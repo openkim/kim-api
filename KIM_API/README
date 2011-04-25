@@ -1,0 +1,30 @@
+KIM API alpha release --- 11-Feb-2011
+
+This directory (KIM_API) contains the KIM API service routines, as well as auxiliary files for compiling and testing.
+
+The contents of the directory is as follows:
+  
+Makefile	-- make file for compiling and building KIM_API using GNU or Intel compilers
+
+KIMserviceDescription.txt -- description of KIM service routines
+
+KIMservice.h	-- C++ Header file for KIM API service classes, routines and methods
+KIMservice.cpp	-- C++ implementations for core service routines and methods
+
+KIMserviceC.h	--  header for C-style interface for KIM API service routines
+KIMserviceC.cpp	-- implementation of C-style interface for the KIM API 
+
+KIMserviceF.F90	-- implementation of FORTRAN-style interface for KIM API
+
+standard_units.cfg	-- standard units descriptor file
+si_units.cfg       	-- SI units descriptor file
+
+aKIMservice_test.F90	-- test program for FORTRAN style KIM API
+KIMserviceTest.cpp	-- test program for testing C++/C KIM API service routines
+
+model_val01.kim	-- kim descriptor files used by tests
+test_val01.kim	-- kim descriptor files used by tests
+model_val02.kim	-- kim descriptor files used by tests
+
+RUN/   -- directory for running tests for KIM API service routines
+

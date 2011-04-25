@@ -1,0 +1,53 @@
+MODEL_NAME := standard
+#SystemOfUnitsFix := fixed    #can work only with units system defined bellow
+SystemOfUnitsFix := flexible #can reset entire units system (default for model)
+
+# This is is the the file that defines KIM API variables standard, the name field is standard.
+# Every name in kim descriptor file for tests and models must follow the standard 
+# that appear in the fields : Name, Type, Unit and Shape
+# The  SystemU/Scale -- here it is set to "none" or "unspecified". The "unspecified" means that in test or models kim file
+# it must be standard,SI , any other supported by KIM API system of units or numerical scale 
+# factor for custom (user defined) system of units
+
+MODEL_INPUT:
+# Name		   Type	     Unit	SystemU/Scale		Shape		requirements
+
+numberOfAtoms  integer*8     none	none		        []                               #empty [] means rank is zero
+
+numberAtomTypes   integer    none	none		        []
+
+atomTypes	integer	     none       none               [numberAtomTypes]                       # one [dummy] --rank is one      
+
+coordinates       real*8     length     unspecified           [numberOfAtoms,3]
+
+compute           method     none	none			[]
+
+neighIterator   method      none	none			[]
+
+neighObject  	pointer	    none 	none			[]    # neighbor list object that is used by iterator
+
+cutoff	real*8	    length	unspecified		[]
+
+LjParamA	real*8	    length	unspecified		[]		# Length is not correct the correct unit, needs to be fixed
+
+LjParamB	real*8	    length	unspecified		[]		# Length is not correct the correct unit, needs to be fixed
+
+destroy 	  method     none	none			[]
+
+
+MODEL_OUTPUT: 
+# Name		   Type	      Unit	SystemU/Scale		Shape		requirements
+
+energy 		  real*8      energy     unspecified			[]	  
+      
+forces            real*8      force      unspecified               [numberOfAtoms,3]
+
+force		  real*8      force	 unspecified			[3]		  
+
+energyPerAtom	  real*8      energy	 unspecified 	         [numberOfAtoms]
+
+stressPerAtom	  real*8     pressure    unspecified	        [numberOfAtoms,3,3]
+
+
+
+ 

@@ -1,0 +1,473 @@
+KIM API alpha release -- 11-Feb-2011
+
+Description of the KIM Service routines
+
+In the following description several constants are used:
+
+C style: KIM_DIR, KIM_DIR_MODELS, KIM_DIR_TESTS 
+		string constants defined in KIMservice.h which give the location
+                of KIM directories.
+
+FORTRAN style: integer,parameter :: kim_intptr = 4 (or 8)
+                defined in KIMserviceF.F90 and defines length of integer
+                variable that can be used to store CRAY pointers. Depending on
+                a system it's value is 4 (on 32 bit machines) or 8 (on 62 bit
+                machines).
+
+==============================  GLOBAL METHODS  ==============================
+
+int KIM_API_init(void * kimmdl, char * testname, char * modelname); 
+	this routine creates the KIM API object that can store every pointer
+        to the data described in the descriptor file for the model.  It also
+        checks if variables described in descriptor files (test and models) are
+        compatible with KIM standard naming convention and also if models are
+        compatible with tests. It will return 1 upon successful completion or
+        zero otherwise. Also if it is unsuccessful, kimmdl will have NULL
+        value.
+
+Arguments:
+
+        void * kimmdl 
+                reference pointer to KIM_API_model object (in c++ style the
+                definition will be (KIM_API_model **)).
+
+        char * testname
+		null terminated character string that defines test name. The 
+		routines prepends string constant KIM_DIR, KIM_DIR_TESTS to
+		obtain file location of the test descriptor file (.kim)
+
+        char * modelname
+                null terminated character string that defines model name. The 
+		routines prepends string constant KIM_DIR, KIM_DIR_TESTS to
+		obtain file location of the test descriptor file (.kim)
+
+Corresponding FORTRAN style interface:
+        integer function kim_api_init_f(kimmdl,testname,modelname) 
+			character (len=*) :: testname,modelname 
+			integer(kind=kim_intptr) :: kimmdl 
+        end function kim_api_init_f
+
+
+******************************************************************************
+
+void KIM_API_allocate(void * kimmdl, intptr_t natoms, int ntypes); 
+	allocates memory for each variable data stored in initialized KIM API 
+        objects. Will exit if an error during allocation. KIM_API_allocate should 
+	not be used in conjuction with KIM_API_set_data for array data 
+	(will create memory leak)
+
+Arguments:
+
+	void * kimmdl 
+		pointer to KIM_API_model object (in c++ style the definition 
+		will be (KIM_API_model *)).
+
+ 	intptr_t natoms 
+		total number of atoms. intptr_t is a c-style standard data is 
+		used here to accomodate very large integers (64 bits)
+
+	int ntypes 
+		number of atom types.
+
+Corresponding FORTRAN style interface:
+	subroutine kim_api_allocate_f(kimmdl, natoms, ntypes) 
+            		integer(kind=kim_intptr) :: kimmdl,natoms 
+            		integer  :: ntypes 
+	end subroutine kim_api_allocate_f
+
+******************************************************************************
+
+void KIM_API_free(void *kimmdl); 
+	deallocates all data allocated with KIM_API_allocate and also destroys  
+	KIM API object. 
+
+Argument:
+
+	void * kimmdl
+		reference pointer to KIM_API_model object (in c++ style the 
+		definition will be (KIM_API_model **)).
+
+Corresponding FORTRAN style interface:
+	subroutine kim_api_free_f(kimmdl) 
+			integer(kind=kim_intptr) :: kimmdl 
+	end subroutine kim_api_free_f
+
+******************************************************************************
+
+void KIM_API_print(void *kimmdl); 
+	prints to screen KIM API object: structure, data and flags. 
+
+Argument:
+
+ 	void * kimmdl
+		pointer to KIM_API_model object (in c++ style the definition 
+		will be (KIM_API_model *)).
+
+Corresponding FORTRAN style interface:
+	subroutine kim_api_print_f(kimmdl) 
+			integer(kind=kim_intptr) :: kimmdl 
+	end subroutine kim_api_print_f
+
+******************************************************************************
+
+void KIM_API_model_compute(void *kimmdl); 
+	execute "compute"  method of the model by using address of the compute 
+	routine stored in KIM API object. 
+
+Argument:
+
+	 void * kimmdl
+		pointer to KIM_API_model object (in c++ style the definition 
+		will be (KIM_API_model *)).
+
+Corresponding FORTRAN style interface:
+	subroutine kim_api_model_compute(kimmdl) 
+        		integer(kind=kim_intptr) :: kimmdl 
+	end subroutine kim_api_model_compute
+
+******************************************************************************
+
+void KIM_API_get_Units(void *kimmdl, char * UnitsSystem); 
+	copies name of the units system currently in use to the supplied 
+	string UnitSystem. 
+
+Arguments:
+
+ 	void * kimmdl
+		pointer to KIM_API_model object (in c++ style the definition 
+		will be (KIM_API_model *)).
+
+	char * UnitsSystem 
+		null terminated character string, must be already allocated.
+
+Corresponding FORTRAN style interface:
+	subroutine kim_api_get_units_f(kimmdl,UnitsSystem) 
+        		integer(kind=kim_intptr) :: kimmdl 
+        		character (len=*) :: UnitsSystem 
+	end subroutine kim_api_get_units_f
+
+******************************************************************************
+	
+void KIM_API_get_originalUnits(void *kimmdl, char * UnitsSystem); 
+	gets name of the original units system, the system defined in the .kim 
+	model descriptor file.
+
+Arguments:
+
+	void * kimmdl 
+		pointer to KIM_API_model object (in c++ style the definition 
+		will be (KIM_API_model *)).
+
+	char * UnitsSystem 
+		null terminated character string, must be already allocated.
+
+Corresponding FORTRAN style interface:
+	subroutine kim_api_get_originalunits_f(kimmdl,UnitsSystem) 
+        		integer(kind=kim_intptr) :: kimmdl 
+        		character (len=*) :: UnitsSystem 
+	end subroutine kim_api_get_originalunits_f
+
+******************************************************************************
+
+int KIM_API_set_Units(void *kimmdl, char * UnitsSystem); 
+	sets new unit system, also checks if the name of unit system among KIM 
+	supported units systems. Will return 1 upon successful completion, 
+	0 otherwise. 
+
+Arguments:
+
+	void * kimmdl 
+		pointer to KIM_API_model object (in c++ style the definition 
+		will be (KIM_API_model *)).
+
+	char * UnitsSystem
+		null terminated character string.
+
+Corresponding FORTRAN style interface:
+	integer function kim_api_set_units_f(kimmdl,UnitsSystem) 
+        		integer(kind=kim_intptr) :: kimmdl 
+	end function kim_api_set_units_f
+
+******************************************************************************
+
+void KIM_API_transform_Units_to(void *kimmdl, char * UnitsSystem); 
+	sets new units system and transforms all relevant data to new units 
+	system from the current. The transformation is done by appropriate 
+	scaling of all data that have physical dimensions.
+
+Arguments:
+
+	void * kimmdl
+		pointer to KIM_API_model object (in c++ style the definition 
+		will be (KIM_API_model *)).
+
+	char * UnitsSystem 
+		null terminated character string.
+
+Corresponding FORTRAN style interface:
+	subroutine kim_api_transform_units_to_f(kimmdl,UnitsSystem) 
+			integer(kind=kim_intptr) :: kimmdl 
+        		character (len=*) :: UnitsSystem 
+	end subroutine  kim_api_transform_units_to_f
+
+******************************************************************************
+
+int KIM_API_isUnitS_fixed(void *kimmdl); 
+	checks whether the model supports only one units system or can work 
+	with multiple units systems. Returns 1 (true) if fixed units (units 
+	cannot be reset), 0 otherwise. 
+
+Argument:
+
+	void * kimmdl
+		pointer to KIM_API_model object (in c++ style the definition 
+		will be (KIM_API_model *)).
+
+Corresponding FORTRAN style interface:
+	integer function kim_api_isunits_fixed_f(kimmdl) 
+        		integer(kind=kim_intptr) :: kimmdl 
+	end function kim_api_isunits_fixed_f
+
+================== ELEMENT ACCESS METHODS ROUTINES BY NAME ====================
+
+int  KIM_API_set_data(void *kimmdl, char *nm,  intptr_t size, void *dt); 
+	this routine places the pointer to the data in the KIM API object. It 
+	searches the name of the data/variable and if it is in the KIM API object,
+	it places the pointer to the data in the KIM API object, if the name is not
+	there it returns 0 and 1 upon successful completion. Should not be used 
+	in conjuction with KIM_API_allocate for array data
+
+Arguments:
+
+	void * kimmdl 
+		pointer to KIM_API_model object (in c++ style the definition 
+		will be (KIM_API_model *))
+	
+	char *nm  
+		null terminated string is the name of the data/variable/method  
+		field exactly as it appears in the .kim descriptor file
+
+	intptr_t size 
+		size of the data in terms of underlying elements
+
+	void *dt  
+		pointer to the data
+
+Corresponding FORTRAN style interface:
+	integer function kim_api_set_data_f(kimmdl,nm, size, dt) 
+        		! dt is address (cray pointer to acctual data )
+        		integer(kind=kim_intptr) :: kimmdl,  size, dt 
+        		character (len=*) ::nm 
+	end function kim_api_set_data_f
+
+******************************************************************************
+
+void * KIM_API_get_data(void *kimmdl, char *nm); 
+		This routine returns a pointer to data in the KIM API object. 
+		Using name (nm) it searches the KIM API object for the data and 
+		returns it,  if it cannot find the data it returns NULL.
+
+Arguments:
+
+ 	void * kimmdl
+		pointer to KIM_API_model object (in c++ style the definition 
+		will be (KIM_API_model *))
+	
+	char *nm
+		null terminated string is the name of the data/variable/method  
+		field exactly as it appears in the .kim descriptor file
+
+Corresponding FORTRAN style interface:
+	integer(kind=kim_intptr) function kim_api_get_data_f(kimmdl,nm) 
+        		integer(kind=kim_intptr) :: kimmdl 
+        		character (len=*) ::nm 
+	end function kim_api_get_data_f
+
+******************************************************************************
+
+intptr_t KIM_API_get_size(void *kimmdl, char *nm); 
+		the functionality of this routine is the same as 
+		KIM_API_get_data, except it returns size of the data in terms 
+		of underlying elements, if no data with name (nm) is in the KIM API 
+		object, a negative value will be returned. 
+
+Arguments:
+
+	void * kimmdl
+		pointer to KIM_API_model object (in c++ style the definition 
+		will be (KIM_API_model *))
+	
+	char *nm
+		null terminated string is the name of the data/variable/method  
+		field exactly as it appears in the .kim descriptor file
+
+Corresponding FORTRAN style interface:
+	integer(kind=kim_intptr) function kim_api_get_size_f(kimmdl,nm) 
+        		integer(kind=kim_intptr) :: kimmdl 
+        		character (len=*) ::nm 
+	end function kim_api_get_size_f 
+
+******************************************************************************
+
+intptr_t KIM_API_get_rank_shape(void *kimmdl, char *nm, int * shape); 
+	returns rank and provides shape of the data. If the name of the 
+	variable/data is not in the KIM API object, a negative value will be 
+	returned.
+
+Arguments:
+
+	void * kimmdl
+		pointer to KIM_API_model object (in c++ style the definition 
+		will be (KIM_API_model *))
+	
+	char *nm
+		null terminated string is the name of the data/variable/method  
+		field exactly as it appears in the .kim descriptor file
+
+	int * shape
+		shape of the array data, number of integer here are equivalent 
+		to the rank. Shape basically tells sizes of each indexes of the 
+		array data. And shape[0] is the slowest changing index. Shape 
+		has to be allocated. 
+
+Corresponding FORTRAN style interface:
+	integer(kind=kim_intptr) function kim_api_get_rank_shape_f(kimmdl,nm, 
+			shape) 
+        		integer(kind=kim_intptr) :: kimmdl 
+        		character (len=*) :: nm 
+	end function kim_api_get_rank_shape_f 
+
+******************************************************************************
+
+void KIM_API_set2_compute(void *kimmdl, char *nm); 
+	sets the flag of the variable/data to compute. If the variable/data can 
+	be optionally computed, setting flag to compute tells the model that 
+	it should be computed.
+
+Arguments:
+
+	void * kimmdl 
+		pointer to KIM_API_model object (in c++ style the definition 
+		will be (KIM_API_model *)).
+	
+	char *nm
+		null terminated string is the name of the data/variable/method  
+		field exactly as it appears in the .kim descriptor file.
+
+Corresponding FORTRAN style interface:
+	subroutine kim_api_set2_compute_f(kimmdl,nm) 
+        		integer(kind=kim_intptr) :: kimmdl 
+        		character (len=*) :: nm 
+	end subroutine kim_api_set2_compute_f
+
+******************************************************************************
+
+void KIM_API_set2_uncompute(void *kimmdl, char *nm); 
+	sets the flag of the variable/data to uncompute. If the variable/data 
+	can be optionally computed, setting flag to uncompute tells the model 
+	that it should not be computed.
+
+Arguments:
+
+	void * kimmdl
+		pointer to KIM_API_model object (in c++ style the definition 
+		will be (KIM_API_model *)).
+	
+	char *nm
+		null terminated string is the name of the data/variable/method 
+		field exactly as it appears in the .kim descriptor file.
+
+Corresponding FORTRAN style interface:
+	subroutine kim_api_set2_uncompute_f(kimmdl,nm) 
+        		integer(kind=kim_intptr) :: kimmdl 
+        		character (len=*) :: nm 
+	end subroutine kim_api_set2_uncompute_f
+
+******************************************************************************
+
+int KIM_API_isit_compute(void *kimmdl, char *nm); 
+	checks the status of compute flag.  If variable/data can be optionally 
+	computed, a model can check if a test wants the variable to be computed. 
+	Returned value 1 - do not compute, 0 compute. 
+
+Arguments:
+
+	void * kimmdl
+		pointer to KIM_API_model object (in c++ style the definition 
+		will be (KIM_API_model *)).
+	
+	char *nm
+		null terminated string is the name of the data/variable/method 
+		field, exactly as it appears in the .kim descriptor file.
+
+Corresponding FORTRAN style interface:
+	integer function kim_api_isit_compute_f(kimmdl,nm) 
+        		integer(kind=kim_intptr) :: kimmdl 
+        		character (len=*) ::nm 
+	end function kim_api_isit_compute_f
+
+******************************************************************************
+
+int KIM_API_get_index(void *kimmdl, char*nm); 
+	gets index of the data/variable/method field in the KIM API object. 
+	Index serves as integer offset that allows to speed up the KIM API 
+	overhead connected with the element access routines. 
+
+Arguments:
+
+	void * kimmdl
+		pointer to KIM_API_model object (in c++ style the definition 
+		will be (KIM_API_model *)).
+	
+	char *nm
+		null terminated string is the name of the data/variable/method  
+		field exactly as it appears in the .kim descriptor file.
+
+Corresponding FORTRAN style interface:
+	integer function kim_api_get_index_f(kimmdl,nm) 
+        		integer(kind=kim_intptr) :: kimmdl 
+        		character (len=*) ::nm 
+	end function kim_api_get_index_f 
+
+==================ELEMENT ACCESS METHODS ROUTINES BY INDEX====================
+
+"by index" routines have the same functionality as "by name" and the same
+arguments except "char* nm" is replaced by "int I". Index of each 
+data/variable/method in the KIM API object is obtained by the 
+KIM_API_get_index routine.
+
+void KIM_API_set_data_byI(void *kimmdl, int I, intptr_t size, void *dt); 
+void * KIM_API_get_data_byI(void *kimmdl,int I); 
+
+intptr_t KIM_API_get_size_byI(void *kimmdl, int I); 
+intptr_t KIM_API_get_rank_shape_byI(void *kimmdl, int I, int * shape); 
+
+void KIM_API_set2_compute_byI(void *kimmdl, int I); 
+void KIM_API_set2_uncompute_byI(void *kimmdl, int I); 
+int KIM_API_isit_compute_byI(void *kimmdl, int I);
+
+========================FORTRAN AUXILIARY ROUTINES============================
+
+Auxiliary routines are not directly connected to KIM API, but they simplify 
+handling and transforming data, for example, from cray pointers to f90 array 
+pointers.
+
+The following subroutine converts ctypeArray to fortran90 type array (pointer).
+For example ctypeArrayc can be a pointee of a cray pointer. Using the subroutine 
+one can cast cray pointer to the f90 array pointer.
+
+	subroutine toRealArrayWithDescriptor2d(ctypeArray, ArrayWithDescriptor,
+			n, m) 
+        		implicit none 
+        		integer :: n,m 
+        		real*8,target :: ctypeArray(n,m) 
+        		real*8,pointer ::ArrayWithDescriptor(:,:) 
+       end subroutine toRealArrayWithDescriptor2d
+
+there are also similar routines for casting cray pointers to different shapes 
+and types f90 style arrays.
+
+toIntegerArrayWithDescriptor2d(ctypeArray, ArrayWithDescriptor, n, m)
+toIntegerArrayWithDescriptor1d(ctypeArray, ArrayWithDescriptor, n)
+toRealArrayWithDescriptor1d(ctypeArray, ArrayWithDescriptor, n)
+
