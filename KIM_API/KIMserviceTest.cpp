@@ -104,10 +104,11 @@ cout<<" SystemOfUnitsFix ="<< kimlj.is_unitsfixed()<<" "<<false<<endl;
    //cout<<kimlj;
    // now get packed and unpucked??
    long long natoms = 2;
+   int kimerr;
    kimlj.set_data("forces",6,&x[0]);
    kimlj.set_data("numberOfAtoms",1,&natoms);
-   kimlj.transform_units_to("standard");
-    kimlj.transform_units_to("custom");
+   kimlj.transform_units_to("standard",&kimerr);
+    kimlj.transform_units_to("custom",&kimerr);
    cout<<kimlj;
 
 
@@ -119,8 +120,8 @@ cout<<" SystemOfUnitsFix ="<< kimlj.is_unitsfixed()<<" "<<false<<endl;
    char  inmodel [] ="../../KIM_API/model_val01.kim";
 
   cout<<"  xxxx match?:"<< kimlj.init(intest,"test_val01",inmodel,"model_val01")<<endl;
-  KIM_API_model::allocateinitialized(&kimlj,10,2);
-  
+  KIM_API_model::allocateinitialized(&kimlj,10,2,&kimerr);
+ // kimlj.model_init();
     //cout<<kimlj;
 
     

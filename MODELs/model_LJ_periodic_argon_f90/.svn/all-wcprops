@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/tools/minimol/svn/!svn/ver/68/trunk/src/MODELs/model_LJ_periodic_argon
+END
+model_LJ_periodic_argon.f90
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/tools/minimol/svn/!svn/ver/66/trunk/src/MODELs/model_LJ_periodic_argon/model_LJ_periodic_argon.f90
+END
+model_LJ_periodic_argon.kim
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/tools/minimol/svn/!svn/ver/67/trunk/src/MODELs/model_LJ_periodic_argon/model_LJ_periodic_argon.kim
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/tools/minimol/svn/!svn/ver/30/trunk/src/MODELs/model_LJ_periodic_argon/Makefile
+END

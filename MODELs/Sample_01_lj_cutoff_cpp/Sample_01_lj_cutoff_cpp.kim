@@ -2,10 +2,18 @@ MODEL_NAME := Sample_01_lj_cutoff_cpp
 #SystemOfUnitsFix := fixed    #can work only with units system defined bellow
 SystemOfUnitsFix := flexible #can reset entire units system (default for model)
 
+SUPPORTED_ATOM/PARTICLES_TYPES:
+#Simbol/name  	Type    code         
+#Na		spec	11
+#Li		spec	3		
+#K		spec	19
+#H		spec	1
 
-
-      
 MODEL_INPUT:
+
+NEIGH-PURE-H		dummy	# the model needs as MODEL_INPUT  coordinates,half neighbor list(neighObject),
+		      		# and  get_half_neigh method
+
 # Name		   Type	     Unit	SystemU/Scale		Shape		requirements
 
 numberOfAtoms  integer*8     none	none		        []                               #empty [] means rank is zero
@@ -18,12 +26,13 @@ neighIterator   method      none	none			[]
 
 neighObject  	pointer	    none 	none			[] # neighbor list object that is used by iterator
 
+get_half_neigh	method	     none	none			[]
+
+get_full_neigh	method	     none	none			[]       optional
+
 cutoff		real*8	    length	standard		[]
 
-LjParamA		real*8	    length	standard		[]
-
-LjParamB		real*8	    length	standard		[]
-
+destroy		 method 	none	none			[] 		optional
 MODEL_OUTPUT: 
 # Name		   Type	      Unit	SystemU/Scale		Shape		requirements
 
@@ -31,4 +40,20 @@ energy 		  real*8      energy     standard			[]
       
 forces            real*8      force      standard               [numberOfAtoms,3]     
 
+AUXILARIES:
+
+ZeroBasedLists		dummy    # presence of this line indicates that indexes for atoms are from 0 to numberOfAtoms-1
+
+
+Neigh_LocaAccess	dummy # works with locator 
+
+
+NEIGH-PURE-H		dummy # scenario method to deal with neighbor list and boundary condition
+
+
+PARAM_FIXED_dope1	real*8      energy     standard			[]	  
+
+PARAM_FIXED_dope2	real*8      energy     standard			[]		
+
+PARAM_FREE_dope3	real*8      energy     standard			[]		
 

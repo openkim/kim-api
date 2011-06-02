@@ -1,4 +1,4 @@
-MODEL_NAME := Sample_01_lj_cutoff.kim
+MODEL_NAME := Sample_01_lj_cutoff_f.kim
 SystemOfUnitsFix := fixed    #can work only with units system defined bellow
 #SystemOfUnitsFix := flexible #can reset entire units system (default for model)
 
@@ -22,6 +22,10 @@ SystemOfUnitsFix := fixed    #can work only with units system defined bellow
 #		  optional -- meaning that you can switch off calculation of the variable
       
 MODEL_INPUT:
+
+NEIGH-PURE-H	dummy # the model needs as MODEL_INPUT  coordinates,half neighbor list(neighObject),
+		      # and  get_half_neigh method
+
 # Name		   Type	     Unit	SystemU/Scale		Shape		requirements
 
 numberOfAtoms  integer*8     none	none		        []                               #empty [] means rank is zero
@@ -34,19 +38,27 @@ compute           method     none	none			[]
 
 neighIterator   method      none	none			[]
 
-neighObject  	pointer	    none 	none			[] 
-                          # neighbor list object that is used by iterator
+get_half_neigh	method	     none	none			[]
+
+get_full_neigh	method	     none	none			[]       optional
+
+neighObject  	pointer	    none 	none			[]     # neighbor list object that is used by iterator
+                         
 cutoff		real*8	    length	standard		[]
 
-LjParamA	real*8	    length	standard		[]
-
-LjParamB	real*8	    length	standard		[]
+destroy		 method 	none	none			[] 		optional
 
 MODEL_OUTPUT: 
 # Name		   Type	      Unit	SystemU/Scale		Shape		requirements
 
 energy 		  real*8      energy     standard			[]	  
       
-forces            real*8      force      standard               [numberOfAtoms,3]     
+forces            real*8      force      standard               [numberOfAtoms,3]
+ 
 
+AUXILARIES:
+
+OneBasedLists	dummy    #presence of this line indicates that indexes for atoms are from 1 to numberOfAtoms
+
+Neigh_IterAccess	dummy # works with iterator
 

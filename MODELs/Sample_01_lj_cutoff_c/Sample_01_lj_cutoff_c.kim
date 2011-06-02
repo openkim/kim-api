@@ -20,7 +20,10 @@ SystemOfUnitsFix := fixed    #can work only with units system defined bellow
 #          []  -- means scalar (or rank zero tensor)
 # requirements -- it is empty field if variable is needed allaws or field set to
 #		  optional -- meaning that you can switch off calculation of the variable
-      
+ 
+NEIGH-PURE-H	dummy # the model needs as MODEL_INPUT  coordinates,half neighbor list(neighObject),
+		      # and  get_half_neigh method
+
 MODEL_INPUT:
 # Name		   Type	     Unit	SystemU/Scale		Shape		requirements
 
@@ -32,13 +35,16 @@ compute           method     none	none			[]
 
 neighIterator   method      none	none			[]
 
+get_half_neigh	method	     none	none			[]
+
+get_full_neigh	method	     none	none			[]       optional
+
+
 neighObject  	pointer	    none 	none			[] 
-                          # neighbor list object that is used by iterator
+                         							 # neighbor list object that is used by iterator
 cutoff		real*8	    length	standard		[]
 
-LjParamA		real*8	    length	standard		[]		# Length is not correct the correct unit, needs to be fixed
-
-LjParamB		real*8	    length	standard		[]		# Length is not correct the correct unit, needs to be fixed
+destroy		 method 	none	none			[] 		optional
 
 MODEL_OUTPUT: 
 # Name		   Type	      Unit	SystemU/Scale		Shape		requirements
@@ -46,5 +52,12 @@ MODEL_OUTPUT:
 energy 		  real*8      energy     standard			[]	  
       
 forces            real*8      force      standard               [numberOfAtoms,3]     
+
+AUXILARIES:
+
+ZeroBasedLists	dummy    # presence of this line indicates that indexes for atoms are from 0 to numberOfAtoms-1
+
+
+Neigh_IterAccess	dummy # works with iterator
 
 

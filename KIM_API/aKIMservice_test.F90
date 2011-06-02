@@ -13,7 +13,7 @@ program akimservice_test
     real*8 ::fcarray(3,1);pointer(pf,fcarray) !              to f
     real*8,allocatable,dimension(:,:) :: x
     real*8,pointer,dimension(:,:) ::f
-    integer init,ind,i
+    integer init,ind,i,kimerr
     integer,pointer::shp(:)
     character (len=KEY_CHAR_LENGTH):: testinfile ="../../KIM_API/test_val01.kim"
     character (len=KEY_CHAR_LENGTH):: testname ="test01"
@@ -34,33 +34,33 @@ program akimservice_test
     print*," kim_isunits_fixed_f= ",kim_api_isunits_fixed_f(pkim)
     sz=6
     !print*,"kim_api_set_data_f = ", kim_api_set_data_f(pkim,"coordinates",sz,px)
-    ind=kim_api_get_index_f(pkim,"coordinates")
-    call kim_api_set_data_byi_f(pkim,ind,sz,px)
-    print*,"kim_api_get_size_f = ", kim_api_get_size_f(pkim,"coordinates")
+    ind=kim_api_get_index_f(pkim,"coordinates",kimerr)
+    call kim_api_set_data_byi_f(pkim,ind,sz,px,kimerr)
+    print*,"kim_api_get_size_f = ", kim_api_get_size_f(pkim,"coordinates",kimerr)
 
-    print*,"kim_api_get_rank_shape_f", kim_api_get_rank_shape_f(pkim,"coordinates",shp)
+    print*,"kim_api_get_rank_shape_f", kim_api_get_rank_shape_f(pkim,"coordinates",shp,kimerr)
     print*,"shape= ",shp(:)
     
-    print*,"kim_api_isit_compute_f(forces) =", kim_api_isit_compute_f(pkim,"forces")
-    print*,"kim_api_isit_compute_f(force) =", kim_api_isit_compute_f(pkim,"force")
-    call kim_api_set2_uncompute_f(pkim,"forces")
-    call kim_api_set2_compute_f(pkim,"force")
-    print*,"kim_api_isit_compute_f(forces) =", kim_api_isit_compute_f(pkim,"forces")
-    print*,"kim_api_isit_compute_f(force) =", kim_api_isit_compute_f(pkim,"force")
-    ind = kim_api_get_index_f(pkim,"forces")
-    call kim_api_set2_compute_byi_f(pkim,ind)
-    print*,"kim_api_isit_compute_f(forces) (byi)=", kim_api_isit_compute_byi_f(pkim,ind)
-    ind = kim_api_get_index_f(pkim,"force")
-    call kim_api_set2_uncompute_byi_f(pkim,ind)
-    print*,"kim_api_isit_compute_f(force) (byi)=", kim_api_isit_compute_byi_f(pkim,ind)
+    print*,"kim_api_isit_compute_f(forces) =", kim_api_isit_compute_f(pkim,"forces",kimerr)
+    print*,"kim_api_isit_compute_f(force) =", kim_api_isit_compute_f(pkim,"force",kimerr)
+    call kim_api_set2_uncompute_f(pkim,"forces",kimerr)
+    call kim_api_set2_compute_f(pkim,"force",kimerr)
+    print*,"kim_api_isit_compute_f(forces) =", kim_api_isit_compute_f(pkim,"forces",kimerr)
+    print*,"kim_api_isit_compute_f(force) =", kim_api_isit_compute_f(pkim,"force",kimerr)
+    ind = kim_api_get_index_f(pkim,"forces",kimerr)
+    call kim_api_set2_compute_byi_f(pkim,ind,kimerr)
+    print*,"kim_api_isit_compute_f(forces) (byi)=", kim_api_isit_compute_byi_f(pkim,ind,kimerr)
+    ind = kim_api_get_index_f(pkim,"force",kimerr)
+    call kim_api_set2_uncompute_byi_f(pkim,ind,kimerr)
+    print*,"kim_api_isit_compute_f(force) (byi)=", kim_api_isit_compute_byi_f(pkim,ind,kimerr)
     
-    print*,"kim_api_get_index_f(force)= ", kim_api_get_index_f(pkim,"force")
-    print*,"kim_api_get_size_byi_f(3)= ", kim_api_get_size_byi_f(pkim,3)
-    print*,"kim_api_get_rank_shape_byi_f =",kim_api_get_rank_shape_byi_f(pkim,3,shp)
+    print*,"kim_api_get_index_f(force)= ", kim_api_get_index_f(pkim,"force",kimerr)
+    print*,"kim_api_get_size_byi_f(3)= ", kim_api_get_size_byi_f(pkim,3,kimerr)
+    print*,"kim_api_get_rank_shape_byi_f =",kim_api_get_rank_shape_byi_f(pkim,3,shp,kimerr)
     print*,"shape= ",shp(:)
-    print*,"kim_api_isit_compute_byi_f =", kim_api_isit_compute_byi_f(pkim,3)
-    call kim_api_print_f(pkim)
-    call kim_api_free(pkim)
+    print*,"kim_api_isit_compute_byi_f =", kim_api_isit_compute_byi_f(pkim,3,kimerr)
+    call kim_api_print_f(pkim,kimerr)
+    call kim_api_free(pkim,kimerr)
 
     !init = kim_api_init1_f(pkim,testinfile,testname,modelinfile,modelname)
 
@@ -73,30 +73,28 @@ program akimservice_test
 
     stop 
 
-    call kim_api_allocate_f(pkim,sz,1)
+    call kim_api_allocate_f(pkim,sz,1,kimerr)
 
    
-    call kim_api_transform_units_to_f(pkim,"standard")
-    call kim_api_get_units_f(pkim,unitsystem)
+    call kim_api_transform_units_to_f(pkim,"standard",kimerr)
+    call kim_api_get_units_f(pkim,unitsystem,kimerr)
     print *,"unitsystem:",unitsystem,":"
-    call kim_api_get_originalunits_f(pkim,unitsystem)
+    call kim_api_get_originalunits_f(pkim,unitsystem,kimerr)
     print *,"originalunitsystem:",unitsystem,":"
 
-    !pf = kim_api_get_data_f(pkim,"forces")
-    ind = kim_api_get_index_f(pkim,"forces")
-    pf = kim_api_get_data_byi_f(pkim,ind) !fast way to access
+    !pf = kim_api_get_data_f(pkim,"forces",kimerr)
+    ind = kim_api_get_index_f(pkim,"forces",kimerr)
+    pf = kim_api_get_data_byi_f(pkim,ind,kimerr) !fast way to access
     call toRealArrayWithDescriptor2d(fcarray,f,3,6)
     do i=1,6
         f(:,i)=1.0*i/2
     end do
-    call kim_api_print_f(pkim)
+    call kim_api_print_f(pkim,kimerr)
 
 
-    call kim_api_free_f(pkim)
+    call kim_api_free_f(pkim,kimerr)
 
-    !call kim_api_print_f(pkim)  !1 check if free works fine
-    !call kim_api_free_f(pkim)   !2
-    !call kim_api_print_f(pkim)  !3
+ 
     
     PRINT*, 'Hello World'
     

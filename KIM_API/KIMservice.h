@@ -14,6 +14,7 @@
 ////#include <cctype>
 //#include <string.h>
 #include <stdint.h>
+
 using namespace std;
 #ifndef _KIMSERVICE_H
 #define	_KIMSERVICE_H
@@ -23,25 +24,23 @@ using namespace std;
 #endif	/* _KIMSERVICE_H */
 
 #define KEY_CHAR_LENGTH 64
-
-#ifndef KIM_DIR
-#define KIM_DIR "../../"
+#define number_NBC_methods 6
+#ifndef KIM_DIR_API
+#define KIM_DIR_API "../../KIM_API/"
 #endif
 
 #ifndef KIM_DIR_MODELS
-#define KIM_DIR_MODELS "MODELs/"
+#define KIM_DIR_MODELS "../../MODELs/"
 #endif
 
 #ifndef KIM_DIR_TESTS
-#define KIM_DIR_TESTS "TESTs/"
+#define KIM_DIR_TESTS "../../TESTs/"
 #endif
 
-//#ifndef intptr_t
-//#define intptr_t long long  // for 64 bit machines
-//#endif
-#ifndef KIM_DIR
-#define KIM_DIR "../../"
+#ifndef KIM_API_MAX_NEIGHBORS
+#define KIM_API_MAX_NEIGHBORS 512
 #endif
+
 #define FREEABLE 0
 
 //#define intptr_t int  // for 32 bit machines
@@ -58,12 +57,17 @@ public:
 class KIMBaseElementUnit{
 public:
         char units[KEY_CHAR_LENGTH]; //name of units system, "none" if not set
-        char  dim [KEY_CHAR_LENGTH];  // dimension (length, energy, time, mass, ore derivatives...
+        char  dim [KEY_CHAR_LENGTH];  // dimension (length, energy, time, mass, or derivatives...
         float scale;// scale to the standard unit: " 1.0 if it is standard unit"
       KIMBaseElementUnit();
       void init();
 };
-
+class Atom_Map{
+public:
+    char symbol[KEY_CHAR_LENGTH];
+    int code;
+    static int comparator(const void * a1,const void *a2);
+};
 class KIM_IOline{
 public:
 	char name[KEY_CHAR_LENGTH];
@@ -123,6 +127,7 @@ public:
     SystemOfUnit();
     ~SystemOfUnit();
     void init(char *infile);
+    void free();
     float &operator[](char * unit);
  static int readlines(char * infile, IOline **inlines);
     bool isitunit(char * unit);
@@ -158,15 +163,18 @@ public:
     KIM_API_model();
     ~KIM_API_model();
     bool preinit(char * initfile,char *modelname);
+    void free(int *error);
     void free();
-
     bool set_data(char *nm, intptr_t size, void *dt);
     bool set_data_byi(int ind,intptr_t size, void *dt);
 
+    void * get_data(char *nm,int *error);
     void * get_data(char *nm);
+    int get_index(char *nm, int * error);
     int get_index(char *nm);
-    intptr_t get_size(char *nm);
-    intptr_t get_rank_shape(char *nm,int * shape);
+    intptr_t get_size(char *nm,int *error);
+    intptr_t get_rank_shape(char *nm,int * shape,int *error);
+    float get_unit_scalefactor(char*nm,int *error);
     void set2_compute(char *nm);
     void set2_uncompute(char *nm);
     bool isit_compute(char *nm);
@@ -176,19 +184,40 @@ public:
 static   void read_file(char * initfile,KIM_IOline ** lns, int * numlns);
 static bool is_it_match(KIM_API_model & mdtst,char * inputinitfile);
 static bool is_it_match(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns);
-static bool is_it_match(KIM_API_model &test,KIM_API_model & mdl);
+static bool is_it_match_noDummyCount(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns);
+static bool is_it_par(char * name);
+static bool is_it_fixed_par(char * name);
+static bool is_it_free_par(char * name);
+
+bool is_it_match(KIM_API_model &test,KIM_API_model & mdl);
+bool do_AtomsTypes_match(KIM_API_model &test,KIM_API_model & mdl);
+
+
     bool init(char * testinputfile,char* testname, char * modelinputfile,char *modelname);
     bool init(char * testname,char * modelname);
-    void model_compute();
-    void model_init();
+    void model_compute(int *error);
+    int get_half_neigh(int mode,int request, int *atom, int *numnei, int **nei1atom, double **Rij);
+    int get_full_neigh(int mode,int request, int *atom, int *numnei, int **nei1atom, double **Rij);
+    bool model_init();
+    void model_destroy(int *error);
 static void irrelevantVars2uncompute(KIM_API_model & test, KIM_API_model & mdl);
-static void allocateinitialized(KIM_API_model * mdl, intptr_t natoms, int ntypes);
+static void allocateinitialized(KIM_API_model * mdl, intptr_t natoms, int ntypes,int * error);
 bool is_unitsfixed();
 void set_unitsfixed(bool f);
-void transform_units_to(char * unitS);
+void transform_units_to(char * unitS,int *error);
 bool set_units(char * unitS);
-void get_units(char * units);
-void get_originalUnits(char * unitS);
+void get_units(char * units,int *error);
+void get_originalUnits(char * unitS,int *error);
+
+void * get_listAtomsTypes(int *nAtomTypes,int *error);
+int get_aTypeCode(char *atom, int * error);
+
+void * get_listParams(int *nVpar,int *error);
+void * get_listFreeParams(int *nVpar,int *error);
+void * get_listFixedParams(int *nVpar,int *error);
+
+void * get_NBC_method(int *error);
+
 
     KIM_IOline *inlines;
     int numlines;
@@ -197,14 +226,71 @@ void get_originalUnits(char * unitS);
     char originalUnits[KEY_CHAR_LENGTH];
     char currentUnits[KEY_CHAR_LENGTH];
     bool unitsFixed;
-
+    
 private:
+    int ErrorCode;// reserved for proper errors handling
     int compute_index;
+    int get_full_neigh_index;
+    int get_half_neigh_index;
+    int neiOfAnAtom_half[KIM_API_MAX_NEIGHBORS];
+    int neiOfAnAtom_full[KIM_API_MAX_NEIGHBORS];
+    int baseConvertKey; //0--no conversion, 1 -- from 0 to 1, -1 -- from 1 to 0
+    Atom_Map * AtomsTypes;
+    int nAtomsTypes;
+
+    //"CLUSTER"
+    char NBC_method_A[KEY_CHAR_LENGTH];
+    char arg_NBC_method_A[1][KEY_CHAR_LENGTH];
+    int narg_NBC_method_A;
+
+    
+    //"MI-OPBC-H"
+    char NBC_method_B[KEY_CHAR_LENGTH];
+    char arg_NBC_method_B[4][KEY_CHAR_LENGTH];
+    int narg_NBC_method_B;
+
+    
+    //"MI-OPBC-F"
+    char NBC_method_C[KEY_CHAR_LENGTH];
+    char arg_NBC_method_C[4][KEY_CHAR_LENGTH];
+    int narg_NBC_method_C;
+ 
+    
+    //"NEIGH-RVEC-F"
+    char NBC_method_D[KEY_CHAR_LENGTH];
+    char arg_NBC_method_D[3][KEY_CHAR_LENGTH];
+    int narg_NBC_method_D;
+
+
+    //"NEIGH-PURE-H"
+    char NBC_method_E[KEY_CHAR_LENGTH];
+    char arg_NBC_method_E[3][KEY_CHAR_LENGTH];
+    int narg_NBC_method_E;
+    
+    
+    //"NEIGH-PURE-F"
+    char NBC_method_F[KEY_CHAR_LENGTH];
+    char arg_NBC_method_F[3][KEY_CHAR_LENGTH];
+    int narg_NBC_method_F;
+
+    int n_NBC_methods;
+    int * nnarg_NBC;
+    char ** NBC_methods;
+    char *** arg_NBC_methods;
+
+    bool check_consistance_NBC_method(); 
+
+    char NBC_method_current[KEY_CHAR_LENGTH];
+    bool NBC_methods_match(KIM_API_model &test,KIM_API_model &mdl);
+    bool init_AtomsTypes();
     void supported_units_init();
     bool are_infileunits_consistent();
     bool among_supported_units(char *unitS);
+    bool do_dummy_match(KIM_API_model & tst, KIM_API_model &mdl);
+    bool is_it_in_and_is_it_dummy(KIM_API_model &mdl,char *name);
     int get_indexOfsupportedUnits(char * unitS);
     void setScale(int index);
     void data_multiply_a(void *dt,char* type,intptr_t sz,float a);
+    void * model_lib_handle;
 };
-ostream &operator<<(ostream &stream, KIM_API_model a);
+ostream &operator<<(ostream &stream, KIM_API_model &a);

@@ -19,8 +19,17 @@ SystemOfUnitsFix := fixed    #can work only with units system defined bellow
 #          [NumberAtoms,3] -- rank 2 tensor,  size of the first index is defined by variable NumberAtoms
 #          []  -- means scalar (or rank zero tensor)
 # requirements -- it is empty field if variable is needed allaws or field set to
-#		  optional -- meaning that you can switch off calculation of the variable
-      
+# optional -- meaning that you can switch off calculation of the variable
+
+SUPPORTED_ATOM/PARTICLES_TYPES:
+#Simbol/name  	Type    code         
+#Na		spec	11
+#Li		spec	3		
+#K		spec	19
+
+
+
+    
 MODEL_INPUT:
 # Name		   Type	     Unit	SystemU/Scale		Shape		requirements
 
@@ -34,17 +43,17 @@ coordinates       real*8     length     standard               [numberOfAtoms,3]
 
 compute           method     none	none			[]
 
-#destroy 	  method     none	none			[]
+destroy 	  method     none	none			[]   
 
 neighIterator   method      none	none			[]
 
 neighObject  	pointer	    none 	none			[]                           # neighbor list object that is used by iterator
 
+get_half_neigh	method	     none	none			[]
+
+get_full_neigh	method	     none	none			[]
+
 cutoff		real*8	    length	standard		[]
-
-LjParamA		real*8	    length	standard		[]
-
-LjParamB		real*8	    length	standard		[]
 
 MODEL_OUTPUT: 
 # Name		   Type	      Unit	SystemU/Scale		Shape		requirements
@@ -55,4 +64,12 @@ energy 		  real*8      energy     standard			[]
       
 forces            real*8      force      standard               [numberOfAtoms,3]     
 
+AUXILARIES:
+
+
+OneBasedLists	dummy    #presence of this line indicates that indexes for atoms are from 1 to numberOfAtoms
+
+Neigh_BothAccess	dummy # need both: locator and iterator
+
+NEIGH-PURE-H	dummy # scenario method to deal with neighbor list and boundary condition
 

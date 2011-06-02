@@ -50,10 +50,10 @@ Corresponding FORTRAN style interface:
 
 ******************************************************************************
 
-void KIM_API_allocate(void * kimmdl, intptr_t natoms, int ntypes); 
+void KIM_API_allocate(void * kimmdl, intptr_t natoms, int ntypes, int * kimerror); 
 	allocates memory for each variable data stored in initialized KIM API 
         objects. Will exit if an error during allocation. KIM_API_allocate should 
-	not be used in conjuction with KIM_API_set_data for array data 
+	not be used in conjunction with KIM_API_set_data for array data 
 	(will create memory leak)
 
 Arguments:
@@ -64,20 +64,23 @@ Arguments:
 
  	intptr_t natoms 
 		total number of atoms. intptr_t is a c-style standard data is 
-		used here to accomodate very large integers (64 bits)
+		used here to accommodate very large integers (64 bits)
 
 	int ntypes 
 		number of atom types.
+        
+        int * kimerror
+	        error code: 1 -- successful completion, 0 (or negative value) -- unsuccessful
 
 Corresponding FORTRAN style interface:
-	subroutine kim_api_allocate_f(kimmdl, natoms, ntypes) 
+	subroutine kim_api_allocate_f(kimmdl, natoms, ntypes,kimerr) 
             		integer(kind=kim_intptr) :: kimmdl,natoms 
-            		integer  :: ntypes 
+            		integer  :: ntypes,kimerr 
 	end subroutine kim_api_allocate_f
 
 ******************************************************************************
 
-void KIM_API_free(void *kimmdl); 
+void KIM_API_free(void *kimmdl,int *kimerror); 
 	deallocates all data allocated with KIM_API_allocate and also destroys  
 	KIM API object. 
 
@@ -87,14 +90,18 @@ Argument:
 		reference pointer to KIM_API_model object (in c++ style the 
 		definition will be (KIM_API_model **)).
 
+	int * kimerror
+	        error code: 1 -- successful completion, 0 (or negative value) -- unsuccessful
+
 Corresponding FORTRAN style interface:
-	subroutine kim_api_free_f(kimmdl) 
-			integer(kind=kim_intptr) :: kimmdl 
+	subroutine kim_api_free_f(kimmdl,kimerr) 
+			integer(kind=kim_intptr) :: kimmdl
+			integer::kimerr
 	end subroutine kim_api_free_f
 
 ******************************************************************************
 
-void KIM_API_print(void *kimmdl); 
+void KIM_API_print(void *kimmdl,kimerror); 
 	prints to screen KIM API object: structure, data and flags. 
 
 Argument:
@@ -103,14 +110,18 @@ Argument:
 		pointer to KIM_API_model object (in c++ style the definition 
 		will be (KIM_API_model *)).
 
+	int * kimerror
+	        error code: 1 -- successful completion, 0 (or negative value) -- unsuccessful
+
 Corresponding FORTRAN style interface:
-	subroutine kim_api_print_f(kimmdl) 
-			integer(kind=kim_intptr) :: kimmdl 
+	subroutine kim_api_print_f(kimmdl,kimerr) 
+			integer(kind=kim_intptr) :: kimmdl
+			integer::kimerr 
 	end subroutine kim_api_print_f
 
 ******************************************************************************
 
-void KIM_API_model_compute(void *kimmdl); 
+void KIM_API_model_compute(void *kimmdl, int * kimerror); 
 	execute "compute"  method of the model by using address of the compute 
 	routine stored in KIM API object. 
 
@@ -118,16 +129,20 @@ Argument:
 
 	 void * kimmdl
 		pointer to KIM_API_model object (in c++ style the definition 
-		will be (KIM_API_model *)).
+		will be (KIM_API_model *))
+
+	int * kimerror
+	        error code: 1 -- successful completion, 0 (or negative value) -- unsuccessful
 
 Corresponding FORTRAN style interface:
-	subroutine kim_api_model_compute(kimmdl) 
-        		integer(kind=kim_intptr) :: kimmdl 
+	subroutine kim_api_model_compute(kimmdl,kimerr) 
+        		integer(kind=kim_intptr) :: kimmdl
+			integer::kimerr
 	end subroutine kim_api_model_compute
 
 ******************************************************************************
 
-void KIM_API_get_Units(void *kimmdl, char * UnitsSystem); 
+void KIM_API_get_Units(void *kimmdl, char * UnitsSystem,int * kimerror); 
 	copies name of the units system currently in use to the supplied 
 	string UnitSystem. 
 
@@ -140,15 +155,19 @@ Arguments:
 	char * UnitsSystem 
 		null terminated character string, must be already allocated.
 
+	int * kimerror
+	        error code: 1 -- successful completion, 0 (or negative value) -- unsuccessful
+
 Corresponding FORTRAN style interface:
-	subroutine kim_api_get_units_f(kimmdl,UnitsSystem) 
+	subroutine kim_api_get_units_f(kimmdl,UnitsSystem,kimerr) 
         		integer(kind=kim_intptr) :: kimmdl 
-        		character (len=*) :: UnitsSystem 
+        		character (len=*) :: UnitsSystem
+			integer :: kimerr
 	end subroutine kim_api_get_units_f
 
 ******************************************************************************
 	
-void KIM_API_get_originalUnits(void *kimmdl, char * UnitsSystem); 
+void KIM_API_get_originalUnits(void *kimmdl, char * UnitsSystem, int * kimerror); 
 	gets name of the original units system, the system defined in the .kim 
 	model descriptor file.
 
@@ -161,15 +180,19 @@ Arguments:
 	char * UnitsSystem 
 		null terminated character string, must be already allocated.
 
+	int * kimerror
+	        error code: 1 -- successful completion, 0 (or negative value) -- unsuccessful
+
 Corresponding FORTRAN style interface:
-	subroutine kim_api_get_originalunits_f(kimmdl,UnitsSystem) 
+	subroutine kim_api_get_originalunits_f(kimmdl,UnitsSystem,kimerr) 
         		integer(kind=kim_intptr) :: kimmdl 
-        		character (len=*) :: UnitsSystem 
+        		character (len=*) :: UnitsSystem
+			integer::kimerr
 	end subroutine kim_api_get_originalunits_f
 
 ******************************************************************************
 
-int KIM_API_set_Units(void *kimmdl, char * UnitsSystem); 
+int KIM_API_set_Units(void *kimmdl, char * UnitsSystem,int * kimerror); 
 	sets new unit system, also checks if the name of unit system among KIM 
 	supported units systems. Will return 1 upon successful completion, 
 	0 otherwise. 
@@ -183,14 +206,18 @@ Arguments:
 	char * UnitsSystem
 		null terminated character string.
 
+	int * kimerror
+	        error code: 1 -- successful completion, 0 (or negative value) -- unsuccessful
+
 Corresponding FORTRAN style interface:
-	integer function kim_api_set_units_f(kimmdl,UnitsSystem) 
-        		integer(kind=kim_intptr) :: kimmdl 
+	integer function kim_api_set_units_f(kimmdl,UnitsSystem,kimerr) 
+        		integer(kind=kim_intptr) :: kimmdl
+			integer::kimerr
 	end function kim_api_set_units_f
 
 ******************************************************************************
 
-void KIM_API_transform_Units_to(void *kimmdl, char * UnitsSystem); 
+void KIM_API_transform_Units_to(void *kimmdl, char * UnitsSystem, int * kimerror); 
 	sets new units system and transforms all relevant data to new units 
 	system from the current. The transformation is done by appropriate 
 	scaling of all data that have physical dimensions.
@@ -204,10 +231,14 @@ Arguments:
 	char * UnitsSystem 
 		null terminated character string.
 
+	int * kimerror
+	        error code: 1 -- successful completion, 0 (or negative value) -- unsuccessful
+
 Corresponding FORTRAN style interface:
-	subroutine kim_api_transform_units_to_f(kimmdl,UnitsSystem) 
+	subroutine kim_api_transform_units_to_f(kimmdl,UnitsSystem,kimerr) 
 			integer(kind=kim_intptr) :: kimmdl 
-        		character (len=*) :: UnitsSystem 
+        		character (len=*) :: UnitsSystem
+			integer::kimerr
 	end subroutine  kim_api_transform_units_to_f
 
 ******************************************************************************
@@ -235,7 +266,7 @@ int  KIM_API_set_data(void *kimmdl, char *nm,  intptr_t size, void *dt);
 	searches the name of the data/variable and if it is in the KIM API object,
 	it places the pointer to the data in the KIM API object, if the name is not
 	there it returns 0 and 1 upon successful completion. Should not be used 
-	in conjuction with KIM_API_allocate for array data
+	in conjunction with KIM_API_allocate for array data
 
 Arguments:
 
@@ -255,14 +286,14 @@ Arguments:
 
 Corresponding FORTRAN style interface:
 	integer function kim_api_set_data_f(kimmdl,nm, size, dt) 
-        		! dt is address (cray pointer to acctual data )
+        		! dt is address (cray pointer to actual data )
         		integer(kind=kim_intptr) :: kimmdl,  size, dt 
         		character (len=*) ::nm 
 	end function kim_api_set_data_f
 
 ******************************************************************************
 
-void * KIM_API_get_data(void *kimmdl, char *nm); 
+void * KIM_API_get_data(void *kimmdl, char *nm, int * kimerror); 
 		This routine returns a pointer to data in the KIM API object. 
 		Using name (nm) it searches the KIM API object for the data and 
 		returns it,  if it cannot find the data it returns NULL.
@@ -277,15 +308,19 @@ Arguments:
 		null terminated string is the name of the data/variable/method  
 		field exactly as it appears in the .kim descriptor file
 
+	int * kimerror
+	        error code: 1 -- successful completion, 0 (or negative value) -- unsuccessful
+
 Corresponding FORTRAN style interface:
-	integer(kind=kim_intptr) function kim_api_get_data_f(kimmdl,nm) 
+	integer(kind=kim_intptr) function kim_api_get_data_f(kimmdl,nm,kimerr) 
         		integer(kind=kim_intptr) :: kimmdl 
-        		character (len=*) ::nm 
+        		character (len=*) ::nm
+			integer :: kimerr
 	end function kim_api_get_data_f
 
 ******************************************************************************
 
-intptr_t KIM_API_get_size(void *kimmdl, char *nm); 
+intptr_t KIM_API_get_size(void *kimmdl, char *nm, int * kimerror); 
 		the functionality of this routine is the same as 
 		KIM_API_get_data, except it returns size of the data in terms 
 		of underlying elements, if no data with name (nm) is in the KIM API 
@@ -301,15 +336,19 @@ Arguments:
 		null terminated string is the name of the data/variable/method  
 		field exactly as it appears in the .kim descriptor file
 
+	int * kimerror
+	        error code: 1 -- successful completion, 0 (or negative value) -- unsuccessful
+
 Corresponding FORTRAN style interface:
-	integer(kind=kim_intptr) function kim_api_get_size_f(kimmdl,nm) 
+	integer(kind=kim_intptr) function kim_api_get_size_f(kimmdl,nm,kimerr) 
         		integer(kind=kim_intptr) :: kimmdl 
-        		character (len=*) ::nm 
+        		character (len=*) ::nm
+			integer::kimerr 
 	end function kim_api_get_size_f 
 
 ******************************************************************************
 
-intptr_t KIM_API_get_rank_shape(void *kimmdl, char *nm, int * shape); 
+intptr_t KIM_API_get_rank_shape(void *kimmdl, char *nm, int * shape, int * kimerror); 
 	returns rank and provides shape of the data. If the name of the 
 	variable/data is not in the KIM API object, a negative value will be 
 	returned.
@@ -330,16 +369,20 @@ Arguments:
 		array data. And shape[0] is the slowest changing index. Shape 
 		has to be allocated. 
 
+	int * kimerror
+	        error code: 1 -- successful completion, 0 (or negative value) -- unsuccessful
+
 Corresponding FORTRAN style interface:
 	integer(kind=kim_intptr) function kim_api_get_rank_shape_f(kimmdl,nm, 
-			shape) 
+			shape,kimerr) 
         		integer(kind=kim_intptr) :: kimmdl 
         		character (len=*) :: nm 
+			integer :: kimerr
 	end function kim_api_get_rank_shape_f 
 
 ******************************************************************************
 
-void KIM_API_set2_compute(void *kimmdl, char *nm); 
+void KIM_API_set2_compute(void *kimmdl, char *nm, int * kimerror); 
 	sets the flag of the variable/data to compute. If the variable/data can 
 	be optionally computed, setting flag to compute tells the model that 
 	it should be computed.
@@ -354,15 +397,20 @@ Arguments:
 		null terminated string is the name of the data/variable/method  
 		field exactly as it appears in the .kim descriptor file.
 
+	int * kimerror
+	        error code: 1 -- successful completion, 0 (or negative value) -- unsuccessful
+	
+
 Corresponding FORTRAN style interface:
-	subroutine kim_api_set2_compute_f(kimmdl,nm) 
+	subroutine kim_api_set2_compute_f(kimmdl,nm,kimerr) 
         		integer(kind=kim_intptr) :: kimmdl 
-        		character (len=*) :: nm 
+        		character (len=*) :: nm
+			integer::kimerr
 	end subroutine kim_api_set2_compute_f
 
 ******************************************************************************
 
-void KIM_API_set2_uncompute(void *kimmdl, char *nm); 
+void KIM_API_set2_uncompute(void *kimmdl, char *nm,int * kimerror); 
 	sets the flag of the variable/data to uncompute. If the variable/data 
 	can be optionally computed, setting flag to uncompute tells the model 
 	that it should not be computed.
@@ -377,15 +425,19 @@ Arguments:
 		null terminated string is the name of the data/variable/method 
 		field exactly as it appears in the .kim descriptor file.
 
+	int * kimerror
+	        error code: 1 -- successful completion, 0 (or negative value) -- unsuccessful
+
 Corresponding FORTRAN style interface:
-	subroutine kim_api_set2_uncompute_f(kimmdl,nm) 
+	subroutine kim_api_set2_uncompute_f(kimmdl,nm, kimerr) 
         		integer(kind=kim_intptr) :: kimmdl 
         		character (len=*) :: nm 
+			integer::kimerr
 	end subroutine kim_api_set2_uncompute_f
 
 ******************************************************************************
 
-int KIM_API_isit_compute(void *kimmdl, char *nm); 
+int KIM_API_isit_compute(void *kimmdl, char *nm, int * kimerror); 
 	checks the status of compute flag.  If variable/data can be optionally 
 	computed, a model can check if a test wants the variable to be computed. 
 	Returned value 1 - do not compute, 0 compute. 
@@ -400,15 +452,19 @@ Arguments:
 		null terminated string is the name of the data/variable/method 
 		field, exactly as it appears in the .kim descriptor file.
 
+	int * kimerror
+	        error code: 1 -- successful completion, 0 (or negative value) -- unsuccessful
+
 Corresponding FORTRAN style interface:
-	integer function kim_api_isit_compute_f(kimmdl,nm) 
+	integer function kim_api_isit_compute_f(kimmdl,nm, kimerr) 
         		integer(kind=kim_intptr) :: kimmdl 
-        		character (len=*) ::nm 
+        		character (len=*) ::nm
+			integer :: kimerr 
 	end function kim_api_isit_compute_f
 
 ******************************************************************************
 
-int KIM_API_get_index(void *kimmdl, char*nm); 
+int KIM_API_get_index(void *kimmdl, char*nm, int * kimerror); 
 	gets index of the data/variable/method field in the KIM API object. 
 	Index serves as integer offset that allows to speed up the KIM API 
 	overhead connected with the element access routines. 
@@ -423,11 +479,305 @@ Arguments:
 		null terminated string is the name of the data/variable/method  
 		field exactly as it appears in the .kim descriptor file.
 
+	int * kimerror
+	        error code: 1 -- successful completion, 0 (or negative value) -- unsuccessful
+
 Corresponding FORTRAN style interface:
-	integer function kim_api_get_index_f(kimmdl,nm) 
+	integer function kim_api_get_index_f(kimmdl,nm, kimerr) 
         		integer(kind=kim_intptr) :: kimmdl 
         		character (len=*) ::nm 
-	end function kim_api_get_index_f 
+			integer :: kimerr
+	end function kim_api_get_index_f
+
+
+******************************************************************************
+
+int KIM_API_model_init(void * kimmdl);
+	initiate model by calling init routine supplied by the model. It does use name 
+	of the model stored in KIM API object (KIM API object has to be initialized with
+	KIM_API_init routine. Return value will be 1 in case of success and zero otherwise.
+
+Arguments:
+	void * kimmdl
+		pointer to KIM_API_model object (in c++ style the definition 
+		will be (KIM_API_model *)).
+	 
+Corresponding FORTRAN style interface:
+	integer function kim_api_model_init(kimmdl) 
+        		integer(kind=kim_intptr) :: kimmdl
+	end subroutine kim_api_model_init
+
+******************************************************************************
+
+void * KIM_API_get_listAtomsTypes(void * kimmdl,int * nATypes, int * error);
+	gives back, as a return value, pointer to the array of fixed size text strings,
+	each string is a atom/particle symbol.
+	In case no Atoms Types are specified returns NULL.
+
+Arguments:
+	void * kimmdl
+		pointer to KIM_API_model object (in c++ style the definition 
+		will be (KIM_API_model *)).
+
+	int * nATypes
+		total number of atom types. In case of error will be negative.
+
+	int * kimerror
+	        error code: 1 -- successful completion, 0 (or negative value) -- unsuccessful
+			    -20 -- internal error in init nAtomsTypes
+		
+Corresponding FORTRAN style interface:
+	function kim_api_get_listatomstypes(kimmdl,natypes,error)
+            integer(kind=kim_intptr) :: kimmdl,kim_api_get_listatomstypes
+	    integer::natypes,error
+        end function kim_api_get_listatomstypes
+
+
+******************************************************************************
+
+void * KIM_API_get_listParams(void * kimmdl,int * nVpar, int * error);
+	gives back, as a return value, pointer to the array of fixed size text strings,
+	each string is a name of a parameter variable. A parameter variable is the variable
+	name that starts with PARAM_FREE_ or PARAM_FIXED_. Each parameter variable described in ".kim" file will be 
+	initiated in KIM API object, but without check against standard.kim file.
+
+
+Arguments:
+	void * kimmdl
+		pointer to KIM_API_model object (in c++ style the definition 
+		will be (KIM_API_model *)).
+
+	int * nVpar
+		total number of parameters. 
+
+	int * kimerror
+	        error code: 1 -- successful completion, 0 (or negative value) -- unsuccessful
+
+Corresponding FORTRAN style interface:
+	function kim_api_get_listparams(kimmdl,nvpar,error)
+            integer(kind=kim_intptr) :: kimmdl,kim_api_get_listparams
+	    integer::nvpar,error
+        end function kim_api_get_listparams
+
+
+******************************************************************************
+
+void * KIM_API_get_listFreeParams(void * kimmdl,int * nVpar, int * error);
+	gives back, as a return value, pointer to the array of fixed size text strings,
+	each string is a name of a free parameter variable. Free parameter variable is the variable
+	name that starts with PARAM_FREE_ . Each free parameter variable described in ".kim" file will be 
+	initiated in KIM API object, but without check against standard.kim file.
+
+
+Arguments:
+	void * kimmdl
+		pointer to KIM_API_model object (in c++ style the definition 
+		will be (KIM_API_model *)).
+
+	int * nVpar
+		total number of parameters. 
+
+	int * kimerror
+	        error code: 1 -- successful completion, 0 (or negative value) -- unsuccessful
+
+Corresponding FORTRAN style interface:
+	function kim_api_get_listfreeparams(kimmdl,nvpar,error)
+            integer(kind=kim_intptr) :: kimmdl,kim_api_get_listfreeparams
+	    integer::nvpar,error
+        end function kim_api_get_listfreeparams
+
+
+******************************************************************************
+
+void * KIM_API_get_listFixedParams(void * kimmdl,int * nVpar, int * error);
+	gives back, as a return value, pointer to the array of fixed size text strings,
+	each string is a name of a fixed parameter variable. Fixed parameter variable is the variable
+	name that starts with PARAM_Fixed_ . Each fixed parameter variable described in ".kim" file will be 
+	initiated in KIM API object, but without check against standard.kim file.
+
+
+Arguments:
+	void * kimmdl
+		pointer to KIM_API_model object (in c++ style the definition 
+		will be (KIM_API_model *)).
+
+	int * nVpar
+		total number of parameters. 
+
+	int * kimerror
+	        error code: 1 -- successful completion, 0 (or negative value) -- unsuccessful
+
+Corresponding FORTRAN style interface:
+	function kim_api_get_listfreeparams(kimmdl,nvpar,error)
+            integer(kind=kim_intptr) :: kimmdl,kim_api_get_listfreeparams
+	    integer::nvpar,error
+        end function kim_api_get_listfreeparams
+
+
+******************************************************************************
+
+void * KIM_API_get_NBC_method(void *kimmdl,int * error);
+	gives back as a return value pointer afixed size text strings, that is 
+	current NBC method in use by KIM_API object. NBC stands for Neighbor list
+	and Boundary Condition.
+ 
+Arguments:
+	void * kimmdl
+		pointer to KIM_API_model object (in c++ style the definition 
+		will be (KIM_API_model *)).
+
+
+	int * kimerror
+	        error code: 1 -- successful completion, 0 (or negative value) -- unsuccessful
+
+Corresponding FORTRAN style interface:
+	function kim_api_get_nbc_method(kimmdl,nvpar,error)
+            integer(kind=kim_intptr) :: kimmdl,kim_api_get_nbc_method
+	    integer::error
+        end function kim_api_get_nbc_method
+
+******************************************************************************
+
+int KIM_API_get_aTypeCode(void * kimmdl, char* atom, int * error);
+	return atom type id for a given atom symbol. It will return -2 if no atom/particles
+	types have been provided in ".kim" file. (Atom/particles type is specified in ".kim"
+	file when the type filed is set to "spec"). It will return -1 if 
+	symbol is not among supported atom symbols
+
+Arguments:
+	void * kimmdl
+		pointer to KIM_API_model object (in c++ style the definition 
+		will be (KIM_API_model *)).
+
+	char * atom
+		atom/particle symbol
+
+	int * error
+	        error code: 1 -- successful completion, 0 (or negative value) -- unsuccessful
+			   -1 -- symbol is not among supported atom symbols
+
+Corresponding FORTRAN style interface:
+	integer function kim_api_get_atypecode_f(kimmdl,nm,error)
+		integer(kind=kim_intptr) :: kimmdl
+ 		character (len=*) ::nm
+		integer::error
+	end function kim_api_get_atypecode_f
+
+
+******************************************************************************
+
+int KIM_API_get_full_neigh(void *kimmdl,int mode,int request,
+        int *atom, int *numnei, int **nei1atom, double **Rij);
+
+	provides standartized access to the supplied by the test neighbor list.
+	Supplied by the test pointer to actual routine must have the same interface as above.
+	Return values depend on result of execution:
+	                 2 -- iterator has been successfully initialized
+                         1 -- successful operation
+                         0 -- iterator has been incremented past end of list
+                        -1 -- invalid atom id requested (request out of range)
+                        -2 -- invalid mode value
+                        -3 -- invalid KIM_API object
+			-4 -- Number of neighbors of an atom exceeds KIM_API_MAX_NEIGHBORS
+ 
+Arguments:
+	void * kimmdl
+		pointer to KIM_API_model object (in c++ style the definition 
+		will be (KIM_API_model *)).
+
+	int mode 
+		Operate in iterator or locator mode
+		mode = 0  : iterator mode
+		mode = 1  : locator mode
+
+	int request
+		Requested operation
+		If mode = 0
+		request = 0  : reset iterator (and return without neighbors)
+		request = 1  : increment iterator
+		If mode = 1
+		request = #  : number of atom whose neighbor list is requested
+
+	int *atom
+		The number of the atom whose neighbor list is returned.
+                This id value will be 0-based if the Model includes
+                ZeroBasedLists in its KIM descriptor file and 1-based if
+                the Model includes OneBasedLists in its KIM descriptor
+                file. (The KIM api will do any necessary conversions
+                behind the scenes.)
+	
+	int *numnei
+		number of neighbors returned
+
+	int **nei1atom
+		 pointer variable which will point to list of neighbors on exit.
+                 The neighbor id values stored in this list will be
+                 0-based if the Model includes ZeroBasedLists in its KIM
+                 descriptor file and 1-based if the Model includes
+                 OneBasedLists in its KIM descriptor file. (the KIM api
+                 will do any necessary conversions behind the scenes)
+
+
+	double **Rij
+		pointer variable which will point to the list of
+                relative position vectors of the neighbors of an atom
+                (including boundary conditions if applied) if they have
+                been computed.
+
+
+Corresponding FORTRAN style interface:
+	integer function kim_api_get_full_neigh(kimmdl,mode,request, 
+					atom, numnei, pnei1atom, pRij)
+	  integer :: mode,request,atom,numnei
+	  integer(kind=kim_intptr) :: kimmdl,
+	  integer :: nei1atom(1) !  array from which neighbors are accessed
+	  pointer(pnei1atom,nei1atom)! actual cray pointer associated with nei1atom
+	  real*8::Rij(3,1) 
+	  pointer(pRij,Rij)
+	end function kim_api_get_full_neigh
+
+
+******************************************************************************
+int KIM_API_get_half_neigh(void *kimmdl,int mode,int request,
+        int *atom, int *numnei, int **nei1atom, double **Rij);
+	
+	the description is the same as for  KIM_API_get_full_neigh, but gives back
+	half neighboring list instead of full neighboring list
+
+
+******************************************************************************
+
+float KIM_API_get_unit_scalefactor(void * kim, char * name, int * error);
+	returns the scale factor for units transformation to the standard unit system.
+	Will return negative value if scale factor is not relevant: variable 
+	has no physical dimension or name of variable is not in KIM API object
+
+Arguments:	
+	void * kimmdl
+		pointer to KIM_API_model object (in c++ style the definition 
+		will be (KIM_API_model *)).
+
+ 	char *name
+		null terminated string is the name of the data/variable  
+		field exactly as it appears in the .kim descriptor file.
+ 
+	int * error
+	        error code: 1 -- successful completion, 0 (or negative value) -- unsuccessful
+			   -1 -- Variable has no physical dimension
+			   -2 -- (internal error) Units system has  physical units "none"
+			   -3 -- Variable is not in KIM API object
+
+Corresponding FORTRAN style interface:
+	real function kim_api_get_unit_scalefactor_f(kimmdl,nm,error)
+		integer(kind=kim_intptr) :: kimmdl
+ 		character (len=*) ::nm
+		integer::error
+	end function kim_api_get_unit_scalefactor_f
+
+
+******************************************************************************
+
+
 
 ==================ELEMENT ACCESS METHODS ROUTINES BY INDEX====================
 
@@ -436,15 +786,15 @@ arguments except "char* nm" is replaced by "int I". Index of each
 data/variable/method in the KIM API object is obtained by the 
 KIM_API_get_index routine.
 
-void KIM_API_set_data_byI(void *kimmdl, int I, intptr_t size, void *dt); 
-void * KIM_API_get_data_byI(void *kimmdl,int I); 
+void KIM_API_set_data_byI(void *kimmdl, int I, intptr_t size, void *dt, int *kimerror); 
+void * KIM_API_get_data_byI(void *kimmdl,int I, int *kimerror); 
 
-intptr_t KIM_API_get_size_byI(void *kimmdl, int I); 
-intptr_t KIM_API_get_rank_shape_byI(void *kimmdl, int I, int * shape); 
+intptr_t KIM_API_get_size_byI(void *kimmdl, int I, int *kimerror); 
+intptr_t KIM_API_get_rank_shape_byI(void *kimmdl, int I, int * shape, int *kimerror); 
 
-void KIM_API_set2_compute_byI(void *kimmdl, int I); 
-void KIM_API_set2_uncompute_byI(void *kimmdl, int I); 
-int KIM_API_isit_compute_byI(void *kimmdl, int I);
+void KIM_API_set2_compute_byI(void *kimmdl, int I, int *kimerror); 
+void KIM_API_set2_uncompute_byI(void *kimmdl, int I, int *kimerror); 
+int KIM_API_isit_compute_byI(void *kimmdl, int I, int *kimerror);
 
 ========================FORTRAN AUXILIARY ROUTINES============================
 

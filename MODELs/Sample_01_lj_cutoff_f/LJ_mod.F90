@@ -14,9 +14,8 @@ module lj_test_mod
 		integer :: numberatoms
 		real*8,pointer :: x(:,:), f(:,:) ! position, forces and saved position
 		!real*8 :: a= 1.0*0.5**(12),b=2.0*0.5**(6),cutof=2.3! parameters of lj potential
-		real*8 :: a= 0.0002441,b=0.03125,cutof=2.3! parameters of lj potential
-		real*8 :: energy ! holder for energy pointer
-	
+		real*8 :: a= 0.0002441,b=0.03125! parameters of lj potential
+		integer(kind=kim_intptr) :: a_cutof,a_energy !holder for cutoff and energy pointer/address
 	end type lj_test_object
 !	interface
 !		subroutine neighborsiterate(pneiobj,pnei1atom,numnei,restart)
@@ -47,15 +46,39 @@ contains
 		integer(kind=kim_intptr) ::sz; integer(kind=8):: numatoms; pointer(patoms,numatoms) ! .. to number of atoms
 		real*8::cutoff; pointer(pcutoff,cutoff)
 		real*8::skin; pointer(pskin,skin)
-		real*8::energy; pointer(penergy,energy)
+		integer::kimerr
 		!getting pointers data from kim
-		patoms = kim_api_get_data_f(pkim,"numberOfAtoms") ; lj_obj%numberatoms=numatoms
-		px=kim_api_get_data_f(pkim,"coordinates"); call toRealArrayWithDescriptor2d(xstub,lj_obj%x,3,lj_obj%numberatoms)
-		pf=kim_api_get_data_f(pkim,"forces");      call toRealArrayWithDescriptor2d(fstub,lj_obj%f,3,lj_obj%numberatoms)
-		pcutoff = kim_api_get_data_f(pkim,"cutoff"); lj_obj%cutof = cutoff;
+		patoms = kim_api_get_data_f(pkim,"numberOfAtoms",kimerr) ; lj_obj%numberatoms=numatoms
+		if (kimerr.ne.1) then
+			print *,"lj_init: kim_api_get_data_f:  numberOfAtoms not in KIM : error code = ", kimerr
+			stop
+		end if
+		px=kim_api_get_data_f(pkim,"coordinates",kimerr); 
+		if (kimerr.ne.1) then
+			print *,"lj_init: kim_api_get_data_f:  coordinates not in KIM : error code = ", kimerr
+			stop
+		end if		
+		call toRealArrayWithDescriptor2d(xstub,lj_obj%x,3,lj_obj%numberatoms)
 		
-		!getting pointer to neighbor iterator from KIM API object
-		 piterator=kim_api_get_data_f(pkim,"neighIterator") ! get pointer to iterator
+		pf=kim_api_get_data_f(pkim,"forces",kimerr)
+		if (kimerr.ne.1) then
+			print *,"lj_init: kim_api_get_data_f:  forces not in KIM : error code = ", kimerr
+			stop
+		end if
+	        call toRealArrayWithDescriptor2d(fstub,lj_obj%f,3,lj_obj%numberatoms)
+		lj_obj%a_cutof = kim_api_get_data_f(pkim,"cutoff",kimerr)
+		if (kimerr.ne.1) then
+			print *,"lj_init: kim_api_get_data_f:  cutoff not in KIM : error code = ", kimerr
+			stop
+		end if
+		pcutoff=lj_obj%a_cutof
+		cutoff = 2.3;  !initialize cutoff                
+		lj_obj%a_energy = kim_api_get_data_f(pkim,"energy",kimerr)     !get pointer to energy
+		if (kimerr.ne.1) then
+			print *,"lj_init: kim_api_get_data_f:  energy not in KIM : error code = ", kimerr
+			stop
+		end if
+
 		!setting pointer to compute method
 		sz=1
 		if(kim_api_set_data_f(pkim,"compute",sz,loc(lj_calculate)).ne.1)  then
@@ -67,31 +90,30 @@ contains
 	
 	
 	!calculates forces per atom and total energy
-	subroutine lj_calculate(pkim) ! compute routine with KIM interface
+	subroutine lj_calculate(pkim,kimerr) ! compute routine with KIM interface
 		implicit none
 		integer(kind=kim_intptr) :: kim; pointer(pkim,kim)
-		call lj_calculate2(pkim,lj_obj%x,lj_obj%f)
+		integer kimerr
+		call lj_calculate2(pkim,lj_obj%x,lj_obj%f,kimerr)
 	end subroutine lj_calculate
 
-	subroutine lj_calculate2(pkim,x,f) ! actual compute routine
+	subroutine lj_calculate2(pkim,x,f,kimerr) ! actual compute routine
 		use KIMservice
 		implicit none		
 		
 		!KIM related declaration
 		integer(kind=kim_intptr) :: kim; pointer(pkim,kim)          
 		real*8,pointer,dimension(:,:) :: x,f
-		real*8 :: vij,dvmr,v,sumv,cutof,cut2,energycutof
-		integer :: i,j,jj,numnei=0;      real*8 :: r2,dv;   real*8,dimension(3):: xi,xj,dx,fij
-		real*8::energy; pointer(penergy,energy)
-		integer(kind=kim_intptr) :: nei_obj; pointer(pnei_obj,nei_obj) !pointer to neighbor list object
-		integer :: nnn(512)
+		real*8 :: vij,dvmr,v,sumv,cut2,energycutof
+		integer :: i,j,jj,numnei=0,kimerr;      real*8 :: r2,dv;   real*8,dimension(3):: xi,xj,dx,fij
+		real*8::energy;pointer(penergy,energy)
+		real*8::cutof;pointer(pcutof,cutof)
+		integer(kind=kim_intptr) ::pRij;
 		integer:: nei1atom(1); pointer (pnei1atom,nei1atom)
-		integer restart;
-		nnn=0
-		pnei1atom = loc(nnn) !!!!!!!!
-		penergy = kim_api_get_data_f(pkim,"energy")     !get pointer to energy
-		pnei_obj=kim_api_get_data_f(pkim,"neighObject")	! get pointer to neighbor list object
-                cutof = lj_obj%cutof	!get pointer to cutoff
+		integer :: retcode,mode,request,atom=0;
+		
+		penergy = lj_obj%a_energy ! now energy is a variable that dirrectly stored in KIM API object
+                pcutof = lj_obj%a_cutof	  ! now cutof is a variable that dirrectly stored in KIM API object-"-
 	
         	sumv=0.0; 
 		
@@ -102,18 +124,31 @@ contains
 		! to be used for shifting LJ so energy is zero at cutoff 
 		call  ljpotr(cut2,energycutof,dvmr)              
 	        
-                restart = 0; !reset neighbor iterator to beginning
-        	call neighborsiterate (pnei_obj,pnei1atom,numnei,restart)
-                
-                
-		restart=1   !increment flag for neighbor iterator
-        	do while (numnei .ge. 0)
+		mode=0;   ! iterator mode
+		request=0;!reset neighbor iterator to beginning
+		retcode = kim_api_get_half_neigh(pkim,mode,request,atom,numnei,pnei1atom,pRij)
+		if(retcode .ne. 2) then
+			kimerr=retcode
+			print*,"sample_01_lj_cutoff_f_calculate: iterator get_half_neigh has not been reset successfully:retcode= ",retcode
+			return
+		end if            
+	
+		retcode=1
+        	do while (retcode .eq. 1)
 			!increment iterator
-			call neighborsiterate (pnei_obj,pnei1atom,numnei,restart)
-			i = nei1atom(2)
+			mode=0; request=1;
+			retcode = kim_api_get_half_neigh(pkim,mode,request,atom,numnei,pnei1atom,pRij)
+			if(retcode.lt.0) then
+				kimerr=retcode
+				print*,"sample_01_lj_cutoff_f_calculate: error iterator get_half_neigh :retcode= ",retcode
+				return
+			else if(retcode.eq.0) then
+				kimerr=1
+				exit
+			end if
+			i=atom
 			xi = x(:,i)
-			do jj=3, nei1atom(1)
-				
+			do jj=1, numnei
 				j=nei1atom(jj)
 				xj = x(:,j)
 				dx = xi-xj
@@ -130,7 +165,6 @@ contains
 			end do
 		end do
 		v=sumv
-		lj_obj%energy = v
 		energy = v !set energy in KIM API object
 		!forces are already stored in KIM API object
 		return
@@ -149,10 +183,10 @@ contains
 end module lj_test_mod
 
 !  Model Initiation routine (it calls actual initialization routine in the module lj_test_mod)
-subroutine sample_01_lj_cutoff_init(pkim)
+subroutine sample_01_lj_cutoff_f_init(pkim)
 	use lj_test_mod
 	implicit none
 	integer(kind=kim_intptr) :: kim; pointer(pkim,kim)
 	call lj_init(pkim)
-end subroutine sample_01_lj_cutoff_init
+end subroutine sample_01_lj_cutoff_f_init
 

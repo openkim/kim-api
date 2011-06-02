@@ -1,10 +1,11 @@
-KIM API alpha release -- 11-Feb-2011
+KIM API alpha release --- 31-May-2011
 
 This directory (Sample_01_compute_example_c) contains a Test that computes the energy of a given atomic configuration and the forces on the atoms.  It conforms with the KIM API interface standard and uses a Model, in this case a Lennard-Jones (LJ) potential with a with cutoff radius, which also conforms to KIM_API interface standard.  The Test is written in C.
 
-There are three copies of the test that are linked against LJ models, written in different languages (c,f90,c++): lj_test_c.c, lj_test_f.c, lj_test_cpp.c
-
 The following files are also in this directory:
+lj_test.c  -- main test program. Executable will be Sample_01_compute_example_c. When run, it expects input: model name.
+	      example:   echo  "Sample_01_lj_cutoff_c" | ./Sample_01_compute_example_c
+
 
 Makefile  -- makefile to compile and build executables with GNU or Intel compilers
 

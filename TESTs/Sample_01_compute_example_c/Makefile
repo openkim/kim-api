@@ -6,36 +6,29 @@
 # Author: Valeriu Smirichinski                                         
 #
 
-
+ifndef KIM_API_DIR
 include ../../KIM_API/Include.mk
-
-LOCALOBJ= neighborlistmod.o myqsort.o
-ifdef NO_FORTRAN
-LOCALOBJ= simple_neighbor.o
-endif
-
-all: Sample_01_compute_example_c_c  Sample_01_compute_example_c_f  Sample_01_compute_example_c_cpp $(LOCALOBJ)
-
-Sample_01_compute_example_c_c: lj_test_c.o $(LOCALOBJ) $(MODELOBJ) $(ALLOBJ)
-	$(LINKCOMPILER) $(CPPFLAG) $(CPPLIBFLAG) $(ALLOBJ) $(MODELOBJ) $(LOCALOBJ) lj_test_c.o $(OUTPUTIN) $@
-
-ifdef NO_FORTRAN
-Sample_01_compute_example_c_f: 
-	echo Skip fortran LJ
 else
-Sample_01_compute_example_c_f: lj_test_f.o $(LOCALOBJ) $(MODELOBJ) $(ALLOBJ)
-	$(LINKCOMPILER) $(CPPFLAG) $(CPPLIBFLAG) $(ALLOBJ) $(MODELOBJ) $(LOCALOBJ)  lj_test_f.o $(OUTPUTIN) $@
+include $(KIM_API_DIR)Include.mk
 endif
 
-Sample_01_compute_example_c_cpp: lj_test_cpp.o $(LOCALOBJ) $(MODELOBJ) $(ALLOBJ)
-	$(LINKCOMPILER) $(CPPFLAG) $(CPPLIBFLAG) $(ALLOBJ) $(MODELOBJ) $(LOCALOBJ)  lj_test_cpp.o $(OUTPUTIN) $@
+
+ifdef KIM_NO_FORTRAN
+LOCALOBJ=sample_neighbor.o
+else
+LOCALOBJ= neighborlistmod.o myqsort.o
+endif
+
+all: Sample_01_compute_example_c
+
+Sample_01_compute_example_c: lj_test.o $(LOCALOBJ)
+	$(LINKCOMPILER) $(CPPFLAG) $(CPPLIBFLAG) $(LOCALOBJ) $<  $(KIM_LIB) $(MODELOBJ) $(OUTPUTIN) $@
+
 
 
 #local dependencies
-lj_test_c.o: $(LOCALOBJ)
-lj_test_cpp.o: $(LOCALOBJ)
-lj_test_f.o: $(LOCALOBJ)
+lj_test.o: $(LOCALOBJ)
 neighborlistmod.o: myqsort.o
 
 clean:
-	rm -f *.mod *.o  Sample_01_compute_example_c_c Sample_01_compute_example_c_f Sample_01_compute_example_c_cpp
+	rm -f *.mod *.o  Sample_01_compute_example_c
