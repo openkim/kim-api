@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include "KIMserviceC.h"
 
-/* Define prototypes for model initialization  and compute routine */
+/* Define prototypes for model initialization and compute routine */
 
 
 void sample_01_lj_cutoff_c_init_(void * km);

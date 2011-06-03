@@ -53,10 +53,9 @@ energy 		  real*8      energy     standard			[]
       
 forces            real*8      force      standard               [numberOfAtoms,3]     
 
-AUXILARIES:
+CONVENTIONS:
 
 ZeroBasedLists	dummy    # presence of this line indicates that indexes for atoms are from 0 to numberOfAtoms-1
-
 
 Neigh_IterAccess	dummy # works with iterator
 
