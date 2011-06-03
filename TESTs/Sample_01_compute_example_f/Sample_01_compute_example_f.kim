@@ -7,7 +7,7 @@ SystemOfUnitsFix := fixed    #can work only with units system defined bellow
 # it contains section MODEL_INPUT or MODEL_OUPUT
 #followed by lines, that defines variable in the following format
 #
-# Name		   Type	     Dim	Units/Scale		Shape		requirements
+# Name             Type      Unit       Units/Scale             Shape           requirements
 #
 # Name -- unique name of variables 
 # Type -- real,real*8,integer,integer*8, pointer -- tells underlying structure of an element
@@ -22,54 +22,51 @@ SystemOfUnitsFix := fixed    #can work only with units system defined bellow
 # optional -- meaning that you can switch off calculation of the variable
 
 SUPPORTED_ATOM/PARTICLES_TYPES:
-#Simbol/name  	Type    code         
-#Na		spec	11
-#Li		spec	3		
-#K		spec	19
+#Simbol/name    Type    code         
+#Na             spec    11
+#Li             spec    3               
+#K              spec    19
 
 
 
     
 MODEL_INPUT:
-# Name		   Type	     Unit	SystemU/Scale		Shape		requirements
+# Name                  Type         Unit       SystemU/Scale           Shape              requirements
 
-numberOfAtoms  integer*8     none	none		        []                               #empty [] means rank is zero
+numberOfAtoms           integer*8    none       none                    []                     #empty [] means rank is zero
 
-#numberAtomTypes   integer    none	none		        []
+#numberAtomTypes        integer      none       none                    []
 
-#atomTypes	integer	     none       none                  [numberAtomTypes]         # one [dummy] --rank is one      
+#atomTypes              integer      none       none                    [numberAtomTypes]      # one [dummy] --rank is one      
 
-coordinates       real*8     length     standard               [numberOfAtoms,3]
+coordinates             real*8       length     standard                [numberOfAtoms,3]
 
-compute           method     none	none			[]
+compute                 method       none       none                    []
 
-destroy 	  method     none	none			[]   
+destroy                 method       none       none                    []   
 
-neighIterator   method      none	none			[]
+neighObject             pointer      none       none                    []                      # neighbor list object that is used by iterator
 
-neighObject  	pointer	    none 	none			[]                           # neighbor list object that is used by iterator
+get_half_neigh          method       none       none                    []
 
-get_half_neigh	method	     none	none			[]
+get_full_neigh          method       none       none                    []
 
-get_full_neigh	method	     none	none			[]
-
-cutoff		real*8	    length	standard		[]
+cutoff                  real*8       length     standard                []
 
 MODEL_OUTPUT: 
-# Name		   Type	      Unit	SystemU/Scale		Shape		requirements
+# Name                  Type         Unit       SystemU/Scale           Shape              requirements
 
-energy 		  real*8      energy     standard			[]
-
-#force		  real*8      force	 standard			[3]		  
+energy                  real*8       energy     standard                []
       
-forces            real*8      force      standard               [numberOfAtoms,3]     
-
-AUXILARIES:
+forces                  real*8       force      standard                [numberOfAtoms,3]     
 
 
-OneBasedLists	dummy    #presence of this line indicates that indexes for atoms are from 1 to numberOfAtoms
+CONVENTIONS:
+# Name                  Type 
 
-Neigh_BothAccess	dummy # need both: locator and iterator
+OneBasedLists           dummy    #presence of this line indicates that indexes for atoms are from 1 to numberOfAtoms
 
-NEIGH-PURE-H	dummy # scenario method to deal with neighbor list and boundary condition
+Neigh_BothAccess        dummy    #need both: locator and iterator
+
+NEIGH-PURE-H            dummy    #scenario method to deal with neighbor list and boundary condition
 

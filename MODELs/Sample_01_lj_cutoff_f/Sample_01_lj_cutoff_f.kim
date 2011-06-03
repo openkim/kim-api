@@ -7,7 +7,7 @@ SystemOfUnitsFix := fixed    #can work only with units system defined bellow
 # it contains section MODEL_INPUT or MODEL_OUPUT
 #followed by lines, that defines variable in the following format
 #
-# Name		   Type	     Dim	Units/Scale		Shape		requirements
+# Name             Type      Dim        Units/Scale             Shape           requirements
 #
 # Name -- unique name of variables 
 # Type -- real,real*8,integer,integer*8, pointer -- tells underlying structure of an element
@@ -19,46 +19,45 @@ SystemOfUnitsFix := fixed    #can work only with units system defined bellow
 #          [NumberAtoms,3] -- rank 2 tensor,  size of the first index is defined by variable NumberAtoms
 #          []  -- means scalar (or rank zero tensor)
 # requirements -- it is empty field if variable is needed allaws or field set to
-#		  optional -- meaning that you can switch off calculation of the variable
-      
+#                 optional -- meaning that you can switch off calculation of the variable
+
 MODEL_INPUT:
+# Name                  Type         Unit       SystemU/Scale           Shape              requirements
 
-NEIGH-PURE-H	dummy # the model needs as MODEL_INPUT  coordinates,half neighbor list(neighObject),
-		      # and  get_half_neigh method
+numberOfAtoms           integer*8    none       none                    []                               #empty [] means rank is zero
 
-# Name		   Type	     Unit	SystemU/Scale		Shape		requirements
+atomTypes               integer      none       none                    [numberAtomTypes]   optional           
 
-numberOfAtoms  integer*8     none	none		        []                               #empty [] means rank is zero
+coordinates             real*8       length     standard                [numberOfAtoms,3]
 
-atomTypes	integer	     none       none                   [numberAtomTypes]   optional      # one [dummy] --rank is one      
+compute                 method       none       none                    []
 
-coordinates       real*8     length     standard               [numberOfAtoms,3]
+get_half_neigh          method       none       none                    []
 
-compute           method     none	none			[]
+get_full_neigh          method       none       none                    []                  optional
 
-neighIterator   method      none	none			[]
-
-get_half_neigh	method	     none	none			[]
-
-get_full_neigh	method	     none	none			[]       optional
-
-neighObject  	pointer	    none 	none			[]     # neighbor list object that is used by iterator
+neighObject             pointer      none       none                    []     # neighbor list object that is used by iterator
                          
-cutoff		real*8	    length	standard		[]
+cutoff                  real*8       length     standard                []
 
-destroy		 method 	none	none			[] 		optional
+destroy                 method       none       none                    []                  optional
 
 MODEL_OUTPUT: 
-# Name		   Type	      Unit	SystemU/Scale		Shape		requirements
+# Name                  Type         Unit       SystemU/Scale           Shape           requirements
 
-energy 		  real*8      energy     standard			[]	  
+energy                  real*8       energy     standard                []        
       
-forces            real*8      force      standard               [numberOfAtoms,3]
+forces                  real*8       force      standard                [numberOfAtoms,3]
  
 
-AUXILARIES:
+CONVENTIONS:
+# Name                  Type
 
-OneBasedLists	dummy    #presence of this line indicates that indexes for atoms are from 1 to numberOfAtoms
+OneBasedLists           dummy #presence of this line indicates that indexes for atoms are from 1 to numberOfAtoms
 
-Neigh_IterAccess	dummy # works with iterator
+Neigh_IterAccess        dummy # works with iterator
+
+NEIGH-PURE-H            dummy # the model needs as MODEL_INPUT  coordinates,half neighbor list(neighObject),
+                              # and  get_half_neigh method
+
 

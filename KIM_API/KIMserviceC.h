@@ -8,8 +8,12 @@
 #ifndef _KIMSERVICC_H
 #define	_KIMSERVICC_H
 
-//#include "KIMservice.h"
+#ifndef KIM_API_MAX_NEIGHBORS
+#define KIM_API_MAX_NEIGHBORS 512
+#endif
+
 #include <stdint.h>
+//#include "KIMservice.h"
 //#define intptr_t long long  // for 64 bit machines
 #ifdef	__cplusplus
 extern "C" {

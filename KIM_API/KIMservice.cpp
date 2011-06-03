@@ -1474,12 +1474,15 @@ int KIM_API_model::get_half_neigh(int mode, int request, int *atom,
         int *numnei, int** nei1atom, double** Rij){
     int locrequest=request;
     int locmode = mode;
+
     if(mode!=0 && mode!=1) return -2;
     if(this == NULL) return -3;
     typedef int (*Get_Neigh)(void **, int *, int *, int *, int *, int **,double **);
+
     if (get_half_neigh_index < 0) return -3;
     Get_Neigh get_neigh = (Get_Neigh)(*this)[get_half_neigh_index].data;
-     KIM_API_model *pkim = this;
+    KIM_API_model *pkim = this;
+
     if (baseConvertKey==0) {
         int erkey = (*get_neigh)((void **)&pkim,&locmode, &locrequest, atom, numnei, nei1atom, Rij );
         if(*numnei > KIM_API_MAX_NEIGHBORS) {
@@ -1489,10 +1492,12 @@ int KIM_API_model::get_half_neigh(int mode, int request, int *atom,
         }
         return erkey;
     }else if (baseConvertKey == 1 || baseConvertKey == -1){
-        int req=request;
+
+ 	int req=request;
         if (mode ==1) req = request - baseConvertKey;
-        int at = *atom;
-        if (mode==0 && request == 0) {
+ 	int at = *atom;
+
+        if (mode==0 && request == 0) {	    
             return (*get_neigh)((void **)&pkim,&locmode, &req, &at, numnei, nei1atom, Rij );
         }else{
             int erkey = (*get_neigh)((void **)&pkim,&locmode, &req, &at, numnei, nei1atom, Rij );
@@ -1501,7 +1506,7 @@ int KIM_API_model::get_half_neigh(int mode, int request, int *atom,
                 cout<<" "<<*numnei <<" > "<< KIM_API_MAX_NEIGHBORS<<endl;
                 return -4;
             }
-            if (erkey ==0 || erkey == 1){
+            if (erkey == 1){
                 *atom= at + baseConvertKey;
                 for (int i = 0; i<(*numnei);i++){
                     neiOfAnAtom_half[i] = (*nei1atom)[i] + baseConvertKey;

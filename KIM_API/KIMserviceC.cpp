@@ -66,8 +66,11 @@ int KIM_API_model_init(void * kimmdl){
     return 0;
 }
 void KIM_API_model_compute(void *kimmdl,int *error){
+ 
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
+
     mdl->model_compute(error);
+
 }
 void KIM_API_model_destroy(void * kimmdl,int *error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
