@@ -4,17 +4,13 @@
 #                                                                     
 # Author: Valeriu Smirichinski                                         
 #
-# This is make file has to be included by main makefiles in 
+# This make file needs to be included by the makefiles in 
 # the KIM_API, MODELs/*/ and TESTs/*/ directories.
-# It contains definition for the GNU and Intel compiler sets. 
-# It also contains definitions for patern compiling rules.
+# It contains definitions for the GNU and Intel compiler sets. 
+# It also contains definitions for patern compilation rules.
 # 
 
-# The following line needs to be changed to point to the location of
-# the KIMdevel directory:
-ifndef KIM_DIR
-KIM_DIR :=$(HOME)/Work/KIM_API_devel/KIMdevel/
-endif
+# The openkim-api subdirectories:
 ifndef KIM_API_DIR
 KIM_API_DIR :=$(KIM_DIR)KIM_API/
 endif
@@ -43,6 +39,7 @@ MACHINESYSTEM=SYSTEM32
 else
 MACHINESYSTEM=SYSTEM64
 endif
+
 ifdef KIM_INTEL
 
 # Define Intel compiler switches
@@ -53,19 +50,11 @@ CCOMPILER = icc
 CPPCOMPILER = icpc
 CPPFLAG = -O3 -I$(KIM_API_DIR) -D KIM_DIR_MODELS=\"$(KIM_MODELS_DIR)\" -D KIM_DIR_API=\"$(KIM_API_DIR)\" -D KIM_DIR_MODELS=\"$(KIM_MODELS_DIR)\"
 CPPFLAG += -D KIM_DIR_TESTS=\"$(KIM_TESTS_DIR)\"
-ifdef KIM_API_MAX_NEIGHBORS #MAX NEIGHBORS FOR AN ATOM default is 512
-CPPFLAG += -D KIM_API_MAX_NEIGHBORS=$(KIM_API_MAX_NEIGHBORS)
-endif
 
 CPPLIBFLAG = -nofor_main -cxxlib
 FORTRANLIBFLAG = -cxxlib
 FORTRANCOMPILER = ifort
 LINKCOMPILER = $(FORTRANCOMPILER)
-
-ifdef KIM_DYNAMIC
-CPPFLAG += -D KIM_DYNAMIC=\"$(KIM_DYNAMIC)\" -fPIC
-FORTRANFLAG += -fPIC
-endif
 
 else
 
@@ -73,26 +62,35 @@ else
 OBJONLY=-c
 OUTPUTIN=-o
 FORTRANFLAG = -fcray-pointer -O3 -J$(KIM_API_DIR) -D $(MACHINESYSTEM)
-CCOMPILER = gcc
+CCOMPILER   = gcc
 CPPCOMPILER = g++
+#CCOMPILER   = gcc-fsf-4.4  # for OS X using fink compilers
+#CPPCOMPILER = g++-fsf-4.4  # for OS X using fink compilers
 CPPFLAG = -O3 -I$(KIM_API_DIR) -Wno-write-strings -D KIM_DIR_MODELS=\"$(KIM_MODELS_DIR)\" -D KIM_DIR_API=\"$(KIM_API_DIR)\"
 CPPFLAG += -D KIM_DIR_TESTS=\"$(KIM_TESTS_DIR)\"
 FORTRANCOMPILER = gfortran
-#CPPLIBFLAG = -lgfortran       #if GNU version 4.5 and up. tested on suse 
-#LINKCOMPILER = $(CPPCOMPILER) #if GNU version 4.5 and up. tested on suse
+#CPPLIBFLAG = -lgfortran           #if GNU version 4.5 and up. tested on suse 
+#LINKCOMPILER = $(CPPCOMPILER)     #if GNU version 4.5 and up. tested on suse
 CPPLIBFLAG = -lstdc++             #if GNU version 4.4.1. tested on suse
 LINKCOMPILER = $(FORTRANCOMPILER) #if GNU version 4.4.1. tested on suse
 
-ifdef KIM_API_MAX_NEIGHBORS #MAX NEIGHBORS FOR AN ATOM default is 512
-CPPFLAG += -D KIM_API_MAX_NEIGHBORS=$(KIM_API_MAX_NEIGHBORS)
-endif
 ifdef KIM_DYNAMIC
-CPPFLAG += -D KIM_DYNAMIC=\"$(KIM_DYNAMIC)\" -fPIC
-FORTRANFLAG += -fPIC
 CPPLIBFLAG += -ldl
 endif
 
 endif
+
+# Set max neighbors
+ifdef KIM_API_MAX_NEIGHBORS #MAX NEIGHBORS FOR AN ATOM default is 512
+CPPFLAG += -D KIM_API_MAX_NEIGHBORS=$(KIM_API_MAX_NEIGHBORS)
+endif
+
+# Set common compiler flags for dynamic linking
+ifdef KIM_DYNAMIC
+CPPFLAG += -D KIM_DYNAMIC=\"$(KIM_DYNAMIC)\" -fPIC
+FORTRANFLAG += -fPIC
+endif
+
 
 # Definition of c and fortran .o file list
 OBJC = $(KIM_API_DIR)KIMservice.o $(KIM_API_DIR)KIMserviceC.o  
@@ -123,7 +121,7 @@ endif
 
 #reconfigure models
 reconfig:
-	cd $(KIM_API_DIR); make configmodels; make all; cd $(RETURN_DIR)
+	cd $(KIM_API_DIR); $(MAKE) configmodels; $(MAKE) all; cd $(RETURN_DIR)
 
 .PHONY: reconfig
 
@@ -142,6 +140,3 @@ reconfig:
 
 %.so: %.a
 	$(LINKCOMPILER) $(SHARED_LIB_FLAG)  -o $@  *.o $(ALLOBJ)
-
-
-

@@ -6,8 +6,8 @@
 #
 
 configall:
-	cd KIM_API/; make configmodels; cd ../
-	cd KIM_API/; make configtests; cd ../
+	cd KIM_API/; $(MAKE) configmodels; cd ../
+	cd KIM_API/; $(MAKE) configtests; cd ../
 	
 
 include KIM_API/Include.mk
@@ -20,5 +20,5 @@ endif
 
 
 cleanall: clean
-	cd KIM_API/; make cleanall; cd ../	
+	cd KIM_API/; $(MAKE) cleanall; cd ../	
 	

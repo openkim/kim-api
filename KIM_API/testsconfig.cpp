@@ -72,30 +72,30 @@ int main(int argc, char** argv) {
         }
         //create target all;
 	out_tetsmkfile << "all:"<<endl;
-	out_tetsmkfile << "\t cd $(KIM_API_DIR)/"<<"; make all; cd "<<"$(RETURN_DIR)"<<endl;
+	out_tetsmkfile << "\t cd $(KIM_API_DIR)/"<<"; $(MAKE) all; cd "<<"$(RETURN_DIR)"<<endl;
 	
         for(int i=0; i<counter_mdl;i++){
-        	out_tetsmkfile << "\t cd $(KIM_MODELS_DIR)/"<<list_models[i]<<"; make all; cd ";
+        	out_tetsmkfile << "\t cd $(KIM_MODELS_DIR)/"<<list_models[i]<<"; $(MAKE) all; cd ";
 		out_tetsmkfile <<"$(RETURN_DIR)"<<endl;
         }
 
         for(int i=0; i<counter;i++){
-        	out_tetsmkfile << "\t cd $(KIM_TESTS_DIR)/"<<list_tests[i]<<"; make all; cd ";
+        	out_tetsmkfile << "\t cd $(KIM_TESTS_DIR)/"<<list_tests[i]<<"; $(MAKE) all; cd ";
 		out_tetsmkfile <<"$(RETURN_DIR)"<<endl;
         }
 	//create target clean
         out_tetsmkfile << "clean:"<<endl;
 	
         for(int i=0; i<counter_mdl;i++){
-        	out_tetsmkfile << "\t cd $(KIM_MODELS_DIR)/"<<list_models[i]<<"; make clean; cd ";
+        	out_tetsmkfile << "\t cd $(KIM_MODELS_DIR)/"<<list_models[i]<<"; $(MAKE) clean; cd ";
 		out_tetsmkfile <<"$(RETURN_DIR)"<<endl;
         }
 
         for(int i=0; i<counter;i++){
-        	out_tetsmkfile << "\t cd $(KIM_TESTS_DIR)/"<<list_tests[i]<<"; make clean; cd ";
+        	out_tetsmkfile << "\t cd $(KIM_TESTS_DIR)/"<<list_tests[i]<<"; $(MAKE) clean; cd ";
 		out_tetsmkfile <<"$(RETURN_DIR)"<<endl;
         }
-	out_tetsmkfile << "\t cd $(KIM_API_DIR)/"<<"; make clean; cd "<<"$(RETURN_DIR)"<<endl;
+	out_tetsmkfile << "\t cd $(KIM_API_DIR)/"<<"; $(MAKE) clean; cd "<<"$(RETURN_DIR)"<<endl;
         out_tetsmkfile.close();   
  
 }
