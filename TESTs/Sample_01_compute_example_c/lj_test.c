@@ -29,8 +29,11 @@ int main(){
 	double * f;
 	int kimerr;
 	intptr_t * neighObject;
-	void (*model_compute)(intptr_t **); /* Defines function pointer to model compute routine */
-
+	
+        //
+	int mode=0,request=0,atom,numnei, **nei1atom;
+        double **Rij;
+        //
 	/* test  and model name */
 	char testname[80] ="Sample_01_compute_example_c";
 	char modelname[80] ="";  /* model name string */
@@ -46,7 +49,7 @@ int main(){
 	FILE*fl;
 
 	/* Initialized KIM API object */
-	KIM_API_init((void *)&pkim, testname ,modelname);
+	if (KIM_API_init((void *)&pkim, testname ,modelname)!=1) return -1;
 
 	/* open input atomic configuration file */
 	fl=fopen(&infile[0],"r");
@@ -77,14 +80,12 @@ int main(){
 	/* Setup neighbor list */
 	neighobj_both_allocate_(&neighObject);
 	set_kim_neighobj_index_(&ind);
-	/* Set calculation parameters */
-	*pcutoff=1.8;        
-
+	       
 	/* calculate neighbor list for the configuration */
 	cutofeps=2.1;
 	neighborscalculate_both_(&neighObject,&x,&n,&cutofeps);	
-	/* Inform KIM API object about neighbor list iterator and object */
 
+	/* Inform KIM API object about neighbor list iterator and object */
 	KIM_API_set_data(pkim,"get_half_neigh",1,(void*) get_neigh_half_both_());
 	KIM_API_set_data(pkim,"neighObject",1,(void*) neighObject);
 	
@@ -99,9 +100,13 @@ int main(){
 	/* All setup finished -- ready to compute */
 
 	/*  Call Model compute routine -- e.g., compute energy & force */
+
+        //nei_iteratorlocator(&pkim,&mode,&request, &atom, &numnei,nei1atom, Rij);
+
 	KIM_API_model_compute(pkim,&kimerr);
 
 	/* output KIM API object to screen (optional) */
+
 	KIM_API_print(pkim,&kimerr);
 
 	/* Print out energy and list of forces */
