@@ -19,10 +19,6 @@ using namespace std;
 #ifndef _KIMSERVICE_H
 #define	_KIMSERVICE_H
 
-
-
-#endif	/* _KIMSERVICE_H */
-
 #define KEY_CHAR_LENGTH 64
 #define number_NBC_methods 6
 #ifndef KIM_DIR_API
@@ -294,3 +290,5 @@ private:
     void * model_lib_handle;
 };
 ostream &operator<<(ostream &stream, KIM_API_model &a);
+
+#endif	/* _KIMSERVICE_H */

@@ -18,13 +18,10 @@
 
 using namespace std;
 #include "KIMservice.h"
-#ifndef _KIMSERVICE_H
-#define	_KIMSERVICE_H
-#endif	/* _KIMSERVICE_H */
+
 #define KEY_CHAR_LENGTH 64
 
 
- #define FREEABLE 0
 //#define intptr_t int  // for 32 bit machines
 KIMBaseElementFlag:: KIMBaseElementFlag(){
     peratom=0;
