@@ -24,21 +24,20 @@ get_full_neigh          method      none        none                    []
 
 get_half_neigh          method      none        none                    []
 
-neighObject             pointer     none        none                    []                                            # neighbor list object that is used by iterator
+neighObject             pointer     none        none                    []    # neighbor list object that is used by iterator
 
-boxlength               real*8      length      unspecified             [3]                                           # simulation box length needed for periodic BC minimum image
-
+boxlength               real*8      length      unspecified             [3]   # simulation box length needed for periodic BC minimum image
 
 MODEL_OUTPUT: 
 # Name                  Type        Unit        SystemU/Scale           Shape                   requirements
 
 compute                 method      none        none                    []
 
-cutoff                  real*8      length      unspecified             []
-
 reinit                  method      none        none                    []
 
 destroy                 method      none        none                    []
+
+cutoff                  real*8      length      unspecified             []
 
 energy                  real*8      energy      unspecified             []        
       
