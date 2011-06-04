@@ -25,7 +25,3 @@ myqsort.c                        -- c-FORTRAN wrapper that is used by
                                     neighborlistmod.F90 to call the standard c 
                                     style qsort routine
 neighborlistmod.F90              -- FORTRAN module for calculating the neighbor list
-
-
-
-
