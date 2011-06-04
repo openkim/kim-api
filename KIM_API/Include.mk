@@ -121,7 +121,7 @@ endif
 
 #reconfigure models
 reconfig:
-	cd $(KIM_API_DIR); $(MAKE) configmodels; $(MAKE) all; cd $(RETURN_DIR)
+	$(MAKE) -C $(KIM_API_DIR) configmodels; $(MAKE) -C $(KIM_API_DIR) all
 
 .PHONY: reconfig
 
