@@ -13,7 +13,7 @@
 /* Define prototypes for neighbor list handeling */
 void neighobj_both_allocate_(intptr_t **);
 void neighobj_both_deallocate_(intptr_t **);
-void neighborscalculate_both_(intptr_t **,double**,int*,double*);
+void neighborscalculate_both_(intptr_t **,double**,intptr_t*,double*);
 void set_kim_neighobj_index_(int *);
 intptr_t * get_neigh_half_both_();
 intptr_t * get_neigh_full_both_();
@@ -21,7 +21,7 @@ intptr_t * get_neigh_full_both_();
 
 int main(){
 	/* KIM API potiner declarations */
-	intptr_t * pkim;
+	void* pkim;
 	double * penergy;
 	double * pcutoff;
 	long long * numberOfAtoms;
@@ -30,10 +30,9 @@ int main(){
 	int kimerr;
 	intptr_t * neighObject;
 	
-        //
 	int mode=0,request=0,atom,numnei, **nei1atom;
         double **Rij;
-        //
+
 	/* test  and model name */
 	char testname[80] ="Sample_01_compute_example_c";
 	char modelname[80] ="";  /* model name string */
@@ -45,11 +44,13 @@ int main(){
         /* Local declarations */
 	char infile[80] = "./data/dumpval10.xyz";
 	double cutofeps;
-	int i,n,id,ntypes,ind; float t0,t1,t2;
+	int i,id,ntypes,ind;
+        intptr_t n;
+        float t0,t1,t2;
 	FILE*fl;
 
 	/* Initialized KIM API object */
-	if (KIM_API_init((void *)&pkim, testname ,modelname)!=1) return -1;
+	if (KIM_API_init(&pkim, testname ,modelname)!=1) return -1;
 
 	/* open input atomic configuration file */
 	fl=fopen(&infile[0],"r");
@@ -58,13 +59,13 @@ int main(){
 	ntypes = 1; /* one atomic species only */
 
 	/* Allocate memory and associated it with the KIM API object */
-	KIM_API_allocate((void*)pkim,(intptr_t)n,ntypes,&kimerr);
+	KIM_API_allocate(pkim,n,ntypes,&kimerr);
 	
 	/* Make local pointers point to allocated memory (in KIM API object) */
-	penergy=(double *)KIM_API_get_data((void *)pkim,"energy",&kimerr);
-	pcutoff=(double *) KIM_API_get_data((void *)pkim,"cutoff",&kimerr);
+	penergy=(double *)KIM_API_get_data(pkim,"energy",&kimerr);
+	pcutoff=(double *) KIM_API_get_data(pkim,"cutoff",&kimerr);
 	numberOfAtoms = (long long *)KIM_API_get_data(pkim,"numberOfAtoms",&kimerr);  
-	*numberOfAtoms = (long long)n;
+	*numberOfAtoms = n;
 	x  = (double *)KIM_API_get_data(pkim,"coordinates",&kimerr);
 	f  = (double *)KIM_API_get_data(pkim,"forces",&kimerr);
         ind = KIM_API_get_index(pkim,"neighObject",&kimerr);
@@ -72,7 +73,9 @@ int main(){
 	/* Read in the atomic positions for all atoms */
 	for(i=0; i<n;i++){
 		fscanf(fl,"%d %f %f %f",&id,&t0,&t1,&t2);
-		*(x+i*3+0)=t0; *(x+i*3+1)=t1; *(x+i*3+2)=t2;
+		*(x+i*3+0)=t0;
+                *(x+i*3+1)=t1;
+                *(x+i*3+2)=t2;
 	}
 	/* close input file */
 	fclose(fl);
@@ -101,8 +104,6 @@ int main(){
 
 	/*  Call Model compute routine -- e.g., compute energy & force */
 
-        //nei_iteratorlocator(&pkim,&mode,&request, &atom, &numnei,nei1atom, Rij);
-
 	KIM_API_model_compute(pkim,&kimerr);
 
 	/* output KIM API object to screen (optional) */
@@ -122,5 +123,3 @@ int main(){
 	neighobj_both_deallocate_(&neighObject);
 	KIM_API_free(&pkim,&kimerr);
 }
-
-
