@@ -1,45 +1,44 @@
 MODEL_NAME := standard
-#SystemOfUnitsFix := fixed    #can work only with units system defined bellow
-SystemOfUnitsFix := flexible #can reset entire units system (default for model)
+# SystemOfUnitsFix := fixed    # can work only with units system defined bellow
+SystemOfUnitsFix := flexible # can reset entire units system (default for model)
 
 # This is is the the file that defines KIM API variables standard, the name field is standard.
-# Every name in kim descriptor file for tests and models must follow the standard 
+# Every name in kim descriptor file for tests and models must follow the standards
 # that appear in the fields : Name, Type, Unit and Shape
-# The  SystemU/Scale -- here it is set to "none" or "unspecified". The "unspecified" means that in test or models kim file
-# it must be standard,SI , any other supported by KIM API system of units or numerical scale 
-# factor for custom (user defined) system of units
+# The  SystemU/Scale -- here it is set to "none" or "unspecified". The "unspecified" means that
+# in test or models kim file it must be standard, SI, or any other supported by KIM API system 
+# of units or numerical scale factor for custom (user defined) system of units
 
 MODEL_INPUT:
 # Name                  Type        Unit        SystemU/Scale           Shape                   requirements
 
-numberOfAtoms           integer*8   none        none                    []                #empty [] for Shape means rank is zero
+numberOfAtoms           integer*8   none        none                    []                                            # empty [] for Shape means rank is zero
 
 numberAtomTypes         integer     none        none                    []
 
-atomTypes               integer     none        none                    [numberAtomTypes] # one [dummy] --rank is one      
+atomTypes               integer     none        none                    [numberAtomTypes]                             # one [dummy] -- rank is one      
 
 coordinates             real*8      length      unspecified             [numberOfAtoms,3]
-
-compute                 method      none        none                    []
 
 get_full_neigh          method      none        none                    []
 
 get_half_neigh          method      none        none                    []
 
-neighObject             pointer     none        none                    []   # neighbor list object that is used by iterator
+neighObject             pointer     none        none                    []                                            # neighbor list object that is used by iterator
+
+boxlength               real*8      length      unspecified             [3]                                           # simulation box length needed for periodic BC minimum image
+
+
+MODEL_OUTPUT: 
+# Name                  Type        Unit        SystemU/Scale           Shape                   requirements
+
+compute                 method      none        none                    []
 
 cutoff                  real*8      length      unspecified             []
 
 reinit                  method      none        none                    []
 
 destroy                 method      none        none                    []
-
-periodicTranslationVectors  real*8  length      unspecified             [3,3]
-
-boxlength               real*8      length      unspecified             [3]   #simulation box length needed for periodic BC minimum image
-
-MODEL_OUTPUT: 
-# Name                  Type        Unit        SystemU/Scale           Shape                   requirements
 
 energy                  real*8      energy      unspecified             []        
       
@@ -52,7 +51,8 @@ energyPerAtom           real*8      energy      unspecified             [numberO
 stressPerAtom           real*8      pressure    unspecified             [numberOfAtoms,3,3]
 
 virial                  real*8      pressure    unspecified             []
-        
+
+
 CONVENTIONS:
 # Name                  Type         
 
@@ -60,28 +60,28 @@ CONVENTIONS:
 ZeroBasedLists          dummy    # presence of this line indicates that indexes for atoms are from 0 to numberOfAtoms-1
 OneBasedLists           dummy    #presence of this line indicates that indexes for atoms are from 1 to numberOfAtoms
 
-# the following  3 lines are related to locator-iterator access method
-Neigh_IterAccess        dummy # works with iterator
-Neigh_LocaAccess        dummy # works with locator 
-Neigh_BothAccess        dummy # need both: locator and iteratorcator
+# the following 3 lines are related to locator-iterator access method
+Neigh_IterAccess        dummy    # works with iterator
+Neigh_LocaAccess        dummy    # works with locator 
+Neigh_BothAccess        dummy    # need both: locator and iteratorcator
 
 # scenario methods to deal with neighbor list and boundary condition
-CLUSTER         dummy # the model needs only coordinates to compute, neighbor list is not needed
-MI-OPBC-H       dummy # Minimum Image Orthogonal Periodic Boundary Condition Half neighbor list:
-                      # the model needs coordinates, half neighbor list (neighObjec,get_half_neigh)  
-                      # and boxlength -- size of orthogonal simulation box
-MI-OPBC-F       dummy # Minimum Image Orthogonal Periodic Boundary Condition Full neighbor list
-                      # the model needs coordinates, full neighbor list (neighObjec,get_full_neigh)  
-                      # and boxlength -- size of orthogonal simulation box
-NEIGH-RVEC-F            dummy # the model needs as MODEL_INPUT  coordinates, full neighbor list(neighObject),
-                      # and  get_full_neigh method, also get_full_neigh must 
-                      # calculate Relative position VECtor --Rij
+CLUSTER                 dummy    # the model needs only coordinates to compute, neighbor list is not needed
+MI-OPBC-H               dummy    # Minimum Image Orthogonal Periodic Boundary Condition Half neighbor list:
+                                 # the model needs coordinates, half neighbor list (neighObjec,get_half_neigh)  
+                                 # and boxlength -- size of orthogonal simulation box
+MI-OPBC-F               dummy    # Minimum Image Orthogonal Periodic Boundary Condition Full neighbor list
+                                 # the model needs coordinates, full neighbor list (neighObjec,get_full_neigh)  
+                                 # and boxlength -- size of orthogonal simulation box
+NEIGH-RVEC-F            dummy    # the model needs as MODEL_INPUT  coordinates, full neighbor list(neighObject),
+                                 # and  get_full_neigh method, also get_full_neigh must 
+                                 # calculate Relative position VECtor --Rij
 
-NEIGH-PURE-H    dummy # the model needs as MODEL_INPUT  coordinates,half neighbor list(neighObject),
-                      # and  get_half_neigh method
-
-NEIGH-PURE-F    dummy # the model needs as MODEL_INPUT  coordinates,full neighbor list(neighObject),
-                      # and  get_full_neigh method
+NEIGH-PURE-H            dummy    # the model needs as MODEL_INPUT  coordinates,half neighbor list(neighObject),
+                                 # and  get_half_neigh method
+                                 
+NEIGH-PURE-F            dummy    # the model needs as MODEL_INPUT  coordinates,full neighbor list(neighObject),
+                                 # and  get_full_neigh method
 
 SUPPORTED_ATOM/PARTICLES_TYPES:
 #Simbol/name    Type            code
@@ -231,8 +231,8 @@ MODEL_PARAMETERS:
 #                          (who should then call model_reinit() to inform 
 #                           the model that its parameters have changed
 # Examples
-# Name                  Type       Unit    SystemU/Scale       Shape       requirements
-# PARAM_FIEXED_Sigma    real*8     length  standard            []          
-# PARAM_FREE_Epsilon    real*8     energy  standard            []
+# Name                  Type        Unit        SystemU/Scale           Shape                   requirements
+# PARAM_FIEXED_Sigma    real*8      length      standard                []                      
+# PARAM_FREE_Epsilon    real*8      energy      standard                []                      
 #
 
