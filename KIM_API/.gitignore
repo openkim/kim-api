@@ -7,4 +7,5 @@ modelsconfig
 testsconfig
 testsmake.mk
 tolowercase
-
+KIMserviceTest
+aKIMservice_test
