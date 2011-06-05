@@ -41,7 +41,7 @@ int main(){
 	printf("input KIM model name:\n");
         scanf("%79s", modelname);
         /* Local declarations */
-	char infile[80] = "./data/dumpval10.xyz";
+	char infile[256];
 	double cutofeps;
 	int i,id,ntypes,ind;
         intptr_t n;
@@ -52,7 +52,13 @@ int main(){
 	if (KIM_API_init(&pkim, testname ,modelname)!=1) return -1;
 
 	/* open input atomic configuration file */
+        sprintf(infile,"%s%s%s",KIM_DIR_TESTS,testname,"/data/dumpval10.xyz");
 	fl=fopen(&infile[0],"r");
+        if (NULL==fl){
+           printf("Can't open file: %s! Exiting...\n",infile);
+           exit(-3);
+        }
+        
 	/* read number of atoms in configuration */
 	fscanf(fl,"%d",&n);
 	ntypes = 1; /* one atomic species only */
