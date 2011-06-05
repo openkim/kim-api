@@ -1,6 +1,14 @@
 KIM API alpha release -- 11-Feb-2011
 
-Description of the KIM Service routines
+Description of the KIM Service routines:
+
+This file provides a basic description of the KIM API functions.  For each
+function the main description is for the C interface.  At the end of the
+description the corresponding FORTRAN interface is provided.  The C++ interface
+is always the same as the C interface, but is called as a member-function of
+the KIM_API_model object whose name does not include the 'KIM_API_' part of the
+C interface function name.  (For example, to call KIM_API_model_compute() in
+C++, you would use the code 'mdl->model_compute()'.)
 
 In the following description several constants are used:
 
@@ -20,10 +28,10 @@ int KIM_API_init(void * kimmdl, char * testname, char * modelname);
         this routine creates the KIM API object that can store every pointer
         to the data described in the descriptor file for the model.  It also
         checks if variables described in descriptor files (tests and models)
-        are compatible with KIM standard naming convention and if models are
-        compatible with tests. It will return 1 upon successful completion or
-        zero otherwise. Also if it is unsuccessful, kimmdl will have NULL
-        value.
+        are compatible with KIM standard naming convention (stored in the file
+        'standard.kim') and if models are compatible with tests. It will return
+        1 upon successful completion or zero otherwise. Also if it is
+        unsuccessful, kimmdl will have NULL value.
 
 Arguments:
 
@@ -302,7 +310,11 @@ Arguments:
 
         char *type1 through typeNP
                 null terminated string is the type of the data/variable/method
-                field exactly as it appears in the .kim descriptor file
+                field exactly as it appears in the .kim descriptor file.
+                (Currently supported values are "real", "real*8", "integer", 
+                "integer*8", "pointer", "method", and "dummy". However, type
+                "dummy" does not have associated data and will therefore give
+                an error if used with this routine.)
 
         intptr_t size1 through sizeNP
                 size of the data in terms of underlying elements
@@ -387,7 +399,11 @@ Arguments:
 
         char *type1 through typeNP
                 null terminated string is the type of the data/variable/method
-                field exactly as it appears in the .kim descriptor file
+                field exactly as it appears in the .kim descriptor file.
+                (Currently supported values are "real", "real*8", "integer", 
+                "integer*8", "pointer", "method", and "dummy". However, type
+                "dummy" does not have associated data and will therefore give
+                an error if used with this routine.)
 
         TYPE **dt1 through dtNP
                 pointer to the data.  TYPE is the native type of dt associated
@@ -474,10 +490,14 @@ Arguments:
                 field exactly as it appears in the .kim descriptor file
 
         int * shape
-                shape of the array data, number of integer here are equivalent 
-                to the rank. Shape basically tells sizes of each indexes of the 
-                array data. And shape[0] is the slowest changing index. Shape 
-                has to be allocated. 
+                An array of integers for the shape of the array data. The
+                routine will set values in this array for each dimension of the
+                data object (the number of these is equal to the rank value
+                returned by this function). Shape gives range of each index for
+                the array data. Shape[0] is the slowest changing index. Shape 
+                has to be allocated and should have enough memory to hold a
+                value for each dimension.  (An integer array of size 10 or
+                greater is usually sufficient.)
 
         int * kimerror
                 error code: 1                     -- successful completion, 
@@ -628,7 +648,9 @@ Corresponding FORTRAN style interface:
 ******************************************************************************
 
 void * KIM_API_get_listAtomsTypes(void * kimmdl,int * nATypes, int * error);
-        Returns a pointer to an array of fixed size text strings.  Each string 
+        Returns a pointer to an array of fixed size text strings.  The memory
+        pointed to by this pointer is allocated by the routine, but should be
+        released by the user to avoid a memory leak. Each string 
         is a atom/particle symbol. In the case where no atom types are
         specified by the model or test, the routine returns NULL.
 
@@ -658,7 +680,9 @@ Corresponding FORTRAN style interface:
 
 void * KIM_API_get_listParams(void * kimmdl,int * nVpar, int * error);
         Returns a pointer to an array of fixed size text strings,
-        each string is the name of a parameter variable. A parameter variable
+        each string is the name of a parameter variable. The memory
+        pointed to by this pointer is allocated by the routine, but should be
+        released by the user to avoid a memory leak. A parameter variable
         is one whose name starts with PARAM_FREE_ or PARAM_FIXED_. Each
         parameter variable described in the ".kim" file will have a place in 
         the KIM API object, but it will not be checked against the standard.kim file.
@@ -687,7 +711,9 @@ Corresponding FORTRAN style interface:
 
 void * KIM_API_get_listFreeParams(void * kimmdl,int * nVpar, int * error);
         Returns a pointer to an array of fixed size text strings,
-        each string is the name of a free parameter variable. Free parameter
+        each string is the name of a free parameter variable. The memory
+        pointed to by this pointer is allocated by the routine, but should be
+        released by the user to avoid a memory leak. Free parameter
         variables are those whose name starts with PARAM_FREE_ . Each free
         parameter variable described in a ".kim" file will have a place in the 
         KIM API object, but it will not be checked against the standard.kim file.
@@ -716,7 +742,9 @@ Corresponding FORTRAN style interface:
 
 void * KIM_API_get_listFixedParams(void * kimmdl,int * nVpar, int * error);
         Returns a pointer to an array of fixed size text strings,
-        each string is the name of a fixed parameter variable. Fixed parameter
+        each string is the name of a fixed parameter variable. The memory
+        pointed to by this pointer is allocated by the routine, but should be
+        released by the user to avoid a memory leak. Fixed parameter
         variables are those whose name starts with PARAM_FIXED_. Each fixed
         parameter variable described in a ".kim" file will have a place in the 
         KIM API object, but it will not be checked against the standard.kim file.
@@ -744,7 +772,9 @@ Corresponding FORTRAN style interface:
 ******************************************************************************
 
 void * KIM_API_get_NBC_method(void *kimmdl,int * error);
-        Returns a pointer to a fixed size text string.  The string is the
+        Returns a pointer to a fixed size text string. The memory
+        pointed to by this pointer is allocated by the routine, but should be
+        released by the user to avoid a memory leak. The string is the
         current NBC method in use by the KIM_API object kimmdl. NBC stands for
         Neighbor list and Boundary Condition.
  
