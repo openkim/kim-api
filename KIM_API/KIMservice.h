@@ -175,7 +175,7 @@ public:
     intptr_t get_rank_shape(char *nm,int * shape,int *error);
     float get_unit_scalefactor(char*nm,int *error);
     void set2_compute(char *nm);
-    void set2_uncompute(char *nm);
+    void set2_donotcompute(char *nm);
     bool isit_compute(char *nm);
     KIMBaseElement &operator[](int i);
     KIMBaseElement &operator[](char *nm);
@@ -199,7 +199,7 @@ bool do_AtomsTypes_match(KIM_API_model &test,KIM_API_model & mdl);
     int get_full_neigh(int mode,int request, int *atom, int *numnei, int **nei1atom, double **Rij);
     bool model_init();
     void model_destroy(int *error);
-static void irrelevantVars2uncompute(KIM_API_model & test, KIM_API_model & mdl);
+static void irrelevantVars2donotcompute(KIM_API_model & test, KIM_API_model & mdl);
 static void allocateinitialized(KIM_API_model * mdl, intptr_t natoms, int ntypes,int * error);
 bool is_unitsfixed();
 void set_unitsfixed(bool f);

@@ -362,7 +362,7 @@ module kimservice
 	integer::error
         end subroutine kim_api_set2_compute
 
-        subroutine kim_api_set2_uncompute(kimmdl,nm,error)
+        subroutine kim_api_set2_donotcompute(kimmdl,nm,error)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
@@ -370,7 +370,7 @@ module kimservice
 #endif
             integer(kind=kim_intptr) :: kimmdl,nm
 	integer::error
-        end subroutine kim_api_set2_uncompute
+        end subroutine kim_api_set2_donotcompute
 
         subroutine kim_api_set_data_byi(kimmdl,I, size,dt,error)
 #ifdef SYSTEM32
@@ -392,7 +392,7 @@ module kimservice
             integer :: I,error
         end subroutine kim_api_set2_compute_byi
 
-        subroutine kim_api_set2_uncompute_byi(kimmdl,I,error)
+        subroutine kim_api_set2_donotcompute_byi(kimmdl,I,error)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
@@ -400,7 +400,7 @@ module kimservice
 #endif
             integer(kind=kim_intptr) :: kimmdl
             integer :: I,error
-        end subroutine kim_api_set2_uncompute_byi
+        end subroutine kim_api_set2_donotcompute_byi
     end interface
 
  contains
@@ -743,7 +743,7 @@ module kimservice
             call kim_api_set2_compute(kimmdl,pstr,error)
         end subroutine kim_api_set2_compute_f
 
-        subroutine kim_api_set2_uncompute_f(kimmdl,nm,error)
+        subroutine kim_api_set2_donotcompute_f(kimmdl,nm,error)
             integer(kind=kim_intptr) :: kimmdl
             character (len=*) :: nm
             integer :: error
@@ -752,8 +752,8 @@ module kimservice
             us = attachnull(nm)
             pstr =loc(us)
 
-            call kim_api_set2_uncompute(kimmdl,pstr,error)
-        end subroutine kim_api_set2_uncompute_f
+            call kim_api_set2_donotcompute(kimmdl,pstr,error)
+        end subroutine kim_api_set2_donotcompute_f
 
         subroutine kim_api_set_data_byi_f(kimmdl,I, size,dt,error)
             integer(kind=kim_intptr) :: kimmdl,size,dt
@@ -767,11 +767,11 @@ module kimservice
             call kim_api_set2_compute_byi(kimmdl,I,error)
         end subroutine kim_api_set2_compute_byi_f
 
-        subroutine kim_api_set2_uncompute_byi_f(kimmdl,I,error)
+        subroutine kim_api_set2_donotcompute_byi_f(kimmdl,I,error)
             integer(kind=kim_intptr) :: kimmdl
             integer :: I,error
-            call kim_api_set2_uncompute_byi(kimmdl,I,error)
-        end subroutine kim_api_set2_uncompute_byi_f
+            call kim_api_set2_donotcompute_byi(kimmdl,I,error)
+        end subroutine kim_api_set2_donotcompute_byi_f
 
 end module kimservice
 

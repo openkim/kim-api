@@ -953,7 +953,7 @@ intptr_t KIM_API_model::get_rank_shape(char *nm,int * shape, int *error){
 void KIM_API_model::set2_compute(char *nm){
         (*this)[nm].flag->calculate = 1;
 }
-void KIM_API_model::set2_uncompute(char *nm){
+void KIM_API_model::set2_donotcompute(char *nm){
         (*this)[nm].flag->calculate = 0;
 }
 bool KIM_API_model::isit_compute(char *nm){
@@ -1316,7 +1316,7 @@ bool KIM_API_model::init(char * testinputfile,char* testname, char * modelinputf
     //check if they match
     if (is_it_match(test,mdl)){
         this->preinit(modelinputfile,modelname);
-        this->irrelevantVars2uncompute(test,*this);
+        this->irrelevantVars2donotcompute(test,*this);
         
         strcpy(this->NBC_method_current, mdl.NBC_method_current);
 
@@ -1527,9 +1527,9 @@ int KIM_API_model::get_half_neigh(int mode, int request, int *atom,
     }
 }
 
-void KIM_API_model::irrelevantVars2uncompute(KIM_API_model & test, KIM_API_model & mdl){
+void KIM_API_model::irrelevantVars2donotcompute(KIM_API_model & test, KIM_API_model & mdl){
     if(! is_it_match_noDummyCount(test,mdl.inlines,mdl.numlines)) {
-        cout<<"irrelevantVars2uncompute: not a test-model match"<<endl;
+        cout<<"irrelevantVars2donotcompute: not a test-model match"<<endl;
         exit(133);
     }
     for(int i=0; i<mdl.numlines;i++){

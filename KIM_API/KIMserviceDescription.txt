@@ -542,9 +542,9 @@ Corresponding FORTRAN style interface:
 
 ******************************************************************************
 
-void KIM_API_set2_uncompute(void *kimmdl, char *nm,int * kimerror); 
-        sets the flag of the variable/data to uncompute. If the variable/data 
-        can be optionally computed, setting flag to uncompute tells the model 
+void KIM_API_set2_donotcompute(void *kimmdl, char *nm,int * kimerror); 
+        sets the flag of the variable/data to donotcompute. If the variable/data 
+        can be optionally computed, setting flag to donotcompute tells the model 
         that it should not be computed.
 
 Arguments:
@@ -562,11 +562,11 @@ Arguments:
                             0 (or negative value) -- unsuccessful
 
 Corresponding FORTRAN style interface:
-        subroutine kim_api_set2_uncompute_f(kimmdl,nm, kimerr) 
+        subroutine kim_api_set2_donotcompute_f(kimmdl,nm, kimerr) 
                         integer(kind=kim_intptr) :: kimmdl 
                         character (len=*) :: nm 
                         integer::kimerr
-        end subroutine kim_api_set2_uncompute_f
+        end subroutine kim_api_set2_donotcompute_f
 
 ******************************************************************************
 
@@ -963,7 +963,7 @@ intptr_t KIM_API_get_size_byI(void *kimmdl, int I, int *kimerror);
 intptr_t KIM_API_get_rank_shape_byI(void *kimmdl, int I, int * shape, int *kimerror); 
 
 void KIM_API_set2_compute_byI(void *kimmdl, int I, int *kimerror); 
-void KIM_API_set2_uncompute_byI(void *kimmdl, int I, int *kimerror); 
+void KIM_API_set2_donotcompute_byI(void *kimmdl, int I, int *kimerror); 
 int KIM_API_isit_compute_byI(void *kimmdl, int I, int *kimerror);
 
 ========================FORTRAN AUXILIARY ROUTINES============================

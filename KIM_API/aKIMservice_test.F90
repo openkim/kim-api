@@ -43,7 +43,7 @@ program akimservice_test
     
     print*,"kim_api_isit_compute_f(forces) =", kim_api_isit_compute_f(pkim,"forces",kimerr)
     print*,"kim_api_isit_compute_f(force) =", kim_api_isit_compute_f(pkim,"force",kimerr)
-    call kim_api_set2_uncompute_f(pkim,"forces",kimerr)
+    call kim_api_set2_donotcompute_f(pkim,"forces",kimerr)
     call kim_api_set2_compute_f(pkim,"force",kimerr)
     print*,"kim_api_isit_compute_f(forces) =", kim_api_isit_compute_f(pkim,"forces",kimerr)
     print*,"kim_api_isit_compute_f(force) =", kim_api_isit_compute_f(pkim,"force",kimerr)
@@ -51,7 +51,7 @@ program akimservice_test
     call kim_api_set2_compute_byi_f(pkim,ind,kimerr)
     print*,"kim_api_isit_compute_f(forces) (byi)=", kim_api_isit_compute_byi_f(pkim,ind,kimerr)
     ind = kim_api_get_index_f(pkim,"force",kimerr)
-    call kim_api_set2_uncompute_byi_f(pkim,ind,kimerr)
+    call kim_api_set2_donotcompute_byi_f(pkim,ind,kimerr)
     print*,"kim_api_isit_compute_f(force) (byi)=", kim_api_isit_compute_byi_f(pkim,ind,kimerr)
     
     print*,"kim_api_get_index_f(force)= ", kim_api_get_index_f(pkim,"force",kimerr)

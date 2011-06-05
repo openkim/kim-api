@@ -63,7 +63,7 @@ intptr_t KIM_API_get_size(void *kimmdl,char *nm, int *error);
 intptr_t KIM_API_get_rank_shape(void *kimmdl,char *nm, int * shape, int *error);
 
 void KIM_API_set2_compute(void *kimmdl,char *nm,int * error);
-void KIM_API_set2_uncompute(void *kimmdl,char *nm,int *error);
+void KIM_API_set2_donotcompute(void *kimmdl,char *nm,int *error);
 int KIM_API_isit_compute(void *kimmdl,char *nm,int *error);
 
 int KIM_API_get_index(void *kimmdl,char*nm, int * error);
@@ -75,7 +75,7 @@ intptr_t KIM_API_get_size_byI(void *kimmdl,int I,int *error);
 intptr_t KIM_API_get_rank_shape_byI(void *kimmdl,int I, int * shape,int *error);
 
 void KIM_API_set2_compute_byI(void *kimmdl,int I,int * error);
-void KIM_API_set2_uncompute_byI(void *kimmdl,int I, int * error);
+void KIM_API_set2_donotcompute_byI(void *kimmdl,int I, int * error);
 int KIM_API_isit_compute_byI(void *kimmdl,int I,int * error);
 
 //total 30 methods
@@ -121,7 +121,7 @@ intptr_t kim_api_get_size_(void *kimmdl,char **nm,int *error);
 intptr_t kim_api_get_rank_shape_(void *kimmdl,char **nm, int ** shape, int *error);
 float kim_api_get_unit_scalefactor_(void * kim, char**nm, int *error);
 void kim_api_set2_compute_(void *kimmdl,char **nm,int *error);
-void kim_api_set2_uncompute_(void *kimmdl,char **nm, int *error);
+void kim_api_set2_donotcompute_(void *kimmdl,char **nm, int *error);
 int kim_api_isit_compute_(void *kimmdl,char **nm, int *error);
 
 int kim_api_get_index_(void *kimmdl,char**nm, int *error);
@@ -133,7 +133,7 @@ intptr_t kim_api_get_size_byi_(void *kimmdl,int * I, int *error);
 intptr_t kim_api_get_rank_shape_byi_(void *kimmdl,int * I, int ** shape, int *error);
 
 void kim_api_set2_compute_byi_(void *kimmdl,int * I, int *error);
-void kim_api_set2_uncompute_byi_(void *kimmdl,int * I, int *error);
+void kim_api_set2_donotcompute_byi_(void *kimmdl,int * I, int *error);
 int kim_api_isit_compute_byi_(void *kimmdl,int * I, int *error);
 
 

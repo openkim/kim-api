@@ -175,10 +175,10 @@ void KIM_API_set2_compute(void *kimmdl,char *nm, int * error){
     mdl->set2_compute(nm);
     *error = 1;
 }
-void KIM_API_set2_uncompute(void *kimmdl,char *nm, int * error){
+void KIM_API_set2_donotcompute(void *kimmdl,char *nm, int * error){
     *error = 0;
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    mdl->set2_uncompute(nm);
+    mdl->set2_donotcompute(nm);
     *error = 1;
 }
 int KIM_API_isit_compute(void *kimmdl,char *nm, int * error){
@@ -252,7 +252,7 @@ void KIM_API_set2_compute_byI(void *kimmdl,int I,int * error){
     (*mdl)[I].flag->calculate =1;
      *error =1;
 }
-void KIM_API_set2_uncompute_byI(void *kimmdl,int I,int * error){
+void KIM_API_set2_donotcompute_byI(void *kimmdl,int I,int * error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     *error =0;
     if (mdl == NULL) return ;
@@ -379,8 +379,8 @@ intptr_t kim_api_get_rank_shape_(void *kimmdl,char **nm, int ** shape,int *error
 void kim_api_set2_compute_(void *kimmdl,char **nm,int *error){
     KIM_API_set2_compute(*(KIM_API_model **)kimmdl,*nm,error);
 }
-void kim_api_set2_uncompute_(void *kimmdl,char **nm,int *error){
-    KIM_API_set2_uncompute(*(KIM_API_model **)kimmdl,*nm,error);
+void kim_api_set2_donotcompute_(void *kimmdl,char **nm,int *error){
+    KIM_API_set2_donotcompute(*(KIM_API_model **)kimmdl,*nm,error);
 }
 int kim_api_isit_compute_(void *kimmdl,char **nm,int *error){
     return KIM_API_isit_compute(*(KIM_API_model **)kimmdl,*nm,error);
@@ -407,8 +407,8 @@ intptr_t kim_api_get_rank_shape_byi_(void *kimmdl,int * I, int ** shape,int *err
 void kim_api_set2_compute_byi_(void *kimmdl,int * I,int *error){
     KIM_API_set2_compute_byI(*(KIM_API_model **)kimmdl,*I,error);
 }
-void kim_api_set2_uncompute_byi_(void *kimmdl,int * I, int *error){
-    KIM_API_set2_uncompute_byI(*(KIM_API_model **)kimmdl,*I,error);
+void kim_api_set2_donotcompute_byi_(void *kimmdl,int * I, int *error){
+    KIM_API_set2_donotcompute_byI(*(KIM_API_model **)kimmdl,*I,error);
 }
 int kim_api_isit_compute_byi_(void *kimmdl,int * I,int *error){
     return KIM_API_isit_compute_byI(*(KIM_API_model **)kimmdl,*I,error);
