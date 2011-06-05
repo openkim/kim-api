@@ -138,10 +138,20 @@ int KIM_API_get_half_neigh(void *kimmdl,int mode,int request,
 
 
 //element access methods by name
+int KIM_API_pack_pointers(void *kimmdl,int npointers,...)
+{
+   KIM_API_model * mdl=(KIM_API_model *) kimmdl;
+   #include "pack_pointers.fragment"
+}
 int  KIM_API_set_data(void *kimmdl,char *nm, intptr_t size, void *dt){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     if(mdl->set_data(nm,size,dt)) return 1;
     return 0;
+}
+int KIM_API_unpack_pointers(void *kimmdl,int npointers,...)
+{
+   KIM_API_model * mdl=(KIM_API_model *) kimmdl;
+   #include "unpack_pointers.fragment"
 }
 void * KIM_API_get_data(void *kimmdl,char *nm,int *error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;

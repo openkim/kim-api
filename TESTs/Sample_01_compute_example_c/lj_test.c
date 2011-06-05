@@ -18,7 +18,6 @@ void set_kim_neighobj_index_(int *);
 intptr_t * get_neigh_half_both_();
 intptr_t * get_neigh_full_both_();
 
-
 int main(){
 	/* KIM API potiner declarations */
 	void* pkim;
@@ -62,12 +61,13 @@ int main(){
 	KIM_API_allocate(pkim,n,ntypes,&kimerr);
 	
 	/* Make local pointers point to allocated memory (in KIM API object) */
-	penergy=(double *)KIM_API_get_data(pkim,"energy",&kimerr);
-	pcutoff=(double *) KIM_API_get_data(pkim,"cutoff",&kimerr);
-	numberOfAtoms = (long long *)KIM_API_get_data(pkim,"numberOfAtoms",&kimerr);  
-	*numberOfAtoms = n;
-	x  = (double *)KIM_API_get_data(pkim,"coordinates",&kimerr);
-	f  = (double *)KIM_API_get_data(pkim,"forces",&kimerr);
+        KIM_API_unpack_pointers(pkim,5,
+                           "energy",        "real*8",    &penergy,
+                           "cutoff",        "real*8",    &pcutoff,
+                           "numberOfAtoms", "integer*8", &numberOfAtoms,
+                           "coordinates",   "real*8",    &x,
+                           "forces",        "real*8",    &f);
+        *numberOfAtoms = n;
         ind = KIM_API_get_index(pkim,"neighObject",&kimerr);
 
 	/* Read in the atomic positions for all atoms */
@@ -89,9 +89,9 @@ int main(){
 	neighborscalculate_both_(&neighObject,&x,&n,&cutofeps);	
 
 	/* Inform KIM API object about neighbor list iterator and object */
-	KIM_API_set_data(pkim,"get_half_neigh",1,(void*) get_neigh_half_both_());
-	KIM_API_set_data(pkim,"neighObject",1,(void*) neighObject);
-	
+        KIM_API_pack_pointers(pkim,2,
+                           "get_half_neigh", "method",  1, get_neigh_half_both_(),
+                           "neighObject",    "pointer", 1, neighObject);
 
 	/* READY to call Model Initiation routine */
 	

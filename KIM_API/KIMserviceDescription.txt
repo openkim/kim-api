@@ -268,6 +268,57 @@ Corresponding FORTRAN style interface:
 
 ================== ELEMENT ACCESS METHODS ROUTINES BY NAME ====================
 
+int  KIM_API_pack_pointers(void *kimmdl, int NP,
+                           char *name1, char *type1, intptr_t size1, TYPE* dt1,
+                           char *name2, char *type2, intptr_t size2, TYPE* dt2,
+                           .
+                           . (NP times)
+                           .
+                           char *nameNP, char *typenNP, intptr_t sizeNP, TYPE* dtNP);
+        This routine places the NP pointers, dt1 through dtNP, in the KIM API
+        object kimmdl.  It searches for each name of the data/variable, name1
+        through nameNP, and if it is in the KIM API object and its type matches
+        the supplied type, type1 through typeNP respectively, the pointers, dt1
+        through dtNP, are placed in the KIM API object.  Upon successful
+        completion this routine returns 1.  If a name is not in the KIM API object
+        this routine prints an error message and returns 0.  This routine
+        should not be used in conjunction with KIM_API_allocate for array data.
+
+Arguments:
+
+        void * kimmdl
+                pointer to KIM_API_model object (in c++ style the definition 
+                will be (KIM_API_model *))
+
+        int NP
+                number of pointers to be packed into the KIM API object.  This
+                may be any integer.  (The routine is implemented using the C 
+                stdarg.h mechanism for variadic, variable number of argument,
+                functions.)
+
+        char *name1 through nameNP
+                null terminated string is the name of the data/variable/method  
+                field exactly as it appears in the .kim descriptor file
+
+        char *type1 through typeNP
+                null terminated string is the type of the data/variable/method
+                field exactly as it appears in the .kim descriptor file
+
+        intptr_t size1 through sizeNP
+                size of the data in terms of underlying elements
+
+        TYPE *dt1 through dtNP
+                pointer to the data.  TYPE is the native type of dt associated
+                with the type string. (So, no type-casting should be required.)
+
+Corresponding FORTRAN style interface:
+        Because FORTRAN does not support user-defined variadic functions, there
+        is no FORTRAN equivalent to KIM_API_pack_pointers().  FORTRAN programs
+        must use one lower-level KIM_API_set_data call (see below) for each
+        pointer to be packed into the KIM API object.
+
+******************************************************************************
+ 
 int  KIM_API_set_data(void *kimmdl, char *nm,  intptr_t size, void *dt); 
         This routine places the pointer, dt, to the data in the KIM API object
         kimmdl. It searches for the name of the data/variable, nm, and if it is 
@@ -298,6 +349,55 @@ Corresponding FORTRAN style interface:
                         integer(kind=kim_intptr) :: kimmdl,  size, dt 
                         character (len=*) ::nm 
         end function kim_api_set_data_f
+
+******************************************************************************
+
+int  KIM_API_unpack_pointers(void *kimmdl, int NP,
+                             char *name1, char *type1, TYPE** dt1,
+                             char *name2, char *type2, TYPE** dt2,
+                             .
+                             . (NP times)
+                             .
+                             char *nameNP, char *typenNP, TYPE** dtNP);
+        This routine retrieves the NP pointers, dt1 through dtNP, from the KIM API
+        object kimmdl.  It searches for each name of the data/variable, name1
+        through nameNP, and if it is in the KIM API object and its type matches
+        the supplied type, type1 through typeNP respectively, the pointers, dt1
+        through dtNP, are set to the values stored in the KIM API object.  Upon 
+        successful completion this routine returns 1.  If a name is not in the
+        KIM API object this routine prints an error message and returns 0.
+        This routine should not be used in conjunction with KIM_API_allocate
+        for array data.
+
+Arguments:
+
+        void * kimmdl
+                pointer to KIM_API_model object (in c++ style the definition 
+                will be (KIM_API_model *))
+
+        int NP
+                number of pointers to be packed into the KIM API object.  This
+                may be any integer.  (The routine is implemented using the C 
+                stdarg.h mechanism for variadic, variable number of argument,
+                functions.)
+
+        char *name1 through nameNP
+                null terminated string is the name of the data/variable/method  
+                field exactly as it appears in the .kim descriptor file
+
+        char *type1 through typeNP
+                null terminated string is the type of the data/variable/method
+                field exactly as it appears in the .kim descriptor file
+
+        TYPE **dt1 through dtNP
+                pointer to the data.  TYPE is the native type of dt associated
+                with the type string. (So, no type-casting should be required.)
+
+Corresponding FORTRAN style interface:
+        Because FORTRAN does not support user-defined variadic functions, there
+        is no FORTRAN equivalent to KIM_API_unpack_pointers().  FORTRAN programs
+        must use one lower-level KIM_API_get_data call (see below) for each
+        pointer to be unpacked from the KIM API object.
 
 ******************************************************************************
 
@@ -543,9 +643,10 @@ Arguments:
         int * kimerror
                 error code:   1                     -- successful completion, 
                               0 (or negative value) -- unsuccessful
-                            -20                     -- internal error in init 
-                                                       nAtomsTypes
-                
+                            -20                     -- memory has been corrupted
+                                                       previously by some part
+                                                       of the code (sould
+                                                       never happen)
 Corresponding FORTRAN style interface:
         function kim_api_get_listatomstypes(kimmdl,natypes,error)
             integer(kind=kim_intptr) :: kimmdl,kim_api_get_listatomstypes

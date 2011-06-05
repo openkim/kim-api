@@ -14,6 +14,7 @@
 ////#include <cctype>
 //#include <string.h>
 #include <stdint.h>
+#include <stdarg.h>
 
 using namespace std;
 #ifndef _KIMSERVICE_H
@@ -161,9 +162,11 @@ public:
     bool preinit(char * initfile,char *modelname);
     void free(int *error);
     void free();
+    int pack_pointers(int npointers, ...);
     bool set_data(char *nm, intptr_t size, void *dt);
     bool set_data_byi(int ind,intptr_t size, void *dt);
 
+    int unpack_pointers(int npointers, ...);
     void * get_data(char *nm,int *error);
     void * get_data(char *nm);
     int get_index(char *nm, int * error);

@@ -1,0 +1,139 @@
+   int kimerr=1;
+   char* pname;
+   char* ptype;
+   intptr_t size;
+   int i;
+   int ind;
+   va_list ap;
+   
+   va_start(ap,npointers);
+
+   for (i=0;i<npointers;++i)
+   {
+      pname = va_arg(ap, char*);
+      ptype = va_arg(ap, char*);
+      size  = va_arg(ap, intptr_t);
+
+      if (!strcmp(ptype,"real"))
+      {
+         ind = mdl->get_index(pname,&kimerr); 
+         if (kimerr == 1)
+         {
+            if (0 != strcmp((*mdl)[ind].type,"real"))
+            {
+                kimerr = -1;
+            }
+            else
+            {
+               float* p;
+               p = va_arg(ap, float*);
+               kimerr = mdl->set_data(pname,size,(void *)p);
+            }
+         }
+      }
+      else if (!strcmp(ptype,"real*8"))
+      {
+         ind = mdl->get_index(pname,&kimerr); 
+         if (kimerr == 1)
+         {
+            if (0 != strcmp((*mdl)[ind].type,"real*8"))
+            {
+                kimerr = -1;
+            }
+            else
+            {
+               double* p;
+               p = va_arg(ap, double*);
+               kimerr = mdl->set_data(pname,size,(void *)p);
+            }
+         }
+      }
+      else if (!strcmp(ptype,"integer"))
+      {
+         ind = mdl->get_index(pname,&kimerr); 
+         if (kimerr == 1)
+         {
+            if (0 != strcmp((*mdl)[ind].type,"integer"))
+            {
+                kimerr = -1;
+            }
+            else
+            {
+               int* p;
+               p = va_arg(ap, int*);
+               kimerr = mdl->set_data(pname,size,(void *)p);
+            }
+         }
+      }
+      else if (!strcmp(ptype,"integer*8"))
+      {
+         ind = mdl->get_index(pname,&kimerr); 
+         if (kimerr == 1)
+         {
+            if (0 != strcmp((*mdl)[ind].type,"integer*8"))
+            {
+                kimerr = -1;
+            }
+            else
+            {
+               long long* p;
+               p = va_arg(ap, long long*);
+               kimerr = mdl->set_data(pname,size,(void *)p);
+            }
+         }
+      }
+      else if (!strcmp(ptype,"pointer"))
+      {
+         ind = mdl->get_index(pname,&kimerr); 
+         if (kimerr == 1)
+         {
+            if (0 != strcmp((*mdl)[ind].type,"pointer"))
+            {
+                kimerr = -1;
+            }
+            else
+            {
+               int* p;
+               p = va_arg(ap, int*);
+               kimerr = mdl->set_data(pname,size,(void *)p);
+            }
+         }
+      }
+      else if (!strcmp(ptype,"method"))
+      {
+         ind = mdl->get_index(pname,&kimerr); 
+         if (kimerr == 1)
+         {
+            if (0 != strcmp((*mdl)[ind].type,"method"))
+            {
+                kimerr = -1;
+            }
+            else
+            {
+               int* p;
+               p = va_arg(ap, int*);
+               kimerr = mdl->set_data(pname,size,(void *)p);
+            }
+         }
+      }
+      else if (!strcmp(ptype,"dummy"))
+      {
+         printf("Error: can't pack a pointer to non-existent dummy data!\n");
+         exit(-1);
+      }
+      else
+      {
+         printf("Error: unknown type passed to pack_pointers!\n");
+         exit(-2);
+      }
+
+      if (kimerr != 1)
+      {
+         printf("error in %s\n",pname);
+         i=npointers;
+      }
+   }
+
+   va_end(ap);
+
+   return kimerr;
