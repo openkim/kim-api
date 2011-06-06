@@ -2,7 +2,7 @@
 # Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna 
 # All rights reserved.                                                 
 #                                                                     
-# Author: Valeriu Smirichinski                                         
+# Author: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
 #
 # This make file needs to be included by the makefiles in 
 # the KIM_API, MODELs/*/ and TESTs/*/ directories.
