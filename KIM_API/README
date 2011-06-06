@@ -21,14 +21,12 @@ aKIMservice_test.F90       -- test program for FORTRAN style KIM API
 model_val01.kim            -- kim descriptor file used by tests
 model_val02.kim            -- kim descriptor file used by tests
 modelsconfig.cpp           -- program to generate configuration files as part of 'make configall'
-pack_pointers.fragment     -- code segment for various versions of KIM_API_pack_pointers function
 si_units.cfg               -- SI units descriptor file
 standard.kim               -- kim descriptor file with description of all standard variables
 standard_units.cfg         -- standard units descriptor file
 test_val01.kim             -- kim descriptor file used by tests
 testsconfig.cpp            -- program to generate configuration files as part of 'make configall'
 tolowercase.cpp            -- program to convert string to all lowercase letters
-unpack_pointers.fragment   -- code segment for various versions of KIM_API_unpack_pointers function
 
 
 Files generated automatically as part of 'make configall'

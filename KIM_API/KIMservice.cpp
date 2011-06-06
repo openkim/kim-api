@@ -845,10 +845,6 @@ bool KIM_API_model:: preinit(char * initfile,char *modelname){
             nAtomsTypes=0;
         }
  }
-int KIM_API_model::pack_pointers(int npointers, ...){
-   KIM_API_model * mdl = this;
-   #include "pack_pointers.fragment"
-}
 
 bool KIM_API_model::set_data(char *nm, intptr_t size, void *dt){
         // set data into preinit element correctly calculates all
@@ -894,10 +890,6 @@ bool KIM_API_model::set_data_byi(int ind, intptr_t size, void* dt){
         }
         (*this)[ind].flag->freeable = 1;
         return true;
-}
-int KIM_API_model::unpack_pointers(int npointers, ...){
-   KIM_API_model * mdl = this;
-   #include "unpack_pointers.fragment"
 }
 void * KIM_API_model::get_data(char *nm,int *error){
         int i=get_index(nm);

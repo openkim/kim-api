@@ -13,7 +13,6 @@
 #endif
 
 #include <stdint.h>
-#include <stdarg.h>
 //#include "KIMservice.h"
 //#define intptr_t long long  // for 64 bit machines
 #ifdef	__cplusplus
@@ -54,9 +53,7 @@ int KIM_API_get_half_neigh(void *kimmdl,int mode,int request,
 
 
 //element access methods
-int KIM_API_pack_pointers(void *kimmdl,int npointers, ...);
 int  KIM_API_set_data(void *kimmdl,char *nm,  intptr_t size, void *dt);
-int KIM_API_unpack_pointers(void *kimmdl,int npointers, ...);
 void * KIM_API_get_data(void *kimmdl,char *nm,int * error);
 
 intptr_t KIM_API_get_size(void *kimmdl,char *nm, int *error);

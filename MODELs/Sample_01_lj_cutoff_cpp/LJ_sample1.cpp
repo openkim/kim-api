@@ -32,10 +32,13 @@ void sample_01_lj_cutoff_cpp_init_(void * km){
 	KIM_API_model ** ppkim=(KIM_API_model **)km;
 	KIM_API_model * pkim = *ppkim;
 	//Provide KIM API object with function pointer of compute routine
-	if (1!=pkim->pack_pointers(2,
-                                 "compute","method",1,(void*)&sample_01_lj_cutoff_cpp_calculate,
-                                 "destroy","method",1,(void*)&sample_01_lj_cutoff_cpp_destroy_)){
-        	cout<< ":compute/destroy: is not in kim "<<endl;
+	if (!pkim->set_data("compute",1,(void*)&sample_01_lj_cutoff_cpp_calculate)) {
+		cout<< ":compute: is not in kim "<<endl;
+		exit(335);
+	}
+	
+	if (!pkim->set_data("destroy",1,(void*)&sample_01_lj_cutoff_cpp_destroy_)) {
+		cout<< ":destroy: is not in kim "<<endl;
 		exit(335);
 	}
 }
@@ -71,13 +74,11 @@ void sample_01_lj_cutoff_cpp_calculate(void *km,int * kimerror){
 	double vij,dvmr,v,sumv,cutof,cut2,energycutof,r2,dv,*Rij;
 	double xi[3],xj[3],dx[3],fij[3];
 	// get everything from kim
-        *kimerror=pkim->unpack_pointers(5,
-                              "energy",        "real*8",    &penergy,
-                              "cutoff",        "real*8",    &pcutoff,
-                              "numberOfAtoms", "integer*8", &numberOfAtoms,
-                              "coordinates",   "real*8",    &x,
-                              "forces",        "real*8",    &f);
-        if (*kimerror != 1) return;
+	penergy       = (double *) pkim->get_data("energy",kimerror); if(*kimerror != 1) return;
+	pcutoff       = (double *)pkim->get_data("cutoff",kimerror);  if(*kimerror != 1) return;
+	numberOfAtoms = (long long *)pkim->get_data("numberOfAtoms",kimerror); if(*kimerror != 1) return;
+	x  = (double *)pkim->get_data("coordinates",kimerror);        if(*kimerror != 1) return;
+	f  = (double *)pkim->get_data("forces",kimerror);             if(*kimerror != 1) return;
 
 	//Ready to do energy and force computation
 	sumv=0.0; 

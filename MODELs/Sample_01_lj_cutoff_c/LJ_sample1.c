@@ -21,8 +21,7 @@ void sample_01_lj_cutoff_c_init_(void * km){
 	intptr_t * pkim = * ((intptr_t **)km);
 
 	/* Provide KIM API object with function pointer of compute routine */
-        KIM_API_pack_pointers(pkim,1,
-                              "compute","method",1,(void*)&sample_01_lj_cutoff_c_calculate);
+	KIM_API_set_data(pkim,"compute",1,(void*) &sample_01_lj_cutoff_c_calculate);
 }
 
 /* Computational core of LJ potential */
@@ -52,19 +51,39 @@ void sample_01_lj_cutoff_c_calculate(void *km,int *kimerror){
 	double vij,dvmr,v,sumv,cutof,cut2,energycutof,r2,dv,*Rij;
 	double xi[3],xj[3],dx[3],fij[3];
         int kimerr;
-
 	/* get everething from kim */
-        kimerr=KIM_API_unpack_pointers(pkim,5,
-               "energy",        "real*8",    &penergy,
-               "cutoff",        "real*8",    &pcutoff,
-               "numberOfAtoms", "integer*8", &numberOfAtoms,
-               "coordinates",   "real*8",    &x,
-               "forces",        "real*8",    &f);
-        if (kimerr!=1)
-        {
-           printf("error in unpack_pointers\n");
-           exit(-2);           
-        }
+
+	penergy       = (double*) KIM_API_get_data(pkim,"energy",&kimerr);
+	if (kimerr!=1) {
+		printf("error in energy\n");
+		*kimerror = kimerr;
+		return;
+	}
+	pcutoff       = (double*) KIM_API_get_data(pkim,"cutoff",&kimerr);
+	if (kimerr!=1) {
+		printf("error in cutoff\n");
+		*kimerror = kimerr;
+		return;
+	}
+	numberOfAtoms = (long long *) KIM_API_get_data(pkim,"numberOfAtoms",&kimerr);
+	if (kimerr!=1) {
+		printf("error in numberOfAtoms\n");
+		*kimerror = kimerr;
+		return;
+	}
+	x  = (double*) KIM_API_get_data(pkim,"coordinates",&kimerr);
+	if (kimerr!=1) {
+		printf("error in coordinates\n");
+		*kimerror = kimerr;
+		return;
+	}
+	f  = (double *) KIM_API_get_data(pkim,"forces",&kimerr);
+	if (kimerr!=1) {
+		printf("error in forces\n");
+		*kimerror = kimerr;
+		return;
+	}
+	
 	
 	/* Ready to do energy and force computation */
 	sumv=0.0; /* running total for energy */
