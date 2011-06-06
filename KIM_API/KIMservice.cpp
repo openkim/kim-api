@@ -241,7 +241,7 @@ ostream &operator<<(ostream &stream, KIM_IOline a){
 istream &operator>>(istream &stream, KIM_IOline &a){
 	char inputline[161];
 	stream.getline(inputline,160);
-        if(stream.ios::fail()){
+        if(stream.ios::fail() && !stream.ios::eof()){
            cerr << "Error: Input line in .kim file longer than 160 characters.\n"
                 << "The line starts with:\n\t"
                 << inputline << "\nExiting..." << endl;
