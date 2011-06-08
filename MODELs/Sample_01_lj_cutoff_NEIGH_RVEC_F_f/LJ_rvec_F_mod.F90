@@ -6,7 +6,7 @@
 !
 
 
-module lj_test_mod
+module lj_rvec_mod
 	use  KIMservice
 	implicit none
 	!defining the structure that holds variables for calculation
@@ -109,6 +109,7 @@ contains
 		real*8::energy;pointer(penergy,energy)
 		real*8::cutof;pointer(pcutof,cutof)
 		integer(kind=kim_intptr) ::pRij;
+		real*8::Rij(3,1); pointer(aRij,Rij)
 		integer:: nei1atom(1); pointer (pnei1atom,nei1atom)
 		integer :: retcode,mode,request,atom=0;
 		
@@ -126,10 +127,10 @@ contains
 	        
 		mode=0;   ! iterator mode
 		request=0;!reset neighbor iterator to beginning
-		retcode = kim_api_get_half_neigh(pkim,mode,request,atom,numnei,pnei1atom,pRij)
+		retcode = kim_api_get_full_neigh(pkim,mode,request,atom,numnei,pnei1atom,pRij)
 		if(retcode .ne. 2) then
 			kimerr=retcode
-			print*,"sample_01_lj_cutoff_f_calculate: iterator get_half_neigh has not been reset successfully:retcode= ",retcode
+			print*,"..._calculate: iterator get_full_neigh has not been reset successfully:retcode= ",retcode
 			return
 		end if            
 	
@@ -137,29 +138,30 @@ contains
         	do while (retcode .eq. 1)
 			!increment iterator
 			mode=0; request=1;
-			retcode = kim_api_get_half_neigh(pkim,mode,request,atom,numnei,pnei1atom,pRij)
+			retcode = kim_api_get_full_neigh(pkim,mode,request,atom,numnei,pnei1atom,pRij)
+		
 			if(retcode.lt.0) then
 				kimerr=retcode
-				print*,"sample_01_lj_cutoff_f_calculate: error iterator get_half_neigh :retcode= ",retcode
+				print*,"..._calculate: error iterator get_full_neigh :retcode= ",retcode
 				return
 			else if(retcode.eq.0) then
 				kimerr=1
 				exit
 			end if
+			aRij=pRij
 			i=atom
-			xi = x(:,i)
+			!xi = x(:,i)
 			do jj=1, numnei
 				j=nei1atom(jj)
-				xj = x(:,j)
-				dx = xi-xj
+				!xj = x(:,j)
+				dx(:) = Rij(:,jj)
 				r2=dx(1)*dx(1) + dx(2)*dx(2) + dx(3)*dx(3)
 				if(r2.lt.0.000000000000001) print*,"xi,xj",xi,xj
 				if(r2.lt.0.000000000000001) print*,"i,j",i,j
 				if (r2.le.cut2) then
 					call ljpotr(r2,vij,dvmr)
-					sumv = sumv + vij-energycutof
+					sumv = sumv + (vij-energycutof)/2.0
 					f(:,i) =f(:,i) - dvmr*dx 
-					f(:,j) =f(:,j) + dvmr*dx
 					
 				end if
 			end do
@@ -180,13 +182,13 @@ contains
 		end subroutine ljpotr
 	end subroutine lj_calculate2
 
-end module lj_test_mod
+end module lj_rvec_mod
 
-!  Model Initiation routine (it calls actual initialization routine in the module lj_test_mod)
-subroutine sample_01_lj_cutoff_f_init(pkim)
-	use lj_test_mod
+!  Model Initiation routine (it calls actual initialization routine in the module lj_rvec_mod)
+subroutine sample_01_lj_cutoff_neigh_rvec_f_f_init(pkim)
+	use lj_rvec_mod
 	implicit none
 	integer(kind=kim_intptr) :: kim; pointer(pkim,kim)
 	call lj_init(pkim)
-end subroutine sample_01_lj_cutoff_f_init
+end subroutine sample_01_lj_cutoff_neigh_rvec_f_f_init
 

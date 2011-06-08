@@ -66,6 +66,34 @@ TESTs, or MODELs one or more of the following environment variables must be set:
      KIM_TEST_DIR
      KIM_MODELS_DIR
 
+8. KIM API provides the possibility of creating dynamic load libraries through 
+setting the KIM_DYNAMIC environment variable. If KIM_DYNAMIC is set the make
+file will build .so libraries and KIM API will use those libraries to 
+load models and call initialize routine dynamically (during runtime)
+ 
+> export KIM_DYNAMIC=yes
+
+if KIM_DYNAMIC is not set, the models will be build and linked statically
+
+9. KIM API provides the possibility to build models and test without those 
+written in FORTRAN (f77, f90, f) through setting KIM_NO_FORTRAN environment 
+variable
+
+>  export KIM_NO_FORTRAN=yes
+
+if it is set, all of the models and test with the names ending _f77,_f,_f90 will 
+be omitted from building process.
+
+10. KIM API provides KIM_API_get_neigh_half and KIM_API_get_neigh_full wrapper
+service routines for access neighbor list object. It also will check that maximum
+numbers of neighbors of an atom do not exceed KIM_API_MAX_NEIGHBORS. If environment
+variable KIM_API_MAX_NEIGHBORS is not set, the default value will be 512.
+To change the default setting, for example, to 1024 (or any other value)
+
+> export KIM_API_MAX_NEIGHBORS=1024
+
+
+
 
 TROUBLESHOOTING: By default, the make system uses the g++ compiler with 
 the -lgfortran option to link compiled FORTRAN executables. If (for some

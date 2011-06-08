@@ -1,4 +1,4 @@
-MODEL_NAME := Sample_01_lj_cutoff_f.kim
+MODEL_NAME := Sample_01_lj_cutoff_NEIGH_PURE_F_f.kim
 SystemOfUnitsFix := fixed    # can work only with units system defined bellow
 # SystemOfUnitsFix := flexible # can reset entire units system (default for model)
 
@@ -58,5 +58,6 @@ OneBasedLists           dummy        # presence of this line indicates that inde
 
 Neigh_IterAccess        dummy        # works with iterator
 
-NEIGH-PURE-H            dummy        # the model needs as MODEL_INPUT  coordinates,half neighbor list(neighObject),
-                                     # and  get_half_neigh method
+NEIGH-PURE-F            dummy       # the model needs as MODEL_INPUT  coordinates,full neighbor list(neighObject),
+                                    # and  get_full_neigh method
+

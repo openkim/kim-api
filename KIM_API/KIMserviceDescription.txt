@@ -734,6 +734,7 @@ int KIM_API_get_full_neigh(void *kimmdl,int mode,int request,
                         -2 -- invalid mode value
                         -3 -- invalid KIM_API object
                         -4 -- Number of neighbors of an atom exceeds KIM_API_MAX_NEIGHBORS
+                        -5 -- get_full_neigh method in KIM API object is not set (NULL value)
  
 Arguments:
         void * kimmdl

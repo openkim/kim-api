@@ -79,6 +79,7 @@ program ljtest
 
 	if(kim_api_set_data_f(pkim,"neighObject",one,loc(neigh_both)).ne.1) stop' neighObjec not in kim'
         if(kim_api_set_data_f(pkim,"get_half_neigh",one,loc(get_half_neigh_kim)).ne.1) stop' get_half_neigh not in kim'
+	if(kim_api_set_data_f(pkim,"get_full_neigh",one,loc(get_full_neigh_kim)).ne.1) stop' get_full_neigh not in kim'
 
 	! READY to call Model Initiation routine
 	if( kim_api_model_init(pkim).ne.1) stop ' model initialiser failed'
