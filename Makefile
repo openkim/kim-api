@@ -12,8 +12,8 @@
 
 include $(KIM_DIR)KIM_API/Include.mk
 
-MODELS_LIST = $(notdir $(shell find $(KIM_MODELS_DIR) -maxdepth 1 -mindepth 1 -type d -exec basename {} \;))
-TESTS_LIST  = $(notdir $(shell find $(KIM_TESTS_DIR) -maxdepth 1 -mindepth 1 -type d -exec basename {} \;))
+MODELS_LIST = $(notdir $(filter-out $(F_FILTER_OUT),$(shell find $(KIM_MODELS_DIR) -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)))
+TESTS_LIST  = $(notdir $(filter-out $(F_FILTER_OUT),$(shell find $(KIM_TESTS_DIR) -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)))
 
 .PHONY: all clean $(patsubst %,%-all,$(MODELS_LIST) $(TESTS_LIST)) $(patsubst %,%-clean,$(MODELS_LIST) $(TESTS_LIST))
 

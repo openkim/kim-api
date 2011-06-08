@@ -103,10 +103,10 @@ OBJF90 = KIMserviceF.o
 #fortran on/of
 ifdef KIM_NO_FORTRAN
 ALLOBJ = $(OBJC)
-F_FILTER_OUT = %_f/ %_F/ %_f77/ %_F90/ %_f90/
+F_FILTER_OUT = %_f %_F %_f77 %_F90 %_f90
 else
 ALLOBJ = $(OBJC) $(OBJF90)
-F_FILTER_OUT = %_nothinghere2filter/
+F_FILTER_OUT = %_nothinghere2filter
 endif
 
 # Compiler pattern rules

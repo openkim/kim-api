@@ -10,7 +10,7 @@
 include Include.mk
 
 # create list of models
-MODELS_TARGETS := $(addprefix ., $(addsuffix .make-temp, $(shell find $(KIM_MODELS_DIR) -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)))
+MODELS_TARGETS := $(addprefix ., $(addsuffix .make-temp, $(filter-out $(F_FILTER_OUT),$(shell find $(KIM_MODELS_DIR) -maxdepth 1 -mindepth 1 -type d -exec basename {} \;))))
 # create list of models that have been deleted from the $(KIM_MODELS_DIR) since the last time make was executed
 DELETED_MODELS_TARGETS := $(filter-out $(MODELS_TARGETS), $(shell find . -name ".*.make-temp" -exec basename {} \;))
 # If there are deleted models, remove files and touch .models-deleted to force a reconfigure 
@@ -53,9 +53,9 @@ KIMserviceTest: KIMserviceTest.o $(ALLOBJ)
 
 # targets for the models: for any new model adds the appropriate lines to the model_init_include.{h,cpp} files
 $(MODELS_TARGETS): .models-deleted
-	@sh -c "if !(grep -i -q -s $(patsubst .%.make-temp,%,$@) model_init_include.h); then echo void \* \
+	@sh -c "if !(grep -i -q -s $(patsubst .%.make-temp,%_,$@) model_init_include.h); then echo void \* \
 	`echo $(patsubst .%.make-temp,%,$@) | tr A-Z a-z`_init_\(void \*\*\)\; >> model_init_include.h;  fi"
-	@sh -c "if !(grep -i -q -s $(patsubst .%.make-temp,%,$@) model_init_include.cpp); then \
+	@sh -c "if !(grep -i -q -s $(patsubst .%.make-temp,%_,$@) model_init_include.cpp); then \
 	echo \"\" if\(strcmp\(modelname,\\\"$(patsubst .%.make-temp,%,$@)\\\"\)==0\){ >> model_init_include.cpp;\
 	echo \"       \" `echo $(patsubst .%.make-temp,%,$@) | tr A-Z a-z`_init_\(\(void \*\*\) pkim\)\; >> model_init_include.cpp;\
 	echo \"       \" return true\; >> model_init_include.cpp;\
