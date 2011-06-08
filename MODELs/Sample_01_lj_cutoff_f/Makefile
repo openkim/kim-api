@@ -1,3 +1,11 @@
+
+#                                                                      
+# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna 
+# All rights reserved.                                                 
+#                                    
+# Author: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
+#
+
 MODEL_BUILD_TARGET:= Sample_01_lj_cutoff_f.a
 
 ifndef KIM_API_DIR
@@ -11,6 +19,11 @@ all: $(MODEL_BUILD_TARGET)
 
 Sample_01_lj_cutoff_f.a:  LJ_mod.o
 	@ar rcs  $@ *.o
+
+LJ_mod.o: Makefile LJ_mod.F90
+
+Makefile: $(KIM_API_DIR)Include.mk
+	@touch Makefile
 
 clean:
 	rm -f *.o *.mod *.a *.so

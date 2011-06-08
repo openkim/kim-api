@@ -32,11 +32,6 @@ bash:
 
 4. Change to the KIM_DIR directory and execute the commands: 
 
-> make configall 
-
-     This will prepare the list of all models and tests and create the
-     required include files (make cleanall -- will remove all generated files).
-
 > make
 
      This will build all models, tests, and the KIM api service routine library

@@ -1,11 +1,6 @@
-listmodelname.txt
-listtestname.txt
 model_init_include.cpp
 model_init_include.h
-model_obj_lib.mk
-modelsconfig
-testsconfig
-testsmake.mk
-tolowercase
+.*.make-temp
+.models-deleted
 KIMserviceTest
 aKIMservice_test

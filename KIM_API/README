@@ -20,20 +20,17 @@ RUN/                       -- directory for running tests for KIM API service ro
 aKIMservice_test.F90       -- test program for FORTRAN style KIM API
 model_val01.kim            -- kim descriptor file used by tests
 model_val02.kim            -- kim descriptor file used by tests
-modelsconfig.cpp           -- program to generate configuration files as part of 'make configall'
 si_units.cfg               -- SI units descriptor file
 standard.kim               -- kim descriptor file with description of all standard variables
 standard_units.cfg         -- standard units descriptor file
 test_val01.kim             -- kim descriptor file used by tests
-testsconfig.cpp            -- program to generate configuration files as part of 'make configall'
-tolowercase.cpp            -- program to convert string to all lowercase letters
 
 
-Files generated automatically as part of 'make configall'
+Files generated automatically as part of 'make all'
 
-listmodelname.txt          -- a list of Model names from the MODELs directory
-listtestname.txt           -- a list of Test names from the TESTs directory
 model_init_include.cpp     -- used in static linking of all Models
 model_init_include.h       -- used in static linking of all Models
-model_obj_lib.mk           -- used by Include.mk (contains a list of all Model libraries)
-testsmake.mk               -- make rules for all Models and Tests in KIM directories
+.*.make-temp               -- files used by make to ensure that KIM knows about all models
+                              in the KIM_MODELS_DIR directory (one file for each model)
+.models-deleted            -- files used by make to detect when one or more models have been
+                              deleted from the KIM_MODELS_DIR directory.
