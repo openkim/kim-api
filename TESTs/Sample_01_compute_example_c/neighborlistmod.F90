@@ -20,6 +20,8 @@ type neighborlist_object
 	integer, pointer::offset(:) ! offset index in the main format
 	integer,pointer::neilist(:) !  neilist( offset(i) : offset(i) + numnei(i))-1 -- gives list of all neighbors 
 				      ! of an atom i (size of dokcurrentsize)
+        real*8,pointer::x(:,:)         !atoms position holder
+	real*8 ::dx(3,1024)		! position difference vector for neighbors of an atom		
 end type neighborlist_object
 
 type neighborlist_object_both
@@ -314,7 +316,7 @@ contains
                 integer :: natomb,shpx3(2),i,j,k,nx,ny,nz,nk,m
 		real*8 :: fcut,xmin,xmax,ymin,ymax,zmin,zmax,lx,ly,lz, lmax, eps
 
-
+                neigh_obj%x => x3
 		shpx3=shape(x3)
 
                 neigh_obj%atomnumber=shpx3(2)
@@ -528,6 +530,7 @@ type (neighborlist_object) :: neigh_obj
 		!allocate(neiobj_full)
 		neiobj_full%atomnumber = neiobj_half%atomnumber
 		neiobj_full%dokcurrentsize = 2 * neiobj_half%dokcurrentsize
+                neiobj_full%x => neiobj_half%x
         	call reallocatedok(neiobj_full,neiobj_full%dokcurrentsize)
 
 		neiobj_full%dokneighbors(:,1:neiobj_half%dokcurrentsize) = neiobj_half%dokneighbors(:,1:neiobj_half%dokcurrentsize)
@@ -543,11 +546,17 @@ type (neighborlist_object) :: neigh_obj
 
 	integer function neilocator(neigh_obj,id,nei1atom)
 		implicit none
-		integer :: id
+		integer :: id,i,ii
 		type (neighborlist_object)::neigh_obj
 		integer (kind=kim_intptr)::nei1atom
 		nei1atom = loc( neigh_obj%neilist(  neigh_obj%offset(id) ) )
 		neilocator = neigh_obj%numnei(id)
+                !calculation position difference vector
+		do i= 1, neigh_obj%numnei(id)
+			ii= neigh_obj%neilist(  neigh_obj%offset(id)+ i -1 )
+			neigh_obj%dx(:,i) = neigh_obj%x(:,id) - neigh_obj%x(:,ii)
+
+		end do
 	end function neilocator
 
         integer function get_neigh(neigh_obj,mode,request,atom,numnei,pnei1atom,pRij)
@@ -555,7 +564,6 @@ type (neighborlist_object) :: neigh_obj
 		type (neighborlist_object),pointer::neigh_obj
 		integer :: mode,request,atom,numnei
 		!local definition
-
 		if(mode.eq.0) then
 			!iterator mode
 			if(request .eq. 0) then 
@@ -572,10 +580,12 @@ type (neighborlist_object) :: neigh_obj
 						get_neigh=0 ! end reached by iterator
 						return
 					end if
-
 					numnei = neilocator(neigh_obj,neigh_obj%pointsto,pnei1atom)
 					atom = neigh_obj%pointsto
 					neigh_obj%pointsto=neigh_obj%pointsto+1
+                                        !address of calculated Rij
+
+					pRij=loc(neigh_obj%dx(1,1))
 					get_neigh=1 ! successful operation
 					return
 				end if	
@@ -589,6 +599,8 @@ type (neighborlist_object) :: neigh_obj
 			end if
 			numnei = neilocator(neigh_obj,request,pnei1atom)
 			atom = request
+			!addres of calculated Rij
+			pRij=loc(neigh_obj%dx(1,1))
 			get_neigh =1;return ! successful return
 		else
 			get_neigh =-2;return ! invalid mode value

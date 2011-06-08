@@ -6,7 +6,7 @@
 # Author: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
 #
 
-MODEL_BUILD_TARGET:= Sample_01_lj_cutoff_f.a
+MODEL_BUILD_TARGET:= Sample_01_lj_cutoff_NEIGH_RVEC_F_f.a
 
 ifndef KIM_API_DIR
 include ../../KIM_API/Include.mk
@@ -17,10 +17,10 @@ endif
 
 all: $(MODEL_BUILD_TARGET)
 
-Sample_01_lj_cutoff_f.a:  LJ_mod.o
+Sample_01_lj_cutoff_NEIGH_RVEC_F_f.a: LJ_rvec_F_mod.o
 	@ar rcs  $@ *.o
 
-LJ_mod.o: Makefile
+LJ_rvec_F_mod.o: Makefile
 
 Makefile: $(KIM_API_DIR)Include.mk
 	@touch Makefile

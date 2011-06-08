@@ -1,4 +1,4 @@
-TEST_NAME := Sample_01_compute_example_f.incfg
+MODEL_NAME := Sample_01_lj_cutoff_CLUSTER_f.kim
 SystemOfUnitsFix := fixed    # can work only with units system defined bellow
 # SystemOfUnitsFix := flexible # can reset entire units system (default for model)
 
@@ -21,37 +21,28 @@ SystemOfUnitsFix := fixed    # can work only with units system defined bellow
 # requirements -- it is empty field if variable is needed always or field set to optional, meaning that you can 
 #                 switch off calculation of the variable
 
-SUPPORTED_ATOM/PARTICLES_TYPES:
-# Simbol/name           Type        code
-# Na                      spec        11
-# Li                      spec         3
-# K                       spec        19
-
-
 MODEL_INPUT:
 # Name                  Type         Unit       SystemU/Scale           Shape              requirements
 
 numberOfAtoms           integer*8    none       none                    []                              # empty [] means rank is zero
 
-#numberAtomTypes        integer      none       none                    []
-
-#atomTypes              integer      none       none                    [numberAtomTypes]               # one [dummy] -- rank is one
+atomTypes               integer      none       none                    [numberAtomTypes]   optional
 
 coordinates             real*8       length     standard                [numberOfAtoms,3]
 
-neighObject             pointer      none       none                    []                              # neighbor list object that is used by iterator
+get_half_neigh          method       none       none                    []		    optional
 
-get_half_neigh          method       none       none                    []
+get_full_neigh          method       none       none                    []                  optional
 
-get_full_neigh          method       none       none                    []
+neighObject             pointer      none       none                    []                  optional    # neighbor list object that is used by iterator
 
 
 MODEL_OUTPUT:
-# Name                  Type         Unit       SystemU/Scale           Shape                   requirements
+# Name                  Type         Unit       SystemU/Scale           Shape              requirements
 
 compute                 method       none       none                    []
 
-destroy                 method       none       none                    []
+destroy                 method       none       none                    []                  optional
 
 cutoff                  real*8       length     standard                []
 
@@ -65,12 +56,6 @@ CONVENTIONS:
 
 OneBasedLists           dummy        # presence of this line indicates that indexes for atoms are from 1 to numberOfAtoms
 
-Neigh_BothAccess        dummy        # need both: locator and iterator
+Neigh_IterAccess        dummy        # works with iterator
 
-NEIGH-PURE-H            dummy        # scenario method to deal with neighbor list and boundary condition
-
-NEIGH-PURE-F            dummy 
-
-NEIGH-RVEC-F            dummy 
-
-CLUSTER			dummy
+CLUSTER                 dummy       # the model needs only coordinates to compute, neighbor list is not needed
