@@ -19,7 +19,7 @@ all: $(MODEL_BUILD_TARGET)
 Sample_01_lj_cutoff_c.a:  LJ_sample1.o
 	@ar rcs  $@ *.o
 
-LJ_sample1.o: Makefile LJ_sample1.c $(KIM_API_DIR)KIMserviceC.h
+LJ_sample1.o: Makefile $(KIM_API_DIR)KIMserviceC.h
 
 Makefile: $(KIM_API_DIR)Include.mk
 	@touch Makefile

@@ -54,10 +54,10 @@ else
    OBJONLY=-c
    OUTPUTIN=-o
    FORTRANFLAG = -fcray-pointer -O3 -J$(KIM_API_DIR) -D $(MACHINESYSTEM)
-   #CCOMPILER   = gcc
-   #CPPCOMPILER = g++
-   CCOMPILER   = gcc-fsf-4.4  # for OS X using fink compilers
-   CPPCOMPILER = g++-fsf-4.4  # for OS X using fink compilers
+   CCOMPILER   = gcc
+   CPPCOMPILER = g++
+   #CCOMPILER   = gcc-fsf-4.4  # for OS X using fink compilers
+   #CPPCOMPILER = g++-fsf-4.4  # for OS X using fink compilers
    CPPFLAG = -O3 -I$(KIM_API_DIR) -Wno-write-strings -D KIM_DIR_MODELS=\"$(KIM_MODELS_DIR)\" -D KIM_DIR_API=\"$(KIM_API_DIR)\"
    CPPFLAG += -D KIM_DIR_TESTS=\"$(KIM_TESTS_DIR)\"
    FORTRANCOMPILER = gfortran
@@ -102,9 +102,11 @@ OBJF90 = KIMserviceF.o
 
 #fortran on/of
 ifdef KIM_NO_FORTRAN
-   ALLOBJ = $(OBJC)
+ALLOBJ = $(OBJC)
+F_FILTER_OUT = %_f/ %_F/ %_f77/ %_F90/ %_f90/
 else
-   ALLOBJ = $(OBJC) $(OBJF90)
+ALLOBJ = $(OBJC) $(OBJF90)
+F_FILTER_OUT = %_nothinghere2filter/
 endif
 
 # Compiler pattern rules

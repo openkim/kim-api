@@ -19,7 +19,7 @@ all: $(MODEL_BUILD_TARGET)
 model_EAM_periodic_aluminum_ercolessi_adams_f90.a: model_EAM_periodic_aluminum_ercolessi_adams.o
 	@ar rcs $@ *.o
 
-model_EAM_periodic_aluminum_ercolessi_adams.o: Makefile model_EAM_periodic_aluminum_ercolessi_adams.f90
+model_EAM_periodic_aluminum_ercolessi_adams.o: Makefile 
 
 Makefile: $(KIM_API_DIR)Include.mk
 	@touch Makefile

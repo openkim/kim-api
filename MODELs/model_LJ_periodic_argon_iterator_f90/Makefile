@@ -19,7 +19,7 @@ all: $(MODEL_BUILD_TARGET)
 model_LJ_periodic_argon_iterator_f90.a: model_LJ_periodic_argon_iterator.o
 	@ar rcs $@ *.o
 
-model_LJ_periodic_argon_iterator.o: Makefile model_LJ_periodic_argon_iterator.f90
+model_LJ_periodic_argon_iterator.o: Makefile
 
 Makefile: $(KIM_API_DIR)Include.mk
 	@touch Makefile

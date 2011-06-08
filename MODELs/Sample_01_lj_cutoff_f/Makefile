@@ -20,7 +20,7 @@ all: $(MODEL_BUILD_TARGET)
 Sample_01_lj_cutoff_f.a:  LJ_mod.o
 	@ar rcs  $@ *.o
 
-LJ_mod.o: Makefile LJ_mod.F90
+LJ_mod.o: Makefile
 
 Makefile: $(KIM_API_DIR)Include.mk
 	@touch Makefile

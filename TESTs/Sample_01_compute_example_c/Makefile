@@ -24,13 +24,13 @@ all: Sample_01_compute_example_c
 Sample_01_compute_example_c: lj_test.o $(LOCALOBJ)
 	$(LINKCOMPILER) $(CPPFLAG) $(CPPLIBFLAG) $(LOCALOBJ) $<  $(KIM_LIB) $(MODELOBJ) $(OUTPUTIN) $@
 
-lj_test.o: Makefile lj_test.c $(KIM_API_DIR)KIMserviceC.h
-sample_neighbor.o: Makefile sample_neighbor.c $(KIM_API_DIR)KIMserviceC.h
-neighborlistmod.o: Makefile neighborlistmod.F90
-myqsort.o: Makefile myqsort.c
+lj_test.o: $(LOCALOBJ) Makefile  $(KIM_API_DIR)KIMserviceC.h
+neighborlistmod.o: myqsort.o Makefile $(KIM_API_DIR)KIMserviceC.h
+
 
 Makefile: $(KIM_API_DIR)Include.mk
 	@touch Makefile
 
 clean:
 	rm -f *.mod *.o  Sample_01_compute_example_c
+
