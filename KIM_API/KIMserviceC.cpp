@@ -174,8 +174,8 @@ void KIM_API_set2_donotcompute(void *kimmdl,char *nm, int * error){
 int KIM_API_isit_compute(void *kimmdl,char *nm, int * error){
     *error =0;
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    return (*mdl)[nm].flag->calculate;
     *error =1;
+    return (*mdl)[nm].flag->calculate;
 }
 
 // element access by Index (fast way)
