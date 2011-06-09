@@ -20,7 +20,7 @@ using namespace std;
 #include "KIMservice.h"
 
 #define KEY_CHAR_LENGTH 64
-
+#define KIM_LINE_LENGTH 512
 
 //#define intptr_t int  // for 32 bit machines
 KIMBaseElementFlag:: KIMBaseElementFlag(){
@@ -239,10 +239,10 @@ ostream &operator<<(ostream &stream, KIM_IOline a){
 	return stream;
 };
 istream &operator>>(istream &stream, KIM_IOline &a){
-	char inputline[161];
-	stream.getline(inputline,160);
+	char inputline[KIM_LINE_LENGTH];
+	stream.getline(inputline,KIM_LINE_LENGTH-1);
         if(stream.ios::fail() && !stream.ios::eof()){
-           cerr << "Error: Input line in .kim file longer than 160 characters.\n"
+           cerr << "Error: Input line in .kim file longer than KIM_LINE_LENGTH (default 512) characters.\n"
                 << "The line starts with:\n\t"
                 << inputline << "\nExiting..." << endl;
            exit(-2);
@@ -315,8 +315,8 @@ ostream &operator<<(ostream &stream, IOline a){
 	return stream;
 }
 istream &operator>>(istream &stream, IOline &a){
-	char inputline[161];
-	stream.getline(inputline,160);
+	char inputline[KIM_LINE_LENGTH];
+	stream.getline(inputline,KIM_LINE_LENGTH-1);
 	if(a.getFields(inputline)){
 		a.goodformat=true;
 	}else{
