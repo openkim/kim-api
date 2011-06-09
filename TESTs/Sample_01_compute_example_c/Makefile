@@ -21,7 +21,7 @@ endif
 
 all: Sample_01_compute_example_c
 
-Sample_01_compute_example_c: lj_test.o $(LOCALOBJ)
+Sample_01_compute_example_c: lj_test.o $(ifndef KIM_DYNAMIC, $(LOCALOBJ),)
 	$(LINKCOMPILER) $(CPPFLAG) $(CPPLIBFLAG) $(LOCALOBJ) $<  $(KIM_LIB) $(MODELOBJ) $(OUTPUTIN) $@
 
 lj_test.o: $(LOCALOBJ) Makefile  $(KIM_API_DIR)KIMserviceC.h
