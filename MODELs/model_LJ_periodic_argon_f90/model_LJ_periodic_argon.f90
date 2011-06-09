@@ -76,26 +76,45 @@ real*8 virial; pointer(pvirial,virial)
 real*8 Rij_dummy(3,1); pointer(pRij_dummy,Rij_dummy)
 integer nei1atom(1); pointer(pnei1atom,nei1atom)
 integer N4     !@@@@@@@@@ NEEDS TO BE FIXED
+integer :: comp_force, comp_enepot, comp_virial
 
 ! Unpack data from KIM object
 !
 pN         = kim_api_get_data_f(pkim,"numberOfAtoms",ier); if (ier.le.0) return
 penergy    = kim_api_get_data_f(pkim,"energy",ier);        if (ier.le.0) return
 pcoor      = kim_api_get_data_f(pkim,"coordinates",ier);   if (ier.le.0) return
-pforce     = kim_api_get_data_f(pkim,"forces",ier);        if (ier.le.0) return
-penepot    = kim_api_get_data_f(pkim,"energyPerAtom",ier); if (ier.le.0) return
-pvirial    = kim_api_get_data_f(pkim,"virial",ier);        if (ier.le.0) return
 pboxlength = kim_api_get_data_f(pkim,"boxlength",ier);     if (ier.le.0) return
+
+comp_force  = kim_api_isit_compute_f(pkim,"forces",ier);         if (ier.le.0) return
+comp_enepot = kim_api_isit_compute_f(pkim,"energyPerAtom",ier);  if (ier.le.0) return
+comp_virial = kim_api_isit_compute_f(pkim,"virial",ier);         if (ier.le.0) return
+
+if (comp_force .eq.1) then 
+  pforce  = kim_api_get_data_f(pkim,"forces",ier);        
+  if (ier.le.0) return
+  call toRealArrayWithDescriptor2d(forcedum,force,DIM,N4)
+endif
+if (comp_enepot.eq.1) then 
+   penepot = kim_api_get_data_f(pkim,"energyPerAtom",ier); 
+   if (ier.le.0) return
+   call toRealArrayWithDescriptor1d(enepotdum,ene_pot,N4)
+endif
+if (comp_virial.eq.1) then
+   pvirial = kim_api_get_data_f(pkim,"virial",ier);
+   if (ier.le.0) return
+endif
 N4=N
 call toRealArrayWithDescriptor2d(coordum,coor,DIM,N4)
-call toRealArrayWithDescriptor2d(forcedum,force,DIM,N4)
-call toRealArrayWithDescriptor1d(enepotdum,ene_pot,N4)
 
 ! Initialize potential energies, forces, virial term
 !
-ene_pot(1:N) = 0.d0
-force(1:3,1:N) = 0.d0
-virial = 0.d0
+if (comp_enepot.eq.1) then
+   ene_pot(1:N) = 0.d0
+else
+   energy = 0.d0
+endif
+if (comp_force.eq.1)  force(1:3,1:N) = 0.d0
+if (comp_virial.eq.1) virial = 0.d0
 
 !  Compute energy and forces
 !
@@ -119,17 +138,26 @@ do i = 1,N-1
       if ( Rsqij < model_cutsq ) then             ! particles are interacting?
          r = sqrt(Rsqij)                          ! compute distance
          call pair(r,phi,dphi,d2phi)              ! compute pair potential
-         ene_pot(i) = ene_pot(i) + 0.5d0*phi      ! accumulate energy
-         ene_pot(j) = ene_pot(j) + 0.5d0*phi      ! (i and j share it)
-         virial = virial + r*dphi                 ! accumul. virial=sum r(dV/dr)
-         force(:,i) = force(:,i) - dphi*Rij/r     ! accumulate forces
-         force(:,j) = force(:,j) + dphi*Rij/r     !    (Fji = -Fij)
+         if (comp_enepot.eq.1) then               !
+            ene_pot(i) = ene_pot(i) + 0.5d0*phi   ! accumulate energy
+            ene_pot(j) = ene_pot(j) + 0.5d0*phi   ! (i and j share it)
+         else                                     !
+            energy = energy + phi                 !
+         endif                                    !
+         if (comp_virial.eq.1) then               !
+            virial = virial + r*dphi              ! accumul. virial=sum r(dV/dr)
+         endif                                    !
+         if (comp_force.eq.1) then                !
+            force(:,i) = force(:,i) - dphi*Rij/r  ! accumulate forces
+            force(:,j) = force(:,j) + dphi*Rij/r  !    (Fji = -Fij)
+         endif
       endif
    enddo
 
 enddo
-virial = - virial/DIM                             ! definition of virial term
-energy = sum(ene_pot(1:N))                        ! compute total energy
+
+if (comp_virial.eq.1) virial = - virial/DIM       ! definition of virial term
+if (comp_enepot.eq.1) energy = sum(ene_pot(1:N))  ! compute total energy
 
 end subroutine Compute_Energy_Forces
 

@@ -94,7 +94,7 @@ program ljtest
 
 	!All setup finished -- ready to compute
 	!compute the model -- e.g., compute energy & force
-
+        call kim_api_print(pkim,kimerr)
 	call kim_api_model_compute(pkim,kimerr); call kimerr_handle("kim_api_model_compute",kimerr)
 
 	!output KIM API object to screen (optional)

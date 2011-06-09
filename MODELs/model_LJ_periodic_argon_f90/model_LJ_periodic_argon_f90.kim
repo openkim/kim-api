@@ -33,7 +33,7 @@ numberOfAtoms           integer*8    none       none                    []      
 
 numberAtomTypes         integer      none       none                    []
 
-atomTypes               integer      none       none                    [numberOfAtom]     optional     # one [dummy] -- rank is one
+atomTypes               integer      none       none                    [numberOfAtoms]    optional     # one [dummy] -- rank is one
 
 coordinates             real*8       length     standard                [numberOfAtoms,3]
 
@@ -56,11 +56,11 @@ cutoff                  real*8       length     standard                []
 
 energy                  real*8       energy     standard                []
 
-forces                  real*8       force      standard                [numberOfAtoms,3]
+forces                  real*8       force      standard                [numberOfAtoms,3]  optional
 
-energyPerAtom           real*8       energy     standard                [numberOfAtoms]
+energyPerAtom           real*8       energy     standard                [numberOfAtoms]    optional
 
-virial                  real*8       pressure   standard                []                 
+virial                  real*8       pressure   standard                []                 optional
 
 
 CONVENTIONS:
