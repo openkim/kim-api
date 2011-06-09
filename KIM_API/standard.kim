@@ -16,7 +16,7 @@ numberOfAtoms           integer*8   none        none                    []      
 
 numberAtomTypes         integer     none        none                    []
 
-atomTypes               integer     none        none                    [numberAtomTypes]                    # one [dummy] -- rank is one
+atomTypes               integer     none        none                    [numberOfAtoms]                      # one [dummy] -- rank is one
 
 coordinates             real*8      length      unspecified             [numberOfAtoms,3]
 

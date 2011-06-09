@@ -23,9 +23,7 @@ SystemOfUnitsFix := fixed    # can work only with units system defined bellow
 
 SUPPORTED_ATOM/PARTICLES_TYPES:
 # Simbol/name           Type        code
-# Na                      spec        11
-# Li                      spec         3
-# K                       spec        19
+Ar                      spec                    18                      # Argon
 
 
 MODEL_INPUT:
@@ -33,9 +31,9 @@ MODEL_INPUT:
 
 numberOfAtoms           integer*8    none       none                    []                              # empty [] means rank is zero
 
-#numberAtomTypes        integer      none       none                    []
+numberAtomTypes         integer      none       none                    []
 
-#atomTypes              integer      none       none                    [numberAtomTypes]               # one [dummy] -- rank is one
+atomTypes               integer      none       none                    [numberOfAtom]                  # one [dummy] -- rank is one
 
 coordinates             real*8       length     standard                [numberOfAtoms,3]
 
@@ -44,6 +42,8 @@ neighObject             pointer      none       none                    []      
 get_half_neigh          method       none       none                    []
 
 get_full_neigh          method       none       none                    []
+
+boxlength               real*8       length     standard                [3]
 
 
 MODEL_OUTPUT:
@@ -58,6 +58,10 @@ cutoff                  real*8       length     standard                []
 energy                  real*8       energy     standard                []
 
 forces                  real*8       force      standard                [numberOfAtoms,3]
+
+energyPerAtom           real*8       energy     standard                [numberOfAtoms]
+
+virial                  real*8       pressure   standard                []                 
 
 
 CONVENTIONS:
@@ -74,3 +78,5 @@ NEIGH-PURE-F            dummy
 NEIGH-RVEC-F            dummy 
 
 CLUSTER			dummy
+
+MI-OPBC-H               dummy

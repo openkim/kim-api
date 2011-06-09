@@ -21,16 +21,24 @@ SystemOfUnitsFix := fixed    # can work only with units system defined bellow
 # requirements -- it is empty field if variable is needed always or field set to optional, meaning that you can 
 #                 switch off calculation of the variable
 
+SUPPORTED_ATOM/PARTICLES_TYPES:
+#Simbol/name            Type                    code
+
+Ar                      spec                    18                      # Argon
+
 
 MODEL_INPUT:
 # Name                  Type         Unit       SystemU/Scale           Shape              requirements
 numberOfAtoms           integer*8    none       none                    []                              # empty [] means rank is zero
 
-atomTypes               integer      none       none                   [numberAtomTypes]   optional     # one [dummy] -- rank is one
+numberAtomTypes         integer      none       none                    []
 
-coordinates             real*8       length     standard               [numberOfAtoms,3]
+atomTypes               integer      none       none                    [numberOfAtom]     optional     # one [dummy] -- rank is one
+
+coordinates             real*8       length     standard                [numberOfAtoms,3]
 
 get_half_neigh          method       none       none                    []
+get_full_neigh          method       none       none                    []                 optional     # don't forget to remove this line
 
 neighObject             pointer      none       none                    []                              # neighbor list object that is used by iterator
 
@@ -52,7 +60,7 @@ forces                  real*8       force      standard                [numberO
 
 energyPerAtom           real*8       energy     standard                [numberOfAtoms]
 
-virial                  real*8       pressure   standard                []
+virial                  real*8       pressure   standard                []                 
 
 
 CONVENTIONS:
