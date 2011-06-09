@@ -465,7 +465,7 @@ Corresponding FORTRAN style interface:
 int KIM_API_isit_compute(void *kimmdl, char *nm, int * kimerror); 
         checks the status of compute flag.  If variable/data can be optionally 
         computed, a model can check if a test wants the variable to be computed. 
-        Returned value 1 - do not compute, 0 compute. 
+        Returned value 0 - do not compute, 1 compute. 
 
 Arguments:
 
