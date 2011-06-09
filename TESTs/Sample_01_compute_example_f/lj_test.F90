@@ -32,7 +32,6 @@ program ljtest
         integer :: nAtomsTypes;
 	character(len=KEY_CHAR_LENGTH) :: txtstr; pointer(ptxtstr,txtstr)
 
-        real*8 :: boxlength(3); pointer(pboxlength,boxlength)
 	allocate(neigh_obj)
 	!read the model name from the std input (screen)
 	print *," KIM model name? :"
@@ -58,9 +57,6 @@ program ljtest
 	pnatoms = kim_api_get_data_f(pkim,"numberOfAtoms",kimerr); call kimerr_handle("numberOfAtoms",kimerr)
         kim_neighObj_index = kim_api_get_index_f(pkim,"neighObject",kimerr) !index for internal usage of neigh locator/iterator
 	call kimerr_handle("kim_api_get_index_f:neighObject",kimerr)
-
-        pboxlength = kim_api_get_data_f(pkim,"boxlength",kimerr); call kimerr_handle("boxlength",kimerr)
-        boxlength(:) = 600.0
         natoms = n
 	!  Read in the atomic positions for all atoms	
 	do i=1,n
