@@ -135,9 +135,9 @@
 #                            the argument quantity. The format of the string is a `[' followed
 #                            by a comma separated list of strings/integers, followed by a `]'.
 #                            The strings may be either `numberOfAtoms', `numberAtomTypes', or
-#                            an arbitrary string.  White-space is not allowed between the `['
-#                            and `]' characters.  Providing a few examples is the best way to
-#                            clearly define what this string means:
+#                            (for the first entry only) an arbitrary string.  White-space is
+#                            not allowed between the `[' and `]' characters.  Providing a few
+#                            examples is the best way to clearly define what this string means:
 #                               * []  - This defines a scalar value (rank=0)
 #                               * [10] - This defines a vector (rank=1) of 10 values
 #                               * [numberOfAtoms] - This defines a vector (rank=1) of
@@ -152,17 +152,18 @@
 #                                    of `nAtomTypes'.
 #                               * [10,5] - This defines a two-dimensional array (rank=2) of size
 #                                    10 by 5.
-#                               * [numberOfAtoms,numberAtomTypes,12] - This defines a three-
-#                                    dimensional array (rank=3) of size `numberOfAtoms' by 
-#                                    `numberAtomTypes' by 12.
-#                               * [15,ZZZ] - This defines a two-dimensional array (rank=2)
-#                                    of size 15 by an undetermined value.  The string `ZZZ' can
-#                                    be anything except `numberOfAtoms' an `numberAtomTypes'. In
+#                               * [12,numberOfAtoms,numberAtomTypes] - This defines a three-
+#                                    dimensional array (rank=3) of size 12 by `numberOfAtoms' by 
+#                                    `numberAtomTypes'.
+#                               * [ZZZ,12] - This defines a two-dimensional array (rank=2)
+#                                    of size (an unspecified length) by 12.  The string `ZZZ' can
+#                                    be anything except `numberOfAtoms' and `numberAtomTypes'. In
 #                                    this case, KIM_API_allocate() will not allocate any memory
 #                                    for this argument.  The Test must allocate (and eventually
 #                                    free) this memory and use the KIM_API_set_data() function
 #                                    in order to register the memory location of the values for
-#                                    this argument.
+#                                    this argument.  Only the first index in the shape can be
+#                                    of unspecified length.
 #                            For multi-dimensional arrays, the `fast-index' is always the last
 #                            in the list.
 #                  6) requirements: This string may be empty or `optional'.  An empty string
