@@ -178,7 +178,9 @@
 # The first item in a KIM descriptor file must be the MODEL/TEST name
 #
 # MODEL/TEST names are case sensitive strings containing only alpha-numeric characters and
-# possibly the `_' character.  No other characters are allowed.
+# possibly the `_' character.  No other characters are allowed.  The name must end with one
+# of `_c', `_cpp', `_f', `_f77', or `_f90' which indicates that programming language in which
+# the Model/Test is written.
 #
 
 MODEL_NAME := standard
