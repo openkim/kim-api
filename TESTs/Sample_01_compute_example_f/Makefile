@@ -17,7 +17,7 @@ LOCALOBJ = neighborlistmod.o myqsort.o
 
 all: Sample_01_compute_example_f
 
-Sample_01_compute_example_f: lj_test.o $(LOCALOBJ) $(ifndef KIM_DYNAMIC, $(LOCALOBJ),)
+Sample_01_compute_example_f: lj_test.o $(LOCALOBJ) $(if $(strip $(KIM_DYNAMIC)),,$(MODELOBJ))
 	$(LINKCOMPILER) $(CPPFLAG) $(CPPLIBFLAG)  $(LOCALOBJ)  $< $(KIM_LIB) $(MODELOBJ) $(OUTPUTIN) $@
 
 lj_test.o: $(LOCALOBJ) Makefile
