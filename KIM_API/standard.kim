@@ -1,90 +1,266 @@
+#####################################################################################################                                                                      
+#
+# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna 
+# All rights reserved.                                                 
+#                                                                     
+# Author: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
+# 
+#####################################################################################################
+#
+# This file defines the KIM_API standard variable names and their properties,
+# the Neighbor Boundary Condition (NBC) scenarios supported by the KIM_API, 
+# the list of standard Atom/Particle types known to KIM, and a set of 
+# conventions defined by KIM that help to ensure that Models and Tests are
+# able to successfully communicate with each other.
+#
+#
+# There are a number of line types that can occur in a KIM descriptor file
+#   1) Blank lines
+#         These are lines containing only white-space characters.  These lines
+#         are silently ignored by the KIM API.
+#   2) Comment lines
+#         These lines have a `#' as their first character (in fact, any line
+#         starting with a non-alpha-numeric character will be treated as a
+#         comment line).  All other line types may end with a comment.  The
+#         beginning of such a comment is indicated by the first occurrence of the
+#         `#' character.
+#   3) A MODEL/TEST name line
+#         Only one such line may occur in a KIM descriptor file and it must be
+#         the first non-comment or blank line in the descriptor file.  The line
+#         must start with either `MODEL_NAME' or `TEST_NAME' as appropriate, 
+#         followed by an assignment symbol `:=' (white space surrounding the
+#         assignment symbol is ignored), followed by the (case sensitive) name
+#         of the Model or Test. (See below for a description of valid name strings.)
+#   4) A system of units line
+#         Only one such line may occur in a KIM descriptor file and it must be
+#         the second non-comment or blank line in the descriptor file. The line
+#         must start with `SystemOfUnitsFix', followed by an assignment symbol `:='
+#         (white-space surrounding the assignment symbol is ignored), followed by
+#         either `fixed' or `flexible'.
+#   5) Section lines
+#         These lines identify logically distinct sections within the KIM
+#         descriptor file.  All lines following a Section line, up to the next
+#         Section line or end of the file, will be assigned to the indicated section.
+#         Currently, there are five (5) sections defined by the KIM standard:
+#            * SUPPORTED_ATOM/PARTICLES_TYPES
+#            * CONVENTIONS
+#            * MODEL_INPUT
+#            * MODEL_OUTPUT
+#            * MODEL_PARAMETERS
+#         These sections may occur in any order within a KIM descriptor file, however
+#         the order given above is recommended.  A section line may only occur once
+#         within a KIM descriptor file.
+#   6) Data lines
+#         These lines are used to specify the information that a Model (Test) will
+#         provide to and require from a Test (Model), as well as the conventions that
+#         the Model (Test) uses.  There are currently three (3) types of Data lines:
+#            * Species Data lines
+#               This line type defines the atom/particle types supported by the
+#               Test/Model and should only be used within the SUPPORTED_ATOM/PARTICLES_TYPES
+#               section of the KIM descriptor file.  The line consists of three (3)
+#               white-space separated (case sensitive) strings, but the line may not
+#               start with white-space.  The three strings, in order, are as follows:
+#                  1) Name: This string gives a unique name to the atom/particle type.
+#                           This name is checked against the standard list in `standard.kim'.
+#                  2) Type: This must be `spec'.
+#                  3) code: This is the integer that the Model uses internally to identify
+#                           the atom/particle type.  The value specified by a Test is ignored.
+#            * Dummy Data lines
+#               This line type defines a convention (or parameter), that can be used to ensure
+#               that Models and Tests are able to work together, and should only be used
+#               within the CONVENTIONS section of the KIM descriptor file.  The line consists
+#               of two (2) white-space separated (case sensitive) strings, but the line may
+#               not start with white-space.  The two strings, in order, are as follows:
+#                  1) Name: This string gives a unique name to the convention.  This name
+#                           is checked against the standard list in `standard.kim'.
+#                  2) Type: This must be `dummy'
+#            * Argument Data lines
+#               This line type defines a quantity that is associated with one or more
+#               values that must be shared between the Model and Test and should only be
+#               used within the MODEL_INPUT, MODEL_OUTPUT, and MODEL_PARAMETERS sections
+#               of the KIM descriptor file.  These are analogous the the arguments of a
+#               function call.  The line consists of six (6) white-space separated (case
+#               sensitive) strings, but the line may not start with white-space.  The 
+#                           values of these strings are checked against the standard list
+#                           in `standard.kim' for lines contained in the MODEL_INPUT and
+#                           MODEL_OUTPUT sections of the KIM descriptor file (but not for
+#                           lines in the MODEL_PARAMETERS section). The six strings, in
+#                           order, are as follows:
+#                  1) Name: This string gives a unique name to the argument.
+#                  2) Type: This string defines the data-type of the associated values.
+#                           Currently there are six (6) Types:
+#                              * integer   : int       (C,C++);   integer   (Fortran)
+#                              * integer*8 : long long (C,C++);   integer*8 (Fortran)
+#                              * real      : float     (C,C++);   real      (Fortran)
+#                              * real*8    : double    (C,C++);   real*8    (Fortran)
+#                              * method    : (int *)   (C,C++);   integer   (Fortran)
+#                              * pointer   : (int *)   (C,C++);   integer   (Fortran)
+#                           The first four are self-explanatory.  The `method' type allows
+#                           the Model (Test) to provide functions that the Test (Model) may
+#                           invoke at run time to perform certain tasks. The `pointer' type
+#                           is capable of pointing to an arbitrary location in memory and is
+#                           a catch-all type that can be used when none of the other types
+#                           are appropriate.
+#                  3) Unit: This string defines the physical units of the values (which must
+#                           all be the same for a single quantity).  Possible values are:
+#                              * none
+#                              * mass
+#                              * length (or distance)
+#                              * time
+#                              * energy
+#                              * velocity
+#                              * force
+#                              * torque
+#                              * temperature
+#                              * pressure
+#                              * dynamic_viscosity
+#                              * charge
+#                              * dipole
+#                              * electric_field
+#                              * density
+#                  4) SystemU/Scale: This string is one of:
+#                                       * none
+#                                       * standard
+#                                       * SI
+#                                    `standard' corresponds to the "Metal" system of units.
+#                                    `none' should only be used when the value of Unit is
+#                                    also `none'.  Additionally, if a custom unit is desired,
+#                                    the string can be a floating-point number that defines 
+#                                    the scaling factor for converting the quantity to the
+#                                    standard units value. That is, multiplying the value by
+#                                    this number converts from the units being used by the
+#                                    Model/Test to the KIM standard units.
+#                  5) Shape: This string defines the rank (number of array dimensions) and
+#                            shape (range of each dimension) for the values associated with
+#                            the argument quantity. The format of the string is a `[' followed
+#                            by a comma separated list of strings/integers, followed by a `]'.
+#                            The strings may be either `numberOfAtoms', `numberAtomTypes', or
+#                            an arbitrary string.  White-space is not allowed between the `['
+#                            and `]' characters.  Providing a few examples is the best way to
+#                            clearly define what this string means:
+#                               * []  - This defines a scalar value (rank=0)
+#                               * [10] - This defines a vector (rank=1) of 10 values
+#                               * [numberOfAtoms] - This defines a vector (rank=1) of
+#                                    `numberOfAtoms' values.  If the KIM_API_allocate function
+#                                    is called as KIM_API_allocate(pkim, nAtoms, nAtomTypes, kimerr),
+#                                    it will allocated memory for this argument using the value
+#                                    of `nAtoms'.
+#                               * [numberAtomTypes] - This defines a vector (rank=1) of
+#                                    `numberAtomTypes' values.  If the KIM_API_allocate function
+#                                    is called as KIM_API_allocate(pkim, nAtoms, nAtomTypes, kimerr),
+#                                    it will allocated memory for this argument using the value
+#                                    of `nAtomTypes'.
+#                               * [10,5] - This defines a two-dimensional array (rank=2) of size
+#                                    10 by 5.
+#                               * [numberOfAtoms,numberAtomTypes,12] - This defines a three-
+#                                    dimensional array (rank=3) of size `numberOfAtoms' by 
+#                                    `numberAtomTypes' by 12.
+#                               * [15,ZZZ] - This defines a two-dimensional array (rank=2)
+#                                    of size 15 by an undetermined value.  The string `ZZZ' can
+#                                    be anything except `numberOfAtoms' an `numberAtomTypes'. In
+#                                    this case, KIM_API_allocate() will not allocate any memory
+#                                    for this argument.  The Test must allocate (and eventually
+#                                    free) this memory and use the KIM_API_set_data() function
+#                                    in order to register the memory location of the values for
+#                                    this argument.
+#                            For multi-dimensional arrays, the `fast-index' is always the last
+#                            in the list.
+#                  6) requirements: This string may be empty or `optional'.  An empty string
+#                                   indicates that the argument is required to be present by the
+#                                   Test/Model (i.e., the Test/Model will read from and/or write
+#                                   to the values associated with this argument.  `optional' means
+#                                   that the Test/Model will check to see if the argument is
+#                                   available before it reads from or writes to the associated values.
+#
+#####################################################################################################
+
+#
+# The first item in a KIM descriptor file must be the MODEL/TEST name
+#
+# MODEL/TEST names are case sensitive strings containing only alpha-numeric characters and
+# possibly the `_' character.  No other characters are allowed.
+#
+
 MODEL_NAME := standard
-# SystemOfUnitsFix := fixed    # can work only with units system defined bellow
-SystemOfUnitsFix := flexible # can reset entire units system (default for model)
-
-# This is is the the file that defines KIM API variables standard, the name field is standard.
-# Every name in kim descriptor file for tests and models must follow the standards
-# that appear in the fields : Name, Type, Unit and Shape
-# The  SystemU/Scale -- here it is set to "none" or "unspecified". The "unspecified" means that
-# in test or models kim file it must be standard, SI, or any other supported by KIM API system
-# of units or numerical scale factor for custom (user defined) system of units
-
-MODEL_INPUT:
-# Name                  Type        Unit        SystemU/Scale           Shape                   requirements
-
-numberOfAtoms           integer*8   none        none                    []                                   # empty [] for Shape means rank is zero
-
-numberAtomTypes         integer     none        none                    []
-
-atomTypes               integer     none        none                    [numberOfAtoms]                      # one [dummy] -- rank is one
-
-coordinates             real*8      length      unspecified             [numberOfAtoms,3]
-
-get_full_neigh          method      none        none                    []
-
-get_half_neigh          method      none        none                    []
-
-neighObject             pointer     none        none                    []                                   # neighbor list object that is used by iterator
-
-boxlength               real*8      length      unspecified             [3]                                  # simulation box length for periodic minimum image
 
 
-MODEL_OUTPUT:
-# Name                  Type        Unit        SystemU/Scale           Shape                   requirements
+#
+# The second item in a KIM descriptor file must be the SystemOfUnitsFix line
+#
+#SystemOfUnitsFix := fixed    # The Model/Test can work only with the units specified in its descriptor file
+SystemOfUnitsFix := flexible # The Model/Test can change the units it works with when requested
 
-compute                 method      none        none                    []
 
-reinit                  method      none        none                    []
-
-destroy                 method      none        none                    []
-
-cutoff                  real*8      length      unspecified             []
-
-energy                  real*8      energy      unspecified             []
-      
-forces                  real*8      force       unspecified             [numberOfAtoms,3]
-
-force                   real*8      force       unspecified             [3]
-
-energyPerAtom           real*8      energy      unspecified             [numberOfAtoms]
-
-stressPerAtom           real*8      pressure    unspecified             [numberOfAtoms,3,3]
-
-virial                  real*8      pressure    unspecified             []
-
+#
+# The CONVENTIONS section
+#
 
 CONVENTIONS:
 # Name                  Type
 
-# in the actual .kim ONLY ONE of the following two lines should be included
-ZeroBasedLists          dummy       # presence of this line indicates that indexes for atoms are from 0 to numberOfAtoms-1
-OneBasedLists           dummy       # presence of this line indicates that indexes for atoms are from 1 to numberOfAtoms
+#
+# In an actual .kim ONLY ONE of the following two lines should be included
+#
+ZeroBasedLists          dummy       # presence of this line indicates that indexes for atoms are from 0 to numberOfAtoms-1 (C-style)
 
-# the following 3 lines are related to locator-iterator access method
-Neigh_IterAccess        dummy       # works with iterator
-Neigh_LocaAccess        dummy       # works with locator
-Neigh_BothAccess        dummy       # need both: locator and iteratorcator
+OneBasedLists           dummy       # presence of this line indicates that indexes for atoms are from 1 to numberOfAtoms   (Fortran-style)
 
-# scenario methods to deal with neighbor list and boundary condition
-CLUSTER                 dummy       # the model needs only coordinates to compute, neighbor list is not needed
-MI-OPBC-H               dummy       # Minimum Image Orthogonal Periodic Boundary Condition Half neighbor list:
-                                    # the model needs coordinates, half neighbor list (neighObjec,get_half_neigh)
-                                    # and boxlength -- size of orthogonal simulation box
-MI-OPBC-F               dummy       # Minimum Image Orthogonal Periodic Boundary Condition Full neighbor list
-                                    # the model needs coordinates, full neighbor list (neighObjec,get_full_neigh)
-                                    # and boxlength -- size of orthogonal simulation box
-NEIGH-RVEC-F            dummy       # the model needs as MODEL_INPUT  coordinates, full neighbor list(neighObject),
-                                    # and  get_full_neigh method, also get_full_neigh must
-                                    # calculate Relative position VECtor --Rij
+#
+# The following three (3) lines are related to locator-iterator neighbor list access mode.
+# These ensure that a Model will not try to use an access mode that is not supported by the routines provided by the Test
+# If Neigh_IterAccess and Neigh_LocaAccess are both in the file, it means that the Model (Test) can work with either mode.
+# If Neigh_BothAccess is in the file, it means that the Model (Test) requires (provides) both access modes
+# It is an error to include Neigh_BothAccess with either of the other two lines in a .kim file.
+#
+Neigh_IterAccess        dummy       # works with iterator mode
 
-NEIGH-PURE-H            dummy       # the model needs as MODEL_INPUT  coordinates,half neighbor list(neighObject),
-                                    # and  get_half_neigh method
+Neigh_LocaAccess        dummy       # works with locator mode
 
-NEIGH-PURE-F            dummy       # the model needs as MODEL_INPUT  coordinates,full neighbor list(neighObject),
-                                    # and  get_full_neigh method
+Neigh_BothAccess        dummy       # need both locator and iterator modes
+
+
+#
+# Neighbor list and Boundary Condition (NBC) scenarios
+# These are the KIM standard methods for dealing with neighbor lists and boundary conditions
+#
+CLUSTER                 dummy       # The Model needs only coordinates to compute, a neighbor list is not needed
+
+MI-OPBC-H               dummy       # This is the Minimum Image Orthogonal Periodic Boundary Condition Half neighbor
+                                    # list scenario.  The Model needs `coordinates', a half neighbor list (with data stored
+                                    # in the `neighObject' argument), the `get_half_neigh' method supplied by the Test,
+                                    # and the `boxlength' argument (which specifies the three side-lengths of the orthogonal
+                                    # simulation box).
+
+MI-OPBC-F               dummy       # This is the Minimum Image Orthogonal Periodic Boundary Condition Full neighbor list
+                                    # scenario. The model needs `coordinates', a full neighbor list (with data stored
+                                    # in the `neighObject' argument), the `get_full_neigh' method supplied by the Test,
+                                    # and the `boxlength' argument (which specifies the three side-lengths of the orthogonal
+                                    # simulation box).
+
+NEIGH-RVEC-F            dummy       # The model needs `coordinates' and a full neighbor list (with data stored in the
+                                    # `neighObject' argument), and the `get_full_neigh' method supplied by the Test.  The
+                                    # `neighObject' argument must also contain the Relative position VECtors (RVEC) (which
+                                    # are returned by the `get_full_neigh' function.
+
+NEIGH-PURE-H            dummy       # The model needs `coordinates', a half neighbor list (with data stored in the `neighObject'
+                                    # argument), and the `get_half_neigh' method supplied by the Test.
+
+NEIGH-PURE-F            dummy       # The model needs `coordinates', a full neighbor list (with data stored in the `neighObject'
+                                    # argument), and the `get_full_neigh' method supplied by the Test.
+
+
+#
+# The SUPPORTED_ATOM/PARTICLES_TYPES section
+#
 
 SUPPORTED_ATOM/PARTICLES_TYPES:
-#Simbol/name            Type                    code
+#
+# The list of standard KIM atom/particle types
+# The code listed in 'standard.kim' is the atomic number. However, this value is ignored and only the code value provided by
+# the Model is retained.
+#
+# Symbol/name           Type                    code
+#
 H                       spec                    1                       # Hydrogen
 He                      spec                    2                       # Helium
 Li                      spec                    3                       # Lithium
@@ -224,14 +400,127 @@ user18                  spec                    218                     # user d
 user19                  spec                    219                     # user defined
 User20                  Spec                    220                     # user defined
 
-MODEL_PARAMETERS:
-# Two types of model parameters are allowed
-# 1) PARAM_FIXED_XXXXXX  - these should not be changed by the user
-# 2) PARAM_FREE_XXXXXX   - these may be changed by the user
-#                          (who should then call model_reinit() to inform
-#                           the model that its parameters have changed
-# Examples
+
+#
+# The MODEL_INPUT section
+#
+
+MODEL_INPUT:
+
+#
+# Every data line in kim descriptor file for tests and models must follow the standards
+# (defined in the `standard.kim' file) that appear in the fields : Name, Type, Unit and Shape
+# In the `standard.kim' file, the SystemU/Scale is set to `none' or `unspecified'. `unspecified'
+# means that in a test or model .kim file the corresponding value must be `standard', `SI',
+# or else the numerical scale factor for a custom (user defined) system of units.
+#
 # Name                  Type        Unit        SystemU/Scale           Shape                   requirements
-# PARAM_FIEXED_Sigma    real*8      length      standard                []
+#
+
+# The number of atoms in the configuration passed between the Model and Test.  Atoms are
+# always numbered sequentially starting from 0 or 1 depending on the ZeroBasedLists/OneBasedLists
+# convention setting.
+numberOfAtoms           integer*8   none        none                    []
+
+# The number of types of atoms/particles contained in the configuration passed between
+# the Model and Test.
+numberAtomTypes         integer     none        none                    []
+
+# A vector of integers indicating the type of each particle in the configuration passed
+# between the Model and Test.  The values in this vector must correspond to the `code' 
+# specified in the Model's KIM descriptor file.
+atomTypes               integer     none        none                    [numberOfAtoms]
+
+# An array of floating-point numbers specifying the spatial location of each atom/particle
+# in the configuration passed between the Model and Test.
+coordinates             real*8      length      unspecified             [numberOfAtoms,3]
+
+# A pointer to the full neighbor list access function that is provided by the Test
+get_full_neigh          method      none        none                    []
+
+# A pointer to the half neighbor list access function that is provided by the Test
+get_half_neigh          method      none        none                    []
+
+# A pointer to the data for the neighbor list that is provided by the Test
+neighObject             pointer     none        none                    []
+
+# A vector of three floating-point numbers indicating the side lengths of the
+# minimum-image periodic orthogonal box
+boxlength               real*8      length      unspecified             [3]
+
+
+#
+# The MODEL_OUTPUT section
+#
+
+MODEL_OUTPUT:
+
+#
+# Every data line in kim descriptor file for tests and models must follow the standards
+# (defined in the `standard.kim' file) that appear in the fields : Name, Type, Unit and Shape
+# In the `standard.kim' file, the SystemU/Scale is set to `none' or `unspecified'. `unspecified'
+# means that in a test or model .kim file the corresponding value must be `standard', `SI',
+# or else the numerical scale factor for a custom (user defined) system of units.
+#
+# Name                  Type        Unit        SystemU/Scale           Shape                   requirements
+
+# A pointer to the Model's compute function
+compute                 method      none        none                    []
+
+# A pointer to the Model's reinit function
+reinit                  method      none        none                    []
+
+# A pointer to the Model's destroy function
+destroy                 method      none        none                    []
+
+# A floating-point number indicating the Model's cutoff distance.  This value should not
+# be modified by the Test.  If the model allows for its cutoff distance to be changed
+# it will provide the parameter PARAM_FREE_cutoff which can be changed.  Once the 
+# PARAM_FREE_cutoff parameter has been changed and the Model's reinit function called, the
+# Model should update the value of `cutoff'.
+cutoff                  real*8      length      unspecified             []
+
+# A floating-point number corresponding to the total energy of the configuration of atoms
+# passed between the Model and Test.
+energy                  real*8      energy      unspecified             []
+
+# An array of floating-point numbers corresponding to the total force acting each atom/particle
+# in the configuration of atoms passed between the Model and Test. 
+forces                  real*8      force       unspecified             [numberOfAtoms,3]
+
+# A vector of three floating-point numbers corresponding to the total force acting on the
+# configuration of atoms passed between the Model and Test.
+force                   real*8      force       unspecified             [3]
+
+# A vector of floating-point numbers corresponding to the energy of each atom in the 
+# configuration passed between the Model and Test.
+energyPerAtom           real*8      energy      unspecified             [numberOfAtoms]
+
+# An array of floating-point numbers corresponding to the virial-stress tensor for each
+# atom in the configuration passed between the Model and Test.
+stressPerAtom           real*8      pressure    unspecified             [numberOfAtoms,3,3]
+
+# A floating-point number corresponding to the total virial for the configuration of atoms
+# passed between the Model and Test.
+virial                  real*8      pressure    unspecified             []
+
+
+#
+# The MODEL_PARAMETERS section
+#
+
+MODEL_PARAMETERS:
+
+#
+# Two types of model parameters are allowed
+# 1) PARAM_FIXED_XXXXXX  - these should not be changed by the Test
+# 2) PARAM_FREE_XXXXXX   - these may be changed by the Test (which should then call the Model's
+#                          _reinit() function to inform the model that its parameters have
+#                          changed)
+#
+# Examples
+#
+# Name                  Type        Unit        SystemU/Scale           Shape                   requirements
+# PARAM_FIXED_Sigma     real*8      length      standard                []
 # PARAM_FREE_Epsilon    real*8      energy      standard                []
 #
