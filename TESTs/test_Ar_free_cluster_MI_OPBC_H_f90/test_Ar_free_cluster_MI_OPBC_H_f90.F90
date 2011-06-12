@@ -15,6 +15,130 @@
 
 !-------------------------------------------------------------------------------
 !
+! Main program
+!
+!-------------------------------------------------------------------------------
+program test_Ar_free_cluster_MI_OPBC_H_f90
+  use KIMservice
+  implicit none
+
+  integer,          external  :: get_half_neigh
+  double precision, parameter :: FCCspacing     = 5.26d0 ! in angstroms
+  integer,          parameter :: nCellsPerSide  = 2
+  integer,          parameter :: DIM            = 3
+  integer,          parameter :: ATypes         = 1
+  integer,          parameter :: &
+       N = 4*(nCellsPerSide)**3 + 6*(nCellsPerSide)**2 + 3*(nCellsPerSide) + 1
+
+  ! neighbor list
+  integer, allocatable  :: neighborList(:,:)
+
+  !
+  ! KIM variables
+  !
+  character*80              :: testname     = "test_Ar_free_cluster_MI_OPBC_H_f90"
+  character*80              :: modelname
+  integer(kind=kim_intptr)  :: pkim
+  integer                   :: ier
+  integer(kind=8) numberOfAtoms; pointer(pnAtoms,numberOfAtoms)
+  integer numberAtomTypes;      pointer(pnAtomTypes,numberAtomTypes)
+  integer atomTypesdum(1); pointer(patomTypesdum,atomTypesdum)
+
+  real*8 cutoff;           pointer(pcutoff,cutoff)
+  real*8 energy;           pointer(penergy,energy)
+  real*8 coordum(DIM,1);   pointer(pcoor,coordum)
+  real*8 forcesdum(DIM,1); pointer(pforces,forcesdum)
+  real*8 boxlength(DIM);   pointer(pboxlength,boxlength)
+  integer N4
+  real*8, pointer  :: coords(:,:), forces(:,:)
+  integer, pointer :: atomTypes(:)
+  N4 = N
+
+  
+  ! Get KIM Model name to use
+  print *, "Please enter a valid KIM model name: "
+  read(*,*) modelname
+
+  ! Initialize the KIM object
+  ier = kim_api_init_f(pkim, testname, modelname); if (ier.le.0) stop "The given KIM Model name "&
+       //"is not a match for this test."
+
+  ! Allocate memory via the KIM system
+  call kim_api_allocate_f(pkim, N, ATypes, ier); if (ier.le.0) call print_error("allocate", ier)
+
+  ! call model's init routine
+  ier = kim_api_model_init(pkim); if (ier.le.0) call print_error("model_init", ier)
+
+  ! Unpack data from KIM object
+  !
+  pnAtoms = kim_api_get_data_f(pkim, "numberOfAtoms", ier);
+  if (ier.le.0) call print_error("numberOfAtoms", ier)
+
+  pnAtomTypes = kim_api_get_data_f(pkim, "numberAtomTypes", ier)
+  if (ier.le.0) call print_error("numberAtomTypes", ier)
+
+  patomTypesdum = kim_api_get_data_f(pkim, "atomTypes", ier)
+  if (ier.le.0) call print_error("atomTypes", ier)
+  call toIntegerArrayWithDescriptor1d(atomTypesdum, atomTypes, N4)
+
+  pcoor = kim_api_get_data_f(pkim, "coordinates", ier)
+  if (ier.le.0) call print_error("coordinates", ier)
+  call toRealArrayWithDescriptor2d(coordum, coords, DIM, N4)
+
+  pcutoff = kim_api_get_data_f(pkim, "cutoff", ier)
+  if (ier.le.0) call print_error("cutoff", ier)
+
+  pboxlength = kim_api_get_data_f(pkim, "boxlength", ier)
+  if (ier.le.0) call print_error("boxlength", ier)
+
+  penergy = kim_api_get_data_f(pkim, "energy", ier)
+  if (ier.le.0) call print_error("energy", ier)
+
+  pforces = kim_api_get_data_f(pkim, "forces", ier)
+  if (ier.le.0) call print_error("forces", ier)
+  call toRealArrayWithDescriptor2d(forcesdum, forces, DIM, N4)
+
+  ! Set values
+  numberOfAtoms   = N
+  numberAtomTypes = ATypes
+  atomTypes(:)    = kim_api_get_atypecode_f(pkim, "Ar", ier); if (ier.le.0) call print_error("aTypeCode", ier)
+
+  ! set up the cluster atom positions
+  call create_FCC_cluster(FCCspacing, nCellsPerSide, coords)
+  boxlength(:)  = 600.d0 ! large enough to make the cluster isolated
+
+  ! compute neighbor lists
+  allocate(neighborList(N+1, N))
+  call MI_OPBC_H_neighborlist(N, coords, (cutoff+0.75), boxlength, neighborList)
+
+  ! store pointers to neighbor list object and access function
+  ier = kim_api_set_data_f(pkim, "neighObject", 1, loc(neighborList))
+  if (ier.le.0) call print_error("neighObject", ier)
+
+  ier = kim_api_set_data_f(pkim, "get_half_neigh", 1, loc(get_half_neigh))
+  if (ier.le.0) call print_error("get_half_heigh", ier)  
+
+  ! Call model compute
+  call kim_api_model_compute(pkim, ier); if (ier.le.0) call print_error("model_compute", ier)
+
+  ! print results to screen
+  print *, "***********************************************************************************************"
+  print *, "Results for KIM Model: ", modelname
+  print *, "Forces:"
+  print *, "  X                   Y                   Z"
+  print 10, forces
+10 format(f20.15, f20.15, f20.15)
+  print *, ""
+  print *, "Energy = ", energy
+
+
+  ! Don't forget to deallocate
+  deallocate(neighborList)
+  stop
+end program test_Ar_free_cluster_MI_OPBC_H_f90
+
+!-------------------------------------------------------------------------------
+!
 ! neighbor list function 
 !
 !-------------------------------------------------------------------------------
@@ -109,152 +233,6 @@ integer function get_half_neigh(pkim,mode,request,atom,numnei,pnei1atom,pRij)
   return
 end function get_half_neigh
 
-
-!-------------------------------------------------------------------------------
-!
-! Main program
-!
-!-------------------------------------------------------------------------------
-program test_Ar_free_cluster_MI_OPBC_H_f90
-  use KIMservice
-  implicit none
-
-  integer,          external  :: get_half_neigh
-  double precision, parameter :: FCCspacing     = 5.26d0 ! in angstroms
-  integer,          parameter :: nCellsPerSide  = 2
-  integer,          parameter :: DIM            = 3
-  integer,          parameter :: ATypes         = 1
-  integer,          parameter :: &
-       N = 4*(nCellsPerSide)**3 + 6*(nCellsPerSide)**2 + 3*(nCellsPerSide) + 1
-
-  ! neighbor list
-  integer, allocatable  :: neighborList(:,:)
-
-  !
-  ! KIM variables
-  !
-  character*80              :: testname     = "test_Ar_free_cluster_MI_OPBC_H_f90"
-  character*80              :: modelname
-  integer(kind=kim_intptr)  :: pkim
-  integer                   :: ier
-  integer(kind=8) numberOfAtoms; pointer(pnAtoms,numberOfAtoms)
-  integer numberAtomTypes;      pointer(pnAtomTypes,numberAtomTypes)
-  integer atomTypesdum(1); pointer(patomTypesdum,atomTypesdum)
-
-  real*8 cutoff;           pointer(pcutoff,cutoff)
-  real*8 energy;           pointer(penergy,energy)
-  real*8 coordum(DIM,1);   pointer(pcoor,coordum)
-  real*8 forcesdum(DIM,1); pointer(pforces,forcesdum)
-  real*8 boxlength(DIM);   pointer(pboxlength,boxlength)
-  integer N4
-  real*8, pointer  :: coords(:,:), forces(:,:)
-  integer, pointer :: atomTypes(:)
-  N4 = N
-
-  
-  ! Get KIM Model name to use
-  print *, "Please enter a valid KIM model name: "
-  read(*,*) modelname
-
-  ! Initialize the KIM object
-  ier = kim_api_init_f(pkim, testname, modelname); if (ier.le.0) stop "The given KIM Model name "&
-       //"is not a match for this test."
-
-  ! Allocate memory via the KIM system
-  call kim_api_allocate_f(pkim, N, ATypes, ier); if (ier.le.0) call print_error("allocate", ier)
-
-  ! Unpack data from KIM object
-  !
-  pnAtoms = kim_api_get_data_f(pkim, "numberOfAtoms", ier);
-  if (ier.le.0) call print_error("numberOfAtoms", ier)
-
-  pnAtomTypes = kim_api_get_data_f(pkim, "numberAtomTypes", ier)
-  if (ier.le.0) call print_error("numberAtomTypes", ier)
-
-  patomTypesdum = kim_api_get_data_f(pkim, "atomTypes", ier)
-  if (ier.le.0) call print_error("atomTypes", ier)
-  call toIntegerArrayWithDescriptor1d(atomTypesdum, atomTypes, N4)
-
-  pcoor = kim_api_get_data_f(pkim, "coordinates", ier)
-  if (ier.le.0) call print_error("coordinates", ier)
-  call toRealArrayWithDescriptor2d(coordum, coords, DIM, N4)
-
-  pcutoff = kim_api_get_data_f(pkim, "cutoff", ier)
-  if (ier.le.0) call print_error("cutoff", ier)
-
-  pboxlength = kim_api_get_data_f(pkim, "boxlength", ier)
-  if (ier.le.0) call print_error("boxlength", ier)
-
-  penergy = kim_api_get_data_f(pkim, "energy", ier)
-  if (ier.le.0) call print_error("energy", ier)
-
-  pforces = kim_api_get_data_f(pkim, "forces", ier)
-  if (ier.le.0) call print_error("forces", ier)
-  call toRealArrayWithDescriptor2d(forcesdum, forces, DIM, N4)
-
-  ! Set values
-  numberOfAtoms   = N
-  numberAtomTypes = ATypes
-  atomTypes(:)    = kim_api_get_atypecode_f(pkim, "Ar", ier); if (ier.le.0) call print_error("aTypeCode", ier)
-
-  ! set up the cluster atom positions
-  call create_FCC_cluster(FCCspacing, nCellsPerSide, coords)
-  boxlength(:)  = 600.d0 ! large enough to make the cluster isolated
-
-  ! call model's init routine
-  ier = kim_api_model_init(pkim); if (ier.le.0) call print_error("model_init", ier)
-
-  ! compute neighbor lists
-  allocate(neighborList(N+1, N))
-  call MI_OPBC_H_neighborlist(N, coords, (cutoff+0.75), boxlength, neighborList)
-
-  ! store pointers to neighbor list object and access function
-  ier = kim_api_set_data_f(pkim, "neighObject", 1, loc(neighborList))
-  if (ier.le.0) call print_error("neighObject", ier)
-
-  ier = kim_api_set_data_f(pkim, "get_half_neigh", 1, loc(get_half_neigh))
-  if (ier.le.0) call print_error("get_half_heigh", ier)  
-
-  ! Call model compute
-  call kim_api_model_compute(pkim, ier); if (ier.le.0) call print_error("model_compute", ier)
-
-  ! print results to screen
-  print *, "***********************************************************************************************"
-  print *, "Results for KIM Model: ", modelname
-  print *, "Energy = ", energy
-  print *, ""
-  print *, "coords:"
-  print *, "  X                   Y                   Z"
-  print 10, coords
-  print *,""
-  print *, "Forces:"
-  print *, "  X                   Y                   Z"
-  print 10, forces
-10 format(f20.15, f20.15, f20.15)
-
-
-  ! Don't forget to deallocate
-  deallocate(neighborList)
-  stop
-end program test_Ar_free_cluster_MI_OPBC_H_f90
-
-
-!-------------------------------------------------------------------------------
-!
-! print_error subroutine
-!
-!-------------------------------------------------------------------------------
-subroutine print_error(nm, err)
-  integer :: err
-  character(len=*) :: nm
-  if (err.ne.1) then
-     print *,"error in: "//nm
-     print *,"KIM error code = ",kimerr
-     stop
-  endif
-  return
-end subroutine print_error
-
 !-------------------------------------------------------------------------------
 !
 ! create_FCC_cluster subroutine
@@ -323,3 +301,20 @@ subroutine create_FCC_cluster(FCCspacing, nCellsPerSide, coords)
 
 end subroutine create_FCC_cluster
 !---------------------------------------------------------------------------------------------------
+
+!-------------------------------------------------------------------------------
+!
+! print_error subroutine
+!
+!-------------------------------------------------------------------------------
+subroutine print_error(nm, err)
+  integer :: err
+  character(len=*) :: nm
+  if (err.ne.1) then
+     print *,"error in: "//nm
+     print *,"KIM error code = ",kimerr
+     stop
+  endif
+  return
+end subroutine print_error
+
