@@ -29,6 +29,10 @@ OneBasedLists           dummy
 
 Neigh_LocaAccess        dummy
 
+NEIGH-PURE-H            dummy
+
+NEIGH-PURE-F            dummy
+
 MI-OPBC-H               dummy
 
 MI-OPBC-F               dummy

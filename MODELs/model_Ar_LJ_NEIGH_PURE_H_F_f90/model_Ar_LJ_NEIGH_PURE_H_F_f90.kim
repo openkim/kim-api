@@ -11,7 +11,7 @@
 #######################################################################################################
 
 
-MODEL_NAME := model_Ar_LJ_MI_OPBC_H_F_f90
+MODEL_NAME := model_Ar_LJ_NEIGH_PURE_H_F_f90
 SystemOfUnitsFix := fixed
 
 
@@ -29,9 +29,9 @@ OneBasedLists           dummy
 
 Neigh_LocaAccess        dummy
 
-MI-OPBC-H               dummy
+NEIGH-PURE-H            dummy
 
-MI-OPBC-F               dummy
+NEIGH-PURE-F            dummy
 
 
 #######################################################################################################
