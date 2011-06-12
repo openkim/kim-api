@@ -89,6 +89,7 @@ comp_force  = kim_api_isit_compute_f(pkim,"forces",ier);         if (ier.le.0) r
 comp_enepot = kim_api_isit_compute_f(pkim,"energyPerAtom",ier);  if (ier.le.0) return
 comp_virial = kim_api_isit_compute_f(pkim,"virial",ier);         if (ier.le.0) return
 
+N4=N
 if (comp_force .eq.1) then 
   pforce  = kim_api_get_data_f(pkim,"forces",ier);        
   if (ier.le.0) return
@@ -103,7 +104,6 @@ if (comp_virial.eq.1) then
    pvirial = kim_api_get_data_f(pkim,"virial",ier);
    if (ier.le.0) return
 endif
-N4=N
 call toRealArrayWithDescriptor2d(coordum,coor,DIM,N4)
 
 ! Initialize potential energies, forces, virial term
