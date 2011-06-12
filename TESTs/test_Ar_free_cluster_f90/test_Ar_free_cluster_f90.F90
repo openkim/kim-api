@@ -194,7 +194,7 @@ subroutine MI_OPBC_H_neighborlist(numberOfAtoms, coords, cutoff, boxlength, neig
   do i=1,numberOfAtoms
      a = 1
      do j=i+1,numberOfAtoms
-        dx = coords(:, j) - coords(:, i)
+        dx = coords(:, i) - coords(:, j)
         where (abs(dx) > 0.5d0*boxlength)  ! apply PBC
            dx = dx - sign(boxlength,dx)
         endwhere
@@ -237,7 +237,7 @@ subroutine MI_OPBC_F_neighborlist(numberOfAtoms, coords, cutoff, boxlength, neig
   do i=1,numberOfAtoms
      a = 1
      do j=1,numberOfAtoms
-        dx = coords(:, j) - coords(:, i)
+        dx = coords(:, i) - coords(:, j)
         where (abs(dx) > 0.5d0*boxlength)  ! apply PBC
            dx = dx - sign(boxlength,dx)
         endwhere
