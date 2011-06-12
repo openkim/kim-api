@@ -41,7 +41,7 @@ contains
     
     !-- Local variables
     integer, parameter :: DIM=3
-    double precision, dimension(DIM) :: Sij,Rij
+    double precision, dimension(DIM) :: Rij
     double precision :: r,Rsqij,phi,dphi,d2phi
     integer :: i,j
     

@@ -51,8 +51,6 @@ get_full_neigh          method       none       none                    []      
 
 neighObject             pointer      none       none                    []
 
-boxlength               real*8       length     standard                [3]
-
 
 #######################################################################################################
 MODEL_OUTPUT:
