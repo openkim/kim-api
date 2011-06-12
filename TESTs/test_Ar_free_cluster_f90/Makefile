@@ -15,15 +15,15 @@ endif
 
 LOCALOBJ = 
 
-all: test_Ar_free_cluster_MI_OPBC_H_f90
+all: test_Ar_free_cluster_f90
 
-test_Ar_free_cluster_MI_OPBC_H_f90: test_Ar_free_cluster_MI_OPBC_H_f90.o $(LOCALOBJ) $(if $(strip $(KIM_DYNAMIC)),,$(MODELOBJ))
+test_Ar_free_cluster_f90: test_Ar_free_cluster_f90.o $(LOCALOBJ) $(if $(strip $(KIM_DYNAMIC)),,$(MODELOBJ))
 	$(LINKCOMPILER) $(CPPFLAG) $(CPPLIBFLAG)  $(LOCALOBJ)  $< $(KIM_LIB) $(MODELOBJ) $(OUTPUTIN) $@
 
-test_Ar_free_cluster_MI_OPBC_H_f90.o: $(LOCALOBJ) Makefile
+test_Ar_free_cluster_f90.o: $(LOCALOBJ) Makefile
 
 Makefile: $(KIM_API_DIR)Include.mk
 	@touch Makefile
 
 clean:
-	rm -f *.mod *.o  test_Ar_free_cluster_MI_OPBC_H_f90
+	rm -f *.mod *.o  test_Ar_free_cluster_f90

@@ -1,19 +1,18 @@
 !*******************************************************************************
 !**
-!**  MODULE model_Ar_LJ_MI_OPBC_H_f90
+!**  MODULE model_Ar_LJ_MI_OPBC_H_F_f90
 !**
 !**  Lennard-Jones pair potential model for argon 
 !**  (modified to have smooth cutoff)
 !**
-!**  Author: Ellad B. Tadmor, Ryan S. Elliott
-!**  Date  : 17 Mar 2011, 10 Jun 2011
+!**  Author: Ryan S. Elliott, Ellad B. Tadmor
 !**
 !**  Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
 !**  All rights reserved.
 !**
 !*******************************************************************************
 
-module model_Ar_LJ_MI_OPBC_H_f90
+module model_Ar_LJ_MI_OPBC_H_F_f90
   use KIMservice
   implicit none
 
@@ -45,6 +44,8 @@ contains
     double precision, dimension(DIM) :: Sij,Rij
     double precision :: r,Rsqij,phi,dphi,d2phi
     integer :: i,j,jj,numnei,atom,atom_ret
+    character*64 :: NBC_Method; pointer(pNBC_Method,NBC_Method)
+    integer :: nbc                               ! 0 - half, 1 - full
     
     !-- KIM variables
     integer(kind=8) numberOfAtoms; pointer(pnAtoms,numberOfAtoms)
@@ -134,44 +135,70 @@ contains
     if (comp_virial.eq.1) virial = 0.d0
 
 
+    ! determine which NBC scenerio to use
+    pNBC_Method = kim_api_get_nbc_method(pkim, ier); if (ier.le.0) return
+    if (index(NBC_Method,"MI-OPBC-H").eq.1) then
+       nbc = 0
+    elseif (index(NBC_Method,"MI-OPBC-F").eq.1) then
+       nbc = 1
+    else
+       ier = 0
+       return
+    endif
+    call free(pNBC_Method) ! don't forget to release the memory...
+
     !  Compute energy and forces
     !
-    !  Using a half-neighbor list, so we don't need to consider the last atom
-    !  because it will not have any neighbors (in its list).
-    do i = 1,numberOfAtoms-1
+    do i = 1,numberOfAtoms
        
        ! Get neighbors for atom i
        !
        atom = i ! request neighbors for atom i
        
-       ier = kim_api_get_half_neigh(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij_dummy)
+       if (nbc.eq.0) then
+          ier = kim_api_get_half_neigh(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij_dummy)
+       else
+          ier = kim_api_get_full_neigh(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij_dummy)
+       endif
        if (ier.le.0) return
        
        ! Loop over the neighbors of atom i
        !
        do jj = 1, numnei
           j = nei1atom(jj)
-          Rij = coor(:,i) - coor(:,j)                 ! distance vector between i j
-          where ( abs(Rij) > 0.5d0*boxlength )        ! periodic boundary conditions
-             Rij = Rij - sign(boxlength,Rij)          ! applied where needed.
-          end where                                   ! 
-          Rsqij = dot_product(Rij,Rij)                ! compute square distance
-          if ( Rsqij < model_cutsq ) then             ! particles are interacting?
-             r = sqrt(Rsqij)                          ! compute distance
+          Rij = coor(:,i) - coor(:,j)                   ! distance vector between i j
+          where ( abs(Rij) > 0.5d0*boxlength )          ! periodic boundary conditions
+             Rij = Rij - sign(boxlength,Rij)            ! applied where needed.
+          end where                                     ! 
+          Rsqij = dot_product(Rij,Rij)                  ! compute square distance
+          if ( Rsqij < model_cutsq ) then               ! particles are interacting?
+             r = sqrt(Rsqij)                            ! compute distance
              call pair(model_epsilon,model_sigma,model_A,model_B, model_C, &
-                  r,phi,dphi,d2phi)                   ! compute pair potential
-             if (comp_enepot.eq.1) then               !
-                ene_pot(i) = ene_pot(i) + 0.5d0*phi   ! accumulate energy
-                ene_pot(j) = ene_pot(j) + 0.5d0*phi   ! (i and j share it)
-             else                                     !
-                energy = energy + phi                 !
-             endif                                    !
-             if (comp_virial.eq.1) then               !
-                virial = virial + r*dphi              ! accumul. virial=sum r(dV/dr)
-             endif                                    !
-             if (comp_force.eq.1) then                !
-                force(:,i) = force(:,i) - dphi*Rij/r  ! accumulate forces
-                force(:,j) = force(:,j) + dphi*Rij/r  !    (Fji = -Fij)
+                  r,phi,dphi,d2phi)                     ! compute pair potential
+             if (comp_enepot.eq.1) then                 !
+                ene_pot(i) = ene_pot(i) + 0.5d0*phi     ! accumulate energy
+                if (nbc.eq.0) then                      !
+                   ene_pot(j) = ene_pot(j) + 0.5d0*phi  ! (i and j share it)
+                endif                                   !
+             else                                       !
+                if (nbc.eq.0) then                      !
+                   energy = energy + phi                ! half neigh case
+                else                                    !
+                   energy = energy + 0.5d0*phi          ! full neigh case
+                endif                                      !
+             endif
+             if (comp_virial.eq.1) then                 !
+                if (nbc.eq.0) then                      !
+                   virial = virial + r*dphi             ! accumul. virial=sum r(dV/dr)
+                else                                    !
+                   virial = virial + 0.5d0*r*dphi       !
+                endif                                   !
+             endif                                      !
+             if (comp_force.eq.1) then                  !
+                force(:,i) = force(:,i) - dphi*Rij/r    ! accumulate forces
+                if (nbc.eq.0) then                      !
+                   force(:,j) = force(:,j) + dphi*Rij/r ! (Fji = -Fij)
+                endif                                   !
              endif
           endif
        enddo
@@ -291,7 +318,7 @@ contains
     
   end subroutine ReInit
   
-end module model_Ar_LJ_MI_OPBC_H_f90
+end module model_Ar_LJ_MI_OPBC_H_F_f90
 
 
 !-------------------------------------------------------------------------------
@@ -299,8 +326,8 @@ end module model_Ar_LJ_MI_OPBC_H_f90
 ! Model initialization routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-subroutine model_Ar_LJ_MI_OPBC_H_f90_init(pkim)
-  use model_Ar_LJ_MI_OPBC_H_f90
+subroutine model_Ar_LJ_MI_OPBC_H_F_f90_init(pkim)
+  use model_Ar_LJ_MI_OPBC_H_F_f90
   use KIMservice
   implicit none
   
@@ -384,4 +411,4 @@ subroutine model_Ar_LJ_MI_OPBC_H_f90_init(pkim)
   if (ier.le.0) stop '* ERROR: PARAM_FIXED_cutsq not found in KIM object.'
   model_cutsq = model_cutoff**2
   
-end subroutine model_Ar_LJ_MI_OPBC_H_f90_init
+end subroutine model_Ar_LJ_MI_OPBC_H_F_f90_init

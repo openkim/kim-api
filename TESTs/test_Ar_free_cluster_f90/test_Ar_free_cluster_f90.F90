@@ -1,12 +1,11 @@
 !*******************************************************************************
 !**
-!**  PROGRAM test_Ar_free_cluster_MI_OPBC_H_f90
+!**  PROGRAM test_Ar_free_cluster_f90
 !**
-!**  KIM compliant program, using the MI-OPBC-H NBC, to compute the
-!**  energy of and forces on an isolated cluster of Ar atoms
+!**  KIM compliant program to compute the energy of and forces on an isolated 
+!**  cluster of Ar atoms
 !**
 !**  Author: Ryan S. Elliott
-!**  Date  : 11 Jun 2011
 !**
 !**  Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
 !**  All rights reserved.
@@ -18,11 +17,11 @@
 ! Main program
 !
 !-------------------------------------------------------------------------------
-program test_Ar_free_cluster_MI_OPBC_H_f90
+program test_Ar_free_cluster_f90
   use KIMservice
   implicit none
 
-  integer,          external  :: get_half_neigh
+  integer,          external  :: get_MI_OPBC_neigh
   double precision, parameter :: FCCspacing     = 5.26d0 ! in angstroms
   integer,          parameter :: nCellsPerSide  = 2
   integer,          parameter :: DIM            = 3
@@ -36,8 +35,10 @@ program test_Ar_free_cluster_MI_OPBC_H_f90
   !
   ! KIM variables
   !
-  character*80              :: testname     = "test_Ar_free_cluster_MI_OPBC_H_f90"
+  character*80              :: testname     = "test_Ar_free_cluster_f90"
   character*80              :: modelname
+  character*64 :: NBC_Method; pointer(pNBC_Method,NBC_Method)
+  integer :: nbc                               ! 0 - half, 1 - full
   integer(kind=kim_intptr)  :: pkim
   integer                   :: ier
   integer(kind=8) numberOfAtoms; pointer(pnAtoms,numberOfAtoms)
@@ -107,23 +108,46 @@ program test_Ar_free_cluster_MI_OPBC_H_f90
   call create_FCC_cluster(FCCspacing, nCellsPerSide, coords)
   boxlength(:)  = 600.d0 ! large enough to make the cluster isolated
 
+  ! determine which NBC scenerio to use
+  pNBC_Method = kim_api_get_nbc_method(pkim, ier); if (ier.le.0) return
+  if (index(NBC_Method,"MI-OPBC-H").eq.1) then
+     nbc = 0
+  elseif (index(NBC_Method,"MI-OPBC-F").eq.1) then
+     nbc = 1
+  else
+     ier = 0
+     return
+  endif
+  call free(pNBC_Method) ! don't forget to release the memory...
+
   ! compute neighbor lists
   allocate(neighborList(N+1, N))
-  call MI_OPBC_H_neighborlist(N, coords, (cutoff+0.75), boxlength, neighborList)
+  if (nbc.eq.0) then
+     call MI_OPBC_H_neighborlist(N, coords, (cutoff+0.75), boxlength, neighborList)
+  else
+     call MI_OPBC_F_neighborlist(N, coords, (cutoff+0.75), boxlength, neighborList)
+  endif
 
   ! store pointers to neighbor list object and access function
   ier = kim_api_set_data_f(pkim, "neighObject", 1, loc(neighborList))
   if (ier.le.0) call print_error("neighObject", ier)
 
-  ier = kim_api_set_data_f(pkim, "get_half_neigh", 1, loc(get_half_neigh))
-  if (ier.le.0) call print_error("get_half_heigh", ier)  
+  if (nbc.eq.0) then
+     ier = kim_api_set_data_f(pkim, "get_half_neigh", 1, loc(get_MI_OPBC_neigh))
+     if (ier.le.0) call print_error("get_half_heigh", ier)
+  else
+     ier = kim_api_set_data_f(pkim, "get_full_neigh", 1, loc(get_MI_OPBC_neigh))
+     if (ier.le.0) call print_error("get_full_heigh", ier)
+  endif
 
   ! Call model compute
   call kim_api_model_compute(pkim, ier); if (ier.le.0) call print_error("model_compute", ier)
 
   ! print results to screen
+  pNBC_Method = kim_api_get_nbc_method(pkim,ier); if (ier.le.0) call print_error("get_NBC_method", ier)
   print *, "***********************************************************************************************"
   print *, "Results for KIM Model: ", modelname
+  print *, "Using NBC: ", NBC_Method
   print *, "Forces:"
   print *, "  X                   Y                   Z"
   print 10, forces
@@ -135,11 +159,18 @@ program test_Ar_free_cluster_MI_OPBC_H_f90
   ! Don't forget to deallocate
   deallocate(neighborList)
   stop
-end program test_Ar_free_cluster_MI_OPBC_H_f90
+end program test_Ar_free_cluster_f90
 
 !-------------------------------------------------------------------------------
 !
-! neighbor list function 
+! neighbor list functions
+!
+!-------------------------------------------------------------------------------
+
+
+!-------------------------------------------------------------------------------
+!
+! MI_OPBC_H_neighborlist 
 !
 !-------------------------------------------------------------------------------
 subroutine MI_OPBC_H_neighborlist(numberOfAtoms, coords, cutoff, boxlength, neighborList)
@@ -182,12 +213,57 @@ end subroutine MI_OPBC_H_neighborlist
 
 !-------------------------------------------------------------------------------
 !
-! get_half_neigh_kim neighbor list access function
+! MI_OPBC_F_neighborlist 
+!
+!-------------------------------------------------------------------------------
+subroutine MI_OPBC_F_neighborlist(numberOfAtoms, coords, cutoff, boxlength, neighborList)
+  implicit none
+  
+  !-- Transferred variables
+  integer,                                             intent(in)  :: numberOfAtoms
+  double precision, dimension(3,numberOfAtoms),        intent(in)  :: coords
+  double precision,                                    intent(in)  :: cutoff
+  double precision, dimension(3),                      intent(in)  :: boxlength
+  integer,   dimension(numberOfAtoms+1,numberOfAtoms), intent(out) :: neighborList ! not memory efficient
+  
+  !-- Local variables
+  integer i, j, a
+  double precision dx(3)
+  double precision r2
+  double precision cutoff2
+  
+  cutoff2 = cutoff**2
+  
+  do i=1,numberOfAtoms
+     a = 1
+     do j=1,numberOfAtoms
+        dx = coords(:, j) - coords(:, i)
+        where (abs(dx) > 0.5d0*boxlength)  ! apply PBC
+           dx = dx - sign(boxlength,dx)
+        endwhere
+        r2 = dot_product(dx, dx)
+        if (r2.le.cutoff2) then
+           if (i.ne.j) then
+              ! atom j is a neighbor of atom i
+              a = a+1
+              neighborList(a,i) = j
+           endif
+        endif
+     enddo
+     ! atom i has a-1 neighbors
+     neighborList(1,i) = a-1
+  enddo
+  
+end subroutine MI_OPBC_F_neighborlist
+
+!-------------------------------------------------------------------------------
+!
+! get_MI_OPBC_neigh neighbor list access function (works for both full and half)
 !
 ! This function only implements Locator mode
 !
 !-------------------------------------------------------------------------------
-integer function get_half_neigh(pkim,mode,request,atom,numnei,pnei1atom,pRij)
+integer function get_MI_OPBC_neigh(pkim,mode,request,atom,numnei,pnei1atom,pRij)
   use KIMservice
   implicit none
   
@@ -208,7 +284,7 @@ integer function get_half_neigh(pkim,mode,request,atom,numnei,pnei1atom,pRij)
   integer   :: N
 
   ! exit if wrong mode
-  if (mode.ne.1) stop "get_half_neigh_kim() only supports locator mode!"
+  if (mode.ne.1) stop "get_MI_OPBC_neigh() only supports locator mode!"
   
   ! unpack neighbor list object
   pneighborListdum = kim_api_get_data_f(pkim, "neighObject", ier)
@@ -229,9 +305,9 @@ integer function get_half_neigh(pkim,mode,request,atom,numnei,pnei1atom,pRij)
   ! set pointer to Rij to NULL
   pRij = 0
   
-  get_half_neigh = 1
+  get_MI_OPBC_neigh = 1
   return
-end function get_half_neigh
+end function get_MI_OPBC_neigh
 
 !-------------------------------------------------------------------------------
 !
