@@ -679,7 +679,7 @@ Arguments:
                             0 (or negative value) -- unsuccessful
 
 Corresponding FORTRAN style interface:
-        function kim_api_get_nbc_method(kimmdl,nvpar,error)
+        function kim_api_get_nbc_method(kimmdl,error)
             integer(kind=kim_intptr) :: kimmdl,kim_api_get_nbc_method
             integer::error
         end function kim_api_get_nbc_method
