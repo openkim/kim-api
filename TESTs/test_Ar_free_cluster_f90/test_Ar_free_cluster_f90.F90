@@ -224,10 +224,11 @@ end program test_Ar_free_cluster_f90
 !
 !-------------------------------------------------------------------------------
 subroutine MI_OPBC_H_neighborlist(numberOfAtoms, coords, cutoff, boxlength, neighborList)
+  use KIMservice
   implicit none
   
   !-- Transferred variables
-  integer,                                             intent(in)  :: numberOfAtoms
+  integer(kind=kim_intptr),                            intent(in)  :: numberOfAtoms
   double precision, dimension(3,numberOfAtoms),        intent(in)  :: coords
   double precision,                                    intent(in)  :: cutoff
   double precision, dimension(3),                      intent(in)  :: boxlength
@@ -267,10 +268,11 @@ end subroutine MI_OPBC_H_neighborlist
 !
 !-------------------------------------------------------------------------------
 subroutine MI_OPBC_F_neighborlist(numberOfAtoms, coords, cutoff, boxlength, neighborList)
+  use KIMservice
   implicit none
   
   !-- Transferred variables
-  integer,                                             intent(in)  :: numberOfAtoms
+  integer(kind=kim_intptr),                            intent(in)  :: numberOfAtoms
   double precision, dimension(3,numberOfAtoms),        intent(in)  :: coords
   double precision,                                    intent(in)  :: cutoff
   double precision, dimension(3),                      intent(in)  :: boxlength
@@ -312,10 +314,11 @@ end subroutine MI_OPBC_F_neighborlist
 !
 !-------------------------------------------------------------------------------
 subroutine NEIGH_PURE_H_neighborlist(numberOfAtoms, coords, cutoff, neighborList)
+  use KIMservice
   implicit none
   
   !-- Transferred variables
-  integer,                                             intent(in)  :: numberOfAtoms
+  integer(kind=kim_intptr),                            intent(in)  :: numberOfAtoms
   double precision, dimension(3,numberOfAtoms),        intent(in)  :: coords
   double precision,                                    intent(in)  :: cutoff
   integer,   dimension(numberOfAtoms+1,numberOfAtoms), intent(out) :: neighborList ! not memory efficient
@@ -351,10 +354,11 @@ end subroutine NEIGH_PURE_H_neighborlist
 !
 !-------------------------------------------------------------------------------
 subroutine NEIGH_PURE_F_neighborlist(numberOfAtoms, coords, cutoff, neighborList)
+  use KIMservice
   implicit none
   
   !-- Transferred variables
-  integer,                                             intent(in)  :: numberOfAtoms
+  integer(kind=kim_intptr),                            intent(in)  :: numberOfAtoms
   double precision, dimension(3,numberOfAtoms),        intent(in)  :: coords
   double precision,                                    intent(in)  :: cutoff
   integer,   dimension(numberOfAtoms+1,numberOfAtoms), intent(out) :: neighborList ! not memory efficient
@@ -446,10 +450,11 @@ end function get_MI_PURE_neigh
 !
 !-------------------------------------------------------------------------------
 subroutine NEIGH_RVEC_F_neighborlist(numberOfAtoms, coords, cutoff, neighborList, RijList)
+  use KIMservice
   implicit none
 
   !-- Transferred variables
-  integer,                                                    intent(in)  :: numberOfAtoms
+  integer(kind=kim_intptr),                            intent(in)  :: numberOfAtoms
   double precision, dimension(3,numberOfAtoms),               intent(in)  :: coords
   double precision,                                           intent(in)  :: cutoff
   integer, dimension(numberOfAtoms+1,numberOfAtoms),          intent(out) :: neighborList
