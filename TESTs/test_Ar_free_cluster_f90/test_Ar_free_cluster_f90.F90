@@ -29,13 +29,13 @@ program test_Ar_free_cluster_f90
   use KIMservice
   implicit none
 
-  integer,          external  :: get_MI_PURE_neigh
-  integer,          external  :: get_RVEC_neigh
-  double precision, parameter :: FCCspacing     = 5.26d0 ! in angstroms
-  integer,          parameter :: nCellsPerSide  = 2
-  integer,          parameter :: DIM            = 3
-  integer,          parameter :: ATypes         = 1
-  integer,          parameter :: &
+  integer,                  external  :: get_MI_PURE_neigh
+  integer,                  external  :: get_RVEC_neigh
+  double precision,         parameter :: FCCspacing     = 5.26d0 ! in angstroms
+  integer,                  parameter :: nCellsPerSide  = 2
+  integer,                  parameter :: DIM            = 3
+  integer,                  parameter :: ATypes         = 1
+  integer(kind=kim_intptr), parameter :: &
        N = 4*(nCellsPerSide)**3 + 6*(nCellsPerSide)**2 + 3*(nCellsPerSide) + 1
 
   ! neighbor list

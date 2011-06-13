@@ -21,11 +21,11 @@ program test_Ar_free_cluster_CLUSTER_f90
   use KIMservice
   implicit none
 
-  double precision, parameter :: FCCspacing     = 5.26d0 ! in angstroms
-  integer,          parameter :: nCellsPerSide  = 2
-  integer,          parameter :: DIM            = 3
-  integer,          parameter :: ATypes         = 1
-  integer,          parameter :: &
+  double precision,         parameter :: FCCspacing     = 5.26d0 ! in angstroms
+  integer,                  parameter :: nCellsPerSide  = 2
+  integer,                  parameter :: DIM            = 3
+  integer,                  parameter :: ATypes         = 1
+  integer(kind=kim_intptr), parameter :: &
        N = 4*(nCellsPerSide)**3 + 6*(nCellsPerSide)**2 + 3*(nCellsPerSide) + 1
 
   !
