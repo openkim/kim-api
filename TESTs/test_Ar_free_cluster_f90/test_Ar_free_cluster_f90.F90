@@ -27,7 +27,6 @@
 !-------------------------------------------------------------------------------
 program test_Ar_free_cluster_f90
   use KIMservice
-  use Rvec_nl_mod
   implicit none
 
   integer,          external  :: get_MI_PURE_neigh
@@ -446,7 +445,6 @@ end function get_MI_PURE_neigh
 !
 !-------------------------------------------------------------------------------
 subroutine NEIGH_RVEC_F_neighborlist(numberOfAtoms, coords, cutoff, neighborList, RijList)
-  use Rvec_nl_mod
   implicit none
 
   !-- Transferred variables
