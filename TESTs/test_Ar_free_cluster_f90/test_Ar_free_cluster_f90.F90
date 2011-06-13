@@ -37,6 +37,7 @@ program test_Ar_free_cluster_f90
   integer,                  parameter :: ATypes         = 1
   integer(kind=kim_intptr), parameter :: &
        N = 4*(nCellsPerSide)**3 + 6*(nCellsPerSide)**2 + 3*(nCellsPerSide) + 1
+  integer(kink=kim_intptr), parameter :: SizeOne        = 1
 
   ! neighbor list
   integer, allocatable          :: neighborList(:,:)
@@ -158,30 +159,30 @@ program test_Ar_free_cluster_f90
 
   ! store pointers to neighbor list object and access function
   if (nbc.le.3) then
-     ier = kim_api_set_data_f(pkim, "neighObject", 1, loc(neighborList))
+     ier = kim_api_set_data_f(pkim, "neighObject", SizeOne, loc(neighborList))
      if (ier.le.0) call print_error("neighObject", ier)
   else
      allocate(NLRvecLocs(2))
      NLRvecLocs(1) = loc(neighborList)
      NLRvecLocs(2) = loc(RijList)
-     ier = kim_api_set_data_f(pkim, "neighObject", 1, loc(NLRvecLocs))
+     ier = kim_api_set_data_f(pkim, "neighObject", SizeOne, loc(NLRvecLocs))
      if (ier.le.0) call print_error("neighObject", ier)
   endif
 
   if (nbc.eq.0) then
-     ier = kim_api_set_data_f(pkim, "get_half_neigh", 1, loc(get_MI_PURE_neigh))
+     ier = kim_api_set_data_f(pkim, "get_half_neigh", SizeOne, loc(get_MI_PURE_neigh))
      if (ier.le.0) call print_error("get_half_heigh", ier)
   elseif (nbc.eq.1) then
-     ier = kim_api_set_data_f(pkim, "get_full_neigh", 1, loc(get_MI_PURE_neigh))
+     ier = kim_api_set_data_f(pkim, "get_full_neigh", SizeOne, loc(get_MI_PURE_neigh))
      if (ier.le.0) call print_error("get_full_heigh", ier)
   elseif (nbc.eq.2) then
-     ier = kim_api_set_data_f(pkim, "get_half_neigh", 1, loc(get_MI_PURE_neigh))
+     ier = kim_api_set_data_f(pkim, "get_half_neigh", SizeOne, loc(get_MI_PURE_neigh))
      if (ier.le.0) call print_error("get_half_heigh", ier)
   elseif (nbc.eq.3) then
-     ier = kim_api_set_data_f(pkim, "get_full_neigh", 1, loc(get_MI_PURE_neigh))
+     ier = kim_api_set_data_f(pkim, "get_full_neigh", SizeOne, loc(get_MI_PURE_neigh))
      if (ier.le.0) call print_error("get_full_heigh", ier)
   elseif (nbc.eq.4) then
-     ier = kim_api_set_data_f(pkim, "get_full_neigh", 1, loc(get_RVEC_neigh))
+     ier = kim_api_set_data_f(pkim, "get_full_neigh", SizeOne, loc(get_RVEC_neigh))
      if (ier.le.0) call print_error("get_full_heigh", ier)
   endif
 
