@@ -195,64 +195,6 @@ SystemOfUnitsFix := flexible # The Model/Test can change the units it works with
 
 
 #
-# The CONVENTIONS section
-#
-
-CONVENTIONS:
-# Name                  Type
-
-#
-# In an actual .kim ONLY ONE of the following two lines should be included
-#
-ZeroBasedLists          dummy       # presence of this line indicates that indexes for atoms are from 0 to numberOfAtoms-1 (C-style)
-
-OneBasedLists           dummy       # presence of this line indicates that indexes for atoms are from 1 to numberOfAtoms   (Fortran-style)
-
-#
-# The following three (3) lines are related to locator-iterator neighbor list access mode.
-# These ensure that a Model will not try to use an access mode that is not supported by the routines provided by the Test
-# If Neigh_IterAccess and Neigh_LocaAccess are both in the file, it means that the Model (Test) can work with either mode.
-# If Neigh_BothAccess is in the file, it means that the Model (Test) requires (provides) both access modes
-# It is an error to include Neigh_BothAccess with either of the other two lines in a .kim file.
-#
-Neigh_IterAccess        dummy       # works with iterator mode
-
-Neigh_LocaAccess        dummy       # works with locator mode
-
-Neigh_BothAccess        dummy       # need both locator and iterator modes
-
-
-#
-# Neighbor list and Boundary Condition (NBC) scenarios
-# These are the KIM standard methods for dealing with neighbor lists and boundary conditions
-#
-CLUSTER                 dummy       # The Model needs only coordinates to compute, a neighbor list is not needed
-
-MI-OPBC-H               dummy       # This is the Minimum Image Orthogonal Periodic Boundary Condition Half neighbor
-                                    # list scenario.  The Model needs `coordinates', a half neighbor list (with data stored
-                                    # in the `neighObject' argument), the `get_half_neigh' method supplied by the Test,
-                                    # and the `boxlength' argument (which specifies the three side-lengths of the orthogonal
-                                    # simulation box).
-
-MI-OPBC-F               dummy       # This is the Minimum Image Orthogonal Periodic Boundary Condition Full neighbor list
-                                    # scenario. The model needs `coordinates', a full neighbor list (with data stored
-                                    # in the `neighObject' argument), the `get_full_neigh' method supplied by the Test,
-                                    # and the `boxlength' argument (which specifies the three side-lengths of the orthogonal
-                                    # simulation box).
-
-NEIGH-RVEC-F            dummy       # The model needs `coordinates' and a full neighbor list (with data stored in the
-                                    # `neighObject' argument), and the `get_full_neigh' method supplied by the Test.  The
-                                    # `neighObject' argument must also contain the Relative position VECtors (RVEC) (which
-                                    # are returned by the `get_full_neigh' function.
-
-NEIGH-PURE-H            dummy       # The model needs `coordinates', a half neighbor list (with data stored in the `neighObject'
-                                    # argument), and the `get_half_neigh' method supplied by the Test.
-
-NEIGH-PURE-F            dummy       # The model needs `coordinates', a full neighbor list (with data stored in the `neighObject'
-                                    # argument), and the `get_full_neigh' method supplied by the Test.
-
-
-#
 # The SUPPORTED_ATOM/PARTICLES_TYPES section
 #
 
@@ -261,6 +203,9 @@ SUPPORTED_ATOM/PARTICLES_TYPES:
 # The list of standard KIM atom/particle types
 # The code listed in 'standard.kim' is the atomic number. However, this value is ignored and only the code value provided by
 # the Model is retained.
+#
+# If this list is empty for both the Model and Test, then a Test/Model match is possible.  This option allows for Models and
+# Tests that don't assign any specific physical type to their (single) particle type
 #
 # Symbol/name           Type                    code
 #
@@ -402,6 +347,64 @@ user17                  spec                    217                     # user d
 user18                  spec                    218                     # user defined
 user19                  spec                    219                     # user defined
 User20                  Spec                    220                     # user defined
+
+
+#
+# The CONVENTIONS section
+#
+
+CONVENTIONS:
+# Name                  Type
+
+#
+# In an actual .kim ONLY ONE of the following two lines should be included
+#
+ZeroBasedLists          dummy       # presence of this line indicates that indexes for atoms are from 0 to numberOfAtoms-1 (C-style)
+
+OneBasedLists           dummy       # presence of this line indicates that indexes for atoms are from 1 to numberOfAtoms   (Fortran-style)
+
+#
+# The following three (3) lines are related to locator-iterator neighbor list access mode.
+# These ensure that a Model will not try to use an access mode that is not supported by the routines provided by the Test
+# If Neigh_IterAccess and Neigh_LocaAccess are both in the file, it means that the Model (Test) can work with either mode.
+# If Neigh_BothAccess is in the file, it means that the Model (Test) requires (provides) both access modes
+# It is an error to include Neigh_BothAccess with either of the other two lines in a .kim file.
+#
+Neigh_IterAccess        dummy       # works with iterator mode
+
+Neigh_LocaAccess        dummy       # works with locator mode
+
+Neigh_BothAccess        dummy       # need both locator and iterator modes
+
+
+#
+# Neighbor list and Boundary Condition (NBC) scenarios
+# These are the KIM standard methods for dealing with neighbor lists and boundary conditions
+#
+CLUSTER                 dummy       # The Model needs only coordinates to compute, a neighbor list is not needed
+
+MI-OPBC-H               dummy       # This is the Minimum Image Orthogonal Periodic Boundary Condition Half neighbor
+                                    # list scenario.  The Model needs `coordinates', a half neighbor list (with data stored
+                                    # in the `neighObject' argument), the `get_half_neigh' method supplied by the Test,
+                                    # and the `boxlength' argument (which specifies the three side-lengths of the orthogonal
+                                    # simulation box).
+
+MI-OPBC-F               dummy       # This is the Minimum Image Orthogonal Periodic Boundary Condition Full neighbor list
+                                    # scenario. The model needs `coordinates', a full neighbor list (with data stored
+                                    # in the `neighObject' argument), the `get_full_neigh' method supplied by the Test,
+                                    # and the `boxlength' argument (which specifies the three side-lengths of the orthogonal
+                                    # simulation box).
+
+NEIGH-RVEC-F            dummy       # The model needs `coordinates' and a full neighbor list (with data stored in the
+                                    # `neighObject' argument), and the `get_full_neigh' method supplied by the Test.  The
+                                    # `neighObject' argument must also contain the Relative position VECtors (RVEC) (which
+                                    # are returned by the `get_full_neigh' function.
+
+NEIGH-PURE-H            dummy       # The model needs `coordinates', a half neighbor list (with data stored in the `neighObject'
+                                    # argument), and the `get_half_neigh' method supplied by the Test.
+
+NEIGH-PURE-F            dummy       # The model needs `coordinates', a full neighbor list (with data stored in the `neighObject'
+                                    # argument), and the `get_full_neigh' method supplied by the Test.
 
 
 #
