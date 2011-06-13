@@ -37,7 +37,7 @@ program test_Ar_free_cluster_f90
   integer,                  parameter :: ATypes         = 1
   integer(kind=kim_intptr), parameter :: &
        N = 4*(nCellsPerSide)**3 + 6*(nCellsPerSide)**2 + 3*(nCellsPerSide) + 1
-  integer(kink=kim_intptr), parameter :: SizeOne        = 1
+  integer(kind=kim_intptr), parameter :: SizeOne        = 1
 
   ! neighbor list
   integer, allocatable          :: neighborList(:,:)
