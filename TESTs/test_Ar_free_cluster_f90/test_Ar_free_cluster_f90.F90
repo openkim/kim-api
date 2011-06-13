@@ -8,8 +8,9 @@
 !**  Works with the following NBC scenarios:
 !**        MI-OPBC-H
 !**        MI-OPBC-F
-!**        PURE-NEIGH-H
-!**        PURE-NEIGH-F
+!**        NEIGH-PURE-H
+!**        NEIGH-PURE-F
+!**        NEIGH-RVEC-F
 !**
 !**  Author: Ryan S. Elliott
 !**
@@ -18,6 +19,7 @@
 !**
 !*******************************************************************************
 
+
 !-------------------------------------------------------------------------------
 !
 ! Main program
@@ -25,9 +27,11 @@
 !-------------------------------------------------------------------------------
 program test_Ar_free_cluster_f90
   use KIMservice
+  use Rvec_nl_mod
   implicit none
 
   integer,          external  :: get_MI_PURE_neigh
+  integer,          external  :: get_RVEC_neigh
   double precision, parameter :: FCCspacing     = 5.26d0 ! in angstroms
   integer,          parameter :: nCellsPerSide  = 2
   integer,          parameter :: DIM            = 3
@@ -36,7 +40,9 @@ program test_Ar_free_cluster_f90
        N = 4*(nCellsPerSide)**3 + 6*(nCellsPerSide)**2 + 3*(nCellsPerSide) + 1
 
   ! neighbor list
-  integer, allocatable  :: neighborList(:,:)
+  integer, allocatable          :: neighborList(:,:)
+  integer, allocatable          :: NLRvecLocs(:)
+  double precision, allocatable :: RijList(:,:,:)
 
   !
   ! KIM variables
@@ -44,7 +50,7 @@ program test_Ar_free_cluster_f90
   character*80              :: testname     = "test_Ar_free_cluster_f90"
   character*80              :: modelname
   character*64 :: NBC_Method; pointer(pNBC_Method,NBC_Method)
-  integer :: nbc  ! 0 - MI-OPBC-H, 1 - MI-OPBC-F, 2 - NEIGH-PURE-H, 3 - NEIGH-PURE-F
+  integer :: nbc  ! 0- MI-OPBC-H, 1- MI-OPBC-F, 2- NEIGH-PURE-H, 3- NEIGH-PURE-F, 4- NEIGH-RVCE-F
   integer(kind=kim_intptr)  :: pkim
   integer                   :: ier
   integer(kind=8) numberOfAtoms; pointer(pnAtoms,numberOfAtoms)
@@ -86,6 +92,8 @@ program test_Ar_free_cluster_f90
      nbc = 2
   elseif (index(NBC_Method,"NEIGH-PURE-F").eq.1) then
      nbc = 3
+  elseif (index(NBC_Method,"NEIGH-RVEC-F").eq.1) then
+     nbc = 4
   else
      ier = 0
      return
@@ -133,19 +141,33 @@ program test_Ar_free_cluster_f90
 
   ! compute neighbor lists
   allocate(neighborList(N+1, N))
+  if (nbc.eq.4) then
+     allocate(RijList(3,N,N))
+  endif
+  !
   if (nbc.eq.0) then
      call MI_OPBC_H_neighborlist(N, coords, (cutoff+0.75), boxlength, neighborList)
   elseif (nbc.eq.1) then
      call MI_OPBC_F_neighborlist(N, coords, (cutoff+0.75), boxlength, neighborList)
   elseif (nbc.eq.2) then
-     call NEIGH_PURE_H_neighborlist(N, coords, (cutoff+0.75), neighborlist)
+     call NEIGH_PURE_H_neighborlist(N, coords, (cutoff+0.75), neighborList)
   elseif (nbc.eq.3) then
-     call NEIGH_PURE_F_neighborlist(N, coords, (cutoff+0.75), neighborlist)
+     call NEIGH_PURE_F_neighborlist(N, coords, (cutoff+0.75), neighborList)
+  elseif (nbc.eq.4) then
+     call NEIGH_RVEC_F_neighborlist(N, coords, (cutoff+0.75), neighborList, RijList)
   endif
 
   ! store pointers to neighbor list object and access function
-  ier = kim_api_set_data_f(pkim, "neighObject", 1, loc(neighborList))
-  if (ier.le.0) call print_error("neighObject", ier)
+  if (nbc.le.3) then
+     ier = kim_api_set_data_f(pkim, "neighObject", 1, loc(neighborList))
+     if (ier.le.0) call print_error("neighObject", ier)
+  else
+     allocate(NLRvecLocs(2))
+     NLRvecLocs(1) = loc(neighborList)
+     NLRvecLocs(2) = loc(RijList)
+     ier = kim_api_set_data_f(pkim, "neighObject", 1, loc(NLRvecLocs))
+     if (ier.le.0) call print_error("neighObject", ier)
+  endif
 
   if (nbc.eq.0) then
      ier = kim_api_set_data_f(pkim, "get_half_neigh", 1, loc(get_MI_PURE_neigh))
@@ -158,6 +180,9 @@ program test_Ar_free_cluster_f90
      if (ier.le.0) call print_error("get_half_heigh", ier)
   elseif (nbc.eq.3) then
      ier = kim_api_set_data_f(pkim, "get_full_neigh", 1, loc(get_MI_PURE_neigh))
+     if (ier.le.0) call print_error("get_full_heigh", ier)
+  elseif (nbc.eq.4) then
+     ier = kim_api_set_data_f(pkim, "get_full_neigh", 1, loc(get_RVEC_neigh))
      if (ier.le.0) call print_error("get_full_heigh", ier)
   endif
 
@@ -179,6 +204,10 @@ program test_Ar_free_cluster_f90
   ! Don't forget to free and/or deallocate
   call free(pNBC_Method) 
   deallocate(neighborList)
+  if (nbc.eq.4) then
+     deallocate(NLRvecLocs)
+     deallocate(RijList)
+  endif
   stop
 end program test_Ar_free_cluster_f90
 
@@ -413,6 +442,108 @@ end function get_MI_PURE_neigh
 
 !-------------------------------------------------------------------------------
 !
+! NEIGH_RVEC_F_neighborlist 
+!
+!-------------------------------------------------------------------------------
+subroutine NEIGH_RVEC_F_neighborlist(numberOfAtoms, coords, cutoff, neighborList, RijList)
+  use Rvec_nl_mod
+  implicit none
+
+  !-- Transferred variables
+  integer,                                                    intent(in)  :: numberOfAtoms
+  double precision, dimension(3,numberOfAtoms),               intent(in)  :: coords
+  double precision,                                           intent(in)  :: cutoff
+  integer, dimension(numberOfAtoms+1,numberOfAtoms),          intent(out) :: neighborList
+  double precision, dimension(3,numberOfAtoms,numberOfAtoms), intent(out) :: RijList
+  
+  !-- Local variables
+  integer i, j, a
+  double precision dx(3)
+  double precision r2
+  double precision cutoff2
+
+  cutoff2 = cutoff**2
+  
+  do i=1,numberOfAtoms
+     a = 1
+     do j=1,numberOfAtoms
+        dx = coords(:, i) - coords(:, j)
+        r2 = dot_product(dx, dx)
+        if (r2.le.cutoff2) then
+           if (i.ne.j) then
+              ! atom j is a neighbor of atom i
+              a = a+1
+              neighborList(a,i) = j
+              RijList(:,a-1,i) = dx
+           endif
+        endif
+     enddo
+     ! atom i has a-1 neighbors
+     neighborList(1,i) = a-1
+  enddo
+  
+end subroutine NEIGH_RVEC_F_neighborlist
+
+!-------------------------------------------------------------------------------
+!
+! get_RVEC_neigh neighbor list access function 
+!
+! This function only implements Locator mode
+!
+!-------------------------------------------------------------------------------
+integer function get_RVEC_neigh(pkim,mode,request,atom,numnei,pnei1atom,pRij)
+  use KIMservice
+  implicit none
+  
+  !-- Transferred variables
+  integer(kind=kim_intptr), intent(in) :: pkim
+  integer, intent(in)  :: mode
+  integer, intent(in)  :: request
+  integer, intent(out) :: atom
+  integer, intent(out) :: numnei
+  integer :: nei1atom(1); pointer(pnei1atom, nei1atom) ! actual cray pointer associated with nei1atom
+  real*8  :: Rij(3,1); pointer(pRij, Rij)
+  
+  !-- Local variables
+  integer   :: NLRvecLocs(1); pointer(pNLRvecLocs,NLRvecLocs)
+  integer   :: neighborListdum(1);  pointer(pneighborListdum, neighborListdum)
+  integer, pointer :: neighborList(:,:)
+  double precision :: RijList(1); pointer(pRijList,RijList)
+  integer   :: ier
+  integer*8 :: numberOfAtoms; pointer(pnAtoms, numberOfAtoms)
+  integer   :: N
+
+  ! exit if wrong mode
+  if (mode.ne.1) stop "get_MI_PURE_neigh() only supports locator mode!"
+  
+  ! unpack neighbor list object
+  pNLRVecLocs = kim_api_get_data_f(pkim, "neighObject", ier)
+  if (ier.le.0) call print_error("neighObject", ier)
+  pneighborListdum = NLRvecLocs(1)
+  pRijList         = NLRvecLocs(2)
+  
+  pnAtoms = kim_api_get_data_f(pkim, "numberOfAtoms", ier); N = numberOfAtoms
+  call toIntegerArrayWithDescriptor2d(neighborListdum, neighborlist, N+1, N)
+
+  ! set the returned atom
+  atom = request
+  
+  ! set the returned number of neighbors for the returned atom
+  numnei = neighborList(1,atom)
+  
+  ! set the location for the returned neighbor list
+  pnei1atom = loc(neighborList(2,atom))
+  
+  ! set pointer to Rij to appropriate value
+  pRij = loc(RijList(3*(numberOfAtoms)*(atom-1) + 1))
+  
+  get_RVEC_neigh = 1
+  return
+end function get_RVEC_neigh
+
+
+!-------------------------------------------------------------------------------
+!
 ! create_FCC_cluster subroutine
 !
 !  creates a cubic cluster of FCC atoms with lattice spacing `FCCspacing' and
@@ -495,4 +626,3 @@ subroutine print_error(nm, err)
   endif
   return
 end subroutine print_error
-
