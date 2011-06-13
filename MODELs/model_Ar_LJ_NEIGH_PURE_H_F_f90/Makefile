@@ -24,5 +24,5 @@ model_Ar_LJ_NEIGH_PURE_H_F_f90.o: Makefile
 Makefile: $(KIM_API_DIR)Include.mk
 	@touch Makefile
 clean:
-	rm -f *.o *.mod *.a
+	rm -f *.o *.mod *.a *.so
 
