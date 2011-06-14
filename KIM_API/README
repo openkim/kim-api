@@ -1,5 +1,3 @@
-KIM API alpha release --- 31-May-2011
-
 This directory (KIM_API) contains the KIM API service routines, as well as auxiliary 
 files for compiling and testing.
 

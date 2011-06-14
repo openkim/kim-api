@@ -1,5 +1,3 @@
-KIM API alpha release --- 31-May-2011
-
 This directory (Sample_01_lj_cutoff_cpp) contains a Lennard Jones (LJ) Model
 with a cutoff radius written in C++.  It complies with the KIM API interface
 standard and uses a cutoff radius and neighbor list supplied by a Test.

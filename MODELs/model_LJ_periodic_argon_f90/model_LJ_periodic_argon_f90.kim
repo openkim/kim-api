@@ -1,3 +1,15 @@
+#######################################################################################################
+#
+# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
+# All rights reserved.
+#
+# Author: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
+#
+#
+# See KIM_API/standard.kim for documentation about this file
+#
+#######################################################################################################
+
 MODEL_NAME := model_LJ_periodic_argon_f90
 SystemOfUnitsFix := fixed    # can work only with units system defined bellow
 # SystemOfUnitsFix := flexible # can reset entire units system (default for model)

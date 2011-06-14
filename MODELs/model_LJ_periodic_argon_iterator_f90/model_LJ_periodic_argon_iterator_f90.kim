@@ -1,3 +1,15 @@
+#######################################################################################################
+#
+# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
+# All rights reserved.
+#
+# Author: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
+#
+#
+# See KIM_API/standard.kim for documentation about this file
+#
+#######################################################################################################
+
 MODEL_NAME := model_LJ_periodic_argon_iterator_f90
 SystemOfUnitsFix := fixed    # can work only with units system defined bellow
 # SystemOfUnitsFix := flexible # can reset entire units system (default for model)
@@ -26,9 +38,9 @@ MODEL_INPUT:
 # Name                  Type         Unit       SystemU/Scale           Shape              requirements
 numberOfAtoms           integer*8    none       none                    []                              # empty [] means rank is zero
 
-atomTypes               integer      none       none                   [numberAtomTypes]   optional     # one [dummy] -- rank is one
+atomTypes               integer      none       none                    [numberOfAtoms]     optional     # one [dummy] -- rank is one
 
-coordinates             real*8       length     standard               [numberOfAtoms,3]
+coordinates             real*8       length     standard                [numberOfAtoms,3]
 
 get_half_neigh          method       none       none                    []
 
