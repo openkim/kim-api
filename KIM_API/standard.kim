@@ -23,14 +23,14 @@
 #         All other line types may end with a comment.  The beginning of such a
 #         comment is indicated by the first occurrence of the `#' character.
 #   3) A MODEL/TEST name line
-#         Only one such line may occur in a KIM descriptor file and it must be
+#         Only one such line may occur in a KIM descriptor file and it should be
 #         the first non-comment or blank line in the descriptor file.  The line's
 #         first non-white-space characters must be either `MODEL_NAME' or `TEST_NAME'
 #         as appropriate, followed by an assignment symbol `:=' (white space surrounding
 #         the assignment symbol is ignored), followed by the (case sensitive) name
 #         of the Model or Test. (See below for a description of valid name strings.)
 #   4) A system of units line
-#         Only one such line may occur in a KIM descriptor file and it must be
+#         Only one such line may occur in a KIM descriptor file and it should be
 #         the second non-comment or blank line in the descriptor file. The line's
 #         first non-white-space characters must be `SystemOfUnitsFix', followed by an
 #         assignment symbol `:=' (white-space surrounding the assignment symbol is
@@ -172,7 +172,7 @@
 #####################################################################################################
 
 #
-# The first item in a KIM descriptor file must be the MODEL/TEST name
+# The first item in a KIM descriptor file should be the MODEL/TEST name
 #
 # MODEL/TEST names are case sensitive strings containing only alpha-numeric characters and
 # possibly the `_' character.  No other characters are allowed.  The name must end with one
@@ -184,7 +184,7 @@ MODEL_NAME := standard
 
 
 #
-# The second item in a KIM descriptor file must be the SystemOfUnitsFix line
+# The second item in a KIM descriptor file should be the SystemOfUnitsFix line
 #
 #SystemOfUnitsFix := fixed    # The Model/Test can work only with the units specified in its descriptor file
 SystemOfUnitsFix := flexible # The Model/Test can change the units it works with when requested
