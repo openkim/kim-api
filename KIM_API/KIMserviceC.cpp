@@ -72,6 +72,11 @@ void KIM_API_model_compute(void *kimmdl,int *error){
     mdl->model_compute(error);
 
 }
+int KIM_API_model_reinit(void * kimmdl){
+    KIM_API_model * mdl=(KIM_API_model *) kimmdl;
+    if (mdl->model_reinit()) return 1;
+    return 0;
+}
 void KIM_API_model_destroy(void * kimmdl,int *error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     mdl->model_destroy(error);
@@ -284,6 +289,9 @@ void kim_api_model_compute_(void*kimmdl,int *error){
     KIM_API_model_compute(*(KIM_API_model **)kimmdl,error);
 }
 
+int kim_api_model_reinit_(void * kimmdl){
+    return KIM_API_model_reinit(*(KIM_API_model **)kimmdl);
+}
 void kim_api_model_destroy_(void * kimmdl,int *error){
     KIM_API_model_destroy(*(KIM_API_model **)kimmdl,error);
 }

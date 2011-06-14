@@ -27,6 +27,7 @@ void KIM_API_print(void *kimmdl,int *error);
 void KIM_API_model_compute(void *kimmdl,int *error);
 int KIM_API_model_init(void * kimmdl);
 void KIM_API_model_destroy(void * kimmdl,int * error);
+int KIM_API_model_reinit(void * kimmdld);
 
 
 void KIM_API_get_Units(void *kimmdl,char * UnitsSystem, int *error);
@@ -85,6 +86,7 @@ void kim_api_free_(void *kimmdl, int * error);
 void kim_api_print_(void *kimmdl,int * error);
 void kim_api_model_compute_(void*kimmdl, int *error);
 
+int kim_api_model_reinit_(void * kimmdl);
 void kim_api_model_destroy_(void * kimmdl, int * error);
 
 int kim_api_model_init_(void * kimmdl);

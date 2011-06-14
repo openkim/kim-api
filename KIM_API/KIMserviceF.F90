@@ -310,6 +310,15 @@ module kimservice
             integer(kind=kim_intptr) :: kimmdl
 	    integer::error
         end subroutine kim_api_model_destroy
+
+	integer function kim_api_model_reinit(kimmdl)
+#ifdef SYSTEM32
+	integer, parameter :: kim_intptr=4
+#else
+	integer,parameter :: kim_intptr = 8
+#endif
+            integer(kind=kim_intptr) :: kimmdl
+        end function kim_api_model_reinit
         
 	integer function kim_api_model_init(kimmdl)
 #ifdef SYSTEM32

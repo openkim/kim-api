@@ -1342,6 +1342,19 @@ bool KIM_API_model::init(char* testname, char* modelname){
 
     return this->init(testfile,testname,modelfile,modelname);
 }
+
+bool KIM_API_model::model_reinit(){
+   int reinit_ind = get_index("reinit");
+   if (reinit_ind < 0) return false;
+   
+   KIM_API_model *pkim = this;
+   typedef void (*Model_Reinit)(void *);//prototype for model_reinit
+   Model_Reinit mdl_reinit = (Model_Reinit)(*this)[reinit_ind].data;
+   if (mdl_reinit == NULL) return false;
+   (*mdl_reinit)(&pkim) ;
+   return true;
+}
+
 #ifndef KIM_DYNAMIC
 extern "C" {
 #include "model_init_include.h"
