@@ -269,7 +269,6 @@ contains
     ! get cutoff parameter from KIM object
     pparamcut = kim_api_get_data_f(pkim,"PARAM_FREE_cutoff",ier)
     if (ier.le.0) stop '* ERROR: PARAM_FREE_cutoff not found in KIM object.'
-    model_Pcutoff = model_cutoff
     
     ! Set new values in KIM object ---------------------------------------------
     
