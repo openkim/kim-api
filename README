@@ -1,24 +1,21 @@
-KIM API alpha release --- 31-May-2011
+The openkim-api package
 
 -------------------------------------------------------------------------------
 
-Instructions for installing, compiling and linking the KIM API alpha release:
+Instructions for installing, compiling and linking this openkim-api release:
 
-1. In the desired directory, execute the command:  
-
-> tar xzvf openkim-api-XX.XX.XX.tgz 
-
-
+1. In these instructions `/OPENKIM-API' represents the absolute path name for
+   the directory in which this README file is contained.
+ 
 2. Set up environment variable:
 
 bash:
-> export KIM_DIR = /your_loacation/openkim-api/ 
+> export KIM_DIR = /OPENKIM-API/
 
-you_location is the correct path where the openkim-api dirrectory is located.
 (Make sure to include the trailing slash.)
 
 
-3. By default, all make files use the GNU compilers for 64 bit linux. 
+3. By default, all makefiles use the GNU compilers for 64 bit linux. 
 In order to use the Intel compiler, define the environment variable KIM_INTEL
 
 bash: 
@@ -30,7 +27,7 @@ bash:
 > export KIM_SYSTEM32="yes" 
 
 
-4. Change to the KIM_DIR directory and execute the commands: 
+4. Change to the KIM_DIR directory (if needed) and execute the commands: 
 
 > make
 
@@ -61,26 +58,26 @@ TESTs, or MODELs one or more of the following environment variables must be set:
      KIM_TEST_DIR
      KIM_MODELS_DIR
 
-8. KIM API provides the possibility of creating dynamic load libraries through
-setting the KIM_DYNAMIC environment variable. If KIM_DYNAMIC is set, the
-makefile will build .so libraries (in addition to the static .a libraries) and
-KIM API will use those libraries to load models and call initialize routines
-dynamically (during runtime)
+8. The openkim-api package provides the possibility of creating dynamic load
+libraries through setting the KIM_DYNAMIC environment variable. If KIM_DYNAMIC
+is set, the makefile will build .so libraries (in addition to the static .a
+libraries) and KIM API will use those libraries to load models and call initialize
+routines dynamically (during runtime)
  
 > export KIM_DYNAMIC=yes
 
-If KIM_DYNAMIC is not set, the models will be build and linked statically.
+If KIM_DYNAMIC is not set, the models will build and linked statically.
 
-9. For those users who do not have a Fortran compiler installed, the KIM API
-provides the possibility to build all models and tests excluding those written
-in FORTRAN (f77, f90, f) through setting KIM_NO_FORTRAN environment variable.
+9. For those users who do not have a Fortran compiler installed, the openkim-api
+package provides the possibility to build all models and tests excluding those
+written in FORTRAN (f77, f90, f) through setting KIM_NO_FORTRAN environment variable.
 
 >  export KIM_NO_FORTRAN=yes
 
 If it is set, all of the models and tests with names ending in _f77, _f, _f90
 will be omitted from build process.
 
-10. The KIM API provides the KIM_API_get_neigh_half() and
+10. The openkim-api package provides the KIM_API_get_neigh_half() and
 KIM_API_get_neigh_full() wrapper service routines for access to the neighbor
 list object. These routines check to ensure that the maximum numbers of
 neighbors for an atom does not exceed KIM_API_MAX_NEIGHBORS. If this
@@ -105,16 +102,17 @@ version 11.1 or higher.
 
 -------------------------------------------------------------------------------
 
-This directory (openkim-api-XX.XX.XX) contains the following files and directories:
+This directory (by default, openkim-api-XX.XX.XX) contains the following files
+and directories:
 
-Makefile -- make file for compiling the KIM API services routines and
+Makefile -- make file for compiling the openkim-api services routines and
             example Tests and Models.
 
 DOCs     -- documention directory. This directory contains the file
             KIM_API_alpha_overview.pdf which provides an overview of
-            the KIM API alpha release.
+            this release of the openkim-api package.
 
-KIM_API  -- directory containing the KIM API service routines
+KIM_API  -- directory containing the openkim-api service routines
         
 MODELs   -- directory containing interatomic Models
         
