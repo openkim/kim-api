@@ -219,7 +219,7 @@ contains
     real*8 model_sigmasq; pointer(psigmasq,model_sigmasq)
     real*8 model_cutsq;   pointer(pcutsq,model_cutsq)
     integer ier
-    
+
     ! Get (changed) parameters from KIM object ---------------------------------
 
     ! get sigma from KIM object
@@ -233,7 +233,6 @@ contains
     ! get cutoff parameter from KIM object
     pparamcut = kim_api_get_data_f(pkim,"PARAM_FREE_cutoff",ier)
     if (ier.le.0) stop '* ERROR: PARAM_FREE_cutoff not found in KIM object.'
-    model_Pcutoff = model_cutoff
     
     ! Set new values in KIM object ---------------------------------------------
     
@@ -274,6 +273,7 @@ contains
     pcutsq = kim_api_get_data_f(pkim,"PARAM_FIXED_cutsq",ier)
     if (ier.le.0) stop '* ERROR: PARAM_FIXED_cutsq not found in KIM object.'
     model_cutsq = model_cutoff**2
+print *,"In reinit"    
     
   end subroutine ReInit
   
