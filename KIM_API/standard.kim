@@ -1,14 +1,14 @@
-#####################################################################################################                                                                      
+#####################################################################################################
 #
-# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna 
-# All rights reserved.                                                 
-#                                                                     
+# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
+# All rights reserved. 
+#
 # Author: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
 # 
 #####################################################################################################
 #
-# This file defines the KIM_API standard variable names and their properties,
-# the Neighbor Boundary Condition (NBC) scenarios supported by the KIM_API, 
+# This file defines the openkim-api standard variable names and their properties,
+# the Neighbor Boundary Condition (NBC) scenarios supported by the openkim-api, 
 # the list of standard Atom/Particle types known to KIM, and a set of 
 # conventions defined by KIM that help to ensure that Models and Tests are
 # able to successfully communicate with each other.
@@ -17,26 +17,24 @@
 # There are a number of line types that can occur in a KIM descriptor file
 #   1) Blank lines
 #         These are lines containing only white-space characters.  These lines
-#         are silently ignored by the KIM API.
+#         are silently ignored by the openkim-api.
 #   2) Comment lines
-#         These lines have a `#' as their first character (in fact, any line
-#         starting with a non-alpha-numeric character will be treated as a
-#         comment line).  All other line types may end with a comment.  The
-#         beginning of such a comment is indicated by the first occurrence of the
-#         `#' character.
+#         These lines have a `#' as their first (non-white-space) character.
+#         All other line types may end with a comment.  The beginning of such a
+#         comment is indicated by the first occurrence of the `#' character.
 #   3) A MODEL/TEST name line
 #         Only one such line may occur in a KIM descriptor file and it must be
-#         the first non-comment or blank line in the descriptor file.  The line
-#         must start with either `MODEL_NAME' or `TEST_NAME' as appropriate, 
-#         followed by an assignment symbol `:=' (white space surrounding the
-#         assignment symbol is ignored), followed by the (case sensitive) name
+#         the first non-comment or blank line in the descriptor file.  The line's
+#         first non-white-space characters must be either `MODEL_NAME' or `TEST_NAME'
+#         as appropriate, followed by an assignment symbol `:=' (white space surrounding
+#         the assignment symbol is ignored), followed by the (case sensitive) name
 #         of the Model or Test. (See below for a description of valid name strings.)
 #   4) A system of units line
 #         Only one such line may occur in a KIM descriptor file and it must be
-#         the second non-comment or blank line in the descriptor file. The line
-#         must start with `SystemOfUnitsFix', followed by an assignment symbol `:='
-#         (white-space surrounding the assignment symbol is ignored), followed by
-#         either `fixed' or `flexible'.
+#         the second non-comment or blank line in the descriptor file. The line's
+#         first non-white-space characters must be `SystemOfUnitsFix', followed by an
+#         assignment symbol `:=' (white-space surrounding the assignment symbol is
+#         ignored), followed by either `fixed' or `flexible'.
 #   5) Section lines
 #         These lines identify logically distinct sections within the KIM
 #         descriptor file.  All lines following a Section line, up to the next
@@ -58,8 +56,8 @@
 #               This line type defines the atom/particle types supported by the
 #               Test/Model and should only be used within the SUPPORTED_ATOM/PARTICLES_TYPES
 #               section of the KIM descriptor file.  The line consists of three (3)
-#               white-space separated (case sensitive) strings, but the line may not
-#               start with white-space.  The three strings, in order, are as follows:
+#               white-space separated (case sensitive) strings.
+#               The three strings, in order, are as follows:
 #                  1) Name: This string gives a unique name to the atom/particle type.
 #                           This name is checked against the standard list in `standard.kim'.
 #                  2) Type: This must be `spec'.
@@ -69,8 +67,8 @@
 #               This line type defines a convention (or parameter), that can be used to ensure
 #               that Models and Tests are able to work together, and should only be used
 #               within the CONVENTIONS section of the KIM descriptor file.  The line consists
-#               of two (2) white-space separated (case sensitive) strings, but the line may
-#               not start with white-space.  The two strings, in order, are as follows:
+#               of two (2) white-space separated (case sensitive) strings.
+#               The two strings, in order, are as follows:
 #                  1) Name: This string gives a unique name to the convention.  This name
 #                           is checked against the standard list in `standard.kim'.
 #                  2) Type: This must be `dummy'
@@ -80,12 +78,10 @@
 #               used within the MODEL_INPUT, MODEL_OUTPUT, and MODEL_PARAMETERS sections
 #               of the KIM descriptor file.  These are analogous the the arguments of a
 #               function call.  The line consists of six (6) white-space separated (case
-#               sensitive) strings, but the line may not start with white-space.  The 
-#                           values of these strings are checked against the standard list
-#                           in `standard.kim' for lines contained in the MODEL_INPUT and
-#                           MODEL_OUTPUT sections of the KIM descriptor file (but not for
-#                           lines in the MODEL_PARAMETERS section). The six strings, in
-#                           order, are as follows:
+#               sensitive) strings. The values of these strings are checked against the
+#               standard list in `standard.kim' for lines contained in the MODEL_INPUT and
+#               MODEL_OUTPUT sections of the KIM descriptor file (but not for lines in the
+#               MODEL_PARAMETERS section). The six strings, in order, are as follows:
 #                  1) Name: This string gives a unique name to the argument.
 #                  2) Type: This string defines the data-type of the associated values.
 #                           Currently there are six (6) Types:
@@ -518,15 +514,18 @@ virial                  real*8      pressure    unspecified             []
 MODEL_PARAMETERS:
 
 #
-# Two types of model parameters are allowed
-# 1) PARAM_FIXED_XXXXXX  - these should not be changed by the Test
+# Two types of model parameters are allowed (the requirements string is ignored in this section)
+# 1) PARAM_FIXED_XXXXXX  - these should not be changed by the Test and can be used as arbitrary
+#                          persistent storage for use by the model.
 # 2) PARAM_FREE_XXXXXX   - these may be changed by the Test (which should then call the Model's
-#                          _reinit() function to inform the model that its parameters have
+#                          model_reinit() function to inform the model that its parameters have
 #                          changed)
 #
 # Examples
 #
 # Name                  Type        Unit        SystemU/Scale           Shape                   requirements
-# PARAM_FIXED_Sigma     real*8      length      standard                []
+# PARAM_FREE_cutoff     real*8      length      standard                []
+# PARAM_FREE_Sigma      real*8      length      standard                []
 # PARAM_FREE_Epsilon    real*8      energy      standard                []
+# PARAM_FIXED_LJshift   real*8      energy      standard                []
 #
