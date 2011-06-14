@@ -152,6 +152,29 @@ Corresponding FORTRAN style interface:
                         integer::kimerr
         end subroutine kim_api_model_compute
 
+
+******************************************************************************
+
+void KIM_API_model_destroy(void *kimmdl, int * kimerror); 
+        execute "destroy" method of the model by using the address of the 
+        destroy routine stored in KIM API object. 
+
+Argument:
+
+         void * kimmdl
+                pointer to KIM_API_model object (in c++ style the definition 
+                will be (KIM_API_model *))
+
+        int * kimerror
+                error code: 1                     -- successful completion, 
+                            0 (or negative value) -- unsuccessful
+
+Corresponding FORTRAN style interface:
+        subroutine kim_api_model_destroy(kimmdl,kimerr) 
+                        integer(kind=kim_intptr) :: kimmdl
+                        integer::kimerr
+        end subroutine kim_api_model_destroy
+
 ******************************************************************************
 
 void KIM_API_get_Units(void *kimmdl, char * UnitsSystem,int * kimerror); 
