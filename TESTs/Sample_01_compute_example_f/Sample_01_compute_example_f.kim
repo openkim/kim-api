@@ -1,4 +1,4 @@
-TEST_NAME := Sample_01_compute_example_f.incfg
+TEST_NAME := Sample_01_compute_example_f
 SystemOfUnitsFix := fixed    # can work only with units system defined bellow
 # SystemOfUnitsFix := flexible # can reset entire units system (default for model)
 

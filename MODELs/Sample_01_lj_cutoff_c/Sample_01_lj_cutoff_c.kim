@@ -1,4 +1,4 @@
-MODEL_NAME := Sample_01_lj_cutoff_c.kim
+MODEL_NAME := Sample_01_lj_cutoff_c
 SystemOfUnitsFix := fixed    # can work only with units system defined bellow
 # SystemOfUnitsFix := flexible # can reset entire units system (default for model)
 

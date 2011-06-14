@@ -11,7 +11,7 @@
 #######################################################################################################
 
 
-MODEL_NAME := test_Ar_free_cluster_f90
+MODEL_NAME := test_Ar_periodic_FCC_MI_OPBC_f90
 SystemOfUnitsFix := fixed
 
 
@@ -28,12 +28,6 @@ CONVENTIONS:
 OneBasedLists           dummy
 
 Neigh_LocaAccess        dummy
-
-NEIGH-RVEC-F            dummy
-
-NEIGH-PURE-H            dummy
-
-NEIGH-PURE-F            dummy
 
 MI-OPBC-H               dummy
 
@@ -73,8 +67,6 @@ reinit                  method       none       none                    []
 cutoff                  real*8       length     standard                []
 
 energy                  real*8       energy     standard                []
-
-forces                  real*8       force      standard                [numberOfAtoms,3]
 
 
 #######################################################################################################

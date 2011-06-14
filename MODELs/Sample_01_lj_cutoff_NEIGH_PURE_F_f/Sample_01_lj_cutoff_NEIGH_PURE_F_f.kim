@@ -1,4 +1,4 @@
-MODEL_NAME := Sample_01_lj_cutoff_NEIGH_PURE_F_f.kim
+MODEL_NAME := Sample_01_lj_cutoff_NEIGH_PURE_F_f
 SystemOfUnitsFix := fixed    # can work only with units system defined bellow
 # SystemOfUnitsFix := flexible # can reset entire units system (default for model)
 

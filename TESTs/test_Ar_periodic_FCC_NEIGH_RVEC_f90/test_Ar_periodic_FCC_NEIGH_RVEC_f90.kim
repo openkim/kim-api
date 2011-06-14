@@ -11,7 +11,7 @@
 #######################################################################################################
 
 
-MODEL_NAME := test_Ar_free_cluster_f90
+MODEL_NAME := test_Ar_periodic_FCC_NEIGH_RVEC_f90
 SystemOfUnitsFix := fixed
 
 
@@ -31,14 +31,6 @@ Neigh_LocaAccess        dummy
 
 NEIGH-RVEC-F            dummy
 
-NEIGH-PURE-H            dummy
-
-NEIGH-PURE-F            dummy
-
-MI-OPBC-H               dummy
-
-MI-OPBC-F               dummy
-
 
 #######################################################################################################
 MODEL_INPUT:
@@ -57,8 +49,6 @@ get_full_neigh          method       none       none                    []      
 
 neighObject             pointer      none       none                    []
 
-boxlength               real*8       length     standard                [3]
-
 
 #######################################################################################################
 MODEL_OUTPUT:
@@ -73,8 +63,6 @@ reinit                  method       none       none                    []
 cutoff                  real*8       length     standard                []
 
 energy                  real*8       energy     standard                []
-
-forces                  real*8       force      standard                [numberOfAtoms,3]
 
 
 #######################################################################################################

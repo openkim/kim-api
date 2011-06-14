@@ -1,4 +1,4 @@
-MODEL_NAME := model_EAM_periodic_aluminum_ercolessi_adams_f90.kim
+MODEL_NAME := model_EAM_periodic_aluminum_ercolessi_adams_f90
 SystemOfUnitsFix := fixed    # can work only with units system defined bellow
 # SystemOfUnitsFix := flexible # can reset entire units system (default for model)
 

@@ -111,6 +111,10 @@ program test_Ar_free_cluster_CLUSTER_f90
   print *, "Energy = ", energy
 
 
+  ! don't forget to destroy and deallocate
+  call kim_api_model_destroy(pkim, ier); if (ier.le.0) call print_error("model_destroy", ier)
+  call kim_api_free(pkim, ier);          if (ier.le.0) call print_error("kim_api_free",  ier)
+
   stop
 end program test_Ar_free_cluster_CLUSTER_f90
 
@@ -144,11 +148,11 @@ subroutine create_FCC_cluster(FCCspacing, nCellsPerSide, coords)
   FCCshifts(1,4) = 0.d0;           FCCshifts(2,4) = 0.5*FCCspacing; FCCshifts(3,4) = 0.5*FCCspacing
 
   a = 0
-  do i=1,2
+  do i=1,nCellsPerSide
      latVec(1) = (i-1)*FCCspacing
-     do j=1,2
+     do j=1,nCellsPerSide
         latVec(2) = (j-1)*FCCspacing
-        do k=1,2
+        do k=1,nCellsPerSide
            latVec(3) = (k-1)*FCCspacing
            do m=1,4
               a = a+1
