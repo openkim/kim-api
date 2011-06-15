@@ -1,0 +1,11 @@
+This directory contains the following files and directories:
+
+KIM_API_concept_implementation_June2011.pdf -- presentation file describing the
+   concepts on which the openkim-api system is based
+
+KIMserviceDescription.txt -- A link to the file in ../KIM_API which describes
+   the openkim-api functions
+
+standard.kim -- A link to the file in ../KIM_API which describes the openkim-api
+   descriptor file format and contants.
+

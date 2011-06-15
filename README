@@ -105,9 +105,6 @@ version 11.1 or higher.
 This directory (by default, openkim-api-XX.XX.XX) contains the following files
 and directories:
 
-Makefile -- make file for compiling the openkim-api services routines and
-            example Tests and Models.
-
 DOCs     -- documention directory. This directory contains the file
             KIM_API_alpha_overview.pdf which provides an overview of
             this release of the openkim-api package.
@@ -115,7 +112,12 @@ DOCs     -- documention directory. This directory contains the file
 KIM_API  -- directory containing the openkim-api service routines
         
 MODELs   -- directory containing interatomic Models
-        
+
+Makefile -- make file for compiling the openkim-api services routines and
+            example Tests and Models.
+
+REDME    -- this file
+ 
 TESTs    -- directory containing example Tests
 
 -------------------------------------------------------------------------------

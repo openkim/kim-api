@@ -1,0 +1,11 @@
+This directory (test_Ar_periodic_FCC_NEIGH_RVEC_f90) contains a test that computes the
+energy per atom in an infinite perfect FCC crystal of Argon using the NEIGH-RVEC-F NBC.
+(The test uses a one atom configuration and constructs a neighbor list with multiple
+images of this one atom.)
+
+Makefile                                -- makefile to compile and build executables with
+                                           GNU or Intel compilers
+README                                  -- this file 
+test_Ar_periodic_FCC_NEIGH_RVEC_f90.F90 -- Code for the test
+test_Ar_periodic_FCC_NEIGH_RVEC_f90.kim -- KIM descriptor file for the test
+
