@@ -85,12 +85,12 @@
 #                  1) Name: This string gives a unique name to the argument.
 #                  2) Type: This string defines the data-type of the associated values.
 #                           Currently there are six (6) Types:
-#                              * integer   : int       (C,C++);   integer   (Fortran)
-#                              * integer*8 : long long (C,C++);   integer*8 (Fortran)
-#                              * real      : float     (C,C++);   real      (Fortran)
-#                              * real*8    : double    (C,C++);   real*8    (Fortran)
-#                              * method    : (int *)   (C,C++);   integer   (Fortran)
-#                              * pointer   : (int *)   (C,C++);   integer   (Fortran)
+#                              * integer   : int        (C,C++);   integer      (Fortran)
+#                              * integer*8 : long long  (C,C++);   integer*8    (Fortran)
+#                              * real      : float      (C,C++);   real         (Fortran)
+#                              * real*8    : double     (C,C++);   real*8       (Fortran)
+#                              * method    : (void *)   (C,C++);   cray pointer (Fortran)
+#                              * pointer   : (void *)   (C,C++);   cray pointer (Fortran)
 #                           The first four are self-explanatory.  The `method' type allows
 #                           the Model (Test) to provide functions that the Test (Model) may
 #                           invoke at run time to perform certain tasks. The `pointer' type
