@@ -1,12 +1,10 @@
-KIM API alpha release --- 31-May-2011
-
 This directory (Sample_01_lj_cutoff_CLUSTER_f) contains a Lennard Jones (LJ) Model with a
 cutoff radius written in FORTRAN.  It complies with the KIM API interface
 standard and uses a cutoff radius and neighbor list supplied by a Test.
 
 The following files are in this directory:
 
-LJ_mod_CLUSTER.F90               -- FORTRAN module file that contains the implementation of 
+LJ_mod_CLUSTER.F90       -- FORTRAN module file that contains the implementation of 
                             the LJ potential
 Makefile                 -- makefile to compile and build executables with GNU or 
                             Intel compilers

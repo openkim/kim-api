@@ -1,103 +1,99 @@
-The openkim-api package
+=========================== The openkim-api package ===========================
 
--------------------------------------------------------------------------------
+OVERVIEW:
 
-Instructions for installing, compiling and linking this openkim-api release:
+Atomistic or molecular simulations of materials have the potential to play a
+key role in the development of innovative technology to address many problems
+the world is currently facing (including climate change, energy generation and
+distribution, and terrorism). Recent examples, where valuable contributions and
+greater insight have been obtained, include applications in chemistry and
+organic chemistry, nanoindentation and tribology, materials processing and
+properties, and nanotechnology and nanofluidics. To model the large numbers of
+atoms required for many applications, and to be able to study their dynamics
+over reasonable time scales, it is generally necessary to develop approximate
+models of interatomic bonding, referred to as "interatomic potentials" or
+"interatomic models".  Once such a model is at hand, one can theoretically
+predict almost any mechanical or thermal property or behavior of the element
+(or elements) it purports to describe. Generally, these models define the
+forces and energies used for sophisticated simulations using methodologies such
+as molecular dynamics, Monte Carlo, lattice dynamics free energy methods,
+multiscale methods, and so on. From such simulations, complex materials
+properties and phenomena can be extracted, including such things as melting
+temperatures, solid-liquid interface phenomena, fracture properties, and
+dislocation nucleation and motion.  This software package implements the
+standards being developed as part of the Knowledgebase of Interatomic Models
+(KIM). KIM (http://openKIM.org) is a current initiative to develop and
+implement standards for the atomistic simulation of materials.  The effort aims
+to help bring order to the efforts of the education, research, and industrial
+communities and to make it easier for new (and existing) scientists to leverage
+the work of other in this important field. The KIM project has two main
+objectives:
 
-1. In these instructions `/OPENKIM-API' represents the absolute path name for
-   the directory in which this README file is contained.
- 
-2. Set up environment variable:
+1. Development of an online resource for standardized testing, permanent
+warehousing and easy retrieval of interatomic potentials and data. This
+includes the development of application programming interface (API) standards
+for coupling simulation codes and interatomic potential subroutines [this
+package].
 
-bash:
-> export KIM_DIR = /OPENKIM-API/
-
-(Make sure to include the trailing slash.)
-
-
-3. By default, all makefiles use the GNU compilers for 64 bit linux. 
-In order to use the Intel compiler, define the environment variable KIM_INTEL
-
-bash: 
-> export KIM_INTEL="yes". 
-
-For using a 32 bit machine, define the environment variable KIM_SYSTEM32 
-
-bash: 
-> export KIM_SYSTEM32="yes" 
-
-
-4. Change to the KIM_DIR directory (if needed) and execute the commands: 
-
-> make
-
-     This will build all models, tests, and the KIM api service routine library
-     (`make clean' -- will remove all .o, .a, .so and executable files) 
-
-
-5. To run a Test, change to the appropriate directory and run the executable.
-For example,
-
-> cd TESTs/Sample_01_compute_example_f
-
-> echo "Sample_01_lj_cutoff_f" | ./Sample_01_compute_example_f
-
-Each test sample (example Sample_01_compute_example_f and 
-Sample_01_compute_example_c) reads the name of the model from its input stream, 
-initiates the model and computes the total energy and forces using the coordinates 
-of a configuration of atoms.
-
-
-6. Each Test (and Model) has its own make file for compiling and linking. 
-If changes are made to the code, perform step (4) again (from the top directory).
-
-
-7. In case of using a non-standard location for any of the directores KIM_API,
-TESTs, or MODELs one or more of the following environment variables must be set:
-     KIM_API_DIR
-     KIM_TEST_DIR
-     KIM_MODELS_DIR
-
-8. The openkim-api package provides the possibility of creating dynamic load
-libraries through setting the KIM_DYNAMIC environment variable. If KIM_DYNAMIC
-is set, the makefile will build .so libraries (in addition to the static .a
-libraries) and KIM API will use those libraries to load models and call initialize
-routines dynamically (during runtime)
- 
-> export KIM_DYNAMIC=yes
-
-If KIM_DYNAMIC is not set, the models will build and linked statically.
-
-9. For those users who do not have a Fortran compiler installed, the openkim-api
-package provides the possibility to build all models and tests excluding those
-written in FORTRAN (f77, f90, f) through setting KIM_NO_FORTRAN environment variable.
-
->  export KIM_NO_FORTRAN=yes
-
-If it is set, all of the models and tests with names ending in _f77, _f, _f90
-will be omitted from build process.
-
-10. The openkim-api package provides the KIM_API_get_neigh_half() and
-KIM_API_get_neigh_full() wrapper service routines for access to the neighbor
-list object. These routines check to ensure that the maximum numbers of
-neighbors for an atom does not exceed KIM_API_MAX_NEIGHBORS. If this
-environment variable KIM_API_MAX_NEIGHBORS is not set, the default value is
-512.  To change the value of this parameter, for example, to 1024 (or any other
-value) use the command
-
-> export KIM_API_MAX_NEIGHBORS=1024
+2. Development of a quantitative theory of interatomic potential
+transferability providing rigorous criteria for selecting potentials for given
+applications and error bounds on results.
 
 
 
+THE OPENKIM-API PACKAGE:
 
-TROUBLESHOOTING: By default, the make system uses the g++ compiler with 
-the -lgfortran option to link compiled FORTRAN executables. If (for some
-versions of linux or GNU compilers) linking of FORTRAN executables with the
-g++ compiler does not work, try gfortran with the -lstdc++ option.  See lines
-78-79 in the Include.mk file (change them to lines 76-77). 
+The openkim-api package aims to give computer programmers the ability to write
+atomistic or molecular simulation programs and routines capable of seamlessly
+interfacing and interacting with other programs and routines, regardless of the
+programming language (C, C++, FORTRAN 77, Fortran 90/95/2003, Python, etc.) in
+which the codes are written.
 
-GNU compilers tested with version  4.2.x or higher, the Intel compiler must be
-version 11.1 or higher.
+The current version of the openkim-api package supports the following features:
+
+* Currently supported programming languages: C, C++, FORTRAN 77, FORTRAN 90/95/2003
+
+* Support for static and dynamic linking of programs using the openkim-api
+
+* Communication of an arbitrary number of `arguments' between a `Model' (interatomic
+  potential) and a `Test' (simulation code that uses a Model).
+
+* Data types: integer, integer*8 (long long), real (float), real*8 (double),
+              method (for exchanging pointers to functions), pointer (for
+              exchanging "everything else").  Each of these data types can be
+              use to create multi-dimensional array `arguments' that are
+              exchanged between Models and Tests.  
+  Currently, the openkim-api does not define any (more complex) data
+  structures.  However, in the future (as the need arises, and in consultation
+  with the atomistic and molecular simulation community) additional data types
+  and data structures may be introduced.
+
+* Physical Units: The openkim-api supports the specification of physical units
+  for each `argument' exchanged between a Model and Test.  Currently, this
+  information is only used to ensure that a Model and Test agree on the units
+  of the arguments they will exchange.  Future plans include the possibility of
+  the openkim-api package performing automatic units conversions for Models and
+  Tests that use different physical units, but are otherwise compatible.
+
+* Neighbor lists and Boundary Conditions (NBC) scenarios: To facilitate
+  computational efficiency, the openkim-api defines a number of scenarios by
+  which a Test may provide a Model with information about the neighbors of each
+  atom in a configuration.  These currently include options that allow for
+  common techniques as, the use of the `minimum image' convention for
+  orthogonal periodic boundary conditions, `ghost atoms', and neighbor lists
+  with relative position vectors.
+
+* Atom Species: The openkim-api provides the ability to designate the physical
+  species of each particle in a simulation.  Currently, only one identifier is
+  provided for each element in the periodic table.  In the future support for
+  Models such as CHARRM and similar force-fields will be added.
+
+* Model Parameters: The openkim.org philosophy views a `Model' as a well
+  defined computational code that includes fixed specific values for all
+  parameters needed to perform an actual computation.  However, it is often
+  useful to explore how a Model's predictions vary as the values of its
+  parameters are varied.  For this reason, the openkim-api provides the ability
+  for a Model to `publish' its parameters so that a Test may modify them.
 
 
 -------------------------------------------------------------------------------
@@ -105,17 +101,19 @@ version 11.1 or higher.
 This directory (by default, openkim-api-XX.XX.XX) contains the following files
 and directories:
 
-Makefile -- make file for compiling the openkim-api services routines and
-            example Tests and Models.
-
-DOCs     -- documention directory. This directory contains the file
+DOCs     -- document ion directory. This directory contains the file
             KIM_API_alpha_overview.pdf which provides an overview of
             this release of the openkim-api package.
 
 KIM_API  -- directory containing the openkim-api service routines
         
 MODELs   -- directory containing interatomic Models
-        
+
+Makefile -- make file for compiling the openkim-api services routines and
+            example Tests and Models.
+
+README   -- this file
+ 
 TESTs    -- directory containing example Tests
 
 -------------------------------------------------------------------------------

@@ -1,9 +1,7 @@
-KIM API alpha release --- 31-May-2011
-
-This directory (KIM_API) contains the KIM API service routines, as well as auxiliary 
+This directory (KIM_API) contains the openkim-api service routines, as well as auxiliary 
 files for compiling and testing.
 
-The contents of the directory is as follows:
+The contents of the directory are as follows:
   
 Include.mk                 -- make file used by all makefiles related to KIM
 KIMservice.cpp             -- C++ implementations for core service routines and methods

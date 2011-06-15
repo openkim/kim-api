@@ -422,32 +422,48 @@ MODEL_INPUT:
 # The number of atoms in the configuration passed between the Model and Test.  Atoms are
 # always numbered sequentially starting from 0 or 1 depending on the ZeroBasedLists/OneBasedLists
 # convention setting.
+# This argument is required for all Models and Tests
 numberOfAtoms           integer*8   none        none                    []
 
 # The number of types of atoms/particles contained in the configuration passed between
 # the Model and Test.
+# This argument is required for any Model/Test that specifies one or more Atom/particle
+# types in the SUPPORTED_ATOM/PARTICLE_TYPES section
 numberAtomTypes         integer     none        none                    []
 
 # A vector of integers indicating the type of each particle in the configuration passed
 # between the Model and Test.  The values in this vector must correspond to the `code' 
 # specified in the Model's KIM descriptor file.
+# This argument is required for any Model/Test that specifies one or more Atom/particle
+# types in the SUPPORTED_ATOM/PARTICLE_TYPES section
 atomTypes               integer     none        none                    [numberOfAtoms]
 
 # An array of floating-point numbers specifying the spatial location of each atom/particle
 # in the configuration passed between the Model and Test.
+# This argument is required for all Models and Tests
 coordinates             real*8      length      unspecified             [numberOfAtoms,3]
 
 # A pointer to the full neighbor list access function that is provided by the Test
+# This argument is required for Models/Tests that support the following NBCs: MI-OPBC-F,
+# NEIGH-PURE-F, and NEIGH-RVEC-F.  It should be optional for all Models to ensure that the 
+# Model is compatible with the widest possible set of Tests
 get_full_neigh          method      none        none                    []
 
 # A pointer to the half neighbor list access function that is provided by the Test
+# This argument is required for Models/Tests that support the following NBCs: MI-OPBC-H and
+# NEIGH-PURE-H.  It should be optional for all Models to ensure that the Model is compatible
+# with the widest possible set of Tests
 get_half_neigh          method      none        none                    []
 
 # A pointer to the data for the neighbor list that is provided by the Test
+# This argument is required for Models/Tests that support the following NBCs: MI-OPBC-H, 
+# MI-OPBC-F, NEIGH-PURE-H, NEIGH-PURE-F, and NEIGH-RVEC-F.
 neighObject             pointer     none        none                    []
 
 # A vector of three floating-point numbers indicating the side lengths of the
 # minimum-image periodic orthogonal box
+# This argument is required for Models/Tests that support the following NBCs: MI-OPBC-H
+# and MI-OPBC-F
 boxlength               real*8      length      unspecified             [3]
 
 
@@ -467,12 +483,17 @@ MODEL_OUTPUT:
 # Name                  Type        Unit        SystemU/Scale           Shape                   requirements
 
 # A pointer to the Model's compute function
+# This argument is required for all Models and Tests
 compute                 method      none        none                    []
 
 # A pointer to the Model's reinit function
+# This argument is required for all Models that publish their parameters and should be optional
+# all other Models and Tests to ensure maximum compatibility.
 reinit                  method      none        none                    []
 
 # A pointer to the Model's destroy function
+# This argument should be included for all Models/Test (to ensure maximum compatibility), but
+# it may be optional.
 destroy                 method      none        none                    []
 
 # A floating-point number indicating the Model's cutoff distance.  This value should not
@@ -480,30 +501,37 @@ destroy                 method      none        none                    []
 # it will provide the parameter PARAM_FREE_cutoff which can be changed.  Once the 
 # PARAM_FREE_cutoff parameter has been changed and the Model's reinit function called, the
 # Model should update the value of `cutoff'.
+# This argument is required for all Models/Tests
 cutoff                  real*8      length      unspecified             []
 
 # A floating-point number corresponding to the total energy of the configuration of atoms
 # passed between the Model and Test.
+# This argument should, ideally, be optional to ensure maximum Model/Test compatibility
 energy                  real*8      energy      unspecified             []
 
 # An array of floating-point numbers corresponding to the total force acting each atom/particle
-# in the configuration of atoms passed between the Model and Test. 
+# in the configuration of atoms passed between the Model and Test.
+# This argument should be optional to ensure maximum Model/Test compatibility
 forces                  real*8      force       unspecified             [numberOfAtoms,3]
 
 # A vector of three floating-point numbers corresponding to the total force acting on the
 # configuration of atoms passed between the Model and Test.
+# This argument should, ideally, be optional to ensure maximum Model/Test compatibility
 force                   real*8      force       unspecified             [3]
 
 # A vector of floating-point numbers corresponding to the energy of each atom in the 
 # configuration passed between the Model and Test.
+# This argument should, ideally, be optional to ensure maximum Model/Test compatibility
 energyPerAtom           real*8      energy      unspecified             [numberOfAtoms]
 
 # An array of floating-point numbers corresponding to the virial-stress tensor for each
 # atom in the configuration passed between the Model and Test.
+# This argument should, ideally, be optional to ensure maximum Model/Test compatibility
 stressPerAtom           real*8      pressure    unspecified             [numberOfAtoms,3,3]
 
 # A floating-point number corresponding to the total virial for the configuration of atoms
 # passed between the Model and Test.
+# This argument should, ideally, be optional to ensure maximum Model/Test compatibility
 virial                  real*8      pressure    unspecified             []
 
 
@@ -516,10 +544,19 @@ MODEL_PARAMETERS:
 #
 # Two types of model parameters are allowed (the requirements string is ignored in this section)
 # 1) PARAM_FIXED_XXXXXX  - these should not be changed by the Test and can be used as arbitrary
-#                          persistent storage for use by the model.
+#                          persistent storage for use by the model.  These `fixed parameters' may
+#                          also be used by the Model for persistent storage between calls to the
+#                          Model's compute routine and/or as local memory space to avoid the
+#                          overhead of memory allocation/deallocation during each execution of the
+#                          compute routine.  
 # 2) PARAM_FREE_XXXXXX   - these may be changed by the Test (which should then call the Model's
 #                          model_reinit() function to inform the model that its parameters have
-#                          changed)
+#                          changed).
+#
+# Currently, PARAM_* arguments should use Shape descriptions that completely determine the total size
+# of the data (i.e., Shape should only use integers or `numberOfAtoms' or `numberAtomTypes').  This is
+# because the Test is responsible for all memory management (either explicitly, or through the 
+# kim_api_allocate() and kim_api_free()).
 #
 # Examples
 #

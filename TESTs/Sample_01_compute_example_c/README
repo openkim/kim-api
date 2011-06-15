@@ -1,5 +1,3 @@
-KIM API alpha release --- 31-May-2011
-
 This directory (Sample_01_compute_example_c) contains a Test that computes the
 energy of a given atomic configuration and the forces on the atoms.  It
 conforms with the KIM API interface standard and uses a Model, in this case a
@@ -21,5 +19,5 @@ lj_test.c                        -- main test program. Executable will be
                                     example: > echo  "Sample_01_lj_cutoff_c" | ./Sample_01_compute_example_c
 myqsort.c                        -- c-FORTRAN wrapper that is used by neighborlistmod.F90 to 
                                     call the standard c style qsort routine
-neighborlistmod.F90              -- FORTRAN module for calculating the neighbor list
-sample_neighbor.c                -- ???
+neighborlistmod.F90              -- FORTRAN module for efficiently calculating the neighbor list
+sample_neighbor.c                -- A simple neighbor list method written in C

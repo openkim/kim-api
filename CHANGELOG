@@ -1,0 +1,35 @@
+openkim-api-00.01.00 ===========================================================
+
+* Added support for ATOM/PARTICLE types
+
+* Added support for Models to publish their parameters
+
+* Added support for Models to define a `reinit' function for use when their
+  parameters are changed by a Test.
+
+* Added the NO_FORTRAN compilation option for uses who do not have a fortran
+  compiler installed.
+
+* Improved the Makefile system in general
+
+* Added support for neighbor list and boundary conditions (NBC)
+
+* Added support for dynamic linking
+
+* Updated documentation
+
+* Added documentation to the standard.kim file which now describes in detail
+  the format and content of KIM descriptor files.
+
+* Added a number of example Models and Tests to help users understand how to
+  implement their own openkim-api compliant codes.
+
+* Added README files to every directory.  These files provide a short
+  (hopefully helpful) description of the contents of the directory)
+
+
+openkim-api-00.00.00 ===========================================================
+
+The initial release of the openkim-api package.  This was first made available
+to participants at the Inaugural Openkim Workshop held in San Diego, CA on
+Feb. 26-27, 2011.

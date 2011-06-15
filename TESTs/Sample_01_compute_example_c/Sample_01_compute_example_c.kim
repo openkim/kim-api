@@ -1,3 +1,15 @@
+#######################################################################################################
+#
+# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
+# All rights reserved.
+#
+# Author: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
+#
+#
+# See KIM_API/standard.kim for documentation about this file
+#
+#######################################################################################################
+
 TEST_NAME := Sample_01_compute_example_f
 SystemOfUnitsFix := fixed    # can work only with units system defined bellow
 # SystemOfUnitsFix := flexible # can reset entire units system (default for model)
@@ -28,7 +40,7 @@ numberOfAtoms           integer*8    none       none                    []      
 
 #numberAtomTypes        integer      none       none                    []
 
-#atomTypes              integer      none       none                    [numberAtomTypes]               # one [dummy] -- rank is one
+#atomTypes              integer      none       none                    [numberOfAtoms]                 # one [dummy] -- rank is one
 
 coordinates             real*8       length     standard                [numberOfAtoms,3]
 

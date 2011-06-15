@@ -273,7 +273,6 @@ contains
     pcutsq = kim_api_get_data_f(pkim,"PARAM_FIXED_cutsq",ier)
     if (ier.le.0) stop '* ERROR: PARAM_FIXED_cutsq not found in KIM object.'
     model_cutsq = model_cutoff**2
-print *,"In reinit"    
     
   end subroutine ReInit
   
