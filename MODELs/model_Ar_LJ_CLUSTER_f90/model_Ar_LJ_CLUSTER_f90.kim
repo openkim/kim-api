@@ -48,7 +48,7 @@ coordinates             real*8       length     standard                [numberO
 MODEL_OUTPUT:
 # Name                  Type         Unit       SystemU/Scale           Shape              requirements
 
-destroy                 method       none       none                    []                 optional
+destroy                 method       none       none                    []
 
 compute                 method       none       none                    []
 

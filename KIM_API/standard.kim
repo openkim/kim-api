@@ -129,11 +129,17 @@
 #                  5) Shape: This string defines the rank (number of array dimensions) and
 #                            shape (range of each dimension) for the values associated with
 #                            the argument quantity. The format of the string is a `[' followed
-#                            by a comma separated list of strings/integers, followed by a `]'.
-#                            The strings may be either `numberOfAtoms', `numberAtomTypes', or
-#                            (for the first entry only) an arbitrary string.  White-space is
-#                            not allowed between the `[' and `]' characters.  Providing a few
-#                            examples is the best way to clearly define what this string means:
+#                            by an (optional) integer or a character string, followed by an
+#                            (optional) comma separated list of integers, followed by a `]'.
+#                            If a character string is provided as the first entry after the `[',
+#                            there are two spcecial cases.  These are the strings `numberOfAtoms'
+#                            and  `numberAtomTypes'.  If one of these strings is present, the
+#                            kim_api_allocate() function will be able to allocate the memory for
+#                            this argument (othwise, when any other string is used, memory must be
+#                            allocated by the Test and registered in the KIM API object using the
+#                            kim_api_set_data() function).  White-space is not allowed between the
+#                            `[' and `]' characters.  Providing a few examples is the best way to
+#                            clearly define what this string means:
 #                               * []  - This defines a scalar value (rank=0)
 #                               * [10] - This defines a vector (rank=1) of 10 values
 #                               * [numberOfAtoms] - This defines a vector (rank=1) of
@@ -146,11 +152,10 @@
 #                                    is called as KIM_API_allocate(pkim, nAtoms, nAtomTypes, kimerr),
 #                                    it will allocated memory for this argument using the value
 #                                    of `nAtomTypes'.
-#                               * [10,5] - This defines a two-dimensional array (rank=2) of size
-#                                    10 by 5.
-#                               * [12,numberOfAtoms,numberAtomTypes] - This defines a three-
-#                                    dimensional array (rank=3) of size 12 by `numberOfAtoms' by 
-#                                    `numberAtomTypes'.
+#                               * [12,10,5] - This defines a three-dimensional array (rank=3) of size
+#                                    12 by 10 by 5.
+#                               * [numberOfAtoms,12,15] - This defines a three-dimensional array
+#                                 (rank=3) of size `numberOfAtoms' by 12 by 15.
 #                               * [ZZZ,12] - This defines a two-dimensional array (rank=2)
 #                                    of size (an unspecified length) by 12.  The string `ZZZ' can
 #                                    be anything except `numberOfAtoms' and `numberAtomTypes'. In
@@ -160,6 +165,9 @@
 #                                    in order to register the memory location of the values for
 #                                    this argument.  Only the first index in the shape can be
 #                                    of unspecified length.
+#                               * [12,numerOfAtoms] - This is INVALID (`numberOfAtoms' or
+#                                    `numberAtomTypes'can only be used as the first entry of the Shape
+#                                    string.
 #                            For multi-dimensional arrays, the `fast-index' is always the last
 #                            in the list.
 #                  6) requirements: This string may be empty or `optional'.  An empty string
@@ -492,8 +500,9 @@ compute                 method      none        none                    []
 reinit                  method      none        none                    []
 
 # A pointer to the Model's destroy function
-# This argument should be included for all Models/Test (to ensure maximum compatibility), but
-# it may be optional.
+# This argument is required if a Model publishes its parameters (so that it can free the memory,
+# that it allocated in the init function, for its parameters).  Otherwise, this argument should
+# be included for all Models/Test (to ensure maximum compatibility), but it may be optional.
 destroy                 method      none        none                    []
 
 # A floating-point number indicating the Model's cutoff distance.  This value should not
@@ -554,10 +563,9 @@ MODEL_PARAMETERS:
 #                          model_reinit() function to inform the model that its parameters have
 #                          changed).
 #
-# Currently, PARAM_* arguments should use Shape descriptions that completely determine the total size
-# of the data (i.e., Shape should only use integers or `numberOfAtoms' or `numberAtomTypes').  This is
-# because the Test is responsible for all memory management (either explicitly, or through the 
-# kim_api_allocate() and kim_api_free()).
+# Memory for PARAM_* arguments is **NOT** allocated in any case by the KIM API (and should not be
+# allocated by a Test).  The Model is responsible for allocating (in the model_init function) and
+# freeing (in the model_destroy function) all memory for its parameters.
 #
 # Examples
 #

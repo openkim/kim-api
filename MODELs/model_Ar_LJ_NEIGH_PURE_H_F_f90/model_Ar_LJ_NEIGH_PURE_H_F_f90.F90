@@ -21,6 +21,7 @@ module model_Ar_LJ_NEIGH_PURE_H_F_f90
   private
   public Compute_Energy_Forces
   public ReInit
+  public Destroy
   
   ! Species indices
   integer, parameter :: Ar = 1
@@ -311,6 +312,78 @@ contains
     model_cutsq = model_cutoff**2
     
   end subroutine ReInit
+
+!-------------------------------------------------------------------------------
+!
+! Model reinitialization routine (REQUIRED)
+!
+!-------------------------------------------------------------------------------
+  subroutine Destroy(pkim)
+    use KIMservice
+    implicit none
+
+    !-- Transferred variables
+    integer(kind=kim_intptr), intent(in) :: pkim
+    
+    !-- Local variables
+    real*8 model_cutoff;  pointer(pcutoff,model_cutoff)
+    real*8 model_epsilon; pointer(pepsilon,model_epsilon)
+    real*8 model_sigma;   pointer(psigma,model_sigma)
+    real*8 model_Pcutoff; pointer(pparamcut,model_Pcutoff)
+    real*8 model_cutnorm; pointer(pcutnorm,model_cutnorm)
+    real*8 model_A;       pointer(pA,model_A)
+    real*8 model_B;       pointer(pB,model_B)
+    real*8 model_C;       pointer(pC,model_C)
+    real*8 model_sigmasq; pointer(psigmasq,model_sigmasq)
+    real*8 model_cutsq;   pointer(pcutsq,model_cutsq)
+    integer ier
+    
+    ! get sigma from KIM object and free memory
+    psigma = kim_api_get_data_f(pkim,"PARAM_FREE_sigma",ier)
+    if (ier.le.0) stop '* ERROR: PARAM_FREE_sigma not found in KIM object.'
+    call free(psigma)
+    
+    ! get epsilon from KIM object and free memory
+    pepsilon = kim_api_get_data_f(pkim,"PARAM_FREE_epsilon",ier)
+    if (ier.le.0) stop '* ERROR: PARAM_FREE_epsilon not found in KIM object.'
+    call free(pepsilon)
+    
+    ! get cutoff parameter from KIM object and free memory
+    pparamcut = kim_api_get_data_f(pkim,"PARAM_FREE_cutoff",ier)
+    if (ier.le.0) stop '* ERROR: PARAM_FREE_cutoff not found in KIM object.'
+    call free(pparamcut)
+    
+    ! get cutnorm in KIM object and free memory
+    pcutnorm = kim_api_get_data_f(pkim,"PARAM_FIXED_cutnorm",ier)
+    if (ier.le.0) stop '* ERROR: PARAM_FIXED_cutnorm not found in KIM object.'
+    call free(pcutnorm)
+    
+    ! get A in KIM object and free memory
+    pA = kim_api_get_data_f(pkim,"PARAM_FIXED_A",ier)
+    if (ier.le.0) stop '* ERROR: PARAM_FIXED_A not found in KIM object.'
+    call free(pA)
+    
+    ! get B in KIM object and free memory
+    pB = kim_api_get_data_f(pkim,"PARAM_FIXED_B",ier)
+    if (ier.le.0) stop '* ERROR: PARAM_FIXED_B not found in KIM object.'
+    call free(pB)
+    
+    ! get C in KIM object and free memory
+    pC = kim_api_get_data_f(pkim,"PARAM_FIXED_C",ier)
+    if (ier.le.0) stop '* ERROR: PARAM_FIXED_C not found in KIM object.'
+    call free(pC)
+    
+    ! get sigma^2 in KIM object and free memory
+    psigmasq = kim_api_get_data_f(pkim,"PARAM_FIXED_sigmasq",ier)
+    if (ier.le.0) stop '* ERROR: PARAM_FIXED_sigmasq not found in KIM object.'
+    call free(psigmasq)
+
+    ! get cutoff^2 in KIM object and free memory
+    pcutsq = kim_api_get_data_f(pkim,"PARAM_FIXED_cutsq",ier)
+    if (ier.le.0) stop '* ERROR: PARAM_FIXED_cutsq not found in KIM object.'
+    call free(pcutsq)
+
+  end subroutine Destroy
   
 end module model_Ar_LJ_NEIGH_PURE_H_F_f90
 
@@ -329,7 +402,7 @@ subroutine model_Ar_LJ_NEIGH_PURE_H_F_f90_init(pkim)
   integer(kind=kim_intptr), intent(in) :: pkim
   
   !-- Local variables
-  integer(kind=kim_intptr), parameter :: sz=1
+  integer(kind=kim_intptr), parameter :: one=1
   real*8 model_cutoff;  pointer(pcutoff,model_cutoff)
   real*8 model_epsilon; pointer(pepsilon,model_epsilon)
   real*8 model_sigma;   pointer(psigma,model_sigma)
@@ -342,67 +415,88 @@ subroutine model_Ar_LJ_NEIGH_PURE_H_F_f90_init(pkim)
   real*8 model_cutsq;   pointer(pcutsq,model_cutsq)
   integer ier
   
-  ! no destroy function is needed
-  
   ! store pointer to compute function in KIM object
-  if (kim_api_set_data_f(pkim,"compute",sz,loc(Compute_Energy_Forces)).ne.1) &
+  if (kim_api_set_data_f(pkim,"compute",one,loc(Compute_Energy_Forces)).ne.1) &
        stop '* ERROR: compute not found in KIM object.'
   
   ! store pointer to reinit function in KIM object
-  if (kim_api_set_data_f(pkim,"reinit",sz,loc(ReInit)).ne.1) &
+  if (kim_api_set_data_f(pkim,"reinit",one,loc(ReInit)).ne.1) &
        stop '* ERROR: reinit not found in KIM object.'
+
+  ! store pointer to destroy function in KIM object
+  if (kim_api_set_data_f(pkim,"destroy",one,loc(Destroy)).ne.1) &
+       stop '* ERROR: destroy not found in KIM object.'
   
   ! store model cutoff in KIM object
   pcutoff =  kim_api_get_data_f(pkim,"cutoff",ier)
   if (ier.le.0) stop '* ERROR: cutoff not found in KIM object.'
   model_cutoff = 8.15d0 ! cutoff distance in angstroms
   
+  ! Allocate memory for sigma and store value
+  psigma = malloc(one*8) ! 8 is the size of a real*8
   ! store sigma in KIM object
-  psigma = kim_api_get_data_f(pkim,"PARAM_FREE_sigma",ier)
+  ier = kim_api_set_data_f(pkim,"PARAM_FREE_sigma",one,psigma)
   if (ier.le.0) stop '* ERROR: PARAM_FREE_sigma not found in KIM object.'
   model_sigma = 3.4d0 ! LJ sigma in angstroms
   
+  ! Allocate memory for epsilon and store value
+  pepsilon = malloc(one*8) ! 8 is the size of a real*8
   ! store epsilon in KIM object
-  pepsilon = kim_api_get_data_f(pkim,"PARAM_FREE_epsilon",ier)
+  ier = kim_api_set_data_f(pkim,"PARAM_FREE_epsilon",one,pepsilon)
   if (ier.le.0) stop '* ERROR: PARAM_FREE_epsilon not found in KIM object.'
   model_epsilon = 0.0104d0 ! LJ epsilon in eV
   
+
+  ! Allocate memory for parameter cutoff and store value
+  pparamcut = malloc(one*8) ! 8 is the size of a real*8
   ! store cutoff as parameter in KIM object
-  pparamcut = kim_api_get_data_f(pkim,"PARAM_FREE_cutoff",ier)
+  ier = kim_api_set_data_f(pkim,"PARAM_FREE_cutoff",one,pparamcut)
   if (ier.le.0) stop '* ERROR: PARAM_FREE_cutoff not found in KIM object.'
   model_Pcutoff = model_cutoff
   
+  ! Allocate memory for parameter cutnorm and store value
+  pcutnorm = malloc(one*8) ! 8 is the size of a real*8
   ! store cutnorm in KIM object
-  pcutnorm = kim_api_get_data_f(pkim,"PARAM_FIXED_cutnorm",ier)
+  ier = kim_api_set_data_f(pkim,"PARAM_FIXED_cutnorm",one,pcutnorm)
   if (ier.le.0) stop '* ERROR: PARAM_FIXED_cutnorm not found in KIM object.'
   model_cutnorm = model_cutoff/model_sigma
   
+  ! Allocate memory for parameter A and store value
+  pA = malloc(one*8) ! 8 is the size of a real*8
   ! store A in KIM object
-  pA = kim_api_get_data_f(pkim,"PARAM_FIXED_A",ier)
+  ier = kim_api_set_data_f(pkim,"PARAM_FIXED_A",one,pA)
   if (ier.le.0) stop '* ERROR: PARAM_FIXED_A not found in KIM object.'
   model_A = 12.d0*model_epsilon*(-26.d0 + 7.d0*model_cutnorm**6)/ &
        (model_cutnorm**14*model_sigma**2)
   
+  ! Allocate memory for parameter B and store value
+  pB = malloc(one*8) ! 8 is the size of a real*8
   ! store B in KIM object
-  pB = kim_api_get_data_f(pkim,"PARAM_FIXED_B",ier)
+  ier = kim_api_set_data_f(pkim,"PARAM_FIXED_B",one,pB)
   if (ier.le.0) stop '* ERROR: PARAM_FIXED_B not found in KIM object.'
   model_B = 96.d0*model_epsilon*(7.d0-2.d0*model_cutnorm**6)/     &
        (model_cutnorm**13*model_sigma)
   
+  ! Allocate memory for parameter C and store value
+  pC = malloc(one*8) ! 8 is the size of a real*8
   ! store C in KIM object
-  pC = kim_api_get_data_f(pkim,"PARAM_FIXED_C",ier)
+  ier = kim_api_set_data_f(pkim,"PARAM_FIXED_C",one,pC)
   if (ier.le.0) stop '* ERROR: PARAM_FIXED_C not found in KIM object.'
   model_C = 28.d0*model_epsilon*(-13.d0+4.d0*model_cutnorm**6)/   &
        (model_cutnorm**12)
   
+  ! Allocate memory for parameter sigmasq and store value
+  psigmasq = malloc(one*8) ! 8 is the size of a real*8
   ! store sigma^2 in KIM object
-  psigmasq = kim_api_get_data_f(pkim,"PARAM_FIXED_sigmasq",ier)
+  ier = kim_api_set_data_f(pkim,"PARAM_FIXED_sigmasq",one,psigmasq)
   if (ier.le.0) stop '* ERROR: PARAM_FIXED_sigmasq not found in KIM object.'
   model_sigmasq = model_sigma**2
   
+  ! Allocate memory for parameter cutsq and store value
+  pcutsq = malloc(one*8) ! 8 is the size of a real*8
   ! store cutoff^2 in KIM object
-  pcutsq = kim_api_get_data_f(pkim,"PARAM_FIXED_cutsq",ier)
+  ier = kim_api_set_data_f(pkim,"PARAM_FIXED_cutsq",one,pcutsq)
   if (ier.le.0) stop '* ERROR: PARAM_FIXED_cutsq not found in KIM object.'
   model_cutsq = model_cutoff**2
-  
+
 end subroutine model_Ar_LJ_NEIGH_PURE_H_F_f90_init
