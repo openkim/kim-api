@@ -94,7 +94,7 @@ TROUBLESHOOTING: By default, the make system uses the g++ compiler with
 the -lgfortran option to link compiled FORTRAN executables. If (for some
 versions of linux or GNU compilers) linking of FORTRAN executables with the
 g++ compiler does not work, try gfortran with the -lstdc++ option.  See lines
-78-79 in the Include.mk file (change them to lines 76-77). 
+64-65 in the Include.mk file (change them to lines 66-67). 
 
 GNU compilers tested with version  4.2.x or higher, the Intel compiler must be
 version 11.1 or higher.

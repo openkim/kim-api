@@ -56,7 +56,9 @@ The current version of the openkim-api package supports the following features:
 * Support for static and dynamic linking of programs using the openkim-api
 
 * Communication of an arbitrary number of `arguments' between a `Model' (interatomic
-  potential) and a `Test' (simulation code that uses a Model).
+  potential) and a `Test' (simulation code that uses a Model).  This is facilitated
+  by the use of KIM descriptor files and a single KIM API object data strucutre
+  that stores all needed information to be communicated between a Model and a Test.
 
 * Data types: integer, integer*8 (long long), real (float), real*8 (double),
               method (for exchanging pointers to functions), pointer (for
