@@ -1564,7 +1564,7 @@ void KIM_API_model::allocateinitialized(KIM_API_model * mdl, intptr_t natoms, in
         intptr_t rank = (intptr_t)mdl->inlines[i].get_rank();
         int *shape = mdl->inlines[i].get_shape();
         int calculate = (*mdl)[i].flag->calculate;
- 
+        bool isitparam = mdl->is_it_par((*mdl)[i].name);
         intptr_t sz=0;
         int c=1;
         if (shape!=NULL) {
@@ -1591,7 +1591,7 @@ void KIM_API_model::allocateinitialized(KIM_API_model * mdl, intptr_t natoms, in
             if (strcmp((*mdl)[i].type,"pointer")==0 || strcmp((*mdl)[i].type,"method")==0) sz=0;
             if (strcmp((*mdl)[i].type,"dummy")==0 ) sz=0;
         }
-        if(mdl->inlines[i].isitoptional() && calculate == 0) {
+        if(mdl->inlines[i].isitoptional() && calculate == 0 || isitparam) {
             sz=0;
             if(shape!=0) shape[0]=0;
         }
