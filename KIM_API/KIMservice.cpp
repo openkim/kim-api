@@ -162,29 +162,70 @@ int *  KIM_IOline::get_shape(){
             }
             return shp;
  }
+int * KIM_IOline::get_shape(intptr_t natoms, int ntypes){
+            char shapetmp[strlen(shape)+1];
+            char tmpstring[128];
+            strncpy(shapetmp,shape,strlen(shape)+1);
+            int rnk = get_rank();
+            if (rnk < 1) return NULL;
+            int *shp = new int[rnk];
+            int i=0;
+            char *tmp =strtok(shapetmp,"[,]");
+            while(tmp!=NULL){
+                double dd = strtod(tmp,&tmp);
+                shp[i]=(int)dd;
+                if(shp[i]==0){
+                    strcpy(tmpstring,tmp);
+                    this->strip(tmpstring);
+                    if(strcmp(tmpstring,"numberAtomTypes")==0) shp[i]=ntypes;
+                    if(strcmp(tmpstring,"numberOfAtoms")==0) shp[i]=(int)natoms;
+                }
+                tmp = strtok(NULL,"[,]");
+                i++;
+            }
+            return shp;
+}
  bool KIM_IOline::isitpernatomtypes(){
              char shapetmp[strlen(shape)+1];
+             char tmpstring[128];
              strncpy(shapetmp,shape,strlen(shape)+1);
              char *tmp =strtok(shapetmp,"[,]");
              if(tmp==NULL)return false;
-             if(strcmp(tmp,"numberAtomTypes")==0) return true;
+             while(tmp!=NULL){
+                strcpy(tmpstring,tmp);
+                this->strip(tmpstring);
+                if(strcmp(tmpstring,"numberAtomTypes")==0) return true;
+                tmp = strtok(NULL,"[,]");
+             }
              return false;
  }
 bool KIM_IOline::isitsizedefined(){
-             char shapetmp[strlen(shape)+1];
-             strncpy(shapetmp,shape,strlen(shape)+1);
-             char *tmp =strtok(shapetmp,"[,]");
-             if(tmp==NULL)return false;
-             double dd = strtod(tmp,&tmp);
-             if( (int) dd > 0 ) return true;
+             
+             int rnk =this->get_rank();
+             if (rnk < 1) return false;
+             int * shp = this->get_shape();
+             if (shp==NULL) return false;
+             
+             int c=1;
+             for (int i=0; i<rnk;i++) c=c*shp[i];
+  
+             delete [] shp;
+             
+             if (c > 0) return true;
              return false;
 }
 bool KIM_IOline:: isitperatom(){
              char shapetmp[strlen(shape)+1];
+             char tmpstring[128];
              strncpy(shapetmp,shape,strlen(shape)+1);
              char *tmp =strtok(shapetmp,"[,]");
              if(tmp==NULL)return false;
-             if(strcmp(tmp,"numberOfAtoms")==0) return true;
+             while(tmp!=NULL){
+                strcpy(tmpstring,tmp);
+                this->strip(tmpstring);
+                if(strcmp(tmpstring,"numberOfAtoms")==0) return true;
+                tmp = strtok(NULL,"[,]");
+             }
              return false;
 }
 bool KIM_IOline::isitoptional(){
@@ -1562,30 +1603,14 @@ void KIM_API_model::allocateinitialized(KIM_API_model * mdl, intptr_t natoms, in
     }
     for(int i=0; i<mdl->model.size;i++){
         intptr_t rank = (intptr_t)mdl->inlines[i].get_rank();
-        int *shape = mdl->inlines[i].get_shape();
+        int *shape = mdl->inlines[i].get_shape(natoms,ntypes);
         int calculate = (*mdl)[i].flag->calculate;
         bool isitparam = mdl->is_it_par((*mdl)[i].name);
         intptr_t sz=0;
         int c=1;
         if (shape!=NULL) {
-            for(int k=1;k<rank;k++) c=c*shape[k];
- 
-            if(mdl->inlines[i].isitperatom()) {
-
-                sz=natoms*c;
-                shape[0]=natoms;
-  
-            }else if(mdl->inlines[i].isitpernatomtypes()){
-  
-                sz=ntypes*c;
-                shape[0]=ntypes;
-            }else if(mdl->inlines[i].isitsizedefined()){
-   
-                sz=shape[0]*c;
-            }else{
-                cout<<"KIM_API_model::allocateinitialized: shape[0] of";
-                cout<< mdl->inlines[i].name<<"  is "<< shape[0]<<endl;
-            }
+            for(int k=0;k<rank;k++) c=c*shape[k];
+            sz=c;
         }else{
             sz = 1;
             if (strcmp((*mdl)[i].type,"pointer")==0 || strcmp((*mdl)[i].type,"method")==0) sz=0;

@@ -81,6 +81,7 @@ public:
         double get_unitscale();
         int get_rank();
         int * get_shape();
+        int * get_shape(intptr_t natoms, int ntypes);
         bool isitpernatomtypes();
         bool isitsizedefined();
         bool isitperatom();
