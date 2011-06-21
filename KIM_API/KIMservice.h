@@ -171,6 +171,7 @@ public:
     int get_index(char *nm);
     intptr_t get_size(char *nm,int *error);
     intptr_t get_rank_shape(char *nm,int * shape,int *error);
+    void set_rank_shape(char *nm, int * shape, int rank, int *error);
     float get_unit_scalefactor(char*nm,int *error);
     void set2_compute(char *nm);
     void set2_donotcompute(char *nm);

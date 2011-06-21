@@ -164,6 +164,12 @@ intptr_t KIM_API_get_rank_shape(void *kimmdl,char *nm, int * shape, int *error){
     return mdl->get_rank_shape(nm,shape,error);
     
 }
+
+void KIM_API_set_rank_shape(void *kimmdl,char *nm, int * shape, int rank,int *error){
+    KIM_API_model * mdl=(KIM_API_model *) kimmdl;
+    mdl->set_rank_shape(nm,shape,rank,error);
+}
+
 void KIM_API_set2_compute(void *kimmdl,char *nm, int * error){
     *error = 0;
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
@@ -370,10 +376,14 @@ void * kim_api_get_data_cptr_(void *kimmdl,char **nm, int *error){
 intptr_t kim_api_get_size_(void *kimmdl,char **nm,int *error){
     return KIM_API_get_size(*(KIM_API_model **)kimmdl,*nm,error);
 }
+
 intptr_t kim_api_get_rank_shape_(void *kimmdl,char **nm, int ** shape,int *error){
     return KIM_API_get_rank_shape(*(KIM_API_model **)kimmdl,*nm,*shape,error);
 }
 
+void kim_api_set_rank_shape_(void *kimmdl,char **nm, int ** shape, int * rank,int *error){
+    KIM_API_set_rank_shape(*(KIM_API_model **)kimmdl,*nm,*shape,*rank,error);
+}
 void kim_api_set2_compute_(void *kimmdl,char **nm,int *error){
     KIM_API_set2_compute(*(KIM_API_model **)kimmdl,*nm,error);
 }

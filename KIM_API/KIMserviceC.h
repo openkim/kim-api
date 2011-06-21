@@ -59,6 +59,7 @@ void * KIM_API_get_data(void *kimmdl,char *nm,int * error);
 
 intptr_t KIM_API_get_size(void *kimmdl,char *nm, int *error);
 intptr_t KIM_API_get_rank_shape(void *kimmdl,char *nm, int * shape, int *error);
+void KIM_API_set_rank_shape(void *kimmdl,char *nm, int * shape, int rank,int *error);
 
 void KIM_API_set2_compute(void *kimmdl,char *nm,int * error);
 void KIM_API_set2_donotcompute(void *kimmdl,char *nm,int *error);
@@ -118,6 +119,8 @@ void * kim_api_get_data_cptr_(void *kimmdl,char **nm, int *error);
 
 intptr_t kim_api_get_size_(void *kimmdl,char **nm,int *error);
 intptr_t kim_api_get_rank_shape_(void *kimmdl,char **nm, int ** shape, int *error);
+void kim_api_set_rank_shape_(void *kimmdl,char **nm, int ** shape, int * rank,int *error);
+
 float kim_api_get_unit_scalefactor_(void * kim, char**nm, int *error);
 void kim_api_set2_compute_(void *kimmdl,char **nm,int *error);
 void kim_api_set2_donotcompute_(void *kimmdl,char **nm, int *error);

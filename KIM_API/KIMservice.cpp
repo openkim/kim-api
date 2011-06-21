@@ -906,7 +906,7 @@ bool KIM_API_model::set_data(char *nm, intptr_t size, void *dt){
             for (int i=1;i<(*this)[ind].rank;i++) {
                 c=c * (*this)[ind].shape[i];
             }
-            (*this)[ind].shape[0] = size/c;
+            if(c!=0) (*this)[ind].shape[0] = size/c;
         }
         (*this)[ind].flag->freeable = 1;
         return true;
@@ -987,6 +987,48 @@ intptr_t KIM_API_model::get_rank_shape(char *nm,int * shape, int *error){
         }else{
             *error =0;
             return -1;
+        }
+}
+
+void KIM_API_model::set_rank_shape(char* nm, int* shape, int rank, int* error){
+    //size will be calculated and set too
+        *error =0;
+        int ind=get_index(nm,error);
+        if (ind < 0) return;
+        if((intptr_t)(rank) != (*this)[ind].rank) {
+            *error=-1; //rank do not match
+            return;
+        }
+       
+        if((*this)[ind].rank == 0){
+            (*this)[ind].size=1;
+            *error =1; //success
+            return;
+        }else if((*this)[ind].rank ==1){
+            (*this)[ind].shape[0]=shape[0];
+            (*this)[ind].size=(intptr_t)shape[0];
+            if (shape[0] < 0) {
+                *error=-2; //negative index
+            }else{
+                *error = 1; //success
+            }
+            return;
+        }else if((*this)[ind].rank>1){
+            int sz=1;
+            for (int i=0;i<rank;i++) {
+                if (shape[i]<0){
+                    *error = -2; //negative index
+                    return;
+                }
+                sz=sz*shape[i];
+            }
+            (*this)[ind].size=(intptr_t)sz;
+            for (int i=0; i< rank; i++) (*this)[ind].shape[i]=shape[i];
+            *error=1;//success
+            return;
+        }else{
+            *error=0;
+            return;
         }
 }
 void KIM_API_model::set2_compute(char *nm){
