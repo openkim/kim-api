@@ -73,4 +73,4 @@ PARAM_FIXED_dope1       real*8      energy     standard                 []
 
 PARAM_FIXED_dope2       real*8      energy     standard                 []
 
-PARAM_FREE_dope3        real*8      energy     standard                 []
+PARAM_FREE_dope3        real*8      energy     standard                 [m,n]
