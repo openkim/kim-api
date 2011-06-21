@@ -433,7 +433,52 @@ Corresponding FORTRAN style interface:
                         integer(kind=kim_intptr) :: kimmdl 
                         character (len=*) :: nm 
                         integer :: kimerr
+			integer,pointer :: shape(:)
         end function kim_api_get_rank_shape_f 
+
+
+******************************************************************************
+
+void  KIM_API_set_rank_shape(void *kimmdl, char *nm, int * shape,int rank, int * kimerror); 
+        This routine setss shape  of nm and checks if rank provided is the same as in KIM API object. In case of error,
+        kimerror will be zero or negative value. In case of success kimerror =1.
+
+Arguments:
+
+        void * kimmdl
+                pointer to KIM_API_model object (in c++ style the definition 
+                will be (KIM_API_model *))
+        
+        char *nm
+                null terminated string is the name of the data/variable/method  
+                field exactly as it appears in the .kim descriptor file
+
+        int * shape
+                An array of integers for the shape of the array data. The
+                routine will set values in this array for each dimension of the
+                data object (the number of these is equal to the rank value
+                returned by this function). Shape gives range of each index for
+                the array data. Shape[0] is the slowest changing index. Shape 
+                has to be allocated and should have enough memory to hold a
+                value for each dimension.  (An integer array of size 10 or
+                greater is usually sufficient.)
+
+        int rank
+                 Rank of the array and size of shape     
+
+        int * kimerror
+                error code: 1   -- successful completion, 
+                            0   -- name nm is not in KIM
+                           -1   -- rank provided, does not match KIM API variable rank
+                           -2   -- negative index in shape
+
+Corresponding FORTRAN style interface:
+        subroutine kim_api_set_rank_shape_f(kimmdl,nm, shape, rank, kimerr) 
+                        integer(kind=kim_intptr) :: kimmdl 
+                        character (len=*) :: nm 
+                        integer :: rank, kimerr, shape(rank)
+        subroutine kim_api_aet_rank_shape_f 
+
 
 ******************************************************************************
 
