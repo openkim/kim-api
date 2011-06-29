@@ -313,8 +313,10 @@ int  KIM_API_set_data(void *kimmdl, char *nm,  intptr_t size, void *dt);
         kimmdl. It searches for the name of the data/variable, nm, and if it is 
         in the KIM API object, places the pointer dt in the KIM API object.
         Upon successful completion this routine returns 1.  If nm is not in the 
-        KIM API object this routine returns 0. This routine should not be used 
-        in conjunction with KIM_API_allocate for array data.
+        KIM API object this routine returns 0. If memory has already been
+        allocated for this argument, a memory leak will be created.  Thus, care
+        must be taken if this routine is used in conjunction with
+        KIM_API_allocate for array data.
 
 Arguments:
 
@@ -433,15 +435,20 @@ Corresponding FORTRAN style interface:
                         integer(kind=kim_intptr) :: kimmdl 
                         character (len=*) :: nm 
                         integer :: kimerr
-			integer,pointer :: shape(:)
+                        integer,pointer :: shape(:)
         end function kim_api_get_rank_shape_f 
 
 
 ******************************************************************************
 
 void  KIM_API_set_rank_shape(void *kimmdl, char *nm, int * shape,int rank, int * kimerror); 
-        This routine setss shape  of nm and checks if rank provided is the same as in KIM API object. In case of error,
-        kimerror will be zero or negative value. In case of success kimerror =1.
+        This routine sets the `shape' of nm and checks if the `rank' provided
+        is the same as that already stored in the KIM API object. In case of
+        error, kimerror will be zero or a negative value. In case of success
+        kimerror = 1.  This will overwrite all of the shape data stored in
+        the KIM API object for this argument.  This routine should not be
+        used in conjunction with arguments for which KIM_API_allocate() has
+        previously allocated memory.
 
 Arguments:
 
@@ -455,13 +462,11 @@ Arguments:
 
         int * shape
                 An array of integers for the shape of the array data. The
-                routine will set values in this array for each dimension of the
-                data object (the number of these is equal to the rank value
-                returned by this function). Shape gives range of each index for
-                the array data. Shape[0] is the slowest changing index. Shape 
-                has to be allocated and should have enough memory to hold a
-                value for each dimension.  (An integer array of size 10 or
-                greater is usually sufficient.)
+                routine will use the values in this array for each dimension of
+                the data object (the number of these must be equal to the rank
+                value passed to the function). Shape gives the range of each
+                index for the array data. Shape[0] is the slowest changing
+                index.
 
         int rank
                  Rank of the array and size of shape     
@@ -875,7 +880,7 @@ int KIM_API_get_half_neigh(void *kimmdl,int mode,int request,
         int *atom, int *numnei, int **nei1atom, double **Rij);
         
         the description is the same as for KIM_API_get_full_neigh, but this 
-	routine provides a half neighbor list instead of a full neighbor list.
+        routine provides a half neighbor list instead of a full neighbor list.
         The test must have previously registered, in the kimmdl object, a
         pointer to its neighbor list access routine with the same interface as
         above.

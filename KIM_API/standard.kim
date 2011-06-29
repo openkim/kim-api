@@ -130,17 +130,21 @@
 #                            shape (range of each dimension) for the values associated with
 #                            the argument quantity. The format of the string is a `[' followed
 #                            by an (optional) integer or a character string, followed by an
-#                            (optional) comma separated list of integers, followed by a `]'.
-#                            If a character string is provided as the first entry after the `[',
-#                            there are two spcecial cases.  These are the strings `numberOfAtoms'
-#                            and  `numberAtomTypes'.  If one of these strings is present, the
-#                            kim_api_allocate() function will be able to allocate the memory for
-#                            this argument (othwise, when any other string is used, memory must be
-#                            allocated by the Test and registered in the KIM API object using the
-#                            kim_api_set_data() function).  White-space is not allowed between the
-#                            `[' and `]' characters.  Providing a few examples is the best way to
-#                            clearly define what this string means:
-#                               * []  - This defines a scalar value (rank=0)
+#                            (optional) comma separated list of integers or character strings,
+#                            followed by a `]'. If a character string is provided there are two
+#                            spcecial cases.  These are the strings `numberOfAtoms' and
+#                            `numberAtomTypes'.  If one of these strings is present, the
+#                            KIM_API_allocate() function will substitute the value of its `natoms'
+#                            or its `ntypes' arguments, respectively. If, after this substitution 
+#                            the ranges of EACH dimension is known, then the KIM_API_allocate() 
+#                            function will allocate the memory for this argument (othwise, when one 
+#                            or more strings not equal to `numberOfAtoms' or `numberAtomTypes' are
+#                            used, memory for this argument will not be allocated by the KIM_API_allocate()
+#                            function and must be allocated by the Test and registered in the KIM API
+#                            object using the KIM_API_set_data() function).  White-space is not allowed
+#                            between the `[' and `]' characters.  Providing a few examples is the best
+#                            way to clearly define what this string means:
+#                               * []   - This defines a scalar value (rank=0)
 #                               * [10] - This defines a vector (rank=1) of 10 values
 #                               * [numberOfAtoms] - This defines a vector (rank=1) of
 #                                    `numberOfAtoms' values.  If the KIM_API_allocate function
@@ -153,21 +157,33 @@
 #                                    it will allocated memory for this argument using the value
 #                                    of `nAtomTypes'.
 #                               * [12,10,5] - This defines a three-dimensional array (rank=3) of size
-#                                    12 by 10 by 5.
+#                                    12 by 10 by 5.  Memory for this array can be allocated by
+#                                    the KIM_API_allocate() function.
 #                               * [numberOfAtoms,12,15] - This defines a three-dimensional array
-#                                 (rank=3) of size `numberOfAtoms' by 12 by 15.
+#                                 (rank=3) of size `numberOfAtoms' by 12 by 15. Memory for this array 
+#                                    can be allocated by the KIM_API_allocate() function.
 #                               * [ZZZ,12] - This defines a two-dimensional array (rank=2)
 #                                    of size (an unspecified length) by 12.  The string `ZZZ' can
 #                                    be anything except `numberOfAtoms' and `numberAtomTypes'. In
 #                                    this case, KIM_API_allocate() will not allocate any memory
-#                                    for this argument.  The Test must allocate (and eventually
-#                                    free) this memory and use the KIM_API_set_data() function
-#                                    in order to register the memory location of the values for
-#                                    this argument.  Only the first index in the shape can be
-#                                    of unspecified length.
-#                               * [12,numerOfAtoms] - This is INVALID (`numberOfAtoms' or
-#                                    `numberAtomTypes'can only be used as the first entry of the Shape
-#                                    string.
+#                                    for this argument.  When the only unknown dimension range is the
+#                                    (slowest) first dimension, the Test must allocate (and eventually
+#                                    free) memory for this argument and use the KIM_API_set_data()
+#                                    function in order to register the memory location of the values for
+#                                    this argument.  If the range of a dimension other than the first is
+#                                    unknown, then the KIM_API_set_rank_shape() function must also be used
+#                                    (see below).
+#                               * [12,numerOfAtoms] - This defines a two-dimensional array (rank=2)
+#                                    of size 12 by `numberOfAtoms'.  Memory for this array can be
+#                                    allocated by the KIM_API_allocate() function.
+#                               * [ZZZ,AAA,BBB,12,CCC,numberAtomTypes] - This defines a six-dimensional
+#                                    array (rank=6).  Memory for this array can not be allocated by
+#                                    the KIM_API_allocate() function.  The Test must use the
+#                                    KIM_API_set_rank_shape() function to register the range of all
+#                                    dimensions (i.e, specify the explicit values for the shape).  Then,
+#                                    the Test must allocate (and eventually free) memory for this argument
+#                                    and use the KIM_API_set_data() function in order to register the
+#                                    memory location of the values for this argument.
 #                            For multi-dimensional arrays, the `fast-index' is always the last
 #                            in the list.
 #                  6) requirements: This string may be empty or `optional'.  An empty string

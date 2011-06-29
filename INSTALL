@@ -70,14 +70,17 @@ If KIM_DYNAMIC is not set, the models will build and linked statically.
 If KIM_DYNAMIC is set, then it will load model_init from shared object library of a 
 model during runtime (KIM_API_init(...) will use KIM_DIR,KIM_MODELS to locate 
 those shared library object). 
-Benefits of KIM_DYNAMIC vs KIM_STATIC:
-  - since only the one model is loaded by KIM_API_init(..) into memory there is 
+Benefits of using dynamically loaded libraries (KIM_DYNAMIC defined) vs. statically
+    linked libraries (KIM_DYNMAIC undefined)
+  - since only one model is loaded by KIM_API_init(..) into memory there is no worry
     of global name clash
-  - one can create  instances of the same model by using KIM_API_init(...) several 
-    times. And again will be no global name clash. That is because dynamic load will create copies
-    of all global names and all  functions and subroutine codes copies in the memory. 
-KIM_DYNAMIC is not a main option yet because some old version of gnu compiler do not provide dynamic 
-load by default; and also some version of older MPI only work with static linking.
+  - one can create instances of the same model by using KIM_API_init(...) several 
+    times. And again, this can be made to ensure that there will be no global name
+    clash.  That is because dynamic load will create copies of all global names and 
+    all functions and subroutine codes copies in the memory. 
+KIM_DYNAMIC is not a main option yet because some old version of gnu compiler do not
+    provide dynamic load by default; and also some version of older MPI only work with
+    static linking.
        
 
 9. For those users who do not have a Fortran compiler installed, the openkim-api
