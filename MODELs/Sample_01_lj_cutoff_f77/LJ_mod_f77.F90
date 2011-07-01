@@ -75,6 +75,7 @@ subroutine sample_01_lj_cutoff_f77_init(pkim)
 		print *,"lj_init: kim_api_get_data_f: cutoff not in KIM : error code = ", kimerr
 		stop
 	end if
+	xcutof =1.8
 	apotenergy = kim_api_get_data_f(pkim,"energy",kimerr)
 	if (kimerr.ne.1) then
 		print *,"lj_init: kim_api_get_data_f: energy not in KIM : error code = ", kimerr

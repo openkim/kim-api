@@ -9,23 +9,43 @@
 #include <stdio.h>
 #include "KIMserviceC.h"
 
-/* Define prototypes for model initialization and compute routine */
+/* Define prototypes for compute routine */
 
+static void sample_01_lj_cutoff_c_calculate(void *km,int *);
 
-void sample_01_lj_cutoff_c_init_(void * km);
-void sample_01_lj_cutoff_c_calculate(void *km,int *);
+/* static local variables */
+static double *pcutoff, *penergy;
+static long long *numberOfAtoms;
 
 /* Model Initiation routine */
 void sample_01_lj_cutoff_c_init_(void * km){
 	/* cast pointer for KIM API object */	
 	intptr_t * pkim = * ((intptr_t **)km);
-
+	int kimerr;
+	/* get  from pkim energy, cutoff and number of atoms */
+	penergy       = (double*) KIM_API_get_data(pkim,"energy",&kimerr);
+	if (kimerr!=1) {
+		printf("error in energy: code %d\n",kimerr);
+		exit(337);
+	}
+	pcutoff       = (double*) KIM_API_get_data(pkim,"cutoff",&kimerr);
+	if (kimerr!=1) {
+		printf("error in cutoff: code %d\n",kimerr);
+		exit(337);
+	}
+	numberOfAtoms = (long long *) KIM_API_get_data(pkim,"numberOfAtoms",&kimerr);
+	if (kimerr!=1) {
+		printf("error in numberOfAtoms: code %d\n",kimerr);
+		exit(337);
+	}
 	/* Provide KIM API object with function pointer of compute routine */
 	KIM_API_set_data(pkim,"compute",1,(void*) &sample_01_lj_cutoff_c_calculate);
+	/*  set  default cutoff*/
+	*pcutoff = 1.8;
 }
 
 /* Computational core of LJ potential */
-void ljpotr (double rr,double *v,double *dvmr){
+static void ljpotr (double rr,double *v,double *dvmr){
 		double a,b,r1,r2,rm6,rm8;
 		a=0.0002441; b=0.03125; // LJ parameters
 		if (rr < 1.0e-16){
@@ -37,11 +57,10 @@ void ljpotr (double rr,double *v,double *dvmr){
 }
 
 
-void sample_01_lj_cutoff_c_calculate(void *km,int *kimerror){
+
+static void  sample_01_lj_cutoff_c_calculate(void *km,int *kimerror){
 	/* kim related declaration */
 	intptr_t * pkim = * ((intptr_t **)km);
-	double * penergy;  double * pcutoff;
-	long long * numberOfAtoms;
 	double * x;
 	double * f;
 	intptr_t * neighObject;
@@ -51,26 +70,8 @@ void sample_01_lj_cutoff_c_calculate(void *km,int *kimerror){
 	double vij,dvmr,v,sumv,cutof,cut2,energycutof,r2,dv,*Rij;
 	double xi[3],xj[3],dx[3],fij[3];
         int kimerr;
-	/* get everething from kim */
+	/* get forces and coordinayes from kim */
 
-	penergy       = (double*) KIM_API_get_data(pkim,"energy",&kimerr);
-	if (kimerr!=1) {
-		printf("error in energy\n");
-		*kimerror = kimerr;
-		return;
-	}
-	pcutoff       = (double*) KIM_API_get_data(pkim,"cutoff",&kimerr);
-	if (kimerr!=1) {
-		printf("error in cutoff\n");
-		*kimerror = kimerr;
-		return;
-	}
-	numberOfAtoms = (long long *) KIM_API_get_data(pkim,"numberOfAtoms",&kimerr);
-	if (kimerr!=1) {
-		printf("error in numberOfAtoms\n");
-		*kimerror = kimerr;
-		return;
-	}
 	x  = (double*) KIM_API_get_data(pkim,"coordinates",&kimerr);
 	if (kimerr!=1) {
 		printf("error in coordinates\n");

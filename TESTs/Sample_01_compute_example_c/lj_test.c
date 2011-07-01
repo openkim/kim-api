@@ -102,9 +102,7 @@ int main(){
 	/* READY to call Model Initiation routine */
 	
 	if (KIM_API_model_init(pkim) != 1) return -1;
-        
-        /* Set calculation parameters */
-	*pcutoff=1.8;        
+               
 
 	/* All setup finished -- ready to compute */
 
