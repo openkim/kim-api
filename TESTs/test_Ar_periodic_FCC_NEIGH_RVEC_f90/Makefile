@@ -17,7 +17,7 @@ LOCALOBJ =
 
 all: test_Ar_periodic_FCC_NEIGH_RVEC_f90
 
-test_Ar_periodic_FCC_NEIGH_RVEC_f90: test_Ar_periodic_FCC_NEIGH_RVEC_f90.o $(LOCALOBJ) $(if $(strip $(KIM_DYNAMIC)),,$(MODELOBJ))
+test_Ar_periodic_FCC_NEIGH_RVEC_f90: test_Ar_periodic_FCC_NEIGH_RVEC_f90.o $(LOCALOBJ) $(if $(strip $(KIM_DYNAMIC)),,$(MODELOBJ)) $(KIM_LIB_FILE)
 	$(LINKCOMPILER) $(CPPFLAG) $(CPPLIBFLAG)  $(LOCALOBJ)  $< $(KIM_LIB) $(MODELOBJ) $(OUTPUTIN) $@
 
 test_Ar_periodic_FCC_NEIGH_RVEC_f90.o: $(LOCALOBJ) Makefile

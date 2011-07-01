@@ -53,7 +53,7 @@ else
    # Define GNU compiler switches
    OBJONLY=-c
    OUTPUTIN=-o
-   FORTRANFLAG = -fcray-pointer -O3 -J$(KIM_API_DIR) -D $(MACHINESYSTEM)
+   FORTRANFLAG = -fcray-pointer -O3 -I$(KIM_API_DIR) -D $(MACHINESYSTEM)
    CCOMPILER   = gcc
    CPPCOMPILER = g++
    #CCOMPILER   = gcc-fsf-4.4  # for OS X using fink compilers
@@ -82,6 +82,7 @@ ifdef KIM_DYNAMIC
 endif
 
 KIM_LIB = -L$(KIM_API_DIR) -lkim
+KIM_LIB_FILE = $(KIM_API_DIR)/libkim.a
 
 #set default goals allways all
 .DEFAULT_GOAL := all
@@ -122,5 +123,5 @@ endif
 %.o:%.F
 	$(FORTRANCOMPILER) $(FORTRANFLAG) $(OBJONLY) $<
 
-%.so: %.a
+%.so: %.a $(KIM_LIB_FILE)
 	$(LINKCOMPILER) $(SHARED_LIB_FLAG)  $(CPPLIBFLAG) -o $@  *.o $(addprefix $(KIM_API_DIR),$(ALLOBJ))
