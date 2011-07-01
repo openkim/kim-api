@@ -151,13 +151,13 @@ contains
           Rsqij = dot_product(Rij(:,jj),Rij(:,jj))         ! compute square distance
           if ( Rsqij < model_cutsq ) then                  ! particles are interacting?
              r = sqrt(Rsqij)                               ! compute distance
-             if ((i.eq.Ar).and.(nei1atom(jj).eq.Ar)) then
+             if ((atomTypes(i).eq.Ar).and.(atomTypes(nei1atom(jj)).eq.Ar)) then
                 CurEpsilon = model_epsilon(Ar)
                 CurSigma   = model_sigma(Ar)
                 CurA       = model_A(Ar)
                 CurB       = model_B(Ar)
                 CurC       = model_C(Ar)
-             else if ((i.eq.Ne).and.(nei1atom(jj).eq.Ne)) then
+             else if ((atomTypes(i).eq.Ne).and.(atomTypes(nei1atom(jj)).eq.Ne)) then
                 CurEpsilon = model_epsilon(Ne)
                 CurSigma   = model_sigma(Ne)
                 CurA       = model_A(Ne)
@@ -423,7 +423,7 @@ subroutine model_Ar_Ne_LJ_NEIGH_RVEC_F_f90_init(pkim)
   ! Allocate memory for sigma and store value
   psigma = malloc(three*8) ! 8 is the size of a real*8
   ! store sigma in KIM object
-  ier = kim_api_set_data_f(pkim,"PARAM_FREE_sigma",one,psigma)
+  ier = kim_api_set_data_f(pkim,"PARAM_FREE_sigma",three,psigma)
   if (ier.le.0) stop '* ERROR: PARAM_FREE_sigma not found in KIM object.'
   model_sigma(1) = 3.40d0 ! LJ Argon sigma in angstroms
   model_sigma(2) = 2.74d0 ! LJ Neon  sigma in angstroms
@@ -432,7 +432,7 @@ subroutine model_Ar_Ne_LJ_NEIGH_RVEC_F_f90_init(pkim)
   ! Allocate memory for epsilon and store value
   pepsilon = malloc(three*8) ! 8 is the size of a real*8
   ! store epsilon in KIM object
-  ier = kim_api_set_data_f(pkim,"PARAM_FREE_epsilon",one,pepsilon)
+  ier = kim_api_set_data_f(pkim,"PARAM_FREE_epsilon",three,pepsilon)
   if (ier.le.0) stop '* ERROR: PARAM_FREE_epsilon not found in KIM object.'
   model_epsilon(1) = 0.0104d0 ! LJ Argon epsilon in eV
   model_epsilon(2) = 0.0031d0 ! LJ Neon  epsilon in eV
@@ -448,14 +448,14 @@ subroutine model_Ar_Ne_LJ_NEIGH_RVEC_F_f90_init(pkim)
   ! Allocate memory for parameter cutnorm and store value
   pcutnorm = malloc(three*8) ! 8 is the size of a real*8
   ! store cutnorm in KIM object
-  ier = kim_api_set_data_f(pkim,"PARAM_FIXED_cutnorm",one,pcutnorm)
+  ier = kim_api_set_data_f(pkim,"PARAM_FIXED_cutnorm",three,pcutnorm)
   if (ier.le.0) stop '* ERROR: PARAM_FIXED_cutnorm not found in KIM object.'
   model_cutnorm(1:3) = model_cutoff/model_sigma(1:3)
   
   ! Allocate memory for parameter A and store value
   pA = malloc(three*8) ! 8 is the size of a real*8
   ! store A in KIM object
-  ier = kim_api_set_data_f(pkim,"PARAM_FIXED_A",one,pA)
+  ier = kim_api_set_data_f(pkim,"PARAM_FIXED_A",three,pA)
   if (ier.le.0) stop '* ERROR: PARAM_FIXED_A not found in KIM object.'
   model_A(1:3) = 12.d0*model_epsilon(1:3)*(-26.d0 + 7.d0*model_cutnorm(1:3)**6)/ &
        (model_cutnorm(1:3)**14*model_sigma(1:3)**2)
@@ -463,7 +463,7 @@ subroutine model_Ar_Ne_LJ_NEIGH_RVEC_F_f90_init(pkim)
   ! Allocate memory for parameter B and store value
   pB = malloc(three*8) ! 8 is the size of a real*8
   ! store B in KIM object
-  ier = kim_api_set_data_f(pkim,"PARAM_FIXED_B",one,pB)
+  ier = kim_api_set_data_f(pkim,"PARAM_FIXED_B",three,pB)
   if (ier.le.0) stop '* ERROR: PARAM_FIXED_B not found in KIM object.'
   model_B(1:3) = 96.d0*model_epsilon(1:3)*(7.d0-2.d0*model_cutnorm(1:3)**6)/     &
        (model_cutnorm(1:3)**13*model_sigma(1:3))
@@ -471,7 +471,7 @@ subroutine model_Ar_Ne_LJ_NEIGH_RVEC_F_f90_init(pkim)
   ! Allocate memory for parameter C and store value
   pC = malloc(three*8) ! 8 is the size of a real*8
   ! store C in KIM object
-  ier = kim_api_set_data_f(pkim,"PARAM_FIXED_C",one,pC)
+  ier = kim_api_set_data_f(pkim,"PARAM_FIXED_C",three,pC)
   if (ier.le.0) stop '* ERROR: PARAM_FIXED_C not found in KIM object.'
   model_C(1:3) = 28.d0*model_epsilon(1:3)*(-13.d0+4.d0*model_cutnorm(1:3)**6)/   &
        (model_cutnorm(1:3)**12)
@@ -479,7 +479,7 @@ subroutine model_Ar_Ne_LJ_NEIGH_RVEC_F_f90_init(pkim)
   ! Allocate memory for parameter sigmasq and store value
   psigmasq = malloc(three*8) ! 8 is the size of a real*8
   ! store sigma^2 in KIM object
-  ier = kim_api_set_data_f(pkim,"PARAM_FIXED_sigmasq",one,psigmasq)
+  ier = kim_api_set_data_f(pkim,"PARAM_FIXED_sigmasq",three,psigmasq)
   if (ier.le.0) stop '* ERROR: PARAM_FIXED_sigmasq not found in KIM object.'
   model_sigmasq(1:3) = model_sigma(1:3)**2
   
