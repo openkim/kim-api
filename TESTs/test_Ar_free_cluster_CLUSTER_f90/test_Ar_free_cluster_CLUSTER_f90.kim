@@ -27,7 +27,7 @@ CONVENTIONS:
 
 OneBasedLists           dummy
 
-Neigh_LocaAccess        dummy
+Neigh_BothAccess        dummy
 
 CLUSTER                 dummy
 

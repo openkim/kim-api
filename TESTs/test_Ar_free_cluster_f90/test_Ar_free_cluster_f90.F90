@@ -349,7 +349,7 @@ subroutine NEIGH_PURE_H_neighborlist(numberOfAtoms, coords, cutoff, neighborList
      ! atom i has a-1 neighbors
      neighborList(1,i) = a-1
   enddo
-  
+
 end subroutine NEIGH_PURE_H_neighborlist
 
 !-------------------------------------------------------------------------------
@@ -399,7 +399,7 @@ end subroutine NEIGH_PURE_F_neighborlist
 ! get_MI_PURE_neigh neighbor list access function 
 !   (works for MI_OPBC and NEIGH_PURE and both full and half)
 !
-! This function only implements Locator mode
+! This function implements Locator and Iterator modes
 !
 !-------------------------------------------------------------------------------
 integer function get_MI_PURE_neigh(pkim,mode,request,atom,numnei,pnei1atom,pRij)
@@ -416,15 +416,14 @@ integer function get_MI_PURE_neigh(pkim,mode,request,atom,numnei,pnei1atom,pRij)
   real*8  :: Rij(3,1); pointer(pRij, Rij)
   
   !-- Local variables
+  integer, save :: iterVal = 0
+  integer   :: atomToReturn
   integer   :: neighborListdum(1); pointer(pneighborListdum, neighborListdum)
   integer, pointer :: neighborList(:,:)
   integer   :: ier
   integer*8 :: numberOfAtoms; pointer(pnAtoms, numberOfAtoms)
   integer   :: N
 
-  ! exit if wrong mode
-  if (mode.ne.1) stop "get_MI_PURE_neigh() only supports locator mode!"
-  
   ! unpack neighbor list object
   pneighborListdum = kim_api_get_data_f(pkim, "neighObject", ier)
   if (ier.le.0) call print_error("neighObject", ier)
@@ -432,8 +431,38 @@ integer function get_MI_PURE_neigh(pkim,mode,request,atom,numnei,pnei1atom,pRij)
   pnAtoms = kim_api_get_data_f(pkim, "numberOfAtoms", ier); N = numberOfAtoms
   call toIntegerArrayWithDescriptor2d(neighborListdum, neighborlist, N+1, N)
   
+  ! check mode and request
+  if (mode.eq.0) then ! iterator mode
+     if (request.eq.0) then ! reset iterator
+        iterVal = 0
+        get_MI_PURE_neigh = 2
+        return
+     elseif (request.eq.1) then ! increment iterator
+        iterVal = iterVal + 1
+        if (iterVal.gt.N) then
+           get_MI_PURE_neigh = 0
+           return
+        else
+           atomToReturn = iterVal
+        endif
+     else
+        get_MI_PURE_neigh = -6 ! invalid request value
+        return
+     endif
+  elseif (mode.eq.1) then ! locator mode
+     if ( (request.gt.N) .or. (request.lt.1)) then
+        get_MI_PURE_neigh = -1
+        return
+     else
+        atomToReturn = request
+     endif
+  else ! not iterator or locator mode
+     get_MI_PURE_neigh = -2
+     return
+  endif
+  
   ! set the returned atom
-  atom = request
+  atom = atomToReturn
   
   ! set the returned number of neighbors for the returned atom
   numnei = neighborList(1,atom)
@@ -496,7 +525,7 @@ end subroutine NEIGH_RVEC_F_neighborlist
 !
 ! get_RVEC_neigh neighbor list access function 
 !
-! This function only implements Locator mode
+! This function implements Locator and Iterator mode
 !
 !-------------------------------------------------------------------------------
 integer function get_RVEC_neigh(pkim,mode,request,atom,numnei,pnei1atom,pRij)
@@ -513,6 +542,8 @@ integer function get_RVEC_neigh(pkim,mode,request,atom,numnei,pnei1atom,pRij)
   real*8  :: Rij(3,1); pointer(pRij, Rij)
   
   !-- Local variables
+  integer, save :: iterVal = 0
+  integer   :: atomToReturn
   integer   :: NLRvecLocs(1); pointer(pNLRvecLocs,NLRvecLocs)
   integer   :: neighborListdum(1);  pointer(pneighborListdum, neighborListdum)
   integer, pointer :: neighborList(:,:)
@@ -521,9 +552,6 @@ integer function get_RVEC_neigh(pkim,mode,request,atom,numnei,pnei1atom,pRij)
   integer*8 :: numberOfAtoms; pointer(pnAtoms, numberOfAtoms)
   integer   :: N
 
-  ! exit if wrong mode
-  if (mode.ne.1) stop "get_RVEC_neigh() only supports locator mode!"
-  
   ! unpack neighbor list object
   pNLRVecLocs = kim_api_get_data_f(pkim, "neighObject", ier)
   if (ier.le.0) call print_error("neighObject", ier)
@@ -533,8 +561,38 @@ integer function get_RVEC_neigh(pkim,mode,request,atom,numnei,pnei1atom,pRij)
   pnAtoms = kim_api_get_data_f(pkim, "numberOfAtoms", ier); N = numberOfAtoms
   call toIntegerArrayWithDescriptor2d(neighborListdum, neighborlist, N+1, N)
 
+  ! check mode and request
+  if (mode.eq.0) then ! iterator mode
+     if (request.eq.0) then ! reset iterator
+        iterVal = 0
+        get_RVEC_neigh = 2
+        return
+     elseif (request.eq.1) then ! increment iterator
+        iterVal = iterVal + 1
+        if (iterVal.gt.N) then
+           get_RVEC_neigh = 0
+           return
+        else
+           atomToReturn = iterVal
+        endif
+     else
+        get_RVEC_neigh = -6 ! invalid request value
+        return
+     endif
+  elseif (mode.eq.1) then ! locator mode
+     if ( (request.gt.N) .or. (request.lt.1)) then
+        get_RVEC_neigh = -1
+        return
+     else
+        atomToReturn = request
+     endif
+  else ! not iterator or locator mode
+     get_RVEC_neigh = -2
+     return
+  endif
+
   ! set the returned atom
-  atom = request
+  atom = atomToReturn
   
   ! set the returned number of neighbors for the returned atom
   numnei = neighborList(1,atom)

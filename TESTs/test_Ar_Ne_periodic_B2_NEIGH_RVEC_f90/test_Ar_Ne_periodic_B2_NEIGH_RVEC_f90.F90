@@ -247,7 +247,7 @@ end subroutine B2_NEIGH_RVEC_F_neighborlist
 !
 ! get_NEIGH_RVEC_neigh neighbor list access function 
 !
-! This function only implements Locator mode
+! This function implements Locator and Iterator mode
 !
 !-------------------------------------------------------------------------------
 integer function get_NEIGH_RVEC_neigh(pkim,mode,request,atom,numnei,pnei1atom,pRij)
@@ -264,6 +264,8 @@ integer function get_NEIGH_RVEC_neigh(pkim,mode,request,atom,numnei,pnei1atom,pR
   real*8  :: Rij(3,1); pointer(pRij, Rij)
   
   !-- Local variables
+  integer, save :: iterVal = 0
+  integer   :: atomToReturn
   integer   :: NLRvecLocs(1); pointer(pNLRvecLocs,NLRvecLocs)
   integer   :: neighborList(1);  pointer(pneighborList, neighborList)
   double precision :: RijList(1); pointer(pRijList,RijList)
@@ -271,9 +273,6 @@ integer function get_NEIGH_RVEC_neigh(pkim,mode,request,atom,numnei,pnei1atom,pR
   integer*8 :: numberOfAtoms; pointer(pnAtoms, numberOfAtoms)
   integer   :: N, NN
 
-  ! exit if wrong mode
-  if (mode.ne.1) stop "get_NEIGH_RVEC_neigh() only supports locator mode!"
-  
   ! unpack neighbor list object
   pNLRVecLocs = kim_api_get_data_f(pkim, "neighObject", ier)
   if (ier.le.0) call print_error("neighObject", ier)
@@ -281,10 +280,40 @@ integer function get_NEIGH_RVEC_neigh(pkim,mode,request,atom,numnei,pnei1atom,pR
   NN            = NLRvecLocs(1)
   pneighborList = NLRvecLocs(2)
   pRijList      = NLRvecLocs(3)
+
+  ! check mode and request
+  if (mode.eq.0) then ! iterator mode
+     if (request.eq.0) then ! reset iterator
+        iterVal = 0
+        get_NEIGH_RVEC_neigh = 2
+        return
+     elseif (request.eq.1) then ! increment iterator
+        iterVal = iterVal + 1
+        if (iterVal.gt.N) then
+           get_NEIGH_RVEC_neigh = 0
+           return
+        else
+           atomToReturn = iterVal
+        endif
+     else
+        get_NEIGH_RVEC_neigh = -6 ! invalid request value
+        return
+     endif
+  elseif (mode.eq.1) then ! locator mode
+     if ( (request.gt.N) .or. (request.lt.1)) then
+        get_NEIGH_RVEC_neigh = -1
+        return
+     else
+        atomToReturn = request
+     endif
+  else ! not iterator or locator mode
+     get_NEIGH_RVEC_neigh = -2
+     return
+  endif
   
   ! set the returned atom
   if ( (request.lt.1).or.(request.gt.N)) stop "get_NEIGH_RVEC_heigh() called with invalid request value!"
-  atom = request
+  atom = atomToReturn
   
   ! set the returned number of neighbors for the returned atom
   numnei = neighborList( ((atom-1)*NN + 1) )

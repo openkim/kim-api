@@ -17,6 +17,9 @@ model_Ar_LJ_NEIGH_PURE_H_F_f90/  --  A Lennard-Jones Model for Argon written in 
                                      its parameters, and supports optional computation of `forces', `energyPerAtoms', and `virial'
 model_Ar_LJ_NEIGH_RVEC_F_f90/  --  A Lennard-Jones Model for Argon written in F90 using the NEIGH-RVEC-F NBC, which publishes
                                    its parameters, and supports optional computation of `forces', `energyPerAtoms', and `virial'
+model_Ar_Ne_LJ_NEIGH_RVEC_F_c/  --  A Lennard-Jones Model for Argon and Neon written in C using the NEIGH-RVEC-F NBC, which
+                                      publishes its parameters, and supports optional computation of `forces', `energyPerAtoms',
+                                      and `virial'
 model_Ar_Ne_LJ_NEIGH_RVEC_F_f90/  --  A Lennard-Jones Model for Argon and Neon written in F90 using the NEIGH-RVEC-F NBC, which
                                       publishes its parameters, and supports optional computation of `forces', `energyPerAtoms',
                                       and `virial'

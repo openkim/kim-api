@@ -11,33 +11,25 @@
 #######################################################################################################
 
 
-MODEL_NAME := test_Ar_free_cluster_f90
+MODEL_NAME := model_Ar_LJ_NEIGH_RVEC_F_c
 SystemOfUnitsFix := fixed
 
 
 #######################################################################################################
 SUPPORTED_ATOM/PARTICLES_TYPES:
 # Symbol/name           Type                    code
-Ar                      spec                    18
+Ar                      spec                    1
 
 
 #######################################################################################################
 CONVENTIONS:
 # Name                  Type
 
-OneBasedLists           dummy
+ZeroBasedLists          dummy
 
-Neigh_BothAccess        dummy
+Neigh_IterAccess        dummy
 
 NEIGH-RVEC-F            dummy
-
-NEIGH-PURE-H            dummy
-
-NEIGH-PURE-F            dummy
-
-MI-OPBC-H               dummy
-
-MI-OPBC-F               dummy
 
 
 #######################################################################################################
@@ -51,13 +43,11 @@ atomTypes               integer      none       none                    [numberO
 
 coordinates             real*8       length     standard                [numberOfAtoms,3]
 
-get_half_neigh          method       none       none                    []                 optional
+get_half_neigh          method       none       none                    []                 optional     # Here so it can work with more Tests
 
-get_full_neigh          method       none       none                    []                 optional
+get_full_neigh          method       none       none                    []                 
 
 neighObject             pointer      none       none                    []
-
-boxlength               real*8       length     standard                [3]
 
 
 #######################################################################################################
@@ -74,7 +64,30 @@ cutoff                  real*8       length     standard                []
 
 energy                  real*8       energy     standard                []
 
-forces                  real*8       force      standard                [numberOfAtoms,3]
+forces                  real*8       force      standard                [numberOfAtoms,3]  optional
+
+energyPerAtom           real*8       energy     standard                [numberOfAtoms]    optional
+
+virial                  real*8       pressure   standard                []                 optional
 
 
 #######################################################################################################
+MODEL_PARAMETERS:
+# Name                  Type         Unit       SystemU/Scale           Shape              requirements
+PARAM_FREE_sigma        real*8       length     standard                []
+
+PARAM_FREE_epsilon      real*8       energy     standard                []
+
+PARAM_FREE_cutoff       real*8       length     standard                []
+
+PARAM_FIXED_cutnorm     real*8       none       none                    []
+
+PARAM_FIXED_A           real*8       pressure   standard                []
+
+PARAM_FIXED_B           real*8       force      standard                []
+
+PARAM_FIXED_C           real*8       energy     standard                []
+
+PARAM_FIXED_sigmasq     real*8       none       none                    []
+
+PARAM_FIXED_cutsq       real*8       none       none                    []
