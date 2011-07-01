@@ -16,12 +16,14 @@ program ljtest
 	character*80 :: testname ="Sample_01_compute_example_f"
 	character*80 :: modelname =""   !string for the modelname
         real*8,pointer, dimension(:,:)::x,f
-	
+	real*8,pointer, dimension(:)::ea !energy per atom
+
 	type (neighborlist_object),pointer :: neigh_obj  ! , nei_obj; !pointer(pnei_obj,nei_obj)
         type (neighborlist_object_both) :: neigh_both; pointer(pneigh_both,neigh_both)
 	type (neighborlist_object_both),pointer :: pnei_both
 	integer(kind=kim_intptr) :: pkim                   !kim world object pointer
 	real*8::xstub(3,1),fstub(3,1); pointer(px,xstub); pointer(pf,fstub) ! cray pointer to coordinates and forces
+	real*8::eastub(1); pointer(pea,eastub)                          ! cray pointer to energy per atom
 	real*8::energy; pointer(penergy,energy)		!cray pointer to energy
 	real*8::cutoff; pointer(pcutoff,cutoff)		!		 cuttof
 	integer*8 :: natoms; pointer(pnatoms,natoms)		!cray pointer to numberOfAtoms
@@ -54,6 +56,9 @@ program ljtest
 	call toRealArrayWithDescriptor2d(xstub,x,3,ni4)	
 	pf=kim_api_get_data_f(pkim,"forces",kimerr); call kimerr_handle("forces",kimerr)     
 	call toRealArrayWithDescriptor2d(fstub,f,3,ni4)
+	pea=kim_api_get_data_f(pkim,"energyPerAtom",kimerr); call kimerr_handle("energyPerAtom",kimerr)
+	call toRealArrayWithDescriptor1d(eastub,ea,ni4)
+
 	penergy = kim_api_get_data_f(pkim,"energy",kimerr); call kimerr_handle("energy",kimerr)
 	pcutoff = kim_api_get_data_f(pkim,"cutoff",kimerr); call kimerr_handle("cutoff",kimerr)
 	pnatoms = kim_api_get_data_f(pkim,"numberOfAtoms",kimerr); call kimerr_handle("numberOfAtoms",kimerr)
@@ -100,6 +105,7 @@ program ljtest
 
 	! print energy
 	print *,"energy =", energy
+        print*,"energy as sum of energy per atom",sum(ea)
 
 
         plist_of_AtomsTypes = KIM_API_get_listAtomsTypes(pkim,nAtomsTypes,kimerr)

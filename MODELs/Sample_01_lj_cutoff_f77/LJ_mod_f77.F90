@@ -11,9 +11,8 @@ module lj_test_mod_f77
 	implicit none
 	!defining the structure that holds variables for calculation
 	!type lj_test_object
-		integer :: numberatoms
-		real*8 :: x(3,1), f(3,1) ! position, forces and saved position
-		pointer(px,x); pointer(af,f)
+		real*8 :: x(3,1), f(3,1),ea(1) ! position, forces and saved position
+		pointer(px,x); pointer(af,f); pointer(aea,ea) 
 		!real*8 :: a= 1.0*0.5**(12),b=2.0*0.5**(6),cutof=2.3! parameters of lj potential
 		real*8 :: potenergy,xcutof ! holder for energy pointer
 		pointer(apotenergy,potenergy)
@@ -36,10 +35,15 @@ contains
 	subroutine lj_calculate_wrap_f77(pkim,kimerr) ! compute routine with KIM interface
 		implicit none
 		integer(kind=kim_intptr) :: kim; pointer(pkim,kim)
-		integer ::natom,kimerr
+		integer ::natom,kimerr,f_flag,e_flag
 		external LJ_f77_calculate
 		natom = numberofatoms
-		call LJ_f77_calculate(pkim,x,f,natom,potenergy,xcutof,kim_api_get_half_neigh,kimerr)
+                px=kim_api_get_data_f(pkim,"coordinates",kimerr)
+		af=kim_api_get_data_f(pkim,"forces",kimerr)
+		aea = kim_api_get_data_f(pkim,"energyPerAtom",kimerr)
+                f_flag=kim_api_isit_compute_f(pkim,"forces",kimerr)
+		e_flag=kim_api_isit_compute_f(pkim,"energyPerAtom",kimerr)
+		call LJ_f77_calculate(pkim,x,f,ea,natom,potenergy,xcutof,f_flag,e_flag,kim_api_get_half_neigh,kimerr)
 	end subroutine lj_calculate_wrap_f77
 
 
@@ -79,6 +83,11 @@ subroutine sample_01_lj_cutoff_f77_init(pkim)
 	apotenergy = kim_api_get_data_f(pkim,"energy",kimerr)
 	if (kimerr.ne.1) then
 		print *,"lj_init: kim_api_get_data_f: energy not in KIM : error code = ", kimerr
+		stop
+	end if
+	aea = kim_api_get_data_f(pkim,"energyPerAtom",kimerr)
+	if (kimerr.ne.1) then
+		print *,"lj_init: kim_api_get_data_f: energyPerAtom not in KIM : error code = ", kimerr
 		stop
 	end if
 	!setting pointer to compute method

@@ -27,11 +27,11 @@ c	LJ parameters
 	RETURN
 	END
 
-      SUBROUTINE LJ_f77_calculate(pkim,x,f,natom,en,cutof,
-     &                             kimget_h_neigh,kimerr)
+      SUBROUTINE LJ_f77_calculate(pkim,x,f,ea,natom,en,cutof,
+     &                f_flag,e_flag, kimget_h_neigh,kimerr)
      	IMPLICIT NONE
-      	DOUBLE PRECISION x(3,natom),f(3,natom)
-	INTEGER natom,kimerr
+      	DOUBLE PRECISION x(3,natom),f(3,natom),ea(natom)
+	INTEGER natom,kimerr,f_flag,e_flag
 	DOUBLE PRECISION en,cutof
 	INTEGER kimget_h_neigh
 	EXTERNAL kimget_h_neigh
@@ -49,11 +49,18 @@ C need check IF cray pointers are acceptable in f77, or use next line
 	INTEGER retcode,mode,request,atom
 	atom =0
 	numnei=0
+	IF(f_flag.eq.1) THEN
 	DO 100 i=1,natom
 		f(1,i)=0.0
 		f(2,i)=0.0
 		f(3,i)=0.0
  100	CONTINUE
+        ENDIF
+        IF(e_flag.eq.1) THEN
+        DO 108 i=1,natom
+		ea(i)=0.0
+ 108	CONTINUE
+	ENDIF
 	sumv=0	
 	cut2=cutof*cutof
 	CALL  ljpotr_f77(cut2,energycutof,dvmr)
@@ -104,13 +111,19 @@ C       reset neighbor iterator to beginning
 			IF (r2.LE.cut2) THEN
 				CALL ljpotr_f77(r2,vij,dvmr)
 				sumv = sumv + vij-energycutof
-				f(1,i) =f(1,i) - dvmr*dx(1)
- 				f(2,i) =f(2,i) - dvmr*dx(2)
-				f(3,i) =f(3,i) - dvmr*dx(3)
+	                        IF(e_flag.eq.1) THEN
+                                  ea(i)=ea(i)+(vij-energycutof)/2.0
+                                  ea(j)=ea(j)+(vij-energycutof)/2.0
+				ENDIF
+				IF(f_flag.eq.1) THEN
+				 f(1,i) =f(1,i) - dvmr*dx(1)
+ 				 f(2,i) =f(2,i) - dvmr*dx(2)
+				 f(3,i) =f(3,i) - dvmr*dx(3)
 
-				f(1,j) =f(1,j) + dvmr*dx(1)
- 				f(2,j) =f(2,j) + dvmr*dx(2)
-				f(3,j) =f(3,j) + dvmr*dx(3)
+				 f(1,j) =f(1,j) + dvmr*dx(1)
+ 				 f(2,j) =f(2,j) + dvmr*dx(2)
+				 f(3,j) =f(3,j) + dvmr*dx(3)
+				ENDIF
 					
 			ENDIF
  102		CONTINUE

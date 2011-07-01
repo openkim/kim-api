@@ -63,13 +63,14 @@ static void  sample_01_lj_cutoff_c_calculate(void *km,int *kimerror){
 	intptr_t * pkim = * ((intptr_t **)km);
 	double * x;
 	double * f;
+	double * ea;
 	intptr_t * neighObject;
 	void (*nei_iterator)(void *,int **,int *,int *); //prototype for iterator
 	/* local declaration */
 	int retcode, mode,request,atom=0,numnei,i,j,jj; int*n1atom;
 	double vij,dvmr,v,sumv,cutof,cut2,energycutof,r2,dv,*Rij;
 	double xi[3],xj[3],dx[3],fij[3];
-        int kimerr;
+        int kimerr,f_flag,e_flag;
 	/* get forces and coordinayes from kim */
 
 	x  = (double*) KIM_API_get_data(pkim,"coordinates",&kimerr);
@@ -84,12 +85,19 @@ static void  sample_01_lj_cutoff_c_calculate(void *km,int *kimerror){
 		*kimerror = kimerr;
 		return;
 	}
-	
-	
+	ea  = (double *) KIM_API_get_data(pkim,"energyPerAtom",&kimerr);
+	if (kimerr!=1) {
+		printf("error in energyPerAtom\n");
+		*kimerror = kimerr;
+		return;
+	}
+	f_flag=KIM_API_isit_compute(pkim,"forces",&kimerr);
+	e_flag=KIM_API_isit_compute(pkim,"energyPerAtom",&kimerr);
 	/* Ready to do energy and force computation */
 	sumv=0.0; /* running total for energy */
 
-	for (i=0;i<(*numberOfAtoms)*3;i++) f[i]=0.0; /* initialize forces to zero */
+	if (f_flag==1) for (i=0;i<(*numberOfAtoms)*3;i++) f[i]=0.0; /* initialize forces to zero */
+	if (e_flag==1) for (i=0;i<(*numberOfAtoms);i++) ea[i]=0.0;/* energy per atom to zero*/
 
 	numnei = 0; /* initialize the number of neighbors */
 	//for (i=0;i<512;i++) nei1atom[i]=0.0;
@@ -139,14 +147,19 @@ static void  sample_01_lj_cutoff_c_calculate(void *km,int *kimerror){
 			if (r2 <= cut2) {
 				ljpotr(r2,&vij,&dvmr);
 				sumv = sumv + vij-energycutof;
-				f[(i)*3 +0] = f[(i)*3 +0] - dvmr*dx[0];
-				f[(i)*3 +1] = f[(i)*3 +1] - dvmr*dx[1];
-				f[(i)*3 +2] = f[(i)*3 +2] - dvmr*dx[2];
+				if (e_flag==1){
+					ea[i]=ea[i]+(vij-energycutof)/2;
+					ea[j]=ea[j]+(vij-energycutof)/2;
+				}
+                                if (f_flag==1){
+					f[(i)*3 +0] = f[(i)*3 +0] - dvmr*dx[0];
+					f[(i)*3 +1] = f[(i)*3 +1] - dvmr*dx[1];
+					f[(i)*3 +2] = f[(i)*3 +2] - dvmr*dx[2];
 
-				f[(j)*3 +0] = f[(j)*3 +0] + dvmr*dx[0];
-				f[(j)*3 +1] = f[(j)*3 +1] + dvmr*dx[1];
-				f[(j)*3 +2] = f[(j)*3 +2] + dvmr*dx[2];
-
+					f[(j)*3 +0] = f[(j)*3 +0] + dvmr*dx[0];
+					f[(j)*3 +1] = f[(j)*3 +1] + dvmr*dx[1];
+					f[(j)*3 +2] = f[(j)*3 +2] + dvmr*dx[2];
+                                }
 			}
 		}
 	}

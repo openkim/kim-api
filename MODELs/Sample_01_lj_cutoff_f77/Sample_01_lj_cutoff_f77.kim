@@ -63,6 +63,7 @@ energy                  real*8       energy     standard                []
 
 forces                  real*8       force      standard                [numberOfAtoms,3]
 
+energyPerAtom           real*8      energy      standard                [numberOfAtoms]     optional
 
 CONVENTIONS:
 # Name                  Type
