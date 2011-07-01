@@ -40,7 +40,7 @@ ifdef KIM_INTEL
    # Define Intel compiler switches
    OBJONLY=-c
    OUTPUTIN=-o
-   FORTRANFLAG =-module $(KIM_API_DIR) -D $(MACHINESYSTEM) #-nofor_main
+   FORTRANFLAG =-I $(KIM_API_DIR) -D $(MACHINESYSTEM) #-nofor_main
    CCOMPILER = icc
    CPPCOMPILER = icpc
    CPPFLAG = -O3 -I$(KIM_API_DIR) -D KIM_DIR_API=\"$(KIM_API_DIR)\" -D KIM_DIR_MODELS=\"$(KIM_MODELS_DIR)\"

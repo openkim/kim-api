@@ -72,7 +72,7 @@ contains
 			stop
 		end if
 		pcutoff=lj_obj%a_cutof
-		cutoff = 2.3;  !initialize cutoff                
+		cutoff = 1.8;  !initialize cutoff                
 		lj_obj%a_energy = kim_api_get_data_f(pkim,"energy",kimerr)     !get pointer to energy
 		if (kimerr.ne.1) then
 			print *,"lj_init: kim_api_get_data_f:  energy not in KIM : error code = ", kimerr

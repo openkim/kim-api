@@ -19,18 +19,26 @@ extern "C" {
 //prototype for model initialization routine
 void sample_01_lj_cutoff_cpp_init_(void * km);
 }
-//prptotype for model compute routine
+
+//prototype for model compute routine & ljpotr as part of unnamed namespace 
+// (in c it would be static global variables) 
+// 
+namespace {
 void sample_01_lj_cutoff_cpp_calculate(void *km,int*);
 
+void ljpotr (double rr,double *v,double *dvmr);
 
 void sample_01_lj_cutoff_cpp_destroy_(void * km,int * kimerror){
 	cout<<endl<<"sample_01_lj_cutoff_cpp_destroy_ (void*)  called!"<<endl;
 }
 
+}
 //Model initialization routine
 void sample_01_lj_cutoff_cpp_init_(void * km){
 	KIM_API_model ** ppkim=(KIM_API_model **)km;
 	KIM_API_model * pkim = *ppkim;
+	int kimerr;
+	double * pcutoff;
 	//Provide KIM API object with function pointer of compute routine
 	if (!pkim->set_data("compute",1,(void*)&sample_01_lj_cutoff_cpp_calculate)) {
 		cout<< ":compute: is not in kim "<<endl;
@@ -41,9 +49,16 @@ void sample_01_lj_cutoff_cpp_init_(void * km){
 		cout<< ":destroy: is not in kim "<<endl;
 		exit(335);
 	}
+	/* get cutoff from pkim and set it to 1.8 default value */
+	pcutoff       = (double*) KIM_API_get_data(pkim,"cutoff",&kimerr);
+	if (kimerr!=1) {
+		printf("error in cutoff: code %d\n",kimerr);
+		exit(337);
+	}
+	*pcutoff = 1.8;
 }
 
-
+namespace {
 //Computational core of LJ potential
 void ljpotr (double rr,double *v,double *dvmr){
 		double a,b,r1,r2,rm6,rm8;
@@ -128,5 +143,6 @@ void sample_01_lj_cutoff_cpp_calculate(void *km,int * kimerror){
 	*penergy = v;//set energy in KIM API object
 	//forces are already stored in KIM API object
 
+}
 }
 

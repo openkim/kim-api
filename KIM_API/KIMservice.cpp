@@ -1555,7 +1555,7 @@ int KIM_API_model::get_full_neigh(int mode, int request, int *atom,
             }
             if (erkey ==0 || erkey == 1){
                 *atom = at + baseConvertKey;
-                for (int i = 0; i<(*numnei) - 1;i++){
+                for (int i = 0; i<(*numnei);i++){
                     neiOfAnAtom_full[i] = (*nei1atom)[i] + baseConvertKey;
                 }
                 *nei1atom = &(neiOfAnAtom_full[0]);

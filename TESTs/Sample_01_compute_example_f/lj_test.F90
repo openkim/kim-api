@@ -30,6 +30,8 @@ program ljtest
 
 	character(len=KEY_CHAR_LENGTH) ::  list_of_AtomsTypes(1); pointer(plist_of_AtomsTypes,list_of_AtomsTypes)
         integer :: nAtomsTypes;
+	character(len=KEY_CHAR_LENGTH) ::  list_of_parameters(1); pointer(plist_of_parameters,list_of_parameters)
+        integer ::nParameters
 	character(len=KEY_CHAR_LENGTH) :: txtstr; pointer(ptxtstr,txtstr)
 
 	allocate(neigh_obj)
@@ -84,8 +86,7 @@ program ljtest
 
 	! READY to call Model Initiation routine
 	if( kim_api_model_init(pkim).ne.1) stop ' model initialiser failed'
-	! setup parameter for lj potential   
-	cutoff=1.8        
+	       
 
 
 	!All setup finished -- ready to compute
@@ -109,31 +110,30 @@ program ljtest
 	print *," supported atom code of W= ",kim_api_get_atypecode_f(pkim,"W",kimerr), " kimerrorcode= ",kimerr
 	call free(plist_of_AtomsTypes)
 
-        plist_of_AtomsTypes = KIM_API_get_listparams(pkim,nAtomsTypes,kimerr)
-        print *,"kimerr=", kimerr, " nParameters= ", nAtomsTypes
-	if ((kimerr.eq.1).and.(nAtomsTypes.gt.0)) then
-		write(*,"('parameters of the models are : ',10( A,' '))")  list_of_AtomsTypes(1:nAtomsTypes)
+        plist_of_parameters = KIM_API_get_listparams(pkim,nParameters,kimerr)
+        print *,"kimerr=", kimerr, " nParameters= ", nParameters
+	if ((kimerr.eq.1).and.(nParameters.gt.0)) then
+		write(*,"('parameters of the models are : ',10( A,' '))")  list_of_parameters(1:nParameters)
 	end if
-	call free(plist_of_AtomsTypes)
+	call free(plist_of_parameters)
 
- 	plist_of_AtomsTypes = KIM_API_get_listfreeparams(pkim,nAtomsTypes,kimerr)
-        print *,"kimerr=", kimerr, " nParameters= ", nAtomsTypes
-	if ((kimerr.eq.1).and.(nAtomsTypes.gt.0)) then
-		write(*,"('FREE parameters of the models are : ',10( A,' '))")  list_of_AtomsTypes(1:nAtomsTypes)
+ 	plist_of_parameters = KIM_API_get_listfreeparams(pkim,nParameters,kimerr)
+        print *,"kimerr=", kimerr, " nParameters= ", nParameters
+	if ((kimerr.eq.1).and.(nParameters.gt.0)) then
+		write(*,"('FREE parameters of the models are : ',10( A,' '))")  list_of_parameters(1:nParameters)
 	end if
-	call free(plist_of_AtomsTypes)
+	call free(plist_of_parameters)
 
-	plist_of_AtomsTypes = KIM_API_get_listfixedparams(pkim,nAtomsTypes,kimerr)
-        print *,"kimerr=", kimerr, " nParameters= ", nAtomsTypes
-	if ((kimerr.eq.1).and.(nAtomsTypes.gt.0)) then
-		write(*,"('FIXED parameters of the models are : ',10( A,' '))")  list_of_AtomsTypes(1:nAtomsTypes)
+	plist_of_parameters = KIM_API_get_listfixedparams(pkim,nParameters,kimerr)
+
+        if ((kimerr.eq.1).and.(nParameters.gt.0)) then
+		write(*,"('FIXED parameters of the models are : ',10( A,' '))")  list_of_parameters(1:nParameters)
 	end if
+	call free(plist_of_parameters)
 	
         ptxtstr=kim_api_get_nbc_method(pkim,kimerr)
         print*," NBC method: ",txtstr," kimerror= ",kimerr
-	!clean up
-        call free(plist_of_AtomsTypes)   
-         
+	!clean up   
 
 	call neighobj_both_deallocate(pneigh_both)
 	!clean up
