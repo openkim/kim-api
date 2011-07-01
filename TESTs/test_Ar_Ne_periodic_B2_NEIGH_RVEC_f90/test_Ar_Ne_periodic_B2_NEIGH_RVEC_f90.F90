@@ -2,8 +2,9 @@
 !**
 !**  PROGRAM test_Ar_Ne_periodic_B2_NEIGH_RVEC_f90
 !**
-!**  KIM compliant program to compute the energy of one two-atom cell in a 
-!**  periodic B2 crystal of Ar and Ne for a range of lattice spacings.
+!**  KIM compliant program to find (using the Golden section search algorithm)
+!**  the minimum energy of one cell in a periodic B2 crystal of Ar and Ne as a 
+!**  function of lattice spacing.
 !**
 !**  Works with the following NBC scenarios:
 !**        NEIGH-RVEC-F
@@ -26,9 +27,11 @@ program test_Ar_Ne_periodic_B2_NEIGH_RVEC_f90
   implicit none
 
   integer,                  external  :: get_NEIGH_RVEC_neigh
+  double precision,         parameter :: TOL         = 1.0d-8
+  double precision,         parameter :: Golden      = (1.d0 + sqrt(5.d0))/2.d0
   double precision,         parameter :: B2spacing  = 5.260d0 ! in angstroms
-  double precision,         parameter :: MinSpacing  = 0.900d0*B2spacing
-  double precision,         parameter :: MaxSpacing  = 1.100d0*B2spacing
+  double precision,         parameter :: MinSpacing  = 0.800d0*B2spacing
+  double precision,         parameter :: MaxSpacing  = 1.200d0*B2spacing
   double precision,         parameter :: SpacingIncr = 0.025d0*B2spacing
   integer,                  parameter :: DIM               = 3
   integer,                  parameter :: ATypes            = 2
@@ -60,7 +63,8 @@ program test_Ar_Ne_periodic_B2_NEIGH_RVEC_f90
   integer, pointer :: atomTypes(:)
   integer(kind=kim_intptr) :: N
   integer          :: NNeighbors
-  double precision :: CurrentSpacing
+  double precision :: Spacings(4)
+  double precision :: Energies(4)
 
   ! Get KIM Model name to use
   print *, "Please enter a valid KIM model name: "
@@ -117,12 +121,12 @@ program test_Ar_Ne_periodic_B2_NEIGH_RVEC_f90
 
   ! generate neighbor list
   !
-  CurrentSpacing = MinSpacing
+  Spacings(1) = MinSpacing
   ! set up coords
   coords(:,1) = 0.0d0
-  coords(:,2) = 0.5d0*CurrentSpacing
+  coords(:,2) = 0.5d0*Spacings(1)
 
-  call B2_NEIGH_RVEC_F_neighborlist(CellsPerCutoff, (cutoff+0.75), CurrentSpacing, NNeighbors, neighborList, RijList)
+  call B2_NEIGH_RVEC_F_neighborlist(CellsPerCutoff, (cutoff+0.75),Spacings(1), NNeighbors, neighborList, RijList)
 
   ! store pointers to neighbor list object and access function
   allocate(NLRvecLocs(3))
@@ -135,38 +139,73 @@ program test_Ar_Ne_periodic_B2_NEIGH_RVEC_f90
   ier = kim_api_set_data_f(pkim, "get_full_neigh", SizeOne, loc(get_NEIGH_RVEC_neigh))
   if (ier.le.0) call print_error("get_full_heigh", ier)
 
-  ! Call model compute
-  call kim_api_model_compute(pkim, ier); if (ier.le.0) call print_error("model_compute", ier)
-
   ! print results to screen
   print *, "***********************************************************************************************"
   print *, "Results for KIM Model: ", modelname
   print *, "Using NBC: NEIGH_RVEC_F"
   print *, ""
-  print *, "Energy/cell = ", energy, "; Spacing = ", CurrentSpacing
 
-  ! compute for a range of lattice spacings
+  ! Call model compute
+  call kim_api_model_compute(pkim, ier); if (ier.le.0) call print_error("model_compute", ier)
+  Energies(1) = energy
+  print *, "Energy/cell = ", Energies(1), "; Spacing = ", Spacings(1)
+
+  ! setup and compute for max spacing
+  Spacings(3) = MaxSpacing
+  ! set up coords
+  coords(:,1) = 0.0d0
+  coords(:,2) = 0.5d0*Spacings(3)
+  call B2_NEIGH_RVEC_F_neighborlist(CellsPerCutoff, (cutoff+0.75),Spacings(3), NNeighbors, neighborList, RijList)
+  ! Call model compute
+  call kim_api_model_compute(pkim, ier); if (ier.le.0) call print_error("model_compute", ier)
+  Energies(3) = energy
+  print *, "Energy/cell = ", Energies(3), "; Spacing = ", Spacings(3)
+
+  ! setup and compute for first intermediate spacing
+  Spacings(2) = MinSpacing + (2.0 - Golden)*(MaxSpacing - MinSpacing)
+  ! set up coords
+  coords(:,1) = 0.0d0
+  coords(:,2) = 0.5d0*Spacings(2)
+  call B2_NEIGH_RVEC_F_neighborlist(CellsPerCutoff, (cutoff+0.75),Spacings(2), NNeighbors, neighborList, RijList)
+  ! Call model compute
+  call kim_api_model_compute(pkim, ier); if (ier.le.0) call print_error("model_compute", ier)
+  Energies(2) = energy
+  print *, "Energy/cell = ", Energies(2), "; Spacing = ", Spacings(2)
 
   
-  ! set up the periodic atom positions
-  do while (CurrentSpacing.lt.MaxSpacing)
+  ! iterate until convergence.
+
+
+  do while (abs(Spacings(3) - Spacings(1)) .gt. TOL)
      ! set new spacing
-     CurrentSpacing = CurrentSpacing + SpacingIncr
+     Spacings(4) = (Spacings(1) + Spacings(3)) - Spacings(2)
      ! set up coords
      coords(:,1) = 0.0d0
-     coords(:,2) = 0.5d0*CurrentSpacing
-
+     coords(:,2) = 0.5d0*Spacings(4)
      ! compute new neighbor lists (could be done more intelligently, I'm sure)
-     call B2_NEIGH_RVEC_F_neighborlist(CellsPerCutoff, (cutoff+0.75), CurrentSpacing, NNeighbors, neighborList, RijList)
-
+     call B2_NEIGH_RVEC_F_neighborlist(CellsPerCutoff, (cutoff+0.75), Spacings(4), NNeighbors, neighborList, RijList)
      ! Call model compute
      call kim_api_model_compute(pkim, ier); if (ier.le.0) call print_error("model_compute", ier)
+     Energies(4) = energy
+     print *, "Energy/cell = ", Energies(4), "; Spacing = ", Spacings(4)
 
-     ! report result
-     print *, "Energy/cell = ", energy, "; Spacing = ", CurrentSpacing
+     ! determine the new interval
+     if (Energies(4) .lt. Energies(2)) then
+        ! We want the right-hand interval
+        Spacings(1) = Spacings(2); Energies(1) = Energies(2)
+        Spacings(2) = Spacings(4); Energies(2) = Energies(4)
+     else
+        ! We want the left-hand interval
+        Spacings(3) = Spacings(1); Energies(3) = Energies(1)
+        Spacings(1) = Spacings(4); Energies(1) = Energies(4)
+     endif
   enddo
-
-
+  
+  print *,
+  print *,"Found minimum energy configuration to within", TOL
+  print *,
+  print *,"Energy/atom = ", Energies(2), "; Spacing = ", Spacings(2)
+  
   ! Don't forget to free and/or deallocate
   deallocate(neighborList)
   deallocate(NLRvecLocs)

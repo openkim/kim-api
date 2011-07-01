@@ -2,8 +2,9 @@
 !**
 !**  PROGRAM test_Ar_periodic_FCC_NEIGH_PURE_f90
 !**
-!**  KIM compliant program to compute the energy of one atom in a periodic
-!**  FCC crystal of Ar for a range of lattice spacings.
+!**  KIM compliant program to find (using the Golden section search algorithm)
+!**  the minimum energy of one atom in a periodic FCC crystal of Ar as a 
+!**  function of lattice spacing.
 !**
 !**  Works with the following NBC scenarios:
 !**        NEIGH-PURE-H
@@ -27,9 +28,11 @@ program test_Ar_periodic_FCC_NEIGH_PURE_f90
   implicit none
 
   integer,                  external  :: get_NEIGH_PURE_neigh
+  double precision,         parameter :: TOL         = 1.0d-8
+  double precision,         parameter :: Golden      = (1.d0 + sqrt(5.d0))/2.d0
   double precision,         parameter :: FCCspacing  = 5.260d0 ! in angstroms
-  double precision,         parameter :: MinSpacing  = 0.900d0*FCCspacing
-  double precision,         parameter :: MaxSpacing  = 1.100d0*FCCspacing
+  double precision,         parameter :: MinSpacing  = 0.800d0*FCCspacing
+  double precision,         parameter :: MaxSpacing  = 1.200d0*FCCspacing
   double precision,         parameter :: SpacingIncr = 0.025d0*FCCspacing
   integer,                  parameter :: DIM               = 3
   integer,                  parameter :: ATypes            = 1
@@ -59,7 +62,8 @@ program test_Ar_periodic_FCC_NEIGH_PURE_f90
   real*8, pointer  :: coords(:,:)
   integer, pointer :: atomTypes(:)
   integer(kind=kim_intptr) :: N
-  double precision :: CurrentSpacing
+  double precision :: Spacings(4)
+  double precision :: Energies(4)
   integer          :: MiddleAtomID
 
   ! Get KIM Model name to use
@@ -136,8 +140,8 @@ program test_Ar_periodic_FCC_NEIGH_PURE_f90
   atomTypes(:)    = kim_api_get_atypecode_f(pkim, "Ar", ier); if (ier.le.0) call print_error("aTypeCode", ier)
 
   ! set up the periodic atom positions
-  CurrentSpacing = MinSpacing
-  call create_FCC_periodic(CurrentSpacing, 2*CellsPerCutoff, coords, MiddleAtomId)
+  Spacings(1) = MinSpacing
+  call create_FCC_periodic(Spacings(1), 2*CellsPerCutoff, coords, MiddleAtomId)
 
   ! compute special neighbor list (Only the middle atom will have neighbors)
   allocate(neighborList(N+1, N))
@@ -160,49 +164,98 @@ program test_Ar_periodic_FCC_NEIGH_PURE_f90
      if (ier.le.0) call print_error("get_full_heigh", ier)
   endif
 
-  ! Call model compute
-  call kim_api_model_compute(pkim, ier); if (ier.le.0) call print_error("model_compute", ier)
-
   ! print results to screen
   print *, "***********************************************************************************************"
   print *, "Results for KIM Model: ", modelname
   print *, "Using NBC: ", NBC_Method
   print *, ""
+
+  ! Call model compute
+  call kim_api_model_compute(pkim, ier); if (ier.le.0) call print_error("model_compute", ier)
   if (nbc.eq.0) then ! half neighbor list computes twice the energy
-     print *, "Energy/atom = ", energy/2.d0, "; Spacing = ", CurrentSpacing
+     Energies(1) = energy/2.d0
   else
-     print *, "Energy/atom = ", energy, "; Spacing = ", CurrentSpacing
+     Energies(1) = energy
   endif
+  print *, "Energy/atom = ", Energies(1), "; Spacing = ", Spacings(2)
 
-  ! compute for a range of lattice spacings
+  ! setup and compute for max spacing
+  Spacings(3) = MaxSpacing
+  call create_FCC_periodic(Spacings(3), 2*CellsPerCutoff, coords, MiddleAtomId)
+  ! compute new neighbor lists (could be done more intelligently, I'm sure)
+  if (nbc.eq.0) then
+     call NEIGH_PURE_H_neighborlist(N, coords, (cutoff+0.75), MiddleAtomId, neighborList)
+  else
+     call NEIGH_PURE_F_neighborlist(N, coords, (cutoff+0.75), MiddleAtomId, neighborList)
+  endif
+  ! Call model compute
+  call kim_api_model_compute(pkim, ier); if (ier.le.0) call print_error("model_compute", ier)
+  if (nbc.eq.0) then ! half neighbor list computes twice the energy
+     Energies(3) = energy/2.d0
+  else
+     Energies(3) = energy
+  endif
+  print *, "Energy/atom = ", Energies(3), "; Spacing = ", Spacings(2)
 
+  ! setup and compute for first intermediate spacing
+  Spacings(2) = MinSpacing + (2.0 - Golden)*(MaxSpacing - MinSpacing)
+  call create_FCC_periodic(Spacings(2), 2*CellsPerCutoff, coords, MiddleAtomId)
+  ! compute new neighbor lists (could be done more intelligently, I'm sure)
+  if (nbc.eq.0) then
+     call NEIGH_PURE_H_neighborlist(N, coords, (cutoff+0.75), MiddleAtomId, neighborList)
+  else
+     call NEIGH_PURE_F_neighborlist(N, coords, (cutoff+0.75), MiddleAtomId, neighborList)
+  endif
+  ! Call model compute
+  call kim_api_model_compute(pkim, ier); if (ier.le.0) call print_error("model_compute", ier)
+  if (nbc.eq.0) then ! half neighbor list computes twice the energy
+     Energies(2) = energy/2.d0
+  else
+     Energies(2) = energy
+  endif
+  print *, "Energy/atom = ", Energies(2), "; Spacing = ", Spacings(2)
   
-  ! set up the periodic atom positions
-  do while (CurrentSpacing.lt.MaxSpacing)
-     ! set new spacing
-     CurrentSpacing = CurrentSpacing + SpacingIncr
-     ! compute new atom coordinates based on new spacing
-     call create_FCC_periodic(CurrentSpacing, 2*CellsPerCutoff, coords)
 
+  ! iterate until convergence.
+
+
+  do while (abs(Spacings(3) - Spacings(1)) .gt. TOL)
+     ! set new spacing
+     Spacings(4) = (Spacings(1) + Spacings(3)) - Spacings(2)
+     ! compute new atom coordinates based on new spacing
+     call create_FCC_periodic(Spacings(4), 2*CellsPerCutoff, coords)
      ! compute new neighbor lists (could be done more intelligently, I'm sure)
      if (nbc.eq.0) then
         call NEIGH_PURE_H_neighborlist(N, coords, (cutoff+0.75), MiddleAtomId, neighborList)
      else
         call NEIGH_PURE_F_neighborlist(N, coords, (cutoff+0.75), MiddleAtomId, neighborList)
      endif
-
      ! Call model compute
      call kim_api_model_compute(pkim, ier); if (ier.le.0) call print_error("model_compute", ier)
-
-     ! report result
      if (nbc.eq.0) then ! half neighbor list computes twice the energy
-        print *, "Energy/atom = ", energy/2.d0, "; Spacing = ", CurrentSpacing
+        Energies(4) = energy/2.d0
      else
-        print *, "Energy/atom = ", energy, "; Spacing = ", CurrentSpacing
+        Energies(4) = energy
+     endif
+     print *, "Energy/atom = ", Energies(4), "; Spacing = ", Spacings(4)
+     
+     ! determine the new interval
+     if (Energies(4) .lt. Energies(2)) then
+        ! We want the right-hand interval
+        Spacings(1) = Spacings(2); Energies(1) = Energies(2)
+        Spacings(2) = Spacings(4); Energies(2) = Energies(4)
+     else
+        ! We want the left-hand interval
+        Spacings(3) = Spacings(1); Energies(3) = Energies(1)
+        Spacings(1) = Spacings(4); Energies(1) = Energies(4)
      endif
   enddo
 
-
+  print *,
+  print *,"Found minimum energy configuration to within", TOL
+  print *,
+  print *,"Energy/atom = ", Energies(2), "; Spacing = ", Spacings(2)
+  
   ! Don't forget to free and/or deallocate
   call free(pNBC_Method) 
   deallocate(neighborList)
