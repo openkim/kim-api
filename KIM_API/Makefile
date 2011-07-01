@@ -30,7 +30,7 @@ Makefile: Include.mk
 	@touch Makefile
 
 libkim.a: $(ALLOBJ) 
-	@ar rcs  $@ $(ALLOBJ)
+	ar rcs  $@ $(ALLOBJ)
 
 KIMservice.o: model_init_include.h model_init_include.cpp KIMservice.h KIMservice.cpp Makefile
 

@@ -18,7 +18,7 @@ endif
 all: $(MODEL_BUILD_TARGET)
 
 Sample_01_lj_cutoff_f77.a:  LJ_mod_f77.o LJ_mod.o
-	@ar rcs  $@ *.o
+	ar rcs  $@ *.o
 
 LJ_mod_f77.o: Makefile 
 LJ_mod.o: Makefile 

@@ -18,7 +18,7 @@ endif
 all: $(MODEL_BUILD_TARGET)
 
 Sample_01_lj_cutoff_NEIGH_RVEC_F_f.a: LJ_rvec_F_mod.o
-	@ar rcs  $@ *.o
+	ar rcs  $@ *.o
 
 LJ_rvec_F_mod.o: Makefile
 

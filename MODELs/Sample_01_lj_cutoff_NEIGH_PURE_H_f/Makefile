@@ -18,7 +18,7 @@ endif
 all: $(MODEL_BUILD_TARGET)
 
 Sample_01_lj_cutoff_NEIGH_PURE_H_f.a:  LJ_mod.o
-	@ar rcs  $@ *.o
+	ar rcs  $@ *.o
 
 clean:
 	rm -f *.o *.mod *.a *.so

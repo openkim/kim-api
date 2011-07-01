@@ -17,7 +17,7 @@ endif
 all: $(MODEL_BUILD_TARGET)
 
 Sample_01_lj_cutoff_CLUSTER_f.a:  LJ_mod_cluster.o
-	@ar rcs  $@ *.o
+	ar rcs  $@ *.o
 
 clean:
 	rm -f *.o *.mod *.a *.so

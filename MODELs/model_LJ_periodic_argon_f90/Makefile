@@ -17,7 +17,7 @@ endif
 all: $(MODEL_BUILD_TARGET)
 
 model_LJ_periodic_argon_f90.a: model_LJ_periodic_argon.o
-	@ar rcs $@ *.o
+	ar rcs $@ *.o
 
 model_LJ_periodic_argon.o: Makefile
 

@@ -17,7 +17,7 @@ endif
 all: $(MODEL_BUILD_TARGET)
 
 Sample_01_lj_cutoff_c.a:  LJ_sample1.o
-	@ar rcs  $@ *.o
+	ar rcs  $@ *.o
 
 LJ_sample1.o: Makefile $(KIM_API_DIR)KIMserviceC.h
 

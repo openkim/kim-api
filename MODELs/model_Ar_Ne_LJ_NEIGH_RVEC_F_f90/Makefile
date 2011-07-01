@@ -17,7 +17,7 @@ endif
 all: $(MODEL_BUILD_TARGET)
 
 model_Ar_Ne_LJ_NEIGH_RVEC_F_f90.a: model_Ar_Ne_LJ_NEIGH_RVEC_F_f90.o
-	@ar rcs $@ *.o
+	ar rcs $@ *.o
 
 model_Ar_Ne_LJ_NEIGH_RVEC_F_f90.o: Makefile
 
