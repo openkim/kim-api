@@ -40,7 +40,7 @@ ifdef KIM_INTEL
    # Define Intel compiler switches
    OBJONLY=-c
    OUTPUTIN=-o
-   FORTRANFLAG =-module $(KIM_API_DIR) -D $(MACHINESYSTEM) #-nofor_main
+   FORTRANFLAG =-I $(KIM_API_DIR) -D $(MACHINESYSTEM) #-nofor_main
    CCOMPILER = icc
    CPPCOMPILER = icpc
    CPPFLAG = -O3 -I$(KIM_API_DIR) -D KIM_DIR_API=\"$(KIM_API_DIR)\" -D KIM_DIR_MODELS=\"$(KIM_MODELS_DIR)\"
@@ -53,7 +53,7 @@ else
    # Define GNU compiler switches
    OBJONLY=-c
    OUTPUTIN=-o
-   FORTRANFLAG = -fcray-pointer -O3 -J$(KIM_API_DIR) -D $(MACHINESYSTEM)
+   FORTRANFLAG = -fcray-pointer -O3 -I$(KIM_API_DIR) -D $(MACHINESYSTEM)
    CCOMPILER   = gcc
    CPPCOMPILER = g++
    #CCOMPILER   = gcc-fsf-4.4  # for OS X using fink compilers
