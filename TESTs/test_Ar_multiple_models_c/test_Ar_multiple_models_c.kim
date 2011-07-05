@@ -1,0 +1,63 @@
+#######################################################################################################
+#
+# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
+# All rights reserved.
+#
+# Author: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
+#
+#
+# See KIM_API/standard.kim for documentation about this file
+#
+#######################################################################################################
+
+
+MODEL_NAME := test_Ar_multiple_models_c
+SystemOfUnitsFix := fixed
+
+
+#######################################################################################################
+SUPPORTED_ATOM/PARTICLES_TYPES:
+# Symbol/name           Type                    code
+Ar                      spec                    18
+
+
+#######################################################################################################
+CONVENTIONS:
+# Name                  Type
+
+ZeroBasedLists          dummy
+
+Neigh_BothAccess        dummy
+
+NEIGH-RVEC-F            dummy
+
+#######################################################################################################
+MODEL_INPUT:
+# Name                  Type         Unit       SystemU/Scale           Shape              requirements
+numberOfAtoms           integer*8    none       none                    []
+
+numberAtomTypes         integer      none       none                    []
+
+atomTypes               integer      none       none                    [numberOfAtoms]
+
+coordinates             real*8       length     standard                [numberOfAtoms,3]
+
+get_full_neigh          method       none       none                    []
+
+neighObject             pointer      none       none                    []
+
+#######################################################################################################
+MODEL_OUTPUT:
+# Name                  Type         Unit       SystemU/Scale           Shape              requirements
+
+destroy                 method       none       none                    []
+
+compute                 method       none       none                    []
+
+reinit                  method       none       none                    []
+
+cutoff                  real*8       length     standard                []
+
+energy                  real*8       energy     standard                []
+
+#######################################################################################################

@@ -22,6 +22,10 @@ test_Ar_free_cluster_f90                 -- A test that computes the energy of a
                                             cluster of Argon atoms using the MI-OPBC-H or
                                             MI-OPBC-F or NEIGH-PURE-H or NEIGH-PURE-F or
                                             NEIGH-RVEC-F NBC and locator mode.
+test_Ar_multiple_models_c                -- that computes the energy of a perfect Ar FCC crystal
+                                            and a free cluster as a function of lattice spacing
+                                            for two models. The test uses the NEIGH-RVEC-F NBC
+                                            and locator or iterator mode.
 test_Ar_periodic_FCC_MI_OPBC_f90         -- A test that computes the minimum energy per atom
                                             in an infinite perfect FCC crystal of Argon, as a
                                             function of lattice spacing, using the MI-OPBC-H
