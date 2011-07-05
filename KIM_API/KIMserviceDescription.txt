@@ -807,7 +807,16 @@ int KIM_API_get_full_neigh(void *kimmdl,int mode,int request,
         provides standartized access to the neighbor list supplied by the test.
         The test must have previously registered, in the kimmdl object, a
         pointer to its neighbor list access routine with the same interface as
-        above.
+        above (except that `mode' and `request' must be of type `int*').  Two
+        modes are supported: `Iterator' and `Locator'.  In Iterator mode, the
+         iterator should, first, be reset.  Then, a call to this funciton will
+        return the neighbor list for the "next" atom (the order in which atoms
+        are returned is immaterial in Iterator mode, and therefore undefined).
+        This process repeats until the neighbor list of every atom has been
+        returned and the iterator is incremented past the end of the list.  In
+        Locator mode, the used explicitly requests the atom for which a
+        neighbor list is desired.  This mode must be used when the order in
+        which atom neighbor lists are processed is important. 
         The return value depends on the results of execution:
                          2 -- iterator has been successfully initialized
                          1 -- successful operation
@@ -879,11 +888,14 @@ Corresponding FORTRAN style interface:
 int KIM_API_get_half_neigh(void *kimmdl,int mode,int request,
         int *atom, int *numnei, int **nei1atom, double **Rij);
         
-        the description is the same as for KIM_API_get_full_neigh, but this 
-        routine provides a half neighbor list instead of a full neighbor list.
+        the description is the same as for KIM_API_get_full_neigh, but this
+        routine provides a half neighbor list (where only the neighbors of atom
+        number `i' that have numbers greater than `i' are included in the list)
+        instead of a full neighbor list.  This type of list is often more
+        computationally efficient since it only stores each pair of atoms once.
         The test must have previously registered, in the kimmdl object, a
         pointer to its neighbor list access routine with the same interface as
-        above.
+        above (except that `mode' and `request' must be of type `int*').
 
 
 ******************************************************************************
