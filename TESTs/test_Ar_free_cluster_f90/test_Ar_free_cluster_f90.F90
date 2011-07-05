@@ -651,28 +651,40 @@ subroutine create_FCC_cluster(FCCspacing, nCellsPerSide, coords)
         enddo
         ! Add in the remaining three faces
         ! pos-x face
-        latVec(1) = 2.d0*FCCspacing; latVec(2) = (i-1)*FCCspacing; latVec(3) = (j-1)*FCCspacing
+        latVec(1) = nCellsPerSide*FCCspacing
+        latVec(2) = (i-1)*FCCspacing
+        latVec(3) = (j-1)*FCCspacing
         a = a+1; coords(:,a) = latVec
         a = a+1; coords(:,a) = latVec + FCCshifts(:,4)
         ! pos-y face
-        latVec(1) = (i-1)*FCCspacing; latVec(2) = 2.d0*FCCspacing; latVec(3) = (j-1)*FCCspacing
+        latVec(1) = (i-1)*FCCspacing
+        latVec(2) = nCellsPerSide*FCCspacing
+        latVec(3) = (j-1)*FCCspacing
         a = a+1; coords(:,a) = latVec
         a = a+1; coords(:,a) = latVec + FCCshifts(:,3)
         ! pos-z face
-        latVec(1) = (i-1)*FCCspacing; latVec(2) = (j-1)*FCCspacing; latVec(3) = 2.d0*FCCspacing
+        latVec(1) = (i-1)*FCCspacing
+        latVec(2) = (j-1)*FCCspacing
+        latVec(3) = nCellsPerSide*FCCspacing
         a = a+1; coords(:,a) = latVec
         a = a+1; coords(:,a) = latVec + FCCshifts(:,2)
      enddo
      ! Add in the remaining three edges
-     latVec(1) = (i-1)*FCCspacing; latVec(2) = 2.d0*FCCspacing; latVec(3) = 2.d0*FCCspacing
+     latVec(1) = (i-1)*FCCspacing
+     latVec(2) = nCellsPerSide*FCCspacing
+     latVec(3) = nCellsPerSide*FCCspacing
      a = a+1; coords(:,a) = latVec
-     latVec(1) = 2.d0*FCCspacing; latVec(2) = (i-1)*FCCspacing; latVec(3) = 2.d0*FCCspacing
+     latVec(1) = nCellsPerSide*FCCspacing
+     latVec(2) = (i-1)*FCCspacing
+     latVec(3) = nCellsPerSide*FCCspacing
      a = a+1; coords(:,a) = latVec
-     latVec(1) = 2.d0*FCCspacing; latVec(2) = 2.d0*FCCspacing; latVec(3) = (i-1)*FCCspacing
+     latVec(1) = nCellsPerSide*FCCspacing
+     latVec(2) = nCellsPerSide*FCCspacing
+     latVec(3) = (i-1)*FCCspacing
      a = a+1; coords(:,a) = latVec
   enddo
   ! Add in the remaining corner
-  a = a+1; coords(:,a) = 2.d0*FCCspacing
+  a = a+1; coords(:,a) = nCellsPerSide*FCCspacing
 
 end subroutine create_FCC_cluster
 !---------------------------------------------------------------------------------------------------
