@@ -51,9 +51,9 @@ atomTypes               integer      none       none                    [numberO
 
 coordinates             real*8       length     standard                [numberOfAtoms,3]
 
-get_half_neigh          method       none       none                    []                 optional
+get_half_neigh          method       none       none                    []
 
-get_full_neigh          method       none       none                    []                 optional
+get_full_neigh          method       none       none                    []
 
 neighObject             pointer      none       none                    []
 
