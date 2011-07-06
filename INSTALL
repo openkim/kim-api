@@ -103,13 +103,14 @@ value) use the command
 > export KIM_API_MAX_NEIGHBORS=1024
 
 
-
+NON-STANDARD COMPILERS: If you need to use non-standard compilers and/or
+adjust compiler flags, make changes to lines 53-65 in KIM_API/Include.mk
 
 TROUBLESHOOTING: By default, the make system uses the g++ compiler with 
 the -lgfortran option to link compiled FORTRAN executables. If (for some
 versions of linux or GNU compilers) linking of FORTRAN executables with the
 g++ compiler does not work, try gfortran with the -lstdc++ option.  See lines
-64-65 in the Include.mk file (change them to lines 66-67). 
+62-63 in the Include.mk file (change them to lines 64-65). 
 
 GNU compilers tested with version  4.2.x or higher, the Intel compiler must be
 version 11.1 or higher.

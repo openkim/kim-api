@@ -866,11 +866,11 @@ Arguments:
 
         double **Rij
                 pointer variable which will point to the list of
-                relative position vectors of the neighbors of an atom
-                (including boundary conditions if applied) if they have
-                been computed (NBC scenario NEIGH-RVEC-F only).  Has NULL value
-                otherwise (all other NBC scenerios).
-
+                relative position vectors (of `atom' relative to the neighbor,
+                i.e., Rij = X_i - X_j) of the neighbors of an atom (including
+                boundary conditions if applied) if they have been computed
+                (NBC scenario NEIGH-RVEC-F only).  Has NULL value otherwise 
+                (all other NBC scenerios).
 
 Corresponding FORTRAN style interface:
         integer function kim_api_get_full_neigh(kimmdl,mode,request, 
