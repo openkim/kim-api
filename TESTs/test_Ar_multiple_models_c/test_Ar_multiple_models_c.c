@@ -115,7 +115,6 @@ int main(int argc, char* argv[])
    if (1 != (status = KIM_API_init(&pkim_cluster_model_1, testname, argv[2])))
       report_error(__LINE__,"KIM_API_init() for MODEL_ONE cluster",status);
 
-
    /* Register memory */
    /* model inputs */
    status = KIM_API_set_data(pkim_periodic_model_0, "numberOfAtoms",   1, &numberOfAtoms_periodic);
@@ -341,6 +340,16 @@ int main(int argc, char* argv[])
    free(nl_cluster_model_0.RijList);
    free(nl_periodic_model_1.RijList);
    free(nl_cluster_model_1.RijList);
+
+   /* free pkim objects */
+   KIM_API_free(&pkim_periodic_model_0, &status);
+   if (1 != status) report_error(__LINE__,"free", status);
+   KIM_API_free(&pkim_periodic_model_1, &status);
+   if (1 != status) report_error(__LINE__,"free", status);
+   KIM_API_free(&pkim_cluster_model_0, &status);
+   if (1 != status) report_error(__LINE__,"free", status);
+   KIM_API_free(&pkim_cluster_model_1, &status);
+   if (1 != status) report_error(__LINE__,"free", status);
 }
 
 
@@ -445,7 +454,7 @@ int get_periodic_neigh(void* kimmdl, int *mode, int *request, int* atom,
       else if (1 == *request) /* increment iterator */
       {
          (*nl).iteratorId++;
-         if ((*nl).iteratorId > N)
+         if ((*nl).iteratorId >= N)
          {
             return 0;
          }
@@ -478,7 +487,7 @@ int get_periodic_neigh(void* kimmdl, int *mode, int *request, int* atom,
    /* set the returned atom */
    if (0 != atomToReturn)
    {
-      printf("get_periodic_neighborlist() called with invalid request value.\n");
+      printf("get_periodic_neighborlist() called with invalid request value: %i.\n",atomToReturn);
    }
    *atom = atomToReturn;
 
@@ -693,7 +702,7 @@ int get_cluster_neigh(void* kimmdl, int *mode, int *request, int* atom,
       else if (1 == *request) /* increment iterator */
       {
          (*nl).iteratorId++;
-         if ((*nl).iteratorId > N)
+         if ((*nl).iteratorId >= N)
          {
             return 0;
          }

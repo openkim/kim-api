@@ -257,7 +257,7 @@ static void reinit(void *km)
    }
    
    /* get epsilon from KIM object */
-   model_sigma = (double*) KIM_API_get_data(pkim, "PARAM_FREE_epsilon", &ier);
+   model_epsilon = (double*) KIM_API_get_data(pkim, "PARAM_FREE_epsilon", &ier);
    if (1 > ier)
    {
       printf("* ERROR: PARAM_FREE_epsilon not found in KIM object.\n");
@@ -368,7 +368,7 @@ static void destroy(void *km)
    free(model_sigma);
    
    /* get and free epsilon from KIM object */
-   model_sigma = (double*) KIM_API_get_data(pkim, "PARAM_FREE_epsilon", &ier);
+   model_epsilon = (double*) KIM_API_get_data(pkim, "PARAM_FREE_epsilon", &ier);
    if (1 > ier)
    {
       printf("* ERROR: PARAM_FREE_epsilon not found in KIM object.\n");
