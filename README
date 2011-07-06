@@ -105,17 +105,18 @@ and directories:
 
 DOCs     -- document ion directory. This directory contains the file
             KIM_API_alpha_overview.pdf which provides an overview of
-            this release of the openkim-api package.
+            this release of the openkim-api package, and links to the
+            files KIMserviceDescriptions.txt and standard.kim.
 
 KIM_API  -- directory containing the openkim-api service routines
         
-MODELs   -- directory containing interatomic Models
+MODELs   -- directory containing examples of interatomic Models
 
 Makefile -- make file for compiling the openkim-api services routines and
             example Tests and Models.
 
 README   -- this file
  
-TESTs    -- directory containing example Tests
+TESTs    -- directory containing examples of Tests
 
 -------------------------------------------------------------------------------
