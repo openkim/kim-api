@@ -622,11 +622,12 @@ Corresponding FORTRAN style interface:
 ******************************************************************************
 
 void * KIM_API_get_listAtomsTypes(void * kimmdl,int * nATypes, int * error);
-        Returns a pointer to an array of fixed size text strings.  The memory
-        pointed to by this pointer is allocated by the routine, but should be
-        released by the user to avoid a memory leak. Each string 
-        is a atom/particle symbol. In the case where no atom types are
-        specified by the model or test, the routine returns NULL.
+        Returns a pointer to an array of fixed size text strings.  (The text
+        strings are of size KEY_CHAR_LENGTH, which is a constant defined by the
+        KIM API.) The memory pointed to by this pointer is allocated by the
+        routine, but should be released by the user to avoid a memory leak.
+        Each string is a atom/particle symbol. In the case where no atom types
+        are specified by the model or test, the routine returns NULL.
 
 Arguments:
         void * kimmdl
@@ -653,12 +654,14 @@ Corresponding FORTRAN style interface:
 
 void * KIM_API_get_listParams(void * kimmdl,int * nVpar, int * error);
         Returns a pointer to an array of fixed size text strings,
-        each string is the name of a parameter variable. The memory
-        pointed to by this pointer is allocated by the routine, but should be
-        released by the user to avoid a memory leak. A parameter variable
-        is one whose name starts with PARAM_FREE_ or PARAM_FIXED_. Each
-        parameter variable described in the ".kim" file will have a place in 
-        the KIM API object, but it will not be checked against the standard.kim file.
+        each string is the name of a parameter variable. (The text
+        strings are of size KEY_CHAR_LENGTH, which is a constant defined by the
+        KIM API.)  The memory pointed to by this pointer is allocated by the
+        routine, but should be released by the user to avoid a memory leak.
+        A parameter variable is one whose name starts with PARAM_FREE_ or
+        PARAM_FIXED_. Each parameter variable described in the ".kim" file will
+        have a place in the KIM API object, but it will not be checked against
+        the standard.kim file.
 
 
 Arguments:
@@ -684,12 +687,14 @@ Corresponding FORTRAN style interface:
 
 void * KIM_API_get_listFreeParams(void * kimmdl,int * nVpar, int * error);
         Returns a pointer to an array of fixed size text strings,
-        each string is the name of a free parameter variable. The memory
-        pointed to by this pointer is allocated by the routine, but should be
-        released by the user to avoid a memory leak. Free parameter
-        variables are those whose name starts with PARAM_FREE_ . Each free
-        parameter variable described in a ".kim" file will have a place in the 
-        KIM API object, but it will not be checked against the standard.kim file.
+        each string is the name of a free parameter variable. (The text
+        strings are of size KEY_CHAR_LENGTH, which is a constant defined by the
+        KIM API.)  The memory pointed to by this pointer is allocated by the
+        routine, but should be released by the user to avoid a memory leak.
+        Free parameter variables are those whose name starts with PARAM_FREE_.
+        Each free parameter variable described in a ".kim" file will have a
+        place in the KIM API object, but it will not be checked against the
+        standard.kim file.
 
 
 Arguments:
@@ -715,13 +720,14 @@ Corresponding FORTRAN style interface:
 
 void * KIM_API_get_listFixedParams(void * kimmdl,int * nVpar, int * error);
         Returns a pointer to an array of fixed size text strings,
-        each string is the name of a fixed parameter variable. The memory
-        pointed to by this pointer is allocated by the routine, but should be
-        released by the user to avoid a memory leak. Fixed parameter
-        variables are those whose name starts with PARAM_FIXED_. Each fixed
-        parameter variable described in a ".kim" file will have a place in the 
-        KIM API object, but it will not be checked against the standard.kim file.
-
+        each string is the name of a fixed parameter variable. (The text
+        strings are of size KEY_CHAR_LENGTH, which is a constant defined by
+        the KIM API.)  The memory pointed to by this pointer is allocated by
+        the routine, but should be released by the user to avoid a memory leak.
+        Fixed parameter variables are those whose name starts with
+        PARAM_FIXED_.  Each fixed parameter variable described in a ".kim" file
+        will have a place in the KIM API object, but it will not be checked 
+        against the standard.kim file.
 
 Arguments:
         void * kimmdl
@@ -745,11 +751,12 @@ Corresponding FORTRAN style interface:
 ******************************************************************************
 
 void * KIM_API_get_NBC_method(void *kimmdl,int * error);
-        Returns a pointer to a fixed size text string. The memory
-        pointed to by this pointer is allocated by the routine, but should be
-        released by the user to avoid a memory leak. The string is the
-        current NBC method in use by the KIM_API object kimmdl. NBC stands for
-        Neighbor list and Boundary Condition.
+        Returns a pointer to a fixed size text string. (The text string is of
+        size KEY_CHAR_LENGTH, which is a constant defined by the KIM API.) 
+        The memory pointed to by this pointer is allocated by the routine,
+        but should be released by the user to avoid a memory leak. The string
+        is the current NBC method in use by the KIM_API object kimmdl. NBC
+        stands for Neighbor list and Boundary Condition.
  
 Arguments:
         void * kimmdl
