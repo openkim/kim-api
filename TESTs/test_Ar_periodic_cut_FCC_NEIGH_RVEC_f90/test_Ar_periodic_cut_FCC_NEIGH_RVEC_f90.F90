@@ -63,6 +63,10 @@ program test_Ar_periodic_cut_FCC_NEIGH_RVEC_f90
   integer          :: NNeighbors
   double precision :: CurrentSpacing
   double precision :: MaxCutoff
+  integer :: nParams
+  integer :: paramIndex
+  integer :: i
+  character(len=KEY_CHAR_LENGTH) :: listOfParameters(1); pointer(plistOfParameters,listOfParameters)
 
   ! Get KIM Model name to use
   print *, "Please enter a valid KIM model name: "
@@ -99,11 +103,29 @@ program test_Ar_periodic_cut_FCC_NEIGH_RVEC_f90
   pcutoff = kim_api_get_data_f(pkim, "cutoff", ier)
   if (ier.le.0) call print_error("cutoff", ier)
 
-  pparam_cutoff = kim_api_get_data_f(pkim, "PARAM_FREE_cutoff", ier)
-  if (ier.le.0) call print_error("PARAM_FREE_cutoff", ier)
-
   penergy = kim_api_get_data_f(pkim, "energy", ier)
   if (ier.le.0) call print_error("energy", ier)
+
+  ! check for PARAM_FREE_cutoff
+  plistOfParameters = kim_api_get_listparams(pkim, nParams, ier)
+  paramIndex = 0
+  print *,"The model has defined the following parameters:"
+  do i=1,nParams
+     print *, i, listOfParameters(i)
+     if (index(listOfParameters(i),"PARAM_FREE_cutoff").eq.1) then
+        paramIndex = i
+     endif
+  enddo
+  call free(plistOfParameters) ! deallocate memory
+  if (paramIndex .gt. 0) then
+     print *,"PARAM_FREE_cutoff IS in the list, at index", paramIndex
+  else
+     print *,"PARAM_FREE_cutoff is NOT in the parameter list."
+     stop "exiting..."
+  endif
+
+  pparam_cutoff = kim_api_get_data_f(pkim, "PARAM_FREE_cutoff", ier)
+  if (ier.le.0) call print_error("PARAM_FREE_cutoff", ier)
 
   ! set values
   numberOfAtoms   = N
@@ -276,6 +298,7 @@ integer function get_NEIGH_RVEC_neigh(pkim,mode,request,atom,numnei,pnei1atom,pR
   integer   :: N
 
   ! unpack neighbor list object
+  pnAtoms = kim_api_get_data_f(pkim, "numberOfAtoms", ier); N = numberOfAtoms
   pNLRVecLocs = kim_api_get_data_f(pkim, "neighObject", ier)
   if (ier.le.0) call print_error("neighObject", ier)
   pneighborList = NLRvecLocs(1)
@@ -314,7 +337,7 @@ integer function get_NEIGH_RVEC_neigh(pkim,mode,request,atom,numnei,pnei1atom,pR
   ! set the returned atom
   if (atomToReturn.ne.1) stop "get_NEIGH_RVEC_heigh() called with invalid request value!"
   atom = 1
-  
+
   ! set the returned number of neighbors for the returned atom
   numnei = neighborList(1)
   
