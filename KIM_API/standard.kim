@@ -557,8 +557,7 @@ stressPerAtom           real*8      pressure    unspecified             [numberO
 # A floating-point number corresponding to the total virial for the configuration of atoms
 # passed between the Model and Test.
 # This argument should, ideally, be optional to ensure maximum Model/Test compatibility
-#virial                  real*8      pressure    unspecified             []
-virial                  real*8      pressure    unspecified             [12,numberOfAtoms,numberAtomTypes]
+virial                  real*8      pressure    unspecified             []
 
 
 #
