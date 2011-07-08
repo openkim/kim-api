@@ -742,10 +742,10 @@ Arguments:
                             0 (or negative value) -- unsuccessful
 
 Corresponding FORTRAN style interface:
-        function kim_api_get_listfreeparams(kimmdl,nvpar,error)
-            integer(kind=kim_intptr) :: kimmdl,kim_api_get_listfreeparams
+        function kim_api_get_listfixedparams(kimmdl,nvpar,error)
+            integer(kind=kim_intptr) :: kimmdl,kim_api_get_listfixedparams
             integer::nvpar,error
-        end function kim_api_get_listfreeparams
+        end function kim_api_get_listfixedparams
 
 
 ******************************************************************************
