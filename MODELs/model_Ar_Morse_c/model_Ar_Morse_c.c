@@ -162,6 +162,7 @@ static void compute(void* km, int* ier)
    /* initialize potential energies, forces, and virial term */
    if (comp_energyPerAtom)
    {
+      energyPerAtom = (double*) KIM_API_get_data(pkim, "energyPerAtom", ier); if (1 > *ier) return;
       for (i = 0; i < *nAtoms; ++i)
       {
          energyPerAtom[i] = 0.0;
@@ -284,7 +285,7 @@ static void compute(void* km, int* ier)
                      
                      if ((NBC < 3) && (fabs(dx[k]) > 0.5*boxlength[k])) /* MI-OPBC-H/F */
                      {
-                        dx[k] -= (boxlength[k]/fabs(boxlength[k]))*dx[k];
+                        dx[k] -= (dx[k]/fabs(dx[k]))*boxlength[k];
                      }
                   }
                   else /* NEIGH-RVEC-F */
@@ -325,7 +326,7 @@ static void compute(void* km, int* ier)
                      for (k = 0; k < DIM; ++k)
                      {
                         force[currentAtom*DIM + k] -= dphi*dx[k]/R;
-                        if (1 == (NBC%2)) force[neighListOfCurrentAtom[jj] + k] += dphi*dx[k]/R;
+                        if (1 == (NBC%2)) force[neighListOfCurrentAtom[jj]*DIM + k] += dphi*dx[k]/R;
                      }
                   }
                }
@@ -411,7 +412,7 @@ static void compute(void* km, int* ier)
                      for (k = 0; k < DIM; ++k)
                      {
                         force[currentAtom*DIM + k] -= dphi*dx[k]/R;
-                        if (1 == (NBC%2)) force[neighListOfCurrentAtom[jj] + k] += dphi*dx[k]/R;
+                        if (1 == (NBC%2)) force[neighListOfCurrentAtom[jj]*DIM + k] += dphi*dx[k]/R;
                      }
                   }
                }
@@ -521,7 +522,7 @@ static void reinit(void *km)
    {
       printf("* ERROR: PARAM_FIXED_A2 not found in KIM object.\n");
    }
-   /* set value of parameter B */
+   /* set value of parameter A2 */
    *model_A2 = -( 2.0*(*model_epsilon)*(*model_C)*( -ep + ep2 )
                  +2.0*(*model_A1)*(*model_cutoff) );
 

@@ -11,7 +11,7 @@
 #######################################################################################################
 
 
-MODEL_NAME := test_Ar_periodic_cut_FCC_NEIGH_RVEC_f90
+TEST_NAME := test_Ar_periodic_cut_FCC_NEIGH_RVEC_f90
 SystemOfUnitsFix := fixed
 
 

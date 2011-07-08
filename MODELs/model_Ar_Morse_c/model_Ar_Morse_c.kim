@@ -55,6 +55,8 @@ atomTypes               integer      none       none                    [numberO
 
 coordinates             real*8       length     standard                [numberOfAtoms,3]
 
+boxlength               real*8       length     standard                [3]
+
 get_half_neigh          method       none       none                    []                 optional     # Here so it can work with more Tests
 
 get_full_neigh          method       none       none                    []                 
