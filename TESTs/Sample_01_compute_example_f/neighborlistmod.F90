@@ -572,7 +572,7 @@ type (neighborlist_object) :: neigh_obj
 
 				return ! iterator  successful reset				
 			else if (request .eq. 1) then
-				if(neigh_obj%pointsto < 1 .and. neigh_obj%pointsto > (neigh_obj%atomnumber+1)) then 
+				if(neigh_obj%pointsto < 1 .or. neigh_obj%pointsto > (neigh_obj%atomnumber+1)) then 
 					get_neigh =-1 ; return ! invalid atom id (out of range)
 				else 
 					if(neigh_obj%pointsto > neigh_obj%atomnumber) then 
@@ -594,7 +594,7 @@ type (neighborlist_object) :: neigh_obj
 			end if			
 		else if (mode.eq.1) then
 			! locator mode
-			if(request < 1 .and. request > neigh_obj%atomnumber) then 
+			if(request < 1 .or. request > neigh_obj%atomnumber) then 
 				get_neigh =-1 ; return ! invalid atom id (out of range)
 			end if
 			numnei = neilocator(neigh_obj,request,pnei1atom)

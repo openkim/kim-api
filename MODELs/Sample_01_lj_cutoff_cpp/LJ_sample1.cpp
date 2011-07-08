@@ -82,7 +82,9 @@ void sample_01_lj_cutoff_cpp_calculate(void *km,int * kimerror){
 	long long * numberOfAtoms;
 	double * x;
 	double * f;
+	double * ea;
 	int kimerr;
+	bool f_flag,e_flag;
 	
 	// local declaration
 	int restart,numnei,i,j,jj,mode,request,atom=0,retcode, *n1atom;
@@ -94,10 +96,16 @@ void sample_01_lj_cutoff_cpp_calculate(void *km,int * kimerror){
 	numberOfAtoms = (long long *)pkim->get_data("numberOfAtoms",kimerror); if(*kimerror != 1) return;
 	x  = (double *)pkim->get_data("coordinates",kimerror);        if(*kimerror != 1) return;
 	f  = (double *)pkim->get_data("forces",kimerror);             if(*kimerror != 1) return;
+	ea  = (double *)pkim->get_data("energyPerAtom",kimerror);     if(*kimerror != 1) return;
+
+        f_flag=pkim->isit_compute("forces");
+	e_flag=pkim->isit_compute("energyPerAtom");
 
 	//Ready to do energy and force computation
 	sumv=0.0; 
-	for (i=0;i<(*numberOfAtoms)*3;i++) f[i]=0.0;
+	if (f_flag) for (i=0;i<(*numberOfAtoms)*3;i++) f[i]=0.0;
+        if (e_flag) for (i=0;i<(*numberOfAtoms);i++) ea[i]=0.0;
+
 	numnei = 0;
 	cut2 = (*pcutoff)*(*pcutoff);
 
@@ -128,13 +136,19 @@ void sample_01_lj_cutoff_cpp_calculate(void *km,int * kimerror){
 			if (r2 <= cut2) {
 				ljpotr(r2,&vij,&dvmr);
 				sumv = sumv + vij-energycutof;
-				f[(i)*3 +0] = f[(i)*3 +0] - dvmr*dx[0];
-				f[(i)*3 +1] = f[(i)*3 +1] - dvmr*dx[1];
-				f[(i)*3 +2] = f[(i)*3 +2] - dvmr*dx[2];
+				if (e_flag){
+					ea[i]=ea[i]+(vij-energycutof)/2;
+					ea[j]=ea[j]+(vij-energycutof)/2;
+				}
+                                if (f_flag){
+					f[(i)*3 +0] = f[(i)*3 +0] - dvmr*dx[0];
+					f[(i)*3 +1] = f[(i)*3 +1] - dvmr*dx[1];
+					f[(i)*3 +2] = f[(i)*3 +2] - dvmr*dx[2];
 
-				f[(j)*3 +0] = f[(j)*3 +0] + dvmr*dx[0];
-				f[(j)*3 +1] = f[(j)*3 +1] + dvmr*dx[1];
-				f[(j)*3 +2] = f[(j)*3 +2] + dvmr*dx[2];
+					f[(j)*3 +0] = f[(j)*3 +0] + dvmr*dx[0];
+					f[(j)*3 +1] = f[(j)*3 +1] + dvmr*dx[1];
+					f[(j)*3 +2] = f[(j)*3 +2] + dvmr*dx[2];
+                                }
 
 			}
 		}

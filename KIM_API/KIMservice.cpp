@@ -929,6 +929,9 @@ bool KIM_API_model::set_data_byi(int ind, intptr_t size, void* dt){
             }
             (*this)[ind].shape[0] = size/c;
         }
+        if ((*this)[ind].rank==1){
+            (*this)[ind].shape[0] = size;
+	}
         (*this)[ind].flag->freeable = 1;
         return true;
 }
