@@ -54,51 +54,90 @@ program test_Ar_free_cluster_CLUSTER_f90
   read(*,*) modelname
 
   ! Initialize the KIM object
-  ier = kim_api_init_f(pkim, testname, modelname); if (ier.le.0) stop "The given KIM Model name "&
-       //"is not a match for this test."
-
+  ier = kim_api_init_f(pkim, testname, modelname)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_init_f", ier)
+     stop
+  endif
   ! Allocate memory via the KIM system
-  call kim_api_allocate_f(pkim, N, ATypes, ier); if (ier.le.0) call print_error("allocate", ier)
+  call kim_api_allocate_f(pkim, N, ATypes, ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_allocate_f", ier)
+     stop
+  endif
 
   ! call model's init routine
-  ier = kim_api_model_init(pkim); if (ier.le.0) call print_error("model_init", ier)
+  ier = kim_api_model_init(pkim)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_model_init", ier)
+     stop
+  endif
 
   ! Unpack data from KIM object
   !
   pnAtoms = kim_api_get_data_f(pkim, "numberOfAtoms", ier);
-  if (ier.le.0) call print_error("numberOfAtoms", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
 
   pnAtomTypes = kim_api_get_data_f(pkim, "numberAtomTypes", ier)
-  if (ier.le.0) call print_error("numberAtomTypes", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
 
   patomTypesdum = kim_api_get_data_f(pkim, "atomTypes", ier)
-  if (ier.le.0) call print_error("atomTypes", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
   call toIntegerArrayWithDescriptor1d(atomTypesdum, atomTypes, N4)
 
   pcoor = kim_api_get_data_f(pkim, "coordinates", ier)
-  if (ier.le.0) call print_error("coordinates", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
   call toRealArrayWithDescriptor2d(coordum, coords, DIM, N4)
 
   pcutoff = kim_api_get_data_f(pkim, "cutoff", ier)
-  if (ier.le.0) call print_error("cutoff", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
 
   penergy = kim_api_get_data_f(pkim, "energy", ier)
-  if (ier.le.0) call print_error("energy", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
 
   pforces = kim_api_get_data_f(pkim, "forces", ier)
-  if (ier.le.0) call print_error("forces", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
   call toRealArrayWithDescriptor2d(forcesdum, forces, DIM, N4)
 
   ! Set values
   numberOfAtoms   = N
   numberAtomTypes = ATypes
-  atomTypes(:)    = kim_api_get_atypecode_f(pkim, "Ar", ier); if (ier.le.0) call print_error("aTypeCode", ier)
+  atomTypes(:)    = kim_api_get_atypecode_f(pkim, "Ar", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_atypecode_f", ier)
+     stop
+  endif
 
   ! set up the cluster atom positions
   call create_FCC_cluster(FCCspacing, nCellsPerSide, coords)
 
   ! Call model compute
-  call kim_api_model_compute(pkim, ier); if (ier.le.0) call print_error("model_compute", ier)
+  call kim_api_model_compute(pkim, ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_model_compute", ier)
+     stop
+  endif
 
   ! print results to screen
   print *, "***********************************************************************************************"
@@ -112,8 +151,16 @@ program test_Ar_free_cluster_CLUSTER_f90
 
 
   ! don't forget to destroy and deallocate
-  call kim_api_model_destroy(pkim, ier); if (ier.le.0) call print_error("model_destroy", ier)
-  call kim_api_free(pkim, ier);          if (ier.le.0) call print_error("kim_api_free",  ier)
+  call kim_api_model_destroy(pkim, ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_model_destroy", ier)
+     stop
+  endif
+  call kim_api_free(pkim, ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_free", ier)
+     stop
+  endif
 
   stop
 end program test_Ar_free_cluster_CLUSTER_f90
@@ -201,17 +248,21 @@ end subroutine create_FCC_cluster
 
 !-------------------------------------------------------------------------------
 !
-! print_error subroutine
+! report_error subroutine
 !
 !-------------------------------------------------------------------------------
-subroutine print_error(nm, err)
-  integer :: err
-  character(len=*) :: nm
-  if (err.ne.1) then
-     print *,"error in: "//nm
-     print *,"KIM error code = ",kimerr
-     stop
-  endif
-  return
-end subroutine print_error
-
+subroutine report_error(line, str, status)
+  implicit none
+  
+  !-- Transferred variables
+  integer,   intent(in) :: line
+  character(len=*), intent(in) :: str
+  integer,   intent(in) :: status
+  
+  !-- Local variables
+  character(len=10000), parameter :: file = __FILE__
+  
+  !-- print the error message
+  print *,'* ERROR at line', line, 'in ',trim(file), ': ', str,'. kimerror =', status
+  
+end subroutine report_error

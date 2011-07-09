@@ -71,73 +71,133 @@ program test_Ar_periodic_FCC_NEIGH_PURE_f90
   read(*,*) modelname
 
   ! Initialize the KIM object
-  ier = kim_api_init_f(pkim, testname, modelname); if (ier.le.0) stop "The given KIM Model name "&
-       //"is not a match for this test."
+  ier = kim_api_init_f(pkim, testname, modelname)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_init_f", ier)
+     stop
+  endif
 
   ! Find Model's cutoff  (This procedure needs to be improved in the future)
   !
   ! We need to get `cutoff' before we know how many atoms to use; so here we use 1 atom 
   ! Allocate memory via the KIM system
   N = 1
-  call kim_api_allocate_f(pkim, N, ATypes, ier); if (ier.le.0) call print_error("allocate", ier)
+  call kim_api_allocate_f(pkim, N, ATypes, ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_allocate_f", ier)
+     stop
+  endif
   ! call model's init routine
-  ier = kim_api_model_init(pkim); if (ier.le.0) call print_error("model_init", ier)
+  ier = kim_api_model_init(pkim)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_model_init", ier)
+     stop
+  endif
   ! access the `cutoff' argument
   pcutoff = kim_api_get_data_f(pkim, "cutoff", ier)
-  if (ier.le.0) call print_error("cutoff", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
   ! determine number of atoms needed. (make sure that the middle atom has all its neighbors)
   CellsPerCutoff = ceiling(cutoff/MinSpacing)
   N = 4*((2.d0*CellsPerCutoff)**3);  N4=N
   ! tear it all down so we can put it back up
-  call kim_api_model_destroy(pkim, ier); if (ier.le.0) call print_error("model_destroy", ier)
-  call kim_api_free(pkim, ier);          if (ier.le.0) call print_error("kim_api_free",  ier)
+  call kim_api_model_destroy(pkim, ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_model_destroy", ier)
+     stop
+  endif
+  call kim_api_free(pkim, ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_free", ier)
+     stop
+  endif
 
   ! Now setup for real.
-  ier = kim_api_init_f(pkim, testname, modelname); if (ier.le.0) stop "The given KIM Model name "&
-       //"is not a match for this test."
+  ier = kim_api_init_f(pkim, testname, modelname)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_init_f", ier)
+     stop
+  endif
 
-  call kim_api_allocate_f(pkim, N, ATypes, ier); if (ier.le.0) call print_error("allocate", ier)
+  call kim_api_allocate_f(pkim, N, ATypes, ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_allocate_f", ier)
+     stop
+  endif
   ! call model's init routine
-  ier = kim_api_model_init(pkim); if (ier.le.0) call print_error("model_init", ier)
+  ier = kim_api_model_init(pkim)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_model_init", ier)
+     stop
+  endif
 
 
   ! determine which NBC scenerio to use
-  pNBC_Method = kim_api_get_nbc_method(pkim, ier); if (ier.le.0) return ! don't forget to free
+  pNBC_Method = kim_api_get_nbc_method(pkim, ier) ! don't forget to free
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_nbc_method", ier)
+     stop
+  endif
   if (index(NBC_Method,"NEIGH-PURE-H").eq.1) then
      nbc = 0
   elseif (index(NBC_Method,"NEIGH-PURE-F").eq.1) then
      nbc = 1
   else
      ier = 0
+     call report_error(__LINE__, "Unknown NBC method", ier)
      return
   endif
 
   ! Unpack data from KIM object
   !
   pnAtoms = kim_api_get_data_f(pkim, "numberOfAtoms", ier);
-  if (ier.le.0) call print_error("numberOfAtoms", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
 
   pnAtomTypes = kim_api_get_data_f(pkim, "numberAtomTypes", ier)
-  if (ier.le.0) call print_error("numberAtomTypes", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
 
   patomTypesdum = kim_api_get_data_f(pkim, "atomTypes", ier)
-  if (ier.le.0) call print_error("atomTypes", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
   call toIntegerArrayWithDescriptor1d(atomTypesdum, atomTypes, N4)
 
   pcoor = kim_api_get_data_f(pkim, "coordinates", ier)
-  if (ier.le.0) call print_error("coordinates", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
   call toRealArrayWithDescriptor2d(coordum, coords, DIM, N4)
 
   pcutoff = kim_api_get_data_f(pkim, "cutoff", ier)
-  if (ier.le.0) call print_error("cutoff", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
 
   penergy = kim_api_get_data_f(pkim, "energy", ier)
-  if (ier.le.0) call print_error("energy", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
 
   ! Set values
   numberOfAtoms   = N
   numberAtomTypes = ATypes
-  atomTypes(:)    = kim_api_get_atypecode_f(pkim, "Ar", ier); if (ier.le.0) call print_error("aTypeCode", ier)
+  atomTypes(:)    = kim_api_get_atypecode_f(pkim, "Ar", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_atypecode_f", ier)
+     stop
+  endif
 
   ! set up the periodic atom positions
   Spacings(1) = MinSpacing
@@ -154,14 +214,23 @@ program test_Ar_periodic_FCC_NEIGH_PURE_f90
 
   ! store pointers to neighbor list object and access function
   ier = kim_api_set_data_f(pkim, "neighObject", SizeOne, loc(neighborList))
-  if (ier.le.0) call print_error("neighObject", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_set_data_f", ier)
+     stop
+  endif
 
   if (nbc.eq.0) then
      ier = kim_api_set_data_f(pkim, "get_half_neigh", SizeOne, loc(get_NEIGH_PURE_neigh))
-     if (ier.le.0) call print_error("get_half_heigh", ier)
+     if (ier.le.0) then
+        call report_error(__LINE__, "kim_api_set_data_f", ier)
+        stop
+     endif
   else
      ier = kim_api_set_data_f(pkim, "get_full_neigh", SizeOne, loc(get_NEIGH_PURE_neigh))
-     if (ier.le.0) call print_error("get_full_heigh", ier)
+     if (ier.le.0) then
+        call report_error(__LINE__, "kim_api_set_data_f", ier)
+        stop
+     endif
   endif
 
   ! print results to screen
@@ -171,7 +240,11 @@ program test_Ar_periodic_FCC_NEIGH_PURE_f90
   print *, ""
 
   ! Call model compute
-  call kim_api_model_compute(pkim, ier); if (ier.le.0) call print_error("model_compute", ier)
+  call kim_api_model_compute(pkim, ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_model_compute", ier)
+     stop
+  endif
   if (nbc.eq.0) then ! half neighbor list computes twice the energy
      Energies(1) = energy/2.d0
   else
@@ -189,7 +262,11 @@ program test_Ar_periodic_FCC_NEIGH_PURE_f90
      call NEIGH_PURE_F_neighborlist(N, coords, (cutoff+0.75), MiddleAtomId, neighborList)
   endif
   ! Call model compute
-  call kim_api_model_compute(pkim, ier); if (ier.le.0) call print_error("model_compute", ier)
+  call kim_api_model_compute(pkim, ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_model_compute", ier)
+     stop
+  endif
   if (nbc.eq.0) then ! half neighbor list computes twice the energy
      Energies(3) = energy/2.d0
   else
@@ -207,7 +284,11 @@ program test_Ar_periodic_FCC_NEIGH_PURE_f90
      call NEIGH_PURE_F_neighborlist(N, coords, (cutoff+0.75), MiddleAtomId, neighborList)
   endif
   ! Call model compute
-  call kim_api_model_compute(pkim, ier); if (ier.le.0) call print_error("model_compute", ier)
+  call kim_api_model_compute(pkim, ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_model_compute", ier)
+     stop
+  endif
   if (nbc.eq.0) then ! half neighbor list computes twice the energy
      Energies(2) = energy/2.d0
   else
@@ -231,7 +312,11 @@ program test_Ar_periodic_FCC_NEIGH_PURE_f90
         call NEIGH_PURE_F_neighborlist(N, coords, (cutoff+0.75), MiddleAtomId, neighborList)
      endif
      ! Call model compute
-     call kim_api_model_compute(pkim, ier); if (ier.le.0) call print_error("model_compute", ier)
+     call kim_api_model_compute(pkim, ier)
+     if (ier.le.0) then
+        call report_error(__LINE__, "kim_api_model_compute", ier)
+        stop
+     endif
      if (nbc.eq.0) then ! half neighbor list computes twice the energy
         Energies(4) = energy/2.d0
      else
@@ -260,8 +345,16 @@ program test_Ar_periodic_FCC_NEIGH_PURE_f90
   call free(pNBC_Method) 
   deallocate(neighborList)
 
-  call kim_api_model_destroy(pkim, ier); if (ier.le.0) call print_error("model_destroy", ier)
-  call kim_api_free(pkim, ier);          if (ier.le.0) call print_error("kim_api_free",  ier)
+  call kim_api_model_destroy(pkim, ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_model_destroy", ier)
+     stop
+  endif
+  call kim_api_free(pkim, ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_free", ier)
+     stop
+  endif
 
   stop
 end program test_Ar_periodic_FCC_NEIGH_PURE_f90
@@ -391,9 +484,17 @@ integer function get_NEIGH_PURE_neigh(pkim,mode,request,atom,numnei,pnei1atom,pR
 
   ! unpack neighbor list object
   pneighborListdum = kim_api_get_data_f(pkim, "neighObject", ier)
-  if (ier.le.0) call print_error("neighObject", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
   
-  pnAtoms = kim_api_get_data_f(pkim, "numberOfAtoms", ier); N = numberOfAtoms
+  pnAtoms = kim_api_get_data_f(pkim, "numberOfAtoms", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
+  N = numberOfAtoms
   call toIntegerArrayWithDescriptor2d(neighborListdum, neighborlist, N+1, N)
   
   ! check mode and request
@@ -411,17 +512,20 @@ integer function get_NEIGH_PURE_neigh(pkim,mode,request,atom,numnei,pnei1atom,pR
            atomToReturn = iterVal
         endif
      else
+        call report_error(__LINE__, "Invalid request in get_NEIGH_PURE_neigh", -6)
         get_NEIGH_PURE_neigh = -6 ! invalid request value
         return
      endif
   elseif (mode.eq.1) then ! locator mode
      if ( (request.gt.N) .or. (request.lt.1)) then
+        call report_error(__LINE__, "Invalid request in get_NEIGH_PURE_neigh", -1)
         get_NEIGH_PURE_neigh = -1
         return
      else
         atomToReturn = request
      endif
   else ! not iterator or locator mode
+     call report_error(__LINE__, "Invalid mode in get_NEIGH_PURE_neigh", -2)
      get_NEIGH_PURE_neigh = -2
      return
   endif
@@ -498,16 +602,21 @@ end subroutine create_FCC_periodic
 
 !-------------------------------------------------------------------------------
 !
-! print_error subroutine
+! report_error subroutine
 !
 !-------------------------------------------------------------------------------
-subroutine print_error(nm, err)
-  integer :: err
-  character(len=*) :: nm
-  if (err.ne.1) then
-     print *,"error in: "//nm
-     print *,"KIM error code = ",kimerr
-     stop
-  endif
-  return
-end subroutine print_error
+subroutine report_error(line, str, status)
+  implicit none
+  
+  !-- Transferred variables
+  integer,   intent(in) :: line
+  character(len=*), intent(in) :: str
+  integer,   intent(in) :: status
+  
+  !-- Local variables
+  character(len=10000), parameter :: file = __FILE__
+  
+  !-- print the error message
+  print *,'* ERROR at line', line, 'in ',trim(file), ': ', str,'. kimerror =', status
+  
+end subroutine report_error

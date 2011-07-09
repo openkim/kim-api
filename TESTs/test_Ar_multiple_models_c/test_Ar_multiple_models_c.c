@@ -465,6 +465,7 @@ int get_periodic_neigh(void* kimmdl, int *mode, int *request, int* atom,
       }
       else /* invalid request value */
       {
+         report_error(__LINE__,"Invalid request in get_periodic_neigh", -6);
          return -6;
       }
    }
@@ -472,6 +473,7 @@ int get_periodic_neigh(void* kimmdl, int *mode, int *request, int* atom,
    {
       if ((*request >= N) || (*request < 0)) /* invalid request */
       {
+         report_error(__LINE__,"Invalid request in get_periodic_neigh", -1);
          return -1;
       }
       else
@@ -481,14 +483,11 @@ int get_periodic_neigh(void* kimmdl, int *mode, int *request, int* atom,
    }
    else /* invalid mode */
    {
+      report_error(__LINE__,"Invalid mode in get_periodic_neigh", -2);
       return -2;
    }
 
    /* set the returned atom */
-   if (0 != atomToReturn)
-   {
-      printf("get_periodic_neighborlist() called with invalid request value: %i.\n",atomToReturn);
-   }
    *atom = atomToReturn;
 
    /* set the returned number of neighbors for the returned atom */
@@ -713,6 +712,7 @@ int get_cluster_neigh(void* kimmdl, int *mode, int *request, int* atom,
       }
       else /* invalid request value */
       {
+         report_error(__LINE__,"Invalid request in get_cluster_neigh", -6);
          return -6;
       }
    }
@@ -720,6 +720,7 @@ int get_cluster_neigh(void* kimmdl, int *mode, int *request, int* atom,
    {
       if ((*request >= N) || (*request < 0)) /* invalid request */
       {
+         report_error(__LINE__,"Invalid request in get_cluster_neigh", -1);
          return -1;
       }
       else
@@ -729,6 +730,7 @@ int get_cluster_neigh(void* kimmdl, int *mode, int *request, int* atom,
    }
    else /* invalid mode */
    {
+      report_error(__LINE__,"Invalid mode in get_cluster_neigh", -2);
       return -2;
    }
 
@@ -749,6 +751,6 @@ int get_cluster_neigh(void* kimmdl, int *mode, int *request, int* atom,
 
 void report_error(int line, char* str, int status)
 {
-   printf("Error at line %i: %s with status = %i.\n",line,str,status);
+   printf("Error at line %i of %s: %s with status = %i.\n",line,__FILE__,str,status);
    exit(-1);
 }

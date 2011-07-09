@@ -73,17 +73,32 @@ program test_Ar_free_cluster_f90
   read(*,*) modelname
 
   ! Initialize the KIM object
-  ier = kim_api_init_f(pkim, testname, modelname); if (ier.le.0) stop "The given KIM Model name "&
-       //"is not a match for this test."
+  ier = kim_api_init_f(pkim, testname, modelname)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_init_f", ier)
+     stop
+  endif
 
   ! Allocate memory via the KIM system
-  call kim_api_allocate_f(pkim, N, ATypes, ier); if (ier.le.0) call print_error("allocate", ier)
+  call kim_api_allocate_f(pkim, N, ATypes, ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_allocate_f", ier)
+     stop
+  endif
 
   ! call model's init routine
-  ier = kim_api_model_init(pkim); if (ier.le.0) call print_error("model_init", ier)
+  ier = kim_api_model_init(pkim)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_model_init", ier)
+     stop
+  endif
 
   ! determine which NBC scenerio to use
-  pNBC_Method = kim_api_get_nbc_method(pkim, ier); if (ier.le.0) return ! don't forget to free
+  pNBC_Method = kim_api_get_nbc_method(pkim, ier) ! don't forget to free
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_nbc_method", ier)
+     stop
+  endif
   if (index(NBC_Method,"MI-OPBC-H").eq.1) then
      nbc = 0
   elseif (index(NBC_Method,"MI-OPBC-F").eq.1) then
@@ -96,44 +111,73 @@ program test_Ar_free_cluster_f90
      nbc = 4
   else
      ier = 0
+     call report_error(__LINE__, "Unknown NBC method", ier)
      return
   endif
 
   ! Unpack data from KIM object
   !
   pnAtoms = kim_api_get_data_f(pkim, "numberOfAtoms", ier);
-  if (ier.le.0) call print_error("numberOfAtoms", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
 
   pnAtomTypes = kim_api_get_data_f(pkim, "numberAtomTypes", ier)
-  if (ier.le.0) call print_error("numberAtomTypes", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
 
   patomTypesdum = kim_api_get_data_f(pkim, "atomTypes", ier)
-  if (ier.le.0) call print_error("atomTypes", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
   call toIntegerArrayWithDescriptor1d(atomTypesdum, atomTypes, N4)
 
   pcoor = kim_api_get_data_f(pkim, "coordinates", ier)
-  if (ier.le.0) call print_error("coordinates", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
   call toRealArrayWithDescriptor2d(coordum, coords, DIM, N4)
 
   pcutoff = kim_api_get_data_f(pkim, "cutoff", ier)
-  if (ier.le.0) call print_error("cutoff", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
 
   if (nbc.le.1) then
      pboxlength = kim_api_get_data_f(pkim, "boxlength", ier)
-     if (ier.le.0) call print_error("boxlength", ier)
+     if (ier.le.0) then
+        call report_error(__LINE__, "kim_api_get_data_f", ier)
+        stop
+     endif
   endif
 
   penergy = kim_api_get_data_f(pkim, "energy", ier)
-  if (ier.le.0) call print_error("energy", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
 
   pforces = kim_api_get_data_f(pkim, "forces", ier)
-  if (ier.le.0) call print_error("forces", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
   call toRealArrayWithDescriptor2d(forcesdum, forces, DIM, N4)
 
   ! Set values
   numberOfAtoms   = N
   numberAtomTypes = ATypes
-  atomTypes(:)    = kim_api_get_atypecode_f(pkim, "Ar", ier); if (ier.le.0) call print_error("aTypeCode", ier)
+  atomTypes(:)    = kim_api_get_atypecode_f(pkim, "Ar", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_atypecode_f", ier)
+     stop
+  endif
 
   ! set up the cluster atom positions
   call create_FCC_cluster(FCCspacing, nCellsPerSide, coords)
@@ -160,34 +204,59 @@ program test_Ar_free_cluster_f90
   ! store pointers to neighbor list object and access function
   if (nbc.le.3) then
      ier = kim_api_set_data_f(pkim, "neighObject", SizeOne, loc(neighborList))
-     if (ier.le.0) call print_error("neighObject", ier)
+     if (ier.le.0) then
+        call report_error(__LINE__, "kim_api_set_data_f", ier)
+        stop
+     endif
   else
      allocate(NLRvecLocs(2))
      NLRvecLocs(1) = loc(neighborList)
      NLRvecLocs(2) = loc(RijList)
      ier = kim_api_set_data_f(pkim, "neighObject", SizeOne, loc(NLRvecLocs))
-     if (ier.le.0) call print_error("neighObject", ier)
+     if (ier.le.0) then
+        call report_error(__LINE__, "kim_api_set_data_f", ier)
+        stop
+     endif
   endif
 
   if (nbc.eq.0) then
      ier = kim_api_set_data_f(pkim, "get_half_neigh", SizeOne, loc(get_MI_PURE_neigh))
-     if (ier.le.0) call print_error("get_half_heigh", ier)
+     if (ier.le.0) then
+        call report_error(__LINE__, "kim_api_set_data_f", ier)
+        stop
+     endif
   elseif (nbc.eq.1) then
      ier = kim_api_set_data_f(pkim, "get_full_neigh", SizeOne, loc(get_MI_PURE_neigh))
-     if (ier.le.0) call print_error("get_full_heigh", ier)
+     if (ier.le.0) then
+        call report_error(__LINE__, "kim_api_set_data_f", ier)
+        stop
+     endif
   elseif (nbc.eq.2) then
      ier = kim_api_set_data_f(pkim, "get_half_neigh", SizeOne, loc(get_MI_PURE_neigh))
-     if (ier.le.0) call print_error("get_half_heigh", ier)
+     if (ier.le.0) then
+        call report_error(__LINE__, "kim_api_set_data_f", ier)
+        stop
+     endif
   elseif (nbc.eq.3) then
      ier = kim_api_set_data_f(pkim, "get_full_neigh", SizeOne, loc(get_MI_PURE_neigh))
-     if (ier.le.0) call print_error("get_full_heigh", ier)
+     if (ier.le.0) then
+        call report_error(__LINE__, "kim_api_set_data_f", ier)
+        stop
+     endif
   elseif (nbc.eq.4) then
      ier = kim_api_set_data_f(pkim, "get_full_neigh", SizeOne, loc(get_RVEC_neigh))
-     if (ier.le.0) call print_error("get_full_heigh", ier)
+     if (ier.le.0) then
+        call report_error(__LINE__, "kim_api_set_data_f", ier)
+        stop
+     endif
   endif
 
   ! Call model compute
-  call kim_api_model_compute(pkim, ier); if (ier.le.0) call print_error("model_compute", ier)
+  call kim_api_model_compute(pkim, ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_model_compute", ier)
+     stop
+  endif
 
   ! print results to screen
   print *, "***********************************************************************************************"
@@ -209,8 +278,16 @@ program test_Ar_free_cluster_f90
      deallocate(RijList)
   endif
 
-  call kim_api_model_destroy(pkim, ier); if (ier.le.0) call print_error("model_destroy", ier)
-  call kim_api_free(pkim, ier);          if (ier.le.0) call print_error("kim_api_free",  ier)
+  call kim_api_model_destroy(pkim, ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_model_destroy", ier)
+     stop
+  endif
+  call kim_api_free(pkim, ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_free", ier)
+     stop
+  endif
 
   stop
 end program test_Ar_free_cluster_f90
@@ -426,9 +503,17 @@ integer function get_MI_PURE_neigh(pkim,mode,request,atom,numnei,pnei1atom,pRij)
 
   ! unpack neighbor list object
   pneighborListdum = kim_api_get_data_f(pkim, "neighObject", ier)
-  if (ier.le.0) call print_error("neighObject", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
   
-  pnAtoms = kim_api_get_data_f(pkim, "numberOfAtoms", ier); N = numberOfAtoms
+  pnAtoms = kim_api_get_data_f(pkim, "numberOfAtoms", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
+  N = numberOfAtoms
   call toIntegerArrayWithDescriptor2d(neighborListdum, neighborlist, N+1, N)
   
   ! check mode and request
@@ -446,17 +531,20 @@ integer function get_MI_PURE_neigh(pkim,mode,request,atom,numnei,pnei1atom,pRij)
            atomToReturn = iterVal
         endif
      else
+        call report_error(__LINE__, "Invalid request in get_MI_PURE_neigh", -6)
         get_MI_PURE_neigh = -6 ! invalid request value
         return
      endif
   elseif (mode.eq.1) then ! locator mode
      if ( (request.gt.N) .or. (request.lt.1)) then
+        call report_error(__LINE__, "Invalid request in get_MI_PURE_neigh", -1)
         get_MI_PURE_neigh = -1
         return
      else
         atomToReturn = request
      endif
   else ! not iterator or locator mode
+     call report_error(__LINE__, "Invalid mode in get_MI_PURE_neigh", -2)
      get_MI_PURE_neigh = -2
      return
   endif
@@ -554,11 +642,19 @@ integer function get_RVEC_neigh(pkim,mode,request,atom,numnei,pnei1atom,pRij)
 
   ! unpack neighbor list object
   pNLRVecLocs = kim_api_get_data_f(pkim, "neighObject", ier)
-  if (ier.le.0) call print_error("neighObject", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
   pneighborListdum = NLRvecLocs(1)
   pRijList         = NLRvecLocs(2)
   
-  pnAtoms = kim_api_get_data_f(pkim, "numberOfAtoms", ier); N = numberOfAtoms
+  pnAtoms = kim_api_get_data_f(pkim, "numberOfAtoms", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
+  N = numberOfAtoms
   call toIntegerArrayWithDescriptor2d(neighborListdum, neighborlist, N+1, N)
 
   ! check mode and request
@@ -576,17 +672,20 @@ integer function get_RVEC_neigh(pkim,mode,request,atom,numnei,pnei1atom,pRij)
            atomToReturn = iterVal
         endif
      else
+        call report_error(__LINE__, "Invalid request in get_RVEC_neigh", -6)
         get_RVEC_neigh = -6 ! invalid request value
         return
      endif
   elseif (mode.eq.1) then ! locator mode
      if ( (request.gt.N) .or. (request.lt.1)) then
+        call report_error(__LINE__, "Invalid request in get_RVEC_neigh", -1)
         get_RVEC_neigh = -1
         return
      else
         atomToReturn = request
      endif
   else ! not iterator or locator mode
+     call report_error(__LINE__, "Invalid mode in get_RVEC_neigh", -2)
      get_RVEC_neigh = -2
      return
   endif
@@ -691,16 +790,21 @@ end subroutine create_FCC_cluster
 
 !-------------------------------------------------------------------------------
 !
-! print_error subroutine
+! report_error subroutine
 !
 !-------------------------------------------------------------------------------
-subroutine print_error(nm, err)
-  integer :: err
-  character(len=*) :: nm
-  if (err.ne.1) then
-     print *,"error in: "//nm
-     print *,"KIM error code = ",kimerr
-     stop
-  endif
-  return
-end subroutine print_error
+subroutine report_error(line, str, status)
+  implicit none
+  
+  !-- Transferred variables
+  integer,   intent(in) :: line
+  character(len=*), intent(in) :: str
+  integer,   intent(in) :: status
+  
+  !-- Local variables
+  character(len=10000), parameter :: file = __FILE__
+  
+  !-- print the error message
+  print *,'* ERROR at line', line, 'in ',trim(file), ': ', str,'. kimerror =', status
+  
+end subroutine report_error

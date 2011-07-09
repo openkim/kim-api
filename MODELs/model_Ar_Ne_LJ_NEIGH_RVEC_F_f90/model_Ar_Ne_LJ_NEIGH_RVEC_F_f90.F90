@@ -24,6 +24,7 @@ module model_Ar_Ne_LJ_NEIGH_RVEC_F_f90
   public Compute_Energy_Forces
   public ReInit
   public Destroy
+  public report_error
   
   ! Species indices
   integer, parameter :: Ar = 1
@@ -77,41 +78,118 @@ contains
     
     ! Unpack data from KIM object
     !
-    pnAtoms     = kim_api_get_data_f(pkim,"numberOfAtoms",ier);       if (ier.le.0) return
-    pnAtomTypes = kim_api_get_data_f(pkim,"numberAtomTypes",ier);     if (ier.le.0) return
-    patomTypes  = kim_api_get_data_f(pkim,"atomTypes",ier);           if (ier.le.0) return
-    pcutoff     = kim_api_get_data_f(pkim,"cutoff",ier);              if (ier.le.0) return
-    pepsilon    = kim_api_get_data_f(pkim,"PARAM_FREE_epsilon",ier);  if (ier.le.0) return
-    psigma      = kim_api_get_data_f(pkim,"PARAM_FREE_sigma",ier);    if (ier.le.0) return
-    pcutnorm    = kim_api_get_data_f(pkim,"PARAM_FIXED_cutnorm",ier); if (ier.le.0) return
-    pA          = kim_api_get_data_f(pkim,"PARAM_FIXED_A",ier);       if (ier.le.0) return
-    pB          = kim_api_get_data_f(pkim,"PARAM_FIXED_B",ier);       if (ier.le.0) return
-    pC          = kim_api_get_data_f(pkim,"PARAM_FIXED_C",ier);       if (ier.le.0) return
-    psigmasq    = kim_api_get_data_f(pkim,"PARAM_FIXED_sigmasq",ier); if (ier.le.0) return
-    pcutsq      = kim_api_get_data_f(pkim,"PARAM_FIXED_cutsq",ier);   if (ier.le.0) return
-    penergy     = kim_api_get_data_f(pkim,"energy",ier);              if (ier.le.0) return
-    pcoor       = kim_api_get_data_f(pkim,"coordinates",ier);         if (ier.le.0) return
+    pnAtoms = kim_api_get_data_f(pkim,"numberOfAtoms",ier);
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_data", ier);
+       return
+    endif
+    pnAtomTypes = kim_api_get_data_f(pkim,"numberAtomTypes",ier);
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_data", ier);
+       return
+    endif
+    patomTypes = kim_api_get_data_f(pkim,"atomTypes",ier);
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_data", ier);
+       return
+    endif
+    pcutoff = kim_api_get_data_f(pkim,"cutoff",ier);
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_data", ier);
+       return
+    endif
+    pepsilon = kim_api_get_data_f(pkim,"PARAM_FREE_epsilon",ier);
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_data", ier);
+       return
+    endif
+    psigma = kim_api_get_data_f(pkim,"PARAM_FREE_sigma",ier);
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_data", ier);
+       return
+    endif
+    pcutnorm = kim_api_get_data_f(pkim,"PARAM_FIXED_cutnorm",ier);
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_data", ier);
+       return
+    endif
+    pA = kim_api_get_data_f(pkim,"PARAM_FIXED_A",ier);
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_data", ier);
+       return
+    endif
+    pB = kim_api_get_data_f(pkim,"PARAM_FIXED_B",ier);
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_data", ier);
+       return
+    endif
+    pC = kim_api_get_data_f(pkim,"PARAM_FIXED_C",ier);
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_data", ier);
+       return
+    endif
+    psigmasq = kim_api_get_data_f(pkim,"PARAM_FIXED_sigmasq",ier);
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_data", ier);
+       return
+    endif
+    pcutsq = kim_api_get_data_f(pkim,"PARAM_FIXED_cutsq",ier);
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_data", ier);
+       return
+    endif
+    penergy = kim_api_get_data_f(pkim,"energy",ier);
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_data", ier);
+       return
+    endif
+    pcoor = kim_api_get_data_f(pkim,"coordinates",ier);
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_data", ier);
+       return
+    endif
     
     ! Check to see if we have been asked to compute the forces, energyperatom, and virial
-    comp_force  = kim_api_isit_compute_f(pkim,"forces",ier);         if (ier.le.0) return
-    comp_enepot = kim_api_isit_compute_f(pkim,"energyPerAtom",ier);  if (ier.le.0) return
-    comp_virial = kim_api_isit_compute_f(pkim,"virial",ier);         if (ier.le.0) return
+    comp_force  = kim_api_isit_compute_f(pkim,"forces",ier);
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_isit_compute", ier);
+       return
+    endif
+    comp_enepot = kim_api_isit_compute_f(pkim,"energyPerAtom",ier);
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_isit_compute", ier);
+       return
+    endif
+    comp_virial = kim_api_isit_compute_f(pkim,"virial",ier);
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_isit_compute", ier);
+       return
+    endif
     
     ! Cast to F90 arrays
     N4=numberOfAtoms
     if (comp_force.eq.1) then 
        pforce  = kim_api_get_data_f(pkim,"forces",ier);        
-       if (ier.le.0) return
+       if (ier.le.0) then
+          call report_error(__LINE__, "kim_api_get_data", ier);
+          return
+       endif
        call toRealArrayWithDescriptor2d(forcedum,force,DIM,N4)
     endif
     if (comp_enepot.eq.1) then 
        penepot = kim_api_get_data_f(pkim,"energyPerAtom",ier); 
-       if (ier.le.0) return
+       if (ier.le.0) then
+          call report_error(__LINE__, "kim_api_get_data", ier);
+          return
+       endif
        call toRealArrayWithDescriptor1d(enepotdum,ene_pot,N4)
     endif
     if (comp_virial.eq.1) then
        pvirial = kim_api_get_data_f(pkim,"virial",ier);
-       if (ier.le.0) return
+       if (ier.le.0) then
+          call report_error(__LINE__, "kim_api_get_data", ier);
+          return
+       endif
     endif
     call toRealArrayWithDescriptor2d(coordum,coor,DIM,N4)
 
@@ -119,7 +197,10 @@ contains
     ! Check to be sure that the atom types are correct
     ier = 0 ! assume an error
     do i = 1,numberOfAtoms
-       if (.not. ( (atomTypes(i).eq.Ar) .or. (atomTypes(i).eq.Ne) ) ) return
+       if (.not. ( (atomTypes(i).eq.Ar) .or. (atomTypes(i).eq.Ne) ) ) then
+          call report_error(__LINE__, "Wrong Atom Type", i);
+          return
+       endif
     enddo
     ier = 1 ! everything is ok
 
@@ -143,7 +224,10 @@ contains
        !
        atom = i ! request neighbors for atom i
        ier = kim_api_get_full_neigh(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij)
-       if (ier.le.0) return
+       if (ier.le.0) then
+          call report_error(__LINE__, "kim_api_get_full_neigh", ier);
+          return
+       endif
        
        ! Loop over the neighbors of atom i
        !
@@ -248,54 +332,84 @@ contains
 
     ! get sigma from KIM object
     psigma = kim_api_get_data_f(pkim,"PARAM_FREE_sigma",ier)
-    if (ier.le.0) stop '* ERROR: PARAM_FREE_sigma not found in KIM object.'
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_data", ier);
+       stop
+    endif
     
     ! get epsilon from KIM object
     pepsilon = kim_api_get_data_f(pkim,"PARAM_FREE_epsilon",ier)
-    if (ier.le.0) stop '* ERROR: PARAM_FREE_epsilon not found in KIM object.'
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_data", ier);
+       stop
+    endif
     
     ! get cutoff parameter from KIM object
     pparamcut = kim_api_get_data_f(pkim,"PARAM_FREE_cutoff",ier)
-    if (ier.le.0) stop '* ERROR: PARAM_FREE_cutoff not found in KIM object.'
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_data", ier);
+       stop
+    endif
     
     ! Set new values in KIM object ---------------------------------------------
     
     ! store model cutoff in KIM object
     pcutoff =  kim_api_get_data_f(pkim,"cutoff",ier)
-    if (ier.le.0) stop '* ERROR: cutoff not found in KIM object.'
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_data", ier);
+       stop
+    endif
     model_cutoff = model_Pcutoff
     
     ! store cutnorm in KIM object
     pcutnorm = kim_api_get_data_f(pkim,"PARAM_FIXED_cutnorm",ier)
-    if (ier.le.0) stop '* ERROR: PARAM_FIXED_cutnorm not found in KIM object.'
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_data", ier);
+       stop
+    endif
     model_cutnorm(1:3) = model_cutoff/model_sigma(1:3)
     
     ! store A in KIM object
     pA = kim_api_get_data_f(pkim,"PARAM_FIXED_A",ier)
-    if (ier.le.0) stop '* ERROR: PARAM_FIXED_A not found in KIM object.'
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_data", ier);
+       stop
+    endif
     model_A(1:3) = 12.d0*model_epsilon(1:3)*(-26.d0 + 7.d0*model_cutnorm(1:3)**6)/ &
          (model_cutnorm(1:3)**14*model_sigma(1:3)**2)
     
     ! store B in KIM object
     pB = kim_api_get_data_f(pkim,"PARAM_FIXED_B",ier)
-    if (ier.le.0) stop '* ERROR: PARAM_FIXED_B not found in KIM object.'
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_data", ier);
+       stop
+    endif
     model_B(1:3) = 96.d0*model_epsilon(1:3)*(7.d0-2.d0*model_cutnorm(1:3)**6)/     &
          (model_cutnorm(1:3)**13*model_sigma(1:3))
     
     ! store C in KIM object
     pC = kim_api_get_data_f(pkim,"PARAM_FIXED_C",ier)
-    if (ier.le.0) stop '* ERROR: PARAM_FIXED_C not found in KIM object.'
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_data", ier);
+       stop
+    endif
     model_C(1:3) = 28.d0*model_epsilon(1:3)*(-13.d0+4.d0*model_cutnorm(1:3)**6)/   &
          (model_cutnorm(1:3)**12)
     
     ! store sigma^2 in KIM object
     psigmasq = kim_api_get_data_f(pkim,"PARAM_FIXED_sigmasq",ier)
-    if (ier.le.0) stop '* ERROR: PARAM_FIXED_sigmasq not found in KIM object.'
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_data", ier);
+       stop
+    endif
     model_sigmasq(1:3) = model_sigma(1:3)**2
     
     ! store cutoff^2 in KIM object
     pcutsq = kim_api_get_data_f(pkim,"PARAM_FIXED_cutsq",ier)
-    if (ier.le.0) stop '* ERROR: PARAM_FIXED_cutsq not found in KIM object.'
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_data", ier);
+       stop
+    endif
     model_cutsq = model_cutoff**2
     
   end subroutine ReInit
@@ -327,50 +441,93 @@ contains
     
     ! get sigma from KIM object and free memory
     psigma = kim_api_get_data_f(pkim,"PARAM_FREE_sigma",ier)
-    if (ier.le.0) stop '* ERROR: PARAM_FREE_sigma not found in KIM object.'
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_data", ier);
+       stop
+    endif
     call free(psigma)
     
     ! get epsilon from KIM object and free memory
     pepsilon = kim_api_get_data_f(pkim,"PARAM_FREE_epsilon",ier)
-    if (ier.le.0) stop '* ERROR: PARAM_FREE_epsilon not found in KIM object.'
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_data", ier);
+       stop
+    endif
     call free(pepsilon)
     
     ! get cutoff parameter from KIM object and free memory
     pparamcut = kim_api_get_data_f(pkim,"PARAM_FREE_cutoff",ier)
-    if (ier.le.0) stop '* ERROR: PARAM_FREE_cutoff not found in KIM object.'
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_data", ier);
+       stop
+    endif
     call free(pparamcut)
     
     ! get cutnorm in KIM object and free memory
     pcutnorm = kim_api_get_data_f(pkim,"PARAM_FIXED_cutnorm",ier)
-    if (ier.le.0) stop '* ERROR: PARAM_FIXED_cutnorm not found in KIM object.'
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_data", ier);
+       stop
+    endif
     call free(pcutnorm)
     
     ! get A in KIM object and free memory
     pA = kim_api_get_data_f(pkim,"PARAM_FIXED_A",ier)
-    if (ier.le.0) stop '* ERROR: PARAM_FIXED_A not found in KIM object.'
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_data", ier);
+       stop
+    endif
     call free(pA)
     
     ! get B in KIM object and free memory
     pB = kim_api_get_data_f(pkim,"PARAM_FIXED_B",ier)
-    if (ier.le.0) stop '* ERROR: PARAM_FIXED_B not found in KIM object.'
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_data", ier);
+       stop
+    endif
     call free(pB)
     
     ! get C in KIM object and free memory
     pC = kim_api_get_data_f(pkim,"PARAM_FIXED_C",ier)
-    if (ier.le.0) stop '* ERROR: PARAM_FIXED_C not found in KIM object.'
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_data", ier);
+       stop
+    endif
     call free(pC)
     
     ! get sigma^2 in KIM object and free memory
     psigmasq = kim_api_get_data_f(pkim,"PARAM_FIXED_sigmasq",ier)
-    if (ier.le.0) stop '* ERROR: PARAM_FIXED_sigmasq not found in KIM object.'
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_data", ier);
+       stop
+    endif
     call free(psigmasq)
 
     ! get cutoff^2 in KIM object and free memory
     pcutsq = kim_api_get_data_f(pkim,"PARAM_FIXED_cutsq",ier)
-    if (ier.le.0) stop '* ERROR: PARAM_FIXED_cutsq not found in KIM object.'
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_data", ier);
+       stop
+    endif
     call free(pcutsq)
 
   end subroutine Destroy
+
+  subroutine report_error(line, str, status)
+    implicit none
+
+    !-- Transferred variables
+    integer,   intent(in) :: line
+    character(len=*), intent(in) :: str
+    integer,   intent(in) :: status
+
+    !-- Local variables
+    character(len=10000), parameter :: file = __FILE__
+
+    !-- print the error message
+    print *,'* ERROR at line', line, 'in ',trim(file), ': ', str,'. kimerror =', status
+
+  end subroutine report_error
   
 end module model_Ar_Ne_LJ_NEIGH_RVEC_F_f90
 
@@ -404,27 +561,39 @@ subroutine model_Ar_Ne_LJ_NEIGH_RVEC_F_f90_init(pkim)
   integer ier
   
   ! store pointer to compute function in KIM object
-  if (kim_api_set_data_f(pkim,"compute",one,loc(Compute_Energy_Forces)).ne.1) &
-       stop '* ERROR: compute not found in KIM object.'
+  if (kim_api_set_data_f(pkim,"compute",one,loc(Compute_Energy_Forces)).ne.1) then
+     call report_error(__LINE__, "kim_api_set_data", ier);
+     stop
+  endif
   
   ! store pointer to reinit function in KIM object
-  if (kim_api_set_data_f(pkim,"reinit",one,loc(ReInit)).ne.1) &
-       stop '* ERROR: reinit not found in KIM object.'
+  if (kim_api_set_data_f(pkim,"reinit",one,loc(ReInit)).ne.1) then
+     call report_error(__LINE__, "kim_api_set_data", ier);
+     stop
+  endif
 
   ! store pointer to destroy function in KIM object
-  if (kim_api_set_data_f(pkim,"destroy",one,loc(Destroy)).ne.1) &
-       stop '* ERROR: destroy not found in KIM object.'
+  if (kim_api_set_data_f(pkim,"destroy",one,loc(Destroy)).ne.1) then
+     call report_error(__LINE__, "kim_api_set_data", ier);
+     stop
+  endif
   
   ! store model cutoff in KIM object
   pcutoff =  kim_api_get_data_f(pkim,"cutoff",ier)
-  if (ier.le.0) stop '* ERROR: cutoff not found in KIM object.'
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data", ier);
+     stop
+  endif
   model_cutoff = 8.15d0 ! cutoff distance in angstroms
   
   ! Allocate memory for sigma and store value
   psigma = malloc(three*8) ! 8 is the size of a real*8
   ! store sigma in KIM object
   ier = kim_api_set_data_f(pkim,"PARAM_FREE_sigma",three,psigma)
-  if (ier.le.0) stop '* ERROR: PARAM_FREE_sigma not found in KIM object.'
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_set_data", ier);
+     stop
+  endif
   model_sigma(1) = 3.40d0 ! LJ Argon sigma in angstroms
   model_sigma(2) = 2.74d0 ! LJ Neon  sigma in angstroms
   model_sigma(3) = 0.5d0*(model_sigma(1) + model_sigma(2)) ! Lorentz/Berthelot Mixing Rule
@@ -433,7 +602,10 @@ subroutine model_Ar_Ne_LJ_NEIGH_RVEC_F_f90_init(pkim)
   pepsilon = malloc(three*8) ! 8 is the size of a real*8
   ! store epsilon in KIM object
   ier = kim_api_set_data_f(pkim,"PARAM_FREE_epsilon",three,pepsilon)
-  if (ier.le.0) stop '* ERROR: PARAM_FREE_epsilon not found in KIM object.'
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_set_data", ier);
+     stop
+  endif
   model_epsilon(1) = 0.0104d0 ! LJ Argon epsilon in eV
   model_epsilon(2) = 0.0031d0 ! LJ Neon  epsilon in eV
   model_epsilon(3) = sqrt(model_epsilon(1)*model_epsilon(2)) ! Lorentz/Berthelot Mixing Rule
@@ -442,21 +614,30 @@ subroutine model_Ar_Ne_LJ_NEIGH_RVEC_F_f90_init(pkim)
   pparamcut = malloc(one*8) ! 8 is the size of a real*8
   ! store cutoff as parameter in KIM object
   ier = kim_api_set_data_f(pkim,"PARAM_FREE_cutoff",one,pparamcut)
-  if (ier.le.0) stop '* ERROR: PARAM_FREE_cutoff not found in KIM object.'
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_set_data", ier);
+     stop
+  endif
   model_Pcutoff = model_cutoff
   
   ! Allocate memory for parameter cutnorm and store value
   pcutnorm = malloc(three*8) ! 8 is the size of a real*8
   ! store cutnorm in KIM object
   ier = kim_api_set_data_f(pkim,"PARAM_FIXED_cutnorm",three,pcutnorm)
-  if (ier.le.0) stop '* ERROR: PARAM_FIXED_cutnorm not found in KIM object.'
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_set_data", ier);
+     stop
+  endif
   model_cutnorm(1:3) = model_cutoff/model_sigma(1:3)
   
   ! Allocate memory for parameter A and store value
   pA = malloc(three*8) ! 8 is the size of a real*8
   ! store A in KIM object
   ier = kim_api_set_data_f(pkim,"PARAM_FIXED_A",three,pA)
-  if (ier.le.0) stop '* ERROR: PARAM_FIXED_A not found in KIM object.'
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_set_data", ier);
+     stop
+  endif
   model_A(1:3) = 12.d0*model_epsilon(1:3)*(-26.d0 + 7.d0*model_cutnorm(1:3)**6)/ &
        (model_cutnorm(1:3)**14*model_sigma(1:3)**2)
   
@@ -464,7 +645,10 @@ subroutine model_Ar_Ne_LJ_NEIGH_RVEC_F_f90_init(pkim)
   pB = malloc(three*8) ! 8 is the size of a real*8
   ! store B in KIM object
   ier = kim_api_set_data_f(pkim,"PARAM_FIXED_B",three,pB)
-  if (ier.le.0) stop '* ERROR: PARAM_FIXED_B not found in KIM object.'
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_set_data", ier);
+     stop
+  endif
   model_B(1:3) = 96.d0*model_epsilon(1:3)*(7.d0-2.d0*model_cutnorm(1:3)**6)/     &
        (model_cutnorm(1:3)**13*model_sigma(1:3))
   
@@ -472,7 +656,10 @@ subroutine model_Ar_Ne_LJ_NEIGH_RVEC_F_f90_init(pkim)
   pC = malloc(three*8) ! 8 is the size of a real*8
   ! store C in KIM object
   ier = kim_api_set_data_f(pkim,"PARAM_FIXED_C",three,pC)
-  if (ier.le.0) stop '* ERROR: PARAM_FIXED_C not found in KIM object.'
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_set_data", ier);
+     stop
+  endif
   model_C(1:3) = 28.d0*model_epsilon(1:3)*(-13.d0+4.d0*model_cutnorm(1:3)**6)/   &
        (model_cutnorm(1:3)**12)
   
@@ -480,14 +667,20 @@ subroutine model_Ar_Ne_LJ_NEIGH_RVEC_F_f90_init(pkim)
   psigmasq = malloc(three*8) ! 8 is the size of a real*8
   ! store sigma^2 in KIM object
   ier = kim_api_set_data_f(pkim,"PARAM_FIXED_sigmasq",three,psigmasq)
-  if (ier.le.0) stop '* ERROR: PARAM_FIXED_sigmasq not found in KIM object.'
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_set_data", ier);
+     stop
+  endif
   model_sigmasq(1:3) = model_sigma(1:3)**2
   
   ! Allocate memory for parameter cutsq and store value
   pcutsq = malloc(one*8) ! 8 is the size of a real*8
   ! store cutoff^2 in KIM object
   ier = kim_api_set_data_f(pkim,"PARAM_FIXED_cutsq",one,pcutsq)
-  if (ier.le.0) stop '* ERROR: PARAM_FIXED_cutsq not found in KIM object.'
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_set_data", ier);
+     stop
+  endif
   model_cutsq = model_cutoff**2
 
 end subroutine model_Ar_Ne_LJ_NEIGH_RVEC_F_f90_init

@@ -73,38 +73,66 @@ program test_Ar_periodic_cut_FCC_NEIGH_RVEC_f90
   read(*,*) modelname
 
   ! Initialize the KIM object
-  ier = kim_api_init_f(pkim, testname, modelname); if (ier.le.0) stop "The given KIM Model name "&
-       //"is not a match for this test."
+  ier = kim_api_init_f(pkim, testname, modelname)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_init_f", ier)
+     stop
+  endif
 
   ! Allocate memory via the KIM system
   N = 1; N4 = N ! We'll use just one atom for this calculation!
-  call kim_api_allocate_f(pkim, N, ATypes, ier); if (ier.le.0) call print_error("allocate", ier)
+  call kim_api_allocate_f(pkim, N, ATypes, ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_allocate_f", ier)
+     stop
+  endif
 
   ! call model's init routine
-  ier = kim_api_model_init(pkim); if (ier.le.0) call print_error("model_init", ier)
-
+  ier = kim_api_model_init(pkim)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_model_init", ier)
+     stop
+  endif
 
   ! Unpack data from KIM object
   !
   pnAtoms = kim_api_get_data_f(pkim, "numberOfAtoms", ier);
-  if (ier.le.0) call print_error("numberOfAtoms", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
 
   pnAtomTypes = kim_api_get_data_f(pkim, "numberAtomTypes", ier)
-  if (ier.le.0) call print_error("numberAtomTypes", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
 
   patomTypesdum = kim_api_get_data_f(pkim, "atomTypes", ier)
-  if (ier.le.0) call print_error("atomTypes", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
   call toIntegerArrayWithDescriptor1d(atomTypesdum, atomTypes, N4)
 
   pcoor = kim_api_get_data_f(pkim, "coordinates", ier)
-  if (ier.le.0) call print_error("coordinates", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
   call toRealArrayWithDescriptor2d(coordum, coords, DIM, N4)
 
   pcutoff = kim_api_get_data_f(pkim, "cutoff", ier)
-  if (ier.le.0) call print_error("cutoff", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
 
   penergy = kim_api_get_data_f(pkim, "energy", ier)
-  if (ier.le.0) call print_error("energy", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
 
   ! check for PARAM_FREE_cutoff
   plistOfParameters = kim_api_get_listparams(pkim, nParams, ier)
@@ -125,12 +153,19 @@ program test_Ar_periodic_cut_FCC_NEIGH_RVEC_f90
   endif
 
   pparam_cutoff = kim_api_get_data_f(pkim, "PARAM_FREE_cutoff", ier)
-  if (ier.le.0) call print_error("PARAM_FREE_cutoff", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
 
   ! set values
   numberOfAtoms   = N
   numberAtomTypes = ATypes
-  atomTypes(:)    = kim_api_get_atypecode_f(pkim, "Ar", ier); if (ier.le.0) call print_error("aTypeCode", ier)
+  atomTypes(:)    = kim_api_get_atypecode_f(pkim, "Ar", ier);
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_atypecode_f", ier)
+     stop
+  endif
 
   ! set up coords
   coords(:,1) = 0.0d0
@@ -155,13 +190,23 @@ program test_Ar_periodic_cut_FCC_NEIGH_RVEC_f90
      NLRvecLocs(1) = loc(neighborList)
      NLRvecLocs(2) = loc(RijList)
      ier = kim_api_set_data_f(pkim, "neighObject", SizeOne, loc(NLRvecLocs))
-     if (ier.le.0) call print_error("neighObject", ier)
+     if (ier.le.0) then
+        call report_error(__LINE__, "kim_api_set_data_f", ier)
+        stop
+     endif
      
      ier = kim_api_set_data_f(pkim, "get_full_neigh", SizeOne, loc(get_NEIGH_RVEC_neigh))
-     if (ier.le.0) call print_error("get_full_heigh", ier)
+     if (ier.le.0) then
+        call report_error(__LINE__, "kim_api_set_data_f", ier)
+        stop
+     endif
      
      ! Call model compute
-     call kim_api_model_compute(pkim, ier); if (ier.le.0) call print_error("model_compute", ier)
+     call kim_api_model_compute(pkim, ier)
+     if (ier.le.0) then
+        call report_error(__LINE__, "kim_api_model_compute", ier)
+        stop
+     endif
      
      ! print results to screen
      print *, "***********************************************************************************************"
@@ -181,7 +226,11 @@ program test_Ar_periodic_cut_FCC_NEIGH_RVEC_f90
         call FCC_NEIGH_RVEC_F_neighborlist(CellsPerCutoff, (cutoff+0.75), CurrentSpacing, neighborList, RijList)
         
         ! Call model compute
-        call kim_api_model_compute(pkim, ier); if (ier.le.0) call print_error("model_compute", ier)
+        call kim_api_model_compute(pkim, ier)
+        if (ier.le.0) then
+           call report_error(__LINE__, "kim_api_model_compute", ier)
+           stop
+        endif
         
         ! report result
         print *, "Energy/atom = ", energy, "; Spacing = ", CurrentSpacing, "; cutoff = ", cutoff
@@ -189,7 +238,11 @@ program test_Ar_periodic_cut_FCC_NEIGH_RVEC_f90
      
      ! increment cutoff and repeat
      param_cutoff = cutoff + 1.0d0
-     ier = kim_api_model_reinit(pkim); if (ier.le.0) call print_error("model_reinit", ier)
+     ier = kim_api_model_reinit(pkim)
+     if (ier.le.0) then
+        call report_error(__LINE__, "kim_api_model_reinit", ier)
+        stop
+     endif
      ! Don't forget to free and/or deallocate
      deallocate(neighborList)
      deallocate(NLRvecLocs)
@@ -197,8 +250,16 @@ program test_Ar_periodic_cut_FCC_NEIGH_RVEC_f90
   enddo
      
 
-  call kim_api_model_destroy(pkim, ier); if (ier.le.0) call print_error("model_destroy", ier)
-  call kim_api_free(pkim, ier);          if (ier.le.0) call print_error("kim_api_free",  ier)
+  call kim_api_model_destroy(pkim, ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_model_destroy", ier)
+     stop
+  endif
+  call kim_api_free(pkim, ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_free", ier)
+     stop
+  endif
 
   stop
 end program test_Ar_periodic_cut_FCC_NEIGH_RVEC_f90
@@ -298,9 +359,17 @@ integer function get_NEIGH_RVEC_neigh(pkim,mode,request,atom,numnei,pnei1atom,pR
   integer   :: N
 
   ! unpack neighbor list object
-  pnAtoms = kim_api_get_data_f(pkim, "numberOfAtoms", ier); N = numberOfAtoms
+  pnAtoms = kim_api_get_data_f(pkim, "numberOfAtoms", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
+  N = numberOfAtoms
   pNLRVecLocs = kim_api_get_data_f(pkim, "neighObject", ier)
-  if (ier.le.0) call print_error("neighObject", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
   pneighborList = NLRvecLocs(1)
   pRijList      = NLRvecLocs(2)
 
@@ -319,24 +388,26 @@ integer function get_NEIGH_RVEC_neigh(pkim,mode,request,atom,numnei,pnei1atom,pR
            atomToReturn = iterVal
         endif
      else
+        call report_error(__LINE__, "Invalid request in get_NEIGH_RVEC_neigh", -6)
         get_NEIGH_RVEC_neigh = -6 ! invalid request value
         return
      endif
   elseif (mode.eq.1) then ! locator mode
      if ( (request.gt.N) .or. (request.lt.1)) then
+        call report_error(__LINE__, "Invalid request in get_NEIGH_RVEC_neigh", -1)
         get_NEIGH_RVEC_neigh = -1
         return
      else
         atomToReturn = request
      endif
   else ! not iterator or locator mode
+     call report_error(__LINE__, "Invalid mode in get_NEIGH_RVEC_neigh", -2)
      get_NEIGH_RVEC_neigh = -2
      return
   endif
   
   ! set the returned atom
-  if (atomToReturn.ne.1) stop "get_NEIGH_RVEC_heigh() called with invalid request value!"
-  atom = 1
+  atom = atomToReturn
 
   ! set the returned number of neighbors for the returned atom
   numnei = neighborList(1)
@@ -354,16 +425,21 @@ end function get_NEIGH_RVEC_neigh
 
 !-------------------------------------------------------------------------------
 !
-! print_error subroutine
+! report_error subroutine
 !
 !-------------------------------------------------------------------------------
-subroutine print_error(nm, err)
-  integer :: err
-  character(len=*) :: nm
-  if (err.ne.1) then
-     print *,"error in: "//nm
-     print *,"KIM error code = ",kimerr
-     stop
-  endif
-  return
-end subroutine print_error
+subroutine report_error(line, str, status)
+  implicit none
+  
+  !-- Transferred variables
+  integer,   intent(in) :: line
+  character(len=*), intent(in) :: str
+  integer,   intent(in) :: status
+  
+  !-- Local variables
+  character(len=10000), parameter :: file = __FILE__
+  
+  !-- print the error message
+  print *,'* ERROR at line', line, 'in ',trim(file), ': ', str,'. kimerror =', status
+  
+end subroutine report_error
