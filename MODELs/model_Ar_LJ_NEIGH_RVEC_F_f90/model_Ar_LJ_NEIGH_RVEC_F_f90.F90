@@ -66,11 +66,11 @@ contains
     real*8 forcedum(DIM,1);  pointer(pforce,forcedum)
     real*8 enepotdum(1);     pointer(penepot,enepotdum)
     real*8 virial;           pointer(pvirial,virial)
-    real*8 Rij(3,1);   pointer(pRij,Rij)
-    integer nei1atom(1);     pointer(pnei1atom,nei1atom)
     real*8, pointer :: coor(:,:),force(:,:),ene_pot(:)
     integer :: comp_force, comp_enepot, comp_virial
     integer N4     !@@@@@@@@@ NEEDS TO BE FIXED
+    integer nei1atom(1);     pointer(pnei1atom,nei1atom)
+    real*8 Rij(3,1);   pointer(pRij,Rij)
     
     ! Unpack data from KIM object
     !

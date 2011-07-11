@@ -43,11 +43,11 @@ contains
     
     !-- Local variables
     integer, parameter :: DIM=3
-    double precision, dimension(DIM) :: Rij
     double precision :: r,Rsqij,phi,dphi,d2phi
     integer :: i,j,jj,numnei,atom,atom_ret
     character*64 :: NBC_Method; pointer(pNBC_Method,NBC_Method)
     integer :: nbc                               ! 0 - half, 1 - full
+    double precision, dimension(DIM) :: Rij
     
     !-- KIM variables
     integer(kind=8) numberOfAtoms; pointer(pnAtoms,numberOfAtoms)
@@ -68,13 +68,13 @@ contains
     real*8 coordum(DIM,1);   pointer(pcoor,coordum)
     real*8 forcedum(DIM,1);  pointer(pforce,forcedum)
     real*8 enepotdum(1);     pointer(penepot,enepotdum)
-    real*8 boxlength(3);     pointer(pboxlength,boxlength)
     real*8 virial;           pointer(pvirial,virial)
-    real*8 Rij_dummy(3,1);   pointer(pRij_dummy,Rij_dummy)
-    integer nei1atom(1);     pointer(pnei1atom,nei1atom)
     real*8, pointer :: coor(:,:),force(:,:),ene_pot(:)
     integer :: comp_force, comp_enepot, comp_virial
     integer N4     !@@@@@@@@@ NEEDS TO BE FIXED
+    real*8 boxlength(3);     pointer(pboxlength,boxlength)
+    integer nei1atom(1);     pointer(pnei1atom,nei1atom)
+    real*8 Rij_dummy(3,1);   pointer(pRij_dummy,Rij_dummy)
     
     ! Unpack data from KIM object
     !
