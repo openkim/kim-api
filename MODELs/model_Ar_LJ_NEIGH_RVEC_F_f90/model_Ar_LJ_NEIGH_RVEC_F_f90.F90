@@ -210,8 +210,8 @@ contains
     endif
     if (comp_force.eq.1)  force(1:3,1:numberOfAtoms) = 0.d0
     if (comp_virial.eq.1) virial = 0.d0
-
-
+    
+    
     !  Compute energy and forces
     !
     do i = 1,numberOfAtoms
@@ -305,7 +305,7 @@ contains
     real*8 model_sigmasq; pointer(psigmasq,model_sigmasq)
     real*8 model_cutsq;   pointer(pcutsq,model_cutsq)
     integer ier
-
+    
     ! Get (changed) parameters from KIM object ---------------------------------
 
     ! get sigma from KIM object
@@ -389,7 +389,7 @@ contains
        stop
     endif
     model_cutsq = model_cutoff**2
-
+    
   end subroutine ReInit
 
 !-------------------------------------------------------------------------------

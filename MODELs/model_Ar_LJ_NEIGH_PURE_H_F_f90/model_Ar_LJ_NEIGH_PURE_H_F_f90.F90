@@ -213,8 +213,8 @@ contains
     endif
     if (comp_force.eq.1)  force(1:3,1:numberOfAtoms) = 0.d0
     if (comp_virial.eq.1) virial = 0.d0
-
-
+    
+    
     ! determine which NBC scenerio to use
     pNBC_Method = kim_api_get_nbc_method(pkim, ier); if (ier.le.0) return
     if (index(NBC_Method,"NEIGH-PURE-H").eq.1) then
@@ -691,5 +691,5 @@ subroutine model_Ar_LJ_NEIGH_PURE_H_F_f90_init(pkim)
      stop
   endif
   model_cutsq = model_cutoff**2
-
+  
 end subroutine model_Ar_LJ_NEIGH_PURE_H_F_f90_init

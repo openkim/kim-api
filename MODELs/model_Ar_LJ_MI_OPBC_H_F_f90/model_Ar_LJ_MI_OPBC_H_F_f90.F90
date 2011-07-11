@@ -214,8 +214,8 @@ contains
     endif
     if (comp_force.eq.1)  force(1:3,1:numberOfAtoms) = 0.d0
     if (comp_virial.eq.1) virial = 0.d0
-
-
+    
+    
     ! determine which NBC scenerio to use
     pNBC_Method = kim_api_get_nbc_method(pkim, ier); if (ier.le.0) return
     if (index(NBC_Method,"MI-OPBC-H").eq.1) then
@@ -576,7 +576,7 @@ subroutine model_Ar_LJ_MI_OPBC_H_F_f90_init(pkim)
   real*8 model_sigmasq; pointer(psigmasq,model_sigmasq)
   real*8 model_cutsq;   pointer(pcutsq,model_cutsq)
   integer ier
-
+  
   ! store pointer to compute function in KIM object
   if (kim_api_set_data_f(pkim,"compute",one,loc(Compute_Energy_Forces)).ne.1) then
      call report_error(__LINE__, "kim_api_set_data", ier);
@@ -695,5 +695,5 @@ subroutine model_Ar_LJ_MI_OPBC_H_F_f90_init(pkim)
      stop
   endif
   model_cutsq = model_cutoff**2
-
+  
 end subroutine model_Ar_LJ_MI_OPBC_H_F_f90_init

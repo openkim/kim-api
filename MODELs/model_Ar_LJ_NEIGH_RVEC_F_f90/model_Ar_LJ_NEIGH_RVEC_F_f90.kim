@@ -45,7 +45,7 @@ coordinates             real*8       length     standard                [numberO
 
 get_half_neigh          method       none       none                    []                 optional     # Here so it can work with more Tests
 
-get_full_neigh          method       none       none                    []                 
+get_full_neigh          method       none       none                    []
 
 neighObject             pointer      none       none                    []
 

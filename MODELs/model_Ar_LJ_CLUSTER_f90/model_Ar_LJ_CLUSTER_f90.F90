@@ -209,8 +209,8 @@ contains
     endif
     if (comp_force.eq.1)  force(1:3,1:numberOfAtoms) = 0.d0
     if (comp_virial.eq.1) virial = 0.d0
-
-
+    
+    
     !  Compute energy and forces
     !
     ! We'll use a half list approach
