@@ -2,12 +2,6 @@ This directory (MODELs) contains a directory for each Model to be compiled as pa
 of the openkim-api package.  This release includes the following example Models:
 
 README  --  this file
-Sample_01_lj_cutoff_CLUSTER_f/  --  A generic Lennard-Jones Model written in Fortran using the CLUSTER NBC
-Sample_01_lj_cutoff_NEIGH_PURE_F_f/  --  A generic Lennard-Jones Model wirtten in Fortran using the NEIGH-PURE-F NBC
-Sample_01_lj_cutoff_NEIGH_PURE_H_f/  --  A generic Lennard-Jones Model written in Fortran using the NEIGH-PURE-H NBC
-Sample_01_lj_cutoff_NEIGH_RVEC_F_f/  --  A generic Lennard-Jones Model written in Fortran using the NEIGH-RVEC-F NBC
-Sample_01_lj_cutoff_c/  --  A generic Lennard-Jones Model written in C using the NEIGH-PURE-H NBC
-Sample_01_lj_cutoff_cpp/  --  A generic Lennard-Jones Model written in C++ using the NEIGH-PURE-H NBC
 Sample_01_lj_cutoff_f77/  --  A generic Lennard-Jones Model wirtten in FORTRAN77 using the NEIGH-PURE-H NBC
 model_EAM_periodic_aluminum_ercolessi_adams_f90/  --  An EAM Model created by Ercolessi and Adams (for aluminum) written in F90
                                                       using the MI-OPBC-H NBC.  Currently, this model does not take advantage of
