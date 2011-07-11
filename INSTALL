@@ -10,7 +10,7 @@ Instructions for installing, compiling and linking this openkim-api release:
 2. Set up environment variable:
 
 bash:
-> export KIM_DIR = /OPENKIM-API/
+> export KIM_DIR=/OPENKIM-API/
 
 (Make sure to include the trailing slash.)
 
@@ -31,24 +31,30 @@ bash:
 
 > make
 
-     This will build all models, tests, and the KIM api service routine library
+     This builds all Models, Tests, and the openKIM API service routine library
      (`make clean'    -- will remove all .o, .a, .so and executable files) 
      (`make pristine' -- will run `make clean' and remove the automatically
                          generated example models and tests)
 
 
-5. To run a Test, change to the appropriate directory and run the executable.
-For example,
+5. The provided example Tests read in the name of a Model (or Models) 
+   which they use to perform their calculations. For Tests written in 
+   Fortran the name of the Model can be piped in using an `echo' command.
+   For example, the following Fortran Test reads in one Model:
 
-> cd TESTs/Sample_01_compute_example_f
+> cd TESTs/test_Ar_free_cluster_CLUSTER_f90
 
-> echo "Sample_01_lj_cutoff_f" | ./Sample_01_compute_example_f
+> echo "model_Ar_LJ_CLUSTER_f90" | ./test_Ar_free_cluster_CLUSTER_f90
 
-Each test sample (example Sample_01_compute_example_f and 
-Sample_01_compute_example_c) reads the name of the model from its input stream, 
-initiates the model and computes the total energy and forces using the coordinates 
-of a configuration of atoms.
+   For Tests written in C, the Model name(s) can be provided as command
+   line arguments. For example, the following C Test reads in two Models:
 
+> cd TESTs/test_Ar_multiple_models_c
+
+> ./test_Ar_multiple_models_c model_Ar_LJ_NEIGH_RVEC_F_f90 model_Ar_Morse_c
+
+(See the README files in the Test directories for an explanation of what 
+the Tests do.)
 
 6. Each Test (and Model) has its own make file for compiling and linking. 
 If changes are made to the code, perform step (4) again (from the top directory).
@@ -61,52 +67,39 @@ TESTs, or MODELs one or more of the following environment variables must be set:
      KIM_MODELS_DIR
 
 8. The openkim-api package provides the possibility of creating dynamic load
-libraries through setting the KIM_DYNAMIC environment variable. If KIM_DYNAMIC
-is set, the makefile will build .so libraries (in addition to the static .a
-libraries) and KIM API will use those libraries to load models and call initialize
-routines dynamically (during runtime)
- 
+libraries by setting the KIM_DYNAMIC environment variable. 
+
+bash:
 > export KIM_DYNAMIC=yes
 
-If KIM_DYNAMIC is not set, the models will build and linked statically.
-If KIM_DYNAMIC is set, then it will load model_init from shared object library of a 
-model during runtime (KIM_API_init(...) will use KIM_DIR,KIM_MODELS to locate 
-those shared library object). 
-Benefits of using dynamically loaded libraries (KIM_DYNAMIC defined) vs. statically
-    linked libraries (KIM_DYNMAIC undefined)
-  - since only one model is loaded by KIM_API_init(..) into memory there is no worry
-    of global name clash
-  - one can create instances of the same model by using KIM_API_init(...) several 
-    times. And again, this can be made to ensure that there will be no global name
-    clash.  That is because dynamic load will create copies of all global names and 
-    all functions and subroutine codes copies in the memory. 
-KIM_DYNAMIC is not a main option yet because some old version of gnu compiler do not
-    provide dynamic load by default; and also some version of older MPI only work with
-    static linking.
+If KIM_DYNAMIC is not set, the models will be built and linked statically.
+
+If KIM_DYNAMIC is set, the makefile will build .so libraries (in addition to
+the static .a libraries) and KIM API will use those libraries to load models
+and call initialize routines dynamically (during runtime). The use of dynamic
+linking may prevent problems of name clashes when multiple Models are read in
+by a Test. This is still being investigated.
+
+Note: Currently static linking is the default option because older
+      versions of the gnu compiler do not provide dynamic loading by default.
+      In addition, some versions of MPI only work with static linking.
+      In future releases, it is expected that dynamic linking will become
+      the default method.
        
 
-9. For those users who do not have a Fortran compiler installed, the openkim-api
-package provides the possibility to build all models and tests excluding those
-written in FORTRAN (f77, f90, f) through setting KIM_NO_FORTRAN environment variable.
-
->  export KIM_NO_FORTRAN=yes
-
-If it is set, all of the models and tests with names ending in _f77, _f, _f90
-will be omitted from build process.
-
-10. The openkim-api package provides the KIM_API_get_neigh_half() and
-KIM_API_get_neigh_full() wrapper service routines for access to the neighbor
-list object. These routines check to ensure that the maximum numbers of
+9. The openkim-api package provides wrapper routines for accessing the neighbor
+list object. These routines check to ensure that the maximum number of
 neighbors for an atom does not exceed KIM_API_MAX_NEIGHBORS. If this
-environment variable KIM_API_MAX_NEIGHBORS is not set, the default value is
-512.  To change the value of this parameter, for example, to 1024 (or any other
-value) use the command
+environment variable is not set, the default value is 512.  To change the value
+of this parameter, for example, to 1024 (or any other value) use the command:
 
+bash:
 > export KIM_API_MAX_NEIGHBORS=1024
 
 
-NON-STANDARD COMPILERS: If you need to use non-standard compilers and/or
-adjust compiler flags, make changes to lines 53-65 in KIM_API/Include.mk
+NON-STANDARD COMPILERS: If you need to make changes to compiler flags
+either because you are using a non-standard compiler or an older version
+of the gnu compiler, change lines 53-62 in KIM_API/Include.mk
 
 TROUBLESHOOTING: By default, the make system uses the g++ compiler with 
 the -lgfortran option to link compiled FORTRAN executables. If (for some
@@ -114,6 +107,6 @@ versions of linux or GNU compilers) linking of FORTRAN executables with the
 g++ compiler does not work, try gfortran with the -lstdc++ option.  See lines
 62-63 in the Include.mk file (change them to lines 64-65). 
 
-GNU compilers tested with version  4.2.x or higher, the Intel compiler must be
+GNU compilers tested with version 4.2.x or higher, the Intel compiler must be
 version 11.1 or higher.
 
