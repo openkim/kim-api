@@ -11,11 +11,5 @@ Sample_01_lj_cutoff_cpp/  --  A generic Lennard-Jones Model written in C++ using
 Sample_01_lj_cutoff_f77/  --  A generic Lennard-Jones Model wirtten in FORTRAN77 using the NEIGH-PURE-H NBC
 model_EAM_periodic_aluminum_ercolessi_adams_f90/  --  An EAM Model created by Ercolessi and Adams (for aluminum) written in F90
                                                       using the MI-OPBC-H NBC.  Currently, this model does not take advantage of
-                                                      the openkim-api support for atom/particle types or model parameters
-model_LJ_periodic_argon_f90/  --  A Lennard-Jones Model written in F90 for Argon using the MI-OPBC-H NBC and locator mode.
-                                  Currently, this model does not take advantage of the openkim-api support for atom/particle
-                                  types or model parameters
-model_LJ_periodic_argon_iterator_f90/  --  A Lennard-Jones Model written in F90 for Argon using the MI-OPBC-H NBC and iterator
-                                           mode.  Currently, this model does not take advantage of the openkim-api support for
-                                           atom/particle types or model parameters
+                                                      the openkim-api support for model parameters
 
