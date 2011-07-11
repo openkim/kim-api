@@ -9,22 +9,6 @@ Sample_01_lj_cutoff_NEIGH_RVEC_F_f/  --  A generic Lennard-Jones Model written i
 Sample_01_lj_cutoff_c/  --  A generic Lennard-Jones Model written in C using the NEIGH-PURE-H NBC
 Sample_01_lj_cutoff_cpp/  --  A generic Lennard-Jones Model written in C++ using the NEIGH-PURE-H NBC
 Sample_01_lj_cutoff_f77/  --  A generic Lennard-Jones Model wirtten in FORTRAN77 using the NEIGH-PURE-H NBC
-model_Ar_LJ_CLUSTER_f90/  --  A Lennard-Jones Model for Argon written in F90 using the CLUSTER NBC, which publishes
-                              its parameters, and supports optional computation of `forces', `energyPerAtoms', and `virial'
-model_Ar_LJ_MI_OPBC_H_F_f90/ --  A Lennard-Jones Model for Argon written in F90 using the MI-OPBC-H-F NBC, which publishes
-                                 its parameters, and supports optional computation of `forces', `energyPerAtoms', and `virial'
-model_Ar_LJ_NEIGH_PURE_H_F_f90/  --  A Lennard-Jones Model for Argon written in F90 using the NEIGH-PURE-H-F NBC, which publishes
-                                     its parameters, and supports optional computation of `forces', `energyPerAtoms', and `virial'
-model_Ar_LJ_NEIGH_RVEC_F_f90/  --  A Lennard-Jones Model for Argon written in F90 using the NEIGH-RVEC-F NBC, which publishes
-                                   its parameters, and supports optional computation of `forces', `energyPerAtoms', and `virial'
-model_Ar_Morse_c/  -- A Morse Model for Argon written in C using any NBC, which publishes its parameters, and supports optional
-                      computation of `forces', `energyPerAtoms', and 'virial'.
-model_Ar_Ne_LJ_NEIGH_RVEC_F_c/  --  A Lennard-Jones Model for Argon and Neon written in C using the NEIGH-RVEC-F NBC, which
-                                      publishes its parameters, and supports optional computation of `forces', `energyPerAtoms',
-                                      and `virial'
-model_Ar_Ne_LJ_NEIGH_RVEC_F_f90/  --  A Lennard-Jones Model for Argon and Neon written in F90 using the NEIGH-RVEC-F NBC, which
-                                      publishes its parameters, and supports optional computation of `forces', `energyPerAtoms',
-                                      and `virial'
 model_EAM_periodic_aluminum_ercolessi_adams_f90/  --  An EAM Model created by Ercolessi and Adams (for aluminum) written in F90
                                                       using the MI-OPBC-H NBC.  Currently, this model does not take advantage of
                                                       the openkim-api support for atom/particle types or model parameters

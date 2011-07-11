@@ -21,8 +21,8 @@ openkim-api-00.01.00 ===========================================================
 * Added documentation to the standard.kim file which now describes in detail
   the format and content of KIM descriptor files.
 
-* Added a number of example Models and Tests to help users understand how to
-  implement their own openkim-api compliant codes.
+* Added a number of automatically generated example Models and Tests to help 
+  users understand how to implement their own openkim-api compliant codes.
 
 * Added README files to every directory.  These files provide a short
   (hopefully helpful) description of the contents of the directory)

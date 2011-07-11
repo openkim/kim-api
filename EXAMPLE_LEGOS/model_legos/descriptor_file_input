@@ -1,0 +1,10 @@
+#######################################################################################################
+MODEL_INPUT:
+# Name                  Type         Unit       SystemU/Scale           Shape              requirements
+numberOfAtoms           integer*8    none       none                    []
+
+numberAtomTypes         integer      none       none                    []
+
+atomTypes               integer      none       none                    [numberOfAtoms]
+
+coordinates             real*8       length     standard                [numberOfAtoms,3]

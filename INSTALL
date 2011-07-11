@@ -32,7 +32,9 @@ bash:
 > make
 
      This will build all models, tests, and the KIM api service routine library
-     (`make clean' -- will remove all .o, .a, .so and executable files) 
+     (`make clean'    -- will remove all .o, .a, .so and executable files) 
+     (`make pristine' -- will run `make clean' and remove the automatically
+                         generated example models and tests)
 
 
 5. To run a Test, change to the appropriate directory and run the executable.

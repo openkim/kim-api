@@ -1,0 +1,20 @@
+#######################################################################################################
+MODEL_PARAMETERS:
+# Name                  Type         Unit       SystemU/Scale           Shape              requirements
+PARAM_FREE_sigma        real*8       length     standard                []
+
+PARAM_FREE_epsilon      real*8       energy     standard                []
+
+PARAM_FREE_cutoff       real*8       length     standard                []
+
+PARAM_FIXED_cutnorm     real*8       none       none                    []
+
+PARAM_FIXED_A           real*8       pressure   standard                []
+
+PARAM_FIXED_B           real*8       force      standard                []
+
+PARAM_FIXED_C           real*8       energy     standard                []
+
+PARAM_FIXED_sigmasq     real*8       none       none                    []
+
+PARAM_FIXED_cutsq       real*8       none       none                    []

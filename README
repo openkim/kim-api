@@ -103,20 +103,25 @@ The current version of the openkim-api package supports the following features:
 This directory (by default, openkim-api-XX.XX.XX) contains the following files
 and directories:
 
-DOCs     -- document ion directory. This directory contains the file
-            KIM_API_alpha_overview.pdf which provides an overview of
-            this release of the openkim-api package, and links to the
-            files KIMserviceDescriptions.txt and standard.kim.
+DOCs          -- document ion directory. This directory contains the file
+                 KIM_API_alpha_overview.pdf which provides an overview of
+                 this release of the openkim-api package, and links to the
+                 files KIMserviceDescriptions.txt and standard.kim.
 
-KIM_API  -- directory containing the openkim-api service routines
+EXAMPLE_LEGOS -- directory containing the picies of example models and
+                 tests that are used to automatically generate working
+                 examples. (This organization facilitates easy maintence
+                 of the examples.)
+
+KIM_API       -- directory containing the openkim-api service routines
         
-MODELs   -- directory containing examples of interatomic Models
+MODELs        -- directory containing examples of interatomic Models
 
-Makefile -- make file for compiling the openkim-api services routines and
-            example Tests and Models.
+Makefile      -- make file for compiling the openkim-api services routines and
+                 example Tests and Models.
 
-README   -- this file
+README        -- this file
  
-TESTs    -- directory containing examples of Tests
+TESTs         -- directory containing examples of Tests
 
 -------------------------------------------------------------------------------

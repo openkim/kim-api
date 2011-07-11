@@ -1,0 +1,14 @@
+This directory (EXAMPLE_LEGOS) contains components for automatically generating
+the example models and tests
+
+
+The following files are in this directory:
+
+model_legos
+    This directory contains the code fragments ("legos") to create the
+    example models
+
+test_legos
+    This directory contains the code fragments ("legos") to create the
+    example tests
+

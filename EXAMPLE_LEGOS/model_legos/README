@@ -1,0 +1,81 @@
+This directory (model_legos) contains components for automatically generating
+the example models
+
+
+The following files are in this directory:
+
+Makefile
+    This is the make file that creates the example models directories in the $(KIM_MODELS_DIR) directory
+
+README
+    This file
+
+cluster_compute_local_variables.frag
+    This file contains the local variables used by the model_Ar_LJ_CLUSTER_f90 model
+ 
+cluster_compute_loops.frag
+    This file contains the computational loops used in the model_Ar_LJ_CLUSTER_f90 model
+
+compute_initialize.frag
+    This file contains the common initialization code for the compute() routine
+
+compute_kim_variables.frag
+    This file contains the common kim variables used in the compute() routine
+
+descriptor_file_input
+    This file contains the common input arguments for the kim descriptor files
+
+descriptor_file_output
+    This file contains the common output arguments for the kim descriptor files
+
+descriptor_file_params
+    This file contains the common parameters arguments for the kim descriptor files
+
+descriptor_file_start
+    This file contains the common head of the kim descriptor files
+
+mi_opbc_compute_extra_kim_variables.frag
+    This file contains the additional kim variables used by the model_Ar_LJ_MI_OPBC_H_F_f90 model
+
+mi_opbc_compute_loops.frag
+    This file contains the computational loops used in the model_Ar_LJ_MI_OPBC_H_F_f90 model
+
+mi_opbc_neigh_pure_compute_local_variables.frag
+    This file contains the local variables used by the model_Ar_LJ_MI_OPBC_H_F_f90 and model_Ar_LJ_NEIGH_PURE_H_F_f90 models
+
+example_model_Ar_LJ_NEIGH_RVEC_F_c/
+    Directory containing the model_Ar_LJ_NEIGH_RVEC_F_c model
+
+example_model_Ar_Morse_c/
+    Directory containing the model_Ar_Morse_c model
+
+example_model_Ar_Ne_LJ_NEIGH_RVEC_F_f90
+    Directory containing the model_Ar_Ne_LJ_NEIGH_RVEC_F_f90 model
+
+model_Makefile
+    This file contains the common Makefile used by the models
+
+model_README
+    This file contains the common README file used by the models
+
+module_end.frag
+    This file contains the common tail of the models' fortran module files
+
+module_start.frag
+    This file contains the common head of the models' fortran module files
+
+neigh_pure_compute_extra_kim_variables.frag
+    This file contains the additional kim variables used by the model_Ar_LJ_NEIGH_PURE_H_F_f90 model
+
+neigh_pure_compute_loops.frag
+    This file contains the computational loops used in the model_Ar_LJ_NEIGH_PURE_H_F_f90 model
+
+neigh_rvec_compute_extra_kim_variables.frag
+    This file contains the additional kim variables used by the model_Ar_LJ_NEIGH_RVEC_F_f90 model
+
+neigh_rvec_compute_local_variables.frag
+    This file contains the local variables used by the model_Ar_LJ_NEIGH_RVEC_F_f90 model
+
+neigh_rvec_compute_loops.frag
+    This file contains the computational loops used in the model_Ar_LJ_NEIGH_RVEC_F_f90 model
+
