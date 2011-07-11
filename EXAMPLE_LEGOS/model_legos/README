@@ -43,6 +43,9 @@ mi_opbc_compute_loops.frag
 mi_opbc_neigh_pure_compute_local_variables.frag
     This file contains the local variables used by the model_Ar_LJ_MI_OPBC_H_F_f90 and model_Ar_LJ_NEIGH_PURE_H_F_f90 models
 
+example_Sample_01_lj_cutoff_f77/
+    A generic Lennard-Jones Model wirtten in FORTRAN77 using the NEIGH-PURE-H NBC
+
 example_model_Ar_LJ_NEIGH_RVEC_F_c/
     Directory containing the model_Ar_LJ_NEIGH_RVEC_F_c model
 
@@ -51,6 +54,11 @@ example_model_Ar_Morse_c/
 
 example_model_Ar_Ne_LJ_NEIGH_RVEC_F_f90
     Directory containing the model_Ar_Ne_LJ_NEIGH_RVEC_F_f90 model
+
+example_model_EAM_periodic_aluminum_ercolessi_adams_f90/
+    An EAM Model created by Ercolessi and Adams (for aluminum) written in F90
+    using the MI-OPBC-H NBC.  Currently, this model does not take advantage of
+    the openkim-api support for model parameters
 
 model_Makefile
     This file contains the common Makefile used by the models

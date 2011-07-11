@@ -17,7 +17,7 @@ SED_CMD = sed -e "s/MODEL_NAME_STR/$@/g"
 
 COMMON_FRAGMENTS = module_start.frag compute_kim_variables.frag compute_initialize.frag module_end.frag model_README model_Makefile descriptor_file_start descriptor_file_input descriptor_file_output descriptor_file_params Makefile
 
-AUTO_GEN_MODELS = model_Ar_LJ_CLUSTER_f90 model_Ar_LJ_MI_OPBC_H_F_f90 model_Ar_LJ_NEIGH_PURE_H_F_f90 model_Ar_LJ_NEIGH_RVEC_F_f90 model_Ar_LJ_NEIGH_RVEC_F_c model_Ar_Morse_c model_Ar_Ne_LJ_NEIGH_RVEC_F_f90
+AUTO_GEN_MODELS = model_Ar_LJ_CLUSTER_f90 model_Ar_LJ_MI_OPBC_H_F_f90 model_Ar_LJ_NEIGH_PURE_H_F_f90 model_Ar_LJ_NEIGH_RVEC_F_f90 model_Ar_LJ_NEIGH_RVEC_F_c model_Ar_Morse_c model_Ar_Ne_LJ_NEIGH_RVEC_F_f90 Sample_01_lj_cutoff_f77 model_EAM_periodic_aluminum_ercolessi_adams_f90
 
 all: $(AUTO_GEN_MODELS)
 
@@ -181,14 +181,24 @@ model_Ar_LJ_NEIGH_RVEC_F_f90: $(COMMON_FRAGMENTS) neigh_rvec_compute_local_varia
 	cat module_end.frag | $(SED_CMD)                                           >> $(KIM_MODELS_DIR)$@/$@.F90
 
 model_Ar_LJ_NEIGH_RVEC_F_c: example_model_Ar_LJ_NEIGH_RVEC_F_c $(wildcard example_model_Ar_LJ_NEIGH_RVEC_F_c/*) Makefile
-	cp -r example_model_Ar_LJ_NEIGH_RVEC_F_c $(KIM_MODELS_DIR)model_Ar_LJ_NEIGH_RVEC_F_c
-
+	cp -r example_$@ $(KIM_MODELS_DIR)$@
+	@touch $(KIM_MODELS_DIR)$@
 
 model_Ar_Morse_c: example_model_Ar_Morse_c $(wildcard example_model_Ar_Morse_c/*) Makefile
-	cp -r example_model_Ar_Morse_c $(KIM_MODELS_DIR)model_Ar_Morse_c
+	cp -r example_$@ $(KIM_MODELS_DIR)$@
+	@touch $(KIM_MODELS_DIR)$@
 
 model_Ar_Ne_LJ_NEIGH_RVEC_F_f90: example_model_Ar_Ne_LJ_NEIGH_RVEC_F_f90 $(wildcard example_model_Ar_Ne_LJ_NEIGH_RVEC_F_f90/*) Makefile
-	cp -r example_model_Ar_Ne_LJ_NEIGH_RVEC_F_f90 $(KIM_MODELS_DIR)model_Ar_Ne_LJ_NEIGH_RVEC_F_f90
+	cp -r example_$@ $(KIM_MODELS_DIR)$@
+	@touch $(KIM_MODELS_DIR)$@
+
+Sample_01_lj_cutoff_f77: example_Sample_01_lj_cutoff_f77 $(wildcard example_Sample_01_lj_cutoff_f77/*) Makefile
+	cp -r example_$@ $(KIM_MODELS_DIR)$@
+	@touch $(KIM_MODELS_DIR)$@
+
+model_EAM_periodic_aluminum_ercolessi_adams_f90: example_model_EAM_periodic_aluminum_ercolessi_adams_f90 $(wildcard example_model_EAM_periodic_aluminum_ercolessi_adams_f90/*) Makefile
+	cp -r example_$@ $(KIM_MODELS_DIR)$@
+	@touch $(KIM_MODELS_DIR)$@
 
 
 .PHONY: clean pristine

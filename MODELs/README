@@ -1,9 +1,9 @@
 This directory (MODELs) contains a directory for each Model to be compiled as part
-of the openkim-api package.  This release includes the following example Models:
+of the openkim-api package.
+
+This directory is populated with example models automatically by the openkim-api make system.
+
+This directory is distributed with only the following files:
 
 README  --  this file
-Sample_01_lj_cutoff_f77/  --  A generic Lennard-Jones Model wirtten in FORTRAN77 using the NEIGH-PURE-H NBC
-model_EAM_periodic_aluminum_ercolessi_adams_f90/  --  An EAM Model created by Ercolessi and Adams (for aluminum) written in F90
-                                                      using the MI-OPBC-H NBC.  Currently, this model does not take advantage of
-                                                      the openkim-api support for model parameters
 
