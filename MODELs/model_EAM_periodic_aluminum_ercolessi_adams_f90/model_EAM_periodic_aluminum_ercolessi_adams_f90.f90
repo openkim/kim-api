@@ -25,6 +25,9 @@ private
 public Compute_Energy_Forces, &
        model_cutoff
 
+! Species indices
+integer, parameter :: Al = 1
+
 ! Model parameters
 double precision, parameter :: model_cutoff  = 5.55805441821810d0   ! cutoff distance
 
@@ -285,7 +288,7 @@ integer,                  intent(out) :: ier
 integer, parameter :: DIM=3
 double precision, dimension(DIM) :: Sij,Rij
 double precision :: r,Rsqij,v,dv,d2v,rho,drho,d2rho,u,du,d2u,dveff
-integer :: i,j,jj,numnei,atom,atom_ret
+integer :: i,j,jj,numnei,atom,atom_ret,comp_force,comp_enepot,comp_virial
 double precision, allocatable :: edens(:),deru(:)
 
 !-- KIM variables
@@ -300,28 +303,54 @@ real*8 virial; pointer(pvirial,virial)
 real*8 Rij_dummy(3,1); pointer(pRij_dummy,Rij_dummy)
 integer:: nei1atom(1); pointer (pnei1atom,nei1atom)
 integer N4     !@@@@@@@@@ NEEDS TO BE FIXED
+integer atomTypes(1);  pointer(patomTypes,atomTypes)
+
+! Check to see if we have been asked to compute the forces, energyperatom,
+! and virial
+comp_force  = kim_api_isit_compute_f(pkim,"forces",ier);        if (ier.le.0) return
+comp_enepot = kim_api_isit_compute_f(pkim,"energyPerAtom",ier); if (ier.le.0) return
+comp_virial = kim_api_isit_compute_f(pkim,"virial",ier);        if (ier.le.0) return
 
 ! Unpack data from KIM object
 !
 pN         = kim_api_get_data_f(pkim,"numberOfAtoms",ier); if (ier.le.0) return
 penergy    = kim_api_get_data_f(pkim,"energy",ier);        if (ier.le.0) return
 pcoor      = kim_api_get_data_f(pkim,"coordinates",ier);   if (ier.le.0) return
-pforce     = kim_api_get_data_f(pkim,"forces",ier);        if (ier.le.0) return
-penepot    = kim_api_get_data_f(pkim,"energyPerAtom",ier); if (ier.le.0) return
-pvirial    = kim_api_get_data_f(pkim,"virial",ier);        if (ier.le.0) return
 pboxlength = kim_api_get_data_f(pkim,"boxlength",ier);     if (ier.le.0) return
+patomTypes  = kim_api_get_data_f(pkim,"atomTypes",ier);    if (ier.le.0) return
+if (comp_force==1) then
+   pforce  = kim_api_get_data_f(pkim,"forces",ier); if (ier.le.0) return
+   call toRealArrayWithDescriptor2d(forcedum,force,DIM,N4)
+endif
+if (comp_enepot==1) then
+   penepot = kim_api_get_data_f(pkim,"energyPerAtom",ier); if (ier.le.0) return
+   call toRealArrayWithDescriptor1d(enepotdum,ene_pot,N4)
+endif
+if (comp_virial==1) then
+   pvirial = kim_api_get_data_f(pkim,"virial",ier); if (ier.le.0) return
+endif
 N4=N
 call toRealArrayWithDescriptor2d(coordum,coor,DIM,N4)
-call toRealArrayWithDescriptor2d(forcedum,force,DIM,N4)
-call toRealArrayWithDescriptor1d(enepotdum,ene_pot,N4)
+
+! Check to be sure that the atom types are correct
+ier = 0 ! assume an error
+do i = 1,N
+   if (atomTypes(i).ne.Al) return
+enddo
+ier = 1 ! everything is ok
 
 ! Initialize potential energies, forces, virial term, electron density
 !
-ene_pot(1:N) = 0.d0
-force(1:3,1:N) = 0.d0
-virial = 0.d0
-allocate( edens(N), deru(N) )  ! EAM electron density and embedded energy deriv
+if (comp_enepot==1) then
+   ene_pot(1:N) = 0.d0
+else
+   energy = 0.d0
+endif
+if (comp_force==1)  force(1:3,1:N) = 0.d0
+if (comp_virial==1) virial = 0.d0
+allocate( edens(N) )  ! EAM electron density
 edens(1:N) = 0.d0
+if (comp_force==1.or.comp_virial==1) allocate( deru(N) )  ! EAM embedded energy deriv
 
 !  Compute energy and forces
 !
@@ -360,10 +389,18 @@ enddo
 !  U and its derivative U' (deru)
 !
 do i = 1,N
-   call calc_u_du(edens(i),u,du)                  ! compute embedding energy
+   if (comp_force==1.or.comp_virial==1) then
+      call calc_u_du(edens(i),u,du)               ! compute embedding energy
                                                   !   and its derivative
-   ene_pot(i) = u                                 ! initialize pot energy
-   deru(i) = du                                   ! store du for later use
+      deru(i) = du                                ! store du for later use
+   else
+      call calc_u(edens(i),u)                     ! compute just embedding energy
+   endif
+   if (comp_enepot==1) then 
+      ene_pot(i) = u                              ! store embed energy per atom
+   else
+      energy = energy + u                         ! add embed energy to tot ener
+   endif
 enddo
 
 !  Loop over particles in the neighbor list a second time, to compute
@@ -388,25 +425,38 @@ do i = 1,N-1
       Rsqij = dot_product(Rij,Rij)                ! compute square distance
       if ( Rsqij < model_cutsq ) then             ! particles are interacting?
          r = sqrt(Rsqij)                          ! compute distance
-         call calc_v_dv(r,v,dv)                   ! compute pair potential
+         if (comp_force==1.or.comp_virial==1) then
+            call calc_v_dv(r,v,dv)                ! compute pair potential
                                                   !   and it derivative
-         call calc_drho(r,drho)                   ! compute elect dens first deriv
-         ene_pot(i) = ene_pot(i) + 0.5d0*v        ! accumulate energy
-         ene_pot(j) = ene_pot(j) + 0.5d0*v        ! (i and j share it)
-         dveff = dv + (deru(i)+deru(j))*drho      !
-         virial = virial + r*dveff                ! accumul. virial=sum r(dV/dr)
-         force(:,i) = force(:,i) - dv*Rij/r       ! accumulate forces
-         force(:,j) = force(:,j) + dv*Rij/r       !    (Fji = -Fij)
+            call calc_drho(r,drho)                ! compute elect dens first deriv
+         else
+            call calc_v(r,v)                      ! compute just pair potential
+         endif
+         if (comp_enepot==1) then
+            ene_pot(i) = ene_pot(i) + 0.5d0*v     ! accumulate energy
+            ene_pot(j) = ene_pot(j) + 0.5d0*v     ! (i and j share it)
+         else
+            energy = energy + v                   ! add v to total energy
+         endif
+         if (comp_virial==1) then
+            dveff = dv + (deru(i)+deru(j))*drho 
+            virial = virial + r*dveff             ! accumul. virial=sum r(dV/dr)
+         endif
+         if (comp_force==1) then
+            force(:,i) = force(:,i) - dv*Rij/r    ! accumulate forces
+            force(:,j) = force(:,j) + dv*Rij/r    !    (Fji = -Fij)
+         endif
       endif
    enddo
 
 enddo
-virial = - virial/DIM                             ! definition of virial term
-energy = sum(ene_pot(1:N))                        ! compute total energy
+if (comp_virial==1) virial = - virial/DIM         ! definition of virial term
+if (comp_enepot==1) energy = sum(ene_pot(1:N))    ! compute total energy
 
 ! Free storage
 !
 deallocate( edens )
+if (comp_force==1.or.comp_virial==1) deallocate( deru )
 
 end subroutine Compute_Energy_Forces
 
