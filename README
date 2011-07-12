@@ -12,33 +12,31 @@ properties, and nanotechnology and nanofluidics. To model the large numbers of
 atoms required for many applications, and to be able to study their dynamics
 over reasonable time scales, it is generally necessary to develop approximate
 models of interatomic bonding, referred to as "interatomic potentials" or
-"interatomic models".  Once such a model is at hand, one can theoretically
-predict almost any mechanical or thermal property or behavior of the element
-(or elements) it purports to describe. Generally, these models define the
-forces and energies used for sophisticated simulations using methodologies such
-as molecular dynamics, Monte Carlo, lattice dynamics free energy methods,
-multiscale methods, and so on. From such simulations, complex materials
-properties and phenomena can be extracted, including such things as melting
-temperatures, solid-liquid interface phenomena, fracture properties, and
-dislocation nucleation and motion.  This software package implements the
-standards being developed as part of the Knowledgebase of Interatomic Models
-(KIM). KIM (http://openKIM.org) is a current initiative to develop and
-implement standards for the atomistic simulation of materials.  The effort aims
-to help bring order to the efforts of the education, research, and industrial
-communities and to make it easier for new (and existing) scientists to leverage
-the work of other in this important field. The KIM project has two main
-objectives:
+"interatomic models".  Once such a model is at hand, one can in principle
+predict almost any mechanical property (and some thermal properties) of the 
+element (or elements) it purports to describe. Generally, these models define 
+the forces and energies used for sophisticated simulations using methodologies 
+such as molecular dynamics, Monte Carlo, lattice dynamics free energy methods,
+and multiscale methods. From such simulations, complex material properties 
+and phenomena can be extracted, including such things as melting temperatures,
+solid-liquid interface phenomena, fracture properties, and dislocation
+nucleation and motion.  
 
-1. Development of an online resource for standardized testing, permanent
-warehousing and easy retrieval of interatomic potentials and data. This
-includes the development of application programming interface (API) standards
-for coupling simulation codes and interatomic potential subroutines [this
-package].
+This software package is an implementation of the application programming interface (API) standard for interatomic models being developed as part of the
+Knowledgebase of Interatomic Models (KIM) project.  KIM (http://openKIM.org) is
+a current initiative to develop and implement standards for the atomistic
+simulation of materials.  The effort aims to help bring order to the efforts of
+the education, research, and industrial communities and to make it easier for
+new (and existing) scientists to leverage the work of others in this important
+field. The KIM project has several main objectives:
 
-2. Development of a quantitative theory of interatomic potential
-transferability providing rigorous criteria for selecting potentials for given
-applications and error bounds on results.
+1. Development of an online open resource for standardized testing and long-term warehousing of interatomic models (potentials and force fields) and data.
 
+2. Development of an API standard for atomistic simulations, which will allow any interatomic model to work seamlessly with any atomistic simulation code.
+
+3. Fostering the development of a quantitative theory of transferability of interatomic models to provide guidance for selecting application-appropriate models based on rigorous criteria, and error bounds on results.
+
+4. Striving for the permanence of the KIM project, including development of a sustainability plan, and establishment of a long-term home for its content.
 
 
 THE OPENKIM-API PACKAGE:
@@ -51,24 +49,27 @@ which the codes are written.
 
 The current version of the openkim-api package supports the following features:
 
-* Currently supported programming languages: C, C++, FORTRAN 77, FORTRAN 90/95/2003
+* Currently supported programming languages: 
+  C, C++, FORTRAN 77, Fortran 90/95/2003
 
-* Support for static and dynamic linking of programs using the openkim-api
+* Support for static and dynamic linking of programs using the openKIM API
 
-* Communication of an arbitrary number of `arguments' between a `Model' (interatomic
-  potential) and a `Test' (simulation code that uses a Model).  This is facilitated
-  by the use of KIM descriptor files and a single KIM API object data strucutre
-  that stores all needed information to be communicated between a Model and a Test.
+* Communication of an arbitrary number of `arguments' between a `Model' 
+  (interatomic potential) and a `Test' (simulation code that uses a Model).
+  This is facilitated by the use of `KIM descriptor files' (terminated with a
+  `.kim' extension) and a single KIM API object data structure that stores all
+  needed information to be communicated between a Model and a Test.
 
 * Data types: integer, integer*8 (long long), real (float), real*8 (double),
               method (for exchanging pointers to functions), pointer (for
               exchanging "everything else").  Each of these data types can be
               use to create multi-dimensional array `arguments' that are
               exchanged between Models and Tests.  
-  Currently, the openkim-api does not define any (more complex) data
-  structures.  However, in the future (as the need arises, and in consultation
-  with the atomistic and molecular simulation community) additional data types
-  and data structures may be introduced.
+
+     Currently, the openkim-api does not define any (more complex) data
+     structures.  However, in the future (as the need arises, and in
+     consultation with the atomistic and molecular simulation community)
+     additional data types and data structures may be introduced.
 
 * Physical Units: The openkim-api supports the specification of physical units
   for each `argument' exchanged between a Model and Test.  Currently, this
@@ -77,25 +78,29 @@ The current version of the openkim-api package supports the following features:
   the openkim-api package performing automatic units conversions for Models and
   Tests that use different physical units, but are otherwise compatible.
 
-* Neighbor lists and Boundary Conditions (NBC) scenarios: To facilitate
-  computational efficiency, the openkim-api defines a number of scenarios by
-  which a Test may provide a Model with information about the neighbors of each
-  atom in a configuration.  These currently include options that allow for
-  common techniques as, the use of the `minimum image' convention for
-  orthogonal periodic boundary conditions, `ghost atoms', and neighbor lists
-  with relative position vectors.
+* Neighbor lists and Boundary Conditions (NBC) methods: To facilitate
+  computational efficiency, the openkim-api defines a number of standard
+  methods by which a Test may provide a Model with information about the
+  neighbors of each atom in a configuration.  These currently include options
+  that allow for common techniques, such as the use of the `minimum image'
+  convention for orthogonal periodic boundary conditions, `ghost atoms', and
+  neighbor lists with relative position vectors.
 
 * Atom Species: The openkim-api provides the ability to designate the physical
   species of each particle in a simulation.  Currently, only one identifier is
   provided for each element in the periodic table.  In the future support for
-  Models such as CHARRM and similar force-fields will be added.
+  Models such as CHARMM and similar force-fields will be added.
 
-* Model Parameters: The openkim.org philosophy views a `Model' as a well
-  defined computational code that includes fixed specific values for all
+* Model Parameters: The openkim.org philosophy views a `Model' as a 
+  well-defined computational code that includes fixed specific values for all
   parameters needed to perform an actual computation.  However, it is often
   useful to explore how a Model's predictions vary as the values of its
   parameters are varied.  For this reason, the openkim-api provides the ability
-  for a Model to `publish' its parameters so that a Test may modify them.
+  for a Model to `publish' its parameters so that a Test may modify them
+  during the course of a simulation.
+
+For more information on all of the above, see files the DOCs directory 
+described below.
 
 
 -------------------------------------------------------------------------------
@@ -103,19 +108,31 @@ The current version of the openkim-api package supports the following features:
 This directory (by default, openkim-api-XX.XX.XX) contains the following files
 and directories:
 
-DOCs          -- document ion directory. This directory contains the file
+DOCs          -- documentation directory. This directory contains the file
                  KIM_API_alpha_overview.pdf which provides an overview of
                  this release of the openkim-api package, and links to the
                  files KIMserviceDescriptions.txt and standard.kim.
+                 (See the README file in that directory.)
 
-EXAMPLE_LEGOS -- directory containing the picies of example models and
-                 tests that are used to automatically generate working
-                 examples. (This organization facilitates easy maintence
+EXAMPLE_LEGOS -- directory containing the pieces of example Models and
+                 Tests that are used to automatically generate working
+                 examples. (This organization facilitates easy maintenance
                  of the examples.)
 
 KIM_API       -- directory containing the openkim-api service routines
         
 MODELs        -- directory containing examples of interatomic Models
+
+                 Each Model is stored in its own directory that conforms
+                 to the following naming convention:
+
+                    model_<elements>_<class>_<name>_<KIM-ID>
+
+                 Note: That for this alpha distribution of the KIM API we
+                       include example Models that are not part of the 
+                       openKIM repository. Therefore they do not have KIM-IDs
+                       and instead we provide information on the their NBC
+                       (Neighbor list and Boundary Conditions) capabilities.
 
 Makefile      -- make file for compiling the openkim-api services routines and
                  example Tests and Models.
@@ -123,5 +140,7 @@ Makefile      -- make file for compiling the openkim-api services routines and
 README        -- this file
  
 TESTs         -- directory containing examples of Tests
+
+                 Each Test is stored in its own directory.
 
 -------------------------------------------------------------------------------
