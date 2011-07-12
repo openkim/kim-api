@@ -10,7 +10,7 @@
 include Include.mk
 
 # create list of models
-MODELS_TARGETS := $(addprefix ., $(addsuffix .make-temp, $(filter-out .% $(F_FILTER_OUT),$(shell find $(KIM_MODELS_DIR) -maxdepth 1 -mindepth 1 -type d -exec basename {} \;))))
+MODELS_TARGETS := $(addprefix ., $(addsuffix .make-temp, $(notdir $(shell find $(KIM_MODELS_DIR) -maxdepth 2 -mindepth 2 -printf "%P\n" | grep -E "^([^/]*)/\1\.$(CODE_EXTENSIONS)$$" | sed -e "s/\([^/]*\)\/.*/\1/"))))
 # create list of models that have been deleted from the $(KIM_MODELS_DIR) since the last time make was executed
 DELETED_MODELS_TARGETS := $(filter-out $(MODELS_TARGETS), $(shell find . -name ".*.make-temp" -exec basename {} \;))
 # If there are deleted models, remove files and touch .models-deleted to force a reconfigure 

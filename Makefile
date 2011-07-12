@@ -12,8 +12,8 @@
 
 include $(KIM_DIR)KIM_API/Include.mk
 
-MODELS_LIST = $(notdir $(filter-out .% $(F_FILTER_OUT),$(shell find $(KIM_MODELS_DIR) -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)))
-TESTS_LIST  = $(notdir $(filter-out .% $(F_FILTER_OUT),$(shell find $(KIM_TESTS_DIR) -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)))
+MODELS_LIST = $(notdir $(shell find $(KIM_MODELS_DIR) -maxdepth 2 -mindepth 2 -printf "%P\n" | grep -E "^([^/]*)/\1\.$(CODE_EXTENSIONS)$$" | sed -e "s/\([^/]*\)\/.*/\1/"))
+TESTS_LIST  = $(notdir $(shell find $(KIM_TESTS_DIR)  -maxdepth 2 -mindepth 2 -printf "%P\n" | grep -E "^([^/]*)/\1\.$(CODE_EXTENSIONS)$$" | sed -e "s/\([^/]*\)\/.*/\1/"))
 
 .PHONY: all therest clean pristine $(patsubst %,%-all,$(MODELS_LIST) $(TESTS_LIST)) $(patsubst %,%-clean,$(MODELS_LIST) $(TESTS_LIST)) \
         example_legos-all example_legos-pristine
