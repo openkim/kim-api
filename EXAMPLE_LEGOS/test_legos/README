@@ -5,7 +5,8 @@ the example tests
 The following files are in this directory:
 
 Makefile
-    This is the make file that creates the example tests directories in the $(KIM_MODELS_DIR) directory
+    This is the make file that creates the example tests directories in the
+    $(KIM_MODELS_DIR) directory
 
 README
     This file

@@ -15,13 +15,17 @@ VPATH = $(KIM_MODELS_DIR)
 
 SED_CMD = sed -e "s/MODEL_NAME_STR/$@/g"
 
-COMMON_FRAGMENTS = module_start.frag compute_kim_variables.frag compute_initialize.frag module_end.frag model_README model_Makefile descriptor_file_start descriptor_file_input descriptor_file_output descriptor_file_params Makefile
+COMMON_FRAGMENTS = module_start.frag compute_kim_variables.frag compute_initialize.frag module_end.frag           \
+                   model_README model_Makefile descriptor_file_start descriptor_file_input descriptor_file_output \
+                   descriptor_file_params Makefile
 
-AUTO_GEN_MODELS = model_Ar_LJ_CLUSTER_f90 model_Ar_LJ_MI_OPBC_H_F_f90 model_Ar_LJ_NEIGH_PURE_H_F_f90 model_Ar_LJ_NEIGH_RVEC_F_f90 model_Ar_LJ_NEIGH_RVEC_F_c model_Ar_Morse_c model_Ar_Ne_LJ_NEIGH_RVEC_F_f90 Sample_01_lj_cutoff_f77 model_EAM_periodic_aluminum_ercolessi_adams_f90
+AUTO_GEN_MODELS = model_Ar_pair_LJ_CLUSTER model_Ar_pair_LJ_MI_OPBC_H_F model_Ar_pair_LJ_NEIGH_PURE_H_F \
+                  model_Ne_pair_LJ_NEIGH_RVEC_F model_Ar_pair_LJ_NEIGH_RVEC_F model_Ar_pair_Morse       \
+                  model_ArNe_pair_LJ_NEIGH_RVEC_F Sample_01_lj_cutoff_f77 model_Al_EAM_ercolessi_adams_MI_OPBC_H
 
 all: $(AUTO_GEN_MODELS)
 
-model_Ar_LJ_CLUSTER_f90: $(COMMON_FRAGMENTS) cluster_compute_local_variables.frag cluster_compute_loops.frag
+model_Ar_pair_LJ_CLUSTER: $(COMMON_FRAGMENTS) cluster_compute_local_variables.frag cluster_compute_loops.frag
         # make directory
 	mkdir -p $(KIM_MODELS_DIR)$@
 	@touch $(KIM_MODELS_DIR)$@
@@ -54,7 +58,8 @@ model_Ar_LJ_CLUSTER_f90: $(COMMON_FRAGMENTS) cluster_compute_local_variables.fra
 	cat cluster_compute_loops.frag                                             >> $(KIM_MODELS_DIR)$@/$@.F90
 	cat module_end.frag | $(SED_CMD)                                           >> $(KIM_MODELS_DIR)$@/$@.F90
 
-model_Ar_LJ_MI_OPBC_H_F_f90: $(COMMON_FRAGMENTS) mi_opbc_neigh_pure_compute_local_variables.frag mi_opbc_compute_extra_kim_variables.frag mi_opbc_compute_loops.frag
+model_Ar_pair_LJ_MI_OPBC_H_F: $(COMMON_FRAGMENTS) mi_opbc_neigh_pure_compute_local_variables.frag \
+                              mi_opbc_compute_extra_kim_variables.frag mi_opbc_compute_loops.frag
         # make directory
 	mkdir -p $(KIM_MODELS_DIR)$@
 	@touch $(KIM_MODELS_DIR)$@
@@ -98,7 +103,8 @@ model_Ar_LJ_MI_OPBC_H_F_f90: $(COMMON_FRAGMENTS) mi_opbc_neigh_pure_compute_loca
 	cat mi_opbc_compute_loops.frag                                             >> $(KIM_MODELS_DIR)$@/$@.F90
 	cat module_end.frag | $(SED_CMD)                                           >> $(KIM_MODELS_DIR)$@/$@.F90
 
-model_Ar_LJ_NEIGH_PURE_H_F_f90: $(COMMON_FRAGMENTS) mi_opbc_neigh_pure_compute_local_variables.frag neigh_pure_compute_extra_kim_variables.frag neigh_pure_compute_loops.frag
+model_Ar_pair_LJ_NEIGH_PURE_H_F: $(COMMON_FRAGMENTS) mi_opbc_neigh_pure_compute_local_variables.frag \
+                                 neigh_pure_compute_extra_kim_variables.frag neigh_pure_compute_loops.frag
         # make directory
 	mkdir -p $(KIM_MODELS_DIR)$@
 	@touch $(KIM_MODELS_DIR)$@
@@ -140,7 +146,8 @@ model_Ar_LJ_NEIGH_PURE_H_F_f90: $(COMMON_FRAGMENTS) mi_opbc_neigh_pure_compute_l
 	cat neigh_pure_compute_loops.frag                                          >> $(KIM_MODELS_DIR)$@/$@.F90
 	cat module_end.frag | $(SED_CMD)                                           >> $(KIM_MODELS_DIR)$@/$@.F90
 
-model_Ar_LJ_NEIGH_RVEC_F_f90: $(COMMON_FRAGMENTS) neigh_rvec_compute_local_variables.frag neigh_rvec_compute_extra_kim_variables.frag neigh_rvec_compute_loops.frag
+model_Ar_pair_LJ_NEIGH_RVEC_F: $(COMMON_FRAGMENTS) neigh_rvec_compute_local_variables.frag \
+                               neigh_rvec_compute_extra_kim_variables.frag neigh_rvec_compute_loops.frag
         # make directory
 	mkdir -p $(KIM_MODELS_DIR)$@
 	@touch $(KIM_MODELS_DIR)$@
@@ -180,15 +187,19 @@ model_Ar_LJ_NEIGH_RVEC_F_f90: $(COMMON_FRAGMENTS) neigh_rvec_compute_local_varia
 	cat neigh_rvec_compute_loops.frag                                          >> $(KIM_MODELS_DIR)$@/$@.F90
 	cat module_end.frag | $(SED_CMD)                                           >> $(KIM_MODELS_DIR)$@/$@.F90
 
-model_Ar_LJ_NEIGH_RVEC_F_c: example_model_Ar_LJ_NEIGH_RVEC_F_c $(wildcard example_model_Ar_LJ_NEIGH_RVEC_F_c/*) Makefile
+model_Ne_pair_LJ_NEIGH_RVEC_F: example_model_Ne_pair_LJ_NEIGH_RVEC_F               \
+                               $(wildcard example_model_Ne_pair_LJ_NEIGH_RVEC_F/*) \
+                               Makefile
 	cp -r example_$@ $(KIM_MODELS_DIR)$@
 	@touch $(KIM_MODELS_DIR)$@
 
-model_Ar_Morse_c: example_model_Ar_Morse_c $(wildcard example_model_Ar_Morse_c/*) Makefile
+model_Ar_pair_Morse: example_model_Ar_pair_Morse $(wildcard example_model_Ar_pair_Morse/*) Makefile
 	cp -r example_$@ $(KIM_MODELS_DIR)$@
 	@touch $(KIM_MODELS_DIR)$@
 
-model_Ar_Ne_LJ_NEIGH_RVEC_F_f90: example_model_Ar_Ne_LJ_NEIGH_RVEC_F_f90 $(wildcard example_model_Ar_Ne_LJ_NEIGH_RVEC_F_f90/*) Makefile
+model_ArNe_pair_LJ_NEIGH_RVEC_F: example_model_ArNe_pair_LJ_NEIGH_RVEC_F               \
+                                 $(wildcard example_model_ArNe_pair_LJ_NEIGH_RVEC_F/*) \
+                                 Makefile
 	cp -r example_$@ $(KIM_MODELS_DIR)$@
 	@touch $(KIM_MODELS_DIR)$@
 
@@ -196,7 +207,9 @@ Sample_01_lj_cutoff_f77: example_Sample_01_lj_cutoff_f77 $(wildcard example_Samp
 	cp -r example_$@ $(KIM_MODELS_DIR)$@
 	@touch $(KIM_MODELS_DIR)$@
 
-model_EAM_periodic_aluminum_ercolessi_adams_f90: example_model_EAM_periodic_aluminum_ercolessi_adams_f90 $(wildcard example_model_EAM_periodic_aluminum_ercolessi_adams_f90/*) Makefile
+model_Al_EAM_ercolessi_adams_MI_OPBC_H: example_model_Al_EAM_ercolessi_adams_MI_OPBC_H               \
+                                        $(wildcard example_model_Al_EAM_ercolessi_adams_MI_OPBC_H/*) \
+                                        Makefile
 	cp -r example_$@ $(KIM_MODELS_DIR)$@
 	@touch $(KIM_MODELS_DIR)$@
 
