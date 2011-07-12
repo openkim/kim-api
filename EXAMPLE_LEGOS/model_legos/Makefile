@@ -20,8 +20,9 @@ COMMON_FRAGMENTS = module_start.frag compute_kim_variables.frag compute_initiali
                    descriptor_file_params Makefile
 
 AUTO_GEN_MODELS = model_Ar_pair_LJ_CLUSTER model_Ar_pair_LJ_MI_OPBC_H_F model_Ar_pair_LJ_NEIGH_PURE_H_F \
-                  model_Ne_pair_LJ_NEIGH_RVEC_F model_Ar_pair_LJ_NEIGH_RVEC_F model_Ar_pair_Morse       \
-                  model_ArNe_pair_LJ_NEIGH_RVEC_F Sample_01_lj_cutoff_f77 model_Al_EAM_ercolessi_adams_MI_OPBC_H
+                  model_Ar_pair_LJ_NEIGH_RVEC_F model_Ar_pair_Morse model_ArNe_pair_LJ_NEIGH_RVEC_F     \
+                  model_Ne_pair_LJ_NEIGH_RVEC_F model_Ne_pair_LJ_NEIGH_PURE_H                           \
+                  model_Al_EAM_ercolessi_adams_MI_OPBC_H
 
 all: $(AUTO_GEN_MODELS)
 
@@ -187,31 +188,38 @@ model_Ar_pair_LJ_NEIGH_RVEC_F: $(COMMON_FRAGMENTS) neigh_rvec_compute_local_vari
 	cat neigh_rvec_compute_loops.frag                                          >> $(KIM_MODELS_DIR)$@/$@.F90
 	cat module_end.frag | $(SED_CMD)                                           >> $(KIM_MODELS_DIR)$@/$@.F90
 
-model_Ne_pair_LJ_NEIGH_RVEC_F: example_model_Ne_pair_LJ_NEIGH_RVEC_F               \
-                               $(wildcard example_model_Ne_pair_LJ_NEIGH_RVEC_F/*) \
-                               Makefile
-	cp -r example_$@ $(KIM_MODELS_DIR)$@
-	@touch $(KIM_MODELS_DIR)$@
-
 model_Ar_pair_Morse: example_model_Ar_pair_Morse $(wildcard example_model_Ar_pair_Morse/*) Makefile
-	cp -r example_$@ $(KIM_MODELS_DIR)$@
+	mkdir -p $(KIM_MODELS_DIR)$@
 	@touch $(KIM_MODELS_DIR)$@
+	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
 
 model_ArNe_pair_LJ_NEIGH_RVEC_F: example_model_ArNe_pair_LJ_NEIGH_RVEC_F               \
                                  $(wildcard example_model_ArNe_pair_LJ_NEIGH_RVEC_F/*) \
                                  Makefile
-	cp -r example_$@ $(KIM_MODELS_DIR)$@
+	mkdir -p $(KIM_MODELS_DIR)$@
 	@touch $(KIM_MODELS_DIR)$@
+	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
 
-Sample_01_lj_cutoff_f77: example_Sample_01_lj_cutoff_f77 $(wildcard example_Sample_01_lj_cutoff_f77/*) Makefile
-	cp -r example_$@ $(KIM_MODELS_DIR)$@
+model_Ne_pair_LJ_NEIGH_RVEC_F: example_model_Ne_pair_LJ_NEIGH_RVEC_F               \
+                               $(wildcard example_model_Ne_pair_LJ_NEIGH_RVEC_F/*) \
+                               Makefile
+	mkdir -p $(KIM_MODELS_DIR)$@
 	@touch $(KIM_MODELS_DIR)$@
+	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
+
+model_Ne_pair_LJ_NEIGH_PURE_H: example_model_Ne_pair_LJ_NEIGH_PURE_H               \
+                               $(wildcard example_model_Ne_pair_LJ_NEIGH_PURE_H/*) \
+                               Makefile
+	mkdir -p $(KIM_MODELS_DIR)$@
+	@touch $(KIM_MODELS_DIR)$@
+	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
 
 model_Al_EAM_ercolessi_adams_MI_OPBC_H: example_model_Al_EAM_ercolessi_adams_MI_OPBC_H               \
                                         $(wildcard example_model_Al_EAM_ercolessi_adams_MI_OPBC_H/*) \
                                         Makefile
-	cp -r example_$@ $(KIM_MODELS_DIR)$@
+	mkdir -p $(KIM_MODELS_DIR)$@
 	@touch $(KIM_MODELS_DIR)$@
+	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
 
 
 .PHONY: clean pristine

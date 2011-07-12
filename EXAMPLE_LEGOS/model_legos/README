@@ -38,9 +38,6 @@ descriptor_file_params
 descriptor_file_start
     This file contains the common head of the kim descriptor files
 
-example_Sample_01_lj_cutoff_f77/
-    A generic Lennard-Jones Model wirtten in FORTRAN77 using the NEIGH-PURE-H NBC
-
 example_model_Al_EAM_ercolessi_adams_MI_OPBC_H/
     An EAM Model created by Ercolessi and Adams (for aluminum) written in F90
     using the MI-OPBC-H NBC.  Currently, this model does not take advantage of
@@ -51,6 +48,9 @@ example_model_ArNe_pair_LJ_NEIGH_RVEC_F/
 
 example_model_Ar_pair_Morse/
     Directory containing the model_Ar_pair_Morse model
+
+example_model_Ne_pair_LJ_NEIGH_PURE_H/
+    A generic Lennard-Jones Model wirtten in FORTRAN77 using the NEIGH-PURE-H NBC
 
 example_model_Ne_pair_LJ_NEIGH_RVEC_F/
     Directory containing the model_Ne_pair_LJ_NEIGH_RVEC_F model
