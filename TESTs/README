@@ -1,54 +1,9 @@
-This directory (TESTs) contains a directory for each Tets to be compiled as part
-of the openkim-api package.  This release includes the following example Tests:
+This directory (TESTs) contains a directory for each Test to be compiled as part
+of the openkim-api package.
 
-README                                   -- this file
-Sample_01_compute_example_c              -- A simple test written in C that computes
-                                            the energy of and forces on a configuration
-                                            of atoms read from a data file
-Sample_01_compute_example_f              -- A simple test written in Fortran that
-                                            computes the energy of and forces on a
-                                            configuration of atoms read from a data
-                                            file
-test_Ar_Ne_periodic_B2_NEIGH_RVEC_f90    -- A test that computes the minimum energy/cell of
-                                            an infinite perfect B2 (CsCl-type) crystal
-                                            of Argon and Neon as a function of lattice
-                                            spacing.
-test_Ar_free_cluster_CLUSTER_f90         -- A test that computes the energy of and forces
-                                            on the atoms of an isolated (free) cubic FCC
-                                            cluster of Argon atoms using the CLUSTER NBC
-                                            and locator mode.
-test_Ar_free_cluster_f90                 -- A test that computes the energy of and forces
-                                            on the atoms of an isolated (free) cubic FCC 
-                                            cluster of Argon atoms using the MI-OPBC-H or
-                                            MI-OPBC-F or NEIGH-PURE-H or NEIGH-PURE-F or
-                                            NEIGH-RVEC-F NBC and locator mode.
-test_Ar_multiple_models_c                -- that computes the energy of a perfect Ar FCC crystal
-                                            and a free cluster as a function of lattice spacing
-                                            for two models. The test uses the NEIGH-RVEC-F NBC
-                                            and locator or iterator mode.
-test_Ar_periodic_FCC_MI_OPBC_f90         -- A test that computes the minimum energy per atom
-                                            in an infinite perfect FCC crystal of Argon, as a
-                                            function of lattice spacing, using the MI-OPBC-H
-                                            or MI-OPBC-F NBC.  (The test uses the Model's cutoff
-                                            to create a configuration just big enough for use by
-                                            the minimum image convention.)
-test_Ar_periodic_FCC_NEIGH_PURE_f90      -- A test that computes the minimum energy per atom as 
-                                            a function of lattice spacing in an infinite perfect
-                                            FCC crystal of Argon using the NEIGH-PURE-H or
-                                            NEIGH-PURE-F NBC. (The test uses one atom and enough
-                                            `ghost' atoms to ensure that the atom has all its
-                                            neighbors [the ghost atoms have no neighbors in the
-                                            neighbor list]) 
-test_Ar_periodic_FCC_NEIGH_RVEC_f90      -- A test that computes the minimum energy per atom as
-                                            a function of lattice spacing in an infinite perfect
-                                            FCC crystal of Argon using the NEIGH-RVEC-F NBC.
-                                            (The test uses a one atom configuration and
-                                            constructs a neighbor list with multiple images of
-                                            this one atom.)
-test_Ar_periodic_cut_FCC_NEIGH_RVEC_f90  -- A test that computes the energy per atom as a 
-                                            function of lattice spacing and the Model's cutoff
-                                            in an infinite perfect FCC crystal of Argon using
-                                            the NEIGH-RVEC-F NBC.  (The test uses a one atom
-                                            configuration and constructs a neighbor list with
-                                            multiple images of this one atom.)
+This directory is populated with example Tests automatically by the openkim-api make system.
+
+This directory is distributed with only the following files:
+
+README  --  this file
 

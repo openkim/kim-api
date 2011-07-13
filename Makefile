@@ -46,7 +46,7 @@ examples_legos-all:
 	$(MAKE) -C $(KIM_DIR)EXAMPLE_LEGOS all
 
 examples_legos-pristine: 
-	$(MAKE) -C $(KIM_DIR)EXAMPLE_LEGOS/model_legos pristine
+	$(MAKE) -C $(KIM_DIR)EXAMPLE_LEGOS pristine
 
 $(patsubst %,%-all,$(MODELS_LIST)): | kim-api-all
 	$(MAKE) -C $(KIM_MODELS_DIR)$(patsubst %-all,%,$@) all

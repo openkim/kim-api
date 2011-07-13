@@ -16,12 +16,15 @@ include $(KIM_DIR)KIM_API/Include.mk
 
 all: 
 	$(MAKE) -C $(KIM_DIR)EXAMPLE_LEGOS/model_legos all
+	@echo
 	$(MAKE) -C $(KIM_DIR)EXAMPLE_LEGOS/test_legos  all
 
 clean: 
 	$(MAKE) -C $(KIM_DIR)EXAMPLE_LEGOS/model_legos clean
+	@echo
 	$(MAKE) -C $(KIM_DIR)EXAMPLE_LEGOS/test_legos  clean
 
 pristine: 
 	$(MAKE) -C $(KIM_DIR)EXAMPLE_LEGOS/model_legos pristine
+	@echo
 	$(MAKE) -C $(KIM_DIR)EXAMPLE_LEGOS/test_legos  pristine
