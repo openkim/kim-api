@@ -7,9 +7,10 @@
 #
 
 ifndef KIM_API_DIR
-include ../../KIM_API/Include.mk
+   KIM_DIR = ../../
+   include $(KIM_DIR)KIM_API/Include.mk
 else
-include $(KIM_API_DIR)Include.mk
+   include $(KIM_API_DIR)Include.mk
 endif
 
 

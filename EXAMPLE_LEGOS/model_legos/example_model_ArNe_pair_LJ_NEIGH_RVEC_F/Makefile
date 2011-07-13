@@ -9,10 +9,12 @@
 MODEL_BUILD_TARGET := model_ArNe_pair_LJ_NEIGH_RVEC_F.a
 
 ifndef KIM_API_DIR
-include ../../KIM_API/Include.mk
+   KIM_DIR = ../../
+   include $(KIM_DIR)KIM_API/Include.mk
 else
-include $(KIM_API_DIR)Include.mk
+   include $(KIM_API_DIR)Include.mk
 endif
+
 
 all: $(MODEL_BUILD_TARGET)
 
