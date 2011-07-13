@@ -5,5 +5,8 @@ model_Ar_pair_LJ_MI_OPBC_H_F
 model_Ar_pair_LJ_NEIGH_PURE_H_F
 model_Ar_pair_LJ_NEIGH_RVEC_F
 model_Ar_pair_Morse
-model_Ne_pair_LJ_NEIGH_RVEC_F
+model_Ne_pair_LJ_CLUSTER
+model_Ne_pair_LJ_MI_OPBC_H_F
 model_Ne_pair_LJ_NEIGH_PURE_H
+model_Ne_pair_LJ_NEIGH_RVEC_F
+

@@ -21,9 +21,9 @@ COMMON_FRAGMENTS = module_start.frag compute_kim_variables.frag compute_initiali
                    model_README model_Makefile descriptor_file_start descriptor_file_input descriptor_file_output \
                    descriptor_file_params Makefile
 
-AUTO_GEN_MODELS = model_Ar_pair_LJ_CLUSTER model_Ar_pair_LJ_MI_OPBC_H_F model_Ar_pair_LJ_NEIGH_PURE_H_F \
-                  model_Ar_pair_LJ_NEIGH_RVEC_F model_Ar_pair_Morse model_ArNe_pair_LJ_NEIGH_RVEC_F     \
-                  model_Ne_pair_LJ_NEIGH_RVEC_F model_Ne_pair_LJ_NEIGH_PURE_H                           \
+AUTO_GEN_MODELS = model_Ar_pair_LJ_CLUSTER model_Ar_pair_LJ_MI_OPBC_H_F model_Ar_pair_LJ_NEIGH_PURE_H_F model_Ar_pair_LJ_NEIGH_RVEC_F \
+                  model_Ar_pair_Morse model_ArNe_pair_LJ_NEIGH_RVEC_F                                                                 \
+                  model_Ne_pair_LJ_CLUSTER model_Ne_pair_LJ_MI_OPBC_H_F model_Ne_pair_LJ_NEIGH_PURE_H   model_Ne_pair_LJ_NEIGH_RVEC_F \
                   model_Al_EAM_ercolessi_adams_MI_OPBC_H
 
 all: $(AUTO_GEN_MODELS)
@@ -65,6 +65,45 @@ model_Ar_pair_LJ_CLUSTER: $(COMMON_FRAGMENTS) cluster_compute_local_variables.fr
                             | sed -e 's/CUTOFF_VALUE_STR/model_cutoff = 8.15d0 ! cutoff distance in angstroms/g' \
                             | sed -e 's/SIGMA_VALUE_STR/model_sigma = 3.40d0 ! LJ Argon sigma in angstroms/g'    \
                             | sed -e 's/EPSILON_VALUE_STR/model_epsilon = 0.0104d0 ! LJ Argon epsilon in eV/g'   \
+                                                                                   >> $(KIM_MODELS_DIR)$@/$@.F90
+
+model_Ne_pair_LJ_CLUSTER: $(COMMON_FRAGMENTS) cluster_compute_local_variables.frag cluster_compute_loops.frag
+        # make directory
+	mkdir -p $(KIM_MODELS_DIR)$@
+	@touch $(KIM_MODELS_DIR)$@
+        # make README file in the directory
+	cat model_README | $(SED_CMD) | sed -e "s/NBC_NAME_STR/CLUSTER/g"          >  $(KIM_MODELS_DIR)$@/README
+        # make Makefile in the directory
+	cat model_Makefile | $(SED_CMD)                                            >  $(KIM_MODELS_DIR)$@/Makefile
+        # make .kim file in the directory
+	cat descriptor_file_start | $(SED_CMD) \
+                                  | sed -e 's/SPECIES_LINE_STR/Ne                      spec                    1/g' \
+                                                                                   >  $(KIM_MODELS_DIR)$@/$@.kim
+	echo                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo "CLUSTER                 dummy"                                       >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
+	cat descriptor_file_input                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
+	cat descriptor_file_output                                                 >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
+	cat descriptor_file_params                                                 >> $(KIM_MODELS_DIR)$@/$@.kim
+        # make .F90 file in the directory
+	cat module_start.frag | $(SED_CMD)                                         >  $(KIM_MODELS_DIR)$@/$@.F90
+	cat cluster_compute_local_variables.frag                                   >> $(KIM_MODELS_DIR)$@/$@.F90
+	echo "    "                                                                >> $(KIM_MODELS_DIR)$@/$@.F90
+	cat compute_kim_variables.frag                                             >> $(KIM_MODELS_DIR)$@/$@.F90
+	echo "    "                                                                >> $(KIM_MODELS_DIR)$@/$@.F90
+	cat compute_initialize.frag | sed -e 's/SPECIES_CODE_STR/1/g'              >> $(KIM_MODELS_DIR)$@/$@.F90
+	echo "    "                                                                >> $(KIM_MODELS_DIR)$@/$@.F90
+	echo "    "                                                                >> $(KIM_MODELS_DIR)$@/$@.F90
+	cat cluster_compute_loops.frag                                             >> $(KIM_MODELS_DIR)$@/$@.F90
+	cat module_end.frag | $(SED_CMD) \
+                            | sed -e 's/CUTOFF_VALUE_STR/model_cutoff = 8.15d0 ! cutoff distance in angstroms/g' \
+                            | sed -e 's/SIGMA_VALUE_STR/model_sigma = 2.74d0 ! LJ Neon sigma in angstroms/g'    \
+                            | sed -e 's/EPSILON_VALUE_STR/model_epsilon = 0.0031d0 ! LJ Neon epsilon in eV/g'   \
                                                                                    >> $(KIM_MODELS_DIR)$@/$@.F90
 
 model_Ar_pair_LJ_MI_OPBC_H_F: $(COMMON_FRAGMENTS) mi_opbc_neigh_pure_compute_local_variables.frag \
@@ -116,6 +155,57 @@ model_Ar_pair_LJ_MI_OPBC_H_F: $(COMMON_FRAGMENTS) mi_opbc_neigh_pure_compute_loc
                             | sed -e 's/CUTOFF_VALUE_STR/model_cutoff = 8.15d0 ! cutoff distance in angstroms/g' \
                             | sed -e 's/SIGMA_VALUE_STR/model_sigma = 3.40d0 ! LJ Argon sigma in angstroms/g'    \
                             | sed -e 's/EPSILON_VALUE_STR/model_epsilon = 0.0104d0 ! LJ Argon epsilon in eV/g'   \
+                                                                                   >> $(KIM_MODELS_DIR)$@/$@.F90
+
+model_Ne_pair_LJ_MI_OPBC_H_F: $(COMMON_FRAGMENTS) mi_opbc_neigh_pure_compute_local_variables.frag \
+                              mi_opbc_compute_extra_kim_variables.frag mi_opbc_compute_loops.frag
+        # make directory
+	mkdir -p $(KIM_MODELS_DIR)$@
+	@touch $(KIM_MODELS_DIR)$@
+        # make README file in the directory
+	cat model_README | $(SED_CMD) | sed -e "s/NBC_NAME_STR/MI-OPBC-[H|F]/g" >  $(KIM_MODELS_DIR)$@/README
+        # make Makefile in the directory
+	cat model_Makefile | $(SED_CMD)                                         >  $(KIM_MODELS_DIR)$@/Makefile
+        # make .kim file in the directory
+	cat descriptor_file_start | $(SED_CMD) \
+                                  | sed -e 's/SPECIES_LINE_STR/Ne                      spec                    1/g' \
+                                                                                   >  $(KIM_MODELS_DIR)$@/$@.kim
+	echo                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo "MI-OPBC-H               dummy"                                       >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo "MI-OPBC-F               dummy"                                       >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
+	cat descriptor_file_input                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo "get_half_neigh          method       none       none                    []                 optional" >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo "get_full_neigh          method       none       none                    []                 optional" >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo "neighObject             pointer      none       none                    []"                          >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo "boxlength               real*8       length     standard                [3]"                         >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
+	cat descriptor_file_output                                                 >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
+	cat descriptor_file_params                                                 >> $(KIM_MODELS_DIR)$@/$@.kim
+        # make .F90 file in the directory
+	cat module_start.frag | $(SED_CMD)                                         >  $(KIM_MODELS_DIR)$@/$@.F90
+	cat mi_opbc_neigh_pure_compute_local_variables.frag                        >> $(KIM_MODELS_DIR)$@/$@.F90
+	echo "    "                                                                >> $(KIM_MODELS_DIR)$@/$@.F90
+	cat compute_kim_variables.frag                                             >> $(KIM_MODELS_DIR)$@/$@.F90
+	cat mi_opbc_compute_extra_kim_variables.frag                               >> $(KIM_MODELS_DIR)$@/$@.F90
+	echo "    "                                                                >> $(KIM_MODELS_DIR)$@/$@.F90
+	cat compute_initialize.frag | sed -e 's/SPECIES_CODE_STR/1/g'              >> $(KIM_MODELS_DIR)$@/$@.F90
+	echo "    "                                                                >> $(KIM_MODELS_DIR)$@/$@.F90
+	echo "    "                                                                >> $(KIM_MODELS_DIR)$@/$@.F90
+	cat mi_opbc_compute_loops.frag                                             >> $(KIM_MODELS_DIR)$@/$@.F90
+	cat module_end.frag | $(SED_CMD) \
+                            | sed -e 's/CUTOFF_VALUE_STR/model_cutoff = 8.15d0 ! cutoff distance in angstroms/g' \
+                            | sed -e 's/SIGMA_VALUE_STR/model_sigma = 2.74d0 ! LJ Neon sigma in angstroms/g'    \
+                            | sed -e 's/EPSILON_VALUE_STR/model_epsilon = 0.0031d0 ! LJ Neon epsilon in eV/g'   \
                                                                                    >> $(KIM_MODELS_DIR)$@/$@.F90
 
 model_Ar_pair_LJ_NEIGH_PURE_H_F: $(COMMON_FRAGMENTS) mi_opbc_neigh_pure_compute_local_variables.frag \
