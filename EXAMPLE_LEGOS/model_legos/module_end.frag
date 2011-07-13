@@ -311,7 +311,7 @@ subroutine MODEL_NAME_STR_init(pkim)
      call report_error(__LINE__, "kim_api_get_data", ier);
      stop
   endif
-  model_cutoff = 8.15d0 ! cutoff distance in angstroms
+  CUTOFF_VALUE_STR
   
   ! Allocate memory for sigma and store value
   psigma = malloc(one*8) ! 8 is the size of a real*8
@@ -321,7 +321,7 @@ subroutine MODEL_NAME_STR_init(pkim)
      call report_error(__LINE__, "kim_api_set_data", ier);
      stop
   endif
-  model_sigma = 3.40d0 ! LJ Argon sigma in angstroms
+  SIGMA_VALUE_STR
   
   ! Allocate memory for epsilon and store value
   pepsilon = malloc(one*8) ! 8 is the size of a real*8
@@ -331,7 +331,7 @@ subroutine MODEL_NAME_STR_init(pkim)
      call report_error(__LINE__, "kim_api_set_data", ier);
      stop
   endif
-  model_epsilon = 0.0104d0 ! LJ Argon epsilon in eV
+  EPSILON_VALUE_STR
 
   ! Allocate memory for parameter cutoff and store value
   pparamcut = malloc(one*8) ! 8 is the size of a real*8

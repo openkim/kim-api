@@ -116,10 +116,12 @@
     call toRealArrayWithDescriptor2d(coordum,coor,DIM,N4)
 
 
-    ! Check to be sure that the atom types are correct
+    ! Check to be sure that the atom types are correct by comparing
+    ! the provided species codes to the value given here (which should
+    ! be the same as that given in the .kim file).
     ier = 0 ! assume an error
     do i = 1,numberOfAtoms
-       if (.not. (atomTypes(i).eq.Ar) ) then
+       if (.not. (atomTypes(i) .eq. SPECIES_CODE_STR)) then
           call report_error(__LINE__, "Wrong Atom Type", i);
           return
        endif

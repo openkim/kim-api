@@ -24,9 +24,6 @@ module MODEL_NAME_STR
   public Destroy
   public report_error
   
-  ! Species indices
-  integer, parameter :: Ar = 1
-  
 contains
   
 !-------------------------------------------------------------------------------
