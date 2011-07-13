@@ -26,7 +26,10 @@ AUTO_GEN_MODELS = model_Ar_pair_LJ_CLUSTER model_Ar_pair_LJ_MI_OPBC_H_F model_Ar
                   model_Ne_pair_LJ_CLUSTER model_Ne_pair_LJ_MI_OPBC_H_F model_Ne_pair_LJ_NEIGH_PURE_H   model_Ne_pair_LJ_NEIGH_RVEC_F \
                   model_Al_EAM_ercolessi_adams_MI_OPBC_H
 
-all: $(AUTO_GEN_MODELS)
+all: $(AUTO_GEN_MODELS) EXAMPLES.README
+
+EXAMPLES.README: model_EXAMPLES.README Makefile
+	cp model_EXAMPLES.README $(KIM_MODELS_DIR)EXAMPLES.README
 
 model_Ar_pair_LJ_CLUSTER: $(COMMON_FRAGMENTS) cluster_compute_local_variables.frag cluster_compute_loops.frag
         # make directory
@@ -343,4 +346,4 @@ model_Al_EAM_ercolessi_adams_MI_OPBC_H: example_model_Al_EAM_ercolessi_adams_MI_
 clean: 
 
 pristine: 
-	rm -rf $(addprefix $(KIM_MODELS_DIR),$(AUTO_GEN_MODELS))
+	rm -rf $(addprefix $(KIM_MODELS_DIR),$(AUTO_GEN_MODELS)) $(KIM_MODELS_DIR)EXAMPLES.README

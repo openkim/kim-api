@@ -24,8 +24,10 @@ AUTO_GEN_TESTS = Sample_01_compute_example_c Sample_01_compute_example_f test_Ar
                  test_Ar_periodic_FCC_NEIGH_RVEC_f90 test_Ar_periodic_cut_FCC_NEIGH_RVEC_f90
 
 
-all: $(AUTO_GEN_TESTS)
+all: $(AUTO_GEN_TESTS) EXAMPLES.README
 
+EXAMPLES.README: test_EXAMPLES.README Makefile
+	cp test_EXAMPLES.README $(KIM_TESTS_DIR)EXAMPLES.README
 
 Sample_01_compute_example_c: example_Sample_01_compute_example_c               \
                              $(wildcard example_Sample_01_compute_example_c/*) \
@@ -103,4 +105,4 @@ test_Ar_periodic_cut_FCC_NEIGH_RVEC_f90: example_test_Ar_periodic_cut_FCC_NEIGH_
 clean: 
 
 pristine: 
-	rm -rf $(addprefix $(KIM_TESTS_DIR),$(AUTO_GEN_TESTS))
+	rm -rf $(addprefix $(KIM_TESTS_DIR),$(AUTO_GEN_TESTS)) $(KIM_TESTS_DIR)EXAMPLES.README
