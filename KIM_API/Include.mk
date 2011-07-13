@@ -101,24 +101,68 @@ OBJF90 = KIMserviceF.o
 #fortran on/of
 ifdef KIM_NO_FORTRAN
    ALLOBJ = $(OBJC)
-   CODE_EXTENSIONS = (c|C|cpp|CPP)
+   CODE_EXTENSIONS = (c|i|ii|cc|cxx|cpp|C)
 else
    ALLOBJ = $(OBJC) $(OBJF90)
-   CODE_EXTENSIONS = (c|C|cpp|CPP|f|f90|F|F90)
+   CODE_EXTENSIONS = (c|i|ii|cc|cxx|cpp|C|f|for|ftn|fpp|f90|f95|f03|f08|F|FOR|FTN|FPP|F90|F95|F03|F08)
 endif
 
-# Compiler pattern rules
-%.o:%.c
+
+# C/C++ Compiler pattern rules
+%.o:%.c    # C with preprocessing
 	$(CCOMPILER) $(CPPFLAG) $(OBJONLY) $<
-%.o:%.cpp
+%.o:%.i    # C without preprocessing
+	$(CCOMPILER) $(CPPFLAG) $(OBJONLY) $<
+%.o:%.cpp  # C++ with preprocessing
 	$(CPPCOMPILER) $(CPPFLAG) $(OBJONLY) $<
-%.o:%.f90
+%.o:%.ii   # C++ without preprocessing
+	$(CPPCOMPILER) $(CPPFLAG) $(OBJONLY) $<
+%.o:%.cc   # C++ with preprocessing
+	$(CPPCOMPILER) $(CPPFLAG) $(OBJONLY) $<
+%.o:%.cxx  # C++ with preprocessing
+	$(CPPCOMPILER) $(CPPFLAG) $(OBJONLY) $<
+%.o:%.cpp  # C++ with preprocessing
+	$(CPPCOMPILER) $(CPPFLAG) $(OBJONLY) $<
+%.o:%.C    # C++ with preprocessing
+	$(CPPCOMPILER) $(CPPFLAG) $(OBJONLY) $<
+
+# Fortran Compiler pattern rules
+# Fixed form code
+%.o:%.f    # FORTRAN 77 without preprocessing
 	$(FORTRANCOMPILER) $(FORTRANFLAG) $(OBJONLY) $<
-%.o:%.F90
+%.o:%.for  # FORTRAN 77 without preprocessing
+	$(FORTRANCOMPILER) $(FORTRANFLAG) $(OBJONLY) $<
+%.o:%.ftn  # FORTRAN 77 without preprocessing
+	$(FORTRANCOMPILER) $(FORTRANFLAG) $(OBJONLY) $<
+%.o:%.fpp  # FORTRAN 77 with preprocessing
+	$(FORTRANCOMPILER) $(FORTRANFLAG) $(OBJONLY) $<
+%.o:%.F    # FORTRAN 77 with preprocessing
+	$(FORTRANCOMPILER) $(FORTRANFLAG) $(OBJONLY) $<
+%.o:%.FOR  # FORTRAN 77 with preprocessing
+	$(FORTRANCOMPILER) $(FORTRANFLAG) $(OBJONLY) $<
+%.o:%.FTN  # FORTRAN 77 with preprocessing
+	$(FORTRANCOMPILER) $(FORTRANFLAG) $(OBJONLY) $<
+%.o:%.FPP  # FORTRAN 77 with preprocessing
+	$(FORTRANCOMPILER) $(FORTRANFLAG) $(OBJONLY) $<
+# Free form code
+%.o:%.f90  # Fortran 90 without preprocessing
+	$(FORTRANCOMPILER) $(FORTRANFLAG) $(OBJONLY) $<
+%.o:%.f95  # Fortran 95 without preprocessing
+	$(FORTRANCOMPILER) $(FORTRANFLAG) $(OBJONLY) $<
+%.o:%.f03  # Fortran 2003 without preprocessing
+	$(FORTRANCOMPILER) $(FORTRANFLAG) $(OBJONLY) $<
+%.o:%.f08  # Fortran 2008 without preprocessing
+	$(FORTRANCOMPILER) $(FORTRANFLAG) $(OBJONLY) $<
+%.o:%.F90  # Fortran 90 without preprocessing
+	$(FORTRANCOMPILER) $(FORTRANFLAG) $(OBJONLY) $<
+%.o:%.F95  # Fortran 95 without preprocessing
+	$(FORTRANCOMPILER) $(FORTRANFLAG) $(OBJONLY) $<
+%.o:%.F03  # Fortran 2003 without preprocessing
+	$(FORTRANCOMPILER) $(FORTRANFLAG) $(OBJONLY) $<
+%.o:%.F08  # Fortran 2008 without preprocessing
 	$(FORTRANCOMPILER) $(FORTRANFLAG) $(OBJONLY) $<
 
-%.o:%.F
-	$(FORTRANCOMPILER) $(FORTRANFLAG) $(OBJONLY) $<
 
+# Library pattern rule
 %.so: %.a $(KIM_LIB_FILE)
 	$(LINKCOMPILER) $(SHARED_LIB_FLAG)  $(CPPLIBFLAG) -o $@  *.o $(addprefix $(KIM_API_DIR),$(ALLOBJ))
