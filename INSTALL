@@ -69,7 +69,7 @@ If changes are made to the code, perform step (4) again (from the top directory)
 7. In case of using a non-standard location for any of the directories KIM_API,
 TESTs, or MODELs one or more of the following environment variables must be set:
      KIM_API_DIR
-     KIM_TEST_DIR
+     KIM_TESTS_DIR
      KIM_MODELS_DIR
 
 8. The openkim-api package provides the possibility of creating dynamic load

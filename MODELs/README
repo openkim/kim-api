@@ -1,7 +1,7 @@
 This directory (MODELs) contains a directory for each Model to be compiled as part
 of the openkim-api package.
 
-This directory is populated with example models automatically by the openkim-api make system.
+This directory is populated with example Models automatically by the openkim-api make system.
 
 This directory is distributed with only the following files:
 
