@@ -1,104 +1,152 @@
-#####################################################################################################
+################################################################################
+#
+# Open KIM API Standard Definitions
+#
+# Release: openkim-api-00.01.00 (July 2011)
 #
 # Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
 # All rights reserved. 
 #
 # Author: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
 # 
-#####################################################################################################
+################################################################################
 #
-# This file defines the openkim-api standard variable names and their properties,
-# the Neighbor Boundary Condition (NBC) scenarios supported by the openkim-api, 
-# the list of standard Atom/Particle types known to KIM, and a set of 
-# conventions defined by KIM that help to ensure that Models and Tests are
+# This file defines the openkim-api standard variable names and their
+# properties, the Neighbor Boundary Condition (NBC) methods supported by the
+# openKIM API, the list of standard atom/particle types known to KIM, and a set
+# of conventions defined by KIM that help to ensure that Models and Tests are
 # able to successfully communicate with each other.
 #
+# There are a number of line types that can occur in a KIM descriptor file:
 #
-# There are a number of line types that can occur in a KIM descriptor file
 #   1) Blank lines
 #         These are lines containing only white-space characters.  These lines
-#         are silently ignored by the openkim-api.
+#         are silently ignored by the openKIM API.
+#
 #   2) Comment lines
 #         These lines have a `#' as their first (non-white-space) character.
 #         All other line types may end with a comment.  The beginning of such a
 #         comment is indicated by the first occurrence of the `#' character.
+#
 #   3) A MODEL/TEST name line
-#         Only one such line may occur in a KIM descriptor file and it should be
-#         the first non-comment or blank line in the descriptor file.  The line's
-#         first non-white-space characters must be either `MODEL_NAME' or `TEST_NAME'
-#         as appropriate, followed by an assignment symbol `:=' (white space surrounding
-#         the assignment symbol is ignored), followed by the (case sensitive) name
-#         of the Model or Test. (See below for a description of valid name strings.)
+#         Only one such line may occur in a KIM descriptor file and it should 
+#         be the first line in the descriptor file which is not a comment or a
+#         blank line.  The line's first non-white-space characters must 
+#         be either `MODEL_NAME' or `TEST_NAME' as appropriate, followed by an
+#         assignment symbol `:=' (white space surrounding the assignment symbol
+#         is ignored), followed by the (case sensitive) name of the Model or
+#         Test. (See below for a description of valid name strings.)
+#
 #   4) A system of units line
 #         Only one such line may occur in a KIM descriptor file and it should be
-#         the second non-comment or blank line in the descriptor file. The line's
-#         first non-white-space characters must be `SystemOfUnitsFix', followed by an
-#         assignment symbol `:=' (white-space surrounding the assignment symbol is
-#         ignored), followed by either `fixed' or `flexible'.
+#         the second line in the descriptor file which is not a comment or a
+#         blank line.  The line's first non-white-space characters must be
+#         `SystemOfUnitsFix', followed by an assignment symbol `:=' (white-
+#         space surrounding the assignment symbol is ignored), followed by
+#         either `fixed' or `flexible'.
+#
 #   5) Section lines
 #         These lines identify logically distinct sections within the KIM
 #         descriptor file.  All lines following a Section line, up to the next
-#         Section line or end of the file, will be assigned to the indicated section.
-#         Currently, there are five (5) sections defined by the KIM standard:
+#         Section line or end of the file, will be assigned to the indicated
+#         section.  Currently, there are five sections defined by the KIM
+#         standard:
+#
 #            * SUPPORTED_ATOM/PARTICLES_TYPES
 #            * CONVENTIONS
 #            * MODEL_INPUT
 #            * MODEL_OUTPUT
 #            * MODEL_PARAMETERS
-#         These sections may occur in any order within a KIM descriptor file, however
-#         the order given above is recommended.  A section line may only occur once
-#         within a KIM descriptor file.
+#
+#         These sections may occur in any order within a KIM descriptor file,
+#         however the order given above is recommended.  A section line may
+#         only occur once within a KIM descriptor file.
+#
 #   6) Data lines
-#         These lines are used to specify the information that a Model (Test) will
-#         provide to and require from a Test (Model), as well as the conventions that
-#         the Model (Test) uses.  There are currently three (3) types of Data lines:
+#         These lines are used to specify the information that a Model (Test) 
+#         will provide to and require from a Test (Model), as well as the
+#         conventions that the Model (Test) uses.  There are currently 
+#         three types of Data lines:
+#
 #            * Species Data lines
-#               This line type defines the atom/particle types supported by the
-#               Test/Model and should only be used within the SUPPORTED_ATOM/PARTICLES_TYPES
-#               section of the KIM descriptor file.  The line consists of three (3)
-#               white-space separated (case sensitive) strings.
-#               The three strings, in order, are as follows:
-#                  1) Name: This string gives a unique name to the atom/particle type.
-#                           This name is checked against the standard list in `standard.kim'.
+#               This line type defines the atom/particle types supported by 
+#               the Test/Model and should only be used within the
+#               SUPPORTED_ATOM/PARTICLES_TYPES section of the KIM descriptor
+#               file.  The line consists of three white-space separated 
+#               (case sensitive) strings.  The three strings, in order, are 
+#               as follows:
+#
+#                  1) Name: This string gives a unique name to the 
+#                           atom/particle type.  This name is checked against
+#                           the standard list in `standard.kim' (below).
+#
 #                  2) Type: This must be `spec'.
-#                  3) code: This is the integer that the Model uses internally to identify
-#                           the atom/particle type.  The value specified by a Test is ignored.
+$
+#                  3) code: This is the integer that the Model uses internally
+#                           to identify the atom/particle type.  The value
+#                           specified by a Test is ignored.
+#
 #            * Dummy Data lines
-#               This line type defines a convention (or parameter), that can be used to ensure
-#               that Models and Tests are able to work together, and should only be used
-#               within the CONVENTIONS section of the KIM descriptor file.  The line consists
-#               of two (2) white-space separated (case sensitive) strings.
-#               The two strings, in order, are as follows:
-#                  1) Name: This string gives a unique name to the convention.  This name
-#                           is checked against the standard list in `standard.kim'.
-#                  2) Type: This must be `dummy'
+#               This line type defines a convention (or parameter), that can be
+#               used to ensure that Models and Tests are able to work together,
+#               and should only be used within the CONVENTIONS section of the
+#               KIM descriptor file.  The line consists of two white-space 
+#               separated (case sensitive) strings. The two strings, in order,
+#               are as follows:
+#
+#                  1) Name: This string gives a unique name to the convention.
+#                           This name is checked against the standard list in
+#                           `standard.kim' (below).
+#
+#                  2) Type: This must be `dummy'.
+#
 #            * Argument Data lines
-#               This line type defines a quantity that is associated with one or more
-#               values that must be shared between the Model and Test and should only be
-#               used within the MODEL_INPUT, MODEL_OUTPUT, and MODEL_PARAMETERS sections
-#               of the KIM descriptor file.  These are analogous the the arguments of a
-#               function call.  The line consists of six (6) white-space separated (case
-#               sensitive) strings. The values of these strings are checked against the
-#               standard list in `standard.kim' for lines contained in the MODEL_INPUT and
-#               MODEL_OUTPUT sections of the KIM descriptor file (but not for lines in the
-#               MODEL_PARAMETERS section). The six strings, in order, are as follows:
+#               This line type defines a quantity that is associated with one 
+#               or more values that must be shared between the Model and Test
+#               and should only be used within the MODEL_INPUT, MODEL_OUTPUT,
+#               and MODEL_PARAMETERS sections of the KIM descriptor file.
+#               These are analogous the the arguments of a function call.  
+#               The line consists of six white-space separated (case
+#               sensitive) strings. The values of these strings are checked 
+#               against the standard list in `standard.kim' (below) for lines 
+#               contained in the MODEL_INPUT and MODEL_OUTPUT sections of the
+#               KIM descriptor file (but not for lines in the MODEL_PARAMETERS
+#               section). The six strings, in order, are as follows:
+#
 #                  1) Name: This string gives a unique name to the argument.
-#                  2) Type: This string defines the data-type of the associated values.
-#                           Currently there are six (6) Types:
-#                              * integer   : int        (C,C++);   integer      (Fortran)
-#                              * integer*8 : long long  (C,C++);   integer*8    (Fortran)
-#                              * real      : float      (C,C++);   real         (Fortran)
-#                              * real*8    : double     (C,C++);   real*8       (Fortran)
-#                              * method    : (void *)   (C,C++);   cray pointer (Fortran)
-#                              * pointer   : (void *)   (C,C++);   cray pointer (Fortran)
-#                           The first four are self-explanatory.  The `method' type allows
-#                           the Model (Test) to provide functions that the Test (Model) may
-#                           invoke at run time to perform certain tasks. The `pointer' type
-#                           is capable of pointing to an arbitrary location in memory and is
-#                           a catch-all type that can be used when none of the other types
-#                           are appropriate.
-#                  3) Unit: This string defines the physical units of the values (which must
-#                           all be the same for a single quantity).  Possible values are:
+#
+#                  2) Type: This string defines the data-type of the associated
+#                           values. Currently there are six types:
+#                           
+#                           KIM string     C/C++ type      Fortran type
+#
+#                           `integer'      int             integer
+#                           `integer*8'    long long       integer*8
+#                           `real'         float           real
+#                           `real*8'       double          real*8
+#                           `method'       void *          cray pointer
+#                           `pointer'      void *          cray pointer
+#
+#                           The first four are self-explanatory.  The `method' 
+#                           type allows the Model (Test) to provide pointers 
+#                           to functions/subroutines that the Test (Model) may
+#                           use to perform certain tasks at runtime.
+#                           The `pointer' type is capable of pointing to an
+#                           arbitrary location in memory and is a catch-all
+#                           type that can be used when none of the other types
+#                           are appropriate. 
+#
+#                           Note: that in Fortran pointers to memory are
+#                                 currently implemented using the cray pointer
+#                                 extension which is widely supported by
+#                                 Fortran compilers. In future releases,
+#                                 native pointer capabilities in Fortran 2003
+#                                 may be adopted.
+#
+#                  3) Unit: This string defines the physical units of the
+#                           values (which must all be the same for a single 
+#                           quantity).  Possible values are:
+#
 #                              * none
 #                              * mass
 #                              * length (or distance)
@@ -114,282 +162,451 @@
 #                              * dipole
 #                              * electric_field
 #                              * density
-#                  4) SystemU/Scale: This string is one of:
-#                                       * none
-#                                       * standard
-#                                       * SI
-#                                    `standard' corresponds to the "Metal" system of units.
-#                                    `none' should only be used when the value of Unit is
-#                                    also `none'.  Additionally, if a custom unit is desired,
-#                                    the string can be a floating-point number that defines 
-#                                    the scaling factor for converting the quantity to the
-#                                    standard units value. That is, multiplying the value by
-#                                    this number converts from the units being used by the
-#                                    Model/Test to the KIM standard units.
-#                  5) Shape: This string defines the rank (number of array dimensions) and
-#                            shape (range of each dimension) for the values associated with
-#                            the argument quantity. The format of the string is a `[' followed
-#                            by an (optional) integer or a character string, followed by an
-#                            (optional) comma separated list of integers or character strings,
-#                            followed by a `]'. If a character string is provided there are two
-#                            spcecial cases.  These are the strings `numberOfAtoms' and
-#                            `numberAtomTypes'.  If one of these strings is present, the
-#                            KIM_API_allocate() function will substitute the value of its `natoms'
-#                            or its `ntypes' arguments, respectively. If, after this substitution 
-#                            the ranges of EACH dimension is known, then the KIM_API_allocate() 
-#                            function will allocate the memory for this argument (othwise, when one 
-#                            or more strings not equal to `numberOfAtoms' or `numberAtomTypes' are
-#                            used, memory for this argument will not be allocated by the KIM_API_allocate()
-#                            function and must be allocated by the Test and registered in the KIM API
-#                            object using the KIM_API_set_data() function).  White-space is not allowed
-#                            between the `[' and `]' characters.  Providing a few examples is the best
-#                            way to clearly define what this string means:
-#                               * []   - This defines a scalar value (rank=0)
-#                               * [10] - This defines a vector (rank=1) of 10 values
-#                               * [numberOfAtoms] - This defines a vector (rank=1) of
-#                                    `numberOfAtoms' values.  If the KIM_API_allocate function
-#                                    is called as KIM_API_allocate(pkim, nAtoms, nAtomTypes, kimerr),
-#                                    it will allocated memory for this argument using the value
-#                                    of `nAtoms'.
-#                               * [numberAtomTypes] - This defines a vector (rank=1) of
-#                                    `numberAtomTypes' values.  If the KIM_API_allocate function
-#                                    is called as KIM_API_allocate(pkim, nAtoms, nAtomTypes, kimerr),
-#                                    it will allocated memory for this argument using the value
-#                                    of `nAtomTypes'.
-#                               * [12,10,5] - This defines a three-dimensional array (rank=3) of size
-#                                    12 by 10 by 5.  Memory for this array can be allocated by
-#                                    the KIM_API_allocate() function.
-#                               * [numberOfAtoms,12,15] - This defines a three-dimensional array
-#                                 (rank=3) of size `numberOfAtoms' by 12 by 15. Memory for this array 
-#                                    can be allocated by the KIM_API_allocate() function.
-#                               * [ZZZ,12] - This defines a two-dimensional array (rank=2)
-#                                    of size (an unspecified length) by 12.  The string `ZZZ' can
-#                                    be anything except `numberOfAtoms' and `numberAtomTypes'. In
-#                                    this case, KIM_API_allocate() will not allocate any memory
-#                                    for this argument.  When the only unknown dimension range is the
-#                                    (slowest) first dimension, the Test must allocate (and eventually
-#                                    free) memory for this argument and use the KIM_API_set_data()
-#                                    function in order to register the memory location of the values for
-#                                    this argument.  If the range of a dimension other than the first is
-#                                    unknown, then the KIM_API_set_rank_shape() function must also be used
-#                                    (see below).
-#                               * [12,numerOfAtoms] - This defines a two-dimensional array (rank=2)
-#                                    of size 12 by `numberOfAtoms'.  Memory for this array can be
-#                                    allocated by the KIM_API_allocate() function.
-#                               * [ZZZ,AAA,BBB,12,CCC,numberAtomTypes] - This defines a six-dimensional
-#                                    array (rank=6).  Memory for this array can not be allocated by
-#                                    the KIM_API_allocate() function.  The Test must use the
-#                                    KIM_API_set_rank_shape() function to register the range of all
-#                                    dimensions (i.e, specify the explicit values for the shape).  Then,
-#                                    the Test must allocate (and eventually free) memory for this argument
-#                                    and use the KIM_API_set_data() function in order to register the
-#                                    memory location of the values for this argument.
-#                            For multi-dimensional arrays, the `fast-index' is always the last
-#                            in the list.
-#                  6) requirements: This string may be empty or `optional'.  An empty string
-#                                   indicates that the argument is required to be present by the
-#                                   Test/Model (i.e., the Test/Model will read from and/or write
-#                                   to the values associated with this argument.  `optional' means
-#                                   that the Test/Model will check to see if the argument is
-#                                   available before it reads from or writes to the associated values.
 #
-#####################################################################################################
-
+#                  4) SystemU/Scale: This string is one of:
+#
+#                              * none
+#                              * standard
+#                              * si
+#
+#                           `none' should only be used when the value of Unit
+#                           is also `none'.  `standard' corresponds to the
+#                           the standard KIM unit system (see file
+#                           standard_units.cfg). `si' corresponds to the
+#                           International System of Units (see file
+#                           si_units.cfg).
+#
+#                           Note: The unit system definitions are likely to
+#                                 change in future releases. In addition, the
+#                                 current implementation does not support
+#                                 automatic conversion between units. Therefore
+#                                 Models and Tests must use the same units
+#                                 for the same arguments.
+#                                 
+#                  5) Shape: This string defines the rank (number of array
+#                            dimensions) and extent (size of each dimension) 
+#                            for the values associated with the argument 
+#                            quantity.  
+#
+#                            The format of the string is a `[' followed by an 
+#                            (optional) comma separated list of integers or 
+#                            character strings, followed by a `]'. 
+#
+#                            If an integer is provided it sets the extent of
+#                            the corresponding dimension. Otherwise one
+#                            of the three following strings may be used:
+#
+#                            `numberOfAtoms', `numberAtomTypes', `:'
+#
+#                            If either of the first two options is present, 
+#                            the KIM_API_allocate() function will substitute 
+#                            the value of its `natoms' or its `ntypes' 
+#                            arguments, respectively. If, after this 
+#                            substitution the extents of EACH dimension is 
+#                            known, then the KIM_API_allocate() function will 
+#                            allocate the memory for this argument (otherwise, 
+#                            if any strings are equal to `:', then memory
+#                            for this argument will not be allocated by the
+#                            KIM_API_allocate() function and must be allocated 
+#                            by the Test and registered in the KIM API object 
+#                            using the KIM_API_set_data() function).  
+#
+#                            White-space is not allowed between the `[' and `]' 
+#                            characters.  
+#
+#                            Note that multi-dimensional arrays are defined as 
+#                            in C with the `fast-index' corresponding to the 
+#                            last in the list. For example, a KIM Shape string 
+#                            [10,3] corresponds to a C array of shape [10][3] 
+#                            and to a Fortran array of shape (3,10).
+#
+#                            Providing a few examples is the best way to 
+#                            clearly define the meaning of the Shape string:
+#
+#                            * []   - This defines a scalar value (rank=0)
+#
+#                            * [10] - This defines a vector (rank=1) of 10 
+#                                     values
+#
+#                            * [numberOfAtoms] - This defines a vector (rank=1) 
+#                                     of `numberOfAtoms' values.  If the
+#                                     KIM_API_allocate function is called as
+#
+#                       KIM_API_allocate(pkim, nAtoms, nAtomTypes, kimerr)
+#                                    
+#                                     it will allocated memory for this 
+#                                     argument using the value of `nAtoms'.
+#
+#                            * [numberAtomTypes] - This defines a vector 
+#                                    (rank=1) of `numberAtomTypes' values. If
+#                                    the KIM_API_allocate function is called as
+#
+#                       KIM_API_allocate(pkim, nAtoms, nAtomTypes, kimerr)
+#
+#                                    it will allocated memory for this argument
+#                                    using the value of `nAtomTypes'.
+#
+#                            * [12,10,5] - This defines a three-dimensional
+#                                    array (rank=3) of size 12 by 10 by 5.  
+#                                    Memory for this array can be allocated by
+#                                    the KIM_API_allocate() function.
+#
+#                            * [numberOfAtoms,12,15] - This defines a three-
+#                                    dimensional array (rank=3) of size 
+#                                    `numberOfAtoms' by 12 by 15. Memory for 
+#                                    this array can be allocated by the 
+#                                    KIM_API_allocate() function.
+#
+#                            * [:,12] - This defines a two-dimensional array 
+#                                    (rank=2) of size (an unspecified length) 
+#                                    by 12.  In this case, KIM_API_allocate() 
+#                                    will not allocate any memory for this 
+#                                    argument.  When the only unknown dimension 
+#                                    range is the (slowest) first dimension, 
+#                                    the Test must allocate (and eventually 
+#                                    free) memory for this argument and use the 
+#                                    KIM_API_set_data() function in order to 
+#                                    register the memory location of the values 
+#                                    for this argument.  If the range of a 
+#                                    dimension other than the first is unknown, 
+#                                    then the KIM_API_set_rank_shape() function 
+#                                    must also be used (see below).
+#
+#                            * [12,numberOfAtoms] - This defines a two-
+#                                    dimensional array (rank=2) of size 12 by 
+#                                    `numberOfAtoms'.  Memory for this array 
+#                                    can be allocated by the KIM_API_allocate() 
+#                                    function.
+#
+#                            * [:,:,:,12,:,numberAtomTypes] - This 
+#                                   defines a six-dimensional array (rank=6).  
+#                                   Memory for this array cannot be allocated 
+#                                   by the KIM_API_allocate() function.  The 
+#                                   Test must use the KIM_API_set_rank_shape() 
+#                                   function to register the range of all 
+#                                   dimensions (i.e, specify the explicit 
+#                                   values for the shape).  Then, the Test must 
+#                                   allocate (and eventually free) memory for 
+#                                   this argument and use the 
+#                                   KIM_API_set_data() function in order to  
+#                                   register the memory location of the values 
+#                                   for this argument.  
+#
+#
+#                  6) Requirements: This string may be empty or `optional'.  An 
+#                                   empty string indicates that the argument is 
+#                                   required to be present by the Test/Model 
+#                                   (i.e., the Test/Model will read from and/or 
+#                                   write to the values associated with this 
+#                                   argument).  Models may use the `optional'
+#                                   string. If this is specified for an input 
+#                                   argument, it means that the Model can run 
+#                                   without receiving this argument (but it may 
+#                                   use it if provided). If specified for an 
+#                                   output argument, it means that the argument 
+#                                   will only be computed if required by the 
+#                                   Test.
+#
+################################################################################
 #
 # The first item in a KIM descriptor file should be the MODEL/TEST name
 #
-# MODEL/TEST names are case sensitive strings containing only alpha-numeric characters and
-# possibly the `_' character.  No other characters are allowed.  The name must end with one
-# of `_c', `_cpp', `_f', `_f77', or `_f90' which indicates that programming language in which
-# the Model/Test is written.
+# MODEL/TEST names are case sensitive strings containing only alpha-numeric 
+# characters and possibly the `_' character.  No other characters are allowed.  
 #
+# 
+# The MODEL_NAME is either `standard' (used only in this file, which defines 
+# the KIM standard) or it must conform to the following naming convention:
+#
+#       model_<elements>_<class>_<label>_<KIM-ID>
+#
+#       where
+#
+#           <elements> is a alphabetized, concatenated list of entries from the 
+#                      SUPPORTED_ATOM/PARTICLES_TYPES table given below. 
+#                      For example, `AlNi' for a Model able to compute 
+#                      configurations containing Al and Ni atoms.
+#
+#           <class> is one of the following strings:
+#
+#                      * `P'   : pair potential
+#                      * `PF'  : pair functional (EAM, Finnis-Sinclair, EMT)
+#                      * `3B'  : three-body potential
+#                      * `4B'  : four-body potential
+#                      * `CF'  : cluster functional (MEAM, ReaxFF, etc.)
+#                      * `BOP' : bond-order potential
+#
+#           <label> is an alphanumeric string uniquely identifying the Model.
+#                   It may contain the concatenated list of the Model's authors,
+#                   a commonly used name for the potential, the year it was
+#                   published, or any other information necessary to identify
+#                   it.  The <label> should be kept as short as possible.
+#
+#           <KIM-ID> is a unique identifier for the Model generated by
+#                    openKIM.org when the Model is uploaded.
+#
+#                    Note: That in this distribution of the KIM API we include
+#                          example Models that are not part of the openKIM.org
+#                          repository. Therefore they do not have KIM-IDs
+#                          and instead the last field provides information on 
+#                          the NBC (Neighbor list and Boundary Conditions) 
+#                          capabilities of the Model.
+#
+#       Some examples for MODEL_NAMEs (without the KIM-ID) are
+#
+#          model_Si_3B_StillingerWeber
+#
+#          model_Al_PF_ErcolessiAdams
+#
+#          model_Si_CF_LenoskySadighMEAM
+#
+#          model_OSi_CF_vanDuinStrachanReaxFF
+#
+#
+# The TEST_NAME is arbitrary at this stage. It can consist of any combination
+# of alphanumeric characters and underscores. Tests included in the openKIM.org
+# repository will have additional naming convention requirements.
+#
+#
+# General notes on Test and Model names:
+#
+#     (1) Model/Test names are limited to alphanumeric characters (letters 
+#         and numbers) and underscores (`_') to ensure that the final 
+#         Model/Name name is a valid function name. Specifically characters
+#         such as `-', `:', `&' are not allowed.
+#
+#     (2) Note that although the handling of Model/Test names is case sensitive
+#         within the KIM API and the openKIM.org system, this is not the case
+#         when these names are used within Fortran programs since Fortran is not
+#         case sensitive. This will not present a problem normally since each
+#         Model/Test will have a unique KIM identifier. However it is better
+#         practice to use <label>s for different Test/Models that differ by
+#         more than just the case of the letters.
+#
+################################################################################
 
 MODEL_NAME := standard
 
-
+################################################################################
 #
-# The second item in a KIM descriptor file should be the SystemOfUnitsFix line
+# The second item in a KIM descriptor file must be the SystemOfUnitsFix line.
+# There are two options:
 #
-#SystemOfUnitsFix := fixed    # The Model/Test can work only with the units specified in its descriptor file
-SystemOfUnitsFix := flexible # The Model/Test can change the units it works with when requested
+#    SystemOfUnitsFix := fixed      The Model/Test can work only with the units 
+#                                   specified in its descriptor file
+#
+#    SystemOfUnitsFix := flexible   The Model/Test can change the units it 
+#                                   works with when requested
+#
+################################################################################
+
+SystemOfUnitsFix := flexible
 
 
+################################################################################
 #
 # The SUPPORTED_ATOM/PARTICLES_TYPES section
 #
+################################################################################
 
 SUPPORTED_ATOM/PARTICLES_TYPES:
+
+################################################################################
 #
 # The list of standard KIM atom/particle types
-# The code listed in 'standard.kim' is the atomic number. However, this value is ignored and only the code value provided by
-# the Model is retained.
 #
-# If this list is empty for both the Model and Test, then a Test/Model match is possible.  This option allows for Models and
-# Tests that don't assign any specific physical type to their (single) particle type
+# The code listed in 'standard.kim' is the atomic number. However, this value 
+# is ignored and only the code value provided by the Model is retained.
+#
+# If this list is empty for both the Model and Test, then a Test/Model match 
+# is possible.  This option allows for Models and Tests that do not assign any 
+# specific physical type to their (single) particle type
 #
 # Symbol/name           Type                    code
 #
-H                       spec                    1                       # Hydrogen
-He                      spec                    2                       # Helium
-Li                      spec                    3                       # Lithium
-Be                      spec                    4                       # Beryllium
-B                       spec                    5                       # Boron
-C                       spec                    6                       # Carbon
-N                       spec                    7                       # Nitrogen
-O                       spec                    8                       # Oxygen
-F                       spec                    9                       # Flourine
-Ne                      spec                    10                      # Neon
-Na                      spec                    11                      # Sodium
-Mg                      spec                    12                      # Magnesium
-Al                      spec                    13                      # Aluminium
-Si                      spec                    14                      # Silicon
-P                       spec                    15                      # Phosphorus
-S                       spec                    16                      # Sulfur
-Cl                      spec                    17                      # Chlorine
-Ar                      spec                    18                      # Argon
-K                       spec                    19                      # Potassium
-Ca                      spec                    20                      # Calcium
-Sc                      spec                    21                      # Scandium
-Ti                      spec                    22                      # Titanium
-V                       spec                    23                      # Vanadium
-Cr                      spec                    24                      # Chromium
-Mn                      spec                    25                      # Manganese
-Fe                      spec                    26                      # Iron
-Co                      spec                    27                      # Cobalt
-Ni                      spec                    28                      # Nickel
-Cu                      spec                    29                      # Copper
-Zn                      spec                    30                      # Zinc
-Ga                      spec                    31                      # Gallium
-Ge                      spec                    32                      # Germanium
-As                      spec                    33                      # Arsenic
-Se                      spec                    34                      # Selenium
-Br                      spec                    35                      # Bromine
-Kr                      spec                    36                      # Krypton
-Rb                      spec                    37                      # Rubidium
-Sr                      spec                    38                      # Strontium
-Y                       spec                    39                      # Yttrium
-Zr                      spec                    40                      # Zirconium
-Nb                      spec                    41                      # Niobium
-Mo                      spec                    42                      # Molybdenum
-Tc                      spec                    43                      # Technetium
-Ru                      spec                    44                      # Ruthenium
-Rh                      spec                    45                      # Rhodium
-Pd                      spec                    46                      # Palladium
-Ag                      spec                    47                      # Silver
-Cd                      spec                    48                      # Cadmium
-In                      spec                    49                      # Indium
-Sn                      spec                    50                      # Tin
-Sb                      spec                    51                      # Antimony
-Te                      spec                    52                      # Tellurium
-I                       spec                    53                      # Iodine
-Xe                      spec                    54                      # Xenon
-Cs                      spec                    55                      # Caesium
-Ba                      spec                    56                      # Barium
-La                      spec                    57                      # Lanthanum
-Ce                      spec                    58                      # Cerium
-Pr                      spec                    59                      # Praseodium
-Nd                      spec                    60                      # Neodymium
-Pm                      spec                    61                      # Promethium
-Sm                      spec                    62                      # Samarium
-Eu                      spec                    63                      # Europium
-Gd                      spec                    64                      # Gadolinium
-Tb                      spec                    65                      # Terbium
-Dy                      spec                    66                      # Dysprosium
-Ho                      spec                    67                      # Holmium
-Er                      spec                    68                      # Erbium
-Tm                      spec                    69                      # Thulium
-Yb                      spec                    70                      # Ytterbium
-Lu                      spec                    71                      # Lutetium
-Hf                      spec                    72                      # Hafnium
-Ta                      spec                    73                      # Tantalum
-W                       spec                    74                      # Tungstem
-Re                      spec                    75                      # Rhenium
-Os                      spec                    76                      # Osmium
-Ir                      spec                    77                      # Iridium
-Pt                      spec                    78                      # Platinum
-Au                      spec                    79                      # Gold
-Hg                      spec                    80                      # Mercury
-Tl                      spec                    81                      # Thallium
-Pb                      spec                    82                      # Lead
-Bi                      spec                    83                      # Bismuth
-Po                      spec                    84                      # Polonium
-At                      spec                    85                      # Astatine
-Rn                      spec                    86                      # Radon
-Fr                      spec                    87                      # Francium
-Ra                      spec                    88                      # Radium
-Ac                      spec                    89                      # Actinium
-Th                      spec                    90                      # Thorium
-Pa                      spec                    91                      # Protactinium
-U                       spec                    92                      # Uranium
-Np                      spec                    93                      # Neptunium
-Pu                      spec                    94                      # Plutonium
-Am                      spec                    95                      # Americium
-Cm                      spec                    96                      # Curium
-Bk                      spec                    97                      # Berkelium
-Cf                      spec                    98                      # Californium
-Es                      spec                    99                      # Einsteinium
-Fm                      spec                    100                     # Fermium
-Md                      spec                    101                     # Mendelevium
-No                      spec                    102                     # Nobelium
-Lr                      spec                    103                     # Lowrencium
-Rf                      spec                    104                     # Rutherfordium
-Db                      spec                    105                     # Dubnium
-Sg                      spec                    106                     # Seaborgium
-Bh                      spec                    107                     # Bohrium
-Hs                      spec                    108                     # Hassium
-Mt                      spec                    109                     # Meitnerium
-Ds                      spec                    110                     # Darmstadium
-Rg                      spec                    111                     # Roentgenium
-Cn                      spec                    112                     # Copernicium
-Uut                     spec                    113                     # Ununtrium
-Uuq                     spec                    114                     # Ununquadium
-Uup                     spec                    115                     # Ununpentium
-Uuh                     spec                    116                     # Ununhexium
-Uus                     spec                    117                     # Ununseptium
-Uuo                     spec                    118                     # Ununoctium
-user01                  spec                    201                     # user defined
-user02                  spec                    202                     # user defined
-user03                  spec                    203                     # user defined
-user04                  spec                    204                     # user defined
-user05                  spec                    205                     # user defined
-user06                  spec                    206                     # user defined
-user07                  spec                    207                     # user defined
-user08                  spec                    208                     # user defined
-user09                  spec                    209                     # user defined
-user10                  spec                    210                     # user defined
-user11                  spec                    211                     # user defined
-user12                  spec                    212                     # user defined
-user13                  spec                    213                     # user defined
-user14                  spec                    214                     # user defined
-user15                  spec                    215                     # user defined
-user16                  spec                    216                     # user defined
-user17                  spec                    217                     # user defined
-user18                  spec                    218                     # user defined
-user19                  spec                    219                     # user defined
-User20                  Spec                    220                     # user defined
+################################################################################
+H                       spec                    1              # Hydrogen
+He                      spec                    2              # Helium
+Li                      spec                    3              # Lithium
+Be                      spec                    4              # Beryllium
+B                       spec                    5              # Boron
+C                       spec                    6              # Carbon
+N                       spec                    7              # Nitrogen
+O                       spec                    8              # Oxygen
+F                       spec                    9              # Fluorine
+Ne                      spec                    10             # Neon
+Na                      spec                    11             # Sodium
+Mg                      spec                    12             # Magnesium
+Al                      spec                    13             # Aluminum
+Si                      spec                    14             # Silicon
+P                       spec                    15             # Phosphorus
+S                       spec                    16             # Sulfur
+Cl                      spec                    17             # Chlorine
+Ar                      spec                    18             # Argon
+K                       spec                    19             # Potassium
+Ca                      spec                    20             # Calcium
+Sc                      spec                    21             # Scandium
+Ti                      spec                    22             # Titanium
+V                       spec                    23             # Vanadium
+Cr                      spec                    24             # Chromium
+Mn                      spec                    25             # Manganese
+Fe                      spec                    26             # Iron
+Co                      spec                    27             # Cobalt
+Ni                      spec                    28             # Nickel
+Cu                      spec                    29             # Copper
+Zn                      spec                    30             # Zinc
+Ga                      spec                    31             # Gallium
+Ge                      spec                    32             # Germanium
+As                      spec                    33             # Arsenic
+Se                      spec                    34             # Selenium
+Br                      spec                    35             # Bromine
+Kr                      spec                    36             # Krypton
+Rb                      spec                    37             # Rubidium
+Sr                      spec                    38             # Strontium
+Y                       spec                    39             # Yttrium
+Zr                      spec                    40             # Zirconium
+Nb                      spec                    41             # Niobium
+Mo                      spec                    42             # Molybdenum
+Tc                      spec                    43             # Technetium
+Ru                      spec                    44             # Ruthenium
+Rh                      spec                    45             # Rhodium
+Pd                      spec                    46             # Palladium
+Ag                      spec                    47             # Silver
+Cd                      spec                    48             # Cadmium
+In                      spec                    49             # Indium
+Sn                      spec                    50             # Tin
+Sb                      spec                    51             # Antimony
+Te                      spec                    52             # Tellurium
+I                       spec                    53             # Iodine
+Xe                      spec                    54             # Xenon
+Cs                      spec                    55             # Cesium
+Ba                      spec                    56             # Barium
+La                      spec                    57             # Lanthanum
+Ce                      spec                    58             # Cerium
+Pr                      spec                    59             # Praseodymium
+Nd                      spec                    60             # Neodymium
+Pm                      spec                    61             # Promethium
+Sm                      spec                    62             # Samarium
+Eu                      spec                    63             # Europium
+Gd                      spec                    64             # Gadolinium
+Tb                      spec                    65             # Terbium
+Dy                      spec                    66             # Dysprosium
+Ho                      spec                    67             # Holmium
+Er                      spec                    68             # Erbium
+Tm                      spec                    69             # Thulium
+Yb                      spec                    70             # Ytterbium
+Lu                      spec                    71             # Lutetium
+Hf                      spec                    72             # Hafnium
+Ta                      spec                    73             # Tantalum
+W                       spec                    74             # Tungsten
+Re                      spec                    75             # Rhenium
+Os                      spec                    76             # Osmium
+Ir                      spec                    77             # Iridium
+Pt                      spec                    78             # Platinum
+Au                      spec                    79             # Gold
+Hg                      spec                    80             # Mercury
+Tl                      spec                    81             # Thallium
+Pb                      spec                    82             # Lead
+Bi                      spec                    83             # Bismuth
+Po                      spec                    84             # Polonium
+At                      spec                    85             # Astatine
+Rn                      spec                    86             # Radon
+Fr                      spec                    87             # Francium
+Ra                      spec                    88             # Radium
+Ac                      spec                    89             # Actinium
+Th                      spec                    90             # Thorium
+Pa                      spec                    91             # Protactinium
+U                       spec                    92             # Uranium
+Np                      spec                    93             # Neptunium
+Pu                      spec                    94             # Plutonium
+Am                      spec                    95             # Americium
+Cm                      spec                    96             # Curium
+Bk                      spec                    97             # Berkelium
+Cf                      spec                    98             # Californium
+Es                      spec                    99             # Einsteinium
+Fm                      spec                    100            # Fermium
+Md                      spec                    101            # Mendelevium
+No                      spec                    102            # Nobelium
+Lr                      spec                    103            # Lawrencium
+Rf                      spec                    104            # Rutherfordium
+Db                      spec                    105            # Dubnium
+Sg                      spec                    106            # Seaborgium
+Bh                      spec                    107            # Bohrium
+Hs                      spec                    108            # Hassium
+Mt                      spec                    109            # Meitnerium
+Ds                      spec                    110            # Darmstadtium
+Rg                      spec                    111            # Roentgenium
+Cn                      spec                    112            # Copernicium
+Uut                     spec                    113            # Ununtrium
+Uuq                     spec                    114            # Ununquadium
+Uup                     spec                    115            # Ununpentium
+Uuh                     spec                    116            # Ununhexium
+Uus                     spec                    117            # Ununseptium
+Uuo                     spec                    118            # Ununoctium
+user01                  spec                    201            # user defined
+user02                  spec                    202            # user defined
+user03                  spec                    203            # user defined
+user04                  spec                    204            # user defined
+user05                  spec                    205            # user defined
+user06                  spec                    206            # user defined
+user07                  spec                    207            # user defined
+user08                  spec                    208            # user defined
+user09                  spec                    209            # user defined
+user10                  spec                    210            # user defined
+user11                  spec                    211            # user defined
+user12                  spec                    212            # user defined
+user13                  spec                    213            # user defined
+user14                  spec                    214            # user defined
+user15                  spec                    215            # user defined
+user16                  spec                    216            # user defined
+user17                  spec                    217            # user defined
+user18                  spec                    218            # user defined
+user19                  spec                    219            # user defined
+User20                  Spec                    220            # user defined
 
-
+################################################################################
 #
 # The CONVENTIONS section
 #
+# This section includes information on general operation conventions of
+# a Test/Model
+#
+# Each line in the CONVENTIONS section consists of a `Name' and `Type'.
+#
+################################################################################
 
 CONVENTIONS:
-# Name                  Type
 
+################################################################################
 #
-# In an actual .kim ONLY ONE of the following two lines should be included
+# In an actual KIM descriptor (.kim) file, exactly ONE of the following 
+# two lines should be included:
 #
-ZeroBasedLists          dummy       # presence of this line indicates that indexes for atoms are from 0 to numberOfAtoms-1 (C-style)
+################################################################################
+ZeroBasedLists          dummy       # Presence of this line indicates that 
+                                    # indexes for atoms are from 0 to 
+                                    # numberOfAtoms-1 (C-style)
 
-OneBasedLists           dummy       # presence of this line indicates that indexes for atoms are from 1 to numberOfAtoms   (Fortran-style)
+OneBasedLists           dummy       # Presence of this line indicates that 
+                                    # indexes for atoms are from 1 to 
+                                    # numberOfAtoms   (Fortran-style)
 
+################################################################################
 #
-# The following three (3) lines are related to locator-iterator neighbor list access mode.
-# These ensure that a Model will not try to use an access mode that is not supported by the routines provided by the Test
-# If Neigh_IterAccess and Neigh_LocaAccess are both in the file, it means that the Model (Test) can work with either mode.
-# If Neigh_BothAccess is in the file, it means that the Model (Test) requires (provides) both access modes
-# It is an error to include Neigh_BothAccess with either of the other two lines in a .kim file.
+# The following three lines are related to the locator/iterator neighbor list 
+# access mode.  These ensure that a Model will not try to use an access mode 
+# that is not supported by the routines provided by the Test.
 #
+# If Neigh_IterAccess and Neigh_LocaAccess are both in the file, it means that 
+# the Model/Test can work with either mode.
+#
+# If Neigh_BothAccess is in the file, it means that the Model (Test)
+# requires (provides) both access modes.
+#
+# It is an error to include Neigh_BothAccess with either of the other two 
+# options in a KIM descriptor (.kim) file.
+#
+################################################################################
 Neigh_IterAccess        dummy       # works with iterator mode
 
 Neigh_LocaAccess        dummy       # works with locator mode
@@ -397,196 +614,406 @@ Neigh_LocaAccess        dummy       # works with locator mode
 Neigh_BothAccess        dummy       # need both locator and iterator modes
 
 
+################################################################################
 #
-# Neighbor list and Boundary Condition (NBC) scenarios
-# These are the KIM standard methods for dealing with neighbor lists and boundary conditions
+# Neighbor list and Boundary Condition (NBC) methods
 #
-CLUSTER                 dummy       # The Model needs only coordinates to compute, a neighbor list is not needed
+# These are the KIM standard methods for dealing with neighbor lists and 
+# boundary conditions.
+#
+################################################################################
+CLUSTER                 dummy       # The Model needs only coordinates to 
+                                    # compute; a neighbor list is not needed.
 
-MI-OPBC-H               dummy       # This is the Minimum Image Orthogonal Periodic Boundary Condition Half neighbor
-                                    # list scenario.  The Model needs `coordinates', a half neighbor list (with data stored
-                                    # in the `neighObject' argument), the `get_half_neigh' method supplied by the Test,
-                                    # and the `boxlength' argument (which specifies the three side-lengths of the orthogonal
-                                    # simulation box).
+MI-OPBC-H               dummy       # This is the Minimum Image Orthogonal 
+                                    # Periodic Boundary Condition Half neighbor
+                                    # list method.  The Model needs 
+                                    # `coordinates', a half neighbor list (with 
+                                    # data stored in the `neighObject' 
+                                    # argument), the `get_half_neigh' method 
+                                    # supplied by the Test, and the `boxlength'
+                                    # argument (which specifies the three 
+                                    # side-lengths of the orthogonal simulation 
+                                    # box).
 
-MI-OPBC-F               dummy       # This is the Minimum Image Orthogonal Periodic Boundary Condition Full neighbor list
-                                    # scenario. The model needs `coordinates', a full neighbor list (with data stored
-                                    # in the `neighObject' argument), the `get_full_neigh' method supplied by the Test,
-                                    # and the `boxlength' argument (which specifies the three side-lengths of the orthogonal
-                                    # simulation box).
+MI-OPBC-F               dummy       # This is the Minimum Image Orthogonal 
+                                    # Periodic Boundary Condition Full neighbor
+                                    # list method.  The Model needs 
+                                    # `coordinates', a full neighbor list (with 
+                                    # data stored in the `neighObject' 
+                                    # argument), the `get_full_neigh' method 
+                                    # supplied by the Test, and the `boxlength'
+                                    # argument (which specifies the three 
+                                    # side-lengths of the orthogonal simulation 
+                                    # box).
 
-NEIGH-RVEC-F            dummy       # The model needs `coordinates' and a full neighbor list (with data stored in the
-                                    # `neighObject' argument), and the `get_full_neigh' method supplied by the Test.  The
-                                    # `neighObject' argument must also contain the Relative position VECtors (RVEC) (which
-                                    # are returned by the `get_full_neigh' function.
+NEIGH-RVEC-F            dummy       # This is the Relative Vector Boundary
+                                    # Condition Full neighbor list method.  
+                                    # The Model needs `coordinates' and a full 
+                                    # neighbor list (with data stored in the 
+                                    # `neighObject' argument), and the 
+                                    # `get_full_neigh' method supplied by the 
+                                    # Test.  The `neighObject' argument must 
+                                    # also contain the relative position 
+                                    # vectors (RVEC) (which are returned by the 
+                                    # `get_full_neigh' function).
 
-NEIGH-PURE-H            dummy       # The model needs `coordinates', a half neighbor list (with data stored in the `neighObject'
-                                    # argument), and the `get_half_neigh' method supplied by the Test.
+NEIGH-PURE-H            dummy       # This is the Pure Half neighbor list 
+                                    # method.  The model needs `coordinates', a 
+                                    # half neighbor list (with data stored in 
+                                    # the `neighObject' argument), and the 
+                                    # `get_half_neigh' method supplied by the 
+                                    # Test.
 
-NEIGH-PURE-F            dummy       # The model needs `coordinates', a full neighbor list (with data stored in the `neighObject'
-                                    # argument), and the `get_full_neigh' method supplied by the Test.
+NEIGH-PURE-F            dummy       # This is the Pure Full neighbor list 
+                                    # method.  The model needs `coordinates', a 
+                                    # full neighbor list (with data stored in 
+                                    # the `neighObject' argument), and the 
+                                    # `get_full_neigh' method supplied by the 
+                                    # Test.
 
-
+################################################################################
 #
 # The MODEL_INPUT section
 #
+################################################################################
 
 MODEL_INPUT:
 
+################################################################################
 #
-# Every data line in kim descriptor file for tests and models must follow the standards
-# (defined in the `standard.kim' file) that appear in the fields : Name, Type, Unit and Shape
-# In the `standard.kim' file, the SystemU/Scale is set to `none' or `unspecified'. `unspecified'
-# means that in a test or model .kim file the corresponding value must be `standard', `SI',
-# or else the numerical scale factor for a custom (user defined) system of units.
+# Every data line in the input section of a KIM descriptor file of a Test and 
+# Model consists of six fields:
 #
-# Name                  Type        Unit        SystemU/Scale           Shape                   requirements
+# Name      Type       Unit       SystemU/Scale       Shape       Requirements
 #
+#
+# Each of these lines must exactly match with one of the standard definitions 
+# given below except for the fields `SystemU/Scale' and `Requirements' which
+# can differ in certain circumstances as explained below.
+#
+# In the definitions below, there are two possibilities for the `SystemU/Scale' 
+# field. If the `Unit' field is set to `none' then `SystemU/Scale' is also 
+# `none'. Otherwise, `SystemU/Scale' is set to `unspecified'. In the first case 
+# the corresponding quantities in a Model or Test KIM descriptor file should 
+# be, `none' and `none'. In the second, the `Unit' field must match the 
+# corresponding field below, and the `SystemU/Scale' field must be set to one 
+# of the allowed values specified above (except for `none').
+#
+# The `Requirements' field is only meaningful in a Model KIM descriptor file
+# as described above. It is therefore left blank in the standard definitions
+# below.
+#
+################################################################################
 
-# The number of atoms in the configuration passed between the Model and Test.  Atoms are
-# always numbered sequentially starting from 0 or 1 depending on the ZeroBasedLists/OneBasedLists
-# convention setting.
-# This argument is required for all Models and Tests
-numberOfAtoms           integer*8   none        none                    []
+################################################################################
+#
+# numberOfAtoms : The number of atoms in the configuration passed between the 
+#                 Model and Test. 
+#
+# Atoms are always numbered sequentially starting from 0 or 1 depending on the 
+# ZeroBasedLists/OneBasedLists # convention setting. This argument is required 
+# for all Models and Tests
+#
+# Name                  Type         Unit       SystemU/Scale           Shape
+#
+numberOfAtoms           integer*8    none       none                    []
 
-# The number of types of atoms/particles contained in the configuration passed between
-# the Model and Test.
-# This argument is required for any Model/Test that specifies one or more Atom/particle
-# types in the SUPPORTED_ATOM/PARTICLE_TYPES section
-numberAtomTypes         integer     none        none                    []
+################################################################################
+#
+# numberAtomTypes: The number of types of atoms/particles contained in the 
+#                  configuration passed between the Model and Test.
+#
+# This argument is required for any Model/Test that specifies one or more 
+# Atom/particle types in the SUPPORTED_ATOM/PARTICLE_TYPES section
+#
+# Name                  Type         Unit       SystemU/Scale           Shape
+#
+numberAtomTypes         integer      none       none                    []
 
-# A vector of integers indicating the type of each particle in the configuration passed
-# between the Model and Test.  The values in this vector must correspond to the `code' 
-# specified in the Model's KIM descriptor file.
-# This argument is required for any Model/Test that specifies one or more Atom/particle
-# types in the SUPPORTED_ATOM/PARTICLE_TYPES section
-atomTypes               integer     none        none                    [numberOfAtoms]
+################################################################################
+#
+# atomTypes : A vector of integers indicating the type of each particle in the 
+#             configuration passed between the Model and Test.  
+#
+# The values in this vector must correspond to the `code' specified in the 
+# Model's KIM descriptor file.  This argument is required for any Model/Test 
+# that specifies one or more Atom/particle types in the 
+# SUPPORTED_ATOM/PARTICLE_TYPES section.
+#
+# Name                  Type         Unit       SystemU/Scale           Shape
+#
+atomTypes               integer      none       none                    [numberOfAtoms]
 
-# An array of floating-point numbers specifying the spatial location of each atom/particle
-# in the configuration passed between the Model and Test.
-# This argument is required for all Models and Tests
-coordinates             real*8      length      unspecified             [numberOfAtoms,3]
+################################################################################
+#
+# coordinates : An array of floating-point numbers specifying the spatial 
+#               location of each of the numberOfAtoms atom/particle in the 
+#               configuration passed between the Model and Test.
+#
+# This argument is required for all Models and Tests.
+#
+# Name                  Type         Unit       SystemU/Scale           Shape
+#
+coordinates             real*8       length     unspecified             [numberOfAtoms,3]
 
-# A pointer to the full neighbor list access function that is provided by the Test
-# This argument is required for Models/Tests that support the following NBCs: MI-OPBC-F,
-# NEIGH-PURE-F, and NEIGH-RVEC-F.  It should be optional for all Models to ensure that the 
-# Model is compatible with the widest possible set of Tests
-get_full_neigh          method      none        none                    []
+################################################################################
+#
+# get_full_neigh : A pointer to the full neighbor list access function that is 
+#                  provided by the Test.
+#
+# This argument is required for Models/Tests that support the following NBCs: 
+# MI-OPBC-F, NEIGH-PURE-F and NEIGH-RVEC-F.  It should be optional for all 
+# Models to ensure that the Model is compatible with the widest possible set of 
+# Tests.
+#
+# Name                  Type         Unit       SystemU/Scale           Shape
+#
+get_full_neigh          method       none       none                    []
 
-# A pointer to the half neighbor list access function that is provided by the Test
-# This argument is required for Models/Tests that support the following NBCs: MI-OPBC-H and
-# NEIGH-PURE-H.  It should be optional for all Models to ensure that the Model is compatible
-# with the widest possible set of Tests
-get_half_neigh          method      none        none                    []
+################################################################################
+#
+# get_half_neigh : A pointer to the half neighbor list access function that is 
+#                  provided by the Test.
+#
+# This argument is required for Models/Tests that support the following NBCs: 
+# MI-OPBC-H and NEIGH-PURE-H.  It should be optional for all Models to ensure 
+# that the Model is compatible with the widest possible set of Tests.
+#
+# Name                  Type         Unit       SystemU/Scale           Shape
+#
+get_half_neigh          method       none       none                    []
 
-# A pointer to the data for the neighbor list that is provided by the Test
-# This argument is required for Models/Tests that support the following NBCs: MI-OPBC-H, 
-# MI-OPBC-F, NEIGH-PURE-H, NEIGH-PURE-F, and NEIGH-RVEC-F.
-neighObject             pointer     none        none                    []
+################################################################################
+#
+# neighObject : A pointer to the data for the neighbor list that is provided by 
+#               the Test.
+#
+# This argument is required for Models/Tests that support the following NBCs: 
+# MI-OPBC-H, MI-OPBC-F, NEIGH-PURE-H, NEIGH-PURE-F, and NEIGH-RVEC-F.
+#
+# Name                  Type         Unit       SystemU/Scale           Shape
+#
+neighObject             pointer      none       none                    []
 
-# A vector of three floating-point numbers indicating the side lengths of the
-# minimum-image periodic orthogonal box
-# This argument is required for Models/Tests that support the following NBCs: MI-OPBC-H
-# and MI-OPBC-F
-boxlength               real*8      length      unspecified             [3]
+################################################################################
+#
+# boxlength : A vector of three floating-point numbers indicating the side 
+#             lengths of the minimum-image periodic orthogonal box.
+#
+# This argument is required for Models/Tests that support the following NBCs: 
+# MI-OPBC-H and MI-OPBC-F.
+#
+# Name                  Type         Unit       SystemU/Scale           Shape
+#
+boxlength               real*8       length     unspecified             [3]
 
 
+################################################################################
 #
 # The MODEL_OUTPUT section
 #
+################################################################################
 
 MODEL_OUTPUT:
 
+################################################################################
 #
-# Every data line in kim descriptor file for tests and models must follow the standards
-# (defined in the `standard.kim' file) that appear in the fields : Name, Type, Unit and Shape
-# In the `standard.kim' file, the SystemU/Scale is set to `none' or `unspecified'. `unspecified'
-# means that in a test or model .kim file the corresponding value must be `standard', `SI',
-# or else the numerical scale factor for a custom (user defined) system of units.
+# The data lines in the output section of the KIM descriptor file of a Test
+# and Model consist of six fields and must satisfy the same restrictions as
+# the lines in the input section as explained above (following the MODEL_INPUT 
+# section line).
 #
-# Name                  Type        Unit        SystemU/Scale           Shape                   requirements
+################################################################################
 
-# A pointer to the Model's compute function
+################################################################################
+#
+# compute : A pointer to the Model's compute function.
+#
 # This argument is required for all Models and Tests
-compute                 method      none        none                    []
+#
+# Name                  Type         Unit       SystemU/Scale           Shape
+#
+compute                 method       none       none                    []
 
-# A pointer to the Model's reinit function
-# This argument is required for all Models that publish their parameters and should be optional
-# all other Models and Tests to ensure maximum compatibility.
-reinit                  method      none        none                    []
+################################################################################
+#
+# reinit : A pointer to the Model's reinit function (called to reinitialize a 
+#          Model following a change to its parameters by a Test).
+#
+# This argument is required for all Models that publish their parameters and 
+# should be optional for all other Models and Tests to ensure maximum 
+# compatibility.
+#
+# Name                  Type         Unit       SystemU/Scale           Shape
+#
+reinit                  method       none       none                    []
 
-# A pointer to the Model's destroy function
-# This argument is required if a Model publishes its parameters (so that it can free the memory,
-# that it allocated in the init function, for its parameters).  Otherwise, this argument should
-# be included for all Models/Test (to ensure maximum compatibility), but it may be optional.
-destroy                 method      none        none                    []
+################################################################################
+#
+# destroy : A pointer to the Model's destroy function (called by a Test prior to
+#           a KIM_API_free() call to allow the Model to perform any necessary
+#           clean-up operations).
+#
+# This argument is required if a Model publishes its parameters (so that it can 
+# free the memory that it allocated in the init function, for its parameters).  
+# Otherwise, this argument should be included for all Models/Test (to ensure 
+# maximum compatibility), but it may be optional.
+#
+# Name                  Type         Unit       SystemU/Scale           Shape
+#
+destroy                 method       none       none                    []
 
-# A floating-point number indicating the Model's cutoff distance.  This value should not
-# be modified by the Test.  If the model allows for its cutoff distance to be changed
-# it will provide the parameter PARAM_FREE_cutoff which can be changed.  Once the 
-# PARAM_FREE_cutoff parameter has been changed and the Model's reinit function called, the
-# Model should update the value of `cutoff'.
-# This argument is required for all Models/Tests
-cutoff                  real*8      length      unspecified             []
+################################################################################
+#
+# cutoff : A floating-point number indicating the Model's range of interactions
+#          (i.e. its cutoff radius).
+#
+# This argument is required for all Models/Tests.  This value should not be 
+# modified by the Test.  If the model allows for its cutoff distance to be 
+# changed it will provide the parameter PARAM_FREE_cutoff (see below) which can 
+# be changed.  Once the PARAM_FREE_cutoff parameter has been changed and the 
+# Model's reinit function called, the Model must update the value of `cutoff'. 
+#
+# Name                  Type         Unit       SystemU/Scale           Shape
+#
+cutoff                  real*8       length     unspecified             []
 
-# A floating-point number corresponding to the total energy of the configuration of atoms
-# passed between the Model and Test.
-# This argument should, ideally, be optional to ensure maximum Model/Test compatibility
-energy                  real*8      energy      unspecified             []
+################################################################################
+#
+# energy : A floating-point number corresponding to the total energy of the 
+#          configuration of atoms passed between the Model and Test.
+#
+# This argument should, ideally, be optional to ensure maximum Model/Test 
+# compatibility.
+#
+# Name                  Type         Unit       SystemU/Scale           Shape
+#
+energy                  real*8       energy     unspecified             []
 
-# An array of floating-point numbers corresponding to the total force acting each atom/particle
-# in the configuration of atoms passed between the Model and Test.
-# This argument should be optional to ensure maximum Model/Test compatibility
-forces                  real*8      force       unspecified             [numberOfAtoms,3]
+################################################################################
+#
+# forces : An array of floating-point numbers corresponding to the total force 
+#          acting each atom/particle in the configuration of atoms passed 
+#          between the Model and Test.
+#
+# This argument should be optional to ensure maximum Model/Test compatibility.
+#
+# Name                  Type         Unit       SystemU/Scale           Shape
+#
+forces                  real*8       force      unspecified             [numberOfAtoms,3]
 
-# A vector of three floating-point numbers corresponding to the total force acting on the
-# configuration of atoms passed between the Model and Test.
-# This argument should, ideally, be optional to ensure maximum Model/Test compatibility
-force                   real*8      force       unspecified             [3]
+################################################################################
+#
+# energyPerAtom : A vector of floating-point numbers corresponding to the energy
+#                 of each atom in the configuration passed between the Model and
+#                 Test.
+#
+# This argument should, ideally, be optional to ensure maximum Model/Test 
+# compatibility.
+#
+# Name                  Type         Unit       SystemU/Scale           Shape
+#
+energyPerAtom           real*8       energy     unspecified             [numberOfAtoms]
 
-# A vector of floating-point numbers corresponding to the energy of each atom in the 
-# configuration passed between the Model and Test.
-# This argument should, ideally, be optional to ensure maximum Model/Test compatibility
-energyPerAtom           real*8      energy      unspecified             [numberOfAtoms]
+################################################################################
+#
+# stressPerAtom : An array of floating-point numbers corresponding to the 
+#                 virial-stress tensor for each atom in the configuration 
+#                 passed between the Model and Test.
+#
+# This argument should, ideally, be optional to ensure maximum Model/Test 
+# compatibility.
+#
+# Note: This argument is deprecated and will most likely be removed in future
+#       releases. It will be replaced by a vector containing the values of
+#       `interatomic' force vectors, from which the stress-per-atom can be
+#       computed.
+#
+# Name                  Type         Unit       SystemU/Scale           Shape
+#
+stressPerAtom           real*8       pressure   unspecified             [numberOfAtoms,3,3]
 
-# An array of floating-point numbers corresponding to the virial-stress tensor for each
-# atom in the configuration passed between the Model and Test.
-# This argument should, ideally, be optional to ensure maximum Model/Test compatibility
-stressPerAtom           real*8      pressure    unspecified             [numberOfAtoms,3,3]
+################################################################################
+#
+# virial : A floating-point number corresponding to the total virial for the 
+#          configuration of atoms passed between the Model and Test.
+#
+# This argument should, ideally, be optional to ensure maximum Model/Test 
+# compatibility.
+#
+# Note: This argument is deprecated and will most likely be removed in future
+#       releases. It will be replaced by a vector containing the values of
+#       `interatomic' force vectors, from which the total virial can be
+#       computed.
+#
+# Name                  Type         Unit       SystemU/Scale           Shape
+#
+virial                  real*8       pressure   unspecified             []
 
-# A floating-point number corresponding to the total virial for the configuration of atoms
-# passed between the Model and Test.
-# This argument should, ideally, be optional to ensure maximum Model/Test compatibility
-virial                  real*8      pressure    unspecified             []
 
-
+################################################################################
 #
 # The MODEL_PARAMETERS section
 #
+################################################################################
 
 MODEL_PARAMETERS:
 
+################################################################################
 #
-# Two types of model parameters are allowed (the requirements string is ignored in this section)
-# 1) PARAM_FIXED_XXXXXX  - these should not be changed by the Test and can be used as arbitrary
-#                          persistent storage for use by the model.  These `fixed parameters' may
-#                          also be used by the Model for persistent storage between calls to the
-#                          Model's compute routine and/or as local memory space to avoid the
-#                          overhead of memory allocation/deallocation during each execution of the
-#                          compute routine.  
-# 2) PARAM_FREE_XXXXXX   - these may be changed by the Test (which should then call the Model's
-#                          model_reinit() function to inform the model that its parameters have
-#                          changed).
+# Two types of model parameters are allowed (the Requirements string is ignored 
+# for MODEL_PARAMETER lines):
 #
-# Memory for PARAM_* arguments is **NOT** allocated in any case by the KIM API (and should not be
-# allocated by a Test).  The Model is responsible for allocating (in the model_init function) and
-# freeing (in the model_destroy function) all memory for its parameters.
+# 1) PARAM_FIXED_<label> : A parameter that should not be changed by the Test.
+#                          A `fixed parameter' may also be used by the Model 
+#                          for persistent storage between calls to the Model's 
+#                          compute routine and/or as local memory space to avoid 
+#                          the overhead of memory allocation/deallocation during 
+#                          each execution of the compute routine.  
+#
+#
+# 2) PARAM_FREE_<label>  : A parameter that may be changed by the Test (which 
+#                          must then call the KIM_API_model_reinit() function 
+#                          to inform the Model that its parameters have changed).
+#
+# In the above <label> is an arbitrary string of alphanumeric characters and
+# the underscore (`_') character. 
+#
+#
+# IMPORTANT NOTE: It is important to stress that a Model may not store data in 
+# static memory since it may be called with differentKIM API objects. Any 
+# information that should persist between calls must be stored in the KIM API  
+# object. Fixed parameters may be used for this purpose as noted above.
+#
+#
+# Memory for PARAM_* arguments is **NOT** allocated in any case by the KIM API 
+# (and should not be allocated by a Test).  The Model is responsible for 
+# allocating (in the model_init function) and freeing (in the model_destroy 
+# function) all memory for its parameters.
 #
 # Examples
 #
-# Name                  Type        Unit        SystemU/Scale           Shape                   requirements
-# PARAM_FREE_cutoff     real*8      length      standard                []
-# PARAM_FREE_Sigma      real*8      length      standard                []
-# PARAM_FREE_Epsilon    real*8      energy      standard                []
-# PARAM_FIXED_LJshift   real*8      energy      standard                []
+# Name                  Type         Unit       SystemU/Scale           Shape
 #
+# PARAM_FREE_Sigma      real*8       length     standard                []
+# PARAM_FREE_Epsilon    real*8       energy     standard                []
+# PARAM_FIXED_LJshift   real*8       energy     standard                []
+#
+################################################################################
+
+################################################################################
+#
+# PARAM_FREE_cutoff : A standard free parameter that is used to store the
+#                     cutoff radius of the Model. This parameter allows
+#                     a Test to modify a Model by changing its cutoff radius
+#                     as described above.
+#
+# Note: Currently this is the only standard parameter defined by the KIM API.
+#
+#
+# Name                  Type         Unit       SystemU/Scale           Shape
+#
+PARAM_FREE_cutoff       real*8       length     unspecified             []
+
+# END of standard.kim file
