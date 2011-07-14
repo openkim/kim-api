@@ -11,15 +11,15 @@
 #######################################################################################################
 
 
-MODEL_NAME := model_ArNe_pair_LJ_NEIGH_RVEC_F
+MODEL_NAME := model_Ne_P_LJ_NEIGH_PURE_H
 SystemOfUnitsFix := fixed
 
 
 #######################################################################################################
 SUPPORTED_ATOM/PARTICLES_TYPES:
 # Symbol/name           Type                    code
-Ar                      spec                    1
-Ne                      spec                    2
+
+Ne                      spec                    1
 
 
 #######################################################################################################
@@ -28,14 +28,15 @@ CONVENTIONS:
 
 OneBasedLists           dummy
 
-Neigh_LocaAccess        dummy
+Neigh_IterAccess        dummy
 
-NEIGH-RVEC-F            dummy
+NEIGH-PURE-H            dummy
 
 
 #######################################################################################################
 MODEL_INPUT:
 # Name                  Type         Unit       SystemU/Scale           Shape              requirements
+
 numberOfAtoms           integer*8    none       none                    []
 
 numberAtomTypes         integer      none       none                    []
@@ -55,11 +56,11 @@ neighObject             pointer      none       none                    []
 MODEL_OUTPUT:
 # Name                  Type         Unit       SystemU/Scale           Shape              requirements
 
-destroy                 method       none       none                    []
+destroy                 method       none       none                    []                 optional
 
 compute                 method       none       none                    []
 
-reinit                  method       none       none                    []
+reinit                  method       none       none                    []                 optinal
 
 cutoff                  real*8       length     standard                []
 
@@ -69,26 +70,9 @@ forces                  real*8       force      standard                [numberO
 
 energyPerAtom           real*8       energy     standard                [numberOfAtoms]    optional
 
-virial                  real*8       pressure   standard                []                 optional
-
 
 #######################################################################################################
 MODEL_PARAMETERS:
 # Name                  Type         Unit       SystemU/Scale           Shape              requirements
-PARAM_FREE_sigma        real*8       length     standard                [3]
 
-PARAM_FREE_epsilon      real*8       energy     standard                [3]
-
-PARAM_FREE_cutoff       real*8       length     standard                []
-
-PARAM_FIXED_cutnorm     real*8       none       none                    [3]
-
-PARAM_FIXED_A           real*8       pressure   standard                [3]
-
-PARAM_FIXED_B           real*8       force      standard                [3]
-
-PARAM_FIXED_C           real*8       energy     standard                [3]
-
-PARAM_FIXED_sigmasq     real*8       none       none                    [3]
-
-PARAM_FIXED_cutsq       real*8       none       none                    []
+# No parameters published

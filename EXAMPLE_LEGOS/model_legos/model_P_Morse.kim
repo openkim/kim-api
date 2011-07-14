@@ -11,14 +11,15 @@
 #######################################################################################################
 
 
-MODEL_NAME := model_Ne_pair_LJ_NEIGH_RVEC_F
+MODEL_NAME := MODEL_NAME_STR
 SystemOfUnitsFix := fixed
 
 
 #######################################################################################################
 SUPPORTED_ATOM/PARTICLES_TYPES:
 # Symbol/name           Type                    code
-Ne                      spec                    1
+
+SPECIES_LINE_STR
 
 
 #######################################################################################################
@@ -29,12 +30,25 @@ ZeroBasedLists          dummy
 
 Neigh_IterAccess        dummy
 
+#Neigh_LocaAccess        dummy
+
 NEIGH-RVEC-F            dummy
+
+NEIGH-PURE-H            dummy
+
+NEIGH-PURE-F            dummy
+
+MI-OPBC-H               dummy
+
+MI-OPBC-F               dummy
+
+CLUSTER                 dummy
 
 
 #######################################################################################################
 MODEL_INPUT:
 # Name                  Type         Unit       SystemU/Scale           Shape              requirements
+
 numberOfAtoms           integer*8    none       none                    []
 
 numberAtomTypes         integer      none       none                    []
@@ -42,6 +56,8 @@ numberAtomTypes         integer      none       none                    []
 atomTypes               integer      none       none                    [numberOfAtoms]
 
 coordinates             real*8       length     standard                [numberOfAtoms,3]
+
+boxlength               real*8       length     standard                [3]
 
 get_half_neigh          method       none       none                    []                 optional     # Here so it can work with more Tests
 
@@ -74,20 +90,19 @@ virial                  real*8       pressure   standard                []      
 #######################################################################################################
 MODEL_PARAMETERS:
 # Name                  Type         Unit       SystemU/Scale           Shape              requirements
-PARAM_FREE_sigma        real*8       length     standard                []
 
 PARAM_FREE_epsilon      real*8       energy     standard                []
 
+PARAM_FREE_C            real*8       none       none                    []                               # should be units of 1/length
+
+PARAM_FREE_Rzero        real*8       length     standard                []
+
 PARAM_FREE_cutoff       real*8       length     standard                []
 
-PARAM_FIXED_cutnorm     real*8       none       none                    []
+PARAM_FIXED_A1          real*8       pressure   standard                []
 
-PARAM_FIXED_A           real*8       pressure   standard                []
+PARAM_FIXED_A2          real*8       force      standard                []
 
-PARAM_FIXED_B           real*8       force      standard                []
-
-PARAM_FIXED_C           real*8       energy     standard                []
-
-PARAM_FIXED_sigmasq     real*8       none       none                    []
+PARAM_FIXED_A3          real*8       energy     standard                []
 
 PARAM_FIXED_cutsq       real*8       none       none                    []

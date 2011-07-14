@@ -6,7 +6,7 @@
 !
 
 
-module model_Ne_pair_LJ_NEIGH_PURE_H
+module model_Ne_P_LJ_NEIGH_PURE_H
   use  KIMservice
   implicit none
   
@@ -119,12 +119,12 @@ contains
 
   end subroutine report_error
 
-end module model_Ne_pair_LJ_NEIGH_PURE_H
+end module model_Ne_P_LJ_NEIGH_PURE_H
 
 
-!  Model Initiation routine (it calls actual initialization routine in the module model_Ne_pair_LJ_NEIGH_PURE_H)
-subroutine model_Ne_pair_LJ_NEIGH_PURE_H_init(pkim)
-        use model_Ne_pair_LJ_NEIGH_PURE_H
+!  Model Initiation routine (it calls actual initialization routine in the module model_Ne_P_LJ_NEIGH_PURE_H)
+subroutine model_Ne_P_LJ_NEIGH_PURE_H_init(pkim)
+        use model_Ne_P_LJ_NEIGH_PURE_H
         use KIMservice
         implicit none
 
@@ -151,4 +151,4 @@ subroutine model_Ne_pair_LJ_NEIGH_PURE_H_init(pkim)
            stop
         endif
 
-end subroutine model_Ne_pair_LJ_NEIGH_PURE_H_init
+end subroutine model_Ne_P_LJ_NEIGH_PURE_H_init

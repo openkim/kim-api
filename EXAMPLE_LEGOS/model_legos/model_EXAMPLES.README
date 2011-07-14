@@ -6,32 +6,32 @@ this release of the openkim-api package.
 Model name                                 Language  NBC             Loca/Iter  Half/Full   Published parameters
 ---------------------------------------------------------------------------------------------------------------
 
-model_Al_EAM_ercolessi_adams_MI_OPBC_H     F90       MI-OPBC-H       Locator    Half        NO
+model_Al_PF_ErcolessiAdams_MI_OPBC_H       F90       MI-OPBC-H       Locator    Half        NO
 
-model_ArNe_pair_LJ_NEIGH_RVEC_F            F90       NEIGH-RVEC-F    Locator    Full        YES
+model_ArNe_P_LJ_NEIGH_RVEC_F               F90       NEIGH-RVEC-F    Locator    Full        YES
 
-model_Ar_pair_LJ_CLUSTER                   F90       CLUSTER         N/A        N/A         YES
+model_Ar_P_LJ_CLUSTER                      F90       CLUSTER         N/A        N/A         YES
 
-model_Ar_pair_LJ_MI_OPBC_H_F               F90       MI-OPBC-H       Locator    Half        YES
+model_Ar_P_LJ_MI_OPBC_H_F                  F90       MI-OPBC-H       Locator    Half        YES
                                                      MI-OPBC-F                  Full
 
-model_Ar_pair_LJ_NEIGH_PURE_H_F            F90       NEIGH-PURE-H    Locator    Half        YES
+model_Ar_P_LJ_NEIGH_PURE_H_F               F90       NEIGH-PURE-H    Locator    Half        YES
                                                      NEIGH-PURE-F               Full
 
-model_Ar_pair_LJ_NEIGH_RVEC_F              F90       NEIGH_RVEC-F    Locator    Full        YES
+model_Ar_P_LJ_NEIGH_RVEC_F                 F90       NEIGH_RVEC-F    Locator    Full        YES
 
-model_Ar_pair_Morse                        C         NEIGH-RVEC-F    Iterator   Full        YES
+model_Ar_P_Morse                           C         NEIGH-RVEC-F    Iterator   Full        YES
                                                      NEIGH-PURE-H               Half
                                                      NEIGH-PURE-F
                                                      MI-OPBC-H
                                                      MI-OPBC-F
                                                      CLUSTER
 
-model_Ne_pair_LJ_CLUSTER                   F90       CLUSTER         N/A        N/A         YES
+model_Ne_P_LJ_CLUSTER                      F90       CLUSTER         N/A        N/A         YES
 
-model_Ne_pair_LJ_MI_OPBC_H_F               F90       MI-OPBC-H       Locator    Half        YES
+model_Ne_P_LJ_MI_OPBC_H_F                  F90       MI-OPBC-H       Locator    Half        YES
                                                      MI-OPBC-F                  Full
 
-model_Ne_pair_LJ_NEIGH_PURE_H              F77       NEIGH-PURE-H    Iterator   Half        NO
+model_Ne_P_LJ_NEIGH_PURE_H                 F77       NEIGH-PURE-H    Iterator   Half        NO
 
-model_Ne_pair_LJ_NEIGH_RVEC_F              C         NEIGH-PURE-F    Iterator   Full        YES
+model_Ne_P_LJ_NEIGH_RVEC_F                 C         NEIGH-PURE-F    Iterator   Full        YES

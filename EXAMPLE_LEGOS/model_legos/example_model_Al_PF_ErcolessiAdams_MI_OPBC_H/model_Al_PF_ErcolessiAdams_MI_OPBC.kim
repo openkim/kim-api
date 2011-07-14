@@ -11,13 +11,14 @@
 #######################################################################################################
 
 
-MODEL_NAME := model_Al_EAM_ercolessi_adams_MI_OPBC_H
+MODEL_NAME := model_Al_PF_ErcolessiAdams_MI_OPBC_H
 SystemOfUnitsFix := fixed
 
 
 #######################################################################################################
 SUPPORTED_ATOM/PARTICLES_TYPES:
 # Symbol/name           Type                    code
+
 Al                      spec                    1
 
 
@@ -35,6 +36,7 @@ MI-OPBC-H               dummy
 #######################################################################################################
 MODEL_INPUT:
 # Name                  Type         Unit       SystemU/Scale           Shape              requirements
+
 numberOfAtoms           integer*8    none       none                    []
 
 numberAtomTypes         integer      none       none                    []

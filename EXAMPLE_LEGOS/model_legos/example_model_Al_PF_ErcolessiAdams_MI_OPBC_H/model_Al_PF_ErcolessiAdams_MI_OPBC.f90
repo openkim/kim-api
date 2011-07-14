@@ -1,6 +1,6 @@
 !****************************************************************************
 !**
-!**  MODULE model_Al_EAM_ercolessi_adams_MI_OPBC_H
+!**  MODULE model_Al_PF_ErcolessiAdams_MI_OPBC_H
 !**
 !**  EAM potential for aluminum due to Ercolessi and Adams
 !**
@@ -16,7 +16,7 @@
 !**
 !****************************************************************************
 
-module model_Al_EAM_ercolessi_adams_MI_OPBC_H
+module model_Al_PF_ErcolessiAdams_MI_OPBC_H
 
 use KIMservice
 implicit none
@@ -843,15 +843,15 @@ if ( u .le. x(i+1) ) go to 30
 
 end function seval_i
 
-end module model_Al_EAM_ercolessi_adams_MI_OPBC_H
+end module model_Al_PF_ErcolessiAdams_MI_OPBC_H
 
 !-------------------------------------------------------------------------------
 !
 ! Model initialization routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-subroutine model_Al_EAM_ercolessi_adams_MI_OPBC_H_init(pkim)
-use model_Al_EAM_ercolessi_adams_MI_OPBC_H
+subroutine model_Al_PF_ErcolessiAdams_MI_OPBC_H_init(pkim)
+use model_Al_PF_ErcolessiAdams_MI_OPBC_H
 use KIMservice
 implicit none
 
@@ -872,5 +872,5 @@ pcutoff =  kim_api_get_data_f(pkim,"cutoff",ier)
 if (ier.le.0) stop '* ERROR: cutoff not found in KIM object.'
 cutoff = model_cutoff
 
-end subroutine model_Al_EAM_ercolessi_adams_MI_OPBC_H_init
+end subroutine model_Al_PF_ErcolessiAdams_MI_OPBC_H_init
 
