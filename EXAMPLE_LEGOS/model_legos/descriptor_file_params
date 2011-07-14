@@ -1,6 +1,7 @@
 #######################################################################################################
 MODEL_PARAMETERS:
-# Name                  Type         Unit       SystemU/Scale           Shape              requirements
+# Name                  Type         Unit       SystemU/Scale           Shape              Requirements
+
 PARAM_FREE_sigma        real*8       length     standard                []
 
 PARAM_FREE_epsilon      real*8       energy     standard                []

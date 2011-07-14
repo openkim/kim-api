@@ -18,6 +18,7 @@ SystemOfUnitsFix := fixed
 #######################################################################################################
 SUPPORTED_ATOM/PARTICLES_TYPES:
 # Symbol/name           Type                    code
+
 SPECIES_LINE_STR
 
 

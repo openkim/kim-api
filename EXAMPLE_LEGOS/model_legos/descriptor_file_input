@@ -1,6 +1,7 @@
 #######################################################################################################
 MODEL_INPUT:
-# Name                  Type         Unit       SystemU/Scale           Shape              requirements
+# Name                  Type         Unit       SystemU/Scale           Shape              Requirements
+
 numberOfAtoms           integer*8    none       none                    []
 
 numberAtomTypes         integer      none       none                    []
