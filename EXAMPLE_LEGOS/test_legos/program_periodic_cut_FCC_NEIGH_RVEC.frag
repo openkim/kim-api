@@ -1,9 +1,9 @@
 !*******************************************************************************
 !**
-!**  PROGRAM test_Ar_periodic_cut_FCC_NEIGH_RVEC_f90
+!**  PROGRAM TEST_NAME_STR
 !**
 !**  KIM compliant program to compute the energy of one atom in a periodic
-!**  FCC crystal of Ar for a range of lattice spacings and model cutoff values.
+!**  FCC crystal of SPECIES_NAME_STR for a range of lattice spacings and model cutoff values.
 !**
 !**  Works with the following NBC scenarios:
 !**        NEIGH-RVEC-F
@@ -21,14 +21,14 @@
 ! Main program
 !
 !-------------------------------------------------------------------------------
-program test_Ar_periodic_cut_FCC_NEIGH_RVEC_f90
+program TEST_NAME_STR
   use KIMservice
   implicit none
 
-  integer,                  external  :: get_NEIGH_RVEC_neigh
-  double precision,         parameter :: FCCspacing  = 5.260d0 ! in angstroms
-  double precision,         parameter :: MinSpacing  = 0.900d0*FCCspacing
-  double precision,         parameter :: MaxSpacing  = 1.100d0*FCCspacing
+  integer,                  external  :: get_neigh_Rij
+  double precision,         parameter :: FCCspacing  = FCC_SPACING_STR
+  double precision,         parameter :: MinSpacing  = 0.800d0*FCCspacing
+  double precision,         parameter :: MaxSpacing  = 1.200d0*FCCspacing
   double precision,         parameter :: SpacingIncr = 0.025d0*FCCspacing
   integer,                  parameter :: DIM               = 3
   integer,                  parameter :: ATypes            = 1
@@ -43,7 +43,7 @@ program test_Ar_periodic_cut_FCC_NEIGH_RVEC_f90
   !
   ! KIM variables
   !
-  character*80              :: testname     = "test_Ar_periodic_cut_FCC_NEIGH_RVEC_f90"
+  character*80              :: testname     = "TEST_NAME_STR"
   character*80              :: modelname
   integer(kind=kim_intptr)  :: pkim
   integer                   :: ier
@@ -158,10 +158,10 @@ program test_Ar_periodic_cut_FCC_NEIGH_RVEC_f90
      stop
   endif
 
-  ! set values
+  ! Set values
   numberOfAtoms   = N
   numberAtomTypes = ATypes
-  atomTypes(:)    = kim_api_get_atypecode_f(pkim, "Ar", ier);
+  atomTypes(:)    = kim_api_get_atypecode_f(pkim, "SPECIES_NAME_STR", ier)
   if (ier.le.0) then
      call report_error(__LINE__, "kim_api_get_atypecode_f", ier)
      stop
@@ -183,7 +183,7 @@ program test_Ar_periodic_cut_FCC_NEIGH_RVEC_f90
      allocate(RijList(3,NNeighbors))
      ! generate neighbor list
      CurrentSpacing = MinSpacing
-     call FCC_NEIGH_RVEC_F_neighborlist(CellsPerCutoff, (cutoff+0.75), CurrentSpacing, neighborList, RijList)
+     call NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerCutoff, (cutoff+0.75), CurrentSpacing, neighborList, RijList)
      
      ! store pointers to neighbor list object and access function
      allocate(NLRvecLocs(2))
@@ -195,7 +195,7 @@ program test_Ar_periodic_cut_FCC_NEIGH_RVEC_f90
         stop
      endif
      
-     ier = kim_api_set_data_f(pkim, "get_full_neigh", SizeOne, loc(get_NEIGH_RVEC_neigh))
+     ier = kim_api_set_data_f(pkim, "get_full_neigh", SizeOne, loc(get_neigh_Rij))
      if (ier.le.0) then
         call report_error(__LINE__, "kim_api_set_data_f", ier)
         stop
@@ -223,7 +223,7 @@ program test_Ar_periodic_cut_FCC_NEIGH_RVEC_f90
         ! set new spacing
         CurrentSpacing = CurrentSpacing + SpacingIncr
         ! compute new neighbor lists (could be done more intelligently, I'm sure)
-        call FCC_NEIGH_RVEC_F_neighborlist(CellsPerCutoff, (cutoff+0.75), CurrentSpacing, neighborList, RijList)
+        call NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerCutoff, (cutoff+0.75), CurrentSpacing, neighborList, RijList)
         
         ! Call model compute
         call kim_api_model_compute(pkim, ier)
@@ -262,184 +262,4 @@ program test_Ar_periodic_cut_FCC_NEIGH_RVEC_f90
   endif
 
   stop
-end program test_Ar_periodic_cut_FCC_NEIGH_RVEC_f90
-
-!-------------------------------------------------------------------------------
-!
-! neighbor list functions
-!
-!-------------------------------------------------------------------------------
-
-!-------------------------------------------------------------------------------
-!
-! FCC_NEIGH_RVEC_F_neighborlist 
-!
-!-------------------------------------------------------------------------------
-subroutine FCC_NEIGH_RVEC_F_neighborlist(CellsPerHalfSide, cutoff, FCCspacing, neighborList, RijList)
-  use KIMservice
-  implicit none
-  
-  !-- Transferred variables
-  integer,                                             intent(in)  :: CellsPerHalfSide
-  double precision,                                    intent(in)  :: cutoff
-  double precision,                                    intent(in)  :: FCCspacing
-  integer, dimension(1),                               intent(out) :: neighborList
-  double precision, dimension(3,1),                    intent(out) :: RijList
-  
-  !-- Local variables
-  double precision dx(3)
-  double precision r2
-  double precision cutoff2
-  double precision :: FCCshifts(3,4)
-  double precision :: latVec(3)
-  integer          :: a, i, j, k, m
-
-  cutoff2 = cutoff**2
-
-  ! Cubic FCC cell positions ----------------------------------------------------------------------
-  FCCshifts(1,1) = 0.d0;           FCCshifts(2,1) = 0.d0;           FCCshifts(3,1) = 0.d0
-  FCCshifts(1,2) = 0.5*FCCspacing; FCCshifts(2,2) = 0.5*FCCspacing; FCCshifts(3,2) = 0.d0
-  FCCshifts(1,3) = 0.5*FCCspacing; FCCshifts(2,3) = 0.d0;           FCCshifts(3,3) = 0.5*FCCspacing
-  FCCshifts(1,4) = 0.d0;           FCCshifts(2,4) = 0.5*FCCspacing; FCCshifts(3,4) = 0.5*FCCspacing
-
-  a = 1
-  do i=-CellsPerHalfSide,CellsPerHalfSide
-     latVec(1) = i*FCCspacing
-     do j=-CellsPerHalfSide,CellsPerHalfSide
-        latVec(2) = j*FCCspacing
-        do k=-CellsPerHalfSide,CellsPerHalfSide
-           latVec(3) = k*FCCspacing
-           do m=1,4
-              dx = -latVec - FCCshifts(:,m)
-              if (dot_product(dx,dx).lt.cutoff2) then
-                 if (.not.( (i.eq.0) .and. (j.eq.0) .and. (k.eq.0) .and. (m.eq.1) )) then
-                    ! we have a neighbor
-                    a = a+1
-                    neighborList(a) = 1
-                    RijList(:,a-1) = dx
-                 endif
-              endif
-           enddo
-        enddo
-     enddo
-  enddo
-  ! atom 1 has a-1 neighbors
-  neighborList(1) = a-1
-
-end subroutine FCC_NEIGH_RVEC_F_neighborlist
-
-!-------------------------------------------------------------------------------
-!
-! get_NEIGH_RVEC_neigh neighbor list access function 
-!
-! This function implements Locator and Iterator mode
-!
-!-------------------------------------------------------------------------------
-integer function get_NEIGH_RVEC_neigh(pkim,mode,request,atom,numnei,pnei1atom,pRij)
-  use KIMservice
-  implicit none
-  
-  !-- Transferred variables
-  integer(kind=kim_intptr), intent(in) :: pkim
-  integer, intent(in)  :: mode
-  integer, intent(in)  :: request
-  integer, intent(out) :: atom
-  integer, intent(out) :: numnei
-  integer :: nei1atom(1); pointer(pnei1atom, nei1atom) ! actual cray pointer associated with nei1atom
-  real*8  :: Rij(3,1); pointer(pRij, Rij)
-  
-  !-- Local variables
-  integer, save :: iterVal = 0
-  integer   :: atomToReturn
-  integer   :: NLRvecLocs(1); pointer(pNLRvecLocs,NLRvecLocs)
-  integer   :: neighborList(1);  pointer(pneighborList, neighborList)
-  double precision :: RijList(1); pointer(pRijList,RijList)
-  integer   :: ier
-  integer*8 :: numberOfAtoms; pointer(pnAtoms, numberOfAtoms)
-  integer   :: N
-
-  ! unpack neighbor list object
-  pnAtoms = kim_api_get_data_f(pkim, "numberOfAtoms", ier)
-  if (ier.le.0) then
-     call report_error(__LINE__, "kim_api_get_data_f", ier)
-     stop
-  endif
-  N = numberOfAtoms
-  pNLRVecLocs = kim_api_get_data_f(pkim, "neighObject", ier)
-  if (ier.le.0) then
-     call report_error(__LINE__, "kim_api_get_data_f", ier)
-     stop
-  endif
-  pneighborList = NLRvecLocs(1)
-  pRijList      = NLRvecLocs(2)
-
-  ! check mode and request
-  if (mode.eq.0) then ! iterator mode
-     if (request.eq.0) then ! reset iterator
-        iterVal = 0
-        get_NEIGH_RVEC_neigh = 2
-        return
-     elseif (request.eq.1) then ! increment iterator
-        iterVal = iterVal + 1
-        if (iterVal.gt.1) then
-           get_NEIGH_RVEC_neigh = 0
-           return
-        else
-           atomToReturn = iterVal
-        endif
-     else
-        call report_error(__LINE__, "Invalid request in get_NEIGH_RVEC_neigh", -6)
-        get_NEIGH_RVEC_neigh = -6 ! invalid request value
-        return
-     endif
-  elseif (mode.eq.1) then ! locator mode
-     if ( (request.gt.N) .or. (request.lt.1)) then
-        call report_error(__LINE__, "Invalid request in get_NEIGH_RVEC_neigh", -1)
-        get_NEIGH_RVEC_neigh = -1
-        return
-     else
-        atomToReturn = request
-     endif
-  else ! not iterator or locator mode
-     call report_error(__LINE__, "Invalid mode in get_NEIGH_RVEC_neigh", -2)
-     get_NEIGH_RVEC_neigh = -2
-     return
-  endif
-  
-  ! set the returned atom
-  atom = atomToReturn
-
-  ! set the returned number of neighbors for the returned atom
-  numnei = neighborList(1)
-  
-  ! set the location for the returned neighbor list
-  pnei1atom = loc(neighborList(2))
-  
-  ! set pointer to Rij to appropriate value
-  pRij = loc(RijList(1))
-  
-  get_NEIGH_RVEC_neigh = 1
-  return
-end function get_NEIGH_RVEC_neigh
-
-
-!-------------------------------------------------------------------------------
-!
-! report_error subroutine
-!
-!-------------------------------------------------------------------------------
-subroutine report_error(line, str, status)
-  implicit none
-  
-  !-- Transferred variables
-  integer,   intent(in) :: line
-  character(len=*), intent(in) :: str
-  integer,   intent(in) :: status
-  
-  !-- Local variables
-  character(len=10000), parameter :: file = __FILE__
-  
-  !-- print the error message
-  print *,'* ERROR at line', line, 'in ',trim(file), ': ', str,'. kimerror =', status
-  
-end subroutine report_error
+end program TEST_NAME_STR

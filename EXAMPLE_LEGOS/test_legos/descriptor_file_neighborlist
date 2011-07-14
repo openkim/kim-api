@@ -1,0 +1,5 @@
+get_half_neigh          method       none       none                    []
+
+get_full_neigh          method       none       none                    []
+
+neighObject             pointer      none       none                    []
