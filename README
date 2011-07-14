@@ -124,15 +124,7 @@ KIM_API       -- directory containing the openkim-api service routines
 MODELs        -- directory containing examples of interatomic Models
 
                  Each Model is stored in its own directory that conforms
-                 to the following naming convention:
-
-                    model_<elements>_<class>_<name>_<KIM-ID>
-
-                 Note: That for this alpha distribution of the KIM API we
-                       include example Models that are not part of the 
-                       openKIM repository. Therefore they do not have KIM-IDs
-                       and instead we provide information on the their NBC
-                       (Neighbor list and Boundary Conditions) capabilities.
+                 to the naming convention specified in standard.kim.
 
 Makefile      -- make file for compiling the openkim-api services routines and
                  example Tests and Models.
@@ -141,6 +133,7 @@ README        -- this file
  
 TESTs         -- directory containing examples of Tests
 
-                 Each Test is stored in its own directory.
+                 Each Test is stored in its own directory that conforms
+                 to the naming convention specified in standard.kim.
 
 -------------------------------------------------------------------------------
