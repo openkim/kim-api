@@ -1,7 +1,9 @@
 EXAMPLES.README
 Sample_01_compute_example_c
 Sample_01_compute_example_f
-test_Ar_Ne_periodic_B2_NEIGH_RVEC_f90
+test_Al_free_cluster
+test_Al_periodic_FCC_MI_OPBC
+test_ArNe_periodic_B2_NEIGH_RVEC
 test_Ar_free_cluster
 test_Ar_free_cluster_CLUSTER
 test_Ar_periodic_FCC_MI_OPBC

@@ -1,0 +1,274 @@
+echo "**********************************************************************************************"
+echo "**** TEST: test_ArNe_periodic_B2_NEIGH_RVEC ******** MODEL: model_ArNe_P_LJ_NEIGH_RVEC_F ****"
+echo "**********************************************************************************************"
+
+echo "model_ArNe_P_LJ_NEIGH_RVEC_F" | ./test_ArNe_periodic_B2_NEIGH_RVEC/test_ArNe_periodic_B2_NEIGH_RVEC
+
+
+
+
+echo && echo && echo && echo
+echo "**********************************************************************************************"
+echo "**** TEST: test_Al_free_cluster ************* MODEL: model_Al_PF_ErcolessiAdams_MI_OPBC_H ****"
+echo "**********************************************************************************************"
+
+echo "model_Al_PF_ErcolessiAdams_MI_OPBC_H" | ./test_Al_free_cluster/test_Al_free_cluster
+
+
+
+
+echo && echo && echo && echo
+echo "**********************************************************************************************"
+echo "**** TEST: test_Ar_free_cluster ********************* MODEL: model_ArNe_P_LJ_NEIGH_RVEC_F ****"
+echo "**********************************************************************************************"
+
+echo "model_ArNe_P_LJ_NEIGH_RVEC_F" | ./test_Ar_free_cluster/test_Ar_free_cluster
+
+echo && echo && echo && echo
+echo "**********************************************************************************************"
+echo "**** TEST: test_Ar_free_cluster ************************ MODEL: model_Ar_P_LJ_MI_OPBC_H_F ****"
+echo "**********************************************************************************************"
+
+echo "model_Ar_P_LJ_MI_OPBC_H_F"    | ./test_Ar_free_cluster/test_Ar_free_cluster
+
+echo && echo && echo && echo
+echo "**********************************************************************************************"
+echo "**** TEST: test_Ar_free_cluster ********************* MODEL: model_Ar_P_LJ_NEIGH_PURE_H_F ****"
+echo "**********************************************************************************************"
+
+echo "model_Ar_P_LJ_NEIGH_PURE_H_F" | ./test_Ar_free_cluster/test_Ar_free_cluster
+
+echo && echo && echo && echo
+echo "**********************************************************************************************"
+echo "**** TEST: test_Ar_free_cluster ********************** MODEL: model_Ar_P_LJ_NEIGH_RVEC_ F ****"
+echo "**********************************************************************************************"
+
+echo "model_Ar_P_LJ_NEIGH_RVEC_F"   | ./test_Ar_free_cluster/test_Ar_free_cluster
+
+echo && echo && echo && echo
+echo "**********************************************************************************************"
+echo "**** TEST: test_Ar_free_cluster ********************************* MODEL: model_Ar_P_Morse ****"
+echo "**********************************************************************************************"
+
+echo "model_Ar_P_Morse"             | ./test_Ar_free_cluster/test_Ar_free_cluster
+
+
+
+echo && echo && echo && echo
+echo "**********************************************************************************************"
+echo "**** TEST: test_Ar_free_cluster_CLUSTER ******************** MODEL: model_Ar_P_LJ_CLUSTER ****"
+echo "**********************************************************************************************"
+
+echo "model_Ar_P_LJ_CLUSTER"        | ./test_Ar_free_cluster_CLUSTER/test_Ar_free_cluster_CLUSTER
+
+echo && echo && echo && echo
+echo "**********************************************************************************************"
+echo "**** TEST: test_Ar_free_cluster_CLUSTER ************************* MODEL: model_Ar_P_Morse ****"
+echo "**********************************************************************************************"
+
+echo "model_Ar_P_Morse"             | ./test_Ar_free_cluster_CLUSTER/test_Ar_free_cluster_CLUSTER
+
+
+echo && echo && echo && echo
+echo "**********************************************************************************************"
+echo "**** TEST: test_Ar_multiple_models_c ****************** MODEL: model_Ar_P_LJ_NEIGH_RVEC_F ****"
+echo "****                                                           model_Ar_P_Morse           ****"
+echo "**********************************************************************************************"
+
+./test_Ar_multiple_models_c/test_Ar_multiple_models_c model_Ar_P_LJ_NEIGH_RVEC_F model_Ar_P_Morse
+
+echo && echo && echo && echo
+echo "**********************************************************************************************"
+echo "**** TEST: test_Ar_multiple_models_c **************** MODEL: model_Ar_P_LJ_NEIGH_RVEC_F   ****"
+echo "****                                                         model_ArNe_P_LJ_NEIGH_RVEC_F ****"
+echo "**********************************************************************************************"
+
+./test_Ar_multiple_models_c/test_Ar_multiple_models_c model_Ar_P_LJ_NEIGH_RVEC_F model_ArNe_P_LJ_NEIGH_RVEC_F
+
+
+
+
+echo && echo && echo && echo
+echo "**********************************************************************************************"
+echo "**** TEST: test_Al_periodic_FCC_MI_OPBC ***** MODEL: model_Al_PF_ErcolessiAdams_MI_OPBC_H ****"
+echo "**********************************************************************************************"
+
+echo "model_Al_PF_ErcolessiAdams_MI_OPBC_H"    | ./test_Al_periodic_FCC_MI_OPBC/test_Al_periodic_FCC_MI_OPBC
+
+
+
+
+echo && echo && echo && echo
+echo "**********************************************************************************************"
+echo "**** TEST: test_Ar_periodic_FCC_MI_OPBC **************** MODEL: model_Ar_P_LJ_MI_OPBC_H_F ****"
+echo "**********************************************************************************************"
+
+echo "model_Ar_P_LJ_MI_OPBC_H_F"    | ./test_Ar_periodic_FCC_MI_OPBC/test_Ar_periodic_FCC_MI_OPBC
+
+echo && echo && echo && echo
+echo "**********************************************************************************************"
+echo "**** TEST: test_Ar_periodic_FCC_MI_OPBC ************************* MODEL: model_Ar_P_Morse ****"
+echo "**********************************************************************************************"
+
+echo "model_Ar_P_Morse"             | ./test_Ar_periodic_FCC_MI_OPBC/test_Ar_periodic_FCC_MI_OPBC
+
+
+
+
+echo && echo && echo && echo
+echo "**********************************************************************************************"
+echo "**** TEST: test_Ar_periodic_FCC_NEIGH_PURE ********** MODEL: model_Ar_P_LJ_NEIGH_PURE_H_F ****"
+echo "**********************************************************************************************"
+
+echo "model_Ar_P_LJ_NEIGH_PURE_H_F" | ./test_Ar_periodic_FCC_NEIGH_PURE/test_Ar_periodic_FCC_NEIGH_PURE
+
+echo && echo && echo && echo
+echo "**********************************************************************************************"
+echo "**** TEST: test_Ar_periodic_FCC_NEIGH_PURE ********************** MODEL: model_Ar_P_Morse ****"
+echo "**********************************************************************************************"
+
+echo "model_Ar_P_Morse"             | ./test_Ar_periodic_FCC_NEIGH_PURE/test_Ar_periodic_FCC_NEIGH_PURE
+
+
+
+
+echo && echo && echo && echo
+echo "**********************************************************************************************"
+echo "**** TEST: test_Ar_periodic_FCC_NEIGH_RVEC ********** MODEL: model_ArNe_P_LJ_NEIGH_RVEC_F ****"
+echo "**********************************************************************************************"
+
+echo "model_ArNe_P_LJ_NEIGH_RVEC_F" | ./test_Ar_periodic_FCC_NEIGH_RVEC/test_Ar_periodic_FCC_NEIGH_RVEC
+
+echo && echo && echo && echo
+echo "**********************************************************************************************"
+echo "**** TEST: test_Ar_periodic_FCC_NEIGH_RVEC ************ MODEL: model_Ar_P_LJ_NEIGH_RVEC_F ****"
+echo "**********************************************************************************************"
+
+echo "model_Ar_P_LJ_NEIGH_RVEC_F"   | ./test_Ar_periodic_FCC_NEIGH_RVEC/test_Ar_periodic_FCC_NEIGH_RVEC
+
+echo && echo && echo && echo
+echo "**********************************************************************************************"
+echo "**** TEST: test_Ar_periodic_FCC_NEIGH_RVEC ********************** MODEL: model_Ar_P_Morse ****"
+echo "**********************************************************************************************"
+
+echo "model_Ar_P_Morse"             | ./test_Ar_periodic_FCC_NEIGH_RVEC/test_Ar_periodic_FCC_NEIGH_RVEC
+
+
+
+
+echo && echo && echo && echo
+echo "**********************************************************************************************"
+echo "**** TEST: test_Ar_periodic_cut_FCC_NEIGH_RVEC ****** MODEL: model_ArNe_P_LJ_NEIGH_RVEC_F ****"
+echo "**********************************************************************************************"
+
+echo "model_ArNe_P_LJ_NEIGH_RVEC_F" | ./test_Ar_periodic_cut_FCC_NEIGH_RVEC/test_Ar_periodic_cut_FCC_NEIGH_RVEC
+
+echo && echo && echo && echo
+echo "**********************************************************************************************"
+echo "**** TEST: test_Ar_periodic_cut_FCC_NEIGH_RVEC ******** MODEL: model_Ar_P_LJ_NEIGH_RVEC_F ****"
+echo "**********************************************************************************************"
+
+echo "model_Ar_P_LJ_NEIGH_RVEC_F"   | ./test_Ar_periodic_cut_FCC_NEIGH_RVEC/test_Ar_periodic_cut_FCC_NEIGH_RVEC
+
+echo && echo && echo && echo
+echo "**********************************************************************************************"
+echo "**** TEST: test_Ar_periodic_cut_FCC_NEIGH_RVEC ****************** MODEL: model_Ar_P_Morse ****"
+echo "**********************************************************************************************"
+
+echo "model_Ar_P_Morse"             | ./test_Ar_periodic_cut_FCC_NEIGH_RVEC/test_Ar_periodic_cut_FCC_NEIGH_RVEC
+
+
+
+
+echo && echo && echo && echo
+echo "**********************************************************************************************"
+echo "**** TEST: test_Ne_free_cluster ********************* MODEL: model_ArNe_P_LJ_NEIGH_RVEC_F ****"
+echo "**********************************************************************************************"
+
+echo "model_ArNe_P_LJ_NEIGH_RVEC_F" | ./test_Ne_free_cluster/test_Ne_free_cluster
+
+echo && echo && echo && echo
+echo "**********************************************************************************************"
+echo "**** TEST: test_Ne_free_cluster ************************ MODEL: model_Ne_P_LJ_MI_OPBC_H_F ****"
+echo "**********************************************************************************************"
+
+echo "model_Ne_P_LJ_MI_OPBC_H_F"    | ./test_Ne_free_cluster/test_Ne_free_cluster
+
+echo && echo && echo && echo
+echo "**********************************************************************************************"
+echo "**** TEST: test_Ne_free_cluster *********************** MODEL: model_Ne_P_LJ_NEIGH_PURE_H ****"
+echo "**********************************************************************************************"
+
+echo "model_Ne_P_LJ_NEIGH_PURE_H"   | ./test_Ne_free_cluster/test_Ne_free_cluster
+
+echo && echo && echo && echo
+echo "**********************************************************************************************"
+echo "**** TEST: test_Ne_free_cluster *********************** MODEL: model_Ne_P_LJ_NEIGH_RVEC_F ****"
+echo "**********************************************************************************************"
+
+echo "model_Ne_P_LJ_NEIGH_RVEC_F"   | ./test_Ne_free_cluster/test_Ne_free_cluster
+
+
+
+
+echo && echo && echo && echo
+echo "**********************************************************************************************"
+echo "**** TEST: test_Ne_free_cluster_CLUSTER ******************** MODEL: model_Ne_P_LJ_CLUSTER ****"
+echo "**********************************************************************************************"
+
+echo "model_Ne_P_LJ_CLUSTER"        | ./test_Ne_free_cluster_CLUSTER/test_Ne_free_cluster_CLUSTER
+
+
+
+
+echo && echo && echo && echo
+echo "**********************************************************************************************"
+echo "**** TEST: test_Ne_periodic_FCC_MI_OPBC **************** MODEL: model_Ne_P_LJ_MI_OPBC_H_F ****"
+echo "**********************************************************************************************"
+
+echo "model_Ne_P_LJ_MI_OPBC_H_F"    | ./test_Ne_periodic_FCC_MI_OPBC/test_Ne_periodic_FCC_MI_OPBC
+
+
+
+
+echo && echo && echo && echo
+echo "**********************************************************************************************"
+echo "**** TEST: test_Ne_periodic_FCC_NEIGH_PURE ************ MODEL: model_Ne_P_LJ_NEIGH_PURE_H ****"
+echo "**********************************************************************************************"
+
+echo "model_Ne_P_LJ_NEIGH_PURE_H" | ./test_Ne_periodic_FCC_NEIGH_PURE/test_Ne_periodic_FCC_NEIGH_PURE
+
+
+
+
+echo && echo && echo && echo
+echo "**********************************************************************************************"
+echo "**** TEST: test_Ne_periodic_FCC_NEIGH_RVEC ********** MODEL: model_ArNe_P_LJ_NEIGH_RVEC_F ****"
+echo "**********************************************************************************************"
+
+echo "model_ArNe_P_LJ_NEIGH_RVEC_F" | ./test_Ne_periodic_FCC_NEIGH_RVEC/test_Ne_periodic_FCC_NEIGH_RVEC
+
+echo && echo && echo && echo
+echo "**********************************************************************************************"
+echo "**** TEST: test_Ne_periodic_FCC_NEIGH_RVEC ************ MODEL: model_Ne_P_LJ_NEIGH_RVEC_F ****"
+echo "**********************************************************************************************"
+
+echo "model_Ne_P_LJ_NEIGH_RVEC_F"   | ./test_Ne_periodic_FCC_NEIGH_RVEC/test_Ne_periodic_FCC_NEIGH_RVEC
+
+
+
+
+echo && echo && echo && echo
+echo "**********************************************************************************************"
+echo "**** TEST: test_Ne_periodic_cut_FCC_NEIGH_RVEC ******** MODEL: model_ArNe_P_LJ_NEIGH_RVEC ****"
+echo "**********************************************************************************************"
+
+echo "model_ArNe_P_LJ_NEIGH_RVEC_F" | ./test_Ne_periodic_cut_FCC_NEIGH_RVEC/test_Ne_periodic_cut_FCC_NEIGH_RVEC
+
+echo && echo && echo && echo
+echo "**********************************************************************************************"
+echo "**** TEST: test_Ne_periodic_cut_FCC_NEIGH_RVEC ******** MODEL: model_Ne_P_LJ_NEIGH_RVEC_F ****"
+echo "**********************************************************************************************"
+
+echo "model_Ne_P_LJ_NEIGH_RVEC_F"  | ./test_Ne_periodic_cut_FCC_NEIGH_RVEC/test_Ne_periodic_cut_FCC_NEIGH_RVEC
+

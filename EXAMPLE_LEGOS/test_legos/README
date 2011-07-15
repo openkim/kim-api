@@ -17,26 +17,5 @@ example_Sample_01_compute_example_c/
 example_Sample_01_compute_example_f/
     Directory containing the Sample_01_compute_example_f Test
 
-example_test_Ar_Ne_periodic_B2_NEIGH_RVEC_f90/
-    Directory containing the test_Ar_Ne_periodic_B2_NEIGH_RVEC_f90 Test
-
-example_test_Ar_free_cluster_CLUSTER_f90/
-    Directory containing the test_Ar_free_cluster_CLUSTER_f90 Test
-
-example_test_Ar_free_cluster_f90/
-    Directory containing the test_Ar_free_cluster_f90 Test
-
 example_test_Ar_multiple_models_c/
     Directory containing the test_Ar_multiple_models_c Test
-
-example_test_Ar_periodic_FCC_MI_OPBC_f90/
-    Directory containing the test_Ar_periodic_FCC_MI_OPBC_f90 Test
-
-example_test_Ar_periodic_FCC_NEIGH_PURE_f90/
-    Directory containing the test_Ar_periodic_FCC_NEIGH_PURE_f90 Test
-
-example_test_Ar_periodic_FCC_NEIGH_RVEC_f90/
-    Directory containing the test_Ar_periodic_FCC_NEIGH_RVEC_f90 Test
-
-example_test_Ar_periodic_cut_FCC_NEIGH_RVEC_f90/
-    Directory containing the test_Ar_periodic_cut_FCC_NEIGH_RVEC_f90 Test
