@@ -38,16 +38,13 @@ descriptor_file_params
 descriptor_file_start
     This file contains the common head of the kim descriptor files
 
-example_model_Al_EAM_ercolessi_adams_MI_OPBC_H/
+example_model_Al_PF_ErcolessiAdams_MI_OPBC_H/
     An EAM Model created by Ercolessi and Adams (for aluminum) written in F90
     using the MI-OPBC-H NBC.  Currently, this Model does not take advantage of
     the openkim-api support for Model parameters
 
 example_model_ArNe_pair_LJ_NEIGH_RVEC_F/
     Directory containing the model_ArNe_pair_LJ_NEIGH_RVEC_F Model
-
-example_model_Ar_pair_Morse/
-    Directory containing the model_Ar_pair_Morse Model
 
 example_model_Ne_pair_LJ_NEIGH_PURE_H/
     A generic Lennard-Jones Model wirtten in FORTRAN77 using the NEIGH-PURE-H NBC
@@ -67,11 +64,25 @@ mi_opbc_neigh_pure_compute_local_variables.frag
     This file contains the local variables used by the
     model_Ar_pair_LJ_MI_OPBC_H_F and model_Ar_pair_LJ_NEIGH_PURE_H_F Models
 
+model_EXAMPLES.README
+    This file contains a list of all example Models indicating their programming
+    language, supported NBCs, Locator/Iterator mode support, Half/Full neighbor
+    list support, and if the Model publishes its parameters.
+
+model_LJ_README
+    This file contains the common LJ README file used by the LJ Models
+
 model_Makefile
     This file contains the common Makefile used by the Models
 
-model_README
-    This file contains the common README file used by the Models
+model_Morse_README
+    This file contains the common Morse README file used by the Morse Models
+
+model_P_Morse.c
+    This file contains the Morse pair potential C code.
+
+model_P_Morse.kim
+    This file contains the Morse pair potential KIM descriptor file
 
 module_end.frag
     This file contains the common tail of the Models' fortran module files
