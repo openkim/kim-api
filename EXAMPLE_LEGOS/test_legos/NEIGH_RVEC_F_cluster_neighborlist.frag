@@ -3,7 +3,7 @@
 ! NEIGH_RVEC_F_cluster_neighborlist 
 !
 !-------------------------------------------------------------------------------
-subroutine NEIGH_RVEC_F_cluster_neighborlist(numberOfAtoms, coords, cutoff, neighborList, RijList)
+subroutine NEIGH_RVEC_F_cluster_neighborlist(numberOfAtoms, coords, cutoff, NN, neighborList, RijList)
   use KIMservice
   implicit none
 
@@ -11,8 +11,9 @@ subroutine NEIGH_RVEC_F_cluster_neighborlist(numberOfAtoms, coords, cutoff, neig
   integer(kind=kim_intptr),                            intent(in)  :: numberOfAtoms
   double precision, dimension(3,numberOfAtoms),               intent(in)  :: coords
   double precision,                                           intent(in)  :: cutoff
-  integer, dimension(numberOfAtoms+1,numberOfAtoms),          intent(out) :: neighborList
-  double precision, dimension(3,numberOfAtoms,numberOfAtoms), intent(out) :: RijList
+  integer,                                                    intent(in)  :: NN
+  integer, dimension(NN+1,numberOfAtoms),                     intent(out) :: neighborList
+  double precision, dimension(3,NN+1,numberOfAtoms),          intent(out) :: RijList
   
   !-- Local variables
   integer i, j, a

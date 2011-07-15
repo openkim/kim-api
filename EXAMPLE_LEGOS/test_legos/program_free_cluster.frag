@@ -199,7 +199,7 @@ program TEST_NAME_STR
   elseif (nbc.eq.3) then
      call NEIGH_PURE_cluster_neighborlist(.false., N, coords, (cutoff+0.75), neighborList)
   elseif (nbc.eq.4) then
-     call NEIGH_RVEC_F_cluster_neighborlist(N, coords, (cutoff+0.75), neighborList, RijList)
+     call NEIGH_RVEC_F_cluster_neighborlist(N, coords, (cutoff+0.75), N, neighborList, RijList)
   endif
 
   ! store pointers to neighbor list object and access function
@@ -210,9 +210,10 @@ program TEST_NAME_STR
         stop
      endif
   else
-     allocate(NLRvecLocs(2))
+     allocate(NLRvecLocs(3))
      NLRvecLocs(1) = loc(neighborList)
      NLRvecLocs(2) = loc(RijList)
+     NLRvecLocs(3) = N+1
      ier = kim_api_set_data_f(pkim, "neighObject", SizeOne, loc(NLRvecLocs))
      if (ier.le.0) then
         call report_error(__LINE__, "kim_api_set_data_f", ier)

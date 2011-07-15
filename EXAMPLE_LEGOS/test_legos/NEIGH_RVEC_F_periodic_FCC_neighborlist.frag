@@ -3,7 +3,7 @@
 ! NEIGH_RVEC_F_periodic_FCC_neighborlist 
 !
 !-------------------------------------------------------------------------------
-subroutine NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerHalfSide, cutoff, FCCspacing, neighborList, RijList)
+subroutine NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerHalfSide, cutoff, FCCspacing, NN, neighborList, RijList)
   use KIMservice
   implicit none
   
@@ -11,8 +11,9 @@ subroutine NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerHalfSide, cutoff, FCCs
   integer,                                             intent(in)  :: CellsPerHalfSide
   double precision,                                    intent(in)  :: cutoff
   double precision,                                    intent(in)  :: FCCspacing
-  integer, dimension(1),                               intent(out) :: neighborList
-  double precision, dimension(3,1),                    intent(out) :: RijList
+  integer,                                             intent(in)  :: NN
+  integer, dimension(NN,1),                            intent(out) :: neighborList
+  double precision, dimension(3,NN),                   intent(out) :: RijList
   
   !-- Local variables
   double precision dx(3)
@@ -43,7 +44,7 @@ subroutine NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerHalfSide, cutoff, FCCs
                  if (.not.( (i.eq.0) .and. (j.eq.0) .and. (k.eq.0) .and. (m.eq.1) )) then
                     ! we have a neighbor
                     a = a+1
-                    neighborList(a) = 1
+                    neighborList(a,1) = 1
                     RijList(:,a-1) = dx
                  endif
               endif
@@ -52,6 +53,6 @@ subroutine NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerHalfSide, cutoff, FCCs
      enddo
   enddo
   ! atom 1 has a-1 neighbors
-  neighborList(1) = a-1
+  neighborList(1,1) = a-1
 
 end subroutine NEIGH_RVEC_F_periodic_FCC_neighborlist

@@ -38,9 +38,9 @@ program TEST_NAME_STR
   integer(kind=kim_intptr), parameter :: SizeOne           = 1
 
   ! neighbor list
-  integer, allocatable          :: neighborList(:)
+  integer, allocatable          :: neighborList(:,:)
   integer, allocatable          :: NLRvecLocs(:)
-  double precision, allocatable :: RijList(:,:)
+  double precision, allocatable :: RijList(:,:,:)
 
 
   !
@@ -152,16 +152,17 @@ program TEST_NAME_STR
   CellsPerCutoff = ceiling(cutoff/MinSpacing+ 0.05d0) ! the 0.05 is a saftey factor
   NNeighbors = 4*((2*CellsPerCutoff + 1)**3)
   ! compute Rij neighbor list where everything is an image of atom 1
-  allocate(neighborList(NNeighbors))
-  allocate(RijList(3,NNeighbors))
+  allocate(neighborList(NNeighbors+1,N))
+  allocate(RijList(3,NNeighbors+1,N))
   ! generate neighbor list
   Spacings(1) = MinSpacing
-  call NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerCutoff, (cutoff+0.75), Spacings(1), neighborList, RijList)
+  call NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerCutoff, (cutoff+0.75), Spacings(1), NNeighbors, neighborList, RijList)
 
   ! store pointers to neighbor list object and access function
-  allocate(NLRvecLocs(2))
+  allocate(NLRvecLocs(3))
   NLRvecLocs(1) = loc(neighborList)
   NLRvecLocs(2) = loc(RijList)
+  NLRvecLocs(3) = NNeighbors+1
   ier = kim_api_set_data_f(pkim, "neighObject", SizeOne, loc(NLRvecLocs))
   if (ier.le.0) then
      call report_error(__LINE__, "kim_api_set_data_f", ier)
@@ -191,7 +192,7 @@ program TEST_NAME_STR
 
   ! setup and compute for max spacing
   Spacings(3) = MaxSpacing
-  call NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerCutoff, (cutoff+0.75), Spacings(3), neighborList, RijList)
+  call NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerCutoff, (cutoff+0.75), Spacings(3), NNeighbors, neighborList, RijList)
   ! Call model compute
   call kim_api_model_compute(pkim, ier)
   if (ier.le.0) then
@@ -203,7 +204,7 @@ program TEST_NAME_STR
 
   ! setup and compute for first intermediate spacing
   Spacings(2) = MinSpacing + (2.0 - Golden)*(MaxSpacing - MinSpacing)
-  call NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerCutoff, (cutoff+0.75), Spacings(2), neighborList, RijList)
+  call NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerCutoff, (cutoff+0.75), Spacings(2), NNeighbors, neighborList, RijList)
   ! Call model compute
   call kim_api_model_compute(pkim, ier)
   if (ier.le.0) then
@@ -221,7 +222,7 @@ program TEST_NAME_STR
      ! set new spacing
      Spacings(4) = (Spacings(1) + Spacings(3)) - Spacings(2)
      ! compute new neighbor lists (could be done more intelligently, I'm sure)
-     call NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerCutoff, (cutoff+0.75), Spacings(4), neighborList, RijList)
+     call NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerCutoff, (cutoff+0.75), Spacings(4), NNeighbors, neighborList, RijList)
      ! Call model compute
      call kim_api_model_compute(pkim, ier)
      if (ier.le.0) then
