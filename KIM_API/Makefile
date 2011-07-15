@@ -10,7 +10,7 @@
 include Include.mk
 
 # create list of models
-MODELS_TARGETS := $(addprefix ., $(addsuffix .make-temp, $(notdir $(shell find $(KIM_MODELS_DIR) -maxdepth 2 -mindepth 2 -printf "%P\n" | grep -E "^([^/]*)/\1\.$(CODE_EXTENSIONS)$$" | sed -e "s/\([^/]*\)\/.*/\1/"))))
+MODELS_TARGETS := $(addprefix ., $(addsuffix .make-temp, $(notdir $(shell find $(KIM_MODELS_DIR) -maxdepth 2 -mindepth 2 -print | sed -e 's/.*\/\([^\/]*\/[^\/]*\)/\1/' | grep -E "^([^/]*)/\1\.$(CODE_EXTENSIONS)$$" | sed -e "s/\([^/]*\)\/.*/\1/"))))
 # create list of models that have been deleted from the $(KIM_MODELS_DIR) since the last time make was executed
 DELETED_MODELS_TARGETS := $(filter-out $(MODELS_TARGETS), $(shell find . -name ".*.make-temp" -exec basename {} \;))
 # If there are deleted models, remove files and touch .models-deleted to force a reconfigure 
@@ -29,7 +29,7 @@ tests: aKIMservice_test KIMserviceTest
 Makefile: Include.mk
 	@touch Makefile
 
-libkim.a: models_check $(ALLOBJ) 
+libkim.a: $(ALLOBJ) 
 	ar rcs  $@ $(ALLOBJ)
 
 KIMservice.o: model_init_include.h model_init_include.cpp KIMservice.h KIMservice.cpp Makefile
@@ -73,13 +73,6 @@ $(MODELS_TARGETS): .models-deleted
 model_init_include.h model_init_include.cpp: Makefile .models-deleted $(MODELS_TARGETS)
 
 .PHONY: all tests clean models_check
-
-models_check:
-	@if [[ "$(MODELS_TARGETS)" == "" && "$(KIM_DYNAMIC)" == "" ]]; then \
-        echo "*************************************************************************"; \
-        echo "*******  Can't compile the API for static linking with no Models  *******"; \
-        echo "*************************************************************************"; \
-        false; else true; fi
 
 clean:
 	rm -f *.o *.a *.mod  KIMserviceTest  aKIMservice_test  model_init_include.{h,cpp} .*.make-temp .models-deleted RUN/* 

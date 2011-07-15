@@ -12,8 +12,8 @@
 
 include $(KIM_DIR)KIM_API/Include.mk
 
-MODELS_LIST = $(notdir $(shell find $(KIM_MODELS_DIR) -maxdepth 2 -mindepth 2 -printf "%P\n" | grep -E "^([^/]*)/\1\.$(CODE_EXTENSIONS)$$" | sed -e "s/\([^/]*\)\/.*/\1/"))
-TESTS_LIST  = $(notdir $(shell find $(KIM_TESTS_DIR)  -maxdepth 2 -mindepth 2 -printf "%P\n" | grep -E "^([^/]*)/\1\.$(CODE_EXTENSIONS)$$" | sed -e "s/\([^/]*\)\/.*/\1/"))
+MODELS_LIST = $(notdir $(shell find $(KIM_MODELS_DIR) -maxdepth 2 -mindepth 2 -print | sed -e 's/.*\/\([^\/]*\/[^\/]*\)/\1/' | grep -E "^([^/]*)/\1\.$(CODE_EXTENSIONS)$$" | sed -e "s/\([^/]*\)\/.*/\1/"))
+TESTS_LIST  = $(notdir $(shell find $(KIM_TESTS_DIR)  -maxdepth 2 -mindepth 2 -print | sed -e 's/.*\/\([^\/]*\/[^\/]*\)/\1/' | grep -E "^([^/]*)/\1\.$(CODE_EXTENSIONS)$$" | sed -e "s/\([^/]*\)\/.*/\1/"))
 
 .PHONY: all openkim-api clean pristine                     \
         kim-api-all kim-api-clean                          \
@@ -23,7 +23,7 @@ TESTS_LIST  = $(notdir $(shell find $(KIM_TESTS_DIR)  -maxdepth 2 -mindepth 2 -p
 
 
 # compile everything in the standard directories
-all: kim-api-all $(patsubst %,%-all,$(MODELS_LIST)) $(patsubst %,%-all,$(TESTS_LIST))
+all: models_check kim-api-all $(patsubst %,%-all,$(MODELS_LIST)) $(patsubst %,%-all,$(TESTS_LIST))
 
 # other targets 
 examples: examples_legos-all   # generate the example codes
@@ -63,3 +63,11 @@ $(patsubst %,%-all,$(TESTS_LIST)): | kim-api-all $(patsubst %,%-all,$(MODELS_LIS
 $(patsubst %,%-clean,$(TESTS_LIST)):
 	$(MAKE) -C $(KIM_TESTS_DIR)$(patsubst %-clean,%,$@) clean
 	@echo
+
+models_check:
+	@if [[ "$(MODELS_LIST)" == "" && "$(KIM_DYNAMIC)" == "" ]]; then \
+        echo "*************************************************************************"; \
+        echo "*******  Can't compile the API for static linking with no Models  *******"; \
+        echo "*************************************************************************"; \
+        false; else true; fi
+
