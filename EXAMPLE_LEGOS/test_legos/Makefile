@@ -150,9 +150,9 @@ test_Ar_free_cluster: program_free_cluster.frag MI_OPBC_neighborlist.frag NEIGH_
 	echo "forces                  real*8       force      standard                [numberOfAtoms,3]" \
                                                           >> $(KIM_TESTS_DIR)$@/$@.kim
         # make .F90 file in the directory
-	cat program_free_cluster_CLUSTER.frag | $(SED_CMD) \
-                                              | sed -e 's/SPECIES_NAME_STR/Ar/g' \
-                                              | sed -e 's/FCC_SPACING_STR/5.26d0 ! in angstroms/g' \
+	cat program_free_cluster.frag | $(SED_CMD) \
+                                      | sed -e 's/SPECIES_NAME_STR/Ar/g' \
+                                      | sed -e 's/FCC_SPACING_STR/5.26d0 ! in angstroms/g' \
                                                           >  $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
 	cat MI_OPBC_neighborlist.frag                     >> $(KIM_TESTS_DIR)$@/$@.F90
@@ -211,9 +211,9 @@ test_Ne_free_cluster: program_free_cluster.frag MI_OPBC_neighborlist.frag NEIGH_
 	echo "forces                  real*8       force      standard                [numberOfAtoms,3]" \
                                                           >> $(KIM_TESTS_DIR)$@/$@.kim
         # make .F90 file in the directory
-	cat program_free_cluster_CLUSTER.frag | $(SED_CMD) \
-                                              | sed -e 's/SPECIES_NAME_STR/Ne/g' \
-                                              | sed -e 's/FCC_SPACING_STR/4.430d0 ! in angstroms/g' \
+	cat program_free_cluster.frag | $(SED_CMD) \
+                                      | sed -e 's/SPECIES_NAME_STR/Ne/g' \
+                                      | sed -e 's/FCC_SPACING_STR/4.430d0 ! in angstroms/g' \
                                                           >  $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
 	cat MI_OPBC_neighborlist.frag                     >> $(KIM_TESTS_DIR)$@/$@.F90

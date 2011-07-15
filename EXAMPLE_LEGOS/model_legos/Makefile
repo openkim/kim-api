@@ -118,7 +118,7 @@ model_Ar_P_LJ_MI_OPBC_H_F: $(COMMON_FRAGMENTS) mi_opbc_neigh_pure_compute_local_
         # make README file in the directory
 	cat model_LJ_README | $(SED_CMD) | sed -e "s/NBC_NAME_STR/MI-OPBC-[H|F]/g" >  $(KIM_MODELS_DIR)$@/README
         # make Makefile in the directory
-	cat model_Makefile | $(SED_CMD)                                         >  $(KIM_MODELS_DIR)$@/Makefile
+	cat model_Makefile | $(SED_CMD)                                            >  $(KIM_MODELS_DIR)$@/Makefile
         # make .kim file in the directory
 	cat descriptor_file_start | $(SED_CMD) \
                                   | sed -e 's/SPECIES_LINE_STR/Ar                      spec                    1/g' \

@@ -171,7 +171,15 @@ program TEST_NAME_STR
   coords(:,1) = 0.0d0
 
 
-  MaxCutoff = cutoff + 4.0d0
+  ! set max cutoff
+  MaxCutoff = cutoff + 2.0d0
+  !  set initial cutoff
+  param_cutoff = cutoff - 2.0d0
+  ier = kim_api_model_reinit(pkim)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_model_reinit", ier)
+     stop
+  endif
   do while (cutoff .le. MaxCutoff)
      ! set up the periodic_cut atom neighbor list
      !

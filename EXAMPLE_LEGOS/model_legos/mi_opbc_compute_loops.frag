@@ -11,6 +11,14 @@
     endif
     call free(pNBC_Method) ! don't forget to release the memory...
 
+    ! get boxlength
+    pboxlength = kim_api_get_data_f(pkim,"boxlength",ier);
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_data", ier);
+       return
+    endif
+
+
     !  Compute energy and forces
     !
     do i = 1,numberOfAtoms

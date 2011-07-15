@@ -65,6 +65,7 @@ program TEST_NAME_STR
   integer N4
   real*8, pointer  :: coords(:,:), forces(:,:)
   integer, pointer :: atomTypes(:)
+  integer :: middleDum
   N4 = N
 
   
@@ -173,14 +174,14 @@ program TEST_NAME_STR
   ! Set values
   numberOfAtoms   = N
   numberAtomTypes = ATypes
-  atomTypes(:)    = kim_api_get_atypecode_f(pkim, "ATOM_NAME_STR", ier)
+  atomTypes(:)    = kim_api_get_atypecode_f(pkim, "SPECIES_NAME_STR", ier)
   if (ier.le.0) then
      call report_error(__LINE__, "kim_api_get_atypecode_f", ier)
      stop
   endif
 
   ! set up the cluster atom positions
-  call create_FCC_configuration(.false., FCCspacing, nCellsPerSide, coords)
+  call create_FCC_configuration(FCCspacing, nCellsPerSide, .false., coords, middleDum)
   if (nbc.le.1) boxlength(:)  = 600.d0 ! large enough to make the cluster isolated
 
   ! compute neighbor lists
@@ -220,31 +221,31 @@ program TEST_NAME_STR
   endif
 
   if (nbc.eq.0) then
-     ier = kim_api_set_data_f(pkim, "get_half_neigh", SizeOne, loc(get_MI_PURE_neigh))
+     ier = kim_api_set_data_f(pkim, "get_half_neigh", SizeOne, loc(get_neigh_no_Rij))
      if (ier.le.0) then
         call report_error(__LINE__, "kim_api_set_data_f", ier)
         stop
      endif
   elseif (nbc.eq.1) then
-     ier = kim_api_set_data_f(pkim, "get_full_neigh", SizeOne, loc(get_MI_PURE_neigh))
+     ier = kim_api_set_data_f(pkim, "get_full_neigh", SizeOne, loc(get_neigh_no_Rij))
      if (ier.le.0) then
         call report_error(__LINE__, "kim_api_set_data_f", ier)
         stop
      endif
   elseif (nbc.eq.2) then
-     ier = kim_api_set_data_f(pkim, "get_half_neigh", SizeOne, loc(get_MI_PURE_neigh))
+     ier = kim_api_set_data_f(pkim, "get_half_neigh", SizeOne, loc(get_neigh_no_Rij))
      if (ier.le.0) then
         call report_error(__LINE__, "kim_api_set_data_f", ier)
         stop
      endif
   elseif (nbc.eq.3) then
-     ier = kim_api_set_data_f(pkim, "get_full_neigh", SizeOne, loc(get_MI_PURE_neigh))
+     ier = kim_api_set_data_f(pkim, "get_full_neigh", SizeOne, loc(get_neigh_no_Rij))
      if (ier.le.0) then
         call report_error(__LINE__, "kim_api_set_data_f", ier)
         stop
      endif
   elseif (nbc.eq.4) then
-     ier = kim_api_set_data_f(pkim, "get_full_neigh", SizeOne, loc(get_RVEC_neigh))
+     ier = kim_api_set_data_f(pkim, "get_full_neigh", SizeOne, loc(get_neigh_Rij))
      if (ier.le.0) then
         call report_error(__LINE__, "kim_api_set_data_f", ier)
         stop
