@@ -265,7 +265,7 @@ contains
                 virial = virial + 0.5d0*r*dphi             ! accumul. virial=sum r(dV/dr)
              endif                                         !
              if (comp_force.eq.1) then                     !
-                force(:,i) = force(:,i) - dphi*Rij(:,jj)/r ! accumulate forces
+                force(:,i) = force(:,i) + dphi*Rij(:,jj)/r ! accumulate forces
              endif
           endif
        enddo

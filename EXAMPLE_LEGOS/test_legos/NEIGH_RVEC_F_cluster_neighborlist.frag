@@ -26,7 +26,7 @@ subroutine NEIGH_RVEC_F_cluster_neighborlist(numberOfAtoms, coords, cutoff, NN, 
   do i=1,numberOfAtoms
      a = 1
      do j=1,numberOfAtoms
-        dx = coords(:, i) - coords(:, j)
+        dx = coords(:, j) - coords(:, i)
         r2 = dot_product(dx, dx)
         if (r2.le.cutoff2) then
            if (i.ne.j) then

@@ -306,7 +306,7 @@ static void compute(void* km, int* ier)
             {
                for (k = 0; k < DIM; ++k)
                {
-                  force[currentAtom*DIM + k] -= dphi*Rij[jj*DIM + k]/R;
+                  force[currentAtom*DIM + k] += dphi*Rij[jj*DIM + k]/R;
                }
             }
          }

@@ -39,7 +39,7 @@ subroutine NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerHalfSide, cutoff, FCCs
         do k=-CellsPerHalfSide,CellsPerHalfSide
            latVec(3) = k*FCCspacing
            do m=1,4
-              dx = -latVec - FCCshifts(:,m)
+              dx = latVec + FCCshifts(:,m)
               if (dot_product(dx,dx).lt.cutoff2) then
                  if (.not.( (i.eq.0) .and. (j.eq.0) .and. (k.eq.0) .and. (m.eq.1) )) then
                     ! we have a neighbor

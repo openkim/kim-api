@@ -314,7 +314,7 @@ static void compute(void* km, int* ier)
             Rsqij = 0.0;
             for (k = 0; k < DIM; ++k)
             {
-               Rsqij += (coords[i*DIM + k] - coords[j*DIM + k])*(coords[i*DIM + k] - coords[j*DIM + k]);
+               Rsqij += (coords[j*DIM + k] - coords[i*DIM + k])*(coords[j*DIM + k] - coords[i*DIM + k]);
             }
 
             if (Rsqij < *cutsq)
@@ -345,8 +345,8 @@ static void compute(void* km, int* ier)
                {
                   for (k = 0; k < DIM; ++k)
                   {
-                     force[i*DIM + k] -= dphi*(coords[i*DIM + k] - coords[j*DIM + k])/R;
-                     force[j*DIM + k] += dphi*(coords[i*DIM + k] - coords[j*DIM + k])/R;
+                     force[i*DIM + k] += dphi*(coords[j*DIM + k] - coords[i*DIM + k])/R;
+                     force[j*DIM + k] -= dphi*(coords[j*DIM + k] - coords[i*DIM + k])/R;
                   }
                }
             }
@@ -395,7 +395,7 @@ static void compute(void* km, int* ier)
                {
                   if (NBC < 5) /* MI-OPBC-H/F & NEIGH-PURE-H/F */
                   {
-                     dx[k] = coords[currentAtom*DIM + k] - coords[neighListOfCurrentAtom[jj]*DIM + k];
+                     dx[k] = coords[neighListOfCurrentAtom[jj]*DIM + k] - coords[currentAtom*DIM + k];
                      
                      if ((NBC < 3) && (fabs(dx[k]) > 0.5*boxlength[k])) /* MI-OPBC-H/F */
                      {
@@ -439,8 +439,8 @@ static void compute(void* km, int* ier)
                   {
                      for (k = 0; k < DIM; ++k)
                      {
-                        force[currentAtom*DIM + k] -= dphi*dx[k]/R;
-                        if (1 == (NBC%2)) force[neighListOfCurrentAtom[jj]*DIM + k] += dphi*dx[k]/R;
+                        force[currentAtom*DIM + k] += dphi*dx[k]/R;
+                        if (1 == (NBC%2)) force[neighListOfCurrentAtom[jj]*DIM + k] -= dphi*dx[k]/R;
                      }
                   }
                }
@@ -485,7 +485,7 @@ static void compute(void* km, int* ier)
                {
                   if (NBC < 5) /* MI-OPBC-H/F & NEIGH-PURE-H/F */
                   {
-                     dx[k] = coords[currentAtom*DIM + k] - coords[neighListOfCurrentAtom[jj]*DIM + k];
+                     dx[k] = coords[neighListOfCurrentAtom[jj]*DIM + k] - coords[currentAtom*DIM + k];
                      
                      if ((NBC < 3) && (fabs(dx[k]) > 0.5*boxlength[k])) /* MI-OPBC-H/F */
                      {
@@ -529,8 +529,8 @@ static void compute(void* km, int* ier)
                   {
                      for (k = 0; k < DIM; ++k)
                      {
-                        force[currentAtom*DIM + k] -= dphi*dx[k]/R;
-                        if (1 == (NBC%2)) force[neighListOfCurrentAtom[jj]*DIM + k] += dphi*dx[k]/R;
+                        force[currentAtom*DIM + k] += dphi*dx[k]/R;
+                        if (1 == (NBC%2)) force[neighListOfCurrentAtom[jj]*DIM + k] -= dphi*dx[k]/R;
                      }
                   }
                }

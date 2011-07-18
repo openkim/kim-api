@@ -41,7 +41,7 @@
        !
        do jj = 1, numnei
           j = nei1atom(jj)
-          Rij = coor(:,i) - coor(:,j)                   ! distance vector between i j
+          Rij = coor(:,j) - coor(:,i)                   ! distance vector between i j
           where ( abs(Rij) > 0.5d0*boxlength )          ! periodic boundary conditions
              Rij = Rij - sign(boxlength,Rij)            ! applied where needed.
           end where                                     ! 
@@ -70,9 +70,9 @@
                 endif                                   !
              endif                                      !
              if (comp_force.eq.1) then                  !
-                force(:,i) = force(:,i) - dphi*Rij/r    ! accumulate forces
+                force(:,i) = force(:,i) + dphi*Rij/r    ! accumulate forces
                 if (nbc.eq.0) then                      !
-                   force(:,j) = force(:,j) + dphi*Rij/r ! (Fji = -Fij)
+                   force(:,j) = force(:,j) - dphi*Rij/r ! (Fji = -Fij)
                 endif                                   !
              endif
           endif

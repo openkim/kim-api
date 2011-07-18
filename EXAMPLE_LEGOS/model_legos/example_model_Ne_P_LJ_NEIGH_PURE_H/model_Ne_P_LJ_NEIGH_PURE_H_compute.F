@@ -102,9 +102,9 @@ C       reset neighbor iterator to beginning
                         xj(1) = x(1,j)
                         xj(2) = x(2,j)
                         xj(3) = x(3,j)
-                        dx(1) = xi(1)-xj(1)
-                        dx(2) = xi(2)-xj(2)
-                        dx(3) = xi(3)-xj(3)
+                        dx(1) = xj(1)-xi(1)
+                        dx(2) = xj(2)-xi(2)
+                        dx(3) = xj(3)-xi(3)
                         r2=dx(1)*dx(1) + dx(2)*dx(2) + dx(3)*dx(3)
                         IF (r2.LT.1.0E-14) THEN
                          WRITE(*,'("i=",I5,", j=",I5)') i,j
@@ -117,13 +117,13 @@ C       reset neighbor iterator to beginning
                                   ea(j)=ea(j)+(vij-energycutof)/2.0
                                 ENDIF
                                 IF(f_flag.eq.1) THEN
-                                 f(1,i) =f(1,i) - dvmr*dx(1)
-                                 f(2,i) =f(2,i) - dvmr*dx(2)
-                                 f(3,i) =f(3,i) - dvmr*dx(3)
+                                 f(1,i) =f(1,i) + dvmr*dx(1)
+                                 f(2,i) =f(2,i) + dvmr*dx(2)
+                                 f(3,i) =f(3,i) + dvmr*dx(3)
 
-                                 f(1,j) =f(1,j) + dvmr*dx(1)
-                                 f(2,j) =f(2,j) + dvmr*dx(2)
-                                 f(3,j) =f(3,j) + dvmr*dx(3)
+                                 f(1,j) =f(1,j) - dvmr*dx(1)
+                                 f(2,j) =f(2,j) - dvmr*dx(2)
+                                 f(3,j) =f(3,j) - dvmr*dx(3)
                                 ENDIF
                         ENDIF
  102            CONTINUE

@@ -6,7 +6,7 @@
     do i = 1, numberOfAtoms-1
        ! Loop over atoms > i
        do j = i+1, numberOfAtoms
-          Rij = coor(:,i) - coor(:,j)                   ! distance vector between i j
+          Rij = coor(:,j) - coor(:,i)                   ! distance vector between i j
           Rsqij = dot_product(Rij,Rij)                  ! compute square distance
           if ( Rsqij < model_cutsq ) then               ! particles are interacting?
              r = sqrt(Rsqij)                            ! compute distance
@@ -22,8 +22,8 @@
                 virial = virial + r*dphi                ! accumul. virial=sum r(dV/dr)
              endif                                      !
              if (comp_force.eq.1) then                  !
-                force(:,i) = force(:,i) - dphi*Rij/r    ! accumulate forces
-                force(:,j) = force(:,j) + dphi*Rij/r    ! (Fji = -Fij)
+                force(:,i) = force(:,i) + dphi*Rij/r    ! accumulate forces
+                force(:,j) = force(:,j) - dphi*Rij/r    ! (Fji = -Fij)
              endif
           endif
        enddo

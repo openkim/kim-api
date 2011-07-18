@@ -393,7 +393,7 @@ void fcc_periodic_neighborlist(int CellsPerHalfSide, double cutoff,
                r2 = 0.0;
                for (n=0;n<DIM;++n)
                {
-                  dx[n] = -latVec[n] - FCCshifts[m][n];
+                  dx[n] = latVec[n] + FCCshifts[m][n];
                   r2 += dx[n]*dx[n];
                }
 
@@ -643,7 +643,7 @@ void fcc_cluster_neighborlist(int numberOfAtoms, double* coords,
          r2 = 0.0;
          for (k = 0; k < DIM; ++k)
          {
-            dx[k] = coords[i*DIM + k] - coords[j*DIM + k];
+            dx[k] = coords[j*DIM + k] - coords[i*DIM + k];
             r2 += dx[k]*dx[k];
          }
 

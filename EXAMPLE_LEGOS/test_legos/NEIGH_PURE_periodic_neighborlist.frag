@@ -26,7 +26,7 @@ subroutine NEIGH_PURE_periodic_neighborlist(half, numberOfAtoms, coords, cutoff,
   do i=1,numberOfAtoms
      a = 1
      do j=1,numberOfAtoms
-        dx = coords(:, i) - coords(:, j)
+        dx = coords(:, j) - coords(:, i)
         r2 = dot_product(dx, dx)
         if (r2.le.cutoff2) then
            ! atom j is a neighbor of atom i

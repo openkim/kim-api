@@ -38,7 +38,7 @@ subroutine NEIGH_RVEC_F_periodic_B2_neighborlist(CellsPerHalfSide, cutoff, B2spa
            do k=-CellsPerHalfSide,CellsPerHalfSide
               latVec(3) = k*B2spacing
               do m=1,2
-                 dx = B2shifts(:,atom) - (latVec + B2shifts(:,m))
+                 dx = (latVec + B2shifts(:,m)) - B2shifts(:,atom)
                  if (dot_product(dx,dx).lt.cutoff2) then
                     if (.not.( (i.eq.0) .and. (j.eq.0) .and. (k.eq.0) .and. (m.eq.atom) )) then
                        ! we have a neighbor
