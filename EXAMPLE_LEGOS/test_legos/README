@@ -4,18 +4,117 @@ the example tests
 
 The following files are in this directory:
 
+MI_OPBC_neighborlist.frag
+     This file contains the routine for creating neighbor lists for use with the
+     MI-OPBC method.
+
 Makefile
-    This is the make file that creates the example Tests directories in the
-    $KIM_TESTS_DIR directory
+     This is the make file that creates the example Tests directories in the
+     $KIM_TESTS_DIR directory
+
+NEIGH_PURE_cluster_neighborlist.frag
+     This file contains the routine for creating neighbor lists for use with the
+     NEIGH-PURE method for free cluster systems.
+
+NEIGH_PURE_periodic_neighborlist.frag
+     This file contains the routine for creating neighbor lists for use with the
+     NEIGH-PURE method for periodic FCC systems.
+
+NEIGH_RVEC_F_cluster_neighborlist.frag
+     This file contains the routine for creating neighbor lists for use with the
+     NEIGH-RVEC method for free cluster systems.
+
+NEIGH_RVEC_F_periodic_B2_neighborlist.frag
+     This file contains the routine for creating neighbor lists for use with the
+     NEIGH-RVEC method for periodic B2 systems.
+
+NEIGH_RVEC_F_periodic_FCC_neighborlist.frag
+     This file contains the routine for creating neighbor lists for use with the
+     NEIGH-RVEC method for periodic FCC systems.
 
 README
-    This file
+     This file
+
+create_FCC_configuration.frag
+     This file contains the routine for creating a cluster of atoms in a perfect
+     FCC crystal configuration.
+
+descriptor_file_input
+     This file contains the input section of the KIM descriptor file.
+
+descriptor_file_neighborlist
+     This file contains the neighbor list entries of the KIM descriptor file.
+
+descriptor_file_output
+     This file contains the output section of the KIM descriptor file.
+
+descriptor_file_start
+     This file contains the beginning of the KIM descriptor file.
 
 example_Sample_01_compute_example_c/
-    Directory containing the Sample_01_compute_example_c Test
+     Directory containing the Sample_01_compute_example_c Test
 
 example_Sample_01_compute_example_f/
-    Directory containing the Sample_01_compute_example_f Test
+     Directory containing the Sample_01_compute_example_f Test
 
 example_test_Ar_multiple_models_c/
-    Directory containing the test_Ar_multiple_models_c Test
+     Directory containing the test_Ar_multiple_models_c Test
+
+get_neigh_Rij.frag
+     This file contains the routine for accessing neighbor lists that include
+     Rij relative position vectors.
+
+get_neigh_no_Rij.frag
+     This file contains the routine for accessing neighbor lists that do not 
+     include Rij relative position vectors.
+
+program_free_cluster.frag
+     This file contains the main program for the test_*_free_cluster example
+     test.
+
+program_free_cluster_CLUSTER.frag
+     This file contains the main program for the test_*_free_cluster_CLUSTER
+     example test.
+
+program_periodic_B2_NEIGH_RVEC.frag
+     This file contains the main program for the test_*_periodic_B2_NEIGH_RVEC
+     example test.
+
+program_periodic_FCC_MI_OPBC.frag
+     This file contains the main program for the test_*_periodic_FCC_MI_OPBC
+     example test.
+
+program_periodic_FCC_NEIGH_PURE.frag
+     This file contains the main program for the test_*_periodic_FCC_NEIGH_PURE
+     example test.
+
+program_periodic_FCC_NEIGH_RVEC.frag
+     This file contains the main program for the test_*_periodic_FCC_NEIGH_RVEC
+     example test.
+
+program_periodic_cut_FCC_NEIGH_RVEC.frag
+     This file contains the main program for the 
+     test_*_periodic_cut_FCC_NEIGH_PURE example test.
+
+report_error.frag
+     This file contain the routine that reports errors.
+
+test_EXAMPLES.README
+     This file contains a table that describes the capabilities of the example
+     tests.
+
+test_Makefile
+     This file contains the Makefile that is used to generate Makefile files for
+     the example tests.
+
+test_free_cluster_README
+     This file contains the README file that is used to generate REAMDE files
+     for the example cluster tests.
+
+test_periodic_B2_README
+     This file contains the README file that is used to generate REAMDE files
+     for the example B2 tests.
+
+test_periodic_FCC_README
+     This file contains the README file that is used to generate REAMDE files
+     for the example periodic FCC tests.
