@@ -15,8 +15,8 @@ bash:
 (Make sure to include the trailing slash.)
 
 
-3. By default, all makefiles use the GNU compilers for 64 bit linux. 
-In order to use the Intel compiler, define the environment variable KIM_INTEL
+3. By default, all makefiles use the GNU compilers for 64 bit linux.  In order
+   to use the Intel compiler, define the environment variable KIM_INTEL
 
 bash: 
 > export KIM_INTEL="yes". 
@@ -48,32 +48,34 @@ bash:
    Fortran the name of the Model can be piped in using an `echo' command.
    For example, the following Fortran Test reads in one Model:
 
-> cd TESTs/test_Ar_free_cluster_CLUSTER_f90
+> cd TESTs/test_Ar_free_cluster_CLUSTER
 
-> echo "model_Ar_LJ_CLUSTER_f90" | ./test_Ar_free_cluster_CLUSTER_f90
+> echo "model_Ar_P_LJ_CLUSTER" | ./test_Ar_free_cluster_CLUSTER
 
    For Tests written in C, the Model name(s) can be provided as command
    line arguments. For example, the following C Test reads in two Models:
 
-> cd TESTs/test_Ar_multiple_models_c
+> cd TESTs/test_Ar_multiple_models
 
-> ./test_Ar_multiple_models_c model_Ar_LJ_NEIGH_RVEC_F_f90 model_Ar_Morse_c
+> ./test_Ar_multiple_models model_Ar_P_LJ_NEIGH_RVEC_F model_Ar_P_Morse
 
 (See the README files in the Test directories for an explanation of what 
 the Tests do.)
 
-6. Each Test (and Model) has its own make file for compiling and linking. 
-If changes are made to the code, perform step (4) again (from the top directory).
+6. Each Test (and Model) has its own make file for compiling and linking.  If
+   changes are made to the code, perform step (4) again (from the top
+   directory).
 
 
 7. In case of using a non-standard location for any of the directories KIM_API,
-TESTs, or MODELs one or more of the following environment variables must be set:
+   TESTs, or MODELs one or more of the following environment variables must be
+   set:
      KIM_API_DIR
      KIM_TESTS_DIR
      KIM_MODELS_DIR
 
 8. The openkim-api package provides the possibility of creating dynamic load
-libraries by setting the KIM_DYNAMIC environment variable. 
+   libraries by setting the KIM_DYNAMIC environment variable.
 
 bash:
 > export KIM_DYNAMIC=yes
@@ -86,32 +88,32 @@ and call initialize routines dynamically (during runtime). The use of dynamic
 linking may prevent problems of name clashes when multiple Models are read in
 by a Test. This is still being investigated.
 
-Note: Currently static linking is the default option because older
-      versions of the gnu compiler do not provide dynamic loading by default.
-      In addition, some versions of MPI only work with static linking.
-      In future releases, it is expected that dynamic linking will become
-      the default method.
+Note: Currently static linking is the default option because older versions of
+      the gnu compiler do not provide dynamic loading by default.  In addition,
+      some versions of MPI only work with static linking.  In future releases,
+      it is expected that dynamic linking will become the default method.
        
 
 9. The openkim-api package provides wrapper routines for accessing the neighbor
-list object. These routines check to ensure that the maximum number of
-neighbors for an atom does not exceed KIM_API_MAX_NEIGHBORS. If this
-environment variable is not set, the default value is 512.  To change the value
-of this parameter, for example, to 1024 (or any other value) use the command:
+   list object. These routines check to ensure that the maximum number of
+   neighbors for an atom does not exceed KIM_API_MAX_NEIGHBORS. If this
+   environment variable is not set, the default value is 512.  To change the
+   value of this parameter, for example, to 1024 (or any other value) use the
+   command:
 
 bash:
 > export KIM_API_MAX_NEIGHBORS=1024
 
 
-NON-STANDARD COMPILERS: If you need to make changes to compiler flags
-either because you are using a non-standard compiler or an older version
-of the gnu compiler, change lines 53-62 in KIM_API/Include.mk
+NON-STANDARD COMPILERS: If you need to make changes to compiler flags either
+because you are using a non-standard compiler or an older version of the gnu
+compiler, change lines 53-62 in KIM_API/Include.mk
 
-TROUBLESHOOTING: By default, the make system uses the g++ compiler with 
-the -lgfortran option to link compiled FORTRAN executables. If (for some
-versions of linux or GNU compilers) linking of FORTRAN executables with the
-g++ compiler does not work, try gfortran with the -lstdc++ option.  See lines
-62-63 in the Include.mk file (change them to lines 64-65). 
+TROUBLESHOOTING: By default, the make system uses the g++ compiler with the
+-lgfortran option to link compiled FORTRAN executables. If (for some versions
+of linux or GNU compilers) linking of FORTRAN executables with the g++ compiler
+does not work, try gfortran with the -lstdc++ option.  See lines 62-63 in the
+Include.mk file (change them to lines 64-65).
 
 GNU compilers tested with version 4.2.x or higher, the Intel compiler must be
 version 11.1 or higher.

@@ -13,16 +13,17 @@ atoms required for many applications, and to be able to study their dynamics
 over reasonable time scales, it is generally necessary to develop approximate
 models of interatomic bonding, referred to as "interatomic potentials" or
 "interatomic models".  Once such a model is at hand, one can in principle
-predict almost any mechanical property (and some thermal properties) of the 
-element (or elements) it purports to describe. Generally, these models define 
-the forces and energies used for sophisticated simulations using methodologies 
+predict almost any mechanical property (and some thermal properties) of the
+element (or elements) it purports to describe. Generally, these models define
+the forces and energies used for sophisticated simulations using methodologies
 such as molecular dynamics, Monte Carlo, lattice dynamics free energy methods,
-and multiscale methods. From such simulations, complex material properties 
-and phenomena can be extracted, including such things as melting temperatures,
+and multiscale methods. From such simulations, complex material properties and
+phenomena can be extracted, including such things as melting temperatures,
 solid-liquid interface phenomena, fracture properties, and dislocation
-nucleation and motion.  
+nucleation and motion.
 
-This software package is an implementation of the application programming interface (API) standard for interatomic models being developed as part of the
+This software package is an implementation of the application programming
+interface (API) standard for interatomic models being developed as part of the
 Knowledgebase of Interatomic Models (KIM) project.  KIM (http://openKIM.org) is
 a current initiative to develop and implement standards for the atomistic
 simulation of materials.  The effort aims to help bring order to the efforts of
@@ -30,13 +31,19 @@ the education, research, and industrial communities and to make it easier for
 new (and existing) scientists to leverage the work of others in this important
 field. The KIM project has several main objectives:
 
-1. Development of an online open resource for standardized testing and long-term warehousing of interatomic models (potentials and force fields) and data.
+1. Development of an online open resource for standardized testing and
+   long-term warehousing of interatomic models (potentials and force fields)
+   and data.
 
-2. Development of an API standard for atomistic simulations, which will allow any interatomic model to work seamlessly with any atomistic simulation code.
+2. Development of an API standard for atomistic simulations, which will allow
+   any interatomic model to work seamlessly with any atomistic simulation code.
 
-3. Fostering the development of a quantitative theory of transferability of interatomic models to provide guidance for selecting application-appropriate models based on rigorous criteria, and error bounds on results.
+3. Fostering the development of a quantitative theory of transferability of
+   interatomic models to provide guidance for selecting application-appropriate
+   models based on rigorous criteria, and error bounds on results.
 
-4. Striving for the permanence of the KIM project, including development of a sustainability plan, and establishment of a long-term home for its content.
+4. Striving for the permanence of the KIM project, including development of a
+   sustainability plan, and establishment of a long-term home for its content.
 
 
 THE OPENKIM-API PACKAGE:
@@ -108,32 +115,35 @@ described below.
 This directory (by default, openkim-api-XX.XX.XX) contains the following files
 and directories:
 
-DOCs          -- documentation directory. This directory contains the file
-                 KIM_API_alpha_overview.pdf which provides an overview of
-                 this release of the openkim-api package, and links to the
-                 files KIMserviceDescriptions.txt and standard.kim.
-                 (See the README file in that directory.)
+DOCs/
+     documentation directory. This directory contains the file
+     KIM_API_alpha_overview.pdf which provides an overview of this release of
+     the openkim-api package, and links to the files KIMserviceDescriptions.txt
+     and standard.kim.  (See the README file in that directory.)
 
-EXAMPLE_LEGOS -- directory containing the pieces of example Models and
-                 Tests that are used to automatically generate working
-                 examples. (This organization facilitates easy maintenance
-                 of the examples.)
+EXAMPLE_LEGOS/
+     directory containing the pieces of example Models and Tests that are used
+     to automatically generate working examples. (This organization facilitates
+     easy maintenance of the examples.)
 
-KIM_API       -- directory containing the openkim-api service routines
+KIM_API/
+     directory containing the openkim-api service routines
         
-MODELs        -- directory containing examples of interatomic Models
+MODELs/
+     directory containing examples of interatomic Models
 
-                 Each Model is stored in its own directory that conforms
-                 to the naming convention specified in standard.kim.
+     Each Model is stored in its own directory that conforms to the naming
+     convention specified in standard.kim.
 
-Makefile      -- make file for compiling the openkim-api services routines and
-                 example Tests and Models.
+Makefile
+     make file for compiling the openkim-api services routines and example
+     Tests and Models.
 
-README        -- this file
+README
+     This file.
  
-TESTs         -- directory containing examples of Tests
+TESTs/
+     directory containing examples of Tests
 
-                 Each Test is stored in its own directory that conforms
-                 to the naming convention specified in standard.kim.
-
--------------------------------------------------------------------------------
+     Each Test is stored in its own directory that conforms to the naming
+     convention specified in standard.kim.
