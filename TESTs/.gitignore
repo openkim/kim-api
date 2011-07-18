@@ -16,5 +16,5 @@ test_Ne_periodic_FCC_MI_OPBC
 test_Ne_periodic_FCC_NEIGH_PURE
 test_Ne_periodic_FCC_NEIGH_RVEC
 test_Ne_periodic_cut_FCC_NEIGH_RVEC
-test_Ar_multiple_models_c
+test_Ar_multiple_models
 

@@ -26,7 +26,7 @@ test_Ar_free_cluster                      F90       NEIGH-RVEC-F    Locator    F
                                                     MI-OPBC-H
                                                     MI-OPBC-F
 
-test_Ar_multiple_models_c                 C         NEIGH-RVEC-F    Locator    Full
+test_Ar_multiple_models                   C         NEIGH-RVEC-F    Locator    Full
                                                                     Iterator
 
 test_Ar_periodic_FCC_MI_OPBC              F90       MI-OPBC-H       Locator    Half

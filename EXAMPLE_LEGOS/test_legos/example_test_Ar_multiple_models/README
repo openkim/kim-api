@@ -1,0 +1,17 @@
+This directory (test_Ar_multiple_models) contains a test that computes the
+energy of a perfect Ar FCC crystal and a finite cluster as a function of
+lattice spacing for two models. The test uses the NEIGH-RVEC-F NBC and locator
+or iterator mode.
+
+Makefile
+    Makefile to compile and build executables with GNU or Intel compilers.
+
+README
+    This file.
+
+test_Ar_multiple_models.c
+    Code for the test.
+
+test_Ar_multiple_models.kim
+    KIM descriptor file for the test.
+

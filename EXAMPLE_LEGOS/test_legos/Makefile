@@ -22,7 +22,7 @@ COMMON_FRAGMENTS = test_Makefile descriptor_file_start descriptor_file_input des
 AUTO_GEN_TESTS = test_Al_free_cluster test_Al_periodic_FCC_MI_OPBC                                             \
                  test_ArNe_periodic_B2_NEIGH_RVEC                                                              \
                  test_Ar_free_cluster_CLUSTER test_Ar_free_cluster                                             \
-                 test_Ar_multiple_models_c                                                                     \
+                 test_Ar_multiple_models                                                                       \
                  test_Ar_periodic_FCC_MI_OPBC test_Ar_periodic_FCC_NEIGH_PURE test_Ar_periodic_FCC_NEIGH_RVEC  \
                  test_Ar_periodic_cut_FCC_NEIGH_RVEC                                                           \
                  test_Ne_free_cluster_CLUSTER test_Ne_free_cluster                                             \
@@ -724,9 +724,9 @@ Sample_01_compute_example_f: example_Sample_01_compute_example_f               \
 	@touch $(KIM_TESTS_DIR)$@
 	cp -rf example_$@/* $(KIM_TESTS_DIR)$@/
 
-test_Ar_multiple_models_c: example_test_Ar_multiple_models_c               \
-                           $(wildcard example_test_Ar_multiple_models_c/*) \
-                           Makefile
+test_Ar_multiple_models: example_test_Ar_multiple_models               \
+                         $(wildcard example_test_Ar_multiple_models/*) \
+                         Makefile
 	mkdir -p $(KIM_TESTS_DIR)$@
 	@touch $(KIM_TESTS_DIR)$@
 	cp -rf example_$@/* $(KIM_TESTS_DIR)$@/
