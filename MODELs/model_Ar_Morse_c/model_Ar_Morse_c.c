@@ -140,6 +140,7 @@ static void compute(void* km, int* ier)
    cutsq      = (double*)   KIM_API_get_data(pkim, "PARAM_FIXED_cutsq",   ier); if (1 > *ier) return;
    energy     = (double*)   KIM_API_get_data(pkim, "energy",              ier); if (1 > *ier) return;
    coords     = (double*)   KIM_API_get_data(pkim, "coordinates",         ier); if (1 > *ier) return;
+   energyPerAtom = (double *) KIM_API_get_data(pkim, "energyPerAtom",     ier); if (1 > *ier) return;
    if ((NBC == 1) || (NBC == 2))
    {
       boxlength = (double*) KIM_API_get_data(pkim, "boxlength",           ier); if (1 > *ier) return;
@@ -165,6 +166,7 @@ static void compute(void* km, int* ier)
       for (i = 0; i < *nAtoms; ++i)
       {
          energyPerAtom[i] = 0.0;
+    
       }
    }
    else
@@ -249,11 +251,15 @@ static void compute(void* km, int* ier)
          /* reset neighbor iterator */
          if (0 == (NBC%2)) /* full list */
          {
+
             *ier = KIM_API_get_full_neigh(pkim, 0, 0, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+
          }
          else /* half list */
          {
+
             *ier = KIM_API_get_half_neigh(pkim, 0, 0, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+
          }
          if (2 != *ier)
          {
@@ -268,6 +274,7 @@ static void compute(void* km, int* ier)
          else /* half list */
          {
             *ier = KIM_API_get_half_neigh(pkim, 0, 1, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+    
          }
          while (1 == *ier)
          {
@@ -663,7 +670,6 @@ void model_ar_morse_c_init_(void *km)
       printf("* ERROR: destroy not found in KIM object.\n");
       exit(1);
    }
-
    /* store model cutoff in KIM object */
    model_cutoff = (double*) KIM_API_get_data(pkim, "cutoff", &ier);
    if (1 > ier)

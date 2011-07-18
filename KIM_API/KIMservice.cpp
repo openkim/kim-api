@@ -751,6 +751,9 @@ KIM_API_model:: KIM_API_model(){
        ErrorCode=1;
        AtomsTypes = NULL;
        nAtomsTypes = 0;
+       locator_neigh_mode=false;
+       iterator_neigh_mode=false;
+       both_neigh_mode=false;
 }
 KIM_API_model:: ~KIM_API_model(){
        //delete [] UnitsSet;
@@ -1257,8 +1260,11 @@ bool KIM_API_model::do_dummy_match(KIM_API_model& tst, KIM_API_model& mdl){
     bool Neigh_BothList_mdl =is_it_in_and_is_it_dummy(mdl, "Neigh_BothList");
 
     bool Neigh_IterAccess_mdl=is_it_in_and_is_it_dummy(mdl, "Neigh_IterAccess");
+    mdl.iterator_neigh_mode=Neigh_IterAccess_mdl;
     bool Neigh_LocaAccess_mdl=is_it_in_and_is_it_dummy(mdl, "Neigh_LocaAccess");
+    mdl.locator_neigh_mode=Neigh_LocaAccess_mdl;
     bool Neigh_BothAccess_mdl=is_it_in_and_is_it_dummy(mdl, "Neigh_BothAccess");
+    mdl.both_neigh_mode=Neigh_BothAccess_mdl;
 
     bool Neigh_CalcRij_mdl=is_it_in_and_is_it_dummy(mdl, "Neigh_CalcRij");
 
@@ -1403,12 +1409,17 @@ bool KIM_API_model::init(char * testinputfile,char* testname, char * modelinputf
         this->irrelevantVars2donotcompute(test,*this);
         
         strcpy(this->NBC_method_current, mdl.NBC_method_current);
-
+        locator_neigh_mode=mdl.locator_neigh_mode;
+        iterator_neigh_mode=mdl.iterator_neigh_mode;
+        both_neigh_mode=mdl.both_neigh_mode;
         test.free(); mdl.free();
         char computestr [] = "compute";
         compute_index = get_index(computestr);
         get_full_neigh_index = get_index("get_full_neigh");
         get_half_neigh_index = get_index("get_half_neigh");
+        support_Rij=false;
+        if (strcmp(NBC_method_current,"NEIGH-RVEC-F")==0) support_Rij=true;
+
         return true;
     }else{
         test.free(); mdl.free();
@@ -1537,6 +1548,7 @@ int KIM_API_model::get_full_neigh(int mode, int request, int *atom,
      KIM_API_model *pkim = this;
     if (baseConvertKey==0) {
         int erkey = (*get_neigh)((void **)&pkim,&locmode, &locrequest, atom, numnei, nei1atom, Rij );
+        if (erkey <= 0) return erkey; // return with error from  supplied by test get_neigh
         if(*numnei > KIM_API_MAX_NEIGHBORS) {
             cout<<endl<< "KIM_API::get_full_neigh: numnei > MAX_NEIGHBORS : ";
             cout<<" "<<*numnei <<" > "<< KIM_API_MAX_NEIGHBORS<<endl;
@@ -1551,12 +1563,13 @@ int KIM_API_model::get_full_neigh(int mode, int request, int *atom,
             return (*get_neigh)((void **)&pkim,&locmode, &req, &at, numnei, nei1atom, Rij );
         }else{
             int erkey = (*get_neigh)((void **)&pkim,&locmode, &req, &at, numnei, nei1atom, Rij );
+            if (erkey <= 0) return erkey; // return with error from  supplied by test get_neigh
             if(*numnei > KIM_API_MAX_NEIGHBORS) {
                 cout<<endl<< "KIM_API::get_full_neigh: numnei > MAX_NEIGHBORS : ";
                 cout<<" "<<*numnei <<" > "<< KIM_API_MAX_NEIGHBORS<<endl;
                 return -4;
             }
-            if (erkey ==0 || erkey == 1){
+            if ( erkey == 1){
                 *atom = at + baseConvertKey;
                 for (int i = 0; i<(*numnei);i++){
                     neiOfAnAtom_full[i] = (*nei1atom)[i] + baseConvertKey;
@@ -1587,6 +1600,7 @@ int KIM_API_model::get_half_neigh(int mode, int request, int *atom,
 
     if (baseConvertKey==0) {
         int erkey = (*get_neigh)((void **)&pkim,&locmode, &locrequest, atom, numnei, nei1atom, Rij );
+        if (erkey <= 0) return erkey; // return with error from  supplied by test get_neigh
         if(*numnei > KIM_API_MAX_NEIGHBORS) {
             cout<<endl<< "KIM_API::get_half_neigh: numnei > MAX_NEIGHBORS : ";
             cout<<" "<<*numnei <<" > "<< KIM_API_MAX_NEIGHBORS<<endl;
@@ -1603,6 +1617,7 @@ int KIM_API_model::get_half_neigh(int mode, int request, int *atom,
             return (*get_neigh)((void **)&pkim,&locmode, &req, &at, numnei, nei1atom, Rij );
         }else{
             int erkey = (*get_neigh)((void **)&pkim,&locmode, &req, &at, numnei, nei1atom, Rij );
+            if (erkey <= 0) return erkey; // return with error from  supplied by test get_neigh
             if(*numnei > KIM_API_MAX_NEIGHBORS) {
                 cout<<endl<< "KIM_API::get_full_neigh: numnei > MAX_NEIGHBORS : ";
                 cout<<" "<<*numnei <<" > "<< KIM_API_MAX_NEIGHBORS<<endl;
@@ -1917,7 +1932,21 @@ void * KIM_API_model::get_NBC_method(int* error){
     *error=1; //success
     return (void *)method;
 }
+bool KIM_API_model::requiresFullNeighbors(){
+    int kimerr;
+    char * method = NULL;
+    method = (char *) get_NBC_method(&kimerr);
+    if(kimerr!=1){
+        if (method!=NULL) delete [] method;
+        return false;
+    }
+    bool answer = false;
+    if (strcmp(method,"NEIGH-PURE-F")==0) answer = true;
+    if (strcmp(method,"NEIGH-RVEC-F")==0) answer = true;
 
+    if (method!=NULL) delete [] method;
+    return answer;
+}
 void * KIM_API_model::get_listParams(int* nVpar, int* error){
     int count;
     count=0;
@@ -1992,6 +2021,27 @@ void * KIM_API_model::get_listFixedParams(int* nVpar, int* error){
     }
     *error =1;//success
     return (void *) listvpar;
+}
+int  KIM_API_model::get_neigh_mode(int*kimerr){
+    *kimerr=-2;
+    if (both_neigh_mode){
+        *kimerr = 1;
+        return 3;
+    }else if (locator_neigh_mode && iterator_neigh_mode){
+        *kimerr=1;
+        return 4; //works with locator or iterator
+
+    }else if (locator_neigh_mode){
+        *kimerr = 1;
+        return 2;
+    }else if (iterator_neigh_mode){
+        *kimerr =1;
+        return 1;
+    }else{
+        *kimerr =-1;
+        return -1;
+    }
+    return -2;
 }
 
 int KIM_API_model::get_aTypeCode(char* atom, int * error){

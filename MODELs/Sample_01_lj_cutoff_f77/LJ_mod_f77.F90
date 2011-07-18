@@ -24,12 +24,7 @@ module lj_test_mod_f77
 	!type (lj_test_object) :: lj_obj
 	!SAVE ::	lj_obj
 
-contains
-	! actual initialization routine
-
-	
-	
-	
+contains	
 	
 	!calculates forces per atom and total energy (f90 wrapper that calls actual f77 routine)
 	subroutine lj_calculate_wrap_f77(pkim,kimerr) ! compute routine with KIM interface
@@ -45,8 +40,6 @@ contains
 		e_flag=kim_api_isit_compute_f(pkim,"energyPerAtom",kimerr)
 		call LJ_f77_calculate(pkim,x,f,ea,natom,potenergy,xcutof,f_flag,e_flag,kim_api_get_half_neigh,kimerr)
 	end subroutine lj_calculate_wrap_f77
-
-
 
 end module lj_test_mod_f77
 

@@ -16,7 +16,7 @@ static void sample_01_lj_cutoff_c_calculate(void *km,int *);
 /* static local variables */
 static double *pcutoff, *penergy;
 static long long *numberOfAtoms;
-
+void sample_01_lj_cutoff_c_init_(void * km);
 /* Model Initiation routine */
 void sample_01_lj_cutoff_c_init_(void * km){
 	/* cast pointer for KIM API object */	

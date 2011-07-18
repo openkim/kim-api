@@ -216,7 +216,7 @@ void * get_listFreeParams(int *nVpar,int *error);
 void * get_listFixedParams(int *nVpar,int *error);
 
 void * get_NBC_method(int *error);
-
+bool requiresFullNeighbors();
 
     KIM_IOline *inlines;
     int numlines;
@@ -225,8 +225,12 @@ void * get_NBC_method(int *error);
     char originalUnits[KEY_CHAR_LENGTH];
     char currentUnits[KEY_CHAR_LENGTH];
     bool unitsFixed;
-    
+    bool support_Rij;
+    int get_neigh_mode(int *);
 private:
+    bool locator_neigh_mode;
+    bool iterator_neigh_mode;
+    bool both_neigh_mode;
     int ErrorCode;// reserved for proper errors handling
     int compute_index;
     int get_full_neigh_index;

@@ -549,10 +549,6 @@ force                   real*8      force       unspecified             [3]
 # This argument should, ideally, be optional to ensure maximum Model/Test compatibility
 energyPerAtom           real*8      energy      unspecified             [numberOfAtoms]
 
-# An array of floating-point numbers corresponding to the virial-stress tensor for each
-# atom in the configuration passed between the Model and Test.
-# This argument should, ideally, be optional to ensure maximum Model/Test compatibility
-stressPerAtom           real*8      pressure    unspecified             [numberOfAtoms,3,3]
 
 # A floating-point number corresponding to the total virial for the configuration of atoms
 # passed between the Model and Test.

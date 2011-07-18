@@ -41,6 +41,8 @@ numberOfAtoms           integer*8    none       none                    []      
 
 atomTypes               integer      none       none                    [numberOfAtoms]    optional
 
+numberAtomTypes         integer      none       none                    []                 optional
+
 coordinates             real*8       length     standard                [numberOfAtoms,3]
 
 get_half_neigh          method       none       none                    []

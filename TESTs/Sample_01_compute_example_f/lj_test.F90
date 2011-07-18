@@ -108,7 +108,7 @@ program ljtest
         print*,"energy as sum of energy per atom",sum(ea)
 
 
-        plist_of_AtomsTypes = KIM_API_get_listAtomsTypes(pkim,nAtomsTypes,kimerr)
+        plist_of_AtomsTypes = KIM_API_get_listAtomTypes(pkim,nAtomsTypes,kimerr)
 	if ((kimerr.eq.1).and.(nAtomsTypes.gt.0)) then
 		write(*,"('The supported atoms types : ',10( A,' '))")  list_of_AtomsTypes(1:nAtomsTypes)
 	end if
