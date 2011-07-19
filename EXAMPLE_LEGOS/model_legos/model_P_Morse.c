@@ -266,6 +266,7 @@ static void compute(void* km, int* ier)
       for (i = 0; i < *nAtoms; ++i)
       {
          energyPerAtom[i] = 0.0;
+    
       }
    }
    else
@@ -798,7 +799,6 @@ void MODEL_NAME_LC_STR_init_(void *km)
       report_error(__LINE__, "KIM_API_set_data", ier);
       exit(1);
    }
-
    /* store model cutoff in KIM object */
    model_cutoff = (double*) KIM_API_get_data(pkim, "cutoff", &ier);
    if (1 > ier)

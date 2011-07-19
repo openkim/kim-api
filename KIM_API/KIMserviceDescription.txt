@@ -81,7 +81,9 @@ void KIM_API_allocate(void * kimmdl, intptr_t natoms, int ntypes, int * kimerror
      with KIM_API_set_data for array data (this would create a memory leak).
 
      Note: Prior to calling this routine a valid KIM API object must be
-           obtained by calling KIM_API_init().
+           obtained by calling KIM_API_init().  However, calling this
+           routine multiple times with the same KIM API object will
+           cause a memory leak.
 
 Arguments:
 
@@ -228,7 +230,8 @@ Corresponding Fortran style interface:
 void KIM_API_get_Units(void *kimmdl, char * UnitsSystem,int * kimerror); 
 
      This routine copies the name of the unit system currently in use to 
-     the supplied string UnitsSystem. 
+     the supplied string UnitsSystem (which should be of length 64 or
+     greater).
 
 Arguments:
 
@@ -237,7 +240,8 @@ Arguments:
                 will be (KIM_API_model *)).
 
         char * UnitsSystem 
-                null terminated character string, must be already allocated.
+                null terminated character string, must be already allocated
+                (which sould be of length 64 or greater)
 
         int * kimerror
                 error code: 1                     -- successful completion, 
@@ -250,94 +254,6 @@ Corresponding Fortran style interface:
                         character (len=*) :: UnitsSystem
                         integer :: kimerror
         end subroutine kim_api_get_units_f
-
-
-******************************************************************************
-        
-void KIM_API_get_originalUnits(void *kimmdl, char * UnitsSystem, int * kimerror); 
-
-     This routine gets the name of the original unit system, the system 
-     defined in the KIM Model descriptor (.kim) file.
-
-Arguments:
-
-        void * kimmdl 
-                pointer to KIM_API_model object (in C++ style, the definition 
-                will be (KIM_API_model *)).
-
-        char * UnitsSystem 
-                null terminated character string, must be already allocated.
-
-        int * kimerror
-                error code: 1                     -- successful completion,
-                            0 (or negative value) -- unsuccessful
-
-Corresponding Fortran style interface:
-
-        subroutine kim_api_get_originalunits_f(kimmdl, UnitsSystem, kimerror) 
-                        integer(kind=kim_intptr) :: kimmdl 
-                        character (len=*) :: UnitsSystem
-                        integer :: kimerror
-        end subroutine kim_api_get_originalunits_f
-
-
-******************************************************************************
-
-int KIM_API_set_Units(void *kimmdl, char * UnitsSystem,int * kimerror); 
-
-     This routine sets the unit system. It also checks whether the provided 
-     name of the unit system is among those unit systems supported by KIM.
-
-Arguments:
-
-        void * kimmdl 
-                pointer to KIM_API_model object (in C++ style, the definition 
-                will be (KIM_API_model *)).
-
-        char * UnitsSystem
-                null terminated character string.
-
-        int * kimerror
-                error code: 1                     -- successful completion, 
-                            0 (or negative value) -- unsuccessful
-
-Corresponding Fortran style interface:
-
-        integer function kim_api_set_units_f(kimmdl, UnitsSystem, kimerror) 
-                        integer(kind=kim_intptr) :: kimmdl
-                        integer :: kimerror
-        end function kim_api_set_units_f
-
-
-******************************************************************************
-
-void KIM_API_transform_Units_to(void *kimmdl, char * UnitsSystem, int * kimerror); 
-
-     This routine sets the unit system to UnitsSystem and transforms all 
-     relevant data to these units. The transformation is done by using the 
-     appropriate scale factor for each set of data in kimmdl that has 
-     physical dimensions.  
-
-Arguments:
-
-        void * kimmdl
-                pointer to KIM_API_model object (in C++ style, the definition 
-                will be (KIM_API_model *)).
-
-        char * UnitsSystem 
-                null terminated character string.
-
-        int * kimerror
-                error code: 1                     -- successful completion, 
-                            0 (or negative value) -- unsuccessful
-
-Corresponding Fortran style interface:
-
-        subroutine kim_api_transform_units_to_f(kimmdl, UnitsSystem, kimerror) 
-                        integer(kind=kim_intptr) :: kimmdl 
-                        character (len=*) :: UnitsSystem
-                        integer :: kimerror
-        end subroutine  kim_api_transform_units_to_f
 
 
 ******************************************************************************
@@ -359,6 +275,7 @@ Corresponding Fortran style interface:
         integer function kim_api_isunits_fixed_f(kimmdl) 
                         integer(kind=kim_intptr) :: kimmdl 
         end function kim_api_isunits_fixed_f
+
 
 ================== ELEMENT ACCESS METHODS ROUTINES BY NAME ====================
 
@@ -739,7 +656,7 @@ Corresponding Fortran style interface:
 
 ******************************************************************************
 
-void * KIM_API_get_listAtomsTypes(void * kimmdl, int * nATypes, int * error);
+void * KIM_API_get_listAtomTypes(void * kimmdl, int * nATypes, int * error);
 
        This routine returns a pointer to an array of fixed size text strings.  
        (The text strings are of size KEY_CHAR_LENGTH, which is a constant 
@@ -763,10 +680,10 @@ Arguments:
 
 Corresponding Fortran style interface:
 
-        function kim_api_get_listatomstypes(kimmdl, natypes, error)
-            integer(kind=kim_intptr) :: kimmdl, kim_api_get_listatomstypes
+        function kim_api_get_listatomtypes(kimmdl, natypes, error)
+            integer(kind=kim_intptr) :: kimmdl, kim_api_get_listatomtypes
             integer :: natypes, error
-        end function kim_api_get_listatomstypes
+        end function kim_api_get_listatomtypes
 
 
 ******************************************************************************
@@ -944,6 +861,28 @@ Corresponding Fortran style interface:
 
 ******************************************************************************
 
+int KIM_API_get_neigh_mode(void *kimmdl,int *kimerror);
+
+    This routine returns a code for the neighbor list mode that should be used
+    by the Model and Test.  The codes and their corresponding meanings are:
+         1  -- for Iterator mode
+         2  -- for Locator mode
+         3  -- for Both (model needs iterator and locator mode)
+
+    The routine returns a negative value if it encounters an error.
+
+Arguments:
+        void * kimmdl
+                pointer to KIM_API_model object (in c++ style the definition 
+                will be (KIM_API_model *)).
+
+        int * error
+                error code: 1                     -- successful completion, 
+                            0 (or negative value) -- unsuccessful
+
+
+******************************************************************************
+
 int KIM_API_get_full_neigh(void *kimmdl, int mode,int request, int *atom, int *numnei, int **nei1atom, double **Rij);
 
     This routine provides standardized access to the neighbor list supplied by 
@@ -1038,6 +977,7 @@ Corresponding Fortran style interface:
 
 
 ******************************************************************************
+
 int KIM_API_get_half_neigh(void *kimmdl, int mode,int request, int *atom, int *numnei, int **nei1atom, double **Rij);
         
     The description is the same as for KIM_API_get_full_neigh, but this
@@ -1052,47 +992,6 @@ int KIM_API_get_half_neigh(void *kimmdl, int mode,int request, int *atom, int *n
 
     Note: Half neighbor lists should include the last atom/particle in the
           configuration and return zero neighbors for it.
-
-******************************************************************************
-
-float KIM_API_get_unit_scalefactor(void * kim, char * name, int * error);
-
-      This routine returns the scale factor for transforming units to the 
-      standard unit system. It will return a negative value if the scale factor 
-      is not relevant. This will be the case if the variable has no physical
-      dimension or the name of the variable is not in KIM API object.
-
-Arguments:      
-        void * kimmdl
-                pointer to KIM_API_model object (in C++ style, the definition 
-                will be (KIM_API_model *)).
-
-        char *name
-                null terminated string is the name of the data/variable  
-                field exactly as it appears in the .kim descriptor file.
- 
-        int * error
-                error code: 1                     -- successful completion, 
-                            0 (or negative value) -- unsuccessful
-                           -1                     -- Variable has no physical 
-                                                     dimension
-                           -2                     -- (internal error) unit 
-                                                     system has physical units 
-                                                     `none'
-                           -3                     -- Variable is not in KIM API 
-                                                     object
-
-Corresponding Fortran style interface:
-
-        real function kim_api_get_unit_scalefactor_f(kimmdl, nm, error)
-                integer(kind=kim_intptr) :: kimmdl
-                character (len=*) :: nm
-                integer :: error
-        end function kim_api_get_unit_scalefactor_f
-
-
-******************************************************************************
-
 
 
 ==================ELEMENT ACCESS METHODS ROUTINES BY INDEX====================
@@ -1117,6 +1016,7 @@ void KIM_API_set2_compute_byI(void *kimmdl, int I, int *kimerror);
 void KIM_API_set2_donotcompute_byI(void *kimmdl, int I, int *kimerror); 
 
 int KIM_API_isit_compute_byI(void *kimmdl, int I, int *kimerror);
+
 
 ========================Fortran AUXILIARY ROUTINES============================
 

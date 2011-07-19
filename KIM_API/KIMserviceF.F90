@@ -109,6 +109,16 @@ module kimservice
 	    integer::error
         end function kim_api_get_size
 
+        function kim_api_get_neigh_mode(kimmdl,error)
+#ifdef SYSTEM32
+	integer, parameter :: kim_intptr=4
+#else
+	integer,parameter :: kim_intptr = 8
+#endif
+            integer(kind=kim_intptr) :: kimmdl,kim_api_get_neigh_mode
+	    integer::error
+        end function kim_api_get_neigh_mode
+
         function kim_api_get_rank_shape(kimmdl,nm, shapea,error)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
@@ -129,15 +139,15 @@ module kimservice
 	integer::rank,error
 	end subroutine kim_api_set_rank_shape
 
-	function kim_api_get_listatomstypes(kimmdl,natypes,error)
+	function kim_api_get_listatomtypes(kimmdl,natypes,error)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
 	integer,parameter :: kim_intptr = 8
 #endif
-            integer(kind=kim_intptr) :: kimmdl,kim_api_get_listatomstypes
+            integer(kind=kim_intptr) :: kimmdl,kim_api_get_listatomtypes
 	    integer::natypes,error
-        end function kim_api_get_listatomstypes
+        end function kim_api_get_listatomtypes
 
 	function kim_api_get_listparams(kimmdl,nvpar,error)
 #ifdef SYSTEM32

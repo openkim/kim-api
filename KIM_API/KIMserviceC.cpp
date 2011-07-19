@@ -104,7 +104,7 @@ int KIM_API_isUnitS_fixed(void *kimmdl){
     if(mdl->is_unitsfixed()) return 1;
     return 0;
 }
-void * KIM_API_get_listAtomsTypes(void * kimmdl,int* nATypes, int* error){
+void * KIM_API_get_listAtomTypes(void * kimmdl,int* nATypes, int* error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     return mdl->get_listAtomsTypes(nATypes,error);
 }
@@ -187,6 +187,12 @@ int KIM_API_isit_compute(void *kimmdl,char *nm, int * error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     *error =1;
     return (*mdl)[nm].flag->calculate;
+}
+
+int KIM_API_get_neigh_mode(void * kimmdl,int * error){
+    *error =0;
+     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
+     return mdl->get_neigh_mode(error);
 }
 
 // element access by Index (fast way)
@@ -282,9 +288,11 @@ int kim_api_init_(void * kimmdl,char ** testname, char **mdlname){
 int kim_api_init1_(void * kimmdl, char ** testinputf,char ** testname, char ** mdlinputf,char **mdlname){
     return KIM_API_init1(kimmdl,*testinputf,*testname,*mdlinputf,*mdlname);
 }
+
 void kim_api_allocate_(void *kimmdl, intptr_t *natoms, int *ntypes,int * error){
     KIM_API_allocate(*(KIM_API_model **)kimmdl,*natoms,*ntypes,error);
 }
+
 void kim_api_free_(void *kimmdl,int *error){
     KIM_API_free(kimmdl,error);
 }
@@ -293,6 +301,9 @@ void kim_api_print_(void *kimmdl,int *error){
 }
 void kim_api_model_compute_(void*kimmdl,int *error){
     KIM_API_model_compute(*(KIM_API_model **)kimmdl,error);
+}
+int kim_api_get_neigh_mode_(void *kimmdl,int *error ){
+    return KIM_API_get_neigh_mode(*(KIM_API_model **)kimmdl,error);
 }
 
 int kim_api_model_reinit_(void * kimmdl){
@@ -330,8 +341,8 @@ void kim_api_transform_units_to_(void *kimmdl,char ** UnitsSystem,int * error){
 int kim_api_isunits_fixed_(void *kimmdl){
     return KIM_API_isUnitS_fixed(*(KIM_API_model **)kimmdl);
 }
-void * kim_api_get_listatomstypes_(void * kimmdl,int* nATypes, int* error){
- return KIM_API_get_listAtomsTypes(*(KIM_API_model **)kimmdl,nATypes,error);
+void * kim_api_get_listatomtypes_(void * kimmdl,int* nATypes, int* error){
+ return KIM_API_get_listAtomTypes(*(KIM_API_model **)kimmdl,nATypes,error);
 }
 void * kim_api_get_listparams_(void * kimmdl,int* nVpar, int* error){
  return KIM_API_get_listParams(*(KIM_API_model **)kimmdl,nVpar,error);

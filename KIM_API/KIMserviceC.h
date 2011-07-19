@@ -36,7 +36,7 @@ int KIM_API_set_Units(void *kimmdl,char * UnitsSystem);
 void KIM_API_transform_Units_to(void *kimmdl,char * UnitsSystem, int *error);
 int KIM_API_isUnitS_fixed(void *kimmdl);
 
-void * KIM_API_get_listAtomsTypes(void * kimmdl,int* nATypes, int* error);
+void * KIM_API_get_listAtomTypes(void * kimmdl,int* nATypes, int* error);
 int KIM_API_get_aTypeCode(void * kimmdl, char* atom, int * error);
 
 void * KIM_API_get_listParams(void * kimmdl,int* nVpar, int* error);
@@ -51,7 +51,7 @@ int KIM_API_get_full_neigh(void *kimmdl,int mode,int request,
 int KIM_API_get_half_neigh(void *kimmdl,int mode,int request,
         int *atom, int *numnei, int **nei1atom, double **Rij);
 
-
+int KIM_API_get_neigh_mode(void *,int *);
 
 //element access methods
 int  KIM_API_set_data(void *kimmdl,char *nm,  intptr_t size, void *dt);
@@ -98,7 +98,9 @@ int kim_api_set_units_(void *kimmdl,char ** UnitsSystem);
 void kim_api_transform_units_to_(void *kimmdl,char ** UnitsSystem, int *error);
 int kim_api_isunits_fixed_(void *kimmdl);
 
-void * kim_api_get_listatomstypes_(void * kimmdl,int* nATypes, int* error);
+int kim_api_get_neigh_mode_(void *kimmdl,int *error);
+
+void * kim_api_get_listatomtypes_(void * kimmdl,int* nATypes, int* error);
 void * kim_api_get_listparams_(void * kimmdl,int* nVpar, int* error);
 void * kim_api_get_listfreeparams_(void * kimmdl,int* nVpar, int* error);
 void * kim_api_get_listfixedparams_(void * kimmdl,int* nVpar, int* error);
