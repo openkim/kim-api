@@ -288,9 +288,11 @@ int kim_api_init_(void * kimmdl,char ** testname, char **mdlname){
 int kim_api_init1_(void * kimmdl, char ** testinputf,char ** testname, char ** mdlinputf,char **mdlname){
     return KIM_API_init1(kimmdl,*testinputf,*testname,*mdlinputf,*mdlname);
 }
+
 void kim_api_allocate_(void *kimmdl, intptr_t *natoms, int *ntypes,int * error){
     KIM_API_allocate(*(KIM_API_model **)kimmdl,*natoms,*ntypes,error);
 }
+
 void kim_api_free_(void *kimmdl,int *error){
     KIM_API_free(kimmdl,error);
 }

@@ -746,7 +746,6 @@ int KIM_API_get_neigh_mode(void *kimmdl,int *kimerror);
          1  -- for Iterator mode
          2  -- for Locator mode
          3  -- for Both (model needs iterator and locator mode)
-         4  -- can work with either locator or iterator
          negative value - if  error
 
 Arguments:

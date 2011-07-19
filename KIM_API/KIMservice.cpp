@@ -1260,11 +1260,11 @@ bool KIM_API_model::do_dummy_match(KIM_API_model& tst, KIM_API_model& mdl){
     bool Neigh_BothList_mdl =is_it_in_and_is_it_dummy(mdl, "Neigh_BothList");
 
     bool Neigh_IterAccess_mdl=is_it_in_and_is_it_dummy(mdl, "Neigh_IterAccess");
-    mdl.iterator_neigh_mode=Neigh_IterAccess_mdl;
+    
     bool Neigh_LocaAccess_mdl=is_it_in_and_is_it_dummy(mdl, "Neigh_LocaAccess");
-    mdl.locator_neigh_mode=Neigh_LocaAccess_mdl;
+    
     bool Neigh_BothAccess_mdl=is_it_in_and_is_it_dummy(mdl, "Neigh_BothAccess");
-    mdl.both_neigh_mode=Neigh_BothAccess_mdl;
+    
 
     bool Neigh_CalcRij_mdl=is_it_in_and_is_it_dummy(mdl, "Neigh_CalcRij");
 
@@ -1282,6 +1282,10 @@ bool KIM_API_model::do_dummy_match(KIM_API_model& tst, KIM_API_model& mdl){
     if (ZeroBasedLists_tst && OneBasedLists_mdl) baseConvertKey = 1;
     if (OneBasedLists_tst && ZeroBasedLists_mdl) baseConvertKey = -1;
 
+    int ind_LocaAccess_mdl = mdl.get_index("Neigh_LocaAccess");
+    int ind_IterAcces_mdl = mdl.get_index("Neigh_IterAccess");
+    int ind_LocaAccess_tst = tst.get_index("Neigh_LocaAccess");
+    int ind_IterAcces_tst = tst.get_index("Neigh_IterAccess");
     //logic for checking Both/Full/Half base list
     // checking if test o.k. when model requires both
  /*   if (Neigh_BothList_mdl){
@@ -1318,6 +1322,7 @@ bool KIM_API_model::do_dummy_match(KIM_API_model& tst, KIM_API_model& mdl){
             cout<< "model .kim requres Neigh_BothAccess "<<endl;
             return false;
         }
+        mdl.both_neigh_mode=true;
      //checking if test o.k. when model may work with loca or iter
      }else if (Neigh_LocaAccess_mdl && Neigh_IterAccess_mdl){
 
@@ -1325,20 +1330,31 @@ bool KIM_API_model::do_dummy_match(KIM_API_model& tst, KIM_API_model& mdl){
             cout<< "model .kim requres IterAccess or LocaAccess  "<<endl;
             return false;
         }
+        if (Neigh_LocaAccess_tst && Neigh_IterAccess_tst) {
+            if (ind_LocaAccess_mdl < ind_IterAcces_mdl) {
+                mdl.locator_neigh_mode =true;
+            }else {
+                mdl.iterator_neigh_mode = true;   
+            }      
+        }
+
      //checking if test o.k. with loca
      }else if(Neigh_LocaAccess_mdl){
          if(!(Neigh_LocaAccess_tst || Neigh_BothAccess_tst)) {
              cout<< "model .kim requres  Neigh_LocaAccess"<<endl;
              return false;
          }
+         mdl.locator_neigh_mode = true;
      //checking if test o.k. with iter
      }else if(Neigh_IterAccess_mdl){
          if(!(Neigh_IterAccess_tst || Neigh_BothAccess_tst)) {
              cout<< "model .kim requres  Neigh_IterAccess"<<endl;
              return false;
          }
+         mdl.iterator_neigh_mode = true;
      }
 
+    
     //logic for Neigh_CalcRij
   /*  if (Neigh_CalcRij_mdl && !Neigh_CalcRij_tst){
              cout<< "model .kim requres Neigh_CalcRij"<<endl;
@@ -2023,25 +2039,17 @@ void * KIM_API_model::get_listFixedParams(int* nVpar, int* error){
     return (void *) listvpar;
 }
 int  KIM_API_model::get_neigh_mode(int*kimerr){
-    *kimerr=-2;
-    if (both_neigh_mode){
-        *kimerr = 1;
-        return 3;
-    }else if (locator_neigh_mode && iterator_neigh_mode){
-        *kimerr=1;
-        return 4; //works with locator or iterator
-
-    }else if (locator_neigh_mode){
-        *kimerr = 1;
+    *kimerr=1;
+    if(locator_neigh_mode && !iterator_neigh_mode && !both_neigh_mode){
         return 2;
-    }else if (iterator_neigh_mode){
-        *kimerr =1;
+    }else if(!locator_neigh_mode && iterator_neigh_mode && !both_neigh_mode){
         return 1;
+    }else if(!locator_neigh_mode && !iterator_neigh_mode && both_neigh_mode){
+        return 3;
     }else{
         *kimerr =-1;
         return -1;
     }
-    return -2;
 }
 
 int KIM_API_model::get_aTypeCode(char* atom, int * error){
