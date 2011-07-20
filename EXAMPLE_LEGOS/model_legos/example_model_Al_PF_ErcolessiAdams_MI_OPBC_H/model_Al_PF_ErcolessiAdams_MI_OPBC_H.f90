@@ -430,6 +430,7 @@ do i = 1,N-1
             call calc_v_dv(r,v,dv)                ! compute pair potential
                                                   !   and it derivative
             call calc_drho(r,drho)                ! compute elect dens first deriv
+            dveff = dv + (deru(i)+deru(j))*drho 
          else
             call calc_v(r,v)                      ! compute just pair potential
          endif
@@ -440,12 +441,11 @@ do i = 1,N-1
             energy = energy + v                   ! add v to total energy
          endif
          if (comp_virial==1) then
-            dveff = dv + (deru(i)+deru(j))*drho 
             virial = virial + r*dveff             ! accumul. virial=sum r(dV/dr)
          endif
          if (comp_force==1) then
-            force(:,i) = force(:,i) - dv*Rij/r    ! accumulate forces
-            force(:,j) = force(:,j) + dv*Rij/r    !    (Fji = -Fij)
+            force(:,i) = force(:,i) - dveff*Rij/r ! accumulate forces
+            force(:,j) = force(:,j) + dveff*Rij/r !    (Fji = -Fij)
          endif
       endif
    enddo
