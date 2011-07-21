@@ -11,6 +11,7 @@
 #include <iostream>
 #include <fstream>
 #include <string.h>
+#include <sstream>
 
 #ifdef KIM_DYNAMIC
 #include <dlfcn.h>
@@ -479,6 +480,47 @@ int SystemOfUnit:: readlines(char * infile, IOline **inlines){
         myfile.close();
         return counter;
 }
+
+int SystemOfUnit::readlines_str(char* instrn, IOline** inlines){
+    int counter=0;
+        IOline inlne;
+        *inlines=NULL;
+        string in_instrn=instrn;
+        stringstream myfile (in_instrn,stringstream::in|stringstream::out) ;
+        stringstream myfile1 (in_instrn,stringstream::in|stringstream::out) ;
+ //cout<<"SystemOfUnit:  file:"<<infile<<":"<<endl;
+         if(!myfile){
+             cout<<"SystemOfUnit: can not open input string"<<endl;
+             exit(327);
+         }
+        myfile.seekp(stringstream::beg);
+          while(!myfile.eof()){
+                myfile>> inlne;
+                if(inlne.goodformat) counter++;
+        }
+
+
+        if (counter < 1) return counter;
+
+
+        (*inlines) =  new IOline [counter] ;
+
+
+        myfile1.seekp(stringstream::beg);
+
+        counter=0;
+        while(!myfile1.eof()){
+                myfile1 >> inlne;
+
+                if(inlne.goodformat) {
+
+                    (*inlines)[counter]=inlne;
+
+                    counter++;
+                }
+        }
+        return counter;
+}
 bool SystemOfUnit::isitunit(char * unit){
         if(strcmp(unit,"mass")==0) return true;
         if(strcmp(unit,"distance")==0 || strcmp(unit,"length")==0) return true;
@@ -845,6 +887,95 @@ bool KIM_API_model:: preinit(char * initfile,char *modelname){
         return true;
 
  }
+
+bool KIM_API_model::preinit_str_testname(char *instrn){
+        read_file_str_testname(instrn,&inlines,&numlines);
+
+  
+        int *shape=NULL;
+        char pointer_str [] = "pointer";
+        char modelname [] ="dummy_name";
+        //get Atoms Types and nAtomsTypes
+        if (! init_AtomsTypes()) return false;
+
+        model.init(modelname,pointer_str,(intptr_t)(numlines-nAtomsTypes),1,shape);
+
+        int ii=0;
+        for (int i=0; i< numlines;i++){
+
+            //check for spec type
+            if (!(strcmp(inlines[i].type,"spec")==0)) {
+
+                KIMBaseElement *el = new KIMBaseElement ;
+
+                int rank=inlines[i].get_rank();
+                shape =inlines[i].get_shape();
+                char * name =& (inlines[i].name[0]);
+                char * type =& (inlines[i].type[0]);
+
+                el->init(name,type,0,rank,shape); //preinit element with zero size
+                strncpy(el->unit->dim,inlines[i].dim,strlen(inlines[i].dim)+1);
+                double scale=inlines[i].get_unitscale();
+
+                strncpy(el->unit->units,inlines[i].units,strlen(inlines[i].units)+1);
+                el->unit->scale = (float)scale;
+                el->flag->calculate = 1;
+                el->flag->peratom = 1;//per something else
+                if(inlines[i].isitperatom()) el->flag->peratom = 0; //per atom
+                KIMBaseElement **pel =(KIMBaseElement**) model.data;
+                pel[ii] =  el;
+                ii++;
+                delete [] shape;
+            }
+        }
+        //resize inlines (remove spec type variables)
+        KIM_IOline * inlinesnew = new KIM_IOline[numlines - nAtomsTypes];
+        ii=0;
+        for (int i=0; i< numlines;i++){
+            //check for spec type
+            if (!(strcmp(inlines[i].type,"spec")==0)) {
+                inlinesnew[ii]=inlines[i];
+                ii++;
+            }
+        }
+        delete [] inlines;
+        inlines = inlinesnew;
+        inlinesnew = NULL;
+        numlines=numlines - nAtomsTypes;
+        //end resize inlines
+
+        this->supported_units_init();
+
+        char coordinates_str [] = "coordinates";
+        int ind =this->get_index(coordinates_str);
+        char custom_str [] ="custom";
+
+        if(!set_units(inlines[ind].units)) if(!set_units(custom_str)){
+             cout<<"KIM_API_model::set_units(from preinit_str_testname):  failed"<<endl;
+            return false;
+        }
+        if (! are_infileunits_consistent()) {
+                cout<<"KIM_API_model::from preinit_str_testname:  inconsistent units"<<endl;
+                return false;
+        }
+        //extra input like unitFixed flag and,later may be, authors
+        IOline *extrainput;
+        int nextra = SystemOfUnit::readlines_str(instrn,&extrainput);
+        for (int i=0;i<nextra;i++){
+            if(strcmp(extrainput[i].name,"SystemOfUnitsFix")==0){
+                if(strcmp(extrainput[i].value,"fixed")==0) this->unitsFixed=true;
+            }
+            if(strcmp(extrainput[i].name,"TEST_NAME")==0){
+                strcpy(this->model.name,extrainput[i].value);
+            }
+            if(strcmp(extrainput[i].name,"MODEL_NAME")==0){
+                strcpy(this->model.name,extrainput[i].value);
+            }
+        }
+        delete [] extrainput;
+        return true;
+}
+
  void KIM_API_model::free(int *error){
         //
         *error = 0;
@@ -1087,6 +1218,46 @@ void KIM_API_model::read_file(char * initfile,KIM_IOline ** lns, int * numlns){
         }
 
         myfile.close();
+}
+
+void KIM_API_model::read_file_str_testname(char* strstream, KIM_IOline** lns, int* numlns){
+        int counter=0;
+        KIM_IOline inln;
+
+        //open string as stream from char *
+        string in_strstream=strstream ;
+        stringstream myfile (in_strstream, stringstream::in|stringstream::out);
+        stringstream myfile1 (in_strstream, stringstream::in|stringstream::out);
+        if(!myfile){
+            cout<<"KIM_API_model: can not open input string:"<<strstream<<":"<<endl;
+            exit (327);
+        }
+
+
+        myfile.seekp(stringstream::beg);//set to the begining
+        while(!myfile.eof()){
+                myfile >> inln;
+                if(inln.goodformat) counter++;
+        }
+
+        myfile1.seekp(stringstream::beg);//set to the begining
+      
+        *numlns = counter;
+        *lns = new KIM_IOline[counter];
+
+        //myfile.open(initfile);
+        counter=0;
+    
+
+        while(!myfile1.eof()){
+                myfile1 >> inln;
+    
+                if(inln.goodformat) {
+                    (*lns)[counter]=inln;
+                    counter++;
+                }
+        }
+        
 }
 bool KIM_API_model::is_it_match(KIM_API_model & mdtst,char * inputinitfile){
     KIM_IOline * IOlines;
@@ -1456,6 +1627,43 @@ bool KIM_API_model::init(char* testname, char* modelname){
     return this->init(testfile,testname,modelfile,modelname);
 }
 
+bool KIM_API_model::init_str_testname(char* in_tststr, char* modelname){
+    char modelinputfile[160] = KIM_DIR_MODELS;
+    strcat(modelinputfile,modelname);strcat(modelinputfile,"/");strcat(modelinputfile,modelname);
+    strcat(modelinputfile,".kim");
+
+    //check test-model match and preinit test-model-API
+    KIM_API_model test,mdl;
+    //preinit test and model API object
+
+    test.preinit_str_testname(in_tststr);
+    mdl.preinit(modelinputfile,modelname);
+
+    //check if they match
+    if (is_it_match(test,mdl)){
+        this->preinit(modelinputfile,modelname);
+        this->irrelevantVars2donotcompute(test,*this);
+
+        strcpy(this->NBC_method_current, mdl.NBC_method_current);
+        locator_neigh_mode=mdl.locator_neigh_mode;
+        iterator_neigh_mode=mdl.iterator_neigh_mode;
+        both_neigh_mode=mdl.both_neigh_mode;
+        test.free(); mdl.free();
+        char computestr [] = "compute";
+        compute_index = get_index(computestr);
+        get_full_neigh_index = get_index("get_full_neigh");
+        get_half_neigh_index = get_index("get_half_neigh");
+        support_Rij=false;
+        if (strcmp(NBC_method_current,"NEIGH-RVEC-F")==0) support_Rij=true;
+
+        return true;
+    }else{
+        mdl.free();
+ cout<<"Do not match  " << modelname << " and "<< test.model.name <<endl;
+       test.free();
+        return false;
+    }
+}
 bool KIM_API_model::model_reinit(){
    int reinit_ind = get_index("reinit");
    if (reinit_ind < 0) return false;

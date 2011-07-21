@@ -39,6 +39,17 @@ int KIM_API_init1(void * kimmdl, char * testinputf,char * testname, char * mdlin
     *(KIM_API_model **)kimmdl=NULL;
     return 0;
 }
+
+ int KIM_API_init_str_testname(void * kimmdl, char *testinputstring, char * mdlname){
+     KIM_API_model * mdl;
+    mdl = new KIM_API_model[1];
+    if(mdl->init_str_testname(testinputstring,mdlname)) {
+        *(KIM_API_model **)kimmdl = mdl;
+        return 1;
+    }
+    *(KIM_API_model **)kimmdl=NULL;
+    return 0;
+ }
  
  void KIM_API_allocate(void *kimmdl, intptr_t natoms, int ntypes,int * error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
@@ -288,7 +299,9 @@ int kim_api_init_(void * kimmdl,char ** testname, char **mdlname){
 int kim_api_init1_(void * kimmdl, char ** testinputf,char ** testname, char ** mdlinputf,char **mdlname){
     return KIM_API_init1(kimmdl,*testinputf,*testname,*mdlinputf,*mdlname);
 }
-
+int kim_api_init_str_testname_(void * kimmdl, char **testinputstring, char ** mdlname){
+    return KIM_API_init_str_testname(kimmdl,*testinputstring,*mdlname);
+}
 void kim_api_allocate_(void *kimmdl, intptr_t *natoms, int *ntypes,int * error){
     KIM_API_allocate(*(KIM_API_model **)kimmdl,*natoms,*ntypes,error);
 }
