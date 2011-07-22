@@ -2,13 +2,13 @@
 ! Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna 
 ! All rights reserved.                                                 
 !                                                                     
-! Author: Valeriu Smirichinski                                         
+! Author: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor                                        
 !
 
 module KIMserviceF2003 ! this module will be in KIM_API as part of 
 			!KIMserviceF2003.F90 will add it later with all service routines
 			! the  interface block in this nodule describes direct call to
-			!c-stle  service routines defined in KIMserviceC.h/cpp through f2003 dtandard 
+			!c-stle  service routines defined in KIMserviceC.h/cpp through f2003 standard 
 
 	use iso_c_binding
 	implicit none

@@ -2,7 +2,7 @@
 ! Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna 
 ! All rights reserved.                                                 
 !                                                                     
-! Author: Valeriu Smirichinski                                         
+! Author: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor                                         
 !
 
 program ljtest
@@ -49,7 +49,8 @@ program ljtest
         open(32,FILE=trim(testname)//".kim",FORM='UNFORMATTED',ACCESS='direct',RECL=6000 )
         read(32,REC=1) inputstring
         close (32)
-        symbol = -1
+        !symbol = -1 !eof symbol
+         inputstring(3977:3977)=char(0)
 print*, inputstring
 
 	!if(kim_api_init_f(pkim,testname,modelname).ne.1) stop 'not a test-model match'
