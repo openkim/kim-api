@@ -1,0 +1,76 @@
+#######################################################################################################
+#
+# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
+# All rights reserved.
+#
+# Author: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
+#
+#
+# See KIM_API/standard.kim for documentation about this file
+#
+#######################################################################################################
+
+MODEL_NAME := Sample_01_lj_cutoff_f77
+SystemOfUnitsFix := fixed    # can work only with units system defined bellow
+# SystemOfUnitsFix := flexible # can reset entire units system (default for model)
+
+# This is is the input file that defines KIM API variables
+# all field strting with # are comments and ignored
+# it contains section MODEL_INPUT or MODEL_OUPUT
+# followed by lines, that defines variable in the following format
+#
+# Name                  Type         Unit       SystemU/Scale           Shape              requirements
+#
+# Name -- unique name of variables
+# Type -- real,real*8,integer,integer*8, pointer -- tells underlying structure of an element
+# Unit -- physical unit dimension of variable -- none, length,time, mass, ...
+# SystemU/Scale -- name of the system units (metal, KIMstandard,...) or numerical scale factor to the standard units
+# Shape -- enclossed in square brackets size of each tensor dimensions for example
+#          [4,3] -- will describe second rank tensor, number of elemnets 12, fastest changing index has size 3
+#          [N,3,3,3] -- rank 4 index with unspecified size = N*3*3*3 and aslo slowest index has size N.
+#          [NumberAtoms,3] -- rank 2 tensor,  size of the first index is defined by variable NumberAtoms
+#          []  -- means scalar (or rank zero tensor)
+# requirements -- it is empty field if variable is needed always or field set to optional, meaning that you can
+#                 switch off calculation of the variable
+
+
+MODEL_INPUT:
+# Name                  Type         Unit       SystemU/Scale           Shape              requirements
+
+numberOfAtoms           integer*8    none       none                    []                              # empty [] means rank is zero
+
+atomTypes               integer      none       none                    [numberOfAtoms]    optional
+
+coordinates             real*8       length     standard                [numberOfAtoms,3]
+
+get_half_neigh          method       none       none                    []
+
+get_full_neigh          method       none       none                    []                 optional
+
+neighObject             pointer      none       none                    []                              # neighbor list object that is used by iterator
+
+
+MODEL_OUTPUT:
+# Name                  Type         Unit       SystemU/Scale           Shape              requirements
+
+destroy                 method       none       none                    []                 optional
+
+compute                 method       none       none                    []
+
+cutoff                  real*8       length     standard                []
+
+energy                  real*8       energy     standard                []
+
+forces                  real*8       force      standard                [numberOfAtoms,3]
+
+energyPerAtom           real*8      energy      standard                [numberOfAtoms]     optional
+
+CONVENTIONS:
+# Name                  Type
+
+OneBasedLists           dummy        # presence of this line indicates that indexes for atoms are from 1 to numberOfAtoms
+
+Neigh_IterAccess        dummy        # works with iterator
+
+NEIGH-PURE-H            dummy        # the model needs as MODEL_INPUT  coordinates,half neighbor list(neighObject),
+                                     # and  get_half_neigh method
