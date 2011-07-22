@@ -67,6 +67,36 @@ Corresponding FORTRAN style interface:
 
 ******************************************************************************
 
+int KIM_API_init_str_testname(void * kimmdl, char * testname, char * modelname); 
+        the same as KIM_API_init, but testname is actual content of .kim file: it is a long
+        character string null(char(0)) or eof terminated.
+
+Arguments:
+
+        void * kimmdl 
+                reference pointer to KIM_API_model object (in c++ style the
+                definition will be (KIM_API_model **)).
+
+        char * testname
+                null(char(0)) or eof terminated  character string with content of corresponded 
+                to testname.kim.
+                
+
+        char * modelname
+                null terminated character string that defines model name. The 
+                routine prepends string constant KIM_DIR, KIM_DIR_MODELS to
+                obtain file location of the model descriptor file (.kim)
+
+Corresponding FORTRAN style interface:
+        integer function kim_api_init_f(kimmdl,testname,modelname) 
+                        character (len=*) :: testname,modelname 
+                        integer(kind=kim_intptr) :: kimmdl 
+        end function kim_api_init_str_testname_f
+
+
+******************************************************************************
+
+
 void KIM_API_allocate(void * kimmdl, intptr_t natoms, int ntypes, int * kimerror); 
         allocates memory for each data variable stored in the initialized KIM API 
         object kimmdl. Will exit if an error occurs during allocation. 
