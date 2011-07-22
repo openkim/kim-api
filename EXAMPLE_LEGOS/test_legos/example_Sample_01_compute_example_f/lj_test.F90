@@ -2,7 +2,7 @@
 ! Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna 
 ! All rights reserved.                                                 
 !                                                                     
-! Author: Valeriu Smirichinski                                         
+! Author: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor                                         
 !
 
 program ljtest
@@ -35,14 +35,26 @@ program ljtest
 	character(len=KEY_CHAR_LENGTH) ::  list_of_parameters(1); pointer(plist_of_parameters,list_of_parameters)
         integer ::nParameters
 	character(len=KEY_CHAR_LENGTH) :: txtstr; pointer(ptxtstr,txtstr)
+        character*1024 ::instring(100)
+        character*4000::inputstring
+        integer*1::symbol; pointer(psymbol,symbol)
+        psymbol = loc(inputstring(3977:3977))
 
 	allocate(neigh_obj)
 	!read the model name from the std input (screen)
 	print *," KIM model name? :"
 	read(*,*) modelname
 	! initialize KIM_api object
-	if(kim_api_init_f(pkim,testname,modelname).ne.1) stop 'not a test-model match'
 
+        open(32,FILE=trim(testname)//".kim",FORM='UNFORMATTED',ACCESS='direct',RECL=6000 )
+        read(32,REC=1) inputstring
+        close (32)
+        !symbol = -1 !eof symbol
+         inputstring(3977:3977)=char(0)
+print*, inputstring
+
+	!if(kim_api_init_f(pkim,testname,modelname).ne.1) stop 'not a test-model match'
+	if(kim_api_init_str_testname_f(pkim,inputstring,modelname).ne.1) stop 'not a test-model match'
 	!read number of atoms in configuration		
 	open(33,FILE=infile)
 	read(33,*) n

@@ -33,6 +33,10 @@ using namespace std;
 #define KIM_DIR_TESTS "../../TESTs/"
 #endif
 
+#ifndef KIM_DIR
+#define KIM_DIR "./"
+#endif
+
 #ifndef KIM_API_MAX_NEIGHBORS
 #define KIM_API_MAX_NEIGHBORS 512
 #endif
@@ -95,7 +99,7 @@ public:
 };//main input line handler
 ostream &operator<<(ostream &stream, KIM_IOline a);
 istream &operator>>(istream &stream, KIM_IOline &a);
-
+//stringstream &operator>>(stringstream &stream, KIM_IOline &a);
 class IOline{
 public:
 	char name[101];
@@ -127,6 +131,8 @@ public:
     void free();
     float &operator[](char * unit);
  static int readlines(char * infile, IOline **inlines);
+ static int readlines_str(char * instrn, IOline **inlines);
+
     bool isitunit(char * unit);
 };
 
@@ -160,6 +166,7 @@ public:
     KIM_API_model();
     ~KIM_API_model();
     bool preinit(char * initfile,char *modelname);
+    bool preinit_str_testname(char * instrn);
     void free(int *error);
     void free();
     bool set_data(char *nm, intptr_t size, void *dt);
@@ -180,6 +187,7 @@ public:
     KIMBaseElement &operator[](char *nm);
 
 static   void read_file(char * initfile,KIM_IOline ** lns, int * numlns);
+static   void read_file_str_testname(char * strstream,KIM_IOline ** lns, int * numlns );
 static bool is_it_match(KIM_API_model & mdtst,char * inputinitfile);
 static bool is_it_match(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns);
 static bool is_it_match_noDummyCount(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns);
@@ -193,6 +201,7 @@ bool do_AtomsTypes_match(KIM_API_model &test,KIM_API_model & mdl);
 
     bool init(char * testinputfile,char* testname, char * modelinputfile,char *modelname);
     bool init(char * testname,char * modelname);
+    bool init_str_testname(char * intststr,char * modelname);
      void model_compute(int *error);
     int get_half_neigh(int mode,int request, int *atom, int *numnei, int **nei1atom, double **Rij);
     int get_full_neigh(int mode,int request, int *atom, int *numnei, int **nei1atom, double **Rij);

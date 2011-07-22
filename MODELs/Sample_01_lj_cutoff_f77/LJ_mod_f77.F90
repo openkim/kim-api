@@ -2,9 +2,8 @@
 ! Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna 
 ! All rights reserved.                                                 
 !                                                                     
-! Author: Valeriu Smirichinski                                         
+! Author: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
 !
-
 
 module lj_test_mod_f77
 	use  KIMservice

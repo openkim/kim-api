@@ -40,6 +40,7 @@ kim-api-all:
 
 kim-api-clean:
 	$(MAKE) -C $(KIM_API_DIR) clean
+	rm -f kim.log
 	@echo
 
 examples_legos-all:
@@ -63,6 +64,7 @@ $(patsubst %,%-all,$(TESTS_LIST)): | kim-api-all $(patsubst %,%-all,$(MODELS_LIS
 $(patsubst %,%-clean,$(TESTS_LIST)):
 	$(MAKE) -C $(KIM_TESTS_DIR)$(patsubst %-clean,%,$@) clean
 	@echo
+<<<<<<< variant A
 
 models_check:
 	@if [[ "$(MODELS_LIST)" == "" && "$(KIM_DYNAMIC)" == "" ]]; then \
@@ -71,3 +73,8 @@ models_check:
         echo "*************************************************************************"; \
         false; else true; fi
 
+>>>>>>> variant B
+
+
+####### Ancestor
+======= end

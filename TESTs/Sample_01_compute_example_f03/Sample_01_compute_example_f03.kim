@@ -10,7 +10,7 @@
 #
 #######################################################################################################
 
-TEST_NAME := Sample_01_compute_example_f
+TEST_NAME := Sample_01_compute_example_f03
 SystemOfUnitsFix := fixed    # can work only with units system defined bellow
 # SystemOfUnitsFix := flexible # can reset entire units system (default for model)
 
@@ -85,5 +85,3 @@ NEIGH-PURE-F            dummy
 NEIGH-RVEC-F            dummy 
 
 CLUSTER			dummy
-
-
