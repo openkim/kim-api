@@ -74,8 +74,11 @@ Corresponding Fortran style interface:
 ******************************************************************************
 
 int KIM_API_init_str_testname(void * kimmdl, char * testname, char * modelname); 
-        the same as KIM_API_init, but testname is actual content of .kim file: it is a long
-        character string null(char(0)) or eof terminated.
+
+    This routine performs the same function as the KIM_API_init() routine.
+    However, in this case the argument `testname' is a (long) null (or eof) 
+    terminated string with the complete content of the Test's KIM descriptor
+    file.
 
 Arguments:
 
@@ -84,24 +87,22 @@ Arguments:
                 definition will be (KIM_API_model **)).
 
         char * testname
-                null(char(0)) or eof terminated  character string with content of corresponded 
-                to testname.kim.
-                
+                null ( char(0) ) or eof terminated character string with the
+                complete content of the Test's KIM desriptor file.                
 
         char * modelname
-                null terminated character string that defines model name. The 
-                routine prepends string constant KIM_DIR, KIM_DIR_MODELS to
-                obtain file location of the model descriptor file (.kim)
+                null terminated character string that defines the Model name. 
+                The routine prepends string constant KIM_DIR_MODELS to
+                obtain the file location of the Model descriptor (.kim) file.
 
 Corresponding FORTRAN style interface:
-        integer function kim_api_init_f(kimmdl,testname,modelname) 
-                        character (len=*) :: testname,modelname 
-                        integer(kind=kim_intptr) :: kimmdl 
+        integer function kim_api_init_f(kimmdl, testname, modelname)
+                        character (len=*) :: testname, modelname
+                        integer(kind=kim_intptr) :: kimmdl
         end function kim_api_init_str_testname_f
 
 
 ******************************************************************************
-
 
 void KIM_API_allocate(void * kimmdl, intptr_t natoms, int ntypes, int * kimerror); 
 
