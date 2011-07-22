@@ -6,7 +6,8 @@
 # Author: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
 #
 
-MODEL_BUILD_TARGET:= model_Ne_P_LJ_NEIGH_PURE_H.a
+MODEL_NAME := model_Ne_P_LJ_NEIGH_PURE_H
+MODEL_BUILD_TARGET := $(MODEL_NAME).a
 
 ifndef KIM_API_DIR
    KIM_DIR = ../../
@@ -18,11 +19,11 @@ endif
 
 all: $(MODEL_BUILD_TARGET)
 
-model_Ne_P_LJ_NEIGH_PURE_H.a:  model_Ne_P_LJ_NEIGH_PURE_H.o model_Ne_P_LJ_NEIGH_PURE_H_compute.o
+$(MODEL_NAME).a:  $(MODEL_NAME).o $(MODEL_NAME)_compute.o
 	ar rcs  $@ *.o
 
-model_Ne_P_LJ_NEIGH_PURE_H.o: Makefile 
-model_Ne_P_LJ_NEIGH_PURE_H_compute.o: Makefile 
+$(MODEL_NAME).o: Makefile 
+$(MODEL_NAME)_compute.o: Makefile 
 
 
 Makefile: $(KIM_API_DIR)Include.mk
