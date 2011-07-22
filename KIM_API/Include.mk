@@ -84,6 +84,7 @@ ifdef KIM_DYNAMIC
    FORTRANFLAG += -fPIC
 endif
 
+KIM_LIB_FILE = $(KIM_API_DIR)/libkim.a
 KIM_LIB = -L$(KIM_API_DIR) -lkim
 
 #set default goals allways all
