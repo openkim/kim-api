@@ -23,9 +23,13 @@ COMMON_FRAGMENTS = module_start.frag compute_kim_variables.frag compute_initiali
 
 AUTO_GEN_MODELS = model_Ar_P_LJ_CLUSTER model_Ar_P_LJ_MI_OPBC_H_F model_Ar_P_LJ_NEIGH_PURE_H_F \
                   model_Ar_P_LJ_NEIGH_RVEC_F model_Ar_P_Morse model_ArNe_P_LJ_NEIGH_RVEC_F     \
-                  model_Ne_P_LJ_CLUSTER model_Ne_P_LJ_MI_OPBC_H_F model_Ne_P_LJ_NEIGH_PURE_H   \
-                  model_Ne_P_LJ_NEIGH_RVEC_F \
-                  model_Al_PF_ErcolessiAdams_MI_OPBC_H
+                  model_Ne_P_LJ_CLUSTER model_Ne_P_LJ_MI_OPBC_H_F                              \
+                  model_Ne_P_LJ_NEIGH_RVEC_F                                                   \
+                  model_Al_PF_ErcolessiAdams_MI_OPBC_H                                         \
+                  Sample_01_lj_cutoff_CLUSTER_f Sample_01_lj_cutoff_NEIGH_PURE_F_f             \
+                  Sample_01_lj_cutoff_NEIGH_PURE_H_f Sample_01_lj_cutoff_NEIGH_RVEC_F_f        \
+                  Sample_01_lj_cutoff_c Sample_01_lj_cutoff_cpp Sample_01_lj_cutoff_f77
+# model_Ne_P_LJ_NEIGH_PURE_H -- removed to avoid duplicate symbol with Sample_01_lj_cutoff_f77
 
 all: $(AUTO_GEN_MODELS) EXAMPLES.README
 
@@ -353,12 +357,71 @@ model_Ne_P_LJ_NEIGH_PURE_H: example_model_Ne_P_LJ_NEIGH_PURE_H               \
 	@touch $(KIM_MODELS_DIR)$@
 	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
 
-model_Al_PF_ErcolessiAdams_MI_OPBC_H: example_model_Al_PF_ErcolessiAdams_MI_OPBC_H               \
+model_Al_PF_ErcolessiAdams_MI_OPBC_H: example_model_Al_PF_ErcolessiAdams_MI_OPBC_H              \
                                       $(wildcard example_model_Al_PF_ErcolessAdams_MI_OPBC_H/*) \
                                       Makefile
 	mkdir -p $(KIM_MODELS_DIR)$@
 	@touch $(KIM_MODELS_DIR)$@
 	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
+
+
+
+Sample_01_lj_cutoff_CLUSTER_f: example_Sample_01_lj_cutoff_CLUSTER_f               \
+                               $(wildcard example_Sample_01_lj_cutoff_CLUSTER_f/*) \
+                               Makefile
+	mkdir -p $(KIM_MODELS_DIR)$@
+	@touch $(KIM_MODELS_DIR)$@
+	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
+	@echo "dummy file" > $(KIM_MODELS_DIR)$@/$@.F90 # so that the make system see it
+
+Sample_01_lj_cutoff_NEIGH_PURE_F_f: example_Sample_01_lj_cutoff_NEIGH_PURE_F_f               \
+                                    $(wildcard example_Sample_01_lj_cutoff_NEIGH_PURE_F_f/*) \
+                                    Makefile
+	mkdir -p $(KIM_MODELS_DIR)$@
+	@touch $(KIM_MODELS_DIR)$@
+	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
+	@echo "dummy file" > $(KIM_MODELS_DIR)$@/$@.F90 # so that the make system see it
+
+Sample_01_lj_cutoff_NEIGH_PURE_H_f: example_Sample_01_lj_cutoff_NEIGH_PURE_H_f               \
+                                    $(wildcard example_Sample_01_lj_cutoff_NEIGH_PURE_H_f/*) \
+                                    Makefile
+	mkdir -p $(KIM_MODELS_DIR)$@
+	@touch $(KIM_MODELS_DIR)$@
+	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
+	@echo "dummy file" > $(KIM_MODELS_DIR)$@/$@.F90 # so that the make system see it
+
+Sample_01_lj_cutoff_NEIGH_RVEC_F_f: example_Sample_01_lj_cutoff_NEIGH_RVEC_F_f               \
+                                    $(wildcard example_Sample_01_lj_cutoff_NEIGH_RVEC_F_f/*) \
+                                    Makefile
+	mkdir -p $(KIM_MODELS_DIR)$@
+	@touch $(KIM_MODELS_DIR)$@
+	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
+	@echo "dummy file" > $(KIM_MODELS_DIR)$@/$@.F90 # so that the make system see it
+
+Sample_01_lj_cutoff_c: example_Sample_01_lj_cutoff_c               \
+                       $(wildcard example_Sample_01_lj_cutoff_c/*) \
+                       Makefile
+	mkdir -p $(KIM_MODELS_DIR)$@
+	@touch $(KIM_MODELS_DIR)$@
+	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
+	@echo "dummy file" > $(KIM_MODELS_DIR)$@/$@.c # so that the make system see it
+
+Sample_01_lj_cutoff_cpp: example_Sample_01_lj_cutoff_cpp               \
+                         $(wildcard example_Sample_01_lj_cutoff_cpp/*) \
+                         Makefile
+	mkdir -p $(KIM_MODELS_DIR)$@
+	@touch $(KIM_MODELS_DIR)$@
+	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
+	@echo "dummy file" > $(KIM_MODELS_DIR)$@/$@.cpp # so that the make system see it
+
+Sample_01_lj_cutoff_f77: example_Sample_01_lj_cutoff_f77               \
+                         $(wildcard example_Sample_01_lj_cutoff_f77/*) \
+                         Makefile
+	mkdir -p $(KIM_MODELS_DIR)$@
+	@touch $(KIM_MODELS_DIR)$@
+	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
+	@echo "dummy file" > $(KIM_MODELS_DIR)$@/$@.F90 # so that the make system see it
+
 
 
 .PHONY: clean pristine

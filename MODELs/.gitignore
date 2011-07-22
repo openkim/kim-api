@@ -1,4 +1,11 @@
 EXAMPLES.README
+Sample_01_lj_cutoff_CLUSTER_f
+Sample_01_lj_cutoff_NEIGH_PURE_F_f
+Sample_01_lj_cutoff_NEIGH_PURE_H_f
+Sample_01_lj_cutoff_NEIGH_RVEC_F_f
+Sample_01_lj_cutoff_c
+Sample_01_lj_cutoff_cpp
+Sample_01_lj_cutoff_f77
 model_Al_PF_ErcolessiAdams_MI_OPBC_H
 model_ArNe_P_LJ_NEIGH_RVEC_F
 model_Ar_P_LJ_CLUSTER
