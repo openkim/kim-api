@@ -27,9 +27,8 @@ AUTO_GEN_TESTS = test_Al_free_cluster test_Al_periodic_FCC_MI_OPBC              
                  test_Ar_periodic_cut_FCC_NEIGH_RVEC                                                           \
                  test_Ne_free_cluster_CLUSTER test_Ne_free_cluster                                             \
                  test_Ne_periodic_FCC_MI_OPBC test_Ne_periodic_FCC_NEIGH_PURE test_Ne_periodic_FCC_NEIGH_RVEC  \
-                 test_Ne_periodic_cut_FCC_NEIGH_RVEC
-
-EXTRA_GEN_TESTS = Sample_01_compute_example_c Sample_01_compute_example_f
+                 test_Ne_periodic_cut_FCC_NEIGH_RVEC                                                           \
+                 Sample_01_compute_example_c Sample_01_compute_example_f Sample_01_compute_example_f03
 
 
 all: $(AUTO_GEN_TESTS) EXAMPLES.README
@@ -716,6 +715,7 @@ Sample_01_compute_example_c: example_Sample_01_compute_example_c               \
 	mkdir -p $(KIM_TESTS_DIR)$@
 	@touch $(KIM_TESTS_DIR)$@
 	cp -rf example_$@/* $(KIM_TESTS_DIR)$@/
+	@echo "dummy file" > $(KIM_TESTS_DIR)$@/$@.c # so that the make system see it
 
 Sample_01_compute_example_f: example_Sample_01_compute_example_f               \
                              $(wildcard example_Sample_01_compute_example_f/*) \
@@ -723,6 +723,16 @@ Sample_01_compute_example_f: example_Sample_01_compute_example_f               \
 	mkdir -p $(KIM_TESTS_DIR)$@
 	@touch $(KIM_TESTS_DIR)$@
 	cp -rf example_$@/* $(KIM_TESTS_DIR)$@/
+	@echo "dummy file" > $(KIM_TESTS_DIR)$@/$@.F90 # so that the make system see it
+
+Sample_01_compute_example_f03: example_Sample_01_compute_example_f03               \
+                               $(wildcard example_Sample_01_compute_example_f03/*) \
+                               Makefile
+	mkdir -p $(KIM_TESTS_DIR)$@
+	@touch $(KIM_TESTS_DIR)$@
+	cp -rf example_$@/* $(KIM_TESTS_DIR)$@/
+	@echo "dummy file" > $(KIM_TESTS_DIR)$@/$@.F03 # so that the make system see it
+
 
 test_Ar_multiple_models: example_test_Ar_multiple_models               \
                          $(wildcard example_test_Ar_multiple_models/*) \
