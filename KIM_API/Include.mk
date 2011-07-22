@@ -72,6 +72,7 @@ else
       CPPLIBFLAG += -ldl
    endif
 endif
+ CPPFLAG += -D KIM_DIR=\"$(KIM_DIR)\"
 
 # Set max neighbors
 ifdef KIM_API_MAX_NEIGHBORS #MAX NEIGHBORS FOR AN ATOM default is 512

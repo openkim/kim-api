@@ -1624,13 +1624,33 @@ bool KIM_API_model::init(char* testname, char* modelname){
     strcat(modelfile,modelname);strcat(modelfile,"/");strcat(modelfile,modelname);
     strcat(modelfile,".kim");
 
-    return this->init(testfile,testname,modelfile,modelname);
+    //redirecting cout > kimlog
+    char kimlog[160] = KIM_DIR; strcat(kimlog,"kim.log");
+    streambuf * psbuf, * backup;ofstream filekimlog;
+    filekimlog.open(kimlog);
+    backup = cout.rdbuf();psbuf = filekimlog.rdbuf();cout.rdbuf(psbuf);
+
+    bool result_init= this->init(testfile,testname,modelfile,modelname);
+
+   //redirecting back to > cout
+    cout.rdbuf(backup); filekimlog.close();
+
+    return result_init;
+
+  
+
 }
 
 bool KIM_API_model::init_str_testname(char* in_tststr, char* modelname){
     char modelinputfile[160] = KIM_DIR_MODELS;
     strcat(modelinputfile,modelname);strcat(modelinputfile,"/");strcat(modelinputfile,modelname);
     strcat(modelinputfile,".kim");
+    
+    //redirecting cout > kimlog
+    char kimlog[160] = KIM_DIR; strcat(kimlog,"kim.log");
+    streambuf * psbuf, * backup;ofstream filekimlog;
+    filekimlog.open(kimlog);
+    backup = cout.rdbuf();psbuf = filekimlog.rdbuf();cout.rdbuf(psbuf);
 
     //check test-model match and preinit test-model-API
     KIM_API_model test,mdl;
@@ -1656,11 +1676,18 @@ bool KIM_API_model::init_str_testname(char* in_tststr, char* modelname){
         support_Rij=false;
         if (strcmp(NBC_method_current,"NEIGH-RVEC-F")==0) support_Rij=true;
 
+        //redirecting back to > cout
+        cout.rdbuf(backup); filekimlog.close();
+
         return true;
     }else{
         mdl.free();
  cout<<"Do not match  " << modelname << " and "<< test.model.name <<endl;
        test.free();
+
+       //redirecting back to > cout
+        cout.rdbuf(backup); filekimlog.close();
+        
         return false;
     }
 }
@@ -1687,11 +1714,29 @@ bool KIM_API_model::model_init(){
     strcpy(modelname,this->model.name);
     kim=this;
     pkim =(void**) &kim;
+
+    //redirecting cout > kimlog
+    char kimlog[160] = KIM_DIR; strcat(kimlog,"kim.log");
+    streambuf * psbuf, * backup;ofstream filekimlog;
+    filekimlog.open(kimlog,ofstream::app);
+    backup = cout.rdbuf();psbuf = filekimlog.rdbuf();cout.rdbuf(psbuf);
+
 cout<< "KIM_API_model::model_init: call statically linked initialize routine for::"<<modelname<<endl;
+    //redirecting back to > cout
+    cout.rdbuf(backup); filekimlog.close();
+
 #include "model_init_include.cpp"
+
+    //redirecting cout > kimlog
+    filekimlog.open(kimlog,ofstream::app);
+    backup = cout.rdbuf();psbuf = filekimlog.rdbuf();cout.rdbuf(psbuf);
 
     cout<< "KIM_API_model::model_init: model initiliser failed for ";
     cout<<modelname<<endl;
+
+     //redirecting back to > cout
+    cout.rdbuf(backup); filekimlog.close();
+
     return false;
 }
 #else
@@ -1706,6 +1751,12 @@ bool KIM_API_model::model_init(){
     pkim =(void**) &kim;
     sprintf(model_slib_file,"%s%s/%s.so",KIM_DIR_MODELS,modelname,modelname);
 
+//redirecting cout > kimlog
+    char kimlog[160] = KIM_DIR; strcat(kimlog,"kim.log");
+    streambuf * psbuf, * backup;ofstream filekimlog;
+    filekimlog.open(kimlog, ofstream::app);
+    backup = cout.rdbuf();psbuf = filekimlog.rdbuf();cout.rdbuf(psbuf);
+
 cout<<"KIM_API_model::model_init: call dynamically linked initialize routine for:"<<modelname<<endl;
 cout<<"               from the shared library:"<<model_slib_file<<endl;
     sprintf(model_init_routine_name,"%s_init_",modelname);
@@ -1717,6 +1768,9 @@ cout<<"               from the shared library:"<<model_slib_file<<endl;
          cout<< "KIM_API_model::model_init: model initiliser failed for ";
          cout<<modelname<<endl<<dlerror()<<endl;
          fprintf(stderr,"%s not found...\n",model_slib_file);
+
+          //redirecting back to > cout
+          cout.rdbuf(backup); filekimlog.close();
 	 return false;
     }
     typedef void (*Model_Init)(void **);//prototype for model_init
@@ -1725,8 +1779,15 @@ cout<<"               from the shared library:"<<model_slib_file<<endl;
     if (dlsym_error) {
         cerr << "Cannot load symbol: " << dlsym_error <<endl;
         dlclose(model_lib_handle);
+
+        //redirecting back to > cout
+        cout.rdbuf(backup); filekimlog.close();
+
         return false;
     }
+    //redirecting back to > cout
+    cout.rdbuf(backup); filekimlog.close();
+    
     (*mdl_init)(pkim);
     return true;
 }

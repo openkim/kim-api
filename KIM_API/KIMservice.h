@@ -33,6 +33,10 @@ using namespace std;
 #define KIM_DIR_TESTS "../../TESTs/"
 #endif
 
+#ifndef KIM_DIR
+#define KIM_DIR "./"
+#endif
+
 #ifndef KIM_API_MAX_NEIGHBORS
 #define KIM_API_MAX_NEIGHBORS 512
 #endif

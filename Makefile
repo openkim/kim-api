@@ -27,6 +27,7 @@ kim-api-all:
 
 kim-api-clean: | $(patsubst %,%-clean,$(MODELS_LIST)) $(patsubst %,%-clean,$(TESTS_LIST))
 	$(MAKE) -C $(KIM_API_DIR) clean
+	rm -f kim.log
 	@echo
 
 $(patsubst %,%-all,$(MODELS_LIST)): | kim-api-all
@@ -44,3 +45,5 @@ $(patsubst %,%-all,$(TESTS_LIST)): | kim-api-all $(patsubst %,%-all,$(MODELS_LIS
 $(patsubst %,%-clean,$(TESTS_LIST)):
 	$(MAKE) -C $(KIM_TESTS_DIR)$(patsubst %-clean,%,$@) clean
 	@echo
+
+
