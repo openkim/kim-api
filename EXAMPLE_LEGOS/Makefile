@@ -23,8 +23,3 @@ clean:
 	$(MAKE) -C $(KIM_DIR)EXAMPLE_LEGOS/model_legos clean
 	@echo
 	$(MAKE) -C $(KIM_DIR)EXAMPLE_LEGOS/test_legos  clean
-
-pristine: 
-	$(MAKE) -C $(KIM_DIR)EXAMPLE_LEGOS/model_legos pristine
-	@echo
-	$(MAKE) -C $(KIM_DIR)EXAMPLE_LEGOS/test_legos  pristine
