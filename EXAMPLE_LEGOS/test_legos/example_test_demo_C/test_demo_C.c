@@ -34,7 +34,7 @@ int main(){
         double **Rij;
 
 	/* test  and model name */
-	char testname[80] ="Sample_01_compute_example_c";
+	char testname[80] ="test_demo_C";
 	char modelname[80] ="";  /* model name string */
         
 

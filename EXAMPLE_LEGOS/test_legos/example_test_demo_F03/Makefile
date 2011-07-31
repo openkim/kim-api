@@ -6,22 +6,23 @@
 # Author: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
 #
 
+TEST_NAME := test_demo_F03
+
 ifndef KIM_API_DIR
-   KIM_DIR = ../../
-   include $(KIM_DIR)KIM_API/Include.mk
+include ../../KIM_API/Include.mk
 else
-   include $(KIM_API_DIR)Include.mk
+include $(KIM_API_DIR)Include.mk
 endif
 
 
 LOCALOBJ = neighborlistmod.o myqsort.o
 
-all: Sample_01_compute_example_f
+all: $(TEST_NAME)
 
-Sample_01_compute_example_f: lj_test.o $(LOCALOBJ) $(if $(strip $(KIM_DYNAMIC)),,$(MODELOBJ)) $(KIM_LIB_FILE)
+$(TEST_NAME): $(TEST_NAME).o $(LOCALOBJ) $(if $(strip $(KIM_DYNAMIC)),,$(MODELOBJ)) $(KIM_LIB_FILE)
 	$(LINKCOMPILER) $(CPPFLAG) $(CPPLIBFLAG)  $(LOCALOBJ)  $< $(KIM_LIB) $(MODELOBJ) $(OUTPUTIN) $@
 
-lj_test.o: $(LOCALOBJ) Makefile
+$(TEST_NAME).o: $(LOCALOBJ) Makefile
 
 neighborlistmod.o: myqsort.o Makefile
 
@@ -30,4 +31,4 @@ Makefile: $(KIM_API_DIR)Include.mk
 	@touch Makefile
 
 clean:
-	rm -f *.mod *.o  Sample_01_compute_example_f
+	rm -f *.mod *.o  $(TEST_NAME)

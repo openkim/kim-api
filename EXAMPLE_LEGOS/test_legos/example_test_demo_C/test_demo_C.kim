@@ -10,7 +10,7 @@
 #
 #######################################################################################################
 
-TEST_NAME := Sample_01_compute_example_f03
+TEST_NAME := test_demo_C
 SystemOfUnitsFix := fixed    # can work only with units system defined bellow
 # SystemOfUnitsFix := flexible # can reset entire units system (default for model)
 
@@ -33,19 +33,14 @@ SystemOfUnitsFix := fixed    # can work only with units system defined bellow
 # requirements -- it is empty field if variable is needed always or field set to optional, meaning that you can 
 #                 switch off calculation of the variable
 
-SUPPORTED_ATOM/PARTICLES_TYPES:
-# Simbol/name           Type        code
-#Ar                      spec                    18                      # Argon
-
-
 MODEL_INPUT:
 # Name                  Type         Unit       SystemU/Scale           Shape              requirements
 
 numberOfAtoms           integer*8    none       none                    []                              # empty [] means rank is zero
 
-numberAtomTypes         integer      none       none                    []
+#numberAtomTypes        integer      none       none                    []
 
-atomTypes               integer      none       none                    [numberOfAtoms]                 # one [dummy] -- rank is one
+#atomTypes              integer      none       none                    [numberOfAtoms]                 # one [dummy] -- rank is one
 
 coordinates             real*8       length     standard                [numberOfAtoms,3]
 
@@ -57,7 +52,7 @@ get_full_neigh          method       none       none                    []
 
 
 MODEL_OUTPUT:
-# Name                  Type         Unit       SystemU/Scale           Shape                   requirements
+# Name                  Type         Unit       SystemU/Scale           Shape              requirements
 
 compute                 method       none       none                    []
 
@@ -69,7 +64,6 @@ energy                  real*8       energy     standard                []
 
 forces                  real*8       force      standard                [numberOfAtoms,3]
 
-energyPerAtom           real*8       energy     standard                [numberOfAtoms]
 
 CONVENTIONS:
 # Name                  Type
@@ -79,9 +73,3 @@ OneBasedLists           dummy        # presence of this line indicates that inde
 Neigh_BothAccess        dummy        # need both: locator and iterator
 
 NEIGH-PURE-H            dummy        # scenario method to deal with neighbor list and boundary condition
-
-NEIGH-PURE-F            dummy 
-
-NEIGH-RVEC-F            dummy 
-
-CLUSTER			dummy

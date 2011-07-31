@@ -102,7 +102,7 @@ program ljtest
         character*80 :: infile = "./data/dumpval10.xyz"
 
 	!KIM API related declaration pointer declarations 	
-	character*80,target :: testname ="Sample_01_compute_example_f"
+	character*80,target :: testname ="test_demo_F03"
 	character*80,target :: modelname =""   !string for the modelname
 	character*80,target :: nm =""
         real*8,pointer, dimension(:,:)::x,f

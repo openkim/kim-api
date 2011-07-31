@@ -10,7 +10,7 @@
 #
 #######################################################################################################
 
-TEST_NAME := Sample_01_compute_example_f
+TEST_NAME := test_demo_F
 SystemOfUnitsFix := fixed    # can work only with units system defined bellow
 # SystemOfUnitsFix := flexible # can reset entire units system (default for model)
 
