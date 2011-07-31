@@ -121,11 +121,6 @@ DOCs/
      the openkim-api package, and links to the files KIMserviceDescriptions.txt
      and standard.kim.  (See the README file in that directory.)
 
-EXAMPLE_LEGOS/
-     directory containing the pieces of example Models and Tests that are used
-     to automatically generate working examples. (This organization facilitates
-     easy maintenance of the examples.)
-
 KIM_API/
      directory containing the openkim-api service routines
         

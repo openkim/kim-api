@@ -29,18 +29,13 @@ bash:
 
 4. Change to the KIM_DIR directory (if needed) and execute the commands: 
 
-> make examples
-
 > make
 
      This builds all Models, Tests, and the openKIM API service routine library
        `make'             -- compiles the API and all Models and Tests
        `make all'         -- same as `make'
-       `make examples'    -- generates code for example Models and Tests
        `make openkim-api' -- compiles only the API
        `make clean'       -- will remove all .o, .a, .so and executable files
-       `make pristine'    -- will run `make clean' and also remove the
-                             automatically generated example Models and Tests
 
 
 5. The provided example Tests read in the name of a Model (or Models) 
