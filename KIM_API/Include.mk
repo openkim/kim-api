@@ -107,10 +107,8 @@ OBJF90 = KIMserviceF.o
 #fortran on/of
 ifdef KIM_NO_FORTRAN
    ALLOBJ = $(OBJC)
-   CODE_EXTENSIONS = (c|i|ii|cc|cxx|cpp|C)
 else
    ALLOBJ = $(OBJC) $(OBJF90)
-   CODE_EXTENSIONS = (c|i|ii|cc|cxx|cpp|C|f|for|ftn|fpp|f90|f95|f03|f08|F|FOR|FTN|FPP|F90|F95|F03|F08)
 endif
 
 

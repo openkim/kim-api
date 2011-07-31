@@ -12,25 +12,22 @@
 
 include $(KIM_DIR)KIM_API/Include.mk
 
-MODELS_LIST = $(notdir $(shell find $(KIM_MODELS_DIR) -maxdepth 2 -mindepth 2 -print | sed -e 's/.*\/\([^\/]*\/[^\/]*\)/\1/' | grep -E "^([^/]*)/\1\.$(CODE_EXTENSIONS)$$" | sed -e "s/\([^/]*\)\/.*/\1/"))
-TESTS_LIST  = $(notdir $(shell find $(KIM_TESTS_DIR)  -maxdepth 2 -mindepth 2 -print | sed -e 's/.*\/\([^\/]*\/[^\/]*\)/\1/' | grep -E "^([^/]*)/\1\.$(CODE_EXTENSIONS)$$" | sed -e "s/\([^/]*\)\/.*/\1/"))
+MODELS_LIST = $(notdir $(filter-out .%,$(shell find $(KIM_MODELS_DIR) -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)))
+TESTS_LIST  = $(notdir $(filter-out .%,$(shell find $(KIM_TESTS_DIR) -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)))
 
-.PHONY: all openkim-api clean pristine                     \
+.PHONY: all openkim-api clean                              \
         kim-api-all kim-api-clean                          \
         $(patsubst %,%-all,$(MODELS_LIST) $(TESTS_LIST))   \
-        $(patsubst %,%-clean,$(MODELS_LIST) $(TESTS_LIST)) \
-        examples examples_legos-all examples_legos-pristine
-
+        $(patsubst %,%-clean,$(MODELS_LIST) $(TESTS_LIST))
 
 # compile everything in the standard directories
 all: models_check kim-api-all $(patsubst %,%-all,$(MODELS_LIST)) $(patsubst %,%-all,$(TESTS_LIST))
 
 # other targets 
-examples: examples_legos-all   # generate the example codes
 openkim-api: kim-api-all      # compile the openkim-api
+
 # cleaning targets
 clean: $(patsubst %,%-clean,$(MODELS_LIST)) $(patsubst %,%-clean,$(TESTS_LIST)) kim-api-clean
-pristine: clean examples_legos-pristine
 
 
 ########### for internal use ###########
@@ -42,12 +39,6 @@ kim-api-clean:
 	$(MAKE) -C $(KIM_API_DIR) clean
 	rm -f kim.log
 	@echo
-
-examples_legos-all:
-	$(MAKE) -C $(KIM_DIR)EXAMPLE_LEGOS all
-
-examples_legos-pristine: 
-	$(MAKE) -C $(KIM_DIR)EXAMPLE_LEGOS pristine
 
 $(patsubst %,%-all,$(MODELS_LIST)): | kim-api-all
 	$(MAKE) -C $(KIM_MODELS_DIR)$(patsubst %-all,%,$@) all
