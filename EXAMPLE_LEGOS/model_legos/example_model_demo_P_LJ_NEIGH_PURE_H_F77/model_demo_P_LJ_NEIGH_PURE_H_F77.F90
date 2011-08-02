@@ -42,7 +42,7 @@ contains
 		aea = kim_api_get_data_f(pkim,"energyPerAtom",kimerr)
                 f_flag=kim_api_isit_compute_f(pkim,"forces",kimerr)
 		e_flag=kim_api_isit_compute_f(pkim,"energyPerAtom",kimerr)
-		call LJ_f77_calculate(pkim,x,f,ea,natom,potenergy,xcutof,f_flag,e_flag,kim_api_get_half_neigh,kimerr)
+		call LJ_f77_calculate(pkim,x,f,ea,natom,potenergy,xcutof,f_flag,e_flag,kim_api_get_half_neigh_f,kimerr)
 	end subroutine lj_calculate_wrap_f77
 
 

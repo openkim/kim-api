@@ -174,7 +174,7 @@ contains
 	        
 		mode=0;   ! iterator mode
 		request=0;!reset neighbor iterator to beginning
-		retcode = kim_api_get_half_neigh(pkim,mode,request,atom,numnei,pnei1atom,pRij)
+		retcode = kim_api_get_half_neigh_f(pkim,mode,request,atom,numnei,pnei1atom,pRij)
 		if(retcode .ne. 2) then
 			kimerr=retcode
 			print*,"sample_01_lj_cutoff_f_calculate: iterator get_half_neigh has not been reset successfully:retcode= ",retcode
@@ -185,7 +185,7 @@ contains
         	do while (retcode .eq. 1)
 			!increment iterator
 			mode=0; request=1;
-			retcode = kim_api_get_half_neigh(pkim,mode,request,atom,numnei,pnei1atom,pRij)
+			retcode = kim_api_get_half_neigh_f(pkim,mode,request,atom,numnei,pnei1atom,pRij)
 			if(retcode.lt.0) then
 				kimerr=retcode
 				print*,"sample_01_lj_cutoff_f_calculate: error iterator get_half_neigh :retcode= ",retcode

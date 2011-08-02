@@ -88,14 +88,14 @@ program TEST_NAME_STR
   endif
 
   ! call model's init routine
-  ier = kim_api_model_init(pkim)
+  ier = kim_api_model_init_f(pkim)
   if (ier.le.0) then
      call report_error(__LINE__, "kim_api_model_init", ier)
      stop
   endif
 
   ! determine which NBC scenerio to use
-  pNBC_Method = kim_api_get_nbc_method(pkim, ier) ! don't forget to free
+  pNBC_Method = kim_api_get_nbc_method_f(pkim, ier) ! don't forget to free
   if (ier.le.0) then
      call report_error(__LINE__, "kim_api_get_nbc_method", ier)
      stop
@@ -254,7 +254,7 @@ program TEST_NAME_STR
   endif
 
   ! Call model compute
-  call kim_api_model_compute(pkim, ier)
+  call kim_api_model_compute_f(pkim, ier)
   if (ier.le.0) then
      call report_error(__LINE__, "kim_api_model_compute", ier)
      stop
@@ -280,7 +280,7 @@ program TEST_NAME_STR
      deallocate(RijList)
   endif
 
-  call kim_api_model_destroy(pkim, ier)
+  call kim_api_model_destroy_f(pkim, ier)
   if (ier.le.0) then
      call report_error(__LINE__, "kim_api_model_destroy", ier)
      stop

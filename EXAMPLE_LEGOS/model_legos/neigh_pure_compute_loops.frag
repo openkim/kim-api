@@ -1,5 +1,5 @@
     ! determine which NBC scenerio to use
-    pNBC_Method = kim_api_get_nbc_method(pkim, ier); if (ier.le.0) return
+    pNBC_Method = kim_api_get_nbc_method_f(pkim, ier); if (ier.le.0) return
     if (index(NBC_Method,"NEIGH-PURE-H").eq.1) then
        nbc = 0
     elseif (index(NBC_Method,"NEIGH-PURE-F").eq.1) then
@@ -20,9 +20,9 @@
        atom = i ! request neighbors for atom i
        
        if (nbc.eq.0) then
-          ier = kim_api_get_half_neigh(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij_dummy)
+          ier = kim_api_get_half_neigh_f(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij_dummy)
        else
-          ier = kim_api_get_full_neigh(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij_dummy)
+          ier = kim_api_get_full_neigh_f(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij_dummy)
        endif
        if (ier.le.0) then
           call report_error(__LINE__, "kim_api_get_*_neigh", ier);

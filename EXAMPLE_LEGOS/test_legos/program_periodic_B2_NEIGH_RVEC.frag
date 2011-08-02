@@ -87,7 +87,7 @@ program TEST_NAME_STR
 
 
   ! call model's init routine
-  ier = kim_api_model_init(pkim)
+  ier = kim_api_model_init_f(pkim)
   if (ier.le.0) then
      call report_error(__LINE__, "kim_api_model_init", ier)
      stop
@@ -190,7 +190,7 @@ program TEST_NAME_STR
   print *, ""
 
   ! Call model compute
-  call kim_api_model_compute(pkim, ier)
+  call kim_api_model_compute_f(pkim, ier)
   if (ier.le.0) then
      call report_error(__LINE__, "kim_api_model_compute", ier)
      stop
@@ -205,7 +205,7 @@ program TEST_NAME_STR
   coords(:,2) = 0.5d0*Spacings(3)
   call NEIGH_RVEC_F_periodic_B2_neighborlist(CellsPerCutoff, (cutoff+0.75),Spacings(3), NNeighbors, neighborList, RijList)
   ! Call model compute
-  call kim_api_model_compute(pkim, ier)
+  call kim_api_model_compute_f(pkim, ier)
   if (ier.le.0) then
      call report_error(__LINE__, "kim_api_model_compute", ier)
      stop
@@ -220,7 +220,7 @@ program TEST_NAME_STR
   coords(:,2) = 0.5d0*Spacings(2)
   call NEIGH_RVEC_F_periodic_B2_neighborlist(CellsPerCutoff, (cutoff+0.75),Spacings(2), NNeighbors, neighborList, RijList)
   ! Call model compute
-  call kim_api_model_compute(pkim, ier)
+  call kim_api_model_compute_f(pkim, ier)
   if (ier.le.0) then
      call report_error(__LINE__, "kim_api_model_compute", ier)
      stop
@@ -241,7 +241,7 @@ program TEST_NAME_STR
      ! compute new neighbor lists (could be done more intelligently, I'm sure)
      call NEIGH_RVEC_F_periodic_B2_neighborlist(CellsPerCutoff, (cutoff+0.75), Spacings(4), NNeighbors, neighborList, RijList)
      ! Call model compute
-     call kim_api_model_compute(pkim, ier)
+     call kim_api_model_compute_f(pkim, ier)
      if (ier.le.0) then
         call report_error(__LINE__, "kim_api_model_compute", ier)
         stop
@@ -271,7 +271,7 @@ program TEST_NAME_STR
   deallocate(NLRvecLocs)
   deallocate(RijList)
 
-  call kim_api_model_destroy(pkim, ier)
+  call kim_api_model_destroy_f(pkim, ier)
   if (ier.le.0) then
      call report_error(__LINE__, "kim_api_model_destroy", ier)
      stop

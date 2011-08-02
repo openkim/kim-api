@@ -68,7 +68,7 @@ program TEST_NAME_STR
   endif
 
   ! call model's init routine
-  ier = kim_api_model_init(pkim)
+  ier = kim_api_model_init_f(pkim)
   if (ier.le.0) then
      call report_error(__LINE__, "kim_api_model_init", ier)
      stop
@@ -134,7 +134,7 @@ program TEST_NAME_STR
   call create_FCC_configuration(FCCspacing, nCellsPerSide, .false., coords, middleDum)
 
   ! Call model compute
-  call kim_api_model_compute(pkim, ier)
+  call kim_api_model_compute_f(pkim, ier)
   if (ier.le.0) then
      call report_error(__LINE__, "kim_api_model_compute", ier)
      stop
@@ -152,7 +152,7 @@ program TEST_NAME_STR
 
 
   ! don't forget to destroy and deallocate
-  call kim_api_model_destroy(pkim, ier)
+  call kim_api_model_destroy_f(pkim, ier)
   if (ier.le.0) then
      call report_error(__LINE__, "kim_api_model_destroy", ier)
      stop

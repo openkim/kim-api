@@ -176,7 +176,7 @@ contains
 	        
 		mode=0;   ! iterator mode
 		request=0;!reset neighbor iterator to beginning
-		retcode = kim_api_get_full_neigh(pkim,mode,request,atom,numnei,pnei1atom,pRij)
+		retcode = kim_api_get_full_neigh_f(pkim,mode,request,atom,numnei,pnei1atom,pRij)
 		if(retcode .ne. 2) then
 			kimerr=retcode
 			print*,"..._calculate: iterator get_full_neigh has not been reset successfully:retcode= ",retcode
@@ -187,7 +187,7 @@ contains
         	do while (retcode .eq. 1)
 			!increment iterator
 			mode=0; request=1;
-			retcode = kim_api_get_full_neigh(pkim,mode,request,atom,numnei,pnei1atom,pRij)
+			retcode = kim_api_get_full_neigh_f(pkim,mode,request,atom,numnei,pnei1atom,pRij)
 		
 			if(retcode.lt.0) then
 				kimerr=retcode

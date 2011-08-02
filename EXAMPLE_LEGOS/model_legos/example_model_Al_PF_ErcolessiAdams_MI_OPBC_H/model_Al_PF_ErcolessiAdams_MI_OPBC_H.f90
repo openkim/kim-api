@@ -363,7 +363,7 @@ do i = 1,N-1
    ! Get neighbors for atom i
    !
    atom = i ! request neighbors for atom i
-   ier = kim_api_get_half_neigh(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij_dummy)
+   ier = kim_api_get_half_neigh_f(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij_dummy)
    if (ier.le.0) return
 
    ! Loop over the neighbors of atom i
@@ -411,7 +411,7 @@ do i = 1,N-1
    ! Get neighbors for atom i
    !
    atom = i ! request neighbors for atom i
-   ier = kim_api_get_half_neigh(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij_dummy)
+   ier = kim_api_get_half_neigh_f(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij_dummy)
    if (ier.le.0) return
 
    ! Loop over the neighbors of atom i

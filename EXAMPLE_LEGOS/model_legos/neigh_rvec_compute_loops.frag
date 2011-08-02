@@ -5,7 +5,7 @@
        ! Get neighbors for atom i
        !
        atom = i ! request neighbors for atom i
-       ier = kim_api_get_full_neigh(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij)
+       ier = kim_api_get_full_neigh_f(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij)
        if (ier.le.0) then
           call report_error(__LINE__, "kim_api_get_full_neigh", ier);
           return

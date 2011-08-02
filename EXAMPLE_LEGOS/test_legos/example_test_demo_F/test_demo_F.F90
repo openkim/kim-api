@@ -102,14 +102,14 @@ print*, inputstring
 	if(kim_api_set_data_f(pkim,"get_full_neigh",one,loc(get_full_neigh_kim)).ne.1) stop' get_full_neigh not in kim'
 
 	! READY to call Model Initiation routine
-	if( kim_api_model_init(pkim).ne.1) stop ' model initialiser failed'
+	if( kim_api_model_init_f(pkim).ne.1) stop ' model initialiser failed'
 	       
 
 
 	!All setup finished -- ready to compute
 	!compute the model -- e.g., compute energy & force
-        call kim_api_print(pkim,kimerr)
-	call kim_api_model_compute(pkim,kimerr); call kimerr_handle("kim_api_model_compute",kimerr)
+        call kim_api_print_f(pkim,kimerr)
+	call kim_api_model_compute_f(pkim,kimerr); call kimerr_handle("kim_api_model_compute",kimerr)
 
 	!output KIM API object to screen (optional)
 	call kim_api_print_f(pkim,kimerr); call kimerr_handle("kim_api_print_f",kimerr)
@@ -120,7 +120,7 @@ print*, inputstring
         print*,"energy as sum of energy per atom",sum(ea)
 
 
-        plist_of_AtomsTypes = KIM_API_get_listAtomTypes(pkim,nAtomsTypes,kimerr)
+        plist_of_AtomsTypes = kim_api_get_listatomtypes_f(pkim,nAtomsTypes,kimerr)
 	if ((kimerr.eq.1).and.(nAtomsTypes.gt.0)) then
 		write(*,"('The supported atoms types : ',10( A,' '))")  list_of_AtomsTypes(1:nAtomsTypes)
 	end if
@@ -128,35 +128,35 @@ print*, inputstring
 	print *," supported atom code of W= ",kim_api_get_atypecode_f(pkim,"W",kimerr), " kimerrorcode= ",kimerr
 	call free(plist_of_AtomsTypes)
 
-        plist_of_parameters = KIM_API_get_listparams(pkim,nParameters,kimerr)
+        plist_of_parameters = kim_api_get_listparams_f(pkim,nParameters,kimerr)
         print *,"kimerr=", kimerr, " nParameters= ", nParameters
 	if ((kimerr.eq.1).and.(nParameters.gt.0)) then
 		write(*,"('parameters of the models are : ',10( A,' '))")  list_of_parameters(1:nParameters)
 	end if
 	call free(plist_of_parameters)
 
- 	plist_of_parameters = KIM_API_get_listfreeparams(pkim,nParameters,kimerr)
+ 	plist_of_parameters = kim_api_get_listfreeparams_f(pkim,nParameters,kimerr)
         print *,"kimerr=", kimerr, " nParameters= ", nParameters
 	if ((kimerr.eq.1).and.(nParameters.gt.0)) then
 		write(*,"('FREE parameters of the models are : ',10( A,' '))")  list_of_parameters(1:nParameters)
 	end if
 	call free(plist_of_parameters)
 
-	plist_of_parameters = KIM_API_get_listfixedparams(pkim,nParameters,kimerr)
+	plist_of_parameters = kim_api_get_listfixedparams_f(pkim,nParameters,kimerr)
 
         if ((kimerr.eq.1).and.(nParameters.gt.0)) then
 		write(*,"('FIXED parameters of the models are : ',10( A,' '))")  list_of_parameters(1:nParameters)
 	end if
 	call free(plist_of_parameters)
 	
-        ptxtstr=kim_api_get_nbc_method(pkim,kimerr)
+        ptxtstr=kim_api_get_nbc_method_f(pkim,kimerr)
         print*," NBC method: ",txtstr," kimerror= ",kimerr
 	!clean up   
 
 	call neighobj_both_deallocate(pneigh_both)
 	!clean up
 
-	call kim_api_model_destroy(pkim,kimerr); call kimerr_handle("kim_api_model_destroy",kimerr)
+	call kim_api_model_destroy_f(pkim,kimerr); call kimerr_handle("kim_api_model_destroy",kimerr)
 
 
 	call kim_api_free(pkim,kimerr); 	

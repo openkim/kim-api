@@ -91,7 +91,7 @@ program TEST_NAME_STR
      stop
   endif
   ! call model's init routine
-  ier = kim_api_model_init(pkim)
+  ier = kim_api_model_init_f(pkim)
   if (ier.le.0) then
      call report_error(__LINE__, "kim_api_model_init", ier)
      stop
@@ -106,7 +106,7 @@ program TEST_NAME_STR
   CellsPerSide = ceiling((2.125d0*cutoff)/(MinSpacing))
   N = 4*(CellsPerSide**3);  N4=N
   ! tear it all down so we can put it back up
-  call kim_api_model_destroy(pkim, ier)
+  call kim_api_model_destroy_f(pkim, ier)
   if (ier.le.0) then
      call report_error(__LINE__, "kim_api_model_destroy", ier)
      stop
@@ -130,7 +130,7 @@ program TEST_NAME_STR
      stop
   endif
   ! call model's init routine
-  ier = kim_api_model_init(pkim)
+  ier = kim_api_model_init_f(pkim)
   if (ier.le.0) then
      call report_error(__LINE__, "kim_api_model_init", ier)
      stop
@@ -138,7 +138,7 @@ program TEST_NAME_STR
 
 
   ! determine which NBC scenerio to use
-  pNBC_Method = kim_api_get_nbc_method(pkim, ier) ! don't forget to free
+  pNBC_Method = kim_api_get_nbc_method_f(pkim, ier) ! don't forget to free
   if (ier.le.0) then
      call report_error(__LINE__, "kim_api_get_nbc_method", ier)
      stop
@@ -250,7 +250,7 @@ program TEST_NAME_STR
   print *, ""
 
   ! Call model compute
-  call kim_api_model_compute(pkim, ier)
+  call kim_api_model_compute_f(pkim, ier)
   if (ier.le.0) then
      call report_error(__LINE__, "kim_api_model_compute", ier)
      stop
@@ -265,7 +265,7 @@ program TEST_NAME_STR
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
   call MI_OPBC_neighborlist(halfflag, N, coords, (cutoff+0.75), boxlength, neighborList)
   ! Call model compute
-  call kim_api_model_compute(pkim, ier)
+  call kim_api_model_compute_f(pkim, ier)
   if (ier.le.0) then
      call report_error(__LINE__, "kim_api_model_compute", ier)
      stop
@@ -280,7 +280,7 @@ program TEST_NAME_STR
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
   call MI_OPBC_neighborlist(halfflag, N, coords, (cutoff+0.75), boxlength, neighborList)
   ! Call model compute
-  call kim_api_model_compute(pkim, ier)
+  call kim_api_model_compute_f(pkim, ier)
   if (ier.le.0) then
      call report_error(__LINE__, "kim_api_model_compute", ier)
      stop
@@ -302,7 +302,7 @@ program TEST_NAME_STR
      ! compute new neighbor lists (could be done more intelligently, I'm sure)
      call MI_OPBC_neighborlist(halfflag, N, coords, (cutoff+0.75), boxlength, neighborList)
      ! Call model compute
-     call kim_api_model_compute(pkim, ier)
+     call kim_api_model_compute_f(pkim, ier)
      if (ier.le.0) then
         call report_error(__LINE__, "kim_api_model_compute", ier)
         stop
@@ -331,7 +331,7 @@ program TEST_NAME_STR
   call free(pNBC_Method) 
   deallocate(neighborList)
 
-  call kim_api_model_destroy(pkim, ier)
+  call kim_api_model_destroy_f(pkim, ier)
   if (ier.le.0) then
      call report_error(__LINE__, "kim_api_model_destroy", ier)
      stop

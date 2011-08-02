@@ -88,7 +88,7 @@ program TEST_NAME_STR
   endif
 
   ! call model's init routine
-  ier = kim_api_model_init(pkim)
+  ier = kim_api_model_init_f(pkim)
   if (ier.le.0) then
      call report_error(__LINE__, "kim_api_model_init", ier)
      stop
@@ -135,7 +135,7 @@ program TEST_NAME_STR
   endif
 
   ! check for PARAM_FREE_cutoff
-  plistOfParameters = kim_api_get_listparams(pkim, nParams, ier)
+  plistOfParameters = kim_api_get_listparams_f(pkim, nParams, ier)
   paramIndex = 0
   print *,"The model has defined the following parameters:"
   do i=1,nParams
@@ -175,7 +175,7 @@ program TEST_NAME_STR
   MaxCutoff = cutoff + 2.0d0
   !  set initial cutoff
   param_cutoff = cutoff - 2.0d0
-  ier = kim_api_model_reinit(pkim)
+  ier = kim_api_model_reinit_f(pkim)
   if (ier.le.0) then
      call report_error(__LINE__, "kim_api_model_reinit", ier)
      stop
@@ -211,7 +211,7 @@ program TEST_NAME_STR
      endif
      
      ! Call model compute
-     call kim_api_model_compute(pkim, ier)
+     call kim_api_model_compute_f(pkim, ier)
      if (ier.le.0) then
         call report_error(__LINE__, "kim_api_model_compute", ier)
         stop
@@ -236,7 +236,7 @@ program TEST_NAME_STR
                                                     neighborList, RijList)
         
         ! Call model compute
-        call kim_api_model_compute(pkim, ier)
+        call kim_api_model_compute_f(pkim, ier)
         if (ier.le.0) then
            call report_error(__LINE__, "kim_api_model_compute", ier)
            stop
@@ -248,7 +248,7 @@ program TEST_NAME_STR
      
      ! increment cutoff and repeat
      param_cutoff = cutoff + 1.0d0
-     ier = kim_api_model_reinit(pkim)
+     ier = kim_api_model_reinit_f(pkim)
      if (ier.le.0) then
         call report_error(__LINE__, "kim_api_model_reinit", ier)
         stop
@@ -260,7 +260,7 @@ program TEST_NAME_STR
   enddo
      
 
-  call kim_api_model_destroy(pkim, ier)
+  call kim_api_model_destroy_f(pkim, ier)
   if (ier.le.0) then
      call report_error(__LINE__, "kim_api_model_destroy", ier)
      stop
