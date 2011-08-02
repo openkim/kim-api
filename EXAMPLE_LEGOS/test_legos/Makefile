@@ -20,6 +20,7 @@ COMMON_FRAGMENTS = test_Makefile descriptor_file_start descriptor_file_input des
                    Makefile
 
 AUTO_GEN_TESTS = test_demo_C                          \
+                 test_demo_CPP                        \
                  test_demo_F                          \
                  test_demo_F03                        \
                  test_Al_free_cluster                 \
@@ -493,6 +494,13 @@ test_Ne_periodic_cut_FCC_NEIGH_RVEC: program_periodic_cut_FCC_NEIGH_RVEC.frag   
 
 test_demo_C: example_test_demo_C                               \
                              $(wildcard example_test_demo_C/*) \
+                             Makefile
+	mkdir -p $(KIM_TESTS_DIR)$@
+	@touch $(KIM_TESTS_DIR)$@
+	cp -rf example_$@/* $(KIM_TESTS_DIR)$@/
+
+test_demo_CPP: example_test_demo_CPP                             \
+                             $(wildcard example_test_demo_CPP/*) \
                              Makefile
 	mkdir -p $(KIM_TESTS_DIR)$@
 	@touch $(KIM_TESTS_DIR)$@
