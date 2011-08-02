@@ -96,7 +96,7 @@ Arguments:
                 obtain the file location of the Model descriptor (.kim) file.
 
 Corresponding FORTRAN style interface:
-        integer function kim_api_init_f(kimmdl, testname, modelname)
+        integer function kim_api_init_str_testname_f(kimmdl, testname, modelname)
                         character (len=*) :: testname, modelname
                         integer(kind=kim_intptr) :: kimmdl
         end function kim_api_init_str_testname_f
@@ -220,10 +220,10 @@ Arguments:
 
 Corresponding Fortran style interface:
 
-        subroutine kim_api_model_compute(kimmdl, kimerror) 
+        subroutine kim_api_model_compute_f(kimmdl, kimerror) 
                         integer(kind=kim_intptr) :: kimmdl
                         integer :: kimerror
-        end subroutine kim_api_model_compute
+        end subroutine kim_api_model_compute_f
 
 
 ******************************************************************************
@@ -250,10 +250,10 @@ Arguments:
 
 Corresponding Fortran style interface:
 
-        subroutine kim_api_model_destroy(kimmdl, kimerror) 
+        subroutine kim_api_model_destroy_f(kimmdl, kimerror) 
                         integer(kind=kim_intptr) :: kimmdl
                         integer :: kimerror
-        end subroutine kim_api_model_destroy
+        end subroutine kim_api_model_destroy_f
 
 
 ******************************************************************************
@@ -680,9 +680,9 @@ Arguments:
          
 Corresponding Fortran style interface:
 
-        integer function kim_api_model_init(kimmdl) 
+        integer function kim_api_model_init_f(kimmdl) 
                         integer(kind=kim_intptr) :: kimmdl
-        end subroutine kim_api_model_init
+        end subroutine kim_api_model_init_f
 
 
 ******************************************************************************
@@ -711,10 +711,10 @@ Arguments:
 
 Corresponding Fortran style interface:
 
-        function kim_api_get_listatomtypes(kimmdl, natypes, error)
+        function kim_api_get_listatomtypes_f(kimmdl, natypes, error)
             integer(kind=kim_intptr) :: kimmdl, kim_api_get_listatomtypes
             integer :: natypes, error
-        end function kim_api_get_listatomtypes
+        end function kim_api_get_listatomtypes_f
 
 
 ******************************************************************************
@@ -746,10 +746,10 @@ Arguments:
 
 Corresponding Fortran style interface:
 
-        function kim_api_get_listparams(kimmdl, nvpar, error)
+        function kim_api_get_listparams_f(kimmdl, nvpar, error)
             integer(kind=kim_intptr) :: kimmdl, kim_api_get_listparams
             integer :: nvpar, error
-        end function kim_api_get_listparams
+        end function kim_api_get_listparams_f
 
 
 ******************************************************************************
@@ -781,10 +781,10 @@ Arguments:
 
 Corresponding Fortran style interface:
 
-        function kim_api_get_listfreeparams(kimmdl, nvpar, error)
+        function kim_api_get_listfreeparams_f(kimmdl, nvpar, error)
             integer(kind=kim_intptr) :: kimmdl, kim_api_get_listfreeparams
             integer :: nvpar, error
-        end function kim_api_get_listfreeparams
+        end function kim_api_get_listfreeparams_f
 
 
 ******************************************************************************
@@ -816,10 +816,10 @@ Arguments:
 
 Corresponding Fortran style interface:
 
-        function kim_api_get_listfixedparams(kimmdl, nvpar, error)
+        function kim_api_get_listfixedparams_f(kimmdl, nvpar, error)
             integer(kind=kim_intptr) :: kimmdl, kim_api_get_listfixedparams
             integer :: nvpar, error
-        end function kim_api_get_listfixedparams
+        end function kim_api_get_listfixedparams_f
 
 
 ******************************************************************************
@@ -845,10 +845,10 @@ Arguments:
 
 Corresponding Fortran style interface:
 
-        function kim_api_get_nbc_method(kimmdl, error)
+        function kim_api_get_nbc_method_f(kimmdl, error)
             integer(kind=kim_intptr) :: kimmdl, kim_api_get_nbc_method
             integer :: error
-        end function kim_api_get_nbc_method
+        end function kim_api_get_nbc_method_f
 
 
 ******************************************************************************
@@ -910,6 +910,13 @@ Arguments:
         int * error
                 error code: 1                     -- successful completion, 
                             0 (or negative value) -- unsuccessful
+
+Corresponding Fortran style interface:
+
+        integer function kim_api_get_neigh_mode_f(kimmdl, error)
+                integer(kind=kim_intptr) :: kimmdl
+                integer :: error
+        end function kim_api_get_neigh_mode_f
 
 
 ******************************************************************************
@@ -997,14 +1004,14 @@ Arguments:
 
 Corresponding Fortran style interface:
 
-        integer function kim_api_get_full_neigh(kimmdl, mode, request, atom, numnei, pnei1atom, pRij)
+        integer function kim_api_get_full_neigh_f(kimmdl, mode, request, atom, numnei, pnei1atom, pRij)
                 integer :: mode, request, atom, numnei
                 integer(kind=kim_intptr) :: kimmdl
                 integer :: nei1atom(1) !  array from which neighbors are accessed
                 pointer(pnei1atom, nei1atom) ! actual cray pointer associated with nei1atom
                 real*8 :: Rij(3,1) 
                 pointer(pRij, Rij)
-        end function kim_api_get_full_neigh
+        end function kim_api_get_full_neigh_f
 
 
 ******************************************************************************
