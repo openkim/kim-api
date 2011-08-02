@@ -15,17 +15,17 @@ subroutine free_KIM_API_object(pkim)
 
   ! call the model destroy function
   !
-  call kim_api_model_destroy(pkim, ier)
+  call kim_api_model_destroy_f(pkim, ier)
   if (ier.le.0) then
-     call report_error(__LINE__, "kim_api_model_destroy", ier)
+     call report_error(__LINE__, "kim_api_model_destroy_f", ier)
      stop
   endif
 
   ! free all KIM API object storage
   !
-  call kim_api_free(pkim, ier)
+  call kim_api_free_f(pkim, ier)
   if (ier.le.0) then
-     call report_error(__LINE__, "kim_api_free", ier)
+     call report_error(__LINE__, "kim_api_free_f", ier)
      stop
   endif
 

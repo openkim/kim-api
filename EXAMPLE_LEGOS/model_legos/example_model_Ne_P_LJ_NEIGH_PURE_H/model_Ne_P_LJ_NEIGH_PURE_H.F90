@@ -100,7 +100,7 @@ contains
        stop
     endif
 
-    call calculate(pkim,x,f,ea,natom,potenergy,xcutof,f_flag,e_flag,kim_api_get_half_neigh,kimerr)
+    call calculate(pkim,x,f,ea,natom,potenergy,xcutof,f_flag,e_flag,kim_api_get_half_neigh_f,kimerr)
   end subroutine calculate_wrap_f77
   
   subroutine report_error(line, str, status)

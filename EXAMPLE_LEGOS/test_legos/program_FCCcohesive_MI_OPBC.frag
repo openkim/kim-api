@@ -208,9 +208,9 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
 
   ! determine which neighbor list type to use
   !
-  pNBC_Method = kim_api_get_nbc_method(pkim, ier)
+  pNBC_Method = kim_api_get_nbc_method_f(pkim, ier)
   if (ier.le.0) then
-     call report_error(__LINE__, "kim_api_get_nbc_method", ier)
+     call report_error(__LINE__, "kim_api_get_nbc_method_f", ier)
      stop
   endif
   if (index(NBC_Method,"MI-OPBC-H").eq.1) then
@@ -231,9 +231,9 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   boxlength(:) = Spacings(1)*CellsPerSide
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
   call MI_OPBC_neighborlist(halfflag, N, coords, (cutoff+0.75), boxlength, neighborList)
-  call kim_api_model_compute(pkim, ier)
+  call kim_api_model_compute_f(pkim, ier)
   if (ier.le.0) then
-     call report_error(__LINE__, "kim_api_model_compute", ier)
+     call report_error(__LINE__, "kim_api_model_compute_f", ier)
      stop
   endif
   Energies(1) = energy/N
@@ -247,9 +247,9 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
   call MI_OPBC_neighborlist(halfflag, N, coords, (cutoff+0.75), boxlength, neighborList)
   ! Call model compute
-  call kim_api_model_compute(pkim, ier)
+  call kim_api_model_compute_f(pkim, ier)
   if (ier.le.0) then
-     call report_error(__LINE__, "kim_api_model_compute", ier)
+     call report_error(__LINE__, "kim_api_model_compute_f", ier)
      stop
   endif
   Energies(3) = energy/N
@@ -263,9 +263,9 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
   call MI_OPBC_neighborlist(halfflag, N, coords, (cutoff+0.75), boxlength, neighborList)
   ! Call model compute
-  call kim_api_model_compute(pkim, ier)
+  call kim_api_model_compute_f(pkim, ier)
   if (ier.le.0) then
-     call report_error(__LINE__, "kim_api_model_compute", ier)
+     call report_error(__LINE__, "kim_api_model_compute_f", ier)
      stop
   endif
   Energies(2) = energy/N
@@ -285,9 +285,9 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
      ! compute new neighbor lists (could be done more intelligently, I'm sure)
      call MI_OPBC_neighborlist(halfflag, N, coords, (cutoff+0.75), boxlength, neighborList)
      ! Call model compute
-     call kim_api_model_compute(pkim, ier)
+     call kim_api_model_compute_f(pkim, ier)
      if (ier.le.0) then
-        call report_error(__LINE__, "kim_api_model_compute", ier)
+        call report_error(__LINE__, "kim_api_model_compute_f", ier)
         stop
      endif
      Energies(4) = energy/N

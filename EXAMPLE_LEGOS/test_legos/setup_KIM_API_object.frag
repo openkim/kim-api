@@ -38,9 +38,9 @@ subroutine setup_KIM_API_object(pkim, testname, modelname, N, specname)
 
   ! call model's init routine
   !
-  ier = kim_api_model_init(pkim)
+  ier = kim_api_model_init_f(pkim)
   if (ier.le.0) then
-     call report_error(__LINE__, "kim_api_model_init", ier)
+     call report_error(__LINE__, "kim_api_model_init_f", ier)
      stop
   endif
 
