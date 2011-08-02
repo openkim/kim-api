@@ -95,6 +95,8 @@ model_Ar_P_LJ_MI_OPBC_H_F: $(COMMON_FRAGMENTS) mi_opbc_neigh_pure_compute_local_
                                   | sed -e 's/SPECIES_LINE_STR/Ar                      spec                    1/g' \
                                                                                    >  $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo "Neigh_LocaAccess        dummy"                                       >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo "MI-OPBC-H               dummy"                                       >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo "MI-OPBC-F               dummy"                                       >> $(KIM_MODELS_DIR)$@/$@.kim
@@ -146,6 +148,8 @@ model_Ar_P_LJ_NEIGH_PURE_H_F: $(COMMON_FRAGMENTS) mi_opbc_neigh_pure_compute_loc
                                   | sed -e 's/SPECIES_LINE_STR/Ar                      spec                    1/g' \
                                                                                    >  $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo "Neigh_LocaAccess        dummy"                                       >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo "NEIGH-PURE-H            dummy"                                       >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo "NEIGH-PURE-F            dummy"                                       >> $(KIM_MODELS_DIR)$@/$@.kim
@@ -194,6 +198,8 @@ model_Ar_P_LJ_NEIGH_RVEC_F: $(COMMON_FRAGMENTS) neigh_rvec_compute_local_variabl
 	cat descriptor_file_start | $(SED_CMD) \
                                   | sed -e 's/SPECIES_LINE_STR/Ar                      spec                    1/g' \
                                                                                    >  $(KIM_MODELS_DIR)$@/$@.kim
+	echo                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo "Neigh_LocaAccess        dummy"                                       >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo "NEIGH-RVEC-F            dummy"                                       >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
