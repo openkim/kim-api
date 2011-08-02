@@ -87,12 +87,12 @@ int kim_api_init_str_testname_(void * kimmdl, char **testinputstring, char ** mo
 void kim_api_allocate_(void *kimmdl, intptr_t *natoms, int *ntypes, int *error);
 void kim_api_free_(void *kimmdl, int * error);
 void kim_api_print_(void *kimmdl,int * error);
-void kim_api_model_compute_(void*kimmdl, int *error);
+void kim_api_model_compute_f_(void*kimmdl, int *error);
 
-int kim_api_model_reinit_(void * kimmdl);
-void kim_api_model_destroy_(void * kimmdl, int * error);
+int kim_api_model_reinit_f_(void * kimmdl);
+void kim_api_model_destroy_f_(void * kimmdl, int * error);
 
-int kim_api_model_init_(void * kimmdl);
+int kim_api_model_init_f_(void * kimmdl);
 
 void kim_api_get_units_(void *kimmdl,char ** UnitsSystem, int *error);
 void kim_api_get_originalunits_(void *kimmdl,char ** UnitsSystem,int *error);
@@ -102,18 +102,18 @@ int kim_api_isunits_fixed_(void *kimmdl);
 
 int kim_api_get_neigh_mode_(void *kimmdl,int *error);
 
-void * kim_api_get_listatomtypes_(void * kimmdl,int* nATypes, int* error);
-void * kim_api_get_listparams_(void * kimmdl,int* nVpar, int* error);
-void * kim_api_get_listfreeparams_(void * kimmdl,int* nVpar, int* error);
-void * kim_api_get_listfixedparams_(void * kimmdl,int* nVpar, int* error);
+void * kim_api_get_listatomtypes_f_(void * kimmdl,int* nATypes, int* error);
+void * kim_api_get_listparams_f_(void * kimmdl,int* nVpar, int* error);
+void * kim_api_get_listfreeparams_f_(void * kimmdl,int* nVpar, int* error);
+void * kim_api_get_listfixedparams_f_(void * kimmdl,int* nVpar, int* error);
 
-void * kim_api_get_nbc_method_(void * kimmdl,int* error);
+void * kim_api_get_nbc_method_f_(void * kimmdl,int* error);
 
 int kim_api_get_atypecode_(void * kimmdl, char** atom, int * error);
-int kim_api_get_full_neigh_(void *kimmdl,int *mode,int *request,
+int kim_api_get_full_neigh_f_(void *kimmdl,int *mode,int *request,
         int *atom, int *numnei, int **nei1atom, double **Rij);
 
-int kim_api_get_half_neigh_(void *kimmdl,int *mode,int *request,
+int kim_api_get_half_neigh_f_(void *kimmdl,int *mode,int *request,
         int *atom, int *numnei, int **nei1atom, double **Rij);
 
 //element access methods
