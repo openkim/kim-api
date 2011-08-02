@@ -24,8 +24,7 @@ COMMON_COHESSIVE_FRAGMENTS = test_FCCcohesive_README   \
                              setup_KIM_API_object.frag \
                              free_KIM_API_object.frag
 
-AUTO_GEN_TESTS = test_demo_F03                        \
-                 test_Al_free_cluster                 \
+AUTO_GEN_TESTS = test_Al_free_cluster                 \
                  test_Al_periodic_FCC_MI_OPBC         \
                  test_ArNe_periodic_B2_NEIGH_RVEC     \
                  test_Ar_FCCcohesive_MI_OPBC          \
@@ -36,7 +35,7 @@ AUTO_GEN_TESTS = test_demo_F03                        \
                  test_Ar_periodic_FCC_NEIGH_PURE      \
                  test_Ar_periodic_FCC_NEIGH_RVEC      \
                  test_Ar_periodic_cut_FCC_NEIGH_RVEC  \
-                 test_Ne_periodic_cut_FCC_NEIGH_RVEC  \
+                 test_Ne_periodic_cut_FCC_NEIGH_RVEC
 
 
 all: $(AUTO_GEN_TESTS) EXAMPLES.README
