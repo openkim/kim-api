@@ -20,11 +20,10 @@ endif
 all: $(MODEL_BUILD_TARGET)
 
 $(MODEL_NAME).a: $(MODEL_NAME).o $(MODEL_NAME)_compute.o
-	ar rcs  $@ *.o
+	ar rcs $@ *.o
 
 $(MODEL_NAME).o: Makefile 
 $(MODEL_NAME)_compute.o: Makefile 
-
 
 Makefile: $(KIM_API_DIR)Include.mk
 	@touch Makefile

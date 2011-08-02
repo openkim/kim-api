@@ -29,4 +29,3 @@ Makefile: $(KIM_API_DIR)Include.mk
 
 clean:
 	rm -f *.o *.mod *.a *.so
-
