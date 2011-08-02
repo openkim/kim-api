@@ -4,11 +4,18 @@ the example models and tests
 
 The following files are in this directory:
 
-model_legos
-    This directory contains the code fragments ("legos") to create the
-    example models
+Makefile
+     The Makefile that calls the make files in the model_legos and test_legos
+     directories.
 
-test_legos
-    This directory contains the code fragments ("legos") to create the
-    example tests
+README
+     This file.
+
+model_legos/
+     This directory contains the code fragments ("legos") to create the
+     example models.
+
+test_legos/
+     This directory contains the code fragments ("legos") to create the
+     example tests.
 

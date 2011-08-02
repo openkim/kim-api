@@ -39,23 +39,23 @@ bash:
 
 
 5. The provided example Tests read in the name of a Model (or Models) 
-   which they use to perform their calculations. For Tests written in 
-   Fortran the name of the Model can be piped in using an `echo' command.
-   For example, the following Fortran Test reads in one Model:
+   which they use to perform their calculations. For most Tests the name of the
+   Model can be piped in using an `echo' command.  For example, the following
+   Fortran Test reads in one Model:
 
 > cd TESTs/test_Ar_free_cluster_CLUSTER
 
 > echo "model_Ar_P_LJ_CLUSTER" | ./test_Ar_free_cluster_CLUSTER
 
-   For Tests written in C, the Model name(s) can be provided as command
-   line arguments. For example, the following C Test reads in two Models:
+   The exception to this rule is the example Test `test_Ar_multiple_models',
+   which reads in two Model names from the command line.  For example:
 
 > cd TESTs/test_Ar_multiple_models
 
 > ./test_Ar_multiple_models model_Ar_P_LJ_NEIGH_RVEC_F model_Ar_P_Morse
 
-(See the README files in the Test directories for an explanation of what 
-the Tests do.)
+  (See the README files in the Test directories for an explanation of what 
+   the Tests do.)
 
 6. Each Test (and Model) has its own make file for compiling and linking.  If
    changes are made to the code, perform step (4) again (from the top

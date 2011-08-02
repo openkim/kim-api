@@ -7,9 +7,6 @@ openkim-api-00.01.00 ===========================================================
 * Added support for Models to define a `reinit' function for use when their
   parameters are changed by a Test.
 
-* Added the NO_FORTRAN compilation option for uses who do not have a fortran
-  compiler installed.
-
 * Improved the Makefile system in general
 
 * Added support for neighbor list and boundary conditions (NBC)

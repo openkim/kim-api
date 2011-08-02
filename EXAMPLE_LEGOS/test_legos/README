@@ -51,14 +51,17 @@ descriptor_file_output
 descriptor_file_start
      This file contains the beginning of the KIM descriptor file.
 
-example_Sample_01_compute_example_c/
-     Directory containing the Sample_01_compute_example_c Test
+example_test_Ar_multiple_models/
+     Directory containing the test_Ar_multiple_models Test
 
-example_Sample_01_compute_example_f/
-     Directory containing the Sample_01_compute_example_f Test
+example_test_demo_C/
+     Directory containing the test_demo_C Test
 
-example_test_Ar_multiple_models_c/
-     Directory containing the test_Ar_multiple_models_c Test
+example_test_demo_F/
+     Directory containing the test_demo_F Test
+
+example_test_demo_F03/
+     Directory containing the test_demo_F03 Test
 
 get_neigh_Rij.frag
      This file contains the routine for accessing neighbor lists that include

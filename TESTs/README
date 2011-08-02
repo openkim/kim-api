@@ -1,9 +1,6 @@
 This directory (TESTs) contains a directory for each Test to be compiled as part
 of the openkim-api package.
 
-This directory is populated with example Tests automatically by the openkim-api make system.
-
-This directory is distributed with only the following files:
-
-README  --  this file
-
+This directory is populated with example Tests as part of the openkim-api distribution.
+Please see the README files within each Test directory for information about the example
+Test.
