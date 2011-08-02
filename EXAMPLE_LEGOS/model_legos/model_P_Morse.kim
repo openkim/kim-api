@@ -30,7 +30,7 @@ ZeroBasedLists          dummy
 
 Neigh_IterAccess        dummy
 
-#Neigh_LocaAccess        dummy
+Neigh_LocaAccess        dummy
 
 NEIGH-RVEC-F            dummy
 

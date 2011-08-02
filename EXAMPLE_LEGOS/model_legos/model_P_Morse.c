@@ -126,8 +126,12 @@ static void compute(void* km, int* ier)
    /* determine mode */
    if (NBC > 0)
    {
-      IterOrLoca = 0; /* Iterator mode */
-      /* use Iterator mode until a new KIM_API call is available to provide the correct value */
+      IterOrLoca = KIM_API_get_neigh_mode(pkim, ier);
+      if (1 > *ier)
+      {
+         report_error(__LINE__, "KIM_API_get_neigh_mode", *ier);
+         return;
+      }
    }
 
 
@@ -356,7 +360,7 @@ static void compute(void* km, int* ier)
    }
    else /* everything else */
    {
-      if (0 == IterOrLoca) /* Iterator mode */
+      if (1 == IterOrLoca) /* Iterator mode */
       {
          /* reset neighbor iterator */
          if (0 == (NBC%2)) /* full list */
@@ -460,7 +464,7 @@ static void compute(void* km, int* ier)
             }
          }
       }
-      else /* Locator mode */
+      else if (2 == IterOrLoca) /* Locator mode */
       {
          /* loop over atoms */
          for (i = 0; i < *nAtoms; ++i)
@@ -490,7 +494,7 @@ static void compute(void* km, int* ier)
                      
                      if ((NBC < 3) && (fabs(dx[k]) > 0.5*boxlength[k])) /* MI-OPBC-H/F */
                      {
-                        dx[k] -= sign(boxlength[k])*dx[k];
+                        dx[k] -= (dx[k]/fabs(dx[k]))*boxlength[k];
                      }
                   }
                   else /* NEIGH-RVEC-F */
@@ -538,6 +542,11 @@ static void compute(void* km, int* ier)
             }
 
          }
+      }
+      else /* unsupported IterOrLoca mode returned from KIM_API_get_neigh_mode() */
+      {
+         report_error(__LINE__, "KIM_API_get_neigh_mode", IterOrLoca);
+         exit(-1);
       }
    }
 
