@@ -2309,12 +2309,15 @@ void * KIM_API_model::get_listFixedParams(int* nVpar, int* error){
 }
 int  KIM_API_model::get_neigh_mode(int*kimerr){
     *kimerr=1;
+cout << locator_neigh_mode << ", " <<iterator_neigh_mode << ", " << both_neigh_mode << endl;
     if(locator_neigh_mode && !iterator_neigh_mode && !both_neigh_mode){
         return 2;
     }else if(!locator_neigh_mode && iterator_neigh_mode && !both_neigh_mode){
         return 1;
     }else if(!locator_neigh_mode && !iterator_neigh_mode && both_neigh_mode){
         return 3;
+    }else if(locator_neigh_mode && iterator_neigh_mode && !both_neigh_mode){
+        return 1;
     }else{
         *kimerr =-1;
         return -1;

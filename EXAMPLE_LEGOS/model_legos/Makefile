@@ -276,8 +276,8 @@ model_Ne_P_LJ_NEIGH_RVEC_F: example_model_Ne_P_LJ_NEIGH_RVEC_F               \
 	@touch $(KIM_MODELS_DIR)$@
 	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
 
-model_demo_P_LJ_CLUSTER_F: example_model_demo_P_LJ_CLUSTER_f               \
-                               $(wildcard example_model_demo_P_LJ_CLUSTER_f/*) \
+model_demo_P_LJ_CLUSTER_F: example_model_demo_P_LJ_CLUSTER_F               \
+                               $(wildcard example_model_demo_P_LJ_CLUSTER_F/*) \
                                Makefile
 	mkdir -p $(KIM_MODELS_DIR)$@
 	@touch $(KIM_MODELS_DIR)$@
