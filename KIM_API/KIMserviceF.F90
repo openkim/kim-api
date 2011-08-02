@@ -120,15 +120,15 @@ module kimservice
 	    integer::error
         end function kim_api_get_size
 
-        function kim_api_get_neigh_mode(kimmdl,error)
+        function kim_api_get_neigh_mode_f(kimmdl,error)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
 	integer,parameter :: kim_intptr = 8
 #endif
-            integer(kind=kim_intptr) :: kimmdl,kim_api_get_neigh_mode
+            integer(kind=kim_intptr) :: kimmdl,kim_api_get_neigh_mode_f
 	    integer::error
-        end function kim_api_get_neigh_mode
+        end function kim_api_get_neigh_mode_f
 
         function kim_api_get_rank_shape(kimmdl,nm, shapea,error)
 #ifdef SYSTEM32
@@ -150,55 +150,55 @@ module kimservice
 	integer::rank,error
 	end subroutine kim_api_set_rank_shape
 
-	function kim_api_get_listatomtypes(kimmdl,natypes,error)
+	function kim_api_get_listatomtypes_f(kimmdl,natypes,error)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
 	integer,parameter :: kim_intptr = 8
 #endif
-            integer(kind=kim_intptr) :: kimmdl,kim_api_get_listatomtypes
+            integer(kind=kim_intptr) :: kimmdl,kim_api_get_listatomtypes_f
 	    integer::natypes,error
-        end function kim_api_get_listatomtypes
+        end function kim_api_get_listatomtypes_f
 
-	function kim_api_get_listparams(kimmdl,nvpar,error)
+	function kim_api_get_listparams_f(kimmdl,nvpar,error)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
 	integer,parameter :: kim_intptr = 8
 #endif
-            integer(kind=kim_intptr) :: kimmdl,kim_api_get_listparams
+            integer(kind=kim_intptr) :: kimmdl,kim_api_get_listparams_f
 	    integer::nvpar,error
-        end function kim_api_get_listparams
+        end function kim_api_get_listparams_f
 
-	function kim_api_get_listfreeparams(kimmdl,nvpar,error)
+	function kim_api_get_listfreeparams_f(kimmdl,nvpar,error)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
 	integer,parameter :: kim_intptr = 8
 #endif
-            integer(kind=kim_intptr) :: kimmdl,kim_api_get_listfreeparams
+            integer(kind=kim_intptr) :: kimmdl,kim_api_get_listfreeparams_f
 	    integer::nvpar,error
-        end function kim_api_get_listfreeparams
+        end function kim_api_get_listfreeparams_f
 
-	function kim_api_get_listfixedparams(kimmdl,nvpar,error)
+	function kim_api_get_listfixedparams_f(kimmdl,nvpar,error)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
 	integer,parameter :: kim_intptr = 8
 #endif
-            integer(kind=kim_intptr) :: kimmdl,kim_api_get_listfixedparams
+            integer(kind=kim_intptr) :: kimmdl,kim_api_get_listfixedparams_f
 	    integer::nvpar,error
-        end function kim_api_get_listfixedparams
+        end function kim_api_get_listfixedparams_f
 
-	function kim_api_get_nbc_method(kimmdl,error)
+	function kim_api_get_nbc_method_f(kimmdl,error)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
 	integer,parameter :: kim_intptr = 8
 #endif
-            integer(kind=kim_intptr) :: kimmdl,kim_api_nbc_method
+            integer(kind=kim_intptr) :: kimmdl,kim_api_nbc_method_f
 	    integer::error
-        end function kim_api_get_nbc_method
+        end function kim_api_get_nbc_method_f
 
 	function kim_api_get_atypecode(kimmdl,nm,error)
 #ifdef SYSTEM32
@@ -210,7 +210,7 @@ module kimservice
 	    integer::error,kim_api_get_atypecode
         end function kim_api_get_atypecode
 
-	integer function kim_api_get_full_neigh(kimmdl,mode,request, atom, numnei, pnei1atom, pRij)
+	integer function kim_api_get_full_neigh_f(kimmdl,mode,request, atom, numnei, pnei1atom, pRij)
 	integer :: mode,request,atom,numnei
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
@@ -218,9 +218,9 @@ module kimservice
 	integer,parameter :: kim_intptr = 8
 #endif
 	integer(kind=kim_intptr) :: kimmdl,pnei1atom,pRij
-	end function kim_api_get_full_neigh
+	end function kim_api_get_full_neigh_f
 
-	integer function kim_api_get_half_neigh(kimmdl,mode,request, atom, numnei, pnei1atom, pRij)
+	integer function kim_api_get_half_neigh_f(kimmdl,mode,request, atom, numnei, pnei1atom, pRij)
 	integer :: mode,request,atom,numnei
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
@@ -228,7 +228,7 @@ module kimservice
 	integer,parameter :: kim_intptr = 8
 #endif
 	integer(kind=kim_intptr) :: kimmdl,pnei1atom,pRij
-	end function kim_api_get_half_neigh
+	end function kim_api_get_half_neigh_f
 
 
         integer function kim_api_isit_compute(kimmdl,nm,error)
@@ -322,7 +322,7 @@ module kimservice
 	    integer ::error
         end subroutine kim_api_print
 
-        subroutine kim_api_model_compute(kimmdl,error)
+        subroutine kim_api_model_compute_f(kimmdl,error)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
@@ -330,9 +330,9 @@ module kimservice
 #endif
             integer(kind=kim_intptr) :: kimmdl
 	    integer::error
-        end subroutine kim_api_model_compute
+        end subroutine kim_api_model_compute_f
 
-	subroutine kim_api_model_destroy(kimmdl,error)
+	subroutine kim_api_model_destroy_f(kimmdl,error)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
@@ -340,18 +340,18 @@ module kimservice
 #endif
             integer(kind=kim_intptr) :: kimmdl
 	    integer::error
-        end subroutine kim_api_model_destroy
+        end subroutine kim_api_model_destroy_f
 
-	integer function kim_api_model_reinit(kimmdl)
+	integer function kim_api_model_reinit_f(kimmdl)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
 	integer,parameter :: kim_intptr = 8
 #endif
             integer(kind=kim_intptr) :: kimmdl
-        end function kim_api_model_reinit
+        end function kim_api_model_reinit_f
         
-	integer function kim_api_model_init(kimmdl)
+	integer function kim_api_model_init_f(kimmdl)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
@@ -359,7 +359,7 @@ module kimservice
 #endif
 		integer(kind=kim_intptr) :: kimmdl
 		
-	end function kim_api_model_init
+	end function kim_api_model_init_f
 
     !subroutines
         subroutine kim_api_get_units(kimmdl,UnitsSystem,error)

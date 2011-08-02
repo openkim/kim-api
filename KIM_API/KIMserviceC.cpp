@@ -312,20 +312,20 @@ void kim_api_free_(void *kimmdl,int *error){
 void kim_api_print_(void *kimmdl,int *error){
     KIM_API_print(*(KIM_API_model **)kimmdl, error);
 }
-void kim_api_model_compute_(void*kimmdl,int *error){
+void kim_api_model_compute_f_(void*kimmdl,int *error){
     KIM_API_model_compute(*(KIM_API_model **)kimmdl,error);
 }
-int kim_api_get_neigh_mode_(void *kimmdl,int *error ){
+int kim_api_get_neigh_mode_f_(void *kimmdl,int *error ){
     return KIM_API_get_neigh_mode(*(KIM_API_model **)kimmdl,error);
 }
 
-int kim_api_model_reinit_(void * kimmdl){
+int kim_api_model_reinit_f_(void * kimmdl){
     return KIM_API_model_reinit(*(KIM_API_model **)kimmdl);
 }
-void kim_api_model_destroy_(void * kimmdl,int *error){
+void kim_api_model_destroy_f_(void * kimmdl,int *error){
     KIM_API_model_destroy(*(KIM_API_model **)kimmdl,error);
 }
-int kim_api_model_init_(void * kimmdl){
+int kim_api_model_init_f_(void * kimmdl){
     return KIM_API_model_init(*(KIM_API_model **)kimmdl);
 }
 
@@ -354,32 +354,32 @@ void kim_api_transform_units_to_(void *kimmdl,char ** UnitsSystem,int * error){
 int kim_api_isunits_fixed_(void *kimmdl){
     return KIM_API_isUnitS_fixed(*(KIM_API_model **)kimmdl);
 }
-void * kim_api_get_listatomtypes_(void * kimmdl,int* nATypes, int* error){
+void * kim_api_get_listatomtypes_f_(void * kimmdl,int* nATypes, int* error){
  return KIM_API_get_listAtomTypes(*(KIM_API_model **)kimmdl,nATypes,error);
 }
-void * kim_api_get_listparams_(void * kimmdl,int* nVpar, int* error){
+void * kim_api_get_listparams_f_(void * kimmdl,int* nVpar, int* error){
  return KIM_API_get_listParams(*(KIM_API_model **)kimmdl,nVpar,error);
 }
-void * kim_api_get_listfreeparams_(void * kimmdl,int* nVpar, int* error){
+void * kim_api_get_listfreeparams_f_(void * kimmdl,int* nVpar, int* error){
  return KIM_API_get_listFreeParams(*(KIM_API_model **)kimmdl,nVpar,error);
 }
-void * kim_api_get_listfixedparams_(void * kimmdl,int* nVpar, int* error){
+void * kim_api_get_listfixedparams_f_(void * kimmdl,int* nVpar, int* error){
  return KIM_API_get_listFixedParams(*(KIM_API_model **)kimmdl,nVpar,error);
 }
-void * kim_api_get_nbc_method_(void * kimmdl,int* error){
+void * kim_api_get_nbc_method_f_(void * kimmdl,int* error){
     return KIM_API_get_NBC_method(*(KIM_API_model **)kimmdl,error);
 }
 int kim_api_get_atypecode_(void * kimmdl, char **atom, int * error){
  return KIM_API_get_aTypeCode(*(KIM_API_model **)kimmdl,*atom,error);
 }
 
-int kim_api_get_full_neigh_(void *kimmdl,int *mode,int *request,
+int kim_api_get_full_neigh_f_(void *kimmdl,int *mode,int *request,
         int *atom, int *numnei, int **nei1atom, double **Rij){
     return KIM_API_get_full_neigh(*(KIM_API_model **)kimmdl, *mode, *request,
             atom,numnei,nei1atom,Rij);
 }
 
-int kim_api_get_half_neigh_(void *kimmdl,int *mode,int *request,
+int kim_api_get_half_neigh_f_(void *kimmdl,int *mode,int *request,
         int *atom, int *numnei, int **nei1atom, double **Rij){
     return KIM_API_get_half_neigh(*(KIM_API_model **)kimmdl, *mode, *request,
             atom,numnei,nei1atom,Rij);
