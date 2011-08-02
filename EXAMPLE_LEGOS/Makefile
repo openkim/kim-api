@@ -8,11 +8,10 @@
 # 
 # this make file builds/cleans the example models and tests
 #
-#
 
 .PHONY: all
 
 all: 
-	$(MAKE) -C $(KIM_DIR)EXAMPLE_LEGOS/model_legos all
+	$(MAKE) -C model_legos all
 	@echo
-	$(MAKE) -C $(KIM_DIR)EXAMPLE_LEGOS/test_legos  all
+	$(MAKE) -C test_legos  all
