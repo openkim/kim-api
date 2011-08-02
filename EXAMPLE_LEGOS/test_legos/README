@@ -54,15 +54,6 @@ descriptor_file_start
 example_test_Ar_multiple_models/
      Directory containing the test_Ar_multiple_models Test
 
-example_test_demo_C/
-     Directory containing the test_demo_C Test
-
-example_test_demo_CPP/
-     Directory containing the test_demo_CPP Test
-
-example_test_demo_F/
-     Directory containing the test_demo_F Test
-
 example_test_demo_F03/
      Directory containing the test_demo_F03 Test
 

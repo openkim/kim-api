@@ -24,10 +24,7 @@ COMMON_COHESSIVE_FRAGMENTS = test_FCCcohesive_README   \
                              setup_KIM_API_object.frag \
                              free_KIM_API_object.frag
 
-AUTO_GEN_TESTS = test_demo_C                          \
-                 test_demo_CPP                        \
-                 test_demo_F                          \
-                 test_demo_F03                        \
+AUTO_GEN_TESTS = test_demo_F03                        \
                  test_Al_free_cluster                 \
                  test_Al_periodic_FCC_MI_OPBC         \
                  test_ArNe_periodic_B2_NEIGH_RVEC     \
@@ -589,27 +586,6 @@ test_Ne_periodic_cut_FCC_NEIGH_RVEC: $(COMMON_FRAGMENTS)                        
 	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
 	cat report_error.frag                             >> $(KIM_TESTS_DIR)$@/$@.F90
 
-
-test_demo_C: example_test_demo_C                               \
-                             $(wildcard example_test_demo_C/*) \
-                             Makefile
-	mkdir -p $(KIM_TESTS_DIR)$@
-	@touch $(KIM_TESTS_DIR)$@
-	cp -rf example_$@/* $(KIM_TESTS_DIR)$@/
-
-test_demo_CPP: example_test_demo_CPP                             \
-                             $(wildcard example_test_demo_CPP/*) \
-                             Makefile
-	mkdir -p $(KIM_TESTS_DIR)$@
-	@touch $(KIM_TESTS_DIR)$@
-	cp -rf example_$@/* $(KIM_TESTS_DIR)$@/
-
-test_demo_F: example_test_demo_F                               \
-                             $(wildcard example_test_demo_F/*) \
-                             Makefile
-	mkdir -p $(KIM_TESTS_DIR)$@
-	@touch $(KIM_TESTS_DIR)$@
-	cp -rf example_$@/* $(KIM_TESTS_DIR)$@/
 
 test_demo_F03: example_test_demo_F03                               \
                                $(wildcard example_test_demo_F03/*) \

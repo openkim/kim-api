@@ -42,17 +42,6 @@ test_Ar_periodic_cut_FCC_NEIGH_RVEC       F90       NEIGH-RVEC-F    Locator    F
 test_Ne_periodic_cut_FCC_NEIGH_RVEC       F90       NEIGH-RVEC-F    Locator    Full
                                                                     Iterator
 
-test_demo_C                               C         NEIGH-PURE-H    Locator    Half
-                                                                    Iterator
-
-test_demo_CPP                             C++       MI-OPBC-H       Locator    Half
-                                                    MI-OPBC-F       Iterator   Full
-
-test_demo_F                               F90       NEIGH-PURE-H    Locator    Half
-                                                    NEIGH-PURE-F    Iterator   Full
-                                                    NEIGH-RVEC-F
-                                                    CLUSTER
-
 test_demo_F03                             F03       NEIGH-PURE-H    Locator    Half
                                                     NEIGH-PURE-F    Iterator   Full
                                                     NEIGH-RVEC-F

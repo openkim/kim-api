@@ -23,15 +23,7 @@ AUTO_GEN_MODELS = model_Al_PF_ErcolessiAdams_MI_OPBC_H  \
                   model_Ar_P_LJ_NEIGH_PURE_H_F          \
                   model_Ar_P_LJ_NEIGH_RVEC_F            \
                   model_Ar_P_Morse                      \
-                  model_Ne_P_LJ_NEIGH_RVEC_F            \
-                  model_demo_P_LJ_CLUSTER_F             \
-                  model_demo_P_LJ_MI_OPBC_H_C           \
-                  model_demo_P_LJ_MI_OPBC_F_C           \
-                  model_demo_P_LJ_NEIGH_PURE_H_C        \
-                  model_demo_P_LJ_NEIGH_PURE_H_CPP      \
-                  model_demo_P_LJ_NEIGH_PURE_H_F        \
-                  model_demo_P_LJ_NEIGH_PURE_H_F77      \
-                  model_demo_P_LJ_NEIGH_RVEC_F_F
+                  model_Ne_P_LJ_NEIGH_RVEC_F
 
 all: $(AUTO_GEN_MODELS) EXAMPLES.README
 
@@ -272,69 +264,6 @@ model_ArNe_P_LJ_NEIGH_RVEC_F: example_model_ArNe_P_LJ_NEIGH_RVEC_F              
 model_Ne_P_LJ_NEIGH_RVEC_F: example_model_Ne_P_LJ_NEIGH_RVEC_F               \
                             $(wildcard example_model_Ne_P_LJ_NEIGH_RVEC_F/*) \
                             Makefile
-	mkdir -p $(KIM_MODELS_DIR)$@
-	@touch $(KIM_MODELS_DIR)$@
-	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
-
-model_demo_P_LJ_CLUSTER_F: example_model_demo_P_LJ_CLUSTER_F               \
-                               $(wildcard example_model_demo_P_LJ_CLUSTER_F/*) \
-                               Makefile
-	mkdir -p $(KIM_MODELS_DIR)$@
-	@touch $(KIM_MODELS_DIR)$@
-	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
-
-model_demo_P_LJ_MI_OPBC_H_C: example_model_demo_P_LJ_MI_OPBC_H_C               \
-                                    $(wildcard example_model_demo_P_LJ_MI_OPBC_H_C/*) \
-                                    Makefile
-	mkdir -p $(KIM_MODELS_DIR)$@
-	@touch $(KIM_MODELS_DIR)$@
-	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
-
-model_demo_P_LJ_MI_OPBC_F_C: example_model_demo_P_LJ_MI_OPBC_F_C               \
-                                    $(wildcard example_model_demo_P_LJ_MI_OPBC_F_C/*) \
-                                    Makefile
-	mkdir -p $(KIM_MODELS_DIR)$@
-	@touch $(KIM_MODELS_DIR)$@
-	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
-
-model_demo_P_LJ_NEIGH_PURE_F_F: example_model_demo_P_LJ_NEIGH_PURE_F_F               \
-                                    $(wildcard example_model_demo_P_LJ_NEIGH_PURE_F_F/*) \
-                                    Makefile
-	mkdir -p $(KIM_MODELS_DIR)$@
-	@touch $(KIM_MODELS_DIR)$@
-	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
-
-model_demo_P_LJ_NEIGH_PURE_H_C: example_model_demo_P_LJ_NEIGH_PURE_H_C               \
-                                    $(wildcard example_model_demo_P_LJ_NEIGH_PURE_H_C/*) \
-                                    Makefile
-	mkdir -p $(KIM_MODELS_DIR)$@
-	@touch $(KIM_MODELS_DIR)$@
-	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
-
-model_demo_P_LJ_NEIGH_PURE_H_CPP: example_model_demo_P_LJ_NEIGH_PURE_H_CPP            \
-                                    $(wildcard example_model_demo_P_LJ_NEIGH_PURE_H_CPP/*) \
-                                    Makefile
-	mkdir -p $(KIM_MODELS_DIR)$@
-	@touch $(KIM_MODELS_DIR)$@
-	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
-
-model_demo_P_LJ_NEIGH_PURE_H_F: example_model_demo_P_LJ_NEIGH_PURE_H_F               \
-                                    $(wildcard example_model_demo_P_LJ_NEIGH_PURE_H_F/*) \
-                                    Makefile
-	mkdir -p $(KIM_MODELS_DIR)$@
-	@touch $(KIM_MODELS_DIR)$@
-	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
-
-model_demo_P_LJ_NEIGH_PURE_H_F77: example_model_demo_P_LJ_NEIGH_PURE_H_F77               \
-                                    $(wildcard example_model_demo_P_LJ_NEIGH_PURE_H_F77/*) \
-                                    Makefile
-	mkdir -p $(KIM_MODELS_DIR)$@
-	@touch $(KIM_MODELS_DIR)$@
-	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
-
-model_demo_P_LJ_NEIGH_RVEC_F_F: example_model_demo_P_LJ_NEIGH_RVEC_F_F               \
-                                    $(wildcard example_model_demo_P_LJ_NEIGH_RVEC_F_F/*) \
-                                    Makefile
 	mkdir -p $(KIM_MODELS_DIR)$@
 	@touch $(KIM_MODELS_DIR)$@
 	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
