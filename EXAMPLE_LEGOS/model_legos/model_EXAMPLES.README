@@ -25,4 +25,6 @@ model_Ar_P_Morse                           C         NEIGH-RVEC-F    Iterator   
                                                      MI-OPBC-F
                                                      CLUSTER
 
-model_Ne_P_LJ_NEIGH_RVEC_F                 C         NEIGH-PURE-F    Iterator   Full        YES
+model_Ne_P_LJ_NEIGH_PURE_H                 F77       NEIGH-PURE-H    Iterator   Half        NO
+
+model_Ne_P_LJ_NEIGH_RVEC_F                 C         NEIGH-RVEC-F    Iterator   Full        YES

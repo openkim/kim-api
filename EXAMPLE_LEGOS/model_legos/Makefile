@@ -23,6 +23,7 @@ AUTO_GEN_MODELS = model_Al_PF_ErcolessiAdams_MI_OPBC_H  \
                   model_Ar_P_LJ_NEIGH_PURE_H_F          \
                   model_Ar_P_LJ_NEIGH_RVEC_F            \
                   model_Ar_P_Morse                      \
+                  model_Ne_P_LJ_NEIGH_PURE_H            \
                   model_Ne_P_LJ_NEIGH_RVEC_F
 
 all: $(AUTO_GEN_MODELS) EXAMPLES.README
@@ -257,6 +258,13 @@ model_Al_PF_ErcolessiAdams_MI_OPBC_H: example_model_Al_PF_ErcolessiAdams_MI_OPBC
 model_ArNe_P_LJ_NEIGH_RVEC_F: example_model_ArNe_P_LJ_NEIGH_RVEC_F               \
                               $(wildcard example_model_ArNe_P_LJ_NEIGH_RVEC_F/*) \
                               Makefile
+	mkdir -p $(KIM_MODELS_DIR)$@
+	@touch $(KIM_MODELS_DIR)$@
+	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
+
+model_Ne_P_LJ_NEIGH_PURE_H: example_model_Ne_P_LJ_NEIGH_PURE_H               \
+                            $(wildcard example_model_Ne_P_LJ_NEIGH_PURE_H/*) \
+                            Makefile
 	mkdir -p $(KIM_MODELS_DIR)$@
 	@touch $(KIM_MODELS_DIR)$@
 	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
