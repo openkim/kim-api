@@ -3,27 +3,29 @@
 # Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna 
 # All rights reserved.                                                 
 #                                    
-# Author: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
+# Authors: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
 #
 
 MODEL_NAME := model_demo_P_LJ_NEIGH_PURE_H_CPP
 MODEL_BUILD_TARGET := $(MODEL_NAME).a
 
 ifndef KIM_API_DIR
-include ../../KIM_API/Include.mk
+   KIM_DIR = ../../
+   include $(KIM_DIR)KIM_API/Include.mk
 else
-include $(KIM_API_DIR)Include.mk
+   include $(KIM_API_DIR)Include.mk
 endif
+
 
 all: $(MODEL_BUILD_TARGET)
 
-$(MODEL_NAME).a:  $(MODEL_NAME).o
-	ar rcs  $@ *.o
+$(MODEL_NAME).a: $(MODEL_NAME).o
+	ar rcs $@ *.o
 
-$(MODEL_NAME).o: Makefile $(KIM_API_DIR)KIMservice.h $(KIM_API_DIR)KIMserviceC.h
+$(MODEL_NAME).o: Makefile
 
 Makefile: $(KIM_API_DIR)Include.mk
 	@touch Makefile
 
 clean:
-	rm -f *.o *.a *.so
+	rm -f *.o *.mod *.a *.so

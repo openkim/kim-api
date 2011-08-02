@@ -3,7 +3,7 @@ C
 C  Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
 C  All rights reserved.
 C 
-C  Author: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
+C  Authors: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
 C 
 C*****************************************************************************************************
 C*****************************************

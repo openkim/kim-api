@@ -2,7 +2,7 @@
 ! Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna 
 ! All rights reserved.                                                 
 !                                                                     
-! Author: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
+! Authors: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
 !
 
 module model_demo_P_LJ_NEIGH_PURE_H_F77
