@@ -78,12 +78,6 @@ OneBasedLists           dummy        # presence of this line indicates that inde
 
 Neigh_BothAccess        dummy        # need both: locator and iterator
 
-NEIGH-PURE-H            dummy        # scenario method to deal with neighbor list and boundary condition
+MI-OPBC-H               dummy        # scenario method to deal with neighbor list and boundary condition
 
-NEIGH-PURE-F            dummy 
-
-NEIGH-RVEC-F            dummy 
-
-CLUSTER			dummy
-
-
+MI-OPBC-F               dummy 

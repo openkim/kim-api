@@ -11,6 +11,7 @@ test_Ar_periodic_FCC_NEIGH_RVEC
 test_Ar_periodic_cut_FCC_NEIGH_RVEC
 test_Ne_periodic_cut_FCC_NEIGH_RVEC
 test_demo_C
+test_demo_CPP
 test_demo_F
 test_demo_F03
 

@@ -57,6 +57,9 @@ example_test_Ar_multiple_models/
 example_test_demo_C/
      Directory containing the test_demo_C Test
 
+example_test_demo_CPP/
+     Directory containing the test_demo_CPP Test
+
 example_test_demo_F/
      Directory containing the test_demo_F Test
 
