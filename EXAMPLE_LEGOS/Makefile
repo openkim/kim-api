@@ -10,16 +10,9 @@
 #
 #
 
-include $(KIM_DIR)KIM_API/Include.mk
-
-.PHONY: all clean pristine
+.PHONY: all
 
 all: 
 	$(MAKE) -C $(KIM_DIR)EXAMPLE_LEGOS/model_legos all
 	@echo
 	$(MAKE) -C $(KIM_DIR)EXAMPLE_LEGOS/test_legos  all
-
-clean: 
-	$(MAKE) -C $(KIM_DIR)EXAMPLE_LEGOS/model_legos clean
-	@echo
-	$(MAKE) -C $(KIM_DIR)EXAMPLE_LEGOS/test_legos  clean

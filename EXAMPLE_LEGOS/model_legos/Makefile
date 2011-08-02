@@ -5,13 +5,8 @@
 # Author: Ryan S. Elliott
 #
 
-ifndef KIM_API_DIR
-   KIM_DIR = ../../
-   include $(KIM_DIR)KIM_API/Include.mk
-else
-   include $(KIM_API_DIR)Include.mk
-endif
-
+KIM_DIR := ../../
+KIM_MODELS_DIR := $(KIM_DIR)MODELs/
 
 VPATH = $(KIM_MODELS_DIR)
 
