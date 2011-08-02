@@ -1,9 +1,10 @@
 !-------------------------------------------------------------------------------
 !
-! MI_OPBC_neighborlist 
+! MI_OPBC_neighborlist : construct a half or full neighbor list using the
+!                        atom coordinates in coords()
 !
 !-------------------------------------------------------------------------------
-subroutine MI_OPBC_neighborlist(half, numberOfAtoms, coords, cutoff, boxlength, neighborList)
+subroutine MI_OPBC_neighborlist(half, numberOfAtoms, coords, rcut, boxlength, neighborList)
   use KIMservice
   implicit none
   
@@ -11,7 +12,7 @@ subroutine MI_OPBC_neighborlist(half, numberOfAtoms, coords, cutoff, boxlength, 
   logical,                                             intent(in)  :: half
   integer(kind=kim_intptr),                            intent(in)  :: numberOfAtoms
   double precision, dimension(3,numberOfAtoms),        intent(in)  :: coords
-  double precision,                                    intent(in)  :: cutoff
+  double precision,                                    intent(in)  :: rcut
   double precision, dimension(3),                      intent(in)  :: boxlength
   integer,   dimension(numberOfAtoms+1,numberOfAtoms), intent(out) :: neighborList ! not memory efficient
   
@@ -19,9 +20,9 @@ subroutine MI_OPBC_neighborlist(half, numberOfAtoms, coords, cutoff, boxlength, 
   integer i, j, a
   double precision dx(3)
   double precision r2
-  double precision cutoff2
+  double precision rcut2
   
-  cutoff2 = cutoff**2
+  rcut2 = rcut**2
   
   do i=1,numberOfAtoms
      a = 1
@@ -31,7 +32,7 @@ subroutine MI_OPBC_neighborlist(half, numberOfAtoms, coords, cutoff, boxlength, 
            dx = dx - sign(boxlength,dx)
         endwhere
         r2 = dot_product(dx, dx)
-        if (r2.le.cutoff2) then
+        if (r2.le.rcut2) then
            if (i.ne.j) then
               if ( (j .gt. i) .or. (.not. half) ) then
                   ! atom j is a neighbor of atom i

@@ -31,7 +31,8 @@ subroutine create_FCC_configuration(FCCspacing, nCellsPerSide, periodic, coords,
   double precision :: latVec(3)
   integer          :: a, i, j, k, m
 
-  ! Create a cubic FCC cluster of Ar atoms ---------------------------------------------------------
+  ! Create a cubic FCC cluster
+  !
   FCCshifts(1,1) = 0.d0;           FCCshifts(2,1) = 0.d0;           FCCshifts(3,1) = 0.d0
   FCCshifts(1,2) = 0.5*FCCspacing; FCCshifts(2,2) = 0.5*FCCspacing; FCCshifts(3,2) = 0.d0
   FCCshifts(1,3) = 0.5*FCCspacing; FCCshifts(2,3) = 0.d0;           FCCshifts(3,3) = 0.5*FCCspacing
@@ -97,4 +98,3 @@ subroutine create_FCC_configuration(FCCspacing, nCellsPerSide, periodic, coords,
   endif
 
 end subroutine create_FCC_configuration
-!---------------------------------------------------------------------------------------------------
