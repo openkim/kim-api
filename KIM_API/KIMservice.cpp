@@ -1841,14 +1841,18 @@ int KIM_API_model::get_full_neigh(int mode, int request, int *atom,
     Get_Neigh get_neigh = (Get_Neigh)(*this)[get_full_neigh_index].data;
      KIM_API_model *pkim = this;
     if (baseConvertKey==0) {
-        int erkey = (*get_neigh)((void **)&pkim,&locmode, &locrequest, atom, numnei, nei1atom, Rij );
-        if (erkey <= 0) return erkey; // return with error from  supplied by test get_neigh
-        if(*numnei > KIM_API_MAX_NEIGHBORS) {
-            cout<<endl<< "KIM_API::get_full_neigh: numnei > MAX_NEIGHBORS : ";
-            cout<<" "<<*numnei <<" > "<< KIM_API_MAX_NEIGHBORS<<endl;
-            return -4;
+        if (mode==0 && request == 0) {
+            return (*get_neigh)((void **)&pkim,&locmode, &locrequest, atom, numnei, nei1atom, Rij ) ;
+        }else{
+            int erkey = (*get_neigh)((void **)&pkim,&locmode, &locrequest, atom, numnei, nei1atom, Rij );
+            if (erkey <= 0) return erkey; // return with error from  supplied by test get_neigh
+            if(*numnei > KIM_API_MAX_NEIGHBORS) {
+                cout<<endl<< "KIM_API::get_full_neigh: numnei > MAX_NEIGHBORS : ";
+                cout<<" "<<*numnei <<" > "<< KIM_API_MAX_NEIGHBORS<<endl;
+                return -4;
+            }
+            return erkey;
         }
-        return erkey;
     }else if (baseConvertKey == 1 || baseConvertKey == -1){
         int req=request;
         if (mode ==1) req = request - baseConvertKey;
@@ -1893,14 +1897,19 @@ int KIM_API_model::get_half_neigh(int mode, int request, int *atom,
     KIM_API_model *pkim = this;
 
     if (baseConvertKey==0) {
-        int erkey = (*get_neigh)((void **)&pkim,&locmode, &locrequest, atom, numnei, nei1atom, Rij );
-        if (erkey <= 0) return erkey; // return with error from  supplied by test get_neigh
-        if(*numnei > KIM_API_MAX_NEIGHBORS) {
-            cout<<endl<< "KIM_API::get_half_neigh: numnei > MAX_NEIGHBORS : ";
-            cout<<" "<<*numnei <<" > "<< KIM_API_MAX_NEIGHBORS<<endl;
-            return -4;
+        if (mode==0 && request == 0) {
+            return (*get_neigh)((void **)&pkim,&locmode, &locrequest, atom, numnei, nei1atom, Rij ) ;
+        }else{
+
+            int erkey = (*get_neigh)((void **)&pkim,&locmode, &locrequest, atom, numnei, nei1atom, Rij );
+            if (erkey <= 0) return erkey; // return with error from  supplied by test get_neigh
+            if(*numnei > KIM_API_MAX_NEIGHBORS) {
+                cout<<endl<< "KIM_API::get_half_neigh: numnei > MAX_NEIGHBORS : ";
+                cout<<" "<<*numnei <<" > "<< KIM_API_MAX_NEIGHBORS<<endl;
+                return -4;
+            }
+            return erkey;
         }
-        return erkey;
     }else if (baseConvertKey == 1 || baseConvertKey == -1){
 
  	int req=request;
