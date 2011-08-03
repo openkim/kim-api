@@ -40,8 +40,6 @@ program TEST_NAME_STR
 
   ! significant local variables
   !
-  double precision     :: rcut               ! cutoff radius of the potential
-
   integer,          allocatable :: NLRvecLocs(:)     ! neighbor list pointers
   integer,          allocatable :: neighborList(:,:) ! neighbor list storage
   double precision, allocatable :: RijList(:,:,:)    ! Rij vector list storage
@@ -53,8 +51,8 @@ program TEST_NAME_STR
   double precision     :: FinalEnergy        ! energy per atom of crystal 
                                              ! at current spacing
 
-  integer              :: CellsPerRcut       ! number of unit cells along
-                                             ! box (of size rcut) side
+  integer              :: CellsPerCutoff     ! number of unit cells along
+                                             ! box (of size cutoff) side
 
 
   ! KIM variables
@@ -68,7 +66,7 @@ program TEST_NAME_STR
   real*8 coordum(DIM,1);   pointer(pcoor,coordum)         ! coordinate
   real*8, pointer  :: coords(:,:)
 
-  real*8 cutoff; pointer(pcutoff,cutoff)                  ! cutoff
+  real*8 cutoff; pointer(pcutoff,cutoff)                  ! cutoff radius of Model
 
   integer(kind=kim_intptr) :: N                           ! number of atoms
 
@@ -106,12 +104,11 @@ program TEST_NAME_STR
      call report_error(__LINE__, "kim_api_get_data_f", ier)
      stop
   endif
-  rcut = cutoff
   !
   ! Second, determine how many neighbors we will need
   !
-  CellsPerRcut = ceiling(rcut/MinSpacing+ 0.05d0) ! the 0.05 is a saftey factor
-  NNeighbors = 4*((2*CellsPerRcut + 1)**3)
+  CellsPerCutoff = ceiling(cutoff/MinSpacing+ 0.05d0) ! the 0.05 is a saftey factor
+  NNeighbors = 4*((2*CellsPerCutoff + 1)**3)
   !
   ! allocate memory for the neighbor list and Rij vectors
   !
@@ -127,8 +124,8 @@ program TEST_NAME_STR
   ! to the periodic box size
   !
   call NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
-         DIM,CellsPerRcut,MinSpacing,MaxSpacing, &
-         TOL,N,NNeighbors,neighborlist,RijList,  &
+         DIM,CellsPerCutoff,MinSpacing,MaxSpacing,  &
+         TOL,N,NNeighbors,neighborlist,RijList,     &
          .false.,FinalSpacing,FinalEnergy)
 
   ! print results to screen
@@ -162,8 +159,8 @@ end program TEST_NAME_STR
 !
 !-------------------------------------------------------------------------------
 subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
-             DIM,CellsPerRcut,MinSpacing,MaxSpacing, &
-             TOL,N,NNeighbors,neighborlist,RijList,  &
+             DIM,CellsPerCutoff,MinSpacing,MaxSpacing,  &
+             TOL,N,NNeighbors,neighborlist,RijList,     &
              verbose,RetSpacing,RetEnergy)
   use KIMservice
   implicit none
@@ -171,7 +168,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   !-- Transferred variables
   integer(kind=kim_intptr), intent(in)  :: pkim
   integer,                  intent(in)  :: DIM
-  integer,                  intent(in)  :: CellsPerRcut
+  integer,                  intent(in)  :: CellsPerCutoff
   double precision,         intent(in)  :: MinSpacing
   double precision,         intent(in)  :: MaxSpacing
   double precision,         intent(in)  :: TOL
@@ -222,8 +219,8 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   !
   Spacings(1) = MinSpacing
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
-  call NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerRcut, (cutoff+0.75), &
-                                              Spacings(1), NNeighbors,     &
+  call NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerCutoff, (cutoff+0.75), &
+                                              Spacings(1), NNeighbors,       &
                                               neighborList, RijList)
   call kim_api_model_compute_f(pkim, ier)
   if (ier.le.0) then
@@ -237,8 +234,8 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   ! setup and compute for max spacing
   Spacings(3) = MaxSpacing
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
-  call NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerRcut, (cutoff+0.75), &
-                                              Spacings(3), NNeighbors,     &
+  call NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerCutoff, (cutoff+0.75), &
+                                              Spacings(3), NNeighbors,       &
                                               neighborList, RijList)
   ! Call model compute
   call kim_api_model_compute_f(pkim, ier)
@@ -253,8 +250,8 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   ! setup and compute for first intermediate spacing
   Spacings(2) = MinSpacing + (2.0 - Golden)*(MaxSpacing - MinSpacing)
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
-  call NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerRcut, (cutoff+0.75), &
-                                              Spacings(2), NNeighbors,     &
+  call NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerCutoff, (cutoff+0.75), &
+                                              Spacings(2), NNeighbors,       &
                                               neighborList, RijList)
   ! Call model compute
   call kim_api_model_compute_f(pkim, ier)
@@ -273,8 +270,8 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
      ! set new spacing
      Spacings(4) = (Spacings(1) + Spacings(3)) - Spacings(2)
      ! compute new neighbor lists (could be done more intelligently, I'm sure)
-     call NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerRcut, (cutoff+0.75), &
-                                                 Spacings(4), NNeighbors,     &
+     call NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerCutoff, (cutoff+0.75), &
+                                                 Spacings(4), NNeighbors,       &
                                                  neighborList, RijList)
      ! Call model compute
      call kim_api_model_compute_f(pkim, ier)
