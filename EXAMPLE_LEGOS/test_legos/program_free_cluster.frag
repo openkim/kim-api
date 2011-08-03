@@ -5,7 +5,7 @@
 !**  KIM compliant program to compute the energy of and forces on an isolated 
 !**  cluster of SPECIES_NAME_STR atoms
 !**
-!**  Works with the following NBC scenarios:
+!**  Works with the following NBC methods:
 !**        MI-OPBC-H
 !**        MI-OPBC-F
 !**        NEIGH-PURE-H
