@@ -3,12 +3,11 @@
 !**  PROGRAM TEST_NAME_STR
 !**
 !**  KIM compliant program to find (using the Golden section search algorithm)
-!**  the minimum energy of one atom in a periodic FCC crystal (spec="SPECIES_NAME_STR") as a 
+!**  the minimum energy of one atom in a periodic B2 crystal of SPECIES1_NAME_STR and SPECIES2_NAME_STR as a 
 !**  function of lattice spacing.
 !**
 !**  Works with the following NBC methods:
-!**        NEIGH-PURE-H
-!**        NEIGH-PURE-F
+!**        NEIGH-RVEC-F
 !**
 !**  Authors: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
 !**
@@ -32,18 +31,23 @@ program TEST_NAME_STR
   ! parameters controlling behavior of test
   !
   character(len=80),        parameter :: testname    = "TEST_NAME_STR"
-  character(len=2),         parameter :: specname    = 'SPECIES_NAME_STR'
+  character(len=2),         parameter :: specname1   = 'SPECIES1_NAME_STR'
+  character(len=2),         parameter :: specname2   = 'SPECIES2_NAME_STR'
   double precision,         parameter :: TOL         = 1.0d-8
-  double precision,         parameter :: FCCspacing  = FCC_SPACING_STR
-  double precision,         parameter :: MinSpacing  = 0.800d0*FCCspacing
-  double precision,         parameter :: MaxSpacing  = 1.200d0*FCCspacing
+  double precision,         parameter :: B2spacing   = B2_SPACING_STR
+  double precision,         parameter :: MinSpacing  = 0.800d0*B2spacing
+  double precision,         parameter :: MaxSpacing  = 1.200d0*B2spacing
   integer,                  parameter :: DIM         = 3
 
   ! significant local variables
   !
   double precision     :: rcut               ! cutoff radius of the potential
 
-  integer, allocatable :: neighborList(:,:)  ! neighbor list storage
+  integer,          allocatable :: NLRvecLocs(:)     ! neighbor list pointers
+  integer,          allocatable :: neighborList(:,:) ! neighbor list storage
+  double precision, allocatable :: RijList(:,:,:)    ! Rij vector list storage
+
+  integer              :: NNeighbors         ! maximum number of neighbors for an atom
 
   double precision     :: FinalSpacing       ! crystal lattice parameter
 
@@ -65,6 +69,8 @@ program TEST_NAME_STR
   real*8 coordum(DIM,1);   pointer(pcoor,coordum)         ! coordinate
   real*8, pointer  :: coords(:,:)
 
+  real*8 cutoff; pointer(pcutoff,cutoff)                  ! cutoff
+
   integer(kind=kim_intptr) :: N                           ! number of atoms
 
 
@@ -81,33 +87,50 @@ program TEST_NAME_STR
   read(*,*) modelname
 
 
-  ! Get model cutoff radius and compute number of atoms needed
-  ! (We need 2*cutoff, use 2.125*cutoff for saftey)
+  ! We'll use just two atom (one SPECIES1_NAME_STR and one SPECIES2_NAME_STR) for this calculation!
   !
-  rcut = get_model_cutoff_firsttime(testname, modelname)
-  CellsPerRcut = ceiling(rcut/MinSpacing)
-  N = 4*((2.d0*CellsPerRcut)**3)
+  N = 2
 
 
   ! Setup the KIM API object
   !
-  call setup_KIM_API_object(pkim, testname, modelname, N, specname)
+  call setup_B2_KIM_API_object(pkim, testname, modelname, specname1, specname2)
 
 
   ! allocate storage for neighbor lists, compute them for the first time, 
   ! and store necessary pointers in KIM API object
   !
-  allocate(neighborList(N+1, N))
-  call setup_neighborlist_no_Rij_KIM_access(pkim, N, neighborList)
+  ! First, access the `cutoff' arguemt
+  !
+  pcutoff = kim_api_get_data_f(pkim, "cutoff", ier)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
+  rcut = cutoff
+  !
+  ! Second, determine how many neighbors we will need
+  !
+  CellsPerRcut = ceiling(rcut/MinSpacing+ 0.05d0) ! the 0.05 is a saftey factor
+  NNeighbors = 2*((2*CellsPerRcut + 1)**3)
+  !
+  ! allocate memory for the neighbor list and Rij vectors
+  !
+  allocate(neighborList(NNeighbors+1,N))
+  allocate(RijList(3,NNeighbors+1,N))
+  allocate(NLRvecLocs(3))
+  ! 
+  call setup_neighborlist_Rij_KIM_access(pkim, N, NNeighbors, neighborList, &
+                                         RijList, NLRvecLocs)
 
 
   ! find equilibrium spacing by minimizing coheseive energy with respect
   ! to the periodic box size
   !
-  call NEIGH_PURE_compute_equilibrium_spacing(pkim, &
+  call NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
          DIM,CellsPerRcut,MinSpacing,MaxSpacing, &
-         TOL,N,neighborlist,.false.,             &
-         FinalSpacing,FinalEnergy)
+         TOL,N,NNeighbors,neighborlist,RijList,  &
+         .false.,FinalSpacing,FinalEnergy)
 
   ! print results to screen
   !
@@ -123,6 +146,8 @@ program TEST_NAME_STR
   ! Don't forget to free and/or deallocate
   !
   deallocate(neighborList)
+  deallocate(RijList)
+  deallocate(NLRvecLocs)
   call free_KIM_API_object(pkim)
 
   stop
@@ -131,16 +156,16 @@ end program TEST_NAME_STR
 
 !-------------------------------------------------------------------------------
 !
-! NEIGH_PURE_compute_equilibrium_spacing : 
+! NEIGH_RVEC_compute_equilibrium_spacing : 
 !
 !    Use the Golden section search algorithm to find the equilibrium spacing by 
 !    minimizing the energy of the system with respect to the periodic box size.
 !
 !-------------------------------------------------------------------------------
-subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
+subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
              DIM,CellsPerRcut,MinSpacing,MaxSpacing, &
-             TOL,N,neighborlist,verbose,             &
-             RetSpacing,RetEnergy)
+             TOL,N,NNeighbors,neighborlist,RijList,  &
+             verbose,RetSpacing,RetEnergy)
   use KIMservice
   implicit none
   
@@ -152,7 +177,9 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
   double precision,         intent(in)  :: MaxSpacing
   double precision,         intent(in)  :: TOL
   integer(kind=kim_intptr), intent(in)  :: N
-  integer,                  intent(in)  :: neighborList(N+1,N)
+  integer,                  intent(in)  :: NNeighbors
+  integer,                  intent(in)  :: neighborList(NNeighbors+1,N)
+  double precision,         intent(in)  :: RijList(3,NNeighbors+1,N)
   logical,                  intent(in)  :: verbose
   double precision,         intent(out) :: RetSpacing
   double precision,         intent(out) :: RetEnergy
@@ -168,8 +195,6 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
   real*8 coordum(DIM,1);   pointer(pcoor,coordum)
   real*8, pointer :: coords(:,:)
   real*8 cutoff;           pointer(pcutoff,cutoff)
-  logical :: halfflag  ! .true. = half neighbor list; .false. = full neighbor list
-  character(len=64) NBC_Method;  pointer(pNBC_Method,NBC_Method)
 
   ! Unpack data from KIM object
   !
@@ -184,7 +209,7 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
      call report_error(__LINE__, "kim_api_get_data_f", ier)
      stop
   endif
-  N4 = N ! (Some routines expect N to be integer*4)
+  N4 = N  ! (Some routines expect N to be integer*4)
   call toRealArrayWithDescriptor2d(coordum, coords, DIM, N4)
 
   pcutoff = kim_api_get_data_f(pkim, "cutoff", ier)
@@ -194,81 +219,51 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
   endif
 
 
-  ! determine which neighbor list type to use
-  !
-  pNBC_Method = kim_api_get_nbc_method_f(pkim, ier) ! don't forget to free
-  if (ier.le.0) then
-     call report_error(__LINE__, "kim_api_get_nbc_method", ier)
-     stop
-  endif
-  if (index(NBC_Method,"NEIGH-PURE-H").eq.1) then
-     halfflag = .true.
-  elseif (index(NBC_Method,"NEIGH-PURE-F").eq.1) then
-     halfflag = .false.
-  else
-     ier = 0
-     call report_error(__LINE__, "Unknown NBC method", ier)
-     return
-  endif
-  call free(pNBC_Method) ! free the memory
-
   ! Initialize for minimization
   !
   Spacings(1) = MinSpacing
-  call create_FCC_configuration(Spacings(1), 2*CellsPerRcut, .true., coords, MiddleAtomId)
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
-  call NEIGH_PURE_periodic_neighborlist(halfflag, N, coords, (cutoff+0.75), &
-                                        MiddleAtomId, neighborList)
+  call NEIGH_RVEC_F_periodic_B2_neighborlist(CellsPerRcut, (cutoff+0.75), &
+                                             Spacings(1), NNeighbors,     &
+                                             neighborList, RijList)
   call kim_api_model_compute_f(pkim, ier)
   if (ier.le.0) then
      call report_error(__LINE__, "kim_api_model_compute_f", ier)
      stop
   endif
-  if (halfflag) then ! half neighbor list computes twice the energy
-     Energies(1) = energy/2.d0
-  else
-     Energies(1) = energy
-  endif
+  Energies(1) = energy
   if (verbose) &
      print *, "Energy/atom = ", Energies(1), "; Spacing = ", Spacings(1)
 
   ! setup and compute for max spacing
   Spacings(3) = MaxSpacing
-  call create_FCC_configuration(Spacings(3), 2*CellsPerRcut, .true., coords, MiddleAtomId)
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
-  call NEIGH_PURE_periodic_neighborlist(halfflag, N, coords, (cutoff+0.75), &
-                                        MiddleAtomId, neighborList)
+  call NEIGH_RVEC_F_periodic_B2_neighborlist(CellsPerRcut, (cutoff+0.75), &
+                                             Spacings(3), NNeighbors,     &
+                                             neighborList, RijList)
   ! Call model compute
   call kim_api_model_compute_f(pkim, ier)
   if (ier.le.0) then
      call report_error(__LINE__, "kim_api_model_compute_f", ier)
      stop
   endif
-  if (halfflag) then ! half neighbor list computes twice the energy
-     Energies(3) = energy/2.d0
-  else
-     Energies(3) = energy
-  endif
+  Energies(3) = energy
   if (verbose) &
      print *, "Energy/atom = ", Energies(3), "; Spacing = ", Spacings(3)
 
   ! setup and compute for first intermediate spacing
   Spacings(2) = MinSpacing + (2.0 - Golden)*(MaxSpacing - MinSpacing)
-  call create_FCC_configuration(Spacings(2), 2*CellsPerRcut, .true., coords, MiddleAtomId)
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
-  call NEIGH_PURE_periodic_neighborlist(halfflag, N, coords, (cutoff+0.75), &
-                                        MiddleAtomId, neighborList)
+  call NEIGH_RVEC_F_periodic_B2_neighborlist(CellsPerRcut, (cutoff+0.75), &
+                                             Spacings(2), NNeighbors,     &
+                                             neighborList, RijList)
   ! Call model compute
   call kim_api_model_compute_f(pkim, ier)
   if (ier.le.0) then
      call report_error(__LINE__, "kim_api_model_compute_f", ier)
      stop
   endif
-  if (halfflag) then ! half neighbor list computes twice the energy
-     Energies(2) = energy/2.d0
-  else
-     Energies(2) = energy
-  endif
+  Energies(2) = energy
   if (verbose) &
      print *, "Energy/atom = ", Energies(2), "; Spacing = ", Spacings(2)
 
@@ -278,22 +273,17 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
   do while (abs(Spacings(3) - Spacings(1)) .gt. TOL)
      ! set new spacing
      Spacings(4) = (Spacings(1) + Spacings(3)) - Spacings(2)
-     ! compute new atom coordinates based on new spacing
-     call create_FCC_configuration(Spacings(4), 2*CellsPerRcut, .true., coords, MiddleAtomId)
      ! compute new neighbor lists (could be done more intelligently, I'm sure)
-     call NEIGH_PURE_periodic_neighborlist(halfflag, N, coords, (cutoff+0.75), &
-                                           MiddleAtomId, neighborList)
+     call NEIGH_RVEC_F_periodic_B2_neighborlist(CellsPerRcut, (cutoff+0.75), &
+                                                Spacings(4), NNeighbors,     &
+                                                neighborList, RijList)
      ! Call model compute
      call kim_api_model_compute_f(pkim, ier)
      if (ier.le.0) then
         call report_error(__LINE__, "kim_api_model_compute_f", ier)
         stop
      endif
-     if (halfflag) then ! half neighbor list computes twice the energy
-        Energies(4) = energy/2.d0
-     else
-        Energies(4) = energy
-     endif
+     Energies(4) = energy
      if (verbose) &
         print *, "Energy/atom = ", Energies(4), "; Spacing = ", Spacings(4)
 
@@ -316,4 +306,4 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
 
   return
 
-end subroutine NEIGH_PURE_compute_equilibrium_spacing
+end subroutine NEIGH_RVEC_compute_equilibrium_spacing

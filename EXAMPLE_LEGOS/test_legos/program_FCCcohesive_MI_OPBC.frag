@@ -73,8 +73,6 @@ program TEST_NAME_STR
   ! other variables
   !
   double precision, external  ::  get_model_cutoff_firsttime
-  integer :: middleDum
-  integer :: N4
 
 !========================= END VARIABLE DEFINITIONS ==========================
 
@@ -91,7 +89,6 @@ program TEST_NAME_STR
   rcut = get_model_cutoff_firsttime(testname, modelname)
   CellsPerSide = ceiling((2.125d0*rcut)/(MinSpacing))
   N = 4*(CellsPerSide**3)
-  N4 = N  ! (Some routine expect N to be integer*4)
 
 
   ! Setup the KIM API object
@@ -190,7 +187,7 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
      call report_error(__LINE__, "kim_api_get_data_f", ier)
      stop
   endif
-  N4 = N
+  N4 = N ! (Some routines expect N to be integer*4)
   call toRealArrayWithDescriptor2d(coordum, coords, DIM, N4)
 
   pcutoff = kim_api_get_data_f(pkim, "cutoff", ier)
