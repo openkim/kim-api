@@ -1,0 +1,68 @@
+
+Direction for using the supplied templates to create a new KIM Model
+
+=======================================================================
+
+1. Create new directory under MODELs, say
+
+   % cd $KIM_DIR/MODELs
+   % mkdir model_Xe_P_LJ
+
+2. Copy and the .f90, .kim and Makefile templates into the new directory
+   and rename:
+
+   % cd $KIM_DIR/MODELs/model_Xe_P_LJ
+   % cp $KIM_DIR/DOCs/TEMPLATEs/model_El_P_Template.f90 model_Xe_P_LJ.f90
+   % cp $KIM_DIR/DOCs/TEMPLATEs/model_El_P_Template.f.kim model_Xe_P_LJ.kim
+   % cp $KIM_DIR/DOCs/TEMPLATEs/Makefile.template Makefile
+
+   Note: For a model written in C, copy the .c and .c.kim templates.
+
+3. Edit the .kim file and change the model name to conform to the
+   new model and enter the species type. (Search for the word "FILL" 
+   which indicates where changes are necessary.) To edit a file on a 
+   unix machine, use for example:
+
+   % pico model_Xe_P_LJ_MI_OPBC_H.kim
+
+4. Edit the .f90 (or .c) file making all necessary changes. (Search for the word 
+   "FILL".) The main changes are:
+
+   - model name which appears in several places in the file.
+
+   - fill in the model cutoff radius
+
+   - define static parameters if necessary. If these parameters need to be
+     accessed outside the module (as in the _init() routine) add them to 
+     to the list of public variables at the top of the module.
+
+     Note: A model cannot rely on static storage between calls. A basic 
+     assumption in the KIM API is that *all* information needed by a model to 
+     run is stored in the KIM API object.  This is necessary to allow multiple 
+     instances of the same model being used simultaneously. The only case where 
+     static variables can be used are if they are "hard-wired" so that the 
+     model can only work with those values. In Fortran this is done using the 
+     "parameter" statement.  In C use preprocessor DEFINE statements. Otherwise 
+     variables need to be stored as parameters in the KIM API object. See discussion 
+     in standard.kim file.
+
+   - Fill in the necessary code in the routines calc_phi() and calc_phi_dphi().
+
+   - Add any necessary initialization into the _init() routine.
+
+5. Edit the Makefile and change the model name appropriately. (Search
+   for the word "FILL".)
+
+6. Compile the new model into the API package:
+
+   % cd $KIM_DIR
+   % make
+
+   Correct any errors until the compilation succeeds.
+
+7. You can now run Tests that are compatible with your model simply by
+   giving your new model name is an argument.
+
+   Note: If you run a Test and it does not seem to be working, remember to
+         check the kim.log file for any messages.
+
