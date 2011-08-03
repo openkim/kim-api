@@ -3,7 +3,7 @@
 # Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna 
 # All rights reserved.                                                 
 #                                    
-# Author: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
+# Authors: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
 #
 # 
 # this make file builds/cleans everything 

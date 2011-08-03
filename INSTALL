@@ -35,7 +35,7 @@ bash:
        `make'             -- compiles the API and all Models and Tests
        `make all'         -- same as `make'
        `make openkim-api' -- compiles only the API
-       `make clean'       -- will remove all .o, .a, .so and executable files
+       `make clean'       -- will remove all .o, .mod, .a, .so and executable files
 
 
 5. The provided example Tests read in the name of a Model (or Models) 

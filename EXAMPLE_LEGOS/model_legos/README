@@ -6,7 +6,7 @@ The following files are in this directory:
 
 Makefile
      This is the make file that creates the example Models directories in the
-     $KIM_MODELS_DIR directory
+     directory ../../MODELs/
 
 README
      This file
