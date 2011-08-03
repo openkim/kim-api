@@ -7,8 +7,8 @@
 !**  function of lattice spacing.
 !**
 !**  Works with the following NBC methods:
-!**        MI-OPBC-H
-!**        MI-OPBC-F
+!**        NEIGH-PURE-H
+!**        NEIGH-PURE-F
 !**
 !**  Authors: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
 !**
@@ -50,8 +50,8 @@ program TEST_NAME_STR
   double precision     :: FinalEnergy        ! energy per atom of crystal 
                                              ! at current spacing
 
-  integer              :: CellsPerSide       ! number of unit cells along
-                                             ! box side
+  integer              :: CellsPerRcut       ! number of unit cells along
+                                             ! box (of size rcut) side
 
 
   ! KIM variables
@@ -64,8 +64,6 @@ program TEST_NAME_STR
 
   real*8 coordum(DIM,1);   pointer(pcoor,coordum)         ! coordinate
   real*8, pointer  :: coords(:,:)
-
-  real*8 boxlength(DIM);   pointer(pboxlength,boxlength)  ! periodic box size
 
   integer(kind=kim_intptr) :: N                           ! number of atoms
 
@@ -89,8 +87,8 @@ program TEST_NAME_STR
   ! (We need 2*cutoff, use 2.125*cutoff for saftey)
   !
   rcut = get_model_cutoff_firsttime(testname, modelname)
-  CellsPerSide = ceiling((2.125d0*rcut)/(MinSpacing))
-  N = 4*(CellsPerSide**3)
+  CellsPerRcut = ceiling(rcut/MinSpacing)
+  N = 4*((2.d0*CellsPerRcut)**3)
   N4 = N  ! (Some routine expect N to be integer*4)
 
 
@@ -109,8 +107,8 @@ program TEST_NAME_STR
   ! find equilibrium spacing by minimizing coheseive energy with respect
   ! to the periodic box size
   !
-  call MI_OPBC_compute_equilibrium_spacing(pkim, &
-         DIM,CellsPerSide,MinSpacing,MaxSpacing, &
+  call NEIGH_PURE_compute_equilibrium_spacing(pkim, &
+         DIM,CellsPerRcut,MinSpacing,MaxSpacing, &
          TOL,N,neighborlist,.false.,             &
          FinalSpacing,FinalEnergy)
 
@@ -136,14 +134,14 @@ end program TEST_NAME_STR
 
 !-------------------------------------------------------------------------------
 !
-! MI_OPBC_compute_equilibrium_spacing : 
+! NEIGH_PURE_compute_equilibrium_spacing : 
 !
 !    Use the Golden section search algorithm to find the equilibrium spacing by 
 !    minimizing the energy of the system with respect to the periodic box size.
 !
 !-------------------------------------------------------------------------------
-subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
-             DIM,CellsPerSide,MinSpacing,MaxSpacing, &
+subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
+             DIM,CellsPerRcut,MinSpacing,MaxSpacing, &
              TOL,N,neighborlist,verbose,             &
              RetSpacing,RetEnergy)
   use KIMservice
@@ -152,7 +150,7 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   !-- Transferred variables
   integer(kind=kim_intptr), intent(in)  :: pkim
   integer,                  intent(in)  :: DIM
-  integer,                  intent(in)  :: CellsPerSide
+  integer,                  intent(in)  :: CellsPerRcut
   double precision,         intent(in)  :: MinSpacing
   double precision,         intent(in)  :: MaxSpacing
   double precision,         intent(in)  :: TOL
@@ -167,13 +165,12 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   integer ier
   double precision Spacings(4)
   double precision Energies(4)
-  integer middleDum
+  integer MiddleAtomId
   real*8 energy;           pointer(penergy,energy)
   integer N4
   real*8 coordum(DIM,1);   pointer(pcoor,coordum)
   real*8, pointer :: coords(:,:)
   real*8 cutoff;           pointer(pcutoff,cutoff)
-  real*8 boxlength(DIM);   pointer(pboxlength,boxlength)
   logical :: halfflag  ! .true. = half neighbor list; .false. = full neighbor list
   character(len=64) NBC_Method;  pointer(pNBC_Method,NBC_Method)
 
@@ -199,23 +196,17 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
      stop
   endif
 
-  pboxlength = kim_api_get_data_f(pkim, "boxlength", ier)
-  if (ier.le.0) then
-     call report_error(__LINE__, "kim_api_get_data_f", ier)
-     stop
-  endif
-
 
   ! determine which neighbor list type to use
   !
   pNBC_Method = kim_api_get_nbc_method_f(pkim, ier) ! don't forget to free
   if (ier.le.0) then
-     call report_error(__LINE__, "kim_api_get_nbc_method_f", ier)
+     call report_error(__LINE__, "kim_api_get_nbc_method", ier)
      stop
   endif
-  if (index(NBC_Method,"MI-OPBC-H").eq.1) then
+  if (index(NBC_Method,"NEIGH-PURE-H").eq.1) then
      halfflag = .true.
-  elseif (index(NBC_Method,"MI-OPBC-F").eq.1) then
+  elseif (index(NBC_Method,"NEIGH-PURE-F").eq.1) then
      halfflag = .false.
   else
      ier = 0
@@ -227,48 +218,60 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   ! Initialize for minimization
   !
   Spacings(1) = MinSpacing
-  call create_FCC_configuration(Spacings(1), CellsPerSide, .true., coords, middleDum)
-  boxlength(:) = Spacings(1)*CellsPerSide
+  call create_FCC_configuration(Spacings(1), 2*CellsPerRcut, .true., coords, MiddleAtomId)
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
-  call MI_OPBC_neighborlist(halfflag, N, coords, (cutoff+0.75), boxlength, neighborList)
+  call NEIGH_PURE_periodic_neighborlist(halfflag, N, coords, (cutoff+0.75), &
+                                        MiddleAtomId, neighborList)
   call kim_api_model_compute_f(pkim, ier)
   if (ier.le.0) then
      call report_error(__LINE__, "kim_api_model_compute_f", ier)
      stop
   endif
-  Energies(1) = energy/N
+  if (halfflag) then ! half neighbor list computes twice the energy
+     Energies(1) = energy/2.d0
+  else
+     Energies(1) = energy
+  endif
   if (verbose) &
      print *, "Energy/atom = ", Energies(1), "; Spacing = ", Spacings(1)
 
   ! setup and compute for max spacing
   Spacings(3) = MaxSpacing
-  call create_FCC_configuration(Spacings(3), CellsPerSide, .true., coords, middleDum)
-  boxlength(:) = Spacings(3)*CellsPerSide
+  call create_FCC_configuration(Spacings(3), 2*CellsPerRcut, .true., coords, MiddleAtomId)
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
-  call MI_OPBC_neighborlist(halfflag, N, coords, (cutoff+0.75), boxlength, neighborList)
+  call NEIGH_PURE_periodic_neighborlist(halfflag, N, coords, (cutoff+0.75), &
+                                        MiddleAtomId, neighborList)
   ! Call model compute
   call kim_api_model_compute_f(pkim, ier)
   if (ier.le.0) then
      call report_error(__LINE__, "kim_api_model_compute_f", ier)
      stop
   endif
-  Energies(3) = energy/N
+  if (halfflag) then ! half neighbor list computes twice the energy
+     Energies(3) = energy/2.d0
+  else
+     Energies(3) = energy
+  endif
   if (verbose) &
      print *, "Energy/atom = ", Energies(3), "; Spacing = ", Spacings(3)
 
   ! setup and compute for first intermediate spacing
   Spacings(2) = MinSpacing + (2.0 - Golden)*(MaxSpacing - MinSpacing)
-  call create_FCC_configuration(Spacings(2), CellsPerSide, .true., coords, middleDum)
-  boxlength(:) = Spacings(2)*CellsPerSide
+  call create_FCC_configuration(Spacings(2), 2*CellsPerRcut, .true., coords, MiddleAtomId)
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
-  call MI_OPBC_neighborlist(halfflag, N, coords, (cutoff+0.75), boxlength, neighborList)
+  call NEIGH_PURE_periodic_neighborlist(halfflag, N, coords, (cutoff+0.75), &
+                                        MiddleAtomId, neighborList)
   ! Call model compute
   call kim_api_model_compute_f(pkim, ier)
   if (ier.le.0) then
      call report_error(__LINE__, "kim_api_model_compute_f", ier)
      stop
   endif
-  Energies(2) = energy/N
+  if (halfflag) then ! half neighbor list computes twice the energy
+     Energies(2) = energy/2.d0
+  else
+     Energies(2) = energy
+  endif
   if (verbose) &
      print *, "Energy/atom = ", Energies(2), "; Spacing = ", Spacings(2)
 
@@ -279,18 +282,21 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
      ! set new spacing
      Spacings(4) = (Spacings(1) + Spacings(3)) - Spacings(2)
      ! compute new atom coordinates based on new spacing
-     call create_FCC_configuration(Spacings(4), CellsPerSide, .true., coords, middleDum)
-     ! set new boxlength
-     boxlength(:)  = Spacings(4)*CellsPerSide
+     call create_FCC_configuration(Spacings(4), 2*CellsPerRcut, .true., coords, MiddleAtomId)
      ! compute new neighbor lists (could be done more intelligently, I'm sure)
-     call MI_OPBC_neighborlist(halfflag, N, coords, (cutoff+0.75), boxlength, neighborList)
+     call NEIGH_PURE_periodic_neighborlist(halfflag, N, coords, (cutoff+0.75), &
+                                           MiddleAtomId, neighborList)
      ! Call model compute
      call kim_api_model_compute_f(pkim, ier)
      if (ier.le.0) then
         call report_error(__LINE__, "kim_api_model_compute_f", ier)
         stop
      endif
-     Energies(4) = energy/N
+     if (halfflag) then ! half neighbor list computes twice the energy
+        Energies(4) = energy/2.d0
+     else
+        Energies(4) = energy
+     endif
      if (verbose) &
         print *, "Energy/atom = ", Energies(4), "; Spacing = ", Spacings(4)
 
@@ -313,4 +319,4 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
 
   return
 
-end subroutine MI_OPBC_compute_equilibrium_spacing
+end subroutine NEIGH_PURE_compute_equilibrium_spacing
