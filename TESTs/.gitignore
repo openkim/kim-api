@@ -1,7 +1,6 @@
 EXAMPLES.README
 test_Al_free_cluster
-test_Al_periodic_FCC_MI_OPBC
-test_ArNe_periodic_B2_NEIGH_RVEC
+test_Al_FCCcohesive_MI_OPBC
 test_ArNe_B2cohesive_NEIGH_RVEC
 test_Ar_FCCcohesive_MI_OPBC
 test_Ar_FCCcohesive_NEIGH_PURE
@@ -9,8 +8,5 @@ test_Ar_FCCcohesive_NEIGH_RVEC
 test_Ar_free_cluster
 test_Ar_free_cluster_CLUSTER
 test_Ar_multiple_models
-test_Ar_periodic_FCC_MI_OPBC
-test_Ar_periodic_FCC_NEIGH_PURE
-test_Ar_periodic_FCC_NEIGH_RVEC
 test_Ar_periodic_cut_FCC_NEIGH_RVEC
 test_Ne_periodic_cut_FCC_NEIGH_RVEC
