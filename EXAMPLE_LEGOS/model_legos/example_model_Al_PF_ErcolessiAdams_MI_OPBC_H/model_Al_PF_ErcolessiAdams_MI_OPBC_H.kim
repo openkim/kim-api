@@ -35,7 +35,7 @@ MI-OPBC-H               dummy
 
 #######################################################################################################
 MODEL_INPUT:
-# Name                  Type         Unit       SystemU/Scale           Shape              requirements
+# Name                  Type         Unit       SystemU/Scale           Shape              Requirements
 
 numberOfAtoms           integer*8    none       none                    []
 
@@ -56,7 +56,7 @@ boxlength               real*8       length     standard                [3]
 
 #######################################################################################################
 MODEL_OUTPUT:
-# Name                  Type         Unit       SystemU/Scale           Shape              requirements
+# Name                  Type         Unit       SystemU/Scale           Shape              Requirements
 
 destroy                 method       none       none                    []                 optional
 
@@ -77,6 +77,6 @@ virial                  real*8       pressure   standard                []      
 
 #######################################################################################################
 MODEL_PARAMETERS:
-# Name                  Type         Unit       SystemU/Scale           Shape              requirements
+# Name                  Type         Unit       SystemU/Scale           Shape              Requirements
 
 # --- No published parameters ---

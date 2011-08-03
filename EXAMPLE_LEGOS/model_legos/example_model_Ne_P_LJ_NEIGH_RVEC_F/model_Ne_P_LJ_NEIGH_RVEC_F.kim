@@ -35,7 +35,7 @@ NEIGH-RVEC-F            dummy
 
 #######################################################################################################
 MODEL_INPUT:
-# Name                  Type         Unit       SystemU/Scale           Shape              requirements
+# Name                  Type         Unit       SystemU/Scale           Shape              Requirements
 
 numberOfAtoms           integer*8    none       none                    []
 
@@ -54,7 +54,7 @@ neighObject             pointer      none       none                    []
 
 #######################################################################################################
 MODEL_OUTPUT:
-# Name                  Type         Unit       SystemU/Scale           Shape              requirements
+# Name                  Type         Unit       SystemU/Scale           Shape              Requirements
 
 destroy                 method       none       none                    []
 
@@ -75,7 +75,7 @@ virial                  real*8       pressure   standard                []      
 
 #######################################################################################################
 MODEL_PARAMETERS:
-# Name                  Type         Unit       SystemU/Scale           Shape              requirements
+# Name                  Type         Unit       SystemU/Scale           Shape              Requirements
 
 PARAM_FREE_sigma        real*8       length     standard                []
 

@@ -35,7 +35,7 @@ NEIGH-PURE-H            dummy
 
 #######################################################################################################
 MODEL_INPUT:
-# Name                  Type         Unit       SystemU/Scale           Shape              requirements
+# Name                  Type         Unit       SystemU/Scale           Shape              Requirements
 
 numberOfAtoms           integer*8    none       none                    []
 
@@ -54,7 +54,7 @@ neighObject             pointer      none       none                    []
 
 #######################################################################################################
 MODEL_OUTPUT:
-# Name                  Type         Unit       SystemU/Scale           Shape              requirements
+# Name                  Type         Unit       SystemU/Scale           Shape              Requirements
 
 destroy                 method       none       none                    []                 optional
 
@@ -73,6 +73,6 @@ energyPerAtom           real*8       energy     standard                [numberO
 
 #######################################################################################################
 MODEL_PARAMETERS:
-# Name                  Type         Unit       SystemU/Scale           Shape              requirements
+# Name                  Type         Unit       SystemU/Scale           Shape              Requirements
 
 # No parameters published
