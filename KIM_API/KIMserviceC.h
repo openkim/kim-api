@@ -100,7 +100,7 @@ int kim_api_set_units_(void *kimmdl,char ** UnitsSystem);
 void kim_api_transform_units_to_(void *kimmdl,char ** UnitsSystem, int *error);
 int kim_api_isunits_fixed_(void *kimmdl);
 
-int kim_api_get_neigh_mode_(void *kimmdl,int *error);
+int kim_api_get_neigh_mode_f_(void *kimmdl,int *error);
 
 void * kim_api_get_listatomtypes_f_(void * kimmdl,int* nATypes, int* error);
 void * kim_api_get_listparams_f_(void * kimmdl,int* nVpar, int* error);
