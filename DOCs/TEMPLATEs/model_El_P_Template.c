@@ -27,6 +27,7 @@
 #define DIM 3       /* dimensionality of space */
 #define SPECCODE 1  /* internal species code */
 #define MODEL_CUTOFF <FILL cutoff value> /* cutoff radius in angstroms */
+#define MODEL_CUTSQ  (MODEL_CUTOFF * MODEL_CUTOFF)
 #define <FILL parameter name> <FILL parameter value>
 
 /* Define prototypes for model init */
@@ -64,7 +65,7 @@ static void calc_phi(double r, double* phi)
 }
 
 /* Calculate pair potential phi(r) and its derivative dphi(r) */
-static void calc_phi_dphi(double r, double* phi)
+static void calc_phi_dphi(double r, double* phi, double* dphi)
 {
    /* local variables */
    /*<FILL place any local variable definitions here>*/
@@ -96,7 +97,7 @@ static void compute(void* km, int* ier)
    double Rsqij;
    double phi;
    double dphi;
-   double dx[DIM];
+   double Rij[DIM];
    int i;
    int j;
    int jj;
@@ -114,7 +115,7 @@ static void compute(void* km, int* ier)
 
    intptr_t* nAtoms;
    int* atomTypes;
-   double* Rij;
+   double* Rij_list;
    double* coords;
    double* energy;
    double* force;
@@ -170,10 +171,10 @@ static void compute(void* km, int* ier)
    else
    {
       *ier = 0;
-      report_error(__LINE__, "Unknown NBC type", *ier);
+      report_error(__LINE__, "Unknown NBC method", *ier);
       return;
    }
-   free(NBCstr);
+   free(NBCstr); /* don't forget to release the memory... */
 
    /* determine neighbor list handling mode */
    if (NBC != 0)
@@ -183,10 +184,15 @@ static void compute(void* km, int* ier)
        *            = 2 -- Locator
        *****************************/
       IterOrLoca = KIM_API_get_neigh_mode(pkim, ier);
-      if ((1 > *ier) || ((IterOrLoca != 1) && (IterOrLoca != 2)))
+      if (1 > *ier)
       {
          report_error(__LINE__, "KIM_API_get_neigh_mode", *ier);
          return;
+      }
+      if ((IterOrLoca != 1) && (IterOrLoca != 2))
+      {
+         printf("* ERROR: Unsupported IterOrLoca mode = %i\n", IterOrLoca);
+         exit(-1);
       }
    }
    else
@@ -250,9 +256,9 @@ static void compute(void* km, int* ier)
       }
    }
 
-   if (comp_energyPerAtom)
+   if (comp_force)
    {
-      energyPerAtom = (double*) KIM_API_get_data(pkim, "energyPerAtom", ier);
+      force = (double*) KIM_API_get_data(pkim, "forces", ier);
       if (1 > *ier)
       {
          report_error(__LINE__, "KIM_API_get_data", *ier);
@@ -260,9 +266,9 @@ static void compute(void* km, int* ier)
       }
    }
 
-   if (comp_force)
+   if (comp_energyPerAtom)
    {
-      force = (double*) KIM_API_get_data(pkim, "forces", ier);
+      energyPerAtom = (double*) KIM_API_get_data(pkim, "energyPerAtom", ier);
       if (1 > *ier)
       {
          report_error(__LINE__, "KIM_API_get_data", *ier);
@@ -280,16 +286,14 @@ static void compute(void* km, int* ier)
       }
    }
 
-   /* check to be sure the atom types are correct by comparing the provided species */
-   /* codes to the value given here (which should be the same as that given in the  */
-   /* .kim file).                                                                   */
+   /* Check to be sure that the atom types are correct */
    /**/
    *ier = 0; /* assume an error */
    for (i = 0; i < *nAtoms; ++i)
    {
       if ( SPECCODE != atomTypes[i])
       {
-         report_error(__LINE__, "Wrong atomType", i);
+         report_error(__LINE__, "Unexpected species type detected", i);
          return;
       }
    }
@@ -301,7 +305,6 @@ static void compute(void* km, int* ier)
       for (i = 0; i < *nAtoms; ++i)
       {
          energyPerAtom[i] = 0.0;
-    
       }
    }
    else
@@ -331,219 +334,219 @@ static void compute(void* km, int* ier)
       neighListOfCurrentAtom = (int *) malloc((*nAtoms)*sizeof(int));
    }
 
-   /* Ready to setup for and perform the computation */
+   /* Initialize neighbor handling for Iterator mode */
 
-   if (1 == IterOrLoca) /* Iterator mode */
+   if (1 == IterOrLoca)
    {
-      /* reset neighbor iterator */
-      if (0 == (NBC%2)) /* full list */
+      if (1 == HalfOrFull) /* HALF list */
       {
-         *ier = KIM_API_get_full_neigh(pkim, 0, 0, &currentAtom,
-                                       &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+         *ier = KIM_API_get_half_neigh(pkim, 0, 0, &currentAtom, &numOfAtomNeigh,
+                                       &neighListOfCurrentAtom, &Rij_list);
       }
-      else /* half list */
+      else                 /* FULL list */
       {
-         *ier = KIM_API_get_half_neigh(pkim, 0, 0, &currentAtom,
-                                       &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+         *ier = KIM_API_get_full_neigh(pkim, 0, 0, &currentAtom, &numOfAtomNeigh,
+                                       &neighListOfCurrentAtom, &Rij_list);
       }
-      if (2 != *ier)
+      /* check for successful initialization */
+      if (2 != *ier) /* ier == 2 upon successful initialization */
       {
+         if (1 == HalfOrFull)
+         {
+            report_error(__LINE__, "KIM_API_get_half_neigh", *ier);
+         }
+         else
+         {
+            report_error(__LINE__, "KIM_API_get_full_neigh", *ier);
+         }
+         ier = 0;
+         return;
+      }
+   }
+
+   /* Compute enery and forces */
+
+   /* loop over particles and compute enregy and forces */
+   i = 0;
+   while( 1 )
+   {
+
+      /* Set up neighbor list for next atom for all NBC methods */
+      if (1 == IterOrLoca) /* ITERATOR mode */
+      {
+         if (1 == HalfOrFull) /* HALF list */
+         {
+            *ier = KIM_API_get_half_neigh(pkim, 0, 1, &currentAtom, &numOfAtomNeigh,
+                                          &neighListOfCurrentAtom, &Rij_list);  
+         }
+         else
+         {
+            *ier = KIM_API_get_full_neigh(pkim, 0, 1, &currentAtom, &numOfAtomNeigh,
+                                          &neighListOfCurrentAtom, &Rij_list);
+         }
+         if (0 > *ier) /* some sort of problem, exit */
+         {
+            if (1 == HalfOrFull)
+            {
+               report_error(__LINE__, "KIM_API_get_half_neigh", *ier);
+            }
+            else
+            {
+               report_error(__LINE__, "KIM_API_get_full_neigh", *ier);
+            }
+            return;
+         }
+         if (0 == *ier) /* ier==0 means that the iterator has been incremented past */
+         {              /* the end of the list, terminate loop                      */
+            break;
+         }
+
+         i = currentAtom;
+      }
+      else
+      {
+         i += 1;
+         if (*nAtoms < i) /* incremented past end of list, terminate loop */
+         {
+            break;
+         }
+
+         if (1 == HalfOrFull) /* HALF list */
+         {
+            if (0 == NBC)     /* CLUSTER NBC method */
+            {
+               numOfAtomNeigh = *nAtoms - i;
+               for (k = 0; k < numOfAtomNeigh; ++k)
+               {
+                  neighListOfCurrentAtom[k] = i + k + 1;
+               }
+               *ier = 1;
+            }
+            else
+            {
+               *ier = KIM_API_get_half_neigh(pkim, 1, i, &currentAtom, &numOfAtomNeigh,
+                                             &neighListOfCurrentAtom, &Rij_list);
+            }
+         }
+         else                 /* FULL list */
+         {
+            *ier = KIM_API_get_full_neigh(pkim, 1, i, &currentAtom, &numOfAtomNeigh,
+                                          &neighListOfCurrentAtom, &Rij_list);
+         }
+      }
+      if (1 != *ier) /* some sort of problem, exit */
+      {
+         if (1 == HalfOrFull)
+         {
+            report_error(__LINE__, "KIM_API_get_half_neigh", *ier);
+         }
+         else
+         {
+            report_error(__LINE__, "KIM_API_get_full_neigh", *ier);
+         }
          *ier = 0;
          return;
       }
+            
+      /* loop over the neighbors of atom i */
+      for (jj = 0; jj < numOfAtomNeigh; ++ jj)
+      {
 
-      if (0 == (NBC%2)) /* full list */
-      {
-         *ier = KIM_API_get_full_neigh(pkim, 0, 1, &currentAtom,
-                                       &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
-      }
-      else /* half list */
-      {
-         *ier = KIM_API_get_half_neigh(pkim, 0, 1, &currentAtom,
-                                       &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
-      }
-      while (1 == *ier)
-      {
-         /* loop over the neighbors of currentAtom */
-         for (jj = 0; jj < numOfAtomNeigh; ++ jj)
+         j = neighListOfCurrentAtom[jj]; /* get neighbor ID */
+
+         /* compute relative position vector and squared distance */
+         Rsqij = 0.0;
+         for (k = 0; k < DIM; ++k)
          {
-            /* compute square distance */
-            Rsqij = 0.0;
-            for (k = 0; k < DIM; ++k)
+            if (3 != NBC) /* all methods except NEIGH-RVEC-F */
             {
-               if (NBC < 5) /* MI-OPBC-H/F & NEIGH-PURE-H/F */
+               Rij[k] = coords[j*DIM + k] - coords[i*DIM + k];
+            }
+            else          /* NEIGH-RVEC-F method */
+            {
+               Rij[k] = Rij_list[jj*DIM + k];
+            }
+
+            /* apply periodic boundary conditions if required */
+            if (1 == NBC)
+            {
+               if (abs(Rij[k]) > 0.5*boxlength[k])
                {
-                  dx[k] = coords[neighListOfCurrentAtom[jj]*DIM + k] - coords[currentAtom*DIM + k];
-                  
-                  if ((NBC < 3) && (fabs(dx[k]) > 0.5*boxlength[k])) /* MI-OPBC-H/F */
-                  {
-                     dx[k] -= (dx[k]/fabs(dx[k]))*boxlength[k];
-                  }
+                  Rij[k] -= (Rij[k]/fabs(Rij[k]))*boxlength[k];
                }
-               else /* NEIGH-RVEC-F */
-               {
-                  dx[k] = Rij[jj*DIM + k];
-               }
-               
-               Rsqij += dx[k]*dx[k];
             }
             
-            /* particles are interacting ? */
-            if (Rsqij < cutsq)
-            {
-               R = sqrt(Rsqij);
-               /* compute pair potential */
-               if (comp_force || comp_virial)
-               {
-                  calc_phi_dphi(R, &phi, &dphi);
-               }
-               else
-               {
-                  calc_phi(R, &phi);
-               }
-               
-               /* accumulate energy */
-               if (comp_energyPerAtom)
-               {
-                  energyPerAtom[currentAtom] += 0.5*phi;
-                  /* if half list add energy for the other atom in the pair */
-                  if (1 == (NBC%2)) energyPerAtom[neighListOfCurrentAtom[jj]] += 0.5*phi;
-               }
-               else
-               {
-                  /* add the appropriate energy value based on half or full neighbor list */
-                  *energy += ( (0 == (NBC%2)) ? (0.5*phi) : (phi) );
-               }
-               
-               /* accumulate virial */
-               if (comp_virial)
-               {
-                  /* add the appropriate viraial contribution based on half or full list */
-                  *virial += ( (0 == (NBC%2)) ? 0.5 : 1.0 )*R*dphi;
-               }
-               
-               /* accumulate force */
-               if (comp_force)
-               {
-                  for (k = 0; k < DIM; ++k)
-                  {
-                     force[currentAtom*DIM + k] += dphi*dx[k]/R;
-                     /* if half list add force terms for the other atom in the pair */
-                     if (1 == (NBC%2)) force[neighListOfCurrentAtom[jj]*DIM + k] -= dphi*dx[k]/R;
-                  }
-               }
-            }
+            /* compute squared distance */
+            Rsqij += Rij[k]*Rij[k];
          }
          
-         /* increment iterator */
-         if (0 == (NBC%2)) /* full list */
+         /* compute energy and force */
+         if (Rsqij < MODEL_CUTSQ) /* particles are interacting ? */
          {
-            *ier = KIM_API_get_full_neigh(pkim, 0, 1, &currentAtom,
-                                          &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
-         }
-         else /* half list */
-         {
-            *ier = KIM_API_get_half_neigh(pkim, 0, 1, &currentAtom,
-                                          &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
-         }
-      }
-   }
-   else if (2 == IterOrLoca) /* Locator mode */
-   {
-      /* loop over atoms */
-      for (i = 0; i < *nAtoms; ++i)
-      {
-         /* get neighbor list for atom i */
-         if (0 == (NBC%2)) /* full list */
-         {
-            *ier = KIM_API_get_full_neigh(pkim, 1, i, &currentAtom,
-                                          &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
-         }
-         else /* half list */
-         {
-            *ier = KIM_API_get_half_neigh(pkim, 1, i, &currentAtom,
-                                          &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
-         }
-         
-         /* loop over the neighbors of currentAtom */
-         for (jj = 0; jj < numOfAtomNeigh; ++ jj)
-         {
-            /* compute square distance */
-            Rsqij = 0.0;
-            for (k = 0; k < DIM; ++k)
+            R = sqrt(Rsqij);
+            if (comp_force || comp_virial)
             {
-               if (NBC < 5) /* MI-OPBC-H/F & NEIGH-PURE-H/F */
-               {
-                  dx[k] = coords[neighListOfCurrentAtom[jj]*DIM + k] - coords[currentAtom*DIM + k];
-                  
-                  if ((NBC < 3) && (fabs(dx[k]) > 0.5*boxlength[k])) /* MI-OPBC-H/F */
-                  {
-                     dx[k] -= (dx[k]/fabs(dx[k]))*boxlength[k];
-                  }
+               /* compute pair potential and its derivative */
+               calc_phi_dphi(R, &phi, &dphi);
                }
-               else /* NEIGH-RVEC-F */
-               {
-                  dx[k] = Rij[jj*DIM + k];
-               }
-               
-               Rsqij += dx[k]*dx[k];
+            else
+            {
+               /* compute just pair potential */
+               calc_phi(R, &phi);
             }
             
-            /* particles are interacting ? */
-            if (Rsqij < cutsq)
+            /* contribution to energy */
+            if (comp_energyPerAtom)
             {
-               R = sqrt(Rsqij);
-               /* compute pair potential */
-               if (comp_force || comp_virial)
+               energyPerAtom[i] += 0.5*phi;
+               /* if half list add energy for the other atom in the pair */
+               if (1 == HalfOrFull) energyPerAtom[j] += 0.5*phi;
+            }
+            else
+            {
+               if (1 == HalfOrFull)
                {
-                  calc_phi_dphi(R, &phi, &dphi);
+                  /* Half mode -- add v to total energy */
+                  *energy += phi;
                }
                else
                {
-                  calc_phi(R, &phi);
+                  /* Full mode -- add half v to total energy */
+                  *energy += 0.5*phi;
                }
-               
-               /* accumulate energy */
-               if (comp_energyPerAtom)
+            }
+            
+            /* contribution to virial perssure */
+            if (comp_virial)
+            {
+               if (1 == HalfOrFull)
                {
-                  energyPerAtom[currentAtom] += 0.5*phi;
-                  /* if half list add energy for the other atom in the pair */
-                  if (1 == (NBC%2)) energyPerAtom[neighListOfCurrentAtom[jj]] += 0.5*phi;
+                  /* Half mode -- varial = sum r*(dphi/dr) */
+                  *virial += R*dphi;
                }
                else
                {
-                  /* add the appropriate energy value based on half or full neighbor list */
-                  *energy += ( (0 == (NBC%2)) ? (0.5*phi) : (phi) );
+                  /* Full mode -- varial = sum 0.6*r*(dphi/dr) */
+                  *virial += 0.5*R*dphi;
                }
-               
-               /* accumulate virial */
-               if (comp_virial)
+            }
+            
+            /* contribution to forces */
+            if (comp_force)
+            {
+               for (k = 0; k < DIM; ++k)
                {
-                  /* add the appropriate viraial contribution based on half or full list */
-                  *virial += ( (0 == (NBC%2)) ? 0.5 : 1.0 )*R*dphi;
-               }
-               
-               /* accumulate force */
-               if (comp_force)
-               {
-                  for (k = 0; k < DIM; ++k)
+                  force[i*DIM + k] += dphi*Rij[k]/R; /* accumulate force on atom i */
+                  if (1 == HalfOrFull)
                   {
-                     force[currentAtom*DIM + k] += dphi*dx[k]/R;
-                     /* if half list add force terms for the other atom in the pair */
-                     if (1 == (NBC%2)) force[neighListOfCurrentAtom[jj]*DIM + k] -= dphi*dx[k]/R;
+                     force[j*DIM + k] -= dphi*Rij[k]/R; /* Fji = -Fij */
                   }
                }
             }
          }
-
-      }
-   }
-   else /* unsupported IterOrLoca mode returned from KIM_API_get_neigh_mode() */
-   {
-      report_error(__LINE__, "KIM_API_get_neigh_mode", IterOrLoca);
-      exit(-1);
-   }
-
+      } /* loop on jj */
+   }    /* infinite while loop (terminated by break statements above */
+   
 
    /* perform final tasks */
    
@@ -555,9 +558,9 @@ static void compute(void* km, int* ier)
    if (comp_energyPerAtom)
    {
       *energy = 0.0;
-      for (i = 0; i < *nAtoms; ++i)
+      for (k = 0; k < *nAtoms; ++k)
       {
-         *energy += energyPerAtom[i];
+         *energy += energyPerAtom[k];
       }
    }
 
