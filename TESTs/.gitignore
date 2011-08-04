@@ -2,6 +2,7 @@ EXAMPLES.README
 test_Al_free_cluster
 test_Al_FCCcohesive_MI_OPBC
 test_ArNe_B2cohesive_NEIGH_RVEC
+test_Ar_FCCcohesiveCutoff_NEIGH_RVEC
 test_Ar_FCCcohesive_MI_OPBC
 test_Ar_FCCcohesive_NEIGH_PURE
 test_Ar_FCCcohesive_NEIGH_RVEC

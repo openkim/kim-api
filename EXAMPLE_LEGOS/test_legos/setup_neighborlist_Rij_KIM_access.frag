@@ -6,17 +6,12 @@
 !    data and methods.
 !
 !-------------------------------------------------------------------------------
-subroutine setup_neighborlist_Rij_KIM_access(pkim, N, NNeighbors, neighborList, &
-                                             RijList, NLRvecLocs)
+subroutine setup_neighborlist_Rij_KIM_access(pkim, NLRvecLocs)
   use KIMservice
   implicit none
 
   !-- Transferred variables
   integer(kind=kim_intptr), intent(in)    :: pkim
-  integer,                  intent(in)    :: N
-  integer,                  intent(in)    :: NNeighbors
-  integer,                  intent(in)    :: neighborList(NNeighbors+1,N)
-  double precision,         intent(in)    :: RijList(3,NNeighbors+1,N)
   integer,                  intent(inout) :: NLRvecLocs(3)
 
   !-- Local variables
@@ -26,11 +21,6 @@ subroutine setup_neighborlist_Rij_KIM_access(pkim, N, NNeighbors, neighborList, 
 
   ! store pointers to neighbor list object and access function
   !
-
-
-  NLRvecLocs(1) = loc(neighborList)
-  NLRvecLocs(2) = loc(RijList)
-  NLRvecLocs(3) = NNeighbors+1
   
   ier = kim_api_set_data_f(pkim, "neighObject", SizeOne, loc(NLRvecLocs))
   if (ier.le.0) then

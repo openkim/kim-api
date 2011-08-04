@@ -23,6 +23,7 @@ COMMON_FRAGMENTS = test_Makefile          \
 AUTO_GEN_TESTS = test_Al_free_cluster                 \
                  test_Al_FCCcohesive_MI_OPBC          \
                  test_ArNe_B2cohesive_NEIGH_RVEC      \
+                 test_Ar_FCCcohesiveCutoff_NEIGH_RVEC \
                  test_Ar_FCCcohesive_MI_OPBC          \
                  test_Ar_FCCcohesive_NEIGH_PURE       \
                  test_Ar_FCCcohesive_NEIGH_RVEC       \
@@ -446,6 +447,7 @@ test_Ar_FCCcohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                         \
                                 test_FCCcohesive_README                     \
                                 descriptor_file_neighborlist                \
                                 program_FCCcohesive_NEIGH_RVEC.frag         \
+                                NEIGH_RVEC_compute_equilibrium_spacing.frag \
                                 setup_KIM_API_object.frag                   \
                                 setup_neighborlist_Rij_KIM_access.frag      \
                                 NEIGH_RVEC_F_periodic_FCC_neighborlist.frag \
@@ -479,6 +481,61 @@ test_Ar_FCCcohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                         \
                                                  | sed -e 's/SPECIES_NAME_STR/Ar/g' \
                                                  | sed -e 's/FCC_SPACING_STR/5.26d0 ! in angstroms/g' \
                                                           >  $(KIM_TESTS_DIR)$@/$@.F90
+	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
+	cat NEIGH_RVEC_compute_equilibrium_spacing.frag   >> $(KIM_TESTS_DIR)$@/$@.F90
+	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
+	cat setup_KIM_API_object.frag                     >> $(KIM_TESTS_DIR)$@/$@.F90
+	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
+	cat setup_neighborlist_Rij_KIM_access.frag        >> $(KIM_TESTS_DIR)$@/$@.F90
+	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
+	cat free_KIM_API_object.frag                      >> $(KIM_TESTS_DIR)$@/$@.F90
+	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
+	cat NEIGH_RVEC_F_periodic_FCC_neighborlist.frag   >> $(KIM_TESTS_DIR)$@/$@.F90
+	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
+	cat get_neigh_Rij.frag                            >> $(KIM_TESTS_DIR)$@/$@.F90
+	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
+	cat report_error.frag                             >> $(KIM_TESTS_DIR)$@/$@.F90
+
+test_Ar_FCCcohesiveCutoff_NEIGH_RVEC: $(COMMON_FRAGMENTS)                         \
+                                      test_FCCcohesiveCutoff_README               \
+                                      descriptor_file_neighborlist                \
+                                      program_FCCcohesiveCutoff_NEIGH_RVEC.frag   \
+                                      NEIGH_RVEC_compute_equilibrium_spacing.frag \
+                                      setup_KIM_API_object.frag                   \
+                                      setup_neighborlist_Rij_KIM_access.frag      \
+                                      NEIGH_RVEC_F_periodic_FCC_neighborlist.frag \
+                                      get_neigh_Rij.frag                          \
+                                      free_KIM_API_object.frag
+        # make directory
+	mkdir -p $(KIM_TESTS_DIR)$@
+	@touch $(KIM_TESTS_DIR)$@
+        # make README file in the directory
+	cat test_FCCcohesiveCutoff_README  | $(SED_CMD) \
+                                           | sed -e 's/SPECIES_NAME_STR/Ar/g' \
+                                                          >  $(KIM_TESTS_DIR)$@/README
+        # make Makefile in the directory
+	cat test_Makefile | $(SED_CMD)                    >  $(KIM_TESTS_DIR)$@/Makefile
+        # make .kim file in the directory
+	cat descriptor_file_start    | $(SED_CMD) \
+                                     | sed -e 's/SPECIES_LINE_STR/Ar                      spec                    18/g' \
+                                                          >  $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                              >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "NEIGH-RVEC-F            dummy"              >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                              >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                              >> $(KIM_TESTS_DIR)$@/$@.kim
+	cat descriptor_file_input                         >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                              >> $(KIM_TESTS_DIR)$@/$@.kim
+	cat descriptor_file_neighborlist                  >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                              >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                              >> $(KIM_TESTS_DIR)$@/$@.kim
+	cat descriptor_file_output                        >> $(KIM_TESTS_DIR)$@/$@.kim
+        # make .F90 file in the directory
+	cat program_FCCcohesiveCutoff_NEIGH_RVEC.frag  | $(SED_CMD) \
+                                                       | sed -e 's/SPECIES_NAME_STR/Ar/g' \
+                                                       | sed -e 's/FCC_SPACING_STR/5.26d0 ! in angstroms/g' \
+                                                          >  $(KIM_TESTS_DIR)$@/$@.F90
+	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
+	cat NEIGH_RVEC_compute_equilibrium_spacing.frag   >> $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
 	cat setup_KIM_API_object.frag                     >> $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90

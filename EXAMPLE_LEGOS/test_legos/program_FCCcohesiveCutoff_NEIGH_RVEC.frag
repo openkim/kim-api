@@ -54,6 +54,8 @@ program TEST_NAME_STR
   integer              :: CellsPerCutoff     ! number of unit cells along
                                              ! box (of size cutoff) side
 
+  double precision     :: MaxCutoff          ! maximum value for cutoff radius
+
 
   ! KIM variables
   !
@@ -66,7 +68,7 @@ program TEST_NAME_STR
   real*8 coordum(DIM,1);   pointer(pcoor,coordum)         ! coordinate
   real*8, pointer  :: coords(:,:)
 
-  real*8 cutoff; pointer(pcutoff,cutoff)                  ! cutoff radius of Model
+  double precision param_cutoff; pointer(pparam_cutoff,param_cutoff) ! parameter cutoff radius
 
   integer(kind=kim_intptr) :: N                           ! number of atoms
 
@@ -74,6 +76,7 @@ program TEST_NAME_STR
   ! other variables
   !
   double precision, external  ::  get_model_cutoff_firsttime
+  integer,          external  ::  check_model_parameters
 
 !========================= END VARIABLE DEFINITIONS ==========================
 
@@ -94,20 +97,42 @@ program TEST_NAME_STR
   call setup_KIM_API_object(pkim, testname, modelname, N, specname)
 
 
-  ! allocate storage for neighbor lists, compute them for the first time, 
-  ! and store necessary pointers in KIM API object
+  ! check for PARAM_FREE_cutoff
+  ier = check_model_parameters(pkim)
+  if (ier.ne.1) then
+     ! PARAM_FREE_cutoff is not provided by the Model
+     call report_error(__LINE__, "exiting...", ier);
+     stop
+  endif
   !
-  ! First, access the `cutoff' arguemt
+  ! access the PARAM_FREE_cutoff parameter
   !
-  pcutoff = kim_api_get_data_f(pkim, "cutoff", ier)
+  pparam_cutoff = kim_api_get_data_f(pkim, "PARAM_FREE_cutoff", ier)
   if (ier.le.0) then
      call report_error(__LINE__, "kim_api_get_data_f", ier)
      stop
   endif
+  
+  ! Set MaxCutoff to be 2.0 more than the Model's normal cutoff
   !
-  ! Second, determine how many neighbors we will need
+  MaxCutoff = param_cutoff + 2.0d0
+
+
+  ! Set up for first iteration of the loop over the cutoff radius
+  param_cutoff = param_cutoff - 2.0d0
+  ier = kim_api_model_reinit_f(pkim)
+  if (ier.le.0) then
+     call report_error(__LINE__, "kim_api_model_reinit_f", ier)
+     stop
+  endif
+
+  ! allocate storage for neighbor lists
+  ! and store necessary pointers in KIM API object
   !
-  CellsPerCutoff = ceiling(cutoff/MinSpacing+ 0.05d0) ! the 0.05 is a saftey factor
+  
+  ! determine maximum number of neighbors we will need
+  !
+  CellsPerCutoff = ceiling(param_cutoff/MinSpacing+ 0.05d0) ! the 0.05 is a saftey factor
   NNeighbors = 4*((2*CellsPerCutoff + 1)**3)
   !
   ! allocate memory for the neighbor list and Rij vectors
@@ -115,31 +140,46 @@ program TEST_NAME_STR
   allocate(neighborList(NNeighbors+1,N))
   allocate(RijList(3,NNeighbors+1,N))
   allocate(NLRvecLocs(3))
-  !
   NLRvecLocs(1) = loc(neighborList)
   NLRvecLocs(2) = loc(RijList)
   NLRvecLocs(3) = NNeighbors+1
   call setup_neighborlist_Rij_KIM_access(pkim, NLRvecLocs)
+  ! 
+  
+  ! loop over an increasing cutoff radius
+  do while (param_cutoff .le. MaxCutoff)
+     !
+     ! find equilibrium spacing by minimizing coheseive energy with respect
+     ! to the periodic box size for the current cutoff value
+     !
+     call NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
+          DIM,CellsPerCutoff,MinSpacing,MaxSpacing,    &
+          TOL,N,NNeighbors,neighborlist,RijList,       &
+          .false.,FinalSpacing,FinalEnergy)
+     
+     ! print results to screen
+     !
+     print '(80(''*''))'
+     print *, "Results for KIM Model: ", modelname
+     print *,
+     print *,"Found minimum energy configuration to within", TOL
+     print *,
+     print *,"cutoff = ", param_cutoff
+     print *,
+     print *,"Energy/atom = ", FinalEnergy, "; Spacing = ", FinalSpacing
+     print '(80(''*''))'
 
+     !
+     ! increment cutoff
+     !
+     param_cutoff = param_cutoff + 1.0
+     ier = kim_api_model_reinit_f(pkim)
+     if (ier.le.0) then
+        call report_error(__LINE__, "kim_api_model_reinit_f", ier)
+        stop
+     endif
 
-  ! find equilibrium spacing by minimizing coheseive energy with respect
-  ! to the periodic box size
-  !
-  call NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
-         DIM,CellsPerCutoff,MinSpacing,MaxSpacing,  &
-         TOL,N,NNeighbors,neighborlist,RijList,     &
-         .false.,FinalSpacing,FinalEnergy)
-
-  ! print results to screen
-  !
-  print '(80(''*''))'
-  print *, "Results for KIM Model: ", modelname
-  print *,
-  print *,"Found minimum energy configuration to within", TOL
-  print *,
-  print *,"Energy/atom = ", FinalEnergy, "; Spacing = ", FinalSpacing
-  print '(80(''*''))'
-
+  enddo
 
   ! Don't forget to free and/or deallocate
   !
@@ -151,3 +191,48 @@ program TEST_NAME_STR
   stop
 
 end program TEST_NAME_STR
+
+!-------------------------------------------------------------------------------
+!
+! check_model_parameters : 
+!
+!    Scan the Model's parameters and return 1 in PARAM_FREE_cutoff is in the
+!    list and 0 if it is not in the list
+!
+!-------------------------------------------------------------------------------
+integer function check_model_parameters(pkim)
+  use KIMservice
+  implicit none
+
+  !-- Transferred variables
+  integer(kind=kim_intptr), intent(in) :: pkim
+
+  !-- Local variables
+  character(len=KEY_CHAR_LENGTH) :: listOfParameters(1); pointer(plistOfParameters,listOfParameters)
+  integer nParams
+  integer paramIndex
+  integer i
+  integer ier
+
+  plistOfParameters = kim_api_get_listparams_f(pkim, nParams, ier)
+  paramIndex = 0
+  print *,"The model has defined the following parameters:"
+  do i=1,nParams
+     print *, i, listOfParameters(i)
+     if (index(listOfParameters(i),"PARAM_FREE_cutoff").eq.1) then
+        paramIndex = i
+     endif
+  enddo
+  call free(plistOfParameters) ! deallocate memory
+
+  if (paramIndex .gt. 0) then
+     print *,"PARAM_FREE_cutoff IS in the list, at index", paramIndex
+     check_model_parameters = 1
+  else
+     print *,"PARAM_FREE_cutoff is NOT in the parameter list."
+     check_model_parameters = 0
+  endif
+
+  return
+
+end function check_model_parameters
