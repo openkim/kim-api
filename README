@@ -61,7 +61,7 @@ The current version of the openkim-api package supports the following features:
 
 * Support for static and dynamic linking of programs using the openKIM API
 
-* Communication of an arbitrary number of `arguments' between a `Model' 
+* Communication of an arbitrary number of `arguments' between a `Model'
   (interatomic potential) and a `Test' (simulation code that uses a Model).
   This is facilitated by the use of `KIM descriptor files' (terminated with a
   `.kim' extension) and a single KIM API object data structure that stores all
@@ -71,7 +71,7 @@ The current version of the openkim-api package supports the following features:
               method (for exchanging pointers to functions), pointer (for
               exchanging "everything else").  Each of these data types can be
               use to create multi-dimensional array `arguments' that are
-              exchanged between Models and Tests.  
+              exchanged between Models and Tests.
 
      Currently, the openkim-api does not define any (more complex) data
      structures.  However, in the future (as the need arises, and in
@@ -98,16 +98,19 @@ The current version of the openkim-api package supports the following features:
   provided for each element in the periodic table.  In the future support for
   Models such as CHARMM and similar force-fields will be added.
 
-* Model Parameters: The openkim.org philosophy views a `Model' as a 
+* Model Parameters: The openkim.org philosophy views a `Model' as a
   well-defined computational code that includes fixed specific values for all
   parameters needed to perform an actual computation.  However, it is often
   useful to explore how a Model's predictions vary as the values of its
   parameters are varied.  For this reason, the openkim-api provides the ability
-  for a Model to `publish' its parameters so that a Test may modify them
-  during the course of a simulation.
+  for a Model to `publish' its parameters so that a Test may modify them during
+  the course of a simulation.
 
-For more information on all of the above, see files the DOCs directory 
-described below.
+For more information on all of the above, see files the DOCs directory
+described below.  If you have problems or questions, send an email with your
+question and all relevant information to --- openkim@googlegroups.com ---.  The
+openkim development team actively monitor this email list and will try their
+best to help you with your question.
 
 
 -------------------------------------------------------------------------------
