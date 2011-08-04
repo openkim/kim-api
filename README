@@ -54,6 +54,12 @@ interfacing and interacting with other programs and routines, regardless of the
 programming language (C, C++, FORTRAN 77, Fortran 90/95/2003, Python, etc.) in
 which the codes are written.
 
+This version of the openkim-api package is distributed under the PIs' (Ellad
+B. Tadmor, Ryan S. Elliott, and James P. Sethna) copyright.  In the near
+future, this package will be released under an open source license.
+Discussions are currently underway in order to determine the appropirate type
+of open source license.
+
 The current version of the openkim-api package supports the following features:
 
 * Currently supported programming languages: 
