@@ -6,19 +6,33 @@ Model name                                 Language  NBC             Loca/Iter  
 
 model_Al_PF_ErcolessiAdams_MI_OPBC_H       F90       MI-OPBC-H       Locator    Half        NO
 
-model_ArNe_P_LJ_NEIGH_RVEC_F               F90       NEIGH-RVEC-F    Locator    Full        YES
+model_ArNe_P_MLJ_NEIGH_RVEC_F              F90       NEIGH-RVEC-F    Locator    Full        YES
 
-model_Ar_P_LJ_CLUSTER                      F90       CLUSTER         N/A        N/A         YES
+model_Ar_P_MLJ_C                           C         NEIGH-RVEC-F    Iterator   Full        NO
+                                                     NEIGH-PURE-H    Locator    Half
+                                                     NEIGH-PURE-F
+                                                     MI-OPBC-H
+                                                     MI-OPBC-F
+                                                     CLUSTER
 
-model_Ar_P_LJ_MI_OPBC_H_F                  F90       MI-OPBC-H       Locator    Half        YES
+model_Ar_P_MLJ_F                           F90       NEIGH-RVEC-F    Iterator   Full        NO
+                                                     NEIGH-PURE-H    Locator    Half
+                                                     NEIGH-PURE-F
+                                                     MI-OPBC-H
+                                                     MI-OPBC-F
+                                                     CLUSTER
+
+model_Ar_P_MLJ_CLUSTER                     F90       CLUSTER         N/A        N/A         YES
+
+model_Ar_P_MLJ_MI_OPBC_H_F                 F90       MI-OPBC-H       Locator    Half        YES
                                                      MI-OPBC-F                  Full
 
-model_Ar_P_LJ_NEIGH_PURE_H_F               F90       NEIGH-PURE-H    Locator    Half        YES
+model_Ar_P_MLJ_NEIGH_PURE_H_F              F90       NEIGH-PURE-H    Locator    Half        YES
                                                      NEIGH-PURE-F               Full
 
-model_Ar_P_LJ_NEIGH_RVEC_F                 F90       NEIGH_RVEC-F    Locator    Full        YES
+model_Ar_P_MLJ_NEIGH_RVEC_F                F90       NEIGH_RVEC-F    Locator    Full        YES
 
-model_Ar_P_Morse                           C         NEIGH-RVEC-F    Iterator   Full        YES
+model_Ar_P_MMorse                          C         NEIGH-RVEC-F    Iterator   Full        YES
                                                      NEIGH-PURE-H    Locator    Half
                                                      NEIGH-PURE-F
                                                      MI-OPBC-H
@@ -27,4 +41,4 @@ model_Ar_P_Morse                           C         NEIGH-RVEC-F    Iterator   
 
 model_Ne_P_LJ_NEIGH_PURE_H                 F77       NEIGH-PURE-H    Iterator   Half        NO
 
-model_Ne_P_LJ_NEIGH_RVEC_F                 C         NEIGH-RVEC-F    Iterator   Full        YES
+model_Ne_P_MLJ_NEIGH_RVEC_F                C         NEIGH-RVEC-F    Iterator   Full        YES

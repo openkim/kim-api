@@ -32,6 +32,11 @@ NEIGH_RVEC_F_periodic_FCC_neighborlist.frag
      This file contains the routine for creating neighbor lists for use with the
      NEIGH-RVEC method for periodic FCC systems.
 
+NEIGH_RVEC_compute_equilibrium_spacing.frag
+     This file contains the routine for computing the equilibrium spacing of an
+     FCC crystal for use with the NEIGH-RVEC method using the golden search
+     algorithm.
+
 README
      This file
 
@@ -52,10 +57,18 @@ descriptor_file_start
      This file contains the beginning of the KIM descriptor file.
 
 example_test_Ar_multiple_models/
-     Directory containing the test_Ar_multiple_models Test
+     Directory containing the test_Ar_multiple_models Test.
 
 example_test_demo_F03/
-     Directory containing the test_demo_F03 Test
+     Directory containing the test_demo_F03 Test.
+
+free_KIM_API_object.frag
+     This file contains the free_KIM_API_object routine that is used the by
+     FCCcohesive Tests.
+
+get_model_cutoff_firsttime.frag
+     This file contains the get_model_cutoff_firsttime routine that is used
+     by the FCCcohesive Tests.
 
 get_neigh_Rij.frag
      This file contains the routine for accessing neighbor lists that include
@@ -65,41 +78,69 @@ get_neigh_no_Rij.frag
      This file contains the routine for accessing neighbor lists that do not 
      include Rij relative position vectors.
 
+program_B2cohesive_NEIGH_RVEC.frag
+     This file contains the main program for the test_*_B2cohesive_NEIGH_RVEC
+     Test.
+
+program_FCCcohesiveCutoff_NEIGH_RVEC.frag
+     This file contains the main program for the test_*_FCCcohesiveCutoff_NEIGH_RVEC
+     Test.
+
+program_FCCcohesive_MI_OPBC.frag
+     This file contains the main program for the test_*_FCCcohesive_MI_OPBC
+     Test.
+
+program_FCCcohesive_NEIGH_PURE.frag
+     This file contains the main program for the test_*_FCCcohesive_NEIGH_PURE
+     Test.
+
+program_FCCcohesive_NEIGH_RVEC.frag
+     This file contains the main program for the test_*_FCCcohesive_NEIGH_RVEC
+     Test.
+
 program_free_cluster.frag
      This file contains the main program for the test_*_free_cluster example
-     test.
+     Test.
 
 program_free_cluster_CLUSTER.frag
      This file contains the main program for the test_*_free_cluster_CLUSTER
      example test.
 
-program_periodic_B2_NEIGH_RVEC.frag
-     This file contains the main program for the test_*_periodic_B2_NEIGH_RVEC
-     example test.
-
-program_periodic_FCC_MI_OPBC.frag
-     This file contains the main program for the test_*_periodic_FCC_MI_OPBC
-     example test.
-
-program_periodic_FCC_NEIGH_PURE.frag
-     This file contains the main program for the test_*_periodic_FCC_NEIGH_PURE
-     example test.
-
-program_periodic_FCC_NEIGH_RVEC.frag
-     This file contains the main program for the test_*_periodic_FCC_NEIGH_RVEC
-     example test.
-
-program_periodic_cut_FCC_NEIGH_RVEC.frag
-     This file contains the main program for the 
-     test_*_periodic_cut_FCC_NEIGH_PURE example test.
-
 report_error.frag
      This file contain the routine that reports errors.
+
+setup_B2_KIM_API_object.frag
+     This file contains the setup_B2_KIM_API_object routine used by the
+     B2cohesive Tests.
+
+setup_KIM_API_object.frag
+     This file contains the setup_KIM_API_obejct routine used by the
+     FCCcohesive Tests.
+
+setup_neighborlist_Rij_KIM_access.frag
+     This file contains the setup_neighborlist_Rij_KIM_access routine used by
+     the cohesive Tests.
+
+setup_neighborlist_no_Rij_KIM_access.frag
+     This file contains the setup_neighborlist_no_Rij_KIM_access routine used
+     by the cohesive Tests.
+
+test_B2cohesive_README
+     This file contains the README file that is used to generate README files
+     for the B2cohesive Tests.
 
 test_EXAMPLES.README
      This file contains a table that describes the capabilities of the example
      tests.
 
+test_FCCcohesiveCutoff_README
+     This file contains the README file that is used to generate README files
+     for the FCCcohesiveCutoff Tests.
+
+test_FCCcohesive_README
+     This file contains the README file that is used to generate README files
+     for the FCCcohesive Tests.
+    
 test_Makefile
      This file contains the Makefile that is used to generate Makefile files for
      the example tests.
@@ -107,11 +148,3 @@ test_Makefile
 test_free_cluster_README
      This file contains the README file that is used to generate REAMDE files
      for the example cluster tests.
-
-test_periodic_B2_README
-     This file contains the README file that is used to generate REAMDE files
-     for the example B2 tests.
-
-test_periodic_FCC_README
-     This file contains the README file that is used to generate REAMDE files
-     for the example periodic FCC tests.
