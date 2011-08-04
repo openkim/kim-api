@@ -6,7 +6,7 @@
 *  REFERENCE_STR
 *  modified to have smooth cutoff
 *
-*  Author: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
+*  Authors: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
 *
 *  Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
 *  All rights reserved.
