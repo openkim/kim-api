@@ -1355,7 +1355,7 @@ bool KIM_API_model::is_it_match_noDummyCount(KIM_API_model & mdtst,KIM_IOline * 
 bool KIM_API_model::is_it_match(KIM_API_model &test,KIM_API_model & mdl){
     //preinit model from standard template kim file
     KIM_API_model stdmdl;
-    char modelfile[512] = KIM_DIR_API;
+    char modelfile[2048] = KIM_DIR_API;
     char modelstdname[32]="standard";
     strcat(modelfile,"standard.kim");
     if(!stdmdl.preinit(modelfile,modelstdname)){
@@ -1635,15 +1635,15 @@ bool KIM_API_model::init(char * testinputfile,char* testname, char * modelinputf
 }
 
 bool KIM_API_model::init(char* testname, char* modelname){
-    char testfile[512] = KIM_DIR_TESTS;
-    char modelfile[512] = KIM_DIR_MODELS;
+    char testfile[2048] = KIM_DIR_TESTS;
+    char modelfile[2048] = KIM_DIR_MODELS;
     strcat(testfile,testname);strcat(testfile,"/");strcat(testfile,testname);
     strcat(testfile,".kim");
     strcat(modelfile,modelname);strcat(modelfile,"/");strcat(modelfile,modelname);
     strcat(modelfile,".kim");
 
     //redirecting cout > kimlog
-    char kimlog[512] = KIM_DIR; strcat(kimlog,"kim.log");
+    char kimlog[2048] = KIM_DIR; strcat(kimlog,"kim.log");
     streambuf * psbuf, * backup;ofstream filekimlog;
     filekimlog.open(kimlog);
     backup = cout.rdbuf();psbuf = filekimlog.rdbuf();cout.rdbuf(psbuf);
@@ -1664,12 +1664,12 @@ void KIM_API_model::fatal_error_print(){
 }
 
 bool KIM_API_model::init_str_testname(char* in_tststr, char* modelname){
-    char modelinputfile[512] = KIM_DIR_MODELS;
+    char modelinputfile[2048] = KIM_DIR_MODELS;
     strcat(modelinputfile,modelname);strcat(modelinputfile,"/");strcat(modelinputfile,modelname);
     strcat(modelinputfile,".kim");
     
     //redirecting cout > kimlog
-    char kimlog[512] = KIM_DIR; strcat(kimlog,"kim.log");
+    char kimlog[2048] = KIM_DIR; strcat(kimlog,"kim.log");
     streambuf * psbuf, * backup;ofstream filekimlog;
     filekimlog.open(kimlog);
     backup = cout.rdbuf();psbuf = filekimlog.rdbuf();cout.rdbuf(psbuf);
@@ -1738,7 +1738,7 @@ bool KIM_API_model::model_init(){
     pkim =(void**) &kim;
 
     //redirecting cout > kimlog
-    char kimlog[512] = KIM_DIR; strcat(kimlog,"kim.log");
+    char kimlog[2048] = KIM_DIR; strcat(kimlog,"kim.log");
     streambuf * psbuf, * backup;ofstream filekimlog;
     filekimlog.open(kimlog,ofstream::app);
     backup = cout.rdbuf();psbuf = filekimlog.rdbuf();cout.rdbuf(psbuf);
@@ -1766,15 +1766,15 @@ bool KIM_API_model::model_init(){
     char modelname[KEY_CHAR_LENGTH]="";
     KIM_API_model * kim;
     void ** pkim;
-    char model_slib_file[512];
-    char model_init_routine_name[512];
+    char model_slib_file[2048];
+    char model_init_routine_name[2048];
     strcpy(modelname,this->model.name); 
     kim=this;
     pkim =(void**) &kim;
     sprintf(model_slib_file,"%s%s/%s.so",KIM_DIR_MODELS,modelname,modelname);
 
 //redirecting cout > kimlog
-    char kimlog[512] = KIM_DIR; strcat(kimlog,"kim.log");
+    char kimlog[2048] = KIM_DIR; strcat(kimlog,"kim.log");
     streambuf * psbuf, * backup;ofstream filekimlog;
     filekimlog.open(kimlog, ofstream::app);
     backup = cout.rdbuf();psbuf = filekimlog.rdbuf();cout.rdbuf(psbuf);
