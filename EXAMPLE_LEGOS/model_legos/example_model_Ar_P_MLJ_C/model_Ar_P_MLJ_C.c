@@ -101,9 +101,6 @@ static void calc_phi_dphi(double r, double* phi, double* dphi)
 /* compute function */
 static void compute(void* km, int* ier)
 {
-   /* local static parameters */
-   const static double cutsq = MODEL_CUTOFF * MODEL_CUTOFF;
-   
    /* local variables */
    intptr_t* pkim = *((intptr_t**) km);
    double R;
