@@ -7,14 +7,14 @@ See the instructions below on how to use these files.
 This directory contains the following files:
 
 Makefile.template
-     A template for the Makefile that needs to be placed in the new
-     Model directory.
+     A template for the Makefile that needs to be placed in the new Model
+     directory.
 
 README
      This file.
 
 model_El_PF_Template.F90
-     Fortran 90 template file for a pair functional (EAM, Finnis-Sinclair, 
+     Fortran 90 template file for a pair functional (EAM, Finnis-Sinclair,
      effective medium theory, glue, etc.) Model.
 
 model_El_PF_Template.f.kim
@@ -36,10 +36,10 @@ model_El_P_Template.f.kim
 
 A first look at the templates.
 
-The templates are designed to faciliate the creation of new KIM-compliant 
-Models. As a first step, we suggest that you compare the templates with 
-functioning KIM Models provided with this KIM API release. This will allow 
-you to see what changes are needed to turn the templates into Models. Detailed 
+The templates are designed to facilitate the creation of new KIM-compliant
+Models. As a first step, we suggest that you compare the templates with
+functioning KIM Models provided with this KIM API release. This will allow you
+to see what changes are needed to turn the templates into Models. Detailed
 directions are also given below.
 
 1. The template `model_El_P_Template.c' can be compared with 
@@ -62,18 +62,18 @@ Alternatively use the `ediff' feature of the emacs editor.
 
 Direction for using the supplied templates to create a new KIM-compliant Model.
 
-These direction show how to the Fortran 90 template for a pair potential 
+These direction show how to use the Fortran 90 template for a pair potential
 (model_El_P_Template.F90) and turn it into a Model for xenon (Xe) using a
-modified Lennard-Jones (MLJ) potential. (The procedure for a Model written in
-C is essentially identical. See comments below.)
+modified Lennard-Jones (MLJ) potential. (The procedure for a Model written in C
+is essentially identical. See comments below.)
 
 1. Create new directory under MODELs for the Xe pair potential:
 
    % cd $KIM_DIR/MODELs
    % mkdir model_Xe_P_MLJ
 
-2. Copy and the .F90, .kim and Makefile templates into the new directory
-   and rename:
+2. Copy the .F90, .kim and Makefile templates into the new directory and
+   rename:
 
    % cd $KIM_DIR/MODELs/model_Xe_P_LJ
    % cp $KIM_DIR/DOCs/TEMPLATEs/model_El_P_Template.F90 model_Xe_P_LJ.F90
@@ -82,33 +82,33 @@ C is essentially identical. See comments below.)
 
    Note: For a Model written in C, copy the .c and .c.kim templates.
 
-3. Edit the .kim file and change the Model name to conform to the
-   new Model and enter the species type. (Search for the word "FILL" 
-   which indicates where changes are necessary.) To edit a file on a 
-   unix machine, use for example:
+3. Edit the .kim file and change the Model name to conform to the new Model and
+   enter the species type. (Search for the word "FILL" which indicates where
+   changes are necessary.) To edit a file on a unix machine, use for example:
 
    % pico model_Xe_P_LJ_MI_OPBC_H.kim
 
-4. Edit the .F90 (or .c) file making all necessary changes. (Search for the word 
-   "FILL".) The main changes are:
+4. Edit the .F90 (or .c) file making all necessary changes. (Search for the
+   word "FILL".) The main changes are:
 
    - Model name which appears in several places in the file.
 
    - fill in the Model cutoff radius
 
    - define static parameters if necessary. If these parameters need to be
-     accessed outside the module (as in the _init() routine) add them to 
-     to the list of public variables at the top of the module.
+     accessed outside the module (as in the _init() routine) add them to the
+     list of public variables at the top of the module.
 
-     Note: A Model cannot rely on static storage between calls. A basic 
-     assumption in the KIM API is that *all* information needed by a Model to 
-     run is stored in the KIM API object.  This is necessary to allow multiple 
-     instances of the same Model being used simultaneously. The only case where 
-     static variables can be used is if they are "hard-wired" so that the 
-     Model can only work with those values. In Fortran this is done using the 
-     "parameter" statement.  In C, use preprocessor DEFINE statements. Otherwise 
-     variables need to be stored as PARAM_FREE_ or PARAM_FIXED_ variables in the
-     KIM API object.  See discussion in standard.kim file.
+     Note: A Model cannot rely on static storage between calls. A basic
+     assumption in the KIM API is that *all* information needed by a Model to
+     run is stored in the KIM API object.  This is necessary to allow multiple
+     instances of the same Model being used simultaneously. The only case where
+     static variables can be used is if they are "hard-wired" so that the Model
+     can only work with those values. In Fortran this is done using the
+     "parameter" statement.  In C, use preprocessor DEFINE
+     statements. Otherwise variables need to be stored as PARAM_FREE_ or
+     PARAM_FIXED_ variables in the KIM API object.  See the discussion in the
+     standard.kim file.
 
    - Fill in the necessary code in the routines calc_phi() and calc_phi_dphi().
 
