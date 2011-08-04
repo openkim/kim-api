@@ -10,6 +10,10 @@ KIMserviceDescription.txt
 README
      This file.
 
+TEMPLATEs/
+     Directory containing templates and instructions for creating your own KIM
+     Models.
+
 standard.kim
      A link to the file in ../KIM_API which describes the openkim-api descriptor
      file format and contants.

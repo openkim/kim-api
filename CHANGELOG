@@ -1,5 +1,10 @@
 openkim-api-00.01.00 ===========================================================
 
+* Added TEMPLATE files to help users create their own KIM Models.
+
+* Added a number of example Models and Tests to help users understand how to
+  implement their own openkim-api compliant codes.
+
 * Added support for ATOM/PARTICLE types
 
 * Added support for Models to publish their parameters
@@ -7,7 +12,7 @@ openkim-api-00.01.00 ===========================================================
 * Added support for Models to define a `reinit' function for use when their
   parameters are changed by a Test.
 
-* Improved the Makefile system in general
+* Improved the Makefile system in general (although, more needs to be done)
 
 * Added support for neighbor list and boundary conditions (NBC)
 
@@ -17,9 +22,6 @@ openkim-api-00.01.00 ===========================================================
 
 * Added documentation to the standard.kim file which now describes in detail
   the format and content of KIM descriptor files.
-
-* Added a number of automatically generated example Models and Tests to help 
-  users understand how to implement their own openkim-api compliant codes.
 
 * Added README files to every directory.  These files provide a short
   (hopefully helpful) description of the contents of the directory)

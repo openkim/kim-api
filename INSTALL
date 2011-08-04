@@ -44,9 +44,9 @@ bash:
    can be piped in using an `echo' command.  For example, the following Fortran
    Test reads in one Model:
 
-> cd TESTs/test_Ar_free_cluster_CLUSTER_C
+> cd TESTs/test_Ar_free_cluster_CLUSTER_F90
 
-> echo "model_Ar_P_MLJ_CLUSTER_C" | ./test_Ar_free_cluster_CLUSTER
+> echo "model_Ar_P_MLJ_CLUSTER_C" | ./test_Ar_free_cluster_CLUSTER_F90
 
    The exception to this rule is the example Test `test_Ar_multiple_models',
    which reads in two Model names from the command line.  For example:
@@ -103,13 +103,13 @@ bash:
 
 NON-STANDARD COMPILERS: If you need to make changes to compiler flags either
 because you are using a non-standard compiler or an older version of the gnu
-compiler, change lines 53-62 in KIM_API/Include.mk
+compiler, change lines 53-72 in KIM_API/Include.mk
 
 TROUBLESHOOTING: By default, the make system uses the g++ compiler with the
 -lgfortran option to link compiled FORTRAN executables. If (for some versions
 of Linux or GNU compilers) linking of FORTRAN executables with the g++ compiler
-does not work, try gfortran with the -lstdc++ option.  See lines 62-63 in the
-Include.mk file (change them to lines 64-65).
+does not work, try gfortran with the -lstdc++ option.  See lines 66-67 in the
+Include.mk file (change them to lines 68-69).
 
 GNU compilers tested with version 4.2.x or higher, the Intel compiler must be
 version 11.1 or higher.

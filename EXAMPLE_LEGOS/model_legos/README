@@ -41,6 +41,9 @@ descriptor_file_params
 descriptor_file_start
      This file contains the common head of the kim descriptor files
 
+example_model_Al_PF_ErcolessiAdams/
+     Directory containing the model_Al_PF_ErcolessiAdams Model
+
 example_model_Al_PF_ErcolessiAdams_MI_OPBC_H/
      Directory containing the model_Al_PF_ErcolessiAdams_MI_OPBC_H Model
 
@@ -49,6 +52,9 @@ example_model_ArNe_P_MLJ_NEIGH_RVEC_F/
 
 example_model_Ar_P_MLJ_C/
      Directory containing the model_Ar_P_MLJ_C Model
+
+example_model_Ar_P_MLJ_F90/
+     Directory containing the model_Ar_P_MLJ_F90 Model
 
 example_model_Ne_P_LJ_NEIGH_PURE_H/
      Directory containing the model_Ne_P_LJ_NEIGH_PURE_H Model
