@@ -667,7 +667,7 @@ module kimservice
             end if
         end function kim_api_get_rank_shape_f
 
-        subroutine kim_api_set_rank_shape_f(kimmdl,nm, shape,rank,error)
+        subroutine kim_api_set_rank_shape_f(kimmdl,nm, shapef,rankf,error)
             ! set rank, shape and size of the data in KIM API object
             ! error=1 if successful , error <= 0 if unsuccessful
             integer(kind=kim_intptr) :: kimmdl
@@ -677,19 +677,19 @@ module kimservice
             character (len=KEY_CHAR_LENGTH) :: str; pointer (pstr,str)   
 
             !integer,pointer :: shape(:)
-	    integer ::shape(rank)
+	    integer ::rankf,shapef(rankf)
             integer :: shpst(1); pointer(pshpst,shpst)
-            integer :: rank,i,error
-	    integer :: shp(rank)
+            integer :: i,error
+	    integer :: shp(rankf)
             str2send = attachnull(trim(nm))
             pstr = loc(str2send)
             pshpst = loc(shp)
-	    if(rank .gt. 1) then
-		do i=1, rank 
-                    shp(i)=shape(rank - i + 1) !transpose shape
+	    if(rankf .gt. 1) then
+		do i=1, rankf 
+                    shp(i)=shapef(rankf - i + 1) !transpose shape
                 end do
 	    end if
-            call kim_api_set_rank_shape(kimmdl,pstr,pshpst,rank,error)
+            call kim_api_set_rank_shape(kimmdl,pstr,pshpst,rankf,error)
         end subroutine kim_api_set_rank_shape_f
 
         integer function kim_api_isit_compute_f(kimmdl,nm,error)
