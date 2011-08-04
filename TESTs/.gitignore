@@ -7,6 +7,7 @@ test_Ar_FCCcohesive_MI_OPBC
 test_Ar_FCCcohesive_NEIGH_PURE
 test_Ar_FCCcohesive_NEIGH_RVEC
 test_Ar_free_cluster
-test_Ar_free_cluster_CLUSTER
+test_Ar_free_cluster_CLUSTER_C
+test_Ar_free_cluster_CLUSTER_F
 test_Ar_multiple_models
 test_Ne_free_cluster
