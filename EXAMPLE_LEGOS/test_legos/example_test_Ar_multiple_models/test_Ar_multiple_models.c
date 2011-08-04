@@ -74,18 +74,6 @@ int main(int argc, char* argv[])
    NeighList nl_cluster_model_0;
    NeighList nl_cluster_model_1;
    /* model outputs */
-   intptr_t destroy_periodic_model_0;
-   intptr_t destroy_periodic_model_1;
-   intptr_t destroy_cluster_model_0;
-   intptr_t destroy_cluster_model_1;
-   intptr_t compute_periodic_model_0;
-   intptr_t compute_periodic_model_1;
-   intptr_t compute_cluster_model_0;
-   intptr_t compute_cluster_model_1;
-   intptr_t reinit_periodic_model_0;
-   intptr_t reinit_periodic_model_1;
-   intptr_t reinit_cluster_model_0;
-   intptr_t reinit_cluster_model_1;
    double cutoff_periodic_model_0;
    double cutoff_periodic_model_1;
    double cutoff_cluster_model_0;
@@ -166,29 +154,29 @@ int main(int argc, char* argv[])
    status = KIM_API_set_data(pkim_cluster_model_1,  "neighObject",     1, &nl_cluster_model_1);
    if (1 != status) report_error(__LINE__,"set data",status);
    /* model outputs */
-   status = KIM_API_set_data(pkim_periodic_model_0, "destroy",         1, &destroy_periodic_model_0);
+   status = KIM_API_set_data(pkim_periodic_model_0, "destroy",         1, NULL);
    if (1 != status) report_error(__LINE__,"set data",status);
-   status = KIM_API_set_data(pkim_periodic_model_1, "destroy",         1, &destroy_periodic_model_1);
+   status = KIM_API_set_data(pkim_periodic_model_1, "destroy",         1, NULL);
    if (1 != status) report_error(__LINE__,"set data",status);
-   status = KIM_API_set_data(pkim_cluster_model_0,  "destroy",         1, &destroy_cluster_model_0);
+   status = KIM_API_set_data(pkim_cluster_model_0,  "destroy",         1, NULL);
    if (1 != status) report_error(__LINE__,"set data",status);
-   status = KIM_API_set_data(pkim_cluster_model_1,  "destroy",         1, &destroy_cluster_model_1);
+   status = KIM_API_set_data(pkim_cluster_model_1,  "destroy",         1, NULL);
    if (1 != status) report_error(__LINE__,"set data",status);
-   status = KIM_API_set_data(pkim_periodic_model_0, "compute",         1, &compute_periodic_model_0);
+   status = KIM_API_set_data(pkim_periodic_model_0, "compute",         1, NULL);
    if (1 != status) report_error(__LINE__,"set data",status);
-   status = KIM_API_set_data(pkim_periodic_model_1, "compute",         1, &compute_periodic_model_1);
+   status = KIM_API_set_data(pkim_periodic_model_1, "compute",         1, NULL);
    if (1 != status) report_error(__LINE__,"set data",status);
-   status = KIM_API_set_data(pkim_cluster_model_0,  "compute",         1, &compute_cluster_model_0);
+   status = KIM_API_set_data(pkim_cluster_model_0,  "compute",         1, NULL);
    if (1 != status) report_error(__LINE__,"set data",status);
-   status = KIM_API_set_data(pkim_cluster_model_1,  "compute",         1, &compute_cluster_model_1);
+   status = KIM_API_set_data(pkim_cluster_model_1,  "compute",         1, NULL);
    if (1 != status) report_error(__LINE__,"set data",status);
-   status = KIM_API_set_data(pkim_periodic_model_0, "reinit",          1, &reinit_periodic_model_0);
+   status = KIM_API_set_data(pkim_periodic_model_0, "reinit",          1, NULL);
    if (1 != status) report_error(__LINE__,"set data",status);
-   status = KIM_API_set_data(pkim_periodic_model_1, "reinit",          1, &reinit_periodic_model_1);
+   status = KIM_API_set_data(pkim_periodic_model_1, "reinit",          1, NULL);
    if (1 != status) report_error(__LINE__,"set data",status);
-   status = KIM_API_set_data(pkim_cluster_model_0,  "reinit",          1, &reinit_cluster_model_0);
+   status = KIM_API_set_data(pkim_cluster_model_0,  "reinit",          1, NULL);
    if (1 != status) report_error(__LINE__,"set data",status);
-   status = KIM_API_set_data(pkim_cluster_model_1,  "reinit",          1, &reinit_cluster_model_1);
+   status = KIM_API_set_data(pkim_cluster_model_1,  "reinit",          1, NULL);
    if (1 != status) report_error(__LINE__,"set data",status);
    status = KIM_API_set_data(pkim_periodic_model_0, "cutoff",          1, &cutoff_periodic_model_0);
    if (1 != status) report_error(__LINE__,"set data",status);
@@ -209,9 +197,9 @@ int main(int argc, char* argv[])
 
    /* call model init routines */
    if (1 != (status = KIM_API_model_init(pkim_periodic_model_0))) report_error(__LINE__,"KIM_API_model_init", status);
-   if (1 != (status = KIM_API_model_init(pkim_cluster_model_0))) report_error(__LINE__,"KIM_API_model_init", status);
+   if (1 != (status = KIM_API_model_init(pkim_cluster_model_0)))  report_error(__LINE__,"KIM_API_model_init", status);
    if (1 != (status = KIM_API_model_init(pkim_periodic_model_1))) report_error(__LINE__,"KIM_API_model_init", status);
-   if (1 != (status = KIM_API_model_init(pkim_cluster_model_1))) report_error(__LINE__,"KIM_API_model_init", status);
+   if (1 != (status = KIM_API_model_init(pkim_cluster_model_1)))  report_error(__LINE__,"KIM_API_model_init", status);
 
    /* setup atomTypes */
    AtomTypes_periodic_model_0 = KIM_API_get_aTypeCode(pkim_periodic_model_0, "Ar", &status);
