@@ -952,10 +952,8 @@ static void destroy(void *km)
 {
    /* Local variables */
    intptr_t* pkim = *((intptr_t**) km);
-   double* model_cutoff;
    double* model_epsilon;
    double* model_C;
-   double* model_Rzero;
    double* model_Pcutoff;
    double* model_A1;
    double* model_A2;
