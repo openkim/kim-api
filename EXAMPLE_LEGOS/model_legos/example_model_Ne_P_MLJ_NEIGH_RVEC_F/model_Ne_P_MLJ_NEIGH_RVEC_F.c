@@ -64,7 +64,6 @@ static void compute(void* km, int* ier)
    int jj;
    int k;
    int numOfAtomNeigh;
-   int requestedAtom;
    int currentAtom;
    int comp_force;
    int comp_energyPerAtom;
@@ -466,7 +465,6 @@ static void destroy(void *km)
 {
    /* Local variables */
    intptr_t* pkim = *((intptr_t**) km);
-   double* model_cutoff;
    double* model_epsilon;
    double* model_sigma;
    double* model_Pcutoff;

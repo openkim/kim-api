@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
    double CurrentSpacing;
    double CellsPerCutoff[2];
    int NNeighbors[2];
-   int i, j;
+   int i;
    int status;
 
 
@@ -338,6 +338,9 @@ int main(int argc, char* argv[])
    if (1 != status) report_error(__LINE__,"free", status);
    KIM_API_free(&pkim_cluster_model_1, &status);
    if (1 != status) report_error(__LINE__,"free", status);
+
+   /* everything is great */
+   return 0;
 }
 
 

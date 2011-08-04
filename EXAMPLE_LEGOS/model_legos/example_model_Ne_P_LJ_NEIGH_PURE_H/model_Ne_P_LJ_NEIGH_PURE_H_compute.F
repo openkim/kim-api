@@ -13,7 +13,7 @@ C
 C*******************************************
        SUBROUTINE ljpotr_f77(sigma,epsilon,rr,v,dvmr)
         IMPLICIT NONE
-        DOUBLE PRECISION rr,v,dvmr, epsilon,sigma,r1,sor2,sor6,sor12
+        DOUBLE PRECISION rr,v,dvmr, epsilon,sigma,sor2,sor6,sor12
         
         IF (rr.LT.1.0E-14) STOP 'rr is zero'
         sor2= (sigma*sigma)/rr
@@ -36,10 +36,10 @@ C*******************************************
         INTEGER kimget_h_neigh
         EXTERNAL kimget_h_neigh
 C       local variable
-        DOUBLE PRECISION vij,dvmr,v,sumv,cut2,energycutoff
+        DOUBLE PRECISION vij,dvmr,sumv,cut2,energycutoff
         INTEGER i,j,jj,numnei
-        DOUBLE PRECISION r2,dv
-        DOUBLE PRECISION xi(3),xj(3),dx(3),fij(3)
+        DOUBLE PRECISION r2
+        DOUBLE PRECISION xi(3),xj(3),dx(3)
 C need check IF cray pointers are acceptable in f77, or use next line
         DOUBLE PRECISION Rij(3,512)
         INTEGER nei1atom(1), kim

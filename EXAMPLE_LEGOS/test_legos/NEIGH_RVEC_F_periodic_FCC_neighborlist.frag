@@ -18,7 +18,6 @@ subroutine NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerHalfSide, cutoff, FCCs
   
   !-- Local variables
   double precision dx(3)
-  double precision r2
   double precision cutoff2
   double precision :: FCCshifts(3,4)
   double precision :: latVec(3)

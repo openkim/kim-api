@@ -60,10 +60,7 @@ program TEST_NAME_STR
 
   integer(kind=kim_intptr)  :: pkim          ! pointer to KIM API object
 
-  integer                   :: ier           ! error flag
-
   real*8 coordum(DIM,1);   pointer(pcoor,coordum)         ! coordinate
-  real*8, pointer  :: coords(:,:)
 
   integer(kind=kim_intptr) :: N                           ! number of atoms
 
