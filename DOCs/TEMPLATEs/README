@@ -1,68 +1,133 @@
 
-Direction for using the supplied templates to create a new KIM Model
+This directory contains template files for creating new KIM-compliant Models.
+See the instructions below on how to use these files.
 
-=======================================================================
+-----------------------------------------------------------------------------
 
-1. Create new directory under MODELs, say
+This directory contains the following files:
+
+Makefile.template
+     A template for the Makefile that needs to be placed in the new
+     Model directory.
+
+README
+     This file.
+
+model_El_PF_Template.F90
+     Fortran 90 template file for a pair functional (EAM, Finnis-Sinclair, 
+     effective medium theory, glue, etc.) Model.
+
+model_El_PF_Template.f.kim
+     KIM descriptor file for the Fortran pair functional template.
+
+model_El_P_Template.F90
+     Fortran 90 template file for a pair potential Model.
+
+model_El_P_Template.c
+     C template file for a pair potential Model.
+
+model_El_P_Template.c.kim
+     KIM descriptor file for the C pair potential template.
+
+model_El_P_Template.f.kim
+     KIM descriptor file for the Fortran pair potential template.
+
+-----------------------------------------------------------------------------
+
+A first look at the templates.
+
+The templates are designed to faciliate the creation of new KIM-compliant 
+Models. As a first step, we suggest that you compare the templates with 
+functioning KIM Models provided with this KIM API release. This will allow 
+you to see what changes are needed to turn the templates into Models. Detailed 
+directions are also given below.
+
+1. The template `model_El_P_Template.c' can be compared with 
+   `model_Ar_P_MLJ_C.c'. 
+
+2. The template `model_El_P_Template.F90' can be compared with 
+   `model_Ar_P_MLJ_F90.F90'. 
+
+3. The template `model_El_PF_Template.F90' can be compared with
+   `model_Al_PF_ErcolessiAdams.F90'.
+
+To compare files, you can for example use the `vimdiff' command:
+
+   % cd $KIM_DIR
+   % vimdiff MODELs/model_Ar_P_LJ/model_Ar_P_LJ.F90 DOCs/TEMPLATEs/model_El_P_Template.F90
+
+Alternatively use the `ediff' feature of the emacs editor.
+
+-----------------------------------------------------------------------------
+
+Direction for using the supplied templates to create a new KIM-compliant Model.
+
+These direction show how to the Fortran 90 template for a pair potential 
+(model_El_P_Template.F90) and turn it into a Model for xenon (Xe) using a
+modified Lennard-Jones (MLJ) potential. (The procedure for a Model written in
+C is essentially identical. See comments below.)
+
+1. Create new directory under MODELs for the Xe pair potential:
 
    % cd $KIM_DIR/MODELs
-   % mkdir model_Xe_P_LJ
+   % mkdir model_Xe_P_MLJ
 
-2. Copy and the .f90, .kim and Makefile templates into the new directory
+2. Copy and the .F90, .kim and Makefile templates into the new directory
    and rename:
 
    % cd $KIM_DIR/MODELs/model_Xe_P_LJ
-   % cp $KIM_DIR/DOCs/TEMPLATEs/model_El_P_Template.f90 model_Xe_P_LJ.f90
+   % cp $KIM_DIR/DOCs/TEMPLATEs/model_El_P_Template.F90 model_Xe_P_LJ.F90
    % cp $KIM_DIR/DOCs/TEMPLATEs/model_El_P_Template.f.kim model_Xe_P_LJ.kim
    % cp $KIM_DIR/DOCs/TEMPLATEs/Makefile.template Makefile
 
-   Note: For a model written in C, copy the .c and .c.kim templates.
+   Note: For a Model written in C, copy the .c and .c.kim templates.
 
-3. Edit the .kim file and change the model name to conform to the
-   new model and enter the species type. (Search for the word "FILL" 
+3. Edit the .kim file and change the Model name to conform to the
+   new Model and enter the species type. (Search for the word "FILL" 
    which indicates where changes are necessary.) To edit a file on a 
    unix machine, use for example:
 
    % pico model_Xe_P_LJ_MI_OPBC_H.kim
 
-4. Edit the .f90 (or .c) file making all necessary changes. (Search for the word 
+4. Edit the .F90 (or .c) file making all necessary changes. (Search for the word 
    "FILL".) The main changes are:
 
-   - model name which appears in several places in the file.
+   - Model name which appears in several places in the file.
 
-   - fill in the model cutoff radius
+   - fill in the Model cutoff radius
 
    - define static parameters if necessary. If these parameters need to be
      accessed outside the module (as in the _init() routine) add them to 
      to the list of public variables at the top of the module.
 
-     Note: A model cannot rely on static storage between calls. A basic 
-     assumption in the KIM API is that *all* information needed by a model to 
+     Note: A Model cannot rely on static storage between calls. A basic 
+     assumption in the KIM API is that *all* information needed by a Model to 
      run is stored in the KIM API object.  This is necessary to allow multiple 
-     instances of the same model being used simultaneously. The only case where 
-     static variables can be used are if they are "hard-wired" so that the 
-     model can only work with those values. In Fortran this is done using the 
-     "parameter" statement.  In C use preprocessor DEFINE statements. Otherwise 
-     variables need to be stored as parameters in the KIM API object. See discussion 
-     in standard.kim file.
+     instances of the same Model being used simultaneously. The only case where 
+     static variables can be used is if they are "hard-wired" so that the 
+     Model can only work with those values. In Fortran this is done using the 
+     "parameter" statement.  In C, use preprocessor DEFINE statements. Otherwise 
+     variables need to be stored as PARAM_FREE_ or PARAM_FIXED_ variables in the
+     KIM API object.  See discussion in standard.kim file.
 
    - Fill in the necessary code in the routines calc_phi() and calc_phi_dphi().
 
    - Add any necessary initialization into the _init() routine.
 
-5. Edit the Makefile and change the model name appropriately. (Search
+5. Edit the Makefile and change the Model name appropriately. (Search
    for the word "FILL".)
 
-6. Compile the new model into the API package:
+6. Compile the new Model into the API package:
 
    % cd $KIM_DIR
    % make
 
    Correct any errors until the compilation succeeds.
 
-7. You can now run Tests that are compatible with your model simply by
-   giving your new model name is an argument.
+7. You can now run Tests that are compatible with your Model simply by
+   giving your new Model name as an argument.
 
    Note: If you run a Test and it does not seem to be working, remember to
          check the kim.log file for any messages.
 
+-----------------------------------------------------------------------------

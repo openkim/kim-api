@@ -1,8 +1,8 @@
 !****************************************************************************
 !**
-!**  MODULE model_<FILL element name>_P_<FILL model name>
+!**  MODULE model_<FILL element name>_PF_<FILL model name>
 !**
-!**  <FILL model name> pair potential model for <FILL element name>
+!**  <FILL model name> pair functional model for <FILL element name> 
 !**
 !**  Reference: <FILL>
 !**
@@ -16,7 +16,7 @@
 !**
 !****************************************************************************
 
-module model_<FILL element name>_P_<FILL model name>
+module model_<FILL element name>_PF_<FILL model name>
 
 use KIMservice
 implicit none
@@ -103,6 +103,94 @@ end subroutine calc_phi_dphi
 
 !-------------------------------------------------------------------------------
 !
+!  Calculate electron density g(r)
+!
+!-------------------------------------------------------------------------------
+subroutine calc_g(r,g)
+implicit none
+   
+!-- Transferred variables
+double precision, intent(in)  :: r
+double precision, intent(out) :: g
+
+!-- Local variables
+! <FILL place any local variable definitions here>
+
+if (r .gt. model_cutoff) then
+   ! Argument exceeds cutoff radius
+   g = 0.d0
+else 
+   g = !<FILL functional form of g(r)>
+endif
+
+end subroutine calc_g
+
+!-------------------------------------------------------------------------------
+!
+!  Calculate electron density derivative dg(r)
+!
+!-------------------------------------------------------------------------------
+subroutine calc_dg(r,dg)
+implicit none
+   
+!-- Transferred variables
+double precision, intent(in)  :: r
+double precision, intent(out) :: dg
+
+!-- Local variables
+! <FILL place any local variable definitions here>
+
+if (r .gt. model_cutoff) then
+   ! Argument exceeds cutoff radius
+   dg = 0.d0
+else 
+   dg = !<FILL functional form of dg(r)>
+endif
+
+end subroutine calc_dg
+
+!-------------------------------------------------------------------------------
+!
+!  Calculate embedding function U(rho)
+!
+!-------------------------------------------------------------------------------
+subroutine calc_U(rho,U)
+implicit none
+
+!-- Transferred variables
+double precision, intent(in)  :: rho
+double precision, intent(out) :: U
+
+!-- Local variables
+! <FILL place any local variable definitions here>
+
+U = !<FILL functional form of U(rho)>
+
+end subroutine calc_U
+
+!-------------------------------------------------------------------------------
+!
+!  Calculate embedding function U(rho) and first derivative dU(rho)
+!
+!-------------------------------------------------------------------------------
+subroutine calc_U_dU(rho,U,dU)
+implicit none
+
+!-- Transferred variables
+double precision, intent(in)  :: rho
+double precision, intent(out) :: U,dU
+
+!-- Local variables
+! <FILL place any local variable definitions here>
+
+U  = !<FILL functional form of U(rho)>
+dU = !<FILL functional form of dU(rho)>
+
+end subroutine calc_U_dU
+
+
+!-------------------------------------------------------------------------------
+!
 ! Compute energy and forces on atoms from the positions.
 !
 !-------------------------------------------------------------------------------
@@ -115,22 +203,23 @@ integer,                  intent(out) :: ier
 
 !-- Local variables
 double precision :: Rij(DIM)
-double precision :: r,Rsqij,phi,dphi
+double precision :: r,Rsqij,phi,dphi,g,dg,U,dU,dphieff
 integer :: i,j,jj,numnei,atom_ret,comp_force,comp_enepot,comp_virial
+double precision, allocatable :: rho(:),derU(:)
 integer, allocatable, target :: nei1atom_substitute(:)
 character*80 :: error_message
 
 !-- KIM variables
-integer(kind=8) N;       pointer(pN,N)
-real*8  energy;          pointer(penergy,energy)
-real*8  coordum(DIM,1);  pointer(pcoor,coordum)
-real*8  forcedum(DIM,1); pointer(pforce,forcedum)
-real*8  enepotdum(1);    pointer(penepot,enepotdum)
-real*8  boxlength(DIM);  pointer(pboxlength,boxlength)
-real*8  Rij_list(DIM,1); pointer(pRij_list,Rij_list)
-integer nei1atom(1);     pointer(pnei1atom,nei1atom)
-integer atomTypes(1);    pointer(patomTypes,atomTypes)
-real*8  virial;          pointer(pvirial,virial)
+integer(kind=8) N;      pointer(pN,N)
+real*8 energy;          pointer(penergy,energy)
+real*8 coordum(DIM,1);  pointer(pcoor,coordum)
+real*8 forcedum(DIM,1); pointer(pforce,forcedum)
+real*8 enepotdum(1);    pointer(penepot,enepotdum)
+real*8 boxlength(DIM);  pointer(pboxlength,boxlength)
+real*8 Rij_list(DIM,1); pointer(pRij_list,Rij_list)
+integer nei1atom(1);    pointer(pnei1atom,nei1atom)
+integer atomTypes(1);   pointer(patomTypes,atomTypes)
+real*8 virial;          pointer(pvirial,virial)
 character*64 NBC_Method; pointer(pNBC_Method,NBC_Method)
 real*8, pointer :: coor(:,:),force(:,:),ene_pot(:)
 integer IterOrLoca
@@ -295,7 +384,7 @@ do i = 1,N
 enddo
 ier = 1 ! everything is ok
 
-! Initialize potential energies, forces, virial term
+! Initialize potential energies, forces, virial term, electron density
 !
 if (comp_enepot.eq.1) then
    ene_pot(1:N) = 0.d0
@@ -304,6 +393,9 @@ else
 endif
 if (comp_force.eq.1)  force(1:3,1:N) = 0.d0
 if (comp_virial.eq.1) virial = 0.d0
+allocate( rho(N) )  ! pair functional electron density
+rho(1:N) = 0.d0
+if (comp_force.eq.1.or.comp_virial.eq.1) allocate( derU(N) )  ! EAM embedded energy deriv
 
 ! Initialize neighbor handling for CLUSTER NBC
 !
@@ -312,89 +404,119 @@ if (NBC.eq.0) then
    pnei1atom = loc(nei1atom_substitute)
 endif
 
-! Initialize neighbor handling for Iterator mode
-!
-if (IterOrLoca.eq.1) then
-   if (HalfOrFull.eq.1) then  ! HALF list
-      ier = kim_api_get_half_neigh_f(pkim,0,0,atom_ret,numnei, &
-                                     pnei1atom,pRij_list)
-   else                       ! FULL list
-      ier = kim_api_get_full_neigh_f(pkim,0,0,atom_ret,numnei, &
-                                     pnei1atom,pRij_list)
-   endif
-   ! check for successful initialization
-   if (ier.ne.2) then   ! ier=2 upon successful initialization
-      if (HalfOrFull.eq.1) then
-         call report_error(__LINE__, "kim_api_get_half_neigh_f", ier)
-      else
-         call report_error(__LINE__, "kim_api_get_full_neigh_f", ier)
-      endif
-      ier = 0
-      return 
-   endif
-endif
-
 !
 !  Compute energy and forces
 !
 
-!  Loop over particles and compute energy and forces
+! Reset iterator if one is being used
+!
+if (IterOrLoca.eq.1) &
+   call reset_iterator(HalfOrFull,pkim,numnei,pnei1atom,pRij_list,ier)
+if (ier.le.0) then
+   call report_error(__LINE__, "reset_iterator", ier)
+   return
+endif
+
+!  Loop over particles in the neighbor list a first time,
+!  to compute electron density (=coordination)
 !
 i = 0
 do
 
    ! Set up neighbor list for next atom for all NBC methods
    !
-   if (IterOrLoca.eq.1) then    ! ITERATOR mode
-      if (HalfOrFull.eq.1) then ! HALF list
-         ier = kim_api_get_half_neigh_f(pkim,0,1,atom_ret,numnei, &
-                                        pnei1atom,pRij_list)
-      else                      ! FULL list
-         ier = kim_api_get_full_neigh_f(pkim,0,1,atom_ret,numnei, &
-                                        pnei1atom,pRij_list)
-      endif
-      if (ier.lt.0) then     ! some sort of problem, exit
-         if (HalfOrFull.eq.1) then
-            call report_error(__LINE__, "kim_api_get_half_neigh_f", ier)
-         else
-            call report_error(__LINE__, "kim_api_get_full_neigh_f", ier)
-         endif
-         return
-      endif
-      if (ier.eq.0) exit     ! ier=0 means that the iterator has been
-                             ! incremented past the end of the list,
-                             ! terminate loop
-      i = atom_ret
-
-   else                         ! LOCATOR mode
-      i = i + 1
-      if (i.gt.N) exit          ! incremented past end of list,
-                                ! terminate loop
-      if (HalfOrFull.eq.1) then ! HALF list
-         if (NBC.eq.0) then     ! CLUSTER NBC method
-            numnei = N - i      ! number of neighbors in list i+1, ..., N
-            nei1atom(1:numnei) = (/ (i+jj, jj = 1,numnei) /)
-            ier = 1
-         else
-            ier = kim_api_get_half_neigh_f(pkim,1,i,atom_ret,numnei, &
-                                           pnei1atom,pRij_list)
-         endif
-      else                      ! FULL list
-         ier = kim_api_get_full_neigh_f(pkim,1,i,atom_ret,numnei, &
-                                        pnei1atom,pRij_list)
-      endif
-      if (ier.ne.1) then ! some sort of problem, exit
-         if (HalfOrFull.eq.1) then
-            call report_error(__LINE__, "kim_api_get_half_neigh_f", ier)
-         else
-            call report_error(__LINE__, "kim_api_get_full_neigh_f", ier)
-         endif
-         ier = 0
-         return
-      endif
-
+   call get_current_atom_neighbors(IterOrLoca,HalfOrFull,NBC,N,pkim,      &
+                                   i,numnei,pnei1atom,pRij_list,ier)
+   if (ier.le.0) then
+      call report_error(__LINE__, "get_current_atom_neighbors", ier)
+      return
    endif
-      
+   if (ier.eq.2) exit  ! atom counter incremented past end of list
+
+
+   ! Loop over the neighbors of atom i
+   !
+   do jj = 1, numnei
+
+      j = nei1atom(jj)                            ! get neighbor ID
+
+      ! compute relative position vector
+      !
+      if (NBC.ne.3) then                          ! all methods except NEIGH-RVEC-F
+         Rij(:) = coor(:,j) - coor(:,i)           ! distance vector between i j
+      else
+         Rij(:) = Rij_list(:,jj)
+      endif
+
+      ! apply periodic boundary conditions if required
+      !
+      if (NBC.eq.1) then
+         where ( abs(Rij) .gt. 0.5d0*boxlength )  ! periodic boundary conditions
+            Rij = Rij - sign(boxlength,Rij)       ! applied where needed.
+         end where                                ! 
+      endif
+
+      ! compute contribution to electron density
+      !
+      Rsqij = dot_product(Rij,Rij)                ! compute square distance
+      if ( Rsqij .lt. model_cutsq ) then          ! particles are interacting?
+         r = sqrt(Rsqij)                          ! compute distance
+         call calc_g(r,g)                         ! compute electron density
+         rho(i) = rho(i) + g                      ! accumulate electron density
+         if (HalfOrFull.eq.1) &                   ! HALF mode
+            rho(j) = rho(j) + g                   !      (add contrib to j)
+
+      endif
+
+   enddo  ! loop on jj
+
+enddo  ! infinite do loop (terminated by exit statements above)
+
+!  Now that we know the electron densities, calculate embedding part of energy
+!  U and its derivative U' (derU)
+!
+do i = 1,N
+   if (comp_force.eq.1.or.comp_virial.eq.1) then
+      call calc_U_dU(rho(i),U,dU)                 ! compute embedding energy
+                                                  !   and its derivative
+      derU(i) = dU                                ! store du for later use
+   else
+      call calc_U(rho(i),U)                       ! compute just embedding energy
+   endif
+   if (comp_enepot.eq.1) then 
+      ene_pot(i) = U                              ! store embed energy per atom
+   else
+      energy = energy + U                         ! add embed energy to tot ener
+   endif
+enddo
+
+!  Loop over particles in the neighbor list a second time, to compute
+!  the forces and complete energy calculation
+!
+
+! Reset iterator if one is being used
+!
+if (IterOrLoca.eq.1) &
+   call reset_iterator(HalfOrFull,pkim,numnei,pnei1atom,pRij_list,ier)
+if (ier.le.0) then
+   call report_error(__LINE__, "reset_iterator", ier)
+   return
+endif
+
+i = 0
+do
+
+   ! Set up neighbor list for next atom for all NBC methods
+   !
+   call get_current_atom_neighbors(IterOrLoca,HalfOrFull,NBC,N,pkim,      &
+                                   i,numnei,pnei1atom,pRij_list,ier)
+   if (ier.le.0) then
+      call report_error(__LINE__, "get_current_atom_neighbors", ier)
+      return
+   endif
+   if (ier.eq.2) exit  ! atom counter incremented past end of list
+
+
    ! Loop over the neighbors of atom i
    !
    do jj = 1, numnei
@@ -426,6 +548,8 @@ do
          if (comp_force.eq.1.or.comp_virial.eq.1) then
             call calc_phi_dphi(r,phi,dphi)        ! compute pair potential
                                                   !   and it derivative
+            call calc_dg(r,dg)                    ! compute elect dens first deriv
+            dphieff = dphi + (derU(i)+derU(j))*dg
          else
             call calc_phi(r,phi)                  ! compute just pair potential
          endif
@@ -448,18 +572,18 @@ do
          !
          if (comp_virial.eq.1) then
             if (HalfOrFull.eq.1) then             ! HALF mode
-               virial = virial + r*dphi           !      virial=sum r*(dphi/dr)
+               virial = virial + r*dphieff        !      contribution to virial
             else                                  ! FULL mode
-               virial = virial + 0.5d0*r*dphi     !      virial=sum 0.5*r*(dphi/dr)
+               virial = virial + 0.5d0*r*dphieff  !      each atom contribs half
             endif
          endif
 
          ! contribution to forces
          !
          if (comp_force.eq.1) then
-            force(:,i) = force(:,i) + dphi*Rij/r    ! accumulate force on atom i
-            if (HalfOrFull.eq.1) &                  ! HALF mode
-               force(:,j) = force(:,j) - dphi*Rij/r !    (Fji = -Fij)
+            force(:,i) = force(:,i) + dphieff*Rij/r    ! accumulate force on atom i
+            if (HalfOrFull.eq.1) &                     ! HALF mode
+               force(:,j) = force(:,j) - dphieff*Rij/r !    (Fji = -Fij)
          endif
 
       endif
@@ -468,14 +592,14 @@ do
 
 enddo  ! infinite do loop (terminated by exit statements above)
 
-! Perform final tasks
-!
 if (comp_virial.eq.1) virial = - virial/DIM         ! definition of virial term
 if (comp_enepot.eq.1) energy = sum(ene_pot(1:N))    ! compute total energy
 
 ! Free temporary storage
 !
 if (NBC.eq.0) deallocate( nei1atom_substitute )
+deallocate( rho )
+if (comp_force.eq.1.or.comp_virial.eq.1) deallocate( derU )
 
 ! Everything is great
 !
@@ -483,6 +607,131 @@ ier = 1
 return
 
 end subroutine Compute_Energy_Forces
+
+!-------------------------------------------------------------------------------
+!
+! Reset iterator to begin from first atom in list
+!
+!-------------------------------------------------------------------------------
+subroutine reset_iterator(HalfOrFull,pkim,numnei,pnei1atom,pRij_list,ier)
+implicit none 
+
+!-- Transferred variables
+integer,                  intent(in)    :: HalfOrFull
+integer(kind=kim_intptr), intent(in)    :: pkim
+integer,                  intent(out)   :: numnei
+integer,                  intent(out)   :: ier
+integer nei1atom(1);    pointer(pnei1atom,nei1atom)
+real*8 Rij_list(DIM,1); pointer(pRij_list,Rij_list)
+
+!-- Local variables
+integer atom_ret
+
+if (HalfOrFull.eq.1) then  ! HALF list
+   ier = kim_api_get_half_neigh_f(pkim,0,0,atom_ret,numnei, &
+                                  pnei1atom,pRij_list)
+else                       ! FULL list
+   ier = kim_api_get_full_neigh_f(pkim,0,0,atom_ret,numnei, &
+                                  pnei1atom,pRij_list)
+endif
+! check for successful initialization
+if (ier.ne.2) then   ! ier=2 upon successful initialization
+   if (HalfOrFull.eq.1) then
+      call report_error(__LINE__, "kim_api_get_half_neigh_f", ier)
+   else
+      call report_error(__LINE__, "kim_api_get_full_neigh_f", ier)
+   endif
+   ier = 0
+   return 
+endif
+
+return
+end subroutine reset_iterator
+
+!-------------------------------------------------------------------------------
+!
+! Get list of neighbors for current atom using all NBC methods
+!
+!-------------------------------------------------------------------------------
+subroutine get_current_atom_neighbors(IterOrLoca,HalfOrFull,NBC,N,pkim,      &
+                                      atom,numnei,pnei1atom,pRij_list,ier)
+implicit none 
+
+!-- Transferred variables
+integer,                  intent(in)    :: IterOrLoca
+integer,                  intent(in)    :: HalfOrFull
+integer,                  intent(in)    :: NBC
+integer(kind=8),          intent(in)    :: N
+integer(kind=kim_intptr), intent(in)    :: pkim
+integer,                  intent(inout) :: atom
+integer,                  intent(out)   :: numnei
+integer,                  intent(out)   :: ier
+integer nei1atom(1);    pointer(pnei1atom,nei1atom)
+real*8 Rij_list(DIM,1); pointer(pRij_list,Rij_list)
+
+!-- Local variables
+integer atom_ret, jj
+
+! Set up neighbor list for next atom for all NBC methods
+!
+if (IterOrLoca.eq.1) then    ! ITERATOR mode
+
+   if (HalfOrFull.eq.1) then ! HALF list
+      ier = kim_api_get_half_neigh_f(pkim,0,1,atom_ret,numnei, &
+                                     pnei1atom,pRij_list)
+   else                      ! FULL list
+      ier = kim_api_get_full_neigh_f(pkim,0,1,atom_ret,numnei, &
+                                     pnei1atom,pRij_list)
+   endif
+   if (ier.lt.0) then     ! some sort of problem, exit
+      if (HalfOrFull.eq.1) then
+         call report_error(__LINE__, "kim_api_get_half_neigh_f", ier)
+      else
+         call report_error(__LINE__, "kim_api_get_full_neigh_f", ier)
+      endif
+      return
+   endif
+   if (ier.eq.0) then     ! Iterator has been incremented past the
+      ier = 2             ! end of the list, terminate loop in
+      return              ! calling routine
+   endif
+   atom = atom_ret
+
+else                         ! LOCATOR mode
+
+   atom = atom + 1
+   if (atom.gt.N) then          ! incremented past end of list,
+      ier = 2                   ! terminate loop in calling routine
+      return
+   endif
+
+   if (HalfOrFull.eq.1) then ! HALF list
+      if (NBC.eq.0) then     ! CLUSTER NBC method
+         numnei = N - atom   ! number of neighbors in list atom+1, ..., N
+         nei1atom(1:numnei) = (/ (atom+jj, jj = 1,numnei) /)
+         ier = 1
+      else
+         ier = kim_api_get_half_neigh_f(pkim,1,atom,atom_ret,numnei, &
+                                        pnei1atom,pRij_list)
+      endif
+   else                      ! FULL list
+      ier = kim_api_get_full_neigh_f(pkim,1,atom,atom_ret,numnei, &
+                                     pnei1atom,pRij_list)
+   endif
+   if (ier.ne.1) then ! some sort of problem, exit
+      if (HalfOrFull.eq.1) then
+         call report_error(__LINE__, "kim_api_get_half_neigh_f", ier)
+      else
+         call report_error(__LINE__, "kim_api_get_full_neigh_f", ier)
+      endif
+      ier = 0
+      return
+   endif
+
+endif
+
+return
+end subroutine get_current_atom_neighbors
 
 !-------------------------------------------------------------------------------
 !
@@ -505,15 +754,15 @@ print *,'* ERROR at line', line, 'in ',trim(file), ': ', str,'. kimerror =', sta
 
 end subroutine report_error
 
-end module model_<FILL element name>_P_<FILL model name>
+end module model_<FILL element name>_PF_<FILL model name>
 
 !-------------------------------------------------------------------------------
 !
 ! Model initialization routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-subroutine model_<FILL element name>_P_<FILL model name>_init(pkim)
-use model_<FILL element name>_P_<FILL model name>
+subroutine model_<FILL element name>_PF_<FILL model name>_init(pkim)
+use model_<FILL element name>_PF_<FILL model name>
 use KIMservice
 implicit none
 
@@ -541,5 +790,5 @@ if (ier.le.0) then
 endif
 cutoff = model_cutoff
 
-end subroutine model_<FILL element name>_P_<FILL model name>_init
+end subroutine model_<FILL element name>_PF_<FILL model name>_init
 
