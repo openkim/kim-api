@@ -15,6 +15,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <math.h>
 #include "KIMserviceC.h"
 
@@ -113,7 +114,6 @@ static void compute(void* km, int* ier)
    int jj;
    int k;
    int numOfAtomNeigh;
-   int requestedAtom;
    int currentAtom;
    int comp_force;
    int comp_energyPerAtom;

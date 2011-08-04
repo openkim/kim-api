@@ -18,6 +18,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <math.h>
 #include "KIMserviceC.h"
 
@@ -89,7 +90,7 @@ static void calc_phi_dphi(double r, double* phi, double* dphi)
 static void compute(void* km, int* ier)
 {
    /* local static parameters */
-   const static cutsq = MODEL_CUTOFF * MODEL_CUTOFF;
+   const static double cutsq = MODEL_CUTOFF * MODEL_CUTOFF;
    
    /* local variables */
    intptr_t* pkim = *((intptr_t**) km);
@@ -103,7 +104,6 @@ static void compute(void* km, int* ier)
    int jj;
    int k;
    int numOfAtomNeigh;
-   int requestedAtom;
    int currentAtom;
    int comp_force;
    int comp_energyPerAtom;
