@@ -416,7 +416,7 @@ contains
 
 !-------------------------------------------------------------------------------
 !
-! Model reinitialization routine (REQUIRED)
+! Model destory routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
   subroutine Destroy(pkim)

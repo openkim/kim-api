@@ -144,7 +144,7 @@
 
 !-------------------------------------------------------------------------------
 !
-! Model reinitialization routine (REQUIRED)
+! Model destroy routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
   subroutine Destroy(pkim)
