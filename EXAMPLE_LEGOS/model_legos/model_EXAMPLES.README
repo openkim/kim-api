@@ -4,7 +4,12 @@ this release of the openkim-api package.
 Model name                                 Language  NBC             Loca/Iter  Half/Full   Published parameters
 ---------------------------------------------------------------------------------------------------------------
 
-model_Al_PF_ErcolessiAdams_MI_OPBC_H       F90       MI-OPBC-H       Locator    Half        NO
+model_Al_PF_ErcolessiAdams                 F90       NEIGH-RVEC-F    Iterator   Full        NO
+                                                     NEIGH-PURE-H    Locator    Half
+                                                     NEIGH-PURE-F
+                                                     MI-OPBC-H
+                                                     MI-OPBC-F
+                                                     CLUSTER
 
 model_ArNe_P_MLJ_NEIGH_RVEC_F              F90       NEIGH-RVEC-F    Locator    Full        YES
 
@@ -15,7 +20,7 @@ model_Ar_P_MLJ_C                           C         NEIGH-RVEC-F    Iterator   
                                                      MI-OPBC-F
                                                      CLUSTER
 
-model_Ar_P_MLJ_F                           F90       NEIGH-RVEC-F    Iterator   Full        NO
+model_Ar_P_MLJ_F90                         F90       NEIGH-RVEC-F    Iterator   Full        NO
                                                      NEIGH-PURE-H    Locator    Half
                                                      NEIGH-PURE-F
                                                      MI-OPBC-H

@@ -24,15 +24,16 @@ COMMON_FRAGMENTS = module_start.f.frag          \
                    descriptor_file_params       \
                    Makefile
 
-AUTO_GEN_MODELS = model_Al_PF_ErcolessiAdams_MI_OPBC_H  \
-                  model_ArNe_P_MLJ_NEIGH_RVEC_F         \
-                  model_Ar_P_MLJ_C                      \
-                  model_Ar_P_MLJ_CLUSTER                \
-                  model_Ar_P_MLJ_MI_OPBC_H_F            \
-                  model_Ar_P_MLJ_NEIGH_PURE_H_F         \
-                  model_Ar_P_MLJ_NEIGH_RVEC_F           \
-                  model_Ar_P_MMorse                     \
-                  model_Ne_P_LJ_NEIGH_PURE_H            \
+AUTO_GEN_MODELS = model_Al_PF_ErcolessiAdams    \
+                  model_ArNe_P_MLJ_NEIGH_RVEC_F \
+                  model_Ar_P_MLJ_C              \
+                  model_Ar_P_MLJ_F90            \
+                  model_Ar_P_MLJ_CLUSTER        \
+                  model_Ar_P_MLJ_MI_OPBC_H_F    \
+                  model_Ar_P_MLJ_NEIGH_PURE_H_F \
+                  model_Ar_P_MLJ_NEIGH_RVEC_F   \
+                  model_Ar_P_MMorse             \
+                  model_Ne_P_LJ_NEIGH_PURE_H    \
                   model_Ne_P_MLJ_NEIGH_RVEC_F
 
 all: $(AUTO_GEN_MODELS) EXAMPLES.README
@@ -275,6 +276,12 @@ model_Al_PF_ErcolessiAdams_MI_OPBC_H: example_model_Al_PF_ErcolessiAdams_MI_OPBC
 	@touch $(KIM_MODELS_DIR)$@
 	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
 
+model_Al_PF_ErcolessiAdams: example_model_Al_PF_ErcolessiAdams              \
+                            $(wildcard example_model_Al_PF_ErcolessAdams/*) \
+                            Makefile
+	mkdir -p $(KIM_MODELS_DIR)$@
+	@touch $(KIM_MODELS_DIR)$@
+	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
 
 model_ArNe_P_MLJ_NEIGH_RVEC_F: example_model_ArNe_P_MLJ_NEIGH_RVEC_F               \
                                $(wildcard example_model_ArNe_P_MLJ_NEIGH_RVEC_F/*) \
@@ -283,9 +290,16 @@ model_ArNe_P_MLJ_NEIGH_RVEC_F: example_model_ArNe_P_MLJ_NEIGH_RVEC_F            
 	@touch $(KIM_MODELS_DIR)$@
 	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
 
-model_Ar_P_MLJ_C: example_model_Ar_P_MLJ_C                            \
-                               $(wildcard example_model_Ar_P_MLJ_C/*) \
-                               Makefile
+model_Ar_P_MLJ_C: example_model_Ar_P_MLJ_C               \
+                  $(wildcard example_model_Ar_P_MLJ_C/*) \
+                  Makefile
+	mkdir -p $(KIM_MODELS_DIR)$@
+	@touch $(KIM_MODELS_DIR)$@
+	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
+
+model_Ar_P_MLJ_F90: example_model_Ar_P_MLJ_F90               \
+                    $(wildcard example_model_Ar_P_MLJ_F90/*) \
+                    Makefile
 	mkdir -p $(KIM_MODELS_DIR)$@
 	@touch $(KIM_MODELS_DIR)$@
 	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
