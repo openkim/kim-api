@@ -654,7 +654,6 @@ void MODEL_NAME_LC_STR_init_(void *km)
    double* model_epsilon;
    double* model_C;
    double* model_Rzero;
-   double* model_Rsq;
    double* model_Pcutoff;
    double* model_A1;
    double* model_A2;
