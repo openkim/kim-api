@@ -188,7 +188,6 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   integer ier
   double precision Spacings(4)
   double precision Energies(4)
-  integer MiddleAtomId
   real*8 energy;           pointer(penergy,energy)
   integer N4
   real*8 coordum(DIM,1);   pointer(pcoor,coordum)

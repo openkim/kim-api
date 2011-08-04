@@ -17,7 +17,6 @@ subroutine NEIGH_RVEC_F_periodic_B2_neighborlist(CellsPerHalfSide, cutoff, B2spa
   
   !-- Local variables
   double precision dx(3)
-  double precision r2
   double precision cutoff2
   double precision :: B2shifts(3,2)
   double precision :: latVec(3)
