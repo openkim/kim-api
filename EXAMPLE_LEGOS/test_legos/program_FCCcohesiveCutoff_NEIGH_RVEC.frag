@@ -66,7 +66,6 @@ program TEST_NAME_STR
   integer                   :: ier           ! error flag
 
   real*8 coordum(DIM,1);   pointer(pcoor,coordum)         ! coordinate
-  real*8, pointer  :: coords(:,:)
 
   double precision param_cutoff; pointer(pparam_cutoff,param_cutoff) ! parameter cutoff radius
 
