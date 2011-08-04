@@ -36,7 +36,7 @@ test_Ar_free_cluster                      F90       NEIGH-RVEC-F    Locator    F
 
 test_Ar_free_cluster_CLUSTER_C            C         CLUSTER         N/A        N/A
 
-test_Ar_free_cluster_CLUSTER_F            F90       CLUSTER         N/A        N/A
+test_Ar_free_cluster_CLUSTER_F90          F90       CLUSTER         N/A        N/A
 
 test_Ar_multiple_models                   C         NEIGH-RVEC-F    Locator    Full
                                                                     Iterator
@@ -56,13 +56,13 @@ Example Test/Model compatibility:
 
 test_Al_FCCcohesive_MI_OPBC
    |
-   |-- model_Al_PF_ErcolessiAdams_MI_OPBC_H
+   |-- model_Al_PF_ErcolessiAdams
    |
 
 
 test_Al_free_cluster
    |
-   |-- model_Al_PF_ErcolessiAdams_MI_OPBC_H
+   |-- model_Al_PF_ErcolessiAdams
    |
 
 
@@ -76,7 +76,7 @@ test_Ar_FCCcohesiveCutoff_NEIGH_RVEC
    |
    |-- model_ArNe_P_MLJ_NEIGH_RVEC_F
    |-- model_Ar_P_MLJ_C
-   |-- model_Ar_P_MLJ_F
+   |-- model_Ar_P_MLJ_F90
    |-- model_Ar_P_MLJ_NEIGH_RVEC_F
    |-- model_Ar_P_MMorse
    |
@@ -85,7 +85,7 @@ test_Ar_FCCcohesiveCutoff_NEIGH_RVEC
 test_Ar_FCCcohesive_MI_OPBC
    |
    |-- model_Ar_P_MLJ_C
-   |-- model_Ar_P_MLJ_F
+   |-- model_Ar_P_MLJ_F90
    |-- model_Ar_P_MLJ_MI_OPBC_H_F
    |-- model_Ar_P_MMorse
    |
@@ -94,7 +94,7 @@ test_Ar_FCCcohesive_MI_OPBC
 test_Ar_FCCcohesive_NEIGH_PURE
    |
    |-- model_Ar_P_MLJ_C
-   |-- model_Ar_P_MLJ_F
+   |-- model_Ar_P_MLJ_F90
    |-- model_Ar_P_MLJ_NEIGH_PURE_H_F
    |-- model_Ar_P_MMorse
    |
@@ -104,7 +104,7 @@ test_Ar_FCCcohesive_NEIGH_RVEC
    |
    |-- model_ArNe_P_MLJ_NEIGH_RVEC_F
    |-- model_Ar_P_MLJ_C
-   |-- model_Ar_P_MLJ_F
+   |-- model_Ar_P_MLJ_F90
    |-- model_Ar_P_MLJ_NEIGH_RVEC_F
    |-- model_Ar_P_MMorse
    |
@@ -114,7 +114,7 @@ test_Ar_free_cluster
    |
    |-- model_ArNe_P_MLJ_NEIGH_RVEC_F
    |-- model_Ar_P_MLJ_C
-   |-- model_Ar_P_MLJ_F
+   |-- model_Ar_P_MLJ_F90
    |-- model_Ar_P_MLJ_MI_OPBC_H_F
    |-- model_Ar_P_MLJ_NEIGH_PURE_H_F
    |-- model_Ar_P_MLJ_NEIGH_RVEC_F
@@ -125,16 +125,16 @@ test_Ar_free_cluster
 test_Ar_free_cluster_CLUSTER_C
    |
    |-- model_Ar_P_MLJ_C
-   |-- model_Ar_P_MLJ_F
+   |-- model_Ar_P_MLJ_F90
    |-- model_Ar_P_MLJ_CLUSTER
    |-- model_Ar_P_MMorse
    |
 
 
-test_Ar_free_cluster_CLUSTER_F
+test_Ar_free_cluster_CLUSTER_F90
    |
    |-- model_Ar_P_MLJ_C
-   |-- model_Ar_P_MLJ_F
+   |-- model_Ar_P_MLJ_F90
    |-- model_Ar_P_MLJ_CLUSTER
    |-- model_Ar_P_MMorse
    |
@@ -144,7 +144,7 @@ test_Ar_multiple_models
    |
    |-- model_ArNe_P_MLJ_NEIGH_RVEC_F
    |-- model_Ar_P_MLJ_C
-   |-- model_Ar_P_MLJ_F
+   |-- model_Ar_P_MLJ_F90
    |-- model_Ar_P_MLJ_NEIGH_RVEC_F
    |-- model_Ar_P_MMorse
    |
