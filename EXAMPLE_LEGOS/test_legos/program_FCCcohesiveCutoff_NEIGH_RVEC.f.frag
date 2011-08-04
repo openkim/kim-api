@@ -164,7 +164,7 @@ program TEST_NAME_STR
      print *,"Found minimum energy configuration to within", TOL
      print *,
      print *,"cutoff = ", param_cutoff
-     print *,
+     print *
      print *,"Energy/atom = ", FinalEnergy, "; Spacing = ", FinalSpacing
      print '(80(''*''))'
 
@@ -232,6 +232,6 @@ integer function check_model_parameters(pkim)
      check_model_parameters = 0
   endif
 
-  return
+  stop
 
 end function check_model_parameters

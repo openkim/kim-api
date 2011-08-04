@@ -268,7 +268,7 @@ program TEST_NAME_STR
   print *, "  X                   Y                   Z"
   print 10, forces
 10 format(f20.15, f20.15, f20.15)
-  print *, ""
+  print *
   print *, "Energy = ", energy
 
 

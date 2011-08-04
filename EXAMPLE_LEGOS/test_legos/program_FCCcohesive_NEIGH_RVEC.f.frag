@@ -135,7 +135,7 @@ program TEST_NAME_STR
   print *, "Results for KIM Model: ", modelname
   print *,
   print *,"Found minimum energy configuration to within", TOL
-  print *,
+  print *
   print *,"Energy/atom = ", FinalEnergy, "; Spacing = ", FinalSpacing
   print '(80(''*''))'
 
