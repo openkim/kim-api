@@ -9,5 +9,3 @@ test_Ar_FCCcohesive_NEIGH_RVEC
 test_Ar_free_cluster
 test_Ar_free_cluster_CLUSTER
 test_Ar_multiple_models
-test_Ar_periodic_cut_FCC_NEIGH_RVEC
-test_Ne_periodic_cut_FCC_NEIGH_RVEC
