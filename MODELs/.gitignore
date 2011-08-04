@@ -1,6 +1,7 @@
 EXAMPLES.README
 model_Al_PF_ErcolessiAdams_MI_OPBC_H
 model_ArNe_P_MLJ_NEIGH_RVEC_F
+model_Ar_P_MLJ_C
 model_Ar_P_MLJ_CLUSTER
 model_Ar_P_MLJ_MI_OPBC_H_F
 model_Ar_P_MLJ_NEIGH_PURE_H_F

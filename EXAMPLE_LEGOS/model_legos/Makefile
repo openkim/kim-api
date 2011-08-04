@@ -26,6 +26,7 @@ COMMON_FRAGMENTS = module_start.frag          \
 
 AUTO_GEN_MODELS = model_Al_PF_ErcolessiAdams_MI_OPBC_H  \
                   model_ArNe_P_MLJ_NEIGH_RVEC_F         \
+                  model_Ar_P_MLJ_C                      \
                   model_Ar_P_MLJ_CLUSTER                \
                   model_Ar_P_MLJ_MI_OPBC_H_F            \
                   model_Ar_P_MLJ_NEIGH_PURE_H_F         \
@@ -277,6 +278,13 @@ model_Al_PF_ErcolessiAdams_MI_OPBC_H: example_model_Al_PF_ErcolessiAdams_MI_OPBC
 
 model_ArNe_P_MLJ_NEIGH_RVEC_F: example_model_ArNe_P_MLJ_NEIGH_RVEC_F               \
                                $(wildcard example_model_ArNe_P_MLJ_NEIGH_RVEC_F/*) \
+                               Makefile
+	mkdir -p $(KIM_MODELS_DIR)$@
+	@touch $(KIM_MODELS_DIR)$@
+	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
+
+model_Ar_P_MLJ_C: example_model_Ar_P_MLJ_C                            \
+                               $(wildcard example_model_Ar_P_MLJ_C/*) \
                                Makefile
 	mkdir -p $(KIM_MODELS_DIR)$@
 	@touch $(KIM_MODELS_DIR)$@

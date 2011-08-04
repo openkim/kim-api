@@ -1,0 +1,95 @@
+#######################################################################################################
+#
+# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
+# All rights reserved.
+#
+# Author: Ryan S. Elliott
+# Date:   Aug. 3, 2011
+#
+#
+# See KIM_API/standard.kim for documentation about this file
+#
+#######################################################################################################
+
+
+MODEL_NAME := model_Ar_P_MLJ_C
+SystemOfUnitsFix := fixed
+
+
+#######################################################################################################
+SUPPORTED_ATOM/PARTICLES_TYPES:
+# Symbol/name           Type                    code
+
+Ar                      spec                    1
+
+
+#######################################################################################################
+CONVENTIONS:
+# Name                  Type
+
+ZeroBasedLists          dummy
+
+Neigh_IterAccess        dummy
+
+Neigh_LocaAccess        dummy
+
+NEIGH-RVEC-F            dummy
+
+NEIGH-PURE-H            dummy
+
+NEIGH-PURE-F            dummy
+
+MI-OPBC-H               dummy
+
+MI-OPBC-F               dummy
+
+CLUSTER                 dummy
+
+
+#######################################################################################################
+MODEL_INPUT:
+# Name                  Type         Unit       SystemU/Scale           Shape              Requirements
+
+numberOfAtoms           integer*8    none       none                    []
+
+numberAtomTypes         integer      none       none                    []
+
+atomTypes               integer      none       none                    [numberOfAtoms]
+
+coordinates             real*8       length     standard                [numberOfAtoms,3]
+
+boxlength               real*8       length     standard                [3]
+
+get_half_neigh          method       none       none                    []                 optional     # Here so it can work with more Tests
+
+get_full_neigh          method       none       none                    []                 optional     # Here so it can work with more Tests
+
+neighObject             pointer      none       none                    []
+
+
+#######################################################################################################
+MODEL_OUTPUT:
+# Name                  Type         Unit       SystemU/Scale           Shape              Requirements
+
+destroy                 method       none       none                    []                 optional
+
+compute                 method       none       none                    []
+
+reinit                  method       none       none                    []                 optional
+
+cutoff                  real*8       length     standard                []
+
+energy                  real*8       energy     standard                []
+
+forces                  real*8       force      standard                [numberOfAtoms,3]  optional
+
+energyPerAtom           real*8       energy     standard                [numberOfAtoms]    optional
+
+virial                  real*8       pressure   standard                []                 optional
+
+
+#######################################################################################################
+MODEL_PARAMETERS:
+# Name                  Type         Unit       SystemU/Scale           Shape              Requirements
+
+# --- No published parameters ---
