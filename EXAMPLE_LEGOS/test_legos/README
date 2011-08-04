@@ -4,45 +4,45 @@ the example tests
 
 The following files are in this directory:
 
-MI_OPBC_neighborlist.frag
-     This file contains the routine for creating neighbor lists for use with the
-     MI-OPBC method.
+MI_OPBC_neighborlist.f.frag
+     This Fortran file contains the routine for creating neighbor lists for use
+     with the MI-OPBC method.
 
 Makefile
      This is the make file that creates the example Tests directories in the
      $KIM_TESTS_DIR directory
 
-NEIGH_PURE_cluster_neighborlist.frag
-     This file contains the routine for creating neighbor lists for use with the
-     NEIGH-PURE method for free cluster systems.
+NEIGH_PURE_cluster_neighborlist.f.frag
+     This Fortran file contains the routine for creating neighbor lists for use
+     with the NEIGH-PURE method for free cluster systems.
 
-NEIGH_PURE_periodic_neighborlist.frag
-     This file contains the routine for creating neighbor lists for use with the
-     NEIGH-PURE method for periodic FCC systems.
+NEIGH_PURE_periodic_neighborlist.f.frag
+     This Fortran file contains the routine for creating neighbor lists for use
+     with the NEIGH-PURE method for periodic FCC systems.
 
-NEIGH_RVEC_F_cluster_neighborlist.frag
-     This file contains the routine for creating neighbor lists for use with the
-     NEIGH-RVEC method for free cluster systems.
+NEIGH_RVEC_F_cluster_neighborlist.f.frag
+     This Fortran file contains the routine for creating neighbor lists for use
+     with the NEIGH-RVEC method for free cluster systems.
 
-NEIGH_RVEC_F_periodic_B2_neighborlist.frag
-     This file contains the routine for creating neighbor lists for use with the
-     NEIGH-RVEC method for periodic B2 systems.
+NEIGH_RVEC_F_periodic_B2_neighborlist.f.frag
+     This Fortran file contains the routine for creating neighbor lists for use
+     with the NEIGH-RVEC method for periodic B2 systems.
 
-NEIGH_RVEC_F_periodic_FCC_neighborlist.frag
-     This file contains the routine for creating neighbor lists for use with the
-     NEIGH-RVEC method for periodic FCC systems.
+NEIGH_RVEC_F_periodic_FCC_neighborlist.f.frag
+     This Fortran file contains the routine for creating neighbor lists for use
+     with the NEIGH-RVEC method for periodic FCC systems.
 
-NEIGH_RVEC_compute_equilibrium_spacing.frag
-     This file contains the routine for computing the equilibrium spacing of an
-     FCC crystal for use with the NEIGH-RVEC method using the golden search
-     algorithm.
+NEIGH_RVEC_compute_equilibrium_spacing.f.frag
+     This Fortran file contains the routine for computing the equilibrium
+     spacing of an FCC crystal for use with the NEIGH-RVEC method using the
+     golden search algorithm.
 
 README
      This file
 
-create_FCC_configuration.frag
-     This file contains the routine for creating a cluster of atoms in a perfect
-     FCC crystal configuration.
+create_FCC_configuration.f.frag
+     This Fortran file contains the routine for creating a cluster of atoms in
+     a perfect FCC crystal configuration.
 
 descriptor_file_input
      This file contains the input section of the KIM descriptor file.
@@ -62,68 +62,68 @@ example_test_Ar_multiple_models/
 example_test_demo_F03/
      Directory containing the test_demo_F03 Test.
 
-free_KIM_API_object.frag
-     This file contains the free_KIM_API_object routine that is used the by
-     FCCcohesive Tests.
+free_KIM_API_object.f.frag
+     This Fortran file contains the free_KIM_API_object routine that is used
+     the by FCCcohesive Tests.
 
-get_model_cutoff_firsttime.frag
-     This file contains the get_model_cutoff_firsttime routine that is used
-     by the FCCcohesive Tests.
+get_model_cutoff_firsttime.f.frag
+     This Fortran file contains the get_model_cutoff_firsttime routine that is
+     used by the FCCcohesive Tests.
 
-get_neigh_Rij.frag
-     This file contains the routine for accessing neighbor lists that include
-     Rij relative position vectors.
-
-get_neigh_no_Rij.frag
-     This file contains the routine for accessing neighbor lists that do not 
+get_neigh_Rij.f.frag
+     This Fortran file contains the routine for accessing neighbor lists that
      include Rij relative position vectors.
 
-program_B2cohesive_NEIGH_RVEC.frag
-     This file contains the main program for the test_*_B2cohesive_NEIGH_RVEC
-     Test.
+get_neigh_no_Rij.f.frag
+     This Fortran file contains the routine for accessing neighbor lists that
+     do not include Rij relative position vectors.
 
-program_FCCcohesiveCutoff_NEIGH_RVEC.frag
-     This file contains the main program for the test_*_FCCcohesiveCutoff_NEIGH_RVEC
-     Test.
+program_B2cohesive_NEIGH_RVEC.f.frag
+     This Fortran file contains the main program for the
+     test_*_B2cohesive_NEIGH_RVEC Test.
 
-program_FCCcohesive_MI_OPBC.frag
-     This file contains the main program for the test_*_FCCcohesive_MI_OPBC
-     Test.
+program_FCCcohesiveCutoff_NEIGH_RVEC.f.frag
+     This Fortran file contains the main program for the
+     test_*_FCCcohesiveCutoff_NEIGH_RVEC Test.
 
-program_FCCcohesive_NEIGH_PURE.frag
-     This file contains the main program for the test_*_FCCcohesive_NEIGH_PURE
-     Test.
+program_FCCcohesive_MI_OPBC.f.frag
+     This Fortran file contains the main program for the
+     test_*_FCCcohesive_MI_OPBC Test.
 
-program_FCCcohesive_NEIGH_RVEC.frag
-     This file contains the main program for the test_*_FCCcohesive_NEIGH_RVEC
-     Test.
+program_FCCcohesive_NEIGH_PURE.f.frag
+     This Fortran file contains the main program for the
+     test_*_FCCcohesive_NEIGH_PURE Test.
 
-program_free_cluster.frag
-     This file contains the main program for the test_*_free_cluster example
-     Test.
+program_FCCcohesive_NEIGH_RVEC.f.frag
+     This Fortran file contains the main program for the
+     test_*_FCCcohesive_NEIGH_RVEC Test.
 
-program_free_cluster_CLUSTER.frag
-     This file contains the main program for the test_*_free_cluster_CLUSTER
-     example test.
+program_free_cluster.f.frag
+     This Fortran file contains the main program for the test_*_free_cluster
+     example Test.
 
-report_error.frag
-     This file contain the routine that reports errors.
+program_free_cluster_CLUSTER.f.frag
+     This Fortran file contains the main program for the
+     test_*_free_cluster_CLUSTER example test.
 
-setup_B2_KIM_API_object.frag
-     This file contains the setup_B2_KIM_API_object routine used by the
+report_error.f.frag
+     This Fortran file contain the routine that reports errors.
+
+setup_B2_KIM_API_object.f.frag
+     This Fortran file contains the setup_B2_KIM_API_object routine used by the
      B2cohesive Tests.
 
-setup_KIM_API_object.frag
-     This file contains the setup_KIM_API_obejct routine used by the
+setup_KIM_API_object.f.frag
+     This Fortran file contains the setup_KIM_API_obejct routine used by the
      FCCcohesive Tests.
 
-setup_neighborlist_Rij_KIM_access.frag
-     This file contains the setup_neighborlist_Rij_KIM_access routine used by
-     the cohesive Tests.
+setup_neighborlist_Rij_KIM_access.f.frag
+     This Fortran file contains the setup_neighborlist_Rij_KIM_access routine
+     used by the cohesive Tests.
 
-setup_neighborlist_no_Rij_KIM_access.frag
-     This file contains the setup_neighborlist_no_Rij_KIM_access routine used
-     by the cohesive Tests.
+setup_neighborlist_no_Rij_KIM_access.f.frag
+     This Fortran file contains the setup_neighborlist_no_Rij_KIM_access
+     routine used by the cohesive Tests.
 
 test_B2cohesive_README
      This file contains the README file that is used to generate README files
@@ -142,8 +142,8 @@ test_FCCcohesive_README
      for the FCCcohesive Tests.
     
 test_Makefile
-     This file contains the Makefile that is used to generate Makefile files for
-     the example tests.
+     This file contains the Makefile that is used to generate Makefile files
+     for the example tests.
 
 test_free_cluster_README
      This file contains the README file that is used to generate REAMDE files
