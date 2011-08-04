@@ -263,7 +263,7 @@ program TEST_NAME_STR
   ! print results to screen
   print *, "***********************************************************************************************"
   print *, "Results for KIM Model: ", modelname
-  print *, "Using NBC: ", NBC_Method
+  print *, "Using NBC: ", NBC_Method(1:(index(NBC_Method,char(0))-1))
   print *, "Forces:"
   print *, "  X                   Y                   Z"
   print 10, forces
