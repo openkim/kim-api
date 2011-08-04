@@ -195,6 +195,7 @@ static bool is_it_par(char * name);
 static bool is_it_fixed_par(char * name);
 static bool is_it_free_par(char * name);
 
+static void fatal_error_print();
 bool is_it_match(KIM_API_model &test,KIM_API_model & mdl);
 bool do_AtomsTypes_match(KIM_API_model &test,KIM_API_model & mdl);
 

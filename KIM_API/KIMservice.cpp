@@ -101,6 +101,7 @@ bool KIM_IOline:: getFields(char *inString){
                 return true;
             }else if(strcmp(type,"flex")==0){
                 cout<<"KIM_IOline::getFields:flex type for preprocessor only..."<<endl;
+                KIM_API_model::fatal_error_print();
                 exit (333);
                 //return false;
             }
@@ -287,6 +288,7 @@ istream &operator>>(istream &stream, KIM_IOline &a){
            cerr << "Error: Input line in .kim file longer than KIM_LINE_LENGTH (default 512) characters.\n"
                 << "The line starts with:\n\t"
                 << inputline << "\nExiting..." << endl;
+           KIM_API_model::fatal_error_print();
            exit(-2);
         }
 	if(a.getFields(inputline)){
@@ -450,6 +452,7 @@ int SystemOfUnit:: readlines(char * infile, IOline **inlines){
  //cout<<"SystemOfUnit:  file:"<<infile<<":"<<endl;
          if(!myfile){
              cout<<"SystemOfUnit: can not open file:"<<infile<<":"<<endl;
+             KIM_API_model::fatal_error_print();
              exit(327);
          }
          
@@ -491,6 +494,7 @@ int SystemOfUnit::readlines_str(char* instrn, IOline** inlines){
  //cout<<"SystemOfUnit:  file:"<<infile<<":"<<endl;
          if(!myfile){
              cout<<"SystemOfUnit: can not open input string"<<endl;
+             KIM_API_model::fatal_error_print();
              exit(327);
          }
         myfile.seekp(stringstream::beg);
@@ -559,6 +563,7 @@ void KIMBaseElement:: init(char *nm,char * tp,intptr_t sz, intptr_t rnk, int *sh
     
             if(rnk < 0) {
                 cout << "KIMBaseElement_init:rnk < 0"<<endl;
+                KIM_API_model::fatal_error_print();
                 exit (113);
             }
             size = sz;
@@ -576,6 +581,7 @@ void KIMBaseElement:: init(char *nm,char * tp,intptr_t sz, intptr_t rnk, int *sh
                 shape = new int[rank];
                 if (shp == NULL) {
                   cout << "KIMBaseElement_init:shp==NULL"<<endl;
+                  KIM_API_model::fatal_error_print();
                   exit (114);
                 }
                 for (int i=0;i<rank;i++) shape[i]=shp[i];
@@ -661,7 +667,8 @@ int KIMBaseElement::getelemsize(char *tp){
                 return 0;
             }else{// add here more in else if block...
             printf("KIMBaseElement_getelemsize:key type %s is not:\n %s %s %s, %s, %s, %s \n",tp,realkey,real8key,integerkey,ptrkey,integer8key,dummykey);
-                exit(102);
+            KIM_API_model::fatal_error_print();
+            exit(102);
             }
 }
 
@@ -1196,6 +1203,7 @@ void KIM_API_model::read_file(char * initfile,KIM_IOline ** lns, int * numlns){
         myfile.open(initfile);
         if(!myfile){
             cout<<"KIM_API_model: can not open file:"<<initfile<<":"<<endl;
+            KIM_API_model::fatal_error_print();
             exit (327);
         }
         while(!myfile.eof()){
@@ -1230,6 +1238,7 @@ void KIM_API_model::read_file_str_testname(char* strstream, KIM_IOline** lns, in
         stringstream myfile1 (in_strstream, stringstream::in|stringstream::out);
         if(!myfile){
             cout<<"KIM_API_model: can not open input string:"<<strstream<<":"<<endl;
+            KIM_API_model::fatal_error_print();
             exit (327);
         }
 
@@ -1346,7 +1355,7 @@ bool KIM_API_model::is_it_match_noDummyCount(KIM_API_model & mdtst,KIM_IOline * 
 bool KIM_API_model::is_it_match(KIM_API_model &test,KIM_API_model & mdl){
     //preinit model from standard template kim file
     KIM_API_model stdmdl;
-    char modelfile[160] = KIM_DIR_API;
+    char modelfile[512] = KIM_DIR_API;
     char modelstdname[32]="standard";
     strcat(modelfile,"standard.kim");
     if(!stdmdl.preinit(modelfile,modelstdname)){
@@ -1626,15 +1635,15 @@ bool KIM_API_model::init(char * testinputfile,char* testname, char * modelinputf
 }
 
 bool KIM_API_model::init(char* testname, char* modelname){
-    char testfile[160] = KIM_DIR_TESTS;
-    char modelfile[160] = KIM_DIR_MODELS;
+    char testfile[512] = KIM_DIR_TESTS;
+    char modelfile[512] = KIM_DIR_MODELS;
     strcat(testfile,testname);strcat(testfile,"/");strcat(testfile,testname);
     strcat(testfile,".kim");
     strcat(modelfile,modelname);strcat(modelfile,"/");strcat(modelfile,modelname);
     strcat(modelfile,".kim");
 
     //redirecting cout > kimlog
-    char kimlog[160] = KIM_DIR; strcat(kimlog,"kim.log");
+    char kimlog[512] = KIM_DIR; strcat(kimlog,"kim.log");
     streambuf * psbuf, * backup;ofstream filekimlog;
     filekimlog.open(kimlog);
     backup = cout.rdbuf();psbuf = filekimlog.rdbuf();cout.rdbuf(psbuf);
@@ -1650,13 +1659,17 @@ bool KIM_API_model::init(char* testname, char* modelname){
 
 }
 
+void KIM_API_model::fatal_error_print(){
+    printf("* KIM FATAL ERROR: See kim.log file for details\n");
+}
+
 bool KIM_API_model::init_str_testname(char* in_tststr, char* modelname){
-    char modelinputfile[160] = KIM_DIR_MODELS;
+    char modelinputfile[512] = KIM_DIR_MODELS;
     strcat(modelinputfile,modelname);strcat(modelinputfile,"/");strcat(modelinputfile,modelname);
     strcat(modelinputfile,".kim");
     
     //redirecting cout > kimlog
-    char kimlog[160] = KIM_DIR; strcat(kimlog,"kim.log");
+    char kimlog[512] = KIM_DIR; strcat(kimlog,"kim.log");
     streambuf * psbuf, * backup;ofstream filekimlog;
     filekimlog.open(kimlog);
     backup = cout.rdbuf();psbuf = filekimlog.rdbuf();cout.rdbuf(psbuf);
@@ -1725,7 +1738,7 @@ bool KIM_API_model::model_init(){
     pkim =(void**) &kim;
 
     //redirecting cout > kimlog
-    char kimlog[160] = KIM_DIR; strcat(kimlog,"kim.log");
+    char kimlog[512] = KIM_DIR; strcat(kimlog,"kim.log");
     streambuf * psbuf, * backup;ofstream filekimlog;
     filekimlog.open(kimlog,ofstream::app);
     backup = cout.rdbuf();psbuf = filekimlog.rdbuf();cout.rdbuf(psbuf);
@@ -1753,15 +1766,15 @@ bool KIM_API_model::model_init(){
     char modelname[KEY_CHAR_LENGTH]="";
     KIM_API_model * kim;
     void ** pkim;
-    char model_slib_file[160];
-    char model_init_routine_name[160];
+    char model_slib_file[512];
+    char model_init_routine_name[512];
     strcpy(modelname,this->model.name); 
     kim=this;
     pkim =(void**) &kim;
     sprintf(model_slib_file,"%s%s/%s.so",KIM_DIR_MODELS,modelname,modelname);
 
 //redirecting cout > kimlog
-    char kimlog[160] = KIM_DIR; strcat(kimlog,"kim.log");
+    char kimlog[512] = KIM_DIR; strcat(kimlog,"kim.log");
     streambuf * psbuf, * backup;ofstream filekimlog;
     filekimlog.open(kimlog, ofstream::app);
     backup = cout.rdbuf();psbuf = filekimlog.rdbuf();cout.rdbuf(psbuf);
@@ -1945,6 +1958,7 @@ int KIM_API_model::get_half_neigh(int mode, int request, int *atom,
 void KIM_API_model::irrelevantVars2donotcompute(KIM_API_model & test, KIM_API_model & mdl){
     if(! is_it_match_noDummyCount(test,mdl.inlines,mdl.numlines)) {
         cout<<"irrelevantVars2donotcompute: not a test-model match"<<endl;
+        KIM_API_model::fatal_error_print();
         exit(133);
     }
     for(int i=0; i<mdl.numlines;i++){
@@ -2145,6 +2159,7 @@ int KIM_API_model::get_indexOfsupportedUnits(char * unitS){
            if( strcmp(&(UnitsSet[i].UnitsSystemName[0]),unitS)==0) return i ;
         }
         cout<<"get_indexOfsupportedUnits, no unitsystem "<<unitS<<" found"<<endl;
+        KIM_API_model::fatal_error_print();
         exit( 3033);
 }
 void KIM_API_model::setScale(int index){
