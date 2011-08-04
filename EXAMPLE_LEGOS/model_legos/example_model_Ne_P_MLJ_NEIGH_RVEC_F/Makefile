@@ -6,7 +6,7 @@
 # Authors: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
 #
 
-MODEL_NAME := model_Ne_P_LJ_NEIGH_RVEC_F
+MODEL_NAME := model_Ne_P_MLJ_NEIGH_RVEC_F
 MODEL_BUILD_TARGET := $(MODEL_NAME).a
 
 ifndef KIM_API_DIR

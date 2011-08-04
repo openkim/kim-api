@@ -16,7 +16,7 @@ COMMON_FRAGMENTS = module_start.frag          \
                    compute_kim_variables.frag \
                    compute_initialize.frag    \
                    module_end.frag            \
-                   model_LJ_README            \
+                   model_MLJ_README           \
                    model_Makefile             \
                    descriptor_file_start      \
                    descriptor_file_input      \
@@ -25,28 +25,28 @@ COMMON_FRAGMENTS = module_start.frag          \
                    Makefile
 
 AUTO_GEN_MODELS = model_Al_PF_ErcolessiAdams_MI_OPBC_H  \
-                  model_ArNe_P_LJ_NEIGH_RVEC_F          \
-                  model_Ar_P_LJ_CLUSTER                 \
-                  model_Ar_P_LJ_MI_OPBC_H_F             \
-                  model_Ar_P_LJ_NEIGH_PURE_H_F          \
-                  model_Ar_P_LJ_NEIGH_RVEC_F            \
-                  model_Ar_P_Morse                      \
+                  model_ArNe_P_MLJ_NEIGH_RVEC_F         \
+                  model_Ar_P_MLJ_CLUSTER                \
+                  model_Ar_P_MLJ_MI_OPBC_H_F            \
+                  model_Ar_P_MLJ_NEIGH_PURE_H_F         \
+                  model_Ar_P_MLJ_NEIGH_RVEC_F           \
+                  model_Ar_P_MMorse                     \
                   model_Ne_P_LJ_NEIGH_PURE_H            \
-                  model_Ne_P_LJ_NEIGH_RVEC_F
+                  model_Ne_P_MLJ_NEIGH_RVEC_F
 
 all: $(AUTO_GEN_MODELS) EXAMPLES.README
 
 EXAMPLES.README: model_EXAMPLES.README Makefile
 	cp model_EXAMPLES.README $(KIM_MODELS_DIR)EXAMPLES.README
 
-model_Ar_P_LJ_CLUSTER: $(COMMON_FRAGMENTS)                  \
-                       cluster_compute_local_variables.frag \
-                       cluster_compute_loops.frag
+model_Ar_P_MLJ_CLUSTER: $(COMMON_FRAGMENTS)                  \
+                        cluster_compute_local_variables.frag \
+                        cluster_compute_loops.frag
         # make directory
 	mkdir -p $(KIM_MODELS_DIR)$@
 	@touch $(KIM_MODELS_DIR)$@
         # make README file in the directory
-	cat model_LJ_README | $(SED_CMD) | sed -e "s/NBC_NAME_STR/CLUSTER/g"       >  $(KIM_MODELS_DIR)$@/README
+	cat model_MLJ_README | $(SED_CMD) | sed -e "s/NBC_NAME_STR/CLUSTER/g"      >  $(KIM_MODELS_DIR)$@/README
         # make Makefile in the directory
 	cat model_Makefile | $(SED_CMD)                                            >  $(KIM_MODELS_DIR)$@/Makefile
         # make .kim file in the directory
@@ -80,15 +80,15 @@ model_Ar_P_LJ_CLUSTER: $(COMMON_FRAGMENTS)                  \
                             | sed -e 's/EPSILON_VALUE_STR/model_epsilon = 0.0104d0 ! LJ Argon epsilon in eV/g'   \
                                                                                    >> $(KIM_MODELS_DIR)$@/$@.F90
 
-model_Ar_P_LJ_MI_OPBC_H_F: $(COMMON_FRAGMENTS)                             \
-                           mi_opbc_neigh_pure_compute_local_variables.frag \
-                           mi_opbc_compute_extra_kim_variables.frag        \
-                           mi_opbc_compute_loops.frag
+model_Ar_P_MLJ_MI_OPBC_H_F: $(COMMON_FRAGMENTS)                             \
+                            mi_opbc_neigh_pure_compute_local_variables.frag \
+                            mi_opbc_compute_extra_kim_variables.frag        \
+                            mi_opbc_compute_loops.frag
         # make directory
 	mkdir -p $(KIM_MODELS_DIR)$@
 	@touch $(KIM_MODELS_DIR)$@
         # make README file in the directory
-	cat model_LJ_README | $(SED_CMD) | sed -e "s/NBC_NAME_STR/MI-OPBC-[H|F]/g" >  $(KIM_MODELS_DIR)$@/README
+	cat model_MLJ_README | $(SED_CMD) | sed -e "s/NBC_NAME_STR/MI-OPBC-[H|F]/g">  $(KIM_MODELS_DIR)$@/README
         # make Makefile in the directory
 	cat model_Makefile | $(SED_CMD)                                            >  $(KIM_MODELS_DIR)$@/Makefile
         # make .kim file in the directory
@@ -135,15 +135,15 @@ model_Ar_P_LJ_MI_OPBC_H_F: $(COMMON_FRAGMENTS)                             \
                             | sed -e 's/EPSILON_VALUE_STR/model_epsilon = 0.0104d0 ! LJ Argon epsilon in eV/g'   \
                                                                                    >> $(KIM_MODELS_DIR)$@/$@.F90
 
-model_Ar_P_LJ_NEIGH_PURE_H_F: $(COMMON_FRAGMENTS)                             \
-                              mi_opbc_neigh_pure_compute_local_variables.frag \
-                              neigh_pure_compute_extra_kim_variables.frag     \
-                              neigh_pure_compute_loops.frag
+model_Ar_P_MLJ_NEIGH_PURE_H_F: $(COMMON_FRAGMENTS)                             \
+                               mi_opbc_neigh_pure_compute_local_variables.frag \
+                               neigh_pure_compute_extra_kim_variables.frag     \
+                               neigh_pure_compute_loops.frag
         # make directory
 	mkdir -p $(KIM_MODELS_DIR)$@
 	@touch $(KIM_MODELS_DIR)$@
         # make README file in the directory
-	cat model_LJ_README | $(SED_CMD) | sed -e "s/NBC_NAME_STR/NEIGH-PURE-[H|F]/g" >  $(KIM_MODELS_DIR)$@/README
+	cat model_MLJ_README | $(SED_CMD) | sed -e "s/NBC_NAME_STR/NEIGH-PURE-[H|F]/g" >  $(KIM_MODELS_DIR)$@/README
         # make Makefile in the directory
 	cat model_Makefile | $(SED_CMD)                                            >  $(KIM_MODELS_DIR)$@/Makefile
         # make .kim file in the directory
@@ -188,15 +188,15 @@ model_Ar_P_LJ_NEIGH_PURE_H_F: $(COMMON_FRAGMENTS)                             \
                             | sed -e 's/EPSILON_VALUE_STR/model_epsilon = 0.0104d0 ! LJ Argon epsilon in eV/g'   \
                                                                                    >> $(KIM_MODELS_DIR)$@/$@.F90
 
-model_Ar_P_LJ_NEIGH_RVEC_F: $(COMMON_FRAGMENTS)                         \
-                            neigh_rvec_compute_local_variables.frag     \
-                            neigh_rvec_compute_extra_kim_variables.frag \
-                            neigh_rvec_compute_loops.frag
+model_Ar_P_MLJ_NEIGH_RVEC_F: $(COMMON_FRAGMENTS)                         \
+                             neigh_rvec_compute_local_variables.frag     \
+                             neigh_rvec_compute_extra_kim_variables.frag \
+                             neigh_rvec_compute_loops.frag
         # make directory
 	mkdir -p $(KIM_MODELS_DIR)$@
 	@touch $(KIM_MODELS_DIR)$@
         # make README file in the directory
-	cat model_LJ_README | $(SED_CMD) | sed -e "s/NBC_NAME_STR/NEIGH-RVEC-F/g"  >  $(KIM_MODELS_DIR)$@/README
+	cat model_MLJ_README | $(SED_CMD) | sed -e "s/NBC_NAME_STR/NEIGH-RVEC-F/g" >  $(KIM_MODELS_DIR)$@/README
         # make Makefile in the directory
 	cat model_Makefile | $(SED_CMD)                                            >  $(KIM_MODELS_DIR)$@/Makefile
         # make .kim file in the directory
@@ -239,24 +239,24 @@ model_Ar_P_LJ_NEIGH_RVEC_F: $(COMMON_FRAGMENTS)                         \
                             | sed -e 's/EPSILON_VALUE_STR/model_epsilon = 0.0104d0 ! LJ Argon epsilon in eV/g'   \
                                                                                    >> $(KIM_MODELS_DIR)$@/$@.F90
 
-model_Ar_P_Morse: model_Morse_README \
-                  model_Makefile     \
-                  model_P_Morse.kim  \
-                  model_P_Morse.c    \
-                  Makefile
+model_Ar_P_MMorse: model_MMorse_README \
+                   model_Makefile      \
+                   model_P_MMorse.kim  \
+                   model_P_MMorse.c    \
+                   Makefile
         # make directory
 	mkdir -p $(KIM_MODELS_DIR)$@
 	@touch $(KIM_MODELS_DIR)$@
         # make README file in the directory
-	cat model_Morse_README | $(SED_CMD)                                        >  $(KIM_MODELS_DIR)$@/README
+	cat model_MMorse_README | $(SED_CMD)                                       >  $(KIM_MODELS_DIR)$@/README
         # make Makefile in the directory
 	cat model_Makefile | $(SED_CMD)                                            >  $(KIM_MODELS_DIR)$@/Makefile
         # make .kim file in the directory
-	cat model_P_Morse.kim  | $(SED_CMD) \
+	cat model_P_MMorse.kim | $(SED_CMD) \
                                | sed -e 's/SPECIES_LINE_STR/Ar                      spec                    1/g' \
                                                                                    >  $(KIM_MODELS_DIR)$@/$@.kim
         # make .F90 file in the directory
-	cat model_P_Morse.c | $(SED_CMD) \
+	cat model_P_MMorse.c | $(SED_CMD) \
             | sed -e `echo $@ | tr A-Z a-z | sed -e 's/^\(.*\)/s\/MODEL_NAME_LC_STR\/\1\/g/'` \
             | sed -e 's/SPECIES_NAME_STR/Ar/g' \
             | sed -e 's/REFERENCE_STR/(Parameters taken from: G. E. Jelinek, Phys. Rev. B, Vol 5, no 8, 1972, pp3210--3217)/g' \
@@ -275,9 +275,9 @@ model_Al_PF_ErcolessiAdams_MI_OPBC_H: example_model_Al_PF_ErcolessiAdams_MI_OPBC
 	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
 
 
-model_ArNe_P_LJ_NEIGH_RVEC_F: example_model_ArNe_P_LJ_NEIGH_RVEC_F               \
-                              $(wildcard example_model_ArNe_P_LJ_NEIGH_RVEC_F/*) \
-                              Makefile
+model_ArNe_P_MLJ_NEIGH_RVEC_F: example_model_ArNe_P_MLJ_NEIGH_RVEC_F               \
+                               $(wildcard example_model_ArNe_P_MLJ_NEIGH_RVEC_F/*) \
+                               Makefile
 	mkdir -p $(KIM_MODELS_DIR)$@
 	@touch $(KIM_MODELS_DIR)$@
 	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
@@ -289,9 +289,9 @@ model_Ne_P_LJ_NEIGH_PURE_H: example_model_Ne_P_LJ_NEIGH_PURE_H               \
 	@touch $(KIM_MODELS_DIR)$@
 	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
 
-model_Ne_P_LJ_NEIGH_RVEC_F: example_model_Ne_P_LJ_NEIGH_RVEC_F               \
-                            $(wildcard example_model_Ne_P_LJ_NEIGH_RVEC_F/*) \
-                            Makefile
+model_Ne_P_MLJ_NEIGH_RVEC_F: example_model_Ne_P_MLJ_NEIGH_RVEC_F               \
+                             $(wildcard example_model_Ne_P_MLJ_NEIGH_RVEC_F/*) \
+                             Makefile
 	mkdir -p $(KIM_MODELS_DIR)$@
 	@touch $(KIM_MODELS_DIR)$@
 	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/

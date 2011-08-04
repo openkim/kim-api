@@ -1,8 +1,8 @@
 !*******************************************************************************
 !**
-!**  MODULE model_ArNe_P_LJ_NEIGH_RVEC_F
+!**  MODULE model_ArNe_P_MLJ_NEIGH_RVEC_F
 !**
-!**  Lennard-Jones P potential model for argon and neon
+!**  Modified Lennard-Jones P potential model for argon and neon
 !**  (modified to have smooth cutoff)
 !**  (uses parameters listed in Modeling Materials, by Tadmor and Miller
 !**   and the Lorentz/Berthelot Mixing Rule)
@@ -14,7 +14,7 @@
 !**
 !*******************************************************************************
 
-module model_ArNe_P_LJ_NEIGH_RVEC_F
+module model_ArNe_P_MLJ_NEIGH_RVEC_F
   use KIMservice
   implicit none
 
@@ -529,7 +529,7 @@ contains
 
   end subroutine report_error
   
-end module model_ArNe_P_LJ_NEIGH_RVEC_F
+end module model_ArNe_P_MLJ_NEIGH_RVEC_F
 
 
 !-------------------------------------------------------------------------------
@@ -537,8 +537,8 @@ end module model_ArNe_P_LJ_NEIGH_RVEC_F
 ! Model initialization routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-subroutine model_ArNe_P_LJ_NEIGH_RVEC_F_init(pkim)
-  use model_ArNe_P_LJ_NEIGH_RVEC_F
+subroutine model_ArNe_P_MLJ_NEIGH_RVEC_F_init(pkim)
+  use model_ArNe_P_MLJ_NEIGH_RVEC_F
   use KIMservice
   implicit none
   
@@ -683,4 +683,4 @@ subroutine model_ArNe_P_LJ_NEIGH_RVEC_F_init(pkim)
   endif
   model_cutsq = model_cutoff**2
 
-end subroutine model_ArNe_P_LJ_NEIGH_RVEC_F_init
+end subroutine model_ArNe_P_MLJ_NEIGH_RVEC_F_init

@@ -1,5 +1,5 @@
-This directory (MODEL_NAME_STR) contains a Morse pair potential
-Model with smoothed cutoff radius written in C.  It complies with the KIM API
+This directory (MODEL_NAME_STR) contains a modified Morse pair potential Model
+with smoothed cutoff radius written in C.  It complies with the KIM API
 interface standard, using any NBC and iterator or locator mode, publishes its
 parameters, and supports optional computation of `forces', `energyPerAtoms',
 and `virial'.

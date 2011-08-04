@@ -11,7 +11,7 @@
 #######################################################################################################
 
 
-MODEL_NAME := model_ArNe_P_LJ_NEIGH_RVEC_F
+MODEL_NAME := model_Ne_P_MLJ_NEIGH_RVEC_F
 SystemOfUnitsFix := fixed
 
 
@@ -19,17 +19,16 @@ SystemOfUnitsFix := fixed
 SUPPORTED_ATOM/PARTICLES_TYPES:
 # Symbol/name           Type                    code
 
-Ar                      spec                    1
-Ne                      spec                    2
+Ne                      spec                    1
 
 
 #######################################################################################################
 CONVENTIONS:
 # Name                  Type
 
-OneBasedLists           dummy
+ZeroBasedLists          dummy
 
-Neigh_LocaAccess        dummy
+Neigh_IterAccess        dummy
 
 NEIGH-RVEC-F            dummy
 
@@ -78,20 +77,20 @@ virial                  real*8       pressure   standard                []      
 MODEL_PARAMETERS:
 # Name                  Type         Unit       SystemU/Scale           Shape              Requirements
 
-PARAM_FREE_sigma        real*8       length     standard                [3]
+PARAM_FREE_sigma        real*8       length     standard                []
 
-PARAM_FREE_epsilon      real*8       energy     standard                [3]
+PARAM_FREE_epsilon      real*8       energy     standard                []
 
 PARAM_FREE_cutoff       real*8       length     standard                []
 
-PARAM_FIXED_cutnorm     real*8       none       none                    [3]
+PARAM_FIXED_cutnorm     real*8       none       none                    []
 
-PARAM_FIXED_A           real*8       pressure   standard                [3]
+PARAM_FIXED_A           real*8       pressure   standard                []
 
-PARAM_FIXED_B           real*8       force      standard                [3]
+PARAM_FIXED_B           real*8       force      standard                []
 
-PARAM_FIXED_C           real*8       energy     standard                [3]
+PARAM_FIXED_C           real*8       energy     standard                []
 
-PARAM_FIXED_sigmasq     real*8       none       none                    [3]
+PARAM_FIXED_sigmasq     real*8       none       none                    []
 
 PARAM_FIXED_cutsq       real*8       none       none                    []

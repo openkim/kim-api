@@ -1,8 +1,8 @@
 /*******************************************************************************
 *
-*  model_Ne_P_LJ_NEIGH_RVEC_F
+*  model_Ne_P_MLJ_NEIGH_RVEC_F
 *
-*  Lennard-Jones pair potential model for neon
+*  Modified Lennard-Jones pair potential model for neon
 *  (modified to have smooth cutoff)
 *
 *  Authors: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
@@ -21,7 +21,7 @@
 #define Ar  1
 
 /* Define prototypes for model init */
-void model_ne_p_lj_neigh_rvec_f_init_(void* km);
+void model_ne_p_mlj_neigh_rvec_f_init_(void* km);
 
 /* Define prototypes for model reinit, compute, and destroy */
 static void reinit(void* km);
@@ -564,7 +564,7 @@ static void destroy(void *km)
 
 
 /* Initialization function */
-void model_ne_p_lj_neigh_rvec_f_init_(void *km)
+void model_ne_p_mlj_neigh_rvec_f_init_(void *km)
 {
    /* Local variables */
    intptr_t* pkim = *((intptr_t**) km);
