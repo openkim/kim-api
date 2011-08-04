@@ -12,9 +12,15 @@ module model_Ne_P_LJ_NEIGH_PURE_H
   
   save
   private
+  public cutoff
   public calculate_wrap_f77
   public report_error
-  
+
+  !-- LJ parameters
+  real*8, parameter :: cutoff  = 8.1500d0
+  real*8, parameter :: sigma   = 2.7400d0
+  real*8, parameter :: epsilon = 0.0031d0
+
 contains
   
   ! calculates forces per atom and total energy (f90 wrapper that calls actual f77 routine)
@@ -31,7 +37,6 @@ contains
     real*8 :: f(3,1);     pointer(af,f)                 ! force
     real*8 :: ea(1);      pointer(aea,ea)               ! energy per atom
     real*8 :: potenergy;  pointer(apotenergy,potenergy) ! total energy
-    real*8 :: xcutof;     pointer(pcutoff,xcutof)       ! cutoff
     integer:: attypes(1); pointer(aattypes,attypes)     ! atom types
     integer*8::numberofatoms; pointer(anumberofatoms,numberofatoms)
     integer :: i, natom, f_flag, e_flag
@@ -81,12 +86,6 @@ contains
        stop
     endif
 
-    pcutoff = kim_api_get_data_f(pkim,"cutoff",kimerr)
-    if (kimerr.ne.1) then
-       call report_error(__LINE__, "kim_api_get_data_f", kimerr)
-       stop
-    endif
-
     ! check if requested to compute forces and energy per atom
     f_flag=kim_api_isit_compute_f(pkim,"forces",kimerr)
     if (kimerr.ne.1) then
@@ -100,7 +99,8 @@ contains
        stop
     endif
 
-    call calculate(pkim,x,f,ea,natom,potenergy,xcutof,f_flag,e_flag,kim_api_get_half_neigh_f,kimerr)
+    call calculate(cutoff,sigma,epsilon,pkim,x,f,ea,natom,potenergy, &
+                   f_flag,e_flag,kim_api_get_half_neigh_f,kimerr)
   end subroutine calculate_wrap_f77
   
   subroutine report_error(line, str, status)
@@ -122,7 +122,7 @@ contains
 end module model_Ne_P_LJ_NEIGH_PURE_H
 
 
-!  Model Initiation routine (it calls actual initialization routine in the module model_Ne_P_LJ_NEIGH_PURE_H)
+!  Model Initiation routine
 subroutine model_Ne_P_LJ_NEIGH_PURE_H_init(pkim)
         use model_Ne_P_LJ_NEIGH_PURE_H
         use KIMservice
@@ -134,14 +134,14 @@ subroutine model_Ne_P_LJ_NEIGH_PURE_H_init(pkim)
         !-- Local variables
         integer::kimerr
         integer(kind=kim_intptr) ::sz
-        real*8 :: xcutof;    pointer(pcutoff,xcutof)       ! cutoff
+        real*8 :: xcutoff;    pointer(pcutoff,xcutoff)       ! cutoff
 
         pcutoff = kim_api_get_data_f(pkim,"cutoff",kimerr)
         if (kimerr.ne.1) then
            call report_error(__LINE__, "kim_api_get_data_f", kimerr)
            stop
         endif
-        xcutof = 8.15
+        xcutoff = cutoff
 
         !setting pointer to compute method
         sz=1

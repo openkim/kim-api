@@ -60,7 +60,7 @@ destroy                 method       none       none                    []      
 
 compute                 method       none       none                    []
 
-reinit                  method       none       none                    []                 optinal
+reinit                  method       none       none                    []                 optional
 
 cutoff                  real*8       length     standard                []
 
@@ -75,4 +75,4 @@ energyPerAtom           real*8       energy     standard                [numberO
 MODEL_PARAMETERS:
 # Name                  Type         Unit       SystemU/Scale           Shape              Requirements
 
-# No parameters published
+# --- No published parameters ---

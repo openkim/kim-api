@@ -11,32 +11,32 @@ C  f77 SUBROUTINE for calculating simple lj potential
 C
 C
 C*******************************************
-       SUBROUTINE ljpotr_f77(rr,v,dvmr)
+       SUBROUTINE ljpotr_f77(sigma,epsilon,rr,v,dvmr)
         IMPLICIT NONE
-        DOUBLE PRECISION rr,v,dvmr, a,b,r1,r2,rm6,rm8
+        DOUBLE PRECISION rr,v,dvmr, epsilon,sigma,r1,sor2,sor6,sor12
         
-c       LJ parameters   
-        a=0.0002441
-        b=0.03125
-        IF (rr.LT. 1.0E-14) STOP 'rr is zero'
-        r2=rr
-        rm6=1.0/(r2*r2*r2)
-        rm8=rm6/r2
-        v=(a*rm6 - b)*rm6
-        dvmr = 6.0*rm8*(-2*rm6*a + b)
+        IF (rr.LT.1.0E-14) STOP 'rr is zero'
+        sor2= (sigma*sigma)/rr
+        sor6= sor2*sor2*sor2
+        sor12= sor6*sor6
+        v    = 4.d0*epsilon*(sor12 - sor6)
+        dvmr = 24.d0*epsilon*(-2.d0*sor12 + sor6)/sqrt(rr)
         RETURN
         END
 
-      SUBROUTINE calculate(pkim,x,f,ea,natom,en,cutof,
+      SUBROUTINE calculate(cutoff,sigma,epsilon,pkim,x,f,ea,natom,en,
      &                     f_flag,e_flag, kimget_h_neigh,kimerr)
         IMPLICIT NONE
+        DOUBLE PRECISION cutoff
+        DOUBLE PRECISION sigma
+        DOUBLE PRECISION epsilon
         DOUBLE PRECISION x(3,natom),f(3,natom),ea(natom)
         INTEGER natom,kimerr,f_flag,e_flag
-        DOUBLE PRECISION en,cutof
+        DOUBLE PRECISION en
         INTEGER kimget_h_neigh
         EXTERNAL kimget_h_neigh
 C       local variable
-        DOUBLE PRECISION vij,dvmr,v,sumv,cut2,energycutof
+        DOUBLE PRECISION vij,dvmr,v,sumv,cut2,energycutoff
         INTEGER i,j,jj,numnei
         DOUBLE PRECISION r2,dv
         DOUBLE PRECISION xi(3),xj(3),dx(3),fij(3)
@@ -62,8 +62,8 @@ C need check IF cray pointers are acceptable in f77, or use next line
  108    CONTINUE
         ENDIF
         sumv=0  
-        cut2=cutof*cutof
-        CALL  ljpotr_f77(cut2,energycutof,dvmr)
+        cut2=cutoff*cutoff
+        CALL  ljpotr_f77(sigma,epsilon,cut2,energycutoff,dvmr)
 c       iterator mode
         mode=0 
 C       reset neighbor iterator to beginning
@@ -110,21 +110,21 @@ C       reset neighbor iterator to beginning
                          WRITE(*,'("i=",I5,", j=",I5)') i,j
                         ENDIF
                         IF (r2.LE.cut2) THEN
-                                CALL ljpotr_f77(r2,vij,dvmr)
-                                sumv = sumv + vij-energycutof
-                                IF(e_flag.eq.1) THEN
-                                  ea(i)=ea(i)+(vij-energycutof)/2.0
-                                  ea(j)=ea(j)+(vij-energycutof)/2.0
-                                ENDIF
-                                IF(f_flag.eq.1) THEN
-                                 f(1,i) =f(1,i) + dvmr*dx(1)
-                                 f(2,i) =f(2,i) + dvmr*dx(2)
-                                 f(3,i) =f(3,i) + dvmr*dx(3)
+                              CALL ljpotr_f77(sigma,epsilon,r2,vij,dvmr)
+                              sumv = sumv + vij-energycutoff
+                              IF(e_flag.eq.1) THEN
+                                ea(i)=ea(i)+(vij-energycutoff)/2.0
+                                ea(j)=ea(j)+(vij-energycutoff)/2.0
+                              ENDIF
+                              IF(f_flag.eq.1) THEN
+                               f(1,i) =f(1,i) + dvmr*dx(1)
+                               f(2,i) =f(2,i) + dvmr*dx(2)
+                               f(3,i) =f(3,i) + dvmr*dx(3)
 
-                                 f(1,j) =f(1,j) - dvmr*dx(1)
-                                 f(2,j) =f(2,j) - dvmr*dx(2)
-                                 f(3,j) =f(3,j) - dvmr*dx(3)
-                                ENDIF
+                               f(1,j) =f(1,j) - dvmr*dx(1)
+                               f(2,j) =f(2,j) - dvmr*dx(2)
+                               f(3,j) =f(3,j) - dvmr*dx(3)
+                              ENDIF
                         ENDIF
  102            CONTINUE
         GOTO 101 
