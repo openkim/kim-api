@@ -1,0 +1,82 @@
+This file contains a list of planned improvements and new features for the
+openkim-api package.
+
+--------------------------------------------------------------------------------
+Items planned for the next significant release.
+--------------------------------------------------------------------------------
+
+* Adopt an appropriate open source license for the openKIM API and the
+  openkim-api implementation of that API.
+
+* Add support to the KIM API for Models to have easy access to and storage of a
+  chunk of memory within a KIM API object.  This will allow Models to have
+  efficient access to persistent memory.  Among other things, Models will then
+  be able to use the KIM_API_get_index() and KIM_API_*byI() service routines to
+  avoid the overhead of searching for the key string of a KIM API argument in
+  the KIM API object.
+
+* Rework the KIM_API_get_*_neigh() interface to allow for improved
+  computational performance.
+
+* Rework the API's handling of physical units in order to conform to the KIM RD
+  (This will not include the required automatic conversions, which are a
+  feature, listed below, that will require more time to develop.)
+
+* Rework the error handling and reporting framework used by the KIM API.
+
+* Refactor the core KIM API code for improved readability and maintenance.
+
+* Change the definition of the argument `numberOfAtoms' from `integer*8' to
+  `integer' in standard.kim.  This will provide a cleaner and less confusing
+  API interface.
+
+* Create a framework for `Model drivers' and `Test drivers'.  A Model driver is
+  a interatomic model without any specified parameters.  A Model driver can be
+  used to make a KIM Model by providing the Model's name, a KIM descriptor
+  file, and an input file, for the driver program to read, containing the
+  Model's parameter values.  For example, a Model driver could be an
+  implementation of the EAM Model, in which case the input file would contain
+  the tabulated pair and embedding functions in the standard "funcfl" format.
+  A Test driver is a simulation code that can be used to make a KIM Test by
+  providing the Test's name, a KIM descriptor file, and an input file, for the
+  driver program to read, containing instructions on how to perform the desired
+  simulation.  For example, a Test driver could be the LAMMPS package, in which
+  case the input file would be a standard LAMMPS input script.
+
+* Add an "interatomic pair forces" (f_ij) argument to standard.kim that will
+  allow Tests to compute the stress tensor (and other quantities) from the f_ij
+  quantities returned by a Model.
+
+* Add the Hessian matrix to the standard.kim file.
+
+* Add an example of a Model that is optimized for computational efficiency.
+
+* Improve the way the make system generates static and dynamic libraries (For
+  example, we should use the appropriate compiler flags to ensure that the only
+  external symbol in a Model's library is the Model's _init() function.)
+
+--------------------------------------------------------------------------------
+Items planned for future releases.
+--------------------------------------------------------------------------------
+
+* Create an example Model and Test written in C++ that makes full use of the
+  object oriented nature of the language.
+
+* Implement support for force-fields (CHARMM/GROMACS) type KIM Models.
+
+* Implement full support for Fortran 2003
+
+* Implement full support for Python
+
+* Implement automatic unit conversions between Models and Tests that use
+  different physical units for the same quantities.
+
+* Add Doxygen commenting for improved code documentation.
+
+* Switch over to an Autotools-based configure and make system.
+
+* Implement a framework for unit and regression testing of all the code in the
+  openkim-api package.
+
+* Implement full support for Java
+
