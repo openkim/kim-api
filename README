@@ -1,5 +1,8 @@
 =========================== The openkim-api package ===========================
 
+This file provides an introduction to the openKIM API package. This is the
+first file that you should read after unpacking the package.
+
 OVERVIEW:
 
 Atomistic or molecular simulations of materials have the potential to play a
@@ -72,6 +75,9 @@ The current version of the openkim-api package supports the following features:
 
 * Support for static and dynamic linking of programs using the openKIM API
 
+* Support for automatic translation between zero-based lists (C-style numbering
+  begining with 0) and one-based lists (Fortran-style numbering beginning with 1)
+
 * Communication of an arbitrary number of `arguments' between a `Model'
   (interatomic potential) and a `Test' (simulation code that uses a Model).
   This is facilitated by the use of `KIM descriptor files' (terminated with a
@@ -104,6 +110,13 @@ The current version of the openkim-api package supports the following features:
   convention for orthogonal periodic boundary conditions, `ghost atoms', and
   neighbor lists with relative position vectors.
 
+* Neighbor list routines are expected to be provided by the calling Test.
+  The API provides support for `locator' and `iterator' neighbor list modes.
+  (A `locator' returns the list of neighbors of a specified atom.  An `iterator' 
+  works by incrementing an atom counter and returning the identity of the next 
+  atom (i.e. its number) and its neighbors.)  The API also supports half and full 
+  neighbor lists.
+
 * Atom Species: The openkim-api provides the ability to designate the physical
   species of each particle in a simulation.  Currently, only one identifier is
   provided for each element in the periodic table.  In the future support for
@@ -117,23 +130,29 @@ The current version of the openkim-api package supports the following features:
   for a Model to `publish' its parameters so that a Test may modify them during
   the course of a simulation.
 
-For more information on all of the above, see files the DOCs directory
-described below.  If you have problems or questions, send an email with your
-question and all relevant information to --- openkim@googlegroups.com ---.  The
-openkim development team actively monitor this email list and will try their
-best to help you with your question.
+For more information on all of the above, see the files in the DOCs directory
+described below. Features planned for future releases are described in the
+TODO file in this directory. (See list of directory contents below.)
 
+Your next step after reading this file is to install the openKIM API package.
+See the detailed instructions in the INSTALL file in this directory.
 
 -------------------------------------------------------------------------------
 
 This directory (by default, openkim-api-XX.XX.XX) contains the following files
 and directories:
 
+CHANGELOG
+     list of main changes made to each API release
+
 DOCs/
      documentation directory. This directory contains the file
      KIM_API_alpha_overview.pdf which provides an overview of this release of
      the openkim-api package, and links to the files KIMserviceDescriptions.txt
      and standard.kim.  (See the README file in that directory.)
+
+INSTALL
+     detailed instructions on how to install the openKIM API package
 
 KIM_API/
      directory containing the openkim-api service routines
@@ -156,3 +175,23 @@ TESTs/
 
      Each Test is stored in its own directory that conforms to the naming
      convention specified in standard.kim.
+
+TODO
+     A file listing features planed for future releases of the openKIM API
+
+
+*******************************************************************************
+
+SUPPORT
+
+If you have problems or questions, send an email with your question and all 
+relevant information to 
+
+openkim@googlegroups.com
+
+The openkim development team actively monitor this email list and will do
+its best to help you with your question in a timely fashion.
+
+*******************************************************************************
+
+
