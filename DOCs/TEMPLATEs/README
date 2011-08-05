@@ -1,3 +1,4 @@
+=========================== The openkim-api package ===========================
 
 This directory contains template files for creating new KIM-compliant Models.
 See the instructions below on how to use these files.
@@ -63,21 +64,21 @@ Alternatively use the `ediff' feature of the emacs editor.
 Direction for using the supplied templates to create a new KIM-compliant Model.
 
 These direction show how to use the Fortran 90 template for a pair potential
-(model_El_P_Template.F90) and turn it into a Model for xenon (Xe) using a
-modified Lennard-Jones (MLJ) potential. (The procedure for a Model written in C
-is essentially identical. See comments below.)
+(model_El_P_Template.F90) and turn it into a Model for argon (Ar) using a
+Buckingham potential. (The procedure for a Model written in C is essentially 
+identical. See comments below.)
 
-1. Create new directory under MODELs for the Xe pair potential:
+1. Create new directory under MODELs for the Ar pair potential:
 
    % cd $KIM_DIR/MODELs
-   % mkdir model_Xe_P_MLJ
+   % mkdir model_Ar_P_Buckingham
 
 2. Copy the .F90, .kim and Makefile templates into the new directory and
    rename:
 
-   % cd $KIM_DIR/MODELs/model_Xe_P_LJ
-   % cp $KIM_DIR/DOCs/TEMPLATEs/model_El_P_Template.F90 model_Xe_P_LJ.F90
-   % cp $KIM_DIR/DOCs/TEMPLATEs/model_El_P_Template.f.kim model_Xe_P_LJ.kim
+   % cd $KIM_DIR/MODELs/model_Ar_P_Buckingham
+   % cp $KIM_DIR/DOCs/TEMPLATEs/model_El_P_Template.F90 model_Ar_P_Buckingham.F90
+   % cp $KIM_DIR/DOCs/TEMPLATEs/model_El_P_Template.f.kim model_Ar_P_Buckingham.kim
    % cp $KIM_DIR/DOCs/TEMPLATEs/Makefile.template Makefile
 
    Note: For a Model written in C, copy the .c and .c.kim templates.
@@ -86,7 +87,7 @@ is essentially identical. See comments below.)
    enter the species type. (Search for the word "FILL" which indicates where
    changes are necessary.) To edit a file on a unix machine, use for example:
 
-   % pico model_Xe_P_LJ_MI_OPBC_H.kim
+   % pico model_Ar_P_Buckingham.kim
 
 4. Edit the .F90 (or .c) file making all necessary changes. (Search for the
    word "FILL".) The main changes are:
@@ -130,4 +131,16 @@ is essentially identical. See comments below.)
    Note: If you run a Test and it does not seem to be working, remember to
          check the kim.log file for any messages.
 
------------------------------------------------------------------------------
+*******************************************************************************
+
+SUPPORT
+
+If you have problems or questions, send an email with your question and all
+relevant information to
+
+openkim@googlegroups.com
+
+The openkim development team actively monitor this email list and will do
+its best to help you with your question in a timely fashion.
+
+*******************************************************************************

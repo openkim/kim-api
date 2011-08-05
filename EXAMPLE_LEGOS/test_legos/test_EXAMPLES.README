@@ -1,5 +1,7 @@
-This file contains a table of information about the example Tests include with
+This file contains a table of information about the example Tests included with
 this release of the openkim-api package.
+
+***  List of the example Tests  ***
 
 Test name                                 Language  NBC             Loca/Iter  Half/Full
 ----------------------------------------------------------------------------------------
@@ -49,10 +51,8 @@ test_Ne_free_cluster                      F90       NEIGH-RVEC-F    Locator    F
 ----------------------------------------------------------------------------------------
 
 
+***  Example Test/Model compatibility  ***
 
-----------------------------------------------------------------------------------------
-Example Test/Model compatibility:
-----------------------------------------------------------------------------------------
 
 test_Al_FCCcohesive_MI_OPBC
    |
@@ -126,7 +126,8 @@ test_Ar_free_cluster_CLUSTER_C
    |
    |-- model_Ar_P_MLJ_C
    |-- model_Ar_P_MLJ_F90
-   |-- model_Ar_P_MLJ_CLUSTER
+   |-- model_Ar_P_MLJ_CLUSTER_C
+   |-- model_Ar_P_MLJ_CLUSTER_F90
    |-- model_Ar_P_MMorse
    |
 
@@ -135,7 +136,8 @@ test_Ar_free_cluster_CLUSTER_F90
    |
    |-- model_Ar_P_MLJ_C
    |-- model_Ar_P_MLJ_F90
-   |-- model_Ar_P_MLJ_CLUSTER
+   |-- model_Ar_P_MLJ_CLUSTER_C
+   |-- model_Ar_P_MLJ_CLUSTER_F90
    |-- model_Ar_P_MMorse
    |
 
@@ -162,13 +164,13 @@ test_Ne_free_cluster
 ***  Description of the example Tests  ***
 
 A description of the provided example Tests is given below.  The Tests are,
-roughly, listed in order of increasing complexity.  It is believed that
+roughly, listed in order of increasing complexity.  It is suggested that
 examining the example Tests in this order will provide a gradual introduction
-to the various components of a KIM compliant Test.
+to the various components of a KIM-compliant Test.
 
 
-test_Ar_free_cluster_CLUSTER_C
-test_Ar_free_cluster_CLUSTER_F90
+test_Ar_free_cluster_CLUSTER_C (C)
+test_Ar_free_cluster_CLUSTER_F90 (Fortran 90)
      These Tests are the simplest examples.  Thus, they provide the best
      introduction to the basic steps required for a Test to setup and interact
      with a KIM Model.  They setup a KIM API object for the user's requested
@@ -179,9 +181,9 @@ test_Ar_free_cluster_CLUSTER_F90
      difference between these Tests is that one is written in C and the other
      is written in Fortran 90.
 
-test_Al_free_cluster
-test_Ar_free_cluster
-test_Ne_free_cluster
+test_Al_free_cluster (Fortran 90)
+test_Ar_free_cluster (Fortran 90)
+test_Ne_free_cluster (Fortran 90)
      These Tests, all written in Fortran 90, are identical except for the
      atomic species they support.  Thus, it is interesting to compare them to
      see the minor changes needed to support different species.  The Tests do
@@ -193,8 +195,8 @@ test_Ne_free_cluster
      these Tests a good place to begin to understand the differences between
      these NBC methods.
 
-test_Al_FCCcohesive_MI_OPBC
-test_Ar_FCCcohesive_MI_OPBC
+test_Al_FCCcohesive_MI_OPBC (Fortran 90)
+test_Ar_FCCcohesive_MI_OPBC (Fortran 90)
      These Tests, both written in Fortran 90, use the MI-OPBC-H or MI-OPBC-F
      NBC method to compute the relaxed cohesive energy of an infinite perfect
      FCC crystal.  The computation method is tailored specifically to the
@@ -203,7 +205,7 @@ test_Ar_FCCcohesive_MI_OPBC
      method to find the relaxed FCC lattice parameter.
 
 
-test_Ar_FCCcohesive_NEIGH_PURE
+test_Ar_FCCcohesive_NEIGH_PURE (Fortran 90)
      This Test, written in Fortran 90, uses the NEIGH-PURE-H or NEIGH-PURE-F
      NBC method to compute the relaxed cohesive energy of an infinite perfect
      FCC crystal.  The computation method is tailored specifically to the
@@ -212,7 +214,7 @@ test_Ar_FCCcohesive_NEIGH_PURE
      method to find the relaxed FCC lattice parameter.
 
 
-test_Ar_FCCcohesive_NEIGH_RVEC
+test_Ar_FCCcohesive_NEIGH_RVEC (Fortran 90)
      This Test, written in Fortran 90, uses the NEIGH-RVEC-F NBC method to
      compute the relaxed cohesive energy of an infinite perfect FCC crystal.
      The computation method is tailored specifically to the NEIGH-RVEC-F method
@@ -221,7 +223,7 @@ test_Ar_FCCcohesive_NEIGH_RVEC
      relaxed FCC lattice parameter.
 
 
-test_ArNe_B2cohesive_NEIGH_RVEC
+test_ArNe_B2cohesive_NEIGH_RVEC (Fortran 90)
      This Test, written in Fortran 90, uses the NEIGH-RVEC-F NBC method to
      compute the relaxed cohesive energy of an infinite perfect B2 (CsCl-type)
      crystal.  The computation method is tailored specifically to the
@@ -232,7 +234,7 @@ test_ArNe_B2cohesive_NEIGH_RVEC
      that are required to work with multiple species.
 
 
-test_Ar_FCCcohesiveCutoff_NEIGH_RVEC
+test_Ar_FCCcohesiveCutoff_NEIGH_RVEC (Fortran 90)
      This Test, written in Fortran 90, uses the NEIGH-RVEC-F NBC method to
      compute the relaxed cohesive energy of an infinite perfect FCC crystal for
      five different values of the Model's `cutoff' parameter.  The Test only
@@ -246,7 +248,7 @@ test_Ar_FCCcohesiveCutoff_NEIGH_RVEC
      for a Test to adjust a Model's parameters.
 
 
-test_Ar_multiple_models
+test_Ar_multiple_models (C)
      This Test, written in C, is the most complex.  It performs all its own
      memory management (i.e., it does not use the KIM_API_allocate() service
      routine).  It also works with two different Models at the same time.
