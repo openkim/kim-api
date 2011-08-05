@@ -24,8 +24,6 @@ endif
 # default target
 all: libkim.a
 
-tests: aKIMservice_test KIMserviceTest
-
 Makefile: Include.mk
 	@touch Makefile
 
@@ -37,19 +35,6 @@ KIMservice.o: model_init_include.h model_init_include.cpp KIMservice.h KIMservic
 KIMserviceC.o: KIMservice.h KIMserviceC.h Makefile
 
 KIMserviceF.o: Makefile
-
-aKIMservice_test.o: aKIMservice_test.F90 Makefile
-
-aKIMservice_test: aKIMservice_test.o  $(ALLOBJ)
-	$(LINKCOMPILER) $(CPPFLAG) $(CPPLIBFLAG)  $(KIM_LIB) $(ALLOBJ) $(MODELOBJ) $< $(OUTPUTIN) $@
-	cp $@ RUN/$@
-
-KIMserviceTest.o: KimServiceTest.cpp Makefile
-
-KIMserviceTest: KIMserviceTest.o $(ALLOBJ)
-	$(LINKCOMPILER) $(CPPFLAG) $(CPPLIBFLAG) $(ALLOBJ) $(MODELOBJ) $< $(OUTPUTIN) $@
-	cp $@ RUN/$@
-
 
 # targets for the models: for any new model adds the appropriate lines to the model_init_include.{h,cpp} files
 $(MODELS_TARGETS): .models-deleted
@@ -75,4 +60,4 @@ model_init_include.h model_init_include.cpp: Makefile .models-deleted $(MODELS_T
 .PHONY: all tests clean
 
 clean:
-	rm -f *.o *.a *.mod  KIMserviceTest  aKIMservice_test  model_init_include.{h,cpp} .*.make-temp .models-deleted RUN/* 
+	rm -f *.o *.a *.mod  model_init_include.{h,cpp} .*.make-temp .models-deleted

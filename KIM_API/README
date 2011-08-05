@@ -24,26 +24,11 @@ KIMserviceDescription.txt
 KIMserviceF.F90
      Implementation of FORTRAN-style interface for KIM API.
 
-KIMserviceTest.cpp
-     Test program for testing C++/C KIM API service routines.
-
 Makefile
      Make file for compiling and building KIM_API using GNU or Intel compilers.
 
 README
      This file.
-
-RUN/
-     Directory for running tests for KIM API service routines.
-
-aKIMservice_test.F90
-     Test program for FORTRAN style KIM API.
-
-model_val01.kim
-     kim descriptor file used by tests.
-
-model_val02.kim
-     kim descriptor file used by tests.
 
 si_units.cfg
      SI units descriptor file.
@@ -54,8 +39,6 @@ standard.kim
 standard_units.cfg
      standard units descriptor file.
 
-test_val01.kim
-     kim descriptor file used by tests.
 
 
 Files generated automatically as part of 'make all'
