@@ -16,6 +16,6 @@ PARAM_FIXED_B           real*8       force      standard                []
 
 PARAM_FIXED_C           real*8       energy     standard                []
 
-PARAM_FIXED_sigmasq     real*8       none       none                    []
+PARAM_FIXED_sigmasq     real*8       none       none                    []                              # should be energy**2
 
-PARAM_FIXED_cutsq       real*8       none       none                    []
+PARAM_FIXED_cutsq       real*8       area       standard                []
