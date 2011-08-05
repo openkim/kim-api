@@ -39,6 +39,7 @@ C       local variable
         DOUBLE PRECISION vij,dvmr,sumv,cut2,energycutoff
         INTEGER i,j,jj,numnei
         DOUBLE PRECISION r2
+        DOUBLE PRECISION r
         DOUBLE PRECISION xi(3),xj(3),dx(3)
 C need check IF cray pointers are acceptable in f77, or use next line
         DOUBLE PRECISION Rij(3,512)
@@ -117,13 +118,14 @@ C       reset neighbor iterator to beginning
                                 ea(j)=ea(j)+(vij-energycutoff)/2.0
                               ENDIF
                               IF(f_flag.eq.1) THEN
-                               f(1,i) =f(1,i) + dvmr*dx(1)
-                               f(2,i) =f(2,i) + dvmr*dx(2)
-                               f(3,i) =f(3,i) + dvmr*dx(3)
+                               r = sqrt(r2)
+                               f(1,i) =f(1,i) + dvmr*dx(1)/r
+                               f(2,i) =f(2,i) + dvmr*dx(2)/r
+                               f(3,i) =f(3,i) + dvmr*dx(3)/r
 
-                               f(1,j) =f(1,j) - dvmr*dx(1)
-                               f(2,j) =f(2,j) - dvmr*dx(2)
-                               f(3,j) =f(3,j) - dvmr*dx(3)
+                               f(1,j) =f(1,j) - dvmr*dx(1)/r
+                               f(2,j) =f(2,j) - dvmr*dx(2)/r
+                               f(3,j) =f(3,j) - dvmr*dx(3)/r
                               ENDIF
                         ENDIF
  102            CONTINUE

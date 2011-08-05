@@ -5,10 +5,10 @@
  *  creates a cubic configuration of FCC atoms with lattice spacing
  *  `FCCspacing' and `nCellsPerSide' cells along each direction.
  *
- *  With periodic==1. this will result in a total number of atoms equal to
+ *  With periodic==0. this will result in a total number of atoms equal to
  *  4*(nCellsPerSide)**3 + 6*(nCellsPerSide)**2 + 3*(nCellsPerSide) + 1
  *
- *  With periodic==0 this will result in a total number of atoms equal to
+ *  With periodic==1 this will result in a total number of atoms equal to
  *  4*(nCellsPerSide)**3
  *
  *  Returns the Id of the atom situated in the middle of the configuration

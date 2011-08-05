@@ -155,3 +155,103 @@ test_Ne_free_cluster
    |-- model_Ne_P_LJ_NEIGH_PURE_H
    |-- model_Ne_P_MLJ_NEIGH_RVEC_F
    |
+
+----------------------------------------------------------------------------------------
+
+
+***  Description of the example Tests  ***
+
+A description of the provided example Tests is given below.  The Tests are,
+roughly, listed in order of increasing complexity.  It is believed that
+examining the example Tests in this order will provide a gradual introduction
+to the various components of a KIM compliant Test.
+
+
+test_Ar_free_cluster_CLUSTER_C
+test_Ar_free_cluster_CLUSTER_F90
+     These Tests are the simplest examples.  Thus, they provide the best
+     introduction to the basic steps required for a Test to setup and interact
+     with a KIM Model.  They setup a KIM API object for the user's requested
+     KIM Model (which must support the CLUSTER neighbor list and boundary
+     condition (NBC) method), create a cluster of 63 atoms with positions
+     corresponding to a 2x2x2 FCC cubic cell, and compute the total energy and
+     forces one each atom.  The results are printed to the screen.  The only
+     difference between these Tests is that one is written in C and the other
+     is written in Fortran 90.
+
+test_Al_free_cluster
+test_Ar_free_cluster
+test_Ne_free_cluster
+     These Tests, all written in Fortran 90, are identical except for the
+     atomic species they support.  Thus, it is interesting to compare them to
+     see the minor changes needed to support different species.  The Tests do
+     exactly the same computation as that performed by the
+     test_Ar_free_cluster_CLUSTER_* Tests.  However, instead of the CLUSTER NBC
+     method, these Tests implement support for all the other NBC methods:
+     MI-OPBC-H, MI-OPBC-F, NEIGH-PURE-H, NEIGH-PURE-F, and NEIGH-RVEC-F.  This
+     entails creating neighbor lists for the various NBC methods, and makes
+     these Tests a good place to begin to understand the differences between
+     these NBC methods.
+
+test_Al_FCCcohesive_MI_OPBC
+test_Ar_FCCcohesive_MI_OPBC
+     These Tests, both written in Fortran 90, use the MI-OPBC-H or MI-OPBC-F
+     NBC method to compute the relaxed cohesive energy of an infinite perfect
+     FCC crystal.  The computation method is tailored specifically to the
+     MI-OPBC-[H|F] methods in order to perform the computation in the most
+     computationally efficient manner.  The Tests use the Golden section search
+     method to find the relaxed FCC lattice parameter.
+
+
+test_Ar_FCCcohesive_NEIGH_PURE
+     This Test, written in Fortran 90, uses the NEIGH-PURE-H or NEIGH-PURE-F
+     NBC method to compute the relaxed cohesive energy of an infinite perfect
+     FCC crystal.  The computation method is tailored specifically to the
+     NEIGH-PURE-[H|F] methods in order to perform the computation in the most
+     computationally efficient manner.  The Tests use the Golden section search
+     method to find the relaxed FCC lattice parameter.
+
+
+test_Ar_FCCcohesive_NEIGH_RVEC
+     This Test, written in Fortran 90, uses the NEIGH-RVEC-F NBC method to
+     compute the relaxed cohesive energy of an infinite perfect FCC crystal.
+     The computation method is tailored specifically to the NEIGH-RVEC-F method
+     in order to perform the computation in the most computationally efficient
+     manner.  The Tests use the Golden section search method to find the
+     relaxed FCC lattice parameter.
+
+
+test_ArNe_B2cohesive_NEIGH_RVEC
+     This Test, written in Fortran 90, uses the NEIGH-RVEC-F NBC method to
+     compute the relaxed cohesive energy of an infinite perfect B2 (CsCl-type)
+     crystal.  The computation method is tailored specifically to the
+     NEIGH-RVEC-F method in order to perform the computation in the most
+     computationally efficient manner.  The Tests use the Golden section search
+     method to find the relaxed B2 lattice parameter.  It is useful to compare
+     this Test with the test_Ar_FCCcohesive_NEIGH_RVEC Test to see the changes
+     that are required to work with multiple species.
+
+
+test_Ar_FCCcohesiveCutoff_NEIGH_RVEC
+     This Test, written in Fortran 90, uses the NEIGH-RVEC-F NBC method to
+     compute the relaxed cohesive energy of an infinite perfect FCC crystal for
+     five different values of the Model's `cutoff' parameter.  The Test only
+     works with Models that publish a `PARAM_FREE_cutoff' parameter, and thus,
+     allow the Test to change its cutoff.  The computation method is tailored
+     specifically to the NEIGH-RVEC-F method in order to perform the
+     computation in the most computationally efficient manner.  The Tests use
+     the Golden section search method to find the relaxed FCC lattice
+     parameter.  It is useful to compare this Test with the
+     test_Ar_FCCcohesive_NEIGH_RVEC Test to see the changes that are required
+     for a Test to adjust a Model's parameters.
+
+
+test_Ar_multiple_models
+     This Test, written in C, is the most complex.  It performs all its own
+     memory management (i.e., it does not use the KIM_API_allocate() service
+     routine).  It also works with two different Models at the same time.
+     Further, it performs two separate computations for each Model.  Thus, this
+     test illustrates the simultaneous use of multiple KIM API objects for both
+     the same Model and different Models.  The Test computes the energy for a
+     FCC cluster and an infinite periodic FCC crystal for each Model and prints
+     these energy values for a range of FCC lattice spacings.
