@@ -10,6 +10,8 @@
 #include <math.h>
 #include "KIMserviceC.h"
 
+#define NAMESTRLEN    128
+
 #define FCCSPACING    5.260
 #define DIM           3
 #define NCELLSPERSIDE 2
@@ -41,7 +43,7 @@ void create_FCC_cluster(double FCCspacing, int nCellsPerSide, double *coords);
 
 
 /* Main program */
-int main(int argc, char* argv[])
+int main()
 {
    /* Local variable declarations */
    double const MinSpacing = 0.8*FCCSPACING;
@@ -84,23 +86,21 @@ int main(int argc, char* argv[])
    double energy_cluster_model_1;
 
    char testname[] = "test_Ar_multiple_models";
-   
-   /* check command line */
-   if (argc != 3)
-   {
-      printf("Usage: %s MODEL_ZERO_NAME MODEL_ONE_NAME\n",argv[0]);
-      exit(-1);
-   }
+   char modelname0[NAMESTRLEN];
+   char modelname1[NAMESTRLEN];
 
+   /* Get KIM Model names */
+   printf("Please eneter two valid KIM Model names: \n");
+   scanf("%s %s", modelname0, modelname1);
    
    /* initialize the two models */
-   if (1 != (status = KIM_API_init(&pkim_periodic_model_0, testname, argv[1])))
+   if (1 != (status = KIM_API_init(&pkim_periodic_model_0, testname, modelname0)))
       report_error(__LINE__,"KIM_API_init() for MODEL_ZERO for periodic",status);
-   if (1 != (status = KIM_API_init(&pkim_cluster_model_0, testname, argv[1])))
+   if (1 != (status = KIM_API_init(&pkim_cluster_model_0, testname, modelname0)))
       report_error(__LINE__,"KIM_API_init() for MODEL_ZERO for cluster",status);
-   if (1 != (status = KIM_API_init(&pkim_periodic_model_1, testname, argv[2])))
+   if (1 != (status = KIM_API_init(&pkim_periodic_model_1, testname, modelname1)))
       report_error(__LINE__,"KIM_API_init() for MODEL_ONE for periodic",status);
-   if (1 != (status = KIM_API_init(&pkim_cluster_model_1, testname, argv[2])))
+   if (1 != (status = KIM_API_init(&pkim_cluster_model_1, testname, modelname1)))
       report_error(__LINE__,"KIM_API_init() for MODEL_ONE cluster",status);
 
    /* Register memory */
