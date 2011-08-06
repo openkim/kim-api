@@ -171,7 +171,7 @@ to the various components of a KIM-compliant Test.  (See the README file in the
 DOCs directory for guidelines on how to study the Tests distributed with this 
 package.)
 
-test_Ar_free_cluster_CLUSTER_C (C)
+test_Ar_free_cluster_CLUSTER_C   (C)
 test_Ar_free_cluster_CLUSTER_F90 (Fortran 90)
      These Tests are the simplest examples.  Thus, they provide the best
      introduction to the basic steps required for a Test to setup and interact
@@ -179,9 +179,9 @@ test_Ar_free_cluster_CLUSTER_F90 (Fortran 90)
      KIM Model (which must support the CLUSTER neighbor list and boundary
      condition (NBC) method), create a cluster of 63 atoms with positions
      corresponding to a 2x2x2 FCC cubic cell, and compute the total energy and
-     forces one each atom.  The results are printed to the screen.  The only
-     difference between these Tests is that one is written in C and the other
-     is written in Fortran 90.
+     force components on each atom.  The results are printed to the screen.
+     The only difference between these Tests is that one is written in C and
+     the other is written in Fortran 90.
 
 test_Al_free_cluster (Fortran 90)
 test_Ar_free_cluster (Fortran 90)
@@ -212,7 +212,7 @@ test_Ar_FCCcohesive_NEIGH_PURE (Fortran 90)
      NBC method to compute the relaxed cohesive energy of an infinite perfect
      FCC crystal.  The computation method is tailored specifically to the
      NEIGH-PURE-[H|F] methods in order to perform the computation in the most
-     computationally efficient manner.  The Tests use the Golden section search
+     computationally efficient manner.  The Test uses the Golden section search
      method to find the relaxed FCC lattice parameter.
 
 
@@ -221,7 +221,7 @@ test_Ar_FCCcohesive_NEIGH_RVEC (Fortran 90)
      compute the relaxed cohesive energy of an infinite perfect FCC crystal.
      The computation method is tailored specifically to the NEIGH-RVEC-F method
      in order to perform the computation in the most computationally efficient
-     manner.  The Tests use the Golden section search method to find the
+     manner.  The Test uses the Golden section search method to find the
      relaxed FCC lattice parameter.
 
 
@@ -230,7 +230,7 @@ test_ArNe_B2cohesive_NEIGH_RVEC (Fortran 90)
      compute the relaxed cohesive energy of an infinite perfect B2 (CsCl-type)
      crystal.  The computation method is tailored specifically to the
      NEIGH-RVEC-F method in order to perform the computation in the most
-     computationally efficient manner.  The Tests use the Golden section search
+     computationally efficient manner.  The Test uses the Golden section search
      method to find the relaxed B2 lattice parameter.  It is useful to compare
      this Test with the test_Ar_FCCcohesive_NEIGH_RVEC Test to see the changes
      that are required to work with multiple species.
@@ -241,9 +241,9 @@ test_Ar_FCCcohesiveCutoff_NEIGH_RVEC (Fortran 90)
      compute the relaxed cohesive energy of an infinite perfect FCC crystal for
      five different values of the Model's `cutoff' parameter.  The Test only
      works with Models that publish a `PARAM_FREE_cutoff' parameter, and thus,
-     allow the Test to change its cutoff.  The computation method is tailored
+     allow the Test to change their cutoff.  The computation method is tailored
      specifically to the NEIGH-RVEC-F method in order to perform the
-     computation in the most computationally efficient manner.  The Tests use
+     computation in the most computationally efficient manner.  The Test uses
      the Golden section search method to find the relaxed FCC lattice
      parameter.  It is useful to compare this Test with the
      test_Ar_FCCcohesive_NEIGH_RVEC Test to see the changes that are required
@@ -256,6 +256,6 @@ test_Ar_multiple_models (C)
      routine).  It also works with two different Models at the same time.
      Further, it performs two separate computations for each Model.  Thus, this
      test illustrates the simultaneous use of multiple KIM API objects for both
-     the same Model and different Models.  The Test computes the energy for a
+     the same Model and different Models.  The Test computes the energy for an
      FCC cluster and an infinite periodic FCC crystal for each Model and prints
      these energy values for a range of FCC lattice spacings.
