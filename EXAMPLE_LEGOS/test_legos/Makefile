@@ -34,10 +34,13 @@ AUTO_GEN_TESTS = test_Al_free_cluster                 \
                  test_Ne_free_cluster
 
 
-all: $(AUTO_GEN_TESTS) EXAMPLES.README
+all: $(AUTO_GEN_TESTS) EXAMPLES.README run_all_tests
 
 EXAMPLES.README: test_EXAMPLES.README Makefile
 	cp test_EXAMPLES.README $(KIM_TESTS_DIR)EXAMPLES.README
+
+run_all_tests: test_run_all_tests
+	cp test_run_all_tests $(KIM_TESTS_DIR)run_all_tests
 
 test_Al_free_cluster: $(COMMON_FRAGMENTS)                      \
                       test_free_cluster_README                 \

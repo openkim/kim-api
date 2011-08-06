@@ -1,0 +1,241 @@
+#!/bin/sh
+
+echo "================================================================================"
+echo "test_Al_FCCcohesive_MI_OPBC"
+echo "   |"
+echo "   |-- model_Al_PF_ErcolessiAdams"
+echo "   |"
+echo ""
+echo "echo model_Al_PF_ErcolessiAdams | ./test_Al_FCCcohesive_MI_OPBC/test_Al_FCCcohesive_MI_OPBC"
+echo "================================================================================"
+echo model_Al_PF_ErcolessiAdams | ./test_Al_FCCcohesive_MI_OPBC/test_Al_FCCcohesive_MI_OPBC
+echo "================================================================================"
+echo ""
+echo ""
+
+
+echo "================================================================================"
+echo "test_Al_free_cluster"
+echo "   |"
+echo "   |-- model_Al_PF_ErcolessiAdams"
+echo "   |"
+echo "================================================================================"
+echo model_Al_PF_ErcolessiAdams | ./test_Al_free_cluster/test_Al_free_cluster
+echo "================================================================================"
+echo ""
+echo ""
+
+
+echo "================================================================================"
+echo "test_ArNe_B2cohesive_NEIGH_RVEC"
+echo "   |"
+echo "   |-- model_ArNe_P_MLJ_NEIGH_RVEC_F"
+echo "   |"
+echo "================================================================================"
+echo model_ArNe_P_MLJ_NEIGH_RVEC_F | ./test_ArNe_B2cohesive_NEIGH_RVEC/test_ArNe_B2cohesive_NEIGH_RVEC
+echo "================================================================================"
+echo ""
+echo ""
+
+
+echo "================================================================================"
+echo "test_Ar_FCCcohesiveCutoff_NEIGH_RVEC"
+echo "   |"
+echo "   |-- model_ArNe_P_MLJ_NEIGH_RVEC_F"
+echo "   |-- model_Ar_P_MLJ_C"
+echo "   |-- model_Ar_P_MLJ_F90"
+echo "   |-- model_Ar_P_MLJ_NEIGH_RVEC_F"
+echo "   |-- model_Ar_P_MMorse"
+echo "   |"
+echo "================================================================================"
+echo model_ArNe_P_MLJ_NEIGH_RVEC_F | ./test_Ar_FCCcohesiveCutoff_NEIGH_RVEC/test_Ar_FCCcohesiveCutoff_NEIGH_RVEC
+echo "================================================================================"
+echo model_Ar_P_MLJ_C              | ./test_Ar_FCCcohesiveCutoff_NEIGH_RVEC/test_Ar_FCCcohesiveCutoff_NEIGH_RVEC
+echo "================================================================================"
+echo model_Ar_P_MLJ_F90            | ./test_Ar_FCCcohesiveCutoff_NEIGH_RVEC/test_Ar_FCCcohesiveCutoff_NEIGH_RVEC
+echo "================================================================================"
+echo model_Ar_P_MLJ_NEIGH_RVEC_F   | ./test_Ar_FCCcohesiveCutoff_NEIGH_RVEC/test_Ar_FCCcohesiveCutoff_NEIGH_RVEC
+echo "================================================================================"
+echo model_Ar_P_MMorse             | ./test_Ar_FCCcohesiveCutoff_NEIGH_RVEC/test_Ar_FCCcohesiveCutoff_NEIGH_RVEC
+echo "================================================================================"
+echo ""
+echo ""
+
+
+echo "================================================================================"
+echo "test_Ar_FCCcohesive_MI_OPBC"
+echo "   |"
+echo "   |-- model_Ar_P_MLJ_C"
+echo "   |-- model_Ar_P_MLJ_F90"
+echo "   |-- model_Ar_P_MLJ_MI_OPBC_H_F"
+echo "   |-- model_Ar_P_MMorse"
+echo "   |"
+echo "================================================================================"
+echo model_Ar_P_MLJ_C           | ./test_Ar_FCCcohesive_MI_OPBC/test_Ar_FCCcohesive_MI_OPBC
+echo "================================================================================"
+echo model_Ar_P_MLJ_F90         | ./test_Ar_FCCcohesive_MI_OPBC/test_Ar_FCCcohesive_MI_OPBC
+echo "================================================================================"
+echo model_Ar_P_MLJ_MI_OPBC_H_F | ./test_Ar_FCCcohesive_MI_OPBC/test_Ar_FCCcohesive_MI_OPBC
+echo "================================================================================"
+echo model_Ar_P_MMorse          | ./test_Ar_FCCcohesive_MI_OPBC/test_Ar_FCCcohesive_MI_OPBC
+echo "================================================================================"
+echo ""
+echo ""
+
+
+echo "================================================================================"
+echo "test_Ar_FCCcohesive_NEIGH_PURE"
+echo "   |"
+echo "   |-- model_Ar_P_MLJ_C"
+echo "   |-- model_Ar_P_MLJ_F90"
+echo "   |-- model_Ar_P_MLJ_NEIGH_PURE_H_F"
+echo "   |-- model_Ar_P_MMorse"
+echo "   |"
+echo "================================================================================"
+echo model_Ar_P_MLJ_C              | ./test_Ar_FCCcohesive_NEIGH_PURE/test_Ar_FCCcohesive_NEIGH_PURE
+echo "================================================================================"
+echo model_Ar_P_MLJ_F90            | ./test_Ar_FCCcohesive_NEIGH_PURE/test_Ar_FCCcohesive_NEIGH_PURE
+echo "================================================================================"
+echo model_Ar_P_MLJ_NEIGH_PURE_H_F | ./test_Ar_FCCcohesive_NEIGH_PURE/test_Ar_FCCcohesive_NEIGH_PURE
+echo "================================================================================"
+echo model_Ar_P_MMorse             | ./test_Ar_FCCcohesive_NEIGH_PURE/test_Ar_FCCcohesive_NEIGH_PURE
+echo "================================================================================"
+echo ""
+echo ""
+
+
+echo "================================================================================"
+echo "test_Ar_FCCcohesive_NEIGH_RVEC"
+echo "   |"
+echo "   |-- model_ArNe_P_MLJ_NEIGH_RVEC_F"
+echo "   |-- model_Ar_P_MLJ_C"
+echo "   |-- model_Ar_P_MLJ_F90"
+echo "   |-- model_Ar_P_MLJ_NEIGH_RVEC_F"
+echo "   |-- model_Ar_P_MMorse"
+echo "   |"
+echo "================================================================================"
+echo model_ArNe_P_MLJ_NEIGH_RVEC_F | ./test_Ar_FCCcohesive_NEIGH_RVEC/test_Ar_FCCcohesive_NEIGH_RVEC
+echo "================================================================================"
+echo model_Ar_P_MLJ_C              | ./test_Ar_FCCcohesive_NEIGH_RVEC/test_Ar_FCCcohesive_NEIGH_RVEC
+echo "================================================================================"
+echo model_Ar_P_MLJ_F90            | ./test_Ar_FCCcohesive_NEIGH_RVEC/test_Ar_FCCcohesive_NEIGH_RVEC
+echo "================================================================================"
+echo model_Ar_P_MLJ_NEIGH_RVEC_F   | ./test_Ar_FCCcohesive_NEIGH_RVEC/test_Ar_FCCcohesive_NEIGH_RVEC
+echo "================================================================================"
+echo model_Ar_P_MMorse             | ./test_Ar_FCCcohesive_NEIGH_RVEC/test_Ar_FCCcohesive_NEIGH_RVEC
+echo "================================================================================"
+echo ""
+echo ""
+
+
+
+echo "================================================================================"
+echo "test_Ar_free_cluster"
+echo "   |"
+echo "   |-- model_ArNe_P_MLJ_NEIGH_RVEC_F"
+echo "   |-- model_Ar_P_MLJ_C"
+echo "   |-- model_Ar_P_MLJ_F90"
+echo "   |-- model_Ar_P_MLJ_MI_OPBC_H_F"
+echo "   |-- model_Ar_P_MLJ_NEIGH_PURE_H_F"
+echo "   |-- model_Ar_P_MLJ_NEIGH_RVEC_F"
+echo "   |-- model_Ar_P_MMorse"
+echo "   |"
+echo "================================================================================"
+echo model_ArNe_P_MLJ_NEIGH_RVEC_F | ./test_Ar_free_cluster/test_Ar_free_cluster
+echo "================================================================================"
+echo model_Ar_P_MLJ_C              | ./test_Ar_free_cluster/test_Ar_free_cluster
+echo "================================================================================"
+echo model_Ar_P_MLJ_F90            | ./test_Ar_free_cluster/test_Ar_free_cluster
+echo "================================================================================"
+echo model_Ar_P_MLJ_MI_OPBC_H_F    | ./test_Ar_free_cluster/test_Ar_free_cluster
+echo "================================================================================"
+echo model_Ar_P_MLJ_NEIGH_PURE_H_F | ./test_Ar_free_cluster/test_Ar_free_cluster
+echo "================================================================================"
+echo model_Ar_P_MLJ_NEIGH_RVEC_F   | ./test_Ar_free_cluster/test_Ar_free_cluster
+echo "================================================================================"
+echo model_Ar_P_MMorse             | ./test_Ar_free_cluster/test_Ar_free_cluster
+echo "================================================================================"
+echo ""
+echo ""
+
+
+echo "================================================================================"
+echo "test_Ar_free_cluster_CLUSTER_C"
+echo "   |"
+echo "   |-- model_Ar_P_MLJ_C"
+echo "   |-- model_Ar_P_MLJ_F90"
+echo "   |-- model_Ar_P_MLJ_CLUSTER_C"
+echo "   |-- model_Ar_P_MLJ_CLUSTER_F90"
+echo "   |-- model_Ar_P_MMorse"
+echo "   |"
+echo "================================================================================"
+echo model_Ar_P_MLJ_C           | ./test_Ar_free_cluster_CLUSTER_C/test_Ar_free_cluster_CLUSTER_C
+echo "================================================================================"
+echo model_Ar_P_MLJ_F90         | ./test_Ar_free_cluster_CLUSTER_C/test_Ar_free_cluster_CLUSTER_C
+echo "================================================================================"
+echo model_Ar_P_MLJ_CLUSTER_C   | ./test_Ar_free_cluster_CLUSTER_C/test_Ar_free_cluster_CLUSTER_C
+echo "================================================================================"
+echo model_Ar_P_MLJ_CLUSTER_F90 | ./test_Ar_free_cluster_CLUSTER_C/test_Ar_free_cluster_CLUSTER_C
+echo "================================================================================"
+echo model_Ar_P_MMorse          | ./test_Ar_free_cluster_CLUSTER_C/test_Ar_free_cluster_CLUSTER_C
+echo "================================================================================"
+
+
+echo "================================================================================"
+echo "test_Ar_free_cluster_CLUSTER_F90"
+echo "   |"
+echo "   |-- model_Ar_P_MLJ_C"
+echo "   |-- model_Ar_P_MLJ_F90"
+echo "   |-- model_Ar_P_MLJ_CLUSTER_C"
+echo "   |-- model_Ar_P_MLJ_CLUSTER_F90"
+echo "   |-- model_Ar_P_MMorse"
+echo "   |"
+echo "================================================================================"
+echo model_Ar_P_MLJ_C           | ./test_Ar_free_cluster_CLUSTER_F90/test_Ar_free_cluster_CLUSTER_F90
+echo "================================================================================"
+echo model_Ar_P_MLJ_F90         | ./test_Ar_free_cluster_CLUSTER_F90/test_Ar_free_cluster_CLUSTER_F90
+echo "================================================================================"
+echo model_Ar_P_MLJ_CLUSTER_C   | ./test_Ar_free_cluster_CLUSTER_F90/test_Ar_free_cluster_CLUSTER_F90
+echo "================================================================================"
+echo model_Ar_P_MLJ_CLUSTER_F90 | ./test_Ar_free_cluster_CLUSTER_F90/test_Ar_free_cluster_CLUSTER_F90
+echo "================================================================================"
+echo model_Ar_P_MMorse          | ./test_Ar_free_cluster_CLUSTER_F90/test_Ar_free_cluster_CLUSTER_F90
+echo "================================================================================"
+
+
+echo "================================================================================"
+echo "test_Ar_multiple_models"
+echo "   |"
+echo "   |-- model_ArNe_P_MLJ_NEIGH_RVEC_F"
+echo "   |-- model_Ar_P_MLJ_C"
+echo "   |-- model_Ar_P_MLJ_F90"
+echo "   |-- model_Ar_P_MLJ_NEIGH_RVEC_F"
+echo "   |-- model_Ar_P_MMorse"
+echo "   |"
+echo "================================================================================"
+echo model_ArNe_P_MLJ_NEIGH_RVEC_F | ./test_Ar_multiple_models/test_Ar_multiple_models
+echo "================================================================================"
+echo model_Ar_P_MLJ_C              | ./test_Ar_multiple_models/test_Ar_multiple_models
+echo "================================================================================"
+echo model_Ar_P_MLJ_F90            | ./test_Ar_multiple_models/test_Ar_multiple_models
+echo "================================================================================"
+echo model_Ar_P_MLJ_NEIGH_RVEC_F   | ./test_Ar_multiple_models/test_Ar_multiple_models
+echo "================================================================================"
+echo model_Ar_P_MMorse             | ./test_Ar_multiple_models/test_Ar_multiple_models
+echo "================================================================================"
+
+
+echo "================================================================================"
+echo "test_Ne_free_cluster"
+echo "   |"
+echo "   |-- model_ArNe_P_MLJ_NEIGH_RVEC_F"
+echo "   |-- model_Ne_P_LJ_NEIGH_PURE_H"
+echo "   |-- model_Ne_P_MLJ_NEIGH_RVEC_F"
+echo "   |"
+echo "================================================================================"
+echo model_ArNe_P_MLJ_NEIGH_RVEC_F  | ./test_Ne_free_cluster/test_Ne_free_cluster
+echo "================================================================================"
+echo model_Ne_P_LJ_NEIGH_PURE_H     | ./test_Ne_free_cluster/test_Ne_free_cluster
+echo "================================================================================"
+echo model_Ne_P_MLJ_NEIGH_RVEC_F    | ./test_Ne_free_cluster/test_Ne_free_cluster
+echo "================================================================================"

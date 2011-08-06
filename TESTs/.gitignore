@@ -1,4 +1,5 @@
 EXAMPLES.README
+run_all_tests
 test_Al_free_cluster
 test_Al_FCCcohesive_MI_OPBC
 test_ArNe_B2cohesive_NEIGH_RVEC

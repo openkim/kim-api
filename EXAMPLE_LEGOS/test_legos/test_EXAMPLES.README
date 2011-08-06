@@ -154,6 +154,7 @@ test_Ar_multiple_models
 
 test_Ne_free_cluster
    |
+   |-- model_ArNe_P_MLJ_NEIGH_RVEC_F
    |-- model_Ne_P_LJ_NEIGH_PURE_H
    |-- model_Ne_P_MLJ_NEIGH_RVEC_F
    |
