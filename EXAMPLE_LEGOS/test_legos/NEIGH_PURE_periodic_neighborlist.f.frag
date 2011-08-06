@@ -47,4 +47,6 @@ subroutine NEIGH_PURE_periodic_neighborlist(half, numberOfAtoms, coords, cutoff,
      neighborList(1,i) = a-1
   enddo
   
+  return
+
 end subroutine NEIGH_PURE_periodic_neighborlist

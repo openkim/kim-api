@@ -60,4 +60,6 @@ subroutine NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerHalfSide, cutoff, FCCs
   ! atom 1 has a-1 neighbors
   neighborList(1,1) = a-1
 
+  return
+
 end subroutine NEIGH_RVEC_F_periodic_FCC_neighborlist

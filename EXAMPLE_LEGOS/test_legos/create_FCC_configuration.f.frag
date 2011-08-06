@@ -97,4 +97,6 @@ subroutine create_FCC_configuration(FCCspacing, nCellsPerSide, periodic, coords,
       a = a+1; coords(:,a) = nCellsPerSide*FCCspacing
   endif
 
+  return
+
 end subroutine create_FCC_configuration

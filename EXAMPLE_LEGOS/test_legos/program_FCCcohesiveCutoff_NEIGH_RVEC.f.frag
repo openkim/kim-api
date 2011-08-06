@@ -232,6 +232,6 @@ integer function check_model_parameters(pkim)
      check_model_parameters = 0
   endif
 
-  stop
+  return
 
 end function check_model_parameters

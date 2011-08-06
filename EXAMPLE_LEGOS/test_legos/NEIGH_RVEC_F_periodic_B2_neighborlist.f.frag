@@ -54,4 +54,6 @@ subroutine NEIGH_RVEC_F_periodic_B2_neighborlist(CellsPerHalfSide, cutoff, B2spa
      neighborList(1,atom) = a-1
   enddo
 
+  return
+
 end subroutine NEIGH_RVEC_F_periodic_B2_neighborlist

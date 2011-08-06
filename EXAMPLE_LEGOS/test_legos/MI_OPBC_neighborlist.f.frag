@@ -46,4 +46,6 @@ subroutine MI_OPBC_neighborlist(half, numberOfAtoms, coords, rcut, boxlength, ne
      neighborList(1,i) = a-1
   enddo
   
+  return
+
 end subroutine MI_OPBC_neighborlist

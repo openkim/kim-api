@@ -311,6 +311,6 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
   RetSpacing = Spacings(2)
   RetEnergy  = Energies(2)
 
-  stop
+  return
 
 end subroutine NEIGH_PURE_compute_equilibrium_spacing

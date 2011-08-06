@@ -304,6 +304,6 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   RetSpacing = Spacings(2)
   RetEnergy  = Energies(2)
 
-  stop
+  return
 
 end subroutine NEIGH_RVEC_compute_equilibrium_spacing

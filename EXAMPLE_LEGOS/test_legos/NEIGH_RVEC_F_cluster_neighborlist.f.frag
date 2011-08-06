@@ -41,4 +41,6 @@ subroutine NEIGH_RVEC_F_cluster_neighborlist(numberOfAtoms, coords, cutoff, NN, 
      neighborList(1,i) = a-1
   enddo
   
+  return
+
 end subroutine NEIGH_RVEC_F_cluster_neighborlist

@@ -16,5 +16,7 @@ subroutine report_error(line, str, status)
   
   !-- print the error message
   print *,'* ERROR at line', line, 'in ',trim(file), ': ', str,'. kimerror =', status
+
+  return
   
 end subroutine report_error
