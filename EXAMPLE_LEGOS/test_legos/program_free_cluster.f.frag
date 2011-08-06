@@ -113,7 +113,7 @@ program TEST_NAME_STR
   else
      ier = 0
      call report_error(__LINE__, "Unknown NBC method", ier)
-     return
+     stop
   endif
 
   ! Unpack data from KIM object
