@@ -118,9 +118,11 @@ program TEST_NAME_STR
   allocate(neighborList(NNeighbors+1,N))
   allocate(RijList(3,NNeighbors+1,N))
   allocate(NLRvecLocs(3))
-  ! 
-  call setup_neighborlist_Rij_KIM_access(pkim, N, NNeighbors, neighborList, &
-                                         RijList, NLRvecLocs)
+  !
+  NLRvecLocs(1) = loc(neighborList)
+  NLRvecLocs(2) = loc(RijList)
+  NLRvecLocs(3) = NNeighbors+1
+  call setup_neighborlist_Rij_KIM_access(pkim, NLRvecLocs)
 
 
   ! find equilibrium spacing by minimizing coheseive energy with respect
