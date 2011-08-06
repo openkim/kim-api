@@ -27,8 +27,9 @@ COMMON_FRAGMENTS = module_start.f.frag          \
 AUTO_GEN_MODELS = model_Al_PF_ErcolessiAdams    \
                   model_ArNe_P_MLJ_NEIGH_RVEC_F \
                   model_Ar_P_MLJ_C              \
+                  model_Ar_P_MLJ_CLUSTER_C      \
+                  model_Ar_P_MLJ_CLUSTER_F90    \
                   model_Ar_P_MLJ_F90            \
-                  model_Ar_P_MLJ_CLUSTER        \
                   model_Ar_P_MLJ_MI_OPBC_H_F    \
                   model_Ar_P_MLJ_NEIGH_PURE_H_F \
                   model_Ar_P_MLJ_NEIGH_RVEC_F   \
@@ -41,14 +42,54 @@ all: $(AUTO_GEN_MODELS) EXAMPLES.README
 EXAMPLES.README: model_EXAMPLES.README Makefile
 	cp model_EXAMPLES.README $(KIM_MODELS_DIR)EXAMPLES.README
 
-model_Ar_P_MLJ_CLUSTER: $(COMMON_FRAGMENTS)                    \
-                        cluster_compute_local_variables.f.frag \
-                        cluster_compute_loops.f.frag
+model_Ar_P_MLJ_CLUSTER_C: model_P_MLJ_CLUSTER_C.c                \
+                          cluster_compute_local_variables.f.frag \
+                          cluster_compute_loops.f.frag           \
+                          Makefile
         # make directory
 	mkdir -p $(KIM_MODELS_DIR)$@
 	@touch $(KIM_MODELS_DIR)$@
         # make README file in the directory
-	cat model_MLJ_README | $(SED_CMD) | sed -e "s/NBC_NAME_STR/CLUSTER/g"      >  $(KIM_MODELS_DIR)$@/README
+	cat model_MLJ_README | $(SED_CMD) \
+                             | sed -e "s/NBC_NAME_STR/CLUSTER/g" \
+                             | sed -e "s/LANGUAGE_STR/C/g"                         >  $(KIM_MODELS_DIR)$@/README
+        # make Makefile in the directory
+	cat model_Makefile | $(SED_CMD)                                            >  $(KIM_MODELS_DIR)$@/Makefile
+        # make .kim file in the directory
+	cat descriptor_file_start | $(SED_CMD) \
+                                  | sed -e 's/SPECIES_LINE_STR/Ar                      spec                    1/g' \
+                                                                                   >  $(KIM_MODELS_DIR)$@/$@.kim
+	echo                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo "CLUSTER                 dummy"                                       >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
+	cat descriptor_file_input                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
+	cat descriptor_file_output                                                 >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
+	cat descriptor_file_params                                                 >> $(KIM_MODELS_DIR)$@/$@.kim
+        # make .c file in the directory
+	cat model_P_MLJ_CLUSTER_C.c | $(SED_CMD) \
+            | sed -e `echo $@ | tr A-Z a-z | sed -e 's/^\(.*\)/s\/MODEL_NAME_LC_STR\/\1\/g/'` \
+            | sed -e 's/SPECIES_NAME_STR/Ar/g' \
+            | sed -e 's/SPECIES_CODE_STR/1/g' \
+            | sed -e 's/CUTOFF_VALUE_STR/8.15; \/* cutoff distance in angstroms *\//g' \
+            | sed -e 's/SIGMA_VALUE_STR/3.40; \/* LJ Argon sigma in angstroms *\//g' \
+            | sed -e 's/EPSILON_VALUE_STR/0.0104; \/* LJ Argon epsilon in eV *\//g' \
+                                                                                   > $(KIM_MODELS_DIR)$@/$@.c
+
+model_Ar_P_MLJ_CLUSTER_F90: $(COMMON_FRAGMENTS)                    \
+                            cluster_compute_local_variables.f.frag \
+                            cluster_compute_loops.f.frag
+        # make directory
+	mkdir -p $(KIM_MODELS_DIR)$@
+	@touch $(KIM_MODELS_DIR)$@
+        # make README file in the directory
+	cat model_MLJ_README | $(SED_CMD) \
+                             | sed -e "s/NBC_NAME_STR/CLUSTER/g" \
+                             | sed -e "s/LANGUAGE_STR/F90/g"                       >  $(KIM_MODELS_DIR)$@/README
         # make Makefile in the directory
 	cat model_Makefile | $(SED_CMD)                                            >  $(KIM_MODELS_DIR)$@/Makefile
         # make .kim file in the directory

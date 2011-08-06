@@ -155,7 +155,6 @@
     integer(kind=kim_intptr), intent(in) :: pkim
     
     !-- Local variables
-    real*8 model_cutoff;  pointer(pcutoff,model_cutoff)
     real*8 model_epsilon; pointer(pepsilon,model_epsilon)
     real*8 model_sigma;   pointer(psigma,model_sigma)
     real*8 model_Pcutoff; pointer(pparamcut,model_Pcutoff)
