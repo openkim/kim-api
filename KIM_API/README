@@ -22,7 +22,7 @@ KIMserviceDescription.txt
      Description of KIM service routines.
 
 KIMserviceF.F90
-     Implementation of FORTRAN-style interface for KIM API.
+     Implementation of Fortran-style interface for KIM API.
 
 Makefile
      Make file for compiling and building KIM_API using GNU or Intel compilers.

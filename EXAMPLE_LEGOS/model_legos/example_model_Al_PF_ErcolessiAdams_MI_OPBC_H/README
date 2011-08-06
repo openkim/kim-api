@@ -12,7 +12,7 @@ README
      This file
 
 model_Al_PF_ErcolessiAdams_MI_OPBC_H.f90
-     FORTRAN module file that contains the implementation of the Ercolessi and
+     Fortran module file that contains the implementation of the Ercolessi and
      Adams EAM Model
 
 model_Al_PF_ErcolessiAdams_MI_OPBC_H.kim

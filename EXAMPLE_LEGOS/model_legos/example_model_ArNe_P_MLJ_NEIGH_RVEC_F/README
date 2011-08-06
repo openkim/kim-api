@@ -13,7 +13,7 @@ README
      This file
 
 model_ArNe_P_MLJ_NEIGH_RVEC_F.F90
-     FORTRAN module file that contains the implementation of the LJ potential
+     Fortran module file that contains the implementation of the LJ potential
 
 model_ArNe_P_MLJ_NEIGH_RVEC_F.kim
      KIM descriptor file, contains all variables and methods that are exposed

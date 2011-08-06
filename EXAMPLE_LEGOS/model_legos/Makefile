@@ -131,7 +131,9 @@ model_Ar_P_MLJ_MI_OPBC_H_F: $(COMMON_FRAGMENTS)                               \
 	mkdir -p $(KIM_MODELS_DIR)$@
 	@touch $(KIM_MODELS_DIR)$@
         # make README file in the directory
-	cat model_MLJ_README | $(SED_CMD) | sed -e "s/NBC_NAME_STR/MI-OPBC-[H|F]/g">  $(KIM_MODELS_DIR)$@/README
+	cat model_MLJ_README | $(SED_CMD) \
+                             | sed -e "s/NBC_NAME_STR/MI-OPBC-[H|F]/g" \
+                             | sed -e "s/LANGUAGE_STR/F90/g"                       >  $(KIM_MODELS_DIR)$@/README
         # make Makefile in the directory
 	cat model_Makefile | $(SED_CMD)                                            >  $(KIM_MODELS_DIR)$@/Makefile
         # make .kim file in the directory
@@ -186,7 +188,9 @@ model_Ar_P_MLJ_NEIGH_PURE_H_F: $(COMMON_FRAGMENTS)                              
 	mkdir -p $(KIM_MODELS_DIR)$@
 	@touch $(KIM_MODELS_DIR)$@
         # make README file in the directory
-	cat model_MLJ_README | $(SED_CMD) | sed -e "s/NBC_NAME_STR/NEIGH-PURE-[H|F]/g" >  $(KIM_MODELS_DIR)$@/README
+	cat model_MLJ_README | $(SED_CMD) \
+                             | sed -e "s/NBC_NAME_STR/NEIGH-PURE-[H|F]/g" \
+                             | sed -e "s/LANGUAGE_STR/F90/g"                       >  $(KIM_MODELS_DIR)$@/README
         # make Makefile in the directory
 	cat model_Makefile | $(SED_CMD)                                            >  $(KIM_MODELS_DIR)$@/Makefile
         # make .kim file in the directory
@@ -239,7 +243,9 @@ model_Ar_P_MLJ_NEIGH_RVEC_F: $(COMMON_FRAGMENTS)                           \
 	mkdir -p $(KIM_MODELS_DIR)$@
 	@touch $(KIM_MODELS_DIR)$@
         # make README file in the directory
-	cat model_MLJ_README | $(SED_CMD) | sed -e "s/NBC_NAME_STR/NEIGH-RVEC-F/g" >  $(KIM_MODELS_DIR)$@/README
+	cat model_MLJ_README | $(SED_CMD) \
+                             | sed -e "s/NBC_NAME_STR/NEIGH-RVEC-F/g" \
+                             | sed -e "s/LANGUAGE_STR/F90/g"                       >  $(KIM_MODELS_DIR)$@/README
         # make Makefile in the directory
 	cat model_Makefile | $(SED_CMD)                                            >  $(KIM_MODELS_DIR)$@/Makefile
         # make .kim file in the directory

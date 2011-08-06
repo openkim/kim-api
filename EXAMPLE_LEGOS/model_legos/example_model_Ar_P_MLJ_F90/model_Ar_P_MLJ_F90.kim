@@ -3,8 +3,7 @@
 # Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
 # All rights reserved.
 #
-# Author: Ellad B. Tadmor
-# Date:   August 3, 2011
+# Authors: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
 #
 #
 # See KIM_API/standard.kim for documentation about this file
@@ -62,7 +61,7 @@ boxlength               real*8       length     standard                [3]
 
 get_half_neigh          method       none       none                    []                 optional     # Here so it can work with more Tests
 
-get_full_neigh          method       none       none                    []                 optional
+get_full_neigh          method       none       none                    []                 optional     # Here so it can work with more Tests
 
 neighObject             pointer      none       none                    []
 

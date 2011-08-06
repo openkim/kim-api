@@ -95,7 +95,7 @@ Arguments:
                 The routine prepends string constant KIM_DIR_MODELS to
                 obtain the file location of the Model descriptor (.kim) file.
 
-Corresponding FORTRAN style interface:
+Corresponding Fortran style interface:
         integer function kim_api_init_str_testname_f(kimmdl, testname, modelname)
                         character (len=*) :: testname, modelname
                         integer(kind=kim_intptr) :: kimmdl

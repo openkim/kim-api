@@ -22,10 +22,10 @@ all: $(MODEL_BUILD_TARGET)
 $(MODEL_NAME).a: $(MODEL_NAME).o
 	ar rcs $@ *.o
 
-$(MODEL_NAME).o: Makefile 
+$(MODEL_NAME).o: Makefile
 
 Makefile: $(KIM_API_DIR)Include.mk
 	@touch Makefile
 
 clean:
-	rm -f *.o *.so *.mod *.a *.so
+	rm -f *.o *.mod *.a *.so
