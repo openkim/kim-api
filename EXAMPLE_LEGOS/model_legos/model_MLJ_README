@@ -14,7 +14,7 @@ README
      this file
 
 MODEL_NAME_STR.LANGUAGE_STR
-     LANGUAGE_STR file that contains the implementation of the LJ potential
+     LANGUAGE_STR file that contains the implementation of the modified LJ potential
 
 MODEL_NAME_STR.kim
      KIM descriptor file, contains all variables and methods that are exposed

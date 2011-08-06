@@ -1,5 +1,9 @@
     ! determine which NBC scenerio to use
-    pNBC_Method = kim_api_get_nbc_method_f(pkim, ier); if (ier.le.0) return
+    pNBC_Method = kim_api_get_nbc_method_f(pkim, ier)
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_nbc_method_f", ier)
+       return
+    endif
     if (index(NBC_Method,"MI-OPBC-H").eq.1) then
        nbc = 0
     elseif (index(NBC_Method,"MI-OPBC-F").eq.1) then
@@ -12,9 +16,9 @@
     call free(pNBC_Method) ! don't forget to release the memory...
 
     ! get boxlength
-    pboxlength = kim_api_get_data_f(pkim,"boxlength",ier);
+    pboxlength = kim_api_get_data_f(pkim,"boxlength",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_get_data", ier);
+       call report_error(__LINE__, "kim_api_get_data", ier)
        return
     endif
 
@@ -33,7 +37,7 @@
           ier = kim_api_get_full_neigh_f(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij_dummy)
        endif
        if (ier.le.0) then
-          call report_error(__LINE__, "kim_api_get_*_neigh", ier);
+          call report_error(__LINE__, "kim_api_get_*_neigh", ier)
           return
        endif
        
@@ -41,7 +45,7 @@
        !
        do jj = 1, numnei
           j = nei1atom(jj)
-          Rij = coor(:,j) - coor(:,i)                   ! distance vector between i j
+          Rij(:) = coor(:,j) - coor(:,i)                ! distance vector between i j
           where ( abs(Rij) > 0.5d0*boxlength )          ! periodic boundary conditions
              Rij = Rij - sign(boxlength,Rij)            ! applied where needed.
           end where                                     ! 

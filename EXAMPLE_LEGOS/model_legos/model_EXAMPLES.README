@@ -59,7 +59,9 @@ model_Ne_P_MLJ_NEIGH_RVEC_F        C         NEIGH-RVEC-F    Iterator   Full    
 A description of the provided example Models is given below.  The Models are,
 roughly, listed in order of increasing complexity.  It is suggested that
 examining the example Models in this order will provide a gradual introduction
-to the various components of a KIM-compliant Model.
+to the various components of a KIM-compliant Model. (See the README file in the 
+DOCs directory for guidelines on how to study the Models distributed with this 
+package.)
 
 model_Ar_P_MLJ_CLUSTER (Fortran 90)
      This Model implements the CLUSTER neighbor list and boundary condition

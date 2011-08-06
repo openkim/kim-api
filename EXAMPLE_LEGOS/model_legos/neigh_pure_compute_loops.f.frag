@@ -1,12 +1,16 @@
     ! determine which NBC scenerio to use
-    pNBC_Method = kim_api_get_nbc_method_f(pkim, ier); if (ier.le.0) return
+    pNBC_Method = kim_api_get_nbc_method_f(pkim, ier)
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_nbc_method_f", ier)
+       return
+    endif
     if (index(NBC_Method,"NEIGH-PURE-H").eq.1) then
        nbc = 0
     elseif (index(NBC_Method,"NEIGH-PURE-F").eq.1) then
        nbc = 1
     else
        ier = 0
-       call report_error(__LINE__, "Unknown NBC type", ier);
+       call report_error(__LINE__, "Unknown NBC type", ier)
        return
     endif
     call free(pNBC_Method) ! don't forget to release the memory...
@@ -25,7 +29,7 @@
           ier = kim_api_get_full_neigh_f(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij_dummy)
        endif
        if (ier.le.0) then
-          call report_error(__LINE__, "kim_api_get_*_neigh", ier);
+          call report_error(__LINE__, "kim_api_get_*_neigh", ier)
           return
        endif
        
@@ -33,7 +37,7 @@
        !
        do jj = 1, numnei
           j = nei1atom(jj)
-          Rij = coor(:,j) - coor(:,i)                   ! distance vector between i j
+          Rij(:) = coor(:,j) - coor(:,i)                ! distance vector between i j
           Rsqij = dot_product(Rij,Rij)                  ! compute square distance
           if ( Rsqij < model_cutsq ) then               ! particles are interacting?
              r = sqrt(Rsqij)                            ! compute distance

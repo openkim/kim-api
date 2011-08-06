@@ -12,47 +12,53 @@ module model_Ne_P_LJ_NEIGH_PURE_H
   
   save
   private
-  public cutoff
+  public model_cutoff
   public calculate_wrap_f77
   public report_error
 
   !-- LJ parameters
-  real*8, parameter :: cutoff  = 8.1500d0
-  real*8, parameter :: sigma   = 2.7400d0
-  real*8, parameter :: epsilon = 0.0031d0
+  real*8, parameter :: model_cutoff  = 8.1500d0
+  real*8, parameter :: sigma         = 2.7400d0
+  real*8, parameter :: epsilon       = 0.0031d0
 
 contains
   
-  ! calculates forces per atom and total energy (f90 wrapper that calls actual f77 routine)
-  subroutine calculate_wrap_f77(pkim,kimerr) ! compute routine with KIM interface
+  !-----------------------------------------------------------------------------
+  !
+  ! Computes energy and forces on atoms from the positions.
+  ! (f90 wrapper that calls the actual f77 routine)
+  !
+  !-----------------------------------------------------------------------------
+  subroutine calculate_wrap_f77(pkim,ier) ! compute routine with KIM interface
     use KIMservice
     implicit none
 
     !-- Transferred variables
-    integer(kind=kim_intptr) :: kim; pointer(pkim,kim)
-    integer, intent(out)     :: kimerr
+    integer(kind=kim_intptr), intent(in)  :: pkim
+    integer,                  intent(out) :: ier
 
     !-- Local variables
-    real*8 :: x(3,1);     pointer(px,x)                 ! position
-    real*8 :: f(3,1);     pointer(af,f)                 ! force
-    real*8 :: ea(1);      pointer(aea,ea)               ! energy per atom
-    real*8 :: potenergy;  pointer(apotenergy,potenergy) ! total energy
-    integer:: attypes(1); pointer(aattypes,attypes)     ! atom types
-    integer*8::numberofatoms; pointer(anumberofatoms,numberofatoms)
-    integer :: i, natom, f_flag, e_flag
+    real*8 x(3,1);           pointer(px,x)                 ! position
+    real*8 f(3,1);           pointer(pf,f)                 ! force
+    real*8 ea(1);            pointer(pea,ea)               ! energy per atom
+    real*8 potenergy;        pointer(ppotenergy,potenergy) ! total energy
+    integer attypes(1);      pointer(pattypes,attypes)     ! atom types
+    integer*8 numberofatoms; pointer(pnumberofatoms,numberofatoms)
+    integer  i, natom, f_flag, e_flag
     external calculate
 
-    ! get data from kim object
-    anumberofatoms = kim_api_get_data_f(pkim,"numberOfAtoms",kimerr)
-    if (kimerr.ne.1) then
-       call report_error(__LINE__, "kim_api_get_data_f", kimerr)
+    ! Unpack data from KIM object
+    !
+    pnumberofatoms = kim_api_get_data_f(pkim,"numberOfAtoms",ier)
+    if (ier.ne.1) then
+       call report_error(__LINE__, "kim_api_get_data_f", ier)
        stop
     endif
     natom = numberofatoms
 
-    aattypes = kim_api_get_data_f(pkim,"atomTypes", kimerr);
-    if (kimerr.le.0) then
-       call report_error(__LINE__, "kim_api_get_data", kimerr);
+    pattypes = kim_api_get_data_f(pkim,"atomTypes", ier)
+    if (ier.le.0) then
+       call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
     do i=1,natom
@@ -62,54 +68,64 @@ contains
        endif
     enddo
 
-    px=kim_api_get_data_f(pkim,"coordinates",kimerr)
-    if (kimerr.ne.1) then
-       call report_error(__LINE__, "kim_api_get_data_f", kimerr)
+    px=kim_api_get_data_f(pkim,"coordinates",ier)
+    if (ier.ne.1) then
+       call report_error(__LINE__, "kim_api_get_data_f", ier)
        stop
     endif
 
-    af=kim_api_get_data_f(pkim,"forces",kimerr)
-    if (kimerr.ne.1) then
-       call report_error(__LINE__, "kim_api_get_data_f", kimerr)
+    pf=kim_api_get_data_f(pkim,"forces",ier)
+    if (ier.ne.1) then
+       call report_error(__LINE__, "kim_api_get_data_f", ier)
        stop
     endif
 
-    apotenergy = kim_api_get_data_f(pkim,"energy",kimerr)
-    if (kimerr.ne.1) then
-       call report_error(__LINE__, "kim_api_get_data_f", kimerr)
+    ppotenergy = kim_api_get_data_f(pkim,"energy",ier)
+    if (ier.ne.1) then
+       call report_error(__LINE__, "kim_api_get_data_f", ier)
        stop
     endif
 
-    aea = kim_api_get_data_f(pkim,"energyPerAtom",kimerr)
-    if (kimerr.ne.1) then
-       call report_error(__LINE__, "kim_api_get_data_f", kimerr)
+    pea = kim_api_get_data_f(pkim,"energyPerAtom",ier)
+    if (ier.ne.1) then
+       call report_error(__LINE__, "kim_api_get_data_f", ier)
        stop
     endif
 
-    ! check if requested to compute forces and energy per atom
-    f_flag=kim_api_isit_compute_f(pkim,"forces",kimerr)
-    if (kimerr.ne.1) then
-       call report_error(__LINE__, "kim_api_isit_compute_f", kimerr)
+    ! Check to see if we have been asked to compute the forces, energyperatom,
+    ! and virial
+    !
+    f_flag=kim_api_isit_compute_f(pkim,"forces",ier)
+    if (ier.ne.1) then
+       call report_error(__LINE__, "kim_api_isit_compute_f", ier)
        stop
     endif
 
-    e_flag=kim_api_isit_compute_f(pkim,"energyPerAtom",kimerr)
-    if (kimerr.ne.1) then
-       call report_error(__LINE__, "kim_api_isit_compute_f", kimerr)
+    e_flag=kim_api_isit_compute_f(pkim,"energyPerAtom",ier)
+    if (ier.ne.1) then
+       call report_error(__LINE__, "kim_api_isit_compute_f", ier)
        stop
     endif
 
-    call calculate(cutoff,sigma,epsilon,pkim,x,f,ea,natom,potenergy, &
-                   f_flag,e_flag,kim_api_get_half_neigh_f,kimerr)
+    ! Call FORTRAN 77 code that does actual calculation
+    !
+    call calculate(model_cutoff,sigma,epsilon,pkim,x,f,ea,natom,potenergy,  &
+                   f_flag,e_flag,kim_api_get_half_neigh_f,ier)
+
   end subroutine calculate_wrap_f77
   
+  !-----------------------------------------------------------------------------
+  !
+  ! error reporting routine
+  !
+  !-----------------------------------------------------------------------------
   subroutine report_error(line, str, status)
     implicit none
 
     !-- Transferred variables
-    integer,   intent(in) :: line
+    integer,          intent(in) :: line
     character(len=*), intent(in) :: str
-    integer,   intent(in) :: status
+    integer,          intent(in) :: status
 
     !-- Local variables
     character(len=10000), parameter :: file = __FILE__
@@ -124,31 +140,34 @@ end module model_Ne_P_LJ_NEIGH_PURE_H
 
 !  Model Initiation routine
 subroutine model_Ne_P_LJ_NEIGH_PURE_H_init(pkim)
-        use model_Ne_P_LJ_NEIGH_PURE_H
-        use KIMservice
-        implicit none
+  use model_Ne_P_LJ_NEIGH_PURE_H
+  use KIMservice
+  implicit none
 
-        !-- Transferred variables
-        integer(kind=kim_intptr) :: kim; pointer(pkim,kim) 
+  !-- Transferred variables
+  integer(kind=kim_intptr), intent(in) :: pkim
 
-        !-- Local variables
-        integer::kimerr
-        integer(kind=kim_intptr) ::sz
-        real*8 :: xcutoff;    pointer(pcutoff,xcutoff)       ! cutoff
+  !-- Local variables
+  integer ier
+  integer(kind=kim_intptr) one
 
-        pcutoff = kim_api_get_data_f(pkim,"cutoff",kimerr)
-        if (kimerr.ne.1) then
-           call report_error(__LINE__, "kim_api_get_data_f", kimerr)
-           stop
-        endif
-        xcutoff = cutoff
+  !-- KIM variables
+  real*8 cutoff;  pointer(pcutoff,cutoff)  ! cutoff radius
 
-        !setting pointer to compute method
-        sz=1
-        kimerr = kim_api_set_data_f(pkim,"compute",sz,loc(calculate_wrap_f77))
-        if (kimerr.ne.1)  then
-           call report_error(__LINE__, "kim_api_set_data_f", kimerr)
-           stop
-        endif
+  ! store pointer to compute function in KIM object
+  one=1
+  ier = kim_api_set_data_f(pkim,"compute",one,loc(calculate_wrap_f77))
+  if (ier.ne.1)  then
+     call report_error(__LINE__, "kim_api_set_data_f", ier)
+     stop
+  endif
+
+  ! store model cutoff in KIM object
+  pcutoff = kim_api_get_data_f(pkim,"cutoff",ier)
+  if (ier.ne.1) then
+     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     stop
+  endif
+  cutoff = model_cutoff
 
 end subroutine model_Ne_P_LJ_NEIGH_PURE_H_init
