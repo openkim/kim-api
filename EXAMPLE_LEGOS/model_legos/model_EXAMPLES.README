@@ -23,7 +23,9 @@ model_Ar_P_MLJ_C                   C         NEIGH-RVEC-F    Iterator   Full    
                                              MI-OPBC-F
                                              CLUSTER
 
-model_Ar_P_MLJ_CLUSTER             F90       CLUSTER         N/A        N/A         YES
+model_Ar_P_MLJ_CLUSTER_C           C         CLUSTER         N/A        N/A         YES
+
+model_Ar_P_MLJ_CLUSTER_F90         F90       CLUSTER         N/A        N/A         YES
 
 model_Ar_P_MLJ_F90                 F90       NEIGH-RVEC-F    Iterator   Full        NO
                                              NEIGH-PURE-H    Locator    Half

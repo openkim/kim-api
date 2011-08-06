@@ -1,5 +1,5 @@
 This directory (MODEL_NAME_STR) contains a modified Lennard Jones (LJ) Model
- with smoothed cutoff radius written in F90.  It complies with the KIM API
+ with smoothed cutoff radius written in LANGUAGE_STR.  It complies with the KIM API
  interface standard, using the NBC_NAME_STR NBC and locator mode, and publishes
  its parameters, and supports optional computation of `forces',
  `energyPerAtoms', and `virial'.
@@ -13,8 +13,8 @@ Makefile
 README
      this file
 
-MODEL_NAME_STR.F90
-     F90 module file that contains the implementation of the LJ potential
+MODEL_NAME_STR.LANGUAGE_STR
+     LANGUAGE_STR file that contains the implementation of the LJ potential
 
 MODEL_NAME_STR.kim
      KIM descriptor file, contains all variables and methods that are exposed
