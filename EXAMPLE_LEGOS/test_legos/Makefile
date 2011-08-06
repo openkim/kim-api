@@ -197,7 +197,7 @@ test_ArNe_B2cohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                          \
 	cat test_Makefile | $(SED_CMD)                    >  $(KIM_TESTS_DIR)$@/Makefile
         # make .kim file in the directory
 	cat descriptor_file_start    | $(SED_CMD) \
-                                     | sed -e 's/SPECIES_LINE_STR/Ar                      spec                    18\n\nNe                      spec                    10/g' \
+                                     | sed -e 's/SPECIES_LINE_STR/Ar                      spec                    18\nNe                      spec                    10/g' \
                                                           >  $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                              >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo "NEIGH-RVEC-F            dummy"              >> $(KIM_TESTS_DIR)$@/$@.kim
