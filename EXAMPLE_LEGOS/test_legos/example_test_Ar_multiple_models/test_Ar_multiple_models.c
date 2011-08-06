@@ -261,7 +261,10 @@ int main()
    if (NULL==nl_cluster_model_1.RijList) report_error(__LINE__,"malloc unsuccessful", -1);
 
    /* ready to compute */
-   printf("                             MODEL_ZERO_periodic   MODEL_ZERO_cluster    MODEL_ONE_periodic    MODEL_ONE_cluster      Spacing\n");
+   printf("\n");
+   printf("MODEL_ZERO is : %s\n", modelname0);
+   printf("MODEL_ONE  is : %s\n\n", modelname0, modelname1);
+   printf("Energy                       MODEL_ZERO_periodic   MODEL_ZERO_cluster    MODEL_ONE_periodic    MODEL_ONE_cluster      Spacing\n");
 
    for (CurrentSpacing = MinSpacing; CurrentSpacing < MaxSpacing; CurrentSpacing += SpacingIncr)
    {
