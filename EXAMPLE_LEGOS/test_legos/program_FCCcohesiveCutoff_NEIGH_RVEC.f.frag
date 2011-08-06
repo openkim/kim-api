@@ -217,7 +217,7 @@ integer function check_model_parameters(pkim)
   paramIndex = 0
   print *,"The model has defined the following parameters:"
   do i=1,nParams
-     print *, i, listOfParameters(i)
+     print *, i, listOfParameters(i)(1:(index(listOfParameters(i),char(0))-1))
      if (index(listOfParameters(i),"PARAM_FREE_cutoff").eq.1) then
         paramIndex = i
      endif
