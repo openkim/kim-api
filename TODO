@@ -18,9 +18,11 @@ Items planned for the next significant release.
 * Rework the KIM_API_get_*_neigh() interface to allow for improved
   computational performance.
 
-* Rework the API's handling of physical units in order to conform to the KIM RD
-  (This will not include the required automatic conversions, which are a
-  feature, listed below, that will require more time to develop.)
+* Rework the API's handling of physical units in order to conform to the KIM
+  Requirements Document (RD).  (This will not include the required automatic
+  conversions, which are a feature, listed below, that will require more time
+  to develop.)  Go to http://openkim.org to read the latest version of the KIM
+  RD.
 
 * Rework the error handling and reporting framework used by the KIM API.
 
@@ -61,6 +63,13 @@ Items planned for future releases.
 
 * Create an example Model and Test written in C++ that makes full use of the
   object oriented nature of the language.
+
+* Rework the model_init() naming convention to avoid Fortran identifiers that
+  are longer than 31 characters.  One idea is to use a SHA1 hash of the Model
+  name for the name of the init function.  The make system can use the
+  preprocessor to automatically substitute the correct hash value in to the
+  Model's code file.  This will make the entire process opaque to the Model
+  developer.
 
 * Implement support for force-fields (CHARMM/GROMACS) type KIM Models.
 

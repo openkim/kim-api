@@ -1,6 +1,6 @@
 =========================== The openkim-api package ===========================
 
-This file provides an introduction to the openKIM API package. This is the
+This file provides an introduction to the openKIM API package.  This is the
 first file that you should read after unpacking the package.
 
 OVERVIEW:
@@ -8,16 +8,16 @@ OVERVIEW:
 Atomistic or molecular simulations of materials have the potential to play a
 key role in the development of innovative technology to address many problems
 the world is currently facing (including climate change, energy generation and
-distribution, and terrorism). Recent examples, where valuable contributions and
-greater insight have been obtained, include applications in chemistry and
+distribution, and terrorism).  Recent examples, where valuable contributions
+and greater insight have been obtained, include applications in chemistry and
 organic chemistry, nanoindentation and tribology, materials processing and
-properties, and nanotechnology and nanofluidics. To model the large numbers of
+properties, and nanotechnology and nanofluidics.  To model the large numbers of
 atoms required for many applications, and to be able to study their dynamics
 over reasonable time scales, it is generally necessary to develop approximate
 models of interatomic bonding, referred to as "interatomic potentials" or
 "interatomic models".  Once such a model is at hand, one can in principle
 predict almost any mechanical property (and some thermal properties) of the
-element (or elements) it purports to describe. Generally, these models define
+element (or elements) it purports to describe.  Generally, these models define
 the forces and energies used for sophisticated simulations using methodologies
 such as molecular dynamics, Monte Carlo, lattice dynamics free energy methods,
 and multiscale methods. From such simulations, complex material properties and
@@ -32,7 +32,7 @@ a current initiative to develop and implement standards for the atomistic
 simulation of materials.  The effort aims to help bring order to the efforts of
 the education, research, and industrial communities and to make it easier for
 new (and existing) scientists to leverage the work of others in this important
-field. The KIM project has several main objectives:
+field.  The KIM project has several main objectives:
 
 1. Development of an online open resource for standardized testing and
    long-term warehousing of interatomic models (potentials and force fields)
@@ -131,8 +131,8 @@ The current version of the openkim-api package supports the following features:
   the course of a simulation.
 
 For more information on all of the above, see the files in the DOCs directory
-described below. Features planned for future releases are described in the
-TODO file in this directory. (See list of directory contents below.)
+described below.  Features planned for future releases are described in the
+TODO file in this directory.  (See list of directory contents below.)
 
 Your next step after reading this file is to install the openKIM API package.
 See the detailed instructions in the INSTALL file in this directory.
@@ -146,7 +146,7 @@ CHANGELOG
      list of main changes made to each API release
 
 DOCs/
-     documentation directory. This directory contains the file
+     documentation directory.  This directory contains the file
      KIM_API_alpha_overview.pdf which provides an overview of this release of
      the openkim-api package, and links to the files KIMserviceDescriptions.txt
      and standard.kim.  (See the README file in that directory.)
@@ -189,8 +189,8 @@ relevant information to
 
 openkim@googlegroups.com
 
-The openkim development team actively monitor this email list and will do
-its best to help you with your question in a timely fashion.
+The members of the openkim development team actively monitor this email list
+and will do their best to help you with your question in a timely fashion.
 
 *******************************************************************************
 

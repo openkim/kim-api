@@ -10,9 +10,9 @@ SYSTEM REQUIREMENTS
 
 To install the openKIM API package you need the following:
 
-1. Unix/Linux/Mac OSX system
+1. A Unix/Linux/Mac OSX system.
 
-2. GNU make
+2. GNU make, and
 
 3. GNU compilers (gcc, g++, gfortran) version 4.2.x or higher or the 
    corresponding Intel compilers, version 11.1 or higher.
@@ -33,7 +33,7 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
        % export KIM_DIR=~/openkim-api-XX.XX.XX/
 
        Make sure to include the trailing slash. The `%' symbol represents the
-       operating system prompt and should not be typed.
+       bash sell prompt and should not be typed.
 
        (Above `XX.XX.XX' represents the current release number.) 
 
@@ -42,7 +42,7 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
        KIM_INTEL
 
        bash: 
-       % export KIM_INTEL="yes". 
+       % export KIM_INTEL="yes"
 
    (c) For using a 32 bit machine, define the environment variable KIM_SYSTEM32 
 
@@ -59,7 +59,8 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
    % cd $KIM_DIR
    % make
 
-     This builds all Models, Tests, and the openKIM API service routine library
+     This builds all Models, Tests, and the openKIM API service routine
+     library. The targets defined by the Makefile in this directory include:
 
        `make'             -- compiles the API and all Models and Tests
        `make all'         -- same as `make'
@@ -70,25 +71,19 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
 3. Verify that the compilation was successful by running a Test.
 
    The provided example Tests read in the name of a Model (or Models) which
-   they use to perform their calculations. For most Tests the name of the Model
-   can be piped in using an `echo' command.  For example, the following Fortran
-   Test reads in one Model:
+   they use to perform their calculations.  For most Tests the name of the
+   Model can be piped in using an `echo' command.  For example, the following
+   Fortran 90 Test reads in one Model:
 
    % cd TESTs/test_Ar_free_cluster_CLUSTER_F90
    % echo "model_Ar_P_MLJ_CLUSTER_C" | ./test_Ar_free_cluster_CLUSTER_F90
-
-   The exception to this rule is the example Test `test_Ar_multiple_models',
-   which reads in two Model names from the command line.  For example:
-
-   % cd TESTs/test_Ar_multiple_models
-   % ./test_Ar_multiple_models model_Ar_P_MLJ_NEIGH_RVEC_F model_Ar_P_MMorse
 
   (See the README files in the Test directories for an explanation of what 
    the Tests do.)
 
 
 4. Each Test (and Model) has its own make file for compiling and linking.  If
-   changes are made to the code, perform step (2) again (from the root
+   changes are made to the code, perform step (2) again (from the $KIM_DIR
    directory).
 
 
@@ -111,23 +106,23 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
 
    If KIM_DYNAMIC is set, the makefile will build .so libraries (in addition to
    the static .a libraries) and KIM API will use those libraries to load models
-   and call initialize routines dynamically (during runtime). The use of dynamic
-   linking may prevent problems of name clashes when multiple Models are read in
-   by a Test. This is still being investigated.
+   and call initialize routines dynamically (during runtime).  The use of
+   dynamic linking may prevent problems of name clashes when multiple Models
+   are read in by a Test.  This is still being investigated.
 
    Note: Currently static linking is the default option because older versions of
-         the gnu compiler do not provide dynamic loading by default.  In 
+         the GNU compiler do not provide dynamic loading by default.  In 
          addition, some versions of MPI only work with static linking.  In 
          future releases, it is expected that dynamic linking will become the 
          default method.
        
 
 7. The openkim-api package provides wrapper routines for accessing the neighbor
-   list object. These routines check to ensure that the maximum number of
-   neighbors for an atom does not exceed KIM_API_MAX_NEIGHBORS. If this
+   list object.  These routines check to ensure that the maximum number of
+   neighbors for an atom does not exceed KIM_API_MAX_NEIGHBORS.  If this
    environment variable is not set, the default value is 512.  To change the
-   value of this parameter, for example, to 1024 (or any other value) use the
-   command:
+   value of this parameter at compile time, for example, to 1024 (or any other
+   value) use the command:
 
    bash:
    % export KIM_API_MAX_NEIGHBORS=1024
@@ -144,10 +139,10 @@ TROUBLESHOOTING
    compiler, change lines 53-72 in KIM_API/Include.mk
 
 2. Linking problems: By default, the make system uses the g++ compiler with the
-   -lgfortran option to link compiled FORTRAN executables. If (for some versions
-   of Linux or GNU compilers) linking of FORTRAN executables with the g++ 
-   compiler does not work, try gfortran with the -lstdc++ option.  See lines 
-   66-67 in the Include.mk file (change them to lines 68-69).
+   -lgfortran option to link compiled Fortran executables.  If (for some
+   versions of Linux or GNU compilers) linking of Fortran executables with the
+   g++ compiler does not work, try gfortran with the -lstdc++ option.  See
+   lines 66-67 in the Include.mk file (change them to lines 68-69).
 
 *******************************************************************************
 
@@ -158,7 +153,7 @@ relevant information to
 
 openkim@googlegroups.com
 
-The openkim development team actively monitor this email list and will do
-its best to help you with your question in a timely fashion.
+The members of the openkim development team actively monitor this email list
+and will do their best to help you with your question in a timely fashion.
 
 *******************************************************************************
