@@ -168,7 +168,7 @@ A description of the provided example Tests is given below.  The Tests are,
 roughly, listed in order of increasing complexity.  It is suggested that
 examining the example Tests in this order will provide a gradual introduction
 to the various components of a KIM-compliant Test.  (See the README file in the
-DOCs directory for guidelines on how to study the Models distributed with this 
+DOCs directory for guidelines on how to study the Tests distributed with this 
 package.)
 
 test_Ar_free_cluster_CLUSTER_C (C)

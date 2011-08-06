@@ -69,10 +69,11 @@ model_Ar_P_MLJ_CLUSTER_F90 (Fortran 90)
      (NBC) method, which is the simplest computation to understand.  For this
      reason, looking at the compute() or Compute_Energy_Forces() subroutines,
      respectively, for this Model is a good place to get started when first
-     trying to understand how a KIM compliant Model works.  These Models also
-     publishes their parameters, which makes them somewhat more complicated
-     than the example Models included in this openkim-api release that do not
-     publish their parameters.
+     trying to understand how a KIM compliant Model works.  Note that these 
+     Models publish their parameters. This means that they must also provide
+     reinitialization and destroy routines in addition to the required 
+     initialization routine. Examples of Models that do not publish parameters
+     (which makes the initialization routine simpler) are described below.
 
 model_Ne_P_LJ_NEIGH_PURE_H (FORTRAN 77)
      This Model implements the NEIGH-PURE-H NBC method, which is slightly more
@@ -112,18 +113,18 @@ model_ArNe_P_MLJ_NEIGH_RVEC_F (Fortran 90)
 model_Ar_P_MLJ_C (C)
      This Model is based on the template file
      $KIM_DIR/DOCs/TEMPLATEs/model_El_P_Template.c.  Thus, it is useful to
-     compare these the file model_Ar_P_MLJ_C.c with
+     compare the file model_Ar_P_MLJ_C.c with
      $KIM_DIR/DOCs/TEMPLATEs/model_El_P_Template.c to see the relatively few
-     changes required to implement the modified Lennard Jones model.  The
+     changes required to implement the modified Lennard-Jones model.  The
      template implements all NBCs and Iterator and Locator modes in a way that
      results in a very compact compute() function.
 
 model_Ar_P_MLJ_F90 (Fortran 90)
      This Model is based on the template file
      $KIM_DIR/DOCs/TEMPLATEs/model_El_P_Template.F90.  Thus, it is useful to
-     compare the the file model_Ar_P_MLJ_F90.F90 with
+     compare the file model_Ar_P_MLJ_F90.F90 with
      $KIM_DIR/DOCs/TEMPLATEs/model_El_P_Template.F90 to see the relatively few
-     changes required to implement the modified Lennard Jones model.  The
+     changes required to implement the modified Lennard-Jones model.  The
      template implements all NBCs and Iterator and Locator modes in a way that
      results in a very compact Compute_Energy_Forces() subroutine.
 
@@ -140,5 +141,5 @@ model_Al_PF_ErcolessiAdams (Fortran 90)
      $KIM_DIR/DOCs/TEMPLATEs/model_El_PF_Template.F90.  Thus, it is useful to
      compare the file model_Al_PF_ErcolessiAdams.F90 with
      $KIM_DIRDOCs/TEMPLATEs/model_El_PF_Template.F90 to see the relatively
-     simple changes required to implement an EAM pair functional Model.
+     simple changes required to implement a pair functional Model.
 

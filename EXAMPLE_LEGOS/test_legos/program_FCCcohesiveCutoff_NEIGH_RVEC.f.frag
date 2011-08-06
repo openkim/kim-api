@@ -30,13 +30,13 @@ program TEST_NAME_STR
 
   ! parameters controlling behavior of test
   !
-  character(len=80),        parameter :: testname    = "TEST_NAME_STR"
-  character(len=2),         parameter :: specname    = 'SPECIES_NAME_STR'
-  double precision,         parameter :: TOL         = 1.0d-8
-  double precision,         parameter :: FCCspacing  = FCC_SPACING_STR
-  double precision,         parameter :: MinSpacing  = 0.800d0*FCCspacing
-  double precision,         parameter :: MaxSpacing  = 1.200d0*FCCspacing
-  integer,                  parameter :: DIM         = 3
+  character(len=80), parameter :: testname    = "TEST_NAME_STR"
+  character(len=2),  parameter :: specname    = 'SPECIES_NAME_STR'
+  double precision,  parameter :: TOL         = 1.0d-8
+  double precision,  parameter :: FCCspacing  = FCC_SPACING_STR
+  double precision,  parameter :: MinSpacing  = 0.800d0*FCCspacing
+  double precision,  parameter :: MaxSpacing  = 1.200d0*FCCspacing
+  integer,           parameter :: DIM         = 3
 
   ! significant local variables
   !

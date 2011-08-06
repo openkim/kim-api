@@ -22,14 +22,14 @@ subroutine create_FCC_configuration(FCCspacing, nCellsPerSide, periodic, coords,
   double precision, intent(in)  :: FCCspacing
   integer,          intent(in)  :: nCellsPerSide
   logical,          intent(in)  :: periodic
-  double precision, dimension(3,*), intent(out) :: coords
+  double precision, intent(out) :: coords(3,*)
   integer,          intent(out) :: MiddleAtomId
   !
   ! cluster setup variables
   !
-  double precision :: FCCshifts(3,4)
-  double precision :: latVec(3)
-  integer          :: a, i, j, k, m
+  double precision FCCshifts(3,4)
+  double precision latVec(3)
+  integer a, i, j, k, m
 
   ! Create a cubic FCC cluster
   !
