@@ -1,0 +1,50 @@
+#!/bin/sh
+
+packagename=$1
+
+# check for errors
+
+if [[ "$packagename" == "" ]]; then
+  echo "usage: $0 packagename"
+  exit
+fi
+
+if [[ -e $packagename ]]; then
+  echo "File '$packagename' exits! exiting..."
+  exit
+fi
+
+# DO IT
+
+git clone . $packagename
+
+cd $packagename
+
+versionfile=openkim-api.version.info
+echo "This package created from commit"    > $versionfile
+echo ""                                   >> $versionfile
+git rev-parse HEAD                        >> $versionfile
+echo ""                                   >> $versionfile
+echo "of the openkim-api git repository." >> $versionfile
+
+rm -rf .git
+
+cd EXAMPLE_LEGOS
+
+make
+
+cd ..
+
+rm -rf EXAMPLE_LEGOS
+
+rm -f README.git
+rm -f create_package
+rm -f DOCs/openkim-api-introduction.pptx
+rm -f `find . -name ".gitignore"`
+
+cd ..
+
+tar czvf $packagename.tgz $packagename
+
+rm -rf $packagename
+
