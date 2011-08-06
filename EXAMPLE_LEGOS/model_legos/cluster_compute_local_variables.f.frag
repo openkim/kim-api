@@ -1,2 +1,2 @@
-    integer :: i,j
+    integer i,j
     double precision, dimension(DIM) :: Rij

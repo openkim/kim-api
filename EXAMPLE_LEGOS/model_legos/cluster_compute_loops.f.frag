@@ -6,7 +6,7 @@
     do i = 1, numberOfAtoms-1
        ! Loop over atoms > i
        do j = i+1, numberOfAtoms
-          Rij = coor(:,j) - coor(:,i)                   ! distance vector between i j
+          Rij(:) = coor(:,j) - coor(:,i)                ! distance vector between i j
           Rsqij = dot_product(Rij,Rij)                  ! compute square distance
           if ( Rsqij < model_cutsq ) then               ! particles are interacting?
              r = sqrt(Rsqij)                            ! compute distance

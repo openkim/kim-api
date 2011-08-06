@@ -3,7 +3,7 @@
 !**  MODULE MODEL_NAME_STR
 !**
 !**  Lennard-Jones pair potential model for argon 
-!**  (modified to have smooth cutoff)
+!**  (modified by adding a quadratic function to have a smooth cutoff)
 !**
 !**  Authors: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
 !**
@@ -15,7 +15,6 @@
 module MODEL_NAME_STR
   use KIMservice
   implicit none
-
 
   save
   private
@@ -40,4 +39,4 @@ contains
     
     !-- Local variables
     integer, parameter :: DIM=3
-    double precision :: r,Rsqij,phi,dphi,d2phi
+    double precision r,Rsqij,phi,dphi,d2phi

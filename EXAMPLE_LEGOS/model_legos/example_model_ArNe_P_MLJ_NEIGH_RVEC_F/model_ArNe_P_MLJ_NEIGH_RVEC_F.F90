@@ -46,148 +46,159 @@ contains
     
     !-- Local variables
     integer, parameter :: DIM=3
-    double precision :: r,Rsqij,phi,dphi,d2phi
-    double precision :: CurEpsilon, CurSigma, CurA, CurB, CurC
-    integer :: i,jj,numnei,atom,atom_ret
+    double precision r,Rsqij,phi,dphi,d2phi
+    double precision CurEpsilon, CurSigma, CurA, CurB, CurC
+    integer i,jj,numnei,atom,atom_ret
     
     !-- KIM variables
     integer(kind=8) numberOfAtoms; pointer(pnAtoms,numberOfAtoms)
-    integer nAtomTypes;  pointer(pnAtomTypes,nAtomTypes)
-    integer atomTypes(1);  pointer(patomTypes,atomTypes)
-    
-
-    real*8 model_cutoff;        pointer(pcutoff,model_cutoff)
-    real*8 model_epsilon(1);    pointer(pepsilon,model_epsilon)
-    real*8 model_sigma(1);      pointer(psigma,model_sigma)
-    real*8 model_cutnorm(1);    pointer(pcutnorm,model_cutnorm)
-    real*8 model_A(1);          pointer(pA,model_A)
-    real*8 model_B(1);          pointer(pB,model_B)
-    real*8 model_C(1);          pointer(pC,model_C)
-    real*8 model_sigmasq(1);    pointer(psigmasq,model_sigmasq)
-    real*8 model_cutsq;         pointer(pcutsq,model_cutsq)
-    real*8 energy;              pointer(penergy,energy)
-    real*8 coordum(DIM,1);      pointer(pcoor,coordum)
-    real*8 forcedum(DIM,1);     pointer(pforce,forcedum)
-    real*8 enepotdum(1);        pointer(penepot,enepotdum)
-    real*8 virial;              pointer(pvirial,virial)
-    real*8 Rij(3,1);            pointer(pRij,Rij)
-    integer nei1atom(1);        pointer(pnei1atom,nei1atom)
+    integer nAtomTypes;            pointer(pnAtomTypes,nAtomTypes)
+    integer atomTypes(1);          pointer(patomTypes,atomTypes)
+    real*8 model_cutoff;           pointer(pcutoff,model_cutoff)
+    real*8 model_epsilon(1);       pointer(pepsilon,model_epsilon)
+    real*8 model_sigma(1);         pointer(psigma,model_sigma)
+    real*8 model_cutnorm(1);       pointer(pcutnorm,model_cutnorm)
+    real*8 model_A(1);             pointer(pA,model_A)
+    real*8 model_B(1);             pointer(pB,model_B)
+    real*8 model_C(1);             pointer(pC,model_C)
+    real*8 model_sigmasq(1);       pointer(psigmasq,model_sigmasq)
+    real*8 model_cutsq;            pointer(pcutsq,model_cutsq)
+    real*8 energy;                 pointer(penergy,energy)
+    real*8 coordum(DIM,1);         pointer(pcoor,coordum)
+    real*8 forcedum(DIM,1);        pointer(pforce,forcedum)
+    real*8 enepotdum(1);           pointer(penepot,enepotdum)
+    real*8 virial;                 pointer(pvirial,virial)
+    real*8 Rij(3,1);               pointer(pRij,Rij)
+    integer nei1atom(1);           pointer(pnei1atom,nei1atom)
     real*8, pointer :: coor(:,:),force(:,:),ene_pot(:)
     integer :: comp_force, comp_enepot, comp_virial
-    integer N4     !@@@@@@@@@ NEEDS TO BE FIXED
+    integer N4
     
     ! Unpack data from KIM object
     !
-    pnAtoms = kim_api_get_data_f(pkim,"numberOfAtoms",ier);
+    pnAtoms = kim_api_get_data_f(pkim,"numberOfAtoms",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_get_data", ier);
+       call report_error(__LINE__, "kim_api_get_data", ier)
        return
     endif
-    pnAtomTypes = kim_api_get_data_f(pkim,"numberAtomTypes",ier);
+
+    pnAtomTypes = kim_api_get_data_f(pkim,"numberAtomTypes",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_get_data", ier);
+       call report_error(__LINE__, "kim_api_get_data", ier)
        return
     endif
-    patomTypes = kim_api_get_data_f(pkim,"atomTypes",ier);
+
+    patomTypes = kim_api_get_data_f(pkim,"atomTypes",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_get_data", ier);
+       call report_error(__LINE__, "kim_api_get_data", ier)
        return
     endif
-    pcutoff = kim_api_get_data_f(pkim,"cutoff",ier);
+
+    pcutoff = kim_api_get_data_f(pkim,"cutoff",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_get_data", ier);
+       call report_error(__LINE__, "kim_api_get_data", ier)
        return
     endif
-    pepsilon = kim_api_get_data_f(pkim,"PARAM_FREE_epsilon",ier);
+
+    pepsilon = kim_api_get_data_f(pkim,"PARAM_FREE_epsilon",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_get_data", ier);
+       call report_error(__LINE__, "kim_api_get_data", ier)
        return
     endif
-    psigma = kim_api_get_data_f(pkim,"PARAM_FREE_sigma",ier);
+
+    psigma = kim_api_get_data_f(pkim,"PARAM_FREE_sigma",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_get_data", ier);
+       call report_error(__LINE__, "kim_api_get_data", ier)
        return
     endif
-    pcutnorm = kim_api_get_data_f(pkim,"PARAM_FIXED_cutnorm",ier);
+
+    pcutnorm = kim_api_get_data_f(pkim,"PARAM_FIXED_cutnorm",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_get_data", ier);
+       call report_error(__LINE__, "kim_api_get_data", ier)
        return
     endif
-    pA = kim_api_get_data_f(pkim,"PARAM_FIXED_A",ier);
+
+    pA = kim_api_get_data_f(pkim,"PARAM_FIXED_A",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_get_data", ier);
+       call report_error(__LINE__, "kim_api_get_data", ier)
        return
     endif
-    pB = kim_api_get_data_f(pkim,"PARAM_FIXED_B",ier);
+
+    pB = kim_api_get_data_f(pkim,"PARAM_FIXED_B",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_get_data", ier);
+       call report_error(__LINE__, "kim_api_get_data", ier)
        return
     endif
-    pC = kim_api_get_data_f(pkim,"PARAM_FIXED_C",ier);
+
+    pC = kim_api_get_data_f(pkim,"PARAM_FIXED_C",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_get_data", ier);
+       call report_error(__LINE__, "kim_api_get_data", ier)
        return
     endif
-    psigmasq = kim_api_get_data_f(pkim,"PARAM_FIXED_sigmasq",ier);
+
+    psigmasq = kim_api_get_data_f(pkim,"PARAM_FIXED_sigmasq",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_get_data", ier);
+       call report_error(__LINE__, "kim_api_get_data", ier)
        return
     endif
-    pcutsq = kim_api_get_data_f(pkim,"PARAM_FIXED_cutsq",ier);
+
+    pcutsq = kim_api_get_data_f(pkim,"PARAM_FIXED_cutsq",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_get_data", ier);
+       call report_error(__LINE__, "kim_api_get_data", ier)
        return
     endif
-    penergy = kim_api_get_data_f(pkim,"energy",ier);
+
+    penergy = kim_api_get_data_f(pkim,"energy",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_get_data", ier);
+       call report_error(__LINE__, "kim_api_get_data", ier)
        return
     endif
-    pcoor = kim_api_get_data_f(pkim,"coordinates",ier);
+
+    pcoor = kim_api_get_data_f(pkim,"coordinates",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_get_data", ier);
+       call report_error(__LINE__, "kim_api_get_data", ier)
        return
     endif
     
     ! Check to see if we have been asked to compute the forces, energyperatom, and virial
-    comp_force  = kim_api_isit_compute_f(pkim,"forces",ier);
+    comp_force  = kim_api_isit_compute_f(pkim,"forces",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_isit_compute", ier);
+       call report_error(__LINE__, "kim_api_isit_compute", ier)
        return
     endif
-    comp_enepot = kim_api_isit_compute_f(pkim,"energyPerAtom",ier);
+    comp_enepot = kim_api_isit_compute_f(pkim,"energyPerAtom",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_isit_compute", ier);
+       call report_error(__LINE__, "kim_api_isit_compute", ier)
        return
     endif
-    comp_virial = kim_api_isit_compute_f(pkim,"virial",ier);
+    comp_virial = kim_api_isit_compute_f(pkim,"virial",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_isit_compute", ier);
+       call report_error(__LINE__, "kim_api_isit_compute", ier)
        return
     endif
     
     ! Cast to F90 arrays
     N4=numberOfAtoms
     if (comp_force.eq.1) then 
-       pforce  = kim_api_get_data_f(pkim,"forces",ier);        
+       pforce  = kim_api_get_data_f(pkim,"forces",ier)
        if (ier.le.0) then
-          call report_error(__LINE__, "kim_api_get_data", ier);
+          call report_error(__LINE__, "kim_api_get_data", ier)
           return
        endif
        call toRealArrayWithDescriptor2d(forcedum,force,DIM,N4)
     endif
     if (comp_enepot.eq.1) then 
-       penepot = kim_api_get_data_f(pkim,"energyPerAtom",ier); 
+       penepot = kim_api_get_data_f(pkim,"energyPerAtom",ier) 
        if (ier.le.0) then
-          call report_error(__LINE__, "kim_api_get_data", ier);
+          call report_error(__LINE__, "kim_api_get_data", ier)
           return
        endif
        call toRealArrayWithDescriptor1d(enepotdum,ene_pot,N4)
     endif
     if (comp_virial.eq.1) then
-       pvirial = kim_api_get_data_f(pkim,"virial",ier);
+       pvirial = kim_api_get_data_f(pkim,"virial",ier)
        if (ier.le.0) then
-          call report_error(__LINE__, "kim_api_get_data", ier);
+          call report_error(__LINE__, "kim_api_get_data", ier)
           return
        endif
     endif
@@ -198,7 +209,7 @@ contains
     ier = 0 ! assume an error
     do i = 1,numberOfAtoms
        if (.not. ( (atomTypes(i).eq.Ar) .or. (atomTypes(i).eq.Ne) ) ) then
-          call report_error(__LINE__, "Wrong Atom Type", i);
+          call report_error(__LINE__, "Wrong Atom Type", i)
           return
        endif
     enddo
@@ -225,7 +236,7 @@ contains
        atom = i ! request neighbors for atom i
        ier = kim_api_get_full_neigh_f(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij)
        if (ier.le.0) then
-          call report_error(__LINE__, "kim_api_get_full_neigh_f_f", ier);
+          call report_error(__LINE__, "kim_api_get_full_neigh_f_f", ier)
           return
        endif
        
@@ -293,8 +304,8 @@ contains
     double precision :: rsq,sor,sor6,sor12
     
     rsq  = r*r             !  r^2
-    sor  = sigma/r   !  (sig/r)
-    sor6 = sor*sor*sor
+    sor  = sigma/r         !  (sig/r)
+    sor6 = sor*sor*sor     !
     sor6 = sor6*sor6       !  (sig/r)^6
     sor12= sor6*sor6       !  (sig/r)^12
     
@@ -333,21 +344,21 @@ contains
     ! get sigma from KIM object
     psigma = kim_api_get_data_f(pkim,"PARAM_FREE_sigma",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_get_data", ier);
+       call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
     
     ! get epsilon from KIM object
     pepsilon = kim_api_get_data_f(pkim,"PARAM_FREE_epsilon",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_get_data", ier);
+       call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
     
     ! get cutoff parameter from KIM object
     pparamcut = kim_api_get_data_f(pkim,"PARAM_FREE_cutoff",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_get_data", ier);
+       call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
     
@@ -356,7 +367,7 @@ contains
     ! store model cutoff in KIM object
     pcutoff =  kim_api_get_data_f(pkim,"cutoff",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_get_data", ier);
+       call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
     model_cutoff = model_Pcutoff
@@ -364,7 +375,7 @@ contains
     ! store cutnorm in KIM object
     pcutnorm = kim_api_get_data_f(pkim,"PARAM_FIXED_cutnorm",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_get_data", ier);
+       call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
     model_cutnorm(1:3) = model_cutoff/model_sigma(1:3)
@@ -372,7 +383,7 @@ contains
     ! store A in KIM object
     pA = kim_api_get_data_f(pkim,"PARAM_FIXED_A",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_get_data", ier);
+       call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
     model_A(1:3) = 12.d0*model_epsilon(1:3)*(-26.d0 + 7.d0*model_cutnorm(1:3)**6)/ &
@@ -381,7 +392,7 @@ contains
     ! store B in KIM object
     pB = kim_api_get_data_f(pkim,"PARAM_FIXED_B",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_get_data", ier);
+       call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
     model_B(1:3) = 96.d0*model_epsilon(1:3)*(7.d0-2.d0*model_cutnorm(1:3)**6)/     &
@@ -390,7 +401,7 @@ contains
     ! store C in KIM object
     pC = kim_api_get_data_f(pkim,"PARAM_FIXED_C",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_get_data", ier);
+       call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
     model_C(1:3) = 28.d0*model_epsilon(1:3)*(-13.d0+4.d0*model_cutnorm(1:3)**6)/   &
@@ -399,7 +410,7 @@ contains
     ! store sigma^2 in KIM object
     psigmasq = kim_api_get_data_f(pkim,"PARAM_FIXED_sigmasq",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_get_data", ier);
+       call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
     model_sigmasq(1:3) = model_sigma(1:3)**2
@@ -407,7 +418,7 @@ contains
     ! store cutoff^2 in KIM object
     pcutsq = kim_api_get_data_f(pkim,"PARAM_FIXED_cutsq",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_get_data", ier);
+       call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
     model_cutsq = model_cutoff**2
@@ -442,7 +453,7 @@ contains
     ! get sigma from KIM object and free memory
     psigma = kim_api_get_data_f(pkim,"PARAM_FREE_sigma",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_get_data", ier);
+       call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
     call free(psigma)
@@ -450,7 +461,7 @@ contains
     ! get epsilon from KIM object and free memory
     pepsilon = kim_api_get_data_f(pkim,"PARAM_FREE_epsilon",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_get_data", ier);
+       call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
     call free(pepsilon)
@@ -458,7 +469,7 @@ contains
     ! get cutoff parameter from KIM object and free memory
     pparamcut = kim_api_get_data_f(pkim,"PARAM_FREE_cutoff",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_get_data", ier);
+       call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
     call free(pparamcut)
@@ -466,7 +477,7 @@ contains
     ! get cutnorm in KIM object and free memory
     pcutnorm = kim_api_get_data_f(pkim,"PARAM_FIXED_cutnorm",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_get_data", ier);
+       call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
     call free(pcutnorm)
@@ -474,7 +485,7 @@ contains
     ! get A in KIM object and free memory
     pA = kim_api_get_data_f(pkim,"PARAM_FIXED_A",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_get_data", ier);
+       call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
     call free(pA)
@@ -482,7 +493,7 @@ contains
     ! get B in KIM object and free memory
     pB = kim_api_get_data_f(pkim,"PARAM_FIXED_B",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_get_data", ier);
+       call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
     call free(pB)
@@ -490,7 +501,7 @@ contains
     ! get C in KIM object and free memory
     pC = kim_api_get_data_f(pkim,"PARAM_FIXED_C",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_get_data", ier);
+       call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
     call free(pC)
@@ -498,7 +509,7 @@ contains
     ! get sigma^2 in KIM object and free memory
     psigmasq = kim_api_get_data_f(pkim,"PARAM_FIXED_sigmasq",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_get_data", ier);
+       call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
     call free(psigmasq)
@@ -506,7 +517,7 @@ contains
     ! get cutoff^2 in KIM object and free memory
     pcutsq = kim_api_get_data_f(pkim,"PARAM_FIXED_cutsq",ier)
     if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_get_data", ier);
+       call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
     call free(pcutsq)
@@ -562,26 +573,26 @@ subroutine model_ArNe_P_MLJ_NEIGH_RVEC_F_init(pkim)
   
   ! store pointer to compute function in KIM object
   if (kim_api_set_data_f(pkim,"compute",one,loc(Compute_Energy_Forces)).ne.1) then
-     call report_error(__LINE__, "kim_api_set_data", ier);
+     call report_error(__LINE__, "kim_api_set_data", ier)
      stop
   endif
   
   ! store pointer to reinit function in KIM object
   if (kim_api_set_data_f(pkim,"reinit",one,loc(ReInit)).ne.1) then
-     call report_error(__LINE__, "kim_api_set_data", ier);
+     call report_error(__LINE__, "kim_api_set_data", ier)
      stop
   endif
 
   ! store pointer to destroy function in KIM object
   if (kim_api_set_data_f(pkim,"destroy",one,loc(Destroy)).ne.1) then
-     call report_error(__LINE__, "kim_api_set_data", ier);
+     call report_error(__LINE__, "kim_api_set_data", ier)
      stop
   endif
   
   ! store model cutoff in KIM object
   pcutoff =  kim_api_get_data_f(pkim,"cutoff",ier)
   if (ier.le.0) then
-     call report_error(__LINE__, "kim_api_get_data", ier);
+     call report_error(__LINE__, "kim_api_get_data", ier)
      stop
   endif
   model_cutoff = 8.15d0 ! cutoff distance in angstroms
@@ -591,7 +602,7 @@ subroutine model_ArNe_P_MLJ_NEIGH_RVEC_F_init(pkim)
   ! store sigma in KIM object
   ier = kim_api_set_data_f(pkim,"PARAM_FREE_sigma",three,psigma)
   if (ier.le.0) then
-     call report_error(__LINE__, "kim_api_set_data", ier);
+     call report_error(__LINE__, "kim_api_set_data", ier)
      stop
   endif
   model_sigma(1) = 3.40d0 ! LJ Argon sigma in angstroms
@@ -603,7 +614,7 @@ subroutine model_ArNe_P_MLJ_NEIGH_RVEC_F_init(pkim)
   ! store epsilon in KIM object
   ier = kim_api_set_data_f(pkim,"PARAM_FREE_epsilon",three,pepsilon)
   if (ier.le.0) then
-     call report_error(__LINE__, "kim_api_set_data", ier);
+     call report_error(__LINE__, "kim_api_set_data", ier)
      stop
   endif
   model_epsilon(1) = 0.0104d0 ! LJ Argon epsilon in eV
@@ -615,7 +626,7 @@ subroutine model_ArNe_P_MLJ_NEIGH_RVEC_F_init(pkim)
   ! store cutoff as parameter in KIM object
   ier = kim_api_set_data_f(pkim,"PARAM_FREE_cutoff",one,pparamcut)
   if (ier.le.0) then
-     call report_error(__LINE__, "kim_api_set_data", ier);
+     call report_error(__LINE__, "kim_api_set_data", ier)
      stop
   endif
   model_Pcutoff = model_cutoff
@@ -625,7 +636,7 @@ subroutine model_ArNe_P_MLJ_NEIGH_RVEC_F_init(pkim)
   ! store cutnorm in KIM object
   ier = kim_api_set_data_f(pkim,"PARAM_FIXED_cutnorm",three,pcutnorm)
   if (ier.le.0) then
-     call report_error(__LINE__, "kim_api_set_data", ier);
+     call report_error(__LINE__, "kim_api_set_data", ier)
      stop
   endif
   model_cutnorm(1:3) = model_cutoff/model_sigma(1:3)
@@ -635,7 +646,7 @@ subroutine model_ArNe_P_MLJ_NEIGH_RVEC_F_init(pkim)
   ! store A in KIM object
   ier = kim_api_set_data_f(pkim,"PARAM_FIXED_A",three,pA)
   if (ier.le.0) then
-     call report_error(__LINE__, "kim_api_set_data", ier);
+     call report_error(__LINE__, "kim_api_set_data", ier)
      stop
   endif
   model_A(1:3) = 12.d0*model_epsilon(1:3)*(-26.d0 + 7.d0*model_cutnorm(1:3)**6)/ &
@@ -646,7 +657,7 @@ subroutine model_ArNe_P_MLJ_NEIGH_RVEC_F_init(pkim)
   ! store B in KIM object
   ier = kim_api_set_data_f(pkim,"PARAM_FIXED_B",three,pB)
   if (ier.le.0) then
-     call report_error(__LINE__, "kim_api_set_data", ier);
+     call report_error(__LINE__, "kim_api_set_data", ier)
      stop
   endif
   model_B(1:3) = 96.d0*model_epsilon(1:3)*(7.d0-2.d0*model_cutnorm(1:3)**6)/     &
@@ -657,7 +668,7 @@ subroutine model_ArNe_P_MLJ_NEIGH_RVEC_F_init(pkim)
   ! store C in KIM object
   ier = kim_api_set_data_f(pkim,"PARAM_FIXED_C",three,pC)
   if (ier.le.0) then
-     call report_error(__LINE__, "kim_api_set_data", ier);
+     call report_error(__LINE__, "kim_api_set_data", ier)
      stop
   endif
   model_C(1:3) = 28.d0*model_epsilon(1:3)*(-13.d0+4.d0*model_cutnorm(1:3)**6)/   &
@@ -668,7 +679,7 @@ subroutine model_ArNe_P_MLJ_NEIGH_RVEC_F_init(pkim)
   ! store sigma^2 in KIM object
   ier = kim_api_set_data_f(pkim,"PARAM_FIXED_sigmasq",three,psigmasq)
   if (ier.le.0) then
-     call report_error(__LINE__, "kim_api_set_data", ier);
+     call report_error(__LINE__, "kim_api_set_data", ier)
      stop
   endif
   model_sigmasq(1:3) = model_sigma(1:3)**2
@@ -678,7 +689,7 @@ subroutine model_ArNe_P_MLJ_NEIGH_RVEC_F_init(pkim)
   ! store cutoff^2 in KIM object
   ier = kim_api_set_data_f(pkim,"PARAM_FIXED_cutsq",one,pcutsq)
   if (ier.le.0) then
-     call report_error(__LINE__, "kim_api_set_data", ier);
+     call report_error(__LINE__, "kim_api_set_data", ier)
      stop
   endif
   model_cutsq = model_cutoff**2
