@@ -50,7 +50,7 @@ program TEST_NAME_STR
   character*80              :: testname     = "TEST_NAME_STR"
   character*80              :: modelname
   character*64 :: NBC_Method; pointer(pNBC_Method,NBC_Method)
-  integer :: nbc  ! 0- MI-OPBC-H, 1- MI-OPBC-F, 2- NEIGH-PURE-H, 3- NEIGH-PURE-F, 4- NEIGH-RVCE-F
+  integer nbc  ! 0- MI-OPBC-H, 1- MI-OPBC-F, 2- NEIGH-PURE-H, 3- NEIGH-PURE-F, 4- NEIGH-RVCE-F
   integer(kind=kim_intptr)  :: pkim
   integer                   :: ier
   integer(kind=8) numberOfAtoms; pointer(pnAtoms,numberOfAtoms)
@@ -65,7 +65,7 @@ program TEST_NAME_STR
   integer N4
   real*8, pointer  :: coords(:,:), forces(:,:)
   integer, pointer :: atomTypes(:)
-  integer :: middleDum
+  integer middleDum
   N4 = N
 
   

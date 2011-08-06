@@ -3,24 +3,25 @@
 ! NEIGH_RVEC_F_periodic_B2_neighborlist 
 !
 !-------------------------------------------------------------------------------
-subroutine NEIGH_RVEC_F_periodic_B2_neighborlist(CellsPerHalfSide, cutoff, B2spacing, NN, neighborList, RijList)
+subroutine NEIGH_RVEC_F_periodic_B2_neighborlist(CellsPerHalfSide, cutoff,  &
+                                      B2spacing, NN, neighborList, RijList)
   use KIMservice
   implicit none
   
   !-- Transferred variables
-  integer,                                             intent(in)  :: CellsPerHalfSide
-  double precision,                                    intent(in)  :: cutoff
-  double precision,                                    intent(in)  :: B2spacing
-  integer,                                             intent(in)  :: NN
-  integer, dimension(NN,1),                            intent(out) :: neighborList
-  double precision, dimension(3,NN,1),                 intent(out) :: RijList
+  integer,                             intent(in)  :: CellsPerHalfSide
+  double precision,                    intent(in)  :: cutoff
+  double precision,                    intent(in)  :: B2spacing
+  integer,                             intent(in)  :: NN
+  integer, dimension(NN,1),            intent(out) :: neighborList
+  double precision, dimension(3,NN,1), intent(out) :: RijList
   
   !-- Local variables
   double precision dx(3)
   double precision cutoff2
-  double precision :: B2shifts(3,2)
-  double precision :: latVec(3)
-  integer          :: atom, a, i, j, k, m
+  double precision B2shifts(3,2)
+  double precision latVec(3)
+  integer atom, a, i, j, k, m
 
   cutoff2 = cutoff**2
 

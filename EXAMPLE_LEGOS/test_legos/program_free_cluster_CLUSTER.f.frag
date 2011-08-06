@@ -46,7 +46,7 @@ program TEST_NAME_STR
   integer N4
   real*8, pointer  :: coords(:,:), forces(:,:)
   integer, pointer :: atomTypes(:)
-  integer :: middleDum
+  integer middleDum
   N4 = N
 
   

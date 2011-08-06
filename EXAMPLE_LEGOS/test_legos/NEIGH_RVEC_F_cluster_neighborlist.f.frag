@@ -8,12 +8,12 @@ subroutine NEIGH_RVEC_F_cluster_neighborlist(numberOfAtoms, coords, cutoff, NN, 
   implicit none
 
   !-- Transferred variables
-  integer(kind=kim_intptr),                            intent(in)  :: numberOfAtoms
-  double precision, dimension(3,numberOfAtoms),               intent(in)  :: coords
-  double precision,                                           intent(in)  :: cutoff
-  integer,                                                    intent(in)  :: NN
-  integer, dimension(NN+1,numberOfAtoms),                     intent(out) :: neighborList
-  double precision, dimension(3,NN+1,numberOfAtoms),          intent(out) :: RijList
+  integer(kind=kim_intptr),                          intent(in)  :: numberOfAtoms
+  double precision, dimension(3,numberOfAtoms),      intent(in)  :: coords
+  double precision,                                  intent(in)  :: cutoff
+  integer,                                           intent(in)  :: NN
+  integer, dimension(NN+1,numberOfAtoms),            intent(out) :: neighborList
+  double precision, dimension(3,NN+1,numberOfAtoms), intent(out) :: RijList
   
   !-- Local variables
   integer i, j, a
@@ -26,7 +26,7 @@ subroutine NEIGH_RVEC_F_cluster_neighborlist(numberOfAtoms, coords, cutoff, NN, 
   do i=1,numberOfAtoms
      a = 1
      do j=1,numberOfAtoms
-        dx = coords(:, j) - coords(:, i)
+        dx(:) = coords(:, j) - coords(:, i)
         r2 = dot_product(dx, dx)
         if (r2.le.cutoff2) then
            if (i.ne.j) then

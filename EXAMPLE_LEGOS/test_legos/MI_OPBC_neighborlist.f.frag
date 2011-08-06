@@ -27,7 +27,7 @@ subroutine MI_OPBC_neighborlist(half, numberOfAtoms, coords, rcut, boxlength, ne
   do i=1,numberOfAtoms
      a = 1
      do j=1,numberOfAtoms
-        dx = coords(:, j) - coords(:, i)
+        dx(:) = coords(:, j) - coords(:, i)
         where (abs(dx) > 0.5d0*boxlength)  ! apply PBC
            dx = dx - sign(boxlength,dx)
         endwhere

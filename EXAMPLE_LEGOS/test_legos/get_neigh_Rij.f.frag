@@ -10,25 +10,25 @@ integer function get_neigh_Rij(pkim,mode,request,atom,numnei,pnei1atom,pRij)
   implicit none
   
   !-- Transferred variables
-  integer(kind=kim_intptr), intent(in) :: pkim
-  integer, intent(in)  :: mode
-  integer, intent(in)  :: request
-  integer, intent(out) :: atom
-  integer, intent(out) :: numnei
-  integer :: nei1atom(1); pointer(pnei1atom, nei1atom) ! actual cray pointer associated with nei1atom
-  real*8  :: Rij(3,1); pointer(pRij, Rij)
+  integer(kind=kim_intptr), intent(in)  :: pkim
+  integer,                  intent(in)  :: mode
+  integer,                  intent(in)  :: request
+  integer,                  intent(out) :: atom
+  integer,                  intent(out) :: numnei
+  integer nei1atom(1); pointer(pnei1atom, nei1atom) ! actual cray pointer associated with nei1atom
+  real*8  Rij(3,1);    pointer(pRij, Rij)
   
   !-- Local variables
   integer, save :: iterVal = 0
-  integer   :: atomToReturn
-  integer   :: NLRvecLocs(1); pointer(pNLRvecLocs,NLRvecLocs)
-  integer   :: neighborListdum(1);  pointer(pneighborListdum, neighborListdum)
+  integer atomToReturn
+  integer NLRvecLocs(1);       pointer(pNLRvecLocs,NLRvecLocs)
+  integer neighborListdum(1);  pointer(pneighborListdum, neighborListdum)
   integer, pointer :: neighborList(:,:)
-  double precision :: RijList(1); pointer(pRijList,RijList)
-  integer   :: ier
-  integer*8 :: numberOfAtoms; pointer(pnAtoms, numberOfAtoms)
-  integer   :: N
-  integer   :: NNeighbors
+  double precision RijList(1); pointer(pRijList,RijList)
+  integer   ier
+  integer*8 numberOfAtoms; pointer(pnAtoms, numberOfAtoms)
+  integer   N
+  integer   NNeighbors
 
   ! unpack neighbor list object
   pNLRVecLocs = kim_api_get_data_f(pkim, "neighObject", ier)

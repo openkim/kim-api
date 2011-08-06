@@ -8,20 +8,20 @@ subroutine NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerHalfSide, cutoff, FCCs
   implicit none
   
   !-- Transferred variables
-  integer,                                             intent(in)  :: CellsPerHalfSide
-  double precision,                                    intent(in)  :: cutoff
-  double precision,                                    intent(in)  :: FCCspacing
-  integer,                                             intent(in)  :: N
-  integer,                                             intent(in)  :: NN
-  integer, dimension(NN+1,N),                          intent(out) :: neighborList
-  double precision, dimension(3,NN+1,N),               intent(out) :: RijList
+  integer,                               intent(in)  :: CellsPerHalfSide
+  double precision,                      intent(in)  :: cutoff
+  double precision,                      intent(in)  :: FCCspacing
+  integer,                               intent(in)  :: N
+  integer,                               intent(in)  :: NN
+  integer, dimension(NN+1,N),            intent(out) :: neighborList
+  double precision, dimension(3,NN+1,N), intent(out) :: RijList
   
   !-- Local variables
   double precision dx(3)
   double precision cutoff2
-  double precision :: FCCshifts(3,4)
-  double precision :: latVec(3)
-  integer          :: a, i, j, k, m
+  double precision FCCshifts(3,4)
+  double precision latVec(3)
+  integer a, i, j, k, m
 
   if (N.ne.1) then ! check assumption that N==1
      print *,"* ERROR: NEIGH_RVEC_F_periodic_FCC_neighborlist called with N.ne.1"
