@@ -1,0 +1,35 @@
+=========================== The openkim-api package ===========================
+
+This file provides supplemental information for users who want to work with the
+openkim-api package through github.com and the git revision control program.
+
+There are only a couple of significant differences between the source tarball
+files that are distributed as openkim-api-XX.XX.XX.tgz and the openkim-api git
+repository.  The primary difference is that in the git repository there are no
+example Models or Tests in the MODELs and TESTs directories, respectively.
+Instead the user must generate the examples by the following process:
+
+   % cd $KIM_DIR/EXAMPLE_LEGOS
+   % make
+
+This will cobble together the example files for the various fragments stored in
+the $KIM_DIR/EXAMPLE_LEGOS/model_legos and $KIM_DIR/EXAMPLE_LEGOS/test_legos
+directories and save them in the $KIM_DIR/MODELs/ and $KIM_DIR/TESTs/
+directories, respectively.  This need only be done once (for every time the git
+repository is updated from github.com).  This process will overwrite any
+changes to files made in the $KIM_DIR/MODELs/ and $KIM_DIR/TESTs/ directories,
+so make a backup of these directories if you don't want to lose your changes.
+
+*******************************************************************************
+
+SUPPORT
+
+If you have problems or questions, send an email with your question and all 
+relevant information to 
+
+openkim@googlegroups.com
+
+The members of the openkim development team actively monitor this email list
+and will do their best to help you with your question in a timely fashion.
+
+*******************************************************************************
