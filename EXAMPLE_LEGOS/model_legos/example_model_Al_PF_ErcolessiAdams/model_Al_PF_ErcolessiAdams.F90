@@ -533,7 +533,7 @@ integer,                  intent(out) :: ier
 !-- Local variables
 double precision :: Rij(DIM)
 double precision :: r,Rsqij,phi,dphi,g,dg,U,dU,dphieff
-integer :: i,j,jj,numnei,atom_ret,comp_force,comp_enepot,comp_virial
+integer :: i,j,jj,numnei,comp_force,comp_enepot,comp_virial
 double precision, allocatable :: rho(:),derU(:)
 integer, allocatable, target :: nei1atom_substitute(:)
 character*80 :: error_message
