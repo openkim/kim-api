@@ -264,7 +264,7 @@ int main()
    printf("\n");
    printf("MODEL_ZERO is : %s\n",   modelname0);
    printf("MODEL_ONE  is : %s\n\n", modelname1);
-   printf("Energy                       MODEL_ZERO_periodic   MODEL_ZERO_cluster    MODEL_ONE_periodic    MODEL_ONE_cluster      Spacing\n");
+   printf("Energy                    MODEL_ZERO_periodic   MODEL_ZERO_cluster    MODEL_ONE_periodic    MODEL_ONE_cluster     Spacing\n");
 
    for (CurrentSpacing = MinSpacing; CurrentSpacing < MaxSpacing; CurrentSpacing += SpacingIncr)
    {
@@ -295,7 +295,7 @@ int main()
       if (1 != status) report_error(__LINE__,"compute", status);
 
       /* print the results */
-      printf("Energy for %i atoms = %20.10f, %20.10f, %20.10f, %20.10f, %20.10f\n",
+      printf("Energy for %i atoms = %20.10e, %20.10e, %20.10e, %20.10e, %20.10e\n",
              NCLUSTERATOMS,
              energy_periodic_model_0*NCLUSTERATOMS,
              energy_cluster_model_0,

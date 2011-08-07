@@ -62,7 +62,7 @@ program TEST_NAME_STR
   real*8 coordum(DIM,1);   pointer(pcoor,coordum)
   real*8 forcesdum(DIM,1); pointer(pforces,forcesdum)
   real*8 boxlength(DIM);   pointer(pboxlength,boxlength)
-  integer N4
+  integer N4, I
   real*8, pointer  :: coords(:,:), forces(:,:)
   integer, pointer :: atomTypes(:)
   integer middleDum
@@ -70,7 +70,7 @@ program TEST_NAME_STR
 
   
   ! Get KIM Model name to use
-  print *, "Please enter a valid KIM model name: "
+  print '("Please enter a valid KIM model name: ")'
   read(*,*) modelname
 
   ! Initialize the KIM object
@@ -262,15 +262,13 @@ program TEST_NAME_STR
 
   ! print results to screen
   print '(80(''-''))'
-  print *, "Results for KIM Model: ", modelname
-  print *, "Using NBC: ", NBC_Method(1:(index(NBC_Method,char(0))-1))
-  print *, "Forces:"
-  print *, "  X                   Y                   Z"
-  print 10, forces
-10 format(f20.15, f20.15, f20.15)
+  print '("Results for KIM Model: ",A)', modelname
+  print '("Using NBC: ",A)', NBC_Method(1:(index(NBC_Method,char(0))-1))
+  print '("Forces:")'
+  print '("Atom     X                        Y                        Z")'
+  print '(I2,"   ",3E25.15)', (I,forces(:,I),I=1,N)
   print *
-  print *, "Energy = ", energy
-
+  print '("Energy = ",E25.15)', energy
 
   ! Don't forget to free and/or deallocate
   call free(pNBC_Method) 

@@ -156,13 +156,14 @@ int main(int argc, char* argv[])
    printf("--------------------------------------------------------------------------------\n");
    printf("Results for KIM Model: %s\n",modelname);
    printf("Forces:\n");
-   printf("  X                   Y                   Z\n");
+   printf("Atom     X                        Y                        Z\n");
    for (i = 0; i < *numberOfAtoms; ++i)
    {
-      printf("%20.15f%20.15f,%20.15f\n",forces[i*DIM + 0], forces[i*DIM + 1], forces[i*DIM + 2]);
+      printf("%2i   %25.15e%25.15e%25.15e\n", i,
+             forces[i*DIM + 0], forces[i*DIM + 1], forces[i*DIM + 2]);
    }
    printf("\n");
-   printf("Energy = %20.15f\n", *energy);
+   printf("Energy = %20.15e\n", *energy);
 
    
    /* don't forget to destroy and deallocate */

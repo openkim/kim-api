@@ -43,7 +43,7 @@ program TEST_NAME_STR
   real*8 energy;           pointer(penergy,energy)
   real*8 coordum(DIM,1);   pointer(pcoor,coordum)
   real*8 forcesdum(DIM,1); pointer(pforces,forcesdum)
-  integer N4
+  integer N4, I
   real*8, pointer  :: coords(:,:), forces(:,:)
   integer, pointer :: atomTypes(:)
   integer middleDum
@@ -51,7 +51,7 @@ program TEST_NAME_STR
 
   
   ! Get KIM Model name to use
-  print *, "Please enter a valid KIM model name: "
+  print '("Please enter a valid KIM model name: ")'
   read(*,*) modelname
 
   ! Initialize the KIM object
@@ -142,13 +142,12 @@ program TEST_NAME_STR
 
   ! print results to screen
   print '(80(''-''))'
-  print *, "Results for KIM Model: ", modelname
-  print *, "Forces:"
-  print *, "  X                   Y                   Z"
-  print 10, forces
-10 format(f20.15, f20.15, f20.15)
+  print '("Results for KIM Model: ",A)', modelname
+  print '("Forces:")'
+  print '("Atom     X                        Y                        Z")'
+  print '(I2,"   ",3E25.15)', (I,forces(:,I),I=1,N)
   print *
-  print *, "Energy = ", energy
+  print '("Energy = ",E25.15)', energy
 
 
   ! don't forget to destroy and deallocate

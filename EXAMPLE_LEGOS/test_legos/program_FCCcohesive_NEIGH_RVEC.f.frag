@@ -79,7 +79,7 @@ program TEST_NAME_STR
 
   ! Read in KIM Model name to use
   !
-  print *, "Please enter a valid KIM model name: "
+  print '("Please enter a valid KIM model name: ")'
   read(*,*) modelname
 
 
@@ -132,11 +132,11 @@ program TEST_NAME_STR
   ! print results to screen
   !
   print '(80(''-''))'
-  print *, "Results for KIM Model: ", modelname
+  print '("Results for KIM Model: ",A)', modelname
   print *
-  print *,"Found minimum energy configuration to within", TOL
+  print '("Found minimum energy configuration to within",E25.15)', TOL
   print *
-  print *,"Energy/atom = ", FinalEnergy, "; Spacing = ", FinalSpacing
+  print '("Energy/atom = ",E25.15,"; Spacing = ",E25.15)', FinalEnergy, FinalSpacing
   print '(80(''-''))'
 
 

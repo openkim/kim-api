@@ -82,7 +82,7 @@ program TEST_NAME_STR
 
   ! Read in KIM Model name to use
   !
-  print *, "Please enter a valid KIM model name: "
+  print '("Please enter a valid KIM model name: ")'
   read(*,*) modelname
 
 
@@ -159,13 +159,13 @@ program TEST_NAME_STR
      ! print results to screen
      !
      print '(80(''-''))'
-     print *, "Results for KIM Model: ", modelname
+     print '("Results for KIM Model: ",A)', modelname
      print *
-     print *,"Found minimum energy configuration to within", TOL
+     print '("Found minimum energy configuration to within",E25.15)', TOL
      print *
-     print *,"cutoff = ", param_cutoff
+     print '("cutoff = ",E25.15)', param_cutoff
      print *
-     print *,"Energy/atom = ", FinalEnergy, "; Spacing = ", FinalSpacing
+     print '("Energy/atom = ",E25.15,"; Spacing = ",E25.15)', FinalEnergy, FinalSpacing
      print '(80(''-''))'
 
      !
@@ -215,7 +215,7 @@ integer function check_model_parameters(pkim)
 
   plistOfParameters = kim_api_get_listparams_f(pkim, nParams, ier)
   paramIndex = 0
-  print *,"The model has defined the following parameters:"
+  print '("The model has defined the following parameters:")'
   do i=1,nParams
      print *, i, listOfParameters(i)(1:(index(listOfParameters(i),char(0))-1))
      if (index(listOfParameters(i),"PARAM_FREE_cutoff").eq.1) then
@@ -225,10 +225,10 @@ integer function check_model_parameters(pkim)
   call free(plistOfParameters) ! deallocate memory
 
   if (paramIndex .gt. 0) then
-     print *,"PARAM_FREE_cutoff IS in the list, at index", paramIndex
+     print '("PARAM_FREE_cutoff IS in the list, at index ",I2)', paramIndex
      check_model_parameters = 1
   else
-     print *,"PARAM_FREE_cutoff is NOT in the parameter list."
+     print '("PARAM_FREE_cutoff is NOT in the parameter list.")'
      check_model_parameters = 0
   endif
 

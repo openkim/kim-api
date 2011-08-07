@@ -367,7 +367,7 @@ static void compute(void* km, int* ier)
    /* Compute enery and forces */
 
    /* loop over particles and compute enregy and forces */
-   i = 0;
+   i = -1;
    while( 1 )
    {
 
@@ -405,8 +405,8 @@ static void compute(void* km, int* ier)
       }
       else
       {
-         i += 1;
-         if (*nAtoms < i) /* incremented past end of list, terminate loop */
+         i++;
+         if (*nAtoms <= i) /* incremented past end of list, terminate loop */
          {
             break;
          }
@@ -415,7 +415,7 @@ static void compute(void* km, int* ier)
          {
             if (0 == NBC)     /* CLUSTER NBC method */
             {
-               numOfAtomNeigh = *nAtoms - i;
+               numOfAtomNeigh = *nAtoms - (i + 1);
                for (k = 0; k < numOfAtomNeigh; ++k)
                {
                   neighListOfCurrentAtom[k] = i + k + 1;

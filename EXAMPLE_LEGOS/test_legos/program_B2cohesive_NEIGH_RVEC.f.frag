@@ -82,7 +82,7 @@ program TEST_NAME_STR
 
   ! Read in KIM Model name to use
   !
-  print *, "Please enter a KIM-compliant model name: "
+  print '("Please enter a KIM-compliant model name: ")'
   read(*,*) modelname
 
 
@@ -136,11 +136,11 @@ program TEST_NAME_STR
   ! print results to screen
   !
   print '(80(''-''))'
-  print *, "Results for KIM Model: ", modelname
+  print '("Results for KIM Model: ",A)', modelname
   print *
-  print *,"Found minimum energy configuration to within", TOL
+  print '("Found minimum energy configuration to within",E25.15)', TOL
   print *
-  print *,"Energy/atom = ", FinalEnergy, "; Spacing = ", FinalSpacing
+  print '("Energy/atom = ",E25.15,"; Spacing = ",E25.15)', FinalEnergy, FinalSpacing
   print '(80(''-''))'
 
 
@@ -233,7 +233,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   endif
   Energies(1) = energy
   if (verbose) &
-     print *, "Energy/atom = ", Energies(1), "; Spacing = ", Spacings(1)
+     print '("Energy/atom = ",E25.15,"; Spacing = ",E25.15)', Energies(1), Spacings(1)
 
   ! setup and compute for max spacing
   Spacings(3) = MaxSpacing
@@ -249,7 +249,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   endif
   Energies(3) = energy
   if (verbose) &
-     print *, "Energy/atom = ", Energies(3), "; Spacing = ", Spacings(3)
+     print '("Energy/atom = ",E25.15,"; Spacing = ",E25.15)', Energies(3), Spacings(3)
 
   ! setup and compute for first intermediate spacing
   Spacings(2) = MinSpacing + (2.0 - Golden)*(MaxSpacing - MinSpacing)
@@ -265,7 +265,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   endif
   Energies(2) = energy
   if (verbose) &
-     print *, "Energy/atom = ", Energies(2), "; Spacing = ", Spacings(2)
+     print '("Energy/atom = ",E25.15,"; Spacing = ",E25.15)', Energies(2), Spacings(2)
 
 
   ! iterate until convergence.
@@ -285,7 +285,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
      endif
      Energies(4) = energy
      if (verbose) &
-        print *, "Energy/atom = ", Energies(4), "; Spacing = ", Spacings(4)
+        print '("Energy/atom = ",E25.15,"; Spacing = ",E25.15)', Energies(4), Spacings(4)
 
      ! determine the new interval
      if (Energies(4) .lt. Energies(2)) then
