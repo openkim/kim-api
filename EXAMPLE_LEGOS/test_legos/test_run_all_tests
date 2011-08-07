@@ -1,246 +1,289 @@
 #!/bin/sh
 
-echo "================================================================================"
-echo "test_Al_FCCcohesive_MI_OPBC"
-echo "   |"
-echo "   |-- model_Al_PF_ErcolessiAdams"
-echo "   |"
+header(){
+echo "****************************************************************************************************"
+echo "****************************************************************************************************"
+echo "**                                                                                                **"
+while [ "$*" != "" ]
+do
+  printf "** %-94s **\n" "$1"
+  shift
+done
+echo "**                                                                                                **"
+echo "****************************************************************************************************"
+}
+footer(){
 echo ""
-echo "================================================================================"
+echo ""
+echo ""
+}
+divider(){
+echo ""
+echo "****************************************************************************************************"
+printf "** %-94s **\n" "$1"
+echo "****************************************************************************************************"
+echo ""
+}
+
+#---------------------------------------------------------------------------------------------------------------
+header "test_Al_FCCcohesive_MI_OPBC"       \
+       "   |"                              \
+       "   |-- model_Al_PF_ErcolessiAdams" \
+       "   |"
+
+divider "test_Al_FCCcohesive_MI_OPBC --- model_Al_PF_ErcolessiAdams"
 echo model_Al_PF_ErcolessiAdams | ./test_Al_FCCcohesive_MI_OPBC/test_Al_FCCcohesive_MI_OPBC
-echo "================================================================================"
-echo ""
-echo ""
+footer
 
 
-echo "================================================================================"
-echo "test_Al_free_cluster"
-echo "   |"
-echo "   |-- model_Al_PF_ErcolessiAdams"
-echo "   |"
-echo "================================================================================"
+#---------------------------------------------------------------------------------------------------------------
+header "test_Al_free_cluster"              \
+       "   |"                              \
+       "   |-- model_Al_PF_ErcolessiAdams" \
+       "   |"
+
+divider "test_Al_free_cluster --- model_Al_PF_ErcolessiAdams"
 echo model_Al_PF_ErcolessiAdams | ./test_Al_free_cluster/test_Al_free_cluster
-echo "================================================================================"
-echo ""
-echo ""
+footer
 
 
-echo "================================================================================"
-echo "test_ArNe_B2cohesive_NEIGH_RVEC"
-echo "   |"
-echo "   |-- model_ArNe_P_MLJ_NEIGH_RVEC_F"
-echo "   |"
-echo "================================================================================"
+#---------------------------------------------------------------------------------------------------------------
+header "test_ArNe_B2cohesive_NEIGH_RVEC"      \
+       "   |"                                 \
+       "   |-- model_ArNe_P_MLJ_NEIGH_RVEC_F" \
+       "   |"
+
+divider "test_ArNe_B2cohesive_NEIGH_RVEC --- model_ArNe_P_MLJ_NEIGH_RVEC_F"
 echo model_ArNe_P_MLJ_NEIGH_RVEC_F | ./test_ArNe_B2cohesive_NEIGH_RVEC/test_ArNe_B2cohesive_NEIGH_RVEC
-echo "================================================================================"
-echo ""
-echo ""
+footer
 
 
-echo "================================================================================"
-echo "test_Ar_FCCcohesiveCutoff_NEIGH_RVEC"
-echo "   |"
-echo "   |-- model_ArNe_P_MLJ_NEIGH_RVEC_F"
-echo "   |-- model_Ar_P_MLJ_C"
-echo "   |-- model_Ar_P_MLJ_F90"
-echo "   |-- model_Ar_P_MLJ_NEIGH_RVEC_F"
-echo "   |-- model_Ar_P_MMorse"
-echo "   |"
-echo "================================================================================"
+#---------------------------------------------------------------------------------------------------------------
+header "test_Ar_FCCcohesiveCutoff_NEIGH_RVEC" \
+       "   |"                                 \
+       "   |-- model_ArNe_P_MLJ_NEIGH_RVEC_F" \
+       "   |-- model_Ar_P_MLJ_C"              \
+       "   |-- model_Ar_P_MLJ_F90"            \
+       "   |-- model_Ar_P_MLJ_NEIGH_RVEC_F"   \
+       "   |-- model_Ar_P_MMorse"             \
+       "   |"
+
+divider "test_Ar_FCCcohesiveCutoff_NEIGH_RVEC --- model_ArNe_P_MLJ_NEIGH_RVEC_F"
 echo model_ArNe_P_MLJ_NEIGH_RVEC_F | ./test_Ar_FCCcohesiveCutoff_NEIGH_RVEC/test_Ar_FCCcohesiveCutoff_NEIGH_RVEC
-echo "================================================================================"
+
+divider "test_Ar_FCCcohesiveCutoff_NEIGH_RVEC --- model_Ar_P_MLJ_C"
 echo model_Ar_P_MLJ_C              | ./test_Ar_FCCcohesiveCutoff_NEIGH_RVEC/test_Ar_FCCcohesiveCutoff_NEIGH_RVEC
-echo "================================================================================"
+
+divider "test_Ar_FCCcohesiveCutoff_NEIGH_RVEC --- model_Ar_P_MLJ_F90"
 echo model_Ar_P_MLJ_F90            | ./test_Ar_FCCcohesiveCutoff_NEIGH_RVEC/test_Ar_FCCcohesiveCutoff_NEIGH_RVEC
-echo "================================================================================"
+
+divider "test_Ar_FCCcohesiveCutoff_NEIGH_RVEC --- model_Ar_P_MLJ_NEIGH_RVEC_F"
 echo model_Ar_P_MLJ_NEIGH_RVEC_F   | ./test_Ar_FCCcohesiveCutoff_NEIGH_RVEC/test_Ar_FCCcohesiveCutoff_NEIGH_RVEC
-echo "================================================================================"
+
+divider "test_Ar_FCCcohesiveCutoff_NEIGH_RVEC --- model_Ar_P_MMorse"
 echo model_Ar_P_MMorse             | ./test_Ar_FCCcohesiveCutoff_NEIGH_RVEC/test_Ar_FCCcohesiveCutoff_NEIGH_RVEC
-echo "================================================================================"
-echo ""
-echo ""
+footer
 
+#---------------------------------------------------------------------------------------------------------------
+header "test_Ar_FCCcohesive_MI_OPBC"        \
+       "   |"                               \
+       "   |-- model_Ar_P_MLJ_C"            \
+       "   |-- model_Ar_P_MLJ_F90"          \
+       "   |-- model_Ar_P_MLJ_MI_OPBC_H_F"  \
+       "   |-- model_Ar_P_MMorse"           \
+       "   |"
 
-echo "================================================================================"
-echo "test_Ar_FCCcohesive_MI_OPBC"
-echo "   |"
-echo "   |-- model_Ar_P_MLJ_C"
-echo "   |-- model_Ar_P_MLJ_F90"
-echo "   |-- model_Ar_P_MLJ_MI_OPBC_H_F"
-echo "   |-- model_Ar_P_MMorse"
-echo "   |"
-echo "================================================================================"
+divider "test_Ar_FCCcohesive_MI_OPBC --- model_Ar_P_MLJ_C"
 echo model_Ar_P_MLJ_C           | ./test_Ar_FCCcohesive_MI_OPBC/test_Ar_FCCcohesive_MI_OPBC
-echo "================================================================================"
+
+divider "test_Ar_FCCcohesive_MI_OPBC --- model_Ar_P_MLJ_F90"
 echo model_Ar_P_MLJ_F90         | ./test_Ar_FCCcohesive_MI_OPBC/test_Ar_FCCcohesive_MI_OPBC
-echo "================================================================================"
+
+divider "test_Ar_FCCcohesive_MI_OPBC --- model_Ar_P_MLJ_MI_OPBC_H_F"
 echo model_Ar_P_MLJ_MI_OPBC_H_F | ./test_Ar_FCCcohesive_MI_OPBC/test_Ar_FCCcohesive_MI_OPBC
-echo "================================================================================"
+
+divider "test_Ar_FCCcohesive_MI_OPBC --- model_Ar_P_MMorse"
 echo model_Ar_P_MMorse          | ./test_Ar_FCCcohesive_MI_OPBC/test_Ar_FCCcohesive_MI_OPBC
-echo "================================================================================"
-echo ""
-echo ""
+footer
 
+#---------------------------------------------------------------------------------------------------------------
+header "test_Ar_FCCcohesive_NEIGH_PURE"       \
+       "   |"                                 \
+       "   |-- model_Ar_P_MLJ_C"              \
+       "   |-- model_Ar_P_MLJ_F90"            \
+       "   |-- model_Ar_P_MLJ_NEIGH_PURE_H_F" \
+       "   |-- model_Ar_P_MMorse"             \
+       "   |"
 
-echo "================================================================================"
-echo "test_Ar_FCCcohesive_NEIGH_PURE"
-echo "   |"
-echo "   |-- model_Ar_P_MLJ_C"
-echo "   |-- model_Ar_P_MLJ_F90"
-echo "   |-- model_Ar_P_MLJ_NEIGH_PURE_H_F"
-echo "   |-- model_Ar_P_MMorse"
-echo "   |"
-echo "================================================================================"
+divider "test_Ar_FCCcohesive_NEIGH_PURE --- model_Ar_P_MLJ_C"
 echo model_Ar_P_MLJ_C              | ./test_Ar_FCCcohesive_NEIGH_PURE/test_Ar_FCCcohesive_NEIGH_PURE
-echo "================================================================================"
+
+divider "test_Ar_FCCcohesive_NEIGH_PURE --- model_Ar_P_MLJ_F90"
 echo model_Ar_P_MLJ_F90            | ./test_Ar_FCCcohesive_NEIGH_PURE/test_Ar_FCCcohesive_NEIGH_PURE
-echo "================================================================================"
+
+divider "test_Ar_FCCcohesive_NEIGH_PURE --- model_Ar_P_MLJ_NEIGH_PURE_H_F"
 echo model_Ar_P_MLJ_NEIGH_PURE_H_F | ./test_Ar_FCCcohesive_NEIGH_PURE/test_Ar_FCCcohesive_NEIGH_PURE
-echo "================================================================================"
+
+divider "test_Ar_FCCcohesive_NEIGH_PURE --- model_Ar_P_MMorse"
 echo model_Ar_P_MMorse             | ./test_Ar_FCCcohesive_NEIGH_PURE/test_Ar_FCCcohesive_NEIGH_PURE
-echo "================================================================================"
-echo ""
-echo ""
+footer
 
+#---------------------------------------------------------------------------------------------------------------
+header "test_Ar_FCCcohesive_NEIGH_RVEC"        \
+       "   |"                                  \
+       "   |-- model_ArNe_P_MLJ_NEIGH_RVEC_F"  \
+       "   |-- model_Ar_P_MLJ_C"               \
+       "   |-- model_Ar_P_MLJ_F90"             \
+       "   |-- model_Ar_P_MLJ_NEIGH_RVEC_F"    \
+       "   |-- model_Ar_P_MMorse"              \
+       "   |"
 
-echo "================================================================================"
-echo "test_Ar_FCCcohesive_NEIGH_RVEC"
-echo "   |"
-echo "   |-- model_ArNe_P_MLJ_NEIGH_RVEC_F"
-echo "   |-- model_Ar_P_MLJ_C"
-echo "   |-- model_Ar_P_MLJ_F90"
-echo "   |-- model_Ar_P_MLJ_NEIGH_RVEC_F"
-echo "   |-- model_Ar_P_MMorse"
-echo "   |"
-echo "================================================================================"
+divider "test_Ar_FCCcohesive_NEIGH_RVEC --- model_ArNe_P_MLJ_NEIGH_RVEC_F"
 echo model_ArNe_P_MLJ_NEIGH_RVEC_F | ./test_Ar_FCCcohesive_NEIGH_RVEC/test_Ar_FCCcohesive_NEIGH_RVEC
-echo "================================================================================"
+
+divider "test_Ar_FCCcohesive_NEIGH_RVEC --- model_Ar_P_MLJ_C"
 echo model_Ar_P_MLJ_C              | ./test_Ar_FCCcohesive_NEIGH_RVEC/test_Ar_FCCcohesive_NEIGH_RVEC
-echo "================================================================================"
+
+divider "test_Ar_FCCcohesive_NEIGH_RVEC --- model_Ar_P_MLJ_F90"
 echo model_Ar_P_MLJ_F90            | ./test_Ar_FCCcohesive_NEIGH_RVEC/test_Ar_FCCcohesive_NEIGH_RVEC
-echo "================================================================================"
+
+divider "test_Ar_FCCcohesive_NEIGH_RVEC --- model_Ar_P_MLJ_NEIGH_RVEC_F"
 echo model_Ar_P_MLJ_NEIGH_RVEC_F   | ./test_Ar_FCCcohesive_NEIGH_RVEC/test_Ar_FCCcohesive_NEIGH_RVEC
-echo "================================================================================"
+
+divider "test_Ar_FCCcohesive_NEIGH_RVEC --- model_Ar_P_MMorse"
 echo model_Ar_P_MMorse             | ./test_Ar_FCCcohesive_NEIGH_RVEC/test_Ar_FCCcohesive_NEIGH_RVEC
-echo "================================================================================"
-echo ""
-echo ""
+footer
 
 
+#---------------------------------------------------------------------------------------------------------------
+header "test_Ar_free_cluster"                 \
+       "   |"                                 \
+       "   |-- model_ArNe_P_MLJ_NEIGH_RVEC_F" \
+       "   |-- model_Ar_P_MLJ_C"              \
+       "   |-- model_Ar_P_MLJ_F90"            \
+       "   |-- model_Ar_P_MLJ_MI_OPBC_H_F"    \
+       "   |-- model_Ar_P_MLJ_NEIGH_PURE_H_F" \
+       "   |-- model_Ar_P_MLJ_NEIGH_RVEC_F"   \
+       "   |-- model_Ar_P_MMorse"             \
+       "   |"
 
-echo "================================================================================"
-echo "test_Ar_free_cluster"
-echo "   |"
-echo "   |-- model_ArNe_P_MLJ_NEIGH_RVEC_F"
-echo "   |-- model_Ar_P_MLJ_C"
-echo "   |-- model_Ar_P_MLJ_F90"
-echo "   |-- model_Ar_P_MLJ_MI_OPBC_H_F"
-echo "   |-- model_Ar_P_MLJ_NEIGH_PURE_H_F"
-echo "   |-- model_Ar_P_MLJ_NEIGH_RVEC_F"
-echo "   |-- model_Ar_P_MMorse"
-echo "   |"
-echo "================================================================================"
+divider "test_Ar_free_cluster --- model_ArNe_P_MLJ_NEIGH_RVEC_F"
 echo model_ArNe_P_MLJ_NEIGH_RVEC_F | ./test_Ar_free_cluster/test_Ar_free_cluster
-echo "================================================================================"
+
+divider "test_Ar_free_cluster --- model_Ar_P_MLJ_C"
 echo model_Ar_P_MLJ_C              | ./test_Ar_free_cluster/test_Ar_free_cluster
-echo "================================================================================"
+
+divider "test_Ar_free_cluster --- model_Ar_P_MLJ_F90"
 echo model_Ar_P_MLJ_F90            | ./test_Ar_free_cluster/test_Ar_free_cluster
-echo "================================================================================"
+
+divider "test_Ar_free_cluster --- model_Ar_P_MLJ_MI_OPBC_H_F"
 echo model_Ar_P_MLJ_MI_OPBC_H_F    | ./test_Ar_free_cluster/test_Ar_free_cluster
-echo "================================================================================"
+
+divider "test_Ar_free_cluster --- model_Ar_P_MLJ_NEIGH_PURE_H_F"
 echo model_Ar_P_MLJ_NEIGH_PURE_H_F | ./test_Ar_free_cluster/test_Ar_free_cluster
-echo "================================================================================"
+
+divider "test_Ar_free_cluster --- model_Ar_P_MLJ_NEIGH_RVEC_F"
 echo model_Ar_P_MLJ_NEIGH_RVEC_F   | ./test_Ar_free_cluster/test_Ar_free_cluster
-echo "================================================================================"
+
+divider "test_Ar_free_cluster --- model_Ar_P_MMorse"
 echo model_Ar_P_MMorse             | ./test_Ar_free_cluster/test_Ar_free_cluster
-echo "================================================================================"
-echo ""
-echo ""
+footer
 
 
-echo "================================================================================"
-echo "test_Ar_free_cluster_CLUSTER_C"
-echo "   |"
-echo "   |-- model_Ar_P_MLJ_C"
-echo "   |-- model_Ar_P_MLJ_F90"
-echo "   |-- model_Ar_P_MLJ_CLUSTER_C"
-echo "   |-- model_Ar_P_MLJ_CLUSTER_F90"
-echo "   |-- model_Ar_P_MMorse"
-echo "   |"
-echo "================================================================================"
+#---------------------------------------------------------------------------------------------------------------
+header "test_Ar_free_cluster_CLUSTER_C"    \
+       "   |"                              \
+       "   |-- model_Ar_P_MLJ_C"           \
+       "   |-- model_Ar_P_MLJ_F90"         \
+       "   |-- model_Ar_P_MLJ_CLUSTER_C"   \
+       "   |-- model_Ar_P_MLJ_CLUSTER_F90" \
+       "   |-- model_Ar_P_MMorse"          \
+       "   |"
+
+divider "test_Ar_free_cluster_CLUSTER_C --- model_Ar_P_MLJ_C"
 echo model_Ar_P_MLJ_C           | ./test_Ar_free_cluster_CLUSTER_C/test_Ar_free_cluster_CLUSTER_C
-echo "================================================================================"
+
+divider "test_Ar_free_cluster_CLUSTER_C --- model_Ar_P_MLJ_F90"
 echo model_Ar_P_MLJ_F90         | ./test_Ar_free_cluster_CLUSTER_C/test_Ar_free_cluster_CLUSTER_C
-echo "================================================================================"
+
+divider "test_Ar_free_cluster_CLUSTER_C --- model_Ar_P_MLJ_CLUSTER_C"
 echo model_Ar_P_MLJ_CLUSTER_C   | ./test_Ar_free_cluster_CLUSTER_C/test_Ar_free_cluster_CLUSTER_C
-echo "================================================================================"
+
+divider "test_Ar_free_cluster_CLUSTER_C --- model_Ar_P_MLJ_CLUSTER_F90"
 echo model_Ar_P_MLJ_CLUSTER_F90 | ./test_Ar_free_cluster_CLUSTER_C/test_Ar_free_cluster_CLUSTER_C
-echo "================================================================================"
+
+divider "test_Ar_free_cluster_CLUSTER_C --- model_Ar_P_MMorse"
 echo model_Ar_P_MMorse          | ./test_Ar_free_cluster_CLUSTER_C/test_Ar_free_cluster_CLUSTER_C
-echo "================================================================================"
-echo ""
-echo ""
+footer
 
 
-echo "================================================================================"
-echo "test_Ar_free_cluster_CLUSTER_F90"
-echo "   |"
-echo "   |-- model_Ar_P_MLJ_C"
-echo "   |-- model_Ar_P_MLJ_F90"
-echo "   |-- model_Ar_P_MLJ_CLUSTER_C"
-echo "   |-- model_Ar_P_MLJ_CLUSTER_F90"
-echo "   |-- model_Ar_P_MMorse"
-echo "   |"
-echo "================================================================================"
+#---------------------------------------------------------------------------------------------------------------
+header "test_Ar_free_cluster_CLUSTER_F90"  \
+       "   |"                              \
+       "   |-- model_Ar_P_MLJ_C"           \
+       "   |-- model_Ar_P_MLJ_F90"         \
+       "   |-- model_Ar_P_MLJ_CLUSTER_C"   \
+       "   |-- model_Ar_P_MLJ_CLUSTER_F90" \
+       "   |-- model_Ar_P_MMorse"          \
+       "   |"
+
+divider "test_Ar_free_cluster_CLUSTER_F90 --- model_Ar_P_MLJ_C"
 echo model_Ar_P_MLJ_C           | ./test_Ar_free_cluster_CLUSTER_F90/test_Ar_free_cluster_CLUSTER_F90
-echo "================================================================================"
+
+divider "test_Ar_free_cluster_CLUSTER_F90 --- model_Ar_P_MLJ_F90"
 echo model_Ar_P_MLJ_F90         | ./test_Ar_free_cluster_CLUSTER_F90/test_Ar_free_cluster_CLUSTER_F90
-echo "================================================================================"
+
+divider "test_Ar_free_cluster_CLUSTER_F90 --- model_Ar_P_MLJ_CLUSTER_C"
 echo model_Ar_P_MLJ_CLUSTER_C   | ./test_Ar_free_cluster_CLUSTER_F90/test_Ar_free_cluster_CLUSTER_F90
-echo "================================================================================"
+
+divider "test_Ar_free_cluster_CLUSTER_F90 --- model_Ar_P_MLJ_CLUSTER_F90"
 echo model_Ar_P_MLJ_CLUSTER_F90 | ./test_Ar_free_cluster_CLUSTER_F90/test_Ar_free_cluster_CLUSTER_F90
-echo "================================================================================"
+
+divider "test_Ar_free_cluster_CLUSTER_F90 --- model_Ar_P_MMorse"
 echo model_Ar_P_MMorse          | ./test_Ar_free_cluster_CLUSTER_F90/test_Ar_free_cluster_CLUSTER_F90
-echo "================================================================================"
-echo ""
-echo ""
+footer
 
+#---------------------------------------------------------------------------------------------------------------
+header "test_Ar_multiple_models"              \
+       "   |"                                 \
+       "   |-- model_ArNe_P_MLJ_NEIGH_RVEC_F" \
+       "   |-- model_Ar_P_MLJ_C"              \
+       "   |-- model_Ar_P_MLJ_F90"            \
+       "   |-- model_Ar_P_MLJ_NEIGH_RVEC_F"   \
+       "   |-- model_Ar_P_MMorse"             \
+       "   |"
 
-echo "================================================================================"
-echo "test_Ar_multiple_models"
-echo "   |"
-echo "   |-- model_ArNe_P_MLJ_NEIGH_RVEC_F"
-echo "   |-- model_Ar_P_MLJ_C"
-echo "   |-- model_Ar_P_MLJ_F90"
-echo "   |-- model_Ar_P_MLJ_NEIGH_RVEC_F"
-echo "   |-- model_Ar_P_MMorse"
-echo "   |"
-echo "================================================================================"
+divider "test_Ar_multiple_models --- model_ArNe_P_MLJ_NEIGH_RVEC_F -and- model_Ar_P_MMorse"
 echo model_ArNe_P_MLJ_NEIGH_RVEC_F model_Ar_P_MMorse | ./test_Ar_multiple_models/test_Ar_multiple_models
-echo "================================================================================"
+
+divider "test_Ar_multiple_models --- model_Ar_P_MLJ_C -and- model_Ar_P_MMorse"
 echo model_Ar_P_MLJ_C model_Ar_P_MMorse              | ./test_Ar_multiple_models/test_Ar_multiple_models
-echo "================================================================================"
+
+divider "test_Ar_multiple_models --- model_Ar_P_MLJ_F90 -and- model_Ar_P_MMorse"
 echo model_Ar_P_MLJ_F90 model_Ar_P_MMorse            | ./test_Ar_multiple_models/test_Ar_multiple_models
-echo "================================================================================"
+
+divider "test_Ar_multiple_models --- model_Ar_P_MLJ_NEIGH_RVEC_F -and- model_Ar_P_MMorse"
 echo model_Ar_P_MLJ_NEIGH_RVEC_F model_Ar_P_MMorse   | ./test_Ar_multiple_models/test_Ar_multiple_models
-echo "================================================================================"
+
+divider "test_Ar_multiple_models --- model_Ar_P_MMorse -and- model_Ar_P_MLJ_F90"
 echo model_Ar_P_MMorse model_Ar_P_MLJ_F90            | ./test_Ar_multiple_models/test_Ar_multiple_models
-echo "================================================================================"
-echo ""
-echo ""
+footer
 
 
-echo "================================================================================"
-echo "test_Ne_free_cluster"
-echo "   |"
-echo "   |-- model_ArNe_P_MLJ_NEIGH_RVEC_F"
-echo "   |-- model_Ne_P_LJ_NEIGH_PURE_H"
-echo "   |-- model_Ne_P_MLJ_NEIGH_RVEC_F"
-echo "   |"
-echo "================================================================================"
+#---------------------------------------------------------------------------------------------------------------
+header "test_Ne_free_cluster"                 \
+       "   |"                                 \
+       "   |-- model_ArNe_P_MLJ_NEIGH_RVEC_F" \
+       "   |-- model_Ne_P_LJ_NEIGH_PURE_H"    \
+       "   |-- model_Ne_P_MLJ_NEIGH_RVEC_F"   \
+       "   |"
+
+divider "test_Ne_free_cluster --- model_ArNe_P_MLJ_NEIGH_RVEC_F"
 echo model_ArNe_P_MLJ_NEIGH_RVEC_F  | ./test_Ne_free_cluster/test_Ne_free_cluster
-echo "================================================================================"
+
+divider "test_Ne_free_cluster --- model_Ne_P_LJ_NEIGH_PURE_H"
 echo model_Ne_P_LJ_NEIGH_PURE_H     | ./test_Ne_free_cluster/test_Ne_free_cluster
-echo "================================================================================"
+
+divider "test_Ne_free_cluster --- model_Ne_P_MLJ_NEIGH_RVEC_F"
 echo model_Ne_P_MLJ_NEIGH_RVEC_F    | ./test_Ne_free_cluster/test_Ne_free_cluster
-echo "================================================================================"
+footer

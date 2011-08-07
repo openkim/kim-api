@@ -153,7 +153,7 @@ int main(int argc, char* argv[])
    }
 
    /* print results to screen */
-   printf("***********************************************************************************************\n");
+   printf("--------------------------------------------------------------------------------\n");
    printf("Results for KIM Model: %s\n",modelname);
    printf("Forces:\n");
    printf("  X                   Y                   Z\n");

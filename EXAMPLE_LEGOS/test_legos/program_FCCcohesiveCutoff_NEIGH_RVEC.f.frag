@@ -158,7 +158,7 @@ program TEST_NAME_STR
      
      ! print results to screen
      !
-     print '(80(''*''))'
+     print '(80(''-''))'
      print *, "Results for KIM Model: ", modelname
      print *
      print *,"Found minimum energy configuration to within", TOL
@@ -166,7 +166,7 @@ program TEST_NAME_STR
      print *,"cutoff = ", param_cutoff
      print *
      print *,"Energy/atom = ", FinalEnergy, "; Spacing = ", FinalSpacing
-     print '(80(''*''))'
+     print '(80(''-''))'
 
      !
      ! increment cutoff
