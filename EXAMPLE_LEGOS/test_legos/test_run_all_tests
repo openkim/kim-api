@@ -1,5 +1,26 @@
 #!/bin/sh
 
+# usage: run_all_tests [filename]
+#
+# If `filename' is given each actual Test output will be redirected to a separate file.
+# This option facilitates the comparison of Test results for different Models using
+# `diff' or another comparison utility program.
+#
+# When the optional argument is given the output is put in a series of files with names
+# filename.TEST_NUM.MODEL_NUM.  Here `filename' is the value provided on the command line,
+# `TEST_NUM' is a two digit integer sequentially numbering the example Tests in the order
+# they are executed below, and `MODEL_NUM' is a two digit integer sequentially numbering the
+# Models that each Test is executed with in the order they are executed below.
+#
+
+TEST_NUM=0
+MODEL_NUM=0
+if [[ $# > 0 ]]; then
+  redirect='$1.`printf "%02i" $TEST_NUM`.`printf "%02i" $MODEL_NUM`';
+else
+  redirect='1';
+fi
+
 header(){
 echo "****************************************************************************************************"
 echo "****************************************************************************************************"
@@ -16,6 +37,8 @@ footer(){
 echo ""
 echo ""
 echo ""
+TEST_NUM=$(($TEST_NUM + 1))
+MODEL_NUM=0
 }
 divider(){
 echo ""
@@ -32,7 +55,7 @@ header "test_Al_FCCcohesive_MI_OPBC"       \
        "   |"
 
 divider "test_Al_FCCcohesive_MI_OPBC --- model_Al_PF_ErcolessiAdams"
-echo model_Al_PF_ErcolessiAdams | ./test_Al_FCCcohesive_MI_OPBC/test_Al_FCCcohesive_MI_OPBC
+echo model_Al_PF_ErcolessiAdams | ./test_Al_FCCcohesive_MI_OPBC/test_Al_FCCcohesive_MI_OPBC >&$redirect && B=$(($B + 1))
 footer
 
 
@@ -43,7 +66,7 @@ header "test_Al_free_cluster"              \
        "   |"
 
 divider "test_Al_free_cluster --- model_Al_PF_ErcolessiAdams"
-echo model_Al_PF_ErcolessiAdams | ./test_Al_free_cluster/test_Al_free_cluster
+echo model_Al_PF_ErcolessiAdams | ./test_Al_free_cluster/test_Al_free_cluster >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 footer
 
 
@@ -54,7 +77,7 @@ header "test_ArNe_B2cohesive_NEIGH_RVEC"      \
        "   |"
 
 divider "test_ArNe_B2cohesive_NEIGH_RVEC --- model_ArNe_P_MLJ_NEIGH_RVEC_F"
-echo model_ArNe_P_MLJ_NEIGH_RVEC_F | ./test_ArNe_B2cohesive_NEIGH_RVEC/test_ArNe_B2cohesive_NEIGH_RVEC
+echo model_ArNe_P_MLJ_NEIGH_RVEC_F | ./test_ArNe_B2cohesive_NEIGH_RVEC/test_ArNe_B2cohesive_NEIGH_RVEC >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 footer
 
 
@@ -67,13 +90,13 @@ header "test_Ar_FCCcohesiveCutoff_NEIGH_RVEC" \
        "   |"
 
 divider "test_Ar_FCCcohesiveCutoff_NEIGH_RVEC --- model_ArNe_P_MLJ_NEIGH_RVEC_F"
-echo model_ArNe_P_MLJ_NEIGH_RVEC_F | ./test_Ar_FCCcohesiveCutoff_NEIGH_RVEC/test_Ar_FCCcohesiveCutoff_NEIGH_RVEC
+echo model_ArNe_P_MLJ_NEIGH_RVEC_F | ./test_Ar_FCCcohesiveCutoff_NEIGH_RVEC/test_Ar_FCCcohesiveCutoff_NEIGH_RVEC >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
 divider "test_Ar_FCCcohesiveCutoff_NEIGH_RVEC --- model_Ar_P_MLJ_NEIGH_RVEC_F"
-echo model_Ar_P_MLJ_NEIGH_RVEC_F   | ./test_Ar_FCCcohesiveCutoff_NEIGH_RVEC/test_Ar_FCCcohesiveCutoff_NEIGH_RVEC
+echo model_Ar_P_MLJ_NEIGH_RVEC_F   | ./test_Ar_FCCcohesiveCutoff_NEIGH_RVEC/test_Ar_FCCcohesiveCutoff_NEIGH_RVEC >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
 divider "test_Ar_FCCcohesiveCutoff_NEIGH_RVEC --- model_Ar_P_MMorse"
-echo model_Ar_P_MMorse             | ./test_Ar_FCCcohesiveCutoff_NEIGH_RVEC/test_Ar_FCCcohesiveCutoff_NEIGH_RVEC
+echo model_Ar_P_MMorse             | ./test_Ar_FCCcohesiveCutoff_NEIGH_RVEC/test_Ar_FCCcohesiveCutoff_NEIGH_RVEC >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 footer
 
 #---------------------------------------------------------------------------------------------------------------
@@ -86,16 +109,16 @@ header "test_Ar_FCCcohesive_MI_OPBC"        \
        "   |"
 
 divider "test_Ar_FCCcohesive_MI_OPBC --- model_Ar_P_MLJ_C"
-echo model_Ar_P_MLJ_C           | ./test_Ar_FCCcohesive_MI_OPBC/test_Ar_FCCcohesive_MI_OPBC
+echo model_Ar_P_MLJ_C           | ./test_Ar_FCCcohesive_MI_OPBC/test_Ar_FCCcohesive_MI_OPBC >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
 divider "test_Ar_FCCcohesive_MI_OPBC --- model_Ar_P_MLJ_F90"
-echo model_Ar_P_MLJ_F90         | ./test_Ar_FCCcohesive_MI_OPBC/test_Ar_FCCcohesive_MI_OPBC
+echo model_Ar_P_MLJ_F90         | ./test_Ar_FCCcohesive_MI_OPBC/test_Ar_FCCcohesive_MI_OPBC >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
 divider "test_Ar_FCCcohesive_MI_OPBC --- model_Ar_P_MLJ_MI_OPBC_H_F"
-echo model_Ar_P_MLJ_MI_OPBC_H_F | ./test_Ar_FCCcohesive_MI_OPBC/test_Ar_FCCcohesive_MI_OPBC
+echo model_Ar_P_MLJ_MI_OPBC_H_F | ./test_Ar_FCCcohesive_MI_OPBC/test_Ar_FCCcohesive_MI_OPBC >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
 divider "test_Ar_FCCcohesive_MI_OPBC --- model_Ar_P_MMorse"
-echo model_Ar_P_MMorse          | ./test_Ar_FCCcohesive_MI_OPBC/test_Ar_FCCcohesive_MI_OPBC
+echo model_Ar_P_MMorse          | ./test_Ar_FCCcohesive_MI_OPBC/test_Ar_FCCcohesive_MI_OPBC >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 footer
 
 #---------------------------------------------------------------------------------------------------------------
@@ -108,16 +131,16 @@ header "test_Ar_FCCcohesive_NEIGH_PURE"       \
        "   |"
 
 divider "test_Ar_FCCcohesive_NEIGH_PURE --- model_Ar_P_MLJ_C"
-echo model_Ar_P_MLJ_C              | ./test_Ar_FCCcohesive_NEIGH_PURE/test_Ar_FCCcohesive_NEIGH_PURE
+echo model_Ar_P_MLJ_C              | ./test_Ar_FCCcohesive_NEIGH_PURE/test_Ar_FCCcohesive_NEIGH_PURE >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
 divider "test_Ar_FCCcohesive_NEIGH_PURE --- model_Ar_P_MLJ_F90"
-echo model_Ar_P_MLJ_F90            | ./test_Ar_FCCcohesive_NEIGH_PURE/test_Ar_FCCcohesive_NEIGH_PURE
+echo model_Ar_P_MLJ_F90            | ./test_Ar_FCCcohesive_NEIGH_PURE/test_Ar_FCCcohesive_NEIGH_PURE >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
 divider "test_Ar_FCCcohesive_NEIGH_PURE --- model_Ar_P_MLJ_NEIGH_PURE_H_F"
-echo model_Ar_P_MLJ_NEIGH_PURE_H_F | ./test_Ar_FCCcohesive_NEIGH_PURE/test_Ar_FCCcohesive_NEIGH_PURE
+echo model_Ar_P_MLJ_NEIGH_PURE_H_F | ./test_Ar_FCCcohesive_NEIGH_PURE/test_Ar_FCCcohesive_NEIGH_PURE >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
 divider "test_Ar_FCCcohesive_NEIGH_PURE --- model_Ar_P_MMorse"
-echo model_Ar_P_MMorse             | ./test_Ar_FCCcohesive_NEIGH_PURE/test_Ar_FCCcohesive_NEIGH_PURE
+echo model_Ar_P_MMorse             | ./test_Ar_FCCcohesive_NEIGH_PURE/test_Ar_FCCcohesive_NEIGH_PURE >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 footer
 
 #---------------------------------------------------------------------------------------------------------------
@@ -131,19 +154,19 @@ header "test_Ar_FCCcohesive_NEIGH_RVEC"        \
        "   |"
 
 divider "test_Ar_FCCcohesive_NEIGH_RVEC --- model_ArNe_P_MLJ_NEIGH_RVEC_F"
-echo model_ArNe_P_MLJ_NEIGH_RVEC_F | ./test_Ar_FCCcohesive_NEIGH_RVEC/test_Ar_FCCcohesive_NEIGH_RVEC
+echo model_ArNe_P_MLJ_NEIGH_RVEC_F | ./test_Ar_FCCcohesive_NEIGH_RVEC/test_Ar_FCCcohesive_NEIGH_RVEC >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
 divider "test_Ar_FCCcohesive_NEIGH_RVEC --- model_Ar_P_MLJ_C"
-echo model_Ar_P_MLJ_C              | ./test_Ar_FCCcohesive_NEIGH_RVEC/test_Ar_FCCcohesive_NEIGH_RVEC
+echo model_Ar_P_MLJ_C              | ./test_Ar_FCCcohesive_NEIGH_RVEC/test_Ar_FCCcohesive_NEIGH_RVEC >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
 divider "test_Ar_FCCcohesive_NEIGH_RVEC --- model_Ar_P_MLJ_F90"
-echo model_Ar_P_MLJ_F90            | ./test_Ar_FCCcohesive_NEIGH_RVEC/test_Ar_FCCcohesive_NEIGH_RVEC
+echo model_Ar_P_MLJ_F90            | ./test_Ar_FCCcohesive_NEIGH_RVEC/test_Ar_FCCcohesive_NEIGH_RVEC >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
 divider "test_Ar_FCCcohesive_NEIGH_RVEC --- model_Ar_P_MLJ_NEIGH_RVEC_F"
-echo model_Ar_P_MLJ_NEIGH_RVEC_F   | ./test_Ar_FCCcohesive_NEIGH_RVEC/test_Ar_FCCcohesive_NEIGH_RVEC
+echo model_Ar_P_MLJ_NEIGH_RVEC_F   | ./test_Ar_FCCcohesive_NEIGH_RVEC/test_Ar_FCCcohesive_NEIGH_RVEC >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
 divider "test_Ar_FCCcohesive_NEIGH_RVEC --- model_Ar_P_MMorse"
-echo model_Ar_P_MMorse             | ./test_Ar_FCCcohesive_NEIGH_RVEC/test_Ar_FCCcohesive_NEIGH_RVEC
+echo model_Ar_P_MMorse             | ./test_Ar_FCCcohesive_NEIGH_RVEC/test_Ar_FCCcohesive_NEIGH_RVEC >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 footer
 
 
@@ -160,25 +183,25 @@ header "test_Ar_free_cluster"                 \
        "   |"
 
 divider "test_Ar_free_cluster --- model_ArNe_P_MLJ_NEIGH_RVEC_F"
-echo model_ArNe_P_MLJ_NEIGH_RVEC_F | ./test_Ar_free_cluster/test_Ar_free_cluster
+echo model_ArNe_P_MLJ_NEIGH_RVEC_F | ./test_Ar_free_cluster/test_Ar_free_cluster >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
 divider "test_Ar_free_cluster --- model_Ar_P_MLJ_C"
-echo model_Ar_P_MLJ_C              | ./test_Ar_free_cluster/test_Ar_free_cluster
+echo model_Ar_P_MLJ_C              | ./test_Ar_free_cluster/test_Ar_free_cluster >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
 divider "test_Ar_free_cluster --- model_Ar_P_MLJ_F90"
-echo model_Ar_P_MLJ_F90            | ./test_Ar_free_cluster/test_Ar_free_cluster
+echo model_Ar_P_MLJ_F90            | ./test_Ar_free_cluster/test_Ar_free_cluster >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
 divider "test_Ar_free_cluster --- model_Ar_P_MLJ_MI_OPBC_H_F"
-echo model_Ar_P_MLJ_MI_OPBC_H_F    | ./test_Ar_free_cluster/test_Ar_free_cluster
+echo model_Ar_P_MLJ_MI_OPBC_H_F    | ./test_Ar_free_cluster/test_Ar_free_cluster >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
 divider "test_Ar_free_cluster --- model_Ar_P_MLJ_NEIGH_PURE_H_F"
-echo model_Ar_P_MLJ_NEIGH_PURE_H_F | ./test_Ar_free_cluster/test_Ar_free_cluster
+echo model_Ar_P_MLJ_NEIGH_PURE_H_F | ./test_Ar_free_cluster/test_Ar_free_cluster >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
 divider "test_Ar_free_cluster --- model_Ar_P_MLJ_NEIGH_RVEC_F"
-echo model_Ar_P_MLJ_NEIGH_RVEC_F   | ./test_Ar_free_cluster/test_Ar_free_cluster
+echo model_Ar_P_MLJ_NEIGH_RVEC_F   | ./test_Ar_free_cluster/test_Ar_free_cluster >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
 divider "test_Ar_free_cluster --- model_Ar_P_MMorse"
-echo model_Ar_P_MMorse             | ./test_Ar_free_cluster/test_Ar_free_cluster
+echo model_Ar_P_MMorse             | ./test_Ar_free_cluster/test_Ar_free_cluster >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 footer
 
 
@@ -193,19 +216,19 @@ header "test_Ar_free_cluster_CLUSTER_C"    \
        "   |"
 
 divider "test_Ar_free_cluster_CLUSTER_C --- model_Ar_P_MLJ_C"
-echo model_Ar_P_MLJ_C           | ./test_Ar_free_cluster_CLUSTER_C/test_Ar_free_cluster_CLUSTER_C
+echo model_Ar_P_MLJ_C           | ./test_Ar_free_cluster_CLUSTER_C/test_Ar_free_cluster_CLUSTER_C >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
 divider "test_Ar_free_cluster_CLUSTER_C --- model_Ar_P_MLJ_F90"
-echo model_Ar_P_MLJ_F90         | ./test_Ar_free_cluster_CLUSTER_C/test_Ar_free_cluster_CLUSTER_C
+echo model_Ar_P_MLJ_F90         | ./test_Ar_free_cluster_CLUSTER_C/test_Ar_free_cluster_CLUSTER_C >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
 divider "test_Ar_free_cluster_CLUSTER_C --- model_Ar_P_MLJ_CLUSTER_C"
-echo model_Ar_P_MLJ_CLUSTER_C   | ./test_Ar_free_cluster_CLUSTER_C/test_Ar_free_cluster_CLUSTER_C
+echo model_Ar_P_MLJ_CLUSTER_C   | ./test_Ar_free_cluster_CLUSTER_C/test_Ar_free_cluster_CLUSTER_C >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
 divider "test_Ar_free_cluster_CLUSTER_C --- model_Ar_P_MLJ_CLUSTER_F90"
-echo model_Ar_P_MLJ_CLUSTER_F90 | ./test_Ar_free_cluster_CLUSTER_C/test_Ar_free_cluster_CLUSTER_C
+echo model_Ar_P_MLJ_CLUSTER_F90 | ./test_Ar_free_cluster_CLUSTER_C/test_Ar_free_cluster_CLUSTER_C >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
 divider "test_Ar_free_cluster_CLUSTER_C --- model_Ar_P_MMorse"
-echo model_Ar_P_MMorse          | ./test_Ar_free_cluster_CLUSTER_C/test_Ar_free_cluster_CLUSTER_C
+echo model_Ar_P_MMorse          | ./test_Ar_free_cluster_CLUSTER_C/test_Ar_free_cluster_CLUSTER_C >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 footer
 
 
@@ -220,19 +243,19 @@ header "test_Ar_free_cluster_CLUSTER_F90"  \
        "   |"
 
 divider "test_Ar_free_cluster_CLUSTER_F90 --- model_Ar_P_MLJ_C"
-echo model_Ar_P_MLJ_C           | ./test_Ar_free_cluster_CLUSTER_F90/test_Ar_free_cluster_CLUSTER_F90
+echo model_Ar_P_MLJ_C           | ./test_Ar_free_cluster_CLUSTER_F90/test_Ar_free_cluster_CLUSTER_F90 >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
 divider "test_Ar_free_cluster_CLUSTER_F90 --- model_Ar_P_MLJ_F90"
-echo model_Ar_P_MLJ_F90         | ./test_Ar_free_cluster_CLUSTER_F90/test_Ar_free_cluster_CLUSTER_F90
+echo model_Ar_P_MLJ_F90         | ./test_Ar_free_cluster_CLUSTER_F90/test_Ar_free_cluster_CLUSTER_F90 >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
 divider "test_Ar_free_cluster_CLUSTER_F90 --- model_Ar_P_MLJ_CLUSTER_C"
-echo model_Ar_P_MLJ_CLUSTER_C   | ./test_Ar_free_cluster_CLUSTER_F90/test_Ar_free_cluster_CLUSTER_F90
+echo model_Ar_P_MLJ_CLUSTER_C   | ./test_Ar_free_cluster_CLUSTER_F90/test_Ar_free_cluster_CLUSTER_F90 >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
 divider "test_Ar_free_cluster_CLUSTER_F90 --- model_Ar_P_MLJ_CLUSTER_F90"
-echo model_Ar_P_MLJ_CLUSTER_F90 | ./test_Ar_free_cluster_CLUSTER_F90/test_Ar_free_cluster_CLUSTER_F90
+echo model_Ar_P_MLJ_CLUSTER_F90 | ./test_Ar_free_cluster_CLUSTER_F90/test_Ar_free_cluster_CLUSTER_F90 >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
 divider "test_Ar_free_cluster_CLUSTER_F90 --- model_Ar_P_MMorse"
-echo model_Ar_P_MMorse          | ./test_Ar_free_cluster_CLUSTER_F90/test_Ar_free_cluster_CLUSTER_F90
+echo model_Ar_P_MMorse          | ./test_Ar_free_cluster_CLUSTER_F90/test_Ar_free_cluster_CLUSTER_F90 >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 footer
 
 #---------------------------------------------------------------------------------------------------------------
@@ -248,10 +271,10 @@ echo ""
 echo "NOTE: Only two examples are executed here because all other permutations produce identical results"
 echo ""
 divider "test_Ar_multiple_models --- model_ArNe_P_MLJ_NEIGH_RVEC_F -and- model_Ar_P_MLJ_C"
-echo model_ArNe_P_MLJ_NEIGH_RVEC_F model_Ar_P_MLJ_C | ./test_Ar_multiple_models/test_Ar_multiple_models
+echo model_ArNe_P_MLJ_NEIGH_RVEC_F model_Ar_P_MLJ_C | ./test_Ar_multiple_models/test_Ar_multiple_models >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
 divider "test_Ar_multiple_models --- model_ArNe_P_MLJ_NEIGH_RVEC_F -and- model_Ar_P_MMorse"
-echo model_ArNe_P_MLJ_NEIGH_RVEC_F model_Ar_P_MMorse | ./test_Ar_multiple_models/test_Ar_multiple_models
+echo model_ArNe_P_MLJ_NEIGH_RVEC_F model_Ar_P_MMorse | ./test_Ar_multiple_models/test_Ar_multiple_models >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 footer
 
 
@@ -264,11 +287,11 @@ header "test_Ne_free_cluster"                 \
        "   |"
 
 divider "test_Ne_free_cluster --- model_ArNe_P_MLJ_NEIGH_RVEC_F"
-echo model_ArNe_P_MLJ_NEIGH_RVEC_F  | ./test_Ne_free_cluster/test_Ne_free_cluster
+echo model_ArNe_P_MLJ_NEIGH_RVEC_F  | ./test_Ne_free_cluster/test_Ne_free_cluster >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
 divider "test_Ne_free_cluster --- model_Ne_P_LJ_NEIGH_PURE_H"
-echo model_Ne_P_LJ_NEIGH_PURE_H     | ./test_Ne_free_cluster/test_Ne_free_cluster
+echo model_Ne_P_LJ_NEIGH_PURE_H     | ./test_Ne_free_cluster/test_Ne_free_cluster >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
 divider "test_Ne_free_cluster --- model_Ne_P_MLJ_NEIGH_RVEC_F"
-echo model_Ne_P_MLJ_NEIGH_RVEC_F    | ./test_Ne_free_cluster/test_Ne_free_cluster
+echo model_Ne_P_MLJ_NEIGH_RVEC_F    | ./test_Ne_free_cluster/test_Ne_free_cluster >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 footer
