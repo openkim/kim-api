@@ -68,7 +68,7 @@ These direction show how to use the Fortran 90 template for a pair potential
 Buckingham potential.  (The procedure for a Model written in C is essentially
 identical. See comments below.)
 
-1. Create new directory under MODELs for the Ar pair potential:
+1. Create a new directory under MODELs for the Ar pair potential:
 
    % cd $KIM_DIR/MODELs
    % mkdir model_Ar_P_Buckingham
@@ -106,11 +106,11 @@ identical. See comments below.)
      instances of the same Model being used simultaneously (see the Test
      `test_Ar_multiple_models' for an example of such usage).  The only case
      where static variables can be used is if they are "hard-wired" so that the
-     Model can only work with those values.  In Fortran this is done using the
-     "parameter" statement.  In C, use preprocessor DEFINE statements.
-     Otherwise variables need to be stored as PARAM_FREE_ or PARAM_FIXED_
-     variables in the KIM API object.  See the discussion in the standard.kim
-     file.
+     Model can only work with those constant values.  In Fortran this is done
+     using the "parameter" statement.  In C, use preprocessor DEFINE
+     statements.  Otherwise variables need to be stored as PARAM_FREE_ or
+     PARAM_FIXED_ variables in the KIM API object.  See the discussion in the
+     standard.kim file.
 
    - Fill in the necessary code in the routines calc_phi() and calc_phi_dphi().
 

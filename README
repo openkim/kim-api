@@ -60,7 +60,7 @@ which the codes are written.
 This version of the openkim-api package is distributed under the PIs' (Ellad
 B. Tadmor, Ryan S. Elliott, and James P. Sethna) copyright.  In the near
 future, this package will be released under an open source license.
-Discussions are currently underway in order to determine the appropirate type
+Discussions are currently underway in order to determine the appropriate type
 of open source license.
 
 The current version of the openkim-api package supports the following features:
@@ -71,18 +71,18 @@ The current version of the openkim-api package supports the following features:
   (Partial support for Fortran 2003 is available.  If you are interested in
   working with the openkim-api and Fortran 2003, please contact the developers
   at --- openkim@googlegroups.com --- and they will provide you with the latest
-  development code and examples.).
+  development code and examples.)
 
 * Support for static and dynamic linking of programs using the openKIM API
 
 * Support for automatic translation between zero-based lists (C-style numbering
-  begining with 0) and one-based lists (Fortran-style numbering beginning with 1)
+  beginning with 0) and one-based lists (Fortran-style numbering beginning with 1)
 
 * Communication of an arbitrary number of `arguments' between a `Model'
   (interatomic potential) and a `Test' (simulation code that uses a Model).
   This is facilitated by the use of `KIM descriptor files' (terminated with a
   `.kim' extension) and a single KIM API object data structure that stores all
-  needed information to be communicated between a Model and a Test.
+  information to be communicated between a Model and a Test.
 
 * Data types: integer, integer*8 (long long), real (float), real*8 (double),
               method (for exchanging pointers to functions), pointer (for
@@ -111,8 +111,8 @@ The current version of the openkim-api package supports the following features:
   neighbor lists with relative position vectors.
 
 * Neighbor list routines are expected to be provided by the calling Test.
-  The API provides support for `locator' and `iterator' neighbor list modes.
-  (A `locator' returns the list of neighbors of a specified atom.  An `iterator' 
+  The API provides support for `Locator' and `Iterator' neighbor list modes.
+  (A `Locator' returns the list of neighbors of a specified atom.  An `Iterator' 
   works by incrementing an atom counter and returning the identity of the next 
   atom (i.e. its number) and its neighbors.)  The API also supports half and full 
   neighbor lists.
@@ -147,9 +147,11 @@ CHANGELOG
 
 DOCs/
      documentation directory.  This directory contains the file
-     KIM_API_alpha_overview.pdf which provides an overview of this release of
-     the openkim-api package, and links to the files KIMserviceDescriptions.txt
-     and standard.kim.  (See the README file in that directory.)
+     openkim-api-introduction-XX.XX.XX.pdf which provides an overview of this
+     release of the openkim-api package, links to the files
+     KIMserviceDescriptions.txt and standard.kim, and a TEMPLATEs directory
+     containing template files for creating your own KIM Models.  (See the
+     README file in that directory.)
 
 INSTALL
      detailed instructions on how to install the openKIM API package

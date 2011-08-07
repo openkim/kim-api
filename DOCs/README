@@ -8,9 +8,9 @@ files to facilitate the learning process.
 STEP 0
 
    It you have not already done so, read the README file in the API root
-   directory, referred to as $KIM_DIR (by default:
-   openkim-api-XX.XX.XX/README), and follow the instructions in the INSTALL
-   file in the same directory to install the openKIM API package.
+   directory, referred to as $KIM_DIR (by default: openkim-api-XX.XX.XX/), and
+   follow the instructions in the INSTALL file in the same directory to install
+   the openKIM API package.
 
 
 STEP 1
@@ -62,9 +62,9 @@ STEP 4
    start looking at computer code.
 
    The list of Models and Tests is given in $KIM_DIR/MODELs/EXAMPLES.README and
-   $KIM_DIR/TESTs/EXAMPLES.README. Each of those files includes a brief
-   description of the Models/Tests in order of increasing complexity and noting
-   the programming language.  For example, the simplest Test is
+   $KIM_DIR/TESTs/EXAMPLES.README, respectively. Each of those files includes a
+   brief description of the Models/Tests in order of increasing complexity and
+   noting the programming language.  For example, the simplest Test is
 
    test_Ar_free_cluster_CLUSTER_C
 
