@@ -62,20 +62,12 @@ footer
 header "test_Ar_FCCcohesiveCutoff_NEIGH_RVEC" \
        "   |"                                 \
        "   |-- model_ArNe_P_MLJ_NEIGH_RVEC_F" \
-       "   |-- model_Ar_P_MLJ_C"              \
-       "   |-- model_Ar_P_MLJ_F90"            \
        "   |-- model_Ar_P_MLJ_NEIGH_RVEC_F"   \
        "   |-- model_Ar_P_MMorse"             \
        "   |"
 
 divider "test_Ar_FCCcohesiveCutoff_NEIGH_RVEC --- model_ArNe_P_MLJ_NEIGH_RVEC_F"
 echo model_ArNe_P_MLJ_NEIGH_RVEC_F | ./test_Ar_FCCcohesiveCutoff_NEIGH_RVEC/test_Ar_FCCcohesiveCutoff_NEIGH_RVEC
-
-divider "test_Ar_FCCcohesiveCutoff_NEIGH_RVEC --- model_Ar_P_MLJ_C"
-echo model_Ar_P_MLJ_C              | ./test_Ar_FCCcohesiveCutoff_NEIGH_RVEC/test_Ar_FCCcohesiveCutoff_NEIGH_RVEC
-
-divider "test_Ar_FCCcohesiveCutoff_NEIGH_RVEC --- model_Ar_P_MLJ_F90"
-echo model_Ar_P_MLJ_F90            | ./test_Ar_FCCcohesiveCutoff_NEIGH_RVEC/test_Ar_FCCcohesiveCutoff_NEIGH_RVEC
 
 divider "test_Ar_FCCcohesiveCutoff_NEIGH_RVEC --- model_Ar_P_MLJ_NEIGH_RVEC_F"
 echo model_Ar_P_MLJ_NEIGH_RVEC_F   | ./test_Ar_FCCcohesiveCutoff_NEIGH_RVEC/test_Ar_FCCcohesiveCutoff_NEIGH_RVEC
@@ -252,21 +244,14 @@ header "test_Ar_multiple_models"              \
        "   |-- model_Ar_P_MLJ_NEIGH_RVEC_F"   \
        "   |-- model_Ar_P_MMorse"             \
        "   |"
+echo ""
+echo "NOTE: Only two examples are executed here because all other permutations produce identical results"
+echo ""
+divider "test_Ar_multiple_models --- model_ArNe_P_MLJ_NEIGH_RVEC_F -and- model_Ar_P_MLJ_C"
+echo model_ArNe_P_MLJ_NEIGH_RVEC_F model_Ar_P_MLJ_C | ./test_Ar_multiple_models/test_Ar_multiple_models
 
 divider "test_Ar_multiple_models --- model_ArNe_P_MLJ_NEIGH_RVEC_F -and- model_Ar_P_MMorse"
 echo model_ArNe_P_MLJ_NEIGH_RVEC_F model_Ar_P_MMorse | ./test_Ar_multiple_models/test_Ar_multiple_models
-
-divider "test_Ar_multiple_models --- model_Ar_P_MLJ_C -and- model_Ar_P_MMorse"
-echo model_Ar_P_MLJ_C model_Ar_P_MMorse              | ./test_Ar_multiple_models/test_Ar_multiple_models
-
-divider "test_Ar_multiple_models --- model_Ar_P_MLJ_F90 -and- model_Ar_P_MMorse"
-echo model_Ar_P_MLJ_F90 model_Ar_P_MMorse            | ./test_Ar_multiple_models/test_Ar_multiple_models
-
-divider "test_Ar_multiple_models --- model_Ar_P_MLJ_NEIGH_RVEC_F -and- model_Ar_P_MMorse"
-echo model_Ar_P_MLJ_NEIGH_RVEC_F model_Ar_P_MMorse   | ./test_Ar_multiple_models/test_Ar_multiple_models
-
-divider "test_Ar_multiple_models --- model_Ar_P_MMorse -and- model_Ar_P_MLJ_F90"
-echo model_Ar_P_MMorse model_Ar_P_MLJ_F90            | ./test_Ar_multiple_models/test_Ar_multiple_models
 footer
 
 
