@@ -262,6 +262,7 @@ int main()
 
    /* ready to compute */
    printf("\n");
+   printf("This is Test  : $s\n",     testname);
    printf("MODEL_ZERO is : %s\n",   modelname0);
    printf("MODEL_ONE  is : %s\n\n", modelname1);
    printf("Energy                    MODEL_ZERO_periodic   MODEL_ZERO_cluster    MODEL_ONE_periodic    MODEL_ONE_cluster     Spacing\n");

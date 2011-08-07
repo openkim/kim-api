@@ -142,7 +142,8 @@ program TEST_NAME_STR
 
   ! print results to screen
   print '(80(''-''))'
-  print '("Results for KIM Model: ",A)', modelname
+  print '("This is Test          : ",A)', testname
+  print '("Results for KIM Model : ",A)', modelname
   print '("Forces:")'
   print '("Atom     X                        Y                        Z")'
   print '(I2,"   ",3E25.15)', (I,forces(:,I),I=1,N)

@@ -154,7 +154,8 @@ int main(int argc, char* argv[])
 
    /* print results to screen */
    printf("--------------------------------------------------------------------------------\n");
-   printf("Results for KIM Model: %s\n",modelname);
+   printf("This is Test          : %s\n",testname);
+   printf("Results for KIM Model : %s\n",modelname);
    printf("Forces:\n");
    printf("Atom     X                        Y                        Z\n");
    for (i = 0; i < *numberOfAtoms; ++i)

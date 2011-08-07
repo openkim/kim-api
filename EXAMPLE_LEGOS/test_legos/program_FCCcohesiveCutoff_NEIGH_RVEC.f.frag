@@ -159,7 +159,8 @@ program TEST_NAME_STR
      ! print results to screen
      !
      print '(80(''-''))'
-     print '("Results for KIM Model: ",A)', modelname
+     print '("This is Test          : ",A)', testname
+     print '("Results for KIM Model : ",A)', modelname
      print *
      print '("Found minimum energy configuration to within",E25.15)', TOL
      print *

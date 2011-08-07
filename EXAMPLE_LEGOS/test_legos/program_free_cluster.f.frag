@@ -262,7 +262,8 @@ program TEST_NAME_STR
 
   ! print results to screen
   print '(80(''-''))'
-  print '("Results for KIM Model: ",A)', modelname
+  print '("This is Test          : ",A)', testname
+  print '("Results for KIM Model : ",A)', modelname
   print '("Using NBC: ",A)', NBC_Method(1:(index(NBC_Method,char(0))-1))
   print '("Forces:")'
   print '("Atom     X                        Y                        Z")'
