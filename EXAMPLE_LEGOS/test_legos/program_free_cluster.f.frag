@@ -261,7 +261,7 @@ program TEST_NAME_STR
   endif
 
   ! print results to screen
-  print *, "***********************************************************************************************"
+  print '(80(''-''))'
   print *, "Results for KIM Model: ", modelname
   print *, "Using NBC: ", NBC_Method(1:(index(NBC_Method,char(0))-1))
   print *, "Forces:"

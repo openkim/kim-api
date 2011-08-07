@@ -141,7 +141,7 @@ program TEST_NAME_STR
   endif
 
   ! print results to screen
-  print *, "***********************************************************************************************"
+  print '(80(''-''))'
   print *, "Results for KIM Model: ", modelname
   print *, "Forces:"
   print *, "  X                   Y                   Z"
