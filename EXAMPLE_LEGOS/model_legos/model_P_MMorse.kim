@@ -105,4 +105,4 @@ PARAM_FIXED_A2          real*8       force      standard                []
 
 PARAM_FIXED_A3          real*8       energy     standard                []
 
-PARAM_FIXED_cutsq       real*8       area       standard                []
+PARAM_FIXED_cutsq       real*8       none       none                    []

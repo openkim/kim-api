@@ -94,4 +94,4 @@ PARAM_FIXED_C           real*8       energy     standard                [3]
 
 PARAM_FIXED_sigmasq     real*8       none       none                    [3]                             # should be energy**2
 
-PARAM_FIXED_cutsq       real*8       area       standard                []
+PARAM_FIXED_cutsq       real*8       none       none                    []
