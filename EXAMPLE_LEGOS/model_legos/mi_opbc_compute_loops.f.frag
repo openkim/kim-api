@@ -1,16 +1,16 @@
-    ! determine which NBC scenerio to use
+    ! determine whether half or full lists are being used
     pNBC_Method = kim_api_get_nbc_method_f(pkim, ier)
     if (ier.le.0) then
        call report_error(__LINE__, "kim_api_get_nbc_method_f", ier)
        return
     endif
     if (index(NBC_Method,"MI-OPBC-H").eq.1) then
-       nbc = 0
+       HalfOrFull = 1
     elseif (index(NBC_Method,"MI-OPBC-F").eq.1) then
-       nbc = 1
+       HalfOrFull = 2
     else
        ier = 0
-       call report_error(__LINE__, "Unknown NBC type", ier)
+       call report_error(__LINE__, "Unsupported NBC type", ier)
        return
     endif
     call free(pNBC_Method) ! don't forget to release the memory...
@@ -31,7 +31,7 @@
        !
        atom = i ! request neighbors for atom i
        
-       if (nbc.eq.0) then
+       if (HalfOrFull.eq.1) then
           ier = kim_api_get_half_neigh_f(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij_dummy)
        else
           ier = kim_api_get_full_neigh_f(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij_dummy)
@@ -56,18 +56,18 @@
                   r,phi,dphi,d2phi)                     ! compute pair potential
              if (comp_enepot.eq.1) then                 !
                 ene_pot(i) = ene_pot(i) + 0.5d0*phi     ! accumulate energy
-                if (nbc.eq.0) then                      !
+                if (HalfOrFull.eq.1) then               !
                    ene_pot(j) = ene_pot(j) + 0.5d0*phi  ! (i and j share it)
                 endif                                   !
              else                                       !
-                if (nbc.eq.0) then                      !
+                if (HalfOrFull.eq.1) then               !
                    energy = energy + phi                ! half neigh case
                 else                                    !
                    energy = energy + 0.5d0*phi          ! full neigh case
-                endif                                      !
+                endif                                   !
              endif
              if (comp_virial.eq.1) then                 !
-                if (nbc.eq.0) then                      !
+                if (HalfOrFull.eq.1) then               !
                    virial = virial + r*dphi             ! accumul. virial=sum r(dV/dr)
                 else                                    !
                    virial = virial + 0.5d0*r*dphi       !
@@ -75,7 +75,7 @@
              endif                                      !
              if (comp_force.eq.1) then                  !
                 force(:,i) = force(:,i) + dphi*Rij/r    ! accumulate forces
-                if (nbc.eq.0) then                      !
+                if (HalfOrFull.eq.1) then               !
                    force(:,j) = force(:,j) - dphi*Rij/r ! (Fji = -Fij)
                 endif                                   !
              endif
