@@ -4,7 +4,7 @@ This file provides supplemental information for users who want to work with the
 openkim-api package through github.com and the git revision control program.
 
 There are only a couple of significant differences between the source tarball
-files that are distributed as openkim-api-XX.XX.XX.tgz and the openkim-api git
+files that are distributed as openkim-api-vX.X.X.tgz and the openkim-api git
 repository.  The primary difference is that in the git repository there are no
 example Models or Tests in the MODELs and TESTs directories, respectively.
 Instead the user must generate the examples by the following process:

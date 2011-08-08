@@ -139,7 +139,7 @@ See the detailed instructions in the INSTALL file in this directory.
 
 -------------------------------------------------------------------------------
 
-This directory (by default, openkim-api-XX.XX.XX) contains the following files
+This directory (by default, openkim-api-vX.X.X) contains the following files
 and directories:
 
 CHANGELOG
@@ -147,7 +147,7 @@ CHANGELOG
 
 DOCs/
      documentation directory.  This directory contains the file
-     openkim-api-introduction-XX.XX.XX.pdf which provides an overview of this
+     openkim-api-introduction-vX.X.X.pdf which provides an overview of this
      release of the openkim-api package, links to the files
      KIMserviceDescriptions.txt and standard.kim, and a TEMPLATEs directory
      containing template files for creating your own KIM Models.  (See the
