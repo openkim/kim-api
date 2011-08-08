@@ -841,9 +841,10 @@ compute                 method       none       none                    []
 # reinit : A pointer to the Model's reinit function (called to reinitialize a 
 #          Model following a change to its parameters by a Test).
 #
-# This argument is required for all Models that publish their parameters and
-# should be optional for all other Models and Tests to ensure maximum
-# compatibility.
+# This argument is required if a Models publishs its parameters.  However, the
+# argument should be included, as optional, by all Models to ensure maximum
+# compatibility with Tests (who should only include the argument if they use
+# it).
 #
 # Name                  Type         Unit       SystemU/Scale           Shape
 #
@@ -857,8 +858,9 @@ reinit                  method       none       none                    []
 #
 # This argument is required if a Model publishes its parameters (so that it can
 # free the memory that it allocated in the init function, for its parameters).
-# Otherwise, this argument should be included for all Models/Test (to ensure
-# maximum compatibility), but it may be optional.
+# However, the argument should be included by all Models (as optional, at
+# least) to ensure maximum compatibility with Tests (who should only include
+# the argument if they use it).
 #
 # Name                  Type         Unit       SystemU/Scale           Shape
 #

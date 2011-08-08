@@ -61,7 +61,7 @@ destroy                 method       none       none                    []
 
 compute                 method       none       none                    []
 
-reinit                  method       none       none                    []
+reinit                  method       none       none                    []                 optional
 
 cutoff                  real*8       length     standard                []
 

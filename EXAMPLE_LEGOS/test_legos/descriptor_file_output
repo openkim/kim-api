@@ -6,8 +6,6 @@ destroy                 method       none       none                    []
 
 compute                 method       none       none                    []
 
-reinit                  method       none       none                    []
-
 cutoff                  real*8       length     standard                []
 
 energy                  real*8       energy     standard                []

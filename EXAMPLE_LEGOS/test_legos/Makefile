@@ -261,6 +261,9 @@ test_Ar_FCCcohesiveCutoff_NEIGH_RVEC: $(COMMON_FRAGMENTS)                       
 	echo                                              >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                              >> $(KIM_TESTS_DIR)$@/$@.kim
 	cat descriptor_file_output                        >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                              >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "reinit                  method       none       none                    []" \
+                                                          >> $(KIM_TESTS_DIR)$@/$@.kim
         # make .F90 file in the directory
 	cat program_FCCcohesiveCutoff_NEIGH_RVEC.f.frag  | $(SED_CMD) \
                                                          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
