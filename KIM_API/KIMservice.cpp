@@ -1520,6 +1520,10 @@ bool KIM_API_model::do_dummy_match(KIM_API_model& tst, KIM_API_model& mdl){
             }else {
                 mdl.iterator_neigh_mode = true;   
             }      
+        }else if (Neigh_LocaAccess_tst) {
+            mdl.locator_neigh_mode=true;
+        } else if(Neigh_IterAccess_tst){
+            mdl.iterator_neigh_mode=true;
         }
         
 
@@ -1541,7 +1545,6 @@ bool KIM_API_model::do_dummy_match(KIM_API_model& tst, KIM_API_model& mdl){
          mdl.iterator_neigh_mode = true;
      }
 
-    
     //logic for Neigh_CalcRij
   /*  if (Neigh_CalcRij_mdl && !Neigh_CalcRij_tst){
              cout<< "model .kim requres Neigh_CalcRij"<<endl;
