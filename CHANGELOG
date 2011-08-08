@@ -1,4 +1,4 @@
-openkim-api-0.1.0 ==============================================================
+openkim-api-v0.1.0 =============================================================
 
 * Added TEMPLATE files to help users create their own KIM Models.
 
@@ -27,7 +27,7 @@ openkim-api-0.1.0 ==============================================================
   (hopefully helpful) description of the contents of the directory)
 
 
-openkim-api-0.0.0 ==============================================================
+openkim-api-v0.0.0 =============================================================
 
 The initial release of the openkim-api package.  This was first made available
 to participants at the Inaugural Openkim Workshop held in San Diego, CA on
