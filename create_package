@@ -25,7 +25,8 @@ echo "This package created from commit"    > $versionfile
 echo ""                                   >> $versionfile
 git rev-parse HEAD                        >> $versionfile
 echo ""                                   >> $versionfile
-echo "of the openkim-api git repository." >> $versionfile
+echo "of the openkim-api git repository"  >> $versionfile
+echo "By $USER on `date`."                >> $versionfile
 
 rm -rf .git
 
