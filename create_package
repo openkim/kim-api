@@ -21,12 +21,12 @@ git clone . $packagename
 cd $packagename
 
 versionfile=openkim-api.version.info
-echo "This package created from commit"    > $versionfile
-echo ""                                   >> $versionfile
-git rev-parse HEAD                        >> $versionfile
-echo ""                                   >> $versionfile
-echo "of the openkim-api git repository"  >> $versionfile
-echo "By $USER on `date`."                >> $versionfile
+echo "This package created from commit"                                               > $versionfile
+echo ""                                                                              >> $versionfile
+git rev-parse HEAD                                                                   >> $versionfile
+echo ""                                                                              >> $versionfile
+echo "of the openkim-api git repository"                                             >> $versionfile
+echo "By `git config user.name` (`git config user.email`) on `date`."                >> $versionfile
 
 rm -rf .git
 
