@@ -261,7 +261,7 @@ int main()
    if (NULL==nl_cluster_model_1.RijList) report_error(__LINE__,"malloc unsuccessful", -1);
 
    /* ready to compute */
-   printf("\n");
+   printf("--------------------------------------------------------------------------------\n");
    printf("This is Test  : $s\n",     testname);
    printf("MODEL_ZERO is : %s\n",   modelname0);
    printf("MODEL_ONE  is : %s\n\n", modelname1);
