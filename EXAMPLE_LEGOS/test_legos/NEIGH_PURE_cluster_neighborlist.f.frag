@@ -29,7 +29,7 @@ subroutine NEIGH_PURE_cluster_neighborlist(half, numberOfAtoms, coords, cutoff, 
         r2 = dot_product(dx, dx)
         if (r2.le.cutoff2) then
            ! atom j is a neighbor of atom i
-           if ( (j .gt. i) .OR. (.not. half) ) then
+           if ( (j .gt. i) .OR. ((.not. half) .AND. (i.ne.j)) ) then
                a = a+1
                neighborList(a,i) = j
            endif

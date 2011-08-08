@@ -34,7 +34,7 @@ subroutine MI_OPBC_neighborlist(half, numberOfAtoms, coords, rcut, boxlength, ne
         r2 = dot_product(dx, dx)
         if (r2.le.rcut2) then
            if (i.ne.j) then
-              if ( (j .gt. i) .or. (.not. half) ) then
+              if ( (j .gt. i) .or. ((.not. half) .AND. (i.ne.j)) ) then
                   ! atom j is a neighbor of atom i
                   a = a+1
                   neighborList(a,i) = j
