@@ -28,7 +28,7 @@ echo ""                                                                         
 echo "of the openkim-api git repository"                                             >> $versionfile
 echo "By `git config user.name` (`git config user.email`) on `date`."                >> $versionfile
 
-rm -rf .git
+rm -rf '.git'
 
 cd EXAMPLE_LEGOS
 
@@ -36,16 +36,16 @@ make
 
 cd ..
 
-rm -rf EXAMPLE_LEGOS
+rm -rf 'EXAMPLE_LEGOS'
 
-rm -f README.git
+rm -f README_GIT
 rm -f create_package
-rm -f DOCs/openkim-api-introduction.pptx
+rm -f 'DOCs/openkim-api-introduction.pptx'
 rm -f `find . -name ".gitignore"`
 
 cd ..
 
 tar czvf $packagename.tgz $packagename
 
-rm -rf $packagename
+rm -rf "$packagename"
 
