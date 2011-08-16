@@ -1,4 +1,21 @@
-openkim-api-v0.1.0 =============================================================
+=== openkim-api-v0.1.1 =========================================================
+
+
+* Fixed memory handling bug associated with the service functions
+     KIM_API_get_listAtomTypes()
+     KIM_API_get_listParams()
+     KIM_API_get_listFreeParams()
+     KIM_API_get_listFixedParams()
+     KIM_API_get_NBC_method()
+
+* Fixed bug in test_**_free_cluster.F90
+
+* Renamed `README.git' to `README_GIT' to avoid confusion with the
+  git convention that the extension `.git' refers to a bare repository
+
+
+=== openkim-api-v0.1.0 =========================================================
+
 
 * Added TEMPLATE files to help users create their own KIM Models.
 
@@ -27,7 +44,8 @@ openkim-api-v0.1.0 =============================================================
   (hopefully helpful) description of the contents of the directory)
 
 
-openkim-api-v0.0.0 =============================================================
+=== openkim-api-v0.0.0 =========================================================
+
 
 The initial release of the openkim-api package.  This was first made available
 to participants at the Inaugural Openkim Workshop held in San Diego, CA on
