@@ -2233,7 +2233,9 @@ void * KIM_API_model::get_listAtomsTypes(int* nATypes, int* error){
         return NULL;
     }
     *nATypes = nAtomsTypes;
-    char * listatypes= new char[nAtomsTypes*KEY_CHAR_LENGTH];
+    //char * listatypes= new char[nAtomsTypes*KEY_CHAR_LENGTH];
+    char * listatypes=(char *)malloc(nAtomsTypes*KEY_CHAR_LENGTH);
+
     for (int i=0;i<nAtomsTypes*KEY_CHAR_LENGTH;i++) listatypes[i] = '\0';
     for(int i=0; i<nAtomsTypes; i++){
         strncpy(listatypes + i*KEY_CHAR_LENGTH, AtomsTypes[i].symbol,strlen( AtomsTypes[i].symbol)+1);
@@ -2247,7 +2249,8 @@ void * KIM_API_model::get_NBC_method(int* error){
         // no NBC methods are specified
         return NULL;
     }
-    char * method = new char[KEY_CHAR_LENGTH];
+    //char * method = new char[KEY_CHAR_LENGTH];
+    char *method = (char *)malloc(KEY_CHAR_LENGTH);
     for (int i=0;i<KEY_CHAR_LENGTH;i++) method[i] = '\0';
     strcpy(method,this->NBC_method_current);
     *error=1; //success
@@ -2281,7 +2284,8 @@ void * KIM_API_model::get_listParams(int* nVpar, int* error){
         return NULL;
     }
     *nVpar=count;
-    listvpar= new char[KEY_CHAR_LENGTH * count];
+    //listvpar= new char[KEY_CHAR_LENGTH * count];
+    listvpar = (char *)malloc(KEY_CHAR_LENGTH * count);
     for (int i=0;i<count*KEY_CHAR_LENGTH;i++) listvpar[i] = '\0';
     count=0;
     for (int i=0;i<model.size;i++){
@@ -2306,7 +2310,8 @@ void * KIM_API_model::get_listFreeParams(int* nVpar, int* error){
         return NULL;
     }
     *nVpar=count;
-    listvpar= new char[KEY_CHAR_LENGTH * count];
+    //listvpar= new char[KEY_CHAR_LENGTH * count];
+    listvpar = (char *)malloc(KEY_CHAR_LENGTH * count);
     for (int i=0;i<count*KEY_CHAR_LENGTH;i++) listvpar[i] = '\0';
     count=0;
     for (int i=0;i<model.size;i++){
@@ -2331,7 +2336,8 @@ void * KIM_API_model::get_listFixedParams(int* nVpar, int* error){
         return NULL;
     }
     *nVpar=count;
-    listvpar= new char[KEY_CHAR_LENGTH * count];
+    //listvpar= new char[KEY_CHAR_LENGTH * count];
+    listvpar = (char *)malloc(KEY_CHAR_LENGTH * count);
     for (int i=0;i<count*KEY_CHAR_LENGTH;i++) listvpar[i] = '\0';
     count=0;
     for (int i=0;i<model.size;i++){
