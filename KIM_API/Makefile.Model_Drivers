@@ -1,0 +1,64 @@
+
+#                                                                      
+# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna 
+# All rights reserved.                                                 
+#                                    
+# Authors: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
+#
+
+MODEL_BUILD_TARGET := $(MODEL_NAME).a
+
+ifndef KIM_API_DIR
+   KIM_DIR = ../../
+   include $(KIM_DIR)KIM_API/Include.mk
+else
+   include $(KIM_API_DIR)Include.mk
+endif
+
+
+all: $(MODEL_NAME).kim $(MODEL_BUILD_TARGET)
+
+lc_MODEL_DRIVER_NAME := `echo $(MODEL_DRIVER_NAME) | tr A-Z a-z`
+lc_MODEL_NAME        := `echo $(MODEL_NAME) | tr A-Z a-z`
+
+$(MODEL_NAME).kim: $(KIM_MODEL_DRIVERS_DIR)$(MODEL_DRIVER_NAME)/$(MODEL_DRIVER_NAME).kim Makefile
+	cat $(KIM_MODEL_DRIVERS_DIR)/$(MODEL_DRIVER_NAME)/$(MODEL_DRIVER_NAME).kim | \
+        sed -e 's,MODEL_NAME_STR,$(MODEL_NAME),g'       \
+            -e 's,SPECIES1_NAME_STR,$(SPECIES1_NAME),g' \
+            -e 's,SPECIES2_NAME_STR,$(SPECIES2_NAME),g' \
+            -e 's,SPECIES3_NAME_STR,$(SPECIES3_NAME),g' \
+            -e 's,SPECIES4_NAME_STR,$(SPECIES4_NAME),g' \
+            -e 's,SPECIES5_NAME_STR,$(SPECIES5_NAME),g' \
+            -e 's,SPECIES6_NAME_STR,$(SPECIES6_NAME),g' \
+            -e 's,SPECIES7_NAME_STR,$(SPECIES7_NAME),g' \
+            -e 's,SPECIES8_NAME_STR,$(SPECIES8_NAME),g' \
+            -e 's,SPECIES9_NAME_STR,$(SPECIES9_NAME),g' \
+        > $(MODEL_NAME).kim
+
+$(MODEL_NAME).cpp: $(PARAM_FILE_NAME) Makefile
+	echo "extern \"C\" {"                                                 >  $(MODEL_NAME).cpp
+	echo ""                                                               >> $(MODEL_NAME).cpp
+	echo "void $(lc_MODEL_DRIVER_NAME)_init_(void* km, char* paramfile);" >> $(MODEL_NAME).cpp
+	echo ""                                                               >> $(MODEL_NAME).cpp
+	echo "void $(lc_MODEL_NAME)_init_(void* km) {"                        >> $(MODEL_NAME).cpp
+	echo "   char param_string[] ="                                       >> $(MODEL_NAME).cpp
+	cat $(PARAM_FILE_NAME) | \
+        sed -e 's,\\,\\\\,g'     \
+            -e 's,",\\",g'       \
+            -e 's,^,      ",g'   \
+            -e 's,$$,\\n",g'                                                  >> $(MODEL_NAME).cpp
+	echo "   ;"                                                           >> $(MODEL_NAME).cpp
+	echo ""                                                               >> $(MODEL_NAME).cpp
+	echo "   $(lc_MODEL_DRIVER_NAME)_init_(km, param_string);"            >> $(MODEL_NAME).cpp
+	echo "}"                                                              >> $(MODEL_NAME).cpp
+	echo ""                                                               >> $(MODEL_NAME).cpp
+	echo "}"                                                              >> $(MODEL_NAME).cpp
+
+$(MODEL_NAME).a: $(MODEL_NAME).o
+	ar rcs $@ *.o
+
+Makefile: $(KIM_API_DIR)Include.mk
+	@touch Makefile
+
+clean:
+	rm -f *.o *.mod *.a *.so $(MODEL_NAME).kim $(MODEL_NAME).cpp

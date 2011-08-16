@@ -12,22 +12,23 @@
 
 include $(KIM_DIR)KIM_API/Include.mk
 
+MODEL_DRIVERS_LIST = $(notdir $(filter-out .%,$(shell find $(KIM_MODEL_DRIVERS_DIR) -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)))
 MODELS_LIST = $(notdir $(filter-out .%,$(shell find $(KIM_MODELS_DIR) -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)))
 TESTS_LIST  = $(notdir $(filter-out .%,$(shell find $(KIM_TESTS_DIR) -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)))
 
-.PHONY: all openkim-api clean                              \
-        kim-api-all kim-api-clean                          \
-        $(patsubst %,%-all,$(MODELS_LIST) $(TESTS_LIST))   \
-        $(patsubst %,%-clean,$(MODELS_LIST) $(TESTS_LIST))
+.PHONY: all openkim-api clean                                                    \
+        kim-api-all kim-api-clean                                                \
+        $(patsubst %,%-all,  $(MODELS_LIST) $(MODEL_DRIVERS_LIST) $(TESTS_LIST)) \
+        $(patsubst %,%-clean,$(MODELS_LIST) $(MODEL_DRIVERS_LIST) $(TESTS_LIST))
 
 # compile everything in the standard directories
-all: models_check kim-api-all $(patsubst %,%-all,$(MODELS_LIST)) $(patsubst %,%-all,$(TESTS_LIST))
+all: models_check kim-api-all $(patsubst %,%-all,$(MODELS_LIST) $(MODEL_DRIVERS_LIST) $(TESTS_LIST))
 
 # other targets 
 openkim-api: kim-api-all      # compile the openkim-api
 
 # cleaning targets
-clean: $(patsubst %,%-clean,$(MODELS_LIST)) $(patsubst %,%-clean,$(TESTS_LIST)) kim-api-clean
+clean: $(patsubst %,%-clean,$(MODELS_LIST) $(MODEL_DRIVERS_LIST) $(TESTS_LIST)) kim-api-clean
 
 
 ########### for internal use ###########
@@ -46,6 +47,14 @@ $(patsubst %,%-all,$(MODELS_LIST)): | kim-api-all
 
 $(patsubst %,%-clean,$(MODELS_LIST)):
 	$(MAKE) -C $(KIM_MODELS_DIR)$(patsubst %-clean,%,$@) clean
+	@echo
+
+$(patsubst %,%-all,$(MODEL_DRIVERS_LIST)): | kim-api-all
+	$(MAKE) -C $(KIM_MODEL_DRIVERS_DIR)$(patsubst %-all,%,$@) all
+	@echo
+
+$(patsubst %,%-clean,$(MODEL_DRIVERS_LIST)):
+	$(MAKE) -C $(KIM_MODEL_DRIVERS_DIR)$(patsubst %-clean,%,$@) clean
 	@echo
 
 $(patsubst %,%-all,$(TESTS_LIST)): | kim-api-all $(patsubst %,%-all,$(MODELS_LIST))

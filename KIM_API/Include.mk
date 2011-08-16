@@ -5,7 +5,7 @@
 # Author: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
 #
 # This make file needs to be included by the makefiles in 
-# the KIM_API, MODELs/*/ and TESTs/*/ directories.
+# the KIM_API, MODELs/*/, MODEL_DRIVERs/*/ and TESTs/*/ directories.
 # It contains definitions for the GNU and Intel compiler sets. 
 # It also contains definitions for patern compilation rules.
 # 
@@ -17,6 +17,9 @@ endif
 ifndef KIM_MODELS_DIR
    KIM_MODELS_DIR:=$(KIM_DIR)MODELs/
 endif
+ifndef KIM_MODEL_DRIVERS_DIR
+   KIM_MODEL_DRIVERS_DIR:=$(KIM_DIR)MODEL_DRIVERs/
+endif
 ifndef KIM_TESTS_DIR
    KIM_TESTS_DIR:=$(KIM_DIR)TESTs/
 endif
@@ -27,7 +30,9 @@ endif
 
 # setup list of available models
 MODELLST = $(patsubst .%.make-temp,%,$(notdir $(wildcard $(KIM_API_DIR).*.make-temp)))
-MODELOBJ = $(addprefix $(KIM_MODELS_DIR), $(join $(addsuffix /,$(MODELLST)), $(addsuffix .a, $(MODELLST))))
+MODELDRIVERLST = $(notdir $(filter-out .%,$(shell find $(KIM_MODEL_DRIVERS_DIR) -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)))
+MODELOBJ = $(addprefix $(KIM_MODELS_DIR), $(join $(addsuffix /,$(MODELLST)), $(addsuffix .a, $(MODELLST)))) \
+           $(addprefix $(KIM_MODEL_DRIVERS_DIR), $(join $(addsuffix /,$(MODELDRIVERLST)), $(addsuffix .a, $(MODELDRIVERLST))))
 
 # Determine whether a 32 bit or 64 bit compile should be use
 ifdef KIM_SYSTEM32
@@ -40,10 +45,17 @@ ifdef KIM_INTEL
    # Define Intel compiler switches
    OBJONLY=-c
    OUTPUTIN=-o
-   FORTRANFLAG =-I $(KIM_API_DIR) -D $(MACHINESYSTEM)  -D KIM_DIR_API=\"$(KIM_API_DIR)\" -D KIM_DIR_MODELS=\"$(KIM_MODELS_DIR)\" -D KIM_DIR_TESTS=\"$(KIM_TESTS_DIR)\" #-nofor_main
+   FORTRANFLAG =-I $(KIM_API_DIR) -D $(MACHINESYSTEM)                     \
+                                  -D KIM_DIR_API=\"$(KIM_API_DIR)\"       \
+                                  -D KIM_DIR_MODELS=\"$(KIM_MODELS_DIR)\" \
+                                  -D KIM_DIR_TESTS=\"$(KIM_TESTS_DIR)\"   \
+                                  -D KIM_DIR_MODEL_DRIVERS=\"$(KIM_MODEL_DRIVERS_DIR)\"
    CCOMPILER = icc
    CPPCOMPILER = icpc
-   CPPFLAG = -O3 -I$(KIM_API_DIR) -D KIM_DIR_API=\"$(KIM_API_DIR)\" -D KIM_DIR_MODELS=\"$(KIM_MODELS_DIR)\" -D KIM_DIR_TESTS=\"$(KIM_TESTS_DIR)\"
+   CPPFLAG = -O3 -I$(KIM_API_DIR) -D KIM_DIR_API=\"$(KIM_API_DIR)\"       \
+                                  -D KIM_DIR_MODELS=\"$(KIM_MODELS_DIR)\" \
+                                  -D KIM_DIR_TESTS=\"$(KIM_TESTS_DIR)\"   \
+                                  -D KIM_DIR_MODEL_DRIVERS=\"$(KIM_MODEL_DRIVERS_DIR)\"
    CPPLIBFLAG = -nofor_main -cxxlib
    FORTRANLIBFLAG = -cxxlib
    FORTRANCOMPILER = ifort
@@ -52,15 +64,21 @@ else
    # Define GNU compiler switches
    OBJONLY=-c
    OUTPUTIN=-o
-   FORTRANFLAG = -fcray-pointer -O3 -I$(KIM_API_DIR) -D $(MACHINESYSTEM) -D KIM_DIR_API=\"$(KIM_API_DIR)\" -D KIM_DIR_MODELS=\"$(KIM_MODELS_DIR)\" -D KIM_DIR_TESTS=\"$(KIM_TESTS_DIR)\"
+   FORTRANFLAG = -fcray-pointer -O3 -I$(KIM_API_DIR) -D $(MACHINESYSTEM)                     \
+                                                     -D KIM_DIR_API=\"$(KIM_API_DIR)\"       \
+                                                     -D KIM_DIR_MODELS=\"$(KIM_MODELS_DIR)\" \
+                                                     -D KIM_DIR_TESTS=\"$(KIM_TESTS_DIR)\"   \
+                                                     -D KIM_DIR_MODEL_DRIVERS=\"$(KIM_MODEL_DRIVERS_DIR)\"
    CCOMPILER   = gcc
    CPPCOMPILER = g++
    #CCOMPILER   = mpicc
    #CPPCOMPILER = mpiCC
    #CCOMPILER   = gcc-fsf-4.4  # for OS X using fink compilers
    #CPPCOMPILER = g++-fsf-4.4  # for OS X using fink compilers
-   CPPFLAG = -O3 -I$(KIM_API_DIR) -Wno-write-strings -D KIM_DIR_MODELS=\"$(KIM_MODELS_DIR)\" -D KIM_DIR_API=\"$(KIM_API_DIR)\"
-   CPPFLAG += -D KIM_DIR_TESTS=\"$(KIM_TESTS_DIR)\"
+   CPPFLAG = -O3 -I$(KIM_API_DIR) -Wno-write-strings -D KIM_DIR_MODELS=\"$(KIM_MODELS_DIR)\" \
+                                                     -D KIM_DIR_API=\"$(KIM_API_DIR)\"       \
+                                                     -D KIM_DIR_TESTS=\"$(KIM_TESTS_DIR)\"   \
+                                                     -D KIM_DIR_MODEL_DRIVERS=\"$(KIM_MODEL_DRIVERS_DIR)\"
    FORTRANCOMPILER = gfortran
    #FORTRANCOMPILER = mpif90
    CPPLIBFLAG = -lgfortran           #if GNU version 4.5 and up. tested on suse 
@@ -95,6 +113,7 @@ KIM_LIB = -L$(KIM_API_DIR) -lkim
 #build target .a or .so for models
 ifdef KIM_DYNAMIC
    MODEL_BUILD_TARGET += $(patsubst %.a,%.so, $(MODEL_BUILD_TARGET))
+   MODEL_DRIVER_BUILD_TARGET += $(patsubst %.a,%.so, $(MODEL_DRIVER_BUILD_TARGET))
    SHARED_LIB_FLAG = -shared
    ifeq ($(OSTYPE),FreeBSD)
       SHARED_LIB_FLAG = -dynamiclib
