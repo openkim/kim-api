@@ -187,7 +187,7 @@ program TEST_NAME_STR
   ! compute neighbor lists
   allocate(neighborList(N+1, N))
   if (nbc.eq.4) then
-     allocate(RijList(3,N,N))
+     allocate(RijList(3,N+1, N))
   endif
   !
   if (nbc.eq.0) then
