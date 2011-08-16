@@ -17,7 +17,7 @@ extern "C" {
 #ifdef KIM_DYNAMIC
 #include <dlfcn.h>
 #else
-   void MODEL_DRIVER_NAME_STR_init_(void* km, char* paramfile);
+   void MODEL_DRIVER_NAME_STR_init_(void* km, char** paramfile);
    static void model_destroy(void* km, int* ier);
 #endif
 
@@ -37,6 +37,7 @@ extern "C" {
 #endif
 
    void MODEL_NAME_STR_init_(void* km) {
+      char* param_str = param_string();
 #ifdef KIM_DYNAMIC
       driver_lib_handle = dlopen("MODEL_DRIVER_SO_NAME_STR",RTLD_NOW);
       if (!driver_lib_handle) {
@@ -44,7 +45,7 @@ extern "C" {
          cout << dlerror() << endl;
       exit(-1);
       }
-      typedef void (*Driver_Init)(void *km, char* paramfile);
+      typedef void (*Driver_Init)(void *km, char** paramfile);
       Driver_Init drvr_init = (Driver_Init)dlsym(driver_lib_handle,"MODEL_DRIVER_NAME_STR_init_");
       const char *dlsym_error = dlerror();
       if (dlsym_error) {
@@ -52,14 +53,14 @@ extern "C" {
          dlclose(driver_lib_handle);
          exit(-1);
       }
-      (*drvr_init)(km, param_string());
+      (*drvr_init)(km, &param_str);
 
       int ier = 0;
       KIM_API_print((void*) *((KIM_API_model **)km),&ier);
       driver_destroy = KIM_API_get_data((void *) *((KIM_API_model**)km), "destroy", &ier);
       KIM_API_set_data((void *) *((KIM_API_model**)km), "destroy",1,(void*) &model_destroy);
 #else
-      MODEL_DRIVER_NAME_STR_init_(km, param_string());
+      MODEL_DRIVER_NAME_STR_init_(km, &param_str);
 #endif
 
    }

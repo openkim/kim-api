@@ -21,27 +21,24 @@ all: $(MODEL_NAME).kim $(MODEL_BUILD_TARGET)
 lc_MODEL_DRIVER_NAME := `echo $(MODEL_DRIVER_NAME) | tr A-Z a-z`
 lc_MODEL_NAME        := `echo $(MODEL_NAME) | tr A-Z a-z`
 
-$(MODEL_NAME).kim: $(KIM_MODEL_DRIVERS_DIR)$(MODEL_DRIVER_NAME)/$(MODEL_DRIVER_NAME).kim Makefile
+$(MODEL_NAME).kim: $(KIM_MODEL_DRIVERS_DIR)$(MODEL_DRIVER_NAME)/$(MODEL_DRIVER_NAME).kim Makefile \
+                   $(KIM_API_DIR)Makefile.Model_Drivers
 	cat $(KIM_MODEL_DRIVERS_DIR)/$(MODEL_DRIVER_NAME)/$(MODEL_DRIVER_NAME).kim | \
-        sed -e 's,MODEL_NAME_STR,$(MODEL_NAME),g'       \
-            -e 's,SPECIES1_NAME_STR,$(SPECIES1_NAME),g' \
-            -e 's,SPECIES2_NAME_STR,$(SPECIES2_NAME),g' \
-            -e 's,SPECIES3_NAME_STR,$(SPECIES3_NAME),g' \
-            -e 's,SPECIES4_NAME_STR,$(SPECIES4_NAME),g' \
-            -e 's,SPECIES5_NAME_STR,$(SPECIES5_NAME),g' \
-            -e 's,SPECIES6_NAME_STR,$(SPECIES6_NAME),g' \
-            -e 's,SPECIES7_NAME_STR,$(SPECIES7_NAME),g' \
-            -e 's,SPECIES8_NAME_STR,$(SPECIES8_NAME),g' \
-            -e 's,SPECIES9_NAME_STR,$(SPECIES9_NAME),g' \
+        sed -e "s,MODEL_NAME_STR,$(MODEL_NAME),g"       \
+            -e "s,SPECIES1_NAME_STR,$(SPECIES1_NAME),g" \
+            -e "s,SPECIES2_NAME_STR,$(SPECIES2_NAME),g" \
+            -e "s,SPECIES3_NAME_STR,$(SPECIES3_NAME),g" \
+            -e "s,SPECIES4_NAME_STR,$(SPECIES4_NAME),g" \
+            -e "s,SPECIES5_NAME_STR,$(SPECIES5_NAME),g" \
+            -e "s,SPECIES6_NAME_STR,$(SPECIES6_NAME),g" \
+            -e "s,SPECIES7_NAME_STR,$(SPECIES7_NAME),g" \
+            -e "s,SPECIES8_NAME_STR,$(SPECIES8_NAME),g" \
+            -e "s,SPECIES9_NAME_STR,$(SPECIES9_NAME),g" \
         > $(MODEL_NAME).kim
 
-$(MODEL_NAME).cpp: $(PARAM_FILE_NAME) Makefile
-	echo "extern \"C\" {"                                                 >  $(MODEL_NAME).cpp
-	echo ""                                                               >> $(MODEL_NAME).cpp
-	echo "void $(lc_MODEL_DRIVER_NAME)_init_(void* km, char* paramfile);" >> $(MODEL_NAME).cpp
-	echo ""                                                               >> $(MODEL_NAME).cpp
-	echo "void $(lc_MODEL_NAME)_init_(void* km) {"                        >> $(MODEL_NAME).cpp
-	echo "   char param_string[] ="                                       >> $(MODEL_NAME).cpp
+$(MODEL_NAME).cpp: $(KIM_API_DIR)model_based_on_driver.cpp $(PARAM_FILE_NAME) Makefile \
+                   $(KIM_API_DIR)Makefile.Model_Drivers
+	echo "static char params[] ="                                         >  $(MODEL_NAME).cpp
 	cat $(PARAM_FILE_NAME) | \
         sed -e 's,\\,\\\\,g'     \
             -e 's,",\\",g'       \
@@ -49,10 +46,11 @@ $(MODEL_NAME).cpp: $(PARAM_FILE_NAME) Makefile
             -e 's,$$,\\n",g'                                                  >> $(MODEL_NAME).cpp
 	echo "   ;"                                                           >> $(MODEL_NAME).cpp
 	echo ""                                                               >> $(MODEL_NAME).cpp
-	echo "   $(lc_MODEL_DRIVER_NAME)_init_(km, param_string);"            >> $(MODEL_NAME).cpp
-	echo "}"                                                              >> $(MODEL_NAME).cpp
-	echo ""                                                               >> $(MODEL_NAME).cpp
-	echo "}"                                                              >> $(MODEL_NAME).cpp
+	cat $(KIM_API_DIR)model_based_on_driver.cpp | \
+        sed -e "s,MODEL_DRIVER_NAME_STR,$(lc_MODEL_DRIVER_NAME),g"                                                 \
+            -e "s,MODEL_NAME_STR,$(lc_MODEL_NAME),g"                                                               \
+            -e "s,MODEL_DRIVER_SO_NAME_STR,$(KIM_MODEL_DRIVERS_DIR)$(MODEL_DRIVER_NAME)/$(MODEL_DRIVER_NAME).so,g" \
+                                                                              >> $(MODEL_NAME).cpp
 
 $(MODEL_NAME).a: $(MODEL_NAME).o
 	ar rcs $@ *.o
