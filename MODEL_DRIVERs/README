@@ -1,0 +1,7 @@
+This directory (MODEL_DRIVERs) contains a directory for each Model Driver to be
+compiled as part of the openkim-api package.
+
+This directory is populated with example Models Drivers as part of the
+openkim-api distribution.  Please see the README files within each Model Driver
+directory for information about the example Model Driver.
+
