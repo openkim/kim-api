@@ -38,6 +38,16 @@ module kimservice
             integer(kind=kim_intptr) :: kimmdl,testname,mdlname
         end function kim_api_init_str_testname
 
+        function kim_api_status_msg_f(kimmdl,errcode)
+#ifdef SYSTEM32
+	integer, parameter :: kim_intptr=4
+#else
+	integer,parameter :: kim_intptr = 8
+#endif
+        integer ::errcode
+        integer(kind=kim_intptr) :: kimmdl,kim_api_status_msg_f
+	end function kim_api_status_msg_f
+
         integer function kim_api_init1(kimmdl,testinputf,testname,mdlinputf,mdlname)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
@@ -52,7 +62,7 @@ module kimservice
 	integer, parameter :: kim_intptr=4
 #else
 	integer,parameter :: kim_intptr = 8
-#endif
+#endif*(KIM_API_model **)kim
              integer(kind=kim_intptr) :: kimmdl,UnitsSystem
         end function kim_api_set_units
 

@@ -54,6 +54,7 @@ int KIM_API_get_half_neigh(void *kimmdl,int mode,int request,
 
 int KIM_API_get_neigh_mode(void *,int *);
 
+char * KIM_API_status_msg(void *kimmdl,int error);
 //element access methods
 int  KIM_API_set_data(void *kimmdl,char *nm,  intptr_t size, void *dt);
 void * KIM_API_get_data(void *kimmdl,char *nm,int * error);
@@ -141,6 +142,8 @@ intptr_t kim_api_get_rank_shape_byi_(void *kimmdl,int * I, int ** shape, int *er
 void kim_api_set2_compute_byi_(void *kimmdl,int * I, int *error);
 void kim_api_set2_donotcompute_byi_(void *kimmdl,int * I, int *error);
 int kim_api_isit_compute_byi_(void *kimmdl,int * I, int *error);
+
+void * kim_api_status_msg_f(void*kimmdl,int * error);
 
 
 
