@@ -11,7 +11,7 @@
 # 
 ################################################################################
 #
-# This file defines the openkim-api standard variable names and their
+# This file defines the openkim-api standard argument names and their
 # properties, the Neighbor Boundary Condition (NBC) methods supported by the
 # openKIM API, the list of standard atom/particle types known to KIM, and a set
 # of conventions defined by KIM that help to ensure that Models and Tests are
