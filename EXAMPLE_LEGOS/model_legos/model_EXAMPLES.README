@@ -16,6 +16,13 @@ model_Al_PF_ErcolessiAdams         F90       NEIGH-RVEC-F    Iterator   Full    
 
 model_ArNe_P_MLJ_NEIGH_RVEC_F      F90       NEIGH-RVEC-F    Locator    Full        YES
 
+model_Ar_P_LJ                      F90       NEIGH-RVEC-F    Iterator   Full        YES
+ - based on model_driver_P_LJ                NEIGH-PURE-H    Locator    Half
+                                             NEIGH-PURE-F
+                                             MI-OPBC-H
+                                             MI-OPBC-F
+                                             CLUSTER
+
 model_Ar_P_MLJ_C                   C         NEIGH-RVEC-F    Iterator   Full        NO
                                              NEIGH-PURE-H    Locator    Half
                                              NEIGH-PURE-F
@@ -44,6 +51,13 @@ model_Ar_P_MLJ_NEIGH_RVEC_F        F90       NEIGH_RVEC-F    Locator    Full    
 
 model_Ar_P_Morse                   C         NEIGH-RVEC-F    Iterator   Full        YES
  - based on model_driver_P_Morse             NEIGH-PURE-H    Locator    Half
+                                             NEIGH-PURE-F
+                                             MI-OPBC-H
+                                             MI-OPBC-F
+                                             CLUSTER
+
+model_Ne_P_LJ                      F90       NEIGH-RVEC-F    Iterator   Full        YES
+ - based on model_driver_P_LJ                NEIGH-PURE-H    Locator    Half
                                              NEIGH-PURE-F
                                              MI-OPBC-H
                                              MI-OPBC-F
@@ -135,6 +149,13 @@ model_Ar_P_MLJ_F90 (Fortran 90)
      template implements all NBCs and Iterator and Locator modes in a way that
      results in a very compact Compute_Energy_Forces() subroutine.
 
+model_Ar_P_LJ (F90)
+model_Ne_P_LJ (F90)
+     These Models are based on the KIM Model Driver model_driver_P_LJ.  They
+     only consist of a simple Makefile and a parameters file.  Everything else
+     is handled by the KIM Model Driver.  See the directory
+     $KIM_DIR/MODEL_DRIVERs/model_driver_P_LJ/ for more details on how KIM
+     Model Drivers are handled.
 
 model_Ar_P_Morse (C)
 model_Ne_P_Morse (C)
