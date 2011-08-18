@@ -147,7 +147,7 @@ CHANGELOG
 
 DOCs/
      documentation directory.  This directory contains the file
-     openkim-api-introduction-vX.X.X.pdf which provides an overview of this
+     openkim-api-vX.X.X-introduction.pdf which provides an overview of this
      release of the openkim-api package, links to the files
      KIMserviceDescriptions.txt and standard.kim, and a TEMPLATEs directory
      containing template files for creating your own KIM Models.  (See the
