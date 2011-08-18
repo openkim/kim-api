@@ -159,6 +159,12 @@ INSTALL
 KIM_API/
      directory containing the openkim-api service routines
         
+MODEL_DRIVERs/
+     directory containing examples of interatomic Model Drivers
+
+     Each Model Driver is stored in its own directory that conforms to the
+     naming convention specified in standard.kim.
+
 MODELs/
      directory containing examples of interatomic Models
 
