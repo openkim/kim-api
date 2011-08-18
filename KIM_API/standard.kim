@@ -622,9 +622,37 @@ Neigh_BothAccess        dummy       # need both locator and iterator modes
 # boundary conditions.
 #
 ################################################################################
+
+# In the CLUSTER method, the Model receives the number of atoms and coordinates
+# without additional information (such as neighbor lists or other boundary
+# condition specifiers) and computes requested quantities under the assumption
+# that the atoms form an isolated cluster. For example, if energy and forces
+# are requested, it will compute the total energy of all the atoms based on the
+# supplied atom coordinates and the derivative of the total energy with respect
+# to the positions of the atoms.
+#
 CLUSTER                 dummy       # The Model needs only coordinates to 
                                     # compute; a neighbor list is not needed.
 
+# In the MI-OPBC methods (MI-OPBC-H and MI-OPBC-F), the Model receives the
+# number of atoms and coordinates, the side lengths for the periodic orthogonal
+# box and a neighbor list as detailed below. Assumes all atoms lie inside the
+# periodic box. Side lengths of box must be at least twice the cutoff
+# range. Computes the requested quantities under the assumption that the atoms
+# are subjected to minimum image, orthogonal, periodic boundary conditions.
+#
+# Neighbor list requirements for MI-OPBC-[F|H]:
+# 1.  The minimum image
+#     convention is applied during construction of the neighbor list consistent
+#     with the orthogonal box size.
+# 2.  The neighbor list can be supplied in either full or half mode.
+#        Full neighbor list: All neighbors of an atom are stored
+#        Half neighbor list: For an atom i only the neighbors j>i are stored.
+#
+# Calculated quantities for both -H and -F modes should be equivalent to those
+# obtained were the model to compute its own neighbor list using the provided
+# orthogonal periodic box side lengths.
+#
 MI-OPBC-H               dummy       # This is the Minimum Image Orthogonal
                                     # Periodic Boundary Condition Half neighbor
                                     # list method.  The Model needs
@@ -647,17 +675,20 @@ MI-OPBC-F               dummy       # This is the Minimum Image Orthogonal
                                     # side-lengths of the orthogonal simulation 
                                     # box).
 
-NEIGH-RVEC-F            dummy       # This is the Relative Vector Boundary
-                                    # Condition Full neighbor list method.  
-                                    # The Model needs `coordinates' and a full 
-                                    # neighbor list (with data stored in the 
-                                    # `neighObject' argument), and the 
-                                    # `get_full_neigh' method supplied by the 
-                                    # Test.  The `neighObject' argument must 
-                                    # also contain the relative position 
-                                    # vectors (RVEC) (which are returned by the 
-                                    # `get_full_neigh' function).
-
+# In the NEIGH-PURE methods (NEIGH-PURE-H and NEIGH-PURE-F), the Model receives
+# the number of atoms, coordinates and a full or half neighbor list. The
+# neighbor list defines the environment of each atom, from which the atom's
+# energy is defined. The model computes the requested quantities using the
+# supplied information. For example, if energy and forces are requested, it
+# will compute the total energy of all the atoms based on their neighbor lists
+# and the derivative of the total energy with respect to the positions of the
+# atoms. This method can be used with codes that use ghost atoms to apply
+# boundary conditions. The ghost atoms are treated as regular atoms by the
+# model, and it is up to the calling code to discard some information such as
+# the forces on the ghost atoms and to compute the appropriate total energy
+# from per-atom energies of the physical atoms, or to use a modified neighbor
+# list to obtain the desired values.
+#
 NEIGH-PURE-H            dummy       # This is the Pure Half neighbor list 
                                     # method.  The model needs `coordinates', a 
                                     # half neighbor list (with data stored in 
@@ -671,6 +702,33 @@ NEIGH-PURE-F            dummy       # This is the Pure Full neighbor list
                                     # the `neighObject' argument), and the 
                                     # `get_full_neigh' method supplied by the 
                                     # Test.
+
+# In the NEIGH-RVEC-F method, the Model receives the number of atoms and
+# coordinates, a full neighbor list and the relative position vectors Rij 
+# (Rij = xj-xi). The neighbor list and Rij vectors define the environment of
+# each atom, from which the atom's energy is defined. The model computes the
+# requested quantities using the supplied information. For example, if energy
+# and forces are requested, it will compute the total energy of all the atoms
+# based on their neighbor lists and relative position vectors and the
+# derivative of the total energy with respect to the positions of the
+# atoms. This method enables the application of general periodic boundary
+# conditions, including multiple images. (This approach can fail with half
+# neighbor lists and therefore the -H variant of the method does not exist.) A
+# possible future extension to this method is to allow the Test to provide a
+# ForceTransformation() function for each neighbor, which would enable the
+# application of complex boundary conditions such as torsion and objective
+# boundary conditions.
+#
+NEIGH-RVEC-F            dummy       # This is the Relative Vector Boundary
+                                    # Condition Full neighbor list method.  
+                                    # The Model needs `coordinates' and a full 
+                                    # neighbor list (with data stored in the 
+                                    # `neighObject' argument), and the 
+                                    # `get_full_neigh' method supplied by the 
+                                    # Test.  The `neighObject' argument must 
+                                    # also contain the relative position 
+                                    # vectors (RVEC) (which are returned by the 
+                                    # `get_full_neigh' function).
 
 ################################################################################
 #
@@ -841,7 +899,7 @@ compute                 method       none       none                    []
 # reinit : A pointer to the Model's reinit function (called to reinitialize a 
 #          Model following a change to its parameters by a Test).
 #
-# This argument is required if a Models publishs its parameters.  However, the
+# This argument is required if a Models publishes its parameters.  However, the
 # argument should be included, as optional, by all Models to ensure maximum
 # compatibility with Tests (who should only include the argument if they use
 # it).
@@ -985,7 +1043,7 @@ MODEL_PARAMETERS:
 #
 #
 # IMPORTANT NOTE: It is important to stress that a Model may not store data in
-# static memory since it may be called with differentKIM API objects.  Any
+# static memory since it may be called with different KIM API objects.  Any
 # information that should persist between calls must be stored in the KIM API
 # object.  Fixed parameters may be used for this purpose as noted above.
 #
