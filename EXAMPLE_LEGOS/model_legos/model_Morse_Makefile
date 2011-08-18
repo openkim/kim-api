@@ -1,0 +1,19 @@
+
+#                                                                      
+# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna 
+# All rights reserved.                                                 
+#                                    
+# Authors: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
+#
+
+MODEL_DRIVER_NAME  := MODEL_DRIVER_NAME_STR
+MODEL_NAME         := MODEL_NAME_STR
+SPECIES1_NAME      := SPECIES_NAME_STR
+PARAM_FILE_NAME    := $(MODEL_NAME).params
+
+ifndef KIM_API_DIR
+   KIM_DIR = ../../
+   include $(KIM_DIR)KIM_API/Makefile.Model_Drivers
+else
+   include $(KIM_API_DIR)Makefile.Model_Drivers
+endif

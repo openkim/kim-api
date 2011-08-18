@@ -19,7 +19,7 @@ SystemOfUnitsFix := fixed
 SUPPORTED_ATOM/PARTICLES_TYPES:
 # Symbol/name           Type                    code
 
-SPECIES_LINE_STR
+SPECIES1_NAME_STR                      spec                    1
 
 
 #######################################################################################################
@@ -99,10 +99,6 @@ PARAM_FREE_Rzero        real*8       length     standard                []
 
 PARAM_FREE_cutoff       real*8       length     standard                []
 
-PARAM_FIXED_A1          real*8       pressure   standard                []
-
-PARAM_FIXED_A2          real*8       force      standard                []
-
-PARAM_FIXED_A3          real*8       energy     standard                []
-
 PARAM_FIXED_cutsq       real*8       none       none                    []
+
+PARAM_FIXED_shift       real*8       energy     standard                []
