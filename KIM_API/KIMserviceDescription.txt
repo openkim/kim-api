@@ -44,7 +44,7 @@ int KIM_API_init(void * kimmdl, char * testname, char * modelname);
     arguments described in descriptor files (Tests and Models) are compatible
     with KIM standard naming convention (stored in the file `standard.kim') and
     if Models are compatible with Tests.  It will return 1 upon successful
-    completion or zero otherwise.  Also if it is unsuccessful, kimmdl will have
+    completion or -1 otherwise.  Also if it is unsuccessful, kimmdl will have
     NULL value.
 
 Arguments:
@@ -130,8 +130,8 @@ Arguments:
                 number of atom types.
         
         int * kimerror
-                error code: 1                     -- successful completion, 
-                            0 (or negative value) -- unsuccessful
+                error code:  1  -- successful completion, 
+                            -1  -- unsuccessful
 
 Corresponding Fortran style interface:
 
@@ -159,8 +159,8 @@ Arguments:
                 definition will be (KIM_API_model **)).
 
         int * kimerror
-                error code: 1                     -- successful completion, 
-                            0 (or negative value) -- unsuccessful
+                error code: 1  -- successful completion, 
+                           -1  -- unsuccessful
 
 Corresponding Fortran style interface:
 
@@ -184,8 +184,8 @@ Arguments:
                 will be (KIM_API_model *)).
 
         int * kimerror
-                error code: 1                     -- successful completion, 
-                            0 (or negative value) -- unsuccessful
+                error code: 1 -- successful completion, 
+                           -1 -- unsuccessful
 
 Corresponding Fortran style interface:
 
@@ -214,8 +214,8 @@ Arguments:
                 will be (KIM_API_model *))
 
         int * kimerror
-                error code: 1                     -- successful completion, 
-                            0 (or negative value) -- unsuccessful
+                error code: 1  -- successful completion, 
+                           -1  -- unsuccessful
 
 Corresponding Fortran style interface:
 
@@ -244,8 +244,8 @@ Arguments:
                 will be (KIM_API_model *))
 
         int * kimerror
-                error code: 1                     -- successful completion, 
-                            0 (or negative value) -- unsuccessful
+                error code: 1 -- successful completion, 
+                           -1 -- unsuccessful
 
 Corresponding Fortran style interface:
 
@@ -273,8 +273,8 @@ Arguments:
                 (which sould be of length 64 or greater)
 
         int * kimerror
-                error code: 1                     -- successful completion, 
-                            0 (or negative value) -- unsuccessful
+                error code: 1 -- successful completion, 
+                           -1 -- unsuccessful
 
 Corresponding Fortran style interface:
 
@@ -291,7 +291,7 @@ int KIM_API_isUnitS_fixed(void *kimmdl);
 
      This routine checks whether the model supports only one unit system or can
      work with multiple unit systems. Returns 1 (true) if units are fixed
-     (units cannot be reset), 0 otherwise.
+     (units cannot be reset), -1 otherwise.
 
 Arguments:
 
@@ -314,7 +314,7 @@ int  KIM_API_set_data(void *kimmdl, char *nm, intptr_t size, void *dt);
      it stores in the KIM API object the value of dt which points to the
      location in memory where the data associated with nm is stored.  Upon
      successful completion this routine returns 1.  If nm is not in the KIM API
-     object this routine returns 0.  If an existing pointer in the KIM API
+     object this routine returns -1.  If an existing pointer in the KIM API
      object is overwritten by this operation, a memory leak may result. (This
      could indicate that storage for the same data has been allocated more than
      once.)  Thus, care must be taken if this routine is used in conjunction
@@ -367,8 +367,8 @@ Arguments:
                 exactly as it appears in the .kim descriptor file
 
         int * kimerror
-                error code: 1                     -- successful completion, 
-                            0 (or negative value) -- unsuccessful
+                error code: 1 -- successful completion, 
+                           -1 -- unsuccessful
 
 Corresponding Fortran style interface:
         integer(kind=kim_intptr) function kim_api_get_data_f(kimmdl, nm, kimerror) 
@@ -400,8 +400,8 @@ Arguments:
                 exactly as it appears in the .kim descriptor file
 
         int * kimerror
-                error code: 1                     -- successful completion, 
-                            0 (or negative value) -- unsuccessful
+                error code: 1 -- successful completion, 
+                           -1 -- unsuccessful
 
 Corresponding Fortran style interface:
 
@@ -440,8 +440,8 @@ Arguments:
                 memory to hold a value for each dimension.
 
         int * kimerror
-                error code: 1                     -- successful completion, 
-                            0 (or negative value) -- unsuccessful
+                error code: 1 -- successful completion, 
+                           -1 -- unsuccessful
 
 Corresponding Fortran style interface:
 
@@ -488,9 +488,9 @@ Arguments:
 
         int * kimerror
                 error code: 1   -- successful completion, 
-                            0   -- name nm is not in KIM
-                           -1   -- rank provided, does not match KIM API argument rank
-                           -2   -- negative index in shape
+                           -2   -- name nm is not in KIM
+                           -5   -- rank provided, does not match KIM API argument rank
+                           -8   -- negative index in shape
 
 Corresponding Fortran style interface:
 
@@ -532,8 +532,8 @@ Arguments:
                 exactly as it appears in the .kim descriptor file.
 
         int * kimerror
-                error code: 1                     -- successful completion, 
-                            0 (or negative value) -- unsuccessful
+                error code: 1 -- successful completion, 
+                           -1 -- unsuccessful
         
 
 Corresponding Fortran style interface:
@@ -567,8 +567,8 @@ Arguments:
                 exactly as it appears in the .kim descriptor file.
 
         int * kimerror
-                error code: 1                     -- successful completion,
-                            0 (or negative value) -- unsuccessful
+                error code: 1  -- successful completion,
+                           -1  -- unsuccessful
 
 Corresponding Fortran style interface:
 
@@ -598,8 +598,8 @@ Arguments:
                 exactly as it appears in the .kim descriptor file.
 
         int * kimerror
-                error code: 1                     -- successful completion, 
-                            0 (or negative value) -- unsuccessful
+                error code: 1 -- successful completion, 
+                           -1 -- unsuccessful
 
 Corresponding Fortran style interface:
 
@@ -631,7 +631,7 @@ Arguments:
 
         int * kimerror
                 error code: 1                     -- successful completion, 
-                            0 (or negative value) -- unsuccessful
+                           -1 -- unsuccessful
 
 Corresponding Fortran style interface:
 
@@ -701,8 +701,8 @@ Arguments:
                 total number of atom types. In case of error will be negative.
 
         int * kimerror
-                error code:   1                     -- successful completion, 
-                              0 (or negative value) -- unsuccessful
+                error code:   1 -- successful completion, 
+                             -1 -- unsuccessful
 
 Corresponding Fortran style interface:
 
@@ -736,8 +736,8 @@ Arguments:
                 total number of parameters. 
 
         int * kimerror
-                error code: 1                     -- successful completion, 
-                            0 (or negative value) -- unsuccessful
+                error code: 1 -- successful completion, 
+                           -1 -- unsuccessful
 
 Corresponding Fortran style interface:
 
@@ -771,8 +771,8 @@ Arguments:
                 total number of parameters. 
 
         int * kimerror
-                error code: 1                     -- successful completion, 
-                            0 (or negative value) -- unsuccessful
+                error code: 1 -- successful completion, 
+                           -1 -- unsuccessful
 
 Corresponding Fortran style interface:
 
@@ -806,8 +806,8 @@ Arguments:
                 total number of parameters. 
 
         int * kimerror
-                error code: 1                     -- successful completion,
-                            0 (or negative value) -- unsuccessful
+                error code: 1 -- successful completion,
+                           -1 -- unsuccessful
 
 Corresponding Fortran style interface:
 
@@ -835,8 +835,8 @@ Arguments:
                 will be (KIM_API_model *)).
 
         int * kimerror
-                error code: 1                     -- successful completion, 
-                            0 (or negative value) -- unsuccessful
+                error code: 1 -- successful completion, 
+                           -1 -- unsuccessful
 
 Corresponding Fortran style interface:
 
@@ -867,13 +867,13 @@ Arguments:
                 atom/particle symbol
 
         int * error
-                error code: 1                     -- successful completion, 
-                            0 (or negative value) -- unsuccessful
-                           -1                     -- symbol is not among the
-                                                     KIM supported atom symbols
-                           -2                     -- no atom/particle types have
-                                                     been specified by the 
-                                                     Test or Model.
+                error code: 1 -- successful completion, 
+                           -1 -- unsuccessful
+                           -3 -- symbol is not among the
+                                 KIM supported atom symbols
+                           -6 -- no atom/particle types have
+                                 been specified by the 
+                                 Test or Model.
                                                    
 
 Corresponding Fortran style interface:
@@ -903,8 +903,8 @@ Arguments:
                 will be (KIM_API_model *)).
 
         int * error
-                error code: 1                     -- successful completion, 
-                            0 (or negative value) -- unsuccessful
+                error code: 1 -- successful completion, 
+                           -1 -- unsuccessful
 
 Corresponding Fortran style interface:
 
@@ -938,15 +938,15 @@ int KIM_API_get_full_neigh(void *kimmdl, int mode,int request, int *atom, int *n
           vector entry. (See explanation of Rij vectors below.)
 
     The return value depends on the results of execution:
-                         2 -- iterator has been successfully initialized
-                         1 -- successful operation
-                         0 -- iterator has been incremented past end of list
-                        -1 -- invalid atom id requested (request out of range)
-                        -2 -- invalid mode value
-                        -3 -- invalid KIM_API object
-                        -4 -- Number of neighbors of an atom exceeds 
+                         2  -- iterator has been successfully initialized
+                         1  -- successful operation
+                         0  -- iterator has been incremented past end of list
+                        -4  -- invalid atom id requested (request out of range)
+                        -7  -- invalid mode value
+                        -9  -- invalid KIM_API object
+                        -10 -- Number of neighbors of an atom exceeds 
                               KIM_API_MAX_NEIGHBORS
-                        -5 -- get_full_neigh method in KIM API object is not 
+                        -11 -- get_full_neigh method in KIM API object is not 
                               set (NULL value)
 Arguments:
         void * kimmdl
@@ -1011,6 +1011,27 @@ Corresponding Fortran style interface:
 
 ******************************************************************************
 
+void * KIM_API_status_msg(void *kimmdl, int status_code)
+    This routine returns null terminated character string that describes status of error code. The error code
+    is the error code set by other kim service routines executions.
+
+   Arguments:
+        void * kimmdl
+                pointer to KIM_API_model object (in C++ style, the definition 
+                will be (KIM_API_model *)).
+
+        int status_code 
+                error status code, string value of that code will be returned
+
+
+Corresponding Fortran style interface:
+
+       function kim_api_status_msg_f(kimmdl,errorcode)
+                integer :: errorcode
+                integer(kind=kim_intptr) :: kimmdl,kim_api_status_msg_f
+       end function kim_api_status_msg_f
+             
+******************************************************************************
 int KIM_API_get_half_neigh(void *kimmdl, int mode,int request, int *atom, int *numnei, int **nei1atom, double **Rij);
         
     The description is the same as for KIM_API_get_full_neigh, but this routine
