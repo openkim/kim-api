@@ -3,7 +3,8 @@
 # Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
 # All rights reserved.
 #
-# Authors: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
+# Author: <FILL>
+# Date  : <FILL>
 #
 #
 # See KIM_API/standard.kim for documentation about this file
@@ -19,7 +20,7 @@ SystemOfUnitsFix := fixed
 SUPPORTED_ATOM/PARTICLES_TYPES:
 # Symbol/name           Type                    code
 
-SPECIES_LINE_STR
+SPECIES1_NAME_STR                      spec                    1
 
 
 #######################################################################################################
@@ -89,20 +90,16 @@ virial                  real*8       pressure   standard                []      
 
 #######################################################################################################
 MODEL_PARAMETERS:
-# Name                  Type         Unit       SystemU/Scale           Shape              Requirements
+# Name                         Type         Unit        SystemU/Scale           Shape              Requirements
 
-PARAM_FREE_epsilon      real*8       energy     standard                []
+PARAM_FREE_<FILL parameter 1>  real*8       <FILL Unit> standard                []
 
-PARAM_FREE_C            real*8       none       none                    []                               # should be units of 1/length
+PARAM_FREE_<FILL parameter 2>  real*8       <FILL Unit> standard                []
 
-PARAM_FREE_Rzero        real*8       length     standard                []
+# <FILL as many parameters as needed>
 
-PARAM_FREE_cutoff       real*8       length     standard                []
+PARAM_FREE_cutoff              real*8       length      standard                []
 
-PARAM_FIXED_A1          real*8       pressure   standard                []
+PARAM_FIXED_cutsq              real*8       none        none                    []
 
-PARAM_FIXED_A2          real*8       force      standard                []
-
-PARAM_FIXED_A3          real*8       energy     standard                []
-
-PARAM_FIXED_cutsq       real*8       none       none                    []
+PARAM_FIXED_shift              real*8       energy      standard                []

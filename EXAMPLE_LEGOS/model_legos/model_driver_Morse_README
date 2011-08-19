@@ -1,0 +1,36 @@
+This directory (MODEL_DRIVER_NAME_STR) contains a shifted Morse pair potential
+Model driver written in C.
+
+   phi(r) = epsilon * ( - exp[ -2*C*(r - Rzero) ] + 2*exp[ -C*(r - Rzero) ] )
+
+It complies with the KIM API interface standard, using any NBC and iterator or
+locator mode, publishes its parameters, and supports optional computation of
+`forces', `energyPerAtoms', and `virial'.  Its initializaton routine takes a
+KIM API object pointer and a pointer to a string that contains the cutoff and
+Morse parameters which define a KIM Model based on this KIM Model Driver.
+
+To create a KIM Model from this Model Driver, a parameter file is required.
+This file must have the follwing format:
+   Line 1: `cutoff' value in angstroms
+   Line 2: Morse `epsilon' value in eV
+   Line 3: Morse `C' value in 1/Angstroms
+   Line 4: Morse `Rzero' value in Angstroms
+Any additional lines will be silently ignored.
+
+
+The following files are in this directory:
+
+Makefile
+    makefile to compile and build executables with GNU or Intel compilers
+
+README
+    This file
+
+MODEL_DRIVER_NAME_STR.c
+    C file that contains the implementation of the Morse potential Model Driver
+
+MODEL_DRIVER_NAME_STR.kim
+    Template KIM descriptor file containing all variables and methods that are
+    exposed by the driver through the KIM API interface.  This file will be
+    used (by the make system) to generate a KIM descriptor file for each KIM
+    Model based on this Model Driver.

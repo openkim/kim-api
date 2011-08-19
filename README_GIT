@@ -5,20 +5,42 @@ openkim-api package through github.com and the git revision control program.
 
 There are only a couple of significant differences between the source tarball
 files that are distributed as openkim-api-vX.X.X.tgz and the openkim-api git
-repository.  The primary difference is that in the git repository there are no
-example Models or Tests in the MODELs and TESTs directories, respectively.
-Instead the user must generate the examples by the following process:
+repository.
+
+1. The primary difference is that in the git repository there are no example
+   Models, Model Drivers, or Tests in the MODELs, MODEL_DRIVERs, and TESTs
+   directories, respectively.  Instead the user must generate the examples by
+   the following process:
 
    % cd $KIM_DIR/EXAMPLE_LEGOS
    % make
 
-This will cobble together the example files for the various fragments stored in
-the $KIM_DIR/EXAMPLE_LEGOS/model_legos and $KIM_DIR/EXAMPLE_LEGOS/test_legos
-directories and save them in the $KIM_DIR/MODELs/ and $KIM_DIR/TESTs/
-directories, respectively.  This need only be done once (for every time the git
-repository is updated from github.com).  This process will overwrite any
-changes to files made in the $KIM_DIR/MODELs/ and $KIM_DIR/TESTs/ directories,
-so make a backup of these directories if you don't want to lose your changes.
+   This will cobble together the example files for the various fragments stored
+   in the $KIM_DIR/EXAMPLE_LEGOS/model_legos and
+   $KIM_DIR/EXAMPLE_LEGOS/test_legos directories and save them in the
+   $KIM_DIR/MODELs/, $KIM_DIR/MODEL_DRIVERs/, and $KIM_DIR/TESTs/ directories,
+   respectively.  This need only be done once (for every time the git
+   repository is updated from github.com).  This process will overwrite any
+   changes to files made in the $KIM_DIR/MODELs/, $KIM_DIR/MODEL_DRIVERs/, and
+   $KIM_DIR/TESTs/ directories, so make a backup of these directories if you
+   don't want to lose your changes.
+
+2. The git repository has the files:
+
+      $KIM_DIR/DOCs/openkim-api-introduction.pdf
+      $KIM_DIR/DOCs/openkim-api-introduction.pptx
+
+   whereas the openkim-api-vX.X.X.tgz package has the file
+
+      $KIM_DIR/DOCs/openkim-api-vX.X.X-introduction.pdf
+
+3. The openkim-api-vX.X.X.tgz package has the file
+
+      $KIM_DIR/openkim-api.version.info
+
+   which contains the SHA1 Hash value of the git commit object from which the
+   package was created, along with the date, time, and user name and email
+   address of the person who created the package.
 
 *******************************************************************************
 

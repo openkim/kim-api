@@ -130,6 +130,11 @@ The current version of the openkim-api package supports the following features:
   for a Model to `publish' its parameters so that a Test may modify them during
   the course of a simulation.
 
+* Model Drivers: The openkim-api provides the ability to create Model Driver
+  routines.  A Model for a given material can be created from a Model Driver by
+  providing a file with the appropriate parameter values for the material of
+  interest.
+
 For more information on all of the above, see the files in the DOCs directory
 described below.  Features planned for future releases are described in the
 TODO file in this directory.  (See list of directory contents below.)
@@ -147,7 +152,7 @@ CHANGELOG
 
 DOCs/
      documentation directory.  This directory contains the file
-     openkim-api-introduction-vX.X.X.pdf which provides an overview of this
+     openkim-api-vX.X.X-introduction.pdf which provides an overview of this
      release of the openkim-api package, links to the files
      KIMserviceDescriptions.txt and standard.kim, and a TEMPLATEs directory
      containing template files for creating your own KIM Models.  (See the
@@ -159,6 +164,12 @@ INSTALL
 KIM_API/
      directory containing the openkim-api service routines
         
+MODEL_DRIVERs/
+     directory containing examples of interatomic Model Drivers
+
+     Each Model Driver is stored in its own directory that conforms to the
+     naming convention specified in standard.kim.
+
 MODELs/
      directory containing examples of interatomic Models
 

@@ -27,8 +27,15 @@ KIMserviceF.F90
 Makefile
      Make file for compiling and building KIM_API using GNU or Intel compilers.
 
+Makefile.Model_Drivers
+     Make file for compiling Models based on a Model Driver
+
 README
      This file.
+
+model_based_on_driver.cpp
+     This file contains the code implementing a Model that is based on a Model Driver.
+     It is used by the Makefile.Model_Drivers file.
 
 si_units.cfg
      SI units descriptor file.

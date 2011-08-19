@@ -1,14 +1,22 @@
 =========================== The openkim-api package ===========================
 
-This directory contains template files for creating new KIM-compliant Models.
-See the instructions below on how to use these files.
+This directory contains template files for creating new KIM-compliant Models
+and Model Drivers.  See the instructions below on how to use these files.
 
 -----------------------------------------------------------------------------
 
 This directory contains the following files:
 
+Makefile.driver.based.model.template
+     A template for the Makefile that needs to be placed in a new Model
+     directory for Models based on a Model Driver.
+
+Makefile.driver.template
+     A template for the Makefile that needs to be placed in a new Model
+     Driver directory.
+
 Makefile.template
-     A template for the Makefile that needs to be placed in the new Model
+     A template for the Makefile that needs to be placed in a new Model
      directory.
 
 README
@@ -32,6 +40,21 @@ model_El_P_Template.c.kim
 
 model_El_P_Template.f.kim
      KIM descriptor file for the Fortran pair potential template.
+
+model_El_P_Template.params
+     Parameter file for a Model based on a shifted pair potential Model Driver.
+
+model_driver_P_Template.F90
+     F90 template file for a shifted pair potential Model Driver.
+
+model_driver_P_Template.c
+     C template file for a shifted pair potential Model Driver.
+
+model_driver_P_Template.c.kim
+     KIM descriptor file for the C pair potential Driver template.
+
+model_driver_P_Template.f.kim
+     KIM descriptor file for the Fortran pair potential Driver template.
 
 -----------------------------------------------------------------------------
 
@@ -131,6 +154,50 @@ identical. See comments below.)
 
    Note: If you run a Test and it does not seem to be working, remember to
          check the kim.log file for any messages.
+
+-----------------------------------------------------------------------------
+
+Direction for using the supplied templates to create a new KIM-compliant
+Buckingham Model Driver and a Ne KIM Model based on it.
+
+Follow steps 1-6 of the above directions for creating a Model, but make the
+following substitutions everywhere:
+   `model_El'          -->  `model_driver'
+   `model_Ar'          -->  `model_driver'
+   `MODELs'            -->  `MODEL_DRIVERs'
+   `Makefile.template' --> `Makefile.driver.template'
+
+7. Create a new directory under MODELs for the Ne pair potential:
+
+   % cd $KIM_DIR/MODELs
+   % mkdir model_Ne_P_Buckingham
+
+8. Copy the `Makefile.driver.based.model.template' and
+   model_El_P_Template.params files into the new directory and rename:
+
+   % cd $KIM_DIR/MODELs/model_Ne_P_Buckingham
+   % cp $KIM_DIR/DOCs/TEMPLATEs/Makefile.driver.based.model.template Makefile
+   % cp $KIM_DIR/DOCs/TEMPLATEs/model_El_P_Template.params model_Ne_P_Buckingham.params
+
+9. Edit the Makefile and change the Model name, Model Driver name, and
+   SPECIES1_NAME appropriately. (Search for the word "FILL".)
+
+10. Edit the model_Ne_P_Buckingham.params file appropriately. (Search for the
+    word "FILL".)
+
+11. Compile the new Model into the API package:
+
+    % cd $KIM_DIR
+    % make
+
+    Correct any errors until the compilation succeeds.
+
+12. You can now run Tests that are compatible with your Model simply by
+    giving your new Model name as an argument.
+
+    Note: If you run a Test and it does not seem to be working, remember to
+          check the kim.log file for any messages.
+
 
 *******************************************************************************
 

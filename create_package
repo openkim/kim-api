@@ -21,7 +21,7 @@ git clone . $packagename
 cd $packagename
 
 versionfile=openkim-api.version.info
-echo "This package created from commit"                                               > $versionfile
+echo "This package ($packagename) created from commit"                               >  $versionfile
 echo ""                                                                              >> $versionfile
 git rev-parse HEAD                                                                   >> $versionfile
 echo ""                                                                              >> $versionfile
@@ -35,6 +35,8 @@ cd EXAMPLE_LEGOS
 make
 
 cd ..
+
+mv 'DOCs/openkim-api-introduction.pdf' "DOCs/$packagename-introduction.pdf"
 
 rm -rf 'EXAMPLE_LEGOS'
 

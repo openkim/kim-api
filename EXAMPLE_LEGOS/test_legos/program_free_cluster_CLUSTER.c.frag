@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
    
    /* Initialize the KIM Model */
    status = KIM_API_init(&pkim, testname, modelname);
-   if (0 > status)
+   if (1 > status)
    {
       report_error(__LINE__, "KIM_API_init", status);
       exit(1);
@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
 
    /* Allocate memory via the KIM system */
    KIM_API_allocate(pkim, NCLUSTERATOMS, ATYPES, &status);
-   if (0 > status)
+   if (1 > status)
    {
       report_error(__LINE__, "KIM_API_allocate", status);
       exit(1);
@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
 
    /* call Model's init routine */
    status = KIM_API_model_init(pkim);
-   if (0 > status)
+   if (1 > status)
    {
       report_error(__LINE__, "KIM_API_model_init", status);
       exit(1);
@@ -79,49 +79,49 @@ int main(int argc, char* argv[])
 
    /* Unpack data from KIM object */
    numberOfAtoms = KIM_API_get_data(pkim, "numberOfAtoms", &status);
-   if (0 > status)
+   if (1 > status)
    {
       report_error(__LINE__, "KIM_API_get_data", status);
       exit(1);
    }
    
    numberAtomTypes = KIM_API_get_data(pkim, "numberAtomTypes", &status);
-   if (0 > status)
+   if (1 > status)
    {
       report_error(__LINE__, "KIM_API_get_data", status);
       exit(1);
    }
    
    atomTypes = KIM_API_get_data(pkim, "atomTypes", &status);
-   if (0 > status)
+   if (1 > status)
    {
       report_error(__LINE__, "KIM_API_get_data", status);
       exit(1);
    }
    
    coords = KIM_API_get_data(pkim, "coordinates", &status);
-   if (0 > status)
+   if (1 > status)
    {
       report_error(__LINE__, "KIM_API_get_data", status);
       exit(1);
    }
    
    cutoff = KIM_API_get_data(pkim, "cutoff", &status);
-   if (0 > status)
+   if (1 > status)
    {
       report_error(__LINE__, "KIM_API_get_data", status);
       exit(1);
    }
    
    energy = KIM_API_get_data(pkim, "energy", &status);
-   if (0 > status)
+   if (1 > status)
    {
       report_error(__LINE__, "KIM_API_get_data", status);
       exit(1);
    }
    
    forces = KIM_API_get_data(pkim, "forces", &status);
-   if (0 > status)
+   if (1 > status)
    {
       report_error(__LINE__, "KIM_API_get_data", status);
       exit(1);
@@ -131,7 +131,7 @@ int main(int argc, char* argv[])
    *numberOfAtoms   = NCLUSTERATOMS;
    *numberAtomTypes = ATYPES;
    atypecode = KIM_API_get_aTypeCode(pkim, "SPECIES_NAME_STR", &status);
-   if (0 > status)
+   if (1 > status)
    {
       report_error(__LINE__, "KIM_API_get_aTypeCode", status);
       exit(1);
@@ -146,7 +146,7 @@ int main(int argc, char* argv[])
 
    /* Call model compute */
    KIM_API_model_compute(pkim, &status);
-   if (0 > status)
+   if (1 > status)
    {
       report_error(__LINE__, "KIM_API_model_compute", status);
       exit(1);
@@ -169,13 +169,13 @@ int main(int argc, char* argv[])
    
    /* don't forget to destroy and deallocate */
    KIM_API_model_destroy(pkim, &status);
-   if (0 > status)
+   if (1 > status)
    {
       report_error(__LINE__, "KIM_API_model_destory", status);
       exit(1);
    }
    KIM_API_free(&pkim, &status);
-   if (0 > status)
+   if (1 > status)
    {
       report_error(__LINE__, "KIM_API_free", status);
       exit(1);

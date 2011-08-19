@@ -7,8 +7,9 @@
 
 KIM_DIR := ../../
 KIM_MODELS_DIR := $(KIM_DIR)MODELs/
+KIM_MODEL_DRIVERS_DIR := $(KIM_DIR)MODEL_DRIVERs/
 
-VPATH = $(KIM_MODELS_DIR)
+VPATH = $(KIM_MODELS_DIR) $(KIM_MODEL_DRIVERS_DIR)
 
 SED_CMD = sed -e "s/MODEL_NAME_STR/$@/g"
 
@@ -33,14 +34,17 @@ AUTO_GEN_MODELS = model_Al_PF_ErcolessiAdams    \
                   model_Ar_P_MLJ_MI_OPBC_H_F    \
                   model_Ar_P_MLJ_NEIGH_PURE_H_F \
                   model_Ar_P_MLJ_NEIGH_RVEC_F   \
-                  model_Ar_P_MMorse             \
                   model_Ne_P_LJ_NEIGH_PURE_H    \
-                  model_Ne_P_MLJ_NEIGH_RVEC_F
+                  model_Ne_P_MLJ_NEIGH_RVEC_F   \
+                  model_driver_P_Morse          \
+                  model_Ar_P_Morse              \
+                  model_Ne_P_Morse
 
 all: $(AUTO_GEN_MODELS) EXAMPLES.README
 
-EXAMPLES.README: model_EXAMPLES.README Makefile
+EXAMPLES.README: model_EXAMPLES.README model_driver_EXAMPLES.README Makefile
 	cp model_EXAMPLES.README $(KIM_MODELS_DIR)EXAMPLES.README
+	cp model_driver_EXAMPLES.README $(KIM_MODEL_DRIVERS_DIR)EXAMPLES.README
 
 model_Ar_P_MLJ_CLUSTER_C: model_P_MLJ_CLUSTER_C.c                \
                           cluster_compute_local_variables.f.frag \
@@ -287,34 +291,67 @@ model_Ar_P_MLJ_NEIGH_RVEC_F: $(COMMON_FRAGMENTS)                           \
                               | sed -e 's/SIGMA_VALUE_STR/model_sigma = 3.40d0 ! LJ Argon sigma in angstroms/g'    \
                               | sed -e 's/EPSILON_VALUE_STR/model_epsilon = 0.0104d0 ! LJ Argon epsilon in eV/g'   \
                                                                                    >> $(KIM_MODELS_DIR)$@/$@.F90
+model_driver_P_Morse: model_driver_Morse_README \
+                      model_driver_Makefile     \
+                      model_driver_P_Morse.kim  \
+                      model_driver_P_Morse.c    \
+                      Makefile
+        # make directory
+	mkdir -p $(KIM_MODEL_DRIVERS_DIR)$@
+	@touch $(KIM_MODEL_DRIVERS_DIR)$@
+        # make README file in the directory
+	cat model_driver_Morse_README | sed -e 's/MODEL_DRIVER_NAME_STR/$@/g'      >  $(KIM_MODEL_DRIVERS_DIR)$@/README
+        # make Makefile in the directory
+	cat model_driver_Makefile | sed -e 's/MODEL_DRIVER_NAME_STR/$@/g'          >  $(KIM_MODEL_DRIVERS_DIR)$@/Makefile
+        # make .kim file in the directory
+	cat model_driver_P_Morse.kim                                               >  $(KIM_MODEL_DRIVERS_DIR)$@/$@.kim
+        # make .c file in the directory
+	cat model_driver_P_Morse.c | $(SED_CMD) \
+            | sed -e `echo $@ | tr A-Z a-z | sed -e 's/^\(.*\)/s\/MODEL_DRIVER_NAME_LC_STR\/\1\/g/'` \
+                  -e 's/MODEL_DRIVER_NAME_STR/$@/g'                                >  $(KIM_MODEL_DRIVERS_DIR)$@/$@.c
 
-model_Ar_P_MMorse: model_MMorse_README \
-                   model_Makefile      \
-                   model_P_MMorse.kim  \
-                   model_P_MMorse.c    \
-                   Makefile
+model_Ar_P_Morse: model_Morse_README \
+                  Makefile
         # make directory
 	mkdir -p $(KIM_MODELS_DIR)$@
 	@touch $(KIM_MODELS_DIR)$@
         # make README file in the directory
-	cat model_MMorse_README | $(SED_CMD)                                       >  $(KIM_MODELS_DIR)$@/README
+	cat model_Morse_README | sed -e 's/MODEL_NAME_STR/$@/g'                          \
+                                     -e 's/MODEL_DRIVER_NAME_STR/model_driver_P_Morse/g' \
+                                     -e 's/SPECIES_NAME_STR/Ar/g'                  >  $(KIM_MODELS_DIR)$@/README
         # make Makefile in the directory
-	cat model_Makefile | $(SED_CMD)                                            >  $(KIM_MODELS_DIR)$@/Makefile
-        # make .kim file in the directory
-	cat model_P_MMorse.kim | $(SED_CMD) \
-                               | sed -e 's/SPECIES_LINE_STR/Ar                      spec                    1/g' \
-                                                                                   >  $(KIM_MODELS_DIR)$@/$@.kim
-        # make .F90 file in the directory
-	cat model_P_MMorse.c | $(SED_CMD) \
-            | sed -e `echo $@ | tr A-Z a-z | sed -e 's/^\(.*\)/s\/MODEL_NAME_LC_STR\/\1\/g/'` \
-            | sed -e 's/SPECIES_NAME_STR/Ar/g' \
-            | sed -e 's/REFERENCE_STR/(Parameters taken from: G. E. Jelinek, Phys. Rev. B, Vol 5, no 8, 1972, pp3210--3217)/g' \
-            | sed -e 's/SPECIES_CODE_STR/1/g' \
-            | sed -e 's/CUTOFF_VALUE_STR/*model_cutoff = 8.15; \/* cutoff distance in angstroms *\//g' \
-            | sed -e 's/EPSILON_VALUE_STR/*model_epsilon = - (156.41\/(1.160451911e4)); \/* Morse epsilon in eV *\//g' \
-            | sed -e 's/C_VALUE_STR/*model_C = 1.545; \/* Morse C in 1\/Angstroms *\//g' \
-            | sed -e 's/RZERO_VALUE_STR/*model_Rzero = 3.786; \/* Morse Rzero in Angstroms *\//g' \
-                                                                                   > $(KIM_MODELS_DIR)$@/$@.c
+	cat model_Morse_Makefile | sed -e 's/MODEL_NAME_STR/$@/g'                          \
+                                       -e 's/MODEL_DRIVER_NAME_STR/model_driver_P_Morse/g' \
+                                       -e 's/SPECIES_NAME_STR/Ar/g'                >  $(KIM_MODELS_DIR)$@/Makefile
+        # make .params file in the directory
+	echo "8.15"                                                                >  $(KIM_MODELS_DIR)$@/$@.params
+	echo "-0.0134783698072604"                                                 >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "1.545"                                                               >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "3.786"                                                               >> $(KIM_MODELS_DIR)$@/$@.params
+	echo ""                                                                    >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "Parameters taken from: G. E. Jelinek, Phys. Rev. B, Vol 5, no 8, 1972, pp3210--3217" \
+                                                                                   >> $(KIM_MODELS_DIR)$@/$@.params
+model_Ne_P_Morse: model_Morse_README \
+                  Makefile
+        # make directory
+	mkdir -p $(KIM_MODELS_DIR)$@
+	@touch $(KIM_MODELS_DIR)$@
+        # make README file in the directory
+	cat model_Morse_README | sed -e 's/MODEL_NAME_STR/$@/g'                          \
+                                     -e 's/MODEL_DRIVER_NAME_STR/model_driver_P_Morse/g' \
+                                     -e 's/SPECIES_NAME_STR/Ne/g'                  >  $(KIM_MODELS_DIR)$@/README
+        # make Makefile in the directory
+	cat model_Morse_Makefile | sed -e 's/MODEL_NAME_STR/$@/g'                          \
+                                       -e 's/MODEL_DRIVER_NAME_STR/model_driver_P_Morse/g' \
+                                       -e 's/SPECIES_NAME_STR/Ne/g'                >  $(KIM_MODELS_DIR)$@/Makefile
+        # make .params file in the directory
+	echo "8.15"                                                                >  $(KIM_MODELS_DIR)$@/$@.params
+	echo "-0.00418802360867498"                                                >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "2.11"                                                                >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "3.0778"                                                              >> $(KIM_MODELS_DIR)$@/$@.params
+	echo ""                                                                    >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "Parameters taken from Table 2 of: H. R. Glyde, J. Phys. C: Solid State Phys.. Vol 3. 1970, pp810--819" \
+                                                                                   >> $(KIM_MODELS_DIR)$@/$@.params
 
 model_Al_PF_ErcolessiAdams_MI_OPBC_H: example_model_Al_PF_ErcolessiAdams_MI_OPBC_H              \
                                       $(wildcard example_model_Al_PF_ErcolessAdams_MI_OPBC_H/*) \

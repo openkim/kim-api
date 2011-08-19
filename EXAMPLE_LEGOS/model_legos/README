@@ -86,17 +86,27 @@ model_MLJ_README
 model_Makefile
      This file contains the common Makefile used by the Models
 
-model_MMorse_README
-     This file contains the common MMorse README file used by the MMorse Models
+model_Morse_Makefile
+     This file contains the common Makefile used by the Morse Models
+
+model_Morse_README
+     This file contains the common Morse README file used by the Morse Models
 
 model_P_MLJ_CLUSTER_C.c
      This file contains the MLJ_CLUSTER_C pair potential C code.
 
-model_P_MMorse.c
-     This file contains the MMorse pair potential C code.
+model_driver_Makefile
+     This file contains the Makefile for Model Drivers
 
-model_P_MMorse.kim
-     This file contains the MMorse pair potential KIM descriptor file
+model_driver_Morse_README
+     This file contains the README file for the Morse Model Driver
+
+model_driver_P_Morse.c
+     This file contains the Morse pair potential Model Driver C code.
+
+model_driver_P_Morse.kim
+     This file contains the Morse pair potential KIM descriptor file for use
+     with the Models based on the Morse Model Driver
 
 module_end.f.frag
      This Fortran file contains the common tail of the Models' fortran module

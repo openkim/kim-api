@@ -13,9 +13,9 @@ README
 
 model_legos/
      This directory contains the code fragments ("legos") to create the
-     example models.
+     example Models and Model Drivers.
 
 test_legos/
      This directory contains the code fragments ("legos") to create the
-     example tests.
+     example Tests.
 
