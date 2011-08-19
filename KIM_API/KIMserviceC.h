@@ -143,7 +143,7 @@ void kim_api_set2_compute_byi_(void *kimmdl,int * I, int *error);
 void kim_api_set2_donotcompute_byi_(void *kimmdl,int * I, int *error);
 int kim_api_isit_compute_byi_(void *kimmdl,int * I, int *error);
 
-void * kim_api_status_msg_f(void*kimmdl,int * error);
+void * kim_api_status_msg_f_(void*kimmdl,int * error);
 
 
 

@@ -2458,7 +2458,9 @@ char * KIM_API_model::status_msg(int status_code){
     {"iterator has been successfully initialized"}};
     
     if (status_code < mincode || status_code > maxcode) {
-        return NULL;
+        char * retstr = (char *)malloc(KEY_CHAR_LENGTH);
+        strcpy(retstr,"the error code is not among KIM_STATUS codes");
+        return retstr;
     }else{
         int ind = offset + status_code;
         char * retstr = (char *)malloc(KEY_CHAR_LENGTH);
