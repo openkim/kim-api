@@ -1,3 +1,19 @@
+=== openkim-api-v0.2.0 =========================================================
+
+
+* Updated documentation
+
+* Added Model Driver Templates
+
+* Added two Model Drivers and four Models based on the Model Drivers
+
+* Removed example model_Ar_P_MMorse in favor of the Morse Driver and its Models
+
+* Added support for Model Drivers
+
+* Bug fixes
+
+
 === openkim-api-v0.1.1 =========================================================
 
 
