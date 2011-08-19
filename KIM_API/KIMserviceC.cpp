@@ -458,6 +458,6 @@ float kim_api_get_unit_scalefactor_(void * kim, char**nm, int *error){
     return KIM_API_get_unit_scalefactor(*(KIM_API_model **)kim, *nm,error);
 }
 
-void * kim_api_status_msg_f(void*kim,int * error){
+void * kim_api_status_msg_f_(void*kim,int * error){
     return (void *) KIM_API_status_msg(*(KIM_API_model **)kim,*error);
 }
