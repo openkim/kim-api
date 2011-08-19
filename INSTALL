@@ -142,7 +142,15 @@ TROUBLESHOOTING
 2. Linking problems: By default, the make system uses the g++ compiler with the
    -lgfortran option to link compiled Fortran executables.  If (for some
    versions of Linux or GNU compilers) linking of Fortran executables with the
-   g++ compiler does not work, try gfortran with the -lstdc++ option.  See
+   g++ compiler give an error like
+
+      Undefined symbols for architecture x86_64:
+        "_main", referenced from:
+            start in crt1.10.6.o
+      ld: symbol(s) not found for architecture x86_64
+      collect2: ld returned 1 exit status
+
+   or somthing similar, try gfortran with the -lstdc++ option.  See
    lines 66-67 in the Include.mk file (change them to lines 68-69).
 
 *******************************************************************************

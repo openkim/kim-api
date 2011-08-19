@@ -42,8 +42,9 @@ AUTO_GEN_MODELS = model_Al_PF_ErcolessiAdams    \
 
 all: $(AUTO_GEN_MODELS) EXAMPLES.README
 
-EXAMPLES.README: model_EXAMPLES.README Makefile
+EXAMPLES.README: model_EXAMPLES.README model_driver_EXAMPLES.README Makefile
 	cp model_EXAMPLES.README $(KIM_MODELS_DIR)EXAMPLES.README
+	cp model_driver_EXAMPLES.README $(KIM_MODEL_DRIVERS_DIR)EXAMPLES.README
 
 model_Ar_P_MLJ_CLUSTER_C: model_P_MLJ_CLUSTER_C.c                \
                           cluster_compute_local_variables.f.frag \
