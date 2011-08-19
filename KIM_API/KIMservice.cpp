@@ -985,10 +985,10 @@ bool KIM_API_model::preinit_str_testname(char *instrn){
 
  void KIM_API_model::free(int *error){
         //
-        *error = 0;
+        *error = KIM_STATUS_FAIL;
         if(this==NULL) return;
         this->free();
-        *error=1;
+        *error=KIM_STATUS_OK;
  }
 
  void KIM_API_model::free(){
@@ -1078,9 +1078,9 @@ bool KIM_API_model::set_data_byi(int ind, intptr_t size, void* dt){
 }
 void * KIM_API_model::get_data(char *nm,int *error){
         int i=get_index(nm);
-        *error = 0;
+        *error = KIM_STATUS_FAIL;
         if (i<0) return NULL;
-        *error =1;
+        *error =KIM_STATUS_OK;
         return (*this)[i].data;
 }
 
@@ -1093,11 +1093,11 @@ void * KIM_API_model::get_data(char *nm){
 int KIM_API_model::get_index(char *nm,int *error){
         for(int i=0; i< model.size;i++){
             if(strcmp((*this)[i].name,nm)==0) {
-                *error =1;
+                *error =KIM_STATUS_OK;
                 return i;
             }
         }
-        *error = 0;
+        *error = KIM_STATUS_FAIL;
         return -1;
 }
 int KIM_API_model::get_index(char *nm){
@@ -1110,16 +1110,16 @@ int KIM_API_model::get_index(char *nm){
 }
 intptr_t KIM_API_model::get_size(char *nm,int *error){
         int ind=get_index(nm,error);
-        *error=0;
+        *error=KIM_STATUS_FAIL;
         if (ind < 0) return -1;
-        *error=1;
+        *error=KIM_STATUS_OK;
         return (*this)[ind].size;
 }
 intptr_t KIM_API_model::get_rank_shape(char *nm,int * shape, int *error){
         int ind=get_index(nm,error);
-        *error =0;
+        *error =KIM_STATUS_ARG_UNKNOWN;
         if (ind < 0) return -1;
-        *error =1;
+        *error =KIM_STATUS_OK;
         if((*this)[ind].rank == 0){
             return 0;
         }else if((*this)[ind].rank ==1){
@@ -1129,49 +1129,49 @@ intptr_t KIM_API_model::get_rank_shape(char *nm,int * shape, int *error){
             for (int i=0; i< (*this)[ind].rank; i++) shape[i] =(*this)[ind].shape[i];
             return (*this)[ind].rank;
         }else{
-            *error =0;
+            *error = KIM_STATUS_ARG_UNKNOWN;
             return -1;
         }
 }
 
 void KIM_API_model::set_rank_shape(char* nm, int* shape, int rank, int* error){
     //size will be calculated and set too
-        *error =0;
+        *error =KIM_STATUS_ARG_UNKNOWN;
         int ind=get_index(nm,error);
         if (ind < 0) return;
         if((intptr_t)(rank) != (*this)[ind].rank) {
-            *error=-1; //rank do not match
+            *error= KIM_STATUS_ARG_INVALID_RANK; //rank do not match
             return;
         }
        
         if((*this)[ind].rank == 0){
             (*this)[ind].size=1;
-            *error =1; //success
+            *error = KIM_STATUS_OK; //success
             return;
         }else if((*this)[ind].rank ==1){
             (*this)[ind].shape[0]=shape[0];
             (*this)[ind].size=(intptr_t)shape[0];
             if (shape[0] < 0) {
-                *error=-2; //negative index
+                *error=KIM_STATUS_ARG_INVALID_SHAPE; //negative index
             }else{
-                *error = 1; //success
+                *error = KIM_STATUS_OK; //success
             }
             return;
         }else if((*this)[ind].rank>1){
             int sz=1;
             for (int i=0;i<rank;i++) {
                 if (shape[i]<0){
-                    *error = -2; //negative index
+                    *error = KIM_STATUS_ARG_INVALID_SHAPE; //negative index
                     return;
                 }
                 sz=sz*shape[i];
             }
             (*this)[ind].size=(intptr_t)sz;
             for (int i=0; i< rank; i++) (*this)[ind].shape[i]=shape[i];
-            *error=1;//success
+            *error=KIM_STATUS_OK;//success
             return;
         }else{
-            *error=0;
+            *error=KIM_STATUS_ARG_UNKNOWN;
             return;
         }
 }
@@ -1820,7 +1820,7 @@ cout<<"               from the shared library:"<<model_slib_file<<endl;
 
 void KIM_API_model::model_destroy(int *error){
   typedef void (*Model_Destroy)(void *,int *);//prototype for model_destroy
-  *error =0;
+  *error =KIM_STATUS_FAIL;
   Model_Destroy mdl_destroy = (Model_Destroy) (*this)["destroy"].data;
   //call model_destroy
   KIM_API_model *pkim = this;
@@ -1832,15 +1832,15 @@ void KIM_API_model::model_destroy(int *error){
 #ifdef KIM_DYNAMIC
   dlclose(model_lib_handle);
 #endif
- *error =1;
+ *error =KIM_STATUS_OK;
 }
 void KIM_API_model::model_compute(int *error){
   // set model_compute pointer
   typedef void (*Model_Compute)(void *,int *);//prototype for model_compute
-  *error = 0;
+  *error = KIM_STATUS_FAIL;
   Model_Compute mdl_compute = (Model_Compute) (*this)[compute_index].data;
   if (mdl_compute == NULL) return;
-  *error = 1;
+  *error = KIM_STATUS_OK;
   //call model_compute
   KIM_API_model *pkim = this;
   (*mdl_compute)((void *)&pkim, error);
@@ -1850,10 +1850,10 @@ int KIM_API_model::get_full_neigh(int mode, int request, int *atom,
         int *numnei, int** nei1atom, double** Rij){
     int locrequest=request;
     int locmode = mode;
-    if(mode!=0 && mode!=1) return -2;
-    if(this == NULL) return -3;
+    if(mode!=0 && mode!=1) return KIM_STATUS_NEIGH_INVALID_MODE;
+    if(this == NULL) return KIM_STATUS_API_OBJECT_INVALID;
     typedef int(*Get_Neigh)(void **, int *, int *, int *, int *, int **,double **);
-    if (get_full_neigh_index < 0) return -3;
+    if (get_full_neigh_index < 0) return KIM_STATUS_API_OBJECT_INVALID;
     Get_Neigh get_neigh = (Get_Neigh)(*this)[get_full_neigh_index].data;
      KIM_API_model *pkim = this;
     if (baseConvertKey==0) {
@@ -1865,7 +1865,7 @@ int KIM_API_model::get_full_neigh(int mode, int request, int *atom,
             if(*numnei > KIM_API_MAX_NEIGHBORS) {
                 cout<<endl<< "KIM_API::get_full_neigh: numnei > MAX_NEIGHBORS : ";
                 cout<<" "<<*numnei <<" > "<< KIM_API_MAX_NEIGHBORS<<endl;
-                return -4;
+                return KIM_STATUS_NEIGH_TOO_MANY_NEIGHBORS;
             }
             return erkey;
         }
@@ -1881,7 +1881,7 @@ int KIM_API_model::get_full_neigh(int mode, int request, int *atom,
             if(*numnei > KIM_API_MAX_NEIGHBORS) {
                 cout<<endl<< "KIM_API::get_full_neigh: numnei > MAX_NEIGHBORS : ";
                 cout<<" "<<*numnei <<" > "<< KIM_API_MAX_NEIGHBORS<<endl;
-                return -4;
+                return KIM_STATUS_NEIGH_TOO_MANY_NEIGHBORS;
             }
             if ( erkey == 1){
                 *atom = at + baseConvertKey;
@@ -1895,7 +1895,7 @@ int KIM_API_model::get_full_neigh(int mode, int request, int *atom,
     }else{
         cout<<endl<< "KIM_API::get_full_neigh: wrong base convert key,baseConvertKey =";
         cout<< baseConvertKey <<"  (must be 0,1 or -1)"<<endl;
-        return -3;
+        return KIM_STATUS_API_OBJECT_INVALID;
     }
 }
 
@@ -1904,11 +1904,11 @@ int KIM_API_model::get_half_neigh(int mode, int request, int *atom,
     int locrequest=request;
     int locmode = mode;
 
-    if(mode!=0 && mode!=1) return -2;
-    if(this == NULL) return -3;
+    if(mode!=0 && mode!=1) return KIM_STATUS_NEIGH_INVALID_MODE;
+    if(this == NULL) return KIM_STATUS_API_OBJECT_INVALID;
     typedef int (*Get_Neigh)(void **, int *, int *, int *, int *, int **,double **);
 
-    if (get_half_neigh_index < 0) return -3;
+    if (get_half_neigh_index < 0) return KIM_STATUS_API_OBJECT_INVALID;
     Get_Neigh get_neigh = (Get_Neigh)(*this)[get_half_neigh_index].data;
     KIM_API_model *pkim = this;
 
@@ -1922,7 +1922,7 @@ int KIM_API_model::get_half_neigh(int mode, int request, int *atom,
             if(*numnei > KIM_API_MAX_NEIGHBORS) {
                 cout<<endl<< "KIM_API::get_half_neigh: numnei > MAX_NEIGHBORS : ";
                 cout<<" "<<*numnei <<" > "<< KIM_API_MAX_NEIGHBORS<<endl;
-                return -4;
+                return KIM_STATUS_NEIGH_TOO_MANY_NEIGHBORS;
             }
             return erkey;
         }
@@ -1940,7 +1940,7 @@ int KIM_API_model::get_half_neigh(int mode, int request, int *atom,
             if(*numnei > KIM_API_MAX_NEIGHBORS) {
                 cout<<endl<< "KIM_API::get_full_neigh: numnei > MAX_NEIGHBORS : ";
                 cout<<" "<<*numnei <<" > "<< KIM_API_MAX_NEIGHBORS<<endl;
-                return -4;
+                return KIM_STATUS_NEIGH_TOO_MANY_NEIGHBORS;
             }
             if (erkey == 1){
                 *atom= at + baseConvertKey;
@@ -1954,7 +1954,7 @@ int KIM_API_model::get_half_neigh(int mode, int request, int *atom,
     }else{
         cout<<endl<< "KIM_API::get_half_neigh: wrong base convert key,baseConvertKey =";
         cout<< baseConvertKey <<"  (must be 0,1 or -1)"<<endl;
-        return -3;
+        return KIM_STATUS_API_OBJECT_INVALID;
     }
 }
 
@@ -1978,7 +1978,7 @@ void KIM_API_model::allocateinitialized(KIM_API_model * mdl, intptr_t natoms, in
     // in process
     if ( mdl->model.data == NULL) {
         cout<<"KIM_API_model::allocateinitialized: model is not preinitialized"<<endl;
-        *error =0;
+        *error = KIM_STATUS_FAIL;
         return;
     }
     for(int i=0; i<mdl->model.size;i++){
@@ -2009,7 +2009,7 @@ void KIM_API_model::allocateinitialized(KIM_API_model * mdl, intptr_t natoms, in
         delete [] shape;
     }
     mdl->set_units(mdl->originalUnits);
-    *error=1;
+    *error=KIM_STATUS_OK;
 }
 bool KIM_API_model::  is_unitsfixed(){
     return unitsFixed;
@@ -2018,7 +2018,7 @@ void KIM_API_model::set_unitsfixed(bool f){
     unitsFixed=f;
 }
 void KIM_API_model::transform_units_to(char * unitS,int *error){
-    *error=0;
+    *error=KIM_STATUS_FAIL;
     for(int i=0;i<model.size;i++){
         if(strcmp((*this)[i].type,"real")==0 || strcmp((*this)[i].type,"real*8")==0 ){
             int uindexcur,uindexnext;
@@ -2040,7 +2040,7 @@ void KIM_API_model::transform_units_to(char * unitS,int *error){
         }
     }
     strncpy(currentUnits,unitS,strlen(unitS)+1);
-    *error=1;
+    *error=KIM_STATUS_OK;
 }
 bool KIM_API_model::set_units(char * unitS){
     if(!among_supported_units(unitS)  && strcmp(unitS,"custom")!=0 ) return false;
@@ -2083,29 +2083,29 @@ bool KIM_API_model::set_units(char * unitS){
     return true;
 }
 void KIM_API_model::get_units(char * units,int *error){
-    *error=0;
+    *error=KIM_STATUS_FAIL;
     strncpy(units, this->currentUnits,strlen(this->currentUnits)+1);
-    *error=1;
+    *error=KIM_STATUS_OK;
 }
 void KIM_API_model::get_originalUnits(char * unitS,int *error){
-    *error=0;
+    *error=KIM_STATUS_FAIL;
     strncpy(unitS, this->originalUnits, strlen(this->originalUnits)+1);
-    *error=1;
+    *error=KIM_STATUS_OK;
 }
 
 float KIM_API_model::get_unit_scalefactor(char*nm,int *error){
     int ind= get_index(nm);
-    *error =1;
+    *error =KIM_STATUS_OK;
     if(ind < 0){
-        *error =-3;
+        *error =-15;
         return -3.0;
     }
     if(strcmp((*this)[ind].unit->dim,"none")==0) {
-        *error = -1;
+        *error = -16;
         return -1.0;
     }
     if(strcmp((*this)[ind].unit->units,"none")==0) {
-        *error =-2;
+        *error =-17;
         return -2.0;
     }
     if(strcmp(this->originalUnits,this->currentUnits)==0){
@@ -2222,14 +2222,14 @@ bool KIM_API_model::init_AtomsTypes(){
     return true;
 }
 void * KIM_API_model::get_listAtomsTypes(int* nATypes, int* error){
-    *error=0;
+    *error=KIM_STATUS_FAIL;
     if (nAtomsTypes==0){
         *nATypes = 0;
-        *error =1; //success but no atoms type specified
+        *error =KIM_STATUS_OK; //success but no atoms type specified
         return NULL;
     }
     if (nAtomsTypes < 0){
-        *error =-20;//was internal error in init nAtomsTypes
+        *error =KIM_STATUS_FAIL;//was internal error in init nAtomsTypes
         return NULL;
     }
     *nATypes = nAtomsTypes;
@@ -2240,11 +2240,11 @@ void * KIM_API_model::get_listAtomsTypes(int* nATypes, int* error){
     for(int i=0; i<nAtomsTypes; i++){
         strncpy(listatypes + i*KEY_CHAR_LENGTH, AtomsTypes[i].symbol,strlen( AtomsTypes[i].symbol)+1);
     }
-    *error =1;//success
+    *error =KIM_STATUS_OK;//success
     return (void *) listatypes;
 }
 void * KIM_API_model::get_NBC_method(int* error){
-    *error=0;
+    *error=KIM_STATUS_FAIL;
     if(strcmp(this->NBC_method_current,"none")==0) {
         // no NBC methods are specified
         return NULL;
@@ -2253,7 +2253,7 @@ void * KIM_API_model::get_NBC_method(int* error){
     char *method = (char *)malloc(KEY_CHAR_LENGTH);
     for (int i=0;i<KEY_CHAR_LENGTH;i++) method[i] = '\0';
     strcpy(method,this->NBC_method_current);
-    *error=1; //success
+    *error=KIM_STATUS_OK; //success
     return (void *)method;
 }
 bool KIM_API_model::requiresFullNeighbors(){
@@ -2274,13 +2274,14 @@ bool KIM_API_model::requiresFullNeighbors(){
 void * KIM_API_model::get_listParams(int* nVpar, int* error){
     int count;
     count=0;
+    *error=KIM_STATUS_FAIL;
     char * listvpar;
     for(int i=0; i< model.size; i++){
         if(is_it_par((*this)[i].name)) count++;
     }
     if (count==0) {
         *nVpar=0;
-        *error=1;  //success but no parameters
+        *error=KIM_STATUS_OK;  //success but no parameters
         return NULL;
     }
     *nVpar=count;
@@ -2294,19 +2295,20 @@ void * KIM_API_model::get_listParams(int* nVpar, int* error){
              count++;
          }
     }
-    *error =1;//success
+    *error =KIM_STATUS_OK;//success
     return (void *) listvpar;
 }
 void * KIM_API_model::get_listFreeParams(int* nVpar, int* error){
     int count;
     count=0;
+    *error=KIM_STATUS_FAIL;
     char * listvpar;
     for(int i=0; i< model.size; i++){
         if(is_it_free_par((*this)[i].name)) count++;
     }
     if (count==0) {
         *nVpar=0;
-        *error=1;  //success but no parameters
+        *error=KIM_STATUS_OK;  //success but no parameters
         return NULL;
     }
     *nVpar=count;
@@ -2320,19 +2322,20 @@ void * KIM_API_model::get_listFreeParams(int* nVpar, int* error){
              count++;
          }
     }
-    *error =1;//success
+    *error =KIM_STATUS_OK;//success
     return (void *) listvpar;
 }
 void * KIM_API_model::get_listFixedParams(int* nVpar, int* error){
     int count;
     count=0;
+    *error = KIM_STATUS_FAIL;
     char * listvpar;
     for(int i=0; i< model.size; i++){
         if(is_it_fixed_par((*this)[i].name)) count++;
     }
     if (count==0) {
         *nVpar=0;
-        *error=1;  //success but no parameters
+        *error=KIM_STATUS_OK;  //success but no parameters
         return NULL;
     }
     *nVpar=count;
@@ -2346,11 +2349,11 @@ void * KIM_API_model::get_listFixedParams(int* nVpar, int* error){
              count++;
          }
     }
-    *error =1;//success
+    *error =KIM_STATUS_OK;//success
     return (void *) listvpar;
 }
 int  KIM_API_model::get_neigh_mode(int*kimerr){
-    *kimerr=1;
+    *kimerr=KIM_STATUS_OK;
 
     if(locator_neigh_mode && !iterator_neigh_mode && !both_neigh_mode){
         return 2;
@@ -2361,22 +2364,25 @@ int  KIM_API_model::get_neigh_mode(int*kimerr){
     }else if(locator_neigh_mode && iterator_neigh_mode && !both_neigh_mode){
         return 1;
     }else{
-        *kimerr =-1;
+        *kimerr = KIM_STATUS_FAIL;
         return -1;
     }
 }
 
 int KIM_API_model::get_aTypeCode(char* atom, int * error){
-    *error =0;
-    if (atom == NULL) return -2; //no atom symbol provided
+    *error =KIM_STATUS_FAIL;
+    if (atom == NULL)  {
+        *error = KIM_STATUS_ATOM_TYPES_UNDEFINED;
+        return KIM_STATUS_ATOM_TYPES_UNDEFINED; //no atom symbol provided
+    }
     Atom_Map key, *res=NULL;
     strcpy(key.symbol,atom);
     res = (Atom_Map *)bsearch((void *)&key,AtomsTypes,nAtomsTypes,sizeof(Atom_Map),&(Atom_Map::comparator));
     if (res == NULL) {
-        *error = -1;
-        return  -1; //did not find atom symbol among atom types
+        *error = KIM_STATUS_ATOM_INVALID_TYPE;
+        return  KIM_STATUS_ATOM_INVALID_TYPE; //did not find atom symbol among atom types
     }
-    *error=1;
+    *error=KIM_STATUS_OK;
     return res->code;
 }
 
@@ -2430,4 +2436,35 @@ bool KIM_API_model::check_consistance_NBC_method(){
         }
     }
     return true;
+}
+char * KIM_API_model::status_msg(int status_code){
+    int mincode=-12,maxcode=2,offset=12;
+
+    char KIM_STATUS_MSG[][KEY_CHAR_LENGTH]=
+    {{"get_half_neigh method in KIM API object is not set(NULL value)"},
+    {"get_full_neigh method in KIM API object is not set(NULL value)"},
+    { "number of neighbors of an atom exceeds KIM_API_MAX_NEIGHBORS"},
+    { "invalid KIM API object"},
+    {"negative index in shape"},
+    {"invalid mode value"},
+    {"no atom/particle types have been specified by the Test or Model"},
+    {"provided rank does not match KIM API argument rank"},
+    {"invalid atom id requested (request out of range)"},
+    { "symbol is not among supported atom symbols"},
+    {"argument name provided is not in KIM API object"},
+    {"unsuccessful completion"},
+    {"iterator has been incremented past end of list"},
+    {"successful completion"},
+    {"iterator has been successfully initialized"}};
+    
+    if (status_code < mincode || status_code > maxcode) {
+        return NULL;
+    }else{
+        int ind = offset + status_code;
+        char * retstr = (char *)malloc(KEY_CHAR_LENGTH);
+        for (int i=0;i<KEY_CHAR_LENGTH;i++) retstr[i]='\0';
+        strcpy(retstr,&(KIM_STATUS_MSG[ind][0]));
+        return retstr;
+    }
+
 }
