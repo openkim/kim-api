@@ -1,0 +1,16 @@
+This directory (MODEL_NAME_STR) contains a shifted Lennard-Jones pair potential
+Model based on the KIM Model Driver MODEL_DRIVER_NAME_STR.  This Model
+implements the Lennard-Jones potential for SPECIES_NAME_STR.
+
+
+The following files are in this directory:
+
+Makefile
+    makefile to compile and build the Model based on the specified KIM Model
+    Driver
+
+README
+    This file
+
+MODEL_NAME_STR.params
+    Parameters file providing the Lennard-Jones Model parameters for SPECIES_NAME_STR

@@ -41,18 +41,21 @@ static void report_error(int line, char* str, int status);
 static void calc_phi(double* epsilon,
                      double* C,
                      double* Rzero,
-                     double* cutoff, double* shift, double r, double* phi);
+		     double* shift,
+                     double* cutoff, double r, double* phi);
 static void calc_phi_dphi(double* epsilon,
                           double* C,
                           double* Rzero,
-                          double* cutoff, double* shift, double r, double* phi, double* dphi);
+			  double* shift,
+                          double* cutoff, double r, double* phi, double* dphi);
 
 
 /* Calculate pair potential phi(r) */
 static void calc_phi(double* epsilon,
                      double* C,
                      double* Rzero,
-                     double* cutoff, double* shift, double r, double* phi)
+		     double* shift,
+                     double* cutoff, double r, double* phi)
 {
    /* local variables */
    double ep;
@@ -78,7 +81,8 @@ static void calc_phi(double* epsilon,
 static void calc_phi_dphi(double* epsilon,
                           double* C,
                           double* Rzero,
-                          double* cutoff, double* shift, double r, double* phi, double* dphi)
+			  double* shift,
+                          double* cutoff, double r, double* phi, double* dphi)
 {
    /* local variables */
    double ep;
@@ -128,12 +132,12 @@ static void compute(void* km, int* ier)
 
    intptr_t* nAtoms;
    int* atomTypes;
+   double* cutoff;
+   double* cutsq;
    double* epsilon;
    double* C;
    double* Rzero;
-   double* cutoff;
    double* shift;
-   double* cutsq;
    double* Rij_list;
    double* coords;
    double* energy;
@@ -307,13 +311,28 @@ static void compute(void* km, int* ier)
 
 
    /* unpack the Model's parameters stored in the KIM API object */
-   epsilon = (double*) KIM_API_get_data(pkim, "PARAM_FREE_epsilon", ier);
+
+    cutoff = (double*) KIM_API_get_data(pkim, "cutoff", ier);
    if (1 > *ier)
    {
       report_error(__LINE__, "KIM_API_get_data", *ier);
       return;
    }
-   
+   cutsq = (double*) KIM_API_get_data(pkim, "PARAM_FIXED_cutsq", ier);
+   if (1 > *ier)
+   {
+      report_error(__LINE__, "KIM_API_get_data", *ier);
+      return;
+   }
+
+    epsilon = (double*) KIM_API_get_data(pkim, "PARAM_FREE_epsilon", ier);
+   if (1 > *ier)
+   {
+      report_error(__LINE__, "KIM_API_get_data", *ier);
+      return;
+   }
+
+ 
    C = (double*) KIM_API_get_data(pkim, "PARAM_FREE_C", ier);
    if (1 > *ier)
    {
@@ -328,18 +347,6 @@ static void compute(void* km, int* ier)
       return;
    }
 
-   cutoff = (double*) KIM_API_get_data(pkim, "cutoff", ier);
-   if (1 > *ier)
-   {
-      report_error(__LINE__, "KIM_API_get_data", *ier);
-      return;
-   }
-   cutsq = (double*) KIM_API_get_data(pkim, "PARAM_FIXED_cutsq", ier);
-   if (1 > *ier)
-   {
-      report_error(__LINE__, "KIM_API_get_data", *ier);
-      return;
-   }
    shift = (double*) KIM_API_get_data(pkim, "PARAM_FIXED_shift", ier);
    if (1 > *ier)
    {
@@ -552,7 +559,8 @@ static void compute(void* km, int* ier)
                calc_phi_dphi(epsilon,
                              C,
                              Rzero,
-                             cutoff, shift, R, &phi, &dphi);
+			     shift,
+                             cutoff, R, &phi, &dphi);
             }
             else
             {
@@ -560,7 +568,8 @@ static void compute(void* km, int* ier)
                calc_phi(epsilon,
                         C,
                         Rzero,
-                        cutoff, shift, R, &phi);
+			shift,
+                        cutoff, R, &phi);
             }
             
             /* contribution to energy */
@@ -647,33 +656,20 @@ static void compute(void* km, int* ier)
 void MODEL_DRIVER_NAME_LC_STR_init_(void *km, char** paramfile)
 {
    /* Local variables */
+   double cutoff;
    double epsilon;
    double C;
    double Rzero;
-   double cutoff;
    intptr_t* pkim = *((intptr_t**) km);
    double* model_epsilon;
    double* model_C;
    double* model_Rzero;
-   double* model_cutoff;
    double* model_Pcutoff;
+   double* model_cutoff;
    double* model_cutsq;
    double* model_shift;
    int ier;
    double dummy;
-
-   /* Read in parameters */
-   ier = sscanf(*paramfile, "%lf \n%lf \n%lf \n%lf",
-                &cutoff,  /* cutoff distance in angstroms */
-                &epsilon, /* Morse epsilon in eV */
-                &C,       /* Morse C in 1/Angstroms */
-                &Rzero);  /* Morse Rzero in Angstroms */
-   if (4 != ier)
-   {
-      report_error(__LINE__, "Unable to read all Morse parameters", ier);
-      exit(1);
-   }
-
 
    /* store pointer to compute function in KIM object */
    if (! KIM_API_set_data(pkim, "compute", 1, (void*) &compute))
@@ -693,7 +689,19 @@ void MODEL_DRIVER_NAME_LC_STR_init_(void *km, char** paramfile)
       report_error(__LINE__, "KIM_API_set_data", ier);
       exit(1);
    }
-   
+
+   /* Read in model parameters from parameter file */
+   ier = sscanf(*paramfile, "%lf \n%lf \n%lf \n%lf",
+                &cutoff,  /* cutoff distance in angstroms */
+                &epsilon, /* Morse epsilon in eV */
+                &C,       /* Morse C in 1/Angstroms */
+                &Rzero);  /* Morse Rzero in Angstroms */
+   if (4 != ier)
+   {
+      report_error(__LINE__, "Unable to read all Morse parameters", ier);
+      exit(1);
+   }
+
    /* store model cutoff in KIM object */
    model_cutoff = (double*) KIM_API_get_data(pkim, "cutoff", &ier);
    if (1 > ier)
@@ -718,6 +726,22 @@ void MODEL_DRIVER_NAME_LC_STR_init_(void *km, char** paramfile)
    }
    /* set value of parameter cutoff */
    *model_Pcutoff = *model_cutoff;
+
+   /* allocate memory for parameter cutsq and store value */
+   model_cutsq = (double*) malloc(1*sizeof(double));
+   if (NULL == model_cutsq)
+   {
+      report_error(__LINE__, "malloc", ier);
+      exit(1);
+   }
+   /* store model_cutsq in KIM object */
+   if (! KIM_API_set_data(pkim, "PARAM_FIXED_cutsq", 1, (void*) model_cutsq))
+   {
+      report_error(__LINE__, "KIM_API_set_data", ier);
+      exit(1);
+   }
+   /* set value of parameter cutsq */
+   *model_cutsq = (*model_cutoff)*(*model_cutoff);
 
    /* allocate memory for epsilon and store value */
    model_epsilon = (double*) malloc(1*sizeof(double));
@@ -767,22 +791,6 @@ void MODEL_DRIVER_NAME_LC_STR_init_(void *km, char** paramfile)
    /* set value of Rzero */
    *model_Rzero = Rzero;
 
-   /* allocate memory for parameter cutsq and store value */
-   model_cutsq = (double*) malloc(1*sizeof(double));
-   if (NULL == model_cutsq)
-   {
-      report_error(__LINE__, "malloc", ier);
-      exit(1);
-   }
-   /* store model_cutsq in KIM object */
-   if (! KIM_API_set_data(pkim, "PARAM_FIXED_cutsq", 1, (void*) model_cutsq))
-   {
-      report_error(__LINE__, "KIM_API_set_data", ier);
-      exit(1);
-   }
-   /* set value of parameter cutsq */
-   *model_cutsq = (*model_cutoff)*(*model_cutoff);
-
    /* allocate memory for parameter shift and store value */
    model_shift = (double*) malloc(1*sizeof(double));
    if (NULL == model_shift)
@@ -802,7 +810,8 @@ void MODEL_DRIVER_NAME_LC_STR_init_(void *km, char** paramfile)
    calc_phi(model_epsilon,
             model_C,
             model_Rzero,
-            model_cutoff, &dummy, *model_cutoff, model_shift);
+	    &dummy,
+            model_cutoff, *model_cutoff, model_shift);
    /* set shift to -shift */
    *model_shift = -(*model_shift);
 
@@ -819,12 +828,12 @@ static void reinit(void *km)
 {
    /* Local variables */
    intptr_t* pkim = *((intptr_t**) km);
+   double* model_cutoff;
+   double* model_cutsq;
    double* model_epsilon;
    double* model_C;
    double* model_Rzero;
    double* model_Pcutoff;
-   double* model_cutoff;
-   double* model_cutsq;
    double* model_shift;
    int ier;
    double dummy;
@@ -899,7 +908,8 @@ static void reinit(void *km)
    calc_phi(model_epsilon,
             model_C,
             model_Rzero,
-            model_cutoff, &dummy, *model_cutoff, model_shift);
+	    &dummy,
+            model_cutoff, *model_cutoff, model_shift);
    /* set shift to -shift */
    *model_shift = -(*model_shift);
 
@@ -911,11 +921,11 @@ static void destroy(void *km)
 {
    /* Local variables */
    intptr_t* pkim = *((intptr_t**) km);
+   double* model_Pcutoff;
+   double* model_cutsq;
    double* model_epsilon;
    double* model_C;
    double* model_Rzero;
-   double* model_Pcutoff;
-   double* model_cutsq;
    double* model_shift;
    int ier;
 
@@ -927,6 +937,15 @@ static void destroy(void *km)
       exit(1);
    }
    free(model_Pcutoff);
+
+   /* get and free model_cutsq in KIM object */
+   model_cutsq = KIM_API_get_data(pkim, "PARAM_FIXED_cutsq", &ier);
+   if (1 > ier)
+   {
+      report_error(__LINE__, "KIM_API_get_data", ier);
+      exit(1);
+   }
+   free(model_cutsq);
 
    /* get and free epsilon from KIM object */
    model_epsilon = (double*) KIM_API_get_data(pkim, "PARAM_FREE_epsilon", &ier);
@@ -954,15 +973,6 @@ static void destroy(void *km)
       exit(1);
    }
    free(model_Rzero);
-
-   /* get and free model_cutsq in KIM object */
-   model_cutsq = KIM_API_get_data(pkim, "PARAM_FIXED_cutsq", &ier);
-   if (1 > ier)
-   {
-      report_error(__LINE__, "KIM_API_get_data", ier);
-      exit(1);
-   }
-   free(model_cutsq);
 
    /* get and free model_shift in KIM object */
    model_shift = KIM_API_get_data(pkim, "PARAM_FIXED_shift", &ier);

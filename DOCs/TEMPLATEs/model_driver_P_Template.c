@@ -3,7 +3,6 @@
 *  model_driver_P_<FILL model driver name>
 *
 *  <FILL model drive name> pair potential KIM Model Driver
-*  shifted to have zero energy at the cutoff radius
 *
 *  Reference: <FILL>
 *
@@ -45,26 +44,22 @@ static void report_error(int line, char* str, int status);
 /**/
 static void calc_phi(double* <FILL parameter 1>,
                      double* <FILL parameter 2>,
-                     /* <FILL as many parameters as needed> */
-                     double* cutoff,
-                     double* shift,
-                     double r, double* phi);
+                     /* FILL as many parameters as needed */
+                     double* cutoff, double r, double* phi);
 static void calc_phi_dphi(double* <FILL parameter 1>,
                           double* <FILL parameter 2>,
-                          /* <FILL as many parameters as needed> */
-                          double* cutoff,
-                          double* shift,
-                          double r, double* phi, double* dphi);
+                          /* FILL as many parameters as needed */
+                          double* cutoff, double r, double* phi, double* dphi);
 
 
 /* Calculate pair potential phi(r) */
 static void calc_phi(double* <FILL parameter 1>,
                      double* <FILL parameter 2>,
-                     /* <FILL as many parameters as needed> */
-                     double* cutoff, double* shift, double r, double* phi)
+                     /* FILL as many parameters as needed */
+                     double* cutoff, double r, double* phi)
 {
    /* local variables */
-   /* <FILL place any local variable definitions here> */
+   /* FILL: place any local variable definitions here */
    
    if (r > *cutoff)
    {
@@ -73,7 +68,7 @@ static void calc_phi(double* <FILL parameter 1>,
    }
    else
    {
-      *phi   = <FILL functional form of phi(r)> + *shift;
+      *phi   = <FILL functional form of phi(r)>;
    }
 
    return;
@@ -82,11 +77,11 @@ static void calc_phi(double* <FILL parameter 1>,
 /* Calculate pair potential phi(r) and its derivative dphi(r) */
 static void calc_phi_dphi(double* <FILL parameter 1>,
                           double* <FILL parameter 2>,
-                          /* <FILL as many parameters as needed> */
-                          double* cutoff, double* shift, double r, double* phi, double* dphi)
+                          /* FILL as many parameters as needed */
+                          double* cutoff, double r, double* phi, double* dphi)
 {
    /* local variables */
-   /* <FILL place any local variable definitions here> */
+   /* FILL: place any local variable definitions here */
 
    if (r > *cutoff)
    {
@@ -96,7 +91,7 @@ static void calc_phi_dphi(double* <FILL parameter 1>,
    }
    else
    {
-      *phi  = <FILL functional form of phi(r)> + *shift;
+      *phi  = <FILL functional form of phi(r)>;
       *dphi = <FILL functional form of dphi(r)>;
    }
 
@@ -129,12 +124,11 @@ static void compute(void* km, int* ier)
 
    intptr_t* nAtoms;
    int* atomTypes;
+   double* cutoff;
+   double* cutsq;
    double* <FILL parameter 1>;
    double* <FILL parameter 2>;
-   /* <FILL as many parameters as needed> */
-   double* cutoff;
-   double* shift;
-   double* cutsq;
+   /* FILL as many parameters as needed */
    double* Rij_list;
    double* coords;
    double* energy;
@@ -308,6 +302,22 @@ static void compute(void* km, int* ier)
 
 
    /* unpack the Model's parameters stored in the KIM API object */
+
+   cutoff = (double*) KIM_API_get_data(pkim, "cutoff", ier);
+   if (1 > *ier)
+   {
+      report_error(__LINE__, "KIM_API_get_data", *ier);
+      return;
+   }
+   cutsq = (double*) KIM_API_get_data(pkim, "PARAM_FIXED_cutsq", ier);
+   if (1 > *ier)
+   {
+      report_error(__LINE__, "KIM_API_get_data", *ier);
+      return;
+   }
+
+   /* FILL as many parameters as needed */
+
    <FILL parameter 1> = (double*) KIM_API_get_data(pkim,"PARAM_FREE_<FILL parameter 1>", ier);
    if (1 > *ier)
    {
@@ -322,27 +332,7 @@ static void compute(void* km, int* ier)
       return;
    }
 
-   /* <FILL as many parameters as needed> */
-
-   cutoff = (double*) KIM_API_get_data(pkim, "cutoff", ier);
-   if (1 > *ier)
-   {
-      report_error(__LINE__, "KIM_API_get_data", *ier);
-      return;
-   }
-   cutsq = (double*) KIM_API_get_data(pkim, "PARAM_FIXED_cutsq", ier);
-   if (1 > *ier)
-   {
-      report_error(__LINE__, "KIM_API_get_data", *ier);
-      return;
-   }
-   shift = (double*) KIM_API_get_data(pkim, "PARAM_FIXED_shift", ier);
-   if (1 > *ier)
-   {
-      report_error(__LINE__, "KIM_API_get_data", *ier);
-      return;
-   }
-
+   /* also FILL PARAM_FIXED_* parameters here if there are any ... */
 
    /* Check to be sure that the atom types are correct */
    /**/
@@ -547,16 +537,16 @@ static void compute(void* km, int* ier)
                /* compute pair potential and its derivative */
                calc_phi_dphi(<FILL parameter 1>,
                              <FILL parameter 2>,
-                             /* <FILL as many parameters as needed> */
-                             cutoff, shift, R, &phi, &dphi);
+                             /* FILL as many parameters as needed */
+                             cutoff, R, &phi, &dphi);
             }
             else
             {
                /* compute just pair potential */
                calc_phi(<FILL parameter 1>,
                         <FILL parameter 2>,
-                        /* <FILL as many parameters as needed> */
-                        cutoff, shift, R, &phi);
+                        /* FILL as many parameters as needed */
+                        cutoff, R, &phi);
             }
             
             /* contribution to energy */
@@ -640,37 +630,21 @@ static void compute(void* km, int* ier)
 }
 
 /* Initialization function */
-void model_driver_<FILL (lowercase) model driver name>_init_(void *km, char** paramfile)
+void model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char** paramfile)
 {
    /* Local variables */
+   double cutoff;
    double <FILL parameter 1>;
    double <FILL parameter 2>;
-   /* <FILL as many parameters as needed> */
-   double cutoff;
+   /* FILL as many parameters as needed */
    intptr_t* pkim = *((intptr_t**) km);
+   double* model_Pcutoff;
+   double* model_cutoff;
+   double* model_cutsq;
    double* model_<FILL parameter 1>;
    double* model_<FILL parameter 2>;
-   /* <FILL as many parameters as needed> */
-   double* model_cutoff;
-   double* model_Pcutoff;
-   double* model_cutsq;
-   double* model_shift;
+   /* FILL as many parameters as needed */
    int ier;
-   double dummy;
-
-   /* Read in parameters */
-   ier = sscanf(*paramfile, "%lf \n%lf \n<FILL as many parameters as needed>",
-                &cutoff,             /* cutoff distance in angstroms */
-                &<FILL parameter 1>,
-                &<FILL parameter 2>,
-                /* <FILL as many parameters as needed> */
-               );
-   if (<FILL number of parameters (including cutoff)> != ier)
-   {
-      report_error(__LINE__, "Unable to read all <FILL model driver name> parameters", ier);
-      exit(1);
-   }
-
 
    /* store pointer to compute function in KIM object */
    if (! KIM_API_set_data(pkim, "compute", 1, (void*) &compute))
@@ -690,7 +664,20 @@ void model_driver_<FILL (lowercase) model driver name>_init_(void *km, char** pa
       report_error(__LINE__, "KIM_API_set_data", ier);
       exit(1);
    }
-   
+
+   /* Read in model parameters from parameter file */
+   ier = sscanf(*paramfile, "%lf \n%lf \n<FILL as many parameters as needed>",
+                &cutoff,             /* cutoff distance in angstroms */
+                &<FILL parameter 1>,
+                &<FILL parameter 2>,
+                /* FILL as many parameters as needed */
+               );
+   if (<FILL number of parameters (including cutoff)> != ier)
+   {
+      report_error(__LINE__, "Unable to read all <FILL model driver name> parameters", ier);
+      exit(1);
+   }
+
    /* store model cutoff in KIM object */
    model_cutoff = (double*) KIM_API_get_data(pkim, "cutoff", &ier);
    if (1 > ier)
@@ -716,41 +703,6 @@ void model_driver_<FILL (lowercase) model driver name>_init_(void *km, char** pa
    /* set value of parameter cutoff */
    *model_Pcutoff = *model_cutoff;
 
-   /* allocate memory for <FILL parameter 1> and store value */
-   model_<FILL parameter 1> = (double*) malloc(1*sizeof(double));
-   if (NULL == model_<FILL parameter 1>)
-   {
-      report_error(__LINE__, "malloc", ier);
-      exit(1);
-   }
-   /* store model_<FILL parameter 1> in KIM object */
-   if (! KIM_API_set_data(pkim, "PARAM_FREE_<FILL parameter 1>", 1, (void*) model_<FILL parameter 1>))
-   {
-      report_error(__LINE__, "KIM_API_set_data", ier);
-      exit(1);
-   }
-   /* set value of <FILL parameter 1> */
-   *model_<FILL parameter 1> = <FILL parameter 1>;
-
-   /* allocate memory for <FILL parameter 2> and store value */
-   model_<FILL parameter 2> = (double*) malloc(1*sizeof(double));
-   if (NULL == model_<FILL parameter 2>)
-   {
-      report_error(__LINE__, "malloc", ier);
-      exit(1);
-   }
-   /* store model_<FILL parameter 2> in KIM object */
-   if (! KIM_API_set_data(pkim, "PARAM_FREE_<FILL parameter 2>", 1, (void*) model_<FILL parameter 2>))
-   {
-      report_error(__LINE__, "KIM_API_set_data", ier);
-      exit(1);
-   }
-   /* set value of <FILL parameter 2> */
-   *model_<FILL parameter 2> = <FILL parameter 2>;
-
-   /* <FILL as many parameters as needed> */
-
-
    /* allocate memory for parameter cutsq and store value */
    model_cutsq = (double*) malloc(1*sizeof(double));
    if (NULL == model_cutsq)
@@ -767,28 +719,26 @@ void model_driver_<FILL (lowercase) model driver name>_init_(void *km, char** pa
    /* set value of parameter cutsq */
    *model_cutsq = (*model_cutoff)*(*model_cutoff);
 
-   /* allocate memory for parameter shift and store value */
-   model_shift = (double*) malloc(1*sizeof(double));
-   if (NULL == model_shift)
+   /* allocate memory for <FILL parameter 1> and store value */
+   model_<FILL parameter 1> = (double*) malloc(1*sizeof(double));
+   if (NULL == model_<FILL parameter 1>)
    {
       report_error(__LINE__, "malloc", ier);
       exit(1);
    }
-   /* store model_shift in KIM object */
-   if (! KIM_API_set_data(pkim, "PARAM_FIXED_shift", 1, (void*) model_shift))
+   /* store model_<FILL parameter 1> in KIM object */
+   if (! KIM_API_set_data(pkim, "PARAM_FREE_<FILL parameter 1>", 1, (void*) model_<FILL parameter 1>))
    {
       report_error(__LINE__, "KIM_API_set_data", ier);
       exit(1);
    }
-   /* set value of parameter shift */
-   dummy = 0.0;
-   /* call calc_phi with r=cutoff and shift=0.0 */
-   calc_phi(model_<FILL parameter 1>,
-            model_<FILL parameter 2>,
-            /* <FILL as many parameters as needed> */
-            model_cutoff, &dummy, *model_cutoff, model_shift);
-   /* set shift to -shift */
-   *model_shift = -(*model_shift);
+   /* set value of <FILL parameter 1> */
+   *model_<FILL parameter 1> = <FILL parameter 1>;
+
+   /* FILL: repeat above statements as many times as necessary for all parameters.
+      Use "FREE" and "FIXED" as appropriate. (Recall FREE parameters can be modified by
+      the calling routine. FIXED parameters depend on the FREE parameters and must be
+      appropriately adjusted in the reinit() method.)  */
 
    return;
 }
@@ -803,15 +753,13 @@ static void reinit(void *km)
 {
    /* Local variables */
    intptr_t* pkim = *((intptr_t**) km);
-   double* model_<FILL parameter 1>;
-   double* model_<FILL parameter 2>;
-   /* <FILL as many parameters as needed> */
-   double* model_Pcutoff;
    double* model_cutoff;
    double* model_cutsq;
-   double* model_shift;
+   double* model_<FILL parameter 1>;
+   double* model_<FILL parameter 2>;
+   /* FILL as many parameters as needed */
+   double* model_Pcutoff;
    int ier;
-   double dummy;
 
    /* get (changed) parameters from KIM object */
 
@@ -839,7 +787,7 @@ static void reinit(void *km)
       exit(1);
    }
 
-   /* <FILL as many parameters as needed> */
+   /* FILL as many parameters as needed */
 
 
    
@@ -865,23 +813,7 @@ static void reinit(void *km)
    /* set value of parameter cutsq */
    *model_cutsq = (*model_cutoff)*(*model_cutoff);
 
-
-   /* store model_shift in KIM object */
-   model_cutsq = KIM_API_get_data(pkim, "PARAM_FIXED_shift", &ier);
-   if (1 > ier)
-   {
-      report_error(__LINE__, "KIM_API_get_data", ier);
-      exit(1);
-   }
-   /* set value of parameter shift */
-   dummy = 0.0;
-   /* call calc_phi with r=cutoff and shift=0.0 */
-   calc_phi(model_<FILL parameter 1>,
-            model_<FILL parameter 2>,
-            /* <FILL as many parameters as needed> */
-            model_cutoff, &dummy, *model_cutoff, model_shift);
-   /* set shift to -shift */
-   *model_shift = -(*model_shift);
+   /* FILL: store any other FIXED parameters whose values depend on FREE parameters */
 
    return;
 }
@@ -891,12 +823,11 @@ static void destroy(void *km)
 {
    /* Local variables */
    intptr_t* pkim = *((intptr_t**) km);
-   double* model_<FILL parameter 1>;
-   double* model_<FILL parameter 2>;
-   /* <FILL as many parameters as needed> */
    double* model_Pcutoff;
    double* model_cutsq;
-   double* model_shift;
+   double* model_<FILL parameter 1>;
+   double* model_<FILL parameter 2>;
+   /* FILL as many parameters as needed */
    int ier;
 
    /* get and free parameter cutoff from KIM object */
@@ -908,27 +839,6 @@ static void destroy(void *km)
    }
    free(model_Pcutoff);
 
-   /* get and free <FILL parameter 1> from KIM object */
-   model_<FILL parameter 1> = (double*) KIM_API_get_data(pkim, "PARAM_FREE_<FILL parameter 1>", &ier);
-   if (1 > ier)
-   {
-      report_error(__LINE__, "KIM_API_get_data", ier);
-      exit(1);
-   }
-   free(model_<FILL parameter 1>);
-
-   /* get and free <FILL parameter 2> from KIM object */
-   model_<FILL parameter 2> = (double*) KIM_API_get_data(pkim, "PARAM_FREE_<FILL parameter 2>", &ier);
-   if (1 > ier)
-   {
-      report_error(__LINE__, "KIM_API_get_data", ier);
-      exit(1);
-   }
-   free(model_<FILL parameter 2>);
-
-   /* <FILL as many parameters as needed> */
-
-
    /* get and free model_cutsq in KIM object */
    model_cutsq = KIM_API_get_data(pkim, "PARAM_FIXED_cutsq", &ier);
    if (1 > ier)
@@ -938,14 +848,16 @@ static void destroy(void *km)
    }
    free(model_cutsq);
 
-   /* get and free model_shift in KIM object */
-   model_shift = KIM_API_get_data(pkim, "PARAM_FIXED_shift", &ier);
+   /* get and free <FILL parameter 1> from KIM object */
+   model_<FILL parameter 1> = (double*) KIM_API_get_data(pkim, "PARAM_FREE_<FILL parameter 1>", &ier);
    if (1 > ier)
    {
       report_error(__LINE__, "KIM_API_get_data", ier);
       exit(1);
    }
-   free(model_shift);
+   free(model_<FILL parameter 1>);
+
+   /* FILL: repeat above statements as many times as necessary for all FREE and FIXED parameters. */
 
    return;
 }

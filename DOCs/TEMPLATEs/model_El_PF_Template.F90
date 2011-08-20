@@ -313,7 +313,7 @@ endif
 !
 pN = kim_api_get_data_f(pkim,"numberOfAtoms",ier)
 if (ier.le.0) then
-   call report_error(__LINE__, "kim_api_isit_compute_f", ier)
+   call report_error(__LINE__, "kim_api_get_data_f", ier)
    return
 endif
 

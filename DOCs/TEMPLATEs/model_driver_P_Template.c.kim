@@ -4,7 +4,7 @@
 # All rights reserved.
 #
 # Author: <FILL>
-# Date  : <FILL>
+# Date:   <FILL>
 #
 #
 # See KIM_API/standard.kim for documentation about this file
@@ -92,14 +92,19 @@ virial                  real*8       pressure   standard                []      
 MODEL_PARAMETERS:
 # Name                         Type         Unit        SystemU/Scale           Shape              Requirements
 
+PARAM_FREE_cutoff              real*8       length      standard                []
+
 PARAM_FREE_<FILL parameter 1>  real*8       <FILL Unit> standard                []
 
 PARAM_FREE_<FILL parameter 2>  real*8       <FILL Unit> standard                []
 
-# <FILL as many parameters as needed>
+# FILL all existing free parameters
 
-PARAM_FREE_cutoff              real*8       length      standard                []
+PARAM_FIXED_cutsq               real*8      none        none                    []
 
-PARAM_FIXED_cutsq              real*8       none        none                    []
+PARAM_FIXED_<FILL parameter 1>  real*8      <FILL Unit> standard                []
 
-PARAM_FIXED_shift              real*8       energy      standard                []
+PARAM_FIXED_<FILL parameter 2>  real*8      <FILL Unit> standard                []
+
+# FILL all existing fixed parameters
+

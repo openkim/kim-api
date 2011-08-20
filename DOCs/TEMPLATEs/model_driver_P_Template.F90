@@ -1,13 +1,13 @@
 !****************************************************************************
 !**
-!**  MODULE model_Ar_P_MLJ_F90
+!**  MODULE model_driver_P_<FILL model driver name>
 !**
-!**  Lennard-Jones pair potential model for Ar
+!**  <FILL model driver name> pair potential KIM Model Driver
 !**
-!**  Reference: Ashcroft and Mermin
+!**  Reference: <FILL>
 !**
-!**  Author: Ellad B. Tadmor
-!**  Date  : August 3, 2011
+!**  Author: <FILL>
+!**  Date  : <FILL>
 !**
 !**  Language: Fortran 90
 !**
@@ -16,7 +16,7 @@
 !**
 !****************************************************************************
 
-module model_Ar_P_MLJ_F90
+module model_driver_P_<FILL model driver name>
 
 use KIMservice
 implicit none
@@ -24,35 +24,13 @@ implicit none
 save
 private
 public Compute_Energy_Forces, &
-       model_cutoff,          &
+       reinit,                &
+       destroy,               &
        report_error
 
 ! Below are the definitions and values of all Model parameters
 integer, parameter          :: DIM=3          ! dimensionality of space
 integer, parameter          :: speccode = 1   ! internal species code
-double precision, parameter :: model_cutoff  = 8.15d0 ! cutoff radius
-                                                      ! in angstroms
-double precision, parameter :: model_cutsq   = model_cutoff**2
-
-!-------------------------------------------------------------------------------
-! Below are the definitions and values of all additional model parameters
-!
-! Recall that the Fortran 90 format for declaring parameters is as follows:
-!
-! integer, parameter :: parname = value          ! This defines an integer
-!                                                ! parameter called `parname' with a
-!                                                ! value equal to `value' (a number)
-!
-! double precision, parameter :: parname = value ! This defines a real double precision
-!                                                ! parameter called `parname' with a
-!                                                ! value equal to `value' (a number)
-!-------------------------------------------------------------------------------
-double precision, parameter :: lj_epsilon = 0.0104d0
-double precision, parameter :: lj_sigma   = 3.40d0
-double precision, parameter :: lj_cutnorm = model_cutoff/lj_sigma
-double precision, parameter :: lj_A = 12.d0*lj_epsilon*(-26.d0 + 7.d0*lj_cutnorm**6)/(lj_cutnorm**14*lj_sigma**2)
-double precision, parameter :: lj_B = 96.d0*lj_epsilon*(7.d0-2.d0*lj_cutnorm**6)/(lj_cutnorm**13*lj_sigma)
-double precision, parameter :: lj_C = 28.d0*lj_epsilon*(-13.d0+4.d0*lj_cutnorm**6)/(lj_cutnorm**12)
 
 contains
 
@@ -61,26 +39,28 @@ contains
 !  Calculate pair potential phi(r)
 !
 !-------------------------------------------------------------------------------
-subroutine calc_phi(r,phi)
+subroutine calc_phi(model_<FILL parameter 1>,  &
+                    model_<FILL parameter 2>,  &
+                    ! FILL as many parameters as needed
+                    model_cutoff,r,phi)
 implicit none
    
 !-- Transferred variables
+double precision, intent(in)  :: model_<FILL parameter 1>
+double precision, intent(in)  :: model_<FILL parameter 2>
+! FILL as many parameter declarations as necessary
+double precision, intent(in)  :: model_cutoff
 double precision, intent(in)  :: r
 double precision, intent(out) :: phi
 
 !-- Local variables
-double precision rsq,sor,sor6,sor12
+! FILL: place any local variable definitions here
 
-rsq  = r*r             !  r^2
-sor  = lj_sigma/r      !  (sig/r)
-sor6 = sor*sor*sor     !
-sor6 = sor6*sor6       !  (sig/r)^6
-sor12= sor6*sor6       !  (sig/r)^12
 if (r .gt. model_cutoff) then
    ! Argument exceeds cutoff radius
    phi = 0.d0
 else 
-   phi = 4.d0*lj_epsilon*(sor12-sor6) + lj_A*rsq + lj_B*r + lj_C
+   phi = !<FILL functional form of phi(r)>
 endif
 
 end subroutine calc_phi
@@ -90,28 +70,30 @@ end subroutine calc_phi
 !  Calculate pair potential phi(r) and its derivative dphi(r)
 !
 !-------------------------------------------------------------------------------
-subroutine calc_phi_dphi(r,phi,dphi)
+subroutine calc_phi_dphi(model_<FILL parameter 1>,  &
+                         model_<FILL parameter 2>,  &
+                         ! FILL as many parameters as needed
+                         model_cutoff,r,phi,dphi)
 implicit none
    
 !-- Transferred variables
+double precision, intent(in)  :: model_<FILL parameter 1>
+double precision, intent(in)  :: model_<FILL parameter 2>
+! FILL as many parameter declarations as necessary
+double precision, intent(in)  :: model_cutoff
 double precision, intent(in)  :: r
 double precision, intent(out) :: phi,dphi
 
 !-- Local variables
-double precision rsq,sor,sor6,sor12
+! FILL: place any local variable definitions here
 
-rsq  = r*r             !  r^2
-sor  = lj_sigma/r      !  (sig/r)
-sor6 = sor*sor*sor     !
-sor6 = sor6*sor6       !  (sig/r)^6
-sor12= sor6*sor6       !  (sig/r)^12
 if (r .gt. model_cutoff) then
    ! Argument exceeds cutoff radius
    phi    = 0.d0
    dphi   = 0.d0
 else 
-   phi  = 4.d0*lj_epsilon*(sor12-sor6) + lj_A*rsq + lj_B*r + lj_C
-   dphi = 24.d0*lj_epsilon*(-2.d0*sor12+sor6)/r  + 2.d0*lj_A*r + lj_B
+   phi  = !<FILL functional form of phi(r)>
+   dphi = !<FILL functional form of dphi(r)>
 endif
 
 end subroutine calc_phi_dphi
@@ -133,8 +115,14 @@ double precision :: Rij(DIM)
 double precision :: r,Rsqij,phi,dphi
 integer :: i,j,jj,numnei,atom_ret,comp_force,comp_enepot,comp_virial
 integer, allocatable, target :: nei1atom_substitute(:)
+character*80 :: error_message
 
 !-- KIM variables
+real*8 model_cutoff;     pointer(pmodel_cutoff, model_cutoff)  ! cutoff radius
+real*8 model_cutsq;      pointer(pmodel_cutsq,  model_cutsq)   ! cutoff radius squared
+real*8 model_<FILL parameter 1>; pointer(pmodel_<FILL parameter 1>,model_<FILL parameter 1>)
+real*8 model_<FILL parameter 2>; pointer(pmodel_<FILL parameter 2>,model_<FILL parameter 2>)
+! FILL as many parameter declarations as necessary
 integer(kind=8) N;       pointer(pN,N)
 real*8  energy;          pointer(penergy,energy)
 real*8  coordum(DIM,1);  pointer(pcoor,coordum)
@@ -151,6 +139,36 @@ integer IterOrLoca
 integer HalfOrFull
 integer NBC
 integer N4
+
+! Unpack the Model's parameters stored in the KIM API object
+!
+pmodel_cutoff = kim_api_get_data_f(pkim,"cutoff",ier)
+if (ier.le.0) then
+   call report_error(__LINE__, "kim_api_get_data_f", ier)
+   return
+endif
+
+pmodel_cutsq = kim_api_get_data_f(pkim,"PARAM_FIXED_cutsq",ier)
+if (ier.le.0) then
+   call report_error(__LINE__, "kim_api_get_data_f", ier)
+   return
+endif
+
+! <Fill below as many parameters as needed> 
+
+pmodel_<FILL parameter 1> = kim_api_get_data_f(pkim,"PARAM_FREE_<FILL parameter 1>",ier)
+if (ier.le.0) then
+   call report_error(__LINE__, "kim_api_get_data_f", ier)
+   return
+endif
+
+pmodel_<FILL parameter 2> = kim_api_get_data_f(pkim,"PARAM_FREE_<FILL parameter 2>",ier)
+if (ier.le.0) then
+   call report_error(__LINE__, "kim_api_get_data_f", ier)
+   return
+endif
+
+! FILL: add PARAM_FIXED_* parameters here if there are any ...
 
 ! Determine neighbor list boundary condition (NBC)
 ! and half versus full mode:
@@ -203,7 +221,10 @@ if (NBC.ne.0) then
       return
    endif
    if (IterOrLoca.ne.1 .and. IterOrLoca.ne.2) then
-      print *,'* ERROR: Unsupported IterOrLoca mode = ',IterOrLoca
+      ier = 0
+      write(error_message,'(a,i1)') &
+         'Unsupported IterOrLoca mode = ',IterOrLoca
+      call report_error(__LINE__, error_message, ier)
       stop
    endif
 else
@@ -435,10 +456,18 @@ do
 
          r = sqrt(Rsqij)                          ! compute distance
          if (comp_force.eq.1.or.comp_virial.eq.1) then
-            call calc_phi_dphi(r,phi,dphi)        ! compute pair potential
+            call calc_phi_dphi(model_<FILL parameter 1>, &
+                               model_<FILL parameter 2>, &
+                               ! FILL as many parameters as needed
+                               model_cutoff,             &
+                               r,phi,dphi)        ! compute pair potential
                                                   !   and it derivative
          else
-            call calc_phi(r,phi)                  ! compute just pair potential
+            call calc_phi(model_<FILL parameter 1>, &
+                          model_<FILL parameter 2>, &
+                          ! FILL as many parameters as needed
+                          model_cutoff,             &
+                          r,phi)                  ! compute just pair potential
          endif
 
          ! contribution to energy
@@ -468,8 +497,8 @@ do
          ! contribution to forces
          !
          if (comp_force.eq.1) then
-            force(:,i) = force(:,i) + dphi*Rij/r  ! accumulate force on atom i
-            if (HalfOrFull.eq.1) &                ! HALF mode
+            force(:,i) = force(:,i) + dphi*Rij/r    ! accumulate force on atom i
+            if (HalfOrFull.eq.1) &                  ! HALF mode
                force(:,j) = force(:,j) - dphi*Rij/r !    (Fji = -Fij)
          endif
 
@@ -486,9 +515,7 @@ if (comp_enepot.eq.1) energy = sum(ene_pot(1:N))    ! compute total energy
 
 ! Free temporary storage
 !
-if (NBC.eq.0) then
-   deallocate( nei1atom_substitute )
-endif
+if (NBC.eq.0) deallocate( nei1atom_substitute )
 
 ! Everything is great
 !
@@ -496,6 +523,126 @@ ier = 1
 return
 
 end subroutine Compute_Energy_Forces
+
+!-------------------------------------------------------------------------------
+!
+! Model driver reinitialization routine
+!
+!-------------------------------------------------------------------------------
+subroutine reinit(pkim)
+use KIMservice
+implicit none
+
+!-- Transferred variables
+integer(kind=kim_intptr), intent(in) :: pkim
+
+!-- Local variables
+integer ier
+
+!-- KIM variables
+real*8  cutoff;          pointer(pcutoff,cutoff)
+real*8  model_cutoff;    pointer(pmodel_cutoff, model_cutoff)  ! cutoff radius
+real*8  model_cutsq;     pointer(pmodel_cutsq,  model_cutsq)   ! cutoff radius squared
+real*8  model_<FILL parameter 1>; pointer(pmodel_<FILL parameter 1>,model_<FILL parameter 1>)
+real*8  model_<FILL parameter 2>; pointer(pmodel_<FILL parameter 2>,model_<FILL parameter 2>)
+! FILL as many parameter declarations as necessary
+
+! Get FREE parameters from KIM object
+!
+pmodel_cutoff = kim_api_get_data_f(pkim,"PARAM_FREE_cutoff",ier)
+if (ier.le.0) then
+   call report_error(__LINE__, "kim_api_get_data_f", ier)
+   return
+endif
+
+pmodel_<FILL parameter 1> = kim_api_get_data_f(pkim,"PARAM_FREE_<FILL parameter 1>",ier)
+if (ier.le.0) then
+   call report_error(__LINE__, "kim_api_get_data_f", ier)
+   return
+endif
+
+pmodel_<FILL parameter 2> = kim_api_get_data_f(pkim,"PARAM_FREE_<FILL parameter 2>",ier)
+if (ier.le.0) then
+   call report_error(__LINE__, "kim_api_get_data_f", ier)
+   return
+endif
+
+! FILL as many parameters as needed
+
+!
+! Set new values in KIM object
+!
+
+! store model cutoff in KIM object
+pcutoff =  kim_api_get_data_f(pkim,"cutoff",ier)
+if (ier.le.0) then
+   call report_error(__LINE__, "kim_api_get_data", ier)
+   stop
+endif
+cutoff = model_cutoff
+
+! store squared cutoff radius in KIM object
+pmodel_cutsq = kim_api_get_data_f(pkim,"PARAM_FIXED_cutsq",ier)
+if (ier.le.0) then
+   call report_error(__LINE__, "kim_api_get_data_f", ier)
+   return
+endif
+model_cutsq = model_cutoff**2
+
+! FILL: store any other FIXED parameters whose values depend on FREE parameters
+
+end subroutine reinit
+
+!-------------------------------------------------------------------------------
+!
+! Model driver destroy routine
+!
+!-------------------------------------------------------------------------------
+subroutine destroy(pkim)
+use KIMservice
+implicit none
+
+!-- Transferred variables
+integer(kind=kim_intptr), intent(in) :: pkim
+
+!-- Local variables
+integer ier
+
+!-- KIM variables
+real*8  cutoff;          pointer(pcutoff,cutoff)
+real*8  model_cutoff;    pointer(pmodel_cutoff, model_cutoff)  ! cutoff radius
+real*8  model_cutsq;     pointer(pmodel_cutsq,  model_cutsq)   ! cutoff radius squared
+real*8  model_<FILL parameter 1>; pointer(pmodel_<FILL parameter 1>,model_<FILL parameter 1>)
+real*8  model_<FILL parameter 2>; pointer(pmodel_<FILL parameter 2>,model_<FILL parameter 2>)
+! FILL as many parameter declarations as necessary
+
+! Get all parameters added to KIM object and free memory 
+!
+pmodel_cutoff = kim_api_get_data_f(pkim,"PARAM_FREE_cutoff",ier)
+if (ier.le.0) then
+   call report_error(__LINE__, "kim_api_get_data_f", ier)
+   return
+endif
+call free(pmodel_cutoff)
+
+pmodel_cutsq = kim_api_get_data_f(pkim,"PARAM_FIXED_cutsq",ier)
+if (ier.le.0) then
+   call report_error(__LINE__, "kim_api_get_data_f", ier)
+   return
+endif
+call free(pmodel_cutsq)
+
+pmodel_<FILL parameter 1> = kim_api_get_data_f(pkim,"PARAM_FREE_<FILL parameter 1>",ier)
+if (ier.le.0) then
+   call report_error(__LINE__, "kim_api_get_data_f", ier)
+   return
+endif
+call free(pmodel_<FILL parameter 1>)
+
+! FILL: repeat above statements as many times as necessary for all FREE and
+! FIXED parameters.
+
+end subroutine destroy
 
 !-------------------------------------------------------------------------------
 !
@@ -518,25 +665,39 @@ print *,'* ERROR at line', line, 'in ',trim(file), ': ', str,'. kimerror =', sta
 
 end subroutine report_error
 
-end module model_Ar_P_MLJ_F90
+end module model_driver_P_<FILL model driver name>
 
 !-------------------------------------------------------------------------------
 !
-! Model initialization routine (REQUIRED)
+! Model driver initialization routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-subroutine model_Ar_P_MLJ_F90_init(pkim)
-use model_Ar_P_MLJ_F90
+subroutine model_driver_P_<FILL model driver name>_init(pkim, paramfile)
+use model_driver_P_<FILL model driver name>
 use KIMservice
 implicit none
 
 !-- Transferred variables
 integer(kind=kim_intptr), intent(in) :: pkim
+character(len=*),         intent(in) :: paramfile
 
 !-- Local variables
+! define variables for all model parameters to be read in
+double precision in_cutoff
+double precision in_<FILL parameter 1>
+double precision in_<FILL parameter 2>
+! ...
+double precision in_<FILL last parameter>
 integer(kind=kim_intptr), parameter :: one=1
-real*8 cutoff; pointer(pcutoff,cutoff)
 integer ier
+
+!-- KIM variables
+real*8  cutoff;          pointer(pcutoff,cutoff)
+real*8  model_cutoff;    pointer(pmodel_cutoff, model_cutoff)  ! cutoff radius
+real*8  model_cutsq;     pointer(pmodel_cutsq,  model_cutsq)   ! cutoff radius squared
+real*8  model_<FILL parameter 1>; pointer(pmodel_<FILL parameter 1>,model_<FILL parameter 1>)
+real*8  model_<FILL parameter 2>; pointer(pmodel_<FILL parameter 2>,model_<FILL parameter 2>)
+! FILL as many parameter declarations as necessary
 
 ! store pointer to compute function in KIM object
 if (kim_api_set_data_f(pkim,"compute",one,loc(Compute_Energy_Forces)).ne.1) then
@@ -544,13 +705,72 @@ if (kim_api_set_data_f(pkim,"compute",one,loc(Compute_Energy_Forces)).ne.1) then
    stop
 endif
 
+! store pointer to reinit function in KIM object
+if (kim_api_set_data_f(pkim,"reinit",one,loc(reinit)).ne.1) then
+   call report_error(__LINE__, "kim_api_set_data", ier)
+   stop
+endif
+
+if (kim_api_set_data_f(pkim,"destroy",one,loc(destroy)).ne.1) then
+   call report_error(__LINE__, "kim_api_set_data", ier)
+   stop
+endif
+
+! Read in model parameters from parameter file
+!
+read(paramfile,'<FILL appropriate format>',iostat=ier,err=100) in_cutoff,       &
+                                                               in_<FILL parameter 1>, &
+                                                               in_<FILL parameter 2>, &
+                                                               ! ...
+                                                               in_<FILL last parameter>
+goto 200
+100 continue
+! reading parameters failed
+call report_error(__LINE__, "Unable to read <FILL model driver name> parameters, ier = ", ier)
+stop
+
+200 continue
+
 ! store model cutoff in KIM object
 pcutoff =  kim_api_get_data_f(pkim,"cutoff",ier)
 if (ier.le.0) then
    call report_error(__LINE__, "kim_api_get_data", ier)
    stop
 endif
-cutoff = model_cutoff
+cutoff = in_cutoff
 
-end subroutine model_Ar_P_MLJ_F90_init
+! allocate memory for parameter cutoff and store value
+pmodel_cutoff = malloc(one*8) ! 8 is the size of double precision number
+ier = kim_api_set_data_f(pkim,"PARAM_FREE_cutoff",one,pmodel_cutoff)
+if (ier.le.0) then
+   call report_error(__LINE__, "kim_api_set_data", ier);
+   stop
+endif
+model_cutoff = in_cutoff ! Initialize
+
+! allocate memory for parameter cutsq and store value
+pmodel_cutsq = malloc(one*8) ! 8 is the size of double precision number
+ier = kim_api_set_data_f(pkim,"PARAM_FIXED_cutsq",one,pmodel_cutsq)
+if (ier.le.0) then
+   call report_error(__LINE__, "kim_api_set_data", ier);
+   stop
+endif
+model_cutsq = in_cutoff**2 ! Initialize
+
+! allocate memory for parameter <FILL parameter 1> and store value
+pmodel_<FILL parameter 1> = malloc(one*8) ! 8 is the size of double precision number
+ier = kim_api_set_data_f(pkim,"PARAM_FREE_<FILL parameter 1>",one,pmodel_<FILL parameter 1>)
+if (ier.le.0) then
+   call report_error(__LINE__, "kim_api_set_data", ier);
+   stop
+endif
+model_<FILL parameter 1> = in_<FILL parameter 1>
+
+! FILL: repeat above statements as many times as necessary for all parameters. 
+! Use "FREE" and "FIXED" as appropriate. (Recall FREE parameters can be modified by
+! the calling routine. FIXED parameters depend on the FREE parameters and must be
+! appropriately adjusted in the reinit() routine.)
+
+end subroutine model_driver_P_<FILL model driver name>_init
+
 

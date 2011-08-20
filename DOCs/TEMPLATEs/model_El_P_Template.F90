@@ -47,7 +47,7 @@ double precision, parameter :: model_cutsq   = model_cutoff**2
 !                                                ! parameter called `parname' with a
 !                                                ! value equal to `value' (a number)
 !-------------------------------------------------------------------------------
-double precision, parameter :: <FILL paramter name> = <FILL parameter value>
+double precision, parameter :: <FILL parameter name> = <FILL parameter value>
 
 contains
 
@@ -224,7 +224,7 @@ endif
 !
 pN = kim_api_get_data_f(pkim,"numberOfAtoms",ier)
 if (ier.le.0) then
-   call report_error(__LINE__, "kim_api_isit_compute_f", ier)
+   call report_error(__LINE__, "kim_api_get_data_f", ier)
    return
 endif
 

@@ -4,7 +4,7 @@
 # All rights reserved.
 #
 # Authors: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
-# Date:    18-Aug-2011
+# Date:    20-Aug-2011
 #
 #
 # See KIM_API/standard.kim for documentation about this file
@@ -27,7 +27,7 @@ SPECIES1_NAME_STR                      spec                    1
 CONVENTIONS:
 # Name                  Type
 
-ZeroBasedLists          dummy
+OneBasedLists           dummy
 
 Neigh_IterAccess        dummy
 
@@ -96,10 +96,8 @@ PARAM_FREE_cutoff       real*8       length     standard                []
 
 PARAM_FREE_epsilon      real*8       energy     standard                []
 
-PARAM_FREE_C            real*8       none       none                    []                 # should be units of 1/length
-
-PARAM_FREE_Rzero        real*8       length     standard                []
+PARAM_FREE_sigma        real*8       none       none                    []                 # should be units of 1/length
 
 PARAM_FIXED_cutsq       real*8       none       none                    []
-
+ 
 PARAM_FIXED_shift       real*8       energy     standard                []

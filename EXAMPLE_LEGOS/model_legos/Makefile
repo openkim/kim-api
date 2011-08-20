@@ -38,7 +38,10 @@ AUTO_GEN_MODELS = model_Al_PF_ErcolessiAdams    \
                   model_Ne_P_MLJ_NEIGH_RVEC_F   \
                   model_driver_P_Morse          \
                   model_Ar_P_Morse              \
-                  model_Ne_P_Morse
+                  model_Ne_P_Morse              \
+                  model_driver_P_LJ             \
+                  model_Ar_P_LJ                 \
+                  model_Ne_P_LJ
 
 all: $(AUTO_GEN_MODELS) EXAMPLES.README
 
@@ -331,6 +334,7 @@ model_Ar_P_Morse: model_Morse_README \
 	echo ""                                                                    >> $(KIM_MODELS_DIR)$@/$@.params
 	echo "Parameters taken from: G. E. Jelinek, Phys. Rev. B, Vol 5, no 8, 1972, pp3210--3217" \
                                                                                    >> $(KIM_MODELS_DIR)$@/$@.params
+
 model_Ne_P_Morse: model_Morse_README \
                   Makefile
         # make directory
@@ -351,6 +355,65 @@ model_Ne_P_Morse: model_Morse_README \
 	echo "3.0778"                                                              >> $(KIM_MODELS_DIR)$@/$@.params
 	echo ""                                                                    >> $(KIM_MODELS_DIR)$@/$@.params
 	echo "Parameters taken from Table 2 of: H. R. Glyde, J. Phys. C: Solid State Phys.. Vol 3. 1970, pp810--819" \
+                                                                                   >> $(KIM_MODELS_DIR)$@/$@.params
+model_driver_P_LJ: model_driver_LJ_README \
+                   model_driver_Makefile  \
+                   model_driver_P_LJ.kim  \
+                   model_driver_P_LJ.F90  \
+                   Makefile
+        # make directory
+	mkdir -p $(KIM_MODEL_DRIVERS_DIR)$@
+	@touch $(KIM_MODEL_DRIVERS_DIR)$@
+        # make README file in the directory
+	cat model_driver_LJ_README | sed -e 's/MODEL_DRIVER_NAME_STR/$@/g'         >  $(KIM_MODEL_DRIVERS_DIR)$@/README
+        # make Makefile in the directory
+	cat model_driver_Makefile | sed -e 's/MODEL_DRIVER_NAME_STR/$@/g'          >  $(KIM_MODEL_DRIVERS_DIR)$@/Makefile
+        # make .kim file in the directory
+	cat model_driver_P_LJ.kim                                                  >  $(KIM_MODEL_DRIVERS_DIR)$@/$@.kim
+        # make .F90 file in the directory
+	cat model_driver_P_LJ.F90 | $(SED_CMD) \
+            | sed -e `echo $@ | tr A-Z a-z | sed -e 's/^\(.*\)/s\/MODEL_DRIVER_NAME_LC_STR\/\1\/g/'` \
+                  -e 's/MODEL_DRIVER_NAME_STR/$@/g'                                >  $(KIM_MODEL_DRIVERS_DIR)$@/$@.F90
+
+model_Ar_P_LJ: model_LJ_README \
+               Makefile
+        # make directory
+	mkdir -p $(KIM_MODELS_DIR)$@
+	@touch $(KIM_MODELS_DIR)$@
+        # make README file in the directory
+	cat model_LJ_README | sed -e 's/MODEL_NAME_STR/$@/g'                       \
+                                  -e 's/MODEL_DRIVER_NAME_STR/model_driver_P_LJ/g' \
+                                  -e 's/SPECIES_NAME_STR/Ar/g'                  >  $(KIM_MODELS_DIR)$@/README
+        # make Makefile in the directory
+	cat model_LJ_Makefile | sed -e 's/MODEL_NAME_STR/$@/g'                       \
+                                    -e 's/MODEL_DRIVER_NAME_STR/model_driver_P_LJ/g' \
+                                    -e 's/SPECIES_NAME_STR/Ar/g'                >  $(KIM_MODELS_DIR)$@/Makefile
+        # make .params file in the directory
+	echo "8.15"                                                                >  $(KIM_MODELS_DIR)$@/$@.params
+	echo "0.0104"                                                              >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "3.40"                                                                >> $(KIM_MODELS_DIR)$@/$@.params
+	echo ""                                                                    >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "Parameters taken from: E. B. Tadmor and R. E. Miller, 'Modeling Materials', Cambridge University Press, 2011" \
+
+model_Ne_P_LJ: model_LJ_README \
+               Makefile
+        # make directory
+	mkdir -p $(KIM_MODELS_DIR)$@
+	@touch $(KIM_MODELS_DIR)$@
+        # make README file in the directory
+	cat model_LJ_README | sed -e 's/MODEL_NAME_STR/$@/g'                       \
+                                  -e 's/MODEL_DRIVER_NAME_STR/model_driver_P_LJ/g' \
+                                  -e 's/SPECIES_NAME_STR/Ne/g'                  >  $(KIM_MODELS_DIR)$@/README
+        # make Makefile in the directory
+	cat model_LJ_Makefile | sed -e 's/MODEL_NAME_STR/$@/g'                       \
+                                    -e 's/MODEL_DRIVER_NAME_STR/model_driver_P_LJ/g' \
+                                    -e 's/SPECIES_NAME_STR/Ne/g'                >  $(KIM_MODELS_DIR)$@/Makefile
+        # make .params file in the directory
+	echo "8.15"                                                                >  $(KIM_MODELS_DIR)$@/$@.params
+	echo "0.0031"                                                              >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "2.74"                                                                >> $(KIM_MODELS_DIR)$@/$@.params
+	echo ""                                                                    >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "Parameters taken from: E. B. Tadmor and R. E. Miller, 'Modeling Materials', Cambridge University Press, 2011" \
                                                                                    >> $(KIM_MODELS_DIR)$@/$@.params
 
 model_Al_PF_ErcolessiAdams_MI_OPBC_H: example_model_Al_PF_ErcolessiAdams_MI_OPBC_H              \

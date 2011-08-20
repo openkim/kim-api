@@ -3,8 +3,8 @@
 # Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
 # All rights reserved.
 #
-# Authors: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
-# Date:    18-Aug-2011
+# Author: <FILL>
+# Date:   <FILL>
 #
 #
 # See KIM_API/standard.kim for documentation about this file
@@ -27,7 +27,7 @@ SPECIES1_NAME_STR                      spec                    1
 CONVENTIONS:
 # Name                  Type
 
-ZeroBasedLists          dummy
+OneBasedLists           dummy
 
 Neigh_IterAccess        dummy
 
@@ -92,14 +92,19 @@ virial                  real*8       pressure   standard                []      
 MODEL_PARAMETERS:
 # Name                  Type         Unit       SystemU/Scale           Shape              Requirements
 
-PARAM_FREE_cutoff       real*8       length     standard                []
+PARAM_FREE_cutoff              real*8       length      standard                []
 
-PARAM_FREE_epsilon      real*8       energy     standard                []
+PARAM_FREE_<FILL parameter 1>  real*8       <FILL Unit> standard                []
 
-PARAM_FREE_C            real*8       none       none                    []                 # should be units of 1/length
+PARAM_FREE_<FILL parameter 2>  real*8       <FILL Unit> standard                []
 
-PARAM_FREE_Rzero        real*8       length     standard                []
+# FILL all existing free parameters
 
-PARAM_FIXED_cutsq       real*8       none       none                    []
+PARAM_FIXED_cutsq               real*8      none        none                    []
+ 
+PARAM_FIXED_<FILL parameter 1>  real*8      <FILL Unit> standard                []
 
-PARAM_FIXED_shift       real*8       energy     standard                []
+PARAM_FIXED_<FILL parameter 2>  real*8      <FILL Unit> standard                []
+
+# FILL all existing fixed parameters
+

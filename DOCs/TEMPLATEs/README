@@ -42,13 +42,13 @@ model_El_P_Template.f.kim
      KIM descriptor file for the Fortran pair potential template.
 
 model_El_P_Template.params
-     Parameter file for a Model based on a shifted pair potential Model Driver.
+     Parameter file for a Model based on a pair potential Model Driver.
 
 model_driver_P_Template.F90
-     F90 template file for a shifted pair potential Model Driver.
+     F90 template file for a pair potential Model Driver.
 
 model_driver_P_Template.c
-     C template file for a shifted pair potential Model Driver.
+     C template file for a pair potential Model Driver.
 
 model_driver_P_Template.c.kim
      KIM descriptor file for the C pair potential Driver template.
