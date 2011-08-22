@@ -702,20 +702,21 @@ end module model_driver_P_LJ
 ! Model driver initialization routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-subroutine model_driver_P_LJ_init(pkim, paramfile)
+subroutine model_driver_P_LJ_init(pkim, paramfileaddress)
 use model_driver_P_LJ
 use KIMservice
 implicit none
 
 !-- Transferred variables
 integer(kind=kim_intptr), intent(in) :: pkim
-character(len=*),         intent(in) :: paramfile
+integer(kind=kim_intptr), intent(in) :: paramfileaddress
 
 !-- Local variables
 ! define variables for all model parameters to be read in
 double precision in_cutoff
 double precision in_epsilon
 double precision in_sigma
+character(len=73) paramfile; pointer(pparamfile,paramfile)
 integer(kind=kim_intptr), parameter :: one=1
 double precision energy_at_cutoff
 integer ier
@@ -747,6 +748,7 @@ endif
 
 ! Read in model parameters from parameter file
 !
+pparamfile = paramfileaddress
 read(paramfile,*,iostat=ier,err=100) in_cutoff,   &
                                      in_epsilon,  &
                                      in_sigma

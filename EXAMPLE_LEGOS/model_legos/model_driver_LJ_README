@@ -16,7 +16,12 @@ This file must have the follwing format:
    Line 1: `cutoff' value in angstroms
    Line 2: Lennard-Jones `epsilon' value in eV
    Line 3: Lennard-Jones `sigma' value in Angstroms
-Any additional lines will be silently ignored.
+Each of these lines should be 23 characters long and contain the corresponding
+quantity in scientific notation with 16 significant digits, three digits for
+the exponent, and explicit +/- for the base and exponent.  For example (without
+the quotes) : "+8.150000000000000E+000".  Thus, the there lines should
+correspond to 72 (= 3*23 + 3newlines) bytes.  Any additional lines will be
+silently ignored.
 
 
 The following files are in this directory:

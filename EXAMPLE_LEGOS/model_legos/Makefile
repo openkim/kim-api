@@ -389,11 +389,12 @@ model_Ar_P_LJ: model_LJ_README \
                                     -e 's/MODEL_DRIVER_NAME_STR/model_driver_P_LJ/g' \
                                     -e 's/SPECIES_NAME_STR/Ar/g'                >  $(KIM_MODELS_DIR)$@/Makefile
         # make .params file in the directory
-	echo "8.15"                                                                >  $(KIM_MODELS_DIR)$@/$@.params
-	echo "0.0104"                                                              >> $(KIM_MODELS_DIR)$@/$@.params
-	echo "3.40"                                                                >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "+8.150000000000000E+000"                                             >  $(KIM_MODELS_DIR)$@/$@.params
+	echo "+1.040000000000000E-002"                                             >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "+3.400000000000000E+000"                                             >> $(KIM_MODELS_DIR)$@/$@.params
 	echo ""                                                                    >> $(KIM_MODELS_DIR)$@/$@.params
 	echo "Parameters taken from: E. B. Tadmor and R. E. Miller, 'Modeling Materials', Cambridge University Press, 2011" \
+                                                                                   >> $(KIM_MODELS_DIR)$@/$@.params
 
 model_Ne_P_LJ: model_LJ_README \
                Makefile
@@ -409,9 +410,9 @@ model_Ne_P_LJ: model_LJ_README \
                                     -e 's/MODEL_DRIVER_NAME_STR/model_driver_P_LJ/g' \
                                     -e 's/SPECIES_NAME_STR/Ne/g'                >  $(KIM_MODELS_DIR)$@/Makefile
         # make .params file in the directory
-	echo "8.15"                                                                >  $(KIM_MODELS_DIR)$@/$@.params
-	echo "0.0031"                                                              >> $(KIM_MODELS_DIR)$@/$@.params
-	echo "2.74"                                                                >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "+8.150000000000000E+000"                                             >  $(KIM_MODELS_DIR)$@/$@.params
+	echo "+3.100000000000000E-003"                                             >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "+2.740000000000000E+000"                                             >> $(KIM_MODELS_DIR)$@/$@.params
 	echo ""                                                                    >> $(KIM_MODELS_DIR)$@/$@.params
 	echo "Parameters taken from: E. B. Tadmor and R. E. Miller, 'Modeling Materials', Cambridge University Press, 2011" \
                                                                                    >> $(KIM_MODELS_DIR)$@/$@.params
