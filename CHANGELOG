@@ -1,3 +1,12 @@
+=== openkim-api-v0.1.2 =========================================================
+
+
+* Fixed a number of bugs in the examples related to running on 64bit machines
+
+* Fixed a bug in kim_api_get_nbc_method_f() related to running on 64bit
+  machines
+  
+  
 === openkim-api-v0.1.1 =========================================================
 
 
