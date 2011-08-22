@@ -43,9 +43,9 @@ program TEST_NAME_STR
   !
   double precision     :: rcut               ! cutoff radius of the potential
 
-  integer,          allocatable :: NLRvecLocs(:)     ! neighbor list pointers
-  integer,          allocatable :: neighborList(:,:) ! neighbor list storage
-  double precision, allocatable :: RijList(:,:,:)    ! Rij vector list storage
+  integer(kind=kim_intptr), allocatable :: NLRvecLocs(:)     ! neighbor list pointers
+  integer,                  allocatable :: neighborList(:,:) ! neighbor list storage
+  double precision,         allocatable :: RijList(:,:,:)    ! Rij vector list storage
 
   integer              :: NNeighbors         ! maximum number of neighbors for an atom
 
@@ -121,7 +121,7 @@ program TEST_NAME_STR
   !
   NLRvecLocs(1) = loc(neighborList)
   NLRvecLocs(2) = loc(RijList)
-  NLRvecLocs(3) = NNeighbors+1
+  NLRvecLocs(3) = NNeighbors
   call setup_neighborlist_Rij_KIM_access(pkim, NLRvecLocs)
 
 
@@ -172,19 +172,19 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   implicit none
   
   !-- Transferred variables
-  integer(kind=kim_intptr), intent(in)  :: pkim
-  integer,                  intent(in)  :: DIM
-  integer,                  intent(in)  :: CellsPerRcut
-  double precision,         intent(in)  :: MinSpacing
-  double precision,         intent(in)  :: MaxSpacing
-  double precision,         intent(in)  :: TOL
-  integer(kind=kim_intptr), intent(in)  :: N
-  integer,                  intent(in)  :: NNeighbors
-  integer,                  intent(in)  :: neighborList(NNeighbors+1,N)
-  double precision,         intent(in)  :: RijList(3,NNeighbors+1,N)
-  logical,                  intent(in)  :: verbose
-  double precision,         intent(out) :: RetSpacing
-  double precision,         intent(out) :: RetEnergy
+  integer(kind=kim_intptr), intent(in)     :: pkim
+  integer,                  intent(in)     :: DIM
+  integer,                  intent(in)     :: CellsPerRcut
+  double precision,         intent(in)     :: MinSpacing
+  double precision,         intent(in)     :: MaxSpacing
+  double precision,         intent(in)     :: TOL
+  integer(kind=kim_intptr), intent(in)     :: N
+  integer,                  intent(in)     :: NNeighbors
+  integer,                  intent(inout)  :: neighborList(NNeighbors+1,N)
+  double precision,         intent(inout)  :: RijList(3,NNeighbors+1,N)
+  logical,                  intent(in)     :: verbose
+  double precision,         intent(out)    :: RetSpacing
+  double precision,         intent(out)    :: RetEnergy
   
   !-- Local variables
   double precision,         parameter :: Golden      = (1.d0 + sqrt(5.d0))/2.d0
