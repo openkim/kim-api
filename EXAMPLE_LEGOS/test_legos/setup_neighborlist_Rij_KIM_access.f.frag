@@ -12,7 +12,7 @@ subroutine setup_neighborlist_Rij_KIM_access(pkim, NLRvecLocs)
 
   !-- Transferred variables
   integer(kind=kim_intptr), intent(in)    :: pkim
-  integer,                  intent(inout) :: NLRvecLocs(3)
+  integer(kind=kim_intptr), intent(inout) :: NLRvecLocs(3)
 
   !-- Local variables
   integer(kind=kim_intptr), parameter :: SizeOne = 1

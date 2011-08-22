@@ -21,9 +21,9 @@ integer function get_neigh_Rij(pkim,mode,request,atom,numnei,pnei1atom,pRij)
   !-- Local variables
   integer, save :: iterVal = 0
   integer atomToReturn
-  integer NLRvecLocs(1);       pointer(pNLRvecLocs,NLRvecLocs)
-  integer neighborListdum(1);  pointer(pneighborListdum, neighborListdum)
-  integer, pointer :: neighborList(:,:)
+  integer(kind=kim_intptr) NLRvecLocs(1);      pointer(pNLRvecLocs,NLRvecLocs)
+  integer                  neighborListdum(1); pointer(pneighborListdum, neighborListdum)
+  integer, pointer ::      neighborList(:,:)
   double precision RijList(1); pointer(pRijList,RijList)
   integer   ier
   integer*8 numberOfAtoms; pointer(pnAtoms, numberOfAtoms)
@@ -46,7 +46,7 @@ integer function get_neigh_Rij(pkim,mode,request,atom,numnei,pnei1atom,pRij)
      stop
   endif
   N = numberOfAtoms
-  call toIntegerArrayWithDescriptor2d(neighborListdum, neighborlist, NNeighbors, N)
+  call toIntegerArrayWithDescriptor2d(neighborListdum, neighborlist, NNeighbors+1, N)
 
   ! check mode and request
   if (mode.eq.0) then ! iterator mode
@@ -91,7 +91,7 @@ integer function get_neigh_Rij(pkim,mode,request,atom,numnei,pnei1atom,pRij)
   pnei1atom = loc(neighborList(2,atom))
   
   ! set pointer to Rij to appropriate value
-  pRij = loc(RijList(3*(NNeighbors)*(atom-1) + 1))
+  pRij = loc(RijList(3*(NNeighbors+1)*(atom-1) + 1))
   
   get_neigh_Rij = 1
   return

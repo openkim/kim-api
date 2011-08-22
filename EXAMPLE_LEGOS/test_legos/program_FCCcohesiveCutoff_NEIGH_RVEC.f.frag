@@ -40,9 +40,9 @@ program TEST_NAME_STR
 
   ! significant local variables
   !
-  integer,          allocatable :: NLRvecLocs(:)     ! neighbor list pointers
-  integer,          allocatable :: neighborList(:,:) ! neighbor list storage
-  double precision, allocatable :: RijList(:,:,:)    ! Rij vector list storage
+  integer(kind=kim_intptr), allocatable :: NLRvecLocs(:)     ! neighbor list pointers
+  integer,                  allocatable :: neighborList(:,:) ! neighbor list storage
+  double precision,         allocatable :: RijList(:,:,:)    ! Rij vector list storage
 
   integer              :: NNeighbors         ! maximum number of neighbors for an atom
 
@@ -141,7 +141,7 @@ program TEST_NAME_STR
   allocate(NLRvecLocs(3))
   NLRvecLocs(1) = loc(neighborList)
   NLRvecLocs(2) = loc(RijList)
-  NLRvecLocs(3) = NNeighbors+1
+  NLRvecLocs(3) = NNeighbors
   call setup_neighborlist_Rij_KIM_access(pkim, NLRvecLocs)
   ! 
   
