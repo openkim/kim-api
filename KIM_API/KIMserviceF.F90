@@ -196,7 +196,7 @@ module kimservice
 #else
 	integer,parameter :: kim_intptr = 8
 #endif
-            integer(kind=kim_intptr) :: kimmdl,kim_api_nbc_method_f
+            integer(kind=kim_intptr) :: kimmdl,kim_api_get_nbc_method_f
 	    integer::error
         end function kim_api_get_nbc_method_f
 
