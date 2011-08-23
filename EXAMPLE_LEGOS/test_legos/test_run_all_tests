@@ -1,5 +1,12 @@
 #!/bin/sh
 
+#
+# Release: This file is part of the openkim-api.git repository.
+#
+# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
+# All rights reserved.
+#
+
 # usage: run_all_tests [filename]
 #
 # If `filename' is given each actual Test output will be redirected to a separate file.

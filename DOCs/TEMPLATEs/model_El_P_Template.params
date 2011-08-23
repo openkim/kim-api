@@ -3,4 +3,10 @@
 <FILL parameter 2 value>
 # FILL as many parameter values as needed
 
-<FILL provide reverence to where the parameters were obtained>
+# <FILL provide reverence to where the parameters were obtained>
+#
+# Release: This file is part of the openkim-api.git repository.
+#
+# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
+# All rights reserved.
+#

@@ -1,3 +1,14 @@
+
+//
+// Release: This file is part of the openkim-api.git repository.
+//
+// Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
+// All rights reserved.
+//
+// Authors: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
+//
+
+
 #include <stdlib.h>
 #include <iostream>
 #include "KIMserviceC.h"

@@ -1,3 +1,10 @@
+#
+# Release: This file is part of the openkim-api.git repository.
+#
+# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
+# All rights reserved.
+#
+
 This directory (MODEL_NAME_STR) contains a shifted Morse pair potential
 Model based on the KIM Model Driver MODEL_DRIVER_NAME_STR.  This Model
 implements the Morse potential for SPECIES_NAME_STR.

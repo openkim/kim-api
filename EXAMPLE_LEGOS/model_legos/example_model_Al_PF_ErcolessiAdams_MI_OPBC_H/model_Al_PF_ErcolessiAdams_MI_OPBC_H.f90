@@ -10,6 +10,8 @@
 !**  Author: Ellad B. Tadmor
 !**  Date  : 17 Mar 2011
 !**
+!**  Release: This file is part of the openkim-api.git repository.
+!**
 !**  Copyright 2011 Ellad B. Tadmor and Ronald E. Miller
 !**  All rights reserved.
 !**

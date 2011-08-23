@@ -2,13 +2,13 @@
 #
 # Open KIM API Standard Definitions
 #
-# Release: openkim-api-v0.1.0 (August 2011)
+# Release: This file is part of the openkim-api.git repository.
 #
 # Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
-# All rights reserved. 
+# All rights reserved.
 #
-# Author: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
-# 
+# Authors: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
+#
 ################################################################################
 #
 # This file defines the openkim-api standard argument names and their

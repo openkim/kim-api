@@ -1,8 +1,10 @@
-!                                                                      
-! Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna 
-! All rights reserved.                                                 
-!                                                                     
-! Author: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor                                        
+!
+! Release: This file is part of the openkim-api.git repository.
+!
+! Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
+! All rights reserved
+!
+! Author: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
 !
 
 module KIMserviceF2003 ! this module will be in KIM_API as part of 

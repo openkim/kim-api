@@ -1,3 +1,10 @@
+#
+# Release: This file is part of the openkim-api.git repository.
+#
+# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
+# All rights reserved.
+#
+
 This directory (MODEL_DRIVER_NAME_STR) contains a shifted Lennard-Jones 
 pair potential Model driver written in Fortran 90.
 

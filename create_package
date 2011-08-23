@@ -45,6 +45,10 @@ rm -f create_package
 rm -f 'DOCs/openkim-api-introduction.pptx'
 rm -f `find . -name ".gitignore"`
 
+for fl in `grep -l -r "openkim-api\.git repository" *`; do
+   sed -i "s/openkim-api\.git repository/$packagename package/g" $fl;
+done
+
 cd ..
 
 tar czvf $packagename.tgz $packagename

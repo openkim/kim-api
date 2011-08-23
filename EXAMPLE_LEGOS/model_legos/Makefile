@@ -1,7 +1,10 @@
-#                                                                      
-# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna 
-# All rights reserved.                                                 
-#                                    
+
+#
+# Release: This file is part of the openkim-api.git repository.
+#
+# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
+# All rights reserved.
+#
 # Author: Ryan S. Elliott
 #
 
@@ -332,8 +335,15 @@ model_Ar_P_Morse: model_Morse_README \
 	echo "1.545"                                                               >> $(KIM_MODELS_DIR)$@/$@.params
 	echo "3.786"                                                               >> $(KIM_MODELS_DIR)$@/$@.params
 	echo ""                                                                    >> $(KIM_MODELS_DIR)$@/$@.params
-	echo "Parameters taken from: G. E. Jelinek, Phys. Rev. B, Vol 5, no 8, 1972, pp3210--3217" \
+	echo "# Parameters taken from: G. E. Jelinek, Phys. Rev. B, Vol 5, no 8, 1972, pp3210--3217" \
                                                                                    >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "#"                                                                   >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "# Release: This file is part of the openkim-api.git repository."     >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "#"                                                                   >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna" \
+                                                                                   >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "# All rights reserved."                                              >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "#"                                                                   >> $(KIM_MODELS_DIR)$@/$@.params
 
 model_Ne_P_Morse: model_Morse_README \
                   Makefile
@@ -354,8 +364,16 @@ model_Ne_P_Morse: model_Morse_README \
 	echo "2.11"                                                                >> $(KIM_MODELS_DIR)$@/$@.params
 	echo "3.0778"                                                              >> $(KIM_MODELS_DIR)$@/$@.params
 	echo ""                                                                    >> $(KIM_MODELS_DIR)$@/$@.params
-	echo "Parameters taken from Table 2 of: H. R. Glyde, J. Phys. C: Solid State Phys.. Vol 3. 1970, pp810--819" \
+	echo "# Parameters taken from Table 2 of: H. R. Glyde, J. Phys. C: Solid State Phys.. Vol 3. 1970, pp810--819" \
                                                                                    >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "#"                                                                   >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "# Release: This file is part of the openkim-api.git repository."     >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "#"                                                                   >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna" \
+                                                                                   >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "# All rights reserved."                                              >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "#"                                                                   >> $(KIM_MODELS_DIR)$@/$@.params
+
 model_driver_P_LJ: model_driver_LJ_README \
                    model_driver_Makefile  \
                    model_driver_P_LJ.kim  \
@@ -393,8 +411,15 @@ model_Ar_P_LJ: model_LJ_README \
 	echo "+1.040000000000000E-002"                                             >> $(KIM_MODELS_DIR)$@/$@.params
 	echo "+3.400000000000000E+000"                                             >> $(KIM_MODELS_DIR)$@/$@.params
 	echo ""                                                                    >> $(KIM_MODELS_DIR)$@/$@.params
-	echo "Parameters taken from: E. B. Tadmor and R. E. Miller, 'Modeling Materials', Cambridge University Press, 2011" \
+	echo "# Parameters taken from: E. B. Tadmor and R. E. Miller, 'Modeling Materials', Cambridge University Press, 2011" \
                                                                                    >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "#"                                                                   >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "# Release: This file is part of the openkim-api.git repository."     >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "#"                                                                   >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna" \
+                                                                                   >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "# All rights reserved."                                              >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "#"                                                                   >> $(KIM_MODELS_DIR)$@/$@.params
 
 model_Ne_P_LJ: model_LJ_README \
                Makefile
@@ -414,8 +439,15 @@ model_Ne_P_LJ: model_LJ_README \
 	echo "+3.100000000000000E-003"                                             >> $(KIM_MODELS_DIR)$@/$@.params
 	echo "+2.740000000000000E+000"                                             >> $(KIM_MODELS_DIR)$@/$@.params
 	echo ""                                                                    >> $(KIM_MODELS_DIR)$@/$@.params
-	echo "Parameters taken from: E. B. Tadmor and R. E. Miller, 'Modeling Materials', Cambridge University Press, 2011" \
+	echo "# Parameters taken from: E. B. Tadmor and R. E. Miller, 'Modeling Materials', Cambridge University Press, 2011" \
                                                                                    >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "#"                                                                   >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "# Release: This file is part of the openkim-api.git repository."     >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "#"                                                                   >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna" \
+                                                                                   >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "# All rights reserved."                                              >> $(KIM_MODELS_DIR)$@/$@.params
+	echo "#"                                                                   >> $(KIM_MODELS_DIR)$@/$@.params
 
 model_Al_PF_ErcolessiAdams_MI_OPBC_H: example_model_Al_PF_ErcolessiAdams_MI_OPBC_H              \
                                       $(wildcard example_model_Al_PF_ErcolessAdams_MI_OPBC_H/*) \

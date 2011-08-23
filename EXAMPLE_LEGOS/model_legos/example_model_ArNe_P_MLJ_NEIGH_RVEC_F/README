@@ -1,3 +1,10 @@
+#
+# Release: This file is part of the openkim-api.git repository.
+#
+# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
+# All rights reserved.
+#
+
 This directory (model_ArNe_P_MLJ_NIGH_RVEC_F) contains a modified Lennard Jones
 (LJ) Model for Argon and Neon with smoothed cutoff radius written in F90.  It
 complies with the KIM API interface standard, using the NEIGH-RVEC-F NBC and

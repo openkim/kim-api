@@ -1,3 +1,10 @@
+#
+# Release: This file is part of the openkim-api.git repository.
+#
+# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
+# All rights reserved.
+#
+
 This directory (test_demo_03) contains a Test that computes the energy of a
 given atomic configuration and the forces on the atoms.  It conforms with the
 KIM API interface standard and uses a Model, in this case a Lennard-Jones (LJ)

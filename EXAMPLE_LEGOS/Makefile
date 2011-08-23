@@ -1,11 +1,13 @@
 
-#                                                                      
-# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna 
-# All rights reserved.                                                 
-#                                    
+#
+# Release: This file is part of the openkim-api.git repository.
+#
+# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
+# All rights reserved.
+#
 # Author: Ryan S. Elliott
 #
-# 
+#
 # this make file builds/cleans the example models and tests
 #
 

@@ -1,3 +1,10 @@
+#
+# Release: This file is part of the openkim-api.git repository.
+#
+# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
+# All rights reserved.
+#
+
 This directory (TEST_NAME_STR) contains a test that computes the energy
 of and forces on the atoms of an isolated (free) cubic FCC cluster of SPECIES_NAME_STR atoms.
 

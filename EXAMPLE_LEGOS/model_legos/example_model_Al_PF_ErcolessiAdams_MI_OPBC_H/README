@@ -1,3 +1,10 @@
+#
+# Release: This file is part of the openkim-api.git repository.
+#
+# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
+# All rights reserved.
+#
+
 This directory (model_Al_PF_ErcolessiAdams_MI_OPBC_H) contains an EAM Model
 created by Ercolessi and Adams (for aluminum) written in F90 using the
 MI-OPBC-H NBC.  Currently, this model does not take advantage of the

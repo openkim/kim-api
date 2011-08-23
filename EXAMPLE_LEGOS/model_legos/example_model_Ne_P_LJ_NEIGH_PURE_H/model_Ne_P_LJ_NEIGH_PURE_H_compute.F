@@ -1,10 +1,12 @@
 C*******************************************************************************
 C
+C  Release: This file is part of the openkim-api.git repository.
+C
 C  Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
 C  All rights reserved.
-C 
+C
 C  Authors: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
-C 
+C
 C*******************************************************************************
 
 
