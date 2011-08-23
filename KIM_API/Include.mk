@@ -193,7 +193,7 @@ endif
 #
 MODEL_NAME_KIM_STR_H = char* $(MODEL_NAME)_kim_str'('')'';'
 MODEL_NAME_KIM_STR_CPP = char* $(MODEL_NAME)_kim_str'('')''{' 
-$(MODEL_NAME)_kim_str.cpp:
+$(MODEL_NAME)_kim_str.cpp: $(MODEL_NAME).kim
 	echo "extern \"C\" {"           >  $(MODEL_NAME)_kim_str.cpp
 	echo $(MODEL_NAME_KIM_STR_H)   >>  $(MODEL_NAME)_kim_str.cpp
 	echo "}"                       >>  $(MODEL_NAME)_kim_str.cpp
