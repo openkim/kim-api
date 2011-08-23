@@ -12,6 +12,10 @@
 # It also contains definitions for patern compilation rules.
 #
 
+ifndef KIM_DIR
+   $(error The environment variable KIM_DIR is not defined.)
+endif
+
 # The openkim-api subdirectories:
 ifndef KIM_API_DIR
    KIM_API_DIR :=$(KIM_DIR)KIM_API/

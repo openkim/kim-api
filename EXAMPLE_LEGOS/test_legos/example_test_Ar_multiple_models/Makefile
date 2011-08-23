@@ -11,7 +11,6 @@
 TEST_NAME := test_Ar_multiple_models
 
 ifndef KIM_API_DIR
-   KIM_DIR = ../../
    include $(KIM_DIR)KIM_API/Include.mk
 else
    include $(KIM_API_DIR)Include.mk

@@ -14,7 +14,6 @@ SPECIES1_NAME      := <FILL species name>
 PARAM_FILE_NAME    := $(MODEL_NAME).params
 
 ifndef KIM_API_DIR
-   KIM_DIR = ../../
    include $(KIM_DIR)KIM_API/Makefile.Model_Drivers
 else
    include $(KIM_API_DIR)Makefile.Model_Drivers

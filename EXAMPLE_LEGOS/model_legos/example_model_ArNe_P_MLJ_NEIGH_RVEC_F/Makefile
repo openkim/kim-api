@@ -12,7 +12,6 @@ MODEL_NAME := model_ArNe_P_MLJ_NEIGH_RVEC_F
 MODEL_BUILD_TARGET := $(MODEL_NAME).a
 
 ifndef KIM_API_DIR
-   KIM_DIR = ../../
    include $(KIM_DIR)KIM_API/Include.mk
 else
    include $(KIM_API_DIR)Include.mk
