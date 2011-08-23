@@ -67,7 +67,6 @@ extern "C" {
       (*drvr_init)(km, &param_str);
 
       int ier = 0;
-      KIM_API_print((void*) *((KIM_API_model **)km),&ier);
       driver_destroy = KIM_API_get_data((void *) *((KIM_API_model**)km), "destroy", &ier);
       KIM_API_set_data((void *) *((KIM_API_model**)km), "destroy",1,(void*) &model_destroy);
 #else
