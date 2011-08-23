@@ -205,6 +205,7 @@ bool do_AtomsTypes_match(KIM_API_model &test,KIM_API_model & mdl);
     bool init(char * testinputfile,char* testname, char * modelinputfile,char *modelname);
     bool init(char * testname,char * modelname);
     bool init_str_testname(char * intststr,char * modelname);
+    bool init_str_modelname(char *testname,char *inmdlstr);
      void model_compute(int *error);
     int get_half_neigh(int mode,int request, int *atom, int *numnei, int **nei1atom, double **Rij);
     int get_full_neigh(int mode,int request, int *atom, int *numnei, int **nei1atom, double **Rij);

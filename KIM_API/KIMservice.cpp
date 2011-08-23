@@ -1639,13 +1639,13 @@ bool KIM_API_model::init(char * testinputfile,char* testname, char * modelinputf
 
 }
 
+#ifndef KIM_DYNAMIC
+extern "C"{
+  #include "model_kim_str_include.h"
+}
+
+
 bool KIM_API_model::init(char* testname, char* modelname){
-    char testfile[2048] = KIM_DIR_TESTS;
-    char modelfile[2048] = KIM_DIR_MODELS;
-    strcat(testfile,testname);strcat(testfile,"/");strcat(testfile,testname);
-    strcat(testfile,".kim");
-    strcat(modelfile,modelname);strcat(modelfile,"/");strcat(modelfile,modelname);
-    strcat(modelfile,".kim");
 
     //redirecting cout > kimlog
     char kimlog[2048] = KIM_DIR; strcat(kimlog,"kim.log");
@@ -1653,19 +1653,128 @@ bool KIM_API_model::init(char* testname, char* modelname){
     filekimlog.open(kimlog);
     backup = cout.rdbuf();psbuf = filekimlog.rdbuf();cout.rdbuf(psbuf);
 
-    bool result_init= this->init(testfile,testname,modelfile,modelname);
+    char * in_mdlstr=NULL;
+#include "model_kim_str_include.cpp"
 
+    if (in_mdlstr == NULL){
+        cout<<"KIM_API_model::init : input model string is NULL";
+        exit(367);
+    }
+    bool result_init= this->init_str_modelname(testname,in_mdlstr);
    //redirecting back to > cout
     cout.rdbuf(backup); filekimlog.close();
 
     return result_init;
-
-  
-
 }
+
+#else
+
+
+bool KIM_API_model::init(char* testname, char* modelname){
+   
+    char model_slib_file[2048];
+    char model_kim_str_name[2048];
+    sprintf(model_slib_file,"%s%s/%s.so",KIM_DIR_MODELS,modelname,modelname);
+    sprintf(model_kim_str_name,"%s_kim_str",modelname);
+    
+    //redirecting cout > kimlog
+    char kimlog[2048] = KIM_DIR; strcat(kimlog,"kim.log");
+    streambuf * psbuf, * backup;ofstream filekimlog;
+    filekimlog.open(kimlog);
+    backup = cout.rdbuf();psbuf = filekimlog.rdbuf();cout.rdbuf(psbuf);
+
+    model_lib_handle = dlopen(model_slib_file,RTLD_NOW);
+    if(!model_lib_handle) {
+         cout<< "KIM_API_model::init: init failed for ";
+         cout<<modelname<<endl<<dlerror()<<endl;
+         fprintf(stderr,"%s not found...\n",model_slib_file);
+
+          //redirecting back to > cout
+          cout.rdbuf(backup); filekimlog.close();
+	 return false;
+    }
+
+    typedef char* (*Model_kim_str)(void);
+    Model_kim_str get_kim_str = (Model_kim_str)dlsym(model_lib_handle,model_kim_str_name);
+    const char *dlsym_error = dlerror();
+    if (dlsym_error) {
+        cerr << "Cannot load symbol: " << dlsym_error <<endl;
+        dlclose(model_lib_handle);
+
+        //redirecting back to > cout
+        cout.rdbuf(backup); filekimlog.close();
+
+        return false;
+    }
+    
+    char * in_mdlstr=NULL;
+
+    in_mdlstr = (*get_kim_str)();
+
+    if (in_mdlstr == NULL){
+        cout<<"KIM_API_model::init : input model string is NULL";
+        exit(367);
+    }
+    bool result_init= this->init_str_modelname(testname,in_mdlstr);
+
+    dlclose(model_lib_handle);
+   //redirecting back to > cout
+    cout.rdbuf(backup); filekimlog.close();
+
+    return result_init;
+}
+#endif
 
 void KIM_API_model::fatal_error_print(){
     printf("* KIM FATAL ERROR: See kim.log file for details\n");
+}
+
+
+bool KIM_API_model::init_str_modelname(char* testname, char* inmdlstr){
+    char testinputfile[2048] = KIM_DIR_TESTS;
+    strcat(testinputfile,testname);strcat(testinputfile,"/");strcat(testinputfile,testname);
+    strcat(testinputfile,".kim");
+
+   
+
+    //check test-model match and preinit test-model-API
+    KIM_API_model test,mdl;
+    //preinit test and model API object
+
+    mdl.preinit_str_testname(inmdlstr);
+
+    test.preinit(testinputfile,testname);
+
+    //check if they match
+    if (is_it_match(test,mdl)){
+        this->preinit_str_testname(inmdlstr);
+        this->irrelevantVars2donotcompute(test,*this);
+
+        strcpy(this->NBC_method_current, mdl.NBC_method_current);
+        locator_neigh_mode=mdl.locator_neigh_mode;
+        iterator_neigh_mode=mdl.iterator_neigh_mode;
+        both_neigh_mode=mdl.both_neigh_mode;
+        test.free(); mdl.free();
+        char computestr [] = "compute";
+        compute_index = get_index(computestr);
+        get_full_neigh_index = get_index("get_full_neigh");
+        get_half_neigh_index = get_index("get_half_neigh");
+        support_Rij=false;
+        if (strcmp(NBC_method_current,"NEIGH-RVEC-F")==0) support_Rij=true;
+
+   
+
+        return true;
+    }else{
+        
+ cout<<"Do not match  " << mdl.model.name  << " and "<< testname <<endl;
+       mdl.free();
+       test.free();
+
+       
+        return false;
+    }
+
 }
 
 bool KIM_API_model::init_str_testname(char* in_tststr, char* modelname){
