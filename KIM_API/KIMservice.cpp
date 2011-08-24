@@ -1778,9 +1778,9 @@ bool KIM_API_model::init_str_modelname(char* testname, char* inmdlstr){
 }
 
 bool KIM_API_model::init_str_testname(char* in_tststr, char* modelname){
-    char modelinputfile[2048] = KIM_DIR_MODELS;
-    strcat(modelinputfile,modelname);strcat(modelinputfile,"/");strcat(modelinputfile,modelname);
-    strcat(modelinputfile,".kim");
+    //char modelinputfile[2048] = KIM_DIR_MODELS;
+    //strcat(modelinputfile,modelname);strcat(modelinputfile,"/");strcat(modelinputfile,modelname);
+    //strcat(modelinputfile,".kim");
     
     //redirecting cout > kimlog
     char kimlog[2048] = KIM_DIR; strcat(kimlog,"kim.log");
@@ -1790,14 +1790,63 @@ bool KIM_API_model::init_str_testname(char* in_tststr, char* modelname){
 
     //check test-model match and preinit test-model-API
     KIM_API_model test,mdl;
-    //preinit test and model API object
+#ifndef KIM_DYNAMIC
+    //get string .kim for the model----------
+     char * in_mdlstr=NULL;
+#include "model_kim_str_include.cpp"
 
+    if (in_mdlstr == NULL){
+        cout<<"KIM_API_model::init_str_testname : input model string is NULL";
+        exit(368);
+    }
+     //                         -------------
+ #else
+
+    char model_slib_file[2048];
+    char model_kim_str_name[2048];
+    sprintf(model_slib_file,"%s%s/%s.so",KIM_DIR_MODELS,modelname,modelname);
+    sprintf(model_kim_str_name,"%s_kim_str",modelname);
+     model_lib_handle = dlopen(model_slib_file,RTLD_NOW);
+    if(!model_lib_handle) {
+         cout<< "KIM_API_model::init: init failed for ";
+         cout<<modelname<<endl<<dlerror()<<endl;
+         fprintf(stderr,"%s not found...\n",model_slib_file);
+
+          //redirecting back to > cout
+          cout.rdbuf(backup); filekimlog.close();
+	 return false;
+    }
+
+    typedef char* (*Model_kim_str)(void);
+    Model_kim_str get_kim_str = (Model_kim_str)dlsym(model_lib_handle,model_kim_str_name);
+    const char *dlsym_error = dlerror();
+    if (dlsym_error) {
+        cerr << "Cannot load symbol: " << dlsym_error <<endl;
+        dlclose(model_lib_handle);
+
+        //redirecting back to > cout
+        cout.rdbuf(backup); filekimlog.close();
+
+        return false;
+    }
+
+    char * in_mdlstr=NULL;
+
+    in_mdlstr = (*get_kim_str)();
+
+    if (in_mdlstr == NULL){
+        cout<<"KIM_API_model::init : input model string is NULL";
+        exit(367);
+    }
+
+ #endif
+//preinit test and model API object
     test.preinit_str_testname(in_tststr);
-    mdl.preinit(modelinputfile,modelname);
+    mdl.preinit_str_testname(in_mdlstr);
 
     //check if they match
     if (is_it_match(test,mdl)){
-        this->preinit(modelinputfile,modelname);
+        this->preinit_str_testname(in_mdlstr);
         this->irrelevantVars2donotcompute(test,*this);
 
         strcpy(this->NBC_method_current, mdl.NBC_method_current);
@@ -1812,7 +1861,11 @@ bool KIM_API_model::init_str_testname(char* in_tststr, char* modelname){
         support_Rij=false;
         if (strcmp(NBC_method_current,"NEIGH-RVEC-F")==0) support_Rij=true;
 
+#ifdef KIM_DYNAMIC
+       dlclose(model_lib_handle);
+#endif
         //redirecting back to > cout
+
         cout.rdbuf(backup); filekimlog.close();
 
         return true;
@@ -1821,6 +1874,9 @@ bool KIM_API_model::init_str_testname(char* in_tststr, char* modelname){
  cout<<"Do not match  " << modelname << " and "<< test.model.name <<endl;
        test.free();
 
+#ifdef KIM_DYNAMIC
+       dlclose(model_lib_handle);
+#endif
        //redirecting back to > cout
         cout.rdbuf(backup); filekimlog.close();
         
