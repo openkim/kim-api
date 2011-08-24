@@ -107,14 +107,13 @@
     
     ! Cast to F90 arrays
     !
-    N4=numberOfAtoms
     if (comp_force.eq.1) then 
        pforce  = kim_api_get_data_f(pkim,"forces",ier)
        if (ier.le.0) then
           call report_error(__LINE__, "kim_api_get_data", ier)
           return
        endif
-       call toRealArrayWithDescriptor2d(forcedum,force,DIM,N4)
+       call toRealArrayWithDescriptor2d(forcedum,force,DIM,numberOfAtoms)
     endif
     if (comp_enepot.eq.1) then 
        penepot = kim_api_get_data_f(pkim,"energyPerAtom",ier) 
@@ -122,7 +121,7 @@
           call report_error(__LINE__, "kim_api_get_data", ier)
           return
        endif
-       call toRealArrayWithDescriptor1d(enepotdum,ene_pot,N4)
+       call toRealArrayWithDescriptor1d(enepotdum,ene_pot,numberOfAtoms)
     endif
     if (comp_virial.eq.1) then
        pvirial = kim_api_get_data_f(pkim,"virial",ier)
@@ -131,7 +130,8 @@
           return
        endif
     endif
-    call toRealArrayWithDescriptor2d(coordum,coor,DIM,N4)
+
+    call toRealArrayWithDescriptor2d(coordum,coor,DIM,numberOfAtoms)
 
 
     ! Check to be sure that the atom types are correct by comparing

@@ -22,7 +22,7 @@ double precision function get_model_cutoff_firsttime(testname, modelname)
   integer, parameter :: ATypes = 1  ! hard-wired to one atomic type
   integer ier
   integer(kind=kim_intptr) pkim_temp
-  integer(kind=kim_intptr) N
+  integer N
   real*8 cutoff; pointer(pcutoff,cutoff)
 
   ! Initialize the KIM object

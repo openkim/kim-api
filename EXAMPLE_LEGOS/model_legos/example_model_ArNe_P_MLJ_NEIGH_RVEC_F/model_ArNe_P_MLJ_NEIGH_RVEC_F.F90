@@ -53,7 +53,7 @@ contains
     integer i,jj,numnei,atom,atom_ret
     
     !-- KIM variables
-    integer(kind=8) numberOfAtoms; pointer(pnAtoms,numberOfAtoms)
+    integer numberOfAtoms;         pointer(pnAtoms,numberOfAtoms)
     integer nAtomTypes;            pointer(pnAtomTypes,nAtomTypes)
     integer atomTypes(1);          pointer(patomTypes,atomTypes)
     real*8 model_cutoff;           pointer(pcutoff,model_cutoff)
@@ -74,7 +74,6 @@ contains
     integer nei1atom(1);           pointer(pnei1atom,nei1atom)
     real*8, pointer :: coor(:,:),force(:,:),ene_pot(:)
     integer :: comp_force, comp_enepot, comp_virial
-    integer N4
     
     ! Unpack data from KIM object
     !
@@ -180,14 +179,13 @@ contains
     endif
     
     ! Cast to F90 arrays
-    N4=numberOfAtoms
     if (comp_force.eq.1) then 
        pforce  = kim_api_get_data_f(pkim,"forces",ier)
        if (ier.le.0) then
           call report_error(__LINE__, "kim_api_get_data", ier)
           return
        endif
-       call toRealArrayWithDescriptor2d(forcedum,force,DIM,N4)
+       call toRealArrayWithDescriptor2d(forcedum,force,DIM,numberOfAtoms)
     endif
     if (comp_enepot.eq.1) then 
        penepot = kim_api_get_data_f(pkim,"energyPerAtom",ier) 
@@ -195,7 +193,7 @@ contains
           call report_error(__LINE__, "kim_api_get_data", ier)
           return
        endif
-       call toRealArrayWithDescriptor1d(enepotdum,ene_pot,N4)
+       call toRealArrayWithDescriptor1d(enepotdum,ene_pot,numberOfAtoms)
     endif
     if (comp_virial.eq.1) then
        pvirial = kim_api_get_data_f(pkim,"virial",ier)
@@ -204,7 +202,8 @@ contains
           return
        endif
     endif
-    call toRealArrayWithDescriptor2d(coordum,coor,DIM,N4)
+
+    call toRealArrayWithDescriptor2d(coordum,coor,DIM,numberOfAtoms)
 
 
     ! Check to be sure that the atom types are correct

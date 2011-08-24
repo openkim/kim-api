@@ -212,7 +212,7 @@ integer, allocatable, target :: nei1atom_substitute(:)
 character*80 :: error_message
 
 !-- KIM variables
-integer(kind=8) N;      pointer(pN,N)
+integer N;              pointer(pN,N)
 real*8 energy;          pointer(penergy,energy)
 real*8 coordum(DIM,1);  pointer(pcoor,coordum)
 real*8 forcedum(DIM,1); pointer(pforce,forcedum)
@@ -227,7 +227,6 @@ real*8, pointer :: coor(:,:),force(:,:),ene_pot(:)
 integer IterOrLoca
 integer HalfOrFull
 integer NBC
-integer N4
 
 ! Determine neighbor list boundary condition (NBC)
 ! and half versus full mode:
@@ -319,9 +318,6 @@ if (ier.le.0) then
    return
 endif
 
-N4=N  ! place N in integer*4 variable which is the expected
-      ! type for some methods
-
 patomTypes = kim_api_get_data_f(pkim,"atomTypes",ier)
 if (ier.le.0) then
    call report_error(__LINE__, "kim_api_get_data_f", ier)
@@ -354,7 +350,7 @@ if (comp_force.eq.1) then
       call report_error(__LINE__, "kim_api_get_data_f", ier)
       return
    endif
-   call toRealArrayWithDescriptor2d(forcedum,force,DIM,N4)
+   call toRealArrayWithDescriptor2d(forcedum,force,DIM,N)
 endif
 
 if (comp_enepot.eq.1) then
@@ -363,7 +359,7 @@ if (comp_enepot.eq.1) then
       call report_error(__LINE__, "kim_api_get_data_f", ier)
       return
    endif
-   call toRealArrayWithDescriptor1d(enepotdum,ene_pot,N4)
+   call toRealArrayWithDescriptor1d(enepotdum,ene_pot,N)
 endif
 
 if (comp_virial.eq.1) then
@@ -373,7 +369,8 @@ if (comp_virial.eq.1) then
       return
    endif
 endif
-call toRealArrayWithDescriptor2d(coordum,coor,DIM,N4)
+
+call toRealArrayWithDescriptor2d(coordum,coor,DIM,N)
 
 ! Check to be sure that the atom types are correct
 !
@@ -663,7 +660,7 @@ implicit none
 integer,                  intent(in)    :: IterOrLoca
 integer,                  intent(in)    :: HalfOrFull
 integer,                  intent(in)    :: NBC
-integer(kind=8),          intent(in)    :: N
+integer,                  intent(in)    :: N
 integer(kind=kim_intptr), intent(in)    :: pkim
 integer,                  intent(inout) :: atom
 integer,                  intent(out)   :: numnei

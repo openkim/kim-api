@@ -24,9 +24,8 @@ integer function get_neigh_no_Rij(pkim,mode,request,atom,numnei,pnei1atom,pRij)
   integer  neighborListdum(1); pointer(pneighborListdum, neighborListdum)
   integer, pointer :: neighborList(:,:)
   integer  ier
-  integer*8 numberOfAtoms; pointer(pnAtoms, numberOfAtoms)
-  integer(kind=kim_intptr) N
-  integer N4
+  integer  numberOfAtoms; pointer(pnAtoms, numberOfAtoms)
+  integer  N
 
   ! unpack neighbor list object
   pneighborListdum = kim_api_get_data_f(pkim, "neighObject", ier)
@@ -41,8 +40,7 @@ integer function get_neigh_no_Rij(pkim,mode,request,atom,numnei,pnei1atom,pRij)
      stop
   endif
   N = numberOfAtoms
-  N4 = N
-  call toIntegerArrayWithDescriptor2d(neighborListdum, neighborlist, N4+1, N4)
+  call toIntegerArrayWithDescriptor2d(neighborListdum, neighborlist, N+1, N)
 
   ! check mode and request
   if (mode.eq.0) then ! iterator mode

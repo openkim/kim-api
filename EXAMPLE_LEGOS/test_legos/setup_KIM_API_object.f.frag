@@ -12,13 +12,13 @@ subroutine setup_KIM_API_object(pkim, testname, modelname, N, specname)
   integer(kind=kim_intptr), intent(in)  :: pkim
   character(len=80),        intent(in)  :: testname
   character(len=80),        intent(in)  :: modelname
-  integer(kind=kim_intptr), intent(in)  :: N
+  integer,                  intent(in)  :: N
   character(len=2),         intent(in)  :: specname
 
   !-- Local variables
   integer, parameter :: ATypes = 1  ! hard-wired to one atomic type
-  integer ier, N4
-  integer(kind=8) numberOfAtoms; pointer(pnAtoms,numberOfAtoms)
+  integer ier
+  integer numberOfAtoms;         pointer(pnAtoms,numberOfAtoms)
   integer numberAtomTypes;       pointer(pnAtomTypes,numberAtomTypes)
   integer atomTypesdum(1);       pointer(patomTypesdum,atomTypesdum)
   integer, pointer :: atomTypes(:)
@@ -63,8 +63,7 @@ subroutine setup_KIM_API_object(pkim, testname, modelname, N, specname)
      call report_error(__LINE__, "kim_api_get_data_f", ier)
      stop
   endif
-  N4 = N
-  call toIntegerArrayWithDescriptor1d(atomTypesdum, atomTypes, N4)
+  call toIntegerArrayWithDescriptor1d(atomTypesdum, atomTypes, N)
 
   ! Set values
   !

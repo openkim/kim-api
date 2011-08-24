@@ -69,7 +69,7 @@ program TEST_NAME_STR
 
   real*8 cutoff; pointer(pcutoff,cutoff)                  ! cutoff radius of Model
 
-  integer(kind=kim_intptr) :: N                           ! number of atoms
+  integer                   :: N                          ! number of atoms
 
 
   ! other variables

@@ -54,7 +54,7 @@ int KIM_API_init1(void * kimmdl, char * testinputf,char * testname, char * mdlin
     return mdl->KIM_STATUS_FAIL;
  }
  
- void KIM_API_allocate(void *kimmdl, intptr_t natoms, int ntypes,int * error){
+ void KIM_API_allocate(void *kimmdl, int natoms, int ntypes,int * error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     mdl->allocateinitialized(mdl,natoms,ntypes,error);
  }
@@ -313,7 +313,7 @@ int kim_api_init1_(void * kimmdl, char ** testinputf,char ** testname, char ** m
 int kim_api_init_str_testname_(void * kimmdl, char **testinputstring, char ** mdlname){
     return KIM_API_init_str_testname(kimmdl,*testinputstring,*mdlname);
 }
-void kim_api_allocate_(void *kimmdl, intptr_t *natoms, int *ntypes,int * error){
+void kim_api_allocate_(void *kimmdl, int *natoms, int *ntypes,int * error){
     KIM_API_allocate(*(KIM_API_model **)kimmdl,*natoms,*ntypes,error);
 }
 

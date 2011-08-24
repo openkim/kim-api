@@ -72,7 +72,7 @@ program TEST_NAME_STR
 
   real*8 cutoff; pointer(pcutoff,cutoff)                  ! cutoff
 
-  integer(kind=kim_intptr) :: N                           ! number of atoms
+  integer                   :: N                          ! number of atoms
 
 
   ! other variables
@@ -88,7 +88,8 @@ program TEST_NAME_STR
   read(*,*) modelname
 
 
-  ! We'll use just two atom (one SPECIES1_NAME_STR and one SPECIES2_NAME_STR) for this calculation!
+  ! We'll use just two atom (one SPECIES1_NAME_STR and one SPECIES2_NAME_STR) for 
+  ! this calculation!
   !
   N = 2
 
@@ -180,7 +181,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   double precision,         intent(in)     :: MinSpacing
   double precision,         intent(in)     :: MaxSpacing
   double precision,         intent(in)     :: TOL
-  integer(kind=kim_intptr), intent(in)     :: N
+  integer,                  intent(in)     :: N
   integer,                  intent(in)     :: NNeighbors
   integer,                  intent(inout)  :: neighborList(NNeighbors+1,N)
   double precision,         intent(inout)  :: RijList(3,NNeighbors+1,N)
@@ -194,7 +195,6 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   double precision Spacings(4)
   double precision Energies(4)
   real*8 energy;           pointer(penergy,energy)
-  integer N4
   real*8 coordum(DIM,1);   pointer(pcoor,coordum)
   real*8, pointer :: coords(:,:)
   real*8 cutoff;           pointer(pcutoff,cutoff)
@@ -212,8 +212,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
      call report_error(__LINE__, "kim_api_get_data_f", ier)
      stop
   endif
-  N4 = N  ! (Some routines expect N to be integer*4)
-  call toRealArrayWithDescriptor2d(coordum, coords, DIM, N4)
+  call toRealArrayWithDescriptor2d(coordum, coords, DIM, N)
 
   pcutoff = kim_api_get_data_f(pkim, "cutoff", ier)
   if (ier.le.0) then

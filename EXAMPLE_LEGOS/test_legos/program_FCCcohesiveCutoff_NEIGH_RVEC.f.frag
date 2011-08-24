@@ -71,7 +71,7 @@ program TEST_NAME_STR
 
   double precision param_cutoff; pointer(pparam_cutoff,param_cutoff) ! parameter cutoff radius
 
-  integer(kind=kim_intptr) :: N                           ! number of atoms
+  integer                   :: N                          ! number of atoms
 
 
   ! other variables

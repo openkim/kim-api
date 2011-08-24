@@ -31,13 +31,13 @@ program TEST_NAME_STR
   use KIMservice
   implicit none
 
-  integer,                  external  :: get_neigh_no_Rij
-  integer,                  external  :: get_neigh_Rij
-  double precision,         parameter :: FCCspacing     = FCC_SPACING_STR
-  integer,                  parameter :: nCellsPerSide  = 2
-  integer,                  parameter :: DIM            = 3
-  integer,                  parameter :: ATypes         = 1
-  integer(kind=kim_intptr), parameter :: &
+  integer,          external  :: get_neigh_no_Rij
+  integer,          external  :: get_neigh_Rij
+  double precision, parameter :: FCCspacing     = FCC_SPACING_STR
+  integer,          parameter :: nCellsPerSide  = 2
+  integer,          parameter :: DIM            = 3
+  integer,          parameter :: ATypes         = 1
+  integer,          parameter :: &
        N = 4*(nCellsPerSide)**3 + 6*(nCellsPerSide)**2 + 3*(nCellsPerSide) + 1
   integer(kind=kim_intptr), parameter :: SizeOne        = 1
 
@@ -55,20 +55,19 @@ program TEST_NAME_STR
   integer nbc  ! 0- MI-OPBC-H, 1- MI-OPBC-F, 2- NEIGH-PURE-H, 3- NEIGH-PURE-F, 4- NEIGH-RVCE-F
   integer(kind=kim_intptr)  :: pkim
   integer                   :: ier
-  integer(kind=8) numberOfAtoms; pointer(pnAtoms,numberOfAtoms)
-  integer numberAtomTypes;       pointer(pnAtomTypes,numberAtomTypes)
-  integer atomTypesdum(1);       pointer(patomTypesdum,atomTypesdum)
+  integer numberOfAtoms;   pointer(pnAtoms,numberOfAtoms)
+  integer numberAtomTypes; pointer(pnAtomTypes,numberAtomTypes)
+  integer atomTypesdum(1); pointer(patomTypesdum,atomTypesdum)
 
   real*8 cutoff;           pointer(pcutoff,cutoff)
   real*8 energy;           pointer(penergy,energy)
   real*8 coordum(DIM,1);   pointer(pcoor,coordum)
   real*8 forcesdum(DIM,1); pointer(pforces,forcesdum)
   real*8 boxlength(DIM);   pointer(pboxlength,boxlength)
-  integer N4, I
+  integer I
   real*8, pointer  :: coords(:,:), forces(:,:)
   integer, pointer :: atomTypes(:)
   integer middleDum
-  N4 = N
 
   
   ! Get KIM Model name to use
@@ -137,14 +136,14 @@ program TEST_NAME_STR
      call report_error(__LINE__, "kim_api_get_data_f", ier)
      stop
   endif
-  call toIntegerArrayWithDescriptor1d(atomTypesdum, atomTypes, N4)
+  call toIntegerArrayWithDescriptor1d(atomTypesdum, atomTypes, N)
 
   pcoor = kim_api_get_data_f(pkim, "coordinates", ier)
   if (ier.le.0) then
      call report_error(__LINE__, "kim_api_get_data_f", ier)
      stop
   endif
-  call toRealArrayWithDescriptor2d(coordum, coords, DIM, N4)
+  call toRealArrayWithDescriptor2d(coordum, coords, DIM, N)
 
   pcutoff = kim_api_get_data_f(pkim, "cutoff", ier)
   if (ier.le.0) then
@@ -171,7 +170,7 @@ program TEST_NAME_STR
      call report_error(__LINE__, "kim_api_get_data_f", ier)
      stop
   endif
-  call toRealArrayWithDescriptor2d(forcesdum, forces, DIM, N4)
+  call toRealArrayWithDescriptor2d(forcesdum, forces, DIM, N)
 
   ! Set values
   numberOfAtoms   = N
@@ -201,7 +200,7 @@ program TEST_NAME_STR
   elseif (nbc.eq.3) then
      call NEIGH_PURE_cluster_neighborlist(.false., N, coords, (cutoff+0.75), neighborList)
   elseif (nbc.eq.4) then
-     call NEIGH_RVEC_F_cluster_neighborlist(N, coords, (cutoff+0.75), N4, neighborList, RijList)
+     call NEIGH_RVEC_F_cluster_neighborlist(N, coords, (cutoff+0.75), N, neighborList, RijList)
   endif
 
   ! store pointers to neighbor list object and access function

@@ -12,7 +12,7 @@ subroutine setup_neighborlist_no_Rij_KIM_access(pkim, N, neighborList)
 
   !-- Transferred variables
   integer(kind=kim_intptr), intent(in) :: pkim
-  integer(kind=kim_intptr), intent(in) :: N
+  integer,                  intent(in) :: N
   integer,                  intent(in) :: neighborList(N+1,N)
 
   !-- Local variables

@@ -8,7 +8,7 @@ subroutine NEIGH_RVEC_F_cluster_neighborlist(numberOfAtoms, coords, cutoff, NN, 
   implicit none
 
   !-- Transferred variables
-  integer(kind=kim_intptr),                          intent(in)  :: numberOfAtoms
+  integer,                                           intent(in)  :: numberOfAtoms
   double precision, dimension(3,numberOfAtoms),      intent(in)  :: coords
   double precision,                                  intent(in)  :: cutoff
   integer,                                           intent(in)  :: NN

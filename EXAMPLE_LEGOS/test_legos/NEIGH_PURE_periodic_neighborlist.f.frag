@@ -9,7 +9,7 @@ subroutine NEIGH_PURE_periodic_neighborlist(half, numberOfAtoms, coords, cutoff,
   
   !-- Transferred variables
   logical,                                           intent(in)  :: half
-  integer(kind=kim_intptr),                          intent(in)  :: numberOfAtoms
+  integer,                                           intent(in)  :: numberOfAtoms
   double precision, dimension(3,numberOfAtoms),      intent(in)  :: coords
   double precision,                                  intent(in)  :: cutoff
   integer,                                           intent(in)  :: MiddleAtomId

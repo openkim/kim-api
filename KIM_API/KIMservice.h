@@ -87,7 +87,7 @@ public:
         double get_unitscale();
         int get_rank();
         int * get_shape();
-        int * get_shape(intptr_t natoms, int ntypes);
+        int * get_shape(int natoms, int ntypes);
         bool isitpernatomtypes();
         bool isitsizedefined();
         bool isitperatom();
@@ -213,7 +213,7 @@ bool do_AtomsTypes_match(KIM_API_model &test,KIM_API_model & mdl);
     bool model_reinit();
    void model_destroy(int *error);
 static void irrelevantVars2donotcompute(KIM_API_model & test, KIM_API_model & mdl);
-static void allocateinitialized(KIM_API_model * mdl, intptr_t natoms, int ntypes,int * error);
+static void allocateinitialized(KIM_API_model * mdl, int natoms, int ntypes,int * error);
 bool is_unitsfixed();
 void set_unitsfixed(bool f);
 void transform_units_to(char * unitS,int *error);

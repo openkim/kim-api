@@ -1,5 +1,5 @@
     !-- KIM variables
-    integer(kind=8) numberOfAtoms; pointer(pnAtoms,numberOfAtoms)
+    integer numberOfAtoms;         pointer(pnAtoms,numberOfAtoms)
     integer nAtomTypes;            pointer(pnAtomTypes,nAtomTypes)
     integer atomTypes(1);          pointer(patomTypes,atomTypes)
     real*8 model_cutoff;           pointer(pcutoff,model_cutoff)
@@ -18,4 +18,3 @@
     real*8 virial;                 pointer(pvirial,virial)
     real*8, pointer :: coor(:,:),force(:,:),ene_pot(:)
     integer comp_force, comp_enepot, comp_virial
-    integer N4

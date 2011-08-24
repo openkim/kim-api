@@ -16,10 +16,10 @@ subroutine setup_B2_KIM_API_object(pkim, testname, modelname, specname1, specnam
   character(len=2),         intent(in)  :: specname2
 
   !-- Local variables
-  integer(kind=kim_intptr) :: N = 2 ! hard-wired to two atoms
+  integer            :: N = 2 ! hard-wired to two atoms
   integer, parameter :: ATypes = 2  ! hard-wired to two atomic types
-  integer ier, N4
-  integer(kind=8) numberOfAtoms; pointer(pnAtoms,numberOfAtoms)
+  integer ier
+  integer numberOfAtoms;         pointer(pnAtoms,numberOfAtoms)
   integer numberAtomTypes;       pointer(pnAtomTypes,numberAtomTypes)
   integer atomTypesdum(1);       pointer(patomTypesdum,atomTypesdum)
   integer, pointer :: atomTypes(:)
@@ -64,8 +64,7 @@ subroutine setup_B2_KIM_API_object(pkim, testname, modelname, specname1, specnam
      call report_error(__LINE__, "kim_api_get_data_f", ier)
      stop
   endif
-  N4 = N
-  call toIntegerArrayWithDescriptor1d(atomTypesdum, atomTypes, N4)
+  call toIntegerArrayWithDescriptor1d(atomTypesdum, atomTypes, N)
 
   ! Set values
   !

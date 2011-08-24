@@ -65,7 +65,7 @@ module kimservice
 	integer, parameter :: kim_intptr=4
 #else
 	integer,parameter :: kim_intptr = 8
-#endif*(KIM_API_model **)kim
+#endif
              integer(kind=kim_intptr) :: kimmdl,UnitsSystem
         end function kim_api_set_units
 
@@ -311,8 +311,8 @@ module kimservice
 #else
 	integer,parameter :: kim_intptr = 8
 #endif
-            integer(kind=kim_intptr) :: kimmdl,natoms
-            integer  :: ntypes,error
+            integer(kind=kim_intptr) :: kimmdl
+            integer  :: natoms,ntypes,error
         end subroutine kim_api_allocate
 
         subroutine kim_api_free(kimmdl,error)
@@ -773,8 +773,8 @@ module kimservice
 
         !subroutines 
         subroutine kim_api_allocate_f(kimmdl,natoms,ntypes,error)
-            integer(kind=kim_intptr) :: kimmdl,natoms
-            integer  :: ntypes,error
+            integer(kind=kim_intptr) :: kimmdl
+            integer  :: natoms,ntypes,error
             call kim_api_allocate(kimmdl,natoms,ntypes,error)
         end subroutine kim_api_allocate_f
 

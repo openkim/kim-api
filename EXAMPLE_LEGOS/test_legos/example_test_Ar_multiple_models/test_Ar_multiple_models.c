@@ -425,18 +425,16 @@ int get_periodic_neigh(void* kimmdl, int *mode, int *request, int* atom,
    intptr_t* pkim = *((intptr_t**) kimmdl);
    int atomToReturn;
    int status;
-   intptr_t* numberOfAtoms;
-   int N;
+   int* numberOfAtoms;
    NeighList* nl;
 
    /* initialize numnei */
    *numnei = 0;
 
    /* unpack neighbor list object */
-   numberOfAtoms = (intptr_t*) KIM_API_get_data(pkim, "numberOfAtoms", &status);
+   numberOfAtoms = (int*) KIM_API_get_data(pkim, "numberOfAtoms", &status);
    if (1 != status) report_error(__LINE__,"get_data", status);
 
-   N = *numberOfAtoms;
    nl = (NeighList*) KIM_API_get_data(pkim, "neighObject", &status);
    if (1 != status) report_error(__LINE__,"get_data", status);
 
@@ -451,7 +449,7 @@ int get_periodic_neigh(void* kimmdl, int *mode, int *request, int* atom,
       else if (1 == *request) /* increment iterator */
       {
          (*nl).iteratorId++;
-         if ((*nl).iteratorId >= N)
+         if ((*nl).iteratorId >= *numberOfAtoms)
          {
             return 0;
          }
@@ -468,7 +466,7 @@ int get_periodic_neigh(void* kimmdl, int *mode, int *request, int* atom,
    }
    else if (1 == *mode) /* locator mode */
    {
-      if ((*request >= N) || (*request < 0)) /* invalid request */
+      if ((*request >= *numberOfAtoms) || (*request < 0)) /* invalid request */
       {
          report_error(__LINE__,"Invalid request in get_periodic_neigh", -1);
          return -1;
@@ -672,18 +670,16 @@ int get_cluster_neigh(void* kimmdl, int *mode, int *request, int* atom,
    intptr_t* pkim = *((intptr_t**) kimmdl);
    int atomToReturn;
    int status;
-   intptr_t* numberOfAtoms;
-   int N;
+   int* numberOfAtoms;
    NeighList* nl;
 
    /* initialize numnei */
    *numnei = 0;
 
    /* unpack neighbor list object */
-   numberOfAtoms = (intptr_t*) KIM_API_get_data(pkim, "numberOfAtoms", &status);
+   numberOfAtoms = (int*) KIM_API_get_data(pkim, "numberOfAtoms", &status);
    if (1 != status) report_error(__LINE__,"get_data", status);
 
-   N = *numberOfAtoms;
    nl = (NeighList*) KIM_API_get_data(pkim, "neighObject", &status);
    if (1 != status) report_error(__LINE__,"get_data", status);
 
@@ -698,7 +694,7 @@ int get_cluster_neigh(void* kimmdl, int *mode, int *request, int* atom,
       else if (1 == *request) /* increment iterator */
       {
          (*nl).iteratorId++;
-         if ((*nl).iteratorId >= N)
+         if ((*nl).iteratorId >= *numberOfAtoms)
          {
             return 0;
          }
@@ -715,7 +711,7 @@ int get_cluster_neigh(void* kimmdl, int *mode, int *request, int* atom,
    }
    else if (1 == *mode) /* locator mode */
    {
-      if ((*request >= N) || (*request < 0)) /* invalid request */
+      if ((*request >= *numberOfAtoms) || (*request < 0)) /* invalid request */
       {
          report_error(__LINE__,"Invalid request in get_cluster_neigh", -1);
          return -1;

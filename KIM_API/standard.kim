@@ -775,7 +775,7 @@ MODEL_INPUT:
 #
 # Name                  Type         Unit       SystemU/Scale           Shape
 #
-numberOfAtoms           integer*8    none       none                    []
+numberOfAtoms           integer      none       none                    []
 
 ################################################################################
 #

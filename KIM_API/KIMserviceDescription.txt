@@ -104,7 +104,7 @@ Corresponding Fortran style interface:
 
 ******************************************************************************
 
-void KIM_API_allocate(void * kimmdl, intptr_t natoms, int ntypes, int * kimerror); 
+void KIM_API_allocate(void * kimmdl, int natoms, int ntypes, int * kimerror); 
 
      This routine allocates memory for each data argument stored in the
      initialized KIM API object kimmdl. It will exit if an error occurs during
@@ -122,9 +122,8 @@ Arguments:
                 pointer to KIM_API_model object (in C++ style, the definition 
                 will be (KIM_API_model *)).
 
-        intptr_t natoms 
-                total number of atoms. intptr_t is a C-style standard data type
-                and is used here to accommodate very large integers (64 bits)
+        int natoms 
+                total number of atoms.
 
         int ntypes
                 number of atom types.

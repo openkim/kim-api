@@ -166,7 +166,7 @@ int *  KIM_IOline::get_shape(){
             }
             return shp;
  }
-int * KIM_IOline::get_shape(intptr_t natoms, int ntypes){
+int * KIM_IOline::get_shape(int natoms, int ntypes){
             char shapetmp[strlen(shape)+1];
             char tmpstring[128];
             strncpy(shapetmp,shape,strlen(shape)+1);
@@ -2085,7 +2085,7 @@ void KIM_API_model::irrelevantVars2donotcompute(KIM_API_model & test, KIM_API_mo
         }
     }
 }
-void KIM_API_model::allocateinitialized(KIM_API_model * mdl, intptr_t natoms, int ntypes, int * error){
+void KIM_API_model::allocateinitialized(KIM_API_model * mdl, int natoms, int ntypes, int * error){
     // in process
     if ( mdl->model.data == NULL) {
         cout<<"KIM_API_model::allocateinitialized: model is not preinitialized"<<endl;

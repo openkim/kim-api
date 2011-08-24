@@ -64,7 +64,7 @@ program TEST_NAME_STR
 
   real*8 coordum(DIM,1);   pointer(pcoor,coordum)         ! coordinate
 
-  integer(kind=kim_intptr) :: N                           ! number of atoms
+  integer                   :: N                          ! number of atoms
 
 
   ! other variables
@@ -151,7 +151,7 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
   double precision,         intent(in)     :: MinSpacing
   double precision,         intent(in)     :: MaxSpacing
   double precision,         intent(in)     :: TOL
-  integer(kind=kim_intptr), intent(in)     :: N
+  integer,                  intent(in)     :: N
   integer,                  intent(inout)  :: neighborList(N+1,N)
   logical,                  intent(in)     :: verbose
   double precision,         intent(out)    :: RetSpacing
@@ -164,7 +164,6 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
   double precision Energies(4)
   integer MiddleAtomId
   real*8 energy;           pointer(penergy,energy)
-  integer N4
   real*8 coordum(DIM,1);   pointer(pcoor,coordum)
   real*8, pointer :: coords(:,:)
   real*8 cutoff;           pointer(pcutoff,cutoff)
@@ -184,8 +183,7 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
      call report_error(__LINE__, "kim_api_get_data_f", ier)
      stop
   endif
-  N4 = N ! (Some routines expect N to be integer*4)
-  call toRealArrayWithDescriptor2d(coordum, coords, DIM, N4)
+  call toRealArrayWithDescriptor2d(coordum, coords, DIM, N)
 
   pcutoff = kim_api_get_data_f(pkim, "cutoff", ier)
   if (ier.le.0) then

@@ -23,11 +23,11 @@ program TEST_NAME_STR
   use KIMservice
   implicit none
 
-  double precision,         parameter :: FCCspacing     = FCC_SPACING_STR
-  integer,                  parameter :: nCellsPerSide  = 2
-  integer,                  parameter :: DIM            = 3
-  integer,                  parameter :: ATypes         = 1
-  integer(kind=kim_intptr), parameter :: &
+  double precision, parameter :: FCCspacing     = FCC_SPACING_STR
+  integer,          parameter :: nCellsPerSide  = 2
+  integer,          parameter :: DIM            = 3
+  integer,          parameter :: ATypes         = 1
+  integer,          parameter :: &
        N = 4*(nCellsPerSide)**3 + 6*(nCellsPerSide)**2 + 3*(nCellsPerSide) + 1
 
   !
@@ -37,19 +37,18 @@ program TEST_NAME_STR
   character*80              :: modelname
   integer(kind=kim_intptr)  :: pkim
   integer                   :: ier
-  integer(kind=8) numberOfAtoms; pointer(pnAtoms,numberOfAtoms)
-  integer numberAtomTypes;       pointer(pnAtomTypes,numberAtomTypes)
-  integer atomTypesdum(1);       pointer(patomTypesdum,atomTypesdum)
+  integer numberOfAtoms;   pointer(pnAtoms,numberOfAtoms)
+  integer numberAtomTypes; pointer(pnAtomTypes,numberAtomTypes)
+  integer atomTypesdum(1); pointer(patomTypesdum,atomTypesdum)
 
   real*8 cutoff;           pointer(pcutoff,cutoff)
   real*8 energy;           pointer(penergy,energy)
   real*8 coordum(DIM,1);   pointer(pcoor,coordum)
   real*8 forcesdum(DIM,1); pointer(pforces,forcesdum)
-  integer N4, I
+  integer I
   real*8, pointer  :: coords(:,:), forces(:,:)
   integer, pointer :: atomTypes(:)
   integer middleDum
-  N4 = N
 
   
   ! Get KIM Model name to use
@@ -95,14 +94,14 @@ program TEST_NAME_STR
      call report_error(__LINE__, "kim_api_get_data_f", ier)
      stop
   endif
-  call toIntegerArrayWithDescriptor1d(atomTypesdum, atomTypes, N4)
+  call toIntegerArrayWithDescriptor1d(atomTypesdum, atomTypes, N)
 
   pcoor = kim_api_get_data_f(pkim, "coordinates", ier)
   if (ier.le.0) then
      call report_error(__LINE__, "kim_api_get_data_f", ier)
      stop
   endif
-  call toRealArrayWithDescriptor2d(coordum, coords, DIM, N4)
+  call toRealArrayWithDescriptor2d(coordum, coords, DIM, N)
 
   pcutoff = kim_api_get_data_f(pkim, "cutoff", ier)
   if (ier.le.0) then
@@ -121,7 +120,7 @@ program TEST_NAME_STR
      call report_error(__LINE__, "kim_api_get_data_f", ier)
      stop
   endif
-  call toRealArrayWithDescriptor2d(forcesdum, forces, DIM, N4)
+  call toRealArrayWithDescriptor2d(forcesdum, forces, DIM, N)
 
   ! Set values
   numberOfAtoms   = N

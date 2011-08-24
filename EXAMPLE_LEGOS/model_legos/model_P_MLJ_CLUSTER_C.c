@@ -127,7 +127,7 @@ static void compute(void* km, int* ier)
    int comp_energyPerAtom;
    int comp_virial;
 
-   intptr_t* nAtoms;
+   int* nAtoms;
    int* atomTypes;
    double* cutoff;
    double* epsilon;
@@ -165,7 +165,7 @@ static void compute(void* km, int* ier)
 
 
    /* unpack data from KIM object */
-   nAtoms = (intptr_t*) KIM_API_get_data(pkim, "numberOfAtoms", ier);
+   nAtoms = (int*) KIM_API_get_data(pkim, "numberOfAtoms", ier);
    if (1 > *ier)
    {
       report_error(__LINE__, "KIM_API_get_data", *ier);

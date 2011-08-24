@@ -40,7 +40,7 @@ NEIGH-RVEC-F            dummy
 MODEL_INPUT:
 # Name                  Type         Unit       SystemU/Scale           Shape              Requirements
 
-numberOfAtoms           integer*8    none       none                    []
+numberOfAtoms           integer      none       none                    []
 
 numberAtomTypes         integer      none       none                    []
 

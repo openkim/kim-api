@@ -25,10 +25,10 @@ integer function get_neigh_Rij(pkim,mode,request,atom,numnei,pnei1atom,pRij)
   integer                  neighborListdum(1); pointer(pneighborListdum, neighborListdum)
   integer, pointer ::      neighborList(:,:)
   double precision RijList(1); pointer(pRijList,RijList)
-  integer   ier
-  integer*8 numberOfAtoms; pointer(pnAtoms, numberOfAtoms)
-  integer   N
-  integer   NNeighbors
+  integer ier
+  integer numberOfAtoms; pointer(pnAtoms, numberOfAtoms)
+  integer N
+  integer NNeighbors
 
   ! unpack neighbor list object
   pNLRVecLocs = kim_api_get_data_f(pkim, "neighObject", ier)

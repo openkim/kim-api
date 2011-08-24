@@ -10,7 +10,7 @@ subroutine MI_OPBC_neighborlist(half, numberOfAtoms, coords, rcut, boxlength, ne
   
   !-- Transferred variables
   logical,                                             intent(in)  :: half
-  integer(kind=kim_intptr),                            intent(in)  :: numberOfAtoms
+  integer,                                             intent(in)  :: numberOfAtoms
   double precision, dimension(3,numberOfAtoms),        intent(in)  :: coords
   double precision,                                    intent(in)  :: rcut
   double precision, dimension(3),                      intent(in)  :: boxlength
