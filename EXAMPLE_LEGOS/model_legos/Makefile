@@ -449,13 +449,6 @@ model_Ne_P_LJ: model_LJ_README \
 	echo "# All rights reserved."                                              >> $(KIM_MODELS_DIR)$@/$@.params
 	echo "#"                                                                   >> $(KIM_MODELS_DIR)$@/$@.params
 
-model_Al_PF_ErcolessiAdams_MI_OPBC_H: example_model_Al_PF_ErcolessiAdams_MI_OPBC_H              \
-                                      $(wildcard example_model_Al_PF_ErcolessAdams_MI_OPBC_H/*) \
-                                      Makefile
-	mkdir -p $(KIM_MODELS_DIR)$@
-	@touch $(KIM_MODELS_DIR)$@
-	cp -rf example_$@/* $(KIM_MODELS_DIR)$@/
-
 model_Al_PF_ErcolessiAdams: example_model_Al_PF_ErcolessiAdams              \
                             $(wildcard example_model_Al_PF_ErcolessAdams/*) \
                             Makefile
