@@ -27,20 +27,20 @@ int KIM_API_init(void * kimmdl, char *testname, char *mdlname){
     mdl = new KIM_API_model[1];
     if(mdl->init(testname,mdlname)) {
         *(KIM_API_model **)kimmdl = mdl;
-        return mdl->KIM_STATUS_OK;
+        return KIM_STATUS_OK;
     }
     *(KIM_API_model **)kimmdl=NULL;
-    return mdl->KIM_STATUS_FAIL;
+    return KIM_STATUS_FAIL;
 }
 int KIM_API_init1(void * kimmdl, char * testinputf,char * testname, char * mdlinputf,char *mdlname){
     KIM_API_model * mdl;
     mdl = new KIM_API_model[1];
     if(mdl->init(testinputf,testname,mdlinputf,mdlname)) {
         *(KIM_API_model **)kimmdl = mdl;
-        return mdl->KIM_STATUS_OK;
+        return KIM_STATUS_OK;
     }
     *(KIM_API_model **)kimmdl=NULL;
-    return mdl->KIM_STATUS_FAIL;
+    return KIM_STATUS_FAIL;
 }
 
  int KIM_API_init_str_testname(void * kimmdl, char *testinputstring, char * mdlname){
@@ -48,10 +48,10 @@ int KIM_API_init1(void * kimmdl, char * testinputf,char * testname, char * mdlin
     mdl = new KIM_API_model[1];
     if(mdl->init_str_testname(testinputstring,mdlname)) {
         *(KIM_API_model **)kimmdl = mdl;
-        return mdl->KIM_STATUS_OK;
+        return KIM_STATUS_OK;
     }
     *(KIM_API_model **)kimmdl=NULL;
-    return mdl->KIM_STATUS_FAIL;
+    return KIM_STATUS_FAIL;
  }
  
  void KIM_API_allocate(void *kimmdl, int natoms, int ntypes,int * error){
@@ -60,7 +60,7 @@ int KIM_API_init1(void * kimmdl, char * testinputf,char * testname, char * mdlin
  }
 void KIM_API_free(void *kimmdl,int * error){
     KIM_API_model * mdl=*(KIM_API_model **) kimmdl;
-    *error=mdl->KIM_STATUS_OK;
+    *error=KIM_STATUS_OK;
     if (mdl==NULL) return;
     mdl->free(error);
     delete [] mdl;
@@ -69,15 +69,15 @@ void KIM_API_free(void *kimmdl,int * error){
 }
 void KIM_API_print(void *kimmdl,int * error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    *error =mdl->KIM_STATUS_FAIL;
+    *error =KIM_STATUS_FAIL;
     if (mdl==NULL) return;
     cout<<(*mdl);
-    *error=mdl->KIM_STATUS_OK;
+    *error=KIM_STATUS_OK;
 }
 int KIM_API_model_init(void * kimmdl){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    if(mdl->model_init()) return mdl->KIM_STATUS_OK;
-    return mdl->KIM_STATUS_FAIL;
+    if(mdl->model_init()) return KIM_STATUS_OK;
+    return KIM_STATUS_FAIL;
 }
 void KIM_API_model_compute(void *kimmdl,int *error){
  
@@ -88,8 +88,8 @@ void KIM_API_model_compute(void *kimmdl,int *error){
 }
 int KIM_API_model_reinit(void * kimmdl){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    if (mdl->model_reinit()) return mdl->KIM_STATUS_OK;
-    return mdl->KIM_STATUS_FAIL;
+    if (mdl->model_reinit()) return KIM_STATUS_OK;
+    return KIM_STATUS_FAIL;
 }
 void KIM_API_model_destroy(void * kimmdl,int *error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
@@ -106,8 +106,8 @@ void KIM_API_get_originalUnits(void *kimmdl,char * UnitsSystem,int *error){
 int KIM_API_set_Units(void *kimmdl,char * UnitsSystem){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
 //cout<<"UnitsSystem"<<":"<<endl;
-    if(mdl->set_units(UnitsSystem)) return mdl->KIM_STATUS_OK;
-    return mdl->KIM_STATUS_FAIL;
+    if(mdl->set_units(UnitsSystem)) return KIM_STATUS_OK;
+    return KIM_STATUS_FAIL;
 }
 void KIM_API_transform_Units_to(void *kimmdl,char * UnitsSystem,int *error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
@@ -115,8 +115,8 @@ void KIM_API_transform_Units_to(void *kimmdl,char * UnitsSystem,int *error){
 }
 int KIM_API_isUnitS_fixed(void *kimmdl){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    if(mdl->is_unitsfixed()) return mdl->KIM_STATUS_OK;
-    return mdl->KIM_STATUS_FAIL;
+    if(mdl->is_unitsfixed()) return KIM_STATUS_OK;
+    return KIM_STATUS_FAIL;
 }
 void * KIM_API_get_listAtomTypes(void * kimmdl,int* nATypes, int* error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
@@ -163,8 +163,8 @@ char * KIM_API_status_msg(void *kimmdl,int error){
 //element access methods by name
 int  KIM_API_set_data(void *kimmdl,char *nm, intptr_t size, void *dt){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    if(mdl->set_data(nm,size,dt)) return mdl->KIM_STATUS_OK;
-    return mdl->KIM_STATUS_FAIL;
+    if(mdl->set_data(nm,size,dt)) return KIM_STATUS_OK;
+    return KIM_STATUS_FAIL;
 }
 void * KIM_API_get_data(void *kimmdl,char *nm,int *error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
@@ -191,29 +191,29 @@ void KIM_API_set_rank_shape(void *kimmdl,char *nm, int * shape, int rank,int *er
 void KIM_API_set2_compute(void *kimmdl,char *nm, int * error){
    
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    *error = mdl->KIM_STATUS_FAIL;
+    *error = KIM_STATUS_FAIL;
     mdl->set2_compute(nm);
-    *error = mdl->KIM_STATUS_OK;
+    *error = KIM_STATUS_OK;
 }
 void KIM_API_set2_donotcompute(void *kimmdl,char *nm, int * error){
   
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    *error = mdl->KIM_STATUS_FAIL;
+    *error = KIM_STATUS_FAIL;
     mdl->set2_donotcompute(nm);
-    *error = mdl->KIM_STATUS_OK;
+    *error = KIM_STATUS_OK;
 }
 int KIM_API_isit_compute(void *kimmdl,char *nm, int * error){
     
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-     *error = mdl->KIM_STATUS_FAIL;
-    *error =mdl->KIM_STATUS_OK;
+     *error = KIM_STATUS_FAIL;
+    *error =KIM_STATUS_OK;
     return (*mdl)[nm].flag->calculate;
 }
 
 int KIM_API_get_neigh_mode(void * kimmdl,int * error){
     
      KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-     *error =  mdl->KIM_STATUS_FAIL;
+     *error =  KIM_STATUS_FAIL;
      return mdl->get_neigh_mode(error);
 }
 
@@ -224,7 +224,7 @@ int KIM_API_get_index(void *kimmdl,char *nm, int *error){
 }
 void  KIM_API_set_data_byI(void *kimmdl,int I, intptr_t size, void *dt, int * error){
      KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-     *error =mdl->KIM_STATUS_FAIL;
+     *error =KIM_STATUS_FAIL;
      if (mdl == NULL) return;
 
       int c=1;
@@ -237,27 +237,27 @@ void  KIM_API_set_data_byI(void *kimmdl,int I, intptr_t size, void *dt, int * er
             (*mdl)[I].shape[0] = size/c;
         }
         (*mdl)[I].flag->freeable = 1;
-        *error=mdl->KIM_STATUS_OK;
+        *error=KIM_STATUS_OK;
 }
 void * KIM_API_get_data_byI(void *kimmdl,int I,int *error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    *error = mdl->KIM_STATUS_FAIL;
+    *error = KIM_STATUS_FAIL;
     if (mdl == NULL) return NULL;
-    *error =mdl->KIM_STATUS_OK;
+    *error =KIM_STATUS_OK;
     return (*mdl)[I].data;
 }
 
 intptr_t KIM_API_get_size_byI(void *kimmdl,int I, int *error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    *error =mdl->KIM_STATUS_FAIL;
+    *error =KIM_STATUS_FAIL;
     if (mdl == NULL) return 0;
-    *error =mdl->KIM_STATUS_OK;
+    *error =KIM_STATUS_OK;
     return (*mdl)[I].size;
     
 }
 intptr_t KIM_API_get_rank_shape_byI(void *kimmdl,int I, int * shape,int *error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    *error =mdl->KIM_STATUS_OK;
+    *error =KIM_STATUS_OK;
     if (mdl == NULL) return -2;
     *error =1;
      if((*mdl)[I].rank == 0){
@@ -269,30 +269,30 @@ intptr_t KIM_API_get_rank_shape_byI(void *kimmdl,int I, int * shape,int *error){
             for (int i=0; i< (*mdl)[I].rank; i++) shape[i] =(*mdl)[I].shape[i];
             return (*mdl)[I].rank;
         }else{
-            *error =mdl->KIM_STATUS_FAIL;
+            *error =KIM_STATUS_FAIL;
             return -1;
         }
 }
 
 void KIM_API_set2_compute_byI(void *kimmdl,int I,int * error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    *error =mdl->KIM_STATUS_FAIL;
+    *error =KIM_STATUS_FAIL;
     if (mdl == NULL) return ;
     (*mdl)[I].flag->calculate =1;
-     *error =mdl->KIM_STATUS_OK;
+     *error =KIM_STATUS_OK;
 }
 void KIM_API_set2_donotcompute_byI(void *kimmdl,int I,int * error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    *error =mdl->KIM_STATUS_FAIL;
+    *error =KIM_STATUS_FAIL;
     if (mdl == NULL) return ;
     (*mdl)[I].flag->calculate = 0;
-    *error =mdl->KIM_STATUS_OK;
+    *error =KIM_STATUS_OK;
 }
 int KIM_API_isit_compute_byI(void *kimmdl,int I,int *error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    *error =mdl->KIM_STATUS_FAIL;
+    *error =KIM_STATUS_FAIL;
     if (mdl == NULL) return 1;
-    *error =mdl->KIM_STATUS_OK;
+    *error =KIM_STATUS_OK;
     return (*mdl)[I].flag->calculate;
     
 }

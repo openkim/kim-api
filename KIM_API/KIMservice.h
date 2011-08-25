@@ -21,6 +21,8 @@ using namespace std;
 #ifndef _KIMSERVICE_H
 #define	_KIMSERVICE_H
 
+#include "KIMstatus.h"
+
 #define KEY_CHAR_LENGTH 64
 #define number_NBC_methods 6
 #ifndef KIM_DIR_API
@@ -240,22 +242,6 @@ bool requiresFullNeighbors();
     bool unitsFixed;
     bool support_Rij;
     int get_neigh_mode(int *);
-    enum {KIM_STATUS_NEIGH_HALF_METHOD_NOT_PROVIDED=-12,
-          KIM_STATUS_NEIGH_FULL_METHOD_NOT_PROVIDED,
-          KIM_STATUS_NEIGH_TOO_MANY_NEIGHBORS,
-          KIM_STATUS_API_OBJECT_INVALID,
-          KIM_STATUS_ARG_INVALID_SHAPE,
-          KIM_STATUS_NEIGH_INVALID_MODE,
-          KIM_STATUS_ATOM_TYPES_UNDEFINED,
-          KIM_STATUS_ARG_INVALID_RANK,
-          KIM_STATUS_ATOM_INVALID_ID,
-          KIM_STATUS_ATOM_INVALID_TYPE,
-          KIM_STATUS_ARG_UNKNOWN,
-          KIM_STATUS_FAIL,
-          KIM_STATUS_NEIGH_ITER_PAST_END,
-          KIM_STATUS_OK,
-          KIM_STATUS_NEIGH_ITER_INIT_OK
-    };
     char * status_msg(int status_code);
 private:
 

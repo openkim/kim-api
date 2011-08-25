@@ -102,7 +102,8 @@ bool KIM_IOline:: getFields(char *inString){
                 strcat(shape,"]");
                 return true;
             }else if(strcmp(type,"flex")==0){
-                cout<<"KIM_IOline::getFields:flex type for preprocessor only..."<<endl;
+                //cout<<"KIM_IOline::getFields:flex type for preprocessor only..."<<endl;
+                cout<<"* Error (KIM_IOline::getFields): Particle name `flex' in SUPPORTED_ATOM/PARTICLES_TYPES section is only supported by the KIM Processing Pipeline."<<endl;
                 KIM_API_model::fatal_error_print();
                 exit (333);
                 //return false;
@@ -146,7 +147,7 @@ int KIM_IOline::get_rank(){
                 }
                 return c;
             }
-            cout<<" KIM_IOline:warning: bad shape format"<<endl;
+            cout<<"* Error (KIM_IOline::get_rank): bad shape format"<<endl;
              return 0;
  }
 int *  KIM_IOline::get_shape(){
@@ -280,16 +281,17 @@ bool KIM_IOline:: isitoutput(char*str){
 ostream &operator<<(ostream &stream, KIM_IOline a){
 	stream<<a.name<<" "<<a.type<<" "<<a.dim<<" ";
         stream<<a.units<<" "<<a.shape<<" "<<a.requirements;
-        stream<<" input: "<<a.input<<" output: "<<a.output<<endl;
+        //stream<<" input: "<<a.input<<" output: "<<a.output<<endl;
+        stream << endl;
 	return stream;
 };
 istream &operator>>(istream &stream, KIM_IOline &a){
 	char inputline[KIM_LINE_LENGTH];
 	stream.getline(inputline,KIM_LINE_LENGTH-1);
         if(stream.fail() && !stream.eof()){
-           cerr << "Error: Input line in .kim file longer than KIM_LINE_LENGTH (default 512) characters.\n"
-                << "The line starts with:\n\t"
-                << inputline << "\nExiting..." << endl;
+           cerr << "* Error (operator>> KIM_IOline): Input line in .kim file longer than KIM_LINE_LENGTH (default 512) characters.\n"
+                << "         The line is: `"
+                << inputline << "'" << "\nExiting..." << endl;
            KIM_API_model::fatal_error_print();
            exit(-2);
         }
@@ -398,11 +400,11 @@ SystemOfUnit::SystemOfUnit(){
 void SystemOfUnit::init(char *infile){
         numlines = readlines(infile,&inlines);
         if (numlines<1) {
-            cout<<"SystemOfUnits::init : no inlines found"<<endl;
+            cout<<"* Error (SystemOfUnit::init): Empty file " << infile <<endl;
             return;
         }
         if (numlines<14) {
-            cout<<"SystemOfUnits::init : input file is incoplete"<<endl;
+           cout<<"* Error (SystemOfUnit::init): Units file " << infile << " is incoplete"<<endl;
             return;
         }
         for (int i=0; i<numlines; i++){
@@ -453,7 +455,7 @@ int SystemOfUnit:: readlines(char * infile, IOline **inlines){
          myfile.open(infile);
  //cout<<"SystemOfUnit:  file:"<<infile<<":"<<endl;
          if(!myfile){
-             cout<<"SystemOfUnit: can not open file:"<<infile<<":"<<endl;
+             cout<<"* Error (SystemOfUnit::readlines): can not open file:"<<infile<<":"<<endl;
              KIM_API_model::fatal_error_print();
              exit(327);
          }
@@ -495,7 +497,8 @@ int SystemOfUnit::readlines_str(char* instrn, IOline** inlines){
         stringstream myfile1 (in_instrn,stringstream::in|stringstream::out) ;
  //cout<<"SystemOfUnit:  file:"<<infile<<":"<<endl;
          if(!myfile){
-             cout<<"SystemOfUnit: can not open input string"<<endl;
+             cout<<"* Error (SystemOfUnit::readlines_str): can not parse units file."<<endl
+                 <<"        Offending line is: `" << in_instrn << "'" << endl;
              KIM_API_model::fatal_error_print();
              exit(327);
          }
@@ -564,7 +567,7 @@ void KIMBaseElement:: init(char *nm,char * tp,intptr_t sz, intptr_t rnk, int *sh
 
     
             if(rnk < 0) {
-                cout << "KIMBaseElement_init:rnk < 0"<<endl;
+                cout << "* Error (KIMBaseElement::init): KIMBaseElement_init:rnk < 0"<<endl;
                 KIM_API_model::fatal_error_print();
                 exit (113);
             }
@@ -582,7 +585,7 @@ void KIMBaseElement:: init(char *nm,char * tp,intptr_t sz, intptr_t rnk, int *sh
             if(rank > 1){
                 shape = new int[rank];
                 if (shp == NULL) {
-                  cout << "KIMBaseElement_init:shp==NULL"<<endl;
+                  cout << "* Error (KIMBaseElement::init): KIMBaseElement_init:shp==NULL"<<endl;
                   KIM_API_model::fatal_error_print();
                   exit (114);
                 }
@@ -668,7 +671,10 @@ int KIMBaseElement::getelemsize(char *tp){
              }else if (strcmp(dummykey,tp)==0){
                 return 0;
             }else{// add here more in else if block...
-            printf("KIMBaseElement_getelemsize:key type %s is not:\n %s %s %s, %s, %s, %s \n",tp,realkey,real8key,integerkey,ptrkey,integer8key,dummykey);
+               cout << "* Error (KIMBaseElement::getelemsize): Unknown Type in KIM descriptor file line." << endl
+                    << "         `" << tp <<"' is not one of: " << realkey << ", "
+                    << real8key << ", " << integerkey << ", " << ptrkey << ", "
+                    << integer8key << ", " << dummykey << endl;
             KIM_API_model::fatal_error_print();
             exit(102);
             }
@@ -877,11 +883,11 @@ bool KIM_API_model:: preinit(char * initfile,char *modelname){
         char custom_str [] ="custom";
 
         if(!set_units(inlines[ind].units)) if(!set_units(custom_str)){
-             cout<<"KIM_API_model::set_units:  failed"<< initfile<<endl;
+              cout<<"* Error (KIM_API_model::preinit):  Unknown units in "<< initfile << " file"<<endl;
             return false;
         }
         if (! are_infileunits_consistent()) {
-                cout<<"KIM_API_model::pre_init:  inconsistent units in"<< initfile<<endl;
+           cout<<"* Error (KIM_API_model::preinit): Inconsistent units in "<< initfile << "file"<<endl;
                 return false;
         }
         //extra input like unitFixed flag and,later may be, authors
@@ -960,11 +966,11 @@ bool KIM_API_model::preinit_str_testname(char *instrn){
         char custom_str [] ="custom";
 
         if(!set_units(inlines[ind].units)) if(!set_units(custom_str)){
-             cout<<"KIM_API_model::set_units(from preinit_str_testname):  failed"<<endl;
+             cout<<"* Error (KIM_API_model::preinit_str_testname):  Unknown units in descriptor file"<<endl;
             return false;
         }
         if (! are_infileunits_consistent()) {
-                cout<<"KIM_API_model::from preinit_str_testname:  inconsistent units"<<endl;
+                cout<<"* Error (KIM_API_model::preinit_str_testname): Inconsistent units in descriptor file"<<endl;
                 return false;
         }
         //extra input like unitFixed flag and,later may be, authors
@@ -1204,7 +1210,7 @@ void KIM_API_model::read_file(char * initfile,KIM_IOline ** lns, int * numlns){
         ifstream myfile;
         myfile.open(initfile);
         if(!myfile){
-            cout<<"KIM_API_model: can not open file:"<<initfile<<":"<<endl;
+            cout<<"* Error (KIM_API_model::read_file): can not open file: "<<initfile<<endl;
             KIM_API_model::fatal_error_print();
             exit (327);
         }
@@ -1239,7 +1245,7 @@ void KIM_API_model::read_file_str_testname(char* strstream, KIM_IOline** lns, in
         stringstream myfile (in_strstream, stringstream::in|stringstream::out);
         stringstream myfile1 (in_strstream, stringstream::in|stringstream::out);
         if(!myfile){
-            cout<<"KIM_API_model: can not open input string:"<<strstream<<":"<<endl;
+            cout<<"* Error (KIM_API_model::read_file_str_testname): can not access KIM descriptor file as input string."<<endl;
             KIM_API_model::fatal_error_print();
             exit (327);
         }
@@ -1307,7 +1313,7 @@ bool KIM_API_model::is_it_match(KIM_API_model & mdtst,KIM_IOline * IOlines,int n
             }
         }
         if(!match) {
-            cout << "The following may not match"<<endl;
+           cout << "* Info (KIM_API_model::is_it_match): The following descriptor file line may not match with " << mdtst.model.name << "'s descriptor file."<<endl;
             cout<<IOlines[i]<<endl;
             return match;
         }
@@ -1347,7 +1353,7 @@ bool KIM_API_model::is_it_match_noDummyCount(KIM_API_model & mdtst,KIM_IOline * 
             }
         }
         if(!match) {
-            cout << "The following does not  match"<<endl;
+            cout << "* Warning (KIM_API_model::is_it_match_noDummyCount): The following line in the Model descriptor file does not match."<<endl;
             cout<<IOlines[i]<<endl;
             return match;
         }
@@ -1383,7 +1389,7 @@ bool KIM_API_model::is_it_match(KIM_API_model &test,KIM_API_model & mdl){
     stdmdl.free();
     if(test.unitsFixed && mdl.unitsFixed){
         if(strcmp(test.currentUnits,mdl.currentUnits)!=0){
-            cout<<"system of units for test and model do not match "<<endl;
+            cout<<"* Error (KIM_API_model::is_it_match): System of units for Test and Model do not match."<<endl;
             return false;
         }
     }
@@ -1391,12 +1397,12 @@ bool KIM_API_model::is_it_match(KIM_API_model &test,KIM_API_model & mdl){
     NBC_methodsmatch=NBC_methodsmatch&&test.check_consistance_NBC_method();
     NBC_methodsmatch=NBC_methodsmatch&&mdl.check_consistance_NBC_method();
 
-    if(!test2standardmatch) cout<<"there are non-standard variables in test:"<<endl;
-    if(!model2standardmatch) cout<<"there are non-standard variables in model"<<endl;
-    if(!test2standardAtomsTypesMatch) cout<<"there are non-standard AtomsTypes in test"<<endl;
-    if(!model2standardAtomsTypesMatch) cout<<"there are non-standard AtomsTypes in model"<<endl;
-    if(!test2modelAtomsTypesMatch) cout<<"test-model AtomsTypes do not match"<<endl;
-    if(!NBC_methodsmatch) cout<<"NBC methods do not match"<<endl;
+    if(!test2standardmatch) cout<<"* Error (KIM_API_model::is_it_match): There are non-standard variables in Test descriptor file:"<<endl;
+    if(!model2standardmatch) cout<<"* Error (KIM_API_model::is_it_match): There are non-standard variables in Model descriptor file:"<<endl;
+    if(!test2standardAtomsTypesMatch) cout<<"* Error (KIM_API_model::is_it_match): There are non-standard AtomsTypes in Test descriptor file:"<<endl;
+    if(!model2standardAtomsTypesMatch) cout<<"* Error (KIM_API_model::is_it_match):there are non-standard AtomsTypes in Model descriptor file:"<<endl;
+    if(!test2modelAtomsTypesMatch) cout<<"* Error (KIM_API_model::is_it_match): Test-Model AtomsTypes do not match:"<<endl;
+    if(!NBC_methodsmatch) cout<<"* Error (KIM_API_model::is_it_match): NBC methods do not match:"<<endl;
 
     do_dummy_match(test,mdl);
 
@@ -1455,11 +1461,11 @@ bool KIM_API_model::do_dummy_match(KIM_API_model& tst, KIM_API_model& mdl){
 
     //logic for Zero or One base list handling
     if ((!ZeroBasedLists_tst && !OneBasedLists_tst)||(ZeroBasedLists_tst && OneBasedLists_tst) ) {
-        cout<< "test .kim has to have ONE ZeroBasedLists or OneBasedLists line"<<endl;
+        cout<< "* Error (KIM_API_model::do_dummy_match): Test descriptor file must have only ONE of ZeroBasedLists or OneBasedLists."<<endl;
         return false;
     }
      if ((!ZeroBasedLists_mdl && !OneBasedLists_mdl)||(ZeroBasedLists_mdl && OneBasedLists_mdl)) {
-        cout<< "model .kim has to have ONE ZeroBasedLists or OneBasedLists line"<<endl;
+        cout<< "* Error (KIM_API_model::do_dummy_match): Model descriptor file must have only ONE of ZeroBasedLists or OneBasedLists."<<endl;
         return false;
     }
     baseConvertKey = 0;
@@ -1505,7 +1511,7 @@ bool KIM_API_model::do_dummy_match(KIM_API_model& tst, KIM_API_model& mdl){
     if (Neigh_BothAccess_mdl){
 
         if(!(Neigh_BothAccess_tst || Neigh_LocaAccess_tst && Neigh_IterAccess_tst)){
-            cout<< "model .kim requres Neigh_BothAccess "<<endl;
+            cout<< "* Error (KIM_API_model::do_dummy_match): Model descriptor file requres Neigh_BothAccess."<<endl;
             return false;
         }
         mdl.both_neigh_mode=true;
@@ -1513,7 +1519,7 @@ bool KIM_API_model::do_dummy_match(KIM_API_model& tst, KIM_API_model& mdl){
      }else if (Neigh_LocaAccess_mdl && Neigh_IterAccess_mdl){
 
         if(!(Neigh_LocaAccess_tst || Neigh_IterAccess_tst || Neigh_BothAccess_tst)){
-            cout<< "model .kim requres IterAccess or LocaAccess  "<<endl;
+            cout<< "* Error (KIM_API_model::do_dummy_match): Model descriptor file requres IterAccess or LocaAccess."<<endl;
             return false;
         }
         if (Neigh_LocaAccess_tst && Neigh_IterAccess_tst || Neigh_BothAccess_tst) {
@@ -1532,7 +1538,7 @@ bool KIM_API_model::do_dummy_match(KIM_API_model& tst, KIM_API_model& mdl){
      //checking if test o.k. with loca
      }else if(Neigh_LocaAccess_mdl){
          if(!(Neigh_LocaAccess_tst || Neigh_BothAccess_tst)) {
-             cout<< "model .kim requres  Neigh_LocaAccess"<<endl;
+             cout<< "* Error (KIM_API_model::do_dummy_match): Model descriptor file requres Neigh_LocaAccess."<<endl;
              return false;
          }
 
@@ -1540,7 +1546,7 @@ bool KIM_API_model::do_dummy_match(KIM_API_model& tst, KIM_API_model& mdl){
      //checking if test o.k. with iter
      }else if(Neigh_IterAccess_mdl){
          if(!(Neigh_IterAccess_tst || Neigh_BothAccess_tst)) {
-             cout<< "model .kim requres  Neigh_IterAccess"<<endl;
+             cout<< "* Error (KIM_API_model::do_dummy_match): Model descriptor file requres Neigh_IterAccess."<<endl;
              return false;
          }
 
@@ -1574,8 +1580,8 @@ bool KIM_API_model::do_AtomsTypes_match(KIM_API_model& test, KIM_API_model& mdl)
             }
         }
         if (!match) {
-            cout <<"the following simbol:"<<test.AtomsTypes[i].symbol<<" in ";
-            cout<< test.model.name << "  not found in "<<mdl.model.name<<endl;
+            cout <<"* Error (KIM_API_model::do_AtomsTypes_match): The following symbol: "<<test.AtomsTypes[i].symbol<<" in ";
+            cout<< test.model.name << " is not found in "<<mdl.model.name<<endl;
             return false;
         }
     }
@@ -1657,7 +1663,7 @@ bool KIM_API_model::init(char* testname, char* modelname){
 #include "model_kim_str_include.cpp"
 
     if (in_mdlstr == NULL){
-        cout<<"KIM_API_model::init : input model string is NULL";
+       cout<<"* Error (KIM_API_model::init): Unknown KIM Model name " << modelname << "." << endl;
         exit(367);
     }
     bool result_init= this->init_str_modelname(testname,in_mdlstr);
@@ -1685,7 +1691,7 @@ bool KIM_API_model::init(char* testname, char* modelname){
 
     model_lib_handle = dlopen(model_slib_file,RTLD_NOW);
     if(!model_lib_handle) {
-         cout<< "KIM_API_model::init: init failed for ";
+         cout<< "* Error (KIM_API_model::init): Cannot find Model shared library file for Model name: ";
          cout<<modelname<<endl<<dlerror()<<endl;
          fprintf(stderr,"%s not found...\n",model_slib_file);
 
@@ -1712,7 +1718,7 @@ bool KIM_API_model::init(char* testname, char* modelname){
     in_mdlstr = (*get_kim_str)();
 
     if (in_mdlstr == NULL){
-        cout<<"KIM_API_model::init : input model string is NULL";
+        cout<<"* Error (KIM_API_model_init): Unknown KIM Model name " << modelname << "." << endl;
         exit(367);
     }
     bool result_init= this->init_str_modelname(testname,in_mdlstr);
@@ -1796,7 +1802,7 @@ bool KIM_API_model::init_str_testname(char* in_tststr, char* modelname){
 #include "model_kim_str_include.cpp"
 
     if (in_mdlstr == NULL){
-        cout<<"KIM_API_model::init_str_testname : input model string is NULL";
+        cout<<"* Error (KIM_API_model::init_str_testname): Unknown KIM Model name " << modelname << "." << endl;
         exit(368);
     }
      //                         -------------
@@ -1808,7 +1814,7 @@ bool KIM_API_model::init_str_testname(char* in_tststr, char* modelname){
     sprintf(model_kim_str_name,"%s_kim_str",modelname);
      model_lib_handle = dlopen(model_slib_file,RTLD_NOW);
     if(!model_lib_handle) {
-         cout<< "KIM_API_model::init: init failed for ";
+         cout<< "* Error (KIM_API_model::init_str_testname): Cannot find Model shared library file for Model name: ";
          cout<<modelname<<endl<<dlerror()<<endl;
          fprintf(stderr,"%s not found...\n",model_slib_file);
 
@@ -1821,7 +1827,7 @@ bool KIM_API_model::init_str_testname(char* in_tststr, char* modelname){
     Model_kim_str get_kim_str = (Model_kim_str)dlsym(model_lib_handle,model_kim_str_name);
     const char *dlsym_error = dlerror();
     if (dlsym_error) {
-        cerr << "Cannot load symbol: " << dlsym_error <<endl;
+        cerr << "* Error (KIM_API_model_init_str_testname): Model descriptor file function not found in shared library for Model: " << modelname << "." << endl;
         dlclose(model_lib_handle);
 
         //redirecting back to > cout
@@ -1835,7 +1841,7 @@ bool KIM_API_model::init_str_testname(char* in_tststr, char* modelname){
     in_mdlstr = (*get_kim_str)();
 
     if (in_mdlstr == NULL){
-        cout<<"KIM_API_model::init : input model string is NULL";
+        cout<< "* Error (KIM_API_model::init_str_testname): Model descriptor string not found in shared library for Model: " << modelname << "." << endl;
         exit(367);
     }
 
@@ -1913,7 +1919,7 @@ bool KIM_API_model::model_init(){
     filekimlog.open(kimlog,ofstream::app);
     backup = cout.rdbuf();psbuf = filekimlog.rdbuf();cout.rdbuf(psbuf);
 
-cout<< "KIM_API_model::model_init: call statically linked initialize routine for::"<<modelname<<endl;
+cout<< "* Info: KIM_API_model::model_init: call statically linked initialize routine for::"<<modelname<<endl;
     //redirecting back to > cout
     cout.rdbuf(backup); filekimlog.close();
 
@@ -1923,7 +1929,7 @@ cout<< "KIM_API_model::model_init: call statically linked initialize routine for
     filekimlog.open(kimlog,ofstream::app);
     backup = cout.rdbuf();psbuf = filekimlog.rdbuf();cout.rdbuf(psbuf);
 
-    cout<< "KIM_API_model::model_init: model initiliser failed for ";
+    cout<< "* Info: KIM_API_model::model_init: model initiliser failed for ";
     cout<<modelname<<endl;
 
      //redirecting back to > cout
@@ -1949,7 +1955,7 @@ bool KIM_API_model::model_init(){
     filekimlog.open(kimlog, ofstream::app);
     backup = cout.rdbuf();psbuf = filekimlog.rdbuf();cout.rdbuf(psbuf);
 
-cout<<"KIM_API_model::model_init: call dynamically linked initialize routine for:"<<modelname<<endl;
+cout<<"* Info: KIM_API_model::model_init: call dynamically linked initialize routine for:"<<modelname<<endl;
 cout<<"               from the shared library:"<<model_slib_file<<endl;
     sprintf(model_init_routine_name,"%s_init_",modelname);
     for(int i=0;i<strlen(model_init_routine_name);i++){
@@ -1957,7 +1963,7 @@ cout<<"               from the shared library:"<<model_slib_file<<endl;
     }
     model_lib_handle = dlopen(model_slib_file,RTLD_NOW);
     if(!model_lib_handle) {
-         cout<< "KIM_API_model::model_init: model initiliser failed for ";
+         cout<< "* Info: KIM_API_model::model_init: model initiliser failed for ";
          cout<<modelname<<endl<<dlerror()<<endl;
          fprintf(stderr,"%s not found...\n",model_slib_file);
 
@@ -1969,7 +1975,7 @@ cout<<"               from the shared library:"<<model_slib_file<<endl;
     Model_Init mdl_init = (Model_Init)dlsym(model_lib_handle,model_init_routine_name);
     const char *dlsym_error = dlerror();
     if (dlsym_error) {
-        cerr << "Cannot load symbol: " << dlsym_error <<endl;
+        cerr << "* Error (KIM_API_model::model_init): Cannot load symbol: " << dlsym_error <<endl;
         dlclose(model_lib_handle);
 
         //redirecting back to > cout
@@ -2030,7 +2036,7 @@ int KIM_API_model::get_full_neigh(int mode, int request, int *atom,
             int erkey = (*get_neigh)((void **)&pkim,&locmode, &locrequest, atom, numnei, nei1atom, Rij );
             if (erkey <= 0) return erkey; // return with error from  supplied by test get_neigh
             if(*numnei > KIM_API_MAX_NEIGHBORS) {
-                cout<<endl<< "KIM_API::get_full_neigh: numnei > MAX_NEIGHBORS : ";
+                cout<<endl<< "* Error (KIM_API_model::get_full_neigh): numnei > MAX_NEIGHBORS : ";
                 cout<<" "<<*numnei <<" > "<< KIM_API_MAX_NEIGHBORS<<endl;
                 return KIM_STATUS_NEIGH_TOO_MANY_NEIGHBORS;
             }
@@ -2046,7 +2052,7 @@ int KIM_API_model::get_full_neigh(int mode, int request, int *atom,
             int erkey = (*get_neigh)((void **)&pkim,&locmode, &req, &at, numnei, nei1atom, Rij );
             if (erkey <= 0) return erkey; // return with error from  supplied by test get_neigh
             if(*numnei > KIM_API_MAX_NEIGHBORS) {
-                cout<<endl<< "KIM_API::get_full_neigh: numnei > MAX_NEIGHBORS : ";
+                cout<<endl<< "* Error (KIM_API::get_full_neigh): numnei > MAX_NEIGHBORS : ";
                 cout<<" "<<*numnei <<" > "<< KIM_API_MAX_NEIGHBORS<<endl;
                 return KIM_STATUS_NEIGH_TOO_MANY_NEIGHBORS;
             }
@@ -2060,7 +2066,7 @@ int KIM_API_model::get_full_neigh(int mode, int request, int *atom,
             return erkey;
         }
     }else{
-        cout<<endl<< "KIM_API::get_full_neigh: wrong base convert key,baseConvertKey =";
+        cout<<endl<< "* Error (KIM_API::get_full_neigh): wrong base convert key,baseConvertKey =";
         cout<< baseConvertKey <<"  (must be 0,1 or -1)"<<endl;
         return KIM_STATUS_API_OBJECT_INVALID;
     }
@@ -2087,7 +2093,7 @@ int KIM_API_model::get_half_neigh(int mode, int request, int *atom,
             int erkey = (*get_neigh)((void **)&pkim,&locmode, &locrequest, atom, numnei, nei1atom, Rij );
             if (erkey <= 0) return erkey; // return with error from  supplied by test get_neigh
             if(*numnei > KIM_API_MAX_NEIGHBORS) {
-                cout<<endl<< "KIM_API::get_half_neigh: numnei > MAX_NEIGHBORS : ";
+                cout<<endl<< "* Error (KIM_API_model::get_half_neigh): numnei > MAX_NEIGHBORS : ";
                 cout<<" "<<*numnei <<" > "<< KIM_API_MAX_NEIGHBORS<<endl;
                 return KIM_STATUS_NEIGH_TOO_MANY_NEIGHBORS;
             }
@@ -2105,7 +2111,7 @@ int KIM_API_model::get_half_neigh(int mode, int request, int *atom,
             int erkey = (*get_neigh)((void **)&pkim,&locmode, &req, &at, numnei, nei1atom, Rij );
             if (erkey <= 0) return erkey; // return with error from  supplied by test get_neigh
             if(*numnei > KIM_API_MAX_NEIGHBORS) {
-                cout<<endl<< "KIM_API::get_full_neigh: numnei > MAX_NEIGHBORS : ";
+                cout<<endl<< "* Error (KIM_API_model::get_full_neigh): numnei > MAX_NEIGHBORS : ";
                 cout<<" "<<*numnei <<" > "<< KIM_API_MAX_NEIGHBORS<<endl;
                 return KIM_STATUS_NEIGH_TOO_MANY_NEIGHBORS;
             }
@@ -2119,7 +2125,7 @@ int KIM_API_model::get_half_neigh(int mode, int request, int *atom,
             return erkey;
         }
     }else{
-        cout<<endl<< "KIM_API::get_half_neigh: wrong base convert key,baseConvertKey =";
+        cout<<endl<< "* Error (KIM_API_model::get_half_neigh): wrong base convert key,baseConvertKey =";
         cout<< baseConvertKey <<"  (must be 0,1 or -1)"<<endl;
         return KIM_STATUS_API_OBJECT_INVALID;
     }
@@ -2127,7 +2133,7 @@ int KIM_API_model::get_half_neigh(int mode, int request, int *atom,
 
 void KIM_API_model::irrelevantVars2donotcompute(KIM_API_model & test, KIM_API_model & mdl){
     if(! is_it_match_noDummyCount(test,mdl.inlines,mdl.numlines)) {
-        cout<<"irrelevantVars2donotcompute: not a test-model match"<<endl;
+        cout<<"* Error (KIM_API_model::irrelevantVars2donotcompute): Test and Model descriptor files are incompatible (do not match)."<<endl;
         KIM_API_model::fatal_error_print();
         exit(133);
     }
@@ -2144,7 +2150,7 @@ void KIM_API_model::irrelevantVars2donotcompute(KIM_API_model & test, KIM_API_mo
 void KIM_API_model::allocateinitialized(KIM_API_model * mdl, int natoms, int ntypes, int * error){
     // in process
     if ( mdl->model.data == NULL) {
-        cout<<"KIM_API_model::allocateinitialized: model is not preinitialized"<<endl;
+        cout<<"* Error (KIM_API_model::allocateinitialized): KIM API object not initialized with KIM_API_init()."<<endl;
         *error = KIM_STATUS_FAIL;
         return;
     }
@@ -2328,7 +2334,7 @@ int KIM_API_model::get_indexOfsupportedUnits(char * unitS){
         for(int i=0;i<numUnitsSet;i++){
            if( strcmp(&(UnitsSet[i].UnitsSystemName[0]),unitS)==0) return i ;
         }
-        cout<<"get_indexOfsupportedUnits, no unitsystem "<<unitS<<" found"<<endl;
+        cout<<"* Error (KIM_API_model::get_indexOfsupportedUnits): Unknown system of units "<<unitS<<" found"<<endl;
         KIM_API_model::fatal_error_print();
         exit( 3033);
 }
@@ -2591,14 +2597,15 @@ bool KIM_API_model::check_consistance_NBC_method(){
         }
     }
     if (!match) {
-        cout<<"check_consistance_NBC_method :"<<NBC_method_current
-                <<" is not among the methods"<<endl;
+        cout<<"* Error (KIM_API_model::check_consistance_NBC_method):"<<NBC_method_current
+                <<" is unknown."<<endl;
         return false;
     }
     for (int j=0;j<nnarg_NBC[i]; j++){
         if (get_index(arg_NBC_methods[i][j]) == -1){
-            cout<<"check_consistance_NBC_method : argument "<< arg_NBC_methods[i][j];
-            cout<<" is not in  KIM API object"<<endl;
+            cout<<"* Error (KIM_API_model::check_consistance_NBC_method): Argument "<< arg_NBC_methods[i][j];
+            cout<<" required for NBC method " << NBC_method_current;
+            cout<<" is not in KIM API object."<<endl;
             return false;
         }
     }
@@ -2609,20 +2616,20 @@ char * KIM_API_model::status_msg(int status_code){
 
     char KIM_STATUS_MSG[][KEY_CHAR_LENGTH]=
     {{"get_half_neigh method in KIM API object is not set(NULL value)"},
-    {"get_full_neigh method in KIM API object is not set(NULL value)"},
+    { "get_full_neigh method in KIM API object is not set(NULL value)"},
     { "number of neighbors of an atom exceeds KIM_API_MAX_NEIGHBORS"},
     { "invalid KIM API object"},
-    {"negative index in shape"},
-    {"invalid mode value"},
-    {"no atom/particle types have been specified by the Test or Model"},
-    {"provided rank does not match KIM API argument rank"},
-    {"invalid atom id requested (request out of range)"},
+    { "negative index in shape"},
+    { "invalid mode value"},
+    { "no atom/particle types have been specified by the Test or Model"},
+    { "provided rank does not match KIM API argument rank"},
+    { "invalid atom id requested (request out of range)"},
     { "symbol is not among supported atom symbols"},
-    {"argument name provided is not in KIM API object"},
-    {"unsuccessful completion"},
-    {"iterator has been incremented past end of list"},
-    {"successful completion"},
-    {"iterator has been successfully initialized"}};
+    { "argument name provided is not in KIM API object"},
+    { "unsuccessful completion"},
+    { "iterator has been incremented past end of list"},
+    { "successful completion"},
+    { "iterator has been successfully initialized"}};
     
     if (status_code < mincode || status_code > maxcode) {
         char * retstr = (char *)malloc(KEY_CHAR_LENGTH);
