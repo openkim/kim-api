@@ -197,23 +197,21 @@ endif
 #
 MODEL_NAME_KIM_STR_H = char* $(MODEL_NAME)_kim_str'('')'';'
 MODEL_NAME_KIM_STR_CPP = char* $(MODEL_NAME)_kim_str'('')''{' 
-$(MODEL_NAME)_kim_str.cpp: $(MODEL_NAME).kim
-	echo "extern \"C\" {"           >  $(MODEL_NAME)_kim_str.cpp
-	echo $(MODEL_NAME_KIM_STR_H)   >>  $(MODEL_NAME)_kim_str.cpp
-	echo "}"                       >>  $(MODEL_NAME)_kim_str.cpp
-	echo $(MODEL_NAME_KIM_STR_CPP) >>  $(MODEL_NAME)_kim_str.cpp
-	echo "static char kimstr[] ="  >>  $(MODEL_NAME)_kim_str.cpp
+%_kim_str.cpp: %.kim
+	echo "extern \"C\" {"           > $*_kim_str.cpp
+	echo $(MODEL_NAME_KIM_STR_H)   >> $*_kim_str.cpp
+	echo "}"                       >> $*_kim_str.cpp
+	echo $(MODEL_NAME_KIM_STR_CPP) >> $*_kim_str.cpp
+	echo "static char kimstr[] ="  >> $*_kim_str.cpp
 	cat $(MODEL_NAME).kim | \
 	sed -e 's,\\,\\\\,g'     \
             -e 's,",\\",g'       \
             -e 's,^,      ",g'   \
-            -e 's,$$,\\n",g'                                                  >> $(MODEL_NAME)_kim_str.cpp
-	echo "   ;"                                                           >> $(MODEL_NAME)_kim_str.cpp
-	echo "return &kimstr[0];"                                             >> $(MODEL_NAME)_kim_str.cpp
-	echo ""                                                               >> $(MODEL_NAME)_kim_str.cpp
-	echo "}"                                                              >> $(MODEL_NAME)_kim_str.cpp
-
-$(MODEL_NAME)_kim_str.o:$(MODEL_NAME)_kim_str.cpp
+            -e 's,$$,\\n",g'           >> $*_kim_str.cpp
+	echo "   ;"                    >> $*_kim_str.cpp
+	echo "return &kimstr[0];"      >> $*_kim_str.cpp
+	echo ""                        >> $*_kim_str.cpp
+	echo "}"                       >> $*_kim_str.cpp
 
 # Library pattern rule
 %.so: %.a $(KIM_LIB_FILE) 
