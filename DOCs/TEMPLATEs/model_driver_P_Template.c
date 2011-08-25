@@ -34,7 +34,7 @@
 /* Define prototypes for Model Driver init */
 /* must be all lowercase to be compatible with the KIM API (to support Fortran Tests) */
 /**/
-void model_driver_p_<FILL (lowercase) model driver name>_init_(void* km, char** paramfile);
+void model_driver_p_<FILL (lowercase) model driver name>_init_(void* km, char* paramfile, int* length);
 
 /* Define prototypes for Model (Driver) reinit, compute, and destroy */
 /* defined as static to avoid namespace clashes with other Models    */
@@ -632,7 +632,7 @@ static void compute(void* km, int* ier)
 }
 
 /* Initialization function */
-void model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char** paramfile)
+void model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* paramfile, int* length)
 {
    /* Local variables */
    double cutoff;
@@ -668,7 +668,7 @@ void model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char** 
    }
 
    /* Read in model parameters from parameter file */
-   ier = sscanf(*paramfile, "%lf \n%lf \n<FILL as many parameters as needed>",
+   ier = sscanf(paramfile, "%lf \n%lf \n<FILL as many parameters as needed>",
                 &cutoff,             /* cutoff distance in angstroms */
                 &<FILL parameter 1>,
                 &<FILL parameter 2>,
