@@ -671,24 +671,26 @@ end module model_driver_P_<FILL model driver name>
 ! Model driver initialization routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-subroutine model_driver_P_<FILL model driver name>_init(pkim, paramfile)
+subroutine model_driver_P_<FILL model driver name>_init(pkim, byte_paramfile, len_paramfile)
 use model_driver_P_<FILL model driver name>
 use KIMservice
 implicit none
 
 !-- Transferred variables
 integer(kind=kim_intptr), intent(in) :: pkim
-character(len=*),         intent(in) :: paramfile
+byte,                     intent(in) :: byte_paramfile(len_paramfile+1)
+integer,                  intent(in) :: len_paramfile
 
 !-- Local variables
+integer(kind=kim_intptr), parameter :: one=1
+character(len=len_paramfile) paramfile
+integer i,ier
 ! define variables for all model parameters to be read in
 double precision in_cutoff
 double precision in_<FILL parameter 1>
 double precision in_<FILL parameter 2>
 ! ...
 double precision in_<FILL last parameter>
-integer(kind=kim_intptr), parameter :: one=1
-integer ier
 
 !-- KIM variables
 real*8  cutoff;          pointer(pcutoff,cutoff)
@@ -717,6 +719,9 @@ endif
 
 ! Read in model parameters from parameter file
 !
+do i=1,len_paramfile
+   paramfile(i:i) = char(byte_paramfile(i))
+enddo
 read(paramfile,'<FILL appropriate format>',iostat=ier,err=100) in_cutoff,       &
                                                                in_<FILL parameter 1>, &
                                                                in_<FILL parameter 2>, &
