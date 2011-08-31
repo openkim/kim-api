@@ -155,9 +155,8 @@ int KIM_API_get_half_neigh(void *kimmdl,int mode,int request,
     return mdl->get_half_neigh(mode,request,atom,numnei,nei1atom,Rij);
 }
 
-char * KIM_API_status_msg(void *kimmdl,int error){
-    KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    return mdl->status_msg(error);
+char * KIM_API_status_msg(int error){
+    return KIM_API_model::status_msg(error);
 }
 
 //element access methods by name
@@ -461,6 +460,6 @@ float kim_api_get_unit_scalefactor_(void * kim, char**nm, int *error){
     return KIM_API_get_unit_scalefactor(*(KIM_API_model **)kim, *nm,error);
 }
 
-void * kim_api_status_msg_f_(void*kim,int * error){
-    return (void *) KIM_API_status_msg(*(KIM_API_model **)kim,*error);
+void * kim_api_status_msg_f_(int * error){
+    return (void *) KIM_API_status_msg(*error);
 }

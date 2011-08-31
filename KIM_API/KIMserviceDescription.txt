@@ -1010,24 +1010,21 @@ Corresponding Fortran style interface:
 
 ******************************************************************************
 
-void * KIM_API_status_msg(void *kimmdl, int status_code)
-    This routine returns null terminated character string that describes status of error code. The error code
-    is the error code set by other kim service routines executions.
+void * KIM_API_status_msg(int status_code)
+    This routine returns null terminated character string that describes status
+    of error code. The error code is the error code set by other kim service
+    routines executions.
 
    Arguments:
-        void * kimmdl
-                pointer to KIM_API_model object (in C++ style, the definition 
-                will be (KIM_API_model *)).
-
         int status_code 
                 error status code, string value of that code will be returned
 
 
 Corresponding Fortran style interface:
 
-       function kim_api_status_msg_f(kimmdl,errorcode)
+       function kim_api_status_msg_f(errorcode)
                 integer :: errorcode
-                integer(kind=kim_intptr) :: kimmdl,kim_api_status_msg_f
+                integer(kind=kim_intptr) :: kim_api_status_msg_f
        end function kim_api_status_msg_f
              
 ******************************************************************************

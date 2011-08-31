@@ -41,7 +41,7 @@ module kimservice
             integer(kind=kim_intptr) :: kimmdl,testname,mdlname
         end function kim_api_init_str_testname
 
-        function kim_api_status_msg_f(kimmdl,errcode)
+        function kim_api_status_msg_f(errcode)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else

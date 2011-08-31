@@ -242,7 +242,7 @@ bool requiresFullNeighbors();
     bool unitsFixed;
     bool support_Rij;
     int get_neigh_mode(int *);
-    char * status_msg(int status_code);
+    static char * status_msg(int status_code);
 private:
 
     bool locator_neigh_mode;

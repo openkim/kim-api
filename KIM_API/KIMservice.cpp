@@ -2611,7 +2611,7 @@ bool KIM_API_model::check_consistance_NBC_method(){
     }
     return true;
 }
-char * KIM_API_model::status_msg(int status_code){
+char * KIM_API_model::status_msg(int status_code) {
     int mincode=-12,maxcode=2,offset=12;
 
     char KIM_STATUS_MSG[][KEY_CHAR_LENGTH]=
