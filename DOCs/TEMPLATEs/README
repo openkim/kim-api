@@ -12,7 +12,10 @@ and Model Drivers.  See the instructions below on how to use these files.
 
 -----------------------------------------------------------------------------
 
-This directory contains the following files:
+STEP 1
+
+Start by reviewing the contents of this directory. It contains the following 
+files:
 
 Makefile.driver.based.model.template
      A template for the Makefile that needs to be placed in a new Model
@@ -65,24 +68,34 @@ model_driver_P_Template.f.kim
 
 -----------------------------------------------------------------------------
 
-A first look at the templates.
+STEP 2
+
+Next, we take a first look at the templates.
 
 The templates are designed to facilitate the creation of new KIM-compliant
-Models.  As a first step, we suggest that you compare the templates with
-functioning KIM Models provided with this KIM API release.  This will allow you
-to see what changes are needed to turn the templates into Models.  Detailed
-directions are also given below.
+Models and Model Drivers.  As a first step, we suggest that you compare the 
+templates with functioning KIM Models provided with this KIM API release.  
+This will allow you to see what changes are needed to turn the templates into 
+Models.  Detailed directions are also given below.
 
-1. The template `model_El_P_Template.c' can be compared with 
-   `model_Ar_P_MLJ_C.c'. 
+(a) The template `model_El_P_Template.c' can be compared with 
+    `model_Ar_P_MLJ_C.c'. 
 
-2. The template `model_El_P_Template.F90' can be compared with
-   `model_Ar_P_MLJ_F90.F90'.
+(b) The template `model_El_P_Template.F90' can be compared with
+    `model_Ar_P_MLJ_F90.F90'.
 
-3. The template `model_El_PF_Template.F90' can be compared with
-   `model_Al_PF_ErcolessiAdams.F90'.
+(c) The template `model_El_PF_Template.F90' can be compared with
+    `model_Al_PF_ErcolessiAdams.F90'.
 
-To compare files, you can for example use the `vimdiff' command:
+(d) The template `model_driver_P_Template.F90' can be compared with
+    `model_driver_P_LJ.F90'
+
+(e) The template `model_driver_P_Template.c' can be compared with
+    `model_driver_P_Morse.c'
+
+Recall that Models are stored under $KIM_DIR/MODELs and Model Drivers
+are stored under $KIM_DIR/MODEL_DRIVERs.  To compare files, you can for 
+example use the `vimdiff' command:
 
    % cd $KIM_DIR
    % vimdiff MODELs/model_Ar_P_MLJ_F90/model_Ar_P_MLJ_F90.F90 DOCs/TEMPLATEs/model_El_P_Template.F90
@@ -91,120 +104,169 @@ Alternatively use the `ediff' feature of the emacs editor.
 
 -----------------------------------------------------------------------------
 
-Direction for using the supplied templates to create a new KIM-compliant Model.
+STEP 3
 
-These direction show how to use the Fortran 90 template for a pair potential
+You are now ready to create a new KIM-compliant Model based on the provided
+templates. 
+
+The directions below show how to use the Fortran 90 template for a pair potential
 (model_El_P_Template.F90) and turn it into a Model for argon (Ar) using a
 Buckingham potential.  (The procedure for a Model written in C is essentially
 identical. See comments below.)
 
-1. Create a new directory under MODELs for the Ar pair potential:
+(a) Create a new directory under MODELs for the Ar pair potential:
+ 
+    % cd $KIM_DIR/MODELs
+    % mkdir model_Ar_P_Buckingham
 
-   % cd $KIM_DIR/MODELs
-   % mkdir model_Ar_P_Buckingham
+(b) Copy the .F90, .kim and Makefile templates into the new directory and
+    rename:
 
-2. Copy the .F90, .kim and Makefile templates into the new directory and
-   rename:
+    % cd $KIM_DIR/MODELs/model_Ar_P_Buckingham
+    % cp $KIM_DIR/DOCs/TEMPLATEs/model_El_P_Template.F90 model_Ar_P_Buckingham.F90
+    % cp $KIM_DIR/DOCs/TEMPLATEs/model_El_P_Template.f.kim model_Ar_P_Buckingham.kim
+    % cp $KIM_DIR/DOCs/TEMPLATEs/Makefile.template Makefile
 
-   % cd $KIM_DIR/MODELs/model_Ar_P_Buckingham
-   % cp $KIM_DIR/DOCs/TEMPLATEs/model_El_P_Template.F90 model_Ar_P_Buckingham.F90
-   % cp $KIM_DIR/DOCs/TEMPLATEs/model_El_P_Template.f.kim model_Ar_P_Buckingham.kim
-   % cp $KIM_DIR/DOCs/TEMPLATEs/Makefile.template Makefile
+    Note: For a Model written in C, copy the .c and .c.kim templates.
 
-   Note: For a Model written in C, copy the .c and .c.kim templates.
+(c) Edit the .kim file and change the Model name to conform to the new Model and
+    enter the species type.  (Search for the word "FILL" which indicates where
+    changes are necessary.)  To edit a file on a unix machine, use for example:
 
-3. Edit the .kim file and change the Model name to conform to the new Model and
-   enter the species type.  (Search for the word "FILL" which indicates where
-   changes are necessary.)  To edit a file on a unix machine, use for example:
+    % pico model_Ar_P_Buckingham.kim
+ 
+(d) Edit the .F90 (or .c) file making all necessary changes.  (Search for the
+    word "FILL".)  The main changes are:
 
-   % pico model_Ar_P_Buckingham.kim
+    - Model name which appears in several places in the file.
 
-4. Edit the .F90 (or .c) file making all necessary changes.  (Search for the
-   word "FILL".)  The main changes are:
+    - Fill in the Model cutoff radius.
 
-   - Model name which appears in several places in the file.
+    - Define static parameters if necessary.  If these parameters need to be
+      accessed outside the module (as in the _init() routine) add them to the
+      list of public variables at the top of the module.
 
-   - Fill in the Model cutoff radius.
+      Note: A Model cannot rely on static storage between calls.  A basic
+      assumption in the KIM API is that *all* information needed by a Model to
+      run is stored in the KIM API object.  This is necessary to allow multiple
+      instances of the same Model being used simultaneously (see the Test
+      `test_Ar_multiple_models' for an example of such usage).  The only case
+      where static variables can be used is if they are "hard-wired" so that the
+      Model can only work with those constant values.  In Fortran this is done
+      using the "parameter" statement.  In C, use preprocessor DEFINE
+      statements.  Otherwise variables need to be stored as PARAM_FREE_ or
+      PARAM_FIXED_ variables in the KIM API object.  See the discussion in the
+      standard.kim file.
 
-   - Define static parameters if necessary.  If these parameters need to be
-     accessed outside the module (as in the _init() routine) add them to the
-     list of public variables at the top of the module.
+    - Fill in the necessary code in the routines calc_phi() and calc_phi_dphi().
+ 
+    - Add any necessary initialization into the _init() routine.
 
-     Note: A Model cannot rely on static storage between calls.  A basic
-     assumption in the KIM API is that *all* information needed by a Model to
-     run is stored in the KIM API object.  This is necessary to allow multiple
-     instances of the same Model being used simultaneously (see the Test
-     `test_Ar_multiple_models' for an example of such usage).  The only case
-     where static variables can be used is if they are "hard-wired" so that the
-     Model can only work with those constant values.  In Fortran this is done
-     using the "parameter" statement.  In C, use preprocessor DEFINE
-     statements.  Otherwise variables need to be stored as PARAM_FREE_ or
-     PARAM_FIXED_ variables in the KIM API object.  See the discussion in the
-     standard.kim file.
+(e) Edit the Makefile and change the Model name appropriately.  (Search
+    for the word "FILL".)
 
-   - Fill in the necessary code in the routines calc_phi() and calc_phi_dphi().
-
-   - Add any necessary initialization into the _init() routine.
-
-5. Edit the Makefile and change the Model name appropriately.  (Search
-   for the word "FILL".)
-
-6. Compile the new Model into the API package:
-
-   % cd $KIM_DIR
-   % make
-
-   Correct any errors until the compilation succeeds.
-
-7. You can now run Tests that are compatible with your Model simply by
-   giving your new Model name as an argument.
-
-   Note: If you run a Test and it does not seem to be working, remember to
-         check the kim.log file for any messages.
-
------------------------------------------------------------------------------
-
-Direction for using the supplied templates to create a new KIM-compliant
-Buckingham Model Driver and a Ne KIM Model based on it.
-
-Follow steps 1-6 of the above directions for creating a Model, but make the
-following substitutions everywhere:
-   `model_El'          -->  `model_driver'
-   `model_Ar'          -->  `model_driver'
-   `MODELs'            -->  `MODEL_DRIVERs'
-   `Makefile.template' --> `Makefile.driver.template'
-
-7. Create a new directory under MODELs for the Ne pair potential:
-
-   % cd $KIM_DIR/MODELs
-   % mkdir model_Ne_P_Buckingham
-
-8. Copy the `Makefile.driver.based.model.template' and
-   model_El_P_Template.params files into the new directory and rename:
-
-   % cd $KIM_DIR/MODELs/model_Ne_P_Buckingham
-   % cp $KIM_DIR/DOCs/TEMPLATEs/Makefile.driver.based.model.template Makefile
-   % cp $KIM_DIR/DOCs/TEMPLATEs/model_El_P_Template.params model_Ne_P_Buckingham.params
-
-9. Edit the Makefile and change the Model name, Model Driver name, and
-   SPECIES1_NAME appropriately. (Search for the word "FILL".)
-
-10. Edit the model_Ne_P_Buckingham.params file appropriately. (Search for the
-    word "FILL".)
-
-11. Compile the new Model into the API package:
+(f) Compile the new Model into the API package:
 
     % cd $KIM_DIR
     % make
-
+ 
     Correct any errors until the compilation succeeds.
 
-12. You can now run Tests that are compatible with your Model simply by
+(g) You can now run Tests that are compatible with your Model simply by
     giving your new Model name as an argument.
 
     Note: If you run a Test and it does not seem to be working, remember to
           check the kim.log file for any messages.
 
+-----------------------------------------------------------------------------
+
+STEP 4
+
+In STEP 3, you created a KIM-compliant Model for Ar based on the Buckingham
+functional form. You will now see how you can create a Buckingham Model Driver
+and the specific Model for Ar by specifying the appropriate parameters. The
+Model Driver approach has the advantage that once the Model Driver is created
+it is easy to create many Models that use this form for different materials
+or even different parameterizations for the same material.
+
+The direction for using the supplied templates to create a new KIM-compliant
+Buckingham Model Driver and a Ne KIM Model based on it are given below.
+
+(a) Create a new directory under MODEL_DRIVERs for the Buckingham pair 
+    potential Model Driver:
+ 
+    % cd $KIM_DIR/MODEL_DRIVERs
+    % mkdir model_driver_P_Buckingham
+
+(b) Copy the .F90, .kim and Makefile templates into the new directory and
+    rename:
+
+    % cd $KIM_DIR/MODEL_DRIVERs/model_driver_P_Buckingham
+    % cp $KIM_DIR/DOCs/TEMPLATEs/model_driver_P_Template.F90 model_driver_P_Buckingham.F90
+    % cp $KIM_DIR/DOCs/TEMPLATEs/model_driver_P_Template.f.kim model_driver_P_Buckingham.kim
+    % cp $KIM_DIR/DOCs/TEMPLATEs/Makefile.driver.template Makefile
+
+    Note: For a Model written in C, copy the .c and .c.kim templates.
+
+(c) Edit the .kim file and define the parameters used by this Model Driver.
+    (Search for the word "FILL" which indicates where changes are necessary.)  
+    To edit a file on a unix machine, use for example:
+
+    % pico model_driver_Buckingham.kim
+ 
+(d) Edit the .F90 (or .c) file making all necessary changes.  (Search for the
+    word "FILL".)  The main changes are:
+
+    - Model Driver name which appears in several places in the file.
+
+    - Fill in the Model Driver parameters which are required in several places in the file.
+
+    - Fill in the necessary code in the routines calc_phi() and calc_phi_dphi().
+
+    - Specify the format for reading in the parameter data (in Fortran 90 you can 
+      simply set this to `*'.)
+ 
+(e) Edit the Makefile and change the Model name appropriately.  (Search
+    for the word "FILL".)
+
+(f) Compile the new Model Driver into the API package:
+
+    % cd $KIM_DIR
+    % make
+ 
+    Correct any errors until the compilation succeeds.
+
+(g) Create a new directory under MODELs for the Ne pair potential:
+
+    % cd $KIM_DIR/MODELs
+    % mkdir model_Ne_P_Buckingham
+
+(h) Copy the `Makefile.driver.based.model.template' and
+    model_El_P_Template.params files into the new directory and rename:
+
+    % cd $KIM_DIR/MODELs/model_Ne_P_Buckingham
+    % cp $KIM_DIR/DOCs/TEMPLATEs/Makefile.driver.based.model.template Makefile
+    % cp $KIM_DIR/DOCs/TEMPLATEs/model_El_P_Template.params model_Ne_P_Buckingham.params
+
+(i) Edit the Makefile and change the Model name, Model Driver name, and
+    SPECIES1_NAME appropriately. (Search for the word "FILL".)
+
+(j)  Edit the model_Ne_P_Buckingham.params file appropriately. (Search for the
+     word "FILL".)
+
+(k)  Compile the new Model into the API package:
+
+     % cd $KIM_DIR
+     % make
+
+     Correct any errors until the compilation succeeds.
+
+(l)  You can now run Tests that are compatible with your Model simply by
+     giving your new Model name as an argument.
+ 
+     Note: If you run a Test and it does not seem to be working, remember to
+           check the kim.log file for any messages.
+ 
 
 *******************************************************************************
 

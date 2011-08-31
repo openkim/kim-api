@@ -156,6 +156,13 @@ model_Ar_P_MLJ_F90 (Fortran 90)
      template implements all NBCs and Iterator and Locator modes in a way that
      results in a very compact Compute_Energy_Forces() subroutine.
 
+model_Al_PF_ErcolessiAdams (Fortran 90)
+     This Model is based on the template file
+     $KIM_DIR/DOCs/TEMPLATEs/model_El_PF_Template.F90.  Thus, it is useful to
+     compare the file model_Al_PF_ErcolessiAdams.F90 with
+     $KIM_DIRDOCs/TEMPLATEs/model_El_PF_Template.F90 to see the relatively
+     simple changes required to implement a pair functional Model.
+
 model_Ar_P_LJ (F90)
 model_Ne_P_LJ (F90)
      These Models are based on the KIM Model Driver model_driver_P_LJ.  They
@@ -172,10 +179,4 @@ model_Ne_P_Morse (C)
      $KIM_DIR/MODEL_DRIVERs/model_driver_P_Morse/ for more details on how KIM
      Model Drivers are handled.
 
-model_Al_PF_ErcolessiAdams (Fortran 90)
-     This Model is based on the template file
-     $KIM_DIR/DOCs/TEMPLATEs/model_El_PF_Template.F90.  Thus, it is useful to
-     compare the file model_Al_PF_ErcolessiAdams.F90 with
-     $KIM_DIRDOCs/TEMPLATEs/model_El_PF_Template.F90 to see the relatively
-     simple changes required to implement a pair functional Model.
 
