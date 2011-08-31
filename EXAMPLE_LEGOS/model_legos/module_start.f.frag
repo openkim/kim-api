@@ -14,6 +14,8 @@
 !**
 !*******************************************************************************
 
+#include "KIMstatus.h"
+
 module MODEL_NAME_STR
   use KIMservice
   implicit none

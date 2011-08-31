@@ -60,21 +60,21 @@
 
     ! get sigma from KIM object
     psigma = kim_api_get_data_f(pkim,"PARAM_FREE_sigma",ier)
-    if (ier.le.0) then
+    if (ier.lt.KIM_STATUS_OK) then
        call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
     
     ! get epsilon from KIM object
     pepsilon = kim_api_get_data_f(pkim,"PARAM_FREE_epsilon",ier)
-    if (ier.le.0) then
+    if (ier.lt.KIM_STATUS_OK) then
        call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
     
     ! get cutoff parameter from KIM object
     pparamcut = kim_api_get_data_f(pkim,"PARAM_FREE_cutoff",ier)
-    if (ier.le.0) then
+    if (ier.lt.KIM_STATUS_OK) then
        call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
@@ -83,7 +83,7 @@
     
     ! store model cutoff in KIM object
     pcutoff =  kim_api_get_data_f(pkim,"cutoff",ier)
-    if (ier.le.0) then
+    if (ier.lt.KIM_STATUS_OK) then
        call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
@@ -91,7 +91,7 @@
     
     ! store cutnorm in KIM object
     pcutnorm = kim_api_get_data_f(pkim,"PARAM_FIXED_cutnorm",ier)
-    if (ier.le.0) then
+    if (ier.lt.KIM_STATUS_OK) then
        call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
@@ -99,7 +99,7 @@
     
     ! store A in KIM object
     pA = kim_api_get_data_f(pkim,"PARAM_FIXED_A",ier)
-    if (ier.le.0) then
+    if (ier.lt.KIM_STATUS_OK) then
        call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
@@ -108,7 +108,7 @@
     
     ! store B in KIM object
     pB = kim_api_get_data_f(pkim,"PARAM_FIXED_B",ier)
-    if (ier.le.0) then
+    if (ier.lt.KIM_STATUS_OK) then
        call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
@@ -117,7 +117,7 @@
     
     ! store C in KIM object
     pC = kim_api_get_data_f(pkim,"PARAM_FIXED_C",ier)
-    if (ier.le.0) then
+    if (ier.lt.KIM_STATUS_OK) then
        call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
@@ -126,7 +126,7 @@
     
     ! store sigma^2 in KIM object
     psigmasq = kim_api_get_data_f(pkim,"PARAM_FIXED_sigmasq",ier)
-    if (ier.le.0) then
+    if (ier.lt.KIM_STATUS_OK) then
        call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
@@ -134,7 +134,7 @@
     
     ! store cutoff^2 in KIM object
     pcutsq = kim_api_get_data_f(pkim,"PARAM_FIXED_cutsq",ier)
-    if (ier.le.0) then
+    if (ier.lt.KIM_STATUS_OK) then
        call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
@@ -168,7 +168,7 @@
     
     ! get sigma from KIM object and free memory
     psigma = kim_api_get_data_f(pkim,"PARAM_FREE_sigma",ier)
-    if (ier.le.0) then
+    if (ier.lt.KIM_STATUS_OK) then
        call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
@@ -176,7 +176,7 @@
     
     ! get epsilon from KIM object and free memory
     pepsilon = kim_api_get_data_f(pkim,"PARAM_FREE_epsilon",ier)
-    if (ier.le.0) then
+    if (ier.lt.KIM_STATUS_OK) then
        call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
@@ -184,7 +184,7 @@
     
     ! get cutoff parameter from KIM object and free memory
     pparamcut = kim_api_get_data_f(pkim,"PARAM_FREE_cutoff",ier)
-    if (ier.le.0) then
+    if (ier.lt.KIM_STATUS_OK) then
        call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
@@ -192,7 +192,7 @@
     
     ! get cutnorm in KIM object and free memory
     pcutnorm = kim_api_get_data_f(pkim,"PARAM_FIXED_cutnorm",ier)
-    if (ier.le.0) then
+    if (ier.lt.KIM_STATUS_OK) then
        call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
@@ -200,7 +200,7 @@
     
     ! get A in KIM object and free memory
     pA = kim_api_get_data_f(pkim,"PARAM_FIXED_A",ier)
-    if (ier.le.0) then
+    if (ier.lt.KIM_STATUS_OK) then
        call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
@@ -208,7 +208,7 @@
     
     ! get B in KIM object and free memory
     pB = kim_api_get_data_f(pkim,"PARAM_FIXED_B",ier)
-    if (ier.le.0) then
+    if (ier.lt.KIM_STATUS_OK) then
        call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
@@ -216,7 +216,7 @@
     
     ! get C in KIM object and free memory
     pC = kim_api_get_data_f(pkim,"PARAM_FIXED_C",ier)
-    if (ier.le.0) then
+    if (ier.lt.KIM_STATUS_OK) then
        call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
@@ -224,7 +224,7 @@
     
     ! get sigma^2 in KIM object and free memory
     psigmasq = kim_api_get_data_f(pkim,"PARAM_FIXED_sigmasq",ier)
-    if (ier.le.0) then
+    if (ier.lt.KIM_STATUS_OK) then
        call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
@@ -232,7 +232,7 @@
 
     ! get cutoff^2 in KIM object and free memory
     pcutsq = kim_api_get_data_f(pkim,"PARAM_FIXED_cutsq",ier)
-    if (ier.le.0) then
+    if (ier.lt.KIM_STATUS_OK) then
        call report_error(__LINE__, "kim_api_get_data", ier)
        stop
     endif
@@ -250,9 +250,12 @@
 
     !-- Local variables
     character(len=10000), parameter :: file = __FILE__
+    character(len=KEY_CHAR_LENGTH)  :: message; pointer(pmessage,message)
 
+    pmessage = kim_api_status_msg_f(status)
     !-- print the error message
-    print *,'* ERROR at line', line, 'in ',trim(file), ': ', str,'. kimerror =', status
+    print *,'* ERROR at line', line, 'in ',trim(file), ': ', str,'. kimerror =', &
+            message(1:(index(message,char(0))-1))
 
   end subroutine report_error
 
@@ -306,7 +309,7 @@ subroutine MODEL_NAME_STR_init(pkim)
   
   ! store model cutoff in KIM object
   pcutoff =  kim_api_get_data_f(pkim,"cutoff",ier)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_get_data", ier)
      stop
   endif
@@ -316,7 +319,7 @@ subroutine MODEL_NAME_STR_init(pkim)
   psigma = malloc(one*8) ! 8 is the size of a real*8
   ! store sigma in KIM object
   ier = kim_api_set_data_f(pkim,"PARAM_FREE_sigma",one,psigma)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_set_data", ier)
      stop
   endif
@@ -326,7 +329,7 @@ subroutine MODEL_NAME_STR_init(pkim)
   pepsilon = malloc(one*8) ! 8 is the size of a real*8
   ! store epsilon in KIM object
   ier = kim_api_set_data_f(pkim,"PARAM_FREE_epsilon",one,pepsilon)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_set_data", ier)
      stop
   endif
@@ -336,7 +339,7 @@ subroutine MODEL_NAME_STR_init(pkim)
   pparamcut = malloc(one*8) ! 8 is the size of a real*8
   ! store cutoff as parameter in KIM object
   ier = kim_api_set_data_f(pkim,"PARAM_FREE_cutoff",one,pparamcut)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_set_data", ier)
      stop
   endif
@@ -346,7 +349,7 @@ subroutine MODEL_NAME_STR_init(pkim)
   pcutnorm = malloc(one*8) ! 8 is the size of a real*8
   ! store cutnorm in KIM object
   ier = kim_api_set_data_f(pkim,"PARAM_FIXED_cutnorm",one,pcutnorm)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_set_data", ier);
      stop
   endif
@@ -356,7 +359,7 @@ subroutine MODEL_NAME_STR_init(pkim)
   pA = malloc(one*8) ! 8 is the size of a real*8
   ! store A in KIM object
   ier = kim_api_set_data_f(pkim,"PARAM_FIXED_A",one,pA)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_set_data", ier)
      stop
   endif
@@ -367,7 +370,7 @@ subroutine MODEL_NAME_STR_init(pkim)
   pB = malloc(one*8) ! 8 is the size of a real*8
   ! store B in KIM object
   ier = kim_api_set_data_f(pkim,"PARAM_FIXED_B",one,pB)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_set_data", ier)
      stop
   endif
@@ -378,7 +381,7 @@ subroutine MODEL_NAME_STR_init(pkim)
   pC = malloc(one*8) ! 8 is the size of a real*8
   ! store C in KIM object
   ier = kim_api_set_data_f(pkim,"PARAM_FIXED_C",one,pC)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_set_data", ier)
      stop
   endif
@@ -389,7 +392,7 @@ subroutine MODEL_NAME_STR_init(pkim)
   psigmasq = malloc(one*8) ! 8 is the size of a real*8
   ! store sigma^2 in KIM object
   ier = kim_api_set_data_f(pkim,"PARAM_FIXED_sigmasq",one,psigmasq)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_set_data", ier)
      stop
   endif
@@ -399,7 +402,7 @@ subroutine MODEL_NAME_STR_init(pkim)
   pcutsq = malloc(one*8) ! 8 is the size of a real*8
   ! store cutoff^2 in KIM object
   ier = kim_api_set_data_f(pkim,"PARAM_FIXED_cutsq",one,pcutsq)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_set_data", ier)
      stop
   endif

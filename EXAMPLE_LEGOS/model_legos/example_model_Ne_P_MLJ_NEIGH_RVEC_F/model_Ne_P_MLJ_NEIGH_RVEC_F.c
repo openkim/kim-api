@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <math.h>
 #include "KIMserviceC.h"
+#include "KIMstatus.h"
 
 #define DIM 3
 #define Ar  1
@@ -93,85 +94,85 @@ static void compute(void* km, int* ier)
 
    /* unpack data from KIM object */
    nAtoms = (int*) KIM_API_get_data(pkim, "numberOfAtoms", ier);
-   if (1 > *ier)
+   if (KIM_STATUS_OK > *ier)
    {
       report_error(__LINE__, "KIM_API_get_data", *ier);
       return;
    }
    nAtomTypes = (int*) KIM_API_get_data(pkim, "numberAtomTypes", ier);
-   if (1 > *ier)
+   if (KIM_STATUS_OK > *ier)
    {
       report_error(__LINE__, "KIM_API_get_data", *ier);
       return;
    }
    atomTypes = (int*) KIM_API_get_data(pkim, "atomTypes", ier);
-   if (1 > *ier)
+   if (KIM_STATUS_OK > *ier)
    {
       report_error(__LINE__, "KIM_API_get_data", *ier);
       return;
    }
    cutoff = (double*) KIM_API_get_data(pkim, "cutoff", ier);
-   if (1 > *ier)
+   if (KIM_STATUS_OK > *ier)
    {
       report_error(__LINE__, "KIM_API_get_data", *ier);
       return;
    }
    epsilon = (double*) KIM_API_get_data(pkim, "PARAM_FREE_epsilon", ier);
-   if (1 > *ier)
+   if (KIM_STATUS_OK > *ier)
    {
       report_error(__LINE__, "KIM_API_get_data", *ier);
       return;
    }
    sigma = (double*) KIM_API_get_data(pkim, "PARAM_FREE_sigma", ier);
-   if (1 > *ier)
+   if (KIM_STATUS_OK > *ier)
    {
       report_error(__LINE__, "KIM_API_get_data", *ier);
       return;
    }
    cutnorm = (double*) KIM_API_get_data(pkim, "PARAM_FIXED_cutnorm", ier);
-   if (1 > *ier)
+   if (KIM_STATUS_OK > *ier)
    {
       report_error(__LINE__, "KIM_API_get_data", *ier);
       return;
    }
    A = (double*) KIM_API_get_data(pkim, "PARAM_FIXED_A", ier);
-   if (1 > *ier)
+   if (KIM_STATUS_OK > *ier)
    {
       report_error(__LINE__, "KIM_API_get_data", *ier);
       return;
    }
    B = (double*) KIM_API_get_data(pkim, "PARAM_FIXED_B", ier);
-   if (1 > *ier)
+   if (KIM_STATUS_OK > *ier)
    {
       report_error(__LINE__, "KIM_API_get_data", *ier);
       return;
    }
    C = (double*) KIM_API_get_data(pkim, "PARAM_FIXED_C", ier);
-   if (1 > *ier)
+   if (KIM_STATUS_OK > *ier)
    {
       report_error(__LINE__, "KIM_API_get_data", *ier);
       return;
    }
    sigmasq = (double*) KIM_API_get_data(pkim, "PARAM_FIXED_sigmasq", ier);
-   if (1 > *ier)
+   if (KIM_STATUS_OK > *ier)
    {
       report_error(__LINE__, "KIM_API_get_data", *ier);
       return;
    }
    cutsq = (double*) KIM_API_get_data(pkim, "PARAM_FIXED_cutsq", ier);
-   if (1 > *ier)
+   if (KIM_STATUS_OK > *ier)
    {
       report_error(__LINE__, "KIM_API_get_data", *ier);
       return;
    }
    energy = (double*) KIM_API_get_data(pkim, "energy", ier);
-   if (1 > *ier)
+   if (KIM_STATUS_OK > *ier)
    {
       report_error(__LINE__, "KIM_API_get_data", *ier);
       return;
    }
    coords = (double*) KIM_API_get_data(pkim, "coordinates", ier);
-   if (1 > *ier)
+   if (KIM_STATUS_OK > *ier)
    {
       report_error(__LINE__, "KIM_API_get_data", *ier);
       return;
@@ -179,26 +180,26 @@ static void compute(void* km, int* ier)
 
    /* check to see if we have been asked to compute the forces, energyPerAtom, and virial */
    comp_force = KIM_API_isit_compute(pkim, "forces", ier);
-   if (1 > *ier)
+   if (KIM_STATUS_OK > *ier)
    {
       report_error(__LINE__, "KIM_API_isit_compute", *ier);
       return;
    }
    comp_energyPerAtom = KIM_API_isit_compute(pkim, "energyPerAtom", ier);
-   if (1 > *ier)
+   if (KIM_STATUS_OK > *ier)
    {
       report_error(__LINE__, "KIM_API_isit_compute", *ier);
       return;
    }
    comp_virial = KIM_API_isit_compute(pkim, "virial", ier);
-   if (1 > *ier)
+   if (KIM_STATUS_OK > *ier)
    {
       report_error(__LINE__, "KIM_API_isit_compute", *ier);
       return;
    }
 
    /* check to be sure the atom types are correct */
-   *ier = 0; /* assume an error */
+   *ier = KIM_STATUS_FAIL; /* assume an error */
    for (i = 0; i < *nAtoms; ++i)
    {
       if (Ar != atomTypes[i])
@@ -207,13 +208,13 @@ static void compute(void* km, int* ier)
          return;
       }
    }
-   *ier = 1; /* everything is ok */
+   *ier = KIM_STATUS_OK; /* everything is ok */
 
    /* initialize potential energies, forces, and virial term */
    if (comp_energyPerAtom)
    {
       energyPerAtom = (double*) KIM_API_get_data(pkim, "energyPerAtom", ier);
-      if (1 > *ier)
+      if (KIM_STATUS_OK > *ier)
       {
          report_error(__LINE__, "KIM_API_get_data", *ier);
          return;
@@ -231,7 +232,7 @@ static void compute(void* km, int* ier)
    if (comp_force)
    {
       force = (double*) KIM_API_get_data(pkim, "forces", ier);
-      if (1 > *ier)
+      if (KIM_STATUS_OK > *ier)
       {
          report_error(__LINE__, "KIM_API_get_data", *ier);
          return;
@@ -248,7 +249,7 @@ static void compute(void* km, int* ier)
    if (comp_virial)
    {
       virial = (double*) KIM_API_get_data(pkim, "virial", ier);
-      if (1 > *ier)
+      if (KIM_STATUS_OK > *ier)
       {
          report_error(__LINE__, "KIM_API_get_data", *ier);
          return;
@@ -258,16 +259,16 @@ static void compute(void* km, int* ier)
 
    /* reset neighbor iterator */
    *ier = KIM_API_get_full_neigh(pkim, 0, 0, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
-   if (2 != *ier)
+   if (KIM_STATUS_NEIGH_ITER_INIT_OK != *ier)
    {
       report_error(__LINE__, "KIM_API_get_full_neigh", *ier);
-      *ier = 0;
+      *ier = KIM_STATUS_FAIL;
       return;
    }
 
    /* compute energy and forces */
    *ier = KIM_API_get_full_neigh(pkim, 0, 1, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
-   while (1 == *ier)
+   while (KIM_STATUS_OK == *ier)
    {
       /* loop over the neighbors of currentAtom */
       for (jj = 0; jj < numOfAtomNeigh; ++ jj)
@@ -335,7 +336,7 @@ static void compute(void* km, int* ier)
    }
 
    /* everything is great */
-   *ier = 1;
+   *ier = KIM_STATUS_OK;
    return;
 }
 
@@ -361,7 +362,7 @@ static void reinit(void *km)
 
    /* get sigma from KIM object */
    model_sigma = (double*) KIM_API_get_data(pkim, "PARAM_FREE_sigma", &ier);
-   if (1 > ier)
+   if (KIM_STATUS_OK > ier)
    {
       report_error(__LINE__, "KIM_API_get_data", ier);
       exit(1);
@@ -369,7 +370,7 @@ static void reinit(void *km)
    
    /* get epsilon from KIM object */
    model_epsilon = (double*) KIM_API_get_data(pkim, "PARAM_FREE_epsilon", &ier);
-   if (1 > ier)
+   if (KIM_STATUS_OK > ier)
    {
       report_error(__LINE__, "KIM_API_get_data", ier);
       exit(1);
@@ -377,7 +378,7 @@ static void reinit(void *km)
 
    /* get parameter cutoff from KIM object */
    model_Pcutoff = (double*) KIM_API_get_data(pkim, "PARAM_FREE_cutoff", &ier);
-   if (1 > ier)
+   if (KIM_STATUS_OK > ier)
    {
       report_error(__LINE__, "KIM_API_get_data", ier);
       exit(1);
@@ -389,7 +390,7 @@ static void reinit(void *km)
 
    /* store model cutoff in KIM object */
    model_cutoff = (double*) KIM_API_get_data(pkim, "cutoff", &ier);
-   if (1 > ier)
+   if (KIM_STATUS_OK > ier)
    {
       report_error(__LINE__, "KIM_API_get_data", ier);
       exit(1);
@@ -398,7 +399,7 @@ static void reinit(void *km)
 
    /* store model_cutnorm in KIM object */
    model_cutnorm = (double*) KIM_API_get_data(pkim, "PARAM_FIXED_cutnorm", &ier);
-   if (1 > ier)
+   if (KIM_STATUS_OK > ier)
    {
       report_error(__LINE__, "KIM_API_get_data", ier);
       exit(1);
@@ -408,7 +409,7 @@ static void reinit(void *km)
 
    /* store model_A in KIM object */
    model_A = (double*) KIM_API_get_data(pkim, "PARAM_FIXED_A", &ier);
-   if (1 > ier)
+   if (KIM_STATUS_OK > ier)
    {
       report_error(__LINE__, "KIM_API_get_data", ier);
       exit(1);
@@ -419,7 +420,7 @@ static void reinit(void *km)
 
    /* store model_B in KIM object */
    model_B = (double*) KIM_API_get_data(pkim, "PARAM_FIXED_B", &ier);
-   if (1 > ier)
+   if (KIM_STATUS_OK > ier)
    {
       report_error(__LINE__, "KIM_API_get_data", ier);
       exit(1);
@@ -430,7 +431,7 @@ static void reinit(void *km)
 
    /* store model_C in KIM object */
    model_C = (double*) KIM_API_get_data(pkim, "PARAM_FIXED_C", &ier);
-   if (1 > ier)
+   if (KIM_STATUS_OK > ier)
    {
       report_error(__LINE__, "KIM_API_get_data", ier);
       exit(1);
@@ -441,7 +442,7 @@ static void reinit(void *km)
 
    /* store model_sigmasq in KIM object */
    model_sigmasq = (double*) KIM_API_get_data(pkim, "PARAM_FIXED_sigmasq", &ier);
-   if (1 > ier)
+   if (KIM_STATUS_OK > ier)
    {
       report_error(__LINE__, "KIM_API_get_data", ier);
       exit(1);
@@ -451,7 +452,7 @@ static void reinit(void *km)
 
    /* store model_cutsq in KIM object */
    model_cutsq = KIM_API_get_data(pkim, "PARAM_FIXED_cutsq", &ier);
-   if (1 > ier)
+   if (KIM_STATUS_OK > ier)
    {
       report_error(__LINE__, "KIM_API_get_data", ier);
       exit(1);
@@ -480,7 +481,7 @@ static void destroy(void *km)
 
    /* get and free sigma from KIM object */
    model_sigma = (double*) KIM_API_get_data(pkim, "PARAM_FREE_sigma", &ier);
-   if (1 > ier)
+   if (KIM_STATUS_OK > ier)
    {
       report_error(__LINE__, "KIM_API_get_data", ier);
       exit(1);
@@ -489,7 +490,7 @@ static void destroy(void *km)
    
    /* get and free epsilon from KIM object */
    model_epsilon = (double*) KIM_API_get_data(pkim, "PARAM_FREE_epsilon", &ier);
-   if (1 > ier)
+   if (KIM_STATUS_OK > ier)
    {
       report_error(__LINE__, "KIM_API_get_data", ier);
       exit(1);
@@ -498,7 +499,7 @@ static void destroy(void *km)
 
    /* get and free parameter cutoff from KIM object */
    model_Pcutoff = (double*) KIM_API_get_data(pkim, "PARAM_FREE_cutoff", &ier);
-   if (1 > ier)
+   if (KIM_STATUS_OK > ier)
    {
       report_error(__LINE__, "KIM_API_get_data", ier);
       exit(1);
@@ -507,7 +508,7 @@ static void destroy(void *km)
 
    /* get and free model_cutnorm in KIM object */
    model_cutnorm = (double*) KIM_API_get_data(pkim, "PARAM_FIXED_cutnorm", &ier);
-   if (1 > ier)
+   if (KIM_STATUS_OK > ier)
    {
       report_error(__LINE__, "KIM_API_get_data", ier);
       exit(1);
@@ -516,7 +517,7 @@ static void destroy(void *km)
 
    /* get and free model_A in KIM object */
    model_A = (double*) KIM_API_get_data(pkim, "PARAM_FIXED_A", &ier);
-   if (1 > ier)
+   if (KIM_STATUS_OK > ier)
    {
       report_error(__LINE__, "KIM_API_get_data", ier);
       exit(1);
@@ -525,7 +526,7 @@ static void destroy(void *km)
 
    /* get and free model_B in KIM object */
    model_B = (double*) KIM_API_get_data(pkim, "PARAM_FIXED_B", &ier);
-   if (1 > ier)
+   if (KIM_STATUS_OK > ier)
    {
       report_error(__LINE__, "KIM_API_get_data", ier);
       exit(1);
@@ -534,7 +535,7 @@ static void destroy(void *km)
 
    /* get and free model_C in KIM object */
    model_C = (double*) KIM_API_get_data(pkim, "PARAM_FIXED_C", &ier);
-   if (1 > ier)
+   if (KIM_STATUS_OK > ier)
    {
       report_error(__LINE__, "KIM_API_get_data", ier);
       exit(1);
@@ -543,7 +544,7 @@ static void destroy(void *km)
    
    /* get and free model_sigmasq in KIM object */
    model_sigmasq = (double*) KIM_API_get_data(pkim, "PARAM_FIXED_sigmasq", &ier);
-   if (1 > ier)
+   if (KIM_STATUS_OK > ier)
    {
       report_error(__LINE__, "KIM_API_get_data", ier);
       exit(1);
@@ -552,7 +553,7 @@ static void destroy(void *km)
 
    /* get and free model_cutsq in KIM object */
    model_cutsq = KIM_API_get_data(pkim, "PARAM_FIXED_cutsq", &ier);
-   if (1 > ier)
+   if (KIM_STATUS_OK > ier)
    {
       report_error(__LINE__, "KIM_API_get_data", ier);
       exit(1);
@@ -581,21 +582,24 @@ void model_ne_p_mlj_neigh_rvec_f_init_(void *km)
    int ier;
 
    /* store pointer to compute function in KIM object */
-   if (! KIM_API_set_data(pkim, "compute", 1, (void*) &compute))
+   ier = KIM_API_set_data(pkim, "compute", 1, (void*) &compute);
+   if (KIM_STATUS_OK > ier)
    {
       report_error(__LINE__, "KIM_API_set_data", ier);
       exit(1);
    }
 
    /* store pointer to reinit function in KIM object */
-   if (! KIM_API_set_data(pkim, "reinit", 1, (void*) &reinit))
+   ier = KIM_API_set_data(pkim, "reinit", 1, (void*) &reinit);
+   if (KIM_STATUS_OK > ier)
    {
       report_error(__LINE__, "KIM_API_set_data", ier);
       exit(1);
    }
 
    /* store pointer to destroy function in KIM object */
-   if (! KIM_API_set_data(pkim, "destroy", 1, (void*) &destroy))
+   ier = KIM_API_set_data(pkim, "destroy", 1, (void*) &destroy);
+   if (KIM_STATUS_OK > ier)
    {
       report_error(__LINE__, "KIM_API_set_data", ier);
       exit(1);
@@ -603,7 +607,7 @@ void model_ne_p_mlj_neigh_rvec_f_init_(void *km)
 
    /* store model cutoff in KIM object */
    model_cutoff = (double*) KIM_API_get_data(pkim, "cutoff", &ier);
-   if (1 > ier)
+   if (KIM_STATUS_OK > ier)
    {
       report_error(__LINE__, "KIM_API_get_data", ier);
       exit(1);
@@ -614,11 +618,12 @@ void model_ne_p_mlj_neigh_rvec_f_init_(void *km)
    model_sigma = (double*) malloc(1*sizeof(double));
    if (NULL == model_sigma)
    {
-      report_error(__LINE__, "malloc", ier);
+      report_error(__LINE__, "malloc", KIM_STATUS_FAIL);
       exit(1);
    }
    /* store model_sigma in KIM object */
-   if (! KIM_API_set_data(pkim, "PARAM_FREE_sigma", 1, (void*) model_sigma))
+   ier = KIM_API_set_data(pkim, "PARAM_FREE_sigma", 1, (void*) model_sigma);
+   if (KIM_STATUS_OK > ier)
    {
       report_error(__LINE__, "KIM_API_set_data", ier);
       exit(1);
@@ -630,11 +635,12 @@ void model_ne_p_mlj_neigh_rvec_f_init_(void *km)
    model_epsilon = (double*) malloc(1*sizeof(double));
    if (NULL == model_epsilon)
    {
-      report_error(__LINE__, "malloc", ier);
+      report_error(__LINE__, "malloc", KIM_STATUS_FAIL);
       exit(1);
    }
    /* store model_epsilon in KIM object */
-   if (! KIM_API_set_data(pkim, "PARAM_FREE_epsilon", 1, (void*) model_epsilon))
+   ier = KIM_API_set_data(pkim, "PARAM_FREE_epsilon", 1, (void*) model_epsilon);
+   if (KIM_STATUS_OK > ier)
    {
       report_error(__LINE__, "KIM_API_set_data", ier);
       exit(1);
@@ -646,11 +652,12 @@ void model_ne_p_mlj_neigh_rvec_f_init_(void *km)
    model_Pcutoff = (double*) malloc(1*sizeof(double));
    if (NULL == model_Pcutoff)
    {
-      report_error(__LINE__, "malloc", ier);
+      report_error(__LINE__, "malloc", KIM_STATUS_FAIL);
       exit(1);
    }
    /* store model_epsilon in KIM object */
-   if (! KIM_API_set_data(pkim, "PARAM_FREE_cutoff", 1, (void*) model_Pcutoff))
+   ier = KIM_API_set_data(pkim, "PARAM_FREE_cutoff", 1, (void*) model_Pcutoff);
+   if (KIM_STATUS_OK > ier)
    {
       report_error(__LINE__, "KIM_API_set_data", ier);
       exit(1);
@@ -662,11 +669,12 @@ void model_ne_p_mlj_neigh_rvec_f_init_(void *km)
    model_cutnorm = (double*) malloc(1*sizeof(double));
    if (NULL == model_cutnorm)
    {
-      report_error(__LINE__, "malloc", ier);
+      report_error(__LINE__, "malloc", KIM_STATUS_FAIL);
       exit(1);
    }
    /* store model_cutnorm in KIM object */
-   if (! KIM_API_set_data(pkim, "PARAM_FIXED_cutnorm", 1, (void*) model_cutnorm))
+   ier = KIM_API_set_data(pkim, "PARAM_FIXED_cutnorm", 1, (void*) model_cutnorm);
+   if (KIM_STATUS_OK > ier)
    {
       report_error(__LINE__, "KIM_API_set_data", ier);
       exit(1);
@@ -678,11 +686,12 @@ void model_ne_p_mlj_neigh_rvec_f_init_(void *km)
    model_A = (double*) malloc(1*sizeof(double));
    if (NULL == model_A)
    {
-      report_error(__LINE__, "malloc", ier);
+      report_error(__LINE__, "malloc", KIM_STATUS_FAIL);
       exit(1);
    }
    /* store model_A in KIM object */
-   if (! KIM_API_set_data(pkim, "PARAM_FIXED_A", 1, (void*) model_A))
+   ier = KIM_API_set_data(pkim, "PARAM_FIXED_A", 1, (void*) model_A);
+   if (KIM_STATUS_OK > ier)
    {
       report_error(__LINE__, "KIM_API_set_data", ier);
       exit(1);
@@ -695,11 +704,12 @@ void model_ne_p_mlj_neigh_rvec_f_init_(void *km)
    model_B = (double*) malloc(1*sizeof(double));
    if (NULL == model_B)
    {
-      report_error(__LINE__, "malloc", ier);
+      report_error(__LINE__, "malloc", KIM_STATUS_FAIL);
       exit(1);
    }
    /* store model_B in KIM object */
-   if (! KIM_API_set_data(pkim, "PARAM_FIXED_B", 1, (void*) model_B))
+   ier = KIM_API_set_data(pkim, "PARAM_FIXED_B", 1, (void*) model_B);
+   if (KIM_STATUS_OK > ier)
    {
       report_error(__LINE__, "KIM_API_set_data", ier);
       exit(1);
@@ -712,11 +722,12 @@ void model_ne_p_mlj_neigh_rvec_f_init_(void *km)
    model_C = (double*) malloc(1*sizeof(double));
    if (NULL == model_C)
    {
-      report_error(__LINE__, "malloc", ier);
+      report_error(__LINE__, "malloc", KIM_STATUS_FAIL);
       exit(1);
    }
    /* store model_C in KIM object */
-   if (! KIM_API_set_data(pkim, "PARAM_FIXED_C", 1, (void*) model_C))
+   ier = KIM_API_set_data(pkim, "PARAM_FIXED_C", 1, (void*) model_C);
+   if (KIM_STATUS_OK > ier)
    {
       report_error(__LINE__, "KIM_API_set_data", ier);
       exit(1);
@@ -729,11 +740,12 @@ void model_ne_p_mlj_neigh_rvec_f_init_(void *km)
    model_sigmasq = (double*) malloc(1*sizeof(double));
    if (NULL == model_sigmasq)
    {
-      report_error(__LINE__, "malloc", ier);
+      report_error(__LINE__, "malloc", KIM_STATUS_FAIL);
       exit(1);
    }
    /* store model_sigmasq in KIM object */
-   if (! KIM_API_set_data(pkim, "PARAM_FIXED_sigmasq", 1, (void*) model_sigmasq))
+   ier = KIM_API_set_data(pkim, "PARAM_FIXED_sigmasq", 1, (void*) model_sigmasq);
+   if (KIM_STATUS_OK > ier)
    {
       report_error(__LINE__, "KIM_API_set_data", ier);
       exit(1);
@@ -745,11 +757,12 @@ void model_ne_p_mlj_neigh_rvec_f_init_(void *km)
    model_cutsq = (double*) malloc(1*sizeof(double));
    if (NULL == model_cutsq)
    {
-      report_error(__LINE__, "malloc", ier);
+      report_error(__LINE__, "malloc", KIM_STATUS_FAIL);
       exit(1);
    }
    /* store model_cutsq in KIM object */
-   if (! KIM_API_set_data(pkim, "PARAM_FIXED_cutsq", 1, (void*) model_cutsq))
+   ier = KIM_API_set_data(pkim, "PARAM_FIXED_cutsq", 1, (void*) model_cutsq);
+   if (KIM_STATUS_OK > ier)
    {
       report_error(__LINE__, "KIM_API_set_data", ier);
       exit(1);
@@ -762,5 +775,6 @@ void model_ne_p_mlj_neigh_rvec_f_init_(void *km)
 
 static void report_error(int line, char* str, int status)
 {
-   printf("* ERROR at line %i in %s: %s. kimerror = %i\n", line, __FILE__, str, status);
+   printf("* ERROR at line %i in %s: %s. kimerror = %s\n",
+          line, __FILE__, str, KIM_API_status_msg(status));
 }

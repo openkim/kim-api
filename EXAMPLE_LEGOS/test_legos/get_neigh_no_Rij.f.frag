@@ -29,13 +29,13 @@ integer function get_neigh_no_Rij(pkim,mode,request,atom,numnei,pnei1atom,pRij)
 
   ! unpack neighbor list object
   pneighborListdum = kim_api_get_data_f(pkim, "neighObject", ier)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_get_data_f", ier)
      stop
   endif
   
   pnAtoms = kim_api_get_data_f(pkim, "numberOfAtoms", ier)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_get_data_f", ier)
      stop
   endif

@@ -18,6 +18,7 @@
 !**
 !*******************************************************************************
 
+#include "KIMstatus.h"
 
 !-------------------------------------------------------------------------------
 !
@@ -100,7 +101,7 @@ program TEST_NAME_STR
 
   ! check for PARAM_FREE_cutoff
   ier = check_model_parameters(pkim)
-  if (ier.ne.1) then
+  if (ier.ne.KIM_STATUS_OK) then
      ! PARAM_FREE_cutoff is not provided by the Model
      call report_error(__LINE__, "exiting...", ier);
      stop
@@ -109,7 +110,7 @@ program TEST_NAME_STR
   ! access the PARAM_FREE_cutoff parameter
   !
   pparam_cutoff = kim_api_get_data_f(pkim, "PARAM_FREE_cutoff", ier)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_get_data_f", ier)
      stop
   endif
@@ -122,7 +123,7 @@ program TEST_NAME_STR
   ! Set up for first iteration of the loop over the cutoff radius
   param_cutoff = param_cutoff - 2.0d0
   ier = kim_api_model_reinit_f(pkim)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_model_reinit_f", ier)
      stop
   endif
@@ -176,7 +177,7 @@ program TEST_NAME_STR
      !
      param_cutoff = param_cutoff + 1.0
      ier = kim_api_model_reinit_f(pkim)
-     if (ier.le.0) then
+     if (ier.lt.KIM_STATUS_OK) then
         call report_error(__LINE__, "kim_api_model_reinit_f", ier)
         stop
      endif

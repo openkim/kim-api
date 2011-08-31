@@ -18,6 +18,8 @@
 !**
 !****************************************************************************
 
+#include "KIMstatus.h"
+
 module model_Ar_P_MLJ_F90
 
 use KIMservice
@@ -135,6 +137,7 @@ double precision :: Rij(DIM)
 double precision :: r,Rsqij,phi,dphi
 integer :: i,j,jj,numnei,atom_ret,comp_force,comp_enepot,comp_virial
 integer, allocatable, target :: nei1atom_substitute(:)
+character*80 :: error_message
 
 !-- KIM variables
 integer N;               pointer(pN,N)
@@ -162,7 +165,7 @@ integer NBC
 !
 !
 pNBC_Method = kim_api_get_nbc_method_f(pkim, ier)
-if (ier.le.0) then
+if (ier.lt.KIM_STATUS_OK) then
    call report_error(__LINE__, "kim_api_get_nbc_method_f", ier)
    return
 endif
@@ -185,7 +188,7 @@ elseif (index(NBC_Method,"NEIGH-RVEC-F").eq.1) then
    NBC = 3
    HalfOrFull = 2
 else
-   ier = 0
+   ier = KIM_STATUS_FAIL
    call report_error(__LINE__, "Unknown NBC method", ier)
    return
 endif
@@ -199,12 +202,15 @@ if (NBC.ne.0) then
    !*            = 2 -- Locator
    !*****************************
    IterOrLoca = kim_api_get_neigh_mode_f(pkim, ier)
-   if (ier.le.0) then
+   if (ier.lt.KIM_STATUS_OK) then
       call report_error(__LINE__, "kim_api_get_neigh_mode_f", ier)
       return
    endif
    if (IterOrLoca.ne.1 .and. IterOrLoca.ne.2) then
-      print *,'* ERROR: Unsupported IterOrLoca mode = ',IterOrLoca
+      ier = KIM_STATUS_FAIL
+      write(error_message,'(a,i1)') &
+         'Unsupported IterOrLoca mode = ',IterOrLoca
+      call report_error(__LINE__, error_message, ier)
       stop
    endif
 else
@@ -215,19 +221,19 @@ endif
 ! and virial
 !
 comp_force = kim_api_isit_compute_f(pkim,"forces",ier)
-if (ier.le.0) then
+if (ier.lt.KIM_STATUS_OK) then
    call report_error(__LINE__, "kim_api_isit_compute_f", ier)
    return
 endif
 
 comp_enepot = kim_api_isit_compute_f(pkim,"energyPerAtom",ier)
-if (ier.le.0) then
+if (ier.lt.KIM_STATUS_OK) then
    call report_error(__LINE__, "kim_api_isit_compute_f", ier)
    return
 endif
 
 comp_virial = kim_api_isit_compute_f(pkim,"virial",ier)
-if (ier.le.0) then
+if (ier.lt.KIM_STATUS_OK) then
    call report_error(__LINE__, "kim_api_isit_compute_f", ier)
    return
 endif
@@ -235,32 +241,32 @@ endif
 ! Unpack data from KIM object
 !
 pN = kim_api_get_data_f(pkim,"numberOfAtoms",ier)
-if (ier.le.0) then
+if (ier.lt.KIM_STATUS_OK) then
    call report_error(__LINE__, "kim_api_get_data_f", ier)
    return
 endif
 
 patomTypes = kim_api_get_data_f(pkim,"atomTypes",ier)
-if (ier.le.0) then
+if (ier.lt.KIM_STATUS_OK) then
    call report_error(__LINE__, "kim_api_get_data_f", ier)
    return
 endif
 
 penergy = kim_api_get_data_f(pkim,"energy",ier)
-if (ier.le.0) then
+if (ier.lt.KIM_STATUS_OK) then
    call report_error(__LINE__, "kim_api_get_data_f", ier)
    return
 endif
 
 pcoor = kim_api_get_data_f(pkim,"coordinates",ier)
-if (ier.le.0) then
+if (ier.lt.KIM_STATUS_OK) then
    call report_error(__LINE__, "kim_api_get_data_f", ier)
    return
 endif
 
 if (NBC.eq.1) then
    pboxlength = kim_api_get_data_f(pkim,"boxlength",ier)
-   if (ier.le.0) then
+   if (ier.lt.KIM_STATUS_OK) then
       call report_error(__LINE__, "kim_api_get_data_f", ier)
       return
    endif
@@ -268,7 +274,7 @@ endif
 
 if (comp_force.eq.1) then
    pforce  = kim_api_get_data_f(pkim,"forces",ier)
-   if (ier.le.0) then
+   if (ier.lt.KIM_STATUS_OK) then
       call report_error(__LINE__, "kim_api_get_data_f", ier)
       return
    endif
@@ -277,7 +283,7 @@ endif
 
 if (comp_enepot.eq.1) then
    penepot = kim_api_get_data_f(pkim,"energyPerAtom",ier)
-   if (ier.le.0) then
+   if (ier.lt.KIM_STATUS_OK) then
       call report_error(__LINE__, "kim_api_get_data_f", ier)
       return
    endif
@@ -286,7 +292,7 @@ endif
 
 if (comp_virial.eq.1) then
    pvirial = kim_api_get_data_f(pkim,"virial",ier)
-   if (ier.le.0) then
+   if (ier.lt.KIM_STATUS_OK) then
       call report_error(__LINE__, "kim_api_get_data_f", ier)
       return
    endif
@@ -296,14 +302,14 @@ call toRealArrayWithDescriptor2d(coordum,coor,DIM,N)
 
 ! Check to be sure that the atom types are correct
 !
-ier = 0 ! assume an error
+ier = KIM_STATUS_FAIL ! assume an error
 do i = 1,N
    if (atomTypes(i).ne.speccode) then
-      call report_error(__LINE__, "Unexpected species type detected", i)
+      call report_error(__LINE__, "Unexpected species type detected", ier)
       return
    endif
 enddo
-ier = 1 ! everything is ok
+ier = KIM_STATUS_OK ! everything is ok
 
 ! Initialize potential energies, forces, virial term
 !
@@ -333,13 +339,13 @@ if (IterOrLoca.eq.1) then
                                      pnei1atom,pRij_list)
    endif
    ! check for successful initialization
-   if (ier.ne.2) then   ! ier=2 upon successful initialization
+   if (ier.ne.KIM_STATUS_NEIGH_ITER_INIT_OK) then
       if (HalfOrFull.eq.1) then
          call report_error(__LINE__, "kim_api_get_half_neigh_f", ier)
       else
          call report_error(__LINE__, "kim_api_get_full_neigh_f", ier)
       endif
-      ier = 0
+      ier = KIM_STATUS_FAIL
       return 
    endif
 endif
@@ -363,7 +369,10 @@ do
          ier = kim_api_get_full_neigh_f(pkim,0,1,atom_ret,numnei, &
                                         pnei1atom,pRij_list)
       endif
-      if (ier.lt.0) then     ! some sort of problem, exit
+      if (ier.eq.KIM_STATUS_NEIGH_ITER_PAST_END) exit
+                                ! incremented past the end of the list,
+                                ! terminate loop
+      if (ier.lt.KIM_STATUS_OK) then     ! some sort of problem, exit
          if (HalfOrFull.eq.1) then
             call report_error(__LINE__, "kim_api_get_half_neigh_f", ier)
          else
@@ -371,9 +380,7 @@ do
          endif
          return
       endif
-      if (ier.eq.0) exit     ! ier=0 means that the iterator has been
-                             ! incremented past the end of the list,
-                             ! terminate loop
+
       i = atom_ret
 
    else                         ! LOCATOR mode
@@ -384,7 +391,7 @@ do
          if (NBC.eq.0) then     ! CLUSTER NBC method
             numnei = N - i      ! number of neighbors in list i+1, ..., N
             nei1atom(1:numnei) = (/ (i+jj, jj = 1,numnei) /)
-            ier = 1
+            ier = KIM_STATUS_OK
          else
             ier = kim_api_get_half_neigh_f(pkim,1,i,atom_ret,numnei, &
                                            pnei1atom,pRij_list)
@@ -393,13 +400,13 @@ do
          ier = kim_api_get_full_neigh_f(pkim,1,i,atom_ret,numnei, &
                                         pnei1atom,pRij_list)
       endif
-      if (ier.ne.1) then ! some sort of problem, exit
+      if (ier.ne.KIM_STATUS_OK) then ! some sort of problem, exit
          if (HalfOrFull.eq.1) then
             call report_error(__LINE__, "kim_api_get_half_neigh_f", ier)
          else
             call report_error(__LINE__, "kim_api_get_full_neigh_f", ier)
          endif
-         ier = 0
+         ier = KIM_STATUS_FAIL
          return
       endif
 
@@ -485,13 +492,11 @@ if (comp_enepot.eq.1) energy = sum(ene_pot(1:N))    ! compute total energy
 
 ! Free temporary storage
 !
-if (NBC.eq.0) then
-   deallocate( nei1atom_substitute )
-endif
+if (NBC.eq.0) deallocate( nei1atom_substitute )
 
 ! Everything is great
 !
-ier = 1
+ier = KIM_STATUS_OK
 return
 
 end subroutine Compute_Energy_Forces
@@ -511,9 +516,12 @@ integer,          intent(in) :: status
 
 !-- Local variables
 character(len=10000), parameter :: file = __FILE__
+character(len=KEY_CHAR_LENGTH)  :: message; pointer(pmessage,message)
 
+pmessage = kim_api_status_msg_f(status)
 !-- print the error message
-print *,'* ERROR at line', line, 'in ',trim(file), ': ', str,'. kimerror =', status
+print *,'* ERROR at line', line, 'in ',trim(file), ': ', str,'. kimerror =', &
+        message(1:(index(message,char(0))-1))
 
 end subroutine report_error
 
@@ -534,18 +542,21 @@ integer(kind=kim_intptr), intent(in) :: pkim
 
 !-- Local variables
 integer(kind=kim_intptr), parameter :: one=1
-real*8 cutoff; pointer(pcutoff,cutoff)
 integer ier
 
+!-- KIM variables
+real*8 cutoff; pointer(pcutoff,cutoff)
+
 ! store pointer to compute function in KIM object
-if (kim_api_set_data_f(pkim,"compute",one,loc(Compute_Energy_Forces)).ne.1) then
+ier = kim_api_set_data_f(pkim,"compute",one,loc(Compute_Energy_Forces))
+if (ier.lt.KIM_STATUS_OK) then
    call report_error(__LINE__, "kim_api_set_data", ier)
    stop
 endif
 
 ! store model cutoff in KIM object
 pcutoff =  kim_api_get_data_f(pkim,"cutoff",ier)
-if (ier.le.0) then
+if (ier.lt.KIM_STATUS_OK) then
    call report_error(__LINE__, "kim_api_get_data", ier)
    stop
 endif

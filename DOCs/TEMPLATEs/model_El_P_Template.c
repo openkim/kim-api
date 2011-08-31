@@ -23,6 +23,7 @@
 #include <string.h>
 #include <math.h>
 #include "KIMserviceC.h"
+#include "KIMstatus.h"
 
 /******************************************************************************
 * Below are the definitions and values of all Model parameters
@@ -134,7 +135,7 @@ static void compute(void* km, int* ier)
     *            = 2 -- Full
     *****************************/
    NBCstr = KIM_API_get_NBC_method(pkim, ier);
-   if (1 > *ier)
+   if (KIM_STATUS_OK > *ier)
    {
       report_error(__LINE__, "KIM_API_get_NBC_method", *ier);
       return;
@@ -172,7 +173,7 @@ static void compute(void* km, int* ier)
    }
    else
    {
-      *ier = 0;
+      *ier = KIM_STATUS_FAIL;
       report_error(__LINE__, "Unknown NBC method", *ier);
       return;
    }
@@ -186,7 +187,7 @@ static void compute(void* km, int* ier)
        *            = 2 -- Locator
        *****************************/
       IterOrLoca = KIM_API_get_neigh_mode(pkim, ier);
-      if (1 > *ier)
+      if (KIM_STATUS_OK > *ier)
       {
          report_error(__LINE__, "KIM_API_get_neigh_mode", *ier);
          return;
@@ -204,19 +205,19 @@ static void compute(void* km, int* ier)
 
    /* check to see if we have been asked to compute the forces, energyPerAtom, and virial */
    comp_force = KIM_API_isit_compute(pkim, "forces", ier);
-   if (1 > *ier)
+   if (KIM_STATUS_OK > *ier)
    {
       report_error(__LINE__, "KIM_API_isit_compute", *ier);
       return;
    }
    comp_energyPerAtom = KIM_API_isit_compute(pkim, "energyPerAtom", ier);
-   if (1 > *ier)
+   if (KIM_STATUS_OK > *ier)
    {
       report_error(__LINE__, "KIM_API_isit_compute", *ier);
       return;
    }
    comp_virial = KIM_API_isit_compute(pkim, "virial", ier);
-   if (1 > *ier)
+   if (KIM_STATUS_OK > *ier)
    {
       report_error(__LINE__, "KIM_API_isit_compute", *ier);
       return;
@@ -225,25 +226,25 @@ static void compute(void* km, int* ier)
 
    /* unpack data from KIM object */
    nAtoms = (int*) KIM_API_get_data(pkim, "numberOfAtoms", ier);
-   if (1 > *ier)
+   if (KIM_STATUS_OK > *ier)
    {
       report_error(__LINE__, "KIM_API_get_data", *ier);
       return;
    }
    atomTypes= (int*) KIM_API_get_data(pkim, "atomTypes", ier);
-   if (1 > *ier)
+   if (KIM_STATUS_OK > *ier)
    {
       report_error(__LINE__, "KIM_API_get_data", *ier);
       return;
    }
    energy = (double*) KIM_API_get_data(pkim, "energy", ier);
-   if (1 > *ier)
+   if (KIM_STATUS_OK > *ier)
    {
       report_error(__LINE__, "KIM_API_get_data", *ier);
       return;
    }
    coords = (double*) KIM_API_get_data(pkim, "coordinates", ier);
-   if (1 > *ier)
+   if (KIM_STATUS_OK > *ier)
    {
       report_error(__LINE__, "KIM_API_get_data", *ier);
       return;
@@ -251,7 +252,7 @@ static void compute(void* km, int* ier)
    if (NBC == 1)
    {
       boxlength = (double*) KIM_API_get_data(pkim, "boxlength", ier);
-      if (1 > *ier)
+      if (KIM_STATUS_OK > *ier)
       {
          report_error(__LINE__, "KIM_API_get_data", *ier);
          return;
@@ -261,7 +262,7 @@ static void compute(void* km, int* ier)
    if (comp_force)
    {
       force = (double*) KIM_API_get_data(pkim, "forces", ier);
-      if (1 > *ier)
+      if (KIM_STATUS_OK > *ier)
       {
          report_error(__LINE__, "KIM_API_get_data", *ier);
          return;
@@ -271,7 +272,7 @@ static void compute(void* km, int* ier)
    if (comp_energyPerAtom)
    {
       energyPerAtom = (double*) KIM_API_get_data(pkim, "energyPerAtom", ier);
-      if (1 > *ier)
+      if (KIM_STATUS_OK > *ier)
       {
          report_error(__LINE__, "KIM_API_get_data", *ier);
          return;
@@ -281,7 +282,7 @@ static void compute(void* km, int* ier)
    if (comp_virial)
    {
       virial = (double*) KIM_API_get_data(pkim, "virial", ier);
-      if (1 > *ier)
+      if (KIM_STATUS_OK > *ier)
       {
          report_error(__LINE__, "KIM_API_get_data", *ier);
          return;
@@ -290,16 +291,16 @@ static void compute(void* km, int* ier)
 
    /* Check to be sure that the atom types are correct */
    /**/
-   *ier = 0; /* assume an error */
+   *ier = KIM_STATUS_FAIL; /* assume an error */
    for (i = 0; i < *nAtoms; ++i)
    {
       if ( SPECCODE != atomTypes[i])
       {
-         report_error(__LINE__, "Unexpected species type detected", i);
+         report_error(__LINE__, "Unexpected species type detected", *ier);
          return;
       }
    }
-   *ier = 1; /* everything is ok */
+   *ier = KIM_STATUS_OK; /* everything is ok */
 
    /* initialize potential energies, forces, and virial term */
    if (comp_energyPerAtom)
@@ -351,7 +352,7 @@ static void compute(void* km, int* ier)
                                        &neighListOfCurrentAtom, &Rij_list);
       }
       /* check for successful initialization */
-      if (2 != *ier) /* ier == 2 upon successful initialization */
+      if (KIM_STATUS_NEIGH_ITER_INIT_OK != *ier)
       {
          if (1 == HalfOrFull)
          {
@@ -361,7 +362,7 @@ static void compute(void* km, int* ier)
          {
             report_error(__LINE__, "KIM_API_get_full_neigh", *ier);
          }
-         ier = 0;
+         *ier = KIM_STATUS_FAIL;
          return;
       }
    }
@@ -386,7 +387,11 @@ static void compute(void* km, int* ier)
             *ier = KIM_API_get_full_neigh(pkim, 0, 1, &currentAtom, &numOfAtomNeigh,
                                           &neighListOfCurrentAtom, &Rij_list);
          }
-         if (0 > *ier) /* some sort of problem, exit */
+         if (KIM_STATUS_NEIGH_ITER_PAST_END == *ier) /* the end of the list, terminate loop */
+         {
+            break;
+         }
+         if (KIM_STATUS_OK > *ier) /* some sort of problem, exit */
          {
             if (1 == HalfOrFull)
             {
@@ -397,10 +402,6 @@ static void compute(void* km, int* ier)
                report_error(__LINE__, "KIM_API_get_full_neigh", *ier);
             }
             return;
-         }
-         if (0 == *ier) /* ier==0 means that the iterator has been incremented past */
-         {              /* the end of the list, terminate loop                      */
-            break;
          }
 
          i = currentAtom;
@@ -422,7 +423,7 @@ static void compute(void* km, int* ier)
                {
                   neighListOfCurrentAtom[k] = i + k + 1;
                }
-               *ier = 1;
+               *ier = KIM_STATUS_OK;
             }
             else
             {
@@ -436,7 +437,7 @@ static void compute(void* km, int* ier)
                                           &neighListOfCurrentAtom, &Rij_list);
          }
       }
-      if (1 != *ier) /* some sort of problem, exit */
+      if (KIM_STATUS_OK != *ier) /* some sort of problem, exit */
       {
          if (1 == HalfOrFull)
          {
@@ -446,7 +447,7 @@ static void compute(void* km, int* ier)
          {
             report_error(__LINE__, "KIM_API_get_full_neigh", *ier);
          }
-         *ier = 0;
+         *ier = KIM_STATUS_FAIL;
          return;
       }
             
@@ -573,7 +574,7 @@ static void compute(void* km, int* ier)
    }
 
    /* everything is great */
-   *ier = 1;
+   *ier = KIM_STATUS_OK;
    return;
 }
 
@@ -586,7 +587,8 @@ void model_<FILL (lowercase) elemenet name>_p_<FILL (lowercase) model name>_init
    int ier;
 
    /* store pointer to compute function in KIM object */
-   if (! KIM_API_set_data(pkim, "compute", 1, (void*) &compute))
+   ier = KIM_API_set_data(pkim, "compute", 1, (void*) &compute);
+   if (KIM_STATUS_OK > ier)
    {
       report_error(__LINE__, "KIM_API_set_data", ier);
       exit(1);
@@ -594,7 +596,7 @@ void model_<FILL (lowercase) elemenet name>_p_<FILL (lowercase) model name>_init
 
    /* store model cutoff in KIM object */
    model_cutoff = (double*) KIM_API_get_data(pkim, "cutoff", &ier);
-   if (1 > ier)
+   if (KIM_STATUS_OK > ier)
    {
       report_error(__LINE__, "KIM_API_get_data", ier);
       exit(1);
@@ -606,5 +608,6 @@ void model_<FILL (lowercase) elemenet name>_p_<FILL (lowercase) model name>_init
 
 static void report_error(int line, char* str, int status)
 {
-   printf("* ERROR at line %i in %s: %s. kimerror = %i\n", line, __FILE__, str, status);
+   printf("* ERROR at line %i in %s: %s. kimerror = %s\n",
+          line, __FILE__, str, KIM_API_status_msg(status));
 }

@@ -7,6 +7,7 @@
 ! Authors: Valeriu Smirichinski, Ryan S. Elliot, Ellad B. Tadmor
 !
 
+#include "KIMstatus.h"
 
 module model_Ne_P_LJ_NEIGH_PURE_H
   use  KIMservice
@@ -52,43 +53,43 @@ contains
     ! Unpack data from KIM object
     !
     pnumberofatoms = kim_api_get_data_f(pkim,"numberOfAtoms",ier)
-    if (ier.ne.1) then
+    if (ier.lt.KIM_STATUS_OK) then
        call report_error(__LINE__, "kim_api_get_data_f", ier)
        stop
     endif
 
     pattypes = kim_api_get_data_f(pkim,"atomTypes", ier)
-    if (ier.le.0) then
-       call report_error(__LINE__, "kim_api_get_data", ier)
+    if (ier.lt.KIM_STATUS_OK) then
+       call report_error(__LINE__, "kim_api_get_data_f", ier)
        stop
     endif
     do i=1,numberofatoms
        if (attypes(i).ne.1) then ! check for correct atom types Ne=1
-          call report_error(__LINE__, "Wrong Atom Type", i);
+          call report_error(__LINE__, "Wrong Atom Type", KIM_STATUS_FAIL)
           stop
        endif
     enddo
 
     px=kim_api_get_data_f(pkim,"coordinates",ier)
-    if (ier.ne.1) then
+    if (ier.lt.KIM_STATUS_OK) then
        call report_error(__LINE__, "kim_api_get_data_f", ier)
        stop
     endif
 
     pf=kim_api_get_data_f(pkim,"forces",ier)
-    if (ier.ne.1) then
+    if (ier.lt.KIM_STATUS_OK) then
        call report_error(__LINE__, "kim_api_get_data_f", ier)
        stop
     endif
 
     ppotenergy = kim_api_get_data_f(pkim,"energy",ier)
-    if (ier.ne.1) then
+    if (ier.lt.KIM_STATUS_OK) then
        call report_error(__LINE__, "kim_api_get_data_f", ier)
        stop
     endif
 
     pea = kim_api_get_data_f(pkim,"energyPerAtom",ier)
-    if (ier.ne.1) then
+    if (ier.lt.KIM_STATUS_OK) then
        call report_error(__LINE__, "kim_api_get_data_f", ier)
        stop
     endif
@@ -97,13 +98,13 @@ contains
     ! and virial
     !
     f_flag=kim_api_isit_compute_f(pkim,"forces",ier)
-    if (ier.ne.1) then
+    if (ier.lt.KIM_STATUS_OK) then
        call report_error(__LINE__, "kim_api_isit_compute_f", ier)
        stop
     endif
 
     e_flag=kim_api_isit_compute_f(pkim,"energyPerAtom",ier)
-    if (ier.ne.1) then
+    if (ier.lt.KIM_STATUS_OK) then
        call report_error(__LINE__, "kim_api_isit_compute_f", ier)
        stop
     endif
@@ -130,9 +131,12 @@ contains
 
     !-- Local variables
     character(len=10000), parameter :: file = __FILE__
+    character(len=KEY_CHAR_LENGTH)  :: message; pointer(pmessage,message)
 
+    pmessage = kim_api_status_msg_f(status)
     !-- print the error message
-    print *,'* ERROR at line', line, 'in ',trim(file), ': ', str,'. kimerror =', status
+    print *,'* ERROR at line', line, 'in ',trim(file), ': ', str,'. kimerror =', &
+            message(1:(index(message,char(0))-1))
 
   end subroutine report_error
 
@@ -158,14 +162,14 @@ subroutine model_Ne_P_LJ_NEIGH_PURE_H_init(pkim)
   ! store pointer to compute function in KIM object
   one=1
   ier = kim_api_set_data_f(pkim,"compute",one,loc(calculate_wrap_f77))
-  if (ier.ne.1)  then
+  if (ier.lt.KIM_STATUS_OK)  then
      call report_error(__LINE__, "kim_api_set_data_f", ier)
      stop
   endif
 
   ! store model cutoff in KIM object
   pcutoff = kim_api_get_data_f(pkim,"cutoff",ier)
-  if (ier.ne.1) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_get_data_f", ier)
      stop
   endif

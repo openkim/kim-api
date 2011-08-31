@@ -27,7 +27,7 @@ double precision function get_model_cutoff_firsttime(testname, modelname)
 
   ! Initialize the KIM object
   ier = kim_api_init_f(pkim_temp, testname, modelname)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_init_f", ier)
      stop
   endif
@@ -36,7 +36,7 @@ double precision function get_model_cutoff_firsttime(testname, modelname)
   !
   N = 1
   call kim_api_allocate_f(pkim_temp, N, ATypes, ier)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_allocate_f", ier)
      stop
   endif
@@ -44,7 +44,7 @@ double precision function get_model_cutoff_firsttime(testname, modelname)
   ! call model's init routine to put cutoff in KIM API object
   !
   ier = kim_api_model_init_f(pkim_temp)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_model_init_f", ier)
      stop
   endif
@@ -52,7 +52,7 @@ double precision function get_model_cutoff_firsttime(testname, modelname)
   ! access the `cutoff' argument
   !
   pcutoff = kim_api_get_data_f(pkim_temp, "cutoff", ier)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_get_data_f", ier)
      stop
   endif
@@ -61,12 +61,12 @@ double precision function get_model_cutoff_firsttime(testname, modelname)
   ! tear it all down
   !
   call kim_api_model_destroy_f(pkim_temp, ier)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_model_destroy_f", ier)
      stop
   endif
   call kim_api_free_f(pkim_temp, ier)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_free_f", ier)
      stop
   endif

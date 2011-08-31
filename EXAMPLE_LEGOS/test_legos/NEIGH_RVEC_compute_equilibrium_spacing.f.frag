@@ -41,20 +41,20 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   ! Unpack data from KIM object
   !
   penergy = kim_api_get_data_f(pkim, "energy", ier)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_get_data_f", ier)
      stop
   endif
 
   pcoor = kim_api_get_data_f(pkim, "coordinates", ier)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_get_data_f", ier)
      stop
   endif
   call toRealArrayWithDescriptor2d(coordum, coords, DIM, N)
 
   pcutoff = kim_api_get_data_f(pkim, "cutoff", ier)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_get_data_f", ier)
      stop
   endif
@@ -68,7 +68,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
                                               Spacings(1), N, NNeighbors,    &
                                               neighborList, RijList)
   call kim_api_model_compute_f(pkim, ier)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_model_compute_f", ier)
      stop
   endif
@@ -84,7 +84,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
                                               neighborList, RijList)
   ! Call model compute
   call kim_api_model_compute_f(pkim, ier)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_model_compute_f", ier)
      stop
   endif
@@ -100,7 +100,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
                                               neighborList, RijList)
   ! Call model compute
   call kim_api_model_compute_f(pkim, ier)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_model_compute_f", ier)
      stop
   endif
@@ -120,7 +120,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
                                                  neighborList, RijList)
      ! Call model compute
      call kim_api_model_compute_f(pkim, ier)
-     if (ier.le.0) then
+     if (ier.lt.KIM_STATUS_OK) then
         call report_error(__LINE__, "kim_api_model_compute_f", ier)
         stop
      endif

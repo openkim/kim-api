@@ -9,6 +9,7 @@ C  Authors: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
 C
 C*******************************************************************************
 
+#include "KIMstatus.h"
 
 C*******************************************************************************
 C
@@ -87,31 +88,31 @@ C     Iterator mode (reset iterator to beginning)
       request = 0
       retcode=kimget_h_neigh(pkim,mode,request,atom,
      &                       numnei,pnei1atom,pRij)
-      IF (retcode.NE.2) THEN
+      IF (retcode.NE.KIM_STATUS_NEIGH_ITER_INIT_OK) THEN
          WRITE(*,'("model_Ne_pure_LJ_NEIGH_PURE_*.F error: ",I5)')
      &      retcode
          ier = retcode
          RETURN
       ENDIF
-      retcode = 1
+      retcode = KIM_STATUS_OK
 
 C     Loop over atoms and compute energy and forces
  120  CONTINUE
-      IF (retcode.NE.1) GOTO 140 
+      IF (retcode.NE.KIM_STATUS_OK) GOTO 140 
 
 C     Increment iterator
       mode = 0
       request = 1
       retcode = kimget_h_neigh(pkim,mode,request,
      &                         atom,numnei,pnei1atom,pRij)
-      IF (retcode.LT.0) THEN
+      IF (retcode.EQ.KIM_STATUS_NEIGH_ITER_PAST_END) THEN
+         ier = KIM_STATUS_OK
+         GOTO 140
+      ENDIF
+      IF (retcode.LT.KIM_STATUS_OK) THEN
          WRITE(*,'("neigh iterator error:retcode",I5)'),retcode
          ier = retcode
          RETURN
-      ENDIF
-      IF (retcode.EQ.0) THEN
-         ier = 1
-         GOTO 140
       ENDIF
       i = atom
       xi(1) = x(1,i)

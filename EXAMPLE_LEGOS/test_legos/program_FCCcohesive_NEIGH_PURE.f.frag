@@ -19,6 +19,7 @@
 !**
 !*******************************************************************************
 
+#include "KIMstatus.h"
 
 !-------------------------------------------------------------------------------
 !
@@ -173,20 +174,20 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
   ! Unpack data from KIM object
   !
   penergy = kim_api_get_data_f(pkim, "energy", ier)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_get_data_f", ier)
      stop
   endif
 
   pcoor = kim_api_get_data_f(pkim, "coordinates", ier)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_get_data_f", ier)
      stop
   endif
   call toRealArrayWithDescriptor2d(coordum, coords, DIM, N)
 
   pcutoff = kim_api_get_data_f(pkim, "cutoff", ier)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_get_data_f", ier)
      stop
   endif
@@ -195,7 +196,7 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
   ! determine which neighbor list type to use
   !
   pNBC_Method = kim_api_get_nbc_method_f(pkim, ier) ! don't forget to free
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_get_nbc_method", ier)
      stop
   endif
@@ -204,7 +205,7 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
   elseif (index(NBC_Method,"NEIGH-PURE-F").eq.1) then
      halfflag = .false.
   else
-     ier = 0
+     ier = KIM_STATUS_FAIL
      call report_error(__LINE__, "Unknown NBC method", ier)
      return
   endif
@@ -218,7 +219,7 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
   call NEIGH_PURE_periodic_neighborlist(halfflag, N, coords, (cutoff+0.75), &
                                         MiddleAtomId, neighborList)
   call kim_api_model_compute_f(pkim, ier)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_model_compute_f", ier)
      stop
   endif
@@ -238,7 +239,7 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
                                         MiddleAtomId, neighborList)
   ! Call model compute
   call kim_api_model_compute_f(pkim, ier)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_model_compute_f", ier)
      stop
   endif
@@ -258,7 +259,7 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
                                         MiddleAtomId, neighborList)
   ! Call model compute
   call kim_api_model_compute_f(pkim, ier)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_model_compute_f", ier)
      stop
   endif
@@ -283,7 +284,7 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
                                            MiddleAtomId, neighborList)
      ! Call model compute
      call kim_api_model_compute_f(pkim, ier)
-     if (ier.le.0) then
+     if (ier.lt.KIM_STATUS_OK) then
         call report_error(__LINE__, "kim_api_model_compute_f", ier)
         stop
      endif

@@ -18,6 +18,7 @@
 !**
 !*******************************************************************************
 
+#include "KIMstatus.h"
 
 !-------------------------------------------------------------------------------
 !
@@ -101,7 +102,7 @@ program TEST_NAME_STR
   ! First, access the `cutoff' arguemt
   !
   pcutoff = kim_api_get_data_f(pkim, "cutoff", ier)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_get_data_f", ier)
      stop
   endif

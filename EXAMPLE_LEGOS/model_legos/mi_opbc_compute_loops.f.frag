@@ -1,6 +1,6 @@
     ! determine whether half or full lists are being used
     pNBC_Method = kim_api_get_nbc_method_f(pkim, ier)
-    if (ier.le.0) then
+    if (ier.lt.KIM_STATUS_OK) then
        call report_error(__LINE__, "kim_api_get_nbc_method_f", ier)
        return
     endif
@@ -9,7 +9,7 @@
     elseif (index(NBC_Method,"MI-OPBC-F").eq.1) then
        HalfOrFull = 2
     else
-       ier = 0
+       ier = KIM_STATUS_FAIL
        call report_error(__LINE__, "Unsupported NBC type", ier)
        return
     endif
@@ -17,7 +17,7 @@
 
     ! get boxlength
     pboxlength = kim_api_get_data_f(pkim,"boxlength",ier)
-    if (ier.le.0) then
+    if (ier.lt.KIM_STATUS_OK) then
        call report_error(__LINE__, "kim_api_get_data", ier)
        return
     endif
@@ -36,7 +36,7 @@
        else
           ier = kim_api_get_full_neigh_f(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij_dummy)
        endif
-       if (ier.le.0) then
+       if (ier.lt.KIM_STATUS_OK) then
           call report_error(__LINE__, "kim_api_get_*_neigh", ier)
           return
        endif

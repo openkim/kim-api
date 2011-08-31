@@ -26,12 +26,12 @@ subroutine setup_KIM_API_object(pkim, testname, modelname, N, specname)
   ! Initialize KIM API object
   !
   ier = kim_api_init_f(pkim, testname, modelname)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_init_f", ier)
      stop
   endif
   call kim_api_allocate_f(pkim, N, ATypes, ier)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_allocate_f", ier)
      stop
   endif
@@ -39,7 +39,7 @@ subroutine setup_KIM_API_object(pkim, testname, modelname, N, specname)
   ! call model's init routine
   !
   ier = kim_api_model_init_f(pkim)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_model_init_f", ier)
      stop
   endif
@@ -47,19 +47,19 @@ subroutine setup_KIM_API_object(pkim, testname, modelname, N, specname)
   ! Unpack data from KIM object whose values need to be set
   !
   pnAtoms = kim_api_get_data_f(pkim, "numberOfAtoms", ier);
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_get_data_f", ier)
      stop
   endif
 
   pnAtomTypes = kim_api_get_data_f(pkim, "numberAtomTypes", ier)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_get_data_f", ier)
      stop
   endif
 
   patomTypesdum = kim_api_get_data_f(pkim, "atomTypes", ier)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_get_data_f", ier)
      stop
   endif
@@ -70,7 +70,7 @@ subroutine setup_KIM_API_object(pkim, testname, modelname, N, specname)
   numberOfAtoms   = N
   numberAtomTypes = ATypes
   atomTypes(:)    = kim_api_get_atypecode_f(pkim, specname, ier)
-  if (ier.le.0) then
+  if (ier.lt.KIM_STATUS_OK) then
      call report_error(__LINE__, "kim_api_get_atypecode_f", ier)
      stop
   endif
