@@ -428,7 +428,7 @@ do
    !
    call get_current_atom_neighbors(IterOrLoca,HalfOrFull,NBC,N,pkim,      &
                                    i,numnei,pnei1atom,pRij_list,ier)
-   if (ier.eq.KIM_STATUS_NEIGH_ITER_PAST_END) exit
+   if (ier.eq.KIM_STATUS_NEIGH_ITER_PAST_END) exit  ! atom counter incremented past end of list
    if (ier.lt.KIM_STATUS_OK) then
       call report_error(__LINE__, "get_current_atom_neighbors", ier)
       return
@@ -510,7 +510,8 @@ do
    !
    call get_current_atom_neighbors(IterOrLoca,HalfOrFull,NBC,N,pkim,      &
                                    i,numnei,pnei1atom,pRij_list,ier)
-   if (ier.eq.KIM_STATUS_NEIGH_ITER_PAST_END) exit
+
+   if (ier.eq.KIM_STATUS_NEIGH_ITER_PAST_END) exit  ! atom counter incremented past end of list
    if (ier.lt.KIM_STATUS_OK) then
       call report_error(__LINE__, "get_current_atom_neighbors", ier)
       return
