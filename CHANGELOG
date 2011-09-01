@@ -11,6 +11,17 @@
 
 * Updated documentation
 
+* Added KIMstatus.h which contains definitions of KIM status codes.
+
+* Added KIM_API_status_msg() service routine to return a string describing a given
+  status code.
+
+* Updated messages printed to kim.log file to be more informative.
+
+* Model KIM descriptor files are now incorporated into the Model's binary library
+  file.  This means that the file is no longer required at run time and that the
+  Model must be recompiled after changes to the descriptor file.
+
 * Added Model Driver Templates
 
 * Added two Model Drivers and four Models based on the Model Drivers

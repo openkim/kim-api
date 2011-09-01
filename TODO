@@ -32,27 +32,6 @@ Items planned for the next significant release.
   to develop.)  Go to http://openkim.org to read the latest version of the KIM
   RD.
 
-* Rework the error handling and reporting framework used by the KIM API.
-
-* Refactor the core KIM API code for improved readability and maintenance.
-
-* Change the definition of the argument `numberOfAtoms' from `integer*8' to
-  `integer' in standard.kim.  This will provide a cleaner and less confusing
-  API interface.
-
-* Create a framework for `Model drivers' and `Test drivers'.  A Model driver is
-  a interatomic model without any specified parameters.  A Model driver can be
-  used to make a KIM Model by providing the Model's name, a KIM descriptor
-  file, and an input file, for the driver program to read, containing the
-  Model's parameter values.  For example, a Model driver could be an
-  implementation of the EAM Model, in which case the input file would contain
-  the tabulated pair and embedding functions in the standard "funcfl" format.
-  A Test driver is a simulation code that can be used to make a KIM Test by
-  providing the Test's name, a KIM descriptor file, and an input file, for the
-  driver program to read, containing instructions on how to perform the desired
-  simulation.  For example, a Test driver could be the LAMMPS package, in which
-  case the input file would be a standard LAMMPS input script.
-
 * Add an "interatomic pair forces" (f_ij) argument to standard.kim that will
   allow Tests to compute the stress tensor (and other quantities) from the f_ij
   quantities returned by a Model.
@@ -89,6 +68,8 @@ Items planned for future releases.
 * Implement full support for Fortran 2003
 
 * Implement full support for Python
+
+* Refactor the core KIM API code for improved readability and maintenance.
 
 * Implement automatic unit conversions between Models and Tests that use
   different physical units for the same quantities.

@@ -21,6 +21,15 @@ C++, you would use the code `mdl->model_compute()'.)
 
 In the following description several constants are used:
 
+STATUS codes: The openkim-api uses a set of defined status code keys to return
+         information to the user.  These symbolic code keys are defined in the
+         KIMstatus.h file which can be #include'd by any source file.  The
+         codes associated with these keys (defined in KIMstatus.h) are subject
+         to change and should not be used directly.  By convention, any status
+         code, ier, returned by an openkim-api service routine that is less
+         than KIM_STATUS_OK (i.e., "ier < KIM_STATUS_OK") indicates an error
+         has occurred.
+
 C style: KIM_DIR, KIM_DIR_MODELS, KIM_DIR_TESTS 
 
          These string constants are defined in KIMservice.h and give the
@@ -43,9 +52,9 @@ int KIM_API_init(void * kimmdl, char * testname, char * modelname);
     data described in the KIM descriptor file for the model.  It also checks if
     arguments described in descriptor files (Tests and Models) are compatible
     with KIM standard naming convention (stored in the file `standard.kim') and
-    if Models are compatible with Tests.  It will return 1 upon successful
-    completion or -1 otherwise.  Also if it is unsuccessful, kimmdl will have
-    NULL value.
+    if Models are compatible with Tests.  It will return KIM_STATUS_OK upon
+    successful completion or KIM_STATUS_FAIL otherwise.  Also if it is
+    unsuccessful, kimmdl will have NULL value.
 
 Arguments:
 
@@ -59,9 +68,12 @@ Arguments:
                 obtain the file location of the Test descriptor (.kim) file.
 
         char * modelname
-                null terminated character string that defines the Model name. 
-                The routine prepends string constant KIM_DIR_MODELS to
-                obtain the file location of the Model descriptor (.kim) file.
+                null terminated character string that defines the Model name.
+                The routine uses this name to find the character string in
+                memory that contains the Model's descriptor (.kim) file.  At
+                compile time the descriptor file is stored in the Model's
+                binary library file.  Thus, it is necessary to perform a `make'
+                of the openkim-api package after editing a Model's .kim file.
 
 Corresponding Fortran style interface:
 
@@ -92,8 +104,11 @@ Arguments:
 
         char * modelname
                 null terminated character string that defines the Model name. 
-                The routine prepends string constant KIM_DIR_MODELS to
-                obtain the file location of the Model descriptor (.kim) file.
+                The routine uses this name to find the character string in
+                memory that contains the Model's descriptor (.kim) file.  At
+                compile time the descriptor file is stored in the Model's
+                binary library file.  Thus, it is necessary to perform a `make'
+                of the openkim-api package after editing a Model's .kim file.
 
 Corresponding Fortran style interface:
         integer function kim_api_init_str_testname_f(kimmdl, testname, modelname)
@@ -129,8 +144,8 @@ Arguments:
                 number of atom types.
         
         int * kimerror
-                error code:  1  -- successful completion, 
-                            -1  -- unsuccessful
+                error code: KIM_STATUS_OK    -- successful completion, 
+                            KIM_STATUS_FAIL  -- unsuccessful
 
 Corresponding Fortran style interface:
 
@@ -158,8 +173,8 @@ Arguments:
                 definition will be (KIM_API_model **)).
 
         int * kimerror
-                error code: 1  -- successful completion, 
-                           -1  -- unsuccessful
+                error code: KIM_STATUS_OK   -- successful completion, 
+                            KIM_STATUS_FAIL -- unsuccessful
 
 Corresponding Fortran style interface:
 
@@ -183,8 +198,8 @@ Arguments:
                 will be (KIM_API_model *)).
 
         int * kimerror
-                error code: 1 -- successful completion, 
-                           -1 -- unsuccessful
+                error code: KIM_STATUS_OK   -- successful completion, 
+                            KIM_STATUS_FAIL -- unsuccessful
 
 Corresponding Fortran style interface:
 
@@ -213,8 +228,8 @@ Arguments:
                 will be (KIM_API_model *))
 
         int * kimerror
-                error code: 1  -- successful completion, 
-                           -1  -- unsuccessful
+                error code: KIM_STATUS_OK   -- successful completion, 
+                            KIM_STATUS_FAIL -- unsuccessful
 
 Corresponding Fortran style interface:
 
@@ -243,8 +258,8 @@ Arguments:
                 will be (KIM_API_model *))
 
         int * kimerror
-                error code: 1 -- successful completion, 
-                           -1 -- unsuccessful
+                error code: KIM_STATUS_OK   -- successful completion, 
+                            KIM_STATUS_FAIL -- unsuccessful
 
 Corresponding Fortran style interface:
 
@@ -272,8 +287,8 @@ Arguments:
                 (which sould be of length 64 or greater)
 
         int * kimerror
-                error code: 1 -- successful completion, 
-                           -1 -- unsuccessful
+                error code: KIM_STATUS_OK   -- successful completion, 
+                            KIM_STATUS_FAIL -- unsuccessful
 
 Corresponding Fortran style interface:
 
@@ -289,8 +304,8 @@ Corresponding Fortran style interface:
 int KIM_API_isUnitS_fixed(void *kimmdl); 
 
      This routine checks whether the model supports only one unit system or can
-     work with multiple unit systems. Returns 1 (true) if units are fixed
-     (units cannot be reset), -1 otherwise.
+     work with multiple unit systems. Returns KIM_STATUS_OK if units are fixed
+     (units cannot be reset), KIM_STATUS_FAIL otherwise.
 
 Arguments:
 
@@ -312,12 +327,12 @@ int  KIM_API_set_data(void *kimmdl, char *nm, intptr_t size, void *dt);
      This routine searches for the string nm in the KIM API kimmdl. If found,
      it stores in the KIM API object the value of dt which points to the
      location in memory where the data associated with nm is stored.  Upon
-     successful completion this routine returns 1.  If nm is not in the KIM API
-     object this routine returns -1.  If an existing pointer in the KIM API
-     object is overwritten by this operation, a memory leak may result. (This
-     could indicate that storage for the same data has been allocated more than
-     once.)  Thus, care must be taken if this routine is used in conjunction
-     with KIM_API_allocate for array data.
+     successful completion this routine returns KIM_STATUS_OK.  If nm is not in
+     the KIM API object this routine returns KIM_STATUS_ARG_UNKNOWN.  If an
+     existing pointer in the KIM API object is overwritten by this operation, a
+     memory leak may result. (This could indicate that storage for the same
+     data has been allocated more than once.)  Thus, care must be taken if this
+     routine is used in conjunction with KIM_API_allocate for array data.
 
      Note: Prior to calling this routine a valid KIM API object must be
            obtained by calling KIM_API_init().
@@ -366,8 +381,8 @@ Arguments:
                 exactly as it appears in the .kim descriptor file
 
         int * kimerror
-                error code: 1 -- successful completion, 
-                           -1 -- unsuccessful
+                error code: KIM_STATUS_OK   -- successful completion, 
+                            KIM_STATUS_FAIL -- unsuccessful
 
 Corresponding Fortran style interface:
         integer(kind=kim_intptr) function kim_api_get_data_f(kimmdl, nm, kimerror) 
@@ -399,8 +414,8 @@ Arguments:
                 exactly as it appears in the .kim descriptor file
 
         int * kimerror
-                error code: 1 -- successful completion, 
-                           -1 -- unsuccessful
+                error code: KIM_STATUS_OK   -- successful completion, 
+                            KIM_STATUS_FAIL -- unsuccessful
 
 Corresponding Fortran style interface:
 
@@ -439,8 +454,8 @@ Arguments:
                 memory to hold a value for each dimension.
 
         int * kimerror
-                error code: 1 -- successful completion, 
-                           -1 -- unsuccessful
+                error code: KIM_STATUS_OK   -- successful completion, 
+                            KIM_STATUS_FAIL -- unsuccessful
 
 Corresponding Fortran style interface:
 
@@ -457,12 +472,10 @@ Corresponding Fortran style interface:
 void  KIM_API_set_rank_shape(void *kimmdl, char *nm, int * shape, int rank, int * kimerror); 
 
       This routine sets the `shape' of nm and checks if the `rank' provided is
-      the same as that already stored in the KIM API object.  In case of error,
-      kimerror will be zero or a negative value.  In case of success kimerror =
-      1.  This will overwrite all of the shape data stored in the KIM API
-      object for this argument.  This routine should not be used in conjunction
-      with arguments for which KIM_API_allocate() has previously allocated
-      memory.
+      the same as that already stored in the KIM API object.  This will
+      overwrite all of the shape data stored in the KIM API object for this
+      argument.  This routine should not be used in conjunction with arguments
+      for which KIM_API_allocate() has previously allocated memory.
 
 Arguments:
 
@@ -486,10 +499,11 @@ Arguments:
                  Rank of the array and size of shape     
 
         int * kimerror
-                error code: 1   -- successful completion, 
-                           -2   -- name nm is not in KIM
-                           -5   -- rank provided, does not match KIM API argument rank
-                           -8   -- negative index in shape
+                error code: KIM_STATUS_OK                -- successful completion, 
+                            KIM_STATUS_ARG_UNKNOWN       -- name nm is not in KIM
+                            KIM_STATUS_ARG_INVALID_RANK  -- rank provided, does not
+                                                            match KIM API argument rank
+                            KIM_STATUS_AEG_INVALID_SHAPE -- negative index in shape
 
 Corresponding Fortran style interface:
 
@@ -531,8 +545,8 @@ Arguments:
                 exactly as it appears in the .kim descriptor file.
 
         int * kimerror
-                error code: 1 -- successful completion, 
-                           -1 -- unsuccessful
+                error code: KIM_STATUS_OK   -- successful completion, 
+                            KIM_STATUS_FAIL -- unsuccessful
         
 
 Corresponding Fortran style interface:
@@ -566,8 +580,8 @@ Arguments:
                 exactly as it appears in the .kim descriptor file.
 
         int * kimerror
-                error code: 1  -- successful completion,
-                           -1  -- unsuccessful
+                error code: KIM_STATUS_OF   -- successful completion,
+                            KIM_STATUS_FAIL -- unsuccessful
 
 Corresponding Fortran style interface:
 
@@ -597,8 +611,8 @@ Arguments:
                 exactly as it appears in the .kim descriptor file.
 
         int * kimerror
-                error code: 1 -- successful completion, 
-                           -1 -- unsuccessful
+                error code: KIM_STATUS_OK   -- successful completion, 
+                            KIM_STATUS_FAIL -- unsuccessful
 
 Corresponding Fortran style interface:
 
@@ -629,8 +643,8 @@ Arguments:
                 exactly as it appears in the .kim descriptor file.
 
         int * kimerror
-                error code: 1                     -- successful completion, 
-                           -1 -- unsuccessful
+                error code: KIM_STATUS_OK   -- successful completion, 
+                            KIM_STATUS_FAIL -- unsuccessful
 
 Corresponding Fortran style interface:
 
@@ -648,7 +662,8 @@ int KIM_API_model_init(void * kimmdl);
     This routine will initialize the Model associated with the KIM API object
     by calling the init routine supplied by the Model.  It uses the Model's
     name (which is stored in KIM API object by the KIM_API_init routine).  The
-    return value will be 1 in case of success and zero or negative otherwise.
+    return value will be KIM_STATUS_OK in case of success and KIM_STATUS_FAIL
+    otherwise.
 
     Notes:
 
@@ -700,8 +715,8 @@ Arguments:
                 total number of atom types. In case of error will be negative.
 
         int * kimerror
-                error code:   1 -- successful completion, 
-                             -1 -- unsuccessful
+                error code: KIM_STATUS_OK   -- successful completion, 
+                            KIM_STATUS_FAIL -- unsuccessful
 
 Corresponding Fortran style interface:
 
@@ -735,8 +750,8 @@ Arguments:
                 total number of parameters. 
 
         int * kimerror
-                error code: 1 -- successful completion, 
-                           -1 -- unsuccessful
+                error code: KIM_STATUS_OK   -- successful completion, 
+                            KIM_STATUS_FAIL -- unsuccessful
 
 Corresponding Fortran style interface:
 
@@ -770,8 +785,8 @@ Arguments:
                 total number of parameters. 
 
         int * kimerror
-                error code: 1 -- successful completion, 
-                           -1 -- unsuccessful
+                error code: KIM_STATUS_OK   -- successful completion, 
+                            KIM_STATUS_FAIL -- unsuccessful
 
 Corresponding Fortran style interface:
 
@@ -805,8 +820,8 @@ Arguments:
                 total number of parameters. 
 
         int * kimerror
-                error code: 1 -- successful completion,
-                           -1 -- unsuccessful
+                error code: KIM_STATUS_OK   -- successful completion,
+                            KIM_STATUS_FAIL -- unsuccessful
 
 Corresponding Fortran style interface:
 
@@ -834,8 +849,8 @@ Arguments:
                 will be (KIM_API_model *)).
 
         int * kimerror
-                error code: 1 -- successful completion, 
-                           -1 -- unsuccessful
+                error code: KIM_STATUS_OK   -- successful completion, 
+                            KIM_STATUS_FAIL -- unsuccessful
 
 Corresponding Fortran style interface:
 
@@ -866,13 +881,13 @@ Arguments:
                 atom/particle symbol
 
         int * error
-                error code: 1 -- successful completion, 
-                           -1 -- unsuccessful
-                           -3 -- symbol is not among the
-                                 KIM supported atom symbols
-                           -6 -- no atom/particle types have
-                                 been specified by the 
-                                 Test or Model.
+                error code: KIM_STATUS_OK                   -- successful completion, 
+                            KIM_STATUS_FAIL                 -- unsuccessful
+                            KIM_STATUS_ATOM_INVALID_TYPE    -- symbol is not among the
+                                                               KIM supported atom symbols
+                            KIM_STATUS_ATOM_TYPES_UNDEFINED -- no atom/particle types have
+                                                               been specified by the 
+                                                               Test or Model.
                                                    
 
 Corresponding Fortran style interface:
@@ -902,8 +917,8 @@ Arguments:
                 will be (KIM_API_model *)).
 
         int * error
-                error code: 1 -- successful completion, 
-                           -1 -- unsuccessful
+                error code: KIM_STATUS_OK   -- successful completion, 
+                            KIM_STATUS_FAIL -- unsuccessful
 
 Corresponding Fortran style interface:
 
@@ -937,16 +952,21 @@ int KIM_API_get_full_neigh(void *kimmdl, int mode,int request, int *atom, int *n
           vector entry. (See explanation of Rij vectors below.)
 
     The return value depends on the results of execution:
-                         2  -- iterator has been successfully initialized
-                         1  -- successful operation
-                         0  -- iterator has been incremented past end of list
-                        -4  -- invalid atom id requested (request out of range)
-                        -7  -- invalid mode value
-                        -9  -- invalid KIM_API object
-                        -10 -- Number of neighbors of an atom exceeds 
-                              KIM_API_MAX_NEIGHBORS
-                        -11 -- get_full_neigh method in KIM API object is not 
-                              set (NULL value)
+      KIM_STATUS_NEIGH_ITER_INIT_OK             -- iterator has been
+                                                   successfully initialized
+      KIM_STATUS_OK                             -- successful operation
+      KIM_STATUS_NEIGH_INTER_PAST_END           -- iterator has been
+                                                   incremented past end of list
+      KIM_STATUS_ATOM_INVALID_ID                -- invalid atom id requested
+                                                   (request out of range)
+      KIM_STATUS_NEIGH_INVALID_MODE             -- invalid mode value
+      KIM_STATUS_API_OBJECT_INVALUD             -- invalid KIM_API object
+      KIM_STATUS_NEIGH_TOO_MANY_NEIGHBORS       -- Number of neighbors of an
+                                                   atom exceeds 
+                                                   KIM_API_MAX_NEIGHBORS
+      KIM_STATUS_NEIGH_FULL_METHOD_NOT_PROVIDED -- get_full_neigh method in
+                                                   KIM API object is not 
+                                                   set (NULL value)
 Arguments:
         void * kimmdl
                 pointer to KIM_API_model object (in C++ style, the definition 

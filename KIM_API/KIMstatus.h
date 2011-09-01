@@ -10,6 +10,8 @@
 *
 *******************************************************************************/
 
+/* Note: All STATUS codes associated with an error must be less than KIM_STATUS_OK */
+
 #ifndef _KIMSERVICESTATUS_H
 #define _KIMSERVICESTATUS_H
 
