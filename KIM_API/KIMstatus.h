@@ -26,8 +26,8 @@
 #define KIM_STATUS_ATOM_INVALID_ID                  -4
 #define KIM_STATUS_ATOM_INVALID_TYPE                -3
 #define KIM_STATUS_ARG_UNKNOWN                      -2
-#define KIM_STATUS_FAIL                             -1
-#define KIM_STATUS_NEIGH_ITER_PAST_END               0
+#define KIM_STATUS_NEIGH_ITER_PAST_END              -1
+#define KIM_STATUS_FAIL                              0
 #define KIM_STATUS_OK                                1
 #define KIM_STATUS_NEIGH_ITER_INIT_OK                2
 

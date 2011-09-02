@@ -2626,8 +2626,8 @@ char * KIM_API_model::status_msg(int status_code) {
     { "invalid atom id requested (request out of range)"},
     { "symbol is not among supported atom symbols"},
     { "argument name provided is not in KIM API object"},
-    { "unsuccessful completion"},
     { "iterator has been incremented past end of list"},
+    { "unsuccessful completion"},
     { "successful completion"},
     { "iterator has been successfully initialized"}};
     
