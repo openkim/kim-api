@@ -453,14 +453,14 @@ int get_periodic_neigh(void* kimmdl, int *mode, int *request, int* atom,
       if (0 == *request) /* reset iterator */
       {
          (*nl).iteratorId = -1;
-         return 2;
+         return KIM_STATUS_NEIGH_ITER_INIT_OK;
       }
       else if (1 == *request) /* increment iterator */
       {
          (*nl).iteratorId++;
          if ((*nl).iteratorId >= *numberOfAtoms)
          {
-            return 0;
+            return KIM_STATUS_NEIGH_ITER_PAST_END;
          }
          else
          {
@@ -470,7 +470,7 @@ int get_periodic_neigh(void* kimmdl, int *mode, int *request, int* atom,
       else /* invalid request value */
       {
          report_error(__LINE__,"Invalid request in get_periodic_neigh", -6);
-         return -6;
+         return KIM_STATUS_ATOM_INVALID_ID;
       }
    }
    else if (1 == *mode) /* locator mode */
@@ -478,7 +478,7 @@ int get_periodic_neigh(void* kimmdl, int *mode, int *request, int* atom,
       if ((*request >= *numberOfAtoms) || (*request < 0)) /* invalid request */
       {
          report_error(__LINE__,"Invalid request in get_periodic_neigh", -1);
-         return -1;
+         return KIM_STATUS_ATOM_INVALID_ID;
       }
       else
       {
@@ -488,7 +488,7 @@ int get_periodic_neigh(void* kimmdl, int *mode, int *request, int* atom,
    else /* invalid mode */
    {
       report_error(__LINE__,"Invalid mode in get_periodic_neigh", -2);
-      return -2;
+      return KIM_STATUS_NEIGH_INVALID_MODE;
    }
 
    /* set the returned atom */
@@ -503,7 +503,7 @@ int get_periodic_neigh(void* kimmdl, int *mode, int *request, int* atom,
    /* set the pointer to Rij to appropriate value */
    *Rij = (*nl).RijList;
 
-   return 1;
+   return KIM_STATUS_OK;
 }
 
 void create_FCC_cluster(double FCCspacing, int nCellsPerSide, double *coords)
@@ -698,14 +698,14 @@ int get_cluster_neigh(void* kimmdl, int *mode, int *request, int* atom,
       if (0 == *request) /* reset iterator */
       {
          (*nl).iteratorId = -1;
-         return 2;
+         return KIM_STATUS_NEIGH_ITER_INIT_OK;
       }
       else if (1 == *request) /* increment iterator */
       {
          (*nl).iteratorId++;
          if ((*nl).iteratorId >= *numberOfAtoms)
          {
-            return 0;
+            return KIM_STATUS_NEIGH_ITER_PAST_END;
          }
          else
          {
@@ -715,7 +715,7 @@ int get_cluster_neigh(void* kimmdl, int *mode, int *request, int* atom,
       else /* invalid request value */
       {
          report_error(__LINE__,"Invalid request in get_cluster_neigh", -6);
-         return -6;
+         return KIM_STATUS_ATOM_INVALID_ID;
       }
    }
    else if (1 == *mode) /* locator mode */
@@ -723,7 +723,7 @@ int get_cluster_neigh(void* kimmdl, int *mode, int *request, int* atom,
       if ((*request >= *numberOfAtoms) || (*request < 0)) /* invalid request */
       {
          report_error(__LINE__,"Invalid request in get_cluster_neigh", -1);
-         return -1;
+         return KIM_STATUS_ATOM_INVALID_ID;
       }
       else
       {
@@ -733,7 +733,7 @@ int get_cluster_neigh(void* kimmdl, int *mode, int *request, int* atom,
    else /* invalid mode */
    {
       report_error(__LINE__,"Invalid mode in get_cluster_neigh", -2);
-      return -2;
+      return KIM_STATUS_NEIGH_INVALID_MODE;
    }
 
    /* set the returned atom */
@@ -748,7 +748,7 @@ int get_cluster_neigh(void* kimmdl, int *mode, int *request, int* atom,
    /* set the pointer to Rij to appropriate value */
    *Rij = &((*nl).RijList[(*atom)*DIM*NCLUSTERATOMS]);
 
-   return 1;
+   return KIM_STATUS_OK;
 }
 
 void report_error(int line, char* str, int status)
