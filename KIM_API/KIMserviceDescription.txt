@@ -957,7 +957,7 @@ int KIM_API_get_full_neigh(void *kimmdl, int mode,int request, int *atom, int *n
       KIM_STATUS_OK                             -- successful operation
       KIM_STATUS_NEIGH_ITER_PAST_END            -- iterator has been
                                                    incremented past end of list
-      KIM_STATUS_ATOM_INVALID_ID                -- invalid atom id requested
+      KIM_STATUS_NEIGH_INVALID_REQUEST          -- invalid atom id requested
                                                    (request out of range)
       KIM_STATUS_NEIGH_INVALID_MODE             -- invalid mode value
       KIM_STATUS_API_OBJECT_INVALUD             -- invalid KIM_API object

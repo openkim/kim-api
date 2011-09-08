@@ -2612,10 +2612,11 @@ bool KIM_API_model::check_consistance_NBC_method(){
     return true;
 }
 char * KIM_API_model::status_msg(int status_code) {
-    int mincode=-12,maxcode=2,offset=12;
+    int mincode=-12,maxcode=3,offset=12;
 
     char KIM_STATUS_MSG[][KEY_CHAR_LENGTH]=
-    {{"get_half_neigh method in KIM API object is not set(NULL value)"},
+    {{"invalid value for `request' provided"},
+    { "get_half_neigh method in KIM API object is not set(NULL value)"},
     { "get_full_neigh method in KIM API object is not set(NULL value)"},
     { "number of neighbors of an atom exceeds KIM_API_MAX_NEIGHBORS"},
     { "invalid KIM API object"},

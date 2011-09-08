@@ -63,20 +63,20 @@ integer function get_neigh_Rij(pkim,mode,request,atom,numnei,pnei1atom,pRij)
            atomToReturn = iterVal
         endif
      else
-        call report_error(__LINE__, "Invalid request in get_neigh_Rij", -6)
-        get_neigh_Rij = KIM_STATUS_ATOM_INVALID_ID ! invalid request value
+        call report_error(__LINE__, "Invalid request in get_neigh_Rij", KIM_STATUS_NEIGH_INVALID_REQUEST)
+        get_neigh_Rij = KIM_STATUS_NEIGH_INVALID_REQUEST
         return
      endif
   elseif (mode.eq.1) then ! locator mode
      if ( (request.gt.N) .or. (request.lt.1)) then
-        call report_error(__LINE__, "Invalid request in get_neigh_Rij", -1)
+        call report_error(__LINE__, "Invalid request in get_neigh_Rij", KIM_STATUS_ATOM_INVALID_ID)
         get_neigh_Rij = KIM_STATUS_ATOM_INVALID_ID
         return
      else
         atomToReturn = request
      endif
   else ! not iterator or locator mode
-     call report_error(__LINE__, "Invalid mode in get_neigh_Rij", -2)
+     call report_error(__LINE__, "Invalid mode in get_neigh_Rij", KIM_STATUS_NEIGH_INVALID_MODE)
      get_neigh_Rij = KIM_STATUS_NEIGH_INVALID_MODE
      return
   endif
