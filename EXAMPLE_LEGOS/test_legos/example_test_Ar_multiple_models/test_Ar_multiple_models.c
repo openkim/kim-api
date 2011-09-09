@@ -469,15 +469,15 @@ int get_periodic_neigh(void* kimmdl, int *mode, int *request, int* atom,
       }
       else /* invalid request value */
       {
-         report_error(__LINE__,"Invalid request in get_periodic_neigh", -6);
-         return KIM_STATUS_ATOM_INVALID_ID;
+         report_error(__LINE__,"Invalid request in get_periodic_neigh", KIM_STATUS_NEIGH_INVALID_REQUEST);
+         return KIM_STATUS_NEIGH_INVALID_REQUEST;
       }
    }
    else if (1 == *mode) /* locator mode */
    {
       if ((*request >= *numberOfAtoms) || (*request < 0)) /* invalid request */
       {
-         report_error(__LINE__,"Invalid request in get_periodic_neigh", -1);
+         report_error(__LINE__,"Invalid request in get_periodic_neigh", KIM_STATUS_ATOM_INVALID_ID);
          return KIM_STATUS_ATOM_INVALID_ID;
       }
       else
@@ -487,7 +487,7 @@ int get_periodic_neigh(void* kimmdl, int *mode, int *request, int* atom,
    }
    else /* invalid mode */
    {
-      report_error(__LINE__,"Invalid mode in get_periodic_neigh", -2);
+      report_error(__LINE__,"Invalid mode in get_periodic_neigh", KIM_STATUS_NEIGH_INVALID_MODE);
       return KIM_STATUS_NEIGH_INVALID_MODE;
    }
 
@@ -714,15 +714,15 @@ int get_cluster_neigh(void* kimmdl, int *mode, int *request, int* atom,
       }
       else /* invalid request value */
       {
-         report_error(__LINE__,"Invalid request in get_cluster_neigh", -6);
-         return KIM_STATUS_ATOM_INVALID_ID;
+         report_error(__LINE__,"Invalid request in get_cluster_neigh", KIM_STATUS_NEIGH_INVALID_REQUEST);
+         return KIM_STATUS_NEIGH_INVALID_REQUEST;
       }
    }
    else if (1 == *mode) /* locator mode */
    {
       if ((*request >= *numberOfAtoms) || (*request < 0)) /* invalid request */
       {
-         report_error(__LINE__,"Invalid request in get_cluster_neigh", -1);
+         report_error(__LINE__,"Invalid request in get_cluster_neigh", KIM_STATUS_ATOM_INVALID_ID);
          return KIM_STATUS_ATOM_INVALID_ID;
       }
       else
@@ -732,7 +732,7 @@ int get_cluster_neigh(void* kimmdl, int *mode, int *request, int* atom,
    }
    else /* invalid mode */
    {
-      report_error(__LINE__,"Invalid mode in get_cluster_neigh", -2);
+      report_error(__LINE__,"Invalid mode in get_cluster_neigh", KIM_STATUS_NEIGH_INVALID_MODE);
       return KIM_STATUS_NEIGH_INVALID_MODE;
    }
 
