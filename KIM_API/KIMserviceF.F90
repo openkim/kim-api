@@ -51,6 +51,16 @@ module kimservice
         integer(kind=kim_intptr) :: kimmdl,kim_api_status_msg_f
 	end function kim_api_status_msg_f
 
+    subroutine kim_api_report_error(ln,fl,usermsg,ier)
+#ifdef SYSTEM32
+integer, parameter :: kim_intptr=4
+#else
+integer,parameter :: kim_intptr = 8
+#endif
+      integer :: ln,ier
+      integer(kind=kim_intptr)::fl,usermsg
+    end subroutine kim_api_report_error
+
         integer function kim_api_init1(kimmdl,testinputf,testname,mdlinputf,mdlname)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
@@ -822,6 +832,16 @@ module kimservice
             pstr =loc(us)
             call kim_api_transform_units_to(kimmdl,pstr,error)
         end subroutine  kim_api_transform_units_to_f
+        
+        subroutine kim_api_report_error_f(ln,fl,usermsg,ier)
+            integer:: ln,ier
+            character(len=*)::fl,usermsg
+            character(len=128)::fltmp,umsgtmp
+            fltmp=fl//CHAR(0)
+            umsgtmp=usermsg//char(0)
+            call kim_api_report_error(ln,loc(fltmp),loc(umsgtmp),ier)
+
+        end subroutine kim_api_report_error_f
 
         subroutine kim_api_set2_compute_f(kimmdl,nm,error)
             integer(kind=kim_intptr) :: kimmdl

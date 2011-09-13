@@ -1046,6 +1046,30 @@ Corresponding Fortran style interface:
                 integer :: errorcode
                 integer(kind=kim_intptr) :: kim_api_status_msg_f
        end function kim_api_status_msg_f
+
+
+******************************************************************************
+
+void  KIM_API_report_error(int line, char * file, char * usermsg, int  errorcode)
+    This routine prints error message. 
+
+   Arguments:
+        int line
+                line in the file where it was generated
+        char * file
+                name of the file 
+        char * usermsg
+                user defined error message 
+        int errorcode
+               error code or  KIM_STATUS_MSG. 
+ 
+Corresponding Fortran style interface:
+
+       subroutine kim_api_report_error_f(line, fl,usermsg,errorcode)
+                integer :: errorcode,line
+                character(len=*) :: fl,usermsg
+       end subroutine kim_api_report_error_f
+
              
 ******************************************************************************
 int KIM_API_get_half_neigh(void *kimmdl, int mode,int request, int *atom, int *numnei, int **nei1atom, double **Rij);

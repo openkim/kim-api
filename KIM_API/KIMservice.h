@@ -243,6 +243,8 @@ bool requiresFullNeighbors();
     bool support_Rij;
     int get_neigh_mode(int *);
     static char * status_msg(int status_code);
+    static void report_error(int line, char * fl, char * usermsg, int ier);
+    
 private:
 
     bool locator_neigh_mode;

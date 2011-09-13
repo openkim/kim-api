@@ -159,6 +159,9 @@ char * KIM_API_status_msg(int error){
     return KIM_API_model::status_msg(error);
 }
 
+void KIM_API_report_error(int ln, char *fl,char *usermsg,int ier){
+    KIM_API_model::report_error(ln,fl,usermsg,ier);
+}
 //element access methods by name
 int  KIM_API_set_data(void *kimmdl,char *nm, intptr_t size, void *dt){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
@@ -462,4 +465,8 @@ float kim_api_get_unit_scalefactor_(void * kim, char**nm, int *error){
 
 void * kim_api_status_msg_f_(int * error){
     return (void *) KIM_API_status_msg(*error);
+}
+
+void kim_api_report_error_(int * ln,char ** fl, char ** usermsg, int * ier){
+    KIM_API_report_error(*ln,*fl,*usermsg,*ier);
 }
