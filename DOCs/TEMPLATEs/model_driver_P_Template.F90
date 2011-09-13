@@ -30,7 +30,6 @@ private
 public Compute_Energy_Forces, &
        reinit,                &
        destroy,               &
-       report_error,          &
        calc_phi
 
 ! Below are the definitions and values of all Model parameters
@@ -148,13 +147,13 @@ integer NBC
 !
 pmodel_cutoff = kim_api_get_data_f(pkim,"cutoff",ier)
 if (ier.lt.KIM_STATUS_OK) then
-   call report_error(__LINE__, "kim_api_get_data_f", ier)
+   call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
    return
 endif
 
 pmodel_cutsq = kim_api_get_data_f(pkim,"PARAM_FIXED_cutsq",ier)
 if (ier.lt.KIM_STATUS_OK) then
-   call report_error(__LINE__, "kim_api_get_data_f", ier)
+   call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
    return
 endif
 
@@ -162,13 +161,13 @@ endif
 
 pmodel_<FILL parameter 1> = kim_api_get_data_f(pkim,"PARAM_FREE_<FILL parameter 1>",ier)
 if (ier.lt.KIM_STATUS_OK) then
-   call report_error(__LINE__, "kim_api_get_data_f", ier)
+   call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
    return
 endif
 
 pmodel_<FILL parameter 2> = kim_api_get_data_f(pkim,"PARAM_FREE_<FILL parameter 2>",ier)
 if (ier.lt.KIM_STATUS_OK) then
-   call report_error(__LINE__, "kim_api_get_data_f", ier)
+   call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
    return
 endif
 
@@ -184,7 +183,7 @@ endif
 !
 pNBC_Method = kim_api_get_nbc_method_f(pkim, ier)
 if (ier.lt.KIM_STATUS_OK) then
-   call report_error(__LINE__, "kim_api_get_nbc_method_f", ier)
+   call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_nbc_method_f", ier)
    return
 endif
 if (index(NBC_Method,"CLUSTER").eq.1) then
@@ -207,7 +206,7 @@ elseif (index(NBC_Method,"NEIGH-RVEC-F").eq.1) then
    HalfOrFull = 2
 else
    ier = KIM_STATUS_FAIL
-   call report_error(__LINE__, "Unknown NBC method", ier)
+   call kim_api_report_error_f(__LINE__, __FILE__, "Unknown NBC method", ier)
    return
 endif
 call free(pNBC_Method) ! don't forget to release the memory...
@@ -221,14 +220,14 @@ if (NBC.ne.0) then
    !*****************************
    IterOrLoca = kim_api_get_neigh_mode_f(pkim, ier)
    if (ier.lt.KIM_STATUS_OK) then
-      call report_error(__LINE__, "kim_api_get_neigh_mode_f", ier)
+      call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_neigh_mode_f", ier)
       return
    endif
    if (IterOrLoca.ne.1 .and. IterOrLoca.ne.2) then
       ier = KIM_STATUS_FAIL
       write(error_message,'(a,i1)') &
          'Unsupported IterOrLoca mode = ',IterOrLoca
-      call report_error(__LINE__, error_message, ier)
+      call kim_api_report_error_f(__LINE__, __FILE__, error_message, ier)
       stop
    endif
 else
@@ -240,19 +239,19 @@ endif
 !
 comp_force = kim_api_isit_compute_f(pkim,"forces",ier)
 if (ier.lt.KIM_STATUS_OK) then
-   call report_error(__LINE__, "kim_api_isit_compute_f", ier)
+   call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute_f", ier)
    return
 endif
 
 comp_enepot = kim_api_isit_compute_f(pkim,"energyPerAtom",ier)
 if (ier.lt.KIM_STATUS_OK) then
-   call report_error(__LINE__, "kim_api_isit_compute_f", ier)
+   call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute_f", ier)
    return
 endif
 
 comp_virial = kim_api_isit_compute_f(pkim,"virial",ier)
 if (ier.lt.KIM_STATUS_OK) then
-   call report_error(__LINE__, "kim_api_isit_compute_f", ier)
+   call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute_f", ier)
    return
 endif
 
@@ -260,32 +259,32 @@ endif
 !
 pN = kim_api_get_data_f(pkim,"numberOfAtoms",ier)
 if (ier.lt.KIM_STATUS_OK) then
-   call report_error(__LINE__, "kim_api_get_data_f", ier)
+   call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
    return
 endif
 
 patomTypes = kim_api_get_data_f(pkim,"atomTypes",ier)
 if (ier.lt.KIM_STATUS_OK) then
-   call report_error(__LINE__, "kim_api_get_data_f", ier)
+   call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
    return
 endif
 
 penergy = kim_api_get_data_f(pkim,"energy",ier)
 if (ier.lt.KIM_STATUS_OK) then
-   call report_error(__LINE__, "kim_api_get_data_f", ier)
+   call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
    return
 endif
 
 pcoor = kim_api_get_data_f(pkim,"coordinates",ier)
 if (ier.lt.KIM_STATUS_OK) then
-   call report_error(__LINE__, "kim_api_get_data_f", ier)
+   call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
    return
 endif
 
 if (NBC.eq.1) then
    pboxlength = kim_api_get_data_f(pkim,"boxlength",ier)
    if (ier.lt.KIM_STATUS_OK) then
-      call report_error(__LINE__, "kim_api_get_data_f", ier)
+      call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
       return
    endif
 endif
@@ -293,7 +292,7 @@ endif
 if (comp_force.eq.1) then
    pforce  = kim_api_get_data_f(pkim,"forces",ier)
    if (ier.lt.KIM_STATUS_OK) then
-      call report_error(__LINE__, "kim_api_get_data_f", ier)
+      call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
       return
    endif
    call toRealArrayWithDescriptor2d(forcedum,force,DIM,N)
@@ -302,7 +301,7 @@ endif
 if (comp_enepot.eq.1) then
    penepot = kim_api_get_data_f(pkim,"energyPerAtom",ier)
    if (ier.lt.KIM_STATUS_OK) then
-      call report_error(__LINE__, "kim_api_get_data_f", ier)
+      call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
       return
    endif
    call toRealArrayWithDescriptor1d(enepotdum,ene_pot,N)
@@ -311,7 +310,7 @@ endif
 if (comp_virial.eq.1) then
    pvirial = kim_api_get_data_f(pkim,"virial",ier)
    if (ier.lt.KIM_STATUS_OK) then
-      call report_error(__LINE__, "kim_api_get_data_f", ier)
+      call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
       return
    endif
 endif
@@ -323,7 +322,7 @@ call toRealArrayWithDescriptor2d(coordum,coor,DIM,N)
 ier = KIM_STATUS_FAIL ! assume an error
 do i = 1,N
    if (atomTypes(i).ne.speccode) then
-      call report_error(__LINE__, "Unexpected species type detected", ier)
+      call kim_api_report_error_f(__LINE__, __FILE__, "Unexpected species type detected", ier)
       return
    endif
 enddo
@@ -359,9 +358,9 @@ if (IterOrLoca.eq.1) then
    ! check for successful initialization
    if (ier.ne.KIM_STATUS_NEIGH_ITER_INIT_OK) then
       if (HalfOrFull.eq.1) then
-         call report_error(__LINE__, "kim_api_get_half_neigh_f", ier)
+         call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_half_neigh_f", ier)
       else
-         call report_error(__LINE__, "kim_api_get_full_neigh_f", ier)
+         call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_full_neigh_f", ier)
       endif
       ier = KIM_STATUS_FAIL
       return 
@@ -392,9 +391,9 @@ do
                                 ! terminate loop
       if (ier.lt.KIM_STATUS_OK) then ! some sort of problem, exit
          if (HalfOrFull.eq.1) then
-            call report_error(__LINE__, "kim_api_get_half_neigh_f", ier)
+            call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_half_neigh_f", ier)
          else
-            call report_error(__LINE__, "kim_api_get_full_neigh_f", ier)
+            call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_full_neigh_f", ier)
          endif
          return
       endif
@@ -420,9 +419,9 @@ do
       endif
       if (ier.ne.KIM_STATUS_OK) then ! some sort of problem, exit
          if (HalfOrFull.eq.1) then
-            call report_error(__LINE__, "kim_api_get_half_neigh_f", ier)
+            call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_half_neigh_f", ier)
          else
-            call report_error(__LINE__, "kim_api_get_full_neigh_f", ier)
+            call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_full_neigh_f", ier)
          endif
          ier = KIM_STATUS_FAIL
          return
@@ -554,19 +553,19 @@ real*8  model_<FILL parameter 2>; pointer(pmodel_<FILL parameter 2>,model_<FILL 
 !
 pmodel_cutoff = kim_api_get_data_f(pkim,"PARAM_FREE_cutoff",ier)
 if (ier.lt.KIM_STATUS_OK) then
-   call report_error(__LINE__, "kim_api_get_data_f", ier)
+   call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
    return
 endif
 
 pmodel_<FILL parameter 1> = kim_api_get_data_f(pkim,"PARAM_FREE_<FILL parameter 1>",ier)
 if (ier.lt.KIM_STATUS_OK) then
-   call report_error(__LINE__, "kim_api_get_data_f", ier)
+   call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
    return
 endif
 
 pmodel_<FILL parameter 2> = kim_api_get_data_f(pkim,"PARAM_FREE_<FILL parameter 2>",ier)
 if (ier.lt.KIM_STATUS_OK) then
-   call report_error(__LINE__, "kim_api_get_data_f", ier)
+   call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
    return
 endif
 
@@ -579,7 +578,7 @@ endif
 ! store model cutoff in KIM object
 pcutoff =  kim_api_get_data_f(pkim,"cutoff",ier)
 if (ier.lt.KIM_STATUS_OK) then
-   call report_error(__LINE__, "kim_api_get_data", ier)
+   call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
    stop
 endif
 cutoff = model_cutoff
@@ -587,7 +586,7 @@ cutoff = model_cutoff
 ! store squared cutoff radius in KIM object
 pmodel_cutsq = kim_api_get_data_f(pkim,"PARAM_FIXED_cutsq",ier)
 if (ier.lt.KIM_STATUS_OK) then
-   call report_error(__LINE__, "kim_api_get_data_f", ier)
+   call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
    return
 endif
 model_cutsq = model_cutoff**2
@@ -623,21 +622,21 @@ real*8  model_<FILL parameter 2>; pointer(pmodel_<FILL parameter 2>,model_<FILL 
 !
 pmodel_cutoff = kim_api_get_data_f(pkim,"PARAM_FREE_cutoff",ier)
 if (ier.lt.KIM_STATUS_OK) then
-   call report_error(__LINE__, "kim_api_get_data_f", ier)
+   call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
    return
 endif
 call free(pmodel_cutoff)
 
 pmodel_cutsq = kim_api_get_data_f(pkim,"PARAM_FIXED_cutsq",ier)
 if (ier.lt.KIM_STATUS_OK) then
-   call report_error(__LINE__, "kim_api_get_data_f", ier)
+   call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
    return
 endif
 call free(pmodel_cutsq)
 
 pmodel_<FILL parameter 1> = kim_api_get_data_f(pkim,"PARAM_FREE_<FILL parameter 1>",ier)
 if (ier.lt.KIM_STATUS_OK) then
-   call report_error(__LINE__, "kim_api_get_data_f", ier)
+   call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
    return
 endif
 call free(pmodel_<FILL parameter 1>)
@@ -646,30 +645,6 @@ call free(pmodel_<FILL parameter 1>)
 ! FIXED parameters.
 
 end subroutine destroy
-
-!-------------------------------------------------------------------------------
-!
-! error reporting routine
-!
-!-------------------------------------------------------------------------------
-subroutine report_error(line, str, status)
-implicit none
-
-!-- Transferred variables
-integer,          intent(in) :: line
-character(len=*), intent(in) :: str
-integer,          intent(in) :: status
-
-!-- Local variables
-character(len=10000), parameter :: file = __FILE__
-character(len=KEY_CHAR_LENGTH)  :: message; pointer(pmessage,message)
-
-pmessage = kim_api_status_msg_f(status)
-!-- print the error message
-print *,'* ERROR at line', line, 'in ',trim(file), ': ', str,'. kimerror =', &
-        message(1:(index(message,char(0))-1))
-
-end subroutine report_error
 
 end module model_driver_P_<FILL model driver name>
 
@@ -710,20 +685,20 @@ real*8  model_<FILL parameter 2>; pointer(pmodel_<FILL parameter 2>,model_<FILL 
 ! store pointer to compute function in KIM object
 ier = kim_api_set_data_f(pkim,"compute",one,loc(Compute_Energy_Forces))
 if (ier.lt.KIM_STATUS_OK) then
-   call report_error(__LINE__, "kim_api_set_data", ier)
+   call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data", ier)
    stop
 endif
 
 ! store pointer to reinit function in KIM object
 ier = kim_api_set_data_f(pkim,"reinit",one,loc(reinit))
 if (ier.lt.KIM_STATUS_OK) then
-   call report_error(__LINE__, "kim_api_set_data", ier)
+   call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data", ier)
    stop
 endif
 
 ier = kim_api_set_data_f(pkim,"destroy",one,loc(destroy))
 if (ier.lt.KIM_STATUS_OK) then
-   call report_error(__LINE__, "kim_api_set_data", ier)
+   call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data", ier)
    stop
 endif
 
@@ -740,7 +715,7 @@ read(paramfile,'<FILL appropriate format>',iostat=ier,err=100) in_cutoff,       
 goto 200
 100 continue
 ! reading parameters failed
-call report_error(__LINE__, "Unable to read <FILL model driver name> parameters, ier = ", KIM_STATUS_FAIL)
+call kim_api_report_error_f(__LINE__, __FILE__, "Unable to read <FILL model driver name> parameters, ier = ", KIM_STATUS_FAIL)
 stop
 
 200 continue
@@ -748,7 +723,7 @@ stop
 ! store model cutoff in KIM object
 pcutoff =  kim_api_get_data_f(pkim,"cutoff",ier)
 if (ier.lt.KIM_STATUS_OK) then
-   call report_error(__LINE__, "kim_api_get_data", ier)
+   call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
    stop
 endif
 cutoff = in_cutoff
@@ -757,7 +732,7 @@ cutoff = in_cutoff
 pmodel_cutoff = malloc(one*8) ! 8 is the size of double precision number
 ier = kim_api_set_data_f(pkim,"PARAM_FREE_cutoff",one,pmodel_cutoff)
 if (ier.lt.KIM_STATUS_OK) then
-   call report_error(__LINE__, "kim_api_set_data", ier);
+   call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data", ier);
    stop
 endif
 model_cutoff = in_cutoff ! Initialize
@@ -766,7 +741,7 @@ model_cutoff = in_cutoff ! Initialize
 pmodel_cutsq = malloc(one*8) ! 8 is the size of double precision number
 ier = kim_api_set_data_f(pkim,"PARAM_FIXED_cutsq",one,pmodel_cutsq)
 if (ier.lt.KIM_STATUS_OK) then
-   call report_error(__LINE__, "kim_api_set_data", ier);
+   call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data", ier);
    stop
 endif
 model_cutsq = in_cutoff**2 ! Initialize
@@ -775,7 +750,7 @@ model_cutsq = in_cutoff**2 ! Initialize
 pmodel_<FILL parameter 1> = malloc(one*8) ! 8 is the size of double precision number
 ier = kim_api_set_data_f(pkim,"PARAM_FREE_<FILL parameter 1>",one,pmodel_<FILL parameter 1>)
 if (ier.lt.KIM_STATUS_OK) then
-   call report_error(__LINE__, "kim_api_set_data", ier);
+   call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data", ier);
    stop
 endif
 model_<FILL parameter 1> = in_<FILL parameter 1>

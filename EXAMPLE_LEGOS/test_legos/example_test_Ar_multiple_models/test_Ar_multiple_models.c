@@ -29,7 +29,6 @@ typedef struct
 } NeighList;
 
 /* Define prototypes */
-void report_error(int line, char* str, int status);
 void fcc_periodic_neighborlist(int CellsPerHalfSide, double cutoff,
                                double FCCspacing, NeighList* nl);
 
@@ -99,132 +98,132 @@ int main()
    /* initialize the two models */
    status = KIM_API_init(&pkim_periodic_model_0, testname, modelname0);
    if (KIM_STATUS_OK > status)
-      report_error(__LINE__,"KIM_API_init() for MODEL_ZERO for periodic",status);
+      KIM_API_report_error(__LINE__, __FILE__,"KIM_API_init() for MODEL_ZERO for periodic",status);
    status = KIM_API_init(&pkim_cluster_model_0, testname, modelname0);
    if (KIM_STATUS_OK > status)
-      report_error(__LINE__,"KIM_API_init() for MODEL_ZERO for cluster",status);
+      KIM_API_report_error(__LINE__, __FILE__,"KIM_API_init() for MODEL_ZERO for cluster",status);
    status = KIM_API_init(&pkim_periodic_model_1, testname, modelname1);
    if (KIM_STATUS_OK > status)
-      report_error(__LINE__,"KIM_API_init() for MODEL_ONE for periodic",status);
+      KIM_API_report_error(__LINE__, __FILE__,"KIM_API_init() for MODEL_ONE for periodic",status);
    status = KIM_API_init(&pkim_cluster_model_1, testname, modelname1);
    if (KIM_STATUS_OK > status)
-      report_error(__LINE__,"KIM_API_init() for MODEL_ONE cluster",status);
+      KIM_API_report_error(__LINE__, __FILE__,"KIM_API_init() for MODEL_ONE cluster",status);
 
    /* Register memory */
    /* model inputs */
    status = KIM_API_set_data(pkim_periodic_model_0, "numberOfAtoms",   1, &numberOfAtoms_periodic);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_periodic_model_1, "numberOfAtoms",   1, &numberOfAtoms_periodic);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_cluster_model_0,  "numberOfAtoms",   1, &numberOfAtoms_cluster);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_cluster_model_1,  "numberOfAtoms",   1, &numberOfAtoms_cluster);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_periodic_model_0, "numberAtomTypes", 1, &numberAtomTypes);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_periodic_model_1, "numberAtomTypes", 1, &numberAtomTypes);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_cluster_model_0,  "numberAtomTypes", 1, &numberAtomTypes);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_cluster_model_1,  "numberAtomTypes", 1, &numberAtomTypes);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_periodic_model_0, "atomTypes",       1, &AtomTypes_periodic_model_0);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_periodic_model_1, "atomTypes",       1, &AtomTypes_periodic_model_1);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_cluster_model_0,  "atomTypes",       NCLUSTERATOMS, &AtomTypes_cluster_model_0);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_cluster_model_1,  "atomTypes",       NCLUSTERATOMS, &AtomTypes_cluster_model_1);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_periodic_model_0, "coordinates",     DIM, coords_periodic);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_periodic_model_1, "coordinates",     DIM, coords_periodic);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_cluster_model_0,  "coordinates",     (NCLUSTERATOMS*DIM), &(coords_cluster[0][0]));
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_cluster_model_1,  "coordinates",     (NCLUSTERATOMS*DIM), &(coords_cluster[0][0]));
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_periodic_model_0, "get_full_neigh",  1, &get_periodic_neigh);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_periodic_model_1, "get_full_neigh",  1, &get_periodic_neigh);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_cluster_model_0,  "get_full_neigh",  1, &get_cluster_neigh);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_cluster_model_1,  "get_full_neigh",  1, &get_cluster_neigh);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_periodic_model_0, "neighObject",     1, &nl_periodic_model_0);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_periodic_model_1, "neighObject",     1, &nl_periodic_model_1);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_cluster_model_0,  "neighObject",     1, &nl_cluster_model_0);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_cluster_model_1,  "neighObject",     1, &nl_cluster_model_1);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    /* model outputs */
    status = KIM_API_set_data(pkim_periodic_model_0, "destroy",         1, NULL);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_periodic_model_1, "destroy",         1, NULL);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_cluster_model_0,  "destroy",         1, NULL);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_cluster_model_1,  "destroy",         1, NULL);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_periodic_model_0, "compute",         1, NULL);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_periodic_model_1, "compute",         1, NULL);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_cluster_model_0,  "compute",         1, NULL);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_cluster_model_1,  "compute",         1, NULL);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_periodic_model_0, "reinit",          1, NULL);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_periodic_model_1, "reinit",          1, NULL);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_cluster_model_0,  "reinit",          1, NULL);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_cluster_model_1,  "reinit",          1, NULL);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_periodic_model_0, "cutoff",          1, &cutoff_periodic_model_0);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_periodic_model_1, "cutoff",          1, &cutoff_periodic_model_1);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_cluster_model_0,  "cutoff",          1, &cutoff_cluster_model_0);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_cluster_model_1,  "cutoff",          1, &cutoff_cluster_model_1);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_periodic_model_0, "energy",          1, &energy_periodic_model_0);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_periodic_model_1, "energy",          1, &energy_periodic_model_1);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_cluster_model_0,  "energy",          1, &energy_cluster_model_0);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_cluster_model_1,  "energy",          1, &energy_cluster_model_1);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"set data",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
 
    /* call model init routines */
    status = KIM_API_model_init(pkim_periodic_model_0);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"KIM_API_model_init", status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_model_init", status);
    status = KIM_API_model_init(pkim_cluster_model_0);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"KIM_API_model_init", status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_model_init", status);
    status = KIM_API_model_init(pkim_periodic_model_1);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"KIM_API_model_init", status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_model_init", status);
    status = KIM_API_model_init(pkim_cluster_model_1);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"KIM_API_model_init", status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_model_init", status);
 
    /* setup atomTypes */
    AtomTypes_periodic_model_0 = KIM_API_get_aTypeCode(pkim_periodic_model_0, "Ar", &status);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"get_aTypeCode", status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_aTypeCode", status);
 
    AtomTypes_cluster_model_0[0] = KIM_API_get_aTypeCode(pkim_cluster_model_0, "Ar", &status);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"get_aTypeCode", status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_aTypeCode", status);
    for (i = 1; i < NCLUSTERATOMS; ++i)
       AtomTypes_cluster_model_0[i] = AtomTypes_cluster_model_0[0];
    AtomTypes_periodic_model_1 = KIM_API_get_aTypeCode(pkim_periodic_model_1, "Ar", &status);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"get_aTypeCode", status); 
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_aTypeCode", status); 
 
    AtomTypes_cluster_model_1[0] = KIM_API_get_aTypeCode(pkim_cluster_model_1, "Ar", &status);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"get_aTypeCode", status); 
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_aTypeCode", status); 
    for (i = 1; i < NCLUSTERATOMS; ++i)
       AtomTypes_cluster_model_1[i] = AtomTypes_cluster_model_1[0];
    
@@ -236,40 +235,40 @@ int main()
    NNeighbors[1] = 4*pow((2*CellsPerCutoff[1] + 1),DIM);
    /* allocate memory for list */
    nl_periodic_model_0.NNeighbors = malloc(sizeof(int));
-   if (NULL==nl_periodic_model_0.NNeighbors) report_error(__LINE__,"malloc unsuccessful", -1);
+   if (NULL==nl_periodic_model_0.NNeighbors) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
    
    nl_cluster_model_0.NNeighbors = malloc(NCLUSTERATOMS*sizeof(int));
-   if (NULL==nl_cluster_model_0.NNeighbors) report_error(__LINE__,"malloc unsuccessful", -1);
+   if (NULL==nl_cluster_model_0.NNeighbors) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
       
    nl_periodic_model_1.NNeighbors = malloc(sizeof(int));
-   if (NULL==nl_periodic_model_1.NNeighbors) report_error(__LINE__,"malloc unsuccessful", -1);
+   if (NULL==nl_periodic_model_1.NNeighbors) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
    nl_cluster_model_1.NNeighbors = malloc(NCLUSTERATOMS*sizeof(int));
-   if (NULL==nl_cluster_model_1.NNeighbors) report_error(__LINE__,"malloc unsuccessful", -1);
+   if (NULL==nl_cluster_model_1.NNeighbors) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
    
    nl_periodic_model_0.neighborList = malloc(NNeighbors[0]*sizeof(int));
-   if (NULL==nl_periodic_model_0.neighborList) report_error(__LINE__,"malloc unsuccessful", -1);
+   if (NULL==nl_periodic_model_0.neighborList) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
    nl_cluster_model_0.neighborList = malloc(NCLUSTERATOMS*NCLUSTERATOMS*sizeof(int));
-   if (NULL==nl_cluster_model_0.neighborList) report_error(__LINE__,"malloc unsuccessful", -1);
+   if (NULL==nl_cluster_model_0.neighborList) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
    nl_periodic_model_1.neighborList = malloc(NNeighbors[1]*sizeof(int));
-   if (NULL==nl_periodic_model_1.neighborList) report_error(__LINE__,"malloc unsuccessful", -1);
+   if (NULL==nl_periodic_model_1.neighborList) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
    nl_cluster_model_1.neighborList = malloc(NCLUSTERATOMS*NCLUSTERATOMS*sizeof(int));
-   if (NULL==nl_cluster_model_1.neighborList) report_error(__LINE__,"malloc unsuccessful", -1);
+   if (NULL==nl_cluster_model_1.neighborList) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
    
    nl_periodic_model_0.RijList = malloc(DIM*NNeighbors[0]*sizeof(double));
-   if (NULL==nl_periodic_model_0.RijList) report_error(__LINE__,"malloc unsuccessful", -1);
+   if (NULL==nl_periodic_model_0.RijList) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
    nl_cluster_model_0.RijList = malloc(DIM*NCLUSTERATOMS*NCLUSTERATOMS*sizeof(double));
-   if (NULL==nl_cluster_model_0.RijList) report_error(__LINE__,"malloc unsuccessful", -1);
+   if (NULL==nl_cluster_model_0.RijList) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
    nl_periodic_model_1.RijList = malloc(DIM*NNeighbors[1]*sizeof(double));
-   if (NULL==nl_periodic_model_1.RijList) report_error(__LINE__,"malloc unsuccessful", -1);
+   if (NULL==nl_periodic_model_1.RijList) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
    nl_cluster_model_1.RijList = malloc(DIM*NCLUSTERATOMS*NCLUSTERATOMS*sizeof(double));
-   if (NULL==nl_cluster_model_1.RijList) report_error(__LINE__,"malloc unsuccessful", -1);
+   if (NULL==nl_cluster_model_1.RijList) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
    /* ready to compute */
    printf("--------------------------------------------------------------------------------\n");
@@ -295,16 +294,16 @@ int main()
 
       /* call compute functions */
       KIM_API_model_compute(pkim_periodic_model_0, &status);
-      if (KIM_STATUS_OK > status) report_error(__LINE__,"compute", status);
+      if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"compute", status);
 
       KIM_API_model_compute(pkim_cluster_model_0, &status);
-      if (KIM_STATUS_OK > status) report_error(__LINE__,"compute", status);
+      if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"compute", status);
 
       KIM_API_model_compute(pkim_periodic_model_1, &status);
-      if (KIM_STATUS_OK > status) report_error(__LINE__,"compute", status);
+      if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"compute", status);
 
       KIM_API_model_compute(pkim_cluster_model_1, &status);
-      if (KIM_STATUS_OK > status) report_error(__LINE__,"compute", status);
+      if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"compute", status);
 
       /* print the results */
       printf("Energy for %i atoms = %20.10e, %20.10e, %20.10e, %20.10e, %20.10e\n",
@@ -319,16 +318,16 @@ int main()
 
    /* call model destroy */
    KIM_API_model_destroy(pkim_periodic_model_0, &status);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"destroy", status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"destroy", status);
 
    KIM_API_model_destroy(pkim_cluster_model_0, &status);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"destroy", status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"destroy", status);
 
    KIM_API_model_destroy(pkim_periodic_model_1, &status);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"destroy", status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"destroy", status);
 
    KIM_API_model_destroy(pkim_cluster_model_1, &status);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"destroy", status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"destroy", status);
    
    /* free memory of neighbor lists */
    free(nl_periodic_model_0.NNeighbors);
@@ -346,13 +345,13 @@ int main()
 
    /* free pkim objects */
    KIM_API_free(&pkim_periodic_model_0, &status);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"free", status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"free", status);
    KIM_API_free(&pkim_periodic_model_1, &status);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"free", status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"free", status);
    KIM_API_free(&pkim_cluster_model_0, &status);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"free", status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"free", status);
    KIM_API_free(&pkim_cluster_model_1, &status);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"free", status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"free", status);
 
    /* everything is great */
    return 0;
@@ -442,10 +441,10 @@ int get_periodic_neigh(void* kimmdl, int *mode, int *request, int* atom,
 
    /* unpack neighbor list object */
    numberOfAtoms = (int*) KIM_API_get_data(pkim, "numberOfAtoms", &status);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"get_data", status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_data", status);
 
    nl = (NeighList*) KIM_API_get_data(pkim, "neighObject", &status);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"get_data", status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_data", status);
 
    /* check mode and request */
    if (0 == *mode) /* iterator mode */
@@ -469,7 +468,7 @@ int get_periodic_neigh(void* kimmdl, int *mode, int *request, int* atom,
       }
       else /* invalid request value */
       {
-         report_error(__LINE__,"Invalid request in get_periodic_neigh", KIM_STATUS_NEIGH_INVALID_REQUEST);
+         KIM_API_report_error(__LINE__, __FILE__,"Invalid request in get_periodic_neigh", KIM_STATUS_NEIGH_INVALID_REQUEST);
          return KIM_STATUS_NEIGH_INVALID_REQUEST;
       }
    }
@@ -477,7 +476,7 @@ int get_periodic_neigh(void* kimmdl, int *mode, int *request, int* atom,
    {
       if ((*request >= *numberOfAtoms) || (*request < 0)) /* invalid request */
       {
-         report_error(__LINE__,"Invalid request in get_periodic_neigh", KIM_STATUS_ATOM_INVALID_ID);
+         KIM_API_report_error(__LINE__, __FILE__,"Invalid request in get_periodic_neigh", KIM_STATUS_ATOM_INVALID_ID);
          return KIM_STATUS_ATOM_INVALID_ID;
       }
       else
@@ -487,7 +486,7 @@ int get_periodic_neigh(void* kimmdl, int *mode, int *request, int* atom,
    }
    else /* invalid mode */
    {
-      report_error(__LINE__,"Invalid mode in get_periodic_neigh", KIM_STATUS_NEIGH_INVALID_MODE);
+      KIM_API_report_error(__LINE__, __FILE__,"Invalid mode in get_periodic_neigh", KIM_STATUS_NEIGH_INVALID_MODE);
       return KIM_STATUS_NEIGH_INVALID_MODE;
    }
 
@@ -687,10 +686,10 @@ int get_cluster_neigh(void* kimmdl, int *mode, int *request, int* atom,
 
    /* unpack neighbor list object */
    numberOfAtoms = (int*) KIM_API_get_data(pkim, "numberOfAtoms", &status);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"get_data", status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_data", status);
 
    nl = (NeighList*) KIM_API_get_data(pkim, "neighObject", &status);
-   if (KIM_STATUS_OK > status) report_error(__LINE__,"get_data", status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_data", status);
 
    /* check mode and request */
    if (0 == *mode) /* iterator mode */
@@ -714,7 +713,7 @@ int get_cluster_neigh(void* kimmdl, int *mode, int *request, int* atom,
       }
       else /* invalid request value */
       {
-         report_error(__LINE__,"Invalid request in get_cluster_neigh", KIM_STATUS_NEIGH_INVALID_REQUEST);
+         KIM_API_report_error(__LINE__, __FILE__,"Invalid request in get_cluster_neigh", KIM_STATUS_NEIGH_INVALID_REQUEST);
          return KIM_STATUS_NEIGH_INVALID_REQUEST;
       }
    }
@@ -722,7 +721,7 @@ int get_cluster_neigh(void* kimmdl, int *mode, int *request, int* atom,
    {
       if ((*request >= *numberOfAtoms) || (*request < 0)) /* invalid request */
       {
-         report_error(__LINE__,"Invalid request in get_cluster_neigh", KIM_STATUS_ATOM_INVALID_ID);
+         KIM_API_report_error(__LINE__, __FILE__,"Invalid request in get_cluster_neigh", KIM_STATUS_ATOM_INVALID_ID);
          return KIM_STATUS_ATOM_INVALID_ID;
       }
       else
@@ -732,7 +731,7 @@ int get_cluster_neigh(void* kimmdl, int *mode, int *request, int* atom,
    }
    else /* invalid mode */
    {
-      report_error(__LINE__,"Invalid mode in get_cluster_neigh", KIM_STATUS_NEIGH_INVALID_MODE);
+      KIM_API_report_error(__LINE__, __FILE__,"Invalid mode in get_cluster_neigh", KIM_STATUS_NEIGH_INVALID_MODE);
       return KIM_STATUS_NEIGH_INVALID_MODE;
    }
 
@@ -749,11 +748,4 @@ int get_cluster_neigh(void* kimmdl, int *mode, int *request, int* atom,
    *Rij = &((*nl).RijList[(*atom)*DIM*NCLUSTERATOMS]);
 
    return KIM_STATUS_OK;
-}
-
-void report_error(int line, char* str, int status)
-{
-   printf("Error at line %i of %s: %s with status = %s.\n",
-          line,__FILE__,str,KIM_API_status_msg(status));
-   exit(-1);
 }

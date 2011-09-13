@@ -43,7 +43,6 @@ void model_<FILL (lowercase) element name>_p_<FILL (lowercase) model name>_init_
 /* defined as static to avoid namespace clashes with other Models */
 /**/
 static void compute(void* km, int* ier);
-static void report_error(int line, char* str, int status);
 /**/
 static void calc_phi(double r, double* phi);
 static void calc_phi_dphi(double r, double* phi, double* dphi);
@@ -137,7 +136,7 @@ static void compute(void* km, int* ier)
    NBCstr = KIM_API_get_NBC_method(pkim, ier);
    if (KIM_STATUS_OK > *ier)
    {
-      report_error(__LINE__, "KIM_API_get_NBC_method", *ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_NBC_method", *ier);
       return;
    }
    if (!strcmp("CLUSTER",NBCstr))
@@ -174,7 +173,7 @@ static void compute(void* km, int* ier)
    else
    {
       *ier = KIM_STATUS_FAIL;
-      report_error(__LINE__, "Unknown NBC method", *ier);
+      KIM_API_report_error(__LINE__, __FILE__, "Unknown NBC method", *ier);
       return;
    }
    free(NBCstr); /* don't forget to release the memory... */
@@ -189,7 +188,7 @@ static void compute(void* km, int* ier)
       IterOrLoca = KIM_API_get_neigh_mode(pkim, ier);
       if (KIM_STATUS_OK > *ier)
       {
-         report_error(__LINE__, "KIM_API_get_neigh_mode", *ier);
+         KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_neigh_mode", *ier);
          return;
       }
       if ((IterOrLoca != 1) && (IterOrLoca != 2))
@@ -207,19 +206,19 @@ static void compute(void* km, int* ier)
    comp_force = KIM_API_isit_compute(pkim, "forces", ier);
    if (KIM_STATUS_OK > *ier)
    {
-      report_error(__LINE__, "KIM_API_isit_compute", *ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_isit_compute", *ier);
       return;
    }
    comp_energyPerAtom = KIM_API_isit_compute(pkim, "energyPerAtom", ier);
    if (KIM_STATUS_OK > *ier)
    {
-      report_error(__LINE__, "KIM_API_isit_compute", *ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_isit_compute", *ier);
       return;
    }
    comp_virial = KIM_API_isit_compute(pkim, "virial", ier);
    if (KIM_STATUS_OK > *ier)
    {
-      report_error(__LINE__, "KIM_API_isit_compute", *ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_isit_compute", *ier);
       return;
    }
 
@@ -228,25 +227,25 @@ static void compute(void* km, int* ier)
    nAtoms = (int*) KIM_API_get_data(pkim, "numberOfAtoms", ier);
    if (KIM_STATUS_OK > *ier)
    {
-      report_error(__LINE__, "KIM_API_get_data", *ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", *ier);
       return;
    }
    atomTypes= (int*) KIM_API_get_data(pkim, "atomTypes", ier);
    if (KIM_STATUS_OK > *ier)
    {
-      report_error(__LINE__, "KIM_API_get_data", *ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", *ier);
       return;
    }
    energy = (double*) KIM_API_get_data(pkim, "energy", ier);
    if (KIM_STATUS_OK > *ier)
    {
-      report_error(__LINE__, "KIM_API_get_data", *ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", *ier);
       return;
    }
    coords = (double*) KIM_API_get_data(pkim, "coordinates", ier);
    if (KIM_STATUS_OK > *ier)
    {
-      report_error(__LINE__, "KIM_API_get_data", *ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", *ier);
       return;
    }
    if (NBC == 1)
@@ -254,7 +253,7 @@ static void compute(void* km, int* ier)
       boxlength = (double*) KIM_API_get_data(pkim, "boxlength", ier);
       if (KIM_STATUS_OK > *ier)
       {
-         report_error(__LINE__, "KIM_API_get_data", *ier);
+         KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", *ier);
          return;
       }
    }
@@ -264,7 +263,7 @@ static void compute(void* km, int* ier)
       force = (double*) KIM_API_get_data(pkim, "forces", ier);
       if (KIM_STATUS_OK > *ier)
       {
-         report_error(__LINE__, "KIM_API_get_data", *ier);
+         KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", *ier);
          return;
       }
    }
@@ -274,7 +273,7 @@ static void compute(void* km, int* ier)
       energyPerAtom = (double*) KIM_API_get_data(pkim, "energyPerAtom", ier);
       if (KIM_STATUS_OK > *ier)
       {
-         report_error(__LINE__, "KIM_API_get_data", *ier);
+         KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", *ier);
          return;
       }
    }
@@ -284,7 +283,7 @@ static void compute(void* km, int* ier)
       virial = (double*) KIM_API_get_data(pkim, "virial", ier);
       if (KIM_STATUS_OK > *ier)
       {
-         report_error(__LINE__, "KIM_API_get_data", *ier);
+         KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", *ier);
          return;
       }
    }
@@ -296,7 +295,7 @@ static void compute(void* km, int* ier)
    {
       if ( SPECCODE != atomTypes[i])
       {
-         report_error(__LINE__, "Unexpected species type detected", *ier);
+         KIM_API_report_error(__LINE__, __FILE__, "Unexpected species type detected", *ier);
          return;
       }
    }
@@ -356,11 +355,11 @@ static void compute(void* km, int* ier)
       {
          if (1 == HalfOrFull)
          {
-            report_error(__LINE__, "KIM_API_get_half_neigh", *ier);
+            KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_half_neigh", *ier);
          }
          else
          {
-            report_error(__LINE__, "KIM_API_get_full_neigh", *ier);
+            KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_full_neigh", *ier);
          }
          *ier = KIM_STATUS_FAIL;
          return;
@@ -395,11 +394,11 @@ static void compute(void* km, int* ier)
          {
             if (1 == HalfOrFull)
             {
-               report_error(__LINE__, "KIM_API_get_half_neigh", *ier);
+               KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_half_neigh", *ier);
             }
             else
             {
-               report_error(__LINE__, "KIM_API_get_full_neigh", *ier);
+               KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_full_neigh", *ier);
             }
             return;
          }
@@ -441,11 +440,11 @@ static void compute(void* km, int* ier)
       {
          if (1 == HalfOrFull)
          {
-            report_error(__LINE__, "KIM_API_get_half_neigh", *ier);
+            KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_half_neigh", *ier);
          }
          else
          {
-            report_error(__LINE__, "KIM_API_get_full_neigh", *ier);
+            KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_full_neigh", *ier);
          }
          *ier = KIM_STATUS_FAIL;
          return;
@@ -590,7 +589,7 @@ void model_<FILL (lowercase) elemenet name>_p_<FILL (lowercase) model name>_init
    ier = KIM_API_set_data(pkim, "compute", 1, (void*) &compute);
    if (KIM_STATUS_OK > ier)
    {
-      report_error(__LINE__, "KIM_API_set_data", ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_set_data", ier);
       exit(1);
    }
 
@@ -598,16 +597,10 @@ void model_<FILL (lowercase) elemenet name>_p_<FILL (lowercase) model name>_init
    model_cutoff = (double*) KIM_API_get_data(pkim, "cutoff", &ier);
    if (KIM_STATUS_OK > ier)
    {
-      report_error(__LINE__, "KIM_API_get_data", ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
       exit(1);
    }
    *model_cutoff = MODEL_CUTOFF; /* cutoff distance in angstroms */
 
    return;
-}
-
-static void report_error(int line, char* str, int status)
-{
-   printf("* ERROR at line %i in %s: %s. kimerror = %s\n",
-          line, __FILE__, str, KIM_API_status_msg(status));
 }

@@ -20,7 +20,6 @@ COMMON_FRAGMENTS = test_Makefile          \
                    descriptor_file_start  \
                    descriptor_file_input  \
                    descriptor_file_output \
-                   report_error.f.frag    \
                    Makefile
 
 AUTO_GEN_TESTS = test_Al_free_cluster                 \
@@ -112,8 +111,6 @@ test_Al_free_cluster: $(COMMON_FRAGMENTS)                      \
 	cat get_neigh_Rij.f.frag                          >> $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
 	cat create_FCC_configuration.f.frag               >> $(KIM_TESTS_DIR)$@/$@.F90
-	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
-	cat report_error.f.frag                           >> $(KIM_TESTS_DIR)$@/$@.F90
 
 test_Al_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
                              test_FCCcohesive_README                      \
@@ -176,8 +173,6 @@ test_Al_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
 	cat get_neigh_no_Rij.f.frag                       >> $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
 	cat create_FCC_configuration.f.frag               >> $(KIM_TESTS_DIR)$@/$@.F90
-	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
-	cat report_error.f.frag                           >> $(KIM_TESTS_DIR)$@/$@.F90
 
 test_ArNe_B2cohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                          \
                                  test_B2cohesive_README                       \
@@ -228,8 +223,6 @@ test_ArNe_B2cohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                          \
 	cat NEIGH_RVEC_F_periodic_B2_neighborlist.f.frag  >> $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
 	cat get_neigh_Rij.f.frag                          >> $(KIM_TESTS_DIR)$@/$@.F90
-	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
-	cat report_error.f.frag                           >> $(KIM_TESTS_DIR)$@/$@.F90
 
 test_Ar_FCCcohesiveCutoff_NEIGH_RVEC: $(COMMON_FRAGMENTS)                           \
                                       test_FCCcohesiveCutoff_README                 \
@@ -284,8 +277,6 @@ test_Ar_FCCcohesiveCutoff_NEIGH_RVEC: $(COMMON_FRAGMENTS)                       
 	cat NEIGH_RVEC_F_periodic_FCC_neighborlist.f.frag >> $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
 	cat get_neigh_Rij.f.frag                          >> $(KIM_TESTS_DIR)$@/$@.F90
-	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
-	cat report_error.f.frag                           >> $(KIM_TESTS_DIR)$@/$@.F90
 
 test_Ar_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
                              test_FCCcohesive_README                      \
@@ -348,8 +339,6 @@ test_Ar_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
 	cat get_neigh_no_Rij.f.frag                       >> $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
 	cat create_FCC_configuration.f.frag               >> $(KIM_TESTS_DIR)$@/$@.F90
-	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
-	cat report_error.f.frag                           >> $(KIM_TESTS_DIR)$@/$@.F90
 
 test_Ar_FCCcohesive_NEIGH_PURE: $(COMMON_FRAGMENTS)                          \
                                 test_FCCcohesive_README                      \
@@ -409,8 +398,6 @@ test_Ar_FCCcohesive_NEIGH_PURE: $(COMMON_FRAGMENTS)                          \
 	cat get_neigh_no_Rij.f.frag                       >> $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
 	cat create_FCC_configuration.f.frag               >> $(KIM_TESTS_DIR)$@/$@.F90
-	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
-	cat report_error.f.frag                           >> $(KIM_TESTS_DIR)$@/$@.F90
 
 test_Ar_FCCcohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                           \
                                 test_FCCcohesive_README                       \
@@ -462,14 +449,11 @@ test_Ar_FCCcohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                           \
 	cat NEIGH_RVEC_F_periodic_FCC_neighborlist.f.frag >> $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
 	cat get_neigh_Rij.f.frag                          >> $(KIM_TESTS_DIR)$@/$@.F90
-	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
-	cat report_error.f.frag                           >> $(KIM_TESTS_DIR)$@/$@.F90
 
 test_Ar_free_cluster_CLUSTER_C: $(COMMON_FRAGMENTS)                 \
                                 test_free_cluster_README            \
                                 program_free_cluster_CLUSTER.c.frag \
-                                create_FCC_configuration.c.frag     \
-                                report_error.c.frag
+                                create_FCC_configuration.c.frag
         # make directory
 	mkdir -p $(KIM_TESTS_DIR)$@
 	@touch $(KIM_TESTS_DIR)$@
@@ -501,8 +485,6 @@ test_Ar_free_cluster_CLUSTER_C: $(COMMON_FRAGMENTS)                 \
                                                           >  $(KIM_TESTS_DIR)$@/$@.c
 	echo                                              >> $(KIM_TESTS_DIR)$@/$@.c
 	cat create_FCC_configuration.c.frag               >> $(KIM_TESTS_DIR)$@/$@.c
-	echo                                              >> $(KIM_TESTS_DIR)$@/$@.c
-	cat report_error.c.frag                           >> $(KIM_TESTS_DIR)$@/$@.c
 
 test_Ar_free_cluster_CLUSTER_F90: $(COMMON_FRAGMENTS)                 \
                                   test_free_cluster_README            \
@@ -539,9 +521,6 @@ test_Ar_free_cluster_CLUSTER_F90: $(COMMON_FRAGMENTS)                 \
                                                           >  $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
 	cat create_FCC_configuration.f.frag               >> $(KIM_TESTS_DIR)$@/$@.F90
-	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
-	cat report_error.f.frag                           >> $(KIM_TESTS_DIR)$@/$@.F90
-
 
 test_Ar_free_cluster: $(COMMON_FRAGMENTS)                      \
                       test_free_cluster_README                 \
@@ -610,8 +589,6 @@ test_Ar_free_cluster: $(COMMON_FRAGMENTS)                      \
 	cat get_neigh_Rij.f.frag                          >> $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
 	cat create_FCC_configuration.f.frag               >> $(KIM_TESTS_DIR)$@/$@.F90
-	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
-	cat report_error.f.frag                           >> $(KIM_TESTS_DIR)$@/$@.F90
 
 test_Ne_free_cluster: $(COMMON_FRAGMENTS)                      \
                       test_free_cluster_README                 \
@@ -680,9 +657,6 @@ test_Ne_free_cluster: $(COMMON_FRAGMENTS)                      \
 	cat get_neigh_Rij.f.frag                          >> $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
 	cat create_FCC_configuration.f.frag               >> $(KIM_TESTS_DIR)$@/$@.F90
-	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
-	cat report_error.f.frag                           >> $(KIM_TESTS_DIR)$@/$@.F90
-
 
 test_Ar_multiple_models: example_test_Ar_multiple_models               \
                          $(wildcard example_test_Ar_multiple_models/*) \

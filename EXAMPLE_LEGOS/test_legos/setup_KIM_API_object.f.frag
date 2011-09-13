@@ -27,12 +27,12 @@ subroutine setup_KIM_API_object(pkim, testname, modelname, N, specname)
   !
   ier = kim_api_init_f(pkim, testname, modelname)
   if (ier.lt.KIM_STATUS_OK) then
-     call report_error(__LINE__, "kim_api_init_f", ier)
+     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_init_f", ier)
      stop
   endif
   call kim_api_allocate_f(pkim, N, ATypes, ier)
   if (ier.lt.KIM_STATUS_OK) then
-     call report_error(__LINE__, "kim_api_allocate_f", ier)
+     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_allocate_f", ier)
      stop
   endif
 
@@ -40,7 +40,7 @@ subroutine setup_KIM_API_object(pkim, testname, modelname, N, specname)
   !
   ier = kim_api_model_init_f(pkim)
   if (ier.lt.KIM_STATUS_OK) then
-     call report_error(__LINE__, "kim_api_model_init_f", ier)
+     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_init_f", ier)
      stop
   endif
 
@@ -48,19 +48,19 @@ subroutine setup_KIM_API_object(pkim, testname, modelname, N, specname)
   !
   pnAtoms = kim_api_get_data_f(pkim, "numberOfAtoms", ier);
   if (ier.lt.KIM_STATUS_OK) then
-     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
      stop
   endif
 
   pnAtomTypes = kim_api_get_data_f(pkim, "numberAtomTypes", ier)
   if (ier.lt.KIM_STATUS_OK) then
-     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
      stop
   endif
 
   patomTypesdum = kim_api_get_data_f(pkim, "atomTypes", ier)
   if (ier.lt.KIM_STATUS_OK) then
-     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
      stop
   endif
   call toIntegerArrayWithDescriptor1d(atomTypesdum, atomTypes, N)
@@ -71,7 +71,7 @@ subroutine setup_KIM_API_object(pkim, testname, modelname, N, specname)
   numberAtomTypes = ATypes
   atomTypes(:)    = kim_api_get_atypecode_f(pkim, specname, ier)
   if (ier.lt.KIM_STATUS_OK) then
-     call report_error(__LINE__, "kim_api_get_atypecode_f", ier)
+     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_atypecode_f", ier)
      stop
   endif
 

@@ -121,12 +121,6 @@ program_free_cluster_CLUSTER.f.frag
      This Fortran file contains the main program for the
      test_*_free_cluster_CLUSTER_F example test.
 
-report_error.c.frag
-     This C file contain the routine that reports errors.
-
-report_error.f.frag
-     This Fortran file contain the routine that reports errors.
-
 setup_B2_KIM_API_object.f.frag
      This Fortran file contains the setup_B2_KIM_API_object routine used by the
      B2cohesive Tests.

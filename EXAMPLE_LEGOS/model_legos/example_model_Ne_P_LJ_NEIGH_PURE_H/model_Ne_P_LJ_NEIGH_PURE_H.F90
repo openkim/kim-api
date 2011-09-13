@@ -17,7 +17,6 @@ module model_Ne_P_LJ_NEIGH_PURE_H
   private
   public model_cutoff
   public calculate_wrap_f77
-  public report_error
 
   !-- LJ parameters
   real*8, parameter :: model_cutoff  = 8.1500d0
@@ -54,43 +53,43 @@ contains
     !
     pnumberofatoms = kim_api_get_data_f(pkim,"numberOfAtoms",ier)
     if (ier.lt.KIM_STATUS_OK) then
-       call report_error(__LINE__, "kim_api_get_data_f", ier)
+       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
        stop
     endif
 
     pattypes = kim_api_get_data_f(pkim,"atomTypes", ier)
     if (ier.lt.KIM_STATUS_OK) then
-       call report_error(__LINE__, "kim_api_get_data_f", ier)
+       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
        stop
     endif
     do i=1,numberofatoms
        if (attypes(i).ne.1) then ! check for correct atom types Ne=1
-          call report_error(__LINE__, "Wrong Atom Type", KIM_STATUS_FAIL)
+          call kim_api_report_error_f(__LINE__, __FILE__, "Wrong Atom Type", KIM_STATUS_FAIL)
           stop
        endif
     enddo
 
     px=kim_api_get_data_f(pkim,"coordinates",ier)
     if (ier.lt.KIM_STATUS_OK) then
-       call report_error(__LINE__, "kim_api_get_data_f", ier)
+       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
        stop
     endif
 
     pf=kim_api_get_data_f(pkim,"forces",ier)
     if (ier.lt.KIM_STATUS_OK) then
-       call report_error(__LINE__, "kim_api_get_data_f", ier)
+       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
        stop
     endif
 
     ppotenergy = kim_api_get_data_f(pkim,"energy",ier)
     if (ier.lt.KIM_STATUS_OK) then
-       call report_error(__LINE__, "kim_api_get_data_f", ier)
+       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
        stop
     endif
 
     pea = kim_api_get_data_f(pkim,"energyPerAtom",ier)
     if (ier.lt.KIM_STATUS_OK) then
-       call report_error(__LINE__, "kim_api_get_data_f", ier)
+       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
        stop
     endif
 
@@ -99,13 +98,13 @@ contains
     !
     f_flag=kim_api_isit_compute_f(pkim,"forces",ier)
     if (ier.lt.KIM_STATUS_OK) then
-       call report_error(__LINE__, "kim_api_isit_compute_f", ier)
+       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute_f", ier)
        stop
     endif
 
     e_flag=kim_api_isit_compute_f(pkim,"energyPerAtom",ier)
     if (ier.lt.KIM_STATUS_OK) then
-       call report_error(__LINE__, "kim_api_isit_compute_f", ier)
+       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute_f", ier)
        stop
     endif
 
@@ -116,30 +115,6 @@ contains
 
   end subroutine calculate_wrap_f77
   
-  !-----------------------------------------------------------------------------
-  !
-  ! error reporting routine
-  !
-  !-----------------------------------------------------------------------------
-  subroutine report_error(line, str, status)
-    implicit none
-
-    !-- Transferred variables
-    integer,          intent(in) :: line
-    character(len=*), intent(in) :: str
-    integer,          intent(in) :: status
-
-    !-- Local variables
-    character(len=10000), parameter :: file = __FILE__
-    character(len=KEY_CHAR_LENGTH)  :: message; pointer(pmessage,message)
-
-    pmessage = kim_api_status_msg_f(status)
-    !-- print the error message
-    print *,'* ERROR at line', line, 'in ',trim(file), ': ', str,'. kimerror =', &
-            message(1:(index(message,char(0))-1))
-
-  end subroutine report_error
-
 end module model_Ne_P_LJ_NEIGH_PURE_H
 
 
@@ -163,14 +138,14 @@ subroutine model_Ne_P_LJ_NEIGH_PURE_H_init(pkim)
   one=1
   ier = kim_api_set_data_f(pkim,"compute",one,loc(calculate_wrap_f77))
   if (ier.lt.KIM_STATUS_OK)  then
-     call report_error(__LINE__, "kim_api_set_data_f", ier)
+     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data_f", ier)
      stop
   endif
 
   ! store model cutoff in KIM object
   pcutoff = kim_api_get_data_f(pkim,"cutoff",ier)
   if (ier.lt.KIM_STATUS_OK) then
-     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
      stop
   endif
   cutoff = model_cutoff

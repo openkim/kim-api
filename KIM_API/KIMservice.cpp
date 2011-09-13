@@ -2648,7 +2648,7 @@ char * KIM_API_model::status_msg(int status_code) {
 
 void KIM_API_model::report_error(int ln,char * fl,char * usermsg,int ier){
     char * kimstatus =status_msg(ier);
-    cout<<"*ERROR at line "<<ln<<" in "<<fl<< endl<<" : "<<usermsg<<" : "<<endl;
-    cout<<"KIM_STATUS_MSG :"<<kimstatus<<endl;
+    cout<<"* Error: at line "<<ln<<" in "<<fl<< endl<<"\tMessage: "<<usermsg<<endl;
+    cout<<"\tKIM_STATUS_MSG: "<<kimstatus<<endl;
     delete [] kimstatus; 
 }

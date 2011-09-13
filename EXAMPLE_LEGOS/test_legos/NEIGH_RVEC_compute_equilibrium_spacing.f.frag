@@ -42,20 +42,20 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   !
   penergy = kim_api_get_data_f(pkim, "energy", ier)
   if (ier.lt.KIM_STATUS_OK) then
-     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
      stop
   endif
 
   pcoor = kim_api_get_data_f(pkim, "coordinates", ier)
   if (ier.lt.KIM_STATUS_OK) then
-     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
      stop
   endif
   call toRealArrayWithDescriptor2d(coordum, coords, DIM, N)
 
   pcutoff = kim_api_get_data_f(pkim, "cutoff", ier)
   if (ier.lt.KIM_STATUS_OK) then
-     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
      stop
   endif
 
@@ -69,7 +69,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
                                               neighborList, RijList)
   call kim_api_model_compute_f(pkim, ier)
   if (ier.lt.KIM_STATUS_OK) then
-     call report_error(__LINE__, "kim_api_model_compute_f", ier)
+     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
      stop
   endif
   Energies(1) = energy
@@ -85,7 +85,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   ! Call model compute
   call kim_api_model_compute_f(pkim, ier)
   if (ier.lt.KIM_STATUS_OK) then
-     call report_error(__LINE__, "kim_api_model_compute_f", ier)
+     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
      stop
   endif
   Energies(3) = energy
@@ -101,7 +101,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   ! Call model compute
   call kim_api_model_compute_f(pkim, ier)
   if (ier.lt.KIM_STATUS_OK) then
-     call report_error(__LINE__, "kim_api_model_compute_f", ier)
+     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
      stop
   endif
   Energies(2) = energy
@@ -121,7 +121,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
      ! Call model compute
      call kim_api_model_compute_f(pkim, ier)
      if (ier.lt.KIM_STATUS_OK) then
-        call report_error(__LINE__, "kim_api_model_compute_f", ier)
+        call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
         stop
      endif
      Energies(4) = energy

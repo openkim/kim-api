@@ -2,85 +2,85 @@
     !
     pnAtoms = kim_api_get_data_f(pkim,"numberOfAtoms",ier)
     if (ier.lt.KIM_STATUS_OK) then
-       call report_error(__LINE__, "kim_api_get_data", ier)
+       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
        return
     endif
 
     pnAtomTypes = kim_api_get_data_f(pkim,"numberAtomTypes",ier)
     if (ier.lt.KIM_STATUS_OK) then
-       call report_error(__LINE__, "kim_api_get_data", ier)
+       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
        return
     endif
 
     patomTypes = kim_api_get_data_f(pkim,"atomTypes",ier)
     if (ier.lt.KIM_STATUS_OK) then
-       call report_error(__LINE__, "kim_api_get_data", ier)
+       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
        return
     endif
 
     pcutoff = kim_api_get_data_f(pkim,"cutoff",ier)
     if (ier.lt.KIM_STATUS_OK) then
-       call report_error(__LINE__, "kim_api_get_data", ier)
+       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
        return
     endif
 
     pepsilon = kim_api_get_data_f(pkim,"PARAM_FREE_epsilon",ier)
     if (ier.lt.KIM_STATUS_OK) then
-       call report_error(__LINE__, "kim_api_get_data", ier)
+       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
        return
     endif
 
     psigma = kim_api_get_data_f(pkim,"PARAM_FREE_sigma",ier)
     if (ier.lt.KIM_STATUS_OK) then
-       call report_error(__LINE__, "kim_api_get_data", ier)
+       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
        return
     endif
 
     pcutnorm = kim_api_get_data_f(pkim,"PARAM_FIXED_cutnorm",ier)
     if (ier.lt.KIM_STATUS_OK) then
-       call report_error(__LINE__, "kim_api_get_data", ier)
+       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
        return
     endif
 
     pA = kim_api_get_data_f(pkim,"PARAM_FIXED_A",ier)
     if (ier.lt.KIM_STATUS_OK) then
-       call report_error(__LINE__, "kim_api_get_data", ier)
+       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
        return
     endif
 
     pB = kim_api_get_data_f(pkim,"PARAM_FIXED_B",ier)
     if (ier.lt.KIM_STATUS_OK) then
-       call report_error(__LINE__, "kim_api_get_data", ier)
+       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
        return
     endif
 
     pC = kim_api_get_data_f(pkim,"PARAM_FIXED_C",ier)
     if (ier.lt.KIM_STATUS_OK) then
-       call report_error(__LINE__, "kim_api_get_data", ier)
+       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
        return
     endif
 
     psigmasq = kim_api_get_data_f(pkim,"PARAM_FIXED_sigmasq",ier)
     if (ier.lt.KIM_STATUS_OK) then
-       call report_error(__LINE__, "kim_api_get_data", ier)
+       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
        return
     endif
 
     pcutsq = kim_api_get_data_f(pkim,"PARAM_FIXED_cutsq",ier)
     if (ier.lt.KIM_STATUS_OK) then
-       call report_error(__LINE__, "kim_api_get_data", ier)
+       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
        return
     endif
 
     penergy = kim_api_get_data_f(pkim,"energy",ier)
     if (ier.lt.KIM_STATUS_OK) then
-       call report_error(__LINE__, "kim_api_get_data", ier)
+       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
        return
     endif
 
     pcoor = kim_api_get_data_f(pkim,"coordinates",ier)
     if (ier.lt.KIM_STATUS_OK) then
-       call report_error(__LINE__, "kim_api_get_data", ier)
+       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
        return
     endif
     
@@ -89,19 +89,19 @@
     !
     comp_force  = kim_api_isit_compute_f(pkim,"forces",ier)
     if (ier.lt.KIM_STATUS_OK) then
-       call report_error(__LINE__, "kim_api_isit_compute", ier)
+       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute", ier)
        return
     endif
 
     comp_enepot = kim_api_isit_compute_f(pkim,"energyPerAtom",ier)
     if (ier.lt.KIM_STATUS_OK) then
-       call report_error(__LINE__, "kim_api_isit_compute", ier)
+       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute", ier)
        return
     endif
 
     comp_virial = kim_api_isit_compute_f(pkim,"virial",ier)
     if (ier.lt.KIM_STATUS_OK) then
-       call report_error(__LINE__, "kim_api_isit_compute", ier)
+       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute", ier)
        return
     endif
     
@@ -110,7 +110,7 @@
     if (comp_force.eq.1) then 
        pforce  = kim_api_get_data_f(pkim,"forces",ier)
        if (ier.lt.KIM_STATUS_OK) then
-          call report_error(__LINE__, "kim_api_get_data", ier)
+          call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
           return
        endif
        call toRealArrayWithDescriptor2d(forcedum,force,DIM,numberOfAtoms)
@@ -118,7 +118,7 @@
     if (comp_enepot.eq.1) then 
        penepot = kim_api_get_data_f(pkim,"energyPerAtom",ier) 
        if (ier.lt.KIM_STATUS_OK) then
-          call report_error(__LINE__, "kim_api_get_data", ier)
+          call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
           return
        endif
        call toRealArrayWithDescriptor1d(enepotdum,ene_pot,numberOfAtoms)
@@ -126,7 +126,7 @@
     if (comp_virial.eq.1) then
        pvirial = kim_api_get_data_f(pkim,"virial",ier)
        if (ier.lt.KIM_STATUS_OK) then
-          call report_error(__LINE__, "kim_api_get_data", ier)
+          call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
           return
        endif
     endif
@@ -141,7 +141,7 @@
     ier = KIM_STATUS_FAIL ! assume an error
     do i = 1,numberOfAtoms
        if (.not. (atomTypes(i) .eq. SPECIES_CODE_STR)) then
-          call report_error(__LINE__, "Wrong Atom Type", ier)
+          call kim_api_report_error_f(__LINE__, __FILE__, "Wrong Atom Type", ier)
           return
        endif
     enddo

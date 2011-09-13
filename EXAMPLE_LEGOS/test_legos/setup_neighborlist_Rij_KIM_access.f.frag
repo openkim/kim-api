@@ -24,13 +24,13 @@ subroutine setup_neighborlist_Rij_KIM_access(pkim, NLRvecLocs)
   
   ier = kim_api_set_data_f(pkim, "neighObject", SizeOne, loc(NLRvecLocs))
   if (ier.lt.KIM_STATUS_OK) then
-     call report_error(__LINE__, "kim_api_set_data_f", ier)
+     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data_f", ier)
      stop
   endif
 
   ier = kim_api_set_data_f(pkim, "get_full_neigh", SizeOne, loc(get_neigh_Rij))
   if (ier.lt.KIM_STATUS_OK) then
-     call report_error(__LINE__, "kim_api_set_data_f", ier)
+     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data_f", ier)
      stop
   endif
 

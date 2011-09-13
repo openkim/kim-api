@@ -25,7 +25,6 @@ module MODEL_NAME_STR
   public Compute_Energy_Forces
   public ReInit
   public Destroy
-  public report_error
   
 contains
   

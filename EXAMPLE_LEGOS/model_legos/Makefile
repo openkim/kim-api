@@ -53,8 +53,10 @@ EXAMPLES.README: model_EXAMPLES.README model_driver_EXAMPLES.README Makefile
 	cp model_driver_EXAMPLES.README $(KIM_MODEL_DRIVERS_DIR)EXAMPLES.README
 
 model_Ar_P_MLJ_CLUSTER_C: model_P_MLJ_CLUSTER_C.c                \
-                          cluster_compute_local_variables.f.frag \
-                          cluster_compute_loops.f.frag           \
+                          model_MLJ_README                       \
+                          model_Makefile                         \
+                          descriptor_file_input                  \
+                          descriptor_file_output                 \
                           Makefile
         # make directory
 	mkdir -p $(KIM_MODELS_DIR)$@

@@ -30,13 +30,13 @@ integer function get_neigh_no_Rij(pkim,mode,request,atom,numnei,pnei1atom,pRij)
   ! unpack neighbor list object
   pneighborListdum = kim_api_get_data_f(pkim, "neighObject", ier)
   if (ier.lt.KIM_STATUS_OK) then
-     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
      stop
   endif
   
   pnAtoms = kim_api_get_data_f(pkim, "numberOfAtoms", ier)
   if (ier.lt.KIM_STATUS_OK) then
-     call report_error(__LINE__, "kim_api_get_data_f", ier)
+     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
      stop
   endif
   N = numberOfAtoms
@@ -57,20 +57,20 @@ integer function get_neigh_no_Rij(pkim,mode,request,atom,numnei,pnei1atom,pRij)
            atomToReturn = iterVal
         endif
      else
-        call report_error(__LINE__, "Invalid request in get_neigh_no_Rij", KIM_STATUS_NEIGH_INVALID_REQUEST)
+        call kim_api_report_error_f(__LINE__, __FILE__, "Invalid request in get_neigh_no_Rij", KIM_STATUS_NEIGH_INVALID_REQUEST)
         get_neigh_no_Rij = KIM_STATUS_NEIGH_INVALID_REQUEST
         return
      endif
   elseif (mode.eq.1) then ! locator mode
      if ( (request.gt.N) .or. (request.lt.1)) then
-        call report_error(__LINE__, "Invalid request in get_neigh_no_Rij", KIM_STATUS_ATOM_INVALID_ID)
+        call kim_api_report_error_f(__LINE__, __FILE__, "Invalid request in get_neigh_no_Rij", KIM_STATUS_ATOM_INVALID_ID)
         get_neigh_no_Rij = KIM_STATUS_ATOM_INVALID_ID
         return
      else
         atomToReturn = request
      endif
   else ! not iterator or locator mode
-     call report_error(__LINE__, "Invalid mode in get_neigh_no_Rij", KIM_STATUS_NEIGH_INVALID_MODE)
+     call kim_api_report_error_f(__LINE__, __FILE__, "Invalid mode in get_neigh_no_Rij", KIM_STATUS_NEIGH_INVALID_MODE)
      get_neigh_no_Rij = KIM_STATUS_NEIGH_INVALID_MODE
      return
   endif

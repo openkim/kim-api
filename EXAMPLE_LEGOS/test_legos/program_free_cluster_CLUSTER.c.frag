@@ -22,7 +22,6 @@
 #define NCLUSTERATOMS (4*(NCELLSPERSIDE*NCELLSPERSIDE*NCELLSPERSIDE) + 6*(NCELLSPERSIDE*NCELLSPERSIDE) + 3*(NCELLSPERSIDE) + 1)
 
 /* Define prototypes */
-static void report_error(int line, char* str, int status);
 static void create_FCC_configuration(double FCCspacing, int nCellsPerSide, int periodic,
                                      double *coords, int *MiddleAtomId);
 
@@ -60,7 +59,7 @@ int main(int argc, char* argv[])
    status = KIM_API_init(&pkim, testname, modelname);
    if (KIM_STATUS_OK > status)
    {
-      report_error(__LINE__, "KIM_API_init", status);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_init", status);
       exit(1);
    }
 
@@ -68,7 +67,7 @@ int main(int argc, char* argv[])
    KIM_API_allocate(pkim, NCLUSTERATOMS, ATYPES, &status);
    if (KIM_STATUS_OK > status)
    {
-      report_error(__LINE__, "KIM_API_allocate", status);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_allocate", status);
       exit(1);
    }
 
@@ -76,7 +75,7 @@ int main(int argc, char* argv[])
    status = KIM_API_model_init(pkim);
    if (KIM_STATUS_OK > status)
    {
-      report_error(__LINE__, "KIM_API_model_init", status);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_model_init", status);
       exit(1);
    }
 
@@ -84,49 +83,49 @@ int main(int argc, char* argv[])
    numberOfAtoms = KIM_API_get_data(pkim, "numberOfAtoms", &status);
    if (KIM_STATUS_OK > status)
    {
-      report_error(__LINE__, "KIM_API_get_data", status);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", status);
       exit(1);
    }
    
    numberAtomTypes = KIM_API_get_data(pkim, "numberAtomTypes", &status);
    if (KIM_STATUS_OK > status)
    {
-      report_error(__LINE__, "KIM_API_get_data", status);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", status);
       exit(1);
    }
    
    atomTypes = KIM_API_get_data(pkim, "atomTypes", &status);
    if (KIM_STATUS_OK > status)
    {
-      report_error(__LINE__, "KIM_API_get_data", status);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", status);
       exit(1);
    }
    
    coords = KIM_API_get_data(pkim, "coordinates", &status);
    if (KIM_STATUS_OK > status)
    {
-      report_error(__LINE__, "KIM_API_get_data", status);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", status);
       exit(1);
    }
    
    cutoff = KIM_API_get_data(pkim, "cutoff", &status);
    if (KIM_STATUS_OK > status)
    {
-      report_error(__LINE__, "KIM_API_get_data", status);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", status);
       exit(1);
    }
    
    energy = KIM_API_get_data(pkim, "energy", &status);
    if (KIM_STATUS_OK > status)
    {
-      report_error(__LINE__, "KIM_API_get_data", status);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", status);
       exit(1);
    }
    
    forces = KIM_API_get_data(pkim, "forces", &status);
    if (KIM_STATUS_OK > status)
    {
-      report_error(__LINE__, "KIM_API_get_data", status);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", status);
       exit(1);
    }
    
@@ -136,7 +135,7 @@ int main(int argc, char* argv[])
    atypecode = KIM_API_get_aTypeCode(pkim, "SPECIES_NAME_STR", &status);
    if (KIM_STATUS_OK > status)
    {
-      report_error(__LINE__, "KIM_API_get_aTypeCode", status);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_aTypeCode", status);
       exit(1);
    }
    for (i = 0; i < *numberOfAtoms; ++i)
@@ -151,7 +150,7 @@ int main(int argc, char* argv[])
    KIM_API_model_compute(pkim, &status);
    if (KIM_STATUS_OK > status)
    {
-      report_error(__LINE__, "KIM_API_model_compute", status);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_model_compute", status);
       exit(1);
    }
 
@@ -174,13 +173,13 @@ int main(int argc, char* argv[])
    KIM_API_model_destroy(pkim, &status);
    if (KIM_STATUS_OK > status)
    {
-      report_error(__LINE__, "KIM_API_model_destory", status);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_model_destory", status);
       exit(1);
    }
    KIM_API_free(&pkim, &status);
    if (KIM_STATUS_OK > status)
    {
-      report_error(__LINE__, "KIM_API_free", status);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_free", status);
       exit(1);
    }
    

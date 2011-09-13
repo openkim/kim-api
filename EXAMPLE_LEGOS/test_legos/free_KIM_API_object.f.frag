@@ -17,7 +17,7 @@ subroutine free_KIM_API_object(pkim)
   !
   call kim_api_model_destroy_f(pkim, ier)
   if (ier.lt.KIM_STATUS_OK) then
-     call report_error(__LINE__, "kim_api_model_destroy_f", ier)
+     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_destroy_f", ier)
      stop
   endif
 
@@ -25,7 +25,7 @@ subroutine free_KIM_API_object(pkim)
   !
   call kim_api_free_f(pkim, ier)
   if (ier.lt.KIM_STATUS_OK) then
-     call report_error(__LINE__, "kim_api_free_f", ier)
+     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_free_f", ier)
      stop
   endif
 
