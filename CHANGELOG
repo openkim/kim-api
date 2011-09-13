@@ -11,6 +11,9 @@
 
 * Updated documentation
 
+* Added KIM_API_report_error() service function and updated all examples 
+  and templates to use this function.
+
 * Added KIMstatus.h which contains definitions of KIM status codes.
 
 * Added KIM_API_status_msg() service routine to return a string describing a given
