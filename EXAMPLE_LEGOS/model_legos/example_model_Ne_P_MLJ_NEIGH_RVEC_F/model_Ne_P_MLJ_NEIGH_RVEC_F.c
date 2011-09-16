@@ -271,6 +271,8 @@ static void compute(void* km, int* ier)
    *ier = KIM_API_get_full_neigh(pkim, 0, 1, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
    while (KIM_STATUS_OK == *ier)
    {
+      i = currentAtom;
+      
       /* loop over the neighbors of currentAtom */
       for (jj = 0; jj < numOfAtomNeigh; ++ jj)
       {
