@@ -109,6 +109,7 @@ static void compute(void* km, int* ier)
    double Rsqij;
    double phi;
    double dphi;
+   double dEidr;
    double Rij[DIM];
    int i;
    int j;
@@ -541,6 +542,18 @@ static void compute(void* km, int* ier)
                              <FILL parameter 2>,
                              /* FILL as many parameters as needed */
                              cutoff, R, &phi, &dphi);
+
+               /* compute dEidr */
+               if (1 == HalfOrFull)
+               {
+                  /* Half mode -- double contribution */
+                  dEidr = dphi;
+               }
+               else
+               {
+                  /* Full mode -- regular contribution */
+                  dEidr = 0.5*dphi;
+               }
             }
             else
             {
@@ -575,16 +588,8 @@ static void compute(void* km, int* ier)
             /* contribution to virial perssure */
             if (comp_virial)
             {
-               if (1 == HalfOrFull)
-               {
-                  /* Half mode -- varial = sum r*(dphi/dr) */
-                  *virial += R*dphi;
-               }
-               else
-               {
-                  /* Full mode -- varial = sum 0.6*r*(dphi/dr) */
-                  *virial += 0.5*R*dphi;
-               }
+               /* varial = sum r*(dV/dr) */
+               *virial += R*dEidr;
             }
             
             /* contribution to forces */
@@ -592,11 +597,8 @@ static void compute(void* km, int* ier)
             {
                for (k = 0; k < DIM; ++k)
                {
-                  force[i*DIM + k] += dphi*Rij[k]/R; /* accumulate force on atom i */
-                  if (1 == HalfOrFull)
-                  {
-                     force[j*DIM + k] -= dphi*Rij[k]/R; /* Fji = -Fij */
-                  }
+                  force[i*DIM + k] += dEidr*Rij[k]/R; /* accumulate force on atom i */
+                  force[j*DIM + k] -= dEidr*Rij[k]/R; /* accumulate force on atom j */
                }
             }
          }

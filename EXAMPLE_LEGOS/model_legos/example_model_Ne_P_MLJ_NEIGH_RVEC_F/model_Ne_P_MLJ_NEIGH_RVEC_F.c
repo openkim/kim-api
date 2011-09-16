@@ -62,7 +62,9 @@ static void compute(void* km, int* ier)
    double phi;
    double dphi;
    double d2phi;
+   double dEidr;
    int i;
+   int j;
    int jj;
    int k;
    int numOfAtomNeigh;
@@ -272,6 +274,8 @@ static void compute(void* km, int* ier)
       /* loop over the neighbors of currentAtom */
       for (jj = 0; jj < numOfAtomNeigh; ++ jj)
       {
+         j = neighListOfCurrentAtom[jj];
+         
          /* compute square distance */
          Rsqij = 0.0;
          for (k = 0; k < DIM; ++k)
@@ -286,6 +290,9 @@ static void compute(void* km, int* ier)
             /* compute pair potential */
             pair(epsilon, sigma, A, B, C, R, &phi, &dphi, &d2phi);
 
+            /* compute dEidr -- regular contribution */
+            dEidr = 0.5*dphi; 
+
             /* accumulate energy */
             if (comp_energyPerAtom)
             {
@@ -299,7 +306,7 @@ static void compute(void* km, int* ier)
             /* accumulate virial */
             if (comp_virial)
             {
-               *virial += 0.5*R*dphi;
+               *virial += R*dEidr;
             }
 
             /* accumulate force */
@@ -307,7 +314,8 @@ static void compute(void* km, int* ier)
             {
                for (k = 0; k < DIM; ++k)
                {
-                  force[currentAtom*DIM + k] += dphi*Rij[jj*DIM + k]/R;
+                  force[i*DIM + k] += dEidr*Rij[jj*DIM + k]/R;
+                  force[j*DIM + k] -= dEidr*Rij[jj*DIM + k]/R;
                }
             }
          }

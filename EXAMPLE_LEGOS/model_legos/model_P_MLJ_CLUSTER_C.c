@@ -366,7 +366,7 @@ static void compute(void* km, int* ier)
                for (k = 0; k < DIM; ++k)
                {
                   force[i*DIM + k] += dphi*Rij[k]/R; /* accumulate force on atom i */
-                  force[j*DIM + k] -= dphi*Rij[k]/R; /* Fji = -Fij */
+                  force[j*DIM + k] -= dphi*Rij[k]/R; /* accumulate force on atom j */
                }
             }
          }

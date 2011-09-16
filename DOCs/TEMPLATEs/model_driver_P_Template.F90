@@ -116,7 +116,7 @@ integer,                  intent(out) :: ier
 
 !-- Local variables
 double precision :: Rij(DIM)
-double precision :: r,Rsqij,phi,dphi
+double precision :: r,Rsqij,phi,dphi,dEidr
 integer :: i,j,jj,numnei,atom_ret,comp_force,comp_enepot,comp_virial
 integer, allocatable, target :: nei1atom_substitute(:)
 character*80 :: error_message
@@ -464,6 +464,12 @@ do
                                model_cutoff,             &
                                r,phi,dphi)        ! compute pair potential
                                                   !   and it derivative
+
+            if (HalfOrFull.eq.1) then             ! HALF mode
+               dEidr = dphi                       !      double contribution
+            else                                  ! FULL mode
+               dEidr = 0.5d0*dphi                 !      regular contribution
+            endif
          else
             call calc_phi(model_<FILL parameter 1>, &
                           model_<FILL parameter 2>, &
@@ -489,19 +495,14 @@ do
          ! contribution to virial pressure
          !
          if (comp_virial.eq.1) then
-            if (HalfOrFull.eq.1) then             ! HALF mode
-               virial = virial + r*dphi           !      virial=sum r*(dphi/dr)
-            else                                  ! FULL mode
-               virial = virial + 0.5d0*r*dphi     !      virial=sum 0.5*r*(dphi/dr)
-            endif
+            virial = virial + r*dEidr             !      virial=sum r*(dV/dr)
          endif
 
          ! contribution to forces
          !
          if (comp_force.eq.1) then
-            force(:,i) = force(:,i) + dphi*Rij/r    ! accumulate force on atom i
-            if (HalfOrFull.eq.1) &                  ! HALF mode
-               force(:,j) = force(:,j) - dphi*Rij/r !    (Fji = -Fij)
+            force(:,i) = force(:,i) + dEidr*Rij/r ! accumulate force on atom i
+            force(:,j) = force(:,j) - dEidr*Rij/r ! accumulate force on atom j
          endif
 
       endif

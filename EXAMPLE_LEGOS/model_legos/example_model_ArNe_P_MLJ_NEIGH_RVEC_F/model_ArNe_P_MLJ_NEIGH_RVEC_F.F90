@@ -49,9 +49,9 @@ contains
     
     !-- Local variables
     integer, parameter :: DIM=3
-    double precision r,Rsqij,phi,dphi,d2phi
+    double precision r,Rsqij,phi,dphi,d2phi,dEidr
     double precision CurEpsilon, CurSigma, CurA, CurB, CurC
-    integer i,jj,numnei,atom,atom_ret
+    integer i,j,jj,numnei,atom,atom_ret
     
     !-- KIM variables
     integer numberOfAtoms;         pointer(pnAtoms,numberOfAtoms)
@@ -245,6 +245,7 @@ contains
        ! Loop over the neighbors of atom i
        !
        do jj = 1, numnei
+          j = nei1atom(jj)
           Rsqij = dot_product(Rij(:,jj),Rij(:,jj))         ! compute square distance
           if ( Rsqij < model_cutsq ) then                  ! particles are interacting?
              r = sqrt(Rsqij)                               ! compute distance
@@ -268,17 +269,19 @@ contains
                 CurC       = model_C(Ar+Ne)
              endif
              call pair(CurEpsilon, CurSigma, CurA, CurB, CurC, &
-                  r, phi, dphi, d2phi)                     ! compute pair potential
-             if (comp_enepot.eq.1) then                    !
-                ene_pot(i) = ene_pot(i) + 0.5d0*phi        ! accumulate energy
-             else                                          !
-                energy = energy + 0.5d0*phi                ! full neigh case
-             endif                                         !
-             if (comp_virial.eq.1) then                    !
-                virial = virial + 0.5d0*r*dphi             ! accumul. virial=sum r(dV/dr)
-             endif                                         !
-             if (comp_force.eq.1) then                     !
-                force(:,i) = force(:,i) + dphi*Rij(:,jj)/r ! accumulate forces
+                  r, phi, dphi, d2phi)                      ! compute pair potential
+             dEidr = 0.5d0*dphi                             ! compute dEidr
+             if (comp_enepot.eq.1) then                     !
+                ene_pot(i) = ene_pot(i) + 0.5d0*phi         ! accumulate energy
+             else                                           !
+                energy = energy + 0.5d0*phi                 ! full neigh case
+             endif                                          !
+             if (comp_virial.eq.1) then                     !
+                virial = virial + r*dEidr                   ! accumul. virial=sum r(dV/dr)
+             endif                                          !
+             if (comp_force.eq.1) then                      !
+                force(:,i) = force(:,i) + dEidr*Rij(:,jj)/r ! accumulate force on atom i
+                force(:,j) = force(:,j) - dEidr*Rij(:,jj)/r ! accumulate force on atom j
              endif
           endif
        enddo

@@ -54,6 +54,11 @@
              r = sqrt(Rsqij)                            ! compute distance
              call pair(model_epsilon,model_sigma,model_A,model_B, model_C, &
                   r,phi,dphi,d2phi)                     ! compute pair potential
+             if (HalfOrFull.eq.1) then                  ! HALF mode
+                dEidr = dphi                            !      double contribution
+             else                                       ! FULL mode
+                dEidr = 0.5d0*dphi                      !      regular contribution
+             endif
              if (comp_enepot.eq.1) then                 !
                 ene_pot(i) = ene_pot(i) + 0.5d0*phi     ! accumulate energy
                 if (HalfOrFull.eq.1) then               !
@@ -67,17 +72,11 @@
                 endif                                   !
              endif
              if (comp_virial.eq.1) then                 !
-                if (HalfOrFull.eq.1) then               !
-                   virial = virial + r*dphi             ! accumul. virial=sum r(dV/dr)
-                else                                    !
-                   virial = virial + 0.5d0*r*dphi       !
-                endif                                   !
+                virial = virial + r*dEidr               ! accumul. virial=sum r(dV/dr)
              endif                                      !
              if (comp_force.eq.1) then                  !
-                force(:,i) = force(:,i) + dphi*Rij/r    ! accumulate forces
-                if (HalfOrFull.eq.1) then               !
-                   force(:,j) = force(:,j) - dphi*Rij/r ! (Fji = -Fij)
-                endif                                   !
+                force(:,i) = force(:,i) + dEidr*Rij/r   ! accumulate force on atom i
+                force(:,j) = force(:,j) - dEidr*Rij/r   ! accumulate force on atom j
              endif
           endif
        enddo

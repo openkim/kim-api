@@ -15,21 +15,24 @@
        ! Loop over the neighbors of atom i
        !
        do jj = 1, numnei
-          Rsqij = dot_product(Rij(:,jj),Rij(:,jj))         ! compute square distance
-          if ( Rsqij < model_cutsq ) then                  ! particles are interacting?
-             r = sqrt(Rsqij)                               ! compute distance
+          j = nei1atom(jj)
+          Rsqij = dot_product(Rij(:,jj),Rij(:,jj))          ! compute square distance
+          if ( Rsqij < model_cutsq ) then                   ! particles are interacting?
+             r = sqrt(Rsqij)                                ! compute distance
              call pair(model_epsilon,model_sigma,model_A,model_B, model_C, &
-                  r,phi,dphi,d2phi)                        ! compute pair potential
-             if (comp_enepot.eq.1) then                    !
-                ene_pot(i) = ene_pot(i) + 0.5d0*phi        ! accumulate energy
-             else                                          !
-                energy = energy + 0.5d0*phi                ! full neigh case
-             endif                                         !
-             if (comp_virial.eq.1) then                    !
-                virial = virial + 0.5d0*r*dphi             ! accumul. virial=sum r(dV/dr)
-             endif                                         !
-             if (comp_force.eq.1) then                     !
-                force(:,i) = force(:,i) + dphi*Rij(:,jj)/r ! accumulate forces
+                  r,phi,dphi,d2phi)                         ! compute pair potential
+             dEidr = 0.5d0*dphi                             !
+             if (comp_enepot.eq.1) then                     !
+                ene_pot(i) = ene_pot(i) + 0.5d0*phi         ! accumulate energy
+             else                                           !
+                energy = energy + 0.5d0*phi                 ! full neigh case
+             endif                                          !
+             if (comp_virial.eq.1) then                     !
+                virial = virial + r*dEidr                   ! accumul. virial=sum r(dV/dr)
+             endif                                          !
+             if (comp_force.eq.1) then                      !
+                force(:,i) = force(:,i) + dEidr*Rij(:,jj)/r ! accumulate forces on j
+                force(:,j) = force(:,j) - dEidr*Rij(:,jj)/r ! accumulate forces on i
              endif
           endif
        enddo

@@ -12,6 +12,7 @@
              r = sqrt(Rsqij)                            ! compute distance
              call pair(model_epsilon,model_sigma,model_A,model_B, model_C, &
                   r,phi,dphi,d2phi)                     ! compute pair potential
+             dEidr = dphi                               ! compute dEidr -- double contribution
              if (comp_enepot.eq.1) then                 !
                 ene_pot(i) = ene_pot(i) + 0.5d0*phi     ! accumulate energy
                 ene_pot(j) = ene_pot(j) + 0.5d0*phi     ! (i and j share it)
@@ -19,11 +20,11 @@
                 energy = energy + phi                   ! half neigh case
              endif                                      !
              if (comp_virial.eq.1) then                 !
-                virial = virial + r*dphi                ! accumul. virial=sum r(dV/dr)
+                virial = virial + r*dEidr               ! accumul. virial=sum r(dV/dr)
              endif                                      !
              if (comp_force.eq.1) then                  !
-                force(:,i) = force(:,i) + dphi*Rij/r    ! accumulate forces
-                force(:,j) = force(:,j) - dphi*Rij/r    ! (Fji = -Fij)
+                force(:,i) = force(:,i) + dEidr*Rij/r   ! accumulate force on atom i
+                force(:,j) = force(:,j) - dEidr*Rij/r   ! accumulate force on atom j
              endif
           endif
        enddo

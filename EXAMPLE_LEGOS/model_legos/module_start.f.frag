@@ -42,4 +42,4 @@ contains
     
     !-- Local variables
     integer, parameter :: DIM=3
-    double precision r,Rsqij,phi,dphi,d2phi
+    double precision r,Rsqij,phi,dphi,d2phi,dEidr
