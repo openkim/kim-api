@@ -542,10 +542,10 @@ integer,parameter :: kim_intptr = 8
             character (len=KEY_CHAR_LENGTH)::testnamesnd,mdlnamesnd
             character (len=KEY_CHAR_LENGTH):: s1,s2
             pointer(ps1,s1);pointer(ps2,s2)
-            !testnamesnd=attachnull(trim(testname))
+            testnamesnd=attachnull(trim(testname))
             
             mdlnamesnd=attachnull(trim(mdlname))
-            ps1=loc(testname)
+            ps1=loc(testnamesnd)
             ps2=loc(mdlnamesnd)
             kim_api_init_str_testname_f =kim_api_init_str_testname(kimmdl,ps1,ps2)
      end function kim_api_init_str_testname_f
