@@ -206,9 +206,10 @@ integer,                  intent(out) :: ier
 
 !-- Local variables
 double precision :: Rij(DIM)
-double precision :: r,Rsqij,phi,dphi,g,dg,U,dU,dphieff
-integer :: i,j,jj,numnei,atom_ret,comp_force,comp_enepot,comp_virial
-double precision, allocatable :: rho(:),derU(:)
+double precision :: r,Rsqij,phi,dphi,g,dg,Utmp,dU,dphieff
+double precision :: dphii,dUi,Ei,dphij,dUj,Ej
+integer :: i,j,jj,numnei,comp_force,comp_enepot,comp_virial
+double precision, allocatable :: rho(:),U(:),derU(:)
 integer, allocatable, target :: nei1atom_substitute(:)
 character*80 :: error_message
 
@@ -395,6 +396,7 @@ if (comp_force.eq.1)  force(1:3,1:N) = 0.d0
 if (comp_virial.eq.1) virial = 0.d0
 allocate( rho(N) )  ! pair functional electron density
 rho(1:N) = 0.d0
+allocate( U(N) )    ! embedding energy
 if (comp_force.eq.1.or.comp_virial.eq.1) allocate( derU(N) )  ! EAM embedded energy deriv
 
 ! Initialize neighbor handling for CLUSTER NBC
@@ -476,17 +478,13 @@ enddo  ! infinite do loop (terminated by exit statements above)
 !
 do i = 1,N
    if (comp_force.eq.1.or.comp_virial.eq.1) then
-      call calc_U_dU(rho(i),U,dU)                 ! compute embedding energy
+      call calc_U_dU(rho(i),Utmp,dU)              ! compute embedding energy
                                                   !   and its derivative
-      derU(i) = dU                                ! store du for later use
+      derU(i) = dU                                ! store dU for later use
    else
-      call calc_U(rho(i),U)                       ! compute just embedding energy
+      call calc_U(rho(i),Utmp )                   ! compute just embedding energy
    endif
-   if (comp_enepot.eq.1) then 
-      ene_pot(i) = U                              ! store embed energy per atom
-   else
-      energy = energy + U                         ! add embed energy to tot ener
-   endif
+   U(i) = Utmp                                    ! store U for later use
 enddo
 
 !  Loop over particles in the neighbor list a second time, to compute
@@ -523,6 +521,25 @@ do
 
       j = nei1atom(jj)                            ! get neighbor ID
 
+      ! accumulate the embedding energy contribution
+      !
+      if (HalfOrFull.eq.1) then                   ! HALF mode
+         if (comp_enepot.eq.1) then               ! accumulate embedding energy contribution
+            ene_pot(j) = ene_pot(j) + U(j)
+         else
+            energy = energy + U(j)
+         endif
+         U(j) = 0.0d0                             ! ensure this energy is used only once
+      endif
+      ! FULL & HALF mode
+      if (comp_enepot.eq.1) then                  ! accumulate embedding energy contribution
+         ene_pot(i) = ene_pot(i) + U(i)
+      else
+         energy = energy + U(i)
+      endif
+      U(i) = 0.d0                                 ! Ensure this energy is used only once
+      
+
       ! compute relative position vector
       !
       if (NBC.ne.3) then                          ! all methods except NEIGH-RVEC-F
@@ -549,41 +566,50 @@ do
             call calc_phi_dphi(r,phi,dphi)        ! compute pair potential
                                                   !   and it derivative
             call calc_dg(r,dg)                    ! compute elect dens first deriv
-            dphieff = dphi + (derU(i)+derU(j))*dg
+            if (HalfOrFull.eq.1) then             ! HALF mode
+               dphii  = 0.5d0*dphi
+               dphij  = 0.5d0*dphi
+               dUi    = derU(i)*dg
+               dUj    = derU(j)*dg
+            else                                  ! FULL mode
+               dphii  = 0.5d0*dphi
+               dphij  = 0.0d0
+               dUi    = derU(i)*dg
+               dUj    = 0.0d0
+            endif
+            dphieff = dphii + dphij + dUi + dUj
          else
-            call calc_phi(r,phi)                  ! compute just pair potential
+            call calc_phi(r,phi,irlast)           ! compute just pair potential
+         endif
+         if (HalfOrFull.eq.1) then             ! HALF mode
+            Ei     = 0.5d0*phi
+            Ej     = 0.5d0*phi
+         else                                  ! FULL mode
+            Ei     = 0.5d0*phi
+            Ej     = 0.0d0
          endif
 
          ! contribution to energy
          !
          if (comp_enepot.eq.1) then
-            ene_pot(i) = ene_pot(i) + 0.5d0*phi   ! accumulate energy
-            if (HalfOrFull.eq.1) &                ! HALF mode
-               ene_pot(j) = ene_pot(j) + 0.5d0*phi! (i and j share it)
+            ene_pot(i) = ene_pot(i) + Ei          ! accumulate energy Ei
+            ene_pot(j) = ene_pot(j) + Ej          ! accumulate energy Ej
          else
-            if (HalfOrFull.eq.1) then             ! HALF mode
-               energy = energy + phi              !      add v to total energy
-            else                                  ! FULL mode
-               energy = energy + 0.5d0*phi        !      add half v to total energy
-            endif
+            energy = energy + Ei                  ! accumulate energy
+            energy = energy + Ej                  ! accumulate energy
          endif
 
          ! contribution to virial pressure
          !
          if (comp_virial.eq.1) then
-            if (HalfOrFull.eq.1) then             ! HALF mode
-               virial = virial + r*dphieff        !      contribution to virial
-            else                                  ! FULL mode
-               virial = virial + 0.5d0*r*dphieff  !      each atom contribs half
-            endif
+            virial = virial + r*dphieff           ! contribution to virial
          endif
 
          ! contribution to forces
          !
-         if (comp_force.eq.1) then
-            force(:,i) = force(:,i) + dphieff*Rij/r    ! accumulate force on atom i
-            if (HalfOrFull.eq.1) &                     ! HALF mode
-               force(:,j) = force(:,j) - dphieff*Rij/r !    (Fji = -Fij)
+         if (comp_force.eq.1) then                        ! Ei contribution
+            force(:,i) = force(:,i) + dphieff*Rij/r ! accumulate force on atom i
+            force(:,j) = force(:,j) - dphieff*Rij/r ! accumulate force on atom j
          endif
 
       endif
@@ -599,6 +625,7 @@ if (comp_enepot.eq.1) energy = sum(ene_pot(1:N))    ! compute total energy
 !
 if (NBC.eq.0) deallocate( nei1atom_substitute )
 deallocate( rho )
+deallocate( U )
 if (comp_force.eq.1.or.comp_virial.eq.1) deallocate( derU )
 
 ! Everything is great
