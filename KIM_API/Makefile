@@ -24,13 +24,20 @@ ifneq ($(DELETED_MODELS_TARGETS),)
 endif
 
 # default target
-all: libkim.a
+ifdef KIM_DYNAMIC
+   all: libkim.so
+else
+   all: libkim.a
+endif
 
 Makefile: Include.mk
 	@touch Makefile
 
 libkim.a: $(ALLOBJ) 
 	ar rcs  $@ $(ALLOBJ)
+
+libkim.so: libkim.a
+	$(LINKCOMPILER) $(SHARED_LIB_FLAG) $(CPPLIBFLAG) $(LINKSONAME)$(KIM_API_DIR)$@ -o $@ *.o
 
 KIMservice.o: model_init_include.h model_init_include.cpp model_kim_str_include.cpp KIMservice.h KIMservice.cpp Makefile
 
@@ -69,4 +76,4 @@ model_init_include.h model_init_include.cpp: Makefile .models-deleted $(MODELS_T
 .PHONY: all tests clean
 
 clean:
-	rm -f *.o *.a *.mod  model_init_include.{h,cpp} model_kim_str_include.{h,cpp} .*.make-temp .models-deleted
+	rm -f *.o *.a *.so *.mod  model_init_include.{h,cpp} model_kim_str_include.{h,cpp} .*.make-temp .models-deleted

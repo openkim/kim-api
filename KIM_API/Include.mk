@@ -124,6 +124,10 @@ ifdef KIM_DYNAMIC
    ifeq ($(OSTYPE),FreeBSD)
       SHARED_LIB_FLAG = -dynamiclib
    endif
+   LINKSONAME = -Wl,-soname=
+   ifeq ($(OSTYPE),darwin)
+      LINKSONAME = -Wl,-install_name,
+   endif
 endif
 
 
@@ -214,5 +218,5 @@ MODEL_NAME_KIM_STR_CPP = char* $(MODEL_NAME)_kim_str'('')''{'
 	echo "}"                       >> $*_kim_str.cpp
 
 # Library pattern rule
-%.so: %.a $(KIM_LIB_FILE) 
-	$(LINKCOMPILER) $(SHARED_LIB_FLAG)  $(CPPLIBFLAG) -o $@  *.o $(addprefix $(KIM_API_DIR),$(ALLOBJ))
+%.so: %.a
+	$(LINKCOMPILER) $(SHARED_LIB_FLAG)  $(CPPLIBFLAG) -o $@  *.o -L$(KIM_API_DIR) -lkim
