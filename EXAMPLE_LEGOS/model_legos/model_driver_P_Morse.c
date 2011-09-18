@@ -365,7 +365,7 @@ static void compute(void* km, int* ier)
    {
       if ( SPECCODE != atomTypes[i])
       {
-         KIM_API_report_error(__LINE__, __FILE__, "Unexpected species type detected", ier);
+         KIM_API_report_error(__LINE__, __FILE__, "Unexpected species type detected", *ier);
          return;
       }
    }
