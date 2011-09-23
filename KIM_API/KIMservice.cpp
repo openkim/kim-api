@@ -2652,3 +2652,7 @@ void KIM_API_model::report_error(int ln,char * fl,char * usermsg,int ier){
     cout<<"\tKIM_STATUS_MSG: "<<kimstatus<<endl;
     delete [] kimstatus; 
 }
+
+int KIM_API_model::get_baseConvertKey(){
+    return this->baseConvertKey;
+}
