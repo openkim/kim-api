@@ -811,6 +811,7 @@ KIM_API_model:: KIM_API_model(){
        locator_neigh_mode=false;
        iterator_neigh_mode=false;
        both_neigh_mode=false;
+       model_buffer=NULL;
 }
 KIM_API_model:: ~KIM_API_model(){
        //delete [] UnitsSet;
@@ -1360,14 +1361,17 @@ bool KIM_API_model::is_it_match_noDummyCount(KIM_API_model & mdtst,KIM_IOline * 
     }
     return match;
 }//will be private
+
 bool KIM_API_model::is_it_match(KIM_API_model &test,KIM_API_model & mdl){
     //preinit model from standard template kim file
-    KIM_API_model stdmdl;
-    char modelfile[2048] = KIM_DIR_API;
-    char modelstdname[32]="standard";
-    strcat(modelfile,"standard.kim");
-    if(!stdmdl.preinit(modelfile,modelstdname)){
-        cout<<" preinit of :"<<modelfile<<" failed"<<endl;
+   KIM_API_model stdmdl;
+    //char modelfile[2048] = KIM_DIR_API;
+    //char modelstdname[32]="standard";
+    //strcat(modelfile,"standard.kim");
+
+    char * inStandard_kim_str = standard_kim_str();
+    if(!stdmdl.preinit_str_testname(inStandard_kim_str)){
+        cout<<" preinit of :"<<"standard.kim"<<" failed"<<endl;
         stdmdl.free();
         return false;
     }
@@ -1660,6 +1664,7 @@ bool KIM_API_model::init(char* testname, char* modelname){
     backup = cout.rdbuf();psbuf = filekimlog.rdbuf();cout.rdbuf(psbuf);
 
     char * in_mdlstr=NULL;
+
 #include "model_kim_str_include.cpp"
 
     if (in_mdlstr == NULL){
@@ -1954,13 +1959,14 @@ bool KIM_API_model::model_init(){
     streambuf * psbuf, * backup;ofstream filekimlog;
     filekimlog.open(kimlog, ofstream::app);
     backup = cout.rdbuf();psbuf = filekimlog.rdbuf();cout.rdbuf(psbuf);
-
+ 
 cout<<"* Info: KIM_API_model::model_init: call dynamically linked initialize routine for:"<<modelname<<endl;
 cout<<"               from the shared library:"<<model_slib_file<<endl;
     sprintf(model_init_routine_name,"%s_init_",modelname);
     for(int i=0;i<strlen(model_init_routine_name);i++){
          model_init_routine_name[i]=tolower(model_init_routine_name[i]);
     }
+
     model_lib_handle = dlopen(model_slib_file,RTLD_NOW);
     if(!model_lib_handle) {
          cout<< "* Info: KIM_API_model::model_init: model initiliser failed for ";
@@ -1969,8 +1975,10 @@ cout<<"               from the shared library:"<<model_slib_file<<endl;
 
           //redirecting back to > cout
           cout.rdbuf(backup); filekimlog.close();
+
 	 return false;
     }
+
     typedef void (*Model_Init)(void **);//prototype for model_init
     Model_Init mdl_init = (Model_Init)dlsym(model_lib_handle,model_init_routine_name);
     const char *dlsym_error = dlerror();
@@ -1983,10 +1991,13 @@ cout<<"               from the shared library:"<<model_slib_file<<endl;
 
         return false;
     }
+
     //redirecting back to > cout
     cout.rdbuf(backup); filekimlog.close();
-    
+
+
     (*mdl_init)(pkim);
+
     return true;
 }
 #endif
@@ -2394,6 +2405,7 @@ bool KIM_API_model::init_AtomsTypes(){
     ErrorCode=1;
     return true;
 }
+
 void * KIM_API_model::get_listAtomsTypes(int* nATypes, int* error){
     *error=KIM_STATUS_FAIL;
     if (nAtomsTypes==0){
@@ -2655,4 +2667,15 @@ void KIM_API_model::report_error(int ln,char * fl,char * usermsg,int ier){
 
 int KIM_API_model::get_baseConvertKey(){
     return this->baseConvertKey;
+}
+
+void KIM_API_model::set_model_buffer(void* o, int* ier){
+    *ier = KIM_STATUS_OK;
+    model_buffer = o;
+}
+void * KIM_API_model::get_model_buffer(int* ier){
+    *ier = KIM_STATUS_FAIL;
+    if (model_buffer == NULL) return NULL;
+    *ier = KIM_STATUS_OK;
+    return model_buffer;
 }

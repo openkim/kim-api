@@ -168,6 +168,16 @@ int KIM_API_get_baseConvertKey(void *  kimmdl){
     return mdl->get_baseConvertKey();
 }
 
+void KIM_API_set_model_buffer(void* kimmdl,void *ob,int * ier){
+    KIM_API_model * mdl=(KIM_API_model *) kimmdl;
+    mdl->set_model_buffer(ob,ier);
+}
+void * KIM_API_get_model_buffer(void* kimmdl, int* ier){
+    KIM_API_model * mdl=(KIM_API_model *) kimmdl;
+    return mdl->get_model_buffer(ier);
+}
+
+
 //element access methods by name
 int  KIM_API_set_data(void *kimmdl,char *nm, intptr_t size, void *dt){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
@@ -408,7 +418,12 @@ int kim_api_get_baseconvertkey_f_(void *kimmdl){
     return KIM_API_get_baseConvertKey(*(KIM_API_model **)kimmdl);
 }
 
-
+void kim_api_set_model_buffer_f_(void * kimmdl,void * ob, int * ier){
+    KIM_API_set_model_buffer(*(KIM_API_model **)kimmdl, *(void **)ob, ier);
+}
+void * kim_api_get_model_buffer_f_(void * kimmdl, int * ier){
+    return KIM_API_get_model_buffer(*(KIM_API_model **)kimmdl, ier);
+}
 //element access methods
 int  kim_api_set_data_(void *kimmdl,char **nm,  intptr_t *size, void *dt){
     return KIM_API_set_data(*(KIM_API_model **)kimmdl,*nm,*size,*(char**)dt);
