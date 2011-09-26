@@ -779,6 +779,16 @@ numberOfAtoms           integer      none       none                    []
 
 ################################################################################
 #
+# numberOfContributingAtoms: The number of atoms that contributes to the energy 
+#                 (only needed for HEIGH-PURE-H NBC ). 
+#
+#
+# Name                  Type         Unit       SystemU/Scale           Shape
+#
+numberOfContributingAtoms integer      none       none                  []
+
+################################################################################
+#
 # numberAtomTypes: The number of types of atoms/particles contained in the 
 #                  configuration passed between the Model and Test.
 #
