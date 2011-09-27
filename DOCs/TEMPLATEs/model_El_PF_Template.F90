@@ -206,7 +206,7 @@ integer,                  intent(out) :: ier
 
 !-- Local variables
 double precision :: Rij(DIM)
-double precision :: r,Rsqij,phi,dphi,g,dg,Utmp,dU,dphieff
+double precision :: r,Rsqij,phi,dphi,g,dg,dU,dphieff
 double precision :: dphii,dUi,Ei,dphij,dUj,Ej
 integer :: i,j,jj,numnei,comp_force,comp_enepot,comp_virial
 double precision, allocatable :: rho(:),U(:),derU(:)
@@ -478,13 +478,12 @@ enddo  ! infinite do loop (terminated by exit statements above)
 !
 do i = 1,N
    if (comp_force.eq.1.or.comp_virial.eq.1) then
-      call calc_U_dU(rho(i),Utmp,dU)              ! compute embedding energy
+      call calc_U_dU(rho(i),U(i),dU)              ! compute embedding energy
                                                   !   and its derivative
       derU(i) = dU                                ! store dU for later use
    else
-      call calc_U(rho(i),Utmp )                   ! compute just embedding energy
+      call calc_U(rho(i),U(i) )                   ! compute just embedding energy
    endif
-   U(i) = Utmp                                    ! store U for later use
 enddo
 
 !  Loop over particles in the neighbor list a second time, to compute
