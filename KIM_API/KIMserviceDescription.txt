@@ -344,6 +344,59 @@ Corresponding Fortran style interface:
                         integer(kind=kim_intptr) :: kimmdl 
         end function kim_api_get_baseconvertkey_f
 
+******************************************************************************
+
+void KIM_API_set_model_buffer(void * kimmdl, void * ob, int * kimerror)
+     This routine sets pointer ob (Model object buffer) into KIM API object.
+     Model object buffer is everything that is needed for instantiation of the Model.
+     If design of the model allows instantiation of multiple objects of the same model,
+     then the pointer of the object (ob) has to be stored in model_buffer. It can be accessed 
+     only from the models methods, therefore ob is not reflected in .kim file.
+
+Arguments:
+         void * kimmdl
+                pointer to KIM_API_model object (in C++ style, the definition 
+                will be (KIM_API_model *)).
+          
+         void * ob
+                pointer to Model object buffer
+
+         int * kimerror
+                error code: KIM_STATUS_OK   -- successful completion, 
+                            KIM_STATUS_FAIL -- unsuccessful
+        
+Corresponding Fortran style interface:
+
+     subroutine kim_api_set_buffer_f(kimmdl,ob,kimerror)
+        integer ::kimerror
+        integer(kind=kim_intptr) :: kimmdl,ob
+     end subroutine kim_api_set_buffer_f
+
+******************************************************************************
+
+void * KIM_API_get_model_buffer(void * kimmdl, int * kimerror)
+     This routine gets (returns) pointer to ob (Model object buffer) from KIM API object.
+     Model object buffer is everything that is needed for instantiation of the Model.
+     If design of the model allows instantiation of multiple objects of the same model,
+     then the pointer of the object (ob) has to be stored in model_buffer. Since it 
+     can only be accessed from the models methods, the ob is not reflected in .kim file.
+
+Arguments:
+         void * kimmdl
+                pointer to KIM_API_model object (in C++ style, the definition 
+                will be (KIM_API_model *)).
+          
+        
+         int * kimerror
+                error code: KIM_STATUS_OK   -- successful completion, 
+                            KIM_STATUS_FAIL -- unsuccessful
+        
+Corresponding Fortran style interface:
+
+     function kim_api_get_buffer_f(kimmdl,kimerror)
+        integer ::kimerror
+        integer(kind=kim_intptr) :: kimmdl, kim_api_get_buffer_f
+     end function kim_api_get_buffer_f
 
 
 ================== ELEMENT ACCESS METHODS ROUTINES BY NAME ====================

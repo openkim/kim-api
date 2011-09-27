@@ -22,7 +22,9 @@ using namespace std;
 #define	_KIMSERVICE_H
 
 #include "KIMstatus.h"
-
+extern "C" {
+        char * standard_kim_str();
+ }
 #define KEY_CHAR_LENGTH 64
 #define number_NBC_methods 6
 #ifndef KIM_DIR_API
@@ -245,6 +247,8 @@ bool requiresFullNeighbors();
     static char * status_msg(int status_code);
     static void report_error(int line, char * fl, char * usermsg, int ier);
     int get_baseConvertKey();
+    void set_model_buffer(void * o,int * ier);
+    void * get_model_buffer(int * ier);
 private:
 
     bool locator_neigh_mode;
@@ -257,6 +261,8 @@ private:
     int neiOfAnAtom_half[KIM_API_MAX_NEIGHBORS];
     int neiOfAnAtom_full[KIM_API_MAX_NEIGHBORS];
     int baseConvertKey; //0--no conversion, 1 -- from 0 to 1, -1 -- from 1 to 0
+    void * model_buffer; // stores everything that is notreflected  in .kim
+                         // but nessssery for model instantiation
     Atom_Map * AtomsTypes;
     int nAtomsTypes;
 
