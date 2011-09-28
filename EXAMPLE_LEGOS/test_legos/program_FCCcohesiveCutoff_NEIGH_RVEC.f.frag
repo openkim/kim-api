@@ -40,6 +40,7 @@ program TEST_NAME_STR
   double precision,  parameter :: MinSpacing  = 0.800d0*FCCspacing
   double precision,  parameter :: MaxSpacing  = 1.200d0*FCCspacing
   integer,           parameter :: DIM         = 3
+  integer,           parameter :: SupportHalf = 0 ! False
 
   ! significant local variables
   !
@@ -96,7 +97,7 @@ program TEST_NAME_STR
 
   ! Setup the KIM API object
   !
-  call setup_KIM_API_object(pkim, testname, modelname, N, specname)
+  call setup_KIM_API_object(pkim, testname, modelname, N, specname, SupportHalf)
 
 
   ! check for PARAM_FREE_cutoff

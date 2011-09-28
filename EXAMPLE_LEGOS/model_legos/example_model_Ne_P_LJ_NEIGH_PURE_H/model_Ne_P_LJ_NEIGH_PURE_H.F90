@@ -46,12 +46,19 @@ contains
     real*8 potenergy;        pointer(ppotenergy,potenergy) ! total energy
     integer attypes(1);      pointer(pattypes,attypes)     ! atom types
     integer numberofatoms; pointer(pnumberofatoms,numberofatoms)
+    integer numContrib; pointer(pnumContrib,numContrib)
     integer i, f_flag, e_flag
     external calculate
 
     ! Unpack data from KIM object
     !
     pnumberofatoms = kim_api_get_data_f(pkim,"numberOfAtoms",ier)
+    if (ier.lt.KIM_STATUS_OK) then
+       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+       stop
+    endif
+
+    pnumContrib = kim_api_get_data_f(pkim,"numberContributingAtoms",ier)
     if (ier.lt.KIM_STATUS_OK) then
        call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
        stop
@@ -110,8 +117,8 @@ contains
 
     ! Call FORTRAN 77 code that does actual calculation
     !
-    call calculate(model_cutoff,sigma,epsilon,pkim,x,f,ea,numberofatoms,potenergy,  &
-                   f_flag,e_flag,kim_api_get_half_neigh_f,ier)
+    call calculate(model_cutoff,sigma,epsilon,pkim,x,f,ea,numberofatoms,numContrib, &
+                   potenergy,f_flag,e_flag,kim_api_get_half_neigh_f,ier)
 
   end subroutine calculate_wrap_f77
   

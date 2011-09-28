@@ -21,6 +21,12 @@
        call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
        return
     endif
+    ! get numberContributingAtoms
+    pnumContrib = kim_api_get_data_f(pkim,"numberContributingAtoms",ier)
+    if (ier.lt.KIM_STATUS_OK) then
+       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
+       return
+    endif
 
 
     !  Compute energy and forces
@@ -54,18 +60,21 @@
              r = sqrt(Rsqij)                            ! compute distance
              call pair(model_epsilon,model_sigma,model_A,model_B, model_C, &
                   r,phi,dphi,d2phi)                     ! compute pair potential
-             if (HalfOrFull.eq.1) then                  ! HALF mode
+             if ((HalfOrFull.eq.1) .and. &
+                 (j .le. numContrib)) then              ! HALF mode
                 dEidr = dphi                            !      double contribution
              else                                       ! FULL mode
                 dEidr = 0.5d0*dphi                      !      regular contribution
              endif
              if (comp_enepot.eq.1) then                 !
                 ene_pot(i) = ene_pot(i) + 0.5d0*phi     ! accumulate energy
-                if (HalfOrFull.eq.1) then               !
+                if ((HalfOrFull.eq.1) .and. &
+                    (j .le. numContrib)) then           ! HALF mode
                    ene_pot(j) = ene_pot(j) + 0.5d0*phi  ! (i and j share it)
                 endif                                   !
              else                                       !
-                if (HalfOrFull.eq.1) then               !
+                if ((HalfOrFull.eq.1) .and. &
+                    (j .le. numContrib)) then           ! HALF mode
                    energy = energy + phi                ! half neigh case
                 else                                    !
                    energy = energy + 0.5d0*phi          ! full neigh case

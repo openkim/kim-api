@@ -41,6 +41,8 @@ MODEL_INPUT:
 
 numberOfAtoms           integer      none       none                    []
 
+numberContributingAtoms integer      none       none                    []
+
 numberAtomTypes         integer      none       none                    []
 
 atomTypes               integer      none       none                    [numberOfAtoms]

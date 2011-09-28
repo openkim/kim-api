@@ -86,6 +86,9 @@ test_Al_free_cluster: $(COMMON_FRAGMENTS)                      \
 	echo                                              >> $(KIM_TESTS_DIR)$@/$@.kim
 	cat descriptor_file_neighborlist                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                              >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "numberContributingAtoms integer      none       none                    []" \
+                                                          >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                              >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo "boxlength               real*8       length     standard                [3]" \
                                                           >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                              >> $(KIM_TESTS_DIR)$@/$@.kim
@@ -149,6 +152,9 @@ test_Al_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
 	echo                                              >> $(KIM_TESTS_DIR)$@/$@.kim
 	cat descriptor_file_neighborlist                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                              >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                              >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "numberContributingAtoms integer      none       none                    []" \
+                                                          >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo "boxlength               real*8       length     standard                [3]" \
                                                           >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                              >> $(KIM_TESTS_DIR)$@/$@.kim
@@ -315,6 +321,9 @@ test_Ar_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
 	echo                                              >> $(KIM_TESTS_DIR)$@/$@.kim
 	cat descriptor_file_neighborlist                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                              >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "numberContributingAtoms integer      none       none                    []" \
+                                                          >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                              >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo "boxlength               real*8       length     standard                [3]" \
                                                           >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                              >> $(KIM_TESTS_DIR)$@/$@.kim
@@ -376,6 +385,9 @@ test_Ar_FCCcohesive_NEIGH_PURE: $(COMMON_FRAGMENTS)                          \
                                                           >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                              >> $(KIM_TESTS_DIR)$@/$@.kim
 	cat descriptor_file_neighborlist                  >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                              >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "numberContributingAtoms integer      none       none                    []" \
+                                                          >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                              >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                              >> $(KIM_TESTS_DIR)$@/$@.kim
 	cat descriptor_file_output                        >> $(KIM_TESTS_DIR)$@/$@.kim
@@ -564,6 +576,9 @@ test_Ar_free_cluster: $(COMMON_FRAGMENTS)                      \
 	echo                                              >> $(KIM_TESTS_DIR)$@/$@.kim
 	cat descriptor_file_neighborlist                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                              >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "numberContributingAtoms integer      none       none                    []" \
+                                                          >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                              >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo "boxlength               real*8       length     standard                [3]" \
                                                           >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                              >> $(KIM_TESTS_DIR)$@/$@.kim
@@ -631,6 +646,9 @@ test_Ne_free_cluster: $(COMMON_FRAGMENTS)                      \
                                                           >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                              >> $(KIM_TESTS_DIR)$@/$@.kim
 	cat descriptor_file_neighborlist                  >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                              >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "numberContributingAtoms integer      none       none                    []" \
+                                                          >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                              >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo "boxlength               real*8       length     standard                [3]" \
                                                           >> $(KIM_TESTS_DIR)$@/$@.kim

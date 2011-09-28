@@ -64,8 +64,10 @@ int main()
    void* pkim_cluster_model_0;
    void* pkim_cluster_model_1;
    /* model inputs */
-   long long numberOfAtoms_periodic = 1;
-   long long numberOfAtoms_cluster  = NCLUSTERATOMS;
+   int numberOfAtoms_periodic = 1;
+   int numberOfAtoms_cluster  = NCLUSTERATOMS;
+   int numContrib_periodic = numberOfAtoms_periodic;
+   int numContrib_cluster  = numberOfAtoms_cluster;
    int numberAtomTypes = 1;
    int AtomTypes_periodic_model_0;
    int AtomTypes_periodic_model_1;
@@ -118,6 +120,14 @@ int main()
    status = KIM_API_set_data(pkim_cluster_model_0,  "numberOfAtoms",   1, &numberOfAtoms_cluster);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_cluster_model_1,  "numberOfAtoms",   1, &numberOfAtoms_cluster);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
+   status = KIM_API_set_data(pkim_periodic_model_0, "numberContributingAtoms",   1, &numContrib_periodic);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
+   status = KIM_API_set_data(pkim_periodic_model_1, "numberContributingAtoms",   1, &numContrib_periodic);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
+   status = KIM_API_set_data(pkim_cluster_model_0, "numberContributingAtoms",   1, &numContrib_cluster);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
+   status = KIM_API_set_data(pkim_cluster_model_1, "numberContributingAtoms",   1, &numContrib_cluster);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_periodic_model_0, "numberAtomTypes", 1, &numberAtomTypes);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);

@@ -4,7 +4,7 @@
 !                        allocate memory and set known values.
 !
 !-------------------------------------------------------------------------------
-subroutine setup_KIM_API_object(pkim, testname, modelname, N, specname)
+subroutine setup_KIM_API_object(pkim, testname, modelname, N, specname, SupportHalf)
   use KIMservice
   implicit none
 
@@ -14,11 +14,13 @@ subroutine setup_KIM_API_object(pkim, testname, modelname, N, specname)
   character(len=80),        intent(in)  :: modelname
   integer,                  intent(in)  :: N
   character(len=2),         intent(in)  :: specname
+  integer,                  intent(in)  :: SupportHalf
 
   !-- Local variables
   integer, parameter :: ATypes = 1  ! hard-wired to one atomic type
   integer ier
   integer numberOfAtoms;         pointer(pnAtoms,numberOfAtoms)
+  integer numContrib;            pointer(pnumContrib,numContrib)
   integer numberAtomTypes;       pointer(pnAtomTypes,numberAtomTypes)
   integer atomTypesdum(1);       pointer(patomTypesdum,atomTypesdum)
   integer, pointer :: atomTypes(:)
@@ -52,6 +54,14 @@ subroutine setup_KIM_API_object(pkim, testname, modelname, N, specname)
      stop
   endif
 
+  if (SupportHalf.eq.1) then
+     pnumContrib = kim_api_get_data_f(pkim, "numberContributingAtoms", ier);
+     if (ier.lt.KIM_STATUS_OK) then
+        call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+        stop
+     endif
+  endif
+
   pnAtomTypes = kim_api_get_data_f(pkim, "numberAtomTypes", ier)
   if (ier.lt.KIM_STATUS_OK) then
      call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
@@ -68,6 +78,7 @@ subroutine setup_KIM_API_object(pkim, testname, modelname, N, specname)
   ! Set values
   !
   numberOfAtoms   = N
+  if (SupportHalf.eq.1) numContrib = N
   numberAtomTypes = ATypes
   atomTypes(:)    = kim_api_get_atypecode_f(pkim, specname, ier)
   if (ier.lt.KIM_STATUS_OK) then

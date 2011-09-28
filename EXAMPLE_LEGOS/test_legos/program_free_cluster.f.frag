@@ -57,6 +57,7 @@ program TEST_NAME_STR
   integer(kind=kim_intptr)  :: pkim
   integer                   :: ier
   integer numberOfAtoms;   pointer(pnAtoms,numberOfAtoms)
+  integer numContrib;      pointer(pnumContrib,numContrib)
   integer numberAtomTypes; pointer(pnAtomTypes,numberAtomTypes)
   integer atomTypesdum(1); pointer(patomTypesdum,atomTypesdum)
 
@@ -126,6 +127,12 @@ program TEST_NAME_STR
      stop
   endif
 
+  pnumContrib = kim_api_get_data_f(pkim, "numberContributingAtoms", ier);
+  if (ier.lt.KIM_STATUS_OK) then
+     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+     stop
+  endif
+
   pnAtomTypes = kim_api_get_data_f(pkim, "numberAtomTypes", ier)
   if (ier.lt.KIM_STATUS_OK) then
      call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
@@ -175,6 +182,7 @@ program TEST_NAME_STR
 
   ! Set values
   numberOfAtoms   = N
+  numContrib      = N
   numberAtomTypes = ATypes
   atomTypes(:)    = kim_api_get_atypecode_f(pkim, "SPECIES_NAME_STR", ier)
   if (ier.lt.KIM_STATUS_OK) then

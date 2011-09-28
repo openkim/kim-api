@@ -146,6 +146,7 @@ real*8  forcedum(DIM,1); pointer(pforce,forcedum)
 real*8  enepotdum(1);    pointer(penepot,enepotdum)
 real*8  boxlength(DIM);  pointer(pboxlength,boxlength)
 real*8  Rij_list(DIM,1); pointer(pRij_list,Rij_list)
+integer numContrib;      pointer(pnumContrib,numContrib)
 integer nei1atom(1);     pointer(pnei1atom,nei1atom)
 integer atomTypes(1);    pointer(patomTypes,atomTypes)
 real*8  virial;          pointer(pvirial,virial)
@@ -154,6 +155,7 @@ real*8, pointer :: coor(:,:),force(:,:),ene_pot(:)
 integer IterOrLoca
 integer HalfOrFull
 integer NBC
+integer numberContrib
 
 ! Determine neighbor list boundary condition (NBC)
 ! and half versus full mode:
@@ -261,6 +263,19 @@ pcoor = kim_api_get_data_f(pkim,"coordinates",ier)
 if (ier.lt.KIM_STATUS_OK) then
    call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
    return
+endif
+
+if (HalfOrFull.eq.1) then
+   pnumContrib = kim_api_get_data_f(pkim,"numberContributingAtoms",ier)
+   if (ier.lt.KIM_STATUS_OK) then
+      call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+      return
+   endif
+   if (NBC.ne.0) then ! non-CLUSTER cases
+      numberContrib = numContrib
+   else               ! CLUSTER case
+      numberContrib = N
+   endif
 endif
 
 if (NBC.eq.1) then
@@ -442,7 +457,8 @@ do
          if (comp_force.eq.1.or.comp_virial.eq.1) then
             call calc_phi_dphi(r,phi,dphi)        ! compute pair potential
                                                   !   and it derivative
-            if (HalfOrFull.eq.1) then             ! HALF mode
+            if ((HalfOrFull.eq.1) .and. &
+                (j .le. numberContrib)) then      ! HALF mode
                dEidr = dphi                       !      double contribution
             else                                  ! FULL mode
                dEidr = 0.5d0*dphi                 !      regular contribution
@@ -455,10 +471,12 @@ do
          !
          if (comp_enepot.eq.1) then
             ene_pot(i) = ene_pot(i) + 0.5d0*phi   ! accumulate energy
-            if (HalfOrFull.eq.1) &                ! HALF mode
+            if ((HalfOrFull.eq.1) .and. &
+                (j .le. numberContrib)) &         ! HALF mode
                ene_pot(j) = ene_pot(j) + 0.5d0*phi! (i and j share it)
          else
-            if (HalfOrFull.eq.1) then             ! HALF mode
+            if ((HalfOrFull.eq.1) .and. &
+                (j .le. numberContrib)) then      ! HALF mode
                energy = energy + phi              !      add v to total energy
             else                                  ! FULL mode
                energy = energy + 0.5d0*phi        !      add half v to total energy

@@ -132,6 +132,7 @@ static void compute(void* km, int* ier)
    int HalfOrFull;
    int NBC;
    char* NBCstr;
+   int numberContrib;
 
    int* nAtoms;
    int* atomTypes;
@@ -149,7 +150,7 @@ static void compute(void* km, int* ier)
    double* virial;
    int* neighListOfCurrentAtom;
    double* boxlength;
-   
+   int* numContrib;
    
    /* Determine neighbor list boundary condition (NBC) */
    /* and half versus full mode: */
@@ -271,6 +272,23 @@ static void compute(void* km, int* ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", *ier);
       return;
+   }
+   if (HalfOrFull == 1)
+   {
+      numContrib = (int*) KIM_API_get_data(pkim, "numberContributingAtoms", ier);
+      if (KIM_STATUS_OK > *ier)
+      {
+         KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", *ier);
+         return;
+      }
+      if (0 != NBC) /* non-CLUSTER cases */
+      {
+         numberContrib = *numContrib;
+      }
+      else /* CLUSTER cases */
+      {
+         numberContrib = *nAtoms;
+      }
    }
    if (NBC == 1)
    {
@@ -566,7 +584,7 @@ static void compute(void* km, int* ier)
                              cutoff, R, &phi, &dphi);
 
                /* compute dEidr */
-               if (1 == HalfOrFull)
+               if ((1 == HalfOrFull) && (j < numberContrib))
                {
                   /* Half mode -- double contribution */
                   dEidr = dphi;
@@ -592,11 +610,11 @@ static void compute(void* km, int* ier)
             {
                energyPerAtom[i] += 0.5*phi;
                /* if half list add energy for the other atom in the pair */
-               if (1 == HalfOrFull) energyPerAtom[j] += 0.5*phi;
+               if ((1 == HalfOrFull) && (j < numberContrib)) energyPerAtom[j] += 0.5*phi;
             }
             else
             {
-               if (1 == HalfOrFull)
+               if ((1 == HalfOrFull) && (j < numberContrib))
                {
                   /* Half mode -- add v to total energy */
                   *energy += phi;

@@ -41,6 +41,7 @@ program TEST_NAME_STR
   double precision,  parameter :: MinSpacing  = 0.800d0*FCCspacing
   double precision,  parameter :: MaxSpacing  = 1.200d0*FCCspacing
   integer,           parameter :: DIM         = 3
+  integer,           parameter :: SupportHalf = 1 ! True
 
   ! significant local variables
   !
@@ -64,8 +65,6 @@ program TEST_NAME_STR
   integer(kind=kim_intptr)  :: pkim          ! pointer to KIM API object
 
   real*8 coordum(DIM,1);   pointer(pcoor,coordum)         ! coordinate
-
-  real*8 boxlength(DIM);   pointer(pboxlength,boxlength)  ! periodic box size
 
   integer                   :: N                          ! number of atoms
 
@@ -93,7 +92,7 @@ program TEST_NAME_STR
 
   ! Setup the KIM API object
   !
-  call setup_KIM_API_object(pkim, testname, modelname, N, specname)
+  call setup_KIM_API_object(pkim, testname, modelname, N, specname, SupportHalf)
 
 
   ! allocate storage for neighbor lists, compute them for the first time, 

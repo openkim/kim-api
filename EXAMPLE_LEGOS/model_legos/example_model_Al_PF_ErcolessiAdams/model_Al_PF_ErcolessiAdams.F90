@@ -550,6 +550,7 @@ real*8 forcedum(DIM,1); pointer(pforce,forcedum)
 real*8 enepotdum(1);    pointer(penepot,enepotdum)
 real*8 boxlength(DIM);  pointer(pboxlength,boxlength)
 real*8 Rij_list(DIM,1); pointer(pRij_list,Rij_list)
+integer numContrib;     pointer(pnumContrib,numContrib)
 integer nei1atom(1);    pointer(pnei1atom,nei1atom)
 integer atomTypes(1);   pointer(patomTypes,atomTypes)
 real*8 virial;          pointer(pvirial,virial)
@@ -560,6 +561,7 @@ real*8, pointer :: coor(:,:),force(:,:),ene_pot(:)
 integer IterOrLoca
 integer HalfOrFull
 integer NBC
+integer numberContrib
 
 ! Determine neighbor list boundary condition (NBC)
 ! and half versus full mode:
@@ -667,6 +669,19 @@ pcoor = kim_api_get_data_f(pkim,"coordinates",ier)
 if (ier.lt.KIM_STATUS_OK) then
    call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
    return
+endif
+
+if (HalfOrFull.eq.1) then
+   pnumContrib = kim_api_get_data_f(pkim,"numberContributingAtoms",ier)
+   if (ier.lt.KIM_STATUS_OK) then
+      call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+      return
+   endif
+   if (NBC.ne.0) then ! non-CLUSTER cases
+      numberContrib = numContrib
+   else               ! CLUSTER cases
+      numberContrib = N
+   endif
 endif
 
 if (NBC.eq.1) then
@@ -810,9 +825,9 @@ do
          r = sqrt(Rsqij)                          ! compute distance
          call calc_g(r,g,irlast)                  ! compute electron density
          rho(i) = rho(i) + g                      ! accumulate electron density
-         if (HalfOrFull.eq.1) &                   ! HALF mode
+         if ((HalfOrFull.eq.1) .and. &
+             (j .le. numberContrib)) &            ! HALF mode
             rho(j) = rho(j) + g                   !      (add contrib to j)
-
       endif
 
    enddo  ! loop on jj
@@ -830,6 +845,18 @@ do i = 1,N
    else
       call calc_U(rho(i),U(i),ielast)             ! compute just embedding energy
    endif
+
+   ! accumulate the embedding energy contribution
+   !
+   ! Assuming U(rho=0) = 0.0d0
+   !
+   if (comp_enepot.eq.1) then                     ! accumulate embedding energy contribution
+      ene_pot(i) = ene_pot(i) + U(i)
+   else
+      energy = energy + U(i)
+   endif
+
+   if ((HalfOrFull.eq.1) .and. (i .gt. numberContrib)) exit
 enddo
 
 !  Loop over particles in the neighbor list a second time, to compute
@@ -866,25 +893,6 @@ do
 
       j = nei1atom(jj)                            ! get neighbor ID
 
-      ! accumulate the embedding energy contribution
-      !
-      if (HalfOrFull.eq.1) then                   ! HALF mode
-         if (comp_enepot.eq.1) then               ! accumulate embedding energy contribution
-            ene_pot(j) = ene_pot(j) + U(j)
-         else
-            energy = energy + U(j)
-         endif
-         U(j) = 0.0d0                             ! ensure this energy is used only once
-      endif
-      ! FULL & HALF mode
-      if (comp_enepot.eq.1) then                  ! accumulate embedding energy contribution
-         ene_pot(i) = ene_pot(i) + U(i)
-      else
-         energy = energy + U(i)
-      endif
-      U(i) = 0.d0                                 ! Ensure this energy is used only once
-      
-
       ! compute relative position vector
       !
       if (NBC.ne.3) then                          ! all methods except NEIGH-RVEC-F
@@ -911,7 +919,8 @@ do
             call calc_phi_dphi(r,phi,dphi,irlast) ! compute pair potential
                                                   !   and it derivative
             call calc_dg(r,dg,irlast)             ! compute elect dens first deriv
-            if (HalfOrFull.eq.1) then             ! HALF mode
+            if ((HalfOrFull.eq.1) .and. &
+                (j .le. numberContrib)) then      ! HALF mode
                dphii  = 0.5d0*dphi
                dphij  = 0.5d0*dphi
                dUi    = derU(i)*dg
@@ -926,7 +935,8 @@ do
          else
             call calc_phi(r,phi,irlast)           ! compute just pair potential
          endif
-         if (HalfOrFull.eq.1) then             ! HALF mode
+         if ((HalfOrFull.eq.1) .and. &
+             (j .le. numberContrib)) then         ! HALF mode
             Ei     = 0.5d0*phi
             Ej     = 0.5d0*phi
          else                                  ! FULL mode

@@ -40,8 +40,8 @@ C  FORTRAN 77 SUBROUTINE to compute energy and forces on atoms from the
 C  positions.
 C
 C*******************************************************************************
-      SUBROUTINE calculate(cutoff,sigma,epsilon,pkim,x,f,ea,natom,en,
-     &                     f_flag,e_flag,kimget_h_neigh,ier)
+      SUBROUTINE calculate(cutoff,sigma,epsilon,pkim,x,f,ea,natom,
+     &                     ncontrib,en,f_flag,e_flag,kimget_h_neigh,ier)
       IMPLICIT NONE
 
 C-------Transferred variables
@@ -56,7 +56,7 @@ C-------Transferred variables
 
 C-------Local variables
       DOUBLE PRECISION vij,dv,sumv,cut2,energycutoff
-      INTEGER i,j,jj,numnei
+      INTEGER i,j,jj,numnei,ncontrib
       DOUBLE PRECISION r2
       DOUBLE PRECISION r
       DOUBLE PRECISION xi(3),xj(3),dx(3)
@@ -131,10 +131,17 @@ C     Increment iterator
      &      WRITE(*,'("i=",I5,", j=",I5)') i,j
          IF (r2.LE.cut2) THEN
             CALL ljpot_f77(sigma,epsilon,r2,vij,dv)
-            sumv = sumv + vij-energycutoff
+            IF (j.LE.ncontrib) THEN
+               sumv = sumv + vij-energycutoff
+            ELSE
+               sumv = sumv + 0.5d0*(vij-energycutoff)
+               dv = 0.5d0*dv;
+            ENDIF
             IF (e_flag.eq.1) THEN
                ea(i)=ea(i)+(vij-energycutoff)/2.D0
-               ea(j)=ea(j)+(vij-energycutoff)/2.D0
+               IF (j.LE.ncontrib) THEN
+                  ea(j)=ea(j)+(vij-energycutoff)/2.D0
+               ENDIF
             ENDIF
             IF (f_flag.eq.1) THEN
                r = sqrt(r2)
