@@ -739,9 +739,10 @@ KIM_API_model:: KIM_API_model(){
        strcpy(NBC_method_B,"MI-OPBC-H");
        strcpy(&arg_NBC_method_B[0][0],"coordinates");
        strcpy(&arg_NBC_method_B[1][0],"boxlength");
-       strcpy(&arg_NBC_method_B[2][0],"neighObject");
-       strcpy(&arg_NBC_method_B[3][0],"get_half_neigh");
-       narg_NBC_method_B=4;
+       strcpy(&arg_NBC_method_B[2][0],"numberContributingAtoms");
+       strcpy(&arg_NBC_method_B[3][0],"neighObject");
+       strcpy(&arg_NBC_method_B[4][0],"get_half_neigh");
+       narg_NBC_method_B=5;
 
        //method_C init
        strcpy(NBC_method_C,"MI-OPBC-F");
@@ -761,9 +762,10 @@ KIM_API_model:: KIM_API_model(){
        //method_E init
        strcpy(NBC_method_E,"NEIGH-PURE-H");
        strcpy(&arg_NBC_method_E[0][0],"coordinates");
-       strcpy(&arg_NBC_method_E[1][0],"neighObject");
-       strcpy(&arg_NBC_method_E[2][0],"get_half_neigh");
-       narg_NBC_method_E=3;
+       strcpy(&arg_NBC_method_E[1][0],"numberContributingAtoms");
+       strcpy(&arg_NBC_method_E[2][0],"neighObject");
+       strcpy(&arg_NBC_method_E[3][0],"get_half_neigh");
+       narg_NBC_method_E=4;
 
        //method_F init
        strcpy(NBC_method_F,"NEIGH-PURE-F");
@@ -804,7 +806,7 @@ KIM_API_model:: KIM_API_model(){
        strcpy(NBC_method_current,"none");
        
 
-       this->baseConvertKey=0;
+       this->model_index_shift=0;
        ErrorCode=1;
        AtomsTypes = NULL;
        nAtomsTypes = 0;
@@ -1472,9 +1474,9 @@ bool KIM_API_model::do_dummy_match(KIM_API_model& tst, KIM_API_model& mdl){
         cout<< "* Error (KIM_API_model::do_dummy_match): Model descriptor file must have only ONE of ZeroBasedLists or OneBasedLists."<<endl;
         return false;
     }
-    baseConvertKey = 0;
-    if (ZeroBasedLists_tst && OneBasedLists_mdl) baseConvertKey = 1;
-    if (OneBasedLists_tst && ZeroBasedLists_mdl) baseConvertKey = -1;
+    model_index_shift = 0;
+    if (ZeroBasedLists_tst && OneBasedLists_mdl) model_index_shift = 1;
+    if (OneBasedLists_tst && ZeroBasedLists_mdl) model_index_shift = -1;
 
     int ind_LocaAccess_mdl = mdl.get_index("Neigh_LocaAccess");
     int ind_IterAcces_mdl = mdl.get_index("Neigh_IterAccess");
@@ -2040,7 +2042,7 @@ int KIM_API_model::get_full_neigh(int mode, int request, int *atom,
     if (get_full_neigh_index < 0) return KIM_STATUS_API_OBJECT_INVALID;
     Get_Neigh get_neigh = (Get_Neigh)(*this)[get_full_neigh_index].data;
      KIM_API_model *pkim = this;
-    if (baseConvertKey==0) {
+    if (model_index_shift==0) {
         if (mode==0 && request == 0) {
             return (*get_neigh)((void **)&pkim,&locmode, &locrequest, atom, numnei, nei1atom, Rij ) ;
         }else{
@@ -2053,9 +2055,9 @@ int KIM_API_model::get_full_neigh(int mode, int request, int *atom,
             }
             return erkey;
         }
-    }else if (baseConvertKey == 1 || baseConvertKey == -1){
+    }else if (model_index_shift == 1 || model_index_shift == -1){
         int req=request;
-        if (mode ==1) req = request - baseConvertKey;
+        if (mode ==1) req = request - model_index_shift;
         int at = *atom;
         if (mode==0 && request == 0) {
             return (*get_neigh)((void **)&pkim,&locmode, &req, &at, numnei, nei1atom, Rij );
@@ -2068,17 +2070,17 @@ int KIM_API_model::get_full_neigh(int mode, int request, int *atom,
                 return KIM_STATUS_NEIGH_TOO_MANY_NEIGHBORS;
             }
             if ( erkey == 1){
-                *atom = at + baseConvertKey;
+                *atom = at + model_index_shift;
                 for (int i = 0; i<(*numnei);i++){
-                    neiOfAnAtom_full[i] = (*nei1atom)[i] + baseConvertKey;
+                    neiOfAnAtom_full[i] = (*nei1atom)[i] + model_index_shift;
                 }
                 *nei1atom = &(neiOfAnAtom_full[0]);
             }
             return erkey;
         }
     }else{
-        cout<<endl<< "* Error (KIM_API::get_full_neigh): wrong base convert key,baseConvertKey =";
-        cout<< baseConvertKey <<"  (must be 0,1 or -1)"<<endl;
+        cout<<endl<< "* Error (KIM_API::get_full_neigh): wrong base convert key,model_index_shift =";
+        cout<< model_index_shift <<"  (must be 0,1 or -1)"<<endl;
         return KIM_STATUS_API_OBJECT_INVALID;
     }
 }
@@ -2096,7 +2098,7 @@ int KIM_API_model::get_half_neigh(int mode, int request, int *atom,
     Get_Neigh get_neigh = (Get_Neigh)(*this)[get_half_neigh_index].data;
     KIM_API_model *pkim = this;
 
-    if (baseConvertKey==0) {
+    if (model_index_shift==0) {
         if (mode==0 && request == 0) {
             return (*get_neigh)((void **)&pkim,&locmode, &locrequest, atom, numnei, nei1atom, Rij ) ;
         }else{
@@ -2110,10 +2112,10 @@ int KIM_API_model::get_half_neigh(int mode, int request, int *atom,
             }
             return erkey;
         }
-    }else if (baseConvertKey == 1 || baseConvertKey == -1){
+    }else if (model_index_shift == 1 || model_index_shift == -1){
 
  	int req=request;
-        if (mode ==1) req = request - baseConvertKey;
+        if (mode ==1) req = request - model_index_shift;
  	int at = *atom;
 
         if (mode==0 && request == 0) {	    
@@ -2127,17 +2129,17 @@ int KIM_API_model::get_half_neigh(int mode, int request, int *atom,
                 return KIM_STATUS_NEIGH_TOO_MANY_NEIGHBORS;
             }
             if (erkey == 1){
-                *atom= at + baseConvertKey;
+                *atom= at + model_index_shift;
                 for (int i = 0; i<(*numnei);i++){
-                    neiOfAnAtom_half[i] = (*nei1atom)[i] + baseConvertKey;
+                    neiOfAnAtom_half[i] = (*nei1atom)[i] + model_index_shift;
                 }
                 *nei1atom = &(neiOfAnAtom_half[0]);
             }
             return erkey;
         }
     }else{
-        cout<<endl<< "* Error (KIM_API_model::get_half_neigh): wrong base convert key,baseConvertKey =";
-        cout<< baseConvertKey <<"  (must be 0,1 or -1)"<<endl;
+        cout<<endl<< "* Error (KIM_API_model::get_half_neigh): wrong base convert key,model_index_shift =";
+        cout<< model_index_shift <<"  (must be 0,1 or -1)"<<endl;
         return KIM_STATUS_API_OBJECT_INVALID;
     }
 }
@@ -2665,8 +2667,8 @@ void KIM_API_model::report_error(int ln,char * fl,char * usermsg,int ier){
     delete [] kimstatus; 
 }
 
-int KIM_API_model::get_baseConvertKey(){
-    return this->baseConvertKey;
+int KIM_API_model::get_model_index_shift(){
+    return this->model_index_shift;
 }
 
 void KIM_API_model::set_model_buffer(void* o, int* ier){

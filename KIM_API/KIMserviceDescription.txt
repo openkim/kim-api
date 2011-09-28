@@ -322,9 +322,9 @@ Corresponding Fortran style interface:
 
 ******************************************************************************
 
-int KIM_API_get_baseConvertKey(void *kimmdl); 
+int KIM_API_get_model_index_shift(void *kimmdl); 
 
-     This routine returns an integer that tells indexes transformation rule between 
+     This routine returns an integer that tells how to transformation indices between 
      Tests and Models for array access.
      The return value can be only -1,0 or 1.
      If the Test has ZeroBasedList and the Model has OneBasedList  the return value is +1
@@ -340,9 +340,9 @@ Arguments:
 
 Corresponding Fortran style interface:
 
-        integer function kim_api_get_baseconvertkey_f(kimmdl) 
+        integer function kim_api_get_model_index_shift_f(kimmdl) 
                         integer(kind=kim_intptr) :: kimmdl 
-        end function kim_api_get_baseconvertkey_f
+        end function kim_api_get_model_index_shift_f
 
 ******************************************************************************
 

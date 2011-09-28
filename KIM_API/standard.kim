@@ -779,13 +779,13 @@ numberOfAtoms           integer      none       none                    []
 
 ################################################################################
 #
-# numberOfContributingAtoms: The number of atoms that contributes to the energy 
-#                 (only needed for HEIGH-PURE-H NBC ). 
+# numberContributingAtoms: The number of atoms that contribute to the energy 
+#                         (required for all half neighbor lists). 
 #
 #
 # Name                  Type         Unit       SystemU/Scale           Shape
 #
-numberOfContributingAtoms integer      none       none                  []
+numberContributingAtoms integer      none       none                    []
 
 ################################################################################
 #

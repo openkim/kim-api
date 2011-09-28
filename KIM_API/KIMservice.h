@@ -246,7 +246,7 @@ bool requiresFullNeighbors();
     int get_neigh_mode(int *);
     static char * status_msg(int status_code);
     static void report_error(int line, char * fl, char * usermsg, int ier);
-    int get_baseConvertKey();
+    int get_model_index_shift();
     void set_model_buffer(void * o,int * ier);
     void * get_model_buffer(int * ier);
 private:
@@ -260,7 +260,7 @@ private:
     int get_half_neigh_index;
     int neiOfAnAtom_half[KIM_API_MAX_NEIGHBORS];
     int neiOfAnAtom_full[KIM_API_MAX_NEIGHBORS];
-    int baseConvertKey; //0--no conversion, 1 -- from 0 to 1, -1 -- from 1 to 0
+    int model_index_shift; //0--no conversion, 1 -- from 0 to 1, -1 -- from 1 to 0
     void * model_buffer; // stores everything that is notreflected  in .kim
                          // but nessssery for model instantiation
     Atom_Map * AtomsTypes;
@@ -274,7 +274,7 @@ private:
     
     //"MI-OPBC-H"
     char NBC_method_B[KEY_CHAR_LENGTH];
-    char arg_NBC_method_B[4][KEY_CHAR_LENGTH];
+    char arg_NBC_method_B[5][KEY_CHAR_LENGTH];
     int narg_NBC_method_B;
 
     
@@ -292,7 +292,7 @@ private:
 
     //"NEIGH-PURE-H"
     char NBC_method_E[KEY_CHAR_LENGTH];
-    char arg_NBC_method_E[3][KEY_CHAR_LENGTH];
+    char arg_NBC_method_E[4][KEY_CHAR_LENGTH];
     int narg_NBC_method_E;
     
     

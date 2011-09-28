@@ -90,14 +90,14 @@ integer,parameter :: kim_intptr = 8
             integer(kind=kim_intptr) :: kimmdl,testinputf,testname,mdlinputf,mdlname
         end function kim_api_init1
 
-         integer function kim_api_get_baseconvertkey_f(kimmdl)
+         integer function kim_api_get_model_index_shift_f(kimmdl)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
 	integer,parameter :: kim_intptr = 8
 #endif
             integer(kind=kim_intptr) :: kimmdl
-        end function kim_api_get_baseconvertkey_f
+        end function kim_api_get_model_index_shift_f
 
         integer function kim_api_set_units(kimmdl,UnitsSystem)
 #ifdef SYSTEM32

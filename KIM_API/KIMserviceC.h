@@ -61,7 +61,7 @@ char * KIM_API_status_msg(int error);
     
 void KIM_API_report_error(int ln,char * fl,char * usermsg,int ier);
 
-int KIM_API_get_baseConvertKey(void *);
+int KIM_API_get_model_index_shift(void *);
 
 void KIM_API_set_model_buffer(void * kimmdl,void * ob, int * ier);
 void * KIM_API_get_model_buffer(void * kimmdl, int * ier);
@@ -128,7 +128,7 @@ int kim_api_get_full_neigh_f_(void *kimmdl,int *mode,int *request,
 int kim_api_get_half_neigh_f_(void *kimmdl,int *mode,int *request,
         int *atom, int *numnei, int **nei1atom, double **Rij);
 
-int kim_api_get_baseconvertkey_f_(void * kimmdl);
+int kim_api_get_model_index_shift_f_(void * kimmdl);
 
 void kim_api_set_model_buffer_f_(void * kimmdl,void * ob, int * ier);
 void * kim_api_get_model_buffer_f_(void * kimmdl, int * ier);

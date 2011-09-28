@@ -163,9 +163,9 @@ void KIM_API_report_error(int ln, char *fl,char *usermsg,int ier){
     KIM_API_model::report_error(ln,fl,usermsg,ier);
 }
 
-int KIM_API_get_baseConvertKey(void *  kimmdl){
+int KIM_API_get_model_index_shift(void *  kimmdl){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    return mdl->get_baseConvertKey();
+    return mdl->get_model_index_shift();
 }
 
 void KIM_API_set_model_buffer(void* kimmdl,void *ob,int * ier){
@@ -414,8 +414,8 @@ int kim_api_get_half_neigh_f_(void *kimmdl,int *mode,int *request,
             atom,numnei,nei1atom,Rij);
 }
 
-int kim_api_get_baseconvertkey_f_(void *kimmdl){
-    return KIM_API_get_baseConvertKey(*(KIM_API_model **)kimmdl);
+int kim_api_get_model_index_shift_f_(void *kimmdl){
+    return KIM_API_get_model_index_shift(*(KIM_API_model **)kimmdl);
 }
 
 void kim_api_set_model_buffer_f_(void * kimmdl,void * ob, int * ier){
