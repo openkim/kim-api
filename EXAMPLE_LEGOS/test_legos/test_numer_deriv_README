@@ -1,0 +1,25 @@
+#
+# Release: This file is part of the openkim-api.git repository.
+#
+# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
+# All rights reserved.
+#
+
+This directory (TEST_NAME_STR) contains a Test that compares the forces
+computed by a KIM-compliant Model with those obtained using numerical
+differentiation of the Model energies.
+
+Note that this Test generates its KIM descriptor file internally and
+passes this to the KIM API using service routines.
+
+The following files are in the directory:
+
+Makefile
+     Makefile to compile and build executables with GNU or Intel compilers.
+
+README
+     This file.
+
+TEST_NAME_STR.F90
+     F90 program that implements the test.
+
