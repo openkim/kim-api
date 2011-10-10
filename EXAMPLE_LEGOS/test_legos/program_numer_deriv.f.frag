@@ -2,8 +2,7 @@
 !**
 !**  PROGRAM TEST_NAME_STR
 !**
-!**  KIM compliant program to compute the energy of and forces on an isolated 
-!**  cluster of SPECIES_NAME_STR atoms
+!**  KIM compliant program to perform numerical derivative check on a model
 !**
 !**  Works with the following NBC methods:
 !**        MI-OPBC-H
@@ -12,7 +11,7 @@
 !**        NEIGH-PURE-F
 !**        NEIGH-RVEC-F
 !**
-!**  Authors: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
+!**  Author: Ellad B. Tadmor, Valeriu Smirichinski, Ryan S. Elliott
 !**
 !**  Release: This file is part of the openkim-api.git repository.
 !**
@@ -32,20 +31,32 @@ program TEST_NAME_STR
   use KIMservice
   implicit none
 
-  integer,          external  :: get_neigh_no_Rij
-  integer,          external  :: get_neigh_Rij
-  double precision, parameter :: FCCspacing     = FCC_SPACING_STR
-  integer,          parameter :: nCellsPerSide  = 2
-  integer,          parameter :: DIM            = 3
-  integer,          parameter :: ATypes         = 1
+  integer, external  :: get_neigh_no_Rij
+  integer, external  :: get_neigh_Rij
+  real*8,  parameter :: FCCspacing     = FCC_SPACING_STR
+  integer, parameter :: nCellsPerSide  = 2
+  integer, parameter :: DIM            = 3
+  integer, parameter :: ATypes         = 1
+  real*8,  parameter :: cutpad         = 0.75d0
+  integer, parameter :: max_specs      = 10     ! most species a Model can support
+  
   integer,          parameter :: &
        N = 4*(nCellsPerSide)**3 + 6*(nCellsPerSide)**2 + 3*(nCellsPerSide) + 1
-  integer(kind=kim_intptr), parameter :: SizeOne        = 1
+  integer(kind=kim_intptr), parameter :: SizeOne = 1
+  real*8, allocatable :: forces_num(:,:)
+  real*8, allocatable :: forces_num_err(:,:)
+  character(len=3)    :: model_specs(max_specs)
+  integer             :: num_specs
+  character(len=4)    :: passfail
+  real*8              :: forcediff
+  real*8              :: forcediff_sumsq
 
   ! neighbor list
   integer,                  allocatable :: neighborList(:,:)
   integer(kind=kim_intptr), allocatable :: NLRvecLocs(:)
   double precision,         allocatable :: RijList(:,:,:)
+  double precision,         allocatable :: coordsave(:,:)
+  logical do_update_list
 
   !
   ! KIM variables
@@ -66,20 +77,36 @@ program TEST_NAME_STR
   real*8 coordum(DIM,1);   pointer(pcoor,coordum)
   real*8 forcesdum(DIM,1); pointer(pforces,forcesdum)
   real*8 boxlength(DIM);   pointer(pboxlength,boxlength)
-  integer I
+  integer I,J
   real*8, pointer  :: coords(:,:), forces(:,:)
   integer, pointer :: atomTypes(:)
   integer middleDum
+  character(len=10000) :: test_descriptor_string
+  real*8 rnd, deriv, deriv_err
 
+  ! Initialize error flag
+  ier = KIM_STATUS_OK
   
   ! Get KIM Model name to use
   print '("Please enter a valid KIM model name: ")'
   read(*,*) modelname
 
-  ! Initialize the KIM object
-  ier = kim_api_init_f(pkim, testname, modelname)
+  ! Write out kim descriptor string for Test
+  ! (Currently gets species types supported by Model from modelname. This
+  ! should be replaced with a call to a KIM Service Routine when available.)
+  call Write_KIM_descriptor(modelname, test_descriptor_string, &
+                            max_specs, model_specs, num_specs, ier)
   if (ier.lt.KIM_STATUS_OK) then
-     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_init_f", ier)
+     call kim_api_report_error_f(__LINE__, __FILE__, "Write_KIM_descriptor", ier)
+     stop
+  endif
+
+  ! Create empty KIM object conforming to fields in the KIM descriptor files
+  ! of the Test and Model
+  !
+  ier = kim_api_init_str_testname_f(pkim,trim(test_descriptor_string)//char(0),modelname)
+  if (ier.lt.KIM_STATUS_OK) then
+     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_init_str_testname_f", ier)
      stop
   endif
 
@@ -181,10 +208,15 @@ program TEST_NAME_STR
   call toRealArrayWithDescriptor2d(forcesdum, forces, DIM, N)
 
   ! Set values
+  !
+  ! NOTE: The numerical derivative test is currently hard-wired to work with
+  !       a single species. This needs to be rewritten to more comprehensivley
+  !       test Models that support multiple species.
+  !
   numberOfAtoms   = N
   numContrib      = N
   numberAtomTypes = ATypes
-  atomTypes(:)    = kim_api_get_atypecode_f(pkim, "SPECIES_NAME_STR", ier)
+  atomTypes(:)    = kim_api_get_atypecode_f(pkim, trim(model_specs(1)), ier)
   if (ier.lt.KIM_STATUS_OK) then
      call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_atypecode_f", ier)
      stop
@@ -194,25 +226,17 @@ program TEST_NAME_STR
   call create_FCC_configuration(FCCspacing, nCellsPerSide, .false., coords, middleDum)
   if (nbc.le.1) boxlength(:)  = 600.d0 ! large enough to make the cluster isolated
 
-  ! compute neighbor lists
-  allocate(neighborList(N+1, N))
-  if (nbc.eq.4) then
-     allocate(RijList(DIM,N+1, N))
-  endif
-  !
-  if (nbc.eq.0) then
-     call MI_OPBC_neighborlist(.true., N, coords, (cutoff+0.75), boxlength, neighborList)
-  elseif (nbc.eq.1) then
-     call MI_OPBC_neighborlist(.false., N, coords, (cutoff+0.75), boxlength, neighborList)
-  elseif (nbc.eq.2) then
-     call NEIGH_PURE_cluster_neighborlist(.true., N, coords, (cutoff+0.75), neighborList)
-  elseif (nbc.eq.3) then
-     call NEIGH_PURE_cluster_neighborlist(.false., N, coords, (cutoff+0.75), neighborList)
-  elseif (nbc.eq.4) then
-     call NEIGH_RVEC_F_cluster_neighborlist(N, coords, (cutoff+0.75), N, neighborList, RijList)
-  endif
+  ! randomly perturb all atoms
+  do I=1,N
+     do J=1,DIM
+        call random_number(rnd)  ! return random number between 0 and 1
+        coords(J,I) = coords(J,I) + 0.1d0*(rnd-0.5d0)
+     enddo
+  enddo
 
+  ! Allocate storage for neighbor lists and 
   ! store pointers to neighbor list object and access function
+  allocate(neighborList(N+1,N))
   if (nbc.le.3) then
      ier = kim_api_set_data_f(pkim, "neighObject", SizeOne, loc(neighborList))
      if (ier.lt.KIM_STATUS_OK) then
@@ -220,7 +244,7 @@ program TEST_NAME_STR
         stop
      endif
   else
-     allocate(NLRvecLocs(3))
+     allocate(RijList(DIM,N+1,N), NLRvecLocs(3))
      NLRvecLocs(1) = loc(neighborList)
      NLRvecLocs(2) = loc(RijList)
      NLRvecLocs(3) = N
@@ -263,26 +287,81 @@ program TEST_NAME_STR
      endif
   endif
 
-  ! Call model compute
+  ! Compute neighbor lists
+  do_update_list = .true.
+  allocate(coordsave(DIM,N))
+  call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxlength,NBC_Method,  &
+                           do_update_list,coordsave,neighborList,RijList,ier)
+  if (ier.lt.KIM_STATUS_OK) then
+     call kim_api_report_error_f(__LINE__, __FILE__, "update_neighborlist", ier)
+     stop
+  endif
+
+  ! Call model compute to get forces (gradient)
   call kim_api_model_compute_f(pkim, ier)
   if (ier.lt.KIM_STATUS_OK) then
      call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute", ier)
      stop
   endif
 
+  ! Turn off force computation
+  call kim_api_set2_donotcompute_f(pkim, "forces", ier)
+  if (ier.lt.KIM_STATUS_OK) then
+     call kim_api_report_error_f(__LINE__, __FILE__,"kim_api_set2_donotcompute_f", ier)
+     stop
+  endif
+
+  ! Compute gradient using numerical differentiation
+  allocate(forces_num(DIM,N),forces_num_err(DIM,N))
+  do I=1,N
+     do J=1,DIM
+        call compute_numer_deriv(I,J,pkim,DIM,N,coords,cutoff,cutpad,   &
+                                 boxlength,NBC_Method,do_update_list,coordsave, &
+                                 neighborList,RijList,deriv,deriv_err,ier)
+        if (ier.lt.KIM_STATUS_OK) then
+           call kim_api_report_error_f(__LINE__, __FILE__,"compute_numer_deriv", ier)
+           stop
+        endif
+        forces_num(J,I) = -deriv
+        forces_num_err(J,I) = deriv_err
+     enddo
+  enddo
+
   ! print results to screen
-  print '(80(''-''))'
+  print '(99(''-''))'
   print '("This is Test          : ",A)', testname
   print '("Results for KIM Model : ",A)', modelname
   print '("Using NBC: ",A)', NBC_Method(1:(index(NBC_Method,char(0))-1))
-  print '("Forces:")'
-  print '("Atom     X                        Y                        Z")'
-  print '(I2,"   ",3E25.15)', (I,forces(:,I),I=1,N)
   print *
-  print '("Energy = ",E25.15)', energy
+  print '(A6,2X,A3,2X,2A25,2A15,2X,A4)',"Atom","Dir", "Force_model",      &
+        "Force_numer",  "Force diff", "pred error", &
+        "stat"
+  forcediff_sumsq = 0.d0
+  do I=1,N
+     do J=1,DIM
+        forcediff = abs(forces(J,I)-forces_num(J,I))
+        forcediff_sumsq = forcediff_sumsq + forcediff**2
+        if (forcediff<forces_num_err(J,I)) then
+           passfail = "    "
+        else
+           passfail = "FAIL"
+        endif
+        print '(I6,2X,I3,2X,2E25.15,2E15.5,2X,A4)', &
+               I,J,forces(J,I),forces_num(J,I), &
+               forcediff,forces_num_err(J,I),passfail
+     enddo
+  enddo
+  print *
+  print '("|Force_model - Force_numer|/(DIM*N) = ",E15.5)', &
+        sqrt(forcediff_sumsq)/dble(DIM*N)
+  print *
+  print '(99(''-''))'
 
   ! Don't forget to free and/or deallocate
+  deallocate(forces_num)
+  deallocate(forces_num_err)
   call free(pNBC_Method) 
+  deallocate(coordsave)
   deallocate(neighborList)
   if (nbc.eq.4) then
      deallocate(NLRvecLocs)
