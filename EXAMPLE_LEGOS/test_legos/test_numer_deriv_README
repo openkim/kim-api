@@ -29,7 +29,7 @@ Notes:
         NEIGH-PURE-F
         NEIGH-RVEC-F
 
-Support for CLUSTER needs to be added.
+Support for CLUSTER needs to be added. Also the code needs to be modified so that it tests *each* of the NBCs supported by the Model. Not just the one selected by the API. This will also require a service call to query the Model KIM descriptor file ahead of the kim_api_init_str_testname_f call.
 
 5. The code computes the DIM*N components of the force vector in two ways: directly using the Model's force calculation (`force_model') and by numerical differentiation using Ridders' method (`force_numer'). The difference between these values in absolute value is also printed (`Force diff') as well as the error predicted by Ridders' method (`pred error').  Ideally, one would expect the force difference to be less than the predicted error. If that is not the case the term `FAIL' is printed at the end of the line. (Most potentials fail this check for most degrees of freedom, so this is not a good criterion.) In addition to the following normed measure is printed:
 
