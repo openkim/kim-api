@@ -33,8 +33,7 @@ AUTO_GEN_TESTS = test_Al_free_cluster                 \
                  test_Ar_free_cluster_CLUSTER_F90     \
                  test_Ar_free_cluster                 \
                  test_Ar_multiple_models              \
-                 test_Ne_free_cluster                 \
-                 test_numer_deriv
+                 test_Ne_free_cluster
 
 
 all: $(AUTO_GEN_TESTS) EXAMPLES.README run_all_tests
