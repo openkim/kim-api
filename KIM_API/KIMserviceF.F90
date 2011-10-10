@@ -507,6 +507,15 @@ integer,parameter :: kim_intptr = 8
         ArrayWithDescriptor=>ctypeArray
     end subroutine toRealArrayWithDescriptor2d
 
+	subroutine toRealArrayWithDescriptor3d(ctypeArray,ArrayWithDescriptor,n,m,l)
+        implicit none
+        integer  :: n,m,l
+        real*8,target :: ctypeArray(n,m,l)
+        real*8,pointer ::ArrayWithDescriptor(:,:,:)
+        ArrayWithDescriptor=>ctypeArray
+    end subroutine toRealArrayWithDescriptor3d
+
+
     subroutine toIntegerArrayWithDescriptor2d(ctypeArray,ArrayWithDescriptor,n,m)
         implicit none
         integer  :: n,m !! Check if I can make array big like size of integer*8
@@ -514,6 +523,14 @@ integer,parameter :: kim_intptr = 8
         integer,pointer ::ArrayWithDescriptor(:,:)
         ArrayWithDescriptor=>ctypeArray
     end subroutine toIntegerArrayWithDescriptor2d
+
+	subroutine toIntegerArrayWithDescriptor3d(ctypeArray,ArrayWithDescriptor,n,m,l)
+        implicit none
+        integer  :: n,m,l !! Check if I can make array big like size of integer*8
+        integer,target :: ctypeArray(n,m,l)
+        integer,pointer ::ArrayWithDescriptor(:,:,:)
+        ArrayWithDescriptor=>ctypeArray
+    end subroutine toIntegerArrayWithDescriptor3d
 
     subroutine toIntegerArrayWithDescriptor1d(ctypeArray,ArrayWithDescriptor,n)
         implicit none
