@@ -690,6 +690,52 @@ test_demo_F03: example_test_demo_F03                               \
 	@touch $(KIM_TESTS_DIR)$@
 	cp -rf example_$@/* $(KIM_TESTS_DIR)$@/
 
+test_numer_deriv: $(COMMON_FRAGMENTS)                      \
+                  test_numer_deriv_README                  \
+                  descriptor_file_neighborlist             \
+                  program_numer_deriv.f.frag               \
+                  write_KIM_descriptor.f.frag              \
+                  update_neighborlist.f.frag               \
+                  MI_OPBC_neighborlist.f.frag              \
+                  NEIGH_PURE_cluster_neighborlist.f.frag   \
+                  NEIGH_RVEC_F_cluster_neighborlist.f.frag \
+                  NEIGH_RVEC_F_update_Rij_vectors.f.frag   \
+                  get_neigh_no_Rij.f.frag                  \
+                  get_neigh_Rij.f.frag                     \
+                  create_FCC_configuration.f.frag          \
+                  compute_numer_deriv.f.frag               \
+        # make directory
+	mkdir -p $(KIM_TESTS_DIR)$@
+	@touch $(KIM_TESTS_DIR)$@
+        # make README file in the directory
+	cat test_numer_deriv_README | $(SED_CMD) \
+                                                          >  $(KIM_TESTS_DIR)$@/README
+        # make Makefile in the directory
+	cat test_Makefile | $(SED_CMD)                    >  $(KIM_TESTS_DIR)$@/Makefile
+        # make .F90 file in the directory
+	cat program_numer_deriv.f.frag  | $(SED_CMD) \
+                                        | sed -e 's/FCC_SPACING_STR/5.26d0 ! in angstroms/g' \
+                                                          >  $(KIM_TESTS_DIR)$@/$@.F90
+	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
+	cat write_KIM_descriptor.f.frag | $(SED_CMD)      >> $(KIM_TESTS_DIR)$@/$@.F90
+	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
+	cat update_neighborlist.f.frag                    >> $(KIM_TESTS_DIR)$@/$@.F90
+	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
+	cat MI_OPBC_neighborlist.f.frag                   >> $(KIM_TESTS_DIR)$@/$@.F90
+	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
+	cat NEIGH_PURE_cluster_neighborlist.f.frag        >> $(KIM_TESTS_DIR)$@/$@.F90
+	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
+	cat NEIGH_RVEC_F_cluster_neighborlist.f.frag      >> $(KIM_TESTS_DIR)$@/$@.F90
+	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
+	cat NEIGH_RVEC_F_update_Rij_vectors.f.frag        >> $(KIM_TESTS_DIR)$@/$@.F90
+	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
+	cat get_neigh_no_Rij.f.frag                       >> $(KIM_TESTS_DIR)$@/$@.F90
+	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
+	cat get_neigh_Rij.f.frag                          >> $(KIM_TESTS_DIR)$@/$@.F90
+	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
+	cat create_FCC_configuration.f.frag               >> $(KIM_TESTS_DIR)$@/$@.F90
+	echo                                              >> $(KIM_TESTS_DIR)$@/$@.F90
+	cat compute_numer_deriv.f.frag                    >> $(KIM_TESTS_DIR)$@/$@.F90
 
 .PHONY: clean
 

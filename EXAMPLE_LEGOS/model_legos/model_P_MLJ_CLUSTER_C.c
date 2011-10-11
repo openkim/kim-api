@@ -702,7 +702,7 @@ static void reinit(void *km)
                pow(*model_cutnorm,12);
 
    /* store model_sigmasq in KIM object */
-   model_sigmasq = KIM_API_get_data(pkim, "PARAM_FIXED_sigmasq", &ier);
+   model_sigmasq = (double*) KIM_API_get_data(pkim, "PARAM_FIXED_sigmasq", &ier);
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
@@ -712,7 +712,7 @@ static void reinit(void *km)
    *model_sigmasq = (*model_sigma)*(*model_sigma);
 
    /* store model_cutsq in KIM object */
-   model_cutsq = KIM_API_get_data(pkim, "PARAM_FIXED_cutsq", &ier);
+   model_cutsq = (double*) KIM_API_get_data(pkim, "PARAM_FIXED_cutsq", &ier);
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
@@ -805,7 +805,7 @@ static void destroy(void *km)
    free(model_C);
    
    /* get and free model_sigmasq in KIM object */
-   model_sigmasq = KIM_API_get_data(pkim, "PARAM_FIXED_sigmasq", &ier);
+   model_sigmasq = (double*) KIM_API_get_data(pkim, "PARAM_FIXED_sigmasq", &ier);
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
@@ -814,7 +814,7 @@ static void destroy(void *km)
    free(model_sigmasq);
 
    /* get and free model_cutsq in KIM object */
-   model_cutsq = KIM_API_get_data(pkim, "PARAM_FIXED_cutsq", &ier);
+   model_cutsq = (double*) KIM_API_get_data(pkim, "PARAM_FIXED_cutsq", &ier);
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);

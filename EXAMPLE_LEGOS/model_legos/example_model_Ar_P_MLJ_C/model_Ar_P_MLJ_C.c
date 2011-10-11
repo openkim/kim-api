@@ -145,7 +145,7 @@ static void compute(void* km, int* ier)
     * HalfOrFull = 1 -- Half
     *            = 2 -- Full
     *****************************/
-   NBCstr = KIM_API_get_NBC_method(pkim, ier);
+   NBCstr = (char*) KIM_API_get_NBC_method(pkim, ier);
    if (KIM_STATUS_OK > *ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_NBC_method", *ier);
@@ -262,7 +262,7 @@ static void compute(void* km, int* ier)
    }
    if (HalfOrFull == 1)
    {
-      numContrib = (double*) KIM_API_get_data(pkim, "numberContributingAtoms", ier);
+      numContrib = (int*) KIM_API_get_data(pkim, "numberContributingAtoms", ier);
       if (KIM_STATUS_OK > *ier)
       {
          KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", *ier);

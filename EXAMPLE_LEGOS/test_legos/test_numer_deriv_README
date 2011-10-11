@@ -1,0 +1,51 @@
+#
+# Release: This file is part of the openkim-api.git repository.
+#
+# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
+# All rights reserved.
+#
+
+This directory (TEST_NAME_STR) contains a Test that compares the forces
+computed by a KIM-compliant Model with those obtained using numerical
+differentiation of the Model energies.
+
+Calling format:
+
+   echo `model_name' | test_numer_deriv
+
+Notes:
+
+1. It generates its own KIM descriptor file in a string and uses kim_api_init_str_testname_f to setup the KIM object.
+
+2. It figures out which species a Model supports from its name. This is obviously dangerous. A service routine that allows the code to query the contents of a Model's KIM descriptor file before the kim_api_init_str_testname_f call is needed
+
+3. It checks a single configuration: a perturbed fcc cluster made of one species (the first species appearing in the model name) with spacing set to that of argon (5.26 A) regardless of the species being tested. The number of configurations tested needs to be expanded with the species of the atoms randomly selected from the set of species supported by the Model.
+
+4. The code works with the following NBCs:
+
+        MI-OPBC-H
+        MI-OPBC-F
+        NEIGH-PURE-H
+        NEIGH-PURE-F
+        NEIGH-RVEC-F
+
+Support for CLUSTER needs to be added. Also the code needs to be modified so that it tests *each* of the NBCs supported by the Model. Not just the one selected by the API. This will also require a service call to query the Model KIM descriptor file ahead of the kim_api_init_str_testname_f call.
+
+5. The code computes the DIM*N components of the force vector in two ways: directly using the Model's force calculation (`force_model') and by numerical differentiation using Ridders' method (`force_numer'). The difference between these values in absolute value is also printed (`Force diff') as well as the error predicted by Ridders' method (`pred error').  Ideally, one would expect the force difference to be less than the predicted error. If that is not the case the term `FAIL' is printed at the end of the line. (Most potentials fail this check for most degrees of freedom, so this is not a good criterion.) In addition to the following normed measure is printed:
+
+|Force_model - Force_numer|/(DIM*N)
+
+This gives an average measure of the error in force_model *assuming* that force_numer is well converged. A more robust measure that accounts for    errors in force_numer itself needs to be developed.  
+
+
+The following files are in the directory:
+
+Makefile
+     Makefile to compile and build executables with GNU or Intel compilers.
+
+README
+     This file.
+
+TEST_NAME_STR.F90
+     F90 program that implements the test.
+

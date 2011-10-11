@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
    int atypecode;
    
    /* model inputs */
-   long long* numberOfAtoms;
+   int* numberOfAtoms;
    int* numberAtomTypes;
    int* atomTypes;
    double* coords;
@@ -80,49 +80,49 @@ int main(int argc, char* argv[])
    }
 
    /* Unpack data from KIM object */
-   numberOfAtoms = KIM_API_get_data(pkim, "numberOfAtoms", &status);
+   numberOfAtoms = (int*) KIM_API_get_data(pkim, "numberOfAtoms", &status);
    if (KIM_STATUS_OK > status)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", status);
       exit(1);
    }
    
-   numberAtomTypes = KIM_API_get_data(pkim, "numberAtomTypes", &status);
+   numberAtomTypes = (int*) KIM_API_get_data(pkim, "numberAtomTypes", &status);
    if (KIM_STATUS_OK > status)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", status);
       exit(1);
    }
    
-   atomTypes = KIM_API_get_data(pkim, "atomTypes", &status);
+   atomTypes = (int*) KIM_API_get_data(pkim, "atomTypes", &status);
    if (KIM_STATUS_OK > status)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", status);
       exit(1);
    }
    
-   coords = KIM_API_get_data(pkim, "coordinates", &status);
+   coords = (double*) KIM_API_get_data(pkim, "coordinates", &status);
    if (KIM_STATUS_OK > status)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", status);
       exit(1);
    }
    
-   cutoff = KIM_API_get_data(pkim, "cutoff", &status);
+   cutoff = (double*) KIM_API_get_data(pkim, "cutoff", &status);
    if (KIM_STATUS_OK > status)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", status);
       exit(1);
    }
    
-   energy = KIM_API_get_data(pkim, "energy", &status);
+   energy = (double*) KIM_API_get_data(pkim, "energy", &status);
    if (KIM_STATUS_OK > status)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", status);
       exit(1);
    }
    
-   forces = KIM_API_get_data(pkim, "forces", &status);
+   forces = (double*) KIM_API_get_data(pkim, "forces", &status);
    if (KIM_STATUS_OK > status)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", status);

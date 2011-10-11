@@ -153,13 +153,13 @@ int main()
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_cluster_model_1,  "coordinates",     (NCLUSTERATOMS*DIM), &(coords_cluster[0][0]));
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
-   status = KIM_API_set_data(pkim_periodic_model_0, "get_full_neigh",  1, &get_periodic_neigh);
+   status = KIM_API_set_data(pkim_periodic_model_0, "get_full_neigh",  1, (void*) &get_periodic_neigh);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
-   status = KIM_API_set_data(pkim_periodic_model_1, "get_full_neigh",  1, &get_periodic_neigh);
+   status = KIM_API_set_data(pkim_periodic_model_1, "get_full_neigh",  1, (void*) &get_periodic_neigh);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
-   status = KIM_API_set_data(pkim_cluster_model_0,  "get_full_neigh",  1, &get_cluster_neigh);
+   status = KIM_API_set_data(pkim_cluster_model_0,  "get_full_neigh",  1, (void*) &get_cluster_neigh);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
-   status = KIM_API_set_data(pkim_cluster_model_1,  "get_full_neigh",  1, &get_cluster_neigh);
+   status = KIM_API_set_data(pkim_cluster_model_1,  "get_full_neigh",  1, (void*) &get_cluster_neigh);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
    status = KIM_API_set_data(pkim_periodic_model_0, "neighObject",     1, &nl_periodic_model_0);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"set data",status);
@@ -244,40 +244,40 @@ int main()
    NNeighbors[0] = 4*pow((2*CellsPerCutoff[0] + 1),DIM);
    NNeighbors[1] = 4*pow((2*CellsPerCutoff[1] + 1),DIM);
    /* allocate memory for list */
-   nl_periodic_model_0.NNeighbors = malloc(sizeof(int));
+   nl_periodic_model_0.NNeighbors = (int*) malloc(sizeof(int));
    if (NULL==nl_periodic_model_0.NNeighbors) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
    
-   nl_cluster_model_0.NNeighbors = malloc(NCLUSTERATOMS*sizeof(int));
+   nl_cluster_model_0.NNeighbors = (int*) malloc(NCLUSTERATOMS*sizeof(int));
    if (NULL==nl_cluster_model_0.NNeighbors) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
       
-   nl_periodic_model_1.NNeighbors = malloc(sizeof(int));
+   nl_periodic_model_1.NNeighbors = (int*) malloc(sizeof(int));
    if (NULL==nl_periodic_model_1.NNeighbors) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
-   nl_cluster_model_1.NNeighbors = malloc(NCLUSTERATOMS*sizeof(int));
+   nl_cluster_model_1.NNeighbors = (int*) malloc(NCLUSTERATOMS*sizeof(int));
    if (NULL==nl_cluster_model_1.NNeighbors) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
    
-   nl_periodic_model_0.neighborList = malloc(NNeighbors[0]*sizeof(int));
+   nl_periodic_model_0.neighborList = (int*) malloc(NNeighbors[0]*sizeof(int));
    if (NULL==nl_periodic_model_0.neighborList) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
-   nl_cluster_model_0.neighborList = malloc(NCLUSTERATOMS*NCLUSTERATOMS*sizeof(int));
+   nl_cluster_model_0.neighborList = (int*) malloc(NCLUSTERATOMS*NCLUSTERATOMS*sizeof(int));
    if (NULL==nl_cluster_model_0.neighborList) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
-   nl_periodic_model_1.neighborList = malloc(NNeighbors[1]*sizeof(int));
+   nl_periodic_model_1.neighborList = (int*) malloc(NNeighbors[1]*sizeof(int));
    if (NULL==nl_periodic_model_1.neighborList) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
-   nl_cluster_model_1.neighborList = malloc(NCLUSTERATOMS*NCLUSTERATOMS*sizeof(int));
+   nl_cluster_model_1.neighborList = (int*) malloc(NCLUSTERATOMS*NCLUSTERATOMS*sizeof(int));
    if (NULL==nl_cluster_model_1.neighborList) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
    
-   nl_periodic_model_0.RijList = malloc(DIM*NNeighbors[0]*sizeof(double));
+   nl_periodic_model_0.RijList = (double*) malloc(DIM*NNeighbors[0]*sizeof(double));
    if (NULL==nl_periodic_model_0.RijList) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
-   nl_cluster_model_0.RijList = malloc(DIM*NCLUSTERATOMS*NCLUSTERATOMS*sizeof(double));
+   nl_cluster_model_0.RijList = (double*) malloc(DIM*NCLUSTERATOMS*NCLUSTERATOMS*sizeof(double));
    if (NULL==nl_cluster_model_0.RijList) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
-   nl_periodic_model_1.RijList = malloc(DIM*NNeighbors[1]*sizeof(double));
+   nl_periodic_model_1.RijList = (double*) malloc(DIM*NNeighbors[1]*sizeof(double));
    if (NULL==nl_periodic_model_1.RijList) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
-   nl_cluster_model_1.RijList = malloc(DIM*NCLUSTERATOMS*NCLUSTERATOMS*sizeof(double));
+   nl_cluster_model_1.RijList = (double*) malloc(DIM*NCLUSTERATOMS*NCLUSTERATOMS*sizeof(double));
    if (NULL==nl_cluster_model_1.RijList) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
    /* ready to compute */
