@@ -31,11 +31,36 @@ Notes:
 
 Support for CLUSTER needs to be added. Also the code needs to be modified so that it tests *each* of the NBCs supported by the Model. Not just the one selected by the API. This will also require a service call to query the Model KIM descriptor file ahead of the kim_api_init_str_testname_f call.
 
-5. The code computes the DIM*N components of the force vector in two ways: directly using the Model's force calculation (`force_model') and by numerical differentiation using Ridders' method (`force_numer'). The difference between these values in absolute value is also printed (`Force diff') as well as the error predicted by Ridders' method (`pred error').  Ideally, one would expect the force difference to be less than the predicted error. If that is not the case the term `FAIL' is printed at the end of the line. (Most potentials fail this check for most degrees of freedom, so this is not a good criterion.) In addition to the following normed measure is printed:
+5. The code computes the DIM*N components of the force vector in two ways: directly using the Model's force calculation (`force_model') and by numerical differentiation using Ridders' method (`force_numer'). The difference between these values in absolute value is also printed (`Force diff') as well as the error predicted by Ridders' method (`pred error').  Ideally, one would expect the force difference to be less than the predicted error. If that is not the case the term `FAIL' is printed at the end of the line. (Most potentials fail this check for most degrees of freedom, so this is not a good criterion.) 
 
-|Force_model - Force_numer|/(DIM*N)
+In addition, the following normalized measure is computed:
 
-This gives an average measure of the error in force_model *assuming* that force_numer is well converged. A more robust measure that accounts for    errors in force_numer itself needs to be developed.  
+\alpha = 1/(DIM*N) sqrt( \sum_i w_i (f^{model}_i - f^{numer}_i) / \sum_i w_i ),
+
+where w_i is the weight associated with term i:
+
+w_i = 1/\hat{\epsilon}_i,
+
+and \hat{\epsilon}_i is the normalized error in the numerical calculation:
+
+\hat{\epsilon}_i = max(\epsilon^{numer}_i, \epsilon^{prec}) /
+                   max(\force^{numer}_i, \epsilon^{prec})
+
+The max functions imposes a lower limit on computed values equal to the numerical precision of the computer (\epsilon^{prec}).  
+
+\alpha has units of force and can be understond is the average error per degree of freedom. The smaller the value of \alpha the more accurate the force calculation of the Model.
+
+In the expression for \alpha each term is weighted by the relative accuracy of the numerical estimate for the derivative. Thus if f^{numer}_i is a poor estimate for the derivative (i.e. \epsilon^{numer}_i is large relative to f^{numer}_i) then term i contributes less to \alpha since it is less trustworthy.
+
+In addition to \alpha, the maximum term contributing to \alpha is identified. For this degree of freedom, the error and normalized error are printed:
+
+forcediff_i = |f^{model}_i - f^{numer}_i}|
+
+forcediff_i/|f^{model}_i|
+
+This is *not* the largest error (i.e. the largest value of forcediff_i) due to the weighting term w_i. Simply looking at the maximum value of forcediff_i could be misleading since the error in the numerical term, \epsilon^{numer}_i, may be large for the component. Instead the maximum of w_i*forcediff_i is a compromise that in some sense seeks the largest error for components where the numerical derivative are also as accurate possible.
+
+
 
 
 The following files are in the directory:

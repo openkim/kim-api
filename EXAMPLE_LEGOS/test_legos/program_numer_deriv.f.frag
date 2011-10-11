@@ -39,6 +39,7 @@ program TEST_NAME_STR
   integer, parameter :: ATypes         = 1
   real*8,  parameter :: cutpad         = 0.75d0
   integer, parameter :: max_specs      = 10     ! most species a Model can support
+  real*8,  parameter :: eps_prec       = epsilon(1.d0)
   
   integer,          parameter :: &
        N = 4*(nCellsPerSide)**3 + 6*(nCellsPerSide)**2 + 3*(nCellsPerSide) + 1
@@ -50,6 +51,12 @@ program TEST_NAME_STR
   character(len=4)    :: passfail
   real*8              :: forcediff
   real*8              :: forcediff_sumsq
+  real*8              :: weight
+  real*8              :: weight_sum
+  real*8              :: alpha
+  real*8              :: term
+  real*8              :: term_max
+  integer I,J,Imax,Jmax
 
   ! neighbor list
   integer,                  allocatable :: neighborList(:,:)
@@ -77,7 +84,6 @@ program TEST_NAME_STR
   real*8 coordum(DIM,1);   pointer(pcoor,coordum)
   real*8 forcesdum(DIM,1); pointer(pforces,forcesdum)
   real*8 boxlength(DIM);   pointer(pboxlength,boxlength)
-  integer I,J
   real*8, pointer  :: coords(:,:), forces(:,:)
   integer, pointer :: atomTypes(:)
   integer middleDum
@@ -328,34 +334,50 @@ program TEST_NAME_STR
   enddo
 
   ! print results to screen
-  print '(99(''-''))'
+  print '(120(''-''))'
   print '("This is Test          : ",A)', testname
   print '("Results for KIM Model : ",A)', modelname
   print '("Using NBC: ",A)', NBC_Method(1:(index(NBC_Method,char(0))-1))
   print *
-  print '(A6,2X,A3,2X,2A25,2A15,2X,A4)',"Atom","Dir", "Force_model",      &
-        "Force_numer",  "Force diff", "pred error", &
+  print '(A6,2X,A3,2X,2A25,3A15,2X,A4)',"Atom","Dir", "Force_model",   &
+        "Force_numer",  "Force diff", "pred error", "weight",          &
         "stat"
   forcediff_sumsq = 0.d0
+  weight_sum = 0.d0
   do I=1,N
      do J=1,DIM
         forcediff = abs(forces(J,I)-forces_num(J,I))
-        forcediff_sumsq = forcediff_sumsq + forcediff**2
         if (forcediff<forces_num_err(J,I)) then
            passfail = "    "
         else
            passfail = "FAIL"
         endif
-        print '(I6,2X,I3,2X,2E25.15,2E15.5,2X,A4)', &
+        weight = max(abs(forces_num(J,I)),eps_prec)/ &
+                 max(abs(forces_num_err(J,I)),eps_prec)
+        term = weight*forcediff**2
+        if (term.gt.term_max) then
+           term_max = term
+           Imax = I
+           Jmax = J
+        endif
+        forcediff_sumsq = forcediff_sumsq + term
+        weight_sum = weight_sum + weight
+        print '(I6,2X,I3,2X,2E25.15,3E15.5,2X,A4)', &
                I,J,forces(J,I),forces_num(J,I), &
-               forcediff,forces_num_err(J,I),passfail
+               forcediff,forces_num_err(J,I),weight,passfail
      enddo
   enddo
+  alpha = sqrt(forcediff_sumsq/weight_sum)/dble(DIM*N)
   print *
-  print '("|Force_model - Force_numer|/(DIM*N) = ",E15.5)', &
-        sqrt(forcediff_sumsq)/dble(DIM*N)
+  print '("alpha = |Force_model - Force_numer|_w/(DIM*N) = ",E15.5," (units of force)")', &
+        alpha
   print *
-  print '(99(''-''))'
+  print '(''Maximum term obtained for Atom = '',I6,'', Dir = '',I1,&
+     '', forcediff = '',E15.5, '', forcediff/force_model = '',E15.5)', &
+     Imax,Jmax,abs(forces(Jmax,Imax)-forces_num(Jmax,Imax)),           &
+     abs(forces(Jmax,Imax)-forces_num(Jmax,Imax))/abs(forces(Jmax,Imax))
+  print *
+  print '(120(''-''))'
 
   ! Don't forget to free and/or deallocate
   deallocate(forces_num)
