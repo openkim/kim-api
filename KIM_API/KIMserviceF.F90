@@ -71,6 +71,17 @@ module kimservice
         integer(kind=kim_intptr) :: kimmdl,ob
         end subroutine kim_api_set_model_buffer_f
 
+        subroutine kim_api_process_d1edr_f(pkim,de,r,dx,i,j,ier)
+#ifdef SYSTEM32
+	integer, parameter :: kim_intptr=4
+#else
+	integer,parameter :: kim_intptr = 8
+#endif
+		integer(kind=kim_intptr) :: pkim,dx
+		real*8 :: de,r
+		integer ::i,j,ier
+        end subroutine kim_api_process_d1edr_f
+
     subroutine kim_api_report_error(ln,fl,usermsg,ier)
 #ifdef SYSTEM32
 integer, parameter :: kim_intptr=4

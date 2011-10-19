@@ -90,6 +90,8 @@ void KIM_API_set2_compute_byI(void *kimmdl,int I,int * error);
 void KIM_API_set2_donotcompute_byI(void *kimmdl,int I, int * error);
 int KIM_API_isit_compute_byI(void *kimmdl,int I,int * error);
 
+void KIM_API_process_d1Edr(void **ppkim, double * dE, double * dr, double **dx,int *i, int *j, int *ier );
+
 //total 30 methods
 
 //fortran interface
@@ -134,6 +136,7 @@ void kim_api_set_model_buffer_f_(void * kimmdl,void * ob, int * ier);
 void * kim_api_get_model_buffer_f_(void * kimmdl, int * ier);
 
 //element access methods
+
 int  kim_api_set_data_(void *kimmdl,char **nm,  intptr_t *size, void *dt);
 void * kim_api_get_data_(void *kimmdl,char **nm, int *error);
 void * kim_api_get_data_cptr_(void *kimmdl,char **nm, int *error);
@@ -163,6 +166,7 @@ void * kim_api_status_msg_f_(int * error);
 
 void kim_api_report_error_(int * ln,char ** fl, char ** usermsg, int * ier);
 
+void kim_api_process_d1edr_f_(void **ppkim, double * dE, double * dr, double **dx, int *i, int *j, int *ier );
 
 #ifdef	__cplusplus
 }

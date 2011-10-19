@@ -854,6 +854,29 @@ get_half_neigh          method       none       none                    []
 
 ################################################################################
 #
+# process_d1Edr  : A pointer  to subroutine that process first differential 
+#                  derivative of the potential energy. By using that function
+#                  quantities like virial, stress etc... can be computed. The model
+#                  does not need know how exactly it is computed. In low level loop
+#                  for each pair of atom (i j) the model organize call to that routine.
+#
+# Name                  Type         Unit       SystemU/Scale           Shape
+process_d1Edr     method       none       none                    []
+
+################################################################################
+#
+# process_d2Edr  : A pointer  to subroutine that process second differential 
+#                  derivative of the potential energy. By using that function
+#                  quantities like virial, stress etc... can be computed. The model
+#                  does not need know how exactly it is computed. In low level loop
+#                  for each set of indexes the model organize call to that routine.
+#
+# Name                  Type         Unit       SystemU/Scale           Shape
+process_d2Edr     method       none       none                    []
+
+
+################################################################################
+#
 # neighObject : A pointer to the data for the neighbor list that is provided by 
 #               the Test.
 #
@@ -1021,6 +1044,46 @@ stressPerAtom           real*8       pressure   unspecified             [numberO
 #
 virial                  real*8       pressure   unspecified             []
 
+
+################################################################################
+#
+# virialGlobal : A symmetric second rank tensor corresponding to the total virial for the
+#          configuration of atoms passed between the Model and Test.
+#
+# This argument should, ideally, be optional to ensure maximum Model/Test
+# compatibility.
+# placement of indexes [6] ->{11,22,33,23,13,12} or {xx,yy,zz,yz,xz,xy}
+#
+#
+#
+# Name                  Type         Unit       SystemU/Scale           Shape
+#
+virialGlobal            real*8       pressure   unspecified             [6]
+
+################################################################################
+#
+# virialPerAtom : A symmetric second rank tensor corresponding to the per atom virial for the
+#          configuration of atoms passed between the Model and Test.
+#
+# This argument should, ideally, be optional to ensure maximum Model/Test
+# compatibility.
+# placement of indexes [n,6] ->{11,22,33,23,13,12} or {xx,yy,zz,yz,xz,xy}
+#
+#
+#
+# Name                  Type         Unit       SystemU/Scale           Shape
+#
+virialPerAtom            real*8       pressure   unspecified             [numberOfAtoms,6]
+
+################################################################################
+#
+# stiffness    : It is computed using second derivative d2Edr
+#
+# This argument should, ideally, be optional to ensure maximum Model/Test
+# compatibility.
+# Name                  Type         Unit       SystemU/Scale           Shape
+#
+stiffness              real*8        pressure   unspecified             [N,3,N,3]
 
 ################################################################################
 #
