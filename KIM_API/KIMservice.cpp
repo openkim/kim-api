@@ -2845,9 +2845,11 @@ void KIM_API_model::process_d1Edr(KIM_API_model** ppkim, double* dE, double* r,
     KIM_API_model * pkim= *ppkim;
     typedef void (*Process_d1Edr)(KIM_API_model **, double *, double *, double **,int *,int *, int *);
 
+
     Process_d1Edr process = (Process_d1Edr) (*pkim)[pkim->process_d1Edr_ind].data;
     int process_flag =0;
     process_flag = (*pkim)[pkim->process_d1Edr_ind].flag->calculate;
+
     if (process != NULL && process_flag == 1) {
         (*process)(ppkim,dE,r,dx,i,j,ier);
     } else if(process_flag == 1){
