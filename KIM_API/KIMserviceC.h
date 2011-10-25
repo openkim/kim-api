@@ -65,7 +65,8 @@ int KIM_API_get_model_index_shift(void *);
 
 void KIM_API_set_model_buffer(void * kimmdl,void * ob, int * ier);
 void * KIM_API_get_model_buffer(void * kimmdl, int * ier);
-    
+int KIM_API_isit_half_neighbors(void *kimmdl,int *ier);
+
 //element access methods
 int  KIM_API_set_data(void *kimmdl,char *nm,  intptr_t size, void *dt);
 void * KIM_API_get_data(void *kimmdl,char *nm,int * error);
@@ -134,6 +135,8 @@ int kim_api_get_model_index_shift_f_(void * kimmdl);
 
 void kim_api_set_model_buffer_f_(void * kimmdl,void * ob, int * ier);
 void * kim_api_get_model_buffer_f_(void * kimmdl, int * ier);
+
+int kim_api_isit_half_neighbors_f_(void * kimmdl,int *ier);
 
 //element access methods
 

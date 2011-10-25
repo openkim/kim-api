@@ -61,6 +61,17 @@ module kimservice
         integer(kind=kim_intptr) :: kimmdl,kim_api_get_model_buffer_f
         end function kim_api_get_model_buffer_f
 
+ 	function kim_api_isit_half_neighbors_f(kimmdl,ier)
+#ifdef SYSTEM32
+	integer, parameter :: kim_intptr=4
+#else
+	integer,parameter :: kim_intptr = 8
+#endif
+        integer ::ier
+        integer(kind=kim_intptr) :: kimmdl,kim_api_isit_half_neighbors_f
+        end function kim_api_isit_half_neighbors_f
+
+
         subroutine kim_api_set_model_buffer_f(kimmdl,ob,ier)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
