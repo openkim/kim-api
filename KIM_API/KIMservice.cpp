@@ -21,6 +21,7 @@
 
 using namespace std;
 #include "KIMservice.h"
+#include "KIM_AUX.h"
 
 #define KEY_CHAR_LENGTH 64
 #define KIM_LINE_LENGTH 512
@@ -639,6 +640,14 @@ void KIMBaseElement::nullefy(){
 
 }
 bool KIMBaseElement::operator==(KIM_IOline& kimioline){
+            //switch off check for virial and process_dnEdr related things
+            if(strcmp(name,"virial") == 0  ||
+               strcmp(name,"virialGlobal")==0 ||
+               strcmp(name,"virialPerAtom")==0 ||
+               strcmp(name,"stiffness")    ==0 ||
+               strcmp(name,"process_d1Edr")    ==0 ||
+               strcmp(name,"process_d2Edr")    ==0  ) return true;
+            //compare the rest
             if(strcmp(kimioline.name,this->name)==0){
                 if(strcmp(kimioline.type,this->type)==0){
                     if(kimioline.get_rank()==(int)(this->rank)) return true;
@@ -814,6 +823,16 @@ KIM_API_model:: KIM_API_model(){
        iterator_neigh_mode=false;
        both_neigh_mode=false;
        model_buffer=NULL;
+
+       this->virialGlobal_ind=-1;
+       this->virialPerAtom_ind=-1;
+       this->stiffness_ind=-1;
+       this->process_d1Edr_ind=-1;
+       this->process_d2Edr_ind=-1;
+
+       this->virialGlobal_need2add=false;
+       this->virialPerAtom_need2add=false;
+       this->stiffness_need2add=false;
 }
 KIM_API_model:: ~KIM_API_model(){
        //delete [] UnitsSet;
@@ -833,7 +852,8 @@ bool KIM_API_model:: preinit(char * initfile,char *modelname){
         //get Atoms Types and nAtomsTypes
         if (! init_AtomsTypes()) return false;
  
-        model.init(modelname,pointer_str,(intptr_t)(numlines-nAtomsTypes),1,shape);
+        model.init(modelname,pointer_str,(intptr_t)(numlines-nAtomsTypes+3),1,shape);
+        model.size = (intptr_t)(numlines-nAtomsTypes);
 
         int ii=0;
         for (int i=0; i< numlines;i++){
@@ -864,7 +884,7 @@ bool KIM_API_model:: preinit(char * initfile,char *modelname){
             }
         }
         //resize inlines (remove spec type variables)
-        KIM_IOline * inlinesnew = new KIM_IOline[numlines - nAtomsTypes];
+        KIM_IOline * inlinesnew = new KIM_IOline[numlines - nAtomsTypes +3];
         ii=0;
         for (int i=0; i< numlines;i++){
             //check for spec type
@@ -916,7 +936,8 @@ bool KIM_API_model::preinit_str_testname(char *instrn){
         //get Atoms Types and nAtomsTypes
         if (! init_AtomsTypes()) return false;
 
-        model.init(modelname,pointer_str,(intptr_t)(numlines-nAtomsTypes),1,shape);
+        model.init(modelname,pointer_str,(intptr_t)(numlines-nAtomsTypes+3),1,shape);
+        model.size =(intptr_t)(numlines-nAtomsTypes);
 
         int ii=0;
         for (int i=0; i< numlines;i++){
@@ -947,7 +968,7 @@ bool KIM_API_model::preinit_str_testname(char *instrn){
             }
         }
         //resize inlines (remove spec type variables)
-        KIM_IOline * inlinesnew = new KIM_IOline[numlines - nAtomsTypes];
+        KIM_IOline * inlinesnew = new KIM_IOline[numlines - nAtomsTypes+3];
         ii=0;
         for (int i=0; i< numlines;i++){
             //check for spec type
@@ -1224,7 +1245,7 @@ void KIM_API_model::read_file(char * initfile,KIM_IOline ** lns, int * numlns){
         myfile.close();
         *numlns = counter;
 
-        *lns = new KIM_IOline[counter];
+        *lns = new KIM_IOline[counter+3];
 
         myfile.open(initfile);
         counter=0;
@@ -1263,7 +1284,7 @@ void KIM_API_model::read_file_str_testname(char* strstream, KIM_IOline** lns, in
         myfile1.seekp(stringstream::beg);//set to the begining
       
         *numlns = counter;
-        *lns = new KIM_IOline[counter];
+        *lns = new KIM_IOline[counter+3];
 
         //myfile.open(initfile);
         counter=0;
@@ -1392,6 +1413,7 @@ bool KIM_API_model::is_it_match(KIM_API_model &test,KIM_API_model & mdl){
     bool model2standardAtomsTypesMatch = do_AtomsTypes_match(mdl,stdmdl);
     bool test2modelAtomsTypesMatch = do_AtomsTypes_match(test,mdl);
     bool AtomsTypesMatch=test2standardAtomsTypesMatch&&model2standardAtomsTypesMatch&&test2modelAtomsTypesMatch;
+
     stdmdl.free();
     if(test.unitsFixed && mdl.unitsFixed){
         if(strcmp(test.currentUnits,mdl.currentUnits)!=0){
@@ -1399,9 +1421,11 @@ bool KIM_API_model::is_it_match(KIM_API_model &test,KIM_API_model & mdl){
             return false;
         }
     }
+    
     bool NBC_methodsmatch = this->NBC_methods_match(test,mdl);
     NBC_methodsmatch=NBC_methodsmatch&&test.check_consistance_NBC_method();
     NBC_methodsmatch=NBC_methodsmatch&&mdl.check_consistance_NBC_method();
+    bool process_fij_related = this->fij_related_things_match(test,mdl);
 
     if(!test2standardmatch) cout<<"* Error (KIM_API_model::is_it_match): There are non-standard variables in Test descriptor file:"<<endl;
     if(!model2standardmatch) cout<<"* Error (KIM_API_model::is_it_match): There are non-standard variables in Model descriptor file:"<<endl;
@@ -1409,13 +1433,15 @@ bool KIM_API_model::is_it_match(KIM_API_model &test,KIM_API_model & mdl){
     if(!model2standardAtomsTypesMatch) cout<<"* Error (KIM_API_model::is_it_match):there are non-standard AtomsTypes in Model descriptor file:"<<endl;
     if(!test2modelAtomsTypesMatch) cout<<"* Error (KIM_API_model::is_it_match): Test-Model AtomsTypes do not match:"<<endl;
     if(!NBC_methodsmatch) cout<<"* Error (KIM_API_model::is_it_match): NBC methods do not match:"<<endl;
+    if(!process_fij_related) cout<<
+       "* Error (KIM_API_model::is_it_match): (virialGlobal,virialPerAtom,stiffness,process_d1/2Edr) do not match:"<<endl;
 
     do_dummy_match(test,mdl);
 
-    if (test2modelmatch && model2testmatch && test2standardmatch &&
+    if (test2modelmatch && model2testmatch && test2standardmatch && process_fij_related &&
             model2standardmatch && AtomsTypesMatch && NBC_methodsmatch) return true;
-    if (test2modelmatch_noDC && model2testmatch_noDC && test2standardmatch 
-            && model2standardmatch && AtomsTypesMatch && NBC_methodsmatch){
+    if (test2modelmatch_noDC && model2testmatch_noDC && test2standardmatch && process_fij_related &&
+             model2standardmatch && AtomsTypesMatch && NBC_methodsmatch){
         return this->do_dummy_match(test,mdl);
     }
     return false;
@@ -1427,7 +1453,11 @@ bool KIM_API_model::is_it_in_and_is_it_dummy(KIM_API_model& mdl,char * name){
     if (strcmp(mdl[i].type,"dummy")!=0) return false;
     return true;
 }
-
+bool KIM_API_model::is_it_in(KIM_API_model& mdl, char* name){
+    int i = mdl.get_index(name);
+    if (i<0) return false;
+    return true;
+}
 bool KIM_API_model::do_dummy_match(KIM_API_model& tst, KIM_API_model& mdl){
     // here the assumption : besides dummy type , everything is a match
     // the logic is hard wired to the .kim file in violation of descriptor file concept.
@@ -1639,6 +1669,7 @@ bool KIM_API_model::init(char * testinputfile,char* testname, char * modelinputf
         compute_index = get_index(computestr);
         get_full_neigh_index = get_index("get_full_neigh");
         get_half_neigh_index = get_index("get_half_neigh");
+        this->fij_related_things_add_set_index();
         support_Rij=false;
         if (strcmp(NBC_method_current,"NEIGH-RVEC-F")==0) support_Rij=true;
 
@@ -1772,6 +1803,7 @@ bool KIM_API_model::init_str_modelname(char* testname, char* inmdlstr){
         compute_index = get_index(computestr);
         get_full_neigh_index = get_index("get_full_neigh");
         get_half_neigh_index = get_index("get_half_neigh");
+        this->fij_related_things_add_set_index();
         support_Rij=false;
         if (strcmp(NBC_method_current,"NEIGH-RVEC-F")==0) support_Rij=true;
 
@@ -1823,7 +1855,7 @@ bool KIM_API_model::init_str_testname(char* in_tststr, char* modelname){
     if(!model_lib_handle) {
          cout<< "* Error (KIM_API_model::init_str_testname): Cannot find Model shared library file for Model name: ";
          cout<<modelname<<endl<<dlerror()<<endl;
-         fprintf(stderr,"%s not found...\n",model_slib_file);
+         fprintf(stderr,"%s not found..\n",model_slib_file);
 
           //redirecting back to > cout
           cout.rdbuf(backup); filekimlog.close();
@@ -1871,6 +1903,7 @@ bool KIM_API_model::init_str_testname(char* in_tststr, char* modelname){
         compute_index = get_index(computestr);
         get_full_neigh_index = get_index("get_full_neigh");
         get_half_neigh_index = get_index("get_half_neigh");
+        this->fij_related_things_add_set_index();
         support_Rij=false;
         if (strcmp(NBC_method_current,"NEIGH-RVEC-F")==0) support_Rij=true;
 
@@ -2027,6 +2060,12 @@ void KIM_API_model::model_compute(int *error){
   Model_Compute mdl_compute = (Model_Compute) (*this)[compute_index].data;
   if (mdl_compute == NULL) return;
   *error = KIM_STATUS_OK;
+
+  //initialize virials if needed
+
+  KIM_Standard_Virials::init2zero(this,error);
+  if(*error != KIM_STATUS_OK) return;
+
   //call model_compute
   KIM_API_model *pkim = this;
   (*mdl_compute)((void *)&pkim, error);
@@ -2680,4 +2719,140 @@ void * KIM_API_model::get_model_buffer(int* ier){
     if (model_buffer == NULL) return NULL;
     *ier = KIM_STATUS_OK;
     return model_buffer;
+}
+
+bool KIM_API_model::fij_related_things_match(KIM_API_model& test, KIM_API_model& mdl){
+
+    bool tst_process_d1Edr = is_it_in(test,"process_d1Edr");
+    bool tst_process_d2Edr = is_it_in(test,"process_d2Edr");
+    bool tst_virialGlobal_required  = is_it_in(test,"virialGlobal");
+    bool tst_virialPerAtom_required = is_it_in(test,"virialPerAtom");
+    bool tst_stiffness_required =     is_it_in(test,"stiffness");
+
+    bool mdl_process_d1Edr = is_it_in(mdl,"process_d1Edr");
+    bool mdl_process_d2Edr = is_it_in(mdl,"process_d2Edr");
+    bool mdl_virialGlobal  = is_it_in(mdl,"virialGlobal");
+    bool mdl_virialPerAtom = is_it_in(mdl,"virialPerAtom");
+    bool mdl_stiffness =     is_it_in(mdl,"stiffness");
+
+    bool virialGlobal_comp_possible = mdl_virialGlobal || mdl_process_d1Edr;
+    bool virialPerAtom_comp_possible = mdl_virialPerAtom || mdl_process_d1Edr;
+    bool stiffness_comp_possible =  mdl_stiffness || mdl_process_d1Edr && mdl_process_d2Edr;
+
+    //do test & model match?
+    bool match = true;
+    if (tst_virialGlobal_required ) if( !virialGlobal_comp_possible) match=false;
+    if (tst_virialPerAtom_required ) if( !virialPerAtom_comp_possible) match=false;
+    if (tst_stiffness_required ) if( !stiffness_comp_possible) match=false;
+    if (tst_process_d1Edr) if(!mdl_process_d1Edr) match=false;
+    if (tst_process_d2Edr) if(!mdl_process_d2Edr) match=false;
+
+    // the match is set, now set flaggs
+   
+    if (tst_virialGlobal_required ) if (!mdl_virialGlobal) virialGlobal_need2add = true;
+    
+    if (tst_virialPerAtom_required ) if (!mdl_virialPerAtom) virialPerAtom_need2add = true;
+   
+    if (tst_stiffness_required ) if (!mdl_stiffness) stiffness_need2add = true;
+
+    // the following part will be ommited when automatic adding auxiliaries like
+    // virialGlobal,virialPerAtom... to the KIM_API onject will be implemented
+    //--------------------------------------------------------------------------
+    //if (tst_virialGlobal_required ) if (virialGlobal_comp_possible) if (!mdl_virialGlobal) match=false;
+    //if (tst_virialPerAtom_required ) if( virialPerAtom_comp_possible) if (!mdl_virialPerAtom) match=false;
+    //if (tst_stiffness_required ) if( stiffness_comp_possible) if (!mdl_stiffness) match=false;
+    //--------------------------------------------------------------------------
+    return match;
+    
+}
+
+void KIM_API_model::add_element(char* instring){
+        KIM_IOline inln;
+        
+  
+        //open string as stream from char *
+        string in_strstream=instring;
+        stringstream myfile (in_strstream, stringstream::in|stringstream::out);
+        if(!myfile){
+            cout<<"* Error (KIM_API_model::add_element): can not access input string."<<endl;
+            KIM_API_model::fatal_error_print();
+            exit (329);
+        }
+
+        myfile.seekp(stringstream::beg);//set to the begining
+        myfile >> inln;
+        if(inln.goodformat) {
+            this->inlines[numlines]=inln;
+        }else{
+            cout<<"* Error (KIM_API_model::add_element): bad format input string."<<endl;
+            KIM_API_model::fatal_error_print();
+            exit (330);
+        }
+
+        int *shape=NULL;
+
+        KIMBaseElement *el = new KIMBaseElement ;
+        int rank=inlines[numlines].get_rank();
+        shape =inlines[numlines].get_shape();
+        char * name =& (inlines[numlines].name[0]);
+        char * type =& (inlines[numlines].type[0]);
+
+        el->init(name,type,0,rank,shape); //preinit element with zero size
+        strncpy(el->unit->dim,inlines[numlines].dim,strlen(inlines[numlines].dim)+1);
+        double scale=inlines[numlines].get_unitscale();
+
+        strncpy(el->unit->units,inlines[numlines].units,strlen(inlines[numlines].units)+1);
+
+        el->unit->scale = (float)scale;
+        el->flag->calculate = 1;
+        el->flag->peratom = 1;//per something else
+        if(inlines[numlines].isitperatom()) el->flag->peratom = 0; //per atom
+        KIMBaseElement **pel =(KIMBaseElement**) model.data;
+        pel[(int)model.size] =  el;
+        delete [] shape;
+
+        numlines ++;
+        model.size++;      
+}
+
+void KIM_API_model::fij_related_things_add_set_index(){
+    //add part
+    if(virialGlobal_need2add){
+        char instr[512] = "virialGlobal            real*8       pressure     ";
+        strcat(instr,(*this)["coordinates"].unit->units);
+        strcat(instr,"    [6]           # automatically generated");
+        this->add_element(instr);
+    }
+    if(virialPerAtom_need2add){
+        char instr[512] = "virialPerAtom            real*8       pressure     ";
+        strcat(instr,(*this)["coordinates"].unit->units);
+        strcat(instr,"    [numberOfAtoms,6]           # automatically generated");
+        this->add_element(instr);
+    }
+
+    //get index
+    this->virialGlobal_ind = get_index("virialGlobal");
+    this->virialPerAtom_ind = get_index("virialPerAtom");
+    this->stiffness_ind =get_index("stiffness");
+    this->process_d1Edr_ind =get_index("process_d1Edr");
+    this->process_d2Edr_ind =get_index("process_d2Edr");
+
+    if (virialGlobal_need2add || virialPerAtom_need2add) (*this)[process_d1Edr_ind].flag->calculate=1;
+    
+}
+void KIM_API_model::process_d1Edr(KIM_API_model** ppkim, double* dE, double* r,
+        double** dx,int *i, int *j, int* ier){
+    KIM_API_model * pkim= *ppkim;
+    typedef void (*Process_d1Edr)(KIM_API_model **, double *, double *, double **,int *,int *, int *);
+
+
+    Process_d1Edr process = (Process_d1Edr) (*pkim)[pkim->process_d1Edr_ind].data;
+    int process_flag =0;
+    process_flag = (*pkim)[pkim->process_d1Edr_ind].flag->calculate;
+
+    if (process != NULL && process_flag == 1) {
+        (*process)(ppkim,dE,r,dx,i,j,ier);
+    } else if(process_flag == 1){
+        KIM_Standard_Virials::process_d1Edr(ppkim,dE,r,dx,i,j,ier);
+    }
 }

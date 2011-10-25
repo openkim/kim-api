@@ -249,6 +249,13 @@ bool requiresFullNeighbors();
     int get_model_index_shift();
     void set_model_buffer(void * o,int * ier);
     void * get_model_buffer(int * ier);
+   static void process_d1Edr(KIM_API_model **ppkim,double *dr,double *r,double ** dx, int *i,int *j,int *ier);
+ 
+   //related to process fij public variables   
+    bool virialGlobal_need2add;
+    bool virialPerAtom_need2add;
+    bool stiffness_need2add;
+
 private:
 
     bool locator_neigh_mode;
@@ -306,20 +313,33 @@ private:
     char ** NBC_methods;
     char *** arg_NBC_methods;
 
+    //related to process fij variables
+  
+    int virialGlobal_ind;
+    int virialPerAtom_ind;
+    int stiffness_ind;
+    int process_d1Edr_ind;
+    int process_d2Edr_ind;
+
     bool check_consistance_NBC_method(); 
 
     char NBC_method_current[KEY_CHAR_LENGTH];
     bool NBC_methods_match(KIM_API_model &test,KIM_API_model &mdl);
+    bool fij_related_things_match(KIM_API_model &test,KIM_API_model &mdl);
+    void fij_related_things_add_set_index();
+    void add_auxiliaries_if_needed();
     bool init_AtomsTypes();
     void supported_units_init();
     bool are_infileunits_consistent();
     bool among_supported_units(char *unitS);
     bool do_dummy_match(KIM_API_model & tst, KIM_API_model &mdl);
     bool is_it_in_and_is_it_dummy(KIM_API_model &mdl,char *name);
+    bool is_it_in(KIM_API_model &mdl,char *name);
     int get_indexOfsupportedUnits(char * unitS);
     void setScale(int index);
     void data_multiply_a(void *dt,char* type,intptr_t sz,float a);
     void * model_lib_handle;
+    void add_element(char * inln);
 };
 ostream &operator<<(ostream &stream, KIM_API_model &a);
 
