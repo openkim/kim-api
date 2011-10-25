@@ -398,6 +398,29 @@ Corresponding Fortran style interface:
         integer(kind=kim_intptr) :: kimmdl, kim_api_get_buffer_f
      end function kim_api_get_buffer_f
 
+******************************************************************************
+
+int KIM_API_isit_half_neighbors(void * kimmdl, int * kimerror)
+     This routine returns 1 if KIM_API model object setting is for half neighbors 
+     or 0 if it is for full neighbors.
+
+Arguments:
+         void * kimmdl
+                pointer to KIM_API_model object (in C++ style, the definition 
+                will be (KIM_API_model *)).
+          
+        
+         int * kimerror
+                error code: KIM_STATUS_OK   -- successful completion, 
+                            KIM_STATUS_FAIL -- unsuccessful
+        
+Corresponding Fortran style interface:
+
+     function kim_api_isit_half_neighbors_f(kimmdl,kimerror)
+        integer ::kimerror
+        integer(kind=kim_intptr) :: kimmdl, kim_api_isit_half_neighbors_f
+     end function kim_api_isit_half_neighbors_f
+
 
 ================== ELEMENT ACCESS METHODS ROUTINES BY NAME ====================
 

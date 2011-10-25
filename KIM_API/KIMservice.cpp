@@ -2493,7 +2493,7 @@ bool KIM_API_model::requiresFullNeighbors(){
     bool answer = false;
     if (strcmp(method,"NEIGH-PURE-F")==0) answer = true;
     if (strcmp(method,"NEIGH-RVEC-F")==0) answer = true;
-
+    if (strcmp(method,"MI-OPBC-F")==0) answer = true;
     if (method!=NULL) delete [] method;
     return answer;
 }

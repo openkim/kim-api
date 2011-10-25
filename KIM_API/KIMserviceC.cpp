@@ -180,7 +180,14 @@ void * KIM_API_get_model_buffer(void* kimmdl, int* ier){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     return mdl->get_model_buffer(ier);
 }
-
+int KIM_API_isit_half_neighbors(void *kimmdl,int *ier){
+    KIM_API_model * mdl=(KIM_API_model *) kimmdl;
+    int ans=1;
+    *ier = KIM_STATUS_FAIL;
+    if (mdl->requiresFullNeighbors()) ans = 0;
+    *ier = KIM_STATUS_OK;
+    return ans;
+}
 
 //element access methods by name
 int  KIM_API_set_data(void *kimmdl,char *nm, intptr_t size, void *dt){
@@ -427,6 +434,9 @@ void kim_api_set_model_buffer_f_(void * kimmdl,void * ob, int * ier){
 }
 void * kim_api_get_model_buffer_f_(void * kimmdl, int * ier){
     return KIM_API_get_model_buffer(*(KIM_API_model **)kimmdl, ier);
+}
+int kim_api_isit_half_neighbors_f_(void * kimmdl,int *ier){
+    return KIM_API_isit_half_neighbors(*(KIM_API_model **)kimmdl, ier);
 }
 //element access methods
 int  kim_api_set_data_(void *kimmdl,char **nm,  intptr_t *size, void *dt){
