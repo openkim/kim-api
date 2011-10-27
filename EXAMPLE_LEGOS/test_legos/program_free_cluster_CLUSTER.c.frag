@@ -1,5 +1,5 @@
-/* KIM compliant program to compute the energy of and forces on an      */
-/* isolated cluster of SPECIES_NAME_STR atoms                                         */
+/* KIM compliant program to compute the energy of and forces and virial */
+/* on an isolated cluster of SPECIES_NAME_STR atoms                                   */
 /*                                                                      */
 /* Authors: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor      */
 /*                                                                      */
@@ -49,6 +49,8 @@ int main(int argc, char* argv[])
    double* cutoff;
    double* energy;
    double* forces;
+   double* virialGlobal;
+   double* virialPerAtom;
    int middleDum;
 
    /* Get KIM Model name to use */
@@ -122,7 +124,21 @@ int main(int argc, char* argv[])
       exit(1);
    }
    
+   virialGlobal = (double*) KIM_API_get_data(pkim, "virialGlobal", &status);
+   if (KIM_STATUS_OK > status)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", status);
+      exit(1);
+   }
+   
    forces = (double*) KIM_API_get_data(pkim, "forces", &status);
+   if (KIM_STATUS_OK > status)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", status);
+      exit(1);
+   }
+
+   virialPerAtom = (double*) KIM_API_get_data(pkim, "virialPerAtom", &status);
    if (KIM_STATUS_OK > status)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", status);
@@ -159,14 +175,41 @@ int main(int argc, char* argv[])
    printf("This is Test          : %s\n",testname);
    printf("Results for KIM Model : %s\n",modelname);
    printf("Forces:\n");
-   printf("Atom     X                        Y                        Z\n");
+   printf("Atom     "
+          "X                        "
+          "Y                        "
+          "Z                        "
+          "V11                      "
+          "V22                      "
+          "V33                      "
+          "V23                      "
+          "V31                      "
+          "V12                      "
+          "\n");
    for (i = 0; i < *numberOfAtoms; ++i)
    {
-      printf("%2i   %25.15e%25.15e%25.15e\n", i,
-             forces[i*DIM + 0], forces[i*DIM + 1], forces[i*DIM + 2]);
+      printf("%2i   %25.15e%25.15e%25.15e%25.15e%25.15e%25.15e%25.15e%25.15e%25.15e\n", i,
+             forces[i*DIM + 0],
+             forces[i*DIM + 1],
+             forces[i*DIM + 2],
+             virialPerAtom[i*6 + 0],
+             virialPerAtom[i*6 + 1],
+             virialPerAtom[i*6 + 2],
+             virialPerAtom[i*6 + 3],
+             virialPerAtom[i*6 + 4],
+             virialPerAtom[i*6 + 5]
+            );
    }
    printf("\n");
-   printf("Energy = %20.15e\n", *energy);
+   printf("Energy = %25.15e                              Global Virial = %25.15e%25.15e%25.15e%25.15e%25.15e%25.15e\n",
+          *energy,
+          virialGlobal[0],
+          virialGlobal[1],
+          virialGlobal[2],
+          virialGlobal[3],
+          virialGlobal[4],
+          virialGlobal[5]
+         );
 
    
    /* don't forget to destroy and deallocate */

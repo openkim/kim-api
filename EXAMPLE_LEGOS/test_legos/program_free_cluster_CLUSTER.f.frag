@@ -2,8 +2,8 @@
 !**
 !**  PROGRAM TEST_NAME_STR
 !**
-!**  KIM compliant program to compute the energy of and forces on an isolated 
-!**  cluster of SPECIES_NAME_STR atoms
+!**  KIM compliant program to compute the energy of and forces and virial on an 
+!**  isolated cluster of SPECIES_NAME_STR atoms
 !**
 !**  Authors: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
 !**
@@ -45,10 +45,12 @@ program TEST_NAME_STR
 
   real*8 cutoff;           pointer(pcutoff,cutoff)
   real*8 energy;           pointer(penergy,energy)
+  real*8 virialglobdum(1); pointer(pvirialglob,virialglobdum)
   real*8 coordum(DIM,1);   pointer(pcoor,coordum)
   real*8 forcesdum(DIM,1); pointer(pforces,forcesdum)
+  real*8 virialdum(DIM,1); pointer(pvirial,virialdum)
   integer I
-  real*8, pointer  :: coords(:,:), forces(:,:)
+  real*8, pointer  :: coords(:,:), forces(:,:), virialperatom(:,:), virialglobal(:)
   integer, pointer :: atomTypes(:)
   integer middleDum
 
@@ -76,6 +78,7 @@ program TEST_NAME_STR
      call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_init", ier)
      stop
   endif
+
 
   ! Unpack data from KIM object
   !
@@ -117,12 +120,26 @@ program TEST_NAME_STR
      stop
   endif
 
+  pvirialglob = kim_api_get_data_f(pkim, "virialGlobal", ier)
+  if (ier.lt.KIM_STATUS_OK) then
+     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+     stop
+  endif
+  call toRealArrayWithDescriptor1d(virialglobdum, virialglobal, 6)
+
   pforces = kim_api_get_data_f(pkim, "forces", ier)
   if (ier.lt.KIM_STATUS_OK) then
      call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
      stop
   endif
   call toRealArrayWithDescriptor2d(forcesdum, forces, DIM, N)
+
+  pvirial = kim_api_get_data_f(pkim, "virialPerAtom", ier)
+  if (ier.lt.KIM_STATUS_OK) then
+     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+     stop
+  endif
+  call toRealArrayWithDescriptor2d(virialdum, virialperatom, 6, N)
 
   ! Set values
   numberOfAtoms   = N
@@ -148,11 +165,19 @@ program TEST_NAME_STR
   print '("This is Test          : ",A)', testname
   print '("Results for KIM Model : ",A)', modelname
   print '("Forces:")'
-  print '("Atom     X                        Y                        Z")'
-  print '(I2,"   ",3E25.15)', (I,forces(:,I),I=1,N)
+  print '("Atom     ' // &
+  'X                        ' // &
+  'Y                        ' // &
+  'Z                        ' // &
+  'V11                      ' // &
+  'V22                      ' // &
+  'V33                      ' // &
+  'V23                      ' // &
+  'V31                      ' // &
+  'V12                      ")'
+  print '(I2,"   ",3E25.15,6E25.15)', (I,forces(:,I),virialperatom(:,I),I=1,N)
   print *
-  print '("Energy = ",E25.15)', energy
-
+  print '("Energy = ",E25.15,"                              Global Virial = ",6E25.15)', energy, virialglobal
 
   ! don't forget to destroy and deallocate
   call kim_api_model_destroy_f(pkim, ier)
