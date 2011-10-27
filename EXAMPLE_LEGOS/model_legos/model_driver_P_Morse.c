@@ -51,6 +51,37 @@ static void calc_phi_dphi(double* epsilon,
 			  double* shift,
                           double* cutoff, double r, double* phi, double* dphi);
 
+/* Define model_buffer structure */
+struct model_buffer {
+   int NBC;
+   int HalfOrFull;
+   int IterOrLoca;
+   int forces_ind;
+   int energyPerAtom_ind;
+   int process_d1Edr_ind;
+   int model_index_shift;
+   
+   int* numberOfAtoms;
+   int atomTypes_ind;
+   double* energy;
+   int coordinates_ind;
+   int* numberContributingAtoms;
+   int boxlength_ind;
+   double* cutoff;
+   int (*get_half_neigh)(void *,int *,int *,int *, int *, int **, double **);
+   int (*get_full_neigh)(void *,int *,int *,int *, int *, int **, double **);
+
+
+   double* Pcutoff;
+   double* cutsq;
+   double* epsilon;
+   double* C;
+   double* Rzero;
+   double* shift;
+};
+/* prototype for buffer setup routine */
+static void setup_buffer(intptr_t* pkim, struct model_buffer* buffer);
+
 
 /* Calculate pair potential phi(r) */
 static void calc_phi(double* epsilon,
@@ -123,17 +154,20 @@ static void compute(void* km, int* ier)
    int j;
    int jj;
    int k;
-   int numOfAtomNeigh;
    int currentAtom;
+   int* neighListOfCurrentAtom;
+   struct model_buffer* buffer;
    int comp_force;
    int comp_energyPerAtom;
-   int comp_virial;
-   int IterOrLoca;
-   int HalfOrFull;
+   int comp_process_d1Edr;
    int NBC;
-   char* NBCstr;
-   int numberContrib;
-
+   int HalfOrFull;
+   int IterOrLoca;
+   int model_index_shift;
+   int zero = 0;
+   int one = 1;
+   int request;
+   
    int* nAtoms;
    int* atomTypes;
    double* cutoff;
@@ -147,140 +181,71 @@ static void compute(void* km, int* ier)
    double* energy;
    double* force;
    double* energyPerAtom;
-   double* virial;
-   int* neighListOfCurrentAtom;
    double* boxlength;
    int* numContrib;
+   int numberContrib;
+   int numOfAtomNeigh;
+
+   /* get buffer from KIM object */
+   buffer = (struct model_buffer*) KIM_API_get_model_buffer(pkim, ier);
+   if (KIM_STATUS_OK > *ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_model_buffer", *ier);
+      return;
+   }
+
+   /* unpack info from the buffer */
+   NBC = buffer->NBC;
+   HalfOrFull = buffer->HalfOrFull;
+   IterOrLoca = buffer->IterOrLoca;
+   model_index_shift = buffer->model_index_shift;
+   /* unpack the Model's parameters stored in the buffer object */
+   cutoff = buffer->cutoff;
+   cutsq = buffer->cutsq;
+   epsilon = buffer->epsilon;
+   C = buffer->C;
+   Rzero = buffer->Rzero;
+   shift = buffer->shift;
+
    
-   /* Determine neighbor list boundary condition (NBC) */
-   /* and half versus full mode: */
-   /*****************************
-    * HalfOrFull = 1 -- Half
-    *            = 2 -- Full
-    *****************************/
-   NBCstr = KIM_API_get_NBC_method(pkim, ier);
+   /* check to see if we have been asked to compute the forces, energyPerAtom, and d1Edr */
+   comp_force = KIM_API_isit_compute_byI(pkim, buffer->forces_ind, ier);
    if (KIM_STATUS_OK > *ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_NBC_method", *ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_isit_compute_byI", *ier);
       return;
    }
-   if (!strcmp("CLUSTER",NBCstr))
-   {	   
-      NBC = 0;
-      HalfOrFull = 1;
-   }
-   else if (!strcmp("MI-OPBC-H",NBCstr))
-   {	   
-      NBC = 1;
-      HalfOrFull = 1;
-   }
-   else if (!strcmp("MI-OPBC-F",NBCstr))
-   {	   
-      NBC = 1;
-      HalfOrFull = 2;
-   }
-
-   else if (!strcmp("NEIGH-PURE-H",NBCstr))
-   {	   
-      NBC = 2;
-      HalfOrFull = 1;
-   }
-   else if (!strcmp("NEIGH-PURE-F",NBCstr))
-   {	   
-      NBC = 2;
-      HalfOrFull = 2;
-   }
-   else if (!strcmp("NEIGH-RVEC-F",NBCstr))
-   {	   
-      NBC = 3;
-      HalfOrFull = 2;
-   }
-   else
-   {
-      *ier = KIM_STATUS_FAIL;
-      KIM_API_report_error(__LINE__, __FILE__, "Unknown NBC method", *ier);
-      return;
-   }
-   free(NBCstr); /* don't forget to release the memory... */
-
-   /* determine neighbor list handling mode */
-   if (NBC != 0)
-   {
-      /*****************************
-       * IterOrLoca = 1 -- Iterator
-       *            = 2 -- Locator
-       *****************************/
-      IterOrLoca = KIM_API_get_neigh_mode(pkim, ier);
-      if (KIM_STATUS_OK > *ier)
-      {
-         KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_neigh_mode", *ier);
-         return;
-      }
-      if ((IterOrLoca != 1) && (IterOrLoca != 2))
-      {
-         printf("* ERROR: Unsupported IterOrLoca mode = %i\n", IterOrLoca);
-         exit(-1);
-      }
-   }
-   else
-   {
-      IterOrLoca = 2;   /* for CLUSTER NBC */
-   }
-
-   /* check to see if we have been asked to compute the forces, energyPerAtom, and virial */
-   comp_force = KIM_API_isit_compute(pkim, "forces", ier);
+   comp_energyPerAtom = KIM_API_isit_compute_byI(pkim, buffer->energyPerAtom_ind, ier);
    if (KIM_STATUS_OK > *ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_isit_compute", *ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_isit_compute_byI", *ier);
       return;
    }
-   comp_energyPerAtom = KIM_API_isit_compute(pkim, "energyPerAtom", ier);
+   comp_process_d1Edr = KIM_API_isit_compute_byI(pkim, buffer->process_d1Edr_ind, ier);
    if (KIM_STATUS_OK > *ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_isit_compute", *ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_isit_compute_byI", *ier);
       return;
    }
-   comp_virial = KIM_API_isit_compute(pkim, "virial", ier);
-   if (KIM_STATUS_OK > *ier)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_isit_compute", *ier);
-      return;
-   }
-
 
    /* unpack data from KIM object */
-   nAtoms = (int*) KIM_API_get_data(pkim, "numberOfAtoms", ier);
+   nAtoms = buffer->numberOfAtoms;
+   atomTypes= (int*) KIM_API_get_data_byI(pkim, buffer->atomTypes_ind, ier);
    if (KIM_STATUS_OK > *ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", *ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data_byI", *ier);
       return;
    }
-   atomTypes= (int*) KIM_API_get_data(pkim, "atomTypes", ier);
+   energy = buffer->energy;
+   coords = (double*) KIM_API_get_data_byI(pkim, buffer->coordinates_ind, ier);
    if (KIM_STATUS_OK > *ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", *ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data_byI", *ier);
       return;
    }
-   energy = (double*) KIM_API_get_data(pkim, "energy", ier);
-   if (KIM_STATUS_OK > *ier)
+   if (buffer->HalfOrFull == 1)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", *ier);
-      return;
-   }
-   coords = (double*) KIM_API_get_data(pkim, "coordinates", ier);
-   if (KIM_STATUS_OK > *ier)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", *ier);
-      return;
-   }
-   if (HalfOrFull == 1)
-   {
-      numContrib = (int*) KIM_API_get_data(pkim, "numberContributingAtoms", ier);
-      if (KIM_STATUS_OK > *ier)
-      {
-         KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", *ier);
-         return;
-      }
+      numContrib = buffer->numberContributingAtoms;
       if (0 != NBC) /* non-CLUSTER cases */
       {
          numberContrib = *numContrib;
@@ -292,89 +257,33 @@ static void compute(void* km, int* ier)
    }
    if (NBC == 1)
    {
-      boxlength = (double*) KIM_API_get_data(pkim, "boxlength", ier);
+      boxlength = (double*) KIM_API_get_data_byI(pkim, buffer->boxlength_ind, ier);
       if (KIM_STATUS_OK > *ier)
       {
-         KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", *ier);
+         KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data_byI", *ier);
          return;
       }
    }
 
    if (comp_force)
    {
-      force = (double*) KIM_API_get_data(pkim, "forces", ier);
+      force = (double*) KIM_API_get_data_byI(pkim, buffer->forces_ind, ier);
       if (KIM_STATUS_OK > *ier)
       {
-         KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", *ier);
+         KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data_byI", *ier);
          return;
       }
    }
 
    if (comp_energyPerAtom)
    {
-      energyPerAtom = (double*) KIM_API_get_data(pkim, "energyPerAtom", ier);
+      energyPerAtom = (double*) KIM_API_get_data_byI(pkim, buffer->energyPerAtom_ind, ier);
       if (KIM_STATUS_OK > *ier)
       {
-         KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", *ier);
+         KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data_byI", *ier);
          return;
       }
    }
-
-   if (comp_virial)
-   {
-      virial = (double*) KIM_API_get_data(pkim, "virial", ier);
-      if (KIM_STATUS_OK > *ier)
-      {
-         KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", *ier);
-         return;
-      }
-   }
-
-
-   /* unpack the Model's parameters stored in the KIM API object */
-
-    cutoff = (double*) KIM_API_get_data(pkim, "cutoff", ier);
-   if (KIM_STATUS_OK > *ier)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", *ier);
-      return;
-   }
-   cutsq = (double*) KIM_API_get_data(pkim, "PARAM_FIXED_cutsq", ier);
-   if (KIM_STATUS_OK > *ier)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", *ier);
-      return;
-   }
-
-    epsilon = (double*) KIM_API_get_data(pkim, "PARAM_FREE_epsilon", ier);
-   if (KIM_STATUS_OK > *ier)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", *ier);
-      return;
-   }
-
- 
-   C = (double*) KIM_API_get_data(pkim, "PARAM_FREE_C", ier);
-   if (KIM_STATUS_OK > *ier)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", *ier);
-      return;
-   }
-   
-   Rzero = (double*) KIM_API_get_data(pkim, "PARAM_FREE_Rzero", ier);
-   if (KIM_STATUS_OK > *ier)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", *ier);
-      return;
-   }
-
-   shift = (double*) KIM_API_get_data(pkim, "PARAM_FIXED_shift", ier);
-   if (KIM_STATUS_OK > *ier)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", *ier);
-      return;
-   }
-
 
    /* Check to be sure that the atom types are correct */
    /**/
@@ -413,11 +322,6 @@ static void compute(void* km, int* ier)
       }
    }
 
-   if (comp_virial)
-   {
-      *virial = 0.0;
-   }
-
    /* Initialize neighbor handling for CLUSTER NBC */
    if (0 == NBC) /* CLUSTER */
    {
@@ -430,13 +334,13 @@ static void compute(void* km, int* ier)
    {
       if (1 == HalfOrFull) /* HALF list */
       {
-         *ier = KIM_API_get_half_neigh(pkim, 0, 0, &currentAtom, &numOfAtomNeigh,
-                                       &neighListOfCurrentAtom, &Rij_list);
+         *ier = (*buffer->get_half_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh,
+                                          &neighListOfCurrentAtom, &Rij_list);
       }
       else                 /* FULL list */
       {
-         *ier = KIM_API_get_full_neigh(pkim, 0, 0, &currentAtom, &numOfAtomNeigh,
-                                       &neighListOfCurrentAtom, &Rij_list);
+         *ier = (*buffer->get_full_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh,
+                                          &neighListOfCurrentAtom, &Rij_list);
       }
       /* check for successful initialization */
       if (KIM_STATUS_NEIGH_ITER_INIT_OK != *ier)
@@ -466,13 +370,13 @@ static void compute(void* km, int* ier)
       {
          if (1 == HalfOrFull) /* HALF list */
          {
-            *ier = KIM_API_get_half_neigh(pkim, 0, 1, &currentAtom, &numOfAtomNeigh,
-                                          &neighListOfCurrentAtom, &Rij_list);  
+            *ier = (*buffer->get_half_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh,
+                                             &neighListOfCurrentAtom, &Rij_list);  
          }
          else
          {
-            *ier = KIM_API_get_full_neigh(pkim, 0, 1, &currentAtom, &numOfAtomNeigh,
-                                          &neighListOfCurrentAtom, &Rij_list);
+            *ier = (*buffer->get_full_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh,
+                                             &neighListOfCurrentAtom, &Rij_list);
          }
          if (KIM_STATUS_NEIGH_ITER_PAST_END == *ier) /* the end of the list, terminate loop */
          {
@@ -491,7 +395,7 @@ static void compute(void* km, int* ier)
             return;
          }
 
-         i = currentAtom;
+         i = currentAtom + model_index_shift;
       }
       else
       {
@@ -508,31 +412,35 @@ static void compute(void* km, int* ier)
                numOfAtomNeigh = *nAtoms - (i + 1);
                for (k = 0; k < numOfAtomNeigh; ++k)
                {
-                  neighListOfCurrentAtom[k] = i + k + 1;
+                  neighListOfCurrentAtom[k] = i + k + 1 - model_index_shift;
                }
                *ier = KIM_STATUS_OK;
             }
             else
             {
-               *ier = KIM_API_get_half_neigh(pkim, 1, i, &currentAtom, &numOfAtomNeigh,
-                                             &neighListOfCurrentAtom, &Rij_list);
+               request = i - model_index_shift;
+               *ier = (*buffer->get_half_neigh)(&pkim, &one, &request,
+                                                &currentAtom, &numOfAtomNeigh,
+                                                &neighListOfCurrentAtom, &Rij_list);
             }
          }
          else                 /* FULL list */
          {
-            *ier = KIM_API_get_full_neigh(pkim, 1, i, &currentAtom, &numOfAtomNeigh,
-                                          &neighListOfCurrentAtom, &Rij_list);
+            request = i - model_index_shift;
+            *ier = (*buffer->get_full_neigh)(&pkim, &one, &request,
+                                             &currentAtom, &numOfAtomNeigh,
+                                             &neighListOfCurrentAtom, &Rij_list);
          }
       }
       if (KIM_STATUS_OK != *ier) /* some sort of problem, exit */
       {
          if (1 == HalfOrFull)
          {
-            KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_half_neigh", *ier);
+            KIM_API_report_error(__LINE__, __FILE__, "get_half_neigh", *ier);
          }
          else
          {
-            KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_full_neigh", *ier);
+            KIM_API_report_error(__LINE__, __FILE__, "get_full_neigh", *ier);
          }
          *ier = KIM_STATUS_FAIL;
          return;
@@ -542,7 +450,7 @@ static void compute(void* km, int* ier)
       for (jj = 0; jj < numOfAtomNeigh; ++ jj)
       {
 
-         j = neighListOfCurrentAtom[jj]; /* get neighbor ID */
+         j = neighListOfCurrentAtom[jj] + model_index_shift; /* get neighbor ID */
 
          /* compute relative position vector and squared distance */
          Rsqij = 0.0;
@@ -574,7 +482,7 @@ static void compute(void* km, int* ier)
          if (Rsqij < *cutsq) /* particles are interacting ? */
          {
             R = sqrt(Rsqij);
-            if (comp_force || comp_virial)
+            if (comp_force || comp_process_d1Edr)
             {
                /* compute pair potential and its derivative */
                calc_phi_dphi(epsilon,
@@ -626,11 +534,10 @@ static void compute(void* km, int* ier)
                }
             }
             
-            /* contribution to virial perssure */
-            if (comp_virial)
+            /* contribution to process_d1Edr */
+            if (comp_process_d1Edr)
             {
-               /* varial = sum r*(dV/dr) */
-               *virial += R*dEidr;
+               KIM_API_process_d1Edr(km, &dphi, &R, (double**) &Rij, &i, &j, ier);
             }
             
             /* contribution to forces */
@@ -646,14 +553,8 @@ static void compute(void* km, int* ier)
       } /* loop on jj */
    }    /* infinite while loop (terminated by break statements above */
    
-
    /* perform final tasks */
    
-   if (comp_virial)
-   {
-      *virial = -*virial/( (double) DIM); /* definition of virial term */
-   }
-
    if (comp_energyPerAtom)
    {
       *energy = 0.0;
@@ -671,6 +572,7 @@ static void compute(void* km, int* ier)
 
    /* everything is great */
    *ier = KIM_STATUS_OK;
+
    return;
 }
 
@@ -692,6 +594,7 @@ void MODEL_DRIVER_NAME_LC_STR_init_(void *km, char* paramfile, int* length)
    double* model_shift;
    int ier;
    double dummy;
+   struct model_buffer* buffer;
 
    /* store pointer to compute function in KIM object */
    ier = KIM_API_set_data(pkim, "compute", 1, (void*) &compute);
@@ -846,6 +749,19 @@ void MODEL_DRIVER_NAME_LC_STR_init_(void *km, char* paramfile, int* length)
    /* set shift to -shift */
    *model_shift = -(*model_shift);
 
+
+   /* allocate buffer */
+   buffer = (struct model_buffer*) malloc(sizeof(struct model_buffer));
+   /* setup buffer */
+   setup_buffer(pkim, buffer);
+   /* store in model buffer */
+   KIM_API_set_model_buffer(pkim, (void*) buffer, &ier);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_set_model_buffer", ier);
+      exit(1);
+   }
+   
    return;
 }
 
@@ -854,90 +770,38 @@ static void reinit(void *km)
 {
    /* Local variables */
    intptr_t* pkim = *((intptr_t**) km);
-   double* model_cutoff;
-   double* model_cutsq;
-   double* model_epsilon;
-   double* model_C;
-   double* model_Rzero;
-   double* model_Pcutoff;
-   double* model_shift;
    int ier;
    double dummy;
+   struct model_buffer* buffer;
 
-   /* get (changed) parameters from KIM object */
-
-   /* get parameter cutoff from KIM object */
-   model_Pcutoff = (double*) KIM_API_get_data(pkim, "PARAM_FREE_cutoff", &ier);
+   /* get buffer from KIM object */
+   buffer = (struct model_buffer*) KIM_API_get_model_buffer(pkim, &ier);
    if (KIM_STATUS_OK > ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_model_buffer", ier);
       exit(1);
    }
+   /* re-setup buffer */
+   setup_buffer(pkim, buffer);
 
-   /* get epsilon from KIM object */
-   model_epsilon = (double*) KIM_API_get_data(pkim, "PARAM_FREE_epsilon", &ier);
-   if (KIM_STATUS_OK > ier)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
-      exit(1);
-   }
-
-   /* get C from KIM object */
-   model_C = (double*) KIM_API_get_data(pkim, "PARAM_FREE_C", &ier);
-   if (KIM_STATUS_OK > ier)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
-      exit(1);
-   }
-
-   /* get Rzero from KIM object */
-   model_Rzero = (double*) KIM_API_get_data(pkim, "PARAM_FREE_Rzero", &ier);
-   if (KIM_STATUS_OK > ier)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
-      exit(1);
-   }
-
-   /* set new values in KIM object */
-   
-
+   /* set new values in KIM object     */
+   /*                                  */
    /* store model cutoff in KIM object */
-   model_cutoff = (double*) KIM_API_get_data(pkim, "cutoff", &ier);
-   if (KIM_STATUS_OK > ier)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
-      exit(1);
-   }
-   *model_cutoff = *model_Pcutoff;
+   *buffer->cutoff = *buffer->Pcutoff;
 
-   /* store model_cutsq in KIM object */
-   model_cutsq = KIM_API_get_data(pkim, "PARAM_FIXED_cutsq", &ier);
-   if (KIM_STATUS_OK > ier)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
-      exit(1);
-   }
    /* set value of parameter cutsq */
-   *model_cutsq = (*model_cutoff)*(*model_cutoff);
+   *buffer->cutsq = (*buffer->cutoff)*(*buffer->cutoff);
 
-
-   /* store model_shift in KIM object */
-   model_shift = KIM_API_get_data(pkim, "PARAM_FIXED_shift", &ier);
-   if (KIM_STATUS_OK > ier)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
-      exit(1);
-   }
    /* set value of parameter shift */
    dummy = 0.0;
    /* call calc_phi with r=cutoff and shift=0.0 */
-   calc_phi(model_epsilon,
-            model_C,
-            model_Rzero,
+   calc_phi(buffer->epsilon,
+            buffer->C,
+            buffer->Rzero,
 	    &dummy,
-            model_cutoff, *model_cutoff, model_shift);
+            buffer->cutoff, *buffer->cutoff, buffer->shift);
    /* set shift to -shift */
-   *model_shift = -(*model_shift);
+   *buffer->shift = -(*buffer->shift);
 
    return;
 }
@@ -947,67 +811,254 @@ static void destroy(void *km)
 {
    /* Local variables */
    intptr_t* pkim = *((intptr_t**) km);
-   double* model_Pcutoff;
-   double* model_cutsq;
-   double* model_epsilon;
-   double* model_C;
-   double* model_Rzero;
-   double* model_shift;
+   struct model_buffer* buffer;
    int ier;
 
-   /* get and free parameter cutoff from KIM object */
-   model_Pcutoff = (double*) KIM_API_get_data(pkim, "PARAM_FREE_cutoff", &ier);
+   /* get model buffer from KIM object */
+   buffer = (struct model_buffer*) KIM_API_get_model_buffer(pkim, &ier);
    if (KIM_STATUS_OK > ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_model_buffer", ier);
       exit(1);
    }
-   free(model_Pcutoff);
 
-   /* get and free model_cutsq in KIM object */
-   model_cutsq = KIM_API_get_data(pkim, "PARAM_FIXED_cutsq", &ier);
-   if (KIM_STATUS_OK > ier)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
-      exit(1);
-   }
-   free(model_cutsq);
+   /* free parameter cutoff */
+   free(buffer->Pcutoff);
 
-   /* get and free epsilon from KIM object */
-   model_epsilon = (double*) KIM_API_get_data(pkim, "PARAM_FREE_epsilon", &ier);
-   if (KIM_STATUS_OK > ier)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
-      exit(1);
-   }
-   free(model_epsilon);
+   /* free model_cutsq */
+   free(buffer->cutsq);
 
-   /* get and free C from KIM object */
-   model_C = (double*) KIM_API_get_data(pkim, "PARAM_FREE_C", &ier);
-   if (KIM_STATUS_OK > ier)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
-      exit(1);
-   }
-   free(model_C);
+   /* free epsilon */
+   free(buffer->epsilon);
 
-   /* get and free Rzero from KIM object */
-   model_Rzero = (double*) KIM_API_get_data(pkim, "PARAM_FREE_Rzero", &ier);
-   if (KIM_STATUS_OK > ier)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
-      exit(1);
-   }
-   free(model_Rzero);
+   /* free C */
+   free(buffer->C);
 
-   /* get and free model_shift in KIM object */
-   model_shift = KIM_API_get_data(pkim, "PARAM_FIXED_shift", &ier);
+   /* free Rzero */
+   free(buffer->Rzero);
+
+   /* free shift */
+   free(buffer->shift);
+
+   /* destroy the buffer */
+   free(buffer);
+   
+   return;
+}
+
+/* buffer setup function */
+static void setup_buffer(intptr_t* pkim, struct model_buffer* buffer)
+{
+   /* Local variables */
+   int ier;
+   char* NBCstr;
+
+   
+   /* Determine neighbor list boundary condition (NBC) */
+   NBCstr = KIM_API_get_NBC_method(pkim, &ier);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_NBC_method", ier);
+      return;
+   }
+   if (!strcmp("CLUSTER",NBCstr))
+   {	   
+      buffer->NBC = 0;
+   }
+   else if ((!strcmp("MI-OPBC-H",NBCstr)) || (!strcmp("MI-OPBC-F",NBCstr)))
+   {	   
+      buffer->NBC = 1;
+   }
+   else if ((!strcmp("NEIGH-PURE-H",NBCstr)) || (!strcmp("NEIGH-PURE-F",NBCstr)))
+   {	   
+      buffer->NBC = 2;
+   }
+   else if (!strcmp("NEIGH-RVEC-F",NBCstr))
+   {	   
+      buffer->NBC = 3;
+   }
+   else
+   {
+      ier = KIM_STATUS_FAIL;
+      KIM_API_report_error(__LINE__, __FILE__, "Unknown NBC method", ier);
+      return;
+   }
+   free(NBCstr); /* don't forget to release the memory... */
+
+   /* Determine if Half or Full neighbor lists are being used */
+   /*****************************
+    * HalfOrFull = 1 -- Half
+    *            = 2 -- Full
+    *****************************/
+   if (KIM_API_isit_half_neighbors(pkim, &ier))
+   {
+      buffer->HalfOrFull = 1;
+   }
+   else
+   {
+      buffer->HalfOrFull = 2;
+   }
+
+   /* determine neighbor list handling mode */
+   if (buffer->NBC != 0)
+   {
+      /*****************************
+       * IterOrLoca = 1 -- Iterator
+       *            = 2 -- Locator
+       *****************************/
+      buffer->IterOrLoca = KIM_API_get_neigh_mode(pkim, &ier);
+      if (KIM_STATUS_OK > ier)
+      {
+         KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_neigh_mode", ier);
+         return;
+      }
+      if ((buffer->IterOrLoca != 1) && (buffer->IterOrLoca != 2))
+      {
+         printf("* ERROR: Unsupported IterOrLoca mode = %i\n", buffer->IterOrLoca);
+         exit(-1);
+      }
+   }
+   else
+   {
+      buffer->IterOrLoca = 2;   /* for CLUSTER NBC */
+   }
+
+   buffer->forces_ind = KIM_API_get_index(pkim, "forces", &ier);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_index", ier);
+      exit(1);
+   }
+   buffer->energyPerAtom_ind = KIM_API_get_index(pkim, "energyPerAtom", &ier);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_index", ier);
+      exit(1);
+   }
+   buffer->process_d1Edr_ind = KIM_API_get_index(pkim, "process_d1Edr", &ier);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_index", ier);
+      exit(1);
+   }
+
+   buffer->model_index_shift = KIM_API_get_model_index_shift(pkim);
+ 
+   buffer->numberOfAtoms = (int*) KIM_API_get_data(pkim, "numberOfAtoms", &ier);
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
       exit(1);
    }
-   free(model_shift);
+
+   buffer->atomTypes_ind = KIM_API_get_index(pkim, "atomTypes", &ier);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_index", ier);
+      exit(1);
+   }
+
+   buffer->energy = (double*) KIM_API_get_data(pkim, "energy", &ier);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
+      exit(1);
+   }
+
+   buffer->coordinates_ind = KIM_API_get_index(pkim, "coordinates", &ier);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_index", ier);
+      exit(1);
+   }
+
+   
+   buffer->numberContributingAtoms =
+      (int*) KIM_API_get_data(pkim, "numberContributingAtoms", &ier);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
+      exit(1);
+   }
+
+   buffer->boxlength_ind = KIM_API_get_index(pkim, "boxlength", &ier);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_index", ier);
+      exit(1);
+   }
+
+   /* get pointers to get_neigh functions */
+   buffer->get_half_neigh = (int(*)(void *,int *,int *,int *, int *, int **, double **))
+      KIM_API_get_data(pkim, "get_half_neigh", &ier);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
+      exit(1);
+   }
+   buffer->get_full_neigh = (int(*)(void *,int *,int *,int *, int *, int **, double **))
+      KIM_API_get_data(pkim, "get_full_neigh", &ier);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
+      exit(1);
+   }
+
+   /* get model cutoff */
+   buffer->cutoff = (double*) KIM_API_get_data(pkim,"cutoff", &ier);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
+      exit(1);
+   }
+
+   /* get parameter cutoff from KIM object */
+   buffer->Pcutoff = (double*) KIM_API_get_data(pkim, "PARAM_FREE_cutoff", &ier);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
+      exit(1);
+   }
+
+   /* get epsilon from KIM object */
+   buffer->epsilon = (double*) KIM_API_get_data(pkim, "PARAM_FREE_epsilon", &ier);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
+      exit(1);
+   }
+
+   /* get C from KIM object */
+   buffer->C = (double*) KIM_API_get_data(pkim, "PARAM_FREE_C", &ier);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
+      exit(1);
+   }
+
+   /* get Rzero from KIM object */
+   buffer->Rzero = (double*) KIM_API_get_data(pkim, "PARAM_FREE_Rzero", &ier);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
+      exit(1);
+   }
+
+   /* get cutsq from KIM object */
+   buffer->cutsq = KIM_API_get_data(pkim, "PARAM_FIXED_cutsq", &ier);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
+      exit(1);
+   }
+
+   /* get shift from KIM object */
+   buffer->shift = KIM_API_get_data(pkim, "PARAM_FIXED_shift", &ier);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
+      exit(1);
+   }
 
    return;
 }
