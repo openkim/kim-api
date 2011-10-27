@@ -150,6 +150,7 @@ static void compute(void* km, int* ier)
    double dphi;
    double dEidr;
    double Rij[DIM];
+   double * pRij = Rij;
    int i;
    int j;
    int jj;
@@ -537,7 +538,7 @@ static void compute(void* km, int* ier)
             /* contribution to process_d1Edr */
             if (comp_process_d1Edr)
             {
-               KIM_API_process_d1Edr(km, &dphi, &R, (double**) &Rij, &i, &j, ier);
+               KIM_API_process_d1Edr(km, &dphi, &R, &pRij, &i, &j, ier);
             }
             
             /* contribution to forces */
