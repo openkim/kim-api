@@ -40,6 +40,10 @@ subroutine setup_neighborlist_no_Rij_KIM_access(pkim, N, neighborList)
      stop
   endif
 
+  ! Call reinit to ensure that the model fully registers the new pointer values
+  !
+  ier = kim_api_model_reinit_f(pkim);
+
   return
 
 end subroutine setup_neighborlist_no_Rij_KIM_access
