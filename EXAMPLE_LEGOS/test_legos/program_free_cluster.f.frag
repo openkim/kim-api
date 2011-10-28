@@ -303,12 +303,10 @@ program TEST_NAME_STR
   'V23                      ' // &
   'V31                      ' // &
   'V12                      ")'
-  print '(I2,"   ",1PE25.15,1PE25.15,1PE25.15,' // &
-        '1PE25.15,1PE25.15,1PE25.15,1PE25.15,1PE25.15,1PE25.15)', &
-        (I,forces(:,I),virialperatom(:,I),I=1,N)
+  print '(I2,"   ",3ES25.15,6ES25.15)', (I,forces(:,I),virialperatom(:,I),I=1,N)
   print *
-  print '("Energy = ",1PE25.15,"                              Global Virial = ",' // &
-        '1PE25.15,1PE25.15,1PE25.15,1PE25.15,1PE25.15,1PE25.15)', energy, virialglobal
+  print '("Energy = ",ES25.15,"                              Global Virial = ",' // &
+        '6ES25.15)', energy, virialglobal
 
   ! Don't forget to free and/or deallocate
   call free(pNBC_Method) 

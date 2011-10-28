@@ -116,9 +116,9 @@ program TEST_NAME_STR
   print '("This is Test          : ",A)', testname
   print '("Results for KIM Model : ",A)', modelname
   print *
-  print '("Found minimum energy configuration to within",1PE25.15)', TOL
+  print '("Found minimum energy configuration to within",ES25.15)', TOL
   print *
-  print '("Energy/atom = ",1PE25.15,"; Spacing = ",1PE25.15)', FinalEnergy, FinalSpacing
+  print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', FinalEnergy, FinalSpacing
   print '(80(''-''))'
 
 
@@ -233,7 +233,7 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   endif
   Energies(1) = energy/N
   if (verbose) &
-     print '("Energy/atom = ",1PE25.15,"; Spacing = ",1PE25.15)', Energies(1), Spacings(1)
+     print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(1), Spacings(1)
 
   ! setup and compute for max spacing
   Spacings(3) = MaxSpacing
@@ -249,7 +249,7 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   endif
   Energies(3) = energy/N
   if (verbose) &
-     print '("Energy/atom = ",1PE25.15,"; Spacing = ",1PE25.15)', Energies(3), Spacings(3)
+     print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(3), Spacings(3)
 
   ! setup and compute for first intermediate spacing
   Spacings(2) = MinSpacing + (2.0 - Golden)*(MaxSpacing - MinSpacing)
@@ -265,7 +265,7 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   endif
   Energies(2) = energy/N
   if (verbose) &
-     print '("Energy/atom = ",1PE25.15,"; Spacing = ",1PE25.15)', Energies(2), Spacings(2)
+     print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(2), Spacings(2)
 
 
   ! iterate until convergence.
@@ -287,7 +287,7 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
      endif
      Energies(4) = energy/N
      if (verbose) &
-        print '("Energy/atom = ",1PE25.15,"; Spacing = ",1PE25.15)', Energies(4), Spacings(4)
+        print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(4), Spacings(4)
 
      ! determine the new interval
      if (Energies(4) .lt. Energies(2)) then

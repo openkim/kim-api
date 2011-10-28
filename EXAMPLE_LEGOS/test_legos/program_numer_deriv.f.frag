@@ -362,18 +362,18 @@ program TEST_NAME_STR
         endif
         forcediff_sumsq = forcediff_sumsq + term
         weight_sum = weight_sum + weight
-        print '(I6,2X,I3,2X,2E25.15,1PE15.5,1PE15.5,1PE15.5,2X,A4)', &
+        print '(I6,2X,I3,2X,2ES25.15,3ES15.5,2X,A4)', &
                I,J,forces(J,I),forces_num(J,I), &
                forcediff,forces_num_err(J,I),weight,passfail
      enddo
   enddo
   alpha = sqrt(forcediff_sumsq/weight_sum)/dble(DIM*N)
   print *
-  print '("alpha = |Force_model - Force_numer|_w/(DIM*N) = ",1PE15.5," (units of force)")', &
+  print '("alpha = |Force_model - Force_numer|_w/(DIM*N) = ",ES15.5," (units of force)")', &
         alpha
   print *
   print '(''Maximum term obtained for Atom = '',I6,'', Dir = '',I1,&
-     '', forcediff = '',1PE15.5, '', forcediff/force_model = '',1PE15.5)', &
+     '', forcediff = '',ES15.5, '', forcediff/force_model = '',ES15.5)', &
      Imax,Jmax,abs(forces(Jmax,Imax)-forces_num(Jmax,Imax)),           &
      abs(forces(Jmax,Imax)-forces_num(Jmax,Imax))/abs(forces(Jmax,Imax))
   print *
