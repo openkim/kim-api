@@ -586,12 +586,12 @@ void MODEL_DRIVER_NAME_LC_STR_init_(void *km, char* paramfile, int* length)
    double C;
    double Rzero;
    intptr_t* pkim = *((intptr_t**) km);
-   double* model_epsilon;
-   double* model_C;
-   double* model_Rzero;
    double* model_Pcutoff;
    double* model_cutoff;
    double* model_cutsq;
+   double* model_epsilon;
+   double* model_C;
+   double* model_Rzero;
    double* model_shift;
    int ier;
    double dummy;
@@ -1021,6 +1021,14 @@ static void setup_buffer(intptr_t* pkim, struct model_buffer* buffer)
       exit(1);
    }
 
+   /* get cutsq from KIM object */
+   buffer->cutsq = KIM_API_get_data(pkim, "PARAM_FIXED_cutsq", &ier);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
+      exit(1);
+   }
+
    /* get epsilon from KIM object */
    buffer->epsilon = (double*) KIM_API_get_data(pkim, "PARAM_FREE_epsilon", &ier);
    if (KIM_STATUS_OK > ier)
@@ -1039,14 +1047,6 @@ static void setup_buffer(intptr_t* pkim, struct model_buffer* buffer)
 
    /* get Rzero from KIM object */
    buffer->Rzero = (double*) KIM_API_get_data(pkim, "PARAM_FREE_Rzero", &ier);
-   if (KIM_STATUS_OK > ier)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
-      exit(1);
-   }
-
-   /* get cutsq from KIM object */
-   buffer->cutsq = KIM_API_get_data(pkim, "PARAM_FIXED_cutsq", &ier);
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
