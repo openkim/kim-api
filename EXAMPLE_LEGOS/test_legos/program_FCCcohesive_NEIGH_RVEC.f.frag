@@ -139,9 +139,9 @@ program TEST_NAME_STR
   print '("This is Test          : ",A)', testname
   print '("Results for KIM Model : ",A)', modelname
   print *
-  print '("Found minimum energy configuration to within",E25.15)', TOL
+  print '("Found minimum energy configuration to within",1PE25.15)', TOL
   print *
-  print '("Energy/atom = ",E25.15,"; Spacing = ",E25.15)', FinalEnergy, FinalSpacing
+  print '("Energy/atom = ",1PE25.15,"; Spacing = ",1PE25.15)', FinalEnergy, FinalSpacing
   print '(80(''-''))'
 
 
