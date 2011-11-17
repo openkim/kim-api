@@ -50,7 +50,18 @@ module kimservice
         integer ::errcode
         integer(kind=kim_intptr) :: kimmdl,kim_api_status_msg_f
 	end function kim_api_status_msg_f
+        
+        function kim_api_get_model_kim_str(modelname,lenstr,ier)
 
+#ifdef SYSTEM32
+	integer, parameter :: kim_intptr=4
+#else
+	integer,parameter :: kim_intptr = 8
+#endif
+	integer(kind=kim_intptr)::kim_api_get_model_kim_str,modelname
+	integer :: ier,lenstr
+	end function kim_api_get_model_kim_str
+         
         function kim_api_get_model_buffer_f(kimmdl,ier)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
@@ -676,6 +687,16 @@ integer,parameter :: kim_intptr = 8
             pstr = loc(str2send)
             kim_api_get_data_f = kim_api_get_data(kimmdl,pstr,error)
         end function kim_api_get_data_f
+         
+        integer(kind=kim_intptr) function kim_api_get_model_kim_str_f(nm,lenstr,error)
+	    character (len=*) ::nm
+            character (len=KEY_CHAR_LENGTH) :: str2send
+            character (len=KEY_CHAR_LENGTH) :: str; pointer (pstr,str)
+	    integer::error,lenstr
+            str2send = attachnull(trim(nm))
+            pstr = loc(str2send)
+            kim_api_get_model_kim_str_f = kim_api_get_model_kim_str(pstr,lenstr,error)
+        end function kim_api_get_model_kim_str_f
 
 	integer function kim_api_get_atypecode_f(kimmdl,nm,error)
 		integer(kind=kim_intptr) :: kimmdl

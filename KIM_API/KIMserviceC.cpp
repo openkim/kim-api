@@ -79,6 +79,11 @@ int KIM_API_model_init(void * kimmdl){
     if(mdl->model_init()) return KIM_STATUS_OK;
     return KIM_STATUS_FAIL;
 }
+
+void * KIM_API_get_model_kim_str(char * modelname,int * kimerr){
+    return KIM_API_model::get_model_kim_str(modelname,kimerr);
+}
+
 void KIM_API_model_compute(void *kimmdl,int *error){
  
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
@@ -369,6 +374,11 @@ int kim_api_model_init_f_(void * kimmdl){
     return KIM_API_model_init(*(KIM_API_model **)kimmdl);
 }
 
+void * kim_api_get_model_kim_str_(char ** modelname, int *ln,int *kimerr){
+    char * tmp =(char *)KIM_API_model::get_model_kim_str(*modelname,kimerr);
+    *ln = (int)strlen(tmp);
+    return (void *)tmp;
+}
 
 void kim_api_get_units_(void *kimmdl,char ** UnitsSystem, int *error){
     KIM_API_get_Units(*(KIM_API_model **)kimmdl,*UnitsSystem,error);

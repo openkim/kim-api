@@ -232,6 +232,9 @@ void * get_listParams(int *nVpar,int *error);
 void * get_listFreeParams(int *nVpar,int *error);
 void * get_listFixedParams(int *nVpar,int *error);
 
+static void * get_model_kim_str(char * modelname,int *kimerr);
+
+
 void * get_NBC_method(int *error);
 bool requiresFullNeighbors();
 

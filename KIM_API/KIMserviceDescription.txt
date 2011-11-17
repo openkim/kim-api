@@ -992,15 +992,34 @@ Arguments:
                                                                Test or Model.
                                                    
 
-Corresponding Fortran style interface:
+Corresponding Fortran style interface: 
 
-        integer function kim_api_get_atypecode_f(kimmdl, nm, error)
+        integer function kim_api_get_atypecode_f(kimmdl, nm,lenstr, error)
                 integer(kind=kim_intptr) :: kimmdl
                 character (len=*) :: nm
-                integer :: error
+                integer :: error, lenstr ! length of the string returned
         end function kim_api_get_atypecode_f
 
+******************************************************************************
 
+void * KIM_API_get_model_kim_str(char * modelname, int * error)
+    
+     This routines returns pointer to the total modelname.kim file as NULL terminated character string.
+
+Arguments:
+        char * modelname
+                 model name in KIM
+        int * error
+                error code: KIM_STATUS_OK                   -- successful completion, 
+                unsuccesful completion -- is the fatal error here, program stops and writes message into kim.log. 
+        
+Corresponding Fortran style interface:
+
+        function kim_api_get_model_kim_str_f(modelname,ier)
+		integer(kind=kim_intptr)::kim_api_get_model_kim_str_f,modelname
+	        integer :: ier
+        end function kim_api_get_model_kim_str_f
+         
 ******************************************************************************
 
 int KIM_API_get_neigh_mode(void *kimmdl,int *kimerror);
