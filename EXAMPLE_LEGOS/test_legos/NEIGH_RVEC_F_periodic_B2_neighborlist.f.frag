@@ -13,8 +13,8 @@ subroutine NEIGH_RVEC_F_periodic_B2_neighborlist(CellsPerHalfSide, cutoff,  &
   double precision,                    intent(in)  :: cutoff
   double precision,                    intent(in)  :: B2spacing
   integer,                             intent(in)  :: NN
-  integer, dimension(NN,1),            intent(out) :: neighborList
-  double precision, dimension(3,NN,1), intent(out) :: RijList
+  integer, dimension(NN+1,1),            intent(out) :: neighborList
+  double precision, dimension(3,NN+1,1), intent(out) :: RijList
   
   !-- Local variables
   double precision dx(3)
