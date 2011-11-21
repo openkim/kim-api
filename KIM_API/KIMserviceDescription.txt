@@ -1171,8 +1171,9 @@ Corresponding Fortran style interface:
 
 ******************************************************************************
 
-void  KIM_API_report_error(int line, char * file, char * usermsg, int  errorcode)
-    This routine prints error message. 
+int  KIM_API_report_error(int line, char * file, char * usermsg, int  errorcode)
+    This routine prints error message of errorcode. It returns KIM_STATUS_FAIL if
+    errorcode is not successfull KIM_STATUS. Otherwise it returns KIM_STATUS_OK.
 
    Arguments:
         int line
@@ -1186,10 +1187,10 @@ void  KIM_API_report_error(int line, char * file, char * usermsg, int  errorcode
  
 Corresponding Fortran style interface:
 
-       subroutine kim_api_report_error_f(line, fl,usermsg,errorcode)
+       integer function kim_api_report_error_f(line, fl,usermsg,errorcode)
                 integer :: errorcode,line
                 character(len=*) :: fl,usermsg
-       end subroutine kim_api_report_error_f
+       end function kim_api_report_error_f
 
              
 ******************************************************************************
