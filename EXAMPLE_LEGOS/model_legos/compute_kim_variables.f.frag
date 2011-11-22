@@ -17,4 +17,4 @@
     real*8 enepotdum(1);           pointer(penepot,enepotdum)
     real*8 virial;                 pointer(pvirial,virial)
     real*8, pointer :: coor(:,:),force(:,:),ene_pot(:)
-    integer comp_force, comp_enepot, comp_virial
+    integer comp_energy, comp_force, comp_enepot, comp_virial

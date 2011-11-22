@@ -24,7 +24,7 @@
              dEidr = 0.5d0*dphi                             !
              if (comp_enepot.eq.1) then                     !
                 ene_pot(i) = ene_pot(i) + 0.5d0*phi         ! accumulate energy
-             else                                           !
+             elseif (comp_energy.eq.1) then                 !
                 energy = energy + 0.5d0*phi                 ! full neigh case
              endif                                          !
              if (comp_virial.eq.1) then                     !

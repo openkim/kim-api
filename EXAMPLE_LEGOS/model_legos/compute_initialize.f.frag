@@ -72,21 +72,21 @@
        return
     endif
 
-    penergy = kim_api_get_data_f(pkim,"energy",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-       return
-    endif
-
     pcoor = kim_api_get_data_f(pkim,"coordinates",ier)
     if (ier.lt.KIM_STATUS_OK) then
        call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
        return
     endif
     
-    ! Check to see if we have been asked to compute the forces, energyperatom, 
+    ! Check to see if we have been asked to compute the energy, forces, energyperatom, 
     ! and virial
     !
+    comp_energy = kim_api_isit_compute_f(pkim,"energy",ier)
+    if (ier.lt.KIM_STATUS_OK) then
+       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute", ier)
+       return
+    endif
+
     comp_force  = kim_api_isit_compute_f(pkim,"forces",ier)
     if (ier.lt.KIM_STATUS_OK) then
        call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute", ier)
@@ -107,6 +107,13 @@
     
     ! Cast to F90 arrays
     !
+    if (comp_energy.eq.1) then
+       penergy = kim_api_get_data_f(pkim,"energy",ier)
+       if (ier.lt.KIM_STATUS_OK) then
+          call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
+          return
+       endif
+    endif
     if (comp_force.eq.1) then 
        pforce  = kim_api_get_data_f(pkim,"forces",ier)
        if (ier.lt.KIM_STATUS_OK) then
@@ -150,10 +157,7 @@
     
     ! Initialize potential energies, forces, virial term
     !
-    if (comp_enepot.eq.1) then
-       ene_pot(1:numberOfAtoms) = 0.d0
-    else
-       energy = 0.d0
-    endif
+    if (comp_enepot.eq.1) ene_pot(1:numberOfAtoms) = 0.d0
+    if (comp_energy.eq.1) energy = 0.d0
     if (comp_force.eq.1)  force(1:3,1:numberOfAtoms) = 0.d0
     if (comp_virial.eq.1) virial = 0.d0
