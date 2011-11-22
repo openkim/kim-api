@@ -56,6 +56,7 @@ struct model_buffer {
    int NBC;
    int HalfOrFull;
    int IterOrLoca;
+   int energy_ind;
    int forces_ind;
    int energyPerAtom_ind;
    int process_d1Edr_ind;
@@ -63,7 +64,6 @@ struct model_buffer {
    
    int* numberOfAtoms;
    int atomTypes_ind;
-   double* energy;
    int coordinates_ind;
    int* numberContributingAtoms;
    int boxlength_ind;
@@ -158,6 +158,7 @@ static void compute(void* km, int* ier)
    int currentAtom;
    int* neighListOfCurrentAtom;
    struct model_buffer* buffer;
+   int comp_energy;
    int comp_force;
    int comp_energyPerAtom;
    int comp_process_d1Edr;
@@ -200,7 +201,7 @@ static void compute(void* km, int* ier)
    HalfOrFull = buffer->HalfOrFull;
    IterOrLoca = buffer->IterOrLoca;
    model_index_shift = buffer->model_index_shift;
-   /* unpack the Model's parameters stored in the buffer object */
+   /* unpack the Model's parameters stored in the KIM API object */
    cutoff = buffer->cutoff;
    cutsq = buffer->cutsq;
    epsilon = buffer->epsilon;
@@ -210,6 +211,12 @@ static void compute(void* km, int* ier)
 
    
    /* check to see if we have been asked to compute the forces, energyPerAtom, and d1Edr */
+   comp_energy = KIM_API_isit_compute_byI(pkim, buffer->energy_ind, ier);
+   if (KIM_STATUS_OK > *ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_isit_compute_byI", *ier);
+      return;
+   }
    comp_force = KIM_API_isit_compute_byI(pkim, buffer->forces_ind, ier);
    if (KIM_STATUS_OK > *ier)
    {
@@ -237,7 +244,6 @@ static void compute(void* km, int* ier)
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data_byI", *ier);
       return;
    }
-   energy = buffer->energy;
    coords = (double*) KIM_API_get_data_byI(pkim, buffer->coordinates_ind, ier);
    if (KIM_STATUS_OK > *ier)
    {
@@ -265,6 +271,16 @@ static void compute(void* km, int* ier)
          return;
       }
    }
+
+   if (comp_energy)
+   {
+      energy = (double*) KIM_API_get_data_byI(pkim, buffer->energy_ind, ier);
+      if (KIM_STATUS_OK > *ier)
+      {
+         KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data_byI", *ier);
+         return;
+      }
+   }	   
 
    if (comp_force)
    {
@@ -307,7 +323,7 @@ static void compute(void* km, int* ier)
          energyPerAtom[i] = 0.0;
       }
    }
-   else
+   else if (comp_energy)
    {
       *energy = 0.0;
    }
@@ -521,7 +537,7 @@ static void compute(void* km, int* ier)
                /* if half list add energy for the other atom in the pair */
                if ((1 == HalfOrFull) && (j < numberContrib)) energyPerAtom[j] += 0.5*phi;
             }
-            else
+            else if (comp_energy)
             {
                if ((1 == HalfOrFull) && (j < numberContrib))
                {
@@ -556,7 +572,7 @@ static void compute(void* km, int* ier)
    
    /* perform final tasks */
    
-   if (comp_energyPerAtom)
+   if (comp_energyPerAtom && comp_energy)
    {
       *energy = 0.0;
       for (k = 0; k < *nAtoms; ++k)
@@ -924,6 +940,12 @@ static void setup_buffer(intptr_t* pkim, struct model_buffer* buffer)
       buffer->IterOrLoca = 2;   /* for CLUSTER NBC */
    }
 
+   buffer->energy_ind = KIM_API_get_index(pkim, "energy", &ier);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_index", ier);
+      exit(1);
+   }
    buffer->forces_ind = KIM_API_get_index(pkim, "forces", &ier);
    if (KIM_STATUS_OK > ier)
    {
@@ -956,13 +978,6 @@ static void setup_buffer(intptr_t* pkim, struct model_buffer* buffer)
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_index", ier);
-      exit(1);
-   }
-
-   buffer->energy = (double*) KIM_API_get_data(pkim, "energy", &ier);
-   if (KIM_STATUS_OK > ier)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
       exit(1);
    }
 

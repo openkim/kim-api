@@ -66,7 +66,6 @@ struct model_buffer {
    
    int* numberOfAtoms;
    int atomTypes_ind;
-   double* energy;
    int coordinates_ind;
    int* numberContributingAtoms;
    int boxlength_ind;
@@ -263,8 +262,12 @@ static void compute(void* km, int* ier)
 
    if (comp_energy)
    {
-      energy = buffer->energy;
-
+      energy = (double*) KIM_API_get_data_byI(pkim, buffer->energy_ind, ier);
+      if (KIM_STATUS_OK > *ier)
+      {
+         KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data_byI", *ier);
+         return;
+      }
    }	   
 
    if (comp_force)
@@ -555,7 +558,7 @@ static void compute(void* km, int* ier)
    
    /* perform final tasks */
    
-   if (comp_energyPerAtom .and. comp_energy)
+   if (comp_energyPerAtom && comp_energy)
    {
       *energy = 0.0;
       for (k = 0; k < *nAtoms; ++k)
