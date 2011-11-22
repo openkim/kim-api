@@ -69,6 +69,7 @@ static void compute(void* km, int* ier)
    int k;
    int numOfAtomNeigh;
    int currentAtom;
+   int comp_energy;
    int comp_force;
    int comp_energyPerAtom;
    int comp_virial;
@@ -92,6 +93,32 @@ static void compute(void* km, int* ier)
    double* energyPerAtom;
    double* virial;
    int* neighListOfCurrentAtom;
+
+   /* check to see if we have been asked to compute the forces, energyPerAtom, energy and virial */
+   comp_energy = KIM_API_isit_compute(pkim, "energy", ier);
+   if (KIM_STATUS_OK > *ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_isit_compute", *ier);
+      return;
+   }
+   comp_force = KIM_API_isit_compute(pkim, "forces", ier);
+   if (KIM_STATUS_OK > *ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_isit_compute", *ier);
+      return;
+   }
+   comp_energyPerAtom = KIM_API_isit_compute(pkim, "energyPerAtom", ier);
+   if (KIM_STATUS_OK > *ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_isit_compute", *ier);
+      return;
+   }
+   comp_virial = KIM_API_isit_compute(pkim, "virial", ier);
+   if (KIM_STATUS_OK > *ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_isit_compute", *ier);
+      return;
+   }
 
    /* unpack data from KIM object */
    nAtoms = (int*) KIM_API_get_data(pkim, "numberOfAtoms", ier);
@@ -166,12 +193,6 @@ static void compute(void* km, int* ier)
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", *ier);
       return;
    }
-   energy = (double*) KIM_API_get_data(pkim, "energy", ier);
-   if (KIM_STATUS_OK > *ier)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", *ier);
-      return;
-   }
    coords = (double*) KIM_API_get_data(pkim, "coordinates", ier);
    if (KIM_STATUS_OK > *ier)
    {
@@ -179,27 +200,48 @@ static void compute(void* km, int* ier)
       return;
    }
 
-   /* check to see if we have been asked to compute the forces, energyPerAtom, and virial */
-   comp_force = KIM_API_isit_compute(pkim, "forces", ier);
-   if (KIM_STATUS_OK > *ier)
+   if (comp_energy)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_isit_compute", *ier);
-      return;
-   }
-   comp_energyPerAtom = KIM_API_isit_compute(pkim, "energyPerAtom", ier);
-   if (KIM_STATUS_OK > *ier)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_isit_compute", *ier);
-      return;
-   }
-   comp_virial = KIM_API_isit_compute(pkim, "virial", ier);
-   if (KIM_STATUS_OK > *ier)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_isit_compute", *ier);
-      return;
+      energy = (double*) KIM_API_get_data(pkim, "energy", ier);
+      if (KIM_STATUS_OK > *ier)
+      {
+         KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", *ier);
+         return;
+      }
    }
 
-   /* check to be sure the atom types are correct */
+   if (comp_force)
+   {
+      force = (double*) KIM_API_get_data(pkim, "forces", ier);
+      if (KIM_STATUS_OK > *ier)
+      {
+         KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", *ier);
+         return;
+      }
+   }
+
+   if (comp_energyPerAtom)
+   {
+      energyPerAtom = (double*) KIM_API_get_data(pkim, "energyPerAtom", ier);
+      if (KIM_STATUS_OK > *ier)
+      {
+         KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", *ier);
+         return;
+      }
+   }
+
+   if (comp_virial)
+   {
+      virial = (double*) KIM_API_get_data(pkim, "virial", ier);
+      if (KIM_STATUS_OK > *ier)
+      {
+         KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", *ier);
+         return;
+      }
+   }
+
+   /* Check to be sure that the atom types are correct */
+   /**/
    *ier = KIM_STATUS_FAIL; /* assume an error */
    for (i = 0; i < *nAtoms; ++i)
    {
@@ -214,30 +256,18 @@ static void compute(void* km, int* ier)
    /* initialize potential energies, forces, and virial term */
    if (comp_energyPerAtom)
    {
-      energyPerAtom = (double*) KIM_API_get_data(pkim, "energyPerAtom", ier);
-      if (KIM_STATUS_OK > *ier)
-      {
-         KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", *ier);
-         return;
-      }
       for (i = 0; i < *nAtoms; ++i)
       {
          energyPerAtom[i] = 0.0;
       }
    }
-   else
+   else if (comp_energy)
    {
       *energy = 0.0;
    }
 
    if (comp_force)
    {
-      force = (double*) KIM_API_get_data(pkim, "forces", ier);
-      if (KIM_STATUS_OK > *ier)
-      {
-         KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", *ier);
-         return;
-      }
       for (i = 0; i < *nAtoms; ++i)
       {
          for (k = 0; k < DIM; ++k)
@@ -249,12 +279,6 @@ static void compute(void* km, int* ier)
 
    if (comp_virial)
    {
-      virial = (double*) KIM_API_get_data(pkim, "virial", ier);
-      if (KIM_STATUS_OK > *ier)
-      {
-         KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", *ier);
-         return;
-      }
       *virial = 0.0;
    }
 
@@ -267,7 +291,7 @@ static void compute(void* km, int* ier)
       return;
    }
 
-   /* compute energy and forces */
+   /* Compute energy and forces */
    *ier = KIM_API_get_full_neigh(pkim, 0, 1, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
    while (KIM_STATUS_OK == *ier)
    {
@@ -300,7 +324,7 @@ static void compute(void* km, int* ier)
             {
                energyPerAtom[currentAtom] += 0.5*phi;
             }
-            else
+            else if (comp_energy)
             {
                *energy += 0.5*phi;
             }
@@ -335,7 +359,7 @@ static void compute(void* km, int* ier)
       *virial = -*virial/( (double) DIM); /* definition of virial term */
    }
 
-   if (comp_energyPerAtom)
+   if (comp_energyPerAtom && comp_energy)
    {
       *energy = 0.0;
       for (i = 0; i < *nAtoms; ++i)

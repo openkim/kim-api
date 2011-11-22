@@ -208,7 +208,7 @@ integer,                  intent(out) :: ier
 double precision :: Rij(DIM)
 double precision :: r,Rsqij,phi,dphi,g,dg,dU,dphieff
 double precision :: dphii,dUi,Ei,dphij,dUj,Ej
-integer :: i,j,jj,numnei,comp_force,comp_enepot,comp_virial
+integer :: i,j,jj,numnei,comp_force,comp_enepot,comp_virial,comp_energy
 double precision, allocatable :: rho(:),U(:),derU(:)
 integer, allocatable, target :: nei1atom_substitute(:)
 character*80 :: error_message
@@ -294,8 +294,14 @@ else
 endif
 
 ! Check to see if we have been asked to compute the forces, energyperatom,
-! and virial
+! energy and virial
 !
+comp_energy = kim_api_isit_compute_f(pkim,"energy",ier)
+if (ier.lt.KIM_STATUS_OK) then
+   call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute_f", ier)
+   return
+endif
+
 comp_force = kim_api_isit_compute_f(pkim,"forces",ier)
 if (ier.lt.KIM_STATUS_OK) then
    call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute_f", ier)
@@ -328,12 +334,6 @@ if (ier.lt.KIM_STATUS_OK) then
    return
 endif
 
-penergy = kim_api_get_data_f(pkim,"energy",ier)
-if (ier.lt.KIM_STATUS_OK) then
-   call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-   return
-endif
-
 pcoor = kim_api_get_data_f(pkim,"coordinates",ier)
 if (ier.lt.KIM_STATUS_OK) then
    call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
@@ -355,6 +355,14 @@ endif
 
 if (NBC.eq.1) then
    pboxlength = kim_api_get_data_f(pkim,"boxlength",ier)
+   if (ier.lt.KIM_STATUS_OK) then
+      call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+      return
+   endif
+endif
+
+if (comp_energy.eq.1) then
+   penergy = kim_api_get_data_f(pkim,"energy",ier)
    if (ier.lt.KIM_STATUS_OK) then
       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
       return
@@ -402,11 +410,8 @@ ier = KIM_STATUS_OK ! everything is ok
 
 ! Initialize potential energies, forces, virial term, electron density
 !
-if (comp_enepot.eq.1) then
-   ene_pot(1:N) = 0.d0
-else
-   energy = 0.d0
-endif
+if (comp_enepot.eq.1) ene_pot(1:N) = 0.d0
+if (comp_energy.eq.1) energy = 0.d0
 if (comp_force.eq.1)  force(1:3,1:N) = 0.d0
 if (comp_virial.eq.1) virial = 0.d0
 allocate( rho(N) )  ! pair functional electron density
@@ -506,7 +511,7 @@ do i = 1,N
    !
    if (comp_enepot.eq.1) then                     ! accumulate embedding energy contribution
       ene_pot(i) = ene_pot(i) + U(i)
-   else
+   elseif (comp_energy.eq.1) then
       energy = energy + U(i)
    endif
 
@@ -603,7 +608,7 @@ do
          if (comp_enepot.eq.1) then
             ene_pot(i) = ene_pot(i) + Ei          ! accumulate energy Ei
             ene_pot(j) = ene_pot(j) + Ej          ! accumulate energy Ej
-         else
+         elseif (comp_energy.eq.1) then
             energy = energy + Ei                  ! accumulate energy
             energy = energy + Ej                  ! accumulate energy
          endif
@@ -628,7 +633,8 @@ do
 enddo  ! infinite do loop (terminated by exit statements above)
 
 if (comp_virial.eq.1) virial = - virial/DIM         ! definition of virial term
-if (comp_enepot.eq.1) energy = sum(ene_pot(1:N))    ! compute total energy
+if (comp_enepot.eq.1 .and. comp_energy.eq.1) &
+   energy = sum(ene_pot(1:N))                       ! compute total energy
 
 ! Free temporary storage
 !

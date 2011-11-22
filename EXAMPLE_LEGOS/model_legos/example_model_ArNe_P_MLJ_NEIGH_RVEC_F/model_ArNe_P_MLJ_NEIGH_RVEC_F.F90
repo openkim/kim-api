@@ -74,8 +74,31 @@ contains
     real*8 Rij(3,1);               pointer(pRij,Rij)
     integer nei1atom(1);           pointer(pnei1atom,nei1atom)
     real*8, pointer :: coor(:,:),force(:,:),ene_pot(:)
-    integer :: comp_force, comp_enepot, comp_virial
-    
+    integer :: comp_force, comp_enepot, comp_virial, comp_energy
+
+    ! Check to see if we have been asked to compute the forces, energyperatom, 
+    ! energy and virial
+    comp_energy = kim_api_isit_compute_f(pkim,"energy",ier)
+    if (ier.lt.KIM_STATUS_OK) then
+       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute", ier)
+       return
+    endif
+    comp_force  = kim_api_isit_compute_f(pkim,"forces",ier)
+    if (ier.lt.KIM_STATUS_OK) then
+       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute", ier)
+       return
+    endif
+    comp_enepot = kim_api_isit_compute_f(pkim,"energyPerAtom",ier)
+    if (ier.lt.KIM_STATUS_OK) then
+       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute", ier)
+       return
+    endif
+    comp_virial = kim_api_isit_compute_f(pkim,"virial",ier)
+    if (ier.lt.KIM_STATUS_OK) then
+       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute", ier)
+       return
+    endif
+
     ! Unpack data from KIM object
     !
     pnAtoms = kim_api_get_data_f(pkim,"numberOfAtoms",ier)
@@ -150,35 +173,20 @@ contains
        return
     endif
 
-    penergy = kim_api_get_data_f(pkim,"energy",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-       return
-    endif
-
     pcoor = kim_api_get_data_f(pkim,"coordinates",ier)
     if (ier.lt.KIM_STATUS_OK) then
        call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
        return
     endif
     
-    ! Check to see if we have been asked to compute the forces, energyperatom, and virial
-    comp_force  = kim_api_isit_compute_f(pkim,"forces",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute", ier)
-       return
+    if (comp_energy.eq.1) then 
+       penergy = kim_api_get_data_f(pkim,"energy",ier)
+       if (ier.lt.KIM_STATUS_OK) then
+          call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
+          return
+       endif
     endif
-    comp_enepot = kim_api_isit_compute_f(pkim,"energyPerAtom",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute", ier)
-       return
-    endif
-    comp_virial = kim_api_isit_compute_f(pkim,"virial",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute", ier)
-       return
-    endif
-    
+   
     ! Cast to F90 arrays
     if (comp_force.eq.1) then 
        pforce  = kim_api_get_data_f(pkim,"forces",ier)
@@ -220,11 +228,8 @@ contains
     
     ! Initialize potential energies, forces, virial term
     !
-    if (comp_enepot.eq.1) then
-       ene_pot(1:numberOfAtoms) = 0.d0
-    else
-       energy = 0.d0
-    endif
+    if (comp_enepot.eq.1) ene_pot(1:numberOfAtoms) = 0.d0
+    if (comp_energy.eq.1) energy = 0.d0
     if (comp_force.eq.1)  force(1:3,1:numberOfAtoms) = 0.d0
     if (comp_virial.eq.1) virial = 0.d0
 
@@ -273,7 +278,7 @@ contains
              dEidr = 0.5d0*dphi                             ! compute dEidr
              if (comp_enepot.eq.1) then                     !
                 ene_pot(i) = ene_pot(i) + 0.5d0*phi         ! accumulate energy
-             else                                           !
+             elseif (comp_energy.eq.1) then                 !
                 energy = energy + 0.5d0*phi                 ! full neigh case
              endif                                          !
              if (comp_virial.eq.1) then                     !
@@ -288,7 +293,8 @@ contains
     enddo
     
     if (comp_virial.eq.1) virial = - virial/DIM                   ! definition of virial term
-    if (comp_enepot.eq.1) energy = sum(ene_pot(1:numberOfAtoms))  ! compute total energy
+    if (comp_enepot.eq.1 .and. comp_energy.eq.1) &
+       energy = sum(ene_pot(1:numberOfAtoms))                     ! compute total energy
     
   end subroutine Compute_Energy_Forces
   
