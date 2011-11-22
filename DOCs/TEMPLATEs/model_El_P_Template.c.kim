@@ -83,13 +83,13 @@ reinit                  method       none       none                    []      
 
 cutoff                  real*8       length     standard                []
 
-energy                  real*8       energy     standard                []
+energy                  real*8       energy     standard                []                 optional
 
 forces                  real*8       force      standard                [numberOfAtoms,3]  optional
 
 energyPerAtom           real*8       energy     standard                [numberOfAtoms]    optional
 
-virial                  real*8       pressure   standard                []                 optional
+virialGlobal            real*8       energy     standard                [6]                optional
 
 
 #######################################################################################################

@@ -214,19 +214,19 @@ integer, allocatable, target :: nei1atom_substitute(:)
 character*80 :: error_message
 
 !-- KIM variables
-integer N;              pointer(pN,N)
-real*8 energy;          pointer(penergy,energy)
-real*8 coordum(DIM,1);  pointer(pcoor,coordum)
-real*8 forcedum(DIM,1); pointer(pforce,forcedum)
-real*8 enepotdum(1);    pointer(penepot,enepotdum)
-real*8 boxlength(DIM);  pointer(pboxlength,boxlength)
-real*8 Rij_list(DIM,1); pointer(pRij_list,Rij_list)
-integer numContrib;     pointer(pnumContrib,numContrib)
-integer nei1atom(1);    pointer(pnei1atom,nei1atom)
-integer atomTypes(1);   pointer(patomTypes,atomTypes)
-real*8 virial;          pointer(pvirial,virial)
-character*64 NBC_Method; pointer(pNBC_Method,NBC_Method)
-real*8, pointer :: coor(:,:),force(:,:),ene_pot(:)
+integer N;                 pointer(pN,N)
+real*8 energy;             pointer(penergy,energy)
+real*8 coordum(DIM,1);     pointer(pcoor,coordum)
+real*8 forcedum(DIM,1);    pointer(pforce,forcedum)
+real*8 enepotdum(1);       pointer(penepot,enepotdum)
+real*8 boxlength(DIM);     pointer(pboxlength,boxlength)
+real*8 Rij_list(DIM,1);    pointer(pRij_list,Rij_list)
+integer numContrib;        pointer(pnumContrib,numContrib)
+integer nei1atom(1);       pointer(pnei1atom,nei1atom)
+integer atomTypes(1);      pointer(patomTypes,atomTypes)
+real*8 virialGlobaldum(1); pointer(pvirialGlobal,virialGlobaldum)
+character*64 NBC_Method;   pointer(pNBC_Method,NBC_Method)
+real*8, pointer :: coor(:,:),force(:,:),ene_pot(:),virial_global(:)
 integer IterOrLoca
 integer HalfOrFull
 integer NBC
@@ -314,7 +314,7 @@ if (ier.lt.KIM_STATUS_OK) then
    return
 endif
 
-comp_virial = kim_api_isit_compute_f(pkim,"virial",ier)
+comp_virial = kim_api_isit_compute_f(pkim,"virialGlobal",ier)
 if (ier.lt.KIM_STATUS_OK) then
    call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute_f", ier)
    return
@@ -388,11 +388,12 @@ if (comp_enepot.eq.1) then
 endif
 
 if (comp_virial.eq.1) then
-   pvirial = kim_api_get_data_f(pkim,"virial",ier)
+   pvirialGlobal = kim_api_get_data_f(pkim,"virialGlobal",ier)
    if (ier.lt.KIM_STATUS_OK) then
       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
       return
    endif
+   call toRealArrayWithDescriptor1d(virialGlobaldum,virial_global,6)
 endif
 
 call toRealArrayWithDescriptor2d(coordum,coor,DIM,N)
@@ -413,7 +414,7 @@ ier = KIM_STATUS_OK ! everything is ok
 if (comp_enepot.eq.1) ene_pot(1:N) = 0.d0
 if (comp_energy.eq.1) energy = 0.d0
 if (comp_force.eq.1)  force(1:3,1:N) = 0.d0
-if (comp_virial.eq.1) virial = 0.d0
+if (comp_virial.eq.1) virial_global = 0.d0
 allocate( rho(N) )  ! pair functional electron density
 rho(1:N) = 0.d0
 allocate( U(N) )    ! embedding energy
@@ -613,10 +614,15 @@ do
             energy = energy + Ej                  ! accumulate energy
          endif
 
-         ! contribution to virial pressure
+         ! contribution to virial tensor
          !
          if (comp_virial.eq.1) then
-            virial = virial + r*dphieff           ! contribution to virial
+            virial_global(1) = virial_global(1) + Rij(1)*Rij(1)*dphieff/r
+            virial_global(2) = virial_global(2) + Rij(2)*Rij(2)*dphieff/r
+            virial_global(3) = virial_global(3) + Rij(3)*Rij(3)*dphieff/r
+            virial_global(4) = virial_global(4) + Rij(2)*Rij(3)*dphieff/r
+            virial_global(5) = virial_global(5) + Rij(1)*Rij(3)*dphieff/r
+            virial_global(6) = virial_global(6) + Rij(1)*Rij(2)*dphieff/r
          endif
 
          ! contribution to forces
@@ -632,7 +638,6 @@ do
 
 enddo  ! infinite do loop (terminated by exit statements above)
 
-if (comp_virial.eq.1) virial = - virial/DIM         ! definition of virial term
 if (comp_enepot.eq.1 .and. comp_energy.eq.1) &
    energy = sum(ene_pot(1:N))                       ! compute total energy
 

@@ -70,10 +70,10 @@ contains
     real*8 coordum(DIM,1);         pointer(pcoor,coordum)
     real*8 forcedum(DIM,1);        pointer(pforce,forcedum)
     real*8 enepotdum(1);           pointer(penepot,enepotdum)
-    real*8 virial;                 pointer(pvirial,virial)
+    real*8 virialGlobaldum(1);     pointer(pvirialGlobal,virialGlobaldum)
     real*8 Rij(3,1);               pointer(pRij,Rij)
     integer nei1atom(1);           pointer(pnei1atom,nei1atom)
-    real*8, pointer :: coor(:,:),force(:,:),ene_pot(:)
+    real*8, pointer :: coor(:,:),force(:,:),ene_pot(:),virial_global(:)
     integer :: comp_force, comp_enepot, comp_virial, comp_energy
 
     ! Check to see if we have been asked to compute the forces, energyperatom, 
@@ -93,7 +93,7 @@ contains
        call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute", ier)
        return
     endif
-    comp_virial = kim_api_isit_compute_f(pkim,"virial",ier)
+    comp_virial = kim_api_isit_compute_f(pkim,"virialGlobal",ier)
     if (ier.lt.KIM_STATUS_OK) then
        call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute", ier)
        return
@@ -205,11 +205,12 @@ contains
        call toRealArrayWithDescriptor1d(enepotdum,ene_pot,numberOfAtoms)
     endif
     if (comp_virial.eq.1) then
-       pvirial = kim_api_get_data_f(pkim,"virial",ier)
+       pvirialGlobal = kim_api_get_data_f(pkim,"virialGlobal",ier)
        if (ier.lt.KIM_STATUS_OK) then
           call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
           return
        endif
+       call toRealArrayWithDescriptor1d(virialGlobaldum,virial_global,6)
     endif
 
     call toRealArrayWithDescriptor2d(coordum,coor,DIM,numberOfAtoms)
@@ -231,7 +232,7 @@ contains
     if (comp_enepot.eq.1) ene_pot(1:numberOfAtoms) = 0.d0
     if (comp_energy.eq.1) energy = 0.d0
     if (comp_force.eq.1)  force(1:3,1:numberOfAtoms) = 0.d0
-    if (comp_virial.eq.1) virial = 0.d0
+    if (comp_virial.eq.1) virial_global = 0.d0
 
 
     !  Compute energy and forces
@@ -281,8 +282,13 @@ contains
              elseif (comp_energy.eq.1) then                 !
                 energy = energy + 0.5d0*phi                 ! full neigh case
              endif                                          !
-             if (comp_virial.eq.1) then                     !
-                virial = virial + r*dEidr                   ! accumul. virial=sum r(dV/dr)
+             if (comp_virial.eq.1) then                     ! accumul. virial
+                virial_global(1) = virial_global(1) + Rij(1,jj)*Rij(1,jj)*dEidr/r
+                virial_global(2) = virial_global(2) + Rij(2,jj)*Rij(2,jj)*dEidr/r
+                virial_global(3) = virial_global(3) + Rij(3,jj)*Rij(3,jj)*dEidr/r
+                virial_global(4) = virial_global(4) + Rij(2,jj)*Rij(3,jj)*dEidr/r
+                virial_global(5) = virial_global(5) + Rij(1,jj)*Rij(3,jj)*dEidr/r
+                virial_global(6) = virial_global(6) + Rij(1,jj)*Rij(2,jj)*dEidr/r
              endif                                          !
              if (comp_force.eq.1) then                      !
                 force(:,i) = force(:,i) + dEidr*Rij(:,jj)/r ! accumulate force on atom i
@@ -292,7 +298,6 @@ contains
        enddo
     enddo
     
-    if (comp_virial.eq.1) virial = - virial/DIM                   ! definition of virial term
     if (comp_enepot.eq.1 .and. comp_energy.eq.1) &
        energy = sum(ene_pot(1:numberOfAtoms))                     ! compute total energy
     

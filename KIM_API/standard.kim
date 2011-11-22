@@ -1011,42 +1011,6 @@ energyPerAtom           real*8       energy     unspecified             [numberO
 
 ################################################################################
 #
-# stressPerAtom : An array of floating-point numbers corresponding to the
-#                 virial-stress tensor for each atom in the configuration
-#                 passed between the Model and Test.
-#
-# This argument should, ideally, be optional to ensure maximum Model/Test
-# compatibility.
-#
-# Note: This argument is deprecated and will most likely be removed in future
-#       releases.  It will be replaced by a vector containing the values of
-#       `interatomic' force vectors, from which the stress-per-atom can be
-#       computed.
-#
-# Name                  Type         Unit       SystemU/Scale           Shape
-#
-stressPerAtom           real*8       pressure   unspecified             [numberOfAtoms,3,3]
-
-################################################################################
-#
-# virial : A floating-point number corresponding to the total virial for the
-#          configuration of atoms passed between the Model and Test.
-#
-# This argument should, ideally, be optional to ensure maximum Model/Test
-# compatibility.
-#
-# Note: This argument is deprecated and will most likely be removed in future
-#       releases.  It will be replaced by a vector containing the values of
-#       `interatomic' force vectors, from which the total virial can be
-#       computed.
-#
-# Name                  Type         Unit       SystemU/Scale           Shape
-#
-virial                  real*8       pressure   unspecified             []
-
-
-################################################################################
-#
 # virialGlobal : A symmetric second rank tensor corresponding to the total virial for the
 #          configuration of atoms passed between the Model and Test.
 #
@@ -1058,7 +1022,7 @@ virial                  real*8       pressure   unspecified             []
 #
 # Name                  Type         Unit       SystemU/Scale           Shape
 #
-virialGlobal            real*8       pressure   unspecified             [6]
+virialGlobal            real*8       energy     unspecified             [6]
 
 ################################################################################
 #
@@ -1073,7 +1037,7 @@ virialGlobal            real*8       pressure   unspecified             [6]
 #
 # Name                  Type         Unit       SystemU/Scale           Shape
 #
-virialPerAtom            real*8       pressure   unspecified             [numberOfAtoms,6]
+virialPerAtom            real*8      energy     unspecified             [numberOfAtoms,6]
 
 ################################################################################
 #

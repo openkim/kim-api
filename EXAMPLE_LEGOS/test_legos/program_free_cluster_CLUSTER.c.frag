@@ -50,7 +50,6 @@ int main(int argc, char* argv[])
    double* energy;
    double* forces;
    double* virialGlobal;
-   double* virialPerAtom;
    int middleDum;
 
    /* Get KIM Model name to use */
@@ -138,13 +137,6 @@ int main(int argc, char* argv[])
       exit(1);
    }
 
-   virialPerAtom = (double*) KIM_API_get_data(pkim, "virialPerAtom", &status);
-   if (KIM_STATUS_OK > status)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", status);
-      exit(1);
-   }
-   
    /* Set values */
    *numberOfAtoms   = NCLUSTERATOMS;
    *numberAtomTypes = ATYPES;
@@ -179,29 +171,17 @@ int main(int argc, char* argv[])
           "X                        "
           "Y                        "
           "Z                        "
-          "V11                      "
-          "V22                      "
-          "V33                      "
-          "V23                      "
-          "V31                      "
-          "V12                      "
           "\n");
    for (i = 0; i < *numberOfAtoms; ++i)
    {
-      printf("%2i   %25.15e%25.15e%25.15e%25.15e%25.15e%25.15e%25.15e%25.15e%25.15e\n", i,
+      printf("%2i   %25.15e%25.15e%25.15e\n", i,
              forces[i*DIM + 0],
              forces[i*DIM + 1],
-             forces[i*DIM + 2],
-             virialPerAtom[i*6 + 0],
-             virialPerAtom[i*6 + 1],
-             virialPerAtom[i*6 + 2],
-             virialPerAtom[i*6 + 3],
-             virialPerAtom[i*6 + 4],
-             virialPerAtom[i*6 + 5]
+             forces[i*DIM + 2]
             );
    }
    printf("\n");
-   printf("Energy = %25.15e                              Global Virial = %25.15e%25.15e%25.15e%25.15e%25.15e%25.15e\n",
+   printf("Energy = %25.15e, Global Virial = %25.15e%25.15e%25.15e%25.15e%25.15e%25.15e\n",
           *energy,
           virialGlobal[0],
           virialGlobal[1],

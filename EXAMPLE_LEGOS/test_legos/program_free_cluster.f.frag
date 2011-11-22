@@ -66,10 +66,9 @@ program TEST_NAME_STR
   real*8 virialglobdum(1); pointer(pvirialglob,virialglobdum)
   real*8 coordum(DIM,1);   pointer(pcoor,coordum)
   real*8 forcesdum(DIM,1); pointer(pforces,forcesdum)
-  real*8 virialdum(DIM,1); pointer(pvirial,virialdum)
   real*8 boxlength(DIM);   pointer(pboxlength,boxlength)
   integer I
-  real*8, pointer  :: coords(:,:), forces(:,:), virialperatom(:,:), virialglobal(:)
+  real*8, pointer  :: coords(:,:), forces(:,:), virialglobal(:)
   integer, pointer :: atomTypes(:)
   integer middleDum
 
@@ -246,13 +245,6 @@ program TEST_NAME_STR
   endif
   call toRealArrayWithDescriptor2d(forcesdum, forces, DIM, N)
 
-  pvirial = kim_api_get_data_f(pkim, "virialPerAtom", ier)
-  if (ier.lt.KIM_STATUS_OK) then
-     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-     stop
-  endif
-  call toRealArrayWithDescriptor2d(virialdum, virialperatom, 6, N)
-
   ! Set values
   numberOfAtoms   = N
   numContrib      = N
@@ -296,16 +288,10 @@ program TEST_NAME_STR
   print '("Atom     ' // &
   'X                        ' // &
   'Y                        ' // &
-  'Z                        ' // &
-  'V11                      ' // &
-  'V22                      ' // &
-  'V33                      ' // &
-  'V23                      ' // &
-  'V31                      ' // &
-  'V12                      ")'
-  print '(I2,"   ",3ES25.15,6ES25.15)', (I,forces(:,I),virialperatom(:,I),I=1,N)
+  'Z                        ")'
+  print '(I2,"   ",3ES25.15)', (I,forces(:,I),I=1,N)
   print *
-  print '("Energy = ",ES25.15,"                              Global Virial = ",' // &
+  print '("Energy = ",ES25.15,", Global Virial = ",' // &
         '6ES25.15)', energy, virialglobal
 
   ! Don't forget to free and/or deallocate

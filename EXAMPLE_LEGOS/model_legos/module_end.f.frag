@@ -1,5 +1,4 @@
     
-    if (comp_virial.eq.1) virial = - virial/DIM                   ! definition of virial term
     if ((comp_enepot.eq.1) .and. (comp_energy.eq.1)) then
        energy = sum(ene_pot(1:numberOfAtoms))                     ! compute total energy
     endif

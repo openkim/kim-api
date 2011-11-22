@@ -91,7 +91,7 @@ static void compute(void* km, int* ier)
    double* energy;
    double* force;
    double* energyPerAtom;
-   double* virial;
+   double* virialGlobal;
    int* neighListOfCurrentAtom;
 
    /* check to see if we have been asked to compute the forces, energyPerAtom, energy and virial */
@@ -113,7 +113,7 @@ static void compute(void* km, int* ier)
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_isit_compute", *ier);
       return;
    }
-   comp_virial = KIM_API_isit_compute(pkim, "virial", ier);
+   comp_virial = KIM_API_isit_compute(pkim, "virialGlobal", ier);
    if (KIM_STATUS_OK > *ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_isit_compute", *ier);
@@ -232,7 +232,7 @@ static void compute(void* km, int* ier)
 
    if (comp_virial)
    {
-      virial = (double*) KIM_API_get_data(pkim, "virial", ier);
+      virialGlobal = (double*) KIM_API_get_data(pkim, "virialGlobal", ier);
       if (KIM_STATUS_OK > *ier)
       {
          KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", *ier);
@@ -279,7 +279,10 @@ static void compute(void* km, int* ier)
 
    if (comp_virial)
    {
-      *virial = 0.0;
+      for (i = 0; i < 6; ++i)
+      {
+         virialGlobal[i] = 0.0;
+      }
    }
 
    /* reset neighbor iterator */
@@ -332,7 +335,13 @@ static void compute(void* km, int* ier)
             /* accumulate virial */
             if (comp_virial)
             {
-               *virial += R*dEidr;
+               /* virial(i,j) = r(i)*r(j)*(dV/dr)/r */
+	       virialGlobal[0] += Rij[jj*DIM + 0]*Rij[jj*DIM + 0]*dEidr/R;
+	       virialGlobal[1] += Rij[jj*DIM + 1]*Rij[jj*DIM + 1]*dEidr/R;
+	       virialGlobal[2] += Rij[jj*DIM + 2]*Rij[jj*DIM + 2]*dEidr/R;
+	       virialGlobal[3] += Rij[jj*DIM + 1]*Rij[jj*DIM + 2]*dEidr/R;
+	       virialGlobal[4] += Rij[jj*DIM + 0]*Rij[jj*DIM + 2]*dEidr/R;
+	       virialGlobal[5] += Rij[jj*DIM + 0]*Rij[jj*DIM + 1]*dEidr/R;
             }
 
             /* accumulate force */
@@ -354,11 +363,6 @@ static void compute(void* km, int* ier)
 
    /* perform final tasks */
    
-   if (comp_virial)
-   {
-      *virial = -*virial/( (double) DIM); /* definition of virial term */
-   }
-
    if (comp_energyPerAtom && comp_energy)
    {
       *energy = 0.0;

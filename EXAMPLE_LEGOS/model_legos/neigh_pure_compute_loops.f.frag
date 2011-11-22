@@ -69,8 +69,13 @@
                    energy = energy + 0.5d0*phi          ! full neigh case
                 endif                                   !
              endif
-             if (comp_virial.eq.1) then                 !
-                virial = virial + r*dEidr               ! accumul. virial=sum r(dV/dr)
+             if (comp_virial.eq.1) then                 ! accumul. virial
+                virial_global(1) = virial_global(1) + Rij(1)*Rij(1)*dEidr/r
+                virial_global(2) = virial_global(2) + Rij(2)*Rij(2)*dEidr/r
+                virial_global(3) = virial_global(3) + Rij(3)*Rij(3)*dEidr/r
+                virial_global(4) = virial_global(4) + Rij(2)*Rij(3)*dEidr/r
+                virial_global(5) = virial_global(5) + Rij(1)*Rij(3)*dEidr/r
+                virial_global(6) = virial_global(6) + Rij(1)*Rij(2)*dEidr/r
              endif                                      !
              if (comp_force.eq.1) then                  !
                 force(:,i) = force(:,i) + dEidr*Rij/r   ! accumulate forces on i

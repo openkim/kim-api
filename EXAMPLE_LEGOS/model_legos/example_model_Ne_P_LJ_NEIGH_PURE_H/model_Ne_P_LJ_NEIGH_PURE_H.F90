@@ -100,8 +100,7 @@ contains
        stop
     endif
 
-    ! Check to see if we have been asked to compute the forces, energyperatom,
-    ! and virial
+    ! Check to see if we have been asked to compute the forces and energyperatom
     !
     e_flag=kim_api_isit_compute_f(pkim,"energy",ier)
     if (ier.lt.KIM_STATUS_OK) then

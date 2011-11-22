@@ -15,6 +15,6 @@
     real*8 coordum(DIM,1);         pointer(pcoor,coordum)
     real*8 forcedum(DIM,1);        pointer(pforce,forcedum)
     real*8 enepotdum(1);           pointer(penepot,enepotdum)
-    real*8 virial;                 pointer(pvirial,virial)
-    real*8, pointer :: coor(:,:),force(:,:),ene_pot(:)
+    real*8 virialGlobaldum(1);     pointer(pvirialGlobal,virialGlobaldum)
+    real*8, pointer :: coor(:,:),force(:,:),ene_pot(:),virial_global(:)
     integer comp_energy, comp_force, comp_enepot, comp_virial

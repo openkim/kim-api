@@ -99,7 +99,7 @@
        return
     endif
 
-    comp_virial = kim_api_isit_compute_f(pkim,"virial",ier)
+    comp_virial = kim_api_isit_compute_f(pkim,"virialGlobal",ier)
     if (ier.lt.KIM_STATUS_OK) then
        call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute", ier)
        return
@@ -131,11 +131,12 @@
        call toRealArrayWithDescriptor1d(enepotdum,ene_pot,numberOfAtoms)
     endif
     if (comp_virial.eq.1) then
-       pvirial = kim_api_get_data_f(pkim,"virial",ier)
+       pvirialGlobal = kim_api_get_data_f(pkim,"virialGlobal",ier)
        if (ier.lt.KIM_STATUS_OK) then
           call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
           return
        endif
+       call toRealArrayWithDescriptor1d(virialGlobaldum,virial_global,6)
     endif
 
     call toRealArrayWithDescriptor2d(coordum,coor,DIM,numberOfAtoms)
@@ -160,4 +161,4 @@
     if (comp_enepot.eq.1) ene_pot(1:numberOfAtoms) = 0.d0
     if (comp_energy.eq.1) energy = 0.d0
     if (comp_force.eq.1)  force(1:3,1:numberOfAtoms) = 0.d0
-    if (comp_virial.eq.1) virial = 0.d0
+    if (comp_virial.eq.1) virial_global = 0.d0
