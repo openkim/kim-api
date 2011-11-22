@@ -119,7 +119,7 @@ integer,                  intent(out) :: ier
 !-- Local variables
 double precision :: Rij(DIM)
 double precision :: r,Rsqij,phi,dphi,dEidr
-integer :: i,j,jj,numnei,atom_ret,comp_force,comp_enepot,comp_virial
+integer :: i,j,jj,numnei,atom_ret,comp_force,comp_enepot,comp_virial,comp_energy
 integer, allocatable, target :: nei1atom_substitute(:)
 character*80 :: error_message
 
@@ -204,8 +204,14 @@ else
 endif
 
 ! Check to see if we have been asked to compute the forces, energyperatom,
-! and virial
+! energy and virial
 !
+comp_energy = kim_api_isit_compute_f(pkim,"energy",ier)
+if (ier.lt.KIM_STATUS_OK) then
+   call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute_f", ier)
+   return
+endif
+
 comp_force = kim_api_isit_compute_f(pkim,"forces",ier)
 if (ier.lt.KIM_STATUS_OK) then
    call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute_f", ier)
@@ -238,12 +244,6 @@ if (ier.lt.KIM_STATUS_OK) then
    return
 endif
 
-penergy = kim_api_get_data_f(pkim,"energy",ier)
-if (ier.lt.KIM_STATUS_OK) then
-   call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-   return
-endif
-
 pcoor = kim_api_get_data_f(pkim,"coordinates",ier)
 if (ier.lt.KIM_STATUS_OK) then
    call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
@@ -265,6 +265,14 @@ endif
 
 if (NBC.eq.1) then
    pboxlength = kim_api_get_data_f(pkim,"boxlength",ier)
+   if (ier.lt.KIM_STATUS_OK) then
+      call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+      return
+   endif
+endif
+
+if (comp_energy.eq.1) then
+   penergy = kim_api_get_data_f(pkim,"energy",ier)
    if (ier.lt.KIM_STATUS_OK) then
       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
       return
@@ -312,11 +320,8 @@ ier = KIM_STATUS_OK ! everything is ok
 
 ! Initialize potential energies, forces, virial term
 !
-if (comp_enepot.eq.1) then
-   ene_pot(1:N) = 0.d0
-else
-   energy = 0.d0
-endif
+if (comp_enepot.eq.1) ene_pot(1:N) = 0.d0
+if (comp_energy.eq.1) energy = 0.d0
 if (comp_force.eq.1)  force(1:3,1:N) = 0.d0
 if (comp_virial.eq.1) virial = 0.d0
 
@@ -459,7 +464,7 @@ do
             if ((HalfOrFull.eq.1) .and. &
                 (j .le. numberContrib)) &         ! HALF mode
                ene_pot(j) = ene_pot(j) + 0.5d0*phi! (i and j share it)
-         else
+         elseif (comp_energy.eq.1) then
             if ((HalfOrFull.eq.1) .and. &
                 (j .le. numberContrib)) then      ! HALF mode
                energy = energy + phi              !      add v to total energy
@@ -490,7 +495,8 @@ enddo  ! infinite do loop (terminated by exit statements above)
 ! Perform final tasks
 !
 if (comp_virial.eq.1) virial = - virial/DIM         ! definition of virial term
-if (comp_enepot.eq.1) energy = sum(ene_pot(1:N))    ! compute total energy
+if (comp_enepot.eq.1 .and. comp_energy.eq.1) &
+   energy = sum(ene_pot(1:N))                       ! compute total energy
 
 ! Free temporary storage
 !

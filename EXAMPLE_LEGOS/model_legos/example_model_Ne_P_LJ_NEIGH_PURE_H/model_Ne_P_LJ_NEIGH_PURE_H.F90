@@ -47,7 +47,7 @@ contains
     integer attypes(1);      pointer(pattypes,attypes)     ! atom types
     integer numberofatoms; pointer(pnumberofatoms,numberofatoms)
     integer numContrib; pointer(pnumContrib,numContrib)
-    integer i, f_flag, e_flag
+    integer i, e_flag, f_flag, eper_flag
     external calculate
 
     ! Unpack data from KIM object
@@ -103,13 +103,19 @@ contains
     ! Check to see if we have been asked to compute the forces, energyperatom,
     ! and virial
     !
+    e_flag=kim_api_isit_compute_f(pkim,"energy",ier)
+    if (ier.lt.KIM_STATUS_OK) then
+       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute_f", ier)
+       stop
+    endif
+
     f_flag=kim_api_isit_compute_f(pkim,"forces",ier)
     if (ier.lt.KIM_STATUS_OK) then
        call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute_f", ier)
        stop
     endif
 
-    e_flag=kim_api_isit_compute_f(pkim,"energyPerAtom",ier)
+    eper_flag=kim_api_isit_compute_f(pkim,"energyPerAtom",ier)
     if (ier.lt.KIM_STATUS_OK) then
        call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute_f", ier)
        stop
@@ -118,7 +124,7 @@ contains
     ! Call FORTRAN 77 code that does actual calculation
     !
     call calculate(model_cutoff,sigma,epsilon,pkim,x,f,ea,numberofatoms,numContrib, &
-                   potenergy,f_flag,e_flag,kim_api_get_half_neigh_f,ier)
+                   potenergy,e_flag,f_flag,eper_flag,kim_api_get_half_neigh_f,ier)
 
   end subroutine calculate_wrap_f77
   

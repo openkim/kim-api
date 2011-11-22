@@ -41,7 +41,8 @@ C  positions.
 C
 C*******************************************************************************
       SUBROUTINE calculate(cutoff,sigma,epsilon,pkim,x,f,ea,natom,
-     &                     ncontrib,en,f_flag,e_flag,kimget_h_neigh,ier)
+     &                     ncontrib,en,e_flag,f_flag,eper_flag,
+     &                     kimget_h_neigh,ier)
       IMPLICIT NONE
 
 C-------Transferred variables
@@ -49,7 +50,7 @@ C-------Transferred variables
       INTEGER kim
       pointer (pkim,kim)
       DOUBLE PRECISION x(3,natom),f(3,natom),ea(natom)
-      INTEGER natom,ier,f_flag,e_flag
+      INTEGER natom,ier,e_flag,f_flag,eper_flag
       DOUBLE PRECISION en
       INTEGER kimget_h_neigh
       EXTERNAL kimget_h_neigh
@@ -75,7 +76,7 @@ C-------Local variables
             f(3,i) = 0.D0
  100     CONTINUE
       ENDIF
-      IF (e_flag.EQ.1) THEN
+      IF (eper_flag.EQ.1) THEN
          DO 110 i = 1,natom
  110        ea(i) = 0.D0
       ENDIF
@@ -137,13 +138,13 @@ C     Increment iterator
                sumv = sumv + 0.5d0*(vij-energycutoff)
                dv = 0.5d0*dv;
             ENDIF
-            IF (e_flag.eq.1) THEN
+            IF (eper_flag.EQ.1) THEN
                ea(i)=ea(i)+(vij-energycutoff)/2.D0
                IF (j.LE.ncontrib) THEN
                   ea(j)=ea(j)+(vij-energycutoff)/2.D0
                ENDIF
             ENDIF
-            IF (f_flag.eq.1) THEN
+            IF (f_flag.EQ.1) THEN
                r = sqrt(r2)
                f(1,i) = f(1,i) + dv*dx(1)/r
                f(2,i) = f(2,i) + dv*dx(2)/r
@@ -156,6 +157,6 @@ C     Increment iterator
  130  CONTINUE
       GOTO 120 
  140  CONTINUE
-      en=sumv
+      IF (e_flag.EQ.1) en=sumv
       RETURN
       END
