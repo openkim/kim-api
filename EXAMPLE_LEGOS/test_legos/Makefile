@@ -114,6 +114,7 @@ test_Al_free_cluster: $(COMMON_FRAGMENTS)                      \
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo "forces                  real*8       force      standard                [numberOfAtoms,3]"      >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo "virialGlobal            real*8       energy     standard                [6]"                    >> $(KIM_TESTS_DIR)$@/$@.kim
         # make .F90 file in the directory
 	$(F_CAT) program_free_cluster.f.frag | $(SED_CMD) \
@@ -485,6 +486,7 @@ test_Ar_free_cluster_CLUSTER_C: $(COMMON_FRAGMENTS)                 \
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo "forces                  real*8       force      standard                [numberOfAtoms,3]"      >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo "virialGlobal            real*8       energy     standard                [6]"                    >> $(KIM_TESTS_DIR)$@/$@.kim
         # make .F90 file in the directory
 	$(C_CAT) program_free_cluster_CLUSTER.c.frag | $(SED_CMD) \
@@ -518,6 +520,7 @@ test_Ar_free_cluster_CLUSTER_F90: $(COMMON_FRAGMENTS)                 \
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo "forces                  real*8       force      standard                [numberOfAtoms,3]"      >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo "virialGlobal            real*8       energy     standard                [6]"                    >> $(KIM_TESTS_DIR)$@/$@.kim
         # make .F90 file in the directory
 	$(F_CAT) program_free_cluster_CLUSTER.f.frag | $(SED_CMD) \
@@ -573,6 +576,7 @@ test_Ar_free_cluster: $(COMMON_FRAGMENTS)                      \
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo "forces                  real*8       force      standard                [numberOfAtoms,3]"      >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo "virialGlobal            real*8       energy     standard                [6]"                    >> $(KIM_TESTS_DIR)$@/$@.kim
         # make .F90 file in the directory
 	$(F_CAT) program_free_cluster.f.frag | $(SED_CMD) \
@@ -638,6 +642,8 @@ test_Ne_free_cluster: $(COMMON_FRAGMENTS)                      \
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo "forces                  real*8       force      standard                [numberOfAtoms,3]"      >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "virialGlobal            real*8       energy     standard                [6]"                    >> $(KIM_TESTS_DIR)$@/$@.kim
         # make .F90 file in the directory
 	$(F_CAT) program_free_cluster.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ne/g' \

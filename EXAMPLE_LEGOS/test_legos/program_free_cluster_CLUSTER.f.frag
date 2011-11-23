@@ -49,7 +49,7 @@ program TEST_NAME_STR
   real*8 coordum(DIM,1);   pointer(pcoor,coordum)
   real*8 forcesdum(DIM,1); pointer(pforces,forcesdum)
   integer I
-  real*8, pointer  :: coords(:,:), forces(:,:), virialglobal(:)
+  real*8, pointer  :: coords(:,:), forces(:,:), virial_global(:)
   integer, pointer :: atomTypes(:)
   integer middleDum
 
@@ -124,7 +124,7 @@ program TEST_NAME_STR
      call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
      stop
   endif
-  call toRealArrayWithDescriptor1d(virialglobdum, virialglobal, 6)
+  call toRealArrayWithDescriptor1d(virialglobdum, virial_global, 6)
 
   pforces = kim_api_get_data_f(pkim, "forces", ier)
   if (ier.lt.KIM_STATUS_OK) then
@@ -163,8 +163,9 @@ program TEST_NAME_STR
   'Z                        ")'
   print '(I2,"   ",3ES25.15)', (I,forces(:,I),I=1,N)
   print *
-  print '("Energy = ",ES25.15,", Global Virial = ",' // &
-        '6ES25.15)', energy, virialglobal
+  print '("Energy        = ",ES25.15)', energy
+  print '("Global Virial = ",3ES25.15)', (virial_global(I),I=1,3)
+  print '("                ",3ES25.15)', (virial_global(I),I=4,6)
 
   ! don't forget to destroy and deallocate
   call kim_api_model_destroy_f(pkim, ier)

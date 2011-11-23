@@ -181,7 +181,9 @@ int main(int argc, char* argv[])
             );
    }
    printf("\n");
-   printf("Energy = %25.15e, Global Virial = %25.15e%25.15e%25.15e%25.15e%25.15e%25.15e\n",
+   printf("Energy        = %25.15e\n"
+          "Global Virial = %25.15e%25.15e%25.15e\n"
+          "                %25.15e%25.15e%25.15e\n",
           *energy,
           virialGlobal[0],
           virialGlobal[1],
