@@ -897,13 +897,6 @@ static void setup_buffer(intptr_t* pkim, struct model_buffer* buffer)
       exit(1);
    }
 
-   buffer->energy = (double*) KIM_API_get_data(pkim, "energy", &ier);
-   if (KIM_STATUS_OK > ier)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
-      exit(1);
-   }
-
    buffer->coordinates_ind = KIM_API_get_index(pkim, "coordinates", &ier);
    if (KIM_STATUS_OK > ier)
    {
