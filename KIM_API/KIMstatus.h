@@ -15,6 +15,9 @@
 #ifndef _KIMSERVICESTATUS_H
 #define _KIMSERVICESTATUS_H
 
+#define KIM_STATUS_WRONG_MULTIPLE_ARGS             -15
+#define KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_2      -14
+#define KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3      -13
 #define KIM_STATUS_NEIGH_INVALID_REQUEST           -12
 #define KIM_STATUS_NEIGH_HALF_METHOD_NOT_PROVIDED  -11
 #define KIM_STATUS_NEIGH_FULL_METHOD_NOT_PROVIDED  -10
@@ -31,5 +34,9 @@
 #define KIM_STATUS_OK                                1
 #define KIM_STATUS_NEIGH_ITER_PAST_END               2
 #define KIM_STATUS_NEIGH_ITER_INIT_OK                3
+
+
+#define KIM_COMPUTE                    1
+#define KIM_NOT_COMPUTE                0
 
 #endif

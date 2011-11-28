@@ -1234,6 +1234,148 @@ void KIM_API_set2_donotcompute_byI(void *kimmdl, int I, int *kimerror);
 int KIM_API_isit_compute_byI(void *kimmdl, int I, int *kimerror);
 
 
+
+*****************************************************************************************
+
+                              MULTIPLE ACCESS ROUTINES
+
+*****************************************************************************************
+    In order to simplify access to KIM API object, MULTIPLE ACCESS ROUTINES are among KIM
+service methods.  There are 9 of those routines:
+
+c-style: KIM_API_set_data_multiple, KIM_API_get_data_byI_multiple,KIM_API_set_compute_multiple, 
+         KIM_API_get_compute_multiple, KIM_API_get_index_multiple, KIM_API_set_data_byI_multiple,
+         KIM_API_get_data_byI_multiple, KIM_API_set_compute_byI_multiple
+         KIM_API_get_compute_byI_multiple
+         
+         All these routines provide access to the multiple KIM API fields at once.
+         These routines have uniform interface:
+
+              void KIM_API_*_multiple(void *pkim,int *kimerr, int numargs,...);
+
+         Line in the code that calls these routine will look like that:
+
+              *_multiple(pkim,error,numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2,...]);
+
+         numargs -- must be the number of all arguments that follows it.
+
+         There can be many argument variable groups in one call. 
+         Each argument variable group has 2 or 3 variables, therefor numargs must be divisible by 2 or 3.
+         Argument variable group has different type of variable depending on the context:
+  
+         1.   void KIM_API_set_data_multiple(void *pkim, int *err, int numargs, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
+
+              VARIABLE_GROUP here has 3 variables:         char *name,   intptr_t size,  void *data
+              See KIM_API_get_data for details
+
+         2.   void KIM_API_set_data_byI_multiple(void *pkim, int *err, int numargs, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
+              VARIABLE_GROUP here has 3 variables:         int index,  intptr_t size,  void *data
+              See KIM_API_get_data_byI for details
+
+         3.   void KIM_API_get_data_multiple(void *pkim, int *err, int numargs, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
+              VARIABLE_GROUP here has 2 variables:         char *name,   void **data
+
+         4.   void KIM_API_get_data_byI_multiple(void *pkim, int *err, int numargs, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
+              VARIABLE_GROUP here has 2 variables:          int index,   void **data
+
+         5.   void KIM_API_set_compute_multiple(void *pkim, int *err, int numargs, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
+              VARIABLE_GROUP here has 2 variables:         char *name,   int compute
+
+         6.   void KIM_API_get_compute_multiple(void *pkim, int *err, int numargs, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
+              VARIABLE_GROUP here has 2 variables:         char *name,   int *compute
+  
+         7.   void KIM_API_set_compute_byI_multiple(void *pkim, int *err, int numargs, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
+              VARIABLE_GROUP here has 2 variables:          int index,   int compute
+
+         8.   void KIM_API_get_compute_byI_multiple(void *pkim, int *err, int numargs, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
+              VARIABLE_GROUP here has 2 variables:          int index,   int *compute
+
+         9.   void KIM_API_get_index_multiple(void *pkim, int *err, int numargs, VARIABLE_GROUP1,[VARIABLE_GROUP2,...] );
+              VARIABLE_GROUP here has 2 variables:         char *name,    int *index
+
+        error code (second argument) in those routines will be KIM_STATUS_OK if it is success, 
+        otherwise KIM_STATUS_FAIL (or other error codes < 1).
+ 
+f90-style:  KIM_API_set_data_multiple_f, KIM_API_get_data_byI_multiple_f,KIM_API_set_compute_multiple_f, 
+         KIM_API_get_compute_multiple_f, KIM_API_get_index_multiple_f, KIM_API_set_data_byI_multiple_f,
+         KIM_API_get_data_byI_multiple_f, KIM_API_set_compute_byI_mltpl_f
+         KIM_API_get_compute_byI_mltpl_f  
+         (NOTE: FORTRAN is case insensitive, for 2 routines mltpl instead of multiple -- FORTRAN names limited to 31 characters)
+         
+         All these routines provide access to the multiple KIM API fields at once.
+         These routines have uniform interface:
+
+              subroutine KIM_API_*_multiple_f(pkim, kimerr, VARIABLE_GROUP1, [VARIABLE_GROUP2,...])
+              or
+              subroutine KIM_API_*_mltpl_f(pkim, kimerr, VARIABLE_GROUP1, [VARIABLE_GROUP2,...])
+
+         First two arguments are the same fore all multiple routines:
+         integer(kind=kimintptr) :: pkim ! kim object holder (pointer)
+         integer :: kimerr               ! error code returned
+
+
+         There can be up to 20  argument variable groups that follows kimerr. 
+         Each argument variable group has 2 or 3 variables.
+         Argument variable group has different type of variable depending on the context:
+  
+         1.   void KIM_API_set_data_multiple_f(pkim, err, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
+
+              VARIABLE_GROUP has 3 variables: 
+                                  character(len=*)       :: name
+                                  integer(kind=kimintptr):: size
+                                  integer(kind=kimintptr):: data
+              See KIM_API_get_data_f for details
+
+         2.   void KIM_API_set_data_byI_multiple(pkim, err, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
+              VARIABLE_GROUP has 3 variables:
+                                  integer                :: index
+                                  integer(kind=kimintptr):: size
+                                  integer(kind=kimintptr):: data
+              See KIM_API_get_data_byI for details
+
+         3.   void KIM_API_get_data_multiple(pkim, err, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
+              VARIABLE_GROUP here has 2 variables: 
+                                  character(len=*)       :: name
+                                  integer(kind=kimintptr):: data
+
+         4.   void KIM_API_get_data_byI_multiple(pkim, err, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
+              VARIABLE_GROUP has 2 variables:
+                                  integer                :: index
+                                  integer(kind=kimintptr):: size, data
+
+         5.   void KIM_API_set_compute_multiple(pkim, err, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
+              VARIABLE_GROUP has 2 variables:
+                                  character(len=*)       :: name
+                                  integer                :: compute
+
+         6.   void KIM_API_get_compute_multiple(pkim, err, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
+              VARIABLE_GROUP has 2 variables:
+                                  character(len=*)       :: name
+                                  integer                :: compute
+  
+         7.   void KIM_API_set_compute_byI_multiple(pkim, err, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
+              VARIABLE_GROUP has 2 variables:
+                                  integer                :: index
+                                  integer                :: compute
+
+         8.   void KIM_API_get_compute_byI_multiple(pkim, err, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
+              VARIABLE_GROUP here has 2 variables:
+                                  integer                :: index
+                                  integer                :: compute
+
+         9.   void KIM_API_get_index_multiple(pkim, err, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
+              VARIABLE_GROUP has 2 variables: 
+                                  character(len=*)       :: name
+                                  integer                :: index
+
+
+        error code (second argument) in those routines will be KIM_STATUS_OK if it is success, 
+        otherwise KIM_STATUS_FAIL (or other error codes < 1).
+
+**********************************************************************************************  
+
+
+
 ========================Fortran AUXILIARY ROUTINES============================
 
 Several auxiliary routines are provided which are not directly connected with

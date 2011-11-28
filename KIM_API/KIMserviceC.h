@@ -60,7 +60,7 @@ int KIM_API_get_neigh_mode(void *,int *);
 
 char * KIM_API_status_msg(int error);
     
-void KIM_API_report_error(int ln,char * fl,char * usermsg,int ier);
+int KIM_API_report_error(int ln,char * fl,char * usermsg,int ier);
 
 int KIM_API_get_model_index_shift(void *);
 
@@ -94,7 +94,19 @@ int KIM_API_isit_compute_byI(void *kimmdl,int I,int * error);
 
 void KIM_API_process_d1Edr(void **ppkim, double * dE, double * dr, double **dx,int *i, int *j, int *ier );
 
-//total 30 methods
+//multiple data set/get methods
+//
+void KIM_API_set_data_multiple(void *kimmdl, int *err, int numargs, ... );
+void KIM_API_set_data_byI_multiple(void *kimmdl, int *err, int numargs, ... );
+void KIM_API_get_data_multiple(void *kimmdl, int *err,int numargs, ...);
+void KIM_API_get_data_byI_multiple(void *kimmdl,int *err,int numargs, ...);
+void KIM_API_get_index_multiple(void *kimmdl, int *err, int numargs, ...);
+void KIM_API_set_compute_multiple(void *kimmdl, int *err, int numargs, ...);
+void KIM_API_set_compute_byI_multiple(void *kimmdl, int *err, int numargs, ...);
+void KIM_API_get_compute_multiple(void *kimmdl, int *err,int numargs, ...);
+void KIM_API_get_compute_byI_multiple(void *kimmdl, int *err,int numargs, ...);
+
+//total 58 service routines
 
 //fortran interface
 int kim_api_init_(void * kimmdl,char ** testname, char **mdlname);
@@ -170,7 +182,7 @@ int kim_api_isit_compute_byi_(void *kimmdl,int * I, int *error);
 
 void * kim_api_status_msg_f_(int * error);
 
-void kim_api_report_error_(int * ln,char ** fl, char ** usermsg, int * ier);
+int kim_api_report_error_(int * ln,char ** fl, char ** usermsg, int * ier);
 
 void kim_api_process_d1edr_f_(void **ppkim, double * dE, double * dr, double **dx, int *i, int *j, int *ier );
 
