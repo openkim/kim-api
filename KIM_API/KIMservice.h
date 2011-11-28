@@ -16,7 +16,7 @@
 ////#include <cctype>
 //#include <string.h>
 #include <stdint.h>
-
+#include <stdarg.h>
 using namespace std;
 #ifndef _KIMSERVICE_H
 #define	_KIMSERVICE_H
@@ -179,6 +179,8 @@ public:
     bool set_data_byi(int ind,intptr_t size, void *dt);
 
     void * get_data(char *nm,int *error);
+    void * get_data_byi(int ind,int *error);
+
     void * get_data(char *nm);
     int get_index(char *nm, int * error);
     int get_index(char *nm);
@@ -248,12 +250,24 @@ bool requiresFullNeighbors();
     bool support_Rij;
     int get_neigh_mode(int *);
     static char * status_msg(int status_code);
-    static void report_error(int line, char * fl, char * usermsg, int ier);
+    static int report_error(int line, char * fl, char * usermsg, int ier);
     int get_model_index_shift();
     void set_model_buffer(void * o,int * ier);
     void * get_model_buffer(int * ier);
    static void process_d1Edr(KIM_API_model **ppkim,double *dr,double *r,double ** dx, int *i,int *j,int *ier);
- 
+   
+   //multiple data set/get methods
+   //
+  void set_data_multiple(int *err, int numargs, ... );      //++
+  void set_data_byI_multiple(int *err, int numargs, ... );  //++
+  void get_data_multiple(int *err,int numargs, ...);        //++
+  void get_data_byI_multiple(int *err,int numargs, ...);    //++
+  void get_index_multiple(int *err, int numargs, ...);      //++
+  void set_compute_multiple(int *err, int numargs, ...);    //++
+  void set_compute_byI_multiple(int *err, int numargs, ...);//++
+  void get_compute_multiple(int *err,int numargs, ...);  //?  ++
+  void get_compute_byI_multiple(int *err,int numargs, ...); //++
+
    //related to process fij public variables   
     bool virialGlobal_need2add;
     bool virialPerAtom_need2add;
