@@ -172,6 +172,7 @@ public:
     KIM_API_model();
     ~KIM_API_model();
     bool preinit(char * initfile,char *modelname);
+    bool preinit(char * modelname);
     bool preinit_str_testname(char * instrn);
     void free(int *error);
     void free();
