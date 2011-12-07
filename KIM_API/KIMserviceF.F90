@@ -31,6 +31,15 @@ module kimservice
             integer(kind=kim_intptr) :: kimmdl,testname,mdlname
         end function kim_api_init
 
+	integer function kim_api_preinit(kimmdl,mdlname)
+	    
+#ifdef SYSTEM32
+	integer, parameter :: kim_intptr=4
+#else
+	integer,parameter :: kim_intptr = 8
+#endif
+            integer(kind=kim_intptr) :: kimmdl,mdlname
+        end function kim_api_preinit
 
  integer function kim_api_init_str_testname(kimmdl,testname,mdlname)
 	    
@@ -615,6 +624,17 @@ integer,parameter :: kim_intptr = 8
             ps2=loc(mdlnamesnd)
             kim_api_init_f =kim_api_init(kimmdl,ps1,ps2)
      end function kim_api_init_f
+
+    integer function kim_api_preinit_f(kimmdl,mdlname)
+            character (len=*) :: mdlname
+            integer(kind=kim_intptr) :: kimmdl
+            character (len=KEY_CHAR_LENGTH)::mdlnamesnd
+            character (len=KEY_CHAR_LENGTH):: s2
+            pointer(ps2,s2)
+            mdlnamesnd=attachnull(trim(mdlname))
+            ps2=loc(mdlnamesnd)
+            kim_api_preinit_f =kim_api_preinit(kimmdl,ps2)
+     end function kim_api_preinit_f
 
     integer function kim_api_init_str_testname_f(kimmdl,testname,mdlname)
             character (len=*) :: testname,mdlname

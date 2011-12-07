@@ -24,6 +24,9 @@ extern "C" {
 //global methods
 int KIM_API_init(void * kimmdl, char *testname, char *modelname);
 int KIM_API_init1(void * kimmdl, char * testinputf,char * testname, char * mdlinputf,char *mdlname);
+
+int KIM_API_preinit(void * kimmdl, char * mdlname);
+
 int KIM_API_init_str_testname(void * kimmdl, char *testinputstring, char * modelname);
 void KIM_API_allocate(void *kimmdl, int natoms, int ntypes, int * error);
 void KIM_API_free(void *kimmdl,int * error);
@@ -111,6 +114,7 @@ void KIM_API_get_compute_byI_multiple(void *kimmdl, int *err,int numargs, ...);
 //fortran interface
 int kim_api_init_(void * kimmdl,char ** testname, char **mdlname);
 int kim_api_init1_(void * kimmdl, char ** testinputf,char ** testname, char ** mdlinputf,char **mdlname);
+int kim_api_preinit_(void * kimmdl,char ** mdlname);
 int kim_api_init_str_testname_(void * kimmdl, char **testinputstring, char ** modelname);
 void kim_api_allocate_(void *kimmdl, int *natoms, int *ntypes, int *error);
 void kim_api_free_(void *kimmdl, int * error);

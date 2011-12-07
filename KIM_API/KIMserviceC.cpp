@@ -43,6 +43,17 @@ int KIM_API_init1(void * kimmdl, char * testinputf,char * testname, char * mdlin
     return KIM_STATUS_FAIL;
 }
 
+int KIM_API_preinit(void * kimmdl, char * mdlname){
+    KIM_API_model * mdl;
+    mdl = new KIM_API_model[1];
+    if(mdl->preinit(mdlname)) {
+        *(KIM_API_model **)kimmdl = mdl;
+        return KIM_STATUS_OK;
+    }
+    *(KIM_API_model **)kimmdl=NULL;
+    return KIM_STATUS_FAIL;
+}
+
  int KIM_API_init_str_testname(void * kimmdl, char *testinputstring, char * mdlname){
      KIM_API_model * mdl;
     mdl = new KIM_API_model[1];
@@ -610,6 +621,9 @@ int kim_api_init_(void * kimmdl,char ** testname, char **mdlname){
 }
 int kim_api_init1_(void * kimmdl, char ** testinputf,char ** testname, char ** mdlinputf,char **mdlname){
     return KIM_API_init1(kimmdl,*testinputf,*testname,*mdlinputf,*mdlname);
+}
+int kim_api_preinit_(void * kimmdl,char ** mdlname){
+    return KIM_API_preinit(kimmdl,*mdlname);
 }
 int kim_api_init_str_testname_(void * kimmdl, char **testinputstring, char ** mdlname){
     return KIM_API_init_str_testname(kimmdl,*testinputstring,*mdlname);
