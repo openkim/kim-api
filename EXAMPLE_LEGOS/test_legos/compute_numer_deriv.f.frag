@@ -28,7 +28,7 @@ real*8,  parameter :: eps_init = 1.d-6
 integer, parameter :: number_eps_levels = 15
 real*8  eps, deriv_last, deriv_err_last
 logical done
-integer i,nn
+integer i,nn,idum
 
 !-- KIM variables
 real*8 energy;         pointer(penergy,energy)
@@ -40,7 +40,7 @@ ier = KIM_STATUS_OK
 !
 penergy = kim_api_get_data_f(pkim, "energy", ier)
 if (ier.lt.KIM_STATUS_OK) then
-   call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
    stop
 endif
 
@@ -51,7 +51,7 @@ deriv_err_last = huge(1.d0)
 do i=1,number_eps_levels
    deriv = dfridr(eps,deriv_err)
    if (ier.lt.KIM_STATUS_OK) then
-      call kim_api_report_error_f(__LINE__, __FILE__, "compute_numer_deriv",ier)
+      idum = kim_api_report_error_f(__LINE__, __FILE__, "compute_numer_deriv",ier)
       stop
    endif
    if (deriv_err>deriv_err_last) then
@@ -98,6 +98,7 @@ contains
    real*8,  parameter :: SAFE=2.d0   ! Returns when error is SAFE worse than
                                      ! the best so far
    integer i,j
+   integer idum
    real*8 errt,fac,hh,a(NTAB,NTAB),fp,fm,coordorig
 
    if (h.eq.0.d0) then
@@ -112,7 +113,7 @@ contains
                             do_update_list,coordsave,neighborList,RijList,ier)
    call kim_api_model_compute_f(pkim, ier)
    if (ier.lt.KIM_STATUS_OK) then
-      call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute",ier)
+      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute",ier)
       stop
    endif
    fp = energy
@@ -121,7 +122,7 @@ contains
                             do_update_list,coordsave,neighborList,RijList,ier)
    call kim_api_model_compute_f(pkim, ier)
    if (ier.lt.KIM_STATUS_OK) then
-      call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute",ier)
+      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute",ier)
       stop
    endif
    fm = energy
@@ -140,7 +141,7 @@ contains
                                do_update_list,coordsave,neighborList,RijList,ier)
       call kim_api_model_compute_f(pkim, ier)
       if (ier.lt.KIM_STATUS_OK) then
-         call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute",ier)
+         idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute",ier)
          stop
       endif
       fp = energy
@@ -149,7 +150,7 @@ contains
                                do_update_list,coordsave,neighborList,RijList,ier)
       call kim_api_model_compute_f(pkim, ier)
       if (ier.lt.KIM_STATUS_OK) then
-         call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute",ier)
+         idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute",ier)
          stop
       endif
       fm = energy

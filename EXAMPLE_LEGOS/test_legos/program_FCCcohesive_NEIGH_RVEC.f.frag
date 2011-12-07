@@ -77,6 +77,7 @@ program TEST_NAME_STR
   ! other variables
   !
   double precision, external  ::  get_model_cutoff_firsttime
+  integer                     ::  idum
 
 !========================= END VARIABLE DEFINITIONS ==========================
 
@@ -104,7 +105,7 @@ program TEST_NAME_STR
   !
   pcutoff = kim_api_get_data_f(pkim, "cutoff", ier)
   if (ier.lt.KIM_STATUS_OK) then
-     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
      stop
   endif
   !

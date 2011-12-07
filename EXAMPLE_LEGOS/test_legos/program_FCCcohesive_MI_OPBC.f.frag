@@ -161,7 +161,7 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   
   !-- Local variables
   double precision,         parameter :: Golden      = (1.d0 + sqrt(5.d0))/2.d0
-  integer ier
+  integer ier, idum
   double precision Spacings(4)
   double precision Energies(4)
   integer middleDum
@@ -177,26 +177,26 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   !
   penergy = kim_api_get_data_f(pkim, "energy", ier)
   if (ier.lt.KIM_STATUS_OK) then
-     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
      stop
   endif
 
   pcoor = kim_api_get_data_f(pkim, "coordinates", ier)
   if (ier.lt.KIM_STATUS_OK) then
-     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
      stop
   endif
   call toRealArrayWithDescriptor2d(coordum, coords, DIM, N)
 
   pcutoff = kim_api_get_data_f(pkim, "cutoff", ier)
   if (ier.lt.KIM_STATUS_OK) then
-     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
      stop
   endif
 
   pboxlength = kim_api_get_data_f(pkim, "boxlength", ier)
   if (ier.lt.KIM_STATUS_OK) then
-     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
      stop
   endif
 
@@ -205,7 +205,7 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   !
   pNBC_Method = kim_api_get_nbc_method_f(pkim, ier) ! don't forget to free
   if (ier.lt.KIM_STATUS_OK) then
-     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_nbc_method_f", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_nbc_method_f", ier)
      stop
   endif
   if (index(NBC_Method,"MI-OPBC-H").eq.1) then
@@ -214,7 +214,7 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
      halfflag = .false.
   else
      ier = KIM_STATUS_FAIL
-     call kim_api_report_error_f(__LINE__, __FILE__, "Unknown NBC method", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "Unknown NBC method", ier)
      return
   endif
   call free(pNBC_Method) ! free the memory
@@ -228,7 +228,7 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   call MI_OPBC_neighborlist(halfflag, N, coords, (cutoff+0.75), boxlength, neighborList)
   call kim_api_model_compute_f(pkim, ier)
   if (ier.lt.KIM_STATUS_OK) then
-     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
      stop
   endif
   Energies(1) = energy/N
@@ -244,7 +244,7 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   ! Call model compute
   call kim_api_model_compute_f(pkim, ier)
   if (ier.lt.KIM_STATUS_OK) then
-     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
      stop
   endif
   Energies(3) = energy/N
@@ -260,7 +260,7 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   ! Call model compute
   call kim_api_model_compute_f(pkim, ier)
   if (ier.lt.KIM_STATUS_OK) then
-     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
      stop
   endif
   Energies(2) = energy/N
@@ -282,7 +282,7 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
      ! Call model compute
      call kim_api_model_compute_f(pkim, ier)
      if (ier.lt.KIM_STATUS_OK) then
-        call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
+        idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
         stop
      endif
      Energies(4) = energy/N

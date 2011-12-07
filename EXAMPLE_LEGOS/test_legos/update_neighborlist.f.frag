@@ -20,7 +20,7 @@ integer,      intent(out)   :: ier
 !-- Local variables
 integer nbc  ! 0- MI-OPBC-H, 1- MI-OPBC-F, 2- NEIGH-PURE-H, 3- NEIGH-PURE-F, 4-  NEIGH-RVCE-F
 real*8 disp, disp1, disp2, cutrange, dispvec(DIM)
-integer i
+integer i, idum
 
 ! Initialize error code
 !
@@ -40,7 +40,7 @@ elseif (index(NBC_Method,"NEIGH-RVEC-F").eq.1) then
    nbc = 4
 else
    ier = KIM_STATUS_FAIL
-   call kim_api_report_error_f(__LINE__, __FILE__, "Unknown NBC method", ier)
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "Unknown NBC method", ier)
    stop
 endif
 

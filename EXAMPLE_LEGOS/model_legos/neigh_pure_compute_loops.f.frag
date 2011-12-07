@@ -1,7 +1,7 @@
     ! determine whether half or full neighbor lists are being used
     pNBC_Method = kim_api_get_nbc_method_f(pkim, ier)
     if (ier.lt.KIM_STATUS_OK) then
-       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_nbc_method_f", ier)
+       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_nbc_method_f", ier)
        return
     endif
     if (index(NBC_Method,"NEIGH-PURE-H").eq.1) then
@@ -9,14 +9,14 @@
        ! get numberContributingAtoms
        pnumContrib = kim_api_get_data_f(pkim,"numberContributingAtoms",ier)
        if (ier.lt.KIM_STATUS_OK) then
-          call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
+          idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
           return
        endif
     elseif (index(NBC_Method,"NEIGH-PURE-F").eq.1) then
        HalfOrFull = 2
     else
        ier = KIM_STATUS_FAIL
-       call kim_api_report_error_f(__LINE__, __FILE__, "Unsupported NBC type", ier)
+       idum = kim_api_report_error_f(__LINE__, __FILE__, "Unsupported NBC type", ier)
        return
     endif
     call free(pNBC_Method) ! don't forget to release the memory...
@@ -35,7 +35,7 @@
           ier = kim_api_get_full_neigh_f(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij_dummy)
        endif
        if (ier.lt.KIM_STATUS_OK) then
-          call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_*_neigh", ier)
+          idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_*_neigh", ier)
           return
        endif
        

@@ -11,13 +11,13 @@ subroutine free_KIM_API_object(pkim)
   integer(kind=kim_intptr), intent(in)  :: pkim
 
   !-- Local variables
-  integer ier
+  integer ier, idum
 
   ! call the model destroy function
   !
   call kim_api_model_destroy_f(pkim, ier)
   if (ier.lt.KIM_STATUS_OK) then
-     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_destroy_f", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_destroy_f", ier)
      stop
   endif
 
@@ -25,7 +25,7 @@ subroutine free_KIM_API_object(pkim)
   !
   call kim_api_free_f(pkim, ier)
   if (ier.lt.KIM_STATUS_OK) then
-     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_free_f", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_free_f", ier)
      stop
   endif
 

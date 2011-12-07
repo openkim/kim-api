@@ -80,6 +80,7 @@ program TEST_NAME_STR
   !
   double precision, external  ::  get_model_cutoff_firsttime
   integer,          external  ::  check_model_parameters
+  integer                     ::  idum
 
 !========================= END VARIABLE DEFINITIONS ==========================
 
@@ -104,7 +105,7 @@ program TEST_NAME_STR
   ier = check_model_parameters(pkim)
   if (ier.ne.KIM_STATUS_OK) then
      ! PARAM_FREE_cutoff is not provided by the Model
-     call kim_api_report_error_f(__LINE__, __FILE__, "exiting...", ier);
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "exiting...", ier);
      stop
   endif
   !
@@ -112,7 +113,7 @@ program TEST_NAME_STR
   !
   pparam_cutoff = kim_api_get_data_f(pkim, "PARAM_FREE_cutoff", ier)
   if (ier.lt.KIM_STATUS_OK) then
-     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
      stop
   endif
   
@@ -125,7 +126,7 @@ program TEST_NAME_STR
   param_cutoff = param_cutoff - 2.0d0
   ier = kim_api_model_reinit_f(pkim)
   if (ier.lt.KIM_STATUS_OK) then
-     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_reinit_f", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_reinit_f", ier)
      stop
   endif
 
@@ -179,7 +180,7 @@ program TEST_NAME_STR
      param_cutoff = param_cutoff + 1.0
      ier = kim_api_model_reinit_f(pkim)
      if (ier.lt.KIM_STATUS_OK) then
-        call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_reinit_f", ier)
+        idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_reinit_f", ier)
         stop
      endif
 
@@ -216,7 +217,7 @@ integer function check_model_parameters(pkim)
   integer nParams
   integer paramIndex
   integer i
-  integer ier
+  integer ier, idum
 
   plistOfParameters = kim_api_get_listparams_f(pkim, nParams, ier)
   paramIndex = 0

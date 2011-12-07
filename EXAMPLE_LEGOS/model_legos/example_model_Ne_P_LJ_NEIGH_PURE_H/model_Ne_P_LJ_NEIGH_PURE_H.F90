@@ -47,56 +47,56 @@ contains
     integer attypes(1);      pointer(pattypes,attypes)     ! atom types
     integer numberofatoms; pointer(pnumberofatoms,numberofatoms)
     integer numContrib; pointer(pnumContrib,numContrib)
-    integer i, e_flag, f_flag, eper_flag
+    integer i, e_flag, f_flag, eper_flag, idum
     external calculate
 
     ! Unpack data from KIM object
     !
     pnumberofatoms = kim_api_get_data_f(pkim,"numberOfAtoms",ier)
     if (ier.lt.KIM_STATUS_OK) then
-       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
        stop
     endif
 
     pnumContrib = kim_api_get_data_f(pkim,"numberContributingAtoms",ier)
     if (ier.lt.KIM_STATUS_OK) then
-       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
        stop
     endif
 
     pattypes = kim_api_get_data_f(pkim,"atomTypes", ier)
     if (ier.lt.KIM_STATUS_OK) then
-       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
        stop
     endif
     do i=1,numberofatoms
        if (attypes(i).ne.1) then ! check for correct atom types Ne=1
-          call kim_api_report_error_f(__LINE__, __FILE__, "Wrong Atom Type", KIM_STATUS_FAIL)
+          idum = kim_api_report_error_f(__LINE__, __FILE__, "Wrong Atom Type", KIM_STATUS_FAIL)
           stop
        endif
     enddo
 
     px=kim_api_get_data_f(pkim,"coordinates",ier)
     if (ier.lt.KIM_STATUS_OK) then
-       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
        stop
     endif
 
     pf=kim_api_get_data_f(pkim,"forces",ier)
     if (ier.lt.KIM_STATUS_OK) then
-       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
        stop
     endif
 
     ppotenergy = kim_api_get_data_f(pkim,"energy",ier)
     if (ier.lt.KIM_STATUS_OK) then
-       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
        stop
     endif
 
     pea = kim_api_get_data_f(pkim,"energyPerAtom",ier)
     if (ier.lt.KIM_STATUS_OK) then
-       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
        stop
     endif
 
@@ -104,19 +104,19 @@ contains
     !
     e_flag=kim_api_isit_compute_f(pkim,"energy",ier)
     if (ier.lt.KIM_STATUS_OK) then
-       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute_f", ier)
+       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute_f", ier)
        stop
     endif
 
     f_flag=kim_api_isit_compute_f(pkim,"forces",ier)
     if (ier.lt.KIM_STATUS_OK) then
-       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute_f", ier)
+       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute_f", ier)
        stop
     endif
 
     eper_flag=kim_api_isit_compute_f(pkim,"energyPerAtom",ier)
     if (ier.lt.KIM_STATUS_OK) then
-       call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute_f", ier)
+       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute_f", ier)
        stop
     endif
 
@@ -140,7 +140,7 @@ subroutine model_Ne_P_LJ_NEIGH_PURE_H_init(pkim)
   integer(kind=kim_intptr), intent(in) :: pkim
 
   !-- Local variables
-  integer ier
+  integer ier, idum
   integer(kind=kim_intptr) one
 
   !-- KIM variables
@@ -150,14 +150,14 @@ subroutine model_Ne_P_LJ_NEIGH_PURE_H_init(pkim)
   one=1
   ier = kim_api_set_data_f(pkim,"compute",one,loc(calculate_wrap_f77))
   if (ier.lt.KIM_STATUS_OK)  then
-     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data_f", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data_f", ier)
      stop
   endif
 
   ! store model cutoff in KIM object
   pcutoff = kim_api_get_data_f(pkim,"cutoff",ier)
   if (ier.lt.KIM_STATUS_OK) then
-     call kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
      stop
   endif
   cutoff = model_cutoff
