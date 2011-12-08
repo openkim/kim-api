@@ -520,7 +520,7 @@ do
          ! contribution to process_d1Edr
          !
          if (comp_process_d1Edr.eq.1) then
-            call kim_api_process_d1Edr_f(pkim, dEidr, r, loc(Rij), loc(i), loc(j), ier)
+            call kim_api_process_d1Edr_f(pkim, dEidr, r, loc(Rij), i, j, ier)
          endif
 
          ! contribution to forces
@@ -731,7 +731,7 @@ ier = kim_api_set_data_f(pkim,"compute",one,loc(Compute_Energy_Forces))
 if (ier.lt.KIM_STATUS_OK) then
    idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data", ier)
    stop
-endif
+endifmodel_driver_P_LJ.F90
 
 ! store pointer to reinit function in KIM object
 ier = kim_api_set_data_f(pkim,"reinit",one,loc(reinit))
