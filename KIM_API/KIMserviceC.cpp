@@ -237,22 +237,28 @@ void KIM_API_set2_compute(void *kimmdl,char *nm, int * error){
    
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     *error = KIM_STATUS_FAIL;
-    mdl->set2_compute(nm);
+    int ind =mdl->get_index(nm);
+    if (ind<0) return;
+    (*mdl)[ind].flag->calculate = 1;
     *error = KIM_STATUS_OK;
 }
 void KIM_API_set2_donotcompute(void *kimmdl,char *nm, int * error){
   
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     *error = KIM_STATUS_FAIL;
-    mdl->set2_donotcompute(nm);
+    int ind =mdl->get_index(nm);
+    if (ind<0) return;
+    (*mdl)[ind].flag->calculate = 0;
     *error = KIM_STATUS_OK;
 }
 int KIM_API_isit_compute(void *kimmdl,char *nm, int * error){
     
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
      *error = KIM_STATUS_FAIL;
+     int ind =mdl->get_index(nm);
+     if (ind<0) return KIM_NOT_COMPUTE;
     *error =KIM_STATUS_OK;
-    return (*mdl)[nm].flag->calculate;
+    return (*mdl)[ind].flag->calculate;
 }
 
 int KIM_API_get_neigh_mode(void * kimmdl,int * error){
@@ -338,8 +344,7 @@ int KIM_API_isit_compute_byI(void *kimmdl,int I,int *error){
     *error =KIM_STATUS_FAIL;
     if (mdl == NULL) return 1;
     *error =KIM_STATUS_OK;
-    return (*mdl)[I].flag->calculate;
-    
+    return (*mdl)[I].flag->calculate; 
 }
 
 float KIM_API_get_unit_scalefactor(void * kim, char*nm,int *error){
