@@ -89,7 +89,7 @@ forces                  real*8       force      standard                [numberO
 
 energyPerAtom           real*8       energy     standard                [numberOfAtoms]    optional
 
-virialGlobal            real*8       energy     standard                [6]                optional
+process_d1Edr           method       none       none                    []                 optional
 
 
 #######################################################################################################

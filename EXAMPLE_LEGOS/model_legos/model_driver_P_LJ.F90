@@ -125,7 +125,8 @@ integer,                  intent(out) :: ier
 !-- Local variables
 double precision :: Rij(DIM)
 double precision :: r,Rsqij,phi,dphi,dEidr
-integer :: i,j,jj,numnei,atom_ret,comp_force,comp_enepot,comp_virial,comp_energy
+integer :: i,j,jj,numnei,atom_ret
+integer :: comp_force,comp_energy,comp_enepot,comp_process_d1Edr
 integer, allocatable, target :: nei1atom_substitute(:)
 character*80 :: error_message
 integer :: idum
@@ -146,7 +147,6 @@ real*8  Rij_list(DIM,1); pointer(pRij_list,Rij_list)
 integer numContrib;      pointer(pnumContrib,numContrib)
 integer nei1atom(1);     pointer(pnei1atom,nei1atom)
 integer atomTypes(1);    pointer(patomTypes,atomTypes)
-real*8  virial;          pointer(pvirial,virial)
 character*64 NBC_Method; pointer(pNBC_Method,NBC_Method)
 real*8, pointer :: coor(:,:),force(:,:),ene_pot(:)
 integer IterOrLoca
@@ -248,7 +248,7 @@ else
 endif
 
 ! Check to see if we have been asked to compute the forces, energyperatom,
-! energy and virial
+! energy and d1Edr
 !
 comp_energy = kim_api_isit_compute_f(pkim,"energy",ier)
 if (ier.lt.KIM_STATUS_OK) then
@@ -268,7 +268,7 @@ if (ier.lt.KIM_STATUS_OK) then
    return
 endif
 
-comp_virial = kim_api_isit_compute_f(pkim,"virial",ier)
+comp_process_d1Edr = kim_api_isit_compute_f(pkim,"process_d1Edr", ier)
 if (ier.lt.KIM_STATUS_OK) then
    idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute_f", ier)
    return
@@ -341,14 +341,6 @@ if (comp_enepot.eq.1) then
    call toRealArrayWithDescriptor1d(enepotdum,ene_pot,N)
 endif
 
-if (comp_virial.eq.1) then
-   pvirial = kim_api_get_data_f(pkim,"virial",ier)
-   if (ier.lt.KIM_STATUS_OK) then
-      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-      return
-   endif
-endif
-
 call toRealArrayWithDescriptor2d(coordum,coor,DIM,N)
 
 ! Check to be sure that the atom types are correct
@@ -362,12 +354,11 @@ do i = 1,N
 enddo
 ier = KIM_STATUS_OK ! everything is ok
 
-! Initialize potential energies, forces, virial term
+! Initialize potential energies, forces
 !
 if (comp_enepot.eq.1) ene_pot(1:N) = 0.d0
 if (comp_energy.eq.1) energy = 0.d0
 if (comp_force.eq.1)  force(1:3,1:N) = 0.d0
-if (comp_virial.eq.1) virial = 0.d0
 
 ! Initialize neighbor handling for CLUSTER NBC
 !
@@ -488,7 +479,7 @@ do
       if ( Rsqij .lt. model_cutsq ) then          ! particles are interacting?
 
          r = sqrt(Rsqij)                          ! compute distance
-         if (comp_force.eq.1.or.comp_virial.eq.1) then
+         if (comp_force.eq.1.or.comp_process_d1Edr.eq.1) then
             call calc_phi_dphi(model_epsilon, &
                                model_sigma,   &
                                model_shift,   &
@@ -526,10 +517,10 @@ do
             endif
          endif
 
-         ! contribution to virial pressure
+         ! contribution to process_d1Edr
          !
-         if (comp_virial.eq.1) then
-            virial = virial + r*dEidr             !      virial=sum r*(dV/dr)
+         if (comp_process_d1Edr.eq.1) then
+            call kim_api_process_d1Edr_f(pkim, dEidr, r, loc(Rij), loc(i), loc(j), ier)
          endif
 
          ! contribution to forces
@@ -547,7 +538,6 @@ enddo  ! infinite do loop (terminated by exit statements above)
 
 ! Perform final tasks
 !
-if (comp_virial.eq.1) virial = - virial/DIM         ! definition of virial term
 if (comp_enepot.eq.1 .and. comp_energy.eq.1) &
    energy = sum(ene_pot(1:N))                       ! compute total energy
 

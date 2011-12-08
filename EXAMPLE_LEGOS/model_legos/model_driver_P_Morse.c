@@ -554,7 +554,7 @@ static void compute(void* km, int* ier)
             /* contribution to process_d1Edr */
             if (comp_process_d1Edr)
             {
-               KIM_API_process_d1Edr(km, &dphi, &R, &pRij, &i, &j, ier);
+               KIM_API_process_d1Edr(km, &dEidr, &R, &pRij, &i, &j, ier);
             }
             
             /* contribution to forces */
