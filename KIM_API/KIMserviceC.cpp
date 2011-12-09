@@ -351,6 +351,7 @@ float KIM_API_get_unit_scalefactor(void * kim, char*nm,int *error){
     KIM_API_model * mdl=(KIM_API_model *) kim;
     return mdl->get_unit_scalefactor(nm,error);
 }
+
 //multiple data set/get methods
 //
 void KIM_API_set_data_multiple(void *kimmdl, int *err, int numargs, ... ){
@@ -358,17 +359,25 @@ void KIM_API_set_data_multiple(void *kimmdl, int *err, int numargs, ... ){
     *err=KIM_STATUS_FAIL;
     va_list listPointer;
     va_start(listPointer,numargs);
-    if(numargs % 3 != 0) {
-        cout<<"set_data_multiple: numargs must be multiple of 3"<<endl;
-        *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3;
+    if(numargs % 4 != 0) {
+        cout<<"set_data_multiple: numargs must be multiple of 4"<<endl;
+        *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_4;
         va_end(listPointer);
         return;
     }
 
-    for (int i=0; i<numargs/3; i++){
+    for (int i=0; i<numargs/4; i++){
         char *nm      = va_arg(listPointer, char *);
         intptr_t size = va_arg(listPointer, intptr_t);
         void *dt      = va_arg(listPointer, void *);
+
+        int key       =va_arg(listPointer, int);
+        if (key != 1 && key != 0 ){
+            *err= KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY;
+            va_end(listPointer);
+            return;
+        }else if(key ==0) continue;
+       
         if(dt==NULL) cout<<"set_data_multiple: WARNING: for "<<nm<<" data is NULL\n";
         if(!pkim->set_data(nm,size,dt)){
             cout<<"set_data_multiple: set data for "<<nm<<" failed\n";
@@ -386,17 +395,25 @@ void KIM_API_set_data_byI_multiple(void *kimmdl, int *err, int numargs, ... ){
      *err=KIM_STATUS_FAIL;
     va_list listPointer;
     va_start(listPointer,numargs);
-    if(numargs % 3 != 0) {
-        cout<<"set_data_byI_multiple: numargs must be multiple of 3"<<endl;
-        *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3;
+    if(numargs % 4 != 0) {
+        cout<<"set_data_byI_multiple: numargs must be multiple of 4"<<endl;
+        *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_4;
         va_end(listPointer);
         return;
     }
 
-    for (int i=0; i<numargs/3; i++){
+    for (int i=0; i<numargs/4; i++){
         int ind      = va_arg(listPointer, int);
         intptr_t size = va_arg(listPointer, intptr_t);
         void *dt      = va_arg(listPointer, void *);
+
+        int key       =va_arg(listPointer, int);
+        if (key != 1 && key != 0 ){
+            *err= KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY;
+            va_end(listPointer);
+            return;
+        }else if(key ==0) continue;
+       
         if(dt==NULL) cout<<"set_data_byI_multiple: WARNING: for argument group "<<i<<" data is NULL\n";
 
         if(!pkim->set_data_byi(ind,size,dt)){
@@ -413,17 +430,24 @@ void KIM_API_get_data_multiple(void *kimmdl, int *err,int numargs, ...){
     *err=KIM_STATUS_FAIL;
     va_list listPointer;
     va_start(listPointer,numargs);
-    if(numargs % 2 != 0) {
-        cout<<"get_data_multiple: numargs must be multiple of 2"<<endl;
-        *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_2;
+    if(numargs % 3 != 0) {
+        cout<<"get_data_multiple: numargs must be multiple of 3"<<endl;
+        *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3;
         va_end(listPointer);
         return;
     }
 
-    for (int i=0; i<numargs/2; i++){
+    for (int i=0; i<numargs/3; i++){
         char *nm      = va_arg(listPointer, char *);
         void **dt      = va_arg(listPointer, void **);
 
+        int key       =va_arg(listPointer, int);
+        if (key != 1 && key != 0 ){
+            *err= KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY;
+            va_end(listPointer);
+            return;
+        }else if(key ==0) continue;
+       
         *dt = pkim->get_data(nm,err);
         if(*err != KIM_STATUS_OK){
             cout<<"get_data_multiple: get data for "<<nm<<" failed\n";
@@ -440,17 +464,24 @@ void KIM_API_get_data_byI_multiple(void *kimmdl,int *err,int numargs, ...){
     *err=KIM_STATUS_FAIL;
     va_list listPointer;
     va_start(listPointer,numargs);
-    if(numargs % 2 != 0) {
-        cout<<"get_data_byI_multiple: numargs must be multiple of 2"<<endl;
-        *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_2;
+    if(numargs % 3 != 0) {
+        cout<<"get_data_byI_multiple: numargs must be multiple of 3"<<endl;
+        *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3;
         va_end(listPointer);
         return;
     }
 
-    for (int i=0; i<numargs/2; i++){
+    for (int i=0; i<numargs/3; i++){
         int ind      = va_arg(listPointer, int);
         void **dt      = va_arg(listPointer, void **);
 
+        int key       =va_arg(listPointer, int);
+        if (key != 1 && key != 0 ){
+            *err= KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY;
+            va_end(listPointer);
+            return;
+        }else if(key ==0) continue;
+       
         *dt = pkim->get_data_byi(ind,err);
         if(*err != KIM_STATUS_OK){
             cout<<"get_data_byI_multiple: get data for argument group "<<i<<" failed\n";
@@ -467,17 +498,24 @@ void KIM_API_get_index_multiple(void *kimmdl, int *err, int numargs, ...){
      *err=KIM_STATUS_FAIL;
     va_list listPointer;
     va_start(listPointer,numargs);
-    cout << numargs << "  ---  "<<numargs % 2<<endl;
-    if(numargs % 2 != 0) {
-        cout<<"get_index_multiple: numargs must be multiple of 2"<<endl;
-        *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_2;
+
+    if(numargs % 3 != 0) {
+        cout<<"get_index_multiple: numargs must be multiple of 3"<<endl;
+        *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3;
         va_end(listPointer);
         return;
     }
 
-    for (int i=0; i<numargs/2; i++){
+    for (int i=0; i<numargs/3; i++){
         char *nm      = va_arg(listPointer, char *);
         int *ind      = va_arg(listPointer, int *);
+
+        int key       =va_arg(listPointer, int);
+        if (key != 1 && key != 0 ){
+            *err= KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY;
+            va_end(listPointer);
+            return;
+        }else if(key ==0) continue;
 
         *ind = pkim->get_index(nm,err);
         if(*err != KIM_STATUS_OK){
@@ -496,16 +534,24 @@ void KIM_API_set_compute_multiple(void *kimmdl, int *err, int numargs, ...){
     *err=KIM_STATUS_FAIL;
     va_list listPointer;
     va_start(listPointer,numargs);
-    if(numargs % 2 != 0) {
-        cout<<"set_compute_multiple: numargs must be multiple of 2"<<endl;
-        *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_2;
+    if(numargs % 3 != 0) {
+        cout<<"set_compute_multiple: numargs must be multiple of 3"<<endl;
+        *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3;
         va_end(listPointer);
         return;
     }
 
-    for (int i=0; i<numargs/2; i++){
+    for (int i=0; i<numargs/3; i++){
         char *nm      = va_arg(listPointer, char *);
         int compute_flag = va_arg(listPointer, int);
+
+        int key       =va_arg(listPointer, int);
+        if (key != 1 && key != 0 ){
+            *err= KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY;
+            va_end(listPointer);
+            return;
+        }else if(key ==0) continue;
+       
         int index = pkim->get_index(nm,err);
         if (*err != KIM_STATUS_OK){
            cout<<"set_compute_multiple:  name "<<nm<<" not in KIM\n";
@@ -531,16 +577,24 @@ void KIM_API_set_compute_byI_multiple(void *kimmdl, int *err, int numargs, ...){
      *err=KIM_STATUS_OK;
     va_list listPointer;
     va_start(listPointer,numargs);
-    if(numargs % 2 != 0) {
-        cout<<"set_compute_byI_multiple: numargs must be multiple of 2"<<endl;
-        *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_2;
+    if(numargs % 3 != 0) {
+        cout<<"set_compute_byI_multiple: numargs must be multiple of 3"<<endl;
+        *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3;
         va_end(listPointer);
         return;
     }
 
-    for (int i=0; i<numargs/2; i++){
+    for (int i=0; i<numargs/3; i++){
         int index      = va_arg(listPointer, int);
         int compute_flag = va_arg(listPointer, int);
+
+        int key       =va_arg(listPointer, int);
+        if (key != 1 && key != 0 ){
+            *err= KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY;
+            va_end(listPointer);
+            return;
+        }else if(key ==0) continue;
+
         if (index < 0 || index >= pkim->model.size) *err=KIM_STATUS_FAIL;
         if (*err != KIM_STATUS_OK){
            cout<<"set_compute_byI_multiple:  for argument group "<<i<<" failed\n";
@@ -567,16 +621,24 @@ void KIM_API_get_compute_multiple(void *kimmdl, int *err,int numargs, ...){
     *err=KIM_STATUS_FAIL;
     va_list listPointer;
     va_start(listPointer,numargs);
-    if(numargs % 2 != 0) {
-        cout<<"get_compute_multiple: numargs must be multiple of 2"<<endl;
-        *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_2;
+    if(numargs % 3 != 0) {
+        cout<<"get_compute_multiple: numargs must be multiple of 3"<<endl;
+        *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3;
         va_end(listPointer);
         return;
     }
 
-    for (int i=0; i<numargs/2; i++){
+    for (int i=0; i<numargs/3; i++){
         char *nm      = va_arg(listPointer, char *);
         int *compute_flag = va_arg(listPointer, int*);
+
+        int key       =va_arg(listPointer, int);
+        if (key != 1 && key != 0 ){
+            *err= KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY;
+            va_end(listPointer);
+            return;
+        }else if(key ==0) continue;
+       
         int index = pkim->get_index(nm,err);
         if (*err != KIM_STATUS_OK){
            cout<<"get_compute_multiple:  name "<<nm<<" not in KIM\n";
@@ -595,16 +657,24 @@ void KIM_API_get_compute_byI_multiple(void *kimmdl, int *err,int numargs, ...){
      *err=KIM_STATUS_OK;
     va_list listPointer;
     va_start(listPointer,numargs);
-    if(numargs % 2 != 0) {
-        cout<<"get_compute_byI_multiple: numargs must be multiple of 2"<<endl;
-        *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_2;
+    if(numargs % 3 != 0) {
+        cout<<"get_compute_byI_multiple: numargs must be multiple of 3"<<endl;
+        *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3;
         va_end(listPointer);
         return;
     }
 
-    for (int i=0; i<numargs/2; i++){
+    for (int i=0; i<numargs/3; i++){
         int index      = va_arg(listPointer, int);
         int *compute_flag = va_arg(listPointer, int*);
+
+        int key       =va_arg(listPointer, int);
+        if (key != 1 && key != 0 ){
+            *err= KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY;
+            va_end(listPointer);
+            return;
+        }else if(key ==0) continue;
+       
         if (index < 0 || index >= pkim->model.size) *err=KIM_STATUS_FAIL;
         if (*err != KIM_STATUS_OK){
            cout<<"get_compute_byI_multiple:  for argument group "<<i<<" failed\n";
