@@ -1695,7 +1695,7 @@ extern "C"{
   #include "model_kim_str_include.h"
 }
 
-void * KIM_API_model::get_model_kim_str(char* modelname,int * kimerr){
+char * KIM_API_model::get_model_kim_str(char* modelname,int * kimerr){
    // void * model_lib_handle;
      //redirecting cout > kimlog
     *kimerr=KIM_STATUS_FAIL;
@@ -1715,7 +1715,7 @@ void * KIM_API_model::get_model_kim_str(char* modelname,int * kimerr){
      //redirecting back to > cout
     cout.rdbuf(backup); filekimlog.close();
     *kimerr= KIM_STATUS_OK;
-    return (void *) in_mdlstr;   
+    return in_mdlstr;   
 }
 
 bool KIM_API_model::init(char* testname, char* modelname){
@@ -1743,7 +1743,7 @@ bool KIM_API_model::init(char* testname, char* modelname){
 
 #else
 
-void * KIM_API_model::get_model_kim_str(char* modelname,int * kimerr){
+char * KIM_API_model::get_model_kim_str(char* modelname,int * kimerr){
     void * model_lib_handle;
     *kimerr= KIM_STATUS_FAIL;
     char model_slib_file[2048];
@@ -1795,7 +1795,7 @@ void * KIM_API_model::get_model_kim_str(char* modelname,int * kimerr){
    //redirecting back to > cout
     cout.rdbuf(backup); filekimlog.close();
     *kimerr= KIM_STATUS_OK;
-    return (void*)in_mdlstr;
+    return in_mdlstr;
 }
 
 
@@ -2597,7 +2597,7 @@ bool KIM_API_model::init_AtomsTypes(){
     return true;
 }
 
-void * KIM_API_model::get_listAtomsTypes(int* nATypes, int* error){
+char * KIM_API_model::get_listAtomsTypes(int* nATypes, int* error){
     *error=KIM_STATUS_FAIL;
     if (nAtomsTypes==0){
         *nATypes = 0;
@@ -2617,9 +2617,9 @@ void * KIM_API_model::get_listAtomsTypes(int* nATypes, int* error){
         strncpy(listatypes + i*KEY_CHAR_LENGTH, AtomsTypes[i].symbol,strlen( AtomsTypes[i].symbol)+1);
     }
     *error =KIM_STATUS_OK;//success
-    return (void *) listatypes;
+    return  listatypes;
 }
-void * KIM_API_model::get_NBC_method(int* error){
+char * KIM_API_model::get_NBC_method(int* error){
     *error=KIM_STATUS_FAIL;
     if(strcmp(this->NBC_method_current,"none")==0) {
         // no NBC methods are specified
@@ -2630,7 +2630,7 @@ void * KIM_API_model::get_NBC_method(int* error){
     for (int i=0;i<KEY_CHAR_LENGTH;i++) method[i] = '\0';
     strcpy(method,this->NBC_method_current);
     *error=KIM_STATUS_OK; //success
-    return (void *)method;
+    return method;
 }
 bool KIM_API_model::requiresFullNeighbors(){
     int kimerr;
@@ -2647,7 +2647,7 @@ bool KIM_API_model::requiresFullNeighbors(){
     if (method!=NULL) delete [] method;
     return answer;
 }
-void * KIM_API_model::get_listParams(int* nVpar, int* error){
+char * KIM_API_model::get_listParams(int* nVpar, int* error){
     int count;
     count=0;
     *error=KIM_STATUS_FAIL;
@@ -2672,9 +2672,9 @@ void * KIM_API_model::get_listParams(int* nVpar, int* error){
          }
     }
     *error =KIM_STATUS_OK;//success
-    return (void *) listvpar;
+    return  listvpar;
 }
-void * KIM_API_model::get_listFreeParams(int* nVpar, int* error){
+char * KIM_API_model::get_listFreeParams(int* nVpar, int* error){
     int count;
     count=0;
     *error=KIM_STATUS_FAIL;
@@ -2699,9 +2699,9 @@ void * KIM_API_model::get_listFreeParams(int* nVpar, int* error){
          }
     }
     *error =KIM_STATUS_OK;//success
-    return (void *) listvpar;
+    return  listvpar;
 }
-void * KIM_API_model::get_listFixedParams(int* nVpar, int* error){
+char * KIM_API_model::get_listFixedParams(int* nVpar, int* error){
     int count;
     count=0;
     *error = KIM_STATUS_FAIL;
@@ -2726,7 +2726,7 @@ void * KIM_API_model::get_listFixedParams(int* nVpar, int* error){
          }
     }
     *error =KIM_STATUS_OK;//success
-    return (void *) listvpar;
+    return  listvpar;
 }
 int  KIM_API_model::get_neigh_mode(int*kimerr){
     *kimerr=KIM_STATUS_OK;

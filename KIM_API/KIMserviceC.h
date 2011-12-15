@@ -33,25 +33,25 @@ void KIM_API_free(void *kimmdl,int * error);
 void KIM_API_print(void *kimmdl,int *error);
 void KIM_API_model_compute(void *kimmdl,int *error);
 int KIM_API_model_init(void * kimmdl);
-void * KIM_API_get_model_kim_str(char *modelname,int *kimerr);
+char * KIM_API_get_model_kim_str(char *modelname,int * error);
 void KIM_API_model_destroy(void * kimmdl,int * error);
 int KIM_API_model_reinit(void * kimmdld);
 
 
 void KIM_API_get_Units(void *kimmdl,char * UnitsSystem, int *error);
-void KIM_API_get_originalUnits(void *kimmdl,char * UnitsSystem, int*error);
+void KIM_API_get_originalUnits(void *kimmdl,char * UnitsSystem, int *error);
 int KIM_API_set_Units(void *kimmdl,char * UnitsSystem);
 void KIM_API_transform_Units_to(void *kimmdl,char * UnitsSystem, int *error);
 int KIM_API_isUnitS_fixed(void *kimmdl);
 
-void * KIM_API_get_listAtomTypes(void * kimmdl,int* nATypes, int* error);
+char * KIM_API_get_listAtomTypes(void * kimmdl,int* nATypes, int * error);
 int KIM_API_get_aTypeCode(void * kimmdl, char* atom, int * error);
 
-void * KIM_API_get_listParams(void * kimmdl,int* nVpar, int* error);
-void * KIM_API_get_listFreeParams(void * kimmdl,int* nVpar, int* error);
-void * KIM_API_get_listFixedParams(void * kimmdl,int* nVpar, int* error);
+char * KIM_API_get_listParams(void * kimmdl,int* nVpar, int * error);
+char * KIM_API_get_listFreeParams(void * kimmdl,int* nVpar, int * error);
+char * KIM_API_get_listFixedParams(void * kimmdl,int* nVpar, int * error);
 
-void * KIM_API_get_NBC_method(void *kimmdl,int * error);
+char * KIM_API_get_NBC_method(void *kimmdl,int * error);
 
 int KIM_API_get_full_neigh(void *kimmdl,int mode,int request,
         int *atom, int *numnei, int **nei1atom, double **Rij);
@@ -59,23 +59,23 @@ int KIM_API_get_full_neigh(void *kimmdl,int mode,int request,
 int KIM_API_get_half_neigh(void *kimmdl,int mode,int request,
         int *atom, int *numnei, int **nei1atom, double **Rij);
 
-int KIM_API_get_neigh_mode(void *,int *);
+int KIM_API_get_neigh_mode(void *kimmdl,int *error);
 
 char * KIM_API_status_msg(int error);
     
-int KIM_API_report_error(int ln,char * fl,char * usermsg,int ier);
+int KIM_API_report_error(int ln,char * fl,char * usermsg,int error);
 
-int KIM_API_get_model_index_shift(void *);
+int KIM_API_get_model_index_shift(void *kimmdl);
 
-void KIM_API_set_model_buffer(void * kimmdl,void * ob, int * ier);
-void * KIM_API_get_model_buffer(void * kimmdl, int * ier);
-int KIM_API_isit_half_neighbors(void *kimmdl,int *ier);
+void KIM_API_set_model_buffer(void * kimmdl,void * ob, int * error);
+void * KIM_API_get_model_buffer(void * kimmdl, int * error);
+int KIM_API_isit_half_neighbors(void *kimmdl,int * error);
 
 //element access methods
 int  KIM_API_set_data(void *kimmdl,char *nm,  intptr_t size, void *dt);
 void * KIM_API_get_data(void *kimmdl,char *nm,int * error);
 
-intptr_t KIM_API_get_size(void *kimmdl,char *nm, int *error);
+intptr_t KIM_API_get_size(void *kimmdl,char *nm, int * error);
 intptr_t KIM_API_get_rank_shape(void *kimmdl,char *nm, int * shape, int *error);
 void KIM_API_set_rank_shape(void *kimmdl,char *nm, int * shape, int rank,int *error);
 
@@ -84,7 +84,7 @@ void KIM_API_set2_donotcompute(void *kimmdl,char *nm,int *error);
 int KIM_API_isit_compute(void *kimmdl,char *nm,int *error);
 
 int KIM_API_get_index(void *kimmdl,char*nm, int * error);
-float KIM_API_get_unit_scalefactor(void * kim, char*nm, int * error);
+float KIM_API_get_unit_scalefactor(void * kimmdl, char*nm, int * error);
 void KIM_API_set_data_byI(void *kimmdl,int I, intptr_t size, void *dt, int * error);
 void * KIM_API_get_data_byI(void *kimmdl,int I, int *error);
 
@@ -95,19 +95,19 @@ void KIM_API_set2_compute_byI(void *kimmdl,int I,int * error);
 void KIM_API_set2_donotcompute_byI(void *kimmdl,int I, int * error);
 int KIM_API_isit_compute_byI(void *kimmdl,int I,int * error);
 
-void KIM_API_process_d1Edr(void **ppkim, double * dE, double * dr, double **dx,int *i, int *j, int *ier );
+void KIM_API_process_d1Edr(void **kimmdl, double * dE, double * dr, double **dx,int *i, int *j, int *error );
 
 //multiple data set/get methods
 //
-void KIM_API_set_data_multiple(void *kimmdl, int *err, int numargs, ... );
-void KIM_API_set_data_byI_multiple(void *kimmdl, int *err, int numargs, ... );
-void KIM_API_get_data_multiple(void *kimmdl, int *err,int numargs, ...);
-void KIM_API_get_data_byI_multiple(void *kimmdl,int *err,int numargs, ...);
-void KIM_API_get_index_multiple(void *kimmdl, int *err, int numargs, ...);
-void KIM_API_set_compute_multiple(void *kimmdl, int *err, int numargs, ...);
-void KIM_API_set_compute_byI_multiple(void *kimmdl, int *err, int numargs, ...);
-void KIM_API_get_compute_multiple(void *kimmdl, int *err,int numargs, ...);
-void KIM_API_get_compute_byI_multiple(void *kimmdl, int *err,int numargs, ...);
+void KIM_API_set_data_multiple(void *kimmdl, int *error, int numargs, ... );
+void KIM_API_set_data_byI_multiple(void *kimmdl, int *error, int numargs, ... );
+void KIM_API_get_data_multiple(void *kimmdl, int *error,int numargs, ...);
+void KIM_API_get_data_byI_multiple(void *kimmdl,int *error,int numargs, ...);
+void KIM_API_get_index_multiple(void *kimmdl, int *error, int numargs, ...);
+void KIM_API_set_compute_multiple(void *kimmdl, int *error, int numargs, ...);
+void KIM_API_set_compute_byI_multiple(void *kimmdl, int *error, int numargs, ...);
+void KIM_API_get_compute_multiple(void *kimmdl, int *error,int numargs, ...);
+void KIM_API_get_compute_byI_multiple(void *kimmdl, int *error,int numargs, ...);
 
 //total 58 service routines
 

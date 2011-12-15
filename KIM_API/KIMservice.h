@@ -228,17 +228,17 @@ bool set_units(char * unitS);
 void get_units(char * units,int *error);
 void get_originalUnits(char * unitS,int *error);
 
-void * get_listAtomsTypes(int *nAtomTypes,int *error);
+char * get_listAtomsTypes(int *nAtomTypes,int *error);
 int get_aTypeCode(char *atom, int * error);
 
-void * get_listParams(int *nVpar,int *error);
-void * get_listFreeParams(int *nVpar,int *error);
-void * get_listFixedParams(int *nVpar,int *error);
+char * get_listParams(int *nVpar,int *error);
+char * get_listFreeParams(int *nVpar,int *error);
+char * get_listFixedParams(int *nVpar,int *error);
 
-static void * get_model_kim_str(char * modelname,int *kimerr);
+static char * get_model_kim_str(char * modelname,int *kimerr);
 
 
-void * get_NBC_method(int *error);
+char * get_NBC_method(int *error);
 bool requiresFullNeighbors();
 
     KIM_IOline *inlines;

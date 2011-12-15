@@ -91,7 +91,7 @@ int KIM_API_model_init(void * kimmdl){
     return KIM_STATUS_FAIL;
 }
 
-void * KIM_API_get_model_kim_str(char * modelname,int * kimerr){
+char * KIM_API_get_model_kim_str(char * modelname,int * kimerr){
     return KIM_API_model::get_model_kim_str(modelname,kimerr);
 }
 
@@ -134,24 +134,24 @@ int KIM_API_isUnitS_fixed(void *kimmdl){
     if(mdl->is_unitsfixed()) return KIM_STATUS_OK;
     return KIM_STATUS_FAIL;
 }
-void * KIM_API_get_listAtomTypes(void * kimmdl,int* nATypes, int* error){
+char * KIM_API_get_listAtomTypes(void * kimmdl,int* nATypes, int* error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     return mdl->get_listAtomsTypes(nATypes,error);
 }
 
-void * KIM_API_get_listParams(void * kimmdl,int* nVpar, int* error){
+char * KIM_API_get_listParams(void * kimmdl,int* nVpar, int* error){
      KIM_API_model * mdl=(KIM_API_model *) kimmdl;
      return mdl->get_listParams(nVpar,error);
 }
-void * KIM_API_get_listFreeParams(void * kimmdl,int* nVpar, int* error){
+char * KIM_API_get_listFreeParams(void * kimmdl,int* nVpar, int* error){
      KIM_API_model * mdl=(KIM_API_model *) kimmdl;
      return mdl->get_listFreeParams(nVpar,error);
 }
-void * KIM_API_get_listFixedParams(void * kimmdl,int* nVpar, int* error){
+char * KIM_API_get_listFixedParams(void * kimmdl,int* nVpar, int* error){
      KIM_API_model * mdl=(KIM_API_model *) kimmdl;
      return mdl->get_listFixedParams(nVpar,error);
 }
-void * KIM_API_get_NBC_method(void *kimmdl,int * error){
+char * KIM_API_get_NBC_method(void *kimmdl,int * error){
      KIM_API_model * mdl=(KIM_API_model *) kimmdl;
      return mdl->get_NBC_method(error);
 }
