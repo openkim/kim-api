@@ -87,15 +87,16 @@ else
                                                      -D KIM_DIR_MODEL_DRIVERS=\"$(KIM_MODEL_DRIVERS_DIR)\"
    FORTRANCOMPILER = gfortran
    #FORTRANCOMPILER = mpif90
-   #CPPLIBFLAG = -lgfortran           #if GNU version 4.5 and up. tested on suse 
-   #LINKCOMPILER = $(CPPCOMPILER)     #if GNU version 4.5 and up. tested on suse
-   CPPLIBFLAG = -lstdc++             #if GNU version 4.4.1. tested on suse
-   LINKCOMPILER = $(FORTRANCOMPILER) #if GNU version 4.4.1. tested on suse
+   CPPLIBFLAG = -lgfortran           #if GNU version 4.5 and up. tested on suse 
+   LINKCOMPILER = $(CPPCOMPILER)     #if GNU version 4.5 and up. tested on suse
+   #CPPLIBFLAG = -lstdc++             #if GNU version 4.4.1. tested on suse
+   #LINKCOMPILER = $(FORTRANCOMPILER) #if GNU version 4.4.1. tested on suse
    ifdef KIM_DYNAMIC
       CPPLIBFLAG += -ldl
    endif
 endif
 
+CPPFLAG += -D $(MACHINESYSTEM)
 # directory where the kim.log file should be created
 # CPPFLAG += -D KIM_DIR=\"$(KIM_DIR)\"
 
@@ -220,3 +221,6 @@ MODEL_NAME_KIM_STR_CPP = char* $(MODEL_NAME)_kim_str'('')''{'
 # Library pattern rule
 %.so: %.a
 	$(LINKCOMPILER) $(SHARED_LIB_FLAG)  $(CPPLIBFLAG) -o $@  *.o -L$(KIM_API_DIR) -lkim
+
+
+
