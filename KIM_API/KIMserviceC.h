@@ -35,7 +35,7 @@ void KIM_API_model_compute(void *kimmdl,int *error);
 int KIM_API_model_init(void * kimmdl);
 char * KIM_API_get_model_kim_str(char *modelname,int * error);
 void KIM_API_model_destroy(void * kimmdl,int * error);
-int KIM_API_model_reinit(void * kimmdld);
+int KIM_API_model_reinit(void * kimmdl);
 
 
 void KIM_API_get_Units(void *kimmdl,char * UnitsSystem, int *error);
@@ -83,8 +83,8 @@ void KIM_API_set2_compute(void *kimmdl,char *nm,int * error);
 void KIM_API_set2_donotcompute(void *kimmdl,char *nm,int *error);
 int KIM_API_isit_compute(void *kimmdl,char *nm,int *error);
 
-int KIM_API_get_index(void *kimmdl,char*nm, int * error);
-float KIM_API_get_unit_scalefactor(void * kimmdl, char*nm, int * error);
+int KIM_API_get_index(void *kimmdl,char *nm, int * error);
+float KIM_API_get_unit_scalefactor(void * kimmdl, char *nm, int * error);
 void KIM_API_set_data_byI(void *kimmdl,int I, intptr_t size, void *dt, int * error);
 void * KIM_API_get_data_byI(void *kimmdl,int I, int *error);
 
