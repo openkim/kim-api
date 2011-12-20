@@ -1260,38 +1260,40 @@ c-style: KIM_API_set_data_multiple, KIM_API_get_data_byI_multiple,KIM_API_set_co
          numargs -- must be the number of all arguments that follows it.
 
          There can be many argument variable groups in one call. 
-         Each argument variable group has 2 or 3 variables, therefor numargs must be divisible by 2 or 3.
-         Argument variable group has different type of variable depending on the context:
+         Each argument variable group has 3 or 4 variables, therefore numargs must be divisible by 3 or 4.
+         Argument variable group has different type of variable depending on the context. The last variable 
+         in the group is always integer variable group key (gkey), That variable can be 1 or 0 and tells whether 
+         action by kimservice routines should be performed or ignored:
   
          1.   void KIM_API_set_data_multiple(void *pkim, int *err, int numargs, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
 
-              VARIABLE_GROUP here has 3 variables:         char *name,   intptr_t size,  void *data
+              VARIABLE_GROUP here has 4 variables:         char *name,   intptr_t size,  void *data, int gkey
               See KIM_API_get_data for details
 
          2.   void KIM_API_set_data_byI_multiple(void *pkim, int *err, int numargs, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
-              VARIABLE_GROUP here has 3 variables:         int index,  intptr_t size,  void *data
+              VARIABLE_GROUP here has 4 variables:         int index,  intptr_t size,  void *data, int gkey
               See KIM_API_get_data_byI for details
 
          3.   void KIM_API_get_data_multiple(void *pkim, int *err, int numargs, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
-              VARIABLE_GROUP here has 2 variables:         char *name,   void **data
+              VARIABLE_GROUP here has 3 variables:         char *name,   void **data, int gkey
 
          4.   void KIM_API_get_data_byI_multiple(void *pkim, int *err, int numargs, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
-              VARIABLE_GROUP here has 2 variables:          int index,   void **data
+              VARIABLE_GROUP here has 3 variables:          int index,   void **data, int gkey
 
          5.   void KIM_API_set_compute_multiple(void *pkim, int *err, int numargs, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
-              VARIABLE_GROUP here has 2 variables:         char *name,   int compute
+              VARIABLE_GROUP here has 3 variables:         char *name,   int compute, int gkey
 
          6.   void KIM_API_get_compute_multiple(void *pkim, int *err, int numargs, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
-              VARIABLE_GROUP here has 2 variables:         char *name,   int *compute
+              VARIABLE_GROUP here has 3 variables:         char *name,   int *compute, int gkey
   
          7.   void KIM_API_set_compute_byI_multiple(void *pkim, int *err, int numargs, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
-              VARIABLE_GROUP here has 2 variables:          int index,   int compute
+              VARIABLE_GROUP here has 3 variables:          int index,   int compute, int gkey
 
          8.   void KIM_API_get_compute_byI_multiple(void *pkim, int *err, int numargs, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
-              VARIABLE_GROUP here has 2 variables:          int index,   int *compute
+              VARIABLE_GROUP here has 3 variables:          int index,   int *compute, int gkey
 
          9.   void KIM_API_get_index_multiple(void *pkim, int *err, int numargs, VARIABLE_GROUP1,[VARIABLE_GROUP2,...] );
-              VARIABLE_GROUP here has 2 variables:         char *name,    int *index
+              VARIABLE_GROUP here has 3 variables:         char *name,    int *index, int gkey
 
         error code (second argument) in those routines will be KIM_STATUS_OK if it is success, 
         otherwise KIM_STATUS_FAIL (or other error codes < 1).
@@ -1314,60 +1316,70 @@ f90-style:  KIM_API_set_data_multiple_f, KIM_API_get_data_byI_multiple_f,KIM_API
          integer :: kimerr               ! error code returned
 
 
-         There can be up to 20  argument variable groups that follows kimerr. 
-         Each argument variable group has 2 or 3 variables.
-         Argument variable group has different type of variable depending on the context:
+         There can be up to 15  argument variable groups that follows kimerr. 
+         Each argument variable group has 3 or 4 variables.
+         Argument variable group has different type of variable depending on the context. The last variable 
+         in the group is always integer variable group key (gkey). That variable can be 1 or 0 and tells whether 
+         action by kimservice routines should be performed or ignored:
   
          1.   void KIM_API_set_data_multiple_f(pkim, err, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
 
-              VARIABLE_GROUP has 3 variables: 
+              VARIABLE_GROUP has 4 variables: 
                                   character(len=*)       :: name
                                   integer(kind=kimintptr):: size
                                   integer(kind=kimintptr):: data
+                                  integer                :: gkey
               See KIM_API_get_data_f for details
 
          2.   void KIM_API_set_data_byI_multiple(pkim, err, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
-              VARIABLE_GROUP has 3 variables:
+              VARIABLE_GROUP has 4 variables:
                                   integer                :: index
                                   integer(kind=kimintptr):: size
                                   integer(kind=kimintptr):: data
+                                  integer                :: gkey
               See KIM_API_get_data_byI for details
 
          3.   void KIM_API_get_data_multiple(pkim, err, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
-              VARIABLE_GROUP here has 2 variables: 
+              VARIABLE_GROUP here has 3 variables: 
                                   character(len=*)       :: name
                                   integer(kind=kimintptr):: data
+                                  integer                :: gkey
 
          4.   void KIM_API_get_data_byI_multiple(pkim, err, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
-              VARIABLE_GROUP has 2 variables:
+              VARIABLE_GROUP has 3 variables:
                                   integer                :: index
                                   integer(kind=kimintptr):: size, data
+                                  integer                :: gkey
 
          5.   void KIM_API_set_compute_multiple(pkim, err, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
-              VARIABLE_GROUP has 2 variables:
+              VARIABLE_GROUP has 3 variables:
                                   character(len=*)       :: name
                                   integer                :: compute
+                                  integer                :: gkey
 
          6.   void KIM_API_get_compute_multiple(pkim, err, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
-              VARIABLE_GROUP has 2 variables:
+              VARIABLE_GROUP has 3 variables:
                                   character(len=*)       :: name
                                   integer                :: compute
+                                  integer                :: gkey
   
          7.   void KIM_API_set_compute_byI_multiple(pkim, err, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
-              VARIABLE_GROUP has 2 variables:
+              VARIABLE_GROUP has 3 variables:
                                   integer                :: index
                                   integer                :: compute
+                                  integer                :: gkey
 
          8.   void KIM_API_get_compute_byI_multiple(pkim, err, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
-              VARIABLE_GROUP here has 2 variables:
+              VARIABLE_GROUP here has 3 variables:
                                   integer                :: index
                                   integer                :: compute
+                                  integer                :: gkey
 
          9.   void KIM_API_get_index_multiple(pkim, err, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
-              VARIABLE_GROUP has 2 variables: 
+              VARIABLE_GROUP has 3 variables: 
                                   character(len=*)       :: name
                                   integer                :: index
-
+                                  integer                :: gkey
 
         error code (second argument) in those routines will be KIM_STATUS_OK if it is success, 
         otherwise KIM_STATUS_FAIL (or other error codes < 1).

@@ -995,9 +995,9 @@ integer,parameter :: kim_intptr = 8
             call kim_api_set2_donotcompute_byi(kimmdl,I,error)
         end subroutine kim_api_set2_donotcompute_byi_f
 
-        subroutine kim_api_set_data_multiple_f(kimmdl,error, nm1,sz1,dt1, nm2,sz2,dt2, nm3,sz3,dt3, nm4,sz4,dt4, nm5,sz5,dt5,&
-         nm6,sz6,dt6, nm7,sz7,dt7, nm8,sz8,dt8, nm9,sz9,dt9, nm10,sz10,dt10, nm11,sz11,dt11, nm12,sz12,dt12, nm13,sz13,dt13,&
-         nm14,sz14,dt14, nm15,sz15,dt15, nm16,sz16,dt16, nm17,sz17,dt17, nm18,sz18,dt18, nm19,sz19,dt19, nm20,sz20,dt20)
+        subroutine kim_api_set_data_multiple_f(kimmdl,error, nm1,sz1,dt1,k1, nm2,sz2,dt2,k2, nm3,sz3,dt3,k3, nm4,sz4,dt4,k4,&
+         nm5,sz5,dt5,k5,   nm6,sz6,dt6,k6,  nm7,sz7,dt7,k7, nm8,sz8,dt8,k8, nm9,sz9,dt9,k9, nm10,sz10,dt10,k10,&
+         nm11,sz11,dt11,k11, nm12,sz12,dt12,k12, nm13,sz13,dt13,k13,  nm14,sz14,dt14,k14, nm15,sz15,dt15,k15)
             integer(kind=kim_intptr) :: kimmdl;  integer error, grarg
 
             character(len=40) ::msg="kim_api_set_data_multiple_f"
@@ -1018,81 +1018,117 @@ integer,parameter :: kim_intptr = 8
             character(len=*),optional:: nm13;  integer(kind=kim_intptr),optional:: sz13,dt13
             character(len=*),optional:: nm14;  integer(kind=kim_intptr),optional:: sz14,dt14
             character(len=*),optional:: nm15;  integer(kind=kim_intptr),optional:: sz15,dt15
-            character(len=*),optional:: nm16;  integer(kind=kim_intptr),optional:: sz16,dt16
-            character(len=*),optional:: nm17;  integer(kind=kim_intptr),optional:: sz17,dt17
-            character(len=*),optional:: nm18;  integer(kind=kim_intptr),optional:: sz18,dt18
-            character(len=*),optional:: nm19;  integer(kind=kim_intptr),optional:: sz19,dt19
-            character(len=*),optional:: nm20;  integer(kind=kim_intptr),optional:: sz20,dt20
+            integer ::k1;
+            integer,optional::k2,k3,k4,k5,k6,k7,k8,k9,k10,k11,k12,k13,k14,k15 
             !
-            error = kim_api_set_data_f(kimmdl,nm1,sz1,dt1); 
-            if (errcheck_mltpl(error,msg,1, nm1).lt.KIM_STATUS_OK) return
+            if(k1.ne.0.and.k1.ne.1) then
+               error=KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY
+               if(errcheck_mltpl(KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY,msg,1, nm1 ).lt.KIM_STATUS_OK) return
+            endif
+            if(k1.eq.1) then 
+               error = kim_api_set_data_f(kimmdl,nm1,sz1,dt1); 
+               if (errcheck_mltpl(error,msg,1, nm1).lt.KIM_STATUS_OK) return
+            endif
+
             !check rest of the arguments
             error = KIM_STATUS_WRONG_MULTIPLE_ARGS
-            if( present(nm2 ).and.(.not.present(sz2 ).or..not.present(dt2 ))) then 
+            if( present(nm2 ).and.(.not.present(sz2 ).or..not.present(dt2 ).or..not.present(k2))) then 
             	if(errcheck_mltpl(error,msg,2, nm2 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm3 ).and.(.not.present(sz3 ).or..not.present(dt3 ))) then 
+            elseif( present(nm3 ).and.(.not.present(sz3 ).or..not.present(dt3 ).or..not.present(k3))) then 
             	if(errcheck_mltpl(error,msg,3, nm3 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm4 ).and.(.not.present(sz4 ).or..not.present(dt4 ))) then 
+            elseif( present(nm4 ).and.(.not.present(sz4 ).or..not.present(dt4 ).or..not.present(k4))) then 
             	if(errcheck_mltpl(error,msg,4, nm4 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm5 ).and.(.not.present(sz5 ).or..not.present(dt5 ))) then 
+            elseif( present(nm5 ).and.(.not.present(sz5 ).or..not.present(dt5 ).or..not.present(k5))) then 
             	if(errcheck_mltpl(error,msg,5, nm5 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm6 ).and.(.not.present(sz6 ).or..not.present(dt6 ))) then 
+            elseif( present(nm6 ).and.(.not.present(sz6 ).or..not.present(dt6 ).or..not.present(k6))) then 
             	if(errcheck_mltpl(error,msg,6, nm6 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm7 ).and.(.not.present(sz7 ).or..not.present(dt7 ))) then 
+            elseif( present(nm7 ).and.(.not.present(sz7 ).or..not.present(dt7 ).or..not.present(k7))) then 
             	if(errcheck_mltpl(error,msg,7, nm7 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm8 ).and.(.not.present(sz8 ).or..not.present(dt8 ))) then 
+            elseif( present(nm8 ).and.(.not.present(sz8 ).or..not.present(dt8 ).or..not.present(k8))) then 
             	if(errcheck_mltpl(error,msg,8, nm8 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm9 ).and.(.not.present(sz9 ).or..not.present(dt9 ))) then 
+            elseif( present(nm9 ).and.(.not.present(sz9 ).or..not.present(dt9 ).or..not.present(k9))) then 
             	if(errcheck_mltpl(error,msg,9, nm9 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm10 ).and.(.not.present(sz10 ).or..not.present(dt10 ))) then 
+            elseif( present(nm10 ).and.(.not.present(sz10 ).or..not.present(dt10 ).or..not.present(k10))) then 
             	if(errcheck_mltpl(error,msg,10, nm10 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm11 ).and.(.not.present(sz11 ).or..not.present(dt11 ))) then 
+            elseif( present(nm11 ).and.(.not.present(sz11 ).or..not.present(dt11 ).or..not.present(k11))) then 
             	if(errcheck_mltpl(error,msg,11, nm11 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm12 ).and.(.not.present(sz12 ).or..not.present(dt12 ))) then 
+            elseif( present(nm12 ).and.(.not.present(sz12 ).or..not.present(dt12 ).or..not.present(k12))) then 
             	if(errcheck_mltpl(error,msg,12, nm12 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm13 ).and.(.not.present(sz13 ).or..not.present(dt13 ))) then 
+            elseif( present(nm13 ).and.(.not.present(sz13 ).or..not.present(dt13 ).or..not.present(k13))) then 
             	if(errcheck_mltpl(error,msg,13, nm13 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm14 ).and.(.not.present(sz14 ).or..not.present(dt14 ))) then 
+            elseif( present(nm14 ).and.(.not.present(sz14 ).or..not.present(dt14 ).or..not.present(k14))) then 
             	if(errcheck_mltpl(error,msg,14, nm14 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm15 ).and.(.not.present(sz15 ).or..not.present(dt15 ))) then 
+            elseif( present(nm15 ).and.(.not.present(sz15 ).or..not.present(dt15 ).or..not.present(k15))) then 
             	if(errcheck_mltpl(error,msg,15, nm15 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm16 ).and.(.not.present(sz16 ).or..not.present(dt16))) then 
-            	if(errcheck_mltpl(error,msg,16, nm16 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm17 ).and.(.not.present(sz17 ).or..not.present(dt17 ))) then 
-            	if(errcheck_mltpl(error,msg,17, nm17 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm18 ).and.(.not.present(sz18 ).or..not.present(dt18 ))) then 
-            	if(errcheck_mltpl(error,msg,18, nm18 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm19 ).and.(.not.present(sz19 ).or..not.present(dt19 ))) then 
-            	if(errcheck_mltpl(error,msg,19, nm19 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm20 ).and.(.not.present(sz20 ).or..not.present(dt20 ))) then 
-            	if(errcheck_mltpl(error,msg,20, nm20 ).lt.KIM_STATUS_OK) return
-            endif 
-	    
+            endif
+
+	    error = KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY
+            if(present(k2).and.(k2.ne.0.and.k2.ne.1))then 
+            	if(errcheck_mltpl(error,msg,2, nm2 ).lt.KIM_STATUS_OK) return
+            elseif(present(k3).and.(k3.ne.0.and.k3.ne.1))then 
+            	if(errcheck_mltpl(error,msg,3, nm3 ).lt.KIM_STATUS_OK) return
+            elseif(present(k4).and.(k4.ne.0.and.k4.ne.1))then 
+            	if(errcheck_mltpl(error,msg,4, nm4 ).lt.KIM_STATUS_OK) return
+            elseif(present(k5).and.(k5.ne.0.and.k5.ne.1))then 
+            	if(errcheck_mltpl(error,msg,5, nm5 ).lt.KIM_STATUS_OK) return
+            elseif(present(k6).and.(k6.ne.0.and.k6.ne.1))then 
+            	if(errcheck_mltpl(error,msg,6, nm6 ).lt.KIM_STATUS_OK) return
+            elseif(present(k7).and.(k7.ne.0.and.k7.ne.1))then 
+            	if(errcheck_mltpl(error,msg,7, nm7 ).lt.KIM_STATUS_OK) return
+            elseif(present(k8).and.(k8.ne.0.and.k8.ne.1))then 
+            	if(errcheck_mltpl(error,msg,8, nm8 ).lt.KIM_STATUS_OK) return
+            elseif(present(k9).and.(k9.ne.0.and.k9.ne.1))then 
+            	if(errcheck_mltpl(error,msg,9, nm9 ).lt.KIM_STATUS_OK) return
+            elseif(present(k10).and.(k10.ne.0.and.k10.ne.1))then 
+            	if(errcheck_mltpl(error,msg,10, nm10 ).lt.KIM_STATUS_OK) return
+            elseif(present(k11).and.(k11.ne.0.and.k11.ne.1))then 
+            	if(errcheck_mltpl(error,msg,11, nm11 ).lt.KIM_STATUS_OK) return
+            elseif(present(k12).and.(k12.ne.0.and.k12.ne.1))then 
+            	if(errcheck_mltpl(error,msg,12, nm12 ).lt.KIM_STATUS_OK) return
+            elseif(present(k13).and.(k13.ne.0.and.k13.ne.1))then 
+            	if(errcheck_mltpl(error,msg,13, nm13 ).lt.KIM_STATUS_OK) return
+            elseif(present(k14).and.(k14.ne.0.and.k14.ne.1))then 
+            	if(errcheck_mltpl(error,msg,14, nm14 ).lt.KIM_STATUS_OK) return
+            elseif(present(k15).and.(k15.ne.0.and.k15.ne.1))then 
+            	if(errcheck_mltpl(error,msg,15, nm15 ).lt.KIM_STATUS_OK) return
+            endif
+
 	    !process arguments
- if(present(nm2)) error=kim_api_set_data_f(kimmdl,nm2,sz2,dt2);if(errcheck_mltpl(error,msg,2,nm2).lt.KIM_STATUS_OK) return
- if(present(nm3)) error=kim_api_set_data_f(kimmdl,nm3,sz3,dt3);if(errcheck_mltpl(error,msg,3,nm3).lt.KIM_STATUS_OK) return
- if(present(nm4)) error=kim_api_set_data_f(kimmdl,nm4,sz4,dt4);if(errcheck_mltpl(error,msg,4,nm4).lt.KIM_STATUS_OK) return
- if(present(nm5)) error=kim_api_set_data_f(kimmdl,nm5,sz5,dt5);if(errcheck_mltpl(error,msg,5,nm5).lt.KIM_STATUS_OK) return
- if(present(nm6)) error=kim_api_set_data_f(kimmdl,nm6,sz6,dt6);if(errcheck_mltpl(error,msg,6,nm6).lt.KIM_STATUS_OK) return
- if(present(nm7)) error=kim_api_set_data_f(kimmdl,nm7,sz7,dt7);if(errcheck_mltpl(error,msg,7,nm7).lt.KIM_STATUS_OK) return
- if(present(nm8)) error=kim_api_set_data_f(kimmdl,nm8,sz8,dt8);if(errcheck_mltpl(error,msg,8,nm8).lt.KIM_STATUS_OK) return
- if(present(nm9)) error=kim_api_set_data_f(kimmdl,nm9,sz9,dt9);if(errcheck_mltpl(error,msg,9,nm9).lt.KIM_STATUS_OK) return
- if(present(nm10)) error=kim_api_set_data_f(kimmdl,nm10,sz10,dt10);if(errcheck_mltpl(error,msg,10,nm10).lt.KIM_STATUS_OK) return
- if(present(nm11)) error=kim_api_set_data_f(kimmdl,nm11,sz11,dt11);if(errcheck_mltpl(error,msg,11,nm11).lt.KIM_STATUS_OK) return
- if(present(nm12)) error=kim_api_set_data_f(kimmdl,nm12,sz12,dt12);if(errcheck_mltpl(error,msg,12,nm12).lt.KIM_STATUS_OK) return
- if(present(nm13)) error=kim_api_set_data_f(kimmdl,nm13,sz13,dt13);if(errcheck_mltpl(error,msg,13,nm13).lt.KIM_STATUS_OK) return
- if(present(nm14)) error=kim_api_set_data_f(kimmdl,nm14,sz14,dt14);if(errcheck_mltpl(error,msg,14,nm14).lt.KIM_STATUS_OK) return
- if(present(nm15)) error=kim_api_set_data_f(kimmdl,nm15,sz15,dt15);if(errcheck_mltpl(error,msg,15,nm15).lt.KIM_STATUS_OK) return
- if(present(nm16)) error=kim_api_set_data_f(kimmdl,nm16,sz16,dt16);if(errcheck_mltpl(error,msg,16,nm16).lt.KIM_STATUS_OK) return
- if(present(nm17)) error=kim_api_set_data_f(kimmdl,nm17,sz17,dt17);if(errcheck_mltpl(error,msg,17,nm17).lt.KIM_STATUS_OK) return
- if(present(nm18)) error=kim_api_set_data_f(kimmdl,nm18,sz18,dt18);if(errcheck_mltpl(error,msg,18,nm18).lt.KIM_STATUS_OK) return
- if(present(nm19)) error=kim_api_set_data_f(kimmdl,nm19,sz19,dt19);if(errcheck_mltpl(error,msg,19,nm19).lt.KIM_STATUS_OK) return
- if(present(nm20)) error=kim_api_set_data_f(kimmdl,nm20,sz20,dt20);if(errcheck_mltpl(error,msg,20,nm20).lt.KIM_STATUS_OK) return         
+            error = KIM_STATUS_OK
+ if(present(nm2).and.k2.eq.1) error=kim_api_set_data_f(kimmdl,nm2,sz2,dt2);
+            if(errcheck_mltpl(error,msg,2,nm2).lt.KIM_STATUS_OK) return
+ if(present(nm3).and.k3.eq.1) error=kim_api_set_data_f(kimmdl,nm3,sz3,dt3);
+            if(errcheck_mltpl(error,msg,3,nm3).lt.KIM_STATUS_OK) return
+ if(present(nm4).and.k4.eq.1) error=kim_api_set_data_f(kimmdl,nm4,sz4,dt4);
+            if(errcheck_mltpl(error,msg,4,nm4).lt.KIM_STATUS_OK) return
+ if(present(nm5).and.k5.eq.1) error=kim_api_set_data_f(kimmdl,nm5,sz5,dt5);
+            if(errcheck_mltpl(error,msg,5,nm5).lt.KIM_STATUS_OK) return
+ if(present(nm6).and.k6.eq.1) error=kim_api_set_data_f(kimmdl,nm6,sz6,dt6);
+            if(errcheck_mltpl(error,msg,6,nm6).lt.KIM_STATUS_OK) return
+ if(present(nm7).and.k7.eq.1) error=kim_api_set_data_f(kimmdl,nm7,sz7,dt7);
+            if(errcheck_mltpl(error,msg,7,nm7).lt.KIM_STATUS_OK) return
+ if(present(nm8).and.k8.eq.1) error=kim_api_set_data_f(kimmdl,nm8,sz8,dt8);
+            if(errcheck_mltpl(error,msg,8,nm8).lt.KIM_STATUS_OK) return
+ if(present(nm9).and.k9.eq.1) error=kim_api_set_data_f(kimmdl,nm9,sz9,dt9);
+            if(errcheck_mltpl(error,msg,9,nm9).lt.KIM_STATUS_OK) return
+ if(present(nm10).and.k10.eq.1) error=kim_api_set_data_f(kimmdl,nm10,sz10,dt10);
+            if(errcheck_mltpl(error,msg,10,nm10).lt.KIM_STATUS_OK) return
+ if(present(nm11).and.k11.eq.1) error=kim_api_set_data_f(kimmdl,nm11,sz11,dt11);
+            if(errcheck_mltpl(error,msg,11,nm11).lt.KIM_STATUS_OK) return
+ if(present(nm12).and.k12.eq.1) error=kim_api_set_data_f(kimmdl,nm12,sz12,dt12);
+            if(errcheck_mltpl(error,msg,12,nm12).lt.KIM_STATUS_OK) return
+ if(present(nm13).and.k13.eq.1) error=kim_api_set_data_f(kimmdl,nm13,sz13,dt13);
+            if(errcheck_mltpl(error,msg,13,nm13).lt.KIM_STATUS_OK) return
+ if(present(nm14).and.k14.eq.1) error=kim_api_set_data_f(kimmdl,nm14,sz14,dt14);
+            if(errcheck_mltpl(error,msg,14,nm14).lt.KIM_STATUS_OK) return
+ if(present(nm15).and.k15.eq.1) error=kim_api_set_data_f(kimmdl,nm15,sz15,dt15);
+            if(errcheck_mltpl(error,msg,15,nm15).lt.KIM_STATUS_OK) return       
 	end subroutine kim_api_set_data_multiple_f
         
-        subroutine kim_api_set_data_byI_multiple_f(kimmdl,error,nm1,sz1,dt1, nm2,sz2,dt2, nm3,sz3,dt3, nm4,sz4,dt4, nm5,sz5,dt5,&
-         nm6,sz6,dt6, nm7,sz7,dt7, nm8,sz8,dt8, nm9,sz9,dt9, nm10,sz10,dt10, nm11,sz11,dt11, nm12,sz12,dt12, nm13,sz13,dt13,&
-         nm14,sz14,dt14, nm15,sz15,dt15, nm16,sz16,dt16, nm17,sz17,dt17, nm18,sz18,dt18, nm19,sz19,dt19, nm20,sz20,dt20)
+        subroutine kim_api_set_data_byI_multiple_f(kimmdl,error,nm1,sz1,dt1,k1, nm2,sz2,dt2,k2, nm3,sz3,dt3,k3, nm4,sz4,dt4,k4,&
+         nm5,sz5,dt5,k5,   nm6,sz6,dt6,k6,  nm7,sz7,dt7,k7, nm8,sz8,dt8,k8, nm9,sz9,dt9,k9, nm10,sz10,dt10,k10,&
+         nm11,sz11,dt11,k11, nm12,sz12,dt12,k12, nm13,sz13,dt13,k13,  nm14,sz14,dt14,k14, nm15,sz15,dt15,k15)
+
             integer(kind=kim_intptr) :: kimmdl;  integer error, grarg
 
             character(len=40) ::msg="kim_api_set_data_byI_multiple_f"
@@ -1112,15 +1148,19 @@ integer,parameter :: kim_intptr = 8
             integer,optional:: nm12;  integer(kind=kim_intptr),optional:: sz12,dt12
             integer,optional:: nm13;  integer(kind=kim_intptr),optional:: sz13,dt13
             integer,optional:: nm14;  integer(kind=kim_intptr),optional:: sz14,dt14
-            integer,optional:: nm15;  integer(kind=kim_intptr),optional:: sz15,dt15
-            integer,optional:: nm16;  integer(kind=kim_intptr),optional:: sz16,dt16
-            integer,optional:: nm17;  integer(kind=kim_intptr),optional:: sz17,dt17
-            integer,optional:: nm18;  integer(kind=kim_intptr),optional:: sz18,dt18
-            integer,optional:: nm19;  integer(kind=kim_intptr),optional:: sz19,dt19
-            integer,optional:: nm20;  integer(kind=kim_intptr),optional:: sz20,dt20
+            integer,optional:: nm15;  integer(kind=kim_intptr),optional:: sz15,dt15           
+            integer ::k1;
+            integer,optional::k2,k3,k4,k5,k6,k7,k8,k9,k10,k11,k12,k13,k14,k15 
             !
-            call kim_api_set_data_byi_f(kimmdl,nm1,sz1,dt1,error); 
-            if (errcheck_mltpl(error,msg,1,"", nm1).lt.KIM_STATUS_OK) return
+            if(k1.ne.0.and.k1.ne.1) then
+               error=KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY
+               if(errcheck_mltpl(KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY,msg,1,"",nm1 ).lt.KIM_STATUS_OK) return
+            endif
+            if(k1.eq.1) then 
+               call kim_api_set_data_byi_f(kimmdl,nm1,sz1,dt1,error); 
+               if (errcheck_mltpl(error,msg,1,"", nm1).lt.KIM_STATUS_OK) return
+            endif
+
             !check rest of the arguments
             error = KIM_STATUS_WRONG_MULTIPLE_ARGS
             if( present(nm2 ).and.(.not.present(sz2 ).or..not.present(dt2 ))) then 
@@ -1151,43 +1191,74 @@ integer,parameter :: kim_intptr = 8
             	if(errcheck_mltpl(error,msg,14,"", nm14 ).lt.KIM_STATUS_OK) return
             elseif( present(nm15 ).and.(.not.present(sz15 ).or..not.present(dt15 ))) then 
             	if(errcheck_mltpl(error,msg,15,"", nm15 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm16 ).and.(.not.present(sz16 ).or..not.present(dt16))) then 
-            	if(errcheck_mltpl(error,msg,16,"", nm16 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm17 ).and.(.not.present(sz17 ).or..not.present(dt17 ))) then 
-            	if(errcheck_mltpl(error,msg,17,"", nm17 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm18 ).and.(.not.present(sz18 ).or..not.present(dt18 ))) then 
-            	if(errcheck_mltpl(error,msg,18,"", nm18 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm19 ).and.(.not.present(sz19 ).or..not.present(dt19 ))) then 
-            	if(errcheck_mltpl(error,msg,19,"", nm19 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm20 ).and.(.not.present(sz20 ).or..not.present(dt20 ))) then 
-            	if(errcheck_mltpl(error,msg,20,"", nm20 ).lt.KIM_STATUS_OK) return
             endif 
+
+	    error = KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY
+            if(present(k2).and.(k2.ne.0.and.k2.ne.1))then 
+            	if(errcheck_mltpl(error,msg,2,"", nm2 ).lt.KIM_STATUS_OK) return
+            elseif(present(k3).and.(k3.ne.0.and.k3.ne.1))then 
+            	if(errcheck_mltpl(error,msg,3,"", nm3 ).lt.KIM_STATUS_OK) return
+            elseif(present(k4).and.(k4.ne.0.and.k4.ne.1))then 
+            	if(errcheck_mltpl(error,msg,4,"", nm4 ).lt.KIM_STATUS_OK) return
+            elseif(present(k5).and.(k5.ne.0.and.k5.ne.1))then 
+            	if(errcheck_mltpl(error,msg,5,"", nm5 ).lt.KIM_STATUS_OK) return
+            elseif(present(k6).and.(k6.ne.0.and.k6.ne.1))then 
+            	if(errcheck_mltpl(error,msg,6,"", nm6 ).lt.KIM_STATUS_OK) return
+            elseif(present(k7).and.(k7.ne.0.and.k7.ne.1))then 
+            	if(errcheck_mltpl(error,msg,7,"", nm7 ).lt.KIM_STATUS_OK) return
+            elseif(present(k8).and.(k8.ne.0.and.k8.ne.1))then 
+            	if(errcheck_mltpl(error,msg,8,"", nm8 ).lt.KIM_STATUS_OK) return
+            elseif(present(k9).and.(k9.ne.0.and.k9.ne.1))then 
+            	if(errcheck_mltpl(error,msg,9,"", nm9 ).lt.KIM_STATUS_OK) return
+            elseif(present(k10).and.(k10.ne.0.and.k10.ne.1))then 
+            	if(errcheck_mltpl(error,msg,10,"", nm10 ).lt.KIM_STATUS_OK) return
+            elseif(present(k11).and.(k11.ne.0.and.k11.ne.1))then 
+            	if(errcheck_mltpl(error,msg,11,"", nm11 ).lt.KIM_STATUS_OK) return
+            elseif(present(k12).and.(k12.ne.0.and.k12.ne.1))then 
+            	if(errcheck_mltpl(error,msg,12,"", nm12 ).lt.KIM_STATUS_OK) return
+            elseif(present(k13).and.(k13.ne.0.and.k13.ne.1))then 
+            	if(errcheck_mltpl(error,msg,13,"", nm13 ).lt.KIM_STATUS_OK) return
+            elseif(present(k14).and.(k14.ne.0.and.k14.ne.1))then 
+            	if(errcheck_mltpl(error,msg,14,"", nm14 ).lt.KIM_STATUS_OK) return
+            elseif(present(k15).and.(k15.ne.0.and.k15.ne.1))then 
+            	if(errcheck_mltpl(error,msg,15,"", nm15 ).lt.KIM_STATUS_OK) return
+            endif
 	    
 	    !process arguments
- if(present(nm2)) call kim_api_set_data_byi_f(kimmdl,nm2,sz2,dt2,error);if(errcheck_mltpl(error,msg,2,"",nm2).lt.KIM_STATUS_OK) return
- if(present(nm3)) call kim_api_set_data_byi_f(kimmdl,nm3,sz3,dt3,error);if(errcheck_mltpl(error,msg,3,"",nm3).lt.KIM_STATUS_OK) return
- if(present(nm4)) call kim_api_set_data_byi_f(kimmdl,nm4,sz4,dt4,error);if(errcheck_mltpl(error,msg,4,"",nm4).lt.KIM_STATUS_OK) return
- if(present(nm5)) call kim_api_set_data_byi_f(kimmdl,nm5,sz5,dt5,error);if(errcheck_mltpl(error,msg,5,"",nm5).lt.KIM_STATUS_OK) return
- if(present(nm6)) call kim_api_set_data_byi_f(kimmdl,nm6,sz6,dt6,error);if(errcheck_mltpl(error,msg,6,"",nm6).lt.KIM_STATUS_OK) return
- if(present(nm7)) call kim_api_set_data_byi_f(kimmdl,nm7,sz7,dt7,error);if(errcheck_mltpl(error,msg,7,"",nm7).lt.KIM_STATUS_OK) return
- if(present(nm8)) call kim_api_set_data_byi_f(kimmdl,nm8,sz8,dt8,error);if(errcheck_mltpl(error,msg,8,"",nm8).lt.KIM_STATUS_OK) return
- if(present(nm9)) call kim_api_set_data_byi_f(kimmdl,nm9,sz9,dt9,error);if(errcheck_mltpl(error,msg,9,"",nm9).lt.KIM_STATUS_OK) return
- if(present(nm10))call kim_api_set_data_byi_f(kimmdl,nm10,sz10,dt10,error);if(errcheck_mltpl(error,msg,10,"",nm10).lt.KIM_STATUS_OK)return
- if(present(nm11))call kim_api_set_data_byi_f(kimmdl,nm11,sz11,dt11,error);if(errcheck_mltpl(error,msg,11,"",nm11).lt.KIM_STATUS_OK)return
- if(present(nm12))call kim_api_set_data_byi_f(kimmdl,nm12,sz12,dt12,error);if(errcheck_mltpl(error,msg,12,"",nm12).lt.KIM_STATUS_OK)return
- if(present(nm13))call kim_api_set_data_byi_f(kimmdl,nm13,sz13,dt13,error);if(errcheck_mltpl(error,msg,13,"",nm13).lt.KIM_STATUS_OK)return
- if(present(nm14))call kim_api_set_data_byi_f(kimmdl,nm14,sz14,dt14,error);if(errcheck_mltpl(error,msg,14,"",nm14).lt.KIM_STATUS_OK)return
- if(present(nm15))call kim_api_set_data_byi_f(kimmdl,nm15,sz15,dt15,error);if(errcheck_mltpl(error,msg,15,"",nm15).lt.KIM_STATUS_OK)return
- if(present(nm16))call kim_api_set_data_byi_f(kimmdl,nm16,sz16,dt16,error);if(errcheck_mltpl(error,msg,16,"",nm16).lt.KIM_STATUS_OK)return
- if(present(nm17))call kim_api_set_data_byi_f(kimmdl,nm17,sz17,dt17,error);if(errcheck_mltpl(error,msg,17,"",nm17).lt.KIM_STATUS_OK)return
- if(present(nm18))call kim_api_set_data_byi_f(kimmdl,nm18,sz18,dt18,error);if(errcheck_mltpl(error,msg,18,"",nm18).lt.KIM_STATUS_OK)return
- if(present(nm19))call kim_api_set_data_byi_f(kimmdl,nm19,sz19,dt19,error);if(errcheck_mltpl(error,msg,19,"",nm19).lt.KIM_STATUS_OK)return
- if(present(nm20))call kim_api_set_data_byi_f(kimmdl,nm20,sz20,dt20,error);if(errcheck_mltpl(error,msg,20,"",nm20).lt.KIM_STATUS_OK)return 
+            error=KIM_STATUS_OK
+ if(present(nm2).and.k2.eq.1) call kim_api_set_data_byi_f(kimmdl,nm2,sz2,dt2,error);
+            if(errcheck_mltpl(error,msg,2,"",nm2).lt.KIM_STATUS_OK) return
+ if(present(nm3).and.k3.eq.1) call kim_api_set_data_byi_f(kimmdl,nm3,sz3,dt3,error);
+            if(errcheck_mltpl(error,msg,3,"",nm3).lt.KIM_STATUS_OK) return
+ if(present(nm4).and.k4.eq.1) call kim_api_set_data_byi_f(kimmdl,nm4,sz4,dt4,error);
+            if(errcheck_mltpl(error,msg,4,"",nm4).lt.KIM_STATUS_OK) return
+ if(present(nm5).and.k5.eq.1) call kim_api_set_data_byi_f(kimmdl,nm5,sz5,dt5,error);
+            if(errcheck_mltpl(error,msg,5,"",nm5).lt.KIM_STATUS_OK) return
+ if(present(nm6).and.k6.eq.1) call kim_api_set_data_byi_f(kimmdl,nm6,sz6,dt6,error);
+            if(errcheck_mltpl(error,msg,6,"",nm6).lt.KIM_STATUS_OK) return
+ if(present(nm7).and.k7.eq.1) call kim_api_set_data_byi_f(kimmdl,nm7,sz7,dt7,error);
+            if(errcheck_mltpl(error,msg,7,"",nm7).lt.KIM_STATUS_OK) return
+ if(present(nm8).and.k8.eq.1) call kim_api_set_data_byi_f(kimmdl,nm8,sz8,dt8,error);
+            if(errcheck_mltpl(error,msg,8,"",nm8).lt.KIM_STATUS_OK) return
+ if(present(nm9).and.k9.eq.1) call kim_api_set_data_byi_f(kimmdl,nm9,sz9,dt9,error);
+            if(errcheck_mltpl(error,msg,9,"",nm9).lt.KIM_STATUS_OK) return
+ if(present(nm10).and.k10.eq.1)call kim_api_set_data_byi_f(kimmdl,nm10,sz10,dt10,error);
+            if(errcheck_mltpl(error,msg,10,"",nm10).lt.KIM_STATUS_OK)return
+ if(present(nm11).and.k11.eq.1)call kim_api_set_data_byi_f(kimmdl,nm11,sz11,dt11,error);
+            if(errcheck_mltpl(error,msg,11,"",nm11).lt.KIM_STATUS_OK)return
+ if(present(nm12).and.k12.eq.1)call kim_api_set_data_byi_f(kimmdl,nm12,sz12,dt12,error);
+            if(errcheck_mltpl(error,msg,12,"",nm12).lt.KIM_STATUS_OK)return
+ if(present(nm13).and.k13.eq.1)call kim_api_set_data_byi_f(kimmdl,nm13,sz13,dt13,error);
+            if(errcheck_mltpl(error,msg,13,"",nm13).lt.KIM_STATUS_OK)return
+ if(present(nm14).and.k14.eq.1)call kim_api_set_data_byi_f(kimmdl,nm14,sz14,dt14,error);
+            if(errcheck_mltpl(error,msg,14,"",nm14).lt.KIM_STATUS_OK)return
+ if(present(nm15).and.k15.eq.1)call kim_api_set_data_byi_f(kimmdl,nm15,sz15,dt15,error);
+            if(errcheck_mltpl(error,msg,15,"",nm15).lt.KIM_STATUS_OK)return
        	end subroutine kim_api_set_data_byI_multiple_f
         
-        subroutine kim_api_get_data_multiple_f(kimmdl,error, nm1,dt1, nm2,dt2, nm3,dt3, nm4,dt4, nm5,dt5,&
-         nm6,dt6, nm7,dt7, nm8,dt8, nm9,dt9, nm10,dt10, nm11,dt11, nm12,dt12, nm13,dt13,&
-         nm14,dt14, nm15,dt15, nm16,dt16, nm17,dt17, nm18,dt18, nm19,dt19, nm20,dt20)
+        subroutine kim_api_get_data_multiple_f(kimmdl,error, nm1,dt1,k1, nm2,dt2,k2, nm3,dt3,k3, nm4,dt4,k4, nm5,dt5,k5,&
+         nm6,dt6,k6, nm7,dt7,k7, nm8,dt8,k8, nm9,dt9,k9, nm10,dt10,k10, nm11,dt11,k11, nm12,dt12,k12, nm13,dt13,k13,&
+         nm14,dt14,k14, nm15,dt15,k15)
             integer(kind=kim_intptr) :: kimmdl;  integer error, grarg
 
             character(len=40) ::msg="kim_api_get_data_multiple_f"
@@ -1208,14 +1279,18 @@ integer,parameter :: kim_intptr = 8
             character(len=*),optional:: nm13;  integer(kind=kim_intptr),optional:: dt13
             character(len=*),optional:: nm14;  integer(kind=kim_intptr),optional:: dt14
             character(len=*),optional:: nm15;  integer(kind=kim_intptr),optional:: dt15
-            character(len=*),optional:: nm16;  integer(kind=kim_intptr),optional:: dt16
-            character(len=*),optional:: nm17;  integer(kind=kim_intptr),optional:: dt17
-            character(len=*),optional:: nm18;  integer(kind=kim_intptr),optional:: dt18
-            character(len=*),optional:: nm19;  integer(kind=kim_intptr),optional:: dt19
-            character(len=*),optional:: nm20;  integer(kind=kim_intptr),optional:: dt20
+            integer ::k1;
+            integer,optional::k2,k3,k4,k5,k6,k7,k8,k9,k10,k11,k12,k13,k14,k15 
             !
-            dt1 = kim_api_get_data_f(kimmdl,nm1,error); 
-            if (errcheck_mltpl(error,msg,1, nm1).lt.KIM_STATUS_OK) return
+            if(k1.ne.0.and.k1.ne.1) then
+               error=KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY
+               if(errcheck_mltpl(KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY,msg,1, nm1 ).lt.KIM_STATUS_OK) return
+            endif
+            if(k1.eq.1) then 
+                dt1 = kim_api_get_data_f(kimmdl,nm1,error); 
+                if (errcheck_mltpl(error,msg,1, nm1).lt.KIM_STATUS_OK) return
+	    endif
+
             !check rest of the arguments
             error = KIM_STATUS_WRONG_MULTIPLE_ARGS
             if( present(nm2 ).and.(.not.present(dt2 ))) then 
@@ -1246,43 +1321,74 @@ integer,parameter :: kim_intptr = 8
             	if(errcheck_mltpl(error,msg,14, nm14 ).lt.KIM_STATUS_OK) return
             elseif( present(nm15 ).and.(.not.present(dt15 ))) then 
             	if(errcheck_mltpl(error,msg,15, nm15 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm16 ).and.(.not.present(dt16))) then 
-            	if(errcheck_mltpl(error,msg,16, nm16 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm17 ).and.(.not.present(dt17 ))) then 
-            	if(errcheck_mltpl(error,msg,17, nm17 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm18 ).and.(.not.present(dt18 ))) then 
-            	if(errcheck_mltpl(error,msg,18, nm18 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm19 ).and.(.not.present(dt19 ))) then 
-            	if(errcheck_mltpl(error,msg,19, nm19 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm20 ).and.(.not.present(dt20 ))) then 
-            	if(errcheck_mltpl(error,msg,20, nm20 ).lt.KIM_STATUS_OK) return
             endif 
+
+	    error = KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY
+            if(present(k2).and.(k2.ne.0.and.k2.ne.1))then 
+            	if(errcheck_mltpl(error,msg,2, nm2 ).lt.KIM_STATUS_OK) return
+            elseif(present(k3).and.(k3.ne.0.and.k3.ne.1))then 
+            	if(errcheck_mltpl(error,msg,3, nm3 ).lt.KIM_STATUS_OK) return
+            elseif(present(k4).and.(k4.ne.0.and.k4.ne.1))then 
+            	if(errcheck_mltpl(error,msg,4, nm4 ).lt.KIM_STATUS_OK) return
+            elseif(present(k5).and.(k5.ne.0.and.k5.ne.1))then 
+            	if(errcheck_mltpl(error,msg,5, nm5 ).lt.KIM_STATUS_OK) return
+            elseif(present(k6).and.(k6.ne.0.and.k6.ne.1))then 
+            	if(errcheck_mltpl(error,msg,6, nm6 ).lt.KIM_STATUS_OK) return
+            elseif(present(k7).and.(k7.ne.0.and.k7.ne.1))then 
+            	if(errcheck_mltpl(error,msg,7, nm7 ).lt.KIM_STATUS_OK) return
+            elseif(present(k8).and.(k8.ne.0.and.k8.ne.1))then 
+            	if(errcheck_mltpl(error,msg,8, nm8 ).lt.KIM_STATUS_OK) return
+            elseif(present(k9).and.(k9.ne.0.and.k9.ne.1))then 
+            	if(errcheck_mltpl(error,msg,9, nm9 ).lt.KIM_STATUS_OK) return
+            elseif(present(k10).and.(k10.ne.0.and.k10.ne.1))then 
+            	if(errcheck_mltpl(error,msg,10, nm10 ).lt.KIM_STATUS_OK) return
+            elseif(present(k11).and.(k11.ne.0.and.k11.ne.1))then 
+            	if(errcheck_mltpl(error,msg,11, nm11 ).lt.KIM_STATUS_OK) return
+            elseif(present(k12).and.(k12.ne.0.and.k12.ne.1))then 
+            	if(errcheck_mltpl(error,msg,12, nm12 ).lt.KIM_STATUS_OK) return
+            elseif(present(k13).and.(k13.ne.0.and.k13.ne.1))then 
+            	if(errcheck_mltpl(error,msg,13, nm13 ).lt.KIM_STATUS_OK) return
+            elseif(present(k14).and.(k14.ne.0.and.k14.ne.1))then 
+            	if(errcheck_mltpl(error,msg,14, nm14 ).lt.KIM_STATUS_OK) return
+            elseif(present(k15).and.(k15.ne.0.and.k15.ne.1))then 
+            	if(errcheck_mltpl(error,msg,15, nm15 ).lt.KIM_STATUS_OK) return
+            endif
 	    
 	    !process arguments
- if(present(nm2)) dt2= kim_api_get_data_f(kimmdl,nm2,error);if(errcheck_mltpl(error,msg,2,nm2).lt.KIM_STATUS_OK) return
- if(present(nm3)) dt3= kim_api_get_data_f(kimmdl,nm3,error);if(errcheck_mltpl(error,msg,3,nm3).lt.KIM_STATUS_OK) return
- if(present(nm4)) dt4= kim_api_get_data_f(kimmdl,nm4,error);if(errcheck_mltpl(error,msg,4,nm4).lt.KIM_STATUS_OK) return
- if(present(nm5)) dt5= kim_api_get_data_f(kimmdl,nm5,error);if(errcheck_mltpl(error,msg,5,nm5).lt.KIM_STATUS_OK) return
- if(present(nm6)) dt6= kim_api_get_data_f(kimmdl,nm6,error);if(errcheck_mltpl(error,msg,6,nm6).lt.KIM_STATUS_OK) return
- if(present(nm7)) dt7= kim_api_get_data_f(kimmdl,nm7,error);if(errcheck_mltpl(error,msg,7,nm7).lt.KIM_STATUS_OK) return
- if(present(nm8)) dt8= kim_api_get_data_f(kimmdl,nm8,error);if(errcheck_mltpl(error,msg,8,nm8).lt.KIM_STATUS_OK) return
- if(present(nm9)) dt9= kim_api_get_data_f(kimmdl,nm9,error);if(errcheck_mltpl(error,msg,9,nm9).lt.KIM_STATUS_OK) return
- if(present(nm10)) dt10= kim_api_get_data_f(kimmdl,nm10,error);if(errcheck_mltpl(error,msg,10,nm10).lt.KIM_STATUS_OK) return
- if(present(nm11)) dt11= kim_api_get_data_f(kimmdl,nm11,error);if(errcheck_mltpl(error,msg,11,nm11).lt.KIM_STATUS_OK) return
- if(present(nm12)) dt12= kim_api_get_data_f(kimmdl,nm12,error);if(errcheck_mltpl(error,msg,12,nm12).lt.KIM_STATUS_OK) return
- if(present(nm13)) dt13= kim_api_get_data_f(kimmdl,nm13,error);if(errcheck_mltpl(error,msg,13,nm13).lt.KIM_STATUS_OK) return
- if(present(nm14)) dt14= kim_api_get_data_f(kimmdl,nm14,error);if(errcheck_mltpl(error,msg,14,nm14).lt.KIM_STATUS_OK) return
- if(present(nm15)) dt15= kim_api_get_data_f(kimmdl,nm15,error);if(errcheck_mltpl(error,msg,15,nm15).lt.KIM_STATUS_OK) return
- if(present(nm16)) dt16= kim_api_get_data_f(kimmdl,nm16,error);if(errcheck_mltpl(error,msg,16,nm16).lt.KIM_STATUS_OK) return
- if(present(nm17)) dt17= kim_api_get_data_f(kimmdl,nm17,error);if(errcheck_mltpl(error,msg,17,nm17).lt.KIM_STATUS_OK) return
- if(present(nm18)) dt18= kim_api_get_data_f(kimmdl,nm18,error);if(errcheck_mltpl(error,msg,18,nm18).lt.KIM_STATUS_OK) return
- if(present(nm19)) dt19= kim_api_get_data_f(kimmdl,nm19,error);if(errcheck_mltpl(error,msg,19,nm19).lt.KIM_STATUS_OK) return
- if(present(nm20)) dt20= kim_api_get_data_f(kimmdl,nm20,error);if(errcheck_mltpl(error,msg,20,nm20).lt.KIM_STATUS_OK) return 	
+            error=KIM_STATUS_OK
+ if(present(nm2).and.k2.eq.1) dt2= kim_api_get_data_f(kimmdl,nm2,error);
+            if(errcheck_mltpl(error,msg,2,nm2).lt.KIM_STATUS_OK) return
+ if(present(nm3).and.k3.eq.1) dt3= kim_api_get_data_f(kimmdl,nm3,error);
+            if(errcheck_mltpl(error,msg,3,nm3).lt.KIM_STATUS_OK) return
+ if(present(nm4).and.k4.eq.1) dt4= kim_api_get_data_f(kimmdl,nm4,error);
+            if(errcheck_mltpl(error,msg,4,nm4).lt.KIM_STATUS_OK) return
+ if(present(nm5).and.k5.eq.1) dt5= kim_api_get_data_f(kimmdl,nm5,error);
+            if(errcheck_mltpl(error,msg,5,nm5).lt.KIM_STATUS_OK) return
+ if(present(nm6).and.k6.eq.1) dt6= kim_api_get_data_f(kimmdl,nm6,error);
+            if(errcheck_mltpl(error,msg,6,nm6).lt.KIM_STATUS_OK) return
+ if(present(nm7).and.k7.eq.1) dt7= kim_api_get_data_f(kimmdl,nm7,error);
+            if(errcheck_mltpl(error,msg,7,nm7).lt.KIM_STATUS_OK) return
+ if(present(nm8).and.k8.eq.1) dt8= kim_api_get_data_f(kimmdl,nm8,error);
+            if(errcheck_mltpl(error,msg,8,nm8).lt.KIM_STATUS_OK) return
+ if(present(nm9).and.k9.eq.1) dt9= kim_api_get_data_f(kimmdl,nm9,error);
+            if(errcheck_mltpl(error,msg,9,nm9).lt.KIM_STATUS_OK) return
+ if(present(nm10).and.k10.eq.1) dt10= kim_api_get_data_f(kimmdl,nm10,error);
+            if(errcheck_mltpl(error,msg,10,nm10).lt.KIM_STATUS_OK) return
+ if(present(nm11).and.k11.eq.1) dt11= kim_api_get_data_f(kimmdl,nm11,error);
+            if(errcheck_mltpl(error,msg,11,nm11).lt.KIM_STATUS_OK) return
+ if(present(nm12).and.k12.eq.1) dt12= kim_api_get_data_f(kimmdl,nm12,error);
+            if(errcheck_mltpl(error,msg,12,nm12).lt.KIM_STATUS_OK) return
+ if(present(nm13).and.k13.eq.1) dt13= kim_api_get_data_f(kimmdl,nm13,error);
+            if(errcheck_mltpl(error,msg,13,nm13).lt.KIM_STATUS_OK) return
+ if(present(nm14).and.k14.eq.1) dt14= kim_api_get_data_f(kimmdl,nm14,error);
+            if(errcheck_mltpl(error,msg,14,nm14).lt.KIM_STATUS_OK) return
+ if(present(nm15).and.k15.eq.1) dt15= kim_api_get_data_f(kimmdl,nm15,error);
+            if(errcheck_mltpl(error,msg,15,nm15).lt.KIM_STATUS_OK) return
 	end subroutine kim_api_get_data_multiple_f
 
-	subroutine kim_api_get_data_byI_multiple_f(kimmdl,error, nm1,dt1, nm2,dt2, nm3,dt3, nm4,dt4, nm5,dt5,&
-         nm6,dt6, nm7,dt7, nm8,dt8, nm9,dt9, nm10,dt10, nm11,dt11, nm12,dt12, nm13,dt13,&
-         nm14,dt14, nm15,dt15, nm16,dt16, nm17,dt17, nm18,dt18, nm19,dt19, nm20,dt20)
+	subroutine kim_api_get_data_byI_multiple_f(kimmdl,error, nm1,dt1,k1, nm2,dt2,k2, nm3,dt3,k3, nm4,dt4,k4, nm5,dt5,k5,&
+         nm6,dt6,k6, nm7,dt7,k7, nm8,dt8,k8, nm9,dt9,k9, nm10,dt10,k10, nm11,dt11,k11, nm12,dt12,k12, nm13,dt13,k13,&
+         nm14,dt14,k14, nm15,dt15,k15)
             integer(kind=kim_intptr) :: kimmdl;  integer error
 
             character(len=40) ::msg="kim_api_get_data_byI_multiple_f"
@@ -1303,14 +1409,17 @@ integer,parameter :: kim_intptr = 8
             integer,optional:: nm13;  integer(kind=kim_intptr),optional:: dt13
             integer,optional:: nm14;  integer(kind=kim_intptr),optional:: dt14
             integer,optional:: nm15;  integer(kind=kim_intptr),optional:: dt15
-            integer,optional:: nm16;  integer(kind=kim_intptr),optional:: dt16
-            integer,optional:: nm17;  integer(kind=kim_intptr),optional:: dt17
-            integer,optional:: nm18;  integer(kind=kim_intptr),optional:: dt18
-            integer,optional:: nm19;  integer(kind=kim_intptr),optional:: dt19
-            integer,optional:: nm20;  integer(kind=kim_intptr),optional:: dt20
-            !
-            dt1 = kim_api_get_data_byi_f(kimmdl,nm1,error); 
-            if (errcheck_mltpl(error,msg,1, "", nm1).lt.KIM_STATUS_OK) return
+            integer ::k1;
+            integer,optional::k2,k3,k4,k5,k6,k7,k8,k9,k10,k11,k12,k13,k14,k15
+            ! 
+            if(k1.ne.0.and.k1.ne.1) then
+               error=KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY 
+              if(errcheck_mltpl(KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY,msg,1,"", nm1 ).lt.KIM_STATUS_OK) return
+            endif
+            if(k1.eq.1) then 
+            	dt1 = kim_api_get_data_byi_f(kimmdl,nm1,error); 
+            	if (errcheck_mltpl(error,msg,1, "", nm1).lt.KIM_STATUS_OK) return
+            endif
             !check rest of the arguments
             error = KIM_STATUS_WRONG_MULTIPLE_ARGS
             if( present(nm2 ).and.(.not.present(dt2 ))) then 
@@ -1341,43 +1450,74 @@ integer,parameter :: kim_intptr = 8
             	if(errcheck_mltpl(error,msg,14, "",nm14 ).lt.KIM_STATUS_OK) return
             elseif( present(nm15 ).and.(.not.present(dt15 ))) then 
             	if(errcheck_mltpl(error,msg,15, "",nm15 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm16 ).and.(.not.present(dt16))) then 
-            	if(errcheck_mltpl(error,msg,16, "",nm16 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm17 ).and.(.not.present(dt17 ))) then 
-            	if(errcheck_mltpl(error,msg,17, "",nm17 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm18 ).and.(.not.present(dt18 ))) then 
-            	if(errcheck_mltpl(error,msg,18, "",nm18 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm19 ).and.(.not.present(dt19 ))) then 
-            	if(errcheck_mltpl(error,msg,19, "",nm19 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm20 ).and.(.not.present(dt20 ))) then 
-            	if(errcheck_mltpl(error,msg,20, "",nm20 ).lt.KIM_STATUS_OK) return
             endif 
+
+	    error = KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY
+            if(present(k2).and.(k2.ne.0.and.k2.ne.1))then 
+            	if(errcheck_mltpl(error,msg,2,"", nm2 ).lt.KIM_STATUS_OK) return
+            elseif(present(k3).and.(k3.ne.0.and.k3.ne.1))then 
+            	if(errcheck_mltpl(error,msg,3,"", nm3 ).lt.KIM_STATUS_OK) return
+            elseif(present(k4).and.(k4.ne.0.and.k4.ne.1))then 
+            	if(errcheck_mltpl(error,msg,4,"", nm4 ).lt.KIM_STATUS_OK) return
+            elseif(present(k5).and.(k5.ne.0.and.k5.ne.1))then 
+            	if(errcheck_mltpl(error,msg,5,"", nm5 ).lt.KIM_STATUS_OK) return
+            elseif(present(k6).and.(k6.ne.0.and.k6.ne.1))then 
+            	if(errcheck_mltpl(error,msg,6,"", nm6 ).lt.KIM_STATUS_OK) return
+            elseif(present(k7).and.(k7.ne.0.and.k7.ne.1))then 
+            	if(errcheck_mltpl(error,msg,7,"", nm7 ).lt.KIM_STATUS_OK) return
+            elseif(present(k8).and.(k8.ne.0.and.k8.ne.1))then 
+            	if(errcheck_mltpl(error,msg,8,"", nm8 ).lt.KIM_STATUS_OK) return
+            elseif(present(k9).and.(k9.ne.0.and.k9.ne.1))then 
+            	if(errcheck_mltpl(error,msg,9,"", nm9 ).lt.KIM_STATUS_OK) return
+            elseif(present(k10).and.(k10.ne.0.and.k10.ne.1))then 
+            	if(errcheck_mltpl(error,msg,10,"", nm10 ).lt.KIM_STATUS_OK) return
+            elseif(present(k11).and.(k11.ne.0.and.k11.ne.1))then 
+            	if(errcheck_mltpl(error,msg,11,"", nm11 ).lt.KIM_STATUS_OK) return
+            elseif(present(k12).and.(k12.ne.0.and.k12.ne.1))then 
+            	if(errcheck_mltpl(error,msg,12,"", nm12 ).lt.KIM_STATUS_OK) return
+            elseif(present(k13).and.(k13.ne.0.and.k13.ne.1))then 
+            	if(errcheck_mltpl(error,msg,13,"", nm13 ).lt.KIM_STATUS_OK) return
+            elseif(present(k14).and.(k14.ne.0.and.k14.ne.1))then 
+            	if(errcheck_mltpl(error,msg,14,"", nm14 ).lt.KIM_STATUS_OK) return
+            elseif(present(k15).and.(k15.ne.0.and.k15.ne.1))then 
+            	if(errcheck_mltpl(error,msg,15,"", nm15 ).lt.KIM_STATUS_OK) return
+            endif
 	    
 	    !process arguments
- if(present(nm2)) dt2= kim_api_get_data_byi_f(kimmdl,nm2,error);if(errcheck_mltpl(error,msg,2,"",nm2).lt.KIM_STATUS_OK) return
- if(present(nm3)) dt3= kim_api_get_data_byi_f(kimmdl,nm3,error);if(errcheck_mltpl(error,msg,3,"",nm3).lt.KIM_STATUS_OK) return
- if(present(nm4)) dt4= kim_api_get_data_byi_f(kimmdl,nm4,error);if(errcheck_mltpl(error,msg,4,"",nm4).lt.KIM_STATUS_OK) return
- if(present(nm5)) dt5= kim_api_get_data_byi_f(kimmdl,nm5,error);if(errcheck_mltpl(error,msg,5,"",nm5).lt.KIM_STATUS_OK) return
- if(present(nm6)) dt6= kim_api_get_data_byi_f(kimmdl,nm6,error);if(errcheck_mltpl(error,msg,6,"",nm6).lt.KIM_STATUS_OK) return
- if(present(nm7)) dt7= kim_api_get_data_byi_f(kimmdl,nm7,error);if(errcheck_mltpl(error,msg,7,"",nm7).lt.KIM_STATUS_OK) return
- if(present(nm8)) dt8= kim_api_get_data_byi_f(kimmdl,nm8,error);if(errcheck_mltpl(error,msg,8,"",nm8).lt.KIM_STATUS_OK) return
- if(present(nm9)) dt9= kim_api_get_data_byi_f(kimmdl,nm9,error);if(errcheck_mltpl(error,msg,9,"",nm9).lt.KIM_STATUS_OK) return
- if(present(nm10)) dt10= kim_api_get_data_byi_f(kimmdl,nm10,error);if(errcheck_mltpl(error,msg,10,"",nm10).lt.KIM_STATUS_OK) return
- if(present(nm11)) dt11= kim_api_get_data_byi_f(kimmdl,nm11,error);if(errcheck_mltpl(error,msg,11,"",nm11).lt.KIM_STATUS_OK) return
- if(present(nm12)) dt12= kim_api_get_data_byi_f(kimmdl,nm12,error);if(errcheck_mltpl(error,msg,12,"",nm12).lt.KIM_STATUS_OK) return
- if(present(nm13)) dt13= kim_api_get_data_byi_f(kimmdl,nm13,error);if(errcheck_mltpl(error,msg,13,"",nm13).lt.KIM_STATUS_OK) return
- if(present(nm14)) dt14= kim_api_get_data_byi_f(kimmdl,nm14,error);if(errcheck_mltpl(error,msg,14,"",nm14).lt.KIM_STATUS_OK) return
- if(present(nm15)) dt15= kim_api_get_data_byi_f(kimmdl,nm15,error);if(errcheck_mltpl(error,msg,15,"",nm15).lt.KIM_STATUS_OK) return
- if(present(nm16)) dt16= kim_api_get_data_byi_f(kimmdl,nm16,error);if(errcheck_mltpl(error,msg,16,"",nm16).lt.KIM_STATUS_OK) return
- if(present(nm17)) dt17= kim_api_get_data_byi_f(kimmdl,nm17,error);if(errcheck_mltpl(error,msg,17,"",nm17).lt.KIM_STATUS_OK) return
- if(present(nm18)) dt18= kim_api_get_data_byi_f(kimmdl,nm18,error);if(errcheck_mltpl(error,msg,18,"",nm18).lt.KIM_STATUS_OK) return
- if(present(nm19)) dt19= kim_api_get_data_byi_f(kimmdl,nm19,error);if(errcheck_mltpl(error,msg,19,"",nm19).lt.KIM_STATUS_OK) return
- if(present(nm20)) dt20= kim_api_get_data_byi_f(kimmdl,nm20,error);if(errcheck_mltpl(error,msg,20,"",nm20).lt.KIM_STATUS_OK) return 			
+            error =KIM_STATUS_OK
+ if(present(nm2).and.k2.eq.1) dt2= kim_api_get_data_byi_f(kimmdl,nm2,error);
+            if(errcheck_mltpl(error,msg,2,"",nm2).lt.KIM_STATUS_OK) return
+ if(present(nm3).and.k3.eq.1) dt3= kim_api_get_data_byi_f(kimmdl,nm3,error);
+            if(errcheck_mltpl(error,msg,3,"",nm3).lt.KIM_STATUS_OK) return
+ if(present(nm4).and.k4.eq.1) dt4= kim_api_get_data_byi_f(kimmdl,nm4,error);
+            if(errcheck_mltpl(error,msg,4,"",nm4).lt.KIM_STATUS_OK) return
+ if(present(nm5).and.k5.eq.1) dt5= kim_api_get_data_byi_f(kimmdl,nm5,error);
+            if(errcheck_mltpl(error,msg,5,"",nm5).lt.KIM_STATUS_OK) return
+ if(present(nm6).and.k6.eq.1) dt6= kim_api_get_data_byi_f(kimmdl,nm6,error);
+            if(errcheck_mltpl(error,msg,6,"",nm6).lt.KIM_STATUS_OK) return
+ if(present(nm7).and.k7.eq.1) dt7= kim_api_get_data_byi_f(kimmdl,nm7,error);
+            if(errcheck_mltpl(error,msg,7,"",nm7).lt.KIM_STATUS_OK) return
+ if(present(nm8).and.k8.eq.1) dt8= kim_api_get_data_byi_f(kimmdl,nm8,error);
+            if(errcheck_mltpl(error,msg,8,"",nm8).lt.KIM_STATUS_OK) return
+ if(present(nm9).and.k9.eq.1) dt9= kim_api_get_data_byi_f(kimmdl,nm9,error);
+            if(errcheck_mltpl(error,msg,9,"",nm9).lt.KIM_STATUS_OK) return
+ if(present(nm10).and.k10.eq.1) dt10= kim_api_get_data_byi_f(kimmdl,nm10,error);
+            if(errcheck_mltpl(error,msg,10,"",nm10).lt.KIM_STATUS_OK) return
+ if(present(nm11).and.k11.eq.1) dt11= kim_api_get_data_byi_f(kimmdl,nm11,error);
+            if(errcheck_mltpl(error,msg,11,"",nm11).lt.KIM_STATUS_OK) return
+ if(present(nm12).and.k12.eq.1) dt12= kim_api_get_data_byi_f(kimmdl,nm12,error);
+            if(errcheck_mltpl(error,msg,12,"",nm12).lt.KIM_STATUS_OK) return
+ if(present(nm13).and.k13.eq.1) dt13= kim_api_get_data_byi_f(kimmdl,nm13,error);
+            if(errcheck_mltpl(error,msg,13,"",nm13).lt.KIM_STATUS_OK) return
+ if(present(nm14).and.k14.eq.1) dt14= kim_api_get_data_byi_f(kimmdl,nm14,error);
+            if(errcheck_mltpl(error,msg,14,"",nm14).lt.KIM_STATUS_OK) return
+ if(present(nm15).and.k15.eq.1) dt15= kim_api_get_data_byi_f(kimmdl,nm15,error);
+            if(errcheck_mltpl(error,msg,15,"",nm15).lt.KIM_STATUS_OK) return		
 	end subroutine kim_api_get_data_byI_multiple_f
 
-	subroutine kim_api_get_compute_multiple_f(kimmdl,error, nm1,dt1, nm2,dt2, nm3,dt3, nm4,dt4, nm5,dt5,&
-         nm6,dt6, nm7,dt7, nm8,dt8, nm9,dt9, nm10,dt10, nm11,dt11, nm12,dt12, nm13,dt13,&
-         nm14,dt14, nm15,dt15, nm16,dt16, nm17,dt17, nm18,dt18, nm19,dt19, nm20,dt20)
+	subroutine kim_api_get_compute_multiple_f(kimmdl,error, nm1,dt1,k1, nm2,dt2,k2, nm3,dt3,k3, nm4,dt4,k4, nm5,dt5,k5,&
+         nm6,dt6,k6, nm7,dt7,k7, nm8,dt8,k8, nm9,dt9,k9, nm10,dt10,k10, nm11,dt11,k11, nm12,dt12,k12, nm13,dt13,k13,&
+         nm14,dt14,k14, nm15,dt15,k15)
             integer(kind=kim_intptr) :: kimmdl;  integer error
 
             character(len=40) ::msg="kim_api_get_compute_multiple_f"
@@ -1398,14 +1538,18 @@ integer,parameter :: kim_intptr = 8
             character(len=*),optional:: nm13;  integer,optional:: dt13
             character(len=*),optional:: nm14;  integer,optional:: dt14
             character(len=*),optional:: nm15;  integer,optional:: dt15
-            character(len=*),optional:: nm16;  integer,optional:: dt16
-            character(len=*),optional:: nm17;  integer,optional:: dt17
-            character(len=*),optional:: nm18;  integer,optional:: dt18
-            character(len=*),optional:: nm19;  integer,optional:: dt19
-            character(len=*),optional:: nm20;  integer,optional:: dt20
-            !
-            dt1 = kim_api_isit_compute_f(kimmdl,nm1,error); 
-            if (errcheck_mltpl(error,msg,1, nm1).lt.KIM_STATUS_OK) return
+            integer ::k1;
+            integer,optional::k2,k3,k4,k5,k6,k7,k8,k9,k10,k11,k12,k13,k14,k15  
+           !
+            if(k1.ne.0.and.k1.ne.1) then
+               error=KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY 
+              if(errcheck_mltpl(KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY,msg,1, nm1 ).lt.KIM_STATUS_OK) return
+            endif
+            if(k1.eq.1) then 
+                dt1 = kim_api_isit_compute_f(kimmdl,nm1,error); 
+                if (errcheck_mltpl(error,msg,1, nm1).lt.KIM_STATUS_OK) return
+            endif
+
             !check rest of the arguments
             error = KIM_STATUS_WRONG_MULTIPLE_ARGS
             if( present(nm2 ).and.(.not.present(dt2 ))) then 
@@ -1436,43 +1580,74 @@ integer,parameter :: kim_intptr = 8
             	if(errcheck_mltpl(error,msg,14, nm14 ).lt.KIM_STATUS_OK) return
             elseif( present(nm15 ).and.(.not.present(dt15 ))) then 
             	if(errcheck_mltpl(error,msg,15, nm15 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm16 ).and.(.not.present(dt16))) then 
-            	if(errcheck_mltpl(error,msg,16, nm16 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm17 ).and.(.not.present(dt17 ))) then 
-            	if(errcheck_mltpl(error,msg,17, nm17 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm18 ).and.(.not.present(dt18 ))) then 
-            	if(errcheck_mltpl(error,msg,18, nm18 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm19 ).and.(.not.present(dt19 ))) then 
-            	if(errcheck_mltpl(error,msg,19, nm19 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm20 ).and.(.not.present(dt20 ))) then 
-            	if(errcheck_mltpl(error,msg,20, nm20 ).lt.KIM_STATUS_OK) return
             endif 
+
+	    error = KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY
+            if(present(k2).and.(k2.ne.0.and.k2.ne.1))then 
+            	if(errcheck_mltpl(error,msg,2, nm2 ).lt.KIM_STATUS_OK) return
+            elseif(present(k3).and.(k3.ne.0.and.k3.ne.1))then 
+            	if(errcheck_mltpl(error,msg,3, nm3 ).lt.KIM_STATUS_OK) return
+            elseif(present(k4).and.(k4.ne.0.and.k4.ne.1))then 
+            	if(errcheck_mltpl(error,msg,4, nm4 ).lt.KIM_STATUS_OK) return
+            elseif(present(k5).and.(k5.ne.0.and.k5.ne.1))then 
+            	if(errcheck_mltpl(error,msg,5, nm5 ).lt.KIM_STATUS_OK) return
+            elseif(present(k6).and.(k6.ne.0.and.k6.ne.1))then 
+            	if(errcheck_mltpl(error,msg,6, nm6 ).lt.KIM_STATUS_OK) return
+            elseif(present(k7).and.(k7.ne.0.and.k7.ne.1))then 
+            	if(errcheck_mltpl(error,msg,7, nm7 ).lt.KIM_STATUS_OK) return
+            elseif(present(k8).and.(k8.ne.0.and.k8.ne.1))then 
+            	if(errcheck_mltpl(error,msg,8, nm8 ).lt.KIM_STATUS_OK) return
+            elseif(present(k9).and.(k9.ne.0.and.k9.ne.1))then 
+            	if(errcheck_mltpl(error,msg,9, nm9 ).lt.KIM_STATUS_OK) return
+            elseif(present(k10).and.(k10.ne.0.and.k10.ne.1))then 
+            	if(errcheck_mltpl(error,msg,10, nm10 ).lt.KIM_STATUS_OK) return
+            elseif(present(k11).and.(k11.ne.0.and.k11.ne.1))then 
+            	if(errcheck_mltpl(error,msg,11, nm11 ).lt.KIM_STATUS_OK) return
+            elseif(present(k12).and.(k12.ne.0.and.k12.ne.1))then 
+            	if(errcheck_mltpl(error,msg,12, nm12 ).lt.KIM_STATUS_OK) return
+            elseif(present(k13).and.(k13.ne.0.and.k13.ne.1))then 
+            	if(errcheck_mltpl(error,msg,13, nm13 ).lt.KIM_STATUS_OK) return
+            elseif(present(k14).and.(k14.ne.0.and.k14.ne.1))then 
+            	if(errcheck_mltpl(error,msg,14, nm14 ).lt.KIM_STATUS_OK) return
+            elseif(present(k15).and.(k15.ne.0.and.k15.ne.1))then 
+            	if(errcheck_mltpl(error,msg,15, nm15 ).lt.KIM_STATUS_OK) return
+            endif
 	    
 	    !process arguments
- if(present(nm2)) dt2= kim_api_isit_compute_f(kimmdl,nm2,error);if(errcheck_mltpl(error,msg,2,nm2).lt.KIM_STATUS_OK) return
- if(present(nm3)) dt3= kim_api_isit_compute_f(kimmdl,nm3,error);if(errcheck_mltpl(error,msg,3,nm3).lt.KIM_STATUS_OK) return
- if(present(nm4)) dt4= kim_api_isit_compute_f(kimmdl,nm4,error);if(errcheck_mltpl(error,msg,4,nm4).lt.KIM_STATUS_OK) return
- if(present(nm5)) dt5= kim_api_isit_compute_f(kimmdl,nm5,error);if(errcheck_mltpl(error,msg,5,nm5).lt.KIM_STATUS_OK) return
- if(present(nm6)) dt6= kim_api_isit_compute_f(kimmdl,nm6,error);if(errcheck_mltpl(error,msg,6,nm6).lt.KIM_STATUS_OK) return
- if(present(nm7)) dt7= kim_api_isit_compute_f(kimmdl,nm7,error);if(errcheck_mltpl(error,msg,7,nm7).lt.KIM_STATUS_OK) return
- if(present(nm8)) dt8= kim_api_isit_compute_f(kimmdl,nm8,error);if(errcheck_mltpl(error,msg,8,nm8).lt.KIM_STATUS_OK) return
- if(present(nm9)) dt9= kim_api_isit_compute_f(kimmdl,nm9,error);if(errcheck_mltpl(error,msg,9,nm9).lt.KIM_STATUS_OK) return
- if(present(nm10)) dt10= kim_api_isit_compute_f(kimmdl,nm10,error);if(errcheck_mltpl(error,msg,10,nm10).lt.KIM_STATUS_OK) return
- if(present(nm11)) dt11= kim_api_isit_compute_f(kimmdl,nm11,error);if(errcheck_mltpl(error,msg,11,nm11).lt.KIM_STATUS_OK) return
- if(present(nm12)) dt12= kim_api_isit_compute_f(kimmdl,nm12,error);if(errcheck_mltpl(error,msg,12,nm12).lt.KIM_STATUS_OK) return
- if(present(nm13)) dt13= kim_api_isit_compute_f(kimmdl,nm13,error);if(errcheck_mltpl(error,msg,13,nm13).lt.KIM_STATUS_OK) return
- if(present(nm14)) dt14= kim_api_isit_compute_f(kimmdl,nm14,error);if(errcheck_mltpl(error,msg,14,nm14).lt.KIM_STATUS_OK) return
- if(present(nm15)) dt15= kim_api_isit_compute_f(kimmdl,nm15,error);if(errcheck_mltpl(error,msg,15,nm15).lt.KIM_STATUS_OK) return
- if(present(nm16)) dt16= kim_api_isit_compute_f(kimmdl,nm16,error);if(errcheck_mltpl(error,msg,16,nm16).lt.KIM_STATUS_OK) return
- if(present(nm17)) dt17= kim_api_isit_compute_f(kimmdl,nm17,error);if(errcheck_mltpl(error,msg,17,nm17).lt.KIM_STATUS_OK) return
- if(present(nm18)) dt18= kim_api_isit_compute_f(kimmdl,nm18,error);if(errcheck_mltpl(error,msg,18,nm18).lt.KIM_STATUS_OK) return
- if(present(nm19)) dt19= kim_api_isit_compute_f(kimmdl,nm19,error);if(errcheck_mltpl(error,msg,19,nm19).lt.KIM_STATUS_OK) return
- if(present(nm20)) dt20= kim_api_isit_compute_f(kimmdl,nm20,error);if(errcheck_mltpl(error,msg,20,nm20).lt.KIM_STATUS_OK) return 
+            error=KIM_STATUS_OK
+ if(present(nm2).and.k2.eq.1) dt2= kim_api_isit_compute_f(kimmdl,nm2,error);
+            if(errcheck_mltpl(error,msg,2,nm2).lt.KIM_STATUS_OK) return
+ if(present(nm3).and.k3.eq.1) dt3= kim_api_isit_compute_f(kimmdl,nm3,error);
+            if(errcheck_mltpl(error,msg,3,nm3).lt.KIM_STATUS_OK) return
+ if(present(nm4).and.k4.eq.1) dt4= kim_api_isit_compute_f(kimmdl,nm4,error);
+            if(errcheck_mltpl(error,msg,4,nm4).lt.KIM_STATUS_OK) return
+ if(present(nm5).and.k5.eq.1) dt5= kim_api_isit_compute_f(kimmdl,nm5,error);
+            if(errcheck_mltpl(error,msg,5,nm5).lt.KIM_STATUS_OK) return
+ if(present(nm6).and.k6.eq.1) dt6= kim_api_isit_compute_f(kimmdl,nm6,error);
+            if(errcheck_mltpl(error,msg,6,nm6).lt.KIM_STATUS_OK) return
+ if(present(nm7).and.k7.eq.1) dt7= kim_api_isit_compute_f(kimmdl,nm7,error);
+            if(errcheck_mltpl(error,msg,7,nm7).lt.KIM_STATUS_OK) return
+ if(present(nm8).and.k8.eq.1) dt8= kim_api_isit_compute_f(kimmdl,nm8,error);
+            if(errcheck_mltpl(error,msg,8,nm8).lt.KIM_STATUS_OK) return
+ if(present(nm9).and.k9.eq.1) dt9= kim_api_isit_compute_f(kimmdl,nm9,error);
+            if(errcheck_mltpl(error,msg,9,nm9).lt.KIM_STATUS_OK) return
+ if(present(nm10).and.k10.eq.1) dt10= kim_api_isit_compute_f(kimmdl,nm10,error);
+            if(errcheck_mltpl(error,msg,10,nm10).lt.KIM_STATUS_OK) return
+ if(present(nm11).and.k11.eq.1) dt11= kim_api_isit_compute_f(kimmdl,nm11,error);
+            if(errcheck_mltpl(error,msg,11,nm11).lt.KIM_STATUS_OK) return
+ if(present(nm12).and.k12.eq.1) dt12= kim_api_isit_compute_f(kimmdl,nm12,error);
+            if(errcheck_mltpl(error,msg,12,nm12).lt.KIM_STATUS_OK) return
+ if(present(nm13).and.k13.eq.1) dt13= kim_api_isit_compute_f(kimmdl,nm13,error);
+            if(errcheck_mltpl(error,msg,13,nm13).lt.KIM_STATUS_OK) return
+ if(present(nm14).and.k14.eq.1) dt14= kim_api_isit_compute_f(kimmdl,nm14,error);
+            if(errcheck_mltpl(error,msg,14,nm14).lt.KIM_STATUS_OK) return
+ if(present(nm15).and.k15.eq.1) dt15= kim_api_isit_compute_f(kimmdl,nm15,error);
+            if(errcheck_mltpl(error,msg,15,nm15).lt.KIM_STATUS_OK) return
 	end subroutine kim_api_get_compute_multiple_f
         
-        subroutine kim_api_get_compute_byI_mltpl_f(kimmdl,error, nm1,dt1, nm2,dt2, nm3,dt3, nm4,dt4, nm5,dt5,&
-         nm6,dt6, nm7,dt7, nm8,dt8, nm9,dt9, nm10,dt10, nm11,dt11, nm12,dt12, nm13,dt13,&
-         nm14,dt14, nm15,dt15, nm16,dt16, nm17,dt17, nm18,dt18, nm19,dt19, nm20,dt20)
+        subroutine kim_api_get_compute_byI_mltpl_f(kimmdl,error, nm1,dt1,k1, nm2,dt2,k2, nm3,dt3,k3, nm4,dt4,k4, nm5,dt5,k5,&
+         nm6,dt6,k6, nm7,dt7,k7, nm8,dt8,k8, nm9,dt9,k9, nm10,dt10,k10, nm11,dt11,k11, nm12,dt12,k12, nm13,dt13,k13,&
+         nm14,dt14,k14, nm15,dt15,k15)
             integer(kind=kim_intptr) :: kimmdl;  integer error
 
             character(len=40) ::msg="kim_api_get_compute_byI_mltpl_f"
@@ -1493,14 +1668,19 @@ integer,parameter :: kim_intptr = 8
             integer,optional:: nm13;  integer,optional:: dt13
             integer,optional:: nm14;  integer,optional:: dt14
             integer,optional:: nm15;  integer,optional:: dt15
-            integer,optional:: nm16;  integer,optional:: dt16
-            integer,optional:: nm17;  integer,optional:: dt17
-            integer,optional:: nm18;  integer,optional:: dt18
-            integer,optional:: nm19;  integer,optional:: dt19
-            integer,optional:: nm20;  integer,optional:: dt20
+            integer ::k1;
+            integer,optional::k2,k3,k4,k5,k6,k7,k8,k9,k10,k11,k12,k13,k14,k15 
             !
-            dt1 = kim_api_isit_compute_byi_f(kimmdl,nm1,error); 
-            if (errcheck_mltpl(error,msg,1, "", nm1).lt.KIM_STATUS_OK) return
+       
+            if(k1.ne.0.and.k1.ne.1) then
+               error=KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY
+               if(errcheck_mltpl(error,msg,1,"", nm1 ).lt.KIM_STATUS_OK) return
+            endif
+            if(k1.eq.1) then 
+                dt1 = kim_api_isit_compute_byi_f(kimmdl,nm1,error); 
+                if (errcheck_mltpl(error,msg,1, "", nm1).lt.KIM_STATUS_OK) return
+            endif
+
             !check rest of the arguments
             error = KIM_STATUS_WRONG_MULTIPLE_ARGS
             if( present(nm2 ).and.(.not.present(dt2 ))) then 
@@ -1531,43 +1711,74 @@ integer,parameter :: kim_intptr = 8
             	if(errcheck_mltpl(error,msg,14, "",nm14 ).lt.KIM_STATUS_OK) return
             elseif( present(nm15 ).and.(.not.present(dt15 ))) then 
             	if(errcheck_mltpl(error,msg,15, "",nm15 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm16 ).and.(.not.present(dt16))) then 
-            	if(errcheck_mltpl(error,msg,16, "",nm16 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm17 ).and.(.not.present(dt17 ))) then 
-            	if(errcheck_mltpl(error,msg,17, "",nm17 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm18 ).and.(.not.present(dt18 ))) then 
-            	if(errcheck_mltpl(error,msg,18, "",nm18 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm19 ).and.(.not.present(dt19 ))) then 
-            	if(errcheck_mltpl(error,msg,19, "",nm19 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm20 ).and.(.not.present(dt20 ))) then 
-            	if(errcheck_mltpl(error,msg,20, "",nm20 ).lt.KIM_STATUS_OK) return
             endif 
+
+	    error = KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY
+            if(present(k2).and.(k2.ne.0.and.k2.ne.1))then 
+            	if(errcheck_mltpl(error,msg,2,"", nm2 ).lt.KIM_STATUS_OK) return
+            elseif(present(k3).and.(k3.ne.0.and.k3.ne.1))then 
+            	if(errcheck_mltpl(error,msg,3,"", nm3 ).lt.KIM_STATUS_OK) return
+            elseif(present(k4).and.(k4.ne.0.and.k4.ne.1))then 
+            	if(errcheck_mltpl(error,msg,4,"", nm4 ).lt.KIM_STATUS_OK) return
+            elseif(present(k5).and.(k5.ne.0.and.k5.ne.1))then 
+            	if(errcheck_mltpl(error,msg,5,"", nm5 ).lt.KIM_STATUS_OK) return
+            elseif(present(k6).and.(k6.ne.0.and.k6.ne.1))then 
+            	if(errcheck_mltpl(error,msg,6,"", nm6 ).lt.KIM_STATUS_OK) return
+            elseif(present(k7).and.(k7.ne.0.and.k7.ne.1))then 
+            	if(errcheck_mltpl(error,msg,7,"", nm7 ).lt.KIM_STATUS_OK) return
+            elseif(present(k8).and.(k8.ne.0.and.k8.ne.1))then 
+            	if(errcheck_mltpl(error,msg,8,"", nm8 ).lt.KIM_STATUS_OK) return
+            elseif(present(k9).and.(k9.ne.0.and.k9.ne.1))then 
+            	if(errcheck_mltpl(error,msg,9,"", nm9 ).lt.KIM_STATUS_OK) return
+            elseif(present(k10).and.(k10.ne.0.and.k10.ne.1))then 
+            	if(errcheck_mltpl(error,msg,10,"", nm10 ).lt.KIM_STATUS_OK) return
+            elseif(present(k11).and.(k11.ne.0.and.k11.ne.1))then 
+            	if(errcheck_mltpl(error,msg,11,"", nm11 ).lt.KIM_STATUS_OK) return
+            elseif(present(k12).and.(k12.ne.0.and.k12.ne.1))then 
+            	if(errcheck_mltpl(error,msg,12,"", nm12 ).lt.KIM_STATUS_OK) return
+            elseif(present(k13).and.(k13.ne.0.and.k13.ne.1))then 
+            	if(errcheck_mltpl(error,msg,13,"", nm13 ).lt.KIM_STATUS_OK) return
+            elseif(present(k14).and.(k14.ne.0.and.k14.ne.1))then 
+            	if(errcheck_mltpl(error,msg,14,"", nm14 ).lt.KIM_STATUS_OK) return
+            elseif(present(k15).and.(k15.ne.0.and.k15.ne.1))then 
+            	if(errcheck_mltpl(error,msg,15,"", nm15 ).lt.KIM_STATUS_OK) return
+            endif
 	    
 	    !process arguments
- if(present(nm2)) dt2= kim_api_isit_compute_byi_f(kimmdl,nm2,error);if(errcheck_mltpl(error,msg,2,"",nm2).lt.KIM_STATUS_OK) return
- if(present(nm3)) dt3= kim_api_isit_compute_byi_f(kimmdl,nm3,error);if(errcheck_mltpl(error,msg,3,"",nm3).lt.KIM_STATUS_OK) return
- if(present(nm4)) dt4= kim_api_isit_compute_byi_f(kimmdl,nm4,error);if(errcheck_mltpl(error,msg,4,"",nm4).lt.KIM_STATUS_OK) return
- if(present(nm5)) dt5= kim_api_isit_compute_byi_f(kimmdl,nm5,error);if(errcheck_mltpl(error,msg,5,"",nm5).lt.KIM_STATUS_OK) return
- if(present(nm6)) dt6= kim_api_isit_compute_byi_f(kimmdl,nm6,error);if(errcheck_mltpl(error,msg,6,"",nm6).lt.KIM_STATUS_OK) return
- if(present(nm7)) dt7= kim_api_isit_compute_byi_f(kimmdl,nm7,error);if(errcheck_mltpl(error,msg,7,"",nm7).lt.KIM_STATUS_OK) return
- if(present(nm8)) dt8= kim_api_isit_compute_byi_f(kimmdl,nm8,error);if(errcheck_mltpl(error,msg,8,"",nm8).lt.KIM_STATUS_OK) return
- if(present(nm9)) dt9= kim_api_isit_compute_byi_f(kimmdl,nm9,error);if(errcheck_mltpl(error,msg,9,"",nm9).lt.KIM_STATUS_OK) return
- if(present(nm10)) dt10= kim_api_isit_compute_byi_f(kimmdl,nm10,error);if(errcheck_mltpl(error,msg,10,"",nm10).lt.KIM_STATUS_OK) return
- if(present(nm11)) dt11= kim_api_isit_compute_byi_f(kimmdl,nm11,error);if(errcheck_mltpl(error,msg,11,"",nm11).lt.KIM_STATUS_OK) return
- if(present(nm12)) dt12= kim_api_isit_compute_byi_f(kimmdl,nm12,error);if(errcheck_mltpl(error,msg,12,"",nm12).lt.KIM_STATUS_OK) return
- if(present(nm13)) dt13= kim_api_isit_compute_byi_f(kimmdl,nm13,error);if(errcheck_mltpl(error,msg,13,"",nm13).lt.KIM_STATUS_OK) return
- if(present(nm14)) dt14= kim_api_isit_compute_byi_f(kimmdl,nm14,error);if(errcheck_mltpl(error,msg,14,"",nm14).lt.KIM_STATUS_OK) return
- if(present(nm15)) dt15= kim_api_isit_compute_byi_f(kimmdl,nm15,error);if(errcheck_mltpl(error,msg,15,"",nm15).lt.KIM_STATUS_OK) return
- if(present(nm16)) dt16= kim_api_isit_compute_byi_f(kimmdl,nm16,error);if(errcheck_mltpl(error,msg,16,"",nm16).lt.KIM_STATUS_OK) return
- if(present(nm17)) dt17= kim_api_isit_compute_byi_f(kimmdl,nm17,error);if(errcheck_mltpl(error,msg,17,"",nm17).lt.KIM_STATUS_OK) return
- if(present(nm18)) dt18= kim_api_isit_compute_byi_f(kimmdl,nm18,error);if(errcheck_mltpl(error,msg,18,"",nm18).lt.KIM_STATUS_OK) return
- if(present(nm19)) dt19= kim_api_isit_compute_byi_f(kimmdl,nm19,error);if(errcheck_mltpl(error,msg,19,"",nm19).lt.KIM_STATUS_OK) return
- if(present(nm20)) dt20= kim_api_isit_compute_byi_f(kimmdl,nm20,error);if(errcheck_mltpl(error,msg,20,"",nm20).lt.KIM_STATUS_OK) return 
+            error =KIM_STATUS_OK
+ if(present(nm2).and.k2.eq.1) dt2= kim_api_isit_compute_byi_f(kimmdl,nm2,error);
+            if(errcheck_mltpl(error,msg,2,"",nm2).lt.KIM_STATUS_OK) return
+ if(present(nm3).and.k3.eq.1) dt3= kim_api_isit_compute_byi_f(kimmdl,nm3,error);
+            if(errcheck_mltpl(error,msg,3,"",nm3).lt.KIM_STATUS_OK) return
+ if(present(nm4).and.k4.eq.1) dt4= kim_api_isit_compute_byi_f(kimmdl,nm4,error);
+            if(errcheck_mltpl(error,msg,4,"",nm4).lt.KIM_STATUS_OK) return
+ if(present(nm5).and.k5.eq.1) dt5= kim_api_isit_compute_byi_f(kimmdl,nm5,error);
+            if(errcheck_mltpl(error,msg,5,"",nm5).lt.KIM_STATUS_OK) return
+ if(present(nm6).and.k6.eq.1) dt6= kim_api_isit_compute_byi_f(kimmdl,nm6,error);
+            if(errcheck_mltpl(error,msg,6,"",nm6).lt.KIM_STATUS_OK) return
+ if(present(nm7).and.k7.eq.1) dt7= kim_api_isit_compute_byi_f(kimmdl,nm7,error);
+            if(errcheck_mltpl(error,msg,7,"",nm7).lt.KIM_STATUS_OK) return
+ if(present(nm8).and.k8.eq.1) dt8= kim_api_isit_compute_byi_f(kimmdl,nm8,error);
+            if(errcheck_mltpl(error,msg,8,"",nm8).lt.KIM_STATUS_OK) return
+ if(present(nm9).and.k9.eq.1) dt9= kim_api_isit_compute_byi_f(kimmdl,nm9,error);
+            if(errcheck_mltpl(error,msg,9,"",nm9).lt.KIM_STATUS_OK) return
+ if(present(nm10).and.k10.eq.1) dt10= kim_api_isit_compute_byi_f(kimmdl,nm10,error);
+            if(errcheck_mltpl(error,msg,10,"",nm10).lt.KIM_STATUS_OK) return
+ if(present(nm11).and.k11.eq.1) dt11= kim_api_isit_compute_byi_f(kimmdl,nm11,error);
+            if(errcheck_mltpl(error,msg,11,"",nm11).lt.KIM_STATUS_OK) return
+ if(present(nm12).and.k12.eq.1) dt12= kim_api_isit_compute_byi_f(kimmdl,nm12,error);
+            if(errcheck_mltpl(error,msg,12,"",nm12).lt.KIM_STATUS_OK) return
+ if(present(nm13).and.k13.eq.1) dt13= kim_api_isit_compute_byi_f(kimmdl,nm13,error);
+            if(errcheck_mltpl(error,msg,13,"",nm13).lt.KIM_STATUS_OK) return
+ if(present(nm14).and.k14.eq.1) dt14= kim_api_isit_compute_byi_f(kimmdl,nm14,error);
+            if(errcheck_mltpl(error,msg,14,"",nm14).lt.KIM_STATUS_OK) return
+ if(present(nm15).and.k15.eq.1) dt15= kim_api_isit_compute_byi_f(kimmdl,nm15,error);
+            if(errcheck_mltpl(error,msg,15,"",nm15).lt.KIM_STATUS_OK) return
         end subroutine kim_api_get_compute_byI_mltpl_f
  
-        subroutine kim_api_get_index_multiple_f(kimmdl,error, nm1,dt1, nm2,dt2, nm3,dt3, nm4,dt4, nm5,dt5,&
-         nm6,dt6, nm7,dt7, nm8,dt8, nm9,dt9, nm10,dt10, nm11,dt11, nm12,dt12, nm13,dt13,&
-         nm14,dt14, nm15,dt15, nm16,dt16, nm17,dt17, nm18,dt18, nm19,dt19, nm20,dt20)
+        subroutine kim_api_get_index_multiple_f(kimmdl,error,  nm1,dt1,k1, nm2,dt2,k2, nm3,dt3,k3, nm4,dt4,k4, nm5,dt5,k5,&
+         nm6,dt6,k6, nm7,dt7,k7, nm8,dt8,k8, nm9,dt9,k9, nm10,dt10,k10, nm11,dt11,k11, nm12,dt12,k12, nm13,dt13,k13,&
+         nm14,dt14,k14, nm15,dt15,k15)
             integer(kind=kim_intptr) :: kimmdl;  integer error
 
             character(len=40) ::msg="kim_api_get_index_multiple_f"
@@ -1588,14 +1799,18 @@ integer,parameter :: kim_intptr = 8
             character(len=*),optional:: nm13;  integer,optional:: dt13
             character(len=*),optional:: nm14;  integer,optional:: dt14
             character(len=*),optional:: nm15;  integer,optional:: dt15
-            character(len=*),optional:: nm16;  integer,optional:: dt16
-            character(len=*),optional:: nm17;  integer,optional:: dt17
-            character(len=*),optional:: nm18;  integer,optional:: dt18
-            character(len=*),optional:: nm19;  integer,optional:: dt19
-            character(len=*),optional:: nm20;  integer,optional:: dt20
+            integer ::k1;
+            integer,optional::k2,k3,k4,k5,k6,k7,k8,k9,k10,k11,k12,k13,k14,k15 
             !
-            dt1 = kim_api_get_index_f(kimmdl,nm1,error); 
-            if (errcheck_mltpl(error,msg,1, nm1).lt.KIM_STATUS_OK) return
+            if(k1.ne.0.and.k1.ne.1) then
+               error=KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY
+               if(errcheck_mltpl(KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY,msg,1, nm1 ).lt.KIM_STATUS_OK) return
+            endif
+            if(k1.eq.1) then 
+                dt1 = kim_api_get_index_f(kimmdl,nm1,error); 
+                if (errcheck_mltpl(error,msg,1, nm1).lt.KIM_STATUS_OK) return
+            endif
+
             !check rest of the arguments
             error = KIM_STATUS_WRONG_MULTIPLE_ARGS
             if( present(nm2 ).and.(.not.present(dt2 ))) then 
@@ -1626,43 +1841,74 @@ integer,parameter :: kim_intptr = 8
             	if(errcheck_mltpl(error,msg,14, nm14 ).lt.KIM_STATUS_OK) return
             elseif( present(nm15 ).and.(.not.present(dt15 ))) then 
             	if(errcheck_mltpl(error,msg,15, nm15 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm16 ).and.(.not.present(dt16))) then 
-            	if(errcheck_mltpl(error,msg,16, nm16 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm17 ).and.(.not.present(dt17 ))) then 
-            	if(errcheck_mltpl(error,msg,17, nm17 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm18 ).and.(.not.present(dt18 ))) then 
-            	if(errcheck_mltpl(error,msg,18, nm18 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm19 ).and.(.not.present(dt19 ))) then 
-            	if(errcheck_mltpl(error,msg,19, nm19 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm20 ).and.(.not.present(dt20 ))) then 
-            	if(errcheck_mltpl(error,msg,20, nm20 ).lt.KIM_STATUS_OK) return
             endif 
+
+	    error = KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY
+            if(present(k2).and.(k2.ne.0.and.k2.ne.1))then 
+            	if(errcheck_mltpl(error,msg,2, nm2 ).lt.KIM_STATUS_OK) return
+            elseif(present(k3).and.(k3.ne.0.and.k3.ne.1))then 
+            	if(errcheck_mltpl(error,msg,3, nm3 ).lt.KIM_STATUS_OK) return
+            elseif(present(k4).and.(k4.ne.0.and.k4.ne.1))then 
+            	if(errcheck_mltpl(error,msg,4, nm4 ).lt.KIM_STATUS_OK) return
+            elseif(present(k5).and.(k5.ne.0.and.k5.ne.1))then 
+            	if(errcheck_mltpl(error,msg,5, nm5 ).lt.KIM_STATUS_OK) return
+            elseif(present(k6).and.(k6.ne.0.and.k6.ne.1))then 
+            	if(errcheck_mltpl(error,msg,6, nm6 ).lt.KIM_STATUS_OK) return
+            elseif(present(k7).and.(k7.ne.0.and.k7.ne.1))then 
+            	if(errcheck_mltpl(error,msg,7, nm7 ).lt.KIM_STATUS_OK) return
+            elseif(present(k8).and.(k8.ne.0.and.k8.ne.1))then 
+            	if(errcheck_mltpl(error,msg,8, nm8 ).lt.KIM_STATUS_OK) return
+            elseif(present(k9).and.(k9.ne.0.and.k9.ne.1))then 
+            	if(errcheck_mltpl(error,msg,9, nm9 ).lt.KIM_STATUS_OK) return
+            elseif(present(k10).and.(k10.ne.0.and.k10.ne.1))then 
+            	if(errcheck_mltpl(error,msg,10, nm10 ).lt.KIM_STATUS_OK) return
+            elseif(present(k11).and.(k11.ne.0.and.k11.ne.1))then 
+            	if(errcheck_mltpl(error,msg,11, nm11 ).lt.KIM_STATUS_OK) return
+            elseif(present(k12).and.(k12.ne.0.and.k12.ne.1))then 
+            	if(errcheck_mltpl(error,msg,12, nm12 ).lt.KIM_STATUS_OK) return
+            elseif(present(k13).and.(k13.ne.0.and.k13.ne.1))then 
+            	if(errcheck_mltpl(error,msg,13, nm13 ).lt.KIM_STATUS_OK) return
+            elseif(present(k14).and.(k14.ne.0.and.k14.ne.1))then 
+            	if(errcheck_mltpl(error,msg,14, nm14 ).lt.KIM_STATUS_OK) return
+            elseif(present(k15).and.(k15.ne.0.and.k15.ne.1))then 
+            	if(errcheck_mltpl(error,msg,15, nm15 ).lt.KIM_STATUS_OK) return
+            endif
 	    
 	    !process arguments
- if(present(nm2)) dt2= kim_api_get_index_f(kimmdl,nm2,error);if(errcheck_mltpl(error,msg,2,nm2).lt.KIM_STATUS_OK) return
- if(present(nm3)) dt3= kim_api_get_index_f(kimmdl,nm3,error);if(errcheck_mltpl(error,msg,3,nm3).lt.KIM_STATUS_OK) return
- if(present(nm4)) dt4= kim_api_get_index_f(kimmdl,nm4,error);if(errcheck_mltpl(error,msg,4,nm4).lt.KIM_STATUS_OK) return
- if(present(nm5)) dt5= kim_api_get_index_f(kimmdl,nm5,error);if(errcheck_mltpl(error,msg,5,nm5).lt.KIM_STATUS_OK) return
- if(present(nm6)) dt6= kim_api_get_index_f(kimmdl,nm6,error);if(errcheck_mltpl(error,msg,6,nm6).lt.KIM_STATUS_OK) return
- if(present(nm7)) dt7= kim_api_get_index_f(kimmdl,nm7,error);if(errcheck_mltpl(error,msg,7,nm7).lt.KIM_STATUS_OK) return
- if(present(nm8)) dt8= kim_api_get_index_f(kimmdl,nm8,error);if(errcheck_mltpl(error,msg,8,nm8).lt.KIM_STATUS_OK) return
- if(present(nm9)) dt9= kim_api_get_index_f(kimmdl,nm9,error);if(errcheck_mltpl(error,msg,9,nm9).lt.KIM_STATUS_OK) return
- if(present(nm10)) dt10= kim_api_get_index_f(kimmdl,nm10,error);if(errcheck_mltpl(error,msg,10,nm10).lt.KIM_STATUS_OK) return
- if(present(nm11)) dt11= kim_api_get_index_f(kimmdl,nm11,error);if(errcheck_mltpl(error,msg,11,nm11).lt.KIM_STATUS_OK) return
- if(present(nm12)) dt12= kim_api_get_index_f(kimmdl,nm12,error);if(errcheck_mltpl(error,msg,12,nm12).lt.KIM_STATUS_OK) return
- if(present(nm13)) dt13= kim_api_get_index_f(kimmdl,nm13,error);if(errcheck_mltpl(error,msg,13,nm13).lt.KIM_STATUS_OK) return
- if(present(nm14)) dt14= kim_api_get_index_f(kimmdl,nm14,error);if(errcheck_mltpl(error,msg,14,nm14).lt.KIM_STATUS_OK) return
- if(present(nm15)) dt15= kim_api_get_index_f(kimmdl,nm15,error);if(errcheck_mltpl(error,msg,15,nm15).lt.KIM_STATUS_OK) return
- if(present(nm16)) dt16= kim_api_get_index_f(kimmdl,nm16,error);if(errcheck_mltpl(error,msg,16,nm16).lt.KIM_STATUS_OK) return
- if(present(nm17)) dt17= kim_api_get_index_f(kimmdl,nm17,error);if(errcheck_mltpl(error,msg,17,nm17).lt.KIM_STATUS_OK) return
- if(present(nm18)) dt18= kim_api_get_index_f(kimmdl,nm18,error);if(errcheck_mltpl(error,msg,18,nm18).lt.KIM_STATUS_OK) return
- if(present(nm19)) dt19= kim_api_get_index_f(kimmdl,nm19,error);if(errcheck_mltpl(error,msg,19,nm19).lt.KIM_STATUS_OK) return
- if(present(nm20)) dt20= kim_api_get_index_f(kimmdl,nm20,error);if(errcheck_mltpl(error,msg,20,nm20).lt.KIM_STATUS_OK) return 
+            error = KIM_STATUS_OK
+ if(present(nm2).and.k2.eq.1) dt2= kim_api_get_index_f(kimmdl,nm2,error);
+            if(errcheck_mltpl(error,msg,2,nm2).lt.KIM_STATUS_OK) return
+ if(present(nm3).and.k3.eq.1) dt3= kim_api_get_index_f(kimmdl,nm3,error);
+            if(errcheck_mltpl(error,msg,3,nm3).lt.KIM_STATUS_OK) return
+ if(present(nm4).and.k4.eq.1) dt4= kim_api_get_index_f(kimmdl,nm4,error);
+            if(errcheck_mltpl(error,msg,4,nm4).lt.KIM_STATUS_OK) return
+ if(present(nm5).and.k5.eq.1) dt5= kim_api_get_index_f(kimmdl,nm5,error);
+            if(errcheck_mltpl(error,msg,5,nm5).lt.KIM_STATUS_OK) return
+ if(present(nm6).and.k6.eq.1) dt6= kim_api_get_index_f(kimmdl,nm6,error);
+            if(errcheck_mltpl(error,msg,6,nm6).lt.KIM_STATUS_OK) return
+ if(present(nm7).and.k7.eq.1) dt7= kim_api_get_index_f(kimmdl,nm7,error);
+            if(errcheck_mltpl(error,msg,7,nm7).lt.KIM_STATUS_OK) return
+ if(present(nm8).and.k8.eq.1) dt8= kim_api_get_index_f(kimmdl,nm8,error);
+            if(errcheck_mltpl(error,msg,8,nm8).lt.KIM_STATUS_OK) return
+ if(present(nm9).and.k9.eq.1) dt9= kim_api_get_index_f(kimmdl,nm9,error);
+            if(errcheck_mltpl(error,msg,9,nm9).lt.KIM_STATUS_OK) return
+ if(present(nm10).and.k10.eq.1) dt10= kim_api_get_index_f(kimmdl,nm10,error);
+            if(errcheck_mltpl(error,msg,10,nm10).lt.KIM_STATUS_OK) return
+ if(present(nm11).and.k11.eq.1) dt11= kim_api_get_index_f(kimmdl,nm11,error);
+            if(errcheck_mltpl(error,msg,11,nm11).lt.KIM_STATUS_OK) return
+ if(present(nm12).and.k12.eq.1) dt12= kim_api_get_index_f(kimmdl,nm12,error);
+            if(errcheck_mltpl(error,msg,12,nm12).lt.KIM_STATUS_OK) return
+ if(present(nm13).and.k13.eq.1) dt13= kim_api_get_index_f(kimmdl,nm13,error);
+            if(errcheck_mltpl(error,msg,13,nm13).lt.KIM_STATUS_OK) return
+ if(present(nm14).and.k14.eq.1) dt14= kim_api_get_index_f(kimmdl,nm14,error);
+            if(errcheck_mltpl(error,msg,14,nm14).lt.KIM_STATUS_OK) return
+ if(present(nm15).and.k15.eq.1) dt15= kim_api_get_index_f(kimmdl,nm15,error);
+            if(errcheck_mltpl(error,msg,15,nm15).lt.KIM_STATUS_OK) return
 	end subroutine kim_api_get_index_multiple_f
          
-         subroutine kim_api_set_compute_multiple_f(kimmdl,error, nm1,dt1, nm2,dt2, nm3,dt3, nm4,dt4, nm5,dt5,&
-         nm6,dt6, nm7,dt7, nm8,dt8, nm9,dt9, nm10,dt10, nm11,dt11, nm12,dt12, nm13,dt13,&
-         nm14,dt14, nm15,dt15, nm16,dt16, nm17,dt17, nm18,dt18, nm19,dt19, nm20,dt20)
+         subroutine kim_api_set_compute_multiple_f(kimmdl,error, nm1,dt1,k1, nm2,dt2,k2, nm3,dt3,k3, nm4,dt4,k4, nm5,dt5,k5,&
+         nm6,dt6,k6, nm7,dt7,k7, nm8,dt8,k8, nm9,dt9,k9, nm10,dt10,k10, nm11,dt11,k11, nm12,dt12,k12, nm13,dt13,k13,&
+         nm14,dt14,k14, nm15,dt15,k15)
             integer(kind=kim_intptr) :: kimmdl;  integer error
 
             character(len=40) ::msg="kim_api_set_compute_multiple_f"
@@ -1683,14 +1929,18 @@ integer,parameter :: kim_intptr = 8
             character(len=*),optional:: nm13;  integer,optional:: dt13
             character(len=*),optional:: nm14;  integer,optional:: dt14
             character(len=*),optional:: nm15;  integer,optional:: dt15
-            character(len=*),optional:: nm16;  integer,optional:: dt16
-            character(len=*),optional:: nm17;  integer,optional:: dt17
-            character(len=*),optional:: nm18;  integer,optional:: dt18
-            character(len=*),optional:: nm19;  integer,optional:: dt19
-            character(len=*),optional:: nm20;  integer,optional:: dt20
+            integer ::k1;
+            integer,optional::k2,k3,k4,k5,k6,k7,k8,k9,k10,k11,k12,k13,k14,k15 
             !
-            call kim_api_set_compute_f(kimmdl,nm1,dt1,error); 
-            if (errcheck_mltpl(error,msg,1, nm1).lt.KIM_STATUS_OK) return
+            if(k1.ne.0.and.k1.ne.1) then
+                error=KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY          
+               if(errcheck_mltpl(KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY,msg,1, nm1 ).lt.KIM_STATUS_OK) return
+            endif
+            if(k1.eq.1) then 
+                call kim_api_set_compute_f(kimmdl,nm1,dt1,error); 
+                if (errcheck_mltpl(error,msg,1, nm1).lt.KIM_STATUS_OK) return
+            endif
+
             !check rest of the arguments
             error = KIM_STATUS_WRONG_MULTIPLE_ARGS
             if( present(nm2 ).and.(.not.present(dt2 ))) then 
@@ -1721,43 +1971,74 @@ integer,parameter :: kim_intptr = 8
             	if(errcheck_mltpl(error,msg,14, nm14 ).lt.KIM_STATUS_OK) return
             elseif( present(nm15 ).and.(.not.present(dt15 ))) then 
             	if(errcheck_mltpl(error,msg,15, nm15 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm16 ).and.(.not.present(dt16))) then 
-            	if(errcheck_mltpl(error,msg,16, nm16 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm17 ).and.(.not.present(dt17 ))) then 
-            	if(errcheck_mltpl(error,msg,17, nm17 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm18 ).and.(.not.present(dt18 ))) then 
-            	if(errcheck_mltpl(error,msg,18, nm18 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm19 ).and.(.not.present(dt19 ))) then 
-            	if(errcheck_mltpl(error,msg,19, nm19 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm20 ).and.(.not.present(dt20 ))) then 
-            	if(errcheck_mltpl(error,msg,20, nm20 ).lt.KIM_STATUS_OK) return
             endif 
+
+	    error = KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY
+            if(present(k2).and.(k2.ne.0.and.k2.ne.1))then 
+            	if(errcheck_mltpl(error,msg,2, nm2 ).lt.KIM_STATUS_OK) return
+            elseif(present(k3).and.(k3.ne.0.and.k3.ne.1))then 
+            	if(errcheck_mltpl(error,msg,3, nm3 ).lt.KIM_STATUS_OK) return
+            elseif(present(k4).and.(k4.ne.0.and.k4.ne.1))then 
+            	if(errcheck_mltpl(error,msg,4, nm4 ).lt.KIM_STATUS_OK) return
+            elseif(present(k5).and.(k5.ne.0.and.k5.ne.1))then 
+            	if(errcheck_mltpl(error,msg,5, nm5 ).lt.KIM_STATUS_OK) return
+            elseif(present(k6).and.(k6.ne.0.and.k6.ne.1))then 
+            	if(errcheck_mltpl(error,msg,6, nm6 ).lt.KIM_STATUS_OK) return
+            elseif(present(k7).and.(k7.ne.0.and.k7.ne.1))then 
+            	if(errcheck_mltpl(error,msg,7, nm7 ).lt.KIM_STATUS_OK) return
+            elseif(present(k8).and.(k8.ne.0.and.k8.ne.1))then 
+            	if(errcheck_mltpl(error,msg,8, nm8 ).lt.KIM_STATUS_OK) return
+            elseif(present(k9).and.(k9.ne.0.and.k9.ne.1))then 
+            	if(errcheck_mltpl(error,msg,9, nm9 ).lt.KIM_STATUS_OK) return
+            elseif(present(k10).and.(k10.ne.0.and.k10.ne.1))then 
+            	if(errcheck_mltpl(error,msg,10, nm10 ).lt.KIM_STATUS_OK) return
+            elseif(present(k11).and.(k11.ne.0.and.k11.ne.1))then 
+            	if(errcheck_mltpl(error,msg,11, nm11 ).lt.KIM_STATUS_OK) return
+            elseif(present(k12).and.(k12.ne.0.and.k12.ne.1))then 
+            	if(errcheck_mltpl(error,msg,12, nm12 ).lt.KIM_STATUS_OK) return
+            elseif(present(k13).and.(k13.ne.0.and.k13.ne.1))then 
+            	if(errcheck_mltpl(error,msg,13, nm13 ).lt.KIM_STATUS_OK) return
+            elseif(present(k14).and.(k14.ne.0.and.k14.ne.1))then 
+            	if(errcheck_mltpl(error,msg,14, nm14 ).lt.KIM_STATUS_OK) return
+            elseif(present(k15).and.(k15.ne.0.and.k15.ne.1))then 
+            	if(errcheck_mltpl(error,msg,15, nm15 ).lt.KIM_STATUS_OK) return
+            endif
 	    
 	    !process arguments
- if(present(nm2)) call kim_api_set_compute_f(kimmdl,nm2,dt2,error);if(errcheck_mltpl(error,msg,2,nm2).lt.KIM_STATUS_OK) return
- if(present(nm3)) call kim_api_set_compute_f(kimmdl,nm3,dt3,error);if(errcheck_mltpl(error,msg,3,nm3).lt.KIM_STATUS_OK) return
- if(present(nm4)) call kim_api_set_compute_f(kimmdl,nm4,dt4,error);if(errcheck_mltpl(error,msg,4,nm4).lt.KIM_STATUS_OK) return
- if(present(nm5)) call kim_api_set_compute_f(kimmdl,nm5,dt5,error);if(errcheck_mltpl(error,msg,5,nm5).lt.KIM_STATUS_OK) return
- if(present(nm6)) call kim_api_set_compute_f(kimmdl,nm6,dt6,error);if(errcheck_mltpl(error,msg,6,nm6).lt.KIM_STATUS_OK) return
- if(present(nm7)) call kim_api_set_compute_f(kimmdl,nm7,dt7,error);if(errcheck_mltpl(error,msg,7,nm7).lt.KIM_STATUS_OK) return
- if(present(nm8)) call kim_api_set_compute_f(kimmdl,nm8,dt8,error);if(errcheck_mltpl(error,msg,8,nm8).lt.KIM_STATUS_OK) return
- if(present(nm9)) call kim_api_set_compute_f(kimmdl,nm9,dt9,error);if(errcheck_mltpl(error,msg,9,nm9).lt.KIM_STATUS_OK) return
- if(present(nm10)) call kim_api_set_compute_f(kimmdl,nm10,dt10,error);if(errcheck_mltpl(error,msg,10,nm10).lt.KIM_STATUS_OK) return
- if(present(nm11)) call kim_api_set_compute_f(kimmdl,nm11,dt11,error);if(errcheck_mltpl(error,msg,11,nm11).lt.KIM_STATUS_OK) return
- if(present(nm12)) call kim_api_set_compute_f(kimmdl,nm12,dt12,error);if(errcheck_mltpl(error,msg,12,nm12).lt.KIM_STATUS_OK) return
- if(present(nm13)) call kim_api_set_compute_f(kimmdl,nm13,dt13,error);if(errcheck_mltpl(error,msg,13,nm13).lt.KIM_STATUS_OK) return
- if(present(nm14)) call kim_api_set_compute_f(kimmdl,nm14,dt14,error);if(errcheck_mltpl(error,msg,14,nm14).lt.KIM_STATUS_OK) return
- if(present(nm15)) call kim_api_set_compute_f(kimmdl,nm15,dt15,error);if(errcheck_mltpl(error,msg,15,nm15).lt.KIM_STATUS_OK) return
- if(present(nm16)) call kim_api_set_compute_f(kimmdl,nm16,dt16,error);if(errcheck_mltpl(error,msg,16,nm16).lt.KIM_STATUS_OK) return
- if(present(nm17)) call kim_api_set_compute_f(kimmdl,nm17,dt17,error);if(errcheck_mltpl(error,msg,17,nm17).lt.KIM_STATUS_OK) return
- if(present(nm18)) call kim_api_set_compute_f(kimmdl,nm18,dt18,error);if(errcheck_mltpl(error,msg,18,nm18).lt.KIM_STATUS_OK) return
- if(present(nm19)) call kim_api_set_compute_f(kimmdl,nm19,dt19,error);if(errcheck_mltpl(error,msg,19,nm19).lt.KIM_STATUS_OK) return
- if(present(nm20)) call kim_api_set_compute_f(kimmdl,nm20,dt20,error);if(errcheck_mltpl(error,msg,20,nm20).lt.KIM_STATUS_OK) return 
+            error = KIM_STATUS_OK
+ if(present(nm2).and.k2.eq.1) call kim_api_set_compute_f(kimmdl,nm2,dt2,error);
+            if(errcheck_mltpl(error,msg,2,nm2).lt.KIM_STATUS_OK) return
+ if(present(nm3).and.k3.eq.1) call kim_api_set_compute_f(kimmdl,nm3,dt3,error);
+            if(errcheck_mltpl(error,msg,3,nm3).lt.KIM_STATUS_OK) return
+ if(present(nm4).and.k4.eq.1) call kim_api_set_compute_f(kimmdl,nm4,dt4,error);
+            if(errcheck_mltpl(error,msg,4,nm4).lt.KIM_STATUS_OK) return
+ if(present(nm5).and.k5.eq.1) call kim_api_set_compute_f(kimmdl,nm5,dt5,error);
+            if(errcheck_mltpl(error,msg,5,nm5).lt.KIM_STATUS_OK) return
+ if(present(nm6).and.k6.eq.1) call kim_api_set_compute_f(kimmdl,nm6,dt6,error);
+            if(errcheck_mltpl(error,msg,6,nm6).lt.KIM_STATUS_OK) return
+ if(present(nm7).and.k7.eq.1) call kim_api_set_compute_f(kimmdl,nm7,dt7,error);
+            if(errcheck_mltpl(error,msg,7,nm7).lt.KIM_STATUS_OK) return
+ if(present(nm8).and.k8.eq.1) call kim_api_set_compute_f(kimmdl,nm8,dt8,error);
+            if(errcheck_mltpl(error,msg,8,nm8).lt.KIM_STATUS_OK) return
+ if(present(nm9).and.k9.eq.1) call kim_api_set_compute_f(kimmdl,nm9,dt9,error);
+            if(errcheck_mltpl(error,msg,9,nm9).lt.KIM_STATUS_OK) return
+ if(present(nm10).and.k10.eq.1) call kim_api_set_compute_f(kimmdl,nm10,dt10,error);
+            if(errcheck_mltpl(error,msg,10,nm10).lt.KIM_STATUS_OK) return
+ if(present(nm11).and.k11.eq.1) call kim_api_set_compute_f(kimmdl,nm11,dt11,error);
+            if(errcheck_mltpl(error,msg,11,nm11).lt.KIM_STATUS_OK) return
+ if(present(nm12).and.k12.eq.1) call kim_api_set_compute_f(kimmdl,nm12,dt12,error);
+            if(errcheck_mltpl(error,msg,12,nm12).lt.KIM_STATUS_OK) return
+ if(present(nm13).and.k13.eq.1) call kim_api_set_compute_f(kimmdl,nm13,dt13,error);
+            if(errcheck_mltpl(error,msg,13,nm13).lt.KIM_STATUS_OK) return
+ if(present(nm14).and.k14.eq.1) call kim_api_set_compute_f(kimmdl,nm14,dt14,error);
+            if(errcheck_mltpl(error,msg,14,nm14).lt.KIM_STATUS_OK) return
+ if(present(nm15).and.k15.eq.1) call kim_api_set_compute_f(kimmdl,nm15,dt15,error);
+            if(errcheck_mltpl(error,msg,15,nm15).lt.KIM_STATUS_OK) return
 	 end subroutine kim_api_set_compute_multiple_f
          
-        subroutine kim_api_set_compute_byI_mltpl_f(kimmdl,error, nm1,dt1, nm2,dt2, nm3,dt3, nm4,dt4, nm5,dt5,&
-         nm6,dt6, nm7,dt7, nm8,dt8, nm9,dt9, nm10,dt10, nm11,dt11, nm12,dt12, nm13,dt13,&
-         nm14,dt14, nm15,dt15, nm16,dt16, nm17,dt17, nm18,dt18, nm19,dt19, nm20,dt20)
+        subroutine kim_api_set_compute_byI_mltpl_f(kimmdl,error, nm1,dt1,k1, nm2,dt2,k2, nm3,dt3,k3, nm4,dt4,k4, nm5,dt5,k5,&
+         nm6,dt6,k6, nm7,dt7,k7, nm8,dt8,k8, nm9,dt9,k9, nm10,dt10,k10, nm11,dt11,k11, nm12,dt12,k12, nm13,dt13,k13,&
+         nm14,dt14,k14, nm15,dt15,k15)
             integer(kind=kim_intptr) :: kimmdl;  integer error
 
             character(len=40) ::msg="kim_api_set_compute_byi_mltpl_f"
@@ -1778,14 +2059,18 @@ integer,parameter :: kim_intptr = 8
             integer,optional:: nm13;  integer,optional:: dt13
             integer,optional:: nm14;  integer,optional:: dt14
             integer,optional:: nm15;  integer,optional:: dt15
-            integer,optional:: nm16;  integer,optional:: dt16
-            integer,optional:: nm17;  integer,optional:: dt17
-            integer,optional:: nm18;  integer,optional:: dt18
-            integer,optional:: nm19;  integer,optional:: dt19
-            integer,optional:: nm20;  integer,optional:: dt20
+            integer ::k1;
+            integer,optional::k2,k3,k4,k5,k6,k7,k8,k9,k10,k11,k12,k13,k14,k15 
             !
-            call kim_api_set_compute_byi_f(kimmdl,nm1,dt1,error); 
-            if (errcheck_mltpl(error,msg,1, "", nm1).lt.KIM_STATUS_OK) return
+            if(k1.ne.0.and.k1.ne.1) then
+               error=KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY
+               if(errcheck_mltpl(KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY,msg,1,"", nm1 ).lt.KIM_STATUS_OK) return
+            endif
+            if(k1.eq.1) then 
+                call kim_api_set_compute_byi_f(kimmdl,nm1,dt1,error); 
+                if (errcheck_mltpl(error,msg,1, "", nm1).lt.KIM_STATUS_OK) return
+            endif
+
             !check rest of the arguments
             error = KIM_STATUS_WRONG_MULTIPLE_ARGS
             if( present(nm2 ).and.(.not.present(dt2 ))) then 
@@ -1816,38 +2101,69 @@ integer,parameter :: kim_intptr = 8
             	if(errcheck_mltpl(error,msg,14, "",nm14 ).lt.KIM_STATUS_OK) return
             elseif( present(nm15 ).and.(.not.present(dt15 ))) then 
             	if(errcheck_mltpl(error,msg,15, "",nm15 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm16 ).and.(.not.present(dt16))) then 
-            	if(errcheck_mltpl(error,msg,16, "",nm16 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm17 ).and.(.not.present(dt17 ))) then 
-            	if(errcheck_mltpl(error,msg,17, "",nm17 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm18 ).and.(.not.present(dt18 ))) then 
-            	if(errcheck_mltpl(error,msg,18, "",nm18 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm19 ).and.(.not.present(dt19 ))) then 
-            	if(errcheck_mltpl(error,msg,19, "",nm19 ).lt.KIM_STATUS_OK) return
-            elseif( present(nm20 ).and.(.not.present(dt20 ))) then 
-            	if(errcheck_mltpl(error,msg,20, "",nm20 ).lt.KIM_STATUS_OK) return
             endif 
+
+	    error = KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY
+            if(present(k2).and.(k2.ne.0.and.k2.ne.1))then 
+            	if(errcheck_mltpl(error,msg,2,"", nm2 ).lt.KIM_STATUS_OK) return
+            elseif(present(k3).and.(k3.ne.0.and.k3.ne.1))then 
+            	if(errcheck_mltpl(error,msg,3,"", nm3 ).lt.KIM_STATUS_OK) return
+            elseif(present(k4).and.(k4.ne.0.and.k4.ne.1))then 
+            	if(errcheck_mltpl(error,msg,4,"", nm4 ).lt.KIM_STATUS_OK) return
+            elseif(present(k5).and.(k5.ne.0.and.k5.ne.1))then 
+            	if(errcheck_mltpl(error,msg,5,"", nm5 ).lt.KIM_STATUS_OK) return
+            elseif(present(k6).and.(k6.ne.0.and.k6.ne.1))then 
+            	if(errcheck_mltpl(error,msg,6,"", nm6 ).lt.KIM_STATUS_OK) return
+            elseif(present(k7).and.(k7.ne.0.and.k7.ne.1))then 
+            	if(errcheck_mltpl(error,msg,7,"", nm7 ).lt.KIM_STATUS_OK) return
+            elseif(present(k8).and.(k8.ne.0.and.k8.ne.1))then 
+            	if(errcheck_mltpl(error,msg,8,"", nm8 ).lt.KIM_STATUS_OK) return
+            elseif(present(k9).and.(k9.ne.0.and.k9.ne.1))then 
+            	if(errcheck_mltpl(error,msg,9,"", nm9 ).lt.KIM_STATUS_OK) return
+            elseif(present(k10).and.(k10.ne.0.and.k10.ne.1))then 
+            	if(errcheck_mltpl(error,msg,10,"", nm10 ).lt.KIM_STATUS_OK) return
+            elseif(present(k11).and.(k11.ne.0.and.k11.ne.1))then 
+            	if(errcheck_mltpl(error,msg,11,"", nm11 ).lt.KIM_STATUS_OK) return
+            elseif(present(k12).and.(k12.ne.0.and.k12.ne.1))then 
+            	if(errcheck_mltpl(error,msg,12,"", nm12 ).lt.KIM_STATUS_OK) return
+            elseif(present(k13).and.(k13.ne.0.and.k13.ne.1))then 
+            	if(errcheck_mltpl(error,msg,13,"", nm13 ).lt.KIM_STATUS_OK) return
+            elseif(present(k14).and.(k14.ne.0.and.k14.ne.1))then 
+            	if(errcheck_mltpl(error,msg,14,"", nm14 ).lt.KIM_STATUS_OK) return
+            elseif(present(k15).and.(k15.ne.0.and.k15.ne.1))then 
+            	if(errcheck_mltpl(error,msg,15,"", nm15 ).lt.KIM_STATUS_OK) return
+            endif
 	               
 	    !process arguments
- if(present(nm2)) call kim_api_set_compute_byi_f(kimmdl,nm2,dt2,error);if(errcheck_mltpl(error,msg,2,"",nm2).lt.KIM_STATUS_OK) return
- if(present(nm3)) call kim_api_set_compute_byi_f(kimmdl,nm3,dt3,error);if(errcheck_mltpl(error,msg,3,"",nm3).lt.KIM_STATUS_OK) return
- if(present(nm4)) call kim_api_set_compute_byi_f(kimmdl,nm4,dt4,error);if(errcheck_mltpl(error,msg,4,"",nm4).lt.KIM_STATUS_OK) return
- if(present(nm5)) call kim_api_set_compute_byi_f(kimmdl,nm5,dt5,error);if(errcheck_mltpl(error,msg,5,"",nm5).lt.KIM_STATUS_OK) return
- if(present(nm6)) call kim_api_set_compute_byi_f(kimmdl,nm6,dt6,error);if(errcheck_mltpl(error,msg,6,"",nm6).lt.KIM_STATUS_OK) return
- if(present(nm7)) call kim_api_set_compute_byi_f(kimmdl,nm7,dt7,error);if(errcheck_mltpl(error,msg,7,"",nm7).lt.KIM_STATUS_OK) return
- if(present(nm8)) call kim_api_set_compute_byi_f(kimmdl,nm8,dt8,error);if(errcheck_mltpl(error,msg,8,"",nm8).lt.KIM_STATUS_OK) return
- if(present(nm9)) call kim_api_set_compute_byi_f(kimmdl,nm9,dt9,error);if(errcheck_mltpl(error,msg,9,"",nm9).lt.KIM_STATUS_OK) return
- if(present(nm10)) call kim_api_set_compute_byi_f(kimmdl,nm10,dt10,error);if(errcheck_mltpl(error,msg,10,"",nm10).lt.KIM_STATUS_OK) return
- if(present(nm11)) call kim_api_set_compute_byi_f(kimmdl,nm11,dt11,error);if(errcheck_mltpl(error,msg,11,"",nm11).lt.KIM_STATUS_OK) return
- if(present(nm12)) call kim_api_set_compute_byi_f(kimmdl,nm12,dt12,error);if(errcheck_mltpl(error,msg,12,"",nm12).lt.KIM_STATUS_OK) return
- if(present(nm13)) call kim_api_set_compute_byi_f(kimmdl,nm13,dt13,error);if(errcheck_mltpl(error,msg,13,"",nm13).lt.KIM_STATUS_OK) return
- if(present(nm14)) call kim_api_set_compute_byi_f(kimmdl,nm14,dt14,error);if(errcheck_mltpl(error,msg,14,"",nm14).lt.KIM_STATUS_OK) return
- if(present(nm15)) call kim_api_set_compute_byi_f(kimmdl,nm15,dt15,error);if(errcheck_mltpl(error,msg,15,"",nm15).lt.KIM_STATUS_OK) return
- if(present(nm16)) call kim_api_set_compute_byi_f(kimmdl,nm16,dt16,error);if(errcheck_mltpl(error,msg,16,"",nm16).lt.KIM_STATUS_OK) return
- if(present(nm17)) call kim_api_set_compute_byi_f(kimmdl,nm17,dt17,error);if(errcheck_mltpl(error,msg,17,"",nm17).lt.KIM_STATUS_OK) return
- if(present(nm18)) call kim_api_set_compute_byi_f(kimmdl,nm18,dt18,error);if(errcheck_mltpl(error,msg,18,"",nm18).lt.KIM_STATUS_OK) return
- if(present(nm19)) call kim_api_set_compute_byi_f(kimmdl,nm19,dt19,error);if(errcheck_mltpl(error,msg,19,"",nm19).lt.KIM_STATUS_OK) return
- if(present(nm20)) call kim_api_set_compute_byi_f(kimmdl,nm20,dt20,error);if(errcheck_mltpl(error,msg,20,"",nm20).lt.KIM_STATUS_OK) return 
+            error = KIM_STATUS_OK
+ if(present(nm2).and.k2.eq.1) call kim_api_set_compute_byi_f(kimmdl,nm2,dt2,error);
+            if(errcheck_mltpl(error,msg,2,"",nm2).lt.KIM_STATUS_OK) return
+ if(present(nm3).and.k3.eq.1) call kim_api_set_compute_byi_f(kimmdl,nm3,dt3,error);
+            if(errcheck_mltpl(error,msg,3,"",nm3).lt.KIM_STATUS_OK) return
+ if(present(nm4).and.k4.eq.1) call kim_api_set_compute_byi_f(kimmdl,nm4,dt4,error);
+            if(errcheck_mltpl(error,msg,4,"",nm4).lt.KIM_STATUS_OK) return
+ if(present(nm5).and.k5.eq.1) call kim_api_set_compute_byi_f(kimmdl,nm5,dt5,error);
+            if(errcheck_mltpl(error,msg,5,"",nm5).lt.KIM_STATUS_OK) return
+ if(present(nm6).and.k6.eq.1) call kim_api_set_compute_byi_f(kimmdl,nm6,dt6,error);
+            if(errcheck_mltpl(error,msg,6,"",nm6).lt.KIM_STATUS_OK) return
+ if(present(nm7).and.k7.eq.1) call kim_api_set_compute_byi_f(kimmdl,nm7,dt7,error);
+            if(errcheck_mltpl(error,msg,7,"",nm7).lt.KIM_STATUS_OK) return
+ if(present(nm8).and.k8.eq.1) call kim_api_set_compute_byi_f(kimmdl,nm8,dt8,error);
+            if(errcheck_mltpl(error,msg,8,"",nm8).lt.KIM_STATUS_OK) return
+ if(present(nm9).and.k9.eq.1) call kim_api_set_compute_byi_f(kimmdl,nm9,dt9,error);
+            if(errcheck_mltpl(error,msg,9,"",nm9).lt.KIM_STATUS_OK) return
+ if(present(nm10).and.k10.eq.1) call kim_api_set_compute_byi_f(kimmdl,nm10,dt10,error);
+            if(errcheck_mltpl(error,msg,10,"",nm10).lt.KIM_STATUS_OK) return
+ if(present(nm11).and.k11.eq.1) call kim_api_set_compute_byi_f(kimmdl,nm11,dt11,error);
+            if(errcheck_mltpl(error,msg,11,"",nm11).lt.KIM_STATUS_OK) return
+ if(present(nm12).and.k12.eq.1) call kim_api_set_compute_byi_f(kimmdl,nm12,dt12,error);
+            if(errcheck_mltpl(error,msg,12,"",nm12).lt.KIM_STATUS_OK) return
+ if(present(nm13).and.k13.eq.1) call kim_api_set_compute_byi_f(kimmdl,nm13,dt13,error);
+            if(errcheck_mltpl(error,msg,13,"",nm13).lt.KIM_STATUS_OK) return
+ if(present(nm14).and.k14.eq.1) call kim_api_set_compute_byi_f(kimmdl,nm14,dt14,error);
+            if(errcheck_mltpl(error,msg,14,"",nm14).lt.KIM_STATUS_OK) return
+ if(present(nm15).and.k15.eq.1) call kim_api_set_compute_byi_f(kimmdl,nm15,dt15,error);
+            if(errcheck_mltpl(error,msg,15,"",nm15).lt.KIM_STATUS_OK) return
 	end subroutine kim_api_set_compute_byI_mltpl_f
 
 
