@@ -79,143 +79,53 @@ contains
 
     ! Check to see if we have been asked to compute the forces, energyperatom, 
     ! energy and virial
-    comp_energy = kim_api_isit_compute_f(pkim,"energy",ier)
+    call kim_api_get_compute_multiple_f(pkim, ier, &
+         "energy",        comp_energy,  1, &
+         "forces",        comp_force,   1, &
+         "energyPerAtom", comp_enepot,  1, &
+         "virialGlobal",  comp_virial,  1)
     if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute", ier)
-       return
-    endif
-    comp_force  = kim_api_isit_compute_f(pkim,"forces",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute", ier)
-       return
-    endif
-    comp_enepot = kim_api_isit_compute_f(pkim,"energyPerAtom",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute", ier)
-       return
-    endif
-    comp_virial = kim_api_isit_compute_f(pkim,"virialGlobal",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute", ier)
+       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_compute_multiple_f", ier)
        return
     endif
 
     ! Unpack data from KIM object
     !
-    pnAtoms = kim_api_get_data_f(pkim,"numberOfAtoms",ier)
+    call kim_api_get_data_multiple_f(pkim, ier, &
+         "numberOfAtoms",       pnAtoms,       1,                             &
+         "numberAtomTypes",     pnAtomTypes,   1,                             &
+         "atomTypes",           patomTypes,    1,                             &
+         "cutoff",              pcutoff,       1,                             &
+         "coordinates",         pcoor,         1,                             &
+         "energy",              penergy,       merge(1,0,(comp_energy.eq.1)), &
+         "forces",              pforce,        merge(1,0,(comp_force.eq.1)),  &
+         "energyPerAtom",       penepot,       merge(1,0,(comp_enepot.eq.1)), &
+         "virialGlobal",        pvirialGlobal, merge(1,0,(comp_virial.eq.1)))
     if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
+       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_multiple_f", ier)
        return
     endif
 
-    pnAtomTypes = kim_api_get_data_f(pkim,"numberAtomTypes",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-       return
-    endif
-
-    patomTypes = kim_api_get_data_f(pkim,"atomTypes",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-       return
-    endif
-
-    pcutoff = kim_api_get_data_f(pkim,"cutoff",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-       return
-    endif
-
-    pepsilon = kim_api_get_data_f(pkim,"PARAM_FREE_epsilon",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-       return
-    endif
-
-    psigma = kim_api_get_data_f(pkim,"PARAM_FREE_sigma",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-       return
-    endif
-
-    pcutnorm = kim_api_get_data_f(pkim,"PARAM_FIXED_cutnorm",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-       return
-    endif
-
-    pA = kim_api_get_data_f(pkim,"PARAM_FIXED_A",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-       return
-    endif
-
-    pB = kim_api_get_data_f(pkim,"PARAM_FIXED_B",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-       return
-    endif
-
-    pC = kim_api_get_data_f(pkim,"PARAM_FIXED_C",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-       return
-    endif
-
-    psigmasq = kim_api_get_data_f(pkim,"PARAM_FIXED_sigmasq",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-       return
-    endif
-
-    pcutsq = kim_api_get_data_f(pkim,"PARAM_FIXED_cutsq",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-       return
-    endif
-
-    pcoor = kim_api_get_data_f(pkim,"coordinates",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-       return
-    endif
-    
-    if (comp_energy.eq.1) then 
-       penergy = kim_api_get_data_f(pkim,"energy",ier)
-       if (ier.lt.KIM_STATUS_OK) then
-          idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-          return
-       endif
-    endif
-   
     ! Cast to F90 arrays
-    if (comp_force.eq.1) then 
-       pforce  = kim_api_get_data_f(pkim,"forces",ier)
-       if (ier.lt.KIM_STATUS_OK) then
-          idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-          return
-       endif
-       call toRealArrayWithDescriptor2d(forcedum,force,DIM,numberOfAtoms)
-    endif
-    if (comp_enepot.eq.1) then 
-       penepot = kim_api_get_data_f(pkim,"energyPerAtom",ier) 
-       if (ier.lt.KIM_STATUS_OK) then
-          idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-          return
-       endif
-       call toRealArrayWithDescriptor1d(enepotdum,ene_pot,numberOfAtoms)
-    endif
-    if (comp_virial.eq.1) then
-       pvirialGlobal = kim_api_get_data_f(pkim,"virialGlobal",ier)
-       if (ier.lt.KIM_STATUS_OK) then
-          idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-          return
-       endif
-       call toRealArrayWithDescriptor1d(virialGlobaldum,virial_global,6)
-    endif
-
     call toRealArrayWithDescriptor2d(coordum,coor,DIM,numberOfAtoms)
+    if (comp_force.eq.1)  call toRealArrayWithDescriptor2d(forcedum,force,DIM,numberOfAtoms)
+    if (comp_enepot.eq.1) call toRealArrayWithDescriptor1d(enepotdum,ene_pot,numberOfAtoms)
+    if (comp_virial.eq.1) call toRealArrayWithDescriptor1d(virialGlobaldum,virial_global,6)
 
+    ! Unpack parameters from KIM object
+    call kim_api_get_data_multiple_f(pkim, ier, &
+         "PARAM_FREE_epsilon",  pepsilon, 1, &
+         "PARAM_FREE_sigma",    psigma,   1, &
+         "PARAM_FIXED_cutnorm", pcutnorm, 1, &
+         "PARAM_FIXED_A",       pA,       1, &
+         "PARAM_FIXED_B",       pB,       1, &
+         "PARAM_FIXED_C",       pC,       1, &
+         "PARAM_FIXED_sigmasq", psigmasq, 1, &
+         "PARAM_FIXED_cutsq",   pcutsq,   1)
+    if (ier.lt.KIM_STATUS_OK) then
+       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_multiple_f", ier)
+       return
+    endif
 
     ! Check to be sure that the atom types are correct
     ier = KIM_STATUS_FAIL ! assume an error
@@ -230,10 +140,10 @@ contains
     
     ! Initialize potential energies, forces, virial term
     !
-    if (comp_enepot.eq.1) ene_pot(1:numberOfAtoms) = 0.d0
-    if (comp_energy.eq.1) energy = 0.d0
+    if (comp_enepot.eq.1) ene_pot(1:numberOfAtoms)   = 0.d0
+    if (comp_energy.eq.1) energy                     = 0.d0
     if (comp_force.eq.1)  force(1:3,1:numberOfAtoms) = 0.d0
-    if (comp_virial.eq.1) virial_global = 0.d0
+    if (comp_virial.eq.1) virial_global              = 0.d0
 
 
     !  Compute energy and forces
@@ -357,87 +267,34 @@ contains
     integer ier, idum
     
     ! Get (changed) parameters from KIM object ---------------------------------
-
-    ! get sigma from KIM object
-    psigma = kim_api_get_data_f(pkim,"PARAM_FREE_sigma",ier)
+    call kim_api_get_data_multiple_f(pkim, ier, &
+         "PARAM_FREE_sigma",   psigma,    1, &
+         "PARAM_FREE_epsilon", pepsilon,  1, &
+         "PARAM_FREE_cutoff",  pparamcut, 1)
     if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-       stop
-    endif
-    
-    ! get epsilon from KIM object
-    pepsilon = kim_api_get_data_f(pkim,"PARAM_FREE_epsilon",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-       stop
-    endif
-    
-    ! get cutoff parameter from KIM object
-    pparamcut = kim_api_get_data_f(pkim,"PARAM_FREE_cutoff",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
+       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_multiple_f", ier)
        stop
     endif
     
     ! Set new values in KIM object ---------------------------------------------
-    
-    ! store model cutoff in KIM object
-    pcutoff =  kim_api_get_data_f(pkim,"cutoff",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-       stop
-    endif
+    call kim_api_get_data_multiple_f(pkim, ier, &
+         "cutoff",              pcutoff,  1, &
+         "PARAM_FIXED_cutnorm", pcutnorm, 1, &
+         "PARAM_FIXED_A",       pA,       1, &
+         "PARAM_FIXED_B",       pB,       1, &
+         "PARAM_FIXED_C",       pC,       1, &
+         "PARAM_FIXED_sigmasq", psigmasq, 1, &
+         "PARAM_FIXED_cutsq",   pcutsq,   1)
+
     model_cutoff = model_Pcutoff
-    
-    ! store cutnorm in KIM object
-    pcutnorm = kim_api_get_data_f(pkim,"PARAM_FIXED_cutnorm",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-       stop
-    endif
     model_cutnorm(1:3) = model_cutoff/model_sigma(1:3)
-    
-    ! store A in KIM object
-    pA = kim_api_get_data_f(pkim,"PARAM_FIXED_A",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-       stop
-    endif
     model_A(1:3) = 12.d0*model_epsilon(1:3)*(-26.d0 + 7.d0*model_cutnorm(1:3)**6)/ &
          (model_cutnorm(1:3)**14*model_sigma(1:3)**2)
-    
-    ! store B in KIM object
-    pB = kim_api_get_data_f(pkim,"PARAM_FIXED_B",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-       stop
-    endif
     model_B(1:3) = 96.d0*model_epsilon(1:3)*(7.d0-2.d0*model_cutnorm(1:3)**6)/     &
          (model_cutnorm(1:3)**13*model_sigma(1:3))
-    
-    ! store C in KIM object
-    pC = kim_api_get_data_f(pkim,"PARAM_FIXED_C",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-       stop
-    endif
     model_C(1:3) = 28.d0*model_epsilon(1:3)*(-13.d0+4.d0*model_cutnorm(1:3)**6)/   &
          (model_cutnorm(1:3)**12)
-    
-    ! store sigma^2 in KIM object
-    psigmasq = kim_api_get_data_f(pkim,"PARAM_FIXED_sigmasq",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-       stop
-    endif
     model_sigmasq(1:3) = model_sigma(1:3)**2
-    
-    ! store cutoff^2 in KIM object
-    pcutsq = kim_api_get_data_f(pkim,"PARAM_FIXED_cutsq",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-       stop
-    endif
     model_cutsq = model_cutoff**2
     
   end subroutine ReInit
@@ -467,76 +324,31 @@ contains
     real*8 model_cutsq;      pointer(pcutsq,model_cutsq)
     integer ier, idum
     
-    ! get sigma from KIM object and free memory
-    psigma = kim_api_get_data_f(pkim,"PARAM_FREE_sigma",ier)
+    ! get parameters from KIM object
+    call kim_api_get_data_multiple_f(pkim, ier, &
+         "PARAM_FREE_sigma",     psigma,    1, &
+         "PARAM_FREE_epsilon",   pepsilon,  1, &
+         "PARAM_FREE_cutoff",    pparamcut, 1, &
+         "PARAM_FIXED_cutnorm",  pcutnorm,  1, &
+         "PARAM_FIXED_A",        pA,        1, &
+         "PARAM_FIXED_B",        pB,        1, &
+         "PARAM_FIXED_C",        pC,        1, &
+         "PARAM_FIXED_sigmasq",  psigmasq,  1, &
+         "PARAM_FIXED_cutsq",    pcutsq,    1)
     if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
+       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_multiple_f", ier)
        stop
     endif
-    call free(psigma)
-    
-    ! get epsilon from KIM object and free memory
-    pepsilon = kim_api_get_data_f(pkim,"PARAM_FREE_epsilon",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-       stop
-    endif
-    call free(pepsilon)
-    
-    ! get cutoff parameter from KIM object and free memory
-    pparamcut = kim_api_get_data_f(pkim,"PARAM_FREE_cutoff",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-       stop
-    endif
-    call free(pparamcut)
-    
-    ! get cutnorm in KIM object and free memory
-    pcutnorm = kim_api_get_data_f(pkim,"PARAM_FIXED_cutnorm",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-       stop
-    endif
-    call free(pcutnorm)
-    
-    ! get A in KIM object and free memory
-    pA = kim_api_get_data_f(pkim,"PARAM_FIXED_A",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-       stop
-    endif
-    call free(pA)
-    
-    ! get B in KIM object and free memory
-    pB = kim_api_get_data_f(pkim,"PARAM_FIXED_B",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-       stop
-    endif
-    call free(pB)
-    
-    ! get C in KIM object and free memory
-    pC = kim_api_get_data_f(pkim,"PARAM_FIXED_C",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-       stop
-    endif
-    call free(pC)
-    
-    ! get sigma^2 in KIM object and free memory
-    psigmasq = kim_api_get_data_f(pkim,"PARAM_FIXED_sigmasq",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-       stop
-    endif
-    call free(psigmasq)
 
-    ! get cutoff^2 in KIM object and free memory
-    pcutsq = kim_api_get_data_f(pkim,"PARAM_FIXED_cutsq",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-       stop
-    endif
+    ! free memory
+    call free(psigma)
+    call free(pepsilon)
+    call free(pparamcut)
+    call free(pcutnorm)
+    call free(pA)
+    call free(pB)
+    call free(pC)
+    call free(psigmasq)
     call free(pcutsq)
 
   end subroutine Destroy
@@ -572,130 +384,102 @@ subroutine model_ArNe_P_MLJ_NEIGH_RVEC_F_init(pkim)
   real*8 model_cutsq;      pointer(pcutsq,model_cutsq)
   integer ier, idum
   
-  ! store pointer to compute function in KIM object
-  ier = kim_api_set_data_f(pkim,"compute",one,loc(Compute_Energy_Forces))
+  ! store function pointers in KIM object
+  call kim_api_set_data_multiple_f(pkim, ier, &
+       "compute", one, loc(Compute_Energy_Forces), 1, &
+       "reinit",  one, loc(ReInit),                1, &
+       "destroy", one, loc(Destroy),               1)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data", ier)
-     stop
-  endif
-  
-  ! store pointer to reinit function in KIM object
-  ier = kim_api_set_data_f(pkim,"reinit",one,loc(ReInit))
-  if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data", ier)
-     stop
-  endif
-
-  ! store pointer to destroy function in KIM object
-  ier = kim_api_set_data_f(pkim,"destroy",one,loc(Destroy))
-  if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data_multiple_f", ier)
      stop
   endif
   
   ! store model cutoff in KIM object
   pcutoff =  kim_api_get_data_f(pkim,"cutoff",ier)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
      stop
   endif
   model_cutoff = 8.15d0 ! cutoff distance in angstroms
   
   ! Allocate memory for sigma and store value
   psigma = malloc(three*8) ! 8 is the size of a real*8
-  ! store sigma in KIM object
-  ier = kim_api_set_data_f(pkim,"PARAM_FREE_sigma",three,psigma)
-  if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data", ier)
+  if (psigma.eq.0) then
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL)
      stop
   endif
+  pepsilon = malloc(three*8) ! 8 is the size of a real*8
+  if (pepsilon.eq.0) then
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL)
+     stop
+  endif
+  pparamcut = malloc(one*8) ! 8 is the size of a real*8
+  if (pparamcut.eq.0) then
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL)
+     stop
+  endif
+  pcutnorm = malloc(three*8) ! 8 is the size of a real*8
+  if (pcutnorm.eq.0) then
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL)
+     stop
+  endif
+  pA = malloc(three*8) ! 8 is the size of a real*8
+  if (pA.eq.0) then
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL)
+     stop
+  endif
+  pB = malloc(three*8) ! 8 is the size of a real*8
+  if (pB.eq.0) then
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL)
+     stop
+  endif
+  pC = malloc(three*8) ! 8 is the size of a real*8
+  if (pC.eq.0) then
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL)
+     stop
+  endif
+  psigmasq = malloc(three*8) ! 8 is the size of a real*8
+  if (psigmasq.eq.0) then
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL)
+     stop
+  endif
+  pcutsq = malloc(one*8) ! 8 is the size of a real*8
+  if (pcutsq.eq.0) then
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL)
+     stop
+  endif
+
+  ! store parameters in KIM object
+  call kim_api_set_data_multiple_f(pkim, ier, &
+       "PARAM_FREE_sigma",    three,  psigma,    1, &
+       "PARAM_FREE_epsilon",  three,  pepsilon,  1, &
+       "PARAM_FREE_cutoff",   one,    pparamcut, 1, &
+       "PARAM_FIXED_cutnorm", three,  pcutnorm,  1, &
+       "PARAM_FIXED_A",       three,  pA,        1, &
+       "PARAM_FIXED_B",       three,  pB,        1, &
+       "PARAM_FIXED_C",       three,  pC,        1, &
+       "PARAM_FIXED_sigmasq", three,  psigmasq,  1, &
+       "PARAM_FIXED_cutsq",   one,    pcutsq,    1)
+  if (ier.lt.KIM_STATUS_OK) then
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data_multiple_f", ier)
+     stop
+  endif
+
   model_sigma(1) = 3.40d0 ! LJ Argon sigma in angstroms
   model_sigma(2) = 2.74d0 ! LJ Neon  sigma in angstroms
   model_sigma(3) = 0.5d0*(model_sigma(1) + model_sigma(2)) ! Lorentz/Berthelot Mixing Rule
-  
-  ! Allocate memory for epsilon and store value
-  pepsilon = malloc(three*8) ! 8 is the size of a real*8
-  ! store epsilon in KIM object
-  ier = kim_api_set_data_f(pkim,"PARAM_FREE_epsilon",three,pepsilon)
-  if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data", ier)
-     stop
-  endif
   model_epsilon(1) = 0.0104d0 ! LJ Argon epsilon in eV
   model_epsilon(2) = 0.0031d0 ! LJ Neon  epsilon in eV
   model_epsilon(3) = sqrt(model_epsilon(1)*model_epsilon(2)) ! Lorentz/Berthelot Mixing Rule
-
-  ! Allocate memory for parameter cutoff and store value
-  pparamcut = malloc(one*8) ! 8 is the size of a real*8
-  ! store cutoff as parameter in KIM object
-  ier = kim_api_set_data_f(pkim,"PARAM_FREE_cutoff",one,pparamcut)
-  if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data", ier)
-     stop
-  endif
   model_Pcutoff = model_cutoff
-  
-  ! Allocate memory for parameter cutnorm and store value
-  pcutnorm = malloc(three*8) ! 8 is the size of a real*8
-  ! store cutnorm in KIM object
-  ier = kim_api_set_data_f(pkim,"PARAM_FIXED_cutnorm",three,pcutnorm)
-  if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data", ier)
-     stop
-  endif
   model_cutnorm(1:3) = model_cutoff/model_sigma(1:3)
-  
-  ! Allocate memory for parameter A and store value
-  pA = malloc(three*8) ! 8 is the size of a real*8
-  ! store A in KIM object
-  ier = kim_api_set_data_f(pkim,"PARAM_FIXED_A",three,pA)
-  if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data", ier)
-     stop
-  endif
   model_A(1:3) = 12.d0*model_epsilon(1:3)*(-26.d0 + 7.d0*model_cutnorm(1:3)**6)/ &
        (model_cutnorm(1:3)**14*model_sigma(1:3)**2)
-  
-  ! Allocate memory for parameter B and store value
-  pB = malloc(three*8) ! 8 is the size of a real*8
-  ! store B in KIM object
-  ier = kim_api_set_data_f(pkim,"PARAM_FIXED_B",three,pB)
-  if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data", ier)
-     stop
-  endif
   model_B(1:3) = 96.d0*model_epsilon(1:3)*(7.d0-2.d0*model_cutnorm(1:3)**6)/     &
        (model_cutnorm(1:3)**13*model_sigma(1:3))
-  
-  ! Allocate memory for parameter C and store value
-  pC = malloc(three*8) ! 8 is the size of a real*8
-  ! store C in KIM object
-  ier = kim_api_set_data_f(pkim,"PARAM_FIXED_C",three,pC)
-  if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data", ier)
-     stop
-  endif
   model_C(1:3) = 28.d0*model_epsilon(1:3)*(-13.d0+4.d0*model_cutnorm(1:3)**6)/   &
        (model_cutnorm(1:3)**12)
-  
-  ! Allocate memory for parameter sigmasq and store value
-  psigmasq = malloc(three*8) ! 8 is the size of a real*8
-  ! store sigma^2 in KIM object
-  ier = kim_api_set_data_f(pkim,"PARAM_FIXED_sigmasq",three,psigmasq)
-  if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data", ier)
-     stop
-  endif
   model_sigmasq(1:3) = model_sigma(1:3)**2
-  
-  ! Allocate memory for parameter cutsq and store value
-  pcutsq = malloc(one*8) ! 8 is the size of a real*8
-  ! store cutoff^2 in KIM object
-  ier = kim_api_set_data_f(pkim,"PARAM_FIXED_cutsq",one,pcutsq)
-  if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data", ier)
-     stop
-  endif
   model_cutsq = model_cutoff**2
 
 end subroutine model_ArNe_P_MLJ_NEIGH_RVEC_F_init

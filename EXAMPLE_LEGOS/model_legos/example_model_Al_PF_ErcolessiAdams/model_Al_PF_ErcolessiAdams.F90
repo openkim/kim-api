@@ -543,10 +543,10 @@ integer, allocatable, target :: nei1atom_substitute(:)
 character*80 :: error_message
 
 !-- KIM variables
-integer N;              pointer(pN,N)
-real*8 energy;          pointer(penergy,energy)
-real*8 coordum(DIM,1);  pointer(pcoor,coordum)
-real*8 forcedum(DIM,1); pointer(pforce,forcedum)
+integer N;                 pointer(pN,N)
+real*8 energy;             pointer(penergy,energy)
+real*8 coordum(DIM,1);     pointer(pcoor,coordum)
+real*8 forcedum(DIM,1);    pointer(pforce,forcedum)
 real*8 enepotdum(1);       pointer(penepot,enepotdum)
 real*8 boxlength(DIM);     pointer(pboxlength,boxlength)
 real*8 Rij_list(DIM,1);    pointer(pRij_list,Rij_list)
@@ -628,121 +628,46 @@ endif
 ! Check to see if we have been asked to compute the forces, energyperatom,
 ! energy and virial
 !
-comp_energy = kim_api_isit_compute_f(pkim,"energy",ier)
+call kim_api_get_compute_multiple_f(pkim, ier, &
+     "energy",        comp_energy, 1, &
+     "forces",        comp_force,  1, &
+     "energyPerAtom", comp_enepot, 1, &
+     "virialGlobal",  comp_virial, 1)
 if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute_f", ier)
-   return
-endif
-
-comp_force = kim_api_isit_compute_f(pkim,"forces",ier)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute_f", ier)
-   return
-endif
-
-comp_enepot = kim_api_isit_compute_f(pkim,"energyPerAtom",ier)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute_f", ier)
-   return
-endif
-
-comp_virial = kim_api_isit_compute_f(pkim,"virialGlobal",ier)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute_f", ier)
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_compute_multiple_f", ier)
    return
 endif
 
 ! Unpack data from KIM object
 !
-pN = kim_api_get_data_f(pkim,"numberOfAtoms",ier)
+call kim_api_get_data_multiple_f(pkim, ier, &
+     "numberOfAtoms",           pN,            1,                             &
+     "atomTypes",               patomTypes,    1,                             &
+     "coordinates",             pcoor,         1,                             &
+     "numberContributingAtoms", pnumContrib,   merge(1,0,(HalfOrFull.eq.1)),  &
+     "boxlength",               pboxlength,    merge(1,0,(NBC.eq.1)),         &
+     "energy",                  penergy,       merge(1,0,(comp_energy.eq.1)), &
+     "forces",                  pforce,        merge(1,0,(comp_force.eq.1)),  &
+     "energyPerAtom",           penepot,       merge(1,0,(comp_enepot.eq.1)), &
+     "virialGlobal",            pvirialGlobal, merge(1,0,(comp_virial.eq.1)), &
+     "PARAM_FIXED_irlast",      pirlast,       1,                             &
+     "PARAM_FIXED_ielast",      pielast,       1                              &
+     )
 if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_multiple_f", ier)
    return
 endif
 
-patomTypes = kim_api_get_data_f(pkim,"atomTypes",ier)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-   return
-endif
-
-pcoor = kim_api_get_data_f(pkim,"coordinates",ier)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-   return
-endif
-
+call toRealArrayWithDescriptor2d(coordum,coor,DIM,N)
+if (comp_force.eq.1)  call toRealArrayWithDescriptor2d(forcedum,force,DIM,N)
+if (comp_enepot.eq.1) call toRealArrayWithDescriptor1d(enepotdum,ene_pot,N)
+if (comp_virial.eq.1) call toRealArrayWithDescriptor1d(virialGlobaldum,virial_global,6)
 if (HalfOrFull.eq.1) then
-   pnumContrib = kim_api_get_data_f(pkim,"numberContributingAtoms",ier)
-   if (ier.lt.KIM_STATUS_OK) then
-      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-      return
-   endif
    if (NBC.ne.0) then ! non-CLUSTER cases
       numberContrib = numContrib
    else               ! CLUSTER cases
       numberContrib = N
    endif
-endif
-
-if (NBC.eq.1) then
-   pboxlength = kim_api_get_data_f(pkim,"boxlength",ier)
-   if (ier.lt.KIM_STATUS_OK) then
-      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-      return
-   endif
-endif
-
-if (comp_energy.eq.1) then
-   penergy = kim_api_get_data_f(pkim,"energy",ier)
-   if (ier.lt.KIM_STATUS_OK) then
-      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-      return
-   endif
-endif
-
-if (comp_force.eq.1) then
-   pforce  = kim_api_get_data_f(pkim,"forces",ier)
-   if (ier.lt.KIM_STATUS_OK) then
-      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-      return
-   endif
-   call toRealArrayWithDescriptor2d(forcedum,force,DIM,N)
-endif
-
-if (comp_enepot.eq.1) then
-   penepot = kim_api_get_data_f(pkim,"energyPerAtom",ier)
-   if (ier.lt.KIM_STATUS_OK) then
-      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-      return
-   endif
-   call toRealArrayWithDescriptor1d(enepotdum,ene_pot,N)
-endif
-
-if (comp_virial.eq.1) then
-   pvirialGlobal = kim_api_get_data_f(pkim,"virialGlobal",ier)
-   if (ier.lt.KIM_STATUS_OK) then
-      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-      return
-   endif
-   call toRealArrayWithDescriptor1d(virialGlobaldum,virial_global,6)
-endif
-
-call toRealArrayWithDescriptor2d(coordum,coor,DIM,N)
-
-! Unpack static parameters used by the Ercolessi-Adams potential
-! and stored in the KIM object
-!
-pirlast = kim_api_get_data_f(pkim,"PARAM_FIXED_irlast",ier);
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier);
-   return
-endif
-
-pielast = kim_api_get_data_f(pkim,"PARAM_FIXED_ielast",ier);
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier);
-   return
 endif
 
 ! Check to be sure that the atom types are correct
@@ -758,10 +683,10 @@ ier = KIM_STATUS_OK ! everything is ok
 
 ! Initialize potential energies, forces, virial term, electron density
 !
-if (comp_enepot.eq.1) ene_pot(1:N) = 0.d0
-if (comp_energy.eq.1) energy = 0.d0
+if (comp_enepot.eq.1) ene_pot(1:N)   = 0.d0
+if (comp_energy.eq.1) energy         = 0.d0
 if (comp_force.eq.1)  force(1:3,1:N) = 0.d0
-if (comp_virial.eq.1) virial_global = 0.d0
+if (comp_virial.eq.1) virial_global  = 0.d0
 allocate( rho(N) )  ! pair functional electron density
 rho(1:N) = 0.d0
 allocate( U(N) )    ! embedding energy
@@ -1148,20 +1073,17 @@ integer ier, idum
 integer irlast; pointer(pirlast,irlast)
 integer ielast; pointer(pielast,ielast)  
     
-! get irlast from KIM object and free memory
-pirlast = kim_api_get_data_f(pkim,"PARAM_FIXED_irlast",ier)
+! get irlast and ielast from KIM object and free memory
+call kim_api_get_data_multiple_f(pkim, ier, &
+     "PARAM_FIXED_irlast", pirlast, 1, &
+     "PARAM_FIXED_ielast", pielast, 1  &
+     )
 if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier);
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_multiple_f", ier);
    stop
 endif
-call free(pirlast)
 
- ! get ielast from KIM object and free memory
-pielast = kim_api_get_data_f(pkim,"PARAM_FIXED_ielast",ier)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier);
-   stop
-endif
+call free(pirlast)
 call free(pielast)
     
 end subroutine Destroy
@@ -1190,24 +1112,19 @@ real*8 cutoff;  pointer(pcutoff,cutoff)
 integer irlast; pointer(pirlast,irlast)
 integer ielast; pointer(pielast,ielast)  
 
-! store pointer to compute function in KIM object
-ier = kim_api_set_data_f(pkim,"compute",one,loc(Compute_Energy_Forces))
+! store function pointers in KIM object
+call kim_api_set_data_multiple_f(pkim, ier, &
+     "compute", one, loc(Compute_Energy_Forces), 1, &
+     "destroy", one, loc(Destroy),               1)
 if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data", ier)
-   stop
-endif
-
-! store pointer to destroy function in KIM object
-ier = kim_api_set_data_f(pkim,"destroy",one,loc(Destroy))
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data", ier)
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data_multiple_f", ier)
    stop
 endif
 
 ! store model cutoff in KIM object
 pcutoff =  kim_api_get_data_f(pkim,"cutoff",ier)
 if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
    stop
 endif
 cutoff = model_cutoff
@@ -1217,26 +1134,32 @@ cutoff = model_cutoff
 ! spline tables. It is stored to speed calculations since the next value
 ! of r is likely close to the last one.)
 pirlast = malloc(one*4) ! 4 is the size of an integer
-! store irlast in KIM object
-ier = kim_api_set_data_f(pkim,"PARAM_FIXED_irlast",one,pirlast)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data", ier);
+if (pirlast.eq.0) then
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL);
    stop
 endif
-irlast = 1 ! Initialize
-
 ! Allocate memory for ielast and store value
 ! (ielast is the last entry into the embedding function spline table.
 ! It is stored to speed calculations since the next value of rho is
 ! likely close to the last one.)
 pielast = malloc(one*4) ! 4 is the size of an integer
-! store ielast in KIM object
-ier = kim_api_set_data_f(pkim,"PARAM_FIXED_ielast",one,pielast)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data", ier);
+if (pielast.eq.0) then
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL);
    stop
 endif
-ielast = 1 ! Initialize
+
+! store irlast and ielast in KIM object
+call kim_api_set_data_multiple_f(pkim, ier, &
+     "PARAM_FIXED_irlast", one, pirlast, 1, &
+     "PARAM_FIXED_ielast", one, pielast, 1)
+if (ier.lt.KIM_STATUS_OK) then
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data_multiple_f", ier);
+   stop
+endif
+
+! Initialize
+irlast = 1
+ielast = 1
 
 end subroutine model_Al_PF_ErcolessiAdams_init
 

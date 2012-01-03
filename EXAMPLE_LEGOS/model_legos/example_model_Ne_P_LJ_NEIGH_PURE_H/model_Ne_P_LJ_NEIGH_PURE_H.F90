@@ -50,75 +50,38 @@ contains
     integer i, e_flag, f_flag, eper_flag, idum
     external calculate
 
+    ! Check to see if we have been asked to compute the forces and energyperatom
+    !
+    call kim_api_get_compute_multiple_f(pkim, ier, &
+         "energy",        e_flag,    1, &
+         "forces",        f_flag,    1, &
+         "energyPerAtom", eper_flag, 1)
+    if (ier.lt.KIM_STATUS_OK) then
+       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_compute_multiple_f", ier)
+       return
+    endif
+
     ! Unpack data from KIM object
     !
-    pnumberofatoms = kim_api_get_data_f(pkim,"numberOfAtoms",ier)
+    call kim_api_get_data_multiple_f(pkim, ier, &
+         "numberOfAtoms",           pnumberofatoms, 1,                           &
+         "numberContributingAtoms", pnumContrib,    1,                           &
+         "atomTypes",               pattypes,       1,                           &
+         "coordinates",             px,             1,                           &
+         "forces",                  pf,             merge(1,0,(f_flag.eq.1)),    &
+         "energy",                  ppotenergy,     merge(1,0,(e_flag.eq.1)),    &
+         "energyPerAtom",           pea,            merge(1,0,(eper_flag.eq.1)))
     if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-       stop
+       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_multiple_f", ier)
+       return
     endif
 
-    pnumContrib = kim_api_get_data_f(pkim,"numberContributingAtoms",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-       stop
-    endif
-
-    pattypes = kim_api_get_data_f(pkim,"atomTypes", ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-       stop
-    endif
     do i=1,numberofatoms
        if (attypes(i).ne.1) then ! check for correct atom types Ne=1
           idum = kim_api_report_error_f(__LINE__, __FILE__, "Wrong Atom Type", KIM_STATUS_FAIL)
-          stop
+          return
        endif
     enddo
-
-    px=kim_api_get_data_f(pkim,"coordinates",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-       stop
-    endif
-
-    pf=kim_api_get_data_f(pkim,"forces",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-       stop
-    endif
-
-    ppotenergy = kim_api_get_data_f(pkim,"energy",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-       stop
-    endif
-
-    pea = kim_api_get_data_f(pkim,"energyPerAtom",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-       stop
-    endif
-
-    ! Check to see if we have been asked to compute the forces and energyperatom
-    !
-    e_flag=kim_api_isit_compute_f(pkim,"energy",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute_f", ier)
-       stop
-    endif
-
-    f_flag=kim_api_isit_compute_f(pkim,"forces",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute_f", ier)
-       stop
-    endif
-
-    eper_flag=kim_api_isit_compute_f(pkim,"energyPerAtom",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute_f", ier)
-       stop
-    endif
 
     ! Call FORTRAN 77 code that does actual calculation
     !

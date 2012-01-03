@@ -148,33 +148,17 @@ integer numberContrib
 
 ! Unpack the Model's parameters stored in the KIM API object
 !
-pmodel_cutoff = kim_api_get_data_f(pkim,"cutoff",ier)
+call kim_api_get_data_multiple_f(pkim, ier, &
+     "cutoff",             pmodel_cutoff,             1, &
+     "PARAM_FIXED_cutsq",  pmodel_cutsq,              1, &
+     "<FILL parameter 1>", pmodel_<FILL parameter 1>, 1, &
+     "<FILL parameter 2>", pmodel_<FILL parameter 2>, 1, &
+     ! FILL as many parameters as necessary
+     )
 if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_multiple_f", ier)
    return
 endif
-
-pmodel_cutsq = kim_api_get_data_f(pkim,"PARAM_FIXED_cutsq",ier)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-   return
-endif
-
-! <Fill below as many parameters as needed> 
-
-pmodel_<FILL parameter 1> = kim_api_get_data_f(pkim,"PARAM_FREE_<FILL parameter 1>",ier)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-   return
-endif
-
-pmodel_<FILL parameter 2> = kim_api_get_data_f(pkim,"PARAM_FREE_<FILL parameter 2>",ier)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-   return
-endif
-
-! FILL: add PARAM_FIXED_* parameters here if there are any ...
 
 ! Determine neighbor list boundary condition (NBC)
 ! and half versus full mode:
@@ -240,98 +224,42 @@ endif
 ! Check to see if we have been asked to compute the forces, energyperatom,
 ! energy and d1Edr
 !
-comp_energy = kim_api_isit_compute_f(pkim,"energy",ier)
+call kim_api_get_compute_multiple_f(pkim, ier, &
+     "energy",        comp_energy,        1, &
+     "forces",        comp_force,         1, &
+     "energyPerAtom", comp_enepot,        1, &
+     "process_d1Edr", comp_process_d1Edr, 1)
 if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute_f", ier)
-   return
-endif
-
-comp_force = kim_api_isit_compute_f(pkim,"forces",ier)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute_f", ier)
-   return
-endif
-
-comp_enepot = kim_api_isit_compute_f(pkim,"energyPerAtom",ier)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute_f", ier)
-   return
-endif
-
-comp_process_d1Edr = kim_api_isit_compute_f(pkim,"process_d1Edr", ier)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute_f", ier)
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_compute_multiple_f", ier)
    return
 endif
 
 ! Unpack data from KIM object
 !
-pN = kim_api_get_data_f(pkim,"numberOfAtoms",ier)
+call kim_api_get_data_multiple_f(pkim, ier, &
+     "numberOfAtoms",           pN,          1,                             &
+     "atomTypes",               patomTypes,  1,                             &
+     "coordinates",             pcoor,       1,                             &
+     "numberContributingAtoms", pnumContrib, merge(1,0,(HalfOrFull.eq.1)),  &
+     "boxlength",               pboxlength,  merge(1,0,(NBC.eq.1)),         &
+     "energy",                  penergy,     merge(1,0,(comp_energy.eq.1)), &
+     "forces",                  pforce,      merge(1,0,(comp_force.eq.1)),  &
+     "energyPerAtom",           penepot,     merge(1,0,(comp_enepot.eq.1)))
 if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_multiple_f", ier)
    return
 endif
 
-patomTypes = kim_api_get_data_f(pkim,"atomTypes",ier)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-   return
-endif
-
-pcoor = kim_api_get_data_f(pkim,"coordinates",ier)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-   return
-endif
-
+call toRealArrayWithDescriptor2d(coordum,coor,DIM,N)
+if (comp_force.eq.1)  call toRealArrayWithDescriptor2d(forcedum,force,DIM,N)
+if (comp_enepot.eq.1) call toRealArrayWithDescriptor1d(enepotdum,ene_pot,N)
 if (HalfOrFull.eq.1) then
-   pnumContrib = kim_api_get_data_f(pkim,"numberContributingAtoms",ier)
-   if (ier.lt.KIM_STATUS_OK) then
-      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-      return
-   endif
    if (NBC.ne.0) then ! non-CLUSTER cases
       numberContrib = numContrib
    else               ! CLUSTER case
       numberContrib = N
    endif
 endif
-
-if (NBC.eq.1) then
-   pboxlength = kim_api_get_data_f(pkim,"boxlength",ier)
-   if (ier.lt.KIM_STATUS_OK) then
-      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-      return
-   endif
-endif
-
-if (comp_energy.eq.1) then
-   penergy = kim_api_get_data_f(pkim,"energy",ier)
-   if (ier.lt.KIM_STATUS_OK) then
-      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-      return
-   endif
-endif
-
-if (comp_force.eq.1) then
-   pforce  = kim_api_get_data_f(pkim,"forces",ier)
-   if (ier.lt.KIM_STATUS_OK) then
-      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-      return
-   endif
-   call toRealArrayWithDescriptor2d(forcedum,force,DIM,N)
-endif
-
-if (comp_enepot.eq.1) then
-   penepot = kim_api_get_data_f(pkim,"energyPerAtom",ier)
-   if (ier.lt.KIM_STATUS_OK) then
-      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-      return
-   endif
-   call toRealArrayWithDescriptor1d(enepotdum,ene_pot,N)
-endif
-
-call toRealArrayWithDescriptor2d(coordum,coor,DIM,N)
 
 ! Check to be sure that the atom types are correct
 !
@@ -469,7 +397,7 @@ do
       if ( Rsqij .lt. model_cutsq ) then          ! particles are interacting?
 
          r = sqrt(Rsqij)                          ! compute distance
-         if (comp_force.eq.1.or.comp_virial.eq.1) then
+         if (comp_force.eq.1.or.comp_process_d1Edr.eq.1) then
             call calc_phi_dphi(model_<FILL parameter 1>, &
                                model_<FILL parameter 2>, &
                                ! FILL as many parameters as needed
@@ -568,46 +496,24 @@ real*8  model_<FILL parameter 2>; pointer(pmodel_<FILL parameter 2>,model_<FILL 
 
 ! Get FREE parameters from KIM object
 !
-pmodel_cutoff = kim_api_get_data_f(pkim,"PARAM_FREE_cutoff",ier)
+call kim_api_get_data_multiple_f(pkim, ier, &
+     "cutoff",             pcutoff,                   1, &
+     "PARAM_FREE_cutoff",  pmodel_cutoff,             1, &
+     "PARAM_FIXED_cutsq",  pmodel_cutsq,              1, & 
+     "<FILL parameter 1>", pmodel_<FILL parameter 1>, 1, &
+     "<FILL parameter 2>", pmodel_<FILL parameter 2>, 1, &
+     ! FILL as many parameters as necessary
+     )
 if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_multiple_f", ier)
    return
 endif
-
-pmodel_<FILL parameter 1> = kim_api_get_data_f(pkim,"PARAM_FREE_<FILL parameter 1>",ier)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-   return
-endif
-
-pmodel_<FILL parameter 2> = kim_api_get_data_f(pkim,"PARAM_FREE_<FILL parameter 2>",ier)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-   return
-endif
-
-! FILL as many parameters as needed
 
 !
 ! Set new values in KIM object
 !
-
-! store model cutoff in KIM object
-pcutoff =  kim_api_get_data_f(pkim,"cutoff",ier)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-   stop
-endif
-cutoff = model_cutoff
-
-! store squared cutoff radius in KIM object
-pmodel_cutsq = kim_api_get_data_f(pkim,"PARAM_FIXED_cutsq",ier)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-   return
-endif
+cutoff      = model_cutoff
 model_cutsq = model_cutoff**2
-
 ! FILL: store any other FIXED parameters whose values depend on FREE parameters
 
 end subroutine reinit
@@ -637,27 +543,22 @@ real*8  model_<FILL parameter 2>; pointer(pmodel_<FILL parameter 2>,model_<FILL 
 
 ! Get all parameters added to KIM object and free memory 
 !
-pmodel_cutoff = kim_api_get_data_f(pkim,"PARAM_FREE_cutoff",ier)
+call kim_api_get_data_multiple_f(pkim, ier, &
+     "PARAM_FREE_cutoff",   pmodel_cutoff,             1, &
+     "PARAM_FIXED_cutsq",   pmodel_cutsq,              1, &
+     "<FILL parameter 1>",  pmodel_<FILL parameter 1>, 1, &
+     "<FILL parameter 2>",  pmodel_<FILL parameter 2>, 1, &
+     ! FILL as many parameters as necessary
+     )
 if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_multiple_f", ier)
    return
 endif
+
 call free(pmodel_cutoff)
-
-pmodel_cutsq = kim_api_get_data_f(pkim,"PARAM_FIXED_cutsq",ier)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-   return
-endif
 call free(pmodel_cutsq)
-
-pmodel_<FILL parameter 1> = kim_api_get_data_f(pkim,"PARAM_FREE_<FILL parameter 1>",ier)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-   return
-endif
 call free(pmodel_<FILL parameter 1>)
-
+call free(pmodel_<FILL parameter 2>)
 ! FILL: repeat above statements as many times as necessary for all FREE and
 ! FIXED parameters.
 
@@ -699,23 +600,13 @@ real*8  model_<FILL parameter 1>; pointer(pmodel_<FILL parameter 1>,model_<FILL 
 real*8  model_<FILL parameter 2>; pointer(pmodel_<FILL parameter 2>,model_<FILL parameter 2>)
 ! FILL as many parameter declarations as necessary
 
-! store pointer to compute function in KIM object
-ier = kim_api_set_data_f(pkim,"compute",one,loc(Compute_Energy_Forces))
+! store function pointers in KIM object
+call kim_api_set_data_multiple_f(pkim, ier, &
+     "compute", one, loc(Compute_Energy_Forces), 1, &
+     "reinit",  one, loc(reinit),                1, &
+     "destroy", one, loc(destroy),               1)
 if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data", ier)
-   stop
-endif
-
-! store pointer to reinit function in KIM object
-ier = kim_api_set_data_f(pkim,"reinit",one,loc(reinit))
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data", ier)
-   stop
-endif
-
-ier = kim_api_set_data_f(pkim,"destroy",one,loc(destroy))
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data", ier)
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data_multiple_f", ier)
    stop
 endif
 
@@ -732,7 +623,7 @@ read(paramfile,'<FILL appropriate format>',iostat=ier,err=100) in_cutoff,       
 goto 200
 100 continue
 ! reading parameters failed
-idum = kim_api_report_error_f(__LINE__, __FILE__, "Unable to read <FILL model driver name> parameters, ier = ", KIM_STATUS_FAIL)
+idum = kim_api_report_error_f(__LINE__, __FILE__, "Unable to read <FILL model driver name> parameters, kimerror = ", KIM_STATUS_FAIL)
 stop
 
 200 continue
@@ -745,31 +636,48 @@ if (ier.lt.KIM_STATUS_OK) then
 endif
 cutoff = in_cutoff
 
-! allocate memory for parameter cutoff and store value
+! allocate memory for parameters
 pmodel_cutoff = malloc(one*8) ! 8 is the size of double precision number
-ier = kim_api_set_data_f(pkim,"PARAM_FREE_cutoff",one,pmodel_cutoff)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data", ier);
+if (pmodel_cutoff.eq.0) then
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL);
    stop
 endif
-model_cutoff = in_cutoff ! Initialize
-
-! allocate memory for parameter cutsq and store value
 pmodel_cutsq = malloc(one*8) ! 8 is the size of double precision number
-ier = kim_api_set_data_f(pkim,"PARAM_FIXED_cutsq",one,pmodel_cutsq)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data", ier);
+if (pmodel_cutsq.eq.0) then
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL);
    stop
 endif
-model_cutsq = in_cutoff**2 ! Initialize
-
-! allocate memory for parameter <FILL parameter 1> and store value
 pmodel_<FILL parameter 1> = malloc(one*8) ! 8 is the size of double precision number
-ier = kim_api_set_data_f(pkim,"PARAM_FREE_<FILL parameter 1>",one,pmodel_<FILL parameter 1>)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data", ier);
+if (pmodel_<FILL parameter 1>.eq.0) then
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL);
    stop
 endif
+pmodel_<FILL parameter 2> = malloc(one*8) ! 8 is the size of double precision number
+if (pmodel_<FILL parameter 2>.eq.0) then
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL);
+   stop
+endif
+! FILL: repeat above statements as many times as necessary for all parameters. 
+! Use "FREE" and "FIXED" as appropriate. (Recall FREE parameters can be modified by
+! the calling routine. FIXED parameters depend on the FREE parameters and must be
+! appropriately adjusted in the reinit() routine.)
+
+! store values in KIM object
+call kim_api_set_data_multiple_f(pkim, ier, &
+     "PARAM_FREE_cutoff",  one, pmodel_cutoff,             1, &
+     "PARAM_FIXED_cutsq",  one, pmodel_cutsq,              1, &
+     "<FILL parameter 1>", one, pmodel_<FILL parameter 1>, 1, &
+     "<FILL parameter 2>", one, pmodel_<FILL parameter 2>, 1, &
+     ! FILL as many parameters as necessary
+     )
+if (ier.lt.KIM_STATUS_OK) then
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data_multiple_f", ier);
+   stop
+endif
+
+! set value of parameters
+model_cutoff = in_cutoff
+model_cutsq = in_cutoff**2
 model_<FILL parameter 1> = in_<FILL parameter 1>
 
 ! FILL: repeat above statements as many times as necessary for all parameters. 

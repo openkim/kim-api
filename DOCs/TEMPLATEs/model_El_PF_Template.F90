@@ -297,107 +297,47 @@ endif
 ! Check to see if we have been asked to compute the forces, energyperatom,
 ! energy and virial
 !
-comp_energy = kim_api_isit_compute_f(pkim,"energy",ier)
+call kim_api_get_compute_multiple_f(pkim, ier, &
+     "energy",        comp_energy, 1, &
+     "forces",        comp_force,  1, &
+     "energyPerAtom", comp_enepot, 1, &
+     "virialGlobal",  comp_virial, 1)
 if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute_f", ier)
-   return
-endif
-
-comp_force = kim_api_isit_compute_f(pkim,"forces",ier)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute_f", ier)
-   return
-endif
-
-comp_enepot = kim_api_isit_compute_f(pkim,"energyPerAtom",ier)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute_f", ier)
-   return
-endif
-
-comp_virial = kim_api_isit_compute_f(pkim,"virialGlobal",ier)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_isit_compute_f", ier)
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_compute_multiple_f", ier)
    return
 endif
 
 ! Unpack data from KIM object
 !
-pN = kim_api_get_data_f(pkim,"numberOfAtoms",ier)
+call kim_api_get_data_multiple_f(pkim, ier, &
+     "numberOfAtoms",           pN,            1,                             &
+     "atomTypes",               patomTypes,    1,                             &
+     "coordinates",             pcoor,         1,                             &
+     "numberContributingAtoms", pnumContrib,   merge(1,0,(HalfOrFull.eq.1)),  &
+     "boxlength",               pboxlength,    merge(1,0,(NBC.eq.1)),         &
+     "energy",                  penergy,       merge(1,0,(comp_energy.eq.1)), &
+     "forces",                  pforce,        merge(1,0,(comp_force.eq.1)),  &
+     "energyPerAtom",           penepot,       merge(1,0,(comp_enepot.eq.1)), &
+     "virialGlobal",            pvirialGlobal, merge(1,0,(comp_virial.eq.1)), &
+     "PARAM_FIXED_irlast",      pirlast,       1,                             &
+     "PARAM_FIXED_ielast",      pielast,       1                              &
+     )
 if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_multiple_f", ier)
    return
 endif
 
-patomTypes = kim_api_get_data_f(pkim,"atomTypes",ier)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-   return
-endif
-
-pcoor = kim_api_get_data_f(pkim,"coordinates",ier)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-   return
-endif
-
+call toRealArrayWithDescriptor2d(coordum,coor,DIM,N)
+if (comp_force.eq.1)  call toRealArrayWithDescriptor2d(forcedum,force,DIM,N)
+if (comp_enepot.eq.1) call toRealArrayWithDescriptor1d(enepotdum,ene_pot,N)
+if (comp_virial.eq.1) call toRealArrayWithDescriptor1d(virialGlobaldum,virial_global,6)
 if (HalfOrFull.eq.1) then
-   pnumContrib = kim_api_get_data_f(pkim,"numberContributingAtoms",ier)
-   if (ier.lt.KIM_STATUS_OK) then
-      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-      return
-   endif
    if (NBC.ne.0) then ! non-CLUSTER cases
       numberContrib = numContrib
    else               ! CLUSTER cases
       numberContrib = N
    endif
 endif
-
-if (NBC.eq.1) then
-   pboxlength = kim_api_get_data_f(pkim,"boxlength",ier)
-   if (ier.lt.KIM_STATUS_OK) then
-      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-      return
-   endif
-endif
-
-if (comp_energy.eq.1) then
-   penergy = kim_api_get_data_f(pkim,"energy",ier)
-   if (ier.lt.KIM_STATUS_OK) then
-      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-      return
-   endif
-endif
-
-if (comp_force.eq.1) then
-   pforce  = kim_api_get_data_f(pkim,"forces",ier)
-   if (ier.lt.KIM_STATUS_OK) then
-      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-      return
-   endif
-   call toRealArrayWithDescriptor2d(forcedum,force,DIM,N)
-endif
-
-if (comp_enepot.eq.1) then
-   penepot = kim_api_get_data_f(pkim,"energyPerAtom",ier)
-   if (ier.lt.KIM_STATUS_OK) then
-      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-      return
-   endif
-   call toRealArrayWithDescriptor1d(enepotdum,ene_pot,N)
-endif
-
-if (comp_virial.eq.1) then
-   pvirialGlobal = kim_api_get_data_f(pkim,"virialGlobal",ier)
-   if (ier.lt.KIM_STATUS_OK) then
-      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-      return
-   endif
-   call toRealArrayWithDescriptor1d(virialGlobaldum,virial_global,6)
-endif
-
-call toRealArrayWithDescriptor2d(coordum,coor,DIM,N)
 
 ! Check to be sure that the atom types are correct
 !
@@ -412,10 +352,10 @@ ier = KIM_STATUS_OK ! everything is ok
 
 ! Initialize potential energies, forces, virial term, electron density
 !
-if (comp_enepot.eq.1) ene_pot(1:N) = 0.d0
-if (comp_energy.eq.1) energy = 0.d0
+if (comp_enepot.eq.1) ene_pot(1:N)   = 0.d0
+if (comp_energy.eq.1) energy         = 0.d0
 if (comp_force.eq.1)  force(1:3,1:N) = 0.d0
-if (comp_virial.eq.1) virial_global = 0.d0
+if (comp_virial.eq.1) virial_global  = 0.d0
 allocate( rho(N) )  ! pair functional electron density
 rho(1:N) = 0.d0
 allocate( U(N) )    ! embedding energy
@@ -805,17 +745,19 @@ integer ier, idum
 !-- KIM variables
 real*8 cutoff; pointer(pcutoff,cutoff)
 
-! store pointer to compute function in KIM object
-ier = kim_api_set_data_f(pkim,"compute",one,loc(Compute_Energy_Forces))
+! store function pointers in KIM object
+call kim_api_set_data_multiple_f(pkim, ier, &
+     "compute", one, loc(Compute_Energy_Forces), 1, &
+     "destroy", one, loc(Destroy),               1)
 if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data", ier)
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data_multiple_f", ier)
    stop
 endif
 
 ! store model cutoff in KIM object
 pcutoff =  kim_api_get_data_f(pkim,"cutoff",ier)
 if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
    stop
 endif
 cutoff = model_cutoff

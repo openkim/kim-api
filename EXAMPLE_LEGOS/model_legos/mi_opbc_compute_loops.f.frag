@@ -15,16 +15,12 @@
     endif
     call free(pNBC_Method) ! don't forget to release the memory...
 
-    ! get boxlength
-    pboxlength = kim_api_get_data_f(pkim,"boxlength",ier)
+    ! get boxlength & numberContributingAtoms
+    call kim_api_get_data_multiple_f(pkim, ier,     &
+         "boxlength",               pboxlength,  1, &
+         "numberContributingAtoms", pnumContrib, 1)
     if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-       return
-    endif
-    ! get numberContributingAtoms
-    pnumContrib = kim_api_get_data_f(pkim,"numberContributingAtoms",ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
+       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_multiple_f", ier)
        return
     endif
 
