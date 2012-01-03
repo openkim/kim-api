@@ -81,59 +81,18 @@ int main(int argc, char* argv[])
    }
 
    /* Unpack data from KIM object */
-   numberOfAtoms = (int*) KIM_API_get_data(pkim, "numberOfAtoms", &status);
+   KIM_API_get_data_multiple(pkim, &status, 8*3,
+                             "numberOfAtoms",     &numberOfAtoms,   1,
+                             "numberAtomTypes",   &numberAtomTypes, 1,
+                             "atomTypes",         &atomTypes,       1,
+                             "coordinates",       &coords,          1,
+                             "cutoff",            &cutoff,          1,
+                             "energy",            &energy,          1,
+                             "virialGlobal",      &virialGlobal,    1,
+                             "forces",            &forces,          1);
    if (KIM_STATUS_OK > status)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", status);
-      exit(1);
-   }
-   
-   numberAtomTypes = (int*) KIM_API_get_data(pkim, "numberAtomTypes", &status);
-   if (KIM_STATUS_OK > status)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", status);
-      exit(1);
-   }
-   
-   atomTypes = (int*) KIM_API_get_data(pkim, "atomTypes", &status);
-   if (KIM_STATUS_OK > status)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", status);
-      exit(1);
-   }
-   
-   coords = (double*) KIM_API_get_data(pkim, "coordinates", &status);
-   if (KIM_STATUS_OK > status)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", status);
-      exit(1);
-   }
-   
-   cutoff = (double*) KIM_API_get_data(pkim, "cutoff", &status);
-   if (KIM_STATUS_OK > status)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", status);
-      exit(1);
-   }
-   
-   energy = (double*) KIM_API_get_data(pkim, "energy", &status);
-   if (KIM_STATUS_OK > status)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", status);
-      exit(1);
-   }
-   
-   virialGlobal = (double*) KIM_API_get_data(pkim, "virialGlobal", &status);
-   if (KIM_STATUS_OK > status)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", status);
-      exit(1);
-   }
-   
-   forces = (double*) KIM_API_get_data(pkim, "forces", &status);
-   if (KIM_STATUS_OK > status)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", status);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data_multiple", status);
       exit(1);
    }
 

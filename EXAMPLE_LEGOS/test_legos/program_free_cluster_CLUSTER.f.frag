@@ -81,56 +81,23 @@ program TEST_NAME_STR
 
   ! Unpack data from KIM object
   !
-  pnAtoms = kim_api_get_data_f(pkim, "numberOfAtoms", ier);
+  call kim_api_get_data_multiple_f(pkim, ier, &
+       "numberOfAtoms", pnAtoms, 1, &
+       "numberAtomTypes", pnAtomTypes, 1, &
+       "atomTypes",       patomTypesdum, 1, &
+       "coordinates",     pcoor,         1, &
+       "cutoff",          pcutoff,       1, &
+       "energy",          penergy,       1, &
+       "virialGlobal",    pvirialglob,   1, &
+       "forces",          pforces,       1)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_multiple_f", ier)
      stop
   endif
 
-  pnAtomTypes = kim_api_get_data_f(pkim, "numberAtomTypes", ier)
-  if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-     stop
-  endif
-
-  patomTypesdum = kim_api_get_data_f(pkim, "atomTypes", ier)
-  if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-     stop
-  endif
   call toIntegerArrayWithDescriptor1d(atomTypesdum, atomTypes, N)
-
-  pcoor = kim_api_get_data_f(pkim, "coordinates", ier)
-  if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-     stop
-  endif
   call toRealArrayWithDescriptor2d(coordum, coords, DIM, N)
-
-  pcutoff = kim_api_get_data_f(pkim, "cutoff", ier)
-  if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-     stop
-  endif
-
-  penergy = kim_api_get_data_f(pkim, "energy", ier)
-  if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-     stop
-  endif
-
-  pvirialglob = kim_api_get_data_f(pkim, "virialGlobal", ier)
-  if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-     stop
-  endif
   call toRealArrayWithDescriptor1d(virialglobdum, virial_global, 6)
-
-  pforces = kim_api_get_data_f(pkim, "forces", ier)
-  if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-     stop
-  endif
   call toRealArrayWithDescriptor2d(forcesdum, forces, DIM, N)
 
   ! Set values

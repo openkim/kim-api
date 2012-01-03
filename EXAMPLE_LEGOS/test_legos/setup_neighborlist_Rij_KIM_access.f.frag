@@ -21,16 +21,11 @@ subroutine setup_neighborlist_Rij_KIM_access(pkim, NLRvecLocs)
 
   ! store pointers to neighbor list object and access function
   !
-  
-  ier = kim_api_set_data_f(pkim, "neighObject", SizeOne, loc(NLRvecLocs))
+  call kim_api_set_data_multiple_f(pkim, ier, &
+       "neighObject",    SizeOne, loc(NLRvecLocs),    1, &
+       "get_full_neigh", SizeOne, loc(get_neigh_Rij), 1)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data_f", ier)
-     stop
-  endif
-
-  ier = kim_api_set_data_f(pkim, "get_full_neigh", SizeOne, loc(get_neigh_Rij))
-  if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data_f", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data_multiple_f", ier)
      stop
   endif
 

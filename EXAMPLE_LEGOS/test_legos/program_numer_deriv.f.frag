@@ -41,7 +41,7 @@ program TEST_NAME_STR
   integer, parameter :: max_specs      = 10     ! most species a Model can support
   real*8,  parameter :: eps_prec       = epsilon(1.d0)
   
-  integer,          parameter :: &
+  integer, parameter :: &
        N = 4*(nCellsPerSide)**3 + 6*(nCellsPerSide)**2 + 3*(nCellsPerSide) + 1
   integer(kind=kim_intptr), parameter :: SizeOne = 1
   real*8, allocatable :: forces_num(:,:)
@@ -207,63 +207,23 @@ program TEST_NAME_STR
 
   ! Unpack data from KIM object
   !
-  pnAtoms = kim_api_get_data_f(pkim, "numberOfAtoms", ier);
+  call kim_api_get_data_multiple_f(pkim, ier, &
+       "numberOfAtoms",           pnAtoms,       1,                     &
+       "numberContributingAtoms", pnumContrib,   1,                     &
+       "numberAtomTypes",         pnAtomTypes,   1,                     &
+       "atomTypes",               patomTypesdum, 1,                     &
+       "coordinates",             pcoor,         1,                     &
+       "cutoff",                  pcutoff,       1,                     &
+       "boxlength",               pboxlength,    merge(1,0,(nbc.le.1)), &
+       "energy",                  penergy,       1,                     &
+       "forces",                  pforces,       1)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_multiple_f", ier)
      stop
   endif
 
-  pnumContrib = kim_api_get_data_f(pkim, "numberContributingAtoms", ier);
-  if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-     stop
-  endif
-
-  pnAtomTypes = kim_api_get_data_f(pkim, "numberAtomTypes", ier)
-  if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-     stop
-  endif
-
-  patomTypesdum = kim_api_get_data_f(pkim, "atomTypes", ier)
-  if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-     stop
-  endif
   call toIntegerArrayWithDescriptor1d(atomTypesdum, atomTypes, N)
-
-  pcoor = kim_api_get_data_f(pkim, "coordinates", ier)
-  if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-     stop
-  endif
   call toRealArrayWithDescriptor2d(coordum, coords, DIM, N)
-
-  pcutoff = kim_api_get_data_f(pkim, "cutoff", ier)
-  if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-     stop
-  endif
-
-  if (nbc.le.1) then
-     pboxlength = kim_api_get_data_f(pkim, "boxlength", ier)
-     if (ier.lt.KIM_STATUS_OK) then
-        idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-        stop
-     endif
-  endif
-
-  penergy = kim_api_get_data_f(pkim, "energy", ier)
-  if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-     stop
-  endif
-
-  pforces = kim_api_get_data_f(pkim, "forces", ier)
-  if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-     stop
-  endif
   call toRealArrayWithDescriptor2d(forcesdum, forces, DIM, N)
 
   ! Set values

@@ -40,25 +40,16 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
 
   ! Unpack data from KIM object
   !
-  penergy = kim_api_get_data_f(pkim, "energy", ier)
+  call kim_api_get_data_multiple_f(pkim, ier, &
+       "energy",      penergy, 1, &
+       "coordinates", pcoor,   1, &
+       "cutoff",      pcutoff, 1)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_multiple_f", ier)
      stop
   endif
 
-  pcoor = kim_api_get_data_f(pkim, "coordinates", ier)
-  if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-     stop
-  endif
   call toRealArrayWithDescriptor2d(coordum, coords, DIM, N)
-
-  pcutoff = kim_api_get_data_f(pkim, "cutoff", ier)
-  if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-     stop
-  endif
-
 
   ! Initialize for minimization
   !
