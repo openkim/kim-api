@@ -102,20 +102,20 @@ test_Al_free_cluster: $(COMMON_FRAGMENTS)                      \
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "get_half_neigh          method       none       none                    []"                     >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "get_half_neigh          method       none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_neighborlist                                                                 >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "numberContributingAtoms integer      none       none                    []"                     >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "numberContributingAtoms integer      none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "boxlength               real*8       length     standard                [3]"                    >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "boxlength               real*8       length              [3]"                                   >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "forces                  real*8       force      standard                [numberOfAtoms,3]"      >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "forces                  real*8       force               [numberOfAtoms,3]"                     >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "virialGlobal            real*8       energy     standard                [6]"                    >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "virialGlobal            real*8       energy              [6]"                                   >> $(KIM_TESTS_DIR)$@/$@.kim
         # make .F90 file in the directory
 	$(F_CAT) program_free_cluster.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Al/g' \
@@ -163,17 +163,17 @@ test_Al_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "get_half_neigh          method       none       none                    []"                     >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "get_half_neigh          method       none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_neighborlist                                                                 >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "numberContributingAtoms integer      none       none                    []"                     >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "boxlength               real*8       length     standard                [3]"                    >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "numberContributingAtoms integer      none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "boxlength               real*8       length              [3]"                                   >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "reinit                  method       none       none                    []"                     >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "reinit                  method       none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
         # make .F90 file in the directory
 	$(F_CAT) program_FCCcohesive_MI_OPBC.f.frag  | $(SED_CMD) \
                                                 | sed -e 's/SPECIES_NAME_STR/Al/g' \
@@ -226,7 +226,7 @@ test_ArNe_B2cohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                          \
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "reinit                  method       none       none                    []"                     >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "reinit                  method       none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
         # make .F90 file in the directory
 	$(F_CAT) program_B2cohesive_NEIGH_RVEC.f.frag  | $(SED_CMD) \
          | sed -e 's/SPECIES1_NAME_STR/Ar/g' \
@@ -276,7 +276,7 @@ test_Ar_FCCcohesiveCutoff_NEIGH_RVEC: $(COMMON_FRAGMENTS)                       
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "reinit                  method       none       none                    []"                     >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "reinit                  method       none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
         # make .F90 file in the directory
 	$(F_CAT) program_FCCcohesiveCutoff_NEIGH_RVEC.f.frag  | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
@@ -324,17 +324,17 @@ test_Ar_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "get_half_neigh          method       none       none                    []"                     >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "get_half_neigh          method       none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_neighborlist                                                                 >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "numberContributingAtoms integer      none       none                    []"                     >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "numberContributingAtoms integer      none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "boxlength               real*8       length     standard                [3]"                    >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "boxlength               real*8       length              [3]"                                   >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "reinit                  method       none       none                    []"                     >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "reinit                  method       none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
         # make .F90 file in the directory
 	$(F_CAT) program_FCCcohesive_MI_OPBC.f.frag  | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
@@ -384,15 +384,15 @@ test_Ar_FCCcohesive_NEIGH_PURE: $(COMMON_FRAGMENTS)                          \
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "get_half_neigh          method       none       none                    []"                     >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "get_half_neigh          method       none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_neighborlist                                                                 >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "numberContributingAtoms integer      none       none                    []"                     >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "numberContributingAtoms integer      none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "reinit                  method       none       none                    []"                     >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "reinit                  method       none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
         # make .F90 file in the directory
 	$(F_CAT) program_FCCcohesive_NEIGH_PURE.f.frag  | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
@@ -443,7 +443,7 @@ test_Ar_FCCcohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                           \
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "reinit                  method       none       none                    []"                     >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "reinit                  method       none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
         # make .F90 file in the directory
 	$(F_CAT) program_FCCcohesive_NEIGH_RVEC.f.frag  | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
@@ -485,9 +485,9 @@ test_Ar_free_cluster_CLUSTER_C: $(COMMON_FRAGMENTS)                 \
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "forces                  real*8       force      standard                [numberOfAtoms,3]"      >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "forces                  real*8       force               [numberOfAtoms,3]"                     >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "virialGlobal            real*8       energy     standard                [6]"                    >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "virialGlobal            real*8       energy              [6]"                                   >> $(KIM_TESTS_DIR)$@/$@.kim
         # make .F90 file in the directory
 	$(C_CAT) program_free_cluster_CLUSTER.c.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
@@ -519,9 +519,9 @@ test_Ar_free_cluster_CLUSTER_F90: $(COMMON_FRAGMENTS)                 \
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "forces                  real*8       force      standard                [numberOfAtoms,3]"      >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "forces                  real*8       force               [numberOfAtoms,3]"                     >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "virialGlobal            real*8       energy     standard                [6]"                    >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "virialGlobal            real*8       energy              [6]"                                   >> $(KIM_TESTS_DIR)$@/$@.kim
         # make .F90 file in the directory
 	$(F_CAT) program_free_cluster_CLUSTER.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
@@ -564,20 +564,20 @@ test_Ar_free_cluster: $(COMMON_FRAGMENTS)                      \
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "get_half_neigh          method       none       none                    []"                     >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "get_half_neigh          method       none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_neighborlist                                                                 >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "numberContributingAtoms integer      none       none                    []"                     >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "numberContributingAtoms integer      none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "boxlength               real*8       length     standard                [3]"                    >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "boxlength               real*8       length              [3]"                                   >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "forces                  real*8       force      standard                [numberOfAtoms,3]"      >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "forces                  real*8       force               [numberOfAtoms,3]"                     >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "virialGlobal            real*8       energy     standard                [6]"                    >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "virialGlobal            real*8       energy              [6]"                                   >> $(KIM_TESTS_DIR)$@/$@.kim
         # make .F90 file in the directory
 	$(F_CAT) program_free_cluster.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
@@ -630,20 +630,20 @@ test_Ne_free_cluster: $(COMMON_FRAGMENTS)                      \
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "get_half_neigh          method       none       none                    []"                     >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "get_half_neigh          method       none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_neighborlist                                                                 >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "numberContributingAtoms integer      none       none                    []"                     >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "numberContributingAtoms integer      none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "boxlength               real*8       length     standard                [3]"                    >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "boxlength               real*8       length              [3]"                                   >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "forces                  real*8       force      standard                [numberOfAtoms,3]"      >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "forces                  real*8       force               [numberOfAtoms,3]"                     >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "virialGlobal            real*8       energy     standard                [6]"                    >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "virialGlobal            real*8       energy              [6]"                                   >> $(KIM_TESTS_DIR)$@/$@.kim
         # make .F90 file in the directory
 	$(F_CAT) program_free_cluster.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ne/g' \

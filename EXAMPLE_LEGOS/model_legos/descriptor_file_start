@@ -14,8 +14,12 @@
 
 
 MODEL_NAME := MODEL_NAME_STR
-SystemOfUnitsFix := fixed
-
+Unit_Handling    := fixed
+Unit_length      := A
+Unit_energy      := eV
+Unit_charge      := e
+Unit_temperature := K
+Unit_time        := fs
 
 #######################################################################################################
 SUPPORTED_ATOM/PARTICLES_TYPES:

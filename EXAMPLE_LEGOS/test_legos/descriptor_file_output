@@ -1,11 +1,11 @@
 #######################################################################################################
 MODEL_OUTPUT:
-# Name                  Type         Unit       SystemU/Scale           Shape              Requirements
+# Name                  Type         Unit                Shape              Requirements
 
-destroy                 method       none       none                    []
+destroy                 method       none                []
 
-compute                 method       none       none                    []
+compute                 method       none                []
 
-cutoff                  real*8       length     standard                []
+cutoff                  real*8       length              []
 
-energy                  real*8       energy     standard                []
+energy                  real*8       energy              []

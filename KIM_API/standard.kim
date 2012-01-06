@@ -763,7 +763,7 @@ MODEL_INPUT:
 # Every data line in the input section of a KIM descriptor file of a Test and 
 # Model consists of six fields:
 #
-# Name      Type       Unit       SystemU/Scale       Shape       Requirements
+# Name                  Type         Unit                Shape
 #
 #
 # Each of these lines must exactly match with one of the standard definitions
@@ -793,9 +793,9 @@ MODEL_INPUT:
 # ZeroBasedLists/OneBasedLists # convention setting.  This argument is required
 # for all Models and Tests
 #
-# Name                  Type         Unit        Shape
+# Name                  Type         Unit                Shape
 #
-numberOfAtoms           integer      none         []
+numberOfAtoms           integer      none                []
 
 ################################################################################
 #
@@ -803,9 +803,9 @@ numberOfAtoms           integer      none         []
 #                         (required for all half neighbor lists). 
 #
 #
-# Name                  Type         Unit       Shape
+# Name                  Type         Unit               Shape
 #
-numberContributingAtoms integer      none        []
+numberContributingAtoms integer      none               []
 
 ################################################################################
 #
@@ -815,9 +815,9 @@ numberContributingAtoms integer      none        []
 # This argument is required for any Model/Test that specifies one or more
 # Atom/particle types in the SUPPORTED_ATOM/PARTICLE_TYPES section
 #
-# Name                  Type         Unit      Shape
+# Name                  Type         Unit              Shape
 #
-numberAtomTypes         integer      none       []
+numberAtomTypes         integer      none              []
 
 ################################################################################
 #
@@ -829,9 +829,9 @@ numberAtomTypes         integer      none       []
 # that specifies one or more Atom/particle types in the
 # SUPPORTED_ATOM/PARTICLE_TYPES section.
 #
-# Name                  Type         Unit       Shape
+# Name                  Type         Unit               Shape
 #
-atomTypes               integer      none       [numberOfAtoms]
+atomTypes               integer      none               [numberOfAtoms]
 
 ################################################################################
 #
@@ -841,9 +841,9 @@ atomTypes               integer      none       [numberOfAtoms]
 #
 # This argument is required for all Models and Tests.
 #
-# Name                  Type         Unit       Shape
+# Name                  Type         Unit               Shape
 #
-coordinates             real*8       length     [numberOfAtoms,3]
+coordinates             real*8       length             [numberOfAtoms,3]
 
 ################################################################################
 #
@@ -855,9 +855,9 @@ coordinates             real*8       length     [numberOfAtoms,3]
 # Models to ensure that the Model is compatible with the widest possible set of
 # Tests.
 #
-# Name                  Type         Unit       Shape
+# Name                  Type         Unit               Shape
 #
-get_full_neigh          method       none       []
+get_full_neigh          method       none               []
 
 ################################################################################
 #
@@ -868,9 +868,9 @@ get_full_neigh          method       none       []
 # MI-OPBC-H and NEIGH-PURE-H.  It should be optional for all Models to ensure
 # that the Model is compatible with the widest possible set of Tests.
 #
-# Name                  Type         Unit       Shape
+# Name                  Type         Unit               Shape
 #
-get_half_neigh          method       none       []
+get_half_neigh          method       none               []
 
 ################################################################################
 #
@@ -880,8 +880,8 @@ get_half_neigh          method       none       []
 #                  does not need know how exactly it is computed. In low level loop
 #                  for each pair of atom (i j) the model organize call to that routine.
 #
-# Name                  Type         Unit       Shape
-process_d1Edr           method       none       []
+# Name                  Type         Unit               Shape
+process_d1Edr           method       none               []
 
 ################################################################################
 #
@@ -891,8 +891,8 @@ process_d1Edr           method       none       []
 #                  does not need know how exactly it is computed. In low level loop
 #                  for each set of indexes the model organize call to that routine.
 #
-# Name                  Type         Unit       Shape
-process_d2Edr           method       none       []
+# Name                  Type         Unit               Shape
+process_d2Edr           method       none               []
 
 
 ################################################################################
@@ -903,9 +903,9 @@ process_d2Edr           method       none       []
 # This argument is required for Models/Tests that support the following NBCs:
 # MI-OPBC-H, MI-OPBC-F, NEIGH-PURE-H, NEIGH-PURE-F, and NEIGH-RVEC-F.
 #
-# Name                  Type         Unit       Shape
+# Name                  Type         Unit               Shape
 #
-neighObject             pointer      none       []
+neighObject             pointer      none               []
 
 ################################################################################
 #
@@ -915,9 +915,9 @@ neighObject             pointer      none       []
 # This argument is required for Models/Tests that support the following NBCs: 
 # MI-OPBC-H and MI-OPBC-F.
 #
-# Name                  Type         Unit       Shape
+# Name                  Type         Unit               Shape
 #
-boxlength               real*8       length     [3]
+boxlength               real*8       length             [3]
 
 
 ################################################################################
@@ -943,9 +943,9 @@ MODEL_OUTPUT:
 #
 # This argument is required for all Models and Tests
 #
-# Name                  Type         Unit       Shape
+# Name                  Type         Unit               Shape
 #
-compute                 method       none       []
+compute                 method       none               []
 
 ################################################################################
 #
@@ -957,9 +957,9 @@ compute                 method       none       []
 # compatibility with Tests (who should only include the argument if they use
 # it).
 #
-# Name                  Type         Unit       Shape
+# Name                  Type         Unit               Shape
 #
-reinit                  method       none       []
+reinit                  method       none               []
 
 ################################################################################
 #
@@ -973,9 +973,9 @@ reinit                  method       none       []
 # least) to ensure maximum compatibility with Tests (who should only include
 # the argument if they use it).
 #
-# Name                  Type         Unit       Shape
+# Name                  Type         Unit               Shape
 #
-destroy                 method       none       []
+destroy                 method       none               []
 
 ################################################################################
 #
@@ -988,9 +988,9 @@ destroy                 method       none       []
 # be changed.  Once the PARAM_FREE_cutoff parameter has been changed and the
 # Model's reinit function called, the Model must update the value of `cutoff'.
 #
-# Name                  Type         Unit       Shape
+# Name                  Type         Unit               Shape
 #
-cutoff                  real*8       length     []
+cutoff                  real*8       length             []
 
 ################################################################################
 #
@@ -1000,9 +1000,9 @@ cutoff                  real*8       length     []
 # This argument should, ideally, be optional to ensure maximum Model/Test
 # compatibility.
 #
-# Name                  Type         Unit       Shape
+# Name                  Type         Unit               Shape
 #
-energy                  real*8       energy     []
+energy                  real*8       energy             []
 
 ################################################################################
 #
@@ -1012,9 +1012,9 @@ energy                  real*8       energy     []
 #
 # This argument should be optional to ensure maximum Model/Test compatibility.
 #
-# Name                  Type         Unit       Shape
+# Name                  Type         Unit               Shape
 #
-forces                  real*8       force      [numberOfAtoms,3]
+forces                  real*8       force              [numberOfAtoms,3]
 
 ################################################################################
 #
@@ -1025,9 +1025,9 @@ forces                  real*8       force      [numberOfAtoms,3]
 # This argument should, ideally, be optional to ensure maximum Model/Test
 # compatibility.
 #
-# Name                  Type         Unit       Shape
+# Name                  Type         Unit               Shape
 #
-energyPerAtom           real*8       energy     [numberOfAtoms]
+energyPerAtom           real*8       energy             [numberOfAtoms]
 
 ################################################################################
 #
@@ -1040,9 +1040,9 @@ energyPerAtom           real*8       energy     [numberOfAtoms]
 #
 #
 #
-# Name                  Type         Unit       Shape
+# Name                  Type         Unit               Shape
 #
-virialGlobal            real*8       energy     [6]
+virialGlobal            real*8       energy             [6]
 
 ################################################################################
 #
@@ -1055,9 +1055,9 @@ virialGlobal            real*8       energy     [6]
 #
 #
 #
-# Name                  Type         Unit       Shape
+# Name                  Type         Unit               Shape
 #
-virialPerAtom            real*8      energy     [numberOfAtoms,6]
+virialPerAtom            real*8      energy             [numberOfAtoms,6]
 
 ################################################################################
 #
@@ -1065,9 +1065,9 @@ virialPerAtom            real*8      energy     [numberOfAtoms,6]
 #
 # This argument should, ideally, be optional to ensure maximum Model/Test
 # compatibility.
-# Name                  Type         Unit       Shape
+# Name                  Type         Unit               Shape
 #
-stiffness              real*8        pressure   [N,3,N,3]
+stiffness              real*8        pressure           [N,3,N,3]
 
 ################################################################################
 #
@@ -1112,11 +1112,11 @@ MODEL_PARAMETERS:
 #
 # Examples
 #
-# Name                  Type         Unit       Shape
+# Name                  Type         Unit               Shape
 #
-# PARAM_FREE_Sigma      real*8       length     []
-# PARAM_FREE_Epsilon    real*8       energy     []
-# PARAM_FIXED_LJshift   real*8       energy     []
+# PARAM_FREE_Sigma      real*8       length             []
+# PARAM_FREE_Epsilon    real*8       energy             []
+# PARAM_FIXED_LJshift   real*8       energy             []
 #
 ################################################################################
 
@@ -1130,8 +1130,8 @@ MODEL_PARAMETERS:
 # Note: Currently this is the only standard parameter defined by the KIM API.
 #
 #
-# Name                  Type         Unit       Shape
+# Name                  Type         Unit               Shape
 #
-PARAM_FREE_cutoff       real*8       length     []
+PARAM_FREE_cutoff       real*8       length             []
 
 # END of standard.kim file

@@ -14,7 +14,12 @@
 
 
 MODEL_NAME := model_Ar_P_MLJ_F90
-SystemOfUnitsFix := fixed
+Unit_Handling    := fixed
+Unit_length      := A
+Unit_energy      := eV
+Unit_charge      := e
+Unit_temperature := K
+Unit_time        := fs
 
 
 #######################################################################################################
@@ -49,50 +54,50 @@ CLUSTER                 dummy
 
 #######################################################################################################
 MODEL_INPUT:
-# Name                  Type         Unit       SystemU/Scale           Shape              Requirements
+# Name                  Type         Unit                Shape              Requirements
 
-numberOfAtoms           integer      none       none                    []
+numberOfAtoms           integer      none                []
 
-numberContributingAtoms integer      none       none                    []                 optional
+numberContributingAtoms integer      none                []                 optional
 
-numberAtomTypes         integer      none       none                    []
+numberAtomTypes         integer      none                []
 
-atomTypes               integer      none       none                    [numberOfAtoms]
+atomTypes               integer      none                [numberOfAtoms]
 
-coordinates             real*8       length     standard                [numberOfAtoms,3]
+coordinates             real*8       length              [numberOfAtoms,3]
 
-boxlength               real*8       length     standard                [3]                optional
+boxlength               real*8       length              [3]                optional
 
-get_half_neigh          method       none       none                    []                 optional     # Here so it can work with more Tests
+get_half_neigh          method       none                []                 optional     # Here so it can work with more Tests
 
-get_full_neigh          method       none       none                    []                 optional     # Here so it can work with more Tests
+get_full_neigh          method       none                []                 optional     # Here so it can work with more Tests
 
-neighObject             pointer      none       none                    []
+neighObject             pointer      none                []
 
 
 #######################################################################################################
 MODEL_OUTPUT:
-# Name                  Type         Unit       SystemU/Scale           Shape              Requirements
+# Name                  Type         Unit                Shape              Requirements
 
-destroy                 method       none       none                    []                 optional
+destroy                 method       none                []                 optional
 
-compute                 method       none       none                    []
+compute                 method       none                []
 
-reinit                  method       none       none                    []                 optional
+reinit                  method       none                []                 optional
 
-cutoff                  real*8       length     standard                []
+cutoff                  real*8       length              []
 
-energy                  real*8       energy     standard                []                 optional
+energy                  real*8       energy              []                 optional
 
-forces                  real*8       force      standard                [numberOfAtoms,3]  optional
+forces                  real*8       force               [numberOfAtoms,3]  optional
 
-energyPerAtom           real*8       energy     standard                [numberOfAtoms]    optional
+energyPerAtom           real*8       energy              [numberOfAtoms]    optional
 
-virialGlobal            real*8       energy     standard                [6]                optional
+virialGlobal            real*8       energy              [6]                optional
 
 
 #######################################################################################################
 MODEL_PARAMETERS:
-# Name                  Type         Unit       SystemU/Scale           Shape              Requirements
+# Name                  Type         Unit                Shape              Requirements
 
 # --- No published parameters ---

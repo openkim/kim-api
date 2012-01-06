@@ -1,19 +1,19 @@
 #######################################################################################################
 MODEL_OUTPUT:
-# Name                  Type         Unit       SystemU/Scale           Shape              Requirements
+# Name                  Type         Unit                Shape              Requirements
 
-destroy                 method       none       none                    []
+destroy                 method       none                []
 
-compute                 method       none       none                    []
+compute                 method       none                []
 
-reinit                  method       none       none                    []                 optional
+reinit                  method       none                []                 optional
 
-cutoff                  real*8       length     standard                []
+cutoff                  real*8       length              []
 
-energy                  real*8       energy     standard                []                 optional
+energy                  real*8       energy              []                 optional
 
-forces                  real*8       force      standard                [numberOfAtoms,3]  optional
+forces                  real*8       force               [numberOfAtoms,3]  optional
 
-energyPerAtom           real*8       energy     standard                [numberOfAtoms]    optional
+energyPerAtom           real*8       energy              [numberOfAtoms]    optional
 
-virialGlobal            real*8       energy     standard                [6]                optional
+virialGlobal            real*8       energy              [6]                optional
