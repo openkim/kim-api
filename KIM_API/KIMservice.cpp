@@ -38,9 +38,7 @@ KIMBaseElementFlag:: KIMBaseElementFlag(){
     init();
 }
 void KIMBaseElementUnit::init(){
-    strncpy(units, "standard",KEY_CHAR_LENGTH);
     strncpy(dim,"none",KEY_CHAR_LENGTH);
-    scale=1.0;
 }
 int Atom_Map::comparator(const void* a1, const void* a2){
     Atom_Map *am1 =(Atom_Map *)a1;
@@ -90,14 +88,12 @@ bool KIM_IOline:: getFields(char *inString){
 
             if(strcmp(type,"dummy")==0) {
                 strncpy(dim,"none",5);
-                strncpy(units,"none",5);
                 strncpy(shape,"[]",3);
                 return true;
             }
             
             if(strcmp(type,"spec")==0) {
                 strncpy(dim,"none",5);
-                strncpy(units,"none",5);
                 tmp = strtok(NULL," \t");if(tmp == NULL) return false;
                 strcat(shape,"[");
                 strcat(shape,tmp);
@@ -115,9 +111,6 @@ bool KIM_IOline:: getFields(char *inString){
             strncpy(dim,tmp,strlen(tmp)+1);
 
             tmp = strtok(NULL," \t");if(tmp == NULL) return false;
-            strncpy(units,tmp,strlen(tmp)+1);
-
-            tmp = strtok(NULL," \t");if(tmp == NULL) return false;
             strncpy(shape,tmp,strlen(tmp)+1);
 
             tmp = strtok(NULL," \t");if(tmp == NULL) return true;
@@ -125,16 +118,7 @@ bool KIM_IOline:: getFields(char *inString){
 
 	    return true;
 }
-double KIM_IOline:: get_unitscale(){
 
-            char unitstmp[strlen(this->units)+1];
-            char * tmp;
-            tmp = &unitstmp[0];
-            strncpy(unitstmp,units,strlen(units)+1);
-            double dd=strtod(tmp,&tmp);
-            if (dd <= 0.0) dd=1.0; // here should be expanded to handle standard units
-            return dd;
- }
 int KIM_IOline::get_rank(){
             char *tmp;
             char shapetmp[strlen(shape)+1];
@@ -254,7 +238,6 @@ void KIM_IOline::strip(){
             strip(this->name);
             strip(this->type);
             strip(this->dim);
-            strip(this->units);
             strip(this->shape);
             strip(this->requirements);
  }
@@ -262,7 +245,6 @@ void KIM_IOline:: init2empty(){
             name[0]='\0';
             type[0]='\0';
             dim[0]='\0';
-            units[0]='\0';
             shape[0]='\0';
             requirements[0]='\0';
             comments[0]='\0';
@@ -282,7 +264,7 @@ bool KIM_IOline:: isitoutput(char*str){
 
 ostream &operator<<(ostream &stream, KIM_IOline a){
 	stream<<a.name<<" "<<a.type<<" "<<a.dim<<" ";
-        stream<<a.units<<" "<<a.shape<<" "<<a.requirements;
+        stream<<a.shape<<" "<<a.requirements;
         //stream<<" input: "<<a.input<<" output: "<<a.output<<endl;
         stream << endl;
 	return stream;
@@ -333,6 +315,9 @@ void IOline::strip(char *nm){
 }
 IOline::IOline(){
     goodformat=false;
+    for(int i=0; i<121;i++) comment[i]='\0';
+    for(int i=0; i<101;i++) name[i]='\0';
+    for(int i=0; i<101;i++) value[i]='\0';
 }
 bool IOline:: getFields(const char *inputString){
 		int i;
@@ -343,12 +328,14 @@ bool IOline:: getFields(const char *inputString){
 		} 
 		if(i>=(int)strlen(inputString)){return false;};
 		int j=0;
+ 
 		for(i;i<=(int)strlen(inputString); i++){
 			if(*(inputString+i)=='#'){value[j]='\0';i+=2;break;};
 			value[j]=*(inputString+i);
 			j++;
 			value[j]='\0';
 		}
+  
 		j=0;
 		if(i>=(int)strlen(inputString)){comment[0]='\0';strip();return true;};
 		for(i;i<=(int)strlen(inputString); i++){
@@ -356,112 +343,24 @@ bool IOline:: getFields(const char *inputString){
 			comment[j+1]='\0';
 			j++;
 		}
-		strip();return true;
-}
-  
-
-ostream &operator<<(ostream &stream, IOline a){
-	stream<<a.name<<":= "<<a.value<<" #"<<a.comment;
-	return stream;
-}
-istream &operator>>(istream &stream, IOline &a){
-	char inputline[KIM_LINE_LENGTH];
-	stream.getline(inputline,KIM_LINE_LENGTH-1);
-	if(a.getFields(inputline)){
-		a.goodformat=true;
-	}else{
-		a.goodformat=false;
-	}
-	return stream;
-}
-
-SystemOfUnit::SystemOfUnit(){
-        inlines = NULL;
-        strncpy(UnitsSystemName,"standard",9);
-        mass=      1.0;
-        distance=  1.0;
-        time=      1.0;
-        energy =   1.0;
-        velocity = 1.0;
-        force =     1.0;
-        torque =    1.0;
-        temperature=1.0;
-        pressure =  1.0;
-        dynamic_viscosity =1.0;
-        charge =    1.0;
-        dipole =    1.0;
-        electric_field =1.0;
-        density =   1.0;
-        garbage =-1.0;
-        numlines=0;
- }
- SystemOfUnit:: ~SystemOfUnit(){
-        delete [] inlines;
-        inlines=NULL;
-}
-void SystemOfUnit::init(char *infile){
-        numlines = readlines(infile,&inlines);
-        if (numlines<1) {
-            cout<<"* Error (SystemOfUnit::init): Empty file " << infile <<endl;
-            return;
-        }
-        if (numlines<14) {
-           cout<<"* Error (SystemOfUnit::init): Units file " << infile << " is incoplete"<<endl;
-            return;
-        }
-        for (int i=0; i<numlines; i++){
-            if (isitunit(& inlines[i].name[0]) ) {
-                char  tmp[KEY_CHAR_LENGTH];
-                strncpy(tmp,& inlines[i].value[0],KEY_CHAR_LENGTH);
-                char *temp = &tmp[0];
-                double dd = strtod(temp,&temp);  
-                (*this)[& inlines[i].name[0] ] = dd;
-            }
  
+		strip();
 
-            if (strcmp(inlines[i].name, "UnitsSystemName")==0) {
-                strncpy(UnitsSystemName,inlines[i].value,KEY_CHAR_LENGTH);
-            }
-
-        }
-
+                return true;
 }
-void SystemOfUnit::free(){
-     if (this->inlines !=NULL) delete [] this->inlines;
-     this->inlines = NULL;
-}
-    
-float& SystemOfUnit::operator[](char * unit){
-        if(strcmp(unit,"mass")==0) return mass;
-        if(strcmp(unit,"distance")==0 || strcmp(unit,"length")==0) return distance;
-        if(strcmp(unit,"time")==0) return time;
-        if(strcmp(unit,"energy")==0) return energy;
-        if(strcmp(unit,"velocity")==0) return velocity;
-        if(strcmp(unit,"force")==0) return force;
-        if(strcmp(unit,"torque")==0) return torque;
-        if(strcmp(unit,"temperature")==0) return temperature;
-        if(strcmp(unit,"pressure")==0) return pressure;
-        if(strcmp(unit,"dynamic_viscosity")==0) return dynamic_viscosity;
-        if(strcmp(unit,"charge")==0) return charge;
-        if(strcmp(unit,"dipole")==0) return dipole;
-        if(strcmp(unit,"electric_field")==0) return electric_field;
-        if(strcmp(unit,"density")==0) return density;
-        garbage = 0.0;
-        return garbage;
-}
-int SystemOfUnit:: readlines(char * infile, IOline **inlines){
-        int counter=0;
+int  IOline::readlines(char * infile, IOline **inlines){
+            int counter=0;
         IOline inlne;
         *inlines=NULL;
         ifstream myfile;
          myfile.open(infile);
  //cout<<"SystemOfUnit:  file:"<<infile<<":"<<endl;
          if(!myfile){
-             cout<<"* Error (SystemOfUnit::readlines): can not open file:"<<infile<<":"<<endl;
+             cout<<"* Error (IOline::readlines): can not open file:"<<infile<<":"<<endl;
              KIM_API_model::fatal_error_print();
              exit(327);
          }
-         
+
           while(!myfile.eof()){
                 myfile>> inlne;
                 if(inlne.goodformat) counter++;
@@ -480,26 +379,23 @@ int SystemOfUnit:: readlines(char * infile, IOline **inlines){
                 myfile >> inlne;
 
                 if(inlne.goodformat) {
-
                     (*inlines)[counter]=inlne;
-
                     counter++;
                 }
         }
+
         myfile.close();
         return counter;
 }
-
-int SystemOfUnit::readlines_str(char* instrn, IOline** inlines){
+int IOline::readlines_str(char* instrn, IOline** inlines){
     int counter=0;
         IOline inlne;
         *inlines=NULL;
         string in_instrn=instrn;
         stringstream myfile (in_instrn,stringstream::in|stringstream::out) ;
         stringstream myfile1 (in_instrn,stringstream::in|stringstream::out) ;
- //cout<<"SystemOfUnit:  file:"<<infile<<":"<<endl;
          if(!myfile){
-             cout<<"* Error (SystemOfUnit::readlines_str): can not parse units file."<<endl
+             cout<<"* Error (IOline::readlines_str): can not parse instrn."<<endl
                  <<"        Offending line is: `" << in_instrn << "'" << endl;
              KIM_API_model::fatal_error_print();
              exit(327);
@@ -532,24 +428,21 @@ int SystemOfUnit::readlines_str(char* instrn, IOline** inlines){
         }
         return counter;
 }
-bool SystemOfUnit::isitunit(char * unit){
-        if(strcmp(unit,"mass")==0) return true;
-        if(strcmp(unit,"distance")==0 || strcmp(unit,"length")==0) return true;
-        if(strcmp(unit,"time")==0) return true;
-        if(strcmp(unit,"energy")==0) return true;
-        if(strcmp(unit,"velocity")==0) return true;
-        if(strcmp(unit,"force")==0) return true;
-        if(strcmp(unit,"torque")==0) return true;
-        if(strcmp(unit,"temperature")==0) return true;
-        if(strcmp(unit,"pressure")==0) return true;
-        if(strcmp(unit,"dynamic_viscosity")==0) return true;
-        if(strcmp(unit,"charge")==0) return true;
-        if(strcmp(unit,"dipole")==0) return true;
-        if(strcmp(unit,"electric_field")==0) return true;
-        if(strcmp(unit,"density")==0) return true;
-        return false;
-}
 
+ostream &operator<<(ostream &stream, IOline a){
+	stream<<a.name<<":= "<<a.value<<" #"<<a.comment;
+	return stream;
+}
+istream &operator>>(istream &stream, IOline &a){
+	char inputline[KIM_LINE_LENGTH];
+	stream.getline(inputline,KIM_LINE_LENGTH-1);
+	if(a.getFields(inputline)){
+		a.goodformat=true;
+	}else{
+		a.goodformat=false;
+	}
+	return stream;
+}
 
 KIMBaseElement:: KIMBaseElement(){
             nullefy();
@@ -651,7 +544,9 @@ bool KIMBaseElement::operator==(KIM_IOline& kimioline){
             //compare the rest
             if(strcmp(kimioline.name,this->name)==0){
                 if(strcmp(kimioline.type,this->type)==0){
-                    if(kimioline.get_rank()==(int)(this->rank)) return true;
+                    if(strcmp(kimioline.dim,this->unit->dim)==0){
+                        if(kimioline.get_rank()==(int)(this->rank)) return true;
+                    }
                 }
             }
             return false;
@@ -706,8 +601,7 @@ ostream &operator<<(ostream &stream, KIMBaseElement a){
     stream<<"flag:calculate "<<a.flag->calculate<<"// 0 -- do not calculate, 1 -- calculate"<<endl;
     stream<<"flag:freeable  "<<a.flag->freeable<<"//0--freeable , 1 is not freeable"<<endl;
     stream<<"flag:peratom  "<<a.flag->peratom<<"//0 -- peratom, 1--per something else"<<endl;
-    stream<<" unit system : "<<a.unit->units<<" phys.dimension: "<<a.unit->dim;
-    stream<<" scale "<< a.unit->scale<<endl;
+    stream<<" phys.dimension: "<<a.unit->dim<<endl;
     // printin gata itself
     
 
@@ -737,9 +631,6 @@ ostream &operator<<(ostream &stream, KIMBaseElement a){
 
 KIM_API_model:: KIM_API_model(){
        inlines=NULL;
-       UnitsSet =NULL;
-       unitsFixed=false;
-       strncpy(&currentUnits[0],"standard",9);
        //method_A init
        strcpy(NBC_method_A,"CLUSTER");
        strcpy(&arg_NBC_method_A[0][0],"coordinates");
@@ -836,7 +727,6 @@ KIM_API_model:: KIM_API_model(){
        this->stiffness_need2add=false;
 }
 KIM_API_model:: ~KIM_API_model(){
-       //delete [] UnitsSet;
       // free();
       for(int i=0;i<n_NBC_methods;i++){
          delete arg_NBC_methods[i];
@@ -871,10 +761,7 @@ bool KIM_API_model:: preinit(char * initfile,char *modelname){
  
                 el->init(name,type,0,rank,shape); //preinit element with zero size
                 strncpy(el->unit->dim,inlines[i].dim,strlen(inlines[i].dim)+1);
-                double scale=inlines[i].get_unitscale();
- 
-                strncpy(el->unit->units,inlines[i].units,strlen(inlines[i].units)+1);
-                el->unit->scale = (float)scale;
+              
                 el->flag->calculate = 1;
                 el->flag->peratom = 1;//per something else
                 if(inlines[i].isitperatom()) el->flag->peratom = 0; //per atom
@@ -899,7 +786,7 @@ bool KIM_API_model:: preinit(char * initfile,char *modelname){
         inlinesnew = NULL;
         numlines=numlines - nAtomsTypes;
         //end resize inlines
- 
+ /*
         this->supported_units_init();
         
         char coordinates_str [] = "coordinates";
@@ -914,15 +801,30 @@ bool KIM_API_model:: preinit(char * initfile,char *modelname){
            cout<<"* Error (KIM_API_model::preinit): Inconsistent units in "<< initfile << "file"<<endl;
                 return false;
         }
-        //extra input like unitFixed flag and,later may be, authors
+  */
+        //extra input
         IOline *extrainput;
-        int nextra = SystemOfUnit::readlines(initfile,&extrainput);
+        
+        int nextra = IOline::readlines(initfile,&extrainput);
         for (int i=0;i<nextra;i++){
+            /*
             if(strcmp(extrainput[i].name,"SystemOfUnitsFix")==0){
                 if(strcmp(extrainput[i].value,"fixed")==0) this->unitsFixed=true;
             }
+            */
+            if(strcmp(extrainput[i].name,"TEST_NAME")==0){
+                strcpy(this->model.name,extrainput[i].value);
+            }
+            if(strcmp(extrainput[i].name,"MODEL_NAME")==0){
+                strcpy(this->model.name,extrainput[i].value);
+            }
         }
         delete [] extrainput;
+
+        unit_h.init(initfile,&ErrorCode);
+        if(ErrorCode < KIM_STATUS_OK) {      
+            return false;
+        }
         return true;
 
  }
@@ -935,8 +837,10 @@ bool KIM_API_model::preinit_str_testname(char *instrn){
         char pointer_str [] = "pointer";
         char modelname [] ="dummy_name";
         //get Atoms Types and nAtomsTypes
-        if (! init_AtomsTypes()) return false;
-
+        if (! init_AtomsTypes()) {
+            ErrorCode=KIM_STATUS_FAIL;
+            return false;
+        }
         model.init(modelname,pointer_str,(intptr_t)(numlines-nAtomsTypes+3),1,shape);
         model.size =(intptr_t)(numlines-nAtomsTypes);
 
@@ -955,10 +859,7 @@ bool KIM_API_model::preinit_str_testname(char *instrn){
 
                 el->init(name,type,0,rank,shape); //preinit element with zero size
                 strncpy(el->unit->dim,inlines[i].dim,strlen(inlines[i].dim)+1);
-                double scale=inlines[i].get_unitscale();
-
-                strncpy(el->unit->units,inlines[i].units,strlen(inlines[i].units)+1);
-                el->unit->scale = (float)scale;
+                
                 el->flag->calculate = 1;
                 el->flag->peratom = 1;//per something else
                 if(inlines[i].isitperatom()) el->flag->peratom = 0; //per atom
@@ -984,10 +885,11 @@ bool KIM_API_model::preinit_str_testname(char *instrn){
         numlines=numlines - nAtomsTypes;
         //end resize inlines
 
-        this->supported_units_init();
-
+       // this->supported_units_init();
+     /*
         char coordinates_str [] = "coordinates";
         int ind =this->get_index(coordinates_str);
+
         char custom_str [] ="custom";
 
         if(!set_units(inlines[ind].units)) if(!set_units(custom_str)){
@@ -998,13 +900,16 @@ bool KIM_API_model::preinit_str_testname(char *instrn){
                 cout<<"* Error (KIM_API_model::preinit_str_testname): Inconsistent units in descriptor file"<<endl;
                 return false;
         }
+     */
         //extra input like unitFixed flag and,later may be, authors
         IOline *extrainput;
-        int nextra = SystemOfUnit::readlines_str(instrn,&extrainput);
+        int nextra = IOline::readlines_str(instrn,&extrainput);
         for (int i=0;i<nextra;i++){
+            /*
             if(strcmp(extrainput[i].name,"SystemOfUnitsFix")==0){
                 if(strcmp(extrainput[i].value,"fixed")==0) this->unitsFixed=true;
             }
+            */
             if(strcmp(extrainput[i].name,"TEST_NAME")==0){
                 strcpy(this->model.name,extrainput[i].value);
             }
@@ -1013,6 +918,9 @@ bool KIM_API_model::preinit_str_testname(char *instrn){
             }
         }
         delete [] extrainput;
+        unit_h.init_str(instrn,&ErrorCode);
+        if(ErrorCode < KIM_STATUS_OK) return false;
+
         return true;
 }
 
@@ -1040,20 +948,9 @@ bool KIM_API_model::preinit_str_testname(char *instrn){
             inlines=NULL;
         }
 
-       if(UnitsSet!= NULL) {
-            for (int i = 0; i< numUnitsSet;i++){
-                UnitsSet[i].free();
-
-            }
-            delete [] UnitsSet;
-            UnitsSet=NULL;
-        }
+    
         numlines=0;
-        numUnitsSet=0;
-        originalUnits[0]='\0';
-        currentUnits[0]='\0';
-        unitsFixed=false;
-
+        
         if(AtomsTypes !=NULL) {
             delete [] AtomsTypes;
             AtomsTypes=NULL;
@@ -1423,17 +1320,19 @@ bool KIM_API_model::is_it_match(KIM_API_model &test,KIM_API_model & mdl){
     bool AtomsTypesMatch=test2standardAtomsTypesMatch&&model2standardAtomsTypesMatch&&test2modelAtomsTypesMatch;
 
     stdmdl.free();
+ /*
     if(test.unitsFixed && mdl.unitsFixed){
         if(strcmp(test.currentUnits,mdl.currentUnits)!=0){
             cout<<"* Error (KIM_API_model::is_it_match): System of units for Test and Model do not match."<<endl;
             return false;
         }
     }
-    
+ */ 
     bool NBC_methodsmatch = this->NBC_methods_match(test,mdl);
     NBC_methodsmatch=NBC_methodsmatch&&test.check_consistance_NBC_method();
     NBC_methodsmatch=NBC_methodsmatch&&mdl.check_consistance_NBC_method();
     bool process_fij_related = this->fij_related_things_match(test,mdl);
+    bool units_match = Unit_Handling::do_unit_match(test.unit_h,mdl.unit_h);
 
     if(!test2standardmatch) cout<<"* Error (KIM_API_model::is_it_match): There are non-standard variables in Test descriptor file:"<<endl;
     if(!model2standardmatch) cout<<"* Error (KIM_API_model::is_it_match): There are non-standard variables in Model descriptor file:"<<endl;
@@ -1443,13 +1342,18 @@ bool KIM_API_model::is_it_match(KIM_API_model &test,KIM_API_model & mdl){
     if(!NBC_methodsmatch) cout<<"* Error (KIM_API_model::is_it_match): NBC methods do not match:"<<endl;
     if(!process_fij_related) cout<<
        "* Error (KIM_API_model::is_it_match): (virialGlobal,virialPerAtom,stiffness,process_d1/2Edr) do not match:"<<endl;
-
+    if(!units_match){
+       cout<<"* Error (KIM_API_model::is_it_match): units do not match:"<<endl;
+    }else{
+        this->unit_h = mdl.unit_h;
+    }
+    
     do_dummy_match(test,mdl);
 
     if (test2modelmatch && model2testmatch && test2standardmatch && process_fij_related &&
-            model2standardmatch && AtomsTypesMatch && NBC_methodsmatch) return true;
+            model2standardmatch && AtomsTypesMatch && NBC_methodsmatch && units_match) return true;
     if (test2modelmatch_noDC && model2testmatch_noDC && test2standardmatch && process_fij_related &&
-             model2standardmatch && AtomsTypesMatch && NBC_methodsmatch){
+             model2standardmatch && AtomsTypesMatch && NBC_methodsmatch && units_match){
         return this->do_dummy_match(test,mdl);
     }
     return false;
@@ -1870,9 +1774,15 @@ bool KIM_API_model::init_str_modelname(char* testname, char* inmdlstr){
     KIM_API_model test,mdl;
     //preinit test and model API object
 
-    mdl.preinit_str_testname(inmdlstr);
+    if(!mdl.preinit_str_testname(inmdlstr)){
+        cout<<"preinit_str_testname  failed with error status: "<<this->status_msg(ErrorCode)<<endl;
+        return false;
+    }
 
-    test.preinit(testinputfile,testname);
+    if(!test.preinit(testinputfile,testname)){
+        cout<<"preinit  failed with error status: "<<this->status_msg(ErrorCode)<<endl;
+        return false;
+    }
 
     //check if they match
     if (is_it_match(test,mdl)){
@@ -1966,10 +1876,10 @@ bool KIM_API_model::preinit(char* modelname){
     }
 
  #endif
-    this->preinit_str_testname(in_mdlstr);
+    bool result= this->preinit_str_testname(in_mdlstr);
     //redirecting back to > cout
     cout.rdbuf(backup); filekimlog.close();
-    return true;
+    return result;
 }
 
 bool KIM_API_model::init_str_testname(char* in_tststr, char* modelname){
@@ -2036,8 +1946,11 @@ bool KIM_API_model::init_str_testname(char* in_tststr, char* modelname){
 
  #endif
 //preinit test and model API object
-    test.preinit_str_testname(in_tststr);
-    mdl.preinit_str_testname(in_mdlstr);
+    if(!test.preinit_str_testname(in_tststr))
+        cout<<"test.preinit_str_testname failed with error status:"<<this->status_msg(test.ErrorCode)<<endl;
+
+    if(!mdl.preinit_str_testname(in_mdlstr))
+        cout<<"mdl.preinit_str_testname failed with error status:"<<this->status_msg(mdl.ErrorCode)<<endl;
 
     //check if they match
     if (is_it_match(test,mdl)){
@@ -2114,6 +2027,7 @@ cout<< "* Info: KIM_API_model::model_init: call statically linked initialize rou
     cout.rdbuf(backup); filekimlog.close();
 
 #include "model_init_include.cpp"
+#include "Unit_Handling.h"
 
     //redirecting cout > kimlog
     filekimlog.open(kimlog,ofstream::app);
@@ -2349,6 +2263,7 @@ void KIM_API_model::irrelevantVars2donotcompute(KIM_API_model & test, KIM_API_mo
         }
     }
 }
+
 void KIM_API_model::allocateinitialized(KIM_API_model * mdl, int natoms, int ntypes, int * error){
     // in process
     if ( mdl->model.data == NULL) {
@@ -2383,170 +2298,10 @@ void KIM_API_model::allocateinitialized(KIM_API_model * mdl, int natoms, int nty
         if(mdl->inlines[i].isitperatom()) (*mdl)[i].flag->peratom = 0;
         delete [] shape;
     }
-    mdl->set_units(mdl->originalUnits);
-    *error=KIM_STATUS_OK;
-}
-bool KIM_API_model::  is_unitsfixed(){
-    return unitsFixed;
-}
-void KIM_API_model::set_unitsfixed(bool f){
-    unitsFixed=f;
-}
-void KIM_API_model::transform_units_to(char * unitS,int *error){
-    *error=KIM_STATUS_FAIL;
-    for(int i=0;i<model.size;i++){
-        if(strcmp((*this)[i].type,"real")==0 || strcmp((*this)[i].type,"real*8")==0 ){
-            int uindexcur,uindexnext;
-            float acurrent,anext;
-            if (strcmp(this->currentUnits,this->originalUnits)==0){
-                acurrent = (*this)[i].unit->scale;
-            }else{
-                uindexcur=get_indexOfsupportedUnits(currentUnits);
-                acurrent = UnitsSet[uindexcur][(*this)[i].unit->dim];
-            }
-            if (strcmp(unitS,this->originalUnits)==0){
-                anext = (*this)[i].unit->scale;
-            }else{
-                uindexnext=get_indexOfsupportedUnits(unitS);
-                anext = UnitsSet[uindexnext][(*this)[i].unit->dim];
-            }
-            data_multiply_a((*this)[i].data, (*this)[i].type,(*this)[i].size,acurrent/anext);
-            
-        }
-    }
-    strncpy(currentUnits,unitS,strlen(unitS)+1);
-    *error=KIM_STATUS_OK;
-}
-bool KIM_API_model::set_units(char * unitS){
-    if(!among_supported_units(unitS)  && strcmp(unitS,"custom")!=0 ) return false;
-    if(strcmp(unitS,"custom")==0){
-        int ind = 0;
-        int ii=0;
-        for (int i=0;i<model.size;i++){
-
-             strncpy((*this)[i].unit->dim,inlines[i].dim,KEY_CHAR_LENGTH);
-
-            if(UnitsSet[ind].isitunit(inlines[i].dim)){
-                strncpy((*this)[i].unit->units,"custom",strlen("custom")+1);
-                (*this)[i].unit->scale = inlines[i].get_unitscale();
-            }else{
-                strncpy((*this)[i].unit->units,"none",strlen("custom")+1);
-                (*this)[i].unit->scale = 1.0;
-            }
-
-        }
-        strncpy(this->originalUnits,"custom",strlen("custom")+1);
-        strncpy(this->currentUnits,"custom",strlen("custom")+1);
-    }else{
-        int ind = this->get_indexOfsupportedUnits(unitS);
-        for (int i=0;i<model.size;i++){
-
-            strncpy((*this)[i].unit->dim,inlines[i].dim,KEY_CHAR_LENGTH);
-
-            if(UnitsSet[ind].isitunit(inlines[i].dim)){
-                strncpy((*this)[i].unit->units,unitS,strlen(unitS)+1);
-            }else{
-                strncpy((*this)[i].unit->units,"none",strlen("custom")+1);
-            }
-
-        }
-        strncpy(this->originalUnits,unitS,strlen(unitS)+1);
-        strncpy(this->currentUnits,unitS,strlen(unitS)+1);
-        setScale(ind);
-    }
-    strncpy(this->model.unit->units,originalUnits,strlen(originalUnits)+1);
-    return true;
-}
-void KIM_API_model::get_units(char * units,int *error){
-    *error=KIM_STATUS_FAIL;
-    strncpy(units, this->currentUnits,strlen(this->currentUnits)+1);
-    *error=KIM_STATUS_OK;
-}
-void KIM_API_model::get_originalUnits(char * unitS,int *error){
-    *error=KIM_STATUS_FAIL;
-    strncpy(unitS, this->originalUnits, strlen(this->originalUnits)+1);
     *error=KIM_STATUS_OK;
 }
 
-float KIM_API_model::get_unit_scalefactor(char*nm,int *error){
-    int ind= get_index(nm);
-    *error =KIM_STATUS_OK;
-    if(ind < 0){
-        *error =-15;
-        return -3.0;
-    }
-    if(strcmp((*this)[ind].unit->dim,"none")==0) {
-        *error = -16;
-        return -1.0;
-    }
-    if(strcmp((*this)[ind].unit->units,"none")==0) {
-        *error =-17;
-        return -2.0;
-    }
-    if(strcmp(this->originalUnits,this->currentUnits)==0){
-        return (*this)[ind].unit->scale;
-    }else{
-        int i = get_indexOfsupportedUnits(currentUnits);
-        return UnitsSet[i][(*this)[ind].unit->dim];
-    }
-}
-void KIM_API_model::supported_units_init(){
-        numUnitsSet =2; // change when available  needed
-        char cnf_files[numUnitsSet][161] ;
-        //standard units
-        char standard_units_file[161]=KIM_DIR_API;
-        strcat(standard_units_file,"standard_units.cfg");
-        strncpy(& cnf_files[0][0],standard_units_file,161);
-        // SI units
-        char SI_units_file[161]=KIM_DIR_API;
-        strcat(SI_units_file,"si_units.cfg");
-        strncpy(& cnf_files[1][0],SI_units_file,161);
-        
-        // add here more when availabel and change the total name
-        //strncpy(&cnf_files[1][0] ...
 
-        (*this).UnitsSet = new SystemOfUnit [numUnitsSet];
- 
-        for(int i=0; i<numUnitsSet; i++){
-            (*this).UnitsSet[i].init(& cnf_files[i][0]);
-
-        }
-}
-bool KIM_API_model::are_infileunits_consistent(){
-        char unittmp[KEY_CHAR_LENGTH];
-        char coordinates_str [] ="coordinates";
-        int ind= get_index(coordinates_str);
-        strncpy(& unittmp[0],(*this)[ind].unit->units, KEY_CHAR_LENGTH);
-      
-        for(int i=0;i<model.size;i++){
-            if(strcmp(&unittmp[0],(*this)[i].unit->units)!=0){
-                if(strcmp((*this)[i].unit->units,"none")!=0) return false;
-                if(strcmp((*this)[i].unit->dim,"none")!=0) return false;
-            }
-        }
-        return true;
-}
-bool KIM_API_model::among_supported_units(char *unitS){
-        for(int i=0;i<numUnitsSet;i++){
-           if( strcmp(&(UnitsSet[i].UnitsSystemName[0]),unitS)==0) return true ;
-        }
-        return false;
-}
-int KIM_API_model::get_indexOfsupportedUnits(char * unitS){
-        for(int i=0;i<numUnitsSet;i++){
-           if( strcmp(&(UnitsSet[i].UnitsSystemName[0]),unitS)==0) return i ;
-        }
-        cout<<"* Error (KIM_API_model::get_indexOfsupportedUnits): Unknown system of units "<<unitS<<" found"<<endl;
-        KIM_API_model::fatal_error_print();
-        exit( 3033);
-}
-void KIM_API_model::setScale(int index){
-        for(int i=0; i< model.size;i++){
-            if (strcmp((*this)[i].unit->dim,"none")!=0){
-                (*this)[i].unit->scale =  (UnitsSet[index])[(*this)[i].unit->dim];
-            }
-        }
- }
 void KIM_API_model::data_multiply_a(void *dt,char* type,intptr_t sz,float a){
         if(sz < 1) return;
         if(strcmp(type,"real")==0){
@@ -2557,6 +2312,8 @@ void KIM_API_model::data_multiply_a(void *dt,char* type,intptr_t sz,float a){
             for(int i=0;i<sz;i++) d[i]=d[i]*a;
         }
 }
+
+
 ostream &operator<<(ostream &stream, KIM_API_model &a){
     stream<<"*************************************"<<endl;
     stream << a.model;
@@ -2564,7 +2321,7 @@ ostream &operator<<(ostream &stream, KIM_API_model &a){
     KIMBaseElement **pel =  (KIMBaseElement **)  a.model.data;
     for(int i=0;i<a.model.size;i++)   stream<< *(pel[i]);
     stream<<"-------------------------------------"<<endl;
-    stream<<"currentUnits: "<<a.currentUnits<<",     originalUnits: "<<a.originalUnits<<endl;
+    stream<<a.unit_h;
     stream<<"*************************************"<<endl;
 
     return stream;
@@ -2815,10 +2572,18 @@ bool KIM_API_model::check_consistance_NBC_method(){
     return true;
 }
 char * KIM_API_model::status_msg(int status_code) {
-    int mincode=-17,maxcode=3,offset=17;
+    int mincode=-24,maxcode=3,offset=24;
 
     char KIM_STATUS_MSG[][KEY_CHAR_LENGTH]=
-   {{ "group argument must be 1 or 0(in KIM_API...multiple routine)"},
+   {
+    {"base units: are not supported or not the same phys.dimensions"},
+    {" unsupported Unit_time  "},
+    {" unsupported Unit_temperature  "},
+    {" unsupported Unit_charge  "},
+    {" unsupported Unit_energy  "},   
+    {" unsupported Unit_length  "},
+    {"Unit_Handling must be \"flexible\" or \"fixed\" "},
+    {"group argument must be 1 or 0(in KIM_API...multiple routine)"},//
     { "numargs is not divisiable by 4(in KIM_API...multiple routine)"},
     { "wrong optional arguments (in a kim_api_...multiple_f routine)"},
     { "numargs is not divisible by 2 (in KIM_API...multiple routine)"},
@@ -2958,11 +2723,7 @@ void KIM_API_model::add_element(char* instring){
 
         el->init(name,type,0,rank,shape); //preinit element with zero size
         strncpy(el->unit->dim,inlines[numlines].dim,strlen(inlines[numlines].dim)+1);
-        double scale=inlines[numlines].get_unitscale();
 
-        strncpy(el->unit->units,inlines[numlines].units,strlen(inlines[numlines].units)+1);
-
-        el->unit->scale = (float)scale;
         el->flag->calculate = 1;
         el->flag->peratom = 1;//per something else
         if(inlines[numlines].isitperatom()) el->flag->peratom = 0; //per atom
@@ -2978,13 +2739,11 @@ void KIM_API_model::fij_related_things_add_set_index(){
     //add part
     if(virialGlobal_need2add){
         char instr[512] = "virialGlobal            real*8       pressure     ";
-        strcat(instr,(*this)["coordinates"].unit->units);
         strcat(instr,"    [6]           # automatically generated");
         this->add_element(instr);
     }
     if(virialPerAtom_need2add){
         char instr[512] = "virialPerAtom            real*8       pressure     ";
-        strcat(instr,(*this)["coordinates"].unit->units);
         strcat(instr,"    [numberOfAtoms,6]           # automatically generated");
         this->add_element(instr);
     }
@@ -3016,6 +2775,28 @@ void KIM_API_model::process_d1Edr(KIM_API_model** ppkim, double* dE, double* r,
     }
 }
 
+//related to Unit_Handling
+double KIM_API_model::get_convert_scale( char *u_from,char *u_to, int *error){
+    return Unit_Handling::get_convert_scale(u_from,u_to,error);
+}
+int KIM_API_model::get_Unit_handling(){
+    return unit_h.get_Unit_handling();
+}
+char * KIM_API_model::get_Unit_length(){
+    return unit_h.get_Unit_length();
+}
+char * KIM_API_model::get_Unit_energy(){
+    return unit_h.get_Unit_energy();
+}
+char * KIM_API_model::get_Unit_charge(){
+    return unit_h.get_Unit_charge();
+}
+char * KIM_API_model::get_Unit_temperature(){
+    return unit_h.get_Unit_temperature();
+}
+char * KIM_API_model::get_Unit_time(){
+    return unit_h.get_Unit_time();
+}
 
 //multiple data set/get methods
 //

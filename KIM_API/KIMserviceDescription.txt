@@ -1192,8 +1192,132 @@ Corresponding Fortran style interface:
                 character(len=*) :: fl,usermsg
        end function kim_api_report_error_f
 
-             
 ******************************************************************************
+
+double   KIM_API_get_convert_scale( char * u_from, char * u_to, int * error)
+
+      This routine get conversion scale factor from one unit to another.
+      For example, get_convert_scale("cm","m",&error) will return 
+      conversion from "cm" to "m". Both u_from and u_to must be from the same 
+      supported base unit: 
+      for Unit_lenght that should be:  "A" , "Bohr" , "cm" , "m" or "nm"
+      for Unit_energy that should be: "amu*A^2/(ps)^2","erg","eV","Hartree","J","Kcal/mole" or " kJ/mole"
+      for Unit_charge that should be: "C" ,        "e" or  "statC"
+      for Unit_temperature that should be:"K"
+      for Unit_time that should be: "fs" ,      "ps" or  "sec"
+      it will return negative scale in case of error.
+
+     Arguments: 
+        char * u_from 
+                     conversion from unit
+        char * u_from
+                     conversion to  unit
+        int * errot
+               error status -- standard KIM_STATUS can be checked with report_error routine.
+                     
+Corresponding Fortran style interface:
+
+      real*8 function kim_api_get_convert_scale_f(from,to,error)
+                integer:: error
+		character (len=*) ::from,to
+      end function kim_api_get_convert_scale_f
+               
+******************************************************************************
+
+int    KIM_API_get_Unit_handling(void * kimmdl)
+      Returns 1 if Unit_Handling is flexible, 0 otherwise.
+      (No error code here since no room for error here.)
+      Arguments: 
+        void * kimmdl
+              KIM_API object
+
+Corresponding Fortran style interface:
+
+     integer function kim_api_get_unit_handling_f(kimmdl)
+		integer(kind=kim_intptr) :: kimmdl		
+     end function kim_api_get_unit_handling_f
+
+******************************************************************************
+
+char * KIM_API_get_Unit_length(void *kimmdl)
+
+     Returns current setting for KIM_API_model object for base Unit_length .
+      (No error code here since no room for error here.)
+      Arguments: 
+        void * kimmdl
+              KIM_API object
+
+Corresponding Fortran style interface:
+
+     function kim_api_get_unit_length_f(kimmdl)
+		integer(kind=kim_intptr) :: kimmdl,kim_api_get_unit_length_f		
+     end function kim_api_get_unit_length_f
+
+******************************************************************************
+
+char * KIM_API_get_Unit_energy(void *kimmdl)
+
+     Returns current setting for KIM_API_model object for base Unit_energy .
+      (No error code here since no room for error.)
+      Arguments: 
+        void * kimmdl
+              KIM_API object
+
+Corresponding Fortran style interface:
+
+     function kim_api_get_unit_energy_f(kimmdl)
+		integer(kind=kim_intptr) :: kimmdl,kim_api_get_energy_f		
+     end function kim_api_get_unit_energy_f
+
+******************************************************************************
+
+char * KIM_API_get_Unit_charge(void *kimmdl)
+
+     Returns current setting for KIM_API_model object for base Unit_charge .
+      (No error code here since no room for error.)
+      Arguments: 
+        void * kimmdl
+              KIM_API object
+
+Corresponding Fortran style interface:
+
+     function kim_api_get_unit_charge_f(kimmdl)
+		integer(kind=kim_intptr) :: kimmdl,kim_api_get_charge_f		
+     end function kim_api_get_unit_charge_f
+
+******************************************************************************
+
+char * KIM_API_get_Unit_temperature(void *kimmdl)
+
+     Returns current setting for KIM_API_model object for base Unit_temperature .
+      (No error code here since no room for error.)
+      Arguments: 
+        void * kimmdl
+              KIM_API object
+
+Corresponding Fortran style interface:
+
+     function kim_api_get_unit_temperature_f(kimmdl)
+		integer(kind=kim_intptr) :: kimmdl,kim_api_get_temperature_f		
+     end function kim_api_get_unit_temperature_f
+
+******************************************************************************
+
+char * KIM_API_get_Unit_time(void *kimmdl);     
+       Returns current setting for KIM_API_model object for base Unit_time .
+      (No error code here since no room for error.)
+      Arguments: 
+        void * kimmdl
+              KIM_API object
+
+Corresponding Fortran style interface:
+
+     function kim_api_get_unit_time_f(kimmdl)
+		integer(kind=kim_intptr) :: kimmdl,kim_api_get_time_f		
+     end function kim_api_get_unit_time_f
+
+******************************************************************************
+
 int KIM_API_get_half_neigh(void *kimmdl, int mode,int request, int *atom, int *numnei, int **nei1atom, double **Rij);
         
     The description is the same as for KIM_API_get_full_neigh, but this routine

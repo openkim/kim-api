@@ -22,6 +22,7 @@ using namespace std;
 #define	_KIMSERVICE_H
 
 #include "KIMstatus.h"
+
 extern "C" {
         char * standard_kim_str();
  }
@@ -49,6 +50,8 @@ extern "C" {
 
 #define FREEABLE 0
 
+
+
 //#define intptr_t int  // for 32 bit machines
 
 class KIMBaseElementFlag{
@@ -60,11 +63,10 @@ public:
         KIMBaseElementFlag();
 };
 
+
 class KIMBaseElementUnit{
-public:
-        char units[KEY_CHAR_LENGTH]; //name of units system, "none" if not set
+public:   
         char  dim [KEY_CHAR_LENGTH];  // dimension (length, energy, time, mass, or derivatives...
-        float scale;// scale to the standard unit: " 1.0 if it is standard unit"
       KIMBaseElementUnit();
       void init();
 };
@@ -79,7 +81,6 @@ public:
 	char name[KEY_CHAR_LENGTH];
 	char type[KEY_CHAR_LENGTH];
 	char dim[KEY_CHAR_LENGTH];
-        char units[KEY_CHAR_LENGTH];
         char shape[KEY_CHAR_LENGTH];
         char requirements[KEY_CHAR_LENGTH];
         char comments[181];
@@ -88,7 +89,6 @@ public:
 	KIM_IOline();
       
 	bool getFields(char *inString);
-        double get_unitscale();
         int get_rank();
         int * get_shape();
         int * get_shape(int natoms, int ntypes);
@@ -96,6 +96,7 @@ public:
         bool isitsizedefined();
         bool isitperatom();
         bool isitoptional();
+
  private:
         void strip(char * strv);
         void strip();
@@ -110,17 +111,21 @@ class IOline{
 public:
 	char name[101];
 	char value[101];
-	char comment[101];
+	char comment[121];
 	bool goodformat;
 	void strip();
 
         void strip(char *nm);
 	IOline();
 	bool getFields(const char *inputString);
-}; //secondary input line handler
+        static int readlines_str(char * inputstr, IOline ** lines);
+        static int  readlines(char * infile, IOline **inlines);
+}; //secondary input line handler //cout<<"SystemOfUnit:  file:"<<infile<<":"<<endl;
 ostream &operator<<(ostream &stream, IOline a);
 istream &operator>>(istream &stream, IOline &a);
 
+
+/*
 class SystemOfUnit {
 public:
     char UnitsSystemName[KEY_CHAR_LENGTH];
@@ -141,7 +146,7 @@ public:
 
     bool isitunit(char * unit);
 };
-
+*/
 class KIMBaseElement{
 public:
         void *data;
@@ -166,6 +171,12 @@ static  int getelemsize(char *tp);
 };
 ostream &operator<<(ostream &stream, KIMBaseElement a);
 
+#ifndef UNIT_HANDLING_H
+#include "Unit_Handling.h"
+#endif
+
+
+
 class KIM_API_model{
 public:
     KIMBaseElement model;
@@ -188,7 +199,6 @@ public:
     intptr_t get_size(char *nm,int *error);
     intptr_t get_rank_shape(char *nm,int * shape,int *error);
     void set_rank_shape(char *nm, int * shape, int rank, int *error);
-    float get_unit_scalefactor(char*nm,int *error);
     void set2_compute(char *nm);
     void set2_donotcompute(char *nm);
     bool isit_compute(char *nm);
@@ -221,12 +231,6 @@ bool do_AtomsTypes_match(KIM_API_model &test,KIM_API_model & mdl);
    void model_destroy(int *error);
 static void irrelevantVars2donotcompute(KIM_API_model & test, KIM_API_model & mdl);
 static void allocateinitialized(KIM_API_model * mdl, int natoms, int ntypes,int * error);
-bool is_unitsfixed();
-void set_unitsfixed(bool f);
-void transform_units_to(char * unitS,int *error);
-bool set_units(char * unitS);
-void get_units(char * units,int *error);
-void get_originalUnits(char * unitS,int *error);
 
 char * get_listAtomsTypes(int *nAtomTypes,int *error);
 int get_aTypeCode(char *atom, int * error);
@@ -243,11 +247,6 @@ bool requiresFullNeighbors();
 
     KIM_IOline *inlines;
     int numlines;
-    SystemOfUnit * UnitsSet;
-    int numUnitsSet;
-    char originalUnits[KEY_CHAR_LENGTH];
-    char currentUnits[KEY_CHAR_LENGTH];
-    bool unitsFixed;
     bool support_Rij;
     int get_neigh_mode(int *);
     static char * status_msg(int status_code);
@@ -273,6 +272,18 @@ bool requiresFullNeighbors();
     bool virialGlobal_need2add;
     bool virialPerAtom_need2add;
     bool stiffness_need2add;
+
+    //Unit_Handling object
+    Unit_Handling unit_h;
+    //Unit_Handling related routines
+
+    static double get_convert_scale( char *u_from,char *u_to, int *error);
+    int get_Unit_handling();
+    char * get_Unit_length();
+    char * get_Unit_energy();
+    char * get_Unit_charge();
+    char * get_Unit_temperature();
+    char * get_Unit_time();
 
 private:
 
@@ -339,6 +350,8 @@ private:
     int process_d1Edr_ind;
     int process_d2Edr_ind;
 
+    
+
     bool check_consistance_NBC_method(); 
 
     char NBC_method_current[KEY_CHAR_LENGTH];
@@ -347,14 +360,9 @@ private:
     void fij_related_things_add_set_index();
     void add_auxiliaries_if_needed();
     bool init_AtomsTypes();
-    void supported_units_init();
-    bool are_infileunits_consistent();
-    bool among_supported_units(char *unitS);
     bool do_dummy_match(KIM_API_model & tst, KIM_API_model &mdl);
     bool is_it_in_and_is_it_dummy(KIM_API_model &mdl,char *name);
     bool is_it_in(KIM_API_model &mdl,char *name);
-    int get_indexOfsupportedUnits(char * unitS);
-    void setScale(int index);
     void data_multiply_a(void *dt,char* type,intptr_t sz,float a);
     void * model_lib_handle;
     void add_element(char * inln);
