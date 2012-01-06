@@ -37,15 +37,40 @@
 #         is ignored), followed by the (case sensitive) name of the Model or
 #         Test.  (See below for a description of valid name strings.)
 #
-#   4) A system of units line
+#   4) Units handling line:
+#         For Models, a variable `Unit_Handling' specifies whether the Model can 
+#         adjust its input and output to match a Test (`flexible') or can only work 
+#         with one set of units (`fixed'). This information is ignored for Tests.
 #         Only one such line may occur in a KIM descriptor file and it should
 #         be the second line in the descriptor file which is not a comment or a
 #         blank line.  The line's first non-white-space characters must be
-#         `SystemOfUnitsFix', followed by an assignment symbol `:=' (white-
+#         `Unit_Handling', followed by an assignment symbol `:=' (white-
 #         space surrounding the assignment symbol is ignored), followed by
 #         either `fixed' or `flexible'.
+#         Example:
+#         Unit_Handling := fixed
 #
-#   5) Section lines
+#   5) Base unit lines:
+#         Five lines that describe  a set of five base units from which all other 
+#         units are derived in a consistent way:
+#         Unit_length := `A' | `Bohr' | `cm' | `m' | `nm'
+#         Unit_energy := `amu*A^2/(ps)^2', `erg' | `eV' | `Hartree' | `J' | `Kcal/mole' | kJ/mole'
+#         Unit_charge := `C' | `e' | `statC'
+#         Unit_temperature := `K'
+#         Unit_time := `fs' | `ps' | `sec'  
+#         The list of recognized units above can be extended. (The current list is 
+#         based on the units used in 8 popular ab initio, MC, MD and lattice dynamics 
+#         codes: AMBER, CHARMM, DL_POLY, GROMACS, LAMMPS, TOWHEE, VASP.)
+#         As noted above all other units will be derived from these units in a consistent 
+#         manner.
+#         Example:
+#         Unit_length := A
+#         Unit_energy := eV
+#         Unit_charge := e
+#         Unit_temperature := K
+#         Unit_time := fs
+#
+#   6) Section lines
 #         These lines identify logically distinct sections within the KIM
 #         descriptor file.  All lines following a Section line, up to the next
 #         Section line or end of the file, will be assigned to the indicated
@@ -62,7 +87,7 @@
 #         however the order given above is recommended.  A section line may
 #         only occur once within a KIM descriptor file.
 #
-#   6) Data lines
+#   7) Data lines
 #         These lines are used to specify the information that a Model (Test)
 #         will provide to and require from a Test (Model), as well as the
 #         conventions that the Model (Test) uses.  There are currently three
@@ -149,7 +174,7 @@ $
 #
 #                              * none
 #                              * mass
-#                              * length (or distance)
+#                              * length
 #                              * time
 #                              * energy
 #                              * velocity
@@ -157,33 +182,16 @@ $
 #                              * torque
 #                              * temperature
 #                              * pressure
+#                              * stress      
 #                              * dynamic_viscosity
 #                              * charge
 #                              * dipole
 #                              * electric_field
 #                              * density
 #
-#                  4) SystemU/Scale: This string is one of:
-#
-#                              * none
-#                              * standard
-#                              * si
-#
-#                           `none' should only be used when the value of Unit
-#                           is also `none'.  `standard' corresponds to the the
-#                           standard KIM unit system (see file
-#                           standard_units.cfg).  `si' corresponds to the
-#                           International System of Units (see file
-#                           si_units.cfg).
-#
-#                           Note: The unit system definitions are likely to
-#                                 change in future releases.  In addition, the
-#                                 current implementation does not support
-#                                 automatic conversion between units.
-#                                 Therefore Models and Tests must use the same
-#                                 units for the same arguments.
+#        
 #                                 
-#                  5) Shape: This string defines the rank (number of array
+#                  4) Shape: This string defines the rank (number of array
 #                            dimensions) and extent (size of each dimension)
 #                            for the values associated with the argument
 #                            quantity.
@@ -292,7 +300,7 @@ $
 #                                   the values for this argument.
 #
 #
-#                  6) Requirements: This string may be empty or `optional'.  An
+#                  5) Requirements: This string may be empty or `optional'.  An
 #                                   empty string indicates that the argument is
 #                                   required to be present by the Test/Model
 #                                   (i.e., the Test/Model will read from and/or
@@ -389,19 +397,31 @@ MODEL_NAME := standard
 
 ################################################################################
 #
-# The second item in a KIM descriptor file must be the SystemOfUnitsFix line.
+# In the MODEL KIM descriptor file must be the Unit_Handling line.
 # There are two options:
 #
-#    SystemOfUnitsFix := fixed      The Model/Test can work only with the units 
+#    Unit_Handling := fixed      The Model can work only with the units 
 #                                   specified in its descriptor file
 #
-#    SystemOfUnitsFix := flexible   The Model/Test can change the units it 
+#    Unit_Handling := flexible   The Model can change the units it 
 #                                   works with when requested
-#
+# The line should not be in the TEST descriptor file
 ################################################################################
 
-SystemOfUnitsFix := flexible
+Unit_Handling := flexible
 
+################################################################################
+#
+# Base unit lines:
+# Five lines that describe  a set of five base units from which all other 
+# units are derived in a consistent way
+################################################################################
+
+Unit_length := A      # here can be: `A',  `Bohr' , `cm' , `m' or `nm'
+Unit_energy := eV     # here can be: `amu*A^2/(ps)^2', `erg', `eV' , `Hartree',`J',`Kcal/mole' or kJ/mole'
+Unit_charge := e      # here can be: `C' , `e' , `statC'
+Unit_temperature := K
+Unit_time := fs       # here can be: `fs' , `ps' or `sec'
 
 ################################################################################
 #
@@ -773,9 +793,9 @@ MODEL_INPUT:
 # ZeroBasedLists/OneBasedLists # convention setting.  This argument is required
 # for all Models and Tests
 #
-# Name                  Type         Unit       SystemU/Scale           Shape
+# Name                  Type         Unit        Shape
 #
-numberOfAtoms           integer      none       none                    []
+numberOfAtoms           integer      none         []
 
 ################################################################################
 #
@@ -783,9 +803,9 @@ numberOfAtoms           integer      none       none                    []
 #                         (required for all half neighbor lists). 
 #
 #
-# Name                  Type         Unit       SystemU/Scale           Shape
+# Name                  Type         Unit       Shape
 #
-numberContributingAtoms integer      none       none                    []
+numberContributingAtoms integer      none        []
 
 ################################################################################
 #
@@ -795,9 +815,9 @@ numberContributingAtoms integer      none       none                    []
 # This argument is required for any Model/Test that specifies one or more
 # Atom/particle types in the SUPPORTED_ATOM/PARTICLE_TYPES section
 #
-# Name                  Type         Unit       SystemU/Scale           Shape
+# Name                  Type         Unit      Shape
 #
-numberAtomTypes         integer      none       none                    []
+numberAtomTypes         integer      none       []
 
 ################################################################################
 #
@@ -809,9 +829,9 @@ numberAtomTypes         integer      none       none                    []
 # that specifies one or more Atom/particle types in the
 # SUPPORTED_ATOM/PARTICLE_TYPES section.
 #
-# Name                  Type         Unit       SystemU/Scale           Shape
+# Name                  Type         Unit       Shape
 #
-atomTypes               integer      none       none                    [numberOfAtoms]
+atomTypes               integer      none       [numberOfAtoms]
 
 ################################################################################
 #
@@ -821,9 +841,9 @@ atomTypes               integer      none       none                    [numberO
 #
 # This argument is required for all Models and Tests.
 #
-# Name                  Type         Unit       SystemU/Scale           Shape
+# Name                  Type         Unit       Shape
 #
-coordinates             real*8       length     unspecified             [numberOfAtoms,3]
+coordinates             real*8       length     [numberOfAtoms,3]
 
 ################################################################################
 #
@@ -835,9 +855,9 @@ coordinates             real*8       length     unspecified             [numberO
 # Models to ensure that the Model is compatible with the widest possible set of
 # Tests.
 #
-# Name                  Type         Unit       SystemU/Scale           Shape
+# Name                  Type         Unit       Shape
 #
-get_full_neigh          method       none       none                    []
+get_full_neigh          method       none       []
 
 ################################################################################
 #
@@ -848,9 +868,9 @@ get_full_neigh          method       none       none                    []
 # MI-OPBC-H and NEIGH-PURE-H.  It should be optional for all Models to ensure
 # that the Model is compatible with the widest possible set of Tests.
 #
-# Name                  Type         Unit       SystemU/Scale           Shape
+# Name                  Type         Unit       Shape
 #
-get_half_neigh          method       none       none                    []
+get_half_neigh          method       none       []
 
 ################################################################################
 #
@@ -860,8 +880,8 @@ get_half_neigh          method       none       none                    []
 #                  does not need know how exactly it is computed. In low level loop
 #                  for each pair of atom (i j) the model organize call to that routine.
 #
-# Name                  Type         Unit       SystemU/Scale           Shape
-process_d1Edr     method       none       none                    []
+# Name                  Type         Unit       Shape
+process_d1Edr           method       none       []
 
 ################################################################################
 #
@@ -871,8 +891,8 @@ process_d1Edr     method       none       none                    []
 #                  does not need know how exactly it is computed. In low level loop
 #                  for each set of indexes the model organize call to that routine.
 #
-# Name                  Type         Unit       SystemU/Scale           Shape
-process_d2Edr     method       none       none                    []
+# Name                  Type         Unit       Shape
+process_d2Edr           method       none       []
 
 
 ################################################################################
@@ -883,9 +903,9 @@ process_d2Edr     method       none       none                    []
 # This argument is required for Models/Tests that support the following NBCs:
 # MI-OPBC-H, MI-OPBC-F, NEIGH-PURE-H, NEIGH-PURE-F, and NEIGH-RVEC-F.
 #
-# Name                  Type         Unit       SystemU/Scale           Shape
+# Name                  Type         Unit       Shape
 #
-neighObject             pointer      none       none                    []
+neighObject             pointer      none       []
 
 ################################################################################
 #
@@ -895,9 +915,9 @@ neighObject             pointer      none       none                    []
 # This argument is required for Models/Tests that support the following NBCs: 
 # MI-OPBC-H and MI-OPBC-F.
 #
-# Name                  Type         Unit       SystemU/Scale           Shape
+# Name                  Type         Unit       Shape
 #
-boxlength               real*8       length     unspecified             [3]
+boxlength               real*8       length     [3]
 
 
 ################################################################################
@@ -923,9 +943,9 @@ MODEL_OUTPUT:
 #
 # This argument is required for all Models and Tests
 #
-# Name                  Type         Unit       SystemU/Scale           Shape
+# Name                  Type         Unit       Shape
 #
-compute                 method       none       none                    []
+compute                 method       none       []
 
 ################################################################################
 #
@@ -937,9 +957,9 @@ compute                 method       none       none                    []
 # compatibility with Tests (who should only include the argument if they use
 # it).
 #
-# Name                  Type         Unit       SystemU/Scale           Shape
+# Name                  Type         Unit       Shape
 #
-reinit                  method       none       none                    []
+reinit                  method       none       []
 
 ################################################################################
 #
@@ -953,9 +973,9 @@ reinit                  method       none       none                    []
 # least) to ensure maximum compatibility with Tests (who should only include
 # the argument if they use it).
 #
-# Name                  Type         Unit       SystemU/Scale           Shape
+# Name                  Type         Unit       Shape
 #
-destroy                 method       none       none                    []
+destroy                 method       none       []
 
 ################################################################################
 #
@@ -968,9 +988,9 @@ destroy                 method       none       none                    []
 # be changed.  Once the PARAM_FREE_cutoff parameter has been changed and the
 # Model's reinit function called, the Model must update the value of `cutoff'.
 #
-# Name                  Type         Unit       SystemU/Scale           Shape
+# Name                  Type         Unit       Shape
 #
-cutoff                  real*8       length     unspecified             []
+cutoff                  real*8       length     []
 
 ################################################################################
 #
@@ -980,9 +1000,9 @@ cutoff                  real*8       length     unspecified             []
 # This argument should, ideally, be optional to ensure maximum Model/Test
 # compatibility.
 #
-# Name                  Type         Unit       SystemU/Scale           Shape
+# Name                  Type         Unit       Shape
 #
-energy                  real*8       energy     unspecified             []
+energy                  real*8       energy     []
 
 ################################################################################
 #
@@ -992,9 +1012,9 @@ energy                  real*8       energy     unspecified             []
 #
 # This argument should be optional to ensure maximum Model/Test compatibility.
 #
-# Name                  Type         Unit       SystemU/Scale           Shape
+# Name                  Type         Unit       Shape
 #
-forces                  real*8       force      unspecified             [numberOfAtoms,3]
+forces                  real*8       force      [numberOfAtoms,3]
 
 ################################################################################
 #
@@ -1005,9 +1025,9 @@ forces                  real*8       force      unspecified             [numberO
 # This argument should, ideally, be optional to ensure maximum Model/Test
 # compatibility.
 #
-# Name                  Type         Unit       SystemU/Scale           Shape
+# Name                  Type         Unit       Shape
 #
-energyPerAtom           real*8       energy     unspecified             [numberOfAtoms]
+energyPerAtom           real*8       energy     [numberOfAtoms]
 
 ################################################################################
 #
@@ -1020,9 +1040,9 @@ energyPerAtom           real*8       energy     unspecified             [numberO
 #
 #
 #
-# Name                  Type         Unit       SystemU/Scale           Shape
+# Name                  Type         Unit       Shape
 #
-virialGlobal            real*8       energy     unspecified             [6]
+virialGlobal            real*8       energy     [6]
 
 ################################################################################
 #
@@ -1035,9 +1055,9 @@ virialGlobal            real*8       energy     unspecified             [6]
 #
 #
 #
-# Name                  Type         Unit       SystemU/Scale           Shape
+# Name                  Type         Unit       Shape
 #
-virialPerAtom            real*8      energy     unspecified             [numberOfAtoms,6]
+virialPerAtom            real*8      energy     [numberOfAtoms,6]
 
 ################################################################################
 #
@@ -1045,9 +1065,9 @@ virialPerAtom            real*8      energy     unspecified             [numberO
 #
 # This argument should, ideally, be optional to ensure maximum Model/Test
 # compatibility.
-# Name                  Type         Unit       SystemU/Scale           Shape
+# Name                  Type         Unit       Shape
 #
-stiffness              real*8        pressure   unspecified             [N,3,N,3]
+stiffness              real*8        pressure   [N,3,N,3]
 
 ################################################################################
 #
@@ -1092,11 +1112,11 @@ MODEL_PARAMETERS:
 #
 # Examples
 #
-# Name                  Type         Unit       SystemU/Scale           Shape
+# Name                  Type         Unit       Shape
 #
-# PARAM_FREE_Sigma      real*8       length     standard                []
-# PARAM_FREE_Epsilon    real*8       energy     standard                []
-# PARAM_FIXED_LJshift   real*8       energy     standard                []
+# PARAM_FREE_Sigma      real*8       length     []
+# PARAM_FREE_Epsilon    real*8       energy     []
+# PARAM_FIXED_LJshift   real*8       energy     []
 #
 ################################################################################
 
@@ -1110,8 +1130,8 @@ MODEL_PARAMETERS:
 # Note: Currently this is the only standard parameter defined by the KIM API.
 #
 #
-# Name                  Type         Unit       SystemU/Scale           Shape
+# Name                  Type         Unit       Shape
 #
-PARAM_FREE_cutoff       real*8       length     unspecified             []
+PARAM_FREE_cutoff       real*8       length     []
 
 # END of standard.kim file

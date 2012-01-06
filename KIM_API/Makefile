@@ -36,8 +36,8 @@ endif
 Makefile: Include.mk
 	@touch Makefile
 
-libkim.a: $(ALLOBJ) standard_kim_str.o
-	ar rcs  $@ $(ALLOBJ) standard_kim_str.o
+libkim.a: $(ALLOBJ) standard_kim_str.o Unit_Handling.o
+	ar rcs  $@ $(ALLOBJ) standard_kim_str.o Unit_Handling.o
 
 libkim.so: libkim.a
 	$(LINKCOMPILER) $(SHARED_LIB_FLAG) $(CPPLIBFLAG) $(LINKSONAME)$(KIM_API_DIR)$@ -o $@ *.o

@@ -111,29 +111,7 @@ void KIM_API_model_destroy(void * kimmdl,int *error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     mdl->model_destroy(error);
 }
-void KIM_API_get_Units(void *kimmdl,char * UnitsSystem,int *error){
-    KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    mdl->get_units(UnitsSystem,error);
-}
-void KIM_API_get_originalUnits(void *kimmdl,char * UnitsSystem,int *error){
-    KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    mdl->get_originalUnits(UnitsSystem,error);
-}
-int KIM_API_set_Units(void *kimmdl,char * UnitsSystem){
-    KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-//cout<<"UnitsSystem"<<":"<<endl;
-    if(mdl->set_units(UnitsSystem)) return KIM_STATUS_OK;
-    return KIM_STATUS_FAIL;
-}
-void KIM_API_transform_Units_to(void *kimmdl,char * UnitsSystem,int *error){
-    KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    mdl->transform_units_to(UnitsSystem,error);
-}
-int KIM_API_isUnitS_fixed(void *kimmdl){
-    KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    if(mdl->is_unitsfixed()) return KIM_STATUS_OK;
-    return KIM_STATUS_FAIL;
-}
+
 char * KIM_API_get_listAtomTypes(void * kimmdl,int* nATypes, int* error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     return mdl->get_listAtomsTypes(nATypes,error);
@@ -347,10 +325,7 @@ int KIM_API_isit_compute_byI(void *kimmdl,int I,int *error){
     return (*mdl)[I].flag->calculate; 
 }
 
-float KIM_API_get_unit_scalefactor(void * kim, char*nm,int *error){
-    KIM_API_model * mdl=(KIM_API_model *) kim;
-    return mdl->get_unit_scalefactor(nm,error);
-}
+
 
 //multiple data set/get methods
 //
@@ -689,6 +664,31 @@ void KIM_API_get_compute_byI_multiple(void *kimmdl, int *err,int numargs, ...){
     va_end(listPointer);
 }
 
+
+//related to Unit_Handling
+double KIM_API_get_convert_scale(char *u_from,char *u_to, int *error){
+    return KIM_API_model::get_convert_scale(u_from,u_to,error);
+}
+int    KIM_API_get_Unit_handling(void *kimmdl){
+    return ((KIM_API_model *)kimmdl)->get_Unit_handling();
+}
+char * KIM_API_get_Unit_length(void *kimmdl){
+    return ((KIM_API_model *)kimmdl)->get_Unit_length();
+}
+char * KIM_API_get_Unit_energy(void *kimmdl){
+    return ((KIM_API_model *)kimmdl)->get_Unit_energy();
+}
+char * KIM_API_get_Unit_charge(void *kimmdl){
+    return ((KIM_API_model *)kimmdl)->get_Unit_charge();
+}
+char * KIM_API_get_Unit_temperature(void *kimmdl){
+    return ((KIM_API_model *)kimmdl)->get_Unit_temperature();
+}
+char * KIM_API_get_Unit_time(void *kimmdl){
+    return ((KIM_API_model *)kimmdl)->get_Unit_time();
+}
+
+
 //Fortran interface
 //global methots
 int kim_api_init_(void * kimmdl,char ** testname, char **mdlname){
@@ -736,33 +736,15 @@ void * kim_api_get_model_kim_str_(char ** modelname, int *ln,int *kimerr){
     return (void *)tmp;
 }
 
-void kim_api_get_units_(void *kimmdl,char ** UnitsSystem, int *error){
-    KIM_API_get_Units(*(KIM_API_model **)kimmdl,*UnitsSystem,error);
-    for(int i=strlen(*UnitsSystem)+1;i<KEY_CHAR_LENGTH;i++){
-        (*UnitsSystem)[i]='\0';
-    }
-}
-void kim_api_get_originalunits_(void *kimmdl,char ** UnitsSystem,int *error){
-    KIM_API_get_originalUnits(*(KIM_API_model **)kimmdl,*UnitsSystem, error);
-    for(int i=strlen(*UnitsSystem)+1;i<KEY_CHAR_LENGTH;i++){
-        (*UnitsSystem)[i]='\0';
-    }
-}
-int kim_api_set_units_(void *kimmdl,char ** UnitsSystem){
 
-    return KIM_API_set_Units(*(KIM_API_model **)kimmdl,*UnitsSystem);
-}
-void kim_api_transform_units_to_(void *kimmdl,char ** UnitsSystem,int * error){
 
-    KIM_API_transform_Units_to(*(KIM_API_model **)kimmdl,*UnitsSystem,error);
 
-}
-int kim_api_isunits_fixed_(void *kimmdl){
-    return KIM_API_isUnitS_fixed(*(KIM_API_model **)kimmdl);
-}
+
+
 void * kim_api_get_listatomtypes_f_(void * kimmdl,int* nATypes, int* error){
  return KIM_API_get_listAtomTypes(*(KIM_API_model **)kimmdl,nATypes,error);
 }
+
 void * kim_api_get_listparams_f_(void * kimmdl,int* nVpar, int* error){
  return KIM_API_get_listParams(*(KIM_API_model **)kimmdl,nVpar,error);
 }
@@ -865,10 +847,6 @@ int kim_api_isit_compute_byi_(void *kimmdl,int * I,int *error){
     return KIM_API_isit_compute_byI(*(KIM_API_model **)kimmdl,*I,error);
 }
 
-float kim_api_get_unit_scalefactor_(void * kim, char**nm, int *error){
-    return KIM_API_get_unit_scalefactor(*(KIM_API_model **)kim, *nm,error);
-}
-
 void * kim_api_status_msg_f_(int * error){
     return (void *) KIM_API_status_msg(*error);
 }
@@ -879,4 +857,26 @@ int kim_api_report_error_(int * ln,char ** fl, char ** usermsg, int * ier){
 
 void kim_api_process_d1edr_f_(void **ppkim, double * dE, double * dr, double **dx, int *i, int *j, int *ier ){
     KIM_API_model::process_d1Edr((KIM_API_model **)ppkim,dE,dr,dx,i,j,ier);
+}
+
+double kim_api_get_convert_scale_(char **u_from,char **u_to, int *error){
+    return KIM_API_model::get_convert_scale(*u_from,*u_to,error);
+}
+int    kim_api_get_unit_handling_f_(void *kimmdl){
+    return (*((KIM_API_model **)kimmdl))->get_Unit_handling();
+}
+char * kim_api_get_unit_length_f_(void *kimmdl){
+    return (*((KIM_API_model **)kimmdl))->get_Unit_length();
+}
+char * kim_api_get_unit_energy_f_(void *kimmdl){
+    return (*((KIM_API_model **)kimmdl))->get_Unit_energy();
+}
+char * kim_api_get_unit_charge_f_(void *kimmdl){
+    return (*((KIM_API_model **)kimmdl))->get_Unit_charge();
+}
+char * kim_api_get_unit_temperature_f_(void *kimmdl){
+    return (*((KIM_API_model **)kimmdl))->get_Unit_temperature();
+}
+char * kim_api_get_unit_time_f_(void *kimmdl){
+    return (*((KIM_API_model **)kimmdl))->get_Unit_time();
 }

@@ -123,6 +123,7 @@ integer,parameter :: kim_intptr = 8
       integer :: ln,ier
       integer(kind=kim_intptr)::fl,usermsg
     end function kim_api_report_error
+    
 
         integer function kim_api_init1(kimmdl,testinputf,testname,mdlinputf,mdlname)
 #ifdef SYSTEM32
@@ -142,23 +143,9 @@ integer,parameter :: kim_intptr = 8
             integer(kind=kim_intptr) :: kimmdl
         end function kim_api_get_model_index_shift_f
 
-        integer function kim_api_set_units(kimmdl,UnitsSystem)
-#ifdef SYSTEM32
-	integer, parameter :: kim_intptr=4
-#else
-	integer,parameter :: kim_intptr = 8
-#endif
-             integer(kind=kim_intptr) :: kimmdl,UnitsSystem
-        end function kim_api_set_units
+        
 
-        integer function kim_api_isunits_fixed(kimmdl)
-#ifdef SYSTEM32
-	integer, parameter :: kim_intptr=4
-#else
-	integer,parameter :: kim_intptr = 8
-#endif
-             integer(kind=kim_intptr) :: kimmdl
-        end function kim_api_isunits_fixed
+       
 
         integer function kim_api_set_data(kimmdl,nm, size, dt)
 #ifdef SYSTEM32
@@ -181,15 +168,7 @@ integer,parameter :: kim_intptr = 8
 	    integer::error
         end function kim_api_get_data
 
-	real function kim_api_get_unit_scalefactor(kimmdl,nm,error)
-#ifdef SYSTEM32
-	integer, parameter :: kim_intptr=4
-#else
-	integer,parameter :: kim_intptr = 8
-#endif
-            integer(kind=kim_intptr) :: kimmdl,nm
-	    integer::error
-        end function kim_api_get_unit_scalefactor
+	
 
 
 #ifdef FORTRAN2003
@@ -456,36 +435,78 @@ integer,parameter :: kim_intptr = 8
 		
 	end function kim_api_model_init_f
 
+        real*8 function kim_api_get_convert_scale(u_from,u_to,error)
+#ifdef SYSTEM32
+	integer, parameter :: kim_intptr=4
+#else
+	integer,parameter :: kim_intptr = 8
+#endif
+		integer(kind=kim_intptr) :: u_from,u_to
+                integer:: error
+		
+	end function kim_api_get_convert_scale
+        
+        integer function kim_api_get_unit_handling_f(kimmdl)
+#ifdef SYSTEM32
+	integer, parameter :: kim_intptr=4
+#else
+	integer,parameter :: kim_intptr = 8
+#endif
+		integer(kind=kim_intptr) :: kimmdl		
+	end function kim_api_get_unit_handling_f
+
+	function kim_api_get_unit_length_f(kimmdl)
+#ifdef SYSTEM32
+	integer, parameter :: kim_intptr=4
+#else
+	integer,parameter :: kim_intptr = 8
+#endif
+		integer(kind=kim_intptr) :: kimmdl,kim_api_get_unit_length_f		
+	end function kim_api_get_unit_length_f
+
+        function kim_api_get_unit_energy_f(kimmdl)
+#ifdef SYSTEM32
+	integer, parameter :: kim_intptr=4
+#else
+	integer,parameter :: kim_intptr = 8
+#endif
+		integer(kind=kim_intptr) :: kimmdl,kim_api_get_unit_energy_f		
+	end function kim_api_get_unit_energy_f
+
+        function kim_api_get_unit_charge_f(kimmdl)
+#ifdef SYSTEM32
+	integer, parameter :: kim_intptr=4
+#else
+	integer,parameter :: kim_intptr = 8
+#endif
+		integer(kind=kim_intptr) :: kimmdl,kim_api_get_unit_charge_f		
+	end function kim_api_get_unit_charge_f
+
+        function kim_api_get_unit_temperature_f(kimmdl)
+#ifdef SYSTEM32
+	integer, parameter :: kim_intptr=4
+#else
+	integer,parameter :: kim_intptr = 8
+#endif
+		integer(kind=kim_intptr) :: kimmdl,kim_api_get_unit_temperature_f		
+	end function kim_api_get_unit_temperature_f
+
+        function kim_api_get_unit_time_f(kimmdl)
+#ifdef SYSTEM32
+	integer, parameter :: kim_intptr=4
+#else
+	integer,parameter :: kim_intptr = 8
+#endif
+		integer(kind=kim_intptr) :: kimmdl,kim_api_get_unit_time_f		
+	end function kim_api_get_unit_time_f
+
     !subroutines
-        subroutine kim_api_get_units(kimmdl,UnitsSystem,error)
-#ifdef SYSTEM32
-	integer, parameter :: kim_intptr=4
-#else
-	integer,parameter :: kim_intptr = 8
-#endif
-            integer(kind=kim_intptr) :: kimmdl,UnitsSystem
-	    integer::error
-        end subroutine kim_api_get_units
+      
 
-        subroutine kim_api_get_originalunits(kimmdl,UnitsSystem,error)
-#ifdef SYSTEM32
-	integer, parameter :: kim_intptr=4
-#else
-	integer,parameter :: kim_intptr = 8
-#endif
-            integer(kind=kim_intptr) :: kimmdl,UnitsSystem
-	    integer::error
-        end subroutine kim_api_get_originalunits
+        
 
-        subroutine kim_api_transform_units_to(kimmdl,UnitsSystem,error)
-#ifdef SYSTEM32
-	integer, parameter :: kim_intptr=4
-#else
-	integer,parameter :: kim_intptr = 8
-#endif
-            integer(kind=kim_intptr) :: kimmdl,UnitsSystem
-	    integer::error
-        end subroutine  kim_api_transform_units_to
+      
+
 
         subroutine kim_api_set2_compute(kimmdl,nm,error)
 #ifdef SYSTEM32
@@ -667,21 +688,9 @@ integer,parameter :: kim_intptr = 8
             kim_api_init1_f =kim_api_init1(kimmdl,ps1,ps2,ps3,ps4)
         end function kim_api_init1_f
 
-        integer function kim_api_set_units_f(kimmdl,UnitsSystem)
-             integer(kind=kim_intptr) :: kimmdl
-             character (len=*) ::UnitsSystem
-             character (len=KEY_CHAR_LENGTH) :: str2send
-             character (len=KEY_CHAR_LENGTH) :: str; pointer (pstr,str)
-             str2send = attachnull(trim(UnitsSystem))
-             pstr = loc(str2send)
-             kim_api_set_units_f = kim_api_set_units(kimmdl,pstr)
-        end function kim_api_set_units_f
+       
 
-        integer function kim_api_isunits_fixed_f(kimmdl)
-             !returns 1 (true) if fixed units (unitits can't be reset)
-             integer(kind=kim_intptr) :: kimmdl
-             kim_api_isunits_fixed_f = kim_api_isunits_fixed(kimmdl)
-        end function kim_api_isunits_fixed_f
+     
 
         integer function kim_api_set_data_f(kimmdl,nm, size, dt)
             ! returns 1 (true) if successfull
@@ -709,6 +718,16 @@ integer,parameter :: kim_intptr = 8
             kim_api_get_data_f = kim_api_get_data(kimmdl,pstr,error)
         end function kim_api_get_data_f
          
+        real*8 function kim_api_get_convert_scale_f(from,to,error)
+                integer:: error
+		character (len=*) ::from,to
+                character (len=KEY_CHAR_LENGTH) ::sfrom,sto
+                sfrom = attachnull(trim(from))
+                sto = attachnull(trim(to))
+                kim_api_get_convert_scale_f = kim_api_get_convert_scale(loc(sfrom),loc(sto),error)
+	end function kim_api_get_convert_scale_f
+        
+
         integer(kind=kim_intptr) function kim_api_get_model_kim_str_f(nm,lenstr,error)
 	    character (len=*) ::nm
             character (len=KEY_CHAR_LENGTH) :: str2send
@@ -730,16 +749,7 @@ integer,parameter :: kim_intptr = 8
 		kim_api_get_atypecode_f = kim_api_get_atypecode(kimmdl,pstr,error)
 	end function kim_api_get_atypecode_f
 
-	real function kim_api_get_unit_scalefactor_f(kimmdl,nm,error)
-		integer(kind=kim_intptr) :: kimmdl
- 		character (len=*) ::nm
-		character (len=KEY_CHAR_LENGTH) :: str2send
-            	character (len=KEY_CHAR_LENGTH) :: str; pointer (pstr,str)
-		integer::error
-            	str2send = attachnull(trim(nm))
-           	pstr = loc(str2send)
-		kim_api_get_unit_scalefactor_f = kim_api_get_unit_scalefactor(kimmdl,pstr,error)
-	end function kim_api_get_unit_scalefactor_f
+
 
 #ifdef FORTRAN2003
         function kim_api_get_data_fc(kimmdl,nm)
@@ -910,38 +920,9 @@ integer,parameter :: kim_intptr = 8
             call kim_api_print(kimmdl,error)
         end subroutine kim_api_print_f
     !subroutine kim_api_model_calculate(subroutine *kimmdl) //method is not implemented yet
-        subroutine kim_api_get_units_f(kimmdl,UnitsSystem,error)
-            integer(kind=kim_intptr) :: kimmdl
-           character (len=*) :: UnitsSystem
-           character (len=KEY_CHAR_LENGTH) ::us
-           character :: str(1); pointer(pstr,str)
-	   integer::error
-           pstr =loc(us)
-           call kim_api_get_units(kimmdl,pstr,error)
-           UnitsSystem = attachnull(us)
-        end subroutine kim_api_get_units_f
+      
 
-        subroutine kim_api_get_originalunits_f(kimmdl,UnitsSystem,error)
-            integer(kind=kim_intptr) :: kimmdl
-            character (len=*) :: UnitsSystem
-            character (len=KEY_CHAR_LENGTH) ::us
-            character :: str(1); pointer(pstr,str)
-	    integer::error
-            pstr =loc(us)
-            call kim_api_get_originalunits(kimmdl,pstr,error)
-            UnitsSystem = attachnull(us)
-        end subroutine kim_api_get_originalunits_f
 
-        subroutine kim_api_transform_units_to_f(kimmdl,UnitsSystem,error)
-            integer(kind=kim_intptr) :: kimmdl
-            character (len=*) :: UnitsSystem
-	    integer::error
-            character (len=KEY_CHAR_LENGTH) ::us
-            character :: str(1); pointer(pstr,str)
-            us = attachnull(UnitsSystem)
-            pstr =loc(us)
-            call kim_api_transform_units_to(kimmdl,pstr,error)
-        end subroutine  kim_api_transform_units_to_f
         
         integer function kim_api_report_error_f(ln,fl,usermsg,ier)
             integer:: ln,ier
