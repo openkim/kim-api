@@ -112,7 +112,7 @@ int main()
       KIM_API_report_error(__LINE__, __FILE__,"KIM_API_init() for MODEL_ONE cluster",status);
 
    /* Register memory */
-   KIM_API_set_data_multiple(pkim_periodic_model_0, &status, 12*4,
+   KIM_API_set_data_multiple(pkim_periodic_model_0, &status, 9*4,
                              "numberOfAtoms",             1,   &numberOfAtoms_periodic,     1,
                              "numberContributingAtoms",   1,   &numContrib_periodic,        1,
                              "numberAtomTypes",           1,   &numberAtomTypes,            1,
@@ -124,7 +124,7 @@ int main()
                              "energy",                    1,   &energy_periodic_model_0,    1);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_set_data_multiple",status);
    
-   KIM_API_set_data_multiple(pkim_periodic_model_1, &status, 12*4,
+   KIM_API_set_data_multiple(pkim_periodic_model_1, &status, 9*4,
                              "numberOfAtoms",             1,   &numberOfAtoms_periodic,     1,
                              "numberContributingAtoms",   1,   &numContrib_periodic,        1,
                              "numberAtomTypes",           1,   &numberAtomTypes,            1,
@@ -136,7 +136,7 @@ int main()
                              "energy",                    1,   &energy_periodic_model_1,    1);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_set_data_multiple",status);
 
-   KIM_API_set_data_multiple(pkim_cluster_model_0, &status, 12*4,
+   KIM_API_set_data_multiple(pkim_cluster_model_0, &status, 9*4,
                              "numberOfAtoms",             1,   &numberOfAtoms_cluster,     1,
                              "numberContributingAtoms",   1,   &numContrib_cluster,        1,
                              "numberAtomTypes",           1,   &numberAtomTypes,           1,
@@ -148,7 +148,7 @@ int main()
                              "energy",                    1,   &energy_cluster_model_0,    1);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_set_data_multiple",status);
 
-   KIM_API_set_data_multiple(pkim_cluster_model_1, &status, 12*4,
+   KIM_API_set_data_multiple(pkim_cluster_model_1, &status, 9*4,
                              "numberOfAtoms",             1,   &numberOfAtoms_cluster,     1,
                              "numberContributingAtoms",   1,   &numContrib_cluster,        1,
                              "numberAtomTypes",           1,   &numberAtomTypes,           1,
