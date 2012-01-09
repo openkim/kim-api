@@ -14,7 +14,6 @@
 
 
 TEST_NAME := TEST_NAME_STR
-Unit_Handling    := fixed
 Unit_length      := A
 Unit_energy      := eV
 Unit_charge      := e
