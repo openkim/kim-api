@@ -583,6 +583,37 @@ void MODEL_DRIVER_NAME_LC_STR_init_(void *km, char* paramfile, int* length)
       exit(1);
    }
 
+   /* convert to appropriate units */
+   cutoff *= KIM_API_convert_unit_from(pkim, "A", "eV", "e", "K", "fs",
+                                             1.0,  0.0, 0.0, 0.0,  0.0, &ier);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_unit_from", ier);
+      exit(1);
+   }
+   epsilon *= KIM_API_convert_unit_from(pkim, "A", "eV", "e", "K", "fs",
+                                              0.0,  1.0, 0.0, 0.0,  0.0, &ier);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_unit_from", ier);
+      exit(1);
+   }
+
+   C *= KIM_API_convert_unit_from(pkim, "A", "eV", "e", "K", "fs",
+                                        -1.0,  0.0, 0.0, 0.0,  0.0, &ier);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_unit_from", ier);
+      exit(1);
+   }
+   Rzero *= KIM_API_convert_unit_from(pkim, "A", "eV", "e", "K", "fs",
+                                            1.0,  0.0, 0.0, 0.0,  0.0, &ier);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_unit_from", ier);
+      exit(1);
+   }
+
    /* store model cutoff in KIM object */
    model_cutoff = (double*) KIM_API_get_data(pkim, "cutoff", &ier);
    if (KIM_STATUS_OK > ier)

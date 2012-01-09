@@ -55,7 +55,8 @@ AUTO_GEN_TESTS = test_Al_free_cluster                 \
                  test_Ar_free_cluster_CLUSTER_F90     \
                  test_Ar_free_cluster                 \
                  test_Ar_multiple_models              \
-                 test_Ne_free_cluster
+                 test_Ne_free_cluster                 \
+                 test_Ne_free_cluster_SI
 
 
 all: $(AUTO_GEN_TESTS) EXAMPLES.README run_all_tests
@@ -119,7 +120,8 @@ test_Al_free_cluster: $(COMMON_FRAGMENTS)                      \
         # make .F90 file in the directory
 	$(F_CAT) program_free_cluster.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Al/g' \
-               -e 's/FCC_SPACING_STR/4.050d0 ! in angstroms/g'                                                >  $(KIM_TESTS_DIR)$@/$@.F90
+               -e 's/FCC_SPACING_STR/4.050d0 ! in angstroms/g' \
+               -e 's/CUTOFF_PADDING_STR/0.750d0 ! in angstroms/g'                                             >  $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
 	$(F_CAT) MI_OPBC_neighborlist.f.frag                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
@@ -581,7 +583,8 @@ test_Ar_free_cluster: $(COMMON_FRAGMENTS)                      \
         # make .F90 file in the directory
 	$(F_CAT) program_free_cluster.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
-               -e 's/FCC_SPACING_STR/5.26d0 ! in angstroms/g'                                                 >  $(KIM_TESTS_DIR)$@/$@.F90
+               -e 's/FCC_SPACING_STR/5.26d0 ! in angstroms/g' \
+               -e 's/CUTOFF_PADDING_STR/0.750d0 ! in angstroms/g'                                             >  $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
 	$(F_CAT) MI_OPBC_neighborlist.f.frag                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
@@ -647,7 +650,8 @@ test_Ne_free_cluster: $(COMMON_FRAGMENTS)                      \
         # make .F90 file in the directory
 	$(F_CAT) program_free_cluster.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ne/g' \
-               -e 's/FCC_SPACING_STR/4.430d0 ! in angstroms/g'                                                >  $(KIM_TESTS_DIR)$@/$@.F90
+               -e 's/FCC_SPACING_STR/4.430d0 ! in angstroms/g' \
+               -e 's/CUTOFF_PADDING_STR/0.750d0 ! in angstroms/g'                                             >  $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
 	$(F_CAT) MI_OPBC_neighborlist.f.frag                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
@@ -660,6 +664,74 @@ test_Ne_free_cluster: $(COMMON_FRAGMENTS)                      \
 	$(F_CAT) get_neigh_Rij.f.frag                                                                         >> $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
 	$(F_CAT) create_FCC_configuration.f.frag                                                              >> $(KIM_TESTS_DIR)$@/$@.F90
+
+test_Ne_free_cluster_SI: $(COMMON_FRAGMENTS)                      \
+                         test_free_cluster_README                 \
+                         descriptor_file_neighborlist             \
+                         program_free_cluster.f.frag              \
+                         MI_OPBC_neighborlist.f.frag              \
+                         NEIGH_PURE_cluster_neighborlist.f.frag   \
+                         NEIGH_RVEC_F_cluster_neighborlist.f.frag \
+                         get_neigh_no_Rij.f.frag                  \
+                         get_neigh_Rij.f.frag                     \
+                         create_FCC_configuration.f.frag
+        # make directory
+	mkdir -p $(KIM_TESTS_DIR)$@
+	@touch $(KIM_TESTS_DIR)$@
+        # make README file in the directory
+	$(D_CAT) test_free_cluster_README | $(SED_CMD) \
+         | sed -e 's/SPECIES_NAME_STR/Ne/g'                                                                   >  $(KIM_TESTS_DIR)$@/README
+        # make Makefile in the directory
+	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_TESTS_DIR)$@/Makefile
+        # make .kim file in the directory
+	$(D_CAT) descriptor_file_start_SI    | $(SED_CMD) \
+         | sed -e 's/SPECIES_LINE_STR/Ne                      spec                    10/g'                   >  $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "NEIGH-RVEC-F            dummy"                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "NEIGH-PURE-H            dummy"                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "NEIGH-PURE-F            dummy"                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "MI-OPBC-H               dummy"                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "MI-OPBC-F               dummy"                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
+	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "get_half_neigh          method       none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
+	$(D_CAT) descriptor_file_neighborlist                                                                 >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "numberContributingAtoms integer      none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "boxlength               real*8       length              [3]"                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
+	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "forces                  real*8       force               [numberOfAtoms,3]"                     >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "virialGlobal            real*8       energy              [6]"                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+        # make .F90 file in the directory
+	$(F_CAT) program_free_cluster.f.frag | $(SED_CMD) \
+         | sed -e 's/SPECIES_NAME_STR/Ne/g' \
+               -e 's/FCC_SPACING_STR/4.430d-10 ! in meters/g' \
+               -e 's/CUTOFF_PADDING_STR/0.750d-10 ! in meters/g'                                              >  $(KIM_TESTS_DIR)$@/$@.F90
+	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
+	$(F_CAT) MI_OPBC_neighborlist.f.frag                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
+	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
+	$(F_CAT) NEIGH_PURE_cluster_neighborlist.f.frag                                                       >> $(KIM_TESTS_DIR)$@/$@.F90
+	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
+	$(F_CAT) NEIGH_RVEC_F_cluster_neighborlist.f.frag                                                     >> $(KIM_TESTS_DIR)$@/$@.F90
+	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
+	$(F_CAT) get_neigh_no_Rij.f.frag                                                                      >> $(KIM_TESTS_DIR)$@/$@.F90
+	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
+	$(F_CAT) get_neigh_Rij.f.frag                                                                         >> $(KIM_TESTS_DIR)$@/$@.F90
+	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
+	$(F_CAT) create_FCC_configuration.f.frag                                                              >> $(KIM_TESTS_DIR)$@/$@.F90
+
 
 test_Ar_multiple_models: example_test_Ar_multiple_models               \
                          $(wildcard example_test_Ar_multiple_models/*) \

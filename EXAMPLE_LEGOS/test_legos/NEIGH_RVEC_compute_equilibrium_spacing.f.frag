@@ -37,6 +37,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   real*8 coordum(DIM,1);   pointer(pcoor,coordum)
   real*8, pointer :: coords(:,:)
   real*8 cutoff;           pointer(pcutoff,cutoff)
+  double precision cutpad ! cutoff radius padding
 
   ! Unpack data from KIM object
   !
@@ -55,7 +56,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   !
   Spacings(1) = MinSpacing
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
-  call NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerCutoff, (cutoff+0.75), &
+  call NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerCutoff, (cutoff+cutpad), &
                                               Spacings(1), N, NNeighbors,    &
                                               neighborList, RijList)
   call kim_api_model_compute_f(pkim, ier)
@@ -70,7 +71,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   ! setup and compute for max spacing
   Spacings(3) = MaxSpacing
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
-  call NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerCutoff, (cutoff+0.75), &
+  call NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerCutoff, (cutoff+cutpad), &
                                               Spacings(3), N, NNeighbors,    &
                                               neighborList, RijList)
   ! Call model compute
@@ -86,7 +87,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   ! setup and compute for first intermediate spacing
   Spacings(2) = MinSpacing + (2.0 - Golden)*(MaxSpacing - MinSpacing)
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
-  call NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerCutoff, (cutoff+0.75), &
+  call NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerCutoff, (cutoff+cutpad), &
                                               Spacings(2), N, NNeighbors,    &
                                               neighborList, RijList)
   ! Call model compute
@@ -106,7 +107,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
      ! set new spacing
      Spacings(4) = (Spacings(1) + Spacings(3)) - Spacings(2)
      ! compute new neighbor lists (could be done more intelligently, I'm sure)
-     call NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerCutoff, (cutoff+0.75), &
+     call NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerCutoff, (cutoff+cutpad), &
                                                  Spacings(4), N, NNeighbors,    &
                                                  neighborList, RijList)
      ! Call model compute

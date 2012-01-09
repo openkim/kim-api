@@ -570,6 +570,32 @@ void model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* p
       exit(1);
    }
 
+   /* convert to appropriate units */
+   cutoff *= KIM_API_convert_unit_from(pkim, "A", "eV", "e", "K", "fs",
+                                             1.0,  0.0, 0.0, 0.0,  0.0, &ier);
+   if (KIM_STATUS_OK < ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_unit_from", ier);
+      exit(1);
+   }
+   <FILL parameter 1> *= KIM_API_convert_unit_from(pkim, "A", "eV", "e", "K", "fs",
+                                                   <FILL exponents (5) for parameter 1>);
+   if (KIM_STATUS_OK < ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_unit_from", ier);
+      exit(1);
+   }
+
+   <FILL parameter 2> *= KIM_API_convert_unit_from(pkim, "A", "eV", "e", "K", "fs",
+                                                   <FILL exponents (5) for parameter 2>);
+   if (KIM_STATUS_OK < ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_unit_from", ier);
+      exit(1);
+   }
+
+   /* FILL as many parameters as necessary */
+
    /* store model cutoff in KIM object */
    model_cutoff = (double*) KIM_API_get_data(pkim, "cutoff", &ier);
    if (KIM_STATUS_OK > ier)

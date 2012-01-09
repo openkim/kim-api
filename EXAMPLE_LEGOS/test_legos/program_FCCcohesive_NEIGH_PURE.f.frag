@@ -169,6 +169,7 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
   real*8 coordum(DIM,1);   pointer(pcoor,coordum)
   real*8, pointer :: coords(:,:)
   real*8 cutoff;           pointer(pcutoff,cutoff)
+  double precision cutpad ! cutoff radius padding
   logical :: halfflag  ! .true. = half neighbor list; .false. = full neighbor list
   character(len=64) NBC_Method;  pointer(pNBC_Method,NBC_Method)
 
@@ -208,7 +209,7 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
   Spacings(1) = MinSpacing
   call create_FCC_configuration(Spacings(1), 2*CellsPerRcut, .true., coords, MiddleAtomId)
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
-  call NEIGH_PURE_periodic_neighborlist(halfflag, N, coords, (cutoff+0.75), &
+  call NEIGH_PURE_periodic_neighborlist(halfflag, N, coords, (cutoff+cutpad), &
                                         MiddleAtomId, neighborList)
   call kim_api_model_compute_f(pkim, ier)
   if (ier.lt.KIM_STATUS_OK) then
@@ -227,7 +228,7 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
   Spacings(3) = MaxSpacing
   call create_FCC_configuration(Spacings(3), 2*CellsPerRcut, .true., coords, MiddleAtomId)
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
-  call NEIGH_PURE_periodic_neighborlist(halfflag, N, coords, (cutoff+0.75), &
+  call NEIGH_PURE_periodic_neighborlist(halfflag, N, coords, (cutoff+cutpad), &
                                         MiddleAtomId, neighborList)
   ! Call model compute
   call kim_api_model_compute_f(pkim, ier)
@@ -247,7 +248,7 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
   Spacings(2) = MinSpacing + (2.0 - Golden)*(MaxSpacing - MinSpacing)
   call create_FCC_configuration(Spacings(2), 2*CellsPerRcut, .true., coords, MiddleAtomId)
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
-  call NEIGH_PURE_periodic_neighborlist(halfflag, N, coords, (cutoff+0.75), &
+  call NEIGH_PURE_periodic_neighborlist(halfflag, N, coords, (cutoff+cutpad), &
                                         MiddleAtomId, neighborList)
   ! Call model compute
   call kim_api_model_compute_f(pkim, ier)
@@ -272,7 +273,7 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
      ! compute new atom coordinates based on new spacing
      call create_FCC_configuration(Spacings(4), 2*CellsPerRcut, .true., coords, MiddleAtomId)
      ! compute new neighbor lists (could be done more intelligently, I'm sure)
-     call NEIGH_PURE_periodic_neighborlist(halfflag, N, coords, (cutoff+0.75), &
+     call NEIGH_PURE_periodic_neighborlist(halfflag, N, coords, (cutoff+cutpad), &
                                            MiddleAtomId, neighborList)
      ! Call model compute
      call kim_api_model_compute_f(pkim, ier)

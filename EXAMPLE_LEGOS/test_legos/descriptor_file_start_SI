@@ -1,0 +1,38 @@
+#######################################################################################################
+#
+# Release: This file is part of the openkim-api.git repository.
+#
+# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
+# All rights reserved.
+#
+# Authors: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
+#
+#
+# See KIM_API/standard.kim for documentation about this file
+#
+#######################################################################################################
+
+
+TEST_NAME := TEST_NAME_STR
+Unit_Handling    := fixed
+Unit_length      := m
+Unit_energy      := J
+Unit_charge      := C
+Unit_temperature := K
+Unit_time        := sec
+
+
+#######################################################################################################
+SUPPORTED_ATOM/PARTICLES_TYPES:
+# Symbol/name           Type                    code
+
+SPECIES_LINE_STR
+
+
+#######################################################################################################
+CONVENTIONS:
+# Name                  Type
+
+OneBasedLists           dummy
+
+Neigh_BothAccess        dummy

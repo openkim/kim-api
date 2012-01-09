@@ -53,6 +53,7 @@ int main()
    double const SpacingIncr = 0.025*FCCSPACING;
    double CurrentSpacing;
    double CellsPerCutoff[2];
+   double cutpad = 0.75; /* Angstroms */
    int NNeighbors[2];
    int i;
    int status;
@@ -242,14 +243,14 @@ int main()
       create_FCC_cluster(CurrentSpacing, NCELLSPERSIDE, &(coords_cluster[0][0]));
 
       /* compute neighbor lists */
-      fcc_periodic_neighborlist(CellsPerCutoff[0], (cutoff_periodic_model_0 + 0.75),
+      fcc_periodic_neighborlist(CellsPerCutoff[0], (cutoff_periodic_model_0 + cutpad),
                                 CurrentSpacing, &nl_periodic_model_0);
       fcc_cluster_neighborlist(NCLUSTERATOMS, &(coords_cluster[0][0]),
-                               (cutoff_cluster_model_0 + 0.75), &nl_cluster_model_0);
-      fcc_periodic_neighborlist(CellsPerCutoff[1], (cutoff_periodic_model_1 + 0.75),
+                               (cutoff_cluster_model_0 + cutpad), &nl_cluster_model_0);
+      fcc_periodic_neighborlist(CellsPerCutoff[1], (cutoff_periodic_model_1 + cutpad),
                                 CurrentSpacing, &nl_periodic_model_1);
       fcc_cluster_neighborlist(NCLUSTERATOMS, &(coords_cluster[0][0]),
-                               (cutoff_cluster_model_1 + 0.75), &nl_cluster_model_1);
+                               (cutoff_cluster_model_1 + cutpad), &nl_cluster_model_1);
 
       /* call compute functions */
       KIM_API_model_compute(pkim_periodic_model_0, &status);

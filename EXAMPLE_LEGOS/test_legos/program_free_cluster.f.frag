@@ -46,6 +46,7 @@ program TEST_NAME_STR
   integer,                  allocatable :: neighborList(:,:)
   integer(kind=kim_intptr), allocatable :: NLRvecLocs(:)
   double precision,         allocatable :: RijList(:,:,:)
+  double precision                      :: cutpad = CUTOFF_PADDING_STR
 
   !
   ! KIM variables
@@ -216,15 +217,15 @@ program TEST_NAME_STR
 
   ! compute neighbor lists
   if (nbc.eq.0) then
-     call MI_OPBC_neighborlist(.true., N, coords, (cutoff+0.75), boxlength, neighborList)
+     call MI_OPBC_neighborlist(.true., N, coords, (cutoff+cutpad), boxlength, neighborList)
   elseif (nbc.eq.1) then
-     call MI_OPBC_neighborlist(.false., N, coords, (cutoff+0.75), boxlength, neighborList)
+     call MI_OPBC_neighborlist(.false., N, coords, (cutoff+cutpad), boxlength, neighborList)
   elseif (nbc.eq.2) then
-     call NEIGH_PURE_cluster_neighborlist(.true., N, coords, (cutoff+0.75), neighborList)
+     call NEIGH_PURE_cluster_neighborlist(.true., N, coords, (cutoff+cutpad), neighborList)
   elseif (nbc.eq.3) then
-     call NEIGH_PURE_cluster_neighborlist(.false., N, coords, (cutoff+0.75), neighborList)
+     call NEIGH_PURE_cluster_neighborlist(.false., N, coords, (cutoff+cutpad), neighborList)
   elseif (nbc.eq.4) then
-     call NEIGH_RVEC_F_cluster_neighborlist(N, coords, (cutoff+0.75), N, neighborList, RijList)
+     call NEIGH_RVEC_F_cluster_neighborlist(N, coords, (cutoff+cutpad), N, neighborList, RijList)
   endif
 
   ! Call model compute

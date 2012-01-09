@@ -169,6 +169,7 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   real*8 coordum(DIM,1);   pointer(pcoor,coordum)
   real*8, pointer :: coords(:,:)
   real*8 cutoff;           pointer(pcutoff,cutoff)
+  double precision cutpad ! cutoff radius padding
   real*8 boxlength(DIM);   pointer(pboxlength,boxlength)
   logical :: halfflag  ! .true. = half neighbor list; .false. = full neighbor list
   character(len=64) NBC_Method;  pointer(pNBC_Method,NBC_Method)
@@ -211,7 +212,7 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   call create_FCC_configuration(Spacings(1), CellsPerSide, .true., coords, middleDum)
   boxlength(:) = Spacings(1)*CellsPerSide
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
-  call MI_OPBC_neighborlist(halfflag, N, coords, (cutoff+0.75), boxlength, neighborList)
+  call MI_OPBC_neighborlist(halfflag, N, coords, (cutoff+cutpad), boxlength, neighborList)
   call kim_api_model_compute_f(pkim, ier)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
@@ -226,7 +227,7 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   call create_FCC_configuration(Spacings(3), CellsPerSide, .true., coords, middleDum)
   boxlength(:) = Spacings(3)*CellsPerSide
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
-  call MI_OPBC_neighborlist(halfflag, N, coords, (cutoff+0.75), boxlength, neighborList)
+  call MI_OPBC_neighborlist(halfflag, N, coords, (cutoff+cutpad), boxlength, neighborList)
   ! Call model compute
   call kim_api_model_compute_f(pkim, ier)
   if (ier.lt.KIM_STATUS_OK) then
@@ -242,7 +243,7 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   call create_FCC_configuration(Spacings(2), CellsPerSide, .true., coords, middleDum)
   boxlength(:) = Spacings(2)*CellsPerSide
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
-  call MI_OPBC_neighborlist(halfflag, N, coords, (cutoff+0.75), boxlength, neighborList)
+  call MI_OPBC_neighborlist(halfflag, N, coords, (cutoff+cutpad), boxlength, neighborList)
   ! Call model compute
   call kim_api_model_compute_f(pkim, ier)
   if (ier.lt.KIM_STATUS_OK) then
@@ -264,7 +265,7 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
      ! set new boxlength
      boxlength(:)  = Spacings(4)*CellsPerSide
      ! compute new neighbor lists (could be done more intelligently, I'm sure)
-     call MI_OPBC_neighborlist(halfflag, N, coords, (cutoff+0.75), boxlength, neighborList)
+     call MI_OPBC_neighborlist(halfflag, N, coords, (cutoff+cutpad), boxlength, neighborList)
      ! Call model compute
      call kim_api_model_compute_f(pkim, ier)
      if (ier.lt.KIM_STATUS_OK) then

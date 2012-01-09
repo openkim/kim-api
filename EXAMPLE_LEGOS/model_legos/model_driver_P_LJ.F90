@@ -639,6 +639,26 @@ stop
 
 200 continue
 
+! convert to appropriate units
+in_cutoff = in_cutoff * kim_api_convert_unit_from_f(pkim, "A", "eV", "e", "K", "fs", &
+                                                    1.0d0, 0.0d0, 0.0d0, 0.0d0, 0.0d0, ier)
+if (ier.lt.KIM_STATUS_OK) then
+   idum=kim_api_report_error_f(__LINE__, __FILE__, "kim_api_convert_unit_from_f", ier)
+   stop
+endif
+in_epsilon = in_epsilon * kim_api_convert_unit_from_f(pkim, "A", "eV", "e", "K", "fs", &
+                                                      0.0d0, 1.0d0, 0.0d0, 0.0d0, 0.0d0, ier)
+if (ier.lt.KIM_STATUS_OK) then
+   idum=kim_api_report_error_f(__LINE__, __FILE__, "kim_api_convert_unit_from_f", ier)
+   stop
+endif
+in_sigma = in_sigma * kim_api_convert_unit_from_f(pkim, "A", "eV", "e", "K", "fs", &
+                                                  1.0d0, 0.0d0, 0.0d0, 0.0d0, 0.0d0, ier)
+if (ier.lt.KIM_STATUS_OK) then
+   idum=kim_api_report_error_f(__LINE__, __FILE__, "kim_api_convert_unit_from_f", ier)
+   stop
+endif
+
 ! store model cutoff in KIM object
 pcutoff =  kim_api_get_data_f(pkim,"cutoff",ier)
 if (ier.lt.KIM_STATUS_OK) then

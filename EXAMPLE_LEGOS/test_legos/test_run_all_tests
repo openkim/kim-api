@@ -340,3 +340,25 @@ echo model_Ne_P_MLJ_NEIGH_RVEC_F    | ./test_Ne_free_cluster/test_Ne_free_cluste
 divider "test_Ne_free_cluster --- model_Ne_P_Morse"
 echo model_Ne_P_Morse               | ./test_Ne_free_cluster/test_Ne_free_cluster >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 footer
+
+#---------------------------------------------------------------------------------------------------------------
+header "test_Ne_free_cluster_SI"              \
+       "   |"                                 \
+       "   |-- model_ArNe_P_MLJ_NEIGH_RVEC_F" \
+       "   |-- model_Ne_P_LJ"                 \
+       "   |-- model_Ne_P_MLJ_NEIGH_RVEC_F"   \
+       "   |-- model_Ne_P_Morse"              \
+       "   |"
+
+divider "test_Ne_free_cluster_SI --- model_ArNe_P_MLJ_NEIGH_RVEC_F --- THIS SHOULD FAIL"
+echo model_ArNe_P_MLJ_NEIGH_RVEC_F  | ./test_Ne_free_cluster_SI/test_Ne_free_cluster_SI >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
+
+divider "test_Ne_free_cluster_SI --- model_Ne_P_LJ"
+echo model_Ne_P_LJ                  | ./test_Ne_free_cluster_SI/test_Ne_free_cluster_SI >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
+
+divider "test_Ne_free_cluster_SI --- model_Ne_P_MLJ_NEIGH_RVEC_F --- THIS SHOULD FAIL"
+echo model_Ne_P_MLJ_NEIGH_RVEC_F    | ./test_Ne_free_cluster_SI/test_Ne_free_cluster_SI >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
+
+divider "test_Ne_free_cluster_SI --- model_Ne_P_Morse"
+echo model_Ne_P_Morse               | ./test_Ne_free_cluster_SI/test_Ne_free_cluster_SI >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
+footer

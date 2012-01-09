@@ -15,7 +15,7 @@
 
 
 MODEL_NAME := MODEL_NAME_STR
-Unit_Handling    := fixed
+Unit_Handling    := flexible
 Unit_length      := A
 Unit_energy      := eV
 Unit_charge      := e
@@ -94,7 +94,7 @@ forces                  real*8       force               [numberOfAtoms,3]  opti
 
 energyPerAtom           real*8       energy              [numberOfAtoms]    optional
 
-virialGlobal            real*8       energy              [6]                optional
+process_d1Edr           method       none                []                 optional
 
 
 #######################################################################################################
