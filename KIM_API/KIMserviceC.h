@@ -204,12 +204,12 @@ void kim_api_process_d1edr_f_(void **ppkim, double * dE, double * dr, double **d
 
 //related to Unit_Handling
 double kim_api_get_convert_scale_(char **u_from,char **u_to, int *error);
-int    kim_api_get_unit_handling_f_(void *kimmdl);
-char * kim_api_get_unit_length_f_(void *kimmdl);
-char * kim_api_get_unit_energy_f_(void *kimmdl);
-char * kim_api_get_unit_charge_f_(void *kimmdl);
-char * kim_api_get_unit_temperature_f_(void *kimmdl);
-char * kim_api_get_unit_time_f_(void *kimmdl);
+int    kim_api_get_unit_handling_f_(void *kimmdl,int *error);
+char * kim_api_get_unit_length_f_(void *kimmdl, int *error);
+char * kim_api_get_unit_energy_f_(void *kimmdl, int *error);
+char * kim_api_get_unit_charge_f_(void *kimmdl, int *error);
+char * kim_api_get_unit_temperature_f_(void *kimmdl, int *error);
+char * kim_api_get_unit_time_f_(void *kimmdl, int *error);
 double kim_api_convert_unit_from_(void * kimmdl,
                                 char **length,
                                 char **energy,
