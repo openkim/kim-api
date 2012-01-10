@@ -1572,6 +1572,7 @@ bool KIM_API_model::init(char * testinputfile,char* testname, char * modelinputf
     //check if they match
     if (is_it_match(test,mdl)){
         this->preinit(modelinputfile,modelname);
+        this->unit_h=test.unit_h;
         this->irrelevantVars2donotcompute(test,*this);
         
         strcpy(this->NBC_method_current, mdl.NBC_method_current);
@@ -1789,6 +1790,7 @@ bool KIM_API_model::init_str_modelname(char* testname, char* inmdlstr){
     //check if they match
     if (is_it_match(test,mdl)){
         this->preinit_str_testname(inmdlstr);
+        this->unit_h=test.unit_h;
         this->irrelevantVars2donotcompute(test,*this);
 
         strcpy(this->NBC_method_current, mdl.NBC_method_current);
@@ -1957,6 +1959,7 @@ bool KIM_API_model::init_str_testname(char* in_tststr, char* modelname){
     //check if they match
     if (is_it_match(test,mdl)){
         this->preinit_str_testname(in_mdlstr);
+        this->unit_h=test.unit_h;
         this->irrelevantVars2donotcompute(test,*this);
 
         strcpy(this->NBC_method_current, mdl.NBC_method_current);
