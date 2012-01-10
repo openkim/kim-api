@@ -94,12 +94,13 @@ void KIM_API_process_d1Edr(void **kimmdl, double * dE, double * dr, double **dx,
 
 //related to Unit_Handling
 double KIM_API_get_convert_scale(char *u_from,char *u_to, int *error);
-int    KIM_API_get_Unit_handling(void *kimmdl);
-char * KIM_API_get_Unit_length(void *kimmdl);
-char * KIM_API_get_Unit_energy(void *kimmdl);
-char * KIM_API_get_Unit_charge(void *kimmdl);
-char * KIM_API_get_Unit_temperature(void *kimmdl);
-char * KIM_API_get_Unit_time(void *kimmdl);
+int    KIM_API_get_Unit_handling(void *kimmdl,int *error);
+char * KIM_API_get_Unit_length(void *kimmdl, int *error);
+char * KIM_API_get_Unit_energy(void *kimmdl, int *error);
+char * KIM_API_get_Unit_charge(void *kimmdl, int *error);
+char * KIM_API_get_Unit_temperature(void *kimmdl, int *error);
+char * KIM_API_get_Unit_time(void *kimmdl, int *error);
+
 double KIM_API_convert_unit_from(void * kimmdl,
                                 char *length,
                                 char *energy,
