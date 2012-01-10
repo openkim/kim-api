@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string.h>
 #include <sstream>
+#include <math.h>
 #include "Unit_Handling.h"
 
 using namespace std;
@@ -43,7 +44,7 @@ char * Unit_Handling::charge_list[]={
      "C" ,        "e",   "statC"
 };
 double Unit_Handling::charge_scale[]={
-     1.0,    1.602e-19,     1.0 //what is statC
+     1.0,    1.602e-19,     2.99792458e-9 //
 };
 int Unit_Handling::ncharge_list=3;
 
@@ -300,40 +301,94 @@ void Unit_Handling::print(ostream& stream){
     stream<<"Unit_time : "<<Unit_time<<endl;
     stream<<"flexible_handling :"<< flexible_handling<<endl;
 }
-int Unit_Handling::get_Unit_handling(){
+int Unit_Handling::get_Unit_handling(int *error){
     if(flexible_handling) return 1;
+    *error = KIM_STATUS_OK;
     return 0;
 }
-char * Unit_Handling::get_Unit_length(){
+char * Unit_Handling::get_Unit_length(int *error){
+    *error = KIM_STATUS_FAIL;
     char *tmp = (char *)malloc(KEY_CHAR_LENGTH);
     for(int i=0;i<KEY_CHAR_LENGTH;i++) tmp[i]='\0';
     strcpy(tmp,Unit_length);
+    *error = KIM_STATUS_OK;
     return tmp;
 }
-char * Unit_Handling::get_Unit_energy(){
+char * Unit_Handling::get_Unit_energy(int *error){
+    *error = KIM_STATUS_FAIL;
     char *tmp = (char *)malloc(KEY_CHAR_LENGTH);
     for(int i=0;i<KEY_CHAR_LENGTH;i++) tmp[i]='\0';
     strcpy(tmp,Unit_energy);
+    *error = KIM_STATUS_OK;
     return tmp;
 }
-char * Unit_Handling::get_Unit_charge(){
+char * Unit_Handling::get_Unit_charge(int *error){
+    *error = KIM_STATUS_FAIL;
     char *tmp = (char *)malloc(KEY_CHAR_LENGTH);
     for(int i=0;i<KEY_CHAR_LENGTH;i++) tmp[i]='\0';
     strcpy(tmp,Unit_charge);
+    *error = KIM_STATUS_OK;
     return tmp;
 }
-char * Unit_Handling::get_Unit_temperature(){
+char * Unit_Handling::get_Unit_temperature(int *error){
+    *error = KIM_STATUS_FAIL;
     char *tmp = (char *)malloc(KEY_CHAR_LENGTH);
     for(int i=0;i<KEY_CHAR_LENGTH;i++) tmp[i]='\0';
     strcpy(tmp,Unit_temperature);
+    *error = KIM_STATUS_OK;
     return tmp;
 }
-char * Unit_Handling::get_Unit_time(){
+char * Unit_Handling::get_Unit_time(int *error){
+    *error = KIM_STATUS_FAIL;
     char *tmp = (char *)malloc(KEY_CHAR_LENGTH);
     for(int i=0;i<KEY_CHAR_LENGTH;i++) tmp[i]='\0';
     strcpy(tmp,Unit_time);
+    *error = KIM_STATUS_OK;
     return tmp;
 }
 ostream &operator<<(ostream &stream, Unit_Handling &a){
     a.print(stream);
+}
+
+double Unit_Handling::convert_unit_from(void *kim,
+      char* length, char* energy, char* charge, char* temperature, char* time,
+      double length_exponent, double energy_exponent, double charge_exponent,
+      double temperature_exponent, double time_exponent, int* kimerror){
+      KIM_API_model *kimmdl = (KIM_API_model *)kim;
+      char *to_length = kimmdl->get_Unit_length(kimerror);
+      char *to_energy =kimmdl->get_Unit_energy(kimerror);
+      char *to_charge =kimmdl->get_Unit_charge(kimerror);
+      char *to_temperature = kimmdl->get_Unit_temperature(kimerror);
+      char *to_time = kimmdl->get_Unit_time(kimerror);
+
+      int error_length,error_energy,error_charge,error_temperature,error_time;
+      double scale_length = kimmdl->get_convert_scale(length,to_length,&error_length);
+      double scale_energy = kimmdl->get_convert_scale(energy,to_energy,&error_energy);
+      double scale_charge = kimmdl->get_convert_scale(charge,to_charge,&error_charge);
+      double scale_temperature = kimmdl->get_convert_scale(temperature,to_temperature,&error_temperature);
+      double scale_time = kimmdl->get_convert_scale(time,to_time,&error_time);
+
+      free(to_length);free(to_energy);free(to_charge);free(to_temperature);free(to_time);
+
+      if      (error_length < KIM_STATUS_OK){
+              *kimerror = error_length;
+              return -1.0;
+      }else if(error_energy < KIM_STATUS_OK){
+              *kimerror = error_energy;
+              return -1.0;
+      }else if(error_charge < KIM_STATUS_OK){
+              *kimerror = error_charge;
+              return -1.0;
+      }else if(error_temperature < KIM_STATUS_OK){
+              *kimerror = error_temperature;
+              return -1.0;
+      }else if(error_time < KIM_STATUS_OK){
+              *kimerror = error_time;
+              return -1.0;
+      }
+
+      return pow(scale_length,length_exponent)*pow(scale_energy,energy_exponent)*
+             pow(scale_charge,charge_exponent)*pow(scale_temperature,temperature_exponent)*
+             pow(scale_time, time_exponent);
+      
 }

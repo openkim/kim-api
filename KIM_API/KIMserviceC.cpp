@@ -669,23 +669,38 @@ void KIM_API_get_compute_byI_multiple(void *kimmdl, int *err,int numargs, ...){
 double KIM_API_get_convert_scale(char *u_from,char *u_to, int *error){
     return KIM_API_model::get_convert_scale(u_from,u_to,error);
 }
-int    KIM_API_get_Unit_handling(void *kimmdl){
-    return ((KIM_API_model *)kimmdl)->get_Unit_handling();
+int    KIM_API_get_Unit_handling(void *kimmdl, int *error){
+    return ((KIM_API_model *)kimmdl)->get_Unit_handling(error);
 }
-char * KIM_API_get_Unit_length(void *kimmdl){
-    return ((KIM_API_model *)kimmdl)->get_Unit_length();
+char * KIM_API_get_Unit_length(void *kimmdl, int *error){
+    return ((KIM_API_model *)kimmdl)->get_Unit_length(error);
 }
-char * KIM_API_get_Unit_energy(void *kimmdl){
-    return ((KIM_API_model *)kimmdl)->get_Unit_energy();
+char * KIM_API_get_Unit_energy(void *kimmdl, int *error){
+    return ((KIM_API_model *)kimmdl)->get_Unit_energy(error);
 }
-char * KIM_API_get_Unit_charge(void *kimmdl){
-    return ((KIM_API_model *)kimmdl)->get_Unit_charge();
+char * KIM_API_get_Unit_charge(void *kimmdl, int *error){
+    return ((KIM_API_model *)kimmdl)->get_Unit_charge(error);
 }
-char * KIM_API_get_Unit_temperature(void *kimmdl){
-    return ((KIM_API_model *)kimmdl)->get_Unit_temperature();
+char * KIM_API_get_Unit_temperature(void *kimmdl, int *error){
+    return ((KIM_API_model *)kimmdl)->get_Unit_temperature(error);
 }
-char * KIM_API_get_Unit_time(void *kimmdl){
-    return ((KIM_API_model *)kimmdl)->get_Unit_time();
+char * KIM_API_get_Unit_time(void *kimmdl, int *error){
+    return ((KIM_API_model *)kimmdl)->get_Unit_time(error);
+}
+double KIM_API_convert_unit_from(void * kimmdl,
+                                char *length,
+                                char *energy,
+                                char *charge,
+                                char *temperature,
+                                char *time,
+                                double length_exponent,
+                                double energy_exponent,
+                                double charge_exponent,
+                                double temperature_exponent,
+                                double time_exponent,
+                                int *kimerror){
+    return ((KIM_API_model *)kimmdl)->convert_unit_from(length,energy,charge,temperature,time,
+            length_exponent,energy_exponent,charge_exponent,temperature_exponent,time_exponent, kimerror);
 }
 
 
@@ -862,21 +877,36 @@ void kim_api_process_d1edr_f_(void **ppkim, double * dE, double * dr, double **d
 double kim_api_get_convert_scale_(char **u_from,char **u_to, int *error){
     return KIM_API_model::get_convert_scale(*u_from,*u_to,error);
 }
-int    kim_api_get_unit_handling_f_(void *kimmdl){
-    return (*((KIM_API_model **)kimmdl))->get_Unit_handling();
+int    kim_api_get_unit_handling_f_(void *kimmdl, int *error){
+    return (*((KIM_API_model **)kimmdl))->get_Unit_handling(error);
 }
-char * kim_api_get_unit_length_f_(void *kimmdl){
-    return (*((KIM_API_model **)kimmdl))->get_Unit_length();
+char * kim_api_get_unit_length_f_(void *kimmdl, int *error){
+    return (*((KIM_API_model **)kimmdl))->get_Unit_length(error);
 }
-char * kim_api_get_unit_energy_f_(void *kimmdl){
-    return (*((KIM_API_model **)kimmdl))->get_Unit_energy();
+char * kim_api_get_unit_energy_f_(void *kimmdl, int *error){
+    return (*((KIM_API_model **)kimmdl))->get_Unit_energy(error);
 }
-char * kim_api_get_unit_charge_f_(void *kimmdl){
-    return (*((KIM_API_model **)kimmdl))->get_Unit_charge();
+char * kim_api_get_unit_charge_f_(void *kimmdl, int *error){
+    return (*((KIM_API_model **)kimmdl))->get_Unit_charge(error);
 }
-char * kim_api_get_unit_temperature_f_(void *kimmdl){
-    return (*((KIM_API_model **)kimmdl))->get_Unit_temperature();
+char * kim_api_get_unit_temperature_f_(void *kimmdl, int *error){
+    return (*((KIM_API_model **)kimmdl))->get_Unit_temperature(error);
 }
-char * kim_api_get_unit_time_f_(void *kimmdl){
-    return (*((KIM_API_model **)kimmdl))->get_Unit_time();
+char * kim_api_get_unit_time_f_(void *kimmdl, int *error){
+    return (*((KIM_API_model **)kimmdl))->get_Unit_time(error);
+}
+double kim_api_convert_unit_from_(void * kimmdl,
+                                char **length,
+                                char **energy,
+                                char **charge,
+                                char **temperature,
+                                char **time,
+                                double *length_exponent,
+                                double *energy_exponent,
+                                double *charge_exponent,
+                                double *temperature_exponent,
+                                double *time_exponent,
+                                int* kimerror){
+     return (*(KIM_API_model **)kimmdl)->convert_unit_from(*length,*energy,*charge,*temperature,*time,
+            *length_exponent,*energy_exponent,*charge_exponent,*temperature_exponent,*time_exponent, kimerror);
 }

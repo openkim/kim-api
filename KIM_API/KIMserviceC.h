@@ -100,6 +100,19 @@ char * KIM_API_get_Unit_energy(void *kimmdl);
 char * KIM_API_get_Unit_charge(void *kimmdl);
 char * KIM_API_get_Unit_temperature(void *kimmdl);
 char * KIM_API_get_Unit_time(void *kimmdl);
+double KIM_API_convert_unit_from(void * kimmdl,
+                                char *length,
+                                char *energy,
+                                char *charge,
+                                char *temperature,
+                                char *time,
+                                double length_exponent,
+                                double energy_exponent,
+                                double charge_exponent,
+                                double temperature_exponent,
+                                double time_exponent,
+                                int *error);
+
 
 //multiple data set/get methods
 //
@@ -196,7 +209,18 @@ char * kim_api_get_unit_energy_f_(void *kimmdl);
 char * kim_api_get_unit_charge_f_(void *kimmdl);
 char * kim_api_get_unit_temperature_f_(void *kimmdl);
 char * kim_api_get_unit_time_f_(void *kimmdl);
-
+double kim_api_convert_unit_from_(void * kimmdl,
+                                char **length,
+                                char **energy,
+                                char **charge,
+                                char **temperature,
+                                char **time,
+                                double *length_exponent,
+                                double *energy_exponent,
+                                double *charge_exponent,
+                                double *temperature_exponent,
+                                double *time_exponent,
+                                int* kimerror);
 #ifdef	__cplusplus
 }
 #endif
