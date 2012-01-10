@@ -446,59 +446,77 @@ integer,parameter :: kim_intptr = 8
 		
 	end function kim_api_get_convert_scale
         
-        integer function kim_api_get_unit_handling_f(kimmdl)
+        integer function kim_api_get_unit_handling_f(kimmdl,error)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
 	integer,parameter :: kim_intptr = 8
 #endif
-		integer(kind=kim_intptr) :: kimmdl		
+		integer(kind=kim_intptr) :: kimmdl
+                integer ::error		
 	end function kim_api_get_unit_handling_f
 
-	function kim_api_get_unit_length_f(kimmdl)
+	function kim_api_get_unit_length_f(kimmdl,error)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
 	integer,parameter :: kim_intptr = 8
 #endif
-		integer(kind=kim_intptr) :: kimmdl,kim_api_get_unit_length_f		
+		integer(kind=kim_intptr) :: kimmdl,kim_api_get_unit_length_f
+                integer ::error		
 	end function kim_api_get_unit_length_f
 
-        function kim_api_get_unit_energy_f(kimmdl)
+        function kim_api_get_unit_energy_f(kimmdl,error)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
 	integer,parameter :: kim_intptr = 8
 #endif
-		integer(kind=kim_intptr) :: kimmdl,kim_api_get_unit_energy_f		
+		integer(kind=kim_intptr) :: kimmdl,kim_api_get_unit_energy_f
+	        integer ::error
 	end function kim_api_get_unit_energy_f
 
-        function kim_api_get_unit_charge_f(kimmdl)
+        function kim_api_get_unit_charge_f(kimmdl,error)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
 	integer,parameter :: kim_intptr = 8
 #endif
-		integer(kind=kim_intptr) :: kimmdl,kim_api_get_unit_charge_f		
+		integer(kind=kim_intptr) :: kimmdl,kim_api_get_unit_charge_f
+                integer ::error		
 	end function kim_api_get_unit_charge_f
 
-        function kim_api_get_unit_temperature_f(kimmdl)
+        function kim_api_get_unit_temperature_f(kimmdl,error)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
 	integer,parameter :: kim_intptr = 8
 #endif
-		integer(kind=kim_intptr) :: kimmdl,kim_api_get_unit_temperature_f		
+		integer(kind=kim_intptr) :: kimmdl,kim_api_get_unit_temperature_f
+                integer ::error		
 	end function kim_api_get_unit_temperature_f
 
-        function kim_api_get_unit_time_f(kimmdl)
+        function kim_api_get_unit_time_f(kimmdl,error)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
 	integer,parameter :: kim_intptr = 8
 #endif
-		integer(kind=kim_intptr) :: kimmdl,kim_api_get_unit_time_f		
+		integer(kind=kim_intptr) :: kimmdl,kim_api_get_unit_time_f
+                integer ::error		
 	end function kim_api_get_unit_time_f
+
+        real*8 function kim_api_convert_unit_from(kimmdl,length,energy,charge,temperature,time, &
+                 length_exponent, energy_exponent, charge_exponent, temperature_exponent, time_exponent, error)
+#ifdef SYSTEM32
+	integer, parameter :: kim_intptr=4
+#else
+	integer,parameter :: kim_intptr = 8
+#endif 
+             integer(kind=kim_intptr) ::kimmdl,length,energy,charge,temperature,time
+             real*8:: length_exponent, energy_exponent, charge_exponent, temperature_exponent, time_exponent
+             integer::error
+        end function kim_api_convert_unit_from
 
     !subroutines
       
@@ -727,6 +745,23 @@ integer,parameter :: kim_intptr = 8
                 kim_api_get_convert_scale_f = kim_api_get_convert_scale(loc(sfrom),loc(sto),error)
 	end function kim_api_get_convert_scale_f
         
+        real*8 function kim_api_convert_unit_from_f(kimmdl,length,energy,charge,temperature,time, &
+                 length_exponent, energy_exponent, charge_exponent, temperature_exponent, time_exponent, error)
+                integer::error
+                integer(kind=kim_intptr) :: kimmdl
+                real*8 ::length_exponent, energy_exponent, charge_exponent, temperature_exponent, time_exponent
+                character (len=*) ::length,energy,charge,temperature,time
+                character (len=KEY_CHAR_LENGTH) ::slength,senergy,scharge,stemperature,stime
+                slength = attachnull(trim(length))
+                senergy = attachnull(trim(energy))
+                scharge = attachnull(trim(charge))
+                stemperature = attachnull(trim(temperature))
+                stime = attachnull(trim(time))
+
+                kim_api_convert_unit_from_f =kim_api_convert_unit_from(kimmdl,loc(slength),loc(senergy),loc(scharge),&
+                loc(stemperature), loc(stime),length_exponent, energy_exponent, charge_exponent, &
+                   temperature_exponent, time_exponent, error)
+        end function kim_api_convert_unit_from_f
 
         integer(kind=kim_intptr) function kim_api_get_model_kim_str_f(nm,lenstr,error)
 	    character (len=*) ::nm

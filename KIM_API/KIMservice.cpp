@@ -22,6 +22,8 @@
 
 using namespace std;
 #include "KIMservice.h"
+
+//#include "Unit_Handling.h"
 #include "KIM_AUX.h"
 
 #define KEY_CHAR_LENGTH 64
@@ -2779,23 +2781,31 @@ void KIM_API_model::process_d1Edr(KIM_API_model** ppkim, double* dE, double* r,
 double KIM_API_model::get_convert_scale( char *u_from,char *u_to, int *error){
     return Unit_Handling::get_convert_scale(u_from,u_to,error);
 }
-int KIM_API_model::get_Unit_handling(){
-    return unit_h.get_Unit_handling();
+int KIM_API_model::get_Unit_handling(int *error){
+    return unit_h.get_Unit_handling(error);
 }
-char * KIM_API_model::get_Unit_length(){
-    return unit_h.get_Unit_length();
+char * KIM_API_model::get_Unit_length(int *error){
+    return unit_h.get_Unit_length(error);
 }
-char * KIM_API_model::get_Unit_energy(){
-    return unit_h.get_Unit_energy();
+char * KIM_API_model::get_Unit_energy(int *error){
+    return unit_h.get_Unit_energy(error);
 }
-char * KIM_API_model::get_Unit_charge(){
-    return unit_h.get_Unit_charge();
+char * KIM_API_model::get_Unit_charge(int *error){
+    return unit_h.get_Unit_charge(error);
 }
-char * KIM_API_model::get_Unit_temperature(){
-    return unit_h.get_Unit_temperature();
+char * KIM_API_model::get_Unit_temperature(int *error){
+    return unit_h.get_Unit_temperature(error);
 }
-char * KIM_API_model::get_Unit_time(){
-    return unit_h.get_Unit_time();
+char * KIM_API_model::get_Unit_time(int *error){
+    return unit_h.get_Unit_time(error);
+}
+
+double KIM_API_model::convert_unit_from(
+   char* length, char* energy, char* charge, char* temperature, char* time,
+   double length_exponent, double energy_exponent, double charge_exponent,
+   double temperature_exponent, double time_exponent, int* kimerror){
+   return Unit_Handling::convert_unit_from((void *)this, length, energy, charge, temperature, time,
+   length_exponent, energy_exponent, charge_exponent,  temperature_exponent, time_exponent, kimerror);
 }
 
 //multiple data set/get methods

@@ -17,13 +17,26 @@ public:
     static bool do_unit_match(Unit_Handling  &tst, Unit_Handling &mdl);
     void print();
     void print(ostream &stream);
-    int get_Unit_handling();
-    char * get_Unit_length();
-    char * get_Unit_energy();
-    char * get_Unit_charge();
-    char * get_Unit_temperature();
-    char * get_Unit_time();
+    int get_Unit_handling(int *error);
+    char * get_Unit_length(int *error);
+    char * get_Unit_energy(int *error);
+    char * get_Unit_charge(int *error);
+    char * get_Unit_temperature(int *error);
+    char * get_Unit_time(int *error);
 
+    static double convert_unit_from(void *kimmdl,
+                                char* length,
+                                char* energy,
+                                char* charge,
+                                char* temperature,
+                                char* time,
+                                double length_exponent,
+                                double energy_exponent,
+                                double charge_exponent,
+                                double temperature_exponent,
+                                double time_exponent,
+                                int* kimerror);
+    
 private:
     // list of  base & derived units
     static char *base_list[];     static int nbase_list;
