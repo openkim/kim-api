@@ -252,25 +252,31 @@ bool Unit_Handling::is_it_derived(char* unit){
 double Unit_Handling::get_convert_scale(char *u_from,char *u_to, int *error){
     *error=KIM_STATUS_FAIL;
      int ind_from =-1, ind_to=-1;
+     double convert;
+
+    // compute multiplicative conversion factor for units (i.e., covariant transformation)
     if       (is_it_Unit_length(u_from,&ind_from) && is_it_Unit_length(u_to,&ind_to)){
        *error=KIM_STATUS_OK;
-       return length_scale[ind_to]/length_scale[ind_from];
+       convert = length_scale[ind_to]/length_scale[ind_from];
     }else if (is_it_Unit_energy(u_from,&ind_from) && is_it_Unit_energy(u_to,&ind_to)){
        *error=KIM_STATUS_OK;
-       return energy_scale[ind_to]/energy_scale[ind_from];
+       convert = energy_scale[ind_to]/energy_scale[ind_from];
     }else if (is_it_Unit_charge(u_from,&ind_from) && is_it_Unit_charge(u_to,&ind_to)){
        *error=KIM_STATUS_OK;
-       return charge_scale[ind_to]/charge_scale[ind_from];
+       convert = charge_scale[ind_to]/charge_scale[ind_from];
     }else if (is_it_Unit_temperature(u_from,&ind_from) && is_it_Unit_temperature(u_to,&ind_to)){
        *error=KIM_STATUS_OK;
-       return temperature_scale[ind_to]/temperature_scale[ind_from];
+       convert = temperature_scale[ind_to]/temperature_scale[ind_from];
     }else if (is_it_Unit_time(u_from,&ind_from) && is_it_Unit_time(u_to,&ind_to)){
        *error=KIM_STATUS_OK;
-       return time_scale[ind_to]/time_scale[ind_from];
+       convert = time_scale[ind_to]/time_scale[ind_from];
     }else{
         *error=KIM_STATUS_INCONSISTENT_BASE_UNIT;
-        return -1.0;
+        convert = -1.0;
     }
+
+    // return multiplicative conversion factor for components (i.e., contravariant transforamtion)
+    return 1.0/convert;
 }
 bool Unit_Handling::do_unit_match(Unit_Handling &test, Unit_Handling  &model){
     if(model.flexible_handling){
