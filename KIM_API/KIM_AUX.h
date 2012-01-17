@@ -29,7 +29,10 @@ namespace KIM_Standard_Virials{
             if (*kimerr !=KIM_STATUS_OK) return;
             if (ierGlobal == KIM_STATUS_OK && virialGlobal != NULL) {
                 virialGlobal_flag = pkim->isit_compute("virialGlobal");
-                if (virialGlobal_flag==1 && pkim->virialGlobal_need2add) *virialGlobal =0.0;
+                if (virialGlobal_flag==1 && pkim->virialGlobal_need2add) {
+		  virialGlobal[0] =0.0;  virialGlobal[1] =0.0;  virialGlobal[2] =0.0;
+                  virialGlobal[3] =0.0;  virialGlobal[4] =0.0;  virialGlobal[5] =0.0;
+                }
             }
 
             if (ierPerAtom == KIM_STATUS_OK && virialPerAtom != NULL) {
