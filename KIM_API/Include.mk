@@ -37,7 +37,7 @@ endif
 # setup list of available models
 MODELLST = $(patsubst .%.make-temp,%,$(notdir $(wildcard $(KIM_API_DIR).*.make-temp)))
 MODELDRIVERLST = $(notdir $(filter-out .%,$(shell find $(KIM_MODEL_DRIVERS_DIR) -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)))
-MODELOBJ = $(addprefix $(KIM_MODELS_DIR), $(join $(addsuffix /,$(MODELLST)), $(addsuffix .a, $(MODELLST)))) \
+qMODELOBJ = $(addprefix $(KIM_MODELS_DIR), $(join $(addsuffix /,$(MODELLST)), $(addsuffix .a, $(MODELLST)))) \
            $(addprefix $(KIM_MODEL_DRIVERS_DIR), $(join $(addsuffix /,$(MODELDRIVERLST)), $(addsuffix .a, $(MODELDRIVERLST))))
 
 # Determine whether a 32 bit or 64 bit compile should be use
@@ -75,12 +75,14 @@ else
                                                      -D KIM_DIR_MODELS=\"$(KIM_MODELS_DIR)\" \
                                                      -D KIM_DIR_TESTS=\"$(KIM_TESTS_DIR)\"   \
                                                      -D KIM_DIR_MODEL_DRIVERS=\"$(KIM_MODEL_DRIVERS_DIR)\"
-   CCOMPILER   = gcc
-   CPPCOMPILER = g++
+   #CCOMPILER   = gcc
+   #CPPCOMPILER = g++
    #CCOMPILER   = mpicc
    #CPPCOMPILER = mpiCC
    #CCOMPILER   = gcc-fsf-4.4  # for OS X using fink compilers
    #CPPCOMPILER = g++-fsf-4.4  # for OS X using fink compilers
+   CCOMPILER   = gcc-fsf-4.6  # for OS X using fink compilers                                  
+   CPPCOMPILER = g++-fsf-4.6  # for OS X using fink compilers
    CPPFLAG = -O3 -I$(KIM_API_DIR) -Wno-write-strings -D KIM_DIR_MODELS=\"$(KIM_MODELS_DIR)\" \
                                                      -D KIM_DIR_API=\"$(KIM_API_DIR)\"       \
                                                      -D KIM_DIR_TESTS=\"$(KIM_TESTS_DIR)\"   \
@@ -114,6 +116,10 @@ endif
 KIM_LIB_FILE = $(KIM_API_DIR)/libkim.a
 KIM_LIB = -L$(KIM_API_DIR) -lkim
 
+ifndef OSTYPE
+  OSTYPE := $(shell echo $$OSTYPE)
+endif
+
 #set default goals allways all
 .DEFAULT_GOAL := all
 
@@ -128,6 +134,13 @@ ifdef KIM_DYNAMIC
    LINKSONAME = -Wl,-soname=
    ifeq ($(OSTYPE),darwin)
       LINKSONAME = -Wl,-install_name,
+   endif
+   ifeq ($(OSTYPE),darwin11)
+     MODELOBJ =
+     KIM_LIB = $(KIM_API_DIR)libkim.a
+
+     SHARED_LIB_FLAG = -dynamic -flat_namespace -undefined suppress
+     LINKSONAME =  -install_name
    endif
 endif
 
@@ -219,8 +232,13 @@ MODEL_NAME_KIM_STR_CPP = char* $(MODEL_NAME)_kim_str'('')''{'
 	echo "}"                       >> $*_kim_str.cpp
 
 # Library pattern rule
+ifeq ($(OSTYPE),darwin11)
+%.so: %.a
+	libtool  $(SHARED_LIB_FLAG)  -o $@  *.a $(KIM_LIB) 
+else
 %.so: %.a
 	$(LINKCOMPILER) $(SHARED_LIB_FLAG)  $(CPPLIBFLAG) -o $@  *.o -L$(KIM_API_DIR) -lkim
+endif
 
 
 
