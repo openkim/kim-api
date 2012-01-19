@@ -362,3 +362,17 @@ echo model_Ne_P_MLJ_NEIGH_RVEC_F    | ./test_Ne_free_cluster_SI/test_Ne_free_clu
 divider "test_Ne_free_cluster_SI --- model_Ne_P_Morse"
 echo model_Ne_P_Morse               | ./test_Ne_free_cluster_SI/test_Ne_free_cluster_SI >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 footer
+
+#---------------------------------------------------------------------------------------------------------------
+header "test_Ne_free_cluster_stiff"           \
+       "   |"                                 \
+       "   |-- model_Ne_P_LJ"                 \
+       "   |-- model_Ne_P_Morse"              \
+       "   |"
+
+divider "test_Ne_free_cluster_stiff --- model_Ne_P_LJ"
+echo model_Ne_P_LJ                  | ./test_Ne_free_cluster_stiff/test_Ne_free_cluster_stiff >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
+
+divider "test_Ne_free_cluster_stiff --- model_Ne_P_Morse"
+echo model_Ne_P_Morse               | ./test_Ne_free_cluster_stiff/test_Ne_free_cluster_stiff >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
+footer

@@ -96,6 +96,7 @@ energyPerAtom           real*8       energy              [numberOfAtoms]    opti
 
 process_d1Edr           method       none                []                 optional
 
+process_d2Edr           method       none                []                 optional
 
 #######################################################################################################
 MODEL_PARAMETERS:

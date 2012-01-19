@@ -61,6 +61,12 @@ test_Ne_free_cluster_SI                   F90       NEIGH-RVEC-F    Locator    F
                                                     NEIGH-PURE-F
                                                     MI-OPBC-H
                                                     MI-OPBC-F
+
+test_Ne_free_cluster_stiff                F90       NEIGH-RVEC-F    Locator    Full
+                                                    NEIGH-PURE-H    Iterator   Half
+                                                    NEIGH-PURE-F
+                                                    MI-OPBC-H
+                                                    MI-OPBC-F
 ----------------------------------------------------------------------------------------
 
 
@@ -185,6 +191,12 @@ test_Ne_free_cluster_SI
    |-- model_Ne_P_Morse
    |
 
+test_Ne_free_cluster_stiff
+   |
+   |-- model_Ne_P_LJ
+   |-- model_Ne_P_Morse
+   |
+
 ----------------------------------------------------------------------------------------
 
 
@@ -225,6 +237,10 @@ test_Ne_free_cluster_SI (Fortran 90)
      these NBC methods.  (The _SI variant uses the SI unit system and is
      therefore only compatible with the example model_drivers with implement
      `flexible' unit handling.)
+
+test_Ne_free_cluster_stiff (Fortran 90)
+     This Test, written in Fortran 90, is identical to the test_*_free_cluster
+     Tests except that is also computes the stiffness matrix.
 
 test_Al_FCCcohesive_MI_OPBC (Fortran 90)
 test_Ar_FCCcohesive_MI_OPBC (Fortran 90)

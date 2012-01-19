@@ -43,13 +43,19 @@ static void compute(void* km, int* ier);
 static void calc_phi(double* epsilon,
                      double* C,
                      double* Rzero,
-		     double* shift,
+                     double* shift,
                      double* cutoff, double r, double* phi);
 static void calc_phi_dphi(double* epsilon,
                           double* C,
                           double* Rzero,
-			  double* shift,
+                          double* shift,
                           double* cutoff, double r, double* phi, double* dphi);
+
+static void calc_phi_d2phi(double* epsilon,
+                           double* C,
+                           double* Rzero,
+                           double* shift,
+                           double* cutoff, double r, double* phi, double* dphi, double* d2phi);
 
 /* Define model_buffer structure */
 struct model_buffer {
@@ -60,6 +66,7 @@ struct model_buffer {
    int forces_ind;
    int energyPerAtom_ind;
    int process_d1Edr_ind;
+   int process_d2Edr_ind;
    int model_index_shift;
    
    int* numberOfAtoms;
@@ -87,7 +94,7 @@ static void setup_buffer(intptr_t* pkim, struct model_buffer* buffer);
 static void calc_phi(double* epsilon,
                      double* C,
                      double* Rzero,
-		     double* shift,
+                     double* shift,
                      double* cutoff, double r, double* phi)
 {
    /* local variables */
@@ -114,7 +121,7 @@ static void calc_phi(double* epsilon,
 static void calc_phi_dphi(double* epsilon,
                           double* C,
                           double* Rzero,
-			  double* shift,
+                          double* shift,
                           double* cutoff, double r, double* phi, double* dphi)
 {
    /* local variables */
@@ -139,20 +146,61 @@ static void calc_phi_dphi(double* epsilon,
    return;
 }
 
+/* Calculate pair potential phi(r) and its 1st & 2nd derivatives dphi(r), d2phi(r) */
+static void calc_phi_d2phi(double* epsilon,
+                           double* C,
+                           double* Rzero,
+                           double* shift,
+                           double* cutoff, double r, double* phi, double* dphi, double* d2phi)
+{
+   /* local variables */
+   double ep;
+   double ep2;
+   
+   ep  = exp(-(*C)*(r-*Rzero));
+   ep2 = ep*ep;
+
+   if (r > *cutoff)
+   {
+      /* Argument exceeds cutoff radius */
+      *phi   = 0.0;
+      *dphi  = 0.0;
+      *d2phi = 0.0;
+   }
+   else
+   {
+      *phi   = (*epsilon)*( -ep2 + 2.0*ep ) + *shift;
+      *dphi  = 2.0*(*epsilon)*(*C)*( -ep + ep2 );
+      *d2phi = 2.0*(*epsilon)*(*C)*(*C)*(ep - 2.0*ep2);
+   }
+
+   return;
+}
+
 /* compute function */
 static void compute(void* km, int* ier)
 {
    /* local variables */
    intptr_t* pkim = *((intptr_t**) km);
    double R;
+   double R_pairs[2];
+   double *pR_pairs = &(R_pairs[0]);
    double Rsqij;
    double phi;
    double dphi;
+   double d2phi;
    double dEidr;
+   double d2Eidr;
    double Rij[DIM];
-   double * pRij = Rij;
+   double *pRij = &(Rij[0]);
+   double Rij_pairs[2][3];
+   double *pRij_pairs = &(Rij_pairs[0][0]);
    int i;
+   int i_pairs[2];
+   int *pi_pairs = &(i_pairs[0]);
    int j;
+   int j_pairs[2];
+   int *pj_pairs = &(j_pairs[0]);
    int jj;
    int k;
    int currentAtom;
@@ -162,6 +210,7 @@ static void compute(void* km, int* ier)
    int comp_force;
    int comp_energyPerAtom;
    int comp_process_d1Edr;
+   int comp_process_d2Edr;
    int NBC;
    int HalfOrFull;
    int IterOrLoca;
@@ -210,11 +259,12 @@ static void compute(void* km, int* ier)
    shift = buffer->shift;
 
    /* check to see if we have been asked to compute the forces, energyPerAtom, and d1Edr */
-   KIM_API_get_compute_byI_multiple(pkim, ier, 4*3,
+   KIM_API_get_compute_byI_multiple(pkim, ier, 5*3,
                                     buffer->energy_ind,        &comp_energy,        1,
                                     buffer->forces_ind,        &comp_force,         1,
                                     buffer->energyPerAtom_ind, &comp_energyPerAtom, 1,
-                                    buffer->process_d1Edr_ind, &comp_process_d1Edr, 1);
+                                    buffer->process_d1Edr_ind, &comp_process_d1Edr, 1,
+                                    buffer->process_d2Edr_ind, &comp_process_d2Edr, 1);
    if (KIM_STATUS_OK > *ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_compute_byI_multiple", *ier);
@@ -446,13 +496,36 @@ static void compute(void* km, int* ier)
          if (Rsqij < *cutsq) /* particles are interacting ? */
          {
             R = sqrt(Rsqij);
-            if (comp_force || comp_process_d1Edr)
+            if (comp_process_d2Edr)
+            {
+               /* compute pair potential and its derivatives */
+               calc_phi_d2phi(epsilon,
+                             C,
+                             Rzero,
+                             shift,
+                             cutoff, R, &phi, &dphi, &d2phi);
+
+               /* compute dEidr */
+               if ((1 == HalfOrFull) && (j < numberContrib))
+               {
+                  /* Half mode -- double contribution */
+                  dEidr = dphi;
+                  d2Eidr = d2phi;
+               }
+               else
+               {
+                  /* Full mode -- regular contribution */
+                  dEidr = 0.5*dphi;
+                  d2Eidr = 0.5*d2phi;
+               }
+            }
+            else if (comp_force || comp_process_d1Edr)
             {
                /* compute pair potential and its derivative */
                calc_phi_dphi(epsilon,
                              C,
                              Rzero,
-			     shift,
+                             shift,
                              cutoff, R, &phi, &dphi);
 
                /* compute dEidr */
@@ -473,7 +546,7 @@ static void compute(void* km, int* ier)
                calc_phi(epsilon,
                         C,
                         Rzero,
-			shift,
+                        shift,
                         cutoff, R, &phi);
             }
             
@@ -504,6 +577,19 @@ static void compute(void* km, int* ier)
                KIM_API_process_d1Edr(km, &dEidr, &R, &pRij, &i, &j, ier);
             }
             
+            /* contribution to process_d2Edr */
+            if (comp_process_d2Edr)
+            {
+               R_pairs[0] = R_pairs[1] = R;
+               Rij_pairs[0][0] = Rij_pairs[1][0] = Rij[0];
+               Rij_pairs[0][1] = Rij_pairs[1][1] = Rij[1];
+               Rij_pairs[0][2] = Rij_pairs[1][2] = Rij[2];
+               i_pairs[0] = i_pairs[1] = i;
+               j_pairs[0] = j_pairs[1] = j;
+
+               KIM_API_process_d2Edr(km, &d2Eidr, &pR_pairs, &pRij_pairs, &pi_pairs, &pj_pairs, ier);
+            } 
+          
             /* contribution to forces */
             if (comp_force)
             {
@@ -683,7 +769,7 @@ void MODEL_DRIVER_NAME_LC_STR_init_(void *km, char* paramfile, int* length)
    calc_phi(model_epsilon,
             model_C,
             model_Rzero,
-	    &dummy,
+            &dummy,
             model_cutoff, *model_cutoff, model_shift);
    /* set shift to -shift */
    *model_shift = -(*model_shift);
@@ -741,7 +827,7 @@ static void reinit(void *km)
    calc_phi(buffer->epsilon,
             buffer->C,
             buffer->Rzero,
-	    &dummy,
+            &dummy,
             buffer->cutoff, *buffer->cutoff, buffer->shift);
    /* set shift to -shift */
    *buffer->shift = -(*buffer->shift);
@@ -795,19 +881,19 @@ static void setup_buffer(intptr_t* pkim, struct model_buffer* buffer)
       return;
    }
    if (!strcmp("CLUSTER",NBCstr))
-   {	   
+   {
       buffer->NBC = 0;
    }
    else if ((!strcmp("MI-OPBC-H",NBCstr)) || (!strcmp("MI-OPBC-F",NBCstr)))
-   {	   
+   {
       buffer->NBC = 1;
    }
    else if ((!strcmp("NEIGH-PURE-H",NBCstr)) || (!strcmp("NEIGH-PURE-F",NBCstr)))
-   {	   
+   {
       buffer->NBC = 2;
    }
    else if (!strcmp("NEIGH-RVEC-F",NBCstr))
-   {	   
+   {
       buffer->NBC = 3;
    }
    else
@@ -858,11 +944,12 @@ static void setup_buffer(intptr_t* pkim, struct model_buffer* buffer)
 
    buffer->model_index_shift = KIM_API_get_model_index_shift(pkim);
 
-   KIM_API_get_index_multiple(pkim, &ier, 7*3,
+   KIM_API_get_index_multiple(pkim, &ier, 8*3,
                               "energy",        &(buffer->energy_ind),        1,
                               "forces",        &(buffer->forces_ind),        1,
                               "energyPerAtom", &(buffer->energyPerAtom_ind), 1,
                               "process_d1Edr", &(buffer->process_d1Edr_ind), 1,
+                              "process_d2Edr", &(buffer->process_d2Edr_ind), 1,
                               "atomTypes",     &(buffer->atomTypes_ind),     1,
                               "coordinates",   &(buffer->coordinates_ind),   1,
                               "boxlength",     &(buffer->boxlength_ind),     1);

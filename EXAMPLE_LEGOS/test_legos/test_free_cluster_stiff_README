@@ -1,0 +1,27 @@
+#
+# Release: This file is part of the openkim-api.git repository.
+#
+# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
+# All rights reserved.
+#
+
+This directory (TEST_NAME_STR) contains a test that computes the energy,
+forces, and stiffness on the atoms of an isolated (free) cubic FCC cluster
+of SPECIES_NAME_STR atoms.
+
+
+The following files are in the directory:
+
+Makefile
+     Makefile to compile and build executables with GNU or Intel compilers.
+
+README
+     This file.
+
+TEST_NAME_STR.F90
+     F90 program that implements the test.
+
+TEST_NAME_STR.kim
+     KIM descriptor file, contains all variables and methods that are exposed
+     through the KIM API interface.
+
