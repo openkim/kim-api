@@ -91,7 +91,7 @@ void KIM_API_set2_donotcompute_byI(void *kimmdl,int I, int * error);
 int KIM_API_isit_compute_byI(void *kimmdl,int I,int * error);
 
 void KIM_API_process_d1Edr(void **kimmdl, double * dE, double * dr, double **dx,int *i, int *j, int *error );
-
+void KIM_API_process_d2Edr(void **kimmdl, double * dE, double ** dr, double **dx,int **i, int **j, int *error );
 //related to Unit_Handling
 double KIM_API_get_convert_scale(char *u_from,char *u_to, int *error);
 int    KIM_API_get_Unit_handling(void *kimmdl,int *error);
@@ -201,6 +201,7 @@ void * kim_api_status_msg_f_(int * error);
 int kim_api_report_error_(int * ln,char ** fl, char ** usermsg, int * ier);
 
 void kim_api_process_d1edr_f_(void **ppkim, double * dE, double * dr, double **dx, int *i, int *j, int *ier );
+void kim_api_process_d2edr_f_(void **ppkim, double * dE, double ** dr, double **dx, int **i, int **j, int *ier );
 
 //related to Unit_Handling
 double kim_api_get_convert_scale_(char **u_from,char **u_to, int *error);

@@ -152,7 +152,9 @@ int KIM_API_get_half_neigh(void *kimmdl,int mode,int request,
 void KIM_API_process_d1Edr(void **ppkim, double * dE, double * dr, double **dx, int *i, int *j, int *ier ){
     KIM_API_model::process_d1Edr((KIM_API_model **)ppkim,dE,dr,dx,i,j,ier);
 }
-
+ void KIM_API_process_d2Edr(void **ppkim, double * dE, double ** dr, double **dx,int **i, int **j, int *ier ){
+    KIM_API_model::process_d2Edr((KIM_API_model **)ppkim,dE,dr,dx,i,j,ier);
+ }
 char * KIM_API_status_msg(int error){
     return KIM_API_model::status_msg(error);
 }
@@ -874,6 +876,9 @@ void kim_api_process_d1edr_f_(void **ppkim, double * dE, double * dr, double **d
     KIM_API_model::process_d1Edr((KIM_API_model **)ppkim,dE,dr,dx,i,j,ier);
 }
 
+void kim_api_process_d2edr_f_(void **ppkim, double * dE, double ** dr, double **dx, int **i, int **j, int *ier ){
+   KIM_API_model::process_d2Edr((KIM_API_model **)ppkim,dE,dr,dx,i,j,ier);
+}
 double kim_api_get_convert_scale_(char **u_from,char **u_to, int *error){
     return KIM_API_model::get_convert_scale(*u_from,*u_to,error);
 }

@@ -254,8 +254,11 @@ bool requiresFullNeighbors();
     int get_model_index_shift();
     void set_model_buffer(void * o,int * ier);
     void * get_model_buffer(int * ier);
+
    static void process_d1Edr(KIM_API_model **ppkim,double *dr,double *r,double ** dx, int *i,int *j,int *ier);
-   
+
+   static void process_d2Edr(KIM_API_model **ppkim,double *de,double **rr,double ** pdx,int **ii,int **jj,int *ier);
+
    //multiple data set/get methods
    //
   void set_data_multiple(int *err, int numargs, ... );      //++

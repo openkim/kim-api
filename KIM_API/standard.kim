@@ -1067,7 +1067,7 @@ virialPerAtom            real*8      energy             [numberOfAtoms,6]
 # compatibility.
 # Name                  Type         Unit               Shape
 #
-stiffness              real*8        pressure           [N,3,N,3]
+stiffness              real*8        pressure           [numberOfAtoms,numberOfAtoms,3,3]
 
 ################################################################################
 #

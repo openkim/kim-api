@@ -2132,7 +2132,7 @@ void KIM_API_model::model_compute(int *error){
 
   //initialize virials if needed
 
-  KIM_Standard_Virials::init2zero(this,error);
+  if (process_d1Edr_ind >=0 || process_d2Edr_ind >= 0) KIM_Standard_Virials::init2zero(this,error);
   if(*error != KIM_STATUS_OK) return;
 
   //call model_compute
@@ -2752,6 +2752,12 @@ void KIM_API_model::fij_related_things_add_set_index(){
         strcat(instr,"    [numberOfAtoms,6]           # automatically generated");
         this->add_element(instr);
     }
+    if(stiffness_need2add){
+        char instr[512] = "stiffness            real*8       pressure     ";
+        strcat(instr,"    [numberOfAtoms,numberOfAtoms,3,3]     # automatically generated");
+        this->add_element(instr);
+    }
+
 
     //get index
     this->virialGlobal_ind = get_index("virialGlobal");
@@ -2760,14 +2766,13 @@ void KIM_API_model::fij_related_things_add_set_index(){
     this->process_d1Edr_ind =get_index("process_d1Edr");
     this->process_d2Edr_ind =get_index("process_d2Edr");
 
-    if (virialGlobal_need2add || virialPerAtom_need2add) (*this)[process_d1Edr_ind].flag->calculate=1;
-    
+    if (virialGlobal_need2add || virialPerAtom_need2add || stiffness_need2add) (*this)[process_d1Edr_ind].flag->calculate=1;
+    if (stiffness_need2add) (*this)[process_d2Edr_ind].flag->calculate=1;
 }
 void KIM_API_model::process_d1Edr(KIM_API_model** ppkim, double* dE, double* r,
         double** dx,int *i, int *j, int* ier){
     KIM_API_model * pkim= *ppkim;
     typedef void (*Process_d1Edr)(KIM_API_model **, double *, double *, double **,int *,int *, int *);
-
 
     Process_d1Edr process = (Process_d1Edr) (*pkim)[pkim->process_d1Edr_ind].data;
     int process_flag =0;
@@ -2779,6 +2784,22 @@ void KIM_API_model::process_d1Edr(KIM_API_model** ppkim, double* dE, double* r,
         KIM_Standard_Virials::process_d1Edr(ppkim,dE,r,dx,i,j,ier);
     }
 }
+
+void KIM_API_model::process_d2Edr(KIM_API_model **ppkim,double *de,double **r,double ** pdx,int **i,int **j,int *ier){
+    KIM_API_model * pkim= *ppkim;
+    typedef void (*Process_d2Edr)(KIM_API_model **, double *, double **, double **,int **,int **, int *);
+
+    Process_d2Edr process = (Process_d2Edr) (*pkim)[pkim->process_d2Edr_ind].data;
+    int process_flag =0;
+    process_flag = (*pkim)[pkim->process_d2Edr_ind].flag->calculate;
+
+    if (process != NULL && process_flag == 1) {
+        (*process)(ppkim,de,r,pdx,i,j,ier);
+    } else if(process_flag == 1){
+        KIM_Standard_Virials::process_d2Edr(ppkim,de,r,pdx,i,j,ier);
+    }
+}
+
 
 //related to Unit_Handling
 double KIM_API_model::get_convert_scale( char *u_from,char *u_to, int *error){
