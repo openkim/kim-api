@@ -303,6 +303,7 @@ private:
     int neiOfAnAtom_half[KIM_API_MAX_NEIGHBORS];
     int neiOfAnAtom_full[KIM_API_MAX_NEIGHBORS];
     int model_index_shift; //0--no conversion, 1 -- from 0 to 1, -1 -- from 1 to 0
+    int AUX_index_shift; //0--noconversion, 1 -- from 0 to 1
     void * model_buffer; // stores everything that is notreflected  in .kim
                          // but nessssery for model instantiation
     Atom_Map * AtomsTypes;

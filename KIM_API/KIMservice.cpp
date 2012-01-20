@@ -710,6 +710,7 @@ KIM_API_model:: KIM_API_model(){
        
 
        this->model_index_shift=0;
+       this->AUX_index_shift =0;
        ErrorCode=1;
        AtomsTypes = NULL;
        nAtomsTypes = 0;
@@ -1421,7 +1422,7 @@ bool KIM_API_model::do_dummy_match(KIM_API_model& tst, KIM_API_model& mdl){
     model_index_shift = 0;
     if (ZeroBasedLists_tst && OneBasedLists_mdl) model_index_shift = 1;
     if (OneBasedLists_tst && ZeroBasedLists_mdl) model_index_shift = -1;
-
+    if (OneBasedLists_mdl) AUX_index_shift =1;
     int ind_LocaAccess_mdl = mdl.get_index("Neigh_LocaAccess");
     int ind_IterAcces_mdl = mdl.get_index("Neigh_IterAccess");
     int ind_LocaAccess_tst = tst.get_index("Neigh_LocaAccess");
@@ -2778,10 +2779,18 @@ void KIM_API_model::process_d1Edr(KIM_API_model** ppkim, double* dE, double* r,
     int process_flag =0;
     process_flag = (*pkim)[pkim->process_d1Edr_ind].flag->calculate;
 
-    if (process != NULL && process_flag == 1) {
+    if (process != NULL && process_flag == 1 && pkim->model_index_shift == 0) {
         (*process)(ppkim,dE,r,dx,i,j,ier);
-    } else if(process_flag == 1){
+     }else if (process != NULL && process_flag == 1){
+        int i2send = *i-pkim->model_index_shift;
+        int j2send = *j-pkim->model_index_shift;
+        (*process)(ppkim,dE,r,dx,&i2send,&j2send,ier);
+    }else if (process_flag == 1 && pkim->AUX_index_shift == 0){
         KIM_Standard_Virials::process_d1Edr(ppkim,dE,r,dx,i,j,ier);
+    } else if(process_flag == 1){
+        int i2send = *i-1;
+        int j2send = *j-1;
+        KIM_Standard_Virials::process_d1Edr(ppkim,dE,r,dx,&i2send,&j2send,ier);
     }
 }
 
@@ -2793,10 +2802,23 @@ void KIM_API_model::process_d2Edr(KIM_API_model **ppkim,double *de,double **r,do
     int process_flag =0;
     process_flag = (*pkim)[pkim->process_d2Edr_ind].flag->calculate;
 
-    if (process != NULL && process_flag == 1) {
+    if (process != NULL && process_flag == 1 && pkim->model_index_shift == 0) {
         (*process)(ppkim,de,r,pdx,i,j,ier);
-    } else if(process_flag == 1){
+    }else if (process != NULL && process_flag == 1) {
+        int k=pkim->model_index_shift;
+        int i2send[2];   i2send[0]=(*i)[0]-k; i2send[1]=(*i)[1]-k;
+        int j2send[2];   j2send[0]=(*j)[0]-k; j2send[1]=(*j)[1]-k;
+        int *pi = &i2send[0];
+        int *pj = &j2send[0];
+        (*process)(ppkim,de,r,pdx,&pi,&pj,ier);
+    } else if(process_flag == 1 && pkim->AUX_index_shift == 0){
         KIM_Standard_Virials::process_d2Edr(ppkim,de,r,pdx,i,j,ier);
+    }else if(process_flag == 1 ){
+        int i2send[2];   i2send[0]=(*i)[0]-1; i2send[1]=(*i)[1]-1;
+        int j2send[2];   j2send[0]=(*j)[0]-1; j2send[1]=(*j)[1]-1;
+        int *pi = &i2send[0];
+        int *pj = &j2send[0];
+        KIM_Standard_Virials::process_d2Edr(ppkim,de,r,pdx,&pi,&pj,ier);
     }
 }
 
