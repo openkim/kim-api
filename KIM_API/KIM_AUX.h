@@ -123,9 +123,12 @@ namespace KIM_Standard_Virials{
      }
 
        if (stiffness_flag ==1 && pkim->stiffness_need2add) {
-           double rm_half = 1/(*r);
+           double rm_half = 1.0/(*r);
            double rm3_half = rm_half*rm_half*rm_half;
            double stiff[3][3];
+
+           rm_half  *= *de;
+           rm3_half *= *de;
            stiff[0][0] = -rm3_half * dx[0] * dx[0] + rm_half;
            stiff[1][1] = -rm3_half * dx[1] * dx[1] + rm_half;
            stiff[2][2] = -rm3_half * dx[2] * dx[2] + rm_half;
@@ -151,38 +154,42 @@ namespace KIM_Standard_Virials{
           KIM_API_model *pkim = *ppkim;
           *ier=KIM_STATUS_FAIL;
           double *r = *rr;
-          double rm =1/(r[0]*r[1]);
+          double rm = (*de)/(r[0]*r[1]);
           double *dx = *pdx;
           double stiff[3][3];
 
-           stiff[0][0] = rm * dx[0] * dx[3+0] *2 ;
-           stiff[1][1] = rm * dx[1] * dx[3+1] *2 ;
-           stiff[2][2] = rm * dx[2] * dx[3+2] *2 ;
-           stiff[1][2] = stiff[2][1]= rm * (dx[1] * dx[3+2] + dx[3+1] * dx[2]);
-           stiff[0][1] = stiff[1][0]= rm * (dx[0] * dx[3+1] + dx[3+0] * dx[0+1]);
-           stiff[0][2] = stiff[2][0]= rm * (dx[0] * dx[3+2] + dx[3+0] * dx[0+2]);
+           stiff[0][0] = rm * dx[0] * dx[3+0];
+           stiff[1][1] = rm * dx[1] * dx[3+1];
+           stiff[2][2] = rm * dx[2] * dx[3+2];
+           stiff[1][2] = stiff[2][1]= 0.5 * rm * (dx[1] * dx[3+2] + dx[3+1] * dx[0+2]);
+           stiff[0][1] = stiff[1][0]= 0.5 * rm * (dx[0] * dx[3+1] + dx[3+0] * dx[0+1]);
+           stiff[0][2] = stiff[2][0]= 0.5 * rm * (dx[0] * dx[3+2] + dx[3+0] * dx[0+2]);
 
            int *i=*ii;
            int *j=*jj;
            for(int k=0;k<3; k++) for(int m=0;m<3;m++)
-               stiffness[(i[0])*(*numberOfAtoms)*9 + (j[0])*9 + k*3 + m] += stiff[k][m];
+               stiffness[(i[0])*(*numberOfAtoms)*9 + (i[1])*9 + k*3 + m] += stiff[k][m];
            for(int k=0;k<3; k++) for(int m=0;m<3;m++)
                stiffness[(i[0])*(*numberOfAtoms)*9 + (j[1])*9 + k*3 + m] -= stiff[k][m];
            for(int k=0;k<3; k++) for(int m=0;m<3;m++)
-               stiffness[(i[1])*(*numberOfAtoms)*9 + (j[0])*9 + k*3 + m] -= stiff[k][m];
-           for(int k=0;k<3; k++) for(int m=0;m<3;m++)
-               stiffness[(i[1])*(*numberOfAtoms)*9 + (j[1])*9 + k*3 + m] += stiff[k][m];
-
-           for(int k=0;k<3; k++) for(int m=0;m<3;m++)
-               stiffness[(j[0])*(*numberOfAtoms)*9 + (i[0])*9 + k*3 + m] += stiff[k][m];
-           for(int k=0;k<3; k++) for(int m=0;m<3;m++)
                stiffness[(j[0])*(*numberOfAtoms)*9 + (i[1])*9 + k*3 + m] -= stiff[k][m];
            for(int k=0;k<3; k++) for(int m=0;m<3;m++)
-               stiffness[(j[1])*(*numberOfAtoms)*9 + (i[0])*9 + k*3 + m] -= stiff[k][m];
-           for(int k=0;k<3; k++) for(int m=0;m<3;m++)
-               stiffness[(j[1])*(*numberOfAtoms)*9 + (i[1])*9 + k*3 + m] += stiff[k][m];
-          *ier = KIM_STATUS_OK;
+               stiffness[(j[0])*(*numberOfAtoms)*9 + (j[1])*9 + k*3 + m] += stiff[k][m];
 
+           if (!((i[0] == i[1]) && (j[0] == j[1])) &&
+               !((i[0] == j[1]) && (j[0] == i[1])))
+           {
+              for(int k=0;k<3; k++) for(int m=0;m<3;m++)
+              stiffness[(i[1])*(*numberOfAtoms)*9 + (i[0])*9 + k*3 + m] += stiff[k][m];
+              for(int k=0;k<3; k++) for(int m=0;m<3;m++)
+              stiffness[(i[1])*(*numberOfAtoms)*9 + (j[0])*9 + k*3 + m] -= stiff[k][m];
+              for(int k=0;k<3; k++) for(int m=0;m<3;m++)
+              stiffness[(j[1])*(*numberOfAtoms)*9 + (i[0])*9 + k*3 + m] -= stiff[k][m];
+              for(int k=0;k<3; k++) for(int m=0;m<3;m++)
+              stiffness[(j[1])*(*numberOfAtoms)*9 + (j[0])*9 + k*3 + m] += stiff[k][m];
+           }
+           
+           *ier = KIM_STATUS_OK;
      }
 }
 
