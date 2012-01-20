@@ -374,11 +374,12 @@ endif
 
 ! Reset iterator if one is being used
 !
-if (IterOrLoca.eq.1) &
+if (IterOrLoca.eq.1) then
    call reset_iterator(HalfOrFull,pkim,numnei,pnei1atom,pRij_list,ier)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "reset_iterator", ier)
-   return
+   if (ier.lt.KIM_STATUS_OK) then
+      idum = kim_api_report_error_f(__LINE__, __FILE__, "reset_iterator", ier)
+      return
+   endif
 endif
 
 !  Loop over particles in the neighbor list a first time,
@@ -466,11 +467,12 @@ enddo
 
 ! Reset iterator if one is being used
 !
-if (IterOrLoca.eq.1) &
+if (IterOrLoca.eq.1) then
    call reset_iterator(HalfOrFull,pkim,numnei,pnei1atom,pRij_list,ier)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "reset_iterator", ier)
-   return
+   if (ier.lt.KIM_STATUS_OK) then
+      idum = kim_api_report_error_f(__LINE__, __FILE__, "reset_iterator", ier)
+      return
+   endif
 endif
 
 i = 0
