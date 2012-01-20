@@ -30,7 +30,9 @@ private
 public Compute_Energy_Forces, &
        reinit,                &
        destroy,               &
-       calc_phi
+       calc_phi,              &
+       calc_phi_dphi,         &
+       calc_phi_dphi_d2phi
 
 ! Below are the definitions and values of all Model parameters
 integer, parameter          :: DIM=3          ! dimensionality of space
@@ -104,6 +106,41 @@ end subroutine calc_phi_dphi
 
 !-------------------------------------------------------------------------------
 !
+!  Calculate pair potential phi(r) and its derivatives dphi(r) and d2phi(r)
+!
+!-------------------------------------------------------------------------------
+subroutine calc_phi_dphi_d2phi(model_<FILL parameter 1>,  &
+                               model_<FILL parameter 2>,  &
+                               ! FILL as many parameters as needed
+                               model_cutoff,r,phi,dphi,d2phi)
+implicit none
+   
+!-- Transferred variables
+double precision, intent(in)  :: model_<FILL parameter 1>
+double precision, intent(in)  :: model_<FILL parameter 2>
+! FILL as many parameter declarations as necessary
+double precision, intent(in)  :: model_cutoff
+double precision, intent(in)  :: r
+double precision, intent(out) :: phi,dphi,d2phi
+
+!-- Local variables
+! FILL: place any local variable definitions here
+
+if (r .gt. model_cutoff) then
+   ! Argument exceeds cutoff radius
+   phi    = 0.d0
+   dphi   = 0.d0
+   d2phi  = 0.d0
+else 
+   phi   = !<FILL functional form of phi(r)>
+   dphi  = !<FILL functional form of dphi(r)>
+   d2phi = !<FILL functional form of d2phi(r)>
+endif
+
+end subroutine calc_phi_dphi_d2phi
+
+!-------------------------------------------------------------------------------
+!
 ! Compute energy and forces on atoms from the positions.
 !
 !-------------------------------------------------------------------------------
@@ -115,10 +152,12 @@ integer(kind=kim_intptr), intent(in)  :: pkim
 integer,                  intent(out) :: ier
 
 !-- Local variables
-double precision :: Rij(DIM)
-double precision :: r,Rsqij,phi,dphi,dEidr
+double precision :: Rij(DIM),Rij_pairs(DIM,2)
+double precision :: r,Rsqij,phi,dphi,d2phi,dEidr,d2Eidr
+double precision :: r_pairs(2)
 integer :: i,j,jj,numnei,atom_ret
-integer :: comp_force,comp_energy,comp_enepot,comp_process_d1Edr
+integer :: i_pairs(2), j_pairs(2)
+integer :: comp_force,comp_energy,comp_enepot,comp_process_d1Edr,comp_process_d2Edr
 integer, allocatable, target :: nei1atom_substitute(:)
 character*80 :: error_message
 integer :: idum
@@ -228,7 +267,8 @@ call kim_api_get_compute_multiple_f(pkim, ier, &
      "energy",        comp_energy,        1, &
      "forces",        comp_force,         1, &
      "energyPerAtom", comp_enepot,        1, &
-     "process_d1Edr", comp_process_d1Edr, 1)
+     "process_d1Edr", comp_process_d1Edr, 1, &
+     "process_d2Edr", comp_process_d2Edr, 1)
 if (ier.lt.KIM_STATUS_OK) then
    idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_compute_multiple_f", ier)
    return
@@ -397,7 +437,21 @@ do
       if ( Rsqij .lt. model_cutsq ) then          ! particles are interacting?
 
          r = sqrt(Rsqij)                          ! compute distance
-         if (comp_force.eq.1.or.comp_process_d1Edr.eq.1) then
+         if (comp_process_d2Edr.eq.1) then
+            call calc_phi_dphi_d2phi(model_<FILL parameter 1>, &
+                                     model_<FILL parameter 2>, &
+                                     ! FILL as many parameters as needed
+                                     r,phi,dphi,d2phi) ! compute pair potential
+                                                       !   and it derivatives
+            if ((HalfOrFull.eq.1) .and. &
+                (j .le. numberContrib)) then      ! HALF mode
+               dEidr  = dphi                      !      double contribution
+               d2Eidr = d2phi
+            else                                  ! FULL mode
+               dEidr  = 0.5d0*dphi                !      regular contribution
+               d2Eidr = 0.5d0*d2phi
+            endif
+         elseif (comp_force.eq.1.or.comp_process_d1Edr.eq.1) then
             call calc_phi_dphi(model_<FILL parameter 1>, &
                                model_<FILL parameter 2>, &
                                ! FILL as many parameters as needed
@@ -439,6 +493,21 @@ do
          !
          if (comp_process_d1Edr.eq.1) then
             call kim_api_process_d1Edr_f(pkim, dEidr, r, loc(Rij), i, j, ier)
+         endif
+
+         ! contribution to process_d2Edr
+         if (comp_process_d2Edr.eq.1) then
+            r_pairs(1) = r
+            r_pairs(2) = r
+            Rij_pairs(:,1) = Rij
+            Rij_pairs(:,2) = Rij
+            i_pairs(1) = i
+            i_pairs(2) = i
+            j_pairs(1) = j
+            j_pairs(2) = j
+
+            call kim_api_process_d2Edr_f(pkim, d2Eidr, loc(r_pairs), loc(Rij_pairs), &
+                                         loc(i_pairs), loc(j_pairs), ier)
          endif
 
          ! contribution to forces

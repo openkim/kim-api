@@ -96,6 +96,7 @@ energyPerAtom           real*8       energy              [numberOfAtoms]    opti
 
 process_d1Edr           method       none                []                 optional
 
+process_d2Edr           method       none                []                 optional
 
 #######################################################################################################
 MODEL_PARAMETERS:
@@ -108,5 +109,5 @@ PARAM_FREE_epsilon      real*8       energy              []
 PARAM_FREE_sigma        real*8       none                []                 # should be units of 1/length
 
 PARAM_FIXED_cutsq       real*8       none                []
- 
+
 PARAM_FIXED_shift       real*8       energy              []
