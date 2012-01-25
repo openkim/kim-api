@@ -119,6 +119,40 @@ Corresponding Fortran style interface:
 
 ******************************************************************************
 
+int KIM_API_preinit(void * kimmdl,  char * modelname); 
+
+    
+    This routine creates the KIM API object that can store every pointer to the
+    data described in the KIM descriptor file for the model.It does not check any
+    compatibility with test. The perpose of that routine is to create the model object
+    in order to check it's properties. It is useful for test driver or simulations 
+    MD software.   
+Arguments:
+
+        void * kimmdl 
+                reference pointer to KIM_API_model object (in C++ style, the
+                definition will be (KIM_API_model **)).
+
+     
+
+        char * modelname
+                null terminated character string that defines the Model name.
+                The routine uses this name to find the character string in
+                memory that contains the Model's descriptor (.kim) file.  At
+                compile time the descriptor file is stored in the Model's
+                binary library file.  Thus, it is necessary to perform a `make'
+                of the openkim-api package after editing a Model's .kim file.
+
+Corresponding Fortran style interface:
+
+        integer function kim_api_preinit_f(kimmdl, modelname) 
+                        character (len=*) :: modelname 
+                        integer(kind=kim_intptr) :: kimmdl 
+        end function kim_api_preinit_f
+
+
+******************************************************************************
+
 void KIM_API_allocate(void * kimmdl, int natoms, int ntypes, int * kimerror); 
 
      This routine allocates memory for each data argument stored in the
@@ -268,56 +302,6 @@ Corresponding Fortran style interface:
                         integer :: kimerror
         end subroutine kim_api_model_destroy_f
 
-
-******************************************************************************
-
-void KIM_API_get_Units(void *kimmdl, char * UnitsSystem,int * kimerror); 
-
-     This routine copies the name of the unit system currently in use to the
-     supplied string UnitsSystem (which should be of length 64 or greater).
-
-Arguments:
-
-        void * kimmdl
-                pointer to KIM_API_model object (in C++ style, the definition 
-                will be (KIM_API_model *)).
-
-        char * UnitsSystem 
-                null terminated character string, must be already allocated
-                (which sould be of length 64 or greater)
-
-        int * kimerror
-                error code: KIM_STATUS_OK   -- successful completion, 
-                            KIM_STATUS_FAIL -- unsuccessful
-
-Corresponding Fortran style interface:
-
-        subroutine kim_api_get_units_f(kimmdl, UnitsSystem, kimerror) 
-                        integer(kind=kim_intptr) :: kimmdl 
-                        character (len=*) :: UnitsSystem
-                        integer :: kimerror
-        end subroutine kim_api_get_units_f
-
-
-******************************************************************************
-
-int KIM_API_isUnitS_fixed(void *kimmdl); 
-
-     This routine checks whether the model supports only one unit system or can
-     work with multiple unit systems. Returns KIM_STATUS_OK if units are fixed
-     (units cannot be reset), KIM_STATUS_FAIL otherwise.
-
-Arguments:
-
-        void * kimmdl
-                pointer to KIM_API_model object (in C++ style, the definition 
-                will be (KIM_API_model *)).
-
-Corresponding Fortran style interface:
-
-        integer function kim_api_isunits_fixed_f(kimmdl) 
-                        integer(kind=kim_intptr) :: kimmdl 
-        end function kim_api_isunits_fixed_f
 
 
 ******************************************************************************
@@ -776,7 +760,7 @@ int KIM_API_model_init(void * kimmdl);
         store data in static memory since it may be called with different KIM
         API objects.  Any information that should persist between calls must be
         stored in the KIM API object. Fixed parameters may be used for this
-        purpose.
+        purpose  or model buffer(see KIM_API_set/get_model_buffer).
 
     (2) In order to call KIM_API_model_init() it is necessary to have a valid
         KIM API object pointed to by kimmdl (see KIM_API_init() above).  The
@@ -793,12 +777,43 @@ Corresponding Fortran style interface:
 
         integer function kim_api_model_init_f(kimmdl) 
                         integer(kind=kim_intptr) :: kimmdl
-        end subroutine kim_api_model_init_f
-
+        end function kim_api_model_init_f
 
 ******************************************************************************
 
-void * KIM_API_get_listAtomTypes(void * kimmdl, int * nATypes, int * error);
+int KIM_API_model_reinit(void * kimmdl);
+
+    This routine will reinitialize the Model associated with the KIM API object
+    by calling the reinit routine supplied by the Model.  It uses the Model's
+    name (which is stored in KIM API object by the KIM_API_init routine).  The
+    return value will be KIM_STATUS_OK in case of success and KIM_STATUS_FAIL
+    otherwise.
+
+    Notes:
+
+    (1) The Model's reinit routine must be called if the parameters of the models
+        have been changed.
+
+    (2) In order to call KIM_API_model_reinit() it is necessary to have a valid
+        KIM API object pointed to by kimmdl (see KIM_API_init() above).  The
+        mandatory argument `cutoff' must be registered in this KIM API object
+        and it must have memory allocated to it (via either the
+        KIM_API_allocate() or KIM_API_set_data() routines).
+
+Arguments:
+        void * kimmdl
+                pointer to KIM_API_model object (in C++ style, the definition 
+                will be (KIM_API_model *)).
+         
+Corresponding Fortran style interface:
+
+        integer function kim_api_model_reinit_f(kimmdl) 
+                        integer(kind=kim_intptr) :: kimmdl
+        end function kim_api_model_reinit_f
+
+******************************************************************************
+
+char * KIM_API_get_listAtomTypes(void * kimmdl, int * nATypes, int * error);
 
        This routine returns a pointer to an array of fixed size text strings.
        (The text strings are of size KEY_CHAR_LENGTH, which is a constant
@@ -830,7 +845,7 @@ Corresponding Fortran style interface:
 
 ******************************************************************************
 
-void * KIM_API_get_listParams(void * kimmdl, int * nVpar, int * error);
+char * KIM_API_get_listParams(void * kimmdl, int * nVpar, int * error);
 
        This routine returns a pointer to an array of fixed size text strings,
        each string is the name of a Model parameter argument.  (The text
@@ -865,7 +880,7 @@ Corresponding Fortran style interface:
 
 ******************************************************************************
 
-void * KIM_API_get_listFreeParams(void * kimmdl, int * nVpar, int * error);
+char * KIM_API_get_listFreeParams(void * kimmdl, int * nVpar, int * error);
 
        This routine returns a pointer to an array of fixed size text strings,
        each string is the name of a Model FREE parameter argument.  (The text
@@ -900,7 +915,7 @@ Corresponding Fortran style interface:
 
 ******************************************************************************
 
-void * KIM_API_get_listFixedParams(void * kimmdl, int * nVpar, int * error);
+char * KIM_API_get_listFixedParams(void * kimmdl, int * nVpar, int * error);
 
        This routine returns a pointer to an array of fixed size text strings,
        each string is the name of a Model FIXED parameter argument.  (The text
@@ -935,7 +950,7 @@ Corresponding Fortran style interface:
 
 ******************************************************************************
 
-void * KIM_API_get_NBC_method(void *kimmdl, int * error);
+char * KIM_API_get_NBC_method(void *kimmdl, int * error);
 
        This routine returns a pointer to a fixed size text string.  (The text
        string is of size KEY_CHAR_LENGTH, which is a constant defined by the
@@ -1002,7 +1017,7 @@ Corresponding Fortran style interface:
 
 ******************************************************************************
 
-void * KIM_API_get_model_kim_str(char * modelname, int * error)
+char * KIM_API_get_model_kim_str(char * modelname, int * error)
     
      This routines returns pointer to the total modelname.kim file as NULL terminated character string.
 
@@ -1151,7 +1166,106 @@ Corresponding Fortran style interface:
 
 ******************************************************************************
 
-void * KIM_API_status_msg(int status_code)
+void KIM_API_process_d1Edr(void **kimmdl, double * dE, double * r, double **dx,&
+                           int *i, int *j, int *errorcode);
+                By using that function quantities like virial, stress etc... can be computed. 
+                The model does not need know how exactly it is computed. In low level loop
+                for each pair of atom (i j) the model organize call to that routine.
+                In general the test will provide the implementation of process_d1Edr 
+                routine (same interface) as pointer stored in KIM API object.
+                   Test can opt for providing the implementation of process_d1Edr 
+                if it needs only standard quantities  (virialGlobal, virialPerAtom and stress). 
+                In that case KIM implementation of process_d1Edr will be called.
+                Essentially, KIM_API_d1Edr is a wrapper routine, that checks  logic,decides what
+                process_d1Edr to call , and also converts i and j from ZeroBasedList to OneBaseList
+                (or vise verse) if needed.
+
+Arguments:
+          void ** kimmdl
+                pointer to KIM_API_model object (in C++ style, the definition 
+                will be (KIM_API_model **)). 
+          
+          double * dE
+                pointer to contribution to the derivative of energy (dE/dr_ij).
+
+          double * r
+                pointer to r_ij -- distance betwing two atoms contributing to the derivative.
+
+          double **dx
+                pointer argument which will point to the list of relative
+                position vectors (of `atom' relative to the neighbor, i.e., 
+                Rij = X_j - X_i).
+          
+          int *i
+                pointer to atom i (from pair ij)              
+          
+          int *j
+                pointer to atom j 
+ 
+          int * errorcode
+              error code returned (KIM_STATUSS_OK if successful completion)
+
+Corresponding Fortran style interface:
+        subroutine kim_api_process_d1edr_f(kimmdl,de,r,dx,i,j,errorcode)
+		integer(kind=kim_intptr) :: kimmdl,dx  
+		real*8 :: de,r
+		integer ::i,j,errorcode
+        end subroutine kim_api_process_d1edr_f
+
+******************************************************************************
+
+void KIM_API_process_d2Edr(void **kimmdl, double * dE, double ** r, double **dx,&
+                           int **i, int **j, int *errorcode);
+                By using that function quantities (that requires second derivative) like stress
+                can be computed. The model does not need know how exactly it is computed. 
+                In low level loop,  the model supplys contribution to the d^2E/(dr_kl dr_mn) 
+                and organize call to that routine. Indexes k,l,m and are fixed.
+                In general the test will provide the implementation of process_d2Edr 
+                routine (same interface) as pointer stored in KIM API object.
+                   Test can opt for providing the implementation of process_d2Edr 
+                if it needs only standard quantities  (like stress). 
+                In that case KIM implementation of process_d2Edr will be called.
+                Essentially, KIM_API_d2Edr is a wrapper routine, that checks  logic,decides what
+                process_d2Edr to call , and also converts i and j from ZeroBasedList to OneBaseList
+                (or vise verse) if needed.
+
+Arguments:
+          void ** kimmdl
+                pointer to KIM_API_model object (in C++ style, the definition 
+                will be (KIM_API_model **)). 
+          
+          double * dE
+                pointer to contribution to the derivative of energy (dE/dr_ij).
+
+          double ** r
+                pointer argument to double[2]  -- distance betwing for relevant combination 
+                of k,l,n,m contributing to the derivative.
+
+          double **dx
+                pointer argument which will point to the list of relative
+                position vectors double [2][3]
+                (for relevant combination  of k,l,n,m contributing to the derivative).
+          
+          int **i
+                pointer to int[2] array that holds k and l indexes              
+          
+          int *j
+                pointer to int[2] array that holds m and n indexes
+ 
+          int * errorcode
+              error code returned (KIM_STATUSS_OK if successful completion)
+
+
+Corresponding Fortran style interface:
+        subroutine kim_api_process_d2edr_f(kimmdl,de,r,dx,i,j,errorcode)
+		integer(kind=kim_intptr) :: kimmdl,dx 
+		real*8 :: de,r
+		integer ::i,j,errorcode
+        end subroutine kim_api_process_d2edr_f
+
+******************************************************************************
+
+char * KIM_API_status_msg(int status_code)
     This routine returns null terminated character string that describes status
     of error code. The error code is the error code set by other kim service
     routines executions.
