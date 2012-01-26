@@ -53,14 +53,14 @@ KIM_IOline::KIM_IOline(){
       
 bool KIM_IOline:: getFields(char *inString){
             char *tmp;
-   //         static int counter=0;
+   
             init2empty();
             //check for comments part and get it removed
             tmp = strpbrk(inString,"#");
             if(tmp !=NULL) {
                 strncpy(comments,tmp,strlen(tmp)+1);
                 tmp[0]='\0';
-    //           counter++;
+    
             }
              strip(inString);
 
@@ -267,7 +267,6 @@ bool KIM_IOline:: isitoutput(char*str){
 ostream &operator<<(ostream &stream, KIM_IOline a){
 	stream<<a.name<<" "<<a.type<<" "<<a.dim<<" ";
         stream<<a.shape<<" "<<a.requirements;
-        //stream<<" input: "<<a.input<<" output: "<<a.output<<endl;
         stream << endl;
 	return stream;
 };
@@ -356,7 +355,6 @@ int  IOline::readlines(char * infile, IOline **inlines){
         *inlines=NULL;
         ifstream myfile;
          myfile.open(infile);
- //cout<<"SystemOfUnit:  file:"<<infile<<":"<<endl;
          if(!myfile){
              cout<<"* Error (IOline::readlines): can not open file:"<<infile<<":"<<endl;
              KIM_API_model::fatal_error_print();
@@ -450,7 +448,7 @@ KIMBaseElement:: KIMBaseElement(){
             nullefy();
 }
 KIMBaseElement::~KIMBaseElement(){
-    //free();
+    
 }
 void KIMBaseElement:: init(char *nm,char * tp,intptr_t sz, intptr_t rnk, int *shp,void * pdata){
             flag = new KIMBaseElementFlag;
@@ -789,32 +787,13 @@ bool KIM_API_model:: preinit(char * initfile,char *modelname){
         inlinesnew = NULL;
         numlines=numlines - nAtomsTypes;
         //end resize inlines
- /*
-        this->supported_units_init();
-        
-        char coordinates_str [] = "coordinates";
-        int ind =this->get_index(coordinates_str);
-        char custom_str [] ="custom";
 
-        if(!set_units(inlines[ind].units)) if(!set_units(custom_str)){
-              cout<<"* Error (KIM_API_model::preinit):  Unknown units in "<< initfile << " file"<<endl;
-            return false;
-        }
-        if (! are_infileunits_consistent()) {
-           cout<<"* Error (KIM_API_model::preinit): Inconsistent units in "<< initfile << "file"<<endl;
-                return false;
-        }
-  */
         //extra input
         IOline *extrainput;
         
         int nextra = IOline::readlines(initfile,&extrainput);
         for (int i=0;i<nextra;i++){
-            /*
-            if(strcmp(extrainput[i].name,"SystemOfUnitsFix")==0){
-                if(strcmp(extrainput[i].value,"fixed")==0) this->unitsFixed=true;
-            }
-            */
+          
             if(strcmp(extrainput[i].name,"TEST_NAME")==0){
                 strcpy(this->model.name,extrainput[i].value);
             }
@@ -888,22 +867,7 @@ bool KIM_API_model::preinit_str_testname(char *instrn){
         numlines=numlines - nAtomsTypes;
         //end resize inlines
 
-       // this->supported_units_init();
-     /*
-        char coordinates_str [] = "coordinates";
-        int ind =this->get_index(coordinates_str);
-
-        char custom_str [] ="custom";
-
-        if(!set_units(inlines[ind].units)) if(!set_units(custom_str)){
-             cout<<"* Error (KIM_API_model::preinit_str_testname):  Unknown units in descriptor file"<<endl;
-            return false;
-        }
-        if (! are_infileunits_consistent()) {
-                cout<<"* Error (KIM_API_model::preinit_str_testname): Inconsistent units in descriptor file"<<endl;
-                return false;
-        }
-     */
+      
         //extra input like unitFixed flag and,later may be, authors
         IOline *extrainput;
         int nextra = IOline::readlines_str(instrn,&extrainput);
@@ -1296,10 +1260,7 @@ bool KIM_API_model::is_it_match_noFlagCount(KIM_API_model & mdtst,KIM_IOline * I
 bool KIM_API_model::is_it_match(KIM_API_model &test,KIM_API_model & mdl){
     //preinit model from standard template kim file
    KIM_API_model stdmdl;
-    //char modelfile[2048] = KIM_DIR_API;
-    //char modelstdname[32]="standard";
-    //strcat(modelfile,"standard.kim");
-
+  
     char * inStandard_kim_str = standard_kim_str();
     if(!stdmdl.preinit_str_testname(inStandard_kim_str)){
         cout<<" preinit of :"<<"standard.kim"<<" failed"<<endl;
@@ -1323,14 +1284,7 @@ bool KIM_API_model::is_it_match(KIM_API_model &test,KIM_API_model & mdl){
     bool AtomsTypesMatch=test2standardAtomsTypesMatch&&model2standardAtomsTypesMatch&&test2modelAtomsTypesMatch;
 
     stdmdl.free();
- /*
-    if(test.unitsFixed && mdl.unitsFixed){
-        if(strcmp(test.currentUnits,mdl.currentUnits)!=0){
-            cout<<"* Error (KIM_API_model::is_it_match): System of units for Test and Model do not match."<<endl;
-            return false;
-        }
-    }
- */ 
+ 
     bool NBC_methodsmatch = this->NBC_methods_match(test,mdl);
     NBC_methodsmatch=NBC_methodsmatch&&test.check_consistance_NBC_method();
     NBC_methodsmatch=NBC_methodsmatch&&mdl.check_consistance_NBC_method();
@@ -1375,9 +1329,7 @@ bool KIM_API_model::is_it_in(KIM_API_model& mdl, char* name){
 }
 bool KIM_API_model::do_flag_match(KIM_API_model& tst, KIM_API_model& mdl){
     // here the assumption : besides flag type , everything is a match
-    // the logic is hard wired to the .kim file in violation of descriptor file concept.
-    // Proposed  by KIM Technical Commettee.
-
+   
     // check flag for tst
     bool ZeroBasedLists_tst =is_it_in_and_is_it_flag(tst, "ZeroBasedLists");
     bool OneBasedLists_tst =is_it_in_and_is_it_flag(tst, "OneBasedLists");
@@ -1429,7 +1381,7 @@ bool KIM_API_model::do_flag_match(KIM_API_model& tst, KIM_API_model& mdl){
     int ind_IterAcces_tst = tst.get_index("Neigh_IterAccess");
     //logic for checking Both/Full/Half base list
     // checking if test o.k. when model requires both
- /*   if (Neigh_BothList_mdl){
+    if (Neigh_BothList_mdl){
         if(!(Neigh_BothList_tst || Neigh_FullList_tst && Neigh_HalfList_tst)){
             cout<< "model .kim requres Neigh_BothList "<<endl;
             return false;
@@ -1454,7 +1406,7 @@ bool KIM_API_model::do_flag_match(KIM_API_model& tst, KIM_API_model& mdl){
              return false;
          }
      }
-*/
+
     //
     //logic for checking Both/Loca/Iter
     // checking if test o.k. when model requires both
@@ -1505,11 +1457,11 @@ bool KIM_API_model::do_flag_match(KIM_API_model& tst, KIM_API_model& mdl){
      }
 
     //logic for Neigh_CalcRij
-  /*  if (Neigh_CalcRij_mdl && !Neigh_CalcRij_tst){
+    if (Neigh_CalcRij_mdl && !Neigh_CalcRij_tst){
              cout<< "model .kim requres Neigh_CalcRij"<<endl;
              return false;
     }
-  */
+  
     if(!(mdl.locator_neigh_mode||mdl.iterator_neigh_mode||mdl.both_neigh_mode)) return false;
 
     return true;
@@ -2372,7 +2324,6 @@ char * KIM_API_model::get_listAtomsTypes(int* nATypes, int* error){
         return NULL;
     }
     *nATypes = nAtomsTypes;
-    //char * listatypes= new char[nAtomsTypes*KEY_CHAR_LENGTH];
     char * listatypes=(char *)malloc(nAtomsTypes*KEY_CHAR_LENGTH);
 
     for (int i=0;i<nAtomsTypes*KEY_CHAR_LENGTH;i++) listatypes[i] = '\0';
@@ -2388,7 +2339,6 @@ char * KIM_API_model::get_NBC_method(int* error){
         // no NBC methods are specified
         return NULL;
     }
-    //char * method = new char[KEY_CHAR_LENGTH];
     char *method = (char *)malloc(KEY_CHAR_LENGTH);
     for (int i=0;i<KEY_CHAR_LENGTH;i++) method[i] = '\0';
     strcpy(method,this->NBC_method_current);
@@ -2424,7 +2374,6 @@ char * KIM_API_model::get_listParams(int* nVpar, int* error){
         return NULL;
     }
     *nVpar=count;
-    //listvpar= new char[KEY_CHAR_LENGTH * count];
     listvpar = (char *)malloc(KEY_CHAR_LENGTH * count);
     for (int i=0;i<count*KEY_CHAR_LENGTH;i++) listvpar[i] = '\0';
     count=0;
@@ -2685,13 +2634,6 @@ bool KIM_API_model::fij_related_things_match(KIM_API_model& test, KIM_API_model&
    
     if (tst_stiffness_required ) if (!mdl_stiffness) stiffness_need2add = true;
 
-    // the following part will be ommited when automatic adding auxiliaries like
-    // virialGlobal,virialPerAtom... to the KIM_API onject will be implemented
-    //--------------------------------------------------------------------------
-    //if (tst_virialGlobal_required ) if (virialGlobal_comp_possible) if (!mdl_virialGlobal) match=false;
-    //if (tst_virialPerAtom_required ) if( virialPerAtom_comp_possible) if (!mdl_virialPerAtom) match=false;
-    //if (tst_stiffness_required ) if( stiffness_comp_possible) if (!mdl_stiffness) match=false;
-    //--------------------------------------------------------------------------
     return match;
     
 }
@@ -3186,4 +3128,3 @@ void KIM_API_model::get_compute_byI_multiple(int* err, int numargs, ...){
     *err=KIM_STATUS_OK;
     va_end(listPointer);
 }
-
