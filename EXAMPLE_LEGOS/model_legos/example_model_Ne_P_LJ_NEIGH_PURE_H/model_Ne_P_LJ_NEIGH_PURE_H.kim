@@ -33,11 +33,11 @@ Ne                      spec                    1
 CONVENTIONS:
 # Name                  Type
 
-OneBasedLists           dummy
+OneBasedLists           flag
 
-Neigh_IterAccess        dummy
+Neigh_IterAccess        flag
 
-NEIGH-PURE-H            dummy
+NEIGH-PURE-H            flag
 
 
 #######################################################################################################

@@ -47,7 +47,7 @@ numberOfAtoms           integer*8    none       none                    []      
 
 numberAtomTypes         integer      none       none                    []
 
-atomTypes               integer      none       none                    [numberOfAtoms]                 # one [dummy] -- rank is one
+atomTypes               integer      none       none                    [numberOfAtoms]                 # one [flag] -- rank is one
 
 coordinates             real*8       length     standard                [numberOfAtoms,3]
 
@@ -76,14 +76,14 @@ energyPerAtom           real*8       energy     standard                [numberO
 CONVENTIONS:
 # Name                  Type
 
-OneBasedLists           dummy        # presence of this line indicates that indexes for atoms are from 1 to numberOfAtoms
+OneBasedLists           flag        # presence of this line indicates that indexes for atoms are from 1 to numberOfAtoms
 
-Neigh_BothAccess        dummy        # need both: locator and iterator
+Neigh_BothAccess        flag        # need both: locator and iterator
 
-NEIGH-PURE-H            dummy        # scenario method to deal with neighbor list and boundary condition
+NEIGH-PURE-H            flag        # scenario method to deal with neighbor list and boundary condition
 
-NEIGH-PURE-F            dummy 
+NEIGH-PURE-F            flag 
 
-NEIGH-RVEC-F            dummy 
+NEIGH-RVEC-F            flag 
 
-CLUSTER			dummy
+CLUSTER			flag

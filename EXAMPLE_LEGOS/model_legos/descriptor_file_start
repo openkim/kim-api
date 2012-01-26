@@ -32,4 +32,4 @@ SPECIES_LINE_STR
 CONVENTIONS:
 # Name                  Type
 
-OneBasedLists           dummy
+OneBasedLists           flag

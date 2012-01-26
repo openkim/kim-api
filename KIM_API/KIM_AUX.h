@@ -8,7 +8,7 @@
 #include "KIMservice.h"
 #endif
 
-namespace KIM_Standard_Virials{
+namespace KIM_AUX{
 
         double *virialGlobal;
         double *virialPerAtom;

@@ -107,19 +107,19 @@ kim_descriptor = trim(kim_descriptor) // &
    'CONVENTIONS:'                                                               // cr // &
    '# Name                  Type'                                               // cr // &
                                                                                    cr // &
-   'OneBasedLists           dummy'                                              // cr // &
+   'OneBasedLists           flag'                                              // cr // &
                                                                                    cr // &
-   'Neigh_BothAccess        dummy'                                              // cr // &
+   'Neigh_BothAccess        flag'                                              // cr // &
                                                                                    cr // &
-   'NEIGH-RVEC-F            dummy'                                              // cr // &
+   'NEIGH-RVEC-F            flag'                                              // cr // &
                                                                                    cr // &
-   'NEIGH-PURE-H            dummy'                                              // cr // &
+   'NEIGH-PURE-H            flag'                                              // cr // &
                                                                                    cr // &
-   'NEIGH-PURE-F            dummy'                                              // cr // &
+   'NEIGH-PURE-F            flag'                                              // cr // &
                                                                                    cr // &
-   'MI-OPBC-H               dummy'                                              // cr // &
+   'MI-OPBC-H               flag'                                              // cr // &
                                                                                    cr // &
-   'MI-OPBC-F               dummy'                                              // cr // &
+   'MI-OPBC-F               flag'                                              // cr // &
                                                                                    cr // &
                                                                                    cr // &
    divider                                                                      // cr // &

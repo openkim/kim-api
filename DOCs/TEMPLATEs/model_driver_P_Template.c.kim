@@ -34,23 +34,23 @@ SPECIES1_NAME_STR                      spec                    1
 CONVENTIONS:
 # Name                  Type
 
-ZeroBasedLists          dummy
+ZeroBasedLists          flag
 
-Neigh_IterAccess        dummy
+Neigh_IterAccess        flag
 
-Neigh_LocaAccess        dummy
+Neigh_LocaAccess        flag
 
-NEIGH-RVEC-F            dummy
+NEIGH-RVEC-F            flag
 
-NEIGH-PURE-H            dummy
+NEIGH-PURE-H            flag
 
-NEIGH-PURE-F            dummy
+NEIGH-PURE-F            flag
 
-MI-OPBC-H               dummy
+MI-OPBC-H               flag
 
-MI-OPBC-F               dummy
+MI-OPBC-F               flag
 
-CLUSTER                 dummy
+CLUSTER                 flag
 
 
 #######################################################################################################

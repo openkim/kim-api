@@ -88,7 +88,7 @@ bool KIM_IOline:: getFields(char *inString){
             tmp = strtok(NULL," \t");if(tmp == NULL) return false;
             strncpy(type,tmp,strlen(tmp)+1);
 
-            if(strcmp(type,"dummy")==0) {
+            if(strcmp(type,"flag")==0) {
                 strncpy(dim,"none",5);
                 strncpy(shape,"[]",3);
                 return true;
@@ -561,7 +561,7 @@ int KIMBaseElement::getelemsize(char *tp){
             char integer8key[KEY_CHAR_LENGTH]="integer*8";
             char ptrkey[KEY_CHAR_LENGTH]="pointer";
             char methodkey[KEY_CHAR_LENGTH]="method";
-            char dummykey[KEY_CHAR_LENGTH]="dummy";// add here to expand...
+            char flagkey[KEY_CHAR_LENGTH]="flag";// add here to expand...
 
             if(strcmp(realkey,tp)==0){
                 return(sizeof(float));
@@ -575,13 +575,13 @@ int KIMBaseElement::getelemsize(char *tp){
                 return (sizeof(double));
             }else if (strcmp(methodkey,tp)==0){
                 return (sizeof(int *));
-             }else if (strcmp(dummykey,tp)==0){
+             }else if (strcmp(flagkey,tp)==0){
                 return 0;
             }else{// add here more in else if block...
                cout << "* Error (KIMBaseElement::getelemsize): Unknown Type in KIM descriptor file line." << endl
                     << "         `" << tp <<"' is not one of: " << realkey << ", "
                     << real8key << ", " << integerkey << ", " << ptrkey << ", "
-                    << integer8key << ", " << dummykey << endl;
+                    << integer8key << ", " << flagkey << endl;
             KIM_API_model::fatal_error_print();
             exit(102);
             }
@@ -838,7 +838,7 @@ bool KIM_API_model::preinit_str_testname(char *instrn){
   
         int *shape=NULL;
         char pointer_str [] = "pointer";
-        char modelname [] ="dummy_name";
+        char modelname [] ="flag_name";
         //get Atoms Types and nAtomsTypes
         if (! init_AtomsTypes()) {
             ErrorCode=KIM_STATUS_FAIL;
@@ -1252,7 +1252,7 @@ bool KIM_API_model::is_it_match(KIM_API_model & mdtst,KIM_IOline * IOlines,int n
     }
     return match;
 }//will be private
-bool KIM_API_model::is_it_match_noDummyCount(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns){
+bool KIM_API_model::is_it_match_noFlagCount(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns){
     bool match;
     //check if lines are match with Model api variable
     match =true;
@@ -1269,14 +1269,14 @@ bool KIM_API_model::is_it_match_noDummyCount(KIM_API_model & mdtst,KIM_IOline * 
         
         if ( is_it_par(IOlines[i].name) ) match=true;
 
-        if(strcmp(IOlines[i].type,"dummy")==0){
+        if(strcmp(IOlines[i].type,"flag")==0){
             match=true;
         }
         for(int j=0;j<mdtst.model.size;j++){
             if(mdtst[j]== IOlines[i]) {
                 match = true;
                 break;
-            }else if(strcmp(mdtst[j].type,"dummy")==0){
+            }else if(strcmp(mdtst[j].type,"flag")==0){
                 match = true;
                 break;
             }else if(is_it_par(mdtst[j].name)){
@@ -1285,7 +1285,7 @@ bool KIM_API_model::is_it_match_noDummyCount(KIM_API_model & mdtst,KIM_IOline * 
             }
         }
         if(!match) {
-            cout << "* Warning (KIM_API_model::is_it_match_noDummyCount): The following line in the Model descriptor file does not match."<<endl;
+            cout << "* Warning (KIM_API_model::is_it_match_noFlagCount): The following line in the Model descriptor file does not match."<<endl;
             cout<<IOlines[i]<<endl;
             return match;
         }
@@ -1311,8 +1311,8 @@ bool KIM_API_model::is_it_match(KIM_API_model &test,KIM_API_model & mdl){
     bool test2modelmatch= is_it_match(test,mdl.inlines,mdl.numlines);
     bool model2testmatch= is_it_match(mdl,test.inlines,test.numlines);
 
-    bool test2modelmatch_noDC= is_it_match_noDummyCount(test,mdl.inlines,mdl.numlines);
-    bool model2testmatch_noDC= is_it_match_noDummyCount(mdl,test.inlines,test.numlines);
+    bool test2modelmatch_noDC= is_it_match_noFlagCount(test,mdl.inlines,mdl.numlines);
+    bool model2testmatch_noDC= is_it_match_noFlagCount(mdl,test.inlines,test.numlines);
 
     bool test2standardmatch = is_it_match(stdmdl,test.inlines,test.numlines);
     bool model2standardmatch = is_it_match(stdmdl,mdl.inlines,mdl.numlines);
@@ -1351,21 +1351,21 @@ bool KIM_API_model::is_it_match(KIM_API_model &test,KIM_API_model & mdl){
         this->unit_h = mdl.unit_h;
     }
     
-    do_dummy_match(test,mdl);
+    do_flag_match(test,mdl);
 
     if (test2modelmatch && model2testmatch && test2standardmatch && process_fij_related &&
             model2standardmatch && AtomsTypesMatch && NBC_methodsmatch && units_match) return true;
     if (test2modelmatch_noDC && model2testmatch_noDC && test2standardmatch && process_fij_related &&
              model2standardmatch && AtomsTypesMatch && NBC_methodsmatch && units_match){
-        return this->do_dummy_match(test,mdl);
+        return this->do_flag_match(test,mdl);
     }
     return false;
 }
 
-bool KIM_API_model::is_it_in_and_is_it_dummy(KIM_API_model& mdl,char * name){
+bool KIM_API_model::is_it_in_and_is_it_flag(KIM_API_model& mdl,char * name){
     int i = mdl.get_index(name);
     if (i<0) return false;
-    if (strcmp(mdl[i].type,"dummy")!=0) return false;
+    if (strcmp(mdl[i].type,"flag")!=0) return false;
     return true;
 }
 bool KIM_API_model::is_it_in(KIM_API_model& mdl, char* name){
@@ -1373,50 +1373,50 @@ bool KIM_API_model::is_it_in(KIM_API_model& mdl, char* name){
     if (i<0) return false;
     return true;
 }
-bool KIM_API_model::do_dummy_match(KIM_API_model& tst, KIM_API_model& mdl){
-    // here the assumption : besides dummy type , everything is a match
+bool KIM_API_model::do_flag_match(KIM_API_model& tst, KIM_API_model& mdl){
+    // here the assumption : besides flag type , everything is a match
     // the logic is hard wired to the .kim file in violation of descriptor file concept.
     // Proposed  by KIM Technical Commettee.
 
-    // check dummy for tst
-    bool ZeroBasedLists_tst =is_it_in_and_is_it_dummy(tst, "ZeroBasedLists");
-    bool OneBasedLists_tst =is_it_in_and_is_it_dummy(tst, "OneBasedLists");
+    // check flag for tst
+    bool ZeroBasedLists_tst =is_it_in_and_is_it_flag(tst, "ZeroBasedLists");
+    bool OneBasedLists_tst =is_it_in_and_is_it_flag(tst, "OneBasedLists");
 
-    bool Neigh_HalfList_tst =is_it_in_and_is_it_dummy(tst, "Neigh_HalfList");
-    bool Neigh_FullList_tst =is_it_in_and_is_it_dummy(tst, "Neigh_FullList");
-    bool Neigh_BothList_tst =is_it_in_and_is_it_dummy(tst, "Neigh_BothList");
+    bool Neigh_HalfList_tst =is_it_in_and_is_it_flag(tst, "Neigh_HalfList");
+    bool Neigh_FullList_tst =is_it_in_and_is_it_flag(tst, "Neigh_FullList");
+    bool Neigh_BothList_tst =is_it_in_and_is_it_flag(tst, "Neigh_BothList");
     
-    bool Neigh_IterAccess_tst=is_it_in_and_is_it_dummy(tst, "Neigh_IterAccess");
-    bool Neigh_LocaAccess_tst=is_it_in_and_is_it_dummy(tst, "Neigh_LocaAccess");
-    bool Neigh_BothAccess_tst=is_it_in_and_is_it_dummy(tst, "Neigh_BothAccess");
+    bool Neigh_IterAccess_tst=is_it_in_and_is_it_flag(tst, "Neigh_IterAccess");
+    bool Neigh_LocaAccess_tst=is_it_in_and_is_it_flag(tst, "Neigh_LocaAccess");
+    bool Neigh_BothAccess_tst=is_it_in_and_is_it_flag(tst, "Neigh_BothAccess");
 
-    bool Neigh_CalcRij_tst=is_it_in_and_is_it_dummy(tst, "Neigh_CalcRij");
+    bool Neigh_CalcRij_tst=is_it_in_and_is_it_flag(tst, "Neigh_CalcRij");
 
-    // check dummy for mdl
-    bool ZeroBasedLists_mdl =is_it_in_and_is_it_dummy(mdl, "ZeroBasedLists");
-    bool OneBasedLists_mdl =is_it_in_and_is_it_dummy(mdl, "OneBasedLists");
+    // check flag for mdl
+    bool ZeroBasedLists_mdl =is_it_in_and_is_it_flag(mdl, "ZeroBasedLists");
+    bool OneBasedLists_mdl =is_it_in_and_is_it_flag(mdl, "OneBasedLists");
 
-    bool Neigh_HalfList_mdl =is_it_in_and_is_it_dummy(mdl, "Neigh_HalfList");
-    bool Neigh_FullList_mdl =is_it_in_and_is_it_dummy(mdl, "Neigh_FullList");
-    bool Neigh_BothList_mdl =is_it_in_and_is_it_dummy(mdl, "Neigh_BothList");
+    bool Neigh_HalfList_mdl =is_it_in_and_is_it_flag(mdl, "Neigh_HalfList");
+    bool Neigh_FullList_mdl =is_it_in_and_is_it_flag(mdl, "Neigh_FullList");
+    bool Neigh_BothList_mdl =is_it_in_and_is_it_flag(mdl, "Neigh_BothList");
 
-    bool Neigh_IterAccess_mdl=is_it_in_and_is_it_dummy(mdl, "Neigh_IterAccess");
+    bool Neigh_IterAccess_mdl=is_it_in_and_is_it_flag(mdl, "Neigh_IterAccess");
     
-    bool Neigh_LocaAccess_mdl=is_it_in_and_is_it_dummy(mdl, "Neigh_LocaAccess");
+    bool Neigh_LocaAccess_mdl=is_it_in_and_is_it_flag(mdl, "Neigh_LocaAccess");
     
-    bool Neigh_BothAccess_mdl=is_it_in_and_is_it_dummy(mdl, "Neigh_BothAccess");
+    bool Neigh_BothAccess_mdl=is_it_in_and_is_it_flag(mdl, "Neigh_BothAccess");
     
 
-    bool Neigh_CalcRij_mdl=is_it_in_and_is_it_dummy(mdl, "Neigh_CalcRij");
+    bool Neigh_CalcRij_mdl=is_it_in_and_is_it_flag(mdl, "Neigh_CalcRij");
 
 
     //logic for Zero or One base list handling
     if ((!ZeroBasedLists_tst && !OneBasedLists_tst)||(ZeroBasedLists_tst && OneBasedLists_tst) ) {
-        cout<< "* Error (KIM_API_model::do_dummy_match): Test descriptor file must have only ONE of ZeroBasedLists or OneBasedLists."<<endl;
+        cout<< "* Error (KIM_API_model::do_flag_match): Test descriptor file must have only ONE of ZeroBasedLists or OneBasedLists."<<endl;
         return false;
     }
      if ((!ZeroBasedLists_mdl && !OneBasedLists_mdl)||(ZeroBasedLists_mdl && OneBasedLists_mdl)) {
-        cout<< "* Error (KIM_API_model::do_dummy_match): Model descriptor file must have only ONE of ZeroBasedLists or OneBasedLists."<<endl;
+        cout<< "* Error (KIM_API_model::do_flag_match): Model descriptor file must have only ONE of ZeroBasedLists or OneBasedLists."<<endl;
         return false;
     }
     model_index_shift = 0;
@@ -1462,7 +1462,7 @@ bool KIM_API_model::do_dummy_match(KIM_API_model& tst, KIM_API_model& mdl){
     if (Neigh_BothAccess_mdl){
 
         if(!(Neigh_BothAccess_tst || Neigh_LocaAccess_tst && Neigh_IterAccess_tst)){
-            cout<< "* Error (KIM_API_model::do_dummy_match): Model descriptor file requres Neigh_BothAccess."<<endl;
+            cout<< "* Error (KIM_API_model::do_flag_match): Model descriptor file requres Neigh_BothAccess."<<endl;
             return false;
         }
         mdl.both_neigh_mode=true;
@@ -1470,7 +1470,7 @@ bool KIM_API_model::do_dummy_match(KIM_API_model& tst, KIM_API_model& mdl){
      }else if (Neigh_LocaAccess_mdl && Neigh_IterAccess_mdl){
 
         if(!(Neigh_LocaAccess_tst || Neigh_IterAccess_tst || Neigh_BothAccess_tst)){
-            cout<< "* Error (KIM_API_model::do_dummy_match): Model descriptor file requres IterAccess or LocaAccess."<<endl;
+            cout<< "* Error (KIM_API_model::do_flag_match): Model descriptor file requres IterAccess or LocaAccess."<<endl;
             return false;
         }
         if (Neigh_LocaAccess_tst && Neigh_IterAccess_tst || Neigh_BothAccess_tst) {
@@ -1489,7 +1489,7 @@ bool KIM_API_model::do_dummy_match(KIM_API_model& tst, KIM_API_model& mdl){
      //checking if test o.k. with loca
      }else if(Neigh_LocaAccess_mdl){
          if(!(Neigh_LocaAccess_tst || Neigh_BothAccess_tst)) {
-             cout<< "* Error (KIM_API_model::do_dummy_match): Model descriptor file requres Neigh_LocaAccess."<<endl;
+             cout<< "* Error (KIM_API_model::do_flag_match): Model descriptor file requres Neigh_LocaAccess."<<endl;
              return false;
          }
 
@@ -1497,7 +1497,7 @@ bool KIM_API_model::do_dummy_match(KIM_API_model& tst, KIM_API_model& mdl){
      //checking if test o.k. with iter
      }else if(Neigh_IterAccess_mdl){
          if(!(Neigh_IterAccess_tst || Neigh_BothAccess_tst)) {
-             cout<< "* Error (KIM_API_model::do_dummy_match): Model descriptor file requres Neigh_IterAccess."<<endl;
+             cout<< "* Error (KIM_API_model::do_flag_match): Model descriptor file requres Neigh_IterAccess."<<endl;
              return false;
          }
 
@@ -2133,7 +2133,7 @@ void KIM_API_model::model_compute(int *error){
 
   //initialize virials if needed
 
-  if (process_d1Edr_ind >=0 || process_d2Edr_ind >= 0) KIM_Standard_Virials::init2zero(this,error);
+  if (process_d1Edr_ind >=0 || process_d2Edr_ind >= 0) KIM_AUX::init2zero(this,error);
   if(*error != KIM_STATUS_OK) return;
 
   //call model_compute
@@ -2254,7 +2254,7 @@ int KIM_API_model::get_half_neigh(int mode, int request, int *atom,
 }
 
 void KIM_API_model::irrelevantVars2donotcompute(KIM_API_model & test, KIM_API_model & mdl){
-    if(! is_it_match_noDummyCount(test,mdl.inlines,mdl.numlines)) {
+    if(! is_it_match_noFlagCount(test,mdl.inlines,mdl.numlines)) {
         cout<<"* Error (KIM_API_model::irrelevantVars2donotcompute): Test and Model descriptor files are incompatible (do not match)."<<endl;
         KIM_API_model::fatal_error_print();
         exit(133);
@@ -2290,7 +2290,7 @@ void KIM_API_model::allocateinitialized(KIM_API_model * mdl, int natoms, int nty
         }else{
             sz = 1;
             if (strcmp((*mdl)[i].type,"pointer")==0 || strcmp((*mdl)[i].type,"method")==0) sz=0;
-            if (strcmp((*mdl)[i].type,"dummy")==0 ) sz=0;
+            if (strcmp((*mdl)[i].type,"flag")==0 ) sz=0;
         }
         if(mdl->inlines[i].isitoptional() && calculate == 0 || isitparam) {
             sz=0;
@@ -2532,8 +2532,8 @@ bool KIM_API_model::NBC_methods_match(KIM_API_model& test, KIM_API_model& mdl){
     bool NBC_method_mdl[number_NBC_methods];
     bool NBC_method_test[number_NBC_methods];
     for (int i=0;i<number_NBC_methods; i++){
-        NBC_method_mdl[i] = is_it_in_and_is_it_dummy(mdl,NBC_methods[i]);
-        NBC_method_test[i] = is_it_in_and_is_it_dummy(test,NBC_methods[i]);
+        NBC_method_mdl[i] = is_it_in_and_is_it_flag(mdl,NBC_methods[i]);
+        NBC_method_test[i] = is_it_in_and_is_it_flag(test,NBC_methods[i]);
     }
 
     int indexes[number_NBC_methods];
@@ -2786,11 +2786,11 @@ void KIM_API_model::process_d1Edr(KIM_API_model** ppkim, double* dE, double* r,
         int j2send = *j-pkim->model_index_shift;
         (*process)(ppkim,dE,r,dx,&i2send,&j2send,ier);
     }else if (process_flag == 1 && pkim->AUX_index_shift == 0){
-        KIM_Standard_Virials::process_d1Edr(ppkim,dE,r,dx,i,j,ier);
+        KIM_AUX::process_d1Edr(ppkim,dE,r,dx,i,j,ier);
     } else if(process_flag == 1){
         int i2send = *i-1;
         int j2send = *j-1;
-        KIM_Standard_Virials::process_d1Edr(ppkim,dE,r,dx,&i2send,&j2send,ier);
+        KIM_AUX::process_d1Edr(ppkim,dE,r,dx,&i2send,&j2send,ier);
     }
 }
 
@@ -2812,13 +2812,13 @@ void KIM_API_model::process_d2Edr(KIM_API_model **ppkim,double *de,double **r,do
         int *pj = &j2send[0];
         (*process)(ppkim,de,r,pdx,&pi,&pj,ier);
     } else if(process_flag == 1 && pkim->AUX_index_shift == 0){
-        KIM_Standard_Virials::process_d2Edr(ppkim,de,r,pdx,i,j,ier);
+        KIM_AUX::process_d2Edr(ppkim,de,r,pdx,i,j,ier);
     }else if(process_flag == 1 ){
         int i2send[2];   i2send[0]=(*i)[0]-1; i2send[1]=(*i)[1]-1;
         int j2send[2];   j2send[0]=(*j)[0]-1; j2send[1]=(*j)[1]-1;
         int *pi = &i2send[0];
         int *pj = &j2send[0];
-        KIM_Standard_Virials::process_d2Edr(ppkim,de,r,pdx,&pi,&pj,ier);
+        KIM_AUX::process_d2Edr(ppkim,de,r,pdx,&pi,&pj,ier);
     }
 }
 

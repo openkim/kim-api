@@ -93,7 +93,7 @@ model_Ar_P_MLJ_CLUSTER_C: model_P_MLJ_CLUSTER_C.c                \
 	$(D_CAT) descriptor_file_start | $(SED_CMD) \
          | sed -e 's/SPECIES_LINE_STR/Ar                      spec                    1/g'                    >  $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
-	echo "CLUSTER                 dummy"                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo "CLUSTER                 flag"                                                                   >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_MODELS_DIR)$@/$@.kim
@@ -129,7 +129,7 @@ model_Ar_P_MLJ_CLUSTER_F90: $(COMMON_FRAGMENTS)                    \
 	$(D_CAT) descriptor_file_start | $(SED_CMD) \
          | sed -e 's/SPECIES_LINE_STR/Ar                      spec                    1/g'                    >  $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
-	echo "CLUSTER                 dummy"                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo "CLUSTER                 flag"                                                                   >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_MODELS_DIR)$@/$@.kim
@@ -171,11 +171,11 @@ model_Ar_P_MLJ_MI_OPBC_H_F: $(COMMON_FRAGMENTS)                               \
 	$(D_CAT) descriptor_file_start | $(SED_CMD) \
          | sed -e 's/SPECIES_LINE_STR/Ar                      spec                    1/g'                    >  $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
-	echo "Neigh_LocaAccess        dummy"                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo "Neigh_LocaAccess        flag"                                                                   >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
-	echo "MI-OPBC-H               dummy"                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo "MI-OPBC-H               flag"                                                                   >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
-	echo "MI-OPBC-F               dummy"                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo "MI-OPBC-F               flag"                                                                   >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_MODELS_DIR)$@/$@.kim
@@ -227,11 +227,11 @@ model_Ar_P_MLJ_NEIGH_PURE_H_F: $(COMMON_FRAGMENTS)                              
                                   | sed -e 's/SPECIES_LINE_STR/Ar                      spec                    1/g' \
                                                                                                               >  $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
-	echo "Neigh_LocaAccess        dummy"                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo "Neigh_LocaAccess        flag"                                                                   >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
-	echo "NEIGH-PURE-H            dummy"                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo "NEIGH-PURE-H            flag"                                                                   >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
-	echo "NEIGH-PURE-F            dummy"                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo "NEIGH-PURE-F            flag"                                                                   >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_MODELS_DIR)$@/$@.kim
@@ -280,9 +280,9 @@ model_Ar_P_MLJ_NEIGH_RVEC_F: $(COMMON_FRAGMENTS)                           \
 	$(D_CAT) descriptor_file_start | $(SED_CMD) \
          | sed -e 's/SPECIES_LINE_STR/Ar                      spec                    1/g'                    >  $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
-	echo "Neigh_LocaAccess        dummy"                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo "Neigh_LocaAccess        flag"                                                                   >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
-	echo "NEIGH-RVEC-F            dummy"                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo "NEIGH-RVEC-F            flag"                                                                   >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_MODELS_DIR)$@/$@.kim
@@ -300,7 +300,7 @@ model_Ar_P_MLJ_NEIGH_RVEC_F: $(COMMON_FRAGMENTS)                           \
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_params                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
         # make .F90 file in the directory
-	$(F_CAT) module_start.f.frag | $(SED_CMD)                                                            >  $(KIM_MODELS_DIR)$@/$@.F90
+	$(F_CAT) module_start.f.frag | $(SED_CMD)                                                             >  $(KIM_MODELS_DIR)$@/$@.F90
 	$(F_CAT) neigh_rvec_compute_local_variables.f.frag                                                    >> $(KIM_MODELS_DIR)$@/$@.F90
 	echo "    "                                                                                           >> $(KIM_MODELS_DIR)$@/$@.F90
 	$(F_CAT) compute_kim_variables.f.frag                                                                 >> $(KIM_MODELS_DIR)$@/$@.F90

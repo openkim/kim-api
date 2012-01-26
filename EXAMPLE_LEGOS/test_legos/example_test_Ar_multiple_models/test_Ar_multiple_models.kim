@@ -32,11 +32,11 @@ Ar                      spec                    18
 CONVENTIONS:
 # Name                  Type
 
-ZeroBasedLists          dummy
+ZeroBasedLists          flag
 
-Neigh_BothAccess        dummy
+Neigh_BothAccess        flag
 
-NEIGH-RVEC-F            dummy
+NEIGH-RVEC-F            flag
 
 
 #######################################################################################################

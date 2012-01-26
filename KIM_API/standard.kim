@@ -111,7 +111,7 @@ $
 #                           to identify the atom/particle type.  The value
 #                           specified by a Test is ignored.
 #
-#            * Dummy Data lines
+#            * Flag Data lines
 #               This line type defines a convention (or parameter), that can be
 #               used to ensure that Models and Tests are able to work together,
 #               and should only be used within the CONVENTIONS section of the
@@ -123,7 +123,7 @@ $
 #                           This name is checked against the standard list in
 #                           `standard.kim' (below).
 #
-#                  2) Type: This must be `dummy'.
+#                  2) Type: This must be `flag'.
 #
 #            * Argument Data lines
 #               This line type defines a quantity that is associated with one
@@ -603,11 +603,11 @@ CONVENTIONS:
 # lines should be included:
 #
 ################################################################################
-ZeroBasedLists          dummy       # Presence of this line indicates that 
+ZeroBasedLists          flag        # Presence of this line indicates that 
                                     # indexes for atoms are from 0 to 
                                     # numberOfAtoms-1 (C-style)
 
-OneBasedLists           dummy       # Presence of this line indicates that 
+OneBasedLists           flag        # Presence of this line indicates that 
                                     # indexes for atoms are from 1 to 
                                     # numberOfAtoms   (Fortran-style)
 
@@ -627,11 +627,11 @@ OneBasedLists           dummy       # Presence of this line indicates that
 # options in a KIM descriptor (.kim) file.
 #
 ################################################################################
-Neigh_IterAccess        dummy       # works with iterator mode
+Neigh_IterAccess        flag        # works with iterator mode
 
-Neigh_LocaAccess        dummy       # works with locator mode
+Neigh_LocaAccess        flag        # works with locator mode
 
-Neigh_BothAccess        dummy       # need both locator and iterator modes
+Neigh_BothAccess        flag        # need both locator and iterator modes
 
 
 ################################################################################
@@ -651,7 +651,7 @@ Neigh_BothAccess        dummy       # need both locator and iterator modes
 # supplied atom coordinates and the derivative of the total energy with respect
 # to the positions of the atoms.
 #
-CLUSTER                 dummy       # The Model needs only coordinates to 
+CLUSTER                 flag        # The Model needs only coordinates to 
                                     # compute; a neighbor list is not needed.
 
 # In the MI-OPBC methods (MI-OPBC-H and MI-OPBC-F), the Model receives the
@@ -673,7 +673,7 @@ CLUSTER                 dummy       # The Model needs only coordinates to
 # obtained were the model to compute its own neighbor list using the provided
 # orthogonal periodic box side lengths.
 #
-MI-OPBC-H               dummy       # This is the Minimum Image Orthogonal
+MI-OPBC-H               flag        # This is the Minimum Image Orthogonal
                                     # Periodic Boundary Condition Half neighbor
                                     # list method.  The Model needs
                                     # `coordinates', a half neighbor list (with
@@ -684,7 +684,7 @@ MI-OPBC-H               dummy       # This is the Minimum Image Orthogonal
                                     # side-lengths of the orthogonal simulation
                                     # box).
 
-MI-OPBC-F               dummy       # This is the Minimum Image Orthogonal 
+MI-OPBC-F               flag        # This is the Minimum Image Orthogonal 
                                     # Periodic Boundary Condition Full neighbor
                                     # list method.  The Model needs 
                                     # `coordinates', a full neighbor list (with 
@@ -709,14 +709,14 @@ MI-OPBC-F               dummy       # This is the Minimum Image Orthogonal
 # from per-atom energies of the physical atoms, or to use a modified neighbor
 # list to obtain the desired values.
 #
-NEIGH-PURE-H            dummy       # This is the Pure Half neighbor list 
+NEIGH-PURE-H            flag        # This is the Pure Half neighbor list 
                                     # method.  The model needs `coordinates', a 
                                     # half neighbor list (with data stored in 
                                     # the `neighObject' argument), and the 
                                     # `get_half_neigh' method supplied by the 
                                     # Test.
 
-NEIGH-PURE-F            dummy       # This is the Pure Full neighbor list 
+NEIGH-PURE-F            flag        # This is the Pure Full neighbor list 
                                     # method.  The model needs `coordinates', a 
                                     # full neighbor list (with data stored in 
                                     # the `neighObject' argument), and the 
@@ -739,7 +739,7 @@ NEIGH-PURE-F            dummy       # This is the Pure Full neighbor list
 # application of complex boundary conditions such as torsion and objective
 # boundary conditions.
 #
-NEIGH-RVEC-F            dummy       # This is the Relative Vector Boundary
+NEIGH-RVEC-F            flag        # This is the Relative Vector Boundary
                                     # Condition Full neighbor list method.  
                                     # The Model needs `coordinates' and a full 
                                     # neighbor list (with data stored in the 
