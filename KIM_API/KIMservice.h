@@ -254,6 +254,8 @@ bool requiresFullNeighbors();
     int get_model_index_shift();
     void set_model_buffer(void * o,int * ier);
     void * get_model_buffer(int * ier);
+    void set_test_buffer(void * o,int * ier);
+    void * get_test_buffer(int * ier);
 
    static void process_d1Edr(KIM_API_model **ppkim,double *dr,double *r,double ** dx, int *i,int *j,int *ier);
 
@@ -304,8 +306,11 @@ private:
     int neiOfAnAtom_full[KIM_API_MAX_NEIGHBORS];
     int model_index_shift; //0--no conversion, 1 -- from 0 to 1, -1 -- from 1 to 0
     int AUX_index_shift; //0--noconversion, 1 -- from 0 to 1
-    void * model_buffer; // stores everything that is notreflected  in .kim
+    void * model_buffer; // stores everything that is not reflected  in .kim
                          // but nessssery for model instantiation
+    void * test_buffer; // stores everything that is not reflected  in .kim
+                        // but nessssery for test instantiation
+    
     Atom_Map * AtomsTypes;
     int nAtomsTypes;
 

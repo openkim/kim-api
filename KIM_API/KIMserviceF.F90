@@ -82,6 +82,18 @@ module kimservice
         integer(kind=kim_intptr) :: kimmdl,kim_api_get_model_buffer_f
         end function kim_api_get_model_buffer_f
 
+
+        function kim_api_get_test_buffer_f(kimmdl,ier)
+#ifdef SYSTEM32
+	integer, parameter :: kim_intptr=4
+#else
+	integer,parameter :: kim_intptr = 8
+#endif
+        integer ::ier
+        integer(kind=kim_intptr) :: kimmdl,kim_api_get_test_buffer_f
+        end function kim_api_get_test_buffer_f
+
+
  	function kim_api_isit_half_neighbors_f(kimmdl,ier)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
@@ -102,6 +114,17 @@ module kimservice
         integer ::ier
         integer(kind=kim_intptr) :: kimmdl,ob
         end subroutine kim_api_set_model_buffer_f
+
+subroutine kim_api_set_test_buffer_f(kimmdl,ob,ier)
+#ifdef SYSTEM32
+	integer, parameter :: kim_intptr=4
+#else
+	integer,parameter :: kim_intptr = 8
+#endif
+        integer ::ier
+        integer(kind=kim_intptr) :: kimmdl,ob
+        end subroutine kim_api_set_test_buffer_f
+
 
         subroutine kim_api_process_d1edr_f(pkim,de,r,dx,i,j,ier)
 #ifdef SYSTEM32

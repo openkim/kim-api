@@ -176,6 +176,16 @@ void * KIM_API_get_model_buffer(void* kimmdl, int* ier){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     return mdl->get_model_buffer(ier);
 }
+
+void KIM_API_set_test_buffer(void* kimmdl,void *ob,int * ier){
+    KIM_API_model * mdl=(KIM_API_model *) kimmdl;
+    mdl->set_test_buffer(ob,ier);
+}
+void * KIM_API_get_test_buffer(void* kimmdl, int* ier){
+    KIM_API_model * mdl=(KIM_API_model *) kimmdl;
+    return mdl->get_test_buffer(ier);
+}
+
 int KIM_API_isit_half_neighbors(void *kimmdl,int *ier){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     int ans=1;
@@ -797,9 +807,19 @@ int kim_api_get_model_index_shift_f_(void *kimmdl){
 void kim_api_set_model_buffer_f_(void * kimmdl,void * ob, int * ier){
     KIM_API_set_model_buffer(*(KIM_API_model **)kimmdl, *(void **)ob, ier);
 }
+
 void * kim_api_get_model_buffer_f_(void * kimmdl, int * ier){
     return KIM_API_get_model_buffer(*(KIM_API_model **)kimmdl, ier);
 }
+
+void kim_api_set_test_buffer_f_(void * kimmdl,void * ob, int * ier){
+    KIM_API_set_test_buffer(*(KIM_API_model **)kimmdl, *(void **)ob, ier);
+}
+
+void * kim_api_get_test_buffer_f_(void * kimmdl, int * ier){
+    return KIM_API_get_test_buffer(*(KIM_API_model **)kimmdl, ier);
+}
+
 int kim_api_isit_half_neighbors_f_(void * kimmdl,int *ier){
     return KIM_API_isit_half_neighbors(*(KIM_API_model **)kimmdl, ier);
 }

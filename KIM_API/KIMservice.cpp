@@ -2599,6 +2599,18 @@ void * KIM_API_model::get_model_buffer(int* ier){
     *ier = KIM_STATUS_OK;
     return model_buffer;
 }
+void KIM_API_model::set_test_buffer(void* o, int* ier){
+    *ier = KIM_STATUS_OK;
+    test_buffer = o;
+}
+
+void * KIM_API_model::get_test_buffer(int* ier){
+    *ier = KIM_STATUS_FAIL;
+    if (test_buffer == NULL) return NULL;
+    *ier = KIM_STATUS_OK;
+    return test_buffer;
+}
+
 
 bool KIM_API_model::fij_related_things_match(KIM_API_model& test, KIM_API_model& mdl){
 
