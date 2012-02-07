@@ -23,9 +23,6 @@
 using namespace std;
 #include "KIMservice.h"
 
-//#include "Unit_Handling.h"
-#include "KIM_AUX.h"
-
 #define KEY_CHAR_LENGTH 64
 #define KIM_LINE_LENGTH 512
 
@@ -2085,7 +2082,7 @@ void KIM_API_model::model_compute(int *error){
 
   //initialize virials if needed
 
-  if (process_d1Edr_ind >=0 || process_d2Edr_ind >= 0) KIM_AUX::init2zero(this,error);
+  if (process_d1Edr_ind >=0 || process_d2Edr_ind >= 0) KIM_AUX::Process_DE::init2zero(this,error);
   if(*error != KIM_STATUS_OK) return;
 
   //call model_compute
@@ -2740,11 +2737,11 @@ void KIM_API_model::process_d1Edr(KIM_API_model** ppkim, double* dE, double* r,
         int j2send = *j-pkim->model_index_shift;
         (*process)(ppkim,dE,r,dx,&i2send,&j2send,ier);
     }else if (process_flag == 1 && pkim->AUX_index_shift == 0){
-        KIM_AUX::process_d1Edr(ppkim,dE,r,dx,i,j,ier);
+        KIM_AUX::Process_DE::process_d1Edr(ppkim,dE,r,dx,i,j,ier);
     } else if(process_flag == 1){
         int i2send = *i-1;
         int j2send = *j-1;
-        KIM_AUX::process_d1Edr(ppkim,dE,r,dx,&i2send,&j2send,ier);
+        KIM_AUX::Process_DE::process_d1Edr(ppkim,dE,r,dx,&i2send,&j2send,ier);
     }
 }
 
@@ -2766,13 +2763,13 @@ void KIM_API_model::process_d2Edr(KIM_API_model **ppkim,double *de,double **r,do
         int *pj = &j2send[0];
         (*process)(ppkim,de,r,pdx,&pi,&pj,ier);
     } else if(process_flag == 1 && pkim->AUX_index_shift == 0){
-        KIM_AUX::process_d2Edr(ppkim,de,r,pdx,i,j,ier);
+        KIM_AUX::Process_DE::process_d2Edr(ppkim,de,r,pdx,i,j,ier);
     }else if(process_flag == 1 ){
         int i2send[2];   i2send[0]=(*i)[0]-1; i2send[1]=(*i)[1]-1;
         int j2send[2];   j2send[0]=(*j)[0]-1; j2send[1]=(*j)[1]-1;
         int *pi = &i2send[0];
         int *pj = &j2send[0];
-        KIM_AUX::process_d2Edr(ppkim,de,r,pdx,&pi,&pj,ier);
+        KIM_AUX::Process_DE::process_d2Edr(ppkim,de,r,pdx,&pi,&pj,ier);
     }
 }
 

@@ -36,8 +36,8 @@ endif
 Makefile: Include.mk
 	@touch Makefile
 
-libkim.a: $(ALLOBJ) standard_kim_str.o Unit_Handling.o
-	ar rcs  $@ $(ALLOBJ) standard_kim_str.o Unit_Handling.o
+libkim.a: $(ALLOBJ) standard_kim_str.o Unit_Handling.o KIM_AUX.o
+	ar rcs  $@ $(ALLOBJ) standard_kim_str.o Unit_Handling.o KIM_AUX.o
 
 libkim.so: libkim.a
 	$(LINKCOMPILER) $(SHARED_LIB_FLAG) $(CPPLIBFLAG) $(LINKSONAME)$(KIM_API_DIR)$@ -o $@ *.o
@@ -47,6 +47,8 @@ KIMservice.o: model_init_include.h model_init_include.cpp model_kim_str_include.
 KIMserviceC.o: KIMservice.h KIMserviceC.h Makefile
 
 KIMserviceF.o: Makefile
+
+KIM_AUX.o: KIM_AUX.h Makefile 
 
 # targets for the models: for any new model adds the appropriate lines to the model_init_include.{h,cpp} files
 $(MODELS_TARGETS): .models-deleted

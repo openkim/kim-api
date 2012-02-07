@@ -22,6 +22,7 @@ using namespace std;
 #define	_KIMSERVICE_H
 
 #include "KIMstatus.h"
+#include "KIM_AUX.h"
 
 extern "C" {
         char * standard_kim_str();
@@ -292,7 +293,10 @@ bool requiresFullNeighbors();
     double convert_unit_from( char* length, char* energy, char* charge,char* temperature, char* time,
       double length_exponent, double energy_exponent, double charge_exponent,
       double temperature_exponent, double time_exponent, int* kimerror);
-    
+
+    KIM_AUX::Process_DE * get_process_DE_instance(){
+        return &process_DE_instance;
+    }
 private:
 
     bool locator_neigh_mode;
@@ -306,6 +310,7 @@ private:
     int neiOfAnAtom_full[KIM_API_MAX_NEIGHBORS];
     int model_index_shift; //0--no conversion, 1 -- from 0 to 1, -1 -- from 1 to 0
     int AUX_index_shift; //0--noconversion, 1 -- from 0 to 1
+    KIM_AUX::Process_DE process_DE_instance;
     void * model_buffer; // stores everything that is not reflected  in .kim
                          // but nessssery for model instantiation
     void * test_buffer; // stores everything that is not reflected  in .kim
