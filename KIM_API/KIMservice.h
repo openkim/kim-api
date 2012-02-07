@@ -186,7 +186,7 @@ public:
     bool preinit(char * initfile,char *modelname);
     bool preinit(char * modelname);
     bool preinit_str_testname(char * instrn);
-    void free(int *error);
+    void free_e(int *error);
     void free();
     bool set_data(char *nm, intptr_t size, void *dt);
     bool set_data_byi(int ind,intptr_t size, void *dt);

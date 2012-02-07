@@ -684,7 +684,7 @@ KIM_API_model:: KIM_API_model(){
        nnarg_NBC[5] =  narg_NBC_method_F;
 
        for(int i=0;i<n_NBC_methods;i++){
-           arg_NBC_methods[i] = new char *[nnarg_NBC[i]];
+           arg_NBC_methods[i] = new char * [nnarg_NBC[i]];
        }
 
        NBC_methods[0] = &NBC_method_A[0];
@@ -727,7 +727,7 @@ KIM_API_model:: KIM_API_model(){
 KIM_API_model:: ~KIM_API_model(){
       // free();
       for(int i=0;i<n_NBC_methods;i++){
-         delete arg_NBC_methods[i];
+         delete [] arg_NBC_methods[i];
       }
 
       delete [] arg_NBC_methods;
@@ -888,7 +888,7 @@ bool KIM_API_model::preinit_str_testname(char *instrn){
         return true;
 }
 
- void KIM_API_model::free(int *error){
+ void KIM_API_model::free_e(int *error){
         //
         *error = KIM_STATUS_FAIL;
         if(this==NULL) return;
@@ -2342,19 +2342,26 @@ char * KIM_API_model::get_NBC_method(int* error){
     *error=KIM_STATUS_OK; //success
     return method;
 }
+
+static void c_free(void *p){
+    free(p);
+}
+
 bool KIM_API_model::requiresFullNeighbors(){
     int kimerr;
     char * method = NULL;
     method = (char *) get_NBC_method(&kimerr);
+    
     if(kimerr!=1){
-        if (method!=NULL) delete [] method;
+        if (method!=NULL) c_free((void *)method);
         return false;
     }
+
     bool answer = false;
     if (strcmp(method,"NEIGH-PURE-F")==0) answer = true;
     if (strcmp(method,"NEIGH-RVEC-F")==0) answer = true;
     if (strcmp(method,"MI-OPBC-F")==0) answer = true;
-    if (method!=NULL) delete [] method;
+    if (method!=NULL) c_free((void *)method);
     return answer;
 }
 char * KIM_API_model::get_listParams(int* nVpar, int* error){
@@ -2576,7 +2583,7 @@ int KIM_API_model::report_error(int ln,char * fl,char * usermsg,int ier){
         char * kimstatus =status_msg(ier);
         cout<<"* Error: at line "<<ln<<" in "<<fl<< endl<<"\tMessage: "<<usermsg<<endl;
         cout<<"\tKIM_STATUS_MSG: "<<kimstatus<<endl;
-        delete [] kimstatus;
+        c_free((void *) kimstatus);
         return KIM_STATUS_FAIL;
     }
     return KIM_STATUS_OK;

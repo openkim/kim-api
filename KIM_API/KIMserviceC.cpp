@@ -73,7 +73,7 @@ void KIM_API_free(void *kimmdl,int * error){
     KIM_API_model * mdl=*(KIM_API_model **) kimmdl;
     *error=KIM_STATUS_OK;
     if (mdl==NULL) return;
-    mdl->free(error);
+    mdl->free_e(error);
     delete [] mdl;
     *(KIM_API_model **) kimmdl=NULL;
 
