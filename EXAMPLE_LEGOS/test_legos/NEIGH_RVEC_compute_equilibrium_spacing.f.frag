@@ -10,7 +10,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
              DIM,CellsPerCutoff,MinSpacing,MaxSpacing,  &
              TOL,N,NNeighbors,neighborlist,RijList,     &
              verbose,RetSpacing,RetEnergy)
-  use KIMservice
+  use KIM_API
   implicit none
   
   !-- Transferred variables
@@ -41,16 +41,16 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
 
   ! Unpack data from KIM object
   !
-  call kim_api_get_data_multiple_f(pkim, ier, &
+  call kim_api_getm_data_f(pkim, ier, &
        "energy",      penergy, 1, &
        "coordinates", pcoor,   1, &
        "cutoff",      pcutoff, 1)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_multiple_f", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
      stop
   endif
 
-  call toRealArrayWithDescriptor2d(coordum, coords, DIM, N)
+  call KIM_to_F90_real_array_2d(coordum, coords, DIM, N)
 
   ! Initialize for minimization
   !

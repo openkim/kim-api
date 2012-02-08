@@ -18,7 +18,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#include "KIMserviceC.h"
+#include "KIM_API_C.h"
 #include "KIMstatus.h"
 
 /******************************************************************************
@@ -124,7 +124,7 @@ static void compute(void* km, int* ier)
    int j;
    int k;
    int comp_force;
-   int comp_energyPerAtom;
+   int comp_particleEnergy;
    int comp_virial;
 
    int* nAtoms;
@@ -139,37 +139,37 @@ static void compute(void* km, int* ier)
    double* coords;
    double* energy;
    double* force;
-   double* energyPerAtom;
-   double* virialGlobal;
+   double* particleEnergy;
+   double* virial;
    
-   /* check to see if we have been asked to compute the forces, energyPerAtom, and virial */
-   KIM_API_get_compute_multiple(pkim, ier, 3*3,
+   /* check to see if we have been asked to compute the forces, particleEnergy, and virial */
+   KIM_API_getm_compute(pkim, ier, 3*3,
                                 "forces",        &comp_force,         1,
-                                "energyPerAtom", &comp_energyPerAtom, 1,
-                                "virialGlobal",  &comp_virial,        1);
+                                "particleEnergy", &comp_particleEnergy, 1,
+                                "virial",  &comp_virial,        1);
    if (KIM_STATUS_OK > *ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_compute_multiple", *ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_compute", *ier);
       return;
    }
 
    /* unpack data from KIM object */
-   KIM_API_get_data_multiple(pkim, ier, 7*3,
-                             "numberOfAtoms", &nAtoms,        1,
+   KIM_API_getm_data(pkim, ier, 7*3,
+                             "numberOfParticles", &nAtoms,        1,
                              "atomTypes",     &atomTypes,     1,
                              "energy",        &energy,        1,
                              "coordinates",   &coords,        1,
                              "forces",        &force,         comp_force,
-                             "energyPerAtom", &energyPerAtom, comp_energyPerAtom,
-                             "virialGlobal",  &virialGlobal,  comp_virial);
+                             "particleEnergy", &particleEnergy, comp_particleEnergy,
+                             "virial",  &virial,  comp_virial);
    if (KIM_STATUS_OK > *ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data_multiple", *ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data", *ier);
       return;
    }
 
    /* unpack the Model's parameters stored in the KIM API object */
-   KIM_API_get_data_multiple(pkim, ier, 7*3,
+   KIM_API_getm_data(pkim, ier, 7*3,
                              "cutoff",             &cutoff,  1,
                              "PARAM_FREE_epsilon", &epsilon, 1,
                              "PARAM_FREE_sigma",   &sigma,   1,
@@ -179,7 +179,7 @@ static void compute(void* km, int* ier)
                              "PARAM_FIXED_cutsq",  &cutsq,   1);
    if (KIM_STATUS_OK > *ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data_multiple", *ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data", *ier);
       return;
    }
 
@@ -197,11 +197,11 @@ static void compute(void* km, int* ier)
    *ier = KIM_STATUS_OK; /* everything is ok */
 
    /* initialize potential energies, forces, and virial term */
-   if (comp_energyPerAtom)
+   if (comp_particleEnergy)
    {
       for (i = 0; i < *nAtoms; ++i)
       {
-         energyPerAtom[i] = 0.0;
+         particleEnergy[i] = 0.0;
       }
    }
    else
@@ -224,7 +224,7 @@ static void compute(void* km, int* ier)
    {
       for (i = 0; i < 6; ++i)
       {
-         virialGlobal[i] = 0.0;
+         virial[i] = 0.0;
       }
    }
 
@@ -263,10 +263,10 @@ static void compute(void* km, int* ier)
             }
             
             /* contribution to energy */
-            if (comp_energyPerAtom)
+            if (comp_particleEnergy)
             {
-               energyPerAtom[i] += 0.5*phi;
-               energyPerAtom[j] += 0.5*phi;
+               particleEnergy[i] += 0.5*phi;
+               particleEnergy[j] += 0.5*phi;
             }
             else
             {
@@ -277,12 +277,12 @@ static void compute(void* km, int* ier)
             if (comp_virial)
             {
                /* virial(i,j) = r(i)*r(j)*(dV/dr)/r */
-	       virialGlobal[0] += Rij[0]*Rij[0]*dphi/R;
-	       virialGlobal[1] += Rij[1]*Rij[1]*dphi/R;
-	       virialGlobal[2] += Rij[2]*Rij[2]*dphi/R;
-	       virialGlobal[3] += Rij[1]*Rij[2]*dphi/R;
-	       virialGlobal[4] += Rij[0]*Rij[2]*dphi/R;
-	       virialGlobal[5] += Rij[0]*Rij[1]*dphi/R;
+	       virial[0] += Rij[0]*Rij[0]*dphi/R;
+	       virial[1] += Rij[1]*Rij[1]*dphi/R;
+	       virial[2] += Rij[2]*Rij[2]*dphi/R;
+	       virial[3] += Rij[1]*Rij[2]*dphi/R;
+	       virial[4] += Rij[0]*Rij[2]*dphi/R;
+	       virial[5] += Rij[0]*Rij[1]*dphi/R;
             }
             
             /* contribution to forces */
@@ -301,12 +301,12 @@ static void compute(void* km, int* ier)
 
    /* perform final tasks */
    
-   if (comp_energyPerAtom)
+   if (comp_particleEnergy)
    {
       *energy = 0.0;
       for (k = 0; k < *nAtoms; ++k)
       {
-         *energy += energyPerAtom[k];
+         *energy += particleEnergy[k];
       }
    }
 
@@ -333,7 +333,7 @@ void MODEL_NAME_LC_STR_init_(void *km)
    int ier;
 
    /* store function pointers in KIM object */
-   KIM_API_set_data_multiple(pkim, &ier, 3*4,
+   KIM_API_setm_data(pkim, &ier, 3*4,
                              "compute", 1, &compute, 1,
                              "reinit",  1, &reinit,  1,
                              "destroy", 1, &destroy, 1);
@@ -404,7 +404,7 @@ void MODEL_NAME_LC_STR_init_(void *km)
    }
 
    /* store parameters in KIM object */
-   KIM_API_set_data_multiple(pkim, &ier, 9*4,
+   KIM_API_setm_data(pkim, &ier, 9*4,
                              "PARAM_FREE_sigma",    1, model_sigma,   1,
                              "PARAM_FREE_epsilon",  1, model_epsilon, 1,
                              "PARAM_FREE_cutoff",   1, model_Pcutoff, 1,
@@ -416,7 +416,7 @@ void MODEL_NAME_LC_STR_init_(void *km)
                              "PARAM_FIXED_cutsq",   1, model_cutsq,   1);
    if (KIM_STATUS_OK > ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_set_data_multiple", ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_setm_data", ier);
       exit(1);
    }
    
@@ -463,7 +463,7 @@ static void reinit(void *km)
    int ier;
 
    /* get parameters from KIM object */
-   KIM_API_get_data_multiple(pkim, &ier, 10*3,
+   KIM_API_getm_data(pkim, &ier, 10*3,
                              "cutoff",              &model_cutoff,  1,
                              "PARAM_FREE_sigma",    &model_sigma,   1,
                              "PARAM_FREE_epsilon",  &model_epsilon, 1,
@@ -476,7 +476,7 @@ static void reinit(void *km)
                              "PARAM_FIXED_cutsq",   &model_cutsq,   1);
    if (KIM_STATUS_OK > ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data_multiple", ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data", ier);
       exit(1);
    }
 
@@ -519,7 +519,7 @@ static void destroy(void *km)
 
 
    /* get parameters from KIM object */
-   KIM_API_get_data_multiple(pkim, &ier, 9*3,
+   KIM_API_getm_data(pkim, &ier, 9*3,
                              "PARAM_FREE_sigma",    &model_sigma,   1,
                              "PARAM_FREE_epsilon",  &model_epsilon, 1,
                              "PARAM_FREE_cutoff",   &model_Pcutoff, 1,
@@ -531,7 +531,7 @@ static void destroy(void *km)
                              "PARAM_FIXED_cutsq",   &model_cutsq,   1);
    if (KIM_STATUS_OK > ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data_multiple", ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data", ier);
       exit(1);
    }
 

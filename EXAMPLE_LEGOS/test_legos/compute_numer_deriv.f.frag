@@ -1,7 +1,7 @@
 subroutine compute_numer_deriv(atomnum,dir,pkim,DIM,N,coords,cutoff,cutpad,   &
-                               boxlength,NBC_Method,do_update_list,coordsave, &
+                               boxSideLengths,NBC_Method,do_update_list,coordsave, &
                                neighborList,RijList,deriv,deriv_err,ier)
-use KIMservice
+use KIM_API
 implicit none
 
 !--Transferred variables
@@ -13,7 +13,7 @@ integer,                  intent(in)    :: N
 real*8,                   intent(inout) :: coords(DIM,N)
 real*8,                   intent(in)    :: cutoff
 real*8,                   intent(in)    :: cutpad
-real*8,                   intent(in)    :: boxlength(DIM)
+real*8,                   intent(in)    :: boxSideLengths(DIM)
 character*64,             intent(in)    :: NBC_Method
 logical,                  intent(inout) :: do_update_list
 real*8,                   intent(inout) :: coordsave(DIM,N)
@@ -109,7 +109,7 @@ contains
    hh = h
    coordorig = coords(dir,atomnum)
    coords(dir,atomnum) = coordorig + hh
-   call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxlength,NBC_Method,  &
+   call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
                             do_update_list,coordsave,neighborList,RijList,ier)
    call kim_api_model_compute_f(pkim, ier)
    if (ier.lt.KIM_STATUS_OK) then
@@ -118,7 +118,7 @@ contains
    endif
    fp = energy
    coords(dir,atomnum) = coordorig - hh
-   call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxlength,NBC_Method,  &
+   call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
                             do_update_list,coordsave,neighborList,RijList,ier)
    call kim_api_model_compute_f(pkim, ier)
    if (ier.lt.KIM_STATUS_OK) then
@@ -127,7 +127,7 @@ contains
    endif
    fm = energy
    coords(dir,atomnum) = coordorig
-   call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxlength,NBC_Method,  &
+   call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
                             do_update_list,coordsave,neighborList,RijList,ier)
    a(1,1)=(fp-fm)/(2.d0*hh)
    err=BIG
@@ -137,7 +137,7 @@ contains
       ! try new, smaller step size
       hh=hh/CON 
       coords(dir,atomnum) = coordorig + hh
-      call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxlength,NBC_Method,  &
+      call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
                                do_update_list,coordsave,neighborList,RijList,ier)
       call kim_api_model_compute_f(pkim, ier)
       if (ier.lt.KIM_STATUS_OK) then
@@ -146,7 +146,7 @@ contains
       endif
       fp = energy
       coords(dir,atomnum) = coordorig - hh
-      call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxlength,NBC_Method,  &
+      call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
                                do_update_list,coordsave,neighborList,RijList,ier)
       call kim_api_model_compute_f(pkim, ier)
       if (ier.lt.KIM_STATUS_OK) then
@@ -155,7 +155,7 @@ contains
       endif
       fm = energy
       coords(dir,atomnum) = coordorig
-      call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxlength,NBC_Method,  &
+      call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
                                do_update_list,coordsave,neighborList,RijList,ier)
       a(1,i)=(fp-fm)/(2.d0*hh)
       fac=CON2

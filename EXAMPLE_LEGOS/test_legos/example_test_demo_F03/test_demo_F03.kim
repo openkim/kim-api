@@ -43,13 +43,13 @@ SUPPORTED_ATOM/PARTICLES_TYPES:
 MODEL_INPUT:
 # Name                  Type         Unit       SystemU/Scale           Shape              requirements
 
-numberOfAtoms           integer*8    none       none                    []                              # empty [] means rank is zero
+numberOfParticles           integer*8    none       none                    []                              # empty [] means rank is zero
 
-numberAtomTypes         integer      none       none                    []
+numberParticleTypes         integer      none       none                    []
 
-atomTypes               integer      none       none                    [numberOfAtoms]                 # one [flag] -- rank is one
+atomTypes               integer      none       none                    [numberOfParticles]                 # one [flag] -- rank is one
 
-coordinates             real*8       length     standard                [numberOfAtoms,3]
+coordinates             real*8       length     standard                [numberOfParticles,3]
 
 neighObject             pointer      none       none                    []                              # neighbor list object that is used by iterator
 
@@ -69,21 +69,21 @@ cutoff                  real*8       length     standard                []
 
 energy                  real*8       energy     standard                []
 
-forces                  real*8       force      standard                [numberOfAtoms,3]
+forces                  real*8       force      standard                [numberOfParticles,3]
 
-energyPerAtom           real*8       energy     standard                [numberOfAtoms]
+particleEnergy           real*8       energy     standard                [numberOfParticles]
 
 CONVENTIONS:
 # Name                  Type
 
-OneBasedLists           flag        # presence of this line indicates that indexes for atoms are from 1 to numberOfAtoms
+OneBasedLists           flag        # presence of this line indicates that indexes for atoms are from 1 to numberOfParticles
 
 Neigh_BothAccess        flag        # need both: locator and iterator
 
-NEIGH-PURE-H            flag        # scenario method to deal with neighbor list and boundary condition
+NEIGH_PURE_H            flag        # scenario method to deal with neighbor list and boundary condition
 
-NEIGH-PURE-F            flag 
+NEIGH_PURE_F            flag 
 
-NEIGH-RVEC-F            flag 
+NEIGH_RVEC_F            flag 
 
 CLUSTER			flag

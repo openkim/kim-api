@@ -5,7 +5,7 @@
 !-------------------------------------------------------------------------------
 subroutine NEIGH_RVEC_F_periodic_B2_neighborlist(CellsPerHalfSide, cutoff,  &
                                       B2spacing, NN, neighborList, RijList)
-  use KIMservice
+  use KIM_API
   implicit none
   
   !-- Transferred variables

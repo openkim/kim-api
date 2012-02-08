@@ -17,7 +17,7 @@
 #include "KIMstatus.h"
 
 module MODEL_NAME_STR
-  use KIMservice
+  use KIM_API
   implicit none
 
   save

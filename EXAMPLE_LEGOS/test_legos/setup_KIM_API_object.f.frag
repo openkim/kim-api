@@ -6,7 +6,7 @@
 !-------------------------------------------------------------------------------
 #define TRUEFALSE(TRUTH) merge(1,0,(TRUTH))
 subroutine setup_KIM_API_object(pkim, testname, modelname, N, specname, SupportHalf)
-  use KIMservice
+  use KIM_API
   implicit none
 
   !-- Transferred variables
@@ -20,9 +20,9 @@ subroutine setup_KIM_API_object(pkim, testname, modelname, N, specname, SupportH
   !-- Local variables
   integer, parameter :: ATypes = 1  ! hard-wired to one atomic type
   integer ier, idum
-  integer numberOfAtoms;         pointer(pnAtoms,numberOfAtoms)
+  integer numberOfParticles;         pointer(pnAtoms,numberOfParticles)
   integer numContrib;            pointer(pnumContrib,numContrib)
-  integer numberAtomTypes;       pointer(pnAtomTypes,numberAtomTypes)
+  integer numberParticleTypes;       pointer(pnparticleTypes,numberParticleTypes)
   integer atomTypesdum(1);       pointer(patomTypesdum,atomTypesdum)
   integer, pointer :: atomTypes(:)
 
@@ -49,26 +49,26 @@ subroutine setup_KIM_API_object(pkim, testname, modelname, N, specname, SupportH
 
   ! Unpack data from KIM object whose values need to be set
   !
-  call kim_api_get_data_multiple_f(pkim, ier, &
-       "numberOfAtoms",           pnAtoms,       1,                           &
-       "numberContributingAtoms", pnumContrib,   TRUEFALSE(SupportHalf.eq.1), & 
-       "numberAtomTypes",         pnAtomTypes,   1,                           &
+  call kim_api_getm_data_f(pkim, ier, &
+       "numberOfParticles",           pnAtoms,       1,                           &
+       "numberContributingParticles", pnumContrib,   TRUEFALSE(SupportHalf.eq.1), & 
+       "numberParticleTypes",         pnparticleTypes,   1,                           &
        "atomTypes",               patomTypesdum, 1)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_multiple_f", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
      stop
   endif
 
-  call toIntegerArrayWithDescriptor1d(atomTypesdum, atomTypes, N)
+  call KIM_to_F90_int_array_1d(atomTypesdum, atomTypes, N)
 
   ! Set values
   !
-  numberOfAtoms   = N
+  numberOfParticles   = N
   if (SupportHalf.eq.1) numContrib = N
-  numberAtomTypes = ATypes
-  atomTypes(:)    = kim_api_get_atypecode_f(pkim, specname, ier)
+  numberParticleTypes = ATypes
+  atomTypes(:)    = kim_api_get_partcl_type_code_f(pkim, specname, ier)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_atypecode_f", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_partcl_type_code_f", ier)
      stop
   endif
 

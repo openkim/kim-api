@@ -27,7 +27,7 @@ using namespace std;
 extern "C" {
         char * standard_kim_str();
  }
-#define KEY_CHAR_LENGTH 64
+#define KIM_KEY_STRING_LENGTH 64
 #define number_NBC_methods 6
 #ifndef KIM_DIR_API
 #define KIM_DIR_API "../../KIM_API/"
@@ -67,23 +67,23 @@ public:
 
 class KIMBaseElementUnit{
 public:   
-        char  dim [KEY_CHAR_LENGTH];  // dimension (length, energy, time, mass, or derivatives...
+        char  dim [KIM_KEY_STRING_LENGTH];  // dimension (length, energy, time, mass, or derivatives...
       KIMBaseElementUnit();
       void init();
 };
 class Atom_Map{
 public:
-    char symbol[KEY_CHAR_LENGTH];
+    char symbol[KIM_KEY_STRING_LENGTH];
     int code;
     static int comparator(const void * a1,const void *a2);
 };
 class KIM_IOline{
 public:
-	char name[KEY_CHAR_LENGTH];
-	char type[KEY_CHAR_LENGTH];
-	char dim[KEY_CHAR_LENGTH];
-        char shape[KEY_CHAR_LENGTH];
-        char requirements[KEY_CHAR_LENGTH];
+	char name[KIM_KEY_STRING_LENGTH];
+	char type[KIM_KEY_STRING_LENGTH];
+	char dim[KIM_KEY_STRING_LENGTH];
+        char shape[KIM_KEY_STRING_LENGTH];
+        char requirements[KIM_KEY_STRING_LENGTH];
         char comments[181];
 	bool goodformat,input,output;
 
@@ -129,7 +129,7 @@ istream &operator>>(istream &stream, IOline &a);
 /*
 class SystemOfUnit {
 public:
-    char UnitsSystemName[KEY_CHAR_LENGTH];
+    char UnitsSystemName[KIM_KEY_STRING_LENGTH];
     IOline * inlines;
     int numlines;
     float mass,distance,time,energy,velocity;
@@ -185,6 +185,7 @@ public:
     ~KIM_API_model();
     bool preinit(char * initfile,char *modelname);
     bool preinit(char * modelname);
+    bool model_info(char * modelname) {return preinit(modelname);}
     bool preinit_str_testname(char * instrn);
     void free_e(int *error);
     void free();
@@ -198,11 +199,11 @@ public:
     int get_index(char *nm, int * error);
     int get_index(char *nm);
     intptr_t get_size(char *nm,int *error);
-    intptr_t get_rank_shape(char *nm,int * shape,int *error);
-    void set_rank_shape(char *nm, int * shape, int rank, int *error);
-    void set2_compute(char *nm);
-    void set2_donotcompute(char *nm);
-    bool isit_compute(char *nm);
+    intptr_t get_shape(char *nm,int * shape,int *error);
+    void set_shape(char *nm, int * shape, int rank, int *error);
+    void set_compute(char *nm, int flag, int *error);
+    void set_compute_by_index(int ind, int flag, int *error);
+    bool get_compute(char *nm);
     KIMBaseElement &operator[](int i);
     KIMBaseElement &operator[](char *nm);
 
@@ -233,12 +234,12 @@ bool do_AtomsTypes_match(KIM_API_model &test,KIM_API_model & mdl);
 static void irrelevantVars2donotcompute(KIM_API_model & test, KIM_API_model & mdl);
 static void allocateinitialized(KIM_API_model * mdl, int natoms, int ntypes,int * error);
 
-char * get_listAtomsTypes(int *nAtomTypes,int *error);
-int get_aTypeCode(char *atom, int * error);
+char * get_partcl_types(int *nparticleTypes,int *error);
+int get_partcl_type_code(char *atom, int * error);
 
-char * get_listParams(int *nVpar,int *error);
-char * get_listFreeParams(int *nVpar,int *error);
-char * get_listFixedParams(int *nVpar,int *error);
+char * get_params(int *nVpar,int *error);
+char * get_free_params(int *nVpar,int *error);
+char * get_fixed_params(int *nVpar,int *error);
 
 static char * get_model_kim_str(char * modelname,int *kimerr);
 
@@ -250,7 +251,7 @@ bool requiresFullNeighbors();
     int numlines;
     bool support_Rij;
     int get_neigh_mode(int *);
-    static char * status_msg(int status_code);
+    static char * get_status_msg(int status_code);
     static int report_error(int line, char * fl, char * usermsg, int ier);
     int get_model_index_shift();
     void set_model_buffer(void * o,int * ier);
@@ -258,39 +259,39 @@ bool requiresFullNeighbors();
     void set_test_buffer(void * o,int * ier);
     void * get_test_buffer(int * ier);
 
-   static void process_d1Edr(KIM_API_model **ppkim,double *dr,double *r,double ** dx, int *i,int *j,int *ier);
+   static void process_dEdr(KIM_API_model **ppkim,double *dr,double *r,double ** dx, int *i,int *j,int *ier);
 
-   static void process_d2Edr(KIM_API_model **ppkim,double *de,double **rr,double ** pdx,int **ii,int **jj,int *ier);
+   static void process_d2Edr2(KIM_API_model **ppkim,double *de,double **rr,double ** pdx,int **ii,int **jj,int *ier);
 
    //multiple data set/get methods
    //
-  void set_data_multiple(int *err, int numargs, ... );      //++
-  void set_data_byI_multiple(int *err, int numargs, ... );  //++
-  void get_data_multiple(int *err,int numargs, ...);        //++
-  void get_data_byI_multiple(int *err,int numargs, ...);    //++
-  void get_index_multiple(int *err, int numargs, ...);      //++
-  void set_compute_multiple(int *err, int numargs, ...);    //++
-  void set_compute_byI_multiple(int *err, int numargs, ...);//++
-  void get_compute_multiple(int *err,int numargs, ...);  //?  ++
-  void get_compute_byI_multiple(int *err,int numargs, ...); //++
+  void setm_data(int *err, int numargs, ... );      //++
+  void setm_data_by_index(int *err, int numargs, ... );  //++
+  void getm_data(int *err,int numargs, ...);        //++
+  void getm_data_by_index(int *err,int numargs, ...);    //++
+  void getm_index(int *err, int numargs, ...);      //++
+  void setm_compute(int *err, int numargs, ...);    //++
+  void setm_compute_by_index(int *err, int numargs, ...);//++
+  void getm_compute(int *err,int numargs, ...);  //?  ++
+  void getm_compute_by_index(int *err,int numargs, ...); //++
 
    //related to process fij public variables   
-    bool virialGlobal_need2add;
-    bool virialPerAtom_need2add;
-    bool stiffness_need2add;
+    bool virial_need2add;
+    bool particleVirial_need2add;
+    bool hessian_need2add;
 
     //Unit_Handling object
     Unit_Handling unit_h;
     //Unit_Handling related routines
 
-    static double get_convert_scale( char *u_from,char *u_to, int *error);
-    int get_Unit_handling(int *error);
-    char * get_Unit_length(int *error);
-    char * get_Unit_energy(int *error);
-    char * get_Unit_charge(int *error);
-    char * get_Unit_temperature(int *error);
-    char * get_Unit_time(int *error);
-    double convert_unit_from( char* length, char* energy, char* charge,char* temperature, char* time,
+    static double get_scale_conversion( char *u_from,char *u_to, int *error);
+    int get_unit_handling(int *error);
+    char * get_unit_length(int *error);
+    char * get_unit_energy(int *error);
+    char * get_unit_charge(int *error);
+    char * get_unit_temperature(int *error);
+    char * get_unit_time(int *error);
+    double convert_to_act_unit( char* length, char* energy, char* charge,char* temperature, char* time,
       double length_exponent, double energy_exponent, double charge_exponent,
       double temperature_exponent, double time_exponent, int* kimerror);
 
@@ -320,38 +321,38 @@ private:
     int nAtomsTypes;
 
     //"CLUSTER"
-    char NBC_method_A[KEY_CHAR_LENGTH];
-    char arg_NBC_method_A[1][KEY_CHAR_LENGTH];
+    char NBC_method_A[KIM_KEY_STRING_LENGTH];
+    char arg_NBC_method_A[1][KIM_KEY_STRING_LENGTH];
     int narg_NBC_method_A;
 
     
-    //"MI-OPBC-H"
-    char NBC_method_B[KEY_CHAR_LENGTH];
-    char arg_NBC_method_B[5][KEY_CHAR_LENGTH];
+    //"MI_OPBC_H"
+    char NBC_method_B[KIM_KEY_STRING_LENGTH];
+    char arg_NBC_method_B[5][KIM_KEY_STRING_LENGTH];
     int narg_NBC_method_B;
 
     
-    //"MI-OPBC-F"
-    char NBC_method_C[KEY_CHAR_LENGTH];
-    char arg_NBC_method_C[4][KEY_CHAR_LENGTH];
+    //"MI_OPBC_F"
+    char NBC_method_C[KIM_KEY_STRING_LENGTH];
+    char arg_NBC_method_C[4][KIM_KEY_STRING_LENGTH];
     int narg_NBC_method_C;
  
     
-    //"NEIGH-RVEC-F"
-    char NBC_method_D[KEY_CHAR_LENGTH];
-    char arg_NBC_method_D[3][KEY_CHAR_LENGTH];
+    //"NEIGH_RVEC_F"
+    char NBC_method_D[KIM_KEY_STRING_LENGTH];
+    char arg_NBC_method_D[3][KIM_KEY_STRING_LENGTH];
     int narg_NBC_method_D;
 
 
-    //"NEIGH-PURE-H"
-    char NBC_method_E[KEY_CHAR_LENGTH];
-    char arg_NBC_method_E[4][KEY_CHAR_LENGTH];
+    //"NEIGH_PURE_H"
+    char NBC_method_E[KIM_KEY_STRING_LENGTH];
+    char arg_NBC_method_E[4][KIM_KEY_STRING_LENGTH];
     int narg_NBC_method_E;
     
     
-    //"NEIGH-PURE-F"
-    char NBC_method_F[KEY_CHAR_LENGTH];
-    char arg_NBC_method_F[3][KEY_CHAR_LENGTH];
+    //"NEIGH_PURE_F"
+    char NBC_method_F[KIM_KEY_STRING_LENGTH];
+    char arg_NBC_method_F[3][KIM_KEY_STRING_LENGTH];
     int narg_NBC_method_F;
 
     int n_NBC_methods;
@@ -361,17 +362,17 @@ private:
 
     //related to process fij variables
   
-    int virialGlobal_ind;
-    int virialPerAtom_ind;
-    int stiffness_ind;
-    int process_d1Edr_ind;
-    int process_d2Edr_ind;
+    int virial_ind;
+    int particleVirial_ind;
+    int hessian_ind;
+    int process_dEdr_ind;
+    int process_d2Edr2_ind;
 
     
 
     bool check_consistance_NBC_method(); 
 
-    char NBC_method_current[KEY_CHAR_LENGTH];
+    char NBC_method_current[KIM_KEY_STRING_LENGTH];
     bool NBC_methods_match(KIM_API_model &test,KIM_API_model &mdl);
     bool fij_related_things_match(KIM_API_model &test,KIM_API_model &mdl);
     void fij_related_things_add_set_index();

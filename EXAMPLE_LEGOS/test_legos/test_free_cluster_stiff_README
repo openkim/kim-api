@@ -6,7 +6,7 @@
 #
 
 This directory (TEST_NAME_STR) contains a test that computes the energy,
-forces, and stiffness on the atoms of an isolated (free) cubic FCC cluster
+forces, and hessian on the atoms of an isolated (free) cubic FCC cluster
 of SPECIES_NAME_STR atoms.
 
 

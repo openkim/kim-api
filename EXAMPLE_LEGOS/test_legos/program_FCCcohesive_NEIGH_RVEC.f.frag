@@ -7,7 +7,7 @@
 !**  function of lattice spacing.
 !**
 !**  Works with the following NBC methods:
-!**        NEIGH-RVEC-F
+!**        NEIGH_RVEC_F
 !**
 !**  Authors: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
 !**
@@ -26,7 +26,7 @@
 !
 !-------------------------------------------------------------------------------
 program TEST_NAME_STR
-  use KIMservice
+  use KIM_API
   implicit none
 
 !============================== VARIABLE DEFINITIONS ==========================

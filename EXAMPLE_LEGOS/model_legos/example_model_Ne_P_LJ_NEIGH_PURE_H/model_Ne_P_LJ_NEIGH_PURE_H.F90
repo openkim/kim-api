@@ -11,7 +11,7 @@
 #define TRUEFALSE(TRUTH) merge(1,0,(TRUTH))
 
 module model_Ne_P_LJ_NEIGH_PURE_H
-  use  KIMservice
+  use  KIM_API
   implicit none
   
   save
@@ -33,7 +33,7 @@ contains
   !
   !-----------------------------------------------------------------------------
   subroutine calculate_wrap_f77(pkim,ier) ! compute routine with KIM interface
-    use KIMservice
+    use KIM_API
     implicit none
 
     !-- Transferred variables
@@ -53,27 +53,27 @@ contains
 
     ! Check to see if we have been asked to compute the forces and energyperatom
     !
-    call kim_api_get_compute_multiple_f(pkim, ier, &
+    call kim_api_getm_compute_f(pkim, ier, &
          "energy",        e_flag,    1, &
          "forces",        f_flag,    1, &
-         "energyPerAtom", eper_flag, 1)
+         "particleEnergy", eper_flag, 1)
     if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_compute_multiple_f", ier)
+       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_compute_f", ier)
        return
     endif
 
     ! Unpack data from KIM object
     !
-    call kim_api_get_data_multiple_f(pkim, ier, &
-         "numberOfAtoms",           pnumberofatoms, 1,                         &
-         "numberContributingAtoms", pnumContrib,    1,                         &
+    call kim_api_getm_data_f(pkim, ier, &
+         "numberOfParticles",           pnumberofatoms, 1,                         &
+         "numberContributingParticles", pnumContrib,    1,                         &
          "atomTypes",               pattypes,       1,                         &
          "coordinates",             px,             1,                         &
          "forces",                  pf,             TRUEFALSE(f_flag.eq.1),    &
          "energy",                  ppotenergy,     TRUEFALSE(e_flag.eq.1),    &
-         "energyPerAtom",           pea,            TRUEFALSE(eper_flag.eq.1))
+         "particleEnergy",           pea,            TRUEFALSE(eper_flag.eq.1))
     if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_multiple_f", ier)
+       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
        return
     endif
 
@@ -97,7 +97,7 @@ end module model_Ne_P_LJ_NEIGH_PURE_H
 !  Model Initiation routine
 subroutine model_Ne_P_LJ_NEIGH_PURE_H_init(pkim)
   use model_Ne_P_LJ_NEIGH_PURE_H
-  use KIMservice
+  use KIM_API
   implicit none
 
   !-- Transferred variables

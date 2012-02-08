@@ -5,11 +5,11 @@
 !**  KIM compliant program to perform numerical derivative check on a model
 !**
 !**  Works with the following NBC methods:
-!**        MI-OPBC-H
-!**        MI-OPBC-F
-!**        NEIGH-PURE-H
-!**        NEIGH-PURE-F
-!**        NEIGH-RVEC-F
+!**        MI_OPBC_H
+!**        MI_OPBC_F
+!**        NEIGH_PURE_H
+!**        NEIGH_PURE_F
+!**        NEIGH_RVEC_F
 !**
 !**  Author: Ellad B. Tadmor, Valeriu Smirichinski, Ryan S. Elliott
 !**
@@ -29,7 +29,7 @@
 !
 !-------------------------------------------------------------------------------
 program TEST_NAME_STR
-  use KIMservice
+  use KIM_API
   implicit none
 
   integer, external  :: get_neigh_no_Rij
@@ -72,19 +72,19 @@ program TEST_NAME_STR
   character*80              :: testname     = "TEST_NAME_STR"
   character*80              :: modelname
   character*64 :: NBC_Method; pointer(pNBC_Method,NBC_Method)
-  integer nbc  ! 0- MI-OPBC-H, 1- MI-OPBC-F, 2- NEIGH-PURE-H, 3- NEIGH-PURE-F, 4- NEIGH-RVCE-F
+  integer nbc  ! 0- MI_OPBC_H, 1- MI_OPBC_F, 2- NEIGH_PURE_H, 3- NEIGH_PURE_F, 4- NEIGH-RVCE-F
   integer(kind=kim_intptr)  :: pkim
   integer                   :: ier, idum
-  integer numberOfAtoms;   pointer(pnAtoms,numberOfAtoms)
+  integer numberOfParticles;   pointer(pnAtoms,numberOfParticles)
   integer numContrib;      pointer(pnumContrib,numContrib)
-  integer numberAtomTypes; pointer(pnAtomTypes,numberAtomTypes)
+  integer numberParticleTypes; pointer(pnparticleTypes,numberParticleTypes)
   integer atomTypesdum(1); pointer(patomTypesdum,atomTypesdum)
 
   real*8 cutoff;           pointer(pcutoff,cutoff)
   real*8 energy;           pointer(penergy,energy)
   real*8 coordum(DIM,1);   pointer(pcoor,coordum)
   real*8 forcesdum(DIM,1); pointer(pforces,forcesdum)
-  real*8 boxlength(DIM);   pointer(pboxlength,boxlength)
+  real*8 boxSideLengths(DIM);   pointer(pboxSideLengths,boxSideLengths)
   real*8, pointer  :: coords(:,:), forces(:,:)
   integer, pointer :: atomTypes(:)
   integer middleDum
@@ -111,9 +111,9 @@ program TEST_NAME_STR
   ! Create empty KIM object conforming to fields in the KIM descriptor files
   ! of the Test and Model
   !
-  ier = kim_api_init_str_testname_f(pkim,trim(test_descriptor_string)//char(0),modelname)
+  ier = kim_api_string_init_f(pkim,trim(test_descriptor_string)//char(0),modelname)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_init_str_testname_f", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_string_init_f", ier)
      stop
   endif
 
@@ -123,15 +123,15 @@ program TEST_NAME_STR
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_nbc_method", ier)
      stop
   endif
-  if (index(NBC_Method,"MI-OPBC-H").eq.1) then
+  if (index(NBC_Method,"MI_OPBC_H").eq.1) then
      nbc = 0
-  elseif (index(NBC_Method,"MI-OPBC-F").eq.1) then
+  elseif (index(NBC_Method,"MI_OPBC_F").eq.1) then
      nbc = 1
-  elseif (index(NBC_Method,"NEIGH-PURE-H").eq.1) then
+  elseif (index(NBC_Method,"NEIGH_PURE_H").eq.1) then
      nbc = 2
-  elseif (index(NBC_Method,"NEIGH-PURE-F").eq.1) then
+  elseif (index(NBC_Method,"NEIGH_PURE_F").eq.1) then
      nbc = 3
-  elseif (index(NBC_Method,"NEIGH-RVEC-F").eq.1) then
+  elseif (index(NBC_Method,"NEIGH_RVEC_F").eq.1) then
      nbc = 4
   else
      ier = KIM_STATUS_FAIL
@@ -208,24 +208,24 @@ program TEST_NAME_STR
 
   ! Unpack data from KIM object
   !
-  call kim_api_get_data_multiple_f(pkim, ier, &
-       "numberOfAtoms",           pnAtoms,       1,                    &
-       "numberContributingAtoms", pnumContrib,   1,                    &
-       "numberAtomTypes",         pnAtomTypes,   1,                    &
+  call kim_api_getm_data_f(pkim, ier, &
+       "numberOfParticles",           pnAtoms,       1,                    &
+       "numberContributingParticles", pnumContrib,   1,                    &
+       "numberParticleTypes",         pnparticleTypes,   1,                    &
        "atomTypes",               patomTypesdum, 1,                    &
        "coordinates",             pcoor,         1,                    &
        "cutoff",                  pcutoff,       1,                    &
-       "boxlength",               pboxlength,    TRUEFALSE(nbc.le.1)), &
+       "boxSideLengths",               pboxSideLengths,    TRUEFALSE(nbc.le.1)), &
        "energy",                  penergy,       1,                    &
        "forces",                  pforces,       1)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_multiple_f", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
      stop
   endif
 
-  call toIntegerArrayWithDescriptor1d(atomTypesdum, atomTypes, N)
-  call toRealArrayWithDescriptor2d(coordum, coords, DIM, N)
-  call toRealArrayWithDescriptor2d(forcesdum, forces, DIM, N)
+  call KIM_to_F90_int_array_1d(atomTypesdum, atomTypes, N)
+  call KIM_to_F90_real_array_2d(coordum, coords, DIM, N)
+  call KIM_to_F90_real_array_2d(forcesdum, forces, DIM, N)
 
   ! Set values
   !
@@ -233,18 +233,18 @@ program TEST_NAME_STR
   !       a single species. This needs to be rewritten to more comprehensivley
   !       test Models that support multiple species.
   !
-  numberOfAtoms   = N
+  numberOfParticles   = N
   numContrib      = N
-  numberAtomTypes = ATypes
-  atomTypes(:)    = kim_api_get_atypecode_f(pkim, trim(model_specs(1)), ier)
+  numberParticleTypes = ATypes
+  atomTypes(:)    = kim_api_get_partcl_type_code_f(pkim, trim(model_specs(1)), ier)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_atypecode_f", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_partcl_type_code_f", ier)
      stop
   endif
 
   ! set up the cluster atom positions
   call create_FCC_configuration(FCCspacing, nCellsPerSide, .false., coords, middleDum)
-  if (nbc.le.1) boxlength(:)  = 600.d0 ! large enough to make the cluster isolated
+  if (nbc.le.1) boxSideLengths(:)  = 600.d0 ! large enough to make the cluster isolated
 
   ! randomly perturb all atoms
   do I=1,N
@@ -257,7 +257,7 @@ program TEST_NAME_STR
   ! Compute neighbor lists
   do_update_list = .true.
   allocate(coordsave(DIM,N))
-  call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxlength,NBC_Method,  &
+  call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
                            do_update_list,coordsave,neighborList,RijList,ier)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "update_neighborlist", ier)
@@ -272,9 +272,9 @@ program TEST_NAME_STR
   endif
 
   ! Turn off force computation
-  call kim_api_set2_donotcompute_f(pkim, "forces", ier)
+  call kim_api_set_compute_f(pkim, "forces", 0, ier)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__,"kim_api_set2_donotcompute_f", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__,"kim_api_set_compute_f", ier)
      stop
   endif
 
@@ -283,7 +283,7 @@ program TEST_NAME_STR
   do I=1,N
      do J=1,DIM
         call compute_numer_deriv(I,J,pkim,DIM,N,coords,cutoff,cutpad,   &
-                                 boxlength,NBC_Method,do_update_list,coordsave, &
+                                 boxSideLengths,NBC_Method,do_update_list,coordsave, &
                                  neighborList,RijList,deriv,deriv_err,ier)
         if (ier.lt.KIM_STATUS_OK) then
            idum = kim_api_report_error_f(__LINE__, __FILE__,"compute_numer_deriv", ier)

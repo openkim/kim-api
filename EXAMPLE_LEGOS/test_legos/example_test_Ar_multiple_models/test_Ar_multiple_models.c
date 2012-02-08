@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include "KIMserviceC.h"
+#include "KIM_API_C.h"
 #include "KIMstatus.h"
 
 #define NAMESTRLEN    128
@@ -32,7 +32,7 @@ typedef struct
 void fcc_periodic_neighborlist(int CellsPerHalfSide, double cutoff,
                                double FCCspacing, NeighList* nl);
 
-void fcc_cluster_neighborlist(int numberOfAtoms, double* coords,
+void fcc_cluster_neighborlist(int numberOfParticles, double* coords,
                               double cutoff, NeighList* nl);
 
 int get_periodic_neigh(void* kimmdl, int *mode, int *request, int* atom,
@@ -65,15 +65,15 @@ int main()
    void* pkim_cluster_model_0;
    void* pkim_cluster_model_1;
    /* model inputs */
-   int numberOfAtoms_periodic = 1;
-   int numberOfAtoms_cluster  = NCLUSTERATOMS;
-   int numContrib_periodic = numberOfAtoms_periodic;
-   int numContrib_cluster  = numberOfAtoms_cluster;
-   int numberAtomTypes = 1;
-   int AtomTypes_periodic_model_0;
-   int AtomTypes_periodic_model_1;
-   int AtomTypes_cluster_model_0[NCLUSTERATOMS];
-   int AtomTypes_cluster_model_1[NCLUSTERATOMS];
+   int numberOfParticles_periodic = 1;
+   int numberOfParticles_cluster  = NCLUSTERATOMS;
+   int numContrib_periodic = numberOfParticles_periodic;
+   int numContrib_cluster  = numberOfParticles_cluster;
+   int numberParticleTypes = 1;
+   int particleTypes_periodic_model_0;
+   int particleTypes_periodic_model_1;
+   int particleTypes_cluster_model_0[NCLUSTERATOMS];
+   int particleTypes_cluster_model_1[NCLUSTERATOMS];
    double coords_periodic[DIM] = {0.0, 0.0, 0.0};
    double coords_cluster[NCLUSTERATOMS][DIM];
    NeighList nl_periodic_model_0;
@@ -113,53 +113,53 @@ int main()
       KIM_API_report_error(__LINE__, __FILE__,"KIM_API_init() for MODEL_ONE cluster",status);
 
    /* Register memory */
-   KIM_API_set_data_multiple(pkim_periodic_model_0, &status, 9*4,
-                             "numberOfAtoms",             1,   &numberOfAtoms_periodic,     1,
-                             "numberContributingAtoms",   1,   &numContrib_periodic,        1,
-                             "numberAtomTypes",           1,   &numberAtomTypes,            1,
-                             "atomTypes",                 1,   &AtomTypes_periodic_model_0, 1,
+   KIM_API_setm_data(pkim_periodic_model_0, &status, 9*4,
+                             "numberOfParticles",             1,   &numberOfParticles_periodic,     1,
+                             "numberContributingParticles",   1,   &numContrib_periodic,        1,
+                             "numberParticleTypes",           1,   &numberParticleTypes,            1,
+                             "atomTypes",                 1,   &particleTypes_periodic_model_0, 1,
                              "coordinates",               DIM, coords_periodic,             1,
                              "get_full_neigh",            1,   &get_periodic_neigh,         1,
                              "neighObject",               1,   &nl_periodic_model_0,        1,
                              "cutoff",                    1,   &cutoff_periodic_model_0,    1,
                              "energy",                    1,   &energy_periodic_model_0,    1);
-   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_set_data_multiple",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data",status);
    
-   KIM_API_set_data_multiple(pkim_periodic_model_1, &status, 9*4,
-                             "numberOfAtoms",             1,   &numberOfAtoms_periodic,     1,
-                             "numberContributingAtoms",   1,   &numContrib_periodic,        1,
-                             "numberAtomTypes",           1,   &numberAtomTypes,            1,
-                             "atomTypes",                 1,   &AtomTypes_periodic_model_1, 1,
+   KIM_API_setm_data(pkim_periodic_model_1, &status, 9*4,
+                             "numberOfParticles",             1,   &numberOfParticles_periodic,     1,
+                             "numberContributingParticles",   1,   &numContrib_periodic,        1,
+                             "numberParticleTypes",           1,   &numberParticleTypes,            1,
+                             "atomTypes",                 1,   &particleTypes_periodic_model_1, 1,
                              "coordinates",               DIM, coords_periodic,             1,
                              "get_full_neigh",            1,   &get_periodic_neigh,         1,
                              "neighObject",               1,   &nl_periodic_model_1,        1,
                              "cutoff",                    1,   &cutoff_periodic_model_1,    1,
                              "energy",                    1,   &energy_periodic_model_1,    1);
-   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_set_data_multiple",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data",status);
 
-   KIM_API_set_data_multiple(pkim_cluster_model_0, &status, 9*4,
-                             "numberOfAtoms",             1,   &numberOfAtoms_cluster,     1,
-                             "numberContributingAtoms",   1,   &numContrib_cluster,        1,
-                             "numberAtomTypes",           1,   &numberAtomTypes,           1,
-                             "atomTypes",                 1,   &AtomTypes_cluster_model_0, 1,
+   KIM_API_setm_data(pkim_cluster_model_0, &status, 9*4,
+                             "numberOfParticles",             1,   &numberOfParticles_cluster,     1,
+                             "numberContributingParticles",   1,   &numContrib_cluster,        1,
+                             "numberParticleTypes",           1,   &numberParticleTypes,           1,
+                             "atomTypes",                 1,   &particleTypes_cluster_model_0, 1,
                              "coordinates",               DIM, coords_cluster,             1,
                              "get_full_neigh",            1,   &get_cluster_neigh,         1,
                              "neighObject",               1,   &nl_cluster_model_0,        1,
                              "cutoff",                    1,   &cutoff_cluster_model_0,    1,
                              "energy",                    1,   &energy_cluster_model_0,    1);
-   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_set_data_multiple",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data",status);
 
-   KIM_API_set_data_multiple(pkim_cluster_model_1, &status, 9*4,
-                             "numberOfAtoms",             1,   &numberOfAtoms_cluster,     1,
-                             "numberContributingAtoms",   1,   &numContrib_cluster,        1,
-                             "numberAtomTypes",           1,   &numberAtomTypes,           1,
-                             "atomTypes",                 1,   &AtomTypes_cluster_model_1, 1,
+   KIM_API_setm_data(pkim_cluster_model_1, &status, 9*4,
+                             "numberOfParticles",             1,   &numberOfParticles_cluster,     1,
+                             "numberContributingParticles",   1,   &numContrib_cluster,        1,
+                             "numberParticleTypes",           1,   &numberParticleTypes,           1,
+                             "atomTypes",                 1,   &particleTypes_cluster_model_1, 1,
                              "coordinates",               DIM, coords_cluster,             1,
                              "get_full_neigh",            1,   &get_cluster_neigh,         1,
                              "neighObject",               1,   &nl_cluster_model_1,        1,
                              "cutoff",                    1,   &cutoff_cluster_model_1,    1,
                              "energy",                    1,   &energy_cluster_model_1,    1);
-   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_set_data_multiple",status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data",status);
 
    /* call model init routines */
    status = KIM_API_model_init(pkim_periodic_model_0);
@@ -172,20 +172,20 @@ int main()
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_model_init", status);
 
    /* setup atomTypes */
-   AtomTypes_periodic_model_0 = KIM_API_get_aTypeCode(pkim_periodic_model_0, "Ar", &status);
-   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_aTypeCode", status);
+   particleTypes_periodic_model_0 = KIM_API_get_partcl_type_code(pkim_periodic_model_0, "Ar", &status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_partcl_type_code", status);
 
-   AtomTypes_cluster_model_0[0] = KIM_API_get_aTypeCode(pkim_cluster_model_0, "Ar", &status);
-   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_aTypeCode", status);
+   particleTypes_cluster_model_0[0] = KIM_API_get_partcl_type_code(pkim_cluster_model_0, "Ar", &status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_partcl_type_code", status);
    for (i = 1; i < NCLUSTERATOMS; ++i)
-      AtomTypes_cluster_model_0[i] = AtomTypes_cluster_model_0[0];
-   AtomTypes_periodic_model_1 = KIM_API_get_aTypeCode(pkim_periodic_model_1, "Ar", &status);
-   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_aTypeCode", status); 
+      particleTypes_cluster_model_0[i] = particleTypes_cluster_model_0[0];
+   particleTypes_periodic_model_1 = KIM_API_get_partcl_type_code(pkim_periodic_model_1, "Ar", &status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_partcl_type_code", status); 
 
-   AtomTypes_cluster_model_1[0] = KIM_API_get_aTypeCode(pkim_cluster_model_1, "Ar", &status);
-   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_aTypeCode", status); 
+   particleTypes_cluster_model_1[0] = KIM_API_get_partcl_type_code(pkim_cluster_model_1, "Ar", &status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_partcl_type_code", status); 
    for (i = 1; i < NCLUSTERATOMS; ++i)
-      AtomTypes_cluster_model_1[i] = AtomTypes_cluster_model_1[0];
+      particleTypes_cluster_model_1[i] = particleTypes_cluster_model_1[0];
    
    
    /* setup neighbor lists */
@@ -393,14 +393,14 @@ int get_periodic_neigh(void* kimmdl, int *mode, int *request, int* atom,
    intptr_t* pkim = *((intptr_t**) kimmdl);
    int atomToReturn;
    int status;
-   int* numberOfAtoms;
+   int* numberOfParticles;
    NeighList* nl;
 
    /* initialize numnei */
    *numnei = 0;
 
    /* unpack neighbor list object */
-   numberOfAtoms = (int*) KIM_API_get_data(pkim, "numberOfAtoms", &status);
+   numberOfParticles = (int*) KIM_API_get_data(pkim, "numberOfParticles", &status);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_data", status);
 
    nl = (NeighList*) KIM_API_get_data(pkim, "neighObject", &status);
@@ -417,7 +417,7 @@ int get_periodic_neigh(void* kimmdl, int *mode, int *request, int* atom,
       else if (1 == *request) /* increment iterator */
       {
          (*nl).iteratorId++;
-         if ((*nl).iteratorId >= *numberOfAtoms)
+         if ((*nl).iteratorId >= *numberOfParticles)
          {
             return KIM_STATUS_NEIGH_ITER_PAST_END;
          }
@@ -434,7 +434,7 @@ int get_periodic_neigh(void* kimmdl, int *mode, int *request, int* atom,
    }
    else if (1 == *mode) /* locator mode */
    {
-      if ((*request >= *numberOfAtoms) || (*request < 0)) /* invalid id */
+      if ((*request >= *numberOfParticles) || (*request < 0)) /* invalid id */
       {
          KIM_API_report_error(__LINE__, __FILE__,"Invalid atom ID in get_periodic_neigh", KIM_STATUS_ATOM_INVALID_ID);
          return KIM_STATUS_ATOM_INVALID_ID;
@@ -583,7 +583,7 @@ void create_FCC_cluster(double FCCspacing, int nCellsPerSide, double *coords)
 }
 
 
-void fcc_cluster_neighborlist(int numberOfAtoms, double* coords,
+void fcc_cluster_neighborlist(int numberOfParticles, double* coords,
                               double cutoff, NeighList* nl)
 {
    /* local variables */
@@ -598,10 +598,10 @@ void fcc_cluster_neighborlist(int numberOfAtoms, double* coords,
 
    cutoff2 = cutoff*cutoff;
 
-   for (i = 0; i < numberOfAtoms; ++i)
+   for (i = 0; i < numberOfParticles; ++i)
    {
       a = 0;
-      for (j = 0; j < numberOfAtoms; ++j)
+      for (j = 0; j < numberOfParticles; ++j)
       {
          r2 = 0.0;
          for (k = 0; k < DIM; ++k)
@@ -638,14 +638,14 @@ int get_cluster_neigh(void* kimmdl, int *mode, int *request, int* atom,
    intptr_t* pkim = *((intptr_t**) kimmdl);
    int atomToReturn;
    int status;
-   int* numberOfAtoms;
+   int* numberOfParticles;
    NeighList* nl;
 
    /* initialize numnei */
    *numnei = 0;
 
    /* unpack neighbor list object */
-   numberOfAtoms = (int*) KIM_API_get_data(pkim, "numberOfAtoms", &status);
+   numberOfParticles = (int*) KIM_API_get_data(pkim, "numberOfParticles", &status);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_data", status);
 
    nl = (NeighList*) KIM_API_get_data(pkim, "neighObject", &status);
@@ -662,7 +662,7 @@ int get_cluster_neigh(void* kimmdl, int *mode, int *request, int* atom,
       else if (1 == *request) /* increment iterator */
       {
          (*nl).iteratorId++;
-         if ((*nl).iteratorId >= *numberOfAtoms)
+         if ((*nl).iteratorId >= *numberOfParticles)
          {
             return KIM_STATUS_NEIGH_ITER_PAST_END;
          }
@@ -679,7 +679,7 @@ int get_cluster_neigh(void* kimmdl, int *mode, int *request, int* atom,
    }
    else if (1 == *mode) /* locator mode */
    {
-      if ((*request >= *numberOfAtoms) || (*request < 0)) /* invalid id */
+      if ((*request >= *numberOfParticles) || (*request < 0)) /* invalid id */
       {
          KIM_API_report_error(__LINE__, __FILE__,"Invalid atom ID in get_cluster_neigh", KIM_STATUS_ATOM_INVALID_ID);
          return KIM_STATUS_ATOM_INVALID_ID;

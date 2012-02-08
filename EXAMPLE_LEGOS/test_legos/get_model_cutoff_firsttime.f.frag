@@ -11,7 +11,7 @@
 !
 !-------------------------------------------------------------------------------
 double precision function get_model_cutoff_firsttime(testname, modelname)
-  use KIMservice
+  use KIM_API
   implicit none
 
   !-- Transferred variables

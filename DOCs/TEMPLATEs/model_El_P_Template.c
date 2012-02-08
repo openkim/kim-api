@@ -22,7 +22,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#include "KIMserviceC.h"
+#include "KIM_API_C.h"
 #include "KIMstatus.h"
 
 /******************************************************************************
@@ -110,7 +110,7 @@ static void compute(void* km, int* ier)
    int currentAtom;
    int comp_energy;
    int comp_force;
-   int comp_energyPerAtom;
+   int comp_particleEnergy;
    int comp_virial;
    int IterOrLoca;
    int HalfOrFull;
@@ -124,10 +124,10 @@ static void compute(void* km, int* ier)
    double* coords;
    double* energy;
    double* force;
-   double* energyPerAtom;
-   double* virialGlobal;
+   double* particleEnergy;
+   double* virial;
    int* neighListOfCurrentAtom;
-   double* boxlength;
+   double* boxSideLengths;
    int* numContrib;
    
    
@@ -148,28 +148,28 @@ static void compute(void* km, int* ier)
       NBC = 0;
       HalfOrFull = 1;
    }
-   else if (!strcmp("MI-OPBC-H",NBCstr))
+   else if (!strcmp("MI_OPBC_H",NBCstr))
    {	   
       NBC = 1;
       HalfOrFull = 1;
    }
-   else if (!strcmp("MI-OPBC-F",NBCstr))
+   else if (!strcmp("MI_OPBC_F",NBCstr))
    {	   
       NBC = 1;
       HalfOrFull = 2;
    }
 
-   else if (!strcmp("NEIGH-PURE-H",NBCstr))
+   else if (!strcmp("NEIGH_PURE_H",NBCstr))
    {	   
       NBC = 2;
       HalfOrFull = 1;
    }
-   else if (!strcmp("NEIGH-PURE-F",NBCstr))
+   else if (!strcmp("NEIGH_PURE_F",NBCstr))
    {	   
       NBC = 2;
       HalfOrFull = 2;
    }
-   else if (!strcmp("NEIGH-RVEC-F",NBCstr))
+   else if (!strcmp("NEIGH_RVEC_F",NBCstr))
    {	   
       NBC = 3;
       HalfOrFull = 2;
@@ -206,32 +206,32 @@ static void compute(void* km, int* ier)
       IterOrLoca = 2;   /* for CLUSTER NBC */
    }
 
-   /* check to see if we have been asked to compute the forces, energyPerAtom, energy and virial */
-   KIM_API_get_compute_multiple(pkim, ier, 4*3,
+   /* check to see if we have been asked to compute the forces, particleEnergy, energy and virial */
+   KIM_API_getm_compute(pkim, ier, 4*3,
                                 "energy",        &comp_energy,        1,
                                 "forces",        &comp_force,         1,
-                                "energyPerAtom", &comp_energyPerAtom, 1,
-                                "virialGlobal",  &comp_virial,        1);
+                                "particleEnergy", &comp_particleEnergy, 1,
+                                "virial",  &comp_virial,        1);
    if (KIM_STATUS_OK > *ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_compute_multiple", *ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_compute", *ier);
       return;
    }
 
    /* unpack data from KIM object */
-   KIM_API_get_data_multiple(pkim, ier, 9*3,
-                             "numberOfAtoms",           &nAtoms,        1,
+   KIM_API_getm_data(pkim, ier, 9*3,
+                             "numberOfParticles",           &nAtoms,        1,
                              "atomTypes",               &atomTypes,     1,
                              "coordinates",             &coords,        1,
-                             "numberContributingAtoms", &numContrib,    (HalfOrFull==1),
-                             "boxlength",               &boxlength,     (NBC==1),
+                             "numberContributingParticles", &numContrib,    (HalfOrFull==1),
+                             "boxSideLengths",               &boxSideLengths,     (NBC==1),
                              "energy",                  &energy,        (comp_energy==1),
                              "forces",                  &force,         (comp_force==1),
-                             "energyPerAtom",           &energyPerAtom, (comp_energyPerAtom==1),
-                             "virialGlobal",            &virialGlobal,  (comp_virial==1));
+                             "particleEnergy",           &particleEnergy, (comp_particleEnergy==1),
+                             "virial",            &virial,  (comp_virial==1));
    if (KIM_STATUS_OK > *ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data_multiple", *ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data", *ier);
       return;
    }
 
@@ -261,11 +261,11 @@ static void compute(void* km, int* ier)
    *ier = KIM_STATUS_OK; /* everything is ok */
 
    /* initialize potential energies, forces, and virial term */
-   if (comp_energyPerAtom)
+   if (comp_particleEnergy)
    {
       for (i = 0; i < *nAtoms; ++i)
       {
-         energyPerAtom[i] = 0.0;
+         particleEnergy[i] = 0.0;
       }
    }
    else if (comp_energy)
@@ -288,7 +288,7 @@ static void compute(void* km, int* ier)
    {
       for (i = 0; i < 6; ++i)
       {
-         virialGlobal[i] = 0.0;
+         virial[i] = 0.0;
       }
    }
 
@@ -422,11 +422,11 @@ static void compute(void* km, int* ier)
          Rsqij = 0.0;
          for (k = 0; k < DIM; ++k)
          {
-            if (3 != NBC) /* all methods except NEIGH-RVEC-F */
+            if (3 != NBC) /* all methods except NEIGH_RVEC_F */
             {
                Rij[k] = coords[j*DIM + k] - coords[i*DIM + k];
             }
-            else          /* NEIGH-RVEC-F method */
+            else          /* NEIGH_RVEC_F method */
             {
                Rij[k] = Rij_list[jj*DIM + k];
             }
@@ -434,9 +434,9 @@ static void compute(void* km, int* ier)
             /* apply periodic boundary conditions if required */
             if (1 == NBC)
             {
-               if (abs(Rij[k]) > 0.5*boxlength[k])
+               if (abs(Rij[k]) > 0.5*boxSideLengths[k])
                {
-                  Rij[k] -= (Rij[k]/fabs(Rij[k]))*boxlength[k];
+                  Rij[k] -= (Rij[k]/fabs(Rij[k]))*boxSideLengths[k];
                }
             }
             
@@ -472,11 +472,11 @@ static void compute(void* km, int* ier)
             }
             
             /* contribution to energy */
-            if (comp_energyPerAtom)
+            if (comp_particleEnergy)
             {
-               energyPerAtom[i] += 0.5*phi;
+               particleEnergy[i] += 0.5*phi;
                /* if half list add energy for the other atom in the pair */
-               if ((1 == HalfOrFull) && (j < numberContrib)) energyPerAtom[j] += 0.5*phi;
+               if ((1 == HalfOrFull) && (j < numberContrib)) particleEnergy[j] += 0.5*phi;
             }
             else if (comp_energy)
             {
@@ -496,12 +496,12 @@ static void compute(void* km, int* ier)
             if (comp_virial)
             {
                /* virial(i,j) = r(i)*r(j)*(dV/dr)/r */
-	       virialGlobal[0] += Rij[0]*Rij[0]*dEidr/R;
-	       virialGlobal[1] += Rij[1]*Rij[1]*dEidr/R;
-	       virialGlobal[2] += Rij[2]*Rij[2]*dEidr/R;
-	       virialGlobal[3] += Rij[1]*Rij[2]*dEidr/R;
-	       virialGlobal[4] += Rij[0]*Rij[2]*dEidr/R;
-	       virialGlobal[5] += Rij[0]*Rij[1]*dEidr/R;
+	       virial[0] += Rij[0]*Rij[0]*dEidr/R;
+	       virial[1] += Rij[1]*Rij[1]*dEidr/R;
+	       virial[2] += Rij[2]*Rij[2]*dEidr/R;
+	       virial[3] += Rij[1]*Rij[2]*dEidr/R;
+	       virial[4] += Rij[0]*Rij[2]*dEidr/R;
+	       virial[5] += Rij[0]*Rij[1]*dEidr/R;
             }
             
             /* contribution to forces */
@@ -520,12 +520,12 @@ static void compute(void* km, int* ier)
 
    /* perform final tasks */
    
-   if (comp_energyPerAtom && comp_energy)
+   if (comp_particleEnergy && comp_energy)
    {
       *energy = 0.0;
       for (k = 0; k < *nAtoms; ++k)
       {
-         *energy += energyPerAtom[k];
+         *energy += particleEnergy[k];
       }
    }
 

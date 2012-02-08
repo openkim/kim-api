@@ -7,8 +7,8 @@
 !**  function of lattice spacing.
 !**
 !**  Works with the following NBC methods:
-!**        MI-OPBC-H
-!**        MI-OPBC-F
+!**        MI_OPBC_H
+!**        MI_OPBC_F
 !**
 !**  Authors: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
 !**
@@ -27,7 +27,7 @@
 !
 !-------------------------------------------------------------------------------
 program TEST_NAME_STR
-  use KIMservice
+  use KIM_API
   implicit none
 
 !============================== VARIABLE DEFINITIONS ==========================
@@ -143,7 +143,7 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
              DIM,CellsPerSide,MinSpacing,MaxSpacing, &
              TOL,N,neighborlist,verbose,             &
              RetSpacing,RetEnergy)
-  use KIMservice
+  use KIM_API
   implicit none
   
   !-- Transferred variables
@@ -170,23 +170,23 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   real*8, pointer :: coords(:,:)
   real*8 cutoff;           pointer(pcutoff,cutoff)
   double precision cutpad ! cutoff radius padding
-  real*8 boxlength(DIM);   pointer(pboxlength,boxlength)
+  real*8 boxSideLengths(DIM);   pointer(pboxSideLengths,boxSideLengths)
   logical :: halfflag  ! .true. = half neighbor list; .false. = full neighbor list
   character(len=64) NBC_Method;  pointer(pNBC_Method,NBC_Method)
 
   ! Unpack data from KIM object
   !
-  call kim_api_get_data_multiple_f(pkim, ier, &
+  call kim_api_getm_data_f(pkim, ier, &
        "energy",      penergy,    1, &
        "coordinates", pcoor,      1, &
        "cutoff",      pcutoff,    1, &
-       "boxlength",   pboxlength, 1)
+       "boxSideLengths",   pboxSideLengths, 1)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_multiple_f", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
      stop
   endif
 
-  call toRealArrayWithDescriptor2d(coordum, coords, DIM, N)
+  call KIM_to_F90_real_array_2d(coordum, coords, DIM, N)
 
   ! determine which neighbor list type to use
   !
@@ -195,9 +195,9 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_nbc_method_f", ier)
      stop
   endif
-  if (index(NBC_Method,"MI-OPBC-H").eq.1) then
+  if (index(NBC_Method,"MI_OPBC_H").eq.1) then
      halfflag = .true.
-  elseif (index(NBC_Method,"MI-OPBC-F").eq.1) then
+  elseif (index(NBC_Method,"MI_OPBC_F").eq.1) then
      halfflag = .false.
   else
      ier = KIM_STATUS_FAIL
@@ -210,9 +210,9 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   !
   Spacings(1) = MinSpacing
   call create_FCC_configuration(Spacings(1), CellsPerSide, .true., coords, middleDum)
-  boxlength(:) = Spacings(1)*CellsPerSide
+  boxSideLengths(:) = Spacings(1)*CellsPerSide
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
-  call MI_OPBC_neighborlist(halfflag, N, coords, (cutoff+cutpad), boxlength, neighborList)
+  call MI_OPBC_neighborlist(halfflag, N, coords, (cutoff+cutpad), boxSideLengths, neighborList)
   call kim_api_model_compute_f(pkim, ier)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
@@ -225,9 +225,9 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   ! setup and compute for max spacing
   Spacings(3) = MaxSpacing
   call create_FCC_configuration(Spacings(3), CellsPerSide, .true., coords, middleDum)
-  boxlength(:) = Spacings(3)*CellsPerSide
+  boxSideLengths(:) = Spacings(3)*CellsPerSide
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
-  call MI_OPBC_neighborlist(halfflag, N, coords, (cutoff+cutpad), boxlength, neighborList)
+  call MI_OPBC_neighborlist(halfflag, N, coords, (cutoff+cutpad), boxSideLengths, neighborList)
   ! Call model compute
   call kim_api_model_compute_f(pkim, ier)
   if (ier.lt.KIM_STATUS_OK) then
@@ -241,9 +241,9 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   ! setup and compute for first intermediate spacing
   Spacings(2) = MinSpacing + (2.0 - Golden)*(MaxSpacing - MinSpacing)
   call create_FCC_configuration(Spacings(2), CellsPerSide, .true., coords, middleDum)
-  boxlength(:) = Spacings(2)*CellsPerSide
+  boxSideLengths(:) = Spacings(2)*CellsPerSide
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
-  call MI_OPBC_neighborlist(halfflag, N, coords, (cutoff+cutpad), boxlength, neighborList)
+  call MI_OPBC_neighborlist(halfflag, N, coords, (cutoff+cutpad), boxSideLengths, neighborList)
   ! Call model compute
   call kim_api_model_compute_f(pkim, ier)
   if (ier.lt.KIM_STATUS_OK) then
@@ -262,10 +262,10 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
      Spacings(4) = (Spacings(1) + Spacings(3)) - Spacings(2)
      ! compute new atom coordinates based on new spacing
      call create_FCC_configuration(Spacings(4), CellsPerSide, .true., coords, middleDum)
-     ! set new boxlength
-     boxlength(:)  = Spacings(4)*CellsPerSide
+     ! set new boxSideLengths
+     boxSideLengths(:)  = Spacings(4)*CellsPerSide
      ! compute new neighbor lists (could be done more intelligently, I'm sure)
-     call MI_OPBC_neighborlist(halfflag, N, coords, (cutoff+cutpad), boxlength, neighborList)
+     call MI_OPBC_neighborlist(halfflag, N, coords, (cutoff+cutpad), boxSideLengths, neighborList)
      ! Call model compute
      call kim_api_model_compute_f(pkim, ier)
      if (ier.lt.KIM_STATUS_OK) then

@@ -8,9 +8,9 @@
 ! Authors: Valeriu Smirichinski, Ellad B. Tadmor, Ryan S. Elliott
 !
 
-module kimservice
+module kim_api
     implicit none
-    integer,parameter :: KEY_CHAR_LENGTH = 64 !
+    integer,parameter :: KIM_KEY_STRING_LENGTH = 64 !
 #include "KIMstatus.h"
 
 #ifdef SYSTEM32
@@ -31,7 +31,7 @@ module kimservice
             integer(kind=kim_intptr) :: kimmdl,testname,mdlname
         end function kim_api_init
 
-	integer function kim_api_preinit(kimmdl,mdlname)
+	integer function kim_api_model_info(kimmdl,mdlname)
 	    
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
@@ -39,9 +39,9 @@ module kimservice
 	integer,parameter :: kim_intptr = 8
 #endif
             integer(kind=kim_intptr) :: kimmdl,mdlname
-        end function kim_api_preinit
+        end function kim_api_model_info
 
- integer function kim_api_init_str_testname(kimmdl,testname,mdlname)
+ integer function kim_api_string_init(kimmdl,testname,mdlname)
 	    
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
@@ -49,17 +49,17 @@ module kimservice
 	integer,parameter :: kim_intptr = 8
 #endif
             integer(kind=kim_intptr) :: kimmdl,testname,mdlname
-        end function kim_api_init_str_testname
+        end function kim_api_string_init
 
-        function kim_api_status_msg_f(errcode)
+        function kim_api_get_status_msg_f(errcode)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
 	integer,parameter :: kim_intptr = 8
 #endif
         integer ::errcode
-        integer(kind=kim_intptr) :: kimmdl,kim_api_status_msg_f
-	end function kim_api_status_msg_f
+        integer(kind=kim_intptr) :: kimmdl,kim_api_get_status_msg_f
+	end function kim_api_get_status_msg_f
         
         function kim_api_get_model_kim_str(modelname,lenstr,ier)
 
@@ -94,15 +94,15 @@ module kimservice
         end function kim_api_get_test_buffer_f
 
 
- 	function kim_api_isit_half_neighbors_f(kimmdl,ier)
+ 	function kim_api_is_half_neighbors_f(kimmdl,ier)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
 	integer,parameter :: kim_intptr = 8
 #endif
         integer ::ier
-        integer(kind=kim_intptr) :: kimmdl,kim_api_isit_half_neighbors_f
-        end function kim_api_isit_half_neighbors_f
+        integer(kind=kim_intptr) :: kimmdl,kim_api_is_half_neighbors_f
+        end function kim_api_is_half_neighbors_f
 
 
         subroutine kim_api_set_model_buffer_f(kimmdl,ob,ier)
@@ -126,7 +126,7 @@ subroutine kim_api_set_test_buffer_f(kimmdl,ob,ier)
         end subroutine kim_api_set_test_buffer_f
 
 
-        subroutine kim_api_process_d1edr_f(pkim,de,r,dx,i,j,ier)
+        subroutine kim_api_process_dedr_f(pkim,de,r,dx,i,j,ier)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
@@ -135,9 +135,9 @@ subroutine kim_api_set_test_buffer_f(kimmdl,ob,ier)
 		integer(kind=kim_intptr) :: pkim,dx
 		real*8 :: de,r
 		integer ::i,j,ier
-        end subroutine kim_api_process_d1edr_f
+        end subroutine kim_api_process_dedr_f
 
-        subroutine kim_api_process_d2edr_f(pkim,de,r,dx,i,j,ier)
+        subroutine kim_api_process_d2edr2_f(pkim,de,r,dx,i,j,ier)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
@@ -146,7 +146,7 @@ subroutine kim_api_set_test_buffer_f(kimmdl,ob,ier)
 		integer(kind=kim_intptr) :: pkim,dx,r,i,j
 		real*8 :: de
 		integer ::ier
-        end subroutine kim_api_process_d2edr_f
+        end subroutine kim_api_process_d2edr2_f
 
 
     integer function kim_api_report_error(ln,fl,usermsg,ier)
@@ -239,17 +239,17 @@ integer,parameter :: kim_intptr = 8
 	    integer::error
         end function kim_api_get_neigh_mode_f
 
-        function kim_api_get_rank_shape(kimmdl,nm, shapea,error)
+        function kim_api_get_shape(kimmdl,nm, shapea,error)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
 	integer,parameter :: kim_intptr = 8
 #endif
-            integer(kind=kim_intptr) :: kimmdl,nm, shapea,kim_api_get_rank_shape
+            integer(kind=kim_intptr) :: kimmdl,nm, shapea,kim_api_get_shape
 	    integer::error
-        end function kim_api_get_rank_shape
+        end function kim_api_get_shape
 
-        subroutine kim_api_set_rank_shape(kimmdl,nm,shapea,rank,error)
+        subroutine kim_api_set_shape(kimmdl,nm,shapea,rank,error)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
@@ -257,47 +257,47 @@ integer,parameter :: kim_intptr = 8
 #endif 
 	integer(kind=kim_intptr) :: kimmdl,nm,shapea
 	integer::rank,error
-	end subroutine kim_api_set_rank_shape
+	end subroutine kim_api_set_shape
 
-	function kim_api_get_listatomtypes_f(kimmdl,natypes,error)
+	function kim_api_get_partcl_types_f(kimmdl,natypes,error)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
 	integer,parameter :: kim_intptr = 8
 #endif
-            integer(kind=kim_intptr) :: kimmdl,kim_api_get_listatomtypes_f
+            integer(kind=kim_intptr) :: kimmdl,kim_api_get_partcl_types_f
 	    integer::natypes,error
-        end function kim_api_get_listatomtypes_f
+        end function kim_api_get_partcl_types_f
 
-	function kim_api_get_listparams_f(kimmdl,nvpar,error)
+	function kim_api_get_params_f(kimmdl,nvpar,error)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
 	integer,parameter :: kim_intptr = 8
 #endif
-            integer(kind=kim_intptr) :: kimmdl,kim_api_get_listparams_f
+            integer(kind=kim_intptr) :: kimmdl,kim_api_get_params_f
 	    integer::nvpar,error
-        end function kim_api_get_listparams_f
+        end function kim_api_get_params_f
 
-	function kim_api_get_listfreeparams_f(kimmdl,nvpar,error)
+	function kim_api_get_free_params_f(kimmdl,nvpar,error)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
 	integer,parameter :: kim_intptr = 8
 #endif
-            integer(kind=kim_intptr) :: kimmdl,kim_api_get_listfreeparams_f
+            integer(kind=kim_intptr) :: kimmdl,kim_api_get_free_params_f
 	    integer::nvpar,error
-        end function kim_api_get_listfreeparams_f
+        end function kim_api_get_free_params_f
 
-	function kim_api_get_listfixedparams_f(kimmdl,nvpar,error)
+	function kim_api_get_fixed_params_f(kimmdl,nvpar,error)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
 	integer,parameter :: kim_intptr = 8
 #endif
-            integer(kind=kim_intptr) :: kimmdl,kim_api_get_listfixedparams_f
+            integer(kind=kim_intptr) :: kimmdl,kim_api_get_fixed_params_f
 	    integer::nvpar,error
-        end function kim_api_get_listfixedparams_f
+        end function kim_api_get_fixed_params_f
 
 	function kim_api_get_nbc_method_f(kimmdl,error)
 #ifdef SYSTEM32
@@ -309,15 +309,15 @@ integer,parameter :: kim_intptr = 8
 	    integer::error
         end function kim_api_get_nbc_method_f
 
-	function kim_api_get_atypecode(kimmdl,nm,error)
+	function kim_api_get_partcl_type_code(kimmdl,nm,error)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
 	integer,parameter :: kim_intptr = 8
 #endif
             integer(kind=kim_intptr) :: kimmdl, nm
-	    integer::error,kim_api_get_atypecode
-        end function kim_api_get_atypecode
+	    integer::error,kim_api_get_partcl_type_code
+        end function kim_api_get_partcl_type_code
 
 	integer function kim_api_get_full_neigh_f(kimmdl,mode,request, atom, numnei, pnei1atom, pRij)
 	integer :: mode,request,atom,numnei
@@ -340,7 +340,7 @@ integer,parameter :: kim_intptr = 8
 	end function kim_api_get_half_neigh_f
 
 
-        integer function kim_api_isit_compute(kimmdl,nm,error)
+        integer function kim_api_get_compute(kimmdl,nm,error)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
@@ -348,7 +348,7 @@ integer,parameter :: kim_intptr = 8
 #endif
             integer(kind=kim_intptr) :: kimmdl,nm
 	    integer::error
-        end function kim_api_isit_compute
+        end function kim_api_get_compute
 
         integer function kim_api_get_index(kimmdl,nm,error)
 #ifdef SYSTEM32
@@ -370,27 +370,27 @@ integer,parameter :: kim_intptr = 8
             integer :: I,error
         end function kim_api_get_data_byi
 
-        function kim_api_get_size_byi(kimmdl,I,error)
+        function kim_api_get_size_by_index(kimmdl,I,error)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
 	integer,parameter :: kim_intptr = 8
 #endif
-            integer(kind=kim_intptr) :: kimmdl,kim_api_get_size_byi
+            integer(kind=kim_intptr) :: kimmdl,kim_api_get_size_by_index
             integer :: I,error
-        end function kim_api_get_size_byi
+        end function kim_api_get_size_by_index
 
-        function kim_api_get_rank_shape_byi(kimmdl,I,shapea,error)
+        function kim_api_get_shape_by_index(kimmdl,I,shapea,error)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
 	integer,parameter :: kim_intptr = 8
 #endif
-            integer(kind=kim_intptr) :: kimmdl,shapea,kim_api_get_rank_shape_byi
+            integer(kind=kim_intptr) :: kimmdl,shapea,kim_api_get_shape_by_index
             integer  :: I,error
-        end function kim_api_get_rank_shape_byi
+        end function kim_api_get_shape_by_index
 
-        integer function kim_api_isit_compute_byi(kimmdl,I,error)
+        integer function kim_api_get_compute_by_index(kimmdl,I,error)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
@@ -398,7 +398,7 @@ integer,parameter :: kim_intptr = 8
 #endif
             integer(kind=kim_intptr) :: kimmdl
             integer :: I,error
-        end function kim_api_isit_compute_byi
+        end function kim_api_get_compute_by_index
 
 
         subroutine kim_api_allocate(kimmdl,natoms,ntypes,error)
@@ -470,7 +470,7 @@ integer,parameter :: kim_intptr = 8
 		
 	end function kim_api_model_init_f
 
-        real*8 function kim_api_get_convert_scale(u_from,u_to,error)
+        real*8 function kim_api_get_scale_conversion(u_from,u_to,error)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
@@ -479,7 +479,7 @@ integer,parameter :: kim_intptr = 8
 		integer(kind=kim_intptr) :: u_from,u_to
                 integer:: error
 		
-	end function kim_api_get_convert_scale
+	end function kim_api_get_scale_conversion
         
         integer function kim_api_get_unit_handling_f(kimmdl,error)
 #ifdef SYSTEM32
@@ -541,7 +541,7 @@ integer,parameter :: kim_intptr = 8
                 integer ::error		
 	end function kim_api_get_unit_time_f
 
-        real*8 function kim_api_convert_unit_from(kimmdl,length,energy,charge,temperature,time, &
+        real*8 function kim_api_convert_to_act_unit(kimmdl,length,energy,charge,temperature,time, &
                  length_exponent, energy_exponent, charge_exponent, temperature_exponent, time_exponent, error)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
@@ -551,7 +551,7 @@ integer,parameter :: kim_intptr = 8
              integer(kind=kim_intptr) ::kimmdl,length,energy,charge,temperature,time
              real*8:: length_exponent, energy_exponent, charge_exponent, temperature_exponent, time_exponent
              integer::error
-        end function kim_api_convert_unit_from
+        end function kim_api_convert_to_act_unit
 
     !subroutines
       
@@ -559,27 +559,25 @@ integer,parameter :: kim_intptr = 8
         
 
       
-
-
-        subroutine kim_api_set2_compute(kimmdl,nm,error)
+        subroutine kim_api_set_compute(kimmdl,nm,flag,error)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
 	integer,parameter :: kim_intptr = 8
 #endif
             integer(kind=kim_intptr) :: kimmdl,nm
-	integer::error
-        end subroutine kim_api_set2_compute
+	integer::flag,error
+        end subroutine kim_api_set_compute
 
-        subroutine kim_api_set2_donotcompute(kimmdl,nm,error)
+        subroutine kim_api_set_compute_by_index_f(kimmdl,ind,flag,error)
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
 #else
 	integer,parameter :: kim_intptr = 8
 #endif
-            integer(kind=kim_intptr) :: kimmdl,nm
-	integer::error
-        end subroutine kim_api_set2_donotcompute
+            integer(kind=kim_intptr) :: kimmdl
+	integer::ind,flag,error
+        end subroutine kim_api_set_compute_by_index_f
 
         subroutine kim_api_set_data_byi(kimmdl,I, size,dt,error)
 #ifdef SYSTEM32
@@ -591,81 +589,62 @@ integer,parameter :: kim_intptr = 8
             integer :: I,error
         end subroutine kim_api_set_data_byi
 
-        subroutine kim_api_set2_compute_byi(kimmdl,I,error)
-#ifdef SYSTEM32
-	integer, parameter :: kim_intptr=4
-#else
-	integer,parameter :: kim_intptr = 8
-#endif
-            integer (kind=kim_intptr):: kimmdl
-            integer :: I,error
-        end subroutine kim_api_set2_compute_byi
-
-        subroutine kim_api_set2_donotcompute_byi(kimmdl,I,error)
-#ifdef SYSTEM32
-	integer, parameter :: kim_intptr=4
-#else
-	integer,parameter :: kim_intptr = 8
-#endif
-            integer(kind=kim_intptr) :: kimmdl
-            integer :: I,error
-        end subroutine kim_api_set2_donotcompute_byi
     end interface
 
  contains
     !the following subs converts ctypeArray to fortran type array
     ! ( to pointer to array with descriptor) without 2003 features
     ! it is analog of c_f_pointer(...)
-    subroutine toRealArrayWithDescriptor2d(ctypeArray,ArrayWithDescriptor,n,m)
+    subroutine KIM_to_F90_real_array_2d(ctypeArray,ArrayWithDescriptor,n,m)
         implicit none
         integer  :: n,m
         real*8,target :: ctypeArray(n,m)
         real*8,pointer ::ArrayWithDescriptor(:,:)
         ArrayWithDescriptor=>ctypeArray
-    end subroutine toRealArrayWithDescriptor2d
+    end subroutine KIM_to_F90_real_array_2d
 
-	subroutine toRealArrayWithDescriptor3d(ctypeArray,ArrayWithDescriptor,n,m,l)
+	subroutine KIM_to_F90_real_array_3d(ctypeArray,ArrayWithDescriptor,n,m,l)
         implicit none
         integer  :: n,m,l
         real*8,target :: ctypeArray(n,m,l)
         real*8,pointer ::ArrayWithDescriptor(:,:,:)
         ArrayWithDescriptor=>ctypeArray
-    end subroutine toRealArrayWithDescriptor3d
+    end subroutine KIM_to_F90_real_array_3d
 
 
-    subroutine toIntegerArrayWithDescriptor2d(ctypeArray,ArrayWithDescriptor,n,m)
+    subroutine KIM_to_F90_int_array_2d(ctypeArray,ArrayWithDescriptor,n,m)
         implicit none
         integer  :: n,m !! Check if I can make array big like size of integer*8
         integer,target :: ctypeArray(n,m)
         integer,pointer ::ArrayWithDescriptor(:,:)
         ArrayWithDescriptor=>ctypeArray
-    end subroutine toIntegerArrayWithDescriptor2d
+    end subroutine KIM_to_F90_int_array_2d
 
-	subroutine toIntegerArrayWithDescriptor3d(ctypeArray,ArrayWithDescriptor,n,m,l)
+	subroutine KIM_to_F90_int_array_3d(ctypeArray,ArrayWithDescriptor,n,m,l)
         implicit none
         integer  :: n,m,l !! Check if I can make array big like size of integer*8
         integer,target :: ctypeArray(n,m,l)
         integer,pointer ::ArrayWithDescriptor(:,:,:)
         ArrayWithDescriptor=>ctypeArray
-    end subroutine toIntegerArrayWithDescriptor3d
+    end subroutine KIM_to_F90_int_array_3d
 
-    subroutine toIntegerArrayWithDescriptor1d(ctypeArray,ArrayWithDescriptor,n)
+    subroutine KIM_to_F90_int_array_1d(ctypeArray,ArrayWithDescriptor,n)
         implicit none
         integer :: n
         integer,target :: ctypeArray(n)
         integer,pointer ::ArrayWithDescriptor(:)
         ArrayWithDescriptor=>ctypeArray
-    end subroutine toIntegerArrayWithDescriptor1d
+    end subroutine KIM_to_F90_int_array_1d
 
-    subroutine toRealArrayWithDescriptor1d(ctypeArray,ArrayWithDescriptor,n)
+    subroutine KIM_to_F90_real_array_1d(ctypeArray,ArrayWithDescriptor,n)
         implicit none
         integer :: n
         real*8,target :: ctypeArray(n)
         real*8,pointer ::ArrayWithDescriptor(:)
         ArrayWithDescriptor=>ctypeArray
-    end subroutine toRealArrayWithDescriptor1d
+    end subroutine KIM_to_F90_real_array_1d
 
-    character (len=KEY_CHAR_LENGTH) function attachnull(str)
+    character (len=KIM_KEY_STRING_LENGTH) function attachnull(str)
         character (LEN=*) :: str
         attachnull = str//CHAR(0)
     end function attachnull
@@ -678,8 +657,8 @@ integer,parameter :: kim_intptr = 8
         attachnull_c = loc(str)
     end function attachnull_c
     
-    character (len=KEY_CHAR_LENGTH) function cstring2fortran(pointercstring)
-        character (len=KEY_CHAR_LENGTH) cstring ; pointer(pointercstring,cstring)
+    character (len=KIM_KEY_STRING_LENGTH) function cstring2fortran(pointercstring)
+        character (len=KIM_KEY_STRING_LENGTH) cstring ; pointer(pointercstring,cstring)
         cstring2fortran = cstring
     end function cstring2fortran
    
@@ -689,8 +668,8 @@ integer,parameter :: kim_intptr = 8
     integer function kim_api_init_f(kimmdl,testname,mdlname)
             character (len=*) :: testname,mdlname
             integer(kind=kim_intptr) :: kimmdl
-            character (len=KEY_CHAR_LENGTH)::testnamesnd,mdlnamesnd
-            character (len=KEY_CHAR_LENGTH):: s1,s2
+            character (len=KIM_KEY_STRING_LENGTH)::testnamesnd,mdlnamesnd
+            character (len=KIM_KEY_STRING_LENGTH):: s1,s2
             pointer(ps1,s1);pointer(ps2,s2)
             testnamesnd=attachnull(trim(testname))
             mdlnamesnd=attachnull(trim(mdlname))
@@ -699,36 +678,36 @@ integer,parameter :: kim_intptr = 8
             kim_api_init_f =kim_api_init(kimmdl,ps1,ps2)
      end function kim_api_init_f
 
-    integer function kim_api_preinit_f(kimmdl,mdlname)
+    integer function kim_api_model_info_f(kimmdl,mdlname)
             character (len=*) :: mdlname
             integer(kind=kim_intptr) :: kimmdl
-            character (len=KEY_CHAR_LENGTH)::mdlnamesnd
-            character (len=KEY_CHAR_LENGTH):: s2
+            character (len=KIM_KEY_STRING_LENGTH)::mdlnamesnd
+            character (len=KIM_KEY_STRING_LENGTH):: s2
             pointer(ps2,s2)
             mdlnamesnd=attachnull(trim(mdlname))
             ps2=loc(mdlnamesnd)
-            kim_api_preinit_f =kim_api_preinit(kimmdl,ps2)
-     end function kim_api_preinit_f
+            kim_api_model_info_f =kim_api_model_info(kimmdl,ps2)
+     end function kim_api_model_info_f
 
-    integer function kim_api_init_str_testname_f(kimmdl,testname,mdlname)
+    integer function kim_api_string_init_f(kimmdl,testname,mdlname)
             character (len=*) :: testname,mdlname
             integer(kind=kim_intptr) :: kimmdl
-            character (len=KEY_CHAR_LENGTH)::testnamesnd,mdlnamesnd
-            character (len=KEY_CHAR_LENGTH):: s1,s2
+            character (len=KIM_KEY_STRING_LENGTH)::testnamesnd,mdlnamesnd
+            character (len=KIM_KEY_STRING_LENGTH):: s1,s2
             pointer(ps1,s1);pointer(ps2,s2)
             !testnamesnd=attachnull(trim(testname))
             
             mdlnamesnd=attachnull(trim(mdlname))
             ps1=loc(testname)
             ps2=loc(mdlnamesnd)
-            kim_api_init_str_testname_f =kim_api_init_str_testname(kimmdl,ps1,ps2)
-     end function kim_api_init_str_testname_f
+            kim_api_string_init_f =kim_api_string_init(kimmdl,ps1,ps2)
+     end function kim_api_string_init_f
 
     integer function kim_api_init1_f(kimmdl,testinputf,testname,mdlinputf,mdlname)
             character (len=*) :: testinputf,testname,mdlinputf,mdlname
             integer(kind=kim_intptr) :: kimmdl
-            character (len=KEY_CHAR_LENGTH)::testinputfsnd,testnamesnd,mdlinputfsnd,mdlnamesnd
-            character (len=KEY_CHAR_LENGTH):: s1,s2,s3,s4
+            character (len=KIM_KEY_STRING_LENGTH)::testinputfsnd,testnamesnd,mdlinputfsnd,mdlnamesnd
+            character (len=KIM_KEY_STRING_LENGTH):: s1,s2,s3,s4
             pointer(ps1,s1);pointer(ps2,s2);pointer(ps3,s3);pointer(ps4,s4)
             testinputfsnd=attachnull(trim(testinputf))
             testnamesnd=attachnull(trim(testname))
@@ -751,8 +730,8 @@ integer,parameter :: kim_intptr = 8
             integer(kind=kim_intptr) :: kimmdl,  size, dt
             character (len=*) ::nm
 
-            character (len=KEY_CHAR_LENGTH) :: str2send
-            character (len=KEY_CHAR_LENGTH) :: str; pointer (pstr,str)
+            character (len=KIM_KEY_STRING_LENGTH) :: str2send
+            character (len=KIM_KEY_STRING_LENGTH) :: str; pointer (pstr,str)
             str2send = attachnull(trim(nm))
             pstr = loc(str2send)
 
@@ -763,61 +742,61 @@ integer,parameter :: kim_intptr = 8
         integer(kind=kim_intptr) function kim_api_get_data_f(kimmdl,nm,error)
             integer(kind=kim_intptr) :: kimmdl
             character (len=*) ::nm
-            character (len=KEY_CHAR_LENGTH) :: str2send
-            character (len=KEY_CHAR_LENGTH) :: str; pointer (pstr,str)
+            character (len=KIM_KEY_STRING_LENGTH) :: str2send
+            character (len=KIM_KEY_STRING_LENGTH) :: str; pointer (pstr,str)
 	    integer::error
             str2send = attachnull(trim(nm))
             pstr = loc(str2send)
             kim_api_get_data_f = kim_api_get_data(kimmdl,pstr,error)
         end function kim_api_get_data_f
          
-        real*8 function kim_api_get_convert_scale_f(from,to,error)
+        real*8 function kim_api_get_scale_conversion_f(from,to,error)
                 integer:: error
 		character (len=*) ::from,to
-                character (len=KEY_CHAR_LENGTH) ::sfrom,sto
+                character (len=KIM_KEY_STRING_LENGTH) ::sfrom,sto
                 sfrom = attachnull(trim(from))
                 sto = attachnull(trim(to))
-                kim_api_get_convert_scale_f = kim_api_get_convert_scale(loc(sfrom),loc(sto),error)
-	end function kim_api_get_convert_scale_f
+                kim_api_get_scale_conversion_f = kim_api_get_scale_conversion(loc(sfrom),loc(sto),error)
+	end function kim_api_get_scale_conversion_f
         
-        real*8 function kim_api_convert_unit_from_f(kimmdl,length,energy,charge,temperature,time, &
+        real*8 function kim_api_convert_to_act_unit_f(kimmdl,length,energy,charge,temperature,time, &
                  length_exponent, energy_exponent, charge_exponent, temperature_exponent, time_exponent, error)
                 integer::error
                 integer(kind=kim_intptr) :: kimmdl
                 real*8 ::length_exponent, energy_exponent, charge_exponent, temperature_exponent, time_exponent
                 character (len=*) ::length,energy,charge,temperature,time
-                character (len=KEY_CHAR_LENGTH) ::slength,senergy,scharge,stemperature,stime
+                character (len=KIM_KEY_STRING_LENGTH) ::slength,senergy,scharge,stemperature,stime
                 slength = attachnull(trim(length))
                 senergy = attachnull(trim(energy))
                 scharge = attachnull(trim(charge))
                 stemperature = attachnull(trim(temperature))
                 stime = attachnull(trim(time))
 
-                kim_api_convert_unit_from_f =kim_api_convert_unit_from(kimmdl,loc(slength),loc(senergy),loc(scharge),&
+                kim_api_convert_to_act_unit_f =kim_api_convert_to_act_unit(kimmdl,loc(slength),loc(senergy),loc(scharge),&
                 loc(stemperature), loc(stime),length_exponent, energy_exponent, charge_exponent, &
                    temperature_exponent, time_exponent, error)
-        end function kim_api_convert_unit_from_f
+        end function kim_api_convert_to_act_unit_f
 
         integer(kind=kim_intptr) function kim_api_get_model_kim_str_f(nm,lenstr,error)
 	    character (len=*) ::nm
-            character (len=KEY_CHAR_LENGTH) :: str2send
-            character (len=KEY_CHAR_LENGTH) :: str; pointer (pstr,str)
+            character (len=KIM_KEY_STRING_LENGTH) :: str2send
+            character (len=KIM_KEY_STRING_LENGTH) :: str; pointer (pstr,str)
 	    integer::error,lenstr
             str2send = attachnull(trim(nm))
             pstr = loc(str2send)
             kim_api_get_model_kim_str_f = kim_api_get_model_kim_str(pstr,lenstr,error)
         end function kim_api_get_model_kim_str_f
 
-	integer function kim_api_get_atypecode_f(kimmdl,nm,error)
+	integer function kim_api_get_partcl_type_code_f(kimmdl,nm,error)
 		integer(kind=kim_intptr) :: kimmdl
  		character (len=*) ::nm
-		character (len=KEY_CHAR_LENGTH) :: str2send
-            	character (len=KEY_CHAR_LENGTH) :: str; pointer (pstr,str)
+		character (len=KIM_KEY_STRING_LENGTH) :: str2send
+            	character (len=KIM_KEY_STRING_LENGTH) :: str; pointer (pstr,str)
 		integer::error
             	str2send = attachnull(trim(nm))
            	pstr = loc(str2send)
-		kim_api_get_atypecode_f = kim_api_get_atypecode(kimmdl,pstr,error)
-	end function kim_api_get_atypecode_f
+		kim_api_get_partcl_type_code_f = kim_api_get_partcl_type_code(kimmdl,pstr,error)
+	end function kim_api_get_partcl_type_code_f
 
 
 
@@ -827,8 +806,8 @@ integer,parameter :: kim_intptr = 8
             integer(kind=kim_intptr) :: kimmdl
 	    type(c_ptr) :: kim_api_get_data_fc
             character (len=*) ::nm
-            character (len=KEY_CHAR_LENGTH) :: str2send
-            character (len=KEY_CHAR_LENGTH) :: str; pointer (pstr,str)
+            character (len=KIM_KEY_STRING_LENGTH) :: str2send
+            character (len=KIM_KEY_STRING_LENGTH) :: str; pointer (pstr,str)
             str2send = attachnull(trim(nm))
             pstr = loc(str2send)
             kim_api_get_data_fc = kim_api_get_data_cptr(kimmdl,pstr)
@@ -839,8 +818,8 @@ integer,parameter :: kim_intptr = 8
             integer(kind=kim_intptr) :: kimmdl
             character (len=*) ::nm
 
-            character (len=KEY_CHAR_LENGTH) :: str2send
-            character (len=KEY_CHAR_LENGTH) :: str; pointer (pstr,str)
+            character (len=KIM_KEY_STRING_LENGTH) :: str2send
+            character (len=KIM_KEY_STRING_LENGTH) :: str; pointer (pstr,str)
 	    integer::error
             str2send = attachnull(trim(nm))
             pstr = loc(str2send)
@@ -848,14 +827,14 @@ integer,parameter :: kim_intptr = 8
             kim_api_get_size_f = kim_api_get_size(kimmdl,pstr,error)
         end function kim_api_get_size_f
 
-        integer(kind=kim_intptr) function kim_api_get_rank_shape_f(kimmdl,nm, shape,error)
+        integer(kind=kim_intptr) function kim_api_get_shape_f(kimmdl,nm, shape,error)
             ! returns rank and place correct shape (shape has to be allocated )
             ! if unssaccesfull returns -1
             integer(kind=kim_intptr) :: kimmdl
             character (len=*) :: nm
 
-            character (len=KEY_CHAR_LENGTH) :: str2send
-            character (len=KEY_CHAR_LENGTH) :: str; pointer (pstr,str)   
+            character (len=KIM_KEY_STRING_LENGTH) :: str2send
+            character (len=KIM_KEY_STRING_LENGTH) :: str; pointer (pstr,str)   
 
             integer,pointer :: shape(:)
             integer :: shp(size(shape))
@@ -864,30 +843,30 @@ integer,parameter :: kim_intptr = 8
             str2send = attachnull(trim(nm))
             pstr = loc(str2send)
             pshpst = loc(shp)
-            rank = kim_api_get_rank_shape(kimmdl,pstr,pshpst,error)
+            rank = kim_api_get_shape(kimmdl,pstr,pshpst,error)
             if(rank .eq. 0) then
-                kim_api_get_rank_shape_f=0
+                kim_api_get_shape_f=0
             else if(rank.eq.1) then
-                kim_api_get_rank_shape_f=1
+                kim_api_get_shape_f=1
                 shape(1)=shp(1)
             else if(rank.gt.1) then
-                kim_api_get_rank_shape_f=rank
+                kim_api_get_shape_f=rank
                 do i=1, rank
                     shape(i)=shp(rank - i + 1)
                 end do
             else
-                kim_api_get_rank_shape_f=-1
+                kim_api_get_shape_f=-1
             end if
-        end function kim_api_get_rank_shape_f
+        end function kim_api_get_shape_f
 
-        subroutine kim_api_set_rank_shape_f(kimmdl,nm, shapef,rankf,error)
+        subroutine kim_api_set_shape_f(kimmdl,nm, shapef,rankf,error)
             ! set rank, shape and size of the data in KIM API object
             ! error=1 if successful , error <= 0 if unsuccessful
             integer(kind=kim_intptr) :: kimmdl
             character (len=*) :: nm
 
-            character (len=KEY_CHAR_LENGTH) :: str2send
-            character (len=KEY_CHAR_LENGTH) :: str; pointer (pstr,str)   
+            character (len=KIM_KEY_STRING_LENGTH) :: str2send
+            character (len=KIM_KEY_STRING_LENGTH) :: str; pointer (pstr,str)   
 
             !integer,pointer :: shape(:)
 	    integer ::rankf,shapef(rankf)
@@ -902,26 +881,26 @@ integer,parameter :: kim_intptr = 8
                     shp(i)=shapef(rankf - i + 1) !transpose shape
                 end do
 	    end if
-            call kim_api_set_rank_shape(kimmdl,pstr,pshpst,rankf,error)
-        end subroutine kim_api_set_rank_shape_f
+            call kim_api_set_shape(kimmdl,pstr,pshpst,rankf,error)
+        end subroutine kim_api_set_shape_f
 
-        integer function kim_api_isit_compute_f(kimmdl,nm,error)
+        integer function kim_api_get_compute_f(kimmdl,nm,error)
             integer(kind=kim_intptr) :: kimmdl
             character (len=*) ::nm
 	    integer::error
-            character (len=KEY_CHAR_LENGTH) :: str2send
-            character (len=KEY_CHAR_LENGTH) :: str; pointer (pstr,str)
+            character (len=KIM_KEY_STRING_LENGTH) :: str2send
+            character (len=KIM_KEY_STRING_LENGTH) :: str; pointer (pstr,str)
             str2send = attachnull(trim(nm))
             pstr = loc(str2send)
 
-            kim_api_isit_compute_f =kim_api_isit_compute(kimmdl,pstr,error)
-        end function kim_api_isit_compute_f
+            kim_api_get_compute_f =kim_api_get_compute(kimmdl,pstr,error)
+        end function kim_api_get_compute_f
 
         integer function kim_api_get_index_f(kimmdl,nm,error)
             integer(kind=kim_intptr) :: kimmdl
             character (len=*) ::nm
-            character (len=KEY_CHAR_LENGTH) :: str2send
-            character (len=KEY_CHAR_LENGTH) :: str; pointer (pstr,str)
+            character (len=KIM_KEY_STRING_LENGTH) :: str2send
+            character (len=KIM_KEY_STRING_LENGTH) :: str; pointer (pstr,str)
 	    integer::error
             str2send = attachnull(trim(nm))
             pstr = loc(str2send)
@@ -935,13 +914,13 @@ integer,parameter :: kim_intptr = 8
             kim_api_get_data_byi_f = kim_api_get_data_byi(kimmdl,I,error)
         end function kim_api_get_data_byi_f
 
-        integer(kind=kim_intptr) function kim_api_get_size_byi_f(kimmdl,I,error)
+        integer(kind=kim_intptr) function kim_api_get_size_by_index_f(kimmdl,I,error)
             integer(kind=kim_intptr) :: kimmdl
             integer :: I,error
-            kim_api_get_size_byi_f = kim_api_get_size_byi(kimmdl,I,error)
-        end function kim_api_get_size_byi_f
+            kim_api_get_size_by_index_f = kim_api_get_size_by_index(kimmdl,I,error)
+        end function kim_api_get_size_by_index_f
 
-        integer(kind=kim_intptr) function kim_api_get_rank_shape_byi_f(kimmdl,I,shape,error)
+        integer(kind=kim_intptr) function kim_api_get_shape_by_index_f(kimmdl,I,shape,error)
             integer(kind=kim_intptr) :: kimmdl
             integer  :: I,error
             integer,pointer :: shape(:)
@@ -949,27 +928,27 @@ integer,parameter :: kim_intptr = 8
             integer :: shpst(1); pointer(pshpst,shpst)
             integer :: rank,ii
             pshpst = loc(shp)
-            rank = kim_api_get_rank_shape_byi(kimmdl,I,pshpst,error)
+            rank = kim_api_get_shape_by_index(kimmdl,I,pshpst,error)
             if(rank .eq. 0) then
-                kim_api_get_rank_shape_byi_f=0
+                kim_api_get_shape_by_index_f=0
             else if(rank.eq.1) then
-                kim_api_get_rank_shape_byi_f=1
+                kim_api_get_shape_by_index_f=1
                 shape(1)=shp(1)
             else if(rank.gt.1) then
-                kim_api_get_rank_shape_byi_f=rank
+                kim_api_get_shape_by_index_f=rank
                 do ii=1, rank
                     shape(ii)=shp(rank - ii + 1)
                 end do
             else
-                kim_api_get_rank_shape_byi_f=-1
+                kim_api_get_shape_by_index_f=-1
             end if
-        end function kim_api_get_rank_shape_byi_f
+        end function kim_api_get_shape_by_index_f
 
-        integer function kim_api_isit_compute_byi_f(kimmdl,I,error)
+        integer function kim_api_get_compute_by_index_f(kimmdl,I,error)
             integer(kind=kim_intptr) :: kimmdl
             integer :: I,error
-            kim_api_isit_compute_byi_f = kim_api_isit_compute_byi(kimmdl,I,error)
-        end function kim_api_isit_compute_byi_f
+            kim_api_get_compute_by_index_f = kim_api_get_compute_by_index(kimmdl,I,error)
+        end function kim_api_get_compute_by_index_f
 
         !subroutines 
         subroutine kim_api_allocate_f(kimmdl,natoms,ntypes,error)
@@ -1004,29 +983,17 @@ integer,parameter :: kim_intptr = 8
 
         end function kim_api_report_error_f
 
-        subroutine kim_api_set2_compute_f(kimmdl,nm,error)
+        subroutine kim_api_set_compute_f(kimmdl,nm,flag,error)
             integer(kind=kim_intptr) :: kimmdl
             character (len=*) :: nm
-	    integer :: error
-            character (len=KEY_CHAR_LENGTH) ::us
+	    integer :: flag, error
+            character (len=KIM_KEY_STRING_LENGTH) ::us
             character :: str(1); pointer(pstr,str)
             us = attachnull(nm)
             pstr =loc(us)
 
-            call kim_api_set2_compute(kimmdl,pstr,error)
-        end subroutine kim_api_set2_compute_f
-
-        subroutine kim_api_set2_donotcompute_f(kimmdl,nm,error)
-            integer(kind=kim_intptr) :: kimmdl
-            character (len=*) :: nm
-            integer :: error
-            character (len=KEY_CHAR_LENGTH) ::us
-            character :: str(1); pointer(pstr,str)
-            us = attachnull(nm)
-            pstr =loc(us)
-
-            call kim_api_set2_donotcompute(kimmdl,pstr,error)
-        end subroutine kim_api_set2_donotcompute_f
+            call kim_api_set_compute(kimmdl,pstr,flag,error)
+        end subroutine kim_api_set_compute_f
 
         subroutine kim_api_set_data_byi_f(kimmdl,I, size,dt,error)
             integer(kind=kim_intptr) :: kimmdl,size,dt
@@ -1034,24 +1001,12 @@ integer,parameter :: kim_intptr = 8
             call kim_api_set_data_byi(kimmdl,I, size,dt,error)
         end subroutine kim_api_set_data_byi_f
 
-        subroutine kim_api_set2_compute_byi_f(kimmdl,I,error)
-            integer(kind=kim_intptr) :: kimmdl
-            integer :: I,error
-            call kim_api_set2_compute_byi(kimmdl,I,error)
-        end subroutine kim_api_set2_compute_byi_f
-
-        subroutine kim_api_set2_donotcompute_byi_f(kimmdl,I,error)
-            integer(kind=kim_intptr) :: kimmdl
-            integer :: I,error
-            call kim_api_set2_donotcompute_byi(kimmdl,I,error)
-        end subroutine kim_api_set2_donotcompute_byi_f
-
-        subroutine kim_api_set_data_multiple_f(kimmdl,error, nm1,sz1,dt1,k1, nm2,sz2,dt2,k2, nm3,sz3,dt3,k3, nm4,sz4,dt4,k4,&
+        subroutine kim_api_setm_data_f(kimmdl,error, nm1,sz1,dt1,k1, nm2,sz2,dt2,k2, nm3,sz3,dt3,k3, nm4,sz4,dt4,k4,&
          nm5,sz5,dt5,k5,   nm6,sz6,dt6,k6,  nm7,sz7,dt7,k7, nm8,sz8,dt8,k8, nm9,sz9,dt9,k9, nm10,sz10,dt10,k10,&
          nm11,sz11,dt11,k11, nm12,sz12,dt12,k12, nm13,sz13,dt13,k13,  nm14,sz14,dt14,k14, nm15,sz15,dt15,k15)
             integer(kind=kim_intptr) :: kimmdl;  integer error, grarg
 
-            character(len=40) ::msg="kim_api_set_data_multiple_f"
+            character(len=40) ::msg="kim_api_setm_data_f"
 
             !    declare optional arguments
             character(len=*)          :: nm1;   integer(kind=kim_intptr)          :: sz1, dt1
@@ -1174,15 +1129,15 @@ integer,parameter :: kim_intptr = 8
             if(errcheck_mltpl(error,msg,14,nm14).lt.KIM_STATUS_OK) return
  if(present(nm15).and.k15.eq.1) error=kim_api_set_data_f(kimmdl,nm15,sz15,dt15);
             if(errcheck_mltpl(error,msg,15,nm15).lt.KIM_STATUS_OK) return       
-	end subroutine kim_api_set_data_multiple_f
+	end subroutine kim_api_setm_data_f
         
-        subroutine kim_api_set_data_byI_multiple_f(kimmdl,error,nm1,sz1,dt1,k1, nm2,sz2,dt2,k2, nm3,sz3,dt3,k3, nm4,sz4,dt4,k4,&
+        subroutine kim_api_setm_data_by_index_f(kimmdl,error,nm1,sz1,dt1,k1, nm2,sz2,dt2,k2, nm3,sz3,dt3,k3, nm4,sz4,dt4,k4,&
          nm5,sz5,dt5,k5,   nm6,sz6,dt6,k6,  nm7,sz7,dt7,k7, nm8,sz8,dt8,k8, nm9,sz9,dt9,k9, nm10,sz10,dt10,k10,&
          nm11,sz11,dt11,k11, nm12,sz12,dt12,k12, nm13,sz13,dt13,k13,  nm14,sz14,dt14,k14, nm15,sz15,dt15,k15)
 
             integer(kind=kim_intptr) :: kimmdl;  integer error, grarg
 
-            character(len=40) ::msg="kim_api_set_data_byI_multiple_f"
+            character(len=40) ::msg="kim_api_setm_data_by_index_f"
 
             !    declare optional arguments
             integer          :: nm1;   integer(kind=kim_intptr)          :: sz1, dt1
@@ -1305,14 +1260,14 @@ integer,parameter :: kim_intptr = 8
             if(errcheck_mltpl(error,msg,14,"",nm14).lt.KIM_STATUS_OK)return
  if(present(nm15).and.k15.eq.1)call kim_api_set_data_byi_f(kimmdl,nm15,sz15,dt15,error);
             if(errcheck_mltpl(error,msg,15,"",nm15).lt.KIM_STATUS_OK)return
-       	end subroutine kim_api_set_data_byI_multiple_f
+       	end subroutine kim_api_setm_data_by_index_f
         
-        subroutine kim_api_get_data_multiple_f(kimmdl,error, nm1,dt1,k1, nm2,dt2,k2, nm3,dt3,k3, nm4,dt4,k4, nm5,dt5,k5,&
+        subroutine kim_api_getm_data_f(kimmdl,error, nm1,dt1,k1, nm2,dt2,k2, nm3,dt3,k3, nm4,dt4,k4, nm5,dt5,k5,&
          nm6,dt6,k6, nm7,dt7,k7, nm8,dt8,k8, nm9,dt9,k9, nm10,dt10,k10, nm11,dt11,k11, nm12,dt12,k12, nm13,dt13,k13,&
          nm14,dt14,k14, nm15,dt15,k15)
             integer(kind=kim_intptr) :: kimmdl;  integer error, grarg
 
-            character(len=40) ::msg="kim_api_get_data_multiple_f"
+            character(len=40) ::msg="kim_api_getm_data_f"
 
             !    declare optional arguments
             character(len=*)          :: nm1;   integer(kind=kim_intptr)          :: dt1
@@ -1435,14 +1390,14 @@ integer,parameter :: kim_intptr = 8
             if(errcheck_mltpl(error,msg,14,nm14).lt.KIM_STATUS_OK) return
  if(present(nm15).and.k15.eq.1) dt15= kim_api_get_data_f(kimmdl,nm15,error);
             if(errcheck_mltpl(error,msg,15,nm15).lt.KIM_STATUS_OK) return
-	end subroutine kim_api_get_data_multiple_f
+	end subroutine kim_api_getm_data_f
 
-	subroutine kim_api_get_data_byI_multiple_f(kimmdl,error, nm1,dt1,k1, nm2,dt2,k2, nm3,dt3,k3, nm4,dt4,k4, nm5,dt5,k5,&
+	subroutine kim_api_getm_data_by_index_f(kimmdl,error, nm1,dt1,k1, nm2,dt2,k2, nm3,dt3,k3, nm4,dt4,k4, nm5,dt5,k5,&
          nm6,dt6,k6, nm7,dt7,k7, nm8,dt8,k8, nm9,dt9,k9, nm10,dt10,k10, nm11,dt11,k11, nm12,dt12,k12, nm13,dt13,k13,&
          nm14,dt14,k14, nm15,dt15,k15)
             integer(kind=kim_intptr) :: kimmdl;  integer error
 
-            character(len=40) ::msg="kim_api_get_data_byI_multiple_f"
+            character(len=40) ::msg="kim_api_getm_data_by_index_f"
 
             !    declare optional arguments
             integer          :: nm1;   integer(kind=kim_intptr)          :: dt1
@@ -1564,14 +1519,14 @@ integer,parameter :: kim_intptr = 8
             if(errcheck_mltpl(error,msg,14,"",nm14).lt.KIM_STATUS_OK) return
  if(present(nm15).and.k15.eq.1) dt15= kim_api_get_data_byi_f(kimmdl,nm15,error);
             if(errcheck_mltpl(error,msg,15,"",nm15).lt.KIM_STATUS_OK) return		
-	end subroutine kim_api_get_data_byI_multiple_f
+	end subroutine kim_api_getm_data_by_index_f
 
-	subroutine kim_api_get_compute_multiple_f(kimmdl,error, nm1,dt1,k1, nm2,dt2,k2, nm3,dt3,k3, nm4,dt4,k4, nm5,dt5,k5,&
+	subroutine kim_api_getm_compute_f(kimmdl,error, nm1,dt1,k1, nm2,dt2,k2, nm3,dt3,k3, nm4,dt4,k4, nm5,dt5,k5,&
          nm6,dt6,k6, nm7,dt7,k7, nm8,dt8,k8, nm9,dt9,k9, nm10,dt10,k10, nm11,dt11,k11, nm12,dt12,k12, nm13,dt13,k13,&
          nm14,dt14,k14, nm15,dt15,k15)
             integer(kind=kim_intptr) :: kimmdl;  integer error
 
-            character(len=40) ::msg="kim_api_get_compute_multiple_f"
+            character(len=40) ::msg="kim_api_getm_compute_f"
 
             !    declare optional arguments
             character(len=*)          :: nm1;   integer          :: dt1
@@ -1597,7 +1552,7 @@ integer,parameter :: kim_intptr = 8
               if(errcheck_mltpl(KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY,msg,1, nm1 ).lt.KIM_STATUS_OK) return
             endif
             if(k1.eq.1) then 
-                dt1 = kim_api_isit_compute_f(kimmdl,nm1,error); 
+                dt1 = kim_api_get_compute_f(kimmdl,nm1,error); 
                 if (errcheck_mltpl(error,msg,1, nm1).lt.KIM_STATUS_OK) return
             endif
 
@@ -1666,42 +1621,42 @@ integer,parameter :: kim_intptr = 8
 	    
 	    !process arguments
             error=KIM_STATUS_OK
- if(present(nm2).and.k2.eq.1) dt2= kim_api_isit_compute_f(kimmdl,nm2,error);
+ if(present(nm2).and.k2.eq.1) dt2= kim_api_get_compute_f(kimmdl,nm2,error);
             if(errcheck_mltpl(error,msg,2,nm2).lt.KIM_STATUS_OK) return
- if(present(nm3).and.k3.eq.1) dt3= kim_api_isit_compute_f(kimmdl,nm3,error);
+ if(present(nm3).and.k3.eq.1) dt3= kim_api_get_compute_f(kimmdl,nm3,error);
             if(errcheck_mltpl(error,msg,3,nm3).lt.KIM_STATUS_OK) return
- if(present(nm4).and.k4.eq.1) dt4= kim_api_isit_compute_f(kimmdl,nm4,error);
+ if(present(nm4).and.k4.eq.1) dt4= kim_api_get_compute_f(kimmdl,nm4,error);
             if(errcheck_mltpl(error,msg,4,nm4).lt.KIM_STATUS_OK) return
- if(present(nm5).and.k5.eq.1) dt5= kim_api_isit_compute_f(kimmdl,nm5,error);
+ if(present(nm5).and.k5.eq.1) dt5= kim_api_get_compute_f(kimmdl,nm5,error);
             if(errcheck_mltpl(error,msg,5,nm5).lt.KIM_STATUS_OK) return
- if(present(nm6).and.k6.eq.1) dt6= kim_api_isit_compute_f(kimmdl,nm6,error);
+ if(present(nm6).and.k6.eq.1) dt6= kim_api_get_compute_f(kimmdl,nm6,error);
             if(errcheck_mltpl(error,msg,6,nm6).lt.KIM_STATUS_OK) return
- if(present(nm7).and.k7.eq.1) dt7= kim_api_isit_compute_f(kimmdl,nm7,error);
+ if(present(nm7).and.k7.eq.1) dt7= kim_api_get_compute_f(kimmdl,nm7,error);
             if(errcheck_mltpl(error,msg,7,nm7).lt.KIM_STATUS_OK) return
- if(present(nm8).and.k8.eq.1) dt8= kim_api_isit_compute_f(kimmdl,nm8,error);
+ if(present(nm8).and.k8.eq.1) dt8= kim_api_get_compute_f(kimmdl,nm8,error);
             if(errcheck_mltpl(error,msg,8,nm8).lt.KIM_STATUS_OK) return
- if(present(nm9).and.k9.eq.1) dt9= kim_api_isit_compute_f(kimmdl,nm9,error);
+ if(present(nm9).and.k9.eq.1) dt9= kim_api_get_compute_f(kimmdl,nm9,error);
             if(errcheck_mltpl(error,msg,9,nm9).lt.KIM_STATUS_OK) return
- if(present(nm10).and.k10.eq.1) dt10= kim_api_isit_compute_f(kimmdl,nm10,error);
+ if(present(nm10).and.k10.eq.1) dt10= kim_api_get_compute_f(kimmdl,nm10,error);
             if(errcheck_mltpl(error,msg,10,nm10).lt.KIM_STATUS_OK) return
- if(present(nm11).and.k11.eq.1) dt11= kim_api_isit_compute_f(kimmdl,nm11,error);
+ if(present(nm11).and.k11.eq.1) dt11= kim_api_get_compute_f(kimmdl,nm11,error);
             if(errcheck_mltpl(error,msg,11,nm11).lt.KIM_STATUS_OK) return
- if(present(nm12).and.k12.eq.1) dt12= kim_api_isit_compute_f(kimmdl,nm12,error);
+ if(present(nm12).and.k12.eq.1) dt12= kim_api_get_compute_f(kimmdl,nm12,error);
             if(errcheck_mltpl(error,msg,12,nm12).lt.KIM_STATUS_OK) return
- if(present(nm13).and.k13.eq.1) dt13= kim_api_isit_compute_f(kimmdl,nm13,error);
+ if(present(nm13).and.k13.eq.1) dt13= kim_api_get_compute_f(kimmdl,nm13,error);
             if(errcheck_mltpl(error,msg,13,nm13).lt.KIM_STATUS_OK) return
- if(present(nm14).and.k14.eq.1) dt14= kim_api_isit_compute_f(kimmdl,nm14,error);
+ if(present(nm14).and.k14.eq.1) dt14= kim_api_get_compute_f(kimmdl,nm14,error);
             if(errcheck_mltpl(error,msg,14,nm14).lt.KIM_STATUS_OK) return
- if(present(nm15).and.k15.eq.1) dt15= kim_api_isit_compute_f(kimmdl,nm15,error);
+ if(present(nm15).and.k15.eq.1) dt15= kim_api_get_compute_f(kimmdl,nm15,error);
             if(errcheck_mltpl(error,msg,15,nm15).lt.KIM_STATUS_OK) return
-	end subroutine kim_api_get_compute_multiple_f
+	end subroutine kim_api_getm_compute_f
         
-        subroutine kim_api_get_compute_byI_mltpl_f(kimmdl,error, nm1,dt1,k1, nm2,dt2,k2, nm3,dt3,k3, nm4,dt4,k4, nm5,dt5,k5,&
+        subroutine kim_api_getm_compute_by_index_f(kimmdl,error, nm1,dt1,k1, nm2,dt2,k2, nm3,dt3,k3, nm4,dt4,k4, nm5,dt5,k5,&
          nm6,dt6,k6, nm7,dt7,k7, nm8,dt8,k8, nm9,dt9,k9, nm10,dt10,k10, nm11,dt11,k11, nm12,dt12,k12, nm13,dt13,k13,&
          nm14,dt14,k14, nm15,dt15,k15)
             integer(kind=kim_intptr) :: kimmdl;  integer error
 
-            character(len=40) ::msg="kim_api_get_compute_byI_mltpl_f"
+            character(len=40) ::msg="kim_api_getm_compute_by_index_f"
 
             !    declare optional arguments
             integer          :: nm1;   integer          :: dt1
@@ -1728,7 +1683,7 @@ integer,parameter :: kim_intptr = 8
                if(errcheck_mltpl(error,msg,1,"", nm1 ).lt.KIM_STATUS_OK) return
             endif
             if(k1.eq.1) then 
-                dt1 = kim_api_isit_compute_byi_f(kimmdl,nm1,error); 
+                dt1 = kim_api_get_compute_by_index_f(kimmdl,nm1,error); 
                 if (errcheck_mltpl(error,msg,1, "", nm1).lt.KIM_STATUS_OK) return
             endif
 
@@ -1797,42 +1752,42 @@ integer,parameter :: kim_intptr = 8
 	    
 	    !process arguments
             error =KIM_STATUS_OK
- if(present(nm2).and.k2.eq.1) dt2= kim_api_isit_compute_byi_f(kimmdl,nm2,error);
+ if(present(nm2).and.k2.eq.1) dt2= kim_api_get_compute_by_index_f(kimmdl,nm2,error);
             if(errcheck_mltpl(error,msg,2,"",nm2).lt.KIM_STATUS_OK) return
- if(present(nm3).and.k3.eq.1) dt3= kim_api_isit_compute_byi_f(kimmdl,nm3,error);
+ if(present(nm3).and.k3.eq.1) dt3= kim_api_get_compute_by_index_f(kimmdl,nm3,error);
             if(errcheck_mltpl(error,msg,3,"",nm3).lt.KIM_STATUS_OK) return
- if(present(nm4).and.k4.eq.1) dt4= kim_api_isit_compute_byi_f(kimmdl,nm4,error);
+ if(present(nm4).and.k4.eq.1) dt4= kim_api_get_compute_by_index_f(kimmdl,nm4,error);
             if(errcheck_mltpl(error,msg,4,"",nm4).lt.KIM_STATUS_OK) return
- if(present(nm5).and.k5.eq.1) dt5= kim_api_isit_compute_byi_f(kimmdl,nm5,error);
+ if(present(nm5).and.k5.eq.1) dt5= kim_api_get_compute_by_index_f(kimmdl,nm5,error);
             if(errcheck_mltpl(error,msg,5,"",nm5).lt.KIM_STATUS_OK) return
- if(present(nm6).and.k6.eq.1) dt6= kim_api_isit_compute_byi_f(kimmdl,nm6,error);
+ if(present(nm6).and.k6.eq.1) dt6= kim_api_get_compute_by_index_f(kimmdl,nm6,error);
             if(errcheck_mltpl(error,msg,6,"",nm6).lt.KIM_STATUS_OK) return
- if(present(nm7).and.k7.eq.1) dt7= kim_api_isit_compute_byi_f(kimmdl,nm7,error);
+ if(present(nm7).and.k7.eq.1) dt7= kim_api_get_compute_by_index_f(kimmdl,nm7,error);
             if(errcheck_mltpl(error,msg,7,"",nm7).lt.KIM_STATUS_OK) return
- if(present(nm8).and.k8.eq.1) dt8= kim_api_isit_compute_byi_f(kimmdl,nm8,error);
+ if(present(nm8).and.k8.eq.1) dt8= kim_api_get_compute_by_index_f(kimmdl,nm8,error);
             if(errcheck_mltpl(error,msg,8,"",nm8).lt.KIM_STATUS_OK) return
- if(present(nm9).and.k9.eq.1) dt9= kim_api_isit_compute_byi_f(kimmdl,nm9,error);
+ if(present(nm9).and.k9.eq.1) dt9= kim_api_get_compute_by_index_f(kimmdl,nm9,error);
             if(errcheck_mltpl(error,msg,9,"",nm9).lt.KIM_STATUS_OK) return
- if(present(nm10).and.k10.eq.1) dt10= kim_api_isit_compute_byi_f(kimmdl,nm10,error);
+ if(present(nm10).and.k10.eq.1) dt10= kim_api_get_compute_by_index_f(kimmdl,nm10,error);
             if(errcheck_mltpl(error,msg,10,"",nm10).lt.KIM_STATUS_OK) return
- if(present(nm11).and.k11.eq.1) dt11= kim_api_isit_compute_byi_f(kimmdl,nm11,error);
+ if(present(nm11).and.k11.eq.1) dt11= kim_api_get_compute_by_index_f(kimmdl,nm11,error);
             if(errcheck_mltpl(error,msg,11,"",nm11).lt.KIM_STATUS_OK) return
- if(present(nm12).and.k12.eq.1) dt12= kim_api_isit_compute_byi_f(kimmdl,nm12,error);
+ if(present(nm12).and.k12.eq.1) dt12= kim_api_get_compute_by_index_f(kimmdl,nm12,error);
             if(errcheck_mltpl(error,msg,12,"",nm12).lt.KIM_STATUS_OK) return
- if(present(nm13).and.k13.eq.1) dt13= kim_api_isit_compute_byi_f(kimmdl,nm13,error);
+ if(present(nm13).and.k13.eq.1) dt13= kim_api_get_compute_by_index_f(kimmdl,nm13,error);
             if(errcheck_mltpl(error,msg,13,"",nm13).lt.KIM_STATUS_OK) return
- if(present(nm14).and.k14.eq.1) dt14= kim_api_isit_compute_byi_f(kimmdl,nm14,error);
+ if(present(nm14).and.k14.eq.1) dt14= kim_api_get_compute_by_index_f(kimmdl,nm14,error);
             if(errcheck_mltpl(error,msg,14,"",nm14).lt.KIM_STATUS_OK) return
- if(present(nm15).and.k15.eq.1) dt15= kim_api_isit_compute_byi_f(kimmdl,nm15,error);
+ if(present(nm15).and.k15.eq.1) dt15= kim_api_get_compute_by_index_f(kimmdl,nm15,error);
             if(errcheck_mltpl(error,msg,15,"",nm15).lt.KIM_STATUS_OK) return
-        end subroutine kim_api_get_compute_byI_mltpl_f
+        end subroutine kim_api_getm_compute_by_index_f
  
-        subroutine kim_api_get_index_multiple_f(kimmdl,error,  nm1,dt1,k1, nm2,dt2,k2, nm3,dt3,k3, nm4,dt4,k4, nm5,dt5,k5,&
+        subroutine kim_api_getm_index_f(kimmdl,error,  nm1,dt1,k1, nm2,dt2,k2, nm3,dt3,k3, nm4,dt4,k4, nm5,dt5,k5,&
          nm6,dt6,k6, nm7,dt7,k7, nm8,dt8,k8, nm9,dt9,k9, nm10,dt10,k10, nm11,dt11,k11, nm12,dt12,k12, nm13,dt13,k13,&
          nm14,dt14,k14, nm15,dt15,k15)
             integer(kind=kim_intptr) :: kimmdl;  integer error
 
-            character(len=40) ::msg="kim_api_get_index_multiple_f"
+            character(len=40) ::msg="kim_api_getm_index_f"
 
             !    declare optional arguments
             character(len=*)          :: nm1;   integer          :: dt1
@@ -1955,14 +1910,14 @@ integer,parameter :: kim_intptr = 8
             if(errcheck_mltpl(error,msg,14,nm14).lt.KIM_STATUS_OK) return
  if(present(nm15).and.k15.eq.1) dt15= kim_api_get_index_f(kimmdl,nm15,error);
             if(errcheck_mltpl(error,msg,15,nm15).lt.KIM_STATUS_OK) return
-	end subroutine kim_api_get_index_multiple_f
+	end subroutine kim_api_getm_index_f
          
-         subroutine kim_api_set_compute_multiple_f(kimmdl,error, nm1,dt1,k1, nm2,dt2,k2, nm3,dt3,k3, nm4,dt4,k4, nm5,dt5,k5,&
+         subroutine kim_api_setm_compute_f(kimmdl,error, nm1,dt1,k1, nm2,dt2,k2, nm3,dt3,k3, nm4,dt4,k4, nm5,dt5,k5,&
          nm6,dt6,k6, nm7,dt7,k7, nm8,dt8,k8, nm9,dt9,k9, nm10,dt10,k10, nm11,dt11,k11, nm12,dt12,k12, nm13,dt13,k13,&
          nm14,dt14,k14, nm15,dt15,k15)
             integer(kind=kim_intptr) :: kimmdl;  integer error
 
-            character(len=40) ::msg="kim_api_set_compute_multiple_f"
+            character(len=40) ::msg="kim_api_setm_compute_f"
 
             !    declare optional arguments
             character(len=*)          :: nm1;   integer          :: dt1
@@ -2085,9 +2040,9 @@ integer,parameter :: kim_intptr = 8
             if(errcheck_mltpl(error,msg,14,nm14).lt.KIM_STATUS_OK) return
  if(present(nm15).and.k15.eq.1) call kim_api_set_compute_f(kimmdl,nm15,dt15,error);
             if(errcheck_mltpl(error,msg,15,nm15).lt.KIM_STATUS_OK) return
-	 end subroutine kim_api_set_compute_multiple_f
+	 end subroutine kim_api_setm_compute_f
          
-        subroutine kim_api_set_compute_byI_mltpl_f(kimmdl,error, nm1,dt1,k1, nm2,dt2,k2, nm3,dt3,k3, nm4,dt4,k4, nm5,dt5,k5,&
+        subroutine kim_api_setm_compute_by_index_f(kimmdl,error, nm1,dt1,k1, nm2,dt2,k2, nm3,dt3,k3, nm4,dt4,k4, nm5,dt5,k5,&
          nm6,dt6,k6, nm7,dt7,k7, nm8,dt8,k8, nm9,dt9,k9, nm10,dt10,k10, nm11,dt11,k11, nm12,dt12,k12, nm13,dt13,k13,&
          nm14,dt14,k14, nm15,dt15,k15)
             integer(kind=kim_intptr) :: kimmdl;  integer error
@@ -2118,7 +2073,7 @@ integer,parameter :: kim_intptr = 8
                if(errcheck_mltpl(KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY,msg,1,"", nm1 ).lt.KIM_STATUS_OK) return
             endif
             if(k1.eq.1) then 
-                call kim_api_set_compute_byi_f(kimmdl,nm1,dt1,error); 
+                call kim_api_set_compute_by_index_f(kimmdl,nm1,dt1,error); 
                 if (errcheck_mltpl(error,msg,1, "", nm1).lt.KIM_STATUS_OK) return
             endif
 
@@ -2187,35 +2142,35 @@ integer,parameter :: kim_intptr = 8
 	               
 	    !process arguments
             error = KIM_STATUS_OK
- if(present(nm2).and.k2.eq.1) call kim_api_set_compute_byi_f(kimmdl,nm2,dt2,error);
+ if(present(nm2).and.k2.eq.1) call kim_api_set_compute_by_index_f(kimmdl,nm2,dt2,error);
             if(errcheck_mltpl(error,msg,2,"",nm2).lt.KIM_STATUS_OK) return
- if(present(nm3).and.k3.eq.1) call kim_api_set_compute_byi_f(kimmdl,nm3,dt3,error);
+ if(present(nm3).and.k3.eq.1) call kim_api_set_compute_by_index_f(kimmdl,nm3,dt3,error);
             if(errcheck_mltpl(error,msg,3,"",nm3).lt.KIM_STATUS_OK) return
- if(present(nm4).and.k4.eq.1) call kim_api_set_compute_byi_f(kimmdl,nm4,dt4,error);
+ if(present(nm4).and.k4.eq.1) call kim_api_set_compute_by_index_f(kimmdl,nm4,dt4,error);
             if(errcheck_mltpl(error,msg,4,"",nm4).lt.KIM_STATUS_OK) return
- if(present(nm5).and.k5.eq.1) call kim_api_set_compute_byi_f(kimmdl,nm5,dt5,error);
+ if(present(nm5).and.k5.eq.1) call kim_api_set_compute_by_index_f(kimmdl,nm5,dt5,error);
             if(errcheck_mltpl(error,msg,5,"",nm5).lt.KIM_STATUS_OK) return
- if(present(nm6).and.k6.eq.1) call kim_api_set_compute_byi_f(kimmdl,nm6,dt6,error);
+ if(present(nm6).and.k6.eq.1) call kim_api_set_compute_by_index_f(kimmdl,nm6,dt6,error);
             if(errcheck_mltpl(error,msg,6,"",nm6).lt.KIM_STATUS_OK) return
- if(present(nm7).and.k7.eq.1) call kim_api_set_compute_byi_f(kimmdl,nm7,dt7,error);
+ if(present(nm7).and.k7.eq.1) call kim_api_set_compute_by_index_f(kimmdl,nm7,dt7,error);
             if(errcheck_mltpl(error,msg,7,"",nm7).lt.KIM_STATUS_OK) return
- if(present(nm8).and.k8.eq.1) call kim_api_set_compute_byi_f(kimmdl,nm8,dt8,error);
+ if(present(nm8).and.k8.eq.1) call kim_api_set_compute_by_index_f(kimmdl,nm8,dt8,error);
             if(errcheck_mltpl(error,msg,8,"",nm8).lt.KIM_STATUS_OK) return
- if(present(nm9).and.k9.eq.1) call kim_api_set_compute_byi_f(kimmdl,nm9,dt9,error);
+ if(present(nm9).and.k9.eq.1) call kim_api_set_compute_by_index_f(kimmdl,nm9,dt9,error);
             if(errcheck_mltpl(error,msg,9,"",nm9).lt.KIM_STATUS_OK) return
- if(present(nm10).and.k10.eq.1) call kim_api_set_compute_byi_f(kimmdl,nm10,dt10,error);
+ if(present(nm10).and.k10.eq.1) call kim_api_set_compute_by_index_f(kimmdl,nm10,dt10,error);
             if(errcheck_mltpl(error,msg,10,"",nm10).lt.KIM_STATUS_OK) return
- if(present(nm11).and.k11.eq.1) call kim_api_set_compute_byi_f(kimmdl,nm11,dt11,error);
+ if(present(nm11).and.k11.eq.1) call kim_api_set_compute_by_index_f(kimmdl,nm11,dt11,error);
             if(errcheck_mltpl(error,msg,11,"",nm11).lt.KIM_STATUS_OK) return
- if(present(nm12).and.k12.eq.1) call kim_api_set_compute_byi_f(kimmdl,nm12,dt12,error);
+ if(present(nm12).and.k12.eq.1) call kim_api_set_compute_by_index_f(kimmdl,nm12,dt12,error);
             if(errcheck_mltpl(error,msg,12,"",nm12).lt.KIM_STATUS_OK) return
- if(present(nm13).and.k13.eq.1) call kim_api_set_compute_byi_f(kimmdl,nm13,dt13,error);
+ if(present(nm13).and.k13.eq.1) call kim_api_set_compute_by_index_f(kimmdl,nm13,dt13,error);
             if(errcheck_mltpl(error,msg,13,"",nm13).lt.KIM_STATUS_OK) return
- if(present(nm14).and.k14.eq.1) call kim_api_set_compute_byi_f(kimmdl,nm14,dt14,error);
+ if(present(nm14).and.k14.eq.1) call kim_api_set_compute_by_index_f(kimmdl,nm14,dt14,error);
             if(errcheck_mltpl(error,msg,14,"",nm14).lt.KIM_STATUS_OK) return
- if(present(nm15).and.k15.eq.1) call kim_api_set_compute_byi_f(kimmdl,nm15,dt15,error);
+ if(present(nm15).and.k15.eq.1) call kim_api_set_compute_by_index_f(kimmdl,nm15,dt15,error);
             if(errcheck_mltpl(error,msg,15,"",nm15).lt.KIM_STATUS_OK) return
-	end subroutine kim_api_set_compute_byI_mltpl_f
+	end subroutine kim_api_setm_compute_by_index_f
 
 
        integer function errcheck_mltpl(error,msgfrom,grarg,nm,ind)
@@ -2237,28 +2192,6 @@ integer,parameter :: kim_intptr = 8
             errcheck_mltpl = KIM_STATUS_FAIL
        end function errcheck_mltpl
 
-       subroutine kim_api_set_compute_f(kimmdl,nm,compute,error)
-	   integer(kind=kim_intptr) :: kimmdl; character(len=*)::nm
-           integer::compute,error
-           error=KIM_STATUS_FAIL
-           if(compute.ne.1 .and. compute.ne.0) then
-		print*,"compute flag must be 1 or 0";return
-	   endif
-           if(compute.eq.1) call kim_api_set2_compute_f(kimmdl,nm,error)
-           if(compute.eq.0) call kim_api_set2_donotcompute_f(kimmdl,nm,error)
-       end subroutine kim_api_set_compute_f
-
-	subroutine kim_api_set_compute_byi_f(kimmdl,i,compute,error)
-	   integer(kind=kim_intptr) :: kimmdl;  integer::i,compute,error
-           error=KIM_STATUS_FAIL
-           if(compute.ne.1 .and. compute.ne.0) then
-		print*,"compute flag must be 1 or 0"
-		return
-	   endif
-           if(compute.eq.1) call kim_api_set2_compute_byi_f(kimmdl,i,error)
-           if(compute.eq.0) call kim_api_set2_donotcompute_byi_f(kimmdl,i,error)
-       end subroutine kim_api_set_compute_byi_f
-
-end module kimservice
+end module kim_api
 
 

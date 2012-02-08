@@ -91,10 +91,10 @@ STEP 4
    Read through these two files (or the corresponding files for the Fortran
    Test).  As you read, you can refer to the following files:
 
-   $KIM_DIR/DOCs/KIMserviceDescription.txt
+   $KIM_DIR/DOCs/KIM_API_Description.txt
    $KIM_DIR/DOCs/standard.kim
 
-   The first file, `KIMserviceDescription.txt', is a reference file which
+   The first file, `KIM_API_Description.txt', is a reference file which
    explains the functioning of the different KIM API service routines which are
    called by the Test code.  The second file, `standard.kim', explains the
    lines that appear in the KIM descriptor file.
@@ -119,7 +119,7 @@ STEP 4
    $KIM_DIR/MODELs/model_Ar_P_MLJ_CLUSTER_C/model_Ar_P_MLJ_CLUSTER_C.kim
 
    Read through these files (or the corresponding files for the Fortran Model)
-   referring to `KIMserviceDescription.txt' and `standard.kim' as explained
+   referring to `KIM_API_Description.txt' and `standard.kim' as explained
    above.
 
    Once you understand how the simple Test and Model described above work,
@@ -198,7 +198,7 @@ openkim-api-vX.X.X-introduction.pdf
      presentation file describing the concepts on which the openkim-api system
      is based.
 
-KIMserviceDescription.txt
+KIM_API_Description.txt
      A link to the file in ../KIM_API which describes the openkim-api functions.
 
 README

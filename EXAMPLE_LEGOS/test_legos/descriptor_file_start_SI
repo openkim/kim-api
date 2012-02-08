@@ -18,7 +18,7 @@ Unit_length      := m
 Unit_energy      := J
 Unit_charge      := C
 Unit_temperature := K
-Unit_time        := sec
+Unit_time        := s
 
 
 #######################################################################################################

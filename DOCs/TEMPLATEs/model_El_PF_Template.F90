@@ -23,7 +23,7 @@
 
 module model_<FILL element name>_PF_<FILL model name>
 
-use KIMservice
+use KIM_API
 implicit none
 
 save
@@ -220,12 +220,12 @@ real*8 energy;             pointer(penergy,energy)
 real*8 coordum(DIM,1);     pointer(pcoor,coordum)
 real*8 forcedum(DIM,1);    pointer(pforce,forcedum)
 real*8 enepotdum(1);       pointer(penepot,enepotdum)
-real*8 boxlength(DIM);     pointer(pboxlength,boxlength)
+real*8 boxSideLengths(DIM);     pointer(pboxSideLengths,boxSideLengths)
 real*8 Rij_list(DIM,1);    pointer(pRij_list,Rij_list)
 integer numContrib;        pointer(pnumContrib,numContrib)
 integer nei1atom(1);       pointer(pnei1atom,nei1atom)
 integer atomTypes(1);      pointer(patomTypes,atomTypes)
-real*8 virialGlobaldum(1); pointer(pvirialGlobal,virialGlobaldum)
+real*8 virialdum(1); pointer(pvirial,virialdum)
 character*64 NBC_Method;   pointer(pNBC_Method,NBC_Method)
 real*8, pointer :: coor(:,:),force(:,:),ene_pot(:),virial_global(:)
 integer IterOrLoca
@@ -250,19 +250,19 @@ endif
 if (index(NBC_Method,"CLUSTER").eq.1) then
    NBC = 0
    HalfOrFull = 1
-elseif (index(NBC_Method,"MI-OPBC-H").eq.1) then
+elseif (index(NBC_Method,"MI_OPBC_H").eq.1) then
    NBC = 1
    HalfOrFull = 1
-elseif (index(NBC_Method,"MI-OPBC-F").eq.1) then
+elseif (index(NBC_Method,"MI_OPBC_F").eq.1) then
    NBC = 1
    HalfOrFull = 2
-elseif (index(NBC_Method,"NEIGH-PURE-H").eq.1) then
+elseif (index(NBC_Method,"NEIGH_PURE_H").eq.1) then
    NBC = 2
    HalfOrFull = 1
-elseif (index(NBC_Method,"NEIGH-PURE-F").eq.1) then
+elseif (index(NBC_Method,"NEIGH_PURE_F").eq.1) then
    NBC = 2
    HalfOrFull = 2
-elseif (index(NBC_Method,"NEIGH-RVEC-F").eq.1) then
+elseif (index(NBC_Method,"NEIGH_RVEC_F").eq.1) then
    NBC = 3
    HalfOrFull = 2
 else
@@ -298,40 +298,40 @@ endif
 ! Check to see if we have been asked to compute the forces, energyperatom,
 ! energy and virial
 !
-call kim_api_get_compute_multiple_f(pkim, ier, &
+call kim_api_getm_compute_f(pkim, ier, &
      "energy",        comp_energy, 1, &
      "forces",        comp_force,  1, &
-     "energyPerAtom", comp_enepot, 1, &
-     "virialGlobal",  comp_virial, 1)
+     "particleEnergy", comp_enepot, 1, &
+     "virial",  comp_virial, 1)
 if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_compute_multiple_f", ier)
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_compute_f", ier)
    return
 endif
 
 ! Unpack data from KIM object
 !
-call kim_api_get_data_multiple_f(pkim, ier, &
-     "numberOfAtoms",           pN,            1,                           &
+call kim_api_getm_data_f(pkim, ier, &
+     "numberOfParticles",           pN,            1,                           &
      "atomTypes",               patomTypes,    1,                           &
      "coordinates",             pcoor,         1,                           &
-     "numberContributingAtoms", pnumContrib,   TRUEFALSE(HalfOrFull.eq.1),  &
-     "boxlength",               pboxlength,    TRUEFALSE(NBC.eq.1),         &
+     "numberContributingParticles", pnumContrib,   TRUEFALSE(HalfOrFull.eq.1),  &
+     "boxSideLengths",               pboxSideLengths,    TRUEFALSE(NBC.eq.1),         &
      "energy",                  penergy,       TRUEFALSE(comp_energy.eq.1), &
      "forces",                  pforce,        TRUEFALSE(comp_force.eq.1),  &
-     "energyPerAtom",           penepot,       TRUEFALSE(comp_enepot.eq.1), &
-     "virialGlobal",            pvirialGlobal, TRUEFALSE(comp_virial.eq.1), &
+     "particleEnergy",           penepot,       TRUEFALSE(comp_enepot.eq.1), &
+     "virial",            pvirial, TRUEFALSE(comp_virial.eq.1), &
      "PARAM_FIXED_irlast",      pirlast,       1,                           &
      "PARAM_FIXED_ielast",      pielast,       1                            &
      )
 if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_multiple_f", ier)
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
    return
 endif
 
-call toRealArrayWithDescriptor2d(coordum,coor,DIM,N)
-if (comp_force.eq.1)  call toRealArrayWithDescriptor2d(forcedum,force,DIM,N)
-if (comp_enepot.eq.1) call toRealArrayWithDescriptor1d(enepotdum,ene_pot,N)
-if (comp_virial.eq.1) call toRealArrayWithDescriptor1d(virialGlobaldum,virial_global,6)
+call KIM_to_F90_real_array_2d(coordum,coor,DIM,N)
+if (comp_force.eq.1)  call KIM_to_F90_real_array_2d(forcedum,force,DIM,N)
+if (comp_enepot.eq.1) call KIM_to_F90_real_array_1d(enepotdum,ene_pot,N)
+if (comp_virial.eq.1) call KIM_to_F90_real_array_1d(virialdum,virial_global,6)
 if (HalfOrFull.eq.1) then
    if (NBC.ne.0) then ! non-CLUSTER cases
       numberContrib = numContrib
@@ -407,7 +407,7 @@ do
 
       ! compute relative position vector
       !
-      if (NBC.ne.3) then                          ! all methods except NEIGH-RVEC-F
+      if (NBC.ne.3) then                          ! all methods except NEIGH_RVEC_F
          Rij(:) = coor(:,j) - coor(:,i)           ! distance vector between i j
       else
          Rij(:) = Rij_list(:,jj)
@@ -416,8 +416,8 @@ do
       ! apply periodic boundary conditions if required
       !
       if (NBC.eq.1) then
-         where ( abs(Rij) .gt. 0.5d0*boxlength )  ! periodic boundary conditions
-            Rij = Rij - sign(boxlength,Rij)       ! applied where needed.
+         where ( abs(Rij) .gt. 0.5d0*boxSideLengths )  ! periodic boundary conditions
+            Rij = Rij - sign(boxSideLengths,Rij)       ! applied where needed.
          end where                                ! 
       endif
 
@@ -499,7 +499,7 @@ do
 
       ! compute relative position vector
       !
-      if (NBC.ne.3) then                          ! all methods except NEIGH-RVEC-F
+      if (NBC.ne.3) then                          ! all methods except NEIGH_RVEC_F
          Rij(:) = coor(:,j) - coor(:,i)           ! distance vector between i j
       else
          Rij(:) = Rij_list(:,jj)
@@ -508,8 +508,8 @@ do
       ! apply periodic boundary conditions if required
       !
       if (NBC.eq.1) then
-         where ( abs(Rij) .gt. 0.5d0*boxlength )  ! periodic boundary conditions
-            Rij = Rij - sign(boxlength,Rij)       ! applied where needed.
+         where ( abs(Rij) .gt. 0.5d0*boxSideLengths )  ! periodic boundary conditions
+            Rij = Rij - sign(boxSideLengths,Rij)       ! applied where needed.
          end where                                ! 
       endif
 
@@ -735,7 +735,7 @@ end module model_<FILL element name>_PF_<FILL model name>
 !-------------------------------------------------------------------------------
 subroutine model_<FILL element name>_PF_<FILL model name>_init(pkim)
 use model_<FILL element name>_PF_<FILL model name>
-use KIMservice
+use KIM_API
 implicit none
 
 !-- Transferred variables
@@ -749,11 +749,11 @@ integer ier, idum
 real*8 cutoff; pointer(pcutoff,cutoff)
 
 ! store function pointers in KIM object
-call kim_api_set_data_multiple_f(pkim, ier, &
+call kim_api_setm_data_f(pkim, ier, &
      "compute", one, loc(Compute_Energy_Forces), 1, &
      "destroy", one, loc(Destroy),               1)
 if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data_multiple_f", ier)
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_setm_data_f", ier)
    stop
 endif
 

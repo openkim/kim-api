@@ -12,8 +12,8 @@
 #include <stdlib.h>
 #include <iostream>
 #include <string.h>
-#include "KIMserviceC.h"
-#include "KIMservice.h"
+#include "KIM_API_C.h"
+#include "KIM_API.h"
 
 using namespace std;
 

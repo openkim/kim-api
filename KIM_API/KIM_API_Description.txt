@@ -32,13 +32,13 @@ STATUS codes: The openkim-api uses a set of defined status code keys to return
 
 C style: KIM_DIR, KIM_DIR_MODELS, KIM_DIR_TESTS 
 
-         These string constants are defined in KIMservice.h and give the
+         These string constants are defined in KIM_API.h and give the
          locations of KIM directories.
 
 
 Fortran style: integer, parameter :: kim_intptr = 4 (or 8)
 
-         This parameter is defined in KIMserviceF.F90 and gives the length of
+         This parameter is defined in KIM_API_F.F90 and gives the length of
          an integer variable that can be used to store CRAY pointers. Depending
          on the system, its value is 4 (on 32 bit machines) or 8 (on 64 bit
          machines).
@@ -85,7 +85,7 @@ Corresponding Fortran style interface:
 
 ******************************************************************************
 
-int KIM_API_init_str_testname(void * kimmdl, char * testname, char * modelname); 
+int KIM_API_string_init(void * kimmdl, char * testname, char * modelname); 
 
     This routine performs the same function as the KIM_API_init() routine.
     However, in this case the argument `testname' is a (long) null (or eof)
@@ -111,15 +111,15 @@ Arguments:
                 of the openkim-api package after editing a Model's .kim file.
 
 Corresponding Fortran style interface:
-        integer function kim_api_init_str_testname_f(kimmdl, testname, modelname)
+        integer function kim_api_string_init_f(kimmdl, testname, modelname)
                         character (len=*) :: testname, modelname
                         integer(kind=kim_intptr) :: kimmdl
-        end function kim_api_init_str_testname_f
+        end function kim_api_string_init_f
 
 
 ******************************************************************************
 
-int KIM_API_preinit(void * kimmdl,  char * modelname); 
+int KIM_API_model_info(void * kimmdl,  char * modelname); 
 
     
     This routine creates the KIM API object that can store every pointer to the
@@ -145,10 +145,10 @@ Arguments:
 
 Corresponding Fortran style interface:
 
-        integer function kim_api_preinit_f(kimmdl, modelname) 
+        integer function kim_api_model_info_f(kimmdl, modelname) 
                         character (len=*) :: modelname 
                         integer(kind=kim_intptr) :: kimmdl 
-        end function kim_api_preinit_f
+        end function kim_api_model_info_f
 
 
 ******************************************************************************
@@ -438,7 +438,7 @@ Corresponding Fortran style interface:
 
 ******************************************************************************
 
-int KIM_API_isit_half_neighbors(void * kimmdl, int * kimerror)
+int KIM_API_is_half_neighbors(void * kimmdl, int * kimerror)
      This routine returns 1 if KIM_API model object setting is for half neighbors 
      or 0 if it is for full neighbors.
 
@@ -454,10 +454,10 @@ Arguments:
         
 Corresponding Fortran style interface:
 
-     function kim_api_isit_half_neighbors_f(kimmdl,kimerror)
+     function kim_api_is_half_neighbors_f(kimmdl,kimerror)
         integer ::kimerror
-        integer(kind=kim_intptr) :: kimmdl, kim_api_isit_half_neighbors_f
-     end function kim_api_isit_half_neighbors_f
+        integer(kind=kim_intptr) :: kimmdl, kim_api_is_half_neighbors_f
+     end function kim_api_is_half_neighbors_f
 
 
 ================== ELEMENT ACCESS METHODS ROUTINES BY NAME ====================
@@ -539,7 +539,7 @@ intptr_t KIM_API_get_size(void *kimmdl, char *nm, int * kimerror);
          The functionality of this routine is the same as KIM_API_get_data,
          except it returns the size of the data in terms of underlying
          elements. (For example, if the data is an array of shape
-         [numberOfAtoms,3], KIM_API_get_size() will return numberOfAtoms*3.)
+         [numberOfParticles,3], KIM_API_get_size() will return numberOfParticles*3.)
          If no data with name (nm) is in the KIM API object, a negative value
          will be returned.
 
@@ -568,7 +568,7 @@ Corresponding Fortran style interface:
 
 ******************************************************************************
 
-intptr_t KIM_API_get_rank_shape(void *kimmdl, char *nm, int * shape, int * kimerror); 
+intptr_t KIM_API_get_shape(void *kimmdl, char *nm, int * shape, int * kimerror); 
 
          This routine returns the rank of nm and provides its shape in the
          argument `shape'.  If the name of the argument is not in the KIM API
@@ -599,17 +599,17 @@ Arguments:
 
 Corresponding Fortran style interface:
 
-        integer(kind=kim_intptr) function kim_api_get_rank_shape_f(kimmdl, nm, shape, kimerror) 
+        integer(kind=kim_intptr) function kim_api_get_shape_f(kimmdl, nm, shape, kimerror) 
                         integer(kind=kim_intptr) :: kimmdl 
                         character (len=*) :: nm 
                         integer :: kimerror
                         integer, pointer :: shape(:)
-        end function kim_api_get_rank_shape_f 
+        end function kim_api_get_shape_f 
 
 
 ******************************************************************************
 
-void  KIM_API_set_rank_shape(void *kimmdl, char *nm, int * shape, int rank, int * kimerror); 
+void  KIM_API_set_shape(void *kimmdl, char *nm, int * shape, int rank, int * kimerror); 
 
       This routine sets the `shape' of nm and checks if the `rank' provided is
       the same as that already stored in the KIM API object.  This will
@@ -647,67 +647,20 @@ Arguments:
 
 Corresponding Fortran style interface:
 
-        subroutine kim_api_set_rank_shape_f(kimmdl, nm, shape, rank, kimerror) 
+        subroutine kim_api_set_shape_f(kimmdl, nm, shape, rank, kimerror) 
                         integer(kind=kim_intptr) :: kimmdl 
                         character (len=*) :: nm 
                         integer :: rank, kimerror, shape(rank)
-        subroutine kim_api_set_rank_shape_f 
+        subroutine kim_api_set_shape_f 
 
 
 ******************************************************************************
 
-void KIM_API_set2_compute(void *kimmdl, char *nm, int * kimerror); 
+void KIM_API_set_compute(void *kimmdl, char *nm, int flag, int * kimerror); 
 
-     This routine sets the flag of the argument to `compute'.  This flag is
-     used when the corresponding argument is listed as `optional' by the Model.
-     In that case, setting this flag to `compute' informs the Model that it
-     should be computed.
-
-     Notes: 
-
-     (1) The Test is responsible for ensuring that memory has been allocated
-         for the argument being requested.
-
-     (2) All arguments that appear in the descriptor (.kim) files of both the
-         Test and Model are initially set to `compute'.  Therefore, this
-         routine would normally only be called if a KIM_API_set2_donotcompute()
-         call had been previously made for a given argument and the Test now
-         wishes to reinstate the `compute' setting.
-
-Arguments:
-
-        void * kimmdl 
-                pointer to KIM_API_model object (in C++ style, the definition 
-                will be (KIM_API_model *)).
-        
-        char *nm
-                null terminated string is the name of the argument field
-                exactly as it appears in the .kim descriptor file.
-
-        int * kimerror
-                error code: KIM_STATUS_OK   -- successful completion, 
-                            KIM_STATUS_FAIL -- unsuccessful
-        
-
-Corresponding Fortran style interface:
-
-        subroutine kim_api_set2_compute_f(kimmdl, nm, kimerror) 
-                        integer(kind=kim_intptr) :: kimmdl 
-                        character (len=*) :: nm
-                        integer :: kimerror
-        end subroutine kim_api_set2_compute_f
-
-
-******************************************************************************
-
-void KIM_API_set2_donotcompute(void *kimmdl, char *nm, int * kimerror); 
-
-     This routine sets the flag of the argument to `donotcompute'.  This flag
-     is used when the corresponding argument is listed as `optional' by the
-     Model.  In that case, setting this flag to `donotcompute' informs the
-     Model that it should *not* be computed.
-
-     Note: See notes under KIM_API_set2_compute() above.
+    This routine sets the status of the `compute' flag.  If the argument can
+    be optionally computed, a Model can check if a Test wants the argument to
+    be computed.
 
 Arguments:
 
@@ -716,25 +669,28 @@ Arguments:
                 will be (KIM_API_model *)).
         
         char *nm
-                null terminated string is the name of the argument field
+                null terminated string is the name of the argument field,
                 exactly as it appears in the .kim descriptor file.
 
+        int flag
+                0 or 1 to turn off compute or turn on compute, respectively.
+
         int * kimerror
-                error code: KIM_STATUS_OF   -- successful completion,
+                error code: KIM_STATUS_OK   -- successful completion, 
                             KIM_STATUS_FAIL -- unsuccessful
 
 Corresponding Fortran style interface:
 
-        subroutine kim_api_set2_donotcompute_f(kimmdl, nm, kimerror) 
+        subroutine kim_api_set_compute_f(kimmdl, nm, flag, kimerror) 
                         integer(kind=kim_intptr) :: kimmdl 
-                        character (len=*) :: nm 
-                        integer :: kimerror
-        end subroutine kim_api_set2_donotcompute_f
+                        character (len=*) :: nm
+                        integer :: flag,kimerror
+        end subroutine kim_api_set_compute_f
 
 
 ******************************************************************************
 
-int KIM_API_isit_compute(void *kimmdl, char *nm, int * kimerror); 
+int KIM_API_get_compute(void *kimmdl, char *nm, int * kimerror); 
 
     This routine checks the status of the `compute' flag.  If the argument can
     be optionally computed, a Model can check if a Test wants the argument to
@@ -756,11 +712,11 @@ Arguments:
 
 Corresponding Fortran style interface:
 
-        integer function kim_api_isit_compute_f(kimmdl, nm, kimerror) 
+        integer function kim_api_get_compute_f(kimmdl, nm, kimerror) 
                         integer(kind=kim_intptr) :: kimmdl 
                         character (len=*) :: nm
                         integer :: kimerror
-        end function kim_api_isit_compute_f
+        end function kim_api_get_compute_f
 
 
 ******************************************************************************
@@ -867,10 +823,10 @@ Corresponding Fortran style interface:
 
 ******************************************************************************
 
-char * KIM_API_get_listAtomTypes(void * kimmdl, int * nATypes, int * error);
+char * KIM_API_get_partcl_types(void * kimmdl, int * nATypes, int * error);
 
        This routine returns a pointer to an array of fixed size text strings.
-       (The text strings are of size KEY_CHAR_LENGTH, which is a constant
+       (The text strings are of size KIM_KEY_STRING_LENGTH, which is a constant
        defined by the KIM API.)  The memory pointed to by this pointer is
        allocated by the routine, but should be released by the user to avoid a
        memory leak.  Each string is an atom/particle symbol. In the case where
@@ -891,19 +847,19 @@ Arguments:
 
 Corresponding Fortran style interface:
 
-        function kim_api_get_listatomtypes_f(kimmdl, natypes, error)
-            integer(kind=kim_intptr) :: kimmdl, kim_api_get_listatomtypes
+        function kim_api_get_partcl_types_f(kimmdl, natypes, error)
+            integer(kind=kim_intptr) :: kimmdl, kim_api_get_partcl_types
             integer :: natypes, error
-        end function kim_api_get_listatomtypes_f
+        end function kim_api_get_partcl_types_f
 
 
 ******************************************************************************
 
-char * KIM_API_get_listParams(void * kimmdl, int * nVpar, int * error);
+char * KIM_API_get_params(void * kimmdl, int * nVpar, int * error);
 
        This routine returns a pointer to an array of fixed size text strings,
        each string is the name of a Model parameter argument.  (The text
-       strings are of size KEY_CHAR_LENGTH, which is a constant defined by the
+       strings are of size KIM_KEY_STRING_LENGTH, which is a constant defined by the
        KIM API.)  The memory pointed to by this pointer is allocated by the
        routine, but should be released by the user to avoid a memory leak.  A
        Model parameter argument is one whose name starts with PARAM_FREE_ or
@@ -926,19 +882,19 @@ Arguments:
 
 Corresponding Fortran style interface:
 
-        function kim_api_get_listparams_f(kimmdl, nvpar, error)
-            integer(kind=kim_intptr) :: kimmdl, kim_api_get_listparams
+        function kim_api_get_params_f(kimmdl, nvpar, error)
+            integer(kind=kim_intptr) :: kimmdl, kim_api_get_params
             integer :: nvpar, error
-        end function kim_api_get_listparams_f
+        end function kim_api_get_params_f
 
 
 ******************************************************************************
 
-char * KIM_API_get_listFreeParams(void * kimmdl, int * nVpar, int * error);
+char * KIM_API_get_free_params(void * kimmdl, int * nVpar, int * error);
 
        This routine returns a pointer to an array of fixed size text strings,
        each string is the name of a Model FREE parameter argument.  (The text
-       strings are of size KEY_CHAR_LENGTH, which is a constant defined by the
+       strings are of size KIM_KEY_STRING_LENGTH, which is a constant defined by the
        KIM API.)  The memory pointed to by this pointer is allocated by the
        routine, but should be released by the user to avoid a memory leak.  A
        Model FREE parameter argument is one whose name starts with PARAM_FREE_.
@@ -961,19 +917,19 @@ Arguments:
 
 Corresponding Fortran style interface:
 
-        function kim_api_get_listfreeparams_f(kimmdl, nvpar, error)
-            integer(kind=kim_intptr) :: kimmdl, kim_api_get_listfreeparams
+        function kim_api_get_free_params_f(kimmdl, nvpar, error)
+            integer(kind=kim_intptr) :: kimmdl, kim_api_get_free_params
             integer :: nvpar, error
-        end function kim_api_get_listfreeparams_f
+        end function kim_api_get_free_params_f
 
 
 ******************************************************************************
 
-char * KIM_API_get_listFixedParams(void * kimmdl, int * nVpar, int * error);
+char * KIM_API_get_fixed_params(void * kimmdl, int * nVpar, int * error);
 
        This routine returns a pointer to an array of fixed size text strings,
        each string is the name of a Model FIXED parameter argument.  (The text
-       strings are of size KEY_CHAR_LENGTH, which is a constant defined by the
+       strings are of size KIM_KEY_STRING_LENGTH, which is a constant defined by the
        KIM API.)  The memory pointed to by this pointer is allocated by the
        routine, but should be released by the user to avoid a memory leak.  A
        Model FIXED parameter argument is one whose name starts with
@@ -996,10 +952,10 @@ Arguments:
 
 Corresponding Fortran style interface:
 
-        function kim_api_get_listfixedparams_f(kimmdl, nvpar, error)
-            integer(kind=kim_intptr) :: kimmdl, kim_api_get_listfixedparams
+        function kim_api_get_fixed_params_f(kimmdl, nvpar, error)
+            integer(kind=kim_intptr) :: kimmdl, kim_api_get_fixed_params
             integer :: nvpar, error
-        end function kim_api_get_listfixedparams_f
+        end function kim_api_get_fixed_params_f
 
 
 ******************************************************************************
@@ -1007,7 +963,7 @@ Corresponding Fortran style interface:
 char * KIM_API_get_NBC_method(void *kimmdl, int * error);
 
        This routine returns a pointer to a fixed size text string.  (The text
-       string is of size KEY_CHAR_LENGTH, which is a constant defined by the
+       string is of size KIM_KEY_STRING_LENGTH, which is a constant defined by the
        KIM API.)  The memory pointed to by this pointer is allocated by the
        routine, but should be released by the user to avoid a memory leak.  The
        string is the NBC (Neighbor list and Boundary Conditions) method in use
@@ -1033,7 +989,7 @@ Corresponding Fortran style interface:
 
 ******************************************************************************
 
-int KIM_API_get_aTypeCode(void * kimmdl, char* atom, int * error);
+int KIM_API_get_partcl_type_code(void * kimmdl, char* atom, int * error);
 
     This routine returns the atom type id for a given atom symbol, as defined o
     by the Model associated with the KIM API object.  The routine returns -2 if
@@ -1063,11 +1019,11 @@ Arguments:
 
 Corresponding Fortran style interface: 
 
-        integer function kim_api_get_atypecode_f(kimmdl, nm,lenstr, error)
+        integer function kim_api_get_partcl_type_code_f(kimmdl, nm,lenstr, error)
                 integer(kind=kim_intptr) :: kimmdl
                 character (len=*) :: nm
                 integer :: error, lenstr ! length of the string returned
-        end function kim_api_get_atypecode_f
+        end function kim_api_get_partcl_type_code_f
 
 ******************************************************************************
 
@@ -1202,7 +1158,7 @@ Arguments:
                 position vectors (of `atom' relative to the neighbor, i.e., 
                 Rij = X_j - X_i) of the neighbors of an atom (including
                 boundary conditions if applied) if they have been computed (NBC
-                method NEIGH-RVEC-F only -- see standard.kim for more
+                method NEIGH_RVEC_F only -- see standard.kim for more
                 information on NBC methods).  Has NULL value otherwise (all
                 other NBC methods).
 
@@ -1220,18 +1176,18 @@ Corresponding Fortran style interface:
 
 ******************************************************************************
 
-void KIM_API_process_d1Edr(void **kimmdl, double * dE, double * r, double **dx,&
+void KIM_API_process_dEdr(void **kimmdl, double * dE, double * r, double **dx,&
                            int *i, int *j, int *errorcode);
                 By using that function quantities like virial, stress etc... can be computed. 
                 The model does not need know how exactly it is computed. In low level loop
                 for each pair of atom (i j) the model organize call to that routine.
-                In general the test will provide the implementation of process_d1Edr 
+                In general the test will provide the implementation of process_dEdr 
                 routine (same interface) as pointer stored in KIM API object.
-                   Test can opt for providing the implementation of process_d1Edr 
-                if it needs only standard quantities  (virialGlobal, virialPerAtom and stress). 
-                In that case KIM implementation of process_d1Edr will be called.
+                   Test can opt for providing the implementation of process_dEdr 
+                if it needs only standard quantities  (virial, particleVirial and stress). 
+                In that case KIM implementation of process_dEdr will be called.
                 Essentially, KIM_API_d1Edr is a wrapper routine, that checks  logic,decides what
-                process_d1Edr to call , and also converts i and j from ZeroBasedList to OneBaseList
+                process_dEdr to call , and also converts i and j from ZeroBasedList to OneBaseList
                 (or vise verse) if needed.
 
 Arguments:
@@ -1260,27 +1216,27 @@ Arguments:
               error code returned (KIM_STATUSS_OK if successful completion)
 
 Corresponding Fortran style interface:
-        subroutine kim_api_process_d1edr_f(kimmdl,de,r,dx,i,j,errorcode)
+        subroutine kim_api_process_dedr_f(kimmdl,de,r,dx,i,j,errorcode)
 		integer(kind=kim_intptr) :: kimmdl,dx  
 		real*8 :: de,r
 		integer ::i,j,errorcode
-        end subroutine kim_api_process_d1edr_f
+        end subroutine kim_api_process_dedr_f
 
 ******************************************************************************
 
-void KIM_API_process_d2Edr(void **kimmdl, double * dE, double ** r, double **dx,&
+void KIM_API_process_d2Edr2(void **kimmdl, double * dE, double ** r, double **dx,&
                            int **i, int **j, int *errorcode);
                 By using that function quantities (that requires second derivative) like stress
                 can be computed. The model does not need know how exactly it is computed. 
                 In low level loop,  the model supplys contribution to the d^2E/(dr_kl dr_mn) 
                 and organize call to that routine. Indexes k,l,m and are fixed.
-                In general the test will provide the implementation of process_d2Edr 
+                In general the test will provide the implementation of process_d2Edr2 
                 routine (same interface) as pointer stored in KIM API object.
-                   Test can opt for providing the implementation of process_d2Edr 
+                   Test can opt for providing the implementation of process_d2Edr2 
                 if it needs only standard quantities  (like stress). 
-                In that case KIM implementation of process_d2Edr will be called.
+                In that case KIM implementation of process_d2Edr2 will be called.
                 Essentially, KIM_API_d2Edr is a wrapper routine, that checks  logic,decides what
-                process_d2Edr to call , and also converts i and j from ZeroBasedList to OneBaseList
+                process_d2Edr2 to call , and also converts i and j from ZeroBasedList to OneBaseList
                 (or vise verse) if needed.
 
 Arguments:
@@ -1311,15 +1267,15 @@ Arguments:
 
 
 Corresponding Fortran style interface:
-        subroutine kim_api_process_d2edr_f(kimmdl,de,r,dx,i,j,errorcode)
+        subroutine kim_api_process_d2edr2_f(kimmdl,de,r,dx,i,j,errorcode)
 		integer(kind=kim_intptr) :: kimmdl,dx 
 		real*8 :: de,r
 		integer ::i,j,errorcode
-        end subroutine kim_api_process_d2edr_f
+        end subroutine kim_api_process_d2edr2_f
 
 ******************************************************************************
 
-char * KIM_API_status_msg(int status_code)
+char * KIM_API_get_status_msg(int status_code)
     This routine returns null terminated character string that describes status
     of error code. The error code is the error code set by other kim service
     routines executions.
@@ -1331,10 +1287,10 @@ char * KIM_API_status_msg(int status_code)
 
 Corresponding Fortran style interface:
 
-       function kim_api_status_msg_f(errorcode)
+       function kim_api_get_status_msg_f(errorcode)
                 integer :: errorcode
-                integer(kind=kim_intptr) :: kim_api_status_msg_f
-       end function kim_api_status_msg_f
+                integer(kind=kim_intptr) :: kim_api_get_status_msg_f
+       end function kim_api_get_status_msg_f
 
 
 ******************************************************************************
@@ -1362,17 +1318,17 @@ Corresponding Fortran style interface:
 
 ******************************************************************************
 
-double   KIM_API_get_convert_scale( char * u_from, char * u_to, int * error)
+double   KIM_API_get_scale_conversion( char * u_from, char * u_to, int * error)
 
       This routine get conversion scale factor from one unit to another.
-      For example, get_convert_scale("cm","m",&error) will return 
+      For example, get_scale_conversion("cm","m",&error) will return 
       conversion from "cm" to "m". Both u_from and u_to must be from the same 
       supported base unit: 
       for Unit_lenght that should be:  "A" , "Bohr" , "cm" , "m" or "nm"
-      for Unit_energy that should be: "amu*A^2/(ps)^2","erg","eV","Hartree","J","Kcal/mole" or " kJ/mole"
+      for Unit_energy that should be: "amu*A^2/(ps)^2","erg","eV","Hartree","J","kcal/mol" or " kJ/mol"
       for Unit_charge that should be: "C" ,        "e" or  "statC"
       for Unit_temperature that should be:"K"
-      for Unit_time that should be: "fs" ,      "ps" or  "sec"
+      for Unit_time that should be: "fs" , "ps", "ns" or "s"
       it will return negative scale in case of error.
 
      Arguments: 
@@ -1385,14 +1341,14 @@ double   KIM_API_get_convert_scale( char * u_from, char * u_to, int * error)
                      
 Corresponding Fortran style interface:
 
-      real*8 function kim_api_get_convert_scale_f(from,to,error)
+      real*8 function kim_api_get_scale_conversion_f(from,to,error)
                 integer:: error
 		character (len=*) ::from,to
-      end function kim_api_get_convert_scale_f
+      end function kim_api_get_scale_conversion_f
                
 ******************************************************************************
 
-int    KIM_API_get_Unit_handling(void * kimmdl, int * error)
+int    KIM_API_get_unit_handling(void * kimmdl, int * error)
       Returns 1 if Unit_Handling is flexible, 0 otherwise.
       (No error code here since no room for error here.)
       Arguments: 
@@ -1410,7 +1366,7 @@ Corresponding Fortran style interface:
 
 ******************************************************************************
 
-char * KIM_API_get_Unit_length(void *kimmdl, int * error)
+char * KIM_API_get_unit_length(void *kimmdl, int * error)
 
      Returns current setting for KIM_API_model object for base Unit_length .
      
@@ -1429,7 +1385,7 @@ Corresponding Fortran style interface:
 
 ******************************************************************************
 
-char * KIM_API_get_Unit_energy(void *kimmdl, int * error)
+char * KIM_API_get_unit_energy(void *kimmdl, int * error)
 
      Returns current setting for KIM_API_model object for base Unit_energy .
       
@@ -1448,7 +1404,7 @@ Corresponding Fortran style interface:
 
 ******************************************************************************
 
-char * KIM_API_get_Unit_charge(void *kimmdl, int * error)
+char * KIM_API_get_unit_charge(void *kimmdl, int * error)
 
      Returns current setting for KIM_API_model object for base Unit_charge .
       
@@ -1467,7 +1423,7 @@ Corresponding Fortran style interface:
 
 ******************************************************************************
 
-char * KIM_API_get_Unit_temperature(void *kimmdl, int * error)
+char * KIM_API_get_unit_temperature(void *kimmdl, int * error)
 
      Returns current setting for KIM_API_model object for base Unit_temperature .
      
@@ -1487,7 +1443,7 @@ Corresponding Fortran style interface:
 
 ******************************************************************************
 
-char * KIM_API_get_Unit_time(void *kimmdl, int * error);     
+char * KIM_API_get_unit_time(void *kimmdl, int * error);     
        Returns current setting for KIM_API_model object for base Unit_time .
      
       Arguments: 
@@ -1505,7 +1461,7 @@ Corresponding Fortran style interface:
 
 ******************************************************************************
 
-double KIM_API_convert_unit_from(void * kimmdl,
+double KIM_API_convert_to_act_unit(void * kimmdl,
                                 char * length,
                                 char * energy,
                                 char * charge,
@@ -1551,13 +1507,13 @@ double KIM_API_convert_unit_from(void * kimmdl,
 
 Corresponding Fortran style interface:
         
-       real*8 function kim_api_convert_unit_from_f(kimmdl,length,energy,charge,temperature,time, &
+       real*8 function kim_api_convert_to_act_unit_f(kimmdl,length,energy,charge,temperature,time, &
            length_exponent, energy_exponent, charge_exponent, temperature_exponent, time_exponent, error)
                 integer::error
                 integer(kind=kim_intptr) :: kimmdl
                 real*8 ::length_exponent, energy_exponent, charge_exponent, temperature_exponent, time_exponent
                 character (len=*) ::length,energy,charge,temperature,time
-        end function kim_api_convert_unit_from_f
+        end function kim_api_convert_to_act_unit_f
 
 ******************************************************************************
 
@@ -1586,19 +1542,15 @@ above.
 
 The prototypes of the supported "by index" routines are:
 
-void KIM_API_set_data_byI(void *kimmdl, int I, intptr_t size, void *dt, int *kimerror); 
+void KIM_API_set_data_by_index(void *kimmdl, int I, intptr_t size, void *dt, int *kimerror); 
 
-void * KIM_API_get_data_byI(void *kimmdl, int I, int *kimerror); 
+void * KIM_API_get_data_by_index(void *kimmdl, int I, int *kimerror); 
 
-intptr_t KIM_API_get_size_byI(void *kimmdl, int I, int *kimerror); 
+intptr_t KIM_API_get_size_by_index(void *kimmdl, int I, int *kimerror); 
 
-intptr_t KIM_API_get_rank_shape_byI(void *kimmdl, int I, int * shape, int *kimerror); 
+intptr_t KIM_API_get_shape_by_index(void *kimmdl, int I, int * shape, int *kimerror); 
 
-void KIM_API_set2_compute_byI(void *kimmdl, int I, int *kimerror); 
-
-void KIM_API_set2_donotcompute_byI(void *kimmdl, int I, int *kimerror); 
-
-int KIM_API_isit_compute_byI(void *kimmdl, int I, int *kimerror);
+int KIM_API_get_compute_by_index(void *kimmdl, int I, int *kimerror);
 
 
 
@@ -1610,10 +1562,10 @@ int KIM_API_isit_compute_byI(void *kimmdl, int I, int *kimerror);
     In order to simplify access to KIM API object, MULTIPLE ACCESS ROUTINES are among KIM
 service methods.  There are 9 of those routines:
 
-c-style: KIM_API_set_data_multiple, KIM_API_get_data_byI_multiple,KIM_API_set_compute_multiple, 
-         KIM_API_get_compute_multiple, KIM_API_get_index_multiple, KIM_API_set_data_byI_multiple,
-         KIM_API_get_data_byI_multiple, KIM_API_set_compute_byI_multiple
-         KIM_API_get_compute_byI_multiple
+c-style: KIM_API_setm_data, KIM_API_getm_data_by_index,KIM_API_setm_compute, 
+         KIM_API_getm_compute, KIM_API_getm_index, KIM_API_setm_data_by_index,
+         KIM_API_getm_data_by_index, KIM_API_setm_compute_by_index
+         KIM_API_getm_compute_by_index
          
          All these routines provide access to the multiple KIM API fields at once.
          These routines have uniform interface:
@@ -1632,43 +1584,43 @@ c-style: KIM_API_set_data_multiple, KIM_API_get_data_byI_multiple,KIM_API_set_co
          in the group is always integer variable group key (gkey), That variable can be 1 or 0 and tells whether 
          action by kimservice routines should be performed or ignored:
   
-         1.   void KIM_API_set_data_multiple(void *pkim, int *err, int numargs, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
+         1.   void KIM_API_setm_data(void *pkim, int *err, int numargs, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
 
               VARIABLE_GROUP here has 4 variables:         char *name,   intptr_t size,  void *data, int gkey
               See KIM_API_get_data for details
 
-         2.   void KIM_API_set_data_byI_multiple(void *pkim, int *err, int numargs, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
+         2.   void KIM_API_setm_data_by_index(void *pkim, int *err, int numargs, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
               VARIABLE_GROUP here has 4 variables:         int index,  intptr_t size,  void *data, int gkey
-              See KIM_API_get_data_byI for details
+              See KIM_API_get_data_by_index for details
 
-         3.   void KIM_API_get_data_multiple(void *pkim, int *err, int numargs, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
+         3.   void KIM_API_getm_data(void *pkim, int *err, int numargs, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
               VARIABLE_GROUP here has 3 variables:         char *name,   void **data, int gkey
 
-         4.   void KIM_API_get_data_byI_multiple(void *pkim, int *err, int numargs, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
+         4.   void KIM_API_getm_data_by_index(void *pkim, int *err, int numargs, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
               VARIABLE_GROUP here has 3 variables:          int index,   void **data, int gkey
 
-         5.   void KIM_API_set_compute_multiple(void *pkim, int *err, int numargs, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
+         5.   void KIM_API_setm_compute(void *pkim, int *err, int numargs, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
               VARIABLE_GROUP here has 3 variables:         char *name,   int compute, int gkey
 
-         6.   void KIM_API_get_compute_multiple(void *pkim, int *err, int numargs, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
+         6.   void KIM_API_getm_compute(void *pkim, int *err, int numargs, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
               VARIABLE_GROUP here has 3 variables:         char *name,   int *compute, int gkey
   
-         7.   void KIM_API_set_compute_byI_multiple(void *pkim, int *err, int numargs, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
+         7.   void KIM_API_setm_compute_by_index(void *pkim, int *err, int numargs, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
               VARIABLE_GROUP here has 3 variables:          int index,   int compute, int gkey
 
-         8.   void KIM_API_get_compute_byI_multiple(void *pkim, int *err, int numargs, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
+         8.   void KIM_API_getm_compute_by_index(void *pkim, int *err, int numargs, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
               VARIABLE_GROUP here has 3 variables:          int index,   int *compute, int gkey
 
-         9.   void KIM_API_get_index_multiple(void *pkim, int *err, int numargs, VARIABLE_GROUP1,[VARIABLE_GROUP2,...] );
+         9.   void KIM_API_getm_index(void *pkim, int *err, int numargs, VARIABLE_GROUP1,[VARIABLE_GROUP2,...] );
               VARIABLE_GROUP here has 3 variables:         char *name,    int *index, int gkey
 
         error code (second argument) in those routines will be KIM_STATUS_OK if it is success, 
         otherwise KIM_STATUS_FAIL (or other error codes < 1).
  
-f90-style:  KIM_API_set_data_multiple_f, KIM_API_get_data_byI_multiple_f,KIM_API_set_compute_multiple_f, 
-         KIM_API_get_compute_multiple_f, KIM_API_get_index_multiple_f, KIM_API_set_data_byI_multiple_f,
-         KIM_API_get_data_byI_multiple_f, KIM_API_set_compute_byI_mltpl_f
-         KIM_API_get_compute_byI_mltpl_f  
+f90-style:  KIM_API_setm_data_f, KIM_API_getm_data_by_index_f,KIM_API_setm_compute_f, 
+         KIM_API_getm_compute_f, KIM_API_getm_index_f, KIM_API_setm_data_by_index_f,
+         KIM_API_getm_data_by_index_f, KIM_API_setm_compute_by_index_f
+         KIM_API_getm_compute_by_index_f  
          (NOTE: FORTRAN is case insensitive, for 2 routines mltpl instead of multiple -- FORTRAN names limited to 31 characters)
          
          All these routines provide access to the multiple KIM API fields at once.
@@ -1689,7 +1641,7 @@ f90-style:  KIM_API_set_data_multiple_f, KIM_API_get_data_byI_multiple_f,KIM_API
          in the group is always integer variable group key (gkey). That variable can be 1 or 0 and tells whether 
          action by kimservice routines should be performed or ignored:
   
-         1.   void KIM_API_set_data_multiple_f(pkim, err, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
+         1.   void KIM_API_setm_data_f(pkim, err, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
 
               VARIABLE_GROUP has 4 variables: 
                                   character(len=*)       :: name
@@ -1698,51 +1650,51 @@ f90-style:  KIM_API_set_data_multiple_f, KIM_API_get_data_byI_multiple_f,KIM_API
                                   integer                :: gkey
               See KIM_API_get_data_f for details
 
-         2.   void KIM_API_set_data_byI_multiple(pkim, err, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
+         2.   void KIM_API_setm_data_by_index(pkim, err, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
               VARIABLE_GROUP has 4 variables:
                                   integer                :: index
                                   integer(kind=kimintptr):: size
                                   integer(kind=kimintptr):: data
                                   integer                :: gkey
-              See KIM_API_get_data_byI for details
+              See KIM_API_get_data_by_index for details
 
-         3.   void KIM_API_get_data_multiple(pkim, err, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
+         3.   void KIM_API_getm_data(pkim, err, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
               VARIABLE_GROUP here has 3 variables: 
                                   character(len=*)       :: name
                                   integer(kind=kimintptr):: data
                                   integer                :: gkey
 
-         4.   void KIM_API_get_data_byI_multiple(pkim, err, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
+         4.   void KIM_API_getm_data_by_index(pkim, err, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
               VARIABLE_GROUP has 3 variables:
                                   integer                :: index
                                   integer(kind=kimintptr):: size, data
                                   integer                :: gkey
 
-         5.   void KIM_API_set_compute_multiple(pkim, err, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
+         5.   void KIM_API_setm_compute(pkim, err, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
               VARIABLE_GROUP has 3 variables:
                                   character(len=*)       :: name
                                   integer                :: compute
                                   integer                :: gkey
 
-         6.   void KIM_API_get_compute_multiple(pkim, err, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
+         6.   void KIM_API_getm_compute(pkim, err, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
               VARIABLE_GROUP has 3 variables:
                                   character(len=*)       :: name
                                   integer                :: compute
                                   integer                :: gkey
   
-         7.   void KIM_API_set_compute_byI_multiple(pkim, err, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
+         7.   void KIM_API_setm_compute_by_index(pkim, err, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
               VARIABLE_GROUP has 3 variables:
                                   integer                :: index
                                   integer                :: compute
                                   integer                :: gkey
 
-         8.   void KIM_API_get_compute_byI_multiple(pkim, err, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
+         8.   void KIM_API_getm_compute_by_index(pkim, err, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
               VARIABLE_GROUP here has 3 variables:
                                   integer                :: index
                                   integer                :: compute
                                   integer                :: gkey
 
-         9.   void KIM_API_get_index_multiple(pkim, err, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
+         9.   void KIM_API_getm_index(pkim, err, VARIABLE_GROUP1,[VARIABLE_GROUP2,...]);
               VARIABLE_GROUP has 3 variables: 
                                   character(len=*)       :: name
                                   integer                :: index
@@ -1765,21 +1717,21 @@ The following subroutine converts a C-type array to a Fortran 90 type array
 (pointer).  For example the C-type array can be a pointee of a cray pointer.
 Using this routine, one can cast a cray pointer to a Fortran 90 array pointer.
 
-       subroutine toRealArrayWithDescriptor2d(ctypeArray, ArrayWithDescriptor, n, m)
+       subroutine KIM_to_F90_real_array_2d(ctypeArray, ArrayWithDescriptor, n, m)
                         implicit none 
                         integer :: n, m 
                         real*8, target  :: ctypeArray(n,m) 
                         real*8, pointer :: ArrayWithDescriptor(:,:) 
-       end subroutine toRealArrayWithDescriptor2d
+       end subroutine KIM_to_F90_real_array_2d
 
 The following routines exist for casting cray pointers to different shapes 
 and types of Fortran 90 style arrays:
 
-toIntegerArrayWithDescriptor2d(ctypeArray, ArrayWithDescriptor, n, m)
+KIM_to_F90_int_array_2d(ctypeArray, ArrayWithDescriptor, n, m)
 
-toIntegerArrayWithDescriptor1d(ctypeArray, ArrayWithDescriptor, n)
+KIM_to_F90_int_array_1d(ctypeArray, ArrayWithDescriptor, n)
 
-toRealArrayWithDescriptor1d(ctypeArray, ArrayWithDescriptor, n)
+KIM_to_F90_real_array_1d(ctypeArray, ArrayWithDescriptor, n)
 
 
-*** END of KIMserviceDescription.txt file ***
+*** END of KIM_API_Description.txt file ***

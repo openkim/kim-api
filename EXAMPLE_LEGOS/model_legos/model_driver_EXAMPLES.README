@@ -14,18 +14,18 @@ Model Driver name                  Language  NBC             Loca/Iter  Half/Ful
                                                                                     parameters
 ----------------------------------------------------------------------------------------------
 
-model_driver_P_LJ                  F90       NEIGH-RVEC-F    Iterator   Full        YES
-                                             NEIGH-PURE-H    Locator    Half
-                                             NEIGH-PURE-F
-                                             MI-OPBC-H
-                                             MI-OPBC-F
+model_driver_P_LJ                  F90       NEIGH_RVEC_F    Iterator   Full        YES
+                                             NEIGH_PURE_H    Locator    Half
+                                             NEIGH_PURE_F
+                                             MI_OPBC_H
+                                             MI_OPBC_F
                                              CLUSTER
 
-model_driver_P_Morse               C         NEIGH-RVEC-F    Iterator   Full        YES
-                                             NEIGH-PURE-H    Locator    Half
-                                             NEIGH-PURE-F
-                                             MI-OPBC-H
-                                             MI-OPBC-F
+model_driver_P_Morse               C         NEIGH_RVEC_F    Iterator   Full        YES
+                                             NEIGH_PURE_H    Locator    Half
+                                             NEIGH_PURE_F
+                                             MI_OPBC_H
+                                             MI_OPBC_F
                                              CLUSTER
 ---------------------------------------------------------------------------------------------
 

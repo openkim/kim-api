@@ -4,15 +4,15 @@
        idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_nbc_method_f", ier)
        return
     endif
-    if (index(NBC_Method,"NEIGH-PURE-H").eq.1) then
+    if (index(NBC_Method,"NEIGH_PURE_H").eq.1) then
        HalfOrFull = 1
-       ! get numberContributingAtoms
-       pnumContrib = kim_api_get_data_f(pkim,"numberContributingAtoms",ier)
+       ! get numberContributingParticles
+       pnumContrib = kim_api_get_data_f(pkim,"numberContributingParticles",ier)
        if (ier.lt.KIM_STATUS_OK) then
           idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
           return
        endif
-    elseif (index(NBC_Method,"NEIGH-PURE-F").eq.1) then
+    elseif (index(NBC_Method,"NEIGH_PURE_F").eq.1) then
        HalfOrFull = 2
     else
        ier = KIM_STATUS_FAIL
@@ -23,7 +23,7 @@
 
     !  Compute energy and forces
     !
-    do i = 1,numberOfAtoms
+    do i = 1,numberOfParticles
        
        ! Get neighbors for atom i
        !

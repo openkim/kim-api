@@ -22,7 +22,7 @@
 !
 !-------------------------------------------------------------------------------
 program TEST_NAME_STR
-  use KIMservice
+  use KIM_API
   implicit none
 
   double precision, parameter :: FCCspacing     = FCC_SPACING_STR
@@ -39,8 +39,8 @@ program TEST_NAME_STR
   character*80              :: modelname
   integer(kind=kim_intptr)  :: pkim
   integer                   :: ier, idum
-  integer numberOfAtoms;   pointer(pnAtoms,numberOfAtoms)
-  integer numberAtomTypes; pointer(pnAtomTypes,numberAtomTypes)
+  integer numberOfParticles;   pointer(pnAtoms,numberOfParticles)
+  integer numberParticleTypes; pointer(pnparticleTypes,numberParticleTypes)
   integer atomTypesdum(1); pointer(patomTypesdum,atomTypesdum)
 
   real*8 cutoff;           pointer(pcutoff,cutoff)
@@ -81,31 +81,31 @@ program TEST_NAME_STR
 
   ! Unpack data from KIM object
   !
-  call kim_api_get_data_multiple_f(pkim, ier, &
-       "numberOfAtoms", pnAtoms, 1, &
-       "numberAtomTypes", pnAtomTypes, 1, &
+  call kim_api_getm_data_f(pkim, ier, &
+       "numberOfParticles", pnAtoms, 1, &
+       "numberParticleTypes", pnparticleTypes, 1, &
        "atomTypes",       patomTypesdum, 1, &
        "coordinates",     pcoor,         1, &
        "cutoff",          pcutoff,       1, &
        "energy",          penergy,       1, &
-       "virialGlobal",    pvirialglob,   1, &
+       "virial",    pvirialglob,   1, &
        "forces",          pforces,       1)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_multiple_f", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
      stop
   endif
 
-  call toIntegerArrayWithDescriptor1d(atomTypesdum, atomTypes, N)
-  call toRealArrayWithDescriptor2d(coordum, coords, DIM, N)
-  call toRealArrayWithDescriptor1d(virialglobdum, virial_global, 6)
-  call toRealArrayWithDescriptor2d(forcesdum, forces, DIM, N)
+  call KIM_to_F90_int_array_1d(atomTypesdum, atomTypes, N)
+  call KIM_to_F90_real_array_2d(coordum, coords, DIM, N)
+  call KIM_to_F90_real_array_1d(virialglobdum, virial_global, 6)
+  call KIM_to_F90_real_array_2d(forcesdum, forces, DIM, N)
 
   ! Set values
-  numberOfAtoms   = N
-  numberAtomTypes = ATypes
-  atomTypes(:)    = kim_api_get_atypecode_f(pkim, "SPECIES_NAME_STR", ier)
+  numberOfParticles   = N
+  numberParticleTypes = ATypes
+  atomTypes(:)    = kim_api_get_partcl_type_code_f(pkim, "SPECIES_NAME_STR", ier)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_atypecode_f", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_partcl_type_code_f", ier)
      stop
   endif
 

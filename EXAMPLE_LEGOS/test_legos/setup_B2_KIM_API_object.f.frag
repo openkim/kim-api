@@ -5,7 +5,7 @@
 !
 !-------------------------------------------------------------------------------
 subroutine setup_B2_KIM_API_object(pkim, testname, modelname, specname1, specname2)
-  use KIMservice
+  use KIM_API
   implicit none
 
   !-- Transferred variables
@@ -19,8 +19,8 @@ subroutine setup_B2_KIM_API_object(pkim, testname, modelname, specname1, specnam
   integer            :: N = 2 ! hard-wired to two atoms
   integer, parameter :: ATypes = 2  ! hard-wired to two atomic types
   integer ier, idum
-  integer numberOfAtoms;         pointer(pnAtoms,numberOfAtoms)
-  integer numberAtomTypes;       pointer(pnAtomTypes,numberAtomTypes)
+  integer numberOfParticles;         pointer(pnAtoms,numberOfParticles)
+  integer numberParticleTypes;       pointer(pnparticleTypes,numberParticleTypes)
   integer atomTypesdum(1);       pointer(patomTypesdum,atomTypesdum)
   integer, pointer :: atomTypes(:)
 
@@ -47,29 +47,29 @@ subroutine setup_B2_KIM_API_object(pkim, testname, modelname, specname1, specnam
 
   ! Unpack data from KIM object whose values need to be set
   !
-  call kim_api_get_data_multiple_f(pkim, ier, &
-       "numberOfAtoms",   pnAtoms,       1, &
-       "numberAtomTypes", pnAtomTypes,   1, &
+  call kim_api_getm_data_f(pkim, ier, &
+       "numberOfParticles",   pnAtoms,       1, &
+       "numberParticleTypes", pnparticleTypes,   1, &
        "atomTypes",       patomTypesdum, 1)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_multiple_f", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
      stop
   endif
 
-  call toIntegerArrayWithDescriptor1d(atomTypesdum, atomTypes, N)
+  call KIM_to_F90_int_array_1d(atomTypesdum, atomTypes, N)
 
   ! Set values
   !
-  numberOfAtoms   = N
-  numberAtomTypes = ATypes
-  atomTypes(1)    = kim_api_get_atypecode_f(pkim, specname1, ier)
+  numberOfParticles   = N
+  numberParticleTypes = ATypes
+  atomTypes(1)    = kim_api_get_partcl_type_code_f(pkim, specname1, ier)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_atypecode_f", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_partcl_type_code_f", ier)
      stop
   endif
-  atomTypes(2)    = kim_api_get_atypecode_f(pkim, specname2, ier)
+  atomTypes(2)    = kim_api_get_partcl_type_code_f(pkim, specname2, ier)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_atypecode_f", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_partcl_type_code_f", ier)
      stop
   endif
 

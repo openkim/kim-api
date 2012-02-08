@@ -13,22 +13,22 @@ The contents of the directory are as follows:
 Include.mk
      Make file used by all makefiles related to KIM.
 
-KIMservice.cpp
+KIM_API.cpp
      C++ implementations for core service routines and methods.
 
-KIMservice.h
+KIM_API.h
      C++ Header file for KIM API service classes, routines and methods.
 
-KIMserviceC.cpp
+KIM_API_C.cpp
      Implementation of C-style interface for the KIM API.
 
-KIMserviceC.h
+KIM_API_C.h
      Header for C-style interface for KIM API service routines.
 
-KIMserviceDescription.txt
+KIM_API_Description.txt
      Description of KIM service routines.
 
-KIMserviceF.F90
+KIM_API_F.F90
      Implementation of Fortran-style interface for KIM API.
 
 Makefile

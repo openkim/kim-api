@@ -14,18 +14,18 @@ namespace KIM_AUX{
     public:
         Process_DE();
         static void init2zero(KIM_API_model *pkim,int *kimerr);
-        static void process_d1Edr(KIM_API_model **ppkim,double *de,
+        static void process_dEdr(KIM_API_model **ppkim,double *de,
                                  double *r,double ** pdx,int *i,int *j,int *ier);
-        static void process_d2Edr(KIM_API_model **ppkim,double *de,
+        static void process_d2Edr2(KIM_API_model **ppkim,double *de,
                                  double **rr,double ** pdx,int **ii,int **jj,int *ier);
     private:
-        double *virialGlobal;
-        double *virialPerAtom;
-        double *stiffness;
-        int virialGlobal_flag;
-        int virialPerAtom_flag;
-        int stiffness_flag;
-        int *numberOfAtoms;
+        double *virial;
+        double *particleVirial;
+        double *hessian;
+        int virial_flag;
+        int particleVirial_flag;
+        int hessian_flag;
+        int *numberOfParticles;
         bool halfNeighbors;
     };
        

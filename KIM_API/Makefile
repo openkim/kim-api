@@ -42,11 +42,11 @@ libkim.a: $(ALLOBJ) standard_kim_str.o Unit_Handling.o KIM_AUX.o
 libkim.so: libkim.a
 	$(LINKCOMPILER) $(SHARED_LIB_FLAG) $(CPPLIBFLAG) $(LINKSONAME)$(KIM_API_DIR)$@ -o $@ *.o
 
-KIMservice.o: model_init_include.h model_init_include.cpp model_kim_str_include.cpp KIMservice.h KIMservice.cpp KIM_AUX.h Makefile
+KIM_API.o: model_init_include.h model_init_include.cpp model_kim_str_include.cpp KIM_API.h KIM_API.cpp KIM_AUX.h Makefile
 
-KIMserviceC.o: KIMservice.h KIMserviceC.h Makefile
+KIM_API_C.o: KIM_API.h KIM_API_C.h Makefile
 
-KIMserviceF.o: Makefile
+KIM_API_F.o: Makefile
 
 KIM_AUX.o: KIM_AUX.h Makefile 
 

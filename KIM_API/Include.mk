@@ -146,8 +146,8 @@ endif
 
 
 # Definition of c and fortran .o file list
-OBJC = KIMservice.o KIMserviceC.o  
-OBJF90 = KIMserviceF.o
+OBJC = KIM_API.o KIM_API_C.o  
+OBJF90 = KIM_API_F.o
 
 #fortran on/of
 ifdef KIM_NO_FORTRAN

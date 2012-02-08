@@ -6,7 +6,7 @@
 !
 !-------------------------------------------------------------------------------
 integer function get_neigh_Rij(pkim,mode,request,atom,numnei,pnei1atom,pRij)
-  use KIMservice
+  use KIM_API
   implicit none
   
   !-- Transferred variables
@@ -26,7 +26,7 @@ integer function get_neigh_Rij(pkim,mode,request,atom,numnei,pnei1atom,pRij)
   integer, pointer ::      neighborList(:,:)
   double precision RijList(1); pointer(pRijList,RijList)
   integer ier, idum
-  integer numberOfAtoms; pointer(pnAtoms, numberOfAtoms)
+  integer numberOfParticles; pointer(pnAtoms, numberOfParticles)
   integer N
   integer NNeighbors
 
@@ -40,13 +40,13 @@ integer function get_neigh_Rij(pkim,mode,request,atom,numnei,pnei1atom,pRij)
   pRijList         = NLRvecLocs(2)
   NNeighbors       = NLRvecLocs(3)
   
-  pnAtoms = kim_api_get_data_f(pkim, "numberOfAtoms", ier)
+  pnAtoms = kim_api_get_data_f(pkim, "numberOfParticles", ier)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
      stop
   endif
-  N = numberOfAtoms
-  call toIntegerArrayWithDescriptor2d(neighborListdum, neighborlist, NNeighbors+1, N)
+  N = numberOfParticles
+  call KIM_to_F90_int_array_2d(neighborListdum, neighborlist, NNeighbors+1, N)
 
   ! check mode and request
   if (mode.eq.0) then ! iterator mode

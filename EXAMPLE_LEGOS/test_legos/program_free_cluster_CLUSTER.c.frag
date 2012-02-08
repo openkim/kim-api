@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include "KIMserviceC.h"
+#include "KIM_API_C.h"
 #include "KIMstatus.h"
 
 #define FCCSPACING    5.260
@@ -38,18 +38,18 @@ int main(int argc, char* argv[])
    char modelname[80];
    void* pkim;
    int status;
-   int atypecode;
+   int partcl_type_code;
    
    /* model inputs */
-   int* numberOfAtoms;
-   int* numberAtomTypes;
+   int* numberOfParticles;
+   int* numberParticleTypes;
    int* atomTypes;
    double* coords;
    /* model outputs */
    double* cutoff;
    double* energy;
    double* forces;
-   double* virialGlobal;
+   double* virial;
    int middleDum;
 
    /* Get KIM Model name to use */
@@ -81,33 +81,33 @@ int main(int argc, char* argv[])
    }
 
    /* Unpack data from KIM object */
-   KIM_API_get_data_multiple(pkim, &status, 8*3,
-                             "numberOfAtoms",     &numberOfAtoms,   1,
-                             "numberAtomTypes",   &numberAtomTypes, 1,
+   KIM_API_getm_data(pkim, &status, 8*3,
+                             "numberOfParticles",     &numberOfParticles,   1,
+                             "numberParticleTypes",   &numberParticleTypes, 1,
                              "atomTypes",         &atomTypes,       1,
                              "coordinates",       &coords,          1,
                              "cutoff",            &cutoff,          1,
                              "energy",            &energy,          1,
-                             "virialGlobal",      &virialGlobal,    1,
+                             "virial",      &virial,    1,
                              "forces",            &forces,          1);
    if (KIM_STATUS_OK > status)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data_multiple", status);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data", status);
       exit(1);
    }
 
    /* Set values */
-   *numberOfAtoms   = NCLUSTERATOMS;
-   *numberAtomTypes = ATYPES;
-   atypecode = KIM_API_get_aTypeCode(pkim, "SPECIES_NAME_STR", &status);
+   *numberOfParticles   = NCLUSTERATOMS;
+   *numberParticleTypes = ATYPES;
+   partcl_type_code = KIM_API_get_partcl_type_code(pkim, "SPECIES_NAME_STR", &status);
    if (KIM_STATUS_OK > status)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_aTypeCode", status);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_partcl_type_code", status);
       exit(1);
    }
-   for (i = 0; i < *numberOfAtoms; ++i)
+   for (i = 0; i < *numberOfParticles; ++i)
    {
-      atomTypes[i] = atypecode;
+      atomTypes[i] = partcl_type_code;
    }
 
    /* set up the cluster atom positions */
@@ -131,7 +131,7 @@ int main(int argc, char* argv[])
           "Y                        "
           "Z                        "
           "\n");
-   for (i = 0; i < *numberOfAtoms; ++i)
+   for (i = 0; i < *numberOfParticles; ++i)
    {
       printf("%2i   %25.15e%25.15e%25.15e\n", i,
              forces[i*DIM + 0],
@@ -144,12 +144,12 @@ int main(int argc, char* argv[])
           "Global Virial = %25.15e%25.15e%25.15e\n"
           "                %25.15e%25.15e%25.15e\n",
           *energy,
-          virialGlobal[0],
-          virialGlobal[1],
-          virialGlobal[2],
-          virialGlobal[3],
-          virialGlobal[4],
-          virialGlobal[5]
+          virial[0],
+          virial[1],
+          virial[2],
+          virial[3],
+          virial[4],
+          virial[5]
          );
 
    

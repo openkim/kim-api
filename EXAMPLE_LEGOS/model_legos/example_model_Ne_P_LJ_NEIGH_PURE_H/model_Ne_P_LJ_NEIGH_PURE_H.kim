@@ -37,22 +37,22 @@ OneBasedLists           flag
 
 Neigh_IterAccess        flag
 
-NEIGH-PURE-H            flag
+NEIGH_PURE_H            flag
 
 
 #######################################################################################################
 MODEL_INPUT:
 # Name                  Type         Unit                Shape              Requirements
 
-numberOfAtoms           integer      none                []
+numberOfParticles           integer      none                []
 
-numberContributingAtoms integer      none                []
+numberContributingParticles integer      none                []
 
-numberAtomTypes         integer      none                []
+numberParticleTypes         integer      none                []
 
-atomTypes               integer      none                [numberOfAtoms]
+atomTypes               integer      none                [numberOfParticles]
 
-coordinates             real*8       length              [numberOfAtoms,3]
+coordinates             real*8       length              [numberOfParticles,3]
 
 get_half_neigh          method       none                []
 
@@ -75,9 +75,9 @@ cutoff                  real*8       length              []
 
 energy                  real*8       energy              []                 optional
 
-forces                  real*8       force               [numberOfAtoms,3]  optional
+forces                  real*8       force               [numberOfParticles,3]  optional
 
-energyPerAtom           real*8       energy              [numberOfAtoms]    optional
+particleEnergy           real*8       energy              [numberOfParticles]    optional
 
 
 #######################################################################################################

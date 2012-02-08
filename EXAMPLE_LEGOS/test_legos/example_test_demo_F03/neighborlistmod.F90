@@ -10,7 +10,7 @@
 
 module neighborlistmod
 use iso_c_binding
-use KIMservice
+use KIM_API
 implicit none
 
 type neighborlist_object
@@ -639,7 +639,7 @@ type (neighborlist_object) :: neigh_obj
 
 	
 	subroutine neighiterator(nei_obj,pnei1atom,numnei,restart)
-		use KIMservice
+		use KIM_API
 		implicit none
 		integer :: numnei,restart
 		type (neighborlist_object),pointer :: nei_obj;
@@ -647,7 +647,7 @@ type (neighborlist_object) :: neigh_obj
 
 		integer, pointer:: neisofanatom(:)
 
-		call toIntegerArrayWithDescriptor1d(nei1atom,neisofanatom,512)
+		call KIM_to_F90_int_array_1d(nei1atom,neisofanatom,512)
 		if (restart.eq.0) then
 			call neighiterator2begining(nei_obj)
 		else
@@ -708,7 +708,7 @@ subroutine neighborscalculate(neigh_obj,px,n,cut)
 	real*8 :: xstub(3,*); pointer(pxstub,xstub)
 	type (neighborlist_object),pointer :: neigh_obj
 	pxstub=px
-        call toRealArrayWithDescriptor2d(xstub,x,3,n)
+        call KIM_to_F90_real_array_2d(xstub,x,3,n)
 
 	call neighborcoolistdomaindec(neigh_obj,x,cut)
 
@@ -730,7 +730,7 @@ end subroutine neighborscalculate_both
 
 
 function get_neigh_iterator()
-	use KIMservice
+	use KIM_API
 	use neighborlistmod
 	implicit none
 	integer(kind=kim_intptr) ::get_neigh_iterator
@@ -739,7 +739,7 @@ end function get_neigh_iterator
 
 
 function get_neigh_half_both()
-	use KIMservice
+	use KIM_API
 	use neighborlistmod
 	implicit none
 	integer(kind=kim_intptr) ::get_neigh_half_both
@@ -747,7 +747,7 @@ function get_neigh_half_both()
 end function get_neigh_half_both
 
 function get_neigh_full_both()
-	use KIMservice
+	use KIM_API
 	use neighborlistmod
 	implicit none
 	integer(kind=kim_intptr) ::get_neigh_full_both
@@ -755,7 +755,7 @@ function get_neigh_full_both()
 end function get_neigh_full_both
 
 subroutine set_kim_neighObj_index(ind)
-	use KIMservice
+	use KIM_API
 	use neighborlistmod
 	implicit none
 	integer ind

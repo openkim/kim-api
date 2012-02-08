@@ -21,9 +21,9 @@
 #endif
 
 using namespace std;
-#include "KIMservice.h"
+#include "KIM_API.h"
 
-#define KEY_CHAR_LENGTH 64
+#define KIM_KEY_STRING_LENGTH 64
 #define KIM_LINE_LENGTH 512
 
 //#define intptr_t int  // for 32 bit machines
@@ -37,7 +37,7 @@ KIMBaseElementFlag:: KIMBaseElementFlag(){
     init();
 }
 void KIMBaseElementUnit::init(){
-    strncpy(dim,"none",KEY_CHAR_LENGTH);
+    strncpy(dim,"none",KIM_KEY_STRING_LENGTH);
 }
 int Atom_Map::comparator(const void* a1, const void* a2){
     Atom_Map *am1 =(Atom_Map *)a1;
@@ -167,8 +167,8 @@ int * KIM_IOline::get_shape(int natoms, int ntypes){
                 if(shp[i]==0){
                     strcpy(tmpstring,tmp);
                     this->strip(tmpstring);
-                    if(strcmp(tmpstring,"numberAtomTypes")==0) shp[i]=ntypes;
-                    if(strcmp(tmpstring,"numberOfAtoms")==0) shp[i]=(int)natoms;
+                    if(strcmp(tmpstring,"numberParticleTypes")==0) shp[i]=ntypes;
+                    if(strcmp(tmpstring,"numberOfParticles")==0) shp[i]=(int)natoms;
                 }
                 tmp = strtok(NULL,"[,]");
                 i++;
@@ -184,7 +184,7 @@ int * KIM_IOline::get_shape(int natoms, int ntypes){
              while(tmp!=NULL){
                 strcpy(tmpstring,tmp);
                 this->strip(tmpstring);
-                if(strcmp(tmpstring,"numberAtomTypes")==0) return true;
+                if(strcmp(tmpstring,"numberParticleTypes")==0) return true;
                 tmp = strtok(NULL,"[,]");
              }
              return false;
@@ -213,7 +213,7 @@ bool KIM_IOline:: isitperatom(){
              while(tmp!=NULL){
                 strcpy(tmpstring,tmp);
                 this->strip(tmpstring);
-                if(strcmp(tmpstring,"numberOfAtoms")==0) return true;
+                if(strcmp(tmpstring,"numberOfParticles")==0) return true;
                 tmp = strtok(NULL,"[,]");
              }
              return false;
@@ -451,11 +451,11 @@ void KIMBaseElement:: init(char *nm,char * tp,intptr_t sz, intptr_t rnk, int *sh
             flag = new KIMBaseElementFlag;
    
             unit = new KIMBaseElementUnit;
-            name = new char[KEY_CHAR_LENGTH];
+            name = new char[KIM_KEY_STRING_LENGTH];
    
-            type = new char[KEY_CHAR_LENGTH];
-            strncpy(name,nm,KEY_CHAR_LENGTH);
-            strncpy(type,tp,KEY_CHAR_LENGTH);
+            type = new char[KIM_KEY_STRING_LENGTH];
+            strncpy(name,nm,KIM_KEY_STRING_LENGTH);
+            strncpy(type,tp,KIM_KEY_STRING_LENGTH);
 
     
             if(rnk < 0) {
@@ -533,11 +533,11 @@ void KIMBaseElement::nullefy(){
 bool KIMBaseElement::operator==(KIM_IOline& kimioline){
             //switch off check for virial and process_dnEdr related things
             if(strcmp(name,"virial") == 0  ||
-               strcmp(name,"virialGlobal")==0 ||
-               strcmp(name,"virialPerAtom")==0 ||
-               strcmp(name,"stiffness")    ==0 ||
-               strcmp(name,"process_d1Edr")    ==0 ||
-               strcmp(name,"process_d2Edr")    ==0  ) return true;
+               strcmp(name,"virial")==0 ||
+               strcmp(name,"particleVirial")==0 ||
+               strcmp(name,"hessian")    ==0 ||
+               strcmp(name,"process_dEdr")    ==0 ||
+               strcmp(name,"process_d2Edr2")    ==0  ) return true;
             //compare the rest
             if(strcmp(kimioline.name,this->name)==0){
                 if(strcmp(kimioline.type,this->type)==0){
@@ -550,13 +550,13 @@ bool KIMBaseElement::operator==(KIM_IOline& kimioline){
 }
 
 int KIMBaseElement::getelemsize(char *tp){
-            char realkey[KEY_CHAR_LENGTH]="real";      //key defenitions
-            char real8key[KEY_CHAR_LENGTH]="real*8";
-            char integerkey[KEY_CHAR_LENGTH]="integer";
-            char integer8key[KEY_CHAR_LENGTH]="integer*8";
-            char ptrkey[KEY_CHAR_LENGTH]="pointer";
-            char methodkey[KEY_CHAR_LENGTH]="method";
-            char flagkey[KEY_CHAR_LENGTH]="flag";// add here to expand...
+            char realkey[KIM_KEY_STRING_LENGTH]="real";      //key defenitions
+            char real8key[KIM_KEY_STRING_LENGTH]="real*8";
+            char integerkey[KIM_KEY_STRING_LENGTH]="integer";
+            char integer8key[KIM_KEY_STRING_LENGTH]="integer*8";
+            char ptrkey[KIM_KEY_STRING_LENGTH]="pointer";
+            char methodkey[KIM_KEY_STRING_LENGTH]="method";
+            char flagkey[KIM_KEY_STRING_LENGTH]="flag";// add here to expand...
 
             if(strcmp(realkey,tp)==0){
                 return(sizeof(float));
@@ -634,39 +634,39 @@ KIM_API_model:: KIM_API_model(){
        narg_NBC_method_A=1;
 
        //method_B init
-       strcpy(NBC_method_B,"MI-OPBC-H");
+       strcpy(NBC_method_B,"MI_OPBC_H");
        strcpy(&arg_NBC_method_B[0][0],"coordinates");
-       strcpy(&arg_NBC_method_B[1][0],"boxlength");
-       strcpy(&arg_NBC_method_B[2][0],"numberContributingAtoms");
+       strcpy(&arg_NBC_method_B[1][0],"boxSideLengths");
+       strcpy(&arg_NBC_method_B[2][0],"numberContributingParticles");
        strcpy(&arg_NBC_method_B[3][0],"neighObject");
        strcpy(&arg_NBC_method_B[4][0],"get_half_neigh");
        narg_NBC_method_B=5;
 
        //method_C init
-       strcpy(NBC_method_C,"MI-OPBC-F");
+       strcpy(NBC_method_C,"MI_OPBC_F");
        strcpy(&arg_NBC_method_C[0][0],"coordinates");
-       strcpy(&arg_NBC_method_C[1][0],"boxlength");
+       strcpy(&arg_NBC_method_C[1][0],"boxSideLengths");
        strcpy(&arg_NBC_method_C[2][0],"neighObject");
        strcpy(&arg_NBC_method_C[3][0],"get_full_neigh");
        narg_NBC_method_C=4;
 
        //method_D init
-       strcpy(NBC_method_D,"NEIGH-RVEC-F");
+       strcpy(NBC_method_D,"NEIGH_RVEC_F");
        strcpy(&arg_NBC_method_D[0][0],"coordinates");
        strcpy(&arg_NBC_method_D[1][0],"neighObject");
        strcpy(&arg_NBC_method_D[2][0],"get_full_neigh");
        narg_NBC_method_D=3;
 
        //method_E init
-       strcpy(NBC_method_E,"NEIGH-PURE-H");
+       strcpy(NBC_method_E,"NEIGH_PURE_H");
        strcpy(&arg_NBC_method_E[0][0],"coordinates");
-       strcpy(&arg_NBC_method_E[1][0],"numberContributingAtoms");
+       strcpy(&arg_NBC_method_E[1][0],"numberContributingParticles");
        strcpy(&arg_NBC_method_E[2][0],"neighObject");
        strcpy(&arg_NBC_method_E[3][0],"get_half_neigh");
        narg_NBC_method_E=4;
 
        //method_F init
-       strcpy(NBC_method_F,"NEIGH-PURE-F");
+       strcpy(NBC_method_F,"NEIGH_PURE_F");
        strcpy(&arg_NBC_method_F[0][0],"coordinates");
        strcpy(&arg_NBC_method_F[1][0],"neighObject");
        strcpy(&arg_NBC_method_F[2][0],"get_full_neigh");
@@ -714,15 +714,15 @@ KIM_API_model:: KIM_API_model(){
        both_neigh_mode=false;
        model_buffer=NULL;
 
-       this->virialGlobal_ind=-1;
-       this->virialPerAtom_ind=-1;
-       this->stiffness_ind=-1;
-       this->process_d1Edr_ind=-1;
-       this->process_d2Edr_ind=-1;
+       this->virial_ind=-1;
+       this->particleVirial_ind=-1;
+       this->hessian_ind=-1;
+       this->process_dEdr_ind=-1;
+       this->process_d2Edr2_ind=-1;
 
-       this->virialGlobal_need2add=false;
-       this->virialPerAtom_need2add=false;
-       this->stiffness_need2add=false;
+       this->virial_need2add=false;
+       this->particleVirial_need2add=false;
+       this->hessian_need2add=false;
 }
 KIM_API_model:: ~KIM_API_model(){
       // free();
@@ -1016,7 +1016,7 @@ intptr_t KIM_API_model::get_size(char *nm,int *error){
         *error=KIM_STATUS_OK;
         return (*this)[ind].size;
 }
-intptr_t KIM_API_model::get_rank_shape(char *nm,int * shape, int *error){
+intptr_t KIM_API_model::get_shape(char *nm,int * shape, int *error){
         int ind=get_index(nm,error);
         *error =KIM_STATUS_ARG_UNKNOWN;
         if (ind < 0) return -1;
@@ -1035,7 +1035,7 @@ intptr_t KIM_API_model::get_rank_shape(char *nm,int * shape, int *error){
         }
 }
 
-void KIM_API_model::set_rank_shape(char* nm, int* shape, int rank, int* error){
+void KIM_API_model::set_shape(char* nm, int* shape, int rank, int* error){
     //size will be calculated and set too
         *error =KIM_STATUS_ARG_UNKNOWN;
         int ind=get_index(nm,error);
@@ -1076,23 +1076,52 @@ void KIM_API_model::set_rank_shape(char* nm, int* shape, int rank, int* error){
             return;
         }
 }
-void KIM_API_model::set2_compute(char *nm){
-        (*this)[nm].flag->calculate = 1;
+void KIM_API_model::set_compute(char *nm, int flag, int *error){
+   *error = KIM_STATUS_FAIL;
+   int ind = (*this).get_index(nm, error);
+   if (*error != KIM_STATUS_OK) return;
+
+   if ((flag == 1) || (flag == 0)){
+      (*this)[ind].flag->calculate = flag;
+      *error = KIM_STATUS_OK;
+   }
+   else
+      *error = KIM_STATUS_FAIL;
+
+   return;
 }
-void KIM_API_model::set2_donotcompute(char *nm){
-        (*this)[nm].flag->calculate = 0;
+void KIM_API_model::set_compute_by_index(int ind, int flag, int *error){
+   *error = KIM_STATUS_FAIL;
+   if ((flag == 1) || (flag == 0)){
+      (*this)[ind].flag->calculate = flag;
+      *error = KIM_STATUS_OK;
+   }
+   else
+      *error = KIM_STATUS_FAIL;
+
+   return;
 }
-bool KIM_API_model::isit_compute(char *nm){
+bool KIM_API_model::get_compute(char *nm){
         if ((*this)[nm].flag->calculate == 1) return true;
         return false;
 }
 KIMBaseElement & KIM_API_model::operator[](int i){
+        if ((i > (*this).model.size) || (i < 0)){
+           cout<<"* Error (KIM_API_model::operator[](int i): invalid index." <<endl;
+           KIM_API_model::fatal_error_print();
+           exit(326);
+        }
         KIMBaseElement **pel =(KIMBaseElement**) model.data;
         return *pel[i];
 }
 KIMBaseElement & KIM_API_model::operator[](char *nm){
-       
-        int ind=get_index(nm);
+        int error;
+        int ind=get_index(nm,&error);
+        if (error == KIM_STATUS_FAIL){
+           cout<<"* Error (KIM_API_model::operator[](char *nm): name not found." <<endl;
+           KIM_API_model::fatal_error_print();
+           exit(325);
+        }           
         KIMBaseElement **pel =(KIMBaseElement**) model.data;
         return *pel[ind];
 }
@@ -1295,7 +1324,7 @@ bool KIM_API_model::is_it_match(KIM_API_model &test,KIM_API_model & mdl){
     if(!test2modelAtomsTypesMatch) cout<<"* Error (KIM_API_model::is_it_match): Test-Model AtomsTypes do not match:"<<endl;
     if(!NBC_methodsmatch) cout<<"* Error (KIM_API_model::is_it_match): NBC methods do not match:"<<endl;
     if(!process_fij_related) cout<<
-       "* Error (KIM_API_model::is_it_match): (virialGlobal,virialPerAtom,stiffness,process_d1/2Edr) do not match:"<<endl;
+       "* Error (KIM_API_model::is_it_match): (virial,particleVirial,hessian,process_d1/2Edr) do not match:"<<endl;
     if(!units_match){
        cout<<"* Error (KIM_API_model::is_it_match): units do not match:"<<endl;
     }else{
@@ -1489,7 +1518,7 @@ bool KIM_API_model::do_AtomsTypes_match(KIM_API_model& test, KIM_API_model& mdl)
 }
 
 bool KIM_API_model::is_it_fixed_par(char* name){
-     char tmpname[KEY_CHAR_LENGTH]="";
+     char tmpname[KIM_KEY_STRING_LENGTH]="";
      strncpy(&tmpname[0],name,strlen(name)+1);
      char * tmp = strtok(tmpname,"_");if(tmp == NULL) return false;
      if(strcmp(tmp,"PARAM")==0) {
@@ -1499,7 +1528,7 @@ bool KIM_API_model::is_it_fixed_par(char* name){
      return false;
 }
 bool KIM_API_model::is_it_free_par(char* name){
-     char tmpname[KEY_CHAR_LENGTH]="";
+     char tmpname[KIM_KEY_STRING_LENGTH]="";
      strncpy(&tmpname[0],name,strlen(name)+1);
      char * tmp = strtok(tmpname,"_");if(tmp == NULL) return false;
      if(strcmp(tmp,"PARAM")==0) {
@@ -1536,7 +1565,7 @@ bool KIM_API_model::init(char * testinputfile,char* testname, char * modelinputf
         get_half_neigh_index = get_index("get_half_neigh");
         this->fij_related_things_add_set_index();
         support_Rij=false;
-        if (strcmp(NBC_method_current,"NEIGH-RVEC-F")==0) support_Rij=true;
+        if (strcmp(NBC_method_current,"NEIGH_RVEC_F")==0) support_Rij=true;
 
         return true;
     }else{
@@ -1728,12 +1757,12 @@ bool KIM_API_model::init_str_modelname(char* testname, char* inmdlstr){
     //preinit test and model API object
 
     if(!mdl.preinit_str_testname(inmdlstr)){
-        cout<<"preinit_str_testname  failed with error status: "<<this->status_msg(ErrorCode)<<endl;
+        cout<<"preinit_str_testname  failed with error status: "<<this->get_status_msg(ErrorCode)<<endl;
         return false;
     }
 
     if(!test.preinit(testinputfile,testname)){
-        cout<<"preinit  failed with error status: "<<this->status_msg(ErrorCode)<<endl;
+        cout<<"preinit  failed with error status: "<<this->get_status_msg(ErrorCode)<<endl;
         return false;
     }
 
@@ -1754,7 +1783,7 @@ bool KIM_API_model::init_str_modelname(char* testname, char* inmdlstr){
         get_half_neigh_index = get_index("get_half_neigh");
         this->fij_related_things_add_set_index();
         support_Rij=false;
-        if (strcmp(NBC_method_current,"NEIGH-RVEC-F")==0) support_Rij=true;
+        if (strcmp(NBC_method_current,"NEIGH_RVEC_F")==0) support_Rij=true;
 
    
 
@@ -1901,10 +1930,10 @@ bool KIM_API_model::init_str_testname(char* in_tststr, char* modelname){
  #endif
 //preinit test and model API object
     if(!test.preinit_str_testname(in_tststr))
-        cout<<"test.preinit_str_testname failed with error status:"<<this->status_msg(test.ErrorCode)<<endl;
+        cout<<"test.preinit_str_testname failed with error status:"<<this->get_status_msg(test.ErrorCode)<<endl;
 
     if(!mdl.preinit_str_testname(in_mdlstr))
-        cout<<"mdl.preinit_str_testname failed with error status:"<<this->status_msg(mdl.ErrorCode)<<endl;
+        cout<<"mdl.preinit_str_testname failed with error status:"<<this->get_status_msg(mdl.ErrorCode)<<endl;
 
     //check if they match
     if (is_it_match(test,mdl)){
@@ -1923,7 +1952,7 @@ bool KIM_API_model::init_str_testname(char* in_tststr, char* modelname){
         get_half_neigh_index = get_index("get_half_neigh");
         this->fij_related_things_add_set_index();
         support_Rij=false;
-        if (strcmp(NBC_method_current,"NEIGH-RVEC-F")==0) support_Rij=true;
+        if (strcmp(NBC_method_current,"NEIGH_RVEC_F")==0) support_Rij=true;
 
 #ifdef KIM_DYNAMIC
        dlclose(model_lib_handle);
@@ -1964,7 +1993,7 @@ extern "C" {
 #include "model_init_include.h"
 }
 bool KIM_API_model::model_init(){
-    char modelname[KEY_CHAR_LENGTH]="";
+    char modelname[KIM_KEY_STRING_LENGTH]="";
     KIM_API_model * kim;
     void ** pkim;
     strcpy(modelname,this->model.name);
@@ -1998,7 +2027,7 @@ cout<< "* Info: KIM_API_model::model_init: call statically linked initialize rou
 }
 #else
 bool KIM_API_model::model_init(){
-    char modelname[KEY_CHAR_LENGTH]="";
+    char modelname[KIM_KEY_STRING_LENGTH]="";
     KIM_API_model * kim;
     void ** pkim;
     char model_slib_file[2048];
@@ -2082,7 +2111,7 @@ void KIM_API_model::model_compute(int *error){
 
   //initialize virials if needed
 
-  if (process_d1Edr_ind >=0 || process_d2Edr_ind >= 0) KIM_AUX::Process_DE::init2zero(this,error);
+  if (process_dEdr_ind >=0 || process_d2Edr2_ind >= 0) KIM_AUX::Process_DE::init2zero(this,error);
   if(*error != KIM_STATUS_OK) return;
 
   //call model_compute
@@ -2309,7 +2338,7 @@ bool KIM_API_model::init_AtomsTypes(){
     return true;
 }
 
-char * KIM_API_model::get_listAtomsTypes(int* nATypes, int* error){
+char * KIM_API_model::get_partcl_types(int* nATypes, int* error){
     *error=KIM_STATUS_FAIL;
     if (nAtomsTypes==0){
         *nATypes = 0;
@@ -2321,11 +2350,11 @@ char * KIM_API_model::get_listAtomsTypes(int* nATypes, int* error){
         return NULL;
     }
     *nATypes = nAtomsTypes;
-    char * listatypes=(char *)malloc(nAtomsTypes*KEY_CHAR_LENGTH);
+    char * listatypes=(char *)malloc(nAtomsTypes*KIM_KEY_STRING_LENGTH);
 
-    for (int i=0;i<nAtomsTypes*KEY_CHAR_LENGTH;i++) listatypes[i] = '\0';
+    for (int i=0;i<nAtomsTypes*KIM_KEY_STRING_LENGTH;i++) listatypes[i] = '\0';
     for(int i=0; i<nAtomsTypes; i++){
-        strncpy(listatypes + i*KEY_CHAR_LENGTH, AtomsTypes[i].symbol,strlen( AtomsTypes[i].symbol)+1);
+        strncpy(listatypes + i*KIM_KEY_STRING_LENGTH, AtomsTypes[i].symbol,strlen( AtomsTypes[i].symbol)+1);
     }
     *error =KIM_STATUS_OK;//success
     return  listatypes;
@@ -2336,8 +2365,8 @@ char * KIM_API_model::get_NBC_method(int* error){
         // no NBC methods are specified
         return NULL;
     }
-    char *method = (char *)malloc(KEY_CHAR_LENGTH);
-    for (int i=0;i<KEY_CHAR_LENGTH;i++) method[i] = '\0';
+    char *method = (char *)malloc(KIM_KEY_STRING_LENGTH);
+    for (int i=0;i<KIM_KEY_STRING_LENGTH;i++) method[i] = '\0';
     strcpy(method,this->NBC_method_current);
     *error=KIM_STATUS_OK; //success
     return method;
@@ -2358,13 +2387,13 @@ bool KIM_API_model::requiresFullNeighbors(){
     }
 
     bool answer = false;
-    if (strcmp(method,"NEIGH-PURE-F")==0) answer = true;
-    if (strcmp(method,"NEIGH-RVEC-F")==0) answer = true;
-    if (strcmp(method,"MI-OPBC-F")==0) answer = true;
+    if (strcmp(method,"NEIGH_PURE_F")==0) answer = true;
+    if (strcmp(method,"NEIGH_RVEC_F")==0) answer = true;
+    if (strcmp(method,"MI_OPBC_F")==0) answer = true;
     if (method!=NULL) c_free((void *)method);
     return answer;
 }
-char * KIM_API_model::get_listParams(int* nVpar, int* error){
+char * KIM_API_model::get_params(int* nVpar, int* error){
     int count;
     count=0;
     *error=KIM_STATUS_FAIL;
@@ -2378,19 +2407,19 @@ char * KIM_API_model::get_listParams(int* nVpar, int* error){
         return NULL;
     }
     *nVpar=count;
-    listvpar = (char *)malloc(KEY_CHAR_LENGTH * count);
-    for (int i=0;i<count*KEY_CHAR_LENGTH;i++) listvpar[i] = '\0';
+    listvpar = (char *)malloc(KIM_KEY_STRING_LENGTH * count);
+    for (int i=0;i<count*KIM_KEY_STRING_LENGTH;i++) listvpar[i] = '\0';
     count=0;
     for (int i=0;i<model.size;i++){
          if(is_it_par((*this)[i].name)){
-             strncpy(listvpar+count*KEY_CHAR_LENGTH, (*this)[i].name, strlen((*this)[i].name) +1 );
+             strncpy(listvpar+count*KIM_KEY_STRING_LENGTH, (*this)[i].name, strlen((*this)[i].name) +1 );
              count++;
          }
     }
     *error =KIM_STATUS_OK;//success
     return  listvpar;
 }
-char * KIM_API_model::get_listFreeParams(int* nVpar, int* error){
+char * KIM_API_model::get_free_params(int* nVpar, int* error){
     int count;
     count=0;
     *error=KIM_STATUS_FAIL;
@@ -2404,20 +2433,20 @@ char * KIM_API_model::get_listFreeParams(int* nVpar, int* error){
         return NULL;
     }
     *nVpar=count;
-    //listvpar= new char[KEY_CHAR_LENGTH * count];
-    listvpar = (char *)malloc(KEY_CHAR_LENGTH * count);
-    for (int i=0;i<count*KEY_CHAR_LENGTH;i++) listvpar[i] = '\0';
+    //listvpar= new char[KIM_KEY_STRING_LENGTH * count];
+    listvpar = (char *)malloc(KIM_KEY_STRING_LENGTH * count);
+    for (int i=0;i<count*KIM_KEY_STRING_LENGTH;i++) listvpar[i] = '\0';
     count=0;
     for (int i=0;i<model.size;i++){
          if(is_it_free_par((*this)[i].name)){
-             strncpy(listvpar+count*KEY_CHAR_LENGTH, (*this)[i].name, strlen((*this)[i].name) +1 );
+             strncpy(listvpar+count*KIM_KEY_STRING_LENGTH, (*this)[i].name, strlen((*this)[i].name) +1 );
              count++;
          }
     }
     *error =KIM_STATUS_OK;//success
     return  listvpar;
 }
-char * KIM_API_model::get_listFixedParams(int* nVpar, int* error){
+char * KIM_API_model::get_fixed_params(int* nVpar, int* error){
     int count;
     count=0;
     *error = KIM_STATUS_FAIL;
@@ -2431,13 +2460,13 @@ char * KIM_API_model::get_listFixedParams(int* nVpar, int* error){
         return NULL;
     }
     *nVpar=count;
-    //listvpar= new char[KEY_CHAR_LENGTH * count];
-    listvpar = (char *)malloc(KEY_CHAR_LENGTH * count);
-    for (int i=0;i<count*KEY_CHAR_LENGTH;i++) listvpar[i] = '\0';
+    //listvpar= new char[KIM_KEY_STRING_LENGTH * count];
+    listvpar = (char *)malloc(KIM_KEY_STRING_LENGTH * count);
+    for (int i=0;i<count*KIM_KEY_STRING_LENGTH;i++) listvpar[i] = '\0';
     count=0;
     for (int i=0;i<model.size;i++){
          if(is_it_fixed_par((*this)[i].name)){
-             strncpy(listvpar+count*KEY_CHAR_LENGTH, (*this)[i].name, strlen((*this)[i].name) +1 );
+             strncpy(listvpar+count*KIM_KEY_STRING_LENGTH, (*this)[i].name, strlen((*this)[i].name) +1 );
              count++;
          }
     }
@@ -2461,7 +2490,7 @@ int  KIM_API_model::get_neigh_mode(int*kimerr){
     }
 }
 
-int KIM_API_model::get_aTypeCode(char* atom, int * error){
+int KIM_API_model::get_partcl_type_code(char* atom, int * error){
     *error =KIM_STATUS_FAIL;
     if (atom == NULL)  {
         *error = KIM_STATUS_ATOM_TYPES_UNDEFINED;
@@ -2530,10 +2559,10 @@ bool KIM_API_model::check_consistance_NBC_method(){
     }
     return true;
 }
-char * KIM_API_model::status_msg(int status_code) {
+char * KIM_API_model::get_status_msg(int status_code) {
     int mincode=-24,maxcode=3,offset=24;
 
-    char KIM_STATUS_MSG[][KEY_CHAR_LENGTH]=
+    char KIM_STATUS_MSG[][KIM_KEY_STRING_LENGTH]=
    {
     {"base units: are not supported or not the same phys.dimensions"},
     {" unsupported Unit_time  "},
@@ -2565,13 +2594,13 @@ char * KIM_API_model::status_msg(int status_code) {
     { "iterator has been successfully initialized"}};
     
     if (status_code < mincode || status_code > maxcode) {
-        char * retstr = (char *)malloc(KEY_CHAR_LENGTH);
+        char * retstr = (char *)malloc(KIM_KEY_STRING_LENGTH);
         strcpy(retstr,"the error code is not among KIM_STATUS codes");
         return retstr;
     }else{
         int ind = offset + status_code;
-        char * retstr = (char *)malloc(KEY_CHAR_LENGTH);
-        for (int i=0;i<KEY_CHAR_LENGTH;i++) retstr[i]='\0';
+        char * retstr = (char *)malloc(KIM_KEY_STRING_LENGTH);
+        for (int i=0;i<KIM_KEY_STRING_LENGTH;i++) retstr[i]='\0';
         strcpy(retstr,&(KIM_STATUS_MSG[ind][0]));
         return retstr;
     }
@@ -2580,7 +2609,7 @@ char * KIM_API_model::status_msg(int status_code) {
 
 int KIM_API_model::report_error(int ln,char * fl,char * usermsg,int ier){
     if(ier <= 0){
-        char * kimstatus =status_msg(ier);
+        char * kimstatus =get_status_msg(ier);
         cout<<"* Error: at line "<<ln<<" in "<<fl<< endl<<"\tMessage: "<<usermsg<<endl;
         cout<<"\tKIM_STATUS_MSG: "<<kimstatus<<endl;
         c_free((void *) kimstatus);
@@ -2618,37 +2647,37 @@ void * KIM_API_model::get_test_buffer(int* ier){
 
 bool KIM_API_model::fij_related_things_match(KIM_API_model& test, KIM_API_model& mdl){
 
-    bool tst_process_d1Edr = is_it_in(test,"process_d1Edr");
-    bool tst_process_d2Edr = is_it_in(test,"process_d2Edr");
-    bool tst_virialGlobal_required  = is_it_in(test,"virialGlobal");
-    bool tst_virialPerAtom_required = is_it_in(test,"virialPerAtom");
-    bool tst_stiffness_required =     is_it_in(test,"stiffness");
+    bool tst_process_dEdr = is_it_in(test,"process_dEdr");
+    bool tst_process_d2Edr2 = is_it_in(test,"process_d2Edr2");
+    bool tst_virial_required  = is_it_in(test,"virial");
+    bool tst_particleVirial_required = is_it_in(test,"particleVirial");
+    bool tst_hessian_required =     is_it_in(test,"hessian");
 
-    bool mdl_process_d1Edr = is_it_in(mdl,"process_d1Edr");
-    bool mdl_process_d2Edr = is_it_in(mdl,"process_d2Edr");
-    bool mdl_virialGlobal  = is_it_in(mdl,"virialGlobal");
-    bool mdl_virialPerAtom = is_it_in(mdl,"virialPerAtom");
-    bool mdl_stiffness =     is_it_in(mdl,"stiffness");
+    bool mdl_process_dEdr = is_it_in(mdl,"process_dEdr");
+    bool mdl_process_d2Edr2 = is_it_in(mdl,"process_d2Edr2");
+    bool mdl_virial  = is_it_in(mdl,"virial");
+    bool mdl_particleVirial = is_it_in(mdl,"particleVirial");
+    bool mdl_hessian =     is_it_in(mdl,"hessian");
 
-    bool virialGlobal_comp_possible = mdl_virialGlobal || mdl_process_d1Edr;
-    bool virialPerAtom_comp_possible = mdl_virialPerAtom || mdl_process_d1Edr;
-    bool stiffness_comp_possible =  mdl_stiffness || mdl_process_d1Edr && mdl_process_d2Edr;
+    bool virial_comp_possible = mdl_virial || mdl_process_dEdr;
+    bool particleVirial_comp_possible = mdl_particleVirial || mdl_process_dEdr;
+    bool hessian_comp_possible =  mdl_hessian || mdl_process_dEdr && mdl_process_d2Edr2;
 
     //do test & model match?
     bool match = true;
-    if (tst_virialGlobal_required ) if( !virialGlobal_comp_possible) match=false;
-    if (tst_virialPerAtom_required ) if( !virialPerAtom_comp_possible) match=false;
-    if (tst_stiffness_required ) if( !stiffness_comp_possible) match=false;
-    if (tst_process_d1Edr) if(!mdl_process_d1Edr) match=false;
-    if (tst_process_d2Edr) if(!mdl_process_d2Edr) match=false;
+    if (tst_virial_required ) if( !virial_comp_possible) match=false;
+    if (tst_particleVirial_required ) if( !particleVirial_comp_possible) match=false;
+    if (tst_hessian_required ) if( !hessian_comp_possible) match=false;
+    if (tst_process_dEdr) if(!mdl_process_dEdr) match=false;
+    if (tst_process_d2Edr2) if(!mdl_process_d2Edr2) match=false;
 
     // the match is set, now set flaggs
    
-    if (tst_virialGlobal_required ) if (!mdl_virialGlobal) virialGlobal_need2add = true;
+    if (tst_virial_required ) if (!mdl_virial) virial_need2add = true;
     
-    if (tst_virialPerAtom_required ) if (!mdl_virialPerAtom) virialPerAtom_need2add = true;
+    if (tst_particleVirial_required ) if (!mdl_particleVirial) particleVirial_need2add = true;
    
-    if (tst_stiffness_required ) if (!mdl_stiffness) stiffness_need2add = true;
+    if (tst_hessian_required ) if (!mdl_hessian) hessian_need2add = true;
 
     return match;
     
@@ -2701,41 +2730,41 @@ void KIM_API_model::add_element(char* instring){
 
 void KIM_API_model::fij_related_things_add_set_index(){
     //add part
-    if(virialGlobal_need2add){
-        char instr[512] = "virialGlobal            real*8       pressure     ";
+    if(virial_need2add){
+        char instr[512] = "virial            real*8       pressure     ";
         strcat(instr,"    [6]           # automatically generated");
         this->add_element(instr);
     }
-    if(virialPerAtom_need2add){
-        char instr[512] = "virialPerAtom            real*8       pressure     ";
-        strcat(instr,"    [numberOfAtoms,6]           # automatically generated");
+    if(particleVirial_need2add){
+        char instr[512] = "particleVirial            real*8       pressure     ";
+        strcat(instr,"    [numberOfParticles,6]           # automatically generated");
         this->add_element(instr);
     }
-    if(stiffness_need2add){
-        char instr[512] = "stiffness            real*8       pressure     ";
-        strcat(instr,"    [numberOfAtoms,numberOfAtoms,3,3]     # automatically generated");
+    if(hessian_need2add){
+        char instr[512] = "hessian            real*8       pressure     ";
+        strcat(instr,"    [numberOfParticles,numberOfParticles,3,3]     # automatically generated");
         this->add_element(instr);
     }
 
 
     //get index
-    this->virialGlobal_ind = get_index("virialGlobal");
-    this->virialPerAtom_ind = get_index("virialPerAtom");
-    this->stiffness_ind =get_index("stiffness");
-    this->process_d1Edr_ind =get_index("process_d1Edr");
-    this->process_d2Edr_ind =get_index("process_d2Edr");
+    this->virial_ind = get_index("virial");
+    this->particleVirial_ind = get_index("particleVirial");
+    this->hessian_ind =get_index("hessian");
+    this->process_dEdr_ind =get_index("process_dEdr");
+    this->process_d2Edr2_ind =get_index("process_d2Edr2");
 
-    if (virialGlobal_need2add || virialPerAtom_need2add || stiffness_need2add) (*this)[process_d1Edr_ind].flag->calculate=1;
-    if (stiffness_need2add) (*this)[process_d2Edr_ind].flag->calculate=1;
+    if (virial_need2add || particleVirial_need2add || hessian_need2add) (*this)[process_dEdr_ind].flag->calculate=1;
+    if (hessian_need2add) (*this)[process_d2Edr2_ind].flag->calculate=1;
 }
-void KIM_API_model::process_d1Edr(KIM_API_model** ppkim, double* dE, double* r,
+void KIM_API_model::process_dEdr(KIM_API_model** ppkim, double* dE, double* r,
         double** dx,int *i, int *j, int* ier){
     KIM_API_model * pkim= *ppkim;
     typedef void (*Process_d1Edr)(KIM_API_model **, double *, double *, double **,int *,int *, int *);
 
-    Process_d1Edr process = (Process_d1Edr) (*pkim)[pkim->process_d1Edr_ind].data;
+    Process_d1Edr process = (Process_d1Edr) (*pkim)[pkim->process_dEdr_ind].data;
     int process_flag =0;
-    process_flag = (*pkim)[pkim->process_d1Edr_ind].flag->calculate;
+    process_flag = (*pkim)[pkim->process_dEdr_ind].flag->calculate;
 
     if (process != NULL && process_flag == 1 && pkim->model_index_shift == 0) {
         (*process)(ppkim,dE,r,dx,i,j,ier);
@@ -2744,21 +2773,21 @@ void KIM_API_model::process_d1Edr(KIM_API_model** ppkim, double* dE, double* r,
         int j2send = *j-pkim->model_index_shift;
         (*process)(ppkim,dE,r,dx,&i2send,&j2send,ier);
     }else if (process_flag == 1 && pkim->AUX_index_shift == 0){
-        KIM_AUX::Process_DE::process_d1Edr(ppkim,dE,r,dx,i,j,ier);
+        KIM_AUX::Process_DE::process_dEdr(ppkim,dE,r,dx,i,j,ier);
     } else if(process_flag == 1){
         int i2send = *i-1;
         int j2send = *j-1;
-        KIM_AUX::Process_DE::process_d1Edr(ppkim,dE,r,dx,&i2send,&j2send,ier);
+        KIM_AUX::Process_DE::process_dEdr(ppkim,dE,r,dx,&i2send,&j2send,ier);
     }
 }
 
-void KIM_API_model::process_d2Edr(KIM_API_model **ppkim,double *de,double **r,double ** pdx,int **i,int **j,int *ier){
+void KIM_API_model::process_d2Edr2(KIM_API_model **ppkim,double *de,double **r,double ** pdx,int **i,int **j,int *ier){
     KIM_API_model * pkim= *ppkim;
     typedef void (*Process_d2Edr)(KIM_API_model **, double *, double **, double **,int **,int **, int *);
 
-    Process_d2Edr process = (Process_d2Edr) (*pkim)[pkim->process_d2Edr_ind].data;
+    Process_d2Edr process = (Process_d2Edr) (*pkim)[pkim->process_d2Edr2_ind].data;
     int process_flag =0;
-    process_flag = (*pkim)[pkim->process_d2Edr_ind].flag->calculate;
+    process_flag = (*pkim)[pkim->process_d2Edr2_ind].flag->calculate;
 
     if (process != NULL && process_flag == 1 && pkim->model_index_shift == 0) {
         (*process)(ppkim,de,r,pdx,i,j,ier);
@@ -2770,56 +2799,56 @@ void KIM_API_model::process_d2Edr(KIM_API_model **ppkim,double *de,double **r,do
         int *pj = &j2send[0];
         (*process)(ppkim,de,r,pdx,&pi,&pj,ier);
     } else if(process_flag == 1 && pkim->AUX_index_shift == 0){
-        KIM_AUX::Process_DE::process_d2Edr(ppkim,de,r,pdx,i,j,ier);
+        KIM_AUX::Process_DE::process_d2Edr2(ppkim,de,r,pdx,i,j,ier);
     }else if(process_flag == 1 ){
         int i2send[2];   i2send[0]=(*i)[0]-1; i2send[1]=(*i)[1]-1;
         int j2send[2];   j2send[0]=(*j)[0]-1; j2send[1]=(*j)[1]-1;
         int *pi = &i2send[0];
         int *pj = &j2send[0];
-        KIM_AUX::Process_DE::process_d2Edr(ppkim,de,r,pdx,&pi,&pj,ier);
+        KIM_AUX::Process_DE::process_d2Edr2(ppkim,de,r,pdx,&pi,&pj,ier);
     }
 }
 
 
 //related to Unit_Handling
-double KIM_API_model::get_convert_scale( char *u_from,char *u_to, int *error){
-    return Unit_Handling::get_convert_scale(u_from,u_to,error);
+double KIM_API_model::get_scale_conversion( char *u_from,char *u_to, int *error){
+    return Unit_Handling::get_scale_conversion(u_from,u_to,error);
 }
-int KIM_API_model::get_Unit_handling(int *error){
-    return unit_h.get_Unit_handling(error);
+int KIM_API_model::get_unit_handling(int *error){
+    return unit_h.get_unit_handling(error);
 }
-char * KIM_API_model::get_Unit_length(int *error){
-    return unit_h.get_Unit_length(error);
+char * KIM_API_model::get_unit_length(int *error){
+    return unit_h.get_unit_length(error);
 }
-char * KIM_API_model::get_Unit_energy(int *error){
-    return unit_h.get_Unit_energy(error);
+char * KIM_API_model::get_unit_energy(int *error){
+    return unit_h.get_unit_energy(error);
 }
-char * KIM_API_model::get_Unit_charge(int *error){
-    return unit_h.get_Unit_charge(error);
+char * KIM_API_model::get_unit_charge(int *error){
+    return unit_h.get_unit_charge(error);
 }
-char * KIM_API_model::get_Unit_temperature(int *error){
-    return unit_h.get_Unit_temperature(error);
+char * KIM_API_model::get_unit_temperature(int *error){
+    return unit_h.get_unit_temperature(error);
 }
-char * KIM_API_model::get_Unit_time(int *error){
-    return unit_h.get_Unit_time(error);
+char * KIM_API_model::get_unit_time(int *error){
+    return unit_h.get_unit_time(error);
 }
 
-double KIM_API_model::convert_unit_from(
+double KIM_API_model::convert_to_act_unit(
    char* length, char* energy, char* charge, char* temperature, char* time,
    double length_exponent, double energy_exponent, double charge_exponent,
    double temperature_exponent, double time_exponent, int* kimerror){
-   return Unit_Handling::convert_unit_from((void *)this, length, energy, charge, temperature, time,
+   return Unit_Handling::convert_to_act_unit((void *)this, length, energy, charge, temperature, time,
    length_exponent, energy_exponent, charge_exponent,  temperature_exponent, time_exponent, kimerror);
 }
 
 //multiple data set/get methods
 //
-void KIM_API_model::set_data_multiple(int *err, int numargs, ... ){  
+void KIM_API_model::setm_data(int *err, int numargs, ... ){  
     *err=KIM_STATUS_FAIL;
     va_list listPointer;
     va_start(listPointer,numargs);
     if(numargs % 4 != 0) {
-        cout<<"set_data_multiple: numargs must be multiple of 4"<<endl;
+        cout<<"setm_data: numargs must be multiple of 4"<<endl;
         *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_4;
         va_end(listPointer);
         return;
@@ -2837,9 +2866,9 @@ void KIM_API_model::set_data_multiple(int *err, int numargs, ... ){
             return;
         }else if(key ==0) continue;
 
-        if(dt==NULL) cout<<"set_data_multiple: WARNING: for "<<nm<<" data is NULL\n";
+        if(dt==NULL) cout<<"setm_data: WARNING: for "<<nm<<" data is NULL\n";
         if(!this->set_data(nm,size,dt)){
-            cout<<"set_data_multiple: set data for "<<nm<<" failed\n";
+            cout<<"setm_data: set data for "<<nm<<" failed\n";
             va_end(listPointer);
             return;
         }
@@ -2849,12 +2878,12 @@ void KIM_API_model::set_data_multiple(int *err, int numargs, ... ){
     va_end(listPointer);
 
 }
-void KIM_API_model::set_data_byI_multiple(int *err, int numargs, ... ){
+void KIM_API_model::setm_data_by_index(int *err, int numargs, ... ){
     *err=KIM_STATUS_FAIL;
     va_list listPointer;
     va_start(listPointer,numargs);
     if(numargs % 4 != 0) {
-        cout<<"set_data_byI_multiple: numargs must be multiple of 4"<<endl;
+        cout<<"setm_data_by_index: numargs must be multiple of 4"<<endl;
         *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_4;
         va_end(listPointer);
         return;
@@ -2871,10 +2900,10 @@ void KIM_API_model::set_data_byI_multiple(int *err, int numargs, ... ){
             return;
         }else if(key ==0) continue;
         
-        if(dt==NULL) cout<<"set_data_byI_multiple: WARNING: for argument group "<<i<<" data is NULL\n";
+        if(dt==NULL) cout<<"setm_data_by_index: WARNING: for argument group "<<i<<" data is NULL\n";
 
         if(!this->set_data_byi(ind,size,dt)){
-            cout<<"set_data_byI_multiple: set data for argument group"<<i<<" failed\n";
+            cout<<"setm_data_by_index: set data for argument group"<<i<<" failed\n";
             va_end(listPointer);
             return;
         }
@@ -2883,13 +2912,13 @@ void KIM_API_model::set_data_byI_multiple(int *err, int numargs, ... ){
     va_end(listPointer);
 }
 
-void KIM_API_model::get_data_multiple(int *err,int numargs, ...){
+void KIM_API_model::getm_data(int *err,int numargs, ...){
     
     *err=KIM_STATUS_FAIL;
     va_list listPointer;
     va_start(listPointer,numargs);
     if(numargs % 3 != 0) {
-        cout<<"get_data_multiple: numargs must be multiple of 3"<<endl;
+        cout<<"getm_data: numargs must be multiple of 3"<<endl;
         *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3;
         va_end(listPointer);
         return;
@@ -2907,7 +2936,7 @@ void KIM_API_model::get_data_multiple(int *err,int numargs, ...){
         
         *dt = this->get_data(nm,err);
         if(*err != KIM_STATUS_OK){
-            cout<<"get_data_multiple: get data for "<<nm<<" failed\n";
+            cout<<"getm_data: get data for "<<nm<<" failed\n";
             va_end(listPointer);
             return;
         }
@@ -2917,12 +2946,12 @@ void KIM_API_model::get_data_multiple(int *err,int numargs, ...){
     va_end(listPointer);
 }
 
-void KIM_API_model::get_data_byI_multiple(int *err,int numargs, ...){
+void KIM_API_model::getm_data_by_index(int *err,int numargs, ...){
     *err=KIM_STATUS_FAIL;
     va_list listPointer;
     va_start(listPointer,numargs);
     if(numargs % 3 != 0) {
-        cout<<"get_data_byI_multiple: numargs must be multiple of 3"<<endl;
+        cout<<"getm_data_by_index: numargs must be multiple of 3"<<endl;
         *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3;
         va_end(listPointer);
         return;
@@ -2941,7 +2970,7 @@ void KIM_API_model::get_data_byI_multiple(int *err,int numargs, ...){
         
         *dt = this->get_data_byi(ind,err);
         if(*err != KIM_STATUS_OK){
-            cout<<"get_data_byI_multiple: get data for argument group "<<i<<" failed\n";
+            cout<<"getm_data_by_index: get data for argument group "<<i<<" failed\n";
             va_end(listPointer);
             return;
         }
@@ -2951,13 +2980,13 @@ void KIM_API_model::get_data_byI_multiple(int *err,int numargs, ...){
     va_end(listPointer);
 }
 
-void KIM_API_model::get_index_multiple(int *err, int numargs, ...){
+void KIM_API_model::getm_index(int *err, int numargs, ...){
      *err=KIM_STATUS_FAIL;
     va_list listPointer;
     va_start(listPointer,numargs);
     
     if(numargs % 3 != 0) {
-        cout<<"get_index_multiple: numargs must be multiple of 3"<<endl;
+        cout<<"getm_index: numargs must be multiple of 3"<<endl;
         *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3;
         va_end(listPointer);
         return;
@@ -2976,7 +3005,7 @@ void KIM_API_model::get_index_multiple(int *err, int numargs, ...){
        
         *ind = this->get_index(nm,err);
         if(*err != KIM_STATUS_OK){
-            cout<<"get_index_multiple: get index for "<<nm<<" failed\n";
+            cout<<"getm_index: get index for "<<nm<<" failed\n";
             va_end(listPointer);
             return;
         }
@@ -2987,12 +3016,12 @@ void KIM_API_model::get_index_multiple(int *err, int numargs, ...){
 
 }
 
-void KIM_API_model::set_compute_multiple(int *err, int numargs, ...){
+void KIM_API_model::setm_compute(int *err, int numargs, ...){
      *err=KIM_STATUS_FAIL;
     va_list listPointer;
     va_start(listPointer,numargs);
     if(numargs % 3 != 0) {
-        cout<<"set_compute_multiple: numargs must be multiple of 3"<<endl;
+        cout<<"setm_compute: numargs must be multiple of 3"<<endl;
         *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3;
         va_end(listPointer);
         return;
@@ -3011,7 +3040,7 @@ void KIM_API_model::set_compute_multiple(int *err, int numargs, ...){
        
         int index = this->get_index(nm,err);
         if (*err != KIM_STATUS_OK){
-           cout<<"set_compute_multiple:  name "<<nm<<" not in KIM\n";
+           cout<<"setm_compute:  name "<<nm<<" not in KIM\n";
            va_end(listPointer);
            return;
         }
@@ -3020,7 +3049,7 @@ void KIM_API_model::set_compute_multiple(int *err, int numargs, ...){
         }else if (compute_flag ==0){
             (*this)[index].flag->calculate = 0;
         }else{
-            cout<<"set_compute_multiple:  for "<<nm<<" failed: compute_flag must be 0 or 1\n";
+            cout<<"setm_compute:  for "<<nm<<" failed: compute_flag must be 0 or 1\n";
             va_end(listPointer);
             return;
         }           
@@ -3030,12 +3059,12 @@ void KIM_API_model::set_compute_multiple(int *err, int numargs, ...){
     va_end(listPointer);
 }
 
-void KIM_API_model::set_compute_byI_multiple(int* err, int numargs, ...){
+void KIM_API_model::setm_compute_by_index(int* err, int numargs, ...){
       *err=KIM_STATUS_OK;
     va_list listPointer;
     va_start(listPointer,numargs);
     if(numargs % 3 != 0) {
-        cout<<"set_compute_byI_multiple: numargs must be multiple of 3"<<endl;
+        cout<<"setm_compute_by_index: numargs must be multiple of 3"<<endl;
         *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3;
         va_end(listPointer);
         return;
@@ -3054,7 +3083,7 @@ void KIM_API_model::set_compute_byI_multiple(int* err, int numargs, ...){
        
         if (index < 0 || index >= this->model.size) *err=KIM_STATUS_FAIL;
         if (*err != KIM_STATUS_OK){
-           cout<<"set_compute_byI_multiple:  for argument group "<<i<<" failed\n";
+           cout<<"setm_compute_by_index:  for argument group "<<i<<" failed\n";
            va_end(listPointer);
            return;
         }
@@ -3063,7 +3092,7 @@ void KIM_API_model::set_compute_byI_multiple(int* err, int numargs, ...){
         }else if (compute_flag ==0){
             (*this)[index].flag->calculate = 0;
         }else{
-            cout<<"set_compute_byI_multiple:  for argument group "<<i<<" failed: compute_flag must be 0 or 1\n";
+            cout<<"setm_compute_by_index:  for argument group "<<i<<" failed: compute_flag must be 0 or 1\n";
             *err=KIM_STATUS_FAIL;
             va_end(listPointer);
             return;
@@ -3074,12 +3103,12 @@ void KIM_API_model::set_compute_byI_multiple(int* err, int numargs, ...){
     va_end(listPointer);
 }
 
-void KIM_API_model::get_compute_multiple(int *err,int numargs, ...){
+void KIM_API_model::getm_compute(int *err,int numargs, ...){
      *err=KIM_STATUS_FAIL;
     va_list listPointer;
     va_start(listPointer,numargs);
     if(numargs % 3 != 0) {
-        cout<<"get_compute_multiple: numargs must be multiple of 3"<<endl;
+        cout<<"getm_compute: numargs must be multiple of 3"<<endl;
         *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3;
         va_end(listPointer);
         return;
@@ -3098,7 +3127,7 @@ void KIM_API_model::get_compute_multiple(int *err,int numargs, ...){
        
         int index = this->get_index(nm,err);
         if (*err != KIM_STATUS_OK){
-           cout<<"get_compute_multiple:  name "<<nm<<" not in KIM\n";
+           cout<<"getm_compute:  name "<<nm<<" not in KIM\n";
            va_end(listPointer);
            return;
         }
@@ -3109,12 +3138,12 @@ void KIM_API_model::get_compute_multiple(int *err,int numargs, ...){
     va_end(listPointer);
 }
 
-void KIM_API_model::get_compute_byI_multiple(int* err, int numargs, ...){
+void KIM_API_model::getm_compute_by_index(int* err, int numargs, ...){
     *err=KIM_STATUS_OK;
     va_list listPointer;
     va_start(listPointer,numargs);
     if(numargs % 3 != 0) {
-        cout<<"get_compute_byI_multiple: numargs must be multiple of 3"<<endl;
+        cout<<"getm_compute_by_index: numargs must be multiple of 3"<<endl;
         *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3;
         va_end(listPointer);
         return;
@@ -3133,7 +3162,7 @@ void KIM_API_model::get_compute_byI_multiple(int* err, int numargs, ...){
        
         if (index < 0 || index >= this->model.size) *err=KIM_STATUS_FAIL;
         if (*err != KIM_STATUS_OK){
-           cout<<"get_compute_byI_multiple:  for argument group "<<i<<" failed\n";
+           cout<<"getm_compute_by_index:  for argument group "<<i<<" failed\n";
            va_end(listPointer);
            return;
         }

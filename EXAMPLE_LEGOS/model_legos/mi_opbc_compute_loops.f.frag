@@ -4,9 +4,9 @@
        idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_nbc_method_f", ier)
        return
     endif
-    if (index(NBC_Method,"MI-OPBC-H").eq.1) then
+    if (index(NBC_Method,"MI_OPBC_H").eq.1) then
        HalfOrFull = 1
-    elseif (index(NBC_Method,"MI-OPBC-F").eq.1) then
+    elseif (index(NBC_Method,"MI_OPBC_F").eq.1) then
        HalfOrFull = 2
     else
        ier = KIM_STATUS_FAIL
@@ -15,19 +15,19 @@
     endif
     call free(pNBC_Method) ! don't forget to release the memory...
 
-    ! get boxlength & numberContributingAtoms
-    call kim_api_get_data_multiple_f(pkim, ier,     &
-         "boxlength",               pboxlength,  1, &
-         "numberContributingAtoms", pnumContrib, 1)
+    ! get boxSideLengths & numberContributingParticles
+    call kim_api_getm_data_f(pkim, ier,     &
+         "boxSideLengths",               pboxSideLengths,  1, &
+         "numberContributingParticles", pnumContrib, 1)
     if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_multiple_f", ier)
+       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
        return
     endif
 
 
     !  Compute energy and forces
     !
-    do i = 1,numberOfAtoms
+    do i = 1,numberOfParticles
        
        ! Get neighbors for atom i
        !
@@ -48,8 +48,8 @@
        do jj = 1, numnei
           j = nei1atom(jj)
           Rij(:) = coor(:,j) - coor(:,i)                ! distance vector between i j
-          where ( abs(Rij) > 0.5d0*boxlength )          ! periodic boundary conditions
-             Rij = Rij - sign(boxlength,Rij)            ! applied where needed.
+          where ( abs(Rij) > 0.5d0*boxSideLengths )          ! periodic boundary conditions
+             Rij = Rij - sign(boxSideLengths,Rij)            ! applied where needed.
           end where                                     ! 
           Rsqij = dot_product(Rij,Rij)                  ! compute square distance
           if ( Rsqij < model_cutsq ) then               ! particles are interacting?

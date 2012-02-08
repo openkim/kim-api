@@ -1,6 +1,6 @@
 
 #ifndef _KIMSERVICE_H
-#include "KIMservice.h"
+#include "KIM_API.h"
 #endif
 #ifndef UNIT_HANDLING_H
 #define	UNIT_HANDLING_H
@@ -11,20 +11,20 @@ public:
     ~Unit_Handling();
     void init_str(char * inputstr, int * error);
     void init(char *inputfile, int * error);
-    static double get_convert_scale( char *u_from,char *u_to, int *error);
+    static double get_scale_conversion( char *u_from,char *u_to, int *error);
     static bool is_it_base(char * unit);
     static bool is_it_derived(char * unit);
     static bool do_unit_match(Unit_Handling  &tst, Unit_Handling &mdl);
     void print();
     void print(ostream &stream);
-    int get_Unit_handling(int *error);
-    char * get_Unit_length(int *error);
-    char * get_Unit_energy(int *error);
-    char * get_Unit_charge(int *error);
-    char * get_Unit_temperature(int *error);
-    char * get_Unit_time(int *error);
+    int get_unit_handling(int *error);
+    char * get_unit_length(int *error);
+    char * get_unit_energy(int *error);
+    char * get_unit_charge(int *error);
+    char * get_unit_temperature(int *error);
+    char * get_unit_time(int *error);
 
-    static double convert_unit_from(void *kimmdl,
+    static double convert_to_act_unit(void *kimmdl,
                                 char* length,
                                 char* energy,
                                 char* charge,
@@ -55,11 +55,11 @@ private:
 
     
     //
-    char Unit_length[KEY_CHAR_LENGTH];
-    char Unit_energy[KEY_CHAR_LENGTH];
-    char Unit_charge[KEY_CHAR_LENGTH];
-    char Unit_temperature[KEY_CHAR_LENGTH];
-    char Unit_time[KEY_CHAR_LENGTH];
+    char Unit_length[KIM_KEY_STRING_LENGTH];
+    char Unit_energy[KIM_KEY_STRING_LENGTH];
+    char Unit_charge[KIM_KEY_STRING_LENGTH];
+    char Unit_temperature[KIM_KEY_STRING_LENGTH];
+    char Unit_time[KIM_KEY_STRING_LENGTH];
     bool flexible_handling;
     void check_base_set_flexible(IOline *lines, int nlines, int *error);
     bool is_Unit_length_supported();

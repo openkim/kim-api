@@ -4,7 +4,7 @@
 !
 !-------------------------------------------------------------------------------
 subroutine free_KIM_API_object(pkim)
-  use KIMservice
+  use KIM_API
   implicit none
 
   !-- Transferred variables

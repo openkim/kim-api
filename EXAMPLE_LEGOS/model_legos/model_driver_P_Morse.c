@@ -18,7 +18,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#include "KIMserviceC.h"
+#include "KIM_API_C.h"
 #include "KIMstatus.h"
 
 /******************************************************************************
@@ -64,16 +64,16 @@ struct model_buffer {
    int IterOrLoca;
    int energy_ind;
    int forces_ind;
-   int energyPerAtom_ind;
-   int process_d1Edr_ind;
-   int process_d2Edr_ind;
+   int particleEnergy_ind;
+   int process_dEdr_ind;
+   int process_d2Edr2_ind;
    int model_index_shift;
    
-   int* numberOfAtoms;
+   int* numberOfParticles;
    int atomTypes_ind;
    int coordinates_ind;
-   int* numberContributingAtoms;
-   int boxlength_ind;
+   int* numberContributingParticles;
+   int boxSideLengths_ind;
    double* cutoff;
    int (*get_half_neigh)(void *,int *,int *,int *, int *, int **, double **);
    int (*get_full_neigh)(void *,int *,int *,int *, int *, int **, double **);
@@ -208,9 +208,9 @@ static void compute(void* km, int* ier)
    struct model_buffer* buffer;
    int comp_energy;
    int comp_force;
-   int comp_energyPerAtom;
-   int comp_process_d1Edr;
-   int comp_process_d2Edr;
+   int comp_particleEnergy;
+   int comp_process_dEdr;
+   int comp_process_d2Edr2;
    int NBC;
    int HalfOrFull;
    int IterOrLoca;
@@ -231,8 +231,8 @@ static void compute(void* km, int* ier)
    double* coords;
    double* energy;
    double* force;
-   double* energyPerAtom;
-   double* boxlength;
+   double* particleEnergy;
+   double* boxSideLengths;
    int* numContrib;
    int numberContrib;
    int numOfAtomNeigh;
@@ -258,24 +258,24 @@ static void compute(void* km, int* ier)
    Rzero = buffer->Rzero;
    shift = buffer->shift;
 
-   /* check to see if we have been asked to compute the forces, energyPerAtom, and d1Edr */
-   KIM_API_get_compute_byI_multiple(pkim, ier, 5*3,
+   /* check to see if we have been asked to compute the forces, particleEnergy, and d1Edr */
+   KIM_API_getm_compute_by_index(pkim, ier, 5*3,
                                     buffer->energy_ind,        &comp_energy,        1,
                                     buffer->forces_ind,        &comp_force,         1,
-                                    buffer->energyPerAtom_ind, &comp_energyPerAtom, 1,
-                                    buffer->process_d1Edr_ind, &comp_process_d1Edr, 1,
-                                    buffer->process_d2Edr_ind, &comp_process_d2Edr, 1);
+                                    buffer->particleEnergy_ind, &comp_particleEnergy, 1,
+                                    buffer->process_dEdr_ind, &comp_process_dEdr, 1,
+                                    buffer->process_d2Edr2_ind, &comp_process_d2Edr2, 1);
    if (KIM_STATUS_OK > *ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_compute_byI_multiple", *ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_compute_by_index", *ier);
       return;
    }
 
    /* unpack data from KIM object and/or buffer */
-   nAtoms = buffer->numberOfAtoms;
+   nAtoms = buffer->numberOfParticles;
    if (buffer->HalfOrFull == 1)
    {
-      numContrib = buffer->numberContributingAtoms;
+      numContrib = buffer->numberContributingParticles;
       if (0 != NBC) /* non-CLUSTER cases */
       {
          numberContrib = *numContrib;
@@ -286,16 +286,16 @@ static void compute(void* km, int* ier)
       }
    }
 
-   KIM_API_get_data_byI_multiple(pkim, ier, 6*3,
+   KIM_API_getm_data_by_index(pkim, ier, 6*3,
                                  buffer->atomTypes_ind,     &atomTypes,     1,
                                  buffer->coordinates_ind,   &coords,        1,
-                                 buffer->boxlength_ind,     &boxlength,     (NBC==1),
+                                 buffer->boxSideLengths_ind,     &boxSideLengths,     (NBC==1),
                                  buffer->energy_ind,        &energy,        comp_energy,
                                  buffer->forces_ind,        &force,         comp_force,
-                                 buffer->energyPerAtom_ind, &energyPerAtom, comp_energyPerAtom);
+                                 buffer->particleEnergy_ind, &particleEnergy, comp_particleEnergy);
    if (KIM_STATUS_OK > *ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data_byI_multiple", *ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data_by_index", *ier);
       return;
    }
 
@@ -313,11 +313,11 @@ static void compute(void* km, int* ier)
    *ier = KIM_STATUS_OK; /* everything is ok */
 
    /* initialize potential energies, forces, and virial term */
-   if (comp_energyPerAtom)
+   if (comp_particleEnergy)
    {
       for (i = 0; i < *nAtoms; ++i)
       {
-         energyPerAtom[i] = 0.0;
+         particleEnergy[i] = 0.0;
       }
    }
    else if (comp_energy)
@@ -470,11 +470,11 @@ static void compute(void* km, int* ier)
          Rsqij = 0.0;
          for (k = 0; k < DIM; ++k)
          {
-            if (3 != NBC) /* all methods except NEIGH-RVEC-F */
+            if (3 != NBC) /* all methods except NEIGH_RVEC_F */
             {
                Rij[k] = coords[j*DIM + k] - coords[i*DIM + k];
             }
-            else          /* NEIGH-RVEC-F method */
+            else          /* NEIGH_RVEC_F method */
             {
                Rij[k] = Rij_list[jj*DIM + k];
             }
@@ -482,9 +482,9 @@ static void compute(void* km, int* ier)
             /* apply periodic boundary conditions if required */
             if (1 == NBC)
             {
-               if (abs(Rij[k]) > 0.5*boxlength[k])
+               if (abs(Rij[k]) > 0.5*boxSideLengths[k])
                {
-                  Rij[k] -= (Rij[k]/fabs(Rij[k]))*boxlength[k];
+                  Rij[k] -= (Rij[k]/fabs(Rij[k]))*boxSideLengths[k];
                }
             }
             
@@ -496,7 +496,7 @@ static void compute(void* km, int* ier)
          if (Rsqij < *cutsq) /* particles are interacting ? */
          {
             R = sqrt(Rsqij);
-            if (comp_process_d2Edr)
+            if (comp_process_d2Edr2)
             {
                /* compute pair potential and its derivatives */
                calc_phi_d2phi(epsilon,
@@ -519,7 +519,7 @@ static void compute(void* km, int* ier)
                   d2Eidr = 0.5*d2phi;
                }
             }
-            else if (comp_force || comp_process_d1Edr)
+            else if (comp_force || comp_process_dEdr)
             {
                /* compute pair potential and its derivative */
                calc_phi_dphi(epsilon,
@@ -551,11 +551,11 @@ static void compute(void* km, int* ier)
             }
             
             /* contribution to energy */
-            if (comp_energyPerAtom)
+            if (comp_particleEnergy)
             {
-               energyPerAtom[i] += 0.5*phi;
+               particleEnergy[i] += 0.5*phi;
                /* if half list add energy for the other atom in the pair */
-               if ((1 == HalfOrFull) && (j < numberContrib)) energyPerAtom[j] += 0.5*phi;
+               if ((1 == HalfOrFull) && (j < numberContrib)) particleEnergy[j] += 0.5*phi;
             }
             else if (comp_energy)
             {
@@ -571,14 +571,14 @@ static void compute(void* km, int* ier)
                }
             }
             
-            /* contribution to process_d1Edr */
-            if (comp_process_d1Edr)
+            /* contribution to process_dEdr */
+            if (comp_process_dEdr)
             {
-               KIM_API_process_d1Edr(km, &dEidr, &R, &pRij, &i, &j, ier);
+               KIM_API_process_dEdr(km, &dEidr, &R, &pRij, &i, &j, ier);
             }
             
-            /* contribution to process_d2Edr */
-            if (comp_process_d2Edr)
+            /* contribution to process_d2Edr2 */
+            if (comp_process_d2Edr2)
             {
                R_pairs[0] = R_pairs[1] = R;
                Rij_pairs[0][0] = Rij_pairs[1][0] = Rij[0];
@@ -587,7 +587,7 @@ static void compute(void* km, int* ier)
                i_pairs[0] = i_pairs[1] = i;
                j_pairs[0] = j_pairs[1] = j;
 
-               KIM_API_process_d2Edr(km, &d2Eidr, &pR_pairs, &pRij_pairs, &pi_pairs, &pj_pairs, ier);
+               KIM_API_process_d2Edr2(km, &d2Eidr, &pR_pairs, &pRij_pairs, &pi_pairs, &pj_pairs, ier);
             } 
           
             /* contribution to forces */
@@ -605,12 +605,12 @@ static void compute(void* km, int* ier)
    
    /* perform final tasks */
    
-   if (comp_energyPerAtom && comp_energy)
+   if (comp_particleEnergy && comp_energy)
    {
       *energy = 0.0;
       for (k = 0; k < *nAtoms; ++k)
       {
-         *energy += energyPerAtom[k];
+         *energy += particleEnergy[k];
       }
    }
 
@@ -647,13 +647,13 @@ void MODEL_DRIVER_NAME_LC_STR_init_(void *km, char* paramfile, int* length)
    struct model_buffer* buffer;
 
    /* store pointer to functions in KIM object */
-   KIM_API_set_data_multiple(pkim, &ier, 3*4,
+   KIM_API_setm_data(pkim, &ier, 3*4,
                              "compute", 1, &compute, 1,
                              "reinit",  1, &reinit,  1,
                              "destroy", 1, &destroy, 1);
    if (KIM_STATUS_OK > ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_set_data_multiple", ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_setm_data", ier);
       exit(1);
    }
 
@@ -670,33 +670,33 @@ void MODEL_DRIVER_NAME_LC_STR_init_(void *km, char* paramfile, int* length)
    }
 
    /* convert to appropriate units */
-   cutoff *= KIM_API_convert_unit_from(pkim, "A", "eV", "e", "K", "fs",
+   cutoff *= KIM_API_convert_to_act_unit(pkim, "A", "eV", "e", "K", "fs",
                                              1.0,  0.0, 0.0, 0.0,  0.0, &ier);
    if (KIM_STATUS_OK > ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_unit_from", ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_to_act_unit", ier);
       exit(1);
    }
-   epsilon *= KIM_API_convert_unit_from(pkim, "A", "eV", "e", "K", "fs",
+   epsilon *= KIM_API_convert_to_act_unit(pkim, "A", "eV", "e", "K", "fs",
                                               0.0,  1.0, 0.0, 0.0,  0.0, &ier);
    if (KIM_STATUS_OK > ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_unit_from", ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_to_act_unit", ier);
       exit(1);
    }
 
-   C *= KIM_API_convert_unit_from(pkim, "A", "eV", "e", "K", "fs",
+   C *= KIM_API_convert_to_act_unit(pkim, "A", "eV", "e", "K", "fs",
                                         -1.0,  0.0, 0.0, 0.0,  0.0, &ier);
    if (KIM_STATUS_OK > ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_unit_from", ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_to_act_unit", ier);
       exit(1);
    }
-   Rzero *= KIM_API_convert_unit_from(pkim, "A", "eV", "e", "K", "fs",
+   Rzero *= KIM_API_convert_to_act_unit(pkim, "A", "eV", "e", "K", "fs",
                                             1.0,  0.0, 0.0, 0.0,  0.0, &ier);
    if (KIM_STATUS_OK > ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_unit_from", ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_to_act_unit", ier);
       exit(1);
    }
 
@@ -748,7 +748,7 @@ void MODEL_DRIVER_NAME_LC_STR_init_(void *km, char* paramfile, int* length)
    }
    
    /* store parameters in KIM object */
-   KIM_API_set_data_multiple(pkim, &ier, 6*4,
+   KIM_API_setm_data(pkim, &ier, 6*4,
                              "PARAM_FREE_cutoff",  1, model_Pcutoff, 1,
                              "PARAM_FIXED_cutsq",  1, model_cutsq,   1,
                              "PARAM_FREE_epsilon", 1, model_epsilon, 1,
@@ -884,15 +884,15 @@ static void setup_buffer(intptr_t* pkim, struct model_buffer* buffer)
    {
       buffer->NBC = 0;
    }
-   else if ((!strcmp("MI-OPBC-H",NBCstr)) || (!strcmp("MI-OPBC-F",NBCstr)))
+   else if ((!strcmp("MI_OPBC_H",NBCstr)) || (!strcmp("MI_OPBC_F",NBCstr)))
    {
       buffer->NBC = 1;
    }
-   else if ((!strcmp("NEIGH-PURE-H",NBCstr)) || (!strcmp("NEIGH-PURE-F",NBCstr)))
+   else if ((!strcmp("NEIGH_PURE_H",NBCstr)) || (!strcmp("NEIGH_PURE_F",NBCstr)))
    {
       buffer->NBC = 2;
    }
-   else if (!strcmp("NEIGH-RVEC-F",NBCstr))
+   else if (!strcmp("NEIGH_RVEC_F",NBCstr))
    {
       buffer->NBC = 3;
    }
@@ -909,7 +909,7 @@ static void setup_buffer(intptr_t* pkim, struct model_buffer* buffer)
     * HalfOrFull = 1 -- Half
     *            = 2 -- Full
     *****************************/
-   if (KIM_API_isit_half_neighbors(pkim, &ier))
+   if (KIM_API_is_half_neighbors(pkim, &ier))
    {
       buffer->HalfOrFull = 1;
    }
@@ -944,24 +944,24 @@ static void setup_buffer(intptr_t* pkim, struct model_buffer* buffer)
 
    buffer->model_index_shift = KIM_API_get_model_index_shift(pkim);
 
-   KIM_API_get_index_multiple(pkim, &ier, 8*3,
+   KIM_API_getm_index(pkim, &ier, 8*3,
                               "energy",        &(buffer->energy_ind),        1,
                               "forces",        &(buffer->forces_ind),        1,
-                              "energyPerAtom", &(buffer->energyPerAtom_ind), 1,
-                              "process_d1Edr", &(buffer->process_d1Edr_ind), 1,
-                              "process_d2Edr", &(buffer->process_d2Edr_ind), 1,
+                              "particleEnergy", &(buffer->particleEnergy_ind), 1,
+                              "process_dEdr", &(buffer->process_dEdr_ind), 1,
+                              "process_d2Edr2", &(buffer->process_d2Edr2_ind), 1,
                               "atomTypes",     &(buffer->atomTypes_ind),     1,
                               "coordinates",   &(buffer->coordinates_ind),   1,
-                              "boxlength",     &(buffer->boxlength_ind),     1);
+                              "boxSideLengths",     &(buffer->boxSideLengths_ind),     1);
    if (KIM_STATUS_OK > ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_index_multiple", ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_index", ier);
       exit(1);
    }
 
-   KIM_API_get_data_multiple(pkim, &ier, 11*3,
-                             "numberOfAtoms",           &(buffer->numberOfAtoms),           1,
-                             "numberContributingAtoms", &(buffer->numberContributingAtoms), 1,
+   KIM_API_getm_data(pkim, &ier, 11*3,
+                             "numberOfParticles",           &(buffer->numberOfParticles),           1,
+                             "numberContributingParticles", &(buffer->numberContributingParticles), 1,
                              "get_half_neigh",          &(buffer->get_half_neigh),          1,
                              "get_full_neigh",          &(buffer->get_full_neigh),          1,
                              "cutoff",                  &(buffer->cutoff),                  1,
@@ -974,7 +974,7 @@ static void setup_buffer(intptr_t* pkim, struct model_buffer* buffer)
                             );
    if (KIM_STATUS_OK > ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data_multiple", ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data", ier);
       exit(1);
    }
 

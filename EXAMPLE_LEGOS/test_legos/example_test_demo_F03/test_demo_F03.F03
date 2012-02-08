@@ -7,10 +7,10 @@
 ! Author: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
 !
 
-module KIMserviceF2003 ! this module will be in KIM_API as part of 
-			!KIMserviceF2003.F90 will add it later with all service routines
+module KIM_APIF2003 ! this module will be in KIM_API as part of 
+			!KIM_APIF2003.F90 will add it later with all service routines
 			! the  interface block in this nodule describes direct call to
-			!c-stle  service routines defined in KIMserviceC.h/cpp through f2003 standard 
+			!c-stle  service routines defined in KIM_API_C.h/cpp through f2003 standard 
 
 	use iso_c_binding
 	implicit none
@@ -93,11 +93,11 @@ module KIMserviceF2003 ! this module will be in KIM_API as part of
 
 	end interface 
           
-end module KIMserviceF2003
+end module KIM_APIF2003
 
 program ljtest
 	use  neighborlistmod
-	use KIMserviceF2003
+	use KIM_APIF2003
 	use iso_c_binding
 	implicit none
 	!input atomic configuration file
@@ -109,7 +109,7 @@ program ljtest
 	character*80,target :: nm =""
         real*8,pointer, dimension(:,:)::x,f
 	real*8,pointer, dimension(:)::ea !energy per atom
-	type(c_ptr) :: px,pf,pea,penergy,pcutoff,pnatoms! c_type pointers:x,f,energyPerAtom,energy,cutoff,natoms
+	type(c_ptr) :: px,pf,pea,penergy,pcutoff,pnatoms! c_type pointers:x,f,particleEnergy,energy,cutoff,natoms
 	type(c_ptr) :: pkim                !kim world object pointer
 	real*8, pointer:: energy,cutoff ! f90 pointers: c_type pointers will be converted to f90 pointers
         integer*8,pointer :: natoms     ! f90 pointer
@@ -149,7 +149,7 @@ program ljtest
 	pf=kim_api_get_data_f03(pkim,c_loc(nm(1:1)),kimerr);call kimerr_handle(nm,kimerr)
         call c_f_pointer(pf,f,shape=[3,ni4])
 
-	nm = "energyPerAtom"; nm=trim(nm)//char(0); 
+	nm = "particleEnergy"; nm=trim(nm)//char(0); 
 	pea=kim_api_get_data_f03(pkim,c_loc(nm(1:1)),kimerr);call kimerr_handle(nm,kimerr)
         call c_f_pointer(pea,ea,shape=[ni4])
 
@@ -162,7 +162,7 @@ program ljtest
 	pcutoff=kim_api_get_data_f03(pkim,c_loc(nm(1:1)),kimerr);call kimerr_handle(nm,kimerr)
         call c_f_pointer(pcutoff,cutoff)
 
-	nm = "numberOfAtoms"; nm=trim(nm)//char(0); 
+	nm = "numberOfParticles"; nm=trim(nm)//char(0); 
 	pnatoms=kim_api_get_data_f03(pkim,c_loc(nm(1:1)),kimerr);call kimerr_handle(nm,kimerr)
         call c_f_pointer(pnatoms,natoms)
 

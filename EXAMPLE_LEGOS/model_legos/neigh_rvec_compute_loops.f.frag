@@ -1,6 +1,6 @@
     !  Compute energy and forces
     !
-    do i = 1,numberOfAtoms
+    do i = 1,numberOfParticles
        
        ! Get neighbors for atom i
        !

@@ -1,6 +1,6 @@
     
     if ((comp_enepot.eq.1) .and. (comp_energy.eq.1)) then
-       energy = sum(ene_pot(1:numberOfAtoms))                     ! compute total energy
+       energy = sum(ene_pot(1:numberOfParticles))                     ! compute total energy
     endif
     
   end subroutine Compute_Energy_Forces
@@ -60,19 +60,19 @@
     ! Get (changed) parameters from KIM object ---------------------------------
 
     ! get stuff from KIM object
-    call kim_api_get_data_multiple_f(pkim, ier, &
+    call kim_api_getm_data_f(pkim, ier, &
          "PARAM_FREE_sigma",   psigma,    1, &
          "PARAM_FREE_epsilon", pepsilon,  1, &
          "PARAM_FREE_cutoff",  pparamcut, 1)
     if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_multiple_f", ier)
+       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
        stop
     endif
     
     ! Set new values in KIM object ---------------------------------------------
 
     ! Set stuff in KIM object
-    call kim_api_get_data_multiple_f(pkim, ier, &
+    call kim_api_getm_data_f(pkim, ier, &
          "cutoff",              pcutoff,  1, &
          "PARAM_FIXED_cutnorm", pcutnorm, 1, &
          "PARAM_FIXED_A",       pA,       1, &
@@ -81,7 +81,7 @@
          "PARAM_FIXED_sigmasq", psigmasq, 1, &
          "PARAM_FIXED_cutsq",   pcutsq,   1)
     if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_multiple_f", ier)
+       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
        stop
     endif
     
@@ -104,7 +104,7 @@
 !
 !-------------------------------------------------------------------------------
   subroutine Destroy(pkim)
-    use KIMservice
+    use KIM_API
     implicit none
 
     !-- Transferred variables
@@ -123,7 +123,7 @@
     integer ier, idum
 
 
-    call kim_api_get_data_multiple_f(pkim, ier, &
+    call kim_api_getm_data_f(pkim, ier, &
          "PARAM_FREE_sigma",    psigma,    1, &
          "PARAM_FREE_epsilon",  pepsilon,  1, &
          "PARAM_FREE_cutoff",   pparamcut, 1, &
@@ -134,7 +134,7 @@
          "PARAM_FIXED_sigmasq", psigmasq,  1, &
          "PARAM_FIXED_cutsq",   pcutsq,    1)
     if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_multiple_f", ier)
+       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
        stop
     endif
     call free(psigma)
@@ -159,7 +159,7 @@ end module MODEL_NAME_STR
 !-------------------------------------------------------------------------------
 subroutine MODEL_NAME_STR_init(pkim)
   use MODEL_NAME_STR
-  use KIMservice
+  use KIM_API
   implicit none
   
   !-- Transferred variables
@@ -180,12 +180,12 @@ subroutine MODEL_NAME_STR_init(pkim)
   integer ier, idum
 
   ! store pointers in KIM object
-  call kim_api_set_data_multiple_f(pkim, ier, &
+  call kim_api_setm_data_f(pkim, ier, &
        "compute", one, loc(Compute_Energy_Forces), 1, &
        "reinit",  one, loc(ReInit),                1, &
        "destroy", one, loc(Destroy),               1)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data_multiple_f", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_setm_data_f", ier)
      stop
   endif
 
@@ -229,7 +229,7 @@ subroutine MODEL_NAME_STR_init(pkim)
   model_cutsq = model_cutoff**2
 
 
-  call kim_api_set_data_multiple_f(pkim, ier, &
+  call kim_api_setm_data_f(pkim, ier, &
        "PARAM_FREE_sigma",    one, psigma,    1, &
        "PARAM_FREE_epsilon",  one, pepsilon,  1, &
        "PARAM_FREE_cutoff",   one, pparamcut, 1, &
@@ -240,7 +240,7 @@ subroutine MODEL_NAME_STR_init(pkim)
        "PARAM_FIXED_sigmasq", one, psigmasq,  1, &
        "PARAM_FIXED_cutsq",   one, pcutsq,    1)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data_multiple_f", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_setm_data_f", ier)
      stop
   endif
   

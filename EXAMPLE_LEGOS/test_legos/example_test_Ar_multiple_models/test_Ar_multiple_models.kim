@@ -36,22 +36,22 @@ ZeroBasedLists          flag
 
 Neigh_BothAccess        flag
 
-NEIGH-RVEC-F            flag
+NEIGH_RVEC_F            flag
 
 
 #######################################################################################################
 MODEL_INPUT:
 # Name                  Type         Unit                Shape              Requirements
 
-numberOfAtoms           integer      none                []
+numberOfParticles           integer      none                []
 
-numberContributingAtoms integer      none                []
+numberContributingParticles integer      none                []
 
-numberAtomTypes         integer      none                []
+numberParticleTypes         integer      none                []
 
-atomTypes               integer      none                [numberOfAtoms]
+atomTypes               integer      none                [numberOfParticles]
 
-coordinates             real*8       length              [numberOfAtoms,3]
+coordinates             real*8       length              [numberOfParticles,3]
 
 get_full_neigh          method       none                []
 

@@ -4,17 +4,17 @@
 !                        atom coordinates in coords()
 !
 !-------------------------------------------------------------------------------
-subroutine MI_OPBC_neighborlist(half, numberOfAtoms, coords, rcut, boxlength, neighborList)
-  use KIMservice
+subroutine MI_OPBC_neighborlist(half, numberOfParticles, coords, rcut, boxSideLengths, neighborList)
+  use KIM_API
   implicit none
   
   !-- Transferred variables
   logical,                                             intent(in)  :: half
-  integer,                                             intent(in)  :: numberOfAtoms
-  double precision, dimension(3,numberOfAtoms),        intent(in)  :: coords
+  integer,                                             intent(in)  :: numberOfParticles
+  double precision, dimension(3,numberOfParticles),        intent(in)  :: coords
   double precision,                                    intent(in)  :: rcut
-  double precision, dimension(3),                      intent(in)  :: boxlength
-  integer,   dimension(numberOfAtoms+1,numberOfAtoms), intent(out) :: neighborList ! not memory efficient
+  double precision, dimension(3),                      intent(in)  :: boxSideLengths
+  integer,   dimension(numberOfParticles+1,numberOfParticles), intent(out) :: neighborList ! not memory efficient
   
   !-- Local variables
   integer i, j, a
@@ -24,12 +24,12 @@ subroutine MI_OPBC_neighborlist(half, numberOfAtoms, coords, rcut, boxlength, ne
   
   rcut2 = rcut**2
   
-  do i=1,numberOfAtoms
+  do i=1,numberOfParticles
      a = 1
-     do j=1,numberOfAtoms
+     do j=1,numberOfParticles
         dx(:) = coords(:, j) - coords(:, i)
-        where (abs(dx) > 0.5d0*boxlength)  ! apply PBC
-           dx = dx - sign(boxlength,dx)
+        where (abs(dx) > 0.5d0*boxSideLengths)  ! apply PBC
+           dx = dx - sign(boxSideLengths,dx)
         endwhere
         r2 = dot_product(dx, dx)
         if (r2.le.rcut2) then

@@ -161,7 +161,7 @@ DOCs/
      documentation directory.  This directory contains the file
      openkim-api-vX.X.X-introduction.pdf which provides an overview of this
      release of the openkim-api package, links to the files
-     KIMserviceDescriptions.txt and standard.kim, and a TEMPLATEs directory
+     KIM_API_Descriptions.txt and standard.kim, and a TEMPLATEs directory
      containing template files for creating your own KIM Models.  (See the
      README file in that directory.)
 

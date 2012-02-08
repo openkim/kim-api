@@ -1,6 +1,6 @@
-subroutine update_neighborlist(DIM,N,coords,cutoff,cutpad,boxlength,NBC_Method,  &
+subroutine update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
                                do_update_list,coordsave,neighborList,RijList,ier)
-use KIMservice
+use KIM_API
 implicit none
 
 !-- Transferred variables
@@ -9,7 +9,7 @@ integer,      intent(in)    :: N
 real*8,       intent(in)    :: coords(DIM,N)
 real*8,       intent(in)    :: cutoff
 real*8,       intent(in)    :: cutpad
-real*8,       intent(in)    :: boxlength(DIM)
+real*8,       intent(in)    :: boxSideLengths(DIM)
 character*64, intent(in)    :: NBC_Method
 logical,      intent(inout) :: do_update_list
 real*8,       intent(inout) :: coordsave(DIM,N)
@@ -18,7 +18,7 @@ real*8,       intent(inout) :: RijList(DIM,N+1,N)
 integer,      intent(out)   :: ier
 
 !-- Local variables
-integer nbc  ! 0- MI-OPBC-H, 1- MI-OPBC-F, 2- NEIGH-PURE-H, 3- NEIGH-PURE-F, 4-  NEIGH-RVCE-F
+integer nbc  ! 0- MI_OPBC_H, 1- MI_OPBC_F, 2- NEIGH_PURE_H, 3- NEIGH_PURE_F, 4-  NEIGH-RVCE-F
 real*8 disp, disp1, disp2, cutrange, dispvec(DIM)
 integer i, idum
 
@@ -28,15 +28,15 @@ ier = KIM_STATUS_OK
 
 ! Determine which NBC scenerio to use
 !
-if (index(NBC_Method,"MI-OPBC-H").eq.1) then
+if (index(NBC_Method,"MI_OPBC_H").eq.1) then
    nbc = 0
-elseif (index(NBC_Method,"MI-OPBC-F").eq.1) then
+elseif (index(NBC_Method,"MI_OPBC_F").eq.1) then
    nbc = 1
-elseif (index(NBC_Method,"NEIGH-PURE-H").eq.1) then
+elseif (index(NBC_Method,"NEIGH_PURE_H").eq.1) then
    nbc = 2
-elseif (index(NBC_Method,"NEIGH-PURE-F").eq.1) then
+elseif (index(NBC_Method,"NEIGH_PURE_F").eq.1) then
    nbc = 3
-elseif (index(NBC_Method,"NEIGH-RVEC-F").eq.1) then
+elseif (index(NBC_Method,"NEIGH_RVEC_F").eq.1) then
    nbc = 4
 else
    ier = KIM_STATUS_FAIL
@@ -75,9 +75,9 @@ if (do_update_list) then
    ! compute neighbor lists
    cutrange = cutoff + cutpad
    if (nbc.eq.0) then
-      call MI_OPBC_neighborlist(.true., N, coords, cutrange, boxlength, neighborList)
+      call MI_OPBC_neighborlist(.true., N, coords, cutrange, boxSideLengths, neighborList)
    elseif (nbc.eq.1) then
-      call MI_OPBC_neighborlist(.false., N, coords, cutrange, boxlength, neighborList)
+      call MI_OPBC_neighborlist(.false., N, coords, cutrange, boxSideLengths, neighborList)
    elseif (nbc.eq.2) then
       call NEIGH_PURE_cluster_neighborlist(.true., N, coords, cutrange, neighborList)
    elseif (nbc.eq.3) then

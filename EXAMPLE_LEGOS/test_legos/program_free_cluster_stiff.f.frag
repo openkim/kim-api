@@ -6,11 +6,11 @@
 !**  isolated cluster of SPECIES_NAME_STR atoms
 !**
 !**  Works with the following NBC methods:
-!**        MI-OPBC-H
-!**        MI-OPBC-F
-!**        NEIGH-PURE-H
-!**        NEIGH-PURE-F
-!**        NEIGH-RVEC-F
+!**        MI_OPBC_H
+!**        MI_OPBC_F
+!**        NEIGH_PURE_H
+!**        NEIGH_PURE_F
+!**        NEIGH_RVEC_F
 !**
 !**  Authors: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
 !**
@@ -30,7 +30,7 @@
 !
 !-------------------------------------------------------------------------------
 program TEST_NAME_STR
-  use KIMservice
+  use KIM_API
   implicit none
 
   integer,          external  :: get_neigh_no_Rij
@@ -55,12 +55,12 @@ program TEST_NAME_STR
   character*80              :: testname     = "TEST_NAME_STR"
   character*80              :: modelname
   character*64 :: NBC_Method; pointer(pNBC_Method,NBC_Method)
-  integer nbc  ! 0- MI-OPBC-H, 1- MI-OPBC-F, 2- NEIGH-PURE-H, 3- NEIGH-PURE-F, 4- NEIGH-RVCE-F
+  integer nbc  ! 0- MI_OPBC_H, 1- MI_OPBC_F, 2- NEIGH_PURE_H, 3- NEIGH_PURE_F, 4- NEIGH-RVCE-F
   integer(kind=kim_intptr)  :: pkim
   integer                   :: ier, idum
-  integer numberOfAtoms;   pointer(pnAtoms,numberOfAtoms)
+  integer numberOfParticles;   pointer(pnAtoms,numberOfParticles)
   integer numContrib;      pointer(pnumContrib,numContrib)
-  integer numberAtomTypes; pointer(pnAtomTypes,numberAtomTypes)
+  integer numberParticleTypes; pointer(pnparticleTypes,numberParticleTypes)
   integer atomTypesdum(1); pointer(patomTypesdum,atomTypesdum)
 
   real*8 cutoff;           pointer(pcutoff,cutoff)
@@ -68,8 +68,8 @@ program TEST_NAME_STR
   real*8 virialglobdum(1); pointer(pvirialglob,virialglobdum)
   real*8 coordum(DIM,1);   pointer(pcoor,coordum)
   real*8 forcesdum(DIM,1); pointer(pforces,forcesdum)
-  real*8 boxlength(DIM);   pointer(pboxlength,boxlength)
-  real*8 stiffness(3,3,1); pointer(pstiffness,stiffness)
+  real*8 boxSideLengths(DIM);   pointer(pboxSideLengths,boxSideLengths)
+  real*8 hessian(3,3,1); pointer(phessian,hessian)
   integer I,J
   real*8, pointer  :: coords(:,:), forces(:,:), virial_global(:)
   integer, pointer :: atomTypes(:)
@@ -93,15 +93,15 @@ program TEST_NAME_STR
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_nbc_method", ier)
      stop
   endif
-  if (index(NBC_Method,"MI-OPBC-H").eq.1) then
+  if (index(NBC_Method,"MI_OPBC_H").eq.1) then
      nbc = 0
-  elseif (index(NBC_Method,"MI-OPBC-F").eq.1) then
+  elseif (index(NBC_Method,"MI_OPBC_F").eq.1) then
      nbc = 1
-  elseif (index(NBC_Method,"NEIGH-PURE-H").eq.1) then
+  elseif (index(NBC_Method,"NEIGH_PURE_H").eq.1) then
      nbc = 2
-  elseif (index(NBC_Method,"NEIGH-PURE-F").eq.1) then
+  elseif (index(NBC_Method,"NEIGH_PURE_F").eq.1) then
      nbc = 3
-  elseif (index(NBC_Method,"NEIGH-RVEC-F").eq.1) then
+  elseif (index(NBC_Method,"NEIGH_RVEC_F").eq.1) then
      nbc = 4
   else
      ier = KIM_STATUS_FAIL
@@ -182,47 +182,47 @@ program TEST_NAME_STR
 
   ! Unpack data from KIM object
   !
-  call kim_api_get_data_multiple_f(pkim, ier, &
-       "numberOfAtoms",           pnAtoms,       1,                   &
-       "numberContributingAtoms", pnumContrib,   1,                   &
-       "numberAtomTypes",         pnAtomTypes,   1,                   &
+  call kim_api_getm_data_f(pkim, ier, &
+       "numberOfParticles",           pnAtoms,       1,                   &
+       "numberContributingParticles", pnumContrib,   1,                   &
+       "numberParticleTypes",         pnparticleTypes,   1,                   &
        "atomTypes",               patomTypesdum, 1,                   &
        "coordinates",             pcoor,         1,                   &
        "cutoff",                  pcutoff,       1,                   &
-       "boxlength",               pboxlength,    TRUEFALSE(nbc.le.1), &
+       "boxSideLengths",               pboxSideLengths,    TRUEFALSE(nbc.le.1), &
        "energy",                  penergy,       1,                   &
-       "virialGlobal",            pvirialglob,   1,                   &
+       "virial",            pvirialglob,   1,                   &
        "forces",                  pforces,       1,                   &
-       "stiffness",               pstiffness,    1)
+       "hessian",               phessian,    1)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_multiple_f", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
      stop
   endif
 
-  call toIntegerArrayWithDescriptor1d(atomTypesdum, atomTypes, N)
-  call toRealArrayWithDescriptor2d(coordum, coords, DIM, N)
-  call toRealArrayWithDescriptor1d(virialglobdum, virial_global, 6)
-  call toRealArrayWithDescriptor2d(forcesdum, forces, DIM, N)
+  call KIM_to_F90_int_array_1d(atomTypesdum, atomTypes, N)
+  call KIM_to_F90_real_array_2d(coordum, coords, DIM, N)
+  call KIM_to_F90_real_array_1d(virialglobdum, virial_global, 6)
+  call KIM_to_F90_real_array_2d(forcesdum, forces, DIM, N)
 
   ! Set values
-  numberOfAtoms   = N
+  numberOfParticles   = N
   numContrib      = N
-  numberAtomTypes = ATypes
-  atomTypes(:)    = kim_api_get_atypecode_f(pkim, "SPECIES_NAME_STR", ier)
+  numberParticleTypes = ATypes
+  atomTypes(:)    = kim_api_get_partcl_type_code_f(pkim, "SPECIES_NAME_STR", ier)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_atypecode_f", ier)
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_partcl_type_code_f", ier)
      stop
   endif
 
   ! set up the cluster atom positions
   call create_FCC_configuration(FCCspacing, nCellsPerSide, .false., coords, middleDum)
-  if (nbc.le.1) boxlength(:)  = 600.d0 ! large enough to make the cluster isolated
+  if (nbc.le.1) boxSideLengths(:)  = 600.d0 ! large enough to make the cluster isolated
 
   ! compute neighbor lists
   if (nbc.eq.0) then
-     call MI_OPBC_neighborlist(.true., N, coords, (cutoff+cutpad), boxlength, neighborList)
+     call MI_OPBC_neighborlist(.true., N, coords, (cutoff+cutpad), boxSideLengths, neighborList)
   elseif (nbc.eq.1) then
-     call MI_OPBC_neighborlist(.false., N, coords, (cutoff+cutpad), boxlength, neighborList)
+     call MI_OPBC_neighborlist(.false., N, coords, (cutoff+cutpad), boxSideLengths, neighborList)
   elseif (nbc.eq.2) then
      call NEIGH_PURE_cluster_neighborlist(.true., N, coords, (cutoff+cutpad), neighborList)
   elseif (nbc.eq.3) then
@@ -254,9 +254,9 @@ program TEST_NAME_STR
   do I=1,N
      do J=1,N
          print '("I = ",I2,"   J = ",I2)', I, J
-         print '("    ",3ES25.15)', stiffness(1,:,(I-1)*N + J)
-         print '("    ",3ES25.15)', stiffness(2,:,(I-1)*N + J)
-         print '("    ",3ES25.15)', stiffness(3,:,(I-1)*N + J)
+         print '("    ",3ES25.15)', hessian(1,:,(I-1)*N + J)
+         print '("    ",3ES25.15)', hessian(2,:,(I-1)*N + J)
+         print '("    ",3ES25.15)', hessian(3,:,(I-1)*N + J)
      enddo
   enddo
   print *

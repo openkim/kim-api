@@ -2,12 +2,12 @@
 MODEL_INPUT:
 # Name                  Type         Unit                Shape              Requirements
 
-numberOfAtoms           integer      none                []
+numberOfParticles           integer      none                []
 
-numberContributingAtoms integer      none                []                 optional      # Here so it can work with more Tests
+numberContributingParticles integer      none                []                 optional      # Here so it can work with more Tests
 
-numberAtomTypes         integer      none                []
+numberParticleTypes         integer      none                []
 
-atomTypes               integer      none                [numberOfAtoms]
+atomTypes               integer      none                [numberOfParticles]
 
-coordinates             real*8       length              [numberOfAtoms,3]
+coordinates             real*8       length              [numberOfParticles,3]

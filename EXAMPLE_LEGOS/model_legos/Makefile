@@ -163,7 +163,7 @@ model_Ar_P_MLJ_MI_OPBC_H_F: $(COMMON_FRAGMENTS)                               \
 	@touch $(KIM_MODELS_DIR)$@
         # make README file in the directory
 	$(D_CAT) model_MLJ_README | $(SED_CMD) \
-         | sed -e "s/NBC_NAME_STR/MI-OPBC-[H|F]/g" \
+         | sed -e "s/NBC_NAME_STR/MI_OPBC_[H|F]/g" \
                -e "s/LANGUAGE_STR/F90/g"                                                                      >  $(KIM_MODELS_DIR)$@/README
         # make Makefile in the directory
 	$(D_CAT) model_Makefile | $(SED_CMD)                                                                  >  $(KIM_MODELS_DIR)$@/Makefile
@@ -173,9 +173,9 @@ model_Ar_P_MLJ_MI_OPBC_H_F: $(COMMON_FRAGMENTS)                               \
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo "Neigh_LocaAccess        flag"                                                                   >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
-	echo "MI-OPBC-H               flag"                                                                   >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo "MI_OPBC_H               flag"                                                                   >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
-	echo "MI-OPBC-F               flag"                                                                   >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo "MI_OPBC_F               flag"                                                                   >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_MODELS_DIR)$@/$@.kim
@@ -186,7 +186,7 @@ model_Ar_P_MLJ_MI_OPBC_H_F: $(COMMON_FRAGMENTS)                               \
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo "neighObject             pointer      none                []"                                    >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
-	echo "boxlength               real*8       length              [3]"                                   >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo "boxSideLengths               real*8       length              [3]"                                   >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_MODELS_DIR)$@/$@.kim
@@ -218,7 +218,7 @@ model_Ar_P_MLJ_NEIGH_PURE_H_F: $(COMMON_FRAGMENTS)                              
 	@touch $(KIM_MODELS_DIR)$@
         # make README file in the directory
 	$(D_CAT) model_MLJ_README | $(SED_CMD) \
-         | sed -e "s/NBC_NAME_STR/NEIGH-PURE-[H|F]/g" \
+         | sed -e "s/NBC_NAME_STR/NEIGH_PURE_[H|F]/g" \
                -e "s/LANGUAGE_STR/F90/g"                                                                      >  $(KIM_MODELS_DIR)$@/README
         # make Makefile in the directory
 	$(D_CAT) model_Makefile | $(SED_CMD)                                                                  >  $(KIM_MODELS_DIR)$@/Makefile
@@ -229,9 +229,9 @@ model_Ar_P_MLJ_NEIGH_PURE_H_F: $(COMMON_FRAGMENTS)                              
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo "Neigh_LocaAccess        flag"                                                                   >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
-	echo "NEIGH-PURE-H            flag"                                                                   >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo "NEIGH_PURE_H            flag"                                                                   >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
-	echo "NEIGH-PURE-F            flag"                                                                   >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo "NEIGH_PURE_F            flag"                                                                   >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_MODELS_DIR)$@/$@.kim
@@ -272,7 +272,7 @@ model_Ar_P_MLJ_NEIGH_RVEC_F: $(COMMON_FRAGMENTS)                           \
 	@touch $(KIM_MODELS_DIR)$@
         # make README file in the directory
 	$(D_CAT) model_MLJ_README | $(SED_CMD) \
-         | sed -e "s/NBC_NAME_STR/NEIGH-RVEC-F/g" \
+         | sed -e "s/NBC_NAME_STR/NEIGH_RVEC_F/g" \
                -e "s/LANGUAGE_STR/F90/g"                                                                      >  $(KIM_MODELS_DIR)$@/README
         # make Makefile in the directory
 	$(D_CAT) model_Makefile | $(SED_CMD)                                                                  >  $(KIM_MODELS_DIR)$@/Makefile
@@ -282,7 +282,7 @@ model_Ar_P_MLJ_NEIGH_RVEC_F: $(COMMON_FRAGMENTS)                           \
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo "Neigh_LocaAccess        flag"                                                                   >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
-	echo "NEIGH-RVEC-F            flag"                                                                   >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo "NEIGH_RVEC_F            flag"                                                                   >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_MODELS_DIR)$@/$@.kim

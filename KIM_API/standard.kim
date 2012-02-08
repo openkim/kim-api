@@ -54,10 +54,10 @@
 #         Five lines that describe  a set of five base units from which all other 
 #         units are derived in a consistent way:
 #         Unit_length := `A' | `Bohr' | `cm' | `m' | `nm'
-#         Unit_energy := `amu*A^2/(ps)^2', `erg' | `eV' | `Hartree' | `J' | `Kcal/mole' | kJ/mole'
+#         Unit_energy := `amu*A^2/(ps)^2', `erg' | `eV' | `Hartree' | `J' | `kcal/mol' | kJ/mol'
 #         Unit_charge := `C' | `e' | `statC'
 #         Unit_temperature := `K'
-#         Unit_time := `fs' | `ps' | `sec'  
+#         Unit_time := `fs' | `ps' | `ns' | `s'  
 #         The list of recognized units above can be extended. (The current list is 
 #         based on the units used in 8 popular ab initio, MC, MD and lattice dynamics 
 #         codes: AMBER, CHARMM, DL_POLY, GROMACS, LAMMPS, TOWHEE, VASP.)
@@ -204,7 +204,7 @@ $
 #                            the corresponding dimension. Otherwise one of the
 #                            three following strings may be used:
 #
-#                            `numberOfAtoms', `numberAtomTypes', `:'
+#                            `numberOfParticles', `numberParticleTypes', `:'
 #
 #                            If either of the first two options is present, 
 #                            the KIM_API_allocate() function will substitute 
@@ -236,32 +236,32 @@ $
 #                            * [10] - This defines a vector (rank=1) of 10 
 #                                     values
 #
-#                            * [numberOfAtoms] - This defines a vector (rank=1)
-#                                     of `numberOfAtoms' values.  If the
+#                            * [numberOfParticles] - This defines a vector (rank=1)
+#                                     of `numberOfParticles' values.  If the
 #                                     KIM_API_allocate function is called as
 #
-#                       KIM_API_allocate(pkim, nAtoms, nAtomTypes, kimerr)
+#                       KIM_API_allocate(pkim, nAtoms, nparticleTypes, kimerr)
 #                                    
 #                                     it will allocated memory for this
 #                                     argument using the value of `nAtoms'.
 #
-#                            * [numberAtomTypes] - This defines a vector
-#                                    (rank=1) of `numberAtomTypes' values.  If
+#                            * [numberParticleTypes] - This defines a vector
+#                                    (rank=1) of `numberParticleTypes' values.  If
 #                                    the KIM_API_allocate function is called as
 #
-#                       KIM_API_allocate(pkim, nAtoms, nAtomTypes, kimerr)
+#                       KIM_API_allocate(pkim, nAtoms, nparticleTypes, kimerr)
 #
 #                                    it will allocated memory for this argument
-#                                    using the value of `nAtomTypes'.
+#                                    using the value of `nparticleTypes'.
 #
 #                            * [12,10,5] - This defines a three-dimensional
 #                                    array (rank=3) of size 12 by 10 by 5.  
 #                                    Memory for this array can be allocated by
 #                                    the KIM_API_allocate() function.
 #
-#                            * [numberOfAtoms,12,15] - This defines a three-
+#                            * [numberOfParticles,12,15] - This defines a three-
 #                                    dimensional array (rank=3) of size
-#                                    `numberOfAtoms' by 12 by 15.  Memory for
+#                                    `numberOfParticles' by 12 by 15.  Memory for
 #                                    this array can be allocated by the
 #                                    KIM_API_allocate() function.
 #
@@ -277,20 +277,20 @@ $
 #                                    register the memory location of the values
 #                                    for this argument.  If the range of a
 #                                    dimension other than the first is unknown,
-#                                    then the KIM_API_set_rank_shape() function
+#                                    then the KIM_API_set_shape() function
 #                                    must also be used (see below).
 #
-#                            * [12,numberOfAtoms] - This defines a two-
+#                            * [12,numberOfParticles] - This defines a two-
 #                                    dimensional array (rank=2) of size 12 by
-#                                    `numberOfAtoms'.  Memory for this array
+#                                    `numberOfParticles'.  Memory for this array
 #                                    can be allocated by the KIM_API_allocate()
 #                                    function.
 #
-#                            * [:,:,:,12,:,numberAtomTypes] - This defines a
+#                            * [:,:,:,12,:,numberParticleTypes] - This defines a
 #                                   six-dimensional array (rank=6).  Memory for
 #                                   this array cannot be allocated by the
 #                                   KIM_API_allocate() function.  The Test must
-#                                   use the KIM_API_set_rank_shape() function
+#                                   use the KIM_API_set_shape() function
 #                                   to register the range of all dimensions
 #                                   (i.e, specify the explicit values for the
 #                                   shape).  Then, the Test must allocate (and
@@ -418,10 +418,10 @@ Unit_Handling := flexible
 ################################################################################
 
 Unit_length := A      # here can be: `A',  `Bohr' , `cm' , `m' or `nm'
-Unit_energy := eV     # here can be: `amu*A^2/(ps)^2', `erg', `eV' , `Hartree',`J',`Kcal/mole' or kJ/mole'
+Unit_energy := eV     # here can be: `amu*A^2/(ps)^2', `erg', `eV' , `Hartree',`J',`kcal/mol' or kJ/mol'
 Unit_charge := e      # here can be: `C' , `e' , `statC'
 Unit_temperature := K
-Unit_time := fs       # here can be: `fs' , `ps' or `sec'
+Unit_time := fs       # here can be: `fs' , `ps', `ns' or `s'
 
 ################################################################################
 #
@@ -605,11 +605,11 @@ CONVENTIONS:
 ################################################################################
 ZeroBasedLists          flag        # Presence of this line indicates that 
                                     # indexes for atoms are from 0 to 
-                                    # numberOfAtoms-1 (C-style)
+                                    # numberOfParticles-1 (C-style)
 
 OneBasedLists           flag        # Presence of this line indicates that 
                                     # indexes for atoms are from 1 to 
-                                    # numberOfAtoms   (Fortran-style)
+                                    # numberOfParticles   (Fortran-style)
 
 ################################################################################
 #
@@ -654,14 +654,14 @@ Neigh_BothAccess        flag        # need both locator and iterator modes
 CLUSTER                 flag        # The Model needs only coordinates to 
                                     # compute; a neighbor list is not needed.
 
-# In the MI-OPBC methods (MI-OPBC-H and MI-OPBC-F), the Model receives the
+# In the MI-OPBC methods (MI_OPBC_H and MI_OPBC_F), the Model receives the
 # number of atoms and coordinates, the side lengths for the periodic orthogonal
 # box and a neighbor list as detailed below. Assumes all atoms lie inside the
 # periodic box. Side lengths of box must be at least twice the cutoff
 # range. Computes the requested quantities under the assumption that the atoms
 # are subjected to minimum image, orthogonal, periodic boundary conditions.
 #
-# Neighbor list requirements for MI-OPBC-[F|H]:
+# Neighbor list requirements for MI_OPBC_[F|H]:
 # 1.  The minimum image
 #     convention is applied during construction of the neighbor list consistent
 #     with the orthogonal box size.
@@ -673,29 +673,29 @@ CLUSTER                 flag        # The Model needs only coordinates to
 # obtained were the model to compute its own neighbor list using the provided
 # orthogonal periodic box side lengths.
 #
-MI-OPBC-H               flag        # This is the Minimum Image Orthogonal
+MI_OPBC_H               flag        # This is the Minimum Image Orthogonal
                                     # Periodic Boundary Condition Half neighbor
                                     # list method.  The Model needs
                                     # `coordinates', a half neighbor list (with
                                     # data stored in the `neighObject'
                                     # argument), the `get_half_neigh' method
-                                    # supplied by the Test, and the `boxlength'
+                                    # supplied by the Test, and the `boxSideLengths'
                                     # argument (which specifies the three
                                     # side-lengths of the orthogonal simulation
                                     # box).
 
-MI-OPBC-F               flag        # This is the Minimum Image Orthogonal 
+MI_OPBC_F               flag        # This is the Minimum Image Orthogonal 
                                     # Periodic Boundary Condition Full neighbor
                                     # list method.  The Model needs 
                                     # `coordinates', a full neighbor list (with 
                                     # data stored in the `neighObject' 
                                     # argument), the `get_full_neigh' method 
-                                    # supplied by the Test, and the `boxlength'
+                                    # supplied by the Test, and the `boxSideLengths'
                                     # argument (which specifies the three 
                                     # side-lengths of the orthogonal simulation 
                                     # box).
 
-# In the NEIGH-PURE methods (NEIGH-PURE-H and NEIGH-PURE-F), the Model receives
+# In the NEIGH-PURE methods (NEIGH_PURE_H and NEIGH_PURE_F), the Model receives
 # the number of atoms, coordinates and a full or half neighbor list. The
 # neighbor list defines the environment of each atom, from which the atom's
 # energy is defined. The model computes the requested quantities using the
@@ -709,21 +709,21 @@ MI-OPBC-F               flag        # This is the Minimum Image Orthogonal
 # from per-atom energies of the physical atoms, or to use a modified neighbor
 # list to obtain the desired values.
 #
-NEIGH-PURE-H            flag        # This is the Pure Half neighbor list 
+NEIGH_PURE_H            flag        # This is the Pure Half neighbor list 
                                     # method.  The model needs `coordinates', a 
                                     # half neighbor list (with data stored in 
                                     # the `neighObject' argument), and the 
                                     # `get_half_neigh' method supplied by the 
                                     # Test.
 
-NEIGH-PURE-F            flag        # This is the Pure Full neighbor list 
+NEIGH_PURE_F            flag        # This is the Pure Full neighbor list 
                                     # method.  The model needs `coordinates', a 
                                     # full neighbor list (with data stored in 
                                     # the `neighObject' argument), and the 
                                     # `get_full_neigh' method supplied by the 
                                     # Test.
 
-# In the NEIGH-RVEC-F method, the Model receives the number of atoms and
+# In the NEIGH_RVEC_F method, the Model receives the number of atoms and
 # coordinates, a full neighbor list and the relative position vectors Rij 
 # (Rij = xj-xi). The neighbor list and Rij vectors define the environment of
 # each atom, from which the atom's energy is defined. The model computes the
@@ -739,7 +739,7 @@ NEIGH-PURE-F            flag        # This is the Pure Full neighbor list
 # application of complex boundary conditions such as torsion and objective
 # boundary conditions.
 #
-NEIGH-RVEC-F            flag        # This is the Relative Vector Boundary
+NEIGH_RVEC_F            flag        # This is the Relative Vector Boundary
                                     # Condition Full neighbor list method.  
                                     # The Model needs `coordinates' and a full 
                                     # neighbor list (with data stored in the 
@@ -786,7 +786,7 @@ MODEL_INPUT:
 
 ################################################################################
 #
-# numberOfAtoms : The number of atoms in the configuration passed between the 
+# numberOfParticles : The number of atoms in the configuration passed between the 
 #                 Model and Test. 
 #
 # Atoms are always numbered sequentially starting from 0 or 1 depending on the
@@ -795,21 +795,21 @@ MODEL_INPUT:
 #
 # Name                  Type         Unit                Shape
 #
-numberOfAtoms           integer      none                []
+numberOfParticles           integer      none                []
 
 ################################################################################
 #
-# numberContributingAtoms: The number of atoms that contribute to the energy 
+# numberContributingParticles: The number of atoms that contribute to the energy 
 #                         (required for all half neighbor lists). 
 #
 #
 # Name                  Type         Unit               Shape
 #
-numberContributingAtoms integer      none               []
+numberContributingParticles integer      none               []
 
 ################################################################################
 #
-# numberAtomTypes: The number of types of atoms/particles contained in the 
+# numberParticleTypes: The number of types of atoms/particles contained in the 
 #                  configuration passed between the Model and Test.
 #
 # This argument is required for any Model/Test that specifies one or more
@@ -817,7 +817,7 @@ numberContributingAtoms integer      none               []
 #
 # Name                  Type         Unit              Shape
 #
-numberAtomTypes         integer      none              []
+numberParticleTypes         integer      none              []
 
 ################################################################################
 #
@@ -831,19 +831,19 @@ numberAtomTypes         integer      none              []
 #
 # Name                  Type         Unit               Shape
 #
-atomTypes               integer      none               [numberOfAtoms]
+atomTypes               integer      none               [numberOfParticles]
 
 ################################################################################
 #
 # coordinates : An array of floating-point numbers specifying the spatial
-#               location of each of the numberOfAtoms atom/particle in the
+#               location of each of the numberOfParticles atom/particle in the
 #               configuration passed between the Model and Test.
 #
 # This argument is required for all Models and Tests.
 #
 # Name                  Type         Unit               Shape
 #
-coordinates             real*8       length             [numberOfAtoms,3]
+coordinates             real*8       length             [numberOfParticles,3]
 
 ################################################################################
 #
@@ -851,7 +851,7 @@ coordinates             real*8       length             [numberOfAtoms,3]
 #                  provided by the Test.
 #
 # This argument is required for Models/Tests that support the following NBCs:
-# MI-OPBC-F, NEIGH-PURE-F and NEIGH-RVEC-F.  It should be optional for all
+# MI_OPBC_F, NEIGH_PURE_F and NEIGH_RVEC_F.  It should be optional for all
 # Models to ensure that the Model is compatible with the widest possible set of
 # Tests.
 #
@@ -865,7 +865,7 @@ get_full_neigh          method       none               []
 #                  provided by the Test.
 #
 # This argument is required for Models/Tests that support the following NBCs:
-# MI-OPBC-H and NEIGH-PURE-H.  It should be optional for all Models to ensure
+# MI_OPBC_H and NEIGH_PURE_H.  It should be optional for all Models to ensure
 # that the Model is compatible with the widest possible set of Tests.
 #
 # Name                  Type         Unit               Shape
@@ -874,25 +874,25 @@ get_half_neigh          method       none               []
 
 ################################################################################
 #
-# process_d1Edr  : A pointer  to subroutine that process first differential 
+# process_dEdr  : A pointer  to subroutine that process first differential 
 #                  derivative of the potential energy. By using that function
 #                  quantities like virial, stress etc... can be computed. The model
 #                  does not need know how exactly it is computed. In low level loop
 #                  for each pair of atom (i j) the model organize call to that routine.
 #
 # Name                  Type         Unit               Shape
-process_d1Edr           method       none               []
+process_dEdr           method       none               []
 
 ################################################################################
 #
-# process_d2Edr  : A pointer  to subroutine that process second differential 
+# process_d2Edr2  : A pointer  to subroutine that process second differential 
 #                  derivative of the potential energy. By using that function
 #                  quantities like virial, stress etc... can be computed. The model
 #                  does not need know how exactly it is computed. In low level loop
 #                  for each set of indexes the model organize call to that routine.
 #
 # Name                  Type         Unit               Shape
-process_d2Edr           method       none               []
+process_d2Edr2           method       none               []
 
 
 ################################################################################
@@ -901,7 +901,7 @@ process_d2Edr           method       none               []
 #               the Test.
 #
 # This argument is required for Models/Tests that support the following NBCs:
-# MI-OPBC-H, MI-OPBC-F, NEIGH-PURE-H, NEIGH-PURE-F, and NEIGH-RVEC-F.
+# MI_OPBC_H, MI_OPBC_F, NEIGH_PURE_H, NEIGH_PURE_F, and NEIGH_RVEC_F.
 #
 # Name                  Type         Unit               Shape
 #
@@ -909,15 +909,15 @@ neighObject             pointer      none               []
 
 ################################################################################
 #
-# boxlength : A vector of three floating-point numbers indicating the side 
+# boxSideLengths : A vector of three floating-point numbers indicating the side 
 #             lengths of the minimum-image periodic orthogonal box.
 #
 # This argument is required for Models/Tests that support the following NBCs: 
-# MI-OPBC-H and MI-OPBC-F.
+# MI_OPBC_H and MI_OPBC_F.
 #
 # Name                  Type         Unit               Shape
 #
-boxlength               real*8       length             [3]
+boxSideLengths               real*8       length             [3]
 
 
 ################################################################################
@@ -1014,11 +1014,11 @@ energy                  real*8       energy             []
 #
 # Name                  Type         Unit               Shape
 #
-forces                  real*8       force              [numberOfAtoms,3]
+forces                  real*8       force              [numberOfParticles,3]
 
 ################################################################################
 #
-# energyPerAtom : A vector of floating-point numbers corresponding to the
+# particleEnergy : A vector of floating-point numbers corresponding to the
 #                 energy of each atom in the configuration passed between the
 #                 Model and Test.
 #
@@ -1027,11 +1027,11 @@ forces                  real*8       force              [numberOfAtoms,3]
 #
 # Name                  Type         Unit               Shape
 #
-energyPerAtom           real*8       energy             [numberOfAtoms]
+particleEnergy           real*8       energy             [numberOfParticles]
 
 ################################################################################
 #
-# virialGlobal : A symmetric second rank tensor corresponding to the total virial for the
+# virial : A symmetric second rank tensor corresponding to the total virial for the
 #          configuration of atoms passed between the Model and Test.
 #
 # This argument should, ideally, be optional to ensure maximum Model/Test
@@ -1042,11 +1042,11 @@ energyPerAtom           real*8       energy             [numberOfAtoms]
 #
 # Name                  Type         Unit               Shape
 #
-virialGlobal            real*8       energy             [6]
+virial            real*8       energy             [6]
 
 ################################################################################
 #
-# virialPerAtom : A symmetric second rank tensor corresponding to the per atom virial for the
+# particleVirial : A symmetric second rank tensor corresponding to the per atom virial for the
 #          configuration of atoms passed between the Model and Test.
 #
 # This argument should, ideally, be optional to ensure maximum Model/Test
@@ -1057,17 +1057,17 @@ virialGlobal            real*8       energy             [6]
 #
 # Name                  Type         Unit               Shape
 #
-virialPerAtom            real*8      energy             [numberOfAtoms,6]
+particleVirial            real*8      energy             [numberOfParticles,6]
 
 ################################################################################
 #
-# stiffness    : It is computed using second derivative d2Edr
+# hessian    : It is computed using second derivative d2Edr
 #
 # This argument should, ideally, be optional to ensure maximum Model/Test
 # compatibility.
 # Name                  Type         Unit               Shape
 #
-stiffness              real*8        pressure           [numberOfAtoms,numberOfAtoms,3,3]
+hessian              real*8        pressure           [numberOfParticles,numberOfParticles,3,3]
 
 ################################################################################
 #

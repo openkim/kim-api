@@ -3,16 +3,16 @@
 ! NEIGH_PURE_cluster_neighborlist 
 !
 !-------------------------------------------------------------------------------
-subroutine NEIGH_PURE_cluster_neighborlist(half, numberOfAtoms, coords, cutoff, neighborList)
-  use KIMservice
+subroutine NEIGH_PURE_cluster_neighborlist(half, numberOfParticles, coords, cutoff, neighborList)
+  use KIM_API
   implicit none
   
   !-- Transferred variables
   logical,                                             intent(in)  :: half
-  integer,                                             intent(in)  :: numberOfAtoms
-  double precision, dimension(3,numberOfAtoms),        intent(in)  :: coords
+  integer,                                             intent(in)  :: numberOfParticles
+  double precision, dimension(3,numberOfParticles),        intent(in)  :: coords
   double precision,                                    intent(in)  :: cutoff
-  integer,   dimension(numberOfAtoms+1,numberOfAtoms), intent(out) :: neighborList ! not memory efficient
+  integer,   dimension(numberOfParticles+1,numberOfParticles), intent(out) :: neighborList ! not memory efficient
   
   !-- Local variables
   integer i, j, a
@@ -22,9 +22,9 @@ subroutine NEIGH_PURE_cluster_neighborlist(half, numberOfAtoms, coords, cutoff, 
   
   cutoff2 = cutoff**2
   
-  do i=1,numberOfAtoms
+  do i=1,numberOfParticles
      a = 1
-     do j=1,numberOfAtoms
+     do j=1,numberOfParticles
         dx(:) = coords(:, j) - coords(:, i)
         r2 = dot_product(dx, dx)
         if (r2.le.cutoff2) then

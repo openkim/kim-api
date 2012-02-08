@@ -7,7 +7,7 @@
 !-------------------------------------------------------------------------------
 subroutine Write_KIM_descriptor(modelname, kim_descriptor, &
                                 max_specs, model_specs, num_specs, ier)
-use KIMservice
+use KIM_API
 implicit none
 
 !-- Transferred variables
@@ -111,27 +111,27 @@ kim_descriptor = trim(kim_descriptor) // &
                                                                                    cr // &
    'Neigh_BothAccess        flag'                                              // cr // &
                                                                                    cr // &
-   'NEIGH-RVEC-F            flag'                                              // cr // &
+   'NEIGH_RVEC_F            flag'                                              // cr // &
                                                                                    cr // &
-   'NEIGH-PURE-H            flag'                                              // cr // &
+   'NEIGH_PURE_H            flag'                                              // cr // &
                                                                                    cr // &
-   'NEIGH-PURE-F            flag'                                              // cr // &
+   'NEIGH_PURE_F            flag'                                              // cr // &
                                                                                    cr // &
-   'MI-OPBC-H               flag'                                              // cr // &
+   'MI_OPBC_H               flag'                                              // cr // &
                                                                                    cr // &
-   'MI-OPBC-F               flag'                                              // cr // &
+   'MI_OPBC_F               flag'                                              // cr // &
                                                                                    cr // &
                                                                                    cr // &
    divider                                                                      // cr // &
    'MODEL_INPUT:'                                                               // cr // &
    '# Name                  Type         Unit       SystemU/Scale           Shape              requirements' // cr // &
-   'numberOfAtoms           integer      none       none                    []' // cr // &
+   'numberOfParticles           integer      none       none                    []' // cr // &
                                                                                    cr // &
-   'numberAtomTypes         integer      none       none                    []' // cr // &
+   'numberParticleTypes         integer      none       none                    []' // cr // &
                                                                                    cr // &
-   'atomTypes               integer      none       none                    [numberOfAtoms]' // cr // &
+   'atomTypes               integer      none       none                    [numberOfParticles]' // cr // &
                                                                                    cr // &
-   'coordinates             real*8       length     standard                [numberOfAtoms,3]' // cr // &
+   'coordinates             real*8       length     standard                [numberOfParticles,3]' // cr // &
                                                                                    cr // &
    'get_half_neigh          method       none       none                    []' // cr // &
                                                                                    cr // &
@@ -139,9 +139,9 @@ kim_descriptor = trim(kim_descriptor) // &
                                                                                    cr // &
    'neighObject             pointer      none       none                    []' // cr // &
                                                                                    cr // &
-   'numberContributingAtoms integer      none       none                    []' // cr // &
+   'numberContributingParticles integer      none       none                    []' // cr // &
                                                                                    cr // &
-   'boxlength               real*8       length     standard                [3]'// cr // &
+   'boxSideLengths               real*8       length     standard                [3]'// cr // &
                                                                                    cr // &
                                                                                    cr // &
    divider                                                                      // cr // &
@@ -158,7 +158,7 @@ kim_descriptor = trim(kim_descriptor) // &
                                                                                    cr // &
    'energy                  real*8       energy     standard                []' // cr // &
                                                                                    cr // &
-   'forces                  real*8       force      standard                [numberOfAtoms,3]' // cr // &
+   'forces                  real*8       force      standard                [numberOfParticles,3]' // cr // &
                                                                                    cr // &
    divider                                                                      // cr
 

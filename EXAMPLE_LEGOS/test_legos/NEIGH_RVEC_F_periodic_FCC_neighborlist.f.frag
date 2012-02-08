@@ -4,7 +4,7 @@
 !
 !-------------------------------------------------------------------------------
 subroutine NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerHalfSide, cutoff, FCCspacing, N, NN, neighborList, RijList)
-  use KIMservice
+  use KIM_API
   implicit none
   
   !-- Transferred variables

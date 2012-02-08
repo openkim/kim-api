@@ -40,15 +40,15 @@ Neigh_IterAccess        flag
 
 Neigh_LocaAccess        flag
 
-NEIGH-RVEC-F            flag
+NEIGH_RVEC_F            flag
 
-NEIGH-PURE-H            flag
+NEIGH_PURE_H            flag
 
-NEIGH-PURE-F            flag
+NEIGH_PURE_F            flag
 
-MI-OPBC-H               flag
+MI_OPBC_H               flag
 
-MI-OPBC-F               flag
+MI_OPBC_F               flag
 
 CLUSTER                 flag
 
@@ -57,17 +57,17 @@ CLUSTER                 flag
 MODEL_INPUT:
 # Name                  Type         Unit                Shape              Requirements
 
-numberOfAtoms           integer      none                []
+numberOfParticles           integer      none                []
 
-numberContributingAtoms integer      none                []                 optional
+numberContributingParticles integer      none                []                 optional
 
-numberAtomTypes         integer      none                []
+numberParticleTypes         integer      none                []
 
-atomTypes               integer      none                [numberOfAtoms]
+atomTypes               integer      none                [numberOfParticles]
 
-coordinates             real*8       length              [numberOfAtoms,3]
+coordinates             real*8       length              [numberOfParticles,3]
 
-boxlength               real*8       length              [3]                optional
+boxSideLengths               real*8       length              [3]                optional
 
 get_half_neigh          method       none                []                 optional     # Here so it can work with more Tests
 
@@ -90,13 +90,13 @@ cutoff                  real*8       length              []
 
 energy                  real*8       energy              []                 optional
 
-forces                  real*8       force               [numberOfAtoms,3]  optional
+forces                  real*8       force               [numberOfParticles,3]  optional
 
-energyPerAtom           real*8       energy              [numberOfAtoms]    optional
+particleEnergy           real*8       energy              [numberOfParticles]    optional
 
-process_d1Edr           method       none                []                 optional
+process_dEdr           method       none                []                 optional
 
-process_d2Edr           method       none                []                 optional
+process_d2Edr2           method       none                []                 optional
 
 #######################################################################################################
 MODEL_PARAMETERS:

@@ -7,7 +7,7 @@
 !**  function of lattice spacing.
 !**
 !**  Works with the following NBC methods:
-!**        NEIGH-RVEC-F
+!**        NEIGH_RVEC_F
 !**
 !**  Authors: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
 !**
@@ -26,7 +26,7 @@
 !
 !-------------------------------------------------------------------------------
 program TEST_NAME_STR
-  use KIMservice
+  use KIM_API
   implicit none
 
 !============================== VARIABLE DEFINITIONS ==========================
@@ -206,20 +206,20 @@ end program TEST_NAME_STR
 !
 !-------------------------------------------------------------------------------
 integer function check_model_parameters(pkim)
-  use KIMservice
+  use KIM_API
   implicit none
 
   !-- Transferred variables
   integer(kind=kim_intptr), intent(in) :: pkim
 
   !-- Local variables
-  character(len=KEY_CHAR_LENGTH) :: listOfParameters(1); pointer(plistOfParameters,listOfParameters)
+  character(len=KIM_KEY_STRING_LENGTH) :: listOfParameters(1); pointer(plistOfParameters,listOfParameters)
   integer nParams
   integer paramIndex
   integer i
   integer ier, idum
 
-  plistOfParameters = kim_api_get_listparams_f(pkim, nParams, ier)
+  plistOfParameters = kim_api_get_params_f(pkim, nParams, ier)
   paramIndex = 0
   print '("The model has defined the following parameters:")'
   do i=1,nParams

@@ -3,9 +3,9 @@
     ! We'll use a half list approach
     ! Don't need to consider the last atom since all its interactions
     ! are accounted for earlier in the loop
-    do i = 1, numberOfAtoms-1
+    do i = 1, numberOfParticles-1
        ! Loop over atoms > i
-       do j = i+1, numberOfAtoms
+       do j = i+1, numberOfParticles
           Rij(:) = coor(:,j) - coor(:,i)                ! distance vector between i j
           Rsqij = dot_product(Rij,Rij)                  ! compute square distance
           if ( Rsqij < model_cutsq ) then               ! particles are interacting?

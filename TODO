@@ -58,7 +58,7 @@ Items planned for future releases.
   Model's code file.  This will make the entire process opaque to the Model
   developer.
 
-* Implement a new NBC method, similar to NEIGH-RVEC-F, that includes a
+* Implement a new NBC method, similar to NEIGH_RVEC_F, that includes a
   ForceTransformation() function that can be applied to each atom.  This will
   provide additional support for exotic boundary conditions such as "Objective
   Boundary Conditions", twist boundary conditions, etc.
