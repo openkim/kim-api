@@ -19,6 +19,7 @@
 !****************************************************************************
 
 #include "KIMstatus.h"
+#define TRUEFALSE(TRUTH) merge(1,0,(TRUTH))
 
 module model_driver_P_<FILL model driver name>
 
@@ -277,14 +278,14 @@ endif
 ! Unpack data from KIM object
 !
 call kim_api_get_data_multiple_f(pkim, ier, &
-     "numberOfAtoms",           pN,          1,                             &
-     "atomTypes",               patomTypes,  1,                             &
-     "coordinates",             pcoor,       1,                             &
-     "numberContributingAtoms", pnumContrib, merge(1,0,(HalfOrFull.eq.1)),  &
-     "boxlength",               pboxlength,  merge(1,0,(NBC.eq.1)),         &
-     "energy",                  penergy,     merge(1,0,(comp_energy.eq.1)), &
-     "forces",                  pforce,      merge(1,0,(comp_force.eq.1)),  &
-     "energyPerAtom",           penepot,     merge(1,0,(comp_enepot.eq.1)))
+     "numberOfAtoms",           pN,          1,                           &
+     "atomTypes",               patomTypes,  1,                           &
+     "coordinates",             pcoor,       1,                           &
+     "numberContributingAtoms", pnumContrib, TRUEFALSE(HalfOrFull.eq.1),  &
+     "boxlength",               pboxlength,  TRUEFALSE(NBC.eq.1),         &
+     "energy",                  penergy,     TRUEFALSE(comp_energy.eq.1), &
+     "forces",                  pforce,      TRUEFALSE(comp_force.eq.1),  &
+     "energyPerAtom",           penepot,     TRUEFALSE(comp_enepot.eq.1))
 if (ier.lt.KIM_STATUS_OK) then
    idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_multiple_f", ier)
    return

@@ -17,6 +17,7 @@
 !*******************************************************************************
 
 #include "KIMstatus.h"
+#define TRUEFALSE(TRUTH) merge(1,0,(TRUTH))
 
 module model_ArNe_P_MLJ_NEIGH_RVEC_F
   use KIMservice
@@ -92,15 +93,15 @@ contains
     ! Unpack data from KIM object
     !
     call kim_api_get_data_multiple_f(pkim, ier, &
-         "numberOfAtoms",       pnAtoms,       1,                             &
-         "numberAtomTypes",     pnAtomTypes,   1,                             &
-         "atomTypes",           patomTypes,    1,                             &
-         "cutoff",              pcutoff,       1,                             &
-         "coordinates",         pcoor,         1,                             &
-         "energy",              penergy,       merge(1,0,(comp_energy.eq.1)), &
-         "forces",              pforce,        merge(1,0,(comp_force.eq.1)),  &
-         "energyPerAtom",       penepot,       merge(1,0,(comp_enepot.eq.1)), &
-         "virialGlobal",        pvirialGlobal, merge(1,0,(comp_virial.eq.1)))
+         "numberOfAtoms",       pnAtoms,       1,                           &
+         "numberAtomTypes",     pnAtomTypes,   1,                           &
+         "atomTypes",           patomTypes,    1,                           &
+         "cutoff",              pcutoff,       1,                           &
+         "coordinates",         pcoor,         1,                           &
+         "energy",              penergy,       TRUEFALSE(comp_energy.eq.1), &
+         "forces",              pforce,        TRUEFALSE(comp_force.eq.1),  &
+         "energyPerAtom",       penepot,       TRUEFALSE(comp_enepot.eq.1), &
+         "virialGlobal",        pvirialGlobal, TRUEFALSE(comp_virial.eq.1))
     if (ier.lt.KIM_STATUS_OK) then
        idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_multiple_f", ier)
        return

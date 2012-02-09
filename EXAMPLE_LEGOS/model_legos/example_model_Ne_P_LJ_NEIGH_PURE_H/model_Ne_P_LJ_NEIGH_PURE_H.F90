@@ -8,6 +8,7 @@
 !
 
 #include "KIMstatus.h"
+#define TRUEFALSE(TRUTH) merge(1,0,(TRUTH))
 
 module model_Ne_P_LJ_NEIGH_PURE_H
   use  KIMservice
@@ -64,13 +65,13 @@ contains
     ! Unpack data from KIM object
     !
     call kim_api_get_data_multiple_f(pkim, ier, &
-         "numberOfAtoms",           pnumberofatoms, 1,                           &
-         "numberContributingAtoms", pnumContrib,    1,                           &
-         "atomTypes",               pattypes,       1,                           &
-         "coordinates",             px,             1,                           &
-         "forces",                  pf,             merge(1,0,(f_flag.eq.1)),    &
-         "energy",                  ppotenergy,     merge(1,0,(e_flag.eq.1)),    &
-         "energyPerAtom",           pea,            merge(1,0,(eper_flag.eq.1)))
+         "numberOfAtoms",           pnumberofatoms, 1,                         &
+         "numberContributingAtoms", pnumContrib,    1,                         &
+         "atomTypes",               pattypes,       1,                         &
+         "coordinates",             px,             1,                         &
+         "forces",                  pf,             TRUEFALSE(f_flag.eq.1),    &
+         "energy",                  ppotenergy,     TRUEFALSE(e_flag.eq.1),    &
+         "energyPerAtom",           pea,            TRUEFALSE(eper_flag.eq.1))
     if (ier.lt.KIM_STATUS_OK) then
        idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_multiple_f", ier)
        return

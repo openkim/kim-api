@@ -22,6 +22,7 @@
 !*******************************************************************************
 
 #include "KIMstatus.h"
+#define TRUEFALSE(TRUTH) merge(1,0,(TRUTH))
 
 !-------------------------------------------------------------------------------
 !
@@ -182,16 +183,16 @@ program TEST_NAME_STR
   ! Unpack data from KIM object
   !
   call kim_api_get_data_multiple_f(pkim, ier, &
-       "numberOfAtoms",           pnAtoms,       1,                     &
-       "numberContributingAtoms", pnumContrib,   1,                     &
-       "numberAtomTypes",         pnAtomTypes,   1,                     &
-       "atomTypes",               patomTypesdum, 1,                     &
-       "coordinates",             pcoor,         1,                     &
-       "cutoff",                  pcutoff,       1,                     &
-       "boxlength",               pboxlength,    merge(1,0,(nbc.le.1)), &
-       "energy",                  penergy,       1,                     &
-       "virialGlobal",            pvirialglob,   1,                     &
-       "forces",                  pforces,       1,                     &
+       "numberOfAtoms",           pnAtoms,       1,                   &
+       "numberContributingAtoms", pnumContrib,   1,                   &
+       "numberAtomTypes",         pnAtomTypes,   1,                   &
+       "atomTypes",               patomTypesdum, 1,                   &
+       "coordinates",             pcoor,         1,                   &
+       "cutoff",                  pcutoff,       1,                   &
+       "boxlength",               pboxlength,    TRUEFALSE(nbc.le.1), &
+       "energy",                  penergy,       1,                   &
+       "virialGlobal",            pvirialglob,   1,                   &
+       "forces",                  pforces,       1,                   &
        "stiffness",               pstiffness,    1)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_multiple_f", ier)

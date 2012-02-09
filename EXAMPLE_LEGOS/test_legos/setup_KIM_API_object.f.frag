@@ -4,6 +4,7 @@
 !                        allocate memory and set known values.
 !
 !-------------------------------------------------------------------------------
+#define TRUEFALSE(TRUTH) merge(1,0,(TRUTH))
 subroutine setup_KIM_API_object(pkim, testname, modelname, N, specname, SupportHalf)
   use KIMservice
   implicit none
@@ -49,9 +50,9 @@ subroutine setup_KIM_API_object(pkim, testname, modelname, N, specname, SupportH
   ! Unpack data from KIM object whose values need to be set
   !
   call kim_api_get_data_multiple_f(pkim, ier, &
-       "numberOfAtoms",           pnAtoms,       1,                             &
-       "numberContributingAtoms", pnumContrib,   merge(1,0,(SupportHalf.eq.1)), & 
-       "numberAtomTypes",         pnAtomTypes,   1,                             &
+       "numberOfAtoms",           pnAtoms,       1,                           &
+       "numberContributingAtoms", pnumContrib,   TRUEFALSE(SupportHalf.eq.1), & 
+       "numberAtomTypes",         pnAtomTypes,   1,                           &
        "atomTypes",               patomTypesdum, 1)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_multiple_f", ier)
