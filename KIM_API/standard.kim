@@ -678,7 +678,7 @@ MI_OPBC_H               flag        # This is the Minimum Image Orthogonal
                                     # list method.  The Model needs
                                     # `coordinates', a half neighbor list (with
                                     # data stored in the `neighObject'
-                                    # argument), the `get_half_neigh' method
+                                    # argument), the `get_neigh' method
                                     # supplied by the Test, and the `boxSideLengths'
                                     # argument (which specifies the three
                                     # side-lengths of the orthogonal simulation
@@ -689,7 +689,7 @@ MI_OPBC_F               flag        # This is the Minimum Image Orthogonal
                                     # list method.  The Model needs 
                                     # `coordinates', a full neighbor list (with 
                                     # data stored in the `neighObject' 
-                                    # argument), the `get_full_neigh' method 
+                                    # argument), the `get_neigh' method 
                                     # supplied by the Test, and the `boxSideLengths'
                                     # argument (which specifies the three 
                                     # side-lengths of the orthogonal simulation 
@@ -713,14 +713,14 @@ NEIGH_PURE_H            flag        # This is the Pure Half neighbor list
                                     # method.  The model needs `coordinates', a 
                                     # half neighbor list (with data stored in 
                                     # the `neighObject' argument), and the 
-                                    # `get_half_neigh' method supplied by the 
+                                    # `get_neigh' method supplied by the 
                                     # Test.
 
 NEIGH_PURE_F            flag        # This is the Pure Full neighbor list 
                                     # method.  The model needs `coordinates', a 
                                     # full neighbor list (with data stored in 
                                     # the `neighObject' argument), and the 
-                                    # `get_full_neigh' method supplied by the 
+                                    # `get_neigh' method supplied by the 
                                     # Test.
 
 # In the NEIGH_RVEC_F method, the Model receives the number of atoms and
@@ -744,11 +744,11 @@ NEIGH_RVEC_F            flag        # This is the Relative Vector Boundary
                                     # The Model needs `coordinates' and a full 
                                     # neighbor list (with data stored in the 
                                     # `neighObject' argument), and the 
-                                    # `get_full_neigh' method supplied by the 
+                                    # `get_neigh' method supplied by the 
                                     # Test.  The `neighObject' argument must 
                                     # also contain the relative position 
                                     # vectors (RVEC) (which are returned by the 
-                                    # `get_full_neigh' function).
+                                    # `get_neigh' function).
 
 ################################################################################
 #
@@ -845,23 +845,10 @@ atomTypes               integer      none               [numberOfParticles]
 #
 coordinates             real*8       length             [numberOfParticles,3]
 
-################################################################################
-#
-# get_full_neigh : A pointer to the full neighbor list access function that is 
-#                  provided by the Test.
-#
-# This argument is required for Models/Tests that support the following NBCs:
-# MI_OPBC_F, NEIGH_PURE_F and NEIGH_RVEC_F.  It should be optional for all
-# Models to ensure that the Model is compatible with the widest possible set of
-# Tests.
-#
-# Name                  Type         Unit               Shape
-#
-get_full_neigh          method       none               []
 
 ################################################################################
 #
-# get_half_neigh : A pointer to the half neighbor list access function that is 
+# get_neigh : A pointer to the half neighbor list access function that is 
 #                  provided by the Test.
 #
 # This argument is required for Models/Tests that support the following NBCs:
@@ -870,7 +857,7 @@ get_full_neigh          method       none               []
 #
 # Name                  Type         Unit               Shape
 #
-get_half_neigh          method       none               []
+get_neigh          method       none               []
 
 ################################################################################
 #

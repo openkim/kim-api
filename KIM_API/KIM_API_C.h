@@ -48,10 +48,7 @@ char * KIM_API_get_fixed_params(void * kimmdl,int* nVpar, int * error);
 
 char * KIM_API_get_NBC_method(void *kimmdl,int * error);
 
-int KIM_API_get_full_neigh(void *kimmdl,int mode,int request,
-        int *atom, int *numnei, int **nei1atom, double **Rij);
-
-int KIM_API_get_half_neigh(void *kimmdl,int mode,int request,
+int KIM_API_get_neigh(void *kimmdl,int mode,int request,
         int *atom, int *numnei, int **nei1atom, double **Rij);
 
 int KIM_API_get_neigh_mode(void *kimmdl,int *error);
@@ -157,10 +154,8 @@ void * kim_api_get_fixed_params_f_(void * kimmdl,int* nVpar, int* error);
 void * kim_api_get_nbc_method_f_(void * kimmdl,int* error);
 
 int kim_api_get_partcl_type_code_(void * kimmdl, char** atom, int * error);
-int kim_api_get_full_neigh_f_(void *kimmdl,int *mode,int *request,
-        int *atom, int *numnei, int **nei1atom, double **Rij);
 
-int kim_api_get_half_neigh_f_(void *kimmdl,int *mode,int *request,
+int kim_api_get_neigh_f_(void *kimmdl,int *mode,int *request,
         int *atom, int *numnei, int **nei1atom, double **Rij);
 
 int kim_api_get_model_index_shift_f_(void * kimmdl);

@@ -8,7 +8,7 @@
 
 using namespace std;
 
-#include "KIM_AUX.h";
+#include "KIM_AUX.h"
 #include "KIM_API.h"
 
 KIM_AUX::Process_DE::Process_DE(){

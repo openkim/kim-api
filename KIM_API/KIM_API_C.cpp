@@ -138,15 +138,12 @@ int KIM_API_get_partcl_type_code(void * kimmdl, char* atom, int * error){
      return mdl->get_partcl_type_code(atom,error);
 }
 
-int KIM_API_get_full_neigh(void *kimmdl,int mode,int request,
+
+
+int KIM_API_get_neigh(void *kimmdl,int mode,int request,
         int *atom, int *numnei, int **nei1atom, double **Rij){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    return mdl->get_full_neigh(mode,request,atom,numnei,nei1atom,Rij);
-}
-int KIM_API_get_half_neigh(void *kimmdl,int mode,int request,
-        int *atom, int *numnei, int **nei1atom, double **Rij){
-    KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    return mdl->get_half_neigh(mode,request,atom,numnei,nei1atom,Rij);
+    return mdl->get_neigh(mode,request,atom,numnei,nei1atom,Rij);
 }
 
 void KIM_API_process_dEdr(void **ppkim, double * dE, double * dr, double **dx, int *i, int *j, int *ier ){
@@ -766,15 +763,9 @@ int kim_api_get_partcl_type_code_(void * kimmdl, char **atom, int * error){
  return KIM_API_get_partcl_type_code(*(KIM_API_model **)kimmdl,*atom,error);
 }
 
-int kim_api_get_full_neigh_f_(void *kimmdl,int *mode,int *request,
+int kim_api_get_neigh_f_(void *kimmdl,int *mode,int *request,
         int *atom, int *numnei, int **nei1atom, double **Rij){
-    return KIM_API_get_full_neigh(*(KIM_API_model **)kimmdl, *mode, *request,
-            atom,numnei,nei1atom,Rij);
-}
-
-int kim_api_get_half_neigh_f_(void *kimmdl,int *mode,int *request,
-        int *atom, int *numnei, int **nei1atom, double **Rij){
-    return KIM_API_get_half_neigh(*(KIM_API_model **)kimmdl, *mode, *request,
+    return KIM_API_get_neigh(*(KIM_API_model **)kimmdl, *mode, *request,
             atom,numnei,nei1atom,Rij);
 }
 

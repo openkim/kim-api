@@ -639,7 +639,7 @@ KIM_API_model:: KIM_API_model(){
        strcpy(&arg_NBC_method_B[1][0],"boxSideLengths");
        strcpy(&arg_NBC_method_B[2][0],"numberContributingParticles");
        strcpy(&arg_NBC_method_B[3][0],"neighObject");
-       strcpy(&arg_NBC_method_B[4][0],"get_half_neigh");
+       strcpy(&arg_NBC_method_B[4][0],"get_neigh");
        narg_NBC_method_B=5;
 
        //method_C init
@@ -647,14 +647,14 @@ KIM_API_model:: KIM_API_model(){
        strcpy(&arg_NBC_method_C[0][0],"coordinates");
        strcpy(&arg_NBC_method_C[1][0],"boxSideLengths");
        strcpy(&arg_NBC_method_C[2][0],"neighObject");
-       strcpy(&arg_NBC_method_C[3][0],"get_full_neigh");
+       strcpy(&arg_NBC_method_E[3][0],"get_neigh");
        narg_NBC_method_C=4;
 
        //method_D init
        strcpy(NBC_method_D,"NEIGH_RVEC_F");
        strcpy(&arg_NBC_method_D[0][0],"coordinates");
        strcpy(&arg_NBC_method_D[1][0],"neighObject");
-       strcpy(&arg_NBC_method_D[2][0],"get_full_neigh");
+       strcpy(&arg_NBC_method_E[3][0],"get_neigh");
        narg_NBC_method_D=3;
 
        //method_E init
@@ -662,14 +662,14 @@ KIM_API_model:: KIM_API_model(){
        strcpy(&arg_NBC_method_E[0][0],"coordinates");
        strcpy(&arg_NBC_method_E[1][0],"numberContributingParticles");
        strcpy(&arg_NBC_method_E[2][0],"neighObject");
-       strcpy(&arg_NBC_method_E[3][0],"get_half_neigh");
+       strcpy(&arg_NBC_method_E[3][0],"get_neigh");
        narg_NBC_method_E=4;
 
        //method_F init
        strcpy(NBC_method_F,"NEIGH_PURE_F");
        strcpy(&arg_NBC_method_F[0][0],"coordinates");
        strcpy(&arg_NBC_method_F[1][0],"neighObject");
-       strcpy(&arg_NBC_method_F[2][0],"get_full_neigh");
+       strcpy(&arg_NBC_method_F[2][0],"get_neigh");
        narg_NBC_method_F=3;
 
        n_NBC_methods = number_NBC_methods;
@@ -1360,9 +1360,7 @@ bool KIM_API_model::do_flag_match(KIM_API_model& tst, KIM_API_model& mdl){
     bool ZeroBasedLists_tst =is_it_in_and_is_it_flag(tst, "ZeroBasedLists");
     bool OneBasedLists_tst =is_it_in_and_is_it_flag(tst, "OneBasedLists");
 
-    bool Neigh_HalfList_tst =is_it_in_and_is_it_flag(tst, "Neigh_HalfList");
-    bool Neigh_FullList_tst =is_it_in_and_is_it_flag(tst, "Neigh_FullList");
-    bool Neigh_BothList_tst =is_it_in_and_is_it_flag(tst, "Neigh_BothList");
+ 
     
     bool Neigh_IterAccess_tst=is_it_in_and_is_it_flag(tst, "Neigh_IterAccess");
     bool Neigh_LocaAccess_tst=is_it_in_and_is_it_flag(tst, "Neigh_LocaAccess");
@@ -1373,10 +1371,6 @@ bool KIM_API_model::do_flag_match(KIM_API_model& tst, KIM_API_model& mdl){
     // check flag for mdl
     bool ZeroBasedLists_mdl =is_it_in_and_is_it_flag(mdl, "ZeroBasedLists");
     bool OneBasedLists_mdl =is_it_in_and_is_it_flag(mdl, "OneBasedLists");
-
-    bool Neigh_HalfList_mdl =is_it_in_and_is_it_flag(mdl, "Neigh_HalfList");
-    bool Neigh_FullList_mdl =is_it_in_and_is_it_flag(mdl, "Neigh_FullList");
-    bool Neigh_BothList_mdl =is_it_in_and_is_it_flag(mdl, "Neigh_BothList");
 
     bool Neigh_IterAccess_mdl=is_it_in_and_is_it_flag(mdl, "Neigh_IterAccess");
     
@@ -1403,37 +1397,8 @@ bool KIM_API_model::do_flag_match(KIM_API_model& tst, KIM_API_model& mdl){
     if (OneBasedLists_mdl) AUX_index_shift =1;
     int ind_LocaAccess_mdl = mdl.get_index("Neigh_LocaAccess");
     int ind_IterAcces_mdl = mdl.get_index("Neigh_IterAccess");
-    int ind_LocaAccess_tst = tst.get_index("Neigh_LocaAccess");
-    int ind_IterAcces_tst = tst.get_index("Neigh_IterAccess");
-    //logic for checking Both/Full/Half base list
-    // checking if test o.k. when model requires both
-    if (Neigh_BothList_mdl){
-        if(!(Neigh_BothList_tst || Neigh_FullList_tst && Neigh_HalfList_tst)){
-            cout<< "model .kim requres Neigh_BothList "<<endl;
-            return false;
-        }
-     //checking if test o.k. when model may work with half or full
-     }else if (Neigh_FullList_mdl && Neigh_HalfList_mdl){
 
-        if(!(Neigh_FullList_tst || Neigh_HalfList_tst || Neigh_BothList_tst)){
-            cout<< "model .kim requres Neigh_HalfList or Neigh_FullList "<<endl;
-            return false;
-        }
-     //checking if test o.k. with full
-     }else if(Neigh_FullList_mdl){
-         if(!(Neigh_FullList_tst || Neigh_BothList_tst)) {
-             cout<< "model .kim requres  Neigh_FullList"<<endl;
-             return false;
-         }
-     //checking if test o.k. with half
-     }else if(Neigh_HalfList_mdl){
-         if(!(Neigh_HalfList_tst || Neigh_BothList_tst)) {
-             cout<< "model .kim requres  Neigh_HalfList"<<endl;
-             return false;
-         }
-     }
-
-    //
+    
     //logic for checking Both/Loca/Iter
     // checking if test o.k. when model requires both
 
@@ -1561,8 +1526,7 @@ bool KIM_API_model::init(char * testinputfile,char* testname, char * modelinputf
         test.free(); mdl.free();
         char computestr [] = "compute";
         compute_index = get_index(computestr);
-        get_full_neigh_index = get_index("get_full_neigh");
-        get_half_neigh_index = get_index("get_half_neigh");
+        get_neigh_index = get_index("get_neigh");
         this->fij_related_things_add_set_index();
         support_Rij=false;
         if (strcmp(NBC_method_current,"NEIGH_RVEC_F")==0) support_Rij=true;
@@ -1779,8 +1743,7 @@ bool KIM_API_model::init_str_modelname(char* testname, char* inmdlstr){
         test.free(); mdl.free();
         char computestr [] = "compute";
         compute_index = get_index(computestr);
-        get_full_neigh_index = get_index("get_full_neigh");
-        get_half_neigh_index = get_index("get_half_neigh");
+        get_neigh_index = get_index("get_neigh");
         this->fij_related_things_add_set_index();
         support_Rij=false;
         if (strcmp(NBC_method_current,"NEIGH_RVEC_F")==0) support_Rij=true;
@@ -1948,8 +1911,7 @@ bool KIM_API_model::init_str_testname(char* in_tststr, char* modelname){
         test.free(); mdl.free();
         char computestr [] = "compute";
         compute_index = get_index(computestr);
-        get_full_neigh_index = get_index("get_full_neigh");
-        get_half_neigh_index = get_index("get_half_neigh");
+        get_neigh_index = get_index("get_neigh");
         this->fij_related_things_add_set_index();
         support_Rij=false;
         if (strcmp(NBC_method_current,"NEIGH_RVEC_F")==0) support_Rij=true;
@@ -2119,60 +2081,7 @@ void KIM_API_model::model_compute(int *error){
   (*mdl_compute)((void *)&pkim, error);
 }
 
-int KIM_API_model::get_full_neigh(int mode, int request, int *atom,
-        int *numnei, int** nei1atom, double** Rij){
-    int locrequest=request;
-    int locmode = mode;
-    if(mode!=0 && mode!=1) return KIM_STATUS_NEIGH_INVALID_MODE;
-    if(this == NULL) return KIM_STATUS_API_OBJECT_INVALID;
-    typedef int(*Get_Neigh)(void **, int *, int *, int *, int *, int **,double **);
-    if (get_full_neigh_index < 0) return KIM_STATUS_API_OBJECT_INVALID;
-    Get_Neigh get_neigh = (Get_Neigh)(*this)[get_full_neigh_index].data;
-     KIM_API_model *pkim = this;
-    if (model_index_shift==0) {
-        if (mode==0 && request == 0) {
-            return (*get_neigh)((void **)&pkim,&locmode, &locrequest, atom, numnei, nei1atom, Rij ) ;
-        }else{
-            int erkey = (*get_neigh)((void **)&pkim,&locmode, &locrequest, atom, numnei, nei1atom, Rij );
-            if (erkey <= 0) return erkey; // return with error from  supplied by test get_neigh
-            if(*numnei > KIM_API_MAX_NEIGHBORS) {
-                cout<<endl<< "* Error (KIM_API_model::get_full_neigh): numnei > MAX_NEIGHBORS : ";
-                cout<<" "<<*numnei <<" > "<< KIM_API_MAX_NEIGHBORS<<endl;
-                return KIM_STATUS_NEIGH_TOO_MANY_NEIGHBORS;
-            }
-            return erkey;
-        }
-    }else if (model_index_shift == 1 || model_index_shift == -1){
-        int req=request;
-        if (mode ==1) req = request - model_index_shift;
-        int at = *atom;
-        if (mode==0 && request == 0) {
-            return (*get_neigh)((void **)&pkim,&locmode, &req, &at, numnei, nei1atom, Rij );
-        }else{
-            int erkey = (*get_neigh)((void **)&pkim,&locmode, &req, &at, numnei, nei1atom, Rij );
-            if (erkey <= 0) return erkey; // return with error from  supplied by test get_neigh
-            if(*numnei > KIM_API_MAX_NEIGHBORS) {
-                cout<<endl<< "* Error (KIM_API::get_full_neigh): numnei > MAX_NEIGHBORS : ";
-                cout<<" "<<*numnei <<" > "<< KIM_API_MAX_NEIGHBORS<<endl;
-                return KIM_STATUS_NEIGH_TOO_MANY_NEIGHBORS;
-            }
-            if ( erkey == 1){
-                *atom = at + model_index_shift;
-                for (int i = 0; i<(*numnei);i++){
-                    neiOfAnAtom_full[i] = (*nei1atom)[i] + model_index_shift;
-                }
-                *nei1atom = &(neiOfAnAtom_full[0]);
-            }
-            return erkey;
-        }
-    }else{
-        cout<<endl<< "* Error (KIM_API::get_full_neigh): wrong base convert key,model_index_shift =";
-        cout<< model_index_shift <<"  (must be 0,1 or -1)"<<endl;
-        return KIM_STATUS_API_OBJECT_INVALID;
-    }
-}
-
-int KIM_API_model::get_half_neigh(int mode, int request, int *atom,
+int KIM_API_model::get_neigh(int mode, int request, int *atom,
         int *numnei, int** nei1atom, double** Rij){
     int locrequest=request;
     int locmode = mode;
@@ -2181,8 +2090,8 @@ int KIM_API_model::get_half_neigh(int mode, int request, int *atom,
     if(this == NULL) return KIM_STATUS_API_OBJECT_INVALID;
     typedef int (*Get_Neigh)(void **, int *, int *, int *, int *, int **,double **);
 
-    if (get_half_neigh_index < 0) return KIM_STATUS_API_OBJECT_INVALID;
-    Get_Neigh get_neigh = (Get_Neigh)(*this)[get_half_neigh_index].data;
+    if (get_neigh_index < 0) return KIM_STATUS_API_OBJECT_INVALID;
+    Get_Neigh get_neigh = (Get_Neigh)(*this)[get_neigh_index].data;
     KIM_API_model *pkim = this;
 
     if (model_index_shift==0) {
@@ -2193,7 +2102,7 @@ int KIM_API_model::get_half_neigh(int mode, int request, int *atom,
             int erkey = (*get_neigh)((void **)&pkim,&locmode, &locrequest, atom, numnei, nei1atom, Rij );
             if (erkey <= 0) return erkey; // return with error from  supplied by test get_neigh
             if(*numnei > KIM_API_MAX_NEIGHBORS) {
-                cout<<endl<< "* Error (KIM_API_model::get_half_neigh): numnei > MAX_NEIGHBORS : ";
+                cout<<endl<< "* Error (KIM_API_model::get_neigh): numnei > MAX_NEIGHBORS : ";
                 cout<<" "<<*numnei <<" > "<< KIM_API_MAX_NEIGHBORS<<endl;
                 return KIM_STATUS_NEIGH_TOO_MANY_NEIGHBORS;
             }
@@ -2211,7 +2120,7 @@ int KIM_API_model::get_half_neigh(int mode, int request, int *atom,
             int erkey = (*get_neigh)((void **)&pkim,&locmode, &req, &at, numnei, nei1atom, Rij );
             if (erkey <= 0) return erkey; // return with error from  supplied by test get_neigh
             if(*numnei > KIM_API_MAX_NEIGHBORS) {
-                cout<<endl<< "* Error (KIM_API_model::get_full_neigh): numnei > MAX_NEIGHBORS : ";
+                cout<<endl<< "* Error (KIM_API_model::get_neigh): numnei > MAX_NEIGHBORS : ";
                 cout<<" "<<*numnei <<" > "<< KIM_API_MAX_NEIGHBORS<<endl;
                 return KIM_STATUS_NEIGH_TOO_MANY_NEIGHBORS;
             }
@@ -2225,7 +2134,7 @@ int KIM_API_model::get_half_neigh(int mode, int request, int *atom,
             return erkey;
         }
     }else{
-        cout<<endl<< "* Error (KIM_API_model::get_half_neigh): wrong base convert key,model_index_shift =";
+        cout<<endl<< "* Error (KIM_API_model::get_neigh): wrong base convert key,model_index_shift =";
         cout<< model_index_shift <<"  (must be 0,1 or -1)"<<endl;
         return KIM_STATUS_API_OBJECT_INVALID;
     }
@@ -2577,8 +2486,8 @@ char * KIM_API_model::get_status_msg(int status_code) {
     { "numargs is not divisible by 2 (in KIM_API...multiple routine)"},
     { "numargs is not divisiable by 3(in KIM_API...multiple routine)"},
     { "invalid value for `request' provided"},
-    { "get_half_neigh method in KIM API object is not set(NULL value)"},
-    { "get_full_neigh method in KIM API object is not set(NULL value)"},
+    { "get_neigh method in KIM API object is not set(NULL value)"},
+    { "get_neigh method in KIM API object is not set(NULL value)"},
     { "number of neighbors of an atom exceeds KIM_API_MAX_NEIGHBORS"},
     { "invalid KIM API object"},
     { "negative index in shape"},

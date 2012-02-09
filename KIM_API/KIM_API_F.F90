@@ -319,17 +319,9 @@ integer,parameter :: kim_intptr = 8
 	    integer::error,kim_api_get_partcl_type_code
         end function kim_api_get_partcl_type_code
 
-	integer function kim_api_get_full_neigh_f(kimmdl,mode,request, atom, numnei, pnei1atom, pRij)
-	integer :: mode,request,atom,numnei
-#ifdef SYSTEM32
-	integer, parameter :: kim_intptr=4
-#else
-	integer,parameter :: kim_intptr = 8
-#endif
-	integer(kind=kim_intptr) :: kimmdl,pnei1atom,pRij
-	end function kim_api_get_full_neigh_f
 
-	integer function kim_api_get_half_neigh_f(kimmdl,mode,request, atom, numnei, pnei1atom, pRij)
+
+	integer function kim_api_get_neigh_f(kimmdl,mode,request, atom, numnei, pnei1atom, pRij)
 	integer :: mode,request,atom,numnei
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4
@@ -337,7 +329,7 @@ integer,parameter :: kim_intptr = 8
 	integer,parameter :: kim_intptr = 8
 #endif
 	integer(kind=kim_intptr) :: kimmdl,pnei1atom,pRij
-	end function kim_api_get_half_neigh_f
+	end function kim_api_get_neigh_f
 
 
         integer function kim_api_get_compute(kimmdl,nm,error)

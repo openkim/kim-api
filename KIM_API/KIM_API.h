@@ -226,8 +226,7 @@ bool do_AtomsTypes_match(KIM_API_model &test,KIM_API_model & mdl);
     bool init_str_testname(char * intststr,char * modelname);
     bool init_str_modelname(char *testname,char *inmdlstr);
      void model_compute(int *error);
-    int get_half_neigh(int mode,int request, int *atom, int *numnei, int **nei1atom, double **Rij);
-    int get_full_neigh(int mode,int request, int *atom, int *numnei, int **nei1atom, double **Rij);
+    int get_neigh(int mode,int request, int *atom, int *numnei, int **nei1atom, double **Rij);
     bool model_init();
     bool model_reinit();
    void model_destroy(int *error);
@@ -305,10 +304,9 @@ private:
     bool both_neigh_mode;
     int ErrorCode;// reserved for proper errors handling
     int compute_index;
-    int get_full_neigh_index;
-    int get_half_neigh_index;
+    int get_neigh_index;
     int neiOfAnAtom_half[KIM_API_MAX_NEIGHBORS];
-    int neiOfAnAtom_full[KIM_API_MAX_NEIGHBORS];
+
     int model_index_shift; //0--no conversion, 1 -- from 0 to 1, -1 -- from 1 to 0
     int AUX_index_shift; //0--noconversion, 1 -- from 0 to 1
     KIM_AUX::Process_DE process_DE_instance;
