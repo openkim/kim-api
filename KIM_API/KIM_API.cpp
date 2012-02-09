@@ -647,14 +647,14 @@ KIM_API_model:: KIM_API_model(){
        strcpy(&arg_NBC_method_C[0][0],"coordinates");
        strcpy(&arg_NBC_method_C[1][0],"boxSideLengths");
        strcpy(&arg_NBC_method_C[2][0],"neighObject");
-       strcpy(&arg_NBC_method_E[3][0],"get_neigh");
+       strcpy(&arg_NBC_method_C[3][0],"get_neigh");
        narg_NBC_method_C=4;
 
        //method_D init
        strcpy(NBC_method_D,"NEIGH_RVEC_F");
        strcpy(&arg_NBC_method_D[0][0],"coordinates");
        strcpy(&arg_NBC_method_D[1][0],"neighObject");
-       strcpy(&arg_NBC_method_E[3][0],"get_neigh");
+       strcpy(&arg_NBC_method_D[3][0],"get_neigh");
        narg_NBC_method_D=3;
 
        //method_E init
@@ -2469,7 +2469,7 @@ bool KIM_API_model::check_consistance_NBC_method(){
     return true;
 }
 char * KIM_API_model::get_status_msg(int status_code) {
-    int mincode=-24,maxcode=3,offset=24;
+    int mincode=-23,maxcode=3,offset=23;
 
     char KIM_STATUS_MSG[][KIM_KEY_STRING_LENGTH]=
    {
@@ -2486,7 +2486,6 @@ char * KIM_API_model::get_status_msg(int status_code) {
     { "numargs is not divisible by 2 (in KIM_API...multiple routine)"},
     { "numargs is not divisiable by 3(in KIM_API...multiple routine)"},
     { "invalid value for `request' provided"},
-    { "get_neigh method in KIM API object is not set(NULL value)"},
     { "get_neigh method in KIM API object is not set(NULL value)"},
     { "number of neighbors of an atom exceeds KIM_API_MAX_NEIGHBORS"},
     { "invalid KIM API object"},
