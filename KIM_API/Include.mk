@@ -96,6 +96,7 @@ ifdef KIM_DYNAMIC
    endif
    ifeq ($(OSTYPE),darwin11)
      MODELOBJ =
+     KIM_LIB = $(KIM_API_DIR)libkim.a
 
      SHARED_LIB_FLAG = -dynamic -flat_namespace -undefined suppress
      LINKSONAME =  -install_name
@@ -192,7 +193,7 @@ MODEL_NAME_KIM_STR_CPP = char* $(MODEL_NAME)_kim_str'('')''{'
 # Library pattern rule
 ifeq ($(OSTYPE),darwin11)
 %.so: %.a
-	libtool  $(SHARED_LIB_FLAG)  -o $@  *.a $(KIM_LIB) 
+	libtool  $(SHARED_LIB_FLAG)  -o $@  *.a  $(KIM_LIB) 
 else
 %.so: %.a
 	$(LINKCOMPILER) $(SHARED_LIB_FLAG)  $(CPPLIBFLAG) -o $@  *.o -L$(KIM_API_DIR) -lkim

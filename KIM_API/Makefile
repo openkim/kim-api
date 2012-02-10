@@ -37,14 +37,22 @@ endif
 Makefile: Include.mk
 	@touch Makefile
 
+ifneq ($(OSTYPE),darwin11)
 libkim.a: $(ALLOBJ) $(MODELOBJ)
 	mkdir $(KIM_API_DIR)temp_archive_dir && cd $(KIM_API_DIR)temp_archive_dir && \
         $(foreach arch, $(MODELOBJ),ar x $(arch);) \
         ar rcs $(KIM_API_DIR)$@ *.o $(addprefix $(KIM_API_DIR),$(ALLOBJ)) && \
         cd $(KIM_API_DIR) && rm -rf $(KIM_API_DIR)temp_archive_dir
-
 libkim.so: $(ALLOBJ)
 	$(LINKCOMPILER) $(SHARED_LIB_FLAG) $(CPPLIBFLAG) $(LINKSONAME)$(KIM_API_DIR)$@ -o $@ *.o
+
+else
+libkim.a: $(ALLOBJ)
+	ar rcs $(KIM_API_DIR)$@ $(ALLOBJ)
+libkim.so:  libkim.a
+	$(LINKCOMPILER) $(SHARED_LIB_FLAG) $(CPPLIBFLAG) $(LINKSONAME)$(KIM_API_DIR)$@ -o $@ *.o
+endif
+
 
 KIM_API.o: model_init_include.h model_init_include.cpp model_kim_str_include.cpp KIM_API.h KIM_API.cpp KIM_AUX.h Makefile
 
