@@ -11,7 +11,7 @@
 module kim_api
     implicit none
     integer,parameter :: KIM_KEY_STRING_LENGTH = 64 !
-#include "KIMstatus.h"
+#include "KIM_API_status.h"
 
 #ifdef SYSTEM32
 	integer, parameter :: kim_intptr=4

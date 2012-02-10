@@ -25,21 +25,25 @@ ifneq ($(DELETED_MODELS_TARGETS),)
 endif
 
 
+all: $(ALLOBJ)
 
 # default target
 ifdef KIM_DYNAMIC
-   all: libkim.so
+   lib: libkim.so
 else
-   all: libkim.a
+   lib: libkim.a
 endif
 
 Makefile: Include.mk
 	@touch Makefile
 
-libkim.a: $(ALLOBJ) standard_kim_str.o Unit_Handling.o KIM_AUX.o
-	ar rcs  $@ $(ALLOBJ) standard_kim_str.o Unit_Handling.o KIM_AUX.o
+libkim.a: $(ALLOBJ) $(MODELOBJ)
+	mkdir $(KIM_API_DIR)temp_archive_dir && cd $(KIM_API_DIR)temp_archive_dir && \
+        $(foreach arch, $(MODELOBJ),ar x $(arch);) \
+        ar rcs $(KIM_API_DIR)$@ *.o $(addprefix $(KIM_API_DIR),$(ALLOBJ)) && \
+        cd $(KIM_API_DIR) && rm -rf $(KIM_API_DIR)temp_archive_dir
 
-libkim.so: libkim.a
+libkim.so: $(ALLOBJ)
 	$(LINKCOMPILER) $(SHARED_LIB_FLAG) $(CPPLIBFLAG) $(LINKSONAME)$(KIM_API_DIR)$@ -o $@ *.o
 
 KIM_API.o: model_init_include.h model_init_include.cpp model_kim_str_include.cpp KIM_API.h KIM_API.cpp KIM_AUX.h Makefile
@@ -84,4 +88,5 @@ model_init_include.h model_init_include.cpp: Makefile .models-deleted $(MODELS_T
 .PHONY: all tests clean
 
 clean:
-	rm -f *.o *.a *.so *.mod  model_init_include.{h,cpp} model_kim_str_include.{h,cpp} .*.make-temp .models-deleted standard_kim_str.cpp
+	rm -f *.o *.a *.so *.mod  model_init_include.{h,cpp} model_kim_str_include.{h,cpp} .*.make-temp .models-deleted standard_kim_str.cpp &&\
+        rm -rf $(KIM_API_DIR)temp_archive_dir

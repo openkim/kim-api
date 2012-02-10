@@ -18,7 +18,7 @@
 !**
 !****************************************************************************
 
-#include "KIMstatus.h"
+#include "KIM_API_status.h"
 #define TRUEFALSE(TRUTH) merge(1,0,(TRUTH))
 
 module model_<FILL element name>_PF_<FILL model name>

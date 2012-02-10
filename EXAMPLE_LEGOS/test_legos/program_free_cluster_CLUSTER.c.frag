@@ -13,7 +13,7 @@
 #include <stdio.h>
 #include <math.h>
 #include "KIM_API_C.h"
-#include "KIMstatus.h"
+#include "KIM_API_status.h"
 
 #define FCCSPACING    5.260
 #define NCELLSPERSIDE 2

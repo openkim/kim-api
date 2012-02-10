@@ -18,7 +18,7 @@
 #include <stdio.h>
 #include <math.h>
 #include "KIM_API_C.h"
-#include "KIMstatus.h"
+#include "KIM_API_status.h"
 
 #define DIM 3
 #define Ar  1

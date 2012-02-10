@@ -21,7 +21,7 @@ using namespace std;
 #ifndef _KIMSERVICE_H
 #define	_KIMSERVICE_H
 
-#include "KIMstatus.h"
+#include "KIM_API_status.h"
 #include "KIM_AUX.h"
 
 extern "C" {

@@ -16,7 +16,7 @@
 !**
 !*******************************************************************************
 
-#include "KIMstatus.h"
+#include "KIM_API_status.h"
 #define TRUEFALSE(TRUTH) merge(1,0,(TRUTH))
 
 module model_ArNe_P_MLJ_NEIGH_RVEC_F

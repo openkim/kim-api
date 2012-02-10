@@ -113,7 +113,11 @@ ifdef KIM_DYNAMIC
    FORTRANFLAG += -fPIC
 endif
 
-KIM_LIB_FILE = $(KIM_API_DIR)/libkim.a
+ifdef KIM_DYNAMIC
+   KIM_LIB_FILE = $(KIM_API_DIR)libkim.so
+else
+   KIM_LIB_FILE = $(KIM_API_DIR)libkim.a
+endif
 KIM_LIB = -L$(KIM_API_DIR) -lkim
 
 ifndef OSTYPE
@@ -137,7 +141,6 @@ ifdef KIM_DYNAMIC
    endif
    ifeq ($(OSTYPE),darwin11)
      MODELOBJ =
-     KIM_LIB = $(KIM_API_DIR)libkim.a
 
      SHARED_LIB_FLAG = -dynamic -flat_namespace -undefined suppress
      LINKSONAME =  -install_name
@@ -146,7 +149,7 @@ endif
 
 
 # Definition of c and fortran .o file list
-OBJC = KIM_API.o KIM_API_C.o  
+OBJC = KIM_API.o KIM_API_C.o standard_kim_str.o Unit_Handling.o KIM_AUX.o
 OBJF90 = KIM_API_F.o
 
 #fortran on/of
