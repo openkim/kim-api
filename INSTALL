@@ -144,7 +144,8 @@ TROUBLESHOOTING
 
 1. Non-Standard Compilers: If you need to make changes to compiler flags either
    because you are using a non-standard compiler or an older version of the gnu
-   compiler, change lines 53-72 in KIM_API/Include.mk
+   compiler, change lines  in KIM_API/GNU_compiler_settings.mk 
+   (ir Intel_compiler_settings.mk)
 
 2. Linking problems: By default, the make system uses the g++ compiler with the
    -lgfortran option to link compiled Fortran executables.  If (for some
@@ -158,8 +159,7 @@ TROUBLESHOOTING
       collect2: ld returned 1 exit status
 
    or somthing similar, try gfortran with the -lstdc++ option.  See
-   lines 66-67 in the Include.mk file (change them to lines 68-69).
-
+   lines 23-24 in the KIM_API/GNU_compiler_settings.mk and change them to lines 25-26.
 *******************************************************************************
 
 SUPPORT
