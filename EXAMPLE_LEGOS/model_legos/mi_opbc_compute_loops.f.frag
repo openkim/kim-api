@@ -16,9 +16,9 @@
     call free(pNBC_Method) ! don't forget to release the memory...
 
     ! get boxSideLengths & numberContributingParticles
-    call kim_api_getm_data_f(pkim, ier,     &
-         "boxSideLengths",               pboxSideLengths,  1, &
-         "numberContributingParticles", pnumContrib, 1)
+    call kim_api_getm_data_f(pkim, ier,                      &
+         "boxSideLengths",              pboxSideLengths,  1, &
+         "numberContributingParticles", pnumContrib,      1)
     if (ier.lt.KIM_STATUS_OK) then
        idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
        return
@@ -33,13 +33,9 @@
        !
        atom = i ! request neighbors for atom i
        
-       if (HalfOrFull.eq.1) then
-          ier = kim_api_get_half_neigh_f(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij_dummy)
-       else
-          ier = kim_api_get_full_neigh_f(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij_dummy)
-       endif
+       ier = kim_api_get_neigh_f(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij_dummy)
        if (ier.lt.KIM_STATUS_OK) then
-          idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_*_neigh", ier)
+          idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_neigh", ier)
           return
        endif
        

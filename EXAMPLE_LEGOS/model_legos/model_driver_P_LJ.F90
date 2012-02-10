@@ -342,20 +342,10 @@ endif
 ! Initialize neighbor handling for Iterator mode
 !
 if (IterOrLoca.eq.1) then
-   if (HalfOrFull.eq.1) then  ! HALF list
-      ier = kim_api_get_half_neigh_f(pkim,0,0,atom_ret,numnei, &
-                                     pnei1atom,pRij_list)
-   else                       ! FULL list
-      ier = kim_api_get_full_neigh_f(pkim,0,0,atom_ret,numnei, &
-                                     pnei1atom,pRij_list)
-   endif
+   ier = kim_api_get_neigh_f(pkim,0,0,atom_ret,numnei,pnei1atom,pRij_list)
    ! check for successful initialization
    if (ier.ne.KIM_STATUS_NEIGH_ITER_INIT_OK) then
-      if (HalfOrFull.eq.1) then
-         idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_half_neigh_f", ier)
-      else
-         idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_full_neigh_f", ier)
-      endif
+      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_neigh_f", ier)
       ier = KIM_STATUS_FAIL
       return 
    endif
@@ -373,22 +363,12 @@ do
    ! Set up neighbor list for next atom for all NBC methods
    !
    if (IterOrLoca.eq.1) then    ! ITERATOR mode
-      if (HalfOrFull.eq.1) then ! HALF list
-         ier = kim_api_get_half_neigh_f(pkim,0,1,atom_ret,numnei, &
-                                        pnei1atom,pRij_list)
-      else                      ! FULL list
-         ier = kim_api_get_full_neigh_f(pkim,0,1,atom_ret,numnei, &
-                                        pnei1atom,pRij_list)
-      endif
+      ier = kim_api_get_neigh_f(pkim,0,1,atom_ret,numnei,pnei1atom,pRij_list)
       if (ier.eq.KIM_STATUS_NEIGH_ITER_PAST_END) exit
                                 ! incremented past the end of the list,
                                 ! terminate loop
       if (ier.lt.KIM_STATUS_OK) then ! some sort of problem, exit
-         if (HalfOrFull.eq.1) then
-            idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_half_neigh_f", ier)
-         else
-            idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_full_neigh_f", ier)
-         endif
+         idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_neigh_f", ier)
          return
       endif
 
@@ -398,29 +378,18 @@ do
       i = i + 1
       if (i.gt.N) exit          ! incremented past end of list,
                                 ! terminate loop
-      if (HalfOrFull.eq.1) then ! HALF list
-         if (NBC.eq.0) then     ! CLUSTER NBC method
-            numnei = N - i      ! number of neighbors in list i+1, ..., N
-            nei1atom(1:numnei) = (/ (i+jj, jj = 1,numnei) /)
-            ier = KIM_STATUS_OK
-         else
-            ier = kim_api_get_half_neigh_f(pkim,1,i,atom_ret,numnei, &
-                                           pnei1atom,pRij_list)
+      if (NBC.eq.0) then        ! CLUSTER NBC method
+         numnei = N - i         ! number of neighbors in list i+1, ..., N
+         nei1atom(1:numnei) = (/ (i+jj, jj = 1,numnei) /)
+         ier = KIM_STATUS_OK
+      else                      ! All other NBCs
+         ier = kim_api_get_neigh_f(pkim,1,i,atom_ret,numnei,pnei1atom,pRij_list)
+         if (ier.ne.KIM_STATUS_OK) then ! some sort of problem, exit
+            idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_neigh_f", ier)
+            ier = KIM_STATUS_FAIL
+            return
          endif
-      else                      ! FULL list
-         ier = kim_api_get_full_neigh_f(pkim,1,i,atom_ret,numnei, &
-                                        pnei1atom,pRij_list)
       endif
-      if (ier.ne.KIM_STATUS_OK) then ! some sort of problem, exit
-         if (HalfOrFull.eq.1) then
-            idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_half_neigh_f", ier)
-         else
-            idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_full_neigh_f", ier)
-         endif
-         ier = KIM_STATUS_FAIL
-         return
-      endif
-
    endif
       
    ! Loop over the neighbors of atom i
