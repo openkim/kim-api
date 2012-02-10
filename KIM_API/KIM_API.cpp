@@ -758,6 +758,7 @@ bool KIM_API_model:: preinit(char * initfile,char *modelname){
                 char * type =& (inlines[i].type[0]);
  
                 el->init(name,type,0,rank,shape); //preinit element with zero size
+                //here to add checking is it derived or is it base units
                 strncpy(el->unit->dim,inlines[i].dim,strlen(inlines[i].dim)+1);
               
                 el->flag->calculate = 1;
@@ -837,6 +838,7 @@ bool KIM_API_model::preinit_str_testname(char *instrn){
                 char * type =& (inlines[i].type[0]);
 
                 el->init(name,type,0,rank,shape); //preinit element with zero size
+                //here to add checking is it derived or is it base units
                 strncpy(el->unit->dim,inlines[i].dim,strlen(inlines[i].dim)+1);
                 
                 el->flag->calculate = 1;

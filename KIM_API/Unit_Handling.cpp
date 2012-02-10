@@ -231,7 +231,6 @@ void Unit_Handling::init(char* inputstr, int* error){
     IOline * IOlines=NULL;
     int nlines = IOline::readlines(inputstr,&IOlines);
     this->check_base_set_flexible(IOlines,nlines,error);
- KIM_API_model::report_error(__LINE__,__FILE__,"debug 00",*error);
     if (IOlines!= NULL) delete [] IOlines;
     return;
 }
