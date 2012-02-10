@@ -104,8 +104,6 @@ test_Al_free_cluster: $(COMMON_FRAGMENTS)                      \
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "get_half_neigh          method       none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_neighborlist                                                                 >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo "numberContributingParticles integer      none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
@@ -165,8 +163,6 @@ test_Al_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "get_half_neigh          method       none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_neighborlist                                                                 >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
@@ -327,8 +323,6 @@ test_Ar_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "get_half_neigh          method       none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_neighborlist                                                                 >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo "numberContributingParticles integer      none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
@@ -386,8 +380,6 @@ test_Ar_FCCcohesive_NEIGH_PURE: $(COMMON_FRAGMENTS)                          \
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "get_half_neigh          method       none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_neighborlist                                                                 >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
@@ -567,8 +559,6 @@ test_Ar_free_cluster: $(COMMON_FRAGMENTS)                      \
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "get_half_neigh          method       none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_neighborlist                                                                 >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo "numberContributingParticles integer      none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
@@ -633,8 +623,6 @@ test_Ne_free_cluster: $(COMMON_FRAGMENTS)                      \
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "get_half_neigh          method       none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_neighborlist                                                                 >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
@@ -701,8 +689,6 @@ test_Ne_free_cluster_SI: $(COMMON_FRAGMENTS)                      \
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "get_half_neigh          method       none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_neighborlist                                                                 >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo "numberContributingParticles integer      none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
@@ -767,8 +753,6 @@ test_Ne_free_cluster_stiff: $(COMMON_FRAGMENTS)                      \
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "get_half_neigh          method       none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_neighborlist                                                                 >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim

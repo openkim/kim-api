@@ -53,7 +53,7 @@ atomTypes               integer      none                [numberOfParticles]
 
 coordinates             real*8       length              [numberOfParticles,3]
 
-get_full_neigh          method       none                []
+get_neigh               method       none                []
 
 neighObject             pointer      none                []
 

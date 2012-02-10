@@ -119,7 +119,7 @@ int main()
                              "numberParticleTypes",           1,   &numberParticleTypes,            1,
                              "atomTypes",                 1,   &particleTypes_periodic_model_0, 1,
                              "coordinates",               DIM, coords_periodic,             1,
-                             "get_full_neigh",            1,   &get_periodic_neigh,         1,
+                             "get_neigh",                 1,   &get_periodic_neigh,         1,
                              "neighObject",               1,   &nl_periodic_model_0,        1,
                              "cutoff",                    1,   &cutoff_periodic_model_0,    1,
                              "energy",                    1,   &energy_periodic_model_0,    1);
@@ -131,7 +131,7 @@ int main()
                              "numberParticleTypes",           1,   &numberParticleTypes,            1,
                              "atomTypes",                 1,   &particleTypes_periodic_model_1, 1,
                              "coordinates",               DIM, coords_periodic,             1,
-                             "get_full_neigh",            1,   &get_periodic_neigh,         1,
+                             "get_neigh",                 1,   &get_periodic_neigh,         1,
                              "neighObject",               1,   &nl_periodic_model_1,        1,
                              "cutoff",                    1,   &cutoff_periodic_model_1,    1,
                              "energy",                    1,   &energy_periodic_model_1,    1);
@@ -143,7 +143,7 @@ int main()
                              "numberParticleTypes",           1,   &numberParticleTypes,           1,
                              "atomTypes",                 1,   &particleTypes_cluster_model_0, 1,
                              "coordinates",               DIM, coords_cluster,             1,
-                             "get_full_neigh",            1,   &get_cluster_neigh,         1,
+                             "get_neigh",                 1,   &get_cluster_neigh,         1,
                              "neighObject",               1,   &nl_cluster_model_0,        1,
                              "cutoff",                    1,   &cutoff_cluster_model_0,    1,
                              "energy",                    1,   &energy_cluster_model_0,    1);
@@ -155,7 +155,7 @@ int main()
                              "numberParticleTypes",           1,   &numberParticleTypes,           1,
                              "atomTypes",                 1,   &particleTypes_cluster_model_1, 1,
                              "coordinates",               DIM, coords_cluster,             1,
-                             "get_full_neigh",            1,   &get_cluster_neigh,         1,
+                             "get_neigh",                 1,   &get_cluster_neigh,         1,
                              "neighObject",               1,   &nl_cluster_model_1,        1,
                              "cutoff",                    1,   &cutoff_cluster_model_1,    1,
                              "energy",                    1,   &energy_cluster_model_1,    1);
