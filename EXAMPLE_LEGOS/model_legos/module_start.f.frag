@@ -14,7 +14,7 @@
 !**
 !*******************************************************************************
 
-#include "KIMstatus.h"
+#include "KIM_API_status.h"
 
 module MODEL_NAME_STR
   use KIM_API

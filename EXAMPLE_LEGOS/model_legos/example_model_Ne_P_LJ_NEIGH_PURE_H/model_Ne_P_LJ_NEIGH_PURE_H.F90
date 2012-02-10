@@ -7,7 +7,7 @@
 ! Authors: Valeriu Smirichinski, Ryan S. Elliot, Ellad B. Tadmor
 !
 
-#include "KIMstatus.h"
+#include "KIM_API_status.h"
 #define TRUEFALSE(TRUTH) merge(1,0,(TRUTH))
 
 module model_Ne_P_LJ_NEIGH_PURE_H

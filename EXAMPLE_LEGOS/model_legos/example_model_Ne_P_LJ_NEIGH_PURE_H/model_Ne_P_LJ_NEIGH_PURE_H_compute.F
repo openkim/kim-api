@@ -9,7 +9,7 @@ C  Authors: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
 C
 C*******************************************************************************
 
-#include "KIMstatus.h"
+#include "KIM_API_status.h"
 
 C*******************************************************************************
 C

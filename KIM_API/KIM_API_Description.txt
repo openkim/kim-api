@@ -23,8 +23,8 @@ In the following description several constants are used:
 
 STATUS codes: The openkim-api uses a set of defined status code keys to return
          information to the user.  These symbolic code keys are defined in the
-         KIMstatus.h file which can be #include'd by any source file.  The
-         codes associated with these keys (defined in KIMstatus.h) are subject
+         KIM_API_status.h file which can be #include'd by any source file.  The
+         codes associated with these keys (defined in KIM_API_status.h) are subject
          to change and should not be used directly.  By convention, any status
          code, ier, returned by an openkim-api service routine that is less
          than KIM_STATUS_OK (i.e., "ier < KIM_STATUS_OK") indicates an error

@@ -20,7 +20,7 @@
 #include <string.h>
 #include <math.h>
 #include "KIM_API_C.h"
-#include "KIMstatus.h"
+#include "KIM_API_status.h"
 
 /******************************************************************************
 * Below are the definitions and values of all Model parameters
