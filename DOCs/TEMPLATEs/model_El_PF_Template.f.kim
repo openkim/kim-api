@@ -69,11 +69,9 @@ coordinates             real*8       length              [numberOfParticles,3]
 
 boxSideLengths               real*8       length              [3]                optional
 
-get_half_neigh          method       none                []                 optional     # Here so it can work with more Tests
+get_neigh               method       none                []                 optional
 
-get_full_neigh          method       none                []                 optional     # Here so it can work with more Tests
-
-neighObject             pointer      none                []
+neighObject             pointer      none                []                 optional
 
 
 #######################################################################################################

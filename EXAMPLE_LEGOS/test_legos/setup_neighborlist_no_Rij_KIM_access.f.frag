@@ -23,9 +23,8 @@ subroutine setup_neighborlist_no_Rij_KIM_access(pkim, N, neighborList)
   ! store pointers to neighbor list object and access function
   !
   call kim_api_setm_data_f(pkim, ier, &
-       "neighObject",    SizeOne, loc(neighborList),     1, &
-       "get_half_neigh", SizeOne, loc(get_neigh_no_Rij), 1, &
-       "get_full_neigh", SizeOne, loc(get_neigh_no_Rij), 1)
+       "neighObject", SizeOne, loc(neighborList),     1, &
+       "get_neigh",   SizeOne, loc(get_neigh_no_Rij), 1)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_setm_data_f", ier)
      stop

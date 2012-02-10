@@ -654,7 +654,7 @@ KIM_API_model:: KIM_API_model(){
        strcpy(NBC_method_D,"NEIGH_RVEC_F");
        strcpy(&arg_NBC_method_D[0][0],"coordinates");
        strcpy(&arg_NBC_method_D[1][0],"neighObject");
-       strcpy(&arg_NBC_method_D[3][0],"get_neigh");
+       strcpy(&arg_NBC_method_D[2][0],"get_neigh");
        narg_NBC_method_D=3;
 
        //method_E init

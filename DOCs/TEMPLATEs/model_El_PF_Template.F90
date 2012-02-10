@@ -233,6 +233,7 @@ integer HalfOrFull
 integer NBC
 integer numberContrib
 integer idum
+integer atom_ret
 
 ! Determine neighbor list boundary condition (NBC)
 ! and half versus full mode:
@@ -376,9 +377,9 @@ endif
 ! Reset iterator if one is being used
 !
 if (IterOrLoca.eq.1) then
-   call reset_iterator(HalfOrFull,pkim,numnei,pnei1atom,pRij_list,ier)
+   ier = kim_api_get_neigh_f(pkim,0,0,atom_ret,numnei,pnei1atom,pRij_list)
    if (ier.lt.KIM_STATUS_OK) then
-      idum = kim_api_report_error_f(__LINE__, __FILE__, "reset_iterator", ier)
+      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_neigh_f", ier)
       return
    endif
 endif
@@ -469,9 +470,9 @@ enddo
 ! Reset iterator if one is being used
 !
 if (IterOrLoca.eq.1) then
-   call reset_iterator(HalfOrFull,pkim,numnei,pnei1atom,pRij_list,ier)
+   ier = kim_api_get_neigh_f(pkim,0,0,atom_ret,numnei,pnei1atom,pRij_list)
    if (ier.lt.KIM_STATUS_OK) then
-      idum = kim_api_report_error_f(__LINE__, __FILE__, "reset_iterator", ier)
+      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_neigh_f", ier)
       return
    endif
 endif
@@ -601,47 +602,6 @@ end subroutine Compute_Energy_Forces
 
 !-------------------------------------------------------------------------------
 !
-! Reset iterator to begin from first atom in list
-!
-!-------------------------------------------------------------------------------
-subroutine reset_iterator(HalfOrFull,pkim,numnei,pnei1atom,pRij_list,ier)
-implicit none 
-
-!-- Transferred variables
-integer,                  intent(in)    :: HalfOrFull
-integer(kind=kim_intptr), intent(in)    :: pkim
-integer,                  intent(out)   :: numnei
-integer,                  intent(out)   :: ier
-integer nei1atom(1);    pointer(pnei1atom,nei1atom)
-real*8 Rij_list(DIM,1); pointer(pRij_list,Rij_list)
-
-!-- Local variables
-integer atom_ret
-integer idum
-
-if (HalfOrFull.eq.1) then  ! HALF list
-   ier = kim_api_get_half_neigh_f(pkim,0,0,atom_ret,numnei, &
-                                  pnei1atom,pRij_list)
-else                       ! FULL list
-   ier = kim_api_get_full_neigh_f(pkim,0,0,atom_ret,numnei, &
-                                  pnei1atom,pRij_list)
-endif
-! check for successful initialization
-if (ier.ne.KIM_STATUS_NEIGH_ITER_INIT_OK) then
-   if (HalfOrFull.eq.1) then
-      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_half_neigh_f", ier)
-   else
-      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_full_neigh_f", ier)
-   endif
-   ier = KIM_STATUS_FAIL
-   return 
-endif
-
-return
-end subroutine reset_iterator
-
-!-------------------------------------------------------------------------------
-!
 ! Get list of neighbors for current atom using all NBC methods
 !
 !-------------------------------------------------------------------------------
@@ -668,24 +628,14 @@ integer idum
 ! Set up neighbor list for next atom for all NBC methods
 !
 if (IterOrLoca.eq.1) then    ! ITERATOR mode
-
-   if (HalfOrFull.eq.1) then ! HALF list
-      ier = kim_api_get_half_neigh_f(pkim,0,1,atom_ret,numnei, &
-                                     pnei1atom,pRij_list)
-   else                      ! FULL list
-      ier = kim_api_get_full_neigh_f(pkim,0,1,atom_ret,numnei, &
-                                     pnei1atom,pRij_list)
-   endif
+   ier = kim_api_get_neigh_f(pkim,0,1,atom_ret,numnei, &
+                             pnei1atom,pRij_list)
    if (ier.eq.KIM_STATUS_NEIGH_ITER_PAST_END) then
                           ! past end of the list, terminate loop in
       return              ! calling routine
    endif
    if (ier.lt.KIM_STATUS_OK) then     ! some sort of problem, exit
-      if (HalfOrFull.eq.1) then
-         idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_half_neigh_f", ier)
-      else
-         idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_full_neigh_f", ier)
-      endif
+      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_neigh_f", ier)
       return
    endif
    atom = atom_ret
@@ -698,29 +648,18 @@ else                         ! LOCATOR mode
       return
    endif
 
-   if (HalfOrFull.eq.1) then ! HALF list
-      if (NBC.eq.0) then     ! CLUSTER NBC method
-         numnei = N - atom   ! number of neighbors in list atom+1, ..., N
-         nei1atom(1:numnei) = (/ (atom+jj, jj = 1,numnei) /)
-         ier = KIM_STATUS_OK
-      else
-         ier = kim_api_get_half_neigh_f(pkim,1,atom,atom_ret,numnei, &
-                                        pnei1atom,pRij_list)
+   if (NBC.eq.0) then ! CLUSTER NBC method
+      numnei = N - atom   ! number of neighbors in list atom+1, ..., N
+      nei1atom(1:numnei) = (/ (atom+jj, jj = 1,numnei) /)
+      ier = KIM_STATUS_OK
+   else
+      ier = kim_api_get_neigh_f(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij_list)
+      if (ier.ne.KIM_STATUS_OK) then ! some sort of problem, exit
+         idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_neigh_f", ier)
+         ier = KIM_STATUS_FAIL
+         return
       endif
-   else                      ! FULL list
-      ier = kim_api_get_full_neigh_f(pkim,1,atom,atom_ret,numnei, &
-                                     pnei1atom,pRij_list)
    endif
-   if (ier.ne.KIM_STATUS_OK) then ! some sort of problem, exit
-      if (HalfOrFull.eq.1) then
-         idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_half_neigh_f", ier)
-      else
-         idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_full_neigh_f", ier)
-      endif
-      ier = KIM_STATUS_FAIL
-      return
-   endif
-
 endif
 
 return

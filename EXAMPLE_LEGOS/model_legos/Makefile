@@ -180,9 +180,7 @@ model_Ar_P_MLJ_MI_OPBC_H_F: $(COMMON_FRAGMENTS)                               \
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
-	echo "get_half_neigh          method       none                []                 optional"           >> $(KIM_MODELS_DIR)$@/$@.kim
-	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
-	echo "get_full_neigh          method       none                []                 optional"           >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo "get_neigh               method       none                []                 optional"           >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo "neighObject             pointer      none                []"                                    >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
@@ -236,9 +234,7 @@ model_Ar_P_MLJ_NEIGH_PURE_H_F: $(COMMON_FRAGMENTS)                              
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
-	echo "get_half_neigh          method       none                []                 optional"           >> $(KIM_MODELS_DIR)$@/$@.kim
-	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
-	echo "get_full_neigh          method       none                []                 optional"           >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo "get_neigh               method       none                []                 optional"           >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo "neighObject             pointer      none                []"                                    >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
@@ -287,10 +283,8 @@ model_Ar_P_MLJ_NEIGH_RVEC_F: $(COMMON_FRAGMENTS)                           \
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
-	echo "get_half_neigh          method       none                []                 optional     # Here so it can work with more Tests" \
-                                                                                                              >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
-	echo "get_full_neigh          method       none                []"                                    >> $(KIM_MODELS_DIR)$@/$@.kim
+	echo "get_neigh               method       none                []"                                    >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo "neighObject             pointer      none                []"                                    >> $(KIM_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_MODELS_DIR)$@/$@.kim

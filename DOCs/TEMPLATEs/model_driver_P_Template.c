@@ -76,8 +76,7 @@ struct model_buffer {
    int* numberContributingParticles;
    int boxSideLengths_ind;
    double* cutoff;
-   int (*get_half_neigh)(void *,int *,int *,int *, int *, int **, double **);
-   int (*get_full_neigh)(void *,int *,int *,int *, int *, int **, double **);
+   int (*get_neigh)(void *,int *,int *,int *, int *, int **, double **);
 
 
    double* Pcutoff;
@@ -329,27 +328,12 @@ static void compute(void* km, int* ier)
 
    if (1 == IterOrLoca)
    {
-      if (1 == HalfOrFull) /* HALF list */
-      {
-         *ier = (*buffer->get_half_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh,
-                                          &neighListOfCurrentAtom, &Rij_list);
-      }
-      else                 /* FULL list */
-      {
-         *ier = (*buffer->get_full_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh,
-                                          &neighListOfCurrentAtom, &Rij_list);
-      }
+      *ier = (*buffer->get_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh,
+                                  &neighListOfCurrentAtom, &Rij_list);
       /* check for successful initialization */
       if (KIM_STATUS_NEIGH_ITER_INIT_OK != *ier)
       {
-         if (1 == HalfOrFull)
-         {
-            KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_half_neigh", *ier);
-         }
-         else
-         {
-            KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_full_neigh", *ier);
-         }
+         KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_neigh", *ier);
          *ier = KIM_STATUS_FAIL;
          return;
       }
@@ -365,30 +349,15 @@ static void compute(void* km, int* ier)
       /* Set up neighbor list for next atom for all NBC methods */
       if (1 == IterOrLoca) /* ITERATOR mode */
       {
-         if (1 == HalfOrFull) /* HALF list */
-         {
-            *ier = (*buffer->get_half_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh,
-                                             &neighListOfCurrentAtom, &Rij_list);  
-         }
-         else
-         {
-            *ier = (*buffer->get_full_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh,
-                                             &neighListOfCurrentAtom, &Rij_list);
-         }
+         *ier = (*buffer->get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh,
+                                     &neighListOfCurrentAtom, &Rij_list);
          if (KIM_STATUS_NEIGH_ITER_PAST_END == *ier) /* the end of the list, terminate loop */
          {
             break;
          }
          if (KIM_STATUS_OK > *ier) /* some sort of problem, exit */
          {
-            if (1 == HalfOrFull)
-            {
-               KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_half_neigh", *ier);
-            }
-            else
-            {
-               KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_full_neigh", *ier);
-            }
+            KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_neigh", *ier);
             return;
          }
 
@@ -402,45 +371,28 @@ static void compute(void* km, int* ier)
             break;
          }
 
-         if (1 == HalfOrFull) /* HALF list */
+         if (0 == NBC) /* CLUSTER NBC method */
          {
-            if (0 == NBC)     /* CLUSTER NBC method */
+            numOfAtomNeigh = *nAtoms - (i + 1);
+            for (k = 0; k < numOfAtomNeigh; ++k)
             {
-               numOfAtomNeigh = *nAtoms - (i + 1);
-               for (k = 0; k < numOfAtomNeigh; ++k)
-               {
-                  neighListOfCurrentAtom[k] = i + k + 1 - model_index_shift;
-               }
-               *ier = KIM_STATUS_OK;
+               neighListOfCurrentAtom[k] = i + k + 1 - model_index_shift;
             }
-            else
-            {
-               request = i - model_index_shift;
-               *ier = (*buffer->get_half_neigh)(&pkim, &one, &request,
-                                                &currentAtom, &numOfAtomNeigh,
-                                                &neighListOfCurrentAtom, &Rij_list);
-            }
-         }
-         else                 /* FULL list */
-         {
-            request = i - model_index_shift;
-            *ier = (*buffer->get_full_neigh)(&pkim, &one, &request,
-                                             &currentAtom, &numOfAtomNeigh,
-                                             &neighListOfCurrentAtom, &Rij_list);
-         }
-      }
-      if (KIM_STATUS_OK != *ier) /* some sort of problem, exit */
-      {
-         if (1 == HalfOrFull)
-         {
-            KIM_API_report_error(__LINE__, __FILE__, "get_half_neigh", *ier);
+            *ier = KIM_STATUS_OK;
          }
          else
          {
-            KIM_API_report_error(__LINE__, __FILE__, "get_full_neigh", *ier);
+            request = i - model_index_shift;
+            *ier = (*buffer->get_neigh)(&pkim, &one, &request,
+                                        &currentAtom, &numOfAtomNeigh,
+                                        &neighListOfCurrentAtom, &Rij_list);
+            if (KIM_STATUS_OK != *ier) /* some sort of problem, exit */
+            {
+               KIM_API_report_error(__LINE__, __FILE__, "get_neigh", *ier);
+               *ier = KIM_STATUS_FAIL;
+               return;
+            }
          }
-         *ier = KIM_STATUS_FAIL;
-         return;
       }
             
       /* loop over the neighbors of atom i */
@@ -907,8 +859,7 @@ static void setup_buffer(intptr_t* pkim, struct model_buffer* buffer)
    KIM_API_getm_data(pkim, &ier, <FILL with correct integer>*3,
                              "numberOfParticles",           &(buffer->numberOfParticles),           1,
                              "numberContributingParticles", &(buffer->numberContributingParticles), 1,
-                             "get_half_neigh",          &(buffer->get_half_neigh),          1,
-                             "get_full_neigh",          &(buffer->get_full_neigh),          1,
+                             "get_neigh",               &(buffer->get_neigh),               1,
                              "cutoff",                  &(buffer->cutoff),                  1,
                              "PARAM_FREE_cutoff",       &(buffer->Pcutoff),                 1,
                              "PARAM_FIXED_cutsq",       &(buffer->cutsq),                   1,

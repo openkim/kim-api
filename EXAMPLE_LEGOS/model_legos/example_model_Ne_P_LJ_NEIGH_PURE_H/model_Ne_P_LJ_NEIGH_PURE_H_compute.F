@@ -42,7 +42,7 @@ C
 C*******************************************************************************
       SUBROUTINE calculate(cutoff,sigma,epsilon,pkim,x,f,ea,natom,
      &                     ncontrib,en,e_flag,f_flag,eper_flag,
-     &                     kimget_h_neigh,ier)
+     &                     kimget_neigh,ier)
       IMPLICIT NONE
 
 C-------Transferred variables
@@ -52,8 +52,8 @@ C-------Transferred variables
       DOUBLE PRECISION x(3,natom),f(3,natom),ea(natom)
       INTEGER natom,ier,e_flag,f_flag,eper_flag
       DOUBLE PRECISION en
-      INTEGER kimget_h_neigh
-      EXTERNAL kimget_h_neigh
+      INTEGER kimget_neigh
+      EXTERNAL kimget_neigh
 
 C-------Local variables
       DOUBLE PRECISION vij,dv,sumv,cut2,energycutoff
@@ -87,8 +87,8 @@ C-------Local variables
 C     Iterator mode (reset iterator to beginning)
       mode = 0 
       request = 0
-      retcode=kimget_h_neigh(pkim,mode,request,atom,
-     &                       numnei,pnei1atom,pRij)
+      retcode=kimget_neigh(pkim,mode,request,atom,
+     &                     numnei,pnei1atom,pRij)
       IF (retcode.NE.KIM_STATUS_NEIGH_ITER_INIT_OK) THEN
          WRITE(*,'("model_Ne_pure_LJ_NEIGH_PURE_*.F error: ",I5)')
      &      retcode
@@ -104,8 +104,8 @@ C     Loop over atoms and compute energy and forces
 C     Increment iterator
       mode = 0
       request = 1
-      retcode = kimget_h_neigh(pkim,mode,request,
-     &                         atom,numnei,pnei1atom,pRij)
+      retcode = kimget_neigh(pkim,mode,request,
+     &                       atom,numnei,pnei1atom,pRij)
       IF (retcode.EQ.KIM_STATUS_NEIGH_ITER_PAST_END) THEN
          ier = KIM_STATUS_OK
          GOTO 140

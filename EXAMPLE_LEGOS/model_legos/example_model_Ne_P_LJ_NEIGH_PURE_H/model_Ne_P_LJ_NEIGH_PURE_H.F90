@@ -87,7 +87,7 @@ contains
     ! Call FORTRAN 77 code that does actual calculation
     !
     call calculate(model_cutoff,sigma,epsilon,pkim,x,f,ea,numberofatoms,numContrib, &
-                   potenergy,e_flag,f_flag,eper_flag,kim_api_get_half_neigh_f,ier)
+                   potenergy,e_flag,f_flag,eper_flag,kim_api_get_neigh_f,ier)
 
   end subroutine calculate_wrap_f77
   

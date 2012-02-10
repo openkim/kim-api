@@ -54,9 +54,7 @@ atomTypes               integer      none                [numberOfParticles]
 
 coordinates             real*8       length              [numberOfParticles,3]
 
-get_half_neigh          method       none                []                 optional     # Here so it can work with more Tests
-
-get_full_neigh          method       none                []                 
+get_neigh               method       none                []                 
 
 neighObject             pointer      none                []
 

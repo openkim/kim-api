@@ -311,27 +311,12 @@ static void compute(void* km, int* ier)
 
    if (1 == IterOrLoca)
    {
-      if (1 == HalfOrFull) /* HALF list */
-      {
-         *ier = KIM_API_get_half_neigh(pkim, 0, 0, &currentAtom, &numOfAtomNeigh,
-                                       &neighListOfCurrentAtom, &Rij_list);
-      }
-      else                 /* FULL list */
-      {
-         *ier = KIM_API_get_full_neigh(pkim, 0, 0, &currentAtom, &numOfAtomNeigh,
-                                       &neighListOfCurrentAtom, &Rij_list);
-      }
+      *ier = KIM_API_get_neigh(pkim, 0, 0, &currentAtom, &numOfAtomNeigh,
+                               &neighListOfCurrentAtom, &Rij_list);
       /* check for successful initialization */
       if (KIM_STATUS_NEIGH_ITER_INIT_OK != *ier)
       {
-         if (1 == HalfOrFull)
-         {
-            KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_half_neigh", *ier);
-         }
-         else
-         {
-            KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_full_neigh", *ier);
-         }
+         KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_neigh", *ier);
          *ier = KIM_STATUS_FAIL;
          return;
       }
@@ -347,30 +332,15 @@ static void compute(void* km, int* ier)
       /* Set up neighbor list for next atom for all NBC methods */
       if (1 == IterOrLoca) /* ITERATOR mode */
       {
-         if (1 == HalfOrFull) /* HALF list */
-         {
-            *ier = KIM_API_get_half_neigh(pkim, 0, 1, &currentAtom, &numOfAtomNeigh,
-                                          &neighListOfCurrentAtom, &Rij_list);  
-         }
-         else
-         {
-            *ier = KIM_API_get_full_neigh(pkim, 0, 1, &currentAtom, &numOfAtomNeigh,
-                                          &neighListOfCurrentAtom, &Rij_list);
-         }
+         *ier = KIM_API_get_neigh(pkim, 0, 1, &currentAtom, &numOfAtomNeigh,
+                                  &neighListOfCurrentAtom, &Rij_list);
          if (KIM_STATUS_NEIGH_ITER_PAST_END == *ier) /* the end of the list, terminate loop */
          {
             break;
          }
          if (KIM_STATUS_OK > *ier) /* some sort of problem, exit */
          {
-            if (1 == HalfOrFull)
-            {
-               KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_half_neigh", *ier);
-            }
-            else
-            {
-               KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_full_neigh", *ier);
-            }
+            KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_neigh", *ier);
             return;
          }
 
@@ -384,41 +354,26 @@ static void compute(void* km, int* ier)
             break;
          }
 
-         if (1 == HalfOrFull) /* HALF list */
+         if (0 == NBC)     /* CLUSTER NBC method */
          {
-            if (0 == NBC)     /* CLUSTER NBC method */
+            numOfAtomNeigh = *nAtoms - (i + 1);
+            for (k = 0; k < numOfAtomNeigh; ++k)
             {
-               numOfAtomNeigh = *nAtoms - (i + 1);
-               for (k = 0; k < numOfAtomNeigh; ++k)
-               {
-                  neighListOfCurrentAtom[k] = i + k + 1;
-               }
-               *ier = KIM_STATUS_OK;
+               neighListOfCurrentAtom[k] = i + k + 1;
             }
-            else
+            *ier = KIM_STATUS_OK;
+         }
+         else              /* All other NBCs */
+         {
+            *ier = KIM_API_get_neigh(pkim, 1, i, &currentAtom, &numOfAtomNeigh,
+                                     &neighListOfCurrentAtom, &Rij_list);
+            if (KIM_STATUS_OK != *ier) /* some sort of problem, exit */
             {
-               *ier = KIM_API_get_half_neigh(pkim, 1, i, &currentAtom, &numOfAtomNeigh,
-                                             &neighListOfCurrentAtom, &Rij_list);
+            KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_neigh", *ier);
+            *ier = KIM_STATUS_FAIL;
+            return;
             }
          }
-         else                 /* FULL list */
-         {
-            *ier = KIM_API_get_full_neigh(pkim, 1, i, &currentAtom, &numOfAtomNeigh,
-                                          &neighListOfCurrentAtom, &Rij_list);
-         }
-      }
-      if (KIM_STATUS_OK != *ier) /* some sort of problem, exit */
-      {
-         if (1 == HalfOrFull)
-         {
-            KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_half_neigh", *ier);
-         }
-         else
-         {
-            KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_full_neigh", *ier);
-         }
-         *ier = KIM_STATUS_FAIL;
-         return;
       }
             
       /* loop over the neighbors of atom i */

@@ -133,9 +133,7 @@ kim_descriptor = trim(kim_descriptor) // &
                                                                                    cr // &
    'coordinates             real*8       length     standard                [numberOfParticles,3]' // cr // &
                                                                                    cr // &
-   'get_half_neigh          method       none       none                    []' // cr // &
-                                                                                   cr // &
-   'get_full_neigh          method       none       none                    []' // cr // &
+   'get_neigh               method       none       none                    []' // cr // &
                                                                                    cr // &
    'neighObject             pointer      none       none                    []' // cr // &
                                                                                    cr // &

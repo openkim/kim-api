@@ -177,16 +177,16 @@ static void compute(void* km, int* ier)
    }
 
    /* reset neighbor iterator */
-   *ier = KIM_API_get_full_neigh(pkim, 0, 0, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+   *ier = KIM_API_get_neigh(pkim, 0, 0, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
    if (KIM_STATUS_NEIGH_ITER_INIT_OK != *ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_full_neigh", *ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_neigh", *ier);
       *ier = KIM_STATUS_FAIL;
       return;
    }
 
    /* Compute energy and forces */
-   *ier = KIM_API_get_full_neigh(pkim, 0, 1, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+   *ier = KIM_API_get_neigh(pkim, 0, 1, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
    while (KIM_STATUS_OK == *ier)
    {
       i = currentAtom;
@@ -248,7 +248,7 @@ static void compute(void* km, int* ier)
       }
       
       /* increment iterator */
-      *ier = KIM_API_get_full_neigh(pkim, 0, 1, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+      *ier = KIM_API_get_neigh(pkim, 0, 1, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
    }
 
 
