@@ -18,16 +18,22 @@ MODEL_DRIVERS_LIST = $(notdir $(filter-out .%,$(shell find $(KIM_MODEL_DRIVERS_D
 MODELS_LIST = $(notdir $(filter-out .%,$(shell find $(KIM_MODELS_DIR) -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)))
 TESTS_LIST  = $(notdir $(filter-out .%,$(shell find $(KIM_TESTS_DIR) -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)))
 
-.PHONY: all openkim-api clean                                                    \
-        kim-api-all kim-api-clean                                                \
+.PHONY: all lib openkim-api clean                                                \
+        kim-api-all kim-api-lib kim-api-clean                                    \
         $(patsubst %,%-all,  $(MODELS_LIST) $(MODEL_DRIVERS_LIST) $(TESTS_LIST)) \
         $(patsubst %,%-clean,$(MODELS_LIST) $(MODEL_DRIVERS_LIST) $(TESTS_LIST))
 
 # compile everything in the standard directories
-all: models_check kim-api-all $(patsubst %,%-all,$(MODELS_LIST) $(MODEL_DRIVERS_LIST) $(TESTS_LIST))
+ifdef KIM_DYNAMIC
+   all: models_check kim-api-all kim-api-lib $(patsubst %,%-all,$(MODEL_DRIVERS_LIST) \
+        $(MODELS_LIST)) $(patsubst %,%-all,$(TESTS_LIST))
+else
+   all: models_check kim-api-all $(patsubst %,%-all,$(MODEL_DRIVERS_LIST) $(MODELS_LIST)) \
+        kim-api-lib $(patsubst %,%-all,$(TESTS_LIST))
+endif
 
 # other targets 
-openkim-api: kim-api-all      # compile the openkim-api
+openkim-api: kim-api-all kim-api-lib     # compile the openkim-api
 
 # cleaning targets
 clean: $(patsubst %,%-clean,$(MODELS_LIST) $(MODEL_DRIVERS_LIST) $(TESTS_LIST)) kim-api-clean
@@ -36,6 +42,10 @@ clean: $(patsubst %,%-clean,$(MODELS_LIST) $(MODEL_DRIVERS_LIST) $(TESTS_LIST)) 
 ########### for internal use ###########
 kim-api-all:
 	$(MAKE) -C $(KIM_API_DIR) all 
+	@echo
+
+kim-api-lib:
+	$(MAKE) -C $(KIM_API_DIR) lib
 	@echo
 
 kim-api-clean:
