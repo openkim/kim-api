@@ -183,8 +183,8 @@ int kim_api_get_compute_(void *kimmdl,char **nm, int *error);
 
 int kim_api_get_index_(void *kimmdl,char**nm, int *error);
 
-void kim_api_set_data_byi_(void *kimmdl,int * I, intptr_t * size, void *dt, int *error);
-void * kim_api_get_data_byi_(void *kimmdl,int * I, int *error);
+void kim_api_set_data_by_index_(void *kimmdl,int * I, intptr_t * size, void *dt, int *error);
+void * kim_api_get_data_by_index_(void *kimmdl,int * I, int *error);
 
 intptr_t kim_api_get_size_by_index_(void *kimmdl,int * I, int *error);
 intptr_t kim_api_get_shape_by_index_(void *kimmdl,int * I, int ** shape, int *error);

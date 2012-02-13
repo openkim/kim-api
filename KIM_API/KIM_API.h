@@ -190,10 +190,10 @@ public:
     void free_e(int *error);
     void free();
     bool set_data(char *nm, intptr_t size, void *dt);
-    bool set_data_byi(int ind,intptr_t size, void *dt);
+    bool set_data_by_index(int ind,intptr_t size, void *dt);
 
     void * get_data(char *nm,int *error);
-    void * get_data_byi(int ind,int *error);
+    void * get_data_by_index(int ind,int *error);
 
     void * get_data(char *nm);
     int get_index(char *nm, int * error);

@@ -615,7 +615,7 @@ type (neighborlist_object) :: neigh_obj
 		integer:: mode, request,atom,numnei,kimerr
 		!local declaration
 		type (neighborlist_object_both) :: neiob; pointer(pneiob,neiob)
-		pneiob = kim_api_get_data_byi(pkim,kim_neighObj_index,kimerr)
+		pneiob = kim_api_get_data_by_index(pkim,kim_neighObj_index,kimerr)
 		get_half_neigh_kim = get_neigh(neiob%half,mode,request,atom,numnei,pnei1atom,pRij)
 		return
 	end function  get_half_neigh_kim
@@ -625,7 +625,7 @@ type (neighborlist_object) :: neigh_obj
 		integer:: mode, request,atom,numnei,kimerr
 		!local declaration
 		type (neighborlist_object_both) :: neiob; pointer(pneiob,neiob)
-		pneiob = kim_api_get_data_byi(pkim,kim_neighObj_index,kimerr)
+		pneiob = kim_api_get_data_by_index(pkim,kim_neighObj_index,kimerr)
 		get_full_neigh_kim = get_neigh(neiob%full,mode,request,atom,numnei,pnei1atom,pRij)
 		return
 	end function  get_full_neigh_kim

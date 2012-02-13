@@ -378,7 +378,7 @@ void KIM_API_setm_data_by_index(void *kimmdl, int *err, int numargs, ... ){
        
         if(dt==NULL) cout<<"setm_data_by_index: WARNING: for argument group "<<i<<" data is NULL\n";
 
-        if(!pkim->set_data_byi(ind,size,dt)){
+        if(!pkim->set_data_by_index(ind,size,dt)){
             cout<<"setm_data_by_index: set data for argument group"<<i<<" failed\n";
             va_end(listPointer);
             return;
@@ -444,7 +444,7 @@ void KIM_API_getm_data_by_index(void *kimmdl,int *err,int numargs, ...){
             return;
         }else if(key ==0) continue;
        
-        *dt = pkim->get_data_byi(ind,err);
+        *dt = pkim->get_data_by_index(ind,err);
         if(*err != KIM_STATUS_OK){
             cout<<"getm_data_by_index: get data for argument group "<<i<<" failed\n";
             va_end(listPointer);
@@ -829,10 +829,10 @@ int kim_api_get_index_(void *kimmdl,char **nm,int *error){
     return KIM_API_get_index(*(KIM_API_model **)kimmdl,*nm,error);
 }
 
-void kim_api_set_data_byi_(void *kimmdl,int * I, intptr_t * size, void *dt,int *error){
+void kim_api_set_data_by_index_(void *kimmdl,int * I, intptr_t * size, void *dt,int *error){
     KIM_API_set_data_by_index(*(KIM_API_model **)kimmdl,*I,*size,*(char**)dt,error);
 }
-void * kim_api_get_data_byi_(void *kimmdl,int * I,int *error){
+void * kim_api_get_data_by_index_(void *kimmdl,int * I,int *error){
     return KIM_API_get_data_by_index(*(KIM_API_model **)kimmdl,*I,error);
 }
 

@@ -948,7 +948,7 @@ bool KIM_API_model::set_data(char *nm, intptr_t size, void *dt){
         (*this)[ind].flag->freeable = 1;
         return true;
 }
-bool KIM_API_model::set_data_byi(int ind, intptr_t size, void* dt){
+bool KIM_API_model::set_data_by_index(int ind, intptr_t size, void* dt){
     if (ind<0) {
             return false;
         } //no data in KIM_API_model
@@ -980,7 +980,7 @@ void * KIM_API_model::get_data(char *nm,int *error){
         return (*this)[i].data;
 }
 
-void * KIM_API_model::get_data_byi(int ind, int* error){
+void * KIM_API_model::get_data_by_index(int ind, int* error){
         *error = KIM_STATUS_FAIL;
         if (ind<0) return NULL;
         *error =KIM_STATUS_OK;
@@ -2812,7 +2812,7 @@ void KIM_API_model::setm_data_by_index(int *err, int numargs, ... ){
         
         if(dt==NULL) cout<<"setm_data_by_index: WARNING: for argument group "<<i<<" data is NULL\n";
 
-        if(!this->set_data_byi(ind,size,dt)){
+        if(!this->set_data_by_index(ind,size,dt)){
             cout<<"setm_data_by_index: set data for argument group"<<i<<" failed\n";
             va_end(listPointer);
             return;
@@ -2878,7 +2878,7 @@ void KIM_API_model::getm_data_by_index(int *err,int numargs, ...){
             return;
         }else if(key ==0) continue;
         
-        *dt = this->get_data_byi(ind,err);
+        *dt = this->get_data_by_index(ind,err);
         if(*err != KIM_STATUS_OK){
             cout<<"getm_data_by_index: get data for argument group "<<i<<" failed\n";
             va_end(listPointer);
