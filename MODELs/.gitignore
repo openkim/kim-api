@@ -10,6 +10,7 @@ model_Ar_P_MLJ_MI_OPBC_H_F
 model_Ar_P_MLJ_NEIGH_PURE_H_F
 model_Ar_P_MLJ_NEIGH_RVEC_F
 model_Ar_P_Morse
+model_Ne_P_fastLJ
 model_Ne_P_LJ_NEIGH_PURE_H
 model_Ne_P_MLJ_NEIGH_RVEC_F
 model_Ne_P_LJ
