@@ -108,7 +108,7 @@ PARAM_FREE_<FILL parameter 2>  real*8       <FILL Unit>         []
 
 # FILL all existing free parameters
 
-PARAM_FIXED_cutsq           real*8       none                []
+PARAM_FIXED_cutsq           real*8       length^2            []
 
 PARAM_FIXED_<FILL parameter 1>  real*8      <FILL Unit>         []
 

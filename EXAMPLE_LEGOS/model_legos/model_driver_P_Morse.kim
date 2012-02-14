@@ -104,10 +104,10 @@ PARAM_FREE_cutoff           real*8       length              []
 
 PARAM_FREE_epsilon          real*8       energy              []
 
-PARAM_FREE_C                real*8       none                []                 # should be units of 1/length
+PARAM_FREE_C                real*8       length^-1           []
 
 PARAM_FREE_Rzero            real*8       length              []
 
-PARAM_FIXED_cutsq           real*8       none                []
+PARAM_FIXED_cutsq           real*8       length^2            []
 
 PARAM_FIXED_shift           real*8       energy              []

@@ -98,6 +98,6 @@ PARAM_FIXED_B               real*8       force               []
 
 PARAM_FIXED_C               real*8       energy              []
 
-PARAM_FIXED_sigmasq         real*8       none                []                  # should be energy**2
+PARAM_FIXED_sigmasq         real*8       length^2            []
 
-PARAM_FIXED_cutsq           real*8       none                []
+PARAM_FIXED_cutsq           real*8       length^2            []
