@@ -656,49 +656,6 @@ Neigh_BothAccess            flag        # need both locator and iterator modes
 CLUSTER                     flag        # The Model needs only coordinates to 
                                         # compute; a neighbor list is not needed.
 
-# In the MI-OPBC methods (MI_OPBC_H and MI_OPBC_F), the Model receives the
-# number of atoms and coordinates, the side lengths for the periodic orthogonal
-# box and a neighbor list as detailed below. Assumes all atoms lie inside the
-# periodic box. Side lengths of box must be at least twice the cutoff
-# range. Computes the requested quantities under the assumption that the atoms
-# are subjected to minimum image, orthogonal, periodic boundary conditions.
-#
-# Neighbor list requirements for MI_OPBC_[F|H]:
-# 1.  The minimum image
-#     convention is applied during construction of the neighbor list consistent
-#     with the orthogonal box size.
-# 2.  The neighbor list can be supplied in either full or half mode.
-#        Full neighbor list: All neighbors of an atom are stored
-#        Half neighbor list: For an atom i only the neighbors j>i are stored.
-#
-# Calculated quantities for both -H and -F modes should be equivalent to those
-# obtained were the model to compute its own neighbor list using the provided
-# orthogonal periodic box side lengths.
-#
-MI_OPBC_H                   flag        # This is the Minimum Image Orthogonal
-                                        # Periodic Boundary Condition Half
-                                        # neighbor list method.  The Model
-                                        # needs `coordinates', a half neighbor
-                                        # list (with data stored in the
-                                        # `neighObject' argument), the
-                                        # `get_neigh' method supplied by the
-                                        # Test, and the `boxSideLengths'
-                                        # argument (which specifies the three
-                                        # side-lengths of the orthogonal
-                                        # simulation box).
-
-MI_OPBC_F                   flag        # This is the Minimum Image Orthogonal 
-                                        # Periodic Boundary Condition Full
-                                        # neighbor list method.  The Model
-                                        # needs `coordinates', a full neighbor
-                                        # list (with data stored in the
-                                        # `neighObject' argument), the
-                                        # `get_neigh' method supplied by the
-                                        # Test, and the `boxSideLengths'
-                                        # argument (which specifies the three
-                                        # side-lengths of the orthogonal
-                                        # simulation box).
-
 # In the NEIGH-PURE methods (NEIGH_PURE_H and NEIGH_PURE_F), the Model receives
 # the number of atoms, coordinates and a full or half neighbor list. The
 # neighbor list defines the environment of each atom, from which the atom's
@@ -754,6 +711,50 @@ NEIGH_RVEC_F                flag        # This is the Relative Vector Boundary
                                         # position vectors (RVEC) (which are
                                         # returned by the `get_neigh'
                                         # function).
+
+# In the MI-OPBC methods (MI_OPBC_H and MI_OPBC_F), the Model receives the
+# number of atoms and coordinates, the side lengths for the periodic orthogonal
+# box and a neighbor list as detailed below. Assumes all atoms lie inside the
+# periodic box. Side lengths of box must be at least twice the cutoff
+# range. Computes the requested quantities under the assumption that the atoms
+# are subjected to minimum image, orthogonal, periodic boundary conditions.
+#
+# Neighbor list requirements for MI_OPBC_[F|H]:
+# 1.  The minimum image
+#     convention is applied during construction of the neighbor list consistent
+#     with the orthogonal box size.
+# 2.  The neighbor list can be supplied in either full or half mode.
+#        Full neighbor list: All neighbors of an atom are stored
+#        Half neighbor list: For an atom i only the neighbors j>i are stored.
+#
+# Calculated quantities for both -H and -F modes should be equivalent to those
+# obtained were the model to compute its own neighbor list using the provided
+# orthogonal periodic box side lengths.
+#
+MI_OPBC_H                   flag        # This is the Minimum Image Orthogonal
+                                        # Periodic Boundary Condition Half
+                                        # neighbor list method.  The Model
+                                        # needs `coordinates', a half neighbor
+                                        # list (with data stored in the
+                                        # `neighObject' argument), the
+                                        # `get_neigh' method supplied by the
+                                        # Test, and the `boxSideLengths'
+                                        # argument (which specifies the three
+                                        # side-lengths of the orthogonal
+                                        # simulation box).
+
+MI_OPBC_F                   flag        # This is the Minimum Image Orthogonal 
+                                        # Periodic Boundary Condition Full
+                                        # neighbor list method.  The Model
+                                        # needs `coordinates', a full neighbor
+                                        # list (with data stored in the
+                                        # `neighObject' argument), the
+                                        # `get_neigh' method supplied by the
+                                        # Test, and the `boxSideLengths'
+                                        # argument (which specifies the three
+                                        # side-lengths of the orthogonal
+                                        # simulation box).
+
 
 ################################################################################
 #

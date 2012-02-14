@@ -111,11 +111,11 @@ kim_descriptor = trim(kim_descriptor) // &
                                                                                    cr // &
    'Neigh_BothAccess            flag'                                           // cr // &
                                                                                    cr // &
-   'NEIGH_RVEC_F                flag'                                           // cr // &
-                                                                                   cr // &
    'NEIGH_PURE_H                flag'                                           // cr // &
                                                                                    cr // &
    'NEIGH_PURE_F                flag'                                           // cr // &
+                                                                                   cr // &
+   'NEIGH_RVEC_F                flag'                                           // cr // &
                                                                                    cr // &
    'MI_OPBC_H                   flag'                                           // cr // &
                                                                                    cr // &

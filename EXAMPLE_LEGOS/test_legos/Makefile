@@ -91,11 +91,11 @@ test_Al_free_cluster: $(COMMON_FRAGMENTS)                      \
 	$(D_CAT) descriptor_file_start    | $(SED_CMD) \
          | sed -e 's/SPECIES_LINE_STR/Al                          spec                    13/g'               >  $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "NEIGH_RVEC_F                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo "NEIGH_PURE_H                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo "NEIGH_PURE_F                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "NEIGH_RVEC_F                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo "MI_OPBC_H                   flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
@@ -546,11 +546,11 @@ test_Ar_free_cluster: $(COMMON_FRAGMENTS)                      \
 	$(D_CAT) descriptor_file_start    | $(SED_CMD) \
          | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    18/g'               >  $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "NEIGH_RVEC_F                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo "NEIGH_PURE_H                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo "NEIGH_PURE_F                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "NEIGH_RVEC_F                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo "MI_OPBC_H                   flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
@@ -611,11 +611,11 @@ test_Ne_free_cluster: $(COMMON_FRAGMENTS)                      \
 	$(D_CAT) descriptor_file_start    | $(SED_CMD) \
          | sed -e 's/SPECIES_LINE_STR/Ne                          spec                    10/g'               >  $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "NEIGH_RVEC_F                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo "NEIGH_PURE_H                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo "NEIGH_PURE_F                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "NEIGH_RVEC_F                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo "MI_OPBC_H                   flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
@@ -676,11 +676,11 @@ test_Ne_free_cluster_SI: $(COMMON_FRAGMENTS)                      \
 	$(D_CAT) descriptor_file_start_SI    | $(SED_CMD) \
          | sed -e 's/SPECIES_LINE_STR/Ne                          spec                    10/g'               >  $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "NEIGH_RVEC_F                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo "NEIGH_PURE_H                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo "NEIGH_PURE_F                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "NEIGH_RVEC_F                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo "MI_OPBC_H                   flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
@@ -741,11 +741,11 @@ test_Ne_free_cluster_stiff: $(COMMON_FRAGMENTS)                      \
 	$(D_CAT) descriptor_file_start    | $(SED_CMD) \
          | sed -e 's/SPECIES_LINE_STR/Ne                          spec                    10/g'               >  $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "NEIGH_RVEC_F                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo "NEIGH_PURE_H                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo "NEIGH_PURE_F                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "NEIGH_RVEC_F                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo "MI_OPBC_H                   flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
