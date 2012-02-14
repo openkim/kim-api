@@ -242,11 +242,11 @@ static void compute(void* km, int* ier)
    
    /* check to see if we have been asked to compute the forces, particleEnergy, and d1Edr */
    KIM_API_getm_compute_by_index(pkim, ier, 5*3,
-                                    buffer->energy_ind,        &comp_energy,        1,
-                                    buffer->forces_ind,        &comp_force,         1,
-                                    buffer->particleEnergy_ind, &comp_particleEnergy, 1,
-                                    buffer->process_dEdr_ind, &comp_process_dEdr, 1,
-                                    buffer->process_d2Edr2_ind, &comp_process_d2Edr2, 1);
+                                 buffer->energy_ind,         &comp_energy,         1,
+                                 buffer->forces_ind,         &comp_force,          1,
+                                 buffer->particleEnergy_ind, &comp_particleEnergy, 1,
+                                 buffer->process_dEdr_ind,   &comp_process_dEdr,   1,
+                                 buffer->process_d2Edr2_ind, &comp_process_d2Edr2, 1);
    if (KIM_STATUS_OK > *ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_compute_by_index", *ier);
@@ -269,12 +269,12 @@ static void compute(void* km, int* ier)
    }
 
    KIM_API_getm_data_by_index(pkim, ier, 6*3,
-                                 buffer->atomTypes_ind,     &atomTypes,     1,
-                                 buffer->coordinates_ind,   &coords,        1,
-                                 buffer->boxSideLengths_ind,     &boxSideLengths,     (NBC==1),
-                                 buffer->energy_ind,        &energy,        comp_energy,
-                                 buffer->forces_ind,        &force,         comp_force,
-                                 buffer->particleEnergy_ind, &particleEnergy, comp_particleEnergy);
+                              buffer->atomTypes_ind,      &atomTypes,      1,
+                              buffer->coordinates_ind,    &coords,         1,
+                              buffer->boxSideLengths_ind, &boxSideLengths, (NBC==1),
+                              buffer->energy_ind,         &energy,         comp_energy,
+                              buffer->forces_ind,         &force,          comp_force,
+                              buffer->particleEnergy_ind, &particleEnergy, comp_particleEnergy);
    if (KIM_STATUS_OK > *ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data_by_index", *ier);
@@ -438,7 +438,7 @@ static void compute(void* km, int* ier)
                               <FILL parameter 2>,
                               /* FILL as many parameters as needed */
                               cutoff, R, &phi, &dphi, &d2phi);
-
+               
                /* compute dEidr */
                if ((1 == HalfOrFull) && (j < numberContrib))
                {
@@ -579,9 +579,9 @@ void model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* p
 
    /* store pointer to functions in KIM object */
    KIM_API_setm_data(pkim, &ier, 3*4,
-                             "compute", 1, &compute, 1,
-                             "reinit",  1, &reinit,  1,
-                             "destroy", 1, &destroy, 1);
+                     "compute", 1, &compute, 1,
+                     "reinit",  1, &reinit,  1,
+                     "destroy", 1, &destroy, 1);
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_setm_data", ier);
@@ -603,14 +603,14 @@ void model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* p
 
    /* convert to appropriate units */
    cutoff *= KIM_API_convert_to_act_unit(pkim, "A", "eV", "e", "K", "fs",
-                                             1.0,  0.0, 0.0, 0.0,  0.0, &ier);
+                                               1.0, 0.0,  0.0, 0.0, 0.0, &ier);
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_to_act_unit", ier);
       exit(1);
    }
    <FILL parameter 1> *= KIM_API_convert_to_act_unit(pkim, "A", "eV", "e", "K", "fs",
-                                                   <FILL exponents (5) for parameter 1>);
+                                                     <FILL exponents (5) for parameter 1>);
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_to_act_unit", ier);
@@ -618,7 +618,7 @@ void model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* p
    }
 
    <FILL parameter 2> *= KIM_API_convert_to_act_unit(pkim, "A", "eV", "e", "K", "fs",
-                                                   <FILL exponents (5) for parameter 2>);
+                                                     <FILL exponents (5) for parameter 2>);
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_to_act_unit", ier);
@@ -842,14 +842,14 @@ static void setup_buffer(intptr_t* pkim, struct model_buffer* buffer)
    buffer->model_index_shift = KIM_API_get_model_index_shift(pkim);
 
    KIM_API_getm_index(pkim, &ier, 8*3,
-                              "energy",        &(buffer->energy_ind),        1,
-                              "forces",        &(buffer->forces_ind),        1,
-                              "particleEnergy", &(buffer->particleEnergy_ind), 1,
-                              "process_dEdr", &(buffer->process_dEdr_ind), 1,
-                              "process_d2Edr2", &(buffer->process_d2Edr2_ind), 1,
-                              "atomTypes",     &(buffer->atomTypes_ind),     1,
-                              "coordinates",   &(buffer->coordinates_ind),   1,
-                              "boxSideLengths",     &(buffer->boxSideLengths_ind),     1);
+                      "energy",         &(buffer->energy_ind),         1,
+                      "forces",         &(buffer->forces_ind),         1,
+                      "particleEnergy", &(buffer->particleEnergy_ind), 1,
+                      "process_dEdr",   &(buffer->process_dEdr_ind),   1,
+                      "process_d2Edr2", &(buffer->process_d2Edr2_ind), 1,
+                      "atomTypes",      &(buffer->atomTypes_ind),      1,
+                      "coordinates",    &(buffer->coordinates_ind),    1,
+                      "boxSideLengths", &(buffer->boxSideLengths_ind), 1);
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_index", ier);
@@ -857,16 +857,16 @@ static void setup_buffer(intptr_t* pkim, struct model_buffer* buffer)
    }
 
    KIM_API_getm_data(pkim, &ier, <FILL with correct integer>*3,
-                             "numberOfParticles",           &(buffer->numberOfParticles),           1,
-                             "numberContributingParticles", &(buffer->numberContributingParticles), 1,
-                             "get_neigh",               &(buffer->get_neigh),               1,
-                             "cutoff",                  &(buffer->cutoff),                  1,
-                             "PARAM_FREE_cutoff",       &(buffer->Pcutoff),                 1,
-                             "PARAM_FIXED_cutsq",       &(buffer->cutsq),                   1,
-                             "<FILL parameter 1>,       &(buffer-><FILL parameter 1>),      1,
-                             "<FILL parameter 2>,       &(buffer-><FILL parameter 2>),      1,
-                             /* FILL as many parameters as needed */
-                            );
+                     "numberOfParticles",           &(buffer->numberOfParticles),           1,
+                     "numberContributingParticles", &(buffer->numberContributingParticles), 1,
+                     "get_neigh",                   &(buffer->get_neigh),                   1,
+                     "cutoff",                      &(buffer->cutoff),                      1,
+                     "PARAM_FREE_cutoff",           &(buffer->Pcutoff),                     1,
+                     "PARAM_FIXED_cutsq",           &(buffer->cutsq),                       1,
+                     "<FILL parameter 1>,           &(buffer-><FILL parameter 1>),          1,
+                     "<FILL parameter 2>,           &(buffer-><FILL parameter 2>),          1,
+                     /* FILL as many parameters as needed */
+                    );
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data", ier);

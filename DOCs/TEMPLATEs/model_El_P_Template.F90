@@ -125,18 +125,18 @@ integer, allocatable, target :: nei1atom_substitute(:)
 character*80 :: error_message
 
 !-- KIM variables
-integer N;                  pointer(pN,N)
-real*8  energy;             pointer(penergy,energy)
-real*8  coordum(DIM,1);     pointer(pcoor,coordum)
-real*8  forcedum(DIM,1);    pointer(pforce,forcedum)
-real*8  enepotdum(1);       pointer(penepot,enepotdum)
-real*8  boxSideLengths(DIM);     pointer(pboxSideLengths,boxSideLengths)
-real*8  Rij_list(DIM,1);    pointer(pRij_list,Rij_list)
-integer numContrib;         pointer(pnumContrib,numContrib)
-integer nei1atom(1);        pointer(pnei1atom,nei1atom)
-integer atomTypes(1);       pointer(patomTypes,atomTypes)
-real*8  virialdum(1); pointer(pvirial,virialdum)
-character*64 NBC_Method;    pointer(pNBC_Method,NBC_Method)
+integer N;                   pointer(pN,N)
+real*8  energy;              pointer(penergy,energy)
+real*8  coordum(DIM,1);      pointer(pcoor,coordum)
+real*8  forcedum(DIM,1);     pointer(pforce,forcedum)
+real*8  enepotdum(1);        pointer(penepot,enepotdum)
+real*8  boxSideLengths(DIM); pointer(pboxSideLengths,boxSideLengths)
+real*8  Rij_list(DIM,1);     pointer(pRij_list,Rij_list)
+integer numContrib;          pointer(pnumContrib,numContrib)
+integer nei1atom(1);         pointer(pnei1atom,nei1atom)
+integer atomTypes(1);        pointer(patomTypes,atomTypes)
+real*8  virialdum(1);        pointer(pvirial,virialdum)
+character*64 NBC_Method;     pointer(pNBC_Method,NBC_Method)
 real*8, pointer :: coor(:,:),force(:,:),ene_pot(:),virial_global(:)
 integer IterOrLoca
 integer HalfOrFull
@@ -211,8 +211,8 @@ endif
 call kim_api_getm_compute_f(pkim, ier, &
      "energy",         comp_energy, 1, &
      "forces",         comp_force,  1, &
-     "particleEnergy",  comp_enepot, 1, &
-     "virial",   comp_virial, 1)
+     "particleEnergy", comp_enepot, 1, &
+     "virial",         comp_virial, 1)
 if (ier.lt.KIM_STATUS_OK) then
    idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_compute_f", ier)
    return
@@ -221,15 +221,15 @@ endif
 ! Unpack data from KIM object
 !
 call kim_api_getm_data_f(pkim, ier, &
-     "numberOfParticles",           pN,            1,                           &
-     "atomTypes",               patomTypes,    1,                           &
-     "coordinates",             pcoor,         1,                           &
-     "numberContributingParticles", pnumContrib,   TRUEFALSE(HalfOrFull.eq.1),  &
-     "boxSideLengths",               pboxSideLengths,    TRUEFALSE(NBC.eq.1),         &
-     "energy",                  penergy,       TRUEFALSE(comp_energy.eq.1), &
-     "forces",                  pforce,        TRUEFALSE(comp_force.eq.1),  &
-     "particleEnergy",           penepot,       TRUEFALSE(comp_enepot.eq.1), &
-     "virial",            pvirial, TRUEFALSE(comp_virial.eq.1))
+     "numberOfParticles",           pN,              1,                           &
+     "atomTypes",                   patomTypes,      1,                           &
+     "coordinates",                 pcoor,           1,                           &
+     "numberContributingParticles", pnumContrib,     TRUEFALSE(HalfOrFull.eq.1),  &
+     "boxSideLengths",              pboxSideLengths, TRUEFALSE(NBC.eq.1),         &
+     "energy",                      penergy,         TRUEFALSE(comp_energy.eq.1), &
+     "forces",                      pforce,          TRUEFALSE(comp_force.eq.1),  &
+     "particleEnergy",              penepot,         TRUEFALSE(comp_enepot.eq.1), &
+     "virial",                      pvirial,         TRUEFALSE(comp_virial.eq.1))
 if (ier.lt.KIM_STATUS_OK) then
    idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
    return

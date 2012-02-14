@@ -208,10 +208,10 @@ static void compute(void* km, int* ier)
 
    /* check to see if we have been asked to compute the forces, particleEnergy, energy and virial */
    KIM_API_getm_compute(pkim, ier, 4*3,
-                                "energy",        &comp_energy,        1,
-                                "forces",        &comp_force,         1,
-                                "particleEnergy", &comp_particleEnergy, 1,
-                                "virial",  &comp_virial,        1);
+                        "energy",         &comp_energy,         1,
+                        "forces",         &comp_force,          1,
+                        "particleEnergy", &comp_particleEnergy, 1,
+                        "virial",         &comp_virial,         1);
    if (KIM_STATUS_OK > *ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_compute", *ier);
@@ -220,15 +220,15 @@ static void compute(void* km, int* ier)
 
    /* unpack data from KIM object */
    KIM_API_getm_data(pkim, ier, 9*3,
-                             "numberOfParticles",           &nAtoms,        1,
-                             "atomTypes",               &atomTypes,     1,
-                             "coordinates",             &coords,        1,
-                             "numberContributingParticles", &numContrib,    (HalfOrFull==1),
-                             "boxSideLengths",               &boxSideLengths,     (NBC==1),
-                             "energy",                  &energy,        (comp_energy==1),
-                             "forces",                  &force,         (comp_force==1),
-                             "particleEnergy",           &particleEnergy, (comp_particleEnergy==1),
-                             "virial",            &virial,  (comp_virial==1));
+                     "numberOfParticles",           &nAtoms,         1,
+                     "atomTypes",                   &atomTypes,      1,
+                     "coordinates",                 &coords,         1,
+                     "numberContributingParticles", &numContrib,     (HalfOrFull==1),
+                     "boxSideLengths",              &boxSideLengths, (NBC==1),
+                     "energy",                      &energy,         (comp_energy==1),
+                     "forces",                      &force,          (comp_force==1),
+                     "particleEnergy",              &particleEnergy, (comp_particleEnergy==1),
+                     "virial",                      &virial,         (comp_virial==1));
    if (KIM_STATUS_OK > *ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data", *ier);

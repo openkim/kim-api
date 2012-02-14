@@ -9,11 +9,11 @@ subroutine MI_OPBC_neighborlist(half, numberOfParticles, coords, rcut, boxSideLe
   implicit none
   
   !-- Transferred variables
-  logical,                                             intent(in)  :: half
-  integer,                                             intent(in)  :: numberOfParticles
-  double precision, dimension(3,numberOfParticles),        intent(in)  :: coords
-  double precision,                                    intent(in)  :: rcut
-  double precision, dimension(3),                      intent(in)  :: boxSideLengths
+  logical,                                                     intent(in)  :: half
+  integer,                                                     intent(in)  :: numberOfParticles
+  double precision, dimension(3,numberOfParticles),            intent(in)  :: coords
+  double precision,                                            intent(in)  :: rcut
+  double precision, dimension(3),                              intent(in)  :: boxSideLengths
   integer,   dimension(numberOfParticles+1,numberOfParticles), intent(out) :: neighborList ! not memory efficient
   
   !-- Local variables

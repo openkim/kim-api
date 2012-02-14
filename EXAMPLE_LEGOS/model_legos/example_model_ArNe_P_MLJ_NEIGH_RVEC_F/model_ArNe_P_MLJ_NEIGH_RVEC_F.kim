@@ -24,26 +24,26 @@ Unit_time        := fs
 
 #######################################################################################################
 SUPPORTED_ATOM/PARTICLES_TYPES:
-# Symbol/name           Type                    code
+# Symbol/name               Type                    code
 
-Ar                      spec                    1
-Ne                      spec                    2
+Ar                          spec                    1
+Ne                          spec                    2
 
 
 #######################################################################################################
 CONVENTIONS:
-# Name                  Type
+# Name                      Type
 
-OneBasedLists           flag
+OneBasedLists               flag
 
-Neigh_LocaAccess        flag
+Neigh_LocaAccess            flag
 
-NEIGH_RVEC_F            flag
+NEIGH_RVEC_F                flag
 
 
 #######################################################################################################
 MODEL_INPUT:
-# Name                  Type         Unit                Shape              Requirements
+# Name                      Type         Unit                Shape              Requirements
 
 numberOfParticles           integer      none                []
 
@@ -51,54 +51,54 @@ numberContributingParticles integer      none                []                 
 
 numberParticleTypes         integer      none                []
 
-atomTypes               integer      none                [numberOfParticles]
+atomTypes                   integer      none                [numberOfParticles]
 
-coordinates             real*8       length              [numberOfParticles,3]
+coordinates                 real*8       length              [numberOfParticles,3]
 
-get_neigh               method       none                []                 
+get_neigh                   method       none                []                 
 
-neighObject             pointer      none                []
+neighObject                 pointer      none                []
 
 
 #######################################################################################################
 MODEL_OUTPUT:
-# Name                  Type         Unit                Shape              Requirements
+# Name                      Type         Unit                Shape              Requirements
 
-destroy                 method       none                []
+destroy                     method       none                []
 
-compute                 method       none                []
+compute                     method       none                []
 
-reinit                  method       none                []                 optional
+reinit                      method       none                []                 optional
 
-cutoff                  real*8       length              []
+cutoff                      real*8       length              []
 
-energy                  real*8       energy              []                 optional
+energy                      real*8       energy              []                 optional
 
-forces                  real*8       force               [numberOfParticles,3]  optional
+forces                      real*8       force               [numberOfParticles,3]  optional
 
-particleEnergy           real*8       energy              [numberOfParticles]    optional
+particleEnergy              real*8       energy              [numberOfParticles]    optional
 
-virial            real*8       energy              [6]                optional
+virial                      real*8       energy              [6]                optional
 
 
 #######################################################################################################
 MODEL_PARAMETERS:
-# Name                  Type         Unit                Shape              Requirements
+# Name                      Type         Unit                Shape              Requirements
 
-PARAM_FREE_sigma        real*8       length              [3]
+PARAM_FREE_sigma            real*8       length              [3]
 
-PARAM_FREE_epsilon      real*8       energy              [3]
+PARAM_FREE_epsilon          real*8       energy              [3]
 
-PARAM_FREE_cutoff       real*8       length              []
+PARAM_FREE_cutoff           real*8       length              []
 
-PARAM_FIXED_cutnorm     real*8       none                [3]
+PARAM_FIXED_cutnorm         real*8       none                [3]
 
-PARAM_FIXED_A           real*8       pressure            [3]
+PARAM_FIXED_A               real*8       pressure            [3]
 
-PARAM_FIXED_B           real*8       force               [3]
+PARAM_FIXED_B               real*8       force               [3]
 
-PARAM_FIXED_C           real*8       energy              [3]
+PARAM_FIXED_C               real*8       energy              [3]
 
-PARAM_FIXED_sigmasq     real*8       none                [3]                             # should be energy**2
+PARAM_FIXED_sigmasq         real*8       none                [3]                             # should be energy**2
 
-PARAM_FIXED_cutsq       real*8       none                []
+PARAM_FIXED_cutsq           real*8       none                []

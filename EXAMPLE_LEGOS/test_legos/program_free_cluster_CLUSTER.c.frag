@@ -82,14 +82,14 @@ int main(int argc, char* argv[])
 
    /* Unpack data from KIM object */
    KIM_API_getm_data(pkim, &status, 8*3,
-                             "numberOfParticles",     &numberOfParticles,   1,
-                             "numberParticleTypes",   &numberParticleTypes, 1,
-                             "atomTypes",         &atomTypes,       1,
-                             "coordinates",       &coords,          1,
-                             "cutoff",            &cutoff,          1,
-                             "energy",            &energy,          1,
-                             "virial",      &virial,    1,
-                             "forces",            &forces,          1);
+                     "numberOfParticles",   numberOfParticles,   1,
+                     "numberParticleTypes", numberParticleTypes, 1,
+                     "atomTypes",           &atomTypes,          1,
+                     "coordinates",         &coords,             1,
+                     "cutoff",              &cutoff,             1,
+                     "energy",              &energy,             1,
+                     "virial",              &virial,             1,
+                     "forces",              &forces,             1);
    if (KIM_STATUS_OK > status)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data", status);

@@ -8,11 +8,11 @@ subroutine NEIGH_PURE_periodic_neighborlist(half, numberOfParticles, coords, cut
   implicit none
   
   !-- Transferred variables
-  logical,                                           intent(in)  :: half
-  integer,                                           intent(in)  :: numberOfParticles
-  double precision, dimension(3,numberOfParticles),      intent(in)  :: coords
-  double precision,                                  intent(in)  :: cutoff
-  integer,                                           intent(in)  :: MiddleAtomId
+  logical,                                                   intent(in)  :: half
+  integer,                                                   intent(in)  :: numberOfParticles
+  double precision, dimension(3,numberOfParticles),          intent(in)  :: coords
+  double precision,                                          intent(in)  :: cutoff
+  integer,                                                   intent(in)  :: MiddleAtomId
   integer, dimension(numberOfParticles+1,numberOfParticles), intent(out) :: neighborList ! not memory efficient
   
   !-- Local variables

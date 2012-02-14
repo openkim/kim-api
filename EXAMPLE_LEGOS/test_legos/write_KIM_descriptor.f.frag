@@ -92,7 +92,7 @@ kim_descriptor = &
                                                                                    cr // &
    divider                                                                      // cr // &
    'SUPPORTED_ATOM/PARTICLES_TYPES:'                                            // cr // &
-   '# Symbol/name           Type                    code'                       // cr
+   '# Symbol/name               Type                    code'                   // cr
 
 do i = 1,num_specs
    spec24 = model_specs(i)
@@ -105,58 +105,58 @@ kim_descriptor = trim(kim_descriptor) // &
                                                                                    cr // &
    divider                                                                      // cr // &
    'CONVENTIONS:'                                                               // cr // &
-   '# Name                  Type'                                               // cr // &
+   '# Name                      Type'                                           // cr // &
                                                                                    cr // &
-   'OneBasedLists           flag'                                              // cr // &
+   'OneBasedLists               flag'                                           // cr // &
                                                                                    cr // &
-   'Neigh_BothAccess        flag'                                              // cr // &
+   'Neigh_BothAccess            flag'                                           // cr // &
                                                                                    cr // &
-   'NEIGH_RVEC_F            flag'                                              // cr // &
+   'NEIGH_RVEC_F                flag'                                           // cr // &
                                                                                    cr // &
-   'NEIGH_PURE_H            flag'                                              // cr // &
+   'NEIGH_PURE_H                flag'                                           // cr // &
                                                                                    cr // &
-   'NEIGH_PURE_F            flag'                                              // cr // &
+   'NEIGH_PURE_F                flag'                                           // cr // &
                                                                                    cr // &
-   'MI_OPBC_H               flag'                                              // cr // &
+   'MI_OPBC_H                   flag'                                           // cr // &
                                                                                    cr // &
-   'MI_OPBC_F               flag'                                              // cr // &
+   'MI_OPBC_F                   flag'                                           // cr // &
                                                                                    cr // &
                                                                                    cr // &
    divider                                                                      // cr // &
    'MODEL_INPUT:'                                                               // cr // &
-   '# Name                  Type         Unit       SystemU/Scale           Shape              requirements' // cr // &
+   '# Name                      Type         Unit       SystemU/Scale           Shape              requirements' // cr // &
    'numberOfParticles           integer      none       none                    []' // cr // &
                                                                                    cr // &
    'numberParticleTypes         integer      none       none                    []' // cr // &
                                                                                    cr // &
-   'atomTypes               integer      none       none                    [numberOfParticles]' // cr // &
+   'atomTypes                   integer      none       none                    [numberOfParticles]' // cr // &
                                                                                    cr // &
-   'coordinates             real*8       length     standard                [numberOfParticles,3]' // cr // &
+   'coordinates                 real*8       length     standard                [numberOfParticles,3]' // cr // &
                                                                                    cr // &
-   'get_neigh               method       none       none                    []' // cr // &
+   'get_neigh                   method       none       none                    []' // cr // &
                                                                                    cr // &
-   'neighObject             pointer      none       none                    []' // cr // &
+   'neighObject                 pointer      none       none                    []' // cr // &
                                                                                    cr // &
    'numberContributingParticles integer      none       none                    []' // cr // &
                                                                                    cr // &
-   'boxSideLengths               real*8       length     standard                [3]'// cr // &
+   'boxSideLengths              real*8       length     standard                [3]'// cr // &
                                                                                    cr // &
                                                                                    cr // &
    divider                                                                      // cr // &
    'MODEL_OUTPUT:'                                                              // cr // &
-   '# Name                  Type         Unit       SystemU/Scale           Shape              requirements' // cr // &
+   '# Name                      Type         Unit       SystemU/Scale           Shape              requirements' // cr // &
                                                                                    cr // &
-   'destroy                 method       none       none                    []' // cr // &
+   'destroy                     method       none       none                    []' // cr // &
                                                                                    cr // &
-   'compute                 method       none       none                    []' // cr // &
+   'compute                     method       none       none                    []' // cr // &
                                                                                    cr // &
-   'reinit                  method       none       none                    []' // cr // &
+   'reinit                      method       none       none                    []' // cr // &
                                                                                    cr // &
-   'cutoff                  real*8       length     standard                []' // cr // &
+   'cutoff                      real*8       length     standard                []' // cr // &
                                                                                    cr // &
-   'energy                  real*8       energy     standard                []' // cr // &
+   'energy                      real*8       energy     standard                []' // cr // &
                                                                                    cr // &
-   'forces                  real*8       force      standard                [numberOfParticles,3]' // cr // &
+   'forces                      real*8       force      standard                [numberOfParticles,3]' // cr // &
                                                                                    cr // &
    divider                                                                      // cr
 

@@ -165,22 +165,22 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   double precision Spacings(4)
   double precision Energies(4)
   integer middleDum
-  real*8 energy;           pointer(penergy,energy)
-  real*8 coordum(DIM,1);   pointer(pcoor,coordum)
+  real*8 energy;         pointer(penergy,energy)
+  real*8 coordum(DIM,1); pointer(pcoor,coordum)
   real*8, pointer :: coords(:,:)
-  real*8 cutoff;           pointer(pcutoff,cutoff)
+  real*8 cutoff;         pointer(pcutoff,cutoff)
   double precision cutpad ! cutoff radius padding
-  real*8 boxSideLengths(DIM);   pointer(pboxSideLengths,boxSideLengths)
+  real*8 boxSideLengths(DIM);    pointer(pboxSideLengths,boxSideLengths)
   logical :: halfflag  ! .true. = half neighbor list; .false. = full neighbor list
   character(len=64) NBC_Method;  pointer(pNBC_Method,NBC_Method)
 
   ! Unpack data from KIM object
   !
   call kim_api_getm_data_f(pkim, ier, &
-       "energy",      penergy,    1, &
-       "coordinates", pcoor,      1, &
-       "cutoff",      pcutoff,    1, &
-       "boxSideLengths",   pboxSideLengths, 1)
+       "energy",         penergy,         1, &
+       "coordinates",    pcoor,           1, &
+       "cutoff",         pcutoff,         1, &
+       "boxSideLengths", pboxSideLengths, 1)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
      stop

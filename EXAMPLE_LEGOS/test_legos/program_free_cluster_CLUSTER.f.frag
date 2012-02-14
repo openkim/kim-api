@@ -41,13 +41,13 @@ program TEST_NAME_STR
   integer                   :: ier, idum
   integer numberOfParticles;   pointer(pnAtoms,numberOfParticles)
   integer numberParticleTypes; pointer(pnparticleTypes,numberParticleTypes)
-  integer atomTypesdum(1); pointer(patomTypesdum,atomTypesdum)
+  integer atomTypesdum(1);     pointer(patomTypesdum,atomTypesdum)
 
-  real*8 cutoff;           pointer(pcutoff,cutoff)
-  real*8 energy;           pointer(penergy,energy)
-  real*8 virialglobdum(1); pointer(pvirialglob,virialglobdum)
-  real*8 coordum(DIM,1);   pointer(pcoor,coordum)
-  real*8 forcesdum(DIM,1); pointer(pforces,forcesdum)
+  real*8 cutoff;               pointer(pcutoff,cutoff)
+  real*8 energy;               pointer(penergy,energy)
+  real*8 virialglobdum(1);     pointer(pvirialglob,virialglobdum)
+  real*8 coordum(DIM,1);       pointer(pcoor,coordum)
+  real*8 forcesdum(DIM,1);     pointer(pforces,forcesdum)
   integer I
   real*8, pointer  :: coords(:,:), forces(:,:), virial_global(:)
   integer, pointer :: atomTypes(:)
@@ -82,14 +82,14 @@ program TEST_NAME_STR
   ! Unpack data from KIM object
   !
   call kim_api_getm_data_f(pkim, ier, &
-       "numberOfParticles", pnAtoms, 1, &
+       "numberOfParticles",   pnAtoms,         1, &
        "numberParticleTypes", pnparticleTypes, 1, &
-       "atomTypes",       patomTypesdum, 1, &
-       "coordinates",     pcoor,         1, &
-       "cutoff",          pcutoff,       1, &
-       "energy",          penergy,       1, &
-       "virial",    pvirialglob,   1, &
-       "forces",          pforces,       1)
+       "atomTypes",           patomTypesdum,   1, &
+       "coordinates",         pcoor,           1, &
+       "cutoff",              pcutoff,         1, &
+       "energy",              penergy,         1, &
+       "virial",              pvirialglob,     1, &
+       "forces",              pforces,         1)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
      stop

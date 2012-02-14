@@ -144,9 +144,9 @@ static void compute(void* km, int* ier)
    
    /* check to see if we have been asked to compute the forces, particleEnergy, and virial */
    KIM_API_getm_compute(pkim, ier, 3*3,
-                                "forces",        &comp_force,         1,
-                                "particleEnergy", &comp_particleEnergy, 1,
-                                "virial",  &comp_virial,        1);
+                        "forces",         &comp_force,          1,
+                        "particleEnergy", &comp_particleEnergy, 1,
+                        "virial",         &comp_virial,         1);
    if (KIM_STATUS_OK > *ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_compute", *ier);
@@ -155,13 +155,13 @@ static void compute(void* km, int* ier)
 
    /* unpack data from KIM object */
    KIM_API_getm_data(pkim, ier, 7*3,
-                             "numberOfParticles", &nAtoms,        1,
-                             "atomTypes",     &atomTypes,     1,
-                             "energy",        &energy,        1,
-                             "coordinates",   &coords,        1,
-                             "forces",        &force,         comp_force,
-                             "particleEnergy", &particleEnergy, comp_particleEnergy,
-                             "virial",  &virial,  comp_virial);
+                     "numberOfParticles", &nAtoms,         1,
+                     "atomTypes",         &atomTypes,      1,
+                     "energy",            &energy,         1,
+                     "coordinates",       &coords,         1,
+                     "forces",            &force,          comp_force,
+                     "particleEnergy",    &particleEnergy, comp_particleEnergy,
+                     "virial",            &virial,         comp_virial);
    if (KIM_STATUS_OK > *ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data", *ier);
@@ -170,13 +170,13 @@ static void compute(void* km, int* ier)
 
    /* unpack the Model's parameters stored in the KIM API object */
    KIM_API_getm_data(pkim, ier, 7*3,
-                             "cutoff",             &cutoff,  1,
-                             "PARAM_FREE_epsilon", &epsilon, 1,
-                             "PARAM_FREE_sigma",   &sigma,   1,
-                             "PARAM_FIXED_A",      &A,       1,
-                             "PARAM_FIXED_B",      &B,       1,
-                             "PARAM_FIXED_C",      &C,       1,
-                             "PARAM_FIXED_cutsq",  &cutsq,   1);
+                     "cutoff",             &cutoff,  1,
+                     "PARAM_FREE_epsilon", &epsilon, 1,
+                     "PARAM_FREE_sigma",   &sigma,   1,
+                     "PARAM_FIXED_A",      &A,       1,
+                     "PARAM_FIXED_B",      &B,       1,
+                     "PARAM_FIXED_C",      &C,       1,
+                     "PARAM_FIXED_cutsq",  &cutsq,   1);
    if (KIM_STATUS_OK > *ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data", *ier);
@@ -334,9 +334,9 @@ void MODEL_NAME_LC_STR_init_(void *km)
 
    /* store function pointers in KIM object */
    KIM_API_setm_data(pkim, &ier, 3*4,
-                             "compute", 1, &compute, 1,
-                             "reinit",  1, &reinit,  1,
-                             "destroy", 1, &destroy, 1);
+                     "compute", 1, &compute, 1,
+                     "reinit",  1, &reinit,  1,
+                     "destroy", 1, &destroy, 1);
    
    /* store model cutoff in KIM object */
    model_cutoff = (double*) KIM_API_get_data(pkim, "cutoff", &ier);
@@ -405,15 +405,15 @@ void MODEL_NAME_LC_STR_init_(void *km)
 
    /* store parameters in KIM object */
    KIM_API_setm_data(pkim, &ier, 9*4,
-                             "PARAM_FREE_sigma",    1, model_sigma,   1,
-                             "PARAM_FREE_epsilon",  1, model_epsilon, 1,
-                             "PARAM_FREE_cutoff",   1, model_Pcutoff, 1,
-                             "PARAM_FIXED_cutnorm", 1, model_cutnorm, 1,
-                             "PARAM_FIXED_A",       1, model_A,       1,
-                             "PARAM_FIXED_B",       1, model_B,       1,
-                             "PARAM_FIXED_C",       1, model_C,       1,
-                             "PARAM_FIXED_sigmasq", 1, model_sigmasq, 1,
-                             "PARAM_FIXED_cutsq",   1, model_cutsq,   1);
+                     "PARAM_FREE_sigma",    1, model_sigma,   1,
+                     "PARAM_FREE_epsilon",  1, model_epsilon, 1,
+                     "PARAM_FREE_cutoff",   1, model_Pcutoff, 1,
+                     "PARAM_FIXED_cutnorm", 1, model_cutnorm, 1,
+                     "PARAM_FIXED_A",       1, model_A,       1,
+                     "PARAM_FIXED_B",       1, model_B,       1,
+                     "PARAM_FIXED_C",       1, model_C,       1,
+                     "PARAM_FIXED_sigmasq", 1, model_sigmasq, 1,
+                     "PARAM_FIXED_cutsq",   1, model_cutsq,   1);
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_setm_data", ier);
@@ -464,16 +464,16 @@ static void reinit(void *km)
 
    /* get parameters from KIM object */
    KIM_API_getm_data(pkim, &ier, 10*3,
-                             "cutoff",              &model_cutoff,  1,
-                             "PARAM_FREE_sigma",    &model_sigma,   1,
-                             "PARAM_FREE_epsilon",  &model_epsilon, 1,
-                             "PARAM_FREE_cutoff",   &model_Pcutoff, 1,
-                             "PARAM_FIXED_cutnorm", &model_cutnorm, 1,
-                             "PARAM_FIXED_A",       &model_A,       1,
-                             "PARAM_FIXED_B",       &model_B,       1,
-                             "PARAM_FIXED_C",       &model_C,       1,
-                             "PARAM_FIXED_sigmasq", &model_sigmasq, 1,
-                             "PARAM_FIXED_cutsq",   &model_cutsq,   1);
+                     "cutoff",              &model_cutoff,  1,
+                     "PARAM_FREE_sigma",    &model_sigma,   1,
+                     "PARAM_FREE_epsilon",  &model_epsilon, 1,
+                     "PARAM_FREE_cutoff",   &model_Pcutoff, 1,
+                     "PARAM_FIXED_cutnorm", &model_cutnorm, 1,
+                     "PARAM_FIXED_A",       &model_A,       1,
+                     "PARAM_FIXED_B",       &model_B,       1,
+                     "PARAM_FIXED_C",       &model_C,       1,
+                     "PARAM_FIXED_sigmasq", &model_sigmasq, 1,
+                     "PARAM_FIXED_cutsq",   &model_cutsq,   1);
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data", ier);
@@ -520,15 +520,15 @@ static void destroy(void *km)
 
    /* get parameters from KIM object */
    KIM_API_getm_data(pkim, &ier, 9*3,
-                             "PARAM_FREE_sigma",    &model_sigma,   1,
-                             "PARAM_FREE_epsilon",  &model_epsilon, 1,
-                             "PARAM_FREE_cutoff",   &model_Pcutoff, 1,
-                             "PARAM_FIXED_cutnorm", &model_cutnorm, 1,
-                             "PARAM_FIXED_A",       &model_A,       1,
-                             "PARAM_FIXED_B",       &model_B,       1,
-                             "PARAM_FIXED_C",       &model_C,       1,
-                             "PARAM_FIXED_sigmasq", &model_sigmasq, 1,
-                             "PARAM_FIXED_cutsq",   &model_cutsq,   1);
+                     "PARAM_FREE_sigma",    &model_sigma,   1,
+                     "PARAM_FREE_epsilon",  &model_epsilon, 1,
+                     "PARAM_FREE_cutoff",   &model_Pcutoff, 1,
+                     "PARAM_FIXED_cutnorm", &model_cutnorm, 1,
+                     "PARAM_FIXED_A",       &model_A,       1,
+                     "PARAM_FIXED_B",       &model_B,       1,
+                     "PARAM_FIXED_C",       &model_C,       1,
+                     "PARAM_FIXED_sigmasq", &model_sigmasq, 1,
+                     "PARAM_FIXED_cutsq",   &model_cutsq,   1);
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data", ier);

@@ -1,11 +1,11 @@
 #######################################################################################################
 MODEL_OUTPUT:
-# Name                  Type         Unit                Shape              Requirements
+# Name                      Type         Unit                Shape              Requirements
 
-destroy                 method       none                []
+destroy                     method       none                []
 
-compute                 method       none                []
+compute                     method       none                []
 
-cutoff                  real*8       length              []
+cutoff                      real*8       length              []
 
-energy                  real*8       energy              []
+energy                      real*8       energy              []

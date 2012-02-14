@@ -8,10 +8,10 @@ subroutine NEIGH_RVEC_F_cluster_neighborlist(numberOfParticles, coords, cutoff, 
   implicit none
 
   !-- Transferred variables
-  integer,                                           intent(in)  :: numberOfParticles
+  integer,                                               intent(in)  :: numberOfParticles
   double precision, dimension(3,numberOfParticles),      intent(in)  :: coords
-  double precision,                                  intent(in)  :: cutoff
-  integer,                                           intent(in)  :: NN
+  double precision,                                      intent(in)  :: cutoff
+  integer,                                               intent(in)  :: NN
   integer, dimension(NN+1,numberOfParticles),            intent(out) :: neighborList
   double precision, dimension(3,NN+1,numberOfParticles), intent(out) :: RijList
   

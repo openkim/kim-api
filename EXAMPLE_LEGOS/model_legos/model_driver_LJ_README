@@ -16,7 +16,8 @@ It complies with the KIM API interface standard, using any NBC and iterator or
 locator mode, publishes its parameters, and supports optional computation of
 `forces', `particleEnergys', and `virial'.  Its initializaton routine takes a
 KIM API object pointer and a pointer to a string that contains the cutoff and
-Lennard-Jones parameters which define a KIM Model based on this KIM Model Driver.
+Lennard-Jones parameters which define a KIM Model based on this KIM Model
+Driver.
 
 To create a KIM Model from this Model Driver, a parameter file is required.
 This file must have the follwing format:
@@ -33,7 +34,8 @@ README
     This file
 
 MODEL_DRIVER_NAME_STR.F90
-    Fortran 90 file that contains the implementation of the Lennard-Jones potential Model Driver
+    Fortran 90 file that contains the implementation of the Lennard-Jones
+    potential Model Driver
 
 MODEL_DRIVER_NAME_STR.kim
     Template KIM descriptor file containing all variables and methods that are

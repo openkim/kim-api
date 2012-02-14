@@ -2,10 +2,10 @@
     ! and virial
     !
     call kim_api_getm_compute_f(pkim, ier, &
-         "energy",        comp_energy, 1, &
-         "forces",        comp_force,  1, &
+         "energy",         comp_energy, 1, &
+         "forces",         comp_force,  1, &
          "particleEnergy", comp_enepot, 1, &
-         "virial",  comp_virial, 1)
+         "virial",         comp_virial, 1)
     if (ier.lt.KIM_STATUS_OK) then
        idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_compute_f", ier)
        return
@@ -13,16 +13,16 @@
 
     ! Unpack data from KIM object
     !
-    call kim_api_getm_data_f(pkim, ier,             &
-         "numberOfParticles",       pnAtoms,       1,           &
-         "numberParticleTypes",     pnparticleTypes,   1,           &
-         "atomTypes",           patomTypes,    1,           &
-         "cutoff",              pcutoff,       1,           &
-         "coordinates",         pcoor,         1,           &
-         "energy",              penergy,       comp_energy, &
-         "forces",              pforce,        comp_force,  &
-         "particleEnergy",       penepot,       comp_enepot, &
-         "virial",        pvirial, comp_virial)
+    call kim_api_getm_data_f(pkim, ier,                       &
+         "numberOfParticles",   pnAtoms,         1,           &
+         "numberParticleTypes", pnparticleTypes, 1,           &
+         "atomTypes",           patomTypes,      1,           &
+         "cutoff",              pcutoff,         1,           &
+         "coordinates",         pcoor,           1,           &
+         "energy",              penergy,         comp_energy, &
+         "forces",              pforce,          comp_force,  &
+         "particleEnergy",      penepot,         comp_enepot, &
+         "virial",              pvirial,         comp_virial)
     if (ier.lt.KIM_STATUS_OK) then
        idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
        return

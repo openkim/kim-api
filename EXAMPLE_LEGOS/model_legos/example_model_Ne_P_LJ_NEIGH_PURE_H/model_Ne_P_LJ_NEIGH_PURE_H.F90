@@ -54,8 +54,8 @@ contains
     ! Check to see if we have been asked to compute the forces and energyperatom
     !
     call kim_api_getm_compute_f(pkim, ier, &
-         "energy",        e_flag,    1, &
-         "forces",        f_flag,    1, &
+         "energy",         e_flag,    1,   &
+         "forces",         f_flag,    1,   &
          "particleEnergy", eper_flag, 1)
     if (ier.lt.KIM_STATUS_OK) then
        idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_compute_f", ier)
@@ -67,11 +67,11 @@ contains
     call kim_api_getm_data_f(pkim, ier, &
          "numberOfParticles",           pnumberofatoms, 1,                         &
          "numberContributingParticles", pnumContrib,    1,                         &
-         "atomTypes",               pattypes,       1,                         &
-         "coordinates",             px,             1,                         &
-         "forces",                  pf,             TRUEFALSE(f_flag.eq.1),    &
-         "energy",                  ppotenergy,     TRUEFALSE(e_flag.eq.1),    &
-         "particleEnergy",           pea,            TRUEFALSE(eper_flag.eq.1))
+         "atomTypes",                   pattypes,       1,                         &
+         "coordinates",                 px,             1,                         &
+         "forces",                      pf,             TRUEFALSE(f_flag.eq.1),    &
+         "energy",                      ppotenergy,     TRUEFALSE(e_flag.eq.1),    &
+         "particleEnergy",              pea,            TRUEFALSE(eper_flag.eq.1))
     if (ier.lt.KIM_STATUS_OK) then
        idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
        return

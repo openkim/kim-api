@@ -444,147 +444,147 @@ SUPPORTED_ATOM/PARTICLES_TYPES:
 # possible.  This option allows for Models and Tests that do not assign any
 # specific physical type to their (single) particle type
 #
-# Symbol/name           Type                    code
-#
+# Symbol/name               Type         code
+#                           
 ################################################################################
-H                       spec                    1              # Hydrogen
-He                      spec                    2              # Helium
-Li                      spec                    3              # Lithium
-Be                      spec                    4              # Beryllium
-B                       spec                    5              # Boron
-C                       spec                    6              # Carbon
-N                       spec                    7              # Nitrogen
-O                       spec                    8              # Oxygen
-F                       spec                    9              # Fluorine
-Ne                      spec                    10             # Neon
-Na                      spec                    11             # Sodium
-Mg                      spec                    12             # Magnesium
-Al                      spec                    13             # Aluminum
-Si                      spec                    14             # Silicon
-P                       spec                    15             # Phosphorus
-S                       spec                    16             # Sulfur
-Cl                      spec                    17             # Chlorine
-Ar                      spec                    18             # Argon
-K                       spec                    19             # Potassium
-Ca                      spec                    20             # Calcium
-Sc                      spec                    21             # Scandium
-Ti                      spec                    22             # Titanium
-V                       spec                    23             # Vanadium
-Cr                      spec                    24             # Chromium
-Mn                      spec                    25             # Manganese
-Fe                      spec                    26             # Iron
-Co                      spec                    27             # Cobalt
-Ni                      spec                    28             # Nickel
-Cu                      spec                    29             # Copper
-Zn                      spec                    30             # Zinc
-Ga                      spec                    31             # Gallium
-Ge                      spec                    32             # Germanium
-As                      spec                    33             # Arsenic
-Se                      spec                    34             # Selenium
-Br                      spec                    35             # Bromine
-Kr                      spec                    36             # Krypton
-Rb                      spec                    37             # Rubidium
-Sr                      spec                    38             # Strontium
-Y                       spec                    39             # Yttrium
-Zr                      spec                    40             # Zirconium
-Nb                      spec                    41             # Niobium
-Mo                      spec                    42             # Molybdenum
-Tc                      spec                    43             # Technetium
-Ru                      spec                    44             # Ruthenium
-Rh                      spec                    45             # Rhodium
-Pd                      spec                    46             # Palladium
-Ag                      spec                    47             # Silver
-Cd                      spec                    48             # Cadmium
-In                      spec                    49             # Indium
-Sn                      spec                    50             # Tin
-Sb                      spec                    51             # Antimony
-Te                      spec                    52             # Tellurium
-I                       spec                    53             # Iodine
-Xe                      spec                    54             # Xenon
-Cs                      spec                    55             # Cesium
-Ba                      spec                    56             # Barium
-La                      spec                    57             # Lanthanum
-Ce                      spec                    58             # Cerium
-Pr                      spec                    59             # Praseodymium
-Nd                      spec                    60             # Neodymium
-Pm                      spec                    61             # Promethium
-Sm                      spec                    62             # Samarium
-Eu                      spec                    63             # Europium
-Gd                      spec                    64             # Gadolinium
-Tb                      spec                    65             # Terbium
-Dy                      spec                    66             # Dysprosium
-Ho                      spec                    67             # Holmium
-Er                      spec                    68             # Erbium
-Tm                      spec                    69             # Thulium
-Yb                      spec                    70             # Ytterbium
-Lu                      spec                    71             # Lutetium
-Hf                      spec                    72             # Hafnium
-Ta                      spec                    73             # Tantalum
-W                       spec                    74             # Tungsten
-Re                      spec                    75             # Rhenium
-Os                      spec                    76             # Osmium
-Ir                      spec                    77             # Iridium
-Pt                      spec                    78             # Platinum
-Au                      spec                    79             # Gold
-Hg                      spec                    80             # Mercury
-Tl                      spec                    81             # Thallium
-Pb                      spec                    82             # Lead
-Bi                      spec                    83             # Bismuth
-Po                      spec                    84             # Polonium
-At                      spec                    85             # Astatine
-Rn                      spec                    86             # Radon
-Fr                      spec                    87             # Francium
-Ra                      spec                    88             # Radium
-Ac                      spec                    89             # Actinium
-Th                      spec                    90             # Thorium
-Pa                      spec                    91             # Protactinium
-U                       spec                    92             # Uranium
-Np                      spec                    93             # Neptunium
-Pu                      spec                    94             # Plutonium
-Am                      spec                    95             # Americium
-Cm                      spec                    96             # Curium
-Bk                      spec                    97             # Berkelium
-Cf                      spec                    98             # Californium
-Es                      spec                    99             # Einsteinium
-Fm                      spec                    100            # Fermium
-Md                      spec                    101            # Mendelevium
-No                      spec                    102            # Nobelium
-Lr                      spec                    103            # Lawrencium
-Rf                      spec                    104            # Rutherfordium
-Db                      spec                    105            # Dubnium
-Sg                      spec                    106            # Seaborgium
-Bh                      spec                    107            # Bohrium
-Hs                      spec                    108            # Hassium
-Mt                      spec                    109            # Meitnerium
-Ds                      spec                    110            # Darmstadtium
-Rg                      spec                    111            # Roentgenium
-Cn                      spec                    112            # Copernicium
-Uut                     spec                    113            # Ununtrium
-Uuq                     spec                    114            # Ununquadium
-Uup                     spec                    115            # Ununpentium
-Uuh                     spec                    116            # Ununhexium
-Uus                     spec                    117            # Ununseptium
-Uuo                     spec                    118            # Ununoctium
-user01                  spec                    201            # user defined
-user02                  spec                    202            # user defined
-user03                  spec                    203            # user defined
-user04                  spec                    204            # user defined
-user05                  spec                    205            # user defined
-user06                  spec                    206            # user defined
-user07                  spec                    207            # user defined
-user08                  spec                    208            # user defined
-user09                  spec                    209            # user defined
-user10                  spec                    210            # user defined
-user11                  spec                    211            # user defined
-user12                  spec                    212            # user defined
-user13                  spec                    213            # user defined
-user14                  spec                    214            # user defined
-user15                  spec                    215            # user defined
-user16                  spec                    216            # user defined
-user17                  spec                    217            # user defined
-user18                  spec                    218            # user defined
-user19                  spec                    219            # user defined
-User20                  Spec                    220            # user defined
+H                           spec         1              # Hydrogen
+He                          spec         2              # Helium
+Li                          spec         3              # Lithium
+Be                          spec         4              # Beryllium
+B                           spec         5              # Boron
+C                           spec         6              # Carbon
+N                           spec         7              # Nitrogen
+O                           spec         8              # Oxygen
+F                           spec         9              # Fluorine
+Ne                          spec         10             # Neon
+Na                          spec         11             # Sodium
+Mg                          spec         12             # Magnesium
+Al                          spec         13             # Aluminum
+Si                          spec         14             # Silicon
+P                           spec         15             # Phosphorus
+S                           spec         16             # Sulfur
+Cl                          spec         17             # Chlorine
+Ar                          spec         18             # Argon
+K                           spec         19             # Potassium
+Ca                          spec         20             # Calcium
+Sc                          spec         21             # Scandium
+Ti                          spec         22             # Titanium
+V                           spec         23             # Vanadium
+Cr                          spec         24             # Chromium
+Mn                          spec         25             # Manganese
+Fe                          spec         26             # Iron
+Co                          spec         27             # Cobalt
+Ni                          spec         28             # Nickel
+Cu                          spec         29             # Copper
+Zn                          spec         30             # Zinc
+Ga                          spec         31             # Gallium
+Ge                          spec         32             # Germanium
+As                          spec         33             # Arsenic
+Se                          spec         34             # Selenium
+Br                          spec         35             # Bromine
+Kr                          spec         36             # Krypton
+Rb                          spec         37             # Rubidium
+Sr                          spec         38             # Strontium
+Y                           spec         39             # Yttrium
+Zr                          spec         40             # Zirconium
+Nb                          spec         41             # Niobium
+Mo                          spec         42             # Molybdenum
+Tc                          spec         43             # Technetium
+Ru                          spec         44             # Ruthenium
+Rh                          spec         45             # Rhodium
+Pd                          spec         46             # Palladium
+Ag                          spec         47             # Silver
+Cd                          spec         48             # Cadmium
+In                          spec         49             # Indium
+Sn                          spec         50             # Tin
+Sb                          spec         51             # Antimony
+Te                          spec         52             # Tellurium
+I                           spec         53             # Iodine
+Xe                          spec         54             # Xenon
+Cs                          spec         55             # Cesium
+Ba                          spec         56             # Barium
+La                          spec         57             # Lanthanum
+Ce                          spec         58             # Cerium
+Pr                          spec         59             # Praseodymium
+Nd                          spec         60             # Neodymium
+Pm                          spec         61             # Promethium
+Sm                          spec         62             # Samarium
+Eu                          spec         63             # Europium
+Gd                          spec         64             # Gadolinium
+Tb                          spec         65             # Terbium
+Dy                          spec         66             # Dysprosium
+Ho                          spec         67             # Holmium
+Er                          spec         68             # Erbium
+Tm                          spec         69             # Thulium
+Yb                          spec         70             # Ytterbium
+Lu                          spec         71             # Lutetium
+Hf                          spec         72             # Hafnium
+Ta                          spec         73             # Tantalum
+W                           spec         74             # Tungsten
+Re                          spec         75             # Rhenium
+Os                          spec         76             # Osmium
+Ir                          spec         77             # Iridium
+Pt                          spec         78             # Platinum
+Au                          spec         79             # Gold
+Hg                          spec         80             # Mercury
+Tl                          spec         81             # Thallium
+Pb                          spec         82             # Lead
+Bi                          spec         83             # Bismuth
+Po                          spec         84             # Polonium
+At                          spec         85             # Astatine
+Rn                          spec         86             # Radon
+Fr                          spec         87             # Francium
+Ra                          spec         88             # Radium
+Ac                          spec         89             # Actinium
+Th                          spec         90             # Thorium
+Pa                          spec         91             # Protactinium
+U                           spec         92             # Uranium
+Np                          spec         93             # Neptunium
+Pu                          spec         94             # Plutonium
+Am                          spec         95             # Americium
+Cm                          spec         96             # Curium
+Bk                          spec         97             # Berkelium
+Cf                          spec         98             # Californium
+Es                          spec         99             # Einsteinium
+Fm                          spec         100            # Fermium
+Md                          spec         101            # Mendelevium
+No                          spec         102            # Nobelium
+Lr                          spec         103            # Lawrencium
+Rf                          spec         104            # Rutherfordium
+Db                          spec         105            # Dubnium
+Sg                          spec         106            # Seaborgium
+Bh                          spec         107            # Bohrium
+Hs                          spec         108            # Hassium
+Mt                          spec         109            # Meitnerium
+Ds                          spec         110            # Darmstadtium
+Rg                          spec         111            # Roentgenium
+Cn                          spec         112            # Copernicium
+Uut                         spec         113            # Ununtrium
+Uuq                         spec         114            # Ununquadium
+Uup                         spec         115            # Ununpentium
+Uuh                         spec         116            # Ununhexium
+Uus                         spec         117            # Ununseptium
+Uuo                         spec         118            # Ununoctium
+user01                      spec         201            # user defined
+user02                      spec         202            # user defined
+user03                      spec         203            # user defined
+user04                      spec         204            # user defined
+user05                      spec         205            # user defined
+user06                      spec         206            # user defined
+user07                      spec         207            # user defined
+user08                      spec         208            # user defined
+user09                      spec         209            # user defined
+user10                      spec         210            # user defined
+user11                      spec         211            # user defined
+user12                      spec         212            # user defined
+user13                      spec         213            # user defined
+user14                      spec         214            # user defined
+user15                      spec         215            # user defined
+user16                      spec         216            # user defined
+user17                      spec         217            # user defined
+user18                      spec         218            # user defined
+user19                      spec         219            # user defined
+User20                      spec         220            # user defined
 
 ################################################################################
 #
@@ -605,13 +605,13 @@ CONVENTIONS:
 # lines should be included:
 #
 ################################################################################
-ZeroBasedLists          flag        # Presence of this line indicates that 
-                                    # indexes for atoms are from 0 to 
-                                    # numberOfParticles-1 (C-style)
+ZeroBasedLists              flag        # Presence of this line indicates that 
+                                        # indexes for atoms are from 0 to 
+                                        # numberOfParticles-1 (C-style)
 
-OneBasedLists           flag        # Presence of this line indicates that 
-                                    # indexes for atoms are from 1 to 
-                                    # numberOfParticles   (Fortran-style)
+OneBasedLists               flag        # Presence of this line indicates that 
+                                        # indexes for atoms are from 1 to 
+                                        # numberOfParticles   (Fortran-style)
 
 ################################################################################
 #
@@ -629,11 +629,11 @@ OneBasedLists           flag        # Presence of this line indicates that
 # options in a KIM descriptor (.kim) file.
 #
 ################################################################################
-Neigh_IterAccess        flag        # works with iterator mode
+Neigh_IterAccess            flag        # works with iterator mode
 
-Neigh_LocaAccess        flag        # works with locator mode
+Neigh_LocaAccess            flag        # works with locator mode
 
-Neigh_BothAccess        flag        # need both locator and iterator modes
+Neigh_BothAccess            flag        # need both locator and iterator modes
 
 
 ################################################################################
@@ -653,8 +653,8 @@ Neigh_BothAccess        flag        # need both locator and iterator modes
 # supplied atom coordinates and the derivative of the total energy with respect
 # to the positions of the atoms.
 #
-CLUSTER                 flag        # The Model needs only coordinates to 
-                                    # compute; a neighbor list is not needed.
+CLUSTER                     flag        # The Model needs only coordinates to 
+                                        # compute; a neighbor list is not needed.
 
 # In the MI-OPBC methods (MI_OPBC_H and MI_OPBC_F), the Model receives the
 # number of atoms and coordinates, the side lengths for the periodic orthogonal
@@ -675,27 +675,29 @@ CLUSTER                 flag        # The Model needs only coordinates to
 # obtained were the model to compute its own neighbor list using the provided
 # orthogonal periodic box side lengths.
 #
-MI_OPBC_H               flag        # This is the Minimum Image Orthogonal
-                                    # Periodic Boundary Condition Half neighbor
-                                    # list method.  The Model needs
-                                    # `coordinates', a half neighbor list (with
-                                    # data stored in the `neighObject'
-                                    # argument), the `get_neigh' method
-                                    # supplied by the Test, and the `boxSideLengths'
-                                    # argument (which specifies the three
-                                    # side-lengths of the orthogonal simulation
-                                    # box).
+MI_OPBC_H                   flag        # This is the Minimum Image Orthogonal
+                                        # Periodic Boundary Condition Half
+                                        # neighbor list method.  The Model
+                                        # needs `coordinates', a half neighbor
+                                        # list (with data stored in the
+                                        # `neighObject' argument), the
+                                        # `get_neigh' method supplied by the
+                                        # Test, and the `boxSideLengths'
+                                        # argument (which specifies the three
+                                        # side-lengths of the orthogonal
+                                        # simulation box).
 
-MI_OPBC_F               flag        # This is the Minimum Image Orthogonal 
-                                    # Periodic Boundary Condition Full neighbor
-                                    # list method.  The Model needs 
-                                    # `coordinates', a full neighbor list (with 
-                                    # data stored in the `neighObject' 
-                                    # argument), the `get_neigh' method 
-                                    # supplied by the Test, and the `boxSideLengths'
-                                    # argument (which specifies the three 
-                                    # side-lengths of the orthogonal simulation 
-                                    # box).
+MI_OPBC_F                   flag        # This is the Minimum Image Orthogonal 
+                                        # Periodic Boundary Condition Full
+                                        # neighbor list method.  The Model
+                                        # needs `coordinates', a full neighbor
+                                        # list (with data stored in the
+                                        # `neighObject' argument), the
+                                        # `get_neigh' method supplied by the
+                                        # Test, and the `boxSideLengths'
+                                        # argument (which specifies the three
+                                        # side-lengths of the orthogonal
+                                        # simulation box).
 
 # In the NEIGH-PURE methods (NEIGH_PURE_H and NEIGH_PURE_F), the Model receives
 # the number of atoms, coordinates and a full or half neighbor list. The
@@ -711,19 +713,19 @@ MI_OPBC_F               flag        # This is the Minimum Image Orthogonal
 # from per-atom energies of the physical atoms, or to use a modified neighbor
 # list to obtain the desired values.
 #
-NEIGH_PURE_H            flag        # This is the Pure Half neighbor list 
-                                    # method.  The model needs `coordinates', a 
-                                    # half neighbor list (with data stored in 
-                                    # the `neighObject' argument), and the 
-                                    # `get_neigh' method supplied by the 
-                                    # Test.
+NEIGH_PURE_H                flag        # This is the Pure Half neighbor list 
+                                        # method.  The model needs `coordinates', a 
+                                        # half neighbor list (with data stored in 
+                                        # the `neighObject' argument), and the 
+                                        # `get_neigh' method supplied by the 
+                                        # Test.
 
-NEIGH_PURE_F            flag        # This is the Pure Full neighbor list 
-                                    # method.  The model needs `coordinates', a 
-                                    # full neighbor list (with data stored in 
-                                    # the `neighObject' argument), and the 
-                                    # `get_neigh' method supplied by the 
-                                    # Test.
+NEIGH_PURE_F                flag        # This is the Pure Full neighbor list 
+                                        # method.  The model needs `coordinates', a 
+                                        # full neighbor list (with data stored in 
+                                        # the `neighObject' argument), and the 
+                                        # `get_neigh' method supplied by the 
+                                        # Test.
 
 # In the NEIGH_RVEC_F method, the Model receives the number of atoms and
 # coordinates, a full neighbor list and the relative position vectors Rij 
@@ -741,16 +743,17 @@ NEIGH_PURE_F            flag        # This is the Pure Full neighbor list
 # application of complex boundary conditions such as torsion and objective
 # boundary conditions.
 #
-NEIGH_RVEC_F            flag        # This is the Relative Vector Boundary
-                                    # Condition Full neighbor list method.  
-                                    # The Model needs `coordinates' and a full 
-                                    # neighbor list (with data stored in the 
-                                    # `neighObject' argument), and the 
-                                    # `get_neigh' method supplied by the 
-                                    # Test.  The `neighObject' argument must 
-                                    # also contain the relative position 
-                                    # vectors (RVEC) (which are returned by the 
-                                    # `get_neigh' function).
+NEIGH_RVEC_F                flag        # This is the Relative Vector Boundary
+                                        # Condition Full neighbor list method.
+                                        # The Model needs `coordinates' and a
+                                        # full neighbor list (with data stored
+                                        # in the `neighObject' argument), and
+                                        # the `get_neigh' method supplied by
+                                        # the Test.  The `neighObject' argument
+                                        # must also contain the relative
+                                        # position vectors (RVEC) (which are
+                                        # returned by the `get_neigh'
+                                        # function).
 
 ################################################################################
 #
@@ -765,7 +768,7 @@ MODEL_INPUT:
 # Every data line in the input section of a KIM descriptor file of a Test and 
 # Model consists of six fields:
 #
-# Name                  Type         Unit                Shape
+# Name                      Type         Unit                Shape
 #
 #
 # Each of these lines must exactly match with one of the standard definitions
@@ -795,7 +798,7 @@ MODEL_INPUT:
 # ZeroBasedLists/OneBasedLists # convention setting.  This argument is required
 # for all Models and Tests
 #
-# Name                  Type         Unit                Shape
+# Name                      Type         Unit                Shape
 #
 numberOfParticles           integer      none                []
 
@@ -805,7 +808,7 @@ numberOfParticles           integer      none                []
 #                         (required for all half neighbor lists). 
 #
 #
-# Name                  Type         Unit               Shape
+# Name                      Type         Unit               Shape
 #
 numberContributingParticles integer      none               []
 
@@ -817,7 +820,7 @@ numberContributingParticles integer      none               []
 # This argument is required for any Model/Test that specifies one or more
 # Atom/particle types in the SUPPORTED_ATOM/PARTICLE_TYPES section
 #
-# Name                  Type         Unit              Shape
+# Name                      Type         Unit              Shape
 #
 numberParticleTypes         integer      none              []
 
@@ -831,9 +834,9 @@ numberParticleTypes         integer      none              []
 # that specifies one or more Atom/particle types in the
 # SUPPORTED_ATOM/PARTICLE_TYPES section.
 #
-# Name                  Type         Unit               Shape
+# Name                      Type         Unit               Shape
 #
-atomTypes               integer      none               [numberOfParticles]
+atomTypes                   integer      none               [numberOfParticles]
 
 ################################################################################
 #
@@ -843,9 +846,9 @@ atomTypes               integer      none               [numberOfParticles]
 #
 # This argument is required for all Models and Tests.
 #
-# Name                  Type         Unit               Shape
+# Name                      Type         Unit               Shape
 #
-coordinates             real*8       length             [numberOfParticles,3]
+coordinates                 real*8       length             [numberOfParticles,3]
 
 
 ################################################################################
@@ -857,9 +860,9 @@ coordinates             real*8       length             [numberOfParticles,3]
 # MI_OPBC_H and NEIGH_PURE_H.  It should be optional for all Models to ensure
 # that the Model is compatible with the widest possible set of Tests.
 #
-# Name                  Type         Unit               Shape
+# Name                      Type         Unit               Shape
 #
-get_neigh          method       none               []
+get_neigh                   method       none               []
 
 ################################################################################
 #
@@ -869,8 +872,9 @@ get_neigh          method       none               []
 #                  does not need know how exactly it is computed. In low level loop
 #                  for each pair of atom (i j) the model organize call to that routine.
 #
-# Name                  Type         Unit               Shape
-process_dEdr           method       none               []
+# Name                      Type         Unit               Shape
+#
+process_dEdr                method       none               []
 
 ################################################################################
 #
@@ -880,8 +884,9 @@ process_dEdr           method       none               []
 #                  does not need know how exactly it is computed. In low level loop
 #                  for each set of indexes the model organize call to that routine.
 #
-# Name                  Type         Unit               Shape
-process_d2Edr2           method       none               []
+# Name                      Type         Unit               Shape
+#
+process_d2Edr2              method       none               []
 
 
 ################################################################################
@@ -892,9 +897,9 @@ process_d2Edr2           method       none               []
 # This argument is required for Models/Tests that support the following NBCs:
 # MI_OPBC_H, MI_OPBC_F, NEIGH_PURE_H, NEIGH_PURE_F, and NEIGH_RVEC_F.
 #
-# Name                  Type         Unit               Shape
+# Name                      Type         Unit               Shape
 #
-neighObject             pointer      none               []
+neighObject                 pointer      none               []
 
 ################################################################################
 #
@@ -904,9 +909,9 @@ neighObject             pointer      none               []
 # This argument is required for Models/Tests that support the following NBCs: 
 # MI_OPBC_H and MI_OPBC_F.
 #
-# Name                  Type         Unit               Shape
+# Name                      Type         Unit               Shape
 #
-boxSideLengths               real*8       length             [3]
+boxSideLengths              real*8       length             [3]
 
 
 ################################################################################
@@ -932,9 +937,9 @@ MODEL_OUTPUT:
 #
 # This argument is required for all Models and Tests
 #
-# Name                  Type         Unit               Shape
+# Name                      Type         Unit               Shape
 #
-compute                 method       none               []
+compute                     method       none               []
 
 ################################################################################
 #
@@ -946,9 +951,9 @@ compute                 method       none               []
 # compatibility with Tests (who should only include the argument if they use
 # it).
 #
-# Name                  Type         Unit               Shape
+# Name                      Type         Unit               Shape
 #
-reinit                  method       none               []
+reinit                      method       none               []
 
 ################################################################################
 #
@@ -962,9 +967,9 @@ reinit                  method       none               []
 # least) to ensure maximum compatibility with Tests (who should only include
 # the argument if they use it).
 #
-# Name                  Type         Unit               Shape
+# Name                      Type         Unit               Shape
 #
-destroy                 method       none               []
+destroy                     method       none               []
 
 ################################################################################
 #
@@ -977,9 +982,9 @@ destroy                 method       none               []
 # be changed.  Once the PARAM_FREE_cutoff parameter has been changed and the
 # Model's reinit function called, the Model must update the value of `cutoff'.
 #
-# Name                  Type         Unit               Shape
+# Name                      Type         Unit               Shape
 #
-cutoff                  real*8       length             []
+cutoff                      real*8       length             []
 
 ################################################################################
 #
@@ -989,9 +994,9 @@ cutoff                  real*8       length             []
 # This argument should, ideally, be optional to ensure maximum Model/Test
 # compatibility.
 #
-# Name                  Type         Unit               Shape
+# Name                      Type         Unit               Shape
 #
-energy                  real*8       energy             []
+energy                      real*8       energy             []
 
 ################################################################################
 #
@@ -1001,9 +1006,9 @@ energy                  real*8       energy             []
 #
 # This argument should be optional to ensure maximum Model/Test compatibility.
 #
-# Name                  Type         Unit               Shape
+# Name                      Type         Unit               Shape
 #
-forces                  real*8       force              [numberOfParticles,3]
+forces                      real*8       force              [numberOfParticles,3]
 
 ################################################################################
 #
@@ -1014,9 +1019,9 @@ forces                  real*8       force              [numberOfParticles,3]
 # This argument should, ideally, be optional to ensure maximum Model/Test
 # compatibility.
 #
-# Name                  Type         Unit               Shape
+# Name                      Type         Unit               Shape
 #
-particleEnergy           real*8       energy             [numberOfParticles]
+particleEnergy              real*8       energy             [numberOfParticles]
 
 ################################################################################
 #
@@ -1029,9 +1034,9 @@ particleEnergy           real*8       energy             [numberOfParticles]
 #
 #
 #
-# Name                  Type         Unit               Shape
+# Name                      Type         Unit               Shape
 #
-virial            real*8       energy             [6]
+virial                      real*8       energy             [6]
 
 ################################################################################
 #
@@ -1044,9 +1049,9 @@ virial            real*8       energy             [6]
 #
 #
 #
-# Name                  Type         Unit               Shape
+# Name                      Type         Unit               Shape
 #
-particleVirial            real*8      energy             [numberOfParticles,6]
+particleVirial              real*8       energy             [numberOfParticles,6]
 
 ################################################################################
 #
@@ -1054,9 +1059,9 @@ particleVirial            real*8      energy             [numberOfParticles,6]
 #
 # This argument should, ideally, be optional to ensure maximum Model/Test
 # compatibility.
-# Name                  Type         Unit               Shape
+# Name                      Type         Unit               Shape
 #
-hessian              real*8        pressure           [numberOfParticles,numberOfParticles,3,3]
+hessian                     real*8       pressure           [numberOfParticles,numberOfParticles,3,3]
 
 ################################################################################
 #
@@ -1101,11 +1106,11 @@ MODEL_PARAMETERS:
 #
 # Examples
 #
-# Name                  Type         Unit               Shape
+# Name                      Type         Unit               Shape
 #
-# PARAM_FREE_Sigma      real*8       length             []
-# PARAM_FREE_Epsilon    real*8       energy             []
-# PARAM_FIXED_LJshift   real*8       energy             []
+# PARAM_FREE_Sigma          real*8       length             []
+# PARAM_FREE_Epsilon        real*8       energy             []
+# PARAM_FIXED_LJshift       real*8       energy             []
 #
 ################################################################################
 
@@ -1119,8 +1124,8 @@ MODEL_PARAMETERS:
 # Note: Currently this is the only standard parameter defined by the KIM API.
 #
 #
-# Name                  Type         Unit               Shape
+# Name                      Type         Unit               Shape
 #
-PARAM_FREE_cutoff       real*8       length             []
+PARAM_FREE_cutoff           real*8       length             []
 
 # END of standard.kim file

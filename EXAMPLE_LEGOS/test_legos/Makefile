@@ -89,33 +89,33 @@ test_Al_free_cluster: $(COMMON_FRAGMENTS)                      \
 	$(D_CAT) test_Makefile | $(SED_CMD)               >  $(KIM_TESTS_DIR)$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start    | $(SED_CMD) \
-         | sed -e 's/SPECIES_LINE_STR/Al                      spec                    13/g'                   >  $(KIM_TESTS_DIR)$@/$@.kim
+         | sed -e 's/SPECIES_LINE_STR/Al                          spec                    13/g'               >  $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "NEIGH_RVEC_F            flag"                                                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "NEIGH_RVEC_F                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "NEIGH_PURE_H            flag"                                                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "NEIGH_PURE_H                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "NEIGH_PURE_F            flag"                                                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "NEIGH_PURE_F                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "MI_OPBC_H               flag"                                                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "MI_OPBC_H                   flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "MI_OPBC_F               flag"                                                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "MI_OPBC_F                   flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_neighborlist                                                                 >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "numberContributingParticles integer      none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "numberContributingParticles integer      none                []"                                >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "boxSideLengths               real*8       length              [3]"                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "boxSideLengths              real*8       length              [3]"                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "forces                  real*8       force               [numberOfParticles,3]"                     >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "forces                      real*8       force               [numberOfParticles,3]"             >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "virial            real*8       energy              [6]"                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "virial                      real*8       energy              [6]"                               >> $(KIM_TESTS_DIR)$@/$@.kim
         # make .F90 file in the directory
 	$(F_CAT) program_free_cluster.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Al/g' \
@@ -155,11 +155,11 @@ test_Al_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_TESTS_DIR)$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start    | $(SED_CMD) \
-         | sed -e 's/SPECIES_LINE_STR/Al                      spec                    13/g'                   >  $(KIM_TESTS_DIR)$@/$@.kim
+         | sed -e 's/SPECIES_LINE_STR/Al                          spec                    13/g'               >  $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "MI_OPBC_H               flag"                                                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "MI_OPBC_H                   flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "MI_OPBC_F               flag"                                                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "MI_OPBC_F                   flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_TESTS_DIR)$@/$@.kim
@@ -167,12 +167,12 @@ test_Al_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
 	$(D_CAT) descriptor_file_neighborlist                                                                 >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "numberContributingParticles integer      none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "boxSideLengths               real*8       length              [3]"                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "numberContributingParticles integer      none                []"                                >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "boxSideLengths              real*8       length              [3]"                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "reinit                  method       none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "reinit                      method       none                []"                                >> $(KIM_TESTS_DIR)$@/$@.kim
         # make .F90 file in the directory
 	$(F_CAT) program_FCCcohesive_MI_OPBC.f.frag  | $(SED_CMD) \
                                                 | sed -e 's/SPECIES_NAME_STR/Al/g' \
@@ -213,10 +213,10 @@ test_ArNe_B2cohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                          \
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_TESTS_DIR)$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start    | $(SED_CMD) \
-         | sed -e 's/SPECIES_LINE_STR/Ar                      spec                    18\nNe                      spec                    10/g' \
+         | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    18\nNe                      spec                    10/g' \
                                                                                                               >  $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "NEIGH_RVEC_F            flag"                                                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "NEIGH_RVEC_F                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_TESTS_DIR)$@/$@.kim
@@ -225,7 +225,7 @@ test_ArNe_B2cohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                          \
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "reinit                  method       none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "reinit                      method       none                []"                                >> $(KIM_TESTS_DIR)$@/$@.kim
         # make .F90 file in the directory
 	$(F_CAT) program_B2cohesive_NEIGH_RVEC.f.frag  | $(SED_CMD) \
          | sed -e 's/SPECIES1_NAME_STR/Ar/g' \
@@ -263,9 +263,9 @@ test_Ar_FCCcohesiveCutoff_NEIGH_RVEC: $(COMMON_FRAGMENTS)                       
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_TESTS_DIR)$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start    | $(SED_CMD) \
-         | sed -e 's/SPECIES_LINE_STR/Ar                      spec                    18/g'                   >  $(KIM_TESTS_DIR)$@/$@.kim
+         | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    18/g'               >  $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "NEIGH_RVEC_F            flag"                                                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "NEIGH_RVEC_F                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_TESTS_DIR)$@/$@.kim
@@ -275,7 +275,7 @@ test_Ar_FCCcohesiveCutoff_NEIGH_RVEC: $(COMMON_FRAGMENTS)                       
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "reinit                  method       none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "reinit                      method       none                []"                                >> $(KIM_TESTS_DIR)$@/$@.kim
         # make .F90 file in the directory
 	$(F_CAT) program_FCCcohesiveCutoff_NEIGH_RVEC.f.frag  | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
@@ -314,24 +314,24 @@ test_Ar_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_TESTS_DIR)$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start    | $(SED_CMD) \
-         | sed -e 's/SPECIES_LINE_STR/Ar                      spec                    18/g'                   >  $(KIM_TESTS_DIR)$@/$@.kim
+         | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    18/g'               >  $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "MI_OPBC_H               flag"                                                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "MI_OPBC_H                   flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "MI_OPBC_F               flag"                                                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "MI_OPBC_F                   flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_neighborlist                                                                 >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "numberContributingParticles integer      none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "numberContributingParticles integer      none                []"                                >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "boxSideLengths               real*8       length              [3]"                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "boxSideLengths              real*8       length              [3]"                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "reinit                  method       none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "reinit                      method       none                []"                                >> $(KIM_TESTS_DIR)$@/$@.kim
         # make .F90 file in the directory
 	$(F_CAT) program_FCCcohesive_MI_OPBC.f.frag  | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
@@ -372,11 +372,11 @@ test_Ar_FCCcohesive_NEIGH_PURE: $(COMMON_FRAGMENTS)                          \
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_TESTS_DIR)$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start    | $(SED_CMD) \
-         | sed -e 's/SPECIES_LINE_STR/Ar                      spec                    18/g'                   >  $(KIM_TESTS_DIR)$@/$@.kim
+         | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    18/g'               >  $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "NEIGH_PURE_H            flag"                                                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "NEIGH_PURE_H                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "NEIGH_PURE_F            flag"                                                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "NEIGH_PURE_F                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_TESTS_DIR)$@/$@.kim
@@ -387,7 +387,7 @@ test_Ar_FCCcohesive_NEIGH_PURE: $(COMMON_FRAGMENTS)                          \
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "reinit                  method       none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "reinit                      method       none                []"                                >> $(KIM_TESTS_DIR)$@/$@.kim
         # make .F90 file in the directory
 	$(F_CAT) program_FCCcohesive_NEIGH_PURE.f.frag  | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
@@ -427,9 +427,9 @@ test_Ar_FCCcohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                           \
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_TESTS_DIR)$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start    | $(SED_CMD) \
-         | sed -e 's/SPECIES_LINE_STR/Ar                      spec                    18/g'                   >  $(KIM_TESTS_DIR)$@/$@.kim
+         | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    18/g'               >  $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "NEIGH_RVEC_F            flag"                                                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "NEIGH_RVEC_F                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_TESTS_DIR)$@/$@.kim
@@ -438,7 +438,7 @@ test_Ar_FCCcohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                           \
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "reinit                  method       none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "reinit                      method       none                []"                                >> $(KIM_TESTS_DIR)$@/$@.kim
         # make .F90 file in the directory
 	$(F_CAT) program_FCCcohesive_NEIGH_RVEC.f.frag  | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
@@ -470,9 +470,9 @@ test_Ar_free_cluster_CLUSTER_C: $(COMMON_FRAGMENTS)                 \
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_TESTS_DIR)$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start    | $(SED_CMD) \
-         | sed -e 's/SPECIES_LINE_STR/Ar                      spec                    18/g'                   >  $(KIM_TESTS_DIR)$@/$@.kim
+         | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    18/g'               >  $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "CLUSTER                 flag"                                                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "CLUSTER                     flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_TESTS_DIR)$@/$@.kim
@@ -480,9 +480,9 @@ test_Ar_free_cluster_CLUSTER_C: $(COMMON_FRAGMENTS)                 \
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "forces                  real*8       force               [numberOfParticles,3]"                     >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "forces                      real*8       force               [numberOfParticles,3]"             >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "virial            real*8       energy              [6]"                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "virial                      real*8       energy              [6]"                               >> $(KIM_TESTS_DIR)$@/$@.kim
         # make .F90 file in the directory
 	$(C_CAT) program_free_cluster_CLUSTER.c.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
@@ -504,9 +504,9 @@ test_Ar_free_cluster_CLUSTER_F90: $(COMMON_FRAGMENTS)                 \
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_TESTS_DIR)$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start    | $(SED_CMD) \
-         | sed -e 's/SPECIES_LINE_STR/Ar                      spec                    18/g'                   >  $(KIM_TESTS_DIR)$@/$@.kim
+         | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    18/g'               >  $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "CLUSTER                 flag"                                                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "CLUSTER                     flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_TESTS_DIR)$@/$@.kim
@@ -514,9 +514,9 @@ test_Ar_free_cluster_CLUSTER_F90: $(COMMON_FRAGMENTS)                 \
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "forces                  real*8       force               [numberOfParticles,3]"                     >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "forces                      real*8       force               [numberOfParticles,3]"             >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "virial            real*8       energy              [6]"                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "virial                      real*8       energy              [6]"                               >> $(KIM_TESTS_DIR)$@/$@.kim
         # make .F90 file in the directory
 	$(F_CAT) program_free_cluster_CLUSTER.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
@@ -544,33 +544,33 @@ test_Ar_free_cluster: $(COMMON_FRAGMENTS)                      \
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_TESTS_DIR)$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start    | $(SED_CMD) \
-         | sed -e 's/SPECIES_LINE_STR/Ar                      spec                    18/g'                   >  $(KIM_TESTS_DIR)$@/$@.kim
+         | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    18/g'               >  $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "NEIGH_RVEC_F            flag"                                                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "NEIGH_RVEC_F                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "NEIGH_PURE_H            flag"                                                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "NEIGH_PURE_H                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "NEIGH_PURE_F            flag"                                                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "NEIGH_PURE_F                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "MI_OPBC_H               flag"                                                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "MI_OPBC_H                   flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "MI_OPBC_F               flag"                                                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "MI_OPBC_F                   flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_neighborlist                                                                 >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "numberContributingParticles integer      none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "numberContributingParticles integer      none                []"                                >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "boxSideLengths               real*8       length              [3]"                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "boxSideLengths              real*8       length              [3]"                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "forces                  real*8       force               [numberOfParticles,3]"                     >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "forces                      real*8       force               [numberOfParticles,3]"             >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "virial            real*8       energy              [6]"                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "virial                      real*8       energy              [6]"                               >> $(KIM_TESTS_DIR)$@/$@.kim
         # make .F90 file in the directory
 	$(F_CAT) program_free_cluster.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
@@ -609,33 +609,33 @@ test_Ne_free_cluster: $(COMMON_FRAGMENTS)                      \
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_TESTS_DIR)$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start    | $(SED_CMD) \
-         | sed -e 's/SPECIES_LINE_STR/Ne                      spec                    10/g'                   >  $(KIM_TESTS_DIR)$@/$@.kim
+         | sed -e 's/SPECIES_LINE_STR/Ne                          spec                    10/g'               >  $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "NEIGH_RVEC_F            flag"                                                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "NEIGH_RVEC_F                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "NEIGH_PURE_H            flag"                                                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "NEIGH_PURE_H                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "NEIGH_PURE_F            flag"                                                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "NEIGH_PURE_F                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "MI_OPBC_H               flag"                                                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "MI_OPBC_H                   flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "MI_OPBC_F               flag"                                                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "MI_OPBC_F                   flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_neighborlist                                                                 >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "numberContributingParticles integer      none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "numberContributingParticles integer      none                []"                                >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "boxSideLengths               real*8       length              [3]"                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "boxSideLengths              real*8       length              [3]"                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "forces                  real*8       force               [numberOfParticles,3]"                     >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "forces                      real*8       force               [numberOfParticles,3]"             >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "virial            real*8       energy              [6]"                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "virial                      real*8       energy              [6]"                               >> $(KIM_TESTS_DIR)$@/$@.kim
         # make .F90 file in the directory
 	$(F_CAT) program_free_cluster.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ne/g' \
@@ -674,33 +674,33 @@ test_Ne_free_cluster_SI: $(COMMON_FRAGMENTS)                      \
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_TESTS_DIR)$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start_SI    | $(SED_CMD) \
-         | sed -e 's/SPECIES_LINE_STR/Ne                      spec                    10/g'                   >  $(KIM_TESTS_DIR)$@/$@.kim
+         | sed -e 's/SPECIES_LINE_STR/Ne                          spec                    10/g'               >  $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "NEIGH_RVEC_F            flag"                                                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "NEIGH_RVEC_F                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "NEIGH_PURE_H            flag"                                                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "NEIGH_PURE_H                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "NEIGH_PURE_F            flag"                                                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "NEIGH_PURE_F                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "MI_OPBC_H               flag"                                                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "MI_OPBC_H                   flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "MI_OPBC_F               flag"                                                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "MI_OPBC_F                   flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_neighborlist                                                                 >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "numberContributingParticles integer      none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "numberContributingParticles integer      none                []"                                >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "boxSideLengths               real*8       length              [3]"                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "boxSideLengths              real*8       length              [3]"                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "forces                  real*8       force               [numberOfParticles,3]"                     >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "forces                      real*8       force               [numberOfParticles,3]"             >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "virial            real*8       energy              [6]"                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "virial                      real*8       energy              [6]"                               >> $(KIM_TESTS_DIR)$@/$@.kim
         # make .F90 file in the directory
 	$(F_CAT) program_free_cluster.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ne/g' \
@@ -739,35 +739,36 @@ test_Ne_free_cluster_stiff: $(COMMON_FRAGMENTS)                      \
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_TESTS_DIR)$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start    | $(SED_CMD) \
-         | sed -e 's/SPECIES_LINE_STR/Ne                      spec                    10/g'                   >  $(KIM_TESTS_DIR)$@/$@.kim
+         | sed -e 's/SPECIES_LINE_STR/Ne                          spec                    10/g'               >  $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "NEIGH_RVEC_F            flag"                                                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "NEIGH_RVEC_F                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "NEIGH_PURE_H            flag"                                                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "NEIGH_PURE_H                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "NEIGH_PURE_F            flag"                                                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "NEIGH_PURE_F                flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "MI_OPBC_H               flag"                                                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "MI_OPBC_H                   flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "MI_OPBC_F               flag"                                                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "MI_OPBC_F                   flag"                                                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_neighborlist                                                                 >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "numberContributingParticles integer      none                []"                                    >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "numberContributingParticles integer      none                []"                                >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "boxSideLengths               real*8       length              [3]"                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "boxSideLengths              real*8       length              [3]"                               >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "forces                  real*8       force               [numberOfParticles,3]"                     >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "forces                      real*8       force               [numberOfParticles,3]"             >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "hessian               real*8       stress              [numberOfParticles,numberOfParticles,3,3]"     >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "hessian                     real*8       stress              [numberOfParticles,numberOfParticles,3,3]" \
+                                                                                                              >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
-	echo "virial            real*8       energy              [6]"                                   >> $(KIM_TESTS_DIR)$@/$@.kim
+	echo "virial                      real*8       energy              [6]"                               >> $(KIM_TESTS_DIR)$@/$@.kim
         # make .F90 file in the directory
 	$(F_CAT) program_free_cluster_stiff.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ne/g' \

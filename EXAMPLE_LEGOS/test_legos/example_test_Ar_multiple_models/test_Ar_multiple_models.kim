@@ -23,25 +23,25 @@ Unit_time        := fs
 
 #######################################################################################################
 SUPPORTED_ATOM/PARTICLES_TYPES:
-# Symbol/name           Type                    code
+# Symbol/name               Type                    code
 
-Ar                      spec                    18
+Ar                          spec                    18
 
 
 #######################################################################################################
 CONVENTIONS:
-# Name                  Type
+# Name                      Type
 
-ZeroBasedLists          flag
+ZeroBasedLists              flag
 
-Neigh_BothAccess        flag
+Neigh_BothAccess            flag
 
-NEIGH_RVEC_F            flag
+NEIGH_RVEC_F                flag
 
 
 #######################################################################################################
 MODEL_INPUT:
-# Name                  Type         Unit                Shape              Requirements
+# Name                      Type         Unit                Shape              Requirements
 
 numberOfParticles           integer      none                []
 
@@ -49,25 +49,25 @@ numberContributingParticles integer      none                []
 
 numberParticleTypes         integer      none                []
 
-atomTypes               integer      none                [numberOfParticles]
+atomTypes                   integer      none                [numberOfParticles]
 
-coordinates             real*8       length              [numberOfParticles,3]
+coordinates                 real*8       length              [numberOfParticles,3]
 
-get_neigh               method       none                []
+get_neigh                   method       none                []
 
-neighObject             pointer      none                []
+neighObject                 pointer      none                []
 
 
 #######################################################################################################
 MODEL_OUTPUT:
-# Name                  Type         Unit                Shape              Requirements
+# Name                      Type         Unit                Shape              Requirements
 
-destroy                 method       none                []
+destroy                     method       none                []
 
-compute                 method       none                []
+compute                     method       none                []
 
-reinit                  method       none                []
+reinit                      method       none                []
 
-cutoff                  real*8       length              []
+cutoff                      real*8       length              []
 
-energy                  real*8       energy              []
+energy                      real*8       energy              []

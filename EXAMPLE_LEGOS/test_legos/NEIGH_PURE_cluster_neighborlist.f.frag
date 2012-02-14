@@ -8,10 +8,10 @@ subroutine NEIGH_PURE_cluster_neighborlist(half, numberOfParticles, coords, cuto
   implicit none
   
   !-- Transferred variables
-  logical,                                             intent(in)  :: half
-  integer,                                             intent(in)  :: numberOfParticles
-  double precision, dimension(3,numberOfParticles),        intent(in)  :: coords
-  double precision,                                    intent(in)  :: cutoff
+  logical,                                                     intent(in)  :: half
+  integer,                                                     intent(in)  :: numberOfParticles
+  double precision, dimension(3,numberOfParticles),            intent(in)  :: coords
+  double precision,                                            intent(in)  :: cutoff
   integer,   dimension(numberOfParticles+1,numberOfParticles), intent(out) :: neighborList ! not memory efficient
   
   !-- Local variables

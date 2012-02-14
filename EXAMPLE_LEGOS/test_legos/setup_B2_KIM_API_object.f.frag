@@ -19,9 +19,9 @@ subroutine setup_B2_KIM_API_object(pkim, testname, modelname, specname1, specnam
   integer            :: N = 2 ! hard-wired to two atoms
   integer, parameter :: ATypes = 2  ! hard-wired to two atomic types
   integer ier, idum
-  integer numberOfParticles;         pointer(pnAtoms,numberOfParticles)
-  integer numberParticleTypes;       pointer(pnparticleTypes,numberParticleTypes)
-  integer atomTypesdum(1);       pointer(patomTypesdum,atomTypesdum)
+  integer numberOfParticles;   pointer(pnAtoms,numberOfParticles)
+  integer numberParticleTypes; pointer(pnparticleTypes,numberParticleTypes)
+  integer atomTypesdum(1);     pointer(patomTypesdum,atomTypesdum)
   integer, pointer :: atomTypes(:)
 
   ! Initialize KIM API object
@@ -48,9 +48,9 @@ subroutine setup_B2_KIM_API_object(pkim, testname, modelname, specname1, specnam
   ! Unpack data from KIM object whose values need to be set
   !
   call kim_api_getm_data_f(pkim, ier, &
-       "numberOfParticles",   pnAtoms,       1, &
-       "numberParticleTypes", pnparticleTypes,   1, &
-       "atomTypes",       patomTypesdum, 1)
+       "numberOfParticles",   pnAtoms,         1, &
+       "numberParticleTypes", pnparticleTypes, 1, &
+       "atomTypes",           patomTypesdum,   1)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
      stop

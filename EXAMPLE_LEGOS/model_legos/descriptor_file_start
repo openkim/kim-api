@@ -23,13 +23,13 @@ Unit_time        := fs
 
 #######################################################################################################
 SUPPORTED_ATOM/PARTICLES_TYPES:
-# Symbol/name           Type                    code
+# Symbol/name               Type                    code
 
 SPECIES_LINE_STR
 
 
 #######################################################################################################
 CONVENTIONS:
-# Name                  Type
+# Name                      Type
 
-OneBasedLists           flag
+OneBasedLists               flag

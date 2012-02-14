@@ -55,36 +55,36 @@ contains
     integer i,j,jj,numnei,atom,atom_ret
     
     !-- KIM variables
-    integer numberOfParticles;         pointer(pnAtoms,numberOfParticles)
-    integer nparticleTypes;            pointer(pnparticleTypes,nparticleTypes)
-    integer atomTypes(1);          pointer(patomTypes,atomTypes)
-    real*8 model_cutoff;           pointer(pcutoff,model_cutoff)
-    real*8 model_epsilon(1);       pointer(pepsilon,model_epsilon)
-    real*8 model_sigma(1);         pointer(psigma,model_sigma)
-    real*8 model_cutnorm(1);       pointer(pcutnorm,model_cutnorm)
-    real*8 model_A(1);             pointer(pA,model_A)
-    real*8 model_B(1);             pointer(pB,model_B)
-    real*8 model_C(1);             pointer(pC,model_C)
-    real*8 model_sigmasq(1);       pointer(psigmasq,model_sigmasq)
-    real*8 model_cutsq;            pointer(pcutsq,model_cutsq)
-    real*8 energy;                 pointer(penergy,energy)
-    real*8 coordum(DIM,1);         pointer(pcoor,coordum)
-    real*8 forcedum(DIM,1);        pointer(pforce,forcedum)
-    real*8 enepotdum(1);           pointer(penepot,enepotdum)
-    real*8 virialdum(1);     pointer(pvirial,virialdum)
-    real*8 Rij(3,1);               pointer(pRij,Rij)
-    integer nei1atom(1);           pointer(pnei1atom,nei1atom)
+    integer numberOfParticles; pointer(pnAtoms,numberOfParticles)
+    integer nparticleTypes;    pointer(pnparticleTypes,nparticleTypes)
+    integer atomTypes(1);      pointer(patomTypes,atomTypes)
+    real*8 model_cutoff;       pointer(pcutoff,model_cutoff)
+    real*8 model_epsilon(1);   pointer(pepsilon,model_epsilon)
+    real*8 model_sigma(1);     pointer(psigma,model_sigma)
+    real*8 model_cutnorm(1);   pointer(pcutnorm,model_cutnorm)
+    real*8 model_A(1);         pointer(pA,model_A)
+    real*8 model_B(1);         pointer(pB,model_B)
+    real*8 model_C(1);         pointer(pC,model_C)
+    real*8 model_sigmasq(1);   pointer(psigmasq,model_sigmasq)
+    real*8 model_cutsq;        pointer(pcutsq,model_cutsq)
+    real*8 energy;             pointer(penergy,energy)
+    real*8 coordum(DIM,1);     pointer(pcoor,coordum)
+    real*8 forcedum(DIM,1);    pointer(pforce,forcedum)
+    real*8 enepotdum(1);       pointer(penepot,enepotdum)
+    real*8 virialdum(1);       pointer(pvirial,virialdum)
+    real*8 Rij(3,1);           pointer(pRij,Rij)
+    integer nei1atom(1);       pointer(pnei1atom,nei1atom)
     real*8, pointer :: coor(:,:),force(:,:),ene_pot(:),virial_global(:)
     integer :: comp_force, comp_enepot, comp_virial, comp_energy
     integer :: idum
 
     ! Check to see if we have been asked to compute the forces, energyperatom, 
     ! energy and virial
-    call kim_api_getm_compute_f(pkim, ier, &
-         "energy",        comp_energy,  1, &
-         "forces",        comp_force,   1, &
+    call kim_api_getm_compute_f(pkim, ier,  &
+         "energy",         comp_energy,  1, &
+         "forces",         comp_force,   1, &
          "particleEnergy", comp_enepot,  1, &
-         "virial",  comp_virial,  1)
+         "virial",         comp_virial,  1)
     if (ier.lt.KIM_STATUS_OK) then
        idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_compute_f", ier)
        return
@@ -93,15 +93,15 @@ contains
     ! Unpack data from KIM object
     !
     call kim_api_getm_data_f(pkim, ier, &
-         "numberOfParticles",       pnAtoms,       1,                           &
-         "numberParticleTypes",     pnparticleTypes,   1,                           &
-         "atomTypes",           patomTypes,    1,                           &
-         "cutoff",              pcutoff,       1,                           &
-         "coordinates",         pcoor,         1,                           &
-         "energy",              penergy,       TRUEFALSE(comp_energy.eq.1), &
-         "forces",              pforce,        TRUEFALSE(comp_force.eq.1),  &
-         "particleEnergy",       penepot,       TRUEFALSE(comp_enepot.eq.1), &
-         "virial",        pvirial, TRUEFALSE(comp_virial.eq.1))
+         "numberOfParticles",   pnAtoms,         1,                           &
+         "numberParticleTypes", pnparticleTypes, 1,                           &
+         "atomTypes",           patomTypes,      1,                           &
+         "cutoff",              pcutoff,         1,                           &
+         "coordinates",         pcoor,           1,                           &
+         "energy",              penergy,         TRUEFALSE(comp_energy.eq.1), &
+         "forces",              pforce,          TRUEFALSE(comp_force.eq.1),  &
+         "particleEnergy",      penepot,         TRUEFALSE(comp_enepot.eq.1), &
+         "virial",              pvirial,         TRUEFALSE(comp_virial.eq.1))
     if (ier.lt.KIM_STATUS_OK) then
        idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
        return
@@ -142,9 +142,9 @@ contains
     ! Initialize potential energies, forces, virial term
     !
     if (comp_enepot.eq.1) ene_pot(1:numberOfParticles)   = 0.d0
-    if (comp_energy.eq.1) energy                     = 0.d0
+    if (comp_energy.eq.1) energy                         = 0.d0
     if (comp_force.eq.1)  force(1:3,1:numberOfParticles) = 0.d0
-    if (comp_virial.eq.1) virial_global              = 0.d0
+    if (comp_virial.eq.1) virial_global                  = 0.d0
 
 
     !  Compute energy and forces

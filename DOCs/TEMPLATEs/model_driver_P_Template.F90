@@ -164,22 +164,22 @@ character*80 :: error_message
 integer :: idum
 
 !-- KIM variables
-real*8 model_cutoff;     pointer(pmodel_cutoff, model_cutoff)  ! cutoff radius
-real*8 model_cutsq;      pointer(pmodel_cutsq,  model_cutsq)   ! cutoff radius squared
-real*8 model_<FILL parameter 1>; pointer(pmodel_<FILL parameter 1>,model_<FILL parameter 1>)
-real*8 model_<FILL parameter 2>; pointer(pmodel_<FILL parameter 2>,model_<FILL parameter 2>)
+real*8  model_cutoff;         pointer(pmodel_cutoff, model_cutoff)  ! cutoff radius
+real*8  model_cutsq;          pointer(pmodel_cutsq,  model_cutsq)   ! cutoff radius squared
+real*8  model_<FILL parameter 1>; pointer(pmodel_<FILL parameter 1>,model_<FILL parameter 1>)
+real*8  model_<FILL parameter 2>; pointer(pmodel_<FILL parameter 2>,model_<FILL parameter 2>)
 ! FILL as many parameter declarations as necessary
-integer N;               pointer(pN,N)
-real*8  energy;          pointer(penergy,energy)
-real*8  coordum(DIM,1);  pointer(pcoor,coordum)
-real*8  forcedum(DIM,1); pointer(pforce,forcedum)
-real*8  enepotdum(1);    pointer(penepot,enepotdum)
+integer N;                    pointer(pN,N)
+real*8  energy;               pointer(penergy,energy)
+real*8  coordum(DIM,1);       pointer(pcoor,coordum)
+real*8  forcedum(DIM,1);      pointer(pforce,forcedum)
+real*8  enepotdum(1);         pointer(penepot,enepotdum)
 real*8  boxSideLengths(DIM);  pointer(pboxSideLengths,boxSideLengths)
-real*8  Rij_list(DIM,1); pointer(pRij_list,Rij_list)
-integer numContrib;      pointer(pnumContrib,numContrib)
-integer nei1atom(1);     pointer(pnei1atom,nei1atom)
-integer atomTypes(1);    pointer(patomTypes,atomTypes)
-character*64 NBC_Method; pointer(pNBC_Method,NBC_Method)
+real*8  Rij_list(DIM,1);      pointer(pRij_list,Rij_list)
+integer numContrib;           pointer(pnumContrib,numContrib)
+integer nei1atom(1);          pointer(pnei1atom,nei1atom)
+integer atomTypes(1);         pointer(patomTypes,atomTypes)
+character*64 NBC_Method;      pointer(pNBC_Method,NBC_Method)
 real*8, pointer :: coor(:,:),force(:,:),ene_pot(:)
 integer IterOrLoca
 integer HalfOrFull
@@ -265,10 +265,10 @@ endif
 ! energy and d1Edr
 !
 call kim_api_getm_compute_f(pkim, ier, &
-     "energy",        comp_energy,        1, &
-     "forces",        comp_force,         1, &
-     "particleEnergy", comp_enepot,        1, &
-     "process_dEdr", comp_process_dEdr, 1, &
+     "energy",         comp_energy,         1, &
+     "forces",         comp_force,          1, &
+     "particleEnergy", comp_enepot,         1, &
+     "process_dEdr",   comp_process_dEdr,   1, &
      "process_d2Edr2", comp_process_d2Edr2, 1)
 if (ier.lt.KIM_STATUS_OK) then
    idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_compute_f", ier)
@@ -278,14 +278,14 @@ endif
 ! Unpack data from KIM object
 !
 call kim_api_getm_data_f(pkim, ier, &
-     "numberOfParticles",           pN,          1,                           &
-     "atomTypes",               patomTypes,  1,                           &
-     "coordinates",             pcoor,       1,                           &
-     "numberContributingParticles", pnumContrib, TRUEFALSE(HalfOrFull.eq.1),  &
-     "boxSideLengths",               pboxSideLengths,  TRUEFALSE(NBC.eq.1),         &
-     "energy",                  penergy,     TRUEFALSE(comp_energy.eq.1), &
-     "forces",                  pforce,      TRUEFALSE(comp_force.eq.1),  &
-     "particleEnergy",           penepot,     TRUEFALSE(comp_enepot.eq.1))
+     "numberOfParticles",           pN,              1,                           &
+     "atomTypes",                   patomTypes,      1,                           &
+     "coordinates",                 pcoor,           1,                           &
+     "numberContributingParticles", pnumContrib,     TRUEFALSE(HalfOrFull.eq.1),  &
+     "boxSideLengths",              pboxSideLengths, TRUEFALSE(NBC.eq.1),         &
+     "energy",                      penergy,         TRUEFALSE(comp_energy.eq.1), &
+     "forces",                      pforce,          TRUEFALSE(comp_force.eq.1),  &
+     "particleEnergy",              penepot,         TRUEFALSE(comp_enepot.eq.1))
 if (ier.lt.KIM_STATUS_OK) then
    idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
    return
