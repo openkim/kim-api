@@ -1,7 +1,7 @@
     !-- KIM variables
     integer numberOfParticles;  pointer(pnAtoms,numberOfParticles)
     integer nparticleTypes;     pointer(pnparticleTypes,nparticleTypes)
-    integer atomTypes(1);       pointer(patomTypes,atomTypes)
+    integer particleTypes(1);   pointer(pparticleTypes,particleTypes)
     real*8 model_cutoff;        pointer(pcutoff,model_cutoff)
     real*8 model_epsilon;       pointer(pepsilon,model_epsilon)
     real*8 model_sigma;         pointer(psigma,model_sigma)

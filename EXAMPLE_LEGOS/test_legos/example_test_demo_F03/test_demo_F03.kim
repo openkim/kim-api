@@ -47,7 +47,7 @@ numberOfParticles           integer*8    none       none                    []  
 
 numberParticleTypes         integer      none       none                    []
 
-atomTypes               integer      none       none                    [numberOfParticles]                 # one [flag] -- rank is one
+particleTypes           integer      none       none                    [numberOfParticles]                 # one [flag] -- rank is one
 
 coordinates             real*8       length     standard                [numberOfParticles,3]
 

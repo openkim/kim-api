@@ -57,7 +57,7 @@ contains
     !-- KIM variables
     integer numberOfParticles; pointer(pnAtoms,numberOfParticles)
     integer nparticleTypes;    pointer(pnparticleTypes,nparticleTypes)
-    integer atomTypes(1);      pointer(patomTypes,atomTypes)
+    integer particleTypes(1);  pointer(pparticleTypes,particleTypes)
     real*8 model_cutoff;       pointer(pcutoff,model_cutoff)
     real*8 model_epsilon(1);   pointer(pepsilon,model_epsilon)
     real*8 model_sigma(1);     pointer(psigma,model_sigma)
@@ -95,7 +95,7 @@ contains
     call kim_api_getm_data_f(pkim, ier, &
          "numberOfParticles",   pnAtoms,         1,                           &
          "numberParticleTypes", pnparticleTypes, 1,                           &
-         "atomTypes",           patomTypes,      1,                           &
+         "particleTypes",       pparticleTypes,  1,                           &
          "cutoff",              pcutoff,         1,                           &
          "coordinates",         pcoor,           1,                           &
          "energy",              penergy,         TRUEFALSE(comp_energy.eq.1), &
@@ -131,7 +131,7 @@ contains
     ! Check to be sure that the atom types are correct
     ier = KIM_STATUS_FAIL ! assume an error
     do i = 1,numberOfParticles
-       if (.not. ( (atomTypes(i).eq.Ar) .or. (atomTypes(i).eq.Ne) ) ) then
+       if (.not. ( (particleTypes(i).eq.Ar) .or. (particleTypes(i).eq.Ne) ) ) then
           idum = kim_api_report_error_f(__LINE__, __FILE__, "Wrong Atom Type", ier)
           return
        endif
@@ -167,13 +167,13 @@ contains
           Rsqij = dot_product(Rij(:,jj),Rij(:,jj))         ! compute square distance
           if ( Rsqij < model_cutsq ) then                  ! particles are interacting?
              r = sqrt(Rsqij)                               ! compute distance
-             if ((atomTypes(i).eq.Ar).and.(atomTypes(nei1atom(jj)).eq.Ar)) then
+             if ((particleTypes(i).eq.Ar).and.(particleTypes(nei1atom(jj)).eq.Ar)) then
                 CurEpsilon = model_epsilon(Ar)
                 CurSigma   = model_sigma(Ar)
                 CurA       = model_A(Ar)
                 CurB       = model_B(Ar)
                 CurC       = model_C(Ar)
-             else if ((atomTypes(i).eq.Ne).and.(atomTypes(nei1atom(jj)).eq.Ne)) then
+             else if ((particleTypes(i).eq.Ne).and.(particleTypes(nei1atom(jj)).eq.Ne)) then
                 CurEpsilon = model_epsilon(Ne)
                 CurSigma   = model_sigma(Ne)
                 CurA       = model_A(Ne)

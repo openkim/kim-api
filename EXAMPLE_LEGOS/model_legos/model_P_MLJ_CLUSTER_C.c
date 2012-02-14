@@ -128,7 +128,7 @@ static void compute(void* km, int* ier)
    int comp_virial;
 
    int* nAtoms;
-   int* atomTypes;
+   int* particleTypes;
    double* cutoff;
    double* epsilon;
    double* sigma;
@@ -156,7 +156,7 @@ static void compute(void* km, int* ier)
    /* unpack data from KIM object */
    KIM_API_getm_data(pkim, ier, 7*3,
                      "numberOfParticles", &nAtoms,         1,
-                     "atomTypes",         &atomTypes,      1,
+                     "particleTypes",     &particleTypes,  1,
                      "energy",            &energy,         1,
                      "coordinates",       &coords,         1,
                      "forces",            &force,          comp_force,
@@ -188,7 +188,7 @@ static void compute(void* km, int* ier)
    *ier = KIM_STATUS_FAIL; /* assume an error */
    for (i = 0; i < *nAtoms; ++i)
    {
-      if ( SPECCODE != atomTypes[i])
+      if ( SPECCODE != particleTypes[i])
       {
          KIM_API_report_error(__LINE__, __FILE__, "Unexpected species type detected", i);
          return;

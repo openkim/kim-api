@@ -67,7 +67,7 @@ contains
     call kim_api_getm_data_f(pkim, ier, &
          "numberOfParticles",           pnumberofatoms, 1,                         &
          "numberContributingParticles", pnumContrib,    1,                         &
-         "atomTypes",                   pattypes,       1,                         &
+         "particleTypes",               pattypes,       1,                         &
          "coordinates",                 px,             1,                         &
          "forces",                      pf,             TRUEFALSE(f_flag.eq.1),    &
          "energy",                      ppotenergy,     TRUEFALSE(e_flag.eq.1),    &

@@ -21,8 +21,8 @@ subroutine setup_B2_KIM_API_object(pkim, testname, modelname, specname1, specnam
   integer ier, idum
   integer numberOfParticles;   pointer(pnAtoms,numberOfParticles)
   integer numberParticleTypes; pointer(pnparticleTypes,numberParticleTypes)
-  integer atomTypesdum(1);     pointer(patomTypesdum,atomTypesdum)
-  integer, pointer :: atomTypes(:)
+  integer particleTypesdum(1); pointer(pparticleTypesdum,particleTypesdum)
+  integer, pointer :: particleTypes(:)
 
   ! Initialize KIM API object
   !
@@ -48,26 +48,26 @@ subroutine setup_B2_KIM_API_object(pkim, testname, modelname, specname1, specnam
   ! Unpack data from KIM object whose values need to be set
   !
   call kim_api_getm_data_f(pkim, ier, &
-       "numberOfParticles",   pnAtoms,         1, &
-       "numberParticleTypes", pnparticleTypes, 1, &
-       "atomTypes",           patomTypesdum,   1)
+       "numberOfParticles",   pnAtoms,           1, &
+       "numberParticleTypes", pnparticleTypes,   1, &
+       "particleTypes",       pparticleTypesdum, 1)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
      stop
   endif
 
-  call KIM_to_F90_int_array_1d(atomTypesdum, atomTypes, N)
+  call KIM_to_F90_int_array_1d(particleTypesdum, particleTypes, N)
 
   ! Set values
   !
   numberOfParticles   = N
   numberParticleTypes = ATypes
-  atomTypes(1)    = kim_api_get_partcl_type_code_f(pkim, specname1, ier)
+  particleTypes(1)    = kim_api_get_partcl_type_code_f(pkim, specname1, ier)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_partcl_type_code_f", ier)
      stop
   endif
-  atomTypes(2)    = kim_api_get_partcl_type_code_f(pkim, specname2, ier)
+  particleTypes(2)    = kim_api_get_partcl_type_code_f(pkim, specname2, ier)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_partcl_type_code_f", ier)
      stop

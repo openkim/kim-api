@@ -827,7 +827,7 @@ numberParticleTypes         integer      none              []
 
 ################################################################################
 #
-# atomTypes : A vector of integers indicating the type of each particle in the 
+# particleTypes : A vector of integers indicating the type of each particle in the 
 #             configuration passed between the Model and Test.  
 #
 # The values in this vector must correspond to the `code' specified in the
@@ -837,7 +837,7 @@ numberParticleTypes         integer      none              []
 #
 # Name                      Type         Unit               Shape
 #
-atomTypes                   integer      none               [numberOfParticles]
+particleTypes               integer      none               [numberOfParticles]
 
 ################################################################################
 #

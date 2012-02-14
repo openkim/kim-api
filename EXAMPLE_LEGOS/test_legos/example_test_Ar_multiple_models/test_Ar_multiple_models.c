@@ -117,7 +117,7 @@ int main()
                      "numberOfParticles",           1,   &numberOfParticles_periodic,     1,
                      "numberContributingParticles", 1,   &numContrib_periodic,            1,
                      "numberParticleTypes",         1,   &numberParticleTypes,            1,
-                     "atomTypes",                   1,   &particleTypes_periodic_model_0, 1,
+                     "particleTypes",               1,   &particleTypes_periodic_model_0, 1,
                      "coordinates",                 DIM, coords_periodic,                 1,
                      "get_neigh",                   1,   &get_periodic_neigh,             1,
                      "neighObject",                 1,   &nl_periodic_model_0,            1,
@@ -129,7 +129,7 @@ int main()
                      "numberOfParticles",           1,   &numberOfParticles_periodic,     1,
                      "numberContributingParticles", 1,   &numContrib_periodic,            1,
                      "numberParticleTypes",         1,   &numberParticleTypes,            1,
-                     "atomTypes",                   1,   &particleTypes_periodic_model_1, 1,
+                     "particleTypes",               1,   &particleTypes_periodic_model_1, 1,
                      "coordinates",                 DIM, coords_periodic,                 1,
                      "get_neigh",                   1,   &get_periodic_neigh,             1,
                      "neighObject",                 1,   &nl_periodic_model_1,            1,
@@ -141,7 +141,7 @@ int main()
                      "numberOfParticles",           1,   &numberOfParticles_cluster,     1,
                      "numberContributingParticles", 1,   &numContrib_cluster,            1,
                      "numberParticleTypes",         1,   &numberParticleTypes,           1,
-                     "atomTypes",                   1,   &particleTypes_cluster_model_0, 1,
+                     "particleTypes",               1,   &particleTypes_cluster_model_0, 1,
                      "coordinates",                 DIM, coords_cluster,                 1,
                      "get_neigh",                   1,   &get_cluster_neigh,             1,
                      "neighObject",                 1,   &nl_cluster_model_0,            1,
@@ -153,7 +153,7 @@ int main()
                      "numberOfParticles",             1,   &numberOfParticles_cluster,     1,
                      "numberContributingParticles",   1,   &numContrib_cluster,            1,
                      "numberParticleTypes",           1,   &numberParticleTypes,           1,
-                     "atomTypes",                     1,   &particleTypes_cluster_model_1, 1,
+                     "particleTypes",                 1,   &particleTypes_cluster_model_1, 1,
                      "coordinates",                   DIM, coords_cluster,                 1,
                      "get_neigh",                     1,   &get_cluster_neigh,             1,
                      "neighObject",                   1,   &nl_cluster_model_1,            1,
@@ -171,7 +171,7 @@ int main()
    status = KIM_API_model_init(pkim_cluster_model_1);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_model_init", status);
 
-   /* setup atomTypes */
+   /* setup particleTypes */
    particleTypes_periodic_model_0 = KIM_API_get_partcl_type_code(pkim_periodic_model_0, "Ar", &status);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_partcl_type_code", status);
 

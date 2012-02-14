@@ -78,7 +78,7 @@ program TEST_NAME_STR
   integer numberOfParticles;   pointer(pnAtoms,numberOfParticles)
   integer numContrib;          pointer(pnumContrib,numContrib)
   integer numberParticleTypes; pointer(pnparticleTypes,numberParticleTypes)
-  integer atomTypesdum(1);     pointer(patomTypesdum,atomTypesdum)
+  integer particleTypesdum(1); pointer(pparticleTypesdum,particleTypesdum)
 
   real*8 cutoff;               pointer(pcutoff,cutoff)
   real*8 energy;               pointer(penergy,energy)
@@ -86,7 +86,7 @@ program TEST_NAME_STR
   real*8 forcesdum(DIM,1);     pointer(pforces,forcesdum)
   real*8 boxSideLengths(DIM);  pointer(pboxSideLengths,boxSideLengths)
   real*8, pointer  :: coords(:,:), forces(:,:)
-  integer, pointer :: atomTypes(:)
+  integer, pointer :: particleTypes(:)
   integer middleDum
   character(len=10000) :: test_descriptor_string
   real*8 rnd, deriv, deriv_err
@@ -209,21 +209,21 @@ program TEST_NAME_STR
   ! Unpack data from KIM object
   !
   call kim_api_getm_data_f(pkim, ier, &
-       "numberOfParticles",           pnAtoms,         1,                    &
-       "numberContributingParticles", pnumContrib,     1,                    &
-       "numberParticleTypes",         pnparticleTypes, 1,                    &
-       "atomTypes",                   patomTypesdum,   1,                    &
-       "coordinates",                 pcoor,           1,                    &
-       "cutoff",                      pcutoff,         1,                    &
-       "boxSideLengths",              pboxSideLengths, TRUEFALSE(nbc.le.1)), &
-       "energy",                      penergy,         1,                    &
-       "forces",                      pforces,         1)
+       "numberOfParticles",           pnAtoms,           1,                    &
+       "numberContributingParticles", pnumContrib,       1,                    &
+       "numberParticleTypes",         pnparticleTypes,   1,                    &
+       "particleTypes",               pparticleTypesdum, 1,                    &
+       "coordinates",                 pcoor,             1,                    &
+       "cutoff",                      pcutoff,           1,                    &
+       "boxSideLengths",              pboxSideLengths,   TRUEFALSE(nbc.le.1)), &
+       "energy",                      penergy,           1,                    &
+       "forces",                      pforces,           1)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
      stop
   endif
 
-  call KIM_to_F90_int_array_1d(atomTypesdum, atomTypes, N)
+  call KIM_to_F90_int_array_1d(particleTypesdum, particleTypes, N)
   call KIM_to_F90_real_array_2d(coordum, coords, DIM, N)
   call KIM_to_F90_real_array_2d(forcesdum, forces, DIM, N)
 
@@ -236,7 +236,7 @@ program TEST_NAME_STR
   numberOfParticles   = N
   numContrib      = N
   numberParticleTypes = ATypes
-  atomTypes(:)    = kim_api_get_partcl_type_code_f(pkim, trim(model_specs(1)), ier)
+  particleTypes(:)    = kim_api_get_partcl_type_code_f(pkim, trim(model_specs(1)), ier)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_partcl_type_code_f", ier)
      stop

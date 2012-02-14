@@ -70,7 +70,7 @@ struct model_buffer {
    int model_index_shift;
    
    int* numberOfParticles;
-   int atomTypes_ind;
+   int particleTypes_ind;
    int coordinates_ind;
    int* numberContributingParticles;
    int boxSideLengths_ind;
@@ -219,7 +219,7 @@ static void compute(void* km, int* ier)
    int request;
    
    int* nAtoms;
-   int* atomTypes;
+   int* particleTypes;
    double* cutoff;
    double* cutsq;
    double* epsilon;
@@ -286,7 +286,7 @@ static void compute(void* km, int* ier)
    }
 
    KIM_API_getm_data_by_index(pkim, ier, 6*3,
-                              buffer->atomTypes_ind,      &atomTypes,      1,
+                              buffer->particleTypes_ind,  &particleTypes,  1,
                               buffer->coordinates_ind,    &coords,         1,
                               buffer->boxSideLengths_ind, &boxSideLengths, (NBC==1),
                               buffer->energy_ind,         &energy,         comp_energy,
@@ -303,7 +303,7 @@ static void compute(void* km, int* ier)
    *ier = KIM_STATUS_FAIL; /* assume an error */
    for (i = 0; i < *nAtoms; ++i)
    {
-      if ( SPECCODE != atomTypes[i])
+      if ( SPECCODE != particleTypes[i])
       {
          KIM_API_report_error(__LINE__, __FILE__, "Unexpected species type detected", *ier);
          return;
@@ -902,7 +902,7 @@ static void setup_buffer(intptr_t* pkim, struct model_buffer* buffer)
                       "particleEnergy", &(buffer->particleEnergy_ind), 1,
                       "process_dEdr",   &(buffer->process_dEdr_ind),   1,
                       "process_d2Edr2", &(buffer->process_d2Edr2_ind), 1,
-                      "atomTypes",      &(buffer->atomTypes_ind),      1,
+                      "particleTypes",  &(buffer->particleTypes_ind),  1,
                       "coordinates",    &(buffer->coordinates_ind),    1,
                       "boxSideLengths", &(buffer->boxSideLengths_ind), 1);
    if (KIM_STATUS_OK > ier)

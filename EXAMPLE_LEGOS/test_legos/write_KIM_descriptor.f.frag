@@ -129,7 +129,7 @@ kim_descriptor = trim(kim_descriptor) // &
                                                                                    cr // &
    'numberParticleTypes         integer      none       none                    []' // cr // &
                                                                                    cr // &
-   'atomTypes                   integer      none       none                    [numberOfParticles]' // cr // &
+   'particleTypes               integer      none       none                    [numberOfParticles]' // cr // &
                                                                                    cr // &
    'coordinates                 real*8       length     standard                [numberOfParticles,3]' // cr // &
                                                                                    cr // &

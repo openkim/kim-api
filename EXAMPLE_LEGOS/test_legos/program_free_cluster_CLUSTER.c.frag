@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
    /* model inputs */
    int* numberOfParticles;
    int* numberParticleTypes;
-   int* atomTypes;
+   int* particleTypes;
    double* coords;
    /* model outputs */
    double* cutoff;
@@ -84,7 +84,7 @@ int main(int argc, char* argv[])
    KIM_API_getm_data(pkim, &status, 8*3,
                      "numberOfParticles",   &numberOfParticles,   1,
                      "numberParticleTypes", &numberParticleTypes, 1,
-                     "atomTypes",           &atomTypes,           1,
+                     "particleTypes",       &particleTypes,       1,
                      "coordinates",         &coords,              1,
                      "cutoff",              &cutoff,              1,
                      "energy",              &energy,              1,
@@ -107,7 +107,7 @@ int main(int argc, char* argv[])
    }
    for (i = 0; i < *numberOfParticles; ++i)
    {
-      atomTypes[i] = partcl_type_code;
+      particleTypes[i] = partcl_type_code;
    }
 
    /* set up the cluster atom positions */

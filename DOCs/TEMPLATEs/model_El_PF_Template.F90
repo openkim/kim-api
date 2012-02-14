@@ -224,7 +224,7 @@ real*8 boxSideLengths(DIM); pointer(pboxSideLengths,boxSideLengths)
 real*8 Rij_list(DIM,1);     pointer(pRij_list,Rij_list)
 integer numContrib;         pointer(pnumContrib,numContrib)
 integer nei1atom(1);        pointer(pnei1atom,nei1atom)
-integer atomTypes(1);       pointer(patomTypes,atomTypes)
+integer particleTypes(1);   pointer(pparticleTypes,particleTypes)
 real*8 virialdum(1);        pointer(pvirial,virialdum)
 character*64 NBC_Method;    pointer(pNBC_Method,NBC_Method)
 real*8, pointer :: coor(:,:),force(:,:),ene_pot(:),virial_global(:)
@@ -313,7 +313,7 @@ endif
 !
 call kim_api_getm_data_f(pkim, ier, &
      "numberOfParticles",           pN,              1,                           &
-     "atomTypes",                   patomTypes,      1,                           &
+     "particleTypes",               pparticleTypes,  1,                           &
      "coordinates",                 pcoor,           1,                           &
      "numberContributingParticles", pnumContrib,     TRUEFALSE(HalfOrFull.eq.1),  &
      "boxSideLengths",              pboxSideLengths, TRUEFALSE(NBC.eq.1),         &
@@ -343,7 +343,7 @@ endif
 !
 ier = KIM_STATUS_FAIL ! assume an error
 do i = 1,N
-   if (atomTypes(i).ne.speccode) then
+   if (particleTypes(i).ne.speccode) then
       idum = kim_api_report_error_f(__LINE__, __FILE__, "Unexpected species type detected", ier)
       return
    endif

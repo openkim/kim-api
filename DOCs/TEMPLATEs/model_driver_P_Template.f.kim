@@ -63,7 +63,7 @@ numberContributingParticles integer      none                []                 
 
 numberParticleTypes         integer      none                []
 
-atomTypes                   integer      none                [numberOfParticles]
+particleTypes               integer      none                [numberOfParticles]
 
 coordinates                 real*8       length              [numberOfParticles,3]
 

@@ -16,7 +16,7 @@
     call kim_api_getm_data_f(pkim, ier,                       &
          "numberOfParticles",   pnAtoms,         1,           &
          "numberParticleTypes", pnparticleTypes, 1,           &
-         "atomTypes",           patomTypes,      1,           &
+         "particleTypes",       pparticleTypes,  1,           &
          "cutoff",              pcutoff,         1,           &
          "coordinates",         pcoor,           1,           &
          "energy",              penergy,         comp_energy, &
@@ -59,7 +59,7 @@
     !
     ier = KIM_STATUS_FAIL ! assume an error
     do i = 1,numberOfParticles
-       if (.not. (atomTypes(i) .eq. SPECIES_CODE_STR)) then
+       if (.not. (particleTypes(i) .eq. SPECIES_CODE_STR)) then
           idum = kim_api_report_error_f(__LINE__, __FILE__, "Wrong Atom Type", ier)
           return
        endif

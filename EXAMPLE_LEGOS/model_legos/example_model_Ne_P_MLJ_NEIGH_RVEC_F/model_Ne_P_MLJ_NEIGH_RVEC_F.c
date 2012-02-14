@@ -76,7 +76,7 @@ static void compute(void* km, int* ier)
 
    int* nAtoms;
    int* nparticleTypes;
-   int* atomTypes;
+   int* particleTypes;
    double* cutoff;
    double* epsilon;
    double* sigma;
@@ -110,7 +110,7 @@ static void compute(void* km, int* ier)
    KIM_API_getm_data(pkim, ier, 17*3,
                      "numberOfParticles",   &nAtoms,         1,
                      "numberParticleTypes", &nparticleTypes, 1,
-                     "atomTypes",           &atomTypes,      1,
+                     "particleTypes",       &particleTypes,  1,
                      "cutoff",              &cutoff,         1,
                      "PARAM_FREE_epsilon",  &epsilon,        1,
                      "PARAM_FREE_sigma",    &sigma,          1,
@@ -136,7 +136,7 @@ static void compute(void* km, int* ier)
    *ier = KIM_STATUS_FAIL; /* assume an error */
    for (i = 0; i < *nAtoms; ++i)
    {
-      if (Ar != atomTypes[i])
+      if (Ar != particleTypes[i])
       {
          KIM_API_report_error(__LINE__, __FILE__, "Wrong atomType", i);
          return;
