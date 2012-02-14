@@ -8,7 +8,7 @@
 This directory (ex_model_Ne_P_LJ_NEIGH_PURE_H) contains a Lennard Jones (LJ)
 Model for neon with a discontinuous cutoff radius written in FORTRAN.  It
 complies with the KIM API interface standard, using the NEIGH_PURE_H NBC and
-iterator mode, and supports optional computation of `forces' and
+iterator mode, and supports optional computation of `energy', `forces' and
 `particleEnergy'.
 
 The following files are in this directory:

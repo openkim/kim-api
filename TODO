@@ -13,32 +13,13 @@ openkim-api package.
 Items planned for the next significant release.
 --------------------------------------------------------------------------------
 
-* Adopt an appropriate open source license for the openKIM API and the
-  openkim-api implementation of that API.
+* Improve error handling consistency within the API
 
-* Add support to the KIM API for Models to have easy access to and storage of a
-  chunk of memory within a KIM API object.  This will allow Models to have
-  efficient access to persistent memory.  Among other things, Models will then
-  be able to use the KIM_API_get_index() and KIM_API_*byI() service routines to
-  avoid the overhead of searching for the key string of a KIM API argument in
-  the KIM API object.
+* Implement full support for Tests written in Python
 
-* Rework the KIM_API_get_*_neigh() interface to allow for improved
-  computational performance.
+* Implement full support for Tests written in Java
 
-* Rework the API's handling of physical units in order to conform to the KIM
-  Requirements Document (RD).  (This will not include the required automatic
-  conversions, which are a feature, listed below, that will require more time
-  to develop.)  Go to http://openkim.org to read the latest version of the KIM
-  RD.
-
-* Add an "interatomic pair forces" (f_ij) argument to standard.kim that will
-  allow Tests to compute the stress tensor (and other quantities) from the f_ij
-  quantities returned by a Model.
-
-* Add the Hessian matrix to the standard.kim file.
-
-* Add an example of a Model that is optimized for computational efficiency.
+* Refactor the core KIM API code for improved readability and maintenance.
 
 * Improve the way the make system generates static and dynamic libraries (For
   example, we should use the appropriate compiler flags to ensure that the only
@@ -67,12 +48,7 @@ Items planned for future releases.
 
 * Implement full support for Fortran 2003
 
-* Implement full support for Python
-
 * Refactor the core KIM API code for improved readability and maintenance.
-
-* Implement automatic unit conversions between Models and Tests that use
-  different physical units for the same quantities.
 
 * Add Doxygen commenting for improved code documentation.
 
@@ -80,6 +56,3 @@ Items planned for future releases.
 
 * Implement a framework for unit and regression testing of all the code in the
   openkim-api package.
-
-* Implement full support for Java
-

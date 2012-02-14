@@ -430,8 +430,8 @@ int get_periodic_neigh(void* kimmdl, int *mode, int *request, int* atom,
    {
       if ((*request >= *numberOfParticles) || (*request < 0)) /* invalid id */
       {
-         KIM_API_report_error(__LINE__, __FILE__,"Invalid atom ID in get_periodic_neigh", KIM_STATUS_ATOM_INVALID_ID);
-         return KIM_STATUS_ATOM_INVALID_ID;
+         KIM_API_report_error(__LINE__, __FILE__,"Invalid atom ID in get_periodic_neigh", KIM_STATUS_PARTICLE_INVALID_ID);
+         return KIM_STATUS_PARTICLE_INVALID_ID;
       }
       else
       {
@@ -675,8 +675,8 @@ int get_cluster_neigh(void* kimmdl, int *mode, int *request, int* atom,
    {
       if ((*request >= *numberOfParticles) || (*request < 0)) /* invalid id */
       {
-         KIM_API_report_error(__LINE__, __FILE__,"Invalid atom ID in get_cluster_neigh", KIM_STATUS_ATOM_INVALID_ID);
-         return KIM_STATUS_ATOM_INVALID_ID;
+         KIM_API_report_error(__LINE__, __FILE__,"Invalid atom ID in get_cluster_neigh", KIM_STATUS_PARTICLE_INVALID_ID);
+         return KIM_STATUS_PARTICLE_INVALID_ID;
       }
       else
       {

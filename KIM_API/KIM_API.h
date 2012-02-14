@@ -18,8 +18,8 @@
 #include <stdint.h>
 #include <stdarg.h>
 using namespace std;
-#ifndef _KIMSERVICE_H
-#define	_KIMSERVICE_H
+#ifndef _KIM_API_H
+#define _KIM_API_H
 
 #include "KIM_API_status.h"
 #include "KIM_AUX.h"
@@ -385,4 +385,4 @@ private:
 };
 ostream &operator<<(ostream &stream, KIM_API_model &a);
 
-#endif	/* _KIMSERVICE_H */
+#endif	/* _KIM_API_H */

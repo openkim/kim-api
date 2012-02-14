@@ -64,11 +64,8 @@ interfacing and interacting with other programs and routines, regardless of the
 programming language (C, C++, FORTRAN 77, Fortran 90/95/2003, Python, etc.) in
 which the codes are written.
 
-This version of the openkim-api package is distributed under the PIs' (Ellad
-B. Tadmor, Ryan S. Elliott, and James P. Sethna) copyright.  In the near
-future, this package will be released under an open source license.
-Discussions are currently underway in order to determine the appropriate type
-of open source license.
+This version of the openkim-api package is distributed under the CDDL Open
+Source License.
 
 The current version of the openkim-api package supports the following features:
 
@@ -87,9 +84,9 @@ The current version of the openkim-api package supports the following features:
 
 * Communication of an arbitrary number of `arguments' between a `Model'
   (interatomic potential) and a `Test' (simulation code that uses a Model).
-  This is facilitated by the use of `KIM descriptor files' (terminated with a
-  `.kim' extension) and a single KIM API object data structure that stores all
-  information to be communicated between a Model and a Test.
+  This is facilitated by the use of `KIM descriptor files' (whose names end
+  with a `.kim' extension) and a single KIM API object data structure that
+  stores all information to be communicated between a Model and a Test.
 
 * Data types: integer, integer*8 (long long), real (float), real*8 (double),
               method (for exchanging pointers to functions), pointer (for
@@ -103,11 +100,10 @@ The current version of the openkim-api package supports the following features:
      additional data types and data structures may be introduced.
 
 * Physical Units: The openkim-api supports the specification of physical units
-  for each `argument' exchanged between a Model and Test.  Currently, this
-  information is only used to ensure that a Model and Test agree on the units
-  of the arguments they will exchange.  Future plans include the possibility of
-  the openkim-api package performing automatic units conversions for Models and
-  Tests that use different physical units, but are otherwise compatible.
+  for each `argument' exchanged between a Model and Test.  A Model is either
+  `fixed' or `flexible' with regard to units.  `fixed' means it is unable to
+  convert to a different set of units.  `flexible' means it can convert its
+  output values to the Test's units.
 
 * Neighbor lists and Boundary Conditions (NBC) methods: To facilitate
   computational efficiency, the openkim-api defines a number of standard
@@ -117,17 +113,18 @@ The current version of the openkim-api package supports the following features:
   convention for orthogonal periodic boundary conditions, `ghost atoms', and
   neighbor lists with relative position vectors.
 
-* Neighbor list routines are expected to be provided by the calling Test.
-  The API provides support for `Locator' and `Iterator' neighbor list modes.
-  (A `Locator' returns the list of neighbors of a specified atom.  An `Iterator' 
-  works by incrementing an atom counter and returning the identity of the next 
-  atom (i.e. its number) and its neighbors.)  The API also supports half and full 
-  neighbor lists.
+* Neighbor list routines are expected to be provided by the calling Test.  The
+  API provides support for `Locator' and `Iterator' neighbor list modes.  (A
+  `Locator' returns the list of neighbors of a specified atom.  An `Iterator'
+  works by incrementing an atom counter and returning the identity of the next
+  atom (i.e. its number) and its neighbors.)  The API also supports half
+  (symmetric and unsymmetric) and full neighbor lists.
 
-* Atom Species: The openkim-api provides the ability to designate the physical
-  species of each particle in a simulation.  Currently, only one identifier is
-  provided for each element in the periodic table.  In the future support for
-  Models such as CHARMM and similar force-fields will be added.
+* Particle Species: The openkim-api provides the ability to designate the
+  physical species (or, more generally, type) of each particle in a simulation.
+  Currently, only one identifier is provided for each element in the periodic
+  table.  In the future support for Models such as CHARMM and similar
+  force-fields will be added.
 
 * Model Parameters: The openkim.org philosophy views a `Model' as a
   well-defined computational code that includes fixed specific values for all
@@ -217,5 +214,3 @@ The members of the openkim development team actively monitor this email list
 and will do their best to help you with your question in a timely fashion.
 
 *******************************************************************************
-
-

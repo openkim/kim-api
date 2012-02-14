@@ -115,4 +115,3 @@ PARAM_FIXED_<FILL parameter 1>  real*8      <FILL Unit>         []
 PARAM_FIXED_<FILL parameter 2>  real*8      <FILL Unit>         []
 
 # FILL all existing fixed parameters
-

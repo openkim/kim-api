@@ -12,8 +12,8 @@
 
 /* Note: All STATUS codes associated with an error must be less than KIM_STATUS_OK */
 
-#ifndef _KIMSERVICESTATUS_H
-#define _KIMSERVICESTATUS_H
+#ifndef _KIM_API_STATUS_H
+#define _KIM_API_STATUS_H
 
 #define KIM_STATUS_INCONSISTENT_BASE_UNIT          -23
 #define KIM_STATUS_UNSUPPORTED_UNIT_TIME           -22
@@ -34,10 +34,10 @@
 #define KIM_STATUS_API_OBJECT_INVALID               -8
 #define KIM_STATUS_ARG_INVALID_SHAPE                -7
 #define KIM_STATUS_NEIGH_INVALID_MODE               -6
-#define KIM_STATUS_ATOM_TYPES_UNDEFINED             -5
+#define KIM_STATUS_PARTICLE_TYPES_UNDEFINED         -5
 #define KIM_STATUS_ARG_INVALID_RANK                 -4
-#define KIM_STATUS_ATOM_INVALID_ID                  -3
-#define KIM_STATUS_ATOM_INVALID_TYPE                -2
+#define KIM_STATUS_PARTICLE_INVALID_ID              -3
+#define KIM_STATUS_PARTICLE_INVALID_TYPE            -2
 #define KIM_STATUS_ARG_UNKNOWN                      -1
 #define KIM_STATUS_FAIL                              0
 #define KIM_STATUS_OK                                1
@@ -48,4 +48,4 @@
 #define KIM_COMPUTE                    1
 #define KIM_NOT_COMPUTE                0
 
-#endif
+#endif /* _KIM_API_STATUS_H */

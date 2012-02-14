@@ -5,13 +5,19 @@
 # All rights reserved.
 #
 
-This directory (KIM_API) contains the openkim-api service routines, as well as auxiliary 
-files for compiling and testing.
+This directory (KIM_API) contains the openkim-api service routines, as well as
+auxiliary files for compiling and testing.
 
 The contents of the directory are as follows:
-  
+
+GNU_compiler_settings.mk
+     Make file containing commands and flags for GNU compilers
+
 Include.mk
      Make file used by all makefiles related to KIM.
+
+Intel_compiler_settings.mk
+     Make file containing commands and flags for Intel compilers
 
 KIM_API.cpp
      C++ implementations for core service routines and methods.
@@ -26,10 +32,20 @@ KIM_API_C.h
      Header for C-style interface for KIM API service routines.
 
 KIM_API_Description.txt
-     Description of KIM service routines.
+     Description of KIM API service routines.
 
 KIM_API_F.F90
      Implementation of Fortran-style interface for KIM API.
+
+KIM_API_status.h
+     Header file defining the KIM API status codes.
+
+KIM_AUX.cpp
+     C++ implementation file containing auxiliary routines, including
+     the native process_dEdr and process_d2Edr2 functions.
+
+KIM_AUX.h
+     Header file declaring the auxiliary routines.
 
 Makefile
      Make file for compiling and building KIM_API using GNU or Intel compilers.
@@ -40,18 +56,18 @@ Makefile.Model_Drivers
 README
      This file.
 
+Unit_Handling.cpp
+     C++ implementation file defining the unit handling capabilities of the KIM API
+
+Unit_Handling.h
+     Header file declaring the unit handling functions.
+
 model_based_on_driver.cpp
      This file contains the code implementing a Model that is based on a Model Driver.
      It is used by the Makefile.Model_Drivers file.
 
-si_units.cfg
-     SI units descriptor file.
-
 standard.kim
      kim descriptor file with description of all standard variables.
-
-standard_units.cfg
-     standard units descriptor file.
 
 
 

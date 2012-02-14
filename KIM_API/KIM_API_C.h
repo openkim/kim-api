@@ -8,8 +8,8 @@
 // Authors: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
 //
 
-#ifndef _KIMSERVICC_H
-#define	_KIMSERVICC_H
+#ifndef _KIM_API_C_H
+#define _KIM_API_C_H
 
 #ifndef KIM_API_MAX_NEIGHBORS
 #define KIM_API_MAX_NEIGHBORS 512
@@ -222,4 +222,4 @@ double kim_api_convert_to_act_unit_(void * kimmdl,
 }
 #endif
 
-#endif	/* _KIMSERVICC_H */
+#endif	/* _KIM_API_C_H */

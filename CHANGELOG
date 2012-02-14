@@ -6,6 +6,44 @@
 #
 
 
+=== openkim-api-v1.0.0 =========================================================
+
+
+* Moved all examples to EXAMPLEs directory and added `make examples' target.
+
+* Renamed all example Model Drivers, Models, and Tests.  Now have `ex_' prefix.
+
+* Renamed nearly all API functions to improve readability and comprehension.
+
+* Changed KIM_API_get_half_neigh and KIM_API_get_full_neigh to just
+  KIM_API_get_neigh.
+
+* Total re-work of unit handling for the API.
+
+* Added KIM_API_model_info() function for Tests to use for discovering what a
+  Model supports.
+
+* Added KIM_API_getm_* and KIM_API_setm_* routines to get/set multiple arguments
+  in one function call.
+
+* Added KIM_API_sting_init() for use by Tests that generate their KIM descriptor
+  file "on-the-fly".
+
+* Added process_dEdr and process_dE2dr2 approach for calculating general
+  properties.  Currently automatic support for `virial', `particleVirial', and
+  `hessian' is available.
+
+* Added "unsymmetric half neighbor lists" (numberContributingParticles).
+
+* Added model/test buffers for use by Model and Test, respectively.
+
+* Improvements in dynamic linking setup.
+
+* Examples additions, improvements, and bug fixes.
+
+* Bug fixes.
+
+
 === openkim-api-v0.2.0 =========================================================
 
 

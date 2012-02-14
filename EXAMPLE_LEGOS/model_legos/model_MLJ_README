@@ -8,8 +8,8 @@
 This directory (MODEL_NAME_STR) contains a modified Lennard Jones (LJ) Model
 with smoothed cutoff radius written in LANGUAGE_STR.  It complies with the KIM
 API interface standard, using the NBC_NAME_STR NBC and locator mode, and
-publishes its parameters, and supports optional computation of `forces',
-`particleEnergy', and `virial'.
+publishes its parameters, and supports optional computation of `energy',
+`forces', `particleEnergy', and `virial'.
 
 
 The following files are in this directory:

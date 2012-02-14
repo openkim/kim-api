@@ -2404,15 +2404,15 @@ int  KIM_API_model::get_neigh_mode(int*kimerr){
 int KIM_API_model::get_partcl_type_code(char* atom, int * error){
     *error =KIM_STATUS_FAIL;
     if (atom == NULL)  {
-        *error = KIM_STATUS_ATOM_TYPES_UNDEFINED;
-        return KIM_STATUS_ATOM_TYPES_UNDEFINED; //no atom symbol provided
+        *error = KIM_STATUS_PARTICLE_TYPES_UNDEFINED;
+        return KIM_STATUS_PARTICLE_TYPES_UNDEFINED; //no atom symbol provided
     }
     Atom_Map key, *res=NULL;
     strcpy(key.symbol,atom);
     res = (Atom_Map *)bsearch((void *)&key,AtomsTypes,nAtomsTypes,sizeof(Atom_Map),&(Atom_Map::comparator));
     if (res == NULL) {
-        *error = KIM_STATUS_ATOM_INVALID_TYPE;
-        return  KIM_STATUS_ATOM_INVALID_TYPE; //did not find atom symbol among atom types
+        *error = KIM_STATUS_PARTICLE_INVALID_TYPE;
+        return  KIM_STATUS_PARTICLE_INVALID_TYPE; //did not find atom symbol among atom types
     }
     *error=KIM_STATUS_OK;
     return res->code;
