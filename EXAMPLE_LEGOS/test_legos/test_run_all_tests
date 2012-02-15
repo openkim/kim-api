@@ -323,6 +323,7 @@ footer
 header "test_Ne_free_cluster"                 \
        "   |"                                 \
        "   |-- model_ArNe_P_MLJ_NEIGH_RVEC_F" \
+       "   |-- model_Ne_P_fastLJ"             \
        "   |-- model_Ne_P_LJ"                 \
        "   |-- model_Ne_P_MLJ_NEIGH_RVEC_F"   \
        "   |-- model_Ne_P_Morse"              \
@@ -330,6 +331,9 @@ header "test_Ne_free_cluster"                 \
 
 divider "test_Ne_free_cluster --- model_ArNe_P_MLJ_NEIGH_RVEC_F"
 echo model_ArNe_P_MLJ_NEIGH_RVEC_F  | ./test_Ne_free_cluster/test_Ne_free_cluster >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
+
+divider "test_Ne_free_cluster --- model_Ne_P_fastLJ"
+echo model_Ne_P_fastLJ              | ./test_Ne_free_cluster/test_Ne_free_cluster >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
 divider "test_Ne_free_cluster --- model_Ne_P_LJ"
 echo model_Ne_P_LJ                  | ./test_Ne_free_cluster/test_Ne_free_cluster >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
