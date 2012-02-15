@@ -72,7 +72,7 @@ test_Al_free_cluster: $(COMMON_FRAGMENTS)                      \
                       test_free_cluster_README                 \
                       descriptor_file_neighborlist             \
                       program_free_cluster.f.frag              \
-                      MI_OPBC_neighborlist.f.frag              \
+                      MI_OPBC_cluster_neighborlist.f.frag      \
                       NEIGH_PURE_cluster_neighborlist.f.frag   \
                       NEIGH_RVEC_F_cluster_neighborlist.f.frag \
                       get_neigh_no_Rij.f.frag                  \
@@ -122,7 +122,7 @@ test_Al_free_cluster: $(COMMON_FRAGMENTS)                      \
                -e 's/FCC_SPACING_STR/4.050d0 ! in angstroms/g' \
                -e 's/CUTOFF_PADDING_STR/0.750d0 ! in angstroms/g'                                             >  $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
-	$(F_CAT) MI_OPBC_neighborlist.f.frag                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
+	$(F_CAT) MI_OPBC_cluster_neighborlist.f.frag                                                          >> $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
 	$(F_CAT) NEIGH_PURE_cluster_neighborlist.f.frag                                                       >> $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
@@ -141,7 +141,7 @@ test_Al_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
                              get_model_cutoff_firsttime.f.frag            \
                              setup_KIM_API_object.f.frag                  \
                              setup_neighborlist_no_Rij_KIM_access.f.frag  \
-                             MI_OPBC_neighborlist.f.frag                  \
+                             MI_OPBC_periodic_neighborlist.f.frag         \
                              get_neigh_no_Rij.f.frag                      \
                              free_KIM_API_object.f.frag                   \
                              create_FCC_configuration.f.frag
@@ -187,7 +187,7 @@ test_Al_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
 	$(F_CAT) free_KIM_API_object.f.frag                                                                   >> $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
-	$(F_CAT) MI_OPBC_neighborlist.f.frag                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
+	$(F_CAT) MI_OPBC_periodic_neighborlist.f.frag                                                         >> $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
 	$(F_CAT) get_neigh_no_Rij.f.frag                                                                      >> $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
@@ -300,7 +300,7 @@ test_Ar_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
                              get_model_cutoff_firsttime.f.frag            \
                              setup_KIM_API_object.f.frag                  \
                              setup_neighborlist_no_Rij_KIM_access.f.frag  \
-                             MI_OPBC_neighborlist.f.frag                  \
+                             MI_OPBC_periodic_neighborlist.f.frag         \
                              get_neigh_no_Rij.f.frag                      \
                              free_KIM_API_object.f.frag                   \
                              create_FCC_configuration.f.frag
@@ -345,7 +345,7 @@ test_Ar_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
 	$(F_CAT) free_KIM_API_object.f.frag                                                                   >> $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
-	$(F_CAT) MI_OPBC_neighborlist.f.frag                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
+	$(F_CAT) MI_OPBC_periodic_neighborlist.f.frag                                                         >> $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
 	$(F_CAT) get_neigh_no_Rij.f.frag                                                                      >> $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
@@ -483,7 +483,7 @@ test_Ar_free_cluster_CLUSTER_C: $(COMMON_FRAGMENTS)                 \
 	echo "forces                      real*8       force               [numberOfParticles,3]"             >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.kim
 	echo "virial                      real*8       energy              [6]"                               >> $(KIM_TESTS_DIR)$@/$@.kim
-        # make .F90 file in the directory
+        # make .c file in the directory
 	$(C_CAT) program_free_cluster_CLUSTER.c.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
          | sed -e 's/FCC_SPACING_STR/5.26; \/* in angstroms *\//g'                                            >  $(KIM_TESTS_DIR)$@/$@.c
@@ -528,7 +528,7 @@ test_Ar_free_cluster: $(COMMON_FRAGMENTS)                      \
                       test_free_cluster_README                 \
                       descriptor_file_neighborlist             \
                       program_free_cluster.f.frag              \
-                      MI_OPBC_neighborlist.f.frag              \
+                      MI_OPBC_cluster_neighborlist.f.frag      \
                       NEIGH_PURE_cluster_neighborlist.f.frag   \
                       NEIGH_RVEC_F_cluster_neighborlist.f.frag \
                       get_neigh_no_Rij.f.frag                  \
@@ -577,7 +577,7 @@ test_Ar_free_cluster: $(COMMON_FRAGMENTS)                      \
                -e 's/FCC_SPACING_STR/5.26d0 ! in angstroms/g' \
                -e 's/CUTOFF_PADDING_STR/0.750d0 ! in angstroms/g'                                             >  $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
-	$(F_CAT) MI_OPBC_neighborlist.f.frag                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
+	$(F_CAT) MI_OPBC_cluster_neighborlist.f.frag                                                          >> $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
 	$(F_CAT) NEIGH_PURE_cluster_neighborlist.f.frag                                                       >> $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
@@ -593,7 +593,7 @@ test_Ne_free_cluster: $(COMMON_FRAGMENTS)                      \
                       test_free_cluster_README                 \
                       descriptor_file_neighborlist             \
                       program_free_cluster.f.frag              \
-                      MI_OPBC_neighborlist.f.frag              \
+                      MI_OPBC_cluster_neighborlist.f.frag      \
                       NEIGH_PURE_cluster_neighborlist.f.frag   \
                       NEIGH_RVEC_F_cluster_neighborlist.f.frag \
                       get_neigh_no_Rij.f.frag                  \
@@ -642,7 +642,7 @@ test_Ne_free_cluster: $(COMMON_FRAGMENTS)                      \
                -e 's/FCC_SPACING_STR/4.430d0 ! in angstroms/g' \
                -e 's/CUTOFF_PADDING_STR/0.750d0 ! in angstroms/g'                                             >  $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
-	$(F_CAT) MI_OPBC_neighborlist.f.frag                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
+	$(F_CAT) MI_OPBC_cluster_neighborlist.f.frag                                                          >> $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
 	$(F_CAT) NEIGH_PURE_cluster_neighborlist.f.frag                                                       >> $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
@@ -658,7 +658,7 @@ test_Ne_free_cluster_SI: $(COMMON_FRAGMENTS)                      \
                          test_free_cluster_README                 \
                          descriptor_file_neighborlist             \
                          program_free_cluster.f.frag              \
-                         MI_OPBC_neighborlist.f.frag              \
+                         MI_OPBC_cluster_neighborlist.f.frag      \
                          NEIGH_PURE_cluster_neighborlist.f.frag   \
                          NEIGH_RVEC_F_cluster_neighborlist.f.frag \
                          get_neigh_no_Rij.f.frag                  \
@@ -707,7 +707,7 @@ test_Ne_free_cluster_SI: $(COMMON_FRAGMENTS)                      \
                -e 's/FCC_SPACING_STR/4.430d-10 ! in meters/g' \
                -e 's/CUTOFF_PADDING_STR/0.750d-10 ! in meters/g'                                              >  $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
-	$(F_CAT) MI_OPBC_neighborlist.f.frag                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
+	$(F_CAT) MI_OPBC_cluster_neighborlist.f.frag                                                          >> $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
 	$(F_CAT) NEIGH_PURE_cluster_neighborlist.f.frag                                                       >> $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
@@ -723,7 +723,7 @@ test_Ne_free_cluster_stiff: $(COMMON_FRAGMENTS)                      \
                             test_free_cluster_stiff_README           \
                             descriptor_file_neighborlist             \
                             program_free_cluster_stiff.f.frag        \
-                            MI_OPBC_neighborlist.f.frag              \
+                            MI_OPBC_cluster_neighborlist.f.frag      \
                             NEIGH_PURE_cluster_neighborlist.f.frag   \
                             NEIGH_RVEC_F_cluster_neighborlist.f.frag \
                             get_neigh_no_Rij.f.frag                  \
@@ -775,7 +775,7 @@ test_Ne_free_cluster_stiff: $(COMMON_FRAGMENTS)                      \
                -e 's/FCC_SPACING_STR/4.430d0 ! in angstroms/g' \
                -e 's/CUTOFF_PADDING_STR/0.750d0 ! in angstroms/g'                                             >  $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
-	$(F_CAT) MI_OPBC_neighborlist.f.frag                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
+	$(F_CAT) MI_OPBC_cluster_neighborlist.f.frag                                                          >> $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
 	$(F_CAT) NEIGH_PURE_cluster_neighborlist.f.frag                                                       >> $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
@@ -808,7 +808,7 @@ test_numer_deriv: $(COMMON_FRAGMENTS)                      \
                   program_numer_deriv.f.frag               \
                   write_KIM_descriptor.f.frag              \
                   update_neighborlist.f.frag               \
-                  MI_OPBC_neighborlist.f.frag              \
+                  MI_OPBC_cluster_neighborlist.f.frag      \
                   NEIGH_PURE_cluster_neighborlist.f.frag   \
                   NEIGH_RVEC_F_cluster_neighborlist.f.frag \
                   NEIGH_RVEC_F_update_Rij_vectors.f.frag   \
@@ -831,7 +831,7 @@ test_numer_deriv: $(COMMON_FRAGMENTS)                      \
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
 	$(F_CAT) update_neighborlist.f.frag                                                                   >> $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
-	$(F_CAT) MI_OPBC_neighborlist.f.frag                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
+	$(F_CAT) MI_OPBC_cluster_neighborlist.f.frag                                                          >> $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90
 	$(F_CAT) NEIGH_PURE_cluster_neighborlist.f.frag                                                       >> $(KIM_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_TESTS_DIR)$@/$@.F90

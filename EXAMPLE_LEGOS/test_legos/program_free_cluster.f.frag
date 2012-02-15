@@ -218,9 +218,9 @@ program TEST_NAME_STR
 
   ! compute neighbor lists
   if (nbc.eq.0) then
-     call MI_OPBC_neighborlist(.true., N, coords, (cutoff+cutpad), boxSideLengths, neighborList)
+     call MI_OPBC_cluster_neighborlist(.true., N, coords, (cutoff+cutpad), boxSideLengths, neighborList)
   elseif (nbc.eq.1) then
-     call MI_OPBC_neighborlist(.false., N, coords, (cutoff+cutpad), boxSideLengths, neighborList)
+     call MI_OPBC_cluster_neighborlist(.false., N, coords, (cutoff+cutpad), boxSideLengths, neighborList)
   elseif (nbc.eq.2) then
      call NEIGH_PURE_cluster_neighborlist(.true., N, coords, (cutoff+cutpad), neighborList)
   elseif (nbc.eq.3) then

@@ -64,7 +64,7 @@ subroutine setup_KIM_API_object(pkim, testname, modelname, N, specname, SupportH
   ! Set values
   !
   numberOfParticles   = N
-  if (SupportHalf.eq.1) numContrib = N
+  if (SupportHalf.eq.1) numContrib = 1
   numberParticleTypes = ATypes
   particleTypes(:)        = kim_api_get_partcl_type_code_f(pkim, specname, ier)
   if (ier.lt.KIM_STATUS_OK) then

@@ -1,10 +1,10 @@
 !-------------------------------------------------------------------------------
 !
-! MI_OPBC_neighborlist : construct a half or full neighbor list using the
-!                        atom coordinates in coords()
+! MI_OPBC_periodic_neighborlist : construct a half or full neighbor list using the
+!                                 atom coordinates in coords()
 !
 !-------------------------------------------------------------------------------
-subroutine MI_OPBC_neighborlist(half, numberOfParticles, coords, rcut, boxSideLengths, neighborList)
+subroutine MI_OPBC_periodic_neighborlist(half, numberOfParticles, coords, rcut, boxSideLengths, MiddleAtomID, neighborList)
   use KIM_API
   implicit none
   
@@ -14,6 +14,7 @@ subroutine MI_OPBC_neighborlist(half, numberOfParticles, coords, rcut, boxSideLe
   double precision, dimension(3,numberOfParticles),            intent(in)  :: coords
   double precision,                                            intent(in)  :: rcut
   double precision, dimension(3),                              intent(in)  :: boxSideLengths
+  integer,                                                     intent(in)  :: MiddleAtomID
   integer,   dimension(numberOfParticles+1,numberOfParticles), intent(out) :: neighborList ! not memory efficient
   
   !-- Local variables
@@ -33,12 +34,17 @@ subroutine MI_OPBC_neighborlist(half, numberOfParticles, coords, rcut, boxSideLe
         endwhere
         r2 = dot_product(dx, dx)
         if (r2.le.rcut2) then
-           if (i.ne.j) then
-              if ( (j .gt. i) .or. ((.not. half) .AND. (i.ne.j)) ) then
-                  ! atom j is a neighbor of atom i
+           ! atom j is a neighbor of atom i
+           if (half) then
+               if ( ((i.eq.MiddleAtomId) .or. (j.eq.MiddleAtomId)) .and. (i .lt. j) ) then
                   a = a+1
                   neighborList(a,i) = j
-              endif
+               endif
+           else
+               if (i.eq.MiddleAtomId) then
+                  a = a+1
+                  neighborList(a,i) = j
+               endif
            endif
         endif
      enddo
@@ -48,4 +54,4 @@ subroutine MI_OPBC_neighborlist(half, numberOfParticles, coords, rcut, boxSideLe
   
   return
 
-end subroutine MI_OPBC_neighborlist
+end subroutine MI_OPBC_periodic_neighborlist

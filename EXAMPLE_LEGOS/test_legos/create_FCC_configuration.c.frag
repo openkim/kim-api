@@ -34,7 +34,8 @@ static void create_FCC_configuration(double FCCspacing, int nCellsPerSide, int p
    FCCshifts[2][0] = 0.5*FCCspacing; FCCshifts[2][1] = 0.0;            FCCshifts[2][2] = 0.5*FCCspacing;
    FCCshifts[3][0] = 0.0;            FCCshifts[3][1] = 0.5*FCCspacing; FCCshifts[3][2] = 0.5*FCCspacing;
 
-   a = 0;
+   *MiddleAtomId = 0; /* Always put middle atom as #0 */
+   a = 1;            /* leave space for middle atom as atom #0 */
    for (i = 0; i < nCellsPerSide; ++i)
    {
       latVec[0] = ((double) i)*FCCspacing;
@@ -53,7 +54,12 @@ static void create_FCC_configuration(double FCCspacing, int nCellsPerSide, int p
                if ((nCellsPerSide/2 == i) && (nCellsPerSide/2 == j) &&
                    (nCellsPerSide/2 == k) && (1 == m))
                {
-                  *MiddleAtomId = a;
+                  /* put middle atom as atom #0 */
+                  for (n = 0; n < DIM; ++n)
+                  {
+                     coords[n] = latVec[n] + FCCshifts[m][n];
+                  }
+                  a--;
                }
                a++;
             }
