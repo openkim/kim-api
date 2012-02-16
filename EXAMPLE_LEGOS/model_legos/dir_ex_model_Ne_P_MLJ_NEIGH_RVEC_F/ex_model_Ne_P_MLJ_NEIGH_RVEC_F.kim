@@ -1,0 +1,101 @@
+#######################################################################################################
+#
+# Release: This file is part of the openkim-api.git repository.
+#
+# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
+# All rights reserved.
+#
+# Authors: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
+#
+#
+# See KIM_API/standard.kim for documentation about this file
+#
+#######################################################################################################
+
+
+MODEL_NAME := ex_model_Ne_P_MLJ_NEIGH_RVEC_F
+Unit_Handling    := fixed
+Unit_length      := A
+Unit_energy      := eV
+Unit_charge      := e
+Unit_temperature := K
+Unit_time        := fs
+
+
+#######################################################################################################
+SUPPORTED_ATOM/PARTICLES_TYPES:
+# Symbol/name               Type                    code
+
+Ne                          spec                    1
+
+
+#######################################################################################################
+CONVENTIONS:
+# Name                      Type
+
+ZeroBasedLists              flag
+
+Neigh_IterAccess            flag
+
+NEIGH_RVEC_F                flag
+
+
+#######################################################################################################
+MODEL_INPUT:
+# Name                      Type         Unit                Shape              Requirements
+
+numberOfParticles           integer      none                []
+
+numberParticleTypes         integer      none                []
+
+particleTypes               integer      none                [numberOfParticles]
+
+coordinates                 real*8       length              [numberOfParticles,3]
+
+get_neigh                   method       none                []                 
+
+neighObject                 pointer      none                []
+
+
+#######################################################################################################
+MODEL_OUTPUT:
+# Name                      Type         Unit                Shape              Requirements
+
+destroy                     method       none                []
+
+compute                     method       none                []
+
+reinit                      method       none                []                 optional
+
+cutoff                      real*8       length              []
+
+energy                      real*8       energy              []                 optional
+
+forces                      real*8       force               [numberOfParticles,3]  optional
+
+particleEnergy              real*8       energy              [numberOfParticles]    optional
+
+virial                      real*8       energy              [6]                optional
+
+
+#######################################################################################################
+MODEL_PARAMETERS:
+# Name                      Type         Unit                Shape              Requirements
+
+PARAM_FREE_sigma            real*8       length              []
+
+PARAM_FREE_epsilon          real*8       energy              []
+
+PARAM_FREE_cutoff           real*8       length              []
+
+PARAM_FIXED_cutnorm         real*8       none                []
+
+PARAM_FIXED_A               real*8       pressure            []
+
+PARAM_FIXED_B               real*8       force               []
+
+PARAM_FIXED_C               real*8       energy              []
+
+PARAM_FIXED_sigmasq         real*8       length^2            []
+
+PARAM_FIXED_cutsq           real*8       length^2            []

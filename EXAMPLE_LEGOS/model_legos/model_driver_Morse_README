@@ -15,7 +15,7 @@ where shift is computed so that phi(rcut) = 0.0
 
 It complies with the KIM API interface standard, using any NBC and iterator or
 locator mode, publishes its parameters, and supports optional computation of
-`forces', `particleEnergys', and `virial'.  Its initializaton routine takes a
+`forces', `particleEnergy', and `virial'.  Its initializaton routine takes a
 KIM API object pointer and a pointer to a string that contains the cutoff and
 Morse parameters which define a KIM Model based on this KIM Model Driver.
 

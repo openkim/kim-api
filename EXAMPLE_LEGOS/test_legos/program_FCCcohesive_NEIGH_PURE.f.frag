@@ -216,11 +216,7 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
      stop
   endif
-  if (halfflag) then ! half neighbor list computes twice the energy
-     Energies(1) = energy/2.d0
-  else
-     Energies(1) = energy
-  endif
+  Energies(1) = energy
   if (verbose) &
      print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(1), Spacings(1)
 
@@ -236,11 +232,7 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
      stop
   endif
-  if (halfflag) then ! half neighbor list computes twice the energy
-     Energies(3) = energy/2.d0
-  else
-     Energies(3) = energy
-  endif
+  Energies(3) = energy
   if (verbose) &
      print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(3), Spacings(3)
 
@@ -256,11 +248,7 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
      stop
   endif
-  if (halfflag) then ! half neighbor list computes twice the energy
-     Energies(2) = energy/2.d0
-  else
-     Energies(2) = energy
-  endif
+  Energies(2) = energy
   if (verbose) &
      print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(2), Spacings(2)
 
@@ -281,11 +269,7 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
         idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
         stop
      endif
-     if (halfflag) then ! half neighbor list computes twice the energy
-        Energies(4) = energy/2.d0
-     else
-        Energies(4) = energy
-     endif
+     Energies(4) = energy
      if (verbose) &
         print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(4), Spacings(4)
 

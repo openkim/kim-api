@@ -1,0 +1,101 @@
+#######################################################################################################
+#
+# Release: This file is part of the openkim-api.git repository.
+#
+# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
+# All rights reserved.
+#
+# Authors: Valeriu Smirichinski, Ryan S. Elliott, Ellad B. Tadmor
+#
+#
+# See KIM_API/standard.kim for documentation about this file
+#
+#######################################################################################################
+
+
+MODEL_NAME := ex_model_Ar_P_MLJ_C
+Unit_Handling    := fixed
+Unit_length      := A
+Unit_energy      := eV
+Unit_charge      := e
+Unit_temperature := K
+Unit_time        := fs
+
+
+#######################################################################################################
+SUPPORTED_ATOM/PARTICLES_TYPES:
+# Symbol/name               Type                    code
+
+Ar                          spec                    1
+
+
+#######################################################################################################
+CONVENTIONS:
+# Name                      Type
+
+ZeroBasedLists              flag
+
+Neigh_IterAccess            flag
+
+Neigh_LocaAccess            flag
+
+NEIGH_PURE_H                flag
+
+NEIGH_PURE_F                flag
+
+NEIGH_RVEC_F                flag
+
+MI_OPBC_H                   flag
+
+MI_OPBC_F                   flag
+
+CLUSTER                     flag
+
+
+#######################################################################################################
+MODEL_INPUT:
+# Name                      Type         Unit                Shape              Requirements
+
+numberOfParticles           integer      none                []
+
+numberContributingParticles integer      none                []                 optional
+
+numberParticleTypes         integer      none                []
+
+particleTypes               integer      none                [numberOfParticles]
+
+coordinates                 real*8       length              [numberOfParticles,3]
+
+boxSideLengths              real*8       length              [3]                optional
+
+get_neigh                   method       none                []                 optional
+
+neighObject                 pointer      none                []                 optional
+
+
+#######################################################################################################
+MODEL_OUTPUT:
+# Name                      Type         Unit                Shape              Requirements
+
+destroy                     method       none                []                 optional
+
+compute                     method       none                []
+
+reinit                      method       none                []                 optional
+
+cutoff                      real*8       length              []
+
+energy                      real*8       energy              []                 optional
+
+forces                      real*8       force               [numberOfParticles,3]  optional
+
+particleEnergy              real*8       energy              [numberOfParticles]    optional
+
+virial                      real*8       energy              [6]                optional
+
+
+#######################################################################################################
+MODEL_PARAMETERS:
+# Name                      Type         Unit                Shape              Requirements
+
+# --- No published parameters ---

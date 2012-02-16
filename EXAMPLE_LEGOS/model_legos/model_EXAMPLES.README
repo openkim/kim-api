@@ -14,74 +14,74 @@ Model name                         Language  NBC             Loca/Iter  Half/Ful
                                                                                     parameters
 ----------------------------------------------------------------------------------------------
 
-model_Al_PF_ErcolessiAdams         F90       NEIGH_PURE_H    Iterator   Full        NO
+ex_model_Al_PF_ErcolessiAdams      F90       NEIGH_PURE_H    Iterator   Full        NO
                                              NEIGH_PURE_F    Locator    Half
                                              NEIGH_RVEC_F
                                              MI_OPBC_H
                                              MI_OPBC_F
                                              CLUSTER
 
-model_ArNe_P_MLJ_NEIGH_RVEC_F      F90       NEIGH_RVEC_F    Locator    Full        YES
+ex_model_ArNe_P_MLJ_NEIGH_RVEC_F   F90       NEIGH_RVEC_F    Locator    Full        YES
 
-model_Ar_P_LJ                      F90       NEIGH_PURE_H    Iterator   Full        YES
+ex_model_Ar_P_LJ                   F90       NEIGH_PURE_H    Iterator   Full        YES
  - based on model_driver_P_LJ                NEIGH_PURE_F    Locator    Half
                                              NEIGH_RVEC_F
                                              MI_OPBC_H
                                              MI_OPBC_F
                                              CLUSTER
 
-model_Ar_P_MLJ_C                   C         NEIGH_PURE_H    Iterator   Full        NO
+ex_model_Ar_P_MLJ_C                C         NEIGH_PURE_H    Iterator   Full        NO
                                              NEIGH_PURE_F    Locator    Half
                                              NEIGH_RVEC_F
                                              MI_OPBC_H
                                              MI_OPBC_F
                                              CLUSTER
 
-model_Ar_P_MLJ_CLUSTER_C           C         CLUSTER         N/A        N/A         YES
+ex_model_Ar_P_MLJ_CLUSTER_C        C         CLUSTER         N/A        N/A         YES
 
-model_Ar_P_MLJ_CLUSTER_F90         F90       CLUSTER         N/A        N/A         YES
+ex_model_Ar_P_MLJ_CLUSTER_F90      F90       CLUSTER         N/A        N/A         YES
 
-model_Ar_P_MLJ_F90                 F90       NEIGH_PURE_H    Iterator   Full        NO
+ex_model_Ar_P_MLJ_F90              F90       NEIGH_PURE_H    Iterator   Full        NO
                                              NEIGH_PURE_F    Locator    Half
                                              NEIGH_RVEC_F
                                              MI_OPBC_H
                                              MI_OPBC_F
                                              CLUSTER
 
-model_Ar_P_MLJ_MI_OPBC_H_F         F90       MI_OPBC_H       Locator    Half        YES
+ex_model_Ar_P_MLJ_MI_OPBC_H_F      F90       MI_OPBC_H       Locator    Half        YES
                                              MI_OPBC_F                  Full
 
-model_Ar_P_MLJ_NEIGH_PURE_H_F      F90       NEIGH_PURE_H    Locator    Half        YES
+ex_model_Ar_P_MLJ_NEIGH_PURE_H_F   F90       NEIGH_PURE_H    Locator    Half        YES
                                              NEIGH_PURE_F               Full
 
-model_Ar_P_MLJ_NEIGH_RVEC_F        F90       NEIGH_RVEC-F    Locator    Full        YES
+ex_model_Ar_P_MLJ_NEIGH_RVEC_F     F90       NEIGH_RVEC-F    Locator    Full        YES
 
-model_Ar_P_Morse                   C         NEIGH_PURE_H    Iterator   Full        YES
+ex_model_Ar_P_Morse                C         NEIGH_PURE_H    Iterator   Full        YES
  - based on model_driver_P_Morse             NEIGH_PURE_F    Locator    Half
                                              NEIGH_RVEC_F
                                              MI_OPBC_H
                                              MI_OPBC_F
                                              CLUSTER
 
-model_Ne_P_fastLJ                  C         NEIGH_PURE_H    Iterator   Full        YES
+ex_model_Ne_P_fastLJ               C         NEIGH_PURE_H    Iterator   Full        YES
                                              NEIGH_PURE_F               Half
                                              NEIGH_RVEC_F
                                              MI_OPBC_H
                                              MI_OPBC_F
                                              CLUSTER
 
-model_Ne_P_LJ                      F90       NEIGH_PURE_H    Iterator   Full        YES
+ex_model_Ne_P_LJ                   F90       NEIGH_PURE_H    Iterator   Full        YES
  - based on model_driver_P_LJ                NEIGH_PURE_F    Locator    Half
                                              NEIGH_RVEC_F
                                              MI_OPBC_H
                                              MI_OPBC_F
                                              CLUSTER
 
-model_Ne_P_LJ_NEIGH_PURE_H         F77       NEIGH_PURE_H    Iterator   Half        NO
+ex_model_Ne_P_LJ_NEIGH_PURE_H      F77       NEIGH_PURE_H    Iterator   Half        NO
 
-model_Ne_P_MLJ_NEIGH_RVEC_F        C         NEIGH_RVEC_F    Iterator   Full        YES
+ex_model_Ne_P_MLJ_NEIGH_RVEC_F     C         NEIGH_RVEC_F    Iterator   Full        YES
 
-model_Ne_P_Morse                   C         NEIGH_PURE_H    Iterator   Full        YES
+ex_model_Ne_P_Morse                C         NEIGH_PURE_H    Iterator   Full        YES
  - based on model_driver_P_Morse             NEIGH_PURE_F    Locator    Half
                                              NEIGH_RVEC_F
                                              MI_OPBC_H
@@ -98,8 +98,8 @@ to the various components of a KIM-compliant Model. (See the README file in the
 DOCs directory for guidelines on how to study the Models distributed with this 
 package.)
 
-model_Ar_P_MLJ_CLUSTER_C   (C)
-model_Ar_P_MLJ_CLUSTER_F90 (Fortran 90)
+ex_model_Ar_P_MLJ_CLUSTER_C   (C)
+ex_model_Ar_P_MLJ_CLUSTER_F90 (Fortran 90)
      These Models implement the CLUSTER neighbor list and boundary condition
      (NBC) method, which is the simplest computation to understand.  For this
      reason, looking at the compute() or Compute_Energy_Forces() subroutines,
@@ -110,7 +110,7 @@ model_Ar_P_MLJ_CLUSTER_F90 (Fortran 90)
      initialization routine. Examples of Models that do not publish parameters
      (which makes the initialization routine simpler) are described below.
 
-model_Ne_P_LJ_NEIGH_PURE_H (FORTRAN 77)
+ex_model_Ne_P_LJ_NEIGH_PURE_H (FORTRAN 77)
      This Model implements the NEIGH_PURE_H NBC method, which is slightly more
      complicated than the CLUSTER method.  The Model uses only Iterator mode
      for neighbor list access, which makes this Model a good place to study the
@@ -118,77 +118,77 @@ model_Ne_P_LJ_NEIGH_PURE_H (FORTRAN 77)
      publish its parameters, which makes it easy to focus on the details of the
      calculate subroutine.
 
-model_Ar_P_MLJ_NEIGH_PURE_H_F (Fortran 90)
+ex_model_Ar_P_MLJ_NEIGH_PURE_H_F (Fortran 90)
      This Model implements both the NEIGH_PURE_H and NEIGH_PURE_F NBC methods,
      and supports both Iterator mode and Locator mode.  Thus, this Model makes
      it easy to identify the differences required for a computation when one
      uses half or full neighbor lists, as well as, Iterator or Locator neighbor
      list access modes.
 
-model_Ar_P_MLJ_NEIGH_RVEC_F (Fortran 90)
-model_Ne_P_MLJ_NEIGH_RVEC_F (C)
+ex_model_Ar_P_MLJ_NEIGH_RVEC_F (Fortran 90)
+ex_model_Ne_P_MLJ_NEIGH_RVEC_F (C)
      These two Models (the first written in F90, the second written in C)
      provide parallel examples of an implementation of the NEIGH_RVEC_F NBC
      method.  This NBC method includes relative position vectors (Rij's) as
      well as the usual neighbor list of atom Id's.
 
-model_Ar_P_MLJ_MI_OPBC_H_F (Fortran 90)
+ex_model_Ar_P_MLJ_MI_OPBC_H_F (Fortran 90)
      This Model implements the MI_OPBC_H and MI_OPBC_F NBC methods.  This is,
      arguably, the most complex method and requires that both the Test and
      Model apply the "minimum image" convention (using the `boxSideLengths'
      argument) to determine an atom's neighbors and the corresponding relative
      position vectors.
 
-model_ArNe_P_MLJ_NEIGH_RVEC_F (Fortran 90)
-     This Model is the same as model_Ar_P_MLJ_NEIGH_RVEC_F except that it
+ex_model_ArNe_P_MLJ_NEIGH_RVEC_F (Fortran 90)
+     This Model is the same as ex_model_Ar_P_MLJ_NEIGH_RVEC_F except that it
      supports interactions between argon and neon atoms.  Thus, it is useful to
      compare these two Models in order to see what changes are required for a
      KIM Model to support multiple species interactions.
 
-model_Ar_P_MLJ_C (C)
+ex_model_Ar_P_MLJ_C (C)
      This Model is based on the template file
      $KIM_DIR/DOCs/TEMPLATEs/model_El_P_Template.c.  Thus, it is useful to
-     compare the file model_Ar_P_MLJ_C.c with
+     compare the file ex_model_Ar_P_MLJ_C.c with
      $KIM_DIR/DOCs/TEMPLATEs/model_El_P_Template.c to see the relatively few
      changes required to implement the modified Lennard-Jones model.  The
      template implements all NBCs and Iterator and Locator modes in a way that
      results in a very compact compute() function.
 
-model_Ar_P_MLJ_F90 (Fortran 90)
+ex_model_Ar_P_MLJ_F90 (Fortran 90)
      This Model is based on the template file
      $KIM_DIR/DOCs/TEMPLATEs/model_El_P_Template.F90.  Thus, it is useful to
-     compare the file model_Ar_P_MLJ_F90.F90 with
+     compare the file ex_model_Ar_P_MLJ_F90.F90 with
      $KIM_DIR/DOCs/TEMPLATEs/model_El_P_Template.F90 to see the relatively few
      changes required to implement the modified Lennard-Jones model.  The
      template implements all NBCs and Iterator and Locator modes in a way that
      results in a very compact Compute_Energy_Forces() subroutine.
 
-model_Al_PF_ErcolessiAdams (Fortran 90)
+ex_model_Al_PF_ErcolessiAdams (Fortran 90)
      This Model is based on the template file
      $KIM_DIR/DOCs/TEMPLATEs/model_El_PF_Template.F90.  Thus, it is useful to
-     compare the file model_Al_PF_ErcolessiAdams.F90 with
+     compare the file ex_model_Al_PF_ErcolessiAdams.F90 with
      $KIM_DIRDOCs/TEMPLATEs/model_El_PF_Template.F90 to see the relatively
      simple changes required to implement a pair functional Model.
 
-model_Ar_P_LJ (F90)
-model_Ne_P_LJ (F90)
+ex_model_Ar_P_LJ (F90)
+ex_model_Ne_P_LJ (F90)
      These Models are based on the KIM Model Driver model_driver_P_LJ.  They
      only consist of a simple Makefile and a parameters file.  Everything else
      is handled by the KIM Model Driver.  See the directory
      $KIM_DIR/MODEL_DRIVERs/model_driver_P_LJ/ for more details on how KIM
      Model Drivers are handled.
 
-model_Ar_P_Morse (C)
-model_Ne_P_Morse (C)
+ex_model_Ar_P_Morse (C)
+ex_model_Ne_P_Morse (C)
      These Models are based on the KIM Model Driver model_driver_P_Morse.  They
      only consist of a simple Makefile and a parameters file.  Everything else
      is handled by the KIM Model Driver.  See the directory
      $KIM_DIR/MODEL_DRIVERs/model_driver_P_Morse/ for more details on how KIM
      Model Drivers are handled.
 
-model_Ne_P_fastLJ (C)
+ex_model_Ne_P_fastLJ (C)
      This Model implements the shifted Lennard-Jones Model in an atempt to be
      as efficient as possible.  The code can be compared to that of
-     model_Ar_P_MLJ_C or model_driver_P_Morse.  This is a good example of how
-     significant performance gains can be made, but only at the expense of
-     source code readability.
+     ex_model_Ar_P_MLJ_C.c or ex_model_driver_P_Morse.c.  This is a good
+     example of how significant performance gains can be made, but only at the
+     expense of source code readability.

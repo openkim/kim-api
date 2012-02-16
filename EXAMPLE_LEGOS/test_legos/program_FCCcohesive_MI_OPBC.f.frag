@@ -164,7 +164,7 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   integer ier, idum
   double precision Spacings(4)
   double precision Energies(4)
-  integer middleDum
+  integer MiddleAtomId
   real*8 energy;         pointer(penergy,energy)
   real*8 coordum(DIM,1); pointer(pcoor,coordum)
   real*8, pointer :: coords(:,:)
@@ -209,48 +209,48 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   ! Initialize for minimization
   !
   Spacings(1) = MinSpacing
-  call create_FCC_configuration(Spacings(1), CellsPerSide, .true., coords, middleDum)
+  call create_FCC_configuration(Spacings(1), CellsPerSide, .true., coords, MiddleAtomId)
   boxSideLengths(:) = Spacings(1)*CellsPerSide
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
-  call MI_OPBC_neighborlist(halfflag, N, coords, (cutoff+cutpad), boxSideLengths, neighborList)
+  call MI_OPBC_periodic_neighborlist(halfflag, N, coords, (cutoff+cutpad), boxSideLengths, MiddleAtomId, neighborList)
   call kim_api_model_compute_f(pkim, ier)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
      stop
   endif
-  Energies(1) = energy/N
+  Energies(1) = energy
   if (verbose) &
      print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(1), Spacings(1)
 
   ! setup and compute for max spacing
   Spacings(3) = MaxSpacing
-  call create_FCC_configuration(Spacings(3), CellsPerSide, .true., coords, middleDum)
+  call create_FCC_configuration(Spacings(3), CellsPerSide, .true., coords, MiddleAtomId)
   boxSideLengths(:) = Spacings(3)*CellsPerSide
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
-  call MI_OPBC_neighborlist(halfflag, N, coords, (cutoff+cutpad), boxSideLengths, neighborList)
+  call MI_OPBC_periodic_neighborlist(halfflag, N, coords, (cutoff+cutpad), boxSideLengths, MiddleAtomId, neighborList)
   ! Call model compute
   call kim_api_model_compute_f(pkim, ier)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
      stop
   endif
-  Energies(3) = energy/N
+  Energies(3) = energy
   if (verbose) &
      print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(3), Spacings(3)
 
   ! setup and compute for first intermediate spacing
   Spacings(2) = MinSpacing + (2.0 - Golden)*(MaxSpacing - MinSpacing)
-  call create_FCC_configuration(Spacings(2), CellsPerSide, .true., coords, middleDum)
+  call create_FCC_configuration(Spacings(2), CellsPerSide, .true., coords, MiddleAtomId)
   boxSideLengths(:) = Spacings(2)*CellsPerSide
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
-  call MI_OPBC_neighborlist(halfflag, N, coords, (cutoff+cutpad), boxSideLengths, neighborList)
+  call MI_OPBC_periodic_neighborlist(halfflag, N, coords, (cutoff+cutpad), boxSideLengths, MiddleAtomId, neighborList)
   ! Call model compute
   call kim_api_model_compute_f(pkim, ier)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
      stop
   endif
-  Energies(2) = energy/N
+  Energies(2) = energy
   if (verbose) &
      print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(2), Spacings(2)
 
@@ -261,18 +261,18 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
      ! set new spacing
      Spacings(4) = (Spacings(1) + Spacings(3)) - Spacings(2)
      ! compute new atom coordinates based on new spacing
-     call create_FCC_configuration(Spacings(4), CellsPerSide, .true., coords, middleDum)
+     call create_FCC_configuration(Spacings(4), CellsPerSide, .true., coords, MiddleAtomId)
      ! set new boxSideLengths
      boxSideLengths(:)  = Spacings(4)*CellsPerSide
      ! compute new neighbor lists (could be done more intelligently, I'm sure)
-     call MI_OPBC_neighborlist(halfflag, N, coords, (cutoff+cutpad), boxSideLengths, neighborList)
+     call MI_OPBC_periodic_neighborlist(halfflag, N, coords, (cutoff+cutpad), boxSideLengths, MiddleAtomId, neighborList)
      ! Call model compute
      call kim_api_model_compute_f(pkim, ier)
      if (ier.lt.KIM_STATUS_OK) then
         idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
         stop
      endif
-     Energies(4) = energy/N
+     Energies(4) = energy
      if (verbose) &
         print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(4), Spacings(4)
 

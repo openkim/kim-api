@@ -14,14 +14,14 @@ Model Driver name                  Language  NBC             Loca/Iter  Half/Ful
                                                                                     parameters
 ----------------------------------------------------------------------------------------------
 
-model_driver_P_LJ                  F90       NEIGH_RVEC_F    Iterator   Full        YES
+ex_model_driver_P_LJ               F90       NEIGH_RVEC_F    Iterator   Full        YES
                                              NEIGH_PURE_H    Locator    Half
                                              NEIGH_PURE_F
                                              MI_OPBC_H
                                              MI_OPBC_F
                                              CLUSTER
 
-model_driver_P_Morse               C         NEIGH_RVEC_F    Iterator   Full        YES
+ex_model_driver_P_Morse            C         NEIGH_RVEC_F    Iterator   Full        YES
                                              NEIGH_PURE_H    Locator    Half
                                              NEIGH_PURE_F
                                              MI_OPBC_H
@@ -33,19 +33,19 @@ model_driver_P_Morse               C         NEIGH_RVEC_F    Iterator   Full    
 
 A description of the provided example Model Drivers is given below.
 
-model_driver_P_LJ (Fortran 90)
+ex_model_driver_P_LJ (Fortran 90)
      This Model Driver is based on the template file
      $KIM_DIR/DOCs/TEMPLATEs/model_driver_P_Template.F90.  Thus, it is useful
-     to compare the file model_driver_P_LJ.F90 with
+     to compare the file ex_model_driver_P_LJ.F90 with
      $KIM_DIR/DOCs/TEMPLATEs/model_driver_P_Template.F90 to see the relatively
      few changes required to implement the shifted Lennard-Jones Model Driver.
      The template implements all NBCs and Iterator and Locator modes in a way
      that results in a very compact compute() function.
 
-model_driver_P_Morse (C)
+ex_model_driver_P_Morse (C)
      This Model Driver is based on the template file
      $KIM_DIR/DOCs/TEMPLATEs/model_driver_P_Template.c.  Thus, it is useful to
-     compare the file model_driver_P_Morse.c with
+     compare the file ex_model_driver_P_Morse.c with
      $KIM_DIR/DOCs/TEMPLATEs/model_driver_P_Template.c to see the relatively
      few changes required to implement the shifted Morse Model Driver.  The
      template implements all NBCs and Iterator and Locator modes in a way that

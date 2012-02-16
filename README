@@ -165,6 +165,10 @@ DOCs/
      containing template files for creating your own KIM Models.  (See the
      README file in that directory.)
 
+EXAMPLEs/ 
+     directory containing examples of interatomic Model Drivers, Models, and
+     Tests.
+
 INSTALL
      detailed instructions on how to install the openKIM API package
 
@@ -172,16 +176,16 @@ KIM_API/
      directory containing the openkim-api service routines
         
 MODEL_DRIVERs/
-     directory containing examples of interatomic Model Drivers
-
      Each Model Driver is stored in its own directory that conforms to the
-     naming convention specified in standard.kim.
+     naming convention specified in standard.kim.  This is where you should
+     place Model Driver directories downloaded from http://openKIM.org. (Or use
+     `make examples' to copy the example Model Drivers to this directory.)
 
 MODELs/
-     directory containing examples of interatomic Models
-
      Each Model is stored in its own directory that conforms to the naming
-     convention specified in standard.kim.
+     convention specified in standard.kim.  This is where you should place
+     Model directories downloaded from http://openKIM.org. (Or use `make
+     examples' to copy the example Models to this directory.)
 
 Makefile
      make file for compiling the openkim-api services routines and example
@@ -191,10 +195,10 @@ README
      This file.
  
 TESTs/
-     directory containing examples of Tests
-
      Each Test is stored in its own directory that conforms to the naming
-     convention specified in standard.kim.
+     convention specified in standard.kim.  This is where you should place Test
+     directories downloaded from http://openKIM.org. (Or use `make examples' to
+     copy the example Tests to this directory.)
 
 TODO
      A file listing features planed for future releases of the openKIM API

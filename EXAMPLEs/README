@@ -1,0 +1,17 @@
+#
+# Release: This file is part of the openkim-api.git repository.
+#
+# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
+# All rights reserved.
+#
+
+This directory (EXAMPLEs) contains directories with example Model Drivers,
+Models, and Tests that can be compiled as part of the openkim-api package.  
+Use `make examples' from the main directory order to copy these files to the
+$KIM_MODEL_DRIVERS_DIR, $KIM_MODELS_DIR, and $KIM_TESTS_DIR directories
+respectively and to compile them.
+
+This directory is populated with the examples as part of the openkim-api
+distribution.  Please see the README files within each directory for
+information about the examples.
+

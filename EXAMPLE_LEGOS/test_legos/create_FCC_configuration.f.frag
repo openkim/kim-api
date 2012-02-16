@@ -38,7 +38,8 @@ subroutine create_FCC_configuration(FCCspacing, nCellsPerSide, periodic, coords,
   FCCshifts(1,3) = 0.5*FCCspacing; FCCshifts(2,3) = 0.d0;           FCCshifts(3,3) = 0.5*FCCspacing
   FCCshifts(1,4) = 0.d0;           FCCshifts(2,4) = 0.5*FCCspacing; FCCshifts(3,4) = 0.5*FCCspacing
 
-  a = 0
+  MiddleAtomID = 1 ! Always put middle atom as #1
+  a = 1            ! leave space for middle atom as atom #1
   do i=1,nCellsPerSide
      latVec(1) = (i-1)*FCCspacing
      do j=1,nCellsPerSide
@@ -50,7 +51,8 @@ subroutine create_FCC_configuration(FCCspacing, nCellsPerSide, periodic, coords,
               coords(:,a) = latVec + FCCshifts(:,m)
               if ((i.eq.nCellsPerside/2) .and. (j.eq.nCellsPerSide/2) .and. &
                    (k.eq.nCellsPerSide/2) .and. (m.eq.1)) then
-                 MiddleAtomId = a
+                 coords(:,1) = latVec + FCCshifts(:,m) ! put middle atom as atom #1
+                 a = a - 1
               endif
            enddo
         enddo

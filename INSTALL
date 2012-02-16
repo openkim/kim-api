@@ -61,19 +61,24 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
     (e.g. ~/.bashrc).
 
 
-2. To compile the package, change to the $KIM_DIR directory and execute make:
+2. To compile the package, including the provided examples, change to the
+   $KIM_DIR directory and execute `make examples':
 
    % cd $KIM_DIR
-   % make
+   % make examples
 
      This builds all Models, Tests, and the openKIM API service routine
      library. The targets defined by the Makefile in this directory include:
 
-       `make'             -- compiles the API and all Models and Tests
-       `make all'         -- same as `make'
-       `make openkim-api' -- compiles only the API
-       `make clean'       -- will remove all .o, .mod, .a, .so and executable
-                             files
+       `make'                -- compiles the API and all Models and Tests
+       `make all'            -- same as `make'
+       `make examples'       -- copy examples into the appropriate directories
+                                then do a `make all'
+       `make openkim-api'    -- compiles only the API
+       `make clean'          -- will remove all .o, .mod, .a, .so and executable
+                                files
+       `make examples-clean' -- remove all examples from the MODEL_DRIVERs,
+                                MODELs, and TESTs directories.
 
 3. Verify that the compilation was successful by running a Test.
 
@@ -82,8 +87,8 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
    Model can be piped in using an `echo' command.  For example, the following
    Fortran 90 Test reads in one Model:
 
-   % cd $KIM_DIR/TESTs/test_Ar_free_cluster_CLUSTER_F90
-   % echo "model_Ar_P_MLJ_CLUSTER_C" | ./test_Ar_free_cluster_CLUSTER_F90
+   % cd $KIM_DIR/TESTs/ex_test_Ar_free_cluster_CLUSTER_F90
+   % echo "ex_model_Ar_P_MLJ_CLUSTER_C" | ./ex_test_Ar_free_cluster_CLUSTER_F90
 
   (See the README files in the Test directories for an explanation of what 
    the Tests do.)

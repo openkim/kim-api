@@ -1,0 +1,27 @@
+#
+# Release: This file is part of the openkim-api.git repository.
+#
+# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
+# All rights reserved.
+#
+
+This directory (ex_model_ArNe_P_MLJ_NIGH_RVEC_F) contains a modified Lennard
+Jones (LJ) Model for Argon and Neon with smoothed cutoff radius written in F90.
+It complies with the KIM API interface standard, using the NEIGH_RVEC_F NBC and
+locator mode, and publishes its parameters, and supports optional computation
+of `forces', `particleEnergy', and `virial'
+
+The following files are in this directory:
+
+Makefile
+     makefile to compile and build executables with GNU or Intel compilers
+
+README
+     This file
+
+ex_model_ArNe_P_MLJ_NEIGH_RVEC_F.F90
+     Fortran module file that contains the implementation of the LJ potential
+
+ex_model_ArNe_P_MLJ_NEIGH_RVEC_F.kim
+     KIM descriptor file, contains all variables and methods that are exposed
+     through the KIM API interface

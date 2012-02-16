@@ -75,9 +75,9 @@ if (do_update_list) then
    ! compute neighbor lists
    cutrange = cutoff + cutpad
    if (nbc.eq.0) then
-      call MI_OPBC_neighborlist(.true., N, coords, cutrange, boxSideLengths, neighborList)
+      call MI_OPBC_cluster_neighborlist(.true., N, coords, cutrange, boxSideLengths, neighborList)
    elseif (nbc.eq.1) then
-      call MI_OPBC_neighborlist(.false., N, coords, cutrange, boxSideLengths, neighborList)
+      call MI_OPBC_cluster_neighborlist(.false., N, coords, cutrange, boxSideLengths, neighborList)
    elseif (nbc.eq.2) then
       call NEIGH_PURE_cluster_neighborlist(.true., N, coords, cutrange, neighborList)
    elseif (nbc.eq.3) then

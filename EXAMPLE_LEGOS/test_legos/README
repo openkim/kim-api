@@ -67,11 +67,11 @@ descriptor_file_output
 descriptor_file_start
      This file contains the beginning of the KIM descriptor file.
 
-example_test_Ar_multiple_models/
-     Directory containing the test_Ar_multiple_models Test.
+ex_test_Ar_multiple_models/
+     Directory containing the ex_test_Ar_multiple_models Test.
 
-example_test_demo_F03/
-     Directory containing the test_demo_F03 Test.
+ex_test_demo_F03/
+     Directory containing the ex_test_demo_F03 Test.
 
 free_KIM_API_object.f.frag
      This Fortran file contains the free_KIM_API_object routine that is used
@@ -91,35 +91,35 @@ get_neigh_no_Rij.f.frag
 
 program_B2cohesive_NEIGH_RVEC.f.frag
      This Fortran file contains the main program for the
-     test_*_B2cohesive_NEIGH_RVEC Test.
+     ex_test_*_B2cohesive_NEIGH_RVEC Test.
 
 program_FCCcohesiveCutoff_NEIGH_RVEC.f.frag
      This Fortran file contains the main program for the
-     test_*_FCCcohesiveCutoff_NEIGH_RVEC Test.
+     ex_test_*_FCCcohesiveCutoff_NEIGH_RVEC Test.
 
 program_FCCcohesive_MI_OPBC.f.frag
      This Fortran file contains the main program for the
-     test_*_FCCcohesive_MI_OPBC Test.
+     ex_test_*_FCCcohesive_MI_OPBC Test.
 
 program_FCCcohesive_NEIGH_PURE.f.frag
      This Fortran file contains the main program for the
-     test_*_FCCcohesive_NEIGH_PURE Test.
+     ex_test_*_FCCcohesive_NEIGH_PURE Test.
 
 program_FCCcohesive_NEIGH_RVEC.f.frag
      This Fortran file contains the main program for the
-     test_*_FCCcohesive_NEIGH_RVEC Test.
+     ex_test_*_FCCcohesive_NEIGH_RVEC Test.
 
 program_free_cluster.f.frag
-     This Fortran file contains the main program for the test_*_free_cluster
-     example Test.
+     This Fortran file contains the main program for the 
+     ex_test_*_free_cluster example Test.
 
 program_free_cluster_CLUSTER.c.frag
      This Fortran file contains the main program for the
-     test_*_free_cluster_CLUSTER_C example test.
+     ex_test_*_free_cluster_CLUSTER_C example test.
 
 program_free_cluster_CLUSTER.f.frag
      This Fortran file contains the main program for the
-     test_*_free_cluster_CLUSTER_F example test.
+     ex_test_*_free_cluster_CLUSTER_F example test.
 
 setup_B2_KIM_API_object.f.frag
      This Fortran file contains the setup_B2_KIM_API_object routine used by the

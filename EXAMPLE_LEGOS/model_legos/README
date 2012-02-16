@@ -13,18 +13,18 @@ The following files are in this directory:
 
 Makefile
      This is the make file that creates the example Models directories in the
-     directory ../../MODELs/
+     directory ../../EXAMPLEs/MODELs/
 
 README
      This file
 
 cluster_compute_local_variables.f.frag
      This Fortran file contains the local variables used by the
-     model_Ar_P_MLJ_CLUSTER Model
+     ex_model_Ar_P_MLJ_CLUSTER Model
  
 cluster_compute_loops.f.frag
      This Fortran file contains the computational loops used in the
-     model_Ar_P_MLJ_CLUSTER Model
+     ex_model_Ar_P_MLJ_CLUSTER Model
 
 compute_initialize.f.frag
      This Fortran file contains the common initialization code for the
@@ -48,38 +48,38 @@ descriptor_file_params
 descriptor_file_start
      This file contains the common head of the kim descriptor files
 
-example_model_Al_PF_ErcolessiAdams/
-     Directory containing the model_Al_PF_ErcolessiAdams Model
+ex_model_Al_PF_ErcolessiAdams/
+     Directory containing the ex_model_Al_PF_ErcolessiAdams Model
 
-example_model_Al_PF_ErcolessiAdams_MI_OPBC_H/
-     Directory containing the model_Al_PF_ErcolessiAdams_MI_OPBC_H Model
+ex_model_Al_PF_ErcolessiAdams_MI_OPBC_H/
+     Directory containing the ex_model_Al_PF_ErcolessiAdams_MI_OPBC_H Model
 
-example_model_ArNe_P_MLJ_NEIGH_RVEC_F/
-     Directory containing the model_ArNe_P_MLJ_NEIGH_RVEC_F Model
+ex_model_ArNe_P_MLJ_NEIGH_RVEC_F/
+     Directory containing the ex_model_ArNe_P_MLJ_NEIGH_RVEC_F Model
 
-example_model_Ar_P_MLJ_C/
-     Directory containing the model_Ar_P_MLJ_C Model
+ex_model_Ar_P_MLJ_C/
+     Directory containing the ex_model_Ar_P_MLJ_C Model
 
-example_model_Ar_P_MLJ_F90/
-     Directory containing the model_Ar_P_MLJ_F90 Model
+ex_model_Ar_P_MLJ_F90/
+     Directory containing the ex_model_Ar_P_MLJ_F90 Model
 
-example_model_Ne_P_LJ_NEIGH_PURE_H/
-     Directory containing the model_Ne_P_LJ_NEIGH_PURE_H Model
+ex_model_Ne_P_LJ_NEIGH_PURE_H/
+     Directory containing the ex_model_Ne_P_LJ_NEIGH_PURE_H Model
 
-example_model_Ne_P_MLJ_NEIGH_RVEC_F/
-     Directory containing the model_Ne_P_MLJ_NEIGH_RVEC_F Model
+ex_model_Ne_P_MLJ_NEIGH_RVEC_F/
+     Directory containing the ex_model_Ne_P_MLJ_NEIGH_RVEC_F Model
 
 mi_opbc_compute_extra_kim_variables.f.frag
      This Fortran file contains the additional kim variables used by the
-     model_Ar_P_MLJ_MI_OPBC_H_F Model
+     ex_model_Ar_P_MLJ_MI_OPBC_H_F Model
 
 mi_opbc_compute_loops.f.frag
      This Fortran file contains the computational loops used in the
-     model_Ar_P_MLJ_MI_OPBC_H_F Model
+     ex_model_Ar_P_MLJ_MI_OPBC_H_F Model
 
 mi_opbc_neigh_pure_compute_local_variables.f.frag
      This Fortran file contains the local variables used by the
-     model_Ar_P_MLJ_MI_OPBC_H_F and model_Ar_P_MLJ_NEIGH_PURE_H_F Models
+     ex_model_Ar_P_MLJ_MI_OPBC_H_F and ex_model_Ar_P_MLJ_NEIGH_PURE_H_F Models
 
 model_EXAMPLES.README
      This file contains a list of all example Models indicating their
@@ -125,20 +125,20 @@ module_start.f.frag
 
 neigh_pure_compute_extra_kim_variables.f.frag
      This Fortran file contains the additional kim variables used by the
-     model_Ar_P_MLJ_NEIGH_PURE_H_F Model
+     ex_model_Ar_P_MLJ_NEIGH_PURE_H_F Model
 
 neigh_pure_compute_loops.f.frag
      This Fortran file contains the computational loops used in the
-     model_Ar_P_MLJ_NEIGH_PURE_H_F Model
+     ex_model_Ar_P_MLJ_NEIGH_PURE_H_F Model
 
 neigh_rvec_compute_extra_kim_variables.f.frag
      This Fortran file contains the additional kim variables used by the
-     model_Ar_P_MLJ_NEIGH_RVEC_F Model
+     ex_model_Ar_P_MLJ_NEIGH_RVEC_F Model
 
 neigh_rvec_compute_local_variables.f.frag
      This Fortran file contains the local variables used by the
-     model_Ar_P_MLJ_NEIGH_RVEC_F Model
+     ex_model_Ar_P_MLJ_NEIGH_RVEC_F Model
 
 neigh_rvec_compute_loops.f.frag
      This Fortran file contains the computational loops used in the
-     model_Ar_P_MLJ_NEIGH_RVEC_F Model
+     ex_model_Ar_P_MLJ_NEIGH_RVEC_F Model
