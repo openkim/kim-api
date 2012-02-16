@@ -182,15 +182,15 @@ program TEST_NAME_STR
   ! Unpack data from KIM object
   !
   call kim_api_getm_data_f(pkim, ier, &
-       "numberOfParticles",           pnAtoms,          1,                   &
-       "numberContributingParticles", pnumContrib,      1,                   &
-       "numberParticleTypes",         pnparticleTypes,  1,                   &
-       "particleTypes",               pparticleTypesdum,1,                   &
-       "coordinates",                 pcoor,            1,                   &
-       "cutoff",                      pcutoff,          1,                   &
-       "boxSideLengths",              pboxSideLengths,  TRUEFALSE(nbc.le.1), &
-       "energy",                      penergy,          1,                   &
-       "virial",                      pvirialglob,      1,                   &
+       "numberOfParticles",           pnAtoms,          1,                                   &
+       "numberContributingParticles", pnumContrib,      TRUEFALSE((nbc.eq.0).or.(nbc.eq.2)), &
+       "numberParticleTypes",         pnparticleTypes,  1,                                   &
+       "particleTypes",               pparticleTypesdum,1,                                   &
+       "coordinates",                 pcoor,            1,                                   &
+       "cutoff",                      pcutoff,          1,                                   &
+       "boxSideLengths",              pboxSideLengths,  TRUEFALSE(nbc.le.1),                 &
+       "energy",                      penergy,          1,                                   &
+       "virial",                      pvirialglob,      1,                                   &
        "forces",                      pforces,          1)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
@@ -203,8 +203,8 @@ program TEST_NAME_STR
   call KIM_to_F90_real_array_2d(forcesdum, forces, DIM, N)
 
   ! Set values
-  numberOfParticles   = N
-  numContrib      = N
+  numberOfParticles = N
+  if ((nbc.eq.0).or.(nbc.eq.2)) numContrib = N
   numberParticleTypes = ATypes
   particleTypes(:)    = kim_api_get_partcl_type_code_f(pkim, "SPECIES_NAME_STR", ier)
   if (ier.lt.KIM_STATUS_OK) then

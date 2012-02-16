@@ -180,6 +180,7 @@ ex_model_Ar_P_MLJ_MI_OPBC_H_F: $(COMMON_FRAGMENTS)                              
 	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_EX_MODELS_DIR)$@/$@.kim
+	echo "numberContributingParticles integer      none                []                 optional"       >> $(KIM_EX_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)$@/$@.kim
 	echo "get_neigh                   method       none                []                 optional"       >> $(KIM_EX_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)$@/$@.kim
@@ -234,8 +235,9 @@ ex_model_Ar_P_MLJ_NEIGH_PURE_H_F: $(COMMON_FRAGMENTS)                           
 	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_EX_MODELS_DIR)$@/$@.kim
+	echo "numberContributingParticles integer      none                []                 optional"       >> $(KIM_EX_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)$@/$@.kim
-	echo "get_neigh                   method       none                []             optional"           >> $(KIM_EX_MODELS_DIR)$@/$@.kim
+	echo "get_neigh                   method       none                []                 optional"       >> $(KIM_EX_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)$@/$@.kim
 	echo "neighObject                 pointer      none                []"                                >> $(KIM_EX_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)$@/$@.kim
@@ -283,7 +285,6 @@ ex_model_Ar_P_MLJ_NEIGH_RVEC_F: $(COMMON_FRAGMENTS)                           \
 	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_EX_MODELS_DIR)$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)$@/$@.kim
 	echo "get_neigh                   method       none                []"                                >> $(KIM_EX_MODELS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)$@/$@.kim

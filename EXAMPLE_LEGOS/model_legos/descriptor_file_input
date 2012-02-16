@@ -4,8 +4,6 @@ MODEL_INPUT:
 
 numberOfParticles           integer      none                []
 
-numberContributingParticles integer      none                []                 optional      # Here so it can work with more Tests
-
 numberParticleTypes         integer      none                []
 
 particleTypes               integer      none                [numberOfParticles]

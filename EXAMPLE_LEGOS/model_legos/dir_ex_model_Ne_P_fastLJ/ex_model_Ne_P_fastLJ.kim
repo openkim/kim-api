@@ -56,7 +56,7 @@ MODEL_INPUT:
 
 numberOfParticles           integer      none                []
 
-numberContributingParticles integer      none                []                 
+numberContributingParticles integer      none                []                 optional
 
 numberParticleTypes         integer      none                []
 

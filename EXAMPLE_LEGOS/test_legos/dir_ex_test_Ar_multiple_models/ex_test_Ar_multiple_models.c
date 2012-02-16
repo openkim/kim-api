@@ -67,8 +67,6 @@ int main()
    /* model inputs */
    int numberOfParticles_periodic = 1;
    int numberOfParticles_cluster  = NCLUSTERATOMS;
-   int numContrib_periodic = numberOfParticles_periodic;
-   int numContrib_cluster  = numberOfParticles_cluster;
    int numberParticleTypes = 1;
    int particleTypes_periodic_model_0;
    int particleTypes_periodic_model_1;
@@ -113,9 +111,8 @@ int main()
       KIM_API_report_error(__LINE__, __FILE__,"KIM_API_init() for MODEL_ONE cluster",status);
 
    /* Register memory */
-   KIM_API_setm_data(pkim_periodic_model_0, &status, 9*4,
+   KIM_API_setm_data(pkim_periodic_model_0, &status, 8*4,
                      "numberOfParticles",           1,   &numberOfParticles_periodic,     1,
-                     "numberContributingParticles", 1,   &numContrib_periodic,            1,
                      "numberParticleTypes",         1,   &numberParticleTypes,            1,
                      "particleTypes",               1,   &particleTypes_periodic_model_0, 1,
                      "coordinates",                 DIM, coords_periodic,                 1,
@@ -125,9 +122,8 @@ int main()
                      "energy",                      1,   &energy_periodic_model_0,        1);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data",status);
    
-   KIM_API_setm_data(pkim_periodic_model_1, &status, 9*4,
+   KIM_API_setm_data(pkim_periodic_model_1, &status, 8*4,
                      "numberOfParticles",           1,   &numberOfParticles_periodic,     1,
-                     "numberContributingParticles", 1,   &numContrib_periodic,            1,
                      "numberParticleTypes",         1,   &numberParticleTypes,            1,
                      "particleTypes",               1,   &particleTypes_periodic_model_1, 1,
                      "coordinates",                 DIM, coords_periodic,                 1,
@@ -137,9 +133,8 @@ int main()
                      "energy",                      1,   &energy_periodic_model_1,        1);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data",status);
 
-   KIM_API_setm_data(pkim_cluster_model_0, &status, 9*4,
+   KIM_API_setm_data(pkim_cluster_model_0, &status, 8*4,
                      "numberOfParticles",           1,   &numberOfParticles_cluster,     1,
-                     "numberContributingParticles", 1,   &numContrib_cluster,            1,
                      "numberParticleTypes",         1,   &numberParticleTypes,           1,
                      "particleTypes",               1,   &particleTypes_cluster_model_0, 1,
                      "coordinates",                 DIM, coords_cluster,                 1,
@@ -149,9 +144,8 @@ int main()
                      "energy",                      1,   &energy_cluster_model_0,        1);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data",status);
 
-   KIM_API_setm_data(pkim_cluster_model_1, &status, 9*4,
+   KIM_API_setm_data(pkim_cluster_model_1, &status, 8*4,
                      "numberOfParticles",             1,   &numberOfParticles_cluster,     1,
-                     "numberContributingParticles",   1,   &numContrib_cluster,            1,
                      "numberParticleTypes",           1,   &numberParticleTypes,           1,
                      "particleTypes",                 1,   &particleTypes_cluster_model_1, 1,
                      "coordinates",                   DIM, coords_cluster,                 1,
