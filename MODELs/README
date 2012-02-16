@@ -5,10 +5,8 @@
 # All rights reserved.
 #
 
-This directory (MODELs) contains a directory for each Model to be compiled as part
-of the openkim-api package.
+This directory (MODELs) contains a directory for each Model to be compiled as
+part of the openkim-api package.
 
-This directory is populated with example Models as part of the openkim-api distribution.
-Please see the README files within each Model directory for information about the example
-Model.
-
+Copy any Model directories (from EXAMPLEs or http://openKIM.org) you want to
+compile into this directory.

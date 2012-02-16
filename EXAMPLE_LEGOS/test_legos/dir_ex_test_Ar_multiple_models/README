@@ -1,0 +1,24 @@
+#
+# Release: This file is part of the openkim-api.git repository.
+#
+# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
+# All rights reserved.
+#
+
+This directory (ex_test_Ar_multiple_models) contains a test that computes the
+energy of a perfect Ar FCC crystal and a finite cluster as a function of
+lattice spacing for two models. The test uses the NEIGH_RVEC_F NBC and locator
+or iterator mode.
+
+Makefile
+     Makefile to compile and build executables with GNU or Intel compilers.
+
+README
+     This file.
+
+ex_test_Ar_multiple_models.c
+     Code for the test.
+
+ex_test_Ar_multiple_models.kim
+     KIM descriptor file for the test.
+

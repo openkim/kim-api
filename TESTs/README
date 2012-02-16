@@ -5,9 +5,8 @@
 # All rights reserved.
 #
 
-This directory (TESTs) contains a directory for each Test to be compiled as part
-of the openkim-api package.
+This directory (TESTs) contains a directory for each Test to be compiled as
+part of the openkim-api package.
 
-This directory is populated with example Tests as part of the openkim-api distribution.
-Please see the README files within each Test directory for information about the example
-Test.
+Copy any Test directories (from EXAMPLEs or http://openKIM.org) you want to
+compile into this directory.

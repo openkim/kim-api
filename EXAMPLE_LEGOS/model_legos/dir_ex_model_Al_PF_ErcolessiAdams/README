@@ -1,0 +1,26 @@
+#
+# Release: This file is part of the openkim-api.git repository.
+#
+# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
+# All rights reserved.
+#
+
+This directory (ex_model_Al_PF_ErcolessiAdams) contains an EAM Model created by
+Ercolessi and Adams (for aluminum) written in F90 and based on the pair
+functional template in DOCs/TEMPLATEs/.
+
+The following files are in this directory:
+
+Makefile
+     Makefile to compile and build executables with GNU or Intel compilers
+
+README
+     This file
+
+ex_model_Al_PF_ErcolessiAdams.F90
+     Fortran module file that contains the implementation of the Ercolessi and
+     Adams EAM Model
+
+ex_model_Al_PF_ErcolessiAdams.kim
+     KIM descriptor file, contains all variables and methods that are exposed
+     through the KIM API interface

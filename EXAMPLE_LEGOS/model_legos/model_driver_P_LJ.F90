@@ -19,7 +19,7 @@
 #include "KIM_API_status.h"
 #define TRUEFALSE(TRUTH) merge(1,0,(TRUTH))
 
-module model_driver_P_LJ
+module ex_model_driver_P_LJ
 
 use KIM_API
 implicit none
@@ -623,15 +623,15 @@ call free(pmodel_shift)
 
 end subroutine destroy
 
-end module model_driver_P_LJ
+end module ex_model_driver_P_LJ
 
 !-------------------------------------------------------------------------------
 !
 ! Model driver initialization routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-subroutine model_driver_P_LJ_init(pkim, byte_paramfile, len_paramfile)
-use model_driver_P_LJ
+subroutine ex_model_driver_P_LJ_init(pkim, byte_paramfile, len_paramfile)
+use ex_model_driver_P_LJ
 use KIM_API
 implicit none
 
@@ -765,4 +765,4 @@ call calc_phi(model_epsilon, &
               model_cutoff,energy_at_cutoff)  
 model_shift   = -energy_at_cutoff
 
-end subroutine model_driver_P_LJ_init
+end subroutine ex_model_driver_P_LJ_init

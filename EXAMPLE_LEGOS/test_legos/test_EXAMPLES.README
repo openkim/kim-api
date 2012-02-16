@@ -13,56 +13,56 @@ this release of the openkim-api package.
 Test name                                 Language  NBC             Loca/Iter  Half/Full
 ----------------------------------------------------------------------------------------
 
-test_Al_FCCcohesive_MI_OPBC               F90       MI_OPBC_H       Locator    Half
+ex_test_Al_FCCcohesive_MI_OPBC            F90       MI_OPBC_H       Locator    Half
                                                     MI_OPBC_F       Iterator   Full
 
-test_Al_free_cluster                      F90       NEIGH_RVEC_F    Locator    Full
+ex_test_Al_free_cluster                   F90       NEIGH_RVEC_F    Locator    Full
                                                     NEIGH_PURE_H    Iterator   Half
                                                     NEIGH_PURE_F
                                                     MI_OPBC_H
                                                     MI_OPBC_F
 
-test_ArNe_periodic_B2_NEIGH_RVEC          F90       NEIGH_RVEC_F    Locator    Full
+ex_test_ArNe_periodic_B2_NEIGH_RVEC       F90       NEIGH_RVEC_F    Locator    Full
                                                                     Iterator
 
-test_Ar_FCCcohesiveCutoff_NEIGH_RVEC      F90       NEIGH_RVEC_F    Locator    Full
+ex_test_Ar_FCCcohesiveCutoff_NEIGH_RVEC   F90       NEIGH_RVEC_F    Locator    Full
                                                                     Iterator
 
-test_Ar_FCCcohesive_MI_OPBC               F90       MI_OPBC_H       Locator    Half
+ex_test_Ar_FCCcohesive_MI_OPBC            F90       MI_OPBC_H       Locator    Half
                                                     MI_OPBC_F       Iterator   Full
 
-test_Ar_FCCcohesive_NEIGH_PURE            F90       NEIGH_PURE_H    Locator    Half
+ex_test_Ar_FCCcohesive_NEIGH_PURE         F90       NEIGH_PURE_H    Locator    Half
                                                     NEIGH_PURE_F    Iterator   Full
 
-test_Ar_FCCcohesive_NEIGH_RVEC            F90       NEIGH_RVEC_F    Locator    Full
+ex_test_Ar_FCCcohesive_NEIGH_RVEC         F90       NEIGH_RVEC_F    Locator    Full
                                                                     Iterator
 
-test_Ar_free_cluster                      F90       NEIGH_RVEC_F    Locator    Full
+ex_test_Ar_free_cluster                   F90       NEIGH_RVEC_F    Locator    Full
                                                     NEIGH_PURE_H    Iterator   Half
                                                     NEIGH_PURE_F
                                                     MI_OPBC_H
                                                     MI_OPBC_F
 
-test_Ar_free_cluster_CLUSTER_C            C         CLUSTER         N/A        N/A
+ex_test_Ar_free_cluster_CLUSTER_C         C         CLUSTER         N/A        N/A
 
-test_Ar_free_cluster_CLUSTER_F90          F90       CLUSTER         N/A        N/A
+ex_test_Ar_free_cluster_CLUSTER_F90       F90       CLUSTER         N/A        N/A
 
-test_Ar_multiple_models                   C         NEIGH_RVEC_F    Locator    Full
+ex_test_Ar_multiple_models                C         NEIGH_RVEC_F    Locator    Full
                                                                     Iterator
 
-test_Ne_free_cluster                      F90       NEIGH_RVEC_F    Locator    Full
+ex_test_Ne_free_cluster                   F90       NEIGH_RVEC_F    Locator    Full
                                                     NEIGH_PURE_H    Iterator   Half
                                                     NEIGH_PURE_F
                                                     MI_OPBC_H
                                                     MI_OPBC_F
 
-test_Ne_free_cluster_SI                   F90       NEIGH_RVEC_F    Locator    Full
+ex_test_Ne_free_cluster_SI                F90       NEIGH_RVEC_F    Locator    Full
                                                     NEIGH_PURE_H    Iterator   Half
                                                     NEIGH_PURE_F
                                                     MI_OPBC_H
                                                     MI_OPBC_F
 
-test_Ne_free_cluster_stiff                F90       NEIGH_RVEC_F    Locator    Full
+ex_test_Ne_free_cluster_stiff             F90       NEIGH_RVEC_F    Locator    Full
                                                     NEIGH_PURE_H    Iterator   Half
                                                     NEIGH_PURE_F
                                                     MI_OPBC_H
@@ -73,131 +73,131 @@ test_Ne_free_cluster_stiff                F90       NEIGH_RVEC_F    Locator    F
 ***  Example Test/Model compatibility  ***
 
 
-test_Al_FCCcohesive_MI_OPBC
+ex_test_Al_FCCcohesive_MI_OPBC
    |
-   |-- model_Al_PF_ErcolessiAdams
-   |
-
-
-test_Al_free_cluster
-   |
-   |-- model_Al_PF_ErcolessiAdams
+   |-- ex_model_Al_PF_ErcolessiAdams
    |
 
 
-test_ArNe_B2cohesive_NEIGH_RVEC
+ex_test_Al_free_cluster
    |
-   |-- model_ArNe_P_MLJ_NEIGH_RVEC_F
-   |
-
-
-test_Ar_FCCcohesiveCutoff_NEIGH_RVEC
-   |
-   |-- model_ArNe_P_MLJ_NEIGH_RVEC_F
-   |-- model_Ar_P_LJ
-   |-- model_Ar_P_MLJ_NEIGH_RVEC_F
-   |-- model_Ar_P_Morse
+   |-- ex_model_Al_PF_ErcolessiAdams
    |
 
 
-test_Ar_FCCcohesive_MI_OPBC
+ex_test_ArNe_B2cohesive_NEIGH_RVEC
    |
-   |-- model_Ar_P_LJ
-   |-- model_Ar_P_MLJ_C
-   |-- model_Ar_P_MLJ_F90
-   |-- model_Ar_P_MLJ_MI_OPBC_H_F
-   |-- model_Ar_P_Morse
+   |-- ex_model_ArNe_P_MLJ_NEIGH_RVEC_F
    |
 
 
-test_Ar_FCCcohesive_NEIGH_PURE
+ex_test_Ar_FCCcohesiveCutoff_NEIGH_RVEC
    |
-   |-- model_Ar_P_LJ
-   |-- model_Ar_P_MLJ_C
-   |-- model_Ar_P_MLJ_F90
-   |-- model_Ar_P_MLJ_NEIGH_PURE_H_F
-   |-- model_Ar_P_Morse
-   |
-
-
-test_Ar_FCCcohesive_NEIGH_RVEC
-   |
-   |-- model_ArNe_P_MLJ_NEIGH_RVEC_F
-   |-- model_Ar_P_LJ
-   |-- model_Ar_P_MLJ_C
-   |-- model_Ar_P_MLJ_F90
-   |-- model_Ar_P_MLJ_NEIGH_RVEC_F
-   |-- model_Ar_P_Morse
+   |-- ex_model_ArNe_P_MLJ_NEIGH_RVEC_F
+   |-- ex_model_Ar_P_LJ
+   |-- ex_model_Ar_P_MLJ_NEIGH_RVEC_F
+   |-- ex_model_Ar_P_Morse
    |
 
 
-test_Ar_free_cluster
+ex_test_Ar_FCCcohesive_MI_OPBC
    |
-   |-- model_ArNe_P_MLJ_NEIGH_RVEC_F
-   |-- model_Ar_P_LJ
-   |-- model_Ar_P_MLJ_C
-   |-- model_Ar_P_MLJ_F90
-   |-- model_Ar_P_MLJ_MI_OPBC_H_F
-   |-- model_Ar_P_MLJ_NEIGH_PURE_H_F
-   |-- model_Ar_P_MLJ_NEIGH_RVEC_F
-   |-- model_Ar_P_Morse
+   |-- ex_model_Ar_P_LJ
+   |-- ex_model_Ar_P_MLJ_C
+   |-- ex_model_Ar_P_MLJ_F90
+   |-- ex_model_Ar_P_MLJ_MI_OPBC_H_F
+   |-- ex_model_Ar_P_Morse
    |
 
 
-test_Ar_free_cluster_CLUSTER_C
+ex_test_Ar_FCCcohesive_NEIGH_PURE
    |
-   |-- model_Ar_P_LJ
-   |-- model_Ar_P_MLJ_C
-   |-- model_Ar_P_MLJ_F90
-   |-- model_Ar_P_MLJ_CLUSTER_C
-   |-- model_Ar_P_MLJ_CLUSTER_F90
-   |-- model_Ar_P_Morse
-   |
-
-
-test_Ar_free_cluster_CLUSTER_F90
-   |
-   |-- model_Ar_P_LJ
-   |-- model_Ar_P_MLJ_C
-   |-- model_Ar_P_MLJ_F90
-   |-- model_Ar_P_MLJ_CLUSTER_C
-   |-- model_Ar_P_MLJ_CLUSTER_F90
-   |-- model_Ar_P_Morse
+   |-- ex_model_Ar_P_LJ
+   |-- ex_model_Ar_P_MLJ_C
+   |-- ex_model_Ar_P_MLJ_F90
+   |-- ex_model_Ar_P_MLJ_NEIGH_PURE_H_F
+   |-- ex_model_Ar_P_Morse
    |
 
 
-test_Ar_multiple_models
+ex_test_Ar_FCCcohesive_NEIGH_RVEC
    |
-   |-- model_ArNe_P_MLJ_NEIGH_RVEC_F
-   |-- model_Ar_P_LJ
-   |-- model_Ar_P_MLJ_C
-   |-- model_Ar_P_MLJ_F90
-   |-- model_Ar_P_MLJ_NEIGH_RVEC_F
-   |-- model_Ar_P_Morse
-   |
-
-
-test_Ne_free_cluster
-   |
-   |-- model_ArNe_P_MLJ_NEIGH_RVEC_F
-   |-- model_Ne_P_fastLJ
-   |-- model_Ne_P_LJ
-   |-- model_Ne_P_MLJ_NEIGH_RVEC_F
-   |-- model_Ne_P_Morse
+   |-- ex_model_ArNe_P_MLJ_NEIGH_RVEC_F
+   |-- ex_model_Ar_P_LJ
+   |-- ex_model_Ar_P_MLJ_C
+   |-- ex_model_Ar_P_MLJ_F90
+   |-- ex_model_Ar_P_MLJ_NEIGH_RVEC_F
+   |-- ex_model_Ar_P_Morse
    |
 
 
-test_Ne_free_cluster_SI
+ex_test_Ar_free_cluster
    |
-   |-- model_Ne_P_LJ
-   |-- model_Ne_P_Morse
+   |-- ex_model_ArNe_P_MLJ_NEIGH_RVEC_F
+   |-- ex_model_Ar_P_LJ
+   |-- ex_model_Ar_P_MLJ_C
+   |-- ex_model_Ar_P_MLJ_F90
+   |-- ex_model_Ar_P_MLJ_MI_OPBC_H_F
+   |-- ex_model_Ar_P_MLJ_NEIGH_PURE_H_F
+   |-- ex_model_Ar_P_MLJ_NEIGH_RVEC_F
+   |-- ex_model_Ar_P_Morse
    |
 
 
-test_Ne_free_cluster_stiff
+ex_test_Ar_free_cluster_CLUSTER_C
    |
-   |-- model_Ne_P_LJ
-   |-- model_Ne_P_Morse
+   |-- ex_model_Ar_P_LJ
+   |-- ex_model_Ar_P_MLJ_C
+   |-- ex_model_Ar_P_MLJ_F90
+   |-- ex_model_Ar_P_MLJ_CLUSTER_C
+   |-- ex_model_Ar_P_MLJ_CLUSTER_F90
+   |-- ex_model_Ar_P_Morse
+   |
+
+
+ex_test_Ar_free_cluster_CLUSTER_F90
+   |
+   |-- ex_model_Ar_P_LJ
+   |-- ex_model_Ar_P_MLJ_C
+   |-- ex_model_Ar_P_MLJ_F90
+   |-- ex_model_Ar_P_MLJ_CLUSTER_C
+   |-- ex_model_Ar_P_MLJ_CLUSTER_F90
+   |-- ex_model_Ar_P_Morse
+   |
+
+
+ex_test_Ar_multiple_models
+   |
+   |-- ex_model_ArNe_P_MLJ_NEIGH_RVEC_F
+   |-- ex_model_Ar_P_LJ
+   |-- ex_model_Ar_P_MLJ_C
+   |-- ex_model_Ar_P_MLJ_F90
+   |-- ex_model_Ar_P_MLJ_NEIGH_RVEC_F
+   |-- ex_model_Ar_P_Morse
+   |
+
+
+ex_test_Ne_free_cluster
+   |
+   |-- ex_model_ArNe_P_MLJ_NEIGH_RVEC_F
+   |-- ex_model_Ne_P_fastLJ
+   |-- ex_model_Ne_P_LJ
+   |-- ex_model_Ne_P_MLJ_NEIGH_RVEC_F
+   |-- ex_model_Ne_P_Morse
+   |
+
+
+ex_test_Ne_free_cluster_SI
+   |
+   |-- ex_model_Ne_P_LJ
+   |-- ex_model_Ne_P_Morse
+   |
+
+
+ex_test_Ne_free_cluster_stiff
+   |
+   |-- ex_model_Ne_P_LJ
+   |-- ex_model_Ne_P_Morse
    |
 
 ----------------------------------------------------------------------------------------
@@ -209,11 +209,11 @@ A description of the provided example Tests is given below.  The Tests are,
 roughly, listed in order of increasing complexity.  It is suggested that
 examining the example Tests in this order will provide a gradual introduction
 to the various components of a KIM-compliant Test.  (See the README file in the
-DOCs directory for guidelines on how to study the Tests distributed with this 
+DOCs directory for guidelines on how to study the Tests distributed with this
 package.)
 
-test_Ar_free_cluster_CLUSTER_C   (C)
-test_Ar_free_cluster_CLUSTER_F90 (Fortran 90)
+ex_test_Ar_free_cluster_CLUSTER_C   (C)
+ex_test_Ar_free_cluster_CLUSTER_F90 (Fortran 90)
      These Tests are the simplest examples.  Thus, they provide the best
      introduction to the basic steps required for a Test to setup and interact
      with a KIM Model.  They setup a KIM API object for the user's requested
@@ -224,29 +224,30 @@ test_Ar_free_cluster_CLUSTER_F90 (Fortran 90)
      The only difference between these Tests is that one is written in C and
      the other is written in Fortran 90.
 
-test_Al_free_cluster    (Fortran 90)
-test_Ar_free_cluster    (Fortran 90)
-test_Ne_free_cluster    (Fortran 90)
-test_Ne_free_cluster_SI (Fortran 90)
+ex_test_Al_free_cluster    (Fortran 90)
+ex_test_Ar_free_cluster    (Fortran 90)
+ex_test_Ne_free_cluster    (Fortran 90)
+ex_test_Ne_free_cluster_SI (Fortran 90)
      These Tests, all written in Fortran 90, are identical except for the
      atomic species they support.  Thus, it is interesting to compare them to
      see the minor changes needed to support different species.  The Tests do
      exactly the same computation as that performed by the
-     test_Ar_free_cluster_CLUSTER_* Tests.  However, instead of the CLUSTER NBC
-     method, these Tests implement support for all the other NBC methods:
+     ex_test_Ar_free_cluster_CLUSTER_* Tests.  However, instead of the CLUSTER
+     NBC method, these Tests implement support for all the other NBC methods:
      MI_OPBC_H, MI_OPBC_F, NEIGH_PURE_H, NEIGH_PURE_F, and NEIGH_RVEC_F.  This
      entails creating neighbor lists for the various NBC methods, and makes
      these Tests a good place to begin to understand the differences between
      these NBC methods.  (The _SI variant uses the SI unit system and is
-     therefore only compatible with the example model_drivers with implement
+     therefore only compatible with the example ex_model_drivers with implement
      `flexible' unit handling.)
 
-test_Ne_free_cluster_stiff (Fortran 90)
-     This Test, written in Fortran 90, is identical to the test_*_free_cluster
-     Tests except that is also computes the hessian matrix.
+ex_test_Ne_free_cluster_stiff (Fortran 90)
+     This Test, written in Fortran 90, is identical to the
+     ex_test_*_free_cluster Tests except that is also computes the hessian
+     matrix.
 
-test_Al_FCCcohesive_MI_OPBC (Fortran 90)
-test_Ar_FCCcohesive_MI_OPBC (Fortran 90)
+ex_test_Al_FCCcohesive_MI_OPBC (Fortran 90)
+ex_test_Ar_FCCcohesive_MI_OPBC (Fortran 90)
      These Tests, both written in Fortran 90, use the MI_OPBC_H or MI_OPBC_F
      NBC method to compute the relaxed cohesive energy of an infinite perfect
      FCC crystal.  The computation method is tailored specifically to the
@@ -255,7 +256,7 @@ test_Ar_FCCcohesive_MI_OPBC (Fortran 90)
      method to find the relaxed FCC lattice parameter.
 
 
-test_Ar_FCCcohesive_NEIGH_PURE (Fortran 90)
+ex_test_Ar_FCCcohesive_NEIGH_PURE (Fortran 90)
      This Test, written in Fortran 90, uses the NEIGH_PURE_H or NEIGH_PURE_F
      NBC method to compute the relaxed cohesive energy of an infinite perfect
      FCC crystal.  The computation method is tailored specifically to the
@@ -264,7 +265,7 @@ test_Ar_FCCcohesive_NEIGH_PURE (Fortran 90)
      method to find the relaxed FCC lattice parameter.
 
 
-test_Ar_FCCcohesive_NEIGH_RVEC (Fortran 90)
+ex_test_Ar_FCCcohesive_NEIGH_RVEC (Fortran 90)
      This Test, written in Fortran 90, uses the NEIGH_RVEC_F NBC method to
      compute the relaxed cohesive energy of an infinite perfect FCC crystal.
      The computation method is tailored specifically to the NEIGH_RVEC_F method
@@ -273,18 +274,18 @@ test_Ar_FCCcohesive_NEIGH_RVEC (Fortran 90)
      relaxed FCC lattice parameter.
 
 
-test_ArNe_B2cohesive_NEIGH_RVEC (Fortran 90)
+ex_test_ArNe_B2cohesive_NEIGH_RVEC (Fortran 90)
      This Test, written in Fortran 90, uses the NEIGH_RVEC_F NBC method to
      compute the relaxed cohesive energy of an infinite perfect B2 (CsCl-type)
      crystal.  The computation method is tailored specifically to the
      NEIGH_RVEC_F method in order to perform the computation in the most
      computationally efficient manner.  The Test uses the Golden section search
      method to find the relaxed B2 lattice parameter.  It is useful to compare
-     this Test with the test_Ar_FCCcohesive_NEIGH_RVEC Test to see the changes
-     that are required to work with multiple species.
+     this Test with the ex_test_Ar_FCCcohesive_NEIGH_RVEC Test to see the
+     changes that are required to work with multiple species.
 
 
-test_Ar_FCCcohesiveCutoff_NEIGH_RVEC (Fortran 90)
+ex_test_Ar_FCCcohesiveCutoff_NEIGH_RVEC (Fortran 90)
      This Test, written in Fortran 90, uses the NEIGH_RVEC_F NBC method to
      compute the relaxed cohesive energy of an infinite perfect FCC crystal for
      five different values of the Model's `cutoff' parameter.  The Test only
@@ -294,11 +295,11 @@ test_Ar_FCCcohesiveCutoff_NEIGH_RVEC (Fortran 90)
      computation in the most computationally efficient manner.  The Test uses
      the Golden section search method to find the relaxed FCC lattice
      parameter.  It is useful to compare this Test with the
-     test_Ar_FCCcohesive_NEIGH_RVEC Test to see the changes that are required
-     for a Test to adjust a Model's parameters.
+     ex_test_Ar_FCCcohesive_NEIGH_RVEC Test to see the changes that are
+     required for a Test to adjust a Model's parameters.
 
 
-test_Ar_multiple_models (C)
+ex_test_Ar_multiple_models (C)
      This Test, written in C, is the most complex.  It performs all its own
      memory management (i.e., it does not use the KIM_API_allocate() service
      routine).  It also works with two different Models at the same time.
