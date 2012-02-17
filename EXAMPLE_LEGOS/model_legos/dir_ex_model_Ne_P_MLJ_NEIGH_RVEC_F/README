@@ -5,11 +5,11 @@
 # All rights reserved.
 #
 
-This directory (ex_model_Ne_P_MLJ_NIGH_RVEC_F) contains a modified Lennard Jones
-(LJ) Model for Neon with smoothed cutoff radius written in C.  It complies with
-the KIM API interface standard, using the NEIGH_RVEC_F NBC and iterator mode,
-and publishes its parameters, and supports optional computation of `forces',
-`particleEnergy', and `virial'
+This directory (ex_model_Ne_P_MLJ_NIGH_RVEC_F) contains a modified Lennard
+Jones (LJ) Model for Neon with smoothed cutoff radius written in C.  It
+complies with the KIM API interface standard, using the NEIGH_RVEC_F NBC and
+iterator mode, and publishes its parameters, and supports optional computation
+of `energy', `forces', `particleEnergy', and `virial'
 
 The following files are in this directory:
 

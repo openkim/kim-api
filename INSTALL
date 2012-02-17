@@ -72,11 +72,11 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
 
        `make'                -- compiles the API and all Models and Tests
        `make all'            -- same as `make'
-       `make examples'       -- copy examples into the appropriate directories
-                                then do a `make all'
+       `make examples'       -- copies examples into the appropriate
+                                directories then does a `make all'
        `make openkim-api'    -- compiles only the API
-       `make clean'          -- will remove all .o, .mod, .a, .so and executable
-                                files
+       `make clean'          -- will remove all .o, .mod, .a, .so and
+                                executable files
        `make examples-clean' -- remove all examples from the MODEL_DRIVERs,
                                 MODELs, and TESTs directories.
 
@@ -109,13 +109,13 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
      KIM_MODEL_DRIVERS_DIR
 
 
-6. The openkim-api package provides the possibility of creating dynamic load
-   libraries by setting the KIM_DYNAMIC environment variable.
+6. The openkim-api package provides the possibility of creating dynamically
+   loaded libraries by setting the KIM_DYNAMIC environment variable.
 
    bash:
    % export KIM_DYNAMIC=yes
 
-   If KIM_DYNAMIC is not set, the models will be built and linked statically.
+   If KIM_DYNAMIC is not set, the Models will be built and linked statically.
 
    If KIM_DYNAMIC is set, the makefile will build .so libraries (in addition to
    the static .a libraries) and KIM API will use those libraries to load models
@@ -149,8 +149,8 @@ TROUBLESHOOTING
 
 1. Non-Standard Compilers: If you need to make changes to compiler flags either
    because you are using a non-standard compiler or an older version of the gnu
-   compiler, change lines  in KIM_API/GNU_compiler_settings.mk 
-   (ir Intel_compiler_settings.mk)
+   compiler, change the appropriate lines in KIM_API/GNU_compiler_settings.mk
+   and KIM_API/Intel_compiler_settings.mk.
 
 2. Linking problems: By default, the make system uses the g++ compiler with the
    -lgfortran option to link compiled Fortran executables.  If (for some
@@ -163,8 +163,9 @@ TROUBLESHOOTING
       ld: symbol(s) not found for architecture x86_64
       collect2: ld returned 1 exit status
 
-   or somthing similar, try gfortran with the -lstdc++ option.  See
-   lines 23-24 in the KIM_API/GNU_compiler_settings.mk and change them to lines 25-26.
+   or somthing similar, try gfortran with the -lstdc++ option.  See lines 23-24
+   in the KIM_API/GNU_compiler_settings.mk and change them to lines 25-26.
+
 *******************************************************************************
 
 SUPPORT

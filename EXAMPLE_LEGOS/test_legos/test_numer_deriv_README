@@ -11,7 +11,7 @@ differentiation of the Model energies.
 
 Calling format:
 
-   echo `model_name' | test_numer_deriv
+   echo `model_name' | ex_test_numer_deriv
 
 Notes:
 
@@ -104,4 +104,3 @@ README
 
 TEST_NAME_STR.F90
      F90 program that implements the test.
-

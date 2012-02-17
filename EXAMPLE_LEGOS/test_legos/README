@@ -11,9 +11,13 @@ the example tests
 
 The following files are in this directory:
 
-MI_OPBC_neighborlist.f.frag
+MI_OPBC_cluster_neighborlist.f.frag
      This Fortran file contains the routine for creating neighbor lists for use
-     with the MI-OPBC method.
+     with the MI-OPBC method for free cluster systems.
+
+MI_OPBC_periodic_neighborlist.f.frag
+     This Fortran file contains the routine for creating neighbor lists for use
+     with the MI-OPBC method for periodic systems.
 
 Makefile
      This is the make file that creates the example Tests directories in the
@@ -25,7 +29,7 @@ NEIGH_PURE_cluster_neighborlist.f.frag
 
 NEIGH_PURE_periodic_neighborlist.f.frag
      This Fortran file contains the routine for creating neighbor lists for use
-     with the NEIGH-PURE method for periodic FCC systems.
+     with the NEIGH-PURE method for periodic systems.
 
 NEIGH_RVEC_F_cluster_neighborlist.f.frag
      This Fortran file contains the routine for creating neighbor lists for use
@@ -39,6 +43,10 @@ NEIGH_RVEC_F_periodic_FCC_neighborlist.f.frag
      This Fortran file contains the routine for creating neighbor lists for use
      with the NEIGH-RVEC method for periodic FCC systems.
 
+NEIGH_RVEC_F_update_Rij_vectors.f.frag
+     This Fortran file contains the routine for updating the relative position
+     vectors in the neighbor list.
+
 NEIGH_RVEC_compute_equilibrium_spacing.f.frag
      This Fortran file contains the routine for computing the equilibrium
      spacing of an FCC crystal for use with the NEIGH-RVEC method using the
@@ -46,6 +54,10 @@ NEIGH_RVEC_compute_equilibrium_spacing.f.frag
 
 README
      This file
+
+compute_numer_driv.f.frag
+     This Fortran file contains the routine for computing a numerical derivative
+     of a Model's energy.
 
 create_FCC_configuration.c.frag
      This C file contains the routine for creating a cluster of atoms in a
@@ -67,10 +79,10 @@ descriptor_file_output
 descriptor_file_start
      This file contains the beginning of the KIM descriptor file.
 
-ex_test_Ar_multiple_models/
+dir_ex_test_Ar_multiple_models/
      Directory containing the ex_test_Ar_multiple_models Test.
 
-ex_test_demo_F03/
+dir_ex_test_demo_F03/
      Directory containing the ex_test_demo_F03 Test.
 
 free_KIM_API_object.f.frag
@@ -121,6 +133,14 @@ program_free_cluster_CLUSTER.f.frag
      This Fortran file contains the main program for the
      ex_test_*_free_cluster_CLUSTER_F example test.
 
+program_free_cluster_stiff.f.frag
+     This Fortran file contains the main program for the
+     ex_test_*_free_cluster_stiff example test.
+
+program_numer_deriv.f.frag
+     This Fortran file contains the main program for the
+     ex_numer_deriv example test.
+
 setup_B2_KIM_API_object.f.frag
      This Fortran file contains the setup_B2_KIM_API_object routine used by the
      B2cohesive Tests.
@@ -152,7 +172,7 @@ test_FCCcohesiveCutoff_README
 test_FCCcohesive_README
      This file contains the README file that is used to generate README files
      for the FCCcohesive Tests.
-    
+
 test_Makefile
      This file contains the Makefile that is used to generate Makefile files
      for the example tests.
@@ -160,3 +180,22 @@ test_Makefile
 test_free_cluster_README
      This file contains the README file that is used to generate REAMDE files
      for the example cluster tests.
+
+test_free_cluster_stiff_README
+     This file contains the README file that is used to generate REAMDE files
+     for the example cluster_stiff tests.
+
+test_numer_deriv_README
+     This file contains the README file that is used to generate REAMDE files
+     for the example numer_deriv tests.
+
+test_run_all_ex_tests
+     This shell script contains code to execute all compatible example Models
+     and Tests.
+
+update_neighborlist.f.frag
+     This Fortran file contains the routine to update a neighbor list.
+
+write_KIM_descriptor.f.frag
+     This Fortran file contains the routine to generate a KIM descriptor string
+     based on a set of input flags.

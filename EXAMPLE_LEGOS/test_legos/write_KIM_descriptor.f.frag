@@ -35,7 +35,7 @@ ier = KIM_STATUS_OK
 ! find first underscore (element string should start right after this)
 lastend = scan(modelname,"_")
 if (lastend.eq.0) then
-   ier = KIM_STATUS_ATOM_INVALID_TYPE
+   ier = KIM_STATUS_PARTICLE_INVALID_TYPE
    return
 endif
 num_specs = 0
@@ -43,14 +43,14 @@ do
    ! find first capital or (underscore following element string) since last end
    firstcap = scan(modelname(lastend+1:),"ABCDEFGHIJKLMNOPQRSTUVWXYZ_")
    if (firstcap.ne.1) then
-      ier = KIM_STATUS_ATOM_INVALID_TYPE
+      ier = KIM_STATUS_PARTICLE_INVALID_TYPE
       return
    endif
    firstcap = lastend + firstcap
    ! find second capital or (underscore following element string) since last end
    secondcap = scan(modelname(firstcap+1:),"ABCDEFGHIJKLMNOPQRSTUVWXYZ_")
    if (secondcap.eq.0) then
-      ier = KIM_STATUS_ATOM_INVALID_TYPE
+      ier = KIM_STATUS_PARTICLE_INVALID_TYPE
       return
    endif
    secondcap = firstcap + secondcap

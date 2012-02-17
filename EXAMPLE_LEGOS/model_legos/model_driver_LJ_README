@@ -14,10 +14,10 @@ where shift is computed so that phi(rcut) = 0.0
 
 It complies with the KIM API interface standard, using any NBC and iterator or
 locator mode, publishes its parameters, and supports optional computation of
-`forces', `particleEnergy', and `virial'.  Its initializaton routine takes a
-KIM API object pointer and a pointer to a string that contains the cutoff and
-Lennard-Jones parameters which define a KIM Model based on this KIM Model
-Driver.
+`energy', `forces', `particleEnergy', `process_dEdr', and `process_dE2dr2'.
+Its initializaton routine takes a KIM API object pointer and a pointer to a
+string that contains the cutoff and Lennard-Jones parameters which define a KIM
+Model based on this KIM Model Driver.
 
 To create a KIM Model from this Model Driver, a parameter file is required.
 This file must have the follwing format:

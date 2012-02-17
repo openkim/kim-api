@@ -212,6 +212,7 @@ to the various components of a KIM-compliant Test.  (See the README file in the
 DOCs directory for guidelines on how to study the Tests distributed with this
 package.)
 
+
 ex_test_Ar_free_cluster_CLUSTER_C   (C)
 ex_test_Ar_free_cluster_CLUSTER_F90 (Fortran 90)
      These Tests are the simplest examples.  Thus, they provide the best
@@ -223,6 +224,7 @@ ex_test_Ar_free_cluster_CLUSTER_F90 (Fortran 90)
      force components on each atom.  The results are printed to the screen.
      The only difference between these Tests is that one is written in C and
      the other is written in Fortran 90.
+
 
 ex_test_Al_free_cluster    (Fortran 90)
 ex_test_Ar_free_cluster    (Fortran 90)
@@ -238,13 +240,15 @@ ex_test_Ne_free_cluster_SI (Fortran 90)
      entails creating neighbor lists for the various NBC methods, and makes
      these Tests a good place to begin to understand the differences between
      these NBC methods.  (The _SI variant uses the SI unit system and is
-     therefore only compatible with the example ex_model_drivers with implement
-     `flexible' unit handling.)
+     therefore only compatible with the example ex_model_drivers which
+     implement `flexible' unit handling.)
+
 
 ex_test_Ne_free_cluster_stiff (Fortran 90)
      This Test, written in Fortran 90, is identical to the
      ex_test_*_free_cluster Tests except that is also computes the hessian
      matrix.
+
 
 ex_test_Al_FCCcohesive_MI_OPBC (Fortran 90)
 ex_test_Ar_FCCcohesive_MI_OPBC (Fortran 90)

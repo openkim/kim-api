@@ -63,8 +63,8 @@ integer function get_neigh_no_Rij(pkim,mode,request,atom,numnei,pnei1atom,pRij)
      endif
   elseif (mode.eq.1) then ! locator mode
      if ( (request.gt.N) .or. (request.lt.1)) then
-        idum = kim_api_report_error_f(__LINE__, __FILE__, "Invalid atom ID in get_neigh_no_Rij", KIM_STATUS_ATOM_INVALID_ID)
-        get_neigh_no_Rij = KIM_STATUS_ATOM_INVALID_ID
+        idum = kim_api_report_error_f(__LINE__, __FILE__, "Invalid atom ID in get_neigh_no_Rij", KIM_STATUS_PARTICLE_INVALID_ID)
+        get_neigh_no_Rij = KIM_STATUS_PARTICLE_INVALID_ID
         return
      else
         atomToReturn = request
