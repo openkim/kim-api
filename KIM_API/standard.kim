@@ -17,6 +17,9 @@
 # of conventions defined by KIM that help to ensure that Models and Tests are
 # able to successfully communicate with each other.
 #
+# The requirements and capabilities of KIM Models and Tests are defined
+# in an accompanying plain text document referred to as a "KIM descriptor file".
+#
 # There are a number of line types that can occur in a KIM descriptor file:
 #
 #   1) Blank lines
@@ -62,11 +65,11 @@
 #         Unit_temperature := `K'
 #         Unit_time        := `fs' | `ps' | `ns' | `s'
 #
-#         The list of recognized units above can be extended. (The current list
-#         is based on the units used in 8 popular ab initio, MC, MD and lattice
-#         dynamics codes: AMBER, CHARMM, DL_POLY, GROMACS, LAMMPS, TOWHEE,
-#         VASP.)  As noted above all other units will be derived from these
-#         units in a consistent manner.
+#         The list of recognized units above may be extended in the future. 
+#         (The current list is based on the units used in 8 popular ab initio, 
+#         MC, MD and lattice dynamics codes: AMBER, CHARMM, DL_POLY, GROMACS, 
+#         LAMMPS, TOWHEE, VASP.)  As noted above all other units will be 
+#         derived from these units in a consistent manner.
 #
 #         Example:
 #         Unit_length      := A
@@ -176,8 +179,9 @@ $
 #                                 may be adopted.
 #
 #                  3) Unit: This string defines the physical units of the
-#                           values (which must all be the same for a single
-#                           quantity).  Possible values are:
+#                           values (which must all be the same for all
+#                           components of array quantities). 
+#                           Possible values are:
 #
 #                              * none
 #                              * mass
@@ -214,6 +218,8 @@ $
 #                            If either of the first two options is present, the
 #                            KIM_API_allocate() function will substitute the
 #                            value of its `nparticles' or its `ntypes'
+ET: Above shouldn't it be "nParticles" and "nParticleTypes" instead of 
+"nparticles" and "ntypes"?
 #                            arguments, respectively.  If, after this
 #                            substitution the extents of EACH dimension is
 #                            known, then the KIM_API_allocate() function will
@@ -223,7 +229,7 @@ $
 #                            KIM_API_allocate() function and must be allocated
 #                            by the Test and registered in the KIM API object
 #                            using the KIM_API_set_data() or
-#                            KIM_API_setm_data() function).
+#                            KIM_API_setm_data() functions).
 #
 #                            White-space is not allowed between the `[' and `]'
 #                            characters.
@@ -233,6 +239,10 @@ $
 #                            last in the list.  For example, a KIM Shape string
 #                            [10,3] corresponds to a C array of shape [10][3]
 #                            and to a Fortran array of shape (3,10).
+ET: It may be worth pointing out that while C and Fortran order their indices
+in the reverse order the way that the variables are stored in memory is the
+same. This means that a the Fortran array (3,10) can directly manipulated by
+a C code working with [10][3] without modification.
 #
 #                            Providing a few examples is the best way to
 #                            clearly define the meaning of the Shape string:
@@ -248,7 +258,7 @@ $
 #
 #                       KIM_API_allocate(pkim, nParticles, nParticleTypes, kimerr)
 #
-#                                     it will allocated memory for this
+#                                     it will allocate memory for this
 #                                     argument using the value of `nParticles'.
 #
 #                            * [numberParticleTypes] - This defines a vector
@@ -285,6 +295,22 @@ $
 #                                    dimension other than the first is unknown,
 #                                    then the KIM_API_set_shape() function
 #                                    must also be used (see below).
+ET: You stress the point that "when the only unknown dimension range is the 
+(slowest) first dimension, the test must allocate...". But that suggests
+that in other cases where there are unknown dimensions KIM_API_allocate()
+might be able to allocate. I do not think that that's what you meant, but
+it reads that way. I think it needs to be made clear that any occurrence of 
+":" means that KIM_API_allocate() will not be able to allocate memory. It is
+also not obvious from the text why "[:,12]" does not require a the
+KIM_API_set_shape() but "[12,:]" or "[:,:,:,12,:,numberParticleTypes]" do.
+
+ET: Another question is what's the point of defining a shape as "[:,12]" in the
+KIM descriptor file? The "12" is not used for anything by the API. I suppose
+it provides some information to a human reading the document, but that's it.
+It may be good to clarify this by saying that from the perspective of the API
+"[:,12]" and "[:,:]" have exactly the same effect. The "12" merely provides 
+some additional information to human readers. But maybe I'm missing something
+regarding the KIM_API_set_shape() issue I mention above.
 #
 #                            * [12,numberOfParticles] - This defines a two-
 #                                    dimensional array (rank=2) of size 12 by
@@ -348,6 +374,7 @@ $
 #                      * `4B'  : four-body potential
 #                      * `CF'  : cluster functional (MEAM, ReaxFF, etc.)
 #                      * `BOP' : bond-order potential
+ET: Do we want to add a force field, `FF', class?
 #
 #           <label> is an alphanumeric string uniquely identifying the Model.
 #                   It may contain the concatenated list of the Model's
@@ -417,6 +444,14 @@ MODEL_NAME := standard
 ################################################################################
 
 Unit_Handling := flexible
+ET: What is the significance of the specific line appearing above in the
+standard.kim file? Same question for the unit definitions given below?
+I would have expected both "flexible" and "fixed" to be listed as a definition.
+Since this information is not used, perhaps it should not appear and the last
+line in the comment above changed to "Test KIM descriptor files (and the
+`standard.kim' file) should not have a Unit_Handling line.". If yes, a similar
+comment should appear below for the units line. Otherwise clarifying statements
+should be added to the comments as why these lines appear in standard.kim.
 
 ################################################################################
 #
@@ -447,9 +482,13 @@ SUPPORTED_ATOM/PARTICLES_TYPES:
 # The code listed in 'standard.kim' is the atomic number.  However, this value
 # is ignored and only the code value provided by the Model is retained.
 #
-# If this list is empty for both the Model and Test, then a Test/Model match is
-# possible.  This option allows for Models and Tests that do not assign any
-# specific physical type to their (single) particle type
+# In order for a Test and Model to match, a Model must be able to support all 
+# atom/particle types required by the Test as indicated in its descriptor file.
+# If no lines appear in the SUPPORTED_ATOM/PARTICLES_TYPES section for both
+# the Test and the Model, then a Test/Model match is possible. This option
+ET: verify that the text I added/changed in the above four lines is correct.
+# allows for Models and Tests that do not assign any specific physical type to 
+# their (single) particle type.
 #
 # Symbol/name               Type         code
 #
@@ -610,7 +649,7 @@ CONVENTIONS:
 ################################################################################
 #
 # In an actual KIM descriptor (.kim) file, exactly ONE of the following two
-# lines should be included:
+# lines must be included:
 #
 ################################################################################
 ZeroBasedLists              flag        # Presence of this line indicates that
@@ -632,6 +671,12 @@ OneBasedLists               flag        # Presence of this line indicates that
 #
 # If Neigh_BothAccess is in the file, it means that the Model (Test) requires
 # (provides) both access modes.
+ET: It is not clear from this discussion why "Neigh_BothAccess" is needed.
+From the description it appears that "Neigh_BothAccess" is equivalent to 
+including both "Neigh_IterAccess" and "Neigh_LocaAccess" which is allowed.
+Probably the difference is that in one case the Model/Test can work with/provide
+either and in the second case both are required to be present. But I don't
+think this is completely clear.
 #
 # It is an error to include Neigh_BothAccess with either of the other two
 # options in a KIM descriptor (.kim) file.
@@ -662,7 +707,7 @@ Neigh_BothAccess            flag        # need both locator and iterator modes
 # the total energy with respect to the positions of the particles.
 #
 CLUSTER                     flag        # The Model needs only coordinates to
-                                        # compute; a neighbor list is not needed.
+                                        # compute; a neighbor list is not used.
 
 # In the NEIGH_PURE methods (NEIGH_PURE_H and NEIGH_PURE_F), the Model receives
 # the number of particles, coordinates and a full or half neighbor list. The
@@ -678,6 +723,7 @@ CLUSTER                     flag        # The Model needs only coordinates to
 # compute the appropriate total energy from per-particle energies of the
 # physical particles, or to use a modified neighbor list to obtain the desired
 # values.
+#
 NEIGH_PURE_H                flag        # This is the Pure Half neighbor list
                                         # method.  The model needs
                                         # `coordinates', a half neighbor list
@@ -686,6 +732,10 @@ NEIGH_PURE_H                flag        # This is the Pure Half neighbor list
                                         # `numberContributingParticles', and
                                         # the `get_neigh' method supplied by
                                         # the Test.
+ET: This is the first time "numberContributingParticles" is mentioned. It
+should probably be defined in the comment above "NEIGH_PURE_H". Also, does
+this variable always need to be defined or is there some assumption that if
+it is not supplied then "numberContributingParticles=numberParticles"?
 
 NEIGH_PURE_F                flag        # This is the Pure Full neighbor list
                                         # method.  The model needs
@@ -694,6 +744,8 @@ NEIGH_PURE_F                flag        # This is the Pure Full neighbor list
                                         # `neighObject' argument), and the
                                         # `get_neigh' method supplied by the
                                         # Test.
+ET: It should be explained above why  "numberContributingParticles" is not 
+needed in this case.
 
 # In the NEIGH_RVEC_F method, the Model receives the number of particles and
 # coordinates, a full neighbor list and the relative position vectors Rij (Rij
@@ -705,9 +757,9 @@ NEIGH_PURE_F                flag        # This is the Pure Full neighbor list
 # derivative of the total energy with respect to the positions of the
 # particles. This method enables the application of general periodic boundary
 # conditions, including multiple images.  (This approach can fail with half
-# neighbor lists and therefore the _H variant of the method does not exist.)  A
-# possible future extension to this method is to allow the Test to provide a
-# ForceTransformation() function for each neighbor, which would enable the
+# neighbor lists and therefore the _H variant of the method does not exist.) 
+# A possible future extension to this method is to allow the Test to provide
+# a ForceTransformation() function for each neighbor, which would enable the
 # application of complex boundary conditions such as torsion and objective
 # boundary conditions.
 #
@@ -790,7 +842,7 @@ MODEL_INPUT:
 #
 # Particles are always numbered sequentially starting from 0 or 1 depending on
 # the ZeroBasedLists/OneBasedLists convention setting.  This argument is
-# required for all Models and Tests
+# required for all Models and Tests.
 #
 # Name                      Type         Unit                Shape
 #
@@ -867,8 +919,8 @@ particleSize                real*8       length             [numberOfParticles]
 #             by the Test.
 #
 # This argument is required for Models/Tests that support any NBCs other than
-# CLUSTER. It should be optional for all Models to ensure that the Model is
-# compatible with the widest possible set of Tests.
+# CLUSTER. It is recommended that for Models this argument be optional to 
+# ensure that a Model is compatible with the widest possible set of Tests.
 #
 # Name                      Type         Unit               Shape
 #
@@ -877,12 +929,14 @@ get_neigh                   method       none               []
 ################################################################################
 #
 # process_dEdr : A pointer to a subroutine that can compute arbitrary linear
-#                combinations of the first derivative of the Model's energy.
+#                combinations of the first derivative of the Model's energy
+#                with respect to the distances between particles.
 #                The function will be called multiple times with a scalar value
 #                representing a contribution to the derivative of the energy
 #                with respect to a pair distance.  The Test can use this
 #                information to compute, via the chain-rule, many properties.
-#                Examples include forces and the virial.
+#                Examples include forces, the virial and other thermodynamic
+#                tensions.
 #
 # Name                      Type         Unit               Shape
 #
@@ -891,11 +945,12 @@ process_dEdr                method       none               []
 ################################################################################
 #
 # process_d2Edr2 : A pointer to a subroutine that can compute arbitrary linear
-#                  combinations of the second derivative of the Model's energy.
+#                  combinations of the second derivative of the Model's energy
+#                  with respect to the distances between particles.
 #                  The function will be called multiple times with a scalar
 #                  value representing a contribution to the second derivative
-#                  of the energy with respect to a pair distance.  The Test can
-#                  use this information (often in conjunction with
+#                  of the energy with respect to two pair distances.  The Test
+#                  can use this information (often in conjunction with
 #                  process_dEdr) to compute, via the chain-rule, many
 #                  properties.  An example is the hessian.
 #
@@ -946,9 +1001,11 @@ MODEL_OUTPUT:
 
 ################################################################################
 #
-# compute : A pointer to the Model's compute function.
+# compute : A pointer to the Model's compute function which given the input
+#           defined in the MODEL_INPUT section will calculate quantities
+#           described in the MODEL_OUTPUT section.
 #
-# This argument is required for all Models and Tests
+# This argument is required for all Models and Tests.
 #
 # Name                      Type         Unit               Shape
 #
@@ -975,7 +1032,7 @@ reinit                      method       none               []
 #           clean-up operations).
 #
 # This argument is required if a Model publishes its parameters (so that it can
-# free the memory that it allocated in the init function, for its parameters).
+# free the memory that it allocated for its parameters in its init function).
 # However, the argument should be included by all Models (as optional, at
 # least) to ensure maximum compatibility with Tests (who should only include
 # the argument if they use it).
@@ -994,6 +1051,8 @@ destroy                     method       none               []
 # changed it will provide the parameter PARAM_FREE_cutoff (see below) which can
 # be changed.  Once the PARAM_FREE_cutoff parameter has been changed and the
 # Model's reinit function called, the Model must update the value of `cutoff'.
+ET: What about models that use multiple cutoffs? Should we say that this is
+the maximum cutoff radius in that case?
 #
 # Name                      Type         Unit               Shape
 #
@@ -1038,11 +1097,12 @@ particleEnergy              real*8       energy             [numberOfParticles]
 
 ################################################################################
 #
-# virial : A symmetric second rank tensor corresponding to the total virial for
+# virial : A symmetric second-order tensor corresponding to the total virial for
 #          the configuration of particles passed between the Model and Test.
 #
-# This argument should, ideally, be optional to ensure maximum Model/Test
-# compatibility.  The mapping of indexes follows the Voigt convention
+# The components of this 3 x 3 symmetric tensor are stored in a compact vector 
+# form with 6 components in accordance with the Voigt convention:
+#
 # {11,22,33,23,13,12} or {xx,yy,zz,yz,xz,xy}
 #
 # A Model may support the virial computation by having the KIM API compute it
@@ -1051,18 +1111,23 @@ particleEnergy              real*8       energy             [numberOfParticles]
 # KIM_API_process_dEdr() function in its compute loop.  The Test should list
 # `virial' in its descriptor file.)
 #
+# This argument should, ideally, be optional to ensure maximum Model/Test
+# compatibility. 
+#
 # Name                      Type         Unit               Shape
 #
 virial                      real*8       energy             [6]
 
 ################################################################################
 #
-# particleVirial : A symmetric second rank tensor corresponding to the per
+# particleVirial : A symmetric second-order tensor corresponding to the per
 #                  particle virial for the configuration of particles passed
 #                  between the Model and Test.
 #
-# The mapping of indexes follows the Voigt convention {11,22,33,23,13,12} or
-# {xx,yy,zz,yz,xz,xy}
+# The components of each 3 x 3 symmetric tensor are stored in a compact vector 
+# form with 6 components in accordance with the Voigt convention:
+#
+# {11,22,33,23,13,12} or {xx,yy,zz,yz,xz,xy}
 #
 # A Model may support the virial computation by having the KIM API compute it
 # via the default process_dEdr mechanism.  (In this case the Model will list
@@ -1078,7 +1143,7 @@ particleVirial              real*8       energy             [numberOfParticles,6
 #
 # hessian : A matrix of second derivatives of the Model's energy.  For
 #           computational efficiency the matrix is stored as a
-#           numberOfParticles by numberOfParticles array of 3 by 3 matricies.
+#           numberOfParticles by numberOfParticles array of 3 by 3 matrices.
 #
 # A Model may support the hessian computation by having the KIM API compute it
 # via the default process_dEdr and process_dE2dr2 mechanisms.  (In this case
@@ -1086,6 +1151,8 @@ particleVirial              real*8       energy             [numberOfParticles,6
 # descriptor file and call the KIM_API_process_dEdr() and
 # KIM_API_process_d2Edr2() functions in its compute loop.  The Test should list
 # `hessian' in its descriptor file.)
+ET: Is this right? I thought you told me yesterday that the hessian calculation
+was not implemented yet.
 #
 # Name                      Type         Unit               Shape
 #
@@ -1110,6 +1177,11 @@ MODEL_PARAMETERS:
 #                          compute routine and/or as local memory space to
 #                          avoid the overhead of memory allocation/deallocation
 #                          during each execution of the compute routine.
+ET: Should it be stated here that no such storage should depend on content
+passed to the model via the KIM API object? As written it sounds like you
+could store information related to a particular configuration, whereas that
+should go in the buffer. There is a note below about this related to storing
+information in static memory, but a similar warning applies here as well, no?
 #
 #
 # 2) PARAM_FREE_<label>  : A parameter that may be changed by the Test (which
@@ -1139,6 +1211,13 @@ MODEL_PARAMETERS:
 # PARAM_FREE_Sigma          real*8       length             []
 # PARAM_FREE_Epsilon        real*8       energy             []
 # PARAM_FIXED_LJshift       real*8       energy             []
+#
+# In this example `PARAM_FIXED_LJshift' is a shift that brings the 
+# Lennard-Jones potential to zero at the defined cutoff radius.
+# If the Sigma or Epsilon parameters are changed by the Test, 
+# `PARAM_FIXED_LJshift' will be recomputed during required call to
+# model_reinit.
+#
 #
 ################################################################################
 
