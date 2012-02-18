@@ -26,9 +26,9 @@ STATUS codes: The openkim-api uses a set of defined status code keys to return
          KIM_API_status.h file which can be #include'd by any source file.  The
          codes associated with these keys (defined in KIM_API_status.h) are
          subject to change and should not be used directly.  By convention, any
-         status code, ier, returned by an openkim-api service routine that is
-         less than KIM_STATUS_OK (i.e., "ier < KIM_STATUS_OK") indicates an
-         error has occurred.
+         status code, `kimerror', returned by an openkim-api service routine that 
+         is less than KIM_STATUS_OK (i.e., "kimerror < KIM_STATUS_OK") indicates 
+         an error has occurred.
 
 C style: KIM_DIR, KIM_DIR_MODELS, KIM_DIR_TESTS 
 
@@ -38,10 +38,10 @@ C style: KIM_DIR, KIM_DIR_MODELS, KIM_DIR_TESTS
 
 Fortran style: integer, parameter :: kim_intptr = 4 (or 8)
 
-         This parameter is defined in KIM_API_F.F90 and gives the length of
-         an integer variable that can be used to store CRAY pointers. Depending
-         on the system, its value is 4 (on 32 bit machines) or 8 (on 64 bit
-         machines).
+         This parameter is defined in the Fortran 90 module `kim_api' 
+         in the file KIM_API_F.F90 and gives the length of an integer variable 
+         that can be used to store CRAY pointers. Depending on the system, its 
+         value is 4 (on 32 bit machines) or 8 (on 64 bit machines).
 
 
 ==============================  GLOBAL METHODS  ==============================
@@ -95,7 +95,7 @@ int KIM_API_string_init(void *kimmdl, char *testdescriptor, char *modelname);
 Arguments:
 
       void *kimmdl 
-              reference pointer to KIM_API_model object (in c++ style the
+              reference pointer to KIM_API_model object (in C++ style the
               definition will be (KIM_API_model **)).
 
       char *testdescriptor
@@ -123,9 +123,10 @@ Corresponding Fortran style interface:
 int KIM_API_model_info(void *kimmdl, char *modelname); 
     
     This routine creates a KIM API object that represents the capabilities of a
-    Model.  The standard service routines can be used to probe this object in
-    order to determine (most) of the items listed in the Model's KIM descriptor
-    file.
+    Model.  Standard service routines (described below) can be used to probe 
+    this object in order to determine (most) of the items listed in the Model's 
+    KIM descriptor file. For example, A Test could determine what atom/particle
+    types are supported by a Model and adjust it's calculations appropriately.
 
 Arguments:
 
@@ -158,7 +159,7 @@ void KIM_API_allocate(void *kimmdl, int nparticles, int ntypes, int *kimerror);
     during allocation.  KIM_API_allocate should not be used in conjunction with
     KIM_API_set_data for array data (this would create a memory leak).
 
-    Note: Prior to calling this routine a valid KIM API object must be obtained
+    NOTE: Prior to calling this routine a valid KIM API object must be obtained
           by calling KIM_API_init().  However, calling this routine multiple
           times with the same KIM API object will cause a memory leak.
 
@@ -190,9 +191,9 @@ Corresponding Fortran style interface:
 void KIM_API_free(void *kimmdl, int *kimerror); 
 
     This routine deallocates all memory allocated by KIM_API_allocate and also
-    destroys KIM API object.
+    destroys the KIM API object.
 
-    Note: Prior to calling this routine, the Test is responsible for calling
+    NOTE: Prior to calling this routine, the Test is responsible for calling
           the KIM_API_model_destroy() function and deallocating any memory
           associated with arguments in the KIM API object as appropriate.
 
@@ -244,7 +245,7 @@ void KIM_API_model_compute(void *kimmdl, int *kimerror);
     This routine executes the `compute' method of the Model by using the
     address of the compute routine stored in KIM API object.
 
-    Note: Prior to calling this routine the KIM API object pointed to by kimmdl
+    NOTE: Prior to calling this routine the KIM API object pointed to by kimmdl
           must contain the necessary information that the Model requires to
           run.  In addition, KIM_API_model_init() must have successfully
           executed for this KIM API object.
@@ -275,7 +276,7 @@ void KIM_API_model_destroy(void *kimmdl, int *kimerror);
     performs any necessary clean-up tasks.  In particular, it must deallocate
     the memory for all Model parameters stored in the KIM API object.
 
-    Note: Prior to calling this routine KIM_API_model_init() must have been
+    NOTE: Prior to calling this routine KIM_API_model_init() must have been
           called for this KIM API object.
 
 Arguments:
@@ -299,7 +300,7 @@ Corresponding Fortran style interface:
 
 int KIM_API_get_model_index_shift(void *kimmdl); 
 
-    This routine returns an integer that tells how to transformation indices
+    This routine returns an integer that indicates the offset in indices
     between Tests and Models for array access. The return value can be only
     -1,0 or +1.
     If the Test has ZeroBasedList and the Model has OneBasedList  the return value is +1
@@ -328,7 +329,7 @@ void KIM_API_set_model_buffer(void *kimmdl, void *ob, int *kimerror)
     The Model can use this buffer as persistent memory between calls to its
     various functions.
 
-    Note: This feature must be used with caution.  There is no mechanism to
+    NOTE: This feature must be used with caution.  There is no mechanism to
           notify the Model when changes are made to the data in the KIM API
           object (such as the number of particles, or the memory location of
           the `forces' argument).  An example of a safe quantity to store in
@@ -363,7 +364,7 @@ void KIM_API_set_test_buffer(void *kimmdl, void *ob, int *kimerror)
     Test can use this buffer as persistent memory associated with the KIM API
     object.
 
-    Note: This feature must be used with caution.  There is no mechanism to
+    NOTE: This feature must be used with caution.  There is no mechanism to
           notify the Test when changes are made to the data in the KIM API
           object (such as the Model's Parameters).  An example of a safe
           quantity to store in the Test buffer is the index for an argument
@@ -443,8 +444,10 @@ Corresponding Fortran style interface:
 
 int KIM_API_is_half_neighbors(void *kimmdl, int *kimerror)
 
-    This routine returns 1 if KIM_API model object setting is for half
+    This routine returns 1 if KIM_API Model object setting is for half
     neighbors or 0 if it is for full neighbors.
+ET: Is it not possible for a model to use both half and full neighbors? Also,
+ET: what is returned if it uses neither, i.e. it does not use a neighbor list?
 
 Arguments:
 
@@ -469,17 +472,17 @@ Corresponding Fortran style interface:
 
 int KIM_API_set_data(void *kimmdl, char *nm, intptr_t size, void *dt); 
 
-    This routine searches for the string nm in the KIM API object kimmdl. If
-    found, it stores in the KIM API object the value of dt which points to the
-    location in memory where the data associated with nm is to be stored.  Upon
-    successful completion this routine returns KIM_STATUS_OK.  If nm is not in
+    This routine searches for the string `nm' in the KIM API object `kimmdl'. If
+    found, it stores in the KIM API object the value of `dt' which points to the
+    location in memory where the data associated with `nm' is to be stored.  Upon
+    successful completion this routine returns KIM_STATUS_OK.  If `nm' is not in
     the KIM API object this routine returns KIM_STATUS_ARG_UNKNOWN.  If an
     existing pointer in the KIM API object is overwritten by this operation, a
     memory leak may result. (This could indicate that storage for the same data
     has been allocated more than once.)  Thus, care must be taken if this
     routine is used in conjunction with KIM_API_allocate for array data.
 
-    Note: Prior to calling this routine a valid KIM API object must be obtained
+    NOTE: Prior to calling this routine a valid KIM API object must be obtained
           by calling KIM_API_init().
         
 Arguments:
@@ -512,7 +515,7 @@ Corresponding Fortran style interface:
 void *KIM_API_get_data(void *kimmdl, char *nm, int *kimerror); 
 
     This routine returns a pointer from the KIM API object that points to
-    memory where data associated with the string nm is stored.  It returns NULL
+    memory where data associated with the string `nm' is stored.  It returns NULL
     if the string nm is not found in the KIM API object.
 
 Arguments:
@@ -545,7 +548,7 @@ intptr_t KIM_API_get_size(void *kimmdl, char *nm, int *kimerror);
      it returns the size of the data in terms of underlying elements. (For
      example, if the data is an array of shape [numberOfParticles,3],
      KIM_API_get_size() will return numberOfParticles*3.)  If no data with name
-     (nm) is in the KIM API object, a negative value will be returned.
+     `nm' is in the KIM API object, a negative value will be returned.
 
 Arguments:
 
@@ -574,7 +577,7 @@ Corresponding Fortran style interface:
 
 intptr_t KIM_API_get_shape(void *kimmdl, char *nm, int *shape, int *kimerror); 
 
-    This routine returns the rank of nm and provides its shape in the argument
+    This routine returns the rank of `nm' and provides its shape in the argument
     `shape'.  If the name of the argument is not in the KIM API object, a
     negative value will be returned.
 
@@ -615,7 +618,7 @@ Corresponding Fortran style interface:
 
 void KIM_API_set_shape(void *kimmdl, char *nm, int *shape, int rank, int *kimerror); 
 
-    This routine sets the `shape' of nm and checks if the `rank' provided is
+    This routine sets the `shape' of `nm' and checks if the `rank' provided is
     the same as that already stored in the KIM API object.  This will overwrite
     all of the shape data stored in the KIM API object for this argument.  This
     routine should not be used in conjunction with arguments for which
@@ -667,7 +670,7 @@ void KIM_API_set_compute(void *kimmdl, char *nm, int flag, int *kimerror);
     optionally computed, a Model can check if a Test wants the argument to be
     computed.
 
-    Notes:
+    NOTES:
 
     (1) The Test is responsible for ensuring that memory has been allocated for
         the argument being requested.
@@ -708,7 +711,7 @@ int KIM_API_get_compute(void *kimmdl, char *nm, int *kimerror);
 
     This routine checks the status of the `compute' flag.  If the argument can
     be optionally computed, a Model can check if a Test wants the argument to
-    be computed.  Returned value 0 - do not compute, 1 compute.
+    be computed.  Returned value: 0 means do not compute, 1 means compute.
 
 Arguments:
 
@@ -737,10 +740,10 @@ Corresponding Fortran style interface:
 
 int KIM_API_get_index(void *kimmdl, char*nm, int *kimerror);
 
-    This routine returns the index of the argument field in the KIM API object.
+    This routine returns the index of an argument field in the KIM API object.
     This index serves as an integer offset that allows for efficient access to
     the KIM API object.  (This eliminates the overhead in the element access
-    routines associated with using the string nm to search for the argument.)
+    routines associated with using the string `nm' to search for the argument.)
     This index is guaranteed to remain valid for the life-time of the KIM API
     object.
 
@@ -777,7 +780,7 @@ int KIM_API_model_init(void *kimmdl);
     return value will be KIM_STATUS_OK in case of success and KIM_STATUS_FAIL
     otherwise.
 
-    Notes:
+    NOTES:
 
     (1) The Model's init routine must store its cutoff value in the KIM API
         object.  It may also publish its parameters as either fixed or free
@@ -786,7 +789,8 @@ int KIM_API_model_init(void *kimmdl);
         store data in static memory since it may be called with different KIM
         API objects.  Any information that should persist between calls must be
         stored in the KIM API object.  Fixed parameters may be used for this
-        purpose or the Model buffer (see KIM_API_set/get_model_buffer).
+        purpose or the Model buffer (see KIM_API_set/get_model_buffer). (See
+        details and cautionary notes about this in the standard.kim file.)
 
     (2) In order to call KIM_API_model_init() it is necessary to have a valid
         KIM API object pointed to by kimmdl (see KIM_API_init() above).  The
@@ -814,7 +818,7 @@ int KIM_API_model_reinit(void *kimmdl);
     by calling the reinit routine supplied by the Model.  The return value will
     be KIM_STATUS_OK in case of success and KIM_STATUS_FAIL otherwise.
 
-    Notes:
+    NOTES:
 
     (1) The Model's reinit routine must be called if the parameters of the
         models have been changed.
@@ -982,7 +986,7 @@ char *KIM_API_get_NBC_method(void *kimmdl, int *kimerror);
     memory pointed to by this pointer is allocated by the routine, but should
     be released by the user to avoid a memory leak.  The string is the NBC
     (Neighbor list and Boundary Conditions) method in use by the KIM_API object
-    kimmdl.  (See the standard.kim file for more information on NBC methods.)
+    `kimmdl'.  (See the standard.kim file for more information on NBC methods.)
 
 Arguments:
       void *kimmdl
@@ -1005,7 +1009,7 @@ Corresponding Fortran style interface:
 
 int KIM_API_get_partcl_type_code(void *kimmdl, char* particle, int *kimerror);
 
-    This routine returns the particle type id for a given particle symbol, as
+    This routine returns the particle type ID for a given particle symbol, as
     defined by the Model associated with the KIM API object.  The routine
     returns KIM_STATUS_PARTICLE_TYPES_UNDEFINED if no atom/particle types have
     been provided in the .kim files.  (See the standard.kim file for more
@@ -1079,7 +1083,7 @@ int KIM_API_get_neigh_mode(void *kimmdl, int *kimerror);
 Arguments:
 
       void *kimmdl
-              pointer to KIM_API_model object (in c++ style the definition 
+              pointer to KIM_API_model object (in C++ style the definition 
               will be (KIM_API_model *)).
 
       int *kimerror
@@ -1100,7 +1104,7 @@ int KIM_API_get_neigh(void *kimmdl, int mode, int request, int *particle,
                       int *numnei, int **nei1particle, double **Rij);
 
     This routine provides standardized access to the neighbor list supplied by
-    the test.  The test must have previously registered, in the KIM API object,
+    the Test.  The Test must have previously registered, in the KIM API object,
     a pointer to its neighbor list access routine with the same interface as
     above (except that `mode' and `request' must be of type `int *').
 
@@ -1114,7 +1118,7 @@ int KIM_API_get_neigh(void *kimmdl, int mode, int request, int *particle,
     neighbor list is desired.  This mode must be used when the order in which
     particle neighbor lists are processed is important.
 
-    Note: The list of neighbors returned for a given particle should not
+    NOTE: The list of neighbors returned for a given particle should not
           include the particle itself unless it is an image particle with a
           non-zero Rij vector entry. (See explanation of Rij vectors below.)
 
@@ -1124,7 +1128,7 @@ int KIM_API_get_neigh(void *kimmdl, int mode, int request, int *particle,
       KIM_STATUS_OK                             -- successful operation
       KIM_STATUS_NEIGH_ITER_PAST_END            -- iterator has been
                                                    incremented past end of list
-      KIM_STATUS_NEIGH_INVALID_REQUEST          -- invalid particle id requested
+      KIM_STATUS_NEIGH_INVALID_REQUEST          -- invalid particle ID requested
                                                    (request out of range)
       KIM_STATUS_NEIGH_INVALID_MODE             -- invalid mode value
       KIM_STATUS_API_OBJECT_INVALUD             -- invalid KIM API object
@@ -1169,19 +1173,21 @@ Arguments:
 
       int **nei1particle
                pointer argument which will point to the list of neighbors on
-               exit.  The neighbor id values stored in this list will be
+               exit.  The neighbor ID values stored in this list will be
                0-based if the Model includes ZeroBasedLists in its KIM
                descriptor file and 1-based if OneBasedLists is included.  (The
                KIM API will automatically do any necessary conversions.)
 
       double **Rij
               pointer argument which will point to the list of relative
-              position vectors (of `particle' relative to the neighbor, i.e.,
-              Rij = X_j - X_i) of the neighbors of a particle (including
-              boundary conditions if applied) if they have been computed (NBC
-              method NEIGH_RVEC_F only -- see standard.kim for more information
-              on NBC methods).  Has NULL value otherwise (all other NBC
-              methods).
+              position vectors of the neighbors of a particle, i.e. if the `particle'
+              index is `i' and its neighbors are indexed by `j', then
+              R_ij = x_j - x_i (including boundary conditions if applied). This
+              data is only available for NBC method NEIGH_RVEC_F. The returned
+              value is NULL for all other NBC methods. (See standard.kim for more 
+              information on NBC methods.)
+ET: I changed the above text significantly. See that you agree.
+ET: Also shouldn't we use "rij" instead of "Rij" since this is a spatial distance?
 
 Corresponding Fortran style interface:
 
@@ -1205,13 +1211,13 @@ void KIM_API_process_dEdr(void **km, double *dEdr, double *r, double **dx, &
 
     This routine can be called by a Model to provide the Test with a
     contribution, dEdr, to the first derivative of the Model's energy with
-    respect to the (scalar) distance r_ij between particle i and particle j.
+    respect to the (scalar) distance r_ij between particle `i' and particle `j'.
     The Test can use this information to compute, via the chain-rule, many
-    properties.  Examples include forces and the virial.  The KIM API performs
-    automatic index conversion (based on ZeroBasedList and OneBasedList flag
-    settings) before calling the Test's supplied process_dEdr function.  If the
-    Test does not provide its own process_dEdr routine, then the KIM API
-    standard process_dEdr routine is used.  If the standard process_dEdr
+    properties.  Examples include forces, the virial, and other thermodynamic
+    tensions.  The KIM API performs automatic index conversion (based on ZeroBasedList 
+    and OneBasedList flag settings) before calling the Test's supplied process_dEdr 
+    function.  If the Test does not provide its own process_dEdr routine, then the KIM 
+    API standard process_dEdr routine is used.  If the standard process_dEdr
     routine is used, the KIM API ensures that any appropriate memory
     initializations are performed.  This routine and currently supports the
     computation of `virial' and `particleVirial'.
@@ -1231,7 +1237,7 @@ Arguments:
 
       double **dx
               pointer to the relative position vector of particle j
-              relative to particle i (i.e., r_ij = X_j - X_i).
+              relative to particle i (i.e., r_ij = x_j - x_i).
           
       int *i
               pointer to particle index i
@@ -1258,7 +1264,7 @@ void KIM_API_process_d2Edr2(void **km, double *d2Edr2, double **r, &
     This routine can be called by a Model to provide the Test with a
     contribution, d2Edr2, to the second derivative of the Model's energy with
     respect to the (scalar) distances r_i[0]j[0] and r_i[1]j[1] between
-    particle i[0] and j[0] and between particles i[1] and j[1], respectivel.
+    particle i[0] and j[0] and between particles i[1] and j[1], respectively.
     The Test can use this information (often in conjunction with information
     from process_dEdr) to compute, via the chain-rule, many properties.  An
     example is the hessian.  The KIM API performs automatic index conversion
@@ -1269,6 +1275,8 @@ void KIM_API_process_d2Edr2(void **km, double *d2Edr2, double **r, &
     ensures that any appropriate memory initializations are performed.  This
     routine and currently supports the computation of `hessian' (process_dEdr
     is also required in order to correclty compute the hessian).
+ET: Is it true that it computes the hessian? I thought you said it did not do
+so at this stage.
 
 Arguments:
 
@@ -1312,7 +1320,7 @@ Corresponding Fortran style interface:
 char *KIM_API_get_status_msg(int status_code);
 
     This routine returns a null terminated character string that describes the
-    status_code.  status_code should be the kimerror code returned by a KIM
+    `status_code'.  `status_code' should contain a `kimerror' code returned by a KIM
     service routine.
 
 Arguments:
@@ -1331,7 +1339,7 @@ Corresponding Fortran style interface:
 int KIM_API_report_error(int line, char *file, char *usermsg, int status_code);
 
     This routine prints the standard KIM error message associated with
-    status_code as well as the user supplied message usermsg.  It returns
+    `status_code' as well as the user supplied message `usermsg'.  It returns
     KIM_STATUS_FAIL if status_code is less than KIM_STATUS_OK. Otherwise it
     returns KIM_STATUS_OK.
 
@@ -1363,9 +1371,9 @@ Corresponding Fortran style interface:
 
 double KIM_API_get_scale_conversion(char *u_from, char *u_to, int *kimerror);
 
-    This routine returns the scale conversion factor between one unit to
+    This routine returns the scale conversion factor between one unit and
     another.  For example, KIM_API_get_scale_conversion("cm","m", &kimerror)
-    will return the value 0.01.  Both u_from and u_to must be from the same
+    will return the value 0.01.  Both `u_from' and `u_to' must be from the same
     supported base unit (length, energy, charge, temperature, or time).  See
     standard.kim for valid values within each base unit.  The function returns
     a negative value if an error occurs.
@@ -1549,6 +1557,7 @@ double KIM_API_convert_to_act_unit(void *kimmdl, char *length, char *energy,
     exponents for each of the base units.  If the supplied base units are not
     among the standard supported base units (see standard.kim), an appropriate
     KIM status code is returned.  
+ET: Can you add an example here to see how this would be used?
 
 Arguments:
 
@@ -1669,7 +1678,7 @@ c-style:
      There can be up to 15 VARIABLE_GROUPs in one call.  Each
      VARIABLE_GROUP has either 3 or 4 function arguments.  Therefore
      numargs must be divisible by either 3 or 4 (depending on which
-     MULTIPLE ACCESS function is being called).  VARIABLE_GROUPS hav
+     MULTIPLE ACCESS function is being called).  VARIABLE_GROUPS have
      different types of function arguments depending on the context.  The
      last variable in the group is always an integer flag (gkey) which can
      be 1 or 0.  If gkey = 1 the routine will perform the requested
@@ -1679,33 +1688,42 @@ c-style:
      The VARIABLE_GROUP definitions are:
   
      1.   void KIM_API_getm_compute(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
+
           Here VARIABLE_GROUP has 3 variables: char *name, int *compute, int gkey
   
      2.   void KIM_API_setm_compute(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
+
           Here VARIABLE_GROUP has 3 variables: char *name, int compute, int gkey
 
      3.   void KIM_API_getm_compute_by_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
+
           Here VARIABLE_GROUP has 3 variables: int index, int *compute, int gkey
 
      4.   void KIM_API_setm_compute_by_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
+
           Here VARIABLE_GROUP has 3 variables: int index, int compute, int gkey
 
      5.   void KIM_API_getm_data(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
+
           Here VARIABLE_GROUP has 3 variables: char *name, void **data, int gkey
 
      6.   void KIM_API_setm_data(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
+
           Here VARIABLE_GROUP has 4 variables: char *name, intptr_t size, void *data, int gkey
 
      7.   void KIM_API_getm_data_by_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
+
           Here VARIABLE_GROUP has 3 variables: int index, void **data, int gkey
 
      8.   void KIM_API_setm_data_by_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
+
           Here VARIABLE_GROUP has 4 variables: int index, intptr_t size, void *data, int gkey
 
      9.   void KIM_API_getm_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...] );
+
           Here VARIABLE_GROUP has 3 variables: char *name, int *index, int gkey
 
-    kimerror in these routines will be KIM_STATUS_OK if the routine is successful,
+    `kimerror' in these routines will be KIM_STATUS_OK if the routine is successful,
     otherwise KIM_STATUS_FAIL (or other error codes < KIM_STATUS_OK).
  
 f90-style:
@@ -1721,6 +1739,7 @@ f90-style:
     
     The interface here is exactly as it is for the c-style, execpt that the
     `numargs' argument is not required.
+ET: Can you give an example of how this is used?
 
 ******************************************************************************
 
@@ -1735,6 +1754,7 @@ example, from cray pointers to Fortran 90 array pointers.
 The following subroutine converts a C-type array to a Fortran 90 type array
 (pointer).  For example the C-type array can be a pointee of a cray pointer.
 Using this routine, one can cast a cray pointer to a Fortran 90 array pointer.
+ET: arguments of the following function have not been defined as they are above.
 
        subroutine KIM_to_F90_real_array_2d(ctypeArray, ArrayWithDescriptor, n, m)
                         implicit none 
