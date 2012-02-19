@@ -55,9 +55,9 @@ kim-api-clean:
 	@echo
 
 examples-all:
-	cp -r --no-clobber $(KIM_DIR)EXAMPLEs/MODEL_DRIVERs/* "$(KIM_MODEL_DRIVERS_DIR)"
-	cp -r --no-clobber $(KIM_DIR)EXAMPLEs/MODELs/* "$(KIM_MODELS_DIR)"
-	cp -r --no-clobber $(KIM_DIR)EXAMPLEs/TESTs/* "$(KIM_TESTS_DIR)"
+	cp -r -n $(KIM_DIR)EXAMPLEs/MODEL_DRIVERs/* "$(KIM_MODEL_DRIVERS_DIR)"
+	cp -r -n $(KIM_DIR)EXAMPLEs/MODELs/* "$(KIM_MODELS_DIR)"
+	cp -r -n $(KIM_DIR)EXAMPLEs/TESTs/* "$(KIM_TESTS_DIR)"
 	$(MAKE) all
 
 examples-clean:
