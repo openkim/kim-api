@@ -59,8 +59,8 @@
 #         other units are derived in a consistent way:
 #
 #         Unit_length      := `A' | `Bohr' | `cm' | `m' | `nm'
-#         Unit_energy      := `amu*A^2/(ps)^2' | `erg' | `eV' | `Hartree' | `J' |
-#                              `kcal/mol' | kJ/mol'
+#         Unit_energy      := `amu*A^2/(ps)^2' | `erg' | `eV' | `Hartree' |
+#                             `J' |`kcal/mol' | kJ/mol'
 #         Unit_charge      := `C' | `e' | `statC'
 #         Unit_temperature := `K'
 #         Unit_time        := `fs' | `ps' | `ns' | `s'
@@ -171,7 +171,7 @@ $
 #                           be used when none of the other types are
 #                           appropriate.
 #
-#                           Note: that in Fortran pointers to memory are
+#                           NOTE: that in Fortran pointers to memory are
 #                                 currently implemented using the cray pointer
 #                                 extension which is widely supported by
 #                                 Fortran compilers.  In future releases,
@@ -217,8 +217,7 @@ $
 #
 #                            If either of the first two options is present, the
 #                            KIM_API_allocate() function will substitute the
-#                            value of its `nParticles' or its `nTypes'
-ET: Shouldn't it be "nParticleTypes" above?
+#                            value of its `nParticles' or its `nParticleTypes'
 #                            arguments, respectively.  If, after this
 #                            substitution the extents of EACH dimension is
 #                            known, then the KIM_API_allocate() function will
@@ -233,7 +232,7 @@ ET: Shouldn't it be "nParticleTypes" above?
 #                            White-space is not allowed between the `[' and `]'
 #                            characters.
 #
-#                            Note that multi-dimensional arrays are defined as
+#                            NOTE that multi-dimensional arrays are defined as
 #                            in C with the `fast-index' corresponding to the
 #                            last in the list.  No conversion is necessary to
 #                            use such an array in Fortan.  The Fortran
@@ -304,33 +303,18 @@ ET: Shouldn't it be "nParticleTypes" above?
 #                                    KIM_API_set_shape() function (see below)
 #                                    must be used before KIM_API_set_data() is
 #                                    called.
-# ET: You stress the point that "when the only unknown dimension range is the 
-# (slowest) first dimension, the test must allocate...". But that suggests
-# that in other cases where there are unknown dimensions KIM_API_allocate()
-# might be able to allocate. I do not think that that's what you meant, but
-# it reads that way. I think it needs to be made clear that any occurrence of 
-# ":" means that KIM_API_allocate() will not be able to allocate memory. It is
-# also not obvious from the text why "[:,12]" does not require a the
-# KIM_API_set_shape() but "[12,:]" or "[:,:,:,12,:,numberParticleTypes]" do.
-# RE: I hope the above makes it more clear.  This was, I guess, an undocumented
-# feature of the KIM_API_set_data() funciton.  In fact, this function ALWAYS
-# computes and sets the EXTENT of the first dimension based on the EXTENT(s) of
-# the other dimensions and the `size' parameter.  We should add this
-# documentation to the KIM_API_Description.txt file.
-ET: This is better, but I still don't get what's special about the unknown
-dimension being the slowest? If you had [12,:], KIM_API_set_data() could
-still compute the unknown extent from the others and total size. No?
 #
 #                                    NOTE: recall that for standard arguments
-#                                    the shape strings are compared with the 
-#                                    corresponding values in standard.kim (this 
-#                                    file).  Thus, specifying a constant EXTENT, 
-#                                    such as the `12' in this example, has meaning 
-#                                    for the Test/Model matching process.  Further,
-#                                    these values are stored in the KIM API
-#                                    object (zero is substituted wherever a `:'
-#                                    occurs) and can be retrieved at run-time
-#                                    (before they are overwritten by a call to
+#                                    the shape strings are compared with the
+#                                    corresponding values in standard.kim (this
+#                                    file).  Thus, specifying a constant
+#                                    EXTENT, such as the `12' in this example,
+#                                    has meaning for the Test/Model matching
+#                                    process.  Further, these values are stored
+#                                    in the KIM API object (zero is substituted
+#                                    wherever a `:' occurs) and can be
+#                                    retrieved at run-time (before they are
+#                                    overwritten by a call to
 #                                    KIM_API_set_shape()).
 # 
 #
@@ -408,7 +392,7 @@ still compute the unknown extent from the others and total size. No?
 #           <KIM-ID> is a unique identifier for the Model generated by
 #                    openKIM.org when the Model is uploaded.
 #
-#                    Note: That in this distribution of the KIM API we include
+#                    NOTE: That in this distribution of the KIM API we include
 #                          example Models that are not part of the openKIM.org
 #                          repository.  Therefore they do not have KIM-IDs and
 #                          instead their names start with `ex_' and the last
@@ -1234,7 +1218,7 @@ MODEL_PARAMETERS:
 #                     to modify a Model by changing its cutoff radius as
 #                     described above.
 #
-# Note: Currently this is the only standard parameter defined by the KIM API.
+# NOTE: Currently this is the only standard parameter defined by the KIM API.
 #
 #
 # Name                      Type         Unit               Shape
