@@ -247,7 +247,7 @@ void KIM_API_model_compute(void *kimmdl, int *kimerror);
 
     NOTES:
 
-    (1) Prior to calling this routine the KIM API object pointed to by kimmdl
+    (1) Prior to calling this routine the KIM API object pointed to by `kimmdl'
         must contain the necessary information that the Model requires to run.
         In addition, KIM_API_model_init() must have successfully executed for
         this KIM API object.
@@ -255,7 +255,7 @@ void KIM_API_model_compute(void *kimmdl, int *kimerror);
     (2) It is important to stress that a Model must not make assumptions about
         the state of the KIM API object in its model_compute() function.  For
         example, the value of `numberOfParticles' could change every time that
-        model_compute() is called.  This would also imply that the `coordinats'
+        model_compute() is called.  This would also imply that the `coordinates'
         array pointer, and other similar pointers, would change too.  Thus, the
         Model must be careful to accurately determine the validity of any data
         has previously stored in its model buffer.  (See details and cautionary
@@ -1577,7 +1577,7 @@ double KIM_API_convert_to_act_unit(void *kimmdl, char *length, char *energy,
     KIM API object kimmdl.  The derived unit is defined by the supplied
     exponents for each of the base units.  If the supplied base units are not
     among the standard supported base units (see standard.kim), an appropriate
-    KIM status code is returned.  For example, suppose we what to convert the
+    KIM status code is returned.  For example, consider the conversion of the
     quantity `10 N/s' to the equivalent active unit.  C code for this would be:
 
       double forcePerTime = 10.0; /* N/s */
@@ -1791,7 +1791,7 @@ f90-style:
       then the `comp_virial' variable will be set to zero by the call to
       KIM_API_getm_compute().  Then, in the KIM_API_getm_data() call the
       logical statement (comp_virial == 1) will evaluate to false (0) and the
-      value of the `virial_data' will not be retrived.
+      value of the `virial_data' will not be retrieved.
 
 ******************************************************************************
 
