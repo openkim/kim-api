@@ -218,6 +218,7 @@ $
 #                            If either of the first two options is present, the
 #                            KIM_API_allocate() function will substitute the
 #                            value of its `nParticles' or its `nTypes'
+ET: Shouldn't it be "nParticleTypes" above?
 #                            arguments, respectively.  If, after this
 #                            substitution the extents of EACH dimension is
 #                            known, then the KIM_API_allocate() function will
@@ -316,15 +317,22 @@ $
 # computes and sets the EXTENT of the first dimension based on the EXTENT(s) of
 # the other dimensions and the `size' parameter.  We should add this
 # documentation to the KIM_API_Description.txt file.
+ET: This is better, but I still don't get what's special about the unknown
+dimension being the slowest? If you had [12,:], KIM_API_set_data() could
+still compute the unknown extent from the others and total size. No?
+#
+#                                    NOTE: recall that for standard arguments
+#                                    the shape strings are compared with the 
+#                                    corresponding values in standard.kim (this 
+#                                    file).  Thus, specifying a constant EXTENT, 
+#                                    such as the `12' in this example, has meaning 
+#                                    for the Test/Model matching process.  Further,
+#                                    these values are stored in the KIM API
+#                                    object (zero is substituted wherever a `:'
+#                                    occurs) and can be retrieved at run-time
+#                                    (before they are overwritten by a call to
+#                                    KIM_API_set_shape()).
 # 
-# ET: Another question is what's the point of defining a shape as "[:,12]" in the
-# KIM descriptor file? The "12" is not used for anything by the API. I suppose
-# it provides some information to a human reading the document, but that's it.
-# It may be good to clarify this by saying that from the perspective of the API
-# "[:,12]" and "[:,:]" have exactly the same effect. The "12" merely provides 
-# some additional information to human readers. But maybe I'm missing something
-# regarding the KIM_API_set_shape() issue I mention above.
-# RE: See the additions to the text for the rank=6 example below.
 #
 #                            * [12,numberOfParticles] - This defines a two-
 #                                    dimensional array (rank=2) of size 12 by
@@ -343,18 +351,7 @@ $
 #                                   eventually free) memory for this argument
 #                                   and use the KIM_API_set_data() function in
 #                                   order to register the memory location of
-#                                   the values for this argument.  Note: recall
-#                                   that for standard arguments the shape
-#                                   strings are compared with the corresponding
-#                                   values in standard.kim (this file).  Thus,
-#                                   specifying a constant EXTENT, such as the
-#                                   `12' in this example, has meaning for the
-#                                   Test/Model matching process.  Further,
-#                                   these values are stored in the KIM API
-#                                   object (zero is substituted wherever a `:'
-#                                   occurs) and can be retrieved at run-time
-#                                   (before they are overwritten by a call to
-#                                   KIM_API_set_shape()).
+#                                   the values for this argument.  
 #                                   
 #
 #
@@ -726,7 +723,7 @@ CLUSTER                     flag        # The Model needs only coordinates to
 # In the NEIGH_PURE methods (NEIGH_PURE_H and NEIGH_PURE_F), the Model receives
 # the number of particles, coordinates and a full or half neighbor list. The
 # neighbor list defines the environment of each particle, from which the
-# particles's energy is defined.  In the case of a half list the value of the
+# particles's energy is defined.  In the case of a half list, the value of the
 # argument `numberContributingParticles' indicates that the first
 # `numberContributingParticles' contribute their energy to the total and the
 # remaining particles do not contribute to the energy (they are "ghost"
@@ -1066,10 +1063,6 @@ destroy                     method       none               []
 # changed it will provide the parameter PARAM_FREE_cutoff (see below) which can
 # be changed.  Once the PARAM_FREE_cutoff parameter has been changed and the
 # Model's reinit function called, the Model must update the value of `cutoff'.
-# ET: What about models that use multiple cutoffs? Should we say that this is
-# the maximum cutoff radius in that case?
-# RE: We really haven't dealt with such things.  I think we can leave it as is 
-# and address it once we run into it.
 #
 # Name                      Type         Unit               Shape
 #
@@ -1168,10 +1161,6 @@ particleVirial              real*8       energy             [numberOfParticles,6
 # descriptor file and call the KIM_API_process_dEdr() and
 # KIM_API_process_d2Edr2() functions in its compute loop.  The Test should list
 # `hessian' in its descriptor file.)
-# ET: Is this right? I thought you told me yesterday that the hessian calculation
-# was not implemented yet.
-# RE: this is the full hessian of the atomistic system.  The elasticity-tensor (4th
-# order tensor relating strain to stress) is not implemented.
 #
 # Name                      Type         Unit               Shape
 #
