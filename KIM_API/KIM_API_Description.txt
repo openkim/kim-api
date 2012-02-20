@@ -258,7 +258,7 @@ void KIM_API_model_compute(void *kimmdl, int *kimerror);
         model_compute() is called.  This would also imply that the `coordinates'
         array pointer, and other similar pointers, would change too.  Thus, the
         Model must be careful to accurately determine the validity of any data
-        has previously stored in its model buffer.  (See details and cautionary
+        has previously stored in its Model Buffer.  (See details and cautionary
         notes about this in the documentation for KIM_API_set/get_model_buffer
         and also in the standard.kim file.)
 
@@ -342,11 +342,13 @@ void KIM_API_set_model_buffer(void *kimmdl, void *ob, int *kimerror);
     various functions.
 
     NOTE: This feature must be used with caution.  There is no mechanism to
-          notify the Model when changes are made to the data in the KIM API
-          object (such as the number of particles, or the memory location of
-          the `forces' argument).  An example of a safe quantity to store in
-          the Model buffer is the index for an argument returned by the
-          KIM_API_get_index() function.
+          notify the Model when changes are made to the data (controlled by the
+          Test) in the KIM API object (such as the number of particles, or the
+          memory location of the `forces' argument).  In particular, the
+          pointer values returned by KIM_API_get_data() are, generally, NOT
+          safe to store in the Model Buffer.  An example of a safe quantity to
+          store in the Model Buffer is the index for an argument returned by
+          the KIM_API_get_index() function.
 
 Arguments:
 
@@ -355,7 +357,7 @@ Arguments:
               will be (KIM_API_model *)).
           
       void *ob
-              pointer to Model object buffer
+              pointer to Model Buffer
 
       int *kimerror
               error code: KIM_STATUS_OK   -- successful completion, 
@@ -377,10 +379,13 @@ void KIM_API_set_test_buffer(void *kimmdl, void *ob, int *kimerror);
     object.
 
     NOTE: This feature must be used with caution.  There is no mechanism to
-          notify the Test when changes are made to the data in the KIM API
-          object (such as the Model's Parameters).  An example of a safe
-          quantity to store in the Test buffer is the index for an argument
-          returned by the KIM_API_get_index() function.
+          notify the Test when changes are made to the data (controlled by the
+          Model) in the KIM API object (such as the pointer to the Model's
+          `compute' function, the pointers to its Parameters or their values).
+          In particular, the pointer values returned by KIM_API_get_data() are,
+          generally, NOT safe to store in the Test Buffer.  An example of a
+          safe quantity to store in the Test Buffer is the index for an
+          argument returned by the KIM_API_get_index() function.
 
 Arguments:
 
@@ -389,7 +394,7 @@ Arguments:
               will be (KIM_API_model *)).
           
       void *ob
-              pointer to test object buffer
+              pointer to Test Buffer
 
       int *kimerror
               error code: KIM_STATUS_OK   -- successful completion, 
@@ -759,7 +764,7 @@ int KIM_API_get_index(void *kimmdl, char*nm, int *kimerror);
     This index serves as an integer offset that allows for efficient access to
     the KIM API object.  (This eliminates the overhead in the element access
     routines associated with using the string `nm' to search for the argument.)
-    This index is guaranteed to remain valid for the life-time of the KIM API
+    This index is guaranteed to remain valid for the lifetime of the KIM API
     object.
 
 Arguments:
@@ -797,10 +802,11 @@ int KIM_API_model_init(void *kimmdl);
 
     NOTES:
 
-    (1) @@@ HERE WE NEED TO DEFINE THE EXPETATIONS FOR THE STATE OF THE KIM API
-            OBJECT AT THE TIME THAT A TEST MAKES A CALL TO THIS FUNCTION.  THIS
-            MOSTLY HAS TO DO WITH THE QUESTION: WHAT CAN THE MODEL STORE IN ITS
-            MODEL BUFFER?
+    (1) In order to call KIM_API_model_init() it is necessary to have a valid
+        KIM API object pointed to by `kimmdl' (see KIM_API_init() above).  The
+        mandatory argument `cutoff' must be registered in this KIM API object
+        and it must have memory allocated to it (via either the
+        KIM_API_allocate() or KIM_API_set_data() routines).
 
     (2) The Model's init routine must store its cutoff value in the KIM API
         object and register pointers to its `compute' function (and its
@@ -813,15 +819,9 @@ int KIM_API_model_init(void *kimmdl);
         store data in static memory since it may be called with different KIM
         API objects.  Any information that should persist between calls must be
         stored in the KIM API object.  Fixed parameters may be used for this
-        purpose or the Model buffer (See details and cautionary notes about
+        purpose or the Model Buffer (See details and cautionary notes about
         this in the documentation for KIM_API_set/get_model_buffer and also in
         the standard.kim file.)
-
-    (3) In order to call KIM_API_model_init() it is necessary to have a valid
-        KIM API object pointed to by kimmdl (see KIM_API_init() above).  The
-        mandatory argument `cutoff' must be registered in this KIM API object
-        and it must have memory allocated to it (via either the
-        KIM_API_allocate() or KIM_API_set_data() routines).
 
 Arguments:
       void *kimmdl
@@ -845,16 +845,14 @@ int KIM_API_model_reinit(void *kimmdl);
 
     NOTES:
 
-    (3) The Model's reinit routine must be called if the parameters of the
-        models have been changed.
+    (1) In order to call KIM_API_model_reinit() it is necessary to have a valid
+        KIM API object pointed to by `kimmdl' (see KIM_API_init()).
+        Additionally, KIM_API_model_init() must have been previously executed
+        for this KIM API object.
 
-    (2) @@@ HERE WE NEED TO DEFINE ANY OTHER SITUATIONS WHERE reinit MUST BE
-            CALLED AND ANY OTHER ACTIONS THAT reinit IS RESPONSIBLE FOR DOING.
-            THIS SHOULD BE CONSISTENT WITH WHAT IS ADDED FOR model_init ABOVE.
-
-    (3) In order to call KIM_API_model_reinit() it is necessary to have a valid
-        KIM API object pointed to by kimmdl (see KIM_API_init() and
-        KIM_API_model_init() above).
+    (2) This routine must be called if the Test has changed one or more of the
+        Model's free parameters (see standard.kim for more discussion about
+        Model Parameters).
 
 Arguments:
       void *kimmdl

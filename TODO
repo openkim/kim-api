@@ -13,6 +13,8 @@ openkim-api package.
 Items planned for the next significant release.
 --------------------------------------------------------------------------------
 
+* Introduce a "sparse array" type (for use with `hessian' and similar arguments)
+
 * Improve error handling consistency within the API
 
 * Implement full support for Tests written in Python

@@ -839,7 +839,10 @@ MODEL_INPUT:
 #
 # Particles are always numbered sequentially starting from 0 or 1 depending on
 # the ZeroBasedLists/OneBasedLists convention setting.  This argument is
-# required for all Models and Tests.
+# required for all Models and Tests.  A Test must allocate memory for this
+# argument and register it in the KIM API object (via KIM_API_allocate() or
+# KIM_API_set_data()) before the KIM_API_model_compute() function is called.
+# The Test is free to change this pointer at any time.
 #
 # Name                      Type         Unit                Shape
 #
@@ -849,6 +852,13 @@ numberOfParticles           integer      none                []
 #
 # numberContributingParticles: The number of particles that contribute to the
 #                              energy (required for all half neighbor lists).
+#
+# This argument allows a half neighbor list to be "unsymmetric."  Only the
+# first `numberContributingParticles' particles will contribute their energy to
+# the total.  If supported, a Test must allocate memory for this argument and
+# register it in the KIM API object (via KIM_API_allocate() or
+# KIM_API_set_data()) before the KIM_API_model_compute() function is called.
+# The Test is free to change this pointer at any time.
 #
 # Name                      Type         Unit               Shape
 #
@@ -860,7 +870,11 @@ numberContributingParticles integer      none               []
 #                      configuration passed between the Model and Test.
 #
 # This argument is required for any Model/Test that specifies one or more
-# atom/particle types in the SUPPORTED_ATOM/PARTICLE_TYPES section
+# atom/particle types in the SUPPORTED_ATOM/PARTICLE_TYPES section.  If
+# supported, a Test must allocate memory for this argument and register it in
+# the KIM API object (via KIM_API_allocate() or KIM_API_set_data()) before the
+# KIM_API_model_compute() function is called.  The Test is free to change this
+# pointer at any time.
 #
 # Name                      Type         Unit              Shape
 #
@@ -874,7 +888,10 @@ numberParticleTypes         integer      none              []
 # The values in this vector must correspond to the `code' specified in the
 # Model's KIM descriptor file.  This argument is required for any Model/Test
 # that specifies one or more atom/particle types in the
-# SUPPORTED_ATOM/PARTICLE_TYPES section.
+# SUPPORTED_ATOM/PARTICLE_TYPES section.  If supported, a Test must allocate
+# memory for this argument and register it in the KIM API object (via
+# KIM_API_allocate() or KIM_API_set_data()) before the KIM_API_model_compute()
+# function is called.  The Test is free to change this pointer at any time.
 #
 # Name                      Type         Unit               Shape
 #
@@ -886,7 +903,10 @@ particleTypes               integer      none               [numberOfParticles]
 #               location of each of the numberOfParticles atom/particle in the
 #               configuration passed between the Model and Test.
 #
-# This argument is required for all Models and Tests.
+# This argument is required for all Models and Tests.  A Test must allocate
+# memory for this argument and register it in the KIM API object (via
+# KIM_API_allocate() or KIM_API_set_data()) before the KIM_API_model_compute()
+# function is called.  The Test is free to change this pointer at any time.
 #
 # Name                      Type         Unit               Shape
 #
@@ -897,6 +917,11 @@ coordinates                 real*8       length             [numberOfParticles,3
 # particleCharge : An array of floating-point numbers specifying the charge of
 #                  each particle.
 #
+# If supported, a Test must allocate memory for this argument and register it
+# in the KIM API object (via KIM_API_allocate() or KIM_API_set_data()) before
+# the KIM_API_model_compute() function is called.  The Test is free to change
+# this pointer at any time.
+#
 # Name                      Type         Unit               Shape
 #
 particleCharge              real*8       charge             [numberOfParticles]
@@ -905,6 +930,11 @@ particleCharge              real*8       charge             [numberOfParticles]
 #
 # particleSize : An array of floating-point numbers specifying the size of each
 #                particle.
+#
+# If supported, a Test must allocate memory for this argument and register it
+# in the KIM API object (via KIM_API_allocate() or KIM_API_set_data()) before
+# the KIM_API_model_compute() function is called.  The Test is free to change
+# this pointer at any time.
 #
 # Name                      Type         Unit               Shape
 #
@@ -919,20 +949,29 @@ particleSize                real*8       length             [numberOfParticles]
 # CLUSTER. It is recommended that for Models this argument be optional to 
 # ensure that a Model is compatible with the widest possible set of Tests.
 #
+# If supported, a Test must allocate memory for this argument and register it
+# in the KIM API object (via KIM_API_allocate() or KIM_API_set_data()) before
+# the KIM_API_model_compute() function is called.  The Test is free to change
+# this pointer at any time.
+#
 # Name                      Type         Unit               Shape
 #
 get_neigh                   method       none               []
 
 ################################################################################
 #
-# process_dEdr : A pointer to a subroutine that can compute arbitrary linear
+# process_dEdr : A pointer to a function that can compute arbitrary linear
 #                combinations of the first derivative of the Model's energy
-#                with respect to the distances between particles.  The function
-#                will be called multiple times with a scalar value representing
-#                a contribution to the derivative of the energy with respect to
-#                a pair distance.  The Test can use this information to
-#                compute, via the chain-rule, many properties.  Examples
-#                include forces, the virial and other thermodynamic tensions.
+#                with respect to the distances between particles.
+#
+# During the Model's compute loop, this function will be called multiple times
+# with a scalar value representing a contribution to the derivative of the
+# energy with respect to a pair distance.  The Test can use this information to
+# compute, via the chain-rule, many properties.  Examples include forces, the
+# virial and other thermodynamic tensions.  If supported, a Test must allocate
+# memory for this argument and register it in the KIM API object (via
+# KIM_API_allocate() or KIM_API_set_data()) before the KIM_API_model_compute()
+# function is called.  The Test is free to change this pointer at any time.
 #
 # Name                      Type         Unit               Shape
 #
@@ -940,15 +979,19 @@ process_dEdr                method       none               []
 
 ################################################################################
 #
-# process_d2Edr2 : A pointer to a subroutine that can compute arbitrary linear
+# process_d2Edr2 : A pointer to a function that can compute arbitrary linear
 #                  combinations of the second derivative of the Model's energy
-#                  with respect to the distances between particles.  The
-#                  function will be called multiple times with a scalar value
-#                  representing a contribution to the second derivative of the
-#                  energy with respect to two pair distances.  The Test can use
-#                  this information (often in conjunction with process_dEdr) to
-#                  compute, via the chain-rule, many properties.  An example is
-#                  the hessian.
+#                  with respect to the distances between particles.
+#
+# The function will be called multiple times with a scalar value representing a
+# contribution to the second derivative of the energy with respect to two pair
+# distances.  The Test can use this information (often in conjunction with
+# process_dEdr) to compute, via the chain-rule, many properties.  An example is
+# the hessian.  If supported, a Test must allocate memory for this argument and
+# register it in the KIM API object (via KIM_API_allocate() or
+# KIM_API_set_data()) before the KIM_API_model_compute() function is called.
+# The Test is free to change this pointer at any time.
+
 #
 # Name                      Type         Unit               Shape
 #
@@ -960,7 +1003,10 @@ process_d2Edr2              method       none               []
 #               the Test.
 #
 # This argument is required for Models/Tests that support the following any NBC
-# other than CLUSTER.
+# other than CLUSTER.  If supported, a Test must allocate memory for this
+# argument and register it in the KIM API object (via KIM_API_allocate() or
+# KIM_API_set_data()) before the KIM_API_model_compute() function is called.
+# The Test is free to change this pointer at any time.
 #
 # Name                      Type         Unit               Shape
 #
@@ -972,7 +1018,10 @@ neighObject                 pointer      none               []
 #                  lengths of the minimum-image periodic orthogonal box.
 #
 # This argument is required for Models/Tests that support the following NBCs:
-# MI_OPBC_H and MI_OPBC_F.
+# MI_OPBC_H and MI_OPBC_F.  If supported, a Test must allocate memory for this
+# argument and register it in the KIM API object (via KIM_API_allocate() or
+# KIM_API_set_data()) before the KIM_API_model_compute() function is called.
+# The Test is free to change this pointer at any time.
 #
 # Name                      Type         Unit               Shape
 #
@@ -1001,7 +1050,9 @@ MODEL_OUTPUT:
 #           defined in the MODEL_INPUT section will calculate quantities
 #           described in the MODEL_OUTPUT section.
 #
-# This argument is required for all Models and Tests.
+# This argument is required for all Models and Tests.  A Model must register a
+# pointer to its `compute' function during the execution of
+# KIM_API_model_init().  The Model is free to change this pointer at any time.
 #
 # Name                      Type         Unit               Shape
 #
@@ -1015,7 +1066,9 @@ compute                     method       none               []
 # This argument is required if a Models publishes its parameters.  However, the
 # argument should be included, as optional, by all Models to ensure maximum
 # compatibility with Tests (who should only include the argument if they use
-# it).
+# it).  If supported, a Model must register a pointer to its `reinit' function
+# during the execution of KIM_API_model_init().  The Model is free to change
+# this pointer at any time.
 #
 # Name                      Type         Unit               Shape
 #
@@ -1031,7 +1084,9 @@ reinit                      method       none               []
 # free the memory that it allocated for its parameters in its init function).
 # However, the argument should be included by all Models (as optional, at
 # least) to ensure maximum compatibility with Tests (who should only include
-# the argument if they use it).
+# the argument if they use it).  If supported, a Model must register a pointer
+# to its `destroy' function during the execution of KIM_API_model_init().  The
+# Model is free to change this pointer at any time.
 #
 # Name                      Type         Unit               Shape
 #
@@ -1043,9 +1098,14 @@ destroy                     method       none               []
 #          (i.e. its cutoff radius).
 #
 # This argument is required for all Models/Tests.  This value should not be
-# modified by the Test.  If the model allows for its cutoff distance to be
-# changed it will provide the parameter PARAM_FREE_cutoff (see below) which can
-# be changed.  Once the PARAM_FREE_cutoff parameter has been changed and the
+# modified by the Test.  A Test must allocate memory for this argument and
+# register it in the KIM API object (via KIM_API_allocate() or
+# KIM_API_set_data()) before the KIM_API_model_init() function is called.  The
+# Test is free to change this pointer at any time.  However, when such a change
+# occurs, the Test must ensure that the value stored in the memory pointed to
+# is preserved.  If the Model allows for its cutoff distance to be changed it
+# will provide the parameter PARAM_FREE_cutoff (see below) which can be
+# changed.  Once the PARAM_FREE_cutoff parameter has been changed and the
 # Model's reinit function called, the Model must update the value of `cutoff'.
 #
 # Name                      Type         Unit               Shape
@@ -1058,7 +1118,10 @@ cutoff                      real*8       length             []
 #          configuration of particles passed between the Model and Test.
 #
 # This argument should, ideally, be optional to ensure maximum Model/Test
-# compatibility.
+# compatibility.  If supported, a Test must allocate memory for this argument
+# and register it in the KIM API object (via KIM_API_allocate() or
+# KIM_API_set_data()) before the KIM_API_model_compute() function is called.
+# The Test is free to change this pointer at any time.
 #
 # Name                      Type         Unit               Shape
 #
@@ -1071,6 +1134,10 @@ energy                      real*8       energy             []
 #          between the Model and Test.
 #
 # This argument should be optional to ensure maximum Model/Test compatibility.
+# If supported, a Test must allocate memory for this argument and register it
+# in the KIM API object (via KIM_API_allocate() or KIM_API_set_data()) before
+# the KIM_API_model_compute() function is called.  The Test is free to change
+# this pointer at any time.
 #
 # Name                      Type         Unit               Shape
 #
@@ -1083,7 +1150,10 @@ forces                      real*8       force              [numberOfParticles,3
 #                 the Model and Test.
 #
 # This argument should, ideally, be optional to ensure maximum Model/Test
-# compatibility.
+# compatibility.  If supported, a Test must allocate memory for this argument
+# and register it in the KIM API object (via KIM_API_allocate() or
+# KIM_API_set_data()) before the KIM_API_model_compute() function is called.
+# The Test is free to change this pointer at any time.
 #
 # Name                      Type         Unit               Shape
 #
@@ -1106,7 +1176,10 @@ particleEnergy              real*8       energy             [numberOfParticles]
 # `virial' in its descriptor file.)
 #
 # This argument should, ideally, be optional to ensure maximum Model/Test
-# compatibility. 
+# compatibility.  If supported, a Test must allocate memory for this argument
+# and register it in the KIM API object (via KIM_API_allocate() or
+# KIM_API_set_data()) before the KIM_API_model_compute() function is called.
+# The Test is free to change this pointer at any time.
 #
 # Name                      Type         Unit               Shape
 #
@@ -1129,6 +1202,12 @@ virial                      real*8       energy             [6]
 # KIM_API_process_dEdr() function in its compute loop.  The Test should list
 # `particleVirial' in its descriptor file.)
 #
+# This argument should, ideally, be optional to ensure maximum Model/Test
+# compatibility.  If supported, a Test must allocate memory for this argument
+# and register it in the KIM API object (via KIM_API_allocate() or
+# KIM_API_set_data()) before the KIM_API_model_compute() function is called.
+# The Test is free to change this pointer at any time.
+#
 # Name                      Type         Unit               Shape
 #
 particleVirial              real*8       energy             [numberOfParticles,6]
@@ -1144,7 +1223,15 @@ particleVirial              real*8       energy             [numberOfParticles,6
 # the Model will list the `process_dEdr' and `process_dE2dr2' arguments in its
 # descriptor file and call the KIM_API_process_dEdr() and
 # KIM_API_process_d2Edr2() functions in its compute loop.  The Test should list
-# `hessian' in its descriptor file.)
+# `hessian' in its descriptor file.)  In the future a sparse array format may
+# be introduces in order to reduce memory usage for this and other similar
+# arguments.
+#
+# This argument should, ideally, be optional to ensure maximum Model/Test
+# compatibility.  If supported, a Test must allocate memory for this argument
+# and register it in the KIM API object (via KIM_API_allocate() or
+# KIM_API_set_data()) before the KIM_API_model_compute() function is called.
+# The Test is free to change this pointer at any time.
 #
 # Name                      Type         Unit               Shape
 #
@@ -1171,7 +1258,7 @@ MODEL_PARAMETERS:
 #                          during each execution of the compute routine.
 #                          However, this storage should not depend on the
 #                          content provided by the Test.  For persistent
-#                          storage of this type the "model buffer" should be
+#                          storage of this type the Model Buffer should be
 #                          used.
 #
 # 2) PARAM_FREE_<label>  : A parameter that may be changed by the Test (which
