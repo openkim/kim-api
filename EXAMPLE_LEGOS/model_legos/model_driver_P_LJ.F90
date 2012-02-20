@@ -673,9 +673,10 @@ endif
 do i=1,len_paramfile
    paramfile(i:i) = char(byte_paramfile(i))
 enddo
-read(paramfile,*,iostat=ier,err=100) in_cutoff,   &
-                                     in_epsilon,  &
-                                     in_sigma
+read(paramfile,*,iostat=ier,err=100) in_cutoff
+read(paramfile,*,iostat=ier,err=100) in_epsilon
+read(paramfile,*,iostat=ier,err=100) in_sigma
+
 goto 200
 100 continue
 ! reading parameters failed
