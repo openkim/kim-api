@@ -29,7 +29,8 @@ implicit none
 save
 private
 public Compute_Energy_Forces, &
-       model_cutoff
+       model_cutoff,          &
+       Destroy
 
 ! Below are the definitions and values of all Model parameters
 integer, parameter          :: DIM=3          ! dimensionality of space
@@ -320,7 +321,7 @@ call kim_api_getm_data_f(pkim, ier, &
      "energy",                      penergy,         TRUEFALSE(comp_energy.eq.1), &
      "forces",                      pforce,          TRUEFALSE(comp_force.eq.1),  &
      "particleEnergy",              penepot,         TRUEFALSE(comp_enepot.eq.1), &
-     "virial",                      pvirial,         TRUEFALSE(comp_virial.eq.1)
+     "virial",                      pvirial,         TRUEFALSE(comp_virial.eq.1)  &
      )
 if (ier.lt.KIM_STATUS_OK) then
    idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
@@ -536,7 +537,7 @@ do
             endif
             dphieff = dphii + dphij + dUi + dUj
          else
-            call calc_phi(r,phi,irlast)           ! compute just pair potential
+            call calc_phi(r,phi)                  ! compute just pair potential
          endif
          if ((HalfOrFull.eq.1) .and. &
              (j .le. numberContrib)) then         ! HALF mode
@@ -662,6 +663,24 @@ endif
 
 return
 end subroutine get_current_atom_neighbors
+
+!-------------------------------------------------------------------------------
+!
+! Model destroy routine
+!
+!-------------------------------------------------------------------------------
+subroutine Destroy(pkim)
+use KIM_API
+implicit none
+
+!-- Transferred variables
+integer(kind=kim_intptr), intent(in) :: pkim
+
+<FILL as necessary>
+
+return
+  
+end subroutine Destroy
 
 end module model_<FILL element name>_PF_<FILL model name>
 

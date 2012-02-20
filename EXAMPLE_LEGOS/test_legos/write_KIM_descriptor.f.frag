@@ -87,7 +87,11 @@ kim_descriptor = &
                                                                                    cr // &
                                                                                    cr // &
    'TEST_NAME := TEST_NAME_STR'                                                 // cr // &
-   'SystemOfUnitsFix := fixed'                                                  // cr // &
+   'Unit_length      := A'                                                      // cr // &
+   'Unit_energy      := eV'                                                     // cr // &
+   'Unit_charge      := e'                                                      // cr // &
+   'Unit_temperature := K'                                                      // cr // &
+   'Unit_time        := fs'                                                     // cr // &
                                                                                    cr // &
                                                                                    cr // &
    divider                                                                      // cr // &
@@ -124,41 +128,41 @@ kim_descriptor = trim(kim_descriptor) // &
                                                                                    cr // &
    divider                                                                      // cr // &
    'MODEL_INPUT:'                                                               // cr // &
-   '# Name                      Type         Unit       SystemU/Scale           Shape              requirements' // cr // &
-   'numberOfParticles           integer      none       none                    []' // cr // &
+   '# Name                      Type         Unit       Shape              requirements' // cr // &
+   'numberOfParticles           integer      none       []'                     // cr // &
                                                                                    cr // &
-   'numberParticleTypes         integer      none       none                    []' // cr // &
+   'numberParticleTypes         integer      none       []'                     // cr // &
                                                                                    cr // &
-   'particleTypes               integer      none       none                    [numberOfParticles]' // cr // &
+   'particleTypes               integer      none       [numberOfParticles]'    // cr // &
                                                                                    cr // &
-   'coordinates                 real*8       length     standard                [numberOfParticles,3]' // cr // &
+   'coordinates                 real*8       length     [numberOfParticles,3]'  // cr // &
                                                                                    cr // &
-   'get_neigh                   method       none       none                    []' // cr // &
+   'get_neigh                   method       none       []'                     // cr // &
                                                                                    cr // &
-   'neighObject                 pointer      none       none                    []' // cr // &
+   'neighObject                 pointer      none       []'                     // cr // &
                                                                                    cr // &
-   'numberContributingParticles integer      none       none                    []' // cr // &
+   'numberContributingParticles integer      none       []'                     // cr // &
                                                                                    cr // &
-   'boxSideLengths              real*8       length     standard                [3]'// cr // &
+   'boxSideLengths              real*8       length     [3]'                    // cr // &
                                                                                    cr // &
                                                                                    cr // &
    divider                                                                      // cr // &
    'MODEL_OUTPUT:'                                                              // cr // &
-   '# Name                      Type         Unit       SystemU/Scale           Shape              requirements' // cr // &
+   '# Name                      Type         Unit       Shape              requirements' // cr // &
                                                                                    cr // &
-   'destroy                     method       none       none                    []' // cr // &
+   'destroy                     method       none       []'                     // cr // &
                                                                                    cr // &
-   'compute                     method       none       none                    []' // cr // &
+   'compute                     method       none       []'                     // cr // &
                                                                                    cr // &
-   'reinit                      method       none       none                    []' // cr // &
+   'reinit                      method       none       []'                     // cr // &
                                                                                    cr // &
-   'cutoff                      real*8       length     standard                []' // cr // &
+   'cutoff                      real*8       length     []'                     // cr // &
                                                                                    cr // &
-   'energy                      real*8       energy     standard                []' // cr // &
+   'energy                      real*8       energy     []'                     // cr // &
                                                                                    cr // &
-   'forces                      real*8       force      standard                [numberOfParticles,3]' // cr // &
+   'forces                      real*8       force      [numberOfParticles,3]'  // cr // &
                                                                                    cr // &
-   divider                                                                      // cr
+   divider                                                                            // cr
 
 return
 

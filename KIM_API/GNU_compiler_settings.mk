@@ -6,10 +6,10 @@
                                                      -D KIM_DIR_MODELS=\"$(KIM_MODELS_DIR)\" \
                                                      -D KIM_DIR_TESTS=\"$(KIM_TESTS_DIR)\"   \
                                                      -D KIM_DIR_MODEL_DRIVERS=\"$(KIM_MODEL_DRIVERS_DIR)\"
-   #CCOMPILER   = gcc
-   #CPPCOMPILER = g++
-   CCOMPILER   = mpicc
-   CPPCOMPILER = mpiCC
+   CCOMPILER   = gcc
+   CPPCOMPILER = g++
+   #CCOMPILER   = mpicc
+   #CPPCOMPILER = mpiCC
    #CCOMPILER   = gcc-fsf-4.4  # for OS X using fink compilers
    #CPPCOMPILER = g++-fsf-4.4  # for OS X using fink compilers
    #CCOMPILER   = gcc-fsf-4.6  # for OS X using fink compilers                                  
