@@ -803,8 +803,12 @@ int KIM_API_model_init(void *kimmdl);
             MODEL BUFFER?
 
     (2) The Model's init routine must store its cutoff value in the KIM API
-        object.  It may also publish its parameters as either fixed or free
-        (see the standard.kim file) and perform any other necessary
+        object and register pointers to its `compute' function (and its
+        `reinit' and `destroy' functions, if supported).  If the Model supports
+        `flexible' units, it must query the KIM API object (via the
+        KIM_API_get_unit_*() functions) and adjust its parameters
+        appropriately.  It may also publish its parameters as either fixed or
+        free (see the standard.kim file) and perform any other necessary
         initialization steps.  It is important to stress that a Model may not
         store data in static memory since it may be called with different KIM
         API objects.  Any information that should persist between calls must be
