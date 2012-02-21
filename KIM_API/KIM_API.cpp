@@ -533,7 +533,6 @@ void KIMBaseElement::nullefy(){
 bool KIMBaseElement::operator==(KIM_IOline& kimioline){
             //switch off check for virial and process_dnEdr related things
             if(strcmp(name,"virial") == 0  ||
-               strcmp(name,"virial")==0 ||
                strcmp(name,"particleVirial")==0 ||
                strcmp(name,"hessian")    ==0 ||
                strcmp(name,"process_dEdr")    ==0 ||
@@ -542,11 +541,40 @@ bool KIMBaseElement::operator==(KIM_IOline& kimioline){
             if(strcmp(kimioline.name,this->name)==0){
                 if(strcmp(kimioline.type,this->type)==0){
                     if(strcmp(kimioline.dim,this->unit->dim)==0){
-                        if(kimioline.get_rank()==(int)(this->rank)) return true;
+                        if(kimioline.get_rank()==(int)(this->rank)) {
+                        int *shp = kimioline.get_shape();
+                        for(int i=0; i< (int)(this->rank);i++){
+                            if(shp[i]!=this->shape[i]){
+                                delete [] shp;
+                                return false;
+                               }
+                             }
+                            delete [] shp;
+                            return true;
+                        }
                     }
                 }
             }
             return false;
+}
+bool KIMBaseElement::equiv(KIM_IOline& kimioline){
+    if(strcmp(kimioline.name,this->name)==0)
+        if(strcmp(kimioline.type,this->type)==0){
+            if(strcmp(kimioline.type,"flag")==0) return true;
+            if(strcmp(kimioline.dim,this->unit->dim)==0)
+                if(kimioline.get_rank()==(int)(this->rank)) {
+                    int *shp = kimioline.get_shape();
+                    for(int i=0; i< (int)(this->rank);i++){
+                        if(shp[i]!=this->shape[i]){
+                            delete [] shp;
+                            return false;
+                        }
+                    }
+                    delete [] shp;
+                    return true;
+                }
+        }
+    return false;
 }
 
 int KIMBaseElement::getelemsize(char *tp){
@@ -1211,6 +1239,7 @@ bool KIM_API_model::is_it_match(KIM_API_model & mdtst,char * inputinitfile){
     return match;
     
  }//will be private
+
 bool KIM_API_model::is_it_match(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns){
     bool match;
     //check if lines are match with Model api variable
@@ -1231,10 +1260,10 @@ bool KIM_API_model::is_it_match(KIM_API_model & mdtst,KIM_IOline * IOlines,int n
             if(mdtst[j]== IOlines[i]) {
                 match = true;
                 break;
-            }else if(is_it_par(mdtst[j].name)){
-                match = true;
-                break;
-            }
+            }//else if(is_it_par(mdtst[j].name)){
+             //   match = true;
+            //    break;
+            //}
         }
         if(!match) {
            cout << "* Info (KIM_API_model::is_it_match): The following descriptor file line may not match with " << mdtst.model.name << "'s descriptor file."<<endl;
@@ -1244,6 +1273,44 @@ bool KIM_API_model::is_it_match(KIM_API_model & mdtst,KIM_IOline * IOlines,int n
     }
     return match;
 }//will be private
+
+bool KIM_API_model::is_it_std_match(KIM_API_model& mdtst, KIM_IOline* IOlines, int nlns){
+      bool match;
+    //check if lines are match with Model api variable
+    match =true;
+    for (int i=0; i<nlns || match==false;i++){
+        match=false;
+
+        if(IOlines[i].isitoptional()){
+            match=true;
+        }
+
+        if(strcmp(IOlines[i].type,"spec")==0){
+            match=true;
+        }
+        if ( is_it_par(IOlines[i].name) ) match=true;
+ 
+
+        for(int j=0;j<mdtst.model.size;j++){
+
+            if(mdtst[j].equiv(IOlines[i])) {
+                match = true;
+                break;
+            }
+        }
+
+ 
+
+        if(!match) {
+           cout << "* Info (KIM_API_model::is_it_std_match): The following descriptor file line may not match with " << mdtst.model.name << "'s descriptor file."<<endl;
+            cout<<IOlines[i]<<endl;
+            return match;
+        }
+    }
+
+    return match;
+}
+
 bool KIM_API_model::is_it_match_noFlagCount(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns){
     bool match;
     //check if lines are match with Model api variable
@@ -1303,8 +1370,9 @@ bool KIM_API_model::is_it_match(KIM_API_model &test,KIM_API_model & mdl){
     bool test2modelmatch_noDC= is_it_match_noFlagCount(test,mdl.inlines,mdl.numlines);
     bool model2testmatch_noDC= is_it_match_noFlagCount(mdl,test.inlines,test.numlines);
 
-    bool test2standardmatch = is_it_match(stdmdl,test.inlines,test.numlines);
-    bool model2standardmatch = is_it_match(stdmdl,mdl.inlines,mdl.numlines);
+    bool test2standardmatch = is_it_std_match(stdmdl,test.inlines,test.numlines);
+
+    bool model2standardmatch = is_it_std_match(stdmdl,mdl.inlines,mdl.numlines);
 
     bool test2standardAtomsTypesMatch = do_AtomsTypes_match(test,stdmdl);
     bool model2standardAtomsTypesMatch = do_AtomsTypes_match(mdl,stdmdl);

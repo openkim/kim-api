@@ -167,6 +167,7 @@ public:
         void free();
         void nullefy();
         bool operator==(KIM_IOline& kimioline);
+        bool equiv(KIM_IOline& kimioline);
 
 static  int getelemsize(char *tp);
 };
@@ -217,6 +218,7 @@ static   void read_file_str_testname(char * strstream,KIM_IOline ** lns, int * n
 static bool is_it_match(KIM_API_model & mdtst,char * inputinitfile);
 static bool is_it_match(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns);
 static bool is_it_match_noFlagCount(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns);
+static bool is_it_std_match(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns);
 static bool is_it_par(char * name);
 static bool is_it_fixed_par(char * name);
 static bool is_it_free_par(char * name);
