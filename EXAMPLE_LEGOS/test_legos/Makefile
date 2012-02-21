@@ -765,7 +765,7 @@ ex_test_Ne_free_cluster_stiff: $(COMMON_FRAGMENTS)                      \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)$@/$@.kim
 	echo "forces                      real*8       force               [numberOfParticles,3]"             >> $(KIM_EX_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)$@/$@.kim
-	echo "hessian                     real*8       stress              [numberOfParticles,numberOfParticles,3,3]" \
+	echo "hessian                     real*8       pressure              [numberOfParticles,numberOfParticles,3,3]" \
                                                                                                               >> $(KIM_EX_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)$@/$@.kim
 	echo "virial                      real*8       energy              [6]"                               >> $(KIM_EX_TESTS_DIR)$@/$@.kim
