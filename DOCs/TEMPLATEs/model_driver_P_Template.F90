@@ -653,6 +653,7 @@ endif
 !
 do i=1,len_paramfile
    paramfile(i:i) = char(byte_paramfile(i))
+   if (paramfile(i:i) .eq. char(10)) paramfile(i:i) = " ";
 enddo
 read(paramfile,'<FILL appropriate format>',iostat=ier,err=100) in_cutoff,       &
                                                                in_<FILL parameter 1>, &
