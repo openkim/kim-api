@@ -307,7 +307,7 @@ intptr_t KIM_API_get_shape_by_index(void *kimmdl,int I, int * shape,int *error){
 
 int KIM_API_get_compute_by_index(void *kimmdl,int I,int *error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    mdl->get_compute_by_index(I,error);
+    return mdl->get_compute_by_index(I,error);
 }
 
 
