@@ -217,7 +217,7 @@ integer function check_model_parameters(pkim)
   integer nParams
   integer paramIndex
   integer i
-  integer ier, idum
+  integer ier
 
   plistOfParameters = kim_api_get_params_f(pkim, nParams, ier)
   paramIndex = 0

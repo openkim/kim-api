@@ -175,9 +175,10 @@ ex_test_Al_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
 	echo "reinit                      method       none                []"                                >> $(KIM_EX_TESTS_DIR)$@/$@.kim
         # make .F90 file in the directory
 	$(F_CAT) program_FCCcohesive_MI_OPBC.f.frag  | $(SED_CMD) \
-                                                | sed -e 's/SPECIES_NAME_STR/Al/g' \
-                                                | sed -e 's/FCC_SPACING_STR/4.050d0 ! in angstroms/g' \
-                                                          >  $(KIM_EX_TESTS_DIR)$@/$@.F90
+         | sed -e 's/SPECIES_NAME_STR/Al/g' \
+               -e 's/CUTOFF_PADDING_STR/0.750d0 ! in angstroms/g' \
+               -e 's/FCC_SPACING_STR/4.050d0 ! in angstroms/g' \
+                                                                                                              >  $(KIM_EX_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)$@/$@.F90
 	$(F_CAT) get_model_cutoff_firsttime.f.frag                                                            >> $(KIM_EX_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)$@/$@.F90
@@ -229,8 +230,9 @@ ex_test_ArNe_B2cohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                         
         # make .F90 file in the directory
 	$(F_CAT) program_B2cohesive_NEIGH_RVEC.f.frag  | $(SED_CMD) \
          | sed -e 's/SPECIES1_NAME_STR/Ar/g' \
-         | sed -e 's/SPECIES2_NAME_STR/Ne/g' \
-         | sed -e 's/B2_SPACING_STR/5.260d0 ! in angstroms/g' \
+               -e 's/SPECIES2_NAME_STR/Ne/g' \
+               -e 's/CUTOFF_PADDING_STR/0.750d0 ! in angstroms/g' \
+               -e 's/B2_SPACING_STR/5.260d0 ! in angstroms/g' \
                                                                                                               >  $(KIM_EX_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)$@/$@.F90
 	$(F_CAT) setup_B2_KIM_API_object.f.frag                                                               >> $(KIM_EX_TESTS_DIR)$@/$@.F90
@@ -281,7 +283,8 @@ ex_test_Ar_FCCcohesiveCutoff_NEIGH_RVEC: $(COMMON_FRAGMENTS)                    
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
                -e 's/FCC_SPACING_STR/5.26d0 ! in angstroms/g'                                                 >  $(KIM_EX_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)$@/$@.F90
-	$(F_CAT) NEIGH_RVEC_compute_equilibrium_spacing.f.frag                                                >> $(KIM_EX_TESTS_DIR)$@/$@.F90
+	$(F_CAT) NEIGH_RVEC_compute_equilibrium_spacing.f.frag | sed -e 's/CUTOFF_PADDING_STR/0.750d0 ! in angstroms/g' \
+                                                                                                              >> $(KIM_EX_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)$@/$@.F90
 	$(F_CAT) setup_KIM_API_object.f.frag                                                                  >> $(KIM_EX_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)$@/$@.F90
@@ -335,6 +338,7 @@ ex_test_Ar_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
         # make .F90 file in the directory
 	$(F_CAT) program_FCCcohesive_MI_OPBC.f.frag  | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
+               -e 's/CUTOFF_PADDING_STR/0.750d0 ! in angstroms/g' \
                -e 's/FCC_SPACING_STR/5.26d0 ! in angstroms/g'                                                 >  $(KIM_EX_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)$@/$@.F90
 	$(F_CAT) get_model_cutoff_firsttime.f.frag                                                            >> $(KIM_EX_TESTS_DIR)$@/$@.F90
@@ -383,7 +387,7 @@ ex_test_Ar_FCCcohesive_NEIGH_PURE: $(COMMON_FRAGMENTS)                          
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_neighborlist                                                                 >> $(KIM_EX_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)$@/$@.kim
-	echo "numberContributingParticles integer      none                []"                                    >> $(KIM_EX_TESTS_DIR)$@/$@.kim
+	echo "numberContributingParticles integer      none                []"                                >> $(KIM_EX_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_TESTS_DIR)$@/$@.kim
@@ -391,6 +395,7 @@ ex_test_Ar_FCCcohesive_NEIGH_PURE: $(COMMON_FRAGMENTS)                          
         # make .F90 file in the directory
 	$(F_CAT) program_FCCcohesive_NEIGH_PURE.f.frag  | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
+               -e 's/CUTOFF_PADDING_STR/0.750d0 ! in angstroms/g' \
                -e 's/FCC_SPACING_STR/5.26d0 ! in angstroms/g'                                                 >  $(KIM_EX_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)$@/$@.F90
 	$(F_CAT) get_model_cutoff_firsttime.f.frag                                                            >> $(KIM_EX_TESTS_DIR)$@/$@.F90
@@ -442,9 +447,11 @@ ex_test_Ar_FCCcohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                          
         # make .F90 file in the directory
 	$(F_CAT) program_FCCcohesive_NEIGH_RVEC.f.frag  | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
+               -e 's/CUTOFF_PADDING_STR/0.750d0 ! in angstroms/g' \
                -e 's/FCC_SPACING_STR/5.26d0 ! in angstroms/g'                                                 >  $(KIM_EX_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)$@/$@.F90
-	$(F_CAT) NEIGH_RVEC_compute_equilibrium_spacing.f.frag                                                >> $(KIM_EX_TESTS_DIR)$@/$@.F90
+	$(F_CAT) NEIGH_RVEC_compute_equilibrium_spacing.f.frag | sed -e 's/CUTOFF_PADDING_STR/0.750d0 ! in angstroms/g' \
+                                                                                                              >> $(KIM_EX_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)$@/$@.F90
 	$(F_CAT) setup_KIM_API_object.f.frag                                                                  >> $(KIM_EX_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)$@/$@.F90
