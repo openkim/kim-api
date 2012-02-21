@@ -1,12 +1,34 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the Common Development
+# and Distribution License Version 1.0 (the "License").
+#
+# You can obtain a copy of the license at
+# http://www.opensource.org/licenses/CDDL-1.0.  See the License for the
+# specific language governing permissions and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each file and
+# include the License file in a prominent location with the name LICENSE.CDDL.
+# If applicable, add the following below this CDDL HEADER, with the fields
+# enclosed by brackets "[]" replaced with your own identifying information:
+#
+# Portions Copyright (c) [yyyy] [name of copyright owner]. All rights reserved.
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2012, Regents of the University of Minnesota.  All rights reserved.
+#
+# Contributors:
+#    Ryan S. Elliott
+#
 
 #
 # Release: This file is part of the openkim-api.git repository.
 #
-# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
-# All rights reserved.
-#
-# Author: Ryan S. Elliott
-#
+
 
 KIM_DIR := ../../
 KIM_EX_MODELS_DIR := $(KIM_DIR)EXAMPLEs/MODELs/
@@ -84,6 +106,7 @@ ex_model_Ar_P_MLJ_CLUSTER_C: model_P_MLJ_CLUSTER_C.c             \
         # make directory
 	mkdir -p $(KIM_EX_MODELS_DIR)$@
 	@touch $(KIM_EX_MODELS_DIR)$@
+	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_MODELS_DIR)$@
         # make README file in the directory
 	$(D_CAT) model_MLJ_README | $(SED_CMD) \
          | sed -e "s/NBC_NAME_STR/CLUSTER/g" \
@@ -120,6 +143,7 @@ ex_model_Ar_P_MLJ_CLUSTER_F90: $(COMMON_FRAGMENTS)                    \
         # make directory
 	mkdir -p $(KIM_EX_MODELS_DIR)$@
 	@touch $(KIM_EX_MODELS_DIR)$@
+	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_MODELS_DIR)$@
         # make README file in the directory
 	$(D_CAT) model_MLJ_README | $(SED_CMD) \
          | sed -e "s/NBC_NAME_STR/CLUSTER/g" \
@@ -162,6 +186,7 @@ ex_model_Ar_P_MLJ_MI_OPBC_H_F: $(COMMON_FRAGMENTS)                              
         # make directory
 	mkdir -p $(KIM_EX_MODELS_DIR)$@
 	@touch $(KIM_EX_MODELS_DIR)$@
+	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_MODELS_DIR)$@
         # make README file in the directory
 	$(D_CAT) model_MLJ_README | $(SED_CMD) \
          | sed -e "s/NBC_NAME_STR/MI_OPBC_[H|F]/g" \
@@ -216,6 +241,7 @@ ex_model_Ar_P_MLJ_NEIGH_PURE_H_F: $(COMMON_FRAGMENTS)                           
         # make directory
 	mkdir -p $(KIM_EX_MODELS_DIR)$@
 	@touch $(KIM_EX_MODELS_DIR)$@
+	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_MODELS_DIR)$@
         # make README file in the directory
 	$(D_CAT) model_MLJ_README | $(SED_CMD) \
          | sed -e "s/NBC_NAME_STR/NEIGH_PURE_[H|F]/g" \
@@ -269,6 +295,7 @@ ex_model_Ar_P_MLJ_NEIGH_RVEC_F: $(COMMON_FRAGMENTS)                           \
         # make directory
 	mkdir -p $(KIM_EX_MODELS_DIR)$@
 	@touch $(KIM_EX_MODELS_DIR)$@
+	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_MODELS_DIR)$@
         # make README file in the directory
 	$(D_CAT) model_MLJ_README | $(SED_CMD) \
          | sed -e "s/NBC_NAME_STR/NEIGH_RVEC_F/g" \
@@ -319,6 +346,7 @@ ex_model_driver_P_Morse: model_driver_Morse_README \
         # make directory
 	mkdir -p $(KIM_EX_MODEL_DRIVERS_DIR)$@
 	@touch $(KIM_EX_MODEL_DRIVERS_DIR)$@
+	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_MODEL_DRIVERS_DIR)$@
         # make README file in the directory
 	$(D_CAT) model_driver_Morse_README | sed -e 's/MODEL_DRIVER_NAME_STR/$@/g'                            >  $(KIM_EX_MODEL_DRIVERS_DIR)$@/README
         # make Makefile in the directory
@@ -335,6 +363,7 @@ ex_model_Ar_P_Morse: model_Morse_README \
         # make directory
 	mkdir -p $(KIM_EX_MODELS_DIR)$@
 	@touch $(KIM_EX_MODELS_DIR)$@
+	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_MODELS_DIR)$@
         # make README file in the directory
 	$(D_CAT) model_Morse_README | sed -e 's/MODEL_NAME_STR/$@/g' \
                                      -e 's/MODEL_DRIVER_NAME_STR/ex_model_driver_P_Morse/g' \
@@ -353,15 +382,42 @@ ex_model_Ar_P_Morse: model_Morse_README \
 	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
 	echo "# Release: This file is part of the openkim-api.git repository."                                >> $(KIM_EX_MODELS_DIR)$@/$@.params
 	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
-	echo "# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna"                         >> $(KIM_EX_MODELS_DIR)$@/$@.params
-	echo "# All rights reserved."                                                                         >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo ""                                                                                               >> $(KIM_EX_MODELS_DIR)$@/$@.params
 	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# CDDL HEADER START"                                                                            >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# The contents of this file are subject to the terms of the Common Development"                 >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# and Distribution License Version 1.0 (the "'"'"License"'"'")."                                >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# You can obtain a copy of the license at"                                                      >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# http://www.opensource.org/licenses/CDDL-1.0.  See the License for the"                        >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# specific language governing permissions and limitations under the License."                   >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# When distributing Covered Code, include this CDDL HEADER in each file and"                    >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# include the License file in a prominent location with the name LICENSE.CDDL."                 >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# If applicable, add the following below this CDDL HEADER, with the fields"                     >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# enclosed by brackets "'"'"[]"'"'" replaced with your own identifying information:"            >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# Portions Copyright (c) [yyyy] [name of copyright owner]. All rights reserved."                >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# CDDL HEADER END"                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo ""                                                                                               >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# Copyright (c) 2012, Regents of the University of Minnesota.  All rights reserved."            >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# Contributors:"                                                                                >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#    Ryan S. Elliott"                                                                           >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#    Ellad B. Tadmor"                                                                           >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+
 
 ex_model_Ne_P_Morse: model_Morse_README \
                      Makefile
         # make directory
 	mkdir -p $(KIM_EX_MODELS_DIR)$@
 	@touch $(KIM_EX_MODELS_DIR)$@
+	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_MODELS_DIR)$@
         # make README file in the directory
 	$(D_CAT) model_Morse_README | sed -e 's/MODEL_NAME_STR/$@/g' \
                                      -e 's/MODEL_DRIVER_NAME_STR/ex_model_driver_P_Morse/g' \
@@ -381,9 +437,35 @@ ex_model_Ne_P_Morse: model_Morse_README \
 	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
 	echo "# Release: This file is part of the openkim-api.git repository."                                >> $(KIM_EX_MODELS_DIR)$@/$@.params
 	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
-	echo "# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna"                         >> $(KIM_EX_MODELS_DIR)$@/$@.params
-	echo "# All rights reserved."                                                                         >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo ""                                                                                               >> $(KIM_EX_MODELS_DIR)$@/$@.params
 	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# CDDL HEADER START"                                                                            >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# The contents of this file are subject to the terms of the Common Development"                 >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# and Distribution License Version 1.0 (the "'"'"License"'"'")."                                >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# You can obtain a copy of the license at"                                                      >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# http://www.opensource.org/licenses/CDDL-1.0.  See the License for the"                        >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# specific language governing permissions and limitations under the License."                   >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# When distributing Covered Code, include this CDDL HEADER in each file and"                    >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# include the License file in a prominent location with the name LICENSE.CDDL."                 >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# If applicable, add the following below this CDDL HEADER, with the fields"                     >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# enclosed by brackets "'"'"[]"'"'" replaced with your own identifying information:"            >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# Portions Copyright (c) [yyyy] [name of copyright owner]. All rights reserved."                >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# CDDL HEADER END"                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo ""                                                                                               >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# Copyright (c) 2012, Regents of the University of Minnesota.  All rights reserved."            >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# Contributors:"                                                                                >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#    Ryan S. Elliott"                                                                           >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#    Ellad B. Tadmor"                                                                           >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+
 
 ex_model_driver_P_LJ: model_driver_LJ_README \
                       model_driver_Makefile  \
@@ -393,6 +475,7 @@ ex_model_driver_P_LJ: model_driver_LJ_README \
         # make directory
 	mkdir -p $(KIM_EX_MODEL_DRIVERS_DIR)$@
 	@touch $(KIM_EX_MODEL_DRIVERS_DIR)$@
+	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_MODEL_DRIVERS_DIR)$@
         # make README file in the directory
 	$(D_CAT) model_driver_LJ_README | sed -e 's/MODEL_DRIVER_NAME_STR/$@/g'                               >  $(KIM_EX_MODEL_DRIVERS_DIR)$@/README
         # make Makefile in the directory
@@ -409,6 +492,7 @@ ex_model_Ar_P_LJ: model_LJ_README \
         # make directory
 	mkdir -p $(KIM_EX_MODELS_DIR)$@
 	@touch $(KIM_EX_MODELS_DIR)$@
+	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_MODELS_DIR)$@
         # make README file in the directory
 	$(D_CAT) model_LJ_README | sed -e 's/MODEL_NAME_STR/$@/g' \
                                   -e 's/MODEL_DRIVER_NAME_STR/ex_model_driver_P_LJ/g' \
@@ -427,15 +511,42 @@ ex_model_Ar_P_LJ: model_LJ_README \
 	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
 	echo "# Release: This file is part of the openkim-api.git repository."                                >> $(KIM_EX_MODELS_DIR)$@/$@.params
 	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
-	echo "# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna"                         >> $(KIM_EX_MODELS_DIR)$@/$@.params
-	echo "# All rights reserved."                                                                         >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo ""                                                                                               >> $(KIM_EX_MODELS_DIR)$@/$@.params
 	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# CDDL HEADER START"                                                                            >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# The contents of this file are subject to the terms of the Common Development"                 >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# and Distribution License Version 1.0 (the "'"'"License"'"'")."                                >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# You can obtain a copy of the license at"                                                      >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# http://www.opensource.org/licenses/CDDL-1.0.  See the License for the"                        >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# specific language governing permissions and limitations under the License."                   >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# When distributing Covered Code, include this CDDL HEADER in each file and"                    >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# include the License file in a prominent location with the name LICENSE.CDDL."                 >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# If applicable, add the following below this CDDL HEADER, with the fields"                     >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# enclosed by brackets "'"'"[]"'"'" replaced with your own identifying information:"            >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# Portions Copyright (c) [yyyy] [name of copyright owner]. All rights reserved."                >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# CDDL HEADER END"                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo ""                                                                                               >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# Copyright (c) 2012, Regents of the University of Minnesota.  All rights reserved."            >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# Contributors:"                                                                                >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#    Ryan S. Elliott"                                                                           >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#    Ellad B. Tadmor"                                                                           >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+
 
 ex_model_Ne_P_LJ: model_LJ_README \
                   Makefile
         # make directory
 	mkdir -p $(KIM_EX_MODELS_DIR)$@
 	@touch $(KIM_EX_MODELS_DIR)$@
+	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_MODELS_DIR)$@
         # make README file in the directory
 	$(D_CAT) model_LJ_README | sed -e 's/MODEL_NAME_STR/$@/g' \
                                   -e 's/MODEL_DRIVER_NAME_STR/ex_model_driver_P_LJ/g' \
@@ -454,15 +565,42 @@ ex_model_Ne_P_LJ: model_LJ_README \
 	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
 	echo "# Release: This file is part of the openkim-api.git repository."                                >> $(KIM_EX_MODELS_DIR)$@/$@.params
 	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
-	echo "# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna"                         >> $(KIM_EX_MODELS_DIR)$@/$@.params
-	echo "# All rights reserved."                                                                         >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo ""                                                                                               >> $(KIM_EX_MODELS_DIR)$@/$@.params
 	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# CDDL HEADER START"                                                                            >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# The contents of this file are subject to the terms of the Common Development"                 >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# and Distribution License Version 1.0 (the "'"'"License"'"'")."                                >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# You can obtain a copy of the license at"                                                      >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# http://www.opensource.org/licenses/CDDL-1.0.  See the License for the"                        >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# specific language governing permissions and limitations under the License."                   >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# When distributing Covered Code, include this CDDL HEADER in each file and"                    >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# include the License file in a prominent location with the name LICENSE.CDDL."                 >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# If applicable, add the following below this CDDL HEADER, with the fields"                     >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# enclosed by brackets "'"'"[]"'"'" replaced with your own identifying information:"            >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# Portions Copyright (c) [yyyy] [name of copyright owner]. All rights reserved."                >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# CDDL HEADER END"                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo ""                                                                                               >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# Copyright (c) 2012, Regents of the University of Minnesota.  All rights reserved."            >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "# Contributors:"                                                                                >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#    Ryan S. Elliott"                                                                           >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#    Ellad B. Tadmor"                                                                           >> $(KIM_EX_MODELS_DIR)$@/$@.params
+	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)$@/$@.params
+
 
 ex_model_Al_PF_ErcolessiAdams: dir_ex_model_Al_PF_ErcolessiAdams              \
                                $(wildcard dir_ex_model_Al_PF_ErcolessAdams/*) \
                                Makefile
 	mkdir -p $(KIM_EX_MODELS_DIR)$@
 	@touch $(KIM_EX_MODELS_DIR)$@
+	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_MODELS_DIR)$@
 	cp -rf dir_$@/* $(KIM_EX_MODELS_DIR)$@/
 
 ex_model_ArNe_P_MLJ_NEIGH_RVEC_F: dir_ex_model_ArNe_P_MLJ_NEIGH_RVEC_F               \
@@ -470,6 +608,7 @@ ex_model_ArNe_P_MLJ_NEIGH_RVEC_F: dir_ex_model_ArNe_P_MLJ_NEIGH_RVEC_F          
                                   Makefile
 	mkdir -p $(KIM_EX_MODELS_DIR)$@
 	@touch $(KIM_EX_MODELS_DIR)$@
+	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_MODELS_DIR)$@
 	cp -rf dir_$@/* $(KIM_EX_MODELS_DIR)$@/
 
 ex_model_Ar_P_MLJ_C: dir_ex_model_Ar_P_MLJ_C               \
@@ -477,6 +616,7 @@ ex_model_Ar_P_MLJ_C: dir_ex_model_Ar_P_MLJ_C               \
                      Makefile
 	mkdir -p $(KIM_EX_MODELS_DIR)$@
 	@touch $(KIM_EX_MODELS_DIR)$@
+	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_MODELS_DIR)$@
 	cp -rf dir_$@/* $(KIM_EX_MODELS_DIR)$@/
 
 ex_model_Ar_P_MLJ_F90: dir_ex_model_Ar_P_MLJ_F90               \
@@ -484,6 +624,7 @@ ex_model_Ar_P_MLJ_F90: dir_ex_model_Ar_P_MLJ_F90               \
                        Makefile
 	mkdir -p $(KIM_EX_MODELS_DIR)$@
 	@touch $(KIM_EX_MODELS_DIR)$@
+	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_MODELS_DIR)$@
 	cp -rf dir_$@/* $(KIM_EX_MODELS_DIR)$@/
 
 ex_model_Ne_P_LJ_NEIGH_PURE_H: dir_ex_model_Ne_P_LJ_NEIGH_PURE_H               \
@@ -491,6 +632,7 @@ ex_model_Ne_P_LJ_NEIGH_PURE_H: dir_ex_model_Ne_P_LJ_NEIGH_PURE_H               \
                                Makefile
 	mkdir -p $(KIM_EX_MODELS_DIR)$@
 	@touch $(KIM_EX_MODELS_DIR)$@
+	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_MODELS_DIR)$@
 	cp -rf dir_$@/* $(KIM_EX_MODELS_DIR)$@/
 
 ex_model_Ne_P_MLJ_NEIGH_RVEC_F: dir_ex_model_Ne_P_MLJ_NEIGH_RVEC_F               \
@@ -498,6 +640,7 @@ ex_model_Ne_P_MLJ_NEIGH_RVEC_F: dir_ex_model_Ne_P_MLJ_NEIGH_RVEC_F              
                                 Makefile
 	mkdir -p $(KIM_EX_MODELS_DIR)$@
 	@touch $(KIM_EX_MODELS_DIR)$@
+	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_MODELS_DIR)$@
 	cp -rf dir_$@/* $(KIM_EX_MODELS_DIR)$@/
 
 ex_model_Ne_P_fastLJ: dir_ex_model_Ne_P_fastLJ               \
@@ -505,6 +648,7 @@ ex_model_Ne_P_fastLJ: dir_ex_model_Ne_P_fastLJ               \
                       Makefile
 	mkdir -p $(KIM_EX_MODELS_DIR)$@
 	@touch $(KIM_EX_MODELS_DIR)$@
+	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_MODELS_DIR)$@
 	cp -rf dir_$@/* $(KIM_EX_MODELS_DIR)$@/
 
 

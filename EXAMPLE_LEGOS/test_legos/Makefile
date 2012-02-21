@@ -1,11 +1,32 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the Common Development
+# and Distribution License Version 1.0 (the "License").
+#
+# You can obtain a copy of the license at
+# http://www.opensource.org/licenses/CDDL-1.0.  See the License for the
+# specific language governing permissions and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each file and
+# include the License file in a prominent location with the name LICENSE.CDDL.
+# If applicable, add the following below this CDDL HEADER, with the fields
+# enclosed by brackets "[]" replaced with your own identifying information:
+#
+# Portions Copyright (c) [yyyy] [name of copyright owner]. All rights reserved.
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2012, Regents of the University of Minnesota.  All rights reserved.
+#
+# Contributors:
+#    Ryan S. Elliott
+#
 
 #
 # Release: This file is part of the openkim-api.git repository.
-#
-# Copyright 2011 Ellad B. Tadmor, Ryan S. Elliott, and James P. Sethna
-# All rights reserved.
-#
-# Author: Ryan S. Elliott
 #
 
 
@@ -81,6 +102,7 @@ ex_test_Al_free_cluster: $(COMMON_FRAGMENTS)                      \
         # make directory
 	mkdir -p $(KIM_EX_TESTS_DIR)$@
 	@touch $(KIM_EX_TESTS_DIR)$@
+	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_TESTS_DIR)$@
         # make README file in the directory
 	$(D_CAT) test_free_cluster_README | $(SED_CMD) \
                                           | sed -e 's/SPECIES_NAME_STR/Al/g' \
@@ -148,6 +170,7 @@ ex_test_Al_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
         # make directory
 	mkdir -p $(KIM_EX_TESTS_DIR)$@
 	@touch $(KIM_EX_TESTS_DIR)$@
+	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_TESTS_DIR)$@
         # make README file in the directory
 	$(D_CAT) test_FCCcohesive_README  | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Al/g'                                                                   >  $(KIM_EX_TESTS_DIR)$@/README
@@ -206,6 +229,7 @@ ex_test_ArNe_B2cohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                         
         # make directory
 	mkdir -p $(KIM_EX_TESTS_DIR)$@
 	@touch $(KIM_EX_TESTS_DIR)$@
+	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_TESTS_DIR)$@
         # make README file in the directory
 	$(D_CAT) test_B2cohesive_README  | $(SED_CMD) \
          | sed -e 's/SPECIES1_NAME_STR/Ar/g' \
@@ -258,6 +282,7 @@ ex_test_Ar_FCCcohesiveCutoff_NEIGH_RVEC: $(COMMON_FRAGMENTS)                    
         # make directory
 	mkdir -p $(KIM_EX_TESTS_DIR)$@
 	@touch $(KIM_EX_TESTS_DIR)$@
+	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_TESTS_DIR)$@
         # make README file in the directory
 	$(D_CAT) test_FCCcohesiveCutoff_README  | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g'                                                                   >  $(KIM_EX_TESTS_DIR)$@/README
@@ -310,6 +335,7 @@ ex_test_Ar_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
         # make directory
 	mkdir -p $(KIM_EX_TESTS_DIR)$@
 	@touch $(KIM_EX_TESTS_DIR)$@
+	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_TESTS_DIR)$@
         # make README file in the directory
 	$(D_CAT) test_FCCcohesive_README  | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g'                                                                   >  $(KIM_EX_TESTS_DIR)$@/README
@@ -369,6 +395,7 @@ ex_test_Ar_FCCcohesive_NEIGH_PURE: $(COMMON_FRAGMENTS)                          
         # make directory
 	mkdir -p $(KIM_EX_TESTS_DIR)$@
 	@touch $(KIM_EX_TESTS_DIR)$@
+	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_TESTS_DIR)$@
         # make README file in the directory
 	$(D_CAT) test_FCCcohesive_README  | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g'                                                                   >  $(KIM_EX_TESTS_DIR)$@/README
@@ -425,6 +452,7 @@ ex_test_Ar_FCCcohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                          
         # make directory
 	mkdir -p $(KIM_EX_TESTS_DIR)$@
 	@touch $(KIM_EX_TESTS_DIR)$@
+	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_TESTS_DIR)$@
         # make README file in the directory
 	$(D_CAT) test_FCCcohesive_README  | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g'                                                                   >  $(KIM_EX_TESTS_DIR)$@/README
@@ -470,6 +498,7 @@ ex_test_Ar_free_cluster_CLUSTER_C: $(COMMON_FRAGMENTS)                 \
         # make directory
 	mkdir -p $(KIM_EX_TESTS_DIR)$@
 	@touch $(KIM_EX_TESTS_DIR)$@
+	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_TESTS_DIR)$@
         # make README file in the directory
 	$(D_CAT) test_free_cluster_README | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g'                                                                   >  $(KIM_EX_TESTS_DIR)$@/README
@@ -504,6 +533,7 @@ ex_test_Ar_free_cluster_CLUSTER_F90: $(COMMON_FRAGMENTS)                 \
         # make directory
 	mkdir -p $(KIM_EX_TESTS_DIR)$@
 	@touch $(KIM_EX_TESTS_DIR)$@
+	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_TESTS_DIR)$@
         # make README file in the directory
 	$(D_CAT) test_free_cluster_README | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g'                                                                   >  $(KIM_EX_TESTS_DIR)$@/README
@@ -544,6 +574,7 @@ ex_test_Ar_free_cluster: $(COMMON_FRAGMENTS)                      \
         # make directory
 	mkdir -p $(KIM_EX_TESTS_DIR)$@
 	@touch $(KIM_EX_TESTS_DIR)$@
+	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_TESTS_DIR)$@
         # make README file in the directory
 	$(D_CAT) test_free_cluster_README | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g'                                                                   >  $(KIM_EX_TESTS_DIR)$@/README
@@ -609,6 +640,7 @@ ex_test_Ne_free_cluster: $(COMMON_FRAGMENTS)                      \
         # make directory
 	mkdir -p $(KIM_EX_TESTS_DIR)$@
 	@touch $(KIM_EX_TESTS_DIR)$@
+	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_TESTS_DIR)$@
         # make README file in the directory
 	$(D_CAT) test_free_cluster_README | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ne/g'                                                                   >  $(KIM_EX_TESTS_DIR)$@/README
@@ -674,6 +706,7 @@ ex_test_Ne_free_cluster_SI: $(COMMON_FRAGMENTS)                      \
         # make directory
 	mkdir -p $(KIM_EX_TESTS_DIR)$@
 	@touch $(KIM_EX_TESTS_DIR)$@
+	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_TESTS_DIR)$@
         # make README file in the directory
 	$(D_CAT) test_free_cluster_README | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ne/g'                                                                   >  $(KIM_EX_TESTS_DIR)$@/README
@@ -739,6 +772,7 @@ ex_test_Ne_free_cluster_stiff: $(COMMON_FRAGMENTS)                      \
         # make directory
 	mkdir -p $(KIM_EX_TESTS_DIR)$@
 	@touch $(KIM_EX_TESTS_DIR)$@
+	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_TESTS_DIR)$@
         # make README file in the directory
 	$(D_CAT) test_free_cluster_stiff_README | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ne/g'                                                                   >  $(KIM_EX_TESTS_DIR)$@/README
@@ -800,6 +834,7 @@ ex_test_Ar_multiple_models: dir_ex_test_Ar_multiple_models               \
                             Makefile
 	mkdir -p $(KIM_EX_TESTS_DIR)$@
 	@touch $(KIM_EX_TESTS_DIR)$@
+	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_TESTS_DIR)$@
 	cp -rf dir_$@/* $(KIM_EX_TESTS_DIR)$@/
 
 ex_test_demo_F03: dir_ex_test_demo_F03               \
@@ -807,6 +842,7 @@ ex_test_demo_F03: dir_ex_test_demo_F03               \
                   Makefile
 	mkdir -p $(KIM_EX_TESTS_DIR)$@
 	@touch $(KIM_EX_TESTS_DIR)$@
+	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_TESTS_DIR)$@
 	cp -rf dir_$@/* $(KIM_EX_TESTS_DIR)$@/
 
 ex_test_numer_deriv: $(COMMON_FRAGMENTS)                      \
@@ -826,6 +862,7 @@ ex_test_numer_deriv: $(COMMON_FRAGMENTS)                      \
         # make directory
 	mkdir -p $(KIM_EX_TESTS_DIR)$@
 	@touch $(KIM_EX_TESTS_DIR)$@
+	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_TESTS_DIR)$@
         # make README file in the directory
 	$(D_CAT) test_numer_deriv_README | $(SED_CMD)                                                         >  $(KIM_EX_TESTS_DIR)$@/README
         # make Makefile in the directory
