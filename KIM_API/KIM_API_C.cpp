@@ -188,7 +188,7 @@ int KIM_API_is_half_neighbors(void *kimmdl,int *ier){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     int ans=1;
     *ier = KIM_STATUS_FAIL;
-    if (mdl->is_half_neighbors()) ans = 0;
+    if (!mdl->is_half_neighbors()) ans = 0;
     *ier = KIM_STATUS_OK;
     return ans;
 }
