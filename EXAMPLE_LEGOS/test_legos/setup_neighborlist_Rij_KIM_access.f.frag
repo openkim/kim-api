@@ -29,10 +29,6 @@ subroutine setup_neighborlist_Rij_KIM_access(pkim, NLRvecLocs)
      stop
   endif
 
-  ! Call reinit to ensure that the model fully registers the new pointer values
-  !
-  ier = kim_api_model_reinit_f(pkim);
-
   return
 
 end subroutine setup_neighborlist_Rij_KIM_access

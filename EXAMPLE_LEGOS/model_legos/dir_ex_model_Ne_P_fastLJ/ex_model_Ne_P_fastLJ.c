@@ -16,6 +16,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <math.h>
 #include "KIM_API_C.h"
 #include "KIM_API_status.h"
@@ -44,13 +45,12 @@ struct model_buffer {
    int particleEnergy_ind;
    int process_dEdr_ind;
    int model_index_shift;
-   
-   int* numberOfParticles;
+   int numberOfParticles_ind;
    int coordinates_ind;
-   int* numberContributingParticles;
+   int numberContributingParticles_ind;
    int boxSideLengths_ind;
-   double* cutoff;
-   int (*get_neigh)(void *,int *,int *,int *, int *, int **, double **);
+   int cutoff_ind;
+   int get_neigh_ind;
 
 
    double* Pcutoff;
@@ -98,9 +98,9 @@ static void neigh_pure_h_compute(void* km, int* ier)
    double* energy;
    double* force;
    double* particleEnergy;
-   double* virial;
    int* neighListOfCurrentAtom;
-
+   int (*get_neigh)(void *,int *,int *,int *, int *, int **, double **);
+   
    int numberContrib;
    double dx[3];
    double* pdx = &(dx[0]);
@@ -123,7 +123,6 @@ static void neigh_pure_h_compute(void* km, int* ier)
    /* unpack info from the buffer */
    model_index_shift = buffer->model_index_shift;
    /* unpack the Model's parameters stored in the KIM API object */
-   cutoff = buffer->cutoff;
    cutsq = buffer->cutsq;
    epsilon = buffer->epsilon;
    sigma = buffer->sigma;
@@ -141,15 +140,16 @@ static void neigh_pure_h_compute(void* km, int* ier)
       return;
    }
 
-   /* unpack data from KIM object and/or buffer */
-   nAtoms = buffer->numberOfParticles;
-   numberContrib = *buffer->numberContributingParticles;
-
-   KIM_API_getm_data_by_index(pkim, ier, 4*3,
-                              buffer->coordinates_ind,    &coords,         1,
-                              buffer->energy_ind,         &energy,         comp_energy,
-                              buffer->forces_ind,         &force,          comp_force,
-                              buffer->particleEnergy_ind, &particleEnergy, comp_particleEnergy);
+   /* unpack data from KIM object */
+   KIM_API_getm_data_by_index(pkim, ier, 8*3,
+                              buffer->cutoff_ind,                      &cutoff,         1,
+                              buffer->numberOfParticles_ind,           &nAtoms,         1,
+                              buffer->numberContributingParticles_ind, &numberContrib,  1,
+                              buffer->get_neigh_ind,                   &get_neigh,      1,
+                              buffer->coordinates_ind,                 &coords,         1,
+                              buffer->energy_ind,                      &energy,         comp_energy,
+                              buffer->forces_ind,                      &force,          comp_force,
+                              buffer->particleEnergy_ind,              &particleEnergy, comp_particleEnergy);
    if (KIM_STATUS_OK > *ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data_by_index", *ier);
@@ -163,7 +163,7 @@ static void neigh_pure_h_compute(void* km, int* ier)
    /* Assume the atom types are correct! */
    
    /* reset neighbor iterator */
-   *ier = (*buffer->get_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+   *ier = (*get_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
    if (KIM_STATUS_NEIGH_ITER_INIT_OK != *ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_neigh", *ier);
@@ -172,7 +172,7 @@ static void neigh_pure_h_compute(void* km, int* ier)
    }
    
    /* Compute energy and forces */
-   *ier = (*buffer->get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+   *ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
 
    if ((comp_force == 1)          && (comp_energy == 1) &&
        (comp_particleEnergy == 0) && (comp_process_dEdr == 0))
@@ -233,7 +233,7 @@ static void neigh_pure_h_compute(void* km, int* ier)
          }
 
          /* increment iterator */
-         *ier = (*buffer->get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+         *ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
       }
    }
    else
@@ -333,7 +333,7 @@ static void neigh_pure_h_compute(void* km, int* ier)
          }
 
          /* increment iterator */
-         *ier = (*buffer->get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+         *ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
       }
    }
  
@@ -376,9 +376,9 @@ static void neigh_pure_f_compute(void* km, int* ier)
    double* energy;
    double* force;
    double* particleEnergy;
-   double* virial;
    int* neighListOfCurrentAtom;
-
+   int (*get_neigh)(void *,int *,int *,int *, int *, int **, double **);
+   
    double dx[3];
    double* pdx = &(dx[0]);
    double four_eps_sigma6;
@@ -400,7 +400,6 @@ static void neigh_pure_f_compute(void* km, int* ier)
    /* unpack info from the buffer */
    model_index_shift = buffer->model_index_shift;
    /* unpack the Model's parameters stored in the KIM API object */
-   cutoff = buffer->cutoff;
    cutsq = buffer->cutsq;
    epsilon = buffer->epsilon;
    sigma = buffer->sigma;
@@ -418,14 +417,15 @@ static void neigh_pure_f_compute(void* km, int* ier)
       return;
    }
 
-   /* unpack data from KIM object and/or buffer */
-   nAtoms = buffer->numberOfParticles;
-
-   KIM_API_getm_data_by_index(pkim, ier, 4*3,
-                              buffer->coordinates_ind,    &coords,         1,
-                              buffer->energy_ind,         &energy,         comp_energy,
-                              buffer->forces_ind,         &force,          comp_force,
-                              buffer->particleEnergy_ind, &particleEnergy, comp_particleEnergy);
+   /* unpack data from KIM object */
+   KIM_API_getm_data_by_index(pkim, ier, 7*3,
+                              buffer->cutoff_ind,            &cutoff,         1,
+                              buffer->numberOfParticles_ind, &nAtoms,         1,
+                              buffer->coordinates_ind,       &coords,         1,
+                              buffer->get_neigh_ind,         &get_neigh,      1,
+                              buffer->energy_ind,            &energy,         comp_energy,
+                              buffer->forces_ind,            &force,          comp_force,
+                              buffer->particleEnergy_ind,    &particleEnergy, comp_particleEnergy);
    if (KIM_STATUS_OK > *ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data_by_index", *ier);
@@ -439,7 +439,7 @@ static void neigh_pure_f_compute(void* km, int* ier)
    /* Assume the atom types are correct! */
    
    /* reset neighbor iterator */
-   *ier = (*buffer->get_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+   *ier = (*get_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
    if (KIM_STATUS_NEIGH_ITER_INIT_OK != *ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_neigh", *ier);
@@ -448,7 +448,7 @@ static void neigh_pure_f_compute(void* km, int* ier)
    }
    
    /* Compute energy and forces */
-   *ier = (*buffer->get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+   *ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
 
    if ((comp_force == 1)          && (comp_energy == 1) &&
        (comp_particleEnergy == 0) && (comp_process_dEdr == 0))
@@ -508,7 +508,7 @@ static void neigh_pure_f_compute(void* km, int* ier)
          }
 
          /* increment iterator */
-         *ier = (*buffer->get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+         *ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
       }
    }
    else
@@ -606,7 +606,7 @@ static void neigh_pure_f_compute(void* km, int* ier)
          }
 
          /* increment iterator */
-         *ier = (*buffer->get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+         *ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
       }
    }
  
@@ -649,9 +649,9 @@ static void neigh_rvec_f_compute(void* km, int* ier)
    double* energy;
    double* force;
    double* particleEnergy;
-   double* virial;
    int* neighListOfCurrentAtom;
-
+   int (*get_neigh)(void *,int *,int *,int *, int *, int **, double **);
+   
    double dx[3];
    double* pdx = &(dx[0]);
    double four_eps_sigma6;
@@ -673,7 +673,6 @@ static void neigh_rvec_f_compute(void* km, int* ier)
    /* unpack info from the buffer */
    model_index_shift = buffer->model_index_shift;
    /* unpack the Model's parameters stored in the KIM API object */
-   cutoff = buffer->cutoff;
    cutsq = buffer->cutsq;
    epsilon = buffer->epsilon;
    sigma = buffer->sigma;
@@ -691,14 +690,15 @@ static void neigh_rvec_f_compute(void* km, int* ier)
       return;
    }
 
-   /* unpack data from KIM object and/or buffer */
-   nAtoms = buffer->numberOfParticles;
-
-   KIM_API_getm_data_by_index(pkim, ier, 4*3,
-                              buffer->coordinates_ind,    &coords,         1,
-                              buffer->energy_ind,         &energy,         comp_energy,
-                              buffer->forces_ind,         &force,          comp_force,
-                              buffer->particleEnergy_ind, &particleEnergy, comp_particleEnergy);
+   /* unpack data from KIM object */
+   KIM_API_getm_data_by_index(pkim, ier, 7*3,
+                              buffer->cutoff_ind,            &cutoff,         1,
+                              buffer->coordinates_ind,       &coords,         1,
+                              buffer->numberOfParticles_ind, &nAtoms,         1,
+                              buffer->get_neigh_ind,         &get_neigh,      1,
+                              buffer->energy_ind,            &energy,         comp_energy,
+                              buffer->forces_ind,            &force,          comp_force,
+                              buffer->particleEnergy_ind,    &particleEnergy, comp_particleEnergy);
    if (KIM_STATUS_OK > *ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data_by_index", *ier);
@@ -712,7 +712,7 @@ static void neigh_rvec_f_compute(void* km, int* ier)
    /* Assume the atom types are correct! */
    
    /* reset neighbor iterator */
-   *ier = (*buffer->get_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+   *ier = (*get_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
    if (KIM_STATUS_NEIGH_ITER_INIT_OK != *ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_neigh", *ier);
@@ -721,7 +721,7 @@ static void neigh_rvec_f_compute(void* km, int* ier)
    }
    
    /* Compute energy and forces */
-   *ier = (*buffer->get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+   *ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
 
    if ((comp_force == 1)          && (comp_energy == 1) &&
        (comp_particleEnergy == 0) && (comp_process_dEdr == 0))
@@ -781,7 +781,7 @@ static void neigh_rvec_f_compute(void* km, int* ier)
          }
 
          /* increment iterator */
-         *ier = (*buffer->get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+         *ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
       }
    }
    else
@@ -879,7 +879,7 @@ static void neigh_rvec_f_compute(void* km, int* ier)
          }
 
          /* increment iterator */
-         *ier = (*buffer->get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+         *ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
       }
    }
  
@@ -923,9 +923,9 @@ static void mi_opbc_h_compute(void* km, int* ier)
    double* force;
    double* particleEnergy;
    double* boxSideLengths;
-   double* virial;
    int* neighListOfCurrentAtom;
-
+   int (*get_neigh)(void *,int *,int *,int *, int *, int **, double **);
+   
    int numberContrib;
    double dx[3];
    double* pdx = &(dx[0]);
@@ -948,7 +948,6 @@ static void mi_opbc_h_compute(void* km, int* ier)
    /* unpack info from the buffer */
    model_index_shift = buffer->model_index_shift;
    /* unpack the Model's parameters stored in the KIM API object */
-   cutoff = buffer->cutoff;
    cutsq = buffer->cutsq;
    epsilon = buffer->epsilon;
    sigma = buffer->sigma;
@@ -966,16 +965,17 @@ static void mi_opbc_h_compute(void* km, int* ier)
       return;
    }
 
-   /* unpack data from KIM object and/or buffer */
-   nAtoms = buffer->numberOfParticles;
-   numberContrib = *buffer->numberContributingParticles;
-
-   KIM_API_getm_data_by_index(pkim, ier, 5*3,
-                              buffer->coordinates_ind,    &coords,         1,
-                              buffer->boxSideLengths_ind, &boxSideLengths, 1,
-                              buffer->energy_ind,         &energy,         comp_energy,
-                              buffer->forces_ind,         &force,          comp_force,
-                              buffer->particleEnergy_ind, &particleEnergy, comp_particleEnergy);
+   /* unpack data from KIM object */
+   KIM_API_getm_data_by_index(pkim, ier, 9*3,
+                              buffer->cutoff_ind,                      &cutoff,         1,
+                              buffer->coordinates_ind,                 &coords,         1,
+                              buffer->numberOfParticles_ind,           &nAtoms,         1,
+                              buffer->numberContributingParticles_ind, &numberContrib,  1,
+                              buffer->boxSideLengths_ind,              &boxSideLengths, 1,
+                              buffer->get_neigh_ind,                   &get_neigh,      1,
+                              buffer->energy_ind,                      &energy,         comp_energy,
+                              buffer->forces_ind,                      &force,          comp_force,
+                              buffer->particleEnergy_ind,              &particleEnergy, comp_particleEnergy);
    if (KIM_STATUS_OK > *ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data_by_index", *ier);
@@ -989,7 +989,7 @@ static void mi_opbc_h_compute(void* km, int* ier)
    /* Assume the atom types are correct! */
    
    /* reset neighbor iterator */
-   *ier = (*buffer->get_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+   *ier = (*get_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
    if (KIM_STATUS_NEIGH_ITER_INIT_OK != *ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_neigh", *ier);
@@ -998,7 +998,7 @@ static void mi_opbc_h_compute(void* km, int* ier)
    }
    
    /* Compute energy and forces */
-   *ier = (*buffer->get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+   *ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
 
    if ((comp_force == 1)          && (comp_energy == 1) &&
        (comp_particleEnergy == 0) && (comp_process_dEdr == 0))
@@ -1036,7 +1036,6 @@ static void mi_opbc_h_compute(void* km, int* ier)
                }
                Rsqij = dx[k]*dx[k];
             }
-            
             /* particles are interacting ? */
             if (Rsqij < *cutsq)
             {
@@ -1065,7 +1064,7 @@ static void mi_opbc_h_compute(void* km, int* ier)
          }
 
          /* increment iterator */
-         *ier = (*buffer->get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+         *ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
       }
    }
    else
@@ -1116,9 +1115,9 @@ static void mi_opbc_h_compute(void* km, int* ier)
                {
                   dx[k] -= (dx[k]/fabs(dx[k]))*boxSideLengths[k];
                }
-               Rsqij = dx[k]*dx[k];
+               Rsqij += dx[k]*dx[k];
             }
-            
+
             /* particles are interacting ? */
             if (Rsqij < *cutsq)
             {
@@ -1171,7 +1170,7 @@ static void mi_opbc_h_compute(void* km, int* ier)
          }
 
          /* increment iterator */
-         *ier = (*buffer->get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+         *ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
       }
    }
  
@@ -1215,9 +1214,9 @@ static void mi_opbc_f_compute(void* km, int* ier)
    double* force;
    double* particleEnergy;
    double* boxSideLengths;
-   double* virial;
    int* neighListOfCurrentAtom;
-
+   int (*get_neigh)(void *,int *,int *,int *, int *, int **, double **);
+   
    double dx[3];
    double* pdx = &(dx[0]);
    double four_eps_sigma6;
@@ -1239,7 +1238,6 @@ static void mi_opbc_f_compute(void* km, int* ier)
    /* unpack info from the buffer */
    model_index_shift = buffer->model_index_shift;
    /* unpack the Model's parameters stored in the KIM API object */
-   cutoff = buffer->cutoff;
    cutsq = buffer->cutsq;
    epsilon = buffer->epsilon;
    sigma = buffer->sigma;
@@ -1257,15 +1255,16 @@ static void mi_opbc_f_compute(void* km, int* ier)
       return;
    }
 
-   /* unpack data from KIM object and/or buffer */
-   nAtoms = buffer->numberOfParticles;
-
-   KIM_API_getm_data_by_index(pkim, ier, 4*3,
-                              buffer->coordinates_ind,    &coords,         1,
-                              buffer->boxSideLengths_ind, &boxSideLengths, 1,
-                              buffer->energy_ind,         &energy,         comp_energy,
-                              buffer->forces_ind,         &force,          comp_force,
-                              buffer->particleEnergy_ind, &particleEnergy, comp_particleEnergy);
+   /* unpack data from KIM object */
+   KIM_API_getm_data_by_index(pkim, ier, 8*3,
+                              buffer->cutoff_ind,            &cutoff,         1,
+                              buffer->numberOfParticles_ind, &nAtoms,         1,
+                              buffer->coordinates_ind,       &coords,         1,
+                              buffer->boxSideLengths_ind,    &boxSideLengths, 1,
+                              buffer->get_neigh_ind,         &get_neigh,      1,
+                              buffer->energy_ind,            &energy,         comp_energy,
+                              buffer->forces_ind,            &force,          comp_force,
+                              buffer->particleEnergy_ind,    &particleEnergy, comp_particleEnergy);
    if (KIM_STATUS_OK > *ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data_by_index", *ier);
@@ -1279,7 +1278,7 @@ static void mi_opbc_f_compute(void* km, int* ier)
    /* Assume the atom types are correct! */
    
    /* reset neighbor iterator */
-   *ier = (*buffer->get_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+   *ier = (*get_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
    if (KIM_STATUS_NEIGH_ITER_INIT_OK != *ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_neigh", *ier);
@@ -1288,7 +1287,7 @@ static void mi_opbc_f_compute(void* km, int* ier)
    }
    
    /* Compute energy and forces */
-   *ier = (*buffer->get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+   *ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
 
    if ((comp_force == 1)          && (comp_energy == 1) &&
        (comp_particleEnergy == 0) && (comp_process_dEdr == 0))
@@ -1354,7 +1353,7 @@ static void mi_opbc_f_compute(void* km, int* ier)
          }
 
          /* increment iterator */
-         *ier = (*buffer->get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+         *ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
       }
    }
    else
@@ -1405,7 +1404,7 @@ static void mi_opbc_f_compute(void* km, int* ier)
                {
                   dx[k] -= (dx[k]/fabs(dx[k]))*boxSideLengths[k];
                }
-               Rsqij = dx[k]*dx[k];
+               Rsqij += dx[k]*dx[k];
             }
             
             /* particles are interacting ? */
@@ -1458,7 +1457,7 @@ static void mi_opbc_f_compute(void* km, int* ier)
          }
 
          /* increment iterator */
-         *ier = (*buffer->get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+         *ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
       }
    }
  
@@ -1492,12 +1491,10 @@ static void cluster_compute(void* km, int* ier)
    double* sigma;
    double* cutsq;
    double* shift;
-   double* Rij;
    double* coords;
    double* energy;
    double* force;
    double* particleEnergy;
-   double* virial;
 
    double dx[3];
    double* pdx = &(dx[0]);
@@ -1505,7 +1502,7 @@ static void cluster_compute(void* km, int* ier)
    double four_eps_sigma12;
    double R6;
    double R12;
-   int z, zi, zj;
+   int zi, zj;
    double fac;
 
    /* get buffer from KIM object */
@@ -1517,14 +1514,10 @@ static void cluster_compute(void* km, int* ier)
    }
 
    /* unpack the Model's parameters stored in the KIM API object */
-   cutoff = buffer->cutoff;
    cutsq = buffer->cutsq;
    epsilon = buffer->epsilon;
    sigma = buffer->sigma;
    shift = buffer->shift;
-
-   /* unpack data from KIM object and/or buffer */
-   nAtoms = buffer->numberOfParticles;
 
    /* check to see if we have been asked to compute the forces, particleEnergy, and d1Edr */
    KIM_API_getm_compute_by_index(pkim, ier, 4*3,
@@ -1538,11 +1531,14 @@ static void cluster_compute(void* km, int* ier)
       return;
    }
 
-   KIM_API_getm_data_by_index(pkim, ier, 4*3,
-                              buffer->coordinates_ind,    &coords,         1,
-                              buffer->energy_ind,         &energy,         comp_energy,
-                              buffer->forces_ind,         &force,          comp_force,
-                              buffer->particleEnergy_ind, &particleEnergy, comp_particleEnergy);
+   /* unpack data from KIM object */
+   KIM_API_getm_data_by_index(pkim, ier, 6*3,
+                              buffer->cutoff_ind,            &cutoff,         1,
+                              buffer->numberOfParticles_ind, &nAtoms,         1,
+                              buffer->coordinates_ind,       &coords,         1,
+                              buffer->energy_ind,            &energy,         comp_energy,
+                              buffer->forces_ind,            &force,          comp_force,
+                              buffer->particleEnergy_ind,    &particleEnergy, comp_particleEnergy);
    if (KIM_STATUS_OK > *ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data_by_index", *ier);
@@ -1718,13 +1714,8 @@ static void reinit(void *km)
 {
    /* Local variables */
    intptr_t* pkim = *((intptr_t**) km);
-   double* model_cutoff;
-   double* model_epsilon;
-   double* model_sigma;
-   double* model_Pcutoff;
-   double* model_cutsq;
-   double* model_shift;
    int ier;
+   double *cutoff;
    struct model_buffer* buffer;
 
    /* get buffer from KIM object */
@@ -1734,23 +1725,23 @@ static void reinit(void *km)
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_model_buffer", ier);
       exit(1);
    }
-   /* re-setup buffer */
-   setup_buffer(pkim, buffer);
-
+ 
    /* set new values in KIM object     */
    /*                                  */
    /* store model cutoff in KIM object */
-   *buffer->cutoff = *buffer->Pcutoff;
+   cutoff = (double *) KIM_API_get_data_by_index(pkim, buffer->cutoff_ind, &ier);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data_by_index", ier);
+      exit(1);
+   }
+   *cutoff = *buffer->Pcutoff;
+
 
    /* set value of parameter cutsq */
-   *buffer->cutsq = (*buffer->cutoff)*(*buffer->cutoff);
-   *model_cutoff = *buffer->cutoff;
-   *model_epsilon = *buffer->epsilon;
-   *model_sigma = *buffer->sigma;
-   *model_cutoff = *buffer->Pcutoff;
-   *model_cutsq = (*model_cutoff)*(*model_cutoff);
-   *model_shift = -4.0*(*model_epsilon)*(pow((*model_sigma/(*model_cutoff)),12.0)
-                                         - pow((*model_sigma/(*model_cutoff)),6.0));
+   *buffer->cutsq = (*cutoff)*(*cutoff);
+   *buffer->shift = -4.0*(*buffer->epsilon)*(pow((*buffer->sigma/(*cutoff)),12.0)
+                                         - pow((*buffer->sigma/(*cutoff)),6.0));
 
    return;
 }
@@ -1929,6 +1920,13 @@ void ex_model_ne_p_fastlj_init_(void *km)
       exit(1);
    }
 
+   /* store parameters in buffer */
+   buffer->Pcutoff = model_Pcutoff;
+   buffer->cutsq = model_cutsq;
+   buffer->epsilon = model_epsilon;
+   buffer->sigma = model_sigma;
+   buffer->shift = model_shift;
+
    return;
 }
 
@@ -1941,35 +1939,22 @@ static void setup_buffer(intptr_t* pkim, struct model_buffer* buffer)
    
    buffer->model_index_shift = KIM_API_get_model_index_shift(pkim);
 
-   KIM_API_getm_index(pkim, &ier, 6*3,
-                      "energy",         &(buffer->energy_ind),         1,
-                      "forces",         &(buffer->forces_ind),         1,
-                      "particleEnergy", &(buffer->particleEnergy_ind), 1,
-                      "process_dEdr",   &(buffer->process_dEdr_ind),   1,
-                      "coordinates",    &(buffer->coordinates_ind),    1,
-                      "boxSideLengths", &(buffer->boxSideLengths_ind), 1);
+   KIM_API_getm_index(pkim, &ier, 10*3,
+                      "energy",                      &(buffer->energy_ind),                      1,
+                      "forces",                      &(buffer->forces_ind),                      1,
+                      "particleEnergy",              &(buffer->particleEnergy_ind),              1,
+                      "process_dEdr",                &(buffer->process_dEdr_ind),                1,
+                      "numberOfParticles",           &(buffer->numberOfParticles_ind),           1,
+                      "coordinates",                 &(buffer->coordinates_ind),                 1,
+                      "numberContributingParticles", &(buffer->numberContributingParticles_ind), 1,
+                      "boxSideLengths",              &(buffer->boxSideLengths_ind),              1,
+                      "cutoff",                      &(buffer->cutoff_ind),                      1,
+                      "get_neigh",                   &(buffer->get_neigh_ind),                   1);
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_index", ier);
       exit(1);
    }
-
-   KIM_API_getm_data(pkim, &ier, 9*3,
-                     "numberOfParticles",           &(buffer->numberOfParticles),           1,
-                     "numberContributingParticles", &(buffer->numberContributingParticles), 1,
-                     "get_neigh",                   &(buffer->get_neigh),                   1,
-                     "cutoff",                      &(buffer->cutoff),                      1,
-                     "PARAM_FREE_cutoff",           &(buffer->Pcutoff),                     1,
-                     "PARAM_FIXED_cutsq",           &(buffer->cutsq),                       1,
-                     "PARAM_FREE_epsilon",          &(buffer->epsilon),                     1,
-                     "PARAM_FREE_sigma",            &(buffer->sigma),                       1,
-                     "PARAM_FIXED_shift",           &(buffer->shift),                       1
-                    );
-   if (KIM_STATUS_OK > ier)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data", ier);
-      exit(1);
-   }
-
+   
    return;
 }

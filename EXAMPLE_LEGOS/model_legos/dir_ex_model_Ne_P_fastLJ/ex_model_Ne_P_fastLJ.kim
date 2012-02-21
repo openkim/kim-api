@@ -70,7 +70,7 @@ get_neigh                   method       none                []
 
 neighObject                 pointer      none                []
 
-process_dEdr                method       none       []                 optional
+process_dEdr                method       none                []                 optional
 
 
 #######################################################################################################

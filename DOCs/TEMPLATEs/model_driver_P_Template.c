@@ -69,14 +69,13 @@ struct model_buffer {
    int process_dEdr_ind;
    int process_d2Edr2_ind;
    int model_index_shift;
-   
-   int* numberOfParticles;
+   int numberOfParticles_ind;
    int particleTypes_ind;
    int coordinates_ind;
-   int* numberContributingParticles;
+   int numberContributingParticles_ind;
    int boxSideLengths_ind;
-   double* cutoff;
-   int (*get_neigh)(void *,int *,int *,int *, int *, int **, double **);
+   int get_neigh_ind;
+   int cutoff_ind;
 
 
    double* Pcutoff;
@@ -85,8 +84,6 @@ struct model_buffer {
    double* <FILL parameter 2>;
    /* FILL as many parameters as needed */
 };
-/* prototype for buffer setup routine */
-static void setup_buffer(intptr_t* pkim, struct model_buffer* buffer);
 
 
 /* Calculate pair potential phi(r) */
@@ -219,6 +216,8 @@ static void compute(void* km, int* ier)
    int* numContrib;
    int numberContrib;
    int numOfAtomNeigh;
+   int (*get_neigh)(void *,int *,int *,int *, int *, int **, double **);
+
 
    /* get buffer from KIM object */
    buffer = (struct model_buffer*) KIM_API_get_model_buffer(pkim, ier);
@@ -234,7 +233,6 @@ static void compute(void* km, int* ier)
    IterOrLoca = buffer->IterOrLoca;
    model_index_shift = buffer->model_index_shift;
    /* unpack the Model's parameters stored in the KIM API object */
-   cutoff = buffer->cutoff;
    cutsq = buffer->cutsq;
    <FILL parameter 1> = buffer-><FILL parameter 1>;
    <FILL parameter 2> = buffer-><FILL parameter 2>;
@@ -253,11 +251,25 @@ static void compute(void* km, int* ier)
       return;
    }
 
-   /* unpack data from KIM object and/or buffer */
-   nAtoms = buffer->numberOfParticles;
-   if (buffer->HalfOrFull == 1)
+   KIM_API_getm_data_by_index(pkim, ier, 10*3,
+                              buffer->cutoff_ind,                      &cutoff,         1,
+                              buffer->numberOfParticles_ind,           &nAtoms,         1,
+                              buffer->particleTypes_ind,               &particleTypes,  1,
+                              buffer->coordinates_ind,                 &coords,         1,
+                              buffer->numberContributingParticles_ind, &numContrib,     (HalfOrFull==1),
+                              buffer->get_neigh_ind,                   &get_neigh,      (NBC!=0),
+                              buffer->boxSideLengths_ind,              &boxSideLengths, (NBC==1),
+                              buffer->energy_ind,                      &energy,         comp_energy,
+                              buffer->forces_ind,                      &force,          comp_force,
+                              buffer->particleEnergy_ind,              &particleEnergy, comp_particleEnergy);
+   if (KIM_STATUS_OK > *ier)
    {
-      numContrib = buffer->numberContributingParticles;
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data_by_index", *ier);
+      return;
+   }
+
+   if (HalfOrFull == 1)
+   {
       if (0 != NBC) /* non-CLUSTER cases */
       {
          numberContrib = *numContrib;
@@ -266,19 +278,6 @@ static void compute(void* km, int* ier)
       {
          numberContrib = *nAtoms;
       }
-   }
-
-   KIM_API_getm_data_by_index(pkim, ier, 6*3,
-                              buffer->particleTypes_ind,  &particleTypes,  1,
-                              buffer->coordinates_ind,    &coords,         1,
-                              buffer->boxSideLengths_ind, &boxSideLengths, (NBC==1),
-                              buffer->energy_ind,         &energy,         comp_energy,
-                              buffer->forces_ind,         &force,          comp_force,
-                              buffer->particleEnergy_ind, &particleEnergy, comp_particleEnergy);
-   if (KIM_STATUS_OK > *ier)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data_by_index", *ier);
-      return;
    }
 
    /* Check to be sure that the atom types are correct */
@@ -328,8 +327,8 @@ static void compute(void* km, int* ier)
 
    if (1 == IterOrLoca)
    {
-      *ier = (*buffer->get_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh,
-                                  &neighListOfCurrentAtom, &Rij_list);
+      *ier = (*get_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh,
+                          &neighListOfCurrentAtom, &Rij_list);
       /* check for successful initialization */
       if (KIM_STATUS_NEIGH_ITER_INIT_OK != *ier)
       {
@@ -349,8 +348,8 @@ static void compute(void* km, int* ier)
       /* Set up neighbor list for next atom for all NBC methods */
       if (1 == IterOrLoca) /* ITERATOR mode */
       {
-         *ier = (*buffer->get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh,
-                                     &neighListOfCurrentAtom, &Rij_list);
+         *ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh,
+                             &neighListOfCurrentAtom, &Rij_list);
          if (KIM_STATUS_NEIGH_ITER_PAST_END == *ier) /* the end of the list, terminate loop */
          {
             break;
@@ -383,9 +382,9 @@ static void compute(void* km, int* ier)
          else
          {
             request = i - model_index_shift;
-            *ier = (*buffer->get_neigh)(&pkim, &one, &request,
-                                        &currentAtom, &numOfAtomNeigh,
-                                        &neighListOfCurrentAtom, &Rij_list);
+            *ier = (*get_neigh)(&pkim, &one, &request,
+                                &currentAtom, &numOfAtomNeigh,
+                                &neighListOfCurrentAtom, &Rij_list);
             if (KIM_STATUS_OK != *ier) /* some sort of problem, exit */
             {
                KIM_API_report_error(__LINE__, __FILE__, "get_neigh", *ier);
@@ -576,6 +575,7 @@ void model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* p
    int ier;
    double dummy;
    struct model_buffer* buffer;
+   char* NBCstr;
 
    /* store pointer to functions in KIM object */
    KIM_API_setm_data(pkim, &ier, 3*4,
@@ -680,6 +680,7 @@ void model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* p
    *model_cutsq = (*model_cutoff)*(*model_cutoff);
    *model_<FILL parameter 1> = <FILL parameter 1>;
    *model_<FILL parameter 2> = <FILL parameter 2>;
+   /* FILL as many parameters as needed */
    
    /* allocate buffer */
    buffer = (struct model_buffer*) malloc(sizeof(struct model_buffer));
@@ -688,88 +689,8 @@ void model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* p
       KIM_API_report_error(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL);
       exit(1);
    }
+
    /* setup buffer */
-   setup_buffer(pkim, buffer);
-   /* store in model buffer */
-   KIM_API_set_model_buffer(pkim, (void*) buffer, &ier);
-   if (KIM_STATUS_OK > ier)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_set_model_buffer", ier);
-      exit(1);
-   }
-
-   return;
-}
-
-/* Reinitialization function */
-static void reinit(void *km)
-{
-   /* Local variables */
-   intptr_t* pkim = *((intptr_t**) km);
-   int ier;
-   double dummy;
-   struct model_buffer* buffer;
-
-   /* get buffer from KIM object */
-   buffer = (struct model_buffer*) KIM_API_get_model_buffer(pkim, &ier);
-   if (KIM_STATUS_OK > ier)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_model_buffer", ier);
-      exit(1);
-   }
-   /* re-setup buffer */
-   setup_buffer(pkim, buffer);
-
-   /* set new values in KIM object     */
-   /*                                  */
-   /* store model cutoff in KIM object */
-   *buffer->cutoff = *buffer->Pcutoff;
-
-   /* set value of parameter cutsq */
-   *buffer->cutsq = (*buffer->cutoff)*(*buffer->cutoff);
-
-   /* FILL: store any other FIXED parameters whose values depend on FREE parameters */
-
-   return;
-}
-
-/* destroy function */
-static void destroy(void *km)
-{
-   /* Local variables */
-   intptr_t* pkim = *((intptr_t**) km);
-   struct model_buffer* buffer;
-   int ier;
-
-   /* get model buffer from KIM object */
-   buffer = (struct model_buffer*) KIM_API_get_model_buffer(pkim, &ier);
-   if (KIM_STATUS_OK > ier)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_model_buffer", ier);
-      exit(1);
-   }
-
-   /* free parameters */
-   free(buffer->Pcutoff);
-   free(buffer->cutsq);
-   free(buffer-><FILL parameter 1>);
-   free(buffer-><FILL parameter 2>);
-   /* FILL: repeat above statements as many times as necessary for all FREE and FIXED parameters. */
-
-   /* destroy the buffer */
-   free(buffer);
-   
-   return;
-}
-
-/* buffer setup function */
-static void setup_buffer(intptr_t* pkim, struct model_buffer* buffer)
-{
-   /* Local variables */
-   int ier;
-   char* NBCstr;
-
-   
    /* Determine neighbor list boundary condition (NBC) */
    NBCstr = KIM_API_get_NBC_method(pkim, &ier);
    if (KIM_STATUS_OK > ier)
@@ -841,37 +762,106 @@ static void setup_buffer(intptr_t* pkim, struct model_buffer* buffer)
 
    buffer->model_index_shift = KIM_API_get_model_index_shift(pkim);
 
-   KIM_API_getm_index(pkim, &ier, 8*3,
-                      "energy",         &(buffer->energy_ind),         1,
-                      "forces",         &(buffer->forces_ind),         1,
-                      "particleEnergy", &(buffer->particleEnergy_ind), 1,
-                      "process_dEdr",   &(buffer->process_dEdr_ind),   1,
-                      "process_d2Edr2", &(buffer->process_d2Edr2_ind), 1,
-                      "particleTypes",  &(buffer->particleTypes_ind),  1,
-                      "coordinates",    &(buffer->coordinates_ind),    1,
-                      "boxSideLengths", &(buffer->boxSideLengths_ind), 1);
+   KIM_API_getm_index(pkim, &ier, 12*3,
+                      "cutoff",                      &(buffer->cutoff_ind),                      1,
+                      "numberOfParticles",           &(buffer->numberOfParticles_ind),           1,
+                      "particleTypes",               &(buffer->particleTypes_ind),               1,
+                      "numberContributingParticles", &(buffer->numberContributingParticles_ind), 1,
+                      "coordinates",                 &(buffer->coordinates_ind),                 1,
+                      "get_neigh",                   &(buffer->get_neigh_ind),                   1,
+                      "boxSideLengths",              &(buffer->boxSideLengths_ind),              1,
+                      "energy",                      &(buffer->energy_ind),                      1,
+                      "forces",                      &(buffer->forces_ind),                      1,
+                      "particleEnergy",              &(buffer->particleEnergy_ind),              1,
+                      "process_dEdr",                &(buffer->process_dEdr_ind),                1,
+                      "process_d2Edr2",              &(buffer->process_d2Edr2_ind),              1
+                     );
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_index", ier);
       exit(1);
    }
 
-   KIM_API_getm_data(pkim, &ier, <FILL with correct integer>*3,
-                     "numberOfParticles",           &(buffer->numberOfParticles),           1,
-                     "numberContributingParticles", &(buffer->numberContributingParticles), 1,
-                     "get_neigh",                   &(buffer->get_neigh),                   1,
-                     "cutoff",                      &(buffer->cutoff),                      1,
-                     "PARAM_FREE_cutoff",           &(buffer->Pcutoff),                     1,
-                     "PARAM_FIXED_cutsq",           &(buffer->cutsq),                       1,
-                     "<FILL parameter 1>,           &(buffer-><FILL parameter 1>),          1,
-                     "<FILL parameter 2>,           &(buffer-><FILL parameter 2>),          1,
-                     /* FILL as many parameters as needed */
-                    );
+   /* store in model buffer */
+   KIM_API_set_model_buffer(pkim, (void*) buffer, &ier);
    if (KIM_STATUS_OK > ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data", ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_set_model_buffer", ier);
       exit(1);
    }
 
+   /* store parameters in buffer */
+   buffer->Pcutoff = model_Pcutoff;
+   buffer->cutsq   = model_cutsq;
+   buffer-><FILL parameter 1> = <FILL parameter 1>;
+   buffer-><FILL parameter 2> = <FILL parameter 2>;
+   /* FILL as many parameters as needed */
+
+   return;
+}
+
+/* Reinitialization function */
+static void reinit(void *km)
+{
+   /* Local variables */
+   intptr_t* pkim = *((intptr_t**) km);
+   int ier;
+   double *cutoff;
+   double dummy;
+   struct model_buffer* buffer;
+
+   /* get buffer from KIM object */
+   buffer = (struct model_buffer*) KIM_API_get_model_buffer(pkim, &ier);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_model_buffer", ier);
+      exit(1);
+   }
+
+   /* set new values in KIM object     */
+   /*                                  */
+   /* store model cutoff in KIM object */
+   cutoff = KIM_API_get_data(pkim, "cutoff", &ier);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
+      exit(1);
+   }
+   *cutoff = *buffer->Pcutoff;
+
+   /* set value of parameter cutsq */
+   *buffer->cutsq = (*cutoff)*(*cutoff);
+
+   /* FILL: store any other FIXED parameters whose values depend on FREE parameters */
+
+   return;
+}
+
+/* destroy function */
+static void destroy(void *km)
+{
+   /* Local variables */
+   intptr_t* pkim = *((intptr_t**) km);
+   struct model_buffer* buffer;
+   int ier;
+
+   /* get model buffer from KIM object */
+   buffer = (struct model_buffer*) KIM_API_get_model_buffer(pkim, &ier);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_model_buffer", ier);
+      exit(1);
+   }
+
+   /* free parameters */
+   free(buffer->Pcutoff);
+   free(buffer->cutsq);
+   free(buffer-><FILL parameter 1>);
+   free(buffer-><FILL parameter 2>);
+   /* FILL: repeat above statements as many times as necessary for all FREE and FIXED parameters. */
+
+   /* destroy the buffer */
+   free(buffer);
+   
    return;
 }
