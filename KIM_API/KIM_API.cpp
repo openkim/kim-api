@@ -1898,6 +1898,10 @@ bool KIM_API_model::preinit(char* modelname){
     return result;
 }
 
+bool KIM_API_model::init_str_testname(char * intststr,char * modelname){
+    return string_init(intststr, modelname);
+}
+
 bool KIM_API_model::string_init(char* in_tststr, char* modelname){
     //char modelinputfile[2048] = KIM_DIR_MODELS;
     //strcat(modelinputfile,modelname);strcat(modelinputfile,"/");strcat(modelinputfile,modelname);
@@ -2354,12 +2358,11 @@ char * KIM_API_model::get_NBC_method(int* error){
 static void c_free(void *p){
     free(p);
 }
-
-bool KIM_API_model::is_half_neighbors(){
+bool KIM_API_model::requiresFullNeighbors(){
     int kimerr;
     char * method = NULL;
     method = (char *) get_NBC_method(&kimerr);
-    
+
     if(kimerr!=1){
         if (method!=NULL) c_free((void *)method);
         return false;
@@ -2372,6 +2375,25 @@ bool KIM_API_model::is_half_neighbors(){
     if (method!=NULL) c_free((void *)method);
     return answer;
 }
+
+bool KIM_API_model::is_half_neighbors(){
+    int kimerr;
+    char * method = NULL;
+    method = (char *) get_NBC_method(&kimerr);
+    
+    if(kimerr!=1){
+        if (method!=NULL) c_free((void *)method);
+        return true;
+    }
+
+    bool answer = true;
+    if (strcmp(method,"NEIGH_PURE_F")==0) answer = false;
+    if (strcmp(method,"NEIGH_RVEC_F")==0) answer = false;
+    if (strcmp(method,"MI_OPBC_F")==0) answer = false;
+    if (method!=NULL) c_free((void *)method);
+    return answer;
+}
+
 char * KIM_API_model::get_params(int* nVpar, int* error){
     int count;
     count=0;
