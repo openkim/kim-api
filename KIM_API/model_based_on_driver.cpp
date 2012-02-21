@@ -27,10 +27,10 @@ static char* param_string();
 extern "C" {
 
 #ifdef KIM_DYNAMIC
-#include <dlfcn.h>
+   #include <dlfcn.h>
+   static void model_destroy(void* km, int* ier);
 #else
    void MODEL_DRIVER_NAME_LC_STR_init_(void* km, char* paramfile, int* length);
-   static void model_destroy(void* km, int* ier);
 #endif
 
 
