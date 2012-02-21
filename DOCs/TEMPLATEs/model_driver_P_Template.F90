@@ -160,8 +160,10 @@ integer :: i,j,jj,numnei,atom_ret
 integer :: i_pairs(2), j_pairs(2)
 integer :: comp_force,comp_energy,comp_enepot,comp_process_dEdr,comp_process_d2Edr2
 integer, allocatable, target :: nei1atom_substitute(:)
-character*80 :: error_message
 integer :: idum
+integer buffer(1);                    pointer(pbuffer, buffer)
+integer bufind(1);                    pointer(pbufind, bufind)
+integer(kind=kim_intptr) bufparam(1); pointer(pbufparam, bufparam)
 
 !-- KIM variables
 real*8  model_cutoff;         pointer(pmodel_cutoff, model_cutoff)  ! cutoff radius
@@ -179,115 +181,96 @@ real*8  Rij_list(DIM,1);      pointer(pRij_list,Rij_list)
 integer numContrib;           pointer(pnumContrib,numContrib)
 integer nei1atom(1);          pointer(pnei1atom,nei1atom)
 integer particleTypes(1);     pointer(pparticleTypes,particleTypes)
-character*64 NBC_Method;      pointer(pNBC_Method,NBC_Method)
 real*8, pointer :: coor(:,:),force(:,:),ene_pot(:)
 integer IterOrLoca
 integer HalfOrFull
 integer NBC
 integer numberContrib
+integer energy_ind
+integer forces_ind
+integer particleEnergy_ind
+integer process_dEdr_ind
+integer process_d2Edr2_ind
+integer model_index_shift
+integer numberOfParticles_ind
+integer particleTypes_ind
+integer coordinates_ind
+integer numberContributingParticles_ind
+integer boxSideLengths_ind
+integer get_neigh_ind
+integer cutoff_ind
 
-! Unpack the Model's parameters stored in the KIM API object
-!
-call kim_api_getm_data_f(pkim, ier, &
-     "cutoff",             pmodel_cutoff,             1, &
-     "PARAM_FIXED_cutsq",  pmodel_cutsq,              1, &
-     "<FILL parameter 1>", pmodel_<FILL parameter 1>, 1, &
-     "<FILL parameter 2>", pmodel_<FILL parameter 2>, 1, &
-     ! FILL as many parameters as necessary
-     )
+
+! get model buffer from KIM object
+pbuffer = kim_api_get_model_buffer_f(pkim, ier)
 if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_model_buffer_f", ier)
    return
 endif
+pbufind   = buffer(1)
+pbufparam = buffer(2)
 
-! Determine neighbor list boundary condition (NBC)
-! and half versus full mode:
-! *****************************
-! * HalfOrFull = 1 -- Half
-! *            = 2 -- Full
-! *****************************
+! Unpack indices from buffer
 !
+NBC                             = bufind(1)
+HalfOrFull                      = bufind(2)
+IterOrLoca                      = bufind(3)
+energy_ind                      = bufind(4)
+forces_ind                      = bufind(5)
+particleEnergy_ind              = bufind(6)
+process_dEdr_ind                = bufind(7)
+process_d2Edr2_ind              = bufind(8)
+model_index_shift               = bufind(9)
+numberOfParticles_ind           = bufind(10)
+particleTypes_ind               = bufind(11)
+coordinates_ind                 = bufind(12)
+numberContributingParticles_ind = bufind(13)
+boxSideLengths_ind              = bufind(14)
+get_neigh_ind                   = bufind(15)
+cutoff_ind                      = bufind(16)
+
+! Unpack Model's parameters from buffer
 !
-pNBC_Method = kim_api_get_nbc_method_f(pkim, ier)
+pmodel_cutsq   = bufparam(2)
+pmodel_<FILL parameter 1> = bufparam(3)
+pmodel_<FILL parameter 2> = bufparam(4)
+! FILL as many parameters as necessary
+
+! Unpack the Model's cutoff stored in the KIM API object
+!
+pmodel_cutoff = kim_api_get_data_by_index_f(pkim, cutoff_ind, ier)
 if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_nbc_method_f", ier)
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_by_index_f", ier)
    return
-endif
-if (index(NBC_Method,"CLUSTER").eq.1) then
-   NBC = 0
-   HalfOrFull = 1
-elseif (index(NBC_Method,"MI_OPBC_H").eq.1) then
-   NBC = 1
-   HalfOrFull = 1
-elseif (index(NBC_Method,"MI_OPBC_F").eq.1) then
-   NBC = 1
-   HalfOrFull = 2
-elseif (index(NBC_Method,"NEIGH_PURE_H").eq.1) then
-   NBC = 2
-   HalfOrFull = 1
-elseif (index(NBC_Method,"NEIGH_PURE_F").eq.1) then
-   NBC = 2
-   HalfOrFull = 2
-elseif (index(NBC_Method,"NEIGH_RVEC_F").eq.1) then
-   NBC = 3
-   HalfOrFull = 2
-else
-   ier = KIM_STATUS_FAIL
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "Unknown NBC method", ier)
-   return
-endif
-call free(pNBC_Method) ! don't forget to release the memory...
-
-! Determine neighbor list handling mode
-!
-if (NBC.ne.0) then
-   !*****************************
-   !* IterOrLoca = 1 -- Iterator
-   !*            = 2 -- Locator
-   !*****************************
-   IterOrLoca = kim_api_get_neigh_mode_f(pkim, ier)
-   if (ier.lt.KIM_STATUS_OK) then
-      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_neigh_mode_f", ier)
-      return
-   endif
-   if (IterOrLoca.ne.1 .and. IterOrLoca.ne.2) then
-      ier = KIM_STATUS_FAIL
-      write(error_message,'(a,i1)') &
-         'Unsupported IterOrLoca mode = ',IterOrLoca
-      idum = kim_api_report_error_f(__LINE__, __FILE__, error_message, ier)
-      stop
-   endif
-else
-   IterOrLoca = 2   ! for CLUSTER NBC
 endif
 
 ! Check to see if we have been asked to compute the forces, energyperatom,
 ! energy and d1Edr
 !
-call kim_api_getm_compute_f(pkim, ier, &
-     "energy",         comp_energy,         1, &
-     "forces",         comp_force,          1, &
-     "particleEnergy", comp_enepot,         1, &
-     "process_dEdr",   comp_process_dEdr,   1, &
-     "process_d2Edr2", comp_process_d2Edr2, 1)
+call kim_api_getm_compute_by_index_f(pkim, ier, &
+     energy_ind,         comp_energy,         1, &
+     forces_ind,         comp_force,          1, &
+     particleEnergy_ind, comp_enepot,         1, &
+     process_dEdr_ind,   comp_process_dEdr,   1, &
+     process_d2Edr2_ind, comp_process_d2Edr2, 1)
 if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_compute_f", ier)
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_compute_by_index_f", ier)
    return
 endif
 
 ! Unpack data from KIM object
 !
-call kim_api_getm_data_f(pkim, ier, &
-     "numberOfParticles",           pN,              1,                           &
-     "particleTypes",               pparticleTypes,  1,                           &
-     "coordinates",                 pcoor,           1,                           &
-     "numberContributingParticles", pnumContrib,     TRUEFALSE(HalfOrFull.eq.1),  &
-     "boxSideLengths",              pboxSideLengths, TRUEFALSE(NBC.eq.1),         &
-     "energy",                      penergy,         TRUEFALSE(comp_energy.eq.1), &
-     "forces",                      pforce,          TRUEFALSE(comp_force.eq.1),  &
-     "particleEnergy",              penepot,         TRUEFALSE(comp_enepot.eq.1))
+call kim_api_getm_data_by_index_f(pkim, ier, &
+     numberOfParticles_ind,           pN,              1,                           &
+     particleTypes_ind,               pparticleTypes,  1,                           &
+     coordinates_ind,                 pcoor,           1,                           &
+     numberContributingParticles_ind, pnumContrib,     TRUEFALSE(HalfOrFull.eq.1),  &
+     boxSideLengths_ind,              pboxSideLengths, TRUEFALSE(NBC.eq.1),         &
+     energy_ind,                      penergy,         TRUEFALSE(comp_energy.eq.1), &
+     forces_ind,                      pforce,          TRUEFALSE(comp_force.eq.1),  &
+     particleEnergy_ind,              penepot,         TRUEFALSE(comp_enepot.eq.1))
 if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_by_index_f", ier)
    return
 endif
 
@@ -524,6 +507,9 @@ integer(kind=kim_intptr), intent(in) :: pkim
 !-- Local variables
 double precision energy_at_cutoff
 integer ier, idum
+integer buffer(1);                    pointer(pbuffer, buffer)
+integer bufind(1);                    pointer(pbufind, bufind)
+integer(kind=kim_intptr) bufparam(1); pointer(pbufparam, bufparam)
 
 !-- KIM variables
 real*8  cutoff;          pointer(pcutoff,cutoff)
@@ -533,18 +519,24 @@ real*8  model_<FILL parameter 1>; pointer(pmodel_<FILL parameter 1>,model_<FILL 
 real*8  model_<FILL parameter 2>; pointer(pmodel_<FILL parameter 2>,model_<FILL parameter 2>)
 ! FILL as many parameter declarations as necessary
 
-! Get FREE parameters from KIM object
-!
-call kim_api_getm_data_f(pkim, ier, &
-     "cutoff",             pcutoff,                   1, &
-     "PARAM_FREE_cutoff",  pmodel_cutoff,             1, &
-     "PARAM_FIXED_cutsq",  pmodel_cutsq,              1, & 
-     "<FILL parameter 1>", pmodel_<FILL parameter 1>, 1, &
-     "<FILL parameter 2>", pmodel_<FILL parameter 2>, 1, &
-     ! FILL as many parameters as necessary
-     )
+! get model buffer from KIM object
+pbuffer = kim_api_get_model_buffer_f(pkim, ier)
 if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_model_buffer_f", ier)
+   return
+endif
+pbufind   = buffer(1)
+pbufparam = buffer(2)
+
+pmodel_cutoff  = bufparam(1)
+pmodel_cutsq   = bufparam(2)
+pmodel_<FILL parameter 1> = bufparam(3)
+pmodel_<FILL parameter 2> = bufparam(4)
+! FILL as many parameters as necessary
+
+pcutoff = kim_api_get_data_by_index_f(pkim, bufind(16), ier)
+if (ier.lt.KIM_STATUS_OK) then
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_by_index_f", ier)
    return
 endif
 
@@ -571,6 +563,9 @@ integer(kind=kim_intptr), intent(in) :: pkim
 
 !-- Local variables
 integer ier, idum
+integer buffer(1);                    pointer(pbuffer, buffer)
+integer bufind(1);                    pointer(pbufind, bufind)
+integer(kind=kim_intptr) bufparam(1); pointer(pbufparam, bufparam)
 
 !-- KIM variables
 real*8  cutoff;          pointer(pcutoff,cutoff)
@@ -580,26 +575,23 @@ real*8  model_<FILL parameter 1>; pointer(pmodel_<FILL parameter 1>,model_<FILL 
 real*8  model_<FILL parameter 2>; pointer(pmodel_<FILL parameter 2>,model_<FILL parameter 2>)
 ! FILL as many parameter declarations as necessary
 
-! Get all parameters added to KIM object and free memory 
-!
-call kim_api_getm_data_f(pkim, ier, &
-     "PARAM_FREE_cutoff",   pmodel_cutoff,             1, &
-     "PARAM_FIXED_cutsq",   pmodel_cutsq,              1, &
-     "<FILL parameter 1>",  pmodel_<FILL parameter 1>, 1, &
-     "<FILL parameter 2>",  pmodel_<FILL parameter 2>, 1, &
-     ! FILL as many parameters as necessary
-     )
+! get model buffer from KIM object
+pbuffer = kim_api_get_model_buffer_f(pkim, ier)
 if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_model_buffer_f", ier)
    return
 endif
+pbufind   = buffer(1)
+pbufparam = buffer(2)
 
-call free(pmodel_cutoff)
-call free(pmodel_cutsq)
-call free(pmodel_<FILL parameter 1>)
-call free(pmodel_<FILL parameter 2>)
-! FILL: repeat above statements as many times as necessary for all FREE and
-! FIXED parameters.
+call free(bufparam(1))
+call free(bufparam(2))
+! FILL free as many parameters as necessary
+
+call free(pbufparam)
+call free(pbufind)
+
+call free(pbuffer)
 
 end subroutine destroy
 
@@ -624,6 +616,10 @@ integer,                  intent(in) :: len_paramfile
 integer(kind=kim_intptr), parameter :: one=1
 character(len=len_paramfile) paramfile
 integer i,ier, idum
+integer buffer(1);                    pointer(pbuffer, buffer)
+integer bufind(1);                    pointer(pbufind, bufind)
+integer(kind=kim_intptr) bufparam(1); pointer(pbufparam, bufparam)
+character*80 :: error_message
 ! define variables for all model parameters to be read in
 double precision in_cutoff
 double precision in_<FILL parameter 1>
@@ -635,6 +631,7 @@ double precision in_<FILL last parameter>
 real*8  cutoff;          pointer(pcutoff,cutoff)
 real*8  model_cutoff;    pointer(pmodel_cutoff, model_cutoff)  ! cutoff radius
 real*8  model_cutsq;     pointer(pmodel_cutsq,  model_cutsq)   ! cutoff radius squared
+character*64 NBC_Method; pointer(pNBC_Method,NBC_Method)
 real*8  model_<FILL parameter 1>; pointer(pmodel_<FILL parameter 1>,model_<FILL parameter 1>)
 real*8  model_<FILL parameter 2>; pointer(pmodel_<FILL parameter 2>,model_<FILL parameter 2>)
 ! FILL as many parameter declarations as necessary
@@ -738,15 +735,144 @@ if (ier.lt.KIM_STATUS_OK) then
 endif
 
 ! set value of parameters
-model_cutoff = in_cutoff
-model_cutsq = in_cutoff**2
+model_cutoff  = in_cutoff
+model_cutsq   = in_cutoff**2
 model_<FILL parameter 1> = in_<FILL parameter 1>
+model_<FILL parameter 2> = in_<FILL parameter 2>
+! FILL as many parameters as necessary
 
-! FILL: repeat above statements as many times as necessary for all parameters. 
-! Use "FREE" and "FIXED" as appropriate. (Recall FREE parameters can be modified by
-! the calling routine. FIXED parameters depend on the FREE parameters and must be
-! appropriately adjusted in the reinit() routine.)
+! allocate buffer
+pbuffer   = malloc(2*kim_intptr)
+!
+! bufind values
+!     1 - NBC
+!     2 - HalfOrFull
+!     3 - IterOrLoca
+!     4 - energy_ind
+!     5 - forces_ind
+!     6 - particleEnergy_ind
+!     7 - process_dEdr_ind
+!     8 - process_d2Edr2_ind
+!     9 - model_index_shift
+!    10 - numberOfParticles_ind
+!    11 - particleTypes_ind
+!    12 - coordinates_ind
+!    13 - numberContributingParticles_ind
+!    14 - boxSideLengths_ind
+!    15 - get_neigh_ind
+!    16 - cutoff_ind
+pbufind   = malloc(16*4)
+!
+! bufparam values
+!     1 - Pcutoff
+!     2 - cutsq
+!     3 - <FILL parameter 1>
+!     4 - <FILL parameter 2>
+!     <FILL as many parameters as necessary>
+pbufparam = malloc(<FILL number of parameters>*kim_intptr)
+if (pbuffer.eq.0 .or. pbufind .eq. 0 .or. pbufparam.eq.0) then
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL);
+   stop
+endif
+! set pointers
+buffer(1) = pbufind
+buffer(2) = pbufparam
+
+! setup buffer
+!
+! Determine neighbor list boundary condition (NBC)
+! and half versus full mode:
+! *****************************
+! * HalfOrFull = 1 -- Half
+! *            = 2 -- Full
+! *****************************
+!
+!
+pNBC_Method = kim_api_get_nbc_method_f(pkim, ier)
+if (ier.lt.KIM_STATUS_OK) then
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_nbc_method_f", ier)
+   return
+endif
+if (index(NBC_Method,"CLUSTER").eq.1) then
+   bufind(1) = 0
+   bufind(2) = 1
+elseif (index(NBC_Method,"MI_OPBC_H").eq.1) then
+   bufind(1) = 1
+   bufind(2) = 1
+elseif (index(NBC_Method,"MI_OPBC_F").eq.1) then
+   bufind(1) = 1
+   bufind(2) = 2
+elseif (index(NBC_Method,"NEIGH_PURE_H").eq.1) then
+   bufind(1) = 2
+   bufind(2) = 1
+elseif (index(NBC_Method,"NEIGH_PURE_F").eq.1) then
+   bufind(1) = 2
+   bufind(2) = 2
+elseif (index(NBC_Method,"NEIGH_RVEC_F").eq.1) then
+   bufind(1) = 3
+   bufind(2) = 2
+else
+   ier = KIM_STATUS_FAIL
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "Unknown NBC method", ier)
+   return
+endif
+call free(pNBC_Method) ! don't forget to release the memory...
+
+! Determine neighbor list handling mode
+!
+if (bufind(1).ne.0) then
+   !*****************************
+   !* IterOrLoca = 1 -- Iterator
+   !*            = 2 -- Locator
+   !*****************************
+   bufind(3) = kim_api_get_neigh_mode_f(pkim, ier)
+   if (ier.lt.KIM_STATUS_OK) then
+      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_neigh_mode_f", ier)
+      return
+   endif
+   if (bufind(3).ne.1 .and. bufind(3).ne.2) then
+      ier = KIM_STATUS_FAIL
+      write(error_message,'(a,i1)') &
+         'Unsupported IterOrLoca mode = ',bufind(3)
+      idum = kim_api_report_error_f(__LINE__, __FILE__, error_message, ier)
+      stop
+   endif
+else
+   bufind(3) = 2   ! for CLUSTER NBC
+endif
+
+bufind(9) = kim_api_get_model_index_shift_f(pkim)
+
+call kim_api_getm_index_f(pkim, ier, &
+     "cutoff",                      bufind(16),  1, &
+     "numberOfParticles",           bufind(10),  1, &
+     "particleTypes",               bufind(11),  1, &
+     "numberContributingParticles", bufind(13),  1, &
+     "coordinates",                 bufind(12),  1, &
+     "get_neigh",                   bufind(15),  1, &
+     "boxSideLengths",              bufind(14),  1, &
+     "energy",                      bufind(4),   1, &
+     "forces",                      bufind(5),   1, &
+     "particleEnergy",              bufind(6),   1, &
+     "process_dEdr",                bufind(7),   1, &
+     "process_d2Edr2",              bufind(8),   1)
+if (ier.lt.KIM_STATUS_OK) then
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_index_f", ier)
+   return
+endif
+
+! store in model buffer
+call kim_api_set_model_buffer_f(pkim, pbuffer, ier)
+if (ier.lt.KIM_STATUS_OK) then
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_model_buffer_f", ier)
+   return
+endif
+
+! store parameters in buffer
+bufparam(1) = pmodel_cutoff
+bufparam(2) = pmodel_cutsq
+bufparam(3) = pmodel_<FILL parameter 1>
+bufparam(4) = pmodel_<FILL parameter 2>
+! FILL as many parameters as necessary
 
 end subroutine model_driver_P_<FILL model driver name>_init
-
-
