@@ -672,10 +672,12 @@ endif
 !
 do i=1,len_paramfile
    paramfile(i:i) = char(byte_paramfile(i))
+   if (paramfile(i:i) .eq. char(10)) paramfile(i:i) = " ";
 enddo
 read(paramfile,*,iostat=ier,err=100) in_cutoff,   &
                                      in_epsilon,  &
                                      in_sigma
+
 goto 200
 100 continue
 ! reading parameters failed
