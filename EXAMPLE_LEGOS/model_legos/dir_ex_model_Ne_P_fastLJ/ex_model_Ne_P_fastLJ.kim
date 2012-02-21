@@ -43,7 +43,7 @@ NEIGH_PURE_F                flag
 
 NEIGH_RVEC_F                flag
 
-MI_OBPC_H                   flag
+MI_OPBC_H                   flag
 
 MI_OPBC_F                   flag
 
