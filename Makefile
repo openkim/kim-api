@@ -93,5 +93,6 @@ models_check:
 	@if [[ "$(MODELS_LIST)" == "" && "$(KIM_DYNAMIC)" == "" ]]; then \
         echo "*************************************************************************"; \
         echo "*******  Can't compile the API for static linking with no Models  *******"; \
+        echo "*******           Maybe you want to do 'make examples'            *******"; \
         echo "*************************************************************************"; \
         false; else true; fi
