@@ -57,7 +57,7 @@ int KIM_API_model_info(void * kimmdl, char * mdlname){
  int KIM_API_string_init(void * kimmdl, char *testinputstring, char * mdlname){
      KIM_API_model * mdl;
     mdl = new KIM_API_model[1];
-    if(mdl->init_str_testname(testinputstring,mdlname)) {
+    if(mdl->string_init(testinputstring,mdlname)) {
         *(KIM_API_model **)kimmdl = mdl;
         return KIM_STATUS_OK;
     }
@@ -67,7 +67,7 @@ int KIM_API_model_info(void * kimmdl, char * mdlname){
  
  void KIM_API_allocate(void *kimmdl, int natoms, int ntypes,int * error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    mdl->allocateinitialized(mdl,natoms,ntypes,error);
+    mdl->allocate(mdl,natoms,ntypes,error);
  }
 void KIM_API_free(void *kimmdl,int * error){
     KIM_API_model * mdl=*(KIM_API_model **) kimmdl;
@@ -85,6 +85,7 @@ void KIM_API_print(void *kimmdl,int * error){
     cout<<(*mdl);
     *error=KIM_STATUS_OK;
 }
+
 int KIM_API_model_init(void * kimmdl){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     if(mdl->model_init()) return KIM_STATUS_OK;
@@ -187,7 +188,7 @@ int KIM_API_is_half_neighbors(void *kimmdl,int *ier){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     int ans=1;
     *ier = KIM_STATUS_FAIL;
-    if (mdl->requiresFullNeighbors()) ans = 0;
+    if (mdl->is_half_neighbors()) ans = 0;
     *ier = KIM_STATUS_OK;
     return ans;
 }
@@ -306,10 +307,7 @@ intptr_t KIM_API_get_shape_by_index(void *kimmdl,int I, int * shape,int *error){
 
 int KIM_API_get_compute_by_index(void *kimmdl,int I,int *error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    *error =KIM_STATUS_FAIL;
-    if (mdl == NULL) return 1;
-    *error =KIM_STATUS_OK;
-    return (*mdl)[I].flag->calculate; 
+    mdl->get_compute_by_index(I,error);
 }
 
 

@@ -809,7 +809,7 @@ bool KIM_API_model:: preinit(char * initfile,char *modelname){
 
  }
 
-bool KIM_API_model::preinit_str_testname(char *instrn){
+bool KIM_API_model::prestring_init(char *instrn){
         read_file_str_testname(instrn,&inlines,&numlines);
 
   
@@ -1290,7 +1290,7 @@ bool KIM_API_model::is_it_match(KIM_API_model &test,KIM_API_model & mdl){
    KIM_API_model stdmdl;
   
     char * inStandard_kim_str = standard_kim_str();
-    if(!stdmdl.preinit_str_testname(inStandard_kim_str)){
+    if(!stdmdl.prestring_init(inStandard_kim_str)){
         cout<<" preinit of :"<<"standard.kim"<<" failed"<<endl;
         stdmdl.free();
         return false;
@@ -1722,8 +1722,8 @@ bool KIM_API_model::init_str_modelname(char* testname, char* inmdlstr){
     KIM_API_model test,mdl;
     //preinit test and model API object
 
-    if(!mdl.preinit_str_testname(inmdlstr)){
-        cout<<"preinit_str_testname  failed with error status: "<<this->get_status_msg(ErrorCode)<<endl;
+    if(!mdl.prestring_init(inmdlstr)){
+        cout<<"prestring_init  failed with error status: "<<this->get_status_msg(ErrorCode)<<endl;
         return false;
     }
 
@@ -1734,7 +1734,7 @@ bool KIM_API_model::init_str_modelname(char* testname, char* inmdlstr){
 
     //check if they match
     if (is_it_match(test,mdl)){
-        this->preinit_str_testname(inmdlstr);
+        this->prestring_init(inmdlstr);
         this->unit_h=test.unit_h;
         this->irrelevantVars2donotcompute(test,*this);
 
@@ -1824,13 +1824,13 @@ bool KIM_API_model::preinit(char* modelname){
     }
 
  #endif
-    bool result= this->preinit_str_testname(in_mdlstr);
+    bool result= this->prestring_init(in_mdlstr);
     //redirecting back to > cout
     cout.rdbuf(backup); filekimlog.close();
     return result;
 }
 
-bool KIM_API_model::init_str_testname(char* in_tststr, char* modelname){
+bool KIM_API_model::string_init(char* in_tststr, char* modelname){
     //char modelinputfile[2048] = KIM_DIR_MODELS;
     //strcat(modelinputfile,modelname);strcat(modelinputfile,"/");strcat(modelinputfile,modelname);
     //strcat(modelinputfile,".kim");
@@ -1849,7 +1849,7 @@ bool KIM_API_model::init_str_testname(char* in_tststr, char* modelname){
 #include "model_kim_str_include.cpp"
 
     if (in_mdlstr == NULL){
-        cout<<"* Error (KIM_API_model::init_str_testname): Unknown KIM Model name " << modelname << "." << endl;
+        cout<<"* Error (KIM_API_model::string_init): Unknown KIM Model name " << modelname << "." << endl;
         exit(368);
     }
      //                         -------------
@@ -1861,7 +1861,7 @@ bool KIM_API_model::init_str_testname(char* in_tststr, char* modelname){
     sprintf(model_kim_str_name,"%s_kim_str",modelname);
      model_lib_handle = dlopen(model_slib_file,RTLD_NOW);
     if(!model_lib_handle) {
-         cout<< "* Error (KIM_API_model::init_str_testname): Cannot find Model shared library file for Model name: ";
+         cout<< "* Error (KIM_API_model::string_init): Cannot find Model shared library file for Model name: ";
          cout<<modelname<<endl<<dlerror()<<endl;
          fprintf(stderr,"%s not found..\n",model_slib_file);
 
@@ -1874,7 +1874,7 @@ bool KIM_API_model::init_str_testname(char* in_tststr, char* modelname){
     Model_kim_str get_kim_str = (Model_kim_str)dlsym(model_lib_handle,model_kim_str_name);
     const char *dlsym_error = dlerror();
     if (dlsym_error) {
-        cerr << "* Error (KIM_API_model_init_str_testname): Model descriptor file function not found in shared library for Model: " << modelname << "." << endl;
+        cerr << "* Error (KIM_API_model_string_init): Model descriptor file function not found in shared library for Model: " << modelname << "." << endl;
         dlclose(model_lib_handle);
 
         //redirecting back to > cout
@@ -1888,21 +1888,21 @@ bool KIM_API_model::init_str_testname(char* in_tststr, char* modelname){
     in_mdlstr = (*get_kim_str)();
 
     if (in_mdlstr == NULL){
-        cout<< "* Error (KIM_API_model::init_str_testname): Model descriptor string not found in shared library for Model: " << modelname << "." << endl;
+        cout<< "* Error (KIM_API_model::string_init): Model descriptor string not found in shared library for Model: " << modelname << "." << endl;
         exit(367);
     }
 
  #endif
 //preinit test and model API object
-    if(!test.preinit_str_testname(in_tststr))
-        cout<<"test.preinit_str_testname failed with error status:"<<this->get_status_msg(test.ErrorCode)<<endl;
+    if(!test.prestring_init(in_tststr))
+        cout<<"test.prestring_init failed with error status:"<<this->get_status_msg(test.ErrorCode)<<endl;
 
-    if(!mdl.preinit_str_testname(in_mdlstr))
-        cout<<"mdl.preinit_str_testname failed with error status:"<<this->get_status_msg(mdl.ErrorCode)<<endl;
+    if(!mdl.prestring_init(in_mdlstr))
+        cout<<"mdl.prestring_init failed with error status:"<<this->get_status_msg(mdl.ErrorCode)<<endl;
 
     //check if they match
     if (is_it_match(test,mdl)){
-        this->preinit_str_testname(in_mdlstr);
+        this->prestring_init(in_mdlstr);
         this->unit_h=test.unit_h;
         this->irrelevantVars2donotcompute(test,*this);
 
@@ -2159,10 +2159,10 @@ void KIM_API_model::irrelevantVars2donotcompute(KIM_API_model & test, KIM_API_mo
     }
 }
 
-void KIM_API_model::allocateinitialized(KIM_API_model * mdl, int natoms, int ntypes, int * error){
+void KIM_API_model::allocate(KIM_API_model * mdl, int natoms, int ntypes, int * error){
     // in process
     if ( mdl->model.data == NULL) {
-        cout<<"* Error (KIM_API_model::allocateinitialized): KIM API object not initialized with KIM_API_init()."<<endl;
+        cout<<"* Error (KIM_API_model::allocate): KIM API object not initialized with KIM_API_init()."<<endl;
         *error = KIM_STATUS_FAIL;
         return;
     }
@@ -2287,7 +2287,7 @@ static void c_free(void *p){
     free(p);
 }
 
-bool KIM_API_model::requiresFullNeighbors(){
+bool KIM_API_model::is_half_neighbors(){
     int kimerr;
     char * method = NULL;
     method = (char *) get_NBC_method(&kimerr);
@@ -3083,3 +3083,42 @@ void KIM_API_model::getm_compute_by_index(int* err, int numargs, ...){
     *err=KIM_STATUS_OK;
     va_end(listPointer);
 }
+
+void KIM_API_model::print(int* error){
+    *error =KIM_STATUS_FAIL;
+    if (this==NULL) return;
+    cout<<(*this);
+    *error=KIM_STATUS_OK;
+}
+
+intptr_t KIM_API_model::get_size_by_index(int I,int *error){
+    *error =KIM_STATUS_FAIL;
+    if (this == NULL) return 0;
+    *error =KIM_STATUS_OK;
+    return (*this)[I].size;
+}
+
+intptr_t KIM_API_model::get_shape_by_index(int I, int * shape,int *error){
+     *error =KIM_STATUS_OK;
+    if (this == NULL) return -2;
+    *error =1;
+     if((*this)[I].rank == 0){
+            return 0;
+        }else if((*this)[I].rank ==1){
+            shape[0] = (int)(*this)[I].size;
+            return 1;
+        }else if((*this)[I].rank>1){
+            for (int i=0; i< (*this)[I].rank; i++) shape[i] =(*this)[I].shape[i];
+            return (*this)[I].rank;
+        }else{
+            *error =KIM_STATUS_FAIL;
+            return -1;
+        }
+}
+
+int KIM_API_model::get_compute_by_index(int I,int * error){
+    *error =KIM_STATUS_FAIL;
+    if (this == NULL) return 1;
+    *error =KIM_STATUS_OK;
+    return (*this)[I].flag->calculate;
+ }

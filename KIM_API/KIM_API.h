@@ -186,7 +186,7 @@ public:
     bool preinit(char * initfile,char *modelname);
     bool preinit(char * modelname);
     bool model_info(char * modelname) {return preinit(modelname);}
-    bool preinit_str_testname(char * instrn);
+    bool prestring_init(char * instrn);
     void free_e(int *error);
     void free();
     bool set_data(char *nm, intptr_t size, void *dt);
@@ -206,6 +206,11 @@ public:
     bool get_compute(char *nm);
     KIMBaseElement &operator[](int i);
     KIMBaseElement &operator[](char *nm);
+    void print(int *error);
+
+    intptr_t get_size_by_index(int I,int *error);
+    intptr_t get_shape_by_index(int I, int * shape,int *error);
+    int get_compute_by_index(int I,int * error);
 
 static   void read_file(char * initfile,KIM_IOline ** lns, int * numlns);
 static   void read_file_str_testname(char * strstream,KIM_IOline ** lns, int * numlns );
@@ -223,7 +228,7 @@ bool do_AtomsTypes_match(KIM_API_model &test,KIM_API_model & mdl);
 
     bool init(char * testinputfile,char* testname, char * modelinputfile,char *modelname);
     bool init(char * testname,char * modelname);
-    bool init_str_testname(char * intststr,char * modelname);
+    bool string_init(char * intststr,char * modelname);
     bool init_str_modelname(char *testname,char *inmdlstr);
      void model_compute(int *error);
     int get_neigh(int mode,int request, int *atom, int *numnei, int **nei1atom, double **Rij);
@@ -231,7 +236,7 @@ bool do_AtomsTypes_match(KIM_API_model &test,KIM_API_model & mdl);
     bool model_reinit();
    void model_destroy(int *error);
 static void irrelevantVars2donotcompute(KIM_API_model & test, KIM_API_model & mdl);
-static void allocateinitialized(KIM_API_model * mdl, int natoms, int ntypes,int * error);
+static void allocate(KIM_API_model * mdl, int natoms, int ntypes,int * error);
 
 char * get_partcl_types(int *nparticleTypes,int *error);
 int get_partcl_type_code(char *atom, int * error);
@@ -244,7 +249,7 @@ static char * get_model_kim_str(char * modelname,int *kimerr);
 
 
 char * get_NBC_method(int *error);
-bool requiresFullNeighbors();
+bool is_half_neighbors();
 
     KIM_IOline *inlines;
     int numlines;
