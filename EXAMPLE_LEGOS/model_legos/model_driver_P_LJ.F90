@@ -199,7 +199,7 @@ integer :: i_pairs(2), j_pairs(2)
 integer :: comp_force,comp_energy,comp_enepot,comp_process_dEdr,comp_process_d2Edr2
 integer, allocatable, target :: nei1atom_substitute(:)
 integer :: idum
-integer buffer(1);                    pointer(pbuffer, buffer)
+integer(kind=kim_intptr):: buffer(1); pointer(pbuffer, buffer)
 integer bufind(1);                    pointer(pbufind, bufind)
 integer(kind=kim_intptr) bufparam(1); pointer(pbufparam, bufparam)
 
@@ -542,7 +542,7 @@ integer(kind=kim_intptr), intent(in) :: pkim
 !-- Local variables
 double precision energy_at_cutoff
 integer ier, idum
-integer buffer(1);                    pointer(pbuffer, buffer)
+integer(kind=kim_intptr):: buffer(1); pointer(pbuffer, buffer)
 integer bufind(1);                    pointer(pbufind, bufind)
 integer(kind=kim_intptr) bufparam(1); pointer(pbufparam, bufparam)
 
@@ -605,7 +605,7 @@ integer(kind=kim_intptr), intent(in) :: pkim
 
 !-- Local variables
 integer ier, idum
-integer buffer(1);                    pointer(pbuffer, buffer)
+integer(kind=kim_intptr):: buffer(1); pointer(pbuffer, buffer)
 integer bufind(1);                    pointer(pbufind, bufind)
 integer(kind=kim_intptr) bufparam(1); pointer(pbufparam, bufparam)
 
@@ -660,7 +660,7 @@ integer,                  intent(in) :: len_paramfile
 integer(kind=kim_intptr), parameter :: one=1
 character(len=len_paramfile) paramfile
 integer i,ier, idum
-integer buffer(1);                    pointer(pbuffer, buffer)
+integer(kind=kim_intptr):: buffer(1); pointer(pbuffer, buffer)
 integer bufind(1);                    pointer(pbufind, bufind)
 integer(kind=kim_intptr) bufparam(1); pointer(pbufparam, bufparam)
 character*80 :: error_message
