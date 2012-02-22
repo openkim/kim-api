@@ -25,6 +25,7 @@
 * Contributors:
 *    Ryan S. Elliott
 *    Ellad B. Tadmor
+*    Valeriu Smirichinski
 *
 */
 
