@@ -199,6 +199,9 @@ INSTALL
 KIM_API/
      directory containing the openkim-api service routines
 
+LICENSE.CDDL
+     The Common Development and Distribution License (CDDL) Version 1.0 file
+
 MODEL_DRIVERs/
      Each Model Driver is stored in its own directory that conforms to the
      naming convention specified in standard.kim.  This is where you should

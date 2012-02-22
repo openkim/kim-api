@@ -40,6 +40,9 @@ of `energy', `forces', `particleEnergy', and `virial'
 
 The following files are in this directory:
 
+LICENSE.CDDL
+     The Common Development and Distribution License (CDDL) Version 1.0 file
+
 Makefile
      Makefile to compile and build executables with GNU or Intel compilers
 

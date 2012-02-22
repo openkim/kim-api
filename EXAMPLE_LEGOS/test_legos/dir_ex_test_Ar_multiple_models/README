@@ -35,6 +35,9 @@ energy of a perfect Ar FCC crystal and a finite cluster as a function of
 lattice spacing for two models. The test uses the NEIGH_RVEC_F NBC and locator
 or iterator mode.
 
+LICENSE.CDDL
+     The Common Development and Distribution License (CDDL) Version 1.0 file
+
 Makefile
      Makefile to compile and build executables with GNU or Intel compilers.
 

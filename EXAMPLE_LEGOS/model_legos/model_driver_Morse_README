@@ -58,6 +58,9 @@ Any additional lines will be silently ignored.
 
 The following files are in this directory:
 
+LICENSE.CDDL
+     The Common Development and Distribution License (CDDL) Version 1.0 file
+
 Makefile
     makefile to compile and build executables with GNU or Intel compilers
 

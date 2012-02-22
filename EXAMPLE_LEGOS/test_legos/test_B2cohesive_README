@@ -39,6 +39,9 @@ and SPECIES2_NAME_STR as a function of lattice spacing.
 
 The following files are in the directory:
 
+LICENSE.CDDL
+     The Common Development and Distribution License (CDDL) Version 1.0 file
+
 Makefile
      Makefile to compile and build executables with GNU or Intel compilers.
 
