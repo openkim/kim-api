@@ -1,12 +1,12 @@
 !-------------------------------------------------------------------------------
 !
-! NEIGH_RVEC_F_periodic_FCC_neighborlist 
+! NEIGH_RVEC_F_periodic_FCC_neighborlist
 !
 !-------------------------------------------------------------------------------
 subroutine NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerHalfSide, cutoff, FCCspacing, N, NN, neighborList, RijList)
   use KIM_API
   implicit none
-  
+
   !-- Transferred variables
   integer,                               intent(in)  :: CellsPerHalfSide
   double precision,                      intent(in)  :: cutoff
@@ -15,7 +15,7 @@ subroutine NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerHalfSide, cutoff, FCCs
   integer,                               intent(in)  :: NN
   integer, dimension(NN+1,N),            intent(out) :: neighborList
   double precision, dimension(3,NN+1,N), intent(out) :: RijList
-  
+
   !-- Local variables
   double precision dx(3)
   double precision cutoff2

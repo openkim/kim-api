@@ -1,6 +1,6 @@
 !-------------------------------------------------------------------------------
 !
-! get_neigh_no_Rij neighbor list access function 
+! get_neigh_no_Rij neighbor list access function
 !
 ! This function implements Locator and Iterator modes
 !
@@ -8,7 +8,7 @@
 integer function get_neigh_no_Rij(pkim,mode,request,atom,numnei,pnei1atom,pRij)
   use KIM_API
   implicit none
-  
+
   !-- Transferred variables
   integer(kind=kim_intptr), intent(in)  :: pkim
   integer,                  intent(in)  :: mode
@@ -17,7 +17,7 @@ integer function get_neigh_no_Rij(pkim,mode,request,atom,numnei,pnei1atom,pRij)
   integer,                  intent(out) :: numnei
   integer nei1atom(1); pointer(pnei1atom, nei1atom) ! actual cray pointer associated with nei1atom
   real*8  Rij(3,1);    pointer(pRij, Rij)
-  
+
   !-- Local variables
   integer, save :: iterVal = 0
   integer  atomToReturn
@@ -33,7 +33,7 @@ integer function get_neigh_no_Rij(pkim,mode,request,atom,numnei,pnei1atom,pRij)
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
      stop
   endif
-  
+
   pnAtoms = kim_api_get_data_f(pkim, "numberOfParticles", ier)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
@@ -74,19 +74,19 @@ integer function get_neigh_no_Rij(pkim,mode,request,atom,numnei,pnei1atom,pRij)
      get_neigh_no_Rij = KIM_STATUS_NEIGH_INVALID_MODE
      return
   endif
-  
+
   ! set the returned atom
   atom = atomToReturn
-  
+
   ! set the returned number of neighbors for the returned atom
   numnei = neighborList(1,atom)
-  
+
   ! set the location for the returned neighbor list
   pnei1atom = loc(neighborList(2,atom))
-  
+
   ! set pointer to Rij to NULL
   pRij = 0
-  
+
   get_neigh_no_Rij = KIM_STATUS_OK
   return
 end function get_neigh_no_Rij

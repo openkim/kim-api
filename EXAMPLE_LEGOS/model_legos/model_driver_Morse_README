@@ -34,7 +34,7 @@
 This directory (MODEL_DRIVER_NAME_STR) contains a shifted Morse pair potential
 Model driver written in C.
 
-   phi(r) = epsilon * ( - exp[ -2*C*(r - Rzero) ] + 2*exp[ -C*(r - Rzero) ] ) 
+   phi(r) = epsilon * ( - exp[ -2*C*(r - Rzero) ] + 2*exp[ -C*(r - Rzero) ] )
             + shift
 
 where shift is computed so that phi(rcut) = 0.0

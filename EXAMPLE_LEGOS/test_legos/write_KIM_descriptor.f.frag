@@ -157,7 +157,7 @@ do i = 1,num_specs
    kim_descriptor = trim(kim_descriptor) // type_line // cr
 enddo
 
-kim_descriptor = trim(kim_descriptor) // & 
+kim_descriptor = trim(kim_descriptor) // &
                                                                                    cr // &
                                                                                    cr // &
    divider                                                                      // cr // &

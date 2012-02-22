@@ -99,7 +99,7 @@ double precision, parameter :: x(npt) =   (/  .202111069753385D+01, &
                                               .555805441821810D+01, &
                                               .555807968210182D+01, &
                                               .555810494598553D+01 /)
- 
+
 double precision, parameter :: yv2(npt) = (/  .196016472197158D+01, &
                                               .682724240745344D+00, &
                                               .147370824539188D+00, &
@@ -117,7 +117,7 @@ double precision, parameter :: yv2(npt) = (/  .196016472197158D+01, &
                                               .000000000000000D+00, &
                                               .000000000000000D+00, &
                                               .000000000000000D+00 /)
-                                            
+
 double precision, parameter :: Bv2(npt) = (/ -.702739315585347D+01, &
                                              -.333140549270729D+01, &
                                              -.117329394261502D+01, &
@@ -326,7 +326,7 @@ contains
 !-------------------------------------------------------------------------------
 subroutine calc_phi(r,phi,irlast)
 implicit none
-   
+
 !-- Transferred variables
 double precision, intent(in)    :: r
 double precision, intent(out)   :: phi
@@ -339,7 +339,7 @@ double precision dx
 if (r .gt. model_cutoff) then
    ! Argument exceeds cutoff radius
    phi = 0.d0
-else 
+else
    i = seval_i(npt,r,x,irlast)
    dx = r - x(i)
    phi = yv2(i) + dx*(Bv2(i) + dx*(Cv2(i) + dx*Dv2(i)))
@@ -354,7 +354,7 @@ end subroutine calc_phi
 !-------------------------------------------------------------------------------
 subroutine calc_phi_dphi(r,phi,dphi,irlast)
 implicit none
-   
+
 !-- Transferred variables
 double precision, intent(in)    :: r
 double precision, intent(out)   :: phi,dphi
@@ -368,7 +368,7 @@ if (r .gt. model_cutoff) then
    ! Argument exceeds cutoff radius
    phi    = 0.d0
    dphi   = 0.d0
-else 
+else
    i = seval_i(npt,r,x,irlast)
    dx = r - x(i)
    phi  = yv2(i) + dx*(Bv2(i) + dx*(Cv2(i) + dx*Dv2(i)))
@@ -384,7 +384,7 @@ end subroutine calc_phi_dphi
 !-------------------------------------------------------------------------------
 subroutine calc_g(r,g,irlast)
 implicit none
-   
+
 !-- Transferred variables
 double precision, intent(in)    :: r
 double precision, intent(out)   :: g
@@ -397,9 +397,9 @@ double precision dx
 if (r .gt. model_cutoff) then
    ! Argument exceeds cutoff radius
    g = 0.d0
-else 
+else
    i = seval_i(npt,r,x,irlast)
-   dx = r - x(i) 
+   dx = r - x(i)
    g = yrh(i) + dx*(Brh(i) + dx*(Crh(i) + dx*Drh(i)))
 endif
 
@@ -412,7 +412,7 @@ end subroutine calc_g
 !-------------------------------------------------------------------------------
 subroutine calc_dg(r,dg,irlast)
 implicit none
-   
+
 !-- Transferred variables
 double precision, intent(in)    :: r
 double precision, intent(out)   :: dg
@@ -425,7 +425,7 @@ double precision dx
 if (r .gt. model_cutoff) then
    ! Argument exceeds cutoff radius
    dg = 0.d0
-else 
+else
    i = seval_i(npt,r,x,irlast)
    dx = r - x(i)
    dg = Brh(i) + dx*(2.d0*Crh(i) + 3.d0*dx*Drh(i))
@@ -453,7 +453,7 @@ double precision dx
 if (rho .le. rhomin) then
    ! Argument less than the minimum stored value
    U = 0.d0
-else 
+else
    i = seval_i(nuu,rho,xuu,ielast)
    dx = rho - xuu(i)
    U = yuu(i) + dx*(Buu(i) + dx*(Cuu(i) + dx*Duu(i)))
@@ -482,7 +482,7 @@ if (rho .le. rhomin) then
    ! Argument less than the minimum stored value
    U  = 0.d0
    dU = 0.d0
-else 
+else
    i = seval_i(nuu,rho,xuu,ielast)
    dx = rho - xuu(i)
    U  = yuu(i) + dx*(Buu(i) + dx*(Cuu(i) + dx*Duu(i)))
@@ -528,7 +528,7 @@ integer j, k
 if ( i .ge. n ) i = 1
 if ( u .lt. x(i) ) go to 10
 if ( u .le. x(i+1) ) go to 30
- 
+
 !  binary search
 !
 10 i = 1
@@ -537,7 +537,7 @@ if ( u .le. x(i+1) ) go to 30
    if ( u .lt. x(k) ) j = k
    if ( u .ge. x(k) ) i = k
    if ( j .gt. i+1 ) go to 20
- 
+
 !  got i, return
 !
 30 seval_i = i
@@ -579,7 +579,7 @@ integer nei1atom(1);        pointer(pnei1atom,nei1atom)
 integer particleTypes(1);   pointer(pparticleTypes,particleTypes)
 real*8 virialdum(1);        pointer(pvirial,virialdum)
 integer irlast;             pointer(pirlast,irlast)
-integer ielast;             pointer(pielast,ielast)  
+integer ielast;             pointer(pielast,ielast)
 character*64 NBC_Method;    pointer(pNBC_Method,NBC_Method)
 real*8, pointer :: coor(:,:),force(:,:),ene_pot(:),virial_global(:)
 integer IterOrLoca
@@ -773,7 +773,7 @@ do
       if (NBC.eq.1) then
          where ( abs(Rij) .gt. 0.5d0*boxSideLengths )  ! periodic boundary conditions
             Rij = Rij - sign(boxSideLengths,Rij)       ! applied where needed.
-         end where                                ! 
+         end where                                !
       endif
 
       ! compute contribution to electron density
@@ -865,7 +865,7 @@ do
       if (NBC.eq.1) then
          where ( abs(Rij) .gt. 0.5d0*boxSideLengths )  ! periodic boundary conditions
             Rij = Rij - sign(boxSideLengths,Rij)       ! applied where needed.
-         end where                                ! 
+         end where                                !
       endif
 
       ! compute energy and forces
@@ -961,7 +961,7 @@ end subroutine Compute_Energy_Forces
 !-------------------------------------------------------------------------------
 subroutine get_current_atom_neighbors(IterOrLoca,HalfOrFull,NBC,N,pkim,      &
                                       atom,numnei,pnei1atom,pRij_list,ier)
-implicit none 
+implicit none
 
 !-- Transferred variables
 integer,                  intent(in)    :: IterOrLoca
@@ -1030,14 +1030,14 @@ implicit none
 
 !-- Transferred variables
 integer(kind=kim_intptr), intent(in) :: pkim
-   
+
 !-- Local variables
 integer ier, idum
 
 !-- KIM variables
 integer irlast; pointer(pirlast,irlast)
-integer ielast; pointer(pielast,ielast)  
-    
+integer ielast; pointer(pielast,ielast)
+
 ! get irlast and ielast from KIM object and free memory
 call kim_api_getm_data_f(pkim, ier, &
      "PARAM_FIXED_irlast", pirlast, 1, &
@@ -1050,7 +1050,7 @@ endif
 
 call free(pirlast)
 call free(pielast)
-    
+
 end subroutine Destroy
 
 end module ex_model_Al_PF_ErcolessiAdams
@@ -1075,7 +1075,7 @@ integer ier, idum
 !-- KIM variables
 real*8 cutoff;  pointer(pcutoff,cutoff)
 integer irlast; pointer(pirlast,irlast)
-integer ielast; pointer(pielast,ielast)  
+integer ielast; pointer(pielast,ielast)
 
 ! store function pointers in KIM object
 call kim_api_setm_data_f(pkim, ier, &

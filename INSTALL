@@ -48,7 +48,7 @@ To install the openKIM API package you need the following:
 
 2. GNU make, and
 
-3. GNU compilers (gcc, g++, gfortran) version 4.2.x or higher or the 
+3. GNU compilers (gcc, g++, gfortran) version 4.2.x or higher or the
    corresponding Intel compilers, version 11.1 or higher.
 
 (See comments below under TROUBLESHOOTING regarding compiler issues.)
@@ -59,8 +59,8 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
 
 1. Set up necessary environment variables.
 
-   (a) Define the location of the openKIM API root directory.  For example, 
-       if you untarred the `openkim-api-vX.X.X.tgz' tarball in your home 
+   (a) Define the location of the openKIM API root directory.  For example,
+       if you untarred the `openkim-api-vX.X.X.tgz' tarball in your home
        directory, you would do:
 
        bash:
@@ -69,22 +69,22 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
        Make sure to include the trailing slash. The `%' symbol represents the
        bash sell prompt and should not be typed.
 
-       (Above `vX.X.X' represents the current release number.) 
+       (Above `vX.X.X' represents the current release number.)
 
-   (b) By default, all makefiles use the GNU compilers for 64 bit Linux.  
+   (b) By default, all makefiles use the GNU compilers for 64 bit Linux.
        In order to use the Intel compiler, define the environment variable
        KIM_INTEL
 
-       bash: 
+       bash:
        % export KIM_INTEL="yes"
 
-   (c) For using a 32 bit machine, define the environment variable KIM_SYSTEM32 
+   (c) For using a 32 bit machine, define the environment variable KIM_SYSTEM32
 
-       bash: 
-       % export KIM_SYSTEM32="yes" 
+       bash:
+       % export KIM_SYSTEM32="yes"
 
-    It is recommended to place the above environment variables definitions in 
-    your shell setup file which is located in your home directory 
+    It is recommended to place the above environment variables definitions in
+    your shell setup file which is located in your home directory
     (e.g. ~/.bashrc).
 
 
@@ -117,7 +117,7 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
    % cd $KIM_DIR/TESTs/ex_test_Ar_free_cluster_CLUSTER_F90
    % echo "ex_model_Ar_P_MLJ_CLUSTER_C" | ./ex_test_Ar_free_cluster_CLUSTER_F90
 
-  (See the README files in the Test directories for an explanation of what 
+  (See the README files in the Test directories for an explanation of what
    the Tests do.)
 
 
@@ -151,11 +151,11 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
    are read in by a Test.  This is still being investigated.
 
    Note: Currently static linking is the default option because older versions of
-         the GNU compiler do not provide dynamic loading by default.  In 
-         addition, some versions of MPI only work with static linking.  In 
-         future releases, it is expected that dynamic linking will become the 
+         the GNU compiler do not provide dynamic loading by default.  In
+         addition, some versions of MPI only work with static linking.  In
+         future releases, it is expected that dynamic linking will become the
          default method.
-       
+
 
 7. The openkim-api package provides wrapper routines for accessing the neighbor
    list object.  These routines check to ensure that the maximum number of
@@ -198,7 +198,7 @@ TROUBLESHOOTING
 SUPPORT
 
 If you have problems or questions, send an email with your question and all
-relevant information to 
+relevant information to
 
 openkim@googlegroups.com
 

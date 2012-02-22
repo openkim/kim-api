@@ -32,7 +32,7 @@
 /*******************************************************************************
 *
 *  Release: This file is part of the openkim-api.git repository.
-* 
+*
 *******************************************************************************/
 
 
@@ -56,7 +56,7 @@
 #define KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3      -12
 #define KIM_STATUS_NEIGH_INVALID_REQUEST           -11
 #define KIM_STATUS_NEIGH_METHOD_NOT_PROVIDED       -10
-#define KIM_STATUS_NEIGH_TOO_MANY_NEIGHBORS         -9 
+#define KIM_STATUS_NEIGH_TOO_MANY_NEIGHBORS         -9
 #define KIM_STATUS_API_OBJECT_INVALID               -8
 #define KIM_STATUS_ARG_INVALID_SHAPE                -7
 #define KIM_STATUS_NEIGH_INVALID_MODE               -6

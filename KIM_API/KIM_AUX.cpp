@@ -76,7 +76,7 @@ void KIM_AUX::Process_DE::init2zero(KIM_API_model* pkim, int* kimerr){
             if (ierGlobal == KIM_STATUS_OK && prDE->virial != NULL) {
                 prDE->virial_flag = pkim->get_compute("virial");
                 if (prDE->virial_flag==1 && pkim->virial_need2add) {
-		  prDE->virial[0] =0.0;  prDE->virial[1] =0.0;  prDE->virial[2] =0.0;
+                  prDE->virial[0] =0.0;  prDE->virial[1] =0.0;  prDE->virial[2] =0.0;
                   prDE->virial[3] =0.0;  prDE->virial[4] =0.0;  prDE->virial[5] =0.0;
                   process_d1=true;
                 }
@@ -194,7 +194,7 @@ void KIM_AUX::Process_DE::process_d2Edr2(KIM_API_model** ppkim, double* de, doub
          //get instance of Process_DE from kim object
          KIM_API_model *pkim = *ppkim;
          Process_DE *prDE=pkim->get_process_DE_instance();//=??
-         
+
           *ier=KIM_STATUS_FAIL;
           double *r = *rr;
           double rm = (*de)/(r[0]*r[1]);

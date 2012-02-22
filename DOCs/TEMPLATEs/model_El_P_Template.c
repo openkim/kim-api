@@ -169,33 +169,33 @@ static void compute(void* km, int* ier)
       return;
    }
    if (!strcmp("CLUSTER",NBCstr))
-   {	   
+   {       
       NBC = 0;
       HalfOrFull = 1;
    }
    else if (!strcmp("MI_OPBC_H",NBCstr))
-   {	   
+   {       
       NBC = 1;
       HalfOrFull = 1;
    }
    else if (!strcmp("MI_OPBC_F",NBCstr))
-   {	   
+   {       
       NBC = 1;
       HalfOrFull = 2;
    }
 
    else if (!strcmp("NEIGH_PURE_H",NBCstr))
-   {	   
+   {       
       NBC = 2;
       HalfOrFull = 1;
    }
    else if (!strcmp("NEIGH_PURE_F",NBCstr))
-   {	   
+   {       
       NBC = 2;
       HalfOrFull = 2;
    }
    else if (!strcmp("NEIGH_RVEC_F",NBCstr))
-   {	   
+   {       
       NBC = 3;
       HalfOrFull = 2;
    }
@@ -476,12 +476,12 @@ static void compute(void* km, int* ier)
             if (comp_virial)
             {
                /* virial(i,j) = r(i)*r(j)*(dV/dr)/r */
-	       virial[0] += Rij[0]*Rij[0]*dEidr/R;
-	       virial[1] += Rij[1]*Rij[1]*dEidr/R;
-	       virial[2] += Rij[2]*Rij[2]*dEidr/R;
-	       virial[3] += Rij[1]*Rij[2]*dEidr/R;
-	       virial[4] += Rij[0]*Rij[2]*dEidr/R;
-	       virial[5] += Rij[0]*Rij[1]*dEidr/R;
+               virial[0] += Rij[0]*Rij[0]*dEidr/R;
+               virial[1] += Rij[1]*Rij[1]*dEidr/R;
+               virial[2] += Rij[2]*Rij[2]*dEidr/R;
+               virial[3] += Rij[1]*Rij[2]*dEidr/R;
+               virial[4] += Rij[0]*Rij[2]*dEidr/R;
+               virial[5] += Rij[0]*Rij[1]*dEidr/R;
             }
             
             /* contribution to forces */

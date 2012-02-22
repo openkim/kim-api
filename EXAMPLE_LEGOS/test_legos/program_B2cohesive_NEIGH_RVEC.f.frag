@@ -32,7 +32,7 @@
 !**  PROGRAM TEST_NAME_STR
 !**
 !**  KIM compliant program to find (using the Golden section search algorithm)
-!**  the minimum energy of one atom in a periodic B2 crystal of SPECIES1_NAME_STR and SPECIES2_NAME_STR as a 
+!**  the minimum energy of one atom in a periodic B2 crystal of SPECIES1_NAME_STR and SPECIES2_NAME_STR as a
 !**  function of lattice spacing.
 !**
 !**  Works with the following NBC methods:
@@ -78,7 +78,7 @@ program TEST_NAME_STR
 
   double precision     :: FinalSpacing       ! crystal lattice parameter
 
-  double precision     :: FinalEnergy        ! energy per atom of crystal 
+  double precision     :: FinalEnergy        ! energy per atom of crystal
                                              ! at current spacing
 
   integer              :: CellsPerRcut       ! number of unit cells along
@@ -114,7 +114,7 @@ program TEST_NAME_STR
   read(*,*) modelname
 
 
-  ! We'll use just two atom (one SPECIES1_NAME_STR and one SPECIES2_NAME_STR) for 
+  ! We'll use just two atom (one SPECIES1_NAME_STR and one SPECIES2_NAME_STR) for
   ! this calculation!
   !
   N = 2
@@ -125,7 +125,7 @@ program TEST_NAME_STR
   call setup_B2_KIM_API_object(pkim, testname, modelname, specname1, specname2)
 
 
-  ! allocate storage for neighbor lists, compute them for the first time, 
+  ! allocate storage for neighbor lists, compute them for the first time,
   ! and store necessary pointers in KIM API object
   !
   ! First, access the `cutoff' arguemt
@@ -187,9 +187,9 @@ end program TEST_NAME_STR
 
 !-------------------------------------------------------------------------------
 !
-! NEIGH_RVEC_compute_equilibrium_spacing : 
+! NEIGH_RVEC_compute_equilibrium_spacing :
 !
-!    Use the Golden section search algorithm to find the equilibrium spacing by 
+!    Use the Golden section search algorithm to find the equilibrium spacing by
 !    minimizing the energy of the system with respect to the periodic box size.
 !
 !-------------------------------------------------------------------------------
@@ -199,7 +199,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
              verbose,RetSpacing,RetEnergy)
   use KIM_API
   implicit none
-  
+
   !-- Transferred variables
   integer(kind=kim_intptr), intent(in)     :: pkim
   integer,                  intent(in)     :: DIM
@@ -214,7 +214,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   logical,                  intent(in)     :: verbose
   double precision,         intent(out)    :: RetSpacing
   double precision,         intent(out)    :: RetEnergy
-  
+
   !-- Local variables
   double precision,         parameter :: Golden      = (1.d0 + sqrt(5.d0))/2.d0
   integer ier, idum

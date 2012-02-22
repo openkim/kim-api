@@ -1,4 +1,4 @@
-    ! Check to see if we have been asked to compute the energy, forces, energyperatom, 
+    ! Check to see if we have been asked to compute the energy, forces, energyperatom,
     ! and virial
     !
     call kim_api_getm_compute_f(pkim, ier, &
@@ -41,7 +41,7 @@
        idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
        return
     endif
-    
+
     ! Cast to F90 arrays
     !
     call KIM_to_F90_real_array_2d(coordum,coor,DIM,numberOfParticles)
@@ -66,7 +66,7 @@
     enddo
     ier = KIM_STATUS_OK ! everything is ok
 
-    
+
     ! Initialize potential energies, forces, virial term
     !
     if (comp_enepot.eq.1) ene_pot(1:numberOfParticles) = 0.d0

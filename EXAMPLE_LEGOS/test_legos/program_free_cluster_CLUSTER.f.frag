@@ -31,7 +31,7 @@
 !**
 !**  PROGRAM TEST_NAME_STR
 !**
-!**  KIM compliant program to compute the energy of and forces and virial on an 
+!**  KIM compliant program to compute the energy of and forces and virial on an
 !**  isolated cluster of SPECIES_NAME_STR atoms
 !**
 !**  Release: This file is part of the openkim-api.git repository.
@@ -77,7 +77,7 @@ program TEST_NAME_STR
   integer, pointer :: particleTypes(:)
   integer middleDum
 
-  
+
   ! Get KIM Model name to use
   print '("Please enter a valid KIM model name: ")'
   read(*,*) modelname

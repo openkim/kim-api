@@ -32,7 +32,7 @@
 !**  PROGRAM TEST_NAME_STR
 !**
 !**  KIM compliant program to find (using the Golden section search algorithm)
-!**  the minimum energy of one atom in a periodic FCC crystal (spec="SPECIES_NAME_STR") as a 
+!**  the minimum energy of one atom in a periodic FCC crystal (spec="SPECIES_NAME_STR") as a
 !**  function of lattice spacing.
 !**
 !**  Works with the following NBC methods:
@@ -76,7 +76,7 @@ program TEST_NAME_STR
 
   double precision     :: FinalSpacing       ! crystal lattice parameter
 
-  double precision     :: FinalEnergy        ! energy per atom of crystal 
+  double precision     :: FinalEnergy        ! energy per atom of crystal
                                              ! at current spacing
 
   integer              :: CellsPerCutoff     ! number of unit cells along
@@ -122,7 +122,7 @@ program TEST_NAME_STR
   call setup_KIM_API_object(pkim, testname, modelname, N, specname, SupportHalf)
 
 
-  ! allocate storage for neighbor lists, compute them for the first time, 
+  ! allocate storage for neighbor lists, compute them for the first time,
   ! and store necessary pointers in KIM API object
   !
   ! First, access the `cutoff' arguemt

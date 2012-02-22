@@ -73,7 +73,7 @@ subroutine calc_phi(model_epsilon,  &
                     model_shift,    &
                     model_cutoff,r,phi)
 implicit none
-   
+
 !-- Transferred variables
 double precision, intent(in)  :: model_epsilon
 double precision, intent(in)  :: model_sigma
@@ -93,7 +93,7 @@ sor12= sor6*sor6       !  (sig/r)^12
 if (r .gt. model_cutoff) then
    ! Argument exceeds cutoff radius
    phi = 0.d0
-else 
+else
    phi = 4.d0*model_epsilon*(sor12-sor6) + model_shift
 endif
 
@@ -109,7 +109,7 @@ subroutine calc_phi_dphi(model_epsilon,  &
                          model_shift,    &
                          model_cutoff,r,phi,dphi)
 implicit none
-   
+
 !-- Transferred variables
 double precision, intent(in)  :: model_epsilon
 double precision, intent(in)  :: model_sigma
@@ -130,7 +130,7 @@ if (r .gt. model_cutoff) then
    ! Argument exceeds cutoff radius
    phi    = 0.d0
    dphi   = 0.d0
-else 
+else
    phi  = 4.d0*model_epsilon*(sor12-sor6) + model_shift
    dphi = 24.d0*model_epsilon*(-2.d0*sor12+sor6)/r
 endif
@@ -147,7 +147,7 @@ subroutine calc_phi_dphi_d2phi(model_epsilon,  &
                                model_shift,    &
                                model_cutoff,r,phi,dphi,d2phi)
 implicit none
-   
+
 !-- Transferred variables
 double precision, intent(in)  :: model_epsilon
 double precision, intent(in)  :: model_sigma
@@ -169,7 +169,7 @@ if (r .gt. model_cutoff) then
    phi    = 0.d0
    dphi   = 0.d0
    d2phi  = 0.d0
-else 
+else
    phi   = 4.d0*model_epsilon*(sor12-sor6) + model_shift
    dphi  = 24.d0*model_epsilon*(-2.d0*sor12+sor6)/r
    d2phi = 24.d0*model_epsilon*(26.d0*sor12-7.d0*sor6)/rsq
@@ -354,7 +354,7 @@ if (IterOrLoca.eq.1) then
    if (ier.ne.KIM_STATUS_NEIGH_ITER_INIT_OK) then
       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_neigh_f", ier)
       ier = KIM_STATUS_FAIL
-      return 
+      return
    endif
 endif
 
@@ -398,7 +398,7 @@ do
          endif
       endif
    endif
-      
+
    ! Loop over the neighbors of atom i
    !
    do jj = 1, numnei
@@ -418,7 +418,7 @@ do
       if (NBC.eq.1) then
          where ( abs(Rij) .gt. 0.5d0*boxSideLengths )  ! periodic boundary conditions
             Rij = Rij - sign(boxSideLengths,Rij)       ! applied where needed.
-         end where                                ! 
+         end where                                !
       endif
 
       ! compute energy and forces
@@ -589,7 +589,7 @@ call calc_phi(model_epsilon, &
               model_sigma,   &
               model_shift,   &
               model_cutoff,  &
-              model_cutoff,energy_at_cutoff)  
+              model_cutoff,energy_at_cutoff)
 model_shift = -energy_at_cutoff
 
 end subroutine reinit
@@ -788,7 +788,7 @@ call calc_phi(model_epsilon, &
               model_sigma,   &
               model_shift,   &
               model_cutoff,  &
-              model_cutoff,energy_at_cutoff)  
+              model_cutoff,energy_at_cutoff)
 model_shift   = -energy_at_cutoff
 
 ! allocate buffer

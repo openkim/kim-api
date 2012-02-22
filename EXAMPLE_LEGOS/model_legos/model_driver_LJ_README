@@ -31,7 +31,7 @@
 #
 
 
-This directory (MODEL_DRIVER_NAME_STR) contains a shifted Lennard-Jones 
+This directory (MODEL_DRIVER_NAME_STR) contains a shifted Lennard-Jones
 pair potential Model driver written in Fortran 90.
 
    phi(r) = 4 * epsilon * ( (sigma/r)^12 - (sigma/r)^6 ) + shift

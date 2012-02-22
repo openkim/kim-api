@@ -40,7 +40,7 @@
 #include <stdint.h>
 //#include "KIM_API.h"
 //#define intptr_t long long  // for 64 bit machines
-#ifdef	__cplusplus
+#ifdef  __cplusplus
 extern "C" {
 #endif
 //global methods
@@ -76,7 +76,7 @@ int KIM_API_get_neigh(void *kimmdl,int mode,int request,
 int KIM_API_get_neigh_mode(void *kimmdl,int *error);
 
 char * KIM_API_get_status_msg(int error);
-    
+
 int KIM_API_report_error(int ln,char * fl,char * usermsg,int error);
 
 int KIM_API_get_model_index_shift(void *kimmdl);
@@ -240,8 +240,8 @@ double kim_api_convert_to_act_unit_(void * kimmdl,
                                 double *temperature_exponent,
                                 double *time_exponent,
                                 int* kimerror);
-#ifdef	__cplusplus
+#ifdef  __cplusplus
 }
 #endif
 
-#endif	/* _KIM_API_C_H */
+#endif  /* _KIM_API_C_H */

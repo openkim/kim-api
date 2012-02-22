@@ -6,7 +6,7 @@
 subroutine NEIGH_PURE_periodic_neighborlist(half, numberOfParticles, coords, cutoff, MiddleAtomId, neighborList)
   use KIM_API
   implicit none
-  
+
   !-- Transferred variables
   logical,                                                   intent(in)  :: half
   integer,                                                   intent(in)  :: numberOfParticles
@@ -14,15 +14,15 @@ subroutine NEIGH_PURE_periodic_neighborlist(half, numberOfParticles, coords, cut
   double precision,                                          intent(in)  :: cutoff
   integer,                                                   intent(in)  :: MiddleAtomId
   integer, dimension(numberOfParticles+1,numberOfParticles), intent(out) :: neighborList ! not memory efficient
-  
+
   !-- Local variables
   integer i, j, a
   double precision dx(3)
   double precision r2
   double precision cutoff2
-  
+
   cutoff2 = cutoff**2
-  
+
   do i=1,numberOfParticles
      a = 1
      do j=1,numberOfParticles
@@ -46,7 +46,7 @@ subroutine NEIGH_PURE_periodic_neighborlist(half, numberOfParticles, coords, cut
      ! atom i has a-1 neighbors
      neighborList(1,i) = a-1
   enddo
-  
+
   return
 
 end subroutine NEIGH_PURE_periodic_neighborlist

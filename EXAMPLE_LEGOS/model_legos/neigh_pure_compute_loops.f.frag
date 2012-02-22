@@ -24,17 +24,17 @@
     !  Compute energy and forces
     !
     do i = 1,numberOfParticles
-       
+
        ! Get neighbors for atom i
        !
        atom = i ! request neighbors for atom i
-       
+
        ier = kim_api_get_neigh_f(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij_dummy)
        if (ier.lt.KIM_STATUS_OK) then
           idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_neigh", ier)
           return
        endif
-       
+
        ! Loop over the neighbors of atom i
        !
        do jj = 1, numnei

@@ -1,7 +1,7 @@
     !  Compute energy and forces
     !
     do i = 1,numberOfParticles
-       
+
        ! Get neighbors for atom i
        !
        atom = i ! request neighbors for atom i
@@ -11,7 +11,7 @@
           return
        endif
 
-       
+
        ! Loop over the neighbors of atom i
        !
        do jj = 1, numnei

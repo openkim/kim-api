@@ -73,7 +73,7 @@ else
 endif
 
 ifdef KIM_INTEL
- include $(KIM_API_DIR)Intel_compiler_settings.mk 
+ include $(KIM_API_DIR)Intel_compiler_settings.mk
 else
  include $(KIM_API_DIR)GNU_compiler_settings.mk
 endif
@@ -198,7 +198,7 @@ endif
 
 #
 MODEL_NAME_KIM_STR_H = char* $(MODEL_NAME)_kim_str'('')'';'
-MODEL_NAME_KIM_STR_CPP = char* $(MODEL_NAME)_kim_str'('')''{' 
+MODEL_NAME_KIM_STR_CPP = char* $(MODEL_NAME)_kim_str'('')''{'
 %_kim_str.cpp: %.kim
 	echo "extern \"C\" {"           > $*_kim_str.cpp
 	echo $(MODEL_NAME_KIM_STR_H)   >> $*_kim_str.cpp
@@ -218,7 +218,7 @@ MODEL_NAME_KIM_STR_CPP = char* $(MODEL_NAME)_kim_str'('')''{'
 # Library pattern rule
 ifeq ($(OSTYPE),darwin11)
 %.so: %.a
-	libtool  $(SHARED_LIB_FLAG)  -o $@  *.a  $(KIM_LIB) 
+	libtool  $(SHARED_LIB_FLAG)  -o $@  *.a  $(KIM_LIB)
 else
 %.so: %.a
 	$(LINKCOMPILER) $(SHARED_LIB_FLAG)  $(CPPLIBFLAG) -o $@  *.o -L$(KIM_API_DIR) -lkim

@@ -64,7 +64,7 @@ program TEST_NAME_STR
   real*8,  parameter :: cutpad         = 0.75d0
   integer, parameter :: max_specs      = 10     ! most species a Model can support
   real*8,  parameter :: eps_prec       = epsilon(1.d0)
-  
+
   integer, parameter :: &
        N = 4*(nCellsPerSide)**3 + 6*(nCellsPerSide)**2 + 3*(nCellsPerSide) + 1
   integer(kind=kim_intptr), parameter :: SizeOne = 1
@@ -116,7 +116,7 @@ program TEST_NAME_STR
 
   ! Initialize error flag
   ier = KIM_STATUS_OK
-  
+
   ! Get KIM Model name to use
   print '("Please enter a valid KIM model name: ")'
   read(*,*) modelname
@@ -169,7 +169,7 @@ program TEST_NAME_STR
      stop
   endif
 
-  ! Allocate storage for neighbor lists and 
+  ! Allocate storage for neighbor lists and
   ! store pointers to neighbor list object and access function
   allocate(neighborList(N+1,N))
   if (nbc.le.3) then
@@ -366,7 +366,7 @@ program TEST_NAME_STR
   ! Don't forget to free and/or deallocate
   deallocate(forces_num)
   deallocate(forces_num_err)
-  call free(pNBC_Method) 
+  call free(pNBC_Method)
   deallocate(coordsave)
   deallocate(neighborList)
   if (nbc.eq.4) then

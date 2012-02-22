@@ -124,7 +124,7 @@ static void calc_phi(double* epsilon,
    /* local variables */
    double ep;
    double ep2;
-   
+
    ep  = exp(-(*C)*(r-*Rzero));
    ep2 = ep*ep;
 
@@ -151,7 +151,7 @@ static void calc_phi_dphi(double* epsilon,
    /* local variables */
    double ep;
    double ep2;
-   
+
    ep  = exp(-(*C)*(r-*Rzero));
    ep2 = ep*ep;
 
@@ -180,7 +180,7 @@ static void calc_phi_d2phi(double* epsilon,
    /* local variables */
    double ep;
    double ep2;
-   
+
    ep  = exp(-(*C)*(r-*Rzero));
    ep2 = ep*ep;
 
@@ -242,7 +242,7 @@ static void compute(void* km, int* ier)
    int zero = 0;
    int one = 1;
    int request;
-   
+
    int* nAtoms;
    int* particleTypes;
    double* cutoff;
@@ -438,7 +438,7 @@ static void compute(void* km, int* ier)
             }
          }
       }
-            
+
       /* loop over the neighbors of atom i */
       for (jj = 0; jj < numOfAtomNeigh; ++ jj)
       {
@@ -466,11 +466,11 @@ static void compute(void* km, int* ier)
                   Rij[k] -= (Rij[k]/fabs(Rij[k]))*boxSideLengths[k];
                }
             }
-            
+
             /* compute squared distance */
             Rsqij += Rij[k]*Rij[k];
          }
-         
+
          /* compute energy and force */
          if (Rsqij < *cutsq) /* particles are interacting ? */
          {
@@ -483,7 +483,7 @@ static void compute(void* km, int* ier)
                               Rzero,
                               shift,
                               cutoff, R, &phi, &dphi, &d2phi);
-               
+
                /* compute dEidr */
                if ((1 == HalfOrFull) && (j < numberContrib))
                {
@@ -528,7 +528,7 @@ static void compute(void* km, int* ier)
                         shift,
                         cutoff, R, &phi);
             }
-            
+
             /* contribution to energy */
             if (comp_particleEnergy)
             {
@@ -549,13 +549,13 @@ static void compute(void* km, int* ier)
                   *energy += 0.5*phi;
                }
             }
-            
+
             /* contribution to process_dEdr */
             if (comp_process_dEdr)
             {
                KIM_API_process_dEdr(km, &dEidr, &R, &pRij, &i, &j, ier);
             }
-            
+
             /* contribution to process_d2Edr2 */
             if (comp_process_d2Edr2)
             {
@@ -567,8 +567,8 @@ static void compute(void* km, int* ier)
                j_pairs[0] = j_pairs[1] = j;
 
                KIM_API_process_d2Edr2(km, &d2Eidr, &pR_pairs, &pRij_pairs, &pi_pairs, &pj_pairs, ier);
-            } 
-          
+            }
+
             /* contribution to forces */
             if (comp_force)
             {
@@ -581,9 +581,9 @@ static void compute(void* km, int* ier)
          }
       } /* loop on jj */
    }    /* infinite while loop (terminated by break statements above */
-   
+
    /* perform final tasks */
-   
+
    if (comp_particleEnergy && comp_energy)
    {
       *energy = 0.0;
@@ -594,7 +594,7 @@ static void compute(void* km, int* ier)
    }
 
    /* Free temporary storage */
-   if (0 == NBC) 
+   if (0 == NBC)
    {
       free(neighListOfCurrentAtom);
    }
@@ -726,7 +726,7 @@ void MODEL_DRIVER_NAME_LC_STR_init_(void *km, char* paramfile, int* length)
       KIM_API_report_error(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL);
       exit(1);
    }
-   
+
    /* store parameters in KIM object */
    KIM_API_setm_data(pkim, &ier, 6*4,
                      "PARAM_FREE_cutoff",  1, model_Pcutoff, 1,
@@ -945,6 +945,6 @@ static void destroy(void *km)
 
    /* destroy the buffer */
    free(buffer);
-   
+
    return;
 }

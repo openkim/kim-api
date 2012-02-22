@@ -53,13 +53,13 @@ module ex_model_ArNe_P_MLJ_NEIGH_RVEC_F
   public Compute_Energy_Forces
   public ReInit
   public Destroy
-  
+
   ! Species indices
   integer, parameter :: Ar = 1
   integer, parameter :: Ne = 2
-  
+
 contains
-  
+
 !-------------------------------------------------------------------------------
 !
 ! Compute energy and forces on atoms from the positions.
@@ -71,13 +71,13 @@ contains
     !-- Transferred variables
     integer(kind=kim_intptr), intent(in)  :: pkim
     integer,                  intent(out) :: ier
-    
+
     !-- Local variables
     integer, parameter :: DIM=3
     double precision r,Rsqij,phi,dphi,d2phi,dEidr
     double precision CurEpsilon, CurSigma, CurA, CurB, CurC
     integer i,j,jj,numnei,atom,atom_ret
-    
+
     !-- KIM variables
     integer numberOfParticles; pointer(pnAtoms,numberOfParticles)
     integer nparticleTypes;    pointer(pnparticleTypes,nparticleTypes)
@@ -102,7 +102,7 @@ contains
     integer :: comp_force, comp_enepot, comp_virial, comp_energy
     integer :: idum
 
-    ! Check to see if we have been asked to compute the forces, energyperatom, 
+    ! Check to see if we have been asked to compute the forces, energyperatom,
     ! energy and virial
     call kim_api_getm_compute_f(pkim, ier,  &
          "energy",         comp_energy,  1, &
@@ -162,7 +162,7 @@ contains
     enddo
     ier = KIM_STATUS_OK ! everything is ok
 
-    
+
     ! Initialize potential energies, forces, virial term
     !
     if (comp_enepot.eq.1) ene_pot(1:numberOfParticles)   = 0.d0
@@ -174,7 +174,7 @@ contains
     !  Compute energy and forces
     !
     do i = 1,numberOfParticles
-       
+
        ! Get neighbors for atom i
        !
        atom = i ! request neighbors for atom i
@@ -183,7 +183,7 @@ contains
           idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_neigh_f_f", ier)
           return
        endif
-       
+
        ! Loop over the neighbors of atom i
        !
        do jj = 1, numnei
@@ -233,12 +233,12 @@ contains
           endif
        enddo
     enddo
-    
+
     if (comp_enepot.eq.1 .and. comp_energy.eq.1) &
        energy = sum(ene_pot(1:numberOfParticles))                     ! compute total energy
-    
+
   end subroutine Compute_Energy_Forces
-  
+
 !-------------------------------------------------------------------------------
 !
 ! Pair potential: Lennard-Jones with smooth cutoff imposed by Ar^2 + Br + C
@@ -246,27 +246,27 @@ contains
 !-------------------------------------------------------------------------------
   subroutine pair(epsilon,sigma,A,B,C,r,phi,dphi,d2phi)
     implicit none
-    
+
     !-- Transferred variables
     double precision, intent(in)  :: epsilon, sigma, A, B, C
     double precision, intent(in)  :: r
     double precision, intent(out) :: phi, dphi, d2phi
-    
+
     !-- Local variables
     double precision :: rsq,sor,sor6,sor12
-    
+
     rsq  = r*r             !  r^2
     sor  = sigma/r         !  (sig/r)
     sor6 = sor*sor*sor     !
     sor6 = sor6*sor6       !  (sig/r)^6
     sor12= sor6*sor6       !  (sig/r)^12
-    
+
     phi   =  4.d0*epsilon*(sor12-sor6) + A*rsq + B*r + C
     dphi  = 24.d0*epsilon*(-2.d0*sor12+sor6)/r  + 2.d0*A*r + B
     d2phi = 24.d0*epsilon*(26.d0*sor12-7.d0*sor6)/rsq + 2.d0*A
-    
+
   end subroutine pair
-  
+
 !-------------------------------------------------------------------------------
 !
 ! Model reinitialization routine (REQUIRED)
@@ -274,10 +274,10 @@ contains
 !-------------------------------------------------------------------------------
   subroutine ReInit(pkim)
     implicit none
-    
+
     !-- Transferred variables
     integer(kind=kim_intptr), intent(in) :: pkim
-    
+
     !-- Local variables
     real*8 model_cutoff;     pointer(pcutoff,model_cutoff)
     real*8 model_epsilon(1); pointer(pepsilon,model_epsilon)
@@ -290,7 +290,7 @@ contains
     real*8 model_sigmasq(1); pointer(psigmasq,model_sigmasq)
     real*8 model_cutsq;      pointer(pcutsq,model_cutsq)
     integer ier, idum
-    
+
     ! Get (changed) parameters from KIM object ---------------------------------
     call kim_api_getm_data_f(pkim, ier, &
          "PARAM_FREE_sigma",   psigma,    1, &
@@ -300,7 +300,7 @@ contains
        idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
        stop
     endif
-    
+
     ! Set new values in KIM object ---------------------------------------------
     call kim_api_getm_data_f(pkim, ier, &
          "cutoff",              pcutoff,  1, &
@@ -321,7 +321,7 @@ contains
          (model_cutnorm(1:3)**12)
     model_sigmasq(1:3) = model_sigma(1:3)**2
     model_cutsq = model_cutoff**2
-    
+
   end subroutine ReInit
 
 !-------------------------------------------------------------------------------
@@ -335,7 +335,7 @@ contains
 
     !-- Transferred variables
     integer(kind=kim_intptr), intent(in) :: pkim
-    
+
     !-- Local variables
     real*8 model_cutoff;     pointer(pcutoff,model_cutoff)
     real*8 model_epsilon(1); pointer(pepsilon,model_epsilon)
@@ -348,7 +348,7 @@ contains
     real*8 model_sigmasq(1); pointer(psigmasq,model_sigmasq)
     real*8 model_cutsq;      pointer(pcutsq,model_cutsq)
     integer ier, idum
-    
+
     ! get parameters from KIM object
     call kim_api_getm_data_f(pkim, ier, &
          "PARAM_FREE_sigma",     psigma,    1, &
@@ -390,10 +390,10 @@ subroutine ex_model_ArNe_P_MLJ_NEIGH_RVEC_F_init(pkim)
   use ex_model_ArNe_P_MLJ_NEIGH_RVEC_F
   use KIM_API
   implicit none
-  
+
   !-- Transferred variables
   integer(kind=kim_intptr), intent(in) :: pkim
-  
+
   !-- Local variables
   integer(kind=kim_intptr), parameter :: one=1
   integer(kind=kim_intptr), parameter :: three=3
@@ -408,7 +408,7 @@ subroutine ex_model_ArNe_P_MLJ_NEIGH_RVEC_F_init(pkim)
   real*8 model_sigmasq(1); pointer(psigmasq,model_sigmasq)
   real*8 model_cutsq;      pointer(pcutsq,model_cutsq)
   integer ier, idum
-  
+
   ! store function pointers in KIM object
   call kim_api_setm_data_f(pkim, ier, &
        "compute", one, loc(Compute_Energy_Forces), 1, &
@@ -418,7 +418,7 @@ subroutine ex_model_ArNe_P_MLJ_NEIGH_RVEC_F_init(pkim)
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_setm_data_f", ier)
      stop
   endif
-  
+
   ! store model cutoff in KIM object
   pcutoff =  kim_api_get_data_f(pkim,"cutoff",ier)
   if (ier.lt.KIM_STATUS_OK) then
@@ -426,7 +426,7 @@ subroutine ex_model_ArNe_P_MLJ_NEIGH_RVEC_F_init(pkim)
      stop
   endif
   model_cutoff = 8.15d0 ! cutoff distance in angstroms
-  
+
   ! Allocate memory for sigma and store value
   psigma = malloc(three*8) ! 8 is the size of a real*8
   if (psigma.eq.0) then

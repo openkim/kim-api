@@ -31,7 +31,7 @@
 
 
 #ifndef _KIM_AUX_H
-#define	_KIM_AUX_H
+#define _KIM_AUX_H
 
 
 
@@ -57,7 +57,7 @@ namespace KIM_AUX{
         int *numberOfParticles;
         bool halfNeighbors;
     };
-       
+
 }
 
-#endif	/* _KIM_AUX_H */
+#endif  /* _KIM_AUX_H */

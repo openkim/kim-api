@@ -1,6 +1,6 @@
 !-------------------------------------------------------------------------------
 !
-! setup_B2_KIM_API_object : Create KIM API object, 
+! setup_B2_KIM_API_object : Create KIM API object,
 !                           allocate memory and set known values.
 !
 !-------------------------------------------------------------------------------

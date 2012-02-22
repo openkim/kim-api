@@ -167,7 +167,7 @@ static void compute(void* km, int* ier)
    double* force;
    double* particleEnergy;
    double* virial;
-   
+
    /* check to see if we have been asked to compute the forces, particleEnergy, and virial */
    KIM_API_getm_compute(pkim, ier, 3*3,
                         "forces",         &comp_force,          1,
@@ -272,7 +272,7 @@ static void compute(void* km, int* ier)
             /* compute squared distance */
             Rsqij += Rij[k]*Rij[k];
          }
-         
+
          /* compute energy and force */
          if (Rsqij < *cutsq) /* particles are interacting ? */
          {
@@ -287,7 +287,7 @@ static void compute(void* km, int* ier)
                /* compute just pair potential */
                calc_phi(cutoff, epsilon, sigma, A, B, C, R, &phi);
             }
-            
+
             /* contribution to energy */
             if (comp_particleEnergy)
             {
@@ -298,19 +298,19 @@ static void compute(void* km, int* ier)
             {
                *energy += phi;
             }
-            
+
             /* contribution to virial tensor */
             if (comp_virial)
             {
                /* virial(i,j) = r(i)*r(j)*(dV/dr)/r */
-	       virial[0] += Rij[0]*Rij[0]*dphi/R;
-	       virial[1] += Rij[1]*Rij[1]*dphi/R;
-	       virial[2] += Rij[2]*Rij[2]*dphi/R;
-	       virial[3] += Rij[1]*Rij[2]*dphi/R;
-	       virial[4] += Rij[0]*Rij[2]*dphi/R;
-	       virial[5] += Rij[0]*Rij[1]*dphi/R;
+               virial[0] += Rij[0]*Rij[0]*dphi/R;
+               virial[1] += Rij[1]*Rij[1]*dphi/R;
+               virial[2] += Rij[2]*Rij[2]*dphi/R;
+               virial[3] += Rij[1]*Rij[2]*dphi/R;
+               virial[4] += Rij[0]*Rij[2]*dphi/R;
+               virial[5] += Rij[0]*Rij[1]*dphi/R;
             }
-            
+
             /* contribution to forces */
             if (comp_force)
             {
@@ -323,10 +323,10 @@ static void compute(void* km, int* ier)
          }
       } /* loop on j */
    }    /* loop on i */
-   
+
 
    /* perform final tasks */
-   
+
    if (comp_particleEnergy)
    {
       *energy = 0.0;
@@ -363,7 +363,7 @@ void MODEL_NAME_LC_STR_init_(void *km)
                      "compute", 1, &compute, 1,
                      "reinit",  1, &reinit,  1,
                      "destroy", 1, &destroy, 1);
-   
+
    /* store model cutoff in KIM object */
    model_cutoff = (double*) KIM_API_get_data(pkim, "cutoff", &ier);
    if (KIM_STATUS_OK > ier)
@@ -445,7 +445,7 @@ void MODEL_NAME_LC_STR_init_(void *km)
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_setm_data", ier);
       exit(1);
    }
-   
+
    /* set value of sigma */
    *model_sigma = SIGMA_VALUE_STR
    /* set value of epsilon */

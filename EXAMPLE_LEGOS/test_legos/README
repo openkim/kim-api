@@ -148,7 +148,7 @@ program_FCCcohesive_NEIGH_RVEC.f.frag
      ex_test_*_FCCcohesive_NEIGH_RVEC Test.
 
 program_free_cluster.f.frag
-     This Fortran file contains the main program for the 
+     This Fortran file contains the main program for the
      ex_test_*_free_cluster example Test.
 
 program_free_cluster_CLUSTER.c.frag

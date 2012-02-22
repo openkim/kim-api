@@ -64,7 +64,7 @@ if (.not.do_update_list) then   ! if update not requested
       endif
    enddo
    do_update_list = ( disp1 + disp2 > cutpad )
-   
+
 endif
 
 if (do_update_list) then

@@ -120,7 +120,7 @@ int main()
    /* Get KIM Model names */
    printf("Please eneter two valid KIM Model names: \n");
    scanf("%s %s", modelname0, modelname1);
-   
+
    /* initialize the two models */
    status = KIM_API_init(&pkim_periodic_model_0, testname, modelname0);
    if (KIM_STATUS_OK > status)
@@ -146,7 +146,7 @@ int main()
                      "cutoff",                      1,   &cutoff_periodic_model_0,        1,
                      "energy",                      1,   &energy_periodic_model_0,        1);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data",status);
-   
+
    KIM_API_setm_data(pkim_periodic_model_1, &status, 8*4,
                      "numberOfParticles",           1,   &numberOfParticles_periodic,     1,
                      "numberParticleTypes",         1,   &numberParticleTypes,            1,
@@ -199,14 +199,14 @@ int main()
    for (i = 1; i < NCLUSTERATOMS; ++i)
       particleTypes_cluster_model_0[i] = particleTypes_cluster_model_0[0];
    particleTypes_periodic_model_1 = KIM_API_get_partcl_type_code(pkim_periodic_model_1, "Ar", &status);
-   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_partcl_type_code", status); 
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_partcl_type_code", status);
 
    particleTypes_cluster_model_1[0] = KIM_API_get_partcl_type_code(pkim_cluster_model_1, "Ar", &status);
-   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_partcl_type_code", status); 
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_partcl_type_code", status);
    for (i = 1; i < NCLUSTERATOMS; ++i)
       particleTypes_cluster_model_1[i] = particleTypes_cluster_model_1[0];
-   
-   
+
+
    /* setup neighbor lists */
    CellsPerCutoff[0] = ceil(cutoff_periodic_model_0/MinSpacing + 0.05); /* 0.05 is saftey factor */
    CellsPerCutoff[1] = ceil(cutoff_periodic_model_1/MinSpacing + 0.05); /* 0.05 is saftey factor */
@@ -215,16 +215,16 @@ int main()
    /* allocate memory for list */
    nl_periodic_model_0.NNeighbors = (int*) malloc(sizeof(int));
    if (NULL==nl_periodic_model_0.NNeighbors) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
-   
+
    nl_cluster_model_0.NNeighbors = (int*) malloc(NCLUSTERATOMS*sizeof(int));
    if (NULL==nl_cluster_model_0.NNeighbors) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
-      
+
    nl_periodic_model_1.NNeighbors = (int*) malloc(sizeof(int));
    if (NULL==nl_periodic_model_1.NNeighbors) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
    nl_cluster_model_1.NNeighbors = (int*) malloc(NCLUSTERATOMS*sizeof(int));
    if (NULL==nl_cluster_model_1.NNeighbors) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
-   
+
    nl_periodic_model_0.neighborList = (int*) malloc(NNeighbors[0]*sizeof(int));
    if (NULL==nl_periodic_model_0.neighborList) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
@@ -236,7 +236,7 @@ int main()
 
    nl_cluster_model_1.neighborList = (int*) malloc(NCLUSTERATOMS*NCLUSTERATOMS*sizeof(int));
    if (NULL==nl_cluster_model_1.neighborList) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
-   
+
    nl_periodic_model_0.RijList = (double*) malloc(DIM*NNeighbors[0]*sizeof(double));
    if (NULL==nl_periodic_model_0.RijList) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
@@ -307,7 +307,7 @@ int main()
 
    KIM_API_model_destroy(pkim_cluster_model_1, &status);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"destroy", status);
-   
+
    /* free memory of neighbor lists */
    free(nl_periodic_model_0.NNeighbors);
    free(nl_cluster_model_0.NNeighbors);
@@ -401,7 +401,7 @@ void fcc_periodic_neighborlist(int CellsPerHalfSide, double cutoff,
    }
    /* there are `a' neighbors */
    *((*nl).NNeighbors) = a;
-   
+
    return;
 }
 

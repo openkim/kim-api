@@ -86,7 +86,7 @@ int KIM_API_model_info(void * kimmdl, char * mdlname){
     *(KIM_API_model **)kimmdl=NULL;
     return KIM_STATUS_FAIL;
  }
- 
+
  void KIM_API_allocate(void *kimmdl, int natoms, int ntypes,int * error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     mdl->allocate(mdl,natoms,ntypes,error);
@@ -119,7 +119,7 @@ char * KIM_API_get_model_kim_str(char * modelname,int * kimerr){
 }
 
 void KIM_API_model_compute(void *kimmdl,int *error){
- 
+
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
 
     mdl->model_compute(error);
@@ -229,13 +229,13 @@ void * KIM_API_get_data(void *kimmdl,char *nm,int *error){
 intptr_t KIM_API_get_size(void *kimmdl,char *nm,int *error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     return mdl->get_size(nm,error);
-  
+
 }
 intptr_t KIM_API_get_shape(void *kimmdl,char *nm, int * shape, int *error){
-    
+
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     return mdl->get_shape(nm,shape,error);
-    
+
 }
 
 void KIM_API_set_shape(void *kimmdl,char *nm, int * shape, int rank,int *error){
@@ -254,7 +254,7 @@ void KIM_API_set_compute_by_index(void *kimmdl,int ind, int flag, int *error){
 }
 
 int KIM_API_get_compute(void *kimmdl,char *nm, int * error){
-    
+
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
      *error = KIM_STATUS_FAIL;
      int ind =mdl->get_index(nm);
@@ -264,7 +264,7 @@ int KIM_API_get_compute(void *kimmdl,char *nm, int * error){
 }
 
 int KIM_API_get_neigh_mode(void * kimmdl,int * error){
-    
+
      KIM_API_model * mdl=(KIM_API_model *) kimmdl;
      *error =  KIM_STATUS_FAIL;
      return mdl->get_neigh_mode(error);
@@ -306,7 +306,7 @@ intptr_t KIM_API_get_size_by_index(void *kimmdl,int I, int *error){
     if (mdl == NULL) return 0;
     *error =KIM_STATUS_OK;
     return (*mdl)[I].size;
-    
+
 }
 intptr_t KIM_API_get_shape_by_index(void *kimmdl,int I, int * shape,int *error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
@@ -359,7 +359,7 @@ void KIM_API_setm_data(void *kimmdl, int *err, int numargs, ... ){
             va_end(listPointer);
             return;
         }else if(key ==0) continue;
-       
+
         if(dt==NULL) cout<<"setm_data: WARNING: for "<<nm<<" data is NULL\n";
         if(!pkim->set_data(nm,size,dt)){
             cout<<"setm_data: set data for "<<nm<<" failed\n";
@@ -395,7 +395,7 @@ void KIM_API_setm_data_by_index(void *kimmdl, int *err, int numargs, ... ){
             va_end(listPointer);
             return;
         }else if(key ==0) continue;
-       
+
         if(dt==NULL) cout<<"setm_data_by_index: WARNING: for argument group "<<i<<" data is NULL\n";
 
         if(!pkim->set_data_by_index(ind,size,dt)){
@@ -429,7 +429,7 @@ void KIM_API_getm_data(void *kimmdl, int *err,int numargs, ...){
             va_end(listPointer);
             return;
         }else if(key ==0) continue;
-       
+
         *dt = pkim->get_data(nm,err);
         if(*err != KIM_STATUS_OK){
             cout<<"getm_data: get data for "<<nm<<" failed\n";
@@ -463,7 +463,7 @@ void KIM_API_getm_data_by_index(void *kimmdl,int *err,int numargs, ...){
             va_end(listPointer);
             return;
         }else if(key ==0) continue;
-       
+
         *dt = pkim->get_data_by_index(ind,err);
         if(*err != KIM_STATUS_OK){
             cout<<"getm_data_by_index: get data for argument group "<<i<<" failed\n";
@@ -533,7 +533,7 @@ void KIM_API_setm_compute(void *kimmdl, int *err, int numargs, ...){
             va_end(listPointer);
             return;
         }else if(key ==0) continue;
-       
+
         int index = pkim->get_index(nm,err);
         if (*err != KIM_STATUS_OK){
            cout<<"setm_compute:  name "<<nm<<" not in KIM\n";
@@ -620,7 +620,7 @@ void KIM_API_getm_compute(void *kimmdl, int *err,int numargs, ...){
             va_end(listPointer);
             return;
         }else if(key ==0) continue;
-       
+
         int index = pkim->get_index(nm,err);
         if (*err != KIM_STATUS_OK){
            cout<<"getm_compute:  name "<<nm<<" not in KIM\n";
@@ -656,7 +656,7 @@ void KIM_API_getm_compute_by_index(void *kimmdl, int *err,int numargs, ...){
             va_end(listPointer);
             return;
         }else if(key ==0) continue;
-       
+
         if (index < 0 || index >= pkim->model.size) *err=KIM_STATUS_FAIL;
         if (*err != KIM_STATUS_OK){
            cout<<"getm_compute_by_index:  for argument group "<<i<<" failed\n";

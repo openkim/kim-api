@@ -39,7 +39,7 @@ else
 endif
 
 
-LOCALOBJ = 
+LOCALOBJ =
 
 all: $(TEST_NAME)
 

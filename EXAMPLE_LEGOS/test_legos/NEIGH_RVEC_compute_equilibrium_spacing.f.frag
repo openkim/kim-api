@@ -1,8 +1,8 @@
 !-------------------------------------------------------------------------------
 !
-! NEIGH_RVEC_compute_equilibrium_spacing : 
+! NEIGH_RVEC_compute_equilibrium_spacing :
 !
-!    Use the Golden section search algorithm to find the equilibrium spacing by 
+!    Use the Golden section search algorithm to find the equilibrium spacing by
 !    minimizing the energy of the system with respect to the periodic box size.
 !
 !-------------------------------------------------------------------------------
@@ -12,7 +12,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
              verbose,RetSpacing,RetEnergy)
   use KIM_API
   implicit none
-  
+
   !-- Transferred variables
   integer(kind=kim_intptr), intent(in)     :: pkim
   integer,                  intent(in)     :: DIM
@@ -27,7 +27,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   logical,                  intent(in)     :: verbose
   double precision,         intent(out)    :: RetSpacing
   double precision,         intent(out)    :: RetEnergy
-  
+
   !-- Local variables
   double precision,         parameter :: Golden      = (1.d0 + sqrt(5.d0))/2.d0
   integer ier, idum

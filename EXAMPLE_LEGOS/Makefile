@@ -37,7 +37,7 @@
 
 .PHONY: all
 
-all: 
+all:
 	$(MAKE) -C model_legos all
 	@echo
 	$(MAKE) -C test_legos  all

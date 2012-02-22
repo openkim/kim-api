@@ -88,7 +88,7 @@ coordinates                 real*8       length              [numberOfParticles,
 
 boxSideLengths              real*8       length              [3]                optional
 
-get_neigh                   method       none                []                 
+get_neigh                   method       none                []
 
 neighObject                 pointer      none                []
 

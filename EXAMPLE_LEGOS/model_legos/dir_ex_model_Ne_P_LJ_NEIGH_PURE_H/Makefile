@@ -46,7 +46,7 @@ $(MODEL_NAME).a: $(MODEL_NAME).o $(MODEL_NAME)_compute.o $(MODEL_NAME)_kim_str.o
 	ar rcs $@ *.o
 
 $(MODEL_NAME).o: Makefile
-$(MODEL_NAME)_compute.o: Makefile 
+$(MODEL_NAME)_compute.o: Makefile
 
 Makefile: $(KIM_API_DIR)Include.mk
 	@touch Makefile

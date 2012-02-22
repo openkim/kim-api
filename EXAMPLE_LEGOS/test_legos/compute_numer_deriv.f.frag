@@ -85,11 +85,11 @@ contains
    !--------------------------------------------------------------------------------
    real*8 function dfridr(h,err)
    implicit none
-   
+
    !-- Transferred variables
    real*8, intent(inout) :: h
    real*8, intent(out)   :: err
-   
+
    !-- Local variables
    integer, parameter :: NTAB=10     ! Maximum size of tableau
    real*8,  parameter :: CON=1.4d0   ! Stepsize increased by CON at each iter
@@ -105,7 +105,7 @@ contains
       ier = KIM_STATUS_FAIL
       return
    endif
-   
+
    hh = h
    coordorig = coords(dir,atomnum)
    coords(dir,atomnum) = coordorig + hh
@@ -133,9 +133,9 @@ contains
    err=BIG
    ! successive columns in the Neville tableau will go to smaller step sizes
    ! and higher orders of extrapolation
-   do i=2,NTAB  
+   do i=2,NTAB
       ! try new, smaller step size
-      hh=hh/CON 
+      hh=hh/CON
       coords(dir,atomnum) = coordorig + hh
       call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
                                do_update_list,coordsave,neighborList,RijList,ier)
@@ -175,7 +175,7 @@ contains
       if (abs(a(i,i)-a(i-1,i-1)).ge.SAFE*err) return ! if higher order is worse by
                                                      ! significant factor `SAFE',
                                                      ! then quit early.
-   enddo 
+   enddo
    return
    end function dfridr
 

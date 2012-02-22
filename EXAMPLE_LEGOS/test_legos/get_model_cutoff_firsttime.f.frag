@@ -1,9 +1,9 @@
 !-------------------------------------------------------------------------------
 !
-! get_model_cutoff_firsttime: get cutoff radius of a KIM model *prior* to the 
+! get_model_cutoff_firsttime: get cutoff radius of a KIM model *prior* to the
 !                             existence of the KIM API object
 !
-! NOTE: This routine creates a temporary KIM API object and goes through the 
+! NOTE: This routine creates a temporary KIM API object and goes through the
 !       initialization process in order to read the cutoff radius from the
 !       API object.
 !

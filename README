@@ -95,7 +95,7 @@ Source License.
 
 The current version of the openkim-api package supports the following features:
 
-* Currently supported programming languages: 
+* Currently supported programming languages:
   C, C++, FORTRAN 77, Fortran 90/95.
 
   (Partial support for Fortran 2003 is available.  If you are interested in
@@ -188,7 +188,7 @@ DOCs/
      containing template files for creating your own KIM Models.  (See the
      README file in that directory.)
 
-EXAMPLEs/ 
+EXAMPLEs/
      directory containing examples of interatomic Model Drivers, Models, and
      Tests.
 
@@ -197,7 +197,7 @@ INSTALL
 
 KIM_API/
      directory containing the openkim-api service routines
-        
+
 MODEL_DRIVERs/
      Each Model Driver is stored in its own directory that conforms to the
      naming convention specified in standard.kim.  This is where you should
@@ -216,7 +216,7 @@ Makefile
 
 README
      This file.
- 
+
 TESTs/
      Each Test is stored in its own directory that conforms to the naming
      convention specified in standard.kim.  This is where you should place Test
@@ -231,8 +231,8 @@ TODO
 
 SUPPORT
 
-If you have problems or questions, send an email with your question and all 
-relevant information to 
+If you have problems or questions, send an email with your question and all
+relevant information to
 
 openkim@googlegroups.com
 

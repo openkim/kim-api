@@ -36,7 +36,7 @@ this release of the openkim-api package.
 
 ***  List of the example Models  ***
 
-Model name                         Language  NBC             Loca/Iter  Half/Full   Published 
+Model name                         Language  NBC             Loca/Iter  Half/Full   Published
                                                                                     parameters
 ----------------------------------------------------------------------------------------------
 
@@ -120,8 +120,8 @@ ex_model_Ne_P_Morse                C         NEIGH_PURE_H    Iterator   Full    
 A description of the provided example Models is given below.  The Models are,
 roughly, listed in order of increasing complexity.  It is suggested that
 examining the example Models in this order will provide a gradual introduction
-to the various components of a KIM-compliant Model. (See the README file in the 
-DOCs directory for guidelines on how to study the Models distributed with this 
+to the various components of a KIM-compliant Model. (See the README file in the
+DOCs directory for guidelines on how to study the Models distributed with this
 package.)
 
 ex_model_Ar_P_MLJ_CLUSTER_C   (C)
@@ -130,9 +130,9 @@ ex_model_Ar_P_MLJ_CLUSTER_F90 (Fortran 90)
      (NBC) method, which is the simplest computation to understand.  For this
      reason, looking at the compute() or Compute_Energy_Forces() subroutines,
      respectively, for this Model is a good place to get started when first
-     trying to understand how a KIM compliant Model works.  Note that these 
+     trying to understand how a KIM compliant Model works.  Note that these
      Models publish their parameters. This means that they must also provide
-     reinitialization and destroy routines in addition to the required 
+     reinitialization and destroy routines in addition to the required
      initialization routine. Examples of Models that do not publish parameters
      (which makes the initialization routine simpler) are described below.
 

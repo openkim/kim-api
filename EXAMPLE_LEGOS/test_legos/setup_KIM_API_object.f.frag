@@ -1,6 +1,6 @@
 !-------------------------------------------------------------------------------
 !
-! setup_KIM_API_object : Create KIM API object, 
+! setup_KIM_API_object : Create KIM API object,
 !                        allocate memory and set known values.
 !
 !-------------------------------------------------------------------------------
@@ -51,7 +51,7 @@ subroutine setup_KIM_API_object(pkim, testname, modelname, N, specname, SupportH
   !
   call kim_api_getm_data_f(pkim, ier, &
        "numberOfParticles",           pnAtoms,           1,                           &
-       "numberContributingParticles", pnumContrib,       TRUEFALSE(SupportHalf.eq.1), & 
+       "numberContributingParticles", pnumContrib,       TRUEFALSE(SupportHalf.eq.1), &
        "numberParticleTypes",         pnparticleTypes,   1,                           &
        "particleTypes",               pparticleTypesdum, 1)
   if (ier.lt.KIM_STATUS_OK) then

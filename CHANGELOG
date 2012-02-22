@@ -74,7 +74,7 @@
 
 * Updated documentation
 
-* Added KIM_API_report_error() service function and updated all examples 
+* Added KIM_API_report_error() service function and updated all examples
   and templates to use this function.
 
 * Added KIMstatus.h which contains definitions of KIM status codes.
@@ -106,8 +106,8 @@
 
 * Fixed a bug in kim_api_get_nbc_method_f() related to running on 64bit
   machines
-  
-  
+
+
 === openkim-api-v0.1.1 =========================================================
 
 

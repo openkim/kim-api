@@ -88,7 +88,7 @@ static void calc_phi(double r, double* phi)
    double sor   = SIGMA/r;
    double sor6  = sor*sor*sor*sor*sor*sor;
    double sor12 = sor6*sor6;
-   
+
    if (r > MODEL_CUTOFF)
    {
       /* Argument exceeds cutoff radius */
@@ -164,8 +164,8 @@ static void compute(void* km, int* ier)
    int* neighListOfCurrentAtom;
    double* boxSideLengths;
    int* numContrib;
-   
-   
+
+
    /* Determine neighbor list boundary condition (NBC) */
    /* and half versus full mode: */
    /*****************************
@@ -179,33 +179,33 @@ static void compute(void* km, int* ier)
       return;
    }
    if (!strcmp("CLUSTER",NBCstr))
-   {	   
+   {
       NBC = 0;
       HalfOrFull = 1;
    }
    else if (!strcmp("MI_OPBC_H",NBCstr))
-   {	   
+   {
       NBC = 1;
       HalfOrFull = 1;
    }
    else if (!strcmp("MI_OPBC_F",NBCstr))
-   {	   
+   {
       NBC = 1;
       HalfOrFull = 2;
    }
 
    else if (!strcmp("NEIGH_PURE_H",NBCstr))
-   {	   
+   {
       NBC = 2;
       HalfOrFull = 1;
    }
    else if (!strcmp("NEIGH_PURE_F",NBCstr))
-   {	   
+   {
       NBC = 2;
       HalfOrFull = 2;
    }
    else if (!strcmp("NEIGH_RVEC_F",NBCstr))
-   {	   
+   {
       NBC = 3;
       HalfOrFull = 2;
    }
@@ -401,7 +401,7 @@ static void compute(void* km, int* ier)
             }
          }
       }
-            
+
       /* loop over the neighbors of atom i */
       for (jj = 0; jj < numOfAtomNeigh; ++ jj)
       {
@@ -429,11 +429,11 @@ static void compute(void* km, int* ier)
                   Rij[k] -= (Rij[k]/fabs(Rij[k]))*boxSideLengths[k];
                }
             }
-            
+
             /* compute squared distance */
             Rsqij += Rij[k]*Rij[k];
          }
-         
+
          /* compute energy and force */
          if (Rsqij < MODEL_CUTSQ) /* particles are interacting ? */
          {
@@ -460,7 +460,7 @@ static void compute(void* km, int* ier)
                /* compute just pair potential */
                calc_phi(R, &phi);
             }
-            
+
             /* contribution to energy */
             if (comp_particleEnergy)
             {
@@ -481,19 +481,19 @@ static void compute(void* km, int* ier)
                   *energy += 0.5*phi;
                }
             }
-            
+
             /* contribution to virial tensor */
             if (comp_virial)
             {
                /* virial(i,j) = r(i)*r(j)*(dV/dr)/r */
-	       virial[0] += Rij[0]*Rij[0]*dEidr/R;
-	       virial[1] += Rij[1]*Rij[1]*dEidr/R;
-	       virial[2] += Rij[2]*Rij[2]*dEidr/R;
-	       virial[3] += Rij[1]*Rij[2]*dEidr/R;
-	       virial[4] += Rij[0]*Rij[2]*dEidr/R;
-	       virial[5] += Rij[0]*Rij[1]*dEidr/R;
+               virial[0] += Rij[0]*Rij[0]*dEidr/R;
+               virial[1] += Rij[1]*Rij[1]*dEidr/R;
+               virial[2] += Rij[2]*Rij[2]*dEidr/R;
+               virial[3] += Rij[1]*Rij[2]*dEidr/R;
+               virial[4] += Rij[0]*Rij[2]*dEidr/R;
+               virial[5] += Rij[0]*Rij[1]*dEidr/R;
             }
-            
+
             /* contribution to forces */
             if (comp_force)
             {
@@ -506,10 +506,10 @@ static void compute(void* km, int* ier)
          }
       } /* loop on jj */
    }    /* infinite while loop (terminated by break statements above */
-   
+
 
    /* perform final tasks */
-   
+
    if (comp_particleEnergy && comp_energy)
    {
       *energy = 0.0;
@@ -520,7 +520,7 @@ static void compute(void* km, int* ier)
    }
 
    /* Free temporary storage */
-   if (0 == NBC) 
+   if (0 == NBC)
    {
       free(neighListOfCurrentAtom);
    }

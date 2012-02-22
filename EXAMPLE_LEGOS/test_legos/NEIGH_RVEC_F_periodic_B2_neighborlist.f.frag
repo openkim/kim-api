@@ -1,13 +1,13 @@
 !-------------------------------------------------------------------------------
 !
-! NEIGH_RVEC_F_periodic_B2_neighborlist 
+! NEIGH_RVEC_F_periodic_B2_neighborlist
 !
 !-------------------------------------------------------------------------------
 subroutine NEIGH_RVEC_F_periodic_B2_neighborlist(CellsPerHalfSide, cutoff,  &
                                       B2spacing, NN, neighborList, RijList)
   use KIM_API
   implicit none
-  
+
   !-- Transferred variables
   integer,                             intent(in)  :: CellsPerHalfSide
   double precision,                    intent(in)  :: cutoff
@@ -15,7 +15,7 @@ subroutine NEIGH_RVEC_F_periodic_B2_neighborlist(CellsPerHalfSide, cutoff,  &
   integer,                             intent(in)  :: NN
   integer, dimension(NN+1,1),            intent(out) :: neighborList
   double precision, dimension(3,NN+1,1), intent(out) :: RijList
-  
+
   !-- Local variables
   double precision dx(3)
   double precision cutoff2

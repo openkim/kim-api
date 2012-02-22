@@ -1,6 +1,6 @@
 !-------------------------------------------------------------------------------
 !
-! NEIGH_RVEC_F_cluster_neighborlist 
+! NEIGH_RVEC_F_cluster_neighborlist
 !
 !-------------------------------------------------------------------------------
 subroutine NEIGH_RVEC_F_cluster_neighborlist(numberOfParticles, coords, cutoff, NN, neighborList, RijList)
@@ -14,7 +14,7 @@ subroutine NEIGH_RVEC_F_cluster_neighborlist(numberOfParticles, coords, cutoff, 
   integer,                                               intent(in)  :: NN
   integer, dimension(NN+1,numberOfParticles),            intent(out) :: neighborList
   double precision, dimension(3,NN+1,numberOfParticles), intent(out) :: RijList
-  
+
   !-- Local variables
   integer i, j, a
   double precision dx(3)
@@ -22,7 +22,7 @@ subroutine NEIGH_RVEC_F_cluster_neighborlist(numberOfParticles, coords, cutoff, 
   double precision cutoff2
 
   cutoff2 = cutoff**2
-  
+
   do i=1,numberOfParticles
      a = 1
      do j=1,numberOfParticles
@@ -40,7 +40,7 @@ subroutine NEIGH_RVEC_F_cluster_neighborlist(numberOfParticles, coords, cutoff, 
      ! atom i has a-1 neighbors
      neighborList(1,i) = a-1
   enddo
-  
+
   return
 
 end subroutine NEIGH_RVEC_F_cluster_neighborlist

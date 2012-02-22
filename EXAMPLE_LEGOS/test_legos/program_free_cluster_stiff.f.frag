@@ -99,7 +99,7 @@ program TEST_NAME_STR
   integer, pointer :: particleTypes(:)
   integer middleDum
 
-  
+
   ! Get KIM Model name to use
   print '("Please enter a valid KIM model name: ")'
   read(*,*) modelname
@@ -289,7 +289,7 @@ program TEST_NAME_STR
   print '("                ",3ES25.15)', (virial_global(I),I=4,6)
 
   ! Don't forget to free and/or deallocate
-  call free(pNBC_Method) 
+  call free(pNBC_Method)
   deallocate(neighborList)
   if (nbc.eq.4) then
      deallocate(NLRvecLocs)

@@ -62,10 +62,10 @@ extern "C" {
       typedef void (*Driver_Destroy)(void *,int *);//prototype for driver_destroy
       Driver_Destroy drvr_destroy = (Driver_Destroy) driver_destroy;
       //call driver_destroy
-      if (drvr_destroy != NULL) {  
+      if (drvr_destroy != NULL) {
          (*drvr_destroy)(km, ier);
       }
-      
+
       // close driver library
       dlclose(driver_lib_handle);
    }

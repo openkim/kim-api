@@ -36,7 +36,7 @@
 module ex_model_Ne_P_LJ_NEIGH_PURE_H
   use  KIM_API
   implicit none
-  
+
   save
   private
   public model_cutoff
@@ -48,7 +48,7 @@ module ex_model_Ne_P_LJ_NEIGH_PURE_H
   real*8, parameter :: epsilon       = 0.0031d0
 
 contains
-  
+
   !-----------------------------------------------------------------------------
   !
   ! Computes energy and forces on atoms from the positions.
@@ -113,7 +113,7 @@ contains
                    potenergy,e_flag,f_flag,eper_flag,kim_api_get_neigh_f,ier)
 
   end subroutine calculate_wrap_f77
-  
+
 end module ex_model_Ne_P_LJ_NEIGH_PURE_H
 
 

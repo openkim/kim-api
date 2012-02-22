@@ -34,7 +34,7 @@
 #include "KIM_API.h"
 #endif
 #ifndef UNIT_HANDLING_H
-#define	UNIT_HANDLING_H
+#define UNIT_HANDLING_H
 
 class Unit_Handling{
 public:
@@ -67,7 +67,7 @@ public:
                                 double temperature_exponent,
                                 double time_exponent,
                                 int* kimerror);
-    
+
 private:
     // list of  base & derived units
     static char *base_list[];     static int nbase_list;
@@ -84,7 +84,7 @@ private:
     // list of supported base units for Unit_time
     static char *time_list[];     static int ntime_list;   static double time_scale[];
 
-    
+
     //
     char Unit_length[KIM_KEY_STRING_LENGTH];
     char Unit_energy[KIM_KEY_STRING_LENGTH];
@@ -103,7 +103,7 @@ private:
     static bool is_it_Unit_charge(char * unit, int *index);
     static bool is_it_Unit_temperature(char * unit, int *index);
     static bool is_it_Unit_time(char * unit, int *index);
-    
+
 };
 ostream &operator<<(ostream &stream, Unit_Handling &a);
-#endif	/* UNIT_HANDLING_H */
+#endif  /* UNIT_HANDLING_H */

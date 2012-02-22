@@ -1,27 +1,27 @@
 !-------------------------------------------------------------------------------
 !
-! NEIGH_PURE_cluster_neighborlist 
+! NEIGH_PURE_cluster_neighborlist
 !
 !-------------------------------------------------------------------------------
 subroutine NEIGH_PURE_cluster_neighborlist(half, numberOfParticles, coords, cutoff, neighborList)
   use KIM_API
   implicit none
-  
+
   !-- Transferred variables
   logical,                                                     intent(in)  :: half
   integer,                                                     intent(in)  :: numberOfParticles
   double precision, dimension(3,numberOfParticles),            intent(in)  :: coords
   double precision,                                            intent(in)  :: cutoff
   integer,   dimension(numberOfParticles+1,numberOfParticles), intent(out) :: neighborList ! not memory efficient
-  
+
   !-- Local variables
   integer i, j, a
   double precision dx(3)
   double precision r2
   double precision cutoff2
-  
+
   cutoff2 = cutoff**2
-  
+
   do i=1,numberOfParticles
      a = 1
      do j=1,numberOfParticles

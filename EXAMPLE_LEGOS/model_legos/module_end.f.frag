@@ -1,10 +1,10 @@
-    
+
     if ((comp_enepot.eq.1) .and. (comp_energy.eq.1)) then
        energy = sum(ene_pot(1:numberOfParticles))                     ! compute total energy
     endif
-    
+
   end subroutine Compute_Energy_Forces
-  
+
 !-------------------------------------------------------------------------------
 !
 ! Pair potential: Lennard-Jones with smooth cutoff imposed by Ar^2 + Br + C
@@ -12,27 +12,27 @@
 !-------------------------------------------------------------------------------
   subroutine pair(epsilon,sigma,A,B,C,r,phi,dphi,d2phi)
     implicit none
-    
+
     !-- Transferred variables
     double precision, intent(in)  :: epsilon, sigma, A, B, C
     double precision, intent(in)  :: r
     double precision, intent(out) :: phi, dphi, d2phi
-    
+
     !-- Local variables
     double precision rsq,sor,sor6,sor12
-    
+
     rsq  = r*r             !  r^2
     sor  = sigma/r         !  (sig/r)
     sor6 = sor*sor*sor     !
     sor6 = sor6*sor6       !  (sig/r)^6
     sor12= sor6*sor6       !  (sig/r)^12
-    
+
     phi   =  4.d0*epsilon*(sor12-sor6) + A*rsq + B*r + C
     dphi  = 24.d0*epsilon*(-2.d0*sor12+sor6)/r  + 2.d0*A*r + B
     d2phi = 24.d0*epsilon*(26.d0*sor12-7.d0*sor6)/rsq + 2.d0*A
-    
+
   end subroutine pair
-  
+
 !-------------------------------------------------------------------------------
 !
 ! Model reinitialization routine
@@ -40,10 +40,10 @@
 !-------------------------------------------------------------------------------
   subroutine ReInit(pkim)
     implicit none
-    
+
     !-- Transferred variables
     integer(kind=kim_intptr), intent(in) :: pkim
-    
+
     !-- Local variables
     real*8 model_cutoff;  pointer(pcutoff,model_cutoff)
     real*8 model_epsilon; pointer(pepsilon,model_epsilon)
@@ -56,7 +56,7 @@
     real*8 model_sigmasq; pointer(psigmasq,model_sigmasq)
     real*8 model_cutsq;   pointer(pcutsq,model_cutsq)
     integer ier, idum
-    
+
     ! Get (changed) parameters from KIM object ---------------------------------
 
     ! get stuff from KIM object
@@ -68,7 +68,7 @@
        idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
        stop
     endif
-    
+
     ! Set new values in KIM object ---------------------------------------------
 
     ! Set stuff in KIM object
@@ -84,7 +84,7 @@
        idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
        stop
     endif
-    
+
     model_cutoff = model_Pcutoff
     model_cutnorm = model_cutoff/model_sigma
     model_A = 12.d0*model_epsilon*(-26.d0 + 7.d0*model_cutnorm**6)/ &
@@ -95,7 +95,7 @@
          (model_cutnorm**12)
     model_sigmasq = model_sigma**2
     model_cutsq = model_cutoff**2
-    
+
   end subroutine ReInit
 
 !-------------------------------------------------------------------------------
@@ -109,7 +109,7 @@
 
     !-- Transferred variables
     integer(kind=kim_intptr), intent(in) :: pkim
-    
+
     !-- Local variables
     real*8 model_epsilon; pointer(pepsilon,model_epsilon)
     real*8 model_sigma;   pointer(psigma,model_sigma)
@@ -148,7 +148,7 @@
     call free(pcutsq)
 
   end subroutine Destroy
-  
+
 end module MODEL_NAME_STR
 
 
@@ -161,10 +161,10 @@ subroutine MODEL_NAME_STR_init(pkim)
   use MODEL_NAME_STR
   use KIM_API
   implicit none
-  
+
   !-- Transferred variables
   integer(kind=kim_intptr), intent(in) :: pkim
-  
+
   !-- Local variables
   integer(kind=kim_intptr), parameter :: one=1
   real*8 model_cutoff;  pointer(pcutoff,model_cutoff)
@@ -196,7 +196,7 @@ subroutine MODEL_NAME_STR_init(pkim)
      stop
   endif
   CUTOFF_VALUE_STR
-  
+
   ! Allocate memory for stuff and store values
   psigma = malloc(one*8) ! 8 is the size of a real*8
   SIGMA_VALUE_STR
@@ -243,5 +243,5 @@ subroutine MODEL_NAME_STR_init(pkim)
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_setm_data_f", ier)
      stop
   endif
-  
+
 end subroutine MODEL_NAME_STR_init

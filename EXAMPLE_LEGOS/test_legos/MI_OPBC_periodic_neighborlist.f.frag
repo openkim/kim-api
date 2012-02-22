@@ -7,7 +7,7 @@
 subroutine MI_OPBC_periodic_neighborlist(half, numberOfParticles, coords, rcut, boxSideLengths, MiddleAtomID, neighborList)
   use KIM_API
   implicit none
-  
+
   !-- Transferred variables
   logical,                                                     intent(in)  :: half
   integer,                                                     intent(in)  :: numberOfParticles
@@ -16,15 +16,15 @@ subroutine MI_OPBC_periodic_neighborlist(half, numberOfParticles, coords, rcut, 
   double precision, dimension(3),                              intent(in)  :: boxSideLengths
   integer,                                                     intent(in)  :: MiddleAtomID
   integer,   dimension(numberOfParticles+1,numberOfParticles), intent(out) :: neighborList ! not memory efficient
-  
+
   !-- Local variables
   integer i, j, a
   double precision dx(3)
   double precision r2
   double precision rcut2
-  
+
   rcut2 = rcut**2
-  
+
   do i=1,numberOfParticles
      a = 1
      do j=1,numberOfParticles
@@ -51,7 +51,7 @@ subroutine MI_OPBC_periodic_neighborlist(half, numberOfParticles, coords, rcut, 
      ! atom i has a-1 neighbors
      neighborList(1,i) = a-1
   enddo
-  
+
   return
 
 end subroutine MI_OPBC_periodic_neighborlist

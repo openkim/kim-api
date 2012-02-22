@@ -87,7 +87,7 @@ public:
 
 
 class KIMBaseElementUnit{
-public:   
+public:
         char  dim [KIM_KEY_STRING_LENGTH];  // dimension (length, energy, time, mass, or derivatives...
       KIMBaseElementUnit();
       void init();
@@ -100,17 +100,17 @@ public:
 };
 class KIM_IOline{
 public:
-	char name[KIM_KEY_STRING_LENGTH];
-	char type[KIM_KEY_STRING_LENGTH];
-	char dim[KIM_KEY_STRING_LENGTH];
+        char name[KIM_KEY_STRING_LENGTH];
+        char type[KIM_KEY_STRING_LENGTH];
+        char dim[KIM_KEY_STRING_LENGTH];
         char shape[KIM_KEY_STRING_LENGTH];
         char requirements[KIM_KEY_STRING_LENGTH];
         char comments[181];
-	bool goodformat,input,output;
+        bool goodformat,input,output;
 
-	KIM_IOline();
-      
-	bool getFields(char *inString);
+        KIM_IOline();
+
+        bool getFields(char *inString);
         int get_rank();
         int * get_shape();
         int * get_shape(int natoms, int ntypes);
@@ -131,15 +131,15 @@ istream &operator>>(istream &stream, KIM_IOline &a);
 //stringstream &operator>>(stringstream &stream, KIM_IOline &a);
 class IOline{
 public:
-	char name[101];
-	char value[101];
-	char comment[121];
-	bool goodformat;
-	void strip();
+        char name[101];
+        char value[101];
+        char comment[121];
+        bool goodformat;
+        void strip();
 
         void strip(char *nm);
-	IOline();
-	bool getFields(const char *inputString);
+        IOline();
+        bool getFields(const char *inputString);
         static int readlines_str(char * inputstr, IOline ** lines);
         static int  readlines(char * infile, IOline **inlines);
 }; //secondary input line handler //cout<<"SystemOfUnit:  file:"<<infile<<":"<<endl;
@@ -304,7 +304,7 @@ bool requiresFullNeighbors();
   void getm_compute(int *err,int numargs, ...);  //?  ++
   void getm_compute_by_index(int *err,int numargs, ...); //++
 
-   //related to process fij public variables   
+   //related to process fij public variables
     bool virial_need2add;
     bool particleVirial_need2add;
     bool hessian_need2add;
@@ -344,7 +344,7 @@ private:
                          // but nessssery for model instantiation
     void * test_buffer; // stores everything that is not reflected  in .kim
                         // but nessssery for test instantiation
-    
+
     Atom_Map * AtomsTypes;
     int nAtomsTypes;
 
@@ -353,19 +353,19 @@ private:
     char arg_NBC_method_A[1][KIM_KEY_STRING_LENGTH];
     int narg_NBC_method_A;
 
-    
+
     //"MI_OPBC_H"
     char NBC_method_B[KIM_KEY_STRING_LENGTH];
     char arg_NBC_method_B[5][KIM_KEY_STRING_LENGTH];
     int narg_NBC_method_B;
 
-    
+
     //"MI_OPBC_F"
     char NBC_method_C[KIM_KEY_STRING_LENGTH];
     char arg_NBC_method_C[4][KIM_KEY_STRING_LENGTH];
     int narg_NBC_method_C;
- 
-    
+
+
     //"NEIGH_RVEC_F"
     char NBC_method_D[KIM_KEY_STRING_LENGTH];
     char arg_NBC_method_D[3][KIM_KEY_STRING_LENGTH];
@@ -376,8 +376,8 @@ private:
     char NBC_method_E[KIM_KEY_STRING_LENGTH];
     char arg_NBC_method_E[4][KIM_KEY_STRING_LENGTH];
     int narg_NBC_method_E;
-    
-    
+
+
     //"NEIGH_PURE_F"
     char NBC_method_F[KIM_KEY_STRING_LENGTH];
     char arg_NBC_method_F[3][KIM_KEY_STRING_LENGTH];
@@ -389,16 +389,16 @@ private:
     char *** arg_NBC_methods;
 
     //related to process fij variables
-  
+
     int virial_ind;
     int particleVirial_ind;
     int hessian_ind;
     int process_dEdr_ind;
     int process_d2Edr2_ind;
 
-    
 
-    bool check_consistance_NBC_method(); 
+
+    bool check_consistance_NBC_method();
 
     char NBC_method_current[KIM_KEY_STRING_LENGTH];
     bool NBC_methods_match(KIM_API_model &test,KIM_API_model &mdl);
@@ -415,4 +415,4 @@ private:
 };
 ostream &operator<<(ostream &stream, KIM_API_model &a);
 
-#endif	/* _KIM_API_H */
+#endif  /* _KIM_API_H */

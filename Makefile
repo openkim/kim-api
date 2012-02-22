@@ -29,7 +29,7 @@
 
 #
 # Release: This file is part of the openkim-api.git repository.
-# 
+#
 #
 # this make file builds/cleans everything
 #
@@ -55,17 +55,17 @@ else
         kim-api-lib $(patsubst %,%-all,$(TESTS_LIST))
 endif
 
-# other targets 
+# other targets
 openkim-api: kim-api-all kim-api-lib     # compile the openkim-api
 examples: examples-all                   # copy examples to appropriate directories then make
 
 # cleaning targets
 clean: $(patsubst %,%-clean,$(MODELS_LIST) $(MODEL_DRIVERS_LIST) $(TESTS_LIST)) kim-api-clean
-clean-examples: 
+clean-examples:
 
 ########### for internal use ###########
 kim-api-all:
-	$(MAKE) -C $(KIM_API_DIR) all 
+	$(MAKE) -C $(KIM_API_DIR) all
 	@echo
 
 kim-api-lib:

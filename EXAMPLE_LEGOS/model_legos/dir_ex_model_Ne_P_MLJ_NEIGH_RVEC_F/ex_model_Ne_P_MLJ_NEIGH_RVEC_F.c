@@ -216,12 +216,12 @@ static void compute(void* km, int* ier)
    while (KIM_STATUS_OK == *ier)
    {
       i = currentAtom;
-      
+
       /* loop over the neighbors of currentAtom */
       for (jj = 0; jj < numOfAtomNeigh; ++ jj)
       {
          j = neighListOfCurrentAtom[jj];
-         
+
          /* compute square distance */
          Rsqij = 0.0;
          for (k = 0; k < DIM; ++k)
@@ -237,7 +237,7 @@ static void compute(void* km, int* ier)
             pair(epsilon, sigma, A, B, C, R, &phi, &dphi, &d2phi);
 
             /* compute dEidr -- regular contribution */
-            dEidr = 0.5*dphi; 
+            dEidr = 0.5*dphi;
 
             /* accumulate energy */
             if (comp_particleEnergy)
@@ -253,12 +253,12 @@ static void compute(void* km, int* ier)
             if (comp_virial)
             {
                /* virial(i,j) = r(i)*r(j)*(dV/dr)/r */
-	       virial[0] += Rij[jj*DIM + 0]*Rij[jj*DIM + 0]*dEidr/R;
-	       virial[1] += Rij[jj*DIM + 1]*Rij[jj*DIM + 1]*dEidr/R;
-	       virial[2] += Rij[jj*DIM + 2]*Rij[jj*DIM + 2]*dEidr/R;
-	       virial[3] += Rij[jj*DIM + 1]*Rij[jj*DIM + 2]*dEidr/R;
-	       virial[4] += Rij[jj*DIM + 0]*Rij[jj*DIM + 2]*dEidr/R;
-	       virial[5] += Rij[jj*DIM + 0]*Rij[jj*DIM + 1]*dEidr/R;
+               virial[0] += Rij[jj*DIM + 0]*Rij[jj*DIM + 0]*dEidr/R;
+               virial[1] += Rij[jj*DIM + 1]*Rij[jj*DIM + 1]*dEidr/R;
+               virial[2] += Rij[jj*DIM + 2]*Rij[jj*DIM + 2]*dEidr/R;
+               virial[3] += Rij[jj*DIM + 1]*Rij[jj*DIM + 2]*dEidr/R;
+               virial[4] += Rij[jj*DIM + 0]*Rij[jj*DIM + 2]*dEidr/R;
+               virial[5] += Rij[jj*DIM + 0]*Rij[jj*DIM + 1]*dEidr/R;
             }
 
             /* accumulate force */
@@ -272,14 +272,14 @@ static void compute(void* km, int* ier)
             }
          }
       }
-      
+
       /* increment iterator */
       *ier = KIM_API_get_neigh(pkim, 0, 1, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
    }
 
 
    /* perform final tasks */
-   
+
    if (comp_particleEnergy && comp_energy)
    {
       *energy = 0.0;

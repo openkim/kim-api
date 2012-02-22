@@ -32,7 +32,7 @@
 !**  PROGRAM TEST_NAME_STR
 !**
 !**  KIM compliant program to find (using the Golden section search algorithm)
-!**  the minimum energy of one atom in a periodic FCC crystal (spec="SPECIES_NAME_STR") as a 
+!**  the minimum energy of one atom in a periodic FCC crystal (spec="SPECIES_NAME_STR") as a
 !**  function of lattice spacing.
 !**
 !**  Works with the following NBC methods:
@@ -76,7 +76,7 @@ program TEST_NAME_STR
 
   double precision     :: FinalSpacing       ! crystal lattice parameter
 
-  double precision     :: FinalEnergy        ! energy per atom of crystal 
+  double precision     :: FinalEnergy        ! energy per atom of crystal
                                              ! at current spacing
 
   integer              :: CellsPerCutoff     ! number of unit cells along
@@ -140,7 +140,7 @@ program TEST_NAME_STR
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
      stop
   endif
-  
+
   ! Set MaxCutoff to be 2.0 more than the Model's normal cutoff
   !
   MaxCutoff = param_cutoff + 2.0d0
@@ -157,7 +157,7 @@ program TEST_NAME_STR
   ! allocate storage for neighbor lists
   ! and store necessary pointers in KIM API object
   !
-  
+
   ! determine maximum number of neighbors we will need
   !
   CellsPerCutoff = ceiling(param_cutoff/MinSpacing+ 0.05d0) ! the 0.05 is a saftey factor
@@ -172,8 +172,8 @@ program TEST_NAME_STR
   NLRvecLocs(2) = loc(RijList)
   NLRvecLocs(3) = NNeighbors
   call setup_neighborlist_Rij_KIM_access(pkim, NLRvecLocs)
-  ! 
-  
+  !
+
   ! loop over an increasing cutoff radius
   do while (param_cutoff .le. MaxCutoff)
      !
@@ -184,7 +184,7 @@ program TEST_NAME_STR
           DIM,CellsPerCutoff,MinSpacing,MaxSpacing,    &
           TOL,N,NNeighbors,neighborlist,RijList,       &
           .false.,FinalSpacing,FinalEnergy)
-     
+
      ! print results to screen
      !
      print '(80(''-''))'
@@ -223,7 +223,7 @@ end program TEST_NAME_STR
 
 !-------------------------------------------------------------------------------
 !
-! check_model_parameters : 
+! check_model_parameters :
 !
 !    Scan the Model's parameters and return 1 in PARAM_FREE_cutoff is in the
 !    list and 0 if it is not in the list

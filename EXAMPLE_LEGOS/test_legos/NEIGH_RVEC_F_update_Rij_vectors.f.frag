@@ -27,7 +27,7 @@ subroutine NEIGH_RVEC_F_update_Rij_vectors(DIM, N, coords, NNMAX, &
         RijList(:,jj,i) = dx(:)
      enddo
   enddo
-        
+
   return
 
 end subroutine NEIGH_RVEC_F_update_Rij_vectors

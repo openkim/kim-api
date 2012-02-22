@@ -46,7 +46,7 @@ C-------Transferred variables
 
 C-------Local variables
       DOUBLE PRECISION sor2,sor6,sor12
-        
+
       IF (rr.LT.1.0E-14) STOP 'rr is zero'
       sor2  = (sigma*sigma)/rr
       sor6  = sor2*sor2*sor2
@@ -107,7 +107,7 @@ C-------Local variables
       CALL ljpot_f77(sigma,epsilon,cut2,energycutoff,dv)
 
 C     Iterator mode (reset iterator to beginning)
-      mode = 0 
+      mode = 0
       request = 0
       retcode=kimget_neigh(pkim,mode,request,atom,
      &                     numnei,pnei1atom,pRij)
@@ -121,7 +121,7 @@ C     Iterator mode (reset iterator to beginning)
 
 C     Loop over atoms and compute energy and forces
  120  CONTINUE
-      IF (retcode.NE.KIM_STATUS_OK) GOTO 140 
+      IF (retcode.NE.KIM_STATUS_OK) GOTO 140
 
 C     Increment iterator
       mode = 0
@@ -177,7 +177,7 @@ C     Increment iterator
             ENDIF
          ENDIF
  130  CONTINUE
-      GOTO 120 
+      GOTO 120
  140  CONTINUE
       IF (e_flag.EQ.1) en=sumv
       RETURN

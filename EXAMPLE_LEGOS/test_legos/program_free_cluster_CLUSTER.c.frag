@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
    void* pkim;
    int status;
    int partcl_type_code;
-   
+
    /* model inputs */
    int* numberOfParticles;
    int* numberParticleTypes;
@@ -82,7 +82,7 @@ int main(int argc, char* argv[])
    /* Get KIM Model name to use */
    printf("Please enter a valid KIM model name: \n");
    scanf("%s",modelname);
-   
+
    /* Initialize the KIM Model */
    status = KIM_API_init(&pkim, testname, modelname);
    if (KIM_STATUS_OK > status)
@@ -179,7 +179,7 @@ int main(int argc, char* argv[])
           virial[5]
          );
 
-   
+
    /* don't forget to destroy and deallocate */
    KIM_API_model_destroy(pkim, &status);
    if (KIM_STATUS_OK > status)
@@ -193,7 +193,7 @@ int main(int argc, char* argv[])
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_free", status);
       exit(1);
    }
-   
+
    /* everything is great */
    return 0;
 }

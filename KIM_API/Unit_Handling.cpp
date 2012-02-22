@@ -111,12 +111,12 @@ Unit_Handling::Unit_Handling(){
 }
 
 Unit_Handling:: ~Unit_Handling(){
-     
+
 }
 
 void Unit_Handling::check_base_set_flexible(IOline* lines, int nlines, int* error){
     *error =KIM_STATUS_FAIL;
-  
+
     for (int i=0;i<nlines;i++){
         if(strcmp(lines[i].name,"Unit_Handling")==0){
             if(strcmp(lines[i].value,"flexible")==0) {
@@ -426,5 +426,5 @@ double Unit_Handling::convert_to_act_unit(void *kim,
       return pow(scale_length,length_exponent)*pow(scale_energy,energy_exponent)*
              pow(scale_charge,charge_exponent)*pow(scale_temperature,temperature_exponent)*
              pow(scale_time, time_exponent);
-      
+
 }

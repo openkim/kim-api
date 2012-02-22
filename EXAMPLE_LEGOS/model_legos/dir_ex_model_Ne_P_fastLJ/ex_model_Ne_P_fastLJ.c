@@ -126,7 +126,7 @@ static void neigh_pure_h_compute(void* km, int* ier)
    double* particleEnergy;
    int* neighListOfCurrentAtom;
    int (*get_neigh)(void *,int *,int *,int *, int *, int **, double **);
-   
+
    int numberContrib;
    double dx[3];
    double* pdx = &(dx[0]);
@@ -187,7 +187,7 @@ static void neigh_pure_h_compute(void* km, int* ier)
    four_eps_sigma12 = 4.0*(*epsilon)*pow(*sigma,12.0);
 
    /* Assume the atom types are correct! */
-   
+
    /* reset neighbor iterator */
    *ier = (*get_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
    if (KIM_STATUS_NEIGH_ITER_INIT_OK != *ier)
@@ -196,7 +196,7 @@ static void neigh_pure_h_compute(void* km, int* ier)
       *ier = KIM_STATUS_FAIL;
       return;
    }
-   
+
    /* Compute energy and forces */
    *ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
 
@@ -212,33 +212,33 @@ static void neigh_pure_h_compute(void* km, int* ier)
             force[i*DIM + k] = 0.0;
          }
       }
-      
+
       while (KIM_STATUS_OK == *ier)
       {
          i = currentAtom + model_index_shift;
          zi=i*DIM;
-         
+
          /* loop over the neighbors of currentAtom */
          for (jj = 0; jj < numOfAtomNeigh; ++ jj)
          {
             j = neighListOfCurrentAtom[jj] + model_index_shift;
             z = jj*DIM;
             zj = j*DIM;
-            
+
             /* compute square distance */
             dx[0] = coords[zj] - coords[zi];
             dx[1] = coords[zj+1] - coords[zi+1];
             dx[2] = coords[zj+2] - coords[zi+2];
             Rsqij = dx[0]*dx[0] + dx[1]*dx[1] + dx[2]*dx[2];
-            
+
             /* particles are interacting ? */
             if (Rsqij < *cutsq)
             {
                /* compute pair potential */
-               double Rm2 = 1.0/Rsqij; 
+               double Rm2 = 1.0/Rsqij;
                R6 = Rm2*Rm2*Rm2;
                R12= R6*R6;
-            
+
                double e_Rm12 = four_eps_sigma12*R12;
                double e_Rm6 = four_eps_sigma6*R6;
                phi = e_Rm12 - e_Rm6 + *shift;
@@ -277,7 +277,7 @@ static void neigh_pure_h_compute(void* km, int* ier)
       {
          *energy = 0.0;
       }
-      
+
       if (comp_force)
       {
          for (i = 0; i < *nAtoms; ++i)
@@ -293,28 +293,28 @@ static void neigh_pure_h_compute(void* km, int* ier)
       {
          i = currentAtom + model_index_shift;;
          zi=i*DIM;
-         
+
          /* loop over the neighbors of currentAtom */
          for (jj = 0; jj < numOfAtomNeigh; ++ jj)
          {
             j = neighListOfCurrentAtom[jj] + model_index_shift;
             z = jj*DIM;
             zj = j*DIM;
-            
+
             /* compute square distance */
             dx[0] = coords[zj] - coords[zi];
             dx[1] = coords[zj+1] - coords[zi+1];
             dx[2] = coords[zj+2] - coords[zi+2];
             Rsqij = dx[0]*dx[0] + dx[1]*dx[1] + dx[2]*dx[2];
-            
+
             /* particles are interacting ? */
             if (Rsqij < *cutsq)
             {
                /* compute pair potential */
-               double Rm2 = 1.0/Rsqij; 
+               double Rm2 = 1.0/Rsqij;
                R6 = Rm2*Rm2*Rm2;
                R12= R6*R6;
-               
+
                double e_Rm12 = four_eps_sigma12*R12;
                double e_Rm6 = four_eps_sigma6*R6;
                phi = e_Rm12 - e_Rm6 + *shift;
@@ -336,7 +336,7 @@ static void neigh_pure_h_compute(void* km, int* ier)
                {
                   *energy += ((j < numberContrib) ? phi : 0.5*phi);
                }
-            
+
                /* process dEdr */
                if (comp_process_dEdr)
                {
@@ -362,7 +362,7 @@ static void neigh_pure_h_compute(void* km, int* ier)
          *ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
       }
    }
- 
+
    /* everything is great */
    *ier = KIM_STATUS_OK;
    return;
@@ -404,7 +404,7 @@ static void neigh_pure_f_compute(void* km, int* ier)
    double* particleEnergy;
    int* neighListOfCurrentAtom;
    int (*get_neigh)(void *,int *,int *,int *, int *, int **, double **);
-   
+
    double dx[3];
    double* pdx = &(dx[0]);
    double four_eps_sigma6;
@@ -463,7 +463,7 @@ static void neigh_pure_f_compute(void* km, int* ier)
    four_eps_sigma12 = 4.0*(*epsilon)*pow(*sigma,12.0);
 
    /* Assume the atom types are correct! */
-   
+
    /* reset neighbor iterator */
    *ier = (*get_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
    if (KIM_STATUS_NEIGH_ITER_INIT_OK != *ier)
@@ -472,7 +472,7 @@ static void neigh_pure_f_compute(void* km, int* ier)
       *ier = KIM_STATUS_FAIL;
       return;
    }
-   
+
    /* Compute energy and forces */
    *ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
 
@@ -488,33 +488,33 @@ static void neigh_pure_f_compute(void* km, int* ier)
             force[i*DIM + k] = 0.0;
          }
       }
-      
+
       while (KIM_STATUS_OK == *ier)
       {
          i = currentAtom + model_index_shift;
          zi=i*DIM;
-         
+
          /* loop over the neighbors of currentAtom */
          for (jj = 0; jj < numOfAtomNeigh; ++ jj)
          {
             j = neighListOfCurrentAtom[jj] + model_index_shift;
             z = jj*DIM;
             zj = j*DIM;
-            
+
             /* compute square distance */
             dx[0] = coords[zj] - coords[zi];
             dx[1] = coords[zj+1] - coords[zi+1];
             dx[2] = coords[zj+2] - coords[zi+2];
             Rsqij = dx[0]*dx[0] + dx[1]*dx[1] + dx[2]*dx[2];
-            
+
             /* particles are interacting ? */
             if (Rsqij < *cutsq)
             {
                /* compute pair potential */
-               double Rm2 = 1.0/Rsqij; 
+               double Rm2 = 1.0/Rsqij;
                R6 = Rm2*Rm2*Rm2;
                R12= R6*R6;
-            
+
                double e_Rm12 = four_eps_sigma12*R12;
                double e_Rm6 = four_eps_sigma6*R6;
                phi = e_Rm12 - e_Rm6 + *shift;
@@ -552,7 +552,7 @@ static void neigh_pure_f_compute(void* km, int* ier)
       {
          *energy = 0.0;
       }
-      
+
       if (comp_force)
       {
          for (i = 0; i < *nAtoms; ++i)
@@ -568,28 +568,28 @@ static void neigh_pure_f_compute(void* km, int* ier)
       {
          i = currentAtom + model_index_shift;;
          zi=i*DIM;
-         
+
          /* loop over the neighbors of currentAtom */
          for (jj = 0; jj < numOfAtomNeigh; ++ jj)
          {
             j = neighListOfCurrentAtom[jj] + model_index_shift;
             z = jj*DIM;
             zj = j*DIM;
-            
+
             /* compute square distance */
             dx[0] = coords[zj] - coords[zi];
             dx[1] = coords[zj+1] - coords[zi+1];
             dx[2] = coords[zj+2] - coords[zi+2];
             Rsqij = dx[0]*dx[0] + dx[1]*dx[1] + dx[2]*dx[2];
-            
+
             /* particles are interacting ? */
             if (Rsqij < *cutsq)
             {
                /* compute pair potential */
-               double Rm2 = 1.0/Rsqij; 
+               double Rm2 = 1.0/Rsqij;
                R6 = Rm2*Rm2*Rm2;
                R12= R6*R6;
-               
+
                double e_Rm12 = four_eps_sigma12*R12;
                double e_Rm6 = four_eps_sigma6*R6;
                phi = e_Rm12 - e_Rm6 + *shift;
@@ -609,7 +609,7 @@ static void neigh_pure_f_compute(void* km, int* ier)
                {
                   *energy += 0.5*phi;
                }
-            
+
                /* process dEdr */
                if (comp_process_dEdr)
                {
@@ -635,7 +635,7 @@ static void neigh_pure_f_compute(void* km, int* ier)
          *ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
       }
    }
- 
+
    /* everything is great */
    *ier = KIM_STATUS_OK;
    return;
@@ -677,7 +677,7 @@ static void neigh_rvec_f_compute(void* km, int* ier)
    double* particleEnergy;
    int* neighListOfCurrentAtom;
    int (*get_neigh)(void *,int *,int *,int *, int *, int **, double **);
-   
+
    double dx[3];
    double* pdx = &(dx[0]);
    double four_eps_sigma6;
@@ -736,7 +736,7 @@ static void neigh_rvec_f_compute(void* km, int* ier)
    four_eps_sigma12 = 4.0*(*epsilon)*pow(*sigma,12.0);
 
    /* Assume the atom types are correct! */
-   
+
    /* reset neighbor iterator */
    *ier = (*get_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
    if (KIM_STATUS_NEIGH_ITER_INIT_OK != *ier)
@@ -745,7 +745,7 @@ static void neigh_rvec_f_compute(void* km, int* ier)
       *ier = KIM_STATUS_FAIL;
       return;
    }
-   
+
    /* Compute energy and forces */
    *ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
 
@@ -761,33 +761,33 @@ static void neigh_rvec_f_compute(void* km, int* ier)
             force[i*DIM + k] = 0.0;
          }
       }
-      
+
       while (KIM_STATUS_OK == *ier)
       {
          i = currentAtom + model_index_shift;
          zi=i*DIM;
-         
+
          /* loop over the neighbors of currentAtom */
          for (jj = 0; jj < numOfAtomNeigh; ++ jj)
          {
             j = neighListOfCurrentAtom[jj] + model_index_shift;
             z = jj*DIM;
             zj = j*DIM;
-            
+
             /* compute square distance */
             dx[0] = Rij[DIM*jj];
             dx[1] = Rij[DIM*jj+1];
             dx[2] = Rij[DIM*jj+2];
             Rsqij = dx[0]*dx[0] + dx[1]*dx[1] + dx[2]*dx[2];
-            
+
             /* particles are interacting ? */
             if (Rsqij < *cutsq)
             {
                /* compute pair potential */
-               double Rm2 = 1.0/Rsqij; 
+               double Rm2 = 1.0/Rsqij;
                R6 = Rm2*Rm2*Rm2;
                R12= R6*R6;
-            
+
                double e_Rm12 = four_eps_sigma12*R12;
                double e_Rm6 = four_eps_sigma6*R6;
                phi = e_Rm12 - e_Rm6 + *shift;
@@ -825,7 +825,7 @@ static void neigh_rvec_f_compute(void* km, int* ier)
       {
          *energy = 0.0;
       }
-      
+
       if (comp_force)
       {
          for (i = 0; i < *nAtoms; ++i)
@@ -841,28 +841,28 @@ static void neigh_rvec_f_compute(void* km, int* ier)
       {
          i = currentAtom + model_index_shift;;
          zi=i*DIM;
-         
+
          /* loop over the neighbors of currentAtom */
          for (jj = 0; jj < numOfAtomNeigh; ++ jj)
          {
             j = neighListOfCurrentAtom[jj] + model_index_shift;
             z = jj*DIM;
             zj = j*DIM;
-            
+
             /* compute square distance */
             dx[0] = Rij[DIM*jj];
             dx[1] = Rij[DIM*jj+1];
             dx[2] = Rij[DIM*jj+2];
             Rsqij = dx[0]*dx[0] + dx[1]*dx[1] + dx[2]*dx[2];
-            
+
             /* particles are interacting ? */
             if (Rsqij < *cutsq)
             {
                /* compute pair potential */
-               double Rm2 = 1.0/Rsqij; 
+               double Rm2 = 1.0/Rsqij;
                R6 = Rm2*Rm2*Rm2;
                R12= R6*R6;
-               
+
                double e_Rm12 = four_eps_sigma12*R12;
                double e_Rm6 = four_eps_sigma6*R6;
                phi = e_Rm12 - e_Rm6 + *shift;
@@ -882,7 +882,7 @@ static void neigh_rvec_f_compute(void* km, int* ier)
                {
                   *energy += 0.5*phi;
                }
-            
+
                /* process dEdr */
                if (comp_process_dEdr)
                {
@@ -908,7 +908,7 @@ static void neigh_rvec_f_compute(void* km, int* ier)
          *ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
       }
    }
- 
+
    /* everything is great */
    *ier = KIM_STATUS_OK;
    return;
@@ -951,7 +951,7 @@ static void mi_opbc_h_compute(void* km, int* ier)
    double* boxSideLengths;
    int* neighListOfCurrentAtom;
    int (*get_neigh)(void *,int *,int *,int *, int *, int **, double **);
-   
+
    int numberContrib;
    double dx[3];
    double* pdx = &(dx[0]);
@@ -1013,7 +1013,7 @@ static void mi_opbc_h_compute(void* km, int* ier)
    four_eps_sigma12 = 4.0*(*epsilon)*pow(*sigma,12.0);
 
    /* Assume the atom types are correct! */
-   
+
    /* reset neighbor iterator */
    *ier = (*get_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
    if (KIM_STATUS_NEIGH_ITER_INIT_OK != *ier)
@@ -1022,7 +1022,7 @@ static void mi_opbc_h_compute(void* km, int* ier)
       *ier = KIM_STATUS_FAIL;
       return;
    }
-   
+
    /* Compute energy and forces */
    *ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
 
@@ -1038,19 +1038,19 @@ static void mi_opbc_h_compute(void* km, int* ier)
             force[i*DIM + k] = 0.0;
          }
       }
-      
+
       while (KIM_STATUS_OK == *ier)
       {
          i = currentAtom + model_index_shift;
          zi=i*DIM;
-         
+
          /* loop over the neighbors of currentAtom */
          for (jj = 0; jj < numOfAtomNeigh; ++ jj)
          {
             j = neighListOfCurrentAtom[jj] + model_index_shift;
             z = jj*DIM;
             zj = j*DIM;
-            
+
             /* compute neighbor vector and square distance */
             Rsqij = 0.0;
             for (k = 0; k < DIM; k++)
@@ -1066,10 +1066,10 @@ static void mi_opbc_h_compute(void* km, int* ier)
             if (Rsqij < *cutsq)
             {
                /* compute pair potential */
-               double Rm2 = 1.0/Rsqij; 
+               double Rm2 = 1.0/Rsqij;
                R6 = Rm2*Rm2*Rm2;
                R12= R6*R6;
-            
+
                double e_Rm12 = four_eps_sigma12*R12;
                double e_Rm6 = four_eps_sigma6*R6;
                phi = e_Rm12 - e_Rm6 + *shift;
@@ -1108,7 +1108,7 @@ static void mi_opbc_h_compute(void* km, int* ier)
       {
          *energy = 0.0;
       }
-      
+
       if (comp_force)
       {
          for (i = 0; i < *nAtoms; ++i)
@@ -1124,14 +1124,14 @@ static void mi_opbc_h_compute(void* km, int* ier)
       {
          i = currentAtom + model_index_shift;;
          zi=i*DIM;
-         
+
          /* loop over the neighbors of currentAtom */
          for (jj = 0; jj < numOfAtomNeigh; ++ jj)
          {
             j = neighListOfCurrentAtom[jj] + model_index_shift;
             z = jj*DIM;
             zj = j*DIM;
-            
+
             /* compute neighbor vector and square distance */
             Rsqij = 0.0;
             for (k = 0; k < DIM; k++)
@@ -1148,10 +1148,10 @@ static void mi_opbc_h_compute(void* km, int* ier)
             if (Rsqij < *cutsq)
             {
                /* compute pair potential */
-               double Rm2 = 1.0/Rsqij; 
+               double Rm2 = 1.0/Rsqij;
                R6 = Rm2*Rm2*Rm2;
                R12= R6*R6;
-               
+
                double e_Rm12 = four_eps_sigma12*R12;
                double e_Rm6 = four_eps_sigma6*R6;
                phi = e_Rm12 - e_Rm6 + *shift;
@@ -1173,7 +1173,7 @@ static void mi_opbc_h_compute(void* km, int* ier)
                {
                   *energy += ((j < numberContrib) ? phi : 0.5*phi);
                }
-            
+
                /* process dEdr */
                if (comp_process_dEdr)
                {
@@ -1199,7 +1199,7 @@ static void mi_opbc_h_compute(void* km, int* ier)
          *ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
       }
    }
- 
+
    /* everything is great */
    *ier = KIM_STATUS_OK;
    return;
@@ -1242,7 +1242,7 @@ static void mi_opbc_f_compute(void* km, int* ier)
    double* boxSideLengths;
    int* neighListOfCurrentAtom;
    int (*get_neigh)(void *,int *,int *,int *, int *, int **, double **);
-   
+
    double dx[3];
    double* pdx = &(dx[0]);
    double four_eps_sigma6;
@@ -1302,7 +1302,7 @@ static void mi_opbc_f_compute(void* km, int* ier)
    four_eps_sigma12 = 4.0*(*epsilon)*pow(*sigma,12.0);
 
    /* Assume the atom types are correct! */
-   
+
    /* reset neighbor iterator */
    *ier = (*get_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
    if (KIM_STATUS_NEIGH_ITER_INIT_OK != *ier)
@@ -1311,7 +1311,7 @@ static void mi_opbc_f_compute(void* km, int* ier)
       *ier = KIM_STATUS_FAIL;
       return;
    }
-   
+
    /* Compute energy and forces */
    *ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
 
@@ -1327,19 +1327,19 @@ static void mi_opbc_f_compute(void* km, int* ier)
             force[i*DIM + k] = 0.0;
          }
       }
-      
+
       while (KIM_STATUS_OK == *ier)
       {
          i = currentAtom + model_index_shift;
          zi=i*DIM;
-         
+
          /* loop over the neighbors of currentAtom */
          for (jj = 0; jj < numOfAtomNeigh; ++ jj)
          {
             j = neighListOfCurrentAtom[jj] + model_index_shift;
             z = jj*DIM;
             zj = j*DIM;
-            
+
             /* compute neighbor vector and square distance */
             Rsqij = 0.0;
             for (k = 0; k < DIM; k++)
@@ -1351,15 +1351,15 @@ static void mi_opbc_f_compute(void* km, int* ier)
                }
                Rsqij = dx[k]*dx[k];
             }
-            
+
             /* particles are interacting ? */
             if (Rsqij < *cutsq)
             {
                /* compute pair potential */
-               double Rm2 = 1.0/Rsqij; 
+               double Rm2 = 1.0/Rsqij;
                R6 = Rm2*Rm2*Rm2;
                R12= R6*R6;
-            
+
                double e_Rm12 = four_eps_sigma12*R12;
                double e_Rm6 = four_eps_sigma6*R6;
                phi = e_Rm12 - e_Rm6 + *shift;
@@ -1397,7 +1397,7 @@ static void mi_opbc_f_compute(void* km, int* ier)
       {
          *energy = 0.0;
       }
-      
+
       if (comp_force)
       {
          for (i = 0; i < *nAtoms; ++i)
@@ -1413,14 +1413,14 @@ static void mi_opbc_f_compute(void* km, int* ier)
       {
          i = currentAtom + model_index_shift;;
          zi=i*DIM;
-         
+
          /* loop over the neighbors of currentAtom */
          for (jj = 0; jj < numOfAtomNeigh; ++ jj)
          {
             j = neighListOfCurrentAtom[jj] + model_index_shift;
             z = jj*DIM;
             zj = j*DIM;
-            
+
             /* compute neighbor vector and square distance */
             Rsqij = 0.0;
             for (k = 0; k < DIM; k++)
@@ -1432,15 +1432,15 @@ static void mi_opbc_f_compute(void* km, int* ier)
                }
                Rsqij += dx[k]*dx[k];
             }
-            
+
             /* particles are interacting ? */
             if (Rsqij < *cutsq)
             {
                /* compute pair potential */
-               double Rm2 = 1.0/Rsqij; 
+               double Rm2 = 1.0/Rsqij;
                R6 = Rm2*Rm2*Rm2;
                R12= R6*R6;
-               
+
                double e_Rm12 = four_eps_sigma12*R12;
                double e_Rm6 = four_eps_sigma6*R6;
                phi = e_Rm12 - e_Rm6 + *shift;
@@ -1460,7 +1460,7 @@ static void mi_opbc_f_compute(void* km, int* ier)
                {
                   *energy += 0.5*phi;
                }
-            
+
                /* process dEdr */
                if (comp_process_dEdr)
                {
@@ -1486,7 +1486,7 @@ static void mi_opbc_f_compute(void* km, int* ier)
          *ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
       }
    }
- 
+
    /* everything is great */
    *ier = KIM_STATUS_OK;
    return;
@@ -1576,7 +1576,7 @@ static void cluster_compute(void* km, int* ier)
    four_eps_sigma12 = 4.0*(*epsilon)*pow(*sigma,12.0);
 
    /* Assume the atom types are correct! */
-   
+
    if ((comp_force == 1)          && (comp_energy == 1) &&
        (comp_particleEnergy == 0) && (comp_process_dEdr == 0))
    {
@@ -1589,30 +1589,30 @@ static void cluster_compute(void* km, int* ier)
             force[i*DIM + k] = 0.0;
          }
       }
-      
+
       for (i = 0; i < *nAtoms; i++)
       {
          zi=i*DIM;
-         
+
          /* loop over the neighbors of currentAtom */
          for (j = i+1; j < *nAtoms; ++ j)
          {
             zj = j*DIM;
-            
+
             /* compute square distance */
             dx[0] = coords[zj] - coords[zi];
             dx[1] = coords[zj+1] - coords[zi+1];
             dx[2] = coords[zj+2] - coords[zi+2];
             Rsqij = dx[0]*dx[0] + dx[1]*dx[1] + dx[2]*dx[2];
-            
+
             /* particles are interacting ? */
             if (Rsqij < *cutsq)
             {
                /* compute pair potential */
-               double Rm2 = 1.0/Rsqij; 
+               double Rm2 = 1.0/Rsqij;
                R6 = Rm2*Rm2*Rm2;
                R12= R6*R6;
-            
+
                double e_Rm12 = four_eps_sigma12*R12;
                double e_Rm6 = four_eps_sigma6*R6;
                phi = e_Rm12 - e_Rm6 + *shift;
@@ -1664,26 +1664,26 @@ static void cluster_compute(void* km, int* ier)
       for (i = 0; i < *nAtoms; i++)
       {
          zi=i*DIM;
-         
+
          /* loop over the neighbors of currentAtom */
          for (j = i+1; j < *nAtoms; j++)
          {
             zj = j*DIM;
-            
+
             /* compute square distance */
             dx[0] = coords[zj] - coords[zi];
             dx[1] = coords[zj+1] - coords[zi+1];
             dx[2] = coords[zj+2] - coords[zi+2];
             Rsqij = dx[0]*dx[0] + dx[1]*dx[1] + dx[2]*dx[2];
-            
+
             /* particles are interacting ? */
             if (Rsqij < *cutsq)
             {
                /* compute pair potential */
-               double Rm2 = 1.0/Rsqij; 
+               double Rm2 = 1.0/Rsqij;
                R6 = Rm2*Rm2*Rm2;
                R12= R6*R6;
-               
+
                double e_Rm12 = four_eps_sigma12*R12;
                double e_Rm6 = four_eps_sigma6*R6;
                phi = e_Rm12 - e_Rm6 + *shift;
@@ -1704,7 +1704,7 @@ static void cluster_compute(void* km, int* ier)
                {
                   *energy += phi;
                }
-            
+
                /* process dEdr */
                if (comp_process_dEdr)
                {
@@ -1727,7 +1727,7 @@ static void cluster_compute(void* km, int* ier)
          }
       }
    }
- 
+
    /* everything is great */
    *ier = KIM_STATUS_OK;
    return;
@@ -1751,7 +1751,7 @@ static void reinit(void *km)
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_model_buffer", ier);
       exit(1);
    }
- 
+
    /* set new values in KIM object     */
    /*                                  */
    /* store model cutoff in KIM object */
@@ -1818,7 +1818,7 @@ void ex_model_ne_p_fastlj_init_(void *km)
    struct model_buffer* buffer;
    char* NBCstr;
 
-   
+
    /* Determine neighbor list boundary condition (NBC) */
    NBCstr = KIM_API_get_NBC_method(pkim, &ier);
    if (KIM_STATUS_OK > ier)
@@ -1962,7 +1962,7 @@ static void setup_buffer(intptr_t* pkim, struct model_buffer* buffer)
 {
    /* Local variables */
    int ier;
-   
+
    buffer->model_index_shift = KIM_API_get_model_index_shift(pkim);
 
    KIM_API_getm_index(pkim, &ier, 10*3,
@@ -1981,6 +1981,6 @@ static void setup_buffer(intptr_t* pkim, struct model_buffer* buffer)
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_index", ier);
       exit(1);
    }
-   
+
    return;
 }

@@ -28,17 +28,17 @@
     !  Compute energy and forces
     !
     do i = 1,numberOfParticles
-       
+
        ! Get neighbors for atom i
        !
        atom = i ! request neighbors for atom i
-       
+
        ier = kim_api_get_neigh_f(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij_dummy)
        if (ier.lt.KIM_STATUS_OK) then
           idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_neigh", ier)
           return
        endif
-       
+
        ! Loop over the neighbors of atom i
        !
        do jj = 1, numnei
@@ -46,7 +46,7 @@
           Rij(:) = coor(:,j) - coor(:,i)                ! distance vector between i j
           where ( abs(Rij) > 0.5d0*boxSideLengths )          ! periodic boundary conditions
              Rij = Rij - sign(boxSideLengths,Rij)            ! applied where needed.
-          end where                                     ! 
+          end where                                     !
           Rsqij = dot_product(Rij,Rij)                  ! compute square distance
           if ( Rsqij < model_cutsq ) then               ! particles are interacting?
              r = sqrt(Rsqij)                            ! compute distance

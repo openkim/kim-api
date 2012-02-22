@@ -90,7 +90,7 @@ contains
 !-------------------------------------------------------------------------------
 subroutine calc_phi(r,phi)
 implicit none
-   
+
 !-- Transferred variables
 double precision, intent(in)  :: r
 double precision, intent(out) :: phi
@@ -106,7 +106,7 @@ sor12= sor6*sor6       !  (sig/r)^12
 if (r .gt. model_cutoff) then
    ! Argument exceeds cutoff radius
    phi = 0.d0
-else 
+else
    phi = 4.d0*lj_epsilon*(sor12-sor6) + lj_A*rsq + lj_B*r + lj_C
 endif
 
@@ -119,7 +119,7 @@ end subroutine calc_phi
 !-------------------------------------------------------------------------------
 subroutine calc_phi_dphi(r,phi,dphi)
 implicit none
-   
+
 !-- Transferred variables
 double precision, intent(in)  :: r
 double precision, intent(out) :: phi,dphi
@@ -136,7 +136,7 @@ if (r .gt. model_cutoff) then
    ! Argument exceeds cutoff radius
    phi    = 0.d0
    dphi   = 0.d0
-else 
+else
    phi  = 4.d0*lj_epsilon*(sor12-sor6) + lj_A*rsq + lj_B*r + lj_C
    dphi = 24.d0*lj_epsilon*(-2.d0*sor12+sor6)/r  + 2.d0*lj_A*r + lj_B
 endif
@@ -319,7 +319,7 @@ if (IterOrLoca.eq.1) then
    if (ier.ne.KIM_STATUS_NEIGH_ITER_INIT_OK) then
       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_neigh_f", ier)
       ier = KIM_STATUS_FAIL
-      return 
+      return
    endif
 endif
 
@@ -363,7 +363,7 @@ do
          endif
       endif
    endif
-      
+
    ! Loop over the neighbors of atom i
    !
    do jj = 1, numnei
@@ -383,7 +383,7 @@ do
       if (NBC.eq.1) then
          where ( abs(Rij) .gt. 0.5d0*boxSideLengths )  ! periodic boundary conditions
             Rij = Rij - sign(boxSideLengths,Rij)       ! applied where needed.
-         end where                                ! 
+         end where                                !
       endif
 
       ! compute energy and forces
