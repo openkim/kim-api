@@ -1495,7 +1495,7 @@ bool KIM_API_model::do_flag_match(KIM_API_model& tst, KIM_API_model& mdl){
 
     if (Neigh_BothAccess_mdl){
 
-        if(!(Neigh_BothAccess_tst || Neigh_LocaAccess_tst && Neigh_IterAccess_tst)){
+        if(!(Neigh_BothAccess_tst || (Neigh_LocaAccess_tst && Neigh_IterAccess_tst))){
             cout<< "* Error (KIM_API_model::do_flag_match): Model descriptor file requres Neigh_BothAccess."<<endl;
             return false;
         }
@@ -1503,11 +1503,11 @@ bool KIM_API_model::do_flag_match(KIM_API_model& tst, KIM_API_model& mdl){
      //checking if test o.k. when model may work with loca or iter
      }else if (Neigh_LocaAccess_mdl && Neigh_IterAccess_mdl){
 
-        if(!(Neigh_LocaAccess_tst || Neigh_IterAccess_tst || Neigh_BothAccess_tst)){
+        if(!(Neigh_LocaAccess_tst || (Neigh_IterAccess_tst || Neigh_BothAccess_tst))){
             cout<< "* Error (KIM_API_model::do_flag_match): Model descriptor file requres IterAccess or LocaAccess."<<endl;
             return false;
         }
-        if (Neigh_LocaAccess_tst && Neigh_IterAccess_tst || Neigh_BothAccess_tst) {
+        if ((Neigh_LocaAccess_tst && Neigh_IterAccess_tst) || Neigh_BothAccess_tst) {
             if (ind_LocaAccess_mdl < ind_IterAcces_mdl) {
                 mdl.locator_neigh_mode =true;
             }else {
@@ -2274,7 +2274,7 @@ void KIM_API_model::allocate(KIM_API_model * mdl, int natoms, int ntypes, int * 
             if (strcmp((*mdl)[i].type,"pointer")==0 || strcmp((*mdl)[i].type,"method")==0) sz=0;
             if (strcmp((*mdl)[i].type,"flag")==0 ) sz=0;
         }
-        if(mdl->inlines[i].isitoptional() && calculate == 0 || isitparam) {
+        if((mdl->inlines[i].isitoptional() && (calculate == 0)) || isitparam) {
             sz=0;
             if(shape!=0) shape[0]=0;
         }
@@ -2682,7 +2682,7 @@ bool KIM_API_model::fij_related_things_match(KIM_API_model& test, KIM_API_model&
 
     bool virial_comp_possible = mdl_virial || mdl_process_dEdr;
     bool particleVirial_comp_possible = mdl_particleVirial || mdl_process_dEdr;
-    bool hessian_comp_possible =  mdl_hessian || mdl_process_dEdr && mdl_process_d2Edr2;
+    bool hessian_comp_possible =  mdl_hessian || (mdl_process_dEdr && mdl_process_d2Edr2);
 
     //do test & model match?
     bool match = true;

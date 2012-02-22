@@ -706,7 +706,7 @@ integer,parameter :: kim_intptr = 8
     integer function kim_api_string_init_f(kimmdl,testname,mdlname)
             character (len=*) :: testname,mdlname
             integer(kind=kim_intptr) :: kimmdl
-            character (len=KIM_KEY_STRING_LENGTH)::testnamesnd,mdlnamesnd
+            character (len=KIM_KEY_STRING_LENGTH)::mdlnamesnd
             character (len=KIM_KEY_STRING_LENGTH):: s1,s2
             pointer(ps1,s1);pointer(ps2,s2)
             !testnamesnd=attachnull(trim(testname))
@@ -1018,7 +1018,7 @@ integer,parameter :: kim_intptr = 8
         subroutine kim_api_setm_data_f(kimmdl,error, nm1,sz1,dt1,k1, nm2,sz2,dt2,k2, nm3,sz3,dt3,k3, nm4,sz4,dt4,k4,&
          nm5,sz5,dt5,k5,   nm6,sz6,dt6,k6,  nm7,sz7,dt7,k7, nm8,sz8,dt8,k8, nm9,sz9,dt9,k9, nm10,sz10,dt10,k10,&
          nm11,sz11,dt11,k11, nm12,sz12,dt12,k12, nm13,sz13,dt13,k13,  nm14,sz14,dt14,k14, nm15,sz15,dt15,k15)
-            integer(kind=kim_intptr) :: kimmdl;  integer error, grarg
+            integer(kind=kim_intptr) :: kimmdl;  integer error
 
             character(len=40) ::msg="kim_api_setm_data_f"
 
@@ -1149,7 +1149,7 @@ integer,parameter :: kim_intptr = 8
          nm5,sz5,dt5,k5,   nm6,sz6,dt6,k6,  nm7,sz7,dt7,k7, nm8,sz8,dt8,k8, nm9,sz9,dt9,k9, nm10,sz10,dt10,k10,&
          nm11,sz11,dt11,k11, nm12,sz12,dt12,k12, nm13,sz13,dt13,k13,  nm14,sz14,dt14,k14, nm15,sz15,dt15,k15)
 
-            integer(kind=kim_intptr) :: kimmdl;  integer error, grarg
+            integer(kind=kim_intptr) :: kimmdl;  integer error
 
             character(len=40) ::msg="kim_api_setm_data_by_index_f"
 
@@ -1279,7 +1279,7 @@ integer,parameter :: kim_intptr = 8
         subroutine kim_api_getm_data_f(kimmdl,error, nm1,dt1,k1, nm2,dt2,k2, nm3,dt3,k3, nm4,dt4,k4, nm5,dt5,k5,&
          nm6,dt6,k6, nm7,dt7,k7, nm8,dt8,k8, nm9,dt9,k9, nm10,dt10,k10, nm11,dt11,k11, nm12,dt12,k12, nm13,dt13,k13,&
          nm14,dt14,k14, nm15,dt15,k15)
-            integer(kind=kim_intptr) :: kimmdl;  integer error, grarg
+            integer(kind=kim_intptr) :: kimmdl;  integer error
 
             character(len=40) ::msg="kim_api_getm_data_f"
 
