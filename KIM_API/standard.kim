@@ -770,20 +770,20 @@ NEIGH_PURE_F                flag        # This is the Pure Full neighbor list
                                         # Test.
 
 # In the NEIGH_RVEC_F method, the Model receives the number of particles and
-# coordinates, a full neighbor list and the relative position vectors Rij (Rij
-# = xj-xi). The neighbor list and Rij vectors define the environment of each
-# particle, from which the particles's energy is defined. The Model computes
-# the requested quantities using the supplied information. For example, if
-# energy and forces are requested, it will compute the total energy of all the
-# particles based on their neighbor lists and relative position vectors and the
-# derivative of the total energy with respect to the positions of the
-# particles. This method enables the application of general periodic boundary
-# conditions, including multiple images.  (This approach can fail with half
-# neighbor lists and therefore the _H variant of the method does not exist.)
-# A possible future extension to this method is to allow the Test to provide
-# a ForceTransformation() function for each neighbor, which would enable the
-# application of complex boundary conditions such as torsion and objective
-# boundary conditions.
+# coordinates, a full neighbor list and the relative position vectors r_ij
+# (r_ij = x_j-x_i). The neighbor list and Rij vectors define the environment of
+# each particle, from which the particles's energy is defined. The Model
+# computes the requested quantities using the supplied information. For
+# example, if energy and forces are requested, it will compute the total energy
+# of all the particles based on their neighbor lists and relative position
+# vectors and the derivative of the total energy with respect to the positions
+# of the particles. This method enables the application of general periodic
+# boundary conditions, including multiple images.  (This approach can fail with
+# half neighbor lists and therefore the _H variant of the method does not
+# exist.)  A possible future extension to this method is to allow the Test to
+# provide a ForceTransformation() function for each neighbor, which would
+# enable the application of complex boundary conditions such as torsion and
+# objective boundary conditions.
 #
 NEIGH_RVEC_F                flag        # This is the Relative Vector Boundary
                                         # Condition Full neighbor list method.

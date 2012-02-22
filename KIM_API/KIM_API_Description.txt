@@ -1270,7 +1270,7 @@ void KIM_API_process_dEdr(void **km, double *dEdr, double *r, double **dx, &
     own process_dEdr routine, then the KIM API standard process_dEdr routine is
     used.  If the standard process_dEdr routine is used, the KIM API ensures
     that any appropriate memory initializations are performed.  This routine
-    and currently supports the computation of `virial' and `particleVirial'.
+    currently supports the computation of `virial' and `particleVirial'.
 
 Arguments:
 
