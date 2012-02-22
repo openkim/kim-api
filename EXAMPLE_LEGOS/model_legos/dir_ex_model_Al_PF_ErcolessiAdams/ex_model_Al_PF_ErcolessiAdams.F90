@@ -810,7 +810,8 @@ do i = 1,N
    !
    if (comp_enepot.eq.1) then                     ! accumulate embedding energy contribution
       ene_pot(i) = ene_pot(i) + U(i)
-   elseif (comp_energy.eq.1) then
+   endif
+   if (comp_energy.eq.1) then
       energy = energy + U(i)
    endif
 
@@ -908,7 +909,8 @@ do
          if (comp_enepot.eq.1) then
             ene_pot(i) = ene_pot(i) + Ei          ! accumulate energy Ei
             ene_pot(j) = ene_pot(j) + Ej          ! accumulate energy Ej
-         elseif (comp_energy.eq.1) then
+         endif
+         if (comp_energy.eq.1) then
             energy = energy + Ei                  ! accumulate energy
             energy = energy + Ej                  ! accumulate energy
          endif
@@ -936,9 +938,6 @@ do
    enddo  ! loop on jj
 
 enddo  ! infinite do loop (terminated by exit statements above)
-
-if (comp_enepot.eq.1 .and. comp_energy.eq.1) &
-   energy = sum(ene_pot(1:N))                       ! compute total energy
 
 ! Free temporary storage
 !
@@ -1050,6 +1049,8 @@ endif
 
 call free(pirlast)
 call free(pielast)
+
+return
 
 end subroutine Destroy
 

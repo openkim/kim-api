@@ -16,7 +16,8 @@
              if (comp_enepot.eq.1) then                 !
                 ene_pot(i) = ene_pot(i) + 0.5d0*phi     ! accumulate energy
                 ene_pot(j) = ene_pot(j) + 0.5d0*phi     ! (i and j share it)
-             elseif (comp_energy.eq.1) then             !
+             endif                                      !
+             if (comp_energy.eq.1) then                 !
                 energy = energy + phi                   ! half neigh case
              endif                                      !
              if (comp_virial.eq.1) then                 !

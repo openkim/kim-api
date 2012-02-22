@@ -346,7 +346,7 @@ static void compute(void* km, int* ier)
          particleEnergy[i] = 0.0;
       }
    }
-   else if (comp_energy)
+   if (comp_energy)
    {
       *energy = 0.0;
    }
@@ -536,7 +536,7 @@ static void compute(void* km, int* ier)
                /* if half list add energy for the other atom in the pair */
                if ((1 == HalfOrFull) && (j < numberContrib)) particleEnergy[j] += 0.5*phi;
             }
-            else if (comp_energy)
+            if (comp_energy)
             {
                if ((1 == HalfOrFull) && (j < numberContrib))
                {
@@ -581,17 +581,6 @@ static void compute(void* km, int* ier)
          }
       } /* loop on jj */
    }    /* infinite while loop (terminated by break statements above */
-
-   /* perform final tasks */
-
-   if (comp_particleEnergy && comp_energy)
-   {
-      *energy = 0.0;
-      for (k = 0; k < *nAtoms; ++k)
-      {
-         *energy += particleEnergy[k];
-      }
-   }
 
    /* Free temporary storage */
    if (0 == NBC)

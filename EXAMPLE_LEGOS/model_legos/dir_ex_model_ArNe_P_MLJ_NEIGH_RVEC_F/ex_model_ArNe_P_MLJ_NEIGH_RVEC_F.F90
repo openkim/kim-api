@@ -215,7 +215,8 @@ contains
              dEidr = 0.5d0*dphi                             ! compute dEidr
              if (comp_enepot.eq.1) then                     !
                 ene_pot(i) = ene_pot(i) + 0.5d0*phi         ! accumulate energy
-             elseif (comp_energy.eq.1) then                 !
+             endif
+             if (comp_energy.eq.1) then                     !
                 energy = energy + 0.5d0*phi                 ! full neigh case
              endif                                          !
              if (comp_virial.eq.1) then                     ! accumul. virial
@@ -233,9 +234,6 @@ contains
           endif
        enddo
     enddo
-
-    if (comp_enepot.eq.1 .and. comp_energy.eq.1) &
-       energy = sum(ene_pot(1:numberOfParticles))                     ! compute total energy
 
   end subroutine Compute_Energy_Forces
 

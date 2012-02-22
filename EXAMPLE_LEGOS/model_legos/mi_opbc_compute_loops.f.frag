@@ -64,7 +64,8 @@
                     (j .le. numContrib)) then           ! HALF mode
                    ene_pot(j) = ene_pot(j) + 0.5d0*phi  ! (i and j share it)
                 endif                                   !
-             elseif (comp_energy.eq.1) then             !
+             endif                                      !
+             if (comp_energy.eq.1) then                 !
                 if ((HalfOrFull.eq.1) .and. &
                     (j .le. numContrib)) then           ! HALF mode
                    energy = energy + phi                ! half neigh case

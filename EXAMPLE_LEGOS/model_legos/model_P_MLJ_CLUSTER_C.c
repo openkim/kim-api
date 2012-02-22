@@ -149,6 +149,7 @@ static void compute(void* km, int* ier)
    int i;
    int j;
    int k;
+   int comp_energy;
    int comp_force;
    int comp_particleEnergy;
    int comp_virial;
@@ -169,7 +170,8 @@ static void compute(void* km, int* ier)
    double* virial;
 
    /* check to see if we have been asked to compute the forces, particleEnergy, and virial */
-   KIM_API_getm_compute(pkim, ier, 3*3,
+   KIM_API_getm_compute(pkim, ier, 4*3,
+                        "energy",         &comp_energy,         1,
                         "forces",         &comp_force,          1,
                         "particleEnergy", &comp_particleEnergy, 1,
                         "virial",         &comp_virial,         1);
@@ -183,7 +185,7 @@ static void compute(void* km, int* ier)
    KIM_API_getm_data(pkim, ier, 7*3,
                      "numberOfParticles", &nAtoms,         1,
                      "particleTypes",     &particleTypes,  1,
-                     "energy",            &energy,         1,
+                     "energy",            &energy,         comp_energy,
                      "coordinates",       &coords,         1,
                      "forces",            &force,          comp_force,
                      "particleEnergy",    &particleEnergy, comp_particleEnergy,
@@ -230,7 +232,7 @@ static void compute(void* km, int* ier)
          particleEnergy[i] = 0.0;
       }
    }
-   else
+   if (comp_energy)
    {
       *energy = 0.0;
    }
@@ -294,7 +296,7 @@ static void compute(void* km, int* ier)
                particleEnergy[i] += 0.5*phi;
                particleEnergy[j] += 0.5*phi;
             }
-            else
+            if (comp_energy)
             {
                *energy += phi;
             }
@@ -323,18 +325,6 @@ static void compute(void* km, int* ier)
          }
       } /* loop on j */
    }    /* loop on i */
-
-
-   /* perform final tasks */
-
-   if (comp_particleEnergy)
-   {
-      *energy = 0.0;
-      for (k = 0; k < *nAtoms; ++k)
-      {
-         *energy += particleEnergy[k];
-      }
-   }
 
    /* everything is great */
    *ier = KIM_STATUS_OK;

@@ -441,7 +441,7 @@ do
       if (NBC.eq.1) then
          where ( abs(Rij) .gt. 0.5d0*boxSideLengths )  ! periodic boundary conditions
             Rij = Rij - sign(boxSideLengths,Rij)       ! applied where needed.
-         end where                                ! 
+         end where                                !
       endif
 
       ! compute contribution to electron density
@@ -478,7 +478,8 @@ do i = 1,N
    !
    if (comp_enepot.eq.1) then                     ! accumulate embedding energy contribution
       ene_pot(i) = ene_pot(i) + U(i)
-   elseif (comp_energy.eq.1) then
+   endif
+   if (comp_energy.eq.1) then
       energy = energy + U(i)
    endif
 
@@ -533,7 +534,7 @@ do
       if (NBC.eq.1) then
          where ( abs(Rij) .gt. 0.5d0*boxSideLengths )  ! periodic boundary conditions
             Rij = Rij - sign(boxSideLengths,Rij)       ! applied where needed.
-         end where                                ! 
+         end where                                !
       endif
 
       ! compute energy and forces
@@ -576,7 +577,8 @@ do
          if (comp_enepot.eq.1) then
             ene_pot(i) = ene_pot(i) + Ei          ! accumulate energy Ei
             ene_pot(j) = ene_pot(j) + Ej          ! accumulate energy Ej
-         elseif (comp_energy.eq.1) then
+         endif
+         if (comp_energy.eq.1) then
             energy = energy + Ei                  ! accumulate energy
             energy = energy + Ej                  ! accumulate energy
          endif
@@ -604,9 +606,6 @@ do
    enddo  ! loop on jj
 
 enddo  ! infinite do loop (terminated by exit statements above)
-
-if (comp_enepot.eq.1 .and. comp_energy.eq.1) &
-   energy = sum(ene_pot(1:N))                       ! compute total energy
 
 ! Free temporary storage
 !
@@ -702,7 +701,7 @@ integer(kind=kim_intptr), intent(in) :: pkim
 <FILL as necessary>
 
 return
-  
+
 end subroutine Destroy
 
 end module model_<FILL element name>_PF_<FILL model name>

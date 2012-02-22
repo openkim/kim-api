@@ -1,8 +1,4 @@
 
-    if ((comp_enepot.eq.1) .and. (comp_energy.eq.1)) then
-       energy = sum(ene_pot(1:numberOfParticles))                     ! compute total energy
-    endif
-
   end subroutine Compute_Energy_Forces
 
 !-------------------------------------------------------------------------------

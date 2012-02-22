@@ -412,7 +412,8 @@ do
             if ((HalfOrFull.eq.1) .and. &
                 (j .le. numberContrib)) &         ! HALF mode
                ene_pot(j) = ene_pot(j) + 0.5d0*phi! (i and j share it)
-         elseif (comp_energy.eq.1) then
+         endif
+         if (comp_energy.eq.1) then
             if ((HalfOrFull.eq.1) .and. &
                 (j .le. numberContrib)) then      ! HALF mode
                energy = energy + phi              !      add v to total energy
@@ -444,11 +445,6 @@ do
    enddo  ! loop on jj
 
 enddo  ! infinite do loop (terminated by exit statements above)
-
-! Perform final tasks
-!
-if (comp_enepot.eq.1 .and. comp_energy.eq.1) &
-   energy = sum(ene_pot(1:N))                       ! compute total energy
 
 ! Free temporary storage
 !

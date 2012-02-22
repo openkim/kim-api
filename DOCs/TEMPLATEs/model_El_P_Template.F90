@@ -86,7 +86,7 @@ contains
 !-------------------------------------------------------------------------------
 subroutine calc_phi(r,phi)
 implicit none
-   
+
 !-- Transferred variables
 double precision, intent(in)  :: r
 double precision, intent(out) :: phi
@@ -110,7 +110,7 @@ end subroutine calc_phi
 !-------------------------------------------------------------------------------
 subroutine calc_phi_dphi(r,phi,dphi)
 implicit none
-   
+
 !-- Transferred variables
 double precision, intent(in)  :: r
 double precision, intent(out) :: phi,dphi
@@ -305,7 +305,7 @@ if (IterOrLoca.eq.1) then
    if (ier.ne.KIM_STATUS_NEIGH_ITER_INIT_OK) then
       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_neigh_f", ier)
       ier = KIM_STATUS_FAIL
-      return 
+      return
    endif
 endif
 
@@ -349,7 +349,7 @@ do
          endif
       endif
    endif
-      
+
    ! Loop over the neighbors of atom i
    !
    do jj = 1, numnei
@@ -369,7 +369,7 @@ do
       if (NBC.eq.1) then
          where ( abs(Rij) .gt. 0.5d0*boxSideLengths )  ! periodic boundary conditions
             Rij = Rij - sign(boxSideLengths,Rij)       ! applied where needed.
-         end where                                ! 
+         end where                                !
       endif
 
       ! compute energy and forces
@@ -398,7 +398,8 @@ do
             if ((HalfOrFull.eq.1) .and. &
                 (j .le. numberContrib)) &         ! HALF mode
                ene_pot(j) = ene_pot(j) + 0.5d0*phi! (i and j share it)
-         elseif (comp_energy.eq.1) then
+         endif
+         if (comp_energy.eq.1) then
             if ((HalfOrFull.eq.1) .and. &
                 (j .le. numberContrib)) then      ! HALF mode
                energy = energy + phi              !      add v to total energy
@@ -430,11 +431,6 @@ do
    enddo  ! loop on jj
 
 enddo  ! infinite do loop (terminated by exit statements above)
-
-! Perform final tasks
-!
-if (comp_enepot.eq.1 .and. comp_energy.eq.1) &
-   energy = sum(ene_pot(1:N))                       ! compute total energy
 
 ! Free temporary storage
 !
