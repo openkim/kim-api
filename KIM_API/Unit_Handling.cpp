@@ -384,6 +384,7 @@ char * Unit_Handling::get_unit_time(int *error){
 }
 ostream &operator<<(ostream &stream, Unit_Handling &a){
     a.print(stream);
+    return stream;
 }
 
 double Unit_Handling::convert_to_act_unit(void *kim,

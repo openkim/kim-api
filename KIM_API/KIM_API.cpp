@@ -348,7 +348,7 @@ bool IOline:: getFields(const char *inputString){
                 if(i>=(int)strlen(inputString)){return false;};
                 int j=0;
 
-                for(i;i<=(int)strlen(inputString); i++){
+                for(i=i;i<=(int)strlen(inputString); i++){
                         if(*(inputString+i)=='#'){value[j]='\0';i+=2;break;};
                         value[j]=*(inputString+i);
                         j++;
@@ -357,7 +357,7 @@ bool IOline:: getFields(const char *inputString){
 
                 j=0;
                 if(i>=(int)strlen(inputString)){comment[0]='\0';strip();return true;};
-                for(i;i<=(int)strlen(inputString); i++){
+                for(i=i;i<=(int)strlen(inputString); i++){
                         comment[j]=*(inputString + i);
                         comment[j+1]='\0';
                         j++;
@@ -2103,7 +2103,7 @@ bool KIM_API_model::model_init(){
 cout<<"* Info: KIM_API_model::model_init: call dynamically linked initialize routine for:"<<modelname<<endl;
 cout<<"               from the shared library:"<<model_slib_file<<endl;
     sprintf(model_init_routine_name,"%s_init_",modelname);
-    for(int i=0;i<strlen(model_init_routine_name);i++){
+    for(int i=0;i<(int)strlen(model_init_routine_name);i++){
          model_init_routine_name[i]=tolower(model_init_routine_name[i]);
     }
 
