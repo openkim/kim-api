@@ -105,10 +105,10 @@ ex_test_Al_free_cluster: $(COMMON_FRAGMENTS)                      \
 	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_TESTS_DIR)$@
         # make README file in the directory
 	$(D_CAT) test_free_cluster_README | $(SED_CMD) \
-                                          | sed -e 's/SPECIES_NAME_STR/Al/g' \
-                                                          >  $(KIM_EX_TESTS_DIR)$@/README
+          | sed -e 's/LANGUAGE_STR/F90/g' \
+          | sed -e 's/SPECIES_NAME_STR/Al/g'                                                                  >  $(KIM_EX_TESTS_DIR)$@/README
         # make Makefile in the directory
-	$(D_CAT) test_Makefile | $(SED_CMD)               >  $(KIM_EX_TESTS_DIR)$@/Makefile
+	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start    | $(SED_CMD) \
          | sed -e 's/SPECIES_LINE_STR/Al                          spec                    13/g'               >  $(KIM_EX_TESTS_DIR)$@/$@.kim
@@ -501,6 +501,7 @@ ex_test_Ar_free_cluster_CLUSTER_C: $(COMMON_FRAGMENTS)                 \
 	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_TESTS_DIR)$@
         # make README file in the directory
 	$(D_CAT) test_free_cluster_README | $(SED_CMD) \
+         | sed -e 's/LANGUAGE_STR/c/g' \
          | sed -e 's/SPECIES_NAME_STR/Ar/g'                                                                   >  $(KIM_EX_TESTS_DIR)$@/README
         # make Makefile in the directory
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)$@/Makefile
@@ -536,6 +537,7 @@ ex_test_Ar_free_cluster_CLUSTER_F90: $(COMMON_FRAGMENTS)                 \
 	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_TESTS_DIR)$@
         # make README file in the directory
 	$(D_CAT) test_free_cluster_README | $(SED_CMD) \
+         | sed -e 's/LANGUAGE_STR/F90/g' \
          | sed -e 's/SPECIES_NAME_STR/Ar/g'                                                                   >  $(KIM_EX_TESTS_DIR)$@/README
         # make Makefile in the directory
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)$@/Makefile
@@ -577,6 +579,7 @@ ex_test_Ar_free_cluster: $(COMMON_FRAGMENTS)                      \
 	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_TESTS_DIR)$@
         # make README file in the directory
 	$(D_CAT) test_free_cluster_README | $(SED_CMD) \
+         | sed -e 's/LANGUAGE_STR/F90/g' \
          | sed -e 's/SPECIES_NAME_STR/Ar/g'                                                                   >  $(KIM_EX_TESTS_DIR)$@/README
         # make Makefile in the directory
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)$@/Makefile
@@ -643,6 +646,7 @@ ex_test_Ne_free_cluster: $(COMMON_FRAGMENTS)                      \
 	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_TESTS_DIR)$@
         # make README file in the directory
 	$(D_CAT) test_free_cluster_README | $(SED_CMD) \
+         | sed -e 's/LANGUAGE_STR/F90/g' \
          | sed -e 's/SPECIES_NAME_STR/Ne/g'                                                                   >  $(KIM_EX_TESTS_DIR)$@/README
         # make Makefile in the directory
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)$@/Makefile
@@ -709,6 +713,7 @@ ex_test_Ne_free_cluster_SI: $(COMMON_FRAGMENTS)                      \
 	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_TESTS_DIR)$@
         # make README file in the directory
 	$(D_CAT) test_free_cluster_README | $(SED_CMD) \
+         | sed -e 's/LANGUAGE_STR/F90/g' \
          | sed -e 's/SPECIES_NAME_STR/Ne/g'                                                                   >  $(KIM_EX_TESTS_DIR)$@/README
         # make Makefile in the directory
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)$@/Makefile
