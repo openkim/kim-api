@@ -507,7 +507,8 @@ ex_test_Ar_free_cluster_CLUSTER_C: $(COMMON_FRAGMENTS)                 \
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start    | $(SED_CMD) \
-         | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    18/g'               >  $(KIM_EX_TESTS_DIR)$@/$@.kim
+         | sed -e 's/OneBasedLists /ZeroBasedLists/g' \
+               -e 's/SPECIES_LINE_STR/Ar                          spec                    18/g'               >  $(KIM_EX_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)$@/$@.kim
 	echo "CLUSTER                     flag"                                                               >> $(KIM_EX_TESTS_DIR)$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)$@/$@.kim
