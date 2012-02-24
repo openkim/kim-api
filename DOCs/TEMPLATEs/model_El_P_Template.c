@@ -339,7 +339,7 @@ static void compute(void* km, int* ier)
       }
    }
 
-   /* Compute enery and forces */
+   /* Compute energy and forces */
 
    /* loop over particles and compute enregy and forces */
    i = -1;

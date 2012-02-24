@@ -257,7 +257,7 @@ static void compute(void* km, int* ier)
       }
    }
 
-   /* Compute enery and forces */
+   /* Compute energy and forces */
 
    /* We'll use a half list approach                                  */
    /* Don't need to consider the last atom since all its interactions */
