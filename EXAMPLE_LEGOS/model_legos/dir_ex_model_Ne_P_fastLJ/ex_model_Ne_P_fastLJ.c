@@ -127,7 +127,7 @@ static void neigh_pure_h_compute(void* km, int* ier)
    int* neighListOfCurrentAtom;
    int (*get_neigh)(void *,int *,int *,int *, int *, int **, double **);
 
-   int numberContrib;
+   int *numberContrib;
    double dx[3];
    double* pdx = &(dx[0]);
    double four_eps_sigma6;
@@ -245,9 +245,9 @@ static void neigh_pure_h_compute(void* km, int* ier)
 
                dEidr = 6.0*(-2.0*e_Rm12 + e_Rm6 );
                fac=dEidr*Rm2;
-               if (j>= numberContrib) fac *=0.5;
+               if (j>= *numberContrib) fac *=0.5;
 
-               *energy += ((j < numberContrib) ? phi : 0.5*phi);
+               *energy += ((j < *numberContrib) ? phi : 0.5*phi);
 
                force[zi] += fac*dx[0];
                force[zi+1] += fac*dx[1];
@@ -322,19 +322,19 @@ static void neigh_pure_h_compute(void* km, int* ier)
                {
                   dEidr = 6.0*(-2.0*e_Rm12 + e_Rm6 );
                   fac=dEidr*Rm2;
-                  if (j>= numberContrib) fac *=0.5;
+                  if (j>= *numberContrib) fac *=0.5;
                }
 
                /* accumulate energy */
                if (comp_particleEnergy)
                {
                   particleEnergy[currentAtom] += 0.5*phi;
-                  if (j < numberContrib) particleEnergy[j] += 0.5*phi;
+                  if (j < *numberContrib) particleEnergy[j] += 0.5*phi;
                }
 
                if (comp_energy)
                {
-                  *energy += ((j < numberContrib) ? phi : 0.5*phi);
+                  *energy += ((j < *numberContrib) ? phi : 0.5*phi);
                }
 
                /* process dEdr */
@@ -952,7 +952,7 @@ static void mi_opbc_h_compute(void* km, int* ier)
    int* neighListOfCurrentAtom;
    int (*get_neigh)(void *,int *,int *,int *, int *, int **, double **);
 
-   int numberContrib;
+   int *numberContrib;
    double dx[3];
    double* pdx = &(dx[0]);
    double four_eps_sigma6;
@@ -1076,9 +1076,9 @@ static void mi_opbc_h_compute(void* km, int* ier)
 
                dEidr = 6.0*(-2.0*e_Rm12 + e_Rm6 );
                fac=dEidr*Rm2;
-               if (j>= numberContrib) fac *=0.5;
+               if (j>= *numberContrib) fac *=0.5;
 
-               *energy += ((j < numberContrib) ? phi : 0.5*phi);
+               *energy += ((j < *numberContrib) ? phi : 0.5*phi);
 
                force[zi] += fac*dx[0];
                force[zi+1] += fac*dx[1];
@@ -1159,19 +1159,19 @@ static void mi_opbc_h_compute(void* km, int* ier)
                {
                   dEidr = 6.0*(-2.0*e_Rm12 + e_Rm6 );
                   fac=dEidr*Rm2;
-                  if (j>= numberContrib) fac *=0.5;
+                  if (j>= *numberContrib) fac *=0.5;
                }
 
                /* accumulate energy */
                if (comp_particleEnergy)
                {
                   particleEnergy[currentAtom] += 0.5*phi;
-                  if (j < numberContrib) particleEnergy[j] += 0.5*phi;
+                  if (j < *numberContrib) particleEnergy[j] += 0.5*phi;
                }
 
                if (comp_energy)
                {
-                  *energy += ((j < numberContrib) ? phi : 0.5*phi);
+                  *energy += ((j < *numberContrib) ? phi : 0.5*phi);
                }
 
                /* process dEdr */
