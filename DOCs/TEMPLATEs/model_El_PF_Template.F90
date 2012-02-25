@@ -232,10 +232,10 @@ integer,                  intent(out) :: ier
 
 !-- Local variables
 double precision :: Rij(DIM)
-double precision :: r,Rsqij,phi,dphi,g,dg,dU,dphieff
+double precision :: r,Rsqij,phi,dphi,g,dg,dU,U,dphieff
 double precision :: dphii,dUi,Ei,dphij,dUj,Ej
 integer :: i,j,jj,numnei,comp_force,comp_enepot,comp_virial,comp_energy
-double precision, allocatable :: rho(:),U(:),derU(:)
+double precision, allocatable :: rho(:),derU(:)
 integer, allocatable, target :: nei1atom_substitute(:)
 character*80 :: error_message
 
@@ -377,13 +377,15 @@ ier = KIM_STATUS_OK ! everything is ok
 
 ! Initialize potential energies, forces, virial term, electron density
 !
-if (comp_enepot.eq.1) ene_pot(1:N)   = 0.d0
+! Note: that the variable `ene_pot' does not need to be initialized
+!       because it's initial value is set during the embedding energy
+!       calculation.
+!
 if (comp_energy.eq.1) energy         = 0.d0
-if (comp_force.eq.1)  force(1:3,1:N) = 0.d0
+if (comp_force.eq.1)  force(1:DIM,1:N) = 0.d0
 if (comp_virial.eq.1) virial_global  = 0.d0
 allocate( rho(N) )  ! pair functional electron density
 rho(1:N) = 0.d0
-allocate( U(N) )    ! embedding energy
 if (comp_force.eq.1.or.comp_virial.eq.1) allocate( derU(N) )  ! EAM embedded energy deriv
 
 ! Initialize neighbor handling for CLUSTER NBC
@@ -466,11 +468,11 @@ enddo  ! infinite do loop (terminated by exit statements above)
 !
 do i = 1,N
    if (comp_force.eq.1.or.comp_virial.eq.1) then
-      call calc_U_dU(rho(i),U(i),dU)              ! compute embedding energy
+      call calc_U_dU(rho(i),U,dU)                 ! compute embedding energy
                                                   !   and its derivative
       derU(i) = dU                                ! store dU for later use
    else
-      call calc_U(rho(i),U(i) )                   ! compute just embedding energy
+      call calc_U(rho(i),U)                       ! compute just embedding energy
    endif
 
    ! accumulate the embedding energy contribution
@@ -478,10 +480,10 @@ do i = 1,N
    ! Assuming U(rho=0) = 0.0d0
    !
    if (comp_enepot.eq.1) then                     ! accumulate embedding energy contribution
-      ene_pot(i) = ene_pot(i) + U(i)
+      ene_pot(i) = U
    endif
    if (comp_energy.eq.1) then
-      energy = energy + U(i)
+      energy = energy + U
    endif
 
    if ((HalfOrFull.eq.1) .and. (i .gt. numberContrib)) exit
@@ -612,7 +614,6 @@ enddo  ! infinite do loop (terminated by exit statements above)
 !
 if (NBC.eq.0) deallocate( nei1atom_substitute )
 deallocate( rho )
-deallocate( U )
 if (comp_force.eq.1.or.comp_virial.eq.1) deallocate( derU )
 
 ! Everything is great
