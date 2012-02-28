@@ -149,28 +149,6 @@ ostream &operator<<(ostream &stream, IOline a);
 istream &operator>>(istream &stream, IOline &a);
 
 
-/*
-class SystemOfUnit {
-public:
-    char UnitsSystemName[KIM_KEY_STRING_LENGTH];
-    IOline * inlines;
-    int numlines;
-    float mass,distance,time,energy,velocity;
-    float force,torque,temperature,pressure;
-    float dynamic_viscosity,charge,dipole,electric_field,density;
-    float garbage;
-
-    SystemOfUnit();
-    ~SystemOfUnit();
-    void init(char *infile);
-    void free();
-    float &operator[](char * unit);
- static int readlines(char * infile, IOline **inlines);
- static int readlines_str(char * instrn, IOline **inlines);
-
-    bool isitunit(char * unit);
-};
-*/
 class KIMBaseElement{
 public:
         void *data;
@@ -207,11 +185,12 @@ public:
     KIMBaseElement model;
     KIM_API_model();
     ~KIM_API_model();
-    bool preinit(char * initfile,char *modelname);
-    bool preinit(char * modelname);
-    bool model_info(char * modelname) {return preinit(modelname);}
-    bool prestring_init(char * instrn);
-    void free_e(int *error);
+
+    bool model_info(char * modelname) {return preinit(modelname);}//does not have error
+                                                                  // because it returns OK or FAIL
+    
+    void free_e(int *error); //free_e because free(int *) interferes with free(void *)
+                             // from standard V, on gnu version 4.5.2
     void free();
     bool set_data(char *nm, intptr_t size, void *dt);
     bool set_data_by_index(int ind,intptr_t size, void *dt);
@@ -219,9 +198,9 @@ public:
     void * get_data(char *nm,int *error);
     void * get_data_by_index(int ind,int *error);
 
-    void * get_data(char *nm);
+    
     int get_index(char *nm, int * error);
-    int get_index(char *nm);
+    int get_index(char *nm);//will move to private with next update kim_pair
     intptr_t get_size(char *nm,int *error);
     intptr_t get_shape(char *nm,int * shape,int *error);
     void set_shape(char *nm, int * shape, int rank, int *error);
@@ -236,33 +215,18 @@ public:
     intptr_t get_shape_by_index(int I, int * shape,int *error);
     int get_compute_by_index(int I,int * error);
 
-static   void read_file(char * initfile,KIM_IOline ** lns, int * numlns);
-static   void read_file_str_testname(char * strstream,KIM_IOline ** lns, int * numlns );
-static bool is_it_match(KIM_API_model & mdtst,char * inputinitfile);
-static bool is_it_match(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns);
-static bool is_it_match_noFlagCount(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns);
-static bool is_it_std_match(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns);
-static bool is_it_par(char * name);
-static bool is_it_fixed_par(char * name);
-static bool is_it_free_par(char * name);
-
-static void fatal_error_print();
-bool is_it_match(KIM_API_model &test,KIM_API_model & mdl);
-bool do_AtomsTypes_match(KIM_API_model &test,KIM_API_model & mdl);
-
-
+    static void fatal_error_print();
     bool init(char * testinputfile,char* testname, char * modelinputfile,char *modelname);
     bool init(char * testname,char * modelname);
     bool string_init(char * intststr,char * modelname);
-    bool init_str_testname(char * intststr,char * modelname);
-    bool init_str_modelname(char *testname,char *inmdlstr);
+    bool init_str_testname(char * intststr,char * modelname);// will move to private for next pair.kim update
      void model_compute(int *error);
     int get_neigh(int mode,int request, int *atom, int *numnei, int **nei1atom, double **Rij);
     bool model_init();
     bool model_reinit();
    void model_destroy(int *error);
-static void irrelevantVars2donotcompute(KIM_API_model & test, KIM_API_model & mdl);
-static void allocate(KIM_API_model * mdl, int natoms, int ntypes,int * error);
+
+void allocate( int natoms, int ntypes,int * error);
 
 char * get_partcl_types(int *nparticleTypes,int *error);
 int get_partcl_type_code(char *atom, int * error);
@@ -276,19 +240,19 @@ static char * get_model_kim_str(char * modelname,int *kimerr);
 
 char * get_NBC_method(int *error);
 bool is_half_neighbors();
-bool requiresFullNeighbors();
+bool is_half_neighbors(int *error);
+bool requiresFullNeighbors();//will be moved to private with next update pair_kim.
 
-    KIM_IOline *inlines;
-    int numlines;
+ 
     bool support_Rij;
-    int get_neigh_mode(int *);
+    int get_neigh_mode(int *error);
     static char * get_status_msg(int status_code);
-    static int report_error(int line, char * fl, char * usermsg, int ier);
+    static int report_error(int line, char * fl, char * usermsg, int error);
     int get_model_index_shift();
-    void set_model_buffer(void * o,int * ier);
-    void * get_model_buffer(int * ier);
-    void set_test_buffer(void * o,int * ier);
-    void * get_test_buffer(int * ier);
+    void set_model_buffer(void * o,int *error);
+    void * get_model_buffer(int *error);
+    void set_test_buffer(void * o,int *error);
+    void * get_test_buffer(int *error);
 
    static void process_dEdr(KIM_API_model **ppkim,double *dr,double *r,double ** dx, int *i,int *j,int *ier);
 
@@ -303,7 +267,7 @@ bool requiresFullNeighbors();
   void getm_index(int *err, int numargs, ...);      //++
   void setm_compute(int *err, int numargs, ...);    //++
   void setm_compute_by_index(int *err, int numargs, ...);//++
-  void getm_compute(int *err,int numargs, ...);  //?  ++
+  void getm_compute(int *err,int numargs, ...);  //  ++
   void getm_compute_by_index(int *err,int numargs, ...); //++
 
    //related to process fij public variables
@@ -326,11 +290,13 @@ bool requiresFullNeighbors();
       double length_exponent, double energy_exponent, double charge_exponent,
       double temperature_exponent, double time_exponent, int* kimerror);
 
-    KIM_AUX::Process_DE * get_process_DE_instance(){
+    KIM_AUX::Process_DE * get_process_DE_instance(){//used in KIM_AUX
         return &process_DE_instance;
     }
 private:
-
+    KIM_IOline *inlines;
+    int numlines;
+    
     bool locator_neigh_mode;
     bool iterator_neigh_mode;
     bool both_neigh_mode;
@@ -397,10 +363,29 @@ private:
     int hessian_ind;
     int process_dEdr_ind;
     int process_d2Edr2_ind;
+    
+    // other..
+    bool preinit(char * initfile,char *modelname);
+    bool preinit(char * modelname);
+    bool prestring_init(char * instrn);
+    bool init_str_modelname(char *testname,char *inmdlstr);
+    void * get_data(char *nm);
+    static   void read_file(char * initfile,KIM_IOline ** lns, int * numlns);
+    static   void read_file_str_testname(char * strstream,KIM_IOline ** lns, int * numlns );
 
-
-
+    static void irrelevantVars2donotcompute(KIM_API_model & test, KIM_API_model & mdl);
     bool check_consistance_NBC_method();
+    static bool is_it_match(KIM_API_model & mdtst,char * inputinitfile);
+    static bool is_it_match(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns);
+    static bool is_it_match_noFlagCount(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns);
+    static bool is_it_std_match(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns);
+
+    static bool is_it_par(char * name);
+    static bool is_it_fixed_par(char * name);
+    static bool is_it_free_par(char * name);
+
+    bool is_it_match(KIM_API_model &test,KIM_API_model & mdl);
+    bool do_AtomsTypes_match(KIM_API_model &test,KIM_API_model & mdl);
 
     char NBC_method_current[KIM_KEY_STRING_LENGTH];
     bool NBC_methods_match(KIM_API_model &test,KIM_API_model &mdl);
@@ -414,6 +399,8 @@ private:
     void data_multiply_a(void *dt,char* type,intptr_t sz,float a);
     void * model_lib_handle;
     void add_element(char * inln);
+    
+  
 };
 ostream &operator<<(ostream &stream, KIM_API_model &a);
 
