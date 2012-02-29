@@ -2254,18 +2254,18 @@ void KIM_API_model::irrelevantVars2donotcompute(KIM_API_model & test, KIM_API_mo
     }
 }
 
-void KIM_API_model::allocate(KIM_API_model * mdl, int natoms, int ntypes, int * error){
+void KIM_API_model::allocate( int natoms, int ntypes, int * error){
     // in process
-    if ( mdl->model.data == NULL) {
+    if ( this->model.data == NULL) {
         cout<<"* Error (KIM_API_model::allocate): KIM API object not initialized with KIM_API_init()."<<endl;
         *error = KIM_STATUS_FAIL;
         return;
     }
-    for(int i=0; i<mdl->model.size;i++){
-        intptr_t rank = (intptr_t)mdl->inlines[i].get_rank();
-        int *shape = mdl->inlines[i].get_shape(natoms,ntypes);
-        int calculate = (*mdl)[i].flag->calculate;
-        bool isitparam = mdl->is_it_par((*mdl)[i].name);
+    for(int i=0; i<this->model.size;i++){
+        intptr_t rank = (intptr_t)this->inlines[i].get_rank();
+        int *shape = this->inlines[i].get_shape(natoms,ntypes);
+        int calculate = (*this)[i].flag->calculate;
+        bool isitparam = this->is_it_par((*this)[i].name);
         intptr_t sz=0;
         int c=1;
         if (shape!=NULL) {
@@ -2273,19 +2273,19 @@ void KIM_API_model::allocate(KIM_API_model * mdl, int natoms, int ntypes, int * 
             sz=c;
         }else{
             sz = 1;
-            if (strcmp((*mdl)[i].type,"pointer")==0 || strcmp((*mdl)[i].type,"method")==0) sz=0;
-            if (strcmp((*mdl)[i].type,"flag")==0 ) sz=0;
+            if (strcmp((*this)[i].type,"pointer")==0 || strcmp((*this)[i].type,"method")==0) sz=0;
+            if (strcmp((*this)[i].type,"flag")==0 ) sz=0;
         }
-        if((mdl->inlines[i].isitoptional() && (calculate == 0)) || isitparam) {
+        if((this->inlines[i].isitoptional() && (calculate == 0)) || isitparam) {
             sz=0;
             if(shape!=0) shape[0]=0;
         }
-        (*mdl)[i].free();
-        (*mdl)[i].init(mdl->inlines[i].name,mdl->inlines[i].type,sz,rank,shape);
-        strncpy((*mdl)[i].unit->dim,mdl->inlines[i].dim,strlen(mdl->inlines[i].dim)+1);
-        (*mdl)[i].flag->calculate=calculate;
-         (*mdl)[i].flag->peratom = 1;
-        if(mdl->inlines[i].isitperatom()) (*mdl)[i].flag->peratom = 0;
+        (*this)[i].free();
+        (*this)[i].init(this->inlines[i].name,this->inlines[i].type,sz,rank,shape);
+        strncpy((*this)[i].unit->dim,this->inlines[i].dim,strlen(this->inlines[i].dim)+1);
+        (*this)[i].flag->calculate=calculate;
+         (*this)[i].flag->peratom = 1;
+        if(this->inlines[i].isitperatom()) (*this)[i].flag->peratom = 0;
         delete [] shape;
     }
     *error=KIM_STATUS_OK;
@@ -2414,6 +2414,24 @@ bool KIM_API_model::is_half_neighbors(){
     if (strcmp(method,"NEIGH_RVEC_F")==0) answer = false;
     if (strcmp(method,"MI_OPBC_F")==0) answer = false;
     if (method!=NULL) c_free((void *)method);
+    return answer;
+}
+bool KIM_API_model::is_half_neighbors(int* kimerr){
+    char * method = NULL;
+    *kimerr=KIM_STATUS_FAIL;
+    method = (char *) get_NBC_method(kimerr);
+
+    if(*kimerr!=1){
+        if (method!=NULL) c_free((void *)method);
+        return true;
+    }
+
+    bool answer = true;
+    if (strcmp(method,"NEIGH_PURE_F")==0) answer = false;
+    if (strcmp(method,"NEIGH_RVEC_F")==0) answer = false;
+    if (strcmp(method,"MI_OPBC_F")==0) answer = false;
+    if (method!=NULL) c_free((void *)method);
+    *kimerr=KIM_STATUS_OK;
     return answer;
 }
 
