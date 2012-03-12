@@ -2247,9 +2247,8 @@ void KIM_API_model::irrelevantVars2donotcompute(KIM_API_model & test, KIM_API_mo
         if(mdl.inlines[i].isitoptional()) {
             mdl[i].flag->calculate = 0;
             for (int j=0;j<test.model.size;j++){
-                if(test[j] ==mdl.inlines[i]) mdl[i].flag->calculate = 1;
+                if(test[j].equiv(mdl.inlines[i])) mdl[i].flag->calculate = 1;
             }
-
         }
     }
 }
