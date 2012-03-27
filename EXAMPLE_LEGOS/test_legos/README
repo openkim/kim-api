@@ -163,9 +163,9 @@ program_free_cluster_stiff.f.frag
      This Fortran file contains the main program for the
      ex_test_*_free_cluster_stiff example test.
 
-program_numer_deriv.f.frag
+program_vc_forces_numer_deriv.f.frag
      This Fortran file contains the main program for the
-     ex_numer_deriv example test.
+     vc_forces_numer_deriv verification check
 
 setup_B2_KIM_API_object.f.frag
      This Fortran file contains the setup_B2_KIM_API_object routine used by the

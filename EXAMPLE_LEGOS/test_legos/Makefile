@@ -851,10 +851,12 @@ ex_test_demo_F03: dir_ex_test_demo_F03               \
 	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_TESTS_DIR)$@
 	cp -rf dir_$@/* $(KIM_EX_TESTS_DIR)$@/
 
-ex_test_numer_deriv: $(COMMON_FRAGMENTS)                      \
-                     test_numer_deriv_README                  \
+vc_forces_numer_deriv: $(COMMON_FRAGMENTS)                    \
+                     vc_forces_numer_deriv_README             \
                      descriptor_file_neighborlist             \
-                     program_numer_deriv.f.frag               \
+                     program_vc_forces_numer_deriv.f.frag     \
+                     get_model_supported_types.f.frag         \
+                     get_model_NBC_methods.f.frag             \
                      write_KIM_descriptor.f.frag              \
                      update_neighborlist.f.frag               \
                      MI_OPBC_cluster_neighborlist.f.frag      \
@@ -870,12 +872,16 @@ ex_test_numer_deriv: $(COMMON_FRAGMENTS)                      \
 	@touch $(KIM_EX_TESTS_DIR)$@
 	cp $(KIM_DIR)LICENSE.CDDL $(KIM_EX_TESTS_DIR)$@
         # make README file in the directory
-	$(D_CAT) test_numer_deriv_README | $(SED_CMD)                                                         >  $(KIM_EX_TESTS_DIR)$@/README
+	$(D_CAT) vc_forces_numer_deriv_README | $(SED_CMD)                                                         >  $(KIM_EX_TESTS_DIR)$@/README
         # make Makefile in the directory
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)$@/Makefile
         # make .F90 file in the directory
-	$(F_CAT) program_numer_deriv.f.frag  | $(SED_CMD) \
+	$(F_CAT) program_vc_forces_numer_deriv.f.frag  | $(SED_CMD) \
          | sed -e 's/FCC_SPACING_STR/5.26d0 ! in angstroms/g'                                                 >  $(KIM_EX_TESTS_DIR)$@/$@.F90
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)$@/$@.F90
+	$(F_CAT) get_model_supported_types.f.frag                                                             >> $(KIM_EX_TESTS_DIR)$@/$@.F90
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)$@/$@.F90
+	$(F_CAT) get_model_NBC_methods.f.frag                                                                 >> $(KIM_EX_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)$@/$@.F90
 	$(F_CAT) write_KIM_descriptor.f.frag | $(SED_CMD)                                                     >> $(KIM_EX_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)$@/$@.F90

@@ -29,6 +29,7 @@ integer, parameter :: number_eps_levels = 15
 real*8  eps, deriv_last, deriv_err_last
 logical done
 integer i,nn,idum
+logical doing_neighbors
 
 !-- KIM variables
 real*8 energy;         pointer(penergy,energy)
@@ -43,6 +44,10 @@ if (ier.lt.KIM_STATUS_OK) then
    idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
    stop
 endif
+
+! Figure out if neighbor list is being generated
+!
+doing_neighbors = .not.(index(NBC_Method,"CLUSTER").eq.1)
 
 ! Outer loop of Ridders' method for computing numerical derivative
 !
@@ -109,8 +114,9 @@ contains
    hh = h
    coordorig = coords(dir,atomnum)
    coords(dir,atomnum) = coordorig + hh
-   call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
-                            do_update_list,coordsave,neighborList,RijList,ier)
+   if (doing_neighbors) &
+      call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
+                               do_update_list,coordsave,neighborList,RijList,ier)
    call kim_api_model_compute_f(pkim, ier)
    if (ier.lt.KIM_STATUS_OK) then
       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute",ier)
@@ -118,8 +124,9 @@ contains
    endif
    fp = energy
    coords(dir,atomnum) = coordorig - hh
-   call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
-                            do_update_list,coordsave,neighborList,RijList,ier)
+   if (doing_neighbors) &
+      call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
+                               do_update_list,coordsave,neighborList,RijList,ier)
    call kim_api_model_compute_f(pkim, ier)
    if (ier.lt.KIM_STATUS_OK) then
       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute",ier)
@@ -127,8 +134,9 @@ contains
    endif
    fm = energy
    coords(dir,atomnum) = coordorig
-   call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
-                            do_update_list,coordsave,neighborList,RijList,ier)
+   if (doing_neighbors) &
+      call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
+                               do_update_list,coordsave,neighborList,RijList,ier)
    a(1,1)=(fp-fm)/(2.d0*hh)
    err=BIG
    ! successive columns in the Neville tableau will go to smaller step sizes
@@ -137,8 +145,9 @@ contains
       ! try new, smaller step size
       hh=hh/CON
       coords(dir,atomnum) = coordorig + hh
-      call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
-                               do_update_list,coordsave,neighborList,RijList,ier)
+      if (doing_neighbors) &
+         call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
+                                  do_update_list,coordsave,neighborList,RijList,ier)
       call kim_api_model_compute_f(pkim, ier)
       if (ier.lt.KIM_STATUS_OK) then
          idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute",ier)
@@ -146,8 +155,9 @@ contains
       endif
       fp = energy
       coords(dir,atomnum) = coordorig - hh
-      call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
-                               do_update_list,coordsave,neighborList,RijList,ier)
+      if (doing_neighbors) &
+         call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
+                                  do_update_list,coordsave,neighborList,RijList,ier)
       call kim_api_model_compute_f(pkim, ier)
       if (ier.lt.KIM_STATUS_OK) then
          idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute",ier)
@@ -155,8 +165,9 @@ contains
       endif
       fm = energy
       coords(dir,atomnum) = coordorig
-      call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
-                               do_update_list,coordsave,neighborList,RijList,ier)
+      if (doing_neighbors) &
+         call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
+                                  do_update_list,coordsave,neighborList,RijList,ier)
       a(1,i)=(fp-fm)/(2.d0*hh)
       fac=CON2
       ! compute extrapolations of various orders, requiring no new function
