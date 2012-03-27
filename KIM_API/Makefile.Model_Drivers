@@ -40,8 +40,32 @@ else
    include $(KIM_API_DIR)Include.mk
 endif
 
-
 all: $(MODEL_NAME).kim $(MODEL_BUILD_TARGET)
+
+
+hundred0 := $(shell i=1; while [ $$i -le 100 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
+hundred1 := $(shell i=101; while [ $$i -le 200 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
+hundred2 := $(shell i=201; while [ $$i -le 300 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
+hundred3 := $(shell i=301; while [ $$i -le 400 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
+hundred4 := $(shell i=401; while [ $$i -le 500 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
+hundred5 := $(shell i=501; while [ $$i -le 600 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
+hundred6 := $(shell i=601; while [ $$i -le 700 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
+hundred7 := $(shell i=701; while [ $$i -le 800 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
+hundred8 := $(shell i=801; while [ $$i -le 900 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
+hundred9 := $(shell i=901; while [ $$i -le 999 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
+
+species_check =\
+  if ( test `grep -c SPECIES$(num)_NAME_STR $(MODEL_NAME).kim` == 0 ) then\
+     if ( test "$(SPECIES$(num)_NAME)" != "" ) then\
+        echo && echo "*** SPECIES$(num)_NAME is defined in Makefile, but SPECIES$(num)_NAME_STR in not in $(MODEL_DRIVER_NAME).kim. ***" && echo && false;\
+     fi;\
+  else\
+     if ( test "$(SPECIES$(num)_NAME)" != "" ) then\
+        sed -i -e "s/SPECIES$(num)_NAME_STR/$(SPECIES$(num)_NAME)/g" $(MODEL_NAME).kim; \
+     else\
+        sed -i -E -e '/^[[:space:]]*SPECIES$(num)_NAME_STR.*$$/d' $(MODEL_NAME).kim; \
+     fi;\
+  fi &&
 
 lc_MODEL_DRIVER_NAME := `echo $(MODEL_DRIVER_NAME) | tr A-Z a-z`
 lc_MODEL_NAME        := `echo $(MODEL_NAME) | tr A-Z a-z`
@@ -49,17 +73,17 @@ lc_MODEL_NAME        := `echo $(MODEL_NAME) | tr A-Z a-z`
 $(MODEL_NAME).kim: $(KIM_MODEL_DRIVERS_DIR)$(MODEL_DRIVER_NAME)/$(MODEL_DRIVER_NAME).kim Makefile \
                    $(KIM_API_DIR)Makefile.Model_Drivers
 	cat $(KIM_MODEL_DRIVERS_DIR)/$(MODEL_DRIVER_NAME)/$(MODEL_DRIVER_NAME).kim | \
-        sed -e "s,MODEL_NAME_STR,$(MODEL_NAME),g"       \
-            -e "s,SPECIES1_NAME_STR,$(SPECIES1_NAME),g" \
-            -e "s,SPECIES2_NAME_STR,$(SPECIES2_NAME),g" \
-            -e "s,SPECIES3_NAME_STR,$(SPECIES3_NAME),g" \
-            -e "s,SPECIES4_NAME_STR,$(SPECIES4_NAME),g" \
-            -e "s,SPECIES5_NAME_STR,$(SPECIES5_NAME),g" \
-            -e "s,SPECIES6_NAME_STR,$(SPECIES6_NAME),g" \
-            -e "s,SPECIES7_NAME_STR,$(SPECIES7_NAME),g" \
-            -e "s,SPECIES8_NAME_STR,$(SPECIES8_NAME),g" \
-            -e "s,SPECIES9_NAME_STR,$(SPECIES9_NAME),g" \
-        > $(MODEL_NAME).kim
+        sed -e "s,MODEL_NAME_STR,$(MODEL_NAME),g"                             > $(MODEL_NAME).kim
+	@$(foreach num,$(hundred0),$(species_check)) true
+	@$(foreach num,$(hundred1),$(species_check)) true
+	@$(foreach num,$(hundred2),$(species_check)) true
+	@$(foreach num,$(hundred3),$(species_check)) true
+	@$(foreach num,$(hundred4),$(species_check)) true
+	@$(foreach num,$(hundred5),$(species_check)) true
+	@$(foreach num,$(hundred6),$(species_check)) true
+	@$(foreach num,$(hundred7),$(species_check)) true
+	@$(foreach num,$(hundred8),$(species_check)) true
+	@$(foreach num,$(hundred9),$(species_check)) true
 
 $(MODEL_NAME).cpp: $(KIM_API_DIR)model_based_on_driver.cpp $(PARAM_FILE_NAME) Makefile \
                    $(KIM_API_DIR)Makefile.Model_Drivers
