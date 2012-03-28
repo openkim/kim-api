@@ -72,7 +72,7 @@ program TEST_NAME_STR
   integer,                  allocatable :: neighborList(:,:)
   integer(kind=kim_intptr), allocatable :: NLRvecLocs(:)
   double precision,         allocatable :: RijList(:,:,:)
-  double precision                      :: cutpad = CUTOFF_PADDING_STR
+  double precision,         parameter   :: cutpad = CUTOFF_PADDING_STR
 
   !
   ! KIM variables

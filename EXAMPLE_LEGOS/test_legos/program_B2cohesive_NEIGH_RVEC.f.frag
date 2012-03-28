@@ -225,7 +225,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   real*8 coordum(DIM,1);   pointer(pcoor,coordum)
   real*8, pointer :: coords(:,:)
   real*8 cutoff;           pointer(pcutoff,cutoff)
-  double precision :: cutpad = CUTOFF_PADDING_STR ! cutoff radius padding
+  double precision, parameter :: cutpad = CUTOFF_PADDING_STR ! cutoff radius padding
 
   ! Unpack data from KIM object
   !
