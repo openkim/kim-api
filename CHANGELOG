@@ -32,6 +32,16 @@
 #
 
 
+=== openkim-api-v1.0.1 =========================================================
+
+
+* Bug fix to ex_model_Ne_P_fastLJ
+
+* Bug fix to ex_model_Al_PF_ErcolessiAdams (and associated template file)
+
+* Documention updates
+
+
 === openkim-api-v1.0.0 =========================================================
 
 

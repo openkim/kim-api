@@ -70,7 +70,7 @@ int KIM_API_init1(void * kimmdl, char * testinputf,char * testname, char * mdlin
 int KIM_API_model_info(void * kimmdl, char * mdlname){
     KIM_API_model * mdl;
     mdl = new KIM_API_model[1];
-    if(mdl->preinit(mdlname)) {
+    if(mdl->model_info(mdlname)) {
         *(KIM_API_model **)kimmdl = mdl;
         return KIM_STATUS_OK;
     }
@@ -91,7 +91,7 @@ int KIM_API_model_info(void * kimmdl, char * mdlname){
 
  void KIM_API_allocate(void *kimmdl, int natoms, int ntypes,int * error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    mdl->allocate(mdl,natoms,ntypes,error);
+    mdl->allocate(natoms,ntypes,error);
  }
 void KIM_API_free(void *kimmdl,int * error){
     KIM_API_model * mdl=*(KIM_API_model **) kimmdl;
