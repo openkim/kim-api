@@ -58,6 +58,7 @@ program TEST_NAME_STR
 
   integer, external  :: get_neigh_no_Rij
   integer, external  :: get_neigh_Rij
+!@@@@ NEED TO CHANGE FCCspacing TO BE COMPUTED FROM cutoff
   real*8,  parameter :: FCCspacing     = FCC_SPACING_STR
   integer, parameter :: nCellsPerSide  = 2
   integer, parameter :: DIM            = 3
