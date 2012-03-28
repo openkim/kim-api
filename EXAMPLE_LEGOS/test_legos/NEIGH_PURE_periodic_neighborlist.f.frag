@@ -36,7 +36,7 @@ subroutine NEIGH_PURE_periodic_neighborlist(half, numberOfParticles, coords, cut
                   neighborList(a,i) = j
                endif
            else
-               if (i.eq.MiddleAtomId) then
+               if (i.eq.MiddleAtomId .and. i.ne.j) then
                   a = a+1
                   neighborList(a,i) = j
                endif

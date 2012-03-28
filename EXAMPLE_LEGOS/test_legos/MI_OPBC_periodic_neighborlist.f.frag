@@ -41,7 +41,7 @@ subroutine MI_OPBC_periodic_neighborlist(half, numberOfParticles, coords, rcut, 
                   neighborList(a,i) = j
                endif
            else
-               if (i.eq.MiddleAtomId) then
+               if (i.eq.MiddleAtomId .and. i.ne.j) then
                   a = a+1
                   neighborList(a,i) = j
                endif
