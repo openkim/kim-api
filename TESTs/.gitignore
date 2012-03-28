@@ -14,5 +14,5 @@ ex_test_Ar_multiple_models
 ex_test_Ne_free_cluster
 ex_test_Ne_free_cluster_SI
 ex_test_Ne_free_cluster_stiff
-ex_test_numer_deriv
+vc_forces_numer_deriv
 kim.log
