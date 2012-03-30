@@ -398,7 +398,7 @@ program TEST_NAME_STR
            if (forcediff<forces_num_err(J,I)) then
               passfail = "    "
            else
-              passfail = "FAIL"
+              passfail = "over"
            endif
            weight = max(abs(forces_num(J,I)),eps_prec)/ &
                     max(abs(forces_num_err(J,I)),eps_prec)

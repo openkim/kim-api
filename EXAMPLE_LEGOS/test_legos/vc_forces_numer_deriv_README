@@ -66,7 +66,7 @@ Notes:
    difference between these values in absolute value is also printed (`Force
    diff') as well as the error predicted by Ridders' method (`pred error').
    Ideally, one would expect the force difference to be less than the predicted
-   error. If that is not the case the term `FAIL' is printed at the end of the
+   error. If that is not the case the term `over' is printed at the end of the
    line. (Most potentials fail this check for most degrees of freedom, so this
    is not a good criterion.)
 
