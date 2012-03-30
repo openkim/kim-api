@@ -58,14 +58,13 @@ program TEST_NAME_STR
 
   integer, external  :: get_neigh_no_Rij
   integer, external  :: get_neigh_Rij
-!@@@@ NEED TO CHANGE FCCspacing TO BE COMPUTED FROM cutoff
-  real*8,  parameter :: FCCspacing     = FCC_SPACING_STR
   integer, parameter :: nCellsPerSide  = 2
   integer, parameter :: DIM            = 3
   real*8,  parameter :: cutpad         = 0.75d0
   integer, parameter :: max_types      = 20     ! most species a Model can support
   integer, parameter :: max_NBCs       = 20     ! maximum number of NBC methods
   real*8,  parameter :: eps_prec       = epsilon(1.d0)
+  real*8   FCCspacing
 
   integer, parameter :: &
        N = 4*(nCellsPerSide)**3 + 6*(nCellsPerSide)**2 + 3*(nCellsPerSide) + 1
@@ -84,7 +83,8 @@ program TEST_NAME_STR
   real*8                               :: alpha
   real*8                               :: term
   real*8                               :: term_max
-  double precision,        allocatable :: cluster_coords(:,:)
+  real*8,                  allocatable :: cluster_coords(:,:)
+  real*8,                  allocatable :: cluster_disps(:,:)
   character(len=3),        allocatable :: cluster_types(:)
   integer I,J,Imax,Jmax,type
 
@@ -141,20 +141,23 @@ program TEST_NAME_STR
 
   ! Setup random cluster
   !
-  allocate(cluster_coords(3,N),cluster_types(N))
+  allocate(cluster_coords(3,N),cluster_disps(3,N),cluster_types(N))
   do i=1,N
      call random_number(rnd)  ! return random number between 0 and 1
      type = 1 + int(rnd*num_types)
      cluster_types(i) = model_types(type)
   enddo
+  FCCspacing = 1.d0  ! initially generate an FCC cluster with lattice
+                     ! spacing equal to one. This is scaled below based
+                     ! on the cutoff radius of the model.
   call create_FCC_configuration(FCCspacing, nCellsPerSide, .false., &
                                 cluster_coords, middleDum)
-  ! Randomly perturb all atoms
+  ! Generate random displacements for all atoms
   !
   do I=1,N
      do J=1,DIM
         call random_number(rnd)  ! return random number between 0 and 1
-        cluster_coords(J,I) = cluster_coords(J,I) + 0.1d0*(rnd-0.5d0)
+        cluster_disps(J,I) = 0.1d0*(rnd-0.5d0)
      enddo
   enddo
 
@@ -166,7 +169,6 @@ program TEST_NAME_STR
   print '(120(''-''))'
   print '("This is Test          : ",A)', testname
   print '("Results for KIM Model : ",A)', modelname
-  print *
 
   ! Loop over all NBCs and perform numerical derivative check for each one
   !
@@ -318,6 +320,17 @@ program TEST_NAME_STR
      call KIM_to_F90_real_array_2d(coordum, coords, DIM, N)
      call KIM_to_F90_real_array_2d(forcesdum, forces, DIM, N)
 
+     ! Scale reference FCC configuration based on cutoff radius.
+     ! (This is only done once.)
+     if (inbc.eq.1) then
+        FCCspacing = 0.75d0*cutoff ! set the FCC spacing to a fraction
+                                   ! of the cutoff radius
+        do i=1,N
+           cluster_coords(:,i) = FCCspacing*cluster_coords(:,i)
+        enddo
+        print '("Using FCC lattice parameter: ",f12.5)', FCCspacing
+     endif
+
      ! Set values in KIM object
      !
      numberOfParticles   = N
@@ -331,7 +344,7 @@ program TEST_NAME_STR
         stop
      endif
      do i=1,N
-        coords(:,i) = cluster_coords(:,i)
+        coords(:,i) = cluster_coords(:,i) + cluster_disps(:,i)
      enddo
      if (nbc.le.1) boxSideLengths(:)  = 600.d0 ! large enough to make the cluster isolated
 
@@ -465,7 +478,7 @@ program TEST_NAME_STR
 
   ! Free cluster storage
   !
-  deallocate(cluster_coords,cluster_types)
+  deallocate(cluster_coords,cluster_disps,cluster_types)
 
   stop
 

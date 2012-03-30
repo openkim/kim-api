@@ -876,8 +876,7 @@ vc_forces_numer_deriv: $(COMMON_FRAGMENTS)                    \
         # make Makefile in the directory
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)$@/Makefile
         # make .F90 file in the directory
-	$(F_CAT) program_vc_forces_numer_deriv.f.frag  | $(SED_CMD) \
-         | sed -e 's/FCC_SPACING_STR/4.40d0 ! in angstroms/g'                                                 >  $(KIM_EX_TESTS_DIR)$@/$@.F90
+	$(F_CAT) program_vc_forces_numer_deriv.f.frag  | $(SED_CMD)                                           >  $(KIM_EX_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)$@/$@.F90
 	$(F_CAT) get_model_supported_types.f.frag                                                             >> $(KIM_EX_TESTS_DIR)$@/$@.F90
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)$@/$@.F90
