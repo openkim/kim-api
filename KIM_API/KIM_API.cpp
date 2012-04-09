@@ -67,6 +67,21 @@ int Atom_Map::comparator(const void* a1, const void* a2){
     Atom_Map *am2 =(Atom_Map *)a2;
     return strcmp(am1->symbol,am2->symbol);
 }
+
+static void strip_char_string(char* nm)
+{
+   //strip spaces and tabs from back
+   for(int i=(int)strlen(nm); i>0; i--){
+      if((nm[i-1]!=' ') && (nm[i-1]!='\t')){nm[i]='\0'; break;}
+   }
+   //strip spaces and tabs from front
+   int c=0,key=0;
+   for(int i=0;i<=(int)strlen(nm);i++){
+      if((nm[i]!=' ') && (nm[i]!='\t')){key=1;}
+      if(key==1){nm[c]=nm[i]; c++;}
+   }
+}
+
 KIM_IOline::KIM_IOline(){
     goodformat=false;init2empty();
 }
@@ -189,7 +204,7 @@ int * KIM_IOline::get_shape(int natoms, int ntypes){
                 shp[i]=(int)dd;
                 if(shp[i]==0){
                     strcpy(tmpstring,tmp);
-                    this->strip(tmpstring);
+                    strip(tmpstring);
                     if(strcmp(tmpstring,"numberParticleTypes")==0) shp[i]=ntypes;
                     if(strcmp(tmpstring,"numberOfParticles")==0) shp[i]=(int)natoms;
                 }
@@ -198,20 +213,7 @@ int * KIM_IOline::get_shape(int natoms, int ntypes){
             }
             return shp;
 }
- bool KIM_IOline::isitpernatomtypes(){
-             char shapetmp[strlen(shape)+1];
-             char tmpstring[128];
-             strncpy(shapetmp,shape,strlen(shape)+1);
-             char *tmp =strtok(shapetmp,"[,]");
-             if(tmp==NULL)return false;
-             while(tmp!=NULL){
-                strcpy(tmpstring,tmp);
-                this->strip(tmpstring);
-                if(strcmp(tmpstring,"numberParticleTypes")==0) return true;
-                tmp = strtok(NULL,"[,]");
-             }
-             return false;
- }
+
 bool KIM_IOline::isitsizedefined(){
 
              int rnk =this->get_rank();
@@ -235,7 +237,7 @@ bool KIM_IOline:: isitperatom(){
              if(tmp==NULL)return false;
              while(tmp!=NULL){
                 strcpy(tmpstring,tmp);
-                this->strip(tmpstring);
+                strip(tmpstring);
                 if(strcmp(tmpstring,"numberOfParticles")==0) return true;
                 tmp = strtok(NULL,"[,]");
              }
@@ -246,22 +248,13 @@ bool KIM_IOline::isitoptional(){
             return false;
 }
 
-void KIM_IOline:: strip(char * strv){
-            for(int i=(int)strlen(strv); i>0; i--){
-                if(strv[i-1]!=' '){strv[i]='\0'; break;};
-            }
-            int c=0,key=0;
-            for(int i=0;i<=(int)strlen(strv);i++){
-                if(strv[i]!=' '){key=1;};
-                if(key==1){strv[c]=strv[i]; c++;};
-            }
-}
+void KIM_IOline:: strip(char * strv){strip_char_string(strv);}
 void KIM_IOline::strip(){
-            strip(this->name);
-            strip(this->type);
-            strip(this->dim);
-            strip(this->shape);
-            strip(this->requirements);
+            strip(name);
+            strip(type);
+            strip(dim);
+            strip(shape);
+            strip(requirements);
  }
 void KIM_IOline:: init2empty(){
             name[0]='\0';
@@ -289,7 +282,7 @@ ostream &operator<<(ostream &stream, KIM_IOline a){
         stream<<a.shape<<" "<<a.requirements;
         stream << endl;
         return stream;
-};
+}
 istream &operator>>(istream &stream, KIM_IOline &a){
         char inputline[KIM_LINE_LENGTH];
         stream.getline(inputline,KIM_LINE_LENGTH-1);
@@ -306,34 +299,15 @@ istream &operator>>(istream &stream, KIM_IOline &a){
                 a.goodformat=false;
         }
         return stream;
-};
+}
 
 void IOline:: strip(){
-            strip(&name[0]);
-            strip(&value[0]);
-            strip(&comment[0]);
+            strip(name);
+            strip(value);
+            strip(comment);
 }
-void IOline::strip(char *nm){
-                //strip space
-                for(int i=(int)strlen(nm); i>0; i--){
-                        if(nm[i-1]!=' '){nm[i]='\0'; break;};
-                }
-                int c=0,key=0;
-                for(int i=0;i<=(int)strlen(nm);i++){
-                        if(nm[i]!=' '){key=1;};
-                        if(key==1){nm[c]=nm[i]; c++;};
-                }
-                //strip tub
-                for(int i=(int)strlen(nm); i>0; i--){
-                        if(nm[i-1]!='\t'){nm[i]='\0'; break;};
-                }
-                c=0;key=0;
-                for(int i=0;i<=(int)strlen(nm);i++){
-                        if(nm[i]!='\t'){key=1;};
-                        if(key==1){nm[c]=nm[i]; c++;};
-                }
+void IOline::strip(char *nm){strip_char_string(nm);}
 
-}
 IOline::IOline(){
     goodformat=false;
     for(int i=0; i<121;i++) comment[i]='\0';
@@ -370,43 +344,21 @@ bool IOline:: getFields(const char *inputString){
                 return true;
 }
 int  IOline::readlines(char * infile, IOline **inlines){
-            int counter=0;
-        IOline inlne;
-        *inlines=NULL;
-        ifstream myfile;
-         myfile.open(infile);
-         if(!myfile){
-             cout<<"* Error (IOline::readlines): can not open file:"<<infile<<":"<<endl;
-             KIM_API_model::fatal_error_print();
-             exit(327);
-         }
+   ifstream myfile;
+   myfile.open(infile);
+   if(!myfile){
+      cout<<"* Error (IOline::readlines): can not open file:"<<infile<<":"<<endl;
+      KIM_API_model::fatal_error_print();
+      exit(327);
+   }
 
-          while(!myfile.eof()){
-                myfile>> inlne;
-                if(inlne.goodformat) counter++;
-        }
-        myfile.close();
+   stringstream buffer;
+   buffer << myfile.rdbuf();
+   myfile.close();
 
-        if (counter < 1) return counter;
-
-
-        (*inlines) =  new IOline [counter] ;
-
-        myfile.open(infile);
-
-        counter=0;
-        while(!myfile.eof()){
-                myfile >> inlne;
-
-                if(inlne.goodformat) {
-                    (*inlines)[counter]=inlne;
-                    counter++;
-                }
-        }
-
-        myfile.close();
-        return counter;
+   return readlines_str((char*) buffer.str().c_str(), inlines);
 }
+
 int IOline::readlines_str(char* instrn, IOline** inlines){
     int counter=0;
         IOline inlne;
@@ -450,7 +402,7 @@ int IOline::readlines_str(char* instrn, IOline** inlines){
 }
 
 ostream &operator<<(ostream &stream, IOline a){
-        stream<<a.name<<":= "<<a.value<<" #"<<a.comment;
+        stream<<a.name<<" := "<<a.value<<" # "<<a.comment;
         return stream;
 }
 istream &operator>>(istream &stream, IOline &a){

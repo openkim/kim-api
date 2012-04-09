@@ -116,7 +116,6 @@ public:
         int get_rank();
         int * get_shape();
         int * get_shape(int natoms, int ntypes);
-        bool isitpernatomtypes();
         bool isitsizedefined();
         bool isitperatom();
         bool isitoptional();
