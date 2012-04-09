@@ -82,6 +82,22 @@ static void strip_char_string(char* nm)
    }
 }
 
+static void read_file_to_stringstream(char* infile, stringstream& ss)
+{
+   ifstream myfile;
+   myfile.open(infile);
+   if(!myfile){
+      cout<<"* Error (read_file_to_stringstream): can not open file :"<<infile<<":"<<endl;
+      KIM_API_model::fatal_error_print();
+      exit(327);
+   }
+
+   ss << myfile.rdbuf();
+   myfile.close();
+
+   return;
+}
+
 KIM_IOline::KIM_IOline(){
     goodformat=false;init2empty();
 }
@@ -344,17 +360,8 @@ bool IOline:: getFields(const char *inputString){
                 return true;
 }
 int  IOline::readlines(char * infile, IOline **inlines){
-   ifstream myfile;
-   myfile.open(infile);
-   if(!myfile){
-      cout<<"* Error (IOline::readlines): can not open file:"<<infile<<":"<<endl;
-      KIM_API_model::fatal_error_print();
-      exit(327);
-   }
-
    stringstream buffer;
-   buffer << myfile.rdbuf();
-   myfile.close();
+   read_file_to_stringstream(infile, buffer);
 
    return readlines_str((char*) buffer.str().c_str(), inlines);
 }
@@ -719,17 +726,8 @@ KIM_API_model:: ~KIM_API_model(){
       delete []  nnarg_NBC;
 }
 bool KIM_API_model:: preinit(char * initfile,char *modelname){
-   ifstream myfile;
-   myfile.open(initfile);
-   if(!myfile){
-      cout<<"* Error (KIM_API_model::preinit): can not open file:"<<initfile<<":"<<endl;
-      fatal_error_print();
-      exit(327);
-   }
-
    stringstream buffer;
-   buffer << myfile.rdbuf();
-   myfile.close();
+   read_file_to_stringstream(initfile, buffer);
    
    return prestring_init((char*) buffer.str().c_str());
  }
@@ -993,17 +991,8 @@ KIMBaseElement & KIM_API_model::operator[](char *nm){
 }
 
 void KIM_API_model::read_file(char * initfile,KIM_IOline ** lns, int * numlns){
-   ifstream myfile;
-   myfile.open(initfile);
-   if(!myfile){
-      cout<<"* Error (KIM_API_model::read_file): can not open file:"<<initfile<<":"<<endl;
-      fatal_error_print();
-      exit(327);
-   }
-   
    stringstream buffer;
-   buffer << myfile.rdbuf();
-   myfile.close();
+   read_file_to_stringstream(initfile, buffer);
 
    read_file_str((char*) buffer.str().c_str(), lns, numlns);
 
