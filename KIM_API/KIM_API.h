@@ -165,9 +165,8 @@ public:
         void init(char *nm,char * tp,intptr_t sz, intptr_t rnk, int *shp,void * pdata);
         void init(char *nm,char * tp,intptr_t sz, intptr_t rnk, int *shp);
         void free();
-        void nullefy();
-        bool operator==(KIM_IOline& kimioline);
-        bool equiv(KIM_IOline& kimioline);
+        void nullify();
+        bool equiv(KIM_IOline& kimioline, bool skip_specials);
 
 static  int getelemsize(char *tp);
 };
@@ -199,7 +198,6 @@ public:
 
     
     int get_index(char *nm, int * error);
-    int get_index(char *nm);//will move to private with next update kim_pair
     intptr_t get_size(char *nm,int *error);
     intptr_t get_shape(char *nm,int * shape,int *error);
     void set_shape(char *nm, int * shape, int rank, int *error);
@@ -368,16 +366,13 @@ private:
     bool preinit(char * modelname);
     bool prestring_init(char * instrn);
     bool init_str_modelname(char *testname,char *inmdlstr);
-    void * get_data(char *nm);
     static   void read_file(char * initfile,KIM_IOline ** lns, int * numlns);
-    static   void read_file_str_testname(char * strstream,KIM_IOline ** lns, int * numlns );
+    static   void read_file_str(char * strstream,KIM_IOline ** lns, int * numlns );
 
     static void irrelevantVars2donotcompute(KIM_API_model & test, KIM_API_model & mdl);
     bool check_consistance_NBC_method();
-    static bool is_it_match(KIM_API_model & mdtst,char * inputinitfile);
-    static bool is_it_match(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns);
+    static bool is_it_match(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns, bool match_regular);
     static bool is_it_match_noFlagCount(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns);
-    static bool is_it_std_match(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns);
 
     static bool is_it_par(char * name);
     static bool is_it_fixed_par(char * name);

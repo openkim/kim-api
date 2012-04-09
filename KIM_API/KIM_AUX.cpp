@@ -65,12 +65,12 @@ void KIM_AUX::Process_DE::init2zero(KIM_API_model* pkim, int* kimerr){
             int p1_ind=-1;
             int p2_ind=-1;
             int ierGlobal,ierPerAtom,ierStiffness;
+            p1_ind = pkim->get_index("process_dEdr",kimerr);
+            p2_ind = pkim->get_index("process_d2Edr2",kimerr);
             prDE->virial = (double *) pkim->get_data("virial",&ierGlobal);
             prDE->particleVirial = (double *) pkim->get_data("particleVirial",&ierPerAtom);
             prDE->hessian = (double *)pkim->get_data("hessian",&ierStiffness);
             prDE->numberOfParticles = (int *) pkim->get_data("numberOfParticles",kimerr);
-            p1_ind = pkim->get_index("process_dEdr");
-            p2_ind = pkim->get_index("process_d2Edr2");
            // halfNeighbors = !pkim->requiresFullNeighbors();
             bool process_d1=false, process_d2=false;
 
