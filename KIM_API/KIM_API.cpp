@@ -1210,8 +1210,6 @@ bool KIM_API_model::do_flag_match(KIM_API_model& tst, KIM_API_model& mdl){
     bool Neigh_LocaAccess_tst=is_it_in_and_is_it_flag(tst, "Neigh_LocaAccess");
     bool Neigh_BothAccess_tst=is_it_in_and_is_it_flag(tst, "Neigh_BothAccess");
 
-    bool Neigh_CalcRij_tst=is_it_in_and_is_it_flag(tst, "Neigh_CalcRij");
-
     // check flag for mdl
     bool ZeroBasedLists_mdl =is_it_in_and_is_it_flag(mdl, "ZeroBasedLists");
     bool OneBasedLists_mdl =is_it_in_and_is_it_flag(mdl, "OneBasedLists");
@@ -1223,16 +1221,14 @@ bool KIM_API_model::do_flag_match(KIM_API_model& tst, KIM_API_model& mdl){
     bool Neigh_BothAccess_mdl=is_it_in_and_is_it_flag(mdl, "Neigh_BothAccess");
 
 
-    bool Neigh_CalcRij_mdl=is_it_in_and_is_it_flag(mdl, "Neigh_CalcRij");
-
 
     //logic for Zero or One base list handling
     if ((!ZeroBasedLists_tst && !OneBasedLists_tst)||(ZeroBasedLists_tst && OneBasedLists_tst) ) {
-        cout<< "* Error (KIM_API_model::do_flag_match): Test descriptor file must have only ONE of ZeroBasedLists or OneBasedLists."<<endl;
+        cout<< "* Error (KIM_API_model::do_flag_match): Test descriptor file must have ONE of ZeroBasedLists or OneBasedLists."<<endl;
         return false;
     }
      if ((!ZeroBasedLists_mdl && !OneBasedLists_mdl)||(ZeroBasedLists_mdl && OneBasedLists_mdl)) {
-        cout<< "* Error (KIM_API_model::do_flag_match): Model descriptor file must have only ONE of ZeroBasedLists or OneBasedLists."<<endl;
+        cout<< "* Error (KIM_API_model::do_flag_match): Model descriptor file must have ONE of ZeroBasedLists or OneBasedLists."<<endl;
         return false;
     }
     model_index_shift = 0;
@@ -1291,12 +1287,6 @@ bool KIM_API_model::do_flag_match(KIM_API_model& tst, KIM_API_model& mdl){
          mdl.iterator_neigh_mode = true;
      }
 
-    //logic for Neigh_CalcRij
-    if (Neigh_CalcRij_mdl && !Neigh_CalcRij_tst){
-             cout<< "model .kim requres Neigh_CalcRij"<<endl;
-             return false;
-    }
-
     if(!(mdl.locator_neigh_mode||mdl.iterator_neigh_mode||mdl.both_neigh_mode)) return false;
 
     return true;
@@ -1348,40 +1338,6 @@ bool KIM_API_model::is_it_free_par(char* name){
 }
 bool KIM_API_model::is_it_par(char* name){
     return is_it_free_par(name) || is_it_fixed_par(name);
-}
-bool KIM_API_model::init(char * testinputfile,char* testname, char * modelinputfile,char *modelname){
-   int error;
-    //check test-model match and preinit test-model-API
-    KIM_API_model test,mdl;
-    //preinit test and model API object
-
-    test.preinit(testinputfile,testname);
-    mdl.preinit(modelinputfile,modelname);
-
-    //check if they match
-    if (is_it_match(test,mdl)){
-       preinit(modelinputfile,modelname);
-       unit_h=test.unit_h;
-       irrelevantVars2donotcompute(test,*this);
-
-       strcpy(NBC_method_current, mdl.NBC_method_current);
-       locator_neigh_mode=mdl.locator_neigh_mode;
-       iterator_neigh_mode=mdl.iterator_neigh_mode;
-       both_neigh_mode=mdl.both_neigh_mode;
-       test.free(); mdl.free();
-       char computestr [] = "compute";
-       compute_index = get_index(computestr, &error);
-       get_neigh_index = get_index("get_neigh", &error);
-       this->fij_related_things_add_set_index();
-       support_Rij=false;
-       if (strcmp(NBC_method_current,"NEIGH_RVEC_F")==0) support_Rij=true;
-       
-       return true;
-    }else{
-       test.free(); mdl.free();
-       cout<<"Do not match  " << modelname << " and "<< testname<<endl;
-       return false;
-    }
 }
 
 #ifndef KIM_DYNAMIC

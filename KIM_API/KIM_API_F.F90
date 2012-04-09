@@ -184,15 +184,6 @@ integer,parameter :: kim_intptr = 8
     end function kim_api_report_error
 
 
-        integer function kim_api_init1(kimmdl,testinputf,testname,mdlinputf,mdlname)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
-            integer(kind=kim_intptr) :: kimmdl,testinputf,testname,mdlinputf,mdlname
-        end function kim_api_init1
-
          integer function kim_api_get_model_index_shift_f(kimmdl)
 #ifdef SYSTEM32
         integer, parameter :: kim_intptr=4
@@ -718,23 +709,6 @@ integer,parameter :: kim_intptr = 8
             ps2=loc(mdlnamesnd)
             kim_api_string_init_f =kim_api_string_init(kimmdl,ps1,ps2)
      end function kim_api_string_init_f
-
-    integer function kim_api_init1_f(kimmdl,testinputf,testname,mdlinputf,mdlname)
-            character (len=*) :: testinputf,testname,mdlinputf,mdlname
-            integer(kind=kim_intptr) :: kimmdl
-            character (len=KIM_KEY_STRING_LENGTH)::testinputfsnd,testnamesnd,mdlinputfsnd,mdlnamesnd
-            character (len=KIM_KEY_STRING_LENGTH):: s1,s2,s3,s4
-            pointer(ps1,s1);pointer(ps2,s2);pointer(ps3,s3);pointer(ps4,s4)
-            testinputfsnd=attachnull(trim(testinputf))
-            testnamesnd=attachnull(trim(testname))
-            mdlinputfsnd=attachnull(trim(mdlinputf))
-            mdlnamesnd=attachnull(trim(mdlname))
-            ps1=loc(testinputfsnd)
-            ps2=loc(testnamesnd)
-            ps3=loc(mdlinputfsnd)
-            ps4=loc(mdlnamesnd)
-            kim_api_init1_f =kim_api_init1(kimmdl,ps1,ps2,ps3,ps4)
-        end function kim_api_init1_f
 
 
 

@@ -213,7 +213,6 @@ public:
     int get_compute_by_index(int I,int * error);
 
     static void fatal_error_print();
-    bool init(char * testinputfile,char* testname, char * modelinputfile,char *modelname);
     bool init(char * testname,char * modelname);
     bool string_init(char * intststr,char * modelname);
     bool init_str_testname(char * intststr,char * modelname);// will move to private for next pair.kim update

@@ -56,16 +56,6 @@ int KIM_API_init(void * kimmdl, char *testname, char *mdlname){
     *(KIM_API_model **)kimmdl=NULL;
     return KIM_STATUS_FAIL;
 }
-int KIM_API_init1(void * kimmdl, char * testinputf,char * testname, char * mdlinputf,char *mdlname){
-    KIM_API_model * mdl;
-    mdl = new KIM_API_model[1];
-    if(mdl->init(testinputf,testname,mdlinputf,mdlname)) {
-        *(KIM_API_model **)kimmdl = mdl;
-        return KIM_STATUS_OK;
-    }
-    *(KIM_API_model **)kimmdl=NULL;
-    return KIM_STATUS_FAIL;
-}
 
 int KIM_API_model_info(void * kimmdl, char * mdlname){
     KIM_API_model * mdl;
@@ -717,9 +707,6 @@ double KIM_API_convert_to_act_unit(void * kimmdl,
 //global methots
 int kim_api_init_(void * kimmdl,char ** testname, char **mdlname){
     return KIM_API_init(kimmdl,*testname,*mdlname);
-}
-int kim_api_init1_(void * kimmdl, char ** testinputf,char ** testname, char ** mdlinputf,char **mdlname){
-    return KIM_API_init1(kimmdl,*testinputf,*testname,*mdlinputf,*mdlname);
 }
 int kim_api_model_info_(void * kimmdl,char ** mdlname){
     return KIM_API_model_info(kimmdl,*mdlname);
