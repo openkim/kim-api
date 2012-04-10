@@ -234,9 +234,7 @@ static char * get_model_kim_str(char * modelname,int *kimerr);
 
 
 char * get_NBC_method(int *error);
-bool is_half_neighbors();
 bool is_half_neighbors(int *error);
-bool requiresFullNeighbors();//will be moved to private with next update pair_kim.
 
  
     bool support_Rij;
@@ -388,7 +386,6 @@ private:
     bool do_flag_match(KIM_API_model & tst, KIM_API_model &mdl);
     bool is_it_in_and_is_it_flag(KIM_API_model &mdl,char *name);
     bool is_it_in(KIM_API_model &mdl,char *name);
-    void data_multiply_a(void *dt,char* type,intptr_t sz,float a);
     void * model_lib_handle;
     void add_element(char * inln);
     

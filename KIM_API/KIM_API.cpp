@@ -1829,19 +1829,6 @@ void KIM_API_model::allocate( int natoms, int ntypes, int * error){
     *error=KIM_STATUS_OK;
 }
 
-
-void KIM_API_model::data_multiply_a(void *dt,char* type,intptr_t sz,float a){
-        if(sz < 1) return;
-        if(strcmp(type,"real")==0){
-            float *d = (float *) dt;
-            for(int i=0;i<sz;i++) d[i]=d[i]*a;
-        }else if(strcmp(type,"real*8")==0) {
-            double *d = (double *)dt;
-            for(int i=0;i<sz;i++) d[i]=d[i]*a;
-        }
-}
-
-
 ostream &operator<<(ostream &stream, KIM_API_model &a){
     stream<<"*************************************"<<endl;
     stream << a.model;
@@ -1916,41 +1903,6 @@ char * KIM_API_model::get_NBC_method(int* error){
     return method;
 }
 
-bool KIM_API_model::requiresFullNeighbors(){
-    int kimerr;
-    char * method = NULL;
-    method = (char *) get_NBC_method(&kimerr);
-
-    if(kimerr!=1){
-        if (method!=NULL) c_free((void *)method);
-        return false;
-    }
-
-    bool answer = false;
-    if (strcmp(method,"NEIGH_PURE_F")==0) answer = true;
-    if (strcmp(method,"NEIGH_RVEC_F")==0) answer = true;
-    if (strcmp(method,"MI_OPBC_F")==0) answer = true;
-    if (method!=NULL) c_free((void *)method);
-    return answer;
-}
-
-bool KIM_API_model::is_half_neighbors(){
-    int kimerr;
-    char * method = NULL;
-    method = (char *) get_NBC_method(&kimerr);
-
-    if(kimerr!=1){
-        if (method!=NULL) c_free((void *)method);
-        return true;
-    }
-
-    bool answer = true;
-    if (strcmp(method,"NEIGH_PURE_F")==0) answer = false;
-    if (strcmp(method,"NEIGH_RVEC_F")==0) answer = false;
-    if (strcmp(method,"MI_OPBC_F")==0) answer = false;
-    if (method!=NULL) c_free((void *)method);
-    return answer;
-}
 bool KIM_API_model::is_half_neighbors(int* kimerr){
     char * method = NULL;
     *kimerr=KIM_STATUS_FAIL;
