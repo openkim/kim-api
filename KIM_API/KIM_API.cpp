@@ -1922,13 +1922,25 @@ bool KIM_API_model::is_half_neighbors(int* kimerr){
     return answer;
 }
 
-char * KIM_API_model::get_params(int* nVpar, int* error){
+char * KIM_API_model::get_a_type_of_params(int* nVpar, int* error, int typecode){
     int count;
     count=0;
     *error=KIM_STATUS_FAIL;
     char * listvpar;
     for(int i=0; i< model.size; i++){
-        if(is_it_par((*this)[i].name)) count++;
+       if (typecode == 0){ // any type of parameter
+          if(is_it_par((*this)[i].name)) count++;
+       }
+       else if (typecode == 1){ // free parameter
+          if(is_it_free_par((*this)[i].name)) count++;
+       }
+       else if (typecode == 2){ // fixed parameter
+          if(is_it_fixed_par((*this)[i].name)) count++;
+       }
+       else { // unknown
+          *error=KIM_STATUS_FAIL;
+          return NULL;
+       }
     }
     if (count==0) {
         *nVpar=0;
@@ -1939,68 +1951,38 @@ char * KIM_API_model::get_params(int* nVpar, int* error){
     listvpar = (char *)malloc(KIM_KEY_STRING_LENGTH * count);
     for (int i=0;i<count*KIM_KEY_STRING_LENGTH;i++) listvpar[i] = '\0';
     count=0;
+    int flag;
     for (int i=0;i<model.size;i++){
-         if(is_it_par((*this)[i].name)){
-             strncpy(listvpar+count*KIM_KEY_STRING_LENGTH, (*this)[i].name, strlen((*this)[i].name) +1 );
-             count++;
-         }
+       flag = 0;
+       if (typecode == 0){ // any type of parameter
+          if(is_it_par((*this)[i].name)) flag=1;
+       }
+       else if (typecode == 1){ // free parameter
+          if(is_it_free_par((*this)[i].name)) flag=1;
+       }
+       else if (typecode == 2){ // fixed parameter
+          if(is_it_fixed_par((*this)[i].name)) flag=1;
+       }
+       else { // unknown
+          *error=KIM_STATUS_FAIL;
+          return NULL;
+       }
+       if(flag==1){
+          strncpy(listvpar+count*KIM_KEY_STRING_LENGTH, (*this)[i].name, strlen((*this)[i].name) +1 );
+          count++;
+       }
     }
     *error =KIM_STATUS_OK;//success
     return  listvpar;
+}
+char * KIM_API_model::get_params(int* nVpar, int* error){
+   return get_a_type_of_params(nVpar, error, 0);
 }
 char * KIM_API_model::get_free_params(int* nVpar, int* error){
-    int count;
-    count=0;
-    *error=KIM_STATUS_FAIL;
-    char * listvpar;
-    for(int i=0; i< model.size; i++){
-        if(is_it_free_par((*this)[i].name)) count++;
-    }
-    if (count==0) {
-        *nVpar=0;
-        *error=KIM_STATUS_OK;  //success but no parameters
-        return NULL;
-    }
-    *nVpar=count;
-    //listvpar= new char[KIM_KEY_STRING_LENGTH * count];
-    listvpar = (char *)malloc(KIM_KEY_STRING_LENGTH * count);
-    for (int i=0;i<count*KIM_KEY_STRING_LENGTH;i++) listvpar[i] = '\0';
-    count=0;
-    for (int i=0;i<model.size;i++){
-         if(is_it_free_par((*this)[i].name)){
-             strncpy(listvpar+count*KIM_KEY_STRING_LENGTH, (*this)[i].name, strlen((*this)[i].name) +1 );
-             count++;
-         }
-    }
-    *error =KIM_STATUS_OK;//success
-    return  listvpar;
+   return get_a_type_of_params(nVpar, error, 1);
 }
 char * KIM_API_model::get_fixed_params(int* nVpar, int* error){
-    int count;
-    count=0;
-    *error = KIM_STATUS_FAIL;
-    char * listvpar;
-    for(int i=0; i< model.size; i++){
-        if(is_it_fixed_par((*this)[i].name)) count++;
-    }
-    if (count==0) {
-        *nVpar=0;
-        *error=KIM_STATUS_OK;  //success but no parameters
-        return NULL;
-    }
-    *nVpar=count;
-    //listvpar= new char[KIM_KEY_STRING_LENGTH * count];
-    listvpar = (char *)malloc(KIM_KEY_STRING_LENGTH * count);
-    for (int i=0;i<count*KIM_KEY_STRING_LENGTH;i++) listvpar[i] = '\0';
-    count=0;
-    for (int i=0;i<model.size;i++){
-         if(is_it_fixed_par((*this)[i].name)){
-             strncpy(listvpar+count*KIM_KEY_STRING_LENGTH, (*this)[i].name, strlen((*this)[i].name) +1 );
-             count++;
-         }
-    }
-    *error =KIM_STATUS_OK;//success
-    return  listvpar;
+   return get_a_type_of_params(nVpar, error, 2);
 }
 int  KIM_API_model::get_neigh_mode(int*kimerr){
     *kimerr=KIM_STATUS_OK;

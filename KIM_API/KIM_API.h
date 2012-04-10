@@ -370,6 +370,7 @@ private:
     static bool is_it_match(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns, bool match_regular);
     static bool is_it_match_noFlagCount(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns);
 
+   char* get_a_type_of_params(int* nVpar, int* error, int typecode);
     static bool is_it_par(char * name);
     static bool is_it_fixed_par(char * name);
     static bool is_it_free_par(char * name);
