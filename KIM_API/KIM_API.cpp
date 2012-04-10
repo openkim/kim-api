@@ -49,23 +49,9 @@ using namespace std;
 #define KIM_KEY_STRING_LENGTH 64
 #define KIM_LINE_LENGTH 512
 
-//#define intptr_t int  // for 32 bit machines
-KIMBaseElementFlag:: KIMBaseElementFlag(){
-    peratom=0;
-    freeable=1;
-    calculate=0;
- }
 
- KIMBaseElementUnit:: KIMBaseElementUnit(){
-    init();
-}
-void KIMBaseElementUnit::init(){
-    strncpy(dim,"none",KIM_KEY_STRING_LENGTH);
-}
-int Atom_Map::comparator(const void* a1, const void* a2){
-    Atom_Map *am1 =(Atom_Map *)a1;
-    Atom_Map *am2 =(Atom_Map *)a2;
-    return strcmp(am1->symbol,am2->symbol);
+static void c_free(void *p){
+    free(p);
 }
 
 static void strip_char_string(char* nm)
@@ -96,6 +82,25 @@ static void read_file_to_stringstream(char* infile, stringstream& ss)
    myfile.close();
 
    return;
+}
+
+//#define intptr_t int  // for 32 bit machines
+KIMBaseElementFlag:: KIMBaseElementFlag(){
+    peratom=0;
+    freeable=1;
+    calculate=0;
+ }
+
+ KIMBaseElementUnit:: KIMBaseElementUnit(){
+    init();
+}
+void KIMBaseElementUnit::init(){
+    strncpy(dim,"none",KIM_KEY_STRING_LENGTH);
+}
+int Atom_Map::comparator(const void* a1, const void* a2){
+    Atom_Map *am1 =(Atom_Map *)a1;
+    Atom_Map *am2 =(Atom_Map *)a2;
+    return strcmp(am1->symbol,am2->symbol);
 }
 
 KIM_IOline::KIM_IOline(){
@@ -1335,7 +1340,6 @@ extern "C"{
 }
 
 char * KIM_API_model::get_model_kim_str(char* modelname,int * kimerr){
-   // void * model_lib_handle;
      //redirecting cout > kimlog
     *kimerr=KIM_STATUS_FAIL;
     char kimlog[2048] = KIM_DIR; strcat(kimlog,"kim.log");
@@ -1353,37 +1357,16 @@ char * KIM_API_model::get_model_kim_str(char* modelname,int * kimerr){
     }
      //redirecting back to > cout
     cout.rdbuf(backup); filekimlog.close();
+    char* str_cpy = (char*) malloc(strlen(in_mdlstr)+1);
+    strcpy(str_cpy,in_mdlstr);
     *kimerr= KIM_STATUS_OK;
-    return in_mdlstr;
-}
-
-bool KIM_API_model::init(char* testname, char* modelname){
-
-    //redirecting cout > kimlog
-    char kimlog[2048] = KIM_DIR; strcat(kimlog,"kim.log");
-    streambuf * psbuf, * backup;ofstream filekimlog;
-    filekimlog.open(kimlog);
-    backup = cout.rdbuf();psbuf = filekimlog.rdbuf();cout.rdbuf(psbuf);
-
-    char * in_mdlstr=NULL;
-
-#include "model_kim_str_include.cpp"
-
-    if (in_mdlstr == NULL){
-       cout<<"* Error (KIM_API_model::init): Unknown KIM Model name " << modelname << "." << endl;
-        exit(367);
-    }
-    bool result_init= this->init_str_modelname(testname,in_mdlstr);
-   //redirecting back to > cout
-    cout.rdbuf(backup); filekimlog.close();
-
-    return result_init;
+    return str_cpy;
 }
 
 #else
 
 char * KIM_API_model::get_model_kim_str(char* modelname,int * kimerr){
-    void * model_lib_handle;
+    void * tmp_model_lib_handle;
     *kimerr= KIM_STATUS_FAIL;
     char model_slib_file[2048];
     char model_kim_str_name[2048];
@@ -1396,8 +1379,8 @@ char * KIM_API_model::get_model_kim_str(char* modelname,int * kimerr){
     filekimlog.open(kimlog);
     backup = cout.rdbuf();psbuf = filekimlog.rdbuf();cout.rdbuf(psbuf);
 
-    model_lib_handle = dlopen(model_slib_file,RTLD_NOW);
-    if(!model_lib_handle) {
+    tmp_model_lib_handle = dlopen(model_slib_file,RTLD_NOW);
+    if(!tmp_model_lib_handle) {
          cout<< "* Error (KIM_API_model::get_model_kim_str): Cannot find Model shared library file for Model name: ";
          cout<<modelname<<endl<<dlerror()<<endl;
          fprintf(stderr,"%s not found...\n",model_slib_file);
@@ -1408,11 +1391,11 @@ char * KIM_API_model::get_model_kim_str(char* modelname,int * kimerr){
     }
 
     typedef char* (*Model_kim_str)(void);
-    Model_kim_str get_kim_str = (Model_kim_str)dlsym(model_lib_handle,model_kim_str_name);
+    Model_kim_str get_kim_str = (Model_kim_str)dlsym(tmp_model_lib_handle,model_kim_str_name);
     const char *dlsym_error = dlerror();
     if (dlsym_error) {
         cerr << "Cannot load symbol: " << dlsym_error <<endl;
-        dlclose(model_lib_handle);
+        dlclose(tmp_model_lib_handle);
 
         //redirecting back to > cout
         cout.rdbuf(backup); filekimlog.close();
@@ -1429,21 +1412,18 @@ char * KIM_API_model::get_model_kim_str(char* modelname,int * kimerr){
         exit(367);
     }
 
+    char* str_cpy = (char*) malloc(strlen(in_mdlstr)+1);
+    strcpy(str_cpy,in_mdlstr);
 
-    dlclose(model_lib_handle);
+    dlclose(tmp_model_lib_handle);
    //redirecting back to > cout
     cout.rdbuf(backup); filekimlog.close();
     *kimerr= KIM_STATUS_OK;
-    return in_mdlstr;
+    return str_cpy;
 }
-
+#endif
 
 bool KIM_API_model::init(char* testname, char* modelname){
-
-    char model_slib_file[2048];
-    char model_kim_str_name[2048];
-    sprintf(model_slib_file,"%s%s/%s.so",KIM_DIR_MODELS,modelname,modelname);
-    sprintf(model_kim_str_name,"%s_kim_str",modelname);
 
     //redirecting cout > kimlog
     char kimlog[2048] = KIM_DIR; strcat(kimlog,"kim.log");
@@ -1451,47 +1431,17 @@ bool KIM_API_model::init(char* testname, char* modelname){
     filekimlog.open(kimlog);
     backup = cout.rdbuf();psbuf = filekimlog.rdbuf();cout.rdbuf(psbuf);
 
-    model_lib_handle = dlopen(model_slib_file,RTLD_NOW);
-    if(!model_lib_handle) {
-         cout<< "* Error (KIM_API_model::init): Cannot find Model shared library file for Model name: ";
-         cout<<modelname<<endl<<dlerror()<<endl;
-         fprintf(stderr,"%s not found...\n",model_slib_file);
+    int error;
+    char* in_mdlstr = get_model_kim_str(modelname, &error);
 
-          //redirecting back to > cout
-          cout.rdbuf(backup); filekimlog.close();
-         return false;
-    }
-
-    typedef char* (*Model_kim_str)(void);
-    Model_kim_str get_kim_str = (Model_kim_str)dlsym(model_lib_handle,model_kim_str_name);
-    const char *dlsym_error = dlerror();
-    if (dlsym_error) {
-        cerr << "Cannot load symbol: " << dlsym_error <<endl;
-        dlclose(model_lib_handle);
-
-        //redirecting back to > cout
-        cout.rdbuf(backup); filekimlog.close();
-
-        return false;
-    }
-
-    char * in_mdlstr=NULL;
-
-    in_mdlstr = (*get_kim_str)();
-
-    if (in_mdlstr == NULL){
-        cout<<"* Error (KIM_API_model_init): Unknown KIM Model name " << modelname << "." << endl;
-        exit(367);
-    }
     bool result_init= this->init_str_modelname(testname,in_mdlstr);
 
-    dlclose(model_lib_handle);
+    c_free(in_mdlstr);
    //redirecting back to > cout
     cout.rdbuf(backup); filekimlog.close();
 
     return result_init;
 }
-#endif
 
 void KIM_API_model::fatal_error_print(){
     printf("* KIM FATAL ERROR: See kim.log file for details\n");
@@ -2075,9 +2025,6 @@ char * KIM_API_model::get_NBC_method(int* error){
     return method;
 }
 
-static void c_free(void *p){
-    free(p);
-}
 bool KIM_API_model::requiresFullNeighbors(){
     int kimerr;
     char * method = NULL;

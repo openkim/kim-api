@@ -1101,8 +1101,10 @@ Corresponding Fortran style interface:
 char *KIM_API_get_model_kim_str(char *modelname, int *kimerror);
 
     This routines returns a pointer to a NULL terminated string containing the
-    complete KIM descriptor file for the Model modelname.  If any errors occur
-    they are fatal and the routine prints a message to kim.log and exits.
+    complete KIM descriptor file for the Model modelname.  The memory pointed
+    to by this pointer is allocated by the routine, but should be released by
+    the user to avoid a memory leak.  If any errors occur they are fatal and
+    the routine prints a message to kim.log and exits.
 
 Arguments:
 
