@@ -215,8 +215,7 @@ public:
     static void fatal_error_print();
     bool init(char * testname,char * modelname);
     bool string_init(char * intststr,char * modelname);
-    bool init_str_testname(char * intststr,char * modelname);// will move to private for next pair.kim update
-     void model_compute(int *error);
+    void model_compute(int *error);
     int get_neigh(int mode,int request, int *atom, int *numnei, int **nei1atom, double **Rij);
     bool model_init();
     bool model_reinit();

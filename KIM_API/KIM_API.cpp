@@ -1510,74 +1510,19 @@ bool KIM_API_model::preinit(char* modelname){
     filekimlog.open(kimlog);
     backup = cout.rdbuf();psbuf = filekimlog.rdbuf();cout.rdbuf(psbuf);
     //preinit model
-   #ifndef KIM_DYNAMIC
-    //get string .kim for the model----------
-     char * in_mdlstr=NULL;
-    #include "model_kim_str_include.cpp"
-     if (in_mdlstr == NULL){
-        cout<<"* Error (KIM_API_model::preinit): Unknown KIM Model name " << modelname << "." << endl;
-         //redirecting back to > cout
-          cout.rdbuf(backup); filekimlog.close();
-         return false;
-    }
-     //                         -------------
-    #else
 
-    char model_slib_file[2048];
-    char model_kim_str_name[2048];
-    sprintf(model_slib_file,"%s%s/%s.so",KIM_DIR_MODELS,modelname,modelname);
-    sprintf(model_kim_str_name,"%s_kim_str",modelname);
-     model_lib_handle = dlopen(model_slib_file,RTLD_NOW);
-    if(!model_lib_handle) {
-         cout<< "* Error (KIM_API_model::preinit): Cannot find Model shared library file for Model name: ";
-         cout<<modelname<<endl<<dlerror()<<endl;
-
-          //redirecting back to > cout
-          cout.rdbuf(backup); filekimlog.close();
-         return false;
-    }
-
-    typedef char* (*Model_kim_str)(void);
-    Model_kim_str get_kim_str = (Model_kim_str)dlsym(model_lib_handle,model_kim_str_name);
-    const char *dlsym_error = dlerror();
-    if (dlsym_error) {
-        cout << "* Error (KIM_API_model::preinit): Model descriptor file function not found in shared library for Model: " << modelname << "." << endl;
-        dlclose(model_lib_handle);
-
-        //redirecting back to > cout
-        cout.rdbuf(backup); filekimlog.close();
-
-        return false;
-    }
-
-    char * in_mdlstr=NULL;
-
-    in_mdlstr = (*get_kim_str)();
-
-    if (in_mdlstr == NULL){
-        cout<< "* Error (KIM_API_model::preinit): Model descriptor string not found in shared library for Model: " << modelname << "." << endl;
-        //redirecting back to > cout
-        cout.rdbuf(backup); filekimlog.close();
-        return false;
-    }
-
- #endif
+    int error;
+    char* in_mdlstr = get_model_kim_str(modelname, &error);
     bool result= this->prestring_init(in_mdlstr);
+
+    c_free(in_mdlstr);
     //redirecting back to > cout
     cout.rdbuf(backup); filekimlog.close();
     return result;
 }
 
-bool KIM_API_model::init_str_testname(char * intststr,char * modelname){
-    return string_init(intststr, modelname);
-}
-
 bool KIM_API_model::string_init(char* in_tststr, char* modelname){
    int error;
-    //char modelinputfile[2048] = KIM_DIR_MODELS;
-    //strcat(modelinputfile,modelname);strcat(modelinputfile,"/");strcat(modelinputfile,modelname);
-    //strcat(modelinputfile,".kim");
-
     //redirecting cout > kimlog
     char kimlog[2048] = KIM_DIR; strcat(kimlog,"kim.log");
     streambuf * psbuf, * backup;ofstream filekimlog;
@@ -1586,57 +1531,9 @@ bool KIM_API_model::string_init(char* in_tststr, char* modelname){
 
     //check test-model match and preinit test-model-API
     KIM_API_model test,mdl;
-#ifndef KIM_DYNAMIC
-    //get string .kim for the model----------
-     char * in_mdlstr=NULL;
-#include "model_kim_str_include.cpp"
-
-    if (in_mdlstr == NULL){
-        cout<<"* Error (KIM_API_model::string_init): Unknown KIM Model name " << modelname << "." << endl;
-        exit(368);
-    }
-     //                         -------------
- #else
-
-    char model_slib_file[2048];
-    char model_kim_str_name[2048];
-    sprintf(model_slib_file,"%s%s/%s.so",KIM_DIR_MODELS,modelname,modelname);
-    sprintf(model_kim_str_name,"%s_kim_str",modelname);
-     model_lib_handle = dlopen(model_slib_file,RTLD_NOW);
-    if(!model_lib_handle) {
-         cout<< "* Error (KIM_API_model::string_init): Cannot find Model shared library file for Model name: ";
-         cout<<modelname<<endl<<dlerror()<<endl;
-         fprintf(stderr,"%s not found..\n",model_slib_file);
-
-          //redirecting back to > cout
-          cout.rdbuf(backup); filekimlog.close();
-         return false;
-    }
-
-    typedef char* (*Model_kim_str)(void);
-    Model_kim_str get_kim_str = (Model_kim_str)dlsym(model_lib_handle,model_kim_str_name);
-    const char *dlsym_error = dlerror();
-    if (dlsym_error) {
-        cerr << "* Error (KIM_API_model_string_init): Model descriptor file function not found in shared library for Model: " << modelname << "." << endl;
-        dlclose(model_lib_handle);
-
-        //redirecting back to > cout
-        cout.rdbuf(backup); filekimlog.close();
-
-        return false;
-    }
-
-    char * in_mdlstr=NULL;
-
-    in_mdlstr = (*get_kim_str)();
-
-    if (in_mdlstr == NULL){
-        cout<< "* Error (KIM_API_model::string_init): Model descriptor string not found in shared library for Model: " << modelname << "." << endl;
-        exit(367);
-    }
-
- #endif
-//preinit test and model API object
+    char* in_mdlstr = get_model_kim_str(modelname, &error);
+    
+    //preinit test and model API object
     if(!test.prestring_init(in_tststr))
         cout<<"test.prestring_init failed with error status:"<<this->get_status_msg(test.ErrorCode)<<endl;
 
@@ -1661,11 +1558,8 @@ bool KIM_API_model::string_init(char* in_tststr, char* modelname){
         support_Rij=false;
         if (strcmp(NBC_method_current,"NEIGH_RVEC_F")==0) support_Rij=true;
 
-#ifdef KIM_DYNAMIC
-       dlclose(model_lib_handle);
-#endif
+        c_free(in_mdlstr);
         //redirecting back to > cout
-
         cout.rdbuf(backup); filekimlog.close();
 
         return true;
@@ -1674,9 +1568,7 @@ bool KIM_API_model::string_init(char* in_tststr, char* modelname){
  cout<<"Do not match  " << modelname << " and "<< test.model.name <<endl;
        test.free();
 
-#ifdef KIM_DYNAMIC
-       dlclose(model_lib_handle);
-#endif
+        c_free(in_mdlstr);
        //redirecting back to > cout
         cout.rdbuf(backup); filekimlog.close();
 
@@ -1719,7 +1611,6 @@ cout<< "* Info: KIM_API_model::model_init: call statically linked initialize rou
     cout.rdbuf(backup); filekimlog.close();
 
 #include "model_init_include.cpp"
-#include "Unit_Handling.h"
 
     //redirecting cout > kimlog
     filekimlog.open(kimlog,ofstream::app);
