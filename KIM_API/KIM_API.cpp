@@ -1045,14 +1045,14 @@ void KIM_API_model::read_file_str(char* strstream, KIM_IOline** lns, int* numlns
 
 }
 
-bool KIM_API_model::is_it_match(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns, bool match_regular){
+bool KIM_API_model::is_it_match(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns, bool ignore_optional, bool match_regular){
     bool match;
     //check if lines are match with Model api variable
     match =true;
     for (int i=0; i<nlns;i++){
         match=false;
 
-        if(IOlines[i].isitoptional()){
+        if(!ignore_optional && IOlines[i].isitoptional()){
             match=true;
         }
 
@@ -1129,15 +1129,15 @@ bool KIM_API_model::is_it_match(KIM_API_model &test,KIM_API_model & mdl){
     }
 
     // test and mdl must be preinit.
-    bool test2modelmatch= is_it_match(test,mdl.inlines,mdl.numlines,true);
-    bool model2testmatch= is_it_match(mdl,test.inlines,test.numlines,true);
+    bool test2modelmatch= is_it_match(test,mdl.inlines,mdl.numlines,false,true);
+    bool model2testmatch= is_it_match(mdl,test.inlines,test.numlines,true,true);
 
     bool test2modelmatch_noDC= is_it_match_noFlagCount(test,mdl.inlines,mdl.numlines);
     bool model2testmatch_noDC= is_it_match_noFlagCount(mdl,test.inlines,test.numlines);
 
-    bool test2standardmatch = is_it_match(stdmdl,test.inlines,test.numlines,false);
+    bool test2standardmatch = is_it_match(stdmdl,test.inlines,test.numlines,true,false);
 
-    bool model2standardmatch = is_it_match(stdmdl,mdl.inlines,mdl.numlines,false);
+    bool model2standardmatch = is_it_match(stdmdl,mdl.inlines,mdl.numlines,true,false);
 
     bool test2standardAtomsTypesMatch = do_AtomsTypes_match(test,stdmdl);
     bool model2standardAtomsTypesMatch = do_AtomsTypes_match(mdl,stdmdl);

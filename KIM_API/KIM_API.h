@@ -367,7 +367,7 @@ private:
 
     static void irrelevantVars2donotcompute(KIM_API_model & test, KIM_API_model & mdl);
     bool check_consistance_NBC_method();
-    static bool is_it_match(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns, bool match_regular);
+    static bool is_it_match(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns, bool ignore_optional, bool match_regular);
     static bool is_it_match_noFlagCount(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns);
 
    char* get_a_type_of_params(int* nVpar, int* error, int typecode);
