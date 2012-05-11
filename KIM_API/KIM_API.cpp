@@ -1099,13 +1099,22 @@ bool KIM_API_model::is_it_match_noFlagCount(KIM_API_model & mdtst,KIM_IOline * I
         for(int j=0;j<mdtst.model.size;j++){
             if(mdtst[j].equiv(IOlines[i],true)) {
                 match = true;
-                break;
             }else if(strcmp(IOlines[i].type,"flag")==0){
                 match = true;
-                break;
             }else if(is_it_par(IOlines[i].name)){
                 match = true;
-                break;
+            }
+
+            if (!match){
+               for (int k=0; k<5;++k){
+                  for (int m=0; m<mdtst.nnarg_NBC[k]; ++m){
+                     if (!strcmp(mdtst.arg_NBC_methods[k][m],IOlines[i].name)){
+                        match=true;
+                        break;
+                     }
+                  }
+                  if (match) break;
+               }
             }
         }
         if(!match) {
@@ -1281,7 +1290,15 @@ bool KIM_API_model::do_flag_match(KIM_API_model& tst, KIM_API_model& mdl){
          mdl.iterator_neigh_mode = true;
      }
 
-    if(!(mdl.locator_neigh_mode||mdl.iterator_neigh_mode||mdl.both_neigh_mode)) return false;
+    // it is ok to not have any of *neigh_mode if only CLUSTER
+    bool cluster_only = true;
+    for (int i=1;i<5;++i) { // Assuming NBC_methods[0] is CLUSTER
+       if (is_it_in_and_is_it_flag(mdl, mdl.NBC_methods[i])){
+          cluster_only = false;
+          break;
+       }
+    }
+    if(!(mdl.locator_neigh_mode||mdl.iterator_neigh_mode||mdl.both_neigh_mode) && !cluster_only) return false;
 
     return true;
 
