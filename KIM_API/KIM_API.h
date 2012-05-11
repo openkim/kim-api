@@ -264,6 +264,8 @@ bool is_half_neighbors(int *error);
   void getm_compute_by_index(int *err,int numargs, ...); //++
 
    //related to process fij public variables
+    bool test_doing_process_dEdr;
+    bool test_doing_process_d2Edr2;
     bool virial_need2add;
     bool particleVirial_need2add;
     bool hessian_need2add;

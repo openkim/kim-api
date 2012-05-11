@@ -101,14 +101,14 @@ void KIM_AUX::Process_DE::init2zero(KIM_API_model* pkim, int* kimerr){
                 }
             }
 
-            if (p1_ind >=0){
+            if ((p1_ind >=0) && (!pkim->test_doing_process_dEdr)){
                 if (process_d1) {
                    pkim->set_compute("process_dEdr", 1, kimerr);
                 } else {
                    pkim->set_compute("process_dEdr", 0, kimerr);
                 }
             }
-            if (p2_ind >=0){
+            if ((p2_ind >=0) && (!pkim->test_doing_process_d2Edr2)){
                 if (process_d2) {
                    pkim->set_compute("process_d2Edr2", 1, kimerr);
                 } else {

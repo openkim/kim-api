@@ -716,6 +716,8 @@ KIM_API_model:: KIM_API_model(){
        process_dEdr_ind=-1;
        process_d2Edr2_ind=-1;
 
+       test_doing_process_dEdr = false;
+       test_doing_process_d2Edr2 = false;
        virial_need2add=false;
        particleVirial_need2add=false;
        hessian_need2add=false;
@@ -2181,11 +2183,31 @@ bool KIM_API_model::fij_related_things_match(KIM_API_model& test, KIM_API_model&
     bool tst_particleVirial_required = is_it_in(test,"particleVirial");
     bool tst_hessian_required =     is_it_in(test,"hessian");
 
+    if ((tst_process_dEdr || tst_process_d2Edr2) && (tst_virial_required ||
+                                                     tst_particleVirial_required ||
+                                                     tst_hessian_required)) {
+       cout << "* Error (KIM_API_model::fij_related_things_match): "
+          "Test descriptor file cannot list both `process_dEdr' or "
+          "`process_d2Edr2'  and any of `virial', `particleVirial', or `hessian'"
+            << endl;
+       return false;
+    }
+
     bool mdl_process_dEdr = is_it_in(mdl,"process_dEdr");
     bool mdl_process_d2Edr2 = is_it_in(mdl,"process_d2Edr2");
     bool mdl_virial  = is_it_in(mdl,"virial");
     bool mdl_particleVirial = is_it_in(mdl,"particleVirial");
     bool mdl_hessian =     is_it_in(mdl,"hessian");
+
+    if ((mdl_process_dEdr || mdl_process_d2Edr2) && (mdl_virial ||
+                                                     mdl_particleVirial ||
+                                                     mdl_hessian)) {
+       cout << "* Error (KIM_API_model::fij_related_things_match): "
+          "Model descriptor file cannot list both `process_dEdr' or "
+          "`process_d2Edr2'  and any of `virial', `particleVirial', or `hessian'"
+            << endl;
+       return false;
+    }
 
     bool virial_comp_possible = mdl_virial || mdl_process_dEdr;
     bool particleVirial_comp_possible = mdl_particleVirial || mdl_process_dEdr;
@@ -2206,6 +2228,9 @@ bool KIM_API_model::fij_related_things_match(KIM_API_model& test, KIM_API_model&
     if (tst_particleVirial_required ) if (!mdl_particleVirial) particleVirial_need2add = true;
 
     if (tst_hessian_required ) if (!mdl_hessian) hessian_need2add = true;
+
+    if (tst_process_dEdr) test_doing_process_dEdr = true;
+    if (tst_process_d2Edr2) test_doing_process_d2Edr2 = true;
 
     return match;
 
@@ -2283,8 +2308,14 @@ void KIM_API_model::fij_related_things_add_set_index(){
     process_dEdr_ind =get_index("process_dEdr", &error);
     process_d2Edr2_ind =get_index("process_d2Edr2", &error);
 
+
+    // Set calculate flags for process_* if the API is doing the computations.
     if (virial_need2add || particleVirial_need2add || hessian_need2add) (*this)[process_dEdr_ind].flag->calculate=1;
     if (hessian_need2add) (*this)[process_d2Edr2_ind].flag->calculate=1;
+
+    // Set calculate flags for process_* if the Test is doing the computations.
+    if (test_doing_process_dEdr) (*this)[process_dEdr_ind].flag->calculate=1;
+    if (test_doing_process_d2Edr2) (*this)[process_d2Edr2_ind].flag->calculate=1;
 }
 void KIM_API_model::process_dEdr(KIM_API_model** ppkim, double* dE, double* r,
         double** dx,int *i, int *j, int* ier){
