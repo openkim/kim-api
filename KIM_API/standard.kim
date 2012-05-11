@@ -675,7 +675,8 @@ CONVENTIONS:
 ################################################################################
 #
 # In an actual KIM descriptor (.kim) file, exactly ONE of the following two
-# lines must be included:
+# lines must be included.  This information is used by neighbor lists and the
+# process_d?Edr? mechanism.
 #
 ################################################################################
 ZeroBasedLists              flag        # Presence of this line indicates that
