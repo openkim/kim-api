@@ -520,11 +520,11 @@ void KIMBaseElement::nullify(){
 bool KIMBaseElement::equiv(KIM_IOline& kimioline, bool skip_specials){
    //switch off check for virial and process_dnEdr related things
    if(skip_specials){
-      if(strcmp(name,"virial") == 0  ||
-         strcmp(name,"particleVirial")==0 ||
-         strcmp(name,"hessian")    ==0 ||
-         strcmp(name,"process_dEdr")    ==0 ||
-         strcmp(name,"process_d2Edr2")    ==0  ) return true;
+      if(strcmp(kimioline.name,"virial") == 0  ||
+         strcmp(kimioline.name,"particleVirial")==0 ||
+         strcmp(kimioline.name,"hessian")    ==0 ||
+         strcmp(kimioline.name,"process_dEdr")    ==0 ||
+         strcmp(kimioline.name,"process_d2Edr2")    ==0  ) return true;
    }
    if(strcmp(kimioline.name,name)==0)
       if(strcmp(kimioline.type,type)==0){
@@ -1076,14 +1076,14 @@ bool KIM_API_model::is_it_match(KIM_API_model & mdtst,KIM_IOline * IOlines,int n
     return match;
 }//will be private
 
-bool KIM_API_model::is_it_match_noFlagCount(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns){
+bool KIM_API_model::is_it_match_noFlagCount(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns, bool ignore_optional){
     bool match;
     //check if lines are match with Model api variable
     match =true;
     for (int i=0; i<nlns;i++){
         match=false;
 
-        if(IOlines[i].isitoptional()){
+        if(!ignore_optional && IOlines[i].isitoptional()){
             match=true;
         }
 
@@ -1100,10 +1100,10 @@ bool KIM_API_model::is_it_match_noFlagCount(KIM_API_model & mdtst,KIM_IOline * I
             if(mdtst[j].equiv(IOlines[i],true)) {
                 match = true;
                 break;
-            }else if(strcmp(mdtst[j].type,"flag")==0){
+            }else if(strcmp(IOlines[i].type,"flag")==0){
                 match = true;
                 break;
-            }else if(is_it_par(mdtst[j].name)){
+            }else if(is_it_par(IOlines[i].name)){
                 match = true;
                 break;
             }
@@ -1132,8 +1132,8 @@ bool KIM_API_model::is_it_match(KIM_API_model &test,KIM_API_model & mdl){
     bool test2modelmatch= is_it_match(test,mdl.inlines,mdl.numlines,false,true);
     bool model2testmatch= is_it_match(mdl,test.inlines,test.numlines,true,true);
 
-    bool test2modelmatch_noDC= is_it_match_noFlagCount(test,mdl.inlines,mdl.numlines);
-    bool model2testmatch_noDC= is_it_match_noFlagCount(mdl,test.inlines,test.numlines);
+    bool test2modelmatch_noDC= is_it_match_noFlagCount(test,mdl.inlines,mdl.numlines,false);
+    bool model2testmatch_noDC= is_it_match_noFlagCount(mdl,test.inlines,test.numlines,true);
 
     bool test2standardmatch = is_it_match(stdmdl,test.inlines,test.numlines,true,false);
 
@@ -1777,7 +1777,7 @@ int KIM_API_model::get_neigh(int mode, int request, int *atom,
 }
 
 void KIM_API_model::irrelevantVars2donotcompute(KIM_API_model & test, KIM_API_model & mdl){
-    if(! is_it_match_noFlagCount(test,mdl.inlines,mdl.numlines)) {
+   if(! is_it_match_noFlagCount(test,mdl.inlines,mdl.numlines,false)) {
         cout<<"* Error (KIM_API_model::irrelevantVars2donotcompute): Test and Model descriptor files are incompatible (do not match)."<<endl;
         KIM_API_model::fatal_error_print();
         exit(133);
