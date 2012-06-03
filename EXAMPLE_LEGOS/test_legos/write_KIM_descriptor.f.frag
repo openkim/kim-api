@@ -162,8 +162,6 @@ kim_descriptor = &
                                                                                    cr // &
    'compute                     method       none       []'                     // cr // &
                                                                                    cr // &
-   'reinit                      method       none       []'                     // cr // &
-                                                                                   cr // &
    'cutoff                      real*8       length     []'                     // cr // &
                                                                                    cr // &
    'energy                      real*8       energy     []'                     // cr // &
