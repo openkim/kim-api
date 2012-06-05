@@ -92,7 +92,7 @@ $(MODEL_NAME).cpp: $(KIM_API_DIR)model_based_on_driver.cpp $(PARAM_FILE_NAME) Ma
         sed -e 's,\\,\\\\,g'     \
             -e 's,",\\",g'       \
             -e 's,^,      ",g'   \
-            -e 's,$$,\\n",g'                                                  >> $(MODEL_NAME).cpp
+            -e 's,\r*$$,\\n",g'                                               >> $(MODEL_NAME).cpp
 	echo "   ;"                                                           >> $(MODEL_NAME).cpp
 	echo ""                                                               >> $(MODEL_NAME).cpp
 	cat $(KIM_API_DIR)model_based_on_driver.cpp | \
