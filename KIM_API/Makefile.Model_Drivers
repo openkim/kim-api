@@ -61,9 +61,9 @@ species_check =\
      fi;\
   else\
      if ( test "$(SPECIES$(num)_NAME)" != "" ) then\
-        sed -i -e "s/SPECIES$(num)_NAME_STR/$(SPECIES$(num)_NAME)/g" $(MODEL_NAME).kim; \
+        sed -e "s/SPECIES$(num)_NAME_STR/$(SPECIES$(num)_NAME)/g" -i $(MODEL_NAME).kim; \
      else\
-        sed -i -E -e '/^[[:space:]]*SPECIES$(num)_NAME_STR.*$$/d' $(MODEL_NAME).kim; \
+        sed -E -e '/^[[:space:]]*SPECIES$(num)_NAME_STR.*$$/d' -i $(MODEL_NAME).kim; \
      fi;\
   fi &&
 
