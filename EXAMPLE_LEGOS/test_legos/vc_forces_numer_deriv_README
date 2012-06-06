@@ -72,7 +72,7 @@ Notes:
 
    In addition, the following normalized measure is computed:
 
-   \alpha = 1/(DIM*N) sqrt( \sum_i w_i (f^{model}_i - f^{numer}_i) / \sum_i w_i ),
+   \alpha = 1/(DIM*N) sqrt( \sum_i w_i (f^{model}_i - f^{numer}_i)^2 / \sum_i w_i ),
 
    where w_i is the weight associated with term i:
 
