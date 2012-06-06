@@ -198,15 +198,15 @@ endif
 
 
 #
-MODEL_NAME_KIM_STR_H = char* $(MODEL_NAME)_kim_str'('')'';'
-MODEL_NAME_KIM_STR_CPP = char* $(MODEL_NAME)_kim_str'('')''{'
+MODEL_NAME_KIM_STR_H = char* $(strip $(MODEL_NAME))_kim_str'('')'';'
+MODEL_NAME_KIM_STR_CPP = char* $(strip $(MODEL_NAME))_kim_str'('')''{'
 %_kim_str.cpp: %.kim
 	echo "extern \"C\" {"           > $*_kim_str.cpp
 	echo $(MODEL_NAME_KIM_STR_H)   >> $*_kim_str.cpp
 	echo "}"                       >> $*_kim_str.cpp
 	echo $(MODEL_NAME_KIM_STR_CPP) >> $*_kim_str.cpp
 	echo "static char kimstr[] ="  >> $*_kim_str.cpp
-	cat $(MODEL_NAME).kim | \
+	cat $(strip $(MODEL_NAME)).kim | \
 	sed -e 's,\\,\\\\,g'     \
             -e 's,",\\",g'       \
             -e 's,^,      ",g'   \
@@ -224,6 +224,3 @@ else
 %.so: %.a
 	$(LINKCOMPILER) $(SHARED_LIB_FLAG)  $(CPPLIBFLAG) -o $@  *.o -L$(KIM_API_DIR) -lkim
 endif
-
-
-

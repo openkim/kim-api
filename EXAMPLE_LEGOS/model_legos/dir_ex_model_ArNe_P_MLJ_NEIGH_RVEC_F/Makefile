@@ -33,7 +33,7 @@
 
 
 MODEL_NAME := ex_model_ArNe_P_MLJ_NEIGH_RVEC_F
-MODEL_BUILD_TARGET := $(MODEL_NAME).a
+MODEL_BUILD_TARGET := $(strip $(MODEL_NAME)).a
 
 ifndef KIM_API_DIR
    include $(KIM_DIR)KIM_API/Include.mk
@@ -44,13 +44,13 @@ endif
 
 all: $(MODEL_BUILD_TARGET)
 
-$(MODEL_NAME).a: $(MODEL_NAME).o $(MODEL_NAME)_kim_str.o
+$(strip $(MODEL_NAME)).a: $(strip $(MODEL_NAME)).o $(strip $(MODEL_NAME))_kim_str.o
 	ar rcs $@ *.o
 
-$(MODEL_NAME).o: Makefile
+$(strip $(MODEL_NAME)).o: Makefile
 
 Makefile: $(KIM_API_DIR)Include.mk
 	@touch Makefile
 
 clean:
-	rm -f *.o *.mod *.a *.so $(MODEL_NAME)_kim_str.{o,cpp}
+	rm -f *.o *.mod *.a *.so $(strip $(MODEL_NAME))_kim_str.{o,cpp}

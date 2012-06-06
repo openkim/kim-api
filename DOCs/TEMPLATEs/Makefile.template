@@ -44,10 +44,10 @@ endif
 
 all: $(MODEL_BUILD_TARGET)
 
-$(MODEL_NAME).a: $(strip $(MODEL_NAME)).o $(strip $(MODEL_NAME))_kim_str.o
+$(strip $(MODEL_NAME)).a: $(strip $(MODEL_NAME)).o $(strip $(MODEL_NAME))_kim_str.o
 	ar rcs $@ *.o
 
-$(MODEL_NAME).o: Makefile
+$(strip $(MODEL_NAME)).o: Makefile
 
 Makefile: $(KIM_API_DIR)Include.mk
 	@touch Makefile

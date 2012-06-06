@@ -43,10 +43,10 @@ LOCALOBJ = neighborlistmod.o myqsort.o
 
 all: $(TEST_NAME)
 
-$(TEST_NAME): $(TEST_NAME).o $(LOCALOBJ) $(KIM_LIB_FILE)
+$(TEST_NAME): $(strip $(TEST_NAME)).o $(LOCALOBJ) $(KIM_LIB_FILE)
 	$(LINKCOMPILER) $(CPPFLAG) $(CPPLIBFLAG) $(LOCALOBJ) $< $(KIM_LIB) $(OUTPUTIN) $@
 
-$(TEST_NAME).o: $(LOCALOBJ) Makefile
+$(strip $(TEST_NAME)).o: $(LOCALOBJ) Makefile
 
 neighborlistmod.o: myqsort.o Makefile
 
