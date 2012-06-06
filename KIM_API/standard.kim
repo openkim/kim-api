@@ -1052,6 +1052,17 @@ neighObject                 pointer      none               []
 # Name                      Type         Unit               Shape
 #
 boxSideLengths              real*8       length             [3]
+#
+################################################################################
+#
+# temperature : A scalar specifying the system temperature.
+#
+# This argument is required for a special class of temperature-dependent models.
+#
+# Name                      Type         Unit               Shape
+#
+temperature                 real*8       temperature        []
+
 
 ################################################################################
 #
