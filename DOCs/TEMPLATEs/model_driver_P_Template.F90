@@ -185,7 +185,7 @@ integer :: i_pairs(2), j_pairs(2)
 integer :: comp_force,comp_energy,comp_enepot,comp_process_dEdr,comp_process_d2Edr2
 integer, allocatable, target :: nei1atom_substitute(:)
 integer :: idum
-integer buffer(1);                    pointer(pbuffer, buffer)
+integer(kind=kim_intptr):: buffer(1); pointer(pbuffer, buffer)
 integer bufind(1);                    pointer(pbufind, bufind)
 integer(kind=kim_intptr) bufparam(1); pointer(pbufparam, bufparam)
 
@@ -527,7 +527,7 @@ integer(kind=kim_intptr), intent(in) :: pkim
 !-- Local variables
 double precision energy_at_cutoff
 integer ier, idum
-integer buffer(1);                    pointer(pbuffer, buffer)
+integer(kind=kim_intptr):: buffer(1); pointer(pbuffer, buffer)
 integer bufind(1);                    pointer(pbufind, bufind)
 integer(kind=kim_intptr) bufparam(1); pointer(pbufparam, bufparam)
 
@@ -583,7 +583,7 @@ integer(kind=kim_intptr), intent(in) :: pkim
 
 !-- Local variables
 integer ier, idum
-integer buffer(1);                    pointer(pbuffer, buffer)
+integer(kind=kim_intptr):: buffer(1); pointer(pbuffer, buffer)
 integer bufind(1);                    pointer(pbufind, bufind)
 integer(kind=kim_intptr) bufparam(1); pointer(pbufparam, bufparam)
 
@@ -622,21 +622,22 @@ end module model_driver_P_<FILL model driver name>
 ! Model driver initialization routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-subroutine model_driver_P_<FILL model driver name>_init(pkim, byte_paramfile, len_paramfile)
+subroutine model_driver_P_<FILL model driver name>_init(pkim, byte_paramfile, nmstrlen, numparamfiles)
 use model_driver_P_<FILL model driver name>
 use KIM_API
 implicit none
 
 !-- Transferred variables
 integer(kind=kim_intptr), intent(in) :: pkim
-byte,                     intent(in) :: byte_paramfile(len_paramfile+1)
-integer,                  intent(in) :: len_paramfile
+integer,                  intent(in) :: nmstrlen
+integer,                  intent(in) :: numparamfiles
+byte,                     intent(in) :: byte_paramfile(nmstrlen*numparamfiles)
 
 !-- Local variables
 integer(kind=kim_intptr), parameter :: one=1
-character(len=len_paramfile) paramfile
-integer i,ier, idum
-integer buffer(1);                    pointer(pbuffer, buffer)
+character(len=nmstrlen) paramfile_names(numparamfiles)
+integer i,j,ier, idum
+integer(kind=kim_intptr):: buffer(1); pointer(pbuffer, buffer)
 integer bufind(1);                    pointer(pbufind, bufind)
 integer(kind=kim_intptr) bufparam(1); pointer(pbufparam, bufparam)
 character*80 :: error_message
@@ -656,6 +657,21 @@ real*8  model_<FILL parameter 1>; pointer(pmodel_<FILL parameter 1>,model_<FILL 
 real*8  model_<FILL parameter 2>; pointer(pmodel_<FILL parameter 2>,model_<FILL parameter 2>)
 ! FILL as many parameter declarations as necessary
 
+!
+! generic code to process model parameter file names from byte string
+!
+do i=1,numparamfiles
+   paramfile_names(i) = "" ! initialize name to empty string
+   do j=1,nmstrlen
+      ! add characters to file name until a NULL is encountered
+      if (char(byte_paramfile((i-1)*nmstrlen+j)) .eq. char(0)) exit 
+      paramfile_names(i)(j:j) = char(byte_paramfile((i-1)*nmstrlen+j))
+   enddo
+enddo
+!
+! end generic code to process model parameter file names
+!
+
 ! store function pointers in KIM object
 call kim_api_setm_data_f(pkim, ier, &
      "compute", one, loc(Compute_Energy_Forces), 1, &
@@ -668,15 +684,14 @@ endif
 
 ! Read in model parameters from parameter file
 !
-do i=1,len_paramfile
-   paramfile(i:i) = char(byte_paramfile(i))
-   if (paramfile(i:i) .eq. char(10)) paramfile(i:i) = " ";
-enddo
-read(paramfile,'<FILL appropriate format>',iostat=ier,err=100) in_cutoff,       &
-                                                               in_<FILL parameter 1>, &
-                                                               in_<FILL parameter 2>, &
-                                                               ! ...
-                                                               in_<FILL last parameter>
+open(10,file=paramfile_names(1),status="old")
+read(10,*,iostat=ier,err=100) in_cutoff
+read(10,*,iostat=ier,err=100) in_<FILL parameter 1>
+read(10,*,iostat=ier,err=100) in_<FILL parameter 2>
+! ...
+read(10,*,iostat=ier,err=100) in_<FILL last parameter>
+close(10)
+
 goto 200
 100 continue
 ! reading parameters failed

@@ -646,20 +646,21 @@ end module MODEL_DRIVER_NAME_LC_STR
 ! Model driver initialization routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-subroutine MODEL_DRIVER_NAME_LC_STR_init(pkim, byte_paramfile, len_paramfile)
+subroutine MODEL_DRIVER_NAME_LC_STR_init(pkim, byte_paramfile, nmstrlen, numparamfiles)
 use MODEL_DRIVER_NAME_LC_STR
 use KIM_API
 implicit none
 
 !-- Transferred variables
 integer(kind=kim_intptr), intent(in) :: pkim
-byte,                     intent(in) :: byte_paramfile(len_paramfile+1)
-integer,                  intent(in) :: len_paramfile
+integer,                  intent(in) :: nmstrlen
+integer,                  intent(in) :: numparamfiles
+byte,                     intent(in) :: byte_paramfile(nmstrlen*numparamfiles)
 
 !-- Local variables
 integer(kind=kim_intptr), parameter :: one=1
-character(len=len_paramfile) paramfile
-integer i,ier, idum
+character(len=nmstrlen) paramfile_names(numparamfiles)
+integer i,j,ier, idum
 integer(kind=kim_intptr):: buffer(1); pointer(pbuffer, buffer)
 integer bufind(1);                    pointer(pbufind, bufind)
 integer(kind=kim_intptr) bufparam(1); pointer(pbufparam, bufparam)
@@ -679,6 +680,21 @@ real*8  model_epsilon;   pointer(pmodel_epsilon,model_epsilon)
 real*8  model_sigma;     pointer(pmodel_sigma,  model_sigma)
 real*8  model_shift;     pointer(pmodel_shift,  model_shift)
 
+!
+! generic code to process model parameter file names from byte string
+!
+do i=1,numparamfiles
+   paramfile_names(i) = "" ! initialize name to empty string
+   do j=1,nmstrlen
+      ! add characters to file name until a NULL is encountered
+      if (char(byte_paramfile((i-1)*nmstrlen+j)) .eq. char(0)) exit 
+      paramfile_names(i)(j:j) = char(byte_paramfile((i-1)*nmstrlen+j))
+   enddo
+enddo
+!
+! end generic code to process model parameter file names
+!
+
 ! store function pointers in KIM object
 call kim_api_setm_data_f(pkim, ier, &
      "compute", one, loc(Compute_Energy_Forces), 1, &
@@ -691,13 +707,11 @@ endif
 
 ! Read in model parameters from parameter file
 !
-do i=1,len_paramfile
-   paramfile(i:i) = char(byte_paramfile(i))
-   if (paramfile(i:i) .eq. char(10)) paramfile(i:i) = " ";
-enddo
-read(paramfile,*,iostat=ier,err=100) in_cutoff,   &
-                                     in_epsilon,  &
-                                     in_sigma
+open(10,file=paramfile_names(1),status="old")
+read(10,*,iostat=ier,err=100) in_cutoff
+read(10,*,iostat=ier,err=100) in_epsilon
+read(10,*,iostat=ier,err=100) in_sigma
+close(10)
 
 goto 200
 100 continue

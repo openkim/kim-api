@@ -60,7 +60,7 @@
 /* Define prototypes for Model Driver init */
 /* must be all lowercase to be compatible with the KIM API (to support Fortran Tests) */
 /**/
-void MODEL_DRIVER_NAME_LC_STR_init_(void* km, char* paramfile, int* length);
+void MODEL_DRIVER_NAME_LC_STR_init_(void* km, char* paramfile_names, int* nmstrlen, int* numparamfiles);
 
 /* Define prototypes for Model (Driver) reinit, compute, and destroy */
 /* defined as static to avoid namespace clashes with other Models    */
@@ -596,14 +596,19 @@ static void compute(void* km, int* ier)
 }
 
 /* Initialization function */
-void MODEL_DRIVER_NAME_LC_STR_init_(void *km, char* paramfile, int* length)
+void MODEL_DRIVER_NAME_LC_STR_init_(void *km, char* paramfile_names, int* nmstrlen, int* numparamfiles)
 {
+   /* KIM variables */
+   intptr_t* pkim = *((intptr_t**) km);
+   char** paramfilename;
+
    /* Local variables */
+   int i;
+   FILE* fid;
    double cutoff;
    double epsilon;
    double C;
    double Rzero;
-   intptr_t* pkim = *((intptr_t**) km);
    double* model_Pcutoff;
    double* model_cutoff;
    double* model_cutsq;
@@ -615,6 +620,15 @@ void MODEL_DRIVER_NAME_LC_STR_init_(void *km, char* paramfile, int* length)
    double dummy;
    struct model_buffer* buffer;
    char* NBCstr;
+
+   /* generic code to process model parameter file names from single string */
+   paramfilename = (char**) malloc(*numparamfiles*sizeof(char*));
+   for (i=0; i<*numparamfiles; ++i)
+   {
+      paramfilename[i] = &(paramfile_names[i*(*nmstrlen)]);
+   }
+   /* end generic code to process model parameter file names */
+   /* but don't forget to free the memory when done with the file names */
 
    /* store pointer to functions in KIM object */
    KIM_API_setm_data(pkim, &ier, 3*4,
@@ -628,11 +642,22 @@ void MODEL_DRIVER_NAME_LC_STR_init_(void *km, char* paramfile, int* length)
    }
 
    /* Read in model parameters from parameter file */
-   ier = sscanf(paramfile, "%lf \n%lf \n%lf \n%lf",
+   fid = fopen(paramfilename[0], "r");
+   if (fid == NULL)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "Unable to open parameter file for Morse parameters", KIM_STATUS_FAIL);
+      exit(1);
+   }
+
+   ier = fscanf(fid, "%lf \n%lf \n%lf \n%lf",
                 &cutoff,  /* cutoff distance in angstroms */
                 &epsilon, /* Morse epsilon in eV */
                 &C,       /* Morse C in 1/Angstroms */
                 &Rzero);  /* Morse Rzero in Angstroms */
+   fclose(fid);
+   free(paramfilename); paramfilename = NULL; /* done with parameter file names */
+
+   /* check that we read the right number of parameters */
    if (4 != ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "Unable to read all Morse parameters", KIM_STATUS_FAIL);

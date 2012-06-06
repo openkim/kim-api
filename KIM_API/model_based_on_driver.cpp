@@ -40,11 +40,11 @@
 
 using namespace std;
 
-static char* param_string();
+static void process_paramfiles(char* param_file_names, int* nmstrlen);
 
 #ifdef KIM_DYNAMIC
-   void* driver_lib_handle;
-   void* driver_destroy;
+   static void* driver_lib_handle;
+   static void* driver_destroy;
 #endif
 
 extern "C" {
@@ -53,7 +53,7 @@ extern "C" {
    #include <dlfcn.h>
    static void model_destroy(void* km, int* ier);
 #else
-   void MODEL_DRIVER_NAME_LC_STR_init_(void* km, char* paramfile, int* length);
+   void MODEL_DRIVER_NAME_LC_STR_init_(void* km, char* paramfilenames, int* nmstrlen, int* numparamfiles);
 #endif
 
 
@@ -72,8 +72,11 @@ extern "C" {
 #endif
 
    void MODEL_NAME_LC_STR_init_(void* km) {
-      char* param_str = param_string();
-      int length = strlen(param_str);
+      int numparamfiles = NUM_PARAMFILES;
+      int nmstrlen;
+      char* param_file_names = new char[NUM_PARAMFILES*(L_tmpnam+1)];
+
+      process_paramfiles(param_file_names, &nmstrlen);
 #ifdef KIM_DYNAMIC
       driver_lib_handle = dlopen("MODEL_DRIVER_SO_NAME_STR",RTLD_NOW);
       if (!driver_lib_handle) {
@@ -81,7 +84,7 @@ extern "C" {
          cout << dlerror() << endl;
       exit(-1);
       }
-      typedef void (*Driver_Init)(void *km, char* paramfile, int* length);
+      typedef void (*Driver_Init)(void *km, char* paramfilenames, int* nmstrlen, int* numparamfiles);
       Driver_Init drvr_init = (Driver_Init)dlsym(driver_lib_handle,"MODEL_DRIVER_NAME_LC_STR_init_");
       const char *dlsym_error = dlerror();
       if (dlsym_error) {
@@ -89,19 +92,46 @@ extern "C" {
          dlclose(driver_lib_handle);
          exit(-1);
       }
-      (*drvr_init)(km, param_str, &length);
+      (*drvr_init)(km, param_file_names, &nmstrlen, &numparamfiles);
 
       int ier = 0;
       driver_destroy = KIM_API_get_data((void *) *((KIM_API_model**)km), "destroy", &ier);
       KIM_API_set_data((void *) *((KIM_API_model**)km), "destroy",1,(void*) &model_destroy);
 #else
-      MODEL_DRIVER_NAME_LC_STR_init_(km, param_str, &length);
+      MODEL_DRIVER_NAME_LC_STR_init_(km, param_file_names, &nmstrlen, &numparamfiles);
 #endif
-
+      delete [] param_file_names;
+      param_file_names = NULL;
    }
-
 }
 
-static char* param_string() {
-   return params;
+static void process_paramfiles(char* param_file_names, int* nmstrlen)
+{
+   *nmstrlen = L_tmpnam+1;
+
+   char* paramfile_strings[NUM_PARAMFILES];
+   PARAMFILE_POINTERS_GO_HERE;
+
+   char* ret;
+   fstream fl;
+   for (int i=0; i<NUM_PARAMFILES; ++i)
+   {
+      ret=tmpnam(&(param_file_names[i*(L_tmpnam+1)]));
+
+      if (ret == NULL)
+      {
+         cerr << "Cannot obtain unique temporary file name: tmpnam() failed." << endl;
+         exit(-1);
+      }
+
+      fl.open(&(param_file_names[i*(L_tmpnam+1)]),fstream::out);
+      if (fl.fail())
+      {
+         cerr << "Unable to open temporary file." << endl;
+         exit(-1);
+      }
+
+      fl << paramfile_strings[i];
+      fl.close();
+   }
 }

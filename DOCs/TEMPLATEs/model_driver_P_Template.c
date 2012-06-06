@@ -61,7 +61,7 @@
 /* Define prototypes for Model Driver init */
 /* must be all lowercase to be compatible with the KIM API (to support Fortran Tests) */
 /**/
-void model_driver_p_<FILL (lowercase) model driver name>_init_(void* km, char* paramfile, int* length);
+void model_driver_p_<FILL (lowercase) model driver name>_init_(void* km, char* paramfile_names, int* nmstrlen, int* numparamfiles);
 
 /* Define prototypes for Model (Driver) reinit, compute, and destroy */
 /* defined as static to avoid namespace clashes with other Models    */
@@ -225,7 +225,7 @@ static void compute(void* km, int* ier)
    int zero = 0;
    int one = 1;
    int request;
-   
+
    int* nAtoms;
    int* particleTypes;
    double* cutoff;
@@ -327,7 +327,7 @@ static void compute(void* km, int* ier)
          particleEnergy[i] = 0.0;
       }
    }
-   else if (comp_energy)
+   if (comp_energy)
    {
       *energy = 0.0;
    }
@@ -419,7 +419,7 @@ static void compute(void* km, int* ier)
             }
          }
       }
-            
+
       /* loop over the neighbors of atom i */
       for (jj = 0; jj < numOfAtomNeigh; ++ jj)
       {
@@ -447,11 +447,11 @@ static void compute(void* km, int* ier)
                   Rij[k] -= (Rij[k]/fabs(Rij[k]))*boxSideLengths[k];
                }
             }
-            
+
             /* compute squared distance */
             Rsqij += Rij[k]*Rij[k];
          }
-         
+
          /* compute energy and force */
          if (Rsqij < *cutsq) /* particles are interacting ? */
          {
@@ -463,7 +463,7 @@ static void compute(void* km, int* ier)
                               <FILL parameter 2>,
                               /* FILL as many parameters as needed */
                               cutoff, R, &phi, &dphi, &d2phi);
-               
+
                /* compute dEidr */
                if ((1 == HalfOrFull) && (j < numberContrib))
                {
@@ -506,7 +506,7 @@ static void compute(void* km, int* ier)
                         /* FILL as many parameters as needed */
                         cutoff, R, &phi);
             }
-            
+
             /* contribution to energy */
             if (comp_particleEnergy)
             {
@@ -514,7 +514,7 @@ static void compute(void* km, int* ier)
                /* if half list add energy for the other atom in the pair */
                if ((1 == HalfOrFull) && (j < numberContrib)) particleEnergy[j] += 0.5*phi;
             }
-            else if (comp_energy)
+            if (comp_energy)
             {
                if ((1 == HalfOrFull) && (j < numberContrib))
                {
@@ -527,13 +527,13 @@ static void compute(void* km, int* ier)
                   *energy += 0.5*phi;
                }
             }
-            
+
             /* contribution to process_dEdr */
             if (comp_process_dEdr)
             {
                KIM_API_process_dEdr(km, &dEidr, &R, &pRij, &i, &j, ier);
             }
-            
+
             /* contribution to process_d2Edr2 */
             if (comp_process_d2Edr2)
             {
@@ -545,8 +545,8 @@ static void compute(void* km, int* ier)
                j_pairs[0] = j_pairs[1] = j;
 
                KIM_API_process_d2Edr2(km, &d2Eidr, &pR_pairs, &pRij_pairs, &pi_pairs, &pj_pairs, ier);
-            } 
-          
+            }
+
             /* contribution to forces */
             if (comp_force)
             {
@@ -559,20 +559,9 @@ static void compute(void* km, int* ier)
          }
       } /* loop on jj */
    }    /* infinite while loop (terminated by break statements above */
-   
-   /* perform final tasks */
-   
-   if (comp_particleEnergy && comp_energy)
-   {
-      *energy = 0.0;
-      for (k = 0; k < *nAtoms; ++k)
-      {
-         *energy += particleEnergy[k];
-      }
-   }
 
    /* Free temporary storage */
-   if (0 == NBC) 
+   if (0 == NBC)
    {
       free(neighListOfCurrentAtom);
    }
@@ -584,9 +573,15 @@ static void compute(void* km, int* ier)
 }
 
 /* Initialization function */
-void model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* paramfile, int* length)
+void model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* paramfile_names, int* nmstrlen, int* numparamfiles)
 {
+   /* KIM variables */
+   intptr_t* pkim = *((intptr_t**) km);
+   char** paramfilename;
+
    /* Local variables */
+   int i;
+   FILE* fid;
    double cutoff;
    double <FILL parameter 1>;
    double <FILL parameter 2>;
@@ -603,6 +598,15 @@ void model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* p
    struct model_buffer* buffer;
    char* NBCstr;
 
+   /* generic code to process model parameter file names from single string */
+   paramfilename = (char**) malloc(*numparamfiles*sizeof(char*));
+   for (i=0; i<*numparamfiles; ++i)
+   {
+      paramfilename[i] = &(paramfile_names[i*(*nmstrlen)]);
+   }
+   /* end generic code to process model parameter file names */
+   /* but don't forget to free the memory when done with the file names */
+
    /* store pointer to functions in KIM object */
    KIM_API_setm_data(pkim, &ier, 3*4,
                      "compute", 1, &compute, 1,
@@ -615,12 +619,23 @@ void model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* p
    }
 
    /* Read in model parameters from parameter file */
+   fid = fopen(paramfilename[0], "r");
+   if (fid == NULL)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "Unable to open parameter file for Morse parameters", KIM_STATUS_FAIL);
+      exit(1);
+   }
+
    ier = sscanf(paramfile, "%lf \n%lf \n<FILL as many parameters as needed>",
                 &cutoff,             /* cutoff distance in angstroms */
                 &<FILL parameter 1>,
                 &<FILL parameter 2>,
                 /* FILL as many parameters as needed */
                );
+   fclose(fid);
+   free(paramfilename); paramfilename = NULL; /* done with parameter file names */
+
+   /* check that we read the right number of parameters */
    if (<FILL number of parameters (including cutoff)> != ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "Unable to read all <FILL model driver name> parameters", KIM_STATUS_FAIL);
@@ -888,6 +903,6 @@ static void destroy(void *km)
 
    /* destroy the buffer */
    free(buffer);
-   
+
    return;
 }
