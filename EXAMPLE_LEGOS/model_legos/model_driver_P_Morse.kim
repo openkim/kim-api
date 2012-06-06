@@ -49,7 +49,7 @@ Unit_time        := fs
 SUPPORTED_ATOM/PARTICLES_TYPES:
 # Symbol/name               Type                    code
 
-SPECIES001_NAME_STR                          spec                    1
+SPECIES_001_NAME_STR                         spec                    1
 
 
 #######################################################################################################

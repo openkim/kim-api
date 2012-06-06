@@ -32,10 +32,10 @@
 #
 
 
-MODEL_DRIVER_NAME  := <FILL model driver name>
-MODEL_NAME         := <FILL model name>
-SPECIES1_NAME      := <FILL species name>
-PARAM_FILE_NAME    := $(strip $(MODEL_NAME)).params
+MODEL_DRIVER_NAME   := <FILL model driver name>
+MODEL_NAME          := <FILL model name>
+SPECIES_001_NAME    := <FILL species name>
+PARAM_FILE_001_NAME := $(strip $(MODEL_NAME)).params
 
 ifndef KIM_API_DIR
    include $(KIM_DIR)KIM_API/Makefile.Model_Drivers

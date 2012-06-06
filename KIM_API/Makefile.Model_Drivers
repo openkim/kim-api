@@ -55,15 +55,15 @@ hundred8 := $(shell i=801; while [ $$i -le 900 ]; do printf '%3.3i ' $$i; i=$$((
 hundred9 := $(shell i=901; while [ $$i -le 999 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
 
 species_check =\
-  if ( test `grep -c SPECIES$(num)_NAME_STR $(strip $(MODEL_NAME)).kim` == 0 ) then\
-     if ( test "$(SPECIES$(num)_NAME)" != "" ) then\
-        echo && echo "*** SPECIES$(num)_NAME is defined in Makefile, but SPECIES$(num)_NAME_STR in not in $(strip $(MODEL_DRIVER_NAME)).kim. ***" && echo && false;\
+  if ( test `grep -c SPECIES_$(num)_NAME_STR $(strip $(MODEL_NAME)).kim` == 0 ) then\
+     if ( test "$(SPECIES_$(num)_NAME)" != "" ) then\
+        echo && echo "*** SPECIES_$(num)_NAME is defined in Makefile, but SPECIES_$(num)_NAME_STR in not in $(strip $(MODEL_DRIVER_NAME)).kim. ***" && echo && false;\
      fi;\
   else\
-     if ( test "$(SPECIES$(num)_NAME)" != "" ) then\
-        sed -e "s/SPECIES$(num)_NAME_STR/$(SPECIES$(num)_NAME)/g" -i $(strip $(MODEL_NAME)).kim; \
+     if ( test "$(SPECIES_$(num)_NAME)" != "" ) then\
+        sed -e "s/SPECIES_$(num)_NAME_STR/$(SPECIES_$(num)_NAME)/g" -i $(strip $(MODEL_NAME)).kim; \
      else\
-        sed -E -e '/^[[:space:]]*SPECIES$(num)_NAME_STR.*$$/d' -i $(strip $(MODEL_NAME)).kim; \
+        sed -E -e '/^[[:space:]]*SPECIES_$(num)_NAME_STR.*$$/d' -i $(strip $(MODEL_NAME)).kim; \
      fi;\
   fi &&
 
