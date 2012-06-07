@@ -44,15 +44,15 @@ all: $(strip $(MODEL_NAME)).kim $(MODEL_BUILD_TARGET)
 
 
 hundred0 := $(shell i=1; while [ $$i -le 100 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
-hundred1 := $(shell i=101; while [ $$i -le 200 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
-hundred2 := $(shell i=201; while [ $$i -le 300 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
-hundred3 := $(shell i=301; while [ $$i -le 400 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
-hundred4 := $(shell i=401; while [ $$i -le 500 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
-hundred5 := $(shell i=501; while [ $$i -le 600 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
-hundred6 := $(shell i=601; while [ $$i -le 700 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
-hundred7 := $(shell i=701; while [ $$i -le 800 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
-hundred8 := $(shell i=801; while [ $$i -le 900 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
-hundred9 := $(shell i=901; while [ $$i -le 999 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
+#hundred1 := $(shell i=101; while [ $$i -le 200 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
+#hundred2 := $(shell i=201; while [ $$i -le 300 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
+#hundred3 := $(shell i=301; while [ $$i -le 400 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
+#hundred4 := $(shell i=401; while [ $$i -le 500 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
+#hundred5 := $(shell i=501; while [ $$i -le 600 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
+#hundred6 := $(shell i=601; while [ $$i -le 700 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
+#hundred7 := $(shell i=701; while [ $$i -le 800 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
+#hundred8 := $(shell i=801; while [ $$i -le 900 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
+#hundred9 := $(shell i=901; while [ $$i -le 999 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
 
 species_check =\
   if ( test `grep -c SPECIES_$(num)_NAME_STR $(strip $(MODEL_NAME)).kim` == 0 ) then\
@@ -68,15 +68,15 @@ species_check =\
   fi &&
 
 paramfile_list =  $(strip $(foreach num,$(hundred0),$(PARAM_FILE_$(num)_NAME)))
-paramfile_list += $(strip $(foreach num,$(hundred1),$(PARAM_FILE_$(num)_NAME)))
-paramfile_list += $(strip $(foreach num,$(hundred2),$(PARAM_FILE_$(num)_NAME)))
-paramfile_list += $(strip $(foreach num,$(hundred3),$(PARAM_FILE_$(num)_NAME)))
-paramfile_list += $(strip $(foreach num,$(hundred4),$(PARAM_FILE_$(num)_NAME)))
-paramfile_list += $(strip $(foreach num,$(hundred5),$(PARAM_FILE_$(num)_NAME)))
-paramfile_list += $(strip $(foreach num,$(hundred6),$(PARAM_FILE_$(num)_NAME)))
-paramfile_list += $(strip $(foreach num,$(hundred7),$(PARAM_FILE_$(num)_NAME)))
-paramfile_list += $(strip $(foreach num,$(hundred8),$(PARAM_FILE_$(num)_NAME)))
-paramfile_list += $(strip $(foreach num,$(hundred9),$(PARAM_FILE_$(num)_NAME)))
+#paramfile_list += $(strip $(foreach num,$(hundred1),$(PARAM_FILE_$(num)_NAME)))
+#paramfile_list += $(strip $(foreach num,$(hundred2),$(PARAM_FILE_$(num)_NAME)))
+#paramfile_list += $(strip $(foreach num,$(hundred3),$(PARAM_FILE_$(num)_NAME)))
+#paramfile_list += $(strip $(foreach num,$(hundred4),$(PARAM_FILE_$(num)_NAME)))
+#paramfile_list += $(strip $(foreach num,$(hundred5),$(PARAM_FILE_$(num)_NAME)))
+#paramfile_list += $(strip $(foreach num,$(hundred6),$(PARAM_FILE_$(num)_NAME)))
+#paramfile_list += $(strip $(foreach num,$(hundred7),$(PARAM_FILE_$(num)_NAME)))
+#paramfile_list += $(strip $(foreach num,$(hundred8),$(PARAM_FILE_$(num)_NAME)))
+#paramfile_list += $(strip $(foreach num,$(hundred9),$(PARAM_FILE_$(num)_NAME)))
 
 num_paramfiles = $(words $(paramfile_list))
 paramfile_num_list := $(shell i=1; while [ $$i -le $(num_paramfiles) ]; do printf '%3i ' $$i; i=$$(($$i + 1)); done)
@@ -89,15 +89,15 @@ $(MODEL_NAME).kim: $(KIM_MODEL_DRIVERS_DIR)$(strip $(MODEL_DRIVER_NAME))/$(strip
 	cat $(KIM_MODEL_DRIVERS_DIR)/$(strip $(MODEL_DRIVER_NAME))/$(strip $(MODEL_DRIVER_NAME)).kim | \
         sed -e "s,MODEL_NAME_STR,$(strip $(MODEL_NAME)),g"                             > $(strip $(MODEL_NAME)).kim
 	@$(foreach num,$(hundred0),$(species_check)) true
-	@$(foreach num,$(hundred1),$(species_check)) true
-	@$(foreach num,$(hundred2),$(species_check)) true
-	@$(foreach num,$(hundred3),$(species_check)) true
-	@$(foreach num,$(hundred4),$(species_check)) true
-	@$(foreach num,$(hundred5),$(species_check)) true
-	@$(foreach num,$(hundred6),$(species_check)) true
-	@$(foreach num,$(hundred7),$(species_check)) true
-	@$(foreach num,$(hundred8),$(species_check)) true
-	@$(foreach num,$(hundred9),$(species_check)) true
+#	@$(foreach num,$(hundred1),$(species_check)) true
+#	@$(foreach num,$(hundred2),$(species_check)) true
+#	@$(foreach num,$(hundred3),$(species_check)) true
+#	@$(foreach num,$(hundred4),$(species_check)) true
+#	@$(foreach num,$(hundred5),$(species_check)) true
+#	@$(foreach num,$(hundred6),$(species_check)) true
+#	@$(foreach num,$(hundred7),$(species_check)) true
+#	@$(foreach num,$(hundred8),$(species_check)) true
+#	@$(foreach num,$(hundred9),$(species_check)) true
 
 $(strip $(MODEL_NAME)).cpp: $(KIM_API_DIR)model_based_on_driver.cpp $(paramfile_list) Makefile \
                    $(KIM_API_DIR)Makefile.Model_Drivers
