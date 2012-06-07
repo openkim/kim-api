@@ -97,6 +97,8 @@ public:
 class Atom_Map{
 public:
     char symbol[KIM_KEY_STRING_LENGTH];
+    bool readOnly;
+    bool requestedByTest;
     int code;
     static int comparator(const void * a1,const void *a2);
 };
@@ -223,8 +225,11 @@ public:
 
 void allocate( int natoms, int ntypes,int * error);
 
-char * get_partcl_types(int *nparticleTypes,int *error);
+char* get_partcl_types(int *nparticleTypes,int *error); // to be removed
+char* get_model_partcl_typs(int *nparticleTypes,int* error);
+char* get_test_partcl_typs(int *nparticleTypes,int* error);
 int get_partcl_type_code(char *atom, int * error);
+void set_partcl_type_code(char *atom, int code, int* error);
 
 char * get_params(int *nVpar,int *error);
 char * get_free_params(int *nVpar,int *error);

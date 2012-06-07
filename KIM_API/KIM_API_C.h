@@ -39,6 +39,10 @@
 #define KIM_API_MAX_NEIGHBORS 512
 #endif
 
+#ifndef KIM_KEY_STRING_LENGTH
+#define KIM_KEY_STRING_LENGTH 64
+#endif
+
 #include <stdint.h>
 //#include "KIM_API.h"
 //#define intptr_t long long  // for 64 bit machines
@@ -64,7 +68,11 @@ int KIM_API_model_reinit(void * kimmdl);
 
 
 char * KIM_API_get_partcl_types(void * kimmdl,int* nATypes, int * error);
+char * KIM_API_get_model_partcl_typs(void * kimmdl,int* nATypes, int * error);
+char * KIM_API_get_test_partcl_typs(void * kimmdl,int* nATypes, int * error);
+char * KIM_API_get_partcl_types(void * kimmdl,int* nATypes, int * error);
 int KIM_API_get_partcl_type_code(void * kimmdl, char* atom, int * error);
+void KIM_API_set_partcl_type_code(void * kimmdl, char* atom, int code, int * error);
 
 char * KIM_API_get_params(void * kimmdl,int* nVpar, int * error);
 char * KIM_API_get_free_params(void * kimmdl,int* nVpar, int * error);
@@ -171,6 +179,8 @@ void * kim_api_get_model_kim_str_(char **modelname,int *ln,int *kimerr);
 int kim_api_get_neigh_mode_f_(void *kimmdl,int *error);
 
 void * kim_api_get_partcl_types_f_(void * kimmdl,int* nATypes, int* error);
+void * kim_api_get_model_partcl_typs_f_(void * kimmdl,int* nATypes, int* error);
+void * kim_api_get_test_partcl_typs_f_(void * kimmdl,int* nATypes, int* error);
 void * kim_api_get_params_f_(void * kimmdl,int* nVpar, int* error);
 void * kim_api_get_free_params_f_(void * kimmdl,int* nVpar, int* error);
 void * kim_api_get_fixed_params_f_(void * kimmdl,int* nVpar, int* error);
@@ -178,6 +188,7 @@ void * kim_api_get_fixed_params_f_(void * kimmdl,int* nVpar, int* error);
 void * kim_api_get_nbc_method_f_(void * kimmdl,int* error);
 
 int kim_api_get_partcl_type_code_(void * kimmdl, char** atom, int * error);
+void kim_api_set_partcl_type_code_(void * kimmdl, char** atom, int* code, int * error);
 
 int kim_api_get_neigh_f_(void *kimmdl,int *mode,int *request,
         int *atom, int *numnei, int **nei1atom, double **Rij);

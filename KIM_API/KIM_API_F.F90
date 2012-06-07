@@ -284,6 +284,26 @@ integer,parameter :: kim_intptr = 8
             integer::natypes,error
         end function kim_api_get_partcl_types_f
 
+        function kim_api_get_model_partcl_typs_f(kimmdl,natypes,error)
+#ifdef SYSTEM32
+        integer, parameter :: kim_intptr=4
+#else
+        integer,parameter :: kim_intptr = 8
+#endif
+            integer(kind=kim_intptr) :: kimmdl,kim_api_get_model_partcl_typs_f
+            integer::natypes,error
+        end function kim_api_get_model_partcl_typs_f
+
+        function kim_api_get_test_partcl_typs_f(kimmdl,natypes,error)
+#ifdef SYSTEM32
+        integer, parameter :: kim_intptr=4
+#else
+        integer,parameter :: kim_intptr = 8
+#endif
+            integer(kind=kim_intptr) :: kimmdl,kim_api_get_test_partcl_typs_f
+            integer::natypes,error
+        end function kim_api_get_test_partcl_typs_f
+
         function kim_api_get_params_f(kimmdl,nvpar,error)
 #ifdef SYSTEM32
         integer, parameter :: kim_intptr=4
@@ -333,6 +353,16 @@ integer,parameter :: kim_intptr = 8
             integer(kind=kim_intptr) :: kimmdl, nm
             integer::error,kim_api_get_partcl_type_code
         end function kim_api_get_partcl_type_code
+
+        subroutine kim_api_set_partcl_type_code(kimmdl,nm,code,error)
+#ifdef SYSTEM32
+        integer, parameter :: kim_intptr=4
+#else
+        integer,parameter :: kim_intptr = 8
+#endif
+            integer(kind=kim_intptr) :: kimmdl, nm
+            integer::code, error
+        end subroutine kim_api_set_partcl_type_code
 
 
 
@@ -787,6 +817,17 @@ integer,parameter :: kim_intptr = 8
                 pstr = loc(str2send)
                 kim_api_get_partcl_type_code_f = kim_api_get_partcl_type_code(kimmdl,pstr,error)
         end function kim_api_get_partcl_type_code_f
+
+        subroutine kim_api_set_partcl_type_code_f(kimmdl,nm,code,error)
+                integer(kind=kim_intptr) :: kimmdl
+                character (len=*) ::nm
+                character (len=KIM_KEY_STRING_LENGTH) :: str2send
+                character (len=KIM_KEY_STRING_LENGTH) :: str; pointer (pstr,str)
+                integer::code, error
+                str2send = attachnull(trim(nm))
+                pstr = loc(str2send)
+                call kim_api_set_partcl_type_code(kimmdl,pstr,code,error)
+        end subroutine kim_api_set_partcl_type_code_f
 
 
 

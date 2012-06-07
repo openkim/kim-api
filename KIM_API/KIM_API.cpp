@@ -1316,6 +1316,7 @@ bool KIM_API_model::do_AtomsTypes_match(KIM_API_model& test, KIM_API_model& mdl)
         match = false;
         for (int j=0;j<mdl.nAtomsTypes;j++){
             if(strcmp(test.AtomsTypes[i].symbol, mdl.AtomsTypes[j].symbol)==0){
+                mdl.AtomsTypes[j].requestedByTest = true;
                 match = true;
                 break;
             }
@@ -1494,6 +1495,9 @@ bool KIM_API_model::init_str_modelname(char* testname, char* inmdlstr){
         this->prestring_init(inmdlstr);
         this->unit_h=test.unit_h;
         this->irrelevantVars2donotcompute(test,*this);
+        for (int i=0;i<this->nAtomsTypes;++i) {
+           this->AtomsTypes[i].requestedByTest = mdl.AtomsTypes[i].requestedByTest;
+        }
 
         strcpy(this->NBC_method_current, mdl.NBC_method_current);
         locator_neigh_mode=mdl.locator_neigh_mode;
@@ -1564,6 +1568,9 @@ bool KIM_API_model::string_init(char* in_tststr, char* modelname){
         this->prestring_init(in_mdlstr);
         this->unit_h=test.unit_h;
         this->irrelevantVars2donotcompute(test,*this);
+        for (int i=0;i<this->nAtomsTypes;++i) {
+           this->AtomsTypes[i].requestedByTest = mdl.AtomsTypes[i].requestedByTest;
+        }
 
         strcpy(this->NBC_method_current, mdl.NBC_method_current);
         locator_neigh_mode=mdl.locator_neigh_mode;
@@ -1879,6 +1886,7 @@ bool KIM_API_model::init_AtomsTypes(){
             }
             int * shp = inlines[i].get_shape();
             AtomsTypes[ii].code = shp[0];
+            AtomsTypes[ii].readOnly = (shp[0] == -1);
             delete [] shp;
             ii++;
         }
@@ -1908,6 +1916,58 @@ char * KIM_API_model::get_partcl_types(int* nATypes, int* error){
     }
     *error =KIM_STATUS_OK;//success
     return  listatypes;
+}
+char * KIM_API_model::get_model_partcl_typs(int* nATypes, int* error){
+    *error=KIM_STATUS_FAIL;
+    if (nAtomsTypes==0){
+        *nATypes = 0;
+        *error =KIM_STATUS_OK; //success but no atoms type specified
+        return NULL;
+    }
+    if (nAtomsTypes < 0){
+        *error =KIM_STATUS_FAIL;//was internal error in init nAtomsTypes
+        return NULL;
+    }
+    *nATypes = nAtomsTypes;
+    char * listatypes=(char *)malloc(nAtomsTypes*KIM_KEY_STRING_LENGTH);
+
+    for (int i=0;i<nAtomsTypes*KIM_KEY_STRING_LENGTH;i++) listatypes[i] = '\0';
+    for(int i=0; i<nAtomsTypes; i++){
+        strncpy(listatypes + i*KIM_KEY_STRING_LENGTH, AtomsTypes[i].symbol,strlen( AtomsTypes[i].symbol)+1);
+    }
+    *error =KIM_STATUS_OK;//success
+    return  listatypes;
+}
+char * KIM_API_model::get_test_partcl_typs(int* nATypes, int* error){
+    *error=KIM_STATUS_FAIL;
+    if (nAtomsTypes==0){
+        *nATypes = 0;
+        *error =KIM_STATUS_OK; //success but no atoms type specified
+        return NULL;
+    }
+    if (nAtomsTypes < 0){
+        *error =KIM_STATUS_FAIL;//was internal error in init nAtomsTypes
+        return NULL;
+    }
+
+    int count=0;
+    for(int i=0;i<nAtomsTypes;++i){
+       if (AtomsTypes[i].requestedByTest) ++count;
+    }
+    *nATypes = count;
+    char * listatypes=(char *)malloc(count*KIM_KEY_STRING_LENGTH);
+
+    for (int i=0;i<count*KIM_KEY_STRING_LENGTH;i++) listatypes[i] = '\0';
+    int progress=0;
+    for(int i=0; i<nAtomsTypes; i++){
+       if (AtomsTypes[i].requestedByTest){
+          strncpy(listatypes + progress*KIM_KEY_STRING_LENGTH, AtomsTypes[i].symbol,strlen( AtomsTypes[i].symbol)+1);
+          ++progress;
+       }
+    }
+    *error =KIM_STATUS_OK;//success
+    return  listatypes;
+   exit(-1);
 }
 char * KIM_API_model::get_NBC_method(int* error){
     *error=KIM_STATUS_FAIL;
@@ -2035,6 +2095,30 @@ int KIM_API_model::get_partcl_type_code(char* atom, int * error){
     }
     *error=KIM_STATUS_OK;
     return res->code;
+}
+
+void KIM_API_model::set_partcl_type_code(char* atom, int code, int* error){
+   *error = KIM_STATUS_FAIL;
+    if (atom == NULL)  {
+        *error = KIM_STATUS_PARTICLE_TYPES_UNDEFINED;
+        return; //no atom symbol provided
+    }
+    Atom_Map key, *res=NULL;
+    strcpy(key.symbol,atom);
+    res = (Atom_Map *)bsearch((void *)&key,AtomsTypes,nAtomsTypes,sizeof(Atom_Map),&(Atom_Map::comparator));
+    if (res == NULL) {
+        *error = KIM_STATUS_PARTICLE_INVALID_TYPE;
+        return; //did not find atom symbol among atom types
+    }
+    if (res->readOnly) {
+       *error = KIM_STATUS_FAIL;
+       return;
+    }
+
+    res->code = code;
+
+    *error=KIM_STATUS_OK;
+    return;
 }
 
 bool KIM_API_model::NBC_methods_match(KIM_API_model& test, KIM_API_model& mdl){

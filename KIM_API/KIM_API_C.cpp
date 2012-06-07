@@ -131,6 +131,14 @@ char * KIM_API_get_partcl_types(void * kimmdl,int* nATypes, int* error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     return mdl->get_partcl_types(nATypes,error);
 }
+char * KIM_API_get_model_partcl_typs(void * kimmdl,int* nATypes, int* error){
+    KIM_API_model * mdl=(KIM_API_model *) kimmdl;
+    return mdl->get_model_partcl_typs(nATypes,error);
+}
+char * KIM_API_get_test_partcl_typs(void * kimmdl,int* nATypes, int* error){
+    KIM_API_model * mdl=(KIM_API_model *) kimmdl;
+    return mdl->get_test_partcl_typs(nATypes,error);
+}
 
 char * KIM_API_get_params(void * kimmdl,int* nVpar, int* error){
      KIM_API_model * mdl=(KIM_API_model *) kimmdl;
@@ -151,6 +159,10 @@ char * KIM_API_get_NBC_method(void *kimmdl,int * error){
 int KIM_API_get_partcl_type_code(void * kimmdl, char* atom, int * error){
      KIM_API_model * mdl=(KIM_API_model *) kimmdl;
      return mdl->get_partcl_type_code(atom,error);
+}
+void KIM_API_set_partcl_type_code(void * kimmdl, char* atom, int code, int * error){
+     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
+     return mdl->set_partcl_type_code(atom, code, error);
 }
 
 
@@ -755,6 +767,12 @@ void * kim_api_get_model_kim_str_(char ** modelname, int *ln,int *kimerr){
 void * kim_api_get_partcl_types_f_(void * kimmdl,int* nATypes, int* error){
  return KIM_API_get_partcl_types(*(KIM_API_model **)kimmdl,nATypes,error);
 }
+void * kim_api_get_model_partcl_typs_f_(void * kimmdl,int* nATypes, int* error){
+ return KIM_API_get_model_partcl_typs(*(KIM_API_model **)kimmdl,nATypes,error);
+}
+void * kim_api_get_test_partcl_typs_f_(void * kimmdl,int* nATypes, int* error){
+ return KIM_API_get_test_partcl_typs(*(KIM_API_model **)kimmdl,nATypes,error);
+}
 
 void * kim_api_get_params_f_(void * kimmdl,int* nVpar, int* error){
  return KIM_API_get_params(*(KIM_API_model **)kimmdl,nVpar,error);
@@ -770,6 +788,9 @@ void * kim_api_get_nbc_method_f_(void * kimmdl,int* error){
 }
 int kim_api_get_partcl_type_code_(void * kimmdl, char **atom, int * error){
  return KIM_API_get_partcl_type_code(*(KIM_API_model **)kimmdl,*atom,error);
+}
+void kim_api_set_partcl_type_code_(void * kimmdl, char **atom, int* code, int * error){
+ return KIM_API_set_partcl_type_code(*(KIM_API_model **)kimmdl,*atom,*code,error);
 }
 
 int kim_api_get_neigh_f_(void *kimmdl,int *mode,int *request,
