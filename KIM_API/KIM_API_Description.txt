@@ -893,11 +893,12 @@ Corresponding Fortran style interface:
 
 ******************************************************************************
 
-char *KIM_API_get_partcl_types(void *kimmdl, int *nPTypes, int *kimerror);
+char *KIM_API_get_model_partcl_typs(void *kimmdl, int *nPTypes, int *kimerror);
 
-    This routine returns a pointer to an array of fixed size text strings.
-    (The text strings are of size KIM_KEY_STRING_LENGTH, which is a constant
-    defined by the KIM API.)  The memory pointed to by this pointer is
+    This routine returns a sorted list of the Model's supported particle
+    types. This routine returns a pointer to an array of fixed size text
+    strings.  (The text strings are of size KIM_KEY_STRING_LENGTH, which is a
+    constant defined by the KIM API.)  The memory pointed to by this pointer is
     allocated by the routine, but should be released by the user to avoid a
     memory leak.  Each string is an atom/particle symbol.  In the case where no
     particle types are specified by the Model or Test, the routine returns
@@ -918,11 +919,45 @@ Arguments:
 
 Corresponding Fortran style interface:
 
-      function kim_api_get_partcl_types_f(kimmdl, nptypes, kimerror)
+      function kim_api_get_model_partcl_typs_f(kimmdl, nptypes, kimerror)
                       integer(kind=kim_intptr) :: kimmdl
-                      integer(kind=kim_intptr) :: kim_api_get_partcl_types
+                      integer(kind=kim_intptr) :: kim_api_get_model_partcl_typs
                       integer :: nptypes, kimerror
-      end function kim_api_get_partcl_types_f
+      end function kim_api_get_model_partcl_typs_f
+
+******************************************************************************
+
+char *KIM_API_get_test_partcl_typs(void *kimmdl, int *nPTypes, int *kimerror);
+
+    This routine returns a sorted list of the Test's supported particle
+    types. This routine returns a pointer to an array of fixed size text
+    strings.  (The text strings are of size KIM_KEY_STRING_LENGTH, which is a
+    constant defined by the KIM API.)  The memory pointed to by this pointer is
+    allocated by the routine, but should be released by the user to avoid a
+    memory leak.  Each string is an atom/particle symbol.  In the case where no
+    particle types are specified by the Model or Test, the routine returns
+    NULL.
+
+Arguments:
+      void *kimmdl
+              pointer to KIM_API_model object (in C++ style, the definition
+              will be (KIM_API_model *)).
+
+      int *nPTypes
+              total number of particle types. In case of error will be
+              negative.
+
+      int *kimerror
+              error code: KIM_STATUS_OK   -- successful completion,
+                          KIM_STATUS_FAIL -- unsuccessful
+
+Corresponding Fortran style interface:
+
+      function kim_api_get_test_partcl_typs_f(kimmdl, nptypes, kimerror)
+                      integer(kind=kim_intptr) :: kimmdl
+                      integer(kind=kim_intptr) :: kim_api_get_test_partcl_typs
+                      integer :: nptypes, kimerror
+      end function kim_api_get_test_partcl_typs_f
 
 ******************************************************************************
 
@@ -1095,6 +1130,49 @@ Corresponding Fortran style interface:
                       integer :: kimerror
                       integer :: kim_api_get_partcl_type_code_f
       end function kim_api_get_partcl_type_code_f
+
+******************************************************************************
+
+void KIM_API_set_partcl_type_code(void *kimmdl, char* particle, int code, int *kimerror);
+
+    This routine sets the particle type ID for a given particle symbol.  Only
+    those particle types which the Model listed with code `-1' in its
+    descriptor file may be chagned.  The routine returns
+    KIM_STATUS_PARTICLE_TYPES_UNDEFINED if no atom/particle types have been
+    provided in the .kim files.  (See the standard.kim file for more
+    information on atom/particle types.)  The routine returns
+    KIM_STATUS_PARTICLE_INVALID_TYPE if the supplied symbol, particle, is not
+    among the KIM supported particle symbols.  (See standard.kim for the list
+    of supported atom/particle types.)
+
+Arguments:
+      void *kimmdl
+              pointer to KIM_API_model object (in C++ style, the definition
+              will be (KIM_API_model *)).
+
+      char *particle
+              atom/particle symbol
+
+      int code
+              integer value used by the Model to represent the specified particle type
+
+      int *kimerror
+              error code: KIM_STATUS_OK                       -- successful completion
+                          KIM_STATUS_FAIL                     -- unsuccessful
+                          KIM_STATUS_PARTICLE_INVALID_TYPE    -- symbol is not among the
+                                                                 KIM supported atom symbols
+                          KIM_STATUS_PARTICLE_TYPES_UNDEFINED -- no atom/particle types have
+                                                                 been specified by the
+                                                                 Test or Model.
+
+Corresponding Fortran style interface:
+
+      subroutine kim_api_set_partcl_type_code_f(kimmdl, nm, code, kimerror)
+                      integer(kind=kim_intptr) :: kimmdl
+                      character (len=*) :: nm
+                      integer :: code
+                      integer :: kimerror
+      end subroutine kim_api_set_partcl_type_code_f
 
 ******************************************************************************
 

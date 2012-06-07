@@ -140,9 +140,12 @@
 #
 #                  2) Type: This must be `spec'.
 $
-#                  3) code: This is the integer that the Model uses internally
-#                           to identify the atom/particle type.  The value
-#                           specified by a Test is ignored.
+#                  3) code: This is the non-negative integer that the Model
+#                           uses internally to identify the atom/particle type.
+#                           The special value of `-1' indicates that the Model
+#                           will set the code value during the execution of its
+#                           `model_init' function.  The value specified by a
+#                           Test is ignored.
 #
 #            * Flag Data lines
 #               This line type defines a convention (or flag), that can be used
