@@ -116,7 +116,7 @@ $(strip $(MODEL_NAME)).cpp: $(KIM_API_DIR)model_based_on_driver.cpp $(paramfile_
             -e "s,MODEL_NAME_LC_STR,$(lc_MODEL_NAME),g"                                                            \
             -e "s,MODEL_DRIVER_SO_NAME_STR,$(KIM_MODEL_DRIVERS_DIR)$(strip $(MODEL_DRIVER_NAME))/$(strip $(MODEL_DRIVER_NAME)).so,g" \
             -e "s,NUM_PARAMFILES,$(num_paramfiles),g"                                                              \
-            -e "s,PARAMFILE_POINTERS_GO_HERE;,$(foreach flnum,$(paramfile_num_list),paramfile_strings[$(flnum)-1] = paramfile_$(flnum);\n  )," \
+            -e "s,PARAMFILE_POINTERS_GO_HERE;,$(foreach flnum,$(paramfile_num_list),paramfile_strings[$(flnum)-1] = paramfile_$(flnum); )," \
                                                                                 >> $(strip $(MODEL_NAME)).cpp
 
 $(strip $(MODEL_NAME)).a: $(strip $(MODEL_NAME)).o $(strip $(MODEL_NAME))_kim_str.o
