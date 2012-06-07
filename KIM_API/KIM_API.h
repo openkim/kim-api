@@ -225,7 +225,6 @@ public:
 
 void allocate( int natoms, int ntypes,int * error);
 
-char* get_partcl_types(int *nparticleTypes,int *error); // to be removed
 char* get_model_partcl_typs(int *nparticleTypes,int* error);
 char* get_test_partcl_typs(int *nparticleTypes,int* error);
 int get_partcl_type_code(char *atom, int * error);

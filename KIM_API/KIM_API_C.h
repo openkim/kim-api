@@ -67,10 +67,8 @@ int KIM_API_model_reinit(void * kimmdl);
 
 
 
-char * KIM_API_get_partcl_types(void * kimmdl,int* nATypes, int * error);
 char * KIM_API_get_model_partcl_typs(void * kimmdl,int* nATypes, int * error);
 char * KIM_API_get_test_partcl_typs(void * kimmdl,int* nATypes, int * error);
-char * KIM_API_get_partcl_types(void * kimmdl,int* nATypes, int * error);
 int KIM_API_get_partcl_type_code(void * kimmdl, char* atom, int * error);
 void KIM_API_set_partcl_type_code(void * kimmdl, char* atom, int code, int * error);
 
@@ -178,7 +176,6 @@ void * kim_api_get_model_kim_str_(char **modelname,int *ln,int *kimerr);
 
 int kim_api_get_neigh_mode_f_(void *kimmdl,int *error);
 
-void * kim_api_get_partcl_types_f_(void * kimmdl,int* nATypes, int* error);
 void * kim_api_get_model_partcl_typs_f_(void * kimmdl,int* nATypes, int* error);
 void * kim_api_get_test_partcl_typs_f_(void * kimmdl,int* nATypes, int* error);
 void * kim_api_get_params_f_(void * kimmdl,int* nVpar, int* error);

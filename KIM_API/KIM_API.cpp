@@ -1896,27 +1896,6 @@ bool KIM_API_model::init_AtomsTypes(){
     return true;
 }
 
-char * KIM_API_model::get_partcl_types(int* nATypes, int* error){
-    *error=KIM_STATUS_FAIL;
-    if (nAtomsTypes==0){
-        *nATypes = 0;
-        *error =KIM_STATUS_OK; //success but no atoms type specified
-        return NULL;
-    }
-    if (nAtomsTypes < 0){
-        *error =KIM_STATUS_FAIL;//was internal error in init nAtomsTypes
-        return NULL;
-    }
-    *nATypes = nAtomsTypes;
-    char * listatypes=(char *)malloc(nAtomsTypes*KIM_KEY_STRING_LENGTH);
-
-    for (int i=0;i<nAtomsTypes*KIM_KEY_STRING_LENGTH;i++) listatypes[i] = '\0';
-    for(int i=0; i<nAtomsTypes; i++){
-        strncpy(listatypes + i*KIM_KEY_STRING_LENGTH, AtomsTypes[i].symbol,strlen( AtomsTypes[i].symbol)+1);
-    }
-    *error =KIM_STATUS_OK;//success
-    return  listatypes;
-}
 char * KIM_API_model::get_model_partcl_typs(int* nATypes, int* error){
     *error=KIM_STATUS_FAIL;
     if (nAtomsTypes==0){

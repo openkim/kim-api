@@ -62,7 +62,7 @@ ier = kim_api_model_info_f(pkim, modelname)
 if (ier.lt.KIM_STATUS_OK) return
 
 ! Get species supported by the model
-ptypes = kim_api_get_partcl_types_f(pkim,num_types,ier)
+ptypes = kim_api_get_model_partcl_typs_f(pkim,num_types,ier)
 if (ier.lt.KIM_STATUS_OK) return
 if (num_types.gt.max_types) then
    ier = KIM_STATUS_FAIL

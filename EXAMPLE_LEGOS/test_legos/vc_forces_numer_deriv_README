@@ -43,7 +43,7 @@ Notes:
 1. It generates its own KIM descriptor file in a string and uses
    kim_api_string_init_f to set up the KIM object.
 
-2. It figures out which species a Model supports using KIM_API_get_partcl_types.
+2. It figures out which species a Model supports using KIM_API_get_model_partcl_typs.
 
 3. It checks a single configuration: a perturbed fcc cluster made of a random
    arrangement of the supported species with spacing set to that of argon (5.26 A) 

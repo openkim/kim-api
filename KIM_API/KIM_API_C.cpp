@@ -127,10 +127,6 @@ void KIM_API_model_destroy(void * kimmdl,int *error){
     mdl->model_destroy(error);
 }
 
-char * KIM_API_get_partcl_types(void * kimmdl,int* nATypes, int* error){
-    KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    return mdl->get_partcl_types(nATypes,error);
-}
 char * KIM_API_get_model_partcl_typs(void * kimmdl,int* nATypes, int* error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     return mdl->get_model_partcl_typs(nATypes,error);
@@ -764,9 +760,6 @@ void * kim_api_get_model_kim_str_(char ** modelname, int *ln,int *kimerr){
 
 
 
-void * kim_api_get_partcl_types_f_(void * kimmdl,int* nATypes, int* error){
- return KIM_API_get_partcl_types(*(KIM_API_model **)kimmdl,nATypes,error);
-}
 void * kim_api_get_model_partcl_typs_f_(void * kimmdl,int* nATypes, int* error){
  return KIM_API_get_model_partcl_typs(*(KIM_API_model **)kimmdl,nATypes,error);
 }

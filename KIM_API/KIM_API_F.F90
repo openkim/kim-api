@@ -274,16 +274,6 @@ integer,parameter :: kim_intptr = 8
         integer::rank,error
         end subroutine kim_api_set_shape
 
-        function kim_api_get_partcl_types_f(kimmdl,natypes,error)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
-            integer(kind=kim_intptr) :: kimmdl,kim_api_get_partcl_types_f
-            integer::natypes,error
-        end function kim_api_get_partcl_types_f
-
         function kim_api_get_model_partcl_typs_f(kimmdl,natypes,error)
 #ifdef SYSTEM32
         integer, parameter :: kim_intptr=4
