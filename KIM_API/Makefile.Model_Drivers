@@ -108,7 +108,7 @@ $(strip $(MODEL_NAME)).cpp: $(KIM_API_DIR)model_based_on_driver.cpp $(paramfile_
           sed -e 's,\\,\\\\,g'     \
               -e 's,",\\",g'       \
               -e 's,^,      ",g'   \
-              -e 's,\r*$$,\\n",g'                                               >> $(strip $(MODEL_NAME)).cpp && \
+              -e 's,$$,\\n",g'                                                  >> $(strip $(MODEL_NAME)).cpp && \
           echo "   ;"                                                           >> $(strip $(MODEL_NAME)).cpp && \
           echo ""                                                               >> $(strip $(MODEL_NAME)).cpp;)
 	cat $(KIM_API_DIR)model_based_on_driver.cpp | \

@@ -210,7 +210,7 @@ MODEL_NAME_KIM_STR_CPP = char* $(strip $(MODEL_NAME))_kim_str'('')''{'
 	sed -e 's,\\,\\\\,g'     \
             -e 's,",\\",g'       \
             -e 's,^,      ",g'   \
-            -e 's,\r*$$,\\n",g'        >> $*_kim_str.cpp
+            -e 's,$$,\\n",g'           >> $*_kim_str.cpp
 	echo "   ;"                    >> $*_kim_str.cpp
 	echo "return &kimstr[0];"      >> $*_kim_str.cpp
 	echo ""                        >> $*_kim_str.cpp
