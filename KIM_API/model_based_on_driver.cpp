@@ -53,7 +53,7 @@ extern "C" {
    #include <dlfcn.h>
    static void model_destroy(void* km, int* ier);
 #else
-   void MODEL_DRIVER_NAME_LC_STR_init_(void* km, char* paramfilenames, int* nmstrlen, int* numparamfiles);
+   int MODEL_DRIVER_NAME_LC_STR_init_(void* km, char* paramfilenames, int* nmstrlen, int* numparamfiles);
 #endif
 
 
@@ -71,7 +71,7 @@ extern "C" {
    }
 #endif
 
-   void MODEL_NAME_LC_STR_init_(void* km) {
+   int MODEL_NAME_LC_STR_init_(void* km) {
       int numparamfiles = NUM_PARAMFILES;
       int nmstrlen;
       char* param_file_names = new char[NUM_PARAMFILES*(L_tmpnam+1)];
@@ -82,26 +82,32 @@ extern "C" {
       if (!driver_lib_handle) {
          cout << "Error at " << __LINE__ << " of file " << __FILE__ << endl;
          cout << dlerror() << endl;
-      exit(-1);
+         return KIM_STATUS_FAIL;
       }
-      typedef void (*Driver_Init)(void *km, char* paramfilenames, int* nmstrlen, int* numparamfiles);
+      typedef int (*Driver_Init)(void *km, char* paramfilenames, int* nmstrlen, int* numparamfiles);
       Driver_Init drvr_init = (Driver_Init)dlsym(driver_lib_handle,"MODEL_DRIVER_NAME_LC_STR_init_");
       const char *dlsym_error = dlerror();
       if (dlsym_error) {
          cerr << "Cannot load symbol: " << dlsym_error << endl;
          dlclose(driver_lib_handle);
-         exit(-1);
+         return KIM_STATUS_FAIL;
       }
-      (*drvr_init)(km, param_file_names, &nmstrlen, &numparamfiles);
-
       int ier = 0;
+      ier = (*drvr_init)(km, param_file_names, &nmstrlen, &numparamfiles);
+      delete [] param_file_names;
+      param_file_names = NULL;
+      if (KIM_STATUS_OK > ier) return ier;
+
       driver_destroy = KIM_API_get_data((void *) *((KIM_API_model**)km), "destroy", &ier);
       KIM_API_set_data((void *) *((KIM_API_model**)km), "destroy",1,(void*) &model_destroy);
 #else
-      MODEL_DRIVER_NAME_LC_STR_init_(km, param_file_names, &nmstrlen, &numparamfiles);
-#endif
+      ier = MODEL_DRIVER_NAME_LC_STR_init_(km, param_file_names, &nmstrlen, &numparamfiles);
       delete [] param_file_names;
       param_file_names = NULL;
+      if (KIM_STATUS_OK > ier) return ier;
+#endif
+      
+      return KIM_STATUS_OK;
    }
 }
 
