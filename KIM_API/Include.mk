@@ -62,7 +62,7 @@ endif
 
 # setup list of available models
 MODELLST = $(patsubst .%.make-temp,%,$(notdir $(wildcard $(KIM_API_DIR).*.make-temp)))
-MODELDRIVERLST = $(notdir $(filter-out .%,$(shell find $(KIM_MODEL_DRIVERS_DIR) -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)))
+MODELDRIVERLST = $(notdir $(filter-out $(shell if [[ -e $(KIM_MODEL_DRIVERS_DIR).kimignore ]]; then cat $(KIM_MODEL_DRIVERS_DIR).kimignore;fi;),$(filter-out .%,$(shell find $(KIM_MODEL_DRIVERS_DIR) -maxdepth 1 -mindepth 1 -type d -exec basename {} \;))))
 MODELOBJ = $(addprefix $(KIM_MODELS_DIR), $(join $(addsuffix /,$(MODELLST)), $(addsuffix .a, $(MODELLST)))) \
            $(addprefix $(KIM_MODEL_DRIVERS_DIR), $(join $(addsuffix /,$(MODELDRIVERLST)), $(addsuffix .a, $(MODELDRIVERLST))))
 
