@@ -101,7 +101,7 @@ extern "C" {
       driver_destroy = KIM_API_get_data((void *) *((KIM_API_model**)km), "destroy", &ier);
       KIM_API_set_data((void *) *((KIM_API_model**)km), "destroy",1,(void*) &model_destroy);
 #else
-      ier = MODEL_DRIVER_NAME_LC_STR_init_(km, param_file_names, &nmstrlen, &numparamfiles);
+      int ier = MODEL_DRIVER_NAME_LC_STR_init_(km, param_file_names, &nmstrlen, &numparamfiles);
       delete [] param_file_names;
       param_file_names = NULL;
       if (KIM_STATUS_OK > ier) return ier;
