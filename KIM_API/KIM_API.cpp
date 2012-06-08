@@ -1886,7 +1886,7 @@ bool KIM_API_model::init_AtomsTypes(){
             }
             int * shp = inlines[i].get_shape();
             AtomsTypes[ii].code = shp[0];
-            AtomsTypes[ii].readOnly = (shp[0] == -1);
+            AtomsTypes[ii].readOnly = (shp[0] != -1);
             delete [] shp;
             ii++;
         }
