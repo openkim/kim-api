@@ -96,6 +96,7 @@ public:
 };
 class Atom_Map{
 public:
+    Atom_Map(): requestedByTest(false) {} 
     char symbol[KIM_KEY_STRING_LENGTH];
     bool readOnly;
     bool requestedByTest;
