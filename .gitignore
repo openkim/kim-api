@@ -5,3 +5,4 @@
 *.mod
 .DS_Store
 old-*
+.kimignore
