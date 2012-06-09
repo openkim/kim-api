@@ -127,8 +127,21 @@ ifdef KIM_DYNAMIC
      SHARED_LIB_FLAG = -dynamic -flat_namespace -undefined suppress
      LINKSONAME =  -install_name
    endif
+else
+   ifneq ("1","$(MAKELEVEL)")
+     MODEL_BUILD_TARGET += STATIC_COMP_WARNING
+     MODEL_DRIVER_BUILD_TARGET += STATIC_COMP_WARNING
+   endif
 endif
 
+.PHONY: STATIC_COMP_WARNING
+STATIC_COMP_WARNING:
+	@echo ''; \
+        echo '*************************************************************************'; \
+        echo '*******               Compiling in static link mode               *******'; \
+        echo '*******         You probably want to execute make from the        *******'; \
+        echo '*******                     $$KIM_DIR directory                    *******'; \
+        echo '*************************************************************************'; \
 
 # Definition of c and fortran .o file list
 OBJC = KIM_API.o KIM_API_C.o standard_kim_str.o Unit_Handling.o KIM_AUX.o
