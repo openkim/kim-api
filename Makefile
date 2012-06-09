@@ -41,9 +41,9 @@ MODEL_DRIVERS_LIST = $(notdir $(filter-out $(shell if [[ -e $(KIM_MODEL_DRIVERS_
 MODELS_LIST = $(notdir $(filter-out $(shell if [[ -e $(KIM_MODELS_DIR).kimignore ]]; then cat $(KIM_MODELS_DIR).kimignore;fi;),$(filter-out .%,$(shell find $(KIM_MODELS_DIR) -maxdepth 1 -mindepth 1 -type d -exec basename {} \;))))
 TESTS_LIST  = $(notdir $(filter-out $(shell if [[ -e $(KIM_TESTS_DIR).kimignore ]]; then cat $(KIM_TESTS_DIR).kimignore;fi;),$(filter-out .%,$(shell find $(KIM_TESTS_DIR) -maxdepth 1 -mindepth 1 -type d -exec basename {} \;))))
 
-.PHONY: all lib openkim-api examples examples-all clean clean-examples           \
-        kim-api-all kim-api-lib kim-api-clean                                    \
-        $(patsubst %,%-all,  $(MODELS_LIST) $(MODEL_DRIVERS_LIST) $(TESTS_LIST)) \
+.PHONY: all lib openkim-api examples examples-all examples-force clean clean-examples \
+        kim-api-all kim-api-lib kim-api-clean                                         \
+        $(patsubst %,%-all,  $(MODELS_LIST) $(MODEL_DRIVERS_LIST) $(TESTS_LIST))      \
         $(patsubst %,%-clean,$(MODELS_LIST) $(MODEL_DRIVERS_LIST) $(TESTS_LIST))
 
 # compile everything in the standard directories
@@ -81,19 +81,45 @@ examples-all:
 	@echo ""; \
 	$(foreach exmpl,$(notdir $(shell find $(KIM_DIR)EXAMPLEs/MODEL_DRIVERs -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)),\
           if test -e $(KIM_MODEL_DRIVERS_DIR)$(exmpl); then \
-          printf "*@existing....@%-50s@no@copy@performed!\n" $(exmpl)@ | sed -e 's/\s/./g' -e 's/@/ /g'; else \
-          printf "*@installing..@%-50s@copied@to@$(KIM_MODEL_DRIVERS_DIR)\n" $(exmpl)@ | sed -e 's/\s/./g' -e 's/@/ /g'; \
+          printf "*@existing.....@%-50s@no@copy@performed!\n" $(exmpl)@ | sed -e 's/\s/./g' -e 's/@/ /g'; else \
+          printf "*@installing...@%-50s@copied@to@$(KIM_MODEL_DRIVERS_DIR)\n" $(exmpl)@ | sed -e 's/\s/./g' -e 's/@/ /g'; \
           cp -r $(KIM_DIR)EXAMPLEs/MODEL_DRIVERs/$(exmpl) "$(KIM_MODEL_DRIVERS_DIR)"; fi;)
 	@echo ""; \
 	$(foreach exmpl,$(notdir $(shell find $(KIM_DIR)EXAMPLEs/MODELs -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)),\
           if test -e $(KIM_MODELS_DIR)$(exmpl); then \
-          printf "*@existing....@%-50s@no@copy@performed!\n" $(exmpl)@ | sed -e 's/\s/./g' -e 's/@/ /g'; else \
+          printf "*@existing.....@%-50s@no@copy@performed!\n" $(exmpl)@ | sed -e 's/\s/./g' -e 's/@/ /g'; else \
+          printf "*@installing...@%-50s@copied@to@$(KIM_MODELS_DIR)\n" $(exmpl)@ | sed -e 's/\s/./g' -e 's/@/ /g'; \
+          cp -r $(KIM_DIR)EXAMPLEs/MODELs/$(exmpl) "$(KIM_MODELS_DIR)"; fi;)
+	@echo ""; \
+	$(foreach exmpl,$(notdir $(shell find $(KIM_DIR)EXAMPLEs/TESTs -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)),\
+          if test -e $(KIM_TESTS_DIR)$(exmpl); then \
+          printf "*@existing.....@%-50s@no@copy@performed!\n" $(exmpl)@ | sed -e 's/\s/./g' -e 's/@/ /g'; else \
+          printf "*@installing...@%-50s@copied@to@$(KIM_TESTS_DIR)\n" $(exmpl)@ | sed -e 's/\s/./g' -e 's/@/ /g'; \
+          cp -r $(KIM_DIR)EXAMPLEs/TESTs/$(exmpl) "$(KIM_TESTS_DIR)"; fi;)
+
+examples-force:
+	@echo ""; \
+	$(foreach exmpl,$(notdir $(shell find $(KIM_DIR)EXAMPLEs/MODEL_DRIVERs -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)),\
+          if test -e $(KIM_MODEL_DRIVERS_DIR)$(exmpl); then \
+          printf "*@overwriting..@%-50s@copied@to@$(KIM_MODEL_DRIVERS_DIR)\n" $(exmpl)@ | sed -e 's/\s/./g' -e 's/@/ /g'; \
+          rm -rf "$(KIM_MODEL_DRIVERS_DIR)$(exmpl)"; \
+          cp -r $(KIM_DIR)EXAMPLEs/MODEL_DRIVERs/$(exmpl) "$(KIM_MODEL_DRIVERS_DIR)"; else \
+          printf "*@installing...@%-50s@copied@to@$(KIM_MODEL_DRIVERS_DIR)\n" $(exmpl)@ | sed -e 's/\s/./g' -e 's/@/ /g'; \
+          cp -r $(KIM_DIR)EXAMPLEs/MODEL_DRIVERs/$(exmpl) "$(KIM_MODEL_DRIVERS_DIR)"; fi;)
+	@echo ""; \
+	$(foreach exmpl,$(notdir $(shell find $(KIM_DIR)EXAMPLEs/MODELs -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)),\
+          if test -e $(KIM_MODELS_DIR)$(exmpl); then \
+          printf "*@overwriting..@%-50s@copied@to@$(KIM_MODELS_DIR)\n" $(exmpl)@ | sed -e 's/\s/./g' -e 's/@/ /g'; \
+          rm -rf "$(KIM_MODELS_DIR)$(exmpl)"; \
+          cp -r $(KIM_DIR)EXAMPLEs/MODELs/$(exmpl) "$(KIM_MODELS_DIR)"; else \
           printf "*@installing..@%-50s@copied@to@$(KIM_MODELS_DIR)\n" $(exmpl)@ | sed -e 's/\s/./g' -e 's/@/ /g'; \
           cp -r $(KIM_DIR)EXAMPLEs/MODELs/$(exmpl) "$(KIM_MODELS_DIR)"; fi;)
 	@echo ""; \
 	$(foreach exmpl,$(notdir $(shell find $(KIM_DIR)EXAMPLEs/TESTs -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)),\
           if test -e $(KIM_TESTS_DIR)$(exmpl); then \
-          printf "*@existing....@%-50s@no@copy@performed!\n" $(exmpl)@ | sed -e 's/\s/./g' -e 's/@/ /g'; else \
+          printf "*@overwriting..@%-50s@copied@to@$(KIM_TESTS_DIR)\n" $(exmpl)@ | sed -e 's/\s/./g' -e 's/@/ /g'; \
+          rm -rf "$(KIM_TESTS_DIR)$(exmpl)"; \
+          cp -r $(KIM_DIR)EXAMPLEs/TESTs/$(exmpl) "$(KIM_TESTS_DIR)"; else \
           printf "*@installing..@%-50s@copied@to@$(KIM_TESTS_DIR)\n" $(exmpl)@ | sed -e 's/\s/./g' -e 's/@/ /g'; \
           cp -r $(KIM_DIR)EXAMPLEs/TESTs/$(exmpl) "$(KIM_TESTS_DIR)"; fi;)
 

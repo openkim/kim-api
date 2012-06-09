@@ -101,7 +101,9 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
        `make'                -- compiles the API and all Models and Tests
        `make all'            -- same as `make'
        `make examples'       -- copies examples into the appropriate
-                                directories
+                                directories (no overwrite)
+       `make examples-force' -- copies examples into the appropriate
+                                directories (overwrite)
        `make openkim-api'    -- compiles only the API
        `make clean'          -- will remove all .o, .mod, .a, .so and
                                 executable files
