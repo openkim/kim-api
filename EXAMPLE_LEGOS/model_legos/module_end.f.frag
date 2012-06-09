@@ -153,7 +153,7 @@ end module MODEL_NAME_STR
 ! Model initialization routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-subroutine MODEL_NAME_STR_init(pkim)
+integer function MODEL_NAME_STR_init(pkim)
   use MODEL_NAME_STR
   use KIM_API
   implicit none
@@ -182,14 +182,14 @@ subroutine MODEL_NAME_STR_init(pkim)
        "destroy", one, loc(Destroy),               1)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_setm_data_f", ier)
-     stop
+     goto 42
   endif
 
   ! store model cutoff in KIM object
   pcutoff =  kim_api_get_data_f(pkim,"cutoff",ier)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-     stop
+     goto 42
   endif
   CUTOFF_VALUE_STR
 
@@ -237,7 +237,12 @@ subroutine MODEL_NAME_STR_init(pkim)
        "PARAM_FIXED_cutsq",   one, pcutsq,    1)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_setm_data_f", ier)
-     stop
+     goto 42
   endif
 
-end subroutine MODEL_NAME_STR_init
+  ier = KIM_STATUS_OK
+42 continue
+  MODEL_NAME_STR_init = ier
+  return
+
+end function MODEL_NAME_STR_init

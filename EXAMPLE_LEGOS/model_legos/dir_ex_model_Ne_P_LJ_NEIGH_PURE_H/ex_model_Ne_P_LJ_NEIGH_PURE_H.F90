@@ -118,7 +118,7 @@ end module ex_model_Ne_P_LJ_NEIGH_PURE_H
 
 
 !  Model Initiation routine
-subroutine ex_model_Ne_P_LJ_NEIGH_PURE_H_init(pkim)
+integer function ex_model_Ne_P_LJ_NEIGH_PURE_H_init(pkim)
   use ex_model_Ne_P_LJ_NEIGH_PURE_H
   use KIM_API
   implicit none
@@ -138,15 +138,20 @@ subroutine ex_model_Ne_P_LJ_NEIGH_PURE_H_init(pkim)
   ier = kim_api_set_data_f(pkim,"compute",one,loc(calculate_wrap_f77))
   if (ier.lt.KIM_STATUS_OK)  then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data_f", ier)
-     stop
+     goto 42
   endif
 
   ! store model cutoff in KIM object
   pcutoff = kim_api_get_data_f(pkim,"cutoff",ier)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-     stop
+     goto 42
   endif
   cutoff = model_cutoff
 
-end subroutine ex_model_Ne_P_LJ_NEIGH_PURE_H_init
+  ier = KIM_STATUS_OK
+42 continue
+  ex_model_Ne_P_LJ_NEIGH_PURE_H_init = ier
+  return
+
+end function ex_model_Ne_P_LJ_NEIGH_PURE_H_init

@@ -1063,7 +1063,7 @@ end module ex_model_Al_PF_ErcolessiAdams
 ! Model initialization routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-subroutine ex_model_Al_PF_ErcolessiAdams_init(pkim)
+integer function ex_model_Al_PF_ErcolessiAdams_init(pkim)
 use ex_model_Al_PF_ErcolessiAdams
 use KIM_API
 implicit none
@@ -1086,14 +1086,14 @@ call kim_api_setm_data_f(pkim, ier, &
      "destroy", one, loc(Destroy),               1)
 if (ier.lt.KIM_STATUS_OK) then
    idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_setm_data_f", ier)
-   stop
+   goto 42
 endif
 
 ! store model cutoff in KIM object
 pcutoff =  kim_api_get_data_f(pkim,"cutoff",ier)
 if (ier.lt.KIM_STATUS_OK) then
    idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-   stop
+   goto 42
 endif
 cutoff = model_cutoff
 
@@ -1103,8 +1103,9 @@ cutoff = model_cutoff
 ! of r is likely close to the last one.)
 pirlast = malloc(one*4) ! 4 is the size of an integer
 if (pirlast.eq.0) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL);
-   stop
+   ier = KIM_STATUS_FAIL
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", ier);
+   goto 42
 endif
 ! Allocate memory for ielast and store value
 ! (ielast is the last entry into the embedding function spline table.
@@ -1112,8 +1113,9 @@ endif
 ! likely close to the last one.)
 pielast = malloc(one*4) ! 4 is the size of an integer
 if (pielast.eq.0) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL);
-   stop
+   ier = KIM_STATUS_FAIL
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", ier);
+   goto 42
 endif
 
 ! store irlast and ielast in KIM object
@@ -1122,12 +1124,17 @@ call kim_api_setm_data_f(pkim, ier, &
      "PARAM_FIXED_ielast", one, pielast, 1)
 if (ier.lt.KIM_STATUS_OK) then
    idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_setm_data_f", ier);
-   stop
+   goto 42
 endif
 
 ! Initialize
 irlast = 1
 ielast = 1
 
-end subroutine ex_model_Al_PF_ErcolessiAdams_init
+  ier = KIM_STATUS_OK
+42 continue
+  ex_model_Al_PF_ErcolessiAdams_init = ier
+  return
+
+end function ex_model_Al_PF_ErcolessiAdams_init
 

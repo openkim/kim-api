@@ -646,7 +646,7 @@ end module MODEL_DRIVER_NAME_LC_STR
 ! Model driver initialization routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-subroutine MODEL_DRIVER_NAME_LC_STR_init(pkim, byte_paramfile, nmstrlen, numparamfiles)
+integer function MODEL_DRIVER_NAME_LC_STR_init(pkim, byte_paramfile, nmstrlen, numparamfiles)
 use MODEL_DRIVER_NAME_LC_STR
 use KIM_API
 implicit none
@@ -702,7 +702,7 @@ call kim_api_setm_data_f(pkim, ier, &
      "destroy", one, loc(destroy),               1)
 if (ier.lt.KIM_STATUS_OK) then
    idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_setm_data_f", ier)
-   stop
+   goto 42
 endif
 
 ! Read in model parameters from parameter file
@@ -716,8 +716,9 @@ close(10)
 goto 200
 100 continue
 ! reading parameters failed
-idum = kim_api_report_error_f(__LINE__, __FILE__, "Unable to read LJ parameters, kimerror = ",KIM_STATUS_FAIL)
-stop
+ier = KIM_STATUS_FAIL
+idum = kim_api_report_error_f(__LINE__, __FILE__, "Unable to read LJ parameters, kimerror = ",ier)
+goto 42
 
 200 continue
 
@@ -726,54 +727,59 @@ in_cutoff = in_cutoff * kim_api_convert_to_act_unit_f(pkim, "A", "eV", "e", "K",
                                                     1.0d0, 0.0d0, 0.0d0, 0.0d0, 0.0d0, ier)
 if (ier.lt.KIM_STATUS_OK) then
    idum=kim_api_report_error_f(__LINE__, __FILE__, "kim_api_convert_to_act_unit_f", ier)
-   stop
+   goto 42
 endif
 in_epsilon = in_epsilon * kim_api_convert_to_act_unit_f(pkim, "A", "eV", "e", "K", "fs", &
                                                       0.0d0, 1.0d0, 0.0d0, 0.0d0, 0.0d0, ier)
 if (ier.lt.KIM_STATUS_OK) then
    idum=kim_api_report_error_f(__LINE__, __FILE__, "kim_api_convert_to_act_unit_f", ier)
-   stop
+   goto 42
 endif
 in_sigma = in_sigma * kim_api_convert_to_act_unit_f(pkim, "A", "eV", "e", "K", "fs", &
                                                   1.0d0, 0.0d0, 0.0d0, 0.0d0, 0.0d0, ier)
 if (ier.lt.KIM_STATUS_OK) then
    idum=kim_api_report_error_f(__LINE__, __FILE__, "kim_api_convert_to_act_unit_f", ier)
-   stop
+   goto 42
 endif
 
 ! store model cutoff in KIM object
 pcutoff =  kim_api_get_data_f(pkim,"cutoff",ier)
 if (ier.lt.KIM_STATUS_OK) then
    idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-   stop
+   goto 42
 endif
 cutoff = in_cutoff
 
 ! allocate memory for parameters
 pmodel_cutoff = malloc(one*8) ! 8 is the size of double precision number
 if (pmodel_cutoff.eq.0) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL);
-   stop
+   ier = KIM_STATUS_FAIL
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", ier);
+   goto 42
 endif
 pmodel_cutsq = malloc(one*8) ! 8 is the size of double precision number
 if (pmodel_cutsq.eq.0) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL);
-   stop
+   ier = KIM_STATUS_FAIL
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", ier);
+   goto 42
 endif
 pmodel_epsilon = malloc(one*8) ! 8 is the size of double precision number
 if (pmodel_epsilon.eq.0) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL);
-   stop
+   ier = KIM_STATUS_FAIL
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", ier);
+   goto 42
 endif
 pmodel_sigma = malloc(one*8) ! 8 is the size of double precision number
 if (pmodel_sigma.eq.0) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL);
-   stop
+   ier = KIM_STATUS_FAIL
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", ier);
+   goto 42
 endif
 pmodel_shift = malloc(one*8) ! 8 is the size of double precision number
 if (pmodel_shift.eq.0) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL);
-   stop
+   ier = KIM_STATUS_FAIL
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", ier);
+   goto 42
 endif
 
 ! store values in KIM object
@@ -786,7 +792,7 @@ call kim_api_setm_data_f(pkim, ier, &
      )
 if (ier.lt.KIM_STATUS_OK) then
    idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_setm_data_f", ier);
-   stop
+   goto 42
 endif
 
 ! set value of parameters
@@ -832,8 +838,9 @@ pbufind   = malloc(16*4)
 !     5 - shift
 pbufparam = malloc(5*kim_intptr)
 if (pbuffer.eq.0 .or. pbufind .eq. 0 .or. pbufparam.eq.0) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL);
-   stop
+   ier = KIM_STATUS_FAIL
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", ier);
+   goto 42
 endif
 ! set pointers
 buffer(1) = pbufind
@@ -852,7 +859,7 @@ buffer(2) = pbufparam
 pNBC_Method = kim_api_get_nbc_method_f(pkim, ier)
 if (ier.lt.KIM_STATUS_OK) then
    idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_nbc_method_f", ier)
-   return
+   goto 42
 endif
 if (index(NBC_Method,"CLUSTER").eq.1) then
    bufind(1) = 0
@@ -875,7 +882,7 @@ elseif (index(NBC_Method,"NEIGH_RVEC_F").eq.1) then
 else
    ier = KIM_STATUS_FAIL
    idum = kim_api_report_error_f(__LINE__, __FILE__, "Unknown NBC method", ier)
-   return
+   goto 42
 endif
 call free(pNBC_Method) ! don't forget to release the memory...
 
@@ -889,14 +896,14 @@ if (bufind(1).ne.0) then
    bufind(3) = kim_api_get_neigh_mode_f(pkim, ier)
    if (ier.lt.KIM_STATUS_OK) then
       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_neigh_mode_f", ier)
-      return
+      goto 42
    endif
    if (bufind(3).ne.1 .and. bufind(3).ne.2) then
       ier = KIM_STATUS_FAIL
       write(error_message,'(a,i1)') &
          'Unsupported IterOrLoca mode = ',bufind(3)
       idum = kim_api_report_error_f(__LINE__, __FILE__, error_message, ier)
-      stop
+      goto 42
    endif
 else
    bufind(3) = 2   ! for CLUSTER NBC
@@ -919,14 +926,14 @@ call kim_api_getm_index_f(pkim, ier, &
      "process_d2Edr2",              bufind(8),   1)
 if (ier.lt.KIM_STATUS_OK) then
    idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_index_f", ier)
-   return
+   goto 42
 endif
 
 ! store in model buffer
 call kim_api_set_model_buffer_f(pkim, pbuffer, ier)
 if (ier.lt.KIM_STATUS_OK) then
    idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_model_buffer_f", ier)
-   return
+   goto 42
 endif
 
 ! store parameters in buffer
@@ -936,4 +943,9 @@ bufparam(3) = pmodel_epsilon
 bufparam(4) = pmodel_sigma
 bufparam(5) = pmodel_shift
 
-end subroutine MODEL_DRIVER_NAME_LC_STR_init
+ier = KIM_STATUS_OK
+42 continue
+MODEL_DRIVER_NAME_LC_STR_init = ier
+return
+
+end function MODEL_DRIVER_NAME_LC_STR_init

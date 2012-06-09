@@ -465,7 +465,7 @@ end module ex_model_Ar_P_MLJ_F90
 ! Model initialization routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-subroutine ex_model_Ar_P_MLJ_F90_init(pkim)
+integer function ex_model_Ar_P_MLJ_F90_init(pkim)
 use ex_model_Ar_P_MLJ_F90
 use KIM_API
 implicit none
@@ -484,16 +484,21 @@ real*8 cutoff; pointer(pcutoff,cutoff)
 ier = kim_api_set_data_f(pkim,"compute",one,loc(Compute_Energy_Forces))
 if (ier.lt.KIM_STATUS_OK) then
    idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data", ier)
-   stop
+   goto 42
 endif
 
 ! store model cutoff in KIM object
 pcutoff =  kim_api_get_data_f(pkim,"cutoff",ier)
 if (ier.lt.KIM_STATUS_OK) then
    idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-   stop
+   goto 42
 endif
 cutoff = model_cutoff
 
-end subroutine ex_model_Ar_P_MLJ_F90_init
+ier = KIM_STATUS_OK
+42 continue
+ex_model_Ar_P_MLJ_F90_init = ier
+return
+
+end function ex_model_Ar_P_MLJ_F90_init
 

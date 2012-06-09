@@ -70,7 +70,7 @@
 /* Define prototypes for model init */
 /* must be all lowercase to be compatible with the KIM API (to support Fortran Tests) */
 /**/
-void ex_model_ar_p_mlj_c_init_(void* km);
+int ex_model_ar_p_mlj_c_init_(void* km);
 
 /* Define prototypes for model reinit, compute, and destroy */
 /* defined as static to avoid namespace clashes with other Models */
@@ -521,7 +521,7 @@ static void compute(void* km, int* ier)
 }
 
 /* Initialization function */
-void ex_model_ar_p_mlj_c_init_(void *km)
+int ex_model_ar_p_mlj_c_init_(void *km)
 {
    /* Local variables */
    intptr_t* pkim = *((intptr_t**) km);
@@ -533,7 +533,7 @@ void ex_model_ar_p_mlj_c_init_(void *km)
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_set_data", ier);
-      exit(1);
+      return ier;
    }
 
    /* store model cutoff in KIM object */
@@ -541,9 +541,9 @@ void ex_model_ar_p_mlj_c_init_(void *km)
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
-      exit(1);
+      return ier;
    }
    *model_cutoff = MODEL_CUTOFF; /* cutoff distance in angstroms */
 
-   return;
+   return KIM_STATUS_OK;
 }

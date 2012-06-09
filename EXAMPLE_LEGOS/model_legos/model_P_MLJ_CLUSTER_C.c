@@ -58,7 +58,7 @@
 /* Define prototypes for model init */
 /* must be all lowercase to be compatible with the KIM API (to support Fortran Tests) */
 /**/
-void MODEL_NAME_LC_STR_init_(void* km);
+int MODEL_NAME_LC_STR_init_(void* km);
 
 /* Define prototypes for model reinit, compute, and destroy */
 /* defined as static to avoid namespace clashes with other Models */
@@ -333,7 +333,7 @@ static void compute(void* km, int* ier)
 }
 
 /* Initialization function */
-void MODEL_NAME_LC_STR_init_(void *km)
+int MODEL_NAME_LC_STR_init_(void *km)
 {
    /* Local variables */
    intptr_t* pkim = *((intptr_t**) km);
@@ -360,7 +360,7 @@ void MODEL_NAME_LC_STR_init_(void *km)
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
-      exit(1);
+      return ier;
    }
    *model_cutoff = CUTOFF_VALUE_STR
 
@@ -368,56 +368,65 @@ void MODEL_NAME_LC_STR_init_(void *km)
    model_sigma = (double*) malloc(1*sizeof(double));
    if (NULL == model_sigma)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL);
-      exit(1);
+      ier = KIM_STATUS_FAIL;
+      KIM_API_report_error(__LINE__, __FILE__, "malloc", ier);
+      return ier;
    }
    model_epsilon = (double*) malloc(1*sizeof(double));
    if (NULL == model_epsilon)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL);
-      exit(1);
+      ier = KIM_STATUS_FAIL;
+      KIM_API_report_error(__LINE__, __FILE__, "malloc", ier);
+      return ier;
    }
    model_Pcutoff = (double*) malloc(1*sizeof(double));
    if (NULL == model_Pcutoff)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL);
-      exit(1);
+      ier = KIM_STATUS_FAIL;
+      KIM_API_report_error(__LINE__, __FILE__, "malloc", ier);
+      return ier;
    }
    model_cutnorm = (double*) malloc(1*sizeof(double));
    if (NULL == model_cutnorm)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL);
-      exit(1);
+      ier = KIM_STATUS_FAIL;
+      KIM_API_report_error(__LINE__, __FILE__, "malloc", ier);
+      return ier;
    }
    model_A = (double*) malloc(1*sizeof(double));
    if (NULL == model_A)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL);
-      exit(1);
+      ier = KIM_STATUS_FAIL;
+      KIM_API_report_error(__LINE__, __FILE__, "malloc", ier);
+      return ier;
    }
    model_B = (double*) malloc(1*sizeof(double));
    if (NULL == model_B)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL);
-      exit(1);
+      ier = KIM_STATUS_FAIL;
+      KIM_API_report_error(__LINE__, __FILE__, "malloc", ier);
+      return ier;
    }
    model_C = (double*) malloc(1*sizeof(double));
    if (NULL == model_C)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL);
-      exit(1);
+      ier = KIM_STATUS_FAIL;
+      KIM_API_report_error(__LINE__, __FILE__, "malloc", ier);
+      return ier;
    }
    model_sigmasq = (double*) malloc(1*sizeof(double));
    if (NULL == model_sigmasq)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL);
-      exit(1);
+      ier = KIM_STATUS_FAIL;
+      KIM_API_report_error(__LINE__, __FILE__, "malloc", ier);
+      return ier;
    }
    model_cutsq = (double*) malloc(1*sizeof(double));
    if (NULL == model_cutsq)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL);
-      exit(1);
+      ier = KIM_STATUS_FAIL;
+      KIM_API_report_error(__LINE__, __FILE__, "malloc", ier);
+      return ier;
    }
 
    /* store parameters in KIM object */
@@ -434,7 +443,7 @@ void MODEL_NAME_LC_STR_init_(void *km)
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_setm_data", ier);
-      exit(1);
+      return ier;
    }
 
    /* set value of sigma */
@@ -459,7 +468,7 @@ void MODEL_NAME_LC_STR_init_(void *km)
    /* set value of parameter cutsq */
    *model_cutsq = (*model_cutoff)*(*model_cutoff);
 
-   return;
+   return KIM_STATUS_OK;
 }
 
 /* Reinitialization function */

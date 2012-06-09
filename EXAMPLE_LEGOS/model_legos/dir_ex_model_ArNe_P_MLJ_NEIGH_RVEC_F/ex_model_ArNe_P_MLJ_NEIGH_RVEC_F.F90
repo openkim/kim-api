@@ -385,7 +385,7 @@ end module ex_model_ArNe_P_MLJ_NEIGH_RVEC_F
 ! Model initialization routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-subroutine ex_model_ArNe_P_MLJ_NEIGH_RVEC_F_init(pkim)
+integer function ex_model_ArNe_P_MLJ_NEIGH_RVEC_F_init(pkim)
   use ex_model_ArNe_P_MLJ_NEIGH_RVEC_F
   use KIM_API
   implicit none
@@ -415,62 +415,71 @@ subroutine ex_model_ArNe_P_MLJ_NEIGH_RVEC_F_init(pkim)
        "destroy", one, loc(Destroy),               1)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_setm_data_f", ier)
-     stop
+     goto 42
   endif
 
   ! store model cutoff in KIM object
   pcutoff =  kim_api_get_data_f(pkim,"cutoff",ier)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-     stop
+     goto 42
   endif
   model_cutoff = 8.15d0 ! cutoff distance in angstroms
 
   ! Allocate memory for sigma and store value
   psigma = malloc(three*8) ! 8 is the size of a real*8
   if (psigma.eq.0) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL)
-     stop
+     ier = KIM_STATUS_FAIL
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", ier)
+     goto 42
   endif
   pepsilon = malloc(three*8) ! 8 is the size of a real*8
   if (pepsilon.eq.0) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL)
-     stop
+     ier = KIM_STATUS_FAIL
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", ier)
+     goto 42
   endif
   pparamcut = malloc(one*8) ! 8 is the size of a real*8
   if (pparamcut.eq.0) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL)
-     stop
+     ier = KIM_STATUS_FAIL
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", ier)
+     goto 42
   endif
   pcutnorm = malloc(three*8) ! 8 is the size of a real*8
   if (pcutnorm.eq.0) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL)
-     stop
+     ier = KIM_STATUS_FAIL
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", ier)
+     goto 42
   endif
   pA = malloc(three*8) ! 8 is the size of a real*8
   if (pA.eq.0) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL)
-     stop
+     ier = KIM_STATUS_FAIL
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", ier)
+     goto 42
   endif
   pB = malloc(three*8) ! 8 is the size of a real*8
   if (pB.eq.0) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL)
-     stop
+     ier = KIM_STATUS_FAIL
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", ier)
+     goto 42
   endif
   pC = malloc(three*8) ! 8 is the size of a real*8
   if (pC.eq.0) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL)
-     stop
+     ier = KIM_STATUS_FAIL
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", ier)
+     goto 42
   endif
   psigmasq = malloc(three*8) ! 8 is the size of a real*8
   if (psigmasq.eq.0) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL)
-     stop
+     ier = KIM_STATUS_FAIL
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", ier)
+     goto 42
   endif
   pcutsq = malloc(one*8) ! 8 is the size of a real*8
   if (pcutsq.eq.0) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL)
-     stop
+     ier = KIM_STATUS_FAIL
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", ier)
+     goto 42
   endif
 
   ! store parameters in KIM object
@@ -486,7 +495,7 @@ subroutine ex_model_ArNe_P_MLJ_NEIGH_RVEC_F_init(pkim)
        "PARAM_FIXED_cutsq",   one,    pcutsq,    1)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_setm_data_f", ier)
-     stop
+     goto 42
   endif
 
   model_sigma(1) = 3.40d0 ! LJ Argon sigma in angstroms
@@ -506,4 +515,9 @@ subroutine ex_model_ArNe_P_MLJ_NEIGH_RVEC_F_init(pkim)
   model_sigmasq(1:3) = model_sigma(1:3)**2
   model_cutsq = model_cutoff**2
 
-end subroutine ex_model_ArNe_P_MLJ_NEIGH_RVEC_F_init
+  ier = KIM_STATUS_OK
+42 continue
+  ex_model_ArNe_P_MLJ_NEIGH_RVEC_F_init = ier
+  return
+
+end function ex_model_ArNe_P_MLJ_NEIGH_RVEC_F_init
