@@ -206,7 +206,7 @@ MODEL_NAME_KIM_STR_CPP = char* $(strip $(MODEL_NAME))_kim_str'('')''{'
 	echo "}"                       >> $*_kim_str.cpp
 	echo $(MODEL_NAME_KIM_STR_CPP) >> $*_kim_str.cpp
 	echo "static char kimstr[] ="  >> $*_kim_str.cpp
-	cat $(strip $(MODEL_NAME)).kim | \
+	cat $(strip $(MODEL_NAME)).kim | tr -d '\r' | \
 	sed -e 's,\\,\\\\,g'     \
             -e 's,",\\",g'       \
             -e 's,^,      ",g'   \

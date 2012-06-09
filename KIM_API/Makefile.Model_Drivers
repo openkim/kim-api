@@ -104,7 +104,7 @@ $(strip $(MODEL_NAME)).cpp: $(KIM_API_DIR)model_based_on_driver.cpp $(paramfile_
 	cat /dev/null > $(strip $(MODEL_NAME)).cpp
 	@$(foreach flnum,$(paramfile_num_list),\
           echo "static char paramfile_$(flnum)[] ="                             >> $(strip $(MODEL_NAME)).cpp && \
-          cat $(word $(flnum),$(paramfile_list)) | \
+          cat $(word $(flnum),$(paramfile_list)) | tr -d '\r' | \
           sed -e 's,\\,\\\\,g'     \
               -e 's,",\\",g'       \
               -e 's,^,      ",g'   \
