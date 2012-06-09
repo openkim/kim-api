@@ -93,6 +93,7 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
 
    % cd $KIM_DIR
    % make examples
+   % make
 
      This builds all Models, Tests, and the openKIM API service routine
      library. The targets defined by the Makefile in this directory include:
@@ -100,7 +101,7 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
        `make'                -- compiles the API and all Models and Tests
        `make all'            -- same as `make'
        `make examples'       -- copies examples into the appropriate
-                                directories then does a `make all'
+                                directories
        `make openkim-api'    -- compiles only the API
        `make clean'          -- will remove all .o, .mod, .a, .so and
                                 executable files

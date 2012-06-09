@@ -78,10 +78,24 @@ kim-api-clean:
 	@echo
 
 examples-all:
-	cp -r -n $(KIM_DIR)EXAMPLEs/MODEL_DRIVERs/* "$(KIM_MODEL_DRIVERS_DIR)"
-	cp -r -n $(KIM_DIR)EXAMPLEs/MODELs/* "$(KIM_MODELS_DIR)"
-	cp -r -n $(KIM_DIR)EXAMPLEs/TESTs/* "$(KIM_TESTS_DIR)"
-	$(MAKE) all
+	@echo ""; \
+	$(foreach exmpl,$(notdir $(shell find $(KIM_DIR)EXAMPLEs/MODEL_DRIVERs -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)),\
+          if test -e $(KIM_MODEL_DRIVERS_DIR)$(exmpl); then \
+          printf "*@existing....@%-50s@no@copy@performed!\n" $(exmpl)@ | sed -e 's/\s/./g' -e 's/@/ /g'; else \
+          printf "*@installing..@%-50s@copied@to@$(KIM_MODEL_DRIVERS_DIR)\n" $(exmpl)@ | sed -e 's/\s/./g' -e 's/@/ /g'; \
+          cp -r $(KIM_DIR)EXAMPLEs/MODEL_DRIVERs/$(exmpl) "$(KIM_MODEL_DRIVERS_DIR)"; fi;)
+	@echo ""; \
+	$(foreach exmpl,$(notdir $(shell find $(KIM_DIR)EXAMPLEs/MODELs -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)),\
+          if test -e $(KIM_MODELS_DIR)$(exmpl); then \
+          printf "*@existing....@%-50s@no@copy@performed!\n" $(exmpl)@ | sed -e 's/\s/./g' -e 's/@/ /g'; else \
+          printf "*@installing..@%-50s@copied@to@$(KIM_MODELS_DIR)\n" $(exmpl)@ | sed -e 's/\s/./g' -e 's/@/ /g'; \
+          cp -r $(KIM_DIR)EXAMPLEs/MODELs/$(exmpl) "$(KIM_MODELS_DIR)"; fi;)
+	@echo ""; \
+	$(foreach exmpl,$(notdir $(shell find $(KIM_DIR)EXAMPLEs/TESTs -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)),\
+          if test -e $(KIM_TESTS_DIR)$(exmpl); then \
+          printf "*@existing....@%-50s@no@copy@performed!\n" $(exmpl)@ | sed -e 's/\s/./g' -e 's/@/ /g'; else \
+          printf "*@installing..@%-50s@copied@to@$(KIM_TESTS_DIR)\n" $(exmpl)@ | sed -e 's/\s/./g' -e 's/@/ /g'; \
+          cp -r $(KIM_DIR)EXAMPLEs/TESTs/$(exmpl) "$(KIM_TESTS_DIR)"; fi;)
 
 examples-clean:
 	$(foreach dr,$(notdir $(wildcard $(KIM_DIR)EXAMPLEs/MODEL_DRIVERs/*)), rm -rf "$(KIM_MODEL_DRIVERS_DIR)$(dr)";)
