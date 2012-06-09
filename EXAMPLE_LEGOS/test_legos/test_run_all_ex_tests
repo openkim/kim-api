@@ -48,7 +48,7 @@
 
 TEST_NUM=0
 MODEL_NUM=0
-if [[ $# > 0 ]]; then
+if test $# -gt 0; then
   redirect='$1.`printf "%02i" $TEST_NUM`.`printf "%02i" $MODEL_NUM`';
 else
   redirect='1';

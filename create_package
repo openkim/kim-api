@@ -32,12 +32,12 @@ packagename=$1
 
 # check for errors
 
-if [[ "$packagename" == "" ]]; then
+if test X"$packagename" == X""; then
   echo "usage: $0 packagename"
   exit
 fi
 
-if [[ -e $packagename ]]; then
+if test -e $packagename; then
   echo "File '$packagename' exits! exiting..."
   exit
 fi
