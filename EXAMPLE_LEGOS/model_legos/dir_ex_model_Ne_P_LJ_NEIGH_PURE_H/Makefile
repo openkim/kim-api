@@ -34,9 +34,9 @@ MODEL_NAME := ex_model_Ne_P_LJ_NEIGH_PURE_H
 MODEL_BUILD_TARGET := $(strip $(MODEL_NAME)).a
 
 ifndef KIM_API_DIR
-   include $(KIM_DIR)KIM_API/Include.mk
+   include $(KIM_DIR)/KIM_API/Include.mk
 else
-   include $(KIM_API_DIR)Include.mk
+   include $(KIM_API_DIR)/Include.mk
 endif
 
 
@@ -48,7 +48,7 @@ $(strip $(MODEL_NAME)).a: $(strip $(MODEL_NAME)).o $(strip $(MODEL_NAME))_comput
 $(strip $(MODEL_NAME)).o: Makefile
 $(strip $(MODEL_NAME))_compute.o: Makefile
 
-Makefile: $(KIM_API_DIR)Include.mk
+Makefile: $(KIM_API_DIR)/Include.mk
 	@touch Makefile
 
 clean:

@@ -37,8 +37,8 @@ include Include.mk
 
 
 # create list of models
-MODELS_TARGETS := $(addprefix ., $(addsuffix .make-temp, $(filter-out $(shell if test -e $(KIM_MODELS_DIR).kimignore; then cat $(KIM_MODELS_DIR).kimignore;fi;),$(filter-out .%,$(shell find $(KIM_MODELS_DIR) -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)))))
-# create list of models that have been deleted from the $(KIM_MODELS_DIR) since the last time make was executed
+MODELS_TARGETS := $(addprefix ., $(addsuffix .make-temp, $(filter-out $(shell if test -e $(KIM_MODELS_DIR)/.kimignore; then cat $(KIM_MODELS_DIR)/.kimignore;fi;),$(filter-out .%,$(shell find $(KIM_MODELS_DIR)/ -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)))))
+# create list of models that have been deleted from the $(KIM_MODELS_DIR)/ since the last time make was executed
 DELETED_MODELS_TARGETS := $(filter-out $(MODELS_TARGETS), $(shell find . -name ".*.make-temp" -exec basename {} \;))
 # If there are deleted models, remove files and touch .models-deleted to force a reconfigure
 ifneq ($(DELETED_MODELS_TARGETS),)
@@ -63,27 +63,27 @@ Makefile: Include.mk
 
 ifneq ($(OSTYPE),darwin11)
 libkim.a: $(ALLOBJ) $(MODELOBJ)
-	mkdir $(KIM_API_DIR)temp_archive_dir && cd $(KIM_API_DIR)temp_archive_dir && \
+	mkdir $(KIM_API_DIR)/temp_archive_dir && cd $(KIM_API_DIR)/temp_archive_dir && \
         $(foreach arch, $(MODELOBJ),ar x $(arch);) \
-        ar rcs $(KIM_API_DIR)$@ *.o $(addprefix $(KIM_API_DIR),$(ALLOBJ)) && \
-        cd $(KIM_API_DIR) && rm -rf $(KIM_API_DIR)temp_archive_dir
+        ar rcs $(KIM_API_DIR)/$@ *.o $(addprefix $(KIM_API_DIR)/,$(ALLOBJ)) && \
+        cd $(KIM_API_DIR)/ && rm -rf $(KIM_API_DIR)/temp_archive_dir
 libkim.so: $(ALLOBJ)
-	$(LINKCOMPILER) $(SHARED_LIB_FLAG) $(CPPLIBFLAG) $(LINKSONAME)$(KIM_API_DIR)$@ -o $@ *.o
+	$(LINKCOMPILER) $(SHARED_LIB_FLAG) $(CPPLIBFLAG) $(LINKSONAME)$(KIM_API_DIR)/$@ -o $@ *.o
 
 else
 ifdef KIM_DYNAMIC
 libkim.a: $(ALLOBJ)
-	ar rcs $(KIM_API_DIR)$@ $(ALLOBJ)
+	ar rcs $(KIM_API_DIR)/$@ $(ALLOBJ)
 else
 libkim.a: $(ALLOBJ) $(MODELOBJ)
-	mkdir $(KIM_API_DIR)temp_archive_dir && cd $(KIM_API_DIR)temp_archive_dir && \
+	mkdir $(KIM_API_DIR)/temp_archive_dir && cd $(KIM_API_DIR)/temp_archive_dir && \
         $(foreach arch, $(MODELOBJ),ar x $(arch);) \
-        ar rcs $(KIM_API_DIR)$@ *.o $(addprefix $(KIM_API_DIR),$(ALLOBJ)) && \
-        cd $(KIM_API_DIR) && rm -rf $(KIM_API_DIR)temp_archive_dir
+        ar rcs $(KIM_API_DIR)/$@ *.o $(addprefix $(KIM_API_DIR)/,$(ALLOBJ)) && \
+        cd $(KIM_API_DIR)/ && rm -rf $(KIM_API_DIR)/temp_archive_dir
 endif
 
 libkim.so:  libkim.a
-	$(LINKCOMPILER) $(SHARED_LIB_FLAG) $(CPPLIBFLAG) $(LINKSONAME)$(KIM_API_DIR)$@ -o $@ *.o
+	$(LINKCOMPILER) $(SHARED_LIB_FLAG) $(CPPLIBFLAG) $(LINKSONAME)$(KIM_API_DIR)/$@ -o $@ *.o
 endif
 
 
@@ -130,4 +130,4 @@ model_init_include.h model_init_include.cpp: Makefile .models-deleted $(MODELS_T
 
 clean:
 	rm -f *.o *.a *.so *.mod  model_init_include.{h,cpp} model_kim_str_include.{h,cpp} .*.make-temp .models-deleted standard_kim_str.cpp &&\
-        rm -rf $(KIM_API_DIR)temp_archive_dir
+        rm -rf $(KIM_API_DIR)/temp_archive_dir

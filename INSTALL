@@ -64,9 +64,9 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
        directory, you would do:
 
        bash:
-       % export KIM_DIR=~/openkim-api-vX.X.X/
+       % export KIM_DIR=~/openkim-api-vX.X.X
 
-       Make sure to include the trailing slash. The `%' symbol represents the
+       A trailing slash is optional.  The `%' symbol represents the
        bash sell prompt and should not be typed.
 
        (Above `vX.X.X' represents the current release number.)

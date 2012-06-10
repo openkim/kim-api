@@ -36,9 +36,9 @@ MODEL_NAME := ex_model_Ar_P_MLJ_F90
 MODEL_BUILD_TARGET := $(strip $(MODEL_NAME)).a
 
 ifndef KIM_API_DIR
-   include $(KIM_DIR)KIM_API/Include.mk
+   include $(KIM_DIR)/KIM_API/Include.mk
 else
-   include $(KIM_API_DIR)Include.mk
+   include $(KIM_API_DIR)/Include.mk
 endif
 
 
@@ -49,7 +49,7 @@ $(strip $(MODEL_NAME)).a: $(strip $(MODEL_NAME)).o $(strip $(MODEL_NAME))_kim_st
 
 $(strip $(MODEL_NAME)).o: Makefile
 
-Makefile: $(KIM_API_DIR)Include.mk
+Makefile: $(KIM_API_DIR)/Include.mk
 	@touch Makefile
 
 clean:

@@ -33,9 +33,9 @@
 TEST_NAME := ex_test_demo_F03
 
 ifndef KIM_API_DIR
-   include $(KIM_DIR)KIM_API/Include.mk
+   include $(KIM_DIR)/KIM_API/Include.mk
 else
-   include $(KIM_API_DIR)Include.mk
+   include $(KIM_API_DIR)/Include.mk
 endif
 
 
@@ -50,7 +50,7 @@ $(strip $(TEST_NAME)).o: $(LOCALOBJ) Makefile
 
 neighborlistmod.o: myqsort.o Makefile
 
-Makefile: $(KIM_API_DIR)Include.mk
+Makefile: $(KIM_API_DIR)/Include.mk
 	@touch Makefile
 
 clean:
