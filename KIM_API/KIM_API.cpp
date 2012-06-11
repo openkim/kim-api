@@ -2154,10 +2154,11 @@ bool KIM_API_model::check_consistance_NBC_method(){
     return true;
 }
 char * KIM_API_model::get_status_msg(int status_code) {
-    int mincode=-23,maxcode=3,offset=23;
+    int mincode=-24,maxcode=3,offset=24;
 
     char KIM_STATUS_MSG[][KIM_KEY_STRING_LENGTH]=
    {
+    {"configuration is not supported by the Model"},
     {"base units: are not supported or not the same phys.dimensions"},
     {" unsupported Unit_time  "},
     {" unsupported Unit_temperature  "},
