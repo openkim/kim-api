@@ -511,7 +511,7 @@ static void compute(void* km, int* ier)
 }
 
 /* Initialization function */
-void model_<FILL (lowercase) elemenet name>_p_<FILL (lowercase) model name>_init_(void *km)
+int model_<FILL (lowercase) elemenet name>_p_<FILL (lowercase) model name>_init_(void *km)
 {
    /* Local variables */
    intptr_t* pkim = *((intptr_t**) km);
@@ -523,7 +523,7 @@ void model_<FILL (lowercase) elemenet name>_p_<FILL (lowercase) model name>_init
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_set_data", ier);
-      exit(1);
+      return ier;
    }
 
    /* store model cutoff in KIM object */
@@ -531,9 +531,9 @@ void model_<FILL (lowercase) elemenet name>_p_<FILL (lowercase) model name>_init
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
-      exit(1);
+      return ier;
    }
    *model_cutoff = MODEL_CUTOFF; /* cutoff distance in angstroms */
 
-   return;
+   return KIM_STATUS_OK;
 }

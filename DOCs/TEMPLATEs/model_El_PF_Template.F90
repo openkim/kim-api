@@ -713,7 +713,7 @@ end module model_<FILL element name>_PF_<FILL model name>
 ! Model initialization routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-subroutine model_<FILL element name>_PF_<FILL model name>_init(pkim)
+integer function model_<FILL element name>_PF_<FILL model name>_init(pkim)
 use model_<FILL element name>_PF_<FILL model name>
 use KIM_API
 implicit none
@@ -734,16 +734,20 @@ call kim_api_setm_data_f(pkim, ier, &
      "destroy", one, loc(Destroy),               1)
 if (ier.lt.KIM_STATUS_OK) then
    idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_setm_data_f", ier)
-   stop
+   goto 42
 endif
 
 ! store model cutoff in KIM object
 pcutoff =  kim_api_get_data_f(pkim,"cutoff",ier)
 if (ier.lt.KIM_STATUS_OK) then
    idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
-   stop
+   goto 42
 endif
 cutoff = model_cutoff
 
-end subroutine model_<FILL element name>_PF_<FILL model name>_init
+ier = KIM_STATUS_OK
+42 continue
+ex_model_<FILL element name>_PF_<FILL model name>_init = ier
+return
+end function model_<FILL element name>_PF_<FILL model name>_init
 

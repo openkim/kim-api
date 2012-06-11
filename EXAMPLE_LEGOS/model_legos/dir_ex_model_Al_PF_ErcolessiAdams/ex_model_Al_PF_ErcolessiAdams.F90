@@ -1131,10 +1131,10 @@ endif
 irlast = 1
 ielast = 1
 
-  ier = KIM_STATUS_OK
+ier = KIM_STATUS_OK
 42 continue
-  ex_model_Al_PF_ErcolessiAdams_init = ier
-  return
+ex_model_Al_PF_ErcolessiAdams_init = ier
+return
 
 end function ex_model_Al_PF_ErcolessiAdams_init
 

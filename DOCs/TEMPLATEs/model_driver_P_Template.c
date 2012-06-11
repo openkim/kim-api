@@ -573,7 +573,7 @@ static void compute(void* km, int* ier)
 }
 
 /* Initialization function */
-void model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* paramfile_names, int* nmstrlen, int* numparamfiles)
+int model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* paramfile_names, int* nmstrlen, int* numparamfiles)
 {
    /* KIM variables */
    intptr_t* pkim = *((intptr_t**) km);
@@ -615,15 +615,16 @@ void model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* p
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_setm_data", ier);
-      exit(1);
+      return ier;
    }
 
    /* Read in model parameters from parameter file */
    fid = fopen(paramfilename[0], "r");
    if (fid == NULL)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "Unable to open parameter file for Morse parameters", KIM_STATUS_FAIL);
-      exit(1);
+      ier = KIM_STATUS_FAIL;
+      KIM_API_report_error(__LINE__, __FILE__, "Unable to open parameter file for <FILL model driver name> parameters", ier);
+      return ier;
    }
 
    ier = sscanf(paramfile, "%lf \n%lf \n<FILL as many parameters as needed>",
@@ -638,8 +639,9 @@ void model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* p
    /* check that we read the right number of parameters */
    if (<FILL number of parameters (including cutoff)> != ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "Unable to read all <FILL model driver name> parameters", KIM_STATUS_FAIL);
-      exit(1);
+      ier = KIM_STATUS_FAIL;
+      KIM_API_report_error(__LINE__, __FILE__, "Unable to read all <FILL model driver name> parameters", ier);
+      return ier;
    }
 
    /* convert to appropriate units */
@@ -648,14 +650,14 @@ void model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* p
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_to_act_unit", ier);
-      exit(1);
+      return ier;
    }
    <FILL parameter 1> *= KIM_API_convert_to_act_unit(pkim, "A", "eV", "e", "K", "fs",
                                                      <FILL exponents (5) for parameter 1>);
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_to_act_unit", ier);
-      exit(1);
+      return ier;
    }
 
    <FILL parameter 2> *= KIM_API_convert_to_act_unit(pkim, "A", "eV", "e", "K", "fs",
@@ -663,7 +665,14 @@ void model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* p
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_to_act_unit", ier);
-      exit(1);
+      return ier;
+   }
+   Rzero *= KIM_API_convert_to_act_unit(pkim, "A", "eV", "e", "K", "fs",
+                                              1.0, 0.0,  0.0, 0.0, 0.0, &ier);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_to_act_unit", ier);
+      return ier;
    }
 
    /* FILL as many parameters as necessary */
@@ -673,7 +682,7 @@ void model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* p
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
-      exit(1);
+      return ier;
    }
    *model_cutoff = cutoff;
 
@@ -681,26 +690,30 @@ void model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* p
    model_Pcutoff = (double*) malloc(1*sizeof(double));
    if (NULL == model_Pcutoff)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL);
-      exit(1);
+      ier = KIM_STATUS_FAIL;
+      KIM_API_report_error(__LINE__, __FILE__, "malloc", ier);
+      return ier;
    }
    model_cutsq = (double*) malloc(1*sizeof(double));
    if (NULL == model_cutsq)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL);
-      exit(1);
+      ier = KIM_STATUS_FAIL;
+      KIM_API_report_error(__LINE__, __FILE__, "malloc", ier);
+      return ier;
    }
    model_<FILL parameter 1> = (double*) malloc(1*sizeof(double));
    if (NULL == model_<FILL parameter 1>)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL);
-      exit(1);
+      ier = KIM_STATUS_FAIL;
+      KIM_API_report_error(__LINE__, __FILE__, "malloc", ier);
+      return ier;
    }
    model_<FILL parameter 2> = (double*) malloc(1*sizeof(double));
    if (NULL == model_<FILL parameter 2>)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL);
-      exit(1);
+      ier = KIM_STATUS_FAIL;
+      KIM_API_report_error(__LINE__, __FILE__, "malloc", ier);
+      return ier;
    }
    /* FILL: repeat above statements as many times as necessary for all parameters.
       Use "FREE" and "FIXED" as appropriate. (Recall FREE parameters can be modified by
@@ -727,8 +740,9 @@ void model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* p
    buffer = (struct model_buffer*) malloc(sizeof(struct model_buffer));
    if (NULL == buffer)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL);
-      exit(1);
+      ier = KIM_STATUS_FAIL;
+      KIM_API_report_error(__LINE__, __FILE__, "malloc", ier);
+      return ier;
    }
 
    /* setup buffer */
@@ -737,7 +751,7 @@ void model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* p
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_NBC_method", ier);
-      return;
+      return ier;
    }
    if (!strcmp("CLUSTER",NBCstr))
    {
@@ -759,7 +773,7 @@ void model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* p
    {
       ier = KIM_STATUS_FAIL;
       KIM_API_report_error(__LINE__, __FILE__, "Unknown NBC method", ier);
-      return;
+      return ier;
    }
    free(NBCstr); /* don't forget to release the memory... */
 
@@ -788,12 +802,13 @@ void model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* p
       if (KIM_STATUS_OK > ier)
       {
          KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_neigh_mode", ier);
-         return;
+         return ier;
       }
       if ((buffer->IterOrLoca != 1) && (buffer->IterOrLoca != 2))
       {
-         printf("* ERROR: Unsupported IterOrLoca mode = %i\n", buffer->IterOrLoca);
-         exit(-1);
+         ier = KIM_STATUS_FAIL;
+         KIM_API_report_error(__LINE__, __FILE__, "Unsupported IterOrLoca mode", ier);
+         return ier;
       }
    }
    else
@@ -820,7 +835,7 @@ void model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* p
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_index", ier);
-      exit(1);
+      return ier;
    }
 
    /* store in model buffer */
@@ -828,7 +843,7 @@ void model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* p
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_set_model_buffer", ier);
-      exit(1);
+      return ier;
    }
 
    /* store parameters in buffer */
@@ -838,7 +853,7 @@ void model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* p
    buffer-><FILL parameter 2> = <FILL parameter 2>;
    /* FILL as many parameters as needed */
 
-   return;
+   return KIM_STATUS_OK;
 }
 
 /* Reinitialization function */

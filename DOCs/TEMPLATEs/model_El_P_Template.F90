@@ -451,7 +451,7 @@ end module model_<FILL element name>_P_<FILL model name>
 ! Model initialization routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-subroutine model_<FILL element name>_P_<FILL model name>_init(pkim)
+integer function model_<FILL element name>_P_<FILL model name>_init(pkim)
 use model_<FILL element name>_P_<FILL model name>
 use KIM_API
 implicit none
@@ -470,16 +470,21 @@ real*8 cutoff; pointer(pcutoff,cutoff)
 ier = kim_api_set_data_f(pkim,"compute",one,loc(Compute_Energy_Forces))
 if (ier.lt.KIM_STATUS_OK) then
    idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data", ier)
-   stop
+   goto 42
 endif
 
 ! store model cutoff in KIM object
 pcutoff =  kim_api_get_data_f(pkim,"cutoff",ier)
 if (ier.lt.KIM_STATUS_OK) then
    idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
-   stop
+   goto 42
 endif
 cutoff = model_cutoff
 
-end subroutine model_<FILL element name>_P_<FILL model name>_init
+ier = KIM_STATUS_OK
+42 continue
+model_<FILL element name>_P_<FILL model name>_init = ier
+return
+
+end function model_<FILL element name>_P_<FILL model name>_init
 
