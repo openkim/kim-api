@@ -257,7 +257,7 @@ program TEST_NAME_STR
            endif
         endif
      endif
-   
+
      ! Set pointer in KIM object to neighbor list routine
      !
      if (nbc.eq.0) then
@@ -360,7 +360,7 @@ program TEST_NAME_STR
            stop
         endif
      endif
-   
+
      ! Call model compute to get forces (gradient)
      !
      call kim_api_model_compute_f(pkim, ier)
@@ -368,7 +368,7 @@ program TEST_NAME_STR
         idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute", ier)
         stop
      endif
-   
+
      ! Turn off force computation
      !
      call kim_api_set_compute_f(pkim, "forces", 0, ier)
@@ -446,7 +446,7 @@ program TEST_NAME_STR
         abs(forces(Jmax,Imax)-forces_num(Jmax,Imax))/abs(forces(Jmax,Imax))
 
      ! Free temporary storage
-     ! 
+     !
      call free(pNBC_Method)
      deallocate(forces_num)
      deallocate(forces_num_err)

@@ -120,7 +120,7 @@ static void calc_phi(double* <FILL parameter 1>,
 {
    /* local variables */
    /* FILL: place any local variable definitions here */
-   
+
    if (r > *cutoff)
    {
       /* Argument exceeds cutoff radius */
@@ -263,7 +263,7 @@ static void compute(void* km, int* ier)
    <FILL parameter 1> = buffer-><FILL parameter 1>;
    <FILL parameter 2> = buffer-><FILL parameter 2>;
    /* also FILL additional parameters here if there are any ... */
-   
+
    /* check to see if we have been asked to compute the forces, particleEnergy, and d1Edr */
    KIM_API_getm_compute_by_index(pkim, ier, 5*3,
                                  buffer->energy_ind,         &comp_energy,         1,
@@ -706,7 +706,7 @@ void model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* p
       Use "FREE" and "FIXED" as appropriate. (Recall FREE parameters can be modified by
       the calling routine. FIXED parameters depend on the FREE parameters and must be
       appropriately adjusted in the reinit() method.)  */
-   
+
    /* store parameters in KIM object */
    KIM_API_setm_data(pkim, &ier, <FILL with correct integer>*4,
                              "PARAM_FREE_cutoff",  1, model_Pcutoff,            1,
@@ -722,7 +722,7 @@ void model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* p
    *model_<FILL parameter 1> = <FILL parameter 1>;
    *model_<FILL parameter 2> = <FILL parameter 2>;
    /* FILL as many parameters as needed */
-   
+
    /* allocate buffer */
    buffer = (struct model_buffer*) malloc(sizeof(struct model_buffer));
    if (NULL == buffer)

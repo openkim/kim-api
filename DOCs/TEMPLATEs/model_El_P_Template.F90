@@ -98,7 +98,7 @@ double precision, intent(out) :: phi
 if (r .gt. model_cutoff) then
    ! Argument exceeds cutoff radius
    phi = 0.d0
-else 
+else
    phi = !<FILL functional form of phi(r)>
 endif
 
@@ -123,7 +123,7 @@ if (r .gt. model_cutoff) then
    ! Argument exceeds cutoff radius
    phi    = 0.d0
    dphi   = 0.d0
-else 
+else
    phi  = !<FILL functional form of phi(r)>
    dphi = !<FILL functional form of dphi(r)>
 endif

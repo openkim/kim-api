@@ -31,7 +31,7 @@
 !
 !-------------------------------------------------------------------------------
 !
-!  Get number and identities of particle types (species) supported by 
+!  Get number and identities of particle types (species) supported by
 !  KIM Model `modelname'
 !
 !-------------------------------------------------------------------------------

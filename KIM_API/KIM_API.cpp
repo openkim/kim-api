@@ -735,7 +735,7 @@ KIM_API_model:: ~KIM_API_model(){
 bool KIM_API_model:: preinit(char * initfile,char *modelname){
    stringstream buffer;
    read_file_to_stringstream(initfile, buffer);
-   
+
    return prestring_init((char*) buffer.str().c_str());
  }
 
@@ -1555,7 +1555,7 @@ bool KIM_API_model::string_init(char* in_tststr, char* modelname){
     //check test-model match and preinit test-model-API
     KIM_API_model test,mdl;
     char* in_mdlstr = get_model_kim_str(modelname, &error);
-    
+
     //preinit test and model API object
     if(!test.prestring_init(in_tststr))
         cout<<"test.prestring_init failed with error status:"<<this->get_status_msg(test.ErrorCode)<<endl;

@@ -96,7 +96,7 @@ public:
 };
 class Atom_Map{
 public:
-    Atom_Map(): requestedByTest(false) {} 
+    Atom_Map(): requestedByTest(false) {}
     char symbol[KIM_KEY_STRING_LENGTH];
     bool readOnly;
     bool requestedByTest;
@@ -189,7 +189,7 @@ public:
 
     bool model_info(char * modelname) {return preinit(modelname);}//does not have error
                                                                   // because it returns OK or FAIL
-    
+
     void free_e(int *error); //free_e because free(int *) interferes with free(void *)
                              // from standard V, on gnu version 4.5.2
     void free();
@@ -199,7 +199,7 @@ public:
     void * get_data(char *nm,int *error);
     void * get_data_by_index(int ind,int *error);
 
-    
+
     int get_index(char *nm, int * error);
     intptr_t get_size(char *nm,int *error);
     intptr_t get_shape(char *nm,int * shape,int *error);
@@ -241,7 +241,7 @@ static char * get_model_kim_str(char * modelname,int *kimerr);
 char * get_NBC_method(int *error);
 bool is_half_neighbors(int *error);
 
- 
+
     bool support_Rij;
     int get_neigh_mode(int *error);
     static char * get_status_msg(int status_code);
@@ -296,7 +296,7 @@ bool is_half_neighbors(int *error);
 private:
     KIM_IOline *inlines;
     int numlines;
-    
+
     bool locator_neigh_mode;
     bool iterator_neigh_mode;
     bool both_neigh_mode;
@@ -363,7 +363,7 @@ private:
     int hessian_ind;
     int process_dEdr_ind;
     int process_d2Edr2_ind;
-    
+
     // other..
     bool preinit(char * initfile,char *modelname);
     bool preinit(char * modelname);
@@ -396,8 +396,8 @@ private:
     bool is_it_in(KIM_API_model &mdl,char *name);
     void * model_lib_handle;
     void add_element(char * inln);
-    
-  
+
+
 };
 ostream &operator<<(ostream &stream, KIM_API_model &a);
 

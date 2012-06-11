@@ -687,7 +687,7 @@ do i=1,numparamfiles
    paramfile_names(i) = "" ! initialize name to empty string
    do j=1,nmstrlen
       ! add characters to file name until a NULL is encountered
-      if (char(byte_paramfile((i-1)*nmstrlen+j)) .eq. char(0)) exit 
+      if (char(byte_paramfile((i-1)*nmstrlen+j)) .eq. char(0)) exit
       paramfile_names(i)(j:j) = char(byte_paramfile((i-1)*nmstrlen+j))
    enddo
 enddo

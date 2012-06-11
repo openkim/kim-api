@@ -90,7 +90,7 @@ double precision, intent(out) :: phi
 if (r .gt. model_cutoff) then
    ! Argument exceeds cutoff radius
    phi = 0.d0
-else 
+else
    phi = !<FILL functional form of phi(r)>
 endif
 
@@ -122,7 +122,7 @@ if (r .gt. model_cutoff) then
    ! Argument exceeds cutoff radius
    phi    = 0.d0
    dphi   = 0.d0
-else 
+else
    phi  = !<FILL functional form of phi(r)>
    dphi = !<FILL functional form of dphi(r)>
 endif
@@ -156,7 +156,7 @@ if (r .gt. model_cutoff) then
    phi    = 0.d0
    dphi   = 0.d0
    d2phi  = 0.d0
-else 
+else
    phi   = !<FILL functional form of phi(r)>
    dphi  = !<FILL functional form of dphi(r)>
    d2phi = !<FILL functional form of d2phi(r)>
@@ -664,7 +664,7 @@ do i=1,numparamfiles
    paramfile_names(i) = "" ! initialize name to empty string
    do j=1,nmstrlen
       ! add characters to file name until a NULL is encountered
-      if (char(byte_paramfile((i-1)*nmstrlen+j)) .eq. char(0)) exit 
+      if (char(byte_paramfile((i-1)*nmstrlen+j)) .eq. char(0)) exit
       paramfile_names(i)(j:j) = char(byte_paramfile((i-1)*nmstrlen+j))
    enddo
 enddo
@@ -751,7 +751,7 @@ if (pmodel_<FILL parameter 2>.eq.0) then
    idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", KIM_STATUS_FAIL);
    stop
 endif
-! FILL: repeat above statements as many times as necessary for all parameters. 
+! FILL: repeat above statements as many times as necessary for all parameters.
 ! Use "FREE" and "FIXED" as appropriate. (Recall FREE parameters can be modified by
 ! the calling routine. FIXED parameters depend on the FREE parameters and must be
 ! appropriately adjusted in the reinit() routine.)

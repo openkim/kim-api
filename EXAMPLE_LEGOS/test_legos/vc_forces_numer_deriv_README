@@ -31,7 +31,7 @@
 
 
 This directory (TEST_NAME_STR) contains a Verification Check that compares the forces
-computed by a KIM-compliant Model with those obtained using numerical differentiation 
+computed by a KIM-compliant Model with those obtained using numerical differentiation
 of the Model energies.
 
 Calling format:
@@ -46,7 +46,7 @@ Notes:
 2. It figures out which species a Model supports using KIM_API_get_model_partcl_typs.
 
 3. It checks a single configuration: a perturbed fcc cluster made of a random
-   arrangement of the supported species with spacing set to that of argon (5.26 A) 
+   arrangement of the supported species with spacing set to that of argon (5.26 A)
    regardless of the species being tested.
 
 4. The code supports the following NBCs:

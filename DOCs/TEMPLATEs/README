@@ -134,7 +134,7 @@ Alternatively use the `ediff' feature of the emacs editor.
 STEP 3
 
 You are now ready to create a new KIM-compliant Model based on the provided
-templates. 
+templates.
 
 The directions below show how to use the Fortran 90 template for a pair potential
 (model_El_P_Template.F90) and turn it into a Model for argon (Ar) using a
@@ -142,7 +142,7 @@ Buckingham potential.  (The procedure for a Model written in C is essentially
 identical. See comments below.)
 
 (a) Create a new directory under MODELs for the Ar pair potential:
- 
+
     % cd $KIM_DIR/MODELs
     % mkdir model_Ar_P_Buckingham
 
@@ -161,7 +161,7 @@ identical. See comments below.)
     changes are necessary.)  To edit a file on a unix machine, use for example:
 
     % pico model_Ar_P_Buckingham.kim
- 
+
 (d) Edit the .F90 (or .c) file making all necessary changes.  (Search for the
     word "FILL".)  The main changes are:
 
@@ -186,7 +186,7 @@ identical. See comments below.)
       standard.kim file.
 
     - Fill in the necessary code in the routines calc_phi() and calc_phi_dphi().
- 
+
     - Add any necessary initialization into the _init() routine.
 
 (e) Edit the Makefile and change the Model name appropriately.  (Search
@@ -196,7 +196,7 @@ identical. See comments below.)
 
     % cd $KIM_DIR
     % make
- 
+
     Correct any errors until the compilation succeeds.
 
 (g) You can now run Tests that are compatible with your Model simply by
@@ -219,9 +219,9 @@ even different parameterizations for the same material.
 The directions for using the supplied templates to create a new KIM-compliant
 Buckingham Model Driver and a Ne KIM Model based on it are given below.
 
-(a) Create a new directory under MODEL_DRIVERs for the Buckingham pair 
+(a) Create a new directory under MODEL_DRIVERs for the Buckingham pair
     potential Model Driver:
- 
+
     % cd $KIM_DIR/MODEL_DRIVERs
     % mkdir model_driver_P_Buckingham
 
@@ -236,11 +236,11 @@ Buckingham Model Driver and a Ne KIM Model based on it are given below.
     Note: For a Model written in C, copy the .c and .c.kim templates.
 
 (c) Edit the .kim file and define the parameters used by this Model Driver.
-    (Search for the word "FILL" which indicates where changes are necessary.)  
+    (Search for the word "FILL" which indicates where changes are necessary.)
     To edit a file on a unix machine, use for example:
 
     % pico model_driver_Buckingham.kim
- 
+
 (d) Edit the .F90 (or .c) file making all necessary changes.  (Search for the
     word "FILL".)  The main changes are:
 
@@ -250,9 +250,9 @@ Buckingham Model Driver and a Ne KIM Model based on it are given below.
 
     - Fill in the necessary code in the routines calc_phi() and calc_phi_dphi().
 
-    - Specify the format for reading in the parameter data (in Fortran 90 you can 
+    - Specify the format for reading in the parameter data (in Fortran 90 you can
       simply set this to `*'.)
- 
+
 (e) Edit the Makefile and change the Model name appropriately.  (Search
     for the word "FILL".)
 
@@ -260,7 +260,7 @@ Buckingham Model Driver and a Ne KIM Model based on it are given below.
 
     % cd $KIM_DIR
     % make
- 
+
     Correct any errors until the compilation succeeds.
 
 (g) Create a new directory under MODELs for the Ne pair potential:
@@ -290,10 +290,10 @@ Buckingham Model Driver and a Ne KIM Model based on it are given below.
 
 (l)  You can now run Tests that are compatible with your Model simply by
      giving your new Model name as an argument.
- 
+
      Note: If you run a Test and it does not seem to be working, remember to
            check the kim.log file for any messages.
- 
+
 
 *******************************************************************************
 

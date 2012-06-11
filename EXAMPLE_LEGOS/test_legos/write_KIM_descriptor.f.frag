@@ -31,7 +31,7 @@
 !
 !-------------------------------------------------------------------------------
 !
-!  Write KIM descriptor file for MiniMol for given NBC and set of 
+!  Write KIM descriptor file for MiniMol for given NBC and set of
 !  support species types
 !
 !-------------------------------------------------------------------------------

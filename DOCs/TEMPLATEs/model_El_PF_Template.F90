@@ -31,7 +31,7 @@
 !**
 !**  MODULE model_<FILL element name>_PF_<FILL model name>
 !**
-!**  <FILL model name> pair functional model for <FILL element name> 
+!**  <FILL model name> pair functional model for <FILL element name>
 !**
 !**  Reference: <FILL>
 !**
@@ -87,7 +87,7 @@ contains
 !-------------------------------------------------------------------------------
 subroutine calc_phi(r,phi)
 implicit none
-   
+
 !-- Transferred variables
 double precision, intent(in)  :: r
 double precision, intent(out) :: phi
@@ -98,7 +98,7 @@ double precision, intent(out) :: phi
 if (r .gt. model_cutoff) then
    ! Argument exceeds cutoff radius
    phi = 0.d0
-else 
+else
    phi = !<FILL functional form of phi(r)>
 endif
 
@@ -111,7 +111,7 @@ end subroutine calc_phi
 !-------------------------------------------------------------------------------
 subroutine calc_phi_dphi(r,phi,dphi)
 implicit none
-   
+
 !-- Transferred variables
 double precision, intent(in)  :: r
 double precision, intent(out) :: phi,dphi
@@ -123,7 +123,7 @@ if (r .gt. model_cutoff) then
    ! Argument exceeds cutoff radius
    phi    = 0.d0
    dphi   = 0.d0
-else 
+else
    phi  = !<FILL functional form of phi(r)>
    dphi = !<FILL functional form of dphi(r)>
 endif
@@ -137,7 +137,7 @@ end subroutine calc_phi_dphi
 !-------------------------------------------------------------------------------
 subroutine calc_g(r,g)
 implicit none
-   
+
 !-- Transferred variables
 double precision, intent(in)  :: r
 double precision, intent(out) :: g
@@ -148,7 +148,7 @@ double precision, intent(out) :: g
 if (r .gt. model_cutoff) then
    ! Argument exceeds cutoff radius
    g = 0.d0
-else 
+else
    g = !<FILL functional form of g(r)>
 endif
 
@@ -161,7 +161,7 @@ end subroutine calc_g
 !-------------------------------------------------------------------------------
 subroutine calc_dg(r,dg)
 implicit none
-   
+
 !-- Transferred variables
 double precision, intent(in)  :: r
 double precision, intent(out) :: dg
@@ -172,7 +172,7 @@ double precision, intent(out) :: dg
 if (r .gt. model_cutoff) then
    ! Argument exceeds cutoff radius
    dg = 0.d0
-else 
+else
    dg = !<FILL functional form of dg(r)>
 endif
 
@@ -630,7 +630,7 @@ end subroutine Compute_Energy_Forces
 !-------------------------------------------------------------------------------
 subroutine get_current_atom_neighbors(IterOrLoca,HalfOrFull,NBC,N,pkim,      &
                                       atom,numnei,pnei1atom,pRij_list,ier)
-implicit none 
+implicit none
 
 !-- Transferred variables
 integer,                  intent(in)    :: IterOrLoca

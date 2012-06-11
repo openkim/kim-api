@@ -106,7 +106,7 @@ extern "C" {
       param_file_names = NULL;
       if (KIM_STATUS_OK > ier) return ier;
 #endif
-      
+
       return KIM_STATUS_OK;
    }
 }
