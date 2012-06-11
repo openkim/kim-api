@@ -42,69 +42,33 @@ endif
 
 all: $(strip $(MODEL_NAME)).kim $(MODEL_BUILD_TARGET)
 
+species_num_list = $(strip $(shell cat $(KIM_MODELS_DIR)/$(strip $(MODEL_NAME))/Makefile | sed -e '/^SPECIES_\([0-9]\{3\}\)_NAME.*$$/!d' -e 's/^SPECIES_\([0-9]\{3\}\)_NAME.*$$/\1/'))
 
-hundred0 := $(shell i=1; while [ $$i -le 100 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
-#hundred1 := $(shell i=101; while [ $$i -le 200 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
-#hundred2 := $(shell i=201; while [ $$i -le 300 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
-#hundred3 := $(shell i=301; while [ $$i -le 400 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
-#hundred4 := $(shell i=401; while [ $$i -le 500 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
-#hundred5 := $(shell i=501; while [ $$i -le 600 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
-#hundred6 := $(shell i=601; while [ $$i -le 700 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
-#hundred7 := $(shell i=701; while [ $$i -le 800 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
-#hundred8 := $(shell i=801; while [ $$i -le 900 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
-#hundred9 := $(shell i=901; while [ $$i -le 999 ]; do printf '%3.3i ' $$i; i=$$(($$i + 1)); done)
-
-species_check =\
-  if ( test `grep -c SPECIES_$(num)_NAME_STR $(strip $(MODEL_NAME)).kim` == 0 ) then\
-     if ( test "$(SPECIES_$(num)_NAME)" != "" ) then\
-        echo && echo "*** SPECIES_$(num)_NAME is defined in Makefile, but SPECIES_$(num)_NAME_STR in not in $(strip $(MODEL_DRIVER_NAME)).kim. ***" && echo && false;\
-     fi;\
-  else\
-     if ( test "$(SPECIES_$(num)_NAME)" != "" ) then\
-        sed -i -e "s/SPECIES_$(num)_NAME_STR/$(SPECIES_$(num)_NAME)/g" $(strip $(MODEL_NAME)).kim; \
-     else\
-        sed -i -e '/^\s*SPECIES_$(num)_NAME_STR.*$$/d' $(strip $(MODEL_NAME)).kim; \
-     fi;\
-  fi &&
-
-paramfile_list =  $(strip $(foreach num,$(hundred0),$(PARAM_FILE_$(num)_NAME)))
-#paramfile_list += $(strip $(foreach num,$(hundred1),$(PARAM_FILE_$(num)_NAME)))
-#paramfile_list += $(strip $(foreach num,$(hundred2),$(PARAM_FILE_$(num)_NAME)))
-#paramfile_list += $(strip $(foreach num,$(hundred3),$(PARAM_FILE_$(num)_NAME)))
-#paramfile_list += $(strip $(foreach num,$(hundred4),$(PARAM_FILE_$(num)_NAME)))
-#paramfile_list += $(strip $(foreach num,$(hundred5),$(PARAM_FILE_$(num)_NAME)))
-#paramfile_list += $(strip $(foreach num,$(hundred6),$(PARAM_FILE_$(num)_NAME)))
-#paramfile_list += $(strip $(foreach num,$(hundred7),$(PARAM_FILE_$(num)_NAME)))
-#paramfile_list += $(strip $(foreach num,$(hundred8),$(PARAM_FILE_$(num)_NAME)))
-#paramfile_list += $(strip $(foreach num,$(hundred9),$(PARAM_FILE_$(num)_NAME)))
-
-num_paramfiles = $(words $(paramfile_list))
-paramfile_num_list := $(shell i=1; while [ $$i -le $(num_paramfiles) ]; do printf '%3i ' $$i; i=$$(($$i + 1)); done)
+paramfile_num_list =  $(strip $(shell cat $(KIM_MODELS_DIR)/$(strip $(MODEL_NAME))/Makefile | sed -e '/^PARAM_FILE_[0-9]\{3\}_NAME.*$$/!d' -e 's/^PARAM_FILE_\([0-9]\{3\}\)_NAME.*$$/\1/'))
+paramfile_name_list = $(strip $(foreach flnum,$(paramfile_num_list), $(PARAM_FILE_$(flnum)_NAME)))
+num_paramfiles = $(words $(paramfile_num_list))
 
 lc_MODEL_DRIVER_NAME := `echo $(strip $(MODEL_DRIVER_NAME)) | tr A-Z a-z`
 lc_MODEL_NAME        := `echo $(strip $(MODEL_NAME)) | tr A-Z a-z`
 
 $(MODEL_NAME).kim: $(KIM_MODEL_DRIVERS_DIR)/$(strip $(MODEL_DRIVER_NAME))/$(strip $(MODEL_DRIVER_NAME)).kim Makefile \
                    $(KIM_API_DIR)/Makefile.Model_Drivers
-	cat $(KIM_MODEL_DRIVERS_DIR)//$(strip $(MODEL_DRIVER_NAME))/$(strip $(MODEL_DRIVER_NAME)).kim | \
-        sed -e "s,MODEL_NAME_STR,$(strip $(MODEL_NAME)),g"                             > $(strip $(MODEL_NAME)).kim
-	@$(foreach num,$(hundred0),$(species_check)) true
-#	@$(foreach num,$(hundred1),$(species_check)) true
-#	@$(foreach num,$(hundred2),$(species_check)) true
-#	@$(foreach num,$(hundred3),$(species_check)) true
-#	@$(foreach num,$(hundred4),$(species_check)) true
-#	@$(foreach num,$(hundred5),$(species_check)) true
-#	@$(foreach num,$(hundred6),$(species_check)) true
-#	@$(foreach num,$(hundred7),$(species_check)) true
-#	@$(foreach num,$(hundred8),$(species_check)) true
-#	@$(foreach num,$(hundred9),$(species_check)) true
+	@$(foreach num,$(filter-out $(shell cat $(KIM_MODEL_DRIVERS_DIR)/$(strip $(MODEL_DRIVER_NAME))/$(strip $(MODEL_DRIVER_NAME)).kim | \
+                                      sed -e '/^SPECIES_\([0-9]\{3\}\)_NAME_STR.*$$/!d' -e 's/^SPECIES_\([0-9]\{3\}\)_NAME_STR.*$$/\1/'), \
+                                      $(species_num_list)),\
+           echo "*** SPECIES_$(num)_NAME is defined in Makefile, but SPECIES_$(num)_NAME_STR is not in $(strip $(MODEL_DRIVER_NAME)).kim. ***" && echo && false;)
+	cat $(KIM_MODEL_DRIVERS_DIR)/$(strip $(MODEL_DRIVER_NAME))/$(strip $(MODEL_DRIVER_NAME)).kim | \
+        sed -e "s,MODEL_NAME_STR,$(strip $(MODEL_NAME)),g"                                             \
+            $(foreach num,$(species_num_list),-e 's,SPECIES_$(num)_NAME_STR,$(SPECIES_$(num)_NAME),g') \
+            -e '/SPECIES_[0-9]\{3\}_NAME_STR/d' \
+        > $(strip $(MODEL_NAME)).kim
 
-$(strip $(MODEL_NAME)).cpp: $(KIM_API_DIR)/model_based_on_driver.cpp $(paramfile_list) Makefile \
+$(strip $(MODEL_NAME)).cpp: $(KIM_API_DIR)/model_based_on_driver.cpp $(paramfile_name_list) Makefile \
                    $(KIM_API_DIR)/Makefile.Model_Drivers
 	cat /dev/null > $(strip $(MODEL_NAME)).cpp
 	@$(foreach flnum,$(paramfile_num_list),\
           echo "static char paramfile_$(flnum)[] ="                             >> $(strip $(MODEL_NAME)).cpp && \
-          cat $(word $(flnum),$(paramfile_list)) | tr -d '\r' | \
+          cat $(PARAM_FILE_$(flnum)_NAME) | tr -d '\r' | \
           sed -e 's,\\,\\\\,g'     \
               -e 's,",\\",g'       \
               -e 's,^,      ",g'   \

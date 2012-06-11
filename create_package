@@ -74,7 +74,10 @@ rm -f 'DOCs/openkim-api-introduction.pptx'
 rm -f `find . -name ".gitignore"`
 
 for fl in `grep -l -r "openkim-api\.git repository" *`; do
-   sed -e "s/openkim-api\.git repository/$packagename package/g" -i $fl;
+   ed $fl <<EOF
+,s/openkim-api\.git repository/$packagename package/g
+w
+EOF
 done
 
 cd ..
