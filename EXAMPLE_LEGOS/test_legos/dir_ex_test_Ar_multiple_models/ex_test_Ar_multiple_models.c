@@ -137,47 +137,47 @@ int main()
 
    /* Register memory */
    KIM_API_setm_data(pkim_periodic_model_0, &status, 8*4,
-                     "numberOfParticles",           1,   &numberOfParticles_periodic,     1,
-                     "numberParticleTypes",         1,   &numberParticleTypes,            1,
-                     "particleTypes",               1,   &particleTypes_periodic_model_0, 1,
-                     "coordinates",                 DIM, coords_periodic,                 1,
-                     "get_neigh",                   1,   &get_periodic_neigh,             1,
-                     "neighObject",                 1,   &nl_periodic_model_0,            1,
-                     "cutoff",                      1,   &cutoff_periodic_model_0,        1,
-                     "energy",                      1,   &energy_periodic_model_0,        1);
+    "numberOfParticles",           1,                              &numberOfParticles_periodic,     1,
+    "numberParticleTypes",         1,                              &numberParticleTypes,            1,
+    "particleTypes",               1,                              &particleTypes_periodic_model_0, 1,
+    "coordinates",                 DIM*numberOfParticles_periodic, coords_periodic,                 1,
+    "get_neigh",                   1,                              &get_periodic_neigh,             1,
+    "neighObject",                 1,                              &nl_periodic_model_0,            1,
+    "cutoff",                      1,                              &cutoff_periodic_model_0,        1,
+    "energy",                      1,                              &energy_periodic_model_0,        1);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data",status);
 
    KIM_API_setm_data(pkim_periodic_model_1, &status, 8*4,
-                     "numberOfParticles",           1,   &numberOfParticles_periodic,     1,
-                     "numberParticleTypes",         1,   &numberParticleTypes,            1,
-                     "particleTypes",               1,   &particleTypes_periodic_model_1, 1,
-                     "coordinates",                 DIM, coords_periodic,                 1,
-                     "get_neigh",                   1,   &get_periodic_neigh,             1,
-                     "neighObject",                 1,   &nl_periodic_model_1,            1,
-                     "cutoff",                      1,   &cutoff_periodic_model_1,        1,
-                     "energy",                      1,   &energy_periodic_model_1,        1);
+    "numberOfParticles",           1,                              &numberOfParticles_periodic,     1,
+    "numberParticleTypes",         1,                              &numberParticleTypes,            1,
+    "particleTypes",               1,                              &particleTypes_periodic_model_1, 1,
+    "coordinates",                 DIM*numberOfParticles_periodic, coords_periodic,                 1,
+    "get_neigh",                   1,                              &get_periodic_neigh,             1,
+    "neighObject",                 1,                              &nl_periodic_model_1,            1,
+    "cutoff",                      1,                              &cutoff_periodic_model_1,        1,
+    "energy",                      1,                              &energy_periodic_model_1,        1);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data",status);
 
    KIM_API_setm_data(pkim_cluster_model_0, &status, 8*4,
-                     "numberOfParticles",           1,   &numberOfParticles_cluster,     1,
-                     "numberParticleTypes",         1,   &numberParticleTypes,           1,
-                     "particleTypes",               1,   &particleTypes_cluster_model_0, 1,
-                     "coordinates",                 DIM, coords_cluster,                 1,
-                     "get_neigh",                   1,   &get_cluster_neigh,             1,
-                     "neighObject",                 1,   &nl_cluster_model_0,            1,
-                     "cutoff",                      1,   &cutoff_cluster_model_0,        1,
-                     "energy",                      1,   &energy_cluster_model_0,        1);
+    "numberOfParticles",           1,                             &numberOfParticles_cluster,     1,
+    "numberParticleTypes",         1,                             &numberParticleTypes,           1,
+    "particleTypes",               1,                             &particleTypes_cluster_model_0, 1,
+    "coordinates",                 DIM*numberOfParticles_cluster, coords_cluster,                 1,
+    "get_neigh",                   1,                             &get_cluster_neigh,             1,
+    "neighObject",                 1,                             &nl_cluster_model_0,            1,
+    "cutoff",                      1,                             &cutoff_cluster_model_0,        1,
+    "energy",                      1,                             &energy_cluster_model_0,        1);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data",status);
 
    KIM_API_setm_data(pkim_cluster_model_1, &status, 8*4,
-                     "numberOfParticles",             1,   &numberOfParticles_cluster,     1,
-                     "numberParticleTypes",           1,   &numberParticleTypes,           1,
-                     "particleTypes",                 1,   &particleTypes_cluster_model_1, 1,
-                     "coordinates",                   DIM, coords_cluster,                 1,
-                     "get_neigh",                     1,   &get_cluster_neigh,             1,
-                     "neighObject",                   1,   &nl_cluster_model_1,            1,
-                     "cutoff",                        1,   &cutoff_cluster_model_1,        1,
-                     "energy",                        1,   &energy_cluster_model_1,        1);
+    "numberOfParticles",             1,                             &numberOfParticles_cluster,     1,
+    "numberParticleTypes",           1,                             &numberParticleTypes,           1,
+    "particleTypes",                 1,                             &particleTypes_cluster_model_1, 1,
+    "coordinates",                   DIM*numberOfParticles_cluster, coords_cluster,                 1,
+    "get_neigh",                     1,                             &get_cluster_neigh,             1,
+    "neighObject",                   1,                             &nl_cluster_model_1,            1,
+    "cutoff",                        1,                             &cutoff_cluster_model_1,        1,
+    "energy",                        1,                             &energy_cluster_model_1,        1);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data",status);
 
    /* call model init routines */
