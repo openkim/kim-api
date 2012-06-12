@@ -37,9 +37,9 @@
 
 include $(KIM_DIR)/KIM_API/Include.mk
 
-MODEL_DRIVERS_LIST = $(notdir $(filter-out $(shell if [[ -e $(KIM_MODEL_DRIVERS_DIR)/.kimignore ]]; then cat $(KIM_MODEL_DRIVERS_DIR)/.kimignore;fi;),$(filter-out .%,$(shell find $(KIM_MODEL_DRIVERS_DIR)/ -maxdepth 1 -mindepth 1 -type d -exec basename {} \;))))
-MODELS_LIST = $(notdir $(filter-out $(shell if [[ -e $(KIM_MODELS_DIR)/.kimignore ]]; then cat $(KIM_MODELS_DIR)/.kimignore;fi;),$(filter-out .%,$(shell find $(KIM_MODELS_DIR)/ -maxdepth 1 -mindepth 1 -type d -exec basename {} \;))))
-TESTS_LIST  = $(notdir $(filter-out $(shell if [[ -e $(KIM_TESTS_DIR)/.kimignore ]]; then cat $(KIM_TESTS_DIR)/.kimignore;fi;),$(filter-out .%,$(shell find $(KIM_TESTS_DIR)/ -maxdepth 1 -mindepth 1 -type d -exec basename {} \;))))
+MODEL_DRIVERS_LIST = $(notdir $(filter-out $(shell if test -e "$(KIM_MODEL_DRIVERS_DIR)/.kimignore"; then cat "$(KIM_MODEL_DRIVERS_DIR)/.kimignore";fi;),$(filter-out .%,$(shell find "$(KIM_MODEL_DRIVERS_DIR)/" -maxdepth 1 -mindepth 1 -type d -exec basename {} \;))))
+MODELS_LIST = $(notdir $(filter-out $(shell if test -e "$(KIM_MODELS_DIR)/.kimignore"; then cat "$(KIM_MODELS_DIR)/.kimignore";fi;),$(filter-out .%,$(shell find "$(KIM_MODELS_DIR)/" -maxdepth 1 -mindepth 1 -type d -exec basename {} \;))))
+TESTS_LIST  = $(notdir $(filter-out $(shell if test -e "$(KIM_TESTS_DIR)/.kimignore"; then cat "$(KIM_TESTS_DIR)/.kimignore";fi;),$(filter-out .%,$(shell find "$(KIM_TESTS_DIR)/" -maxdepth 1 -mindepth 1 -type d -exec basename {} \;))))
 
 .PHONY: all lib openkim-api examples examples-all examples-force clean clean-examples \
         kim-api-all kim-api-lib kim-api-clean                                         \

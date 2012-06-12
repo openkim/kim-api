@@ -37,7 +37,7 @@ include Include.mk
 
 
 # create list of models
-MODELS_TARGETS := $(addprefix ., $(addsuffix .make-temp, $(filter-out $(shell if test -e $(KIM_MODELS_DIR)/.kimignore; then cat $(KIM_MODELS_DIR)/.kimignore;fi;),$(filter-out .%,$(shell find $(KIM_MODELS_DIR)/ -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)))))
+MODELS_TARGETS := $(addprefix ., $(addsuffix .make-temp, $(filter-out $(shell if test -e "$(KIM_MODELS_DIR)/.kimignore"; then cat "$(KIM_MODELS_DIR)/.kimignore";fi;),$(filter-out .%,$(shell find "$(KIM_MODELS_DIR)/" -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)))))
 # create list of models that have been deleted from the $(KIM_MODELS_DIR)/ since the last time make was executed
 DELETED_MODELS_TARGETS := $(filter-out $(MODELS_TARGETS), $(shell find . -name ".*.make-temp" -exec basename {} \;))
 # If there are deleted models, remove files and touch .models-deleted to force a reconfigure
