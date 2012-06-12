@@ -87,7 +87,7 @@ libkim.so:  libkim.a
 endif
 
 
-KIM_API.o: model_init_include.h model_init_include.cpp model_kim_str_include.cpp KIM_API.h KIM_API.cpp KIM_AUX.h Makefile
+KIM_API.o: $(if $(strip $(KIM_DYNAMIC)),,model_init_include.h model_init_include.cpp model_kim_str_include.cpp) KIM_API.h KIM_API.cpp KIM_AUX.h Makefile
 
 KIM_API_C.o: KIM_API.h KIM_API_C.h Makefile
 

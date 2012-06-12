@@ -153,7 +153,7 @@ $(patsubst %,%-clean,$(TESTS_LIST)):
 	@echo
 
 models_check:
-	@if [[ "$(MODELS_LIST)" == "" && "$(KIM_DYNAMIC)" == "" ]]; then \
+	@if test \(X"$(MODELS_LIST)" = X""\) -a \(X"$(KIM_DYNAMIC)" = X""\); then \
         echo "*************************************************************************"; \
         echo "*******  Can't compile the API for static linking with no Models  *******"; \
         echo "*******           Maybe you want to do 'make examples'            *******"; \
