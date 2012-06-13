@@ -68,20 +68,19 @@ static void strip_char_string(char* nm)
    }
 }
 
-static void read_file_to_stringstream(char* infile, stringstream& ss)
+static bool read_file_to_stringstream(char* infile, stringstream& ss)
 {
    ifstream myfile;
    myfile.open(infile);
    if(!myfile){
       cout<<"* Error (read_file_to_stringstream): can not open file :"<<infile<<":"<<endl;
-      KIM_API_model::fatal_error_print();
-      exit(327);
+      return false;
    }
 
    ss << myfile.rdbuf();
    myfile.close();
 
-   return;
+   return true;
 }
 
 //#define intptr_t int  // for 32 bit machines
@@ -304,14 +303,14 @@ istream &operator>>(istream &stream, KIM_IOline &a){
         if(stream.fail() && !stream.eof()){
            cerr << "* Error (operator>> KIM_IOline): Input line in .kim file longer than KIM_LINE_LENGTH (default 512) characters.\n"
                 << "         The line is: `"
-                << inputline << "'" << "\nExiting..." << endl;
-           KIM_API_model::fatal_error_print();
-           exit(-2);
-        }
-        if(a.getFields(inputline)){
-                a.goodformat=true;
+                << inputline << "'";
+           a.goodformat=false;
         }else{
-                a.goodformat=false;
+           if(a.getFields(inputline)){
+              a.goodformat=true;
+           }else{
+              a.goodformat=false;
+           }
         }
         return stream;
 }
@@ -359,7 +358,8 @@ bool IOline:: getFields(const char *inputString){
                 return true;
 }
 
-int IOline::readlines_str(char* instrn, IOline** inlines){
+int IOline::readlines_str(char* instrn, IOline** inlines, bool& success){
+   success = true;
     int counter=0;
         IOline inlne;
         *inlines=NULL;
@@ -369,8 +369,8 @@ int IOline::readlines_str(char* instrn, IOline** inlines){
          if(!myfile){
              cout<<"* Error (IOline::readlines_str): can not parse instrn."<<endl
                  <<"        Offending line is: `" << in_instrn << "'" << endl;
-             KIM_API_model::fatal_error_print();
-             exit(327);
+             success = false;
+             return -1;
          }
         myfile.seekp(stringstream::beg);
           while(!myfile.eof()){
@@ -422,7 +422,7 @@ KIMBaseElement:: KIMBaseElement(){
 KIMBaseElement::~KIMBaseElement(){
 
 }
-void KIMBaseElement:: init(char *nm,char * tp,intptr_t sz, intptr_t rnk, int *shp,void * pdata){
+bool KIMBaseElement:: init(char *nm,char * tp,intptr_t sz, intptr_t rnk, int *shp,void * pdata){
             flag = new KIMBaseElementFlag;
 
             unit = new KIMBaseElementUnit;
@@ -435,8 +435,7 @@ void KIMBaseElement:: init(char *nm,char * tp,intptr_t sz, intptr_t rnk, int *sh
 
             if(rnk < 0) {
                 cout << "* Error (KIMBaseElement::init): KIMBaseElement_init:rnk < 0"<<endl;
-                KIM_API_model::fatal_error_print();
-                exit (113);
+                return false;
             }
             size = sz;
             rank = rnk;
@@ -453,8 +452,7 @@ void KIMBaseElement:: init(char *nm,char * tp,intptr_t sz, intptr_t rnk, int *sh
                 shape = new int[rank];
                 if (shp == NULL) {
                   cout << "* Error (KIMBaseElement::init): KIMBaseElement_init:shp==NULL"<<endl;
-                  KIM_API_model::fatal_error_print();
-                  exit (114);
+                  return false;
                 }
                 for (int i=0;i<rank;i++) shape[i]=shp[i];
             }
@@ -465,18 +463,23 @@ void KIMBaseElement:: init(char *nm,char * tp,intptr_t sz, intptr_t rnk, int *sh
             flag->freeable = 1;
             if(sz==0) flag->freeable = 0;
             flag->calculate = 1;
+
+            return true;
 }
-void KIMBaseElement::init(char *nm,char * tp,intptr_t sz, intptr_t rnk, int *shp){
-            int szelement=getelemsize(tp);
+bool KIMBaseElement::init(char *nm,char * tp,intptr_t sz, intptr_t rnk, int *shp){
+            bool getelemsize_success;
+            int szelement=getelemsize(tp, getelemsize_success);
+            if (! getelemsize_success) return false;
             char *data = NULL;
 
             if(sz>0) data=new char[szelement*sz];
 
-            init(nm, tp,sz, rnk, shp,&data);
+            if (!init(nm, tp,sz, rnk, shp,&data)) return false;
 
             if (sz>0) flag->freeable=0;
 
             ptrptr=NULL;
+            return true;
 }
 void KIMBaseElement::free(){
              if(flag!=NULL) if (flag->freeable == 0){
@@ -533,7 +536,8 @@ bool KIMBaseElement::equiv(KIM_IOline& kimioline, bool skip_specials){
    return false;
 }
 
-int KIMBaseElement::getelemsize(char *tp){
+int KIMBaseElement::getelemsize(char *tp, bool& success){
+            success = true;
             char realkey[KIM_KEY_STRING_LENGTH]="real";      //key defenitions
             char real8key[KIM_KEY_STRING_LENGTH]="real*8";
             char integerkey[KIM_KEY_STRING_LENGTH]="integer";
@@ -561,8 +565,8 @@ int KIMBaseElement::getelemsize(char *tp){
                     << "         `" << tp <<"' is not one of: " << realkey << ", "
                     << real8key << ", " << integerkey << ", " << ptrkey << ", "
                     << integer8key << ", " << flagkey << endl;
-            KIM_API_model::fatal_error_print();
-            exit(102);
+               success = false;
+               return -1;
             }
 }
 
@@ -722,13 +726,13 @@ KIM_API_model:: ~KIM_API_model(){
 }
 bool KIM_API_model:: preinit(char * initfile,char *modelname){
    stringstream buffer;
-   read_file_to_stringstream(initfile, buffer);
+   if (!read_file_to_stringstream(initfile, buffer)) return false;
 
    return prestring_init((char*) buffer.str().c_str());
  }
 
 bool KIM_API_model::prestring_init(char *instrn){
-        read_file_str(instrn,&inlines,&numlines);
+        if (!read_file_str(instrn,&inlines,&numlines)) return false;
 
 
         int *shape=NULL;
@@ -787,7 +791,9 @@ bool KIM_API_model::prestring_init(char *instrn){
 
         //extra input like unitFixed flag and,later may be, authors
         IOline *extrainput;
-        int nextra = IOline::readlines_str(instrn,&extrainput);
+        bool readlines_str_success;
+        int nextra = IOline::readlines_str(instrn,&extrainput, readlines_str_success);
+        if (!readlines_str_success) return false;
         for (int i=0;i<nextra;i++){
             if(strcmp(extrainput[i].name,"TEST_NAME")==0){
                 strcpy(this->model.name,extrainput[i].value);
@@ -985,7 +991,7 @@ KIMBaseElement & KIM_API_model::operator[](char *nm){
         return *pel[ind];
 }
 
-void KIM_API_model::read_file_str(char* strstream, KIM_IOline** lns, int* numlns){
+bool KIM_API_model::read_file_str(char* strstream, KIM_IOline** lns, int* numlns){
         int counter=0;
         KIM_IOline inln;
 
@@ -995,8 +1001,7 @@ void KIM_API_model::read_file_str(char* strstream, KIM_IOline** lns, int* numlns
         stringstream myfile1 (in_strstream, stringstream::in|stringstream::out);
         if(!myfile){
             cout<<"* Error (KIM_API_model::read_file_str): can not access KIM descriptor file as input string."<<endl;
-            KIM_API_model::fatal_error_print();
-            exit (327);
+            return false;
         }
 
 
@@ -1024,6 +1029,7 @@ void KIM_API_model::read_file_str(char* strstream, KIM_IOline** lns, int* numlns
                 }
         }
 
+        return true;
 }
 
 bool KIM_API_model::is_it_match(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns, bool ignore_optional, bool match_regular){
@@ -1352,7 +1358,7 @@ char * KIM_API_model::get_model_kim_str(char* modelname,int * kimerr){
 
     if (in_mdlstr == NULL){
        cout<<"* Error (KIM_API_model::get_model_kim_str): Unknown KIM Model name " << modelname << "." << endl;
-        exit(367);
+       return NULL;
     }
      //redirecting back to > cout
     cout.rdbuf(backup); filekimlog.close();
@@ -1386,7 +1392,7 @@ char * KIM_API_model::get_model_kim_str(char* modelname,int * kimerr){
 
           //redirecting back to > cout
           cout.rdbuf(backup); filekimlog.close();
-         return false;
+         return NULL;
     }
 
     typedef char* (*Model_kim_str)(void);
@@ -1399,7 +1405,7 @@ char * KIM_API_model::get_model_kim_str(char* modelname,int * kimerr){
         //redirecting back to > cout
         cout.rdbuf(backup); filekimlog.close();
 
-        return false;
+        return NULL;
     }
 
     char * in_mdlstr=NULL;
@@ -1408,7 +1414,7 @@ char * KIM_API_model::get_model_kim_str(char* modelname,int * kimerr){
 
     if (in_mdlstr == NULL){
         cout<<"* Error (KIM_API_get_model_kim_str: Unknown KIM Model name " << modelname << "." << endl;
-        exit(367);
+        return NULL;
     }
 
     char* str_cpy = (char*) malloc(strlen(in_mdlstr)+1);
@@ -1473,7 +1479,7 @@ bool KIM_API_model::init_str_modelname(char* testname, char* inmdlstr){
     if (is_it_match(test,mdl)){
         this->prestring_init(inmdlstr);
         this->unit_h=test.unit_h;
-        this->irrelevantVars2donotcompute(test,*this);
+        if (!(this->irrelevantVars2donotcompute(test,*this))) return false;
         for (int i=0;i<this->nAtomsTypes;++i) {
            this->AtomsTypes[i].requestedByTest = mdl.AtomsTypes[i].requestedByTest;
         }
@@ -1486,7 +1492,7 @@ bool KIM_API_model::init_str_modelname(char* testname, char* inmdlstr){
         char computestr [] = "compute";
         compute_index = get_index(computestr, &error);
         get_neigh_index = get_index("get_neigh", &error);
-        this->fij_related_things_add_set_index();
+        if (!(this->fij_related_things_add_set_index())) return false;
         support_Rij=false;
         if (strcmp(NBC_method_current,"NEIGH_RVEC_F")==0) support_Rij=true;
 
@@ -1546,7 +1552,7 @@ bool KIM_API_model::string_init(char* in_tststr, char* modelname){
     if (is_it_match(test,mdl)){
         this->prestring_init(in_mdlstr);
         this->unit_h=test.unit_h;
-        this->irrelevantVars2donotcompute(test,*this);
+        if (!(this->irrelevantVars2donotcompute(test,*this))) return false;
         for (int i=0;i<this->nAtomsTypes;++i) {
            this->AtomsTypes[i].requestedByTest = mdl.AtomsTypes[i].requestedByTest;
         }
@@ -1559,7 +1565,7 @@ bool KIM_API_model::string_init(char* in_tststr, char* modelname){
         char computestr [] = "compute";
         compute_index = get_index(computestr, &error);
         get_neigh_index = get_index("get_neigh", &error);
-        this->fij_related_things_add_set_index();
+        if (!(this->fij_related_things_add_set_index())) return false;
         support_Rij=false;
         if (strcmp(NBC_method_current,"NEIGH_RVEC_F")==0) support_Rij=true;
 
@@ -1781,11 +1787,10 @@ int KIM_API_model::get_neigh(int mode, int request, int *atom,
     }
 }
 
-void KIM_API_model::irrelevantVars2donotcompute(KIM_API_model & test, KIM_API_model & mdl){
+bool KIM_API_model::irrelevantVars2donotcompute(KIM_API_model & test, KIM_API_model & mdl){
    if(! is_it_match_noFlagCount(test,mdl.inlines,mdl.numlines,false)) {
         cout<<"* Error (KIM_API_model::irrelevantVars2donotcompute): Test and Model descriptor files are incompatible (do not match)."<<endl;
-        KIM_API_model::fatal_error_print();
-        exit(133);
+        return false;
     }
     for(int i=0; i<mdl.numlines;i++){
         if(mdl.inlines[i].isitoptional()) {
@@ -1795,6 +1800,8 @@ void KIM_API_model::irrelevantVars2donotcompute(KIM_API_model & test, KIM_API_mo
             }
         }
     }
+
+    return true;
 }
 
 void KIM_API_model::allocate( int natoms, int ntypes, int * error){
@@ -1925,7 +1932,6 @@ char * KIM_API_model::get_test_partcl_typs(int* nATypes, int* error){
     }
     *error =KIM_STATUS_OK;//success
     return  listatypes;
-   exit(-1);
 }
 char * KIM_API_model::get_NBC_method(int* error){
     *error=KIM_STATUS_FAIL;
@@ -2279,7 +2285,7 @@ bool KIM_API_model::fij_related_things_match(KIM_API_model& test, KIM_API_model&
 
 }
 
-void KIM_API_model::add_element(char* instring){
+bool KIM_API_model::add_element(char* instring){
         KIM_IOline inln;
 
 
@@ -2288,8 +2294,7 @@ void KIM_API_model::add_element(char* instring){
         stringstream myfile (in_strstream, stringstream::in|stringstream::out);
         if(!myfile){
             cout<<"* Error (KIM_API_model::add_element): can not access input string."<<endl;
-            KIM_API_model::fatal_error_print();
-            exit (329);
+            return false;
         }
 
         myfile.seekp(stringstream::beg);//set to the begining
@@ -2298,8 +2303,7 @@ void KIM_API_model::add_element(char* instring){
             this->inlines[numlines]=inln;
         }else{
             cout<<"* Error (KIM_API_model::add_element): bad format input string."<<endl;
-            KIM_API_model::fatal_error_print();
-            exit (330);
+            return false;
         }
 
         int *shape=NULL;
@@ -2322,24 +2326,26 @@ void KIM_API_model::add_element(char* instring){
 
         numlines ++;
         model.size++;
+
+        return true;
 }
 
-void KIM_API_model::fij_related_things_add_set_index(){
+bool KIM_API_model::fij_related_things_add_set_index(){
     //add part
     if(virial_need2add){
         char instr[512] = "virial            real*8       pressure     ";
         strcat(instr,"    [6]           # automatically generated");
-        this->add_element(instr);
+        if (!(this->add_element(instr))) return false;
     }
     if(particleVirial_need2add){
         char instr[512] = "particleVirial            real*8       pressure     ";
         strcat(instr,"    [numberOfParticles,6]           # automatically generated");
-        this->add_element(instr);
+        if (!(this->add_element(instr))) return false;
     }
     if(hessian_need2add){
         char instr[512] = "hessian            real*8       pressure     ";
         strcat(instr,"    [numberOfParticles,numberOfParticles,3,3]     # automatically generated");
-        this->add_element(instr);
+        if (!(this->add_element(instr))) return false;
     }
 
 
@@ -2359,6 +2365,8 @@ void KIM_API_model::fij_related_things_add_set_index(){
     // Set calculate flags for process_* if the Test is doing the computations.
     if (test_doing_process_dEdr) (*this)[process_dEdr_ind].flag->calculate=1;
     if (test_doing_process_d2Edr2) (*this)[process_d2Edr2_ind].flag->calculate=1;
+
+    return true;
 }
 void KIM_API_model::process_dEdr(KIM_API_model** ppkim, double* dE, double* r,
         double** dx,int *i, int *j, int* ier){

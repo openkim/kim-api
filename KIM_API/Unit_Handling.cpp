@@ -254,7 +254,9 @@ bool Unit_Handling::is_it_Unit_time(char* unit,int *index){
 void Unit_Handling::init_str(char* inputstr, int* error){
     *error = KIM_STATUS_FAIL;
     IOline * IOlines=NULL;
-    int nlines = IOline::readlines_str(inputstr,&IOlines);
+    bool readlines_str_success;
+    int nlines = IOline::readlines_str(inputstr,&IOlines,readlines_str_success);
+    if (!readlines_str_success) return;
     this->check_base_set_flexible(IOlines,nlines,error);
     if (IOlines!= NULL) delete [] IOlines;
     return;

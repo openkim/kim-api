@@ -144,7 +144,7 @@ public:
         void strip(char *nm);
         IOline();
         bool getFields(const char *inputString);
-        static int readlines_str(char * inputstr, IOline ** lines);
+        static int readlines_str(char * inputstr, IOline ** lines, bool& success);
 }; //secondary input line handler //cout<<"SystemOfUnit:  file:"<<infile<<":"<<endl;
 ostream &operator<<(ostream &stream, IOline a);
 istream &operator>>(istream &stream, IOline &a);
@@ -164,13 +164,13 @@ public:
         void *reserved;
         KIMBaseElement();
         ~KIMBaseElement();
-        void init(char *nm,char * tp,intptr_t sz, intptr_t rnk, int *shp,void * pdata);
-        void init(char *nm,char * tp,intptr_t sz, intptr_t rnk, int *shp);
+        bool init(char *nm,char * tp,intptr_t sz, intptr_t rnk, int *shp,void * pdata);
+        bool init(char *nm,char * tp,intptr_t sz, intptr_t rnk, int *shp);
         void free();
         void nullify();
         bool equiv(KIM_IOline& kimioline, bool skip_specials);
 
-static  int getelemsize(char *tp);
+static  int getelemsize(char *tp, bool& success);
 };
 ostream &operator<<(ostream &stream, KIMBaseElement a);
 
@@ -368,9 +368,9 @@ private:
     bool preinit(char * modelname);
     bool prestring_init(char * instrn);
     bool init_str_modelname(char *testname,char *inmdlstr);
-    static   void read_file_str(char * strstream,KIM_IOline ** lns, int * numlns );
+    static   bool read_file_str(char * strstream,KIM_IOline ** lns, int * numlns );
 
-    static void irrelevantVars2donotcompute(KIM_API_model & test, KIM_API_model & mdl);
+    static bool irrelevantVars2donotcompute(KIM_API_model & test, KIM_API_model & mdl);
     bool check_consistance_NBC_method();
     static bool is_it_match(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns, bool ignore_optional, bool match_regular);
     static bool is_it_match_noFlagCount(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns, bool ignore_optional);
@@ -386,14 +386,14 @@ private:
     char NBC_method_current[KIM_KEY_STRING_LENGTH];
     bool NBC_methods_match(KIM_API_model &test,KIM_API_model &mdl);
     bool fij_related_things_match(KIM_API_model &test,KIM_API_model &mdl);
-    void fij_related_things_add_set_index();
+    bool fij_related_things_add_set_index();
     void add_auxiliaries_if_needed();
     bool init_AtomsTypes();
     bool do_flag_match(KIM_API_model & tst, KIM_API_model &mdl);
     bool is_it_in_and_is_it_flag(KIM_API_model &mdl,char *name);
     bool is_it_in(KIM_API_model &mdl,char *name);
     void * model_lib_handle;
-    void add_element(char * inln);
+    bool add_element(char * inln);
 
 
 };
