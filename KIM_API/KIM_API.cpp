@@ -991,15 +991,6 @@ KIMBaseElement & KIM_API_model::operator[](char *nm){
         return *pel[ind];
 }
 
-void KIM_API_model::read_file(char * initfile,KIM_IOline ** lns, int * numlns){
-   stringstream buffer;
-   read_file_to_stringstream(initfile, buffer);
-
-   read_file_str((char*) buffer.str().c_str(), lns, numlns);
-
-   return;
-}
-
 void KIM_API_model::read_file_str(char* strstream, KIM_IOline** lns, int* numlns){
         int counter=0;
         KIM_IOline inln;

@@ -369,7 +369,6 @@ private:
     bool preinit(char * modelname);
     bool prestring_init(char * instrn);
     bool init_str_modelname(char *testname,char *inmdlstr);
-    static   void read_file(char * initfile,KIM_IOline ** lns, int * numlns);
     static   void read_file_str(char * strstream,KIM_IOline ** lns, int * numlns );
 
     static void irrelevantVars2donotcompute(KIM_API_model & test, KIM_API_model & mdl);
