@@ -157,12 +157,6 @@ bool KIM_IOline:: getFields(char *inString){
                 strcat(shape,tmp);
                 strcat(shape,"]");
                 return true;
-            }else if(strcmp(type,"flex")==0){
-                //cout<<"KIM_IOline::getFields:flex type for preprocessor only..."<<endl;
-                cout<<"* Error (KIM_IOline::getFields): Particle name `flex' in SUPPORTED_ATOM/PARTICLES_TYPES section is only supported by the KIM Processing Pipeline."<<endl;
-                KIM_API_model::fatal_error_print();
-                exit (333);
-                //return false;
             }
 
             tmp = strtok(NULL," \t");if(tmp == NULL) return false;
