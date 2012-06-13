@@ -145,7 +145,6 @@ public:
         IOline();
         bool getFields(const char *inputString);
         static int readlines_str(char * inputstr, IOline ** lines);
-        static int  readlines(char * infile, IOline **inlines);
 }; //secondary input line handler //cout<<"SystemOfUnit:  file:"<<infile<<":"<<endl;
 ostream &operator<<(ostream &stream, IOline a);
 istream &operator>>(istream &stream, IOline &a);

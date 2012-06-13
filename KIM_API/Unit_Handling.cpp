@@ -259,14 +259,6 @@ void Unit_Handling::init_str(char* inputstr, int* error){
     if (IOlines!= NULL) delete [] IOlines;
     return;
 }
-void Unit_Handling::init(char* inputstr, int* error){
-    *error = KIM_STATUS_FAIL;
-    IOline * IOlines=NULL;
-    int nlines = IOline::readlines(inputstr,&IOlines);
-    this->check_base_set_flexible(IOlines,nlines,error);
-    if (IOlines!= NULL) delete [] IOlines;
-    return;
-}
 bool Unit_Handling::is_it_base(char* unit){
     bool result = false;
     for(int i=0;i<nbase_list;i++){

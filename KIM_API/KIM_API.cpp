@@ -358,12 +358,6 @@ bool IOline:: getFields(const char *inputString){
 
                 return true;
 }
-int  IOline::readlines(char * infile, IOline **inlines){
-   stringstream buffer;
-   read_file_to_stringstream(infile, buffer);
-
-   return readlines_str((char*) buffer.str().c_str(), inlines);
-}
 
 int IOline::readlines_str(char* instrn, IOline** inlines){
     int counter=0;

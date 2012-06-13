@@ -43,7 +43,6 @@ public:
     Unit_Handling();
     ~Unit_Handling();
     void init_str(char * inputstr, int * error);
-    void init(char *inputfile, int * error);
     static double get_scale_conversion( char *u_from,char *u_to, int *error);
     static bool is_it_base(char * unit);
     static bool is_it_derived(char * unit);
