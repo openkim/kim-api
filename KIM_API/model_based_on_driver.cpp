@@ -94,6 +94,9 @@ extern "C" {
       }
       int ier = 0;
       ier = (*drvr_init)(km, param_file_names, &nmstrlen, &numparamfiles);
+      for (int i=0; i<numparamfiles; ++i) {
+         remove(&(param_file_names[i*(L_tmpnam+1)]));
+      }
       delete [] param_file_names;
       param_file_names = NULL;
       if (KIM_STATUS_OK > ier) return ier;
