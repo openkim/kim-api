@@ -160,16 +160,6 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
          default method.
 
 
-7. The openkim-api package provides wrapper routines for accessing the neighbor
-   list object.  These routines check to ensure that the maximum number of
-   neighbors for an atom does not exceed KIM_API_MAX_NEIGHBORS.  If this
-   environment variable is not set, the default value is 512.  To change the
-   value of this parameter at compile time, for example, to 1024 (or any other
-   value) use the command:
-
-   bash:
-   % export KIM_API_MAX_NEIGHBORS=1024
-
 Once the installation is successfully completed, read the README file in
 the DOCs directory for a step-by-step guide to learning the openKIM API.
 

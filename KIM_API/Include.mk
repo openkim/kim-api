@@ -83,11 +83,6 @@ CPPFLAG += -D $(MACHINESYSTEM)
 # directory where the kim.log file should be created
 # CPPFLAG += -D KIM_DIR=\"$(KIM_DIR)/\"
 
-# Set max neighbors
-ifdef KIM_API_MAX_NEIGHBORS #MAX NEIGHBORS FOR AN ATOM default is 512
-   CPPFLAG += -D KIM_API_MAX_NEIGHBORS=$(KIM_API_MAX_NEIGHBORS)
-endif
-
 # Set common compiler flags for dynamic linking
 ifdef KIM_DYNAMIC
    CPPFLAG += -D KIM_DYNAMIC=\"$(KIM_DYNAMIC)\" -fPIC

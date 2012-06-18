@@ -688,6 +688,8 @@ KIM_API_model:: KIM_API_model(){
 
 
        model_index_shift=0;
+       neiOfAnAtom = NULL;
+       neiOfAnAtomSize = 0;
        AUX_index_shift =0;
        ErrorCode=1;
        AtomsTypes = NULL;
@@ -718,6 +720,10 @@ KIM_API_model:: ~KIM_API_model(){
       delete [] arg_NBC_methods;
       delete [] NBC_methods;
       delete []  nnarg_NBC;
+
+      if (neiOfAnAtomSize > 0) {
+         delete [] neiOfAnAtom;
+      }
 }
 bool KIM_API_model:: preinit(char * initfile,char *modelname){
    std::stringstream buffer;
@@ -1732,17 +1738,11 @@ int KIM_API_model::get_neigh(int mode, int request, int *atom,
     KIM_API_model *pkim = this;
 
     if (model_index_shift==0) {
-        if (mode==0 && request == 0) {
+       if (mode==0 && request == 0) { // reset iterator
             return (*get_neigh)((void **)&pkim,&locmode, &locrequest, atom, numnei, nei1atom, Rij ) ;
         }else{
 
             int erkey = (*get_neigh)((void **)&pkim,&locmode, &locrequest, atom, numnei, nei1atom, Rij );
-            if (erkey <= 0) return erkey; // return with error from  supplied by test get_neigh
-            if(*numnei > KIM_API_MAX_NEIGHBORS) {
-                std::cout<<std::endl<< "* Error (KIM_API_model::get_neigh): numnei > MAX_NEIGHBORS : ";
-                std::cout<<" "<<*numnei <<" > "<< KIM_API_MAX_NEIGHBORS<<std::endl;
-                return KIM_STATUS_NEIGH_TOO_MANY_NEIGHBORS;
-            }
             return erkey;
         }
     }else if (model_index_shift == 1 || model_index_shift == -1){
@@ -1751,22 +1751,26 @@ int KIM_API_model::get_neigh(int mode, int request, int *atom,
         if (mode ==1) req = request - model_index_shift;
         int at = *atom;
 
-        if (mode==0 && request == 0) {
+        if (mode==0 && request == 0) { // reset iterator
             return (*get_neigh)((void **)&pkim,&locmode, &req, &at, numnei, nei1atom, Rij );
         }else{
             int erkey = (*get_neigh)((void **)&pkim,&locmode, &req, &at, numnei, nei1atom, Rij );
-            if (erkey <= 0) return erkey; // return with error from  supplied by test get_neigh
-            if(*numnei > KIM_API_MAX_NEIGHBORS) {
-                std::cout<<std::endl<< "* Error (KIM_API_model::get_neigh): numnei > MAX_NEIGHBORS : ";
-                std::cout<<" "<<*numnei <<" > "<< KIM_API_MAX_NEIGHBORS<<std::endl;
-                return KIM_STATUS_NEIGH_TOO_MANY_NEIGHBORS;
-            }
             if (erkey == 1){
                 *atom= at + model_index_shift;
-                for (int i = 0; i<(*numnei);i++){
-                    neiOfAnAtom_half[i] = (*nei1atom)[i] + model_index_shift;
+                if (neiOfAnAtomSize < *numnei) {
+                   delete [] neiOfAnAtom;
+                   neiOfAnAtom = new int[*numnei];
+                   if (neiOfAnAtom == NULL) {
+                      neiOfAnAtomSize = 0;
+                      std::cout << std::endl << "* Error (KIM_API_model::get_neigh): numnei too big to allocate memory for index conversion." << std::endl;
+                      return KIM_STATUS_NEIGH_TOO_MANY_NEIGHBORS;
+                   }
+                   neiOfAnAtomSize = *numnei;
                 }
-                *nei1atom = &(neiOfAnAtom_half[0]);
+                for (int i = 0; i<(*numnei);i++){
+                   neiOfAnAtom[i] = (*nei1atom)[i] + model_index_shift;
+                }
+                *nei1atom = &(neiOfAnAtom[0]);
             }
             return erkey;
         }
@@ -2148,7 +2152,7 @@ char * KIM_API_model::get_status_msg(int status_code) {
     { "numargs is not divisiable by 3(in KIM_API...multiple routine)"},
     { "invalid value for `request' provided"},
     { "get_neigh method in KIM API object is not set(NULL value)"},
-    { "number of neighbors of an atom exceeds KIM_API_MAX_NEIGHBORS"},
+    { "number of neighs of atom too big to allocate for conversion"},
     { "invalid KIM API object"},
     { "negative index in shape"},
     { "invalid mode value"},

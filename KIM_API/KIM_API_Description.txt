@@ -1265,8 +1265,8 @@ int KIM_API_get_neigh(void *kimmdl, int mode, int request, int *particle,
       KIM_STATUS_NEIGH_INVALID_MODE             -- invalid mode value
       KIM_STATUS_API_OBJECT_INVALUD             -- invalid KIM API object
       KIM_STATUS_NEIGH_TOO_MANY_NEIGHBORS       -- Number of neighbors of a
-                                                   particle exceeds
-                                                   KIM_API_MAX_NEIGHBORS
+                                                   particle too big to allocate
+                                                   memory for index conversion
       KIM_STATUS_NEIGH_FULL_METHOD_NOT_PROVIDED -- get_neigh method in
                                                    KIM API object is not
                                                    set (NULL value)

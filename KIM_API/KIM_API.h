@@ -57,7 +57,6 @@
 #endif
 
 #define KIM_KEY_STRING_LENGTH 64
-#define KIM_API_MAX_NEIGHBORS 512
 
 #include "KIM_AUX.h"
 
@@ -285,7 +284,8 @@ private:
     int ErrorCode;// reserved for proper errors handling
     int compute_index;
     int get_neigh_index;
-    int neiOfAnAtom_half[KIM_API_MAX_NEIGHBORS];
+    int* neiOfAnAtom;
+    int neiOfAnAtomSize;
 
     int model_index_shift; //0--no conversion, 1 -- from 0 to 1, -1 -- from 1 to 0
     int AUX_index_shift; //0--noconversion, 1 -- from 0 to 1
