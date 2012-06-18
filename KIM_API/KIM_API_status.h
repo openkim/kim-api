@@ -38,8 +38,8 @@
 
 /* Note: All STATUS codes associated with an error must be less than KIM_STATUS_OK */
 
-#ifndef _KIM_API_STATUS_H
-#define _KIM_API_STATUS_H
+#ifndef KIMHDR_KIM_API_STATUS_H
+#define KIMHDR_KIM_API_STATUS_H
 
 #define KIM_STATUS_MODEL_UNSUPPORTED_CONFIGURATION -24
 #define KIM_STATUS_INCONSISTENT_BASE_UNIT          -23
@@ -75,4 +75,4 @@
 #define KIM_COMPUTE                    1
 #define KIM_NOT_COMPUTE                0
 
-#endif /* _KIM_API_STATUS_H */
+#endif /* KIMHDR_KIM_API_STATUS_H */

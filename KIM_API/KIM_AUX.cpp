@@ -40,8 +40,6 @@
 
 
 
-using namespace std;
-
 #include "KIM_AUX.h"
 #include "KIM_API.h"
 

@@ -32,8 +32,8 @@
 //
 
 
-#ifndef _KIM_AUX_H
-#define _KIM_AUX_H
+#ifndef KIMHDR_KIM_AUX_H
+#define KIMHDR_KIM_AUX_H
 
 
 
@@ -62,4 +62,4 @@ namespace KIM_AUX{
 
 }
 
-#endif  /* _KIM_AUX_H */
+#endif  /* KIMHDR_KIM_AUX_H */

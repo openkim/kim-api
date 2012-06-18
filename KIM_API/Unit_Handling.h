@@ -48,7 +48,7 @@ public:
     static bool is_it_derived(char * unit);
     static bool do_unit_match(Unit_Handling  &tst, Unit_Handling &mdl);
     void print();
-    void print(ostream &stream);
+    void print(std::ostream &stream);
     int get_unit_handling(int *error);
     char * get_unit_length(int *error);
     char * get_unit_energy(int *error);
@@ -106,5 +106,5 @@ private:
     static bool is_it_Unit_time(char * unit, int *index);
 
 };
-ostream &operator<<(ostream &stream, Unit_Handling &a);
+std::ostream &operator<<(std::ostream &stream, Unit_Handling &a);
 #endif  /* UNIT_HANDLING_H */

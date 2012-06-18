@@ -34,15 +34,13 @@
 
 //#include <stdlib.h>
 
+#ifndef KIMHDR_KIM_API_H
+#define KIMHDR_KIM_API_H
+
 #include <iostream>
 #include <fstream>
-////#include <cctype>
-//#include <string.h>
 #include <stdint.h>
 #include <stdarg.h>
-using namespace std;
-#ifndef _KIM_API_H
-#define _KIM_API_H
 
 #include "KIM_API_status.h"
 #include "KIM_AUX.h"
@@ -130,8 +128,8 @@ public:
         bool isitinput(char*str);
         bool isitoutput(char*str);
 };//main input line handler
-ostream &operator<<(ostream &stream, KIM_IOline a);
-istream &operator>>(istream &stream, KIM_IOline &a);
+std::ostream &operator<<(std::ostream &stream, KIM_IOline a);
+std::istream &operator>>(std::istream &stream, KIM_IOline &a);
 //stringstream &operator>>(stringstream &stream, KIM_IOline &a);
 class IOline{
 public:
@@ -146,8 +144,8 @@ public:
         bool getFields(const char *inputString);
         static int readlines_str(char * inputstr, IOline ** lines, bool& success);
 }; //secondary input line handler //cout<<"SystemOfUnit:  file:"<<infile<<":"<<endl;
-ostream &operator<<(ostream &stream, IOline a);
-istream &operator>>(istream &stream, IOline &a);
+std::ostream &operator<<(std::ostream &stream, IOline a);
+std::istream &operator>>(std::istream &stream, IOline &a);
 
 
 class KIMBaseElement{
@@ -172,7 +170,7 @@ public:
 
 static  int getelemsize(char *tp, bool& success);
 };
-ostream &operator<<(ostream &stream, KIMBaseElement a);
+std::ostream &operator<<(std::ostream &stream, KIMBaseElement a);
 
 #ifndef UNIT_HANDLING_H
 #include "Unit_Handling.h"
@@ -397,6 +395,6 @@ private:
 
 
 };
-ostream &operator<<(ostream &stream, KIM_API_model &a);
+std::ostream &operator<<(std::ostream &stream, KIM_API_model &a);
 
-#endif  /* _KIM_API_H */
+#endif  /* KIMHDR_KIM_API_H */

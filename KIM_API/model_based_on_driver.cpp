@@ -38,8 +38,6 @@
 #include "KIM_API_C.h"
 #include "KIM_API.h"
 
-using namespace std;
-
 static void process_paramfiles(char* param_file_names, int* nmstrlen);
 
 #ifdef KIM_DYNAMIC
@@ -80,15 +78,15 @@ extern "C" {
 #ifdef KIM_DYNAMIC
       driver_lib_handle = dlopen("MODEL_DRIVER_SO_NAME_STR",RTLD_NOW);
       if (!driver_lib_handle) {
-         cout << "Error at " << __LINE__ << " of file " << __FILE__ << endl;
-         cout << dlerror() << endl;
+         std::cout << "Error at " << __LINE__ << " of file " << __FILE__ << std::endl;
+         std::cout << dlerror() << std::endl;
          return KIM_STATUS_FAIL;
       }
       typedef int (*Driver_Init)(void *km, char* paramfilenames, int* nmstrlen, int* numparamfiles);
       Driver_Init drvr_init = (Driver_Init)dlsym(driver_lib_handle,"MODEL_DRIVER_NAME_LC_STR_init_");
       const char *dlsym_error = dlerror();
       if (dlsym_error) {
-         cerr << "Cannot load symbol: " << dlsym_error << endl;
+         std::cerr << "Cannot load symbol: " << dlsym_error << std::endl;
          dlclose(driver_lib_handle);
          return KIM_STATUS_FAIL;
       }
@@ -122,21 +120,21 @@ static void process_paramfiles(char* param_file_names, int* nmstrlen)
    PARAMFILE_POINTERS_GO_HERE;
 
    char* ret;
-   fstream fl;
+   std::fstream fl;
    for (int i=0; i<NUM_PARAMFILES; ++i)
    {
       ret=tmpnam(&(param_file_names[i*(L_tmpnam+1)]));
 
       if (ret == NULL)
       {
-         cerr << "Cannot obtain unique temporary file name: tmpnam() failed." << endl;
+         std::cerr << "Cannot obtain unique temporary file name: tmpnam() failed." << std::endl;
          exit(-1);
       }
 
-      fl.open(&(param_file_names[i*(L_tmpnam+1)]),fstream::out);
+      fl.open(&(param_file_names[i*(L_tmpnam+1)]),std::fstream::out);
       if (fl.fail())
       {
-         cerr << "Unable to open temporary file." << endl;
+         std::cerr << "Unable to open temporary file." << std::endl;
          exit(-1);
       }
 

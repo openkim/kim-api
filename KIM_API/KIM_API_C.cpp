@@ -35,13 +35,11 @@
 #include <stdlib.h>
 #include <iostream>
 #include <fstream>
-//#include <cctype>
 
 
 #include <string.h>
 
 
-using namespace std;
 #include "KIM_API.h"
 #include "KIM_API_C.h"
 
@@ -96,7 +94,7 @@ void KIM_API_print(void *kimmdl,int * error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     *error =KIM_STATUS_FAIL;
     if (mdl==NULL) return;
-    cout<<(*mdl);
+    std::cout<<(*mdl);
     *error=KIM_STATUS_OK;
 }
 
@@ -342,7 +340,7 @@ void KIM_API_setm_data(void *kimmdl, int *err, int numargs, ... ){
     va_list listPointer;
     va_start(listPointer,numargs);
     if(numargs % 4 != 0) {
-        cout<<"setm_data: numargs must be multiple of 4"<<endl;
+        std::cout<<"setm_data: numargs must be multiple of 4"<<std::endl;
         *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_4;
         va_end(listPointer);
         return;
@@ -360,9 +358,9 @@ void KIM_API_setm_data(void *kimmdl, int *err, int numargs, ... ){
             return;
         }else if(key ==0) continue;
 
-        if(dt==NULL) cout<<"setm_data: WARNING: for "<<nm<<" data is NULL\n";
+        if(dt==NULL) std::cout<<"setm_data: WARNING: for "<<nm<<" data is NULL\n";
         if(!pkim->set_data(nm,size,dt)){
-            cout<<"setm_data: set data for "<<nm<<" failed\n";
+            std::cout<<"setm_data: set data for "<<nm<<" failed\n";
             va_end(listPointer);
             return;
         }
@@ -378,7 +376,7 @@ void KIM_API_setm_data_by_index(void *kimmdl, int *err, int numargs, ... ){
     va_list listPointer;
     va_start(listPointer,numargs);
     if(numargs % 4 != 0) {
-        cout<<"setm_data_by_index: numargs must be multiple of 4"<<endl;
+        std::cout<<"setm_data_by_index: numargs must be multiple of 4"<<std::endl;
         *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_4;
         va_end(listPointer);
         return;
@@ -396,10 +394,10 @@ void KIM_API_setm_data_by_index(void *kimmdl, int *err, int numargs, ... ){
             return;
         }else if(key ==0) continue;
 
-        if(dt==NULL) cout<<"setm_data_by_index: WARNING: for argument group "<<i<<" data is NULL\n";
+        if(dt==NULL) std::cout<<"setm_data_by_index: WARNING: for argument group "<<i<<" data is NULL\n";
 
         if(!pkim->set_data_by_index(ind,size,dt)){
-            cout<<"setm_data_by_index: set data for argument group"<<i<<" failed\n";
+            std::cout<<"setm_data_by_index: set data for argument group"<<i<<" failed\n";
             va_end(listPointer);
             return;
         }
@@ -413,7 +411,7 @@ void KIM_API_getm_data(void *kimmdl, int *err,int numargs, ...){
     va_list listPointer;
     va_start(listPointer,numargs);
     if(numargs % 3 != 0) {
-        cout<<"getm_data: numargs must be multiple of 3"<<endl;
+        std::cout<<"getm_data: numargs must be multiple of 3"<<std::endl;
         *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3;
         va_end(listPointer);
         return;
@@ -432,7 +430,7 @@ void KIM_API_getm_data(void *kimmdl, int *err,int numargs, ...){
 
         *dt = pkim->get_data(nm,err);
         if(*err != KIM_STATUS_OK){
-            cout<<"getm_data: get data for "<<nm<<" failed\n";
+            std::cout<<"getm_data: get data for "<<nm<<" failed\n";
             va_end(listPointer);
             return;
         }
@@ -447,7 +445,7 @@ void KIM_API_getm_data_by_index(void *kimmdl,int *err,int numargs, ...){
     va_list listPointer;
     va_start(listPointer,numargs);
     if(numargs % 3 != 0) {
-        cout<<"getm_data_by_index: numargs must be multiple of 3"<<endl;
+        std::cout<<"getm_data_by_index: numargs must be multiple of 3"<<std::endl;
         *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3;
         va_end(listPointer);
         return;
@@ -466,7 +464,7 @@ void KIM_API_getm_data_by_index(void *kimmdl,int *err,int numargs, ...){
 
         *dt = pkim->get_data_by_index(ind,err);
         if(*err != KIM_STATUS_OK){
-            cout<<"getm_data_by_index: get data for argument group "<<i<<" failed\n";
+            std::cout<<"getm_data_by_index: get data for argument group "<<i<<" failed\n";
             va_end(listPointer);
             return;
         }
@@ -482,7 +480,7 @@ void KIM_API_getm_index(void *kimmdl, int *err, int numargs, ...){
     va_start(listPointer,numargs);
 
     if(numargs % 3 != 0) {
-        cout<<"getm_index: numargs must be multiple of 3"<<endl;
+        std::cout<<"getm_index: numargs must be multiple of 3"<<std::endl;
         *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3;
         va_end(listPointer);
         return;
@@ -501,7 +499,7 @@ void KIM_API_getm_index(void *kimmdl, int *err, int numargs, ...){
 
         *ind = pkim->get_index(nm,err);
         if(*err != KIM_STATUS_OK){
-            cout<<"getm_index: get index for "<<nm<<" failed\n";
+            std::cout<<"getm_index: get index for "<<nm<<" failed\n";
             va_end(listPointer);
             return;
         }
@@ -517,7 +515,7 @@ void KIM_API_setm_compute(void *kimmdl, int *err, int numargs, ...){
     va_list listPointer;
     va_start(listPointer,numargs);
     if(numargs % 3 != 0) {
-        cout<<"setm_compute: numargs must be multiple of 3"<<endl;
+        std::cout<<"setm_compute: numargs must be multiple of 3"<<std::endl;
         *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3;
         va_end(listPointer);
         return;
@@ -536,7 +534,7 @@ void KIM_API_setm_compute(void *kimmdl, int *err, int numargs, ...){
 
         int index = pkim->get_index(nm,err);
         if (*err != KIM_STATUS_OK){
-           cout<<"setm_compute:  name "<<nm<<" not in KIM\n";
+           std::cout<<"setm_compute:  name "<<nm<<" not in KIM\n";
            va_end(listPointer);
            return;
         }
@@ -545,7 +543,7 @@ void KIM_API_setm_compute(void *kimmdl, int *err, int numargs, ...){
         }else if (compute_flag ==0){
             (*pkim)[index].flag->calculate = 0;
         }else{
-            cout<<"setm_compute:  for "<<nm<<" failed: compute_flag must be 0 or 1\n";
+            std::cout<<"setm_compute:  for "<<nm<<" failed: compute_flag must be 0 or 1\n";
             va_end(listPointer);
             return;
         }
@@ -560,7 +558,7 @@ void KIM_API_setm_compute_by_index(void *kimmdl, int *err, int numargs, ...){
     va_list listPointer;
     va_start(listPointer,numargs);
     if(numargs % 3 != 0) {
-        cout<<"setm_compute_by_index: numargs must be multiple of 3"<<endl;
+        std::cout<<"setm_compute_by_index: numargs must be multiple of 3"<<std::endl;
         *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3;
         va_end(listPointer);
         return;
@@ -579,7 +577,7 @@ void KIM_API_setm_compute_by_index(void *kimmdl, int *err, int numargs, ...){
 
         if (index < 0 || index >= pkim->model.size) *err=KIM_STATUS_FAIL;
         if (*err != KIM_STATUS_OK){
-           cout<<"setm_compute_by_index:  for argument group "<<i<<" failed\n";
+           std::cout<<"setm_compute_by_index:  for argument group "<<i<<" failed\n";
            va_end(listPointer);
            return;
         }
@@ -588,7 +586,7 @@ void KIM_API_setm_compute_by_index(void *kimmdl, int *err, int numargs, ...){
         }else if (compute_flag ==0){
             (*pkim)[index].flag->calculate = 0;
         }else{
-            cout<<"setm_compute_by_index:  for argument group "<<i<<" failed: compute_flag must be 0 or 1\n";
+            std::cout<<"setm_compute_by_index:  for argument group "<<i<<" failed: compute_flag must be 0 or 1\n";
             *err=KIM_STATUS_FAIL;
             va_end(listPointer);
             return;
@@ -604,7 +602,7 @@ void KIM_API_getm_compute(void *kimmdl, int *err,int numargs, ...){
     va_list listPointer;
     va_start(listPointer,numargs);
     if(numargs % 3 != 0) {
-        cout<<"getm_compute: numargs must be multiple of 3"<<endl;
+        std::cout<<"getm_compute: numargs must be multiple of 3"<<std::endl;
         *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3;
         va_end(listPointer);
         return;
@@ -623,7 +621,7 @@ void KIM_API_getm_compute(void *kimmdl, int *err,int numargs, ...){
 
         int index = pkim->get_index(nm,err);
         if (*err != KIM_STATUS_OK){
-           cout<<"getm_compute:  name "<<nm<<" not in KIM\n";
+           std::cout<<"getm_compute:  name "<<nm<<" not in KIM\n";
            va_end(listPointer);
            return;
         }
@@ -640,7 +638,7 @@ void KIM_API_getm_compute_by_index(void *kimmdl, int *err,int numargs, ...){
     va_list listPointer;
     va_start(listPointer,numargs);
     if(numargs % 3 != 0) {
-        cout<<"getm_compute_by_index: numargs must be multiple of 3"<<endl;
+        std::cout<<"getm_compute_by_index: numargs must be multiple of 3"<<std::endl;
         *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3;
         va_end(listPointer);
         return;
@@ -659,7 +657,7 @@ void KIM_API_getm_compute_by_index(void *kimmdl, int *err,int numargs, ...){
 
         if (index < 0 || index >= pkim->model.size) *err=KIM_STATUS_FAIL;
         if (*err != KIM_STATUS_OK){
-           cout<<"getm_compute_by_index:  for argument group "<<i<<" failed\n";
+           std::cout<<"getm_compute_by_index:  for argument group "<<i<<" failed\n";
            va_end(listPointer);
            return;
         }

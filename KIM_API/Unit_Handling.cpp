@@ -40,8 +40,6 @@
 #include <math.h>
 #include "Unit_Handling.h"
 
-using namespace std;
-
 char * Unit_Handling::derived_list[]={
     "dipole", "density", "dynamic_viscosity", "electric_field",
     "force", "mass","pressure", "stress", "torque", "velocity"
@@ -318,20 +316,20 @@ bool Unit_Handling::do_unit_match(Unit_Handling &test, Unit_Handling  &model){
     return false;
 }
 void Unit_Handling::print(){
-    cout<<"Unit_length : "<<Unit_length<<endl;
-    cout<<"Unit_energy : "<<Unit_energy<<endl;
-    cout<<"Unit_charge : "<<Unit_charge<<endl;
-    cout<<"Unit_temperature : "<<Unit_temperature<<endl;
-    cout<<"Unit_time : "<<Unit_time<<endl;
-    cout<<"flexible_handling :"<< flexible_handling<<endl;
+    std::cout<<"Unit_length : "<<Unit_length<<std::endl;
+    std::cout<<"Unit_energy : "<<Unit_energy<<std::endl;
+    std::cout<<"Unit_charge : "<<Unit_charge<<std::endl;
+    std::cout<<"Unit_temperature : "<<Unit_temperature<<std::endl;
+    std::cout<<"Unit_time : "<<Unit_time<<std::endl;
+    std::cout<<"flexible_handling :"<< flexible_handling<<std::endl;
 }
-void Unit_Handling::print(ostream& stream){
-    stream<<"Unit_length : "<<Unit_length<<endl;
-    stream<<"Unit_energy : "<<Unit_energy<<endl;
-    stream<<"Unit_charge : "<<Unit_charge<<endl;
-    stream<<"Unit_temperature : "<<Unit_temperature<<endl;
-    stream<<"Unit_time : "<<Unit_time<<endl;
-    stream<<"flexible_handling :"<< flexible_handling<<endl;
+void Unit_Handling::print(std::ostream& stream){
+    stream<<"Unit_length : "<<Unit_length<<std::endl;
+    stream<<"Unit_energy : "<<Unit_energy<<std::endl;
+    stream<<"Unit_charge : "<<Unit_charge<<std::endl;
+    stream<<"Unit_temperature : "<<Unit_temperature<<std::endl;
+    stream<<"Unit_time : "<<Unit_time<<std::endl;
+    stream<<"flexible_handling :"<< flexible_handling<<std::endl;
 }
 int Unit_Handling::get_unit_handling(int *error){
     if(flexible_handling) return 1;
@@ -378,7 +376,7 @@ char * Unit_Handling::get_unit_time(int *error){
     *error = KIM_STATUS_OK;
     return tmp;
 }
-ostream &operator<<(ostream &stream, Unit_Handling &a){
+std::ostream &operator<<(std::ostream &stream, Unit_Handling &a){
     a.print(stream);
     return stream;
 }

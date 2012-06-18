@@ -43,7 +43,6 @@
 #include <dlfcn.h>
 #endif
 
-using namespace std;
 #include "KIM_API.h"
 
 #define KIM_KEY_STRING_LENGTH 64
@@ -68,12 +67,12 @@ static void strip_char_string(char* nm)
    }
 }
 
-static bool read_file_to_stringstream(char* infile, stringstream& ss)
+static bool read_file_to_stringstream(char* infile, std::stringstream& ss)
 {
-   ifstream myfile;
+   std::ifstream myfile;
    myfile.open(infile);
    if(!myfile){
-      cout<<"* Error (read_file_to_stringstream): can not open file :"<<infile<<":"<<endl;
+      std::cout<<"* Error (read_file_to_stringstream): can not open file :"<<infile<<":"<<std::endl;
       return false;
    }
 
@@ -184,7 +183,7 @@ int KIM_IOline::get_rank(){
                 }
                 return c;
             }
-            cout<<"* Error (KIM_IOline::get_rank): bad shape format"<<endl;
+            std::cout<<"* Error (KIM_IOline::get_rank): bad shape format"<<std::endl;
              return 0;
  }
 int *  KIM_IOline::get_shape(){
@@ -291,17 +290,17 @@ bool KIM_IOline:: isitoutput(char*str){
             return false;
 }
 
-ostream &operator<<(ostream &stream, KIM_IOline a){
+std::ostream &operator<<(std::ostream &stream, KIM_IOline a){
         stream<<a.name<<" "<<a.type<<" "<<a.dim<<" ";
         stream<<a.shape<<" "<<a.requirements;
-        stream << endl;
+        stream << std::endl;
         return stream;
 }
-istream &operator>>(istream &stream, KIM_IOline &a){
+std::istream &operator>>(std::istream &stream, KIM_IOline &a){
         char inputline[KIM_LINE_LENGTH];
         stream.getline(inputline,KIM_LINE_LENGTH-1);
         if(stream.fail() && !stream.eof()){
-           cerr << "* Error (operator>> KIM_IOline): Input line in .kim file longer than KIM_LINE_LENGTH (default 512) characters.\n"
+           std::cerr << "* Error (operator>> KIM_IOline): Input line in .kim file longer than KIM_LINE_LENGTH (default 512) characters.\n"
                 << "         The line is: `"
                 << inputline << "'";
            a.goodformat=false;
@@ -363,16 +362,16 @@ int IOline::readlines_str(char* instrn, IOline** inlines, bool& success){
     int counter=0;
         IOline inlne;
         *inlines=NULL;
-        string in_instrn=instrn;
-        stringstream myfile (in_instrn,stringstream::in|stringstream::out) ;
-        stringstream myfile1 (in_instrn,stringstream::in|stringstream::out) ;
+        std::string in_instrn=instrn;
+        std::stringstream myfile (in_instrn,std::stringstream::in|std::stringstream::out) ;
+        std::stringstream myfile1 (in_instrn,std::stringstream::in|std::stringstream::out) ;
          if(!myfile){
-             cout<<"* Error (IOline::readlines_str): can not parse instrn."<<endl
-                 <<"        Offending line is: `" << in_instrn << "'" << endl;
+            std::cout<<"* Error (IOline::readlines_str): can not parse instrn."<< std::endl
+                     <<"        Offending line is: `" << in_instrn << "'" << std::endl;
              success = false;
              return -1;
          }
-        myfile.seekp(stringstream::beg);
+         myfile.seekp(std::stringstream::beg);
           while(!myfile.eof()){
                 myfile>> inlne;
                 if(inlne.goodformat) counter++;
@@ -385,7 +384,7 @@ int IOline::readlines_str(char* instrn, IOline** inlines, bool& success){
         (*inlines) =  new IOline [counter] ;
 
 
-        myfile1.seekp(stringstream::beg);
+        myfile1.seekp(std::stringstream::beg);
 
         counter=0;
         while(!myfile1.eof()){
@@ -401,11 +400,11 @@ int IOline::readlines_str(char* instrn, IOline** inlines, bool& success){
         return counter;
 }
 
-ostream &operator<<(ostream &stream, IOline a){
+std::ostream &operator<<(std::ostream &stream, IOline a){
         stream<<a.name<<" := "<<a.value<<" # "<<a.comment;
         return stream;
 }
-istream &operator>>(istream &stream, IOline &a){
+std::istream &operator>>(std::istream &stream, IOline &a){
         char inputline[KIM_LINE_LENGTH];
         stream.getline(inputline,KIM_LINE_LENGTH-1);
         if(a.getFields(inputline)){
@@ -434,7 +433,7 @@ bool KIMBaseElement:: init(char *nm,char * tp,intptr_t sz, intptr_t rnk, int *sh
 
 
             if(rnk < 0) {
-                cout << "* Error (KIMBaseElement::init): KIMBaseElement_init:rnk < 0"<<endl;
+               std::cout << "* Error (KIMBaseElement::init): KIMBaseElement_init:rnk < 0"<<std::endl;
                 return false;
             }
             size = sz;
@@ -451,7 +450,7 @@ bool KIMBaseElement:: init(char *nm,char * tp,intptr_t sz, intptr_t rnk, int *sh
             if(rank > 1){
                 shape = new int[rank];
                 if (shp == NULL) {
-                  cout << "* Error (KIMBaseElement::init): KIMBaseElement_init:shp==NULL"<<endl;
+                  std::cout << "* Error (KIMBaseElement::init): KIMBaseElement_init:shp==NULL"<<std::endl;
                   return false;
                 }
                 for (int i=0;i<rank;i++) shape[i]=shp[i];
@@ -561,32 +560,32 @@ int KIMBaseElement::getelemsize(char *tp, bool& success){
              }else if (strcmp(flagkey,tp)==0){
                 return 0;
             }else{// add here more in else if block...
-               cout << "* Error (KIMBaseElement::getelemsize): Unknown Type in KIM descriptor file line." << endl
+               std::cout << "* Error (KIMBaseElement::getelemsize): Unknown Type in KIM descriptor file line." << std::endl
                     << "         `" << tp <<"' is not one of: " << realkey << ", "
                     << real8key << ", " << integerkey << ", " << ptrkey << ", "
-                    << integer8key << ", " << flagkey << endl;
+                    << integer8key << ", " << flagkey << std::endl;
                success = false;
                return -1;
             }
 }
 
-ostream &operator<<(ostream &stream, KIMBaseElement a){
+std::ostream &operator<<(std::ostream &stream, KIMBaseElement a){
     if (a.data==NULL && a.name == NULL && a.type==NULL) {
-        stream <<" KIMBaseElement is nullified "<<endl;
+        stream <<" KIMBaseElement is nullified "<<std::endl;
         return stream;
     }
-    stream<<endl<<"name: "<<a.name<<" type: "<<a.type<<" rank= "<<a.rank<<endl;
+    stream<<std::endl<<"name: "<<a.name<<" type: "<<a.type<<" rank= "<<a.rank<<std::endl;
     if (a.rank>0 && a.shape!=NULL){
         stream<<" shape= [ ";
         for(int i=0;i<a.rank;i++) stream<< a.shape[i] <<" ";
         stream << " ]"<<" ";
     }
-    stream<<" size= "<<a.size<<endl;
+    stream<<" size= "<<a.size<<std::endl;
 
-    stream<<"flag:calculate "<<a.flag->calculate<<"// 0 -- do not calculate, 1 -- calculate"<<endl;
-    stream<<"flag:freeable  "<<a.flag->freeable<<"//0--freeable , 1 is not freeable"<<endl;
-    stream<<"flag:peratom  "<<a.flag->peratom<<"//0 -- peratom, 1--per something else"<<endl;
-    stream<<" phys.dimension: "<<a.unit->dim<<endl;
+    stream<<"flag:calculate "<<a.flag->calculate<<"// 0 -- do not calculate, 1 -- calculate"<<std::endl;
+    stream<<"flag:freeable  "<<a.flag->freeable<<"//0--freeable , 1 is not freeable"<<std::endl;
+    stream<<"flag:peratom  "<<a.flag->peratom<<"//0 -- peratom, 1--per something else"<<std::endl;
+    stream<<" phys.dimension: "<<a.unit->dim<<std::endl;
     // printin gata itself
 
 
@@ -594,7 +593,7 @@ ostream &operator<<(ostream &stream, KIMBaseElement a){
 
 
     if(a.data == NULL) {
-        stream <<"NULL"<<endl;
+        stream <<"NULL"<<std::endl;
         return stream;
     }else if(strcmp(a.type,"real*8")==0){
 
@@ -609,7 +608,7 @@ ostream &operator<<(ostream &stream, KIMBaseElement a){
     }else{
         stream<<"address:"<<(intptr_t)a.data;
     }
-    stream<<endl;
+    stream<<std::endl;
 
     return stream;
 }
@@ -725,7 +724,7 @@ KIM_API_model:: ~KIM_API_model(){
       delete []  nnarg_NBC;
 }
 bool KIM_API_model:: preinit(char * initfile,char *modelname){
-   stringstream buffer;
+   std::stringstream buffer;
    if (!read_file_to_stringstream(initfile, buffer)) return false;
 
    return prestring_init((char*) buffer.str().c_str());
@@ -972,7 +971,7 @@ bool KIM_API_model::get_compute(char *nm){
 }
 KIMBaseElement & KIM_API_model::operator[](int i){
         if ((i > (*this).model.size) || (i < 0)){
-           cout<<"* Error (KIM_API_model::operator[](int i): invalid index." <<endl;
+           std::cout<<"* Error (KIM_API_model::operator[](int i): invalid index." <<std::endl;
            KIM_API_model::fatal_error_print();
            exit(326);
         }
@@ -983,7 +982,7 @@ KIMBaseElement & KIM_API_model::operator[](char *nm){
         int error;
         int ind=get_index(nm,&error);
         if (error == KIM_STATUS_FAIL){
-           cout<<"* Error (KIM_API_model::operator[](char *nm): name not found." <<endl;
+           std::cout<<"* Error (KIM_API_model::operator[](char *nm): name not found." <<std::endl;
            KIM_API_model::fatal_error_print();
            exit(325);
         }
@@ -996,22 +995,22 @@ bool KIM_API_model::read_file_str(char* strstream, KIM_IOline** lns, int* numlns
         KIM_IOline inln;
 
         //open string as stream from char *
-        string in_strstream=strstream ;
-        stringstream myfile (in_strstream, stringstream::in|stringstream::out);
-        stringstream myfile1 (in_strstream, stringstream::in|stringstream::out);
+        std::string in_strstream=strstream ;
+        std::stringstream myfile (in_strstream, std::stringstream::in|std::stringstream::out);
+        std::stringstream myfile1 (in_strstream, std::stringstream::in|std::stringstream::out);
         if(!myfile){
-            cout<<"* Error (KIM_API_model::read_file_str): can not access KIM descriptor file as input string."<<endl;
+            std::cout<<"* Error (KIM_API_model::read_file_str): can not access KIM descriptor file as input string."<<std::endl;
             return false;
         }
 
 
-        myfile.seekp(stringstream::beg);//set to the begining
+        myfile.seekp(std::stringstream::beg);//set to the begining
         while(!myfile.eof()){
                 myfile >> inln;
                 if(inln.goodformat) counter++;
         }
 
-        myfile1.seekp(stringstream::beg);//set to the begining
+        myfile1.seekp(std::stringstream::beg);//set to the begining
 
         *numlns = counter;
         *lns = new KIM_IOline[counter+3];
@@ -1055,8 +1054,8 @@ bool KIM_API_model::is_it_match(KIM_API_model & mdtst,KIM_IOline * IOlines,int n
             }
         }
         if(!match) {
-           cout << "* Info (KIM_API_model::is_it_match): The following descriptor file line may not match with " << mdtst.model.name << "'s descriptor file."<<endl;
-            cout<<IOlines[i]<<endl;
+           std::cout << "* Info (KIM_API_model::is_it_match): The following descriptor file line may not match with " << mdtst.model.name << "'s descriptor file."<<std::endl;
+            std::cout<<IOlines[i]<<std::endl;
             return match;
         }
     }
@@ -1105,8 +1104,8 @@ bool KIM_API_model::is_it_match_noFlagCount(KIM_API_model & mdtst,KIM_IOline * I
             }
         }
         if(!match) {
-            cout << "* Warning (KIM_API_model::is_it_match_noFlagCount): The following line in the Model descriptor file does not match."<<endl;
-            cout<<IOlines[i]<<endl;
+            std::cout << "* Warning (KIM_API_model::is_it_match_noFlagCount): The following line in the Model descriptor file does not match."<<std::endl;
+            std::cout<<IOlines[i]<<std::endl;
             return match;
         }
     }
@@ -1119,7 +1118,7 @@ bool KIM_API_model::is_it_match(KIM_API_model &test,KIM_API_model & mdl){
 
     char * inStandard_kim_str = standard_kim_str();
     if(!stdmdl.prestring_init(inStandard_kim_str)){
-        cout<<" preinit of :"<<"standard.kim"<<" failed"<<endl;
+        std::cout<<" preinit of :"<<"standard.kim"<<" failed"<<std::endl;
         stdmdl.free();
         return false;
     }
@@ -1148,16 +1147,16 @@ bool KIM_API_model::is_it_match(KIM_API_model &test,KIM_API_model & mdl){
     bool process_fij_related = this->fij_related_things_match(test,mdl);
     bool units_match = Unit_Handling::do_unit_match(test.unit_h,mdl.unit_h);
 
-    if(!test2standardmatch) cout<<"* Error (KIM_API_model::is_it_match): There are non-standard variables in Test descriptor file:"<<endl;
-    if(!model2standardmatch) cout<<"* Error (KIM_API_model::is_it_match): There are non-standard variables in Model descriptor file:"<<endl;
-    if(!test2standardAtomsTypesMatch) cout<<"* Error (KIM_API_model::is_it_match): There are non-standard AtomsTypes in Test descriptor file:"<<endl;
-    if(!model2standardAtomsTypesMatch) cout<<"* Error (KIM_API_model::is_it_match):there are non-standard AtomsTypes in Model descriptor file:"<<endl;
-    if(!test2modelAtomsTypesMatch) cout<<"* Error (KIM_API_model::is_it_match): Test-Model AtomsTypes do not match:"<<endl;
-    if(!NBC_methodsmatch) cout<<"* Error (KIM_API_model::is_it_match): NBC methods do not match:"<<endl;
-    if(!process_fij_related) cout<<
-       "* Error (KIM_API_model::is_it_match): (virial,particleVirial,hessian,process_d1/2Edr) do not match:"<<endl;
+    if(!test2standardmatch) std::cout<<"* Error (KIM_API_model::is_it_match): There are non-standard variables in Test descriptor file:"<<std::endl;
+    if(!model2standardmatch) std::cout<<"* Error (KIM_API_model::is_it_match): There are non-standard variables in Model descriptor file:"<<std::endl;
+    if(!test2standardAtomsTypesMatch) std::cout<<"* Error (KIM_API_model::is_it_match): There are non-standard AtomsTypes in Test descriptor file:"<<std::endl;
+    if(!model2standardAtomsTypesMatch) std::cout<<"* Error (KIM_API_model::is_it_match):there are non-standard AtomsTypes in Model descriptor file:"<<std::endl;
+    if(!test2modelAtomsTypesMatch) std::cout<<"* Error (KIM_API_model::is_it_match): Test-Model AtomsTypes do not match:"<<std::endl;
+    if(!NBC_methodsmatch) std::cout<<"* Error (KIM_API_model::is_it_match): NBC methods do not match:"<<std::endl;
+    if(!process_fij_related) std::cout<<
+       "* Error (KIM_API_model::is_it_match): (virial,particleVirial,hessian,process_d1/2Edr) do not match:"<<std::endl;
     if(!units_match){
-       cout<<"* Error (KIM_API_model::is_it_match): units do not match:"<<endl;
+       std::cout<<"* Error (KIM_API_model::is_it_match): units do not match:"<<std::endl;
     }else{
         this->unit_h = mdl.unit_h;
     }
@@ -1214,11 +1213,11 @@ bool KIM_API_model::do_flag_match(KIM_API_model& tst, KIM_API_model& mdl){
 
     //logic for Zero or One base list handling
     if ((!ZeroBasedLists_tst && !OneBasedLists_tst)||(ZeroBasedLists_tst && OneBasedLists_tst) ) {
-        cout<< "* Error (KIM_API_model::do_flag_match): Test descriptor file must have ONE of ZeroBasedLists or OneBasedLists."<<endl;
+        std::cout<< "* Error (KIM_API_model::do_flag_match): Test descriptor file must have ONE of ZeroBasedLists or OneBasedLists."<<std::endl;
         return false;
     }
      if ((!ZeroBasedLists_mdl && !OneBasedLists_mdl)||(ZeroBasedLists_mdl && OneBasedLists_mdl)) {
-        cout<< "* Error (KIM_API_model::do_flag_match): Model descriptor file must have ONE of ZeroBasedLists or OneBasedLists."<<endl;
+        std::cout<< "* Error (KIM_API_model::do_flag_match): Model descriptor file must have ONE of ZeroBasedLists or OneBasedLists."<<std::endl;
         return false;
     }
     model_index_shift = 0;
@@ -1235,7 +1234,7 @@ bool KIM_API_model::do_flag_match(KIM_API_model& tst, KIM_API_model& mdl){
     if (Neigh_BothAccess_mdl){
 
         if(!(Neigh_BothAccess_tst || (Neigh_LocaAccess_tst && Neigh_IterAccess_tst))){
-            cout<< "* Error (KIM_API_model::do_flag_match): Model descriptor file requres Neigh_BothAccess."<<endl;
+            std::cout<< "* Error (KIM_API_model::do_flag_match): Model descriptor file requres Neigh_BothAccess."<<std::endl;
             return false;
         }
         mdl.both_neigh_mode=true;
@@ -1243,7 +1242,7 @@ bool KIM_API_model::do_flag_match(KIM_API_model& tst, KIM_API_model& mdl){
      }else if (Neigh_LocaAccess_mdl && Neigh_IterAccess_mdl){
 
         if(!(Neigh_LocaAccess_tst || (Neigh_IterAccess_tst || Neigh_BothAccess_tst))){
-            cout<< "* Error (KIM_API_model::do_flag_match): Model descriptor file requres IterAccess or LocaAccess."<<endl;
+            std::cout<< "* Error (KIM_API_model::do_flag_match): Model descriptor file requres IterAccess or LocaAccess."<<std::endl;
             return false;
         }
         if ((Neigh_LocaAccess_tst && Neigh_IterAccess_tst) || Neigh_BothAccess_tst) {
@@ -1262,7 +1261,7 @@ bool KIM_API_model::do_flag_match(KIM_API_model& tst, KIM_API_model& mdl){
      //checking if test o.k. with loca
      }else if(Neigh_LocaAccess_mdl){
          if(!(Neigh_LocaAccess_tst || Neigh_BothAccess_tst)) {
-             cout<< "* Error (KIM_API_model::do_flag_match): Model descriptor file requres Neigh_LocaAccess."<<endl;
+             std::cout<< "* Error (KIM_API_model::do_flag_match): Model descriptor file requres Neigh_LocaAccess."<<std::endl;
              return false;
          }
 
@@ -1270,7 +1269,7 @@ bool KIM_API_model::do_flag_match(KIM_API_model& tst, KIM_API_model& mdl){
      //checking if test o.k. with iter
      }else if(Neigh_IterAccess_mdl){
          if(!(Neigh_IterAccess_tst || Neigh_BothAccess_tst)) {
-             cout<< "* Error (KIM_API_model::do_flag_match): Model descriptor file requres Neigh_IterAccess."<<endl;
+             std::cout<< "* Error (KIM_API_model::do_flag_match): Model descriptor file requres Neigh_IterAccess."<<std::endl;
              return false;
          }
 
@@ -1307,8 +1306,8 @@ bool KIM_API_model::do_AtomsTypes_match(KIM_API_model& test, KIM_API_model& mdl)
             }
         }
         if (!match) {
-            cout <<"* Error (KIM_API_model::do_AtomsTypes_match): The following symbol: "<<test.AtomsTypes[i].symbol<<" in ";
-            cout<< test.model.name << " is not found in "<<mdl.model.name<<endl;
+            std::cout <<"* Error (KIM_API_model::do_AtomsTypes_match): The following symbol: "<<test.AtomsTypes[i].symbol<<" in ";
+            std::cout<< test.model.name << " is not found in "<<mdl.model.name<<std::endl;
             return false;
         }
     }
@@ -1345,23 +1344,23 @@ extern "C"{
 }
 
 char * KIM_API_model::get_model_kim_str(char* modelname,int * kimerr){
-     //redirecting cout > kimlog
+     //redirecting std::cout > kimlog
     *kimerr=KIM_STATUS_FAIL;
     char kimlog[2048] = KIM_DIR; strcat(kimlog,"kim.log");
-    streambuf * psbuf, * backup;ofstream filekimlog;
+    std::streambuf * psbuf, * backup; std::ofstream filekimlog;
     filekimlog.open(kimlog);
-    backup = cout.rdbuf();psbuf = filekimlog.rdbuf();cout.rdbuf(psbuf);
+    backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);
 
     char * in_mdlstr=NULL;
 
     #include "model_kim_str_include.cpp"
 
     if (in_mdlstr == NULL){
-       cout<<"* Error (KIM_API_model::get_model_kim_str): Unknown KIM Model name " << modelname << "." << endl;
+       std::cout<<"* Error (KIM_API_model::get_model_kim_str): Unknown KIM Model name " << modelname << "." << std::endl;
        return NULL;
     }
-     //redirecting back to > cout
-    cout.rdbuf(backup); filekimlog.close();
+     //redirecting back to > std::cout
+    std::cout.rdbuf(backup); filekimlog.close();
     char* str_cpy = (char*) malloc(strlen(in_mdlstr)+1);
     strcpy(str_cpy,in_mdlstr);
     *kimerr= KIM_STATUS_OK;
@@ -1378,20 +1377,20 @@ char * KIM_API_model::get_model_kim_str(char* modelname,int * kimerr){
     sprintf(model_slib_file,"%s%s/%s.so",KIM_DIR_MODELS,modelname,modelname);
     sprintf(model_kim_str_name,"%s_kim_str",modelname);
 
-    //redirecting cout > kimlog
+    //redirecting std::cout > kimlog
     char kimlog[2048] = KIM_DIR; strcat(kimlog,"kim.log");
-    streambuf * psbuf, * backup;ofstream filekimlog;
+    std::streambuf * psbuf, * backup; std::ofstream filekimlog;
     filekimlog.open(kimlog);
-    backup = cout.rdbuf();psbuf = filekimlog.rdbuf();cout.rdbuf(psbuf);
+    backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);
 
     tmp_model_lib_handle = dlopen(model_slib_file,RTLD_NOW);
     if(!tmp_model_lib_handle) {
-         cout<< "* Error (KIM_API_model::get_model_kim_str): Cannot find Model shared library file for Model name: ";
-         cout<<modelname<<endl<<dlerror()<<endl;
+         std::cout<< "* Error (KIM_API_model::get_model_kim_str): Cannot find Model shared library file for Model name: ";
+         std::cout<<modelname<<std::endl<<dlerror()<<std::endl;
          fprintf(stderr,"%s not found...\n",model_slib_file);
 
-          //redirecting back to > cout
-          cout.rdbuf(backup); filekimlog.close();
+          //redirecting back to > std::cout
+          std::cout.rdbuf(backup); filekimlog.close();
          return NULL;
     }
 
@@ -1399,11 +1398,11 @@ char * KIM_API_model::get_model_kim_str(char* modelname,int * kimerr){
     Model_kim_str get_kim_str = (Model_kim_str)dlsym(tmp_model_lib_handle,model_kim_str_name);
     const char *dlsym_error = dlerror();
     if (dlsym_error) {
-        cerr << "Cannot load symbol: " << dlsym_error <<endl;
+        std::cerr << "Cannot load symbol: " << dlsym_error <<std::endl;
         dlclose(tmp_model_lib_handle);
 
-        //redirecting back to > cout
-        cout.rdbuf(backup); filekimlog.close();
+        //redirecting back to > std::cout
+        std::cout.rdbuf(backup); filekimlog.close();
 
         return NULL;
     }
@@ -1413,7 +1412,7 @@ char * KIM_API_model::get_model_kim_str(char* modelname,int * kimerr){
     in_mdlstr = (*get_kim_str)();
 
     if (in_mdlstr == NULL){
-        cout<<"* Error (KIM_API_get_model_kim_str: Unknown KIM Model name " << modelname << "." << endl;
+        std::cout<<"* Error (KIM_API_get_model_kim_str: Unknown KIM Model name " << modelname << "." << std::endl;
         return NULL;
     }
 
@@ -1421,8 +1420,8 @@ char * KIM_API_model::get_model_kim_str(char* modelname,int * kimerr){
     strcpy(str_cpy,in_mdlstr);
 
     dlclose(tmp_model_lib_handle);
-   //redirecting back to > cout
-    cout.rdbuf(backup); filekimlog.close();
+   //redirecting back to > std::cout
+    std::cout.rdbuf(backup); filekimlog.close();
     *kimerr= KIM_STATUS_OK;
     return str_cpy;
 }
@@ -1430,11 +1429,11 @@ char * KIM_API_model::get_model_kim_str(char* modelname,int * kimerr){
 
 bool KIM_API_model::init(char* testname, char* modelname){
 
-    //redirecting cout > kimlog
+    //redirecting std::cout > kimlog
     char kimlog[2048] = KIM_DIR; strcat(kimlog,"kim.log");
-    streambuf * psbuf, * backup;ofstream filekimlog;
+    std::streambuf * psbuf, * backup; std::ofstream filekimlog;
     filekimlog.open(kimlog);
-    backup = cout.rdbuf();psbuf = filekimlog.rdbuf();cout.rdbuf(psbuf);
+    backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);
 
     int error;
     char* in_mdlstr = get_model_kim_str(modelname, &error);
@@ -1442,8 +1441,8 @@ bool KIM_API_model::init(char* testname, char* modelname){
     bool result_init= this->init_str_modelname(testname,in_mdlstr);
 
     c_free(in_mdlstr);
-   //redirecting back to > cout
-    cout.rdbuf(backup); filekimlog.close();
+   //redirecting back to > std::cout
+    std::cout.rdbuf(backup); filekimlog.close();
 
     return result_init;
 }
@@ -1466,12 +1465,12 @@ bool KIM_API_model::init_str_modelname(char* testname, char* inmdlstr){
     //preinit test and model API object
 
     if(!mdl.prestring_init(inmdlstr)){
-        cout<<"prestring_init  failed with error status: "<<this->get_status_msg(ErrorCode)<<endl;
+        std::cout<<"prestring_init  failed with error status: "<<this->get_status_msg(ErrorCode)<<std::endl;
         return false;
     }
 
     if(!test.preinit(testinputfile,testname)){
-        cout<<"preinit  failed with error status: "<<this->get_status_msg(ErrorCode)<<endl;
+        std::cout<<"preinit  failed with error status: "<<this->get_status_msg(ErrorCode)<<std::endl;
         return false;
     }
 
@@ -1501,7 +1500,7 @@ bool KIM_API_model::init_str_modelname(char* testname, char* inmdlstr){
         return true;
     }else{
 
- cout<<"Do not match  " << mdl.model.name  << " and "<< testname <<endl;
+ std::cout<<"Do not match  " << mdl.model.name  << " and "<< testname <<std::endl;
        mdl.free();
        test.free();
 
@@ -1512,11 +1511,11 @@ bool KIM_API_model::init_str_modelname(char* testname, char* inmdlstr){
 }
 
 bool KIM_API_model::preinit(char* modelname){
-    //redirecting cout > kimlog
+    //redirecting std::cout > kimlog
     char kimlog[2048] = KIM_DIR; strcat(kimlog,"kim.log");
-    streambuf * psbuf, * backup;ofstream filekimlog;
+    std::streambuf * psbuf, * backup; std::ofstream filekimlog;
     filekimlog.open(kimlog);
-    backup = cout.rdbuf();psbuf = filekimlog.rdbuf();cout.rdbuf(psbuf);
+    backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);
     //preinit model
 
     int error;
@@ -1524,18 +1523,18 @@ bool KIM_API_model::preinit(char* modelname){
     bool result= this->prestring_init(in_mdlstr);
 
     c_free(in_mdlstr);
-    //redirecting back to > cout
-    cout.rdbuf(backup); filekimlog.close();
+    //redirecting back to > std::cout
+    std::cout.rdbuf(backup); filekimlog.close();
     return result;
 }
 
 bool KIM_API_model::string_init(char* in_tststr, char* modelname){
    int error;
-    //redirecting cout > kimlog
+    //redirecting std::cout > kimlog
     char kimlog[2048] = KIM_DIR; strcat(kimlog,"kim.log");
-    streambuf * psbuf, * backup;ofstream filekimlog;
+    std::streambuf * psbuf, * backup; std::ofstream filekimlog;
     filekimlog.open(kimlog);
-    backup = cout.rdbuf();psbuf = filekimlog.rdbuf();cout.rdbuf(psbuf);
+    backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);
 
     //check test-model match and preinit test-model-API
     KIM_API_model test,mdl;
@@ -1543,10 +1542,10 @@ bool KIM_API_model::string_init(char* in_tststr, char* modelname){
 
     //preinit test and model API object
     if(!test.prestring_init(in_tststr))
-        cout<<"test.prestring_init failed with error status:"<<this->get_status_msg(test.ErrorCode)<<endl;
+        std::cout<<"test.prestring_init failed with error status:"<<this->get_status_msg(test.ErrorCode)<<std::endl;
 
     if(!mdl.prestring_init(in_mdlstr))
-        cout<<"mdl.prestring_init failed with error status:"<<this->get_status_msg(mdl.ErrorCode)<<endl;
+        std::cout<<"mdl.prestring_init failed with error status:"<<this->get_status_msg(mdl.ErrorCode)<<std::endl;
 
     //check if they match
     if (is_it_match(test,mdl)){
@@ -1570,18 +1569,18 @@ bool KIM_API_model::string_init(char* in_tststr, char* modelname){
         if (strcmp(NBC_method_current,"NEIGH_RVEC_F")==0) support_Rij=true;
 
         c_free(in_mdlstr);
-        //redirecting back to > cout
-        cout.rdbuf(backup); filekimlog.close();
+        //redirecting back to > std::cout
+        std::cout.rdbuf(backup); filekimlog.close();
 
         return true;
     }else{
         mdl.free();
- cout<<"Do not match  " << modelname << " and "<< test.model.name <<endl;
+ std::cout<<"Do not match  " << modelname << " and "<< test.model.name <<std::endl;
        test.free();
 
         c_free(in_mdlstr);
-       //redirecting back to > cout
-        cout.rdbuf(backup); filekimlog.close();
+       //redirecting back to > std::cout
+        std::cout.rdbuf(backup); filekimlog.close();
 
         return false;
     }
@@ -1611,27 +1610,27 @@ bool KIM_API_model::model_init(){
     kim=this;
     pkim =(void**) &kim;
 
-    //redirecting cout > kimlog
+    //redirecting std::cout > kimlog
     char kimlog[2048] = KIM_DIR; strcat(kimlog,"kim.log");
-    streambuf * psbuf, * backup;ofstream filekimlog;
-    filekimlog.open(kimlog,ofstream::app);
-    backup = cout.rdbuf();psbuf = filekimlog.rdbuf();cout.rdbuf(psbuf);
+    std::streambuf * psbuf, * backup; std::ofstream filekimlog;
+    filekimlog.open(kimlog,std::ofstream::app);
+    backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);
 
-cout<< "* Info: KIM_API_model::model_init: call statically linked initialize routine for::"<<modelname<<endl;
-    //redirecting back to > cout
-    cout.rdbuf(backup); filekimlog.close();
+std::cout<< "* Info: KIM_API_model::model_init: call statically linked initialize routine for::"<<modelname<<std::endl;
+    //redirecting back to > std::cout
+    std::cout.rdbuf(backup); filekimlog.close();
 
 #include "model_init_include.cpp"
 
-    //redirecting cout > kimlog
-    filekimlog.open(kimlog,ofstream::app);
-    backup = cout.rdbuf();psbuf = filekimlog.rdbuf();cout.rdbuf(psbuf);
+    //redirecting std::cout > kimlog
+    filekimlog.open(kimlog,std::ofstream::app);
+    backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);
 
-    cout<< "* Info: KIM_API_model::model_init: model initiliser failed for ";
-    cout<<modelname<<endl;
+    std::cout<< "* Info: KIM_API_model::model_init: model initiliser failed for ";
+    std::cout<<modelname<<std::endl;
 
-     //redirecting back to > cout
-    cout.rdbuf(backup); filekimlog.close();
+     //redirecting back to > std::cout
+    std::cout.rdbuf(backup); filekimlog.close();
 
     return false;
 }
@@ -1647,14 +1646,14 @@ bool KIM_API_model::model_init(){
     pkim =(void**) &kim;
     sprintf(model_slib_file,"%s%s/%s.so",KIM_DIR_MODELS,modelname,modelname);
 
-//redirecting cout > kimlog
+//redirecting std::cout > kimlog
     char kimlog[2048] = KIM_DIR; strcat(kimlog,"kim.log");
-    streambuf * psbuf, * backup;ofstream filekimlog;
-    filekimlog.open(kimlog, ofstream::app);
-    backup = cout.rdbuf();psbuf = filekimlog.rdbuf();cout.rdbuf(psbuf);
+    std::streambuf * psbuf, * backup; std::ofstream filekimlog;
+    filekimlog.open(kimlog, std::ofstream::app);
+    backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);
 
-cout<<"* Info: KIM_API_model::model_init: call dynamically linked initialize routine for:"<<modelname<<endl;
-cout<<"               from the shared library:"<<model_slib_file<<endl;
+std::cout<<"* Info: KIM_API_model::model_init: call dynamically linked initialize routine for:"<<modelname<<std::endl;
+std::cout<<"               from the shared library:"<<model_slib_file<<std::endl;
     sprintf(model_init_routine_name,"%s_init_",modelname);
     for(int i=0;i<(int)strlen(model_init_routine_name);i++){
          model_init_routine_name[i]=tolower(model_init_routine_name[i]);
@@ -1662,12 +1661,12 @@ cout<<"               from the shared library:"<<model_slib_file<<endl;
 
     model_lib_handle = dlopen(model_slib_file,RTLD_NOW);
     if(!model_lib_handle) {
-         cout<< "* Info: KIM_API_model::model_init: model initiliser failed for ";
-         cout<<modelname<<endl<<dlerror()<<endl;
+         std::cout<< "* Info: KIM_API_model::model_init: model initiliser failed for ";
+         std::cout<<modelname<<std::endl<<dlerror()<<std::endl;
          fprintf(stderr,"%s not found...\n",model_slib_file);
 
-          //redirecting back to > cout
-          cout.rdbuf(backup); filekimlog.close();
+          //redirecting back to > std::cout
+          std::cout.rdbuf(backup); filekimlog.close();
 
          return false;
     }
@@ -1676,17 +1675,17 @@ cout<<"               from the shared library:"<<model_slib_file<<endl;
     Model_Init mdl_init = (Model_Init)dlsym(model_lib_handle,model_init_routine_name);
     const char *dlsym_error = dlerror();
     if (dlsym_error) {
-        cerr << "* Error (KIM_API_model::model_init): Cannot load symbol: " << dlsym_error <<endl;
+        std::cerr << "* Error (KIM_API_model::model_init): Cannot load symbol: " << dlsym_error <<std::endl;
         dlclose(model_lib_handle);
 
-        //redirecting back to > cout
-        cout.rdbuf(backup); filekimlog.close();
+        //redirecting back to > std::cout
+        std::cout.rdbuf(backup); filekimlog.close();
 
         return false;
     }
 
-    //redirecting back to > cout
-    cout.rdbuf(backup); filekimlog.close();
+    //redirecting back to > std::cout
+    std::cout.rdbuf(backup); filekimlog.close();
 
 
     (*mdl_init)(pkim);
@@ -1749,8 +1748,8 @@ int KIM_API_model::get_neigh(int mode, int request, int *atom,
             int erkey = (*get_neigh)((void **)&pkim,&locmode, &locrequest, atom, numnei, nei1atom, Rij );
             if (erkey <= 0) return erkey; // return with error from  supplied by test get_neigh
             if(*numnei > KIM_API_MAX_NEIGHBORS) {
-                cout<<endl<< "* Error (KIM_API_model::get_neigh): numnei > MAX_NEIGHBORS : ";
-                cout<<" "<<*numnei <<" > "<< KIM_API_MAX_NEIGHBORS<<endl;
+                std::cout<<std::endl<< "* Error (KIM_API_model::get_neigh): numnei > MAX_NEIGHBORS : ";
+                std::cout<<" "<<*numnei <<" > "<< KIM_API_MAX_NEIGHBORS<<std::endl;
                 return KIM_STATUS_NEIGH_TOO_MANY_NEIGHBORS;
             }
             return erkey;
@@ -1767,8 +1766,8 @@ int KIM_API_model::get_neigh(int mode, int request, int *atom,
             int erkey = (*get_neigh)((void **)&pkim,&locmode, &req, &at, numnei, nei1atom, Rij );
             if (erkey <= 0) return erkey; // return with error from  supplied by test get_neigh
             if(*numnei > KIM_API_MAX_NEIGHBORS) {
-                cout<<endl<< "* Error (KIM_API_model::get_neigh): numnei > MAX_NEIGHBORS : ";
-                cout<<" "<<*numnei <<" > "<< KIM_API_MAX_NEIGHBORS<<endl;
+                std::cout<<std::endl<< "* Error (KIM_API_model::get_neigh): numnei > MAX_NEIGHBORS : ";
+                std::cout<<" "<<*numnei <<" > "<< KIM_API_MAX_NEIGHBORS<<std::endl;
                 return KIM_STATUS_NEIGH_TOO_MANY_NEIGHBORS;
             }
             if (erkey == 1){
@@ -1781,15 +1780,15 @@ int KIM_API_model::get_neigh(int mode, int request, int *atom,
             return erkey;
         }
     }else{
-        cout<<endl<< "* Error (KIM_API_model::get_neigh): wrong base convert key,model_index_shift =";
-        cout<< model_index_shift <<"  (must be 0,1 or -1)"<<endl;
+        std::cout<<std::endl<< "* Error (KIM_API_model::get_neigh): wrong base convert key,model_index_shift =";
+        std::cout<< model_index_shift <<"  (must be 0,1 or -1)"<<std::endl;
         return KIM_STATUS_API_OBJECT_INVALID;
     }
 }
 
 bool KIM_API_model::irrelevantVars2donotcompute(KIM_API_model & test, KIM_API_model & mdl){
    if(! is_it_match_noFlagCount(test,mdl.inlines,mdl.numlines,false)) {
-        cout<<"* Error (KIM_API_model::irrelevantVars2donotcompute): Test and Model descriptor files are incompatible (do not match)."<<endl;
+        std::cout<<"* Error (KIM_API_model::irrelevantVars2donotcompute): Test and Model descriptor files are incompatible (do not match)."<<std::endl;
         return false;
     }
     for(int i=0; i<mdl.numlines;i++){
@@ -1807,7 +1806,7 @@ bool KIM_API_model::irrelevantVars2donotcompute(KIM_API_model & test, KIM_API_mo
 void KIM_API_model::allocate( int natoms, int ntypes, int * error){
     // in process
     if ( this->model.data == NULL) {
-        cout<<"* Error (KIM_API_model::allocate): KIM API object not initialized with KIM_API_init()."<<endl;
+        std::cout<<"* Error (KIM_API_model::allocate): KIM API object not initialized with KIM_API_init()."<<std::endl;
         *error = KIM_STATUS_FAIL;
         return;
     }
@@ -1841,15 +1840,15 @@ void KIM_API_model::allocate( int natoms, int ntypes, int * error){
     *error=KIM_STATUS_OK;
 }
 
-ostream &operator<<(ostream &stream, KIM_API_model &a){
-    stream<<"*************************************"<<endl;
+std::ostream &operator<<(std::ostream &stream, KIM_API_model &a){
+    stream<<"*************************************"<<std::endl;
     stream << a.model;
-    stream<<"-------------------------------------"<<endl;
+    stream<<"-------------------------------------"<<std::endl;
     KIMBaseElement **pel =  (KIMBaseElement **)  a.model.data;
     for(int i=0;i<a.model.size;i++)   stream<< *(pel[i]);
-    stream<<"-------------------------------------"<<endl;
+    stream<<"-------------------------------------"<<std::endl;
     stream<<a.unit_h;
-    stream<<"*************************************"<<endl;
+    stream<<"*************************************"<<std::endl;
 
     return stream;
 }
@@ -1867,7 +1866,7 @@ bool KIM_API_model::init_AtomsTypes(){
             strncpy(AtomsTypes[ii].symbol,inlines[i].name,strlen(inlines[i].name)+1);
             if(inlines[i].get_rank() !=1){
                 ErrorCode = -30;
-                cout <<" atom code error";
+                std::cout <<" atom code error";
                 return false;
             }
             int * shp = inlines[i].get_shape();
@@ -2124,15 +2123,15 @@ bool KIM_API_model::check_consistance_NBC_method(){
         }
     }
     if (!match) {
-        cout<<"* Error (KIM_API_model::check_consistance_NBC_method):"<<NBC_method_current
-                <<" is unknown."<<endl;
+        std::cout<<"* Error (KIM_API_model::check_consistance_NBC_method):"<<NBC_method_current
+                <<" is unknown."<<std::endl;
         return false;
     }
     for (int j=0;j<nnarg_NBC[i]; j++){
        if (get_index(arg_NBC_methods[i][j], &error) == -1){
-            cout<<"* Error (KIM_API_model::check_consistance_NBC_method): Argument "<< arg_NBC_methods[i][j];
-            cout<<" required for NBC method " << NBC_method_current;
-            cout<<" is not in KIM API object."<<endl;
+            std::cout<<"* Error (KIM_API_model::check_consistance_NBC_method): Argument "<< arg_NBC_methods[i][j];
+            std::cout<<" required for NBC method " << NBC_method_current;
+            std::cout<<" is not in KIM API object."<<std::endl;
             return false;
         }
     }
@@ -2189,8 +2188,8 @@ char * KIM_API_model::get_status_msg(int status_code) {
 int KIM_API_model::report_error(int ln,char * fl,char * usermsg,int ier){
     if(ier <= 0){
         char * kimstatus =get_status_msg(ier);
-        cout<<"* Error: at line "<<ln<<" in "<<fl<< endl<<"\tMessage: "<<usermsg<<endl;
-        cout<<"\tKIM_STATUS_MSG: "<<kimstatus<<endl;
+        std::cout<<"* Error: at line "<<ln<<" in "<<fl<< std::endl<<"\tMessage: "<<usermsg<<std::endl;
+        std::cout<<"\tKIM_STATUS_MSG: "<<kimstatus<<std::endl;
         c_free((void *) kimstatus);
         return KIM_STATUS_FAIL;
     }
@@ -2235,10 +2234,10 @@ bool KIM_API_model::fij_related_things_match(KIM_API_model& test, KIM_API_model&
     if ((tst_process_dEdr || tst_process_d2Edr2) && (tst_virial_required ||
                                                      tst_particleVirial_required ||
                                                      tst_hessian_required)) {
-       cout << "* Error (KIM_API_model::fij_related_things_match): "
+       std::cout << "* Error (KIM_API_model::fij_related_things_match): "
           "Test descriptor file cannot list both `process_dEdr' or "
           "`process_d2Edr2'  and any of `virial', `particleVirial', or `hessian'"
-            << endl;
+            << std::endl;
        return false;
     }
 
@@ -2251,10 +2250,10 @@ bool KIM_API_model::fij_related_things_match(KIM_API_model& test, KIM_API_model&
     if ((mdl_process_dEdr || mdl_process_d2Edr2) && (mdl_virial ||
                                                      mdl_particleVirial ||
                                                      mdl_hessian)) {
-       cout << "* Error (KIM_API_model::fij_related_things_match): "
+       std::cout << "* Error (KIM_API_model::fij_related_things_match): "
           "Model descriptor file cannot list both `process_dEdr' or "
           "`process_d2Edr2'  and any of `virial', `particleVirial', or `hessian'"
-            << endl;
+            << std::endl;
        return false;
     }
 
@@ -2290,19 +2289,19 @@ bool KIM_API_model::add_element(char* instring){
 
 
         //open string as stream from char *
-        string in_strstream=instring;
-        stringstream myfile (in_strstream, stringstream::in|stringstream::out);
+        std::string in_strstream=instring;
+        std::stringstream myfile (in_strstream, std::stringstream::in|std::stringstream::out);
         if(!myfile){
-            cout<<"* Error (KIM_API_model::add_element): can not access input string."<<endl;
+            std::cout<<"* Error (KIM_API_model::add_element): can not access input string."<<std::endl;
             return false;
         }
 
-        myfile.seekp(stringstream::beg);//set to the begining
+        myfile.seekp(std::stringstream::beg);//set to the begining
         myfile >> inln;
         if(inln.goodformat) {
             this->inlines[numlines]=inln;
         }else{
-            cout<<"* Error (KIM_API_model::add_element): bad format input string."<<endl;
+            std::cout<<"* Error (KIM_API_model::add_element): bad format input string."<<std::endl;
             return false;
         }
 
@@ -2459,7 +2458,7 @@ void KIM_API_model::setm_data(int *err, int numargs, ... ){
     va_list listPointer;
     va_start(listPointer,numargs);
     if(numargs % 4 != 0) {
-        cout<<"setm_data: numargs must be multiple of 4"<<endl;
+        std::cout<<"setm_data: numargs must be multiple of 4"<<std::endl;
         *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_4;
         va_end(listPointer);
         return;
@@ -2477,9 +2476,9 @@ void KIM_API_model::setm_data(int *err, int numargs, ... ){
             return;
         }else if(key ==0) continue;
 
-        if(dt==NULL) cout<<"setm_data: WARNING: for "<<nm<<" data is NULL\n";
+        if(dt==NULL) std::cout<<"setm_data: WARNING: for "<<nm<<" data is NULL\n";
         if(!this->set_data(nm,size,dt)){
-            cout<<"setm_data: set data for "<<nm<<" failed\n";
+            std::cout<<"setm_data: set data for "<<nm<<" failed\n";
             va_end(listPointer);
             return;
         }
@@ -2494,7 +2493,7 @@ void KIM_API_model::setm_data_by_index(int *err, int numargs, ... ){
     va_list listPointer;
     va_start(listPointer,numargs);
     if(numargs % 4 != 0) {
-        cout<<"setm_data_by_index: numargs must be multiple of 4"<<endl;
+        std::cout<<"setm_data_by_index: numargs must be multiple of 4"<<std::endl;
         *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_4;
         va_end(listPointer);
         return;
@@ -2511,10 +2510,10 @@ void KIM_API_model::setm_data_by_index(int *err, int numargs, ... ){
             return;
         }else if(key ==0) continue;
 
-        if(dt==NULL) cout<<"setm_data_by_index: WARNING: for argument group "<<i<<" data is NULL\n";
+        if(dt==NULL) std::cout<<"setm_data_by_index: WARNING: for argument group "<<i<<" data is NULL\n";
 
         if(!this->set_data_by_index(ind,size,dt)){
-            cout<<"setm_data_by_index: set data for argument group"<<i<<" failed\n";
+            std::cout<<"setm_data_by_index: set data for argument group"<<i<<" failed\n";
             va_end(listPointer);
             return;
         }
@@ -2529,7 +2528,7 @@ void KIM_API_model::getm_data(int *err,int numargs, ...){
     va_list listPointer;
     va_start(listPointer,numargs);
     if(numargs % 3 != 0) {
-        cout<<"getm_data: numargs must be multiple of 3"<<endl;
+        std::cout<<"getm_data: numargs must be multiple of 3"<<std::endl;
         *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3;
         va_end(listPointer);
         return;
@@ -2547,7 +2546,7 @@ void KIM_API_model::getm_data(int *err,int numargs, ...){
 
         *dt = this->get_data(nm,err);
         if(*err != KIM_STATUS_OK){
-            cout<<"getm_data: get data for "<<nm<<" failed\n";
+            std::cout<<"getm_data: get data for "<<nm<<" failed\n";
             va_end(listPointer);
             return;
         }
@@ -2562,7 +2561,7 @@ void KIM_API_model::getm_data_by_index(int *err,int numargs, ...){
     va_list listPointer;
     va_start(listPointer,numargs);
     if(numargs % 3 != 0) {
-        cout<<"getm_data_by_index: numargs must be multiple of 3"<<endl;
+        std::cout<<"getm_data_by_index: numargs must be multiple of 3"<<std::endl;
         *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3;
         va_end(listPointer);
         return;
@@ -2581,7 +2580,7 @@ void KIM_API_model::getm_data_by_index(int *err,int numargs, ...){
 
         *dt = this->get_data_by_index(ind,err);
         if(*err != KIM_STATUS_OK){
-            cout<<"getm_data_by_index: get data for argument group "<<i<<" failed\n";
+            std::cout<<"getm_data_by_index: get data for argument group "<<i<<" failed\n";
             va_end(listPointer);
             return;
         }
@@ -2597,7 +2596,7 @@ void KIM_API_model::getm_index(int *err, int numargs, ...){
     va_start(listPointer,numargs);
 
     if(numargs % 3 != 0) {
-        cout<<"getm_index: numargs must be multiple of 3"<<endl;
+        std::cout<<"getm_index: numargs must be multiple of 3"<<std::endl;
         *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3;
         va_end(listPointer);
         return;
@@ -2616,7 +2615,7 @@ void KIM_API_model::getm_index(int *err, int numargs, ...){
 
         *ind = this->get_index(nm,err);
         if(*err != KIM_STATUS_OK){
-            cout<<"getm_index: get index for "<<nm<<" failed\n";
+            std::cout<<"getm_index: get index for "<<nm<<" failed\n";
             va_end(listPointer);
             return;
         }
@@ -2632,7 +2631,7 @@ void KIM_API_model::setm_compute(int *err, int numargs, ...){
     va_list listPointer;
     va_start(listPointer,numargs);
     if(numargs % 3 != 0) {
-        cout<<"setm_compute: numargs must be multiple of 3"<<endl;
+        std::cout<<"setm_compute: numargs must be multiple of 3"<<std::endl;
         *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3;
         va_end(listPointer);
         return;
@@ -2651,7 +2650,7 @@ void KIM_API_model::setm_compute(int *err, int numargs, ...){
 
         int index = this->get_index(nm,err);
         if (*err != KIM_STATUS_OK){
-           cout<<"setm_compute:  name "<<nm<<" not in KIM\n";
+           std::cout<<"setm_compute:  name "<<nm<<" not in KIM\n";
            va_end(listPointer);
            return;
         }
@@ -2660,7 +2659,7 @@ void KIM_API_model::setm_compute(int *err, int numargs, ...){
         }else if (compute_flag ==0){
             (*this)[index].flag->calculate = 0;
         }else{
-            cout<<"setm_compute:  for "<<nm<<" failed: compute_flag must be 0 or 1\n";
+            std::cout<<"setm_compute:  for "<<nm<<" failed: compute_flag must be 0 or 1\n";
             va_end(listPointer);
             return;
         }
@@ -2675,7 +2674,7 @@ void KIM_API_model::setm_compute_by_index(int* err, int numargs, ...){
     va_list listPointer;
     va_start(listPointer,numargs);
     if(numargs % 3 != 0) {
-        cout<<"setm_compute_by_index: numargs must be multiple of 3"<<endl;
+        std::cout<<"setm_compute_by_index: numargs must be multiple of 3"<<std::endl;
         *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3;
         va_end(listPointer);
         return;
@@ -2694,7 +2693,7 @@ void KIM_API_model::setm_compute_by_index(int* err, int numargs, ...){
 
         if (index < 0 || index >= this->model.size) *err=KIM_STATUS_FAIL;
         if (*err != KIM_STATUS_OK){
-           cout<<"setm_compute_by_index:  for argument group "<<i<<" failed\n";
+           std::cout<<"setm_compute_by_index:  for argument group "<<i<<" failed\n";
            va_end(listPointer);
            return;
         }
@@ -2703,7 +2702,7 @@ void KIM_API_model::setm_compute_by_index(int* err, int numargs, ...){
         }else if (compute_flag ==0){
             (*this)[index].flag->calculate = 0;
         }else{
-            cout<<"setm_compute_by_index:  for argument group "<<i<<" failed: compute_flag must be 0 or 1\n";
+            std::cout<<"setm_compute_by_index:  for argument group "<<i<<" failed: compute_flag must be 0 or 1\n";
             *err=KIM_STATUS_FAIL;
             va_end(listPointer);
             return;
@@ -2719,7 +2718,7 @@ void KIM_API_model::getm_compute(int *err,int numargs, ...){
     va_list listPointer;
     va_start(listPointer,numargs);
     if(numargs % 3 != 0) {
-        cout<<"getm_compute: numargs must be multiple of 3"<<endl;
+        std::cout<<"getm_compute: numargs must be multiple of 3"<<std::endl;
         *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3;
         va_end(listPointer);
         return;
@@ -2738,7 +2737,7 @@ void KIM_API_model::getm_compute(int *err,int numargs, ...){
 
         int index = this->get_index(nm,err);
         if (*err != KIM_STATUS_OK){
-           cout<<"getm_compute:  name "<<nm<<" not in KIM\n";
+           std::cout<<"getm_compute:  name "<<nm<<" not in KIM\n";
            va_end(listPointer);
            return;
         }
@@ -2754,7 +2753,7 @@ void KIM_API_model::getm_compute_by_index(int* err, int numargs, ...){
     va_list listPointer;
     va_start(listPointer,numargs);
     if(numargs % 3 != 0) {
-        cout<<"getm_compute_by_index: numargs must be multiple of 3"<<endl;
+        std::cout<<"getm_compute_by_index: numargs must be multiple of 3"<<std::endl;
         *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3;
         va_end(listPointer);
         return;
@@ -2773,7 +2772,7 @@ void KIM_API_model::getm_compute_by_index(int* err, int numargs, ...){
 
         if (index < 0 || index >= this->model.size) *err=KIM_STATUS_FAIL;
         if (*err != KIM_STATUS_OK){
-           cout<<"getm_compute_by_index:  for argument group "<<i<<" failed\n";
+           std::cout<<"getm_compute_by_index:  for argument group "<<i<<" failed\n";
            va_end(listPointer);
            return;
         }
@@ -2788,7 +2787,7 @@ void KIM_API_model::getm_compute_by_index(int* err, int numargs, ...){
 void KIM_API_model::print(int* error){
     *error =KIM_STATUS_FAIL;
     if (this==NULL) return;
-    cout<<(*this);
+    std::cout<<(*this);
     *error=KIM_STATUS_OK;
 }
 
