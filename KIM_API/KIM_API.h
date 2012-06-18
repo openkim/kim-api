@@ -41,15 +41,15 @@
 
 #define number_NBC_methods 6
 #ifndef KIM_DIR_API
-#define KIM_DIR_API "../../KIM_API/"
+#define KIM_DIR_API "../../KIM_API"
 #endif
 
 #ifndef KIM_DIR_MODELS
-#define KIM_DIR_MODELS "../../MODELs/"
+#define KIM_DIR_MODELS "../../MODELs"
 #endif
 
 #ifndef KIM_DIR_TESTS
-#define KIM_DIR_TESTS "../../TESTs/"
+#define KIM_DIR_TESTS "../../TESTs"
 #endif
 
 #ifndef KIM_DIR

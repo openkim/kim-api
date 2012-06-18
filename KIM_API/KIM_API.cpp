@@ -1371,7 +1371,7 @@ char * KIM_API_model::get_model_kim_str(char* modelname,int * kimerr){
     *kimerr= KIM_STATUS_FAIL;
     char model_slib_file[2048];
     char model_kim_str_name[2048];
-    sprintf(model_slib_file,"%s%s/%s.so",KIM_DIR_MODELS,modelname,modelname);
+    sprintf(model_slib_file,"%s/%s/%s.so",KIM_DIR_MODELS,modelname,modelname);
     sprintf(model_kim_str_name,"%s_kim_str",modelname);
 
     //redirecting std::cout > kimlog
@@ -1452,8 +1452,8 @@ void KIM_API_model::fatal_error_print(){
 bool KIM_API_model::init_str_modelname(char* testname, char* inmdlstr){
    int error;
     char testinputfile[2048] = KIM_DIR_TESTS;
-    strcat(testinputfile,testname);strcat(testinputfile,"/");strcat(testinputfile,testname);
-    strcat(testinputfile,".kim");
+    strcat(testinputfile,"/");strcat(testinputfile,testname);strcat(testinputfile,"/");
+    strcat(testinputfile,testname);strcat(testinputfile,".kim");
 
 
 
@@ -1641,7 +1641,7 @@ bool KIM_API_model::model_init(){
     strcpy(modelname,this->model.name);
     kim=this;
     pkim =(void**) &kim;
-    sprintf(model_slib_file,"%s%s/%s.so",KIM_DIR_MODELS,modelname,modelname);
+    sprintf(model_slib_file,"%s/%s/%s.so",KIM_DIR_MODELS,modelname,modelname);
 
 //redirecting std::cout > kimlog
     char kimlog[2048] = KIM_DIR; strcat(kimlog,"kim.log");
