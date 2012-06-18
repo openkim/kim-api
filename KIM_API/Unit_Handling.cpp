@@ -32,13 +32,14 @@
 //
 
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <iostream>
-#include <fstream>
-#include <string.h>
-#include <sstream>
-#include <math.h>
+#include <cstring>
+#include <cmath>
+
+#include "KIM_API.h"
 #include "Unit_Handling.h"
+#include "KIM_API_status.h"
 
 char * Unit_Handling::derived_list[]={
     "dipole", "density", "dynamic_viscosity", "electric_field",

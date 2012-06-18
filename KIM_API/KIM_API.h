@@ -32,23 +32,13 @@
 //
 
 
-//#include <stdlib.h>
-
 #ifndef KIMHDR_KIM_API_H
 #define KIMHDR_KIM_API_H
 
 #include <iostream>
-#include <fstream>
 #include <stdint.h>
 #include <stdarg.h>
 
-#include "KIM_API_status.h"
-#include "KIM_AUX.h"
-
-extern "C" {
-        char * standard_kim_str();
- }
-#define KIM_KEY_STRING_LENGTH 64
 #define number_NBC_methods 6
 #ifndef KIM_DIR_API
 #define KIM_DIR_API "../../KIM_API/"
@@ -66,15 +56,16 @@ extern "C" {
 #define KIM_DIR "./"
 #endif
 
-#ifndef KIM_API_MAX_NEIGHBORS
+#define KIM_KEY_STRING_LENGTH 64
 #define KIM_API_MAX_NEIGHBORS 512
-#endif
 
-#define FREEABLE 0
-
-
+#include "KIM_AUX.h"
 
 //#define intptr_t int  // for 32 bit machines
+
+extern "C" {
+        char * standard_kim_str();
+ }
 
 class KIMBaseElementFlag{
 public:
@@ -148,6 +139,8 @@ std::ostream &operator<<(std::ostream &stream, IOline a);
 std::istream &operator>>(std::istream &stream, IOline &a);
 
 
+#include "Unit_Handling.h"
+
 class KIMBaseElement{
 public:
         void *data;
@@ -172,12 +165,6 @@ static  int getelemsize(char *tp, bool& success);
 };
 std::ostream &operator<<(std::ostream &stream, KIMBaseElement a);
 
-#ifndef UNIT_HANDLING_H
-#include "Unit_Handling.h"
-#endif
-
-
-
 class KIM_API_model{
 public:
     KIMBaseElement model;
@@ -187,9 +174,7 @@ public:
     bool model_info(char * modelname) {return preinit(modelname);}//does not have error
                                                                   // because it returns OK or FAIL
 
-    void free_e(int *error); //free_e because free(int *) interferes with free(void *)
-                             // from standard V, on gnu version 4.5.2
-    void free();
+    void free(int *error);
     bool set_data(char *nm, intptr_t size, void *dt);
     bool set_data_by_index(int ind,intptr_t size, void *dt);
 
@@ -392,8 +377,7 @@ private:
     bool is_it_in(KIM_API_model &mdl,char *name);
     void * model_lib_handle;
     bool add_element(char * inln);
-
-
+    void free();
 };
 std::ostream &operator<<(std::ostream &stream, KIM_API_model &a);
 

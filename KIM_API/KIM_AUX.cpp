@@ -32,16 +32,9 @@
 //
 
 
-#include <stdlib.h>
-#include <iostream>
-#include <fstream>
-#include <string.h>
-//#include <sstream>
-
-
-
 #include "KIM_AUX.h"
 #include "KIM_API.h"
+#include "KIM_API_status.h"
 
 KIM_AUX::Process_DE::Process_DE(){
     virial=NULL;

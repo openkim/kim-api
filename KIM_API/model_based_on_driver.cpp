@@ -32,11 +32,11 @@
 //
 
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <iostream>
-#include <string.h>
-#include "KIM_API_C.h"
+#include <fstream>
 #include "KIM_API.h"
+#include "KIM_API_status.h"
 
 static void process_paramfiles(char* param_file_names, int* nmstrlen);
 
@@ -99,8 +99,8 @@ extern "C" {
       param_file_names = NULL;
       if (KIM_STATUS_OK > ier) return ier;
 
-      driver_destroy = KIM_API_get_data((void *) *((KIM_API_model**)km), "destroy", &ier);
-      KIM_API_set_data((void *) *((KIM_API_model**)km), "destroy",1,(void*) &model_destroy);
+      driver_destroy = (*((KIM_API_model**)km))->get_data("destroy", &ier);
+      (*((KIM_API_model**)km))->set_data("destroy",1,(void*) &model_destroy);
 #else
       int ier = MODEL_DRIVER_NAME_LC_STR_init_(km, param_file_names, &nmstrlen, &numparamfiles);
       delete [] param_file_names;

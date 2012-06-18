@@ -32,16 +32,14 @@
 //
 
 
-#include <stdlib.h>
 #include <iostream>
-#include <fstream>
+#include <cstring>
+#include <stdarg.h>
+#include <stdint.h>
 
-
-#include <string.h>
-
-
-#include "KIM_API.h"
 #include "KIM_API_C.h"
+#include "KIM_API.h"
+#include "KIM_API_status.h"
 
 //global methods
 int KIM_API_init(void * kimmdl, char *testname, char *mdlname){
@@ -85,7 +83,7 @@ void KIM_API_free(void *kimmdl,int * error){
     KIM_API_model * mdl=*(KIM_API_model **) kimmdl;
     *error=KIM_STATUS_OK;
     if (mdl==NULL) return;
-    mdl->free_e(error);
+    mdl->free(error);
     delete [] mdl;
     *(KIM_API_model **) kimmdl=NULL;
 

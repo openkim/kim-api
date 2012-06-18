@@ -32,11 +32,10 @@
 //
 
 
-#ifndef _KIMSERVICE_H
-#include "KIM_API.h"
-#endif
-#ifndef UNIT_HANDLING_H
-#define UNIT_HANDLING_H
+#ifndef KIMHDR_UNIT_HANDLING_H
+#define KIMHDR_UNIT_HANDLING_H
+
+#include <iostream>
 
 class Unit_Handling{
 public:
@@ -107,4 +106,4 @@ private:
 
 };
 std::ostream &operator<<(std::ostream &stream, Unit_Handling &a);
-#endif  /* UNIT_HANDLING_H */
+#endif  /* KIM_HDR_UNIT_HANDLING_H */

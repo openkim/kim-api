@@ -32,10 +32,10 @@
 //
 
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <iostream>
 #include <fstream>
-#include <string.h>
+#include <cstring>
 #include <sstream>
 
 
@@ -44,14 +44,10 @@
 #endif
 
 #include "KIM_API.h"
+#include "KIM_API_status.h"
 
-#define KIM_KEY_STRING_LENGTH 64
 #define KIM_LINE_LENGTH 512
 
-
-static void c_free(void *p){
-    free(p);
-}
 
 static void strip_char_string(char* nm)
 {
@@ -808,17 +804,12 @@ bool KIM_API_model::prestring_init(char *instrn){
         return true;
 }
 
- void KIM_API_model::free_e(int *error){
-        //
-        *error = KIM_STATUS_FAIL;
-        if(this==NULL) return;
-        this->free();
-        *error=KIM_STATUS_OK;
- }
+void KIM_API_model::free(int *error){
+   free();
+   *error = KIM_STATUS_OK; // no failures detectable
+}
 
  void KIM_API_model::free(){
-        //
-
          KIMBaseElement **pel =  (KIMBaseElement **)  model.data;
         if(model.data != NULL)  for (int i =0;i<model.size;i++) {
             pel[i]->free();
@@ -1440,7 +1431,7 @@ bool KIM_API_model::init(char* testname, char* modelname){
 
     bool result_init= this->init_str_modelname(testname,in_mdlstr);
 
-    c_free(in_mdlstr);
+    std::free(in_mdlstr);
    //redirecting back to > std::cout
     std::cout.rdbuf(backup); filekimlog.close();
 
@@ -1522,7 +1513,7 @@ bool KIM_API_model::preinit(char* modelname){
     char* in_mdlstr = get_model_kim_str(modelname, &error);
     bool result= this->prestring_init(in_mdlstr);
 
-    c_free(in_mdlstr);
+    std::free(in_mdlstr);
     //redirecting back to > std::cout
     std::cout.rdbuf(backup); filekimlog.close();
     return result;
@@ -1568,7 +1559,7 @@ bool KIM_API_model::string_init(char* in_tststr, char* modelname){
         support_Rij=false;
         if (strcmp(NBC_method_current,"NEIGH_RVEC_F")==0) support_Rij=true;
 
-        c_free(in_mdlstr);
+        std::free(in_mdlstr);
         //redirecting back to > std::cout
         std::cout.rdbuf(backup); filekimlog.close();
 
@@ -1578,7 +1569,7 @@ bool KIM_API_model::string_init(char* in_tststr, char* modelname){
  std::cout<<"Do not match  " << modelname << " and "<< test.model.name <<std::endl;
        test.free();
 
-        c_free(in_mdlstr);
+       std::free(in_mdlstr);
        //redirecting back to > std::cout
         std::cout.rdbuf(backup); filekimlog.close();
 
@@ -1951,7 +1942,7 @@ bool KIM_API_model::is_half_neighbors(int* kimerr){
     method = (char *) get_NBC_method(kimerr);
 
     if(*kimerr!=1){
-        if (method!=NULL) c_free((void *)method);
+       if (method!=NULL) std::free((void *)method);
         return true;
     }
 
@@ -1959,7 +1950,7 @@ bool KIM_API_model::is_half_neighbors(int* kimerr){
     if (strcmp(method,"NEIGH_PURE_F")==0) answer = false;
     if (strcmp(method,"NEIGH_RVEC_F")==0) answer = false;
     if (strcmp(method,"MI_OPBC_F")==0) answer = false;
-    if (method!=NULL) c_free((void *)method);
+    if (method!=NULL) std::free((void *)method);
     *kimerr=KIM_STATUS_OK;
     return answer;
 }
@@ -2190,7 +2181,7 @@ int KIM_API_model::report_error(int ln,char * fl,char * usermsg,int ier){
         char * kimstatus =get_status_msg(ier);
         std::cout<<"* Error: at line "<<ln<<" in "<<fl<< std::endl<<"\tMessage: "<<usermsg<<std::endl;
         std::cout<<"\tKIM_STATUS_MSG: "<<kimstatus<<std::endl;
-        c_free((void *) kimstatus);
+        std::free((void *) kimstatus);
         return KIM_STATUS_FAIL;
     }
     return KIM_STATUS_OK;
