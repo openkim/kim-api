@@ -53,10 +53,10 @@ int KIM_API_string_init(void * kimmdl, char *testinputstring, char * modelname);
 void KIM_API_allocate(void *kimmdl, int natoms, int ntypes, int * error);
 void KIM_API_free(void *kimmdl,int * error);
 void KIM_API_print(void *kimmdl,int *error);
-void KIM_API_model_compute(void *kimmdl,int *error);
+int KIM_API_model_compute(void *kimmdl);
 int KIM_API_model_init(void * kimmdl);
 char * KIM_API_get_model_kim_str(char *modelname,int * error);
-void KIM_API_model_destroy(void * kimmdl,int * error);
+int KIM_API_model_destroy(void * kimmdl);
 int KIM_API_model_reinit(void * kimmdl);
 
 
@@ -104,7 +104,7 @@ int KIM_API_get_compute(void *kimmdl,char *nm,int *error);
 
 int KIM_API_get_index(void *kimmdl,char *nm, int * error);
 
-void KIM_API_set_data_by_index(void *kimmdl,int I, intptr_t size, void *dt, int * error);
+int KIM_API_set_data_by_index(void *kimmdl,int I, intptr_t size, void *dt);
 void * KIM_API_get_data_by_index(void *kimmdl,int I, int *error);
 
 intptr_t KIM_API_get_size_by_index(void *kimmdl,int I,int *error);
@@ -112,8 +112,8 @@ intptr_t KIM_API_get_shape_by_index(void *kimmdl,int I, int * shape,int *error);
 
 int KIM_API_get_compute_by_index(void *kimmdl,int I,int * error);
 
-void KIM_API_process_dEdr(void **kimmdl, double * dE, double * dr, double **dx,int *i, int *j, int *error );
-void KIM_API_process_d2Edr2(void **kimmdl, double * dE, double ** dr, double **dx,int **i, int **j, int *error );
+int KIM_API_process_dEdr(void **kimmdl, double * dE, double * dr, double **dx,int *i, int *j);
+int KIM_API_process_d2Edr2(void **kimmdl, double * dE, double ** dr, double **dx,int **i, int **j);
 /* related to Unit_Handling */
 double KIM_API_get_scale_conversion(char *u_from,char *u_to, int *error);
 int    KIM_API_get_unit_handling(void *kimmdl,int *error);
@@ -158,10 +158,10 @@ int kim_api_string_init_(void * kimmdl, char **testinputstring, char ** modelnam
 void kim_api_allocate_(void *kimmdl, int *natoms, int *ntypes, int *error);
 void kim_api_free_(void *kimmdl, int * error);
 void kim_api_print_(void *kimmdl,int * error);
-void kim_api_model_compute_f_(void*kimmdl, int *error);
+int kim_api_model_compute_f_(void*kimmdl);
 
 int kim_api_model_reinit_f_(void * kimmdl);
-void kim_api_model_destroy_f_(void * kimmdl, int * error);
+int kim_api_model_destroy_f_(void * kimmdl);
 
 int kim_api_model_init_f_(void * kimmdl);
 
@@ -208,7 +208,7 @@ int kim_api_get_compute_(void *kimmdl,char **nm, int *error);
 
 int kim_api_get_index_(void *kimmdl,char**nm, int *error);
 
-void kim_api_set_data_by_index_(void *kimmdl,int * I, intptr_t * size, void *dt, int *error);
+int kim_api_set_data_by_index_(void *kimmdl,int * I, intptr_t * size, void *dt);
 void * kim_api_get_data_by_index_(void *kimmdl,int * I, int *error);
 
 intptr_t kim_api_get_size_by_index_(void *kimmdl,int * I, int *error);
@@ -220,8 +220,8 @@ void * kim_api_get_status_msg_f_(int * error);
 
 int kim_api_report_error_(int * ln,char ** fl, char ** usermsg, int * ier);
 
-void kim_api_process_dedr_f_(void **ppkim, double * dE, double * dr, double **dx, int *i, int *j, int *ier );
-void kim_api_process_d2edr2_f_(void **ppkim, double * dE, double ** dr, double **dx, int **i, int **j, int *ier );
+int kim_api_process_dedr_f_(void **ppkim, double * dE, double * dr, double **dx, int *i, int *j);
+int kim_api_process_d2edr2_f_(void **ppkim, double * dE, double ** dr, double **dx, int **i,int **j);
 
 /* related to Unit_Handling */
 double kim_api_get_scale_conversion_(char **u_from,char **u_to, int *error);

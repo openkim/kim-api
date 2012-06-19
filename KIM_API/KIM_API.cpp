@@ -725,15 +725,15 @@ KIM_API_model:: ~KIM_API_model(){
          delete [] neiOfAnAtom;
       }
 }
-bool KIM_API_model:: preinit(char * initfile,char *modelname){
+int KIM_API_model:: preinit(char * initfile,char *modelname){
    std::stringstream buffer;
-   if (!read_file_to_stringstream(initfile, buffer)) return false;
+   if (!read_file_to_stringstream(initfile, buffer)) return KIM_STATUS_FAIL;
 
    return prestring_init((char*) buffer.str().c_str());
  }
 
-bool KIM_API_model::prestring_init(char *instrn){
-        if (!read_file_str(instrn,&inlines,&numlines)) return false;
+int KIM_API_model::prestring_init(char *instrn){
+        if (!read_file_str(instrn,&inlines,&numlines)) return KIM_STATUS_FAIL;
 
 
         int *shape=NULL;
@@ -742,7 +742,7 @@ bool KIM_API_model::prestring_init(char *instrn){
         //get Atoms Types and nAtomsTypes
         if (! init_AtomsTypes()) {
             ErrorCode=KIM_STATUS_FAIL;
-            return false;
+            return ErrorCode;
         }
         model.init(modelname,pointer_str,(intptr_t)(numlines-nAtomsTypes+3),1,shape);
         model.size =(intptr_t)(numlines-nAtomsTypes);
@@ -794,7 +794,7 @@ bool KIM_API_model::prestring_init(char *instrn){
         IOline *extrainput;
         bool readlines_str_success;
         int nextra = IOline::readlines_str(instrn,&extrainput, readlines_str_success);
-        if (!readlines_str_success) return false;
+        if (!readlines_str_success) return KIM_STATUS_FAIL;
         for (int i=0;i<nextra;i++){
             if(strcmp(extrainput[i].name,"TEST_NAME")==0){
                 strcpy(this->model.name,extrainput[i].value);
@@ -805,9 +805,10 @@ bool KIM_API_model::prestring_init(char *instrn){
         }
         delete [] extrainput;
         unit_h.init_str(instrn,&ErrorCode);
-        if(ErrorCode < KIM_STATUS_OK) return false;
+        if(ErrorCode < KIM_STATUS_OK) return ErrorCode;
 
-        return true;
+        ErrorCode = KIM_STATUS_OK;
+        return ErrorCode;
 }
 
 void KIM_API_model::free(int *error){
@@ -839,18 +840,18 @@ void KIM_API_model::free(int *error){
         }
  }
 
-bool KIM_API_model::set_data(char *nm, intptr_t size, void *dt){
+int KIM_API_model::set_data(char *nm, intptr_t size, void *dt){
         // set data into preinit element correctly calculates all
         int error;
         int ind=get_index(nm, &error);
         if (ind<0) {
-            return false;
+            return error;
         } //no data in KIM_API_model
         return set_data_by_index(ind, size, dt);
 }
-bool KIM_API_model::set_data_by_index(int ind, intptr_t size, void* dt){
+int KIM_API_model::set_data_by_index(int ind, intptr_t size, void* dt){
     if (ind<0) {
-            return false;
+            return KIM_STATUS_FAIL;
         } //no data in KIM_API_model
         int c=1;
        if((*this)[ind].flag->freeable == 0) {
@@ -870,7 +871,7 @@ bool KIM_API_model::set_data_by_index(int ind, intptr_t size, void* dt){
             (*this)[ind].shape[0] = size;
         }
         (*this)[ind].flag->freeable = 1;
-        return true;
+        return KIM_STATUS_OK;
 }
 void * KIM_API_model::get_data(char *nm,int *error){
    int i=get_index(nm, error);
@@ -962,9 +963,10 @@ void KIM_API_model::set_compute_by_index(int ind, int flag, int *error){
 
    return;
 }
-bool KIM_API_model::get_compute(char *nm){
-        if ((*this)[nm].flag->calculate == 1) return true;
-        return false;
+int KIM_API_model::get_compute(char *nm, int* error){
+   int ind = get_index(nm, error);
+   if (*error != KIM_STATUS_OK) return KIM_STATUS_ARG_UNKNOWN;
+   return get_compute_by_index(ind, error);
 }
 KIMBaseElement & KIM_API_model::operator[](int i){
         if ((i > (*this).model.size) || (i < 0)){
@@ -1424,7 +1426,7 @@ char * KIM_API_model::get_model_kim_str(char* modelname,int * kimerr){
 }
 #endif
 
-bool KIM_API_model::init(char* testname, char* modelname){
+int KIM_API_model::init(char* testname, char* modelname){
 
     //redirecting std::cout > kimlog
     char kimlog[2048] = KIM_DIR; strcat(kimlog,"kim.log");
@@ -1434,14 +1436,15 @@ bool KIM_API_model::init(char* testname, char* modelname){
 
     int error;
     char* in_mdlstr = get_model_kim_str(modelname, &error);
-
-    bool result_init= this->init_str_modelname(testname,in_mdlstr);
+    if (error == KIM_STATUS_OK) {
+       error = init_str_modelname(testname,in_mdlstr);
+    }
 
     std::free(in_mdlstr);
    //redirecting back to > std::cout
     std::cout.rdbuf(backup); filekimlog.close();
 
-    return result_init;
+    return error;
 }
 
 void KIM_API_model::fatal_error_print(){
@@ -1449,7 +1452,7 @@ void KIM_API_model::fatal_error_print(){
 }
 
 
-bool KIM_API_model::init_str_modelname(char* testname, char* inmdlstr){
+int KIM_API_model::init_str_modelname(char* testname, char* inmdlstr){
    int error;
     char testinputfile[2048] = KIM_DIR_TESTS;
     strcat(testinputfile,"/");strcat(testinputfile,testname);strcat(testinputfile,"/");
@@ -1463,19 +1466,19 @@ bool KIM_API_model::init_str_modelname(char* testname, char* inmdlstr){
 
     if(!mdl.prestring_init(inmdlstr)){
         std::cout<<"prestring_init  failed with error status: "<<this->get_status_msg(ErrorCode)<<std::endl;
-        return false;
+        return KIM_STATUS_FAIL;
     }
 
     if(!test.preinit(testinputfile,testname)){
         std::cout<<"preinit  failed with error status: "<<this->get_status_msg(ErrorCode)<<std::endl;
-        return false;
+        return KIM_STATUS_FAIL;
     }
 
     //check if they match
     if (is_it_match(test,mdl)){
         this->prestring_init(inmdlstr);
         this->unit_h=test.unit_h;
-        if (!(this->irrelevantVars2donotcompute(test,*this))) return false;
+        if (!(this->irrelevantVars2donotcompute(test,*this))) return KIM_STATUS_FAIL;
         for (int i=0;i<this->nAtomsTypes;++i) {
            this->AtomsTypes[i].requestedByTest = mdl.AtomsTypes[i].requestedByTest;
         }
@@ -1488,26 +1491,22 @@ bool KIM_API_model::init_str_modelname(char* testname, char* inmdlstr){
         char computestr [] = "compute";
         compute_index = get_index(computestr, &error);
         get_neigh_index = get_index("get_neigh", &error);
-        if (!(this->fij_related_things_add_set_index())) return false;
+        if (!(this->fij_related_things_add_set_index())) return KIM_STATUS_FAIL;
         support_Rij=false;
         if (strcmp(NBC_method_current,"NEIGH_RVEC_F")==0) support_Rij=true;
 
-
-
-        return true;
+        return KIM_STATUS_OK;
     }else{
 
- std::cout<<"Do not match  " << mdl.model.name  << " and "<< testname <<std::endl;
+       std::cout<<"Do not match  " << mdl.model.name  << " and "<< testname <<std::endl;
        mdl.free();
        test.free();
 
-
-        return false;
+       return KIM_STATUS_FAIL;
     }
-
 }
 
-bool KIM_API_model::preinit(char* modelname){
+int KIM_API_model::preinit(char* modelname){
     //redirecting std::cout > kimlog
     char kimlog[2048] = KIM_DIR; strcat(kimlog,"kim.log");
     std::streambuf * psbuf, * backup; std::ofstream filekimlog;
@@ -1517,7 +1516,7 @@ bool KIM_API_model::preinit(char* modelname){
 
     int error;
     char* in_mdlstr = get_model_kim_str(modelname, &error);
-    bool result= this->prestring_init(in_mdlstr);
+    int result = this->prestring_init(in_mdlstr);
 
     std::free(in_mdlstr);
     //redirecting back to > std::cout
@@ -1525,7 +1524,7 @@ bool KIM_API_model::preinit(char* modelname){
     return result;
 }
 
-bool KIM_API_model::string_init(char* in_tststr, char* modelname){
+int KIM_API_model::string_init(char* in_tststr, char* modelname){
    int error;
     //redirecting std::cout > kimlog
     char kimlog[2048] = KIM_DIR; strcat(kimlog,"kim.log");
@@ -1536,19 +1535,25 @@ bool KIM_API_model::string_init(char* in_tststr, char* modelname){
     //check test-model match and preinit test-model-API
     KIM_API_model test,mdl;
     char* in_mdlstr = get_model_kim_str(modelname, &error);
+    if (error != KIM_STATUS_OK) {
+       if (in_mdlstr == NULL) std::free(in_mdlstr);
+       return error;
+    }
 
     //preinit test and model API object
-    if(!test.prestring_init(in_tststr))
-        std::cout<<"test.prestring_init failed with error status:"<<this->get_status_msg(test.ErrorCode)<<std::endl;
+    error = test.prestring_init(in_tststr);
+    if(error != KIM_STATUS_OK)
+       std::cout<<"test.prestring_init failed with error status:"<<get_status_msg(error)<<std::endl;
 
-    if(!mdl.prestring_init(in_mdlstr))
-        std::cout<<"mdl.prestring_init failed with error status:"<<this->get_status_msg(mdl.ErrorCode)<<std::endl;
+    error = mdl.prestring_init(in_mdlstr);
+    if(error != KIM_STATUS_OK)
+       std::cout<<"mdl.prestring_init failed with error status:"<<get_status_msg(error)<<std::endl;
 
     //check if they match
     if (is_it_match(test,mdl)){
         this->prestring_init(in_mdlstr);
         this->unit_h=test.unit_h;
-        if (!(this->irrelevantVars2donotcompute(test,*this))) return false;
+        if (!(this->irrelevantVars2donotcompute(test,*this))) return KIM_STATUS_FAIL;
         for (int i=0;i<this->nAtomsTypes;++i) {
            this->AtomsTypes[i].requestedByTest = mdl.AtomsTypes[i].requestedByTest;
         }
@@ -1561,7 +1566,7 @@ bool KIM_API_model::string_init(char* in_tststr, char* modelname){
         char computestr [] = "compute";
         compute_index = get_index(computestr, &error);
         get_neigh_index = get_index("get_neigh", &error);
-        if (!(this->fij_related_things_add_set_index())) return false;
+        if (!(this->fij_related_things_add_set_index())) return KIM_STATUS_FAIL;
         support_Rij=false;
         if (strcmp(NBC_method_current,"NEIGH_RVEC_F")==0) support_Rij=true;
 
@@ -1569,7 +1574,7 @@ bool KIM_API_model::string_init(char* in_tststr, char* modelname){
         //redirecting back to > std::cout
         std::cout.rdbuf(backup); filekimlog.close();
 
-        return true;
+        return KIM_STATUS_OK;
     }else{
         mdl.free();
  std::cout<<"Do not match  " << modelname << " and "<< test.model.name <<std::endl;
@@ -1579,27 +1584,26 @@ bool KIM_API_model::string_init(char* in_tststr, char* modelname){
        //redirecting back to > std::cout
         std::cout.rdbuf(backup); filekimlog.close();
 
-        return false;
+        return KIM_STATUS_FAIL;
     }
 }
-bool KIM_API_model::model_reinit(){
+int KIM_API_model::model_reinit(){
    int error;
    int reinit_ind = get_index("reinit", &error);
-   if (reinit_ind < 0) return false;
+   if (error != KIM_STATUS_OK) return error;
 
    KIM_API_model *pkim = this;
-   typedef void (*Model_Reinit)(void *);//prototype for model_reinit
+   typedef int (*Model_Reinit)(void *);//prototype for model_reinit
    Model_Reinit mdl_reinit = (Model_Reinit)(*this)[reinit_ind].data;
-   if (mdl_reinit == NULL) return false;
-   (*mdl_reinit)(&pkim) ;
-   return true;
+   if (mdl_reinit == NULL) return KIM_STATUS_FAIL;
+   return (*mdl_reinit)(&pkim);
 }
 
 #ifndef KIM_DYNAMIC
 extern "C" {
 #include "model_init_include.h"
 }
-bool KIM_API_model::model_init(){
+int KIM_API_model::model_init(){
     char modelname[KIM_KEY_STRING_LENGTH]="";
     KIM_API_model * kim;
     void ** pkim;
@@ -1629,10 +1633,10 @@ std::cout<< "* Info: KIM_API_model::model_init: call statically linked initializ
      //redirecting back to > std::cout
     std::cout.rdbuf(backup); filekimlog.close();
 
-    return false;
+    return KIM_STATUS_FAIL;
 }
 #else
-bool KIM_API_model::model_init(){
+int KIM_API_model::model_init(){
     char modelname[KIM_KEY_STRING_LENGTH]="";
     KIM_API_model * kim;
     void ** pkim;
@@ -1665,10 +1669,10 @@ std::cout<<"               from the shared library:"<<model_slib_file<<std::endl
           //redirecting back to > std::cout
           std::cout.rdbuf(backup); filekimlog.close();
 
-         return false;
+         return KIM_STATUS_FAIL;
     }
 
-    typedef void (*Model_Init)(void **);//prototype for model_init
+    typedef int (*Model_Init)(void **);//prototype for model_init
     Model_Init mdl_init = (Model_Init)dlsym(model_lib_handle,model_init_routine_name);
     const char *dlsym_error = dlerror();
     if (dlsym_error) {
@@ -1678,50 +1682,52 @@ std::cout<<"               from the shared library:"<<model_slib_file<<std::endl
         //redirecting back to > std::cout
         std::cout.rdbuf(backup); filekimlog.close();
 
-        return false;
+        return KIM_STATUS_FAIL;
     }
 
     //redirecting back to > std::cout
     std::cout.rdbuf(backup); filekimlog.close();
 
 
-    (*mdl_init)(pkim);
-
-    return true;
+    return (*mdl_init)(pkim);
 }
 #endif
 
-void KIM_API_model::model_destroy(int *error){
-  typedef void (*Model_Destroy)(void *,int *);//prototype for model_destroy
-  *error =KIM_STATUS_FAIL;
+int KIM_API_model::model_destroy(){
+  typedef int (*Model_Destroy)(void *);//prototype for model_destroy
   Model_Destroy mdl_destroy = (Model_Destroy) (*this)["destroy"].data;
   //call model_destroy
   KIM_API_model *pkim = this;
 
+  int error = KIM_STATUS_OK;
   if (mdl_destroy != NULL) {
-      (*mdl_destroy)((void *)&pkim, error);
+     error = (*mdl_destroy)((void *)&pkim);
   }
 
 #ifdef KIM_DYNAMIC
   dlclose(model_lib_handle);
 #endif
- *error =KIM_STATUS_OK;
+  return error;
 }
-void KIM_API_model::model_compute(int *error){
+int KIM_API_model::model_compute(){
   // set model_compute pointer
-  typedef void (*Model_Compute)(void *,int *);//prototype for model_compute
-  *error = KIM_STATUS_FAIL;
+  typedef int (*Model_Compute)(void *);//prototype for model_compute
+  int error = KIM_STATUS_FAIL;
   Model_Compute mdl_compute = (Model_Compute) (*this)[compute_index].data;
-  if (mdl_compute == NULL) return;
-  *error = KIM_STATUS_OK;
+  if (mdl_compute == NULL) return error;
 
   //initialize virials if needed
 
-  if (process_dEdr_ind >=0 || process_d2Edr2_ind >= 0) KIM_AUX::Process_DE::init2zero(this,error);
-  if(*error != KIM_STATUS_OK) return;
+  if (process_dEdr_ind >=0 || process_d2Edr2_ind >= 0){
+     KIM_AUX::Process_DE::init2zero(this,&error);
+     if(error != KIM_STATUS_OK) return error;
+  }
+
   //call model_compute
   KIM_API_model *pkim = this;
-  (*mdl_compute)((void *)&pkim, error);
+  error = (*mdl_compute)((void *)&pkim);
+
+  return error;
 }
 
 int KIM_API_model::get_neigh(int mode, int request, int *atom,
@@ -1940,20 +1946,22 @@ char * KIM_API_model::get_NBC_method(int* error){
     return method;
 }
 
-bool KIM_API_model::is_half_neighbors(int* kimerr){
+int KIM_API_model::is_half_neighbors(int* kimerr){
+   const int is_half = 1;
+   const int is_full = 0;
     char * method = NULL;
     *kimerr=KIM_STATUS_FAIL;
     method = (char *) get_NBC_method(kimerr);
 
     if(*kimerr!=1){
        if (method!=NULL) std::free((void *)method);
-        return true;
+        return is_half;
     }
 
-    bool answer = true;
-    if (strcmp(method,"NEIGH_PURE_F")==0) answer = false;
-    if (strcmp(method,"NEIGH_RVEC_F")==0) answer = false;
-    if (strcmp(method,"MI_OPBC_F")==0) answer = false;
+    int answer = is_half;
+    if (strcmp(method,"NEIGH_PURE_F")==0) answer = is_full;
+    if (strcmp(method,"NEIGH_RVEC_F")==0) answer = is_full;
+    if (strcmp(method,"MI_OPBC_F")==0) answer = is_full;
     if (method!=NULL) std::free((void *)method);
     *kimerr=KIM_STATUS_OK;
     return answer;
@@ -2362,56 +2370,62 @@ bool KIM_API_model::fij_related_things_add_set_index(){
 
     return true;
 }
-void KIM_API_model::process_dEdr(KIM_API_model** ppkim, double* dE, double* r,
-        double** dx,int *i, int *j, int* ier){
+int KIM_API_model::process_dEdr(KIM_API_model** ppkim, double* dE, double* r,
+        double** dx,int *i, int *j){
+   int ier = KIM_STATUS_OK;;
     KIM_API_model * pkim= *ppkim;
-    typedef void (*Process_d1Edr)(KIM_API_model **, double *, double *, double **,int *,int *, int *);
+    typedef int (*Process_d1Edr)(KIM_API_model **, double *, double *, double **,int *,int *);
 
     Process_d1Edr process = (Process_d1Edr) (*pkim)[pkim->process_dEdr_ind].data;
     int process_flag =0;
     process_flag = (*pkim)[pkim->process_dEdr_ind].flag->calculate;
 
     if (process != NULL && process_flag == 1 && pkim->model_index_shift == 0) {
-        (*process)(ppkim,dE,r,dx,i,j,ier);
+        ier = (*process)(ppkim,dE,r,dx,i,j);
      }else if (process != NULL && process_flag == 1){
         int i2send = *i-pkim->model_index_shift;
         int j2send = *j-pkim->model_index_shift;
-        (*process)(ppkim,dE,r,dx,&i2send,&j2send,ier);
+        ier = (*process)(ppkim,dE,r,dx,&i2send,&j2send);
     }else if (process_flag == 1 && pkim->AUX_index_shift == 0){
-        KIM_AUX::Process_DE::process_dEdr(ppkim,dE,r,dx,i,j,ier);
+        ier = KIM_AUX::Process_DE::process_dEdr(ppkim,dE,r,dx,i,j);
     } else if(process_flag == 1){
         int i2send = *i-1;
         int j2send = *j-1;
-        KIM_AUX::Process_DE::process_dEdr(ppkim,dE,r,dx,&i2send,&j2send,ier);
+        ier = KIM_AUX::Process_DE::process_dEdr(ppkim,dE,r,dx,&i2send,&j2send);
     }
+
+    return ier;
 }
 
-void KIM_API_model::process_d2Edr2(KIM_API_model **ppkim,double *de,double **r,double ** pdx,int **i,int **j,int *ier){
+int KIM_API_model::process_d2Edr2(KIM_API_model **ppkim,double *de,double **r,double ** pdx,int **i,int **j){
+   int ier = KIM_STATUS_OK;
     KIM_API_model * pkim= *ppkim;
-    typedef void (*Process_d2Edr)(KIM_API_model **, double *, double **, double **,int **,int **, int *);
+    typedef int (*Process_d2Edr)(KIM_API_model **, double *, double **, double **,int **,int **);
 
     Process_d2Edr process = (Process_d2Edr) (*pkim)[pkim->process_d2Edr2_ind].data;
     int process_flag =0;
     process_flag = (*pkim)[pkim->process_d2Edr2_ind].flag->calculate;
 
     if (process != NULL && process_flag == 1 && pkim->model_index_shift == 0) {
-        (*process)(ppkim,de,r,pdx,i,j,ier);
+       ier = (*process)(ppkim,de,r,pdx,i,j);
     }else if (process != NULL && process_flag == 1) {
         int k=pkim->model_index_shift;
         int i2send[2];   i2send[0]=(*i)[0]-k; i2send[1]=(*i)[1]-k;
         int j2send[2];   j2send[0]=(*j)[0]-k; j2send[1]=(*j)[1]-k;
         int *pi = &i2send[0];
         int *pj = &j2send[0];
-        (*process)(ppkim,de,r,pdx,&pi,&pj,ier);
+        ier = (*process)(ppkim,de,r,pdx,&pi,&pj);
     } else if(process_flag == 1 && pkim->AUX_index_shift == 0){
-        KIM_AUX::Process_DE::process_d2Edr2(ppkim,de,r,pdx,i,j,ier);
+       ier = KIM_AUX::Process_DE::process_d2Edr2(ppkim,de,r,pdx,i,j);
     }else if(process_flag == 1 ){
         int i2send[2];   i2send[0]=(*i)[0]-1; i2send[1]=(*i)[1]-1;
         int j2send[2];   j2send[0]=(*j)[0]-1; j2send[1]=(*j)[1]-1;
         int *pi = &i2send[0];
         int *pj = &j2send[0];
-        KIM_AUX::Process_DE::process_d2Edr2(ppkim,de,r,pdx,&pi,&pj,ier);
+        ier = KIM_AUX::Process_DE::process_d2Edr2(ppkim,de,r,pdx,&pi,&pj);
     }
+
+    return ier;
 }
 
 
@@ -2812,8 +2826,8 @@ intptr_t KIM_API_model::get_shape_by_index(int I, int * shape,int *error){
 }
 
 int KIM_API_model::get_compute_by_index(int I,int * error){
-    *error =KIM_STATUS_FAIL;
-    if (this == NULL) return 1;
-    *error =KIM_STATUS_OK;
+    *error = KIM_STATUS_FAIL;
+    if ((I < 0) || (I >= model.size)) return KIM_STATUS_ARG_UNKNOWN;
+    *error = KIM_STATUS_OK;
     return (*this)[I].flag->calculate;
  }

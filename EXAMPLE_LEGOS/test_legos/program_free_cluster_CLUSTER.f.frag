@@ -138,7 +138,7 @@ program TEST_NAME_STR
   call create_FCC_configuration(FCCspacing, nCellsPerSide, .false., coords, middleDum)
 
   ! Call model compute
-  call kim_api_model_compute_f(pkim, ier)
+  ier = kim_api_model_compute_f(pkim)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute", ier)
      stop
@@ -160,7 +160,7 @@ program TEST_NAME_STR
   print '("                ",3ES25.15)', (virial_global(I),I=4,6)
 
   ! don't forget to destroy and deallocate
-  call kim_api_model_destroy_f(pkim, ier)
+  ier = kim_api_model_destroy_f(pkim)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_destroy", ier)
      stop

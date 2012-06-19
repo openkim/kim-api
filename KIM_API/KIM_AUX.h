@@ -45,10 +45,10 @@ namespace KIM_AUX{
     public:
         Process_DE();
         static void init2zero(KIM_API_model *pkim,int *kimerr);
-        static void process_dEdr(KIM_API_model **ppkim,double *de,
-                                 double *r,double ** pdx,int *i,int *j,int *ier);
-        static void process_d2Edr2(KIM_API_model **ppkim,double *de,
-                                 double **rr,double ** pdx,int **ii,int **jj,int *ier);
+        static int process_dEdr(KIM_API_model **ppkim,double *de,
+                                 double *r,double ** pdx,int *i,int *j);
+        static int process_d2Edr2(KIM_API_model **ppkim,double *de,
+                                 double **rr,double ** pdx,int **ii,int **jj);
     private:
         double *virial;
         double *particleVirial;

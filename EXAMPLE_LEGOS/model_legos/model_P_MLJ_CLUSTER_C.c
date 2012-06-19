@@ -63,9 +63,9 @@ int MODEL_NAME_LC_STR_init_(void* km);
 /* Define prototypes for model reinit, compute, and destroy */
 /* defined as static to avoid namespace clashes with other Models */
 /**/
-static void reinit(void* km);
-static void destroy(void* km);
-static void compute(void* km, int* ier);
+static int reinit(void* km);
+static int destroy(void* km);
+static int compute(void* km);
 /**/
 static void calc_phi(double* cutoff, double* epsilon, double* sigma,
                      double* A, double* B, double* C,
@@ -138,7 +138,7 @@ static void calc_phi_dphi(double* cutoff, double* epsilon, double* sigma,
 }
 
 /* compute function */
-static void compute(void* km, int* ier)
+static int compute(void* km)
 {
    /* local variables */
    intptr_t* pkim = *((intptr_t**) km);
@@ -147,6 +147,7 @@ static void compute(void* km, int* ier)
    double phi;
    double dphi;
    double Rij[DIM];
+   int ier;
    int i;
    int j;
    int k;
@@ -171,19 +172,19 @@ static void compute(void* km, int* ier)
    double* virial;
 
    /* check to see if we have been asked to compute the forces, particleEnergy, and virial */
-   KIM_API_getm_compute(pkim, ier, 4*3,
+   KIM_API_getm_compute(pkim, &ier, 4*3,
                         "energy",         &comp_energy,         1,
                         "forces",         &comp_force,          1,
                         "particleEnergy", &comp_particleEnergy, 1,
                         "virial",         &comp_virial,         1);
-   if (KIM_STATUS_OK > *ier)
+   if (KIM_STATUS_OK > ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_compute", *ier);
-      return;
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_compute", ier);
+      return ier;
    }
 
    /* unpack data from KIM object */
-   KIM_API_getm_data(pkim, ier, 7*3,
+   KIM_API_getm_data(pkim, &ier, 7*3,
                      "numberOfParticles", &nAtoms,         1,
                      "particleTypes",     &particleTypes,  1,
                      "energy",            &energy,         comp_energy,
@@ -191,14 +192,14 @@ static void compute(void* km, int* ier)
                      "forces",            &force,          comp_force,
                      "particleEnergy",    &particleEnergy, comp_particleEnergy,
                      "virial",            &virial,         comp_virial);
-   if (KIM_STATUS_OK > *ier)
+   if (KIM_STATUS_OK > ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data", *ier);
-      return;
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data", ier);
+      return ier;
    }
 
    /* unpack the Model's parameters stored in the KIM API object */
-   KIM_API_getm_data(pkim, ier, 7*3,
+   KIM_API_getm_data(pkim, &ier, 7*3,
                      "cutoff",             &cutoff,  1,
                      "PARAM_FREE_epsilon", &epsilon, 1,
                      "PARAM_FREE_sigma",   &sigma,   1,
@@ -206,24 +207,24 @@ static void compute(void* km, int* ier)
                      "PARAM_FIXED_B",      &B,       1,
                      "PARAM_FIXED_C",      &C,       1,
                      "PARAM_FIXED_cutsq",  &cutsq,   1);
-   if (KIM_STATUS_OK > *ier)
+   if (KIM_STATUS_OK > ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data", *ier);
-      return;
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data", ier);
+      return ier;
    }
 
    /* Check to be sure that the atom types are correct */
    /**/
-   *ier = KIM_STATUS_FAIL; /* assume an error */
+   ier = KIM_STATUS_FAIL; /* assume an error */
    for (i = 0; i < *nAtoms; ++i)
    {
       if ( SPECCODE != particleTypes[i])
       {
-         KIM_API_report_error(__LINE__, __FILE__, "Unexpected species type detected", i);
-         return;
+         KIM_API_report_error(__LINE__, __FILE__, "Unexpected species type detected", ier);
+         return ier;
       }
    }
-   *ier = KIM_STATUS_OK; /* everything is ok */
+   ier = KIM_STATUS_OK; /* everything is ok */
 
    /* initialize potential energies, forces, and virial term */
    if (comp_particleEnergy)
@@ -328,8 +329,8 @@ static void compute(void* km, int* ier)
    }    /* loop on i */
 
    /* everything is great */
-   *ier = KIM_STATUS_OK;
-   return;
+   ier = KIM_STATUS_OK;
+   return ier;
 }
 
 /* Initialization function */
@@ -468,11 +469,12 @@ int MODEL_NAME_LC_STR_init_(void *km)
    /* set value of parameter cutsq */
    *model_cutsq = (*model_cutoff)*(*model_cutoff);
 
-   return KIM_STATUS_OK;
+   ier = KIM_STATUS_OK;
+   return ier;
 }
 
 /* Reinitialization function */
-static void reinit(void *km)
+static int reinit(void *km)
 {
    /* Local variables */
    intptr_t* pkim = *((intptr_t**) km);
@@ -503,7 +505,7 @@ static void reinit(void *km)
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data", ier);
-      exit(1);
+      return ier;
    }
 
    /* set value of cutoff in KIM object */
@@ -524,11 +526,12 @@ static void reinit(void *km)
    /* set value of parameter cutsq */
    *model_cutsq = (*model_cutoff)*(*model_cutoff);
 
-   return;
+   ier = KIM_STATUS_OK;
+   return ier;
 }
 
 /* destroy function */
-static void destroy(void *km)
+static int destroy(void *km)
 {
    /* Local variables */
    intptr_t* pkim = *((intptr_t**) km);
@@ -558,7 +561,7 @@ static void destroy(void *km)
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data", ier);
-      exit(1);
+      return ier;
    }
 
    /*free memory for the parameters */
@@ -572,5 +575,6 @@ static void destroy(void *km)
    free(model_sigmasq);
    free(model_cutsq);
 
-   return;
+   ier = KIM_STATUS_OK;
+   return ier;
 }

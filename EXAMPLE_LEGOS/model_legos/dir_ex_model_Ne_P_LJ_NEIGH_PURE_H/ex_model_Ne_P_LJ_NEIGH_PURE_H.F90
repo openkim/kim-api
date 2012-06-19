@@ -55,13 +55,12 @@ contains
   ! (f90 wrapper that calls the actual f77 routine)
   !
   !-----------------------------------------------------------------------------
-  subroutine calculate_wrap_f77(pkim,ier) ! compute routine with KIM interface
+  integer function calculate_wrap_f77(pkim) ! compute routine with KIM interface
     use KIM_API
     implicit none
 
     !-- Transferred variables
     integer(kind=kim_intptr), intent(in)  :: pkim
-    integer,                  intent(out) :: ier
 
     !-- Local variables
     real*8 x(3,1);           pointer(px,x)                 ! position
@@ -76,18 +75,21 @@ contains
 
     ! Check to see if we have been asked to compute the forces and energyperatom
     !
-    call kim_api_getm_compute_f(pkim, ier, &
+    call kim_api_getm_compute_f(pkim, calculate_wrap_f77, &
          "energy",         e_flag,    1,   &
          "forces",         f_flag,    1,   &
          "particleEnergy", eper_flag, 1)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_compute_f", ier)
+    if (calculate_wrap_f77.lt.KIM_STATUS_OK) then
+       idum = kim_api_report_error_f( &
+              __LINE__,               &
+              __FILE__,               &
+              "kim_api_getm_compute_f", calculate_wrap_f77)
        return
     endif
 
     ! Unpack data from KIM object
     !
-    call kim_api_getm_data_f(pkim, ier, &
+    call kim_api_getm_data_f(pkim, calculate_wrap_f77, &
          "numberOfParticles",           pnumberofatoms, 1,                         &
          "numberContributingParticles", pnumContrib,    1,                         &
          "particleTypes",               pattypes,       1,                         &
@@ -95,14 +97,18 @@ contains
          "forces",                      pf,             TRUEFALSE(f_flag.eq.1),    &
          "energy",                      ppotenergy,     TRUEFALSE(e_flag.eq.1),    &
          "particleEnergy",              pea,            TRUEFALSE(eper_flag.eq.1))
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
+    if (calculate_wrap_f77.lt.KIM_STATUS_OK) then
+       idum = kim_api_report_error_f( &
+              __LINE__,               &
+              __FILE__,               &
+              "kim_api_getm_data_f", calculate_wrap_f77)
        return
     endif
 
     do i=1,numberofatoms
        if (attypes(i).ne.1) then ! check for correct atom types Ne=1
-          idum = kim_api_report_error_f(__LINE__, __FILE__, "Wrong Atom Type", KIM_STATUS_FAIL)
+          calculate_wrap_f77 = KIM_STATUS_FAIL
+          idum = kim_api_report_error_f(__LINE__, __FILE__, "Wrong Atom Type", calculate_wrap_f77)
           return
        endif
     enddo
@@ -110,9 +116,10 @@ contains
     ! Call FORTRAN 77 code that does actual calculation
     !
     call calculate(model_cutoff,sigma,epsilon,pkim,x,f,ea,numberofatoms,numContrib, &
-                   potenergy,e_flag,f_flag,eper_flag,kim_api_get_neigh_f,ier)
+                   potenergy,e_flag,f_flag,eper_flag,kim_api_get_neigh_f,calculate_wrap_f77)
 
-  end subroutine calculate_wrap_f77
+    return
+  end function calculate_wrap_f77
 
 end module ex_model_Ne_P_LJ_NEIGH_PURE_H
 

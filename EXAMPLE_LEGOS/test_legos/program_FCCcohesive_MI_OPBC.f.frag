@@ -238,7 +238,7 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   boxSideLengths(:) = Spacings(1)*CellsPerSide
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
   call MI_OPBC_periodic_neighborlist(halfflag, N, coords, (cutoff+cutpad), boxSideLengths, MiddleAtomId, neighborList)
-  call kim_api_model_compute_f(pkim, ier)
+  ier = kim_api_model_compute_f(pkim)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
      stop
@@ -254,7 +254,7 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
   call MI_OPBC_periodic_neighborlist(halfflag, N, coords, (cutoff+cutpad), boxSideLengths, MiddleAtomId, neighborList)
   ! Call model compute
-  call kim_api_model_compute_f(pkim, ier)
+  ier = kim_api_model_compute_f(pkim)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
      stop
@@ -270,7 +270,7 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
   call MI_OPBC_periodic_neighborlist(halfflag, N, coords, (cutoff+cutpad), boxSideLengths, MiddleAtomId, neighborList)
   ! Call model compute
-  call kim_api_model_compute_f(pkim, ier)
+  ier = kim_api_model_compute_f(pkim)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
      stop
@@ -292,7 +292,7 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
      ! compute new neighbor lists (could be done more intelligently, I'm sure)
      call MI_OPBC_periodic_neighborlist(halfflag, N, coords, (cutoff+cutpad), boxSideLengths, MiddleAtomId, neighborList)
      ! Call model compute
-     call kim_api_model_compute_f(pkim, ier)
+     ier = kim_api_model_compute_f(pkim)
      if (ier.lt.KIM_STATUS_OK) then
         idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
         stop

@@ -97,12 +97,11 @@ KIM_AUX.o: KIM_AUX.h Makefile
 
 # targets for the models: for any new model adds the appropriate lines to the model_init_include.{h,cpp} files
 $(MODELS_TARGETS): .models-deleted
-	@sh -c "if !(grep -i -q -s $(patsubst .%.make-temp,%_init,$@) model_init_include.h); then echo void \* \
+	@sh -c "if !(grep -i -q -s $(patsubst .%.make-temp,%_init,$@) model_init_include.h); then echo int \
 	`echo $(patsubst .%.make-temp,%,$@) | tr A-Z a-z`_init_\(void \*\*\)\; >> model_init_include.h;  fi"
 	@sh -c "if !(grep -i -q -s $(patsubst .%.make-temp,%_init,$@) model_init_include.cpp); then \
 	echo \"\" if\(strcmp\(modelname,\\\"$(patsubst .%.make-temp,%,$@)\\\"\)==0\){ >> model_init_include.cpp;\
-	echo \"       \" `echo $(patsubst .%.make-temp,%,$@) | tr A-Z a-z`_init_\(\(void \*\*\) pkim\)\; >> model_init_include.cpp;\
-	echo \"       \" return true\; >> model_init_include.cpp;\
+	echo \"       \" return `echo $(patsubst .%.make-temp,%,$@) | tr A-Z a-z`_init_\(\(void \*\*\) pkim\)\; >> model_init_include.cpp;\
 	echo \" }\" >> model_init_include.cpp;\
 	fi"
 	@sh -c "if !(grep -i -q -s $(patsubst .%.make-temp,%_kim_str,$@) model_kim_str_include.h); then echo \

@@ -170,12 +170,12 @@ public:
     KIM_API_model();
     ~KIM_API_model();
 
-    bool model_info(char * modelname) {return preinit(modelname);}//does not have error
+    int model_info(char * modelname) {return preinit(modelname);} //does not have error
                                                                   // because it returns OK or FAIL
 
     void free(int *error);
-    bool set_data(char *nm, intptr_t size, void *dt);
-    bool set_data_by_index(int ind,intptr_t size, void *dt);
+    int set_data(char *nm, intptr_t size, void *dt);
+    int set_data_by_index(int ind,intptr_t size, void *dt);
 
     void * get_data(char *nm,int *error);
     void * get_data_by_index(int ind,int *error);
@@ -187,7 +187,7 @@ public:
     void set_shape(char *nm, int * shape, int rank, int *error);
     void set_compute(char *nm, int flag, int *error);
     void set_compute_by_index(int ind, int flag, int *error);
-    bool get_compute(char *nm);
+    int get_compute(char *nm, int* error);
     KIMBaseElement &operator[](int i);
     KIMBaseElement &operator[](char *nm);
     void print(int *error);
@@ -196,14 +196,13 @@ public:
     intptr_t get_shape_by_index(int I, int * shape,int *error);
     int get_compute_by_index(int I,int * error);
 
-    static void fatal_error_print();
-    bool init(char * testname,char * modelname);
-    bool string_init(char * intststr,char * modelname);
-    void model_compute(int *error);
+    int init(char * testname,char * modelname);
+    int string_init(char * intststr,char * modelname);
+    int model_compute();
     int get_neigh(int mode,int request, int *atom, int *numnei, int **nei1atom, double **Rij);
-    bool model_init();
-    bool model_reinit();
-   void model_destroy(int *error);
+    int model_init();
+    int model_reinit();
+    int model_destroy();
 
 void allocate( int natoms, int ntypes,int * error);
 
@@ -220,7 +219,7 @@ static char * get_model_kim_str(char * modelname,int *kimerr);
 
 
 char * get_NBC_method(int *error);
-bool is_half_neighbors(int *error);
+int is_half_neighbors(int *error);
 
 
     bool support_Rij;
@@ -233,9 +232,9 @@ bool is_half_neighbors(int *error);
     void set_test_buffer(void * o,int *error);
     void * get_test_buffer(int *error);
 
-   static void process_dEdr(KIM_API_model **ppkim,double *dr,double *r,double ** dx, int *i,int *j,int *ier);
+   static int process_dEdr(KIM_API_model **ppkim,double *dr,double *r,double ** dx, int *i,int *j);
 
-   static void process_d2Edr2(KIM_API_model **ppkim,double *de,double **rr,double ** pdx,int **ii,int **jj,int *ier);
+   static int process_d2Edr2(KIM_API_model **ppkim,double *de,double **rr,double ** pdx,int **ii,int **jj);
 
    //multiple data set/get methods
    //
@@ -347,10 +346,11 @@ private:
     int process_d2Edr2_ind;
 
     // other..
-    bool preinit(char * initfile,char *modelname);
-    bool preinit(char * modelname);
-    bool prestring_init(char * instrn);
-    bool init_str_modelname(char *testname,char *inmdlstr);
+    static void fatal_error_print();
+    int preinit(char * initfile,char *modelname);
+    int preinit(char * modelname);
+    int prestring_init(char * instrn);
+    int init_str_modelname(char *testname,char *inmdlstr);
     static   bool read_file_str(char * strstream,KIM_IOline ** lns, int * numlns );
 
     static bool irrelevantVars2donotcompute(KIM_API_model & test, KIM_API_model & mdl);
@@ -380,5 +380,4 @@ private:
     void free();
 };
 std::ostream &operator<<(std::ostream &stream, KIM_API_model &a);
-
 #endif  /* KIMHDR_KIM_API_H */

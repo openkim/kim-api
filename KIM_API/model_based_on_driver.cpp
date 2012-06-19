@@ -38,7 +38,7 @@
 #include "KIM_API.h"
 #include "KIM_API_status.h"
 
-static void process_paramfiles(char* param_file_names, int* nmstrlen);
+static int process_paramfiles(char* param_file_names, int* nmstrlen);
 
 #ifdef KIM_DYNAMIC
    static void* driver_lib_handle;
@@ -49,23 +49,26 @@ extern "C" {
 
 #ifdef KIM_DYNAMIC
    #include <dlfcn.h>
-   static void model_destroy(void* km, int* ier);
+   static int model_destroy(void* km);
 #else
    int MODEL_DRIVER_NAME_LC_STR_init_(void* km, char* paramfilenames, int* nmstrlen, int* numparamfiles);
 #endif
 
 
 #ifdef KIM_DYNAMIC
-   static void model_destroy(void* km, int* ier) {
-      typedef void (*Driver_Destroy)(void *,int *);//prototype for driver_destroy
+   static int model_destroy(void* km) {
+      typedef int (*Driver_Destroy)(void *);//prototype for driver_destroy
       Driver_Destroy drvr_destroy = (Driver_Destroy) driver_destroy;
+      int ier;
       //call driver_destroy
       if (drvr_destroy != NULL) {
-         (*drvr_destroy)(km, ier);
+         ier = (*drvr_destroy)(km);
       }
 
       // close driver library
       dlclose(driver_lib_handle);
+
+      return ier;
    }
 #endif
 
@@ -74,7 +77,9 @@ extern "C" {
       int nmstrlen;
       char* param_file_names = new char[NUM_PARAMFILES*(L_tmpnam+1)];
 
-      process_paramfiles(param_file_names, &nmstrlen);
+      if (KIM_STATUS_OK != process_paramfiles(param_file_names, &nmstrlen)) {
+         return KIM_STATUS_FAIL;
+      }
 #ifdef KIM_DYNAMIC
       driver_lib_handle = dlopen("MODEL_DRIVER_SO_NAME_STR",RTLD_NOW);
       if (!driver_lib_handle) {
@@ -112,7 +117,7 @@ extern "C" {
    }
 }
 
-static void process_paramfiles(char* param_file_names, int* nmstrlen)
+static int process_paramfiles(char* param_file_names, int* nmstrlen)
 {
    *nmstrlen = L_tmpnam+1;
 
@@ -128,17 +133,19 @@ static void process_paramfiles(char* param_file_names, int* nmstrlen)
       if (ret == NULL)
       {
          std::cerr << "Cannot obtain unique temporary file name: tmpnam() failed." << std::endl;
-         exit(-1);
+         return KIM_STATUS_FAIL;
       }
 
       fl.open(&(param_file_names[i*(L_tmpnam+1)]),std::fstream::out);
       if (fl.fail())
       {
          std::cerr << "Unable to open temporary file." << std::endl;
-         exit(-1);
+         return KIM_STATUS_FAIL;
       }
 
       fl << paramfile_strings[i];
       fl.close();
    }
+
+   return KIM_STATUS_OK;
 }

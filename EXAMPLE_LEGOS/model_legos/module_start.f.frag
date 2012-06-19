@@ -58,12 +58,11 @@ contains
 ! Compute energy and forces on atoms from the positions.
 !
 !-------------------------------------------------------------------------------
-  subroutine Compute_Energy_Forces(pkim,ier)
+  integer function Compute_Energy_Forces(pkim)
     implicit none
 
     !-- Transferred variables
     integer(kind=kim_intptr), intent(in)  :: pkim
-    integer,                  intent(out) :: ier
 
     !-- Local variables
     integer, parameter :: DIM=3

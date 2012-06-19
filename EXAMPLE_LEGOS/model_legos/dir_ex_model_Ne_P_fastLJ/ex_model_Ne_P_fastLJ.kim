@@ -113,8 +113,6 @@ forces                      real*8       force               [numberOfParticles,
 
 particleEnergy              real*8       energy              [numberOfParticles]    optional
 
-process_dEdr                method       none                []                 optional
-
 
 #######################################################################################################
 MODEL_PARAMETERS:

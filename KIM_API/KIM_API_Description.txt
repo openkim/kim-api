@@ -152,6 +152,8 @@ int KIM_API_model_info(void *kimmdl, char *modelname);
     this object in order to determine (most) of the items listed in the Model's
     KIM descriptor file. For example, A Test could determine what atom/particle
     types are supported by a Model and adjust it's calculations appropriately.
+    Return value: KIM_STATUS_OK if successful and KIM_STATUS_FAIL if
+    unsuccessful.
 
 Arguments:
 
@@ -180,9 +182,10 @@ Corresponding Fortran style interface:
 void KIM_API_allocate(void *kimmdl, int nParticles, int nParticleTypes, int *kimerror);
 
     This routine allocates memory for each data argument stored in the
-    initialized KIM API object kimmdl.  It will call exit() if an error occurs
-    during allocation.  KIM_API_allocate should not be used in conjunction with
-    KIM_API_set_data for array data (this would create a memory leak).
+    initialized KIM API object kimmdl.  It will return with an error code if an
+    error occurs during allocation.  KIM_API_allocate should not be used in
+    conjunction with KIM_API_set_data for array data (this would create a
+    memory leak).
 
     NOTE: Prior to calling this routine a valid KIM API object must be obtained
           by calling KIM_API_init().  However, calling this routine multiple
@@ -265,10 +268,11 @@ Corresponding Fortran style interface:
 
 ******************************************************************************
 
-void KIM_API_model_compute(void *kimmdl, int *kimerror);
+int KIM_API_model_compute(void *kimmdl);
 
     This routine executes the `compute' method of the Model by using the
-    address of the compute routine stored in KIM API object.
+    address of the compute routine stored in KIM API object.  Return value:
+    KIM_STATUS_OK on success or KIM_STATUS_FAIL on failure.
 
     NOTES:
 
@@ -293,25 +297,22 @@ Arguments:
               pointer to KIM_API_model object (in C++ style, the definition
               will be (KIM_API_model *))
 
-      int *kimerror
-              error code: KIM_STATUS_OK   -- successful completion,
-                          KIM_STATUS_FAIL -- unsuccessful
-
 Corresponding Fortran style interface:
 
-      subroutine kim_api_model_compute_f(kimmdl, kimerror)
+      integer function kim_api_model_compute_f(kimmdl)
                       integer(kind=kim_intptr) :: kimmdl
-                      integer :: kimerror
-      end subroutine kim_api_model_compute_f
+                      integer :: kim_api_model_compute_f
+      end function kim_api_model_compute_f
 
 ******************************************************************************
 
-void KIM_API_model_destroy(void *kimmdl, int *kimerror);
+int KIM_API_model_destroy(void *kimmdl);
 
     This routine executes the `destroy' method of the model by using the
     address of the destroy routine stored in KIM API object.  This routine
     performs any necessary clean-up tasks.  In particular, it must deallocate
-    the memory for all Model parameters stored in the KIM API object.
+    the memory for all Model parameters stored in the KIM API object.  Return
+    value is KIM_STATUS_OK on success and KIM_STATUS_FAIL on failure.
 
     NOTE: Prior to calling this routine KIM_API_model_init() must have been
           called for this KIM API object.
@@ -322,16 +323,12 @@ Arguments:
               pointer to KIM_API_model object (in C++ style, the definition
               will be (KIM_API_model *))
 
-      int *kimerror
-              error code: KIM_STATUS_OK   -- successful completion,
-                          KIM_STATUS_FAIL -- unsuccessful
-
 Corresponding Fortran style interface:
 
-      subroutine kim_api_model_destroy_f(kimmdl, kimerror)
+      integer function kim_api_model_destroy_f(kimmdl)
                       integer(kind=kim_intptr) :: kimmdl
-                      integer :: kimerror
-      end subroutine kim_api_model_destroy_f
+                      integer :: kim_api_model_destroy_f
+      end function kim_api_model_destroy_f
 
 ******************************************************************************
 
@@ -506,7 +503,7 @@ Arguments:
 
 Corresponding Fortran style interface:
 
-      function kim_api_is_half_neighbors_f(kimmdl, kimerror)
+      integer function kim_api_is_half_neighbors_f(kimmdl, kimerror)
                       integer(kind=kim_intptr) :: kimmdl
                       integer :: kim_api_is_half_neighbors_f
                       integer :: kimerror
@@ -756,7 +753,8 @@ int KIM_API_get_compute(void *kimmdl, char *nm, int *kimerror);
 
     This routine checks the status of the `compute' flag.  If the argument can
     be optionally computed, a Model can check if a Test wants the argument to
-    be computed.  Returned value: 0 means do not compute, 1 means compute.
+    be computed.  Returned value: KIM_NOT_COMPUTE means do not compute,
+    KIM_COMPUTE means compute.  KIM_STATUS_ARG_UNKNOWN is returned on error.
 
 Arguments:
 
@@ -1336,8 +1334,8 @@ Corresponding Fortran style interface:
 
 ******************************************************************************
 
-void KIM_API_process_dEdr(void **km, double *dEdr, double *r, double **dx, &
-                          int *i, int *j, int *kimerror);
+int KIM_API_process_dEdr(void **km, double *dEdr, double *r, double **dx, &
+                          int *i, int *j);
 
     This routine can be called by a Model to provide the Test with a
     contribution, dEdr, to the first derivative of the Model's energy with
@@ -1351,6 +1349,8 @@ void KIM_API_process_dEdr(void **km, double *dEdr, double *r, double **dx, &
     used.  If the standard process_dEdr routine is used, the KIM API ensures
     that any appropriate memory initializations are performed.  This routine
     currently supports the computation of `virial' and `particleVirial'.
+    Return value: KIM_STATUS_OK if successful and KIM_STATUS_FAIL if
+    unsuccessful.
 
 Arguments:
 
@@ -1375,9 +1375,6 @@ Arguments:
       int *j
               pointer to particle index j
 
-      int *kimerror
-              error code returned (KIM_STATUSS_OK if successful completion)
-
 Corresponding Fortran style interface:
 
       subroutine kim_api_process_dedr_f(kimmdl, de, r, dx, i, j, kimerror)
@@ -1388,8 +1385,8 @@ Corresponding Fortran style interface:
 
 ******************************************************************************
 
-void KIM_API_process_d2Edr2(void **km, double *d2Edr2, double **r, &
-                            double **dx, int **i, int **j, int *kimerror);
+int KIM_API_process_d2Edr2(void **km, double *d2Edr2, double **r, &
+                            double **dx, int **i, int **j);
 
     This routine can be called by a Model to provide the Test with a
     contribution, d2Edr2, to the second derivative of the Model's energy with
@@ -1404,7 +1401,8 @@ void KIM_API_process_d2Edr2(void **km, double *d2Edr2, double **r, &
     routine is used.  If the standard process_dEdr routine is used, the KIM API
     ensures that any appropriate memory initializations are performed.  This
     routine and currently supports the computation of `hessian' (process_dEdr
-    is also required in order to correclty compute the hessian).
+    is also required in order to correclty compute the hessian).  Return value:
+    KIM_STATUS_OK if successfull and KIM_STATUS_FAIL if unsuccessful.
 
 Arguments:
 
@@ -1431,9 +1429,6 @@ Arguments:
 
       int **j
               pointer to particle indices j[0] and j[1]
-
-      int *kimerror
-              error code returned (KIM_STATUSS_OK if successful completion)
 
 Corresponding Fortran style interface:
 
@@ -1766,7 +1761,7 @@ above.
 
 The prototypes of the supported "by index" routines are:
 
-void KIM_API_set_data_by_index(void *kimmdl, int I, intptr_t size, void *dt, int *kimerror);
+int KIM_API_set_data_by_index(void *kimmdl, int I, intptr_t size, void *dt);
 
 void *KIM_API_get_data_by_index(void *kimmdl, int I, int *kimerror);
 

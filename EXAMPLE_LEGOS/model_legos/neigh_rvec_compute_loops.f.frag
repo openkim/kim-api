@@ -5,9 +5,12 @@
        ! Get neighbors for atom i
        !
        atom = i ! request neighbors for atom i
-       ier = kim_api_get_neigh_f(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij)
-       if (ier.lt.KIM_STATUS_OK) then
-          idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_neigh", ier)
+       Compute_Energy_Forces = kim_api_get_neigh_f(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij)
+       if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
+          idum = kim_api_report_error_f( &
+                 __LINE__,               &
+                 __FILE__,               &
+                 "kim_api_get_neigh", Compute_Energy_Forces)
           return
        endif
 

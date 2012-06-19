@@ -65,9 +65,9 @@ int MODEL_DRIVER_NAME_LC_STR_init_(void* km, char* paramfile_names, int* nmstrle
 /* Define prototypes for Model (Driver) reinit, compute, and destroy */
 /* defined as static to avoid namespace clashes with other Models    */
 /**/
-static void reinit(void* km);
-static void destroy(void* km);
-static void compute(void* km, int* ier);
+static int reinit(void* km);
+static int destroy(void* km);
+static int compute(void* km);
 /**/
 static void calc_phi(double* epsilon,
                      double* C,
@@ -203,7 +203,7 @@ static void calc_phi_d2phi(double* epsilon,
 }
 
 /* compute function */
-static void compute(void* km, int* ier)
+static int compute(void* km)
 {
    /* local variables */
    intptr_t* pkim = *((intptr_t**) km);
@@ -220,6 +220,7 @@ static void compute(void* km, int* ier)
    double *pRij = &(Rij[0]);
    double Rij_pairs[2][3];
    double *pRij_pairs = &(Rij_pairs[0][0]);
+   int ier;
    int i;
    int i_pairs[2];
    int *pi_pairs = &(i_pairs[0]);
@@ -265,11 +266,11 @@ static void compute(void* km, int* ier)
 
 
    /* get buffer from KIM object */
-   buffer = (struct model_buffer*) KIM_API_get_model_buffer(pkim, ier);
-   if (KIM_STATUS_OK > *ier)
+   buffer = (struct model_buffer*) KIM_API_get_model_buffer(pkim, &ier);
+   if (KIM_STATUS_OK > ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_model_buffer", *ier);
-      return;
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_model_buffer", ier);
+      return ier;
    }
 
    /* unpack info from the buffer */
@@ -285,19 +286,19 @@ static void compute(void* km, int* ier)
    shift = buffer->shift;
 
    /* check to see if we have been asked to compute the forces, particleEnergy, and d1Edr */
-   KIM_API_getm_compute_by_index(pkim, ier, 5*3,
+   KIM_API_getm_compute_by_index(pkim, &ier, 5*3,
                                  buffer->energy_ind,         &comp_energy,         1,
                                  buffer->forces_ind,         &comp_force,          1,
                                  buffer->particleEnergy_ind, &comp_particleEnergy, 1,
                                  buffer->process_dEdr_ind,   &comp_process_dEdr,   1,
                                  buffer->process_d2Edr2_ind, &comp_process_d2Edr2, 1);
-   if (KIM_STATUS_OK > *ier)
+   if (KIM_STATUS_OK > ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_compute_by_index", *ier);
-      return;
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_compute_by_index", ier);
+      return ier;
    }
 
-   KIM_API_getm_data_by_index(pkim, ier, 10*3,
+   KIM_API_getm_data_by_index(pkim, &ier, 10*3,
                               buffer->cutoff_ind,                      &cutoff,         1,
                               buffer->numberOfParticles_ind,           &nAtoms,         1,
                               buffer->particleTypes_ind,               &particleTypes,  1,
@@ -308,10 +309,10 @@ static void compute(void* km, int* ier)
                               buffer->energy_ind,                      &energy,         comp_energy,
                               buffer->forces_ind,                      &force,          comp_force,
                               buffer->particleEnergy_ind,              &particleEnergy, comp_particleEnergy);
-   if (KIM_STATUS_OK > *ier)
+   if (KIM_STATUS_OK > ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data_by_index", *ier);
-      return;
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data_by_index", ier);
+      return ier;
    }
 
    if (HalfOrFull == 1)
@@ -328,16 +329,16 @@ static void compute(void* km, int* ier)
 
    /* Check to be sure that the atom types are correct */
    /**/
-   *ier = KIM_STATUS_FAIL; /* assume an error */
+   ier = KIM_STATUS_FAIL; /* assume an error */
    for (i = 0; i < *nAtoms; ++i)
    {
       if ( SPECCODE != particleTypes[i])
       {
-         KIM_API_report_error(__LINE__, __FILE__, "Unexpected species type detected", *ier);
-         return;
+         KIM_API_report_error(__LINE__, __FILE__, "Unexpected species type detected", ier);
+         return ier;
       }
    }
-   *ier = KIM_STATUS_OK; /* everything is ok */
+   ier = KIM_STATUS_OK; /* everything is ok */
 
    /* initialize potential energies, forces, and virial term */
    if (comp_particleEnergy)
@@ -373,14 +374,14 @@ static void compute(void* km, int* ier)
 
    if (1 == IterOrLoca)
    {
-      *ier = (*get_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh,
+      ier = (*get_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh,
                           &neighListOfCurrentAtom, &Rij_list);
       /* check for successful initialization */
-      if (KIM_STATUS_NEIGH_ITER_INIT_OK != *ier)
+      if (KIM_STATUS_NEIGH_ITER_INIT_OK != ier)
       {
-         KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_neigh", *ier);
-         *ier = KIM_STATUS_FAIL;
-         return;
+         KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_neigh", ier);
+         ier = KIM_STATUS_FAIL;
+         return ier;
       }
    }
 
@@ -394,16 +395,16 @@ static void compute(void* km, int* ier)
       /* Set up neighbor list for next atom for all NBC methods */
       if (1 == IterOrLoca) /* ITERATOR mode */
       {
-         *ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh,
+         ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh,
                              &neighListOfCurrentAtom, &Rij_list);
-         if (KIM_STATUS_NEIGH_ITER_PAST_END == *ier) /* the end of the list, terminate loop */
+         if (KIM_STATUS_NEIGH_ITER_PAST_END == ier) /* the end of the list, terminate loop */
          {
             break;
          }
-         if (KIM_STATUS_OK > *ier) /* some sort of problem, exit */
+         if (KIM_STATUS_OK > ier) /* some sort of problem, exit */
          {
-            KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_neigh", *ier);
-            return;
+            KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_neigh", ier);
+            return ier;
          }
 
          i = currentAtom + model_index_shift;
@@ -423,19 +424,19 @@ static void compute(void* km, int* ier)
             {
                neighListOfCurrentAtom[k] = i + k + 1 - model_index_shift;
             }
-            *ier = KIM_STATUS_OK;
+            ier = KIM_STATUS_OK;
          }
          else
          {
             request = i - model_index_shift;
-            *ier = (*get_neigh)(&pkim, &one, &request,
+            ier = (*get_neigh)(&pkim, &one, &request,
                                 &currentAtom, &numOfAtomNeigh,
                                 &neighListOfCurrentAtom, &Rij_list);
-            if (KIM_STATUS_OK != *ier) /* some sort of problem, exit */
+            if (KIM_STATUS_OK != ier) /* some sort of problem, exit */
             {
-               KIM_API_report_error(__LINE__, __FILE__, "get_neigh", *ier);
-               *ier = KIM_STATUS_FAIL;
-               return;
+               KIM_API_report_error(__LINE__, __FILE__, "get_neigh", ier);
+               ier = KIM_STATUS_FAIL;
+               return ier;
             }
          }
       }
@@ -554,7 +555,7 @@ static void compute(void* km, int* ier)
             /* contribution to process_dEdr */
             if (comp_process_dEdr)
             {
-               KIM_API_process_dEdr(km, &dEidr, &R, &pRij, &i, &j, ier);
+               ier = KIM_API_process_dEdr(km, &dEidr, &R, &pRij, &i, &j);
             }
 
             /* contribution to process_d2Edr2 */
@@ -567,7 +568,7 @@ static void compute(void* km, int* ier)
                i_pairs[0] = i_pairs[1] = i;
                j_pairs[0] = j_pairs[1] = j;
 
-               KIM_API_process_d2Edr2(km, &d2Eidr, &pR_pairs, &pRij_pairs, &pi_pairs, &pj_pairs, ier);
+               ier = KIM_API_process_d2Edr2(km, &d2Eidr, &pR_pairs, &pRij_pairs, &pi_pairs, &pj_pairs);
             }
 
             /* contribution to forces */
@@ -590,9 +591,9 @@ static void compute(void* km, int* ier)
    }
 
    /* everything is great */
-   *ier = KIM_STATUS_OK;
+   ier = KIM_STATUS_OK;
 
-   return;
+   return ier;
 }
 
 /* Initialization function */
@@ -899,7 +900,7 @@ int MODEL_DRIVER_NAME_LC_STR_init_(void *km, char* paramfile_names, int* nmstrle
 }
 
 /* Reinitialization function */
-static void reinit(void *km)
+static int reinit(void *km)
 {
    /* Local variables */
    intptr_t* pkim = *((intptr_t**) km);
@@ -913,7 +914,7 @@ static void reinit(void *km)
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_model_buffer", ier);
-      exit(1);
+      return ier;
    }
 
    /* set new values in KIM object     */
@@ -923,7 +924,7 @@ static void reinit(void *km)
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
-      exit(1);
+      return ier;
    }
    *cutoff = *buffer->Pcutoff;
 
@@ -941,11 +942,12 @@ static void reinit(void *km)
    /* set shift to -shift */
    *buffer->shift = -(*buffer->shift);
 
-   return;
+   ier = KIM_STATUS_OK;
+   return ier;
 }
 
 /* destroy function */
-static void destroy(void *km)
+static int destroy(void *km)
 {
    /* Local variables */
    intptr_t* pkim = *((intptr_t**) km);
@@ -957,7 +959,7 @@ static void destroy(void *km)
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_model_buffer", ier);
-      exit(1);
+      return ier;
    }
 
    /* free parameters */
@@ -971,5 +973,6 @@ static void destroy(void *km)
    /* destroy the buffer */
    free(buffer);
 
-   return;
+   ier = KIM_STATUS_OK;
+   return ier;
 }

@@ -66,12 +66,11 @@ contains
 ! Compute energy and forces on atoms from the positions.
 !
 !-------------------------------------------------------------------------------
-  subroutine Compute_Energy_Forces(pkim,ier)
+  integer function Compute_Energy_Forces(pkim)
     implicit none
 
     !-- Transferred variables
     integer(kind=kim_intptr), intent(in)  :: pkim
-    integer,                  intent(out) :: ier
 
     !-- Local variables
     integer, parameter :: DIM=3
@@ -105,19 +104,22 @@ contains
 
     ! Check to see if we have been asked to compute the forces, energyperatom,
     ! energy and virial
-    call kim_api_getm_compute_f(pkim, ier,  &
+    call kim_api_getm_compute_f(pkim, Compute_Energy_Forces,  &
          "energy",         comp_energy,  1, &
          "forces",         comp_force,   1, &
          "particleEnergy", comp_enepot,  1, &
          "virial",         comp_virial,  1)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_compute_f", ier)
+    if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
+       idum = kim_api_report_error_f( &
+              __LINE__,               &
+              __FILE__,               &
+              "kim_api_getm_compute_f", Compute_Energy_Forces)
        return
     endif
 
     ! Unpack data from KIM object
     !
-    call kim_api_getm_data_f(pkim, ier, &
+    call kim_api_getm_data_f(pkim, Compute_Energy_Forces, &
          "numberOfParticles",   pnAtoms,         1,                           &
          "numberParticleTypes", pnparticleTypes, 1,                           &
          "particleTypes",       pparticleTypes,  1,                           &
@@ -127,8 +129,11 @@ contains
          "forces",              pforce,          TRUEFALSE(comp_force.eq.1),  &
          "particleEnergy",      penepot,         TRUEFALSE(comp_enepot.eq.1), &
          "virial",              pvirial,         TRUEFALSE(comp_virial.eq.1))
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
+    if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
+       idum = kim_api_report_error_f( &
+              __LINE__,               &
+              __FILE__,               &
+              "kim_api_getm_data_f", Compute_Energy_Forces)
        return
     endif
 
@@ -139,7 +144,7 @@ contains
     if (comp_virial.eq.1) call KIM_to_F90_real_array_1d(virialdum,virial_global,6)
 
     ! Unpack parameters from KIM object
-    call kim_api_getm_data_f(pkim, ier, &
+    call kim_api_getm_data_f(pkim, Compute_Energy_Forces, &
          "PARAM_FREE_epsilon",  pepsilon, 1, &
          "PARAM_FREE_sigma",    psigma,   1, &
          "PARAM_FIXED_cutnorm", pcutnorm, 1, &
@@ -148,20 +153,26 @@ contains
          "PARAM_FIXED_C",       pC,       1, &
          "PARAM_FIXED_sigmasq", psigmasq, 1, &
          "PARAM_FIXED_cutsq",   pcutsq,   1)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
+    if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
+       idum = kim_api_report_error_f( &
+              __LINE__,               &
+              __FILE__,               &
+              "kim_api_getm_data_f", Compute_Energy_Forces)
        return
     endif
 
     ! Check to be sure that the atom types are correct
-    ier = KIM_STATUS_FAIL ! assume an error
+    Compute_Energy_Forces = KIM_STATUS_FAIL ! assume an error
     do i = 1,numberOfParticles
        if (.not. ( (particleTypes(i).eq.Ar) .or. (particleTypes(i).eq.Ne) ) ) then
-          idum = kim_api_report_error_f(__LINE__, __FILE__, "Wrong Atom Type", ier)
+          idum = kim_api_report_error_f( &
+                 __LINE__,               &
+                 __FILE__,               &
+                 "Wrong Atom Type", Compute_Energy_Forces)
           return
        endif
     enddo
-    ier = KIM_STATUS_OK ! everything is ok
+    Compute_Energy_Forces = KIM_STATUS_OK ! everything is ok
 
 
     ! Initialize potential energies, forces, virial term
@@ -179,9 +190,12 @@ contains
        ! Get neighbors for atom i
        !
        atom = i ! request neighbors for atom i
-       ier = kim_api_get_neigh_f(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij)
-       if (ier.lt.KIM_STATUS_OK) then
-          idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_neigh_f_f", ier)
+       Compute_Energy_Forces = kim_api_get_neigh_f(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij)
+       if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
+          idum = kim_api_report_error_f( &
+                 __LINE__,               &
+                 __FILE__,               &
+                 "kim_api_get_neigh_f_f", Compute_Energy_Forces)
           return
        endif
 
@@ -236,7 +250,7 @@ contains
        enddo
     enddo
 
-  end subroutine Compute_Energy_Forces
+  end function Compute_Energy_Forces
 
 !-------------------------------------------------------------------------------
 !
@@ -271,7 +285,7 @@ contains
 ! Model reinitialization routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-  subroutine ReInit(pkim)
+  integer function ReInit(pkim)
     implicit none
 
     !-- Transferred variables
@@ -288,20 +302,20 @@ contains
     real*8 model_C(1);       pointer(pC,model_C)
     real*8 model_sigmasq(1); pointer(psigmasq,model_sigmasq)
     real*8 model_cutsq;      pointer(pcutsq,model_cutsq)
-    integer ier, idum
+    integer idum
 
     ! Get (changed) parameters from KIM object ---------------------------------
-    call kim_api_getm_data_f(pkim, ier, &
+    call kim_api_getm_data_f(pkim, ReInit, &
          "PARAM_FREE_sigma",   psigma,    1, &
          "PARAM_FREE_epsilon", pepsilon,  1, &
          "PARAM_FREE_cutoff",  pparamcut, 1)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
-       stop
+    if (ReInit.lt.KIM_STATUS_OK) then
+       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ReInit)
+       return
     endif
 
     ! Set new values in KIM object ---------------------------------------------
-    call kim_api_getm_data_f(pkim, ier, &
+    call kim_api_getm_data_f(pkim, ReInit, &
          "cutoff",              pcutoff,  1, &
          "PARAM_FIXED_cutnorm", pcutnorm, 1, &
          "PARAM_FIXED_A",       pA,       1, &
@@ -309,6 +323,11 @@ contains
          "PARAM_FIXED_C",       pC,       1, &
          "PARAM_FIXED_sigmasq", psigmasq, 1, &
          "PARAM_FIXED_cutsq",   pcutsq,   1)
+
+    if (ReInit.lt.KIM_STATUS_OK) then
+       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ReInit)
+       return
+    endif
 
     model_cutoff = model_Pcutoff
     model_cutnorm(1:3) = model_cutoff/model_sigma(1:3)
@@ -321,14 +340,17 @@ contains
     model_sigmasq(1:3) = model_sigma(1:3)**2
     model_cutsq = model_cutoff**2
 
-  end subroutine ReInit
+    ReInit = KIM_STATUS_OK
+    return
+
+  end function ReInit
 
 !-------------------------------------------------------------------------------
 !
 ! Model destory routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-  subroutine Destroy(pkim)
+  integer function Destroy(pkim)
     use KIM_API
     implicit none
 
@@ -346,10 +368,10 @@ contains
     real*8 model_C(1);       pointer(pC,model_C)
     real*8 model_sigmasq(1); pointer(psigmasq,model_sigmasq)
     real*8 model_cutsq;      pointer(pcutsq,model_cutsq)
-    integer ier, idum
+    integer idum
 
     ! get parameters from KIM object
-    call kim_api_getm_data_f(pkim, ier, &
+    call kim_api_getm_data_f(pkim, Destroy, &
          "PARAM_FREE_sigma",     psigma,    1, &
          "PARAM_FREE_epsilon",   pepsilon,  1, &
          "PARAM_FREE_cutoff",    pparamcut, 1, &
@@ -359,9 +381,9 @@ contains
          "PARAM_FIXED_C",        pC,        1, &
          "PARAM_FIXED_sigmasq",  psigmasq,  1, &
          "PARAM_FIXED_cutsq",    pcutsq,    1)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
-       stop
+    if (Destroy.lt.KIM_STATUS_OK) then
+       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", Destroy)
+       return
     endif
 
     ! free memory
@@ -375,7 +397,10 @@ contains
     call free(psigmasq)
     call free(pcutsq)
 
-  end subroutine Destroy
+    Destroy = KIM_STATUS_OK
+    return
+
+  end function Destroy
 
 end module ex_model_ArNe_P_MLJ_NEIGH_RVEC_F
 

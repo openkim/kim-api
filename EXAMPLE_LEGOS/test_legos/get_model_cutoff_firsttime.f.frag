@@ -60,7 +60,7 @@ double precision function get_model_cutoff_firsttime(testname, modelname)
 
   ! tear it all down
   !
-  call kim_api_model_destroy_f(pkim_temp, ier)
+  ier = kim_api_model_destroy_f(pkim_temp)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_destroy_f", ier)
      stop

@@ -67,7 +67,7 @@ void KIM_AUX::Process_DE::init2zero(KIM_API_model* pkim, int* kimerr){
 
             if (*kimerr !=KIM_STATUS_OK) return;
             if (ierGlobal == KIM_STATUS_OK && prDE->virial != NULL) {
-                prDE->virial_flag = pkim->get_compute("virial");
+               prDE->virial_flag = pkim->get_compute("virial", kimerr);
                 if (prDE->virial_flag==1 && pkim->virial_need2add) {
                   prDE->virial[0] =0.0;  prDE->virial[1] =0.0;  prDE->virial[2] =0.0;
                   prDE->virial[3] =0.0;  prDE->virial[4] =0.0;  prDE->virial[5] =0.0;
@@ -76,7 +76,7 @@ void KIM_AUX::Process_DE::init2zero(KIM_API_model* pkim, int* kimerr){
             }
 
             if (ierPerAtom == KIM_STATUS_OK && prDE->particleVirial != NULL) {
-                prDE->particleVirial_flag = pkim->get_compute("particleVirial");
+               prDE->particleVirial_flag = pkim->get_compute("particleVirial",kimerr);
                 if (prDE->particleVirial_flag==1 && pkim->particleVirial_need2add) {
                     for (int i =0;i<(*(prDE->numberOfParticles))*6 ;i++) prDE->particleVirial[i]=0.0;
                     process_d1=true;
@@ -84,7 +84,7 @@ void KIM_AUX::Process_DE::init2zero(KIM_API_model* pkim, int* kimerr){
             }
 
             if (ierStiffness == KIM_STATUS_OK && prDE->hessian != NULL) {
-                prDE->hessian_flag = pkim->get_compute("hessian");
+               prDE->hessian_flag = pkim->get_compute("hessian",kimerr);
                 if (prDE->hessian_flag==1 && pkim->hessian_need2add) {
                     for (int i =0;i<(*(prDE->numberOfParticles))*(*(prDE->numberOfParticles))*9 ;i++) prDE->hessian[i]=0.0;
                     process_d1=true;
@@ -109,12 +109,11 @@ void KIM_AUX::Process_DE::init2zero(KIM_API_model* pkim, int* kimerr){
 
 }
 
-void KIM_AUX::Process_DE::process_dEdr(KIM_API_model** ppkim, double* de, double* r, double** pdx, int* i, int* j, int* ier){
+int KIM_AUX::Process_DE::process_dEdr(KIM_API_model** ppkim, double* de, double* r, double** pdx, int* i, int* j){
     //get instance of Process_DE from kim object
     KIM_API_model *pkim = *ppkim;
     Process_DE *prDE=pkim->get_process_DE_instance();
 
-    *ier=KIM_STATUS_FAIL;
     double vir[6],v;
     double *dx = *pdx;
     v=(*de)/(*r);
@@ -180,15 +179,15 @@ void KIM_AUX::Process_DE::process_dEdr(KIM_API_model** ppkim, double* de, double
                prDE->hessian[(*j)*(*(prDE->numberOfParticles))*9 + (*j)*9 + k*3 + m] += stiff[k][m];
 
        }
-       *ier = KIM_STATUS_OK;
+
+       return KIM_STATUS_OK;
 }
 
-void KIM_AUX::Process_DE::process_d2Edr2(KIM_API_model** ppkim, double* de, double** rr, double** pdx, int** ii, int** jj, int* ier){
+int KIM_AUX::Process_DE::process_d2Edr2(KIM_API_model** ppkim, double* de, double** rr, double** pdx, int** ii, int** jj){
          //get instance of Process_DE from kim object
          KIM_API_model *pkim = *ppkim;
          Process_DE *prDE=pkim->get_process_DE_instance();//=??
 
-          *ier=KIM_STATUS_FAIL;
           double *r = *rr;
           double rm = (*de)/(r[0]*r[1]);
           double *dx = *pdx;
@@ -225,5 +224,5 @@ void KIM_AUX::Process_DE::process_d2Edr2(KIM_API_model** ppkim, double* de, doub
               prDE->hessian[(j[1])*(*(prDE->numberOfParticles))*9 + (j[0])*9 + k*3 + m] += stiff[k][m];
            }
 
-           *ier = KIM_STATUS_OK;
+           return KIM_STATUS_OK;
 }

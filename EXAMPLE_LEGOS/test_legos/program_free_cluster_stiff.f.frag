@@ -257,7 +257,7 @@ program TEST_NAME_STR
   endif
 
   ! Call model compute
-  call kim_api_model_compute_f(pkim, ier)
+  ier = kim_api_model_compute_f(pkim)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute", ier)
      stop
@@ -297,7 +297,7 @@ program TEST_NAME_STR
      deallocate(RijList)
   endif
 
-  call kim_api_model_destroy_f(pkim, ier)
+  ier = kim_api_model_destroy_f(pkim)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_destroy", ier)
      stop

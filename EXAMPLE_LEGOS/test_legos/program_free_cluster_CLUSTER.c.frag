@@ -142,7 +142,7 @@ int main(int argc, char* argv[])
    create_FCC_configuration(FCCSPACING, NCELLSPERSIDE, 0, coords, &middleDum);
 
    /* Call model compute */
-   KIM_API_model_compute(pkim, &status);
+   status = KIM_API_model_compute(pkim);
    if (KIM_STATUS_OK > status)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_model_compute", status);
@@ -182,7 +182,7 @@ int main(int argc, char* argv[])
 
 
    /* don't forget to destroy and deallocate */
-   KIM_API_model_destroy(pkim, &status);
+   status = KIM_API_model_destroy(pkim);
    if (KIM_STATUS_OK > status)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_model_destory", status);

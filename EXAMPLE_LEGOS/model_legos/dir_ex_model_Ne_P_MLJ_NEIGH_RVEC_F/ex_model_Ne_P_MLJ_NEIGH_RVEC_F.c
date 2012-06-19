@@ -54,9 +54,9 @@
 int ex_model_ne_p_mlj_neigh_rvec_f_init_(void* km);
 
 /* Define prototypes for model reinit, compute, and destroy */
-static void reinit(void* km);
-static void destroy(void* km);
-static void compute(void* km, int* ier);
+static int reinit(void* km);
+static int destroy(void* km);
+static int compute(void* km);
 
 static void pair(double* epsilon, double* sigma, double* A, double* B, double* C,
                  double R, double* phi, double* dphi, double* d2phi)
@@ -80,7 +80,7 @@ static void pair(double* epsilon, double* sigma, double* A, double* B, double* C
 }
 
 /* compute function */
-static void compute(void* km, int* ier)
+static int compute(void* km)
 {
    /* local variables */
    intptr_t* pkim = *((intptr_t**) km);
@@ -90,6 +90,7 @@ static void compute(void* km, int* ier)
    double dphi;
    double d2phi;
    double dEidr;
+   int ier;
    int i;
    int j;
    int jj;
@@ -122,19 +123,19 @@ static void compute(void* km, int* ier)
    int* neighListOfCurrentAtom;
 
    /* check to see if we have been asked to compute the forces, particleEnergy, energy and virial */
-   KIM_API_getm_compute(pkim, ier, 4*3,
+   KIM_API_getm_compute(pkim, &ier, 4*3,
                         "energy",         &comp_energy,         1,
                         "forces",         &comp_force,          1,
                         "particleEnergy", &comp_particleEnergy, 1,
                         "virial",         &comp_virial,         1);
-   if (KIM_STATUS_OK > *ier)
+   if (KIM_STATUS_OK > ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_compute", *ier);
-      return;
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_compute", ier);
+      return ier;
    }
 
    /* unpack data from KIM object */
-   KIM_API_getm_data(pkim, ier, 17*3,
+   KIM_API_getm_data(pkim, &ier, 17*3,
                      "numberOfParticles",   &nAtoms,         1,
                      "numberParticleTypes", &nparticleTypes, 1,
                      "particleTypes",       &particleTypes,  1,
@@ -152,24 +153,24 @@ static void compute(void* km, int* ier)
                      "forces",              &force,          (comp_force==1),
                      "particleEnergy",      &particleEnergy, (comp_particleEnergy==1),
                      "virial",              &virial,         (comp_virial==1));
-   if (KIM_STATUS_OK > *ier)
+   if (KIM_STATUS_OK > ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data", *ier);
-      return;
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data", ier);
+      return ier;
    }
 
    /* Check to be sure that the atom types are correct */
    /**/
-   *ier = KIM_STATUS_FAIL; /* assume an error */
+   ier = KIM_STATUS_FAIL; /* assume an error */
    for (i = 0; i < *nAtoms; ++i)
    {
       if (Ar != particleTypes[i])
       {
          KIM_API_report_error(__LINE__, __FILE__, "Wrong atomType", i);
-         return;
+         return ier;
       }
    }
-   *ier = KIM_STATUS_OK; /* everything is ok */
+   ier = KIM_STATUS_OK; /* everything is ok */
 
    /* initialize potential energies, forces, and virial term */
    if (comp_particleEnergy)
@@ -204,17 +205,17 @@ static void compute(void* km, int* ier)
    }
 
    /* reset neighbor iterator */
-   *ier = KIM_API_get_neigh(pkim, 0, 0, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
-   if (KIM_STATUS_NEIGH_ITER_INIT_OK != *ier)
+   ier = KIM_API_get_neigh(pkim, 0, 0, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+   if (KIM_STATUS_NEIGH_ITER_INIT_OK != ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_neigh", *ier);
-      *ier = KIM_STATUS_FAIL;
-      return;
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_neigh", ier);
+      ier = KIM_STATUS_FAIL;
+      return ier;
    }
 
    /* Compute energy and forces */
-   *ier = KIM_API_get_neigh(pkim, 0, 1, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
-   while (KIM_STATUS_OK == *ier)
+   ier = KIM_API_get_neigh(pkim, 0, 1, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+   while (KIM_STATUS_OK == ier)
    {
       i = currentAtom;
 
@@ -275,7 +276,7 @@ static void compute(void* km, int* ier)
       }
 
       /* increment iterator */
-      *ier = KIM_API_get_neigh(pkim, 0, 1, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+      ier = KIM_API_get_neigh(pkim, 0, 1, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
    }
 
 
@@ -291,13 +292,13 @@ static void compute(void* km, int* ier)
    }
 
    /* everything is great */
-   *ier = KIM_STATUS_OK;
-   return;
+   ier = KIM_STATUS_OK;
+   return ier;
 }
 
 
 /* Reinitialization function */
-static void reinit(void *km)
+static int reinit(void *km)
 {
    /* Local variables */
    intptr_t* pkim = *((intptr_t**) km);
@@ -321,7 +322,7 @@ static void reinit(void *km)
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data", ier);
-      exit(1);
+      return ier;
    }
 
    /* set new values in KIM object */
@@ -336,7 +337,7 @@ static void reinit(void *km)
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data", ier);
-      exit(1);
+      return ier;
    }
 
    *model_cutoff = *model_Pcutoff;
@@ -350,11 +351,12 @@ static void reinit(void *km)
    *model_sigmasq = (*model_sigma)*(*model_sigma);
    *model_cutsq = (*model_cutoff)*(*model_cutoff);
 
-   return;
+   ier = KIM_STATUS_OK;
+   return ier;
 }
 
 /* destroy function */
-static void destroy(void *km)
+static int destroy(void *km)
 {
    /* Local variables */
    intptr_t* pkim = *((intptr_t**) km);
@@ -383,7 +385,7 @@ static void destroy(void *km)
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data", ier);
-      exit(1);
+      return ier;
    }
 
    /* free parameter memory */
@@ -397,7 +399,8 @@ static void destroy(void *km)
    free(model_sigmasq);
    free(model_cutsq);
 
-   return;
+   ier = KIM_STATUS_OK;
+   return ier;
 }
 
 
@@ -533,5 +536,6 @@ int ex_model_ne_p_mlj_neigh_rvec_f_init_(void *km)
    *model_sigmasq = (*model_sigma)*(*model_sigma);
    *model_cutsq = (*model_cutoff)*(*model_cutoff);
 
-   return KIM_STATUS_OK;
+   ier = KIM_STATUS_OK;
+   return ier;
 }

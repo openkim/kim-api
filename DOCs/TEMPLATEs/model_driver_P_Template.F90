@@ -169,12 +169,11 @@ end subroutine calc_phi_dphi_d2phi
 ! Compute energy and forces on atoms from the positions.
 !
 !-------------------------------------------------------------------------------
-subroutine Compute_Energy_Forces(pkim,ier)
+integer function Compute_Energy_Forces(pkim)
 implicit none
 
 !-- Transferred variables
 integer(kind=kim_intptr), intent(in)  :: pkim
-integer,                  intent(out) :: ier
 
 !-- Local variables
 double precision :: Rij(DIM),Rij_pairs(DIM,2)
@@ -226,9 +225,12 @@ integer cutoff_ind
 
 
 ! get model buffer from KIM object
-pbuffer = kim_api_get_model_buffer_f(pkim, ier)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_model_buffer_f", ier)
+pbuffer = kim_api_get_model_buffer_f(pkim, Compute_Energy_Forces)
+if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
+   idum = kim_api_report_error_f( &
+          __LINE__,               &
+          __FILE__,               &
+          "kim_api_get_model_buffer_f", Compute_Energy_Forces)
    return
 endif
 pbufind   = buffer(1)
@@ -262,29 +264,35 @@ pmodel_<FILL parameter 2> = bufparam(4)
 
 ! Unpack the Model's cutoff stored in the KIM API object
 !
-pmodel_cutoff = kim_api_get_data_by_index_f(pkim, cutoff_ind, ier)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_by_index_f", ier)
+pmodel_cutoff = kim_api_get_data_by_index_f(pkim, cutoff_ind, Compute_Energy_Forces)
+if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
+   idum = kim_api_report_error_f( &
+          __LINE__,               &
+          __FILE__,               &
+          "kim_api_get_data_by_index_f", Compute_Energy_Forces)
    return
 endif
 
 ! Check to see if we have been asked to compute the forces, energyperatom,
 ! energy and d1Edr
 !
-call kim_api_getm_compute_by_index_f(pkim, ier, &
+call kim_api_getm_compute_by_index_f(pkim, Compute_Energy_Forces, &
      energy_ind,         comp_energy,         1, &
      forces_ind,         comp_force,          1, &
      particleEnergy_ind, comp_enepot,         1, &
      process_dEdr_ind,   comp_process_dEdr,   1, &
      process_d2Edr2_ind, comp_process_d2Edr2, 1)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_compute_by_index_f", ier)
+if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
+   idum = kim_api_report_error_f( &
+          __LINE__,               &
+          __FILE__,               &
+          "kim_api_getm_compute_by_index_f", Compute_Energy_Forces)
    return
 endif
 
 ! Unpack data from KIM object
 !
-call kim_api_getm_data_by_index_f(pkim, ier, &
+call kim_api_getm_data_by_index_f(pkim, Compute_Energy_Forces, &
      numberOfParticles_ind,           pN,              1,                           &
      particleTypes_ind,               pparticleTypes,  1,                           &
      coordinates_ind,                 pcoor,           1,                           &
@@ -293,8 +301,11 @@ call kim_api_getm_data_by_index_f(pkim, ier, &
      energy_ind,                      penergy,         TRUEFALSE(comp_energy.eq.1), &
      forces_ind,                      pforce,          TRUEFALSE(comp_force.eq.1),  &
      particleEnergy_ind,              penepot,         TRUEFALSE(comp_enepot.eq.1))
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_by_index_f", ier)
+if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
+   idum = kim_api_report_error_f( &
+          __LINE__,               &
+          __FILE__,               &
+          "kim_api_getm_data_by_index_f", Compute_Energy_Forces)
    return
 endif
 
@@ -311,14 +322,17 @@ endif
 
 ! Check to be sure that the atom types are correct
 !
-ier = KIM_STATUS_FAIL ! assume an error
+Compute_Energy_Forces = KIM_STATUS_FAIL ! assume an error
 do i = 1,N
    if (particleTypes(i).ne.speccode) then
-      idum = kim_api_report_error_f(__LINE__, __FILE__, "Unexpected species type detected", ier)
+      idum = kim_api_report_error_f( &
+             __LINE__,               &
+             __FILE__,               &
+             "Unexpected species type detected", Compute_Energy_Forces)
       return
    endif
 enddo
-ier = KIM_STATUS_OK ! everything is ok
+Compute_Energy_Forces = KIM_STATUS_OK ! everything is ok
 
 ! Initialize potential energies, forces
 !
@@ -336,11 +350,14 @@ endif
 ! Initialize neighbor handling for Iterator mode
 !
 if (IterOrLoca.eq.1) then
-   ier = kim_api_get_neigh_f(pkim,0,0,atom_ret,numnei,pnei1atom,pRij_list)
+   Compute_Energy_Forces = kim_api_get_neigh_f(pkim,0,0,atom_ret,numnei,pnei1atom,pRij_list)
    ! check for successful initialization
-   if (ier.ne.KIM_STATUS_NEIGH_ITER_INIT_OK) then
-      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_neigh_f", ier)
-      ier = KIM_STATUS_FAIL
+   if (Compute_Energy_Forces.ne.KIM_STATUS_NEIGH_ITER_INIT_OK) then
+      idum = kim_api_report_error_f( &
+             __LINE__,               &
+             __FILE__,               &
+             "kim_api_get_neigh_f", Compute_Energy_Forces)
+      Compute_Energy_Forces = KIM_STATUS_FAIL
       return
    endif
 endif
@@ -357,12 +374,15 @@ do
    ! Set up neighbor list for next atom for all NBC methods
    !
    if (IterOrLoca.eq.1) then    ! ITERATOR mode
-      ier = kim_api_get_neigh_f(pkim,0,1,atom_ret,numnei,pnei1atom,pRij_list)
-      if (ier.eq.KIM_STATUS_NEIGH_ITER_PAST_END) exit
+      Compute_Energy_Forces = kim_api_get_neigh_f(pkim,0,1,atom_ret,numnei,pnei1atom,pRij_list)
+      if (Compute_Energy_Forces.eq.KIM_STATUS_NEIGH_ITER_PAST_END) exit
                                 ! incremented past the end of the list,
                                 ! terminate loop
-      if (ier.lt.KIM_STATUS_OK) then ! some sort of problem, exit
-         idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_neigh_f", ier)
+      if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then ! some sort of problem, exit
+         idum = kim_api_report_error_f( &
+                __LINE__,               &
+                __FILE__,               &
+                "kim_api_get_neigh_f", Compute_Energy_Forces)
          return
       endif
 
@@ -375,12 +395,15 @@ do
       if (NBC.eq.0) then        ! CLUSTER NBC method
          numnei = N - i         ! number of neighbors in list i+1, ..., N
          nei1atom(1:numnei) = (/ (i+jj, jj = 1,numnei) /)
-         ier = KIM_STATUS_OK
+         Compute_Energy_Forces = KIM_STATUS_OK
       else                      ! All other NBCs
-         ier = kim_api_get_neigh_f(pkim,1,i,atom_ret,numnei,pnei1atom,pRij_list)
-         if (ier.ne.KIM_STATUS_OK) then ! some sort of problem, exit
-            idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_neigh_f", ier)
-            ier = KIM_STATUS_FAIL
+         Compute_Energy_Forces = kim_api_get_neigh_f(pkim,1,i,atom_ret,numnei,pnei1atom,pRij_list)
+         if (Compute_Energy_Forces.ne.KIM_STATUS_OK) then ! some sort of problem, exit
+            idum = kim_api_report_error_f( &
+                   __LINE__,               &
+                   __FILE__,               &
+                   "kim_api_get_neigh_f", Compute_Energy_Forces)
+            Compute_Energy_Forces = KIM_STATUS_FAIL
             return
          endif
       endif
@@ -470,7 +493,7 @@ do
          ! contribution to process_dEdr
          !
          if (comp_process_dEdr.eq.1) then
-            call kim_api_process_dEdr_f(pkim, dEidr, r, loc(Rij), i, j, ier)
+            Compute_Energy_Forces = kim_api_process_dEdr_f(pkim, dEidr, r, loc(Rij), i, j)
          endif
 
          ! contribution to process_d2Edr2
@@ -484,8 +507,8 @@ do
             j_pairs(1) = j
             j_pairs(2) = j
 
-            call kim_api_process_d2Edr2_f(pkim, d2Eidr, loc(r_pairs), loc(Rij_pairs), &
-                                         loc(i_pairs), loc(j_pairs), ier)
+            Compute_Energy_Forces = kim_api_process_d2Edr2_f(pkim, d2Eidr, loc(r_pairs), &
+                                    loc(Rij_pairs), loc(i_pairs), loc(j_pairs))
          endif
 
          ! contribution to forces
@@ -507,17 +530,17 @@ if (NBC.eq.0) deallocate( nei1atom_substitute )
 
 ! Everything is great
 !
-ier = KIM_STATUS_OK
+Compute_Energy_Forces = KIM_STATUS_OK
 return
 
-end subroutine Compute_Energy_Forces
+end function Compute_Energy_Forces
 
 !-------------------------------------------------------------------------------
 !
 ! Model driver reinitialization routine
 !
 !-------------------------------------------------------------------------------
-subroutine reinit(pkim)
+integer function reinit(pkim)
 use KIM_API
 implicit none
 
@@ -526,7 +549,7 @@ integer(kind=kim_intptr), intent(in) :: pkim
 
 !-- Local variables
 double precision energy_at_cutoff
-integer ier, idum
+integer idum
 integer(kind=kim_intptr):: buffer(1); pointer(pbuffer, buffer)
 integer bufind(1);                    pointer(pbufind, bufind)
 integer(kind=kim_intptr) bufparam(1); pointer(pbufparam, bufparam)
@@ -540,9 +563,9 @@ real*8  model_<FILL parameter 2>; pointer(pmodel_<FILL parameter 2>,model_<FILL 
 ! FILL as many parameter declarations as necessary
 
 ! get model buffer from KIM object
-pbuffer = kim_api_get_model_buffer_f(pkim, ier)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_model_buffer_f", ier)
+pbuffer = kim_api_get_model_buffer_f(pkim, reinit)
+if (reinit.lt.KIM_STATUS_OK) then
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_model_buffer_f", reinit)
    return
 endif
 pbufind   = buffer(1)
@@ -554,9 +577,9 @@ pmodel_<FILL parameter 1> = bufparam(3)
 pmodel_<FILL parameter 2> = bufparam(4)
 ! FILL as many parameters as necessary
 
-pcutoff = kim_api_get_data_by_index_f(pkim, bufind(16), ier)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_by_index_f", ier)
+pcutoff = kim_api_get_data_by_index_f(pkim, bufind(16), reinit)
+if (reinit.lt.KIM_STATUS_OK) then
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_by_index_f", reinit)
    return
 endif
 
@@ -567,14 +590,17 @@ cutoff      = model_cutoff
 model_cutsq = model_cutoff**2
 ! FILL: store any other FIXED parameters whose values depend on FREE parameters
 
-end subroutine reinit
+reinit = KIM_STATUS_OK
+return
+
+end function reinit
 
 !-------------------------------------------------------------------------------
 !
 ! Model driver destroy routine
 !
 !-------------------------------------------------------------------------------
-subroutine destroy(pkim)
+integer function destroy(pkim)
 use KIM_API
 implicit none
 
@@ -582,7 +608,7 @@ implicit none
 integer(kind=kim_intptr), intent(in) :: pkim
 
 !-- Local variables
-integer ier, idum
+integer idum
 integer(kind=kim_intptr):: buffer(1); pointer(pbuffer, buffer)
 integer bufind(1);                    pointer(pbufind, bufind)
 integer(kind=kim_intptr) bufparam(1); pointer(pbufparam, bufparam)
@@ -596,9 +622,9 @@ real*8  model_<FILL parameter 2>; pointer(pmodel_<FILL parameter 2>,model_<FILL 
 ! FILL as many parameter declarations as necessary
 
 ! get model buffer from KIM object
-pbuffer = kim_api_get_model_buffer_f(pkim, ier)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_model_buffer_f", ier)
+pbuffer = kim_api_get_model_buffer_f(pkim, destroy)
+if (destroy.lt.KIM_STATUS_OK) then
+   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_model_buffer_f", destroy)
    return
 endif
 pbufind   = buffer(1)
@@ -613,7 +639,10 @@ call free(pbufind)
 
 call free(pbuffer)
 
-end subroutine destroy
+destroy = KIM_STATUS_OK
+return
+
+end function destroy
 
 end module model_driver_P_<FILL model driver name>
 
@@ -695,7 +724,8 @@ close(10)
 goto 200
 100 continue
 ! reading parameters failed
-idum = kim_api_report_error_f(__LINE__, __FILE__, "Unable to read <FILL model driver name> parameters, kimerror = ", KIM_STATUS_FAIL)
+ier = KIM_STATUS_FAIL
+idum = kim_api_report_error_f(__LINE__, __FILE__, "Unable to read <FILL model driver name> parameters, kimerror = ", ier)
 goto 42
 
 200 continue

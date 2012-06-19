@@ -150,7 +150,7 @@ subroutine kim_api_set_test_buffer_f(kimmdl,ob,ier)
         end subroutine kim_api_set_test_buffer_f
 
 
-        subroutine kim_api_process_dedr_f(pkim,de,r,dx,i,j,ier)
+        integer function kim_api_process_dedr_f(pkim,de,r,dx,i,j)
 #ifdef SYSTEM32
         integer, parameter :: kim_intptr=4
 #else
@@ -158,10 +158,10 @@ subroutine kim_api_set_test_buffer_f(kimmdl,ob,ier)
 #endif
                 integer(kind=kim_intptr) :: pkim,dx
                 real*8 :: de,r
-                integer ::i,j,ier
-        end subroutine kim_api_process_dedr_f
+                integer ::i,j
+        end function kim_api_process_dedr_f
 
-        subroutine kim_api_process_d2edr2_f(pkim,de,r,dx,i,j,ier)
+        integer function kim_api_process_d2edr2_f(pkim,de,r,dx,i,j)
 #ifdef SYSTEM32
         integer, parameter :: kim_intptr=4
 #else
@@ -169,8 +169,7 @@ subroutine kim_api_set_test_buffer_f(kimmdl,ob,ier)
 #endif
                 integer(kind=kim_intptr) :: pkim,dx,r,i,j
                 real*8 :: de
-                integer ::ier
-        end subroutine kim_api_process_d2edr2_f
+        end function kim_api_process_d2edr2_f
 
 
     integer function kim_api_report_error(ln,fl,usermsg,ier)
@@ -458,25 +457,23 @@ integer,parameter :: kim_intptr = 8
             integer ::error
         end subroutine kim_api_print
 
-        subroutine kim_api_model_compute_f(kimmdl,error)
+        integer function kim_api_model_compute_f(kimmdl)
 #ifdef SYSTEM32
         integer, parameter :: kim_intptr=4
 #else
         integer,parameter :: kim_intptr = 8
 #endif
             integer(kind=kim_intptr) :: kimmdl
-            integer::error
-        end subroutine kim_api_model_compute_f
+        end function kim_api_model_compute_f
 
-        subroutine kim_api_model_destroy_f(kimmdl,error)
+        integer function kim_api_model_destroy_f(kimmdl)
 #ifdef SYSTEM32
         integer, parameter :: kim_intptr=4
 #else
         integer,parameter :: kim_intptr = 8
 #endif
             integer(kind=kim_intptr) :: kimmdl
-            integer::error
-        end subroutine kim_api_model_destroy_f
+        end function kim_api_model_destroy_f
 
         integer function kim_api_model_reinit_f(kimmdl)
 #ifdef SYSTEM32
@@ -606,15 +603,15 @@ integer,parameter :: kim_intptr = 8
         integer::ind,flag,error
         end subroutine kim_api_set_compute_by_index_f
 
-        subroutine kim_api_set_data_by_index(kimmdl,I, size,dt,error)
+        integer function kim_api_set_data_by_index(kimmdl,I, size,dt)
 #ifdef SYSTEM32
         integer, parameter :: kim_intptr=4
 #else
         integer,parameter :: kim_intptr = 8
 #endif
             integer (kind=kim_intptr):: kimmdl,size,dt
-            integer :: I,error
-        end subroutine kim_api_set_data_by_index
+            integer :: I
+        end function kim_api_set_data_by_index
 
     end interface
 
@@ -1016,11 +1013,11 @@ integer,parameter :: kim_intptr = 8
             call kim_api_set_compute(kimmdl,pstr,flag,error)
         end subroutine kim_api_set_compute_f
 
-        subroutine kim_api_set_data_by_index_f(kimmdl,I, size,dt,error)
+        integer function kim_api_set_data_by_index_f(kimmdl,I, size,dt)
             integer(kind=kim_intptr) :: kimmdl,size,dt
-            integer :: I,error
-            call kim_api_set_data_by_index(kimmdl,I, size,dt,error)
-        end subroutine kim_api_set_data_by_index_f
+            integer :: I
+            kim_api_set_data_by_index_f = kim_api_set_data_by_index(kimmdl,I, size,dt)
+        end function kim_api_set_data_by_index_f
 
         subroutine kim_api_setm_data_f(kimmdl,error, nm1,sz1,dt1,k1, nm2,sz2,dt2,k2, nm3,sz3,dt3,k3, nm4,sz4,dt4,k4,&
          nm5,sz5,dt5,k5,   nm6,sz6,dt6,k6,  nm7,sz7,dt7,k7, nm8,sz8,dt8,k8, nm9,sz9,dt9,k9, nm10,sz10,dt10,k10,&
@@ -1184,7 +1181,7 @@ integer,parameter :: kim_intptr = 8
                if(errcheck_mltpl(KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY,msg,1,"",nm1 ).lt.KIM_STATUS_OK) return
             endif
             if(k1.eq.1) then
-               call kim_api_set_data_by_index_f(kimmdl,nm1,sz1,dt1,error);
+               error = kim_api_set_data_by_index_f(kimmdl,nm1,sz1,dt1);
                if (errcheck_mltpl(error,msg,1,"", nm1).lt.KIM_STATUS_OK) return
             endif
 
@@ -1253,33 +1250,33 @@ integer,parameter :: kim_intptr = 8
 
             !process arguments
             error=KIM_STATUS_OK
- if(present(nm2).and.k2.eq.1) call kim_api_set_data_by_index_f(kimmdl,nm2,sz2,dt2,error);
+ if(present(nm2).and.k2.eq.1) error = kim_api_set_data_by_index_f(kimmdl,nm2,sz2,dt2);
             if(errcheck_mltpl(error,msg,2,"",nm2).lt.KIM_STATUS_OK) return
- if(present(nm3).and.k3.eq.1) call kim_api_set_data_by_index_f(kimmdl,nm3,sz3,dt3,error);
+ if(present(nm3).and.k3.eq.1) error = kim_api_set_data_by_index_f(kimmdl,nm3,sz3,dt3);
             if(errcheck_mltpl(error,msg,3,"",nm3).lt.KIM_STATUS_OK) return
- if(present(nm4).and.k4.eq.1) call kim_api_set_data_by_index_f(kimmdl,nm4,sz4,dt4,error);
+ if(present(nm4).and.k4.eq.1) error = kim_api_set_data_by_index_f(kimmdl,nm4,sz4,dt4);
             if(errcheck_mltpl(error,msg,4,"",nm4).lt.KIM_STATUS_OK) return
- if(present(nm5).and.k5.eq.1) call kim_api_set_data_by_index_f(kimmdl,nm5,sz5,dt5,error);
+ if(present(nm5).and.k5.eq.1) error = kim_api_set_data_by_index_f(kimmdl,nm5,sz5,dt5);
             if(errcheck_mltpl(error,msg,5,"",nm5).lt.KIM_STATUS_OK) return
- if(present(nm6).and.k6.eq.1) call kim_api_set_data_by_index_f(kimmdl,nm6,sz6,dt6,error);
+ if(present(nm6).and.k6.eq.1) error = kim_api_set_data_by_index_f(kimmdl,nm6,sz6,dt6);
             if(errcheck_mltpl(error,msg,6,"",nm6).lt.KIM_STATUS_OK) return
- if(present(nm7).and.k7.eq.1) call kim_api_set_data_by_index_f(kimmdl,nm7,sz7,dt7,error);
+ if(present(nm7).and.k7.eq.1) error = kim_api_set_data_by_index_f(kimmdl,nm7,sz7,dt7);
             if(errcheck_mltpl(error,msg,7,"",nm7).lt.KIM_STATUS_OK) return
- if(present(nm8).and.k8.eq.1) call kim_api_set_data_by_index_f(kimmdl,nm8,sz8,dt8,error);
+ if(present(nm8).and.k8.eq.1) error = kim_api_set_data_by_index_f(kimmdl,nm8,sz8,dt8);
             if(errcheck_mltpl(error,msg,8,"",nm8).lt.KIM_STATUS_OK) return
- if(present(nm9).and.k9.eq.1) call kim_api_set_data_by_index_f(kimmdl,nm9,sz9,dt9,error);
+ if(present(nm9).and.k9.eq.1) error = kim_api_set_data_by_index_f(kimmdl,nm9,sz9,dt9);
             if(errcheck_mltpl(error,msg,9,"",nm9).lt.KIM_STATUS_OK) return
- if(present(nm10).and.k10.eq.1)call kim_api_set_data_by_index_f(kimmdl,nm10,sz10,dt10,error);
+ if(present(nm10).and.k10.eq.1) error = kim_api_set_data_by_index_f(kimmdl,nm10,sz10,dt10);
             if(errcheck_mltpl(error,msg,10,"",nm10).lt.KIM_STATUS_OK)return
- if(present(nm11).and.k11.eq.1)call kim_api_set_data_by_index_f(kimmdl,nm11,sz11,dt11,error);
+ if(present(nm11).and.k11.eq.1) error = kim_api_set_data_by_index_f(kimmdl,nm11,sz11,dt11);
             if(errcheck_mltpl(error,msg,11,"",nm11).lt.KIM_STATUS_OK)return
- if(present(nm12).and.k12.eq.1)call kim_api_set_data_by_index_f(kimmdl,nm12,sz12,dt12,error);
+ if(present(nm12).and.k12.eq.1) error = kim_api_set_data_by_index_f(kimmdl,nm12,sz12,dt12);
             if(errcheck_mltpl(error,msg,12,"",nm12).lt.KIM_STATUS_OK)return
- if(present(nm13).and.k13.eq.1)call kim_api_set_data_by_index_f(kimmdl,nm13,sz13,dt13,error);
+ if(present(nm13).and.k13.eq.1) error = kim_api_set_data_by_index_f(kimmdl,nm13,sz13,dt13);
             if(errcheck_mltpl(error,msg,13,"",nm13).lt.KIM_STATUS_OK)return
- if(present(nm14).and.k14.eq.1)call kim_api_set_data_by_index_f(kimmdl,nm14,sz14,dt14,error);
+ if(present(nm14).and.k14.eq.1) error = kim_api_set_data_by_index_f(kimmdl,nm14,sz14,dt14);
             if(errcheck_mltpl(error,msg,14,"",nm14).lt.KIM_STATUS_OK)return
- if(present(nm15).and.k15.eq.1)call kim_api_set_data_by_index_f(kimmdl,nm15,sz15,dt15,error);
+ if(present(nm15).and.k15.eq.1) error = kim_api_set_data_by_index_f(kimmdl,nm15,sz15,dt15);
             if(errcheck_mltpl(error,msg,15,"",nm15).lt.KIM_STATUS_OK)return
         end subroutine kim_api_setm_data_by_index_f
 

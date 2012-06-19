@@ -95,6 +95,10 @@ get_neigh                   method       none                []                 
 
 neighObject                 pointer      none                []                 optional
 
+process_dEdr                method       none                []                 optional
+
+process_d2Edr2              method       none                []                 optional
+
 
 #######################################################################################################
 MODEL_OUTPUT:
@@ -114,9 +118,6 @@ forces                      real*8       force               [numberOfParticles,
 
 particleEnergy              real*8       energy              [numberOfParticles]    optional
 
-process_dEdr                method       none                []                 optional
-
-process_d2Edr2              method       none                []                 optional
 
 #######################################################################################################
 MODEL_PARAMETERS:

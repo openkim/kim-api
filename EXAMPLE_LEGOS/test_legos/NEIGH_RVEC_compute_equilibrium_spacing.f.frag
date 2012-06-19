@@ -59,7 +59,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   call NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerCutoff, (cutoff+cutpad), &
                                               Spacings(1), N, NNeighbors,    &
                                               neighborList, RijList)
-  call kim_api_model_compute_f(pkim, ier)
+  ier = kim_api_model_compute_f(pkim)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
      stop
@@ -75,7 +75,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
                                               Spacings(3), N, NNeighbors,    &
                                               neighborList, RijList)
   ! Call model compute
-  call kim_api_model_compute_f(pkim, ier)
+  ier = kim_api_model_compute_f(pkim)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
      stop
@@ -91,7 +91,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
                                               Spacings(2), N, NNeighbors,    &
                                               neighborList, RijList)
   ! Call model compute
-  call kim_api_model_compute_f(pkim, ier)
+  ier = kim_api_model_compute_f(pkim)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
      stop
@@ -111,7 +111,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
                                                  Spacings(4), N, NNeighbors,    &
                                                  neighborList, RijList)
      ! Call model compute
-     call kim_api_model_compute_f(pkim, ier)
+     ier = kim_api_model_compute_f(pkim)
      if (ier.lt.KIM_STATUS_OK) then
         idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
         stop

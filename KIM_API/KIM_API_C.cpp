@@ -106,11 +106,11 @@ char * KIM_API_get_model_kim_str(char * modelname,int * kimerr){
     return KIM_API_model::get_model_kim_str(modelname,kimerr);
 }
 
-void KIM_API_model_compute(void *kimmdl,int *error){
+int KIM_API_model_compute(void *kimmdl){
 
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
 
-    mdl->model_compute(error);
+    return mdl->model_compute();
 
 }
 int KIM_API_model_reinit(void * kimmdl){
@@ -118,9 +118,9 @@ int KIM_API_model_reinit(void * kimmdl){
     if (mdl->model_reinit()) return KIM_STATUS_OK;
     return KIM_STATUS_FAIL;
 }
-void KIM_API_model_destroy(void * kimmdl,int *error){
+int KIM_API_model_destroy(void * kimmdl){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    mdl->model_destroy(error);
+    return mdl->model_destroy();
 }
 
 char * KIM_API_get_model_partcl_typs(void * kimmdl,int* nATypes, int* error){
@@ -165,11 +165,11 @@ int KIM_API_get_neigh(void *kimmdl,int mode,int request,
     return mdl->get_neigh(mode,request,atom,numnei,nei1atom,Rij);
 }
 
-void KIM_API_process_dEdr(void **ppkim, double * dE, double * dr, double **dx, int *i, int *j, int *ier ){
-    KIM_API_model::process_dEdr((KIM_API_model **)ppkim,dE,dr,dx,i,j,ier);
+int KIM_API_process_dEdr(void **ppkim, double * dE, double * dr, double **dx, int *i, int *j){
+   return KIM_API_model::process_dEdr((KIM_API_model **)ppkim,dE,dr,dx,i,j);
 }
- void KIM_API_process_d2Edr2(void **ppkim, double * dE, double ** dr, double **dx,int **i, int **j, int *ier ){
-    KIM_API_model::process_d2Edr2((KIM_API_model **)ppkim,dE,dr,dx,i,j,ier);
+int KIM_API_process_d2Edr2(void **ppkim, double * dE, double ** dr, double **dx,int **i, int **j){
+   return KIM_API_model::process_d2Edr2((KIM_API_model **)ppkim,dE,dr,dx,i,j);
  }
 char * KIM_API_get_status_msg(int error){
     return KIM_API_model::get_status_msg(error);
@@ -271,10 +271,10 @@ int KIM_API_get_index(void *kimmdl,char *nm, int *error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     return mdl->get_index(nm,error);
 }
-void  KIM_API_set_data_by_index(void *kimmdl,int I, intptr_t size, void *dt, int * error){
+int KIM_API_set_data_by_index(void *kimmdl,int I, intptr_t size, void *dt){
      KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-     *error =KIM_STATUS_FAIL;
-     if (mdl == NULL) return;
+     int error = KIM_STATUS_FAIL;
+     if (mdl == NULL) return error;
 
       int c=1;
        (*mdl)[I].data = dt;
@@ -286,7 +286,9 @@ void  KIM_API_set_data_by_index(void *kimmdl,int I, intptr_t size, void *dt, int
             (*mdl)[I].shape[0] = size/c;
         }
         (*mdl)[I].flag->freeable = 1;
-        *error=KIM_STATUS_OK;
+        error=KIM_STATUS_OK;
+
+        return error;
 }
 void * KIM_API_get_data_by_index(void *kimmdl,int I,int *error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
@@ -728,8 +730,8 @@ void kim_api_free_(void *kimmdl,int *error){
 void kim_api_print_(void *kimmdl,int *error){
     KIM_API_print(*(KIM_API_model **)kimmdl, error);
 }
-void kim_api_model_compute_f_(void*kimmdl,int *error){
-    KIM_API_model_compute(*(KIM_API_model **)kimmdl,error);
+int kim_api_model_compute_f_(void*kimmdl){
+   return KIM_API_model_compute(*(KIM_API_model **)kimmdl);
 }
 int kim_api_get_neigh_mode_f_(void *kimmdl,int *error ){
     return KIM_API_get_neigh_mode(*(KIM_API_model **)kimmdl,error);
@@ -738,8 +740,8 @@ int kim_api_get_neigh_mode_f_(void *kimmdl,int *error ){
 int kim_api_model_reinit_f_(void * kimmdl){
     return KIM_API_model_reinit(*(KIM_API_model **)kimmdl);
 }
-void kim_api_model_destroy_f_(void * kimmdl,int *error){
-    KIM_API_model_destroy(*(KIM_API_model **)kimmdl,error);
+int kim_api_model_destroy_f_(void * kimmdl){
+    return KIM_API_model_destroy(*(KIM_API_model **)kimmdl);
 }
 int kim_api_model_init_f_(void * kimmdl){
     return KIM_API_model_init(*(KIM_API_model **)kimmdl);
@@ -848,8 +850,8 @@ int kim_api_get_index_(void *kimmdl,char **nm,int *error){
     return KIM_API_get_index(*(KIM_API_model **)kimmdl,*nm,error);
 }
 
-void kim_api_set_data_by_index_(void *kimmdl,int * I, intptr_t * size, void *dt,int *error){
-    KIM_API_set_data_by_index(*(KIM_API_model **)kimmdl,*I,*size,*(char**)dt,error);
+int kim_api_set_data_by_index_(void *kimmdl,int * I, intptr_t * size, void *dt){
+   return KIM_API_set_data_by_index(*(KIM_API_model **)kimmdl,*I,*size,*(char**)dt);
 }
 void * kim_api_get_data_by_index_(void *kimmdl,int * I,int *error){
     return KIM_API_get_data_by_index(*(KIM_API_model **)kimmdl,*I,error);
@@ -874,12 +876,12 @@ int kim_api_report_error_(int * ln,char ** fl, char ** usermsg, int * ier){
     return KIM_API_report_error(*ln,*fl,*usermsg,*ier);
 }
 
-void kim_api_process_dedr_f_(void **ppkim, double * dE, double * dr, double **dx, int *i, int *j, int *ier ){
-    KIM_API_model::process_dEdr((KIM_API_model **)ppkim,dE,dr,dx,i,j,ier);
+int kim_api_process_dedr_f_(void **ppkim, double * dE, double * dr, double **dx, int *i, int *j){
+   return KIM_API_model::process_dEdr((KIM_API_model **)ppkim,dE,dr,dx,i,j);
 }
 
-void kim_api_process_d2edr2_f_(void **ppkim, double * dE, double ** dr, double **dx, int **i, int **j, int *ier ){
-   KIM_API_model::process_d2Edr2((KIM_API_model **)ppkim,dE,dr,dx,i,j,ier);
+int kim_api_process_d2edr2_f_(void **ppkim, double * dE, double ** dr, double **dx, int **i, int **j){
+   return KIM_API_model::process_d2Edr2((KIM_API_model **)ppkim,dE,dr,dx,i,j);
 }
 double kim_api_get_scale_conversion_(char **u_from,char **u_to, int *error){
     return KIM_API_model::get_scale_conversion(*u_from,*u_to,error);

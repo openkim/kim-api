@@ -272,16 +272,16 @@ int main()
                                (cutoff_cluster_model_1 + cutpad), &nl_cluster_model_1);
 
       /* call compute functions */
-      KIM_API_model_compute(pkim_periodic_model_0, &status);
+      status = KIM_API_model_compute(pkim_periodic_model_0);
       if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"compute", status);
 
-      KIM_API_model_compute(pkim_cluster_model_0, &status);
+      status = KIM_API_model_compute(pkim_cluster_model_0);
       if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"compute", status);
 
-      KIM_API_model_compute(pkim_periodic_model_1, &status);
+      status = KIM_API_model_compute(pkim_periodic_model_1);
       if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"compute", status);
 
-      KIM_API_model_compute(pkim_cluster_model_1, &status);
+      status = KIM_API_model_compute(pkim_cluster_model_1);
       if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"compute", status);
 
       /* print the results */
@@ -296,16 +296,16 @@ int main()
 
 
    /* call model destroy */
-   KIM_API_model_destroy(pkim_periodic_model_0, &status);
+   status = KIM_API_model_destroy(pkim_periodic_model_0);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"destroy", status);
 
-   KIM_API_model_destroy(pkim_cluster_model_0, &status);
+   status = KIM_API_model_destroy(pkim_cluster_model_0);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"destroy", status);
 
-   KIM_API_model_destroy(pkim_periodic_model_1, &status);
+   status = KIM_API_model_destroy(pkim_periodic_model_1);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"destroy", status);
 
-   KIM_API_model_destroy(pkim_cluster_model_1, &status);
+   status = KIM_API_model_destroy(pkim_cluster_model_1);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"destroy", status);
 
    /* free memory of neighbor lists */

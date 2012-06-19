@@ -1,22 +1,31 @@
     ! determine whether half or full neighbor lists are being used
-    pNBC_Method = kim_api_get_nbc_method_f(pkim, ier)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_nbc_method_f", ier)
+    pNBC_Method = kim_api_get_nbc_method_f(pkim, Compute_Energy_Forces)
+    if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
+       idum = kim_api_report_error_f( &
+              __LINE__,               &
+              __FILE__,               &
+              "kim_api_get_nbc_method_f", Compute_Energy_Forces)
        return
     endif
     if (index(NBC_Method,"NEIGH_PURE_H").eq.1) then
        HalfOrFull = 1
        ! get numberContributingParticles
-       pnumContrib = kim_api_get_data_f(pkim,"numberContributingParticles",ier)
-       if (ier.lt.KIM_STATUS_OK) then
-          idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
+       pnumContrib = kim_api_get_data_f(pkim,"numberContributingParticles",Compute_Energy_Forces)
+       if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
+          idum = kim_api_report_error_f( &
+                 __LINE__,               &
+                 __FILE__,               &
+                 "kim_api_get_data", Compute_Energy_Forces)
           return
        endif
     elseif (index(NBC_Method,"NEIGH_PURE_F").eq.1) then
        HalfOrFull = 2
     else
-       ier = KIM_STATUS_FAIL
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "Unsupported NBC type", ier)
+       Compute_Energy_Forces = KIM_STATUS_FAIL
+       idum = kim_api_report_error_f( &
+              __LINE__,               &
+              __FILE__,               &
+              "Unsupported NBC type", Compute_Energy_Forces)
        return
     endif
     call free(pNBC_Method) ! don't forget to release the memory...
@@ -29,9 +38,12 @@
        !
        atom = i ! request neighbors for atom i
 
-       ier = kim_api_get_neigh_f(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij_dummy)
-       if (ier.lt.KIM_STATUS_OK) then
-          idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_neigh", ier)
+       Compute_Energy_Forces = kim_api_get_neigh_f(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij_dummy)
+       if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
+          idum = kim_api_report_error_f( &
+                 __LINE__,               &
+                 __FILE__,               &
+                 "kim_api_get_neigh", Compute_Energy_Forces)
           return
        endif
 

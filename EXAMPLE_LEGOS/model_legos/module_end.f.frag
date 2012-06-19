@@ -1,5 +1,5 @@
 
-  end subroutine Compute_Energy_Forces
+  end function Compute_Energy_Forces
 
 !-------------------------------------------------------------------------------
 !
@@ -34,7 +34,7 @@
 ! Model reinitialization routine
 !
 !-------------------------------------------------------------------------------
-  subroutine ReInit(pkim)
+  integer function ReInit(pkim)
     implicit none
 
     !-- Transferred variables
@@ -51,24 +51,24 @@
     real*8 model_C;       pointer(pC,model_C)
     real*8 model_sigmasq; pointer(psigmasq,model_sigmasq)
     real*8 model_cutsq;   pointer(pcutsq,model_cutsq)
-    integer ier, idum
+    integer idum
 
     ! Get (changed) parameters from KIM object ---------------------------------
 
     ! get stuff from KIM object
-    call kim_api_getm_data_f(pkim, ier, &
+    call kim_api_getm_data_f(pkim, ReInit, &
          "PARAM_FREE_sigma",   psigma,    1, &
          "PARAM_FREE_epsilon", pepsilon,  1, &
          "PARAM_FREE_cutoff",  pparamcut, 1)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
-       stop
+    if (ReInit.lt.KIM_STATUS_OK) then
+       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ReInit)
+       return
     endif
 
     ! Set new values in KIM object ---------------------------------------------
 
     ! Set stuff in KIM object
-    call kim_api_getm_data_f(pkim, ier, &
+    call kim_api_getm_data_f(pkim, ReInit, &
          "cutoff",              pcutoff,  1, &
          "PARAM_FIXED_cutnorm", pcutnorm, 1, &
          "PARAM_FIXED_A",       pA,       1, &
@@ -76,9 +76,9 @@
          "PARAM_FIXED_C",       pC,       1, &
          "PARAM_FIXED_sigmasq", psigmasq, 1, &
          "PARAM_FIXED_cutsq",   pcutsq,   1)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
-       stop
+    if (ReInit.lt.KIM_STATUS_OK) then
+       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ReInit)
+       return
     endif
 
     model_cutoff = model_Pcutoff
@@ -92,14 +92,17 @@
     model_sigmasq = model_sigma**2
     model_cutsq = model_cutoff**2
 
-  end subroutine ReInit
+    ReInit = KIM_STATUS_OK
+    return
+
+  end function ReInit
 
 !-------------------------------------------------------------------------------
 !
 ! Model destroy routine
 !
 !-------------------------------------------------------------------------------
-  subroutine Destroy(pkim)
+  integer function Destroy(pkim)
     use KIM_API
     implicit none
 
@@ -116,10 +119,10 @@
     real*8 model_C;       pointer(pC,model_C)
     real*8 model_sigmasq; pointer(psigmasq,model_sigmasq)
     real*8 model_cutsq;   pointer(pcutsq,model_cutsq)
-    integer ier, idum
+    integer idum
 
 
-    call kim_api_getm_data_f(pkim, ier, &
+    call kim_api_getm_data_f(pkim, Destroy, &
          "PARAM_FREE_sigma",    psigma,    1, &
          "PARAM_FREE_epsilon",  pepsilon,  1, &
          "PARAM_FREE_cutoff",   pparamcut, 1, &
@@ -129,9 +132,9 @@
          "PARAM_FIXED_C",       pC,        1, &
          "PARAM_FIXED_sigmasq", psigmasq,  1, &
          "PARAM_FIXED_cutsq",   pcutsq,    1)
-    if (ier.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
-       stop
+    if (Destroy.lt.KIM_STATUS_OK) then
+       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", Destroy)
+       return
     endif
     call free(psigma)
     call free(pepsilon)
@@ -143,7 +146,10 @@
     call free(psigmasq)
     call free(pcutsq)
 
-  end subroutine Destroy
+    Destroy = KIM_STATUS_OK
+    return
+
+  end function Destroy
 
 end module MODEL_NAME_STR
 

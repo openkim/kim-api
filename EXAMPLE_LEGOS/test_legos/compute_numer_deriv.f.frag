@@ -117,7 +117,7 @@ contains
    if (doing_neighbors) &
       call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
                                do_update_list,coordsave,neighborList,RijList,ier)
-   call kim_api_model_compute_f(pkim, ier)
+   ier = kim_api_model_compute_f(pkim)
    if (ier.lt.KIM_STATUS_OK) then
       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute",ier)
       stop
@@ -127,7 +127,7 @@ contains
    if (doing_neighbors) &
       call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
                                do_update_list,coordsave,neighborList,RijList,ier)
-   call kim_api_model_compute_f(pkim, ier)
+   ier = kim_api_model_compute_f(pkim)
    if (ier.lt.KIM_STATUS_OK) then
       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute",ier)
       stop
@@ -148,7 +148,7 @@ contains
       if (doing_neighbors) &
          call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
                                   do_update_list,coordsave,neighborList,RijList,ier)
-      call kim_api_model_compute_f(pkim, ier)
+      ier = kim_api_model_compute_f(pkim)
       if (ier.lt.KIM_STATUS_OK) then
          idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute",ier)
          stop
@@ -158,7 +158,7 @@ contains
       if (doing_neighbors) &
          call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
                                   do_update_list,coordsave,neighborList,RijList,ier)
-      call kim_api_model_compute_f(pkim, ier)
+      ier = kim_api_model_compute_f(pkim)
       if (ier.lt.KIM_STATUS_OK) then
          idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute",ier)
          stop

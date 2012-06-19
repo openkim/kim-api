@@ -15,7 +15,7 @@ subroutine free_KIM_API_object(pkim)
 
   ! call the model destroy function
   !
-  call kim_api_model_destroy_f(pkim, ier)
+  ier = kim_api_model_destroy_f(pkim)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_destroy_f", ier)
      stop
