@@ -61,7 +61,7 @@ program TEST_NAME_STR
   integer, parameter :: nCellsPerSide  = 2
   integer, parameter :: DIM            = 3
   real*8,  parameter :: cutpad         = 0.75d0
-  integer, parameter :: max_types      = 20     ! most species a Model can support
+  integer, parameter :: max_types      = 30     ! most species a Model can support
   integer, parameter :: max_NBCs       = 20     ! maximum number of NBC methods
   real*8,  parameter :: eps_prec       = epsilon(1.d0)
   real*8   FCCspacing
@@ -130,6 +130,10 @@ program TEST_NAME_STR
   ! Get list of particle types supported by the model
   !
   call Get_Model_Supported_Types(modelname, max_types, model_types, num_types, ier)
+  if (ier.lt.KIM_STATUS_OK) then
+     idum = kim_api_report_error_f(__LINE__, __FILE__, "Get_Model_Supported_Types", ier)
+     stop
+  endif
 
   ! Get list of NBCs supported by the model
   !
