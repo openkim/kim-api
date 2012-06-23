@@ -578,7 +578,9 @@ int model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* pa
 {
    /* KIM variables */
    intptr_t* pkim = *((intptr_t**) km);
-   char** paramfilename;
+   char* paramfile1name;
+   char* paramfile2name;
+   <FILL as many file name pointers as needed>
 
    /* Local variables */
    int i;
@@ -587,7 +589,6 @@ int model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* pa
    double <FILL parameter 1>;
    double <FILL parameter 2>;
    /* FILL as many parameters as needed */
-   intptr_t* pkim = *((intptr_t**) km);
    double* model_Pcutoff;
    double* model_cutoff;
    double* model_cutsq;
@@ -599,14 +600,16 @@ int model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* pa
    struct model_buffer* buffer;
    char* NBCstr;
 
-   /* generic code to process model parameter file names from single string */
-   paramfilename = (char**) malloc(*numparamfiles*sizeof(char*));
-   for (i=0; i<*numparamfiles; ++i)
+   /* set paramfile1name */
+   if (*numparamfiles != <FILL number of parameter files>)
    {
-      paramfilename[i] = &(paramfile_names[i*(*nmstrlen)]);
+      ier = KIM_STATUS_FAIL;
+      KIM_API_report_error(__LINE__, __FILE__, "Incorrect number of parameter files.", ier);
+      return ier;
    }
-   /* end generic code to process model parameter file names */
-   /* but don't forget to free the memory when done with the file names */
+   paramfile1name = paramfile_names;
+   paramfile2name = &(paramfile_names[1*(*nmstrlen)]);
+   <FILL as many file name pointers as needed>
 
    /* store pointer to functions in KIM object */
    KIM_API_setm_data(pkim, &ier, 3*4,
@@ -620,7 +623,7 @@ int model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* pa
    }
 
    /* Read in model parameters from parameter file */
-   fid = fopen(paramfilename[0], "r");
+   fid = fopen(paramfile1name, "r");
    if (fid == NULL)
    {
       ier = KIM_STATUS_FAIL;
@@ -635,7 +638,6 @@ int model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* pa
                 /* FILL as many parameters as needed */
                );
    fclose(fid);
-   free(paramfilename); paramfilename = NULL; /* done with parameter file names */
 
    /* check that we read the right number of parameters */
    if (<FILL number of parameters (including cutoff)> != ier)
@@ -644,6 +646,8 @@ int model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* pa
       KIM_API_report_error(__LINE__, __FILE__, "Unable to read all <FILL model driver name> parameters", ier);
       return ier;
    }
+
+   /* FILL process the remaining parameter files */
 
    /* convert to appropriate units */
    cutoff *= KIM_API_convert_to_act_unit(pkim, "A", "eV", "e", "K", "fs",

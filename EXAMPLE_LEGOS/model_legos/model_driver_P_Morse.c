@@ -601,7 +601,7 @@ int MODEL_DRIVER_NAME_LC_STR_init_(void *km, char* paramfile_names, int* nmstrle
 {
    /* KIM variables */
    intptr_t* pkim = *((intptr_t**) km);
-   char** paramfilename;
+   char* paramfile1name;
 
    /* Local variables */
    int i;
@@ -622,14 +622,14 @@ int MODEL_DRIVER_NAME_LC_STR_init_(void *km, char* paramfile_names, int* nmstrle
    struct model_buffer* buffer;
    char* NBCstr;
 
-   /* generic code to process model parameter file names from single string */
-   paramfilename = (char**) malloc(*numparamfiles*sizeof(char*));
-   for (i=0; i<*numparamfiles; ++i)
+   /* set paramfile1name */
+   if (*numparamfiles != 1)
    {
-      paramfilename[i] = &(paramfile_names[i*(*nmstrlen)]);
+      ier = KIM_STATUS_FAIL;
+      KIM_API_report_error(__LINE__, __FILE__, "Incorrect number of parameter files.", ier);
+      return ier;
    }
-   /* end generic code to process model parameter file names */
-   /* but don't forget to free the memory when done with the file names */
+   paramfile1name = paramfile_names;
 
    /* store pointer to functions in KIM object */
    KIM_API_setm_data(pkim, &ier, 3*4,
@@ -643,7 +643,7 @@ int MODEL_DRIVER_NAME_LC_STR_init_(void *km, char* paramfile_names, int* nmstrle
    }
 
    /* Read in model parameters from parameter file */
-   fid = fopen(paramfilename[0], "r");
+   fid = fopen(paramfile1name, "r");
    if (fid == NULL)
    {
       ier = KIM_STATUS_FAIL;
@@ -657,7 +657,6 @@ int MODEL_DRIVER_NAME_LC_STR_init_(void *km, char* paramfile_names, int* nmstrle
                 &C,       /* Morse C in 1/Angstroms */
                 &Rzero);  /* Morse Rzero in Angstroms */
    fclose(fid);
-   free(paramfilename); paramfilename = NULL; /* done with parameter file names */
 
    /* check that we read the right number of parameters */
    if (4 != ier)
