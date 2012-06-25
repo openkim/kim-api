@@ -254,7 +254,7 @@ int KIM_API_get_compute(void *kimmdl,char *nm, int * error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
      *error = KIM_STATUS_FAIL;
      int ind =mdl->get_index(nm, error);
-     if (ind<0) return KIM_NOT_COMPUTE;
+     if (ind<0) return KIM_COMPUTE_FALSE;
     *error =KIM_STATUS_OK;
     return (*mdl)[ind].flag->calculate;
 }

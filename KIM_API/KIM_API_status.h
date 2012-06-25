@@ -72,7 +72,7 @@
 #define KIM_STATUS_NEIGH_ITER_INIT_OK                3
 
 
-#define KIM_COMPUTE                    1
-#define KIM_NOT_COMPUTE                0
+#define KIM_COMPUTE_TRUE                             1
+#define KIM_COMPUTE_FALSE                            0
 
 #endif /* KIMHDR_KIM_API_STATUS_H */

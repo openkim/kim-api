@@ -733,7 +733,8 @@ Arguments:
               as it appears in the .kim descriptor file.
 
       int flag
-              0 or 1 to turn off compute or turn on compute, respectively.
+              KIM_COMPUTE_FALSE or KIM_COMPUTE_TRUE to turn off compute or turn
+              on compute, respectively.
 
       int *kimerror
               error code: KIM_STATUS_OK   -- successful completion,
@@ -753,8 +754,9 @@ int KIM_API_get_compute(void *kimmdl, char *nm, int *kimerror);
 
     This routine checks the status of the `compute' flag.  If the argument can
     be optionally computed, a Model can check if a Test wants the argument to
-    be computed.  Returned value: KIM_NOT_COMPUTE means do not compute,
-    KIM_COMPUTE means compute.  KIM_STATUS_ARG_UNKNOWN is returned on error.
+    be computed.  Returned value: KIM_COMPUTE_FALSE means do not compute,
+    KIM_COMPUTE_TRUE means compute.  KIM_STATUS_ARG_UNKNOWN is returned on
+    error.
 
 Arguments:
 

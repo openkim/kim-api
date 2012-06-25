@@ -375,7 +375,7 @@ program TEST_NAME_STR
 
      ! Turn off force computation
      !
-     call kim_api_set_compute_f(pkim, "forces", 0, ier)
+     call kim_api_set_compute_f(pkim, "forces", KIM_COMPUTE_FALSE, ier)
      if (ier.lt.KIM_STATUS_OK) then
         idum = kim_api_report_error_f(__LINE__, __FILE__,"kim_api_set_compute_f", ier)
         stop
