@@ -32,6 +32,67 @@
 #
 
 
+=== openkim-api-v1.1.0 =========================================================
+
+* Documentation updates
+
+* Introduced the use of THIS_FILE_NAME in Fortran examples instead of __FILE__.
+  This allows for easily setting the value of THIS_FILE_NAME to something
+  appropriate (short) when the default preprocessor value of __FILE__ is longer
+  that 132 characters (the max line length for Fortran)
+
+* Changed KIM_COMPUTE and KIM_NOT_COMPUTE to KIM_COMPUTE_TRUE and
+  KIM_COMPUTE_FALSE, respectively
+
+* Removed KIM_API_MAX_NEIGHBORS; the api no longer puts any restriction on the
+  number of neighbors for an atom
+
+* Updated api and examples to always `return' with an error code instead of
+  `exit' or `stop'.  This allows the Test to handle errors and is a better
+  convention for error handling
+
+* Added KIM_STATUS_MODEL_UNSUPPORTED_CONFIGURATION for cases where a
+  configuration is identified at run time as unsupported
+
+* Removed requirement for a trailing `/' in environment variables (such as
+  $KIM_DIR)
+
+* Added make warning if `make' is invoked from a Model directory when static
+  linking is being used.
+
+* Added `make examples-force' target
+
+* `make examples' only copies files; it no longer also compiles everything
+
+* Changed all call-back interfaces (model_init, model_reinit, model_compute,
+  model_destroy) to be consistent: integer functions (in Fortran speak).  Also
+  updated examples and templates to conform to this new interface.
+
+* Added get_model_partcl_typs() and get_test_partcl_type() service routines
+  Removed get_partcl_types() routine.
+
+* Added ability of a Model/Model Driver to set its particle type codes at runtime
+
+* Added support for .kimignore files in MODELs, MODEL_DRIVERs, and TESTs directories
+
+* Added `Temperature' to standard.kim for "temperature dependent" Models
+
+* New Model Driver interface supports reading from any number of files (not strings)
+
+* Support for 001-999 particle types in Model Drivers
+
+* Use $(strip ) function to avoid difficult trailing space problem in make files
+
+* Many improvements to Make-system portability
+
+* Carriage returns are now striped from kim and parameter files during Make
+
+* Improvements to the vc_forces_numer_deriv verification check
+
+* Bug fixes for KIM_API_init() matching
+
+* Significant clean-up/rearrangement of core api code
+
 === openkim-api-v1.0.1 =========================================================
 
 

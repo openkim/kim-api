@@ -32,7 +32,7 @@
 
 
 This directory (test_legos) contains components for automatically generating
-the example tests
+the example tests and verification checks
 
 
 The following files are in this directory:
@@ -105,6 +105,9 @@ descriptor_file_output
 descriptor_file_start
      This file contains the beginning of the KIM descriptor file.
 
+descriptor_file_start_SI
+     This file contains the beginning of the KIM descriptor file using SI units.
+
 dir_ex_test_Ar_multiple_models/
      Directory containing the ex_test_Ar_multiple_models Test.
 
@@ -115,9 +118,17 @@ free_KIM_API_object.f.frag
      This Fortran file contains the free_KIM_API_object routine that is used
      the by FCCcohesive Tests.
 
+get_model_NBC_methods.f.frag
+     This Fortran file contains the get_model_NBC_methods routine that is used
+     by the numerical derivative check.
+
 get_model_cutoff_firsttime.f.frag
      This Fortran file contains the get_model_cutoff_firsttime routine that is
      used by the FCCcohesive Tests.
+
+get_model_supported_types.f.frag
+     This Fortran file contains the get_model_supported_types routine that is
+     used by the numerical derivative check.
 
 get_neigh_Rij.f.frag
      This Fortran file contains the routine for accessing neighbor lists that
@@ -211,16 +222,16 @@ test_free_cluster_stiff_README
      This file contains the README file that is used to generate REAMDE files
      for the example cluster_stiff tests.
 
-test_numer_deriv_README
-     This file contains the README file that is used to generate REAMDE files
-     for the example numer_deriv tests.
-
 test_run_all_ex_tests
      This shell script contains code to execute all compatible example Models
      and Tests.
 
 update_neighborlist.f.frag
      This Fortran file contains the routine to update a neighbor list.
+
+vc_forces_numer_deriv_README
+     This file contains the README file that is used to generate REAMDE files
+     for the example numer_deriv check.
 
 write_KIM_descriptor.f.frag
      This Fortran file contains the routine to generate a KIM descriptor string

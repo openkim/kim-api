@@ -390,7 +390,8 @@ $
 #
 #
 # The MODEL_NAME is either `standard' (used only in this file, which defines
-# the KIM standard) or it must conform to the following naming convention:
+# the KIM standard) or it convention to conform to the following naming
+# scheme:
 #
 #       model_<elements>_<class>_<label>_<KIM-ID>
 #
