@@ -291,6 +291,16 @@ int KIM_API_model_compute(void *kimmdl);
         notes about this in the documentation for KIM_API_set/get_model_buffer
         and also in the standard.kim file.)
 
+    (3) The Model must define a model_compute function (the name of this
+           function is not important) with prototype:
+           extern "C" { int model_compute(void *kimmdl); } // in C++
+           int model_compute(void *kimmdl);                /* in C */
+           integer function model_compute(pkim)
+              integer(kind=kim_intptr), intent(in) :: pkim
+                                                     ! in Fortran
+        A pointer to the Model's model_compute function must be registered in
+        the KIM_API object using one of the "set data" api service routines.
+
 Arguments:
 
       void *kimmdl
@@ -314,8 +324,21 @@ int KIM_API_model_destroy(void *kimmdl);
     the memory for all Model parameters stored in the KIM API object.  Return
     value is KIM_STATUS_OK on success and KIM_STATUS_FAIL on failure.
 
-    NOTE: Prior to calling this routine KIM_API_model_init() must have been
-          called for this KIM API object.
+    NOTES:
+
+    (1) Prior to calling this routine KIM_API_model_init() must have been
+        called for this KIM API object.
+
+    (2) The Model may define a model_destroy function (the name of this
+           function is not important) with prototype:
+           extern "C" { int model_destroy(void *kimmdl); } // in C++
+           int model_destroy(void *kimmdl);                /* in C */
+           integer function model_destroy(pkim)
+              integer(kind=kim_intptr), intent(in) :: pkim
+                                                     ! in Fortran
+        If a model defines a model_destroy functions, a pointer to this
+        function must be registered in the KIM_API object using one of the "set
+        data" api service routines.
 
 Arguments:
 
@@ -848,6 +871,16 @@ int KIM_API_model_init(void *kimmdl);
         this in the documentation for KIM_API_set/get_model_buffer and also in
         the standard.kim file.)
 
+    (3) The Model must define a model_init function (the name of this function
+           must be the lower-case version of the Model's name [with an
+           underscore appended to the end for C and C++]; here we use the
+           example Model name "ex_Model_1") with prototype:
+           extern "C" { int ex_model_1_(void *kimmdl); } // in C++
+           int ex_model_1_(void *kimmdl);                /* in C */
+           integer function ex_Model_1(pkim)
+              integer(kind=kim_intptr), intent(in) :: pkim
+                                                         ! in Fortran
+
 Arguments:
       void *kimmdl
               pointer to KIM_API_model object (in C++ style, the definition
@@ -878,6 +911,17 @@ int KIM_API_model_reinit(void *kimmdl);
     (2) This routine must be called if the Test has changed one or more of the
         Model's free parameters (see standard.kim for more discussion about
         Model Parameters).
+
+    (3) The Model may define a model_reinit function (the name of this
+           function is not important) with prototype:
+           extern "C" { int model_reinit(void *kimmdl); } // in C++
+           int model_reinit(void *kimmdl);                /* in C */
+           integer function model_reinit(pkim)
+              integer(kind=kim_intptr), intent(in) :: pkim
+                                                          ! in Fortran
+        If a model defines a model_reinit functions, a pointer to this function
+        must be registered in the KIM_API object using one of the "set data"
+        api service routines.
 
 Arguments:
       void *kimmdl
@@ -1238,7 +1282,21 @@ int KIM_API_get_neigh(void *kimmdl, int mode, int request, int *particle,
     This routine provides standardized access to the neighbor list supplied by
     the Test.  The Test must have previously registered, in the KIM API object,
     a pointer to its neighbor list access routine with the same interface as
-    above (except that `mode' and `request' must be of type `int *').
+    above (except that `mode' and `request' must be of type `int *'). That is,
+       extern "C" { int get_neigh(void *kimmdl, int *mode, int* request,
+                                  int *particle, int *numnei, int **nei1particle,
+                                  double **rij); }                   // in C++
+       int get_neigh(void *kimmdl, int *mode, int* request, int *particle,
+                     int *numnei, int **nei1particle, double **rij); /* in C */
+       integer function get_neigh(pkim, mode, request, atom, numnei,
+                                  pnei1atom, pRij)
+          integer(kind=kim_intptr), intent(in)  :: pkim
+          integer,                  intent(in)  :: mode
+          integer,                  intent(in)  :: request
+          integer,                  intent(out) :: atom
+          integer,                  intent(out) :: numnei
+          integer(kind=kim_intptr), intent(out) :: pnei1atom
+          integer(kind=kim_intptr), intent(out) :: pRij              ! in Fortran
 
     Two modes are supported: `Iterator' and `Locator'.  In Iterator mode, the
     Iterator should, first, be reset.  Then, a call to this function will
@@ -1346,13 +1404,27 @@ int KIM_API_process_dEdr(void **km, double *dEdr, double *r, double **dx, &
     many properties.  Examples include forces, the virial, and other
     thermodynamic tensions.  The KIM API performs automatic index conversion
     (based on ZeroBasedList and OneBasedList flag settings) before calling the
-    Test's supplied process_dEdr function.  If the Test does not provide its
-    own process_dEdr routine, then the KIM API standard process_dEdr routine is
-    used.  If the standard process_dEdr routine is used, the KIM API ensures
-    that any appropriate memory initializations are performed.  This routine
-    currently supports the computation of `virial' and `particleVirial'.
-    Return value: KIM_STATUS_OK if successful and KIM_STATUS_FAIL if
-    unsuccessful.
+    Test's supplied process_dEdr function.  If the Test provides a process_dEdr
+    function, it must register, in the KIM API object, a pointer to this
+    function.  The function must conform to the following interface:
+       extern "C" { int process_dEdr(void *kimmdl, double *dEdr, double *r,
+                                     double **dx, int *i, int *j); } // in C++
+       int process_dEdr(void *kimmdl, double *dEdr, double *r,
+                        double **dx, int *i, int *j);                /* in C */
+       integer function process_dEdr(pkim, dEdr, r, pdx, i, j)
+          integer(kind=kim_intptr), intent(in) :: pkim
+          real*8,                   intent(in) :: dEdr
+          real*8,                   intent(in) :: r
+          integer(kind=kim_intptr), intent(in) :: pdx
+          integer,                  intent(in) :: i
+          integer,                  intent(in) :: j                  ! in Fortran
+
+    If the Test does not provide its own process_dEdr routine, then the KIM API
+    standard process_dEdr routine is used.  If the standard process_dEdr
+    routine is used, the KIM API ensures that any appropriate memory
+    initializations are performed.  This routine currently supports the
+    computation of `virial' and `particleVirial'.  Return value: KIM_STATUS_OK
+    if successful and KIM_STATUS_FAIL if unsuccessful.
 
 Arguments:
 
@@ -1398,13 +1470,28 @@ int KIM_API_process_d2Edr2(void **km, double *d2Edr2, double **r, &
     from process_dEdr) to compute, via the chain-rule, many properties.  An
     example is the hessian.  The KIM API performs automatic index conversion
     (based on ZeroBasedList and OneBasedList flag settings) before calling the
-    Test's supplied process_d2Edr2 function.  If the Test does not provide its
-    own process_d2Edr2 routine, then the KIM API standard process_d2Edr2
-    routine is used.  If the standard process_dEdr routine is used, the KIM API
-    ensures that any appropriate memory initializations are performed.  This
-    routine and currently supports the computation of `hessian' (process_dEdr
-    is also required in order to correclty compute the hessian).  Return value:
-    KIM_STATUS_OK if successfull and KIM_STATUS_FAIL if unsuccessful.
+    Test's supplied process_d2Edr2 function.  If the Test provides a process_d2Edr2
+    function, it must register, in the KIM API object, a pointer to this
+    function.  The function must conform to the following interface:
+       extern "C" { int process_d2Edr2(void *kimmdl, double *d2Edr2, double **r,
+                                       double **dx, int **i, int **j); } // in C++
+       int process_d2Edr2(void *kimmdl, double *d2Edr2, double **r,
+                          double **dx, int **i, int **j);                /* in C */
+       integer function process_d2Edr2(pkim, d2Edr2, pr, pdx, pi, pj)
+          integer(kind=kim_intptr), intent(in) :: pkim
+          real*8,                   intent(in) :: d2Edr2
+          integer(kind=kim_intptr), intent(in) :: pr
+          integer(kind=kim_intptr), intent(in) :: pdx
+          integer(kind=kim_intptr), intent(in) :: pi
+          integer(kind=kim_intptr), intent(in) :: pj                     ! in Fortran
+
+    If the Test does not provide its own process_d2Edr2 routine, then the KIM
+    API standard process_d2Edr2 routine is used.  If the standard process_dEdr
+    routine is used, the KIM API ensures that any appropriate memory
+    initializations are performed.  This routine and currently supports the
+    computation of `hessian' (process_dEdr is also required in order to
+    correctly compute the hessian).  Return value: KIM_STATUS_OK if successful
+    and KIM_STATUS_FAIL if unsuccessful.
 
 Arguments:
 
