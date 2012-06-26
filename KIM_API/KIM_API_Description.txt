@@ -125,7 +125,7 @@ Arguments:
 
       char *testdescriptor
               null ( char(0) ) or eof terminated character string with the
-              complete content of the Test's KIM desriptor file.
+              complete content of the Test's KIM descriptor file.
 
       char *modelname
               null terminated character string that defines the Model name.
@@ -510,7 +510,7 @@ int KIM_API_is_half_neighbors(void *kimmdl, int *kimerror);
     neighbors or 0 if it is for full neighbors.  The type of neighbor list
     being used (if any) is determined by the "active" NBC method (See
     KIM_API_get_NBC_method() below).  This is a convenience routine which makes
-    it easy to quickly deterine the type of neighbor list in use.  This routine
+    it easy to quickly determine the type of neighbor list in use.  This routine
     returns 1 for the CLUSTER NBC method even though neighbor lists are not
     used as part of the CLUSTER NBC method.
 
@@ -716,7 +716,7 @@ Arguments:
                           KIM_STATUS_ARG_INVALID_RANK  -- rank provided, does
                                                           not match KIM API
                                                           argument rank
-                          KIM_STATUS_AEG_INVALID_SHAPE -- negative index in
+                          KIM_STATUS_ARG_INVALID_SHAPE -- negative index in
                                                           shape
 
 Corresponding Fortran style interface:
@@ -1181,7 +1181,7 @@ void KIM_API_set_partcl_type_code(void *kimmdl, char* particle, int code, int *k
 
     This routine sets the particle type ID for a given particle symbol.  Only
     those particle types which the Model listed with code `-1' in its
-    descriptor file may be chagned.  The routine returns
+    descriptor file may be changed.  The routine returns
     KIM_STATUS_PARTICLE_TYPES_UNDEFINED if no atom/particle types have been
     provided in the .kim files.  (See the standard.kim file for more
     information on atom/particle types.)  The routine returns
@@ -1321,7 +1321,7 @@ int KIM_API_get_neigh(void *kimmdl, int mode, int request, int *particle,
       KIM_STATUS_NEIGH_INVALID_REQUEST          -- invalid particle ID requested
                                                    (request out of range)
       KIM_STATUS_NEIGH_INVALID_MODE             -- invalid mode value
-      KIM_STATUS_API_OBJECT_INVALUD             -- invalid KIM API object
+      KIM_STATUS_API_OBJECT_INVALID             -- invalid KIM API object
       KIM_STATUS_NEIGH_TOO_MANY_NEIGHBORS       -- Number of neighbors of a
                                                    particle too big to allocate
                                                    memory for index conversion
@@ -1622,7 +1622,7 @@ Arguments:
               will be (KIM_API_model *)).
 
       int *kimerror
-              KIM_STATUSS_OK is always returned
+              KIM_STATUS_OK is always returned
 
 Corresponding Fortran style interface:
 
@@ -1814,7 +1814,7 @@ Arguments:
               exponent for time contribution to derived unit
 
       int *kimerror
-              KIM_STATUSS_OK (if successful completion)
+              KIM_STATUS_OK (if successful completion)
 
 Corresponding Fortran style interface:
 
@@ -1958,7 +1958,7 @@ f90-style:
     8) kim_api_setm_data_by_index_f
     9) kim_api_getm_index_f
 
-    The interface here is exactly as it is for the c-style, execpt that the
+    The interface here is exactly as it is for the c-style, except that the
     `numargs' argument is not required.
 
     As an example, in C, suppose a Model wants to determine if the Test has
