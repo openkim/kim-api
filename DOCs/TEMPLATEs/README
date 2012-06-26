@@ -156,15 +156,20 @@ identical. See comments below.)
 
     Note: For a Model written in C, copy the .c and .c.kim templates.
 
-(c) Edit the .kim file and change the Model name to conform to the new Model and
-    enter the species type.  (Search for the word "FILL" which indicates where
-    changes are necessary.)  To edit a file on a unix machine, use for example:
+(c) Edit the .kim file and change the Model name to conform to the new Model
+    and enter the species type.  (Search for the word "FILL" which indicates
+    where changes are necessary.)  Also, change the "Release:" line to indicate
+    that the file is part of your new Model and not part of the openkim-api
+    release.  To edit a file on a unix machine, use for example:
 
     % pico model_Ar_P_Buckingham.kim
 
 (d) Edit the .F90 (or .c) file making all necessary changes.  (Search for the
     word "FILL".)  The main changes are:
 
+    - The "Release:" line should be changed from referencing the openkim-api
+      release to something more appropriate.
+.
     - Model name which appears in several places in the file.
 
     - Fill in the Model cutoff radius.
@@ -189,8 +194,9 @@ identical. See comments below.)
 
     - Add any necessary initialization into the _init() routine.
 
-(e) Edit the Makefile and change the Model name appropriately.  (Search
-    for the word "FILL".)
+(e) Edit the Makefile and change the Model name appropriately.  (Search for the
+    word "FILL".)  Also change the "Release:" line to indicate that the file is
+    part of your new Model and not part of the openkim-api release.
 
 (f) Compile the new Model into the API package:
 
@@ -237,12 +243,17 @@ Buckingham Model Driver and a Ne KIM Model based on it are given below.
 
 (c) Edit the .kim file and define the parameters used by this Model Driver.
     (Search for the word "FILL" which indicates where changes are necessary.)
-    To edit a file on a unix machine, use for example:
+    Also change the "Release:" line to indicate that the file is part of your
+    new Model and not part of the openkim-api release.  To edit a file on a
+    unix machine, use for example:
 
     % pico model_driver_Buckingham.kim
 
 (d) Edit the .F90 (or .c) file making all necessary changes.  (Search for the
     word "FILL".)  The main changes are:
+
+    - The "Release:" line should be changed from referencing the openkim-api
+      release to something more appropriate.
 
     - Model Driver name which appears in several places in the file.
 
@@ -253,8 +264,9 @@ Buckingham Model Driver and a Ne KIM Model based on it are given below.
     - Specify the format for reading in the parameter data (in Fortran 90 you can
       simply set this to `*'.)
 
-(e) Edit the Makefile and change the Model name appropriately.  (Search
-    for the word "FILL".)
+(e) Edit the Makefile and change the Model name appropriately.  (Search for the
+    word "FILL".) Also change the "Release:" line to indicate that the file is
+    part of your new Model and not part of the openkim-api release.
 
 (f) Compile the new Model Driver into the API package:
 
@@ -276,10 +288,13 @@ Buckingham Model Driver and a Ne KIM Model based on it are given below.
     % cp $KIM_DIR/DOCs/TEMPLATEs/model_El_P_Template.params model_Ne_P_Buckingham.params
 
 (i) Edit the Makefile and change the Model name, Model Driver name, and
-    SPECIES1_NAME appropriately. (Search for the word "FILL".)
+    SPECIES1_NAME appropriately. (Search for the word "FILL".)  Also change the
+    "Release:" line to indicate that the file is part of your new Model and not
+    part of the openkim-api release.
 
-(j)  Edit the model_Ne_P_Buckingham.params file appropriately. (Search for the
-     word "FILL".)
+(j) Edit the model_Ne_P_Buckingham.params file appropriately. (Search for the
+     word "FILL".)  Also change the "Release:" line to indicate that the file
+     is part of your new Model and not part of the openkim-api release.
 
 (k)  Compile the new Model into the API package:
 

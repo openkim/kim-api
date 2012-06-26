@@ -33,6 +33,9 @@
 
 
 MODEL_NAME := MODEL_NAME_STR
+
+# No changes should be needed below this line.
+
 MODEL_BUILD_TARGET := $(strip $(MODEL_NAME)).a
 
 ifndef KIM_API_DIR

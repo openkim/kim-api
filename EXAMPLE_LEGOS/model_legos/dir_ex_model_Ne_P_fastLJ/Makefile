@@ -33,6 +33,8 @@
 
 MODEL_NAME := ex_model_Ne_P_fastLJ
 
+# No changes should be needed below this line.
+
 MODEL_BUILD_TARGET := $(strip $(MODEL_NAME)).a
 
 ifndef KIM_API_DIR

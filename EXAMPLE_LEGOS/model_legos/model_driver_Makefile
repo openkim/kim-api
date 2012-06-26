@@ -33,6 +33,9 @@
 
 
 MODEL_DRIVER_NAME := MODEL_DRIVER_NAME_STR
+
+# No changes should be needed below this line.
+
 MODEL_DRIVER_BUILD_TARGET := $(strip $(MODEL_DRIVER_NAME)).a
 
 ifndef KIM_API_DIR

@@ -25,6 +25,7 @@
 #    Ryan S. Elliott
 #    Ellad B. Tadmor
 #    Valeriu Smirichinski
+#    <FILL your name>
 #
 
 #
@@ -33,6 +34,9 @@
 
 
 MODEL_NAME := <FILL model name>
+
+# No changes should be needed below this line.
+
 MODEL_BUILD_TARGET := $(strip $(MODEL_NAME)).a
 
 ifndef KIM_API_DIR

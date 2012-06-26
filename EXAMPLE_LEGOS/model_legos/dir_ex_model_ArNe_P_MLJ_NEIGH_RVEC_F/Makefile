@@ -33,6 +33,9 @@
 
 
 MODEL_NAME := ex_model_ArNe_P_MLJ_NEIGH_RVEC_F
+
+# No changes should be needed below this line.
+
 MODEL_BUILD_TARGET := $(strip $(MODEL_NAME)).a
 
 ifndef KIM_API_DIR
