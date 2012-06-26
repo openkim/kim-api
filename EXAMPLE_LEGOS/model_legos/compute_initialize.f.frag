@@ -7,16 +7,14 @@
          "particleEnergy", comp_enepot, 1, &
          "virial",         comp_virial, 1)
     if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f( &
-              __LINE__,               &
-              __FILE__,               &
-              "kim_api_getm_compute_f", Compute_Energy_Forces)
+       idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                     "kim_api_getm_compute_f", Compute_Energy_Forces)
        return
     endif
 
     ! Unpack data from KIM object
     !
-    call kim_api_getm_data_f(pkim, Compute_Energy_Forces,                       &
+    call kim_api_getm_data_f(pkim, Compute_Energy_Forces,     &
          "numberOfParticles",   pnAtoms,         1,           &
          "numberParticleTypes", pnparticleTypes, 1,           &
          "particleTypes",       pparticleTypes,  1,           &
@@ -27,27 +25,23 @@
          "particleEnergy",      penepot,         comp_enepot, &
          "virial",              pvirial,         comp_virial)
     if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f( &
-              __LINE__,               &
-              __FILE__,               &
-              "kim_api_getm_data_f", Compute_Energy_Forces)
+       idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                     "kim_api_getm_data_f", Compute_Energy_Forces)
        return
     endif
 
-    call kim_api_getm_data_f(pkim, Compute_Energy_Forces,   &
-         "PARAM_FREE_epsilon",  pepsilon,      1, &
-         "PARAM_FREE_sigma",    psigma,        1, &
-         "PARAM_FIXED_cutnorm", pcutnorm,      1, &
-         "PARAM_FIXED_A",       pA,            1, &
-         "PARAM_FIXED_B",       pB,            1, &
-         "PARAM_FIXED_C",       pC,            1, &
-         "PARAM_FIXED_sigmasq", psigmasq,      1, &
+    call kim_api_getm_data_f(pkim, Compute_Energy_Forces, &
+         "PARAM_FREE_epsilon",  pepsilon,      1,         &
+         "PARAM_FREE_sigma",    psigma,        1,         &
+         "PARAM_FIXED_cutnorm", pcutnorm,      1,         &
+         "PARAM_FIXED_A",       pA,            1,         &
+         "PARAM_FIXED_B",       pB,            1,         &
+         "PARAM_FIXED_C",       pC,            1,         &
+         "PARAM_FIXED_sigmasq", psigmasq,      1,         &
          "PARAM_FIXED_cutsq",   pcutsq,        1)
     if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f( &
-              __LINE__,               &
-              __FILE__,               &
-              "kim_api_getm_data_f", Compute_Energy_Forces)
+       idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                     "kim_api_getm_data_f", Compute_Energy_Forces)
        return
     endif
 
@@ -69,10 +63,8 @@
     Compute_Energy_Forces = KIM_STATUS_FAIL ! assume an error
     do i = 1,numberOfParticles
        if (.not. (particleTypes(i) .eq. SPECIES_CODE_STR)) then
-          idum = kim_api_report_error_f( &
-                 __LINE__,               &
-                 __FILE__,               &
-                 "Wrong Atom Type", Compute_Energy_Forces)
+          idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                        "Wrong Atom Type", Compute_Energy_Forces)
           return
        endif
     enddo

@@ -31,6 +31,7 @@
 
 
 #include "KIM_API_status.h"
+#define THIS_FILE_NAME __FILE__
 #define TRUEFALSE(TRUTH) merge(1,0,(TRUTH))
 
 module ex_model_Ne_P_LJ_NEIGH_PURE_H
@@ -80,10 +81,8 @@ contains
          "forces",         f_flag,    1,   &
          "particleEnergy", eper_flag, 1)
     if (calculate_wrap_f77.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f( &
-              __LINE__,               &
-              __FILE__,               &
-              "kim_api_getm_compute_f", calculate_wrap_f77)
+       idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                     "kim_api_getm_compute_f", calculate_wrap_f77)
        return
     endif
 
@@ -98,17 +97,16 @@ contains
          "energy",                      ppotenergy,     TRUEFALSE(e_flag.eq.1),    &
          "particleEnergy",              pea,            TRUEFALSE(eper_flag.eq.1))
     if (calculate_wrap_f77.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f( &
-              __LINE__,               &
-              __FILE__,               &
-              "kim_api_getm_data_f", calculate_wrap_f77)
+       idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                     "kim_api_getm_data_f", calculate_wrap_f77)
        return
     endif
 
     do i=1,numberofatoms
        if (attypes(i).ne.1) then ! check for correct atom types Ne=1
           calculate_wrap_f77 = KIM_STATUS_FAIL
-          idum = kim_api_report_error_f(__LINE__, __FILE__, "Wrong Atom Type", calculate_wrap_f77)
+          idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                        "Wrong Atom Type", calculate_wrap_f77)
           return
        endif
     enddo
@@ -144,14 +142,16 @@ integer function ex_model_Ne_P_LJ_NEIGH_PURE_H_init(pkim)
   one=1
   ier = kim_api_set_data_f(pkim,"compute",one,loc(calculate_wrap_f77))
   if (ier.lt.KIM_STATUS_OK)  then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data_f", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_set_data_f", ier)
      goto 42
   endif
 
   ! store model cutoff in KIM object
   pcutoff = kim_api_get_data_f(pkim,"cutoff",ier)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_get_data_f", ier)
      goto 42
   endif
   cutoff = model_cutoff

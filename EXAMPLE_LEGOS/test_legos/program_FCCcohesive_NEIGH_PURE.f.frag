@@ -45,6 +45,7 @@
 !*******************************************************************************
 
 #include "KIM_API_status.h"
+#define THIS_FILE_NAME __FILE__
 
 !-------------------------------------------------------------------------------
 !
@@ -205,7 +206,8 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
        "coordinates", pcoor,    1, &
        "cutoff",      pcutoff,  1)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_getm_data_f", ier)
      stop
   endif
 
@@ -215,7 +217,8 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
   !
   pNBC_Method = kim_api_get_nbc_method_f(pkim, ier) ! don't forget to free
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_nbc_method", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_get_nbc_method", ier)
      stop
   endif
   if (index(NBC_Method,"NEIGH_PURE_H").eq.1) then
@@ -224,7 +227,8 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
      halfflag = .false.
   else
      ier = KIM_STATUS_FAIL
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "Unknown NBC method", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "Unknown NBC method", ier)
      return
   endif
   call free(pNBC_Method) ! free the memory
@@ -238,7 +242,8 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
                                         MiddleAtomId, neighborList)
   ier = kim_api_model_compute_f(pkim)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_model_compute_f", ier)
      stop
   endif
   Energies(1) = energy
@@ -254,7 +259,8 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
   ! Call model compute
   ier = kim_api_model_compute_f(pkim)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_model_compute_f", ier)
      stop
   endif
   Energies(3) = energy
@@ -270,7 +276,8 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
   ! Call model compute
   ier = kim_api_model_compute_f(pkim)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_model_compute_f", ier)
      stop
   endif
   Energies(2) = energy
@@ -291,7 +298,8 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
      ! Call model compute
      ier = kim_api_model_compute_f(pkim)
      if (ier.lt.KIM_STATUS_OK) then
-        idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
+        idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                      "kim_api_model_compute_f", ier)
         stop
      endif
      Energies(4) = energy

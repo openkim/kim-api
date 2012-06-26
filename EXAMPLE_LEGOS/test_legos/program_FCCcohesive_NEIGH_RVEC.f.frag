@@ -44,6 +44,7 @@
 !*******************************************************************************
 
 #include "KIM_API_status.h"
+#define THIS_FILE_NAME __FILE__
 
 !-------------------------------------------------------------------------------
 !
@@ -130,7 +131,8 @@ program TEST_NAME_STR
   !
   pcutoff = kim_api_get_data_f(pkim, "cutoff", ier)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_get_data_f", ier)
      stop
   endif
   !

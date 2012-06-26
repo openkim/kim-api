@@ -42,6 +42,7 @@
 
 
 #include "KIM_API_status.h"
+#define THIS_FILE_NAME __FILE__
 #define TRUEFALSE(TRUTH) merge(1,0,(TRUTH))
 
 module ex_model_ArNe_P_MLJ_NEIGH_RVEC_F
@@ -110,10 +111,8 @@ contains
          "particleEnergy", comp_enepot,  1, &
          "virial",         comp_virial,  1)
     if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f( &
-              __LINE__,               &
-              __FILE__,               &
-              "kim_api_getm_compute_f", Compute_Energy_Forces)
+       idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                     "kim_api_getm_compute_f", Compute_Energy_Forces)
        return
     endif
 
@@ -130,10 +129,8 @@ contains
          "particleEnergy",      penepot,         TRUEFALSE(comp_enepot.eq.1), &
          "virial",              pvirial,         TRUEFALSE(comp_virial.eq.1))
     if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f( &
-              __LINE__,               &
-              __FILE__,               &
-              "kim_api_getm_data_f", Compute_Energy_Forces)
+       idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                     "kim_api_getm_data_f", Compute_Energy_Forces)
        return
     endif
 
@@ -154,10 +151,8 @@ contains
          "PARAM_FIXED_sigmasq", psigmasq, 1, &
          "PARAM_FIXED_cutsq",   pcutsq,   1)
     if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f( &
-              __LINE__,               &
-              __FILE__,               &
-              "kim_api_getm_data_f", Compute_Energy_Forces)
+       idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                     "kim_api_getm_data_f", Compute_Energy_Forces)
        return
     endif
 
@@ -165,10 +160,8 @@ contains
     Compute_Energy_Forces = KIM_STATUS_FAIL ! assume an error
     do i = 1,numberOfParticles
        if (.not. ( (particleTypes(i).eq.Ar) .or. (particleTypes(i).eq.Ne) ) ) then
-          idum = kim_api_report_error_f( &
-                 __LINE__,               &
-                 __FILE__,               &
-                 "Wrong Atom Type", Compute_Energy_Forces)
+          idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                        "Wrong Atom Type", Compute_Energy_Forces)
           return
        endif
     enddo
@@ -192,10 +185,8 @@ contains
        atom = i ! request neighbors for atom i
        Compute_Energy_Forces = kim_api_get_neigh_f(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij)
        if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
-          idum = kim_api_report_error_f( &
-                 __LINE__,               &
-                 __FILE__,               &
-                 "kim_api_get_neigh_f_f", Compute_Energy_Forces)
+          idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                        "kim_api_get_neigh_f_f", Compute_Energy_Forces)
           return
        endif
 
@@ -310,7 +301,8 @@ contains
          "PARAM_FREE_epsilon", pepsilon,  1, &
          "PARAM_FREE_cutoff",  pparamcut, 1)
     if (ReInit.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ReInit)
+       idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                     "kim_api_getm_data_f", ReInit)
        return
     endif
 
@@ -325,7 +317,8 @@ contains
          "PARAM_FIXED_cutsq",   pcutsq,   1)
 
     if (ReInit.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ReInit)
+       idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                     "kim_api_getm_data_f", ReInit)
        return
     endif
 
@@ -382,7 +375,8 @@ contains
          "PARAM_FIXED_sigmasq",  psigmasq,  1, &
          "PARAM_FIXED_cutsq",    pcutsq,    1)
     if (Destroy.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", Destroy)
+       idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                     "kim_api_getm_data_f", Destroy)
        return
     endif
 
@@ -439,14 +433,16 @@ integer function ex_model_ArNe_P_MLJ_NEIGH_RVEC_F_init(pkim)
        "reinit",  one, loc(ReInit),                1, &
        "destroy", one, loc(Destroy),               1)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_setm_data_f", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_setm_data_f", ier)
      goto 42
   endif
 
   ! store model cutoff in KIM object
   pcutoff =  kim_api_get_data_f(pkim,"cutoff",ier)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_get_data_f", ier)
      goto 42
   endif
   model_cutoff = 8.15d0 ! cutoff distance in angstroms
@@ -455,55 +451,64 @@ integer function ex_model_ArNe_P_MLJ_NEIGH_RVEC_F_init(pkim)
   psigma = malloc(three*8) ! 8 is the size of a real*8
   if (psigma.eq.0) then
      ier = KIM_STATUS_FAIL
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "malloc", ier)
      goto 42
   endif
   pepsilon = malloc(three*8) ! 8 is the size of a real*8
   if (pepsilon.eq.0) then
      ier = KIM_STATUS_FAIL
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "malloc", ier)
      goto 42
   endif
   pparamcut = malloc(one*8) ! 8 is the size of a real*8
   if (pparamcut.eq.0) then
      ier = KIM_STATUS_FAIL
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "malloc", ier)
      goto 42
   endif
   pcutnorm = malloc(three*8) ! 8 is the size of a real*8
   if (pcutnorm.eq.0) then
      ier = KIM_STATUS_FAIL
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "malloc", ier)
      goto 42
   endif
   pA = malloc(three*8) ! 8 is the size of a real*8
   if (pA.eq.0) then
      ier = KIM_STATUS_FAIL
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "malloc", ier)
      goto 42
   endif
   pB = malloc(three*8) ! 8 is the size of a real*8
   if (pB.eq.0) then
      ier = KIM_STATUS_FAIL
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "malloc", ier)
      goto 42
   endif
   pC = malloc(three*8) ! 8 is the size of a real*8
   if (pC.eq.0) then
      ier = KIM_STATUS_FAIL
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "malloc", ier)
      goto 42
   endif
   psigmasq = malloc(three*8) ! 8 is the size of a real*8
   if (psigmasq.eq.0) then
      ier = KIM_STATUS_FAIL
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "malloc", ier)
      goto 42
   endif
   pcutsq = malloc(one*8) ! 8 is the size of a real*8
   if (pcutsq.eq.0) then
      ier = KIM_STATUS_FAIL
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "malloc", ier)
      goto 42
   endif
 
@@ -519,7 +524,8 @@ integer function ex_model_ArNe_P_MLJ_NEIGH_RVEC_F_init(pkim)
        "PARAM_FIXED_sigmasq", three,  psigmasq,  1, &
        "PARAM_FIXED_cutsq",   one,    pcutsq,    1)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_setm_data_f", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_setm_data_f", ier)
      goto 42
   endif
 

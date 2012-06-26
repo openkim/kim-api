@@ -30,12 +30,14 @@ subroutine setup_KIM_API_object(pkim, testname, modelname, N, specname, SupportH
   !
   ier = kim_api_init_f(pkim, testname, modelname)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_init_f", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_init_f", ier)
      stop
   endif
   call kim_api_allocate_f(pkim, N, ATypes, ier)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_allocate_f", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_allocate_f", ier)
      stop
   endif
 
@@ -43,7 +45,8 @@ subroutine setup_KIM_API_object(pkim, testname, modelname, N, specname, SupportH
   !
   ier = kim_api_model_init_f(pkim)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_init_f", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_model_init_f", ier)
      stop
   endif
 
@@ -55,7 +58,8 @@ subroutine setup_KIM_API_object(pkim, testname, modelname, N, specname, SupportH
        "numberParticleTypes",         pnparticleTypes,   1,                           &
        "particleTypes",               pparticleTypesdum, 1)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_getm_data_f", ier)
      stop
   endif
 
@@ -68,7 +72,8 @@ subroutine setup_KIM_API_object(pkim, testname, modelname, N, specname, SupportH
   numberParticleTypes = ATypes
   particleTypes(:)        = kim_api_get_partcl_type_code_f(pkim, specname, ier)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_partcl_type_code_f", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_get_partcl_type_code_f", ier)
      stop
   endif
 

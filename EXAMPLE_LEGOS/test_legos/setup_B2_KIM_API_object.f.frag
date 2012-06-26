@@ -28,12 +28,14 @@ subroutine setup_B2_KIM_API_object(pkim, testname, modelname, specname1, specnam
   !
   ier = kim_api_init_f(pkim, testname, modelname)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_init_f", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_init_f", ier)
      stop
   endif
   call kim_api_allocate_f(pkim, N, ATypes, ier)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_allocate_f", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_allocate_f", ier)
      stop
   endif
 
@@ -41,7 +43,8 @@ subroutine setup_B2_KIM_API_object(pkim, testname, modelname, specname1, specnam
   !
   ier = kim_api_model_init_f(pkim)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_init_f", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_model_init_f", ier)
      stop
   endif
 
@@ -52,7 +55,8 @@ subroutine setup_B2_KIM_API_object(pkim, testname, modelname, specname1, specnam
        "numberParticleTypes", pnparticleTypes,   1, &
        "particleTypes",       pparticleTypesdum, 1)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_getm_data_f", ier)
      stop
   endif
 
@@ -64,12 +68,14 @@ subroutine setup_B2_KIM_API_object(pkim, testname, modelname, specname1, specnam
   numberParticleTypes = ATypes
   particleTypes(1)    = kim_api_get_partcl_type_code_f(pkim, specname1, ier)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_partcl_type_code_f", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_get_partcl_type_code_f", ier)
      stop
   endif
   particleTypes(2)    = kim_api_get_partcl_type_code_f(pkim, specname2, ier)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_partcl_type_code_f", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_get_partcl_type_code_f", ier)
      stop
   endif
 

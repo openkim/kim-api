@@ -45,6 +45,7 @@
 !*******************************************************************************
 
 #include "KIM_API_status.h"
+#define THIS_FILE_NAME __FILE__
 #define TRUEFALSE(TRUTH) merge(1,0,(TRUTH))
 
 !-------------------------------------------------------------------------------
@@ -131,7 +132,8 @@ program TEST_NAME_STR
   !
   call Get_Model_Supported_Types(modelname, max_types, model_types, num_types, ier)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "Get_Model_Supported_Types", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "Get_Model_Supported_Types", ier)
      stop
   endif
 
@@ -139,7 +141,8 @@ program TEST_NAME_STR
   !
   call Get_Model_NBC_methods(modelname, max_NBCs, model_NBCs, num_NBCs, ier)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "Get_Model_NBC_methods", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "Get_Model_NBC_methods", ier)
      stop
   endif
 
@@ -183,7 +186,8 @@ program TEST_NAME_STR
      call Write_KIM_descriptor(model_NBCs(inbc), max_types, model_types, num_types, &
                                test_descriptor_string, ier)
      if (ier.lt.KIM_STATUS_OK) then
-        idum = kim_api_report_error_f(__LINE__, __FILE__, "Write_KIM_descriptor", ier)
+        idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                      "Write_KIM_descriptor", ier)
         stop
      endif
 
@@ -192,7 +196,8 @@ program TEST_NAME_STR
      !
      ier = kim_api_string_init_f(pkim,trim(test_descriptor_string)//char(0),modelname)
      if (ier.lt.KIM_STATUS_OK) then
-        idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_string_init_f", ier)
+        idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                      "kim_api_string_init_f", ier)
         stop
      endif
 
@@ -200,12 +205,13 @@ program TEST_NAME_STR
      !
      pNBC_Method = kim_api_get_nbc_method_f(pkim, ier) ! don't forget to free
      if (ier.lt.KIM_STATUS_OK) then
-        idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_nbc_method", ier)
+        idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                      "kim_api_get_nbc_method", ier)
         stop
      endif
      if (index(NBC_Method,trim(model_NBCs(inbc))).ne.1) then
         ier = KIM_STATUS_FAIL
-        idum = kim_api_report_error_f(__LINE__, __FILE__, &
+        idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
               "Internal Error: Selected NBC method different from requested value", ier)
         stop
      endif
@@ -226,7 +232,8 @@ program TEST_NAME_STR
         nbc = 5
      else
         ier = KIM_STATUS_FAIL
-        idum = kim_api_report_error_f(__LINE__, __FILE__, "Unknown NBC method", ier)
+        idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                      "Unknown NBC method", ier)
         stop
      endif
 
@@ -234,7 +241,8 @@ program TEST_NAME_STR
      !
      call kim_api_allocate_f(pkim, N, num_types, ier)
      if (ier.lt.KIM_STATUS_OK) then
-        idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_allocate_f", ier)
+        idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                      "kim_api_allocate_f", ier)
         stop
      endif
 
@@ -246,7 +254,8 @@ program TEST_NAME_STR
         if (nbc.le.3) then
            ier = kim_api_set_data_f(pkim, "neighObject", SizeOne, loc(neighborList))
            if (ier.lt.KIM_STATUS_OK) then
-              idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data_f", ier)
+              idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                            "kim_api_set_data_f", ier)
               stop
            endif
         else
@@ -256,7 +265,8 @@ program TEST_NAME_STR
            NLRvecLocs(3) = N
            ier = kim_api_set_data_f(pkim, "neighObject", SizeOne, loc(NLRvecLocs))
            if (ier.lt.KIM_STATUS_OK) then
-              idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data_f", ier)
+              idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                            "kim_api_set_data_f", ier)
               stop
            endif
         endif
@@ -267,31 +277,36 @@ program TEST_NAME_STR
      if (nbc.eq.0) then
         ier = kim_api_set_data_f(pkim, "get_neigh", SizeOne, loc(get_neigh_no_Rij))
         if (ier.lt.KIM_STATUS_OK) then
-           idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data_f", ier)
+           idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                         "kim_api_set_data_f", ier)
            stop
         endif
         elseif (nbc.eq.1) then
         ier = kim_api_set_data_f(pkim, "get_neigh", SizeOne, loc(get_neigh_no_Rij))
         if (ier.lt.KIM_STATUS_OK) then
-           idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data_f", ier)
+           idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                         "kim_api_set_data_f", ier)
            stop
         endif
      elseif (nbc.eq.2) then
         ier = kim_api_set_data_f(pkim, "get_neigh", SizeOne, loc(get_neigh_no_Rij))
         if (ier.lt.KIM_STATUS_OK) then
-           idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data_f", ier)
+           idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                         "kim_api_set_data_f", ier)
            stop
         endif
      elseif (nbc.eq.3) then
         ier = kim_api_set_data_f(pkim, "get_neigh", SizeOne, loc(get_neigh_no_Rij))
         if (ier.lt.KIM_STATUS_OK) then
-           idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data_f", ier)
+           idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                         "kim_api_set_data_f", ier)
            stop
         endif
      elseif (nbc.eq.4) then
         ier = kim_api_set_data_f(pkim, "get_neigh", SizeOne, loc(get_neigh_Rij))
         if (ier.lt.KIM_STATUS_OK) then
-           idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_set_data_f", ier)
+           idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                         "kim_api_set_data_f", ier)
            stop
         endif
      endif
@@ -300,7 +315,8 @@ program TEST_NAME_STR
      !
      ier = kim_api_model_init_f(pkim)
      if (ier.lt.KIM_STATUS_OK) then
-        idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_init", ier)
+        idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                      "kim_api_model_init", ier)
         stop
      endif
 
@@ -317,7 +333,8 @@ program TEST_NAME_STR
           "energy",                      penergy,           1,                    &
           "forces",                      pforces,           1)
      if (ier.lt.KIM_STATUS_OK) then
-        idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
+        idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                      "kim_api_getm_data_f", ier)
         stop
      endif
      call KIM_to_F90_int_array_1d(particleTypesdum, particleTypes, N)
@@ -344,7 +361,8 @@ program TEST_NAME_STR
         particleTypes(i) = kim_api_get_partcl_type_code_f(pkim,trim(cluster_types(i)),ier)
      enddo
      if (ier.lt.KIM_STATUS_OK) then
-        idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_partcl_type_code_f", ier)
+        idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                      "kim_api_get_partcl_type_code_f", ier)
         stop
      endif
      do i=1,N
@@ -360,7 +378,8 @@ program TEST_NAME_STR
         call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
                                  do_update_list,coordsave,neighborList,RijList,ier)
         if (ier.lt.KIM_STATUS_OK) then
-           idum = kim_api_report_error_f(__LINE__, __FILE__, "update_neighborlist", ier)
+           idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                         "update_neighborlist", ier)
            stop
         endif
      endif
@@ -369,7 +388,8 @@ program TEST_NAME_STR
      !
      ier = kim_api_model_compute_f(pkim)
      if (ier.lt.KIM_STATUS_OK) then
-        idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute", ier)
+        idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                      "kim_api_model_compute", ier)
         stop
      endif
 
@@ -377,7 +397,8 @@ program TEST_NAME_STR
      !
      call kim_api_set_compute_f(pkim, "forces", KIM_COMPUTE_FALSE, ier)
      if (ier.lt.KIM_STATUS_OK) then
-        idum = kim_api_report_error_f(__LINE__, __FILE__,"kim_api_set_compute_f", ier)
+        idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                      "kim_api_set_compute_f", ier)
         stop
      endif
 
@@ -390,7 +411,8 @@ program TEST_NAME_STR
                                     boxSideLengths,NBC_Method,do_update_list,coordsave, &
                                     neighborList,RijList,deriv,deriv_err,ier)
            if (ier.lt.KIM_STATUS_OK) then
-              idum = kim_api_report_error_f(__LINE__, __FILE__,"compute_numer_deriv", ier)
+              idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                            "compute_numer_deriv", ier)
               stop
            endif
            forces_num(J,I) = -deriv
@@ -464,12 +486,14 @@ program TEST_NAME_STR
      endif
      ier = kim_api_model_destroy_f(pkim)
      if (ier.lt.KIM_STATUS_OK) then
-        idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_destroy", ier)
+        idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                      "kim_api_model_destroy", ier)
         stop
      endif
      call kim_api_free(pkim, ier)
      if (ier.lt.KIM_STATUS_OK) then
-        idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_free", ier)
+        idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                      "kim_api_free", ier)
         stop
      endif
 

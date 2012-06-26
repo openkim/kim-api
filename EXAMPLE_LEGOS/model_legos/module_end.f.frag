@@ -61,7 +61,8 @@
          "PARAM_FREE_epsilon", pepsilon,  1, &
          "PARAM_FREE_cutoff",  pparamcut, 1)
     if (ReInit.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ReInit)
+       idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                     "kim_api_getm_data_f", ReInit)
        return
     endif
 
@@ -77,7 +78,8 @@
          "PARAM_FIXED_sigmasq", psigmasq, 1, &
          "PARAM_FIXED_cutsq",   pcutsq,   1)
     if (ReInit.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ReInit)
+       idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                     "kim_api_getm_data_f", ReInit)
        return
     endif
 
@@ -133,7 +135,8 @@
          "PARAM_FIXED_sigmasq", psigmasq,  1, &
          "PARAM_FIXED_cutsq",   pcutsq,    1)
     if (Destroy.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", Destroy)
+       idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                     "kim_api_getm_data_f", Destroy)
        return
     endif
     call free(psigma)
@@ -187,14 +190,16 @@ integer function MODEL_NAME_STR_init(pkim)
        "reinit",  one, loc(ReInit),                1, &
        "destroy", one, loc(Destroy),               1)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_setm_data_f", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_setm_data_f", ier)
      goto 42
   endif
 
   ! store model cutoff in KIM object
   pcutoff =  kim_api_get_data_f(pkim,"cutoff",ier)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_get_data", ier)
      goto 42
   endif
   CUTOFF_VALUE_STR
@@ -242,7 +247,8 @@ integer function MODEL_NAME_STR_init(pkim)
        "PARAM_FIXED_sigmasq", one, psigmasq,  1, &
        "PARAM_FIXED_cutsq",   one, pcutsq,    1)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_setm_data_f", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_setm_data_f", ier)
      goto 42
   endif
 

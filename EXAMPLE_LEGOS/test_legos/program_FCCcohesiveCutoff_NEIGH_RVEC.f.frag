@@ -44,6 +44,7 @@
 !*******************************************************************************
 
 #include "KIM_API_status.h"
+#define THIS_FILE_NAME __FILE__
 
 !-------------------------------------------------------------------------------
 !
@@ -130,7 +131,8 @@ program TEST_NAME_STR
   ier = check_model_parameters(pkim)
   if (ier.ne.KIM_STATUS_OK) then
      ! PARAM_FREE_cutoff is not provided by the Model
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "exiting...", ier);
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "exiting...", ier);
      stop
   endif
   !
@@ -138,7 +140,8 @@ program TEST_NAME_STR
   !
   pparam_cutoff = kim_api_get_data_f(pkim, "PARAM_FREE_cutoff", ier)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_get_data_f", ier)
      stop
   endif
 
@@ -151,7 +154,8 @@ program TEST_NAME_STR
   param_cutoff = param_cutoff - 2.0d0
   ier = kim_api_model_reinit_f(pkim)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_reinit_f", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_model_reinit_f", ier)
      stop
   endif
 
@@ -205,7 +209,8 @@ program TEST_NAME_STR
      param_cutoff = param_cutoff + 1.0
      ier = kim_api_model_reinit_f(pkim)
      if (ier.lt.KIM_STATUS_OK) then
-        idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_reinit_f", ier)
+        idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                      "kim_api_model_reinit_f", ier)
         stop
      endif
 

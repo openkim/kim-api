@@ -40,7 +40,8 @@ elseif (index(NBC_Method,"NEIGH_RVEC_F").eq.1) then
    nbc = 4
 else
    ier = KIM_STATUS_FAIL
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "Unknown NBC method", ier)
+   idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                 "Unknown NBC method", ier)
    stop
 endif
 

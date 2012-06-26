@@ -44,6 +44,7 @@
 
 
 #include "KIM_API_status.h"
+#define THIS_FILE_NAME __FILE__
 #define TRUEFALSE(TRUTH) merge(1,0,(TRUTH))
 
 module ex_model_Al_PF_ErcolessiAdams
@@ -599,10 +600,8 @@ integer atom_ret
 !
 pNBC_Method = kim_api_get_nbc_method_f(pkim, Compute_Energy_Forces)
 if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f( &
-          __LINE__,               &
-          __FILE__,               &
-          "kim_api_get_nbc_method_f", Compute_Energy_Forces)
+   idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_get_nbc_method_f", Compute_Energy_Forces)
    return
 endif
 if (index(NBC_Method,"CLUSTER").eq.1) then
@@ -625,10 +624,8 @@ elseif (index(NBC_Method,"NEIGH_RVEC_F").eq.1) then
    HalfOrFull = 2
 else
    Compute_Energy_Forces = KIM_STATUS_FAIL
-   idum = kim_api_report_error_f( &
-          __LINE__,               &
-          __FILE__,               &
-          "Unknown NBC method", Compute_Energy_Forces)
+   idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                 "Unknown NBC method", Compute_Energy_Forces)
    return
 endif
 call free(pNBC_Method) ! don't forget to release the memory...
@@ -642,20 +639,16 @@ if (NBC.ne.0) then
    !*****************************
    IterOrLoca = kim_api_get_neigh_mode_f(pkim, Compute_Energy_Forces)
    if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
-      idum = kim_api_report_error_f( &
-             __LINE__,               &
-             __FILE__,               &
-             "kim_api_get_neigh_mode_f", Compute_Energy_Forces)
+      idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                    "kim_api_get_neigh_mode_f", Compute_Energy_Forces)
       return
    endif
    if (IterOrLoca.ne.1 .and. IterOrLoca.ne.2) then
       Compute_Energy_Forces = KIM_STATUS_FAIL
       write(error_message,'(a,i1)') &
          'Unsupported IterOrLoca mode = ',IterOrLoca
-      idum = kim_api_report_error_f( &
-             __LINE__,               &
-             __FILE__,               &
-             error_message, Compute_Energy_Forces)
+      idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                    error_message, Compute_Energy_Forces)
       return
    endif
 else
@@ -671,10 +664,8 @@ call kim_api_getm_compute_f(pkim, Compute_Energy_Forces, &
      "particleEnergy", comp_enepot, 1, &
      "virial",         comp_virial, 1)
 if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f( &
-          __LINE__,               &
-          __FILE__,               &
-          "kim_api_getm_compute_f", Compute_Energy_Forces)
+   idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_getm_compute_f", Compute_Energy_Forces)
    return
 endif
 
@@ -694,10 +685,8 @@ call kim_api_getm_data_f(pkim, Compute_Energy_Forces, &
      "PARAM_FIXED_ielast",          pielast,         1                            &
      )
 if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f( &
-          __LINE__,               &
-          __FILE__,               &
-          "kim_api_getm_data_f", Compute_Energy_Forces)
+   idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_getm_data_f", Compute_Energy_Forces)
    return
 endif
 
@@ -718,10 +707,8 @@ endif
 Compute_Energy_Forces = KIM_STATUS_FAIL ! assume an error
 do i = 1,N
    if (particleTypes(i).ne.speccode) then
-      idum = kim_api_report_error_f( &
-             __LINE__,               &
-             __FILE__,               &
-             "Unexpected species type detected", Compute_Energy_Forces)
+      idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                    "Unexpected species type detected", Compute_Energy_Forces)
       return
    endif
 enddo
@@ -756,10 +743,8 @@ endif
 if (IterOrLoca.eq.1) then
    Compute_Energy_Forces = kim_api_get_neigh_f(pkim,0,0,atom_ret,numnei,pnei1atom,pRij_list)
    if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
-      idum = kim_api_report_error_f( &
-             __LINE__,               &
-             __FILE__,               &
-             "kim_api_get_neigh_f", Compute_Energy_Forces)
+      idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                    "kim_api_get_neigh_f", Compute_Energy_Forces)
       return
    endif
 endif
@@ -776,10 +761,8 @@ do
                                    i,numnei,pnei1atom,pRij_list,Compute_Energy_Forces)
    if (Compute_Energy_Forces.eq.KIM_STATUS_NEIGH_ITER_PAST_END) exit  ! atom counter incremented past end of list
    if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
-      idum = kim_api_report_error_f( &
-             __LINE__,               &
-             __FILE__,               &
-             "get_current_atom_neighbors", Compute_Energy_Forces)
+      idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                    "get_current_atom_neighbors", Compute_Energy_Forces)
       return
    endif
 
@@ -856,10 +839,8 @@ enddo
 if (IterOrLoca.eq.1) then
    Compute_Energy_Forces = kim_api_get_neigh_f(pkim,0,0,atom_ret,numnei,pnei1atom,pRij_list)
    if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
-      idum = kim_api_report_error_f( &
-             __LINE__,               &
-             __FILE__,               &
-             "kim_api_get_neigh_f", Compute_Energy_Forces)
+      idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                    "kim_api_get_neigh_f", Compute_Energy_Forces)
       return
    endif
 endif
@@ -874,10 +855,8 @@ do
 
    if (Compute_Energy_Forces.eq.KIM_STATUS_NEIGH_ITER_PAST_END) exit  ! atom counter incremented past end of list
    if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
-      idum = kim_api_report_error_f( &
-             __LINE__,               &
-             __FILE__,               &
-             "get_current_atom_neighbors", Compute_Energy_Forces)
+      idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                    "get_current_atom_neighbors", Compute_Energy_Forces)
       return
    endif
 
@@ -1022,7 +1001,8 @@ if (IterOrLoca.eq.1) then    ! ITERATOR mode
       return              ! calling routine
    endif
    if (ier.lt.KIM_STATUS_OK) then     ! some sort of problem, exit
-      idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_neigh_f", ier)
+      idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                    "kim_api_get_neigh_f", ier)
       return
    endif
    atom = atom_ret
@@ -1042,7 +1022,8 @@ else                         ! LOCATOR mode
    else
       ier = kim_api_get_neigh_f(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij_list)
       if (ier.ne.KIM_STATUS_OK) then ! some sort of problem, exit
-         idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_neigh_f", ier)
+         idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                       "kim_api_get_neigh_f", ier)
          ier = KIM_STATUS_FAIL
          return
       endif
@@ -1077,10 +1058,8 @@ call kim_api_getm_data_f(pkim, Destroy, &
      "PARAM_FIXED_ielast", pielast, 1  &
      )
 if (Destroy.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f( &
-          __LINE__,               &
-          __FILE__,               &
-          "kim_api_getm_data_f", Destroy);
+   idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_getm_data_f", Destroy);
    return
 endif
 
@@ -1121,14 +1100,16 @@ call kim_api_setm_data_f(pkim, ier, &
      "compute", one, loc(Compute_Energy_Forces), 1, &
      "destroy", one, loc(Destroy),               1)
 if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_setm_data_f", ier)
+   idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_setm_data_f", ier)
    goto 42
 endif
 
 ! store model cutoff in KIM object
 pcutoff =  kim_api_get_data_f(pkim,"cutoff",ier)
 if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_get_data_f", ier)
+   idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_get_data_f", ier)
    goto 42
 endif
 cutoff = model_cutoff
@@ -1140,7 +1121,8 @@ cutoff = model_cutoff
 pirlast = malloc(one*4) ! 4 is the size of an integer
 if (pirlast.eq.0) then
    ier = KIM_STATUS_FAIL
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", ier);
+   idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                 "malloc", ier);
    goto 42
 endif
 ! Allocate memory for ielast and store value
@@ -1150,7 +1132,8 @@ endif
 pielast = malloc(one*4) ! 4 is the size of an integer
 if (pielast.eq.0) then
    ier = KIM_STATUS_FAIL
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "malloc", ier);
+   idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                 "malloc", ier);
    goto 42
 endif
 
@@ -1159,7 +1142,8 @@ call kim_api_setm_data_f(pkim, ier, &
      "PARAM_FIXED_irlast", one, pirlast, 1, &
      "PARAM_FIXED_ielast", one, pielast, 1)
 if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_setm_data_f", ier);
+   idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_setm_data_f", ier);
    goto 42
 endif
 

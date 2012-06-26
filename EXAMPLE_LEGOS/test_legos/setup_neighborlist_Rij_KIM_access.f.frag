@@ -25,7 +25,8 @@ subroutine setup_neighborlist_Rij_KIM_access(pkim, NLRvecLocs)
        "neighObject", SizeOne, loc(NLRvecLocs),    1, &
        "get_neigh",   SizeOne, loc(get_neigh_Rij), 1)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_setm_data_f", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_setm_data_f", ier)
      stop
   endif
 

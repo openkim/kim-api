@@ -46,7 +46,8 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
        "coordinates", pcoor,   1, &
        "cutoff",      pcutoff, 1)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_getm_data_f", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_getm_data_f", ier)
      stop
   endif
 
@@ -61,7 +62,8 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
                                               neighborList, RijList)
   ier = kim_api_model_compute_f(pkim)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_model_compute_f", ier)
      stop
   endif
   Energies(1) = energy
@@ -77,7 +79,8 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   ! Call model compute
   ier = kim_api_model_compute_f(pkim)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_model_compute_f", ier)
      stop
   endif
   Energies(3) = energy
@@ -93,7 +96,8 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   ! Call model compute
   ier = kim_api_model_compute_f(pkim)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_model_compute_f", ier)
      stop
   endif
   Energies(2) = energy
@@ -113,7 +117,8 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
      ! Call model compute
      ier = kim_api_model_compute_f(pkim)
      if (ier.lt.KIM_STATUS_OK) then
-        idum = kim_api_report_error_f(__LINE__, __FILE__, "kim_api_model_compute_f", ier)
+        idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                      "kim_api_model_compute_f", ier)
         stop
      endif
      Energies(4) = energy
