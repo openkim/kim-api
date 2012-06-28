@@ -34,6 +34,8 @@ TEST_NAME := ex_test_demo_F03
 
 LOCALOBJ = neighborlistmod.o myqsort.o
 
+LOCALCLEAN =
+
 # No changes should be needed below this line.
 
 ifndef KIM_API_DIR
@@ -56,4 +58,4 @@ Makefile: $(KIM_API_DIR)/Include.mk
 	@touch Makefile
 
 clean:
-	rm -f *.mod *.o $(TEST_NAME)
+	rm -f *.mod *.o $(TEST_NAME) $(LOCAL_CLEAN)

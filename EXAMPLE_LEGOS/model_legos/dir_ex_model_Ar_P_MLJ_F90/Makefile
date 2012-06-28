@@ -34,6 +34,10 @@
 
 MODEL_NAME := ex_model_Ar_P_MLJ_F90
 
+LOCALOBJ =
+
+LOCALCLEAN =
+
 # No changes should be needed below this line.
 
 MODEL_BUILD_TARGET := $(strip $(MODEL_NAME)).a
@@ -47,7 +51,7 @@ endif
 
 all: $(MODEL_BUILD_TARGET)
 
-$(strip $(MODEL_NAME)).a: $(strip $(MODEL_NAME)).o $(strip $(MODEL_NAME))_kim_str.o
+$(strip $(MODEL_NAME)).a: $(strip $(MODEL_NAME)).o $(strip $(MODEL_NAME))_kim_str.o $(LOCALOBJ)
 	ar rcs $@ *.o
 
 $(strip $(MODEL_NAME)).o: Makefile
@@ -56,4 +60,4 @@ Makefile: $(KIM_API_DIR)/Include.mk
 	@touch Makefile
 
 clean:
-	rm -f *.o *.mod *.a *.so $(strip $(MODEL_NAME))_kim_str.{o,cpp}
+	rm -f *.o *.mod *.a *.so $(strip $(MODEL_NAME))_kim_str.{o,cpp} $(LOCALCLEAN)
