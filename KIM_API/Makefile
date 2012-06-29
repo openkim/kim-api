@@ -67,7 +67,7 @@ libkim.a: $(ALLOBJ) $(MODELOBJ)
         ar rcs $(KIM_API_DIR)/$@ *.o $(addprefix $(KIM_API_DIR)/,$(ALLOBJ)) && \
         cd $(KIM_API_DIR)/ && rm -rf $(KIM_API_DIR)/temp_archive_dir
 libkim.so: $(ALLOBJ)
-	$(LINKCOMPILER) $(SHARED_LIB_FLAG) $(CPPLIBFLAG) $(LINKSONAME)$(KIM_API_DIR)/$@ -o $@ *.o
+	$(LINKCOMPILER) $(SHARED_LIB_FLAG) $(LINKLIBFLAG) $(LINKSONAME)$(KIM_API_DIR)/$@ -o $@ *.o
 
 KIM_API.o: $(if $(strip $(KIM_DYNAMIC)),,model_init_include.h model_init_include.cpp model_kim_str_include.cpp) KIM_API.h KIM_API.cpp KIM_AUX.h Makefile
 

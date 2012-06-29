@@ -83,6 +83,10 @@
 
 * Use $(strip ) function to avoid difficult trailing space problem in make files
 
+* Rearranged and simplify compiler settings files (KIM_API/*_compiler_settings.mk)
+
+* Changed CPPLIBFLAG to LINKLIBFLAG in Make files to better represent its use
+
 * Many improvements to Make-system portability
 
 * Carriage returns are now striped from kim and parameter files during Make

@@ -33,25 +33,27 @@
 
 
 # Define GNU compiler switches
-   OBJONLY=-c
-   OUTPUTIN=-o
-   FORTRANFLAG =  -fcray-pointer -O3 -I$(KIM_API_DIR)/ -D $(MACHINESYSTEM)                     \
-                                                     -D KIM_DIR_API=\"$(KIM_API_DIR)\"       \
-                                                     -D KIM_DIR_MODELS=\"$(KIM_MODELS_DIR)\" \
-                                                     -D KIM_DIR_TESTS=\"$(KIM_TESTS_DIR)\"   \
-                                                     -D KIM_DIR_MODEL_DRIVERS=\"$(KIM_MODEL_DRIVERS_DIR)\"
-   CCOMPILER   = gcc
-   CPPCOMPILER = g++
-   CPPFLAG =  -O3 -I$(KIM_API_DIR)/ -Wno-write-strings -D KIM_DIR_MODELS=\"$(KIM_MODELS_DIR)\" \
-                                                     -D KIM_DIR_API=\"$(KIM_API_DIR)\"       \
-                                                     -D KIM_DIR_TESTS=\"$(KIM_TESTS_DIR)\"   \
-                                                     -D KIM_DIR_MODEL_DRIVERS=\"$(KIM_MODEL_DRIVERS_DIR)\"
-   FORTRANCOMPILER = gfortran
-   CPPLIBFLAG = -lgfortran
-   ifneq ($(shell $(FORTRANCOMPILER) -v /dev/null 2>&1 | grep -c lgfortranbegin),0)
-      CPPLIBFLAG += -lgfortranbegin
-   endif
-   LINKCOMPILER = $(CPPCOMPILER)
-   ifdef KIM_DYNAMIC
-      CPPLIBFLAG += -ldl
-   endif
+CCOMPILER       = gcc
+CPPCOMPILER     = g++
+FORTRANCOMPILER = gfortran
+LINKCOMPILER    = $(CPPCOMPILER)
+
+# Define the names for typical compiler options
+OBJONLY=-c
+OUTPUTIN=-o
+
+# Define compiler flag lists
+FORTRANFLAG = -O3 -fcray-pointer
+CFLAG       = -O3
+CPPFLAG     = -O3 -Wno-write-strings
+
+# Define linking options for using $(LIKNCOMPILER) to link other language objects
+LINKLIBFLAG = -lgfortran
+ifneq ($(shell $(FORTRANCOMPILER) -v /dev/null 2>&1 | grep -c lgfortranbegin),0)
+   # Add libforgranbegin if needed.
+   LINKLIBFLAG += -lgfortranbegin
+endif
+ifdef KIM_DYNAMIC
+   # Add libdl if dynamic linking is being used
+   LINKLIBFLAG += -ldl
+endif
