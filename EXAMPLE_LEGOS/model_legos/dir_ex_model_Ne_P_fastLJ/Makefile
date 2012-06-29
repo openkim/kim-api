@@ -50,7 +50,7 @@ endif
 
 all: $(MODEL_BUILD_TARGET)
 
-$(strip $(MODEL_NAME)).a: $(strip $(MODEL_NAME)).o $(strip $(MODEL_NAME))_kim_str.o $(LOCALOBJ)
+$(strip $(MODEL_NAME)).a: $(LOCALOBJ) $(strip $(MODEL_NAME)).o $(strip $(MODEL_NAME))_kim_str.o
 	ar rcs $@ *.o
 
 $(strip $(MODEL_NAME)).o: Makefile

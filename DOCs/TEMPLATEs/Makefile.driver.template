@@ -52,7 +52,7 @@ endif
 
 all: $(MODEL_DRIVER_BUILD_TARGET)
 
-$(strip $(MODEL_DRIVER_NAME)).a: $(strip $(MODEL_DRIVER_NAME)).o $(LOCALOBJ)
+$(strip $(MODEL_DRIVER_NAME)).a: $(LOCALOBJ) $(strip $(MODEL_DRIVER_NAME)).o
 	ar rcs $@ *.o
 
 $(strip $(MODEL_DRIVER_NAME)).o: Makefile
