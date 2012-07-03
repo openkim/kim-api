@@ -1492,8 +1492,6 @@ int KIM_API_model::init_str_modelname(char* testname, char* inmdlstr){
         compute_index = get_index(computestr, &error);
         get_neigh_index = get_index("get_neigh", &error);
         if (!(this->fij_related_things_add_set_index())) return KIM_STATUS_FAIL;
-        support_Rij=false;
-        if (strcmp(NBC_method_current,"NEIGH_RVEC_F")==0) support_Rij=true;
 
         return KIM_STATUS_OK;
     }else{
@@ -1567,8 +1565,6 @@ int KIM_API_model::string_init(char* in_tststr, char* modelname){
         compute_index = get_index(computestr, &error);
         get_neigh_index = get_index("get_neigh", &error);
         if (!(this->fij_related_things_add_set_index())) return KIM_STATUS_FAIL;
-        support_Rij=false;
-        if (strcmp(NBC_method_current,"NEIGH_RVEC_F")==0) support_Rij=true;
 
         std::free(in_mdlstr);
         //redirecting back to > std::cout

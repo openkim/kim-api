@@ -222,7 +222,6 @@ char * get_NBC_method(int *error);
 int is_half_neighbors(int *error);
 
 
-    bool support_Rij;
     int get_neigh_mode(int *error);
     static char * get_status_msg(int status_code);
     static int report_error(int line, char * fl, char * usermsg, int error);
