@@ -128,6 +128,8 @@ static int process_paramfiles(char* param_file_names, int* nmstrlen)
    std::fstream fl;
    for (int i=0; i<NUM_PARAMFILES; ++i)
    {
+      // Note: the use of tmpnam() below may create a security hole.  Users should
+      //       be avoid running KIM Models with root (or other special) previlages.
       ret=tmpnam(&(param_file_names[i*(L_tmpnam+1)]));
 
       if (ret == NULL)
