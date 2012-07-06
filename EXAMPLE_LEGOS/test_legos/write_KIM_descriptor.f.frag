@@ -75,7 +75,7 @@ kim_descriptor = &
    'Unit_energy      := eV'                                                     // cr // &
    'Unit_charge      := e'                                                      // cr // &
    'Unit_temperature := K'                                                      // cr // &
-   'Unit_time        := fs'                                                     // cr // &
+   'Unit_time        := ps'                                                     // cr // &
                                                                                    cr // &
                                                                                    cr // &
    divider                                                                      // cr // &

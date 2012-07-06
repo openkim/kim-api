@@ -216,6 +216,7 @@ ex_test_Ne_free_cluster
 
 ex_test_Ne_free_cluster_SI
    |
+   |-- ex_model_Ne_P_fastLJ
    |-- ex_model_Ne_P_LJ
    |-- ex_model_Ne_P_Morse
    |

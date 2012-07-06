@@ -1884,6 +1884,9 @@ int ex_model_ne_p_fastlj_init_(void *km)
       return ier;
    }
    *model_cutoff = 8.15; /* cutoff distance in angstroms */
+   /* convert to appropriate units */
+   *model_cutoff *= KIM_API_convert_to_act_unit(pkim, "A", "eV", "e", "K", "ps",
+                                                      1.0, 0.0,  0.0, 0.0, 0.0, &ier);
 
    /* allocate memory for parameters */
    model_sigma = (double*) malloc(1*sizeof(double));
@@ -1936,7 +1939,14 @@ int ex_model_ne_p_fastlj_init_(void *km)
    }
 
    *model_sigma = 2.74; /* LJ sigma in angstroms */
+   /* convert to appropriate units */
+   *model_sigma *= KIM_API_convert_to_act_unit(pkim, "A", "eV", "e", "K", "ps",
+                                                     1.0, 0.0,  0.0, 0.0, 0.0, &ier);
    *model_epsilon = 0.0031; /* LJ epsilon in eV */
+   /* convert to appropriate units */
+   *model_epsilon *= KIM_API_convert_to_act_unit(pkim, "A", "eV", "e", "K", "ps",
+                                                       0.0, 1.0,  0.0, 0.0, 0.0, &ier);
+   /* already in correct units */
    *model_Pcutoff = *model_cutoff;
    *model_cutsq = (*model_cutoff)*(*model_cutoff);
    *model_shift = -4.0*(*model_epsilon)*(pow((*model_sigma/(*model_cutoff)),12.0)

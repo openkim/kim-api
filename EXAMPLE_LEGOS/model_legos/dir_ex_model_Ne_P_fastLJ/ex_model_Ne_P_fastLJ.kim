@@ -36,12 +36,12 @@
 
 
 MODEL_NAME := ex_model_Ne_P_fastLJ
-Unit_Handling    := fixed
+Unit_Handling    := flexible
 Unit_length      := A
 Unit_energy      := eV
 Unit_charge      := e
 Unit_temperature := K
-Unit_time        := fs
+Unit_time        := ps
 
 
 #######################################################################################################

@@ -742,21 +742,21 @@ goto 42
 200 continue
 
 ! convert to appropriate units
-in_cutoff = in_cutoff * kim_api_convert_to_act_unit_f(pkim, "A", "eV", "e", "K", "fs", &
+in_cutoff = in_cutoff * kim_api_convert_to_act_unit_f(pkim, "A", "eV", "e", "K", "ps", &
                                                     1.0d0, 0.0d0, 0.0d0, 0.0d0, 0.0d0, ier)
 if (ier.lt.KIM_STATUS_OK) then
    idum=kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
                                "kim_api_convert_to_act_unit_f", ier)
    goto 42
 endif
-in_epsilon = in_epsilon * kim_api_convert_to_act_unit_f(pkim, "A", "eV", "e", "K", "fs", &
+in_epsilon = in_epsilon * kim_api_convert_to_act_unit_f(pkim, "A", "eV", "e", "K", "ps", &
                                                       0.0d0, 1.0d0, 0.0d0, 0.0d0, 0.0d0, ier)
 if (ier.lt.KIM_STATUS_OK) then
    idum=kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
                                "kim_api_convert_to_act_unit_f", ier)
    goto 42
 endif
-in_sigma = in_sigma * kim_api_convert_to_act_unit_f(pkim, "A", "eV", "e", "K", "fs", &
+in_sigma = in_sigma * kim_api_convert_to_act_unit_f(pkim, "A", "eV", "e", "K", "ps", &
                                                   1.0d0, 0.0d0, 0.0d0, 0.0d0, 0.0d0, ier)
 if (ier.lt.KIM_STATUS_OK) then
    idum=kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &

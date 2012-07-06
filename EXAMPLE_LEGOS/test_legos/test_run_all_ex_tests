@@ -375,6 +375,7 @@ footer
 header "ex_test_Ne_free_cluster_SI"              \
        "   |"                                    \
        "   |-- ex_model_ArNe_P_MLJ_NEIGH_RVEC_F" \
+       "   |-- ex_model_Ne_P_fastLJ"             \
        "   |-- ex_model_Ne_P_LJ"                 \
        "   |-- ex_model_Ne_P_MLJ_NEIGH_RVEC_F"   \
        "   |-- ex_model_Ne_P_Morse"              \
@@ -382,6 +383,9 @@ header "ex_test_Ne_free_cluster_SI"              \
 
 divider "ex_test_Ne_free_cluster_SI --- ex_model_ArNe_P_MLJ_NEIGH_RVEC_F --- THIS SHOULD FAIL"
 echo ex_model_ArNe_P_MLJ_NEIGH_RVEC_F  | ./ex_test_Ne_free_cluster_SI/ex_test_Ne_free_cluster_SI >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
+
+divider "ex_test_Ne_free_cluster_SI --- ex_model_Ne_P_fastLJ"
+echo ex_model_Ne_P_fastLJ                  | ./ex_test_Ne_free_cluster_SI/ex_test_Ne_free_cluster_SI >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
 divider "ex_test_Ne_free_cluster_SI --- ex_model_Ne_P_LJ"
 echo ex_model_Ne_P_LJ                  | ./ex_test_Ne_free_cluster_SI/ex_test_Ne_free_cluster_SI >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))

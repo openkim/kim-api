@@ -101,7 +101,7 @@
 #         Unit_energy      := eV
 #         Unit_charge      := e
 #         Unit_temperature := K
-#         Unit_time        := fs
+#         Unit_time        := ps
 #
 #   6) Section lines
 #         These lines identify logically distinct sections within the KIM
@@ -496,7 +496,7 @@ Unit_length      := A
 Unit_energy      := eV
 Unit_charge      := e
 Unit_temperature := K
-Unit_time        := fs
+Unit_time        := ps
 
 ################################################################################
 #

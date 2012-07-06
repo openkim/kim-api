@@ -41,6 +41,9 @@
   appropriate (short) when the default preprocessor value of __FILE__ is longer
   that 132 characters (the max line length for Fortran)
 
+* Changed KIM standard time unit from `fs' to `ps' to be consistent with LAMMPS
+  `metal' unit system
+
 * Changed KIM_COMPUTE and KIM_NOT_COMPUTE to KIM_COMPUTE_TRUE and
   KIM_COMPUTE_FALSE, respectively
 

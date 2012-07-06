@@ -650,14 +650,14 @@ int model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* pa
    /* FILL process the remaining parameter files */
 
    /* convert to appropriate units */
-   cutoff *= KIM_API_convert_to_act_unit(pkim, "A", "eV", "e", "K", "fs",
+   cutoff *= KIM_API_convert_to_act_unit(pkim, "A", "eV", "e", "K", "ps",
                                                1.0, 0.0,  0.0, 0.0, 0.0, &ier);
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_to_act_unit", ier);
       return ier;
    }
-   <FILL parameter 1> *= KIM_API_convert_to_act_unit(pkim, "A", "eV", "e", "K", "fs",
+   <FILL parameter 1> *= KIM_API_convert_to_act_unit(pkim, "A", "eV", "e", "K", "ps",
                                                      <FILL exponents (5) for parameter 1>);
    if (KIM_STATUS_OK > ier)
    {
@@ -665,14 +665,14 @@ int model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* pa
       return ier;
    }
 
-   <FILL parameter 2> *= KIM_API_convert_to_act_unit(pkim, "A", "eV", "e", "K", "fs",
+   <FILL parameter 2> *= KIM_API_convert_to_act_unit(pkim, "A", "eV", "e", "K", "ps",
                                                      <FILL exponents (5) for parameter 2>);
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_to_act_unit", ier);
       return ier;
    }
-   Rzero *= KIM_API_convert_to_act_unit(pkim, "A", "eV", "e", "K", "fs",
+   Rzero *= KIM_API_convert_to_act_unit(pkim, "A", "eV", "e", "K", "ps",
                                               1.0, 0.0,  0.0, 0.0, 0.0, &ier);
    if (KIM_STATUS_OK > ier)
    {
