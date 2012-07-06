@@ -153,9 +153,9 @@ endif
 
 # C/C++ Compiler pattern rules
 %.o:%.c    # C with preprocessing
-	$(CCOMPILER) $(CPFLAG) $(COMMONFLAGS) $(OBJONLY) $<
+	$(CCOMPILER) $(CFLAG) $(COMMONFLAGS) $(OBJONLY) $<
 %.o:%.i    # C without preprocessing
-	$(CCOMPILER) $(CPFLAG) $(COMMONFLAGS) $(OBJONLY) $<
+	$(CCOMPILER) $(CFLAG) $(COMMONFLAGS) $(OBJONLY) $<
 %.o:%.cpp  # C++ with preprocessing
 	$(CPPCOMPILER) $(CPPFLAG) $(COMMONFLAGS) $(OBJONLY) $<
 %.o:%.ii   # C++ without preprocessing
