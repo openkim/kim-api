@@ -42,7 +42,7 @@ MODELS_TARGETS := $(addprefix ., $(addsuffix .make-temp, $(filter-out $(shell if
 DELETED_MODELS_TARGETS := $(filter-out $(MODELS_TARGETS), $(shell find . -name ".*.make-temp" -exec basename {} \;))
 # If there are deleted models, remove files and touch .models-deleted to force a reconfigure
 ifneq ($(DELETED_MODELS_TARGETS),)
-   DUMMY:=$(shell rm -f .*.make-temp model_init_include.{h,cpp} && touch .models-deleted)
+   DUMMY:=$(shell rm -f .*.make-temp model_init_include.h model_init_include.cpp && touch .models-deleted)
    $(info Deleted Models: $(patsubst .%.make-temp,%,$(DELETED_MODELS_TARGETS)))
    $(info Must reconfigure all models...)
    $(info )
@@ -77,7 +77,7 @@ KIM_API_F.o: Makefile
 
 KIM_AUX.o: KIM_AUX.h Makefile
 
-# targets for the models: for any new model adds the appropriate lines to the model_init_include.{h,cpp} files
+# targets for the models: for any new model, adds the appropriate lines to the model_init_include.h and model_inclue.cpp files
 $(MODELS_TARGETS): .models-deleted
 	@sh -c "if !(grep -i -q -s $(patsubst .%.make-temp,%_init,$@) model_init_include.h); then echo int \
 	`echo $(patsubst .%.make-temp,%,$@) | tr A-Z a-z`_init_\(void \*\*\)\; >> model_init_include.h;  fi"
@@ -98,7 +98,7 @@ $(MODELS_TARGETS): .models-deleted
 
 # If .models-deleted doesn't exist or Makefile is newer, delete files and then create .models-deleted.
 .models-deleted : Makefile
-	@rm -f .*.make-temp model_init_include.{h,cpp} model_kim_str_include.{h,cpp}
+	@rm -f .*.make-temp $(addprefix model_init_include.,h cpp) $(addprefix model_kim_str_include.,h cpp)
 	@touch .models-deleted
 
 MODEL_NAME_KIM_STR_H = char* standard_kim_str'('')'';'
@@ -110,5 +110,5 @@ model_init_include.h model_init_include.cpp: Makefile .models-deleted $(MODELS_T
 .PHONY: all tests clean
 
 clean:
-	rm -f *.o *.a *.so *.mod  model_init_include.{h,cpp} model_kim_str_include.{h,cpp} .*.make-temp .models-deleted standard_kim_str.cpp &&\
+	rm -f *.o *.a *.so *.mod  model_init_include.h model_init_include.cpp model_kim_str_include.h model_kim_str_include,cpp .*.make-temp .models-deleted standard_kim_str.cpp &&\
         rm -rf $(KIM_API_DIR)/temp_archive_dir

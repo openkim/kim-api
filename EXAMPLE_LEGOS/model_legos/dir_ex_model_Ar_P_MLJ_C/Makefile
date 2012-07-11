@@ -60,4 +60,4 @@ Makefile: $(KIM_API_DIR)/Include.mk
 	@touch Makefile
 
 clean:
-	rm -f *.o *.mod *.a *.so $(strip $(MODEL_NAME))_kim_str.{o,cpp} $(LOCAL_CLEAN)
+	rm -f *.o *.mod *.a *.so $(addprefix $(strip $(MODEL_NAME))_kim_str.,o cpp) $(LOCALCLEAN)
