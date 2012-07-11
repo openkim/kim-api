@@ -130,13 +130,13 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
 
 
 5. In case of using a non-standard location for any of the directories KIM_API,
-   TESTs, or MODELs one or more of the following environment variables must be
-   set:
+   TESTs, MODEL_DRIVERs, or MODELs one or more of the following environment
+   variables must be set:
 
      KIM_API_DIR
      KIM_TESTS_DIR
-     KIM_MODELS_DIR
      KIM_MODEL_DRIVERS_DIR
+     KIM_MODELS_DIR
 
 
 6. The openkim-api package provides the possibility of creating dynamically
