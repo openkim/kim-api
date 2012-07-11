@@ -122,5 +122,3 @@ MODEL_PARAMETERS:
 # Name                      Type         Unit                Shape              Requirements
 PARAM_FIXED_irlast          integer      none                []
 PARAM_FIXED_ielast          integer      none                []
-
-# --- No published parameters ---
