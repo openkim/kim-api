@@ -583,7 +583,6 @@ int model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* pa
    <FILL as many file name pointers as needed>
 
    /* Local variables */
-   int i;
    FILE* fid;
    double cutoff;
    double <FILL parameter 1>;

@@ -604,7 +604,6 @@ int MODEL_DRIVER_NAME_LC_STR_init_(void *km, char* paramfile_names, int* nmstrle
    char* paramfile1name;
 
    /* Local variables */
-   int i;
    FILE* fid;
    double cutoff;
    double epsilon;
