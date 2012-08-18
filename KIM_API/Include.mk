@@ -227,4 +227,4 @@ MODEL_NAME_KIM_STR_CPP = char* $(strip $(MODEL_NAME))_kim_str'('')''{'
 
 # Library pattern rule
 %.so: %.a
-	$(LINKCOMPILER) $(SHARED_LIB_FLAG) $(LINKLIBFLAG) -o $@  *.o -L$(KIM_API_DIR)/ -lkim
+	$(LINKCOMPILER) $(SHARED_LIB_FLAG) $(OUTPUTIN) $@  *.o -L$(KIM_API_DIR)/ -lkim $(LINKLIBFLAG)
