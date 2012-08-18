@@ -32,163 +32,108 @@
 !
 
 
-module kim_api
-    implicit none
-    integer,parameter :: KIM_KEY_STRING_LENGTH = 64 !
 #include "KIM_API_status.h"
 
+module kim_kinds
+  implicit none
 #ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
+  integer, parameter :: kim_intptr = 4
 #else
-        integer,parameter :: kim_intptr = 8
+  integer, parameter :: kim_intptr = 8
 #endif
+end module kim_kinds
+
+module kim_api
+  use kim_kinds
+    implicit none
+    integer,parameter :: KIM_KEY_STRING_LENGTH = 64 !
 
     interface
         !explicite inteface to C-side code
         integer function kim_api_init(kimmdl,testname,mdlname)
-
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
             integer(kind=kim_intptr) :: kimmdl,testname,mdlname
         end function kim_api_init
 
         integer function kim_api_model_info(kimmdl,mdlname)
-
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
             integer(kind=kim_intptr) :: kimmdl,mdlname
         end function kim_api_model_info
 
- integer function kim_api_string_init(kimmdl,testname,mdlname)
-
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+        integer function kim_api_string_init(kimmdl,testname,mdlname)
+          use kim_kinds
             integer(kind=kim_intptr) :: kimmdl,testname,mdlname
         end function kim_api_string_init
 
         function kim_api_get_status_msg_f(errcode)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
         integer ::errcode
         integer(kind=kim_intptr) :: kimmdl,kim_api_get_status_msg_f
         end function kim_api_get_status_msg_f
 
         function kim_api_get_model_kim_str(modelname,lenstr,ier)
-
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
         integer(kind=kim_intptr)::kim_api_get_model_kim_str,modelname
         integer :: ier,lenstr
         end function kim_api_get_model_kim_str
 
         function kim_api_get_model_buffer_f(kimmdl,ier)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
         integer ::ier
         integer(kind=kim_intptr) :: kimmdl,kim_api_get_model_buffer_f
         end function kim_api_get_model_buffer_f
 
 
         function kim_api_get_test_buffer_f(kimmdl,ier)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
         integer ::ier
         integer(kind=kim_intptr) :: kimmdl,kim_api_get_test_buffer_f
         end function kim_api_get_test_buffer_f
 
 
         function kim_api_is_half_neighbors_f(kimmdl,ier)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
         integer ::ier
         integer(kind=kim_intptr) :: kimmdl,kim_api_is_half_neighbors_f
         end function kim_api_is_half_neighbors_f
 
 
         subroutine kim_api_set_model_buffer_f(kimmdl,ob,ier)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
         integer ::ier
         integer(kind=kim_intptr) :: kimmdl,ob
         end subroutine kim_api_set_model_buffer_f
 
-subroutine kim_api_set_test_buffer_f(kimmdl,ob,ier)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+        subroutine kim_api_set_test_buffer_f(kimmdl,ob,ier)
+          use kim_kinds
         integer ::ier
         integer(kind=kim_intptr) :: kimmdl,ob
         end subroutine kim_api_set_test_buffer_f
 
 
         integer function kim_api_process_dedr_f(pkim,de,r,dx,i,j)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
                 integer(kind=kim_intptr) :: pkim,dx
                 real*8 :: de,r
                 integer ::i,j
         end function kim_api_process_dedr_f
 
         integer function kim_api_process_d2edr2_f(pkim,de,r,dx,i,j)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
                 integer(kind=kim_intptr) :: pkim,dx,r,i,j
                 real*8 :: de
         end function kim_api_process_d2edr2_f
 
 
     integer function kim_api_report_error(ln,fl,usermsg,ier)
-#ifdef SYSTEM32
-integer, parameter :: kim_intptr=4
-#else
-integer,parameter :: kim_intptr = 8
-#endif
+      use kim_kinds
       integer :: ln,ier
       integer(kind=kim_intptr)::fl,usermsg
     end function kim_api_report_error
 
 
          integer function kim_api_get_model_index_shift_f(kimmdl)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+           use kim_kinds
             integer(kind=kim_intptr) :: kimmdl
         end function kim_api_get_model_index_shift_f
 
@@ -197,22 +142,14 @@ integer,parameter :: kim_intptr = 8
 
 
         integer function kim_api_set_data(kimmdl,nm, size, dt)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
             integer(kind=kim_intptr) :: kimmdl,nm,  size, dt
         end function kim_api_set_data
 
 
 
         function kim_api_get_data(kimmdl,nm,error)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
             integer(kind=kim_intptr) :: kimmdl,nm,kim_api_get_data
             integer::error
         end function kim_api_get_data
@@ -222,133 +159,81 @@ integer,parameter :: kim_intptr = 8
 
 #ifdef FORTRAN2003
         function kim_api_get_data_cptr(kimmdl,nm)
+          use kim_kinds
             use iso_c_binding
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
            type (c_ptr)::kim_api_get_data_cptr
             integer(kind=kim_intptr) :: kimmdl,nm
         end function kim_api_get_data_cptr
 #endif
 
         function kim_api_get_size(kimmdl,nm,error)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
             integer(kind=kim_intptr) :: kimmdl,nm,kim_api_get_size
             integer::error
         end function kim_api_get_size
 
         function kim_api_get_neigh_mode_f(kimmdl,error)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
             integer(kind=kim_intptr) :: kimmdl,kim_api_get_neigh_mode_f
             integer::error
         end function kim_api_get_neigh_mode_f
 
         function kim_api_get_shape(kimmdl,nm, shapea,error)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
             integer(kind=kim_intptr) :: kimmdl,nm, shapea,kim_api_get_shape
             integer::error
         end function kim_api_get_shape
 
         subroutine kim_api_set_shape(kimmdl,nm,shapea,rank,error)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
         integer(kind=kim_intptr) :: kimmdl,nm,shapea
         integer::rank,error
         end subroutine kim_api_set_shape
 
         function kim_api_get_model_partcl_typs_f(kimmdl,natypes,error)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
             integer(kind=kim_intptr) :: kimmdl,kim_api_get_model_partcl_typs_f
             integer::natypes,error
         end function kim_api_get_model_partcl_typs_f
 
         function kim_api_get_test_partcl_typs_f(kimmdl,natypes,error)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
             integer(kind=kim_intptr) :: kimmdl,kim_api_get_test_partcl_typs_f
             integer::natypes,error
         end function kim_api_get_test_partcl_typs_f
 
         function kim_api_get_params_f(kimmdl,nvpar,error)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
             integer(kind=kim_intptr) :: kimmdl,kim_api_get_params_f
             integer::nvpar,error
         end function kim_api_get_params_f
 
         function kim_api_get_free_params_f(kimmdl,nvpar,error)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
             integer(kind=kim_intptr) :: kimmdl,kim_api_get_free_params_f
             integer::nvpar,error
         end function kim_api_get_free_params_f
 
         function kim_api_get_fixed_params_f(kimmdl,nvpar,error)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
             integer(kind=kim_intptr) :: kimmdl,kim_api_get_fixed_params_f
             integer::nvpar,error
         end function kim_api_get_fixed_params_f
 
         function kim_api_get_nbc_method_f(kimmdl,error)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
             integer(kind=kim_intptr) :: kimmdl,kim_api_get_nbc_method_f
             integer::error
         end function kim_api_get_nbc_method_f
 
         function kim_api_get_partcl_type_code(kimmdl,nm,error)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
             integer(kind=kim_intptr) :: kimmdl, nm
             integer::error,kim_api_get_partcl_type_code
         end function kim_api_get_partcl_type_code
 
         subroutine kim_api_set_partcl_type_code(kimmdl,nm,code,error)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
             integer(kind=kim_intptr) :: kimmdl, nm
             integer::code, error
         end subroutine kim_api_set_partcl_type_code
@@ -356,222 +241,132 @@ integer,parameter :: kim_intptr = 8
 
 
         integer function kim_api_get_neigh_f(kimmdl,mode,request, atom, numnei, pnei1atom, pRij)
+          use kim_kinds
         integer :: mode,request,atom,numnei
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
         integer(kind=kim_intptr) :: kimmdl,pnei1atom,pRij
         end function kim_api_get_neigh_f
 
 
         integer function kim_api_get_compute(kimmdl,nm,error)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
             integer(kind=kim_intptr) :: kimmdl,nm
             integer::error
         end function kim_api_get_compute
 
         integer function kim_api_get_index(kimmdl,nm,error)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
             integer(kind=kim_intptr) :: kimmdl,nm
             integer::error
         end function kim_api_get_index
 
         function kim_api_get_data_by_index(kimmdl,I,error)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
             integer(kind=kim_intptr) :: kimmdl,kim_api_get_data_by_index
             integer :: I,error
         end function kim_api_get_data_by_index
 
         function kim_api_get_size_by_index(kimmdl,I,error)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
             integer(kind=kim_intptr) :: kimmdl,kim_api_get_size_by_index
             integer :: I,error
         end function kim_api_get_size_by_index
 
         function kim_api_get_shape_by_index(kimmdl,I,shapea,error)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
             integer(kind=kim_intptr) :: kimmdl,shapea,kim_api_get_shape_by_index
             integer  :: I,error
         end function kim_api_get_shape_by_index
 
         integer function kim_api_get_compute_by_index(kimmdl,I,error)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
             integer(kind=kim_intptr) :: kimmdl
             integer :: I,error
         end function kim_api_get_compute_by_index
 
 
         subroutine kim_api_allocate(kimmdl,natoms,ntypes,error)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
             integer(kind=kim_intptr) :: kimmdl
             integer  :: natoms,ntypes,error
         end subroutine kim_api_allocate
 
         subroutine kim_api_free(kimmdl,error)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
             integer(kind=kim_intptr) :: kimmdl
         integer::error
         end subroutine kim_api_free
 
         subroutine kim_api_print(kimmdl,error)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
             integer(kind=kim_intptr) :: kimmdl
             integer ::error
         end subroutine kim_api_print
 
         integer function kim_api_model_compute_f(kimmdl)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
             integer(kind=kim_intptr) :: kimmdl
         end function kim_api_model_compute_f
 
         integer function kim_api_model_destroy_f(kimmdl)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
             integer(kind=kim_intptr) :: kimmdl
         end function kim_api_model_destroy_f
 
         integer function kim_api_model_reinit_f(kimmdl)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
             integer(kind=kim_intptr) :: kimmdl
         end function kim_api_model_reinit_f
 
         integer function kim_api_model_init_f(kimmdl)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
                 integer(kind=kim_intptr) :: kimmdl
-
         end function kim_api_model_init_f
 
         real*8 function kim_api_get_scale_conversion(u_from,u_to,error)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
                 integer(kind=kim_intptr) :: u_from,u_to
                 integer:: error
-
         end function kim_api_get_scale_conversion
 
         integer function kim_api_get_unit_handling_f(kimmdl,error)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
                 integer(kind=kim_intptr) :: kimmdl
                 integer ::error
         end function kim_api_get_unit_handling_f
 
         function kim_api_get_unit_length_f(kimmdl,error)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
                 integer(kind=kim_intptr) :: kimmdl,kim_api_get_unit_length_f
                 integer ::error
         end function kim_api_get_unit_length_f
 
         function kim_api_get_unit_energy_f(kimmdl,error)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
                 integer(kind=kim_intptr) :: kimmdl,kim_api_get_unit_energy_f
                 integer ::error
         end function kim_api_get_unit_energy_f
 
         function kim_api_get_unit_charge_f(kimmdl,error)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
                 integer(kind=kim_intptr) :: kimmdl,kim_api_get_unit_charge_f
                 integer ::error
         end function kim_api_get_unit_charge_f
 
         function kim_api_get_unit_temperature_f(kimmdl,error)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
                 integer(kind=kim_intptr) :: kimmdl,kim_api_get_unit_temperature_f
                 integer ::error
         end function kim_api_get_unit_temperature_f
 
         function kim_api_get_unit_time_f(kimmdl,error)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
                 integer(kind=kim_intptr) :: kimmdl,kim_api_get_unit_time_f
                 integer ::error
         end function kim_api_get_unit_time_f
 
         real*8 function kim_api_convert_to_act_unit(kimmdl,length,energy,charge,temperature,time, &
                  length_exponent, energy_exponent, charge_exponent, temperature_exponent, time_exponent, error)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
              integer(kind=kim_intptr) ::kimmdl,length,energy,charge,temperature,time
              real*8:: length_exponent, energy_exponent, charge_exponent, temperature_exponent, time_exponent
              integer::error
@@ -584,31 +379,19 @@ integer,parameter :: kim_intptr = 8
 
 
         subroutine kim_api_set_compute(kimmdl,nm,flag,error)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
             integer(kind=kim_intptr) :: kimmdl,nm
         integer::flag,error
         end subroutine kim_api_set_compute
 
         subroutine kim_api_set_compute_by_index_f(kimmdl,ind,flag,error)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
             integer(kind=kim_intptr) :: kimmdl
         integer::ind,flag,error
         end subroutine kim_api_set_compute_by_index_f
 
         integer function kim_api_set_data_by_index(kimmdl,I, size,dt)
-#ifdef SYSTEM32
-        integer, parameter :: kim_intptr=4
-#else
-        integer,parameter :: kim_intptr = 8
-#endif
+          use kim_kinds
             integer (kind=kim_intptr):: kimmdl,size,dt
             integer :: I
         end function kim_api_set_data_by_index
