@@ -82,13 +82,16 @@ AUTO_GEN_TESTS = ex_test_Al_free_cluster                 \
                  vc_forces_numer_deriv
 
 
-all: $(AUTO_GEN_TESTS) EXAMPLES.README run_all_ex_tests
+all: $(AUTO_GEN_TESTS) EXAMPLES.README run_all_ex_tests run_forces_numer_deriv_for_all_models
 
 EXAMPLES.README: test_EXAMPLES.README Makefile
 	cp test_EXAMPLES.README $(KIM_EX_TESTS_DIR)/EXAMPLES.README
 
 run_all_ex_tests: test_run_all_ex_tests
 	cp test_run_all_ex_tests $(KIM_EX_TESTS_DIR)/run_all_ex_tests
+
+run_forces_numer_deriv_for_all_models: test_run_forces_numer_deriv_for_all_models
+	cp test_run_forces_numer_deriv_for_all_models $(KIM_EX_TESTS_DIR)/run_forces_numer_deriv_for_all_models
 
 ex_test_Al_free_cluster: $(COMMON_FRAGMENTS)                      \
                          test_free_cluster_README                 \

@@ -1,5 +1,6 @@
 EXAMPLES.README
 run_all_ex_tests
+run_forces_numer_deriv_for_all_models
 ex_test_Al_free_cluster
 ex_test_Al_FCCcohesive_MI_OPBC
 ex_test_ArNe_B2cohesive_NEIGH_RVEC
