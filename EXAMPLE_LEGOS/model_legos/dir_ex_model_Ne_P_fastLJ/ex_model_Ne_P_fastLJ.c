@@ -79,14 +79,12 @@ struct model_buffer {
    int get_neigh_ind;
 
 
-   double* Pcutoff;
-   double* cutsq;
-   double* epsilon;
-   double* sigma;
-   double* shift;
+   double Pcutoff;
+   double cutsq;
+   double epsilon;
+   double sigma;
+   double shift;
 };
-/* prototype for buffer setup routine */
-static int setup_buffer(intptr_t* pkim, struct model_buffer* buffer);
 
 
 
@@ -150,10 +148,10 @@ static int neigh_pure_h_compute(void* km)
    /* unpack info from the buffer */
    model_index_shift = buffer->model_index_shift;
    /* unpack the Model's parameters stored in the KIM API object */
-   cutsq = buffer->cutsq;
-   epsilon = buffer->epsilon;
-   sigma = buffer->sigma;
-   shift = buffer->shift;
+   cutsq = &(buffer->cutsq);
+   epsilon = &(buffer->epsilon);
+   sigma = &(buffer->sigma);
+   shift = &(buffer->shift);
 
    /* check to see if we have been asked to compute the forces, particleEnergy, and d1Edr */
    KIM_API_getm_compute_by_index(pkim, &ier, 4*3,
@@ -428,10 +426,10 @@ static int neigh_pure_f_compute(void* km)
    /* unpack info from the buffer */
    model_index_shift = buffer->model_index_shift;
    /* unpack the Model's parameters stored in the KIM API object */
-   cutsq = buffer->cutsq;
-   epsilon = buffer->epsilon;
-   sigma = buffer->sigma;
-   shift = buffer->shift;
+   cutsq = &(buffer->cutsq);
+   epsilon = &(buffer->epsilon);
+   sigma = &(buffer->sigma);
+   shift = &(buffer->shift);
 
    /* check to see if we have been asked to compute the forces, particleEnergy, and d1Edr */
    KIM_API_getm_compute_by_index(pkim, &ier, 4*3,
@@ -702,10 +700,10 @@ static int neigh_rvec_f_compute(void* km)
    /* unpack info from the buffer */
    model_index_shift = buffer->model_index_shift;
    /* unpack the Model's parameters stored in the KIM API object */
-   cutsq = buffer->cutsq;
-   epsilon = buffer->epsilon;
-   sigma = buffer->sigma;
-   shift = buffer->shift;
+   cutsq = &(buffer->cutsq);
+   epsilon = &(buffer->epsilon);
+   sigma = &(buffer->sigma);
+   shift = &(buffer->shift);
 
    /* check to see if we have been asked to compute the forces, particleEnergy, and d1Edr */
    KIM_API_getm_compute_by_index(pkim, &ier, 4*3,
@@ -978,10 +976,10 @@ static int mi_opbc_h_compute(void* km)
    /* unpack info from the buffer */
    model_index_shift = buffer->model_index_shift;
    /* unpack the Model's parameters stored in the KIM API object */
-   cutsq = buffer->cutsq;
-   epsilon = buffer->epsilon;
-   sigma = buffer->sigma;
-   shift = buffer->shift;
+   cutsq = &(buffer->cutsq);
+   epsilon = &(buffer->epsilon);
+   sigma = &(buffer->sigma);
+   shift = &(buffer->shift);
 
    /* check to see if we have been asked to compute the forces, particleEnergy, and d1Edr */
    KIM_API_getm_compute_by_index(pkim, &ier, 4*3,
@@ -1270,10 +1268,10 @@ static int mi_opbc_f_compute(void* km)
    /* unpack info from the buffer */
    model_index_shift = buffer->model_index_shift;
    /* unpack the Model's parameters stored in the KIM API object */
-   cutsq = buffer->cutsq;
-   epsilon = buffer->epsilon;
-   sigma = buffer->sigma;
-   shift = buffer->shift;
+   cutsq = &(buffer->cutsq);
+   epsilon = &(buffer->epsilon);
+   sigma = &(buffer->sigma);
+   shift = &(buffer->shift);
 
    /* check to see if we have been asked to compute the forces, particleEnergy, and d1Edr */
    KIM_API_getm_compute_by_index(pkim, &ier, 4*3,
@@ -1547,10 +1545,10 @@ static int cluster_compute(void* km)
    }
 
    /* unpack the Model's parameters stored in the KIM API object */
-   cutsq = buffer->cutsq;
-   epsilon = buffer->epsilon;
-   sigma = buffer->sigma;
-   shift = buffer->shift;
+   cutsq = &(buffer->cutsq);
+   epsilon = &(buffer->epsilon);
+   sigma = &(buffer->sigma);
+   shift = &(buffer->shift);
 
    /* check to see if we have been asked to compute the forces, particleEnergy, and d1Edr */
    KIM_API_getm_compute_by_index(pkim, &ier, 4*3,
@@ -1768,13 +1766,13 @@ static int reinit(void *km)
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data_by_index", ier);
       return ier;
    }
-   *cutoff = *buffer->Pcutoff;
+   *cutoff = buffer->Pcutoff;
 
 
-   /* set value of parameter cutsq */
-   *buffer->cutsq = (*cutoff)*(*cutoff);
-   *buffer->shift = -4.0*(*buffer->epsilon)*(pow((*buffer->sigma/(*cutoff)),12.0)
-                                         - pow((*buffer->sigma/(*cutoff)),6.0));
+   /* set value of parameter cutsq and shift */
+   buffer->cutsq = (*cutoff)*(*cutoff);
+   buffer->shift = -4.0*(buffer->epsilon)*(pow((buffer->sigma/(*cutoff)),12.0)
+                                         - pow((buffer->sigma/(*cutoff)),6.0));
 
    ier = KIM_STATUS_OK;
    return ier;
@@ -1796,13 +1794,6 @@ static int destroy(void *km)
       return ier;
    }
 
-   /* free parameters */
-   free(buffer->Pcutoff);
-   free(buffer->cutsq);
-   free(buffer->epsilon);
-   free(buffer->sigma);
-   free(buffer->shift);
-
    /* destroy the buffer */
    free(buffer);
 
@@ -1817,16 +1808,73 @@ int ex_model_ne_p_fastlj_init_(void *km)
 {
    /* Local variables */
    intptr_t* pkim = *((intptr_t**) km);
-   double* model_cutoff;
-   double* model_epsilon;
-   double* model_sigma;
-   double* model_Pcutoff;
-   double* model_cutsq;
-   double* model_shift;
+   double* cutoff;
    int ier;
    struct model_buffer* buffer;
    char* NBCstr;
 
+   /* store function pointers in KIM object */
+   KIM_API_setm_data(pkim, &ier, 2*4,
+                             "reinit",  1, &reinit,  1,
+                             "destroy", 1, &destroy, 1);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_setm_data", ier);
+      return ier;
+   }
+
+   /* store model cutoff in KIM object */
+   cutoff = (double*) KIM_API_get_data(pkim, "cutoff", &ier);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
+      return ier;
+   }
+   *cutoff = 8.15; /* cutoff distance in angstroms */
+   /* convert to appropriate units */
+   *cutoff *= KIM_API_convert_to_act_unit(pkim, "A", "eV", "e", "K", "ps",
+                                                1.0, 0.0,  0.0, 0.0, 0.0, &ier);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_to_act_unit", ier);
+      return ier;
+   }
+
+   /* allocate buffer */
+   buffer = (struct model_buffer*) malloc(sizeof(struct model_buffer));
+   if (NULL == buffer)
+   {
+      ier = KIM_STATUS_FAIL;
+      KIM_API_report_error(__LINE__, __FILE__, "malloc", ier);
+      return ier;
+   }
+
+   /* setup buffer */
+   buffer->sigma = 2.74; /* LJ sigma in angstroms */
+   /* convert to appropriate units */
+   buffer->sigma *= KIM_API_convert_to_act_unit(pkim, "A", "eV", "e", "K", "ps",
+                                                      1.0, 0.0,  0.0, 0.0, 0.0, &ier);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_to_act_unit", ier);
+      return ier;
+   }
+
+   buffer->epsilon = 0.0031; /* LJ epsilon in eV */
+   /* convert to appropriate units */
+   buffer->epsilon *= KIM_API_convert_to_act_unit(pkim, "A", "eV", "e", "K", "ps",
+                                                        0.0, 1.0,  0.0, 0.0, 0.0, &ier);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_to_act_unit", ier);
+      return ier;
+   }
+
+   /* already in correct units */
+   buffer->Pcutoff = *cutoff;
+   buffer->cutsq = (*cutoff)*(*cutoff);
+   buffer->shift = -4.0*(buffer->epsilon)*(pow((buffer->sigma/(*cutoff)),12.0)
+                                         - pow((buffer->sigma/(*cutoff)),6.0));
 
    /* Determine neighbor list boundary condition (NBC) */
    NBCstr = KIM_API_get_NBC_method(pkim, &ier);
@@ -1867,133 +1915,6 @@ int ex_model_ne_p_fastlj_init_(void *km)
    }
    free(NBCstr); /* don't forget to release the memory... */
 
-   /* store function pointers in KIM object */
-   KIM_API_setm_data(pkim, &ier, 2*4,
-                             "reinit",  1, &reinit,  1,
-                             "destroy", 1, &destroy, 1);
-   if (KIM_STATUS_OK > ier)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_setm_data", ier);
-      return ier;
-   }
-
-   /* store model cutoff in KIM object */
-   model_cutoff = (double*) KIM_API_get_data(pkim, "cutoff", &ier);
-   if (KIM_STATUS_OK > ier)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
-      return ier;
-   }
-   *model_cutoff = 8.15; /* cutoff distance in angstroms */
-   /* convert to appropriate units */
-   *model_cutoff *= KIM_API_convert_to_act_unit(pkim, "A", "eV", "e", "K", "ps",
-                                                      1.0, 0.0,  0.0, 0.0, 0.0, &ier);
-
-   /* allocate memory for parameters */
-   model_sigma = (double*) malloc(1*sizeof(double));
-   if (NULL == model_sigma)
-   {
-      ier = KIM_STATUS_FAIL;
-      KIM_API_report_error(__LINE__, __FILE__, "malloc", ier);
-      return ier;
-   }
-   model_epsilon = (double*) malloc(1*sizeof(double));
-   if (NULL == model_epsilon)
-   {
-      ier = KIM_STATUS_FAIL;
-      KIM_API_report_error(__LINE__, __FILE__, "malloc", ier);
-      return ier;
-   }
-   model_Pcutoff = (double*) malloc(1*sizeof(double));
-   if (NULL == model_Pcutoff)
-   {
-      ier = KIM_STATUS_FAIL;
-      KIM_API_report_error(__LINE__, __FILE__, "malloc", ier);
-      return ier;
-   }
-   model_cutsq = (double*) malloc(1*sizeof(double));
-   if (NULL == model_cutsq)
-   {
-      ier = KIM_STATUS_FAIL;
-      KIM_API_report_error(__LINE__, __FILE__, "malloc", ier);
-      return ier;
-   }
-   model_shift = (double*) malloc(1*sizeof(double));
-   if (NULL == model_shift)
-   {
-      ier = KIM_STATUS_FAIL;
-      KIM_API_report_error(__LINE__, __FILE__, "malloc", ier);
-      return ier;
-   }
-
-   /* store parameters in KIM object */
-   KIM_API_setm_data(pkim, &ier, 5*4,
-                             "PARAM_FREE_sigma",    1, model_sigma,   1,
-                             "PARAM_FREE_epsilon",  1, model_epsilon, 1,
-                             "PARAM_FREE_cutoff",   1, model_Pcutoff, 1,
-                             "PARAM_FIXED_cutsq",   1, model_cutsq,   1,
-                             "PARAM_FIXED_shift",   1, model_shift,   1);
-   if (KIM_STATUS_OK > ier)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_setm_data", ier);
-      return ier;
-   }
-
-   *model_sigma = 2.74; /* LJ sigma in angstroms */
-   /* convert to appropriate units */
-   *model_sigma *= KIM_API_convert_to_act_unit(pkim, "A", "eV", "e", "K", "ps",
-                                                     1.0, 0.0,  0.0, 0.0, 0.0, &ier);
-   *model_epsilon = 0.0031; /* LJ epsilon in eV */
-   /* convert to appropriate units */
-   *model_epsilon *= KIM_API_convert_to_act_unit(pkim, "A", "eV", "e", "K", "ps",
-                                                       0.0, 1.0,  0.0, 0.0, 0.0, &ier);
-   /* already in correct units */
-   *model_Pcutoff = *model_cutoff;
-   *model_cutsq = (*model_cutoff)*(*model_cutoff);
-   *model_shift = -4.0*(*model_epsilon)*(pow((*model_sigma/(*model_cutoff)),12.0)
-                                         - pow((*model_sigma/(*model_cutoff)),6.0));
-
-   /* allocate buffer */
-   buffer = (struct model_buffer*) malloc(sizeof(struct model_buffer));
-   if (NULL == buffer)
-   {
-      ier = KIM_STATUS_FAIL;
-      KIM_API_report_error(__LINE__, __FILE__, "malloc", ier);
-      return ier;
-   }
-   /* setup buffer */
-   ier = setup_buffer(pkim, buffer);
-   if (KIM_STATUS_OK > ier)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "setup_buffer", ier);
-      return ier;
-   }
-   /* store in model buffer */
-   KIM_API_set_model_buffer(pkim, (void*) buffer, &ier);
-   if (KIM_STATUS_OK > ier)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_set_model_buffer", ier);
-      return ier;
-   }
-
-   /* store parameters in buffer */
-   buffer->Pcutoff = model_Pcutoff;
-   buffer->cutsq = model_cutsq;
-   buffer->epsilon = model_epsilon;
-   buffer->sigma = model_sigma;
-   buffer->shift = model_shift;
-
-   ier = KIM_STATUS_OK;
-   return ier;
-}
-
-/******************************************************************************/
-/* buffer setup function */
-static int setup_buffer(intptr_t* pkim, struct model_buffer* buffer)
-{
-   /* Local variables */
-   int ier;
-
    buffer->model_index_shift = KIM_API_get_model_index_shift(pkim);
 
    KIM_API_getm_index(pkim, &ier, 10*3,
@@ -2010,6 +1931,28 @@ static int setup_buffer(intptr_t* pkim, struct model_buffer* buffer)
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_index", ier);
+      return ier;
+   }
+   /* end buffer setup */
+
+   /* store in model buffer */
+   KIM_API_set_model_buffer(pkim, (void*) buffer, &ier);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_set_model_buffer", ier);
+      return ier;
+   }
+
+   /* store parameters in KIM object */
+   KIM_API_setm_data(pkim, &ier, 5*4,
+                     "PARAM_FREE_sigma",    1, &(buffer->sigma),   1,
+                     "PARAM_FREE_epsilon",  1, &(buffer->epsilon), 1,
+                     "PARAM_FREE_cutoff",   1, &(buffer->Pcutoff), 1,
+                     "PARAM_FIXED_cutsq",   1, &(buffer->cutsq),   1,
+                     "PARAM_FIXED_shift",   1, &(buffer->shift),   1);
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_setm_data", ier);
       return ier;
    }
 
