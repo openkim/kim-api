@@ -43,12 +43,15 @@ where shift is computed so that phi(rcut) = 0.0
 It complies with the KIM API interface standard, using any NBC and iterator or
 locator mode, publishes its parameters, and supports optional computation of
 `energy', `forces', `particleEnergy', `process_dEdr', and `process_dE2dr2'.
-Its initializaton routine takes a KIM API object pointer and a pointer to a
-string that contains the cutoff and Morse parameters which define a KIM Model
-based on this KIM Model Driver.
+Its initialization routine takes a KIM API object pointer, a pointer to a
+two-dimensional character array (each row of which contains the full path to a
+parameter file) of the form a[b][c], a pointer to the value of c, and a pointer
+to the value of b.  This Model Driver expects that only b=1 and that the
+associated parameter file contains the cutoff and Morse parameters which define
+a KIM Model based on this KIM Model Driver.
 
 To create a KIM Model from this Model Driver, a parameter file is required.
-This file must have the follwing format:
+This file must have the following format:
    Line 1: `cutoff' value in angstroms
    Line 2: Morse `epsilon' value in eV
    Line 3: Morse `C' value in 1/Angstroms
@@ -56,7 +59,7 @@ This file must have the follwing format:
 Any additional lines will be silently ignored.
 
 
-The following files are in this directory:
+The following files are in this directory (before any compilation is performed):
 
 LICENSE.CDDL
      The Common Development and Distribution License (CDDL) Version 1.0 file

@@ -37,7 +37,7 @@ Model based on the KIM Model Driver MODEL_DRIVER_NAME_STR.  This Model
 implements the Morse potential for SPECIES_NAME_STR.
 
 
-The following files are in this directory:
+The following files are in this directory (before any compilation is performed):
 
 LICENSE.CDDL
      The Common Development and Distribution License (CDDL) Version 1.0 file

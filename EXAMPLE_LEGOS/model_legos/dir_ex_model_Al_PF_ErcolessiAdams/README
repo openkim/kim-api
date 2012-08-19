@@ -36,7 +36,7 @@ This directory (ex_model_Al_PF_ErcolessiAdams) contains an EAM Model created by
 Ercolessi and Adams (for aluminum) written in F90 and based on the pair
 functional template in DOCs/TEMPLATEs/.
 
-The following files are in this directory:
+The contents of the directory are as follows (before any compilation if performed):
 
 LICENSE.CDDL
      The Common Development and Distribution License (CDDL) Version 1.0 file

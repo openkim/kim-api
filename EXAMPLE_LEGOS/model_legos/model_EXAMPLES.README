@@ -214,7 +214,7 @@ ex_model_Ne_P_Morse (C)
      Model Drivers are handled.
 
 ex_model_Ne_P_fastLJ (C)
-     This Model implements the shifted Lennard-Jones Model in an atempt to be
+     This Model implements the shifted Lennard-Jones Model in an attempt to be
      as efficient as possible.  The code can be compared to that of
      ex_model_Ar_P_MLJ_C.c or ex_model_driver_P_Morse.c.  This is a good
      example of how significant performance gains can be made, but only at the

@@ -39,7 +39,7 @@ for a range of values for the Model's cutoff parameter.
 method it uses.)
 
 
-The following files are in the directory:
+The following files are in the directory (before any compilation is performed):
 
 LICENSE.CDDL
      The Common Development and Distribution License (CDDL) Version 1.0 file

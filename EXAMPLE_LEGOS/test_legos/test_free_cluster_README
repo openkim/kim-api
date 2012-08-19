@@ -36,7 +36,7 @@ This directory (TEST_NAME_STR) contains a test that computes the energy
 of and forces on the atoms of an isolated (free) cubic FCC cluster of SPECIES_NAME_STR atoms.
 
 
-The following files are in the directory:
+The following files are in the directory (before any compilation is performed):
 
 LICENSE.CDDL
      The Common Development and Distribution License (CDDL) Version 1.0 file

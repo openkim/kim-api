@@ -38,7 +38,7 @@ the minimum energy per atom in an infinite perfect FCC crystal of SPECIES_NAME_S
 method it uses.)
 
 
-The following files are in the directory:
+The following files are in the directory (before any compilation is performed):
 
 LICENSE.CDDL
      The Common Development and Distribution License (CDDL) Version 1.0 file

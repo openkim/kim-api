@@ -37,7 +37,7 @@ potential with a with cutoff radius, which also conforms to KIM_API interface
 standard.  The Test is written in FORTRAN.
 
 
-The following files are  in this directory:
+The contents of the directory are as follows (before any compilation if performed):
 
 LICENSE.CDDL
      The Common Development and Distribution License (CDDL) Version 1.0 file

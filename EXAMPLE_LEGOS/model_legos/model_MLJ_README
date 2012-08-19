@@ -39,7 +39,7 @@ publishes its parameters, and supports optional computation of `energy',
 `forces', `particleEnergy', and `virial'.
 
 
-The following files are in this directory:
+The following files are in this directory (before any compilation is performed):
 
 LICENSE.CDDL
      The Common Development and Distribution License (CDDL) Version 1.0 file

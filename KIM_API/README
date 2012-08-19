@@ -32,10 +32,9 @@
 #
 
 
-This directory (KIM_API) contains the openkim-api service routines, as well as
-auxiliary files for compiling and testing.
+This directory (KIM_API) contains the openkim-api service routines and related files.
 
-The contents of the directory are as follows:
+The contents of the directory are as follows (before any compilation if performed):
 
 GNU_compiler_settings.mk
      Make file containing commands and flags for GNU compilers
@@ -96,20 +95,3 @@ model_based_on_driver.cpp
 standard.kim
      kim descriptor file with description of all standard variables.
 
-
-
-Files generated automatically as part of 'make all'
-
-model_init_include.cpp
-     This file is used in static linking of all Models.
-
-model_init_include.h
-     This file is used in static linking of all Models.
-
-.*.make-temp
-     These files are used by make to ensure that KIM knows about all models in
-     the KIM_MODELS_DIR directory (one file for each model).
-
-.models-deleted
-     These files are used by make to detect when one or more models have been
-     deleted from the KIM_MODELS_DIR directory.

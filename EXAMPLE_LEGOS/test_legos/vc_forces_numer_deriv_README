@@ -86,7 +86,7 @@ Notes:
    The max functions imposes a lower limit on computed values equal to the
    numerical precision of the computer (\epsilon^{prec}).
 
-   \alpha has units of force and can be understond is the average error per
+   \alpha has units of force and can be understood is the average error per
    degree of freedom. The smaller the value of \alpha the more accurate the
    force calculation of the Model.
 

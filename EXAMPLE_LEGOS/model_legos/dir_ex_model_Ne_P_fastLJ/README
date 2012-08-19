@@ -36,9 +36,9 @@ potential Model for Neon written in C.  It complies with the KIM API interface
 standard, using any NBC, iterator mode, publishes its parameters, and supports
 optional computation of `energy', `forces', `particleEnergy', and
 `process_dEdr'.  The Model is optimized for speed and specifically for the case
-where `energy' and `forces' are the only quantites to be computed.
+where `energy' and `forces' are the only quantities to be computed.
 
-The following files are in this directory:
+The contents of the directory are as follows (before any compilation if performed):
 
 LICENSE.CDDL
      The Common Development and Distribution License (CDDL) Version 1.0 file
