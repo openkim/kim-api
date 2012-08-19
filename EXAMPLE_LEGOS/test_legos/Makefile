@@ -78,7 +78,8 @@ AUTO_GEN_TESTS = ex_test_Al_free_cluster                 \
                  ex_test_Ar_multiple_models              \
                  ex_test_Ne_free_cluster                 \
                  ex_test_Ne_free_cluster_SI              \
-                 ex_test_Ne_free_cluster_stiff
+                 ex_test_Ne_free_cluster_stiff           \
+                 vc_forces_numer_deriv
 
 
 all: $(AUTO_GEN_TESTS) EXAMPLES.README run_all_ex_tests
