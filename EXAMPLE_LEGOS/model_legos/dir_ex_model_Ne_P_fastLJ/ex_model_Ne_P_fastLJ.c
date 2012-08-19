@@ -1064,8 +1064,9 @@ static int mi_opbc_h_compute(void* km)
                {
                   dx[k] -= (dx[k]/fabs(dx[k]))*boxSideLengths[k];
                }
-               Rsqij = dx[k]*dx[k];
+               Rsqij += dx[k]*dx[k];
             }
+
             /* particles are interacting ? */
             if (Rsqij < *cutsq)
             {
@@ -1354,7 +1355,7 @@ static int mi_opbc_f_compute(void* km)
                {
                   dx[k] -= (dx[k]/fabs(dx[k]))*boxSideLengths[k];
                }
-               Rsqij = dx[k]*dx[k];
+               Rsqij += dx[k]*dx[k];
             }
 
             /* particles are interacting ? */
