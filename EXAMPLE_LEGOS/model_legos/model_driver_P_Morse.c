@@ -106,12 +106,12 @@ struct model_buffer {
    int cutoff_ind;
 
 
-   double* Pcutoff;
-   double* cutsq;
-   double* epsilon;
-   double* C;
-   double* Rzero;
-   double* shift;
+   double Pcutoff;
+   double cutsq;
+   double epsilon;
+   double C;
+   double Rzero;
+   double shift;
 };
 
 
@@ -278,12 +278,11 @@ static int compute(void* km)
    HalfOrFull = buffer->HalfOrFull;
    IterOrLoca = buffer->IterOrLoca;
    model_index_shift = buffer->model_index_shift;
-   /* unpack the Model's parameters stored in the KIM API object */
-   cutsq = buffer->cutsq;
-   epsilon = buffer->epsilon;
-   C = buffer->C;
-   Rzero = buffer->Rzero;
-   shift = buffer->shift;
+   cutsq = &(buffer->cutsq);
+   epsilon = &(buffer->epsilon);
+   C = &(buffer->C);
+   Rzero = &(buffer->Rzero);
+   shift = &(buffer->shift);
 
    /* check to see if we have been asked to compute the forces, particleEnergy, and d1Edr */
    KIM_API_getm_compute_by_index(pkim, &ier, 5*3,
@@ -609,13 +608,7 @@ int MODEL_DRIVER_NAME_LC_STR_init_(void *km, char* paramfile_names, int* nmstrle
    double epsilon;
    double C;
    double Rzero;
-   double* model_Pcutoff;
    double* model_cutoff;
-   double* model_cutsq;
-   double* model_epsilon;
-   double* model_C;
-   double* model_Rzero;
-   double* model_shift;
    int ier;
    double dummy;
    struct model_buffer* buffer;
@@ -673,6 +666,7 @@ int MODEL_DRIVER_NAME_LC_STR_init_(void *km, char* paramfile_names, int* nmstrle
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_to_act_unit", ier);
       return ier;
    }
+
    epsilon *= KIM_API_convert_to_act_unit(pkim, "A", "eV", "e", "K", "ps",
                                                 0.0, 1.0,  0.0, 0.0, 0.0, &ier);
    if (KIM_STATUS_OK > ier)
@@ -688,6 +682,7 @@ int MODEL_DRIVER_NAME_LC_STR_init_(void *km, char* paramfile_names, int* nmstrle
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_to_act_unit", ier);
       return ier;
    }
+
    Rzero *= KIM_API_convert_to_act_unit(pkim, "A", "eV", "e", "K", "ps",
                                               1.0, 0.0,  0.0, 0.0, 0.0, &ier);
    if (KIM_STATUS_OK > ier)
@@ -705,77 +700,6 @@ int MODEL_DRIVER_NAME_LC_STR_init_(void *km, char* paramfile_names, int* nmstrle
    }
    *model_cutoff = cutoff;
 
-   /* allocate memory for parameters */
-   model_Pcutoff = (double*) malloc(1*sizeof(double));
-   if (NULL == model_Pcutoff)
-   {
-      ier = KIM_STATUS_FAIL;
-      KIM_API_report_error(__LINE__, __FILE__, "malloc", ier);
-      return ier;
-   }
-   model_cutsq = (double*) malloc(1*sizeof(double));
-   if (NULL == model_cutsq)
-   {
-      ier = KIM_STATUS_FAIL;
-      KIM_API_report_error(__LINE__, __FILE__, "malloc", ier);
-      return ier;
-   }
-   model_epsilon = (double*) malloc(1*sizeof(double));
-   if (NULL == model_epsilon)
-   {
-      ier = KIM_STATUS_FAIL;
-      KIM_API_report_error(__LINE__, __FILE__, "malloc", ier);
-      return ier;
-   }
-   model_C = (double*) malloc(1*sizeof(double));
-   if (NULL == model_C)
-   {
-      ier = KIM_STATUS_FAIL;
-      KIM_API_report_error(__LINE__, __FILE__, "malloc", ier);
-      return ier;
-   }
-   model_Rzero = (double*) malloc(1*sizeof(double));
-   if (NULL == model_Rzero)
-   {
-      ier = KIM_STATUS_FAIL;
-      KIM_API_report_error(__LINE__, __FILE__, "malloc", ier);
-      return ier;
-   }
-   model_shift = (double*) malloc(1*sizeof(double));
-   if (NULL == model_shift)
-   {
-      ier = KIM_STATUS_FAIL;
-      KIM_API_report_error(__LINE__, __FILE__, "malloc", ier);
-      return ier;
-   }
-
-   /* store parameters in KIM object */
-   KIM_API_setm_data(pkim, &ier, 6*4,
-                     "PARAM_FREE_cutoff",  1, model_Pcutoff, 1,
-                     "PARAM_FIXED_cutsq",  1, model_cutsq,   1,
-                     "PARAM_FREE_epsilon", 1, model_epsilon, 1,
-                     "PARAM_FREE_C",       1, model_C,       1,
-                     "PARAM_FREE_Rzero",   1, model_Rzero,   1,
-                     "PARAM_FIXED_shift",  1, model_shift,   1
-                    );
-
-   /* set value of parameters */
-   *model_Pcutoff = *model_cutoff;
-   *model_cutsq = (*model_cutoff)*(*model_cutoff);
-   *model_epsilon = epsilon;
-   *model_C = C;
-   *model_Rzero = Rzero;
-   /* set value of parameter shift */
-   dummy = 0.0;
-   /* call calc_phi with r=cutoff and shift=0.0 */
-   calc_phi(model_epsilon,
-            model_C,
-            model_Rzero,
-            &dummy,
-            model_cutoff, *model_cutoff, model_shift);
-   /* set shift to -shift */
-   *model_shift = -(*model_shift);
-
    /* allocate buffer */
    buffer = (struct model_buffer*) malloc(sizeof(struct model_buffer));
    if (NULL == buffer)
@@ -786,6 +710,23 @@ int MODEL_DRIVER_NAME_LC_STR_init_(void *km, char* paramfile_names, int* nmstrle
    }
 
    /* setup buffer */
+   /* set value of parameters */
+   buffer->Pcutoff = *model_cutoff;
+   buffer->cutsq = (*model_cutoff)*(*model_cutoff);
+   buffer->epsilon = epsilon;
+   buffer->C = C;
+   buffer->Rzero = Rzero;
+   /* set value of parameter shift */
+   dummy = 0.0;
+   /* call calc_phi with r=cutoff and shift=0.0 */
+   calc_phi(&(buffer->epsilon),
+            &(buffer->C),
+            &(buffer->Rzero),
+            &dummy,
+            model_cutoff, *model_cutoff, &(buffer->shift));
+   /* set shift to -shift */
+   buffer->shift = -buffer->shift;
+
    /* Determine neighbor list boundary condition (NBC) */
    NBCstr = KIM_API_get_NBC_method(pkim, &ier);
    if (KIM_STATUS_OK > ier)
@@ -877,6 +818,7 @@ int MODEL_DRIVER_NAME_LC_STR_init_(void *km, char* paramfile_names, int* nmstrle
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_index", ier);
       return ier;
    }
+   /* end setup buffer */
 
    /* store in model buffer */
    KIM_API_set_model_buffer(pkim, (void*) buffer, &ier);
@@ -886,13 +828,20 @@ int MODEL_DRIVER_NAME_LC_STR_init_(void *km, char* paramfile_names, int* nmstrle
       return ier;
    }
 
-   /* store parameters in buffer */
-   buffer->Pcutoff = model_Pcutoff;
-   buffer->cutsq   = model_cutsq;
-   buffer->epsilon = model_epsilon;
-   buffer->C       = model_C;
-   buffer->Rzero   = model_Rzero;
-   buffer->shift   = model_shift;
+   /* set pointers to parameters in KIM object */
+   KIM_API_setm_data(pkim, &ier, 6*4,
+                     "PARAM_FREE_cutoff",  1, &(buffer->Pcutoff), 1,
+                     "PARAM_FIXED_cutsq",  1, &(buffer->cutsq),   1,
+                     "PARAM_FREE_epsilon", 1, &(buffer->epsilon), 1,
+                     "PARAM_FREE_C",       1, &(buffer->C),       1,
+                     "PARAM_FREE_Rzero",   1, &(buffer->Rzero),   1,
+                     "PARAM_FIXED_shift",  1, &(buffer->shift),   1
+                    );
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_setm_data", ier);
+      return ier;
+   }
 
    return KIM_STATUS_OK;
 }
@@ -924,21 +873,21 @@ static int reinit(void *km)
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
       return ier;
    }
-   *cutoff = *buffer->Pcutoff;
+   *cutoff = buffer->Pcutoff;
 
    /* set value of parameter cutsq */
-   *buffer->cutsq = (*cutoff)*(*cutoff);
+   buffer->cutsq = (*cutoff)*(*cutoff);
 
    /* set value of parameter shift */
    dummy = 0.0;
    /* call calc_phi with r=cutoff and shift=0.0 */
-   calc_phi(buffer->epsilon,
-            buffer->C,
-            buffer->Rzero,
+   calc_phi(&(buffer->epsilon),
+            &(buffer->C),
+            &(buffer->Rzero),
             &dummy,
-            cutoff, *cutoff, buffer->shift);
+            cutoff, *cutoff, &(buffer->shift));
    /* set shift to -shift */
-   *buffer->shift = -(*buffer->shift);
+   buffer->shift = -buffer->shift;
 
    ier = KIM_STATUS_OK;
    return ier;
@@ -959,14 +908,6 @@ static int destroy(void *km)
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_model_buffer", ier);
       return ier;
    }
-
-   /* free parameters */
-   free(buffer->Pcutoff);
-   free(buffer->cutsq);
-   free(buffer->epsilon);
-   free(buffer->C);
-   free(buffer->Rzero);
-   free(buffer->shift);
 
    /* destroy the buffer */
    free(buffer);

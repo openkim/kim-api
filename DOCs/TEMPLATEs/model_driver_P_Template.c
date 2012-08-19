@@ -104,10 +104,10 @@ struct model_buffer {
    int cutoff_ind;
 
 
-   double* Pcutoff;
-   double* cutsq;
-   double* <FILL parameter 1>;
-   double* <FILL parameter 2>;
+   double Pcutoff;
+   double cutsq;
+   double <FILL parameter 1>;
+   double <FILL parameter 2>;
    /* FILL as many parameters as needed */
 };
 
@@ -259,10 +259,9 @@ static int compute(void* km)
    HalfOrFull = buffer->HalfOrFull;
    IterOrLoca = buffer->IterOrLoca;
    model_index_shift = buffer->model_index_shift;
-   /* unpack the Model's parameters stored in the KIM API object */
-   cutsq = buffer->cutsq;
-   <FILL parameter 1> = buffer-><FILL parameter 1>;
-   <FILL parameter 2> = buffer-><FILL parameter 2>;
+   cutsq = &(buffer->cutsq);
+   <FILL parameter 1> = &(buffer-><FILL parameter 1>);
+   <FILL parameter 2> = &(buffer-><FILL parameter 2>);
    /* also FILL additional parameters here if there are any ... */
 
    /* check to see if we have been asked to compute the forces, particleEnergy, and d1Edr */
@@ -588,12 +587,7 @@ int model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* pa
    double <FILL parameter 1>;
    double <FILL parameter 2>;
    /* FILL as many parameters as needed */
-   double* model_Pcutoff;
    double* model_cutoff;
-   double* model_cutsq;
-   double* model_<FILL parameter 1>;
-   double* model_<FILL parameter 2>;
-   /* FILL as many parameters as needed */
    int ier;
    double dummy;
    struct model_buffer* buffer;
@@ -656,8 +650,9 @@ int model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* pa
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_to_act_unit", ier);
       return ier;
    }
+
    <FILL parameter 1> *= KIM_API_convert_to_act_unit(pkim, "A", "eV", "e", "K", "ps",
-                                                     <FILL exponents (5) for parameter 1>);
+                                                     <FILL exponents (5) for parameter 1>, &ier);
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_to_act_unit", ier);
@@ -665,14 +660,7 @@ int model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* pa
    }
 
    <FILL parameter 2> *= KIM_API_convert_to_act_unit(pkim, "A", "eV", "e", "K", "ps",
-                                                     <FILL exponents (5) for parameter 2>);
-   if (KIM_STATUS_OK > ier)
-   {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_to_act_unit", ier);
-      return ier;
-   }
-   Rzero *= KIM_API_convert_to_act_unit(pkim, "A", "eV", "e", "K", "ps",
-                                              1.0, 0.0,  0.0, 0.0, 0.0, &ier);
+                                                     <FILL exponents (5) for parameter 2>, &ier);
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_to_act_unit", ier);
@@ -690,56 +678,6 @@ int model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* pa
    }
    *model_cutoff = cutoff;
 
-   /* allocate memory for parameters */
-   model_Pcutoff = (double*) malloc(1*sizeof(double));
-   if (NULL == model_Pcutoff)
-   {
-      ier = KIM_STATUS_FAIL;
-      KIM_API_report_error(__LINE__, __FILE__, "malloc", ier);
-      return ier;
-   }
-   model_cutsq = (double*) malloc(1*sizeof(double));
-   if (NULL == model_cutsq)
-   {
-      ier = KIM_STATUS_FAIL;
-      KIM_API_report_error(__LINE__, __FILE__, "malloc", ier);
-      return ier;
-   }
-   model_<FILL parameter 1> = (double*) malloc(1*sizeof(double));
-   if (NULL == model_<FILL parameter 1>)
-   {
-      ier = KIM_STATUS_FAIL;
-      KIM_API_report_error(__LINE__, __FILE__, "malloc", ier);
-      return ier;
-   }
-   model_<FILL parameter 2> = (double*) malloc(1*sizeof(double));
-   if (NULL == model_<FILL parameter 2>)
-   {
-      ier = KIM_STATUS_FAIL;
-      KIM_API_report_error(__LINE__, __FILE__, "malloc", ier);
-      return ier;
-   }
-   /* FILL: repeat above statements as many times as necessary for all parameters.
-      Use "FREE" and "FIXED" as appropriate. (Recall FREE parameters can be modified by
-      the calling routine. FIXED parameters depend on the FREE parameters and must be
-      appropriately adjusted in the reinit() method.)  */
-
-   /* store parameters in KIM object */
-   KIM_API_setm_data(pkim, &ier, <FILL with correct integer>*4,
-                             "PARAM_FREE_cutoff",  1, model_Pcutoff,            1,
-                             "PARAM_FIXED_cutsq",  1, model_cutsq,              1,
-                             "<FILL parameter 1>", 1, model_<FILL parameter 1>, 1,
-                             "<FILL parameter 2>", 1, model_<FILL parameter 2>, 1,
-                             /* FILL as many parameters as needed */
-                            );
-
-   /* set value of parameters */
-   *model_Pcutoff = *model_cutoff;
-   *model_cutsq = (*model_cutoff)*(*model_cutoff);
-   *model_<FILL parameter 1> = <FILL parameter 1>;
-   *model_<FILL parameter 2> = <FILL parameter 2>;
-   /* FILL as many parameters as needed */
-
    /* allocate buffer */
    buffer = (struct model_buffer*) malloc(sizeof(struct model_buffer));
    if (NULL == buffer)
@@ -750,6 +688,13 @@ int model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* pa
    }
 
    /* setup buffer */
+   /* set value of parameters */
+   buffer->Pcutoff = *model_cutoff;
+   buffer->cutsq = (*model_cutoff)*(*model_cutoff);
+   buffer-><FILL parameter 1> = <FILL parameter 1>;
+   buffer-><FILL parameter 2> = <FILL parameter 2>;
+   /* FILL as many parameters as needed */
+
    /* Determine neighbor list boundary condition (NBC) */
    NBCstr = KIM_API_get_NBC_method(pkim, &ier);
    if (KIM_STATUS_OK > ier)
@@ -841,6 +786,7 @@ int model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* pa
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_index", ier);
       return ier;
    }
+   /* end setup buffer */
 
    /* store in model buffer */
    KIM_API_set_model_buffer(pkim, (void*) buffer, &ier);
@@ -850,12 +796,19 @@ int model_driver_p_<FILL (lowercase) model driver name>_init_(void *km, char* pa
       return ier;
    }
 
-   /* store parameters in buffer */
-   buffer->Pcutoff = model_Pcutoff;
-   buffer->cutsq   = model_cutsq;
-   buffer-><FILL parameter 1> = <FILL parameter 1>;
-   buffer-><FILL parameter 2> = <FILL parameter 2>;
-   /* FILL as many parameters as needed */
+   /* set pointers to parameters in KIM object */
+   KIM_API_setm_data(pkim, &ier, 6*4,
+                     "PARAM_FREE_cutoff",  1, &(buffer->Pcutoff), 1,
+                     "PARAM_FIXED_cutsq",  1, &(buffer->cutsq),   1,
+                     "PARAM_<FILL FREE or FIXED>_<FILL parameter 1>", 1, &(buffer-><FILL parameter 1>), 1,
+                     "PARAM_<FILL FREE or FIXED>_<FILL parameter 2>", 1, &(buffer-><FILL parameter 2>), 1,
+                     /* FILL as many parameters as needed */
+                    );
+   if (KIM_STATUS_OK > ier)
+   {
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_setm_data", ier);
+      return ier;
+   }
 
    return KIM_STATUS_OK;
 }
@@ -887,12 +840,12 @@ static int reinit(void *km)
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
       return ier;
    }
-   *cutoff = *buffer->Pcutoff;
+   *cutoff = buffer->Pcutoff;
 
    /* set value of parameter cutsq */
-   *buffer->cutsq = (*cutoff)*(*cutoff);
+   buffer->cutsq = (*cutoff)*(*cutoff);
 
-   /* FILL: store any other FIXED parameters whose values depend on FREE parameters */
+   /* FILL: recompute any other FIXED parameters whose values depend on FREE parameters */
 
    ier = KIM_STATUS_OK;
    return ier;
@@ -913,13 +866,6 @@ static int destroy(void *km)
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_model_buffer", ier);
       return ier;
    }
-
-   /* free parameters */
-   free(buffer->Pcutoff);
-   free(buffer->cutsq);
-   free(buffer-><FILL parameter 1>);
-   free(buffer-><FILL parameter 2>);
-   /* FILL: repeat above statements as many times as necessary for all FREE and FIXED parameters. */
 
    /* destroy the buffer */
    free(buffer);

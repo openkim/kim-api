@@ -187,13 +187,13 @@ integer, allocatable, target :: nei1atom_substitute(:)
 integer :: idum
 integer(kind=kim_intptr):: buffer(1); pointer(pbuffer, buffer)
 integer bufind(1);                    pointer(pbufind, bufind)
-integer(kind=kim_intptr) bufparam(1); pointer(pbufparam, bufparam)
+real*8  bufparam(1);                  pointer(pbufparam, bufparam)
 
 !-- KIM variables
 real*8  model_cutoff;         pointer(pmodel_cutoff, model_cutoff)  ! cutoff radius
-real*8  model_cutsq;          pointer(pmodel_cutsq,  model_cutsq)   ! cutoff radius squared
-real*8  model_<FILL parameter 1>; pointer(pmodel_<FILL parameter 1>,model_<FILL parameter 1>)
-real*8  model_<FILL parameter 2>; pointer(pmodel_<FILL parameter 2>,model_<FILL parameter 2>)
+real*8  model_cutsq                                                 ! cutoff radius squared
+real*8  model_<FILL parameter 1>
+real*8  model_<FILL parameter 2>
 ! FILL as many parameter declarations as necessary
 integer N;                    pointer(pN,N)
 real*8  energy;               pointer(penergy,energy)
@@ -256,9 +256,9 @@ cutoff_ind                      = bufind(16)
 
 ! Unpack Model's parameters from buffer
 !
-pmodel_cutsq   = bufparam(2)
-pmodel_<FILL parameter 1> = bufparam(3)
-pmodel_<FILL parameter 2> = bufparam(4)
+model_cutsq   = bufparam(2)
+model_<FILL parameter 1> = bufparam(3)
+model_<FILL parameter 2> = bufparam(4)
 ! FILL as many parameters as necessary
 
 ! Unpack the Model's cutoff stored in the KIM API object
@@ -537,14 +537,14 @@ double precision energy_at_cutoff
 integer idum
 integer(kind=kim_intptr):: buffer(1); pointer(pbuffer, buffer)
 integer bufind(1);                    pointer(pbufind, bufind)
-integer(kind=kim_intptr) bufparam(1); pointer(pbufparam, bufparam)
+real*8  bufparam(1);                  pointer(pbufparam, bufparam)
 
 !-- KIM variables
-real*8  cutoff;          pointer(pcutoff,cutoff)
-real*8  model_cutoff;    pointer(pmodel_cutoff, model_cutoff)  ! cutoff radius
-real*8  model_cutsq;     pointer(pmodel_cutsq,  model_cutsq)   ! cutoff radius squared
-real*8  model_<FILL parameter 1>; pointer(pmodel_<FILL parameter 1>,model_<FILL parameter 1>)
-real*8  model_<FILL parameter 2>; pointer(pmodel_<FILL parameter 2>,model_<FILL parameter 2>)
+real*8  cutoff; pointer(pcutoff,cutoff)
+real*8  model_cutoff
+real*8  model_cutsq
+real*8  model_<FILL parameter 1>
+real*8  model_<FILL parameter 2>
 ! FILL as many parameter declarations as necessary
 
 ! get model buffer from KIM object
@@ -557,11 +557,11 @@ endif
 pbufind   = buffer(1)
 pbufparam = buffer(2)
 
-pmodel_cutoff  = bufparam(1)
-pmodel_cutsq   = bufparam(2)
-pmodel_<FILL parameter 1> = bufparam(3)
-pmodel_<FILL parameter 2> = bufparam(4)
-! FILL as many parameters as necessary
+! get updated values of PARAM_FREE_*
+model_<FILL parameter 1> = bufparam(1)
+model_<FILL parameter 2> = bufparam(3)
+! FILL as many parameters as needed
+
 
 pcutoff = kim_api_get_data_by_index_f(pkim, bufind(16), reinit)
 if (reinit.lt.KIM_STATUS_OK) then
@@ -571,10 +571,10 @@ if (reinit.lt.KIM_STATUS_OK) then
 endif
 
 !
-! Set new values in KIM object
+! Set new values in KIM object and buffer
 !
 cutoff      = model_cutoff
-model_cutsq = model_cutoff**2
+bufparam(2) = model_cutoff**2
 ! FILL: store any other FIXED parameters whose values depend on FREE parameters
 
 reinit = KIM_STATUS_OK
@@ -598,15 +598,7 @@ integer(kind=kim_intptr), intent(in) :: pkim
 integer idum
 integer(kind=kim_intptr):: buffer(1); pointer(pbuffer, buffer)
 integer bufind(1);                    pointer(pbufind, bufind)
-integer(kind=kim_intptr) bufparam(1); pointer(pbufparam, bufparam)
-
-!-- KIM variables
-real*8  cutoff;          pointer(pcutoff,cutoff)
-real*8  model_cutoff;    pointer(pmodel_cutoff, model_cutoff)  ! cutoff radius
-real*8  model_cutsq;     pointer(pmodel_cutsq,  model_cutsq)   ! cutoff radius squared
-real*8  model_<FILL parameter 1>; pointer(pmodel_<FILL parameter 1>,model_<FILL parameter 1>)
-real*8  model_<FILL parameter 2>; pointer(pmodel_<FILL parameter 2>,model_<FILL parameter 2>)
-! FILL as many parameter declarations as necessary
+real*8  bufparam(1);                  pointer(pbufparam, bufparam)
 
 ! get model buffer from KIM object
 pbuffer = kim_api_get_model_buffer_f(pkim, destroy)
@@ -617,10 +609,6 @@ if (destroy.lt.KIM_STATUS_OK) then
 endif
 pbufind   = buffer(1)
 pbufparam = buffer(2)
-
-call free(bufparam(1))
-call free(bufparam(2))
-! FILL free as many parameters as necessary
 
 call free(pbufparam)
 call free(pbufind)
@@ -656,7 +644,7 @@ character(len=nmstrlen) paramfile_names(numparamfiles)
 integer i,j,ier, idum
 integer(kind=kim_intptr):: buffer(1); pointer(pbuffer, buffer)
 integer bufind(1);                    pointer(pbufind, bufind)
-integer(kind=kim_intptr) bufparam(1); pointer(pbufparam, bufparam)
+real*8  bufparam(1);                  pointer(pbufparam, bufparam)
 character*80 :: error_message
 ! define variables for all model parameters to be read in
 double precision in_cutoff
@@ -667,12 +655,7 @@ double precision in_<FILL last parameter>
 
 !-- KIM variables
 real*8  cutoff;          pointer(pcutoff,cutoff)
-real*8  model_cutoff;    pointer(pmodel_cutoff, model_cutoff)  ! cutoff radius
-real*8  model_cutsq;     pointer(pmodel_cutsq,  model_cutsq)   ! cutoff radius squared
 character*64 NBC_Method; pointer(pNBC_Method,NBC_Method)
-real*8  model_<FILL parameter 1>; pointer(pmodel_<FILL parameter 1>,model_<FILL parameter 1>)
-real*8  model_<FILL parameter 2>; pointer(pmodel_<FILL parameter 2>,model_<FILL parameter 2>)
-! FILL as many parameter declarations as necessary
 
 !
 ! generic code to process model parameter file names from byte string
@@ -729,14 +712,15 @@ if (ier.lt.KIM_STATUS_OK) then
    goto 42
 endif
 <FILL parameter 1> = <FILL parameter 1> * kim_api_convert_to_act_unit_f(pkim, "A", "eV", "e", "K", "ps", &
-                                                                      <FILL exponents (5) for parameter 1>)
+                                                                      <FILL exponents (5) for parameter 1>, ier)
 if (ier.lt.KIM_STATUS_OK) then
    idum=kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
                                "kim_api_convert_to_act_unit_f", ier)
    goto 42
 endif
+
 <FILL parameter 2> = <FILL parameter 2> * kim_api_convert_to_act_unit_f(pkim, "A", "eV", "e", "K", "ps", &
-                                                                      <FILL exponents (5) for parameter 2>)
+                                                                      <FILL exponents (5) for parameter 2>, ier)
 if (ier.lt.KIM_STATUS_OK) then
    idum=kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
                                "kim_api_convert_to_act_unit_f", ier)
@@ -753,61 +737,6 @@ if (ier.lt.KIM_STATUS_OK) then
    goto 42
 endif
 cutoff = in_cutoff
-
-! allocate memory for parameters
-pmodel_cutoff = malloc(one*8) ! 8 is the size of double precision number
-if (pmodel_cutoff.eq.0) then
-   ier = KIM_STATUS_FAIL
-   idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                 "malloc", ier);
-   goto 42
-endif
-pmodel_cutsq = malloc(one*8) ! 8 is the size of double precision number
-if (pmodel_cutsq.eq.0) then
-   ier = KIM_STATUS_FAIL
-   idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                 "malloc", ier);
-   goto 42
-endif
-pmodel_<FILL parameter 1> = malloc(one*8) ! 8 is the size of double precision number
-if (pmodel_<FILL parameter 1>.eq.0) then
-   ier = KIM_STATUS_FAIL
-   idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                 "malloc", ier);
-   goto 42
-endif
-pmodel_<FILL parameter 2> = malloc(one*8) ! 8 is the size of double precision number
-if (pmodel_<FILL parameter 2>.eq.0) then
-   ier = KIM_STATUS_FAIL
-   idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                 "malloc", ier);
-   goto 42
-endif
-! FILL: repeat above statements as many times as necessary for all parameters.
-! Use "FREE" and "FIXED" as appropriate. (Recall FREE parameters can be modified by
-! the calling routine. FIXED parameters depend on the FREE parameters and must be
-! appropriately adjusted in the reinit() routine.)
-
-! store values in KIM object
-call kim_api_setm_data_f(pkim, ier, &
-     "PARAM_FREE_cutoff",  one, pmodel_cutoff,             1, &
-     "PARAM_FIXED_cutsq",  one, pmodel_cutsq,              1, &
-     "<FILL parameter 1>", one, pmodel_<FILL parameter 1>, 1, &
-     "<FILL parameter 2>", one, pmodel_<FILL parameter 2>, 1, &
-     ! FILL as many parameters as necessary
-     )
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                 "kim_api_setm_data_f", ier);
-   goto 42
-endif
-
-! set value of parameters
-model_cutoff  = in_cutoff
-model_cutsq   = in_cutoff**2
-model_<FILL parameter 1> = in_<FILL parameter 1>
-model_<FILL parameter 2> = in_<FILL parameter 2>
-! FILL as many parameters as necessary
 
 ! allocate buffer
 pbuffer   = malloc(2*kim_intptr)
@@ -837,7 +766,7 @@ pbufind   = malloc(16*4)
 !     3 - <FILL parameter 1>
 !     4 - <FILL parameter 2>
 !     <FILL as many parameters as necessary>
-pbufparam = malloc(<FILL number of parameters>*kim_intptr)
+pbufparam = malloc(<FILL number of parameters>*8) ! 8 is size of double precision number
 if (pbuffer.eq.0 .or. pbufind .eq. 0 .or. pbufparam.eq.0) then
    ier = KIM_STATUS_FAIL
    idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
@@ -849,7 +778,13 @@ buffer(1) = pbufind
 buffer(2) = pbufparam
 
 ! setup buffer
-!
+! set value of parameters
+bufparam(1) = in_cutoff
+bufparam(2) = in_cutoff**2
+bufparam(3) = in_<FILL parameter 1>
+bufparam(4) = in_<FILL parameter 2>
+! FILL as many parameters as necessary
+
 ! Determine neighbor list boundary condition (NBC)
 ! and half versus full mode:
 ! *****************************
@@ -935,6 +870,7 @@ if (ier.lt.KIM_STATUS_OK) then
                                  "kim_api_getm_index_f", ier)
    goto 42
 endif
+! end setup buffer
 
 ! store in model buffer
 call kim_api_set_model_buffer_f(pkim, pbuffer, ier)
@@ -944,12 +880,20 @@ if (ier.lt.KIM_STATUS_OK) then
    goto 42
 endif
 
-! store parameters in buffer
-bufparam(1) = pmodel_cutoff
-bufparam(2) = pmodel_cutsq
-bufparam(3) = pmodel_<FILL parameter 1>
-bufparam(4) = pmodel_<FILL parameter 2>
-! FILL as many parameters as necessary
+! set pointers to parameters in KIM object
+call kim_api_setm_data_f(pkim, ier, &
+     "PARAM_FREE_cutoff",  one, loc(bufparam(1)), 1, &
+     "PARAM_FIXED_cutsq",  one, loc(bufparam(2)), 1, &
+     "PARAM_FREE_<FILL parameter 1>", one, loc(bufparam(3)), 1, &
+     "PARAM_FREE_<FILL parameter 2>", one, loc(bufparam(4)), 1, &
+     ! FILL as many FREE parameters as necessary
+     ! FILL as many FIXED parameters as necessary
+     )
+if (ier.lt.KIM_STATUS_OK) then
+   idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_setm_data_f", ier);
+   goto 42
+endif
 
 ier = KIM_STATUS_OK
 42 continue

@@ -201,14 +201,14 @@ integer, allocatable, target :: nei1atom_substitute(:)
 integer :: idum
 integer(kind=kim_intptr):: buffer(1); pointer(pbuffer, buffer)
 integer bufind(1);                    pointer(pbufind, bufind)
-integer(kind=kim_intptr) bufparam(1); pointer(pbufparam, bufparam)
+real*8  bufparam(1);                  pointer(pbufparam, bufparam)
 
 !-- KIM variables
 real*8  model_cutoff;         pointer(pmodel_cutoff, model_cutoff)  ! cutoff radius
-real*8  model_cutsq;          pointer(pmodel_cutsq,  model_cutsq)   ! cutoff radius squared
-real*8  model_epsilon;        pointer(pmodel_epsilon,model_epsilon)
-real*8  model_sigma;          pointer(pmodel_sigma,  model_sigma)
-real*8  model_shift;          pointer(pmodel_shift,  model_shift)
+real*8  model_cutsq                                                 ! cutoff radius squared
+real*8  model_epsilon
+real*8  model_sigma
+real*8  model_shift
 integer N;                    pointer(pN,N)
 real*8  energy;               pointer(penergy,energy)
 real*8  coordum(DIM,1);       pointer(pcoor,coordum)
@@ -270,10 +270,10 @@ cutoff_ind                      = bufind(16)
 
 ! Unpack Model's parameters from buffer
 !
-pmodel_cutsq   = bufparam(2)
-pmodel_epsilon = bufparam(3)
-pmodel_sigma   = bufparam(4)
-pmodel_shift   = bufparam(5)
+model_cutsq   = bufparam(2)
+model_epsilon = bufparam(3)
+model_sigma   = bufparam(4)
+model_shift   = bufparam(5)
 
 ! Unpack the Model's cutoff stored in the KIM API object
 !
@@ -552,15 +552,13 @@ double precision energy_at_cutoff
 integer idum
 integer(kind=kim_intptr):: buffer(1); pointer(pbuffer, buffer)
 integer bufind(1);                    pointer(pbufind, bufind)
-integer(kind=kim_intptr) bufparam(1); pointer(pbufparam, bufparam)
+real*8  bufparam(1);                  pointer(pbufparam, bufparam)
 
 !-- KIM variables
-real*8  cutoff;          pointer(pcutoff,cutoff)
-real*8  model_cutoff;    pointer(pmodel_cutoff, model_cutoff)  ! cutoff radius
-real*8  model_cutsq;     pointer(pmodel_cutsq,  model_cutsq)   ! cutoff radius squared
-real*8  model_epsilon;   pointer(pmodel_epsilon,model_epsilon)
-real*8  model_sigma;     pointer(pmodel_sigma,  model_sigma)
-real*8  model_shift;     pointer(pmodel_shift,  model_shift)
+real*8  cutoff; pointer(pcutoff,cutoff)
+real*8  model_cutoff
+real*8  model_epsilon
+real*8  model_sigma
 
 ! get model buffer from KIM object
 pbuffer = kim_api_get_model_buffer_f(pkim, reinit)
@@ -572,11 +570,10 @@ endif
 pbufind   = buffer(1)
 pbufparam = buffer(2)
 
-pmodel_cutoff  = bufparam(1)
-pmodel_cutsq   = bufparam(2)
-pmodel_epsilon = bufparam(3)
-pmodel_sigma   = bufparam(4)
-pmodel_shift   = bufparam(5)
+! get updated values of PARAM_FREE_*
+model_cutoff  = bufparam(1)
+model_epsilon = bufparam(3)
+model_sigma   = bufparam(4)
 
 pcutoff = kim_api_get_data_by_index_f(pkim, bufind(16), reinit)
 if (reinit.lt.KIM_STATUS_OK) then
@@ -586,18 +583,17 @@ if (reinit.lt.KIM_STATUS_OK) then
 endif
 
 !
-! Set new values in KIM object
+! Set new values in KIM object and buffer
 !
 cutoff      = model_cutoff
-model_cutsq = model_cutoff**2
+bufparam(2) = model_cutoff**2
 ! calculate pair potential at r=cutoff with shift=0.0
-model_shift = 0.d0
 call calc_phi(model_epsilon, &
               model_sigma,   &
-              model_shift,   &
+              0.d0,          &
               model_cutoff,  &
               model_cutoff,energy_at_cutoff)
-model_shift = -energy_at_cutoff
+bufparam(5) = -energy_at_cutoff
 
 reinit = KIM_STATUS_OK
 return
@@ -620,15 +616,7 @@ integer(kind=kim_intptr), intent(in) :: pkim
 integer idum
 integer(kind=kim_intptr):: buffer(1); pointer(pbuffer, buffer)
 integer bufind(1);                    pointer(pbufind, bufind)
-integer(kind=kim_intptr) bufparam(1); pointer(pbufparam, bufparam)
-
-!-- KIM variables
-real*8  cutoff;          pointer(pcutoff,cutoff)
-real*8  model_cutoff;    pointer(pmodel_cutoff, model_cutoff)  ! cutoff radius
-real*8  model_cutsq;     pointer(pmodel_cutsq,  model_cutsq)   ! cutoff radius squared
-real*8  model_epsilon;   pointer(pmodel_epsilon,model_epsilon)
-real*8  model_sigma;     pointer(pmodel_sigma,  model_sigma)
-real*8  model_shift;     pointer(pmodel_shift,  model_shift)
+real*8  bufparam(1);                  pointer(pbufparam, bufparam)
 
 ! get model buffer from KIM object
 pbuffer = kim_api_get_model_buffer_f(pkim, destroy)
@@ -639,12 +627,6 @@ if (destroy.lt.KIM_STATUS_OK) then
 endif
 pbufind   = buffer(1)
 pbufparam = buffer(2)
-
-call free(bufparam(1))
-call free(bufparam(2))
-call free(bufparam(3))
-call free(bufparam(4))
-call free(bufparam(5))
 
 call free(pbufparam)
 call free(pbufind)
@@ -680,7 +662,7 @@ character(len=nmstrlen) paramfile_names(numparamfiles)
 integer i,j,ier, idum
 integer(kind=kim_intptr):: buffer(1); pointer(pbuffer, buffer)
 integer bufind(1);                    pointer(pbufind, bufind)
-integer(kind=kim_intptr) bufparam(1); pointer(pbufparam, bufparam)
+real*8  bufparam(1);                  pointer(pbufparam, bufparam)
 character*80 :: error_message
 ! define variables for all model parameters to be read in
 double precision in_cutoff
@@ -690,12 +672,7 @@ double precision energy_at_cutoff
 
 !-- KIM variables
 real*8  cutoff;          pointer(pcutoff,cutoff)
-real*8  model_cutoff;    pointer(pmodel_cutoff, model_cutoff)  ! cutoff radius
-real*8  model_cutsq;     pointer(pmodel_cutsq,  model_cutsq)   ! cutoff radius squared
 character*64 NBC_Method; pointer(pNBC_Method,NBC_Method)
-real*8  model_epsilon;   pointer(pmodel_epsilon,model_epsilon)
-real*8  model_sigma;     pointer(pmodel_sigma,  model_sigma)
-real*8  model_shift;     pointer(pmodel_shift,  model_shift)
 
 !
 ! generic code to process model parameter file names from byte string
@@ -749,6 +726,7 @@ if (ier.lt.KIM_STATUS_OK) then
                                "kim_api_convert_to_act_unit_f", ier)
    goto 42
 endif
+
 in_epsilon = in_epsilon * kim_api_convert_to_act_unit_f(pkim, "A", "eV", "e", "K", "ps", &
                                                       0.0d0, 1.0d0, 0.0d0, 0.0d0, 0.0d0, ier)
 if (ier.lt.KIM_STATUS_OK) then
@@ -756,6 +734,7 @@ if (ier.lt.KIM_STATUS_OK) then
                                "kim_api_convert_to_act_unit_f", ier)
    goto 42
 endif
+
 in_sigma = in_sigma * kim_api_convert_to_act_unit_f(pkim, "A", "eV", "e", "K", "ps", &
                                                   1.0d0, 0.0d0, 0.0d0, 0.0d0, 0.0d0, ier)
 if (ier.lt.KIM_STATUS_OK) then
@@ -772,70 +751,6 @@ if (ier.lt.KIM_STATUS_OK) then
    goto 42
 endif
 cutoff = in_cutoff
-
-! allocate memory for parameters
-pmodel_cutoff = malloc(one*8) ! 8 is the size of double precision number
-if (pmodel_cutoff.eq.0) then
-   ier = KIM_STATUS_FAIL
-   idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                 "malloc", ier);
-   goto 42
-endif
-pmodel_cutsq = malloc(one*8) ! 8 is the size of double precision number
-if (pmodel_cutsq.eq.0) then
-   ier = KIM_STATUS_FAIL
-   idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                 "malloc", ier);
-   goto 42
-endif
-pmodel_epsilon = malloc(one*8) ! 8 is the size of double precision number
-if (pmodel_epsilon.eq.0) then
-   ier = KIM_STATUS_FAIL
-   idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                 "malloc", ier);
-   goto 42
-endif
-pmodel_sigma = malloc(one*8) ! 8 is the size of double precision number
-if (pmodel_sigma.eq.0) then
-   ier = KIM_STATUS_FAIL
-   idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                 "malloc", ier);
-   goto 42
-endif
-pmodel_shift = malloc(one*8) ! 8 is the size of double precision number
-if (pmodel_shift.eq.0) then
-   ier = KIM_STATUS_FAIL
-   idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                 "malloc", ier);
-   goto 42
-endif
-
-! store values in KIM object
-call kim_api_setm_data_f(pkim, ier, &
-     "PARAM_FREE_cutoff",  one, pmodel_cutoff,  1, &
-     "PARAM_FIXED_cutsq",  one, pmodel_cutsq,   1, &
-     "PARAM_FREE_epsilon", one, pmodel_epsilon, 1, &
-     "PARAM_FREE_sigma",   one, pmodel_sigma,   1, &
-     "PARAM_FIXED_shift",  one, pmodel_shift,   1  &
-     )
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                 "kim_api_setm_data_f", ier);
-   goto 42
-endif
-
-! set value of parameters
-model_cutoff  = in_cutoff
-model_cutsq   = in_cutoff**2
-model_epsilon = in_epsilon
-model_sigma   = in_sigma
-model_shift   = 0.d0
-call calc_phi(model_epsilon, &
-              model_sigma,   &
-              model_shift,   &
-              model_cutoff,  &
-              model_cutoff,energy_at_cutoff)
-model_shift   = -energy_at_cutoff
 
 ! allocate buffer
 pbuffer   = malloc(2*kim_intptr)
@@ -865,7 +780,7 @@ pbufind   = malloc(16*4)
 !     3 - epsilon
 !     4 - sigma
 !     5 - shift
-pbufparam = malloc(5*kim_intptr)
+pbufparam = malloc(5*8) ! 8 is size of double precision number
 if (pbuffer.eq.0 .or. pbufind .eq. 0 .or. pbufparam.eq.0) then
    ier = KIM_STATUS_FAIL
    idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
@@ -877,7 +792,18 @@ buffer(1) = pbufind
 buffer(2) = pbufparam
 
 ! setup buffer
-!
+! set value of parameters
+bufparam(1) = in_cutoff
+bufparam(2) = in_cutoff**2
+bufparam(3) = in_epsilon
+bufparam(4) = in_sigma
+call calc_phi(in_epsilon, &
+              in_sigma,   &
+              0.d0,       &
+              in_cutoff,  &
+              in_cutoff, energy_at_cutoff)
+bufparam(5) = -energy_at_cutoff
+
 ! Determine neighbor list boundary condition (NBC)
 ! and half versus full mode:
 ! *****************************
@@ -963,6 +889,7 @@ if (ier.lt.KIM_STATUS_OK) then
                                  "kim_api_getm_index_f", ier)
    goto 42
 endif
+! end setup buffer
 
 ! store in model buffer
 call kim_api_set_model_buffer_f(pkim, pbuffer, ier)
@@ -972,12 +899,19 @@ if (ier.lt.KIM_STATUS_OK) then
    goto 42
 endif
 
-! store parameters in buffer
-bufparam(1) = pmodel_cutoff
-bufparam(2) = pmodel_cutsq
-bufparam(3) = pmodel_epsilon
-bufparam(4) = pmodel_sigma
-bufparam(5) = pmodel_shift
+! set pointers to parameters in KIM object
+call kim_api_setm_data_f(pkim, ier, &
+     "PARAM_FREE_cutoff",  one, loc(bufparam(1)), 1, &
+     "PARAM_FIXED_cutsq",  one, loc(bufparam(2)), 1, &
+     "PARAM_FREE_epsilon", one, loc(bufparam(3)), 1, &
+     "PARAM_FREE_sigma",   one, loc(bufparam(4)), 1, &
+     "PARAM_FIXED_shift",  one, loc(bufparam(5)), 1  &
+     )
+if (ier.lt.KIM_STATUS_OK) then
+   idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_setm_data_f", ier);
+   goto 42
+endif
 
 ier = KIM_STATUS_OK
 42 continue
