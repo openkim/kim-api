@@ -48,6 +48,7 @@ ex_test_Al_free_cluster                   F90       NEIGH_RVEC_F    Locator    F
                                                     NEIGH_PURE_F
                                                     MI_OPBC_H
                                                     MI_OPBC_F
+                                                    CLUSTER
 
 ex_test_ArNe_periodic_B2_NEIGH_RVEC       F90       NEIGH_RVEC_F    Locator    Full
                                                                     Iterator
@@ -69,6 +70,7 @@ ex_test_Ar_free_cluster                   F90       NEIGH_RVEC_F    Locator    F
                                                     NEIGH_PURE_F
                                                     MI_OPBC_H
                                                     MI_OPBC_F
+                                                    CLUSTER
 
 ex_test_Ar_free_cluster_CLUSTER_C         C         CLUSTER         N/A        N/A
 
@@ -82,18 +84,21 @@ ex_test_Ne_free_cluster                   F90       NEIGH_RVEC_F    Locator    F
                                                     NEIGH_PURE_F
                                                     MI_OPBC_H
                                                     MI_OPBC_F
+                                                    CLUSTER
 
 ex_test_Ne_free_cluster_SI                F90       NEIGH_RVEC_F    Locator    Full
                                                     NEIGH_PURE_H    Iterator   Half
                                                     NEIGH_PURE_F
                                                     MI_OPBC_H
                                                     MI_OPBC_F
+                                                    CLUSTER
 
 ex_test_Ne_free_cluster_stiff             F90       NEIGH_RVEC_F    Locator    Full
                                                     NEIGH_PURE_H    Iterator   Half
                                                     NEIGH_PURE_F
                                                     MI_OPBC_H
                                                     MI_OPBC_F
+                                                    CLUSTER
 ----------------------------------------------------------------------------------------
 
 
@@ -163,6 +168,8 @@ ex_test_Ar_free_cluster
    |-- ex_model_ArNe_P_MLJ_NEIGH_RVEC_F
    |-- ex_model_Ar_P_LJ
    |-- ex_model_Ar_P_MLJ_C
+   |-- ex_model_Ar_P_MLJ_CLUSTER_C
+   |-- ex_model_Ar_P_MLJ_CLUSTER_F90
    |-- ex_model_Ar_P_MLJ_F90
    |-- ex_model_Ar_P_MLJ_MI_OPBC_H_F
    |-- ex_model_Ar_P_MLJ_NEIGH_PURE_H_F
@@ -262,14 +269,14 @@ ex_test_Ne_free_cluster_SI (Fortran 90)
      atomic species they support.  Thus, it is interesting to compare them to
      see the minor changes needed to support different species.  The Tests do
      exactly the same computation as that performed by the
-     ex_test_Ar_free_cluster_CLUSTER_* Tests.  However, instead of the CLUSTER
-     NBC method, these Tests implement support for all the other NBC methods:
-     MI_OPBC_H, MI_OPBC_F, NEIGH_PURE_H, NEIGH_PURE_F, and NEIGH_RVEC_F.  This
-     entails creating neighbor lists for the various NBC methods, and makes
-     these Tests a good place to begin to understand the differences between
-     these NBC methods.  (The _SI variant uses the SI unit system and is
-     therefore only compatible with the example ex_model_drivers which
-     implement `flexible' unit handling.)
+     ex_test_Ar_free_cluster_CLUSTER_* Tests.  However, in addition to the
+     CLUSTER NBC method, these Tests implement support for all the other NBC
+     methods: MI_OPBC_H, MI_OPBC_F, NEIGH_PURE_H, NEIGH_PURE_F, and
+     NEIGH_RVEC_F.  This entails creating neighbor lists for the various NBC
+     methods, and makes these Tests a good place to begin to understand the
+     differences between these NBC methods.  (The _SI variant uses the SI unit
+     system and is therefore only compatible with the example ex_model_drivers
+     which implement `flexible' unit handling.)
 
 
 ex_test_Ne_free_cluster_stiff (Fortran 90)

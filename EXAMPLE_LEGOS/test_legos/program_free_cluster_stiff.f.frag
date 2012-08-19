@@ -81,7 +81,8 @@ program TEST_NAME_STR
   character*80              :: testname     = "TEST_NAME_STR"
   character*80              :: modelname
   character*64 :: NBC_Method; pointer(pNBC_Method,NBC_Method)
-  integer nbc  ! 0- MI_OPBC_H, 1- MI_OPBC_F, 2- NEIGH_PURE_H, 3- NEIGH_PURE_F, 4- NEIGH-RVCE-F
+  integer nbc  ! 0- MI_OPBC_H,    1- MI_OPBC_F, 2- NEIGH_PURE_H, 3- NEIGH_PURE_F,
+               ! 4- NEIGH-RVCE-F, 5- CLUSTER
   integer(kind=kim_intptr)  :: pkim
   integer                   :: ier, idum
   integer numberOfParticles;   pointer(pnAtoms,numberOfParticles)
@@ -131,6 +132,8 @@ program TEST_NAME_STR
      nbc = 3
   elseif (index(NBC_Method,"NEIGH_RVEC_F").eq.1) then
      nbc = 4
+  elseif (index(NBC_Method,"CLUSTER").eq.1) then
+     nbc = 5
   else
      ier = KIM_STATUS_FAIL
      idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
@@ -147,7 +150,7 @@ program TEST_NAME_STR
   endif
 
   ! Allocate and store pointers to neighbor list object and access function
-  allocate(neighborList(N+1, N))
+  if (nbc.ne.5) allocate(neighborList(N+1, N))
   if (nbc.eq.4) then
      allocate(RijList(DIM,N+1, N))
   endif
@@ -159,7 +162,7 @@ program TEST_NAME_STR
                                       "kim_api_set_data_f", ier)
         stop
      endif
-  else
+  elseif (nbc.eq.4) then ! NEIGH_RVEC_F
      allocate(NLRvecLocs(3))
      NLRvecLocs(1) = loc(neighborList)
      NLRvecLocs(2) = loc(RijList)
@@ -170,6 +173,8 @@ program TEST_NAME_STR
                                       "kim_api_set_data_f", ier)
         stop
      endif
+  else
+     ! nothing to do for CLUSTER
   endif
 
   if (nbc.eq.0) then
@@ -207,6 +212,8 @@ program TEST_NAME_STR
                                       "kim_api_set_data_f", ier)
         stop
      endif
+  else
+     ! nothing to do for CLUSTER
   endif
 
   ! call model's init routine
@@ -221,17 +228,17 @@ program TEST_NAME_STR
   ! Unpack data from KIM object
   !
   call kim_api_getm_data_f(pkim, ier, &
-       "numberOfParticles",           pnAtoms,           1,                   &
-       "numberContributingParticles", pnumContrib,       1,                   &
-       "numberParticleTypes",         pnparticleTypes,   1,                   &
-       "particleTypes",               pparticleTypesdum, 1,                   &
-       "coordinates",                 pcoor,             1,                   &
-       "cutoff",                      pcutoff,           1,                   &
-       "boxSideLengths",              pboxSideLengths,   TRUEFALSE(nbc.le.1), &
-       "energy",                      penergy,           1,                   &
-       "virial",                      pvirialglob,       1,                   &
-       "forces",                      pforces,           1,                   &
-       "hessian",                     phessian,          1)
+       "numberOfParticles",           pnAtoms,          1,                                   &
+       "numberContributingParticles", pnumContrib,      TRUEFALSE((nbc.eq.0).or.(nbc.eq.2)), &
+       "numberParticleTypes",         pnparticleTypes,  1,                                   &
+       "particleTypes",               pparticleTypesdum,1,                                   &
+       "coordinates",                 pcoor,            1,                                   &
+       "cutoff",                      pcutoff,          1,                                   &
+       "boxSideLengths",              pboxSideLengths,  TRUEFALSE(nbc.le.1),                 &
+       "energy",                      penergy,          1,                                   &
+       "virial",                      pvirialglob,      1,                                   &
+       "forces",                      pforces,          1,                                   &
+       "hessian",                     phessian,         1)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
                                    "kim_api_getm_data_f", ier)
@@ -244,8 +251,8 @@ program TEST_NAME_STR
   call KIM_to_F90_real_array_2d(forcesdum, forces, DIM, N)
 
   ! Set values
-  numberOfParticles   = N
-  numContrib      = N
+  numberOfParticles = N
+  if ((nbc.eq.0).or.(nbc.eq.2)) numContrib = N
   numberParticleTypes = ATypes
   particleTypes(:)    = kim_api_get_partcl_type_code_f(pkim, "SPECIES_NAME_STR", ier)
   if (ier.lt.KIM_STATUS_OK) then
@@ -269,6 +276,8 @@ program TEST_NAME_STR
      call NEIGH_PURE_cluster_neighborlist(.false., N, coords, (cutoff+cutpad), neighborList)
   elseif (nbc.eq.4) then
      call NEIGH_RVEC_F_cluster_neighborlist(N, coords, (cutoff+cutpad), N, neighborList, RijList)
+  else
+     ! nothing to do for CLUSTER
   endif
 
   ! Call model compute
@@ -307,7 +316,7 @@ program TEST_NAME_STR
 
   ! Don't forget to free and/or deallocate
   call free(pNBC_Method)
-  deallocate(neighborList)
+  if (nbc.ne.5) deallocate(neighborList)
   if (nbc.eq.4) then
      deallocate(NLRvecLocs)
      deallocate(RijList)

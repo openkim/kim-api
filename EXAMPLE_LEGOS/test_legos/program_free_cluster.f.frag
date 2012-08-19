@@ -81,7 +81,8 @@ program TEST_NAME_STR
   character*80              :: testname     = "TEST_NAME_STR"
   character*80              :: modelname
   character*64 :: NBC_Method; pointer(pNBC_Method,NBC_Method)
-  integer nbc  ! 0- MI_OPBC_H, 1- MI_OPBC_F, 2- NEIGH_PURE_H, 3- NEIGH_PURE_F, 4- NEIGH-RVCE-F
+  integer nbc  ! 0- MI_OPBC_H,    1- MI_OPBC_F, 2- NEIGH_PURE_H, 3- NEIGH_PURE_F,
+               ! 4- NEIGH-RVCE-F, 5- CLUSTER
   integer(kind=kim_intptr)  :: pkim
   integer                   :: ier, idum
   integer numberOfParticles;   pointer(pnAtoms,numberOfParticles)
@@ -130,6 +131,8 @@ program TEST_NAME_STR
      nbc = 3
   elseif (index(NBC_Method,"NEIGH_RVEC_F").eq.1) then
      nbc = 4
+  elseif (index(NBC_Method,"CLUSTER").eq.1) then
+     nbc = 5
   else
      ier = KIM_STATUS_FAIL
      idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
@@ -146,7 +149,7 @@ program TEST_NAME_STR
   endif
 
   ! Allocate and store pointers to neighbor list object and access function
-  allocate(neighborList(N+1, N))
+  if (nbc.ne.5) allocate(neighborList(N+1, N))
   if (nbc.eq.4) then
      allocate(RijList(DIM,N+1, N))
   endif
@@ -158,7 +161,7 @@ program TEST_NAME_STR
                                       "kim_api_set_data_f", ier)
         stop
      endif
-  else
+  elseif (nbc.eq.4) then ! NEIGH_RVEC_F
      allocate(NLRvecLocs(3))
      NLRvecLocs(1) = loc(neighborList)
      NLRvecLocs(2) = loc(RijList)
@@ -169,6 +172,8 @@ program TEST_NAME_STR
                                       "kim_api_set_data_f", ier)
         stop
      endif
+  else
+     ! nothing to do for CLUSTER
   endif
 
   if (nbc.eq.0) then
@@ -206,6 +211,8 @@ program TEST_NAME_STR
                                       "kim_api_set_data_f", ier)
         stop
      endif
+  else
+     ! nothing to do for CLUSTER
   endif
 
   ! call model's init routine
@@ -267,6 +274,8 @@ program TEST_NAME_STR
      call NEIGH_PURE_cluster_neighborlist(.false., N, coords, (cutoff+cutpad), neighborList)
   elseif (nbc.eq.4) then
      call NEIGH_RVEC_F_cluster_neighborlist(N, coords, (cutoff+cutpad), N, neighborList, RijList)
+  else
+     ! nothing to do for CLUSTER
   endif
 
   ! Call model compute
@@ -295,7 +304,7 @@ program TEST_NAME_STR
 
   ! Don't forget to free and/or deallocate
   call free(pNBC_Method)
-  deallocate(neighborList)
+  if (nbc.ne.5) deallocate(neighborList)
   if (nbc.eq.4) then
      deallocate(NLRvecLocs)
      deallocate(RijList)

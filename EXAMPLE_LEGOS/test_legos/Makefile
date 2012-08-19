@@ -123,6 +123,8 @@ ex_test_Al_free_cluster: $(COMMON_FRAGMENTS)                      \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "MI_OPBC_F                   flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "CLUSTER                     flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
@@ -598,6 +600,8 @@ ex_test_Ar_free_cluster: $(COMMON_FRAGMENTS)                      \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "MI_OPBC_F                   flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "CLUSTER                     flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
@@ -664,6 +668,8 @@ ex_test_Ne_free_cluster: $(COMMON_FRAGMENTS)                      \
 	echo "MI_OPBC_H                   flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "MI_OPBC_F                   flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "CLUSTER                     flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
@@ -732,6 +738,8 @@ ex_test_Ne_free_cluster_SI: $(COMMON_FRAGMENTS)                      \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "MI_OPBC_F                   flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "CLUSTER                     flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
@@ -797,6 +805,8 @@ ex_test_Ne_free_cluster_stiff: $(COMMON_FRAGMENTS)                      \
 	echo "MI_OPBC_H                   flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "MI_OPBC_F                   flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "CLUSTER                     flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
