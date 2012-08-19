@@ -32,6 +32,33 @@
 #
 
 
+=== openkim-api-v1.1.1 =========================================================
+
+* Added run_forces_numer_deriv_for_all_models script that will run and
+  summarize the results of vc_forces_numer_deriv for all available Models.
+
+* Added vc_forces_numer_deriv "verification check" that can be used with any
+  Model to check the consistency of its computed forces with a numerical
+  derivative based on the Model's energy.
+
+* Fixed a bug in the MI_OPBC_* support for ex_model_Ne_P_fastLJ
+
+* Fixed a bug in the make system that occurred when using static linking that
+  would cause some Models to be incorrectly identified as "unknown"
+
+* ex_test_*_free_cluster and ex_test_*_free_cluster_stiff now support CLUSTER
+  NBC (which means they work with ALL NBC methods)
+
+* Documentation updates
+
+* Updated 32/64 bit switching in Fortran code for easier maintenance
+
+* Moved library compile flags to end of command line to make sure all libraries are
+  correctly associated with the appropriate .so files
+
+* Cleaned up ex_model_driver_P_* and ex_model_Ne_P_fastLJ to simplify memory
+  management and PARAM_* handling
+
 === openkim-api-v1.1.0 =========================================================
 
 * Documentation updates
@@ -107,7 +134,7 @@
 
 * Bug fix to ex_model_Al_PF_ErcolessiAdams (and associated template file)
 
-* Documention updates
+* Documentation updates
 
 
 === openkim-api-v1.0.0 =========================================================
