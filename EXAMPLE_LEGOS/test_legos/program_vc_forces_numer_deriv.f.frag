@@ -69,24 +69,24 @@ program TEST_NAME_STR
 
   integer, parameter :: &
        N = 4*(nCellsPerSide)**3 + 6*(nCellsPerSide)**2 + 3*(nCellsPerSide) + 1
-  integer(kind=kim_intptr), parameter  :: SizeOne = 1
-  real*8, allocatable                  :: forces_num(:,:)
-  real*8, allocatable                  :: forces_num_err(:,:)
-  character(len=3)                     :: model_types(max_types)
-  character(len=KIM_KEY_STRING_LENGTH) :: model_NBCs(max_NBCs)
-  integer                              :: num_types
-  integer                              :: num_NBCs
-  character(len=4)                     :: passfail
-  real*8                               :: forcediff
-  real*8                               :: forcediff_sumsq
-  real*8                               :: weight
-  real*8                               :: weight_sum
-  real*8                               :: alpha
-  real*8                               :: term
-  real*8                               :: term_max
-  real*8,                  allocatable :: cluster_coords(:,:)
-  real*8,                  allocatable :: cluster_disps(:,:)
-  character(len=3),        allocatable :: cluster_types(:)
+  integer(kind=kim_intptr), parameter               :: SizeOne = 1
+  real*8, allocatable                               :: forces_num(:,:)
+  real*8, allocatable                               :: forces_num_err(:,:)
+  character(len=KIM_KEY_STRING_LENGTH)              :: model_types(max_types)
+  character(len=KIM_KEY_STRING_LENGTH)              :: model_NBCs(max_NBCs)
+  integer                                           :: num_types
+  integer                                           :: num_NBCs
+  character(len=4)                                  :: passfail
+  real*8                                            :: forcediff
+  real*8                                            :: forcediff_sumsq
+  real*8                                            :: weight
+  real*8                                            :: weight_sum
+  real*8                                            :: alpha
+  real*8                                            :: term
+  real*8                                            :: term_max
+  real*8,                               allocatable :: cluster_coords(:,:)
+  real*8,                               allocatable :: cluster_disps(:,:)
+  character(len=KIM_KEY_STRING_LENGTH), allocatable :: cluster_types(:)
   integer I,J,Imax,Jmax,type
 
   ! neighbor list

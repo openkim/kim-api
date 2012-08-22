@@ -12,7 +12,7 @@ implicit none
 !-- Transferred variables
 character(len=KIM_KEY_STRING_LENGTH), intent(in)   :: NBC_method
 integer,                              intent(in)   :: max_types
-character(len=3),                     intent(in)   :: model_types(max_types)
+character(len=KIM_KEY_STRING_LENGTH), intent(in)   :: model_types(max_types)
 integer,                              intent(in)   :: num_types
 character(len=10000),                 intent(out)  :: kim_descriptor
 integer,                              intent(out)  :: ier
@@ -22,7 +22,7 @@ integer :: i
 character(len=103) :: divider
 character(len=1)   :: cr
 character(len=52)  :: type_line
-character(len=24)  :: type24
+character(len=23)  :: type23
 character(len=32)  :: nbcline
 
 ! Initialize error flag
@@ -83,8 +83,8 @@ kim_descriptor = &
    '# Symbol/name               Type                    code'                   // cr
 
    do i = 1,num_types
-      type24 = model_types(i)
-      write(type_line,'(a24,''spec'',20x,i4)') type24,0
+      type23 = model_types(i)
+      write(type_line,'(a24,''spec'',20x,i4)') type23,0
       kim_descriptor = trim(kim_descriptor) // type_line // cr
    enddo
 
