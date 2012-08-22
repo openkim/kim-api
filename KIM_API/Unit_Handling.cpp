@@ -64,7 +64,7 @@ int Unit_Handling::nlength_list=5;
 
 // list of supported base units for Unit_energy
 char * Unit_Handling::energy_list[]={
-  "amu*A^2/(ps)^2",  "erg",   "eV" ,          "Hartree" ,  "J", "kcal/mol" , " kJ/mol"
+  "amu*A^2/(ps)^2",  "erg",   "eV" ,          "Hartree" ,  "J", "kcal/mol" , "kJ/mol"
 };
 double Unit_Handling::energy_scale[]={
     1.66053886e-23,  1.0e7, 1.60217646e-19,  4.3597439422e-18, 1.0,   6.9477e-21, 1.66054e-21
