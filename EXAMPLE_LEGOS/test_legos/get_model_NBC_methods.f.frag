@@ -1,8 +1,6 @@
 !-------------------------------------------------------------------------------
 !
-!  Write KIM descriptor file for MiniMol
-!  (Also returns the number and identities of the species supported by
-!  the Model.)
+!  Get the number and identities of NBCs supported by the Model.
 !
 !-------------------------------------------------------------------------------
 subroutine Get_Model_NBC_methods(modelname, max_NBCs, model_NBCs, num_NBCs, ier)
