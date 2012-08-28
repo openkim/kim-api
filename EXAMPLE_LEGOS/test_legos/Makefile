@@ -79,6 +79,7 @@ AUTO_GEN_TESTS = ex_test_Al_free_cluster                 \
                  ex_test_Ne_free_cluster                 \
                  ex_test_Ne_free_cluster_SI              \
                  ex_test_Ne_free_cluster_stiff           \
+                 vc_config_ener_forces                   \
                  vc_forces_numer_deriv
 
 
@@ -865,28 +866,28 @@ ex_test_demo_F03: dir_ex_test_demo_F03               \
 	cp $(KIM_DIR)/LICENSE.CDDL $(KIM_EX_TESTS_DIR)/$@
 	cp -rf dir_$@/* $(KIM_EX_TESTS_DIR)/$@/
 
-vc_forces_numer_deriv: $(COMMON_FRAGMENTS)                    \
-                     vc_forces_numer_deriv_README             \
-                     descriptor_file_neighborlist             \
-                     program_vc_forces_numer_deriv.f.frag     \
-                     get_model_supported_types.f.frag         \
-                     get_model_NBC_methods.f.frag             \
-                     write_KIM_descriptor.f.frag              \
-                     update_neighborlist.f.frag               \
-                     MI_OPBC_cluster_neighborlist.f.frag      \
-                     NEIGH_PURE_cluster_neighborlist.f.frag   \
-                     NEIGH_RVEC_F_cluster_neighborlist.f.frag \
-                     NEIGH_RVEC_F_update_Rij_vectors.f.frag   \
-                     get_neigh_no_Rij.f.frag                  \
-                     get_neigh_Rij.f.frag                     \
-                     create_FCC_configuration.f.frag          \
-                     compute_numer_deriv.f.frag               \
+vc_forces_numer_deriv: Makefile                                 \
+                       test_Makefile                            \
+                       vc_forces_numer_deriv_README             \
+                       program_vc_forces_numer_deriv.f.frag     \
+                       get_model_supported_types.f.frag         \
+                       get_model_NBC_methods.f.frag             \
+                       write_KIM_descriptor.f.frag              \
+                       update_neighborlist.f.frag               \
+                       MI_OPBC_cluster_neighborlist.f.frag      \
+                       NEIGH_PURE_cluster_neighborlist.f.frag   \
+                       NEIGH_RVEC_F_cluster_neighborlist.f.frag \
+                       NEIGH_RVEC_F_update_Rij_vectors.f.frag   \
+                       get_neigh_no_Rij.f.frag                  \
+                       get_neigh_Rij.f.frag                     \
+                       create_FCC_configuration.f.frag          \
+                       compute_numer_deriv.f.frag               \
         # make directory
 	mkdir -p $(KIM_EX_TESTS_DIR)/$@
 	@touch $(KIM_EX_TESTS_DIR)/$@
 	cp $(KIM_DIR)/LICENSE.CDDL $(KIM_EX_TESTS_DIR)/$@
         # make README file in the directory
-	$(D_CAT) vc_forces_numer_deriv_README | $(SED_CMD)                                                         >  $(KIM_EX_TESTS_DIR)/$@/README
+	$(D_CAT) vc_forces_numer_deriv_README | $(SED_CMD)                                                    >  $(KIM_EX_TESTS_DIR)/$@/README
         # make Makefile in the directory
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .F90 file in the directory
@@ -915,6 +916,49 @@ vc_forces_numer_deriv: $(COMMON_FRAGMENTS)                    \
 	$(F_CAT) create_FCC_configuration.f.frag                                                              >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
 	$(F_CAT) compute_numer_deriv.f.frag                                                                   >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
+
+vc_config_ener_forces: Makefile                                 \
+                       test_Makefile                            \
+                       vc_config_ener_forces_README             \
+                       program_vc_config_ener_forces.f.frag     \
+                       get_model_NBC_methods.f.frag             \
+                       write_KIM_descriptor.f.frag              \
+                       update_neighborlist.f.frag               \
+                       MI_OPBC_cluster_neighborlist.f.frag      \
+                       NEIGH_PURE_cluster_neighborlist.f.frag   \
+                       NEIGH_RVEC_F_cluster_neighborlist.f.frag \
+                       NEIGH_RVEC_F_update_Rij_vectors.f.frag   \
+                       get_neigh_no_Rij.f.frag                  \
+                       get_neigh_Rij.f.frag                     \
+        # make directory
+	mkdir -p $(KIM_EX_TESTS_DIR)/$@
+	@touch $(KIM_EX_TESTS_DIR)/$@
+	cp $(KIM_DIR)/LICENSE.CDDL $(KIM_EX_TESTS_DIR)/$@
+        # make README file in the directory
+	$(D_CAT) vc_config_ener_forces_README | $(SED_CMD)                                                    >  $(KIM_EX_TESTS_DIR)/$@/README
+        # make Makefile in the directory
+	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
+        # make .F90 file in the directory
+	$(F_CAT) program_vc_config_ener_forces.f.frag  | $(SED_CMD)                                           >  $(KIM_EX_TESTS_DIR)/$@/$@.F90
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
+	$(F_CAT) get_model_NBC_methods.f.frag                                                                 >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
+	$(F_CAT) write_KIM_descriptor.f.frag | $(SED_CMD)                                                     >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
+	$(F_CAT) update_neighborlist.f.frag                                                                   >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
+	$(F_CAT) MI_OPBC_cluster_neighborlist.f.frag                                                          >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
+	$(F_CAT) NEIGH_PURE_cluster_neighborlist.f.frag                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
+	$(F_CAT) NEIGH_RVEC_F_cluster_neighborlist.f.frag                                                     >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
+	$(F_CAT) NEIGH_RVEC_F_update_Rij_vectors.f.frag                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
+	$(F_CAT) get_neigh_no_Rij.f.frag                                                                      >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
+	$(F_CAT) get_neigh_Rij.f.frag                                                                         >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
 
 .PHONY: clean
 

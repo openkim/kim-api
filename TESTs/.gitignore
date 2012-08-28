@@ -16,4 +16,5 @@ ex_test_Ne_free_cluster
 ex_test_Ne_free_cluster_SI
 ex_test_Ne_free_cluster_stiff
 vc_forces_numer_deriv
+vc_config_ener_forces
 kim.log
