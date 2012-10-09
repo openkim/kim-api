@@ -79,6 +79,13 @@ ex_test_Ar_free_cluster_CLUSTER_F90       F90       CLUSTER         N/A        N
 ex_test_Ar_multiple_models                C         NEIGH_RVEC_F    Locator    Full
                                                                     Iterator
 
+ex_test_Cu_free_cluster                   F90       NEIGH_RVEC_F    Locator    Full
+                                                    NEIGH_PURE_H    Iterator   Half
+                                                    NEIGH_PURE_F
+                                                    MI_OPBC_H
+                                                    MI_OPBC_F
+                                                    CLUSTER
+
 ex_test_Ne_free_cluster                   F90       NEIGH_RVEC_F    Locator    Full
                                                     NEIGH_PURE_H    Iterator   Half
                                                     NEIGH_PURE_F
@@ -211,6 +218,11 @@ ex_test_Ar_multiple_models
    |
 
 
+ex_test_Cu_free_cluster
+   |
+   |-- ex_model_Cu_PF_Johnson
+
+
 ex_test_Ne_free_cluster
    |
    |-- ex_model_ArNe_P_MLJ_NEIGH_RVEC_F
@@ -263,6 +275,7 @@ ex_test_Ar_free_cluster_CLUSTER_F90 (Fortran 90)
 
 ex_test_Al_free_cluster    (Fortran 90)
 ex_test_Ar_free_cluster    (Fortran 90)
+ex_test_Cu_free_cluster    (Fortran 90)
 ex_test_Ne_free_cluster    (Fortran 90)
 ex_test_Ne_free_cluster_SI (Fortran 90)
      These Tests, all written in Fortran 90, are identical except for the

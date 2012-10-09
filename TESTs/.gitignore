@@ -12,6 +12,7 @@ ex_test_Ar_free_cluster
 ex_test_Ar_free_cluster_CLUSTER_C
 ex_test_Ar_free_cluster_CLUSTER_F90
 ex_test_Ar_multiple_models
+ex_test_Cu_free_cluster
 ex_test_Ne_free_cluster
 ex_test_Ne_free_cluster_SI
 ex_test_Ne_free_cluster_stiff

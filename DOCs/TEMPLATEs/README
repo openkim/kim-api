@@ -63,6 +63,13 @@ model_El_PF_Template.F90
      Fortran 90 template file for a pair functional (EAM, Finnis-Sinclair,
      effective medium theory, glue, etc.) Model.
 
+model_El_PF_Template.c
+     C template file for a pair functional (EAM, Finnis-Sinclair,
+     effective medium theory, glue, etc.) Model.
+
+model_El_PF_Template.c.kim
+     KIM descriptor file for the C pair functional template.
+
 model_El_PF_Template.f.kim
      KIM descriptor file for the Fortran pair functional template.
 
@@ -114,10 +121,13 @@ Models.  Detailed directions are also given below.
 (c) The template `model_El_PF_Template.F90' can be compared with
     `ex_model_Al_PF_ErcolessiAdams.F90'.
 
-(d) The template `model_driver_P_Template.F90' can be compared with
+(d) The template `model_El_PF_Template.C' can be compared with
+    `ex_model_Cu_PF_Johnson.F90'.
+
+(e) The template `model_driver_P_Template.F90' can be compared with
     `ex_model_driver_P_LJ.F90'
 
-(e) The template `model_driver_P_Template.c' can be compared with
+(f) The template `model_driver_P_Template.c' can be compared with
     `ex_model_driver_P_Morse.c'
 
 Recall that Models are stored under $KIM_DIR/EXAMPLEs/MODELs and Model Drivers

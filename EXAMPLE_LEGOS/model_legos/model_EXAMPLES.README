@@ -90,6 +90,13 @@ ex_model_Ar_P_Morse                C         NEIGH_PURE_H    Iterator   Full    
                                              MI_OPBC_F
                                              CLUSTER
 
+ex_model_Cu_PF_Johnson             F90       NEIGH_PURE_H    Iterator   Full        NO
+                                             NEIGH_PURE_F    Locator    Half
+                                             NEIGH_RVEC_F
+                                             MI_OPBC_H
+                                             MI_OPBC_F
+                                             CLUSTER
+
 ex_model_Ne_P_fastLJ               C         NEIGH_PURE_H    Iterator   Full        YES
                                              NEIGH_PURE_F               Half
                                              NEIGH_RVEC_F
@@ -195,6 +202,13 @@ ex_model_Al_PF_ErcolessiAdams (Fortran 90)
      $KIM_DIR/DOCs/TEMPLATEs/model_El_PF_Template.F90.  Thus, it is useful to
      compare the file ex_model_Al_PF_ErcolessiAdams.F90 with
      $KIM_DIRDOCs/TEMPLATEs/model_El_PF_Template.F90 to see the relatively
+     simple changes required to implement a pair functional Model.
+
+ex_model_Cu_PF_Johnson (C)
+     This Model is based on the template file
+     $KIM_DIR/DOCs/TEMPLATEs/model_El_PF_Template.c.  Thus, it is useful to
+     compare the file ex_model_Cu_PF_Johnson.c with
+     $KIM_DIRDOCs/TEMPLATEs/model_El_PF_Template.c to see the relatively
      simple changes required to implement a pair functional Model.
 
 ex_model_Ar_P_LJ (F90)

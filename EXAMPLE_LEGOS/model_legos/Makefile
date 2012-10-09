@@ -73,6 +73,7 @@ COMMON_FRAGMENTS = module_start.f.frag          \
                    Makefile
 
 AUTO_GEN_MODELS = ex_model_Al_PF_ErcolessiAdams    \
+                  ex_model_Cu_PF_Johnson           \
                   ex_model_ArNe_P_MLJ_NEIGH_RVEC_F \
                   ex_model_Ar_P_MLJ_C              \
                   ex_model_Ar_P_MLJ_CLUSTER_C      \
@@ -597,6 +598,14 @@ ex_model_Ne_P_LJ: model_LJ_README \
 
 ex_model_Al_PF_ErcolessiAdams: dir_ex_model_Al_PF_ErcolessiAdams              \
                                $(wildcard dir_ex_model_Al_PF_ErcolessAdams/*) \
+                               Makefile
+	mkdir -p $(KIM_EX_MODELS_DIR)/$@
+	@touch $(KIM_EX_MODELS_DIR)/$@
+	cp $(KIM_DIR)/LICENSE.CDDL $(KIM_EX_MODELS_DIR)/$@
+	cp -rf dir_$@/* $(KIM_EX_MODELS_DIR)/$@/
+
+ex_model_Cu_PF_Johnson: dir_ex_model_Cu_PF_Johnson                      \
+                               $(wildcard dir_ex_model_Cu_PF_Johnson/*) \
                                Makefile
 	mkdir -p $(KIM_EX_MODELS_DIR)/$@
 	@touch $(KIM_EX_MODELS_DIR)/$@

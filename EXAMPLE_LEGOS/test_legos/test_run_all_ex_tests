@@ -354,6 +354,16 @@ echo ex_model_Ar_P_LJ ex_model_Ar_P_Morse                 | ./ex_test_Ar_multipl
 footer
 
 #---------------------------------------------------------------------------------------------------------------
+header "ex_test_Cu_free_cluster"                 \
+       "   |"                                    \
+       "   |-- ex_model_Cu_PF_Johnson"           \
+       "   |"
+
+divider "ex_test_Cu_free_cluster --- ex_model_Cu_PF_Johnson"
+echo ex_model_Cu_PF_Johnson  | ./ex_test_Cu_free_cluster/ex_test_Cu_free_cluster >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
+footer
+
+#---------------------------------------------------------------------------------------------------------------
 header "ex_test_Ne_free_cluster"                 \
        "   |"                                    \
        "   |-- ex_model_ArNe_P_MLJ_NEIGH_RVEC_F" \
