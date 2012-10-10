@@ -37,76 +37,78 @@ this release of the openkim-api package.
 
 ***  List of the example Tests  ***
 
-Test name                                 Language  NBC             Loca/Iter  Half/Full
-----------------------------------------------------------------------------------------
+Test name                                  Language  NBC             Loca/Iter  Half/Full
+-----------------------------------------------------------------------------------------
 
-ex_test_Al_FCCcohesive_MI_OPBC            F90       MI_OPBC_H       Locator    Half
-                                                    MI_OPBC_F       Iterator   Full
+ex_test_Al_FCCcohesive_MI_OPBC             F90       MI_OPBC_H       Locator    Half
+                                                     MI_OPBC_F       Iterator   Full
 
-ex_test_Al_free_cluster                   F90       NEIGH_RVEC_F    Locator    Full
-                                                    NEIGH_PURE_H    Iterator   Half
-                                                    NEIGH_PURE_F
-                                                    MI_OPBC_H
-                                                    MI_OPBC_F
-                                                    CLUSTER
+ex_test_Al_free_cluster                    F90       NEIGH_RVEC_F    Locator    Full
+                                                     NEIGH_PURE_H    Iterator   Half
+                                                     NEIGH_PURE_F
+                                                     MI_OPBC_H
+                                                     MI_OPBC_F
+                                                     CLUSTER
 
-ex_test_ArNe_periodic_B2_NEIGH_RVEC       F90       NEIGH_RVEC_F    Locator    Full
-                                                                    Iterator
+ex_test_ArNe_periodic_B2_NEIGH_RVEC        F90       NEIGH_RVEC_F    Locator    Full
+                                                                     Iterator
 
-ex_test_Ar_FCCcohesiveCutoff_NEIGH_RVEC   F90       NEIGH_RVEC_F    Locator    Full
-                                                                    Iterator
+ex_test_Ar_FCCcohesiveCutoff_NEIGH_RVEC    F90       NEIGH_RVEC_F    Locator    Full
+                                                                     Iterator
 
-ex_test_Ar_FCCcohesive_MI_OPBC            F90       MI_OPBC_H       Locator    Half
-                                                    MI_OPBC_F       Iterator   Full
+ex_test_Ar_FCCcohesive_MI_OPBC             F90       MI_OPBC_H       Locator    Half
+                                                     MI_OPBC_F       Iterator   Full
 
-ex_test_Ar_FCCcohesive_NEIGH_PURE         F90       NEIGH_PURE_H    Locator    Half
-                                                    NEIGH_PURE_F    Iterator   Full
+ex_test_Ar_FCCcohesive_NEIGH_PURE          F90       NEIGH_PURE_H    Locator    Half
+                                                     NEIGH_PURE_F    Iterator   Full
 
-ex_test_Ar_FCCcohesive_NEIGH_RVEC         F90       NEIGH_RVEC_F    Locator    Full
-                                                                    Iterator
+ex_test_Ar_FCCcohesive_NEIGH_RVEC          F90       NEIGH_RVEC_F    Locator    Full
+                                                                     Iterator
 
-ex_test_Ar_free_cluster                   F90       NEIGH_RVEC_F    Locator    Full
-                                                    NEIGH_PURE_H    Iterator   Half
-                                                    NEIGH_PURE_F
-                                                    MI_OPBC_H
-                                                    MI_OPBC_F
-                                                    CLUSTER
+ex_test_Ar_free_cluster                    F90       NEIGH_RVEC_F    Locator    Full
+                                                     NEIGH_PURE_H    Iterator   Half
+                                                     NEIGH_PURE_F
+                                                     MI_OPBC_H
+                                                     MI_OPBC_F
+                                                     CLUSTER
 
-ex_test_Ar_free_cluster_CLUSTER_C         C         CLUSTER         N/A        N/A
+ex_test_Ar_free_cluster_CLUSTER_C          C         CLUSTER         N/A        N/A
 
-ex_test_Ar_free_cluster_CLUSTER_F90       F90       CLUSTER         N/A        N/A
+ex_test_Ar_free_cluster_CLUSTER_F90        F90       CLUSTER         N/A        N/A
 
-ex_test_Ar_multiple_models                C         NEIGH_RVEC_F    Locator    Full
-                                                                    Iterator
+ex_test_Ar_free_cluster_CLUSTER_memory_F90 F90       CLUSTER         N/A        N/A
 
-ex_test_Cu_free_cluster                   F90       NEIGH_RVEC_F    Locator    Full
-                                                    NEIGH_PURE_H    Iterator   Half
-                                                    NEIGH_PURE_F
-                                                    MI_OPBC_H
-                                                    MI_OPBC_F
-                                                    CLUSTER
+ex_test_Ar_multiple_models                 C         NEIGH_RVEC_F    Locator    Full
+                                                                     Iterator
 
-ex_test_Ne_free_cluster                   F90       NEIGH_RVEC_F    Locator    Full
-                                                    NEIGH_PURE_H    Iterator   Half
-                                                    NEIGH_PURE_F
-                                                    MI_OPBC_H
-                                                    MI_OPBC_F
-                                                    CLUSTER
+ex_test_Cu_free_cluster                    F90       NEIGH_RVEC_F    Locator    Full
+                                                     NEIGH_PURE_H    Iterator   Half
+                                                     NEIGH_PURE_F
+                                                     MI_OPBC_H
+                                                     MI_OPBC_F
+                                                     CLUSTER
 
-ex_test_Ne_free_cluster_SI                F90       NEIGH_RVEC_F    Locator    Full
-                                                    NEIGH_PURE_H    Iterator   Half
-                                                    NEIGH_PURE_F
-                                                    MI_OPBC_H
-                                                    MI_OPBC_F
-                                                    CLUSTER
+ex_test_Ne_free_cluster                    F90       NEIGH_RVEC_F    Locator    Full
+                                                     NEIGH_PURE_H    Iterator   Half
+                                                     NEIGH_PURE_F
+                                                     MI_OPBC_H
+                                                     MI_OPBC_F
+                                                     CLUSTER
 
-ex_test_Ne_free_cluster_stiff             F90       NEIGH_RVEC_F    Locator    Full
-                                                    NEIGH_PURE_H    Iterator   Half
-                                                    NEIGH_PURE_F
-                                                    MI_OPBC_H
-                                                    MI_OPBC_F
-                                                    CLUSTER
-----------------------------------------------------------------------------------------
+ex_test_Ne_free_cluster_SI                 F90       NEIGH_RVEC_F    Locator    Full
+                                                     NEIGH_PURE_H    Iterator   Half
+                                                     NEIGH_PURE_F
+                                                     MI_OPBC_H
+                                                     MI_OPBC_F
+                                                     CLUSTER
+
+ex_test_Ne_free_cluster_stiff              F90       NEIGH_RVEC_F    Locator    Full
+                                                     NEIGH_PURE_H    Iterator   Half
+                                                     NEIGH_PURE_F
+                                                     MI_OPBC_H
+                                                     MI_OPBC_F
+                                                     CLUSTER
+-----------------------------------------------------------------------------------------
 
 
 ***  Example Test/Model compatibility  ***
@@ -207,6 +209,17 @@ ex_test_Ar_free_cluster_CLUSTER_F90
    |
 
 
+ex_test_Ar_free_cluster_CLUSTER_memory_F90
+   |
+   |-- ex_model_Ar_P_LJ
+   |-- ex_model_Ar_P_MLJ_C
+   |-- ex_model_Ar_P_MLJ_F90
+   |-- ex_model_Ar_P_MLJ_CLUSTER_C
+   |-- ex_model_Ar_P_MLJ_CLUSTER_F90
+   |-- ex_model_Ar_P_Morse
+   |
+
+
 ex_test_Ar_multiple_models
    |
    |-- ex_model_ArNe_P_MLJ_NEIGH_RVEC_F
@@ -262,6 +275,7 @@ package.)
 
 ex_test_Ar_free_cluster_CLUSTER_C   (C)
 ex_test_Ar_free_cluster_CLUSTER_F90 (Fortran 90)
+ex_test_Ar_free_cluster_CLUSTER_memory_F90 (Fortran 90)
      These Tests are the simplest examples.  Thus, they provide the best
      introduction to the basic steps required for a Test to setup and interact
      with a KIM Model.  They setup a KIM API object for the user's requested
@@ -270,7 +284,9 @@ ex_test_Ar_free_cluster_CLUSTER_F90 (Fortran 90)
      corresponding to a 2x2x2 FCC cubic cell, and compute the total energy and
      force components on each atom.  The results are printed to the screen.
      The only difference between these Tests is that one is written in C and
-     the other is written in Fortran 90.
+     two are written in Fortran 90.  The difference between the two F90 codes
+     is that one uses the KIM API to allocate memory and the other
+     (*_memory_F90) manages the memory on its own.
 
 
 ex_test_Al_free_cluster    (Fortran 90)

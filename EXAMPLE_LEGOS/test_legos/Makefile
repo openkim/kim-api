@@ -65,23 +65,24 @@ COMMON_FRAGMENTS = test_Makefile          \
                    descriptor_file_output \
                    Makefile
 
-AUTO_GEN_TESTS = ex_test_Al_free_cluster                 \
-                 ex_test_Al_FCCcohesive_MI_OPBC          \
-                 ex_test_ArNe_B2cohesive_NEIGH_RVEC      \
-                 ex_test_Ar_FCCcohesiveCutoff_NEIGH_RVEC \
-                 ex_test_Ar_FCCcohesive_MI_OPBC          \
-                 ex_test_Ar_FCCcohesive_NEIGH_PURE       \
-                 ex_test_Ar_FCCcohesive_NEIGH_RVEC       \
-                 ex_test_Ar_free_cluster_CLUSTER_C       \
-                 ex_test_Ar_free_cluster_CLUSTER_F90     \
-                 ex_test_Ar_free_cluster                 \
-                 ex_test_Ar_multiple_models              \
-                 ex_test_Cu_free_cluster                 \
-                 ex_test_Ne_free_cluster                 \
-                 ex_test_Ne_free_cluster_SI              \
-                 ex_test_Ne_free_cluster_stiff           \
-                 vc_config_ener_forces                   \
-                 vc_forces_delta                         \
+AUTO_GEN_TESTS = ex_test_Al_free_cluster                        \
+                 ex_test_Al_FCCcohesive_MI_OPBC                 \
+                 ex_test_ArNe_B2cohesive_NEIGH_RVEC             \
+                 ex_test_Ar_FCCcohesiveCutoff_NEIGH_RVEC        \
+                 ex_test_Ar_FCCcohesive_MI_OPBC                 \
+                 ex_test_Ar_FCCcohesive_NEIGH_PURE              \
+                 ex_test_Ar_FCCcohesive_NEIGH_RVEC              \
+                 ex_test_Ar_free_cluster_CLUSTER_C              \
+                 ex_test_Ar_free_cluster_CLUSTER_F90            \
+                 ex_test_Ar_free_cluster_CLUSTER_memory_F90     \
+                 ex_test_Ar_free_cluster                        \
+                 ex_test_Ar_multiple_models                     \
+                 ex_test_Cu_free_cluster                        \
+                 ex_test_Ne_free_cluster                        \
+                 ex_test_Ne_free_cluster_SI                     \
+                 ex_test_Ne_free_cluster_stiff                  \
+                 vc_config_ener_forces                          \
+                 vc_forces_delta                                \
                  vc_forces_numer_deriv
 
 
@@ -568,6 +569,42 @@ ex_test_Ar_free_cluster_CLUSTER_F90: $(COMMON_FRAGMENTS)                 \
 	echo "virial                      real*8       energy              [6]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
         # make .F90 file in the directory
 	$(F_CAT) program_free_cluster_CLUSTER.f.frag | $(SED_CMD) \
+         | sed -e 's/SPECIES_NAME_STR/Ar/g' \
+         | sed -e 's/FCC_SPACING_STR/5.26d0 ! in angstroms/g'                                                 >  $(KIM_EX_TESTS_DIR)/$@/$@.F90
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
+	$(F_CAT) create_FCC_configuration.f.frag                                                              >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
+
+ex_test_Ar_free_cluster_CLUSTER_memory_F90: $(COMMON_FRAGMENTS)                        \
+                                            test_free_cluster_README                   \
+                                            program_free_cluster_CLUSTER_memory.f.frag \
+                                            create_FCC_configuration.f.frag
+        # make directory
+	mkdir -p $(KIM_EX_TESTS_DIR)/$@
+	@touch $(KIM_EX_TESTS_DIR)/$@
+	cp $(KIM_DIR)/LICENSE.CDDL $(KIM_EX_TESTS_DIR)/$@
+        # make README file in the directory
+	$(D_CAT) test_free_cluster_README | $(SED_CMD) \
+         | sed -e 's/LANGUAGE_STR/F90/g' \
+         | sed -e 's/SPECIES_NAME_STR/Ar/g'                                                                   >  $(KIM_EX_TESTS_DIR)/$@/README
+        # make Makefile in the directory
+	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
+        # make .kim file in the directory
+	$(D_CAT) descriptor_file_start    | $(SED_CMD) \
+         | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    18/g'               >  $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "CLUSTER                     flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "forces                      real*8       force               [numberOfParticles,3]"             >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "virial                      real*8       energy              [6]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+        # make .F90 file in the directory
+	$(F_CAT) program_free_cluster_CLUSTER_memory.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
          | sed -e 's/FCC_SPACING_STR/5.26d0 ! in angstroms/g'                                                 >  $(KIM_EX_TESTS_DIR)/$@/$@.F90
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F90

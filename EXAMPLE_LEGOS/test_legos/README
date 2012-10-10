@@ -170,6 +170,10 @@ program_free_cluster_CLUSTER.f.frag
      This Fortran file contains the main program for the
      ex_test_*_free_cluster_CLUSTER_F90 example test.
 
+program_free_cluster_CLUSTER_memory.f.frag
+     This Fortran file contains the main program for the
+     ex_test_*_free_cluster_CLUSTER_memory_F90 example test.
+
 program_free_cluster_stiff.f.frag
      This Fortran file contains the main program for the
      ex_test_*_free_cluster_stiff example test.
