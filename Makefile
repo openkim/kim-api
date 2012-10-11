@@ -124,9 +124,9 @@ examples-force:
           cp -r $(KIM_DIR)/EXAMPLEs/TESTs/$(exmpl) "$(KIM_TESTS_DIR)/"; fi;)
 
 examples-clean:
-	$(foreach dr,$(notdir $(wildcard $(KIM_DIR)/EXAMPLEs/MODEL_DRIVERs/*)), rm -rf "$(KIM_MODEL_DRIVERS_DIR)/$(dr)";)
-	$(foreach dr,$(notdir $(wildcard $(KIM_DIR)/EXAMPLEs/MODELs/*)), rm -rf "$(KIM_MODELS_DIR)/$(dr)";)
-	$(foreach dr,$(notdir $(wildcard $(KIM_DIR)/EXAMPLEs/TESTs/*)), rm -rf "$(KIM_TESTS_DIR)/$(dr)";)
+	$(foreach dr,$(notdir $(wildcard $(KIM_MODEL_DRIVERS_DIR)/*)), rm -rf "$(KIM_MODEL_DRIVERS_DIR)/$(dr)";)
+	$(foreach dr,$(notdir $(wildcard $(KIM_MODELS_DIR)/*)), rm -rf "$(KIM_MODELS_DIR)/$(dr)";)
+	$(foreach dr,$(notdir $(wildcard $(KIM_TESTS_DIR)/*)), rm -rf "$(KIM_TESTS_DIR)/$(dr)";)
 
 $(patsubst %,%-all,$(MODELS_LIST)): | kim-api-all
 	$(MAKE) -C $(KIM_MODELS_DIR)/$(patsubst %-all,%,$@) all
