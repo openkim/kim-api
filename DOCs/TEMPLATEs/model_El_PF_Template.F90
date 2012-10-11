@@ -25,6 +25,7 @@
 !    Ryan S. Elliott
 !    Ellad B. Tadmor
 !    Valeriu Smirichinski
+!    <FILL your name here>
 !
 
 !****************************************************************************
@@ -713,7 +714,7 @@ implicit none
 !-- Transferred variables
 integer(kind=kim_intptr), intent(in) :: pkim
 
-<FILL as necessary>
+!<FILL as necessary>
 
 Destroy = KIM_STATUS_OK
 return
@@ -760,6 +761,8 @@ if (ier.lt.KIM_STATUS_OK) then
    goto 42
 endif
 cutoff = model_cutoff
+
+!<FILL as necessary>
 
 ier = KIM_STATUS_OK
 42 continue
