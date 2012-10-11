@@ -500,7 +500,7 @@ program TEST_NAME_STR
                                       "kim_api_model_destroy", ier)
         stop
      endif
-     call kim_api_free(pkim, ier)
+     call kim_api_free_f(pkim, ier)
      if (ier.lt.KIM_STATUS_OK) then
         idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
                                       "kim_api_free", ier)
