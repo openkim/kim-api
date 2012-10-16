@@ -1172,7 +1172,9 @@ energy                      real*8       energy             []
 #
 # forces : An array of floating-point numbers corresponding to the total force
 #          acting each atom/particle in the configuration of particles passed
-#          between the Model and Test.
+#          between the Model and Test.  The force vector on a particle is
+#          defined as the negative of the gradient of the energy with respect
+#          to the particle's coordinate vector.
 #
 # This argument should be optional to ensure maximum Model/Test compatibility.
 # If supported, a Test must allocate memory for this argument and register it
@@ -1202,8 +1204,13 @@ particleEnergy              real*8       energy             [numberOfParticles]
 
 ################################################################################
 #
-# virial : A symmetric second-order tensor corresponding to the total virial for
-#          the configuration of particles passed between the Model and Test.
+# virial : A symmetric second-order tensor corresponding to the total virial
+#          for the configuration of particles passed between the Model and
+#          Test.  The "stress" sign convention is used: tensile quantities are
+#          positive and compressive quantities are negative.  Thus, the trace
+#          of the virial (sum of the 11, 22, and 33 components) is related to
+#          the pressure, however the sign convention is opposite that normally
+#          used for pressure.
 #
 # The components of this 3 x 3 symmetric tensor are stored in a compact vector
 # form with 6 components in accordance with the Voigt convention:
@@ -1230,7 +1237,12 @@ virial                      real*8       energy             [6]
 #
 # particleVirial : A symmetric second-order tensor corresponding to the per
 #                  particle virial for the configuration of particles passed
-#                  between the Model and Test.
+#                  between the Model and Test.  The "stress" sign convention is
+#                  used: tensile quantities are positive and compressive
+#                  quantities are negative.  Thus, the trace of the virial (sum
+#                  of the 11, 22, and 33 components) is related to the
+#                  pressure, however the sign convention is opposite that
+#                  normally used for pressure.
 #
 # The components of each 3 x 3 symmetric tensor are stored in a compact vector
 # form with 6 components in accordance with the Voigt convention:
