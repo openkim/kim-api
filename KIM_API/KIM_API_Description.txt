@@ -915,7 +915,7 @@ int KIM_API_model_init(void *kimmdl);
 Arguments:
       void *kimmdl
               pointer to KIM_API_model object (in C++ style, the definition
-              will be (KIM_API_model *)).
+              will be (KIM_API_model **)).
 
 Corresponding Fortran style interface:
 

@@ -317,20 +317,20 @@ bool Unit_Handling::do_unit_match(Unit_Handling &test, Unit_Handling  &model){
     return false;
 }
 void Unit_Handling::print(){
-    std::cout<<"Unit_length : "<<Unit_length<<std::endl;
-    std::cout<<"Unit_energy : "<<Unit_energy<<std::endl;
-    std::cout<<"Unit_charge : "<<Unit_charge<<std::endl;
-    std::cout<<"Unit_temperature : "<<Unit_temperature<<std::endl;
-    std::cout<<"Unit_time : "<<Unit_time<<std::endl;
-    std::cout<<"flexible_handling :"<< flexible_handling<<std::endl;
+    std::cout<<" Unit_length      : "<<Unit_length<<std::endl;
+    std::cout<<" Unit_energy      : "<<Unit_energy<<std::endl;
+    std::cout<<" Unit_charge      : "<<Unit_charge<<std::endl;
+    std::cout<<" Unit_temperature : "<<Unit_temperature<<std::endl;
+    std::cout<<" Unit_time        : "<<Unit_time<<std::endl;
+    std::cout<<" flexible_handling: "<< flexible_handling<<std::endl;
 }
 void Unit_Handling::print(std::ostream& stream){
-    stream<<"Unit_length : "<<Unit_length<<std::endl;
-    stream<<"Unit_energy : "<<Unit_energy<<std::endl;
-    stream<<"Unit_charge : "<<Unit_charge<<std::endl;
-    stream<<"Unit_temperature : "<<Unit_temperature<<std::endl;
-    stream<<"Unit_time : "<<Unit_time<<std::endl;
-    stream<<"flexible_handling :"<< flexible_handling<<std::endl;
+    stream<<" Unit_length      : "<<Unit_length<<std::endl;
+    stream<<" Unit_energy      : "<<Unit_energy<<std::endl;
+    stream<<" Unit_charge      : "<<Unit_charge<<std::endl;
+    stream<<" Unit_temperature : "<<Unit_temperature<<std::endl;
+    stream<<" Unit_time        : "<<Unit_time<<std::endl;
+    stream<<" flexible_handling: "<< flexible_handling<<std::endl;
 }
 int Unit_Handling::get_unit_handling(int *error){
     if(flexible_handling) return 1;

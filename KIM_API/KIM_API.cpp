@@ -570,18 +570,19 @@ std::ostream &operator<<(std::ostream &stream, KIMBaseElement a){
         stream <<" KIMBaseElement is nullified "<<std::endl;
         return stream;
     }
-    stream<<std::endl<<"name: "<<a.name<<" type: "<<a.type<<" rank= "<<a.rank<<std::endl;
+    stream<<"name  : "<<a.name<< std::endl
+          <<" type          : "<<a.type << std::endl
+          <<" rank          : "<<a.rank<<std::endl;
     if (a.rank>0 && a.shape!=NULL){
-        stream<<" shape= [ ";
-        for(int i=0;i<a.rank;i++) stream<< a.shape[i] <<" ";
-        stream << " ]"<<" ";
+       stream<<" shape         : [";
+       for(int i=0;i<a.rank-1;i++) stream<< a.shape[i] << ",";
+       stream << a.shape[a.rank-1] << "]" << std::endl;
     }
-    stream<<" size= "<<a.size<<std::endl;
-
-    stream<<"flag:calculate "<<a.flag->calculate<<"// 0 -- do not calculate, 1 -- calculate"<<std::endl;
-    stream<<"flag:freeable  "<<a.flag->freeable<<"//0--freeable , 1 is not freeable"<<std::endl;
-    stream<<"flag:peratom  "<<a.flag->peratom<<"//0 -- peratom, 1--per something else"<<std::endl;
-    stream<<" phys.dimension: "<<a.unit->dim<<std::endl;
+    stream<<" size          : "<<a.size<<std::endl;
+    stream<<" flag calculate: "<<a.flag->calculate<<"   // 0 -- do not calculate, 1 -- calculate"<<std::endl;
+    stream<<" flag freeable : "<<a.flag->freeable<< "   // 0 -- freeable,         1 -- not freeable"<<std::endl;
+    stream<<" flag peratom  : "<<a.flag->peratom<<  "   // 0 -- peratom,          1 -- per something else"<<std::endl;
+    stream<<" dimension     : "<<a.unit->dim<<std::endl;
     // printin gata itself
 
 
@@ -1839,12 +1840,18 @@ void KIM_API_model::allocate( int natoms, int ntypes, int * error){
 
 std::ostream &operator<<(std::ostream &stream, KIM_API_model &a){
     stream<<"*************************************"<<std::endl;
+    stream<<"KIM API Object details:" << std::endl << std::endl;
     stream << a.model;
+    stream<<"Active Units" << std::endl;
+    stream<< a.unit_h << std::endl;
+    stream<<"List of items in KIM API Ojbect" << std::endl;
     stream<<"-------------------------------------"<<std::endl;
     KIMBaseElement **pel =  (KIMBaseElement **)  a.model.data;
-    for(int i=0;i<a.model.size;i++)   stream<< *(pel[i]);
-    stream<<"-------------------------------------"<<std::endl;
-    stream<<a.unit_h;
+    for(int i=0;i<a.model.size;i++)
+    {
+       stream << "index : " << i << std::endl
+              << *(pel[i]) << std::endl;
+    }
     stream<<"*************************************"<<std::endl;
 
     return stream;
