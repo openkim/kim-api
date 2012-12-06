@@ -642,7 +642,7 @@ KIM_API_model:: KIM_API_model(){
        narg_NBC_method_D=3;
 
        //method_E init
-       strcpy(NBC_method_E,"NEIGH_PURE_H");
+       strcpy(NBC_method_E,"NEIGH_RVEC_H");
        strcpy(&arg_NBC_method_E[0][0],"coordinates");
        strcpy(&arg_NBC_method_E[1][0],"numberContributingParticles");
        strcpy(&arg_NBC_method_E[2][0],"neighObject");
@@ -656,6 +656,14 @@ KIM_API_model:: KIM_API_model(){
        strcpy(&arg_NBC_method_F[2][0],"get_neigh");
        narg_NBC_method_F=3;
 
+       //method_G init
+       strcpy(NBC_method_G,"NEIGH_PURE_H");
+       strcpy(&arg_NBC_method_G[0][0],"coordinates");
+       strcpy(&arg_NBC_method_G[1][0],"numberContributingParticles");
+       strcpy(&arg_NBC_method_G[2][0],"neighObject");
+       strcpy(&arg_NBC_method_G[3][0],"get_neigh");
+       narg_NBC_method_G=4;
+
        n_NBC_methods = number_NBC_methods;
        nnarg_NBC = new int[n_NBC_methods];
        NBC_methods = new char* [n_NBC_methods];
@@ -666,6 +674,7 @@ KIM_API_model:: KIM_API_model(){
        nnarg_NBC[3] =  narg_NBC_method_D;
        nnarg_NBC[4] =  narg_NBC_method_E;
        nnarg_NBC[5] =  narg_NBC_method_F;
+       nnarg_NBC[6] =  narg_NBC_method_G;
 
        for(int i=0;i<n_NBC_methods;i++){
            arg_NBC_methods[i] = new char * [nnarg_NBC[i]];
@@ -677,6 +686,7 @@ KIM_API_model:: KIM_API_model(){
        NBC_methods[3] = &NBC_method_D[0];
        NBC_methods[4] = &NBC_method_E[0];
        NBC_methods[5] = &NBC_method_F[0];
+       NBC_methods[6] = &NBC_method_G[0];
 
        for (int i=0; i<nnarg_NBC[0];i++) arg_NBC_methods[0][i] = & arg_NBC_method_A[i][0];
        for (int i=0; i<nnarg_NBC[1];i++) arg_NBC_methods[1][i] = & arg_NBC_method_B[i][0];
@@ -684,6 +694,7 @@ KIM_API_model:: KIM_API_model(){
        for (int i=0; i<nnarg_NBC[3];i++) arg_NBC_methods[3][i] = & arg_NBC_method_D[i][0];
        for (int i=0; i<nnarg_NBC[4];i++) arg_NBC_methods[4][i] = & arg_NBC_method_E[i][0];
        for (int i=0; i<nnarg_NBC[5];i++) arg_NBC_methods[5][i] = & arg_NBC_method_F[i][0];
+       for (int i=0; i<nnarg_NBC[6];i++) arg_NBC_methods[6][i] = & arg_NBC_method_G[i][0];
 
        strcpy(NBC_method_current,"none");
 

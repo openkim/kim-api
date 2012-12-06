@@ -774,29 +774,53 @@ NEIGH_PURE_F                flag        # This is the Pure Full neighbor list
                                         # `get_neigh' method supplied by the
                                         # Test.
 
-# In the NEIGH_RVEC_F method, the Model receives the number of particles and
-# coordinates, a full neighbor list and the relative position vectors r_ij
-# (r_ij = x_j-x_i). The neighbor list and Rij vectors define the environment of
-# each particle, from which the particles's energy is defined. The Model
-# computes the requested quantities using the supplied information. For
-# example, if energy and forces are requested, it will compute the total energy
-# of all the particles based on their neighbor lists and relative position
-# vectors and the derivative of the total energy with respect to the positions
-# of the particles. This method enables the application of general periodic
-# boundary conditions, including multiple images.  (This approach can fail with
-# half neighbor lists and therefore the _H variant of the method does not
-# exist.)  A possible future extension to this method is to allow the Test to
-# provide a ForceTransformation() function for each neighbor, which would
-# enable the application of complex boundary conditions such as torsion and
-# objective boundary conditions.
+
+# In the NEIGH_RVEC methods (NEIGH_RVEC_H and NEIGH_RVEC_F), the Model receives
+# the number of particles, coordinates, a half or full neighbor list, and the
+# relative position vectors r_ij (r_ij = x_j-x_i). The neighbor list and r_ij
+# vectors define the environment of each particle, from which the particles's
+# energy is defined.  In the case of a half list, a neighbor pair i and j
+# (where i < j) with relative position vector (RVEC) r_ij defines two pieces of
+# information: (1) j is a neighbor of i with RVEC r_ij and (2) i is a neighbor
+# of j with RVEC r_ji = -r_ij.  Additionally, the value of the argument
+# `numberContributingParticles' indicates that the first
+# `numberContributingParticles' contribute their energy to the total and the
+# remaining particles do not contribute to the energy (they are "ghost"
+# particles).  When `numberContributingParticles' is equal to `numberParticles'
+# the half list is called "symmetric", otherwise it is called "unsymmetric."
+# In the case of a full list, any particle that has one or more neighbors
+# contributes its energy to the total and those particles with zero neighbors
+# do not contribute to the total energy.  The model computes the requested
+# quantities using the supplied information.  For example, if energy and forces
+# are requested, it will compute the total energy of all the particles based on
+# their neighbor lists and the derivative of the total energy with respect to
+# the positions of the particles.  These methods enable the application of
+# general periodic boundary conditions, including multiple images.  A possible
+# future extension to these methods is to allow the Test to provide a
+# ForceTransformation() function for each neighbor, which would enable the
+# application of complex boundary conditions such as torsion and objective
+# boundary conditions.
 #
-NEIGH_RVEC_F                flag        # This is the Relative Vector Boundary
-                                        # Condition Full neighbor list method.
-                                        # The Model needs `coordinates' and a
-                                        # full neighbor list (with data stored
-                                        # in the `neighObject' argument), and
+NEIGH_RVEC_H                flag        # This is the Relative Vector Boundary
+                                        # Condition Half neighbor list method.
+                                        # The Model needs `coordinates', a half
+                                        # neighbor list (with data stored in
+                                        # the `neighObject' argument),
+                                        # `numberContributingParticles', and
                                         # the `get_neigh' method supplied by
                                         # the Test.  The `neighObject' argument
+                                        # must also contain the relative
+                                        # position vectors (RVEC) (which are
+                                        # returned by the `get_neigh'
+                                        # function).
+
+NEIGH_RVEC_F                flag        # This is the Relative Vector Boundary
+                                        # Condition Full neighbor list method.
+                                        # The Model needs `coordinates', a full
+                                        # neighbor list (with data stored in
+                                        # the `neighObject' argument), and the
+                                        # `get_neigh' method supplied by the
+                                        # Test.  The `neighObject' argument
                                         # must also contain the relative
                                         # position vectors (RVEC) (which are
                                         # returned by the `get_neigh'

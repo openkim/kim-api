@@ -39,7 +39,7 @@
 #include <stdint.h>
 #include <stdarg.h>
 
-#define number_NBC_methods 6
+#define number_NBC_methods 7
 #ifndef KIM_DIR_API
 #define KIM_DIR_API "../../KIM_API"
 #endif
@@ -320,7 +320,7 @@ private:
     int narg_NBC_method_D;
 
 
-    //"NEIGH_PURE_H"
+    //"NEIGH_RVEC_H"
     char NBC_method_E[KIM_KEY_STRING_LENGTH];
     char arg_NBC_method_E[4][KIM_KEY_STRING_LENGTH];
     int narg_NBC_method_E;
@@ -330,6 +330,11 @@ private:
     char NBC_method_F[KIM_KEY_STRING_LENGTH];
     char arg_NBC_method_F[3][KIM_KEY_STRING_LENGTH];
     int narg_NBC_method_F;
+
+    //"NEIGH_PURE_H"
+    char NBC_method_G[KIM_KEY_STRING_LENGTH];
+    char arg_NBC_method_G[4][KIM_KEY_STRING_LENGTH];
+    int narg_NBC_method_G;
 
     int n_NBC_methods;
     int * nnarg_NBC;
