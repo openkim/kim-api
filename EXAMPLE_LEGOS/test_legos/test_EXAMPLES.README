@@ -300,8 +300,7 @@ ex_test_Ne_free_cluster_SI (Fortran 90)
      exactly the same computation as that performed by the
      ex_test_Ar_free_cluster_CLUSTER_* Tests.  However, in addition to the
      CLUSTER NBC method, these Tests implement support for all the other NBC
-     methods: MI_OPBC_H, MI_OPBC_F, NEIGH_PURE_H, NEIGH_PURE_F, and
-     NEIGH_RVEC_F.  This entails creating neighbor lists for the various NBC
+     methods.  This entails creating neighbor lists for the various NBC
      methods, and makes these Tests a good place to begin to understand the
      differences between these NBC methods.  (The _SI variant uses the SI unit
      system and is therefore only compatible with the example ex_model_drivers
