@@ -63,6 +63,17 @@ if (index.ge.0) then
    model_NBCs(num_NBCs) = "NEIGH_PURE_F"
 endif
 
+! NEIGH_RVEC_H
+index = kim_api_get_index_f(pkim, "NEIGH_RVEC_H", ier)
+if (index.ge.0) then
+   num_NBCs = num_NBCs + 1
+   if (num_NBCs>max_NBCs) then
+      ier = KIM_STATUS_FAIL
+      return
+   endif
+   model_NBCs(num_NBCs) = "NEIGH_RVEC_H"
+endif
+
 ! NEIGH_RVEC_F
 index = kim_api_get_index_f(pkim, "NEIGH_RVEC_F", ier)
 if (index.ge.0) then

@@ -37,7 +37,9 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   real*8 coordum(DIM,1);   pointer(pcoor,coordum)
   real*8, pointer :: coords(:,:)
   real*8 cutoff;           pointer(pcutoff,cutoff)
-  double precision, parameter :: cutpad = CUTOFF_PADDING_STR! cutoff radius padding
+  double precision, parameter :: cutpad = CUTOFF_PADDING_STR ! cutoff radius padding
+  logical :: halfflag  ! .true. = half neighbor list; .false. = full neighbor list
+  character(len=64) NBC_Method;  pointer(pNBC_Method,NBC_Method)
 
   ! Unpack data from KIM object
   !
@@ -53,13 +55,39 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
 
   call KIM_to_F90_real_array_2d(coordum, coords, DIM, N)
 
+  ! determine which neighbor list type to use
+  !
+  pNBC_Method = kim_api_get_nbc_method_f(pkim, ier) ! don't forget to free
+  if (ier.lt.KIM_STATUS_OK) then
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_get_nbc_method", ier)
+     stop
+  endif
+  if (index(NBC_Method,"NEIGH_RVEC_H").eq.1) then
+     halfflag = .true.
+  elseif (index(NBC_Method,"NEIGH_RVEC_F").eq.1) then
+     halfflag = .false.
+  else
+     ier = KIM_STATUS_FAIL
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "Unknown NBC method", ier)
+     return
+  endif
+  call free(pNBC_Method) ! free the memory
+
   ! Initialize for minimization
   !
   Spacings(1) = MinSpacing
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
-  call NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerCutoff, (cutoff+cutpad), &
-                                              Spacings(1), N, NNeighbors,    &
-                                              neighborList, RijList)
+  if (halfflag) then
+     call NEIGH_RVEC_H_periodic_FCC_neighborlist(CellsPerCutoff, (cutoff+cutpad), &
+                                                 Spacings(1), N, NNeighbors,    &
+                                                 neighborList, RijList)
+  else
+     call NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerCutoff, (cutoff+cutpad), &
+                                                 Spacings(1), N, NNeighbors,    &
+                                                 neighborList, RijList)
+  endif
   ier = kim_api_model_compute_f(pkim)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
@@ -73,9 +101,15 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   ! setup and compute for max spacing
   Spacings(3) = MaxSpacing
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
-  call NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerCutoff, (cutoff+cutpad), &
-                                              Spacings(3), N, NNeighbors,    &
-                                              neighborList, RijList)
+  if (halfflag) then
+     call NEIGH_RVEC_H_periodic_FCC_neighborlist(CellsPerCutoff, (cutoff+cutpad), &
+                                                 Spacings(3), N, NNeighbors,    &
+                                                 neighborList, RijList)
+  else
+     call NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerCutoff, (cutoff+cutpad), &
+                                                 Spacings(3), N, NNeighbors,    &
+                                                 neighborList, RijList)
+  endif
   ! Call model compute
   ier = kim_api_model_compute_f(pkim)
   if (ier.lt.KIM_STATUS_OK) then
@@ -90,9 +124,15 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   ! setup and compute for first intermediate spacing
   Spacings(2) = MinSpacing + (2.0 - Golden)*(MaxSpacing - MinSpacing)
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
-  call NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerCutoff, (cutoff+cutpad), &
-                                              Spacings(2), N, NNeighbors,    &
-                                              neighborList, RijList)
+  if (halfflag) then
+     call NEIGH_RVEC_H_periodic_FCC_neighborlist(CellsPerCutoff, (cutoff+cutpad), &
+                                                 Spacings(2), N, NNeighbors,    &
+                                                 neighborList, RijList)
+  else
+     call NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerCutoff, (cutoff+cutpad), &
+                                                 Spacings(2), N, NNeighbors,    &
+                                                 neighborList, RijList)
+  endif
   ! Call model compute
   ier = kim_api_model_compute_f(pkim)
   if (ier.lt.KIM_STATUS_OK) then
@@ -111,9 +151,15 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
      ! set new spacing
      Spacings(4) = (Spacings(1) + Spacings(3)) - Spacings(2)
      ! compute new neighbor lists (could be done more intelligently, I'm sure)
-     call NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerCutoff, (cutoff+cutpad), &
-                                                 Spacings(4), N, NNeighbors,    &
-                                                 neighborList, RijList)
+     if (halfflag) then
+        call NEIGH_RVEC_H_periodic_FCC_neighborlist(CellsPerCutoff, (cutoff+cutpad), &
+                                                    Spacings(4), N, NNeighbors,    &
+                                                    neighborList, RijList)
+     else
+        call NEIGH_RVEC_F_periodic_FCC_neighborlist(CellsPerCutoff, (cutoff+cutpad), &
+                                                    Spacings(4), N, NNeighbors,    &
+                                                    neighborList, RijList)
+     endif
      ! Call model compute
      ier = kim_api_model_compute_f(pkim)
      if (ier.lt.KIM_STATUS_OK) then

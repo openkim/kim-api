@@ -233,6 +233,7 @@ ex_test_ArNe_B2cohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                         
                                     program_B2cohesive_NEIGH_RVEC.f.frag         \
                                     setup_B2_KIM_API_object.f.frag               \
                                     setup_neighborlist_Rij_KIM_access.f.frag     \
+                                    NEIGH_RVEC_H_periodic_B2_neighborlist.f.frag \
                                     NEIGH_RVEC_F_periodic_B2_neighborlist.f.frag \
                                     get_neigh_Rij.f.frag                         \
                                     free_KIM_API_object.f.frag
@@ -251,12 +252,16 @@ ex_test_ArNe_B2cohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                         
          | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    18\nNe                      spec                    10/g' \
                                                                                                               >  $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "NEIGH_RVEC_H                flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "NEIGH_RVEC_F                flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	$(D_CAT) descriptor_file_neighborlist                                                                 >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "numberContributingParticles integer      none                []"                                >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
@@ -275,6 +280,8 @@ ex_test_ArNe_B2cohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                         
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
 	$(F_CAT) free_KIM_API_object.f.frag                                                                   >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
+	$(F_CAT) NEIGH_RVEC_H_periodic_B2_neighborlist.f.frag                                                 >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
 	$(F_CAT) NEIGH_RVEC_F_periodic_B2_neighborlist.f.frag                                                 >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
 	$(F_CAT) get_neigh_Rij.f.frag                                                                         >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
@@ -286,6 +293,7 @@ ex_test_Ar_FCCcohesiveCutoff_NEIGH_RVEC: $(COMMON_FRAGMENTS)                    
                                          NEIGH_RVEC_compute_equilibrium_spacing.f.frag \
                                          setup_KIM_API_object.f.frag                   \
                                          setup_neighborlist_Rij_KIM_access.f.frag      \
+                                         NEIGH_RVEC_H_periodic_FCC_neighborlist.f.frag \
                                          NEIGH_RVEC_F_periodic_FCC_neighborlist.f.frag \
                                          get_neigh_Rij.f.frag                          \
                                          free_KIM_API_object.f.frag
@@ -302,12 +310,16 @@ ex_test_Ar_FCCcohesiveCutoff_NEIGH_RVEC: $(COMMON_FRAGMENTS)                    
 	$(D_CAT) descriptor_file_start    | $(SED_CMD) \
          | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    18/g'               >  $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "NEIGH_RVEC_H                flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "NEIGH_RVEC_F                flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	$(D_CAT) descriptor_file_neighborlist                                                                 >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "numberContributingParticles integer      none                []"                                >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
@@ -326,6 +338,8 @@ ex_test_Ar_FCCcohesiveCutoff_NEIGH_RVEC: $(COMMON_FRAGMENTS)                    
 	$(F_CAT) setup_neighborlist_Rij_KIM_access.f.frag                                                     >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
 	$(F_CAT) free_KIM_API_object.f.frag                                                                   >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
+	$(F_CAT) NEIGH_RVEC_H_periodic_FCC_neighborlist.f.frag                                                >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
 	$(F_CAT) NEIGH_RVEC_F_periodic_FCC_neighborlist.f.frag                                                >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
@@ -456,6 +470,7 @@ ex_test_Ar_FCCcohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                          
                                    NEIGH_RVEC_compute_equilibrium_spacing.f.frag \
                                    setup_KIM_API_object.f.frag                   \
                                    setup_neighborlist_Rij_KIM_access.f.frag      \
+                                   NEIGH_RVEC_H_periodic_FCC_neighborlist.f.frag \
                                    NEIGH_RVEC_F_periodic_FCC_neighborlist.f.frag \
                                    get_neigh_Rij.f.frag                          \
                                    free_KIM_API_object.f.frag
@@ -472,12 +487,16 @@ ex_test_Ar_FCCcohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                          
 	$(D_CAT) descriptor_file_start    | $(SED_CMD) \
          | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    18/g'               >  $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "NEIGH_RVEC_H                flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "NEIGH_RVEC_F                flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	$(D_CAT) descriptor_file_neighborlist                                                                 >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "numberContributingParticles integer      none                []"                                >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
@@ -496,6 +515,8 @@ ex_test_Ar_FCCcohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                          
 	$(F_CAT) setup_neighborlist_Rij_KIM_access.f.frag                                                     >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
 	$(F_CAT) free_KIM_API_object.f.frag                                                                   >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
+	$(F_CAT) NEIGH_RVEC_H_periodic_FCC_neighborlist.f.frag                                                >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
 	$(F_CAT) NEIGH_RVEC_F_periodic_FCC_neighborlist.f.frag                                                >> $(KIM_EX_TESTS_DIR)/$@/$@.F90
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F90

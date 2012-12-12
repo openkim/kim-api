@@ -62,8 +62,8 @@ ex_test_Ar_FCCcohesive_MI_OPBC             F90       MI_OPBC_H       Locator    
 ex_test_Ar_FCCcohesive_NEIGH_PURE          F90       NEIGH_PURE_H    Locator    Half
                                                      NEIGH_PURE_F    Iterator   Full
 
-ex_test_Ar_FCCcohesive_NEIGH_RVEC          F90       NEIGH_RVEC_F    Locator    Full
-                                                                     Iterator
+ex_test_Ar_FCCcohesive_NEIGH_RVEC          F90       NEIGH_RVEC_H    Locator    Full
+                                                     NEIGH_RVEC_F    Iterator
 
 ex_test_Ar_free_cluster                    F90       NEIGH_RVEC_F    Locator    Full
                                                      NEIGH_PURE_H    Iterator   Half

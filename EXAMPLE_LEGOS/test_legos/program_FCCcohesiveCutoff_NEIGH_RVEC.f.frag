@@ -25,6 +25,7 @@
 !    Ryan S. Elliott
 !    Ellad B. Tadmor
 !    Valeriu Smirichinski
+!    Stephen M. Whalen
 !
 
 
@@ -37,6 +38,7 @@
 !**  function of lattice spacing.
 !**
 !**  Works with the following NBC methods:
+!**        NEIGH_RVEC_H
 !**        NEIGH_RVEC_F
 !**
 !**  Release: This file is part of the openkim-api.git repository.
@@ -66,7 +68,7 @@ program TEST_NAME_STR
   double precision,  parameter :: MinSpacing  = 0.800d0*FCCspacing
   double precision,  parameter :: MaxSpacing  = 1.200d0*FCCspacing
   integer,           parameter :: DIM         = 3
-  integer,           parameter :: SupportHalf = 0 ! False
+  integer,           parameter :: SupportHalf = 1            ! True
 
   ! significant local variables
   !
