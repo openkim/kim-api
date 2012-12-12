@@ -25,6 +25,7 @@
 #    Ryan S. Elliott
 #    Ellad B. Tadmor
 #    Valeriu Smirichinski
+#    Stephen M. Whalen
 #
 
 #######################################################################################################
@@ -65,6 +66,8 @@ Neigh_LocaAccess            flag
 NEIGH_PURE_H                flag
 
 NEIGH_PURE_F                flag
+
+NEIGH_RVEC_H                flag
 
 NEIGH_RVEC_F                flag
 

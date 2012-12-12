@@ -52,6 +52,7 @@ ex_model_ArNe_P_MLJ_NEIGH_RVEC_F   F90       NEIGH_RVEC_F    Locator    Full    
 
 ex_model_Ar_P_LJ                   F90       NEIGH_PURE_H    Iterator   Full        YES
  - based on model_driver_P_LJ                NEIGH_PURE_F    Locator    Half
+                                             NEIGH_RVEC_H
                                              NEIGH_RVEC_F
                                              MI_OPBC_H
                                              MI_OPBC_F
@@ -106,6 +107,7 @@ ex_model_Ne_P_fastLJ               C         NEIGH_PURE_H    Iterator   Full    
 
 ex_model_Ne_P_LJ                   F90       NEIGH_PURE_H    Iterator   Full        YES
  - based on model_driver_P_LJ                NEIGH_PURE_F    Locator    Half
+                                             NEIGH_RVEC_H
                                              NEIGH_RVEC_F
                                              MI_OPBC_H
                                              MI_OPBC_F

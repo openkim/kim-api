@@ -25,6 +25,7 @@
 !    Ryan S. Elliott
 !    Ellad B. Tadmor
 !    Valeriu Smirichinski
+!    Stephen M. Whalen
 !
 
 !****************************************************************************
@@ -416,7 +417,7 @@ do
 
       ! compute relative position vector
       !
-      if (NBC.ne.3) then                          ! all methods except NEIGH_RVEC_F
+      if (NBC.ne.3) then                          ! all methods except NEIGH_RVEC
          Rij(:) = coor(:,j) - coor(:,i)           ! distance vector between i j
       else
          Rij(:) = Rij_list(:,jj)
@@ -833,6 +834,9 @@ elseif (index(NBC_Method,"NEIGH_PURE_H").eq.1) then
 elseif (index(NBC_Method,"NEIGH_PURE_F").eq.1) then
    bufind(1) = 2
    bufind(2) = 2
+elseif (index(NBC_Method,"NEIGH_RVEC_H").eq.1) then
+   bufind(1) = 3
+   bufind(2) = 1
 elseif (index(NBC_Method,"NEIGH_RVEC_F").eq.1) then
    bufind(1) = 3
    bufind(2) = 2
