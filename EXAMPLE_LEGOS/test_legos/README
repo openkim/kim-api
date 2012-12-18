@@ -57,25 +57,25 @@ NEIGH_PURE_periodic_neighborlist.f.frag
      This Fortran file contains the routine for creating neighbor lists for use
      with the NEIGH-PURE method for periodic systems.
 
-NEIGH_RVEC_F_cluster_neighborlist.f.frag
+NEIGH_RVEC_cluster_neighborlist.f.frag
      This Fortran file contains the routine for creating neighbor lists for use
-     with the NEIGH-RVEC method for free cluster systems.
+     with the NEIGH_RVEC methods for free cluster systems.
 
-NEIGH_RVEC_F_periodic_B2_neighborlist.f.frag
+NEIGH_RVEC_periodic_B2_neighborlist.f.frag
      This Fortran file contains the routine for creating neighbor lists for use
-     with the NEIGH-RVEC method for periodic B2 systems.
+     with the NEIGH_RVEC methods for periodic B2 systems.
 
-NEIGH_RVEC_F_periodic_FCC_neighborlist.f.frag
+NEIGH_RVEC_periodic_FCC_neighborlist.f.frag
      This Fortran file contains the routine for creating neighbor lists for use
-     with the NEIGH-RVEC method for periodic FCC systems.
+     with the NEIGH_RVEC methods for periodic FCC systems.
 
-NEIGH_RVEC_F_update_Rij_vectors.f.frag
+NEIGH_RVEC_update_Rij_vectors.f.frag
      This Fortran file contains the routine for updating the relative position
      vectors in the neighbor list.
 
 NEIGH_RVEC_compute_equilibrium_spacing.f.frag
      This Fortran file contains the routine for computing the equilibrium
-     spacing of an FCC crystal for use with the NEIGH-RVEC method using the
+     spacing of an FCC crystal for use with the NEIGH_RVEC methods using the
      golden search algorithm.
 
 README

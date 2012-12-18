@@ -25,6 +25,7 @@
 !    Ryan S. Elliott
 !    Ellad B. Tadmor
 !    Valeriu Smirichinski
+!    Stephen M. Whalen
 !
 
 
@@ -36,11 +37,13 @@
 !**  isolated cluster of SPECIES_NAME_STR atoms
 !**
 !**  Works with the following NBC methods:
+!**        NEIGH_RVEC_H
+!**        NEIGH_PURE_H
+!**        NEIGH_RVEC_F
+!**        NEIGH_PURE_F
 !**        MI_OPBC_H
 !**        MI_OPBC_F
-!**        NEIGH_PURE_H
-!**        NEIGH_PURE_F
-!**        NEIGH_RVEC_F
+!**        CLUSTER
 !**
 !**  Release: This file is part of the openkim-api.git repository.
 !**
@@ -81,8 +84,8 @@ program TEST_NAME_STR
   character*80              :: testname     = "TEST_NAME_STR"
   character*80              :: modelname
   character*64 :: NBC_Method; pointer(pNBC_Method,NBC_Method)
-  integer nbc  ! 0- MI_OPBC_H,    1- MI_OPBC_F, 2- NEIGH_PURE_H, 3- NEIGH_PURE_F,
-               ! 4- NEIGH-RVCE-F, 5- CLUSTER
+  integer nbc  ! 0- NEIGH_RVEC_H, 1- NEIGH_PURE_H, 2- NEIGH_RVEC_F, 3- NEIGH_PURE_F,
+               ! 4- MI_OPBC_H,    5- MI_OPBC_F,    6- CLUSTER
   integer(kind=kim_intptr)  :: pkim
   integer                   :: ier, idum
   integer numberOfParticles;   pointer(pnAtoms,numberOfParticles)
@@ -121,18 +124,20 @@ program TEST_NAME_STR
                                    "kim_api_get_nbc_method", ier)
      stop
   endif
-  if (index(NBC_Method,"MI_OPBC_H").eq.1) then
+  if (index(NBC_Method,"NEIGH_RVEC_H").eq.1) then
      nbc = 0
-  elseif (index(NBC_Method,"MI_OPBC_F").eq.1) then
-     nbc = 1
   elseif (index(NBC_Method,"NEIGH_PURE_H").eq.1) then
+     nbc = 1
+  elseif (index(NBC_Method,"NEIGH_RVEC_F").eq.1) then
      nbc = 2
   elseif (index(NBC_Method,"NEIGH_PURE_F").eq.1) then
      nbc = 3
-  elseif (index(NBC_Method,"NEIGH_RVEC_F").eq.1) then
+  elseif (index(NBC_Method,"MI_OPBC_H").eq.1) then
      nbc = 4
-  elseif (index(NBC_Method,"CLUSTER").eq.1) then
+  elseif (index(NBC_Method,"MI_OPBC_F").eq.1) then
      nbc = 5
+  elseif (index(NBC_Method,"CLUSTER").eq.1) then
+     nbc = 6
   else
      ier = KIM_STATUS_FAIL
      idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
@@ -149,19 +154,19 @@ program TEST_NAME_STR
   endif
 
   ! Allocate and store pointers to neighbor list object and access function
-  if (nbc.ne.5) allocate(neighborList(N+1, N))
-  if (nbc.eq.4) then
+  if (nbc.lt.6) allocate(neighborList(N+1, N))
+  if (nbc.eq.0 .or. nbc.eq.2) then
      allocate(RijList(DIM,N+1, N))
   endif
   !
-  if (nbc.le.3) then
+  if (nbc.eq.1 .or. nbc.eq.3 .or. nbc.eq.4 .or. nbc.eq.5) then
      ier = kim_api_set_data_f(pkim, "neighObject", SizeOne, loc(neighborList))
      if (ier.lt.KIM_STATUS_OK) then
         idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
                                       "kim_api_set_data_f", ier)
         stop
      endif
-  elseif (nbc.eq.4) then ! NEIGH_RVEC_F
+  elseif (nbc.eq.0 .or. nbc.eq.2) then ! NEIGH_RVEC
      allocate(NLRvecLocs(3))
      NLRvecLocs(1) = loc(neighborList)
      NLRvecLocs(2) = loc(RijList)
@@ -177,7 +182,7 @@ program TEST_NAME_STR
   endif
 
   if (nbc.eq.0) then
-     ier = kim_api_set_data_f(pkim, "get_neigh", SizeOne, loc(get_neigh_no_Rij))
+     ier = kim_api_set_data_f(pkim, "get_neigh", SizeOne, loc(get_neigh_Rij))
      if (ier.lt.KIM_STATUS_OK) then
         idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
                                       "kim_api_set_data_f", ier)
@@ -191,7 +196,7 @@ program TEST_NAME_STR
         stop
      endif
   elseif (nbc.eq.2) then
-     ier = kim_api_set_data_f(pkim, "get_neigh", SizeOne, loc(get_neigh_no_Rij))
+     ier = kim_api_set_data_f(pkim, "get_neigh", SizeOne, loc(get_neigh_Rij))
      if (ier.lt.KIM_STATUS_OK) then
         idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
                                       "kim_api_set_data_f", ier)
@@ -205,7 +210,14 @@ program TEST_NAME_STR
         stop
      endif
   elseif (nbc.eq.4) then
-     ier = kim_api_set_data_f(pkim, "get_neigh", SizeOne, loc(get_neigh_Rij))
+     ier = kim_api_set_data_f(pkim, "get_neigh", SizeOne, loc(get_neigh_no_Rij))
+     if (ier.lt.KIM_STATUS_OK) then
+        idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                      "kim_api_set_data_f", ier)
+        stop
+     endif
+  elseif (nbc.eq.5) then
+     ier = kim_api_set_data_f(pkim, "get_neigh", SizeOne, loc(get_neigh_no_Rij))
      if (ier.lt.KIM_STATUS_OK) then
         idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
                                       "kim_api_set_data_f", ier)
@@ -228,12 +240,12 @@ program TEST_NAME_STR
   !
   call kim_api_getm_data_f(pkim, ier, &
        "numberOfParticles",           pnAtoms,          1,                                   &
-       "numberContributingParticles", pnumContrib,      TRUEFALSE((nbc.eq.0).or.(nbc.eq.2)), &
+       "numberContributingParticles", pnumContrib,      TRUEFALSE((nbc.eq.0).or.(nbc.eq.1).or.(nbc.eq.4)), &
        "numberParticleTypes",         pnparticleTypes,  1,                                   &
        "particleTypes",               pparticleTypesdum,1,                                   &
        "coordinates",                 pcoor,            1,                                   &
        "cutoff",                      pcutoff,          1,                                   &
-       "boxSideLengths",              pboxSideLengths,  TRUEFALSE(nbc.le.1),                 &
+       "boxSideLengths",              pboxSideLengths,  TRUEFALSE((nbc.eq.4).or.(nbc.eq.5)), &
        "energy",                      penergy,          1,                                   &
        "virial",                      pvirialglob,      1,                                   &
        "forces",                      pforces,          1)
@@ -250,7 +262,7 @@ program TEST_NAME_STR
 
   ! Set values
   numberOfParticles = N
-  if ((nbc.eq.0).or.(nbc.eq.2)) numContrib = N
+  if ((nbc.eq.0).or.(nbc.eq.1).or.(nbc.eq.4)) numContrib = N
   numberParticleTypes = ATypes
   particleTypes(:)    = kim_api_get_partcl_type_code_f(pkim, "SPECIES_NAME_STR", ier)
   if (ier.lt.KIM_STATUS_OK) then
@@ -261,19 +273,21 @@ program TEST_NAME_STR
 
   ! set up the cluster atom positions
   call create_FCC_configuration(FCCspacing, nCellsPerSide, .false., coords, middleDum)
-  if (nbc.le.1) boxSideLengths(:)  = 600.d0 ! large enough to make the cluster isolated
+  if (nbc.eq.4 .or. nbc.eq.5) boxSideLengths(:) = 600.d0 ! large enough to make the cluster isolated
 
   ! compute neighbor lists
   if (nbc.eq.0) then
-     call MI_OPBC_cluster_neighborlist(.true., N, coords, (cutoff+cutpad), boxSideLengths, neighborList)
+     call NEIGH_RVEC_cluster_neighborlist(.true., N, coords, (cutoff+cutpad), N, neighborList, RijList)
   elseif (nbc.eq.1) then
-     call MI_OPBC_cluster_neighborlist(.false., N, coords, (cutoff+cutpad), boxSideLengths, neighborList)
-  elseif (nbc.eq.2) then
      call NEIGH_PURE_cluster_neighborlist(.true., N, coords, (cutoff+cutpad), neighborList)
+  elseif (nbc.eq.2) then
+     call NEIGH_RVEC_cluster_neighborlist(.false., N, coords, (cutoff+cutpad), N, neighborList, RijList)
   elseif (nbc.eq.3) then
      call NEIGH_PURE_cluster_neighborlist(.false., N, coords, (cutoff+cutpad), neighborList)
   elseif (nbc.eq.4) then
-     call NEIGH_RVEC_F_cluster_neighborlist(N, coords, (cutoff+cutpad), N, neighborList, RijList)
+     call MI_OPBC_cluster_neighborlist(.true., N, coords, (cutoff+cutpad), boxSideLengths, neighborList)
+  elseif (nbc.eq.5) then
+     call MI_OPBC_cluster_neighborlist(.false., N, coords, (cutoff+cutpad), boxSideLengths, neighborList)
   else
      ! nothing to do for CLUSTER
   endif
@@ -304,8 +318,8 @@ program TEST_NAME_STR
 
   ! Don't forget to free and/or deallocate
   call free(pNBC_Method)
-  if (nbc.ne.5) deallocate(neighborList)
-  if (nbc.eq.4) then
+  if (nbc.lt.6) deallocate(neighborList)
+  if (nbc.eq.0 .or. nbc.eq.2) then
      deallocate(NLRvecLocs)
      deallocate(RijList)
   endif

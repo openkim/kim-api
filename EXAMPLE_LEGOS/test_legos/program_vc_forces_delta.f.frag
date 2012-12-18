@@ -24,6 +24,7 @@
 ! Contributors:
 !    Ellad B. Tadmor
 !    Toon Verstraelen
+!    Stephen M. Whalen
 !
 
 
@@ -34,12 +35,13 @@
 !**  KIM compliant program to perform numerical derivative check on a model
 !**
 !**  Works with the following NBC methods:
-!**        CLUSTER
+!**        NEIGH_RVEC_H
+!**        NEIGH_PURE_H
+!**        NEIGH_RVEC_F
+!**        NEIGH_PURE_F
 !**        MI_OPBC_H
 !**        MI_OPBC_F
-!**        NEIGH_PURE_H
-!**        NEIGH_PURE_F
-!**        NEIGH_RVEC_F
+!**        CLUSTER
 !**
 !**  Release: This file is part of the openkim-api.git package.
 !**
@@ -103,7 +105,8 @@ program vc_forces_delta
   character*80              :: testname     = "vc_forces_delta"
   character*80              :: modelname
   character(len=KIM_KEY_STRING_LENGTH) :: NBC_Method; pointer(pNBC_Method,NBC_Method)
-  integer nbc  ! 0- MI_OPBC_H, 1- MI_OPBC_F, 2- NEIGH_PURE_H, 3- NEIGH_PURE_F, 4- NEIGH-RVCE-F, 5- CLUSTER
+  integer nbc  ! 0- NEIGH_RVEC_H, 1- NEIGH_PURE_H, 2- NEIGH_RVEC_F, 3- NEIGH_PURE_F,
+               ! 4- MI_OPBC_H,    5- MI_OPBC_F,    6- CLUSTER
   integer(kind=kim_intptr)  :: pkim
   integer                   :: ier, idum, inbc
   integer numberOfParticles;   pointer(pnAtoms,numberOfParticles)
@@ -219,18 +222,20 @@ program vc_forces_delta
 
      ! Set NBC code based on selected NBC method
      !
-     if (index(NBC_Method,"MI_OPBC_H").eq.1) then
+     if (index(NBC_Method,"NEIGH_RVEC_H").eq.1) then
         nbc = 0
-     elseif (index(NBC_Method,"MI_OPBC_F").eq.1) then
-        nbc = 1
      elseif (index(NBC_Method,"NEIGH_PURE_H").eq.1) then
+        nbc = 1
+     elseif (index(NBC_Method,"NEIGH_RVEC_F").eq.1) then
         nbc = 2
      elseif (index(NBC_Method,"NEIGH_PURE_F").eq.1) then
         nbc = 3
-     elseif (index(NBC_Method,"NEIGH_RVEC_F").eq.1) then
+     elseif (index(NBC_Method,"MI_OPBC_H").eq.1) then
         nbc = 4
-     elseif (index(NBC_Method,"CLUSTER").eq.1) then
+     elseif (index(NBC_Method,"MI_OPBC_F").eq.1) then
         nbc = 5
+     elseif (index(NBC_Method,"CLUSTER").eq.1) then
+        nbc = 6
      else
         ier = KIM_STATUS_FAIL
         idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
@@ -250,21 +255,21 @@ program vc_forces_delta
      ! Allocate storage for neighbor lists and
      ! store pointers to neighbor list object and access function
      !
-     if (nbc.le.4) then
+     if (nbc.le.5) then
         allocate(neighborList(N+1,N))
-        if (nbc.le.3) then
-           ier = kim_api_set_data_f(pkim, "neighObject", SizeOne, loc(neighborList))
+        if (nbc.eq.0.or.nbc.eq.2) then
+           allocate(RijList(DIM,N+1,N), NLRvecLocs(3))
+           NLRvecLocs(1) = loc(neighborList)
+           NLRvecLocs(2) = loc(RijList)
+           NLRvecLocs(3) = N
+           ier = kim_api_set_data_f(pkim, "neighObject", SizeOne, loc(NLRvecLocs))
            if (ier.lt.KIM_STATUS_OK) then
               idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
                                             "kim_api_set_data_f", ier)
               stop
            endif
         else
-           allocate(RijList(DIM,N+1,N), NLRvecLocs(3))
-           NLRvecLocs(1) = loc(neighborList)
-           NLRvecLocs(2) = loc(RijList)
-           NLRvecLocs(3) = N
-           ier = kim_api_set_data_f(pkim, "neighObject", SizeOne, loc(NLRvecLocs))
+           ier = kim_api_set_data_f(pkim, "neighObject", SizeOne, loc(neighborList))
            if (ier.lt.KIM_STATUS_OK) then
               idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
                                             "kim_api_set_data_f", ier)
@@ -276,13 +281,13 @@ program vc_forces_delta
      ! Set pointer in KIM object to neighbor list routine
      !
      if (nbc.eq.0) then
-        ier = kim_api_set_data_f(pkim, "get_neigh", SizeOne, loc(get_neigh_no_Rij))
+        ier = kim_api_set_data_f(pkim, "get_neigh", SizeOne, loc(get_neigh_Rij))
         if (ier.lt.KIM_STATUS_OK) then
            idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
                                          "kim_api_set_data_f", ier)
            stop
         endif
-        elseif (nbc.eq.1) then
+     elseif (nbc.eq.1) then
         ier = kim_api_set_data_f(pkim, "get_neigh", SizeOne, loc(get_neigh_no_Rij))
         if (ier.lt.KIM_STATUS_OK) then
            idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
@@ -290,7 +295,7 @@ program vc_forces_delta
            stop
         endif
      elseif (nbc.eq.2) then
-        ier = kim_api_set_data_f(pkim, "get_neigh", SizeOne, loc(get_neigh_no_Rij))
+        ier = kim_api_set_data_f(pkim, "get_neigh", SizeOne, loc(get_neigh_Rij))
         if (ier.lt.KIM_STATUS_OK) then
            idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
                                          "kim_api_set_data_f", ier)
@@ -304,7 +309,14 @@ program vc_forces_delta
            stop
         endif
      elseif (nbc.eq.4) then
-        ier = kim_api_set_data_f(pkim, "get_neigh", SizeOne, loc(get_neigh_Rij))
+        ier = kim_api_set_data_f(pkim, "get_neigh", SizeOne, loc(get_neigh_no_Rij))
+        if (ier.lt.KIM_STATUS_OK) then
+           idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                         "kim_api_set_data_f", ier)
+           stop
+        endif
+     elseif (nbc.eq.5) then
+        ier = kim_api_set_data_f(pkim, "get_neigh", SizeOne, loc(get_neigh_no_Rij))
         if (ier.lt.KIM_STATUS_OK) then
            idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
                                          "kim_api_set_data_f", ier)
@@ -324,14 +336,14 @@ program vc_forces_delta
      ! Unpack data from KIM object
      !
      call kim_api_getm_data_f(pkim, ier, &
-          "numberOfParticles",           pnAtoms,           1,                    &
-          "numberContributingParticles", pnumContrib,       TRUEFALSE(nbc.eq.0.or.nbc.eq.2),  &
-          "numberParticleTypes",         pnparticleTypes,   1,                    &
-          "particleTypes",               pparticleTypesdum, 1,                    &
-          "coordinates",                 pcoor,             1,                    &
-          "cutoff",                      pcutoff,           1,                    &
-          "boxSideLengths",              pboxSideLengths,   TRUEFALSE(nbc.le.1),  &
-          "energy",                      penergy,           1,                    &
+          "numberOfParticles",           pnAtoms,           1,                               &
+          "numberContributingParticles", pnumContrib,       TRUEFALSE(nbc.eq.0.or.nbc.eq.1.or.nbc.eq.4), &
+          "numberParticleTypes",         pnparticleTypes,   1,                               &
+          "particleTypes",               pparticleTypesdum, 1,                               &
+          "coordinates",                 pcoor,             1,                               &
+          "cutoff",                      pcutoff,           1,                               &
+          "boxSideLengths",              pboxSideLengths,   TRUEFALSE(nbc.eq.4.or.nbc.eq.5), &
+          "energy",                      penergy,           1,                               &
           "forces",                      pforces,           1)
      if (ier.lt.KIM_STATUS_OK) then
         idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
@@ -356,7 +368,7 @@ program vc_forces_delta
      ! Set values in KIM object
      !
      numberOfParticles   = N
-     if (nbc.eq.0.or.nbc.eq.2) numContrib = N
+     if (nbc.eq.0.or.nbc.eq.1.or.nbc.eq.4) numContrib = N
      numberParticleTypes = num_types
      do i=1,N
         particleTypes(i) = kim_api_get_partcl_type_code_f(pkim,trim(cluster_types(i)),ier)
@@ -369,7 +381,7 @@ program vc_forces_delta
      do i=1,N
         coords(:,i) = cluster_coords(:,i) + cluster_disps(:,i)
      enddo
-     if (nbc.le.1) boxSideLengths(:)  = 600.d0 ! large enough to make the cluster isolated
+     if (nbc.eq.4.or.nbc.eq.5) boxSideLengths(:) = 600.d0 ! large enough to make the cluster isolated
 
 
      do_update_list = .true.
@@ -378,7 +390,7 @@ program vc_forces_delta
      do idisp=1,ndisp
         ! Compute neighbor lists
         !
-        if (nbc.le.4) then
+        if (nbc.le.5) then
            call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
                                     do_update_list,coordsave,neighborList,RijList,ier)
            if (ier.lt.KIM_STATUS_OK) then
@@ -416,7 +428,7 @@ program vc_forces_delta
 
         ! Call model compute again to get forces (gradient)
         !
-        if (nbc.le.4) then
+        if (nbc.le.5) then
            call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
                                     do_update_list,coordsave,neighborList,RijList,ier)
            if (ier.lt.KIM_STATUS_OK) then
@@ -474,9 +486,9 @@ program vc_forces_delta
      call free(pNBC_Method)
      deallocate(forces_old)
      deallocate(coordsave)
-     if (nbc.le.4) then ! deallocate neighbor list storage
+     if (nbc.le.5) then ! deallocate neighbor list storage
         deallocate(neighborList)
-        if (nbc.eq.4) then
+        if (nbc.eq.0.or.nbc.eq.2) then
            deallocate(NLRvecLocs)
            deallocate(RijList)
         endif

@@ -118,7 +118,7 @@ int main()
    char modelname1[NAMESTRLEN];
 
    /* Get KIM Model names */
-   printf("Please eneter two valid KIM Model names: \n");
+   printf("Please enter two valid KIM Model names: \n");
    scanf("%s %s", modelname0, modelname1);
 
    /* initialize the two models */

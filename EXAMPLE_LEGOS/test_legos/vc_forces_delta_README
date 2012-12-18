@@ -56,12 +56,13 @@ Notes:
 
 4. The code supports the following NBCs:
 
-        CLUSTER
+        NEIGH_RVEC_H
+        NEIGH_PURE_H
+        NEIGH_RVEC_F
+        NEIGH_PURE_F
         MI_OPBC_H
         MI_OPBC_F
-        NEIGH_PURE_H
-        NEIGH_PURE_F
-        NEIGH_RVEC_F
+        CLUSTER
 
    The code runs in sequence over all NBCs supported by the Model (from the
    above list).

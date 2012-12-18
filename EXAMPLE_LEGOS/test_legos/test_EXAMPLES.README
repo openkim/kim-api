@@ -43,18 +43,19 @@ Test name                                  Language  NBC             Loca/Iter  
 ex_test_Al_FCCcohesive_MI_OPBC             F90       MI_OPBC_H       Locator    Half
                                                      MI_OPBC_F       Iterator   Full
 
-ex_test_Al_free_cluster                    F90       NEIGH_RVEC_F    Locator    Full
+ex_test_Al_free_cluster                    F90       NEIGH_RVEC_H    Locator    Full
                                                      NEIGH_PURE_H    Iterator   Half
+                                                     NEIGH_RVEC_F
                                                      NEIGH_PURE_F
                                                      MI_OPBC_H
                                                      MI_OPBC_F
                                                      CLUSTER
 
-ex_test_ArNe_periodic_B2_NEIGH_RVEC        F90       NEIGH_RVEC_F    Locator    Full
-                                                                     Iterator
+ex_test_ArNe_periodic_B2_NEIGH_RVEC        F90       NEIGH_RVEC_H    Locator    Full
+                                                     NEIGH_RVEC_F    Iterator
 
-ex_test_Ar_FCCcohesiveCutoff_NEIGH_RVEC    F90       NEIGH_RVEC_F    Locator    Full
-                                                                     Iterator
+ex_test_Ar_FCCcohesiveCutoff_NEIGH_RVEC    F90       NEIGH_RVEC_H    Locator    Full
+                                                     NEIGH_RVEC_F    Iterator
 
 ex_test_Ar_FCCcohesive_MI_OPBC             F90       MI_OPBC_H       Locator    Half
                                                      MI_OPBC_F       Iterator   Full
@@ -65,8 +66,9 @@ ex_test_Ar_FCCcohesive_NEIGH_PURE          F90       NEIGH_PURE_H    Locator    
 ex_test_Ar_FCCcohesive_NEIGH_RVEC          F90       NEIGH_RVEC_H    Locator    Full
                                                      NEIGH_RVEC_F    Iterator
 
-ex_test_Ar_free_cluster                    F90       NEIGH_RVEC_F    Locator    Full
+ex_test_Ar_free_cluster                    F90       NEIGH_RVEC_H    Locator    Full
                                                      NEIGH_PURE_H    Iterator   Half
+                                                     NEIGH_RVEC_F
                                                      NEIGH_PURE_F
                                                      MI_OPBC_H
                                                      MI_OPBC_F
@@ -78,32 +80,36 @@ ex_test_Ar_free_cluster_CLUSTER_F90        F90       CLUSTER         N/A        
 
 ex_test_Ar_free_cluster_CLUSTER_memory_F90 F90       CLUSTER         N/A        N/A
 
-ex_test_Ar_multiple_models                 C         NEIGH_RVEC_F    Locator    Full
-                                                                     Iterator
+ex_test_Ar_multiple_models                 C         NEIGH_RVEC_H    Locator    Full
+                                                     NEIGH_RVEC_F    Iterator
 
-ex_test_Cu_free_cluster                    F90       NEIGH_RVEC_F    Locator    Full
+ex_test_Cu_free_cluster                    F90       NEIGH_RVEC_H    Locator    Full
                                                      NEIGH_PURE_H    Iterator   Half
+                                                     NEIGH_RVEC_F
                                                      NEIGH_PURE_F
                                                      MI_OPBC_H
                                                      MI_OPBC_F
                                                      CLUSTER
 
-ex_test_Ne_free_cluster                    F90       NEIGH_RVEC_F    Locator    Full
+ex_test_Ne_free_cluster                    F90       NEIGH_RVEC_H    Locator    Full
                                                      NEIGH_PURE_H    Iterator   Half
+                                                     NEIGH_RVEC_F
                                                      NEIGH_PURE_F
                                                      MI_OPBC_H
                                                      MI_OPBC_F
                                                      CLUSTER
 
-ex_test_Ne_free_cluster_SI                 F90       NEIGH_RVEC_F    Locator    Full
+ex_test_Ne_free_cluster_SI                 F90       NEIGH_RVEC_H    Locator    Full
                                                      NEIGH_PURE_H    Iterator   Half
+                                                     NEIGH_RVEC_F
                                                      NEIGH_PURE_F
                                                      MI_OPBC_H
                                                      MI_OPBC_F
                                                      CLUSTER
 
-ex_test_Ne_free_cluster_stiff              F90       NEIGH_RVEC_F    Locator    Full
+ex_test_Ne_free_cluster_stiff              F90       NEIGH_RVEC_H    Locator    Full
                                                      NEIGH_PURE_H    Iterator   Half
+                                                     NEIGH_RVEC_F
                                                      NEIGH_PURE_F
                                                      MI_OPBC_H
                                                      MI_OPBC_F
@@ -333,36 +339,36 @@ ex_test_Ar_FCCcohesive_NEIGH_PURE (Fortran 90)
 
 
 ex_test_Ar_FCCcohesive_NEIGH_RVEC (Fortran 90)
-     This Test, written in Fortran 90, uses the NEIGH_RVEC_F NBC method to
-     compute the relaxed cohesive energy of an infinite perfect FCC crystal.
-     The computation method is tailored specifically to the NEIGH_RVEC_F method
-     in order to perform the computation in the most computationally efficient
-     manner.  The Test uses the Golden section search method to find the
-     relaxed FCC lattice parameter.
+     This Test, written in Fortran 90, uses the NEIGH_RVEC_H or NEIGH_RVEC_F
+     NBC method to compute the relaxed cohesive energy of an infinite perfect
+     FCC crystal.  The computation method is tailored specifically to the
+     NEIGH_RVEC_[H|F] methods in order to perform the computation in the most
+     computationally efficient manner.  The Test uses the Golden section search
+     method to find the relaxed FCC lattice parameter.
 
 
 ex_test_ArNe_B2cohesive_NEIGH_RVEC (Fortran 90)
-     This Test, written in Fortran 90, uses the NEIGH_RVEC_F NBC method to
-     compute the relaxed cohesive energy of an infinite perfect B2 (CsCl-type)
-     crystal.  The computation method is tailored specifically to the
-     NEIGH_RVEC_F method in order to perform the computation in the most
-     computationally efficient manner.  The Test uses the Golden section search
-     method to find the relaxed B2 lattice parameter.  It is useful to compare
-     this Test with the ex_test_Ar_FCCcohesive_NEIGH_RVEC Test to see the
-     changes that are required to work with multiple species.
+     This Test, written in Fortran 90, uses the NEIGH_RVEC_H or NEIGH_RVEC_F
+     NBC method to compute the relaxed cohesive energy of an infinite perfect
+     B2 (CsCl-type) crystal.  The computation method is tailored specifically
+     to the NEIGH_RVEC_[H|F] methods in order to perform the computation in the
+     most computationally efficient manner.  The Test uses the Golden section
+     search method to find the relaxed B2 lattice parameter.  It is useful to
+     compare this Test with the ex_test_Ar_FCCcohesive_NEIGH_RVEC Test to see
+     the changes that are required to work with multiple species.
 
 
 ex_test_Ar_FCCcohesiveCutoff_NEIGH_RVEC (Fortran 90)
-     This Test, written in Fortran 90, uses the NEIGH_RVEC_F NBC method to
-     compute the relaxed cohesive energy of an infinite perfect FCC crystal for
-     five different values of the Model's `cutoff' parameter.  The Test only
-     works with Models that publish a `PARAM_FREE_cutoff' parameter, and thus,
-     allow the Test to change their cutoff.  The computation method is tailored
-     specifically to the NEIGH_RVEC_F method in order to perform the
-     computation in the most computationally efficient manner.  The Test uses
-     the Golden section search method to find the relaxed FCC lattice
-     parameter.  It is useful to compare this Test with the
-     ex_test_Ar_FCCcohesive_NEIGH_RVEC Test to see the changes that are
+     This Test, written in Fortran 90, uses the NEIGH_RVEC_H or NEIGH_RVEC_F
+     NBC method to compute the relaxed cohesive energy of an infinite perfect
+     FCC crystal for five different values of the Model's `cutoff' parameter.
+     The Test only works with Models that publish a `PARAM_FREE_cutoff'
+     parameter, and thus, allow the Test to change their cutoff.  The
+     computation method is tailored specifically to the NEIGH_RVEC_[H|F]
+     methods in order to perform the computation in the most computationally
+     efficient manner.  The Test uses the Golden section search method to find
+     the relaxed FCC lattice parameter.  It is useful to compare this Test with
+     the ex_test_Ar_FCCcohesive_NEIGH_RVEC Test to see the changes that are
      required for a Test to adjust a Model's parameters.
 
 

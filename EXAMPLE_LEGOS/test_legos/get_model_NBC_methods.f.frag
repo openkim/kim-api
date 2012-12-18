@@ -30,15 +30,15 @@ if (ier.lt.KIM_STATUS_OK) return
 ! Identify supported NBCs by seeking index to each of the NBCs in the KIM model
 num_NBCs = 0
 
-! CLUSTER
-index = kim_api_get_index_f(pkim, "CLUSTER", ier)
+! NEIGH_RVEC_H
+index = kim_api_get_index_f(pkim, "NEIGH_RVEC_H", ier)
 if (index.ge.0) then
    num_NBCs = num_NBCs + 1
    if (num_NBCs>max_NBCs) then
       ier = KIM_STATUS_FAIL
       return
    endif
-   model_NBCs(num_NBCs) = "CLUSTER"
+   model_NBCs(num_NBCs) = "NEIGH_RVEC_H"
 endif
 
 ! NEIGH_PURE_H
@@ -52,28 +52,6 @@ if (index.ge.0) then
    model_NBCs(num_NBCs) = "NEIGH_PURE_H"
 endif
 
-! NEIGH_PURE_F
-index = kim_api_get_index_f(pkim, "NEIGH_PURE_F", ier)
-if (index.ge.0) then
-   num_NBCs = num_NBCs + 1
-   if (num_NBCs>max_NBCs) then
-      ier = KIM_STATUS_FAIL
-      return
-   endif
-   model_NBCs(num_NBCs) = "NEIGH_PURE_F"
-endif
-
-! NEIGH_RVEC_H
-index = kim_api_get_index_f(pkim, "NEIGH_RVEC_H", ier)
-if (index.ge.0) then
-   num_NBCs = num_NBCs + 1
-   if (num_NBCs>max_NBCs) then
-      ier = KIM_STATUS_FAIL
-      return
-   endif
-   model_NBCs(num_NBCs) = "NEIGH_RVEC_H"
-endif
-
 ! NEIGH_RVEC_F
 index = kim_api_get_index_f(pkim, "NEIGH_RVEC_F", ier)
 if (index.ge.0) then
@@ -83,6 +61,17 @@ if (index.ge.0) then
       return
    endif
    model_NBCs(num_NBCs) = "NEIGH_RVEC_F"
+endif
+
+! NEIGH_PURE_F
+index = kim_api_get_index_f(pkim, "NEIGH_PURE_F", ier)
+if (index.ge.0) then
+   num_NBCs = num_NBCs + 1
+   if (num_NBCs>max_NBCs) then
+      ier = KIM_STATUS_FAIL
+      return
+   endif
+   model_NBCs(num_NBCs) = "NEIGH_PURE_F"
 endif
 
 ! MI_OPBC_H
@@ -105,6 +94,17 @@ if (index.ge.0) then
       return
    endif
    model_NBCs(num_NBCs) = "MI_OPBC_F"
+endif
+
+! CLUSTER
+index = kim_api_get_index_f(pkim, "CLUSTER", ier)
+if (index.ge.0) then
+   num_NBCs = num_NBCs + 1
+   if (num_NBCs>max_NBCs) then
+      ier = KIM_STATUS_FAIL
+      return
+   endif
+   model_NBCs(num_NBCs) = "CLUSTER"
 endif
 
 ! free temporary storage
