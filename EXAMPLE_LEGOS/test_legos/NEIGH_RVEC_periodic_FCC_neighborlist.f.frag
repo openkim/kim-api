@@ -60,7 +60,7 @@ subroutine NEIGH_RVEC_periodic_FCC_neighborlist(half, CellsPerHalfSide, cutoff, 
            enddo
         enddo
      enddo
-     
+
      ! For i<j, atom i gets all images of atom j; atom j gets no atom i images
      do atomi = 1, N
         do atomj = atomi+1, 4

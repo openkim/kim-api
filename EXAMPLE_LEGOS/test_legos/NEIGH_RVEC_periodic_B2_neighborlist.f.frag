@@ -55,7 +55,7 @@ subroutine NEIGH_RVEC_periodic_B2_neighborlist(half,CellsPerHalfSide, cutoff,  &
         ! this atom has a-1 neighbors (so far)
         neighborList(1,atom) = a - 1
      enddo
-     
+
      ! Atom 1 gets all images of atom 2; atom 2 gets no atom 1 images
      do i = -CellsPerHalfSide, CellsPerHalfSide
         latVec(1) = i*B2spacing
