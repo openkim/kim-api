@@ -18,7 +18,8 @@ real*8,       intent(inout) :: RijList(DIM,N+1,N)
 integer,      intent(out)   :: ier
 
 !-- Local variables
-integer nbc  ! 0- MI_OPBC_H, 1- MI_OPBC_F, 2- NEIGH_PURE_H, 3- NEIGH_PURE_F, 4-  NEIGH-RVCE-F
+integer nbc  ! 0- NEIGH_RVEC_H, 1- NEIGH_PURE_H, 2- NEIGH_RVEC_F, 3- NEIGH_PURE_F, 
+             ! 4- MI_OPBC_H, 5- MI_OPBC_F 
 real*8 disp, disp1, disp2, cutrange, dispvec(DIM)
 integer i, idum
 
