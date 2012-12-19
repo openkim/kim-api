@@ -20,6 +20,7 @@ subroutine setup_KIM_API_object(pkim, testname, modelname, N, specname, SupportH
   !-- Local variables
   integer, parameter :: ATypes = 1  ! hard-wired to one atomic type
   integer ier, idum
+  integer isHalf
   integer numberOfParticles;   pointer(pnAtoms,numberOfParticles)
   integer numContrib;          pointer(pnumContrib,numContrib)
   integer numberParticleTypes; pointer(pnparticleTypes,numberParticleTypes)
@@ -50,12 +51,21 @@ subroutine setup_KIM_API_object(pkim, testname, modelname, N, specname, SupportH
      stop
   endif
 
+  ! determine if a half list is being used
+  isHalf = kim_api_is_half_neighbors_f(pkim, ier)
+  if (ier.lt.KIM_STATUS_OK) then
+     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_is_half_neighbors_f", ier)
+     stop
+  endif
+
   ! Unpack data from KIM object whose values need to be set
   !
   call kim_api_getm_data_f(pkim, ier, &
-       "numberOfParticles",           pnAtoms,           1,                           &
-       "numberContributingParticles", pnumContrib,       TRUEFALSE(SupportHalf.eq.1), &
-       "numberParticleTypes",         pnparticleTypes,   1,                           &
+       "numberOfParticles",           pnAtoms,           1, &
+       "numberContributingParticles", pnumContrib,          &
+           TRUEFALSE((SupportHalf.eq.1).and.(isHalf.eq.1)), &
+       "numberParticleTypes",         pnparticleTypes,   1, &
        "particleTypes",               pparticleTypesdum, 1)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
@@ -68,7 +78,7 @@ subroutine setup_KIM_API_object(pkim, testname, modelname, N, specname, SupportH
   ! Set values
   !
   numberOfParticles   = N
-  if (SupportHalf.eq.1) numContrib = 1
+  if ((SupportHalf.eq.1).and.(isHalf.eq.1)) numContrib = 1
   numberParticleTypes = ATypes
   particleTypes(:)        = kim_api_get_partcl_type_code_f(pkim, specname, ier)
   if (ier.lt.KIM_STATUS_OK) then
