@@ -24,6 +24,7 @@
 *
 * Contributors:
 *    Ryan S. Elliott
+*    Stephen M. Whalen
 *
 */
 
@@ -54,10 +55,10 @@ typedef struct
 } NeighList;
 
 /* Define prototypes */
-void fcc_periodic_neighborlist(int CellsPerHalfSide, double cutoff,
+void fcc_periodic_neighborlist(int half, int CellsPerHalfSide, double cutoff,
                                double FCCspacing, NeighList* nl);
 
-void fcc_cluster_neighborlist(int numberOfParticles, double* coords,
+void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
                               double cutoff, NeighList* nl);
 
 int get_periodic_neigh(void* kimmdl, int *mode, int *request, int* atom,
@@ -82,6 +83,10 @@ int main()
    int NNeighbors[2];
    int i;
    int status;
+   int halfflag_periodic_model_0;
+   int halfflag_periodic_model_1;
+   int halfflag_cluster_model_0;
+   int halfflag_cluster_model_1;
 
 
    /* KIM variable declarations */
@@ -97,6 +102,8 @@ int main()
    int particleTypes_periodic_model_1;
    int particleTypes_cluster_model_0[NCLUSTERATOMS];
    int particleTypes_cluster_model_1[NCLUSTERATOMS];
+   int numContrib_periodic = 1;
+   int numContrib_cluster  = NCLUSTERATOMS;
    double coords_periodic[DIM] = {0.0, 0.0, 0.0};
    double coords_cluster[NCLUSTERATOMS][DIM];
    NeighList nl_periodic_model_0;
@@ -136,8 +143,9 @@ int main()
       KIM_API_report_error(__LINE__, __FILE__,"KIM_API_init() for MODEL_ONE cluster",status);
 
    /* Register memory */
-   KIM_API_setm_data(pkim_periodic_model_0, &status, 8*4,
+   KIM_API_setm_data(pkim_periodic_model_0, &status, 9*4,
     "numberOfParticles",           1,                              &numberOfParticles_periodic,     1,
+    "numberContributingParticles", 1,                              &numContrib_periodic,            1,
     "numberParticleTypes",         1,                              &numberParticleTypes,            1,
     "particleTypes",               1,                              &particleTypes_periodic_model_0, 1,
     "coordinates",                 DIM*numberOfParticles_periodic, coords_periodic,                 1,
@@ -147,8 +155,9 @@ int main()
     "energy",                      1,                              &energy_periodic_model_0,        1);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data",status);
 
-   KIM_API_setm_data(pkim_periodic_model_1, &status, 8*4,
+   KIM_API_setm_data(pkim_periodic_model_1, &status, 9*4,
     "numberOfParticles",           1,                              &numberOfParticles_periodic,     1,
+    "numberContributingParticles", 1,                              &numContrib_periodic,            1,
     "numberParticleTypes",         1,                              &numberParticleTypes,            1,
     "particleTypes",               1,                              &particleTypes_periodic_model_1, 1,
     "coordinates",                 DIM*numberOfParticles_periodic, coords_periodic,                 1,
@@ -158,8 +167,9 @@ int main()
     "energy",                      1,                              &energy_periodic_model_1,        1);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data",status);
 
-   KIM_API_setm_data(pkim_cluster_model_0, &status, 8*4,
+   KIM_API_setm_data(pkim_cluster_model_0, &status, 9*4,
     "numberOfParticles",           1,                             &numberOfParticles_cluster,     1,
+    "numberContributingParticles", 1,                             &numContrib_cluster,            1,
     "numberParticleTypes",         1,                             &numberParticleTypes,           1,
     "particleTypes",               1,                             &particleTypes_cluster_model_0, 1,
     "coordinates",                 DIM*numberOfParticles_cluster, coords_cluster,                 1,
@@ -169,15 +179,16 @@ int main()
     "energy",                      1,                             &energy_cluster_model_0,        1);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data",status);
 
-   KIM_API_setm_data(pkim_cluster_model_1, &status, 8*4,
-    "numberOfParticles",             1,                             &numberOfParticles_cluster,     1,
-    "numberParticleTypes",           1,                             &numberParticleTypes,           1,
-    "particleTypes",                 1,                             &particleTypes_cluster_model_1, 1,
-    "coordinates",                   DIM*numberOfParticles_cluster, coords_cluster,                 1,
-    "get_neigh",                     1,                             &get_cluster_neigh,             1,
-    "neighObject",                   1,                             &nl_cluster_model_1,            1,
-    "cutoff",                        1,                             &cutoff_cluster_model_1,        1,
-    "energy",                        1,                             &energy_cluster_model_1,        1);
+   KIM_API_setm_data(pkim_cluster_model_1, &status, 9*4,
+    "numberOfParticles",           1,                             &numberOfParticles_cluster,     1,
+    "numberContributingParticles", 1,                             &numContrib_cluster,            1,
+    "numberParticleTypes",         1,                             &numberParticleTypes,           1,
+    "particleTypes",               1,                             &particleTypes_cluster_model_1, 1,
+    "coordinates",                 DIM*numberOfParticles_cluster, coords_cluster,                 1,
+    "get_neigh",                   1,                             &get_cluster_neigh,             1,
+    "neighObject",                 1,                             &nl_cluster_model_1,            1,
+    "cutoff",                      1,                             &cutoff_cluster_model_1,        1,
+    "energy",                      1,                             &energy_cluster_model_1,        1);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data",status);
 
    /* call model init routines */
@@ -207,9 +218,23 @@ int main()
       particleTypes_cluster_model_1[i] = particleTypes_cluster_model_1[0];
 
 
+   /* Determine which neighbor list type to use */
+   halfflag_periodic_model_0 = (KIM_API_is_half_neighbors(pkim_periodic_model_0, &status));
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"is_half_neighbors", status);
+
+   halfflag_periodic_model_1 = (KIM_API_is_half_neighbors(pkim_periodic_model_1, &status));
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"is_half_neighbors", status);
+
+   halfflag_cluster_model_0 = (KIM_API_is_half_neighbors(pkim_cluster_model_0, &status));
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"is_half_neighbors", status);
+
+   halfflag_cluster_model_1 = (KIM_API_is_half_neighbors(pkim_cluster_model_1, &status));
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"is_half_neighbors", status);
+
+
    /* setup neighbor lists */
-   CellsPerCutoff[0] = ceil(cutoff_periodic_model_0/MinSpacing + 0.05); /* 0.05 is saftey factor */
-   CellsPerCutoff[1] = ceil(cutoff_periodic_model_1/MinSpacing + 0.05); /* 0.05 is saftey factor */
+   CellsPerCutoff[0] = ceil(cutoff_periodic_model_0/MinSpacing + 0.05); /* 0.05 is safety factor */
+   CellsPerCutoff[1] = ceil(cutoff_periodic_model_1/MinSpacing + 0.05); /* 0.05 is safety factor */
    NNeighbors[0] = 4*pow((2*CellsPerCutoff[0] + 1),DIM);
    NNeighbors[1] = 4*pow((2*CellsPerCutoff[1] + 1),DIM);
    /* allocate memory for list */
@@ -262,13 +287,17 @@ int main()
       create_FCC_cluster(CurrentSpacing, NCELLSPERSIDE, &(coords_cluster[0][0]));
 
       /* compute neighbor lists */
-      fcc_periodic_neighborlist(CellsPerCutoff[0], (cutoff_periodic_model_0 + cutpad),
+      fcc_periodic_neighborlist(halfflag_periodic_model_0,
+                                CellsPerCutoff[0], (cutoff_periodic_model_0 + cutpad),
                                 CurrentSpacing, &nl_periodic_model_0);
-      fcc_cluster_neighborlist(NCLUSTERATOMS, &(coords_cluster[0][0]),
+      fcc_cluster_neighborlist(halfflag_cluster_model_0,
+                               NCLUSTERATOMS, &(coords_cluster[0][0]),
                                (cutoff_cluster_model_0 + cutpad), &nl_cluster_model_0);
-      fcc_periodic_neighborlist(CellsPerCutoff[1], (cutoff_periodic_model_1 + cutpad),
+      fcc_periodic_neighborlist(halfflag_periodic_model_1,
+                                CellsPerCutoff[1], (cutoff_periodic_model_1 + cutpad),
                                 CurrentSpacing, &nl_periodic_model_1);
-      fcc_cluster_neighborlist(NCLUSTERATOMS, &(coords_cluster[0][0]),
+      fcc_cluster_neighborlist(halfflag_cluster_model_1,
+                               NCLUSTERATOMS, &(coords_cluster[0][0]),
                                (cutoff_cluster_model_1 + cutpad), &nl_cluster_model_1);
 
       /* call compute functions */
@@ -337,7 +366,7 @@ int main()
 }
 
 
-void fcc_periodic_neighborlist(int CellsPerHalfSide, double cutoff,
+void fcc_periodic_neighborlist(int half, int CellsPerHalfSide, double cutoff,
                                double FCCspacing, NeighList* nl)
 {
    /* local variables */
@@ -352,6 +381,7 @@ void fcc_periodic_neighborlist(int CellsPerHalfSide, double cutoff,
    int k;
    int m;
    int n;
+   double tol = 0.0001 * FCCspacing;
 
    cutoff2 = cutoff*cutoff;
 
@@ -361,46 +391,95 @@ void fcc_periodic_neighborlist(int CellsPerHalfSide, double cutoff,
    FCCshifts[2][0] = 0.5*FCCspacing; FCCshifts[2][1] = 0.0;            FCCshifts[2][2] = 0.5*FCCspacing;
    FCCshifts[3][0] = 0.0;            FCCshifts[3][1] = 0.5*FCCspacing; FCCshifts[3][2] = 0.5*FCCspacing;
 
-   a = 0;
-   for (i=-CellsPerHalfSide; i <= CellsPerHalfSide; ++i)
+   if (half)
    {
-      latVec[0] = i*FCCspacing;
-      for (j=-CellsPerHalfSide; j <= CellsPerHalfSide; ++j)
+      a = 0;
+      for (i=0; i <= CellsPerHalfSide; ++i)
       {
-         latVec[1] = j*FCCspacing;
-         for (k=-CellsPerHalfSide; k <= CellsPerHalfSide; ++k)
+         latVec[0] = i*FCCspacing;
+         for (j=-CellsPerHalfSide; j <= CellsPerHalfSide; ++j)
          {
-            latVec[2] = k*FCCspacing;
-            for (m=0; m < 4; ++m)
+            latVec[1] = j*FCCspacing;
+            for (k=-CellsPerHalfSide; k <= CellsPerHalfSide; ++k)
             {
-               /* compute dx and dot product at same time */
-               r2 = 0.0;
-               for (n=0;n<DIM;++n)
+               latVec[2] = k*FCCspacing;
+               for (m=0; m < 4; ++m)
                {
-                  dx[n] = latVec[n] + FCCshifts[m][n];
-                  r2 += dx[n]*dx[n];
-               }
-
-               if (r2 < cutoff2)
-               {
-                  if (! ((0 == i) &&
-                         (0 == j) &&
-                         (0 == k) &&
-                         (0 == m)))
+                  /* compute dx and dot product at same time */
+                  r2 = 0.0;
+                  for (n=0;n<DIM;++n)
                   {
-                     /* We have a neighbor */
-                     (*nl).neighborList[a] = 0;
-                     for (n = 0; n<DIM; ++n)
-                        (*nl).RijList[DIM*a + n] = dx[n];
-                     a++;
+                     dx[n] = latVec[n] + FCCshifts[m][n];
+                     r2 += dx[n]*dx[n];
+                  }
+
+                  if (r2 < cutoff2)
+                  {
+                     if (! ((0 == i) &&
+                            (0 == j) &&
+                            (0 == k) &&
+                            (0 == m))
+                         && (dx[0] > tol ||
+                             (abs(dx[0]) < tol && (dx[1] > tol ||
+                                                   (abs(dx[1]) < tol && dx[2] > tol)))) )
+                     {
+                        /* We have a neighbor */
+                        (*nl).neighborList[a] = 0;
+                        for (n = 0; n<DIM; ++n)
+                           (*nl).RijList[DIM*a + n] = dx[n];
+                        a++;
+                     }
                   }
                }
             }
          }
       }
+      /* there are `a' neighbors */
+      *((*nl).NNeighbors) = a;
    }
-   /* there are `a' neighbors */
-   *((*nl).NNeighbors) = a;
+   else
+   {
+      a = 0;
+      for (i=-CellsPerHalfSide; i <= CellsPerHalfSide; ++i)
+      {
+         latVec[0] = i*FCCspacing;
+         for (j=-CellsPerHalfSide; j <= CellsPerHalfSide; ++j)
+         {
+            latVec[1] = j*FCCspacing;
+            for (k=-CellsPerHalfSide; k <= CellsPerHalfSide; ++k)
+            {
+               latVec[2] = k*FCCspacing;
+               for (m=0; m < 4; ++m)
+               {
+                  /* compute dx and dot product at same time */
+                  r2 = 0.0;
+                  for (n=0;n<DIM;++n)
+                  {
+                     dx[n] = latVec[n] + FCCshifts[m][n];
+                     r2 += dx[n]*dx[n];
+                  }
+
+                  if (r2 < cutoff2)
+                  {
+                     if (! ((0 == i) &&
+                            (0 == j) &&
+                            (0 == k) &&
+                            (0 == m)))
+                     {
+                        /* We have a neighbor */
+                        (*nl).neighborList[a] = 0;
+                        for (n = 0; n<DIM; ++n)
+                           (*nl).RijList[DIM*a + n] = dx[n];
+                        a++;
+                     }
+                  }
+               }
+            }
+         }
+      }
+      /* there are `a' neighbors */
+      *((*nl).NNeighbors) = a;
+   }
 
    return;
 }
@@ -602,7 +681,7 @@ void create_FCC_cluster(double FCCspacing, int nCellsPerSide, double *coords)
 }
 
 
-void fcc_cluster_neighborlist(int numberOfParticles, double* coords,
+void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
                               double cutoff, NeighList* nl)
 {
    /* local variables */
@@ -631,7 +710,7 @@ void fcc_cluster_neighborlist(int numberOfParticles, double* coords,
 
          if (r2 < cutoff2)
          {
-            if (i != j)
+            if ((half && i < j) || (!half && i != j))
             {
                /* atom j is a neighbor of atom i */
                (*nl).neighborList[i*NCLUSTERATOMS + a] = j;

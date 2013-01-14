@@ -23,6 +23,7 @@
 #
 # Contributors:
 #    Ryan S. Elliott
+#    Stephen M. Whalen
 #
 
 #######################################################################################################
@@ -56,6 +57,8 @@ CONVENTIONS:
 ZeroBasedLists              flag
 
 Neigh_BothAccess            flag
+
+NEIGH_RVEC_H                flag
 
 NEIGH_RVEC_F                flag
 
