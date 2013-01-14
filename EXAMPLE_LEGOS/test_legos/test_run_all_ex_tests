@@ -399,7 +399,7 @@ header "ex_test_Ne_free_cluster"                 \
        "   |-- ex_model_ArNe_P_MLJ_NEIGH_RVEC_F" \
        "   |-- ex_model_Ne_P_fastLJ"             \
        "   |-- ex_model_Ne_P_LJ"                 \
-       "   |-- ex_model_Ne_P_MLJ_NEIGH_RVEC_F"   \
+       "   |-- ex_model_Ne_P_MLJ_NEIGH_RVEC_H_F" \
        "   |-- ex_model_Ne_P_Morse"              \
        "   |"
 
@@ -412,8 +412,8 @@ echo ex_model_Ne_P_fastLJ              | ./ex_test_Ne_free_cluster/ex_test_Ne_fr
 divider "ex_test_Ne_free_cluster --- ex_model_Ne_P_LJ"
 echo ex_model_Ne_P_LJ                  | ./ex_test_Ne_free_cluster/ex_test_Ne_free_cluster >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
-divider "ex_test_Ne_free_cluster --- ex_model_Ne_P_MLJ_NEIGH_RVEC_F"
-echo ex_model_Ne_P_MLJ_NEIGH_RVEC_F    | ./ex_test_Ne_free_cluster/ex_test_Ne_free_cluster >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
+divider "ex_test_Ne_free_cluster --- ex_model_Ne_P_MLJ_NEIGH_RVEC_H_F"
+echo ex_model_Ne_P_MLJ_NEIGH_RVEC_H_F  | ./ex_test_Ne_free_cluster/ex_test_Ne_free_cluster >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
 divider "ex_test_Ne_free_cluster --- ex_model_Ne_P_Morse"
 echo ex_model_Ne_P_Morse               | ./ex_test_Ne_free_cluster/ex_test_Ne_free_cluster >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
@@ -425,7 +425,7 @@ header "ex_test_Ne_free_cluster_SI"              \
        "   |-- ex_model_ArNe_P_MLJ_NEIGH_RVEC_F" \
        "   |-- ex_model_Ne_P_fastLJ"             \
        "   |-- ex_model_Ne_P_LJ"                 \
-       "   |-- ex_model_Ne_P_MLJ_NEIGH_RVEC_F"   \
+       "   |-- ex_model_Ne_P_MLJ_NEIGH_RVEC_H_F" \
        "   |-- ex_model_Ne_P_Morse"              \
        "   |"
 
@@ -433,13 +433,13 @@ divider "ex_test_Ne_free_cluster_SI --- ex_model_ArNe_P_MLJ_NEIGH_RVEC_F --- THI
 echo ex_model_ArNe_P_MLJ_NEIGH_RVEC_F  | ./ex_test_Ne_free_cluster_SI/ex_test_Ne_free_cluster_SI >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
 divider "ex_test_Ne_free_cluster_SI --- ex_model_Ne_P_fastLJ"
-echo ex_model_Ne_P_fastLJ                  | ./ex_test_Ne_free_cluster_SI/ex_test_Ne_free_cluster_SI >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
+echo ex_model_Ne_P_fastLJ              | ./ex_test_Ne_free_cluster_SI/ex_test_Ne_free_cluster_SI >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
 divider "ex_test_Ne_free_cluster_SI --- ex_model_Ne_P_LJ"
 echo ex_model_Ne_P_LJ                  | ./ex_test_Ne_free_cluster_SI/ex_test_Ne_free_cluster_SI >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
-divider "ex_test_Ne_free_cluster_SI --- ex_model_Ne_P_MLJ_NEIGH_RVEC_F --- THIS SHOULD FAIL"
-echo ex_model_Ne_P_MLJ_NEIGH_RVEC_F    | ./ex_test_Ne_free_cluster_SI/ex_test_Ne_free_cluster_SI >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
+divider "ex_test_Ne_free_cluster_SI --- ex_model_Ne_P_MLJ_NEIGH_RVEC_H_F --- THIS SHOULD FAIL"
+echo ex_model_Ne_P_MLJ_NEIGH_RVEC_H_F  | ./ex_test_Ne_free_cluster_SI/ex_test_Ne_free_cluster_SI >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
 divider "ex_test_Ne_free_cluster_SI --- ex_model_Ne_P_Morse"
 echo ex_model_Ne_P_Morse               | ./ex_test_Ne_free_cluster_SI/ex_test_Ne_free_cluster_SI >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))

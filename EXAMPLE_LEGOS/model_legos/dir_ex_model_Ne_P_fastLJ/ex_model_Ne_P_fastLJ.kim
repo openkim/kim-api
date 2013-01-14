@@ -24,6 +24,7 @@
 # Contributors:
 #    Valeriu Smirichinski
 #    Ryan S. Elliott
+#    Stephen M. Whalen
 #
 
 #######################################################################################################
@@ -59,11 +60,13 @@ ZeroBasedLists              flag
 
 Neigh_IterAccess            flag
 
+NEIGH_RVEC_H                flag
+
 NEIGH_PURE_H                flag
 
-NEIGH_PURE_F                flag
-
 NEIGH_RVEC_F                flag
+
+NEIGH_PURE_F                flag
 
 MI_OPBC_H                   flag
 

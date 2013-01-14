@@ -24,6 +24,7 @@
 # Contributors:
 #    Ryan S. Elliott
 #    Ellad B. Tadmor
+#    Stephen M. Whalen
 #
 
 #######################################################################################################
@@ -61,11 +62,13 @@ Neigh_IterAccess            flag
 
 Neigh_LocaAccess            flag
 
+NEIGH_RVEC_H                flag
+
 NEIGH_PURE_H                flag
 
-NEIGH_PURE_F                flag
-
 NEIGH_RVEC_F                flag
+
+NEIGH_PURE_F                flag
 
 MI_OPBC_H                   flag
 

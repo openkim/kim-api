@@ -26,6 +26,7 @@
 *    Ryan S. Elliott
 *    Ellad B. Tadmor
 *    Valeriu Smirichinski
+*    Stephen M. Whalen
 *
 */
 
@@ -303,8 +304,8 @@ static int compute(void* km)
                               buffer->particleTypes_ind,               &particleTypes,  1,
                               buffer->coordinates_ind,                 &coords,         1,
                               buffer->numberContributingParticles_ind, &numContrib,     (HalfOrFull==1),
-                              buffer->get_neigh_ind,                   &get_neigh,      (NBC!=0),
-                              buffer->boxSideLengths_ind,              &boxSideLengths, (NBC==1),
+                              buffer->get_neigh_ind,                   &get_neigh,      (NBC!=3),
+                              buffer->boxSideLengths_ind,              &boxSideLengths, (NBC==2),
                               buffer->energy_ind,                      &energy,         comp_energy,
                               buffer->forces_ind,                      &force,          comp_force,
                               buffer->particleEnergy_ind,              &particleEnergy, comp_particleEnergy);
@@ -316,7 +317,7 @@ static int compute(void* km)
 
    if (HalfOrFull == 1)
    {
-      if (0 != NBC) /* non-CLUSTER cases */
+      if (3 != NBC) /* non-CLUSTER cases */
       {
          numberContrib = *numContrib;
       }
@@ -364,7 +365,7 @@ static int compute(void* km)
    }
 
    /* Initialize neighbor handling for CLUSTER NBC */
-   if (0 == NBC) /* CLUSTER */
+   if (3 == NBC) /* CLUSTER */
    {
       neighListOfCurrentAtom = (int *) malloc((*nAtoms)*sizeof(int));
    }
@@ -416,7 +417,7 @@ static int compute(void* km)
             break;
          }
 
-         if (0 == NBC) /* CLUSTER NBC method */
+         if (3 == NBC) /* CLUSTER NBC method */
          {
             numOfAtomNeigh = *nAtoms - (i + 1);
             for (k = 0; k < numOfAtomNeigh; ++k)
@@ -450,7 +451,7 @@ static int compute(void* km)
          Rsqij = 0.0;
          for (k = 0; k < DIM; ++k)
          {
-            if (3 != NBC) /* all methods except NEIGH_RVEC_F */
+            if (0 != NBC) /* all methods except NEIGH_RVEC */
             {
                Rij[k] = coords[j*DIM + k] - coords[i*DIM + k];
             }
@@ -460,7 +461,7 @@ static int compute(void* km)
             }
 
             /* apply periodic boundary conditions if required */
-            if (1 == NBC)
+            if (2 == NBC)
             {
                if (abs(Rij[k]) > 0.5*boxSideLengths[k])
                {
@@ -584,7 +585,7 @@ static int compute(void* km)
    }    /* infinite while loop (terminated by break statements above */
 
    /* Free temporary storage */
-   if (0 == NBC)
+   if (3 == NBC)
    {
       free(neighListOfCurrentAtom);
    }
@@ -734,19 +735,19 @@ int MODEL_DRIVER_NAME_LC_STR_init_(void *km, char* paramfile_names, int* nmstrle
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_NBC_method", ier);
       return ier;
    }
-   if (!strcmp("CLUSTER",NBCstr))
+   if ((!strcmp("NEIGH_RVEC_H",NBCstr)) || (!strcmp("NEIGH_RVEC_F",NBCstr)))
    {
       buffer->NBC = 0;
    }
-   else if ((!strcmp("MI_OPBC_H",NBCstr)) || (!strcmp("MI_OPBC_F",NBCstr)))
+   else if ((!strcmp("NEIGH_PURE_H",NBCstr)) || (!strcmp("NEIGH_PURE_F",NBCstr)))
    {
       buffer->NBC = 1;
    }
-   else if ((!strcmp("NEIGH_PURE_H",NBCstr)) || (!strcmp("NEIGH_PURE_F",NBCstr)))
+   else if ((!strcmp("MI_OPBC_H",NBCstr)) || (!strcmp("MI_OPBC_F",NBCstr)))
    {
       buffer->NBC = 2;
    }
-   else if (!strcmp("NEIGH_RVEC_F",NBCstr))
+   else if (!strcmp("CLUSTER",NBCstr))
    {
       buffer->NBC = 3;
    }
@@ -773,7 +774,7 @@ int MODEL_DRIVER_NAME_LC_STR_init_(void *km, char* paramfile_names, int* nmstrle
    }
 
    /* determine neighbor list handling mode */
-   if (buffer->NBC != 0)
+   if (buffer->NBC != 3)
    {
       /*****************************
        * IterOrLoca = 1 -- Iterator

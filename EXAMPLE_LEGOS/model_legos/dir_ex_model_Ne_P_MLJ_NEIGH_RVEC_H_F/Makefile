@@ -25,37 +25,39 @@
 #    Ryan S. Elliott
 #    Ellad B. Tadmor
 #    Valeriu Smirichinski
-#    Stephen M. Whalen
 #
 
-#######################################################################################################
 #
 # Release: This file is part of the openkim-api.git repository.
 #
-# See KIM_API/standard.kim for documentation about this file
-#
-#######################################################################################################
 
 
-TEST_NAME := TEST_NAME_STR
-Unit_length      := A
-Unit_energy      := eV
-Unit_charge      := e
-Unit_temperature := K
-Unit_time        := ps
+MODEL_NAME := ex_model_Ne_P_MLJ_NEIGH_RVEC_H_F
+
+LOCALOBJ =
+
+LOCALCLEAN =
+
+# No changes should be needed below this line.
+
+MODEL_BUILD_TARGET := $(strip $(MODEL_NAME)).a
+
+ifndef KIM_API_DIR
+   include $(KIM_DIR)/KIM_API/Include.mk
+else
+   include $(KIM_API_DIR)/Include.mk
+endif
 
 
-#######################################################################################################
-SUPPORTED_ATOM/PARTICLES_TYPES:
-# Symbol/name               Type                    code
+all: $(MODEL_BUILD_TARGET)
 
-SPECIES_LINE_STR
+$(strip $(MODEL_NAME)).a: $(LOCALOBJ) $(strip $(MODEL_NAME)).o $(strip $(MODEL_NAME))_kim_str.o
+	ar rcs $@ *.o
 
+$(strip $(MODEL_NAME)).o: Makefile
 
-#######################################################################################################
-CONVENTIONS:
-# Name                      Type
+Makefile: $(KIM_API_DIR)/Include.mk
+	@touch Makefile
 
-OneBasedLists               flag
-
-Neigh_BothAccess            flag
+clean:
+	rm -f *.o *.mod *.a *.so $(addprefix $(strip $(MODEL_NAME))_kim_str.,o cpp) $(LOCALCLEAN)

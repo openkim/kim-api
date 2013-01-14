@@ -35,7 +35,7 @@ This directory (ex_model_Cu_PF_Johnson) contains an EAM Model created by
 Johnson (for copper) written in C and based on the pair functional template in
 DOCs/TEMPLATEs/.
 
-The contents of the directory are as follows (before any compilation if performed):
+The contents of the directory are as follows (before any compilation is performed):
 
 LICENSE.CDDL
      The Common Development and Distribution License (CDDL) Version 1.0 file

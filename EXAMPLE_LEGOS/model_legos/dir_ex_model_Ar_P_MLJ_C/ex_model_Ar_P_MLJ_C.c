@@ -26,6 +26,7 @@
 *    Ryan S. Elliott
 *    Ellad B. Tadmor
 *    Valeriu Smirichinski
+*    Stephen M. Whalen
 *
 */
 
@@ -180,36 +181,40 @@ static int compute(void* km)
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_NBC_method", ier);
       return ier;
    }
-   if (!strcmp("CLUSTER",NBCstr))
+   if (!strcmp("NEIGH_RVEC_H",NBCstr))
    {
       NBC = 0;
       HalfOrFull = 1;
    }
-   else if (!strcmp("MI_OPBC_H",NBCstr))
+   else if (!strcmp("NEIGH_PURE_H",NBCstr))
    {
       NBC = 1;
+      HalfOrFull = 1;
+   }
+   else if (!strcmp("NEIGH_RVEC_F",NBCstr))
+   {
+      NBC = 0;
+      HalfOrFull = 2;
+   }
+   else if (!strcmp("NEIGH_PURE_F",NBCstr))
+   {
+      NBC = 1;
+      HalfOrFull = 2;
+   }
+   else if (!strcmp("MI_OPBC_H",NBCstr))
+   {
+      NBC = 2;
       HalfOrFull = 1;
    }
    else if (!strcmp("MI_OPBC_F",NBCstr))
    {
-      NBC = 1;
-      HalfOrFull = 2;
-   }
-
-   else if (!strcmp("NEIGH_PURE_H",NBCstr))
-   {
-      NBC = 2;
-      HalfOrFull = 1;
-   }
-   else if (!strcmp("NEIGH_PURE_F",NBCstr))
-   {
       NBC = 2;
       HalfOrFull = 2;
    }
-   else if (!strcmp("NEIGH_RVEC_F",NBCstr))
+   else if (!strcmp("CLUSTER",NBCstr))
    {
       NBC = 3;
-      HalfOrFull = 2;
+      HalfOrFull = 1;
    }
    else
    {
@@ -220,7 +225,7 @@ static int compute(void* km)
    free(NBCstr); /* don't forget to release the memory... */
 
    /* determine neighbor list handling mode */
-   if (NBC != 0)
+   if (NBC != 3)
    {
       /*****************************
        * IterOrLoca = 1 -- Iterator
@@ -261,7 +266,7 @@ static int compute(void* km)
                      "particleTypes",               &particleTypes,  1,
                      "coordinates",                 &coords,         1,
                      "numberContributingParticles", &numContrib,     (HalfOrFull==1),
-                     "boxSideLengths",              &boxSideLengths, (NBC==1),
+                     "boxSideLengths",              &boxSideLengths, (NBC==2),
                      "energy",                      &energy,         (comp_energy==1),
                      "forces",                      &force,          (comp_force==1),
                      "particleEnergy",              &particleEnergy, (comp_particleEnergy==1),
@@ -274,7 +279,7 @@ static int compute(void* km)
 
    if (HalfOrFull == 1)
    {
-      if (0 != NBC) /* non-CLUSTER cases */
+      if (3 != NBC) /* non-CLUSTER cases */
       {
          numberContrib = *numContrib;
       }
@@ -330,7 +335,7 @@ static int compute(void* km)
    }
 
    /* Initialize neighbor handling for CLUSTER NBC */
-   if (0 == NBC) /* CLUSTER */
+   if (3 == NBC) /* CLUSTER */
    {
       neighListOfCurrentAtom = (int *) malloc((*nAtoms)*sizeof(int));
    }
@@ -382,7 +387,7 @@ static int compute(void* km)
             break;
          }
 
-         if (0 == NBC)     /* CLUSTER NBC method */
+         if (3 == NBC)     /* CLUSTER NBC method */
          {
             numOfAtomNeigh = *nAtoms - (i + 1);
             for (k = 0; k < numOfAtomNeigh; ++k)
@@ -414,7 +419,7 @@ static int compute(void* km)
          Rsqij = 0.0;
          for (k = 0; k < DIM; ++k)
          {
-            if (3 != NBC) /* all methods except NEIGH_RVEC_F */
+            if (0 != NBC) /* all methods except NEIGH_RVEC */
             {
                Rij[k] = coords[j*DIM + k] - coords[i*DIM + k];
             }
@@ -424,7 +429,7 @@ static int compute(void* km)
             }
 
             /* apply periodic boundary conditions if required */
-            if (1 == NBC)
+            if (2 == NBC)
             {
                if (abs(Rij[k]) > 0.5*boxSideLengths[k])
                {
@@ -511,7 +516,7 @@ static int compute(void* km)
 
 
    /* Free temporary storage */
-   if (0 == NBC)
+   if (3 == NBC)
    {
       free(neighListOfCurrentAtom);
    }

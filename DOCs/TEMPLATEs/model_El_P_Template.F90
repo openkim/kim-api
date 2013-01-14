@@ -25,6 +25,7 @@
 !    Ryan S. Elliott
 !    Ellad B. Tadmor
 !    Valeriu Smirichinski
+!    Stephen M. Whalen
 !    <FILL name>
 !
 
@@ -183,24 +184,27 @@ if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
                                  "kim_api_get_nbc_method_f", Compute_Energy_Forces)
    return
 endif
-if (index(NBC_Method,"CLUSTER").eq.1) then
+if (index(NBC_Method,"NEIGH_RVEC_H").eq.1) then
    NBC = 0
    HalfOrFull = 1
-elseif (index(NBC_Method,"MI_OPBC_H").eq.1) then
+elseif (index(NBC_Method,"NEIGH_PURE_H").eq.1) then
    NBC = 1
+   HalfOrFull = 1
+elseif (index(NBC_Method,"NEIGH_RVEC_F").eq.1) then
+   NBC = 0
+   HalfOrFull = 2
+elseif (index(NBC_Method,"NEIGH_PURE_F").eq.1) then
+   NBC = 1
+   HalfOrFull = 2
+elseif (index(NBC_Method,"MI_OPBC_H").eq.1) then
+   NBC = 2
    HalfOrFull = 1
 elseif (index(NBC_Method,"MI_OPBC_F").eq.1) then
-   NBC = 1
-   HalfOrFull = 2
-elseif (index(NBC_Method,"NEIGH_PURE_H").eq.1) then
-   NBC = 2
-   HalfOrFull = 1
-elseif (index(NBC_Method,"NEIGH_PURE_F").eq.1) then
    NBC = 2
    HalfOrFull = 2
-elseif (index(NBC_Method,"NEIGH_RVEC_F").eq.1) then
+elseif (index(NBC_Method,"CLUSTER").eq.1) then
    NBC = 3
-   HalfOrFull = 2
+   HalfOrFull = 1
 else
    Compute_Energy_Forces = KIM_STATUS_FAIL
    idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
@@ -211,7 +215,7 @@ call free(pNBC_Method) ! don't forget to release the memory...
 
 ! Determine neighbor list handling mode
 !
-if (NBC.ne.0) then
+if (NBC.ne.3) then
    !*****************************
    !* IterOrLoca = 1 -- Iterator
    !*            = 2 -- Locator
@@ -255,7 +259,7 @@ call kim_api_getm_data_f(pkim, Compute_Energy_Forces, &
      "particleTypes",               pparticleTypes,  1,                           &
      "coordinates",                 pcoor,           1,                           &
      "numberContributingParticles", pnumContrib,     TRUEFALSE(HalfOrFull.eq.1),  &
-     "boxSideLengths",              pboxSideLengths, TRUEFALSE(NBC.eq.1),         &
+     "boxSideLengths",              pboxSideLengths, TRUEFALSE(NBC.eq.2),         &
      "energy",                      penergy,         TRUEFALSE(comp_energy.eq.1), &
      "forces",                      pforce,          TRUEFALSE(comp_force.eq.1),  &
      "particleEnergy",              penepot,         TRUEFALSE(comp_enepot.eq.1), &
@@ -272,7 +276,7 @@ if (comp_enepot.eq.1) call KIM_to_F90_real_array_1d(enepotdum,ene_pot,N)
 if (comp_virial.eq.1) call KIM_to_F90_real_array_1d(virialdum,virial_global,6)
 
 if (HalfOrFull.eq.1) then
-   if (NBC.ne.0) then ! non-CLUSTER cases
+   if (NBC.ne.3) then ! non-CLUSTER cases
       numberContrib = numContrib
    else               ! CLUSTER case
       numberContrib = N
@@ -300,7 +304,7 @@ if (comp_virial.eq.1) virial_global  = 0.d0
 
 ! Initialize neighbor handling for CLUSTER NBC
 !
-if (NBC.eq.0) then
+if (NBC.eq.3) then
    allocate( nei1atom_substitute(N) )
    pnei1atom = loc(nei1atom_substitute)
 endif
@@ -346,7 +350,7 @@ do
       i = i + 1
       if (i.gt.N) exit          ! incremented past end of list,
                                 ! terminate loop
-      if (NBC.eq.0) then     ! CLUSTER NBC method
+      if (NBC.eq.3) then     ! CLUSTER NBC method
          numnei = N - i      ! number of neighbors in list i+1, ..., N
          nei1atom(1:numnei) = (/ (i+jj, jj = 1,numnei) /)
          Compute_Energy_Forces = KIM_STATUS_OK
@@ -369,7 +373,7 @@ do
 
       ! compute relative position vector
       !
-      if (NBC.ne.3) then                          ! all methods except NEIGH_RVEC_F
+      if (NBC.ne.0) then                          ! all methods except NEIGH_RVEC
          Rij(:) = coor(:,j) - coor(:,i)           ! distance vector between i j
       else
          Rij(:) = Rij_list(:,jj)
@@ -377,7 +381,7 @@ do
 
       ! apply periodic boundary conditions if required
       !
-      if (NBC.eq.1) then
+      if (NBC.eq.2) then
          where ( abs(Rij) .gt. 0.5d0*boxSideLengths )  ! periodic boundary conditions
             Rij = Rij - sign(boxSideLengths,Rij)       ! applied where needed.
          end where                                !
@@ -445,7 +449,7 @@ enddo  ! infinite do loop (terminated by exit statements above)
 
 ! Free temporary storage
 !
-if (NBC.eq.0) deallocate( nei1atom_substitute )
+if (NBC.eq.3) deallocate( nei1atom_substitute )
 
 ! Everything is great
 !
