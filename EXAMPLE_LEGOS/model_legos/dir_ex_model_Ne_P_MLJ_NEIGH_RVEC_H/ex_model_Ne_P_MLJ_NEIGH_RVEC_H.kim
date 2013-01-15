@@ -1,0 +1,127 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the Common Development
+# and Distribution License Version 1.0 (the "License").
+#
+# You can obtain a copy of the license at
+# http://www.opensource.org/licenses/CDDL-1.0.  See the License for the
+# specific language governing permissions and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each file and
+# include the License file in a prominent location with the name LICENSE.CDDL.
+# If applicable, add the following below this CDDL HEADER, with the fields
+# enclosed by brackets "[]" replaced with your own identifying information:
+#
+# Portions Copyright (c) [yyyy] [name of copyright owner]. All rights reserved.
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2012, Regents of the University of Minnesota.  All rights reserved.
+#
+# Contributors:
+#    Ryan S. Elliott
+#    Ellad B. Tadmor
+#    Valeriu Smirichinski
+#    Stephen M. Whalen
+#
+
+#######################################################################################################
+#
+# Release: This file is part of the openkim-api.git repository.
+#
+# See KIM_API/standard.kim for documentation about this file
+#
+#######################################################################################################
+
+
+MODEL_NAME := ex_model_Ne_P_MLJ_NEIGH_RVEC_H
+Unit_Handling    := fixed
+Unit_length      := A
+Unit_energy      := eV
+Unit_charge      := e
+Unit_temperature := K
+Unit_time        := ps
+
+
+#######################################################################################################
+SUPPORTED_ATOM/PARTICLES_TYPES:
+# Symbol/name               Type                    code
+
+Ne                          spec                    1
+
+
+#######################################################################################################
+CONVENTIONS:
+# Name                      Type
+
+ZeroBasedLists              flag
+
+Neigh_IterAccess            flag
+
+NEIGH_RVEC_H                flag
+
+
+#######################################################################################################
+MODEL_INPUT:
+# Name                      Type         Unit                Shape              Requirements
+
+numberOfParticles           integer      none                []
+
+numberContributingParticles integer      none                []
+
+numberParticleTypes         integer      none                []
+
+particleTypes               integer      none                [numberOfParticles]
+
+coordinates                 real*8       length              [numberOfParticles,3]
+
+get_neigh                   method       none                []
+
+neighObject                 pointer      none                []
+
+
+#######################################################################################################
+MODEL_OUTPUT:
+# Name                      Type         Unit                Shape              Requirements
+
+destroy                     method       none                []
+
+compute                     method       none                []
+
+reinit                      method       none                []                 optional
+
+cutoff                      real*8       length              []
+
+energy                      real*8       energy              []                 optional
+
+forces                      real*8       force               [numberOfParticles,3]  optional
+
+particleEnergy              real*8       energy              [numberOfParticles]    optional
+
+virial                      real*8       energy              [6]                optional
+
+
+#######################################################################################################
+MODEL_PARAMETERS:
+# Name                      Type         Unit                Shape              Requirements
+
+PARAM_FREE_sigma            real*8       length              []
+
+PARAM_FREE_epsilon          real*8       energy              []
+
+PARAM_FREE_cutoff           real*8       length              []
+
+PARAM_FIXED_cutnorm         real*8       none                []
+
+PARAM_FIXED_A               real*8       pressure            []
+
+PARAM_FIXED_B               real*8       force               []
+
+PARAM_FIXED_C               real*8       energy              []
+
+PARAM_FIXED_sigmasq         real*8       length^2            []
+
+PARAM_FIXED_cutsq           real*8       length^2            []

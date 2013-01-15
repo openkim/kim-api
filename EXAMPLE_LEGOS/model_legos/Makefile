@@ -83,7 +83,7 @@ AUTO_GEN_MODELS = ex_model_Al_PF_ErcolessiAdams    \
                   ex_model_Ar_P_MLJ_NEIGH_PURE_H_F \
                   ex_model_Ar_P_MLJ_NEIGH_RVEC_F   \
                   ex_model_Ne_P_LJ_NEIGH_PURE_H    \
-                  ex_model_Ne_P_MLJ_NEIGH_RVEC_H_F \
+                  ex_model_Ne_P_MLJ_NEIGH_RVEC_H   \
                   ex_model_driver_P_Morse          \
                   ex_model_Ar_P_Morse              \
                   ex_model_Ne_P_Morse              \
@@ -644,9 +644,9 @@ ex_model_Ne_P_LJ_NEIGH_PURE_H: dir_ex_model_Ne_P_LJ_NEIGH_PURE_H               \
 	cp $(KIM_DIR)/LICENSE.CDDL $(KIM_EX_MODELS_DIR)/$@
 	cp -rf dir_$@/* $(KIM_EX_MODELS_DIR)/$@/
 
-ex_model_Ne_P_MLJ_NEIGH_RVEC_H_F: dir_ex_model_Ne_P_MLJ_NEIGH_RVEC_H_F               \
-                                  $(wildcard dir_ex_model_Ne_P_MLJ_NEIGH_RVEC_H_F/*) \
-                                  Makefile
+ex_model_Ne_P_MLJ_NEIGH_RVEC_H: dir_ex_model_Ne_P_MLJ_NEIGH_RVEC_H               \
+                                $(wildcard dir_ex_model_Ne_P_MLJ_NEIGH_RVEC_H/*) \
+                                Makefile
 	mkdir -p $(KIM_EX_MODELS_DIR)/$@
 	@touch $(KIM_EX_MODELS_DIR)/$@
 	cp $(KIM_DIR)/LICENSE.CDDL $(KIM_EX_MODELS_DIR)/$@

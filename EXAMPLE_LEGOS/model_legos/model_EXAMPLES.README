@@ -50,8 +50,7 @@ ex_model_Al_PF_ErcolessiAdams      F90       NEIGH_RVEC_H    Iterator   Half    
                                              MI_OPBC_F
                                              CLUSTER
 
-ex_model_ArNe_P_MLJ_NEIGH_RVEC_H_F F90       NEIGH_RVEC_H    Locator    Half        YES
-                                             NEIGH_RVEC_F               Full        YES
+ex_model_ArNe_P_MLJ_NEIGH_RVEC_F   F90       NEIGH_RVEC_F    Locator    Full        YES
 
 ex_model_Ar_P_LJ                   F90       NEIGH_RVEC_H    Iterator   Half        YES
  - based on model_driver_P_LJ                NEIGH_PURE_H    Locator    Full
@@ -173,8 +172,9 @@ ex_model_Ar_P_MLJ_NEIGH_RVEC_F (Fortran 90)
 ex_model_Ne_P_MLJ_NEIGH_RVEC_H (C)
      These two Models (the first written in F90, the second written in C)
      provide parallel examples of an implementation of the NEIGH_RVEC_F and
-     NEIGH_RVEC_H NBC methods.  These NBC methods include relative position
-     vectors (Rij's) as well as the usual neighbor list of atom Id's.
+     NEIGH_RVEC_H NBC methods, respectively.  These NBC methods include
+     relative position vectors (Rij's) as well as the usual neighbor list of
+     atom Id's.
 
 ex_model_Ar_P_MLJ_MI_OPBC_H_F (Fortran 90)
      This Model implements the MI_OPBC_H and MI_OPBC_F NBC methods.  This is,
