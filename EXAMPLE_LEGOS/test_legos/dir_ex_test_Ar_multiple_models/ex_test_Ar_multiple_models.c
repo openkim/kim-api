@@ -143,9 +143,8 @@ int main()
       KIM_API_report_error(__LINE__, __FILE__,"KIM_API_init() for MODEL_ONE cluster",status);
 
    /* Register memory */
-   KIM_API_setm_data(pkim_periodic_model_0, &status, 9*4,
+   KIM_API_setm_data(pkim_periodic_model_0, &status, 8*4,
     "numberOfParticles",           1,                              &numberOfParticles_periodic,     1,
-    "numberContributingParticles", 1,                              &numContrib_periodic,            1,
     "numberParticleTypes",         1,                              &numberParticleTypes,            1,
     "particleTypes",               1,                              &particleTypes_periodic_model_0, 1,
     "coordinates",                 DIM*numberOfParticles_periodic, coords_periodic,                 1,
@@ -155,9 +154,8 @@ int main()
     "energy",                      1,                              &energy_periodic_model_0,        1);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data",status);
 
-   KIM_API_setm_data(pkim_periodic_model_1, &status, 9*4,
+   KIM_API_setm_data(pkim_periodic_model_1, &status, 8*4,
     "numberOfParticles",           1,                              &numberOfParticles_periodic,     1,
-    "numberContributingParticles", 1,                              &numContrib_periodic,            1,
     "numberParticleTypes",         1,                              &numberParticleTypes,            1,
     "particleTypes",               1,                              &particleTypes_periodic_model_1, 1,
     "coordinates",                 DIM*numberOfParticles_periodic, coords_periodic,                 1,
@@ -167,9 +165,8 @@ int main()
     "energy",                      1,                              &energy_periodic_model_1,        1);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data",status);
 
-   KIM_API_setm_data(pkim_cluster_model_0, &status, 9*4,
+   KIM_API_setm_data(pkim_cluster_model_0, &status, 8*4,
     "numberOfParticles",           1,                             &numberOfParticles_cluster,     1,
-    "numberContributingParticles", 1,                             &numContrib_cluster,            1,
     "numberParticleTypes",         1,                             &numberParticleTypes,           1,
     "particleTypes",               1,                             &particleTypes_cluster_model_0, 1,
     "coordinates",                 DIM*numberOfParticles_cluster, coords_cluster,                 1,
@@ -179,9 +176,8 @@ int main()
     "energy",                      1,                             &energy_cluster_model_0,        1);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data",status);
 
-   KIM_API_setm_data(pkim_cluster_model_1, &status, 9*4,
+   KIM_API_setm_data(pkim_cluster_model_1, &status, 8*4,
     "numberOfParticles",           1,                             &numberOfParticles_cluster,     1,
-    "numberContributingParticles", 1,                             &numContrib_cluster,            1,
     "numberParticleTypes",         1,                             &numberParticleTypes,           1,
     "particleTypes",               1,                             &particleTypes_cluster_model_1, 1,
     "coordinates",                 DIM*numberOfParticles_cluster, coords_cluster,                 1,
@@ -221,15 +217,27 @@ int main()
    /* Determine which neighbor list type to use */
    halfflag_periodic_model_0 = (KIM_API_is_half_neighbors(pkim_periodic_model_0, &status));
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"is_half_neighbors", status);
+   KIM_API_setm_data(pkim_periodic_model_0, &status, 1*4,
+    "numberContributingParticles", 1, &numContrib_periodic, (1==halfflag_periodic_model_0));
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data", status);
 
    halfflag_periodic_model_1 = (KIM_API_is_half_neighbors(pkim_periodic_model_1, &status));
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"is_half_neighbors", status);
+   KIM_API_setm_data(pkim_periodic_model_1, &status, 1*4,
+    "numberContributingParticles", 1, &numContrib_periodic, (1==halfflag_periodic_model_1));
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data", status);
 
    halfflag_cluster_model_0 = (KIM_API_is_half_neighbors(pkim_cluster_model_0, &status));
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"is_half_neighbors", status);
+   KIM_API_setm_data(pkim_cluster_model_0, &status, 1*4,
+    "numberContributingParticles", 1, &numContrib_periodic, (1==halfflag_cluster_model_0));
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data", status);
 
    halfflag_cluster_model_1 = (KIM_API_is_half_neighbors(pkim_cluster_model_1, &status));
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"is_half_neighbors", status);
+   KIM_API_setm_data(pkim_cluster_model_1, &status, 1*4,
+    "numberContributingParticles", 1, &numContrib_periodic, (1==halfflag_cluster_model_1));
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data", status);
 
 
    /* setup neighbor lists */
