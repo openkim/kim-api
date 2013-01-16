@@ -230,13 +230,13 @@ int main()
    halfflag_cluster_model_0 = (KIM_API_is_half_neighbors(pkim_cluster_model_0, &status));
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"is_half_neighbors", status);
    KIM_API_setm_data(pkim_cluster_model_0, &status, 1*4,
-    "numberContributingParticles", 1, &numContrib_periodic, (1==halfflag_cluster_model_0));
+    "numberContributingParticles", 1, &numContrib_cluster, (1==halfflag_cluster_model_0));
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data", status);
 
    halfflag_cluster_model_1 = (KIM_API_is_half_neighbors(pkim_cluster_model_1, &status));
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"is_half_neighbors", status);
    KIM_API_setm_data(pkim_cluster_model_1, &status, 1*4,
-    "numberContributingParticles", 1, &numContrib_periodic, (1==halfflag_cluster_model_1));
+    "numberContributingParticles", 1, &numContrib_cluster, (1==halfflag_cluster_model_1));
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data", status);
 
 

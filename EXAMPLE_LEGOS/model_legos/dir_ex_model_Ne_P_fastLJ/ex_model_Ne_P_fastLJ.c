@@ -244,7 +244,7 @@ static int neigh_rvec_h_compute(void* km)
                double e_Rm6 = four_eps_sigma6*R6;
                phi = e_Rm12 - e_Rm6 + *shift;
 
-               dEidr = 3.0*(-2.0*e_Rm12 + e_Rm6 );
+               dEidr = 6.0*(-2.0*e_Rm12 + e_Rm6 );
                fac=dEidr*Rm2;
                if (j>= *numberContrib) fac *=0.5;
 
@@ -321,7 +321,7 @@ static int neigh_rvec_h_compute(void* km)
                phi = e_Rm12 - e_Rm6 + *shift;
                if (comp_force==1)
                {
-                  dEidr = 3.0*(-2.0*e_Rm12 + e_Rm6 );
+                  dEidr = 6.0*(-2.0*e_Rm12 + e_Rm6 );
                   fac=dEidr*Rm2;
                   if (j>= *numberContrib) fac *=0.5;
                }
