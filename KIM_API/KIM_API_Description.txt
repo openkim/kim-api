@@ -1482,11 +1482,12 @@ Arguments:
 
 Corresponding Fortran style interface:
 
-      subroutine kim_api_process_dedr_f(kimmdl, de, r, dx, i, j, kimerror)
+      integer function kim_api_process_dedr_f(kimmdl, de, r, dx, i, j)
                       integer(kind=kim_intptr) :: kimmdl, dx
                       real*8 :: de, r
-                      integer ::i, j, kimerror
-      end subroutine kim_api_process_dedr_f
+                      integer ::i, j
+                      integer :: kim_api_process_dedr_f
+      end function kim_api_process_dedr_f
 
 ******************************************************************************
 
@@ -1552,11 +1553,11 @@ Arguments:
 
 Corresponding Fortran style interface:
 
-      subroutine kim_api_process_d2edr2_f(kimmdl, d2edr2, r, dx, i, j, kimerror)
+      integer function kim_api_process_d2edr2_f(kimmdl, d2edr2, r, dx, i, j)
                       integer(kind=kim_intptr) :: kimmdl, dx
                       real*8 :: d2edr2, r
-                      integer :: i, j, kimerror
-      end subroutine kim_api_process_d2edr2_f
+                      integer :: i, j
+      end function kim_api_process_d2edr2_f
 
 ******************************************************************************
 
