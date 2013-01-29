@@ -32,8 +32,18 @@
 #
 
 
-# load in variable definitions and pattern rules
-include Include.mk
+include Makefile.KIMConfig
+
+# Definition of c and fortran .o file list
+OBJC = KIM_API.o KIM_API_C.o standard_kim_str.o Unit_Handling.o KIM_AUX.o
+OBJF90 = KIM_API_F.o
+
+#fortran on/of
+ifdef KIM_NO_FORTRAN
+   ALLOBJ = $(OBJC)
+else
+   ALLOBJ = $(OBJC) $(OBJF90)
+endif
 
 # create list of models
 MODELS_TARGETS := $(addprefix ., $(addsuffix .make-temp, $(filter-out $(shell if test -e "$(KIM_MODELS_DIR)/.kimignore"; then cat "$(KIM_MODELS_DIR)/.kimignore";fi;),$(filter-out .%,$(shell find "$(KIM_MODELS_DIR)/" -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)))))

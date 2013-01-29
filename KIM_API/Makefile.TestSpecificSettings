@@ -22,9 +22,7 @@
 # Copyright (c) 2012, Regents of the University of Minnesota.  All rights reserved.
 #
 # Contributors:
-#    Valeriu Smirichinski
 #    Ryan S. Elliott
-#    Ellad B. Tadmor
 #
 
 #
@@ -32,26 +30,30 @@
 #
 
 
-# We use the standard make variables defined by the GNU standard
-# http://www.gnu.org/software/make/manual/html_node/Implicit-Variables.html
+# sanity checks
+ifndef KIM_DIR
+   $(error Make variable KIM_DIR must be defined.)
+endif
+ifndef KIM_MODEL_DRIVERS_DIR
+   $(error Make variable KIM_MODEL_DRIVERS_DIR must be defined.)
+endif
+ifndef KIM_MODELS_DIR
+   $(error Make variable KIM_MODELS_DIR must be defined.)
+endif
+ifndef KIM_TESTS_DIR
+   $(error Make variable KIM_TEST_DIR must be defined.)
+endif
 
-# Define GNU compiler switches
-CC  = gcc
-CXX = g++
-FC  = gfortran
-LD  = $(CXX)
 
-# Define the names for typical/required compiler option flags
-OBJONLYFLAG  = -c
-OUTPUTINFLAG = -o
-PICFLAG      = -fPIC
-FCRAYFLAG    = -fcray-pointer
-LDDYNAMICLIB = -ldl
-# Define linking options for using $(LD) to link other language objects
-XLANGLDLIBS  = -lgfortran
+all: $(TEST_NAME)
 
-# Define optional compiler option flag lists
-FFLAGS   = -O3 -g
-CCFLAGS  = -O3 -g
-CXXFLAGS = -O3 -g -Wno-write-strings
-LDFLAGS  =
+$(TEST_NAME): $(LOCALOBJ) $(strip $(TEST_NAME)).o $(KIM_LIB_FILE)
+	$(LD) $(LDFLAGS) $(LOCALOBJ) $< $(KIM_LIB) $(XLANGLDLIBS) $(LDDYNAMICLIB) $(OUTPUTINFLAG) $@
+
+$(strip $(TEST_NAME)).o: $(LOCALOBJ) Makefile
+
+Makefile: $(KIM_API_DIR)/Include.mk
+	@touch Makefile
+
+clean:
+	rm -f *.mod *.o $(TEST_NAME) $(LOCAL_CLEAN)

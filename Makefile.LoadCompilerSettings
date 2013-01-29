@@ -22,36 +22,39 @@
 # Copyright (c) 2012, Regents of the University of Minnesota.  All rights reserved.
 #
 # Contributors:
-#    Valeriu Smirichinski
 #    Ryan S. Elliott
-#    Ellad B. Tadmor
 #
 
 #
 # Release: This file is part of the openkim-api.git repository.
 #
+#
+# this make file builds/cleans everything
+#
 
 
-# We use the standard make variables defined by the GNU standard
-# http://www.gnu.org/software/make/manual/html_node/Implicit-Variables.html
+# sanity check
+ifndef KIM_DIR
+   $(error Make variable KIM_DIR must be defined.)
+endif
 
-# Define GNU compiler switches
-CC  = gcc
-CXX = g++
-FC  = gfortran
-LD  = $(CXX)
+# The openkim-api subdirectories:
+ifndef KIM_API_DIR
+   KIM_API_DIR := $(KIM_DIR)/KIM_API
+endif
+ifndef KIM_MODEL_DRIVERS_DIR
+   KIM_MODEL_DRIVERS_DIR := $(KIM_DIR)/MODEL_DRIVERs
+endif
+ifndef KIM_MODELS_DIR
+   KIM_MODELS_DIR := $(KIM_DIR)/MODELs
+endif
+ifndef KIM_TESTS_DIR
+   KIM_TESTS_DIR := $(KIM_DIR)/TESTs
+endif
 
-# Define the names for typical/required compiler option flags
-OBJONLYFLAG  = -c
-OUTPUTINFLAG = -o
-PICFLAG      = -fPIC
-FCRAYFLAG    = -fcray-pointer
-LDDYNAMICLIB = -ldl
-# Define linking options for using $(LD) to link other language objects
-XLANGLDLIBS  = -lgfortran
-
-# Define optional compiler option flag lists
-FFLAGS   = -O3 -g
-CCFLAGS  = -O3 -g
-CXXFLAGS = -O3 -g -Wno-write-strings
-LDFLAGS  =
+# load compiler options
+ifdef KIM_INTEL
+ include $(KIM_API_DIR)/Intel_compiler_settings.mk
+else
+ include $(KIM_API_DIR)/GNU_compiler_settings.mk
+endif

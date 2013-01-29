@@ -22,36 +22,32 @@
 # Copyright (c) 2012, Regents of the University of Minnesota.  All rights reserved.
 #
 # Contributors:
-#    Valeriu Smirichinski
 #    Ryan S. Elliott
-#    Ellad B. Tadmor
 #
 
 #
 # Release: This file is part of the openkim-api.git repository.
 #
+#
+# this make file builds/cleans everything
+#
 
+KIM_DIR = `pwd`
+#KIM_API_DIR =
+#KIM_MODEL_DRIVERS_DIR =
+#KIM_MODELS_DIR =
+#KIM_TESTS_DIR =
 
-# We use the standard make variables defined by the GNU standard
-# http://www.gnu.org/software/make/manual/html_node/Implicit-Variables.html
+KIM_SYSTEM32 = yes
+KIM_DYNAMIC  = yes
 
-# Define GNU compiler switches
-CC  = gcc
-CXX = g++
-FC  = gfortran
-LD  = $(CXX)
+# load default compiler options
+include $(KIM_DIR)/Makefile.LoadCompilerSettings
 
-# Define the names for typical/required compiler option flags
-OBJONLYFLAG  = -c
-OUTPUTINFLAG = -o
-PICFLAG      = -fPIC
-FCRAYFLAG    = -fcray-pointer
-LDDYNAMICLIB = -ldl
-# Define linking options for using $(LD) to link other language objects
-XLANGLDLIBS  = -lgfortran
+# overwrite default compiler options
+#CC  =
+#CXX =
+#FC  =
 
-# Define optional compiler option flag lists
-FFLAGS   = -O3 -g
-CCFLAGS  = -O3 -g
-CXXFLAGS = -O3 -g -Wno-write-strings
-LDFLAGS  =
+# load rest of generic make settings
+include $(KIM_API_DIR)/Makefile.GenericSettings
