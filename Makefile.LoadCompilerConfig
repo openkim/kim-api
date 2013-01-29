@@ -30,30 +30,28 @@
 #
 
 
-# sanity checks
+# sanity check
 ifndef KIM_DIR
    $(error Make variable KIM_DIR must be defined.)
 endif
+
+# The openkim-api subdirectories:
+ifndef KIM_API_DIR
+   KIM_API_DIR := $(KIM_DIR)/KIM_API
+endif
 ifndef KIM_MODEL_DRIVERS_DIR
-   $(error Make variable KIM_MODEL_DRIVERS_DIR must be defined.)
+   KIM_MODEL_DRIVERS_DIR := $(KIM_DIR)/MODEL_DRIVERs
 endif
 ifndef KIM_MODELS_DIR
-   $(error Make variable KIM_MODELS_DIR must be defined.)
+   KIM_MODELS_DIR := $(KIM_DIR)/MODELs
 endif
 ifndef KIM_TESTS_DIR
-   $(error Make variable KIM_TEST_DIR must be defined.)
+   KIM_TESTS_DIR := $(KIM_DIR)/TESTs
 endif
 
-
-all: $(TEST_NAME)
-
-$(TEST_NAME): $(LOCALOBJ) $(strip $(TEST_NAME)).o $(KIM_LIB_FILE)
-	$(LD) $(LDFLAGS) $(LOCALOBJ) $< $(KIM_LIB) $(XLANGLDLIBS) $(LDDYNAMICLIB) $(OUTPUTINFLAG) $@
-
-$(strip $(TEST_NAME)).o: $(LOCALOBJ) Makefile
-
-Makefile: $(KIM_API_DIR)/Include.mk
-	@touch Makefile
-
-clean:
-	rm -f *.mod *.o $(TEST_NAME) $(LOCAL_CLEAN)
+# load compiler options
+ifdef KIM_INTEL
+ include $(KIM_API_DIR)/Makfile.Intel
+else
+ include $(KIM_API_DIR)/Makefile.GNU
+endif

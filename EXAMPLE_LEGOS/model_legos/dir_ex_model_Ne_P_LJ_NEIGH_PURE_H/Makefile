@@ -30,33 +30,15 @@
 #
 
 
+# load all basic KIM make configuration
+include ../Makefile.KIMConfig
+
+# set model specific details
 MODEL_NAME := ex_model_Ne_P_LJ_NEIGH_PURE_H
 
 LOCALOBJ = $(strip $(MODEL_NAME))_compute.o
 
 LOCALCLEAN =
 
-# No changes should be needed below this line.
-
-MODEL_BUILD_TARGET := $(strip $(MODEL_NAME)).a
-
-ifndef KIM_API_DIR
-   include $(KIM_DIR)/KIM_API/Include.mk
-else
-   include $(KIM_API_DIR)/Include.mk
-endif
-
-
-all: $(MODEL_BUILD_TARGET)
-
-$(strip $(MODEL_NAME)).a: $(LOCALOBJ) $(strip $(MODEL_NAME)).o $(strip $(MODEL_NAME))_kim_str.o
-	ar rcs $@ *.o
-
-$(strip $(MODEL_NAME)).o: Makefile
-$(strip $(MODEL_NAME))_compute.o: Makefile
-
-Makefile: $(KIM_API_DIR)/Include.mk
-	@touch Makefile
-
-clean:
-	rm -f *.o *.mod *.a *.so $(addprefix $(strip $(MODEL_NAME))_kim_str.,o cpp) $(LOCALCLEAN)
+# load remaining KIM make configuration
+include $(KIM_API_DIR)/Makefile.Model

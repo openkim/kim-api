@@ -22,9 +22,7 @@
 # Copyright (c) 2012, Regents of the University of Minnesota.  All rights reserved.
 #
 # Contributors:
-#    Valeriu Smirichinski
 #    Ryan S. Elliott
-#    Ellad B. Tadmor
 #
 
 #
@@ -32,13 +30,40 @@
 #
 
 
-MODEL_BUILD_TARGET := $(strip $(MODEL_NAME)).a
-
-ifndef KIM_API_DIR
-   include $(KIM_DIR)/KIM_API/Include.mk
-else
-   include $(KIM_API_DIR)/Include.mk
+# sanity checks
+ifndef KIM_DIR
+   $(error Make variable KIM_DIR must be defined.)
 endif
+ifndef KIM_MODEL_DRIVERS_DIR
+   $(error Make variable KIM_MODEL_DRIVERS_DIR must be defined.)
+endif
+ifndef KIM_MODELS_DIR
+   $(error Make variable KIM_MODELS_DIR must be defined.)
+endif
+ifndef KIM_TESTS_DIR
+   $(error Make variable KIM_TEST_DIR must be defined.)
+endif
+
+MODEL_BUILD_TARGET := $(strip $(MODEL_NAME)).a
+ifdef KIM_DYNAMIC
+   MODEL_BUILD_TARGET += $(patsubst %.a,%.so, $(MODEL_BUILD_TARGET))
+else
+   ifneq ("1","$(MAKELEVEL)")
+     MODEL_BUILD_TARGET += STATIC_COMP_WARNING
+   endif
+endif
+
+.PHONY: STATIC_COMP_WARNING
+STATIC_COMP_WARNING:
+	@echo ''; \
+        echo '*************************************************************************'; \
+        echo '*******               Compiling in static link mode               *******'; \
+        echo '*******         You probably want to execute make from the        *******'; \
+        echo '*******                     $$KIM_DIR directory                    *******'; \
+        echo '*************************************************************************'; \
+
+MODEL_NAME_KIM_STR_H = char* $(strip $(MODEL_NAME))_kim_str'('')'';'
+MODEL_NAME_KIM_STR_CPP = char* $(strip $(MODEL_NAME))_kim_str'('')''{'
 
 all: $(strip $(MODEL_NAME)).kim $(MODEL_BUILD_TARGET)
 
@@ -53,7 +78,7 @@ lc_MODEL_DRIVER_NAME := `echo $(strip $(MODEL_DRIVER_NAME)) | tr A-Z a-z`
 lc_MODEL_NAME        := `echo $(strip $(MODEL_NAME)) | tr A-Z a-z`
 
 $(strip $(MODEL_NAME)).kim: $(KIM_MODEL_DRIVERS_DIR)/$(strip $(MODEL_DRIVER_NAME))/$(strip $(MODEL_DRIVER_NAME)).kim Makefile \
-                   $(KIM_API_DIR)/Makefile.Model_Drivers
+                   $(KIM_API_DIR)/Makefile.ParameterizedModel
 	@$(foreach spec,$(filter-out $(shell cat $(KIM_MODEL_DRIVERS_DIR)/$(strip $(MODEL_DRIVER_NAME))/$(strip $(MODEL_DRIVER_NAME)).kim | \
                                       sed -e '/^SPECIES_\([0-9]\{3\}\)_NAME_STR.*$$/!d' -e 's/^\(SPECIES_[0-9]\{3\}_NAME\)_STR.*$$/\1/'), \
                                       $(species_list)),\
@@ -65,7 +90,7 @@ $(strip $(MODEL_NAME)).kim: $(KIM_MODEL_DRIVERS_DIR)/$(strip $(MODEL_DRIVER_NAME
         > $(strip $(MODEL_NAME)).kim
 
 $(strip $(MODEL_NAME)).cpp: $(KIM_API_DIR)/model_based_on_driver.cpp $(paramfile_name_list) Makefile \
-                   $(KIM_API_DIR)/Makefile.Model_Drivers
+                   $(KIM_API_DIR)/Makefile.ParameterizedModel
 	cat /dev/null > $(strip $(MODEL_NAME)).cpp
 	@$(foreach flnum,$(paramfile_num_list),\
           echo "static char paramfile_$(flnum)[] ="                             >> $(strip $(MODEL_NAME)).cpp && \
@@ -93,7 +118,7 @@ $(strip $(MODEL_NAME)).cpp: $(KIM_API_DIR)/model_based_on_driver.cpp $(paramfile
 $(strip $(MODEL_NAME)).a: $(strip $(MODEL_NAME)).o $(strip $(MODEL_NAME))_kim_str.o
 	ar rcs $@ *.o
 
-Makefile: $(KIM_API_DIR)/Include.mk
+Makefile: 
 	@touch Makefile
 
 clean:

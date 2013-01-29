@@ -67,7 +67,7 @@ else
    lib: libkim.a
 endif
 
-Makefile: Include.mk
+Makefile: 
 	@touch Makefile
 
 libkim.a: $(ALLOBJ) $(MODELOBJ)

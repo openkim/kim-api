@@ -28,33 +28,32 @@
 #
 # Release: This file is part of the openkim-api.git repository.
 #
-#
-# this make file builds/cleans everything
-#
 
 
-# sanity check
+# sanity checks
 ifndef KIM_DIR
    $(error Make variable KIM_DIR must be defined.)
 endif
-
-# The openkim-api subdirectories:
-ifndef KIM_API_DIR
-   KIM_API_DIR := $(KIM_DIR)/KIM_API
-endif
 ifndef KIM_MODEL_DRIVERS_DIR
-   KIM_MODEL_DRIVERS_DIR := $(KIM_DIR)/MODEL_DRIVERs
+   $(error Make variable KIM_MODEL_DRIVERS_DIR must be defined.)
 endif
 ifndef KIM_MODELS_DIR
-   KIM_MODELS_DIR := $(KIM_DIR)/MODELs
+   $(error Make variable KIM_MODELS_DIR must be defined.)
 endif
 ifndef KIM_TESTS_DIR
-   KIM_TESTS_DIR := $(KIM_DIR)/TESTs
+   $(error Make variable KIM_TEST_DIR must be defined.)
 endif
 
-# load compiler options
-ifdef KIM_INTEL
- include $(KIM_API_DIR)/Intel_compiler_settings.mk
-else
- include $(KIM_API_DIR)/GNU_compiler_settings.mk
-endif
+
+all: $(TEST_NAME)
+
+$(TEST_NAME): $(LOCALOBJ) $(strip $(TEST_NAME)).o $(KIM_LIB_FILE)
+	$(LD) $(LDFLAGS) $(LOCALOBJ) $< $(KIM_LIB) $(XLANGLDLIBS) $(LDDYNAMICLIB) $(OUTPUTINFLAG) $@
+
+$(strip $(TEST_NAME)).o: $(LOCALOBJ) Makefile
+
+Makefile: 
+	@touch Makefile
+
+clean:
+	rm -f *.mod *.o $(TEST_NAME) $(LOCAL_CLEAN)

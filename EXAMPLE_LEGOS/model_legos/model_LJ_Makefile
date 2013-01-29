@@ -32,15 +32,14 @@
 #
 
 
+# load all basic KIM make configuration
+include ../Makefile.KIMConfig
+
+# set model driver specific details
 MODEL_DRIVER_NAME   := MODEL_DRIVER_NAME_STR
 MODEL_NAME          := MODEL_NAME_STR
 SPECIES_001_NAME    := SPECIES_NAME_STR
 PARAM_FILE_001_NAME := $(strip $(MODEL_NAME)).params
 
-# No changes should be needed below this line.
-
-ifndef KIM_API_DIR
-   include $(KIM_DIR)/KIM_API/Makefile.Model_Drivers
-else
-   include $(KIM_API_DIR)/Makefile.Model_Drivers
-endif
+# load remaining KIM make configuration
+include $(KIM_API_DIR)/Makefile.ParameterizedModel

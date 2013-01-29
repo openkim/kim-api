@@ -32,7 +32,7 @@
 # this make file builds/cleans everything
 #
 
-KIM_DIR = `pwd`
+KIM_DIR = /usr/relliott/openkim-api-vX.X.X
 #KIM_API_DIR =
 #KIM_MODEL_DRIVERS_DIR =
 #KIM_MODELS_DIR =
@@ -42,7 +42,7 @@ KIM_SYSTEM32 = yes
 KIM_DYNAMIC  = yes
 
 # load default compiler options
-include $(KIM_DIR)/Makefile.LoadCompilerSettings
+include $(KIM_DIR)/Makefile.LoadCompilerConfig
 
 # overwrite default compiler options
 #CC  =
@@ -50,4 +50,4 @@ include $(KIM_DIR)/Makefile.LoadCompilerSettings
 #FC  =
 
 # load rest of generic make settings
-include $(KIM_API_DIR)/Makefile.GenericSettings
+include $(KIM_API_DIR)/Makefile.Generic

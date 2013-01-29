@@ -45,12 +45,12 @@ ifndef KIM_TESTS_DIR
 endif
 
 #build target .a or .so for models
-MODEL_BUILD_TARGET := $(strip $(MODEL_NAME)).a
+MODEL_DRIVER_BUILD_TARGET := $(strip $(MODEL_DRIVER_NAME)).a
 ifdef KIM_DYNAMIC
-   MODEL_BUILD_TARGET += $(patsubst %.a,%.so, $(MODEL_BUILD_TARGET))
+   MODEL_DRIVER_BUILD_TARGET += $(patsubst %.a,%.so, $(MODEL_DRIVER_BUILD_TARGET))
 else
    ifneq ("1","$(MAKELEVEL)")
-     MODEL_BUILD_TARGET += STATIC_COMP_WARNING
+     MODEL_DRIVER_BUILD_TARGET += STATIC_COMP_WARNING
    endif
 endif
 
@@ -63,18 +63,15 @@ STATIC_COMP_WARNING:
         echo '*******                     $$KIM_DIR directory                    *******'; \
         echo '*************************************************************************'; \
 
-MODEL_NAME_KIM_STR_H = char* $(strip $(MODEL_NAME))_kim_str'('')'';'
-MODEL_NAME_KIM_STR_CPP = char* $(strip $(MODEL_NAME))_kim_str'('')''{'
+all: $(MODEL_DRIVER_BUILD_TARGET)
 
-all: $(MODEL_BUILD_TARGET)
-
-$(strip $(MODEL_NAME)).a: $(LOCALOBJ) $(strip $(MODEL_NAME)).o $(strip $(MODEL_NAME))_kim_str.o
+$(strip $(MODEL_DRIVER_NAME)).a: $(LOCALOBJ) $(strip $(MODEL_DRIVER_NAME)).o
 	ar rcs $@ *.o
 
-$(strip $(MODEL_NAME)).o: Makefile
+$(strip $(MODEL_DRIVER_NAME)).o: Makefile
 
-Makefile: $(KIM_API_DIR)/Include.mk
+Makefile: 
 	@touch Makefile
 
 clean:
-	rm -f *.o *.mod *.a *.so $(addprefix $(strip $(MODEL_NAME))_kim_str.,o cpp) $(LOCALCLEAN)
+	rm -f *.o *.mod *.a *.so $(LOCALCLEAN)
