@@ -80,6 +80,10 @@ COMMONFLAGS = -I$(KIM_API_DIR)                                      \
               -D KIM_DIR_MODELS=\"$(KIM_MODELS_DIR)\"               \
               -D KIM_DIR_TESTS=\"$(KIM_TESTS_DIR)\"                 \
               -D KIM_DIR_MODEL_DRIVERS=\"$(KIM_MODEL_DRIVERS_DIR)\"
+# add dynamic define if appropriate
+ifdef KIM_DYNAMIC
+   COMMONFLAGS += -D KIM_DYNAMIC=\"$(KIM_DYNAMIC)\"
+endif
 # directory where the kim.log file should be created
 #              -D KIM_DIR=\"$(KIM_DIR)/\"
 
@@ -90,10 +94,9 @@ else
 endif
 
 # Set common compiler flags for dynamic linking
-ifdef KIM_DYNAMIC
-   CPPFLAG     += -D KIM_DYNAMIC=\"$(KIM_DYNAMIC)\" -fPIC
-   CFLAG       += -D KIM_DYNAMIC=\"$(KIM_DYNAMIC)\" -fPIC
-   FORTRANFLAG += -fPIC
+ifndef KIM_DYNAMIC
+   PICFLAG =
+   LDDYNAMICFLAG =
 endif
 
 # Set correct lib file name depending on type of compilation
@@ -115,9 +118,9 @@ endif
 ifdef KIM_DYNAMIC
    MODEL_BUILD_TARGET        += $(patsubst %.a,%.so, $(MODEL_BUILD_TARGET))
    MODEL_DRIVER_BUILD_TARGET += $(patsubst %.a,%.so, $(MODEL_DRIVER_BUILD_TARGET))
-   SHARED_LIB_FLAG = -shared
+   LDSHAREDFLAG = -shared
    ifeq ($(OSTYPE),FreeBSD)
-      SHARED_LIB_FLAG = -dynamiclib
+      LDSHAREDFLAG = -dynamiclib
    endif
    LINKSONAME = -Wl,-soname=
    ifeq ($(findstring darwin,$(OSTYPE)),darwin)
@@ -153,57 +156,57 @@ endif
 
 # C/C++ Compiler pattern rules
 %.o:%.c    # C with preprocessing
-	$(CCOMPILER) $(CFLAG) $(COMMONFLAGS) $(OBJONLY) $<
+	$(CC) $(PICFLAG) $(CCFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
 %.o:%.i    # C without preprocessing
-	$(CCOMPILER) $(CFLAG) $(COMMONFLAGS) $(OBJONLY) $<
+	$(CC) $(PICFLAG) $(CCFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
 %.o:%.cpp  # C++ with preprocessing
-	$(CPPCOMPILER) $(CPPFLAG) $(COMMONFLAGS) $(OBJONLY) $<
+	$(CXX) $(PICFLAG) $(CXXFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
 %.o:%.ii   # C++ without preprocessing
-	$(CPPCOMPILER) $(CPPFLAG) $(COMMONFLAGS) $(OBJONLY) $<
+	$(CXX) $(PICFLAG) $(CXXFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
 %.o:%.cc   # C++ with preprocessing
-	$(CPPCOMPILER) $(CPPFLAG) $(COMMONFLAGS) $(OBJONLY) $<
+	$(CXX) $(PICFLAG) $(CXXFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
 %.o:%.cxx  # C++ with preprocessing
-	$(CPPCOMPILER) $(CPPFLAG) $(COMMONFLAGS) $(OBJONLY) $<
+	$(CXX) $(PICFLAG) $(CXXFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
 %.o:%.cpp  # C++ with preprocessing
-	$(CPPCOMPILER) $(CPPFLAG) $(COMMONFLAGS) $(OBJONLY) $<
+	$(CXX) $(PICFLAG) $(CXXFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
 %.o:%.C    # C++ with preprocessing
-	$(CPPCOMPILER) $(CPPFLAG) $(COMMONFLAGS) $(OBJONLY) $<
+	$(CXX) $(PICFLAG) $(CXXFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
 
 # Fortran Compiler pattern rules
 # Fixed form code
 %.o:%.f    # FORTRAN 77 without preprocessing
-	$(FORTRANCOMPILER) $(FORTRANFLAG) $(COMMONFLAGS) $(OBJONLY) $<
+	$(FC) $(PICFLAG) $(FCRAYFLAG) $(FFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
 %.o:%.for  # FORTRAN 77 without preprocessing
-	$(FORTRANCOMPILER) $(FORTRANFLAG) $(COMMONFLAGS) $(OBJONLY) $<
+	$(FC) $(PICFLAG) $(FCRAYFLAG) $(FFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
 %.o:%.ftn  # FORTRAN 77 without preprocessing
-	$(FORTRANCOMPILER) $(FORTRANFLAG) $(COMMONFLAGS) $(OBJONLY) $<
+	$(FC) $(PICFLAG) $(FCRAYFLAG) $(FFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
 %.o:%.fpp  # FORTRAN 77 with preprocessing
-	$(FORTRANCOMPILER) $(FORTRANFLAG) $(COMMONFLAGS) $(OBJONLY) $<
+	$(FC) $(PICFLAG) $(FCRAYFLAG) $(FFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
 %.o:%.F    # FORTRAN 77 with preprocessing
-	$(FORTRANCOMPILER) $(FORTRANFLAG) $(COMMONFLAGS) $(OBJONLY) $<
+	$(FC) $(PICFLAG) $(FCRAYFLAG) $(FFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
 %.o:%.FOR  # FORTRAN 77 with preprocessing
-	$(FORTRANCOMPILER) $(FORTRANFLAG) $(COMMONFLAGS) $(OBJONLY) $<
+	$(FC) $(PICFLAG) $(FCRAYFLAG) $(FFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
 %.o:%.FTN  # FORTRAN 77 with preprocessing
-	$(FORTRANCOMPILER) $(FORTRANFLAG) $(COMMONFLAGS) $(OBJONLY) $<
+	$(FC) $(PICFLAG) $(FCRAYFLAG) $(FFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
 %.o:%.FPP  # FORTRAN 77 with preprocessing
-	$(FORTRANCOMPILER) $(FORTRANFLAG) $(COMMONFLAGS) $(OBJONLY) $<
+	$(FC) $(PICFLAG) $(FCRAYFLAG) $(FFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
 # Free form code
 %.o:%.f90  # Fortran 90 without preprocessing
-	$(FORTRANCOMPILER) $(FORTRANFLAG) $(COMMONFLAGS) $(OBJONLY) $<
+	$(FC) $(PICFLAG) $(FCRAYFLAG) $(FFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
 %.o:%.f95  # Fortran 95 without preprocessing
-	$(FORTRANCOMPILER) $(FORTRANFLAG) $(COMMONFLAGS) $(OBJONLY) $<
+	$(FC) $(PICFLAG) $(FCRAYFLAG) $(FFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
 %.o:%.f03  # Fortran 2003 without preprocessing
-	$(FORTRANCOMPILER) $(FORTRANFLAG) $(COMMONFLAGS) $(OBJONLY) $<
+	$(FC) $(PICFLAG) $(FCRAYFLAG) $(FFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
 %.o:%.f08  # Fortran 2008 without preprocessing
-	$(FORTRANCOMPILER) $(FORTRANFLAG) $(COMMONFLAGS) $(OBJONLY) $<
+	$(FC) $(PICFLAG) $(FCRAYFLAG) $(FFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
 %.o:%.F90  # Fortran 90 without preprocessing
-	$(FORTRANCOMPILER) $(FORTRANFLAG) $(COMMONFLAGS) $(OBJONLY) $<
+	$(FC) $(PICFLAG) $(FCRAYFLAG) $(FFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
 %.o:%.F95  # Fortran 95 without preprocessing
-	$(FORTRANCOMPILER) $(FORTRANFLAG) $(COMMONFLAGS) $(OBJONLY) $<
+	$(FC) $(PICFLAG) $(FCRAYFLAG) $(FFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
 %.o:%.F03  # Fortran 2003 without preprocessing
-	$(FORTRANCOMPILER) $(FORTRANFLAG) $(COMMONFLAGS) $(OBJONLY) $<
+	$(FC) $(PICFLAG) $(FCRAYFLAG) $(FFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
 %.o:%.F08  # Fortran 2008 without preprocessing
-	$(FORTRANCOMPILER) $(FORTRANFLAG) $(COMMONFLAGS) $(OBJONLY) $<
+	$(FC) $(PICFLAG) $(FCRAYFLAG) $(FFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
 
 
 #
@@ -227,4 +230,4 @@ MODEL_NAME_KIM_STR_CPP = char* $(strip $(MODEL_NAME))_kim_str'('')''{'
 
 # Library pattern rule
 %.so: %.a
-	$(LINKCOMPILER) $(SHARED_LIB_FLAG) $(OUTPUTIN) $@  *.o -L$(KIM_API_DIR)/ -lkim $(LINKLIBFLAG)
+	$(LD) $(LDSHAREDFLAG) $(OUTPUTINFLAG) $@  *.o -L$(KIM_API_DIR)/ -lkim $(LDDYNAMICLIB) $(XLANGLDLIBS)

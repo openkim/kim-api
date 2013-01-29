@@ -32,28 +32,30 @@
 #
 
 
+# We use the standard make variables defined by the GNU standard
+# http://www.gnu.org/software/make/manual/html_node/Implicit-Variables.html
+
 # Define GNU compiler switches
-CCOMPILER       = gcc
-CPPCOMPILER     = g++
-FORTRANCOMPILER = gfortran
-LINKCOMPILER    = $(CPPCOMPILER)
+CC  = gcc
+CXX = g++
+FC  = gfortran
+LD  = $(CXX)
 
-# Define the names for typical compiler options
-OBJONLY=-c
-OUTPUTIN=-o
-
-# Define compiler flag lists
-FORTRANFLAG = -O3 -fcray-pointer
-CFLAG       = -O3
-CPPFLAG     = -O3 -Wno-write-strings
-
-# Define linking options for using $(LIKNCOMPILER) to link other language objects
-LINKLIBFLAG = -lgfortran
-ifneq ($(shell $(FORTRANCOMPILER) -v /dev/null 2>&1 | grep -c lgfortranbegin),0)
+# Define the names for typical/required compiler option flags
+OBJONLYFLAG  = -c
+OUTPUTINFLAG = -o
+PICFLAG      = -fPIC
+FCRAYFLAG    = -fcray-pointer
+LDDYNAMICLIB = -ldl
+# Define linking options for using $(LD) to link other language objects
+XLANGLDLIBS  = -lgfortran
+ifneq ($(shell $(FC) -v /dev/null 2>&1 | grep -c lgfortranbegin),0)
    # Add libforgranbegin if needed.
-   LINKLIBFLAG += -lgfortranbegin
+   XLANGLDLIBS += -lgfortranbegin
 endif
-ifdef KIM_DYNAMIC
-   # Add libdl if dynamic linking is being used
-   LINKLIBFLAG += -ldl
-endif
+
+# Define optional compiler option flag lists
+FFLAGS   = -O3 -g
+CCFLAGS  = -O3 -g
+CXXFLAGS = -O3 -g -Wno-write-strings
+LDFLAGS  =

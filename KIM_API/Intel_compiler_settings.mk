@@ -32,20 +32,26 @@
 #
 
 
+# We use the standard make variables defined by the GNU standard
+# http://www.gnu.org/software/make/manual/html_node/Implicit-Variables.html
+
 # Define Intel compiler switches
-CCOMPILER       = icc
-CPPCOMPILER     = icpc
-FORTRANCOMPILER = ifort
-LINKCOMPILER    = $(FORTRANCOMPILER)
+CC  = icc
+CXX = icpc
+FC  = ifort
+LD  = $(FC)
 
-# Define the names for typical compiler options
-OBJONLY=-c
-OUTPUTIN=-o
+# Define the names for typical/required compiler option flags
+OBJONLYFLAG  = -c
+OUTPUTINFLAG = -o
+PICFLAG      = -fPIC
+FCRAYFLAG    =
+LDDYNAMICLIB =
+# Define linking options for using $(LD) to link other language objects
+XLANGLDLIBS  = -nofor_main -cxxlib
 
-# Define compiler flag lists
-FORTRANFLAG = -O3
-CFLAG       = -O3
-CPPFLAG     = -O3
-
-# Define linking options for using $(LIKNCOMPILER) to link other language objects
-LINKLIBFLAG = -nofor_main -cxxlib
+# Define optional compiler option flag lists
+FFLAGS   = -O3 -g
+CCFLAGS  = -O3 -g
+CXXFLAGS = -O3 -g
+LDFLAGS  =
