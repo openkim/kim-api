@@ -67,5 +67,5 @@ Makefile: $(KIM_MAKE_FILES) $(KIM_API_DIR)/Makefile.ModelDriver
 	@touch Makefile
 
 clean:
-	rm -f $(LOCALOBJ) $(strip $(MODEL_DRIVER_NAME)).o $(patsubst %.o,%.mod,$(LOCALOBJ)) \
+	rm -f $(LOCALOBJ) $(strip $(MODEL_DRIVER_NAME)).o *.mod \
               $(strip $(MODEL_DRIVER_NAME)).a $(strip $(MODEL_DRIVER_NAME)).so $(LOCALCLEAN)

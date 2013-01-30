@@ -90,7 +90,7 @@ ifeq ($(KIM_DYNAMIC),yes)
    endif
    ifeq ($(findstring darwin,$(OSTYPE)),darwin)
       LINKSONAME = -Wl,-install_name,
-      LDWHOLEARCHIVEFLAG = -Wl,-all_load
+      LDWHOLEARCHIVEFLAG = -Wl,-force_load
    endif
 endif
 
@@ -161,7 +161,7 @@ KIM_LIB = -L$(KIM_API_DIR)/ -lkim
 
 # Library pattern rule
 %.so: %.a
-	$(LD) $(LDSHAREDFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@  $(LDWHOLEARCHIVE) $< \
+	$(LD) $(LDSHAREDFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@  $(LDWHOLEARCHIVEFLAG) $< \
               -L$(KIM_API_DIR)/ -lkim $(LDDYNAMICLIB) $(XLANGLDLIBS)
 
 # KIM descriptor file make rule

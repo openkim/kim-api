@@ -70,6 +70,5 @@ Makefile: $(KIM_MAKE_FILES) $(KIM_API_DIR)/Makefile.Model
 	@touch Makefile
 
 clean:
-	rm -f $(LOCALOBJ) $(patsubst %.o,%.mod,$(LOCALOBJ)) $(strip $(MODEL_NAME)).a       \
-              $(strip $(MODEL_NAME)).so $(addprefix $(strip $(MODEL_NAME))_kim_str.,o cpp) \
-              $(LOCALCLEAN)
+	rm -f $(LOCALOBJ) *.mod $(addprefix $(strip $(MODEL_NAME)).,o a so) \
+              $(addprefix $(strip $(MODEL_NAME))_kim_str.,o cpp) $(LOCALCLEAN)
