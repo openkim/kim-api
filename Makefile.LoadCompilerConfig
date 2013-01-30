@@ -49,9 +49,6 @@ ifndef KIM_TESTS_DIR
    KIM_TESTS_DIR := $(KIM_DIR)/TESTs
 endif
 
-# additional sanity checks
-include $(KIM_API_DIR)/Makefile.SanityCheck
-
 # load compiler options
 ifdef KIM_INTEL
  include $(KIM_API_DIR)/Makfile.Intel

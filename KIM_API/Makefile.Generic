@@ -83,16 +83,16 @@ endif
 # set compiler flags for shared libraries
 ifeq ($(KIM_DYNAMIC),yes)
    LDSHAREDFLAG = -shared
+   LINKSONAME = -Wl,-soname=
+   LDWHOLEARCHIVEFLAG = -Wl,--whole-archive
    ifeq ($(OSTYPE),FreeBSD)
       LDSHAREDFLAG = -dynamiclib
    endif
-   LINKSONAME = -Wl,-soname=
    ifeq ($(findstring darwin,$(OSTYPE)),darwin)
       LINKSONAME = -Wl,-install_name,
+      LDWHOLEARCHIVEFLAG = -Wl,-all_load
    endif
 endif
-
-LDWHOLEARCHIVE = -Wl,--whole-archive
 
 # Set correct lib file name depending on type of compilation
 ifeq ($(KIM_DYNAMIC),yes)
@@ -106,21 +106,21 @@ KIM_LIB = -L$(KIM_API_DIR)/ -lkim
 .DEFAULT_GOAL := all
 
 # C/C++ Compiler pattern rules
-%.o:%.c: Makefile    # C with preprocessing
+%.o:%.c Makefile    # C with preprocessing
 	$(CC) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CCFLAGS) $<
-%.o:%.i: Makefile    # C without preprocessing
+%.o:%.i Makefile    # C without preprocessing
 	$(CC) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CCFLAGS) $<
-%.o:%.cpp: Makefile  # C++ with preprocessing
+%.o:%.cpp Makefile  # C++ with preprocessing
 	$(CXX) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CXXFLAGS) $<
-%.o:%.ii: Makefile   # C++ without preprocessing
+%.o:%.ii Makefile   # C++ without preprocessing
 	$(CXX) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CXXFLAGS) $<
-%.o:%.cc: Makefile   # C++ with preprocessing
+%.o:%.cc Makefile   # C++ with preprocessing
 	$(CXX) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CXXFLAGS) $<
-%.o:%.cxx: Makefile  # C++ with preprocessing
+%.o:%.cxx Makefile  # C++ with preprocessing
 	$(CXX) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CXXFLAGS) $<
-%.o:%.cpp: Makefile  # C++ with preprocessing
+%.o:%.cpp Makefile  # C++ with preprocessing
 	$(CXX) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CXXFLAGS) $<
-%.o:%.C: Makefile    # C++ with preprocessing
+%.o:%.C Makefile    # C++ with preprocessing
 	$(CXX) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CXXFLAGS) $<
 
 # Fortran Compiler pattern rules

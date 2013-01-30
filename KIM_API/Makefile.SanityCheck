@@ -73,17 +73,3 @@ endif
 ifndef XLANGLDLIBS
    $(error Make variable XLANGLDLIBS must be defined)
 endif
-
-
-ifndef FFLAGS
-   $(error Make variable FFLAGS must be defined)
-endif
-ifndef CCFLAGS
-   $(error Make variable CCFLAGS must be defined)
-endif
-ifndef CXXFLAGS
-   $(error Make variable CXXFLAGS must be defined)
-endif
-ifndef LDFLAGS
-   $(error Make variable LDFLAGS must be defined)
-endif

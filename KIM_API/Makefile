@@ -70,11 +70,16 @@ endif
 Makefile: $(KIM_MAKE_FILES)
 	@touch Makefile
 
-libkim.a: $(ALLOBJ) $(MODELOBJ)
+ifeq ($(KIM_DYNAMIC),yes)
+   libkim.a: $(ALLOBJ)
+	ar rcs $@ $(ALLOBJ)
+else
+   libkim.a: $(ALLOBJ) $(MODELOBJ)
 	mkdir $(KIM_API_DIR)/temp_archive_dir && cd $(KIM_API_DIR)/temp_archive_dir && \
         $(foreach arch, $(MODELOBJ),ar x $(arch);) \
         ar rcs $(KIM_API_DIR)/$@ *.o $(addprefix $(KIM_API_DIR)/,$(ALLOBJ)) && \
         cd $(KIM_API_DIR)/ && rm -rf $(KIM_API_DIR)/temp_archive_dir
+endif
 libkim.so: libkim.a
 	$(LD) $(LDSHAREDFLAG) $(LINKSONAME)$(KIM_API_DIR)/$@ $(LDFLAGS) $(OUTPUTINFLAG) $@ $(LDWHOLEARCHIVEFLAG) $< \
               $(LDDYNAMICLIB) $(XLANGLDLIBS)
