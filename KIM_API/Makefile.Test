@@ -31,18 +31,10 @@
 
 
 # sanity checks
-ifndef KIM_DIR
-   $(error Make variable KIM_DIR must be defined.)
+ifndef KIM_API_DIR
+   $(error Make variable KIM_API_DIR must be defined.)
 endif
-ifndef KIM_MODEL_DRIVERS_DIR
-   $(error Make variable KIM_MODEL_DRIVERS_DIR must be defined.)
-endif
-ifndef KIM_MODELS_DIR
-   $(error Make variable KIM_MODELS_DIR must be defined.)
-endif
-ifndef KIM_TESTS_DIR
-   $(error Make variable KIM_TEST_DIR must be defined.)
-endif
+include $(KIM_API_DIR)/Makefile.SanityCheck
 
 
 all: $(TEST_NAME)
@@ -52,8 +44,8 @@ $(TEST_NAME): $(LOCALOBJ) $(strip $(TEST_NAME)).o $(KIM_LIB_FILE)
 
 $(strip $(TEST_NAME)).o: $(LOCALOBJ) Makefile
 
-Makefile: 
+Makefile: $(KIM_MAKE_FILES) $(KIM_API_DIR)/Makefile.Test
 	@touch Makefile
 
 clean:
-	rm -f *.mod *.o $(TEST_NAME) $(LOCAL_CLEAN)
+	rm -f $(patsubst %.o,%.mod,$(LOCALJOB)) $(LOCALOBJ) $(strip $(TEST_NAME)).o $(TEST_NAME) $(LOCAL_CLEAN)

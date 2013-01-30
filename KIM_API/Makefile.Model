@@ -31,18 +31,11 @@
 
 
 # sanity checks
-ifndef KIM_DIR
-   $(error Make variable KIM_DIR must be defined.)
+ifndef KIM_API_DIR
+   $(error Make variable KIM_API_DIR must be defined)
 endif
-ifndef KIM_MODEL_DRIVERS_DIR
-   $(error Make variable KIM_MODEL_DRIVERS_DIR must be defined.)
-endif
-ifndef KIM_MODELS_DIR
-   $(error Make variable KIM_MODELS_DIR must be defined.)
-endif
-ifndef KIM_TESTS_DIR
-   $(error Make variable KIM_TEST_DIR must be defined.)
-endif
+include $(KIM_API_DIR)/Makefile.SanityCheck
+
 
 #build target .a or .so for models
 MODEL_BUILD_TARGET := $(strip $(MODEL_NAME)).a
@@ -69,12 +62,14 @@ MODEL_NAME_KIM_STR_CPP = char* $(strip $(MODEL_NAME))_kim_str'('')''{'
 all: $(MODEL_BUILD_TARGET)
 
 $(strip $(MODEL_NAME)).a: $(LOCALOBJ) $(strip $(MODEL_NAME)).o $(strip $(MODEL_NAME))_kim_str.o
-	ar rcs $@ *.o
+	ar rcs $@ $(LOCALOBJ) $(strip $(MODEL_NAME)).o $(strip $(MODEL_NAME))_kim_str.o
 
 $(strip $(MODEL_NAME)).o: Makefile
 
-Makefile: 
+Makefile: $(KIM_MAKE_FILES) $(KIM_API_DIR)/Makefile.Model
 	@touch Makefile
 
 clean:
-	rm -f *.o *.mod *.a *.so $(addprefix $(strip $(MODEL_NAME))_kim_str.,o cpp) $(LOCALCLEAN)
+	rm -f $(LOCALOBJ) $(patsubst %.o,%.mod,$(LOCALOBJ)) $(strip $(MODEL_NAME)).a       \
+              $(strip $(MODEL_NAME)).so $(addprefix $(strip $(MODEL_NAME))_kim_str.,o cpp) \
+              $(LOCALCLEAN)

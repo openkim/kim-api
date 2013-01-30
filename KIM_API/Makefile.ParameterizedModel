@@ -31,18 +31,11 @@
 
 
 # sanity checks
-ifndef KIM_DIR
-   $(error Make variable KIM_DIR must be defined.)
+ifndef KIM_API_DIR
+   $(error Make variable KIM_API_DIR must be defined)
 endif
-ifndef KIM_MODEL_DRIVERS_DIR
-   $(error Make variable KIM_MODEL_DRIVERS_DIR must be defined.)
-endif
-ifndef KIM_MODELS_DIR
-   $(error Make variable KIM_MODELS_DIR must be defined.)
-endif
-ifndef KIM_TESTS_DIR
-   $(error Make variable KIM_TEST_DIR must be defined.)
-endif
+include $(KIM_API_DIR)/Makefile.SanityCheck
+
 
 MODEL_BUILD_TARGET := $(strip $(MODEL_NAME)).a
 ifdef KIM_DYNAMIC
@@ -77,8 +70,7 @@ num_paramfiles = $(words $(paramfile_num_list))
 lc_MODEL_DRIVER_NAME := `echo $(strip $(MODEL_DRIVER_NAME)) | tr A-Z a-z`
 lc_MODEL_NAME        := `echo $(strip $(MODEL_NAME)) | tr A-Z a-z`
 
-$(strip $(MODEL_NAME)).kim: $(KIM_MODEL_DRIVERS_DIR)/$(strip $(MODEL_DRIVER_NAME))/$(strip $(MODEL_DRIVER_NAME)).kim Makefile \
-                   $(KIM_API_DIR)/Makefile.ParameterizedModel
+$(strip $(MODEL_NAME)).kim: $(KIM_MODEL_DRIVERS_DIR)/$(strip $(MODEL_DRIVER_NAME))/$(strip $(MODEL_DRIVER_NAME)).kim Makefile
 	@$(foreach spec,$(filter-out $(shell cat $(KIM_MODEL_DRIVERS_DIR)/$(strip $(MODEL_DRIVER_NAME))/$(strip $(MODEL_DRIVER_NAME)).kim | \
                                       sed -e '/^SPECIES_\([0-9]\{3\}\)_NAME_STR.*$$/!d' -e 's/^\(SPECIES_[0-9]\{3\}_NAME\)_STR.*$$/\1/'), \
                                       $(species_list)),\
@@ -89,8 +81,7 @@ $(strip $(MODEL_NAME)).kim: $(KIM_MODEL_DRIVERS_DIR)/$(strip $(MODEL_DRIVER_NAME
             -e '/SPECIES_[0-9]\{3\}_NAME_STR/d' \
         > $(strip $(MODEL_NAME)).kim
 
-$(strip $(MODEL_NAME)).cpp: $(KIM_API_DIR)/model_based_on_driver.cpp $(paramfile_name_list) Makefile \
-                   $(KIM_API_DIR)/Makefile.ParameterizedModel
+$(strip $(MODEL_NAME)).cpp: $(KIM_API_DIR)/model_based_on_driver.cpp $(paramfile_name_list) Makefile
 	cat /dev/null > $(strip $(MODEL_NAME)).cpp
 	@$(foreach flnum,$(paramfile_num_list),\
           echo "static char paramfile_$(flnum)[] ="                             >> $(strip $(MODEL_NAME)).cpp && \
@@ -116,10 +107,10 @@ $(strip $(MODEL_NAME)).cpp: $(KIM_API_DIR)/model_based_on_driver.cpp $(paramfile
 	@rm -f tmp-sed-script
 
 $(strip $(MODEL_NAME)).a: $(strip $(MODEL_NAME)).o $(strip $(MODEL_NAME))_kim_str.o
-	ar rcs $@ *.o
+	ar rcs $@ $(strip $(MODEL_NAME)).o $(strip $(MODEL_NAME))_kim_str.o 
 
-Makefile: 
+Makefile: $(KIM_MAKE_FILES) $(KIM_API_DIR)/Makefile.ParameterizedModel
 	@touch Makefile
 
 clean:
-	rm -f *.o *.mod *.a *.so $(strip $(MODEL_NAME)).kim $(strip $(MODEL_NAME)).cpp $(addprefix $(strip $(MODEL_NAME))_kim_str.,o cpp)
+	rm -f $(addprefix $(strip $(MODEL_NAME)).,cpp o a so) $(strip $(MODEL_NAME)).kim $(addprefix $(strip $(MODEL_NAME))_kim_str.,cpp o)

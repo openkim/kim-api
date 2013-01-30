@@ -31,18 +31,18 @@
 
 
 # sanity checks
-ifndef KIM_DIR
-   $(error Make variable KIM_DIR must be defined)
+ifndef KIM_API_DIR
+   $(error Make variable KIM_API_DIR must be defined)
 endif
-ifndef KIM_MODEL_DRIVERS_DIR
-   $(error Make variable KIM_MODEL_DRIVERS_DIR must be defined)
-endif
-ifndef KIM_MODELS_DIR
-   $(error Make variable KIM_MODELS_DIR must be defined)
-endif
-ifndef KIM_TESTS_DIR
-   $(error Make variable KIM_TEST_DIR must be defined)
-endif
+include $(KIM_API_DIR)/Makefile.SanityCheck
+
+
+# define list of Makefiles in the KIM make system to be used for dependencies
+KIM_MAKE_FILES = $(KIM_DIR)/Makefile.KIMConfig       \
+                 $(KIM_API_DIR)/Makefile.Generic     \
+                 $(KIM_API_DIR)/Makefile.GNU         \
+                 $(KIM_API_DIR)/Makefile.Intel       \
+                 $(KIM_API_DIR)/Makefile.SanityCheck \
 
 # Determine whether a 32 bit or 64 bit compile should be use
 ifeq ($(KIM_SYSTEM32), yes)
@@ -65,12 +65,12 @@ COMMONFLAGS = -I$(KIM_API_DIR)                                      \
               -D KIM_DIR_MODEL_DRIVERS=\"$(KIM_MODEL_DRIVERS_DIR)\" \
               -D KIM_DIR_LOG=\".\"
 # add dynamic define if appropriate
-ifdef KIM_DYNAMIC
+ifeq ($(KIM_DYNAMIC),yes)
    COMMONFLAGS += -D KIM_DYNAMIC=\"$(KIM_DYNAMIC)\"
 endif
 
 # Set common compiler flags for dynamic linking
-ifndef KIM_DYNAMIC
+ifeq ($(KIM_DYNAMIC),no)
    PICFLAG =
    LDDYNAMICFLAG =
 endif
@@ -81,7 +81,7 @@ ifndef OSTYPE
 endif
 
 # set compiler flags for shared libraries
-ifdef KIM_DYNAMIC
+ifeq ($(KIM_DYNAMIC),yes)
    LDSHAREDFLAG = -shared
    ifeq ($(OSTYPE),FreeBSD)
       LDSHAREDFLAG = -dynamiclib
@@ -92,8 +92,10 @@ ifdef KIM_DYNAMIC
    endif
 endif
 
+LDWHOLEARCHIVE = -Wl,--whole-archive
+
 # Set correct lib file name depending on type of compilation
-ifdef KIM_DYNAMIC
+ifeq ($(KIM_DYNAMIC),yes)
    KIM_LIB_FILE = $(KIM_API_DIR)/libkim.so
 else
    KIM_LIB_FILE = $(KIM_API_DIR)/libkim.a
@@ -104,62 +106,63 @@ KIM_LIB = -L$(KIM_API_DIR)/ -lkim
 .DEFAULT_GOAL := all
 
 # C/C++ Compiler pattern rules
-%.o:%.c    # C with preprocessing
-	$(CC) $(PICFLAG) $(CCFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
-%.o:%.i    # C without preprocessing
-	$(CC) $(PICFLAG) $(CCFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
-%.o:%.cpp  # C++ with preprocessing
-	$(CXX) $(PICFLAG) $(CXXFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
-%.o:%.ii   # C++ without preprocessing
-	$(CXX) $(PICFLAG) $(CXXFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
-%.o:%.cc   # C++ with preprocessing
-	$(CXX) $(PICFLAG) $(CXXFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
-%.o:%.cxx  # C++ with preprocessing
-	$(CXX) $(PICFLAG) $(CXXFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
-%.o:%.cpp  # C++ with preprocessing
-	$(CXX) $(PICFLAG) $(CXXFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
-%.o:%.C    # C++ with preprocessing
-	$(CXX) $(PICFLAG) $(CXXFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
+%.o:%.c: Makefile    # C with preprocessing
+	$(CC) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CCFLAGS) $<
+%.o:%.i: Makefile    # C without preprocessing
+	$(CC) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CCFLAGS) $<
+%.o:%.cpp: Makefile  # C++ with preprocessing
+	$(CXX) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CXXFLAGS) $<
+%.o:%.ii: Makefile   # C++ without preprocessing
+	$(CXX) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CXXFLAGS) $<
+%.o:%.cc: Makefile   # C++ with preprocessing
+	$(CXX) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CXXFLAGS) $<
+%.o:%.cxx: Makefile  # C++ with preprocessing
+	$(CXX) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CXXFLAGS) $<
+%.o:%.cpp: Makefile  # C++ with preprocessing
+	$(CXX) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CXXFLAGS) $<
+%.o:%.C: Makefile    # C++ with preprocessing
+	$(CXX) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CXXFLAGS) $<
 
 # Fortran Compiler pattern rules
 # Fixed form code
-%.o:%.f    # FORTRAN 77 without preprocessing
-	$(FC) $(PICFLAG) $(FCRAYFLAG) $(FFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
-%.o:%.for  # FORTRAN 77 without preprocessing
-	$(FC) $(PICFLAG) $(FCRAYFLAG) $(FFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
-%.o:%.ftn  # FORTRAN 77 without preprocessing
-	$(FC) $(PICFLAG) $(FCRAYFLAG) $(FFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
-%.o:%.fpp  # FORTRAN 77 with preprocessing
-	$(FC) $(PICFLAG) $(FCRAYFLAG) $(FFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
-%.o:%.F    # FORTRAN 77 with preprocessing
-	$(FC) $(PICFLAG) $(FCRAYFLAG) $(FFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
-%.o:%.FOR  # FORTRAN 77 with preprocessing
-	$(FC) $(PICFLAG) $(FCRAYFLAG) $(FFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
-%.o:%.FTN  # FORTRAN 77 with preprocessing
-	$(FC) $(PICFLAG) $(FCRAYFLAG) $(FFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
-%.o:%.FPP  # FORTRAN 77 with preprocessing
-	$(FC) $(PICFLAG) $(FCRAYFLAG) $(FFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
+%.o:%.f Makefile    # FORTRAN 77 without preprocessing
+	$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+%.o:%.for Makefile  # FORTRAN 77 without preprocessing
+	$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+%.o:%.ftn Makefile  # FORTRAN 77 without preprocessing
+	$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+%.o:%.fpp Makefile  # FORTRAN 77 with preprocessing
+	$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+%.o:%.F Makefile    # FORTRAN 77 with preprocessing
+	$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+%.o:%.FOR Makefile  # FORTRAN 77 with preprocessing
+	$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+%.o:%.FTN Makefile  # FORTRAN 77 with preprocessing
+	$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+%.o:%.FPP Makefile  # FORTRAN 77 with preprocessing
+	$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
 # Free form code
-%.o:%.f90  # Fortran 90 without preprocessing
-	$(FC) $(PICFLAG) $(FCRAYFLAG) $(FFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
-%.o:%.f95  # Fortran 95 without preprocessing
-	$(FC) $(PICFLAG) $(FCRAYFLAG) $(FFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
-%.o:%.f03  # Fortran 2003 without preprocessing
-	$(FC) $(PICFLAG) $(FCRAYFLAG) $(FFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
-%.o:%.f08  # Fortran 2008 without preprocessing
-	$(FC) $(PICFLAG) $(FCRAYFLAG) $(FFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
-%.o:%.F90  # Fortran 90 without preprocessing
-	$(FC) $(PICFLAG) $(FCRAYFLAG) $(FFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
-%.o:%.F95  # Fortran 95 without preprocessing
-	$(FC) $(PICFLAG) $(FCRAYFLAG) $(FFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
-%.o:%.F03  # Fortran 2003 without preprocessing
-	$(FC) $(PICFLAG) $(FCRAYFLAG) $(FFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
-%.o:%.F08  # Fortran 2008 without preprocessing
-	$(FC) $(PICFLAG) $(FCRAYFLAG) $(FFLAGS) $(COMMONFLAGS) $(OBJONLYFLAG) $<
+%.o:%.f90 Makefile  # Fortran 90 without preprocessing
+	$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+%.o:%.f95 Makefile  # Fortran 95 without preprocessing
+	$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+%.o:%.f03 Makefile  # Fortran 2003 without preprocessing
+	$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+%.o:%.f08 Makefile  # Fortran 2008 without preprocessing
+	$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+%.o:%.F90 Makefile  # Fortran 90 without preprocessing
+	$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+%.o:%.F95 Makefile  # Fortran 95 without preprocessing
+	$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+%.o:%.F03 Makefile  # Fortran 2003 without preprocessing
+	$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+%.o:%.F08 Makefile  # Fortran 2008 without preprocessing
+	$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
 
 # Library pattern rule
 %.so: %.a
-	$(LD) $(LDSHAREDFLAG) $(OUTPUTINFLAG) $@  *.o -L$(KIM_API_DIR)/ -lkim $(LDDYNAMICLIB) $(XLANGLDLIBS)
+	$(LD) $(LDSHAREDFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@  $(LDWHOLEARCHIVE) $< \
+              -L$(KIM_API_DIR)/ -lkim $(LDDYNAMICLIB) $(XLANGLDLIBS)
 
 # KIM descriptor file make rule
 %_kim_str.cpp: %.kim
