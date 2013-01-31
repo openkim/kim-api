@@ -81,7 +81,8 @@ else
         cd $(KIM_API_DIR)/ && rm -rf $(KIM_API_DIR)/temp_archive_dir
 endif
 libkim.so: libkim.a
-	$(LD) $(LDSHAREDFLAG) $(LINKSONAME)$(KIM_API_DIR)/$@ $(LDFLAGS) $(OUTPUTINFLAG) $@ $(LDWHOLEARCHIVEFLAG) $< \
+	$(LD) $(LDSHAREDFLAG) $(LINKSONAME)$(KIM_API_DIR)/$@ $(LDFLAGS) $(OUTPUTINFLAG) $@ \
+              $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
               $(LDDYNAMICLIB) $(XLANGLDLIBS)
 
 KIM_API.o: $(if $(strip $(KIM_DYNAMIC)),,model_init_include.h model_init_include.cpp model_kim_str_include.cpp) KIM_API.h KIM_API.cpp KIM_AUX.h Makefile
