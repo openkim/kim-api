@@ -30,22 +30,33 @@
 #
 
 
-# sanity checks
-ifndef KIM_API_DIR
-   $(error Make variable KIM_API_DIR must be defined.)
+# sanity check
+ifndef KIM_DIR
+   $(error Make variable KIM_DIR must be defined.)
 endif
-include $(KIM_API_DIR)/Makefile.SanityCheck
+
+# The openkim-api subdirectories:
+ifndef KIM_MODEL_DRIVERS_DIR
+   KIM_MODEL_DRIVERS_DIR := $(KIM_DIR)/MODEL_DRIVERs
+endif
+ifndef KIM_MODELS_DIR
+   KIM_MODELS_DIR := $(KIM_DIR)/MODELs
+endif
+ifndef KIM_TESTS_DIR
+   KIM_TESTS_DIR := $(KIM_DIR)/TESTs
+endif
 
 
-all: $(TEST_NAME)
+# sanity check
+ifeq      ($(KIM_COMPILERSUITE),GCC)
+else ifeq ($(KIM_COMPILERSUITE),INTEL)
+else
+   $(error Make variable KIM_COMPILERSUITE must be 'GCC' or 'INTEL'.  Current value is: '$(KIM_COMPILERSUITE)')
+endif
 
-$(TEST_NAME): $(LOCALOBJ) $(strip $(TEST_NAME)).o $(KIM_LIB_FILE)
-	$(LD) $(LDFLAGS) $(LOCALOBJ) $< $(KIM_LIB) $(XLANGLDLIBS) $(LDDYNAMICLIB) $(OUTPUTINFLAG) $@
-
-$(strip $(TEST_NAME)).o: $(LOCALOBJ) Makefile
-
-Makefile: $(KIM_MAKE_FILES) $(KIM_API_DIR)/Makefile.Test
-	@touch Makefile
-
-clean:
-	rm -f $(patsubst %.o,%.mod,$(LOCALJOB)) $(LOCALOBJ) $(strip $(TEST_NAME)).o $(TEST_NAME) $(LOCAL_CLEAN)
+# load compiler options
+ifeq  ($(KIM_COMPILERSUITE),GCC)
+ include $(KIM_DIR)/MAKE_SYSTEM/Makefile.GNU
+else ifeq ($(KIM_COMPILERSUITE),INTEL)
+ include $(KIM_DIR)/MAKE_SYSTEM/Makfile.Intel
+endif

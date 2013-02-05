@@ -41,4 +41,4 @@ LOCALOBJ = $(strip $(MODEL_NAME))_compute.o
 LOCALCLEAN =
 
 # load remaining KIM make configuration
-include $(KIM_API_DIR)/Makefile.Model
+include $(KIM_DIR)/MAKE_SYSTEM/Makefile.Model

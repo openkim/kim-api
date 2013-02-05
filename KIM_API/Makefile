@@ -74,13 +74,13 @@ ifneq ($(KIM_LINK),static-link)
 	ar rcs $@ $(ALLOBJ)
 else
    libkim.a: $(ALLOBJ) # should also depend on MODEL and MODEL DRIVER archives
-	mkdir $(KIM_API_DIR)/temp_archive_dir && cd $(KIM_API_DIR)/temp_archive_dir && \
+	mkdir $(KIM_DIR)/KIM_API/temp_archive_dir && cd $(KIM_DIR)/KIM_API/temp_archive_dir && \
         $(foreach arch, $(shell find $(KIM_MODEL_DRIVERS_DIR) $(KIM_MODELS_DIR) -name "*.a"),ar x $(arch);) \
-        ar rcs $(KIM_API_DIR)/$@ *.o $(addprefix $(KIM_API_DIR)/,$(ALLOBJ)) && \
-        cd $(KIM_API_DIR)/ && rm -rf $(KIM_API_DIR)/temp_archive_dir
+        ar rcs $(KIM_DIR)/KIM_API/$@ *.o $(addprefix $(KIM_DIR)/KIM_API/,$(ALLOBJ)) && \
+        cd $(KIM_DIR)/KIM_API/ && rm -rf $(KIM_DIR)/KIM_API/temp_archive_dir
 endif
 libkim.so: libkim.a
-	$(LD) $(LDSHAREDFLAG) $(LINKSONAME)$(KIM_API_DIR)/$@ $(LDFLAGS) $(OUTPUTINFLAG) $@ \
+	$(LD) $(LDSHAREDFLAG) $(LINKSONAME)$(KIM_DIR)/KIM_API/$@ $(LDFLAGS) $(OUTPUTINFLAG) $@ \
               $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
               $(LDDYNAMICLIB) $(XLANGLDLIBS)
 
@@ -126,4 +126,4 @@ model_init_include.h model_init_include.cpp: Makefile .models-deleted $(MODELS_T
 
 clean:
 	rm -f *.o *.a *.so *.mod  model_init_include.h model_init_include.cpp model_kim_str_include.h model_kim_str_include,cpp .*.make-temp .models-deleted standard_kim_str.cpp &&\
-        rm -rf $(KIM_API_DIR)/temp_archive_dir
+        rm -rf $(KIM_DIR)/KIM_API/temp_archive_dir

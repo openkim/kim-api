@@ -42,4 +42,4 @@ SPECIES_001_NAME    := SPECIES_NAME_STR
 PARAM_FILE_001_NAME := $(strip $(MODEL_NAME)).params
 
 # load remaining KIM make configuration
-include $(KIM_API_DIR)/Makefile.ParameterizedModel
+include $(KIM_DIR)/MAKE_SYSTEM/Makefile.ParameterizedModel

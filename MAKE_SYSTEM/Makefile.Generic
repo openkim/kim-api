@@ -31,18 +31,18 @@
 
 
 # sanity checks
-ifndef KIM_API_DIR
-   $(error Make variable KIM_API_DIR must be defined)
+ifndef KIM_DIR
+   $(error Make variable KIM_DIR must be defined)
 endif
-include $(KIM_API_DIR)/Makefile.SanityCheck
+include $(KIM_DIR)/MAKE_SYSTEM/Makefile.SanityCheck
 
 
 # define list of Makefiles in the KIM make system to be used for dependencies
 KIM_MAKE_FILES = $(KIM_DIR)/Makefile.KIMConfig       \
-                 $(KIM_API_DIR)/Makefile.Generic     \
-                 $(KIM_API_DIR)/Makefile.GNU         \
-                 $(KIM_API_DIR)/Makefile.Intel       \
-                 $(KIM_API_DIR)/Makefile.SanityCheck \
+                 $(KIM_DIR)/MAKE_SYSTEM/Makefile.Generic     \
+                 $(KIM_DIR)/MAKE_SYSTEM/Makefile.GNU         \
+                 $(KIM_DIR)/MAKE_SYSTEM/Makefile.Intel       \
+                 $(KIM_DIR)/MAKE_SYSTEM/Makefile.SanityCheck \
 
 # set appropriate flag values
 ifeq ($(KIM_SYSTEMARCH),32bit)
@@ -60,12 +60,11 @@ else ifeq ($(KIM_LINK),dynamic-load)
 endif
 
 # Set compiler flag and define lists
-COMMONFLAGS = -I$(KIM_API_DIR)                                      \
+COMMONFLAGS = -I$(KIM_DIR)/KIM_API                                  \
               -D KIM_ARCHTYPE=$(KIM_ARCHTYPE)                       \
               -D KIM_LINK_VALUE=$(KIM_LINK_VALUE)                   \
               -D KIM_LOG_DIR=\".\"                                  \
               -D KIM_DIR=\"$(KIM_DIR)\"                             \
-              -D KIM_API_DIR=\"$(KIM_API_DIR)\"                     \
               -D KIM_MODEL_DRIVERS_DIR=\"$(KIM_MODEL_DRIVERS_DIR)\" \
               -D KIM_MODELS_DIR=\"$(KIM_MODELS_DIR)\"               \
               -D KIM_TESTS_DIR=\"$(KIM_TESTS_DIR)\"
@@ -99,11 +98,11 @@ endif
 
 # Set correct lib file name depending on type of compilation
 ifneq ($(KIM_LINK),static-link)
-   KIM_LIB_FILE = $(KIM_API_DIR)/libkim.so
+   KIM_LIB_FILE = $(KIM_DIR)/KIM_API/libkim.so
 else
-   KIM_LIB_FILE = $(KIM_API_DIR)/libkim.a
+   KIM_LIB_FILE = $(KIM_DIR)/KIM_API/libkim.a
 endif
-KIM_LIB = -L$(KIM_API_DIR)/ -lkim
+KIM_LIB = -L$(KIM_DIR)/KIM_API/ -lkim
 
 #set default goals allways all
 .DEFAULT_GOAL := all
@@ -166,7 +165,7 @@ KIM_LIB = -L$(KIM_API_DIR)/ -lkim
 %.so: %.a
 	$(LD) $(LDSHAREDFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@  \
               $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
-              -L$(KIM_API_DIR)/ -lkim $(LDDYNAMICLIB) $(XLANGLDLIBS)
+              -L$(KIM_DIR)/KIM_API/ -lkim $(LDDYNAMICLIB) $(XLANGLDLIBS)
 
 # KIM descriptor file make rule
 %_kim_str.cpp: %.kim

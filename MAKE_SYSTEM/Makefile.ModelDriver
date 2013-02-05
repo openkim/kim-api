@@ -31,10 +31,10 @@
 
 
 # sanity checks
-ifndef KIM_API_DIR
-   $(error Make variable KIM_API_DIR must be defined)
+ifndef KIM_DIR
+   $(error Make variable KIM_DIR must be defined)
 endif
-include $(KIM_API_DIR)/Makefile.SanityCheck
+include $(KIM_DIR)/MAKE_SYSTEM/Makefile.SanityCheck
 
 
 #build target .a or .so for models
@@ -63,7 +63,7 @@ $(strip $(MODEL_DRIVER_NAME)).a: $(LOCALOBJ) $(strip $(MODEL_DRIVER_NAME)).o
 
 $(strip $(MODEL_DRIVER_NAME)).o: Makefile
 
-Makefile: $(KIM_MAKE_FILES) $(KIM_API_DIR)/Makefile.ModelDriver
+Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/MAKE_SYSTEM/Makefile.ModelDriver
 	@touch Makefile
 
 clean:

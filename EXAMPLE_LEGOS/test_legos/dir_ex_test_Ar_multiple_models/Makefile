@@ -41,4 +41,4 @@ LOCALOBJ =
 LOCALCLEAN =
 
 # load remaining KIM make configuration
-include $(KIM_API_DIR)/Makefile.Test
+include $(KIM_DIR)/MAKE_SYSTEM/Makefile.Test

@@ -38,7 +38,7 @@ MODEL_DRIVERS_LIST = $(notdir $(filter-out $(shell if test -e "$(KIM_MODEL_DRIVE
 MODELS_LIST = $(notdir $(filter-out $(shell if test -e "$(KIM_MODELS_DIR)/.kimignore"; then cat "$(KIM_MODELS_DIR)/.kimignore";fi;),$(filter-out .%,$(shell find "$(KIM_MODELS_DIR)/" -maxdepth 1 -mindepth 1 -type d -exec basename {} \;))))
 TESTS_LIST  = $(notdir $(filter-out $(shell if test -e "$(KIM_TESTS_DIR)/.kimignore"; then cat "$(KIM_TESTS_DIR)/.kimignore";fi;),$(filter-out .%,$(shell find "$(KIM_TESTS_DIR)/" -maxdepth 1 -mindepth 1 -type d -exec basename {} \;))))
 
-KIM_CONFIG_FILES = $(KIM_API_DIR)/Makefile.KIMConfig $(KIM_MODEL_DRIVERS_DIR)/Makefile.KIMConfig $(KIM_MODELS_DIR)/Makefile.KIMConfig $(KIM_TESTS_DIR)/Makefile.KIMConfig
+KIM_CONFIG_FILES = $(KIM_DIR)/KIM_API/Makefile.KIMConfig $(KIM_MODEL_DRIVERS_DIR)/Makefile.KIMConfig $(KIM_MODELS_DIR)/Makefile.KIMConfig $(KIM_TESTS_DIR)/Makefile.KIMConfig
 
 .PHONY: all lib openkim-api examples examples-all examples-force clean clean-config   \
         clean-examples kim-api-all kim-api-lib kim-api-clean                          \
@@ -64,15 +64,15 @@ clean-examples:
 
 ########### for internal use ###########
 kim-api-all:
-	$(MAKE) -C $(KIM_API_DIR)/ all
+	$(MAKE) -C $(KIM_DIR)/KIM_API/ all
 	@echo
 
 kim-api-lib:
-	$(MAKE) -C $(KIM_API_DIR)/ lib
+	$(MAKE) -C $(KIM_DIR)/KIM_API/ lib
 	@echo
 
 kim-api-clean:
-	$(MAKE) -C $(KIM_API_DIR)/ clean
+	$(MAKE) -C $(KIM_DIR)/KIM_API/ clean
 	rm -f kim.log
 	@echo
 

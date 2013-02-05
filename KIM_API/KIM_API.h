@@ -45,10 +45,6 @@
 #error "KIM_DIR must be defined."
 #endif
 
-#ifndef KIM_API_DIR
-#error "KIM_API_DIR must be defined."
-#endif
-
 #ifndef KIM_MODEL_DRIVERS_DIR
 #error "KIM_MODEL_DRIVERS_DIR must be defined."
 #endif

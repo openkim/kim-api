@@ -34,9 +34,6 @@
 ifndef KIM_DIR
    $(error Make variable KIM_DIR must be defined)
 endif
-ifndef KIM_API_DIR
-   $(error Make variable KIM_API_DIR must be defined)
-endif
 ifndef KIM_MODEL_DRIVERS_DIR
    $(error Make variable KIM_MODEL_DRIVERS_DIR must be defined)
 endif

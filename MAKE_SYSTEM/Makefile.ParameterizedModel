@@ -31,10 +31,10 @@
 
 
 # sanity checks
-ifndef KIM_API_DIR
-   $(error Make variable KIM_API_DIR must be defined)
+ifndef KIM_DIR
+   $(error Make variable KIM_DIR must be defined)
 endif
-include $(KIM_API_DIR)/Makefile.SanityCheck
+include $(KIM_DIR)/MAKE_SYSTEM/Makefile.SanityCheck
 
 
 MODEL_BUILD_TARGET := $(strip $(MODEL_NAME)).a
@@ -81,7 +81,7 @@ $(strip $(MODEL_NAME)).kim: $(KIM_MODEL_DRIVERS_DIR)/$(strip $(MODEL_DRIVER_NAME
             -e '/SPECIES_[0-9]\{3\}_NAME_STR/d' \
         > $(strip $(MODEL_NAME)).kim
 
-$(strip $(MODEL_NAME)).cpp: $(KIM_API_DIR)/model_based_on_driver.cpp $(paramfile_name_list) Makefile
+$(strip $(MODEL_NAME)).cpp: $(KIM_DIR)/MAKE_SYSTEM/model_based_on_driver.cpp $(paramfile_name_list) Makefile
 	cat /dev/null > $(strip $(MODEL_NAME)).cpp
 	@$(foreach flnum,$(paramfile_num_list),\
           echo "static char paramfile_$(flnum)[] ="                             >> $(strip $(MODEL_NAME)).cpp && \
@@ -98,7 +98,7 @@ $(strip $(MODEL_NAME)).cpp: $(KIM_API_DIR)/model_based_on_driver.cpp $(paramfile
 	@echo "d" >> tmp-sed-script
 	@echo "}" >> tmp-sed-script
         # create actual model code to call model driver
-	cat $(KIM_API_DIR)/model_based_on_driver.cpp | \
+	cat $(KIM_DIR)/MAKE_SYSTEM/model_based_on_driver.cpp | \
         sed -e "s,MODEL_DRIVER_NAME_LC_STR,$(lc_MODEL_DRIVER_NAME),g"                                              \
             -e "s,MODEL_NAME_LC_STR,$(lc_MODEL_NAME),g"                                                            \
             -e "s,MODEL_DRIVER_SO_NAME_STR,$(KIM_MODEL_DRIVERS_DIR)/$(strip $(MODEL_DRIVER_NAME))/$(strip $(MODEL_DRIVER_NAME)).so,g" \
@@ -109,7 +109,7 @@ $(strip $(MODEL_NAME)).cpp: $(KIM_API_DIR)/model_based_on_driver.cpp $(paramfile
 $(strip $(MODEL_NAME)).a: $(strip $(MODEL_NAME)).o $(strip $(MODEL_NAME))_kim_str.o
 	ar rcs $@ $(strip $(MODEL_NAME)).o $(strip $(MODEL_NAME))_kim_str.o 
 
-Makefile: $(KIM_MAKE_FILES) $(KIM_API_DIR)/Makefile.ParameterizedModel
+Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/MAKE_SYSTEM/Makefile.ParameterizedModel
 	@touch Makefile
 
 clean:
