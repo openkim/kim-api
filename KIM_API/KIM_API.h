@@ -40,20 +40,25 @@
 #include <stdarg.h>
 
 #define number_NBC_methods 7
-#ifndef KIM_DIR_API
-#define KIM_DIR_API "../../KIM_API"
-#endif
-
-#ifndef KIM_DIR_MODELS
-#define KIM_DIR_MODELS "../../MODELs"
-#endif
-
-#ifndef KIM_DIR_TESTS
-#define KIM_DIR_TESTS "../../TESTs"
-#endif
 
 #ifndef KIM_DIR
-#define KIM_DIR "./"
+#error "KIM_DIR must be defined."
+#endif
+
+#ifndef KIM_API_DIR
+#error "KIM_API_DIR must be defined."
+#endif
+
+#ifndef KIM_MODEL_DRIVERS_DIR
+#error "KIM_MODEL_DRIVERS_DIR must be defined."
+#endif
+
+#ifndef KIM_MODELS_DIR
+#error "KIM_MODELS_DIR must be defined."
+#endif
+
+#ifndef KIM_TESTS_DIR
+#error "KIM_TESTS_DIR must be defined."
 #endif
 
 #define KIM_KEY_STRING_LENGTH 64

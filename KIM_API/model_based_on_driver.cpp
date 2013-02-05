@@ -40,14 +40,14 @@
 
 static int process_paramfiles(char* param_file_names, int* nmstrlen);
 
-#ifdef KIM_DYNAMIC
+#if KIM_LINK_VALUE == KIM_LINK_DYNAMIC_LOAD
    static void* driver_lib_handle;
    static void* driver_destroy;
 #endif
 
 extern "C" {
 
-#ifdef KIM_DYNAMIC
+#if KIM_LINK_VALUE == KIM_LINK_DYNAMIC_LOAD
    #include <dlfcn.h>
    static int model_destroy(void* km);
 #else
@@ -55,7 +55,7 @@ extern "C" {
 #endif
 
 
-#ifdef KIM_DYNAMIC
+#if KIM_LINK_VALUE == KIM_LINK_DYNAMIC_LOAD
    static int model_destroy(void* km) {
       typedef int (*Driver_Destroy)(void *);//prototype for driver_destroy
       Driver_Destroy drvr_destroy = (Driver_Destroy) driver_destroy;
@@ -80,7 +80,7 @@ extern "C" {
       if (KIM_STATUS_OK != process_paramfiles(param_file_names, &nmstrlen)) {
          return KIM_STATUS_FAIL;
       }
-#ifdef KIM_DYNAMIC
+#if KIM_LINK_VALUE == KIM_LINK_DYNAMIC_LOAD
       driver_lib_handle = dlopen("MODEL_DRIVER_SO_NAME_STR",RTLD_NOW);
       if (!driver_lib_handle) {
          std::cout << "Error at " << __LINE__ << " of file " << __FILE__ << std::endl;

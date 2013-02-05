@@ -75,4 +75,12 @@
 #define KIM_COMPUTE_TRUE                             1
 #define KIM_COMPUTE_FALSE                            0
 
+
+#define KIM_ARCH32BIT                                0
+#define KIM_ARCH64BIT                                1
+
+#define KIM_LINK_STATIC                              0
+#define KIM_LINK_DYNAMIC_LINK                        1
+#define KIM_LINK_DYNAMIC_LOAD                        2
+
 #endif /* KIMHDR_KIM_API_STATUS_H */

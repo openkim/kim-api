@@ -36,7 +36,7 @@
 
 module kim_kinds
   implicit none
-#ifdef SYSTEM32
+#if KIM_ARCHTYPE == KIM_ARCH32BIT
   integer, parameter :: kim_intptr = 4
 #else
   integer, parameter :: kim_intptr = 8

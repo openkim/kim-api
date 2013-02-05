@@ -57,11 +57,10 @@ ifneq ($(DELETED_MODELS_TARGETS),)
    $(info )
 endif
 
-
 all: $(ALLOBJ)
 
 # default target
-ifeq ($(KIM_DYNAMIC),yes)
+ifneq ($(KIM_LINK),static-link)
    lib: libkim.so
 else
    lib: libkim.a
@@ -70,13 +69,13 @@ endif
 Makefile: $(KIM_MAKE_FILES)
 	@touch Makefile
 
-ifeq ($(KIM_DYNAMIC),yes)
+ifneq ($(KIM_LINK),static-link)
    libkim.a: $(ALLOBJ)
 	ar rcs $@ $(ALLOBJ)
 else
-   libkim.a: $(ALLOBJ) $(MODELOBJ)
+   libkim.a: $(ALLOBJ) # should also depend on MODEL and MODEL DRIVER archives
 	mkdir $(KIM_API_DIR)/temp_archive_dir && cd $(KIM_API_DIR)/temp_archive_dir && \
-        $(foreach arch, $(MODELOBJ),ar x $(arch);) \
+        $(foreach arch, $(shell find $(KIM_MODEL_DRIVERS_DIR) $(KIM_MODELS_DIR) -name "*.a"),ar x $(arch);) \
         ar rcs $(KIM_API_DIR)/$@ *.o $(addprefix $(KIM_API_DIR)/,$(ALLOBJ)) && \
         cd $(KIM_API_DIR)/ && rm -rf $(KIM_API_DIR)/temp_archive_dir
 endif
@@ -85,7 +84,7 @@ libkim.so: libkim.a
               $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
               $(LDDYNAMICLIB) $(XLANGLDLIBS)
 
-KIM_API.o: $(if $(strip $(KIM_DYNAMIC)),,model_init_include.h model_init_include.cpp model_kim_str_include.cpp) KIM_API.h KIM_API.cpp KIM_AUX.h Makefile
+KIM_API.o: $(if $(filter-out static-link,$(KIM_LINK)),,model_init_include.h model_init_include.cpp model_kim_str_include.cpp) KIM_API.h KIM_API.cpp KIM_AUX.h Makefile
 
 KIM_API_C.o: KIM_API.h KIM_API_C.h Makefile
 

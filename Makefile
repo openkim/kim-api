@@ -46,7 +46,7 @@ KIM_CONFIG_FILES = $(KIM_API_DIR)/Makefile.KIMConfig $(KIM_MODEL_DRIVERS_DIR)/Ma
         $(patsubst %,%-clean,$(MODELS_LIST) $(MODEL_DRIVERS_LIST) $(TESTS_LIST))
 
 # compile everything in the standard directories
-ifdef KIM_DYNAMIC
+ifneq ($(KIM_LINK),static-link)
    all: models_check $(KIM_CONFIG_FILES) kim-api-all kim-api-lib $(patsubst %,%-all,$(MODEL_DRIVERS_LIST) \
         $(MODELS_LIST)) $(patsubst %,%-all,$(TESTS_LIST))
 else
@@ -161,7 +161,7 @@ clean-config:
 	rm -f $(KIM_CONFIG_FILES)
 
 models_check:
-	@if test \(X"$(MODELS_LIST)" = X""\) -a \(X"$(KIM_DYNAMIC)" = X""\); then \
+	@if test \(X"$(MODELS_LIST)" = X""\) -a \(X"$(KIM_LINK)" = X"static-link"\); then \
         echo "*************************************************************************"; \
         echo "*******  Can't compile the API for static linking with no Models  *******"; \
         echo "*******           Maybe you want to do 'make examples'            *******"; \

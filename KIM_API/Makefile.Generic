@@ -44,33 +44,34 @@ KIM_MAKE_FILES = $(KIM_DIR)/Makefile.KIMConfig       \
                  $(KIM_API_DIR)/Makefile.Intel       \
                  $(KIM_API_DIR)/Makefile.SanityCheck \
 
-# Determine whether a 32 bit or 64 bit compile should be use
-ifeq ($(KIM_SYSTEM32), yes)
-   MACHINESYSTEM=SYSTEM32
-else 
-   ifeq ($(KIM_SYSTEM32), no)
-      MACHINESYSTEM=SYSTEM64
-   else
-      $(error Make variable KIM_SYSTEM32 must be 'yes' or 'no')
-   endif
+# set appropriate flag values
+ifeq ($(KIM_SYSTEMARCH),32bit)
+   KIM_ARCHTYPE = 0
+else ifeq ($(KIM_SYSTEMARCH),64bit)
+   KIM_ARCHTYPE = 1
+endif
+
+ifeq ($(KIM_LINK),static-link)
+   KIM_LINK_VALUE = 0
+else ifeq ($(KIM_LINK),dynamic-link)
+   KIM_LINK_VALUE = 1
+else ifeq ($(KIM_LINK),dynamic-load)
+   KIM_LINK_VALUE = 2
 endif
 
 # Set compiler flag and define lists
 COMMONFLAGS = -I$(KIM_API_DIR)                                      \
-              -D $(MACHINESYSTEM)                                   \
+              -D KIM_ARCHTYPE=$(KIM_ARCHTYPE)                       \
+              -D KIM_LINK_VALUE=$(KIM_LINK_VALUE)                   \
+              -D KIM_LOG_DIR=\".\"                                  \
               -D KIM_DIR=\"$(KIM_DIR)\"                             \
-              -D KIM_DIR_API=\"$(KIM_API_DIR)\"                     \
-              -D KIM_DIR_MODELS=\"$(KIM_MODELS_DIR)\"               \
-              -D KIM_DIR_TESTS=\"$(KIM_TESTS_DIR)\"                 \
-              -D KIM_DIR_MODEL_DRIVERS=\"$(KIM_MODEL_DRIVERS_DIR)\" \
-              -D KIM_DIR_LOG=\".\"
-# add dynamic define if appropriate
-ifeq ($(KIM_DYNAMIC),yes)
-   COMMONFLAGS += -D KIM_DYNAMIC=\"$(KIM_DYNAMIC)\"
-endif
+              -D KIM_API_DIR=\"$(KIM_API_DIR)\"                     \
+              -D KIM_MODEL_DRIVERS_DIR=\"$(KIM_MODEL_DRIVERS_DIR)\" \
+              -D KIM_MODELS_DIR=\"$(KIM_MODELS_DIR)\"               \
+              -D KIM_TESTS_DIR=\"$(KIM_TESTS_DIR)\"
 
 # Set common compiler flags for dynamic linking
-ifeq ($(KIM_DYNAMIC),no)
+ifeq ($(KIM_LINK),static-link)
    PICFLAG =
    LDDYNAMICFLAG =
 endif
@@ -81,7 +82,7 @@ ifndef OSTYPE
 endif
 
 # set compiler flags for shared libraries
-ifeq ($(KIM_DYNAMIC),yes)
+ifneq ($(KIM_LINK),static-link)
    LDSHAREDFLAG = -shared
    LINKSONAME = -Wl,-soname=
    LDWHOLEARCHIVESTARTFLAG = -Wl,--whole-archive
@@ -97,7 +98,7 @@ ifeq ($(KIM_DYNAMIC),yes)
 endif
 
 # Set correct lib file name depending on type of compilation
-ifeq ($(KIM_DYNAMIC),yes)
+ifneq ($(KIM_LINK),static-link)
    KIM_LIB_FILE = $(KIM_API_DIR)/libkim.so
 else
    KIM_LIB_FILE = $(KIM_API_DIR)/libkim.a

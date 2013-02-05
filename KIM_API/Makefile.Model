@@ -39,7 +39,7 @@ include $(KIM_API_DIR)/Makefile.SanityCheck
 
 #build target .a or .so for models
 MODEL_BUILD_TARGET := $(strip $(MODEL_NAME)).a
-ifdef KIM_DYNAMIC
+ifneq ($(KIM_LINK),static-link)
    MODEL_BUILD_TARGET += $(patsubst %.a,%.so, $(MODEL_BUILD_TARGET))
 else
    ifneq ("1","$(MAKELEVEL)")

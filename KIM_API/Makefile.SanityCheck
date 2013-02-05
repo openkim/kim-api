@@ -47,11 +47,17 @@ ifndef KIM_TESTS_DIR
    $(error Make variable KIM_TEST_DIR must be defined)
 endif
 
-ifndef KIM_SYSTEM32
-   $(error Make variable KIM_SYSTEM32 must be defined)
+ifeq      ($(KIM_SYSTEMARCH),32bit)
+else ifeq ($(KIM_SYSTEMARCH),64bit)
+else
+   $(error Make variable KIM_SYSTEMARCH must be '32bit' or '64bit'.  Current value is: '$(KIM_SYSTEMARCH)')
 endif
-ifndef KIM_DYNAMIC
-   $(error Make variable KIM_SYSTEM32 must be defined)
+
+ifeq      ($(KIM_LINK),dynamic-load)
+else ifeq ($(KIM_LINK),dynamic-link)
+else ifeq ($(KIM_LINK),static-link)
+else
+   $(error Make variable KIM_LINK must be 'static-link', 'dynamic-link', or 'dynamic-load'.  Current value is: '$(KIM_LINK)')
 endif
 
 
@@ -62,13 +68,17 @@ ifndef OUTPUTINFLAG
    $(error Make variable OUTPUTINFLAG must be defined)
 endif
 ifndef PICFLAG
-   $(error Make variable PICFLAG must be defined)
+   ifneq ($(KIM_LINK),static-link)
+      $(error Make variable PICFLAG must be defined)
+   endif
 endif
 ifndef FCRAYFLAG
    $(error Make variable FCRAYFLAG must be defined)
 endif
 ifndef LDDYNAMICLIB
-   $(error Make variable LDDYNAMICLIB must be defined)
+   ifneq ($(KIM_LINK),static-link)
+      $(error Make variable LDDYNAMICLIB must be defined)
+   endif
 endif
 ifndef XLANGLDLIBS
    $(error Make variable XLANGLDLIBS must be defined)
