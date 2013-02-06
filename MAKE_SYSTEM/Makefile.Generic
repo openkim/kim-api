@@ -38,11 +38,15 @@ include $(KIM_DIR)/MAKE_SYSTEM/Makefile.SanityCheck
 
 
 # define list of Makefiles in the KIM make system to be used for dependencies
-KIM_MAKE_FILES = $(KIM_DIR)/Makefile.KIMConfig       \
-                 $(KIM_DIR)/MAKE_SYSTEM/Makefile.Generic     \
-                 $(KIM_DIR)/MAKE_SYSTEM/Makefile.GNU         \
-                 $(KIM_DIR)/MAKE_SYSTEM/Makefile.Intel       \
-                 $(KIM_DIR)/MAKE_SYSTEM/Makefile.SanityCheck \
+KIM_MAKE_FILES = $(KIM_DIR)/Makefile.KIMConfig                           \
+                 $(KIM_DIR)/MAKE_SYSTEM/Makefile.Generic                 \
+                 $(KIM_DIR)/MAKE_SYSTEM/Makefile.LoadDefaults            \
+                 $(KIM_DIR)/MAKE_SYSTEM/Makefile.SanityCheck             \
+                 $(KIM_DIR)/MAKE_SYSTEM/COMPILER_DEFAULTS/Makefile.GCC   \
+                 $(KIM_DIR)/MAKE_SYSTEM/COMPILER_DEFAULTS/Makefile.INTEL \
+                 $(KIM_DIR)/MAKE_SYSTEM/LINKER_DEFAULTS/Makefile.LINUX   \
+                 $(KIM_DIR)/MAKE_SYSTEM/LINKER_DEFAULTS/Makefile.FREEBSD \
+                 $(KIM_DIR)/MAKE_SYSTEM/LINKER_DEFAULTS/Makefile.DARWIN
 
 # set appropriate flag values
 ifeq ($(KIM_SYSTEMARCH),32bit)
@@ -73,27 +77,6 @@ COMMONFLAGS = -I$(KIM_DIR)/KIM_API                                  \
 ifeq ($(KIM_LINK),static-link)
    PICFLAG =
    LDDYNAMICFLAG =
-endif
-
-
-ifndef OSTYPE
-  OSTYPE := $(shell echo $$OSTYPE)
-endif
-
-# set compiler flags for shared libraries
-ifneq ($(KIM_LINK),static-link)
-   LDSHAREDFLAG = -shared
-   LINKSONAME = -Wl,-soname=
-   LDWHOLEARCHIVESTARTFLAG = -Wl,--whole-archive
-   LDWHOLEARCHIVEENDFLAG = -Wl,--no-whole-archive
-   ifeq ($(OSTYPE),FreeBSD)
-      LDSHAREDFLAG = -dynamiclib
-   endif
-   ifeq ($(findstring darwin,$(OSTYPE)),darwin)
-      LINKSONAME = -Wl,-install_name,
-      LDWHOLEARCHIVESTARTFLAG = -Wl,-force_load
-      LDWHOLEARCHIVEENDFLAG =
-   endif
 endif
 
 # Set correct lib file name depending on type of compilation

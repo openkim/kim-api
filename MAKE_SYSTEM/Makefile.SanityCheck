@@ -44,6 +44,13 @@ ifndef KIM_TESTS_DIR
    $(error Make variable KIM_TEST_DIR must be defined)
 endif
 
+ifeq      ($(KIM_SYSTEMLINKER),linux)
+else ifeq ($(KIM_SYSTEMLINKER),darwin)
+else ifeq ($(KIM_SYSTEMLINKER),freebsd)
+else
+   $(error Make variable KIM_SYSTEMLINKER must be 'linux', 'darwin', or 'freebsd'.  Current value is: '$(KIM_SYSTEMLINKER)')
+endif
+
 ifeq      ($(KIM_SYSTEMARCH),32bit)
 else ifeq ($(KIM_SYSTEMARCH),64bit)
 else

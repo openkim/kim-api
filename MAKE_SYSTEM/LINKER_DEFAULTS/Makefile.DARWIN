@@ -30,33 +30,11 @@
 #
 
 
-# sanity check
-ifndef KIM_DIR
-   $(error Make variable KIM_DIR must be defined.)
-endif
+# We use the standard make variables defined by the GNU standard
+# http://www.gnu.org/software/make/manual/html_node/Implicit-Variables.html
 
-# The openkim-api subdirectories:
-ifndef KIM_MODEL_DRIVERS_DIR
-   KIM_MODEL_DRIVERS_DIR := $(KIM_DIR)/MODEL_DRIVERs
-endif
-ifndef KIM_MODELS_DIR
-   KIM_MODELS_DIR := $(KIM_DIR)/MODELs
-endif
-ifndef KIM_TESTS_DIR
-   KIM_TESTS_DIR := $(KIM_DIR)/TESTs
-endif
-
-
-# sanity check
-ifeq      ($(KIM_COMPILERSUITE),GCC)
-else ifeq ($(KIM_COMPILERSUITE),INTEL)
-else
-   $(error Make variable KIM_COMPILERSUITE must be 'GCC' or 'INTEL'.  Current value is: '$(KIM_COMPILERSUITE)')
-endif
-
-# load compiler options
-ifeq  ($(KIM_COMPILERSUITE),GCC)
- include $(KIM_DIR)/MAKE_SYSTEM/Makefile.GNU
-else ifeq ($(KIM_COMPILERSUITE),INTEL)
- include $(KIM_DIR)/MAKE_SYSTEM/Makfile.Intel
-endif
+# Define FreeBSD linker switches
+LDSHAREDFLAG = -shared
+LINKSONAME = -Wl,-install_name,
+LDWHOLEARCHIVESTARTFLAG = -Wl,-force_load
+LDWHOLEARCHIVEENDFLAG =

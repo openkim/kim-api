@@ -28,33 +28,13 @@
 #
 # Release: This file is part of the openkim-api.git repository.
 #
-#
-# this make file builds/cleans everything
-#
 
-KIM_DIR = /usr/relliott/openkim-api-vX.X.X
-#KIM_MODEL_DRIVERS_DIR =
-#KIM_MODELS_DIR =
-#KIM_TESTS_DIR =
 
-KIM_COMPILERSUITE = GCC
-KIM_SYSTEMLINKER = darwin
-KIM_SYSTEMARCH = 32bit
-KIM_LINK = dynamic-load
+# We use the standard make variables defined by the GNU standard
+# http://www.gnu.org/software/make/manual/html_node/Implicit-Variables.html
 
-# load default compiler options
-include $(KIM_DIR)/MAKE_SYSTEM/Makefile.LoadDefaults
-
-# overwrite default compiler options
-#CC  =
-#CXX =
-#FC  =
-
-# overwrite default linker options
-#LDSHAREDFLAG =
-#LINKSONAME =
-#LDWHOLEARCHIVESTARTFLAG =
-#LDWHOLEARCHIVEENDFLAG =
-
-# load rest of generic make settings
-include $(KIM_DIR)/MAKE_SYSTEM/Makefile.Generic
+# Define FreeBSD linker switches
+LDSHAREDFLAG = -dynamiclib
+LINKSONAME = -Wl,-soname=
+LDWHOLEARCHIVESTARTFLAG = -Wl,--whole-archive
+LDWHOLEARCHIVEENDFLAG = -Wl,--no-whole-archive
