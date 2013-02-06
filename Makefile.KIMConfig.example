@@ -50,6 +50,12 @@ include $(KIM_DIR)/MAKE_SYSTEM/Makefile.LoadDefaults
 #CXX =
 #FC  =
 
+# overwrite default compiler option flag lists
+#FFLAGS   =
+#CCFLAGS  =
+#CXXFLAGS =
+#LDFLAGS  =
+
 # overwrite default linker options
 #LDSHAREDFLAG =
 #LINKSONAME =

@@ -40,5 +40,11 @@ LOCALOBJ = neighborlistmod.o myqsort.o
 
 LOCALCLEAN =
 
+# APPEND to compiler option flag lists
+#FFLAGS   +=
+#CCFLAGS  +=
+#CXXFLAGS +=
+#LDFLAGS  +=
+
 # load remaining KIM make configuration
 include $(KIM_DIR)/MAKE_SYSTEM/Makefile.Test
