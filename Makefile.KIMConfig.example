@@ -32,7 +32,7 @@
 # this make file builds/cleans everything
 #
 
-KIM_DIR = /usr/relliott/openkim-api-vX.X.X
+KIM_DIR = $(HOME)/openkim-api-vX.X.X
 #KIM_MODEL_DRIVERS_DIR =
 #KIM_MODELS_DIR =
 #KIM_TESTS_DIR =
@@ -45,22 +45,8 @@ KIM_LINK = dynamic-load
 # load default compiler options
 include $(KIM_DIR)/MAKE_SYSTEM/Makefile.LoadDefaults
 
-# overwrite default compiler options
-#CC  =
-#CXX =
-#FC  =
+# overwrite default variable values here
 
-# overwrite default compiler option flag lists
-#FFLAGS   =
-#CCFLAGS  =
-#CXXFLAGS =
-#LDFLAGS  =
-
-# overwrite default linker options
-#LDSHAREDFLAG =
-#LINKSONAME =
-#LDWHOLEARCHIVESTARTFLAG =
-#LDWHOLEARCHIVEENDFLAG =
 
 # load rest of generic make settings
 include $(KIM_DIR)/MAKE_SYSTEM/Makefile.Generic

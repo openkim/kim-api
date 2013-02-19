@@ -130,11 +130,11 @@ Models.  Detailed directions are also given below.
 (f) The template `model_driver_P_Template.c' can be compared with
     `ex_model_driver_P_Morse.c'
 
-Recall that Models are stored under $KIM_DIR/EXAMPLEs/MODELs and Model Drivers
-are stored under $KIM_DIR/EXAMPLEs/MODEL_DRIVERs.  To compare files, you can
+Recall that Models are stored under $KD/EXAMPLEs/MODELs and Model Drivers
+are stored under $KD/EXAMPLEs/MODEL_DRIVERs.  To compare files, you can
 for example use the `vimdiff' command:
 
-   % cd $KIM_DIR
+   % cd $KD
    % vimdiff EXAMPLEs/MODELs/ex_model_Ar_P_MLJ_F90/ex_model_Ar_P_MLJ_F90.F90 DOCs/TEMPLATEs/model_El_P_Template.F90
 
 Alternatively use the `ediff' feature of the emacs editor.
@@ -153,16 +153,16 @@ identical. See comments below.)
 
 (a) Create a new directory under MODELs for the Ar pair potential:
 
-    % cd $KIM_DIR/MODELs
+    % cd $KD/MODELs
     % mkdir model_Ar_P_Buckingham
 
 (b) Copy the .F90, .kim and Makefile templates into the new directory and
     rename:
 
-    % cd $KIM_DIR/MODELs/model_Ar_P_Buckingham
-    % cp $KIM_DIR/DOCs/TEMPLATEs/model_El_P_Template.F90 model_Ar_P_Buckingham.F90
-    % cp $KIM_DIR/DOCs/TEMPLATEs/model_El_P_Template.f.kim model_Ar_P_Buckingham.kim
-    % cp $KIM_DIR/DOCs/TEMPLATEs/Makefile.template Makefile
+    % cd $KD/MODELs/model_Ar_P_Buckingham
+    % cp $KD/DOCs/TEMPLATEs/model_El_P_Template.F90 model_Ar_P_Buckingham.F90
+    % cp $KD/DOCs/TEMPLATEs/model_El_P_Template.f.kim model_Ar_P_Buckingham.kim
+    % cp $KD/DOCs/TEMPLATEs/Makefile.template Makefile
 
     Note: For a Model written in C, copy the .c and .c.kim templates.
 
@@ -210,7 +210,7 @@ identical. See comments below.)
 
 (f) Compile the new Model into the API package:
 
-    % cd $KIM_DIR
+    % cd $KD
     % make
 
     Correct any errors until the compilation succeeds.
@@ -238,16 +238,16 @@ Buckingham Model Driver and a Ne KIM Model based on it are given below.
 (a) Create a new directory under MODEL_DRIVERs for the Buckingham pair
     potential Model Driver:
 
-    % cd $KIM_DIR/MODEL_DRIVERs
+    % cd $KD/MODEL_DRIVERs
     % mkdir model_driver_P_Buckingham
 
 (b) Copy the .F90, .kim and Makefile templates into the new directory and
     rename:
 
-    % cd $KIM_DIR/MODEL_DRIVERs/model_driver_P_Buckingham
-    % cp $KIM_DIR/DOCs/TEMPLATEs/model_driver_P_Template.F90 model_driver_P_Buckingham.F90
-    % cp $KIM_DIR/DOCs/TEMPLATEs/model_driver_P_Template.f.kim model_driver_P_Buckingham.kim
-    % cp $KIM_DIR/DOCs/TEMPLATEs/Makefile.driver.template Makefile
+    % cd $KD/MODEL_DRIVERs/model_driver_P_Buckingham
+    % cp $KD/DOCs/TEMPLATEs/model_driver_P_Template.F90 model_driver_P_Buckingham.F90
+    % cp $KD/DOCs/TEMPLATEs/model_driver_P_Template.f.kim model_driver_P_Buckingham.kim
+    % cp $KD/DOCs/TEMPLATEs/Makefile.driver.template Makefile
 
     Note: For a Model written in C, copy the .c and .c.kim templates.
 
@@ -280,22 +280,22 @@ Buckingham Model Driver and a Ne KIM Model based on it are given below.
 
 (f) Compile the new Model Driver into the API package:
 
-    % cd $KIM_DIR
+    % cd $KD
     % make
 
     Correct any errors until the compilation succeeds.
 
 (g) Create a new directory under MODELs for the Ne pair potential:
 
-    % cd $KIM_DIR/MODELs
+    % cd $KD/MODELs
     % mkdir model_Ne_P_Buckingham
 
 (h) Copy the `Makefile.driver.based.model.template' and
     model_El_P_Template.params files into the new directory and rename:
 
-    % cd $KIM_DIR/MODELs/model_Ne_P_Buckingham
-    % cp $KIM_DIR/DOCs/TEMPLATEs/Makefile.driver.based.model.template Makefile
-    % cp $KIM_DIR/DOCs/TEMPLATEs/model_El_P_Template.params model_Ne_P_Buckingham.params
+    % cd $KD/MODELs/model_Ne_P_Buckingham
+    % cp $KD/DOCs/TEMPLATEs/Makefile.driver.based.model.template Makefile
+    % cp $KD/DOCs/TEMPLATEs/model_El_P_Template.params model_Ne_P_Buckingham.params
 
 (i) Edit the Makefile and change the Model name, Model Driver name, and
     SPECIES1_NAME appropriately. (Search for the word "FILL".)  Also change the
@@ -308,7 +308,7 @@ Buckingham Model Driver and a Ne KIM Model based on it are given below.
 
 (k)  Compile the new Model into the API package:
 
-     % cd $KIM_DIR
+     % cd $KD
      % make
 
      Correct any errors until the compilation succeeds.

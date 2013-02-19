@@ -202,6 +202,10 @@ KIM_API/
 LICENSE.CDDL
      The Common Development and Distribution License (CDDL) Version 1.0 file
 
+MAKE_SYSTEM/
+     directory containing the common Makefiles and default settings used by
+     the openkim-api package make system.
+
 MODEL_DRIVERs/
      Each Model Driver is stored in its own directory that conforms to the
      naming convention specified in standard.kim.  This is where you should
@@ -217,6 +221,11 @@ MODELs/
 Makefile
      make file for compiling the openkim-api services routines and example
      Tests and Models.
+
+Makefile.KIMConfig.example
+     Example Makefile.KIMConfig file.  This file provides the basic settings
+     needed to compile the openkim-api system and associated Model Drivers,
+     Models, and Tests.
 
 README
      This file.

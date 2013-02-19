@@ -45,31 +45,30 @@ repository.
    Models, Model Drivers, or Tests in the EXAMPLEs directory.  Instead the user
    must generate the examples by the following process:
 
-   % cd $KIM_DIR/EXAMPLE_LEGOS
+   % cd $KD/EXAMPLE_LEGOS
    % make
 
    This will cobble together the example files for the various fragments stored
-   in the $KIM_DIR/EXAMPLE_LEGOS/model_legos and
-   $KIM_DIR/EXAMPLE_LEGOS/test_legos directories and save them in the
-   $KIM_DIR/EXAMPLEs/MODELs/, $KIM_DIR/EXAMPLEs/MODEL_DRIVERs/, and
-   $KIM_DIR/EXAMPLEs/TESTs/ directories, respectively.  This need only be done
-   once (for every time the git repository is updated from github.com).  This
-   process will overwrite any changes to files made in the $KIM_DIR/EXAMPLEs
-   directory, so make a backup of these directories if you don't want to lose
-   your changes.
+   in the $KD/EXAMPLE_LEGOS/model_legos and $KD/EXAMPLE_LEGOS/test_legos
+   directories and save them in the $KD/EXAMPLEs/MODELs/,
+   $KD/EXAMPLEs/MODEL_DRIVERs/, and $KD/EXAMPLEs/TESTs/ directories,
+   respectively.  This need only be done once (for every time the git
+   repository is updated from github.com).  This process will overwrite any
+   changes to files made in the $KD/EXAMPLEs directory, so make a backup of
+   these directories if you don't want to lose your changes.
 
 2. The git repository has the files:
 
-      $KIM_DIR/DOCs/openkim-api-introduction.pdf
-      $KIM_DIR/DOCs/openkim-api-introduction.pptx
+      $KD/DOCs/openkim-api-introduction.pdf
+      $KD/DOCs/openkim-api-introduction.pptx
 
    whereas the openkim-api-vX.X.X.tgz package has the file
 
-      $KIM_DIR/DOCs/openkim-api-vX.X.X-introduction.pdf
+      $KD/DOCs/openkim-api-vX.X.X-introduction.pdf
 
 3. The openkim-api-vX.X.X.tgz package has the file
 
-      $KIM_DIR/openkim-api.version.info
+      $KD/openkim-api.version.info
 
    which contains the SHA1 Hash value of the git commit object from which the
    package was created, along with the date, time, and user name and email
