@@ -1583,6 +1583,56 @@ int KIM_API_model::string_init(char* in_tststr, char* modelname){
         return KIM_STATUS_FAIL;
     }
 }
+
+int KIM_API_model::match(char* teststr, char* modelstr){
+   int error;
+    //redirecting std::cout > kimlog
+    char kimlog[2048] = KIM_DIR; strcat(kimlog,"kim.log");
+    std::streambuf * psbuf, * backup; std::ofstream filekimlog;
+    filekimlog.open(kimlog);
+    backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);
+
+    //check test-model match and preinit test-model-API
+    KIM_API_model test,mdl;
+
+    //preinit test and model API object
+    error = test.prestring_init(teststr);
+    if(error != KIM_STATUS_OK)
+    {
+       test.free();
+       return KIM_STATUS_FAIL;
+    }
+       
+    error = mdl.prestring_init(modelstr);
+    if(error != KIM_STATUS_OK)
+    {
+       test.free();
+       mdl.free();
+       return KIM_STATUS_FAIL;
+    }
+
+    //check if they match
+    bool match;
+    match = is_it_match(test,mdl);
+    mdl.free();
+    test.free();
+
+    //redirecting back to > std::cout
+    std::cout.rdbuf(backup); filekimlog.close();
+
+    if (match)
+    {
+       error = KIM_STATUS_OK;
+    }
+    else
+    {
+       error = KIM_STATUS_FAIL;
+    }
+    
+    return error;
+}
+
+
 int KIM_API_model::model_reinit(){
    int error;
    int reinit_ind = get_index("reinit", &error);

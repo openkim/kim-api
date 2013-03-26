@@ -198,6 +198,7 @@ public:
 
     int init(char * testname,char * modelname);
     int string_init(char * intststr,char * modelname);
+   int match(char* teststring, char* modelstring);
     int model_compute();
     int get_neigh(int mode,int request, int *atom, int *numnei, int **nei1atom, double **Rij);
     int model_init();
