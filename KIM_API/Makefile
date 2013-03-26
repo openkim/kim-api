@@ -57,7 +57,7 @@ ifneq ($(DELETED_MODELS_TARGETS),)
    $(info )
 endif
 
-all: $(ALLOBJ)
+all: $(ALLOBJ) openkim-api-descriptor-file-match
 
 # default target
 ifneq ($(KIM_LINK),static-link)
@@ -91,6 +91,11 @@ KIM_API_C.o: KIM_API.h KIM_API_C.h Makefile
 KIM_API_F.o: Makefile
 
 KIM_AUX.o: KIM_AUX.h Makefile
+
+openkim-api-descriptor-file-match.o: openkim-api-descriptor-file-match.cpp KIM_API.h KIM_API_status.h Makefile
+
+openkim-api-descriptor-file-match: openkim-api-descriptor-file-match.o KIM_API.o KIM_AUX.o Unit_Handling.o standard_kim_str.o
+	$(LINKCOMPILER) -o $@ $@.o KIM_API.o KIM_AUX.o Unit_Handling.o standard_kim_str.o
 
 # targets for the models: for any new model, adds the appropriate lines to the model_init_include.h and model_inclue.cpp files
 $(MODELS_TARGETS): .models-deleted
@@ -126,4 +131,5 @@ model_init_include.h model_init_include.cpp: Makefile .models-deleted $(MODELS_T
 
 clean:
 	rm -f *.o *.a *.so *.mod  model_init_include.h model_init_include.cpp model_kim_str_include.h model_kim_str_include,cpp .*.make-temp .models-deleted standard_kim_str.cpp &&\
+        rm -f openkim-api-descriptor-file-match &&\
         rm -rf $(KIM_DIR)/KIM_API/temp_archive_dir
