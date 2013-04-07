@@ -65,7 +65,7 @@
 /* Define prototypes for model init */
 /* must be all lowercase to be compatible with the KIM API (to support Fortran Tests) */
 /**/
-void model_<FILL (lowercase) element name>_p_<FILL (lowercase) model name>_init_(void* km);
+in model_<FILL (lowercase) element name>_p_<FILL (lowercase) model name>_init_(void* km);
 
 /* Define prototypes for model reinit, compute, and destroy */
 /* defined as static to avoid namespace clashes with other Models */
