@@ -95,7 +95,7 @@ KIM_AUX.o: KIM_AUX.h Makefile
 openkim-api-descriptor-file-match.o: openkim-api-descriptor-file-match.cpp KIM_API.h KIM_API_status.h Makefile
 
 openkim-api-descriptor-file-match: openkim-api-descriptor-file-match.o KIM_API.o KIM_AUX.o Unit_Handling.o standard_kim_str.o
-	$(LINKCOMPILER) -o $@ $@.o KIM_API.o KIM_AUX.o Unit_Handling.o standard_kim_str.o
+	$(LD) -o $@ $@.o KIM_API.o KIM_AUX.o Unit_Handling.o standard_kim_str.o
 
 # targets for the models: for any new model, adds the appropriate lines to the model_init_include.h and model_inclue.cpp files
 $(MODELS_TARGETS): .models-deleted
