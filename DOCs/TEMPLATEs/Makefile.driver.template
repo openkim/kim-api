@@ -38,8 +38,10 @@ include ../Makefile.KIMConfig
 
 # set model driver specific details
 MODEL_DRIVER_NAME := <FILL model driver name>
+MODEL_DRIVER_INIT_FUNCTION_NAME := model_driver_init
+MODEL_DRIVER_INIT_FUNCTION_LANG := <FILL language name>
 
-LOCALOBJ = <FILL additional .o files required by the model, or leave blank>
+LOCALOBJ = <FILL .o files required by the model, or leave blank>
 
 LOCALCLEAN = <FILL additional files to be deleted on clean, or leave blank>
 

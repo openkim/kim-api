@@ -59,9 +59,8 @@
 
 
 /* Define prototypes for Model Driver init */
-/* must be all lowercase to be compatible with the KIM API (to support Fortran Tests) */
 /**/
-int MODEL_DRIVER_NAME_LC_STR_init_(void* km, char* paramfile_names, int* nmstrlen, int* numparamfiles);
+int model_driver_init(void* km, char* paramfile_names, int* nmstrlen, int* numparamfiles);
 
 /* Define prototypes for Model (Driver) reinit, compute, and destroy */
 /* defined as static to avoid namespace clashes with other Models    */
@@ -597,7 +596,7 @@ static int compute(void* km)
 }
 
 /* Initialization function */
-int MODEL_DRIVER_NAME_LC_STR_init_(void *km, char* paramfile_names, int* nmstrlen, int* numparamfiles)
+int model_driver_init(void *km, char* paramfile_names, int* nmstrlen, int* numparamfiles)
 {
    /* KIM variables */
    intptr_t* pkim = *((intptr_t**) km);

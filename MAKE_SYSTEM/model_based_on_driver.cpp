@@ -51,7 +51,7 @@ extern "C" {
    #include <dlfcn.h>
    static int model_destroy(void* km);
 #else
-   int MODEL_DRIVER_NAME_LC_STR_init_(void* km, char* paramfilenames, int* nmstrlen, int* numparamfiles);
+   int MODEL_DRIVER_NAME_STR_init(void* km, char* paramfilenames, int* nmstrlen, int* numparamfiles);
 #endif
 
 
@@ -72,7 +72,7 @@ extern "C" {
    }
 #endif
 
-   int MODEL_NAME_LC_STR_init_(void* km) {
+   int MODEL_NAME_STR_init(void* km) {
       int numparamfiles = NUM_PARAMFILES;
       int nmstrlen;
       char* param_file_names = new char[NUM_PARAMFILES*(L_tmpnam+1)];
@@ -88,7 +88,7 @@ extern "C" {
          return KIM_STATUS_FAIL;
       }
       typedef int (*Driver_Init)(void *km, char* paramfilenames, int* nmstrlen, int* numparamfiles);
-      Driver_Init drvr_init = (Driver_Init)dlsym(driver_lib_handle,"MODEL_DRIVER_NAME_LC_STR_init_");
+      Driver_Init drvr_init = (Driver_Init)dlsym(driver_lib_handle,"MODEL_DRIVER_NAME_STR_init");
       const char *dlsym_error = dlerror();
       if (dlsym_error) {
          std::cerr << "Cannot load symbol: " << dlsym_error << std::endl;

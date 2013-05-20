@@ -36,8 +36,10 @@ include ../Makefile.KIMConfig
 
 # set model specific details
 MODEL_NAME := ex_model_Cu_PF_Johnson
+MODEL_INIT_FUNCTION_NAME := model_init
+MODEL_INIT_FUNCTION_LANG := C
 
-LOCALOBJ =
+LOCALOBJ = ex_model_Cu_PF_Johnson.o
 
 LOCALCLEAN =
 

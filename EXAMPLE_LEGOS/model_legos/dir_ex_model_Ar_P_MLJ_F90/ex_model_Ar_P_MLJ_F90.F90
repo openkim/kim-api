@@ -479,7 +479,7 @@ end module ex_model_Ar_P_MLJ_F90
 ! Model initialization routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-integer function ex_model_Ar_P_MLJ_F90_init(pkim)
+integer function model_init(pkim)
 use ex_model_Ar_P_MLJ_F90
 use KIM_API
 implicit none
@@ -513,7 +513,7 @@ cutoff = model_cutoff
 
 ier = KIM_STATUS_OK
 42 continue
-ex_model_Ar_P_MLJ_F90_init = ier
+model_init = ier
 return
 
-end function ex_model_Ar_P_MLJ_F90_init
+end function model_init

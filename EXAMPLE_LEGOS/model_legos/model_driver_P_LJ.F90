@@ -646,7 +646,7 @@ end module MODEL_DRIVER_NAME_LC_STR
 ! Model driver initialization routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-integer function MODEL_DRIVER_NAME_LC_STR_init(pkim, byte_paramfile, nmstrlen, numparamfiles)
+integer function model_driver_init(pkim, byte_paramfile, nmstrlen, numparamfiles)
 use MODEL_DRIVER_NAME_LC_STR
 use KIM_API
 implicit none
@@ -919,7 +919,7 @@ endif
 
 ier = KIM_STATUS_OK
 42 continue
-MODEL_DRIVER_NAME_LC_STR_init = ier
+model_driver_init = ier
 return
 
-end function MODEL_DRIVER_NAME_LC_STR_init
+end function model_driver_init

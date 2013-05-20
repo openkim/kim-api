@@ -872,14 +872,13 @@ int KIM_API_model_init(void *kimmdl);
         the standard.kim file.)
 
     (3) The Model must define a model_init function (the name of this function
-        must be the lower-case version of the Model's name with _init appended
-        to the end [and with an underscore appended to the end for C and C++];
-        here we use the example Model name "ex_Model_1") with prototype:
-           extern "C" { int ex_model_1_init_(void *kimmdl); } // in C++
-           int ex_model_1_init_(void *kimmdl);                /* in C */
-           integer function ex_Model_1_init(pkim)
-              integer(kind=kim_intptr), intent(in) :: pkim
-                                                              ! in Fortran
+        can be any valid function name; this name must be specified in the
+        Model's Makefile, along with its binding language "C" or "Fortran")
+        with prototype:
+           extern "C" { int My_Model_Init(void *kimmdl); } // in C++
+           int My_Model_Init(void *kimmdl);                /* in C */
+           integer function my_model_init(pkim)
+              integer(kind=kim_intptr), intent(in) :: pkim ! in Fortran
 
     (4) ***Model Drivers*** The KIM_API, as described in this document, has no
         knowledge of the Model Driver concept.  The openkim-api Makefile system
@@ -888,24 +887,23 @@ int KIM_API_model_init(void *kimmdl);
         only one interface difference between a Model and a Model Driver.  This
         is the model_init function.  The model_init function for a Model Driver
         must accept additional arguments in order for it to have access to the
-        parameter files needed to implement a particular "driver based Model."
+        parameter files needed to implement a particular "driver based Model".
         The model_init function for a Model Driver (the name of this function
-        must be the lower-case version of the Model Driver's name with _init
-        appended to the end [and with an underscore appended to the end for C
-        and C++]; here we use the example Model Driver name "ex_Driver_5") with
-        prototype:
-           extern "C" { int ex_driver_5_init_(void *kimmdl, char *paramfile_names,
-                                              int *nmstrlen, int *numparamfiles);}
-                                                                     // in C++
-           int ex_driver_5_init_(void *kimmdl, char *paramfile_names,
-                                 int *nmstrlen, int *numparamfiles); /* in C */
-           integer function ex_Driver_5_init(pkim, byte_paramfile_names, &
-                                             nmstrlen, numparamfiles)
+        can be any valid function name; this name must be specified in the
+        Model Driver's Makefile, along with its binding language "C" or
+        "Fortran") with prototype:
+           extern "C" { int My_MD_Init(void *kimmdl, char *paramfile_names,
+                                       int *nmstrlen, int *numparamfiles);}
+                                                               // in C++
+           int My_MD_Init(void *kimmdl, char *paramfile_names,
+                          int *nmstrlen, int *numparamfiles);  /* in C */
+           integer function my_md_init(pkim, byte_paramfile_names, &
+                                       nmstrlen, numparamfiles)
               integer(kind=kim_intptr), intent(in) :: pkim
               integer,                  intent(in) :: nmstrlen
               integer,                  intent(in) :: numparamfiles
               byte,                     intent(in) :: byte_paramfile_names(nmstrlen*numparamfiles)
-                                                                     ! in Fortran
+                                                               ! in Fortran
         The argument `paramfile_names' is a pointer to a 2D character array (in
         C, char paramfile_names[numparamfiles][nmstrlen]).  `nmparamfiles' and
         `nmstrlen' make up the extent of the paramfile_name array.  The i-th

@@ -162,7 +162,7 @@ end module MODEL_NAME_STR
 ! Model initialization routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-integer function MODEL_NAME_STR_init(pkim)
+integer function model_init(pkim)
   use MODEL_NAME_STR
   use KIM_API
   implicit none
@@ -254,7 +254,7 @@ integer function MODEL_NAME_STR_init(pkim)
 
   ier = KIM_STATUS_OK
 42 continue
-  MODEL_NAME_STR_init = ier
+  model_init = ier
   return
 
-end function MODEL_NAME_STR_init
+end function model_init

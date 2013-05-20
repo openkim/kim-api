@@ -1713,10 +1713,7 @@ int KIM_API_model::model_init(){
 
 std::cout<<"* Info: KIM_API_model::model_init: call dynamically linked initialize routine for:"<<modelname<<std::endl;
 std::cout<<"               from the shared library:"<<model_slib_file<<std::endl;
-    sprintf(model_init_routine_name,"%s_init_",modelname);
-    for(int i=0;i<(int)strlen(model_init_routine_name);i++){
-         model_init_routine_name[i]=tolower(model_init_routine_name[i]);
-    }
+    sprintf(model_init_routine_name,"%s_init",modelname);
 
     model_lib_handle = dlopen(model_slib_file,RTLD_NOW);
     if(!model_lib_handle) {

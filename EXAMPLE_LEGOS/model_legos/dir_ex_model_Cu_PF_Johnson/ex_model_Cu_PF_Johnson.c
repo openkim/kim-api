@@ -69,9 +69,8 @@
 #define JEAM_RHO0 3.60 /* eV (=12*JEAM_G0) */
 
 /* Define prototypes for model init */
-/* must be all lowercase to be compatible with the KIM API (to support Fortran Tests) */
 /**/
-int ex_model_cu_pf_johnson_init_(void* km);
+int model_init(void* km);
 
 /* Define prototypes for model reinit, compute, and destroy */
 /* defined as static to avoid namespace clashes with other Models */
@@ -814,7 +813,7 @@ int destroy(void *km)
 }
 
 /* Initialization function */
-int ex_model_cu_pf_johnson_init_(void *km)
+int model_init(void *km)
 {
    /* Local variables */
    intptr_t* pkim = *((intptr_t**) km);

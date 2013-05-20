@@ -52,7 +52,7 @@
 #define Ar  1
 
 /* Define prototypes for model init */
-int ex_model_ne_p_fastlj_init_(void* km);
+int model_init(void* km);
 
 /* Define prototypes for model reinit, compute, and destroy */
 static int reinit(void* km);
@@ -2085,7 +2085,7 @@ static int destroy(void *km)
 
 /******************************************************************************/
 /* Initialization function */
-int ex_model_ne_p_fastlj_init_(void *km)
+int model_init(void *km)
 {
    /* Local variables */
    intptr_t* pkim = *((intptr_t**) km);

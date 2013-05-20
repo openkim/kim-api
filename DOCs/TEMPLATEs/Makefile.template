@@ -38,8 +38,10 @@ include ../Makefile.KIMConfig
 
 # set model specific details
 MODEL_NAME := <FILL model name>
+MODEL_INIT_FUNCTION_NAME := model_init
+MODEL_INIT_FUNCTION_LANG := <FILL language>
 
-LOCALOBJ = <FILL additional .o files required by the model, or leave blank>
+LOCALOBJ = <FILL .o files required by the model, or leave blank>
 
 LOCALCLEAN = <FILL additional files to be deleted on clean, or leave blank>
 

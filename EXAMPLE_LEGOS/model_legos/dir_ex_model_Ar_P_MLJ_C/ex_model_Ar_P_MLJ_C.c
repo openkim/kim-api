@@ -69,9 +69,8 @@
 
 
 /* Define prototypes for model init */
-/* must be all lowercase to be compatible with the KIM API (to support Fortran Tests) */
 /**/
-int ex_model_ar_p_mlj_c_init_(void* km);
+int model_init(void* km);
 
 /* Define prototypes for model reinit, compute, and destroy */
 /* defined as static to avoid namespace clashes with other Models */
@@ -527,7 +526,7 @@ static int compute(void* km)
 }
 
 /* Initialization function */
-int ex_model_ar_p_mlj_c_init_(void *km)
+int model_init(void *km)
 {
    /* Local variables */
    intptr_t* pkim = *((intptr_t**) km);

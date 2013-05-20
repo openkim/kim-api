@@ -55,6 +55,7 @@ else
 endif
 
 # other targets
+config: $(KIM_CONFIG_FILES)
 openkim-api: kim-api-all kim-api-lib     # compile the openkim-api
 examples: examples-all                   # copy examples to appropriate directories then make
 

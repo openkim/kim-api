@@ -37,8 +37,10 @@ include ../Makefile.KIMConfig
 
 # set model specific details
 MODEL_NAME := MODEL_NAME_STR
+MODEL_INIT_FUNCTION_NAME := model_init
+MODEL_INIT_FUNCTION_LANG := MODEL_LANG
 
-LOCALOBJ =
+LOCALOBJ = $(strip $(MODEL_NAME)).o
 
 LOCALCLEAN =
 

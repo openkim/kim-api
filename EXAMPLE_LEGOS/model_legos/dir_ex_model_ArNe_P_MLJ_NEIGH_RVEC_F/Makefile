@@ -37,8 +37,10 @@ include ../Makefile.KIMConfig
 
 # set model specific details
 MODEL_NAME := ex_model_ArNe_P_MLJ_NEIGH_RVEC_F
+MODEL_INIT_FUNCTION_NAME := model_init
+MODEL_INIT_FUNCTION_LANG := Fortran
 
-LOCALOBJ =
+LOCALOBJ = ex_model_ArNe_P_MLJ_NEIGH_RVEC_F.o
 
 LOCALCLEAN =
 

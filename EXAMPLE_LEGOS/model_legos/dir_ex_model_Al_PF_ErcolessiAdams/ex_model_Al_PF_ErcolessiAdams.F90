@@ -1082,7 +1082,7 @@ end module ex_model_Al_PF_ErcolessiAdams
 ! Model initialization routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-integer function ex_model_Al_PF_ErcolessiAdams_init(pkim)
+integer function ErcolessiAdams_init(pkim)
 use ex_model_Al_PF_ErcolessiAdams
 use KIM_API
 implicit none
@@ -1157,8 +1157,8 @@ ielast = 1
 
 ier = KIM_STATUS_OK
 42 continue
-ex_model_Al_PF_ErcolessiAdams_init = ier
+ErcolessiAdams_init = ier
 return
 
-end function ex_model_Al_PF_ErcolessiAdams_init
+end function ErcolessiAdams_init
 

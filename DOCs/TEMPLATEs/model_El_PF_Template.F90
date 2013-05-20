@@ -732,7 +732,7 @@ end module model_<FILL element name>_PF_<FILL model name>
 ! Model initialization routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-integer function model_<FILL element name>_PF_<FILL model name>_init(pkim)
+integer function model_init(pkim)
 use model_<FILL element name>_PF_<FILL model name>
 use KIM_API
 implicit none
@@ -770,7 +770,7 @@ cutoff = model_cutoff
 
 ier = KIM_STATUS_OK
 42 continue
-ex_model_<FILL element name>_PF_<FILL model name>_init = ier
+ex_model_init = ier
 return
-end function model_<FILL element name>_PF_<FILL model name>_init
+end function model_init
 

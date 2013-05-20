@@ -37,8 +37,10 @@ include ../Makefile.KIMConfig
 
 # set model driver specific details
 MODEL_DRIVER_NAME := MODEL_DRIVER_NAME_STR
+MODEL_DRIVER_INIT_FUNCTION_NAME := model_driver_init
+MODEL_DRIVER_INIT_FUNCTION_LANG := MODEL_DRIVER_LANG
 
-LOCALOBJ =
+LOCALOBJ = $(strip $(MODEL_DRIVER_NAME)).o
 
 LOCALCLEAN =
 

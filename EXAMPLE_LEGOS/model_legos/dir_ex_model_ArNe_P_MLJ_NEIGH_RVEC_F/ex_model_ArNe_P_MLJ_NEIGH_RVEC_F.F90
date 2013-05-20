@@ -404,7 +404,7 @@ end module ex_model_ArNe_P_MLJ_NEIGH_RVEC_F
 ! Model initialization routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-integer function ex_model_ArNe_P_MLJ_NEIGH_RVEC_F_init(pkim)
+integer function model_init(pkim)
   use ex_model_ArNe_P_MLJ_NEIGH_RVEC_F
   use KIM_API
   implicit none
@@ -548,7 +548,7 @@ integer function ex_model_ArNe_P_MLJ_NEIGH_RVEC_F_init(pkim)
 
   ier = KIM_STATUS_OK
 42 continue
-  ex_model_ArNe_P_MLJ_NEIGH_RVEC_F_init = ier
+  model_init = ier
   return
 
-end function ex_model_ArNe_P_MLJ_NEIGH_RVEC_F_init
+end function model_init

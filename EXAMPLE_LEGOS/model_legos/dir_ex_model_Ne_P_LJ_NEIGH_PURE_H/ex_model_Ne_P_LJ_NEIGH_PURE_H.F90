@@ -123,7 +123,7 @@ end module ex_model_Ne_P_LJ_NEIGH_PURE_H
 
 
 !  Model Initiation routine
-integer function ex_model_Ne_P_LJ_NEIGH_PURE_H_init(pkim)
+integer function model_init(pkim)
   use ex_model_Ne_P_LJ_NEIGH_PURE_H
   use KIM_API
   implicit none
@@ -158,7 +158,7 @@ integer function ex_model_Ne_P_LJ_NEIGH_PURE_H_init(pkim)
 
   ier = KIM_STATUS_OK
 42 continue
-  ex_model_Ne_P_LJ_NEIGH_PURE_H_init = ier
+  model_init = ier
   return
 
-end function ex_model_Ne_P_LJ_NEIGH_PURE_H_init
+end function model_init

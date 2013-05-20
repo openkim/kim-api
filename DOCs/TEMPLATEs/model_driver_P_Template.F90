@@ -627,7 +627,7 @@ end module model_driver_P_<FILL model driver name>
 ! Model driver initialization routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-integer function model_driver_P_<FILL model driver name>_init(pkim, byte_paramfile, nmstrlen, numparamfiles)
+integer function model_driver_init(pkim, byte_paramfile, nmstrlen, numparamfiles)
 use model_driver_P_<FILL model driver name>
 use KIM_API
 implicit none
@@ -897,7 +897,7 @@ endif
 
 ier = KIM_STATUS_OK
 42 continue
-model_driver_P_<FILL model driver name>_init = ier
+model_driver_init = ier
 return
 
-end function model_driver_P_<FILL model driver name>_init
+end function model_driver_init

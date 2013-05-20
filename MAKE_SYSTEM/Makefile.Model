@@ -61,14 +61,32 @@ MODEL_NAME_KIM_STR_CPP = char* $(strip $(MODEL_NAME))_kim_str'('')''{'
 
 all: $(MODEL_BUILD_TARGET)
 
-$(strip $(MODEL_NAME)).a: $(LOCALOBJ) $(strip $(MODEL_NAME)).o $(strip $(MODEL_NAME))_kim_str.o
-	ar rcs $@ $(LOCALOBJ) $(strip $(MODEL_NAME)).o $(strip $(MODEL_NAME))_kim_str.o
+ifneq ("C", "$(MODEL_INIT_FUNCTION_LANG)")
+   MODEL_INIT_FUNC_NAME = `echo $(MODEL_INIT_FUNCTION_NAME) | tr 'A-Z' 'a-z'`_
+else
+   MODEL_INIT_FUNC_NAME = $(MODEL_INIT_FUNCTION_NAME)
+endif
+%_init_wrapper.cpp: Makefile
+	printf "extern \"C\"\n"                                            > $@
+	printf "{\n"                                                      >> $@
+	printf "   int $(strip $(MODEL_INIT_FUNC_NAME))(void *kimmdl);\n" >> $@
+	printf "   int $(strip $(MODEL_NAME))_init(void *kimmdl);\n"      >> $@
+	printf "}\n"                                                      >> $@
+	printf "\n"                                                       >> $@
+	printf "int $(strip $(MODEL_NAME))_init(void *kimmdl)\n"          >> $@
+	printf "{\n"                                                      >> $@
+	printf "   return $(MODEL_INIT_FUNC_NAME)(kimmdl);\n"             >> $@
+	printf "}\n"                                                      >> $@
 
-$(strip $(MODEL_NAME)).o: Makefile
+$(strip $(MODEL_NAME)).a: $(LOCALOBJ) $(strip $(MODEL_NAME))_init_wrapper.o $(strip $(MODEL_NAME))_kim_str.o
+	ar rcs $@ $(LOCALOBJ) $(strip $(MODEL_NAME))_init_wrapper.o $(strip $(MODEL_NAME))_kim_str.o
+
+$(LOCALOBJ): Makefile
 
 Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/MAKE_SYSTEM/Makefile.Model
 	@touch Makefile
 
 clean:
-	rm -f $(LOCALOBJ) *.mod $(addprefix $(strip $(MODEL_NAME)).,o a so) \
-              $(addprefix $(strip $(MODEL_NAME))_kim_str.,o cpp) $(LOCALCLEAN)
+	rm -f $(LOCALOBJ) *.mod $(addprefix $(strip $(MODEL_NAME)).,a so) \
+              $(addprefix $(strip $(MODEL_NAME))_kim_str.,o cpp) \
+              $(addprefix $(strip $(MODEL_NAME))_init_wrapper.,o cpp) $(LOCALCLEAN)
