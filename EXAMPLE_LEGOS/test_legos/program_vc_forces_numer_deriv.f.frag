@@ -478,8 +478,8 @@ program TEST_NAME_STR
      print '("alpha = |Force_model - Force_numer|_w/(DIM*N) = ",ES15.5," (units of force)")', &
            alpha
      print *
-     print '(''Maximum term obtained for Atom = '',I6,'', Dir = '',I1,&
-        '', forcediff = '',ES15.5, '', forcediff/force_model = '',ES15.5)', &
+     print '(''Maximum term obtained for Atom = '',I6,'', Dir = '',I1,' // &
+        ''', forcediff = '',ES15.5, '', forcediff/force_model = '',ES15.5)', &
         Imax,Jmax,abs(forces(Jmax,Imax)-forces_num(Jmax,Imax)),           &
         abs(forces(Jmax,Imax)-forces_num(Jmax,Imax))/abs(forces(Jmax,Imax))
 

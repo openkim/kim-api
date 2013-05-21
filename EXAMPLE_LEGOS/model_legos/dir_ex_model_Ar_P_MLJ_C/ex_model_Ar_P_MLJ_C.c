@@ -136,7 +136,7 @@ static int compute(void* km)
    double Rsqij;
    double phi;
    double dphi;
-   double dEidr;
+   double dEidr = 0.0;
    double Rij[DIM];
    int ier;
    int i;
@@ -286,6 +286,10 @@ static int compute(void* km)
       {
          numberContrib = *nAtoms;
       }
+   }
+   else
+   { // provide initialization even if not used
+      numberContrib = *nAtoms;
    }
 
    /* Check to be sure that the atom types are correct */

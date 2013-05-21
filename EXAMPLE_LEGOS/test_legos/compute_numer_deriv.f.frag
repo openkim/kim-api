@@ -27,8 +27,7 @@ integer,                  intent(out)   :: ier
 real*8,  parameter :: eps_init = 1.d-6
 integer, parameter :: number_eps_levels = 15
 real*8  eps, deriv_last, deriv_err_last
-logical done
-integer i,nn,idum
+integer i,idum
 logical doing_neighbors
 
 !-- KIM variables

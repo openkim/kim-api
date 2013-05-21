@@ -325,6 +325,10 @@ static int compute(void* km)
          numberContrib = *nAtoms;
       }
    }
+   else
+   {  // provide initialization even if not used
+      numberContrib = *nAtoms;
+   }
 
    /* Check to be sure that the atom types are correct */
    /**/

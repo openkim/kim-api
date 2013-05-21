@@ -144,7 +144,7 @@ static int compute(void* km)
    double R;
    double Rsqij;
    double phi;
-   double dphi;
+   double dphi = 0.0;
    double Rij[DIM];
    int ier;
    int i;

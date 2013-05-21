@@ -136,7 +136,7 @@ static int neigh_rvec_h_compute(void* km)
    double R6;
    double R12;
    int z, zi, zj;
-   double fac;
+   double fac = 0.0;
    int zero = 0, one = 1;
 
    /* get buffer from KIM object */
@@ -415,7 +415,7 @@ static int neigh_pure_h_compute(void* km)
    double R6;
    double R12;
    int z, zi, zj;
-   double fac;
+   double fac = 0.0;
    int zero = 0, one = 1;
 
    /* get buffer from KIM object */
@@ -693,7 +693,7 @@ static int neigh_rvec_f_compute(void* km)
    double R6;
    double R12;
    int z, zi, zj;
-   double fac;
+   double fac = 0.0;
    int zero = 0, one = 1;
 
    /* get buffer from KIM object */
@@ -967,7 +967,7 @@ static int neigh_pure_f_compute(void* km)
    double R6;
    double R12;
    int z, zi, zj;
-   double fac;
+   double fac = 0.0;
    int zero = 0, one = 1;
 
    /* get buffer from KIM object */
@@ -1243,7 +1243,7 @@ static int mi_opbc_h_compute(void* km)
    double R6;
    double R12;
    int z, zi, zj;
-   double fac;
+   double fac = 0.0;
    int zero = 0, one = 1;
 
    /* get buffer from KIM object */
@@ -1535,7 +1535,7 @@ static int mi_opbc_f_compute(void* km)
    double R6;
    double R12;
    int z, zi, zj;
-   double fac;
+   double fac = 0.0;
    int zero = 0, one = 1;
 
    /* get buffer from KIM object */
@@ -1815,7 +1815,7 @@ static int cluster_compute(void* km)
    double R6;
    double R12;
    int zi, zj;
-   double fac;
+   double fac = 0.0;
 
    /* get buffer from KIM object */
    buffer = (struct model_buffer*) KIM_API_get_model_buffer(pkim, &ier);

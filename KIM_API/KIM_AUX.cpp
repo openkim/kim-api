@@ -56,18 +56,18 @@ void KIM_AUX::Process_DE::init2zero(KIM_API_model* pkim, int* kimerr){
             int p1_ind=-1;
             int p2_ind=-1;
             int ierGlobal,ierPerAtom,ierStiffness;
-            p1_ind = pkim->get_index("process_dEdr",kimerr);
-            p2_ind = pkim->get_index("process_d2Edr2",kimerr);
-            prDE->virial = (double *) pkim->get_data("virial",&ierGlobal);
-            prDE->particleVirial = (double *) pkim->get_data("particleVirial",&ierPerAtom);
-            prDE->hessian = (double *)pkim->get_data("hessian",&ierStiffness);
-            prDE->numberOfParticles = (int *) pkim->get_data("numberOfParticles",kimerr);
+            p1_ind = pkim->get_index((char*) "process_dEdr",kimerr);
+            p2_ind = pkim->get_index((char*) "process_d2Edr2",kimerr);
+            prDE->virial = (double *) pkim->get_data((char*) "virial",&ierGlobal);
+            prDE->particleVirial = (double *) pkim->get_data((char*) "particleVirial",&ierPerAtom);
+prDE->hessian = (double *)pkim->get_data((char*) "hessian",&ierStiffness);
+prDE->numberOfParticles = (int *) pkim->get_data((char*) "numberOfParticles",kimerr);
            // halfNeighbors = !pkim->requiresFullNeighbors();
             bool process_d1=false, process_d2=false;
 
             if (*kimerr !=KIM_STATUS_OK) return;
             if (ierGlobal == KIM_STATUS_OK && prDE->virial != NULL) {
-               prDE->virial_flag = pkim->get_compute("virial", kimerr);
+               prDE->virial_flag = pkim->get_compute((char*) "virial", kimerr);
                 if (prDE->virial_flag==1 && pkim->virial_need2add) {
                   prDE->virial[0] =0.0;  prDE->virial[1] =0.0;  prDE->virial[2] =0.0;
                   prDE->virial[3] =0.0;  prDE->virial[4] =0.0;  prDE->virial[5] =0.0;
@@ -76,7 +76,7 @@ void KIM_AUX::Process_DE::init2zero(KIM_API_model* pkim, int* kimerr){
             }
 
             if (ierPerAtom == KIM_STATUS_OK && prDE->particleVirial != NULL) {
-               prDE->particleVirial_flag = pkim->get_compute("particleVirial",kimerr);
+               prDE->particleVirial_flag = pkim->get_compute((char*) "particleVirial",kimerr);
                 if (prDE->particleVirial_flag==1 && pkim->particleVirial_need2add) {
                     for (int i =0;i<(*(prDE->numberOfParticles))*6 ;i++) prDE->particleVirial[i]=0.0;
                     process_d1=true;
@@ -84,7 +84,7 @@ void KIM_AUX::Process_DE::init2zero(KIM_API_model* pkim, int* kimerr){
             }
 
             if (ierStiffness == KIM_STATUS_OK && prDE->hessian != NULL) {
-               prDE->hessian_flag = pkim->get_compute("hessian",kimerr);
+               prDE->hessian_flag = pkim->get_compute((char*) "hessian",kimerr);
                 if (prDE->hessian_flag==1 && pkim->hessian_need2add) {
                     for (int i =0;i<(*(prDE->numberOfParticles))*(*(prDE->numberOfParticles))*9 ;i++) prDE->hessian[i]=0.0;
                     process_d1=true;
@@ -94,16 +94,16 @@ void KIM_AUX::Process_DE::init2zero(KIM_API_model* pkim, int* kimerr){
 
             if ((p1_ind >=0) && (!pkim->test_doing_process_dEdr)){
                 if (process_d1) {
-                   pkim->set_compute("process_dEdr", KIM_COMPUTE_TRUE, kimerr);
+                   pkim->set_compute((char*) "process_dEdr", KIM_COMPUTE_TRUE, kimerr);
                 } else {
-                   pkim->set_compute("process_dEdr", KIM_COMPUTE_FALSE, kimerr);
+                   pkim->set_compute((char*) "process_dEdr", KIM_COMPUTE_FALSE, kimerr);
                 }
             }
             if ((p2_ind >=0) && (!pkim->test_doing_process_d2Edr2)){
                 if (process_d2) {
-                   pkim->set_compute("process_d2Edr2", KIM_COMPUTE_TRUE, kimerr);
+                   pkim->set_compute((char*) "process_d2Edr2", KIM_COMPUTE_TRUE, kimerr);
                 } else {
-                   pkim->set_compute("process_d2Edr2", KIM_COMPUTE_FALSE, kimerr);
+                   pkim->set_compute((char*) "process_d2Edr2", KIM_COMPUTE_FALSE, kimerr);
                 }
             }
 

@@ -59,7 +59,7 @@ extern "C" {
    static int model_destroy(void* km) {
       typedef int (*Driver_Destroy)(void *);//prototype for driver_destroy
       Driver_Destroy drvr_destroy = (Driver_Destroy) driver_destroy;
-      int ier;
+      int ier = KIM_STATUS_FAIL;
       //call driver_destroy
       if (drvr_destroy != NULL) {
          ier = (*drvr_destroy)(km);
@@ -104,8 +104,8 @@ extern "C" {
       param_file_names = NULL;
       if (KIM_STATUS_OK > ier) return ier;
 
-      driver_destroy = (*((KIM_API_model**)km))->get_data("destroy", &ier);
-      (*((KIM_API_model**)km))->set_data("destroy",1,(void*) &model_destroy);
+      driver_destroy = (*((KIM_API_model**)km))->get_data((char*) "destroy", &ier);
+      (*((KIM_API_model**)km))->set_data((char*) "destroy",1,(void*) &model_destroy);
 #else
       int ier = MODEL_DRIVER_NAME_LC_STR_init_(km, param_file_names, &nmstrlen, &numparamfiles);
       delete [] param_file_names;

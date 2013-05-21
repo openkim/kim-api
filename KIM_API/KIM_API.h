@@ -175,7 +175,7 @@ public:
                                                                   // because it returns OK or FAIL
 
     void free(int *error);
-    int set_data(char *nm, intptr_t size, void *dt);
+    int set_data(char const* nm, intptr_t size, void *dt);
     int set_data_by_index(int ind,intptr_t size, void *dt);
 
     void * get_data(char *nm,int *error);
@@ -185,7 +185,7 @@ public:
     int get_index(char *nm, int * error);
     intptr_t get_size(char *nm,int *error);
     intptr_t get_shape(char *nm,int * shape,int *error);
-    void set_shape(char *nm, int * shape, int rank, int *error);
+    void set_shape(char const* nm, int * shape, int rank, int *error);
     void set_compute(char *nm, int flag, int *error);
     void set_compute_by_index(int ind, int flag, int *error);
     int get_compute(char *nm, int* error);
@@ -226,7 +226,7 @@ int is_half_neighbors(int *error);
 
     int get_neigh_mode(int *error);
     static char * get_status_msg(int status_code);
-    static int report_error(int line, char * fl, char * usermsg, int error);
+    static int report_error(int line, char const* fl, char const* usermsg, int error);
     int get_model_index_shift();
     void set_model_buffer(void * o,int *error);
     void * get_model_buffer(int *error);
@@ -260,14 +260,15 @@ int is_half_neighbors(int *error);
     Unit_Handling unit_h;
     //Unit_Handling related routines
 
-    static double get_scale_conversion( char *u_from,char *u_to, int *error);
+    static double get_scale_conversion(char const* u_from,char const* u_to, int *error);
     int get_unit_handling(int *error);
     char * get_unit_length(int *error);
     char * get_unit_energy(int *error);
     char * get_unit_charge(int *error);
     char * get_unit_temperature(int *error);
     char * get_unit_time(int *error);
-    double convert_to_act_unit( char* length, char* energy, char* charge,char* temperature, char* time,
+    double convert_to_act_unit( char const* length, char const* energy,
+      char const* charge,char const* temperature, char const* time,
       double length_exponent, double energy_exponent, double charge_exponent,
       double temperature_exponent, double time_exponent, int* kimerror);
 

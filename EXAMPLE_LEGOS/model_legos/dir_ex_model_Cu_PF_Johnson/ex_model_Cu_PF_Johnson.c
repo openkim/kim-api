@@ -249,7 +249,7 @@ static int compute(void* km)
    double g;
    double dg;
    double dU;
-   double dphieff;
+   double dphieff = 0.0;
    double dphii;
    double dUi;
    double Ei;
@@ -268,7 +268,7 @@ static int compute(void* km)
    int comp_energy;
    double* rho;
    double U;
-   double* derU;
+   double* derU = 0;
    
    int* nAtoms;
    double* energy;
@@ -407,6 +407,10 @@ static int compute(void* km)
       {
          numberContrib = *nAtoms;
       }
+   }
+   else
+   { // provide initialization even if not used
+      numberContrib = *nAtoms;
    }
 
    /* Check to be sure that the atom types are correct */
@@ -805,7 +809,7 @@ static void get_current_atom_neighbors(int IterOrLoca, int HalfOrFull, int NBC, 
 int destroy(void *km)
 {
    /* Local variables */
-   intptr_t* pkim = *((intptr_t**) km);
+   /* intptr_t* pkim = *((intptr_t**) km); */
 
    /* nothing to do */
 

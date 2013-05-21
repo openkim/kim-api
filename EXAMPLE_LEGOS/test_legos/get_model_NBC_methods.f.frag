@@ -15,7 +15,7 @@ integer,                              intent(out)  :: num_NBCs
 integer,                              intent(out)  :: ier
 
 !-- Local variables
-integer :: i, index
+integer :: index
 
 !-- KIM variables
 integer(kind=kim_intptr) pkim

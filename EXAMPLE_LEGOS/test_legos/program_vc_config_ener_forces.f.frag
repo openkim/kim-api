@@ -97,7 +97,6 @@ program TEST_NAME_STR
   character*80              :: configfile
   character(len=KIM_KEY_STRING_LENGTH), pointer &
                             :: conf_types(:)    ! configuration atom types (element symbols)
-  real*8                    :: conf_boxsize(DIM)! configuration periodic box side lengths
   real*8,           pointer :: conf_coors(:,:)  ! configuration coordinates
   real*8,           pointer :: conf_forces(:,:) ! configuration forces
   real*8                    :: conf_energy      ! configuration energy
@@ -169,7 +168,7 @@ program TEST_NAME_STR
            "Error reading in the number of atoms N in the configuration", ier)
     stop
 
-20 continue
+!20 continue
    ier = KIM_STATUS_FAIL
    idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
           "Error reading in the periodic box size in the configuration", ier)

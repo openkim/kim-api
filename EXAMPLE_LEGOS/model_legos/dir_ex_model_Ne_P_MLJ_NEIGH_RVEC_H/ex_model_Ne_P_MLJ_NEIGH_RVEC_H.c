@@ -90,7 +90,7 @@ static int compute(void* km)
    double phi;
    double dphi;
    double d2phi;
-   double dEidr;
+   double dEidr = 0.0;
    int ier;
    int i;
    int j;
@@ -242,7 +242,7 @@ static int compute(void* km)
             pair(epsilon, sigma, A, B, C, R, &phi, &dphi, &d2phi);
 
             /* compute dEidr */
-            if (j < numContrib)
+            if (j < *numContrib)
             {
                /* double contribution */
                dEidr = dphi;
@@ -253,12 +253,12 @@ static int compute(void* km)
             {
                particleEnergy[currentAtom] += 0.5*phi;
                /* half list: add energy for the other atom in the pair */
-               if (j < numContrib) particleEnergy[j] += 0.5*phi;
+               if (j < *numContrib) particleEnergy[j] += 0.5*phi;
 
             }
             else if (comp_energy)
             {
-               if (j < numContrib)
+               if (j < *numContrib)
                {
                   /* add phi to total energy */
                   *energy += phi;

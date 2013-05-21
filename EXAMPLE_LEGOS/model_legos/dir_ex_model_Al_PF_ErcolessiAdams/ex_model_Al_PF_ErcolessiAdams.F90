@@ -761,7 +761,7 @@ do
 
    ! Set up neighbor list for next atom for all NBC methods
    !
-   call get_current_atom_neighbors(IterOrLoca,HalfOrFull,NBC,N,pkim,      &
+   call get_current_atom_neighbors(IterOrLoca,NBC,N,pkim,      &
                                    i,numnei,pnei1atom,pRij_list,Compute_Energy_Forces)
    if (Compute_Energy_Forces.eq.KIM_STATUS_NEIGH_ITER_PAST_END) exit  ! atom counter incremented past end of list
    if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
@@ -854,7 +854,7 @@ do
 
    ! Set up neighbor list for next atom for all NBC methods
    !
-   call get_current_atom_neighbors(IterOrLoca,HalfOrFull,NBC,N,pkim,      &
+   call get_current_atom_neighbors(IterOrLoca,NBC,N,pkim,      &
                                    i,numnei,pnei1atom,pRij_list,Compute_Energy_Forces)
 
    if (Compute_Energy_Forces.eq.KIM_STATUS_NEIGH_ITER_PAST_END) exit  ! atom counter incremented past end of list
@@ -975,13 +975,12 @@ end function Compute_Energy_Forces
 ! Get list of neighbors for current atom using all NBC methods
 !
 !-------------------------------------------------------------------------------
-subroutine get_current_atom_neighbors(IterOrLoca,HalfOrFull,NBC,N,pkim,      &
+subroutine get_current_atom_neighbors(IterOrLoca,NBC,N,pkim,      &
                                       atom,numnei,pnei1atom,pRij_list,ier)
 implicit none
 
 !-- Transferred variables
 integer,                  intent(in)    :: IterOrLoca
-integer,                  intent(in)    :: HalfOrFull
 integer,                  intent(in)    :: NBC
 integer,                  intent(in)    :: N
 integer(kind=kim_intptr), intent(in)    :: pkim
@@ -1050,7 +1049,7 @@ implicit none
 integer(kind=kim_intptr), intent(in) :: pkim
 
 !-- Local variables
-integer ier, idum
+integer idum
 
 !-- KIM variables
 integer irlast; pointer(pirlast,irlast)

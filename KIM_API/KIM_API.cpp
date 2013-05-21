@@ -804,7 +804,7 @@ int KIM_API_model::prestring_init(char *instrn){
         //extra input like unitFixed flag and,later may be, authors
         IOline *extrainput;
         bool readlines_str_success;
-        int nextra = IOline::readlines_str(instrn,&extrainput, readlines_str_success);
+        IOline::readlines_str(instrn,&extrainput, readlines_str_success);
         if (!readlines_str_success) return KIM_STATUS_FAIL;
         // do nothing for now
         delete [] extrainput;
@@ -844,10 +844,10 @@ void KIM_API_model::free(int *error){
         }
  }
 
-int KIM_API_model::set_data(char *nm, intptr_t size, void *dt){
+int KIM_API_model::set_data(char const* nm, intptr_t size, void *dt){
         // set data into preinit element correctly calculates all
         int error;
-        int ind=get_index(nm, &error);
+        int ind=get_index((char*) nm, &error);
         if (ind<0) {
             return error;
         } //no data in KIM_API_model
@@ -909,9 +909,9 @@ intptr_t KIM_API_model::get_shape(char *nm,int * shape, int *error){
         return get_shape_by_index(ind, shape, error);
 }
 
-void KIM_API_model::set_shape(char* nm, int* shape, int rank, int* error){
+void KIM_API_model::set_shape(char const* nm, int* shape, int rank, int* error){
     //size will be calculated and set too
-        int ind=get_index(nm,error);
+        int ind=get_index((char*) nm,error);
         *error =KIM_STATUS_ARG_UNKNOWN;
         if (ind < 0) return;
         if((intptr_t)(rank) != (*this)[ind].rank) {
@@ -1120,7 +1120,7 @@ bool KIM_API_model::is_it_match(KIM_API_model &test,KIM_API_model & mdl){
    KIM_API_model stdmdl;
 
     char * inStandard_kim_str = standard_kim_str();
-    stdmdl.name_temp = "standard";
+    stdmdl.name_temp = (char*) "standard";
     if(!stdmdl.prestring_init(inStandard_kim_str)){
         std::cout<<" preinit of :"<<"standard.kim"<<" failed"<<std::endl;
         stdmdl.free();
@@ -1194,24 +1194,24 @@ bool KIM_API_model::do_flag_match(KIM_API_model& tst, KIM_API_model& mdl){
     // here the assumption : besides flag type , everything is a match
 
     // check flag for tst
-    bool ZeroBasedLists_tst =is_it_in_and_is_it_flag(tst, "ZeroBasedLists");
-    bool OneBasedLists_tst =is_it_in_and_is_it_flag(tst, "OneBasedLists");
+   bool ZeroBasedLists_tst =is_it_in_and_is_it_flag(tst, (char*) "ZeroBasedLists");
+   bool OneBasedLists_tst =is_it_in_and_is_it_flag(tst, (char*) "OneBasedLists");
 
 
 
-    bool Neigh_IterAccess_tst=is_it_in_and_is_it_flag(tst, "Neigh_IterAccess");
-    bool Neigh_LocaAccess_tst=is_it_in_and_is_it_flag(tst, "Neigh_LocaAccess");
-    bool Neigh_BothAccess_tst=is_it_in_and_is_it_flag(tst, "Neigh_BothAccess");
+   bool Neigh_IterAccess_tst=is_it_in_and_is_it_flag(tst, (char*) "Neigh_IterAccess");
+   bool Neigh_LocaAccess_tst=is_it_in_and_is_it_flag(tst, (char*) "Neigh_LocaAccess");
+   bool Neigh_BothAccess_tst=is_it_in_and_is_it_flag(tst, (char*) "Neigh_BothAccess");
 
     // check flag for mdl
-    bool ZeroBasedLists_mdl =is_it_in_and_is_it_flag(mdl, "ZeroBasedLists");
-    bool OneBasedLists_mdl =is_it_in_and_is_it_flag(mdl, "OneBasedLists");
+   bool ZeroBasedLists_mdl =is_it_in_and_is_it_flag(mdl, (char*) "ZeroBasedLists");
+   bool OneBasedLists_mdl =is_it_in_and_is_it_flag(mdl, (char*) "OneBasedLists");
 
-    bool Neigh_IterAccess_mdl=is_it_in_and_is_it_flag(mdl, "Neigh_IterAccess");
+   bool Neigh_IterAccess_mdl=is_it_in_and_is_it_flag(mdl, (char*) "Neigh_IterAccess");
 
-    bool Neigh_LocaAccess_mdl=is_it_in_and_is_it_flag(mdl, "Neigh_LocaAccess");
+   bool Neigh_LocaAccess_mdl=is_it_in_and_is_it_flag(mdl, (char*) "Neigh_LocaAccess");
 
-    bool Neigh_BothAccess_mdl=is_it_in_and_is_it_flag(mdl, "Neigh_BothAccess");
+   bool Neigh_BothAccess_mdl=is_it_in_and_is_it_flag(mdl, (char*) "Neigh_BothAccess");
 
 
 
@@ -1228,8 +1228,8 @@ bool KIM_API_model::do_flag_match(KIM_API_model& tst, KIM_API_model& mdl){
     if (ZeroBasedLists_tst && OneBasedLists_mdl) model_index_shift = 1;
     if (OneBasedLists_tst && ZeroBasedLists_mdl) model_index_shift = -1;
     if (OneBasedLists_mdl) AUX_index_shift =1;
-    int ind_LocaAccess_mdl = mdl.get_index("Neigh_LocaAccess", &error);
-    int ind_IterAcces_mdl = mdl.get_index("Neigh_IterAccess", &error);
+    int ind_LocaAccess_mdl = mdl.get_index((char*) "Neigh_LocaAccess", &error);
+    int ind_IterAcces_mdl = mdl.get_index((char*) "Neigh_IterAccess", &error);
 
 
     //logic for checking Both/Loca/Iter
@@ -1499,7 +1499,7 @@ int KIM_API_model::init_str_modelname(char* testname, char* inmdlstr){
         test.free(); mdl.free();
         char computestr [] = "compute";
         compute_index = get_index(computestr, &error);
-        get_neigh_index = get_index("get_neigh", &error);
+        get_neigh_index = get_index((char*) "get_neigh", &error);
         if (!(this->fij_related_things_add_set_index())) return KIM_STATUS_FAIL;
 
         return KIM_STATUS_OK;
@@ -1575,7 +1575,7 @@ int KIM_API_model::string_init(char* in_tststr, char* modelname){
         test.free(); mdl.free();
         char computestr [] = "compute";
         compute_index = get_index(computestr, &error);
-        get_neigh_index = get_index("get_neigh", &error);
+        get_neigh_index = get_index((char*) "get_neigh", &error);
         if (!(this->fij_related_things_add_set_index())) return KIM_STATUS_FAIL;
 
         std::free(in_mdlstr);
@@ -1647,7 +1647,7 @@ int KIM_API_model::match(char* teststr, char* modelstr){
 
 int KIM_API_model::model_reinit(){
    int error;
-   int reinit_ind = get_index("reinit", &error);
+   int reinit_ind = get_index((char*) "reinit", &error);
    if (error != KIM_STATUS_OK) return error;
 
    KIM_API_model *pkim = this;
@@ -1750,7 +1750,7 @@ std::cout<<"               from the shared library:"<<model_slib_file<<std::endl
 
 int KIM_API_model::model_destroy(){
   typedef int (*Model_Destroy)(void *);//prototype for model_destroy
-  Model_Destroy mdl_destroy = (Model_Destroy) (*this)["destroy"].data;
+  Model_Destroy mdl_destroy = (Model_Destroy) (*this)[(char*) "destroy"].data;
   //call model_destroy
   KIM_API_model *pkim = this;
 
@@ -2249,7 +2249,7 @@ char * KIM_API_model::get_status_msg(int status_code) {
 
 }
 
-int KIM_API_model::report_error(int ln,char * fl,char * usermsg,int ier){
+int KIM_API_model::report_error(int ln,char const* fl,char const* usermsg,int ier){
     if(ier <= 0){
         char * kimstatus =get_status_msg(ier);
         std::cout<<"* Error: at line "<<ln<<" in "<<fl<< std::endl<<"\tMessage: "<<usermsg<<std::endl;
@@ -2289,11 +2289,11 @@ void * KIM_API_model::get_test_buffer(int* ier){
 
 bool KIM_API_model::fij_related_things_match(KIM_API_model& test, KIM_API_model& mdl){
 
-    bool tst_process_dEdr = is_it_in(test,"process_dEdr");
-    bool tst_process_d2Edr2 = is_it_in(test,"process_d2Edr2");
-    bool tst_virial_required  = is_it_in(test,"virial");
-    bool tst_particleVirial_required = is_it_in(test,"particleVirial");
-    bool tst_hessian_required =     is_it_in(test,"hessian");
+   bool tst_process_dEdr = is_it_in(test,(char*) "process_dEdr");
+   bool tst_process_d2Edr2 = is_it_in(test,(char*) "process_d2Edr2");
+   bool tst_virial_required  = is_it_in(test,(char*) "virial");
+   bool tst_particleVirial_required = is_it_in(test,(char*) "particleVirial");
+   bool tst_hessian_required =     is_it_in(test,(char*)"hessian");
 
     if ((tst_process_dEdr || tst_process_d2Edr2) && (tst_virial_required ||
                                                      tst_particleVirial_required ||
@@ -2305,11 +2305,11 @@ bool KIM_API_model::fij_related_things_match(KIM_API_model& test, KIM_API_model&
        return false;
     }
 
-    bool mdl_process_dEdr = is_it_in(mdl,"process_dEdr");
-    bool mdl_process_d2Edr2 = is_it_in(mdl,"process_d2Edr2");
-    bool mdl_virial  = is_it_in(mdl,"virial");
-    bool mdl_particleVirial = is_it_in(mdl,"particleVirial");
-    bool mdl_hessian =     is_it_in(mdl,"hessian");
+    bool mdl_process_dEdr = is_it_in(mdl,(char*) "process_dEdr");
+    bool mdl_process_d2Edr2 = is_it_in(mdl,(char*) "process_d2Edr2");
+    bool mdl_virial  = is_it_in(mdl,(char*) "virial");
+    bool mdl_particleVirial = is_it_in(mdl,(char*) "particleVirial");
+    bool mdl_hessian =     is_it_in(mdl,(char*) "hessian");
 
     if ((mdl_process_dEdr || mdl_process_d2Edr2) && (mdl_virial ||
                                                      mdl_particleVirial ||
@@ -2414,11 +2414,11 @@ bool KIM_API_model::fij_related_things_add_set_index(){
 
     //get index
     int error;
-    virial_ind = get_index("virial", &error);
-    particleVirial_ind = get_index("particleVirial", &error);
-    hessian_ind =get_index("hessian", &error);
-    process_dEdr_ind =get_index("process_dEdr", &error);
-    process_d2Edr2_ind =get_index("process_d2Edr2", &error);
+    virial_ind = get_index((char*) "virial", &error);
+    particleVirial_ind = get_index((char*)"particleVirial", &error);
+    hessian_ind =get_index((char*) "hessian", &error);
+    process_dEdr_ind =get_index((char*) "process_dEdr", &error);
+    process_d2Edr2_ind =get_index((char*) "process_d2Edr2", &error);
 
 
     // Set calculate flags for process_* if the API is doing the computations.
@@ -2491,7 +2491,7 @@ int KIM_API_model::process_d2Edr2(KIM_API_model **ppkim,double *de,double **r,do
 
 
 //related to Unit_Handling
-double KIM_API_model::get_scale_conversion( char *u_from,char *u_to, int *error){
+double KIM_API_model::get_scale_conversion( char const* u_from,char const* u_to, int *error){
     return Unit_Handling::get_scale_conversion(u_from,u_to,error);
 }
 int KIM_API_model::get_unit_handling(int *error){
@@ -2514,7 +2514,8 @@ char * KIM_API_model::get_unit_time(int *error){
 }
 
 double KIM_API_model::convert_to_act_unit(
-   char* length, char* energy, char* charge, char* temperature, char* time,
+   char const* length, char const* energy, char const* charge,
+   char const* temperature, char const* time,
    double length_exponent, double energy_exponent, double charge_exponent,
    double temperature_exponent, double time_exponent, int* kimerror){
    return Unit_Handling::convert_to_act_unit((void *)this, length, energy, charge, temperature, time,

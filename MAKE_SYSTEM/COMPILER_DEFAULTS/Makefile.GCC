@@ -51,7 +51,7 @@ LDDYNAMICLIB = -ldl
 XLANGLDLIBS  = -lgfortran
 
 # Define optional compiler option flag lists
-FFLAGS   = -O3 -g
-CCFLAGS  = -O3 -g
-CXXFLAGS = -O3 -g -Wno-write-strings
+FFLAGS   = -O3 -g -Wall
+CCFLAGS  = -O3 -g -Wall
+CXXFLAGS = -O3 -g -Wall
 LDFLAGS  =
