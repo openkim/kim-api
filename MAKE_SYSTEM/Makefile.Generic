@@ -92,77 +92,103 @@ KIM_LIB = -L$(KIM_DIR)/KIM_API/ -lkim
 
 # C/C++ Compiler pattern rules
 %.o:%.c Makefile    # C with preprocessing
-	$(CC) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CCFLAGS) $<
+	@printf "Creating... $@.\n"
+	@$(CC) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CCFLAGS) $<
 %.o:%.i Makefile    # C without preprocessing
-	$(CC) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CCFLAGS) $<
+	@printf "Creating... $@.\n"
+	@$(CC) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CCFLAGS) $<
 %.o:%.cpp Makefile  # C++ with preprocessing
-	$(CXX) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CXXFLAGS) $<
+	@printf "Creating... $@.\n"
+	@$(CXX) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CXXFLAGS) $<
 %.o:%.ii Makefile   # C++ without preprocessing
-	$(CXX) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CXXFLAGS) $<
+	@printf "Creating... $@.\n"
+	@$(CXX) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CXXFLAGS) $<
 %.o:%.cc Makefile   # C++ with preprocessing
-	$(CXX) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CXXFLAGS) $<
+	@printf "Creating... $@.\n"
+	@$(CXX) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CXXFLAGS) $<
 %.o:%.cxx Makefile  # C++ with preprocessing
-	$(CXX) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CXXFLAGS) $<
+	@printf "Creating... $@.\n"
+	@$(CXX) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CXXFLAGS) $<
 %.o:%.cpp Makefile  # C++ with preprocessing
-	$(CXX) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CXXFLAGS) $<
+	@printf "Creating... $@.\n"
+	@$(CXX) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CXXFLAGS) $<
 %.o:%.C Makefile    # C++ with preprocessing
-	$(CXX) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CXXFLAGS) $<
+	@printf "Creating... $@.\n"
+	@$(CXX) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CXXFLAGS) $<
 
 # Fortran Compiler pattern rules
 # Fixed form code
 %.o:%.f Makefile    # FORTRAN 77 without preprocessing
-	$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+	@printf "Creating... $@.\n"
+	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
 %.o:%.for Makefile  # FORTRAN 77 without preprocessing
-	$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+	@printf "Creating... $@.\n"
+	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
 %.o:%.ftn Makefile  # FORTRAN 77 without preprocessing
-	$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+	@printf "Creating... $@.\n"
+	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
 %.o:%.fpp Makefile  # FORTRAN 77 with preprocessing
-	$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+	@printf "Creating... $@.\n"
+	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
 %.o:%.F Makefile    # FORTRAN 77 with preprocessing
-	$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+	@printf "Creating... $@.\n"
+	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
 %.o:%.FOR Makefile  # FORTRAN 77 with preprocessing
-	$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+	@printf "Creating... $@.\n"
+	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
 %.o:%.FTN Makefile  # FORTRAN 77 with preprocessing
-	$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+	@printf "Creating... $@.\n"
+	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
 %.o:%.FPP Makefile  # FORTRAN 77 with preprocessing
-	$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+	@printf "Creating... $@.\n"
+	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
 # Free form code
 %.o:%.f90 Makefile  # Fortran 90 without preprocessing
-	$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+	@printf "Creating... $@.\n"
+	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
 %.o:%.f95 Makefile  # Fortran 95 without preprocessing
-	$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+	@printf "Creating... $@.\n"
+	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
 %.o:%.f03 Makefile  # Fortran 2003 without preprocessing
-	$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+	@printf "Creating... $@.\n"
+	$@(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
 %.o:%.f08 Makefile  # Fortran 2008 without preprocessing
-	$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+	@printf "Creating... $@.\n"
+	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
 %.o:%.F90 Makefile  # Fortran 90 without preprocessing
-	$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+	@printf "Creating... $@.\n"
+	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
 %.o:%.F95 Makefile  # Fortran 95 without preprocessing
-	$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+	@printf "Creating... $@.\n"
+	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
 %.o:%.F03 Makefile  # Fortran 2003 without preprocessing
-	$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+	@printf "Creating... $@.\n"
+	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
 %.o:%.F08 Makefile  # Fortran 2008 without preprocessing
-	$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+	@printf "Creating... $@.\n"
+	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
 
 # Library pattern rule
 %.so: %.a
-	$(LD) $(LDSHAREDFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@  \
-              $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
-              -L$(KIM_DIR)/KIM_API/ -lkim $(LDDYNAMICLIB) $(XLANGLDLIBS)
+	@printf "Creating... $@.\n"
+	@$(LD) $(LDSHAREDFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@  \
+               $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
+               -L$(KIM_DIR)/KIM_API/ -lkim $(LDDYNAMICLIB) $(XLANGLDLIBS)
 
 # KIM descriptor file make rule
 %_kim_str.cpp: %.kim
-	echo "extern \"C\" {"           > $*_kim_str.cpp
-	echo $(MODEL_NAME_KIM_STR_H)   >> $*_kim_str.cpp
-	echo "}"                       >> $*_kim_str.cpp
-	echo $(MODEL_NAME_KIM_STR_CPP) >> $*_kim_str.cpp
-	echo "static char kimstr[] ="  >> $*_kim_str.cpp
-	cat $(strip $(MODEL_NAME)).kim | tr -d '\r' | \
-	sed -e 's,\\,\\\\,g'     \
-            -e 's,",\\",g'       \
-            -e 's,^,      ",g'   \
-            -e 's,$$,\\n",g'           >> $*_kim_str.cpp
-	echo "   ;"                    >> $*_kim_str.cpp
-	echo "return &kimstr[0];"      >> $*_kim_str.cpp
-	echo ""                        >> $*_kim_str.cpp
-	echo "}"                       >> $*_kim_str.cpp
+	@printf "Creating... intermediate file... $@.\n"
+	@printf "extern \"C\" {\n"             > $*_kim_str.cpp
+	@printf "$(MODEL_NAME_KIM_STR_H)\n"   >> $*_kim_str.cpp
+	@printf "}\n"                         >> $*_kim_str.cpp
+	@printf "$(MODEL_NAME_KIM_STR_CPP)\n" >> $*_kim_str.cpp
+	@printf "static char kimstr[] =\n"    >> $*_kim_str.cpp
+	@cat $(strip $(MODEL_NAME)).kim | tr -d '\r' | \
+	 sed -e 's,\\,\\\\,g'     \
+             -e 's,",\\",g'       \
+             -e 's,^,      ",g'   \
+             -e 's,$$,\\n",g'                 >> $*_kim_str.cpp
+	@printf "   ;\n"                      >> $*_kim_str.cpp
+	@printf "return &kimstr[0];\n"        >> $*_kim_str.cpp
+	@printf "\n"                          >> $*_kim_str.cpp
+	@printf "}\n"                         >> $*_kim_str.cpp

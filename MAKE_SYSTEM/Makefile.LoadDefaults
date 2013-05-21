@@ -69,3 +69,6 @@ else ifeq ($(KIM_SYSTEMLINKER),darwin)
 else ifeq ($(KIM_SYSTEMLINKER),freebsd)
    include $(KIM_DIR)/MAKE_SYSTEM/LINKER_DEFAULTS/Makefile.FREEBSD
 endif
+
+# set make flag
+MAKE_FLAGS := --no-print-directory

@@ -64,19 +64,21 @@ else
    MODEL_DRIVER_INIT_FUNC_NAME = $(MODEL_DRIVER_INIT_FUNCTION_NAME)
 endif
 %_init_wrapper.cpp: Makefile
-	printf "extern \"C\"\n"                                                                                                             > $@
-	printf "{\n"                                                                                                                       >> $@
-	printf "   int $(strip $(MODEL_DRIVER_INIT_FUNC_NAME))(void *kimmdl, char *paramfile_names, int *nmstrlen, int *numparamfiles);\n" >> $@
-	printf "   int $(strip $(MODEL_DRIVER_NAME))_init(void *kimmdl, char *paramfile_names, int *nmstrlen, int *numparamfiles);\n"      >> $@
-	printf "}\n"                                                                                                                       >> $@
-	printf "\n"                                                                                                                        >> $@
-	printf "int $(strip $(MODEL_DRIVER_NAME))_init(void *kimmdl, char *paramfile_names, int *nmstrlen, int *numparamfiles)\n"          >> $@
-	printf "{\n"                                                                                                                       >> $@
-	printf "   return $(MODEL_DRIVER_INIT_FUNC_NAME)(kimmdl, paramfile_names, nmstrlen, numparamfiles);\n"                             >> $@
-	printf "}\n"                                                                                                                       >> $@
+	@printf "Creating... intermediate file... $@.\n"
+	@printf "extern \"C\"\n"                                                                                                             > $@
+	@printf "{\n"                                                                                                                       >> $@
+	@printf "   int $(strip $(MODEL_DRIVER_INIT_FUNC_NAME))(void *kimmdl, char *paramfile_names, int *nmstrlen, int *numparamfiles);\n" >> $@
+	@printf "   int $(strip $(MODEL_DRIVER_NAME))_init(void *kimmdl, char *paramfile_names, int *nmstrlen, int *numparamfiles);\n"      >> $@
+	@printf "}\n"                                                                                                                       >> $@
+	@printf "\n"                                                                                                                        >> $@
+	@printf "int $(strip $(MODEL_DRIVER_NAME))_init(void *kimmdl, char *paramfile_names, int *nmstrlen, int *numparamfiles)\n"          >> $@
+	@printf "{\n"                                                                                                                       >> $@
+	@printf "   return $(MODEL_DRIVER_INIT_FUNC_NAME)(kimmdl, paramfile_names, nmstrlen, numparamfiles);\n"                             >> $@
+	@printf "}\n"                                                                                                                       >> $@
 
 $(strip $(MODEL_DRIVER_NAME)).a: $(LOCALOBJ) $(strip $(MODEL_DRIVER_NAME))_init_wrapper.o 
-	ar rcs $@ $(LOCALOBJ) $(strip $(MODEL_DRIVER_NAME))_init_wrapper.o
+	@printf "Creating... $@.\n"
+	@ar rcs $@ $(LOCALOBJ) $(strip $(MODEL_DRIVER_NAME))_init_wrapper.o
 
 $(LOCALOBJ): Makefile
 
@@ -84,5 +86,6 @@ Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/MAKE_SYSTEM/Makefile.ModelDriver
 	@touch Makefile
 
 clean:
-	rm -f $(LOCALOBJ) *.mod $(addprefix $(strip $(MODEL_DRIVER_NAME)).,a so) \
+	@printf "Cleaning... Model Driver.......... $(MODEL_DRIVER_NAME).\n"
+	@rm -f $(LOCALOBJ) *.mod $(addprefix $(strip $(MODEL_DRIVER_NAME)).,a so) \
               $(addprefix $(strip $(MODEL_DRIVER_NAME))_init_wrapper.,o cpp) $(LOCALCLEAN)

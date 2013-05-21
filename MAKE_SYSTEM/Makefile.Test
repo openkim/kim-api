@@ -40,7 +40,8 @@ include $(KIM_DIR)/MAKE_SYSTEM/Makefile.SanityCheck
 all: $(TEST_NAME)
 
 $(TEST_NAME): $(LOCALOBJ) $(strip $(TEST_NAME)).o $(KIM_LIB_FILE)
-	$(LD) $(LDFLAGS) $(LOCALOBJ) $< $(KIM_LIB) $(XLANGLDLIBS) $(LDDYNAMICLIB) $(OUTPUTINFLAG) $@
+	@printf "Creating... Test executable... $@.\n"
+	@$(LD) $(LDFLAGS) $(LOCALOBJ) $< $(KIM_LIB) $(XLANGLDLIBS) $(LDDYNAMICLIB) $(OUTPUTINFLAG) $@
 
 $(strip $(TEST_NAME)).o: $(LOCALOBJ) Makefile
 
@@ -48,4 +49,5 @@ Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/MAKE_SYSTEM/Makefile.Test
 	@touch Makefile
 
 clean:
-	rm -f $(patsubst %.o,%.mod,$(LOCALJOB)) $(LOCALOBJ) $(strip $(TEST_NAME)).o $(TEST_NAME) $(LOCAL_CLEAN)
+	@printf "Cleaning... Test.................. $(TEST_NAME).\n"
+	@rm -f $(patsubst %.o,%.mod,$(LOCALJOB)) $(LOCALOBJ) $(strip $(TEST_NAME)).o $(TEST_NAME) $(LOCAL_CLEAN)
