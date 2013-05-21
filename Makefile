@@ -47,20 +47,20 @@ KIM_CONFIG_FILES = $(KIM_DIR)/KIM_API/Makefile.KIMConfig $(KIM_MODEL_DRIVERS_DIR
 
 # compile everything in the standard directories
 ifneq ($(KIM_LINK),static-link)
-   all: models_check $(KIM_CONFIG_FILES) kim-api-all kim-api-lib $(patsubst %,%-all,$(MODEL_DRIVERS_LIST) \
+   all: models_check config kim-api-all kim-api-lib $(patsubst %,%-all,$(MODEL_DRIVERS_LIST) \
         $(MODELS_LIST)) $(patsubst %,%-all,$(TESTS_LIST))
 else
-   all: models_check $(KIM_CONFIG_FILES) kim-api-all $(patsubst %,%-all,$(MODEL_DRIVERS_LIST) $(MODELS_LIST)) \
+   all: models_check config kim-api-all $(patsubst %,%-all,$(MODEL_DRIVERS_LIST) $(MODELS_LIST)) \
         kim-api-lib $(patsubst %,%-all,$(TESTS_LIST))
 endif
 
 # other targets
 config: $(KIM_CONFIG_FILES)
-openkim-api: kim-api-all kim-api-lib     # compile the openkim-api
-examples: examples-all                   # copy examples to appropriate directories then make
+openkim-api: config kim-api-all kim-api-lib     # compile the openkim-api
+examples: config examples-all                   # copy examples to appropriate directories then make
 
 # cleaning targets
-clean: $(KIM_CONFIG_FILES) $(patsubst %,%-clean,$(MODELS_LIST) $(MODEL_DRIVERS_LIST) $(TESTS_LIST)) kim-api-clean clean-config
+clean: config $(patsubst %,%-clean,$(MODELS_LIST) $(MODEL_DRIVERS_LIST) $(TESTS_LIST)) kim-api-clean clean-config
 clean-examples:
 
 ########### for internal use ###########
