@@ -35,7 +35,6 @@
 #######################################################################################################
 
 
-TEST_NAME := ex_test_Ar_multiple_models
 Unit_length      := A
 Unit_energy      := eV
 Unit_charge      := e

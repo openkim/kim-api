@@ -36,7 +36,6 @@
 #######################################################################################################
 
 
-MODEL_NAME := ex_model_Cu_PF_Johnson
 Unit_Handling    := fixed
 Unit_length      := A
 Unit_energy      := eV

@@ -115,7 +115,7 @@ ex_model_Ar_P_MLJ_CLUSTER_C: model_P_MLJ_CLUSTER_C.c             \
         # make Makefile in the directory
 	$(D_CAT) model_Makefile | $(SED_CMD) | sed -e 's/MODEL_LANG/C/'                                       >  $(KIM_EX_MODELS_DIR)/$@/Makefile
         # make .kim file in the directory
-	$(D_CAT) descriptor_file_start | $(SED_CMD) \
+	$(D_CAT) descriptor_file_start \
          | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    1/g'                >  $(KIM_EX_MODELS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
 	echo "CLUSTER                     flag"                                                               >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
@@ -151,7 +151,7 @@ ex_model_Ar_P_MLJ_CLUSTER_F90: $(COMMON_FRAGMENTS)                    \
         # make Makefile in the directory
 	$(D_CAT) model_Makefile | $(SED_CMD) | sed -e 's/MODEL_LANG/Fortran/'                                 >  $(KIM_EX_MODELS_DIR)/$@/Makefile
         # make .kim file in the directory
-	$(D_CAT) descriptor_file_start | $(SED_CMD) \
+	$(D_CAT) descriptor_file_start \
          | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    1/g'                >  $(KIM_EX_MODELS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
 	echo "CLUSTER                     flag"                                                               >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
@@ -194,7 +194,7 @@ ex_model_Ar_P_MLJ_MI_OPBC_H_F: $(COMMON_FRAGMENTS)                              
         # make Makefile in the directory
 	$(D_CAT) model_Makefile | $(SED_CMD) | sed -e 's/MODEL_LANG/Fortran/'                                 >  $(KIM_EX_MODELS_DIR)/$@/Makefile
         # make .kim file in the directory
-	$(D_CAT) descriptor_file_start | $(SED_CMD) \
+	$(D_CAT) descriptor_file_start \
          | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    1/g'                >  $(KIM_EX_MODELS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
 	echo "Neigh_LocaAccess            flag"                                                               >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
@@ -249,7 +249,7 @@ ex_model_Ar_P_MLJ_NEIGH_PURE_H_F: $(COMMON_FRAGMENTS)                           
         # make Makefile in the directory
 	$(D_CAT) model_Makefile | $(SED_CMD) | sed -e 's/MODEL_LANG/Fortran/'                                 >  $(KIM_EX_MODELS_DIR)/$@/Makefile
         # make .kim file in the directory
-	$(D_CAT) descriptor_file_start | $(SED_CMD) \
+	$(D_CAT) descriptor_file_start \
                                   | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    1/g' \
                                                                                                               >  $(KIM_EX_MODELS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
@@ -303,7 +303,7 @@ ex_model_Ar_P_MLJ_NEIGH_RVEC_F: $(COMMON_FRAGMENTS)                           \
         # make Makefile in the directory
 	$(D_CAT) model_Makefile | $(SED_CMD) | sed -e 's/MODEL_LANG/Fortran/'                                 >  $(KIM_EX_MODELS_DIR)/$@/Makefile
         # make .kim file in the directory
-	$(D_CAT) descriptor_file_start | $(SED_CMD) \
+	$(D_CAT) descriptor_file_start \
          | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    1/g'                >  $(KIM_EX_MODELS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
 	echo "Neigh_LocaAccess            flag"                                                               >> $(KIM_EX_MODELS_DIR)/$@/$@.kim

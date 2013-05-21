@@ -34,7 +34,6 @@
 #######################################################################################################
 
 
-TEST_NAME := ex_test_demo_F03
 SystemOfUnitsFix := fixed    # can work only with units system defined bellow
 # SystemOfUnitsFix := flexible # can reset entire units system (default for model)
 

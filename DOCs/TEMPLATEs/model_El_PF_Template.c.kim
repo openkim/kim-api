@@ -36,7 +36,6 @@
 #######################################################################################################
 
 
-MODEL_NAME := model_<FILL element name>_PF_<FILL model name>
 Unit_Handling    := fixed
 Unit_length      := A
 Unit_energy      := eV

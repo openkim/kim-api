@@ -34,7 +34,6 @@
 #######################################################################################################
 
 
-MODEL_NAME := ex_model_Ne_P_LJ_NEIGH_PURE_H
 Unit_Handling    := fixed
 Unit_length      := A
 Unit_energy      := eV

@@ -37,7 +37,6 @@
 #######################################################################################################
 
 
-MODEL_NAME := MODEL_NAME_STR
 Unit_Handling    := flexible
 Unit_length      := A
 Unit_energy      := eV

@@ -70,7 +70,6 @@ kim_descriptor = &
    divider                                                                      // cr // &
                                                                                    cr // &
                                                                                    cr // &
-   'TEST_NAME := TEST_NAME_STR'                                                 // cr // &
    'Unit_length      := A'                                                      // cr // &
    'Unit_energy      := eV'                                                     // cr // &
    'Unit_charge      := e'                                                      // cr // &

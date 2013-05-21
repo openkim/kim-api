@@ -37,7 +37,6 @@
 #######################################################################################################
 
 
-MODEL_NAME := ex_model_Al_PF_ErcolessiAdams
 Unit_Handling    := fixed
 Unit_length      := A
 Unit_energy      := eV

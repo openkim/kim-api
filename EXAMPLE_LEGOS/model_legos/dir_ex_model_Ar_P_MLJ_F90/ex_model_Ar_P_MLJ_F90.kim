@@ -37,7 +37,6 @@
 #######################################################################################################
 
 
-MODEL_NAME := ex_model_Ar_P_MLJ_F90
 Unit_Handling    := fixed
 Unit_length      := A
 Unit_energy      := eV

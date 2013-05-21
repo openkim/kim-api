@@ -36,7 +36,6 @@
 #######################################################################################################
 
 
-MODEL_NAME := ex_model_Ne_P_fastLJ
 Unit_Handling    := flexible
 Unit_length      := A
 Unit_energy      := eV

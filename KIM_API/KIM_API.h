@@ -277,6 +277,7 @@ int is_half_neighbors(int *error);
 private:
     KIM_IOline *inlines;
     int numlines;
+   char* name_temp;
 
     bool locator_neigh_mode;
     bool iterator_neigh_mode;

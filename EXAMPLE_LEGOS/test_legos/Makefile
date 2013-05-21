@@ -119,7 +119,7 @@ ex_test_Al_free_cluster: $(COMMON_FRAGMENTS)                    \
         # make Makefile in the directory
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .kim file in the directory
-	$(D_CAT) descriptor_file_start    | $(SED_CMD) \
+	$(D_CAT) descriptor_file_start \
          | sed -e 's/SPECIES_LINE_STR/Al                          spec                    13/g'               >  $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "NEIGH_RVEC_H                flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
@@ -190,7 +190,7 @@ ex_test_Al_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
         # make Makefile in the directory
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .kim file in the directory
-	$(D_CAT) descriptor_file_start    | $(SED_CMD) \
+	$(D_CAT) descriptor_file_start \
          | sed -e 's/SPECIES_LINE_STR/Al                          spec                    13/g'               >  $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "MI_OPBC_H                   flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
@@ -251,7 +251,7 @@ ex_test_ArNe_B2cohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                        \
         # make Makefile in the directory
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .kim file in the directory
-	$(D_CAT) descriptor_file_start    | $(SED_CMD) \
+	$(D_CAT) descriptor_file_start \
          | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    18\nNe                      spec                    10/g' \
                                                                                                               >  $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
@@ -307,7 +307,7 @@ ex_test_Ar_FCCcohesiveCutoff_NEIGH_RVEC: $(COMMON_FRAGMENTS)                    
         # make Makefile in the directory
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .kim file in the directory
-	$(D_CAT) descriptor_file_start    | $(SED_CMD) \
+	$(D_CAT) descriptor_file_start \
          | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    18/g'               >  $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "NEIGH_RVEC_H                flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
@@ -364,7 +364,7 @@ ex_test_Ar_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
         # make Makefile in the directory
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .kim file in the directory
-	$(D_CAT) descriptor_file_start    | $(SED_CMD) \
+	$(D_CAT) descriptor_file_start \
          | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    18/g'               >  $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "MI_OPBC_H                   flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
@@ -424,7 +424,7 @@ ex_test_Ar_FCCcohesive_NEIGH_PURE: $(COMMON_FRAGMENTS)                          
         # make Makefile in the directory
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .kim file in the directory
-	$(D_CAT) descriptor_file_start    | $(SED_CMD) \
+	$(D_CAT) descriptor_file_start \
          | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    18/g'               >  $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "NEIGH_PURE_H                flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
@@ -481,7 +481,7 @@ ex_test_Ar_FCCcohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                          
         # make Makefile in the directory
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .kim file in the directory
-	$(D_CAT) descriptor_file_start    | $(SED_CMD) \
+	$(D_CAT) descriptor_file_start \
          | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    18/g'               >  $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "NEIGH_RVEC_H                flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
@@ -532,7 +532,7 @@ ex_test_Ar_free_cluster_CLUSTER_C: $(COMMON_FRAGMENTS)                 \
         # make Makefile in the directory
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .kim file in the directory
-	$(D_CAT) descriptor_file_start    | $(SED_CMD) \
+	$(D_CAT) descriptor_file_start \
          | sed -e 's/OneBasedLists /ZeroBasedLists/g' \
                -e 's/SPECIES_LINE_STR/Ar                          spec                    18/g'               >  $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
@@ -569,7 +569,7 @@ ex_test_Ar_free_cluster_CLUSTER_F90: $(COMMON_FRAGMENTS)                 \
         # make Makefile in the directory
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .kim file in the directory
-	$(D_CAT) descriptor_file_start    | $(SED_CMD) \
+	$(D_CAT) descriptor_file_start \
          | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    18/g'               >  $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "CLUSTER                     flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
@@ -605,7 +605,7 @@ ex_test_Ar_free_cluster_CLUSTER_memory_F90: $(COMMON_FRAGMENTS)                 
         # make Makefile in the directory
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .kim file in the directory
-	$(D_CAT) descriptor_file_start    | $(SED_CMD) \
+	$(D_CAT) descriptor_file_start \
          | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    18/g'               >  $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "CLUSTER                     flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
@@ -647,7 +647,7 @@ ex_test_Ar_free_cluster: $(COMMON_FRAGMENTS)                    \
         # make Makefile in the directory
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .kim file in the directory
-	$(D_CAT) descriptor_file_start    | $(SED_CMD) \
+	$(D_CAT) descriptor_file_start \
          | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    18/g'               >  $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "NEIGH_RVEC_H                flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
@@ -718,7 +718,7 @@ ex_test_Cu_free_cluster: $(COMMON_FRAGMENTS)                    \
         # make Makefile in the directory
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .kim file in the directory
-	$(D_CAT) descriptor_file_start    | $(SED_CMD) \
+	$(D_CAT) descriptor_file_start \
          | sed -e 's/SPECIES_LINE_STR/Cu                          spec                    29/g'               >  $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "NEIGH_RVEC_H                flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
@@ -789,7 +789,7 @@ ex_test_Ne_free_cluster: $(COMMON_FRAGMENTS)                    \
         # make Makefile in the directory
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .kim file in the directory
-	$(D_CAT) descriptor_file_start    | $(SED_CMD) \
+	$(D_CAT) descriptor_file_start \
          | sed -e 's/SPECIES_LINE_STR/Ne                          spec                    10/g'               >  $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "NEIGH_RVEC_H                flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
@@ -860,7 +860,7 @@ ex_test_Ne_free_cluster_SI: $(COMMON_FRAGMENTS)                    \
         # make Makefile in the directory
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .kim file in the directory
-	$(D_CAT) descriptor_file_start_SI    | $(SED_CMD) \
+	$(D_CAT) descriptor_file_start_SI \
          | sed -e 's/SPECIES_LINE_STR/Ne                          spec                    10/g'               >  $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "NEIGH_RVEC_H                flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
@@ -930,7 +930,7 @@ ex_test_Ne_free_cluster_stiff: $(COMMON_FRAGMENTS)                    \
         # make Makefile in the directory
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .kim file in the directory
-	$(D_CAT) descriptor_file_start    | $(SED_CMD) \
+	$(D_CAT) descriptor_file_start \
          | sed -e 's/SPECIES_LINE_STR/Ne                          spec                    10/g'               >  $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "NEIGH_RVEC_H                flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim

@@ -750,13 +750,12 @@ int KIM_API_model::prestring_init(char *instrn){
 
         int *shape=NULL;
         char pointer_str [] = "pointer";
-        char modelname [] ="dummy_name";
         //get Atoms Types and nAtomsTypes
         if (! init_AtomsTypes()) {
             ErrorCode=KIM_STATUS_FAIL;
             return ErrorCode;
         }
-        model.init(modelname,pointer_str,(intptr_t)(numlines-nAtomsTypes+3),1,shape);
+        model.init(name_temp,pointer_str,(intptr_t)(numlines-nAtomsTypes+3),1,shape);
         model.size =(intptr_t)(numlines-nAtomsTypes);
 
         int ii=0;
@@ -807,14 +806,7 @@ int KIM_API_model::prestring_init(char *instrn){
         bool readlines_str_success;
         int nextra = IOline::readlines_str(instrn,&extrainput, readlines_str_success);
         if (!readlines_str_success) return KIM_STATUS_FAIL;
-        for (int i=0;i<nextra;i++){
-            if(strcmp(extrainput[i].name,"TEST_NAME")==0){
-                strcpy(this->model.name,extrainput[i].value);
-            }
-            if(strcmp(extrainput[i].name,"MODEL_NAME")==0){
-                strcpy(this->model.name,extrainput[i].value);
-            }
-        }
+        // do nothing for now
         delete [] extrainput;
         unit_h.init_str(instrn,&ErrorCode);
         if(ErrorCode < KIM_STATUS_OK) return ErrorCode;
@@ -1128,6 +1120,7 @@ bool KIM_API_model::is_it_match(KIM_API_model &test,KIM_API_model & mdl){
    KIM_API_model stdmdl;
 
     char * inStandard_kim_str = standard_kim_str();
+    stdmdl.name_temp = "standard";
     if(!stdmdl.prestring_init(inStandard_kim_str)){
         std::cout<<" preinit of :"<<"standard.kim"<<" failed"<<std::endl;
         stdmdl.free();
@@ -1449,6 +1442,7 @@ int KIM_API_model::init(char* testname, char* modelname){
     int error;
     char* in_mdlstr = get_model_kim_str(modelname, &error);
     if (error == KIM_STATUS_OK) {
+       name_temp = modelname;
        error = init_str_modelname(testname,in_mdlstr);
     }
 
@@ -1476,11 +1470,13 @@ int KIM_API_model::init_str_modelname(char* testname, char* inmdlstr){
     KIM_API_model test,mdl;
     //preinit test and model API object
 
+    mdl.name_temp = name_temp;
     if(!mdl.prestring_init(inmdlstr)){
         std::cout<<"prestring_init  failed with error status: "<<this->get_status_msg(ErrorCode)<<std::endl;
         return KIM_STATUS_FAIL;
     }
 
+    test.name_temp = testname;
     if(!test.preinit(testinputfile,testname)){
         std::cout<<"preinit  failed with error status: "<<this->get_status_msg(ErrorCode)<<std::endl;
         return KIM_STATUS_FAIL;
@@ -1488,6 +1484,7 @@ int KIM_API_model::init_str_modelname(char* testname, char* inmdlstr){
 
     //check if they match
     if (is_it_match(test,mdl)){
+       this->name_temp = mdl.model.name;
         this->prestring_init(inmdlstr);
         this->unit_h=test.unit_h;
         if (!(this->irrelevantVars2donotcompute(test,*this))) return KIM_STATUS_FAIL;
@@ -1526,6 +1523,7 @@ int KIM_API_model::preinit(char* modelname){
 
     int error;
     char* in_mdlstr = get_model_kim_str(modelname, &error);
+    this->name_temp = modelname;
     int result = this->prestring_init(in_mdlstr);
 
     std::free(in_mdlstr);
@@ -1551,10 +1549,12 @@ int KIM_API_model::string_init(char* in_tststr, char* modelname){
     }
 
     //preinit test and model API object
+    test.name_temp = (char*) "test_name";
     error = test.prestring_init(in_tststr);
     if(error != KIM_STATUS_OK)
        std::cout<<"test.prestring_init failed with error status:"<<get_status_msg(error)<<std::endl;
 
+    mdl.name_temp = modelname;
     error = mdl.prestring_init(in_mdlstr);
     if(error != KIM_STATUS_OK)
        std::cout<<"mdl.prestring_init failed with error status:"<<get_status_msg(error)<<std::endl;
