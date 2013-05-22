@@ -19,7 +19,8 @@
 //
 
 //
-// Copyright (c) 2012, Regents of the University of Minnesota.  All rights reserved.
+// Copyright (c) 2012, Regents of the University of Minnesota.
+// All rights reserved.
 //
 // Contributors:
 //    Valeriu Smirichinski

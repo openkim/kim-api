@@ -19,7 +19,8 @@
 #
 
 #
-# Copyright (c) 2012, Regents of the University of Minnesota.  All rights reserved.
+# Copyright (c) 2012, Regents of the University of Minnesota.
+# All rights reserved.
 #
 # Contributors:
 #    Ryan S. Elliott
@@ -404,7 +405,8 @@ ex_model_Ar_P_Morse: model_Morse_README \
 	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)/$@/$@.params
 	echo ""                                                                                               >> $(KIM_EX_MODELS_DIR)/$@/$@.params
 	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)/$@/$@.params
-	echo "# Copyright (c) 2012, Regents of the University of Minnesota.  All rights reserved."            >> $(KIM_EX_MODELS_DIR)/$@/$@.params
+	echo "# Copyright (c) 2012, Regents of the University of Minnesota."                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.params
+	echo "# All rights reserved."                                                                         >> $(KIM_EX_MODELS_DIR)/$@/$@.params
 	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)/$@/$@.params
 	echo "# Contributors:"                                                                                >> $(KIM_EX_MODELS_DIR)/$@/$@.params
 	echo "#    Ryan S. Elliott"                                                                           >> $(KIM_EX_MODELS_DIR)/$@/$@.params
@@ -459,7 +461,8 @@ ex_model_Ne_P_Morse: model_Morse_README \
 	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)/$@/$@.params
 	echo ""                                                                                               >> $(KIM_EX_MODELS_DIR)/$@/$@.params
 	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)/$@/$@.params
-	echo "# Copyright (c) 2012, Regents of the University of Minnesota.  All rights reserved."            >> $(KIM_EX_MODELS_DIR)/$@/$@.params
+	echo "# Copyright (c) 2012, Regents of the University of Minnesota."                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.params
+	echo "# All rights reserved."                                                                         >> $(KIM_EX_MODELS_DIR)/$@/$@.params
 	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)/$@/$@.params
 	echo "# Contributors:"                                                                                >> $(KIM_EX_MODELS_DIR)/$@/$@.params
 	echo "#    Ryan S. Elliott"                                                                           >> $(KIM_EX_MODELS_DIR)/$@/$@.params
@@ -533,7 +536,8 @@ ex_model_Ar_P_LJ: model_LJ_README \
 	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)/$@/$@.params
 	echo ""                                                                                               >> $(KIM_EX_MODELS_DIR)/$@/$@.params
 	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)/$@/$@.params
-	echo "# Copyright (c) 2012, Regents of the University of Minnesota.  All rights reserved."            >> $(KIM_EX_MODELS_DIR)/$@/$@.params
+	echo "# Copyright (c) 2012, Regents of the University of Minnesota."                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.params
+	echo "# All rights reserved."                                                                         >> $(KIM_EX_MODELS_DIR)/$@/$@.params
 	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)/$@/$@.params
 	echo "# Contributors:"                                                                                >> $(KIM_EX_MODELS_DIR)/$@/$@.params
 	echo "#    Ryan S. Elliott"                                                                           >> $(KIM_EX_MODELS_DIR)/$@/$@.params
@@ -587,7 +591,8 @@ ex_model_Ne_P_LJ: model_LJ_README \
 	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)/$@/$@.params
 	echo ""                                                                                               >> $(KIM_EX_MODELS_DIR)/$@/$@.params
 	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)/$@/$@.params
-	echo "# Copyright (c) 2012, Regents of the University of Minnesota.  All rights reserved."            >> $(KIM_EX_MODELS_DIR)/$@/$@.params
+	echo "# Copyright (c) 2012, Regents of the University of Minnesota."                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.params
+	echo "# All rights reserved."                                                                         >> $(KIM_EX_MODELS_DIR)/$@/$@.params
 	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)/$@/$@.params
 	echo "# Contributors:"                                                                                >> $(KIM_EX_MODELS_DIR)/$@/$@.params
 	echo "#    Ryan S. Elliott"                                                                           >> $(KIM_EX_MODELS_DIR)/$@/$@.params

@@ -19,7 +19,8 @@
 #
 
 #
-# Copyright (c) 2012, Regents of the University of Minnesota.  All rights reserved.
+# Copyright (c) 2012, Regents of the University of Minnesota.
+# All rights reserved.
 #
 # Contributors:
 #    Ryan S. Elliott
@@ -107,7 +108,8 @@ The current version of the openkim-api package supports the following features:
 * Support for static and dynamic linking of programs using the openKIM API
 
 * Support for automatic translation between zero-based lists (C-style numbering
-  beginning with 0) and one-based lists (Fortran-style numbering beginning with 1)
+  beginning with 0) and one-based lists (Fortran-style numbering beginning
+  with 1)
 
 * Communication of an arbitrary number of `arguments' between a `Model'
   (interatomic potential) and a `Test' (simulation code that uses a Model).

@@ -19,7 +19,8 @@ C CDDL HEADER END
 C
 
 C
-C Copyright (c) 2012, Regents of the University of Minnesota.  All rights reserved.
+C Copyright (c) 2012, Regents of the University of Minnesota.
+C All rights reserved.
 C
 C Contributors:
 C    Valeriu Smirichinski

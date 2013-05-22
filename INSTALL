@@ -19,7 +19,8 @@
 #
 
 #
-# Copyright (c) 2012, Regents of the University of Minnesota.  All rights reserved.
+# Copyright (c) 2012, Regents of the University of Minnesota.
+# All rights reserved.
 #
 # Contributors:
 #    Valeriu Smirichinski
@@ -146,7 +147,7 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
 
 
 3. To compile the package, including the provided examples, change to the
-   KIM_DIR directory and execute `make examples':
+   $KD directory and execute `make examples':
 
    % cd $KD
    % make examples
@@ -157,13 +158,13 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
 
        `make'                -- compiles the API and all Models and Tests
        `make all'            -- same as `make'
+       `make clean'          -- will remove appropriate .o, .mod, .a, .so and
+                                executable files
+       `make openkim-api'    -- compiles only the API
        `make examples'       -- copies examples into the appropriate
                                 directories (no overwrite)
        `make examples-force' -- copies examples into the appropriate
                                 directories (overwrite)
-       `make openkim-api'    -- compiles only the API
-       `make clean'          -- will remove appropriate .o, .mod, .a, .so and
-                                executable files
        `make examples-clean' -- remove all examples from the MODEL_DRIVERs,
                                 MODELs, and TESTs directories.
 
@@ -182,8 +183,8 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
 
 
 5. Each Test (and Model) has its own make file for compiling and linking.  If
-   changes are made to the code, perform step (3) again (from the $KD
-   directory).
+   changes are made to the code, perform the `make' portion of step (3) again
+   (from the $KD directory).
 
 
 Once the installation is successfully completed, read the README file in
