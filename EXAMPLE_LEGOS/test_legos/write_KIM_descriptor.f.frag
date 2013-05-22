@@ -58,7 +58,7 @@ kim_descriptor = &
    '#'                                                                          // cr // &
                                                                                    cr // &
    '#'                                                                          // cr // &
-   '# Copyright (c) 2012, Regents of the University of Minnesota.'              // cr // &
+   '# Copyright (c) 2013, Regents of the University of Minnesota.'              // cr // &
    '# All rights reserved.'                                                     // cr // &
    '#'                                                                          // cr // &
    '# Contributors:'                                                            // cr // &
