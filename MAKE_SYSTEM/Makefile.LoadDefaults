@@ -38,13 +38,13 @@ endif
 
 # The openkim-api subdirectories:
 ifndef KIM_MODEL_DRIVERS_DIR
-   KIM_MODEL_DRIVERS_DIR := $(KIM_DIR)/MODEL_DRIVERs
+   KIM_MODEL_DRIVERS_DIR := $(KIM_DIR)/MODEL_DRIVERS
 endif
 ifndef KIM_MODELS_DIR
-   KIM_MODELS_DIR := $(KIM_DIR)/MODELs
+   KIM_MODELS_DIR := $(KIM_DIR)/MODELS
 endif
 ifndef KIM_TESTS_DIR
-   KIM_TESTS_DIR := $(KIM_DIR)/TESTs
+   KIM_TESTS_DIR := $(KIM_DIR)/TESTS
 endif
 
 

@@ -43,7 +43,7 @@ files that are distributed as openkim-api-vX.X.X.tgz and the openkim-api git
 repository.
 
 1. The primary difference is that in the git repository there are no example
-   Models, Model Drivers, or Tests in the EXAMPLEs directory.  Instead the user
+   Models, Model Drivers, or Tests in the EXAMPLES directory.  Instead the user
    must generate the examples by the following process:
 
    % cd $KD/EXAMPLE_LEGOS
@@ -51,11 +51,11 @@ repository.
 
    This will cobble together the example files for the various fragments stored
    in the $KD/EXAMPLE_LEGOS/model_legos and $KD/EXAMPLE_LEGOS/test_legos
-   directories and save them in the $KD/EXAMPLEs/MODELs/,
-   $KD/EXAMPLEs/MODEL_DRIVERs/, and $KD/EXAMPLEs/TESTs/ directories,
+   directories and save them in the $KD/EXAMPLES/MODELS/,
+   $KD/EXAMPLES/MODEL_DRIVERS/, and $KD/EXAMPLES/TESTS/ directories,
    respectively.  This need only be done once (for every time the git
    repository is updated from github.com).  This process will overwrite any
-   changes to files made in the $KD/EXAMPLEs directory, so make a backup of
+   changes to files made in the $KD/EXAMPLES directory, so make a backup of
    these directories if you don't want to lose your changes.
 
 2. The git repository has the files:

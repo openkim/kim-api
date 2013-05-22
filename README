@@ -191,7 +191,7 @@ DOCs/
      containing template files for creating your own KIM Models.  (See the
      README file in that directory.)
 
-EXAMPLEs/
+EXAMPLES/
      directory containing examples of interatomic Model Drivers, Models, and
      Tests.
 
@@ -208,13 +208,13 @@ MAKE_SYSTEM/
      directory containing the common Makefiles and default settings used by
      the openkim-api package make system.
 
-MODEL_DRIVERs/
+MODEL_DRIVERS/
      Each Model Driver is stored in its own directory that conforms to the
      naming convention specified in standard.kim.  This is where you should
      place Model Driver directories downloaded from http://openKIM.org. (Or use
      `make examples' to copy the example Model Drivers to this directory.)
 
-MODELs/
+MODELS/
      Each Model is stored in its own directory that conforms to the naming
      convention specified in standard.kim.  This is where you should place
      Model directories downloaded from http://openKIM.org. (Or use `make
@@ -232,7 +232,7 @@ Makefile.KIMConfig.example
 README
      This file.
 
-TESTs/
+TESTS/
      Each Test is stored in its own directory that conforms to the naming
      convention specified in standard.kim.  This is where you should place Test
      directories downloaded from http://openKIM.org. (Or use `make examples' to

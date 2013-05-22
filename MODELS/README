@@ -33,13 +33,8 @@
 #
 
 
-This directory (EXAMPLEs) contains directories with example Model Drivers,
-Models, and Tests that can be compiled as part of the openkim-api package.
-Use `make examples' from the main directory order to copy these files to the
-$KIM_MODEL_DRIVERS_DIR, $KIM_MODELS_DIR, and $KIM_TESTS_DIR directories
-respectively and to compile them.
+This directory (MODELS) contains a directory for each Model to be compiled as
+part of the openkim-api package.
 
-This directory is populated with the examples as part of the openkim-api
-distribution.  Please see the README files within each directory for
-information about the examples.
-
+Copy any Model directories (from EXAMPLES or http://openKIM.org) you want to
+compile into this directory.

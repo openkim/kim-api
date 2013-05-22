@@ -36,14 +36,14 @@
 # usage: run_forces_numer_deriv_for_all_models
 #
 # This script runs the vc_forces_numer_deriv executable for each Model in the
-# MODELs directory.  It filters the output so that, for each Model, the Model
+# MODELS directory.  It filters the output so that, for each Model, the Model
 # name is printed and followed by a list of supported NBC methods and the
 # associated "alpha" value computed by the vc_forces_numer_deriv computation.
 # This provides a convenient summary of the results.
 # 
 #
 
-for mdl in `find ../MODELs -mindepth 1 -maxdepth 1 -type d`
+for mdl in `find ../MODELS -mindepth 1 -maxdepth 1 -type d`
 do
    echo $mdl
    echo `basename $mdl` | vc_forces_numer_deriv/vc_forces_numer_deriv | grep -E '(^alpha|NBC Method)' | sed -e 'N' -e 's/.*= *\([^ ]*\).*\n/\1  \t/' -e 's/alpha.*= *\([^ ]*\).*/\1/'

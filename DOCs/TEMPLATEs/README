@@ -131,12 +131,12 @@ Models.  Detailed directions are also given below.
 (f) The template `model_driver_P_Template.c' can be compared with
     `ex_model_driver_P_Morse.c'
 
-Recall that Models are stored under $KD/EXAMPLEs/MODELs and Model Drivers
-are stored under $KD/EXAMPLEs/MODEL_DRIVERs.  To compare files, you can
+Recall that Models are stored under $KD/EXAMPLES/MODELS and Model Drivers
+are stored under $KD/EXAMPLES/MODEL_DRIVERS.  To compare files, you can
 for example use the `vimdiff' command:
 
    % cd $KD
-   % vimdiff EXAMPLEs/MODELs/ex_model_Ar_P_MLJ_F90/ex_model_Ar_P_MLJ_F90.F90 DOCs/TEMPLATEs/model_El_P_Template.F90
+   % vimdiff EXAMPLES/MODELS/ex_model_Ar_P_MLJ_F90/ex_model_Ar_P_MLJ_F90.F90 DOCs/TEMPLATEs/model_El_P_Template.F90
 
 Alternatively use the `ediff' feature of the emacs editor.
 
@@ -152,15 +152,15 @@ The directions below show how to use the Fortran 90 template for a pair potentia
 Buckingham potential.  (The procedure for a Model written in C is essentially
 identical. See comments below.)
 
-(a) Create a new directory under MODELs for the Ar pair potential:
+(a) Create a new directory under MODELS for the Ar pair potential:
 
-    % cd $KD/MODELs
+    % cd $KD/MODELS
     % mkdir model_Ar_P_Buckingham
 
 (b) Copy the .F90, .kim and Makefile templates into the new directory and
     rename:
 
-    % cd $KD/MODELs/model_Ar_P_Buckingham
+    % cd $KD/MODELS/model_Ar_P_Buckingham
     % cp $KD/DOCs/TEMPLATEs/model_El_P_Template.F90 model_Ar_P_Buckingham.F90
     % cp $KD/DOCs/TEMPLATEs/model_El_P_Template.f.kim model_Ar_P_Buckingham.kim
     % cp $KD/DOCs/TEMPLATEs/Makefile.template Makefile
@@ -236,16 +236,16 @@ even different parameterizations for the same material.
 The directions for using the supplied templates to create a new KIM-compliant
 Buckingham Model Driver and a Ne KIM Model based on it are given below.
 
-(a) Create a new directory under MODEL_DRIVERs for the Buckingham pair
+(a) Create a new directory under MODEL_DRIVERS for the Buckingham pair
     potential Model Driver:
 
-    % cd $KD/MODEL_DRIVERs
+    % cd $KD/MODEL_DRIVERS
     % mkdir model_driver_P_Buckingham
 
 (b) Copy the .F90, .kim and Makefile templates into the new directory and
     rename:
 
-    % cd $KD/MODEL_DRIVERs/model_driver_P_Buckingham
+    % cd $KD/MODEL_DRIVERS/model_driver_P_Buckingham
     % cp $KD/DOCs/TEMPLATEs/model_driver_P_Template.F90 model_driver_P_Buckingham.F90
     % cp $KD/DOCs/TEMPLATEs/model_driver_P_Template.f.kim model_driver_P_Buckingham.kim
     % cp $KD/DOCs/TEMPLATEs/Makefile.driver.template Makefile
@@ -286,15 +286,15 @@ Buckingham Model Driver and a Ne KIM Model based on it are given below.
 
     Correct any errors until the compilation succeeds.
 
-(g) Create a new directory under MODELs for the Ne pair potential:
+(g) Create a new directory under MODELS for the Ne pair potential:
 
-    % cd $KD/MODELs
+    % cd $KD/MODELS
     % mkdir model_Ne_P_Buckingham
 
 (h) Copy the `Makefile.driver.based.model.template' and
     model_El_P_Template.params files into the new directory and rename:
 
-    % cd $KD/MODELs/model_Ne_P_Buckingham
+    % cd $KD/MODELS/model_Ne_P_Buckingham
     % cp $KD/DOCs/TEMPLATEs/Makefile.driver.based.model.template Makefile
     % cp $KD/DOCs/TEMPLATEs/model_El_P_Template.params model_Ne_P_Buckingham.params
 

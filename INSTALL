@@ -165,8 +165,8 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
                                 directories (no overwrite)
        `make examples-force' -- copies examples into the appropriate
                                 directories (overwrite)
-       `make examples-clean' -- remove all examples from the MODEL_DRIVERs,
-                                MODELs, and TESTs directories.
+       `make examples-clean' -- remove all examples from the MODEL_DRIVERS,
+                                MODELS, and TESTS directories.
 
 4. Verify that the compilation was successful by running a Test.
 
@@ -175,7 +175,7 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
    Model can be piped in using an `echo' command.  For example, the following
    Fortran 90 Test reads in one Model:
 
-   % cd $KD/TESTs/ex_test_Ar_free_cluster_CLUSTER_F90
+   % cd $KD/TESTS/ex_test_Ar_free_cluster_CLUSTER_F90
    % echo "ex_model_Ar_P_MLJ_CLUSTER_C" | ./ex_test_Ar_free_cluster_CLUSTER_F90
 
   (See the README files in the Test directories for an explanation of what

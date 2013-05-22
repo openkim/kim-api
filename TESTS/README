@@ -33,8 +33,8 @@
 #
 
 
-This directory (TESTs) contains a directory for each Test to be compiled as
+This directory (TESTS) contains a directory for each Test to be compiled as
 part of the openkim-api package.
 
-Copy any Test directories (from EXAMPLEs or http://openKIM.org) you want to
+Copy any Test directories (from EXAMPLES or http://openKIM.org) you want to
 compile into this directory.

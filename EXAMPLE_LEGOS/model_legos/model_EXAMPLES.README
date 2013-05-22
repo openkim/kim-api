@@ -227,7 +227,7 @@ ex_model_Ne_P_LJ (F90)
      These Models are based on the KIM Model Driver model_driver_P_LJ.  They
      only consist of a simple Makefile and a parameters file.  Everything else
      is handled by the KIM Model Driver.  See the directory
-     $KD/MODEL_DRIVERs/model_driver_P_LJ/ for more details on how KIM
+     $KD/MODEL_DRIVERS/model_driver_P_LJ/ for more details on how KIM
      Model Drivers are handled.
 
 ex_model_Ar_P_Morse (C)
@@ -235,7 +235,7 @@ ex_model_Ne_P_Morse (C)
      These Models are based on the KIM Model Driver model_driver_P_Morse.  They
      only consist of a simple Makefile and a parameters file.  Everything else
      is handled by the KIM Model Driver.  See the directory
-     $KD/MODEL_DRIVERs/model_driver_P_Morse/ for more details on how KIM
+     $KD/MODEL_DRIVERS/model_driver_P_Morse/ for more details on how KIM
      Model Drivers are handled.
 
 ex_model_Ne_P_fastLJ (C)

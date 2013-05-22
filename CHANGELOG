@@ -104,7 +104,7 @@
 
 * Added ability of a Model/Model Driver to set its particle type codes at runtime
 
-* Added support for .kimignore files in MODELs, MODEL_DRIVERs, and TESTs directories
+* Added support for .kimignore files in MODELS, MODEL_DRIVERS, and TESTS directories
 
 * Added `Temperature' to standard.kim for "temperature dependent" Models
 
@@ -141,7 +141,7 @@
 === openkim-api-v1.0.0 =========================================================
 
 
-* Moved all examples to EXAMPLEs directory and added `make examples' target.
+* Moved all examples to EXAMPLES directory and added `make examples' target.
 
 * Renamed all example Model Drivers, Models, and Tests.  Now have `ex_' prefix.
 
