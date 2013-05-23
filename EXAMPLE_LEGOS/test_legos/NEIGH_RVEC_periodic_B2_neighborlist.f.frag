@@ -4,7 +4,7 @@
 !
 !-------------------------------------------------------------------------------
 subroutine NEIGH_RVEC_periodic_B2_neighborlist(half,CellsPerHalfSide, cutoff,  &
-                                      B2spacing, NN, neighborList, RijList)
+                                      B2spacing, NN, neighborList, coords, RijList)
   use KIM_API
   implicit none
 
@@ -15,6 +15,7 @@ subroutine NEIGH_RVEC_periodic_B2_neighborlist(half,CellsPerHalfSide, cutoff,  &
   double precision,                      intent(in)  :: B2spacing
   integer,                               intent(in)  :: NN
   integer, dimension(NN+1,1),            intent(out) :: neighborList
+  double precision, dimension(3,2),      intent(out) :: coords
   double precision, dimension(3,NN+1,1), intent(out) :: RijList
 
   !-- Local variables
@@ -29,6 +30,10 @@ subroutine NEIGH_RVEC_periodic_B2_neighborlist(half,CellsPerHalfSide, cutoff,  &
   ! Cubic B2 cell positions ----------------------------------------------------------------------
   B2shifts(1,1) = 0.d0;           B2shifts(2,1) = 0.d0;           B2shifts(3,1) = 0.d0
   B2shifts(1,2) = 0.5*B2spacing;  B2shifts(2,2) = 0.5*B2spacing;  B2shifts(3,2) = 0.5*B2spacing
+
+  ! set coords
+  coords(:,1) = B2shifts(1,1)
+  coords(:,2) = B2shifts(1,2)
 
   if (half) then
      ! Each atom gets half of its own neighbor-self images

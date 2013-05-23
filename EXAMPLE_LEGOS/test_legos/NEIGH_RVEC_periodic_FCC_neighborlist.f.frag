@@ -3,7 +3,9 @@
 ! NEIGH_RVEC_periodic_FCC_neighborlist
 !
 !-------------------------------------------------------------------------------
-subroutine NEIGH_RVEC_periodic_FCC_neighborlist(half, CellsPerHalfSide, cutoff, FCCspacing, N, NN, neighborList, RijList)
+subroutine NEIGH_RVEC_periodic_FCC_neighborlist(half, CellsPerHalfSide, cutoff,  &
+                                                FCCspacing, N, NN, neighborList, &
+                                                coords, RijList)
   use KIM_API
   implicit none
 
@@ -15,6 +17,7 @@ subroutine NEIGH_RVEC_periodic_FCC_neighborlist(half, CellsPerHalfSide, cutoff, 
   integer,                               intent(in)  :: N
   integer,                               intent(in)  :: NN
   integer, dimension(NN+1,N),            intent(out) :: neighborList
+  double precision, dimension(3,N),      intent(out) :: coords
   double precision, dimension(3,NN+1,N), intent(out) :: RijList
 
   !-- Local variables
@@ -28,6 +31,9 @@ subroutine NEIGH_RVEC_periodic_FCC_neighborlist(half, CellsPerHalfSide, cutoff, 
      print *,"* ERROR: NEIGH_RVEC_periodic_FCC_neighborlist called with N.ne.1"
      stop
   endif
+
+  ! set coords
+  coords(:,1) = 0.0d0
 
   cutoff2 = cutoff**2
 

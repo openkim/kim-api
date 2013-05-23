@@ -275,7 +275,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
   call NEIGH_RVEC_periodic_B2_neighborlist(halfflag, CellsPerRcut,       &
                                            (cutoff+cutpad), Spacings(1), &
-                                           NNeighbors, neighborList, RijList)
+                                           NNeighbors, neighborList, coords, RijList)
   ier = kim_api_model_compute_f(pkim)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
@@ -291,7 +291,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
   call NEIGH_RVEC_periodic_B2_neighborlist(halfflag, CellsPerRcut,       &
                                            (cutoff+cutpad), Spacings(3), &
-                                           NNeighbors, neighborList, RijList)
+                                           NNeighbors, neighborList, coords, RijList)
   ! Call model compute
   ier = kim_api_model_compute_f(pkim)
   if (ier.lt.KIM_STATUS_OK) then
@@ -308,7 +308,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
   call NEIGH_RVEC_periodic_B2_neighborlist(halfflag, CellsPerRcut,       &
                                            (cutoff+cutpad), Spacings(2), &
-                                           NNeighbors, neighborList, RijList)
+                                           NNeighbors, neighborList, coords, RijList)
   ! Call model compute
   ier = kim_api_model_compute_f(pkim)
   if (ier.lt.KIM_STATUS_OK) then
@@ -329,7 +329,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
      ! compute new neighbor lists (could be done more intelligently, I'm sure)
      call NEIGH_RVEC_periodic_B2_neighborlist(halfflag, CellsPerRcut,       &
                                               (cutoff+cutpad), Spacings(4), &
-                                              NNeighbors, neighborList, RijList)
+                                              NNeighbors, neighborList, coords, RijList)
      ! Call model compute
      ier = kim_api_model_compute_f(pkim)
      if (ier.lt.KIM_STATUS_OK) then
