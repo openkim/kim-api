@@ -1562,6 +1562,7 @@ int KIM_API_model::string_init(char* in_tststr, char* modelname){
 
     //check if they match
     if (is_it_match(test,mdl)){
+       this->name_temp = mdl.model.name;
         this->prestring_init(in_mdlstr);
         this->unit_h=test.unit_h;
         if (!(this->irrelevantVars2donotcompute(test,*this))) return KIM_STATUS_FAIL;
@@ -1609,13 +1610,15 @@ int KIM_API_model::match(char* teststr, char* modelstr){
     KIM_API_model test,mdl;
 
     //preinit test and model API object
+    test.name_temp = "test_name";
     error = test.prestring_init(teststr);
     if(error != KIM_STATUS_OK)
     {
        test.free();
        return KIM_STATUS_FAIL;
     }
-       
+
+    mdl.name_temp = "model_name";
     error = mdl.prestring_init(modelstr);
     if(error != KIM_STATUS_OK)
     {
