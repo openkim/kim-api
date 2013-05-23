@@ -103,7 +103,7 @@ model_init_include_stubs.o: model_init_include_stubs.c
 openkim-api-descriptor-file-match: openkim-api-descriptor-file-match.o KIM_API.o KIM_AUX.o Unit_Handling.o standard_kim_str.o \
         $(if $(filter-out static-link,$(KIM_LINK)),,model_init_include_stubs.o)
 	@printf "Creating... $@.\n"
-	@$(LD) -o $@ $@.o KIM_API.o KIM_AUX.o Unit_Handling.o standard_kim_str.o $(if $(filter-out static-link,$(KIM_LINK)),,model_init_include_stubs.o)
+	@$(LD) -o $@ $@.o KIM_API.o KIM_AUX.o Unit_Handling.o standard_kim_str.o $(if $(filter-out static-link,$(KIM_LINK)),,model_init_include_stubs.o) $(LDDYNAMICLIB)
 
 # targets for the models: for any new model, adds the appropriate lines to the model_init_include.h and model_inclue.cpp files
 $(MODELS_TARGETS): .models-deleted
