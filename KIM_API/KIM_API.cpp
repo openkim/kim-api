@@ -422,10 +422,10 @@ bool KIMBaseElement:: init(char *nm,char * tp,intptr_t sz, intptr_t rnk, int *sh
             flag = new KIMBaseElementFlag;
 
             unit = new KIMBaseElementUnit;
-            name = new char[KIM_KEY_STRING_LENGTH];
+            name = new char[strlen(nm)+1];
 
             type = new char[KIM_KEY_STRING_LENGTH];
-            strncpy(name,nm,KIM_KEY_STRING_LENGTH);
+            strcpy(name,nm);
             strncpy(type,tp,KIM_KEY_STRING_LENGTH);
 
 
