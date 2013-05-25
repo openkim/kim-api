@@ -36,6 +36,6 @@
 
 # Define FreeBSD linker switches
 LDSHAREDFLAG = -shared
-LINKSONAME = -Wl,-install_name,
+LINKSONAME = -Wl,-headerpad_max_install_names -Wl,-install_name,
 LDWHOLEARCHIVESTARTFLAG = -Wl,-force_load
 LDWHOLEARCHIVEENDFLAG =
