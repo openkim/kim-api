@@ -81,6 +81,10 @@ $(strip $(MODEL_DRIVER_NAME)).a: $(LOCALOBJ) $(strip $(MODEL_DRIVER_NAME))_init_
 	@printf "Creating... $@.\n"
 	@ar rcs $@ $(LOCALOBJ) $(strip $(MODEL_DRIVER_NAME))_init_wrapper.o
 
+export-list.txt: $(KIM_MAKE_FILES) Makefile
+	@printf "Creating... $@.\n"
+	@printf "_$(MODEL_DRIVER_NAME)_init\n" > $@
+
 $(LOCALOBJ): Makefile
 
 Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/MAKE_SYSTEM/Makefile.ModelDriver
@@ -89,4 +93,5 @@ Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/MAKE_SYSTEM/Makefile.ModelDriver
 clean:
 	@printf "Cleaning... Model Driver.......... $(MODEL_DRIVER_NAME).\n"
 	@rm -f $(LOCALOBJ) *.mod $(addprefix $(strip $(MODEL_DRIVER_NAME)).,a so) \
+              export-list.txt \
               $(addprefix $(strip $(MODEL_DRIVER_NAME))_init_wrapper.,o cpp) $(LOCALCLEAN)

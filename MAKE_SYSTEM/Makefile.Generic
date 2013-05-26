@@ -170,9 +170,9 @@ KIM_LIB = -L$(KIM_DIR)/KIM_API/ -lkim
 	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
 
 # Library pattern rule
-%.so: %.a
+%.so: %.a export-list.txt
 	@printf "Creating... $@.\n"
-	@$(LD) $(LDSHAREDFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@  \
+	@$(LD) $(LDSHAREDFLAG) $(LDEXPORTLISTFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@  \
                $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
                -L$(KIM_DIR)/KIM_API/ -lkim $(LDDYNAMICLIB) $(XLANGLDLIBS)
 

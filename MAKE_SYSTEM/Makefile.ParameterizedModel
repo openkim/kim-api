@@ -110,9 +110,15 @@ $(strip $(MODEL_NAME)).a: $(strip $(MODEL_NAME)).o $(strip $(MODEL_NAME))_kim_st
 	@printf "Creating... $@.\n"
 	@ar rcs $@ $(strip $(MODEL_NAME)).o $(strip $(MODEL_NAME))_kim_str.o 
 
+export-list.txt: $(KIM_MAKE_FILES) Makefile
+	@printf "Creating... $@.\n"
+	@printf "_$(MODEL_NAME)_init\n"     > $@
+	@printf "_$(MODEL_NAME)_kim_str\n" >> $@
+
 Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/MAKE_SYSTEM/Makefile.ParameterizedModel
 	@touch Makefile
 
 clean:
 	@printf "Cleaning... Parameterized Model... $(MODEL_NAME).\n"
-	@rm -f $(addprefix $(strip $(MODEL_NAME)).,cpp o a so) $(strip $(MODEL_NAME)).kim $(addprefix $(strip $(MODEL_NAME))_kim_str.,cpp o)
+	@rm -f $(addprefix $(strip $(MODEL_NAME)).,cpp o a so) $(strip $(MODEL_NAME)).kim $(addprefix $(strip $(MODEL_NAME))_kim_str.,cpp o) \
+               export-list.txt
