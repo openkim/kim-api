@@ -82,8 +82,16 @@ $(strip $(MODEL_DRIVER_NAME)).a: $(LOCALOBJ) $(strip $(MODEL_DRIVER_NAME))_init_
 	@ar rcs $@ $(LOCALOBJ) $(strip $(MODEL_DRIVER_NAME))_init_wrapper.o
 
 export-list.txt: $(KIM_MAKE_FILES) Makefile
-	@printf "Creating... $@.\n"
-	@printf "_$(MODEL_DRIVER_NAME)_init\n" > $@
+ifeq (darwin, $(KIM_SYSTEMLINKER))
+	@printf "_$(MODEL_DRIVER_NAME)_init\n"     > $@
+else # everything else (linux and freebsd)
+	@printf "{\n"                                         > $@
+	@printf "   global:\n"                               >> $@
+	@printf "           $(MODEL_DRIVER_NAME)_init;\n"    >> $@
+	@printf "\n"                                         >> $@
+	@printf "   local: *;\n"                             >> $@
+	@printf "};\n"                                       >> $@
+endif
 
 $(LOCALOBJ): Makefile
 

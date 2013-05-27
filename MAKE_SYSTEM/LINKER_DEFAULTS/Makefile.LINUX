@@ -36,7 +36,7 @@
 
 # Define linux linker switches
 LDSHAREDFLAG = -shared
-LDEXPORTLISTFLAG =
+LDEXPORTLISTFLAG = -Wl,--version-script=export-list.txt
 LINKSONAME = -Wl,-soname=
 LDWHOLEARCHIVESTARTFLAG = -Wl,--whole-archive
 LDWHOLEARCHIVEENDFLAG = -Wl,--no-whole-archive
