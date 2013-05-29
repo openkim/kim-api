@@ -172,9 +172,11 @@ KIM_LIB = -L$(KIM_DIR)/KIM_API/ -lkim
 # Library pattern rule
 %.so: %.a export-list.txt
 	@printf "Creating... $@.\n"
-	@$(LD) $(LDSHAREDFLAG) $(LDEXPORTLISTFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@  \
+	@$(LD) $(LDSHAREDFLAG) \
+               $(LINKSONAME)$(if $(filter MODEL_NAME,$(.VARIABLES)),$(KIM_MODELS_DIR),$(KIM_MODEL_DRIVERS_DIR))/$*/$*.so \
+               $(LDEXPORTLISTFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@  \
                $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
-               -L$(KIM_DIR)/KIM_API/ -lkim $(LDDYNAMICLIB) $(XLANGLDLIBS)
+               $(if $(filter-out dynamic-load,$(KIM_LINK)),,-L$(KIM_DIR)/KIM_API/ -lkim) $(LDDYNAMICLIB) $(XLANGLDLIBS)
 
 # KIM descriptor file make rule
 %_kim_str.cpp: %.kim

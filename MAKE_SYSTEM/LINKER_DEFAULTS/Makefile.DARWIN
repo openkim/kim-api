@@ -35,7 +35,7 @@
 # http://www.gnu.org/software/make/manual/html_node/Implicit-Variables.html
 
 # Define FreeBSD linker switches
-LDSHAREDFLAG = -shared
+LDSHAREDFLAG = -shared -undefined suppress -flat_namespace
 LDEXPORTLISTFLAG = -exported_symbols_list export-list.txt
 LINKSONAME = -Wl,-headerpad_max_install_names -Wl,-install_name,
 LDWHOLEARCHIVESTARTFLAG = -Wl,-force_load

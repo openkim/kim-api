@@ -57,14 +57,16 @@ ifneq ($(DELETED_MODELS_TARGETS),)
    $(info Must reconfigure all models...)
    $(info )
 endif
+# create list of model drivers
+MODEL_DRIVERS := $(filter-out $(shell if test -e "$(KIM_MODEL_DRIVERS_DIR)/.kimignore"; then cat "$(KIM_MODEL_DRIVERS_DIR)/.kimignore";fi;),$(filter-out .%,$(shell find "$(KIM_MODEL_DRIVERS_DIR)/" -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)))
 
-all: $(ALLOBJ) openkim-api-descriptor-file-match
+all: $(ALLOBJ)
 
 # default target
 ifneq ($(KIM_LINK),static-link)
-   lib: libkim.so
+   lib: libkim.so openkim-api-descriptor-file-match
 else
-   lib: libkim.a
+   lib: libkim.a openkim-api-descriptor-file-match
 endif
 
 Makefile: $(KIM_MAKE_FILES)
@@ -86,9 +88,12 @@ libkim.so: libkim.a
 	@printf "Creating... openkim-api library... $@.\n";
 	@$(LD) $(LDSHAREDFLAG) $(LINKSONAME)$(KIM_DIR)/KIM_API/$@ $(LDFLAGS) $(OUTPUTINFLAG) $@ \
                $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
-               $(LDDYNAMICLIB) $(XLANGLDLIBS)
+               $(LDDYNAMICLIB) $(XLANGLDLIBS) \
+               $(if $(filter-out dynamic-load,$(KIM_LINK)),\
+                  $(foreach mdldrv, $(MODEL_DRIVERS),$(KIM_MODEL_DRIVERS_DIR)/$(mdldrv)/$(mdldrv).so) \
+                  $(foreach mdl, $(patsubst .%.make-temp, %, $(MODELS_TARGETS)),$(KIM_MODELS_DIR)/$(mdl)/$(mdl).so),)
 
-KIM_API.o: $(if $(filter-out static-link,$(KIM_LINK)),,model_init_include.h model_init_include.cpp model_kim_str_include.cpp) KIM_API.h KIM_API.cpp KIM_AUX.h Makefile
+KIM_API.o: $(if $(filter-out dynamic-load,$(KIM_LINK)),model_init_include.h model_init_include.cpp model_kim_str_include.cpp,) KIM_API.h KIM_API.cpp KIM_AUX.h Makefile
 
 KIM_API_C.o: KIM_API.h KIM_API_C.h Makefile
 
@@ -101,9 +106,9 @@ openkim-api-descriptor-file-match.o: openkim-api-descriptor-file-match.cpp KIM_A
 model_init_include_stubs.o: model_init_include_stubs.c
 
 openkim-api-descriptor-file-match: openkim-api-descriptor-file-match.o KIM_API.o KIM_AUX.o Unit_Handling.o standard_kim_str.o \
-        $(if $(filter-out static-link,$(KIM_LINK)),,model_init_include_stubs.o)
+        $(if $(filter-out dynamic-load,$(KIM_LINK)),model_init_include_stubs.o,)
 	@printf "Creating... $@.\n"
-	@$(LD) -o $@ $@.o KIM_API.o KIM_AUX.o Unit_Handling.o standard_kim_str.o $(if $(filter-out static-link,$(KIM_LINK)),,model_init_include_stubs.o) $(LDDYNAMICLIB)
+	@$(LD) -o $@ $@.o KIM_API.o KIM_AUX.o Unit_Handling.o standard_kim_str.o $(if $(filter-out dynamic-load,$(KIM_LINK)),model_init_include_stubs.o,) $(LDDYNAMICLIB)
 
 # targets for the models: for any new model, adds the appropriate lines to the model_init_include.h and model_inclue.cpp files
 $(MODELS_TARGETS): .models-deleted

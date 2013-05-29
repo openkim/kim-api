@@ -51,10 +51,10 @@ KIM_CONFIG_FILES = $(KIM_DIR)/KIM_API/Makefile.KIMConfig $(KIM_MODEL_DRIVERS_DIR
         examples-clean examples-clean-all
 
 # compile everything in the standard directories
-ifneq ($(KIM_LINK),static-link)
+ifeq ($(KIM_LINK),dynamic-load)
    all: models_check config kim-api-all kim-api-lib $(patsubst %,%-all,$(MODEL_DRIVERS_LIST) \
         $(MODELS_LIST)) $(patsubst %,%-all,$(TESTS_LIST))
-else
+else # everything else: dynamic-link static-link
    all: models_check config kim-api-all $(patsubst %,%-all,$(MODEL_DRIVERS_LIST) $(MODELS_LIST)) \
         kim-api-lib $(patsubst %,%-all,$(TESTS_LIST))
 endif
