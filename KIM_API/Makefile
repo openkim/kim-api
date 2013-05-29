@@ -57,8 +57,6 @@ ifneq ($(DELETED_MODELS_TARGETS),)
    $(info Must reconfigure all models...)
    $(info )
 endif
-# create list of model drivers
-MODEL_DRIVERS := $(filter-out $(shell if test -e "$(KIM_MODEL_DRIVERS_DIR)/.kimignore"; then cat "$(KIM_MODEL_DRIVERS_DIR)/.kimignore";fi;),$(filter-out .%,$(shell find "$(KIM_MODEL_DRIVERS_DIR)/" -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)))
 
 all: $(ALLOBJ)
 
@@ -90,7 +88,6 @@ libkim.so: libkim.a
                $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
                $(LDDYNAMICLIB) $(XLANGLDLIBS) \
                $(if $(filter-out dynamic-load,$(KIM_LINK)),\
-                  $(foreach mdldrv, $(MODEL_DRIVERS),$(KIM_MODEL_DRIVERS_DIR)/$(mdldrv)/$(mdldrv).so) \
                   $(foreach mdl, $(patsubst .%.make-temp, %, $(MODELS_TARGETS)),$(KIM_MODELS_DIR)/$(mdl)/$(mdl).so),)
 
 KIM_API.o: $(if $(filter-out dynamic-load,$(KIM_LINK)),model_init_include.h model_init_include.cpp model_kim_str_include.cpp,) KIM_API.h KIM_API.cpp KIM_AUX.h Makefile

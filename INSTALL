@@ -23,9 +23,9 @@
 # All rights reserved.
 #
 # Contributors:
-#    Valeriu Smirichinski
 #    Ryan S. Elliott
 #    Ellad B. Tadmor
+#    Valeriu Smirichinski
 #
 
 #
@@ -101,17 +101,18 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
 
        KIM_SYSTEMARCH = 32bit
 
-   (g) Set the value of KIM_LINK.  Possible values are `dynamic-load' and
-       `static-link'.
+   (g) Set the value of KIM_LINK.  Possible values are `dynamic-load',
+       `dynamic-link', and `static-link'.
 
        KIM_LINK = dynamic-load
 
-       If KIM_LINK is set to dynamic-load, the makefile will build .so
-       libraries (in addition to the static .a libraries) and KIM API will use
-       those libraries to load models and call initialize routines dynamically
-       (during runtime).  The use of dynamic linking may prevent problems of
-       name clashes when multiple Models are used by a Test.  This is still
-       being investigated.
+       `dynamic-load' is the preferred option. (Unless performance or other
+       issues require it, you should use dynamic-link.)  `dynamic-link' is like
+       `dynamic-load' but does note use the dl.h library.  This option requires
+       a more complicated Makefile process, but may improve computation time in
+       some instances.  `static-link' is the least desirable option because
+       there are likely to be symbol name clashes between the Models and Model
+       Drivers.
 
    (h) Set override values for other variables, if necessary, by adding the
        desired variable name (after "# overwrite default variable values here"
