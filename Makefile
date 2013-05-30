@@ -160,9 +160,9 @@ $(patsubst %,%-clean,$(TESTS_LIST)):
 	@$(MAKE) $(MAKE_FLAGS) -C $(KIM_TESTS_DIR)/$(patsubst %-clean,%,$@) clean
 
 models_check:
-	@if test \(X"$(MODELS_LIST)" = X""\) -a \(X"$(KIM_LINK)" = X"static-link"\); then     \
-        printf "*************************************************************************\n"; \
-        printf "*******  Can't compile the API for static linking with no Models  *******\n"; \
-        printf "*******           Maybe you want to do 'make examples'            *******\n"; \
-        printf "*************************************************************************\n"; \
+	@if test \( X"$(MODELS_LIST)" = X"" \) -a \( X"$(KIM_LINK)" = X"static-link" \); then     \
+        printf "*******************************************************************************\n"; \
+        printf "*******     Can't compile the API for static linking with no Models     *******\n"; \
+        printf "*******              Maybe you want to do 'make examples'               *******\n"; \
+        printf "*******************************************************************************\n"; \
         false; else true; fi

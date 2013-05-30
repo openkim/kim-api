@@ -107,12 +107,11 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
        KIM_LINK = dynamic-load
 
        `dynamic-load' is the preferred option. (Unless performance or other
-       issues require it, you should use dynamic-link.)  `dynamic-link' is like
+       issues require it, you should use dynamic-load.)  `dynamic-link' is like
        `dynamic-load' but does note use the dl.h library.  This option requires
        a more complicated Makefile process, but may improve computation time in
-       some instances.  `static-link' is the least desirable option because
-       there are likely to be symbol name clashes between the Models and Model
-       Drivers.
+       some instances.  `static-link' only works with ONE Model and AT MOST ONE
+       Model Driver (in order to avoid the possibility of symbol clashes).
 
    (h) Set override values for other variables, if necessary, by adding the
        desired variable name (after "# overwrite default variable values here"

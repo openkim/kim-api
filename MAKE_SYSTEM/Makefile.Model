@@ -51,11 +51,11 @@ endif
 .PHONY: STATIC_COMP_WARNING
 STATIC_COMP_WARNING:
 	@echo ''; \
-        echo '*************************************************************************'; \
-        echo '*******               Compiling in static link mode               *******'; \
-        echo '*******         You probably want to execute make from the        *******'; \
-        echo '*******                     $$KIM_DIR directory                    *******'; \
-        echo '*************************************************************************'; \
+        echo '*******************************************************************************'; \
+        echo '*******                  Compiling in static link mode                  *******'; \
+        echo '*******            You probably want to execute make from the           *******'; \
+        echo '*******                        $$KIM_DIR directory                       *******'; \
+        echo '*******************************************************************************'; \
 
 MODEL_NAME_KIM_STR_H = char* $(strip $(MODEL_NAME))_kim_str();
 MODEL_NAME_KIM_STR_CPP = char* $(strip $(MODEL_NAME))_kim_str(){
