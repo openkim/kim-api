@@ -45,24 +45,24 @@ KIM_CONFIG_FILES = $(KIM_DIR)/KIM_API/Makefile.KIMConfig $(KIM_MODEL_DRIVERS_DIR
             $(patsubst %,%-all,  $(MODELS_LIST) $(MODEL_DRIVERS_LIST) $(TESTS_LIST)) \
         clean kim-api-clean config-clean \
             $(patsubst %,%-clean,$(MODELS_LIST) $(MODEL_DRIVERS_LIST) $(TESTS_LIST)) \
-        openkim-api kim-api-all kim-api-lib \
+        openkim-api kim-api-objects kim-api-libs \
         examples examples-all \
         examples-force examples-force-all \
         examples-clean examples-clean-all
 
 # compile everything in the standard directories
 ifeq ($(KIM_LINK),dynamic-load)
-   all: models_check config kim-api-all kim-api-lib $(patsubst %,%-all,$(MODEL_DRIVERS_LIST) \
+   all: models_check config kim-api-objects kim-api-libs $(patsubst %,%-all,$(MODEL_DRIVERS_LIST) \
         $(MODELS_LIST)) $(patsubst %,%-all,$(TESTS_LIST))
 else # everything else: dynamic-link static-link
-   all: models_check config kim-api-all $(patsubst %,%-all,$(MODEL_DRIVERS_LIST) $(MODELS_LIST)) \
-        kim-api-lib $(patsubst %,%-all,$(TESTS_LIST))
+   all: models_check config kim-api-objects $(patsubst %,%-all,$(MODEL_DRIVERS_LIST) $(MODELS_LIST)) \
+        kim-api-libs $(patsubst %,%-all,$(TESTS_LIST))
 endif
 
 # other targets
 clean: config $(patsubst %,%-clean,$(MODELS_LIST) $(MODEL_DRIVERS_LIST) $(TESTS_LIST)) kim-api-clean config-clean
-openkim-api: config kim-api-all kim-api-lib     # compile the openkim-api
-examples: config examples-all                   # copy examples to appropriate directories then make
+openkim-api: config kim-api-objects kim-api-libs # compile the openkim-api
+examples: config examples-all                    # copy examples to appropriate directories then make
 examples-force: config examples-force-all
 examples-clean: examples-clean-all
 
@@ -85,11 +85,11 @@ config-clean:
 	@printf "Cleaning... KIMConfig files.\n"
 	@rm -f $(KIM_CONFIG_FILES)
 
-kim-api-all: kim-api-all-making-echo
-	@$(MAKE) $(MAKE_FLAGS) -C $(KIM_DIR)/KIM_API/ all
+kim-api-objects: kim-api-objects-making-echo
+	@$(MAKE) $(MAKE_FLAGS) -C $(KIM_DIR)/KIM_API/ objects
 
-kim-api-lib: kim-api-lib-making-echo
-	@$(MAKE) $(MAKE_FLAGS) -C $(KIM_DIR)/KIM_API/ lib
+kim-api-libs: kim-api-libs-making-echo
+	@$(MAKE) $(MAKE_FLAGS) -C $(KIM_DIR)/KIM_API/ libs
 
 kim-api-clean:
 	@$(MAKE) $(MAKE_FLAGS) -C $(KIM_DIR)/KIM_API/ clean
@@ -141,19 +141,19 @@ examples-force-all:
           printf "*@installing..@%-50s@copied@to@$(KIM_TESTS_DIR)\n" $(exmpl)@ | sed -e 's/ /./g' -e 's/@/ /g'; \
           cp -r $(KIM_DIR)/EXAMPLES/TESTS/$(exmpl) "$(KIM_TESTS_DIR)/"; fi;)
 
-$(patsubst %,%-all,$(MODELS_LIST)): %: Model.................\ %-making-echo | kim-api-all
+$(patsubst %,%-all,$(MODELS_LIST)): %: Model.................\ %-making-echo | kim-api-objects
 	@$(MAKE) $(MAKE_FLAGS) -C $(KIM_MODELS_DIR)/$(patsubst %-all,%,$@) all
 
 $(patsubst %,%-clean,$(MODELS_LIST)):
 	@$(MAKE) $(MAKE_FLAGS) -C $(KIM_MODELS_DIR)/$(patsubst %-clean,%,$@) clean
 
-$(patsubst %,%-all,$(MODEL_DRIVERS_LIST)): %: Model\ Driver..........\ %-making-echo | kim-api-all
+$(patsubst %,%-all,$(MODEL_DRIVERS_LIST)): %: Model\ Driver..........\ %-making-echo | kim-api-objects
 	@$(MAKE) $(MAKE_FLAGS) -C $(KIM_MODEL_DRIVERS_DIR)/$(patsubst %-all,%,$@) all
 
 $(patsubst %,%-clean,$(MODEL_DRIVERS_LIST)):
 	@$(MAKE) $(MAKE_FLAGS) -C $(KIM_MODEL_DRIVERS_DIR)/$(patsubst %-clean,%,$@) clean
 
-$(patsubst %,%-all,$(TESTS_LIST)): %: Test.................\ %-making-echo | kim-api-all $(patsubst %,%-all,$(MODELS_LIST))
+$(patsubst %,%-all,$(TESTS_LIST)): %: Test.................\ %-making-echo | kim-api-objects kim-api-libs $(patsubst %,%-all,$(MODELS_LIST))
 	@$(MAKE) $(MAKE_FLAGS) -C $(KIM_TESTS_DIR)/$(patsubst %-all,%,$@) all
 
 $(patsubst %,%-clean,$(TESTS_LIST)):
