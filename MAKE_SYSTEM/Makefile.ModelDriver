@@ -99,7 +99,7 @@ Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/MAKE_SYSTEM/Makefile.ModelDriver
 	@touch Makefile
 
 clean:
-	@printf "Cleaning... Model Driver.......... $(MODEL_DRIVER_NAME).\n"
+	@printf "Cleaning... Model Driver... $(MODEL_DRIVER_NAME).\n"
 	@rm -f $(LOCALOBJ) *.mod $(addprefix $(strip $(MODEL_DRIVER_NAME)).,a so) \
               export-list.txt \
               $(addprefix $(strip $(MODEL_DRIVER_NAME))_init_wrapper.,o cpp) $(LOCALCLEAN)

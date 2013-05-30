@@ -141,19 +141,19 @@ examples-force-all:
           printf "*@installing..@%-50s@copied@to@$(KIM_TESTS_DIR)\n" $(exmpl)@ | sed -e 's/ /./g' -e 's/@/ /g'; \
           cp -r $(KIM_DIR)/EXAMPLES/TESTS/$(exmpl) "$(KIM_TESTS_DIR)/"; fi;)
 
-$(patsubst %,%-all,$(MODELS_LIST)): %: Model.................\ %-making-echo | kim-api-objects
+$(patsubst %,%-all,$(MODELS_LIST)): %: Model..........\ %-making-echo | kim-api-objects
 	@$(MAKE) $(MAKE_FLAGS) -C $(KIM_MODELS_DIR)/$(patsubst %-all,%,$@) all
 
 $(patsubst %,%-clean,$(MODELS_LIST)):
 	@$(MAKE) $(MAKE_FLAGS) -C $(KIM_MODELS_DIR)/$(patsubst %-clean,%,$@) clean
 
-$(patsubst %,%-all,$(MODEL_DRIVERS_LIST)): %: Model\ Driver..........\ %-making-echo | kim-api-objects
+$(patsubst %,%-all,$(MODEL_DRIVERS_LIST)): %: Model\ Driver...\ %-making-echo | kim-api-objects
 	@$(MAKE) $(MAKE_FLAGS) -C $(KIM_MODEL_DRIVERS_DIR)/$(patsubst %-all,%,$@) all
 
 $(patsubst %,%-clean,$(MODEL_DRIVERS_LIST)):
 	@$(MAKE) $(MAKE_FLAGS) -C $(KIM_MODEL_DRIVERS_DIR)/$(patsubst %-clean,%,$@) clean
 
-$(patsubst %,%-all,$(TESTS_LIST)): %: Test.................\ %-making-echo | kim-api-objects kim-api-libs $(patsubst %,%-all,$(MODELS_LIST))
+$(patsubst %,%-all,$(TESTS_LIST)): %: Test...........\ %-making-echo | kim-api-objects kim-api-libs $(patsubst %,%-all,$(MODELS_LIST))
 	@$(MAKE) $(MAKE_FLAGS) -C $(KIM_TESTS_DIR)/$(patsubst %-all,%,$@) all
 
 $(patsubst %,%-clean,$(TESTS_LIST)):

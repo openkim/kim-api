@@ -105,7 +105,7 @@ Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/MAKE_SYSTEM/Makefile.Model
 	@touch Makefile
 
 clean:
-	@printf "Cleaning... Model................. $(MODEL_NAME).\n"
+	@printf "Cleaning... Model.......... $(MODEL_NAME).\n"
 	@rm -f $(LOCALOBJ) *.mod $(addprefix $(strip $(MODEL_NAME)).,a so) \
               export-list.txt \
               $(addprefix $(strip $(MODEL_NAME))_kim_str.,o cpp) \

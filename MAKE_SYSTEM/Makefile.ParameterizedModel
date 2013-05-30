@@ -134,6 +134,6 @@ Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/MAKE_SYSTEM/Makefile.ParameterizedModel
 	@touch Makefile
 
 clean:
-	@printf "Cleaning... Parameterized Model... $(MODEL_NAME).\n"
+	@printf "Cleaning... Model.......... $(MODEL_NAME).\n"
 	@rm -f $(addprefix $(strip $(MODEL_NAME)).,cpp o a so) $(strip $(MODEL_NAME)).kim $(addprefix $(strip $(MODEL_NAME))_kim_str.,cpp o) \
                export-list.txt

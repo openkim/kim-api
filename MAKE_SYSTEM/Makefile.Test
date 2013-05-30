@@ -50,5 +50,5 @@ Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/MAKE_SYSTEM/Makefile.Test
 	@touch Makefile
 
 clean:
-	@printf "Cleaning... Test.................. $(TEST_NAME).\n"
+	@printf "Cleaning... Test........... $(TEST_NAME).\n"
 	@rm -f $(patsubst %.o,%.mod,$(LOCALJOB)) $(LOCALOBJ) $(strip $(TEST_NAME)).o $(TEST_NAME) $(LOCAL_CLEAN)
