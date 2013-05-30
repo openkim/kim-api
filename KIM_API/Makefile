@@ -82,7 +82,7 @@ else
         ar rcs $(KIM_DIR)/KIM_API/$@ *.o $(addprefix $(KIM_DIR)/KIM_API/,$(ALLOBJ)) && \
         cd $(KIM_DIR)/KIM_API/ && rm -rf $(KIM_DIR)/KIM_API/temp_archive_dir
 endif
-libkim.so: libkim.a
+libkim.so: libkim.a $(if $(filter-out dynamic-load,$(KIM_LINK)),$(foreach mdl, $(patsubst .%.make-temp, %, $(MODELS_TARGETS)), $(KIM_MODELS_DIR)/$(mdl)/$(mdl).so),)
 	@printf "Creating... openkim-api library... $@.\n";
 	@$(LD) $(LDSHAREDFLAG) $(LINKSONAME)$(KIM_DIR)/KIM_API/$@ $(LDFLAGS) $(OUTPUTINFLAG) $@ \
                $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \

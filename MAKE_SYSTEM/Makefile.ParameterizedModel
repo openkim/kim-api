@@ -41,6 +41,11 @@ include $(KIM_DIR)/MAKE_SYSTEM/Makefile.SanityCheck
 MODEL_BUILD_TARGET := $(strip $(MODEL_NAME)).a
 ifneq ($(KIM_LINK),static-link)
    MODEL_BUILD_TARGET += $(patsubst %.a,%.so, $(MODEL_BUILD_TARGET))
+   ifeq ($(KIM_LINK),dynamic-link)
+      $(MODEL_NAME).so: $(KIM_MODEL_DRIVERS_DIR)/$(MODEL_DRIVER_NAME)/$(MODEL_DRIVER_NAME).so
+      $(KIM_MODEL_DRIVERS_DIR)/$(MODEL_DRIVER_NAME)/$(MODEL_DRIVER_NAME).so:
+	#Consider to always be up-to-date -- use empty rule
+   endif
 else
    ifneq ("1","$(MAKELEVEL)")
      MODEL_BUILD_TARGET += STATIC_COMP_WARNING
