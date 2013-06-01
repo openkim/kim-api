@@ -182,6 +182,13 @@ KIM_LIB = -L$(KIM_DIR)/KIM_API/ -lkim
                $(if $(filter-out dynamic-load,$(KIM_LINK)),,-L$(KIM_DIR)/KIM_API/ -lkim) \
                $(if $(filter-out dynamic-link,$(KIM_LINK)),,$(if $(filter MODEL_DRIVER_NAME,$(.VARIABLES)),$(if $(filter MODEL_NAME,$(.VARIABLES)),$(KIM_MODEL_DRIVERS_DIR)/$(MODEL_DRIVER_NAME)/$(MODEL_DRIVER_NAME).so,),)) \
                $(LDDYNAMICLIB) $(XLANGLDLIBS)
+	@$(LD) $(LDSHAREDFLAG) \
+               $(LINKSONAME)$(DESTDIR)$(libdir)/$(package_name)/$(if $(filter MODEL_NAME,$(.VARIABLES)),MODELS,MODEL_DRIVERS)/$*/$*.so \
+               $(LDEXPORTLISTFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@  \
+               $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
+               $(if $(filter-out dynamic-load,$(KIM_LINK)),,$(KIM_DIR)/KIM_API/.libkim.so) \
+               $(if $(filter-out dynamic-link,$(KIM_LINK)),,$(if $(filter MODEL_DRIVER_NAME,$(.VARIABLES)),$(if $(filter MODEL_NAME,$(.VARIABLES)),$(KIM_MODEL_DRIVERS_DIR)/$(MODEL_DRIVER_NAME)/.$(MODEL_DRIVER_NAME).so,),)) \
+               $(LDDYNAMICLIB) $(XLANGLDLIBS)
 
 # KIM descriptor file make rule
 %_kim_str.cpp: %.kim
@@ -200,3 +207,9 @@ KIM_LIB = -L$(KIM_DIR)/KIM_API/ -lkim
 	@printf "return &kimstr[0];\n"        >> $*_kim_str.cpp
 	@printf "\n"                          >> $*_kim_str.cpp
 	@printf "}\n"                         >> $*_kim_str.cpp
+
+
+# INSTALL stuff
+package_name = openkim-api
+prefix = /usr/local
+libdir = $(prefix)/lib

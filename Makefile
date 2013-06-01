@@ -45,6 +45,10 @@ KIM_CONFIG_FILES = $(KIM_DIR)/KIM_API/Makefile.KIMConfig $(KIM_MODEL_DRIVERS_DIR
             $(patsubst %,%-all,  $(MODELS_LIST) $(MODEL_DRIVERS_LIST) $(TESTS_LIST)) \
         clean kim-api-clean config-clean \
             $(patsubst %,%-clean,$(MODELS_LIST) $(MODEL_DRIVERS_LIST) $(TESTS_LIST)) \
+        install kim-api-install config-install \
+            $(patsubst %,%-install,$(MODELS_LIST) $(MODEL_DRIVERS_LIST)) \
+        uninstall kim-api-uninstall config-uninstall \
+            $(patsubst %,%-uninstall,$(MODELS_LIST) $(MODEL_DRIVERS_LIST)) \
         openkim-api kim-api-objects kim-api-libs \
         examples examples-all \
         examples-force examples-force-all \
@@ -61,6 +65,8 @@ endif
 
 # other targets
 clean: config $(patsubst %,%-clean,$(MODELS_LIST) $(MODEL_DRIVERS_LIST) $(TESTS_LIST)) kim-api-clean config-clean
+install: config $(patsubst %,%-install,$(MODELS_LIST) $(MODEL_DRIVERS_LIST)) kim-api-install config-install
+uninstall: config $(patsubst %,%-uninstall,$(MODELS_LIST) $(MODEL_DRIVERS_LIST)) kim-api-uninstall config-uninstall uninstall-cleanup
 openkim-api: config kim-api-objects kim-api-libs # compile the openkim-api
 examples: config examples-all                    # copy examples to appropriate directories then make
 examples-force: config examples-force-all
@@ -85,6 +91,58 @@ config-clean:
 	@printf "Cleaning... KIMConfig files.\n"
 	@rm -f $(KIM_CONFIG_FILES)
 
+config-install:
+	@printf "Installing... KIMConfig files"
+ifeq (dynamic-load,$(KIM_LINK))
+	@printf ".\n"
+	@cp -rf MAKE_SYSTEM $(DESTDIR)$(libdir)/$(package_name)/MAKE_SYSTEM
+	@chmod 755 $(DESTDIR)$(libdir)/$(package_name)/MAKE_SYSTEM
+	@chmod 755 $(DESTDIR)$(libdir)/$(package_name)/MAKE_SYSTEM/*_DEFAULTS
+	@chmod 644 $(DESTDIR)$(libdir)/$(package_name)/MAKE_SYSTEM/*_DEFAULTS/*
+	@chmod 644 $(DESTDIR)$(libdir)/$(package_name)/MAKE_SYSTEM/Makefile.*
+	@chmod 644 $(DESTDIR)$(libdir)/$(package_name)/MAKE_SYSTEM/model_based_on_driver.cpp
+	@sed -e 's|^ *prefix *=.*|prefix = $(prefix)|' \
+             -e 's|^ *libdir *=.*|libdir = $(libdir)|' \
+             MAKE_SYSTEM/Makefile.Generic > $(DESTDIR)$(libdir)/$(package_name)/MAKE_SYSTEM/Makefile.Generic
+	@chmod 644 $(DESTDIR)$(libdir)/$(package_name)/MAKE_SYSTEM/Makefile.Generic
+	@sed -e '/KIM_MODEL_DRIVERS_DIR/d' \
+             -e '/KIM_MODELS_DIR/d'        \
+             -e '/KIM_TESTS_DIR/d'         \
+             -e 's|^ *KIM_DIR *=.*|KIM_DIR = $(libdir)/$(package_name)|' \
+             Makefile.KIMConfig > $(DESTDIR)$(libdir)/$(package_name)/Makefile.KIMConfig
+	@chmod 644 $(DESTDIR)$(libdir)/$(package_name)/Makefile.KIMConfig
+else ifeq (dynamic-link,$(KIM_LINK))
+	@if test \( -d $(DESTDIR)$(libdir)/$(package_name)/MAKE_SYSTEM \) -o \( -f $(DESTDIR)$(libdir)/$(package_name)/Makefile.KIMConfig \); then \
+            printf ": removing KIMConfig files for dynamic-load"; \
+            rm -rf "$(DESTDIR)$(libdir)/$(package_name)/MAKE_SYSTEM"; \
+            rm -f "$(DESTDIR)$(libdir)/$(package_name)/Makefile.KIMConfig"; \
+         else \
+            printf ": nothing to be done for dynamic-link"; \
+         fi;
+	@printf ".\n"
+else
+	@printf ": nothing to be done for static-link.\n"
+endif
+
+config-uninstall:
+	@printf "Uninstalling... KIMConfig files"
+ifeq (dynamic-load,$(KIM_LINK))
+	@printf ".\n"
+	@if test \( -d "$(DESTDIR)$(libdir)/$(package_name)/MAKE_SYSTEM" \); then rm -rf "$(DESTDIR)$(libdir)/$(package_name)/MAKE_SYSTEM"; fi;
+	@if test \( -f "$(DESTDIR)$(libdir)/$(package_name)/Makefile.KIMConfig" \); then rm -f "$(DESTDIR)$(libdir)/$(package_name)/Makefile.KIMConfig"; fi;
+else ifeq (dynamic-link,$(KIM_LINK))
+	@printf ": nothing to be done for dynamic-link.\n"
+else
+	@printf ": nothing to be done for static-link.\n"
+endif
+
+
+uninstall-cleanup:
+	@printf "Uninstalling... $(package_name) directories.\n"
+	@if test \( -d "$(DESTDIR)$(libdir)/$(package_name)/MODELS" \); then rmdir --ignore-fail-on-non-empty "$(DESTDIR)$(libdir)/$(package_name)/MODELS"; fi
+	@if test \( -d "$(DESTDIR)$(libdir)/$(package_name)/MODEL_DRIVERS" \); then rmdir --ignore-fail-on-non-empty "$(DESTDIR)$(libdir)/$(package_name)/MODEL_DRIVERS"; fi
+	@if test \( -d "$(DESTDIR)$(libdir)/$(package_name)" \); then rmdir --ignore-fail-on-non-empty "$(DESTDIR)$(libdir)/$(package_name)"; fi
+
 kim-api-objects: kim-api-objects-making-echo
 	@$(MAKE) $(MAKE_FLAGS) -C $(KIM_DIR)/KIM_API/ objects
 
@@ -94,6 +152,12 @@ kim-api-libs: kim-api-libs-making-echo
 kim-api-clean:
 	@$(MAKE) $(MAKE_FLAGS) -C $(KIM_DIR)/KIM_API/ clean
 	@rm -f kim.log
+
+kim-api-install:
+	@$(MAKE) $(MAKE_FLAGS) -C $(KIM_DIR)/KIM_API/ install
+
+kim-api-uninstall:
+	@$(MAKE) $(MAKE_FLAGS) -C $(KIM_DIR)/KIM_API/ uninstall
 
 examples-all:
 	@$(foreach exmpl,$(notdir $(shell find $(KIM_DIR)/EXAMPLES/MODEL_DRIVERS -maxdepth 1 -mindepth 1 \( -type d -o -type f \) -exec basename {} \;)),\
@@ -147,11 +211,23 @@ $(patsubst %,%-all,$(MODELS_LIST)): %: Model..........\ %-making-echo | kim-api-
 $(patsubst %,%-clean,$(MODELS_LIST)):
 	@$(MAKE) $(MAKE_FLAGS) -C $(KIM_MODELS_DIR)/$(patsubst %-clean,%,$@) clean
 
+$(patsubst %,%-install,$(MODELS_LIST)):
+	@$(MAKE) $(MAKE_FLAGS) -C $(KIM_MODELS_DIR)/$(patsubst %-install,%,$@) install
+
+$(patsubst %,%-uninstall,$(MODELS_LIST)):
+	@$(MAKE) $(MAKE_FLAGS) -C $(KIM_MODELS_DIR)/$(patsubst %-uninstall,%,$@) uninstall
+
 $(patsubst %,%-all,$(MODEL_DRIVERS_LIST)): %: Model\ Driver...\ %-making-echo | kim-api-objects
 	@$(MAKE) $(MAKE_FLAGS) -C $(KIM_MODEL_DRIVERS_DIR)/$(patsubst %-all,%,$@) all
 
 $(patsubst %,%-clean,$(MODEL_DRIVERS_LIST)):
 	@$(MAKE) $(MAKE_FLAGS) -C $(KIM_MODEL_DRIVERS_DIR)/$(patsubst %-clean,%,$@) clean
+
+$(patsubst %,%-install,$(MODEL_DRIVERS_LIST)):
+	@$(MAKE) $(MAKE_FLAGS) -C $(KIM_MODEL_DRIVERS_DIR)/$(patsubst %-install,%,$@) install
+
+$(patsubst %,%-uninstall,$(MODEL_DRIVERS_LIST)):
+	@$(MAKE) $(MAKE_FLAGS) -C $(KIM_MODEL_DRIVERS_DIR)/$(patsubst %-uninstall,%,$@) uninstall
 
 $(patsubst %,%-all,$(TESTS_LIST)): %: Test...........\ %-making-echo | kim-api-objects kim-api-libs $(patsubst %,%-all,$(MODELS_LIST))
 	@$(MAKE) $(MAKE_FLAGS) -C $(KIM_TESTS_DIR)/$(patsubst %-all,%,$@) all

@@ -48,7 +48,7 @@ else
    endif
 endif
 
-.PHONY: STATIC_COMP_WARNING
+.PHONY: STATIC_COMP_WARNING clean install uninstall
 STATIC_COMP_WARNING:
 	@echo ''; \
         echo '*******************************************************************************'; \
@@ -106,7 +106,29 @@ Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/MAKE_SYSTEM/Makefile.Model
 
 clean:
 	@printf "Cleaning... Model.......... $(MODEL_NAME).\n"
-	@rm -f $(LOCALOBJ) *.mod $(addprefix $(strip $(MODEL_NAME)).,a so) \
+	@rm -f $(LOCALOBJ) *.mod $(addprefix $(strip $(MODEL_NAME)).,a so) .$(MODEL_NAME).so\
               export-list.txt \
               $(addprefix $(strip $(MODEL_NAME))_kim_str.,o cpp) \
               $(addprefix $(strip $(MODEL_NAME))_init_wrapper.,o cpp) $(LOCALCLEAN)
+
+install: all
+	@printf "Installing...($(DESTDIR)$(libdir)/$(package_name)/MODELS).......... Model.......... $(MODEL_NAME)"
+ifneq (static-link,$(KIM_LINK))
+	@printf ".\n"
+	@mkdir -p $(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)
+	@cp .$(MODEL_NAME).so $(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)/$(MODEL_NAME).so
+	@chmod 644 $(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)/$(MODEL_NAME).so
+else
+	@printf ": nothing to be done for static-link.\n"
+endif
+
+uninstall:
+	@printf "Uninstalling...($(DESTDIR)$(libdir)/$(package_name)/MODELS).......... Model.......... $(MODEL_NAME)"
+ifneq (static-link,$(KIM_LINK))
+	@printf ".\n"
+	@rm -f "$(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)/$(MODEL_NAME).so"
+	@if test \( -d "$(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)" \); then rmdir --ignore-fail-on-non-empty "$(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)"; fi
+
+else
+	@printf ": nothing to be done for static-link.\n"
+endif

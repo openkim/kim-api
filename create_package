@@ -81,6 +81,11 @@ w
 EOF
 done
 
+ed MAKE_SYSTEM/Makefile.Generic <<EOF
+,s/^ *package_name *=.*/package_name = $packagename/
+w
+EOF
+
 cd ..
 
 tar czvf $packagename.tgz $packagename
