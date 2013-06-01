@@ -64,15 +64,18 @@ else ifeq ($(KIM_LINK),dynamic-load)
    KIM_LINK_VALUE = 2
 endif
 
-# Set compiler flag and define lists
-COMMONFLAGS = -I$(KIM_DIR)/KIM_API                                  \
-              -D KIM_ARCHTYPE=$(KIM_ARCHTYPE)                       \
-              -D KIM_LINK_VALUE=$(KIM_LINK_VALUE)                   \
-              -D KIM_LOG_DIR=\".\"                                  \
-              -D KIM_DIR=\"$(KIM_DIR)\"                             \
-              -D KIM_MODEL_DRIVERS_DIR=\"$(KIM_MODEL_DRIVERS_DIR)\" \
-              -D KIM_MODELS_DIR=\"$(KIM_MODELS_DIR)\"               \
-              -D KIM_TESTS_DIR=\"$(KIM_TESTS_DIR)\"
+# Set include flag
+KIMINCLUDEFLAG = -I$(KIM_DIR)/KIM_API
+
+# Set KIM define values to be used with KIMDEFINES when needed
+KIM_DEFINE_VALUES =                                      \
+   -D KIM_ARCHTYPE=$(KIM_ARCHTYPE)                       \
+   -D KIM_LINK_VALUE=$(KIM_LINK_VALUE)                   \
+   -D KIM_LOG_DIR=\".\"                                  \
+   -D KIM_DIR=\"$(KIM_DIR)\"                             \
+   -D KIM_MODEL_DRIVERS_DIR=\"$(KIM_MODEL_DRIVERS_DIR)\" \
+   -D KIM_MODELS_DIR=\"$(KIM_MODELS_DIR)\"               \
+   -D KIM_TESTS_DIR=\"$(KIM_TESTS_DIR)\"
 
 # Set common compiler flags for dynamic linking
 ifeq ($(KIM_LINK),static-link)
@@ -94,80 +97,80 @@ KIM_LIB = -L$(KIM_DIR)/KIM_API/ -lkim
 # C/C++ Compiler pattern rules
 %.o:%.c Makefile    # C with preprocessing
 	@printf "Creating... $@.\n"
-	@$(CC) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CCFLAGS) $<
+	@$(CC) $(PICFLAG) $(KIMINCLUDEFLAG) $(KIMDEFINES) $(OBJONLYFLAG) $(CCFLAGS) $<
 %.o:%.i Makefile    # C without preprocessing
 	@printf "Creating... $@.\n"
-	@$(CC) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CCFLAGS) $<
+	@$(CC) $(PICFLAG) $(KIMINCLUDEFLAG) $(KIMDEFINES) $(OBJONLYFLAG) $(CCFLAGS) $<
 %.o:%.cpp Makefile  # C++ with preprocessing
 	@printf "Creating... $@.\n"
-	@$(CXX) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CXXFLAGS) $<
+	@$(CXX) $(PICFLAG) $(KIMINCLUDEFLAG) $(KIMDEFINES) $(OBJONLYFLAG) $(CXXFLAGS) $<
 %.o:%.ii Makefile   # C++ without preprocessing
 	@printf "Creating... $@.\n"
-	@$(CXX) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CXXFLAGS) $<
+	@$(CXX) $(PICFLAG) $(KIMINCLUDEFLAG) $(KIMDEFINES) $(OBJONLYFLAG) $(CXXFLAGS) $<
 %.o:%.cc Makefile   # C++ with preprocessing
 	@printf "Creating... $@.\n"
-	@$(CXX) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CXXFLAGS) $<
+	@$(CXX) $(PICFLAG) $(KIMINCLUDEFLAG) $(KIMDEFINES) $(OBJONLYFLAG) $(CXXFLAGS) $<
 %.o:%.cxx Makefile  # C++ with preprocessing
 	@printf "Creating... $@.\n"
-	@$(CXX) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CXXFLAGS) $<
+	@$(CXX) $(PICFLAG) $(KIMINCLUDEFLAG) $(KIMDEFINES) $(OBJONLYFLAG) $(CXXFLAGS) $<
 %.o:%.cpp Makefile  # C++ with preprocessing
 	@printf "Creating... $@.\n"
-	@$(CXX) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CXXFLAGS) $<
+	@$(CXX) $(PICFLAG) $(KIMINCLUDEFLAG) $(KIMDEFINES) $(OBJONLYFLAG) $(CXXFLAGS) $<
 %.o:%.C Makefile    # C++ with preprocessing
 	@printf "Creating... $@.\n"
-	@$(CXX) $(PICFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(CXXFLAGS) $<
+	@$(CXX) $(PICFLAG) $(KIMINCLUDEFLAG) $(KIMDEFINES) $(OBJONLYFLAG) $(CXXFLAGS) $<
 
 # Fortran Compiler pattern rules
 # Fixed form code
 %.o:%.f Makefile    # FORTRAN 77 without preprocessing
 	@printf "Creating... $@.\n"
-	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(KIMINCLUDEFLAG) $(KIMDEFINES) $(OBJONLYFLAG) $(FFLAGS) $<
 %.o:%.for Makefile  # FORTRAN 77 without preprocessing
 	@printf "Creating... $@.\n"
-	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(KIMINCLUDEFLAG) $(KIMDEFINES) $(OBJONLYFLAG) $(FFLAGS) $<
 %.o:%.ftn Makefile  # FORTRAN 77 without preprocessing
 	@printf "Creating... $@.\n"
-	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(KIMINCLUDEFLAG) $(KIMDEFINES) $(OBJONLYFLAG) $(FFLAGS) $<
 %.o:%.fpp Makefile  # FORTRAN 77 with preprocessing
 	@printf "Creating... $@.\n"
-	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(KIMINCLUDEFLAG) $(KIMDEFINES) $(OBJONLYFLAG) $(FFLAGS) $<
 %.o:%.F Makefile    # FORTRAN 77 with preprocessing
 	@printf "Creating... $@.\n"
-	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(KIMINCLUDEFLAG) $(KIMDEFINES) $(OBJONLYFLAG) $(FFLAGS) $<
 %.o:%.FOR Makefile  # FORTRAN 77 with preprocessing
 	@printf "Creating... $@.\n"
-	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(KIMINCLUDEFLAG) $(KIMDEFINES) $(OBJONLYFLAG) $(FFLAGS) $<
 %.o:%.FTN Makefile  # FORTRAN 77 with preprocessing
 	@printf "Creating... $@.\n"
-	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(KIMINCLUDEFLAG) $(KIMDEFINES) $(OBJONLYFLAG) $(FFLAGS) $<
 %.o:%.FPP Makefile  # FORTRAN 77 with preprocessing
 	@printf "Creating... $@.\n"
-	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(KIMINCLUDEFLAG) $(KIMDEFINES) $(OBJONLYFLAG) $(FFLAGS) $<
 # Free form code
 %.o:%.f90 Makefile  # Fortran 90 without preprocessing
 	@printf "Creating... $@.\n"
-	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(KIMINCLUDEFLAG) $(KIMDEFINES) $(OBJONLYFLAG) $(FFLAGS) $<
 %.o:%.f95 Makefile  # Fortran 95 without preprocessing
 	@printf "Creating... $@.\n"
-	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(KIMINCLUDEFLAG) $(KIMDEFINES) $(OBJONLYFLAG) $(FFLAGS) $<
 %.o:%.f03 Makefile  # Fortran 2003 without preprocessing
 	@printf "Creating... $@.\n"
-	$@(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+	$@(FC) $(PICFLAG) $(FCRAYFLAG) $(KIMINCLUDEFLAG) $(KIMDEFINES) $(OBJONLYFLAG) $(FFLAGS) $<
 %.o:%.f08 Makefile  # Fortran 2008 without preprocessing
 	@printf "Creating... $@.\n"
-	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(KIMINCLUDEFLAG) $(KIMDEFINES) $(OBJONLYFLAG) $(FFLAGS) $<
 %.o:%.F90 Makefile  # Fortran 90 without preprocessing
 	@printf "Creating... $@.\n"
-	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(KIMINCLUDEFLAG) $(KIMDEFINES) $(OBJONLYFLAG) $(FFLAGS) $<
 %.o:%.F95 Makefile  # Fortran 95 without preprocessing
 	@printf "Creating... $@.\n"
-	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(KIMINCLUDEFLAG) $(KIMDEFINES) $(OBJONLYFLAG) $(FFLAGS) $<
 %.o:%.F03 Makefile  # Fortran 2003 without preprocessing
 	@printf "Creating... $@.\n"
-	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(KIMINCLUDEFLAG) $(KIMDEFINES) $(OBJONLYFLAG) $(FFLAGS) $<
 %.o:%.F08 Makefile  # Fortran 2008 without preprocessing
 	@printf "Creating... $@.\n"
-	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(COMMONFLAGS) $(OBJONLYFLAG) $(FFLAGS) $<
+	@$(FC) $(PICFLAG) $(FCRAYFLAG) $(KIMINCLUDEFLAG) $(KIMDEFINES) $(OBJONLYFLAG) $(FFLAGS) $<
 
 # Library pattern rule
 %.so: %.a export-list.txt

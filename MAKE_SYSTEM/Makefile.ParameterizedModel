@@ -37,6 +37,8 @@ ifndef KIM_DIR
 endif
 include $(KIM_DIR)/MAKE_SYSTEM/Makefile.SanityCheck
 
+# Set defines
+KIMDEFINES = $(KIM_DEFINE_VALUES)
 
 MODEL_BUILD_TARGET := $(strip $(MODEL_NAME)).a
 ifneq ($(KIM_LINK),static-link)

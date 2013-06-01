@@ -46,6 +46,9 @@ else
    ALLOBJ = $(OBJC) $(OBJF90)
 endif
 
+# Set defines
+KIMDEFINES = $(KIM_DEFINE_VALUES)
+
 # create lists
 MODEL_DRIVERS_LIST = $(notdir $(filter-out $(shell if test -e "$(KIM_MODEL_DRIVERS_DIR)/.kimignore"; then cat "$(KIM_MODEL_DRIVERS_DIR)/.kimignore";fi;),$(filter-out .%,$(shell find "$(KIM_MODEL_DRIVERS_DIR)/" -maxdepth 1 -mindepth 1 -type d -exec basename {} \;))))
 MODELS_LIST = $(notdir $(filter-out $(shell if test -e "$(KIM_MODELS_DIR)/.kimignore"; then cat "$(KIM_MODELS_DIR)/.kimignore";fi;),$(filter-out .%,$(shell find "$(KIM_MODELS_DIR)/" -maxdepth 1 -mindepth 1 -type d -exec basename {} \;))))
