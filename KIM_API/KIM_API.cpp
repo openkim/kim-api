@@ -1351,7 +1351,7 @@ extern "C"{
 char * KIM_API_model::get_model_kim_str(char* modelname,int * kimerr){
      //redirecting std::cout > kimlog
     *kimerr=KIM_STATUS_FAIL;
-    char kimlog[2048] = KIM_LOG_DIR; strcat(kimlog,"/kim.log");
+    char kimlog[2048] = "./kim.log";
     std::streambuf * psbuf, * backup; std::ofstream filekimlog;
     filekimlog.open(kimlog);
     backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);
@@ -1379,11 +1379,11 @@ char * KIM_API_model::get_model_kim_str(char* modelname,int * kimerr){
     *kimerr= KIM_STATUS_FAIL;
     char model_slib_file[2048];
     char model_kim_str_name[2048];
-    sprintf(model_slib_file,"%s/%s/%s.so",KIM_MODELS_DIR,modelname,modelname);
+    sprintf(model_slib_file,"%s/%s/%s.so",directoryPath(KIM_MODELS_DIR),modelname,modelname);
     sprintf(model_kim_str_name,"%s_kim_str",modelname);
 
     //redirecting std::cout > kimlog
-    char kimlog[2048] = KIM_LOG_DIR; strcat(kimlog,"/kim.log");
+    char kimlog[2048] = "./kim.log";
     std::streambuf * psbuf, * backup; std::ofstream filekimlog;
     filekimlog.open(kimlog);
     backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);
@@ -1435,7 +1435,7 @@ char * KIM_API_model::get_model_kim_str(char* modelname,int * kimerr){
 int KIM_API_model::init(char* testname, char* modelname){
 
     //redirecting std::cout > kimlog
-    char kimlog[2048] = KIM_LOG_DIR; strcat(kimlog,"/kim.log");
+   char kimlog[2048] = "./kim.log";
     std::streambuf * psbuf, * backup; std::ofstream filekimlog;
     filekimlog.open(kimlog);
     backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);
@@ -1461,7 +1461,7 @@ void KIM_API_model::fatal_error_print(){
 
 int KIM_API_model::init_str_modelname(char* testname, char* inmdlstr){
    int error;
-    char testinputfile[2048] = KIM_TESTS_DIR;
+   char testinputfile[2048] = KIM_TESTS_DIR_VAL;
     strcat(testinputfile,"/");strcat(testinputfile,testname);strcat(testinputfile,"/");
     strcat(testinputfile,testname);strcat(testinputfile,".kim");
 
@@ -1516,7 +1516,7 @@ int KIM_API_model::init_str_modelname(char* testname, char* inmdlstr){
 
 int KIM_API_model::preinit(char* modelname){
     //redirecting std::cout > kimlog
-    char kimlog[2048] = KIM_LOG_DIR; strcat(kimlog,"/kim.log");
+   char kimlog[2048] = "./kim.log";
     std::streambuf * psbuf, * backup; std::ofstream filekimlog;
     filekimlog.open(kimlog);
     backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);
@@ -1536,7 +1536,7 @@ int KIM_API_model::preinit(char* modelname){
 int KIM_API_model::string_init(char* in_tststr, char* modelname){
    int error;
     //redirecting std::cout > kimlog
-    char kimlog[2048] = KIM_LOG_DIR; strcat(kimlog,"/kim.log");
+   char kimlog[2048] = "./kim.log";
     std::streambuf * psbuf, * backup; std::ofstream filekimlog;
     filekimlog.open(kimlog);
     backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);
@@ -1601,7 +1601,7 @@ int KIM_API_model::string_init(char* in_tststr, char* modelname){
 int KIM_API_model::match(char* teststr, char* modelstr){
    int error;
     //redirecting std::cout > kimlog
-    char kimlog[2048] = KIM_DIR; strcat(kimlog,"kim.log");
+   char kimlog[2048] = "./kim.log";
     std::streambuf * psbuf, * backup; std::ofstream filekimlog;
     filekimlog.open(kimlog);
     backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);
@@ -1674,7 +1674,7 @@ int KIM_API_model::model_init(){
     pkim =(void**) &kim;
 
     //redirecting std::cout > kimlog
-    char kimlog[2048] = KIM_LOG_DIR; strcat(kimlog,"/kim.log");
+    char kimlog[2048] = "./kim.log";
     std::streambuf * psbuf, * backup; std::ofstream filekimlog;
     filekimlog.open(kimlog,std::ofstream::app);
     backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);
@@ -1707,10 +1707,10 @@ int KIM_API_model::model_init(){
     strcpy(modelname,this->model.name);
     kim=this;
     pkim =(void**) &kim;
-    sprintf(model_slib_file,"%s/%s/%s.so",KIM_MODELS_DIR,modelname,modelname);
+    sprintf(model_slib_file,"%s/%s/%s.so",directoryPath(KIM_MODELS_DIR),modelname,modelname);
 
 //redirecting std::cout > kimlog
-    char kimlog[2048] = KIM_LOG_DIR; strcat(kimlog,"/kim.log");
+    char kimlog[2048] = "./kim.log";
     std::streambuf * psbuf, * backup; std::ofstream filekimlog;
     filekimlog.open(kimlog, std::ofstream::app);
     backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);

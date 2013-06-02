@@ -100,21 +100,23 @@ else
 endif
 libkim.so: libkim.a $(if $(filter-out dynamic-load,$(KIM_LINK)), \
                         $(foreach mdl, $(MODELS_LIST), $(KIM_MODELS_DIR)/$(mdl)/$(mdl).so) \
-                        $(foreach mdldrv, $(MODEL_DRIVERS_LIST), $(KIM_MODEL_DRIVERS_DIR)/$(mdldrv)/$(mdldrv).so),)
+                        $(foreach mdldrv, $(MODEL_DRIVERS_LIST), $(KIM_MODEL_DRIVERS_DIR)/$(mdldrv)/$(mdldrv).so),\
+                        KIM_API_DIRS.o .KIM_API_DIRS.o)
 	@printf "Creating... openkim-api library... $@.\n";
 	@$(LD) $(LDSHAREDFLAG) $(LINKSONAME)$(KIM_DIR)/KIM_API/$@ $(LDFLAGS) $(OUTPUTINFLAG) $@ \
                $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
                $(LDDYNAMICLIB) $(XLANGLDLIBS) \
                $(if $(filter-out dynamic-load,$(KIM_LINK)),\
                   $(foreach mdl, $(MODELS_LIST),$(KIM_MODELS_DIR)/$(mdl)/$(mdl).so) \
-                  $(foreach mdldrv, $(MODEL_DRIVERS_LIST),$(KIM_MODEL_DRIVERS_DIR)/$(mdldrv)/$(mdldrv).so),)
+                  $(foreach mdldrv, $(MODEL_DRIVERS_LIST),$(KIM_MODEL_DRIVERS_DIR)/$(mdldrv)/$(mdldrv).so),KIM_API_DIRS.o)
 	@$(LD) $(LDSHAREDFLAG) $(LINKSONAME)$(DESTDIR)$(libdir)/$(package_name)/KIM_API/$@ $(LDFLAGS) $(OUTPUTINFLAG) .$@ \
                $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
                $(LDDYNAMICLIB) $(XLANGLDLIBS) \
                $(if $(filter-out dynamic-load,$(KIM_LINK)),\
                   $(foreach mdl, $(MODELS_LIST),$(KIM_MODELS_DIR)/$(mdl)/.$(mdl).so) \
-                  $(foreach mdldrv, $(MODEL_DRIVERS_LIST),$(KIM_MODEL_DRIVERS_DIR)/$(mdldrv)/.$(mdldrv).so),)
+                  $(foreach mdldrv, $(MODEL_DRIVERS_LIST),$(KIM_MODEL_DRIVERS_DIR)/$(mdldrv)/.$(mdldrv).so), .KIM_API_DIRS.o)
 
+KIM_API.o: KIM_DEFINE_VALUES += -D KIM_TESTS_DIR_VAL=\"$(KIM_TESTS_DIR)\"
 KIM_API.o: $(if $(filter-out dynamic-load,$(KIM_LINK)),model_init_include.h model_init_include.cpp model_kim_str_include.cpp,) KIM_API.h KIM_API.cpp KIM_AUX.h Makefile
 
 KIM_API_C.o: KIM_API.h KIM_API_C.h Makefile
@@ -123,14 +125,43 @@ KIM_API_F.o: Makefile
 
 KIM_AUX.o: KIM_AUX.h Makefile
 
+%_API_DIRS.cpp: $(KIM_MAKE_FILES) Makefile
+	@printf "Creating... intermediate file... $@.\n"
+	@printf "#include \"KIM_API_DIRS.h\"\n" > $@
+	@printf "\n"                           >> $@
+	@printf "char const* const directoryPath(DirectoryPathType type)\n" >> $@
+	@printf "{\n"                                                       >> $@
+	@printf "   switch (type)\n"                                        >> $@
+	@printf "   {\n"                                                    >> $@
+	@printf "      case KIM_DIR:\n"                                     >> $@
+	@$(if $(filter-out KIM_API_DIRS.cpp,$@),\
+              printf "         return \"$(libdir)/$(package_name)\";\n"     >> $@,\
+              printf "         return \"$(KIM_DIR)\";\n"                    >> $@)
+	@printf "         break;\n"                                         >> $@
+	@printf "      case KIM_MODEL_DRIVERS_DIR:\n"                       >> $@
+	@$(if $(filter-out KIM_API_DIRS.cpp,$@),\
+              printf "         return \"$(libdir)/MODEL_DRIVERS\";\n"       >> $@,\
+              printf "         return \"$(KIM_MODEL_DRIVERS_DIR)\";\n"      >> $@)
+	@printf "         break;\n"                                         >> $@
+	@printf "      case KIM_MODELS_DIR:\n"                              >> $@
+	@$(if $(filter-out KIM_API_DIRS.cpp,$@),\
+              printf "         return \"$(libdir)/MODELS\";\n"              >> $@,\
+              printf "         return \"$(KIM_MODELS_DIR)\";\n"             >> $@)
+	@printf "         break;\n"                                         >> $@
+	@printf "      default:\n"                                          >> $@
+	@printf "         return \"/???INVALID???\";\n"                     >> $@
+	@printf "         break;\n"                                         >> $@
+	@printf "   }\n"                                                    >> $@
+	@printf "}\n"                                                       >> $@
+
 openkim-api-descriptor-file-match.o: openkim-api-descriptor-file-match.cpp KIM_API.h KIM_API_status.h Makefile
 
 model_init_include_stubs.o: model_init_include_stubs.c
 
-openkim-api-descriptor-file-match: openkim-api-descriptor-file-match.o KIM_API.o KIM_AUX.o Unit_Handling.o standard_kim_str.o \
+openkim-api-descriptor-file-match: openkim-api-descriptor-file-match.o KIM_API.o KIM_API_DIRS.o KIM_AUX.o Unit_Handling.o standard_kim_str.o \
         $(if $(filter-out dynamic-load,$(KIM_LINK)),model_init_include_stubs.o,)
 	@printf "Creating... $@.\n"
-	@$(LD) -o $@ $@.o KIM_API.o KIM_AUX.o Unit_Handling.o standard_kim_str.o $(if $(filter-out dynamic-load,$(KIM_LINK)),model_init_include_stubs.o,) $(LDDYNAMICLIB)
+	@$(LD) -o $@ $@.o KIM_API.o KIM_API_DIRS.o KIM_AUX.o Unit_Handling.o standard_kim_str.o $(if $(filter-out dynamic-load,$(KIM_LINK)),model_init_include_stubs.o,) $(LDDYNAMICLIB)
 
 # targets for the models: for any new model, adds the appropriate lines to the model_init_include.h and model_inclue.cpp files
 $(MODELS_TARGETS): .models-deleted
@@ -169,8 +200,8 @@ model_init_include.h model_init_include.cpp: Makefile .models-deleted $(MODELS_T
 
 clean:
 	@printf "Cleaning... KIM_API.\n"
-	@rm -f *.o *.a *.so .*.so *.mod  model_init_include.h model_init_include.cpp model_init_include_stubs.c model_kim_str_include.h model_kim_str_include.cpp \
-        .*.make-temp .models-deleted standard_kim_str.cpp &&\
+	@rm -f *.o .*.o *.a *.so .*.so *.mod  model_init_include.h model_init_include.cpp model_init_include_stubs.c model_kim_str_include.h model_kim_str_include.cpp \
+        .*.make-temp .models-deleted standard_kim_str.cpp KIM_API_DIRS.cpp .KIM_API_DIRS.cpp &&\
         rm -f openkim-api-descriptor-file-match &&\
         rm -rf $(KIM_DIR)/KIM_API/temp_archive_dir
 

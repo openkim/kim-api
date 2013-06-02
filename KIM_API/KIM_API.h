@@ -41,25 +41,9 @@
 #include <stdarg.h>
 
 #define number_NBC_methods 7
-
-#ifndef KIM_DIR
-#error "KIM_DIR must be defined."
-#endif
-
-#ifndef KIM_MODEL_DRIVERS_DIR
-#error "KIM_MODEL_DRIVERS_DIR must be defined."
-#endif
-
-#ifndef KIM_MODELS_DIR
-#error "KIM_MODELS_DIR must be defined."
-#endif
-
-#ifndef KIM_TESTS_DIR
-#error "KIM_TESTS_DIR must be defined."
-#endif
-
 #define KIM_KEY_STRING_LENGTH 64
 
+#include "KIM_API_DIRS.h"
 #include "KIM_AUX.h"
 
 //#define intptr_t int  // for 32 bit machines

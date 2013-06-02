@@ -68,14 +68,9 @@ endif
 KIMINCLUDEFLAG = -I$(KIM_DIR)/KIM_API
 
 # Set KIM define values to be used with KIMDEFINES when needed
-KIM_DEFINE_VALUES =                                      \
-   -D KIM_ARCHTYPE=$(KIM_ARCHTYPE)                       \
-   -D KIM_LINK_VALUE=$(KIM_LINK_VALUE)                   \
-   -D KIM_LOG_DIR=\".\"                                  \
-   -D KIM_DIR=\"$(KIM_DIR)\"                             \
-   -D KIM_MODEL_DRIVERS_DIR=\"$(KIM_MODEL_DRIVERS_DIR)\" \
-   -D KIM_MODELS_DIR=\"$(KIM_MODELS_DIR)\"               \
-   -D KIM_TESTS_DIR=\"$(KIM_TESTS_DIR)\"
+KIM_DEFINE_VALUES =                    \
+   -D KIM_ARCHTYPE=$(KIM_ARCHTYPE)     \
+   -D KIM_LINK_VALUE=$(KIM_LINK_VALUE)
 
 # Set common compiler flags for dynamic linking
 ifeq ($(KIM_LINK),static-link)
