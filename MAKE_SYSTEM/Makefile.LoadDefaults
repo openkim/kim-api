@@ -47,6 +47,10 @@ ifndef KIM_TESTS_DIR
    KIM_TESTS_DIR := $(KIM_DIR)/TESTS
 endif
 
+# INSTALL stuff
+package_name = openkim-api
+prefix = /usr/local
+libdir = $(prefix)/lib
 
 # sanity check
 ifeq      ($(KIM_COMPILERSUITE),GCC)

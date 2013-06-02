@@ -136,6 +136,11 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
        LDWHOLEARCHIVESTARTFLAG =
        LDWHOLEARCHIVEENDFLAG =
 
+       # overwrite default install directories
+       package_name =
+       prefix =
+       libdir =
+
 
 2. In the remainder of the documentation we will use the string $KD to
    represent the location of the openkim source package (the value of the
@@ -160,6 +165,8 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
        `make all'            -- same as `make'
        `make clean'          -- will remove appropriate .o, .mod, .a, .so and
                                 executable files
+       `make install'        -- install files to `/usr/local/lib' by default
+       `make uninstall'      -- delete files installed by `make install'
        `make openkim-api'    -- compiles only the API
        `make examples'       -- copies examples into the appropriate
                                 directories (no overwrite)

@@ -48,6 +48,5 @@ include $(KIM_DIR)/MAKE_SYSTEM/Makefile.LoadDefaults
 
 # overwrite default variable values here
 
-
 # load rest of generic make settings
 include $(KIM_DIR)/MAKE_SYSTEM/Makefile.Generic

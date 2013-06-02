@@ -140,12 +140,12 @@ KIM_AUX.o: KIM_AUX.h Makefile
 	@printf "         break;\n"                                         >> $@
 	@printf "      case KIM_MODEL_DRIVERS_DIR:\n"                       >> $@
 	@$(if $(filter-out KIM_API_DIRS.cpp,$@),\
-              printf "         return \"$(libdir)/MODEL_DRIVERS\";\n"       >> $@,\
+              printf "         return \"$(libdir)/$(package_name)/MODEL_DRIVERS\";\n" >> $@,\
               printf "         return \"$(KIM_MODEL_DRIVERS_DIR)\";\n"      >> $@)
 	@printf "         break;\n"                                         >> $@
 	@printf "      case KIM_MODELS_DIR:\n"                              >> $@
 	@$(if $(filter-out KIM_API_DIRS.cpp,$@),\
-              printf "         return \"$(libdir)/MODELS\";\n"              >> $@,\
+              printf "         return \"$(libdir)/$(package_name)/MODELS\";\n"        >> $@,\
               printf "         return \"$(KIM_MODELS_DIR)\";\n"             >> $@)
 	@printf "         break;\n"                                         >> $@
 	@printf "      default:\n"                                          >> $@
@@ -203,18 +203,20 @@ clean:
 	@rm -f *.o .*.o *.a *.so .*.so *.mod  model_init_include.h model_init_include.cpp model_init_include_stubs.c model_kim_str_include.h model_kim_str_include.cpp \
         .*.make-temp .models-deleted standard_kim_str.cpp KIM_API_DIRS.cpp .KIM_API_DIRS.cpp &&\
         rm -f openkim-api-descriptor-file-match &&\
-        rm -rf $(KIM_DIR)/KIM_API/temp_archive_dir
+        rm -rf "$(KIM_DIR)/KIM_API/temp_archive_dir"
 
 install: objects libs
 	@printf "Installing...($(DESTDIR)$(libdir)/$(package_name)/KIM_API)......... KIM_API.\n"
 	@mkdir -p $(DESTDIR)$(libdir)/$(package_name)/KIM_API
 ifneq (static-link,$(KIM_LINK))
-	@cp -f .libkim.so $(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.so
-	@chmod 644 $(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.so
+	@cp -f .libkim.so "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.so"
+	@chmod 644 "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.so"
 else
-	@cp -f libkim.a $(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.a
-	@chmod 644 $(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.a
+	@cp -f libkim.a "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.a"
+	@chmod 644 "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.a"
 endif
+	@cp -f KIM_API.h KIM_API_C.h KIM_API_status.h kim_kinds.mod kim_api.mod "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/"
+	@chmod 644 $(addsuffix ",$(addprefix "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/,KIM_API.h KIM_API_C.h KIM_API_status.h kim_kinds.mod kim_api.mod))
 
 uninstall:
 	@printf "Uninstalling...($(DESTDIR)$(libdir)/$(package_name)/KIM_API)......... KIM_API.\n"
@@ -223,4 +225,5 @@ ifneq (static-link,$(KIM_LINK))
 else
 	@rm -f "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.a"
 endif
+	@rm -f $(addsuffix ",$(addprefix "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/,KIM_API.h KIM_API_C.h KIM_API_status.h kim_kinds.mod kim_api.mod))
 	@if test \( -d "$(DESTDIR)$(libdir)/$(package_name)/KIM_API" \); then rmdir --ignore-fail-on-non-empty "$(DESTDIR)$(libdir)/$(package_name)/KIM_API"; fi

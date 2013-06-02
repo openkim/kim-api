@@ -202,9 +202,3 @@ KIM_LIB = -L$(KIM_DIR)/KIM_API/ -lkim
 	@printf "return &kimstr[0];\n"        >> $*_kim_str.cpp
 	@printf "\n"                          >> $*_kim_str.cpp
 	@printf "}\n"                         >> $*_kim_str.cpp
-
-
-# INSTALL stuff
-package_name = openkim-api
-prefix = /usr/local
-libdir = $(prefix)/lib

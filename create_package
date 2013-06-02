@@ -81,7 +81,7 @@ w
 EOF
 done
 
-ed MAKE_SYSTEM/Makefile.Generic <<EOF
+ed MAKE_SYSTEM/Makefile.LoadDefaults <<EOF
 ,s/^ *package_name *=.*/package_name = $packagename/
 w
 EOF
