@@ -1375,11 +1375,9 @@ char * KIM_API_model::get_model_kim_str(char* modelname,int * kimerr){
 #else
 
 char * KIM_API_model::get_model_kim_str(char* modelname,int * kimerr){
-    void * tmp_model_lib_handle;
+    void * tmp_model_lib_handle = NULL;
     *kimerr= KIM_STATUS_FAIL;
-    char model_slib_file[2048];
     char model_kim_str_name[2048];
-    sprintf(model_slib_file,"%s/%s/%s.so",directoryPath(KIM_MODELS_DIR),modelname,modelname);
     sprintf(model_kim_str_name,"%s_kim_str",modelname);
 
     //redirecting std::cout > kimlog
@@ -1388,15 +1386,24 @@ char * KIM_API_model::get_model_kim_str(char* modelname,int * kimerr){
     filekimlog.open(kimlog);
     backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);
 
-    tmp_model_lib_handle = dlopen(model_slib_file,RTLD_NOW);
+    std::list<std::string> lst;
+    directoryPath(KIM_MODELS_DIR, &lst);
+    std::list<std::string>::iterator itr;
+    for (itr = lst.begin(); itr != lst.end(); ++itr)
+    {
+       itr->append("/");
+       itr->append(modelname); itr->append("/");
+       itr->append(modelname); itr->append(".so");
+       tmp_model_lib_handle = dlopen(itr->c_str(), RTLD_NOW);
+       if (tmp_model_lib_handle) break;
+       std::cout<< "* Error (KIM_API_model::get_model_kim_str): Cannot find Model shared library file for Model name: ";
+       std::cout<<modelname<<std::endl<<dlerror()<<std::endl;
+       fprintf(stderr,"%s not found...\n",itr->c_str());
+    }
     if(!tmp_model_lib_handle) {
-         std::cout<< "* Error (KIM_API_model::get_model_kim_str): Cannot find Model shared library file for Model name: ";
-         std::cout<<modelname<<std::endl<<dlerror()<<std::endl;
-         fprintf(stderr,"%s not found...\n",model_slib_file);
-
-          //redirecting back to > std::cout
-          std::cout.rdbuf(backup); filekimlog.close();
-         return NULL;
+       //redirecting back to > std::cout
+       std::cout.rdbuf(backup); filekimlog.close();
+       return NULL;
     }
 
     typedef char* (*Model_kim_str)(void);
@@ -1702,12 +1709,10 @@ int KIM_API_model::model_init(){
     char modelname[KIM_KEY_STRING_LENGTH]="";
     KIM_API_model * kim;
     void ** pkim;
-    char model_slib_file[2048];
     char model_init_routine_name[2048];
     strcpy(modelname,this->model.name);
     kim=this;
     pkim =(void**) &kim;
-    sprintf(model_slib_file,"%s/%s/%s.so",directoryPath(KIM_MODELS_DIR),modelname,modelname);
 
 //redirecting std::cout > kimlog
     char kimlog[2048] = "./kim.log";
@@ -1715,21 +1720,30 @@ int KIM_API_model::model_init(){
     filekimlog.open(kimlog, std::ofstream::app);
     backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);
 
-std::cout<<"* Info: KIM_API_model::model_init: call dynamically linked initialize routine for:"<<modelname<<std::endl;
-std::cout<<"               from the shared library:"<<model_slib_file<<std::endl;
-    sprintf(model_init_routine_name,"%s_init",modelname);
-
-    model_lib_handle = dlopen(model_slib_file,RTLD_NOW);
-    if(!model_lib_handle) {
-         std::cout<< "* Info: KIM_API_model::model_init: model initiliser failed for ";
-         std::cout<<modelname<<std::endl<<dlerror()<<std::endl;
-         fprintf(stderr,"%s not found...\n",model_slib_file);
-
-          //redirecting back to > std::cout
-          std::cout.rdbuf(backup); filekimlog.close();
-
-         return KIM_STATUS_FAIL;
+//    sprintf(model_slib_file,"%s/%s/%s.so",directoryPath(KIM_MODELS_DIR),modelname,modelname);
+    std::list<std::string> lst;
+    directoryPath(KIM_MODELS_DIR, &lst);
+    std::list<std::string>::iterator itr;
+    for (itr = lst.begin(); itr != lst.end(); ++itr)
+    {
+       itr->append("/");
+       itr->append(modelname); itr->append("/");
+       itr->append(modelname); itr->append(".so");
+       model_lib_handle = dlopen(itr->c_str(), RTLD_NOW);
+       if (model_lib_handle) break;
+       std::cout<< "* Info: KIM_API_model::model_init: model initiliser failed for ";
+       std::cout<<modelname<<std::endl<<dlerror()<<std::endl;
+       fprintf(stderr,"%s not found...\n",itr->c_str());
     }
+    if(!model_lib_handle) {
+       //redirecting back to > std::cout
+       std::cout.rdbuf(backup); filekimlog.close();
+       return KIM_STATUS_FAIL;
+    }
+
+std::cout<<"* Info: KIM_API_model::model_init: call dynamically linked initialize routine for:"<<modelname<<std::endl;
+std::cout<<"               from the shared library:"<<itr->c_str()<<std::endl;
+    sprintf(model_init_routine_name,"%s_init",modelname);
 
     typedef int (*Model_Init)(void **);//prototype for model_init
     Model_Init mdl_init = (Model_Init)dlsym(model_lib_handle,model_init_routine_name);

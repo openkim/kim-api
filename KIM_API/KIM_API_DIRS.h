@@ -34,6 +34,9 @@
 #ifndef KIMHDR_KIM_API_DIRS_H
 #define KIMHDR_KIM_API_DIRS_H
 
+#include <string>
+#include <list>
+
 enum DirectoryPathType
 {
    KIM_DIR,
@@ -41,6 +44,6 @@ enum DirectoryPathType
    KIM_MODELS_DIR
 };
 
-char const* const directoryPath(DirectoryPathType type);
+void directoryPath(DirectoryPathType type, std::list<std::string>* const lst);
 
 #endif /* KIMHDR_KIM_API_DIRS_H */

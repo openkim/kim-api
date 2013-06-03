@@ -127,32 +127,37 @@ KIM_AUX.o: KIM_AUX.h Makefile
 
 %_API_DIRS.cpp: $(KIM_MAKE_FILES) Makefile
 	@printf "Creating... intermediate file... $@.\n"
-	@printf "#include \"KIM_API_DIRS.h\"\n" > $@
-	@printf "\n"                           >> $@
-	@printf "char const* const directoryPath(DirectoryPathType type)\n" >> $@
-	@printf "{\n"                                                       >> $@
-	@printf "   switch (type)\n"                                        >> $@
-	@printf "   {\n"                                                    >> $@
-	@printf "      case KIM_DIR:\n"                                     >> $@
-	@$(if $(filter-out KIM_API_DIRS.cpp,$@),\
-              printf "         return \"$(libdir)/$(package_name)\";\n"     >> $@,\
-              printf "         return \"$(KIM_DIR)\";\n"                    >> $@)
-	@printf "         break;\n"                                         >> $@
-	@printf "      case KIM_MODEL_DRIVERS_DIR:\n"                       >> $@
-	@$(if $(filter-out KIM_API_DIRS.cpp,$@),\
-              printf "         return \"$(libdir)/$(package_name)/MODEL_DRIVERS\";\n" >> $@,\
-              printf "         return \"$(KIM_MODEL_DRIVERS_DIR)\";\n"      >> $@)
-	@printf "         break;\n"                                         >> $@
-	@printf "      case KIM_MODELS_DIR:\n"                              >> $@
-	@$(if $(filter-out KIM_API_DIRS.cpp,$@),\
-              printf "         return \"$(libdir)/$(package_name)/MODELS\";\n"        >> $@,\
-              printf "         return \"$(KIM_MODELS_DIR)\";\n"             >> $@)
-	@printf "         break;\n"                                         >> $@
-	@printf "      default:\n"                                          >> $@
-	@printf "         return \"/???INVALID???\";\n"                     >> $@
-	@printf "         break;\n"                                         >> $@
-	@printf "   }\n"                                                    >> $@
-	@printf "}\n"                                                       >> $@
+	@printf "#include <cstdlib>\n"                                                                                            > $@
+	@printf "#include \"KIM_API_DIRS.h\"\n"                                                                                  >> $@
+	@printf "\n"                                                                                                             >> $@
+	@printf "void directoryPath(DirectoryPathType type, std::list<std::string>* const lst)\n"                                >> $@
+	@printf "{\n"                                                                                                            >> $@
+	@printf "   switch (type)\n"                                                                                             >> $@
+	@printf "   {\n"                                                                                                         >> $@
+	@printf "      case KIM_DIR:\n"                                                                                          >> $@
+	@$(if $(filter-out KIM_API_DIRS.cpp,$@),                                                                                       \
+              printf "         lst->push_back(std::string(\"$(libdir)/$(package_name)\"));\n"                                    >> $@,\
+              printf "         lst->push_back(std::string(\"$(KIM_DIR)\"));\n"                                                   >> $@)
+	@printf "         break;\n"                                                                                              >> $@
+	@printf "      case KIM_MODEL_DRIVERS_DIR:\n"                                                                            >> $@
+	@$(if $(filter-out KIM_API_DIRS.cpp,$@),                                                                                       \
+              printf "         lst->push_back(std::string(\"$(libdir)/$(package_name)/MODEL_DRIVERS\"));\n"                      >> $@;\
+              printf "         lst->push_back(std::string(getenv(\"HOME\")).append(\"/.kim/$(package_name)/MODEL_DRIVERS\"));\n" >> $@;\
+              printf "         lst->push_back(std::string(\".\"));\n"                                                            >> $@,\
+              printf "         lst->push_back(std::string(\"$(KIM_MODEL_DRIVERS_DIR)\"));\n"                                     >> $@)
+	@printf "         break;\n"                                                                                              >> $@
+	@printf "      case KIM_MODELS_DIR:\n"                                                                                   >> $@
+	@$(if $(filter-out KIM_API_DIRS.cpp,$@),                                                                                       \
+              printf "         lst->push_back(std::string(\"$(libdir)/$(package_name)/MODELS\"));\n"                             >> $@;\
+              printf "         lst->push_back(std::string(getenv(\"HOME\")).append(\"/.kim/$(package_name)/MODELS\"));\n"        >> $@;\
+              printf "         lst->push_back(std::string(\".\"));\n"                                                            >> $@,\
+              printf "         lst->push_back(std::string(\"$(KIM_MODELS_DIR)\"));\n"                                            >> $@)
+	@printf "         break;\n"                                                                                              >> $@
+	@printf "      default:\n"                                                                                               >> $@
+	@printf "         break;\n"                                                                                              >> $@
+	@printf "   }\n"                                                                                                         >> $@
+	@printf "   return;\n"                                                                                                   >> $@
+	@printf "}\n"                                                                                                            >> $@
 
 openkim-api-descriptor-file-match.o: openkim-api-descriptor-file-match.cpp KIM_API.h KIM_API_status.h Makefile
 
