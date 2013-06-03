@@ -65,7 +65,7 @@ endif
 
 # other targets
 clean: config $(patsubst %,%-clean,$(MODELS_LIST) $(MODEL_DRIVERS_LIST) $(TESTS_LIST)) kim-api-clean config-clean
-install: all $(patsubst %,%-install,$(MODELS_LIST) $(MODEL_DRIVERS_LIST)) kim-api-install config-install
+install: config $(patsubst %,%-install,$(MODELS_LIST) $(MODEL_DRIVERS_LIST)) kim-api-install config-install
 uninstall: config $(patsubst %,%-uninstall,$(MODELS_LIST) $(MODEL_DRIVERS_LIST)) kim-api-uninstall config-uninstall uninstall-cleanup
 openkim-api: config kim-api-objects kim-api-libs # compile the openkim-api
 examples: config examples-all                    # copy examples to appropriate directories then make
@@ -103,6 +103,7 @@ ifeq (dynamic-load,$(KIM_LINK))
 	@chmod 644 $(DESTDIR)$(libdir)/$(package_name)/MAKE_SYSTEM/model_based_on_driver.cpp
 	@sed -e 's|^ *prefix *=.*|prefix = $(prefix)|' \
              -e 's|^ *libdir *=.*|libdir = $(libdir)|' \
+             -e '/ *#INSTALLTAG/,/ *#INSTALLTAG/d'     \
              MAKE_SYSTEM/Makefile.Generic > $(DESTDIR)$(libdir)/$(package_name)/MAKE_SYSTEM/Makefile.Generic
 	@chmod 644 $(DESTDIR)$(libdir)/$(package_name)/MAKE_SYSTEM/Makefile.Generic
 	@sed -e '/KIM_MODEL_DRIVERS_DIR/d' \
