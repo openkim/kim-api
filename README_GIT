@@ -49,8 +49,8 @@ repository.
    % cd $KD/EXAMPLE_LEGOS
    % make
 
-   This will cobble together the example files for the various fragments stored
-   in the $KD/EXAMPLE_LEGOS/model_legos and $KD/EXAMPLE_LEGOS/test_legos
+   This will cobble together the example files form the various fragments
+   stored in the $KD/EXAMPLE_LEGOS/model_legos and $KD/EXAMPLE_LEGOS/test_legos
    directories and save them in the $KD/EXAMPLES/MODELS/,
    $KD/EXAMPLES/MODEL_DRIVERS/, and $KD/EXAMPLES/TESTS/ directories,
    respectively.  This need only be done once (for every time the git

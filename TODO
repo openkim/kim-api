@@ -44,29 +44,18 @@ Items planned for the next significant release.
 
 * Improve error handling consistency within the API
 
-* Implement full support for Tests written in Python
-
-* Implement full support for Tests written in Java
-
 * Refactor the core KIM API code for improved readability and maintenance.
-
-* Improve the way the make system generates static and dynamic libraries (For
-  example, we should use the appropriate compiler flags to ensure that the only
-  external symbol in a Model's library is the Model's _init() function.)
 
 --------------------------------------------------------------------------------
 Items planned for future releases.
 --------------------------------------------------------------------------------
 
+* Implement full support for Tests written in Python
+
+* Implement full support for Tests written in Java
+
 * Create an example Model and Test written in C++ that makes full use of the
   object oriented nature of the language.
-
-* Rework the model_init() naming convention to avoid Fortran identifiers that
-  are longer than 31 characters.  One idea is to use a SHA1 hash of the Model
-  name for the name of the init function.  The make system can use the
-  preprocessor to automatically substitute the correct hash value in to the
-  Model's code file.  This will make the entire process opaque to the Model
-  developer.
 
 * Implement a new NBC method, similar to NEIGH_RVEC_F, that includes a
   ForceTransformation() function that can be applied to each atom.  This will
@@ -77,11 +66,7 @@ Items planned for future releases.
 
 * Implement full support for Fortran 2003
 
-* Refactor the core KIM API code for improved readability and maintenance.
-
 * Add Doxygen commenting for improved code documentation.
-
-* Switch over to an Autotools-based configure and make system.
 
 * Implement a framework for unit and regression testing of all the code in the
   openkim-api package.

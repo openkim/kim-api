@@ -23,9 +23,9 @@
 # All rights reserved.
 #
 # Contributors:
-#    Valeriu Smirichinski
 #    Ryan S. Elliott
 #    Ellad B. Tadmor
+#    Valeriu Smirichinski
 #
 
 
@@ -650,7 +650,7 @@ CLUSTER                     flag        # The Model needs only coordinates to
 # particles's energy is defined.  In the case of a half list, the value of the
 # argument `numberContributingParticles' indicates that the first
 # `numberContributingParticles' contribute their energy to the total and the
-# remaining particles do not contribute to the energy (they are "ghost"
+# remaining particles do not contribute to the energy (they are "padding"
 # particles).  When `numberContributingParticles' is equal to `numberParticles'
 # the half list is called "symmetric", otherwise it is called "unsymmetric."
 # In the case of a full list, any particle that has one or more neighbors
@@ -660,9 +660,9 @@ CLUSTER                     flag        # The Model needs only coordinates to
 # are requested, it will compute the total energy of all the particles based on
 # their neighbor lists and the derivative of the total energy with respect to
 # the positions of the particles.  This method can be used with codes that use
-# ghost particles to apply boundary conditions.  The ghost particles are
+# padding particles to apply boundary conditions.  The padding particles are
 # treated as regular particles by the Model, and it is up to the calling code
-# to discard some information such as the forces on the ghost particles and to
+# to discard some information such as the forces on the padding particles and to
 # compute the appropriate total energy from per-particle energies of the
 # physical particles, or to use a modified neighbor list to obtain the desired
 # values.
@@ -695,7 +695,7 @@ NEIGH_PURE_F                flag        # This is the Pure Full neighbor list
 # of j with RVEC r_ji = -r_ij.  Additionally, the value of the argument
 # `numberContributingParticles' indicates that the first
 # `numberContributingParticles' contribute their energy to the total and the
-# remaining particles do not contribute to the energy (they are "ghost"
+# remaining particles do not contribute to the energy (they are "padding"
 # particles).  When `numberContributingParticles' is equal to `numberParticles'
 # the half list is called "symmetric", otherwise it is called "unsymmetric."
 # In the case of a full list, any particle that has one or more neighbors

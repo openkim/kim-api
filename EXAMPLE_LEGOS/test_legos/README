@@ -183,6 +183,10 @@ program_vc_config_ener_forces.f.frag
      This Fortran file contains the main program for the
      vc_config_ener_forces verification check
 
+program_vc_forces_delta.f.frag
+     This Fortran file contains the main program for the
+     vc_forces_delta verification check
+
 program_vc_forces_numer_deriv.f.frag
      This Fortran file contains the main program for the
      vc_forces_numer_deriv verification check
@@ -235,6 +239,10 @@ test_run_all_ex_tests
      This shell script contains code to execute all compatible example Models
      and Tests.
 
+test_run_forces_numer_deriv_for_all_models
+     This shell script contains code to execute all compatible example Models
+     with the forces_numer_deriv verification check..
+
 update_neighborlist.f.frag
      This Fortran file contains the routine to update a neighbor list.
 
@@ -242,9 +250,18 @@ vc_config_ener_forces_README
      This file contains the README file that is used to generate REAMDE files
      for the example config_ener_forces check.
 
+vc_config_ener_forces_README.PERIODICBOX
+     This file contains the README file that is used to generate README files
+     for the exmaple config_ener_forces check that is specific to periodic box
+     calculations (this vc does not currently exist).
+
+vc_forces_delta_README
+     This file contains the README file that is used to generate REAMDE files
+     for the example forces_delta check.
+
 vc_forces_numer_deriv_README
      This file contains the README file that is used to generate REAMDE files
-     for the example numer_deriv check.
+     for the example forces_numer_deriv check.
 
 write_KIM_descriptor.f.frag
      This Fortran file contains the routine to generate a KIM descriptor string

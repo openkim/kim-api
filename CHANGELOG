@@ -33,7 +33,56 @@
 #
 
 
+=== openkim-api-v1.2.0 =========================================================
+
+
+* Documentation updates.
+
+* Various bug fixes.
+
+* Added support for searching ${HOME}/.kim/ and ./ for Models and Model Drivers
+  when the package is installed via the `make install' command.
+
+* Added install and uninstall targets to the Make system.
+
+* Now the build system (in dynamic-load and dynamic-link modes) hides all
+  symbols in the Model Driver and Model libraries except for the model_init()
+  function and the Model's kim descriptor string.  This means that there is no
+  need to worry about symbol clashes between Models, Model Drivers, or Tests.
+
+* Implemented dynamic-load, dynamic-link, and static-link build options.
+
+* Make system now provides only summary information on the build process.  This
+  makes the progress easier to understand.  To see the actual build commands
+  use `make -n'.
+
+* Now use -g and -Wall by default for all compilations.
+
+* Changed model_init() function conventions to simplify the scheme.  This also
+  resulted in the removal of the Model or Test name from the descriptor files.
+
+* Added the openkim-api-descriptor-file-match utility.
+
+* Completely rewrote and streamlined the openkim-api Make system
+
+* Changed directory names from trailing `s' to trailing `S'.
+
+* Added support to examples for NEIGH_RVEC_H.
+
+* Added the NEIGH_RVEC_H NBC method.
+
+* Added ex_free_cluster_CLUSTER_memory F90 Test which manages its own memory.
+
+* Added ex_model_Cu_PF_Johnson C pair-functional model and template.
+
+* Updates and bug fixes in example Models.
+
+* Bug fixes for vc_forces_numer_deriv and added vc_config_ener_forces and
+  vc_forces_delta to the distribution.
+
+
 === openkim-api-v1.1.1 =========================================================
+
 
 * Added run_forces_numer_deriv_for_all_models script that will run and
   summarize the results of vc_forces_numer_deriv for all available Models.
@@ -54,13 +103,15 @@
 
 * Updated 32/64 bit switching in Fortran code for easier maintenance
 
-* Moved library compile flags to end of command line to make sure all libraries are
-  correctly associated with the appropriate .so files
+* Moved library compile flags to end of command line to make sure all libraries
+  are correctly associated with the appropriate .so files
 
 * Cleaned up ex_model_driver_P_* and ex_model_Ne_P_fastLJ to simplify memory
   management and PARAM_* handling
 
+
 === openkim-api-v1.1.0 =========================================================
+
 
 * Documentation updates
 
@@ -102,19 +153,23 @@
 * Added get_model_partcl_typs() and get_test_partcl_type() service routines
   Removed get_partcl_types() routine.
 
-* Added ability of a Model/Model Driver to set its particle type codes at runtime
+* Added ability of a Model/Model Driver to set its particle type codes at
+  runtime
 
-* Added support for .kimignore files in MODELS, MODEL_DRIVERS, and TESTS directories
+* Added support for .kimignore files in MODELS, MODEL_DRIVERS, and TESTS
+  directories
 
 * Added `Temperature' to standard.kim for "temperature dependent" Models
 
-* New Model Driver interface supports reading from any number of files (not strings)
+* New Model Driver interface supports reading from any number of files (not
+  strings)
 
 * Support for 001-999 particle types in Model Drivers
 
 * Use $(strip ) function to avoid difficult trailing space problem in make files
 
-* Rearranged and simplify compiler settings files (KIM_API/*_compiler_settings.mk)
+* Rearranged and simplify compiler settings files
+  (KIM_API/*_compiler_settings.mk)
 
 * Changed CPPLIBFLAG to LINKLIBFLAG in Make files to better represent its use
 
@@ -127,6 +182,7 @@
 * Bug fixes for KIM_API_init() matching
 
 * Significant clean-up/rearrangement of core api code
+
 
 === openkim-api-v1.0.1 =========================================================
 
@@ -186,14 +242,14 @@
 
 * Added KIMstatus.h which contains definitions of KIM status codes.
 
-* Added KIM_API_status_msg() service routine to return a string describing a given
-  status code.
+* Added KIM_API_status_msg() service routine to return a string describing a
+  given status code.
 
 * Updated messages printed to kim.log file to be more informative.
 
-* Model KIM descriptor files are now incorporated into the Model's binary library
-  file.  This means that the file is no longer required at run time and that the
-  Model must be recompiled after changes to the descriptor file.
+* Model KIM descriptor files are now incorporated into the Model's binary
+  library file.  This means that the file is no longer required at run time and
+  that the Model must be recompiled after changes to the descriptor file.
 
 * Added Model Driver Templates
 

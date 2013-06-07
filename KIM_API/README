@@ -1,4 +1,4 @@
-#
+t#
 # CDDL HEADER START
 #
 # The contents of this file are subject to the terms of the Common Development
@@ -23,9 +23,9 @@
 # All rights reserved.
 #
 # Contributors:
-#    Valeriu Smirichinski
 #    Ryan S. Elliott
 #    Ellad B. Tadmor
+#    Valeriu Smirichinski
 #
 
 #
@@ -33,18 +33,11 @@
 #
 
 
-This directory (KIM_API) contains the openkim-api service routines and related files.
+This directory (KIM_API) contains the openkim-api service routines and related
+files.
 
-The contents of the directory are as follows (before any compilation if performed):
-
-GNU_compiler_settings.mk
-     Make file containing commands and flags for GNU compilers
-
-Include.mk
-     Make file used by all makefiles related to KIM.
-
-Intel_compiler_settings.mk
-     Make file containing commands and flags for Intel compilers
+The contents of the directory are as follows (before any compilation if
+performed):
 
 KIM_API.cpp
      C++ implementations for core service routines and methods.
@@ -57,6 +50,10 @@ KIM_API_C.cpp
 
 KIM_API_C.h
      Header for C-style interface for KIM API service routines.
+
+KIM_API_DIRS.h
+     Header file defining a routine to supply directory locations to be searched
+     by the API.
 
 KIM_API_Description.txt
      Description of KIM API service routines.
@@ -75,23 +72,21 @@ KIM_AUX.h
      Header file declaring the auxiliary routines.
 
 Makefile
-     Make file for compiling and building KIM_API using GNU or Intel compilers.
-
-Makefile.Model_Drivers
-     Make file for compiling Models based on a Model Driver
+     Make file for compiling and building KIM_API
 
 README
      This file.
 
 Unit_Handling.cpp
-     C++ implementation file defining the unit handling capabilities of the KIM API
+     C++ implementation file defining the unit handling capabilities of the KIM
+     API
 
 Unit_Handling.h
      Header file declaring the unit handling functions.
 
-model_based_on_driver.cpp
-     This file contains the code implementing a Model that is based on a Model Driver.
-     It is used by the Makefile.Model_Drivers file.
+openkim-api-descriptor-file-match.cpp
+     A helper application that takes a Model descriptor file and a Test
+     descriptor file and prints out either MATCH or NOMATCH.
 
 standard.kim
      kim descriptor file with description of all standard variables.

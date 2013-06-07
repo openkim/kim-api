@@ -35,7 +35,7 @@
 
 =========================== The openkim-api package ===========================
 
-This file provides an introduction to the openKIM API package.  This is the
+This file provides an introduction to the openkim-api package.  This is the
 first file that you should read after unpacking the package.
 
 OVERVIEW:
@@ -105,7 +105,7 @@ The current version of the openkim-api package supports the following features:
   at --- openkim@googlegroups.com --- and they will provide you with the latest
   development code and examples.)
 
-* Support for static and dynamic linking of programs using the openKIM API
+* Support for static and dynamic linking of programs using the openkim-api
 
 * Support for automatic translation between zero-based lists (C-style numbering
   beginning with 0) and one-based lists (Fortran-style numbering beginning
@@ -132,14 +132,14 @@ The current version of the openkim-api package supports the following features:
   for each `argument' exchanged between a Model and Test.  A Model is either
   `fixed' or `flexible' with regard to units.  `fixed' means it is unable to
   convert to a different set of units.  `flexible' means it can convert its
-  output values to the Test's units.
+  values to the Test's units.
 
 * Neighbor lists and Boundary Conditions (NBC) methods: To facilitate
   computational efficiency, the openkim-api defines a number of standard
   methods by which a Test may provide a Model with information about the
   neighbors of each atom in a configuration.  These currently include options
   that allow for common techniques, such as the use of the `minimum image'
-  convention for orthogonal periodic boundary conditions, `ghost atoms', and
+  convention for orthogonal periodic boundary conditions, `padding atoms', and
   neighbor lists with relative position vectors.
 
 * Neighbor list routines are expected to be provided by the calling Test.  The
@@ -172,7 +172,7 @@ For more information on all of the above, see the files in the DOCs directory
 described below.  Features planned for future releases are described in the
 TODO file in this directory.  (See list of directory contents below.)
 
-Your next step after reading this file is to install the openKIM API package.
+Your next step after reading this file is to install the openkim-api package.
 See the detailed instructions in the INSTALL file in this directory.
 
 -------------------------------------------------------------------------------
@@ -183,11 +183,11 @@ and directories:
 CHANGELOG
      list of main changes made to each API release
 
-DOCs/
+DOCS/
      documentation directory.  This directory contains the file
      openkim-api-vX.X.X-introduction.pdf which provides an overview of this
      release of the openkim-api package, links to the files
-     KIM_API_Descriptions.txt and standard.kim, and a TEMPLATEs directory
+     KIM_API_Descriptions.txt and standard.kim, and a TEMPLATES directory
      containing template files for creating your own KIM Models.  (See the
      README file in that directory.)
 
@@ -196,7 +196,7 @@ EXAMPLES/
      Tests.
 
 INSTALL
-     detailed instructions on how to install the openKIM API package
+     detailed instructions on how to install the openkim-api package
 
 KIM_API/
      directory containing the openkim-api service routines
@@ -208,17 +208,16 @@ MAKE_SYSTEM/
      directory containing the common Makefiles and default settings used by
      the openkim-api package make system.
 
-MODEL_DRIVERS/
-     Each Model Driver is stored in its own directory that conforms to the
-     naming convention specified in standard.kim.  This is where you should
-     place Model Driver directories downloaded from http://openKIM.org. (Or use
-     `make examples' to copy the example Model Drivers to this directory.)
-
 MODELS/
-     Each Model is stored in its own directory that conforms to the naming
-     convention specified in standard.kim.  This is where you should place
+     Each Model is stored in its own directory.  This is where you should place
      Model directories downloaded from http://openKIM.org. (Or use `make
      examples' to copy the example Models to this directory.)
+
+MODEL_DRIVERS/
+     Each Model Driver is stored in its own directory.  This is where you
+     should place Model Driver directories downloaded from
+     http://openKIM.org. (Or use `make examples' to copy the example Model
+     Drivers to this directory.)
 
 Makefile
      make file for compiling the openkim-api services routines and example
@@ -233,13 +232,12 @@ README
      This file.
 
 TESTS/
-     Each Test is stored in its own directory that conforms to the naming
-     convention specified in standard.kim.  This is where you should place Test
-     directories downloaded from http://openKIM.org. (Or use `make examples' to
-     copy the example Tests to this directory.)
+     Each Test is stored in its own directory.  This is where you should place
+     Test directories downloaded from http://openKIM.org. (Or use `make
+     examples' to copy the example Tests to this directory.)
 
 TODO
-     A file listing features planed for future releases of the openKIM API
+     A file listing features planed for future releases of the openkim-api
 
 
 *******************************************************************************

@@ -1,4 +1,4 @@
-#
+t#
 # CDDL HEADER START
 #
 # The contents of this file are subject to the terms of the Common Development
@@ -24,8 +24,6 @@
 #
 # Contributors:
 #    Ryan S. Elliott
-#    Ellad B. Tadmor
-#    Valeriu Smirichinski
 #
 
 #
@@ -33,13 +31,16 @@
 #
 
 
-This directory (EXAMPLES) contains directories with example Model Drivers,
-Models, and Tests that can be compiled as part of the openkim-api package.
-Use `make examples' from the main directory order to copy these files to the
-KIM_MODEL_DRIVERS_DIR, KIM_MODELS_DIR, and KIM_TESTS_DIR directories
-respectively and to compile them.
+This directory (COMPILER_DEFAULTS) contains the openkim-api Make system
+compiler defaults.
 
-This directory is populated with the examples as part of the openkim-api
-distribution.  Please see the README files within each directory for
-information about the examples.
+The contents of the directory are as follows:
 
+Makefile.GCC
+     Makefile containing default settings for the Gnu Compiler Collection
+
+Makefile.INTEL
+     Makefile containing default settings for the Intel compiler suite
+
+README
+     This file

@@ -218,7 +218,7 @@ static int compute(void* km)
    double* rho;
    double U;
    double* derU;
-   
+
    int* nAtoms;
    double* energy;
    double* coords;
@@ -450,7 +450,7 @@ static int compute(void* km)
          KIM_API_report_error(__LINE__, __FILE__, "get_current_atom_neighbors", ier);
          return ier;
       }
-      
+
       /* loop over the neighbors of atom i */
       for (jj = 0; jj < numOfAtomNeigh; ++ jj)
       {
@@ -496,7 +496,7 @@ static int compute(void* km)
       } /* loop on jj */
    }    /* infinite while loop (terminated by break statements above */
 
-   
+
    /* Now that we know the electron densities, calculate embedding part
     * of energy U and its derivative U' (derU)
     */
@@ -558,7 +558,7 @@ static int compute(void* km)
          KIM_API_report_error(__LINE__, __FILE__, "get_current_atom_neighbors", ier);
          return ier;
       }
-      
+
       /* loop over the neighbors of atom i */
       for (jj = 0; jj < numOfAtomNeigh; ++ jj)
       {
@@ -713,7 +713,7 @@ static void get_current_atom_neighbors(int IterOrLoca, int HalfOrFull, int NBC, 
          KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_neigh", *ier);
          return;
       }
-      
+
       *i = currentAtom;
    }
    else
@@ -724,7 +724,7 @@ static void get_current_atom_neighbors(int IterOrLoca, int HalfOrFull, int NBC, 
          *ier = KIM_STATUS_NEIGH_ITER_PAST_END;
          return;
       }
-      
+
       if (3 == NBC)     /* CLUSTER NBC method */
       {
          *numOfAtomNeigh = nAtoms - (*i + 1);

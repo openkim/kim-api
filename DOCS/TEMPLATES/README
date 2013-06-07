@@ -136,7 +136,7 @@ are stored under $KD/EXAMPLES/MODEL_DRIVERS.  To compare files, you can
 for example use the `vimdiff' command:
 
    % cd $KD
-   % vimdiff EXAMPLES/MODELS/ex_model_Ar_P_MLJ_F90/ex_model_Ar_P_MLJ_F90.F90 DOCs/TEMPLATEs/model_El_P_Template.F90
+   % vimdiff EXAMPLES/MODELS/ex_model_Ar_P_MLJ_F90/ex_model_Ar_P_MLJ_F90.F90 DOCS/TEMPLATES/model_El_P_Template.F90
 
 Alternatively use the `ediff' feature of the emacs editor.
 
@@ -147,10 +147,10 @@ STEP 3
 You are now ready to create a new KIM-compliant Model based on the provided
 templates.
 
-The directions below show how to use the Fortran 90 template for a pair potential
-(model_El_P_Template.F90) and turn it into a Model for argon (Ar) using a
-Buckingham potential.  (The procedure for a Model written in C is essentially
-identical. See comments below.)
+The directions below show how to use the Fortran 90 template for a pair
+potential (model_El_P_Template.F90) and turn it into a Model for argon (Ar)
+using a Buckingham potential.  (The procedure for a Model written in C is
+essentially identical. See comments below.)
 
 (a) Create a new directory under MODELS for the Ar pair potential:
 
@@ -161,17 +161,17 @@ identical. See comments below.)
     rename:
 
     % cd $KD/MODELS/model_Ar_P_Buckingham
-    % cp $KD/DOCs/TEMPLATEs/model_El_P_Template.F90 model_Ar_P_Buckingham.F90
-    % cp $KD/DOCs/TEMPLATEs/model_El_P_Template.f.kim model_Ar_P_Buckingham.kim
-    % cp $KD/DOCs/TEMPLATEs/Makefile.template Makefile
+    % cp $KD/DOCS/TEMPLATES/model_El_P_Template.F90 model_Ar_P_Buckingham.F90
+    % cp $KD/DOCS/TEMPLATES/model_El_P_Template.f.kim model_Ar_P_Buckingham.kim
+    % cp $KD/DOCS/TEMPLATES/Makefile.template Makefile
 
     Note: For a Model written in C, copy the .c and .c.kim templates.
 
-(c) Edit the .kim file and change the Model name to conform to the new Model
-    and enter the species type.  (Search for the word "FILL" which indicates
-    where changes are necessary.)  Also, change the "Release:" line to indicate
-    that the file is part of your new Model and not part of the openkim-api
-    release.  To edit a file on a unix machine, use for example:
+(c) Edit the .kim file and enter the species type.  (Search for the word "FILL"
+    which indicates where changes are necessary.)  Also, change the "Release:"
+    line to indicate that the file is part of your new Model and not part of
+    the openkim-api release.  To edit a file on a unix machine, use for
+    example:
 
     % pico model_Ar_P_Buckingham.kim
 
@@ -205,9 +205,10 @@ identical. See comments below.)
 
     - Add any necessary initialization into the _init() routine.
 
-(e) Edit the Makefile and change the Model name appropriately.  (Search for the
-    word "FILL".)  Also change the "Release:" line to indicate that the file is
-    part of your new Model and not part of the openkim-api release.
+(e) Edit the Makefile and change the Model name and model_init function values
+    appropriately.  (Search for the word "FILL".)  Also change the "Release:"
+    line to indicate that the file is part of your new Model and not part of
+    the openkim-api release.
 
 (f) Compile the new Model into the API package:
 
@@ -246,9 +247,9 @@ Buckingham Model Driver and a Ne KIM Model based on it are given below.
     rename:
 
     % cd $KD/MODEL_DRIVERS/model_driver_P_Buckingham
-    % cp $KD/DOCs/TEMPLATEs/model_driver_P_Template.F90 model_driver_P_Buckingham.F90
-    % cp $KD/DOCs/TEMPLATEs/model_driver_P_Template.f.kim model_driver_P_Buckingham.kim
-    % cp $KD/DOCs/TEMPLATEs/Makefile.driver.template Makefile
+    % cp $KD/DOCS/TEMPLATES/model_driver_P_Template.F90 model_driver_P_Buckingham.F90
+    % cp $KD/DOCS/TEMPLATES/model_driver_P_Template.f.kim model_driver_P_Buckingham.kim
+    % cp $KD/DOCS/TEMPLATES/Makefile.driver.template Makefile
 
     Note: For a Model written in C, copy the .c and .c.kim templates.
 
@@ -275,9 +276,10 @@ Buckingham Model Driver and a Ne KIM Model based on it are given below.
     - Specify the format for reading in the parameter data (in Fortran 90 you can
       simply set this to `*'.)
 
-(e) Edit the Makefile and change the Model name appropriately.  (Search for the
-    word "FILL".) Also change the "Release:" line to indicate that the file is
-    part of your new Model and not part of the openkim-api release.
+(e) Edit the Makefile and change the Model Driver name and model_init function
+    values appropriately.  (Search for the word "FILL".) Also change the
+    "Release:" line to indicate that the file is part of your new Model and not
+    part of the openkim-api release.
 
 (f) Compile the new Model Driver into the API package:
 
@@ -295,13 +297,13 @@ Buckingham Model Driver and a Ne KIM Model based on it are given below.
     model_El_P_Template.params files into the new directory and rename:
 
     % cd $KD/MODELS/model_Ne_P_Buckingham
-    % cp $KD/DOCs/TEMPLATEs/Makefile.driver.based.model.template Makefile
-    % cp $KD/DOCs/TEMPLATEs/model_El_P_Template.params model_Ne_P_Buckingham.params
+    % cp $KD/DOCS/TEMPLATES/Makefile.driver.based.model.template Makefile
+    % cp $KD/DOCS/TEMPLATES/model_El_P_Template.params model_Ne_P_Buckingham.params
 
 (i) Edit the Makefile and change the Model name, Model Driver name, and
-    SPECIES1_NAME appropriately. (Search for the word "FILL".)  Also change the
-    "Release:" line to indicate that the file is part of your new Model and not
-    part of the openkim-api release.
+    SPECIES_001_NAME appropriately. (Search for the word "FILL".)  Also change
+    the "Release:" line to indicate that the file is part of your new Model and
+    not part of the openkim-api release.
 
 (j) Edit the model_Ne_P_Buckingham.params file appropriately. (Search for the
      word "FILL".)  Also change the "Release:" line to indicate that the file
