@@ -39,7 +39,7 @@ include $(KIM_DIR)/MAKE_SYSTEM/Makefile.SanityCheck
 
 
 # define list of Makefiles in the KIM make system to be used for dependencies
-KIM_MAKE_FILES = $(KIM_DIR)/Makefile.KIMConfig                           \
+KIM_MAKE_FILES = $(KIM_DIR)/Makefile.KIM_Config                           \
                  $(KIM_DIR)/MAKE_SYSTEM/Makefile.Generic                 \
                  $(KIM_DIR)/MAKE_SYSTEM/Makefile.LoadDefaults            \
                  $(KIM_DIR)/MAKE_SYSTEM/Makefile.SanityCheck             \

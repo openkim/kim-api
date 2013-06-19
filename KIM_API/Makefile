@@ -33,7 +33,7 @@
 #
 
 
-include Makefile.KIMConfig
+include Makefile.KIM_Config
 
 # Definition of c and fortran .o file list
 OBJC = KIM_API.o KIM_API_C.o standard_kim_str.o Unit_Handling.o KIM_AUX.o

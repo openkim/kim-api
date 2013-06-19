@@ -61,22 +61,22 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
    variables from your environment.  (These include, KIM_DIR, KIM_INTEL,
    KIM_SYSTEM32, KIM_DYNAMIC, KIM_API_DIR, KIM_TESTS_DIR,
    KIM_MODEL_DRIVERS_DIR, and KIM_MODELS_DIR.)  All setting are now specified
-   in the Makefile.KIMConfig file.
+   in the Makefile.KIM_Config file.
 
-1. Set up the Makefile.KIMConfig file
+1. Set up the Makefile.KIM_Config file
 
-   (a) Copy the file Makefile.KIMConfig.example to Makefile.KIMConfig
+   (a) Copy the file Makefile.KIM_Config.example to Makefile.KIM_Config
        For example, if you untarred the `openkim-api-vX.X.X.tgz' tarball in
        your home directory, you would do:
 
        % cd $HOME/openkim-api-vX.X.X
-       % cp Makefile.KIMConfig.example Makefile.KIMConfig
+       % cp Makefile.KIM_Config.example Makefile.KIM_Config
 
        The `%' symbol represents the bash sell prompt and should not be typed.
 
        (Above `vX.X.X' represents the current release number.)
 
-   (b) Edit the file Makefile.KIMConfig and set the appropriate value for the 
+   (b) Edit the file Makefile.KIM_Config and set the appropriate value for the
        KIM_DIR variable.  This must expand to an absolute path.  Using the same
        assumptions as above, this would be
 
@@ -85,8 +85,8 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
    (c) If appropriate, set explicit values for the remaining three directories
 
        KIM_MODEL_DRIVERS_DIR =
-       KIM_MODELS_DIR = 
-       KIM_TESTS_DIR = 
+       KIM_MODELS_DIR =
+       KIM_TESTS_DIR =
 
        If these lines are commented out, defaults will be provided by the
        openkim-api make system.

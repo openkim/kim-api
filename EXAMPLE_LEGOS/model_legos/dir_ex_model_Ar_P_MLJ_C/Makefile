@@ -34,7 +34,7 @@
 
 
 # load all basic KIM make configuration
-include ../Makefile.KIMConfig
+include ../Makefile.KIM_Config
 
 # set model specific details
 MODEL_NAME := ex_model_Ar_P_MLJ_C

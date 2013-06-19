@@ -32,7 +32,7 @@
 
 
 # load all basic KIM make configuration
-include ../Makefile.KIMConfig
+include ../Makefile.KIM_Config
 
 # set test specific details
 TEST_NAME := ex_test_demo_F03

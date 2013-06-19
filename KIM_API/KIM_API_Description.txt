@@ -86,7 +86,7 @@ Arguments:
               null terminated character string that defines Test name. The
               routine prepends the Tests' directory string (defined by the Make
               variable KIM_TESTS_DIR, which is specified in the file
-              Makefile.KIMConfig) to obtain the file location of the Test
+              Makefile.KIM_Config) to obtain the file location of the Test
               descriptor (.kim) file.
 
       char *modelname

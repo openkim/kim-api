@@ -32,7 +32,7 @@
 
 
 # load all basic KIM make configuration
-include ../Makefile.KIMConfig
+include ../Makefile.KIM_Config
 
 # set model specific details
 MODEL_NAME := ex_model_Ne_P_LJ_NEIGH_PURE_H

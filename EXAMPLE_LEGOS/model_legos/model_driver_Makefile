@@ -34,7 +34,7 @@
 
 
 # load all basic KIM make configuration
-include ../Makefile.KIMConfig
+include ../Makefile.KIM_Config
 
 # set model driver specific details
 MODEL_DRIVER_NAME := MODEL_DRIVER_NAME_STR

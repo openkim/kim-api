@@ -223,8 +223,8 @@ Makefile
      make file for compiling the openkim-api services routines and example
      Tests and Models.
 
-Makefile.KIMConfig.example
-     Example Makefile.KIMConfig file.  This file provides the basic settings
+Makefile.KIM_Config.example
+     Example Makefile.KIM_Config file.  This file provides the basic settings
      needed to compile the openkim-api system and associated Model Drivers,
      Models, and Tests.
 
