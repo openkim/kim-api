@@ -56,12 +56,6 @@ STATUS codes: The openkim-api uses a set of defined status code keys to return
          that is less than KIM_STATUS_OK (i.e., "kimerror < KIM_STATUS_OK")
          indicates an error has occurred.
 
-C style: KIM_DIR, KIM_DIR_MODELS, KIM_DIR_TESTS
-
-         These string constants are defined in KIM_API.h and give the
-         locations of KIM directories.
-
-
 Fortran style: integer, parameter :: kim_intptr = 4 (or 8)
 
          This parameter is defined in the Fortran 90 module `kim_api'
@@ -90,8 +84,10 @@ Arguments:
 
       char *testname
               null terminated character string that defines Test name. The
-              routine prepends the string constant KIM_DIR_TESTS to obtain the
-              file location of the Test descriptor (.kim) file.
+              routine prepends the Tests' directory string (defined by the Make
+              variable KIM_TESTS_DIR, which is specified in the file
+              Makefile.KIMConfig) to obtain the file location of the Test
+              descriptor (.kim) file.
 
       char *modelname
               null terminated character string that defines the Model name.
