@@ -134,10 +134,14 @@ static int neigh_rvec_h_compute(void* km)
    double* pdx = &(dx[0]);
    double four_eps_sigma6;
    double four_eps_sigma12;
+   double Rm2;
    double R6;
    double R12;
+   double e_Rm12;
+   double e_Rm6;
    int z, zi, zj;
    double fac = 0.0;
+   double DE;
    int zero = 0, one = 1;
 
    /* get buffer from KIM object */
@@ -237,12 +241,12 @@ static int neigh_rvec_h_compute(void* km)
             if (Rsqij < *cutsq)
             {
                /* compute pair potential */
-               double Rm2 = 1.0/Rsqij;
+               Rm2 = 1.0/Rsqij;
                R6 = Rm2*Rm2*Rm2;
                R12= R6*R6;
 
-               double e_Rm12 = four_eps_sigma12*R12;
-               double e_Rm6 = four_eps_sigma6*R6;
+               e_Rm12 = four_eps_sigma12*R12;
+               e_Rm6 = four_eps_sigma6*R6;
                phi = e_Rm12 - e_Rm6 + *shift;
 
                dEidr = 6.0*(-2.0*e_Rm12 + e_Rm6 );
@@ -313,12 +317,12 @@ static int neigh_rvec_h_compute(void* km)
             if (Rsqij < *cutsq)
             {
                /* compute pair potential */
-               double Rm2 = 1.0/Rsqij;
+               Rm2 = 1.0/Rsqij;
                R6 = Rm2*Rm2*Rm2;
                R12= R6*R6;
 
-               double e_Rm12 = four_eps_sigma12*R12;
-               double e_Rm6 = four_eps_sigma6*R6;
+               e_Rm12 = four_eps_sigma12*R12;
+               e_Rm6 = four_eps_sigma6*R6;
                phi = e_Rm12 - e_Rm6 + *shift;
                if (comp_force==1)
                {
@@ -343,7 +347,7 @@ static int neigh_rvec_h_compute(void* km)
                if (comp_process_dEdr)
                {
                   R = sqrt(Rsqij);
-                  double DE = fac*R;
+                  DE = fac*R;
                   ier = KIM_API_process_dEdr(km, &DE, &R, &pdx, &i, &j);
                }
 
@@ -413,10 +417,14 @@ static int neigh_pure_h_compute(void* km)
    double* pdx = &(dx[0]);
    double four_eps_sigma6;
    double four_eps_sigma12;
+   double Rm2;
    double R6;
    double R12;
+   double e_Rm12;
+   double e_Rm6;
    int z, zi, zj;
    double fac = 0.0;
+   double DE;
    int zero = 0, one = 1;
 
    /* get buffer from KIM object */
@@ -516,12 +524,12 @@ static int neigh_pure_h_compute(void* km)
             if (Rsqij < *cutsq)
             {
                /* compute pair potential */
-               double Rm2 = 1.0/Rsqij;
+               Rm2 = 1.0/Rsqij;
                R6 = Rm2*Rm2*Rm2;
                R12= R6*R6;
 
-               double e_Rm12 = four_eps_sigma12*R12;
-               double e_Rm6 = four_eps_sigma6*R6;
+               e_Rm12 = four_eps_sigma12*R12;
+               e_Rm6 = four_eps_sigma6*R6;
                phi = e_Rm12 - e_Rm6 + *shift;
 
                dEidr = 6.0*(-2.0*e_Rm12 + e_Rm6 );
@@ -592,12 +600,12 @@ static int neigh_pure_h_compute(void* km)
             if (Rsqij < *cutsq)
             {
                /* compute pair potential */
-               double Rm2 = 1.0/Rsqij;
+               Rm2 = 1.0/Rsqij;
                R6 = Rm2*Rm2*Rm2;
                R12= R6*R6;
 
-               double e_Rm12 = four_eps_sigma12*R12;
-               double e_Rm6 = four_eps_sigma6*R6;
+               e_Rm12 = four_eps_sigma12*R12;
+               e_Rm6 = four_eps_sigma6*R6;
                phi = e_Rm12 - e_Rm6 + *shift;
                if (comp_force==1)
                {
@@ -622,7 +630,7 @@ static int neigh_pure_h_compute(void* km)
                if (comp_process_dEdr)
                {
                   R = sqrt(Rsqij);
-                  double DE = fac*R;
+                  DE = fac*R;
                   ier = KIM_API_process_dEdr(km, &DE, &R, &pdx, &i, &j);
                }
 
@@ -691,10 +699,14 @@ static int neigh_rvec_f_compute(void* km)
    double* pdx = &(dx[0]);
    double four_eps_sigma6;
    double four_eps_sigma12;
+   double Rm2;
    double R6;
    double R12;
+   double e_Rm12;
+   double e_Rm6;
    int z, zi, zj;
    double fac = 0.0;
+   double DE;
    int zero = 0, one = 1;
 
    /* get buffer from KIM object */
@@ -793,12 +805,12 @@ static int neigh_rvec_f_compute(void* km)
             if (Rsqij < *cutsq)
             {
                /* compute pair potential */
-               double Rm2 = 1.0/Rsqij;
+               Rm2 = 1.0/Rsqij;
                R6 = Rm2*Rm2*Rm2;
                R12= R6*R6;
 
-               double e_Rm12 = four_eps_sigma12*R12;
-               double e_Rm6 = four_eps_sigma6*R6;
+               e_Rm12 = four_eps_sigma12*R12;
+               e_Rm6 = four_eps_sigma6*R6;
                phi = e_Rm12 - e_Rm6 + *shift;
 
                dEidr = 3.0*(-2.0*e_Rm12 + e_Rm6 );
@@ -868,12 +880,12 @@ static int neigh_rvec_f_compute(void* km)
             if (Rsqij < *cutsq)
             {
                /* compute pair potential */
-               double Rm2 = 1.0/Rsqij;
+               Rm2 = 1.0/Rsqij;
                R6 = Rm2*Rm2*Rm2;
                R12= R6*R6;
 
-               double e_Rm12 = four_eps_sigma12*R12;
-               double e_Rm6 = four_eps_sigma6*R6;
+               e_Rm12 = four_eps_sigma12*R12;
+               e_Rm6 = four_eps_sigma6*R6;
                phi = e_Rm12 - e_Rm6 + *shift;
                if (comp_force==1)
                {
@@ -896,7 +908,7 @@ static int neigh_rvec_f_compute(void* km)
                if (comp_process_dEdr)
                {
                   R = sqrt(Rsqij);
-                  double DE = fac*R;
+                  DE = fac*R;
                   ier = KIM_API_process_dEdr(km, &DE, &R, &pdx, &i, &j);
                }
 
@@ -965,10 +977,14 @@ static int neigh_pure_f_compute(void* km)
    double* pdx = &(dx[0]);
    double four_eps_sigma6;
    double four_eps_sigma12;
+   double Rm2;
    double R6;
    double R12;
+   double e_Rm12;
+   double e_Rm6;
    int z, zi, zj;
    double fac = 0.0;
+   double DE;
    int zero = 0, one = 1;
 
    /* get buffer from KIM object */
@@ -1067,12 +1083,12 @@ static int neigh_pure_f_compute(void* km)
             if (Rsqij < *cutsq)
             {
                /* compute pair potential */
-               double Rm2 = 1.0/Rsqij;
+               Rm2 = 1.0/Rsqij;
                R6 = Rm2*Rm2*Rm2;
                R12= R6*R6;
 
-               double e_Rm12 = four_eps_sigma12*R12;
-               double e_Rm6 = four_eps_sigma6*R6;
+               e_Rm12 = four_eps_sigma12*R12;
+               e_Rm6 = four_eps_sigma6*R6;
                phi = e_Rm12 - e_Rm6 + *shift;
 
                dEidr = 3.0*(-2.0*e_Rm12 + e_Rm6 );
@@ -1142,12 +1158,12 @@ static int neigh_pure_f_compute(void* km)
             if (Rsqij < *cutsq)
             {
                /* compute pair potential */
-               double Rm2 = 1.0/Rsqij;
+               Rm2 = 1.0/Rsqij;
                R6 = Rm2*Rm2*Rm2;
                R12= R6*R6;
 
-               double e_Rm12 = four_eps_sigma12*R12;
-               double e_Rm6 = four_eps_sigma6*R6;
+               e_Rm12 = four_eps_sigma12*R12;
+               e_Rm6 = four_eps_sigma6*R6;
                phi = e_Rm12 - e_Rm6 + *shift;
                if (comp_force==1)
                {
@@ -1170,7 +1186,7 @@ static int neigh_pure_f_compute(void* km)
                if (comp_process_dEdr)
                {
                   R = sqrt(Rsqij);
-                  double DE = fac*R;
+                  DE = fac*R;
                   ier = KIM_API_process_dEdr(km, &DE, &R, &pdx, &i, &j);
                }
 
@@ -1241,10 +1257,14 @@ static int mi_opbc_h_compute(void* km)
    double* pdx = &(dx[0]);
    double four_eps_sigma6;
    double four_eps_sigma12;
+   double Rm2;
    double R6;
    double R12;
+   double e_Rm12;
+   double e_Rm6;
    int z, zi, zj;
    double fac = 0.0;
+   double DE;
    int zero = 0, one = 1;
 
    /* get buffer from KIM object */
@@ -1351,12 +1371,12 @@ static int mi_opbc_h_compute(void* km)
             if (Rsqij < *cutsq)
             {
                /* compute pair potential */
-               double Rm2 = 1.0/Rsqij;
+               Rm2 = 1.0/Rsqij;
                R6 = Rm2*Rm2*Rm2;
                R12= R6*R6;
 
-               double e_Rm12 = four_eps_sigma12*R12;
-               double e_Rm6 = four_eps_sigma6*R6;
+               e_Rm12 = four_eps_sigma12*R12;
+               e_Rm6 = four_eps_sigma6*R6;
                phi = e_Rm12 - e_Rm6 + *shift;
 
                dEidr = 6.0*(-2.0*e_Rm12 + e_Rm6 );
@@ -1433,12 +1453,12 @@ static int mi_opbc_h_compute(void* km)
             if (Rsqij < *cutsq)
             {
                /* compute pair potential */
-               double Rm2 = 1.0/Rsqij;
+               Rm2 = 1.0/Rsqij;
                R6 = Rm2*Rm2*Rm2;
                R12= R6*R6;
 
-               double e_Rm12 = four_eps_sigma12*R12;
-               double e_Rm6 = four_eps_sigma6*R6;
+               e_Rm12 = four_eps_sigma12*R12;
+               e_Rm6 = four_eps_sigma6*R6;
                phi = e_Rm12 - e_Rm6 + *shift;
                if (comp_force==1)
                {
@@ -1463,7 +1483,7 @@ static int mi_opbc_h_compute(void* km)
                if (comp_process_dEdr)
                {
                   R = sqrt(Rsqij);
-                  double DE = fac*R;
+                  DE = fac*R;
                   ier = KIM_API_process_dEdr(km, &DE, &R, &pdx, &i, &j);
                }
 
@@ -1533,10 +1553,14 @@ static int mi_opbc_f_compute(void* km)
    double* pdx = &(dx[0]);
    double four_eps_sigma6;
    double four_eps_sigma12;
+   double Rm2;
    double R6;
    double R12;
+   double e_Rm12;
+   double e_Rm6;
    int z, zi, zj;
    double fac = 0.0;
+   double DE;
    int zero = 0, one = 1;
 
    /* get buffer from KIM object */
@@ -1642,12 +1666,12 @@ static int mi_opbc_f_compute(void* km)
             if (Rsqij < *cutsq)
             {
                /* compute pair potential */
-               double Rm2 = 1.0/Rsqij;
+               Rm2 = 1.0/Rsqij;
                R6 = Rm2*Rm2*Rm2;
                R12= R6*R6;
 
-               double e_Rm12 = four_eps_sigma12*R12;
-               double e_Rm6 = four_eps_sigma6*R6;
+               e_Rm12 = four_eps_sigma12*R12;
+               e_Rm6 = four_eps_sigma6*R6;
                phi = e_Rm12 - e_Rm6 + *shift;
 
                dEidr = 3.0*(-2.0*e_Rm12 + e_Rm6 );
@@ -1723,12 +1747,12 @@ static int mi_opbc_f_compute(void* km)
             if (Rsqij < *cutsq)
             {
                /* compute pair potential */
-               double Rm2 = 1.0/Rsqij;
+               Rm2 = 1.0/Rsqij;
                R6 = Rm2*Rm2*Rm2;
                R12= R6*R6;
 
-               double e_Rm12 = four_eps_sigma12*R12;
-               double e_Rm6 = four_eps_sigma6*R6;
+               e_Rm12 = four_eps_sigma12*R12;
+               e_Rm6 = four_eps_sigma6*R6;
                phi = e_Rm12 - e_Rm6 + *shift;
                if (comp_force==1)
                {
@@ -1751,7 +1775,7 @@ static int mi_opbc_f_compute(void* km)
                if (comp_process_dEdr)
                {
                   R = sqrt(Rsqij);
-                  double DE = fac*R;
+                  DE = fac*R;
                   ier = KIM_API_process_dEdr(km, &DE, &R, &pdx, &i, &j);
                }
 
@@ -1813,10 +1837,14 @@ static int cluster_compute(void* km)
    double* pdx = &(dx[0]);
    double four_eps_sigma6;
    double four_eps_sigma12;
+   double Rm2;
    double R6;
    double R12;
+   double e_Rm12;
+   double e_Rm6;
    int zi, zj;
    double fac = 0.0;
+   double DE;
 
    /* get buffer from KIM object */
    buffer = (struct model_buffer*) KIM_API_get_model_buffer(pkim, &ier);
@@ -1896,12 +1924,12 @@ static int cluster_compute(void* km)
             if (Rsqij < *cutsq)
             {
                /* compute pair potential */
-               double Rm2 = 1.0/Rsqij;
+               Rm2 = 1.0/Rsqij;
                R6 = Rm2*Rm2*Rm2;
                R12= R6*R6;
 
-               double e_Rm12 = four_eps_sigma12*R12;
-               double e_Rm6 = four_eps_sigma6*R6;
+               e_Rm12 = four_eps_sigma12*R12;
+               e_Rm6 = four_eps_sigma6*R6;
                phi = e_Rm12 - e_Rm6 + *shift;
 
                dEidr = 6.0*(-2.0*e_Rm12 + e_Rm6 );
@@ -1967,12 +1995,12 @@ static int cluster_compute(void* km)
             if (Rsqij < *cutsq)
             {
                /* compute pair potential */
-               double Rm2 = 1.0/Rsqij;
+               Rm2 = 1.0/Rsqij;
                R6 = Rm2*Rm2*Rm2;
                R12= R6*R6;
 
-               double e_Rm12 = four_eps_sigma12*R12;
-               double e_Rm6 = four_eps_sigma6*R6;
+               e_Rm12 = four_eps_sigma12*R12;
+               e_Rm6 = four_eps_sigma6*R6;
                phi = e_Rm12 - e_Rm6 + *shift;
                if (comp_force==1)
                {
@@ -1996,7 +2024,7 @@ static int cluster_compute(void* km)
                if (comp_process_dEdr)
                {
                   R = sqrt(Rsqij);
-                  double DE = fac*R;
+                  DE = fac*R;
                   ier = KIM_API_process_dEdr(km, &DE, &R, &pdx, &i, &j);
                }
 

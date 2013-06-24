@@ -327,7 +327,7 @@ static int compute(void* km)
       }
    }
    else
-   {  // provide initialization even if not used
+   {  /* provide initialization even if not used */
       numberContrib = *nAtoms;
    }
 

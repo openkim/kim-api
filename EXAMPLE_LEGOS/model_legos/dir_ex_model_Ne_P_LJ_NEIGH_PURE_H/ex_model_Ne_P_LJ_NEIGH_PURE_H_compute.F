@@ -72,8 +72,8 @@ C-------Transferred variables
       DOUBLE PRECISION cutoff,sigma,epsilon
       INTEGER kim
       pointer (pkim,kim)
-      DOUBLE PRECISION x(3,natom),f(3,natom),ea(natom)
       INTEGER natom,ier,e_flag,f_flag,eper_flag
+      DOUBLE PRECISION x(3,natom),f(3,natom),ea(natom)
       DOUBLE PRECISION en
       INTEGER kimget_neigh
       EXTERNAL kimget_neigh
@@ -134,7 +134,7 @@ C     Increment iterator
          GOTO 140
       ENDIF
       IF (retcode.LT.KIM_STATUS_OK) THEN
-         WRITE(*,'("neigh iterator error:retcode",I5)'),retcode
+         WRITE(*,'("neigh iterator error:retcode",I5)') retcode
          ier = retcode
          RETURN
       ENDIF

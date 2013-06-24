@@ -80,13 +80,13 @@ program TEST_NAME_STR
   integer                                           :: num_types
   integer                                           :: num_NBCs
   character(len=4)                                  :: passfail
-  double precision,                                 :: forcediff
-  double precision,                                 :: forcediff_sumsq
-  double precision,                                 :: weight
-  double precision,                                 :: weight_sum
-  double precision,                                 :: alpha
-  double precision,                                 :: term
-  double precision,                                 :: term_max
+  double precision                                  :: forcediff
+  double precision                                  :: forcediff_sumsq
+  double precision                                  :: weight
+  double precision                                  :: weight_sum
+  double precision                                  :: alpha
+  double precision                                  :: term
+  double precision                                  :: term_max
   double precision,                     allocatable :: cluster_coords(:,:)
   double precision,                     allocatable :: cluster_disps(:,:)
   character(len=KIM_KEY_STRING_LENGTH), allocatable :: cluster_types(:)
