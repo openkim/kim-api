@@ -168,7 +168,7 @@ bool KIM_IOline:: getFields(char *inString){
 
 int KIM_IOline::get_rank(){
             char *tmp;
-            char shapetmp[strlen(shape)+1];
+            char* shapetmp = new char[strlen(shape)+1];
             strncpy(shapetmp,shape,strlen(shape)+1);
             if(shapetmp[0]=='[' && shapetmp[strlen(shape)-1]==']'){
                 tmp = strtok(shapetmp,"[,]");
@@ -178,14 +178,16 @@ int KIM_IOline::get_rank(){
                     tmp = strtok(NULL,"[,]");
                     c++;
                 }
+                delete [] shapetmp;
                 return c;
             }
             std::cout<<"* Error (KIM_IOline::get_rank): bad shape format"<<std::endl;
-             return 0;
+            delete [] shapetmp;
+            return 0;
  }
 int *  KIM_IOline::get_shape(){
 
-            char shapetmp[strlen(shape)+1];
+            char* shapetmp = new char[strlen(shape)+1];
             strncpy(shapetmp,shape,strlen(shape)+1);
             int rnk = get_rank();
             if (rnk < 1) return NULL;
@@ -198,10 +200,11 @@ int *  KIM_IOline::get_shape(){
                 tmp = strtok(NULL,"[,]");
                 i++;
             }
+            delete [] shapetmp;
             return shp;
  }
 int * KIM_IOline::get_shape(int natoms, int ntypes){
-            char shapetmp[strlen(shape)+1];
+            char* shapetmp = new char[strlen(shape)+1];
             char tmpstring[128];
             strncpy(shapetmp,shape,strlen(shape)+1);
             int rnk = get_rank();
@@ -221,6 +224,7 @@ int * KIM_IOline::get_shape(int natoms, int ntypes){
                 tmp = strtok(NULL,"[,]");
                 i++;
             }
+            delete [] shapetmp;
             return shp;
 }
 
@@ -240,17 +244,26 @@ bool KIM_IOline::isitsizedefined(){
              return false;
 }
 bool KIM_IOline:: isitperatom(){
-             char shapetmp[strlen(shape)+1];
+             char* shapetmp = new char[strlen(shape)+1];
              char tmpstring[128];
              strncpy(shapetmp,shape,strlen(shape)+1);
              char *tmp =strtok(shapetmp,"[,]");
-             if(tmp==NULL)return false;
+             if(tmp==NULL)
+             {
+                delete [] shapetmp;
+                return false;
+             }
              while(tmp!=NULL){
                 strcpy(tmpstring,tmp);
                 strip(tmpstring);
-                if(strcmp(tmpstring,"numberOfParticles")==0) return true;
+                if(strcmp(tmpstring,"numberOfParticles")==0)
+                {
+                   delete [] shapetmp;
+                   return true;
+                }
                 tmp = strtok(NULL,"[,]");
              }
+             delete [] shapetmp;
              return false;
 }
 bool KIM_IOline::isitoptional(){
@@ -537,7 +550,6 @@ int KIMBaseElement::getelemsize(char *tp, bool& success){
             char realkey[KIM_KEY_STRING_LENGTH]="real";      //key defenitions
             char real8key[KIM_KEY_STRING_LENGTH]="real*8";
             char integerkey[KIM_KEY_STRING_LENGTH]="integer";
-            char integer8key[KIM_KEY_STRING_LENGTH]="integer*8";
             char ptrkey[KIM_KEY_STRING_LENGTH]="pointer";
             char methodkey[KIM_KEY_STRING_LENGTH]="method";
             char flagkey[KIM_KEY_STRING_LENGTH]="flag";// add here to expand...
@@ -546,8 +558,6 @@ int KIMBaseElement::getelemsize(char *tp, bool& success){
                 return(sizeof(float));
             }else if (strcmp(integerkey,tp)==0){
                 return(sizeof(int));
-            } else if (strcmp(integer8key,tp)==0){
-                return(sizeof(long long));
             }else if (strcmp(ptrkey,tp)==0){
                 return(sizeof(int *));
             }else if (strcmp(real8key,tp)==0){
@@ -560,7 +570,7 @@ int KIMBaseElement::getelemsize(char *tp, bool& success){
                std::cout << "* Error (KIMBaseElement::getelemsize): Unknown Type in KIM descriptor file line." << std::endl
                     << "         `" << tp <<"' is not one of: " << realkey << ", "
                     << real8key << ", " << integerkey << ", " << ptrkey << ", "
-                    << integer8key << ", " << flagkey << std::endl;
+                    << flagkey << std::endl;
                success = false;
                return -1;
             }
@@ -601,8 +611,6 @@ std::ostream &operator<<(std::ostream &stream, KIMBaseElement a){
         for(int i=0;i<a.size;i++) stream<< ((float*)(a.data))[i]<<" ";
     }else if(strcmp(a.type,"integer")==0){
         for(int i=0;i<a.size;i++) stream<< ((int*)(a.data))[i]<<" ";
-    }else if(strcmp(a.type,"integer*8")==0){
-        for(int i=0;i<a.size;i++) stream<< ((intptr_t*)(a.data))[i]<<" ";
     }else{
         stream<<"address:"<<(intptr_t)a.data;
     }

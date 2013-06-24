@@ -176,7 +176,6 @@ $
 #                           KIM string     C/C++ type      Fortran type
 #
 #                           `integer'      int             integer
-#                           `integer*8'    long long       integer*8
 #                           `real'         float           real
 #                           `real*8'       double          real*8
 #                           `method'       void *          cray pointer
