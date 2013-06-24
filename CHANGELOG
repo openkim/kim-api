@@ -56,7 +56,9 @@
   makes the progress easier to understand.  To see the actual build commands
   use `make -n'.
 
-* Now use -g and -Wall by default for all compilations.
+* Removed `integer*8' and changed `real' and `real*8' to `float' and `double'.
+
+* Now use -g, -Wall, and -pedantic by default for all compilations.
 
 * Changed model_init() function conventions to simplify the scheme.  This also
   resulted in the removal of the Model or Test name from the descriptor files.
