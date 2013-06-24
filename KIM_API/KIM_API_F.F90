@@ -115,14 +115,14 @@ module kim_api
         integer function kim_api_process_dedr_f(pkim,de,r,dx,i,j)
           use kim_kinds
                 integer(kind=kim_intptr) :: pkim,dx
-                real*8 :: de,r
+                double precision :: de,r
                 integer ::i,j
         end function kim_api_process_dedr_f
 
         integer function kim_api_process_d2edr2_f(pkim,de,r,dx,i,j)
           use kim_kinds
                 integer(kind=kim_intptr) :: pkim,dx,r,i,j
-                real*8 :: de
+                double precision :: de
         end function kim_api_process_d2edr2_f
 
 
@@ -323,7 +323,8 @@ module kim_api
                 integer(kind=kim_intptr) :: kimmdl
         end function kim_api_model_init_f
 
-        real*8 function kim_api_get_scale_conversion(u_from,u_to,error)
+        double precision function kim_api_get_scale_conversion(u_from,u_to, &
+                                                               error)
           use kim_kinds
                 integer(kind=kim_intptr) :: u_from,u_to
                 integer:: error
@@ -355,7 +356,8 @@ module kim_api
 
         function kim_api_get_unit_temperature_f(kimmdl,error)
           use kim_kinds
-                integer(kind=kim_intptr) :: kimmdl,kim_api_get_unit_temperature_f
+                integer(kind=kim_intptr) :: kimmdl, &
+                     kim_api_get_unit_temperature_f
                 integer ::error
         end function kim_api_get_unit_temperature_f
 
@@ -365,11 +367,14 @@ module kim_api
                 integer ::error
         end function kim_api_get_unit_time_f
 
-        real*8 function kim_api_convert_to_act_unit(kimmdl,length,energy,charge,temperature,time, &
-                 length_exponent, energy_exponent, charge_exponent, temperature_exponent, time_exponent, error)
+        double precision function kim_api_convert_to_act_unit(kimmdl,length, &
+             energy,charge,temperature,time, length_exponent, energy_exponent, &
+             charge_exponent, temperature_exponent, time_exponent, error)
           use kim_kinds
-             integer(kind=kim_intptr) ::kimmdl,length,energy,charge,temperature,time
-             real*8:: length_exponent, energy_exponent, charge_exponent, temperature_exponent, time_exponent
+             integer(kind=kim_intptr) ::kimmdl,length,energy,charge, &
+                  temperature,time
+             double precision :: length_exponent, energy_exponent, &
+                  charge_exponent, temperature_exponent, time_exponent
              integer::error
         end function kim_api_convert_to_act_unit
 
@@ -406,16 +411,16 @@ module kim_api
     subroutine KIM_to_F90_real_array_2d(ctypeArray,ArrayWithDescriptor,n,m)
         implicit none
         integer  :: n,m
-        real*8,target :: ctypeArray(n,m)
-        real*8,pointer ::ArrayWithDescriptor(:,:)
+        double precision, target :: ctypeArray(n,m)
+        double precision, pointer ::ArrayWithDescriptor(:,:)
         ArrayWithDescriptor=>ctypeArray
     end subroutine KIM_to_F90_real_array_2d
 
         subroutine KIM_to_F90_real_array_3d(ctypeArray,ArrayWithDescriptor,n,m,l)
         implicit none
         integer  :: n,m,l
-        real*8,target :: ctypeArray(n,m,l)
-        real*8,pointer ::ArrayWithDescriptor(:,:,:)
+        double precision, target :: ctypeArray(n,m,l)
+        double precision, pointer ::ArrayWithDescriptor(:,:,:)
         ArrayWithDescriptor=>ctypeArray
     end subroutine KIM_to_F90_real_array_3d
 
@@ -447,8 +452,8 @@ module kim_api
     subroutine KIM_to_F90_real_array_1d(ctypeArray,ArrayWithDescriptor,n)
         implicit none
         integer :: n
-        real*8,target :: ctypeArray(n)
-        real*8,pointer ::ArrayWithDescriptor(:)
+        double precision, target :: ctypeArray(n)
+        double precision, pointer ::ArrayWithDescriptor(:)
         ArrayWithDescriptor=>ctypeArray
     end subroutine KIM_to_F90_real_array_1d
 
@@ -541,7 +546,7 @@ module kim_api
             kim_api_get_data_f = kim_api_get_data(kimmdl,pstr,error)
         end function kim_api_get_data_f
 
-        real*8 function kim_api_get_scale_conversion_f(from,to,error)
+        double precision function kim_api_get_scale_conversion_f(from,to,error)
                 integer:: error
                 character (len=*) ::from,to
                 character (len=KIM_KEY_STRING_LENGTH) ::sfrom,sto
@@ -550,13 +555,16 @@ module kim_api
                 kim_api_get_scale_conversion_f = kim_api_get_scale_conversion(loc(sfrom),loc(sto),error)
         end function kim_api_get_scale_conversion_f
 
-        real*8 function kim_api_convert_to_act_unit_f(kimmdl,length,energy,charge,temperature,time, &
-                 length_exponent, energy_exponent, charge_exponent, temperature_exponent, time_exponent, error)
+        double precision function kim_api_convert_to_act_unit_f(kimmdl,length, &
+             energy,charge,temperature,time, length_exponent, energy_exponent, &
+             charge_exponent, temperature_exponent, time_exponent, error)
                 integer::error
                 integer(kind=kim_intptr) :: kimmdl
-                real*8 ::length_exponent, energy_exponent, charge_exponent, temperature_exponent, time_exponent
+                double precision ::length_exponent, energy_exponent, &
+                     charge_exponent, temperature_exponent, time_exponent
                 character (len=*) ::length,energy,charge,temperature,time
-                character (len=KIM_KEY_STRING_LENGTH) ::slength,senergy,scharge,stemperature,stime
+                character (len=KIM_KEY_STRING_LENGTH) ::slength,senergy, &
+                     scharge,stemperature,stime
                 slength = attachnull(trim(length))
                 senergy = attachnull(trim(energy))
                 scharge = attachnull(trim(charge))

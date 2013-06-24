@@ -90,9 +90,9 @@ numberParticleTypes         integer      none                []
 
 particleTypes               integer      none                [numberOfParticles]
 
-coordinates                 real*8       length              [numberOfParticles,3]
+coordinates                 double       length              [numberOfParticles,3]
 
-boxSideLengths              real*8       length              [3]                optional
+boxSideLengths              double       length              [3]                optional
 
 get_neigh                   method       none                []                 optional
 
@@ -113,27 +113,27 @@ compute                     method       none                []
 
 reinit                      method       none                []                 optional
 
-cutoff                      real*8       length              []
+cutoff                      double       length              []
 
-energy                      real*8       energy              []                 optional
+energy                      double       energy              []                 optional
 
-forces                      real*8       force               [numberOfParticles,3]  optional
+forces                      double       force               [numberOfParticles,3]  optional
 
-particleEnergy              real*8       energy              [numberOfParticles]    optional
+particleEnergy              double       energy              [numberOfParticles]    optional
 
 
 #######################################################################################################
 MODEL_PARAMETERS:
 # Name                      Type         Unit                Shape              Requirements
 
-PARAM_FREE_cutoff           real*8       length              []
+PARAM_FREE_cutoff           double       length              []
 
-PARAM_FREE_epsilon          real*8       energy              []
+PARAM_FREE_epsilon          double       energy              []
 
-PARAM_FREE_C                real*8       length^-1           []
+PARAM_FREE_C                double       length^-1           []
 
-PARAM_FREE_Rzero            real*8       length              []
+PARAM_FREE_Rzero            double       length              []
 
-PARAM_FIXED_cutsq           real*8       length^2            []
+PARAM_FIXED_cutsq           double       length^2            []
 
-PARAM_FIXED_shift           real*8       energy              []
+PARAM_FIXED_shift           double       energy              []

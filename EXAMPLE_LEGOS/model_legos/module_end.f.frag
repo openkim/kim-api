@@ -41,16 +41,16 @@
     integer(kind=kim_intptr), intent(in) :: pkim
 
     !-- Local variables
-    real*8 model_cutoff;  pointer(pcutoff,model_cutoff)
-    real*8 model_epsilon; pointer(pepsilon,model_epsilon)
-    real*8 model_sigma;   pointer(psigma,model_sigma)
-    real*8 model_Pcutoff; pointer(pparamcut,model_Pcutoff)
-    real*8 model_cutnorm; pointer(pcutnorm,model_cutnorm)
-    real*8 model_A;       pointer(pA,model_A)
-    real*8 model_B;       pointer(pB,model_B)
-    real*8 model_C;       pointer(pC,model_C)
-    real*8 model_sigmasq; pointer(psigmasq,model_sigmasq)
-    real*8 model_cutsq;   pointer(pcutsq,model_cutsq)
+    double precision model_cutoff;  pointer(pcutoff,model_cutoff)
+    double precision model_epsilon; pointer(pepsilon,model_epsilon)
+    double precision model_sigma;   pointer(psigma,model_sigma)
+    double precision model_Pcutoff; pointer(pparamcut,model_Pcutoff)
+    double precision model_cutnorm; pointer(pcutnorm,model_cutnorm)
+    double precision model_A;       pointer(pA,model_A)
+    double precision model_B;       pointer(pB,model_B)
+    double precision model_C;       pointer(pC,model_C)
+    double precision model_sigmasq; pointer(psigmasq,model_sigmasq)
+    double precision model_cutsq;   pointer(pcutsq,model_cutsq)
     integer idum
 
     ! Get (changed) parameters from KIM object ---------------------------------
@@ -112,15 +112,15 @@
     integer(kind=kim_intptr), intent(in) :: pkim
 
     !-- Local variables
-    real*8 model_epsilon; pointer(pepsilon,model_epsilon)
-    real*8 model_sigma;   pointer(psigma,model_sigma)
-    real*8 model_Pcutoff; pointer(pparamcut,model_Pcutoff)
-    real*8 model_cutnorm; pointer(pcutnorm,model_cutnorm)
-    real*8 model_A;       pointer(pA,model_A)
-    real*8 model_B;       pointer(pB,model_B)
-    real*8 model_C;       pointer(pC,model_C)
-    real*8 model_sigmasq; pointer(psigmasq,model_sigmasq)
-    real*8 model_cutsq;   pointer(pcutsq,model_cutsq)
+    double precision model_epsilon; pointer(pepsilon,model_epsilon)
+    double precision model_sigma;   pointer(psigma,model_sigma)
+    double precision model_Pcutoff; pointer(pparamcut,model_Pcutoff)
+    double precision model_cutnorm; pointer(pcutnorm,model_cutnorm)
+    double precision model_A;       pointer(pA,model_A)
+    double precision model_B;       pointer(pB,model_B)
+    double precision model_C;       pointer(pC,model_C)
+    double precision model_sigmasq; pointer(psigmasq,model_sigmasq)
+    double precision model_cutsq;   pointer(pcutsq,model_cutsq)
     integer idum
 
 
@@ -172,16 +172,16 @@ integer function model_init(pkim)
 
   !-- Local variables
   integer(kind=kim_intptr), parameter :: one=1
-  real*8 model_cutoff;  pointer(pcutoff,model_cutoff)
-  real*8 model_epsilon; pointer(pepsilon,model_epsilon)
-  real*8 model_sigma;   pointer(psigma,model_sigma)
-  real*8 model_Pcutoff; pointer(pparamcut,model_Pcutoff)
-  real*8 model_cutnorm; pointer(pcutnorm,model_cutnorm)
-  real*8 model_A;       pointer(pA,model_A)
-  real*8 model_B;       pointer(pB,model_B)
-  real*8 model_C;       pointer(pC,model_C)
-  real*8 model_sigmasq; pointer(psigmasq,model_sigmasq)
-  real*8 model_cutsq;   pointer(pcutsq,model_cutsq)
+  double precision model_cutoff;  pointer(pcutoff,model_cutoff)
+  double precision model_epsilon; pointer(pepsilon,model_epsilon)
+  double precision model_sigma;   pointer(psigma,model_sigma)
+  double precision model_Pcutoff; pointer(pparamcut,model_Pcutoff)
+  double precision model_cutnorm; pointer(pcutnorm,model_cutnorm)
+  double precision model_A;       pointer(pA,model_A)
+  double precision model_B;       pointer(pB,model_B)
+  double precision model_C;       pointer(pC,model_C)
+  double precision model_sigmasq; pointer(psigmasq,model_sigmasq)
+  double precision model_cutsq;   pointer(pcutsq,model_cutsq)
   integer ier, idum
 
   ! store pointers in KIM object
@@ -205,34 +205,34 @@ integer function model_init(pkim)
   CUTOFF_VALUE_STR
 
   ! Allocate memory for stuff and store values
-  psigma = malloc(one*8) ! 8 is the size of a real*8
+  psigma = malloc(one*8) ! 8 is the size of a double precision
   SIGMA_VALUE_STR
 
-  pepsilon = malloc(one*8) ! 8 is the size of a real*8
+  pepsilon = malloc(one*8) ! 8 is the size of a double precision
   EPSILON_VALUE_STR
 
-  pparamcut = malloc(one*8) ! 8 is the size of a real*8
+  pparamcut = malloc(one*8) ! 8 is the size of a double precision
   model_Pcutoff = model_cutoff
 
-  pcutnorm = malloc(one*8) ! 8 is the size of a real*8
+  pcutnorm = malloc(one*8) ! 8 is the size of a double precision
   model_cutnorm = model_cutoff/model_sigma
 
-  pA = malloc(one*8) ! 8 is the size of a real*8
+  pA = malloc(one*8) ! 8 is the size of a double precision
   model_A = 12.d0*model_epsilon*(-26.d0 + 7.d0*model_cutnorm**6)/ &
        (model_cutnorm**14*model_sigma**2)
 
-  pB = malloc(one*8) ! 8 is the size of a real*8
+  pB = malloc(one*8) ! 8 is the size of a double precision
   model_B = 96.d0*model_epsilon*(7.d0-2.d0*model_cutnorm**6)/     &
        (model_cutnorm**13*model_sigma)
 
-  pC = malloc(one*8) ! 8 is the size of a real*8
+  pC = malloc(one*8) ! 8 is the size of a double precision
   model_C = 28.d0*model_epsilon*(-13.d0+4.d0*model_cutnorm**6)/   &
        (model_cutnorm**12)
 
-  psigmasq = malloc(one*8) ! 8 is the size of a real*8
+  psigmasq = malloc(one*8) ! 8 is the size of a double precision
   model_sigmasq = model_sigma**2
 
-  pcutsq = malloc(one*8) ! 8 is the size of a real*8
+  pcutsq = malloc(one*8) ! 8 is the size of a double precision
   model_cutsq = model_cutoff**2
 
 

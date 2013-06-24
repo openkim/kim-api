@@ -188,25 +188,25 @@ integer, allocatable, target :: nei1atom_substitute(:)
 integer :: idum
 integer(kind=kim_intptr):: buffer(1); pointer(pbuffer, buffer)
 integer bufind(1);                    pointer(pbufind, bufind)
-real*8  bufparam(1);                  pointer(pbufparam, bufparam)
+double precision  bufparam(1);        pointer(pbufparam, bufparam)
 
 !-- KIM variables
-real*8  model_cutoff;         pointer(pmodel_cutoff, model_cutoff)  ! cutoff radius
-real*8  model_cutsq                                                 ! cutoff radius squared
-real*8  model_<FILL parameter 1>
-real*8  model_<FILL parameter 2>
+double precision  model_cutoff;         pointer(pmodel_cutoff, model_cutoff)  ! cutoff radius
+double precision  model_cutsq                                                 ! cutoff radius squared
+double precision  model_<FILL parameter 1>
+double precision  model_<FILL parameter 2>
 ! FILL as many parameter declarations as necessary
-integer N;                    pointer(pN,N)
-real*8  energy;               pointer(penergy,energy)
-real*8  coordum(DIM,1);       pointer(pcoor,coordum)
-real*8  forcedum(DIM,1);      pointer(pforce,forcedum)
-real*8  enepotdum(1);         pointer(penepot,enepotdum)
-real*8  boxSideLengths(DIM);  pointer(pboxSideLengths,boxSideLengths)
-real*8  Rij_list(DIM,1);      pointer(pRij_list,Rij_list)
-integer numContrib;           pointer(pnumContrib,numContrib)
-integer nei1atom(1);          pointer(pnei1atom,nei1atom)
-integer particleTypes(1);     pointer(pparticleTypes,particleTypes)
-real*8, pointer :: coor(:,:),force(:,:),ene_pot(:)
+integer N;                              pointer(pN,N)
+double precision  energy;               pointer(penergy,energy)
+double precision  coordum(DIM,1);       pointer(pcoor,coordum)
+double precision  forcedum(DIM,1);      pointer(pforce,forcedum)
+double precision  enepotdum(1);         pointer(penepot,enepotdum)
+double precision  boxSideLengths(DIM);  pointer(pboxSideLengths,boxSideLengths)
+double precision  Rij_list(DIM,1);      pointer(pRij_list,Rij_list)
+integer numContrib;                     pointer(pnumContrib,numContrib)
+integer nei1atom(1);                    pointer(pnei1atom,nei1atom)
+integer particleTypes(1);               pointer(pparticleTypes,particleTypes)
+double precision, pointer :: coor(:,:),force(:,:),ene_pot(:)
 integer IterOrLoca
 integer HalfOrFull
 integer NBC
@@ -538,14 +538,14 @@ double precision energy_at_cutoff
 integer idum
 integer(kind=kim_intptr):: buffer(1); pointer(pbuffer, buffer)
 integer bufind(1);                    pointer(pbufind, bufind)
-real*8  bufparam(1);                  pointer(pbufparam, bufparam)
+double precision  bufparam(1);        pointer(pbufparam, bufparam)
 
 !-- KIM variables
-real*8  cutoff; pointer(pcutoff,cutoff)
-real*8  model_cutoff
-real*8  model_cutsq
-real*8  model_<FILL parameter 1>
-real*8  model_<FILL parameter 2>
+double precision  cutoff; pointer(pcutoff,cutoff)
+double precision  model_cutoff
+double precision  model_cutsq
+double precision  model_<FILL parameter 1>
+double precision  model_<FILL parameter 2>
 ! FILL as many parameter declarations as necessary
 
 ! get model buffer from KIM object
@@ -599,7 +599,7 @@ integer(kind=kim_intptr), intent(in) :: pkim
 integer idum
 integer(kind=kim_intptr):: buffer(1); pointer(pbuffer, buffer)
 integer bufind(1);                    pointer(pbufind, bufind)
-real*8  bufparam(1);                  pointer(pbufparam, bufparam)
+double precision  bufparam(1);        pointer(pbufparam, bufparam)
 
 ! get model buffer from KIM object
 pbuffer = kim_api_get_model_buffer_f(pkim, destroy)
@@ -645,7 +645,7 @@ character(len=nmstrlen) paramfile_names(numparamfiles)
 integer i,j,ier, idum
 integer(kind=kim_intptr):: buffer(1); pointer(pbuffer, buffer)
 integer bufind(1);                    pointer(pbufind, bufind)
-real*8  bufparam(1);                  pointer(pbufparam, bufparam)
+double precision  bufparam(1);        pointer(pbufparam, bufparam)
 character*80 :: error_message
 ! define variables for all model parameters to be read in
 double precision in_cutoff
@@ -655,8 +655,8 @@ double precision in_<FILL parameter 2>
 double precision in_<FILL last parameter>
 
 !-- KIM variables
-real*8  cutoff;          pointer(pcutoff,cutoff)
-character*64 NBC_Method; pointer(pNBC_Method,NBC_Method)
+double precision  cutoff; pointer(pcutoff,cutoff)
+character*64 NBC_Method;  pointer(pNBC_Method,NBC_Method)
 
 !
 ! generic code to process model parameter file names from byte string

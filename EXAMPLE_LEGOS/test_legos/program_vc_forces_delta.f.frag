@@ -61,35 +61,35 @@ program vc_forces_delta
   use KIM_API
   implicit none
 
-  integer, external  :: get_neigh_no_Rij
-  integer, external  :: get_neigh_Rij
-  integer, parameter :: nCellsPerSide  = 2
-  integer, parameter :: DIM            = 3
-  real*8,  parameter :: cutpad         = 0.75d0
-  integer, parameter :: max_types      = 30     ! most species a Model can support
-  integer, parameter :: max_NBCs       = 20     ! maximum number of NBC methods
-  real*8,  parameter :: eps_prec       = epsilon(1.d0)
-  integer, parameter :: ndisp          = 100    ! number of displacements in one test
-  real*8   FCCspacing
+  integer,           external  :: get_neigh_no_Rij
+  integer,           external  :: get_neigh_Rij
+  integer,           parameter :: nCellsPerSide  = 2
+  integer,           parameter :: DIM            = 3
+  double precision,  parameter :: cutpad         = 0.75d0
+  integer,           parameter :: max_types      = 30 ! most species a Model can support
+  integer,           parameter :: max_NBCs       = 20 ! maximum number of NBC methods
+  double precision,  parameter :: eps_prec       = epsilon(1.d0)
+  integer, parameter :: ndisp          = 100  ! number of displacements in one test
+  double precision   FCCspacing
 
   integer, parameter :: &
        N = 4*(nCellsPerSide)**3 + 6*(nCellsPerSide)**2 + 3*(nCellsPerSide) + 1
   integer(kind=kim_intptr), parameter  :: SizeOne = 1
 
-  real*8, allocatable                  :: forces_old(:,:)
+  double precision, allocatable        :: forces_old(:,:)
   character(len=3)                     :: model_types(max_types)
   character(len=KIM_KEY_STRING_LENGTH) :: model_NBCs(max_NBCs)
   integer                              :: num_types
   integer                              :: num_NBCs
   integer                              :: nfail
   character(len=4)                     :: passfail
-  real*8                               :: energy_old
-  real*8                               :: abs_mean_delta
-  real*8                               :: error
-  real*8                               :: abs_mean_error
-  real*8,dimension(100)                :: deltas, deltas_estimated
-  real*8,                  allocatable :: cluster_coords(:,:)
-  real*8,                  allocatable :: cluster_disps(:,:)
+  double precision                     :: energy_old
+  double precision                     :: abs_mean_delta
+  double precision                     :: error
+  double precision                     :: abs_mean_error
+  double precision,dimension(100)      :: deltas, deltas_estimated
+  double precision,        allocatable :: cluster_coords(:,:)
+  double precision,        allocatable :: cluster_disps(:,:)
   character(len=3),        allocatable :: cluster_types(:)
   integer I,J,type,idisp
 
@@ -115,16 +115,16 @@ program vc_forces_delta
   integer numberParticleTypes; pointer(pnparticleTypes,numberParticleTypes)
   integer particleTypesdum(1); pointer(pparticleTypesdum,particleTypesdum)
 
-  real*8 cutoff;               pointer(pcutoff,cutoff)
-  real*8 energy;               pointer(penergy,energy)
-  real*8 coordum(DIM,1);       pointer(pcoor,coordum)
-  real*8 forcesdum(DIM,1);     pointer(pforces,forcesdum)
-  real*8 boxSideLengths(DIM);  pointer(pboxSideLengths,boxSideLengths)
-  real*8, pointer  :: coords(:,:), forces(:,:)
+  double precision cutoff;               pointer(pcutoff,cutoff)
+  double precision energy;               pointer(penergy,energy)
+  double precision coordum(DIM,1);       pointer(pcoor,coordum)
+  double precision forcesdum(DIM,1);     pointer(pforces,forcesdum)
+  double precision boxSideLengths(DIM);  pointer(pboxSideLengths,boxSideLengths)
+  double precision, pointer  :: coords(:,:), forces(:,:)
   integer, pointer :: particleTypes(:)
   integer middleDum
   character(len=10000) :: test_descriptor_string
-  real*8 rnd
+  double precision rnd
 
   ! Initialize error flag
   ier = KIM_STATUS_OK

@@ -144,14 +144,14 @@ ex_test_Al_free_cluster: $(COMMON_FRAGMENTS)                    \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "numberContributingParticles integer      none                []"                                >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
-	echo "boxSideLengths              real*8       length              [3]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "boxSideLengths              double       length              [3]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
-	echo "forces                      real*8       force               [numberOfParticles,3]"             >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "forces                      double       force               [numberOfParticles,3]"             >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
-	echo "virial                      real*8       energy              [6]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "virial                      double       energy              [6]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
         # make .F90 file in the directory
 	$(F_CAT) program_free_cluster.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Al/g' \
@@ -206,7 +206,7 @@ ex_test_Al_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "numberContributingParticles integer      none                []"                                >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
-	echo "boxSideLengths              real*8       length              [3]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "boxSideLengths              double       length              [3]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
@@ -379,7 +379,7 @@ ex_test_Ar_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "numberContributingParticles integer      none                []"                                >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
-	echo "boxSideLengths              real*8       length              [3]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "boxSideLengths              double       length              [3]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
@@ -545,9 +545,9 @@ ex_test_Ar_free_cluster_CLUSTER_C: $(COMMON_FRAGMENTS)                 \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
-	echo "forces                      real*8       force               [numberOfParticles,3]"             >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "forces                      double       force               [numberOfParticles,3]"             >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
-	echo "virial                      real*8       energy              [6]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "virial                      double       energy              [6]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
         # make .c file in the directory
 	$(C_CAT) program_free_cluster_CLUSTER.c.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
@@ -581,9 +581,9 @@ ex_test_Ar_free_cluster_CLUSTER_F90: $(COMMON_FRAGMENTS)                 \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
-	echo "forces                      real*8       force               [numberOfParticles,3]"             >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "forces                      double       force               [numberOfParticles,3]"             >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
-	echo "virial                      real*8       energy              [6]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "virial                      double       energy              [6]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
         # make .F90 file in the directory
 	$(F_CAT) program_free_cluster_CLUSTER.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
@@ -617,9 +617,9 @@ ex_test_Ar_free_cluster_CLUSTER_memory_F90: $(COMMON_FRAGMENTS)                 
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
-	echo "forces                      real*8       force               [numberOfParticles,3]"             >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "forces                      double       force               [numberOfParticles,3]"             >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
-	echo "virial                      real*8       energy              [6]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "virial                      double       energy              [6]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
         # make .F90 file in the directory
 	$(F_CAT) program_free_cluster_CLUSTER_memory.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
@@ -672,14 +672,14 @@ ex_test_Ar_free_cluster: $(COMMON_FRAGMENTS)                    \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "numberContributingParticles integer      none                []"                                >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
-	echo "boxSideLengths              real*8       length              [3]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "boxSideLengths              double       length              [3]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
-	echo "forces                      real*8       force               [numberOfParticles,3]"             >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "forces                      double       force               [numberOfParticles,3]"             >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
-	echo "virial                      real*8       energy              [6]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "virial                      double       energy              [6]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
         # make .F90 file in the directory
 	$(F_CAT) program_free_cluster.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
@@ -743,14 +743,14 @@ ex_test_Cu_free_cluster: $(COMMON_FRAGMENTS)                    \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "numberContributingParticles integer      none                []"                                >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
-	echo "boxSideLengths              real*8       length              [3]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "boxSideLengths              double       length              [3]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
-	echo "forces                      real*8       force               [numberOfParticles,3]"             >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "forces                      double       force               [numberOfParticles,3]"             >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
-	echo "virial                      real*8       energy              [6]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "virial                      double       energy              [6]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
         # make .F90 file in the directory
 	$(F_CAT) program_free_cluster.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Cu/g' \
@@ -814,14 +814,14 @@ ex_test_Ne_free_cluster: $(COMMON_FRAGMENTS)                    \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "numberContributingParticles integer      none                []"                                >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
-	echo "boxSideLengths              real*8       length              [3]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "boxSideLengths              double       length              [3]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
-	echo "forces                      real*8       force               [numberOfParticles,3]"             >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "forces                      double       force               [numberOfParticles,3]"             >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
-	echo "virial                      real*8       energy              [6]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "virial                      double       energy              [6]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
         # make .F90 file in the directory
 	$(F_CAT) program_free_cluster.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ne/g' \
@@ -885,14 +885,14 @@ ex_test_Ne_free_cluster_SI: $(COMMON_FRAGMENTS)                    \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "numberContributingParticles integer      none                []"                                >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
-	echo "boxSideLengths              real*8       length              [3]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "boxSideLengths              double       length              [3]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
-	echo "forces                      real*8       force               [numberOfParticles,3]"             >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "forces                      double       force               [numberOfParticles,3]"             >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
-	echo "virial                      real*8       energy              [6]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "virial                      double       energy              [6]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
         # make .F90 file in the directory
 	$(F_CAT) program_free_cluster.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ne/g' \
@@ -955,17 +955,17 @@ ex_test_Ne_free_cluster_stiff: $(COMMON_FRAGMENTS)                    \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "numberContributingParticles integer      none                []"                                >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
-	echo "boxSideLengths              real*8       length              [3]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "boxSideLengths              double       length              [3]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
-	echo "forces                      real*8       force               [numberOfParticles,3]"             >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "forces                      double       force               [numberOfParticles,3]"             >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
-	echo "hessian                     real*8       pressure            [numberOfParticles,numberOfParticles,3,3]" \
+	echo "hessian                     double       pressure            [numberOfParticles,numberOfParticles,3,3]" \
                                                                                                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
-	echo "virial                      real*8       energy              [6]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
+	echo "virial                      double       energy              [6]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
         # make .F90 file in the directory
 	$(F_CAT) program_free_cluster_stiff.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ne/g' \

@@ -45,9 +45,9 @@ module ex_model_Ne_P_LJ_NEIGH_PURE_H
   public calculate_wrap_f77
 
   !-- LJ parameters
-  real*8, parameter :: model_cutoff  = 8.1500d0
-  real*8, parameter :: sigma         = 2.7400d0
-  real*8, parameter :: epsilon       = 0.0031d0
+  double precision, parameter :: model_cutoff  = 8.1500d0
+  double precision, parameter :: sigma         = 2.7400d0
+  double precision, parameter :: epsilon       = 0.0031d0
 
 contains
 
@@ -65,13 +65,13 @@ contains
     integer(kind=kim_intptr), intent(in)  :: pkim
 
     !-- Local variables
-    real*8 x(3,1);           pointer(px,x)                 ! position
-    real*8 f(3,1);           pointer(pf,f)                 ! force
-    real*8 ea(1);            pointer(pea,ea)               ! energy per atom
-    real*8 potenergy;        pointer(ppotenergy,potenergy) ! total energy
-    integer attypes(1);      pointer(pattypes,attypes)     ! atom types
-    integer numberofatoms; pointer(pnumberofatoms,numberofatoms)
-    integer numContrib; pointer(pnumContrib,numContrib)
+    double precision x(3,1);    pointer(px,x)                 ! position
+    double precision f(3,1);    pointer(pf,f)                 ! force
+    double precision ea(1);     pointer(pea,ea)               ! energy per atom
+    double precision potenergy; pointer(ppotenergy,potenergy) ! total energy
+    integer attypes(1);         pointer(pattypes,attypes)     ! atom types
+    integer numberofatoms;      pointer(pnumberofatoms,numberofatoms)
+    integer numContrib;         pointer(pnumContrib,numContrib)
     integer i, e_flag, f_flag, eper_flag, idum
     external calculate
 
@@ -137,7 +137,7 @@ integer function model_init(pkim)
   integer(kind=kim_intptr) one
 
   !-- KIM variables
-  real*8 cutoff;  pointer(pcutoff,cutoff)  ! cutoff radius
+  double precision cutoff;  pointer(pcutoff,cutoff)  ! cutoff radius
 
   ! store pointer to compute function in KIM object
   one=1

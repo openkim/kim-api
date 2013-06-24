@@ -73,7 +73,7 @@ numberParticleTypes         integer      none                []
 
 particleTypes               integer      none                [numberOfParticles]
 
-coordinates                 real*8       length              [numberOfParticles,3]
+coordinates                 double       length              [numberOfParticles,3]
 
 get_neigh                   method       none                []
 
@@ -90,13 +90,13 @@ compute                     method       none                []
 
 reinit                      method       none                []                 optional
 
-cutoff                      real*8       length              []
+cutoff                      double       length              []
 
-energy                      real*8       energy              []                 optional
+energy                      double       energy              []                 optional
 
-forces                      real*8       force               [numberOfParticles,3]  optional
+forces                      double       force               [numberOfParticles,3]  optional
 
-particleEnergy              real*8       energy              [numberOfParticles]    optional
+particleEnergy              double       energy              [numberOfParticles]    optional
 
 
 #######################################################################################################

@@ -6,6 +6,6 @@ destroy                     method       none                []
 
 compute                     method       none                []
 
-cutoff                      real*8       length              []
+cutoff                      double       length              []
 
-energy                      real*8       energy              []
+energy                      double       energy              []

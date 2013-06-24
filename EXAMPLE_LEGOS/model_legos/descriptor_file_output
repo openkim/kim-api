@@ -8,12 +8,12 @@ compute                     method       none                []
 
 reinit                      method       none                []                 optional
 
-cutoff                      real*8       length              []
+cutoff                      double       length              []
 
-energy                      real*8       energy              []                 optional
+energy                      double       energy              []                 optional
 
-forces                      real*8       force               [numberOfParticles,3]  optional
+forces                      double       force               [numberOfParticles,3]  optional
 
-particleEnergy              real*8       energy              [numberOfParticles]    optional
+particleEnergy              double       energy              [numberOfParticles]    optional
 
-virial                      real*8       energy              [6]                optional
+virial                      double       energy              [6]                optional

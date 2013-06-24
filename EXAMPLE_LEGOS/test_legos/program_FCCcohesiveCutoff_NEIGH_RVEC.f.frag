@@ -98,9 +98,9 @@ program TEST_NAME_STR
 
   integer                   :: ier           ! error flag
 
-  real*8 coordum(DIM,1);   pointer(pcoor,coordum)         ! coordinate
+  double precision coordum(DIM,1); pointer(pcoor,coordum)              ! coordinate
 
-  double precision param_cutoff; pointer(pparam_cutoff,param_cutoff) ! parameter cutoff radius
+  double precision param_cutoff;   pointer(pparam_cutoff,param_cutoff) ! parameter cutoff radius
 
   integer                   :: N                          ! number of atoms
 

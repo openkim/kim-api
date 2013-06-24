@@ -23,7 +23,7 @@ double precision function get_model_cutoff_firsttime(testname, modelname)
   integer ier, idum
   integer(kind=kim_intptr) pkim_temp
   integer N
-  real*8 cutoff; pointer(pcutoff,cutoff)
+  double precision cutoff; pointer(pcutoff,cutoff)
 
   ! Initialize the KIM object
   ier = kim_api_init_f(pkim_temp, testname, modelname)

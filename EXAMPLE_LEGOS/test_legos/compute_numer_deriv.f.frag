@@ -10,28 +10,28 @@ integer,                  intent(in)    :: dir
 integer(kind=kim_intptr), intent(in)    :: pkim
 integer,                  intent(in)    :: DIM
 integer,                  intent(in)    :: N
-real*8,                   intent(inout) :: coords(DIM,N)
-real*8,                   intent(in)    :: cutoff
-real*8,                   intent(in)    :: cutpad
-real*8,                   intent(in)    :: boxSideLengths(DIM)
+double precision,         intent(inout) :: coords(DIM,N)
+double precision,         intent(in)    :: cutoff
+double precision,         intent(in)    :: cutpad
+double precision,         intent(in)    :: boxSideLengths(DIM)
 character*64,             intent(in)    :: NBC_Method
 logical,                  intent(inout) :: do_update_list
-real*8,                   intent(inout) :: coordsave(DIM,N)
+double precision,         intent(inout) :: coordsave(DIM,N)
 integer,                  intent(inout) :: neighborList(N+1,N)
-real*8,                   intent(inout) :: RijList(DIM,N+1,N)
-real*8,                   intent(out)   :: deriv
-real*8,                   intent(out)   :: deriv_err
+double precision,         intent(inout) :: RijList(DIM,N+1,N)
+double precision,         intent(out)   :: deriv
+double precision,         intent(out)   :: deriv_err
 integer,                  intent(out)   :: ier
 
 !-- Local variables
-real*8,  parameter :: eps_init = 1.d-6
+double precision,  parameter :: eps_init = 1.d-6
 integer, parameter :: number_eps_levels = 15
-real*8  eps, deriv_last, deriv_err_last
+double precision  eps, deriv_last, deriv_err_last
 integer i,idum
 logical doing_neighbors
 
 !-- KIM variables
-real*8 energy;         pointer(penergy,energy)
+double precision energy;         pointer(penergy,energy)
 
 ! Initialize error flag
 ier = KIM_STATUS_OK
@@ -89,23 +89,23 @@ contains
    ! for the error in each component of the gradient is returned in grad_err().
    !
    !--------------------------------------------------------------------------------
-   real*8 function dfridr(h,err)
+   double precision function dfridr(h,err)
    implicit none
 
    !-- Transferred variables
-   real*8, intent(inout) :: h
-   real*8, intent(out)   :: err
+   double precision, intent(inout) :: h
+   double precision, intent(out)   :: err
 
    !-- Local variables
    integer, parameter :: NTAB=10     ! Maximum size of tableau
-   real*8,  parameter :: CON=1.4d0   ! Stepsize increased by CON at each iter
-   real*8,  parameter :: CON2=CON*CON
-   real*8,  parameter :: BIG=huge(1.d0)
-   real*8,  parameter :: SAFE=2.d0   ! Returns when error is SAFE worse than
+   double precision,  parameter :: CON=1.4d0   ! Stepsize increased by CON at each iter
+   double precision,  parameter :: CON2=CON*CON
+   double precision,  parameter :: BIG=huge(1.d0)
+   double precision,  parameter :: SAFE=2.d0   ! Returns when error is SAFE worse than
                                      ! the best so far
    integer i,j
    integer idum
-   real*8 errt,fac,hh,a(NTAB,NTAB),fp,fm,coordorig
+   double precision errt,fac,hh,a(NTAB,NTAB),fp,fm,coordorig
 
    if (h.eq.0.d0) then
       ier = KIM_STATUS_FAIL

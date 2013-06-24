@@ -46,7 +46,7 @@ SystemOfUnitsFix := fixed    # can work only with units system defined bellow
 # Name                  Type         Unit       SystemU/Scale           Shape              requirements
 #
 # Name -- unique name of variables
-# Type -- real,real*8,integer,integer*8, pointer -- tells underlying structure of an element
+# Type -- real,double,integer,integer*8, pointer -- tells underlying structure of an element
 # Unit -- physical unit dimension of variable -- none, length,time, mass, ...
 # SystemU/Scale -- name of the system units (metal, KIMstandard,...) or numerical scale factor to the standard units
 # Shape -- enclossed in square brackets size of each tensor dimensions for example
@@ -71,7 +71,7 @@ numberParticleTypes         integer      none       none                    []
 
 particleTypes           integer      none       none                    [numberOfParticles]                 # one [flag] -- rank is one
 
-coordinates             real*8       length     standard                [numberOfParticles,3]
+coordinates             double       length     standard                [numberOfParticles,3]
 
 neighObject             pointer      none       none                    []                              # neighbor list object that is used by iterator
 
@@ -87,13 +87,13 @@ compute                 method       none       none                    []
 
 destroy                 method       none       none                    []
 
-cutoff                  real*8       length     standard                []
+cutoff                  double       length     standard                []
 
-energy                  real*8       energy     standard                []
+energy                  double       energy     standard                []
 
-forces                  real*8       force      standard                [numberOfParticles,3]
+forces                  double       force      standard                [numberOfParticles,3]
 
-particleEnergy           real*8       energy     standard                [numberOfParticles]
+particleEnergy           double       energy     standard                [numberOfParticles]
 
 CONVENTIONS:
 # Name                  Type

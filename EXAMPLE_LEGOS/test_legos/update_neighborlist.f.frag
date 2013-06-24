@@ -4,23 +4,23 @@ use KIM_API
 implicit none
 
 !-- Transferred variables
-integer,      intent(in)    :: DIM
-integer,      intent(in)    :: N
-real*8,       intent(in)    :: coords(DIM,N)
-real*8,       intent(in)    :: cutoff
-real*8,       intent(in)    :: cutpad
-real*8,       intent(in)    :: boxSideLengths(DIM)
-character*64, intent(in)    :: NBC_Method
-logical,      intent(inout) :: do_update_list
-real*8,       intent(inout) :: coordsave(DIM,N)
-integer,      intent(inout) :: neighborList(N+1,N)
-real*8,       intent(inout) :: RijList(DIM,N+1,N)
-integer,      intent(out)   :: ier
+integer,          intent(in)    :: DIM
+integer,          intent(in)    :: N
+double precision, intent(in)    :: coords(DIM,N)
+double precision, intent(in)    :: cutoff
+double precision, intent(in)    :: cutpad
+double precision, intent(in)    :: boxSideLengths(DIM)
+character*64,     intent(in)    :: NBC_Method
+logical,          intent(inout) :: do_update_list
+double precision, intent(inout) :: coordsave(DIM,N)
+integer,          intent(inout) :: neighborList(N+1,N)
+double precision, intent(inout) :: RijList(DIM,N+1,N)
+integer,          intent(out)   :: ier
 
 !-- Local variables
 integer nbc  ! 0- NEIGH_RVEC_H, 1- NEIGH_PURE_H, 2- NEIGH_RVEC_F, 3- NEIGH_PURE_F, 
              ! 4- MI_OPBC_H, 5- MI_OPBC_F 
-real*8 disp, disp1, disp2, cutrange, dispvec(DIM)
+double precision disp, disp1, disp2, cutrange, dispvec(DIM)
 integer i, idum
 
 ! Initialize error code

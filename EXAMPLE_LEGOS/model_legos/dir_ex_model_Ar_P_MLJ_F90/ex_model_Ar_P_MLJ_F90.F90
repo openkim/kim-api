@@ -166,19 +166,19 @@ integer, allocatable, target :: nei1atom_substitute(:)
 character*80 :: error_message
 
 !-- KIM variables
-integer N;                   pointer(pN,N)
-real*8  energy;              pointer(penergy,energy)
-real*8  coordum(DIM,1);      pointer(pcoor,coordum)
-real*8  forcedum(DIM,1);     pointer(pforce,forcedum)
-real*8  enepotdum(1);        pointer(penepot,enepotdum)
-real*8  boxSideLengths(DIM); pointer(pboxSideLengths,boxSideLengths)
-real*8  Rij_list(DIM,1);     pointer(pRij_list,Rij_list)
-integer numContrib;          pointer(pnumContrib,numContrib)
-integer nei1atom(1);         pointer(pnei1atom,nei1atom)
-integer particleTypes(1);    pointer(pparticleTypes,particleTypes)
-real*8  virialdum(1);        pointer(pvirial,virialdum)
-character*64 NBC_Method;     pointer(pNBC_Method,NBC_Method)
-real*8, pointer :: coor(:,:),force(:,:),ene_pot(:),virial_global(:)
+integer N;                             pointer(pN,N)
+double precision  energy;              pointer(penergy,energy)
+double precision  coordum(DIM,1);      pointer(pcoor,coordum)
+double precision  forcedum(DIM,1);     pointer(pforce,forcedum)
+double precision  enepotdum(1);        pointer(penepot,enepotdum)
+double precision  boxSideLengths(DIM); pointer(pboxSideLengths,boxSideLengths)
+double precision  Rij_list(DIM,1);     pointer(pRij_list,Rij_list)
+integer numContrib;                    pointer(pnumContrib,numContrib)
+integer nei1atom(1);                   pointer(pnei1atom,nei1atom)
+integer particleTypes(1);              pointer(pparticleTypes,particleTypes)
+double precision  virialdum(1);        pointer(pvirial,virialdum)
+character*64 NBC_Method;               pointer(pNBC_Method,NBC_Method)
+double precision, pointer :: coor(:,:),force(:,:),ene_pot(:),virial_global(:)
 integer IterOrLoca
 integer HalfOrFull
 integer NBC
@@ -493,7 +493,7 @@ integer(kind=kim_intptr), parameter :: one=1
 integer ier, idum
 
 !-- KIM variables
-real*8 cutoff; pointer(pcutoff,cutoff)
+double precision cutoff; pointer(pcutoff,cutoff)
 
 ! store pointer to compute function in KIM object
 ier = kim_api_set_data_f(pkim,"compute",one,loc(Compute_Energy_Forces))

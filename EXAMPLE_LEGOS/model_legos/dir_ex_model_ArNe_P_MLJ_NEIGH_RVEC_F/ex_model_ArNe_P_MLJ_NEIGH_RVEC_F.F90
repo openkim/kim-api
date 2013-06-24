@@ -81,26 +81,26 @@ contains
     integer i,j,jj,numnei,atom,atom_ret
 
     !-- KIM variables
-    integer numberOfParticles; pointer(pnAtoms,numberOfParticles)
-    integer nparticleTypes;    pointer(pnparticleTypes,nparticleTypes)
-    integer particleTypes(1);  pointer(pparticleTypes,particleTypes)
-    real*8 model_cutoff;       pointer(pcutoff,model_cutoff)
-    real*8 model_epsilon(1);   pointer(pepsilon,model_epsilon)
-    real*8 model_sigma(1);     pointer(psigma,model_sigma)
-    real*8 model_cutnorm(1);   pointer(pcutnorm,model_cutnorm)
-    real*8 model_A(1);         pointer(pA,model_A)
-    real*8 model_B(1);         pointer(pB,model_B)
-    real*8 model_C(1);         pointer(pC,model_C)
-    real*8 model_sigmasq(1);   pointer(psigmasq,model_sigmasq)
-    real*8 model_cutsq;        pointer(pcutsq,model_cutsq)
-    real*8 energy;             pointer(penergy,energy)
-    real*8 coordum(DIM,1);     pointer(pcoor,coordum)
-    real*8 forcedum(DIM,1);    pointer(pforce,forcedum)
-    real*8 enepotdum(1);       pointer(penepot,enepotdum)
-    real*8 virialdum(1);       pointer(pvirial,virialdum)
-    real*8 Rij(3,1);           pointer(pRij,Rij)
-    integer nei1atom(1);       pointer(pnei1atom,nei1atom)
-    real*8, pointer :: coor(:,:),force(:,:),ene_pot(:),virial_global(:)
+    integer numberOfParticles;           pointer(pnAtoms,numberOfParticles)
+    integer nparticleTypes;              pointer(pnparticleTypes,nparticleTypes)
+    integer particleTypes(1);            pointer(pparticleTypes,particleTypes)
+    double precision model_cutoff;       pointer(pcutoff,model_cutoff)
+    double precision model_epsilon(1);   pointer(pepsilon,model_epsilon)
+    double precision model_sigma(1);     pointer(psigma,model_sigma)
+    double precision model_cutnorm(1);   pointer(pcutnorm,model_cutnorm)
+    double precision model_A(1);         pointer(pA,model_A)
+    double precision model_B(1);         pointer(pB,model_B)
+    double precision model_C(1);         pointer(pC,model_C)
+    double precision model_sigmasq(1);   pointer(psigmasq,model_sigmasq)
+    double precision model_cutsq;        pointer(pcutsq,model_cutsq)
+    double precision energy;             pointer(penergy,energy)
+    double precision coordum(DIM,1);     pointer(pcoor,coordum)
+    double precision forcedum(DIM,1);    pointer(pforce,forcedum)
+    double precision enepotdum(1);       pointer(penepot,enepotdum)
+    double precision virialdum(1);       pointer(pvirial,virialdum)
+    double precision Rij(3,1);           pointer(pRij,Rij)
+    integer nei1atom(1);                 pointer(pnei1atom,nei1atom)
+    double precision, pointer :: coor(:,:),force(:,:),ene_pot(:),virial_global(:)
     integer :: comp_force, comp_enepot, comp_virial, comp_energy
     integer :: idum
 
@@ -284,16 +284,16 @@ contains
     integer(kind=kim_intptr), intent(in) :: pkim
 
     !-- Local variables
-    real*8 model_cutoff;     pointer(pcutoff,model_cutoff)
-    real*8 model_epsilon(1); pointer(pepsilon,model_epsilon)
-    real*8 model_sigma(1);   pointer(psigma,model_sigma)
-    real*8 model_Pcutoff;    pointer(pparamcut,model_Pcutoff)
-    real*8 model_cutnorm(1); pointer(pcutnorm,model_cutnorm)
-    real*8 model_A(1);       pointer(pA,model_A)
-    real*8 model_B(1);       pointer(pB,model_B)
-    real*8 model_C(1);       pointer(pC,model_C)
-    real*8 model_sigmasq(1); pointer(psigmasq,model_sigmasq)
-    real*8 model_cutsq;      pointer(pcutsq,model_cutsq)
+    double precision model_cutoff;     pointer(pcutoff,model_cutoff)
+    double precision model_epsilon(1); pointer(pepsilon,model_epsilon)
+    double precision model_sigma(1);   pointer(psigma,model_sigma)
+    double precision model_Pcutoff;    pointer(pparamcut,model_Pcutoff)
+    double precision model_cutnorm(1); pointer(pcutnorm,model_cutnorm)
+    double precision model_A(1);       pointer(pA,model_A)
+    double precision model_B(1);       pointer(pB,model_B)
+    double precision model_C(1);       pointer(pC,model_C)
+    double precision model_sigmasq(1); pointer(psigmasq,model_sigmasq)
+    double precision model_cutsq;      pointer(pcutsq,model_cutsq)
     integer idum
 
     ! Get (changed) parameters from KIM object ---------------------------------
@@ -352,16 +352,16 @@ contains
     integer(kind=kim_intptr), intent(in) :: pkim
 
     !-- Local variables
-    real*8 model_cutoff;     pointer(pcutoff,model_cutoff)
-    real*8 model_epsilon(1); pointer(pepsilon,model_epsilon)
-    real*8 model_sigma(1);   pointer(psigma,model_sigma)
-    real*8 model_Pcutoff;    pointer(pparamcut,model_Pcutoff)
-    real*8 model_cutnorm(1); pointer(pcutnorm,model_cutnorm)
-    real*8 model_A(1);       pointer(pA,model_A)
-    real*8 model_B(1);       pointer(pB,model_B)
-    real*8 model_C(1);       pointer(pC,model_C)
-    real*8 model_sigmasq(1); pointer(psigmasq,model_sigmasq)
-    real*8 model_cutsq;      pointer(pcutsq,model_cutsq)
+    double precision model_cutoff;     pointer(pcutoff,model_cutoff)
+    double precision model_epsilon(1); pointer(pepsilon,model_epsilon)
+    double precision model_sigma(1);   pointer(psigma,model_sigma)
+    double precision model_Pcutoff;    pointer(pparamcut,model_Pcutoff)
+    double precision model_cutnorm(1); pointer(pcutnorm,model_cutnorm)
+    double precision model_A(1);       pointer(pA,model_A)
+    double precision model_B(1);       pointer(pB,model_B)
+    double precision model_C(1);       pointer(pC,model_C)
+    double precision model_sigmasq(1); pointer(psigmasq,model_sigmasq)
+    double precision model_cutsq;      pointer(pcutsq,model_cutsq)
     integer idum
 
     ! get parameters from KIM object
@@ -416,16 +416,16 @@ integer function model_init(pkim)
   !-- Local variables
   integer(kind=kim_intptr), parameter :: one=1
   integer(kind=kim_intptr), parameter :: three=3
-  real*8 model_cutoff;     pointer(pcutoff,model_cutoff)
-  real*8 model_epsilon(1); pointer(pepsilon,model_epsilon)
-  real*8 model_sigma(1);   pointer(psigma,model_sigma)
-  real*8 model_Pcutoff;    pointer(pparamcut,model_Pcutoff)
-  real*8 model_cutnorm(1); pointer(pcutnorm,model_cutnorm)
-  real*8 model_A(1);       pointer(pA,model_A)
-  real*8 model_B(1);       pointer(pB,model_B)
-  real*8 model_C(1);       pointer(pC,model_C)
-  real*8 model_sigmasq(1); pointer(psigmasq,model_sigmasq)
-  real*8 model_cutsq;      pointer(pcutsq,model_cutsq)
+  double precision model_cutoff;     pointer(pcutoff,model_cutoff)
+  double precision model_epsilon(1); pointer(pepsilon,model_epsilon)
+  double precision model_sigma(1);   pointer(psigma,model_sigma)
+  double precision model_Pcutoff;    pointer(pparamcut,model_Pcutoff)
+  double precision model_cutnorm(1); pointer(pcutnorm,model_cutnorm)
+  double precision model_A(1);       pointer(pA,model_A)
+  double precision model_B(1);       pointer(pB,model_B)
+  double precision model_C(1);       pointer(pC,model_C)
+  double precision model_sigmasq(1); pointer(psigmasq,model_sigmasq)
+  double precision model_cutsq;      pointer(pcutsq,model_cutsq)
   integer ier, idum
 
   ! store function pointers in KIM object
@@ -449,63 +449,63 @@ integer function model_init(pkim)
   model_cutoff = 8.15d0 ! cutoff distance in angstroms
 
   ! Allocate memory for sigma and store value
-  psigma = malloc(three*8) ! 8 is the size of a real*8
+  psigma = malloc(three*8) ! 8 is the size of a double precision
   if (psigma.eq.0) then
      ier = KIM_STATUS_FAIL
      idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
                                    "malloc", ier)
      goto 42
   endif
-  pepsilon = malloc(three*8) ! 8 is the size of a real*8
+  pepsilon = malloc(three*8) ! 8 is the size of a double precision
   if (pepsilon.eq.0) then
      ier = KIM_STATUS_FAIL
      idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
                                    "malloc", ier)
      goto 42
   endif
-  pparamcut = malloc(one*8) ! 8 is the size of a real*8
+  pparamcut = malloc(one*8) ! 8 is the size of a double precision
   if (pparamcut.eq.0) then
      ier = KIM_STATUS_FAIL
      idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
                                    "malloc", ier)
      goto 42
   endif
-  pcutnorm = malloc(three*8) ! 8 is the size of a real*8
+  pcutnorm = malloc(three*8) ! 8 is the size of a double precision
   if (pcutnorm.eq.0) then
      ier = KIM_STATUS_FAIL
      idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
                                    "malloc", ier)
      goto 42
   endif
-  pA = malloc(three*8) ! 8 is the size of a real*8
+  pA = malloc(three*8) ! 8 is the size of a double precision
   if (pA.eq.0) then
      ier = KIM_STATUS_FAIL
      idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
                                    "malloc", ier)
      goto 42
   endif
-  pB = malloc(three*8) ! 8 is the size of a real*8
+  pB = malloc(three*8) ! 8 is the size of a double precision
   if (pB.eq.0) then
      ier = KIM_STATUS_FAIL
      idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
                                    "malloc", ier)
      goto 42
   endif
-  pC = malloc(three*8) ! 8 is the size of a real*8
+  pC = malloc(three*8) ! 8 is the size of a double precision
   if (pC.eq.0) then
      ier = KIM_STATUS_FAIL
      idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
                                    "malloc", ier)
      goto 42
   endif
-  psigmasq = malloc(three*8) ! 8 is the size of a real*8
+  psigmasq = malloc(three*8) ! 8 is the size of a double precision
   if (psigmasq.eq.0) then
      ier = KIM_STATUS_FAIL
      idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
                                    "malloc", ier)
      goto 42
   endif
-  pcutsq = malloc(one*8) ! 8 is the size of a real*8
+  pcutsq = malloc(one*8) ! 8 is the size of a double precision
   if (pcutsq.eq.0) then
      ier = KIM_STATUS_FAIL
      idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &

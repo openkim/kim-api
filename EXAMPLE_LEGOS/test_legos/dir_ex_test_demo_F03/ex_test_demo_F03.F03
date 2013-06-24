@@ -131,17 +131,17 @@ program ljtest
 	character*80,target :: testname ="test_demo_F03"
 	character*80,target :: modelname =""   !string for the modelname
 	character*80,target :: nm =""
-        real*8,pointer, dimension(:,:)::x,f
-	real*8,pointer, dimension(:)::ea !energy per atom
+        double precision,pointer, dimension(:,:)::x,f
+	double precision,pointer, dimension(:)::ea !energy per atom
 	type(c_ptr) :: px,pf,pea,penergy,pcutoff,pnatoms! c_type pointers:x,f,particleEnergy,energy,cutoff,natoms
 	type(c_ptr) :: pkim                !kim world object pointer
-	real*8, pointer:: energy,cutoff ! f90 pointers: c_type pointers will be converted to f90 pointers
+	double precision, pointer:: energy,cutoff ! f90 pointers: c_type pointers will be converted to f90 pointers
         integer*8,pointer :: natoms     ! f90 pointer
 
 	type(c_ptr)::pneigh_both;
 	
 	
-	real*8 ::cutofeps
+	double precision ::cutofeps
 	integer ::i,id,ni4,kimerr; integer(kind=kim_intptr_f03) ::n,one
 
 

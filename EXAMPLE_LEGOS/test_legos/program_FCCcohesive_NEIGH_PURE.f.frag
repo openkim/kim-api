@@ -91,7 +91,7 @@ program TEST_NAME_STR
 
   integer(kind=kim_intptr)  :: pkim          ! pointer to KIM API object
 
-  real*8 coordum(DIM,1);   pointer(pcoor,coordum)         ! coordinate
+  double precision coordum(DIM,1);   pointer(pcoor,coordum)         ! coordinate
 
   integer                   :: N                          ! number of atoms
 
@@ -192,10 +192,10 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
   double precision Spacings(4)
   double precision Energies(4)
   integer MiddleAtomId
-  real*8 energy;         pointer(penergy,energy)
-  real*8 coordum(DIM,1); pointer(pcoor,coordum)
-  real*8, pointer :: coords(:,:)
-  real*8 cutoff;         pointer(pcutoff,cutoff)
+  double precision energy;         pointer(penergy,energy)
+  double precision coordum(DIM,1); pointer(pcoor,coordum)
+  double precision, pointer :: coords(:,:)
+  double precision cutoff;         pointer(pcutoff,cutoff)
   double precision, parameter :: cutpad = CUTOFF_PADDING_STR ! cutoff radius padding
   logical :: halfflag  ! .true. = half neighbor list; .false. = full neighbor list
   character(len=64) NBC_Method;  pointer(pNBC_Method,NBC_Method)

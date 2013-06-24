@@ -74,11 +74,11 @@ program TEST_NAME_STR
   integer numberParticleTypes;
   integer particleTypes(N);
 
-  real*8 cutoff;
-  real*8 energy;
-  real*8 virialglob(6);
-  real*8 coor(DIM,N);
-  real*8 forces(DIM,N);
+  double precision cutoff;
+  double precision energy;
+  double precision virialglob(6);
+  double precision coor(DIM,N);
+  double precision forces(DIM,N);
   integer I
   integer middleDum
 

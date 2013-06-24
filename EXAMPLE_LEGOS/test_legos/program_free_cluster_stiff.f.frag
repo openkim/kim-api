@@ -94,15 +94,15 @@ program TEST_NAME_STR
   integer numberParticleTypes; pointer(pnparticleTypes,numberParticleTypes)
   integer particleTypesdum(1); pointer(pparticleTypesdum,particleTypesdum)
 
-  real*8 cutoff;               pointer(pcutoff,cutoff)
-  real*8 energy;               pointer(penergy,energy)
-  real*8 virialglobdum(1);     pointer(pvirialglob,virialglobdum)
-  real*8 coordum(DIM,1);       pointer(pcoor,coordum)
-  real*8 forcesdum(DIM,1);     pointer(pforces,forcesdum)
-  real*8 boxSideLengths(DIM);  pointer(pboxSideLengths,boxSideLengths)
-  real*8 hessian(3,3,1);       pointer(phessian,hessian)
+  double precision cutoff;               pointer(pcutoff,cutoff)
+  double precision energy;               pointer(penergy,energy)
+  double precision virialglobdum(1);     pointer(pvirialglob,virialglobdum)
+  double precision coordum(DIM,1);       pointer(pcoor,coordum)
+  double precision forcesdum(DIM,1);     pointer(pforces,forcesdum)
+  double precision boxSideLengths(DIM);  pointer(pboxSideLengths,boxSideLengths)
+  double precision hessian(3,3,1);       pointer(phessian,hessian)
   integer I,J
-  real*8, pointer  :: coords(:,:), forces(:,:), virial_global(:)
+  double precision, pointer  :: coords(:,:), forces(:,:), virial_global(:)
   integer, pointer :: particleTypes(:)
   integer middleDum
 

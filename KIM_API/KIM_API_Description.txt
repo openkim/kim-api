@@ -1414,7 +1414,7 @@ Corresponding Fortran style interface:
                       integer :: nei1particle(1)
                       ! actual cray pointer associated with nei1particle
                       pointer(pnei1particle, nei1particle)
-                      real*8 :: rij(3,1)
+                      double precision:: rij(3,1)
                       pointer(prij, rij)
       end function kim_api_get_neigh_f
 
@@ -1439,8 +1439,8 @@ int KIM_API_process_dEdr(void **km, double *dEdr, double *r, double **dx, &
                         double **dx, int *i, int *j);                /* in C */
        integer function process_dEdr(pkim, dEdr, r, pdx, i, j)
           integer(kind=kim_intptr), intent(in) :: pkim
-          real*8,                   intent(in) :: dEdr
-          real*8,                   intent(in) :: r
+          double precision,         intent(in) :: dEdr
+          double precision,         intent(in) :: r
           integer(kind=kim_intptr), intent(in) :: pdx
           integer,                  intent(in) :: i
           integer,                  intent(in) :: j                  ! in Fortran
@@ -1479,7 +1479,7 @@ Corresponding Fortran style interface:
 
       integer function kim_api_process_dedr_f(kimmdl, de, r, dx, i, j)
                       integer(kind=kim_intptr) :: kimmdl, dx
-                      real*8 :: de, r
+                      double precision :: de, r
                       integer ::i, j
                       integer :: kim_api_process_dedr_f
       end function kim_api_process_dedr_f
@@ -1506,7 +1506,7 @@ int KIM_API_process_d2Edr2(void **km, double *d2Edr2, double **r, &
                           double **dx, int **i, int **j);                /* in C */
        integer function process_d2Edr2(pkim, d2Edr2, pr, pdx, pi, pj)
           integer(kind=kim_intptr), intent(in) :: pkim
-          real*8,                   intent(in) :: d2Edr2
+          double precision,         intent(in) :: d2Edr2
           integer(kind=kim_intptr), intent(in) :: pr
           integer(kind=kim_intptr), intent(in) :: pdx
           integer(kind=kim_intptr), intent(in) :: pi
@@ -1550,7 +1550,7 @@ Corresponding Fortran style interface:
 
       integer function kim_api_process_d2edr2_f(kimmdl, d2edr2, r, dx, i, j)
                       integer(kind=kim_intptr) :: kimmdl, dx
-                      real*8 :: d2edr2, r
+                      double precision :: d2edr2, r
                       integer :: i, j
       end function kim_api_process_d2edr2_f
 
@@ -1630,10 +1630,11 @@ Arguments:
 
 Corresponding Fortran style interface:
 
-      real*8 function kim_api_get_scale_conversion_f(from, to, kimerror)
+      double precision function kim_api_get_scale_conversion_f(from, to, &
+                                                               kimerror)
                       integer :: kimerror
                       character(len=*) :: from, to
-                      real*8 kim_api_get_scale_conversion_f
+                      double precision kim_api_get_scale_conversion_f
       end function kim_api_get_scale_conversion_f
 
 ******************************************************************************
@@ -1845,22 +1846,23 @@ Arguments:
 
 Corresponding Fortran style interface:
 
-      real*8 function kim_api_convert_to_act_unit_f(kimmdl, length, energy, &
-                                                    charge, temperature,    &
-                                                    time,                   &
-                                                    length_exponent,        &
-                                                    energy_exponent,        &
-                                                    charge_exponent,        &
-                                                    temperature_exponent,   &
-                                                    time_exponent,          &
+      double precision function kim_api_convert_to_act_unit_f(kimmdl, length,&
+                                                    energy,                  &
+                                                    charge, temperature,     &
+                                                    time,                    &
+                                                    length_exponent,         &
+                                                    energy_exponent,         &
+                                                    charge_exponent,         &
+                                                    temperature_exponent,    &
+                                                    time_exponent,           &
                                                     kimerror)
                       integer(kind=kim_intptr) :: kimmdl
                       character(len=*) :: length, energy, charge
                       character(len=*) :: temperature, time
-                      real*8 :: length_exponent, energy_exponent
-                      real*8 :: charge_exponent, temperature_exponent
-                      real*8 :: time_exponent
-                      real*8 :: kim_api_convert_to_act_unit_f
+                      double precision :: length_exponent, energy_exponent
+                      double precision :: charge_exponent, temperature_exponent
+                      double precision :: time_exponent
+                      double precision :: kim_api_convert_to_act_unit_f
                       integer :: kimerror
       end function kim_api_convert_to_act_unit_f
 
@@ -2028,17 +2030,17 @@ Using this routine, one can cast a cray pointer to a Fortran 90 array pointer.
        subroutine KIM_to_F90_real_array_2d(cTypeArray, ArrayWithDescriptor, n, m)
                         implicit none
                         integer :: n, m
-                        real*8, target  :: cTypeArray(n,m)
-                        real*8, pointer :: ArrayWithDescriptor(:,:)
+                        double precision, target  :: cTypeArray(n,m)
+                        double precision, pointer :: ArrayWithDescriptor(:,:)
        end subroutine KIM_to_F90_real_array_2d
 
 Arguments:
 
-      real*8 cTypeArray
+      double precision cTypeArray
               This argument corresponds to a C-type pointer to a block of
               memory
 
-      real*8 ArrayWithDescriptor
+      double precision ArrayWithDescriptor
               This argument corresponds to a native F90 array which includes a
               pointer to the block of memory, but also some additional memory
               (created, managed, and used only by the compiler) to keep track
@@ -2048,8 +2050,8 @@ An example of the use of these routines is:
 
    integer kimerror, DIM
    integer numberOfParticles; pointer(pnumberOfParticles, numberOfParticles)
-   real*8  coordum(DIM,1);    pointer(pcoor,coordum)
-   real*8, pointer :: coor(:,:)
+   double precision  coordum(DIM,1);    pointer(pcoor,coordum)
+   double precision, pointer :: coor(:,:)
 
    DIM = 3
    kim_api_getm_data_f(kimmdl, kimerror,                           &

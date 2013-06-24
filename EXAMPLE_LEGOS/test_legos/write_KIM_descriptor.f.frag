@@ -112,7 +112,7 @@ kim_descriptor = &
                                                                                    cr // &
    'particleTypes               integer      none       [numberOfParticles]'    // cr // &
                                                                                    cr // &
-   'coordinates                 real*8       length     [numberOfParticles,3]'  // cr // &
+   'coordinates                 double       length     [numberOfParticles,3]'  // cr // &
                                                                                    cr // &
    'get_neigh                   method       none       []'                     // cr // &
                                                                                    cr // &
@@ -120,7 +120,7 @@ kim_descriptor = &
                                                                                    cr // &
    'numberContributingParticles integer      none       []'                     // cr // &
                                                                                    cr // &
-   'boxSideLengths              real*8       length     [3]'                    // cr // &
+   'boxSideLengths              double       length     [3]'                    // cr // &
                                                                                    cr // &
                                                                                    cr // &
    divider                                                                      // cr // &
@@ -131,11 +131,11 @@ kim_descriptor = &
                                                                                    cr // &
    'compute                     method       none       []'                     // cr // &
                                                                                    cr // &
-   'cutoff                      real*8       length     []'                     // cr // &
+   'cutoff                      double       length     []'                     // cr // &
                                                                                    cr // &
-   'energy                      real*8       energy     []'                     // cr // &
+   'energy                      double       energy     []'                     // cr // &
                                                                                    cr // &
-   'forces                      real*8       force      [numberOfParticles,3]'  // cr // &
+   'forces                      double       force      [numberOfParticles,3]'  // cr // &
                                                                                    cr // &
    divider                                                                            // cr
 

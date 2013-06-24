@@ -548,7 +548,7 @@ bool KIMBaseElement::equiv(KIM_IOline& kimioline, bool skip_specials){
 int KIMBaseElement::getelemsize(char *tp, bool& success){
             success = true;
             char realkey[KIM_KEY_STRING_LENGTH]="real";      //key defenitions
-            char real8key[KIM_KEY_STRING_LENGTH]="real*8";
+            char doublekey[KIM_KEY_STRING_LENGTH]="double";
             char integerkey[KIM_KEY_STRING_LENGTH]="integer";
             char ptrkey[KIM_KEY_STRING_LENGTH]="pointer";
             char methodkey[KIM_KEY_STRING_LENGTH]="method";
@@ -560,7 +560,7 @@ int KIMBaseElement::getelemsize(char *tp, bool& success){
                 return(sizeof(int));
             }else if (strcmp(ptrkey,tp)==0){
                 return(sizeof(int *));
-            }else if (strcmp(real8key,tp)==0){
+            }else if (strcmp(doublekey,tp)==0){
                 return (sizeof(double));
             }else if (strcmp(methodkey,tp)==0){
                 return (sizeof(int *));
@@ -569,7 +569,7 @@ int KIMBaseElement::getelemsize(char *tp, bool& success){
             }else{// add here more in else if block...
                std::cout << "* Error (KIMBaseElement::getelemsize): Unknown Type in KIM descriptor file line." << std::endl
                     << "         `" << tp <<"' is not one of: " << realkey << ", "
-                    << real8key << ", " << integerkey << ", " << ptrkey << ", "
+                    << doublekey << ", " << integerkey << ", " << ptrkey << ", "
                     << flagkey << std::endl;
                success = false;
                return -1;
@@ -603,7 +603,7 @@ std::ostream &operator<<(std::ostream &stream, KIMBaseElement a){
     if(a.data == NULL) {
         stream <<"NULL"<<std::endl;
         return stream;
-    }else if(strcmp(a.type,"real*8")==0){
+    }else if(strcmp(a.type,"double")==0){
 
         for(int i=0;i<a.size;i++) stream<< ((double*)(a.data))[i]<<" ";
 
@@ -2422,17 +2422,17 @@ bool KIM_API_model::add_element(char* instring){
 bool KIM_API_model::fij_related_things_add_set_index(){
     //add part
     if(virial_need2add){
-        char instr[512] = "virial            real*8       pressure     ";
+        char instr[512] = "virial            double       pressure     ";
         strcat(instr,"    [6]           # automatically generated");
         if (!(this->add_element(instr))) return false;
     }
     if(particleVirial_need2add){
-        char instr[512] = "particleVirial            real*8       pressure     ";
+        char instr[512] = "particleVirial            double       pressure     ";
         strcat(instr,"    [numberOfParticles,6]           # automatically generated");
         if (!(this->add_element(instr))) return false;
     }
     if(hessian_need2add){
-        char instr[512] = "hessian            real*8       pressure     ";
+        char instr[512] = "hessian            double       pressure     ";
         strcat(instr,"    [numberOfParticles,numberOfParticles,3,3]     # automatically generated");
         if (!(this->add_element(instr))) return false;
     }

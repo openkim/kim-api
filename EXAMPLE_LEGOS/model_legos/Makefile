@@ -212,7 +212,7 @@ ex_model_Ar_P_MLJ_MI_OPBC_H_F: $(COMMON_FRAGMENTS)                              
 	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
 	echo "neighObject                 pointer      none                []"                                >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo "boxSideLengths              real*8       length              [3]"                               >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
+	echo "boxSideLengths              double       length              [3]"                               >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
 	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_MODELS_DIR)/$@/$@.kim

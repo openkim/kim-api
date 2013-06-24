@@ -8,16 +8,16 @@ subroutine NEIGH_RVEC_update_Rij_vectors(DIM, N, coords, NNMAX, &
   implicit none
 
   !-- Transferred variables
-  integer,  intent(in)  :: DIM
-  integer,  intent(in)  :: N
-  real*8,   intent(in)  :: coords(DIM,N)
-  integer,  intent(in)  :: NNMAX
-  integer,  intent(in)  :: neighborList(NNMAX+1,N)
-  real*8,   intent(out) :: RijList(DIM,NNMAX+1,N)
+  integer,            intent(in)  :: DIM
+  integer,            intent(in)  :: N
+  double precision,   intent(in)  :: coords(DIM,N)
+  integer,            intent(in)  :: NNMAX
+  integer,            intent(in)  :: neighborList(NNMAX+1,N)
+  double precision,   intent(out) :: RijList(DIM,NNMAX+1,N)
 
   !-- Local variables
   integer i, j, jj, NN
-  real*8 dx(DIM)
+  double precision dx(DIM)
 
   do i=1,N
      NN = neighborList(1,i)

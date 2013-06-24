@@ -117,11 +117,10 @@ The current version of the openkim-api package supports the following features:
   with a `.kim' extension) and a single KIM API object data structure that
   stores all information to be communicated between a Model and a Test.
 
-* Data types: integer, real (float), real*8 (double), method (for exchanging
-              pointers to functions), pointer (for exchanging "everything
-              else").  Each of these data types can be use to create
-              multi-dimensional array `arguments' that are exchanged between
-              Models and Tests.
+* Data types: integer, float, double, method (for exchanging pointers to
+              functions), pointer (for exchanging "everything else").  Each of
+              these data types can be use to create multi-dimensional array
+              `arguments' that are exchanged between Models and Tests.
 
      Currently, the openkim-api does not define any (more complex) data
      structures.  However, in the future (as the need arises, and in

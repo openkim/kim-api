@@ -176,19 +176,26 @@ $
 #                           KIM string     C/C++ type      Fortran type
 #
 #                           `integer'      int             integer
-#                           `real'         float           real
-#                           `real*8'       double          real*8
+#                           `float'        float           real
+#                           `double'       double          double precision
 #                           `method'       void *          cray pointer
 #                           `pointer'      void *          cray pointer
 #
-#                           The first four are self-explanatory.  The `method'
-#                           type allows the Model (Test) to provide pointers to
-#                           functions/subroutines that the Test (Model) may use
-#                           to perform certain tasks at runtime.  The `pointer'
-#                           type is capable of pointing to an arbitrary
-#                           location in memory and is a catch-all type that can
-#                           be used when none of the other types are
-#                           appropriate.
+#                           The first thre are self-explanatory.  (Note:
+#                           programmers should use the types listed above, as
+#                           this will best ensure that cross language compiled
+#                           code created one a single machine using a single
+#                           compiler suite will work correctly together.  In
+#                           particular, Fortran programmers should not use more
+#                           specific types such as `integer*4' or `double' as
+#                           these could lead to compatibility problems on some
+#                           machines.)  The `method' type allows the Model
+#                           (Test) to provide pointers to functions/subroutines
+#                           that the Test (Model) may use to perform certain
+#                           tasks at runtime.  The `pointer' type is capable of
+#                           pointing to an arbitrary location in memory and is
+#                           a catch-all type that can be used when none of the
+#                           other types are appropriate.
 #
 #                           NOTE: that in Fortran pointers to memory are
 #                                 currently implemented using the cray pointer
@@ -873,7 +880,7 @@ particleTypes               integer      none               [numberOfParticles]
 #
 # Name                      Type         Unit               Shape
 #
-coordinates                 real*8       length             [numberOfParticles,3]
+coordinates                 double       length             [numberOfParticles,3]
 
 ################################################################################
 #
@@ -887,7 +894,7 @@ coordinates                 real*8       length             [numberOfParticles,3
 #
 # Name                      Type         Unit               Shape
 #
-particleCharge              real*8       charge             [numberOfParticles]
+particleCharge              double       charge             [numberOfParticles]
 
 ################################################################################
 #
@@ -901,7 +908,7 @@ particleCharge              real*8       charge             [numberOfParticles]
 #
 # Name                      Type         Unit               Shape
 #
-particleSize                real*8       length             [numberOfParticles]
+particleSize                double       length             [numberOfParticles]
 
 ################################################################################
 #
@@ -988,7 +995,7 @@ neighObject                 pointer      none               []
 #
 # Name                      Type         Unit               Shape
 #
-boxSideLengths              real*8       length             [3]
+boxSideLengths              double       length             [3]
 
 ################################################################################
 #
@@ -998,7 +1005,7 @@ boxSideLengths              real*8       length             [3]
 #
 # Name                      Type         Unit               Shape
 #
-temperature                 real*8       temperature        []
+temperature                 double       temperature        []
 
 
 ################################################################################
@@ -1084,7 +1091,7 @@ destroy                     method       none               []
 #
 # Name                      Type         Unit               Shape
 #
-cutoff                      real*8       length             []
+cutoff                      double       length             []
 
 ################################################################################
 #
@@ -1099,7 +1106,7 @@ cutoff                      real*8       length             []
 #
 # Name                      Type         Unit               Shape
 #
-energy                      real*8       energy             []
+energy                      double       energy             []
 
 ################################################################################
 #
@@ -1117,7 +1124,7 @@ energy                      real*8       energy             []
 #
 # Name                      Type         Unit               Shape
 #
-forces                      real*8       force              [numberOfParticles,3]
+forces                      double       force              [numberOfParticles,3]
 
 ################################################################################
 #
@@ -1133,7 +1140,7 @@ forces                      real*8       force              [numberOfParticles,3
 #
 # Name                      Type         Unit               Shape
 #
-particleEnergy              real*8       energy             [numberOfParticles]
+particleEnergy              double       energy             [numberOfParticles]
 
 ################################################################################
 #
@@ -1164,7 +1171,7 @@ particleEnergy              real*8       energy             [numberOfParticles]
 #
 # Name                      Type         Unit               Shape
 #
-virial                      real*8       energy             [6]
+virial                      double       energy             [6]
 
 ################################################################################
 #
@@ -1196,7 +1203,7 @@ virial                      real*8       energy             [6]
 #
 # Name                      Type         Unit               Shape
 #
-particleVirial              real*8       energy             [numberOfParticles,6]
+particleVirial              double       energy             [numberOfParticles,6]
 
 ################################################################################
 #
@@ -1221,7 +1228,7 @@ particleVirial              real*8       energy             [numberOfParticles,6
 #
 # Name                      Type         Unit               Shape
 #
-hessian                     real*8       pressure           [numberOfParticles,numberOfParticles,3,3]
+hessian                     double       pressure           [numberOfParticles,numberOfParticles,3,3]
 
 ################################################################################
 #
@@ -1271,9 +1278,9 @@ MODEL_PARAMETERS:
 #
 # Name                      Type         Unit               Shape
 #
-# PARAM_FREE_Sigma          real*8       length             []
-# PARAM_FREE_Epsilon        real*8       energy             []
-# PARAM_FIXED_LJshift       real*8       energy             []
+# PARAM_FREE_Sigma          double       length             []
+# PARAM_FREE_Epsilon        double       energy             []
+# PARAM_FIXED_LJshift       double       energy             []
 #
 # In this example `PARAM_FIXED_LJshift' is a shift that brings the
 # Lennard-Jones potential to zero at the defined cutoff radius.
@@ -1296,6 +1303,6 @@ MODEL_PARAMETERS:
 #
 # Name                      Type         Unit               Shape
 #
-PARAM_FREE_cutoff           real*8       length             []
+PARAM_FREE_cutoff           double       length             []
 
 # END of standard.kim file

@@ -61,18 +61,18 @@ program TEST_NAME_STR
   use KIM_API
   implicit none
 
-  integer, external  :: get_neigh_no_Rij
-  integer, external  :: get_neigh_Rij
-  integer, parameter :: nCellsPerSide  = 2
-  integer, parameter :: DIM            = 3
-  real*8,  parameter :: cutpad         = 0.75d0
-  integer, parameter :: max_types      = 30     ! most species allowed in a config
-  integer, parameter :: max_NBCs       = 20     ! maximum number of NBC methods
+  integer,           external  :: get_neigh_no_Rij
+  integer,           external  :: get_neigh_Rij
+  integer,           parameter :: nCellsPerSide  = 2
+  integer,           parameter :: DIM            = 3
+  double precision,  parameter :: cutpad         = 0.75d0
+  integer,           parameter :: max_types      = 30     ! most species allowed in a config
+  integer,           parameter :: max_NBCs       = 20     ! maximum number of NBC methods
   integer            :: in
   integer            :: N
-  real*8,  parameter :: eps_prec       = epsilon(1.d0)
-  real*8             :: max_force_component
-  real*8             :: scaled_eps_prec
+  double precision,  parameter :: eps_prec       = epsilon(1.d0)
+  double precision             :: max_force_component
+  double precision             :: scaled_eps_prec
 
   integer(kind=kim_intptr), parameter  :: SizeOne = 1
   character(len=KIM_KEY_STRING_LENGTH) :: types_in_config(max_types)
@@ -81,7 +81,7 @@ program TEST_NAME_STR
   integer                              :: num_NBCs
   logical                              :: found
   integer i,j
-  real*8 force_err(DIM),ave_force_error
+  double precision force_err(DIM),ave_force_error
 
   ! neighbor list
   integer,                  allocatable :: neighborList(:,:)
@@ -98,9 +98,9 @@ program TEST_NAME_STR
   character*80              :: configfile
   character(len=KIM_KEY_STRING_LENGTH), pointer &
                             :: conf_types(:)    ! configuration atom types (element symbols)
-  real*8,           pointer :: conf_coors(:,:)  ! configuration coordinates
-  real*8,           pointer :: conf_forces(:,:) ! configuration forces
-  real*8                    :: conf_energy      ! configuration energy
+  double precision, pointer :: conf_coors(:,:)  ! configuration coordinates
+  double precision, pointer :: conf_forces(:,:) ! configuration forces
+  double precision          :: conf_energy      ! configuration energy
 
   character(len=KIM_KEY_STRING_LENGTH) :: NBC_Method; pointer(pNBC_Method,NBC_Method)
   integer nbc  ! 0- NEIGH_RVEC_H, 1- NEIGH_PURE_H, 2- NEIGH_RVEC_F, 3- NEIGH_PURE_F,
@@ -112,12 +112,12 @@ program TEST_NAME_STR
   integer numberParticleTypes; pointer(pnparticleTypes,numberParticleTypes)
   integer particleTypesdum(1); pointer(pparticleTypesdum,particleTypesdum)
 
-  real*8 cutoff;               pointer(pcutoff,cutoff)
-  real*8 energy;               pointer(penergy,energy)
-  real*8 coordum(DIM,1);       pointer(pcoor,coordum)
-  real*8 forcesdum(DIM,1);     pointer(pforces,forcesdum)
-  real*8 boxSideLengths(DIM);  pointer(pboxSideLengths,boxSideLengths)
-  real*8, pointer  :: coords(:,:), forces(:,:)
+  double precision cutoff;               pointer(pcutoff,cutoff)
+  double precision energy;               pointer(penergy,energy)
+  double precision coordum(DIM,1);       pointer(pcoor,coordum)
+  double precision forcesdum(DIM,1);     pointer(pforces,forcesdum)
+  double precision boxSideLengths(DIM);  pointer(pboxSideLengths,boxSideLengths)
+  double precision, pointer  :: coords(:,:), forces(:,:)
   integer, pointer :: particleTypes(:)
   character(len=10000) :: test_descriptor_string
 

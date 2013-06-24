@@ -47,8 +47,8 @@ type neighborlist_object
 	integer, pointer::offset(:) ! offset index in the main format
 	integer,pointer::neilist(:) !  neilist( offset(i) : offset(i) + numnei(i))-1 -- gives list of all neighbors 
 				      ! of an atom i (size of dokcurrentsize)
-        real*8,pointer::x(:,:)         !atoms position holder
-	real*8 ::dx(3,1024)		! position difference vector for neighbors of an atom		
+        double precision,pointer::x(:,:)         !atoms position holder
+	double precision ::dx(3,1024)		! position difference vector for neighbors of an atom		
 end type neighborlist_object
 
 type neighborlist_object_both
@@ -296,11 +296,11 @@ contains
 	subroutine neighborsfrom2groups(neigh_obj,i,j,k,ii,jj,kk,x3,fcut)
 		implicit none
 		integer ::i,j,k,ii,jj,kk, nei(2)
-		real*8::fcut
-		real*8,pointer :: x3(:,:)
+		double precision::fcut
+		double precision,pointer :: x3(:,:)
 		integer::group1(500), group2(500),groupnum1,groupnum2, m,n, a1,a2
                 type (neighborlist_object) :: neigh_obj
-		real*8 :: v(3),fcut2,norm2
+		double presision :: v(3),fcut2,norm2
                 
                 
                 fcut2=fcut*fcut
@@ -339,9 +339,9 @@ contains
 		implicit none
 		type (neighborlist_object),pointer:: neigh_obj
 
-		real*8, pointer,dimension(:,:) :: x3
+		double precision, pointer,dimension(:,:) :: x3
                 integer :: natomb,shpx3(2),i,j,k,nx,ny,nz,nk,m
-		real*8 :: fcut,xmin,xmax,ymin,ymax,zmin,zmax,lx,ly,lz, lmax, eps
+                double precision:: fcut,xmin,xmax,ymin,ymax,zmin,zmax,lx,ly,lz, lmax, eps
 
                 neigh_obj%x => x3
 		shpx3=shape(x3)
@@ -726,10 +726,10 @@ subroutine neighborscalculate(neigh_obj,px,n,cut)
 	use neighborlistmod
 	implicit none
 	integer:: n
-	real*8 ::cut
-	real*8,pointer::x(:,:)
+	double precision ::cut
+	double precision,pointer::x(:,:)
 	integer(kind=kim_intptr) :: px
-	real*8 :: xstub(3,*); pointer(pxstub,xstub)
+	double precision :: xstub(3,*); pointer(pxstub,xstub)
 	type (neighborlist_object),pointer :: neigh_obj
 	pxstub=px
         call KIM_to_F90_real_array_2d(xstub,x,3,n)
@@ -742,7 +742,7 @@ subroutine neighborscalculate_both(paddress,px,n,cut)
 	use neighborlistmod
 	implicit none
 	integer:: n
-	real*8 ::cut
+	double precision ::cut
 	integer(kind=kim_intptr) :: px,paddress
 	type (neighborlist_object_both):: neigh_obj; pointer(pneigh_obj,neigh_obj)
 	pneigh_obj = paddress
