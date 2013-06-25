@@ -48,10 +48,6 @@
 
 //#define intptr_t int  // for 32 bit machines
 
-extern "C" {
-        char * standard_kim_str();
- }
-
 class KIMBaseElementFlag{
 public:
         int peratom; //0 -- peratom, 1--per something else

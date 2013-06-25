@@ -1128,9 +1128,9 @@ bool KIM_API_model::is_it_match(KIM_API_model &test,KIM_API_model & mdl){
     //preinit model from standard template kim file
    KIM_API_model stdmdl;
 
-    char * inStandard_kim_str = standard_kim_str();
+    extern char standard_kim_str[];
     stdmdl.name_temp = (char*) "standard";
-    if(!stdmdl.prestring_init(inStandard_kim_str)){
+    if(!stdmdl.prestring_init(standard_kim_str)){
         std::cout<<" preinit of :"<<"standard.kim"<<" failed"<<std::endl;
         stdmdl.free();
         return false;
@@ -1414,8 +1414,8 @@ char * KIM_API_model::get_model_kim_str(char* modelname,int * kimerr){
        return NULL;
     }
 
-    typedef char* (*Model_kim_str)(void);
-    Model_kim_str get_kim_str = (Model_kim_str)dlsym(tmp_model_lib_handle,model_kim_str_name);
+    const char * in_mdlstr=NULL;
+    in_mdlstr = (const char*) dlsym(tmp_model_lib_handle,model_kim_str_name);
     const char *dlsym_error = dlerror();
     if (dlsym_error) {
         std::cerr << "Cannot load symbol: " << dlsym_error <<std::endl;
@@ -1424,15 +1424,6 @@ char * KIM_API_model::get_model_kim_str(char* modelname,int * kimerr){
         //redirecting back to > std::cout
         std::cout.rdbuf(backup); filekimlog.close();
 
-        return NULL;
-    }
-
-    char * in_mdlstr=NULL;
-
-    in_mdlstr = (*get_kim_str)();
-
-    if (in_mdlstr == NULL){
-        std::cout<<"* Error (KIM_API_get_model_kim_str: Unknown KIM Model name " << modelname << "." << std::endl;
         return NULL;
     }
 
@@ -1485,7 +1476,6 @@ int KIM_API_model::init_str_modelname(char* testname, char* inmdlstr){
     //check test-model match and preinit test-model-API
     KIM_API_model test,mdl;
     //preinit test and model API object
-
     mdl.name_temp = name_temp;
     if(!mdl.prestring_init(inmdlstr)){
         std::cout<<"prestring_init  failed with error status: "<<this->get_status_msg(ErrorCode)<<std::endl;

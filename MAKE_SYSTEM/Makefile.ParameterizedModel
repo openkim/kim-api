@@ -58,8 +58,7 @@ STATIC_COMP_WARNING:
         echo '*******                        $$KIM_DIR directory                       *******'; \
         echo '*******************************************************************************'; \
 
-MODEL_NAME_KIM_STR_H = char* $(strip $(MODEL_NAME))_kim_str();
-MODEL_NAME_KIM_STR_CPP = char* $(strip $(MODEL_NAME))_kim_str(){
+MODEL_NAME_KIM_STR = char $(strip $(MODEL_NAME))_kim_str[] =
 
 all: $(strip $(MODEL_NAME)).kim $(MODEL_BUILD_TARGET)
 

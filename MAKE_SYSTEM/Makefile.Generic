@@ -191,16 +191,11 @@ KIM_LIB = -L$(KIM_DIR)/KIM_API/ -lkim
 %_kim_str.cpp: %.kim
 	@printf "Creating... intermediate file... $@.\n"
 	@printf "extern \"C\" {\n"             > $*_kim_str.cpp
-	@printf "$(MODEL_NAME_KIM_STR_H)\n"   >> $*_kim_str.cpp
-	@printf "}\n"                         >> $*_kim_str.cpp
-	@printf "$(MODEL_NAME_KIM_STR_CPP)\n" >> $*_kim_str.cpp
-	@printf "static char kimstr[] =\n"    >> $*_kim_str.cpp
+	@printf "   $(MODEL_NAME_KIM_STR)\n"   >> $*_kim_str.cpp
 	@cat $(strip $(MODEL_NAME)).kim | tr -d '\r' | \
 	 sed -e 's,\\,\\\\,g'     \
              -e 's,",\\",g'       \
              -e 's,^,      ",g'   \
              -e 's,$$,\\n",g'                 >> $*_kim_str.cpp
 	@printf "   ;\n"                      >> $*_kim_str.cpp
-	@printf "return &kimstr[0];\n"        >> $*_kim_str.cpp
-	@printf "\n"                          >> $*_kim_str.cpp
 	@printf "}\n"                         >> $*_kim_str.cpp
