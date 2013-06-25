@@ -466,7 +466,7 @@ bool KIMBaseElement:: init(char *nm,char * tp,intptr_t sz, intptr_t rnk, int *sh
                 for (int i=0;i<rank;i++) shape[i]=shp[i];
             }
             if (rank !=0) ptrptr = pdata;
-            data = (void *)  (*(( intptr_t **)pdata));
+            data.p = (void *)  (*(( intptr_t **)pdata));
 
 
             flag->freeable = 1;
@@ -492,7 +492,7 @@ bool KIMBaseElement::init(char *nm,char * tp,intptr_t sz, intptr_t rnk, int *shp
 }
 void KIMBaseElement::free(){
              if(flag!=NULL) if (flag->freeable == 0){
-                delete [] (char *)data;
+                delete [] (char *)data.p;
             }
            if(name!= NULL) delete [] name;
            if(type!=NULL) delete [] type;
@@ -505,7 +505,7 @@ void KIMBaseElement::free(){
 
 }
 void KIMBaseElement::nullify(){
-            data=NULL;
+            data.p=NULL;
             ptrptr = NULL;
             shape = NULL;
             reserved=NULL;
@@ -577,7 +577,7 @@ int KIMBaseElement::getelemsize(char *tp, bool& success){
 }
 
 std::ostream &operator<<(std::ostream &stream, KIMBaseElement a){
-    if (a.data==NULL && a.name == NULL && a.type==NULL) {
+    if (a.data.p==NULL && a.name == NULL && a.type==NULL) {
         stream <<" KIMBaseElement is nullified "<<std::endl;
         return stream;
     }
@@ -600,19 +600,19 @@ std::ostream &operator<<(std::ostream &stream, KIMBaseElement a){
     stream<<" data: ";
 
 
-    if(a.data == NULL) {
+    if(a.data.p == NULL) {
         stream <<"NULL"<<std::endl;
         return stream;
     }else if(strcmp(a.type,"double")==0){
 
-        for(int i=0;i<a.size;i++) stream<< ((double*)(a.data))[i]<<" ";
+        for(int i=0;i<a.size;i++) stream<< ((double*)(a.data.p))[i]<<" ";
 
     }else if(strcmp(a.type,"real")==0){
-        for(int i=0;i<a.size;i++) stream<< ((float*)(a.data))[i]<<" ";
+        for(int i=0;i<a.size;i++) stream<< ((float*)(a.data.p))[i]<<" ";
     }else if(strcmp(a.type,"integer")==0){
-        for(int i=0;i<a.size;i++) stream<< ((int*)(a.data))[i]<<" ";
+        for(int i=0;i<a.size;i++) stream<< ((int*)(a.data.p))[i]<<" ";
     }else{
-        stream<<"address:"<<(intptr_t)a.data;
+        stream<<"address:"<<(intptr_t)a.data.p;
     }
     stream<<std::endl;
 
@@ -787,7 +787,7 @@ int KIM_API_model::prestring_init(char *instrn){
                 el->flag->calculate = 1;
                 el->flag->peratom = 1;//per something else
                 if(inlines[i].isitperatom()) el->flag->peratom = 0; //per atom
-                KIMBaseElement **pel =(KIMBaseElement**) model.data;
+                KIMBaseElement **pel =(KIMBaseElement**) model.data.p;
                 pel[ii] =  el;
                 ii++;
                 delete [] shape;
@@ -830,8 +830,8 @@ void KIM_API_model::free(int *error){
 }
 
  void KIM_API_model::free(){
-         KIMBaseElement **pel =  (KIMBaseElement **)  model.data;
-        if(model.data != NULL)  for (int i =0;i<model.size;i++) {
+         KIMBaseElement **pel =  (KIMBaseElement **)  model.data.p;
+        if(model.data.p != NULL)  for (int i =0;i<model.size;i++) {
             pel[i]->free();
             delete pel[i];
             pel[i]=NULL;
@@ -868,9 +868,9 @@ int KIM_API_model::set_data_by_index(int ind, intptr_t size, void* dt){
         } //no data in KIM_API_model
         int c=1;
        if((*this)[ind].flag->freeable == 0) {
-           if((*this)[ind].data!=NULL) delete [] (char *)((*this)[ind].data);
+           if((*this)[ind].data.p!=NULL) delete [] (char *)((*this)[ind].data.p);
        }
-       (*this)[ind].data = dt;
+       (*this)[ind].data.p = dt;
 
         (*this)[ind].size = size;
 
@@ -895,7 +895,7 @@ void * KIM_API_model::get_data_by_index(int ind, int* error){
         *error = KIM_STATUS_FAIL;
         if (ind<0) return NULL;
         *error =KIM_STATUS_OK;
-        return (*this)[ind].data;
+        return (*this)[ind].data.p;
 }
 
 int KIM_API_model::get_index(char *nm,int *error){
@@ -987,7 +987,7 @@ KIMBaseElement & KIM_API_model::operator[](int i){
            KIM_API_model::fatal_error_print();
            exit(326);
         }
-        KIMBaseElement **pel =(KIMBaseElement**) model.data;
+        KIMBaseElement **pel =(KIMBaseElement**) model.data.p;
         return *pel[i];
 }
 KIMBaseElement & KIM_API_model::operator[](char *nm){
@@ -998,7 +998,7 @@ KIMBaseElement & KIM_API_model::operator[](char *nm){
            KIM_API_model::fatal_error_print();
            exit(325);
         }
-        KIMBaseElement **pel =(KIMBaseElement**) model.data;
+        KIMBaseElement **pel =(KIMBaseElement**) model.data.p;
         return *pel[ind];
 }
 
@@ -1661,7 +1661,7 @@ int KIM_API_model::model_reinit(){
 
    KIM_API_model *pkim = this;
    typedef int (*Model_Reinit)(void *);//prototype for model_reinit
-   Model_Reinit mdl_reinit = (Model_Reinit)(*this)[reinit_ind].data;
+   Model_Reinit mdl_reinit = (Model_Reinit)(*this)[reinit_ind].data.p;
    if (mdl_reinit == NULL) return KIM_STATUS_FAIL;
    return (*mdl_reinit)(&pkim);
 }
@@ -1766,7 +1766,7 @@ std::cout<<"               from the shared library:"<<itr->c_str()<<std::endl;
 
 int KIM_API_model::model_destroy(){
   typedef int (*Model_Destroy)(void *);//prototype for model_destroy
-  Model_Destroy mdl_destroy = (Model_Destroy) (*this)[(char*) "destroy"].data;
+  Model_Destroy mdl_destroy = (Model_Destroy) (*this)[(char*) "destroy"].data.p;
   //call model_destroy
   KIM_API_model *pkim = this;
 
@@ -1784,7 +1784,7 @@ int KIM_API_model::model_compute(){
   // set model_compute pointer
   typedef int (*Model_Compute)(void *);//prototype for model_compute
   int error = KIM_STATUS_FAIL;
-  Model_Compute mdl_compute = (Model_Compute) (*this)[compute_index].data;
+  Model_Compute mdl_compute = (Model_Compute) (*this)[compute_index].data.p;
   if (mdl_compute == NULL) return error;
 
   //initialize virials if needed
@@ -1811,7 +1811,7 @@ int KIM_API_model::get_neigh(int mode, int request, int *atom,
     typedef int (*Get_Neigh)(void **, int *, int *, int *, int *, int **,double **);
 
     if (get_neigh_index < 0) return KIM_STATUS_API_OBJECT_INVALID;
-    Get_Neigh get_neigh = (Get_Neigh)(*this)[get_neigh_index].data;
+    Get_Neigh get_neigh = (Get_Neigh)(*this)[get_neigh_index].data.p;
     KIM_API_model *pkim = this;
 
     if (model_index_shift==0) {
@@ -1877,7 +1877,7 @@ bool KIM_API_model::irrelevantVars2donotcompute(KIM_API_model & test, KIM_API_mo
 
 void KIM_API_model::allocate( int natoms, int ntypes, int * error){
     // in process
-    if ( this->model.data == NULL) {
+    if ( this->model.data.p == NULL) {
         std::cout<<"* Error (KIM_API_model::allocate): KIM API object not initialized with KIM_API_init()."<<std::endl;
         *error = KIM_STATUS_FAIL;
         return;
@@ -1920,7 +1920,7 @@ std::ostream &operator<<(std::ostream &stream, KIM_API_model &a){
     stream<< a.unit_h << std::endl;
     stream<<"List of items in KIM API Ojbect" << std::endl;
     stream<<"-------------------------------------"<<std::endl;
-    KIMBaseElement **pel =  (KIMBaseElement **)  a.model.data;
+    KIMBaseElement **pel =  (KIMBaseElement **)  a.model.data.p;
     for(int i=0;i<a.model.size;i++)
     {
        stream << "index : " << i << std::endl
@@ -2399,7 +2399,7 @@ bool KIM_API_model::add_element(char* instring){
         el->flag->calculate = 1;
         el->flag->peratom = 1;//per something else
         if(inlines[numlines].isitperatom()) el->flag->peratom = 0; //per atom
-        KIMBaseElement **pel =(KIMBaseElement**) model.data;
+        KIMBaseElement **pel =(KIMBaseElement**) model.data.p;
         pel[(int)model.size] =  el;
         delete [] shape;
 
@@ -2453,7 +2453,7 @@ int KIM_API_model::process_dEdr(KIM_API_model** ppkim, double* dE, double* r,
     KIM_API_model * pkim= *ppkim;
     typedef int (*Process_d1Edr)(KIM_API_model **, double *, double *, double **,int *,int *);
 
-    Process_d1Edr process = (Process_d1Edr) (*pkim)[pkim->process_dEdr_ind].data;
+    Process_d1Edr process = (Process_d1Edr) (*pkim)[pkim->process_dEdr_ind].data.p;
     int process_flag =0;
     process_flag = (*pkim)[pkim->process_dEdr_ind].flag->calculate;
 
@@ -2479,7 +2479,7 @@ int KIM_API_model::process_d2Edr2(KIM_API_model **ppkim,double *de,double **r,do
     KIM_API_model * pkim= *ppkim;
     typedef int (*Process_d2Edr)(KIM_API_model **, double *, double **, double **,int **,int **);
 
-    Process_d2Edr process = (Process_d2Edr) (*pkim)[pkim->process_d2Edr2_ind].data;
+    Process_d2Edr process = (Process_d2Edr) (*pkim)[pkim->process_d2Edr2_ind].data.p;
     int process_flag =0;
     process_flag = (*pkim)[pkim->process_d2Edr2_ind].flag->calculate;
 

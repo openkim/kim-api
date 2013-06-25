@@ -278,7 +278,7 @@ int KIM_API_set_data_by_index(void *kimmdl,int I, intptr_t size, void *dt){
      if (mdl == NULL) return error;
 
       int c=1;
-       (*mdl)[I].data = dt;
+       (*mdl)[I].data.p = dt;
        (*mdl)[I].size = size;
         if ((*mdl)[I].rank > 1) {
             for (int i=1;i<(*mdl)[I].rank;i++) {
@@ -296,7 +296,7 @@ void * KIM_API_get_data_by_index(void *kimmdl,int I,int *error){
     *error = KIM_STATUS_FAIL;
     if (mdl == NULL) return NULL;
     *error =KIM_STATUS_OK;
-    return (*mdl)[I].data;
+    return (*mdl)[I].data.p;
 }
 
 intptr_t KIM_API_get_size_by_index(void *kimmdl,int I, int *error){

@@ -124,7 +124,10 @@ std::istream &operator>>(std::istream &stream, IOline &a);
 
 class KIMBaseElement{
 public:
-        void *data;
+   union {
+      void *p;
+      void (* fp)();
+   } data;
         intptr_t size; //Size in words defined by type
         intptr_t rank; // number of indexes
         int * shape; //1d array of integer showing the size of each index
