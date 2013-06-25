@@ -52,7 +52,7 @@ extern "C" {
    #include <dlfcn.h>
    static int model_destroy(void* km);
 #else
-   int MODEL_DRIVER_NAME_STR_init(void* km, char* paramfilenames, int* nmstrlen, int* numparamfiles);
+   extern int (* MODEL_DRIVER_NAME_STR_init_pointer)(void*, char*, int*, int*);
 #endif
 
 
@@ -84,12 +84,16 @@ extern "C" {
 #if KIM_LINK_VALUE == KIM_LINK_DYNAMIC_LOAD
       driver_lib_handle = dlopen("MODEL_DRIVER_SO_NAME_STR",RTLD_NOW);
       if (!driver_lib_handle) {
-         std::cout << "Error at " << __LINE__ << " of file " << __FILE__ << std::endl;
+         std::cout << "Error at " << __LINE__ << " of file " << __FILE__
+                   << std::endl;
          std::cout << dlerror() << std::endl;
          return KIM_STATUS_FAIL;
       }
-      typedef int (*Driver_Init)(void *km, char* paramfilenames, int* nmstrlen, int* numparamfiles);
-      Driver_Init drvr_init = (Driver_Init)dlsym(driver_lib_handle,"MODEL_DRIVER_NAME_STR_init");
+      typedef int (*Driver_Init)(void *km, char* paramfilenames,
+                                 int* nmstrlen, int* numparamfiles);
+      Driver_Init drvr_init =
+         *((Driver_Init*)dlsym(driver_lib_handle,
+                               "MODEL_DRIVER_NAME_STR_init_pointer"));
       const char *dlsym_error = dlerror();
       if (dlsym_error) {
          std::cerr << "Cannot load symbol: " << dlsym_error << std::endl;
@@ -108,7 +112,7 @@ extern "C" {
       driver_destroy = (*((KIM_API_model**)km))->get_data((char*) "destroy", &ier);
       (*((KIM_API_model**)km))->set_data((char*) "destroy",1,(void*) &model_destroy);
 #else
-      int ier = MODEL_DRIVER_NAME_STR_init(km, param_file_names, &nmstrlen, &numparamfiles);
+      int ier = (*MODEL_DRIVER_NAME_STR_init_pointer)(km, param_file_names, &nmstrlen, &numparamfiles);
       delete [] param_file_names;
       param_file_names = NULL;
       if (KIM_STATUS_OK > ier) return ier;
@@ -117,6 +121,8 @@ extern "C" {
       return KIM_STATUS_OK;
    }
 }
+
+int (* MODEL_NAME_STR_init_pointer)(void*) = MODEL_NAME_STR_init;
 
 static int process_paramfiles(char* param_file_names, int* nmstrlen)
 {

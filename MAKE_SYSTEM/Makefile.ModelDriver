@@ -66,16 +66,13 @@ else
 endif
 %_init_wrapper.cpp: Makefile
 	@printf "Creating... intermediate file... $@.\n"
-	@printf "extern \"C\"\n"                                                                                                             > $@
-	@printf "{\n"                                                                                                                       >> $@
+	@printf "extern \"C\"\n"                                                  > $@
+	@printf "{\n"                                                            >> $@
 	@printf "   int $(strip $(MODEL_DRIVER_INIT_FUNC_NAME))(void *kimmdl, char *paramfile_names, int *nmstrlen, int *numparamfiles);\n" >> $@
-	@printf "   int $(strip $(MODEL_DRIVER_NAME))_init(void *kimmdl, char *paramfile_names, int *nmstrlen, int *numparamfiles);\n"      >> $@
-	@printf "}\n"                                                                                                                       >> $@
-	@printf "\n"                                                                                                                        >> $@
-	@printf "int $(strip $(MODEL_DRIVER_NAME))_init(void *kimmdl, char *paramfile_names, int *nmstrlen, int *numparamfiles)\n"          >> $@
-	@printf "{\n"                                                                                                                       >> $@
-	@printf "   return $(MODEL_DRIVER_INIT_FUNC_NAME)(kimmdl, paramfile_names, nmstrlen, numparamfiles);\n"                             >> $@
-	@printf "}\n"                                                                                                                       >> $@
+	@printf "   int (* $(strip $(MODEL_DRIVER_NAME))_init_pointer)(void*,\n" >> $@
+	@printf "      char*, int*, int*) =\n"                                   >> $@
+	@printf "      $(strip $(MODEL_DRIVER_INIT_FUNC_NAME));\n"               >> $@
+	@printf "}\n"                                                            >> $@
 
 $(strip $(MODEL_DRIVER_NAME)).a: $(LOCALOBJ) $(strip $(MODEL_DRIVER_NAME))_init_wrapper.o 
 	@printf "Creating... $@.\n"
@@ -83,14 +80,14 @@ $(strip $(MODEL_DRIVER_NAME)).a: $(LOCALOBJ) $(strip $(MODEL_DRIVER_NAME))_init_
 
 export-list.txt: $(KIM_MAKE_FILES) Makefile
 ifeq (darwin, $(KIM_SYSTEMLINKER))
-	@printf "_$(MODEL_DRIVER_NAME)_init\n"     > $@
+	@printf "_$(MODEL_DRIVER_NAME)_init_pointer\n"             > $@
 else # everything else (linux and freebsd)
-	@printf "{\n"                                         > $@
-	@printf "   global:\n"                               >> $@
-	@printf "           $(MODEL_DRIVER_NAME)_init;\n"    >> $@
-	@printf "\n"                                         >> $@
-	@printf "   local: *;\n"                             >> $@
-	@printf "};\n"                                       >> $@
+	@printf "{\n"                                              > $@
+	@printf "   global:\n"                                    >> $@
+	@printf "           $(MODEL_DRIVER_NAME)_init_pointer;\n" >> $@
+	@printf "\n"                                              >> $@
+	@printf "   local: *;\n"                                  >> $@
+	@printf "};\n"                                            >> $@
 endif
 
 $(LOCALOBJ): Makefile

@@ -1741,10 +1741,10 @@ int KIM_API_model::model_init(){
 
 std::cout<<"* Info: KIM_API_model::model_init: call dynamically linked initialize routine for:"<<modelname<<std::endl;
 std::cout<<"               from the shared library:"<<itr->c_str()<<std::endl;
-    sprintf(model_init_routine_name,"%s_init",modelname);
+    sprintf(model_init_routine_name,"%s_init_pointer",modelname);
 
     typedef int (*Model_Init)(void **);//prototype for model_init
-    Model_Init mdl_init = (Model_Init)dlsym(model_lib_handle,model_init_routine_name);
+    Model_Init mdl_init = *((Model_Init*)dlsym(model_lib_handle,model_init_routine_name));
     const char *dlsym_error = dlerror();
     if (dlsym_error) {
         std::cerr << "* Error (KIM_API_model::model_init): Cannot load symbol: " << dlsym_error <<std::endl;

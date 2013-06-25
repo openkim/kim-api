@@ -68,16 +68,12 @@ else
 endif
 %_init_wrapper.cpp: Makefile
 	@printf "Creating... intermediate file... $@.\n"
-	@printf "extern \"C\"\n"                                            > $@
-	@printf "{\n"                                                      >> $@
-	@printf "   int $(strip $(MODEL_INIT_FUNC_NAME))(void *kimmdl);\n" >> $@
-	@printf "   int $(strip $(MODEL_NAME))_init(void *kimmdl);\n"      >> $@
-	@printf "}\n"                                                      >> $@
-	@printf "\n"                                                       >> $@
-	@printf "int $(strip $(MODEL_NAME))_init(void *kimmdl)\n"          >> $@
-	@printf "{\n"                                                      >> $@
-	@printf "   return $(MODEL_INIT_FUNC_NAME)(kimmdl);\n"             >> $@
-	@printf "}\n"                                                      >> $@
+	@printf "extern \"C\"\n"                                             > $@
+	@printf "{\n"                                                       >> $@
+	@printf "   int $(strip $(MODEL_INIT_FUNC_NAME))(void *kimmdl);\n"  >> $@
+	@printf "   int (* $(strip $(MODEL_NAME))_init_pointer)(void*) =\n" >> $@
+	@printf "      $(strip $(MODEL_INIT_FUNC_NAME));\n"                 >> $@
+	@printf "}\n"                                                       >> $@
 
 $(strip $(MODEL_NAME)).a: $(LOCALOBJ) $(strip $(MODEL_NAME))_init_wrapper.o $(strip $(MODEL_NAME))_kim_str.o
 	@printf "Creating... $@.\n"
@@ -86,16 +82,16 @@ $(strip $(MODEL_NAME)).a: $(LOCALOBJ) $(strip $(MODEL_NAME))_init_wrapper.o $(st
 export-list.txt: $(KIM_MAKE_FILES) Makefile
 	@printf "Creating... $@.\n"
 ifeq (darwin, $(KIM_SYSTEMLINKER))
-	@printf "_$(MODEL_NAME)_init\n"     > $@
-	@printf "_$(MODEL_NAME)_kim_str\n" >> $@
+	@printf "_$(MODEL_NAME)_init_pointer\n"             > $@
+	@printf "_$(MODEL_NAME)_kim_str\n"                 >> $@
 else # everything else (linux and freebsd)
-	@printf "{\n"                                  > $@
-	@printf "   global:\n"                        >> $@
-	@printf "           $(MODEL_NAME)_init;\n"    >> $@
-	@printf "           $(MODEL_NAME)_kim_str;\n" >> $@
-	@printf "\n"                                  >> $@
-	@printf "   local: *;\n"                      >> $@
-	@printf "};\n"                                >> $@
+	@printf "{\n"                                       > $@
+	@printf "   global:\n"                             >> $@
+	@printf "           $(MODEL_NAME)_init_pointer;\n" >> $@
+	@printf "           $(MODEL_NAME)_kim_str;\n"      >> $@
+	@printf "\n"                                       >> $@
+	@printf "   local: *;\n"                           >> $@
+	@printf "};\n"                                     >> $@
 endif
 
 $(LOCALOBJ): Makefile
