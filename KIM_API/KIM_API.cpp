@@ -862,6 +862,15 @@ int KIM_API_model::set_data(char const* nm, intptr_t size, void *dt){
         } //no data in KIM_API_model
         return set_data_by_index(ind, size, dt);
 }
+int KIM_API_model::set_method_data(char const* nm, intptr_t size, func_ptr dt){
+        // set data into preinit element correctly calculates all
+        int error;
+        int ind=get_index((char*) nm, &error);
+        if (ind<0) {
+            return error;
+        } //no data in KIM_API_model
+        return set_method_data_by_index(ind, size, dt);
+}
 int KIM_API_model::set_data_by_index(int ind, intptr_t size, void* dt){
     if (ind<0) {
             return KIM_STATUS_FAIL;
@@ -886,9 +895,39 @@ int KIM_API_model::set_data_by_index(int ind, intptr_t size, void* dt){
         (*this)[ind].flag->freeable = 1;
         return KIM_STATUS_OK;
 }
+int KIM_API_model::set_method_data_by_index(int ind, intptr_t size, func_ptr dt){
+    if (ind<0) {
+            return KIM_STATUS_FAIL;
+        } //no data in KIM_API_model
+        int c=1;
+       if((*this)[ind].flag->freeable == 0) {
+           if((*this)[ind].data.p!=NULL) delete [] (char *)((*this)[ind].data.p);
+       }
+       (*this)[ind].data.fp = dt;
+
+        (*this)[ind].size = size;
+
+        if ((*this)[ind].rank > 1) {
+            for (int i=1;i<(*this)[ind].rank;i++) {
+                c=c * (*this)[ind].shape[i];
+            }
+            if(c!=0) (*this)[ind].shape[0] = size/c;
+        }
+        if ((*this)[ind].rank==1){
+            (*this)[ind].shape[0] = size;
+        }
+        (*this)[ind].flag->freeable = 1;
+        return KIM_STATUS_OK;
+}
+
 void * KIM_API_model::get_data(char *nm,int *error){
    int i=get_index(nm, error);
    return get_data_by_index(i, error);
+}
+
+func_ptr KIM_API_model::get_method_data(char *nm,int *error){
+   int i=get_index(nm, error);
+   return get_method_data_by_index(i, error);
 }
 
 void * KIM_API_model::get_data_by_index(int ind, int* error){
@@ -896,6 +935,13 @@ void * KIM_API_model::get_data_by_index(int ind, int* error){
         if (ind<0) return NULL;
         *error =KIM_STATUS_OK;
         return (*this)[ind].data.p;
+}
+
+func_ptr KIM_API_model::get_method_data_by_index(int ind, int* error){
+        *error = KIM_STATUS_FAIL;
+        if (ind<0) return NULL;
+        *error =KIM_STATUS_OK;
+        return (*this)[ind].data.fp;
 }
 
 int KIM_API_model::get_index(char *nm,int *error){
@@ -1661,7 +1707,7 @@ int KIM_API_model::model_reinit(){
 
    KIM_API_model *pkim = this;
    typedef int (*Model_Reinit)(void *);//prototype for model_reinit
-   Model_Reinit mdl_reinit = (Model_Reinit)(*this)[reinit_ind].data.p;
+   Model_Reinit mdl_reinit = (Model_Reinit)(*this)[reinit_ind].data.fp;
    if (mdl_reinit == NULL) return KIM_STATUS_FAIL;
    return (*mdl_reinit)(&pkim);
 }
@@ -1766,7 +1812,7 @@ std::cout<<"               from the shared library:"<<itr->c_str()<<std::endl;
 
 int KIM_API_model::model_destroy(){
   typedef int (*Model_Destroy)(void *);//prototype for model_destroy
-  Model_Destroy mdl_destroy = (Model_Destroy) (*this)[(char*) "destroy"].data.p;
+  Model_Destroy mdl_destroy = (Model_Destroy) (*this)[(char*) "destroy"].data.fp;
   //call model_destroy
   KIM_API_model *pkim = this;
 
@@ -1784,7 +1830,7 @@ int KIM_API_model::model_compute(){
   // set model_compute pointer
   typedef int (*Model_Compute)(void *);//prototype for model_compute
   int error = KIM_STATUS_FAIL;
-  Model_Compute mdl_compute = (Model_Compute) (*this)[compute_index].data.p;
+  Model_Compute mdl_compute = (Model_Compute) (*this)[compute_index].data.fp;
   if (mdl_compute == NULL) return error;
 
   //initialize virials if needed
@@ -1811,7 +1857,7 @@ int KIM_API_model::get_neigh(int mode, int request, int *atom,
     typedef int (*Get_Neigh)(void **, int *, int *, int *, int *, int **,double **);
 
     if (get_neigh_index < 0) return KIM_STATUS_API_OBJECT_INVALID;
-    Get_Neigh get_neigh = (Get_Neigh)(*this)[get_neigh_index].data.p;
+    Get_Neigh get_neigh = (Get_Neigh)(*this)[get_neigh_index].data.fp;
     KIM_API_model *pkim = this;
 
     if (model_index_shift==0) {
@@ -2453,7 +2499,7 @@ int KIM_API_model::process_dEdr(KIM_API_model** ppkim, double* dE, double* r,
     KIM_API_model * pkim= *ppkim;
     typedef int (*Process_d1Edr)(KIM_API_model **, double *, double *, double **,int *,int *);
 
-    Process_d1Edr process = (Process_d1Edr) (*pkim)[pkim->process_dEdr_ind].data.p;
+    Process_d1Edr process = (Process_d1Edr) (*pkim)[pkim->process_dEdr_ind].data.fp;
     int process_flag =0;
     process_flag = (*pkim)[pkim->process_dEdr_ind].flag->calculate;
 
@@ -2479,7 +2525,7 @@ int KIM_API_model::process_d2Edr2(KIM_API_model **ppkim,double *de,double **r,do
     KIM_API_model * pkim= *ppkim;
     typedef int (*Process_d2Edr)(KIM_API_model **, double *, double **, double **,int **,int **);
 
-    Process_d2Edr process = (Process_d2Edr) (*pkim)[pkim->process_d2Edr2_ind].data.p;
+    Process_d2Edr process = (Process_d2Edr) (*pkim)[pkim->process_d2Edr2_ind].data.fp;
     int process_flag =0;
     process_flag = (*pkim)[pkim->process_d2Edr2_ind].flag->calculate;
 
@@ -2575,6 +2621,41 @@ void KIM_API_model::setm_data(int *err, int numargs, ... ){
     va_end(listPointer);
 
 }
+void KIM_API_model::setm_method_data(int *err, int numargs, ... ){
+    *err=KIM_STATUS_FAIL;
+    va_list listPointer;
+    va_start(listPointer,numargs);
+    if(numargs % 4 != 0) {
+        std::cout<<"setm_method_data: numargs must be multiple of 4"<<std::endl;
+        *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_4;
+        va_end(listPointer);
+        return;
+    }
+
+    for (int i=0; i<numargs/4; i++){
+        char *nm      = va_arg(listPointer, char *);
+        intptr_t size = va_arg(listPointer, intptr_t);
+        func_ptr dt      = va_arg(listPointer, func_ptr);
+
+        int key       =va_arg(listPointer, int);
+        if (key != 1 && key != 0 ){
+            *err= KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY;
+            va_end(listPointer);
+            return;
+        }else if(key ==0) continue;
+
+        if(dt==NULL) std::cout<<"setm_method_data: WARNING: for "<<nm<<" data is NULL\n";
+        if(!this->set_method_data(nm,size,dt)){
+            std::cout<<"setm_method_data: set data for "<<nm<<" failed\n";
+            va_end(listPointer);
+            return;
+        }
+    }
+
+    *err=KIM_STATUS_OK;
+    va_end(listPointer);
+}
+
 void KIM_API_model::setm_data_by_index(int *err, int numargs, ... ){
     *err=KIM_STATUS_FAIL;
     va_list listPointer;
@@ -2600,6 +2681,39 @@ void KIM_API_model::setm_data_by_index(int *err, int numargs, ... ){
         if(dt==NULL) std::cout<<"setm_data_by_index: WARNING: for argument group "<<i<<" data is NULL\n";
 
         if(!this->set_data_by_index(ind,size,dt)){
+            std::cout<<"setm_data_by_index: set data for argument group"<<i<<" failed\n";
+            va_end(listPointer);
+            return;
+        }
+    }
+    *err=KIM_STATUS_OK;
+    va_end(listPointer);
+}
+void KIM_API_model::setm_method_data_by_index(int *err, int numargs, ... ){
+    *err=KIM_STATUS_FAIL;
+    va_list listPointer;
+    va_start(listPointer,numargs);
+    if(numargs % 4 != 0) {
+        std::cout<<"setm_method_data_by_index: numargs must be multiple of 4"<<std::endl;
+        *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_4;
+        va_end(listPointer);
+        return;
+    }
+
+    for (int i=0; i<numargs/4; i++){
+        int ind      = va_arg(listPointer, int);
+        intptr_t size = va_arg(listPointer, intptr_t);
+        func_ptr dt      = va_arg(listPointer, func_ptr);
+        int key       =va_arg(listPointer, int);
+        if (key != 1 && key != 0 ){
+            *err= KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY;
+            va_end(listPointer);
+            return;
+        }else if(key ==0) continue;
+
+        if(dt==NULL) std::cout<<"setm_data_by_index: WARNING: for argument group "<<i<<" data is NULL\n";
+
+        if(!this->set_method_data_by_index(ind,size,dt)){
             std::cout<<"setm_data_by_index: set data for argument group"<<i<<" failed\n";
             va_end(listPointer);
             return;
@@ -2642,6 +2756,39 @@ void KIM_API_model::getm_data(int *err,int numargs, ...){
     *err=KIM_STATUS_OK;
     va_end(listPointer);
 }
+void KIM_API_model::getm_method_data(int *err,int numargs, ...){
+
+    *err=KIM_STATUS_FAIL;
+    va_list listPointer;
+    va_start(listPointer,numargs);
+    if(numargs % 3 != 0) {
+        std::cout<<"getm_data: numargs must be multiple of 3"<<std::endl;
+        *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3;
+        va_end(listPointer);
+        return;
+    }
+
+    for (int i=0; i<numargs/3; i++){
+        char *nm      = va_arg(listPointer, char *);
+        func_ptr *dt      = va_arg(listPointer, func_ptr *);
+        int key       =va_arg(listPointer, int);
+        if (key != 1 && key != 0 ){
+            *err= KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY;
+            va_end(listPointer);
+            return;
+        }else if(key ==0) continue;
+
+        *dt = this->get_method_data(nm,err);
+        if(*err != KIM_STATUS_OK){
+            std::cout<<"getm_data: get data for "<<nm<<" failed\n";
+            va_end(listPointer);
+            return;
+        }
+    }
+
+    *err=KIM_STATUS_OK;
+    va_end(listPointer);
+}
 
 void KIM_API_model::getm_data_by_index(int *err,int numargs, ...){
     *err=KIM_STATUS_FAIL;
@@ -2666,6 +2813,39 @@ void KIM_API_model::getm_data_by_index(int *err,int numargs, ...){
         }else if(key ==0) continue;
 
         *dt = this->get_data_by_index(ind,err);
+        if(*err != KIM_STATUS_OK){
+            std::cout<<"getm_data_by_index: get data for argument group "<<i<<" failed\n";
+            va_end(listPointer);
+            return;
+        }
+    }
+
+    *err=KIM_STATUS_OK;
+    va_end(listPointer);
+}
+void KIM_API_model::getm_method_data_by_index(int *err,int numargs, ...){
+    *err=KIM_STATUS_FAIL;
+    va_list listPointer;
+    va_start(listPointer,numargs);
+    if(numargs % 3 != 0) {
+        std::cout<<"getm_data_by_index: numargs must be multiple of 3"<<std::endl;
+        *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3;
+        va_end(listPointer);
+        return;
+    }
+
+    for (int i=0; i<numargs/3; i++){
+        int ind      = va_arg(listPointer, int);
+        func_ptr *dt      = va_arg(listPointer, func_ptr *);
+
+        int key       =va_arg(listPointer, int);
+        if (key != 1 && key != 0 ){
+            *err= KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY;
+            va_end(listPointer);
+            return;
+        }else if(key ==0) continue;
+
+        *dt = this->get_method_data_by_index(ind,err);
         if(*err != KIM_STATUS_OK){
             std::cout<<"getm_data_by_index: get data for argument group "<<i<<" failed\n";
             va_end(listPointer);
