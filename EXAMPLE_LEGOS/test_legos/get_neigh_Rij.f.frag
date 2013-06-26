@@ -39,7 +39,7 @@ integer function get_neigh_Rij(pkim,mode,request,atom,numnei,pnei1atom,pRij)
   endif
   pneighborListdum = NLRvecLocs(1)
   pRijList         = NLRvecLocs(2)
-  NNeighbors       = NLRvecLocs(3)
+  NNeighbors       = INT(NLRvecLocs(3))
 
   pnAtoms = kim_api_get_data_f(pkim, "numberOfParticles", ier)
   if (ier.lt.KIM_STATUS_OK) then

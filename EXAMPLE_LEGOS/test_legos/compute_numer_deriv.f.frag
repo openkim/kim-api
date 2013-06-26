@@ -14,7 +14,7 @@ double precision,         intent(inout) :: coords(DIM,N)
 double precision,         intent(in)    :: cutoff
 double precision,         intent(in)    :: cutpad
 double precision,         intent(in)    :: boxSideLengths(DIM)
-character*64,             intent(in)    :: NBC_Method
+character(len=64),        intent(in)    :: NBC_Method
 logical,                  intent(inout) :: do_update_list
 double precision,         intent(inout) :: coordsave(DIM,N)
 integer,                  intent(inout) :: neighborList(N+1,N)
@@ -35,6 +35,8 @@ double precision energy;         pointer(penergy,energy)
 
 ! Initialize error flag
 ier = KIM_STATUS_OK
+
+deriv_last = 0.d0 ! initialize
 
 ! Unpack data from KIM object
 !
@@ -106,6 +108,8 @@ contains
    integer i,j
    integer idum
    double precision errt,fac,hh,a(NTAB,NTAB),fp,fm,coordorig
+
+   dfridr = 0.d0 ! initialize
 
    if (h.eq.0.d0) then
       ier = KIM_STATUS_FAIL

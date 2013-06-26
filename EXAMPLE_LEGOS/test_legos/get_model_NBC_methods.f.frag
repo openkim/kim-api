@@ -8,7 +8,7 @@ use KIM_API
 implicit none
 
 !-- Transferred variables
-character*80,                         intent(in)   :: modelname
+character(len=80),                    intent(in)   :: modelname
 integer,                              intent(in)   :: max_NBCs
 character(len=KIM_KEY_STRING_LENGTH), intent(out)  :: model_NBCs(max_NBCs)
 integer,                              intent(out)  :: num_NBCs

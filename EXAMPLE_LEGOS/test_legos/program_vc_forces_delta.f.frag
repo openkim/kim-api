@@ -103,8 +103,8 @@ program vc_forces_delta
   !
   ! KIM variables
   !
-  character*80              :: testname     = "vc_forces_delta"
-  character*80              :: modelname
+  character(len=80)         :: testname     = "vc_forces_delta"
+  character(len=80)         :: modelname
   character(len=KIM_KEY_STRING_LENGTH) :: NBC_Method; pointer(pNBC_Method,NBC_Method)
   integer nbc  ! 0- NEIGH_RVEC_H, 1- NEIGH_PURE_H, 2- NEIGH_RVEC_F, 3- NEIGH_PURE_F,
                ! 4- MI_OPBC_H,    5- MI_OPBC_F,    6- CLUSTER

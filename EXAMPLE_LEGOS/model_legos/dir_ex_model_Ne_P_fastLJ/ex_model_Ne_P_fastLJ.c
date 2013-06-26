@@ -139,7 +139,7 @@ static int neigh_rvec_h_compute(void* km)
    double R12;
    double e_Rm12;
    double e_Rm6;
-   int zi, zj;
+   int z, zi, zj;
    double fac = 0.0;
    double DE;
    int zero = 0, one = 1;
@@ -232,9 +232,9 @@ static int neigh_rvec_h_compute(void* km)
             zj = j*DIM;
 
             /* compute square distance */
-            dx[0] = Rij[DIM*jj];
-            dx[1] = Rij[DIM*jj+1];
-            dx[2] = Rij[DIM*jj+2];
+            dx[0] = Rij[z];
+            dx[1] = Rij[z+1];
+            dx[2] = Rij[z+2];
             Rsqij = dx[0]*dx[0] + dx[1]*dx[1] + dx[2]*dx[2];
 
             /* particles are interacting ? */
@@ -308,9 +308,9 @@ static int neigh_rvec_h_compute(void* km)
             zj = j*DIM;
 
             /* compute square distance */
-            dx[0] = Rij[DIM*jj];
-            dx[1] = Rij[DIM*jj+1];
-            dx[2] = Rij[DIM*jj+2];
+            dx[0] = Rij[z];
+            dx[1] = Rij[z+1];
+            dx[2] = Rij[z+2];
             Rsqij = dx[0]*dx[0] + dx[1]*dx[1] + dx[2]*dx[2];
 
             /* particles are interacting ? */
@@ -511,7 +511,6 @@ static int neigh_pure_h_compute(void* km)
          for (jj = 0; jj < numOfAtomNeigh; ++ jj)
          {
             j = neighListOfCurrentAtom[jj] + model_index_shift;
-            z = jj*DIM;
             zj = j*DIM;
 
             /* compute square distance */
@@ -587,7 +586,6 @@ static int neigh_pure_h_compute(void* km)
          for (jj = 0; jj < numOfAtomNeigh; ++ jj)
          {
             j = neighListOfCurrentAtom[jj] + model_index_shift;
-            z = jj*DIM;
             zj = j*DIM;
 
             /* compute square distance */
@@ -704,7 +702,7 @@ static int neigh_rvec_f_compute(void* km)
    double R12;
    double e_Rm12;
    double e_Rm6;
-   int zi, zj;
+   int z, zi, zj;
    double fac = 0.0;
    double DE;
    int zero = 0, one = 1;
@@ -796,9 +794,9 @@ static int neigh_rvec_f_compute(void* km)
             zj = j*DIM;
 
             /* compute square distance */
-            dx[0] = Rij[DIM*jj];
-            dx[1] = Rij[DIM*jj+1];
-            dx[2] = Rij[DIM*jj+2];
+            dx[0] = Rij[z];
+            dx[1] = Rij[z+1];
+            dx[2] = Rij[z+2];
             Rsqij = dx[0]*dx[0] + dx[1]*dx[1] + dx[2]*dx[2];
 
             /* particles are interacting ? */
@@ -871,9 +869,9 @@ static int neigh_rvec_f_compute(void* km)
             zj = j*DIM;
 
             /* compute square distance */
-            dx[0] = Rij[DIM*jj];
-            dx[1] = Rij[DIM*jj+1];
-            dx[2] = Rij[DIM*jj+2];
+            dx[0] = Rij[z];
+            dx[1] = Rij[z+1];
+            dx[2] = Rij[z+2];
             Rsqij = dx[0]*dx[0] + dx[1]*dx[1] + dx[2]*dx[2];
 
             /* particles are interacting ? */
@@ -1070,7 +1068,6 @@ static int neigh_pure_f_compute(void* km)
          for (jj = 0; jj < numOfAtomNeigh; ++ jj)
          {
             j = neighListOfCurrentAtom[jj] + model_index_shift;
-            z = jj*DIM;
             zj = j*DIM;
 
             /* compute square distance */
@@ -1145,7 +1142,6 @@ static int neigh_pure_f_compute(void* km)
          for (jj = 0; jj < numOfAtomNeigh; ++ jj)
          {
             j = neighListOfCurrentAtom[jj] + model_index_shift;
-            z = jj*DIM;
             zj = j*DIM;
 
             /* compute square distance */
@@ -1352,7 +1348,6 @@ static int mi_opbc_h_compute(void* km)
          for (jj = 0; jj < numOfAtomNeigh; ++ jj)
          {
             j = neighListOfCurrentAtom[jj] + model_index_shift;
-            z = jj*DIM;
             zj = j*DIM;
 
             /* compute neighbor vector and square distance */
@@ -1434,7 +1429,6 @@ static int mi_opbc_h_compute(void* km)
          for (jj = 0; jj < numOfAtomNeigh; ++ jj)
          {
             j = neighListOfCurrentAtom[jj] + model_index_shift;
-            z = jj*DIM;
             zj = j*DIM;
 
             /* compute neighbor vector and square distance */
@@ -1647,7 +1641,6 @@ static int mi_opbc_f_compute(void* km)
          for (jj = 0; jj < numOfAtomNeigh; ++ jj)
          {
             j = neighListOfCurrentAtom[jj] + model_index_shift;
-            z = jj*DIM;
             zj = j*DIM;
 
             /* compute neighbor vector and square distance */
@@ -1728,7 +1721,6 @@ static int mi_opbc_f_compute(void* km)
          for (jj = 0; jj < numOfAtomNeigh; ++ jj)
          {
             j = neighListOfCurrentAtom[jj] + model_index_shift;
-            z = jj*DIM;
             zj = j*DIM;
 
             /* compute neighbor vector and square distance */

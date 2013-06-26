@@ -182,8 +182,10 @@ double precision, pointer :: coor(:,:),force(:,:),ene_pot(:),virial_global(:)
 integer IterOrLoca
 integer HalfOrFull
 integer NBC
-integer numberContrib = 0
+integer numberContrib
 integer idum
+
+numberContrib = 0 ! initialize
 
 ! Determine neighbor list boundary condition (NBC)
 ! and half versus full mode:

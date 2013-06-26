@@ -225,7 +225,7 @@ double precision, pointer :: coor(:,:),force(:,:),ene_pot(:)
 integer IterOrLoca
 integer HalfOrFull
 integer NBC
-integer numberContrib = 0
+integer numberContrib
 integer energy_ind
 integer forces_ind
 integer particleEnergy_ind
@@ -240,6 +240,7 @@ integer boxSideLengths_ind
 integer get_neigh_ind
 integer cutoff_ind
 
+numberContrib = 0 ! initialize
 
 ! get model buffer from KIM object
 pbuffer = kim_api_get_model_buffer_f(pkim, Compute_Energy_Forces)

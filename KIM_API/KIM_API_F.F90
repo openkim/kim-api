@@ -94,8 +94,8 @@ module kim_api
 
         function kim_api_is_half_neighbors_f(kimmdl,ier)
           use kim_kinds
-        integer ::ier
-        integer(kind=kim_intptr) :: kimmdl,kim_api_is_half_neighbors_f
+        integer ::ier,kim_api_is_half_neighbors_f
+        integer(kind=kim_intptr) :: kimmdl
         end function kim_api_is_half_neighbors_f
 
 
@@ -668,8 +668,8 @@ module kim_api
             integer,pointer :: shape(:)
             integer :: shp(size(shape))
             integer :: shpst(1); pointer(pshpst,shpst)
-            integer :: i,error
-            integer(kind=kim_intptr) :: rank
+            integer :: error
+            integer(kind=kim_intptr) :: rank, i
             str2send = attachnull(trim(nm))
             pstr = loc(str2send)
             pshpst = loc(shp)
@@ -761,8 +761,7 @@ module kim_api
             integer,pointer :: shape(:)
             integer :: shp(size(shape))
             integer :: shpst(1); pointer(pshpst,shpst)
-            integer :: ii
-            integer(kind=kim_intptr) :: rank
+            integer(kind=kim_intptr) :: rank, ii
             pshpst = loc(shp)
             rank = kim_api_get_shape_by_index(kimmdl,I,pshpst,error)
             if(rank .eq. 0) then

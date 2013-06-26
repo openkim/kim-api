@@ -62,8 +62,8 @@ program TEST_NAME_STR
   !
   ! KIM variables
   !
-  character*80              :: testname     = "TEST_NAME_STR"
-  character*80              :: modelname
+  character(len=80)         :: testname     = "TEST_NAME_STR"
+  character(len=80)         :: modelname
   integer(kind=kim_intptr)  :: pkim
   integer                   :: ier, idum
   integer numberOfParticles;   pointer(pnAtoms,numberOfParticles)

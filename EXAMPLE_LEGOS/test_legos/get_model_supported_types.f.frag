@@ -10,7 +10,7 @@ use KIM_API
 implicit none
 
 !-- Transferred variables
-character*80,                         intent(in)   :: modelname
+character(len=80),                    intent(in)   :: modelname
 integer,                              intent(in)   :: max_types
 character(len=KIM_KEY_STRING_LENGTH), intent(out)  :: model_types(max_types)
 integer,                              intent(out)  :: num_types

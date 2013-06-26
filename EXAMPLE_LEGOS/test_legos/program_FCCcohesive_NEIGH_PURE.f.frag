@@ -114,7 +114,7 @@ program TEST_NAME_STR
   !
   rcut = get_model_cutoff_firsttime(testname, modelname)
   CellsPerRcut = ceiling(rcut/MinSpacing)
-  N = 4*((2.d0*CellsPerRcut)**3)
+  N = 4*((2*CellsPerRcut)**3)
 
 
   ! Setup the KIM API object

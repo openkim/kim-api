@@ -93,9 +93,9 @@ program TEST_NAME_STR
   !
   ! KIM variables
   !
-  character*80              :: testname     = "TEST_NAME_STR"
-  character*80              :: modelname
-  character*80              :: configfile
+  character(len=80)         :: testname     = "TEST_NAME_STR"
+  character(len=80)         :: modelname
+  character(len=80)         :: configfile
   character(len=KIM_KEY_STRING_LENGTH), pointer &
                             :: conf_types(:)    ! configuration atom types (element symbols)
   double precision, pointer :: conf_coors(:,:)  ! configuration coordinates

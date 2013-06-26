@@ -227,7 +227,7 @@ void * KIM_API_get_data(void *kimmdl,char *nm,int *error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     return mdl->get_data(nm,error);
 }
-func_ptr KIM_API_method_get_data(void *kimmdl,char *nm,int *error){
+func_ptr KIM_API_get_method_data(void *kimmdl,char *nm,int *error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     return mdl->get_method_data(nm,error);
 }
@@ -998,8 +998,8 @@ int  kim_api_set_method_data_(void *kimmdl,char **nm,  intptr_t *size, func_ptr 
 void * kim_api_get_data_(void *kimmdl,char **nm,int *error){
     return KIM_API_get_data(*(KIM_API_model **)kimmdl,*nm,error);
 }
-func_ptr kim_api_method_get_data_(void *kimmdl,char **nm,int *error){
-    return KIM_API_method_get_data(*(KIM_API_model **)kimmdl,*nm,error);
+func_ptr kim_api_get_method_data_(void *kimmdl,char **nm,int *error){
+    return KIM_API_get_method_data(*(KIM_API_model **)kimmdl,*nm,error);
 }
 
 intptr_t kim_api_get_size_(void *kimmdl,char **nm,int *error){

@@ -102,8 +102,8 @@ program TEST_NAME_STR
   !
   ! KIM variables
   !
-  character*80              :: testname     = "TEST_NAME_STR"
-  character*80              :: modelname
+  character(len=80)         :: testname     = "TEST_NAME_STR"
+  character(len=80)         :: modelname
   character(len=KIM_KEY_STRING_LENGTH) :: NBC_Method; pointer(pNBC_Method,NBC_Method)
   integer nbc  ! 0- NEIGH_RVEC_H, 1- NEIGH_PURE_H, 2- NEIGH_RVEC_F, 3- NEIGH_PURE_F,
                ! 4- MI_OPBC_H,    5- MI_OPBC_F,    6- CLUSTER
@@ -124,6 +124,8 @@ program TEST_NAME_STR
   integer middleDum
   character(len=10000) :: test_descriptor_string
   double precision rnd, deriv, deriv_err
+
+  term_max = 0.d0 ! initialize
 
   ! Initialize error flag
   ier = KIM_STATUS_OK
