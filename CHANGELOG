@@ -69,6 +69,11 @@
 
 * Changed directory names from trailing `s' to trailing `S'.
 
+* Updated example Tests and Models to use the new get/set method_data routines.
+
+* Added get/set method_data routines to properly transfer pointers to functions
+  or methods via the api.
+
 * Added support to examples for NEIGH_RVEC_H.
 
 * Added the NEIGH_RVEC_H NBC method.

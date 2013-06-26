@@ -23,9 +23,9 @@
 # All rights reserved.
 #
 # Contributors:
-#    Valeriu Smirichinski
 #    Ryan S. Elliott
 #    Ellad B. Tadmor
+#    Valeriu Smirichinski
 #
 
 ################################################################################
@@ -44,6 +44,18 @@ is always the same as the C interface, but is called as a member-function of
 the KIM_API_model object whose name does not include the `KIM_API_' part of the
 C interface function name.  (For example, to call KIM_API_model_compute() in
 C++, you would use the code `mdl->model_compute()'.)
+
+Pointers to data versus pointers to methods (functions):
+
+In general it is not portable to store a pointer to a method in a pointer to
+data variable.  This requires that we have separate service routines for
+storing and retrieving data and method pointers.  Additionally, for C/C++ the
+following typedef is provided:
+
+         typedef void (* func_ptr)();
+
+This provides a generic function pointer type and is used in the associated
+get/set method routines.
 
 In the following description several constants are used:
 
@@ -533,16 +545,18 @@ Corresponding Fortran style interface:
 ================== ELEMENT ACCESS METHODS ROUTINES BY NAME ====================
 
 int KIM_API_set_data(void *kimmdl, char *nm, intptr_t size, void *dt);
+int KIM_API_set_method_data(void *kimmdl, char *nm, intptr_t size, func_ptr dt);
 
-    This routine searches for the string `nm' in the KIM API object `kimmdl'. If
-    found, it stores in the KIM API object the value of `dt' which points to the
-    location in memory where the data associated with `nm' is to be stored.  Upon
-    successful completion this routine returns KIM_STATUS_OK.  If `nm' is not in
-    the KIM API object this routine returns KIM_STATUS_ARG_UNKNOWN.  If an
-    existing pointer in the KIM API object is overwritten by this operation, a
-    memory leak may result. (This could indicate that storage for the same data
-    has been allocated more than once.)  Thus, care must be taken if this
-    routine is used in conjunction with KIM_API_allocate for array data.
+    These routines search for the string `nm' in the KIM API object
+    `kimmdl'. If found, it stores in the KIM API object the value of `dt' which
+    points to the location in memory where the data/method associated with `nm'
+    is to be stored.  Upon successful completion this routine returns
+    KIM_STATUS_OK.  If `nm' is not in the KIM API object this routine returns
+    KIM_STATUS_ARG_UNKNOWN.  If an existing pointer in the KIM API object is
+    overwritten by this operation, a memory leak may result. (This could
+    indicate that storage for the same data has been allocated more than once.)
+    Thus, care must be taken if this routine is used in conjunction with
+    KIM_API_allocate for array data.
 
     NOTE: Prior to calling this routine a valid KIM API object must be obtained
           by calling KIM_API_init().
@@ -562,6 +576,8 @@ Arguments:
 
       void *dt
               pointer to the data
+      func_ptr dt
+              pointer to the method
 
 Corresponding Fortran style interface:
 
@@ -572,13 +588,21 @@ Corresponding Fortran style interface:
                       integer :: kim_api_set_data_f
       end function kim_api_set_data_f
 
+      integer function kim_api_set_method_data_f(kimmdl, nm, size, dt)
+                      ! dt is address (cray pointer to actual data)
+                      integer(kind=kim_intptr) :: kimmdl, size, dt
+                      character (len=*) :: nm
+                      integer :: kim_api_set_method_data_f
+      end function kim_api_set_method_data_f
+
 ******************************************************************************
 
 void *KIM_API_get_data(void *kimmdl, char *nm, int *kimerror);
+func_ptr KIM_API_get_method_data(void *kimmdl, char *nm, int *kimerror);
 
-    This routine returns a pointer from the KIM API object that points to
-    memory where data associated with the string `nm' is stored.  It returns NULL
-    if the string nm is not found in the KIM API object.
+    These routines return a pointer from the KIM API object that points to
+    memory where data/method associated with the string `nm' is stored.  It
+    returns NULL if the string nm is not found in the KIM API object.
 
 Arguments:
 
@@ -601,6 +625,13 @@ Corresponding Fortran style interface:
                       character (len=*) :: nm
                       integer :: kimerror
       end function kim_api_get_data_f
+
+      integer(kind=kim_intptr) function kim_api_get_method_data_f(kimmdl, nm, kimerror)
+                      integer(kind=kim_intptr) :: kimmdl
+                      integer(kind=kim_intptr) :: kim_api_get_method_data_f
+                      character (len=*) :: nm
+                      integer :: kimerror
+      end function kim_api_get_method_data_f
 
 ******************************************************************************
 
@@ -1880,8 +1911,10 @@ above.
 The prototypes of the supported "by index" routines are:
 
 int KIM_API_set_data_by_index(void *kimmdl, int I, intptr_t size, void *dt);
+int KIM_API_set_method_data_by_index(void *kimmdl, int I, intptr_t size, func_ptr dt);
 
 void *KIM_API_get_data_by_index(void *kimmdl, int I, int *kimerror);
+func_ptr KIM_API_get_method_data_by_index(void *kimmdl, int I, int *kimerror);
 
 intptr_t KIM_API_get_size_by_index(void *kimmdl, int I, int *kimerror);
 
@@ -1900,18 +1933,22 @@ int KIM_API_get_compute_by_index(void *kimmdl, int I, int *kimerror);
 ******************************************************************************
 
 In order to simplify access to KIM API object, MULTIPLE ACCESS ROUTINES are
-included among the KIM service methods.  There are 9 of these routines:
+included among the KIM service methods.  There are 13 of these routines:
 
 c-style:
-     1) KIM_API_getm_compute
-     2) KIM_API_setm_compute
-     3) KIM_API_getm_compute_by_index
-     4) KIM_API_setm_compute_by_index
-     5) KIM_API_getm_data
-     6) KIM_API_setm_data
-     7) KIM_API_getm_data_by_index
-     8) KIM_API_setm_data_by_index
-     9) KIM_API_getm_index
+      1) KIM_API_getm_compute
+      2) KIM_API_setm_compute
+      3) KIM_API_getm_compute_by_index
+      4) KIM_API_setm_compute_by_index
+      5) KIM_API_getm_data
+      6) KIM_API_getm_method_data
+      7) KIM_API_setm_data
+      8) KIM_API_setm_method_data
+      9) KIM_API_getm_data_by_index
+     10) KIM_API_getm_method_data_by_index
+     11) KIM_API_setm_data_by_index
+     12) KIM_API_setm_method_data_by_index
+     13) KIM_API_getm_index
 
      Each of these routines provides access to multiple KIM API object
      arguments in one function call.  These routines have a uniform
@@ -1937,39 +1974,55 @@ c-style:
 
      The VARIABLE_GROUP definitions are:
 
-     1.   void KIM_API_getm_compute(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
+      1.  void KIM_API_getm_compute(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
 
           Here VARIABLE_GROUP has 3 variables: char *name, int *compute, int gkey
 
-     2.   void KIM_API_setm_compute(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
+      2.  void KIM_API_setm_compute(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
 
           Here VARIABLE_GROUP has 3 variables: char *name, int compute, int gkey
 
-     3.   void KIM_API_getm_compute_by_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
+      3.  void KIM_API_getm_compute_by_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
 
           Here VARIABLE_GROUP has 3 variables: int index, int *compute, int gkey
 
-     4.   void KIM_API_setm_compute_by_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
+      4.  void KIM_API_setm_compute_by_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
 
           Here VARIABLE_GROUP has 3 variables: int index, int compute, int gkey
 
-     5.   void KIM_API_getm_data(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
+      5.  void KIM_API_getm_data(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
 
           Here VARIABLE_GROUP has 3 variables: char *name, void **data, int gkey
 
-     6.   void KIM_API_setm_data(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
+      6.  void KIM_API_getm_method_data(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
+
+          Here VARIABLE_GROUP has 3 variables: char *name, func_ptr *method, int gkey
+
+      7.  void KIM_API_setm_data(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
 
           Here VARIABLE_GROUP has 4 variables: char *name, intptr_t size, void *data, int gkey
 
-     7.   void KIM_API_getm_data_by_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
+      8.  void KIM_API_setm_method_data(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
+
+          Here VARIABLE_GROUP has 4 variables: char *name, intptr_t size, func_ptr data, int gkey
+
+      9.  void KIM_API_getm_data_by_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
 
           Here VARIABLE_GROUP has 3 variables: int index, void **data, int gkey
 
-     8.   void KIM_API_setm_data_by_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
+     10.  void KIM_API_getm_method_data_by_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
+
+          Here VARIABLE_GROUP has 3 variables: int index, func_ptr *method, int gkey
+
+     11.  void KIM_API_setm_data_by_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
 
           Here VARIABLE_GROUP has 4 variables: int index, intptr_t size, void *data, int gkey
 
-     9.   void KIM_API_getm_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...] );
+     12.  void KIM_API_setm_method_data_by_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
+
+          Here VARIABLE_GROUP has 4 variables: int index, intptr_t size, func_ptr method, int gkey
+
+     13.  void KIM_API_getm_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...] );
 
           Here VARIABLE_GROUP has 3 variables: char *name, int *index, int gkey
 
@@ -1977,15 +2030,19 @@ c-style:
     otherwise KIM_STATUS_FAIL (or other error codes < KIM_STATUS_OK).
 
 f90-style:
-    1) kim_api_getm_compute_f
-    2) kim_api_setm_compute_f
-    3) kim_api_getm_compute_by_index_f
-    4) kim_api_setm_compute_by_index_f
-    5) kim_api_getm_data_f
-    6) kim_api_setm_data_f
-    7) kim_api_getm_data_by_index_f
-    8) kim_api_setm_data_by_index_f
-    9) kim_api_getm_index_f
+     1) kim_api_getm_compute_f
+     2) kim_api_setm_compute_f
+     3) kim_api_getm_compute_by_index_f
+     4) kim_api_setm_compute_by_index_f
+     5) kim_api_getm_data_f
+     6) kim_api_getm_method_data_f
+     7) kim_api_setm_data_f
+     8) kim_api_setm_method_data_f
+     9) kim_api_getm_data_by_index_f
+    10) kim_api_getm_method_data_by_index_f
+    11) kim_api_setm_data_by_index_f
+    12) kim_api_setm_method_data_by_index_f
+    13) kim_api_getm_index_f
 
     The interface here is exactly as it is for the c-style, except that the
     `numargs' argument is not required.
