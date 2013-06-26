@@ -185,7 +185,7 @@ integer function model_init(pkim)
   integer ier, idum
 
   ! store pointers in KIM object
-  call kim_api_setm_data_f(pkim, ier, &
+  call kim_api_setm_method_data_f(pkim, ier, &
        "compute", one, loc(Compute_Energy_Forces), 1, &
        "reinit",  one, loc(ReInit),                1, &
        "destroy", one, loc(Destroy),               1)

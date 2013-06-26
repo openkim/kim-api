@@ -326,7 +326,7 @@ void * KIM_API_get_data_by_index(void *kimmdl,int I,int *error){
     *error =KIM_STATUS_OK;
     return (*mdl)[I].data.p;
 }
-func_ptr KIM_API_method_get_data_by_index(void *kimmdl,int I,int *error){
+func_ptr KIM_API_get_method_data_by_index(void *kimmdl,int I,int *error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     *error = KIM_STATUS_FAIL;
     if (mdl == NULL) return NULL;

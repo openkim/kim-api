@@ -43,7 +43,7 @@ static int process_paramfiles(char* param_file_names, int* nmstrlen);
 
 #if KIM_LINK_VALUE == KIM_LINK_DYNAMIC_LOAD
    static void* driver_lib_handle;
-   static void* driver_destroy;
+   static func_ptr driver_destroy;
 #endif
 
 extern "C" {
@@ -109,8 +109,8 @@ extern "C" {
       param_file_names = NULL;
       if (KIM_STATUS_OK > ier) return ier;
 
-      driver_destroy = (*((KIM_API_model**)km))->get_data((char*) "destroy", &ier);
-      (*((KIM_API_model**)km))->set_data((char*) "destroy",1,(void*) &model_destroy);
+      driver_destroy = (*((KIM_API_model**)km))->get_method_data((char*) "destroy", &ier);
+      (*((KIM_API_model**)km))->set_method_data((char*) "destroy",1, (func_ptr) model_destroy);
 #else
       int ier = (*MODEL_DRIVER_NAME_STR_init_pointer)(km, param_file_names, &nmstrlen, &numparamfiles);
       delete [] param_file_names;

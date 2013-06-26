@@ -263,7 +263,8 @@ static int compute(void* km)
    int* numContrib;
    int numberContrib;
    int numOfAtomNeigh;
-   int (*get_neigh)(void *,int *,int *,int *, int *, int **, double **);
+   typedef int (*get_neigh_ptr)(void *,int *,int *,int *, int *, int **, double **);
+   get_neigh_ptr get_neigh = NULL;
 
 
    /* get buffer from KIM object */
@@ -298,13 +299,12 @@ static int compute(void* km)
       return ier;
    }
 
-   KIM_API_getm_data_by_index(pkim, &ier, 10*3,
+   KIM_API_getm_data_by_index(pkim, &ier, 9*3,
                               buffer->cutoff_ind,                      &cutoff,         1,
                               buffer->numberOfParticles_ind,           &nAtoms,         1,
                               buffer->particleTypes_ind,               &particleTypes,  1,
                               buffer->coordinates_ind,                 &coords,         1,
                               buffer->numberContributingParticles_ind, &numContrib,     (HalfOrFull==1),
-                              buffer->get_neigh_ind,                   &get_neigh,      (NBC!=3),
                               buffer->boxSideLengths_ind,              &boxSideLengths, (NBC==2),
                               buffer->energy_ind,                      &energy,         comp_energy,
                               buffer->forces_ind,                      &force,          comp_force,
@@ -313,6 +313,15 @@ static int compute(void* km)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data_by_index", ier);
       return ier;
+   }
+   if (NBC!=3)
+   {
+      get_neigh = (get_neigh_ptr) KIM_API_get_method_data_by_index(pkim, buffer->get_neigh_ind, &ier);
+      if (KIM_STATUS_OK > ier)
+      {
+         KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_method_data_by_index", ier);
+         return ier;
+      }
    }
 
    if (HalfOrFull == 1)
@@ -629,7 +638,7 @@ int model_driver_init(void *km, char* paramfile_names, int* nmstrlen, int* numpa
    paramfile1name = paramfile_names;
 
    /* store pointer to functions in KIM object */
-   KIM_API_setm_data(pkim, &ier, 3*4,
+   KIM_API_setm_method_data(pkim, &ier, 3*4,
                      "compute", 1, &compute, 1,
                      "reinit",  1, &reinit,  1,
                      "destroy", 1, &destroy, 1);
