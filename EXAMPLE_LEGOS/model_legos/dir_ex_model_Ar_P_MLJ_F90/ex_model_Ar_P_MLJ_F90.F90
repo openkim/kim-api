@@ -160,10 +160,10 @@ integer(kind=kim_intptr), intent(in)  :: pkim
 
 !-- Local variables
 double precision :: Rij(DIM)
-double precision :: r,Rsqij,phi,dphi,dEidr
+double precision :: r,Rsqij,phi,dphi,dEidr = 0.d0
 integer :: i,j,jj,numnei,atom_ret,comp_force,comp_enepot,comp_virial,comp_energy
 integer, allocatable, target :: nei1atom_substitute(:)
-character*80 :: error_message
+character (len=80) :: error_message
 
 !-- KIM variables
 integer N;                             pointer(pN,N)
@@ -177,12 +177,12 @@ integer numContrib;                    pointer(pnumContrib,numContrib)
 integer nei1atom(1);                   pointer(pnei1atom,nei1atom)
 integer particleTypes(1);              pointer(pparticleTypes,particleTypes)
 double precision  virialdum(1);        pointer(pvirial,virialdum)
-character*64 NBC_Method;               pointer(pNBC_Method,NBC_Method)
+character (len=64) NBC_Method;         pointer(pNBC_Method,NBC_Method)
 double precision, pointer :: coor(:,:),force(:,:),ene_pot(:),virial_global(:)
 integer IterOrLoca
 integer HalfOrFull
 integer NBC
-integer numberContrib
+integer numberContrib = 0
 integer idum
 
 ! Determine neighbor list boundary condition (NBC)

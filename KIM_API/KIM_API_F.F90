@@ -175,8 +175,8 @@ module kim_api
 
         function kim_api_get_neigh_mode_f(kimmdl,error)
           use kim_kinds
-            integer(kind=kim_intptr) :: kimmdl,kim_api_get_neigh_mode_f
-            integer::error
+            integer(kind=kim_intptr) :: kimmdl
+            integer::error,kim_api_get_neigh_mode_f
         end function kim_api_get_neigh_mode_f
 
         function kim_api_get_shape(kimmdl,nm, shapea,error)
@@ -668,7 +668,8 @@ module kim_api
             integer,pointer :: shape(:)
             integer :: shp(size(shape))
             integer :: shpst(1); pointer(pshpst,shpst)
-            integer :: rank,i,error
+            integer :: i,error
+            integer(kind=kim_intptr) :: rank
             str2send = attachnull(trim(nm))
             pstr = loc(str2send)
             pshpst = loc(shp)
@@ -760,7 +761,8 @@ module kim_api
             integer,pointer :: shape(:)
             integer :: shp(size(shape))
             integer :: shpst(1); pointer(pshpst,shpst)
-            integer :: rank,ii
+            integer :: ii
+            integer(kind=kim_intptr) :: rank
             pshpst = loc(shp)
             rank = kim_api_get_shape_by_index(kimmdl,I,pshpst,error)
             if(rank .eq. 0) then

@@ -562,12 +562,12 @@ integer(kind=kim_intptr), intent(in)  :: pkim
 
 !-- Local variables
 double precision :: Rij(DIM)
-double precision :: r,Rsqij,phi,dphi,g,dg,dU,U,dphieff
+double precision :: r,Rsqij,phi,dphi,g,dg,dU,U,dphieff = 0.d0
 double precision :: dphii,dUi,Ei,dphij,dUj,Ej
 integer :: i,j,jj,numnei,comp_force,comp_enepot,comp_virial,comp_energy
 double precision, allocatable :: rho(:),derU(:)
 integer, allocatable, target :: nei1atom_substitute(:)
-character*80 :: error_message
+character (len=80) :: error_message
 
 !-- KIM variables
 integer N;                            pointer(pN,N)
@@ -583,12 +583,12 @@ integer particleTypes(1);             pointer(pparticleTypes,particleTypes)
 double precision virialdum(1);        pointer(pvirial,virialdum)
 integer irlast;                       pointer(pirlast,irlast)
 integer ielast;                       pointer(pielast,ielast)
-character*64 NBC_Method;              pointer(pNBC_Method,NBC_Method)
+character (len=64) NBC_Method;        pointer(pNBC_Method,NBC_Method)
 double precision, pointer :: coor(:,:),force(:,:),ene_pot(:),virial_global(:)
 integer IterOrLoca
 integer HalfOrFull
 integer NBC
-integer numberContrib
+integer numberContrib = 0
 integer idum
 integer atom_ret
 

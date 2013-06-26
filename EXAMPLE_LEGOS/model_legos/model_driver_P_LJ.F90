@@ -225,7 +225,7 @@ double precision, pointer :: coor(:,:),force(:,:),ene_pot(:)
 integer IterOrLoca
 integer HalfOrFull
 integer NBC
-integer numberContrib
+integer numberContrib = 0
 integer energy_ind
 integer forces_ind
 integer particleEnergy_ind
@@ -665,7 +665,7 @@ integer i,j,ier, idum
 integer(kind=kim_intptr):: buffer(1); pointer(pbuffer, buffer)
 integer bufind(1);                    pointer(pbufind, bufind)
 double precision  bufparam(1);        pointer(pbufparam, bufparam)
-character*80 :: error_message
+character (len=80) :: error_message
 ! define variables for all model parameters to be read in
 double precision in_cutoff
 double precision in_epsilon
@@ -674,7 +674,7 @@ double precision energy_at_cutoff
 
 !-- KIM variables
 double precision  cutoff; pointer(pcutoff,cutoff)
-character*64 NBC_Method;  pointer(pNBC_Method,NBC_Method)
+character (len=64) NBC_Method;  pointer(pNBC_Method,NBC_Method)
 
 !
 ! generic code to process model parameter file names from byte string

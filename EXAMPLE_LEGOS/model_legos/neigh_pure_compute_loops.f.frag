@@ -16,8 +16,10 @@
           return
        endif
     elseif (index(NBC_Method,"NEIGH_PURE_F").eq.1) then
+       pnumContrib = 0 ! initialize to avoid warning
        HalfOrFull = 2
     else
+       pnumCongrib = 0 ! initialize to avoid warning
        Compute_Energy_Forces = KIM_STATUS_FAIL
        idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
                                      "Unsupported NBC type", Compute_Energy_Forces)

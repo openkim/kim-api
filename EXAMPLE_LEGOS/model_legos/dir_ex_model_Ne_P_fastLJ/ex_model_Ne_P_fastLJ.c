@@ -139,7 +139,7 @@ static int neigh_rvec_h_compute(void* km)
    double R12;
    double e_Rm12;
    double e_Rm6;
-   int z, zi, zj;
+   int zi, zj;
    double fac = 0.0;
    double DE;
    int zero = 0, one = 1;
@@ -422,7 +422,7 @@ static int neigh_pure_h_compute(void* km)
    double R12;
    double e_Rm12;
    double e_Rm6;
-   int z, zi, zj;
+   int zi, zj;
    double fac = 0.0;
    double DE;
    int zero = 0, one = 1;
@@ -704,7 +704,7 @@ static int neigh_rvec_f_compute(void* km)
    double R12;
    double e_Rm12;
    double e_Rm6;
-   int z, zi, zj;
+   int zi, zj;
    double fac = 0.0;
    double DE;
    int zero = 0, one = 1;
@@ -982,7 +982,7 @@ static int neigh_pure_f_compute(void* km)
    double R12;
    double e_Rm12;
    double e_Rm6;
-   int z, zi, zj;
+   int zi, zj;
    double fac = 0.0;
    double DE;
    int zero = 0, one = 1;
@@ -1262,7 +1262,7 @@ static int mi_opbc_h_compute(void* km)
    double R12;
    double e_Rm12;
    double e_Rm6;
-   int z, zi, zj;
+   int zi, zj;
    double fac = 0.0;
    double DE;
    int zero = 0, one = 1;
@@ -1558,7 +1558,7 @@ static int mi_opbc_f_compute(void* km)
    double R12;
    double e_Rm12;
    double e_Rm6;
-   int z, zi, zj;
+   int zi, zj;
    double fac = 0.0;
    double DE;
    int zero = 0, one = 1;
