@@ -43,7 +43,7 @@
 #include "KIM_API_status.h"
 
 //global methods
-int KIM_API_init(void * kimmdl, char *testname, char *mdlname){
+int KIM_API_init(void * kimmdl, const char *testname, const char *mdlname){
     KIM_API_model * mdl;
     mdl = new KIM_API_model[1];
     if(mdl->init(testname,mdlname)) {
@@ -54,7 +54,7 @@ int KIM_API_init(void * kimmdl, char *testname, char *mdlname){
     return KIM_STATUS_FAIL;
 }
 
-int KIM_API_model_info(void * kimmdl, char * mdlname){
+int KIM_API_model_info(void * kimmdl, const char * mdlname){
     KIM_API_model * mdl;
     mdl = new KIM_API_model[1];
     if(mdl->model_info(mdlname)) {
@@ -65,7 +65,7 @@ int KIM_API_model_info(void * kimmdl, char * mdlname){
     return KIM_STATUS_FAIL;
 }
 
- int KIM_API_string_init(void * kimmdl, char *testinputstring, char * mdlname){
+ int KIM_API_string_init(void * kimmdl, const char *testinputstring, const char * mdlname){
      KIM_API_model * mdl;
     mdl = new KIM_API_model[1];
     if(mdl->string_init(testinputstring,mdlname)) {
@@ -103,7 +103,7 @@ int KIM_API_model_init(void * kimmdl){
     return KIM_STATUS_FAIL;
 }
 
-char * KIM_API_get_model_kim_str(char * modelname,int * kimerr){
+char * KIM_API_get_model_kim_str(const char * modelname,int * kimerr){
     return KIM_API_model::get_model_kim_str(modelname,kimerr);
 }
 
@@ -149,11 +149,11 @@ char * KIM_API_get_NBC_method(void *kimmdl,int * error){
      KIM_API_model * mdl=(KIM_API_model *) kimmdl;
      return mdl->get_NBC_method(error);
 }
-int KIM_API_get_partcl_type_code(void * kimmdl, char* atom, int * error){
+int KIM_API_get_partcl_type_code(void * kimmdl, const char* atom, int * error){
      KIM_API_model * mdl=(KIM_API_model *) kimmdl;
      return mdl->get_partcl_type_code(atom,error);
 }
-void KIM_API_set_partcl_type_code(void * kimmdl, char* atom, int code, int * error){
+void KIM_API_set_partcl_type_code(void * kimmdl, const char* atom, int code, int * error){
      KIM_API_model * mdl=(KIM_API_model *) kimmdl;
      return mdl->set_partcl_type_code(atom, code, error);
 }
@@ -176,7 +176,7 @@ char * KIM_API_get_status_msg(int error){
     return KIM_API_model::get_status_msg(error);
 }
 
-int KIM_API_report_error(int ln, char *fl,char *usermsg,int ier){
+int KIM_API_report_error(int ln, const char *fl,const char *usermsg,int ier){
     return KIM_API_model::report_error(ln,fl,usermsg,ier);
 }
 
@@ -213,43 +213,43 @@ int KIM_API_is_half_neighbors(void *kimmdl,int *ier){
 }
 
 //element access methods by name
-int  KIM_API_set_data(void *kimmdl,char *nm, intptr_t size, void *dt){
+int  KIM_API_set_data(void *kimmdl,const char *nm, intptr_t size, void *dt){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     if(mdl->set_data(nm,size,dt)) return KIM_STATUS_OK;
     return KIM_STATUS_FAIL;
 }
-int  KIM_API_set_method_data(void *kimmdl,char *nm, intptr_t size, func_ptr dt){
+int  KIM_API_set_method_data(void *kimmdl,const char *nm, intptr_t size, func_ptr dt){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     if(mdl->set_method_data(nm,size,dt)) return KIM_STATUS_OK;
     return KIM_STATUS_FAIL;
 }
-void * KIM_API_get_data(void *kimmdl,char *nm,int *error){
+void * KIM_API_get_data(void *kimmdl,const char *nm,int *error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     return mdl->get_data(nm,error);
 }
-func_ptr KIM_API_get_method_data(void *kimmdl,char *nm,int *error){
+func_ptr KIM_API_get_method_data(void *kimmdl,const char *nm,int *error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     return mdl->get_method_data(nm,error);
 }
 
-intptr_t KIM_API_get_size(void *kimmdl,char *nm,int *error){
+intptr_t KIM_API_get_size(void *kimmdl,const char *nm,int *error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     return mdl->get_size(nm,error);
 
 }
-intptr_t KIM_API_get_shape(void *kimmdl,char *nm, int * shape, int *error){
+intptr_t KIM_API_get_shape(void *kimmdl,const char *nm, int * shape, int *error){
 
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     return mdl->get_shape(nm,shape,error);
 
 }
 
-void KIM_API_set_shape(void *kimmdl,char *nm, int * shape, int rank,int *error){
+void KIM_API_set_shape(void *kimmdl,const char *nm, int * shape, int rank,int *error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     mdl->set_shape(nm,shape,rank,error);
 }
 
-void KIM_API_set_compute(void *kimmdl,char *nm, int flag, int *error){
+void KIM_API_set_compute(void *kimmdl,const char *nm, int flag, int *error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     mdl->set_compute(nm, flag, error);
 }
@@ -259,7 +259,7 @@ void KIM_API_set_compute_by_index(void *kimmdl,int ind, int flag, int *error){
     mdl->set_compute_by_index(ind, flag, error);
 }
 
-int KIM_API_get_compute(void *kimmdl,char *nm, int * error){
+int KIM_API_get_compute(void *kimmdl,const char *nm, int * error){
 
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
      *error = KIM_STATUS_FAIL;
@@ -277,7 +277,7 @@ int KIM_API_get_neigh_mode(void * kimmdl,int * error){
 }
 
 // element access by Index (fast way)
-int KIM_API_get_index(void *kimmdl,char *nm, int *error){
+int KIM_API_get_index(void *kimmdl,const char *nm, int *error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     return mdl->get_index(nm,error);
 }
@@ -845,7 +845,7 @@ void KIM_API_getm_compute_by_index(void *kimmdl, int *err,int numargs, ...){
 
 
 //related to Unit_Handling
-double KIM_API_get_scale_conversion(char *u_from,char *u_to, int *error){
+double KIM_API_get_scale_conversion(const char *u_from,const char *u_to, int *error){
     return KIM_API_model::get_scale_conversion(u_from,u_to,error);
 }
 int    KIM_API_get_unit_handling(void *kimmdl, int *error){
@@ -867,11 +867,11 @@ char * KIM_API_get_unit_time(void *kimmdl, int *error){
     return ((KIM_API_model *)kimmdl)->get_unit_time(error);
 }
 double KIM_API_convert_to_act_unit(void * kimmdl,
-                                char *length,
-                                char *energy,
-                                char *charge,
-                                char *temperature,
-                                char *time,
+                                const char *length,
+                                const char *energy,
+                                const char *charge,
+                                const char *temperature,
+                                const char *time,
                                 double length_exponent,
                                 double energy_exponent,
                                 double charge_exponent,

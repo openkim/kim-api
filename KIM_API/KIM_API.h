@@ -97,8 +97,8 @@ public:
         void strip(char * strv);
         void strip();
         void init2empty();
-        bool isitinput(char*str);
-        bool isitoutput(char*str);
+        bool isitinput(const char*str);
+        bool isitoutput(const char*str);
 };//main input line handler
 std::ostream &operator<<(std::ostream &stream, KIM_IOline a);
 std::istream &operator>>(std::istream &stream, KIM_IOline &a);
@@ -113,8 +113,8 @@ public:
 
         void strip(char *nm);
         IOline();
-        bool getFields(const char *inputString);
-        static int readlines_str(char * inputstr, IOline ** lines, bool& success);
+        bool getFields(char *inputString);
+        static int readlines_str(const char * inputstr, IOline ** lines, bool& success);
 }; //secondary input line handler //cout<<"SystemOfUnit:  file:"<<infile<<":"<<endl;
 std::ostream &operator<<(std::ostream &stream, IOline a);
 std::istream &operator>>(std::istream &stream, IOline &a);
@@ -139,13 +139,13 @@ public:
         void *reserved;
         KIMBaseElement();
         ~KIMBaseElement();
-        bool init(char *nm,char * tp,intptr_t sz, intptr_t rnk, int *shp,void * pdata);
-        bool init(char *nm,char * tp,intptr_t sz, intptr_t rnk, int *shp);
+        bool init(const char *nm,const char * tp,intptr_t sz, intptr_t rnk, int *shp,void * pdata);
+        bool init(const char *nm,const char * tp,intptr_t sz, intptr_t rnk, int *shp);
         void free();
         void nullify();
         bool equiv(KIM_IOline& kimioline, bool skip_specials);
 
-static  int getelemsize(char *tp, bool& success);
+static  int getelemsize(const char *tp, bool& success);
 };
 std::ostream &operator<<(std::ostream &stream, KIMBaseElement a);
 
@@ -156,39 +156,39 @@ public:
     KIM_API_model();
     ~KIM_API_model();
 
-    int model_info(char * modelname) {return preinit(modelname);} //does not have error
+    int model_info(const char * modelname) {return preinit(modelname);} //does not have error
                                                                   // because it returns OK or FAIL
 
     void free(int *error);
-    int set_data(char const* nm, intptr_t size, void *dt);
-    int set_method_data(char const* nm, intptr_t size, func_ptr dt);
+    int set_data(const char * nm, intptr_t size, void *dt);
+    int set_method_data(const char * nm, intptr_t size, func_ptr dt);
     int set_data_by_index(int ind,intptr_t size, void *dt);
     int set_method_data_by_index(int ind,intptr_t size, func_ptr dt);
 
-    void * get_data(char *nm,int *error);
-    func_ptr get_method_data(char *nm,int *error);
+    void * get_data(const char *nm,int *error);
+    func_ptr get_method_data(const char *nm,int *error);
     void * get_data_by_index(int ind,int *error);
     func_ptr get_method_data_by_index(int ind,int *error);
 
 
-    int get_index(char *nm, int * error);
-    intptr_t get_size(char *nm,int *error);
-    intptr_t get_shape(char *nm,int * shape,int *error);
-    void set_shape(char const* nm, int * shape, int rank, int *error);
-    void set_compute(char *nm, int flag, int *error);
+    int get_index(const char *nm, int * error);
+    intptr_t get_size(const char *nm,int *error);
+    intptr_t get_shape(const char *nm,int * shape,int *error);
+    void set_shape(const char * nm, int * shape, int rank, int *error);
+    void set_compute(const char *nm, int flag, int *error);
     void set_compute_by_index(int ind, int flag, int *error);
-    int get_compute(char *nm, int* error);
+    int get_compute(const char *nm, int* error);
     KIMBaseElement &operator[](int i);
-    KIMBaseElement &operator[](char *nm);
+    KIMBaseElement &operator[](const char *nm);
     void print(int *error);
 
     intptr_t get_size_by_index(int I,int *error);
     intptr_t get_shape_by_index(int I, int * shape,int *error);
     int get_compute_by_index(int I,int * error);
 
-    int init(char * testname,char * modelname);
-    int string_init(char * intststr,char * modelname);
-   int match(char* teststring, char* modelstring);
+    int init(const char * testname,const char * modelname);
+    int string_init(const char * intststr,const char * modelname);
+   int match(const char* teststring, const char* modelstring);
     int model_compute();
     int get_neigh(int mode,int request, int *atom, int *numnei, int **nei1atom, double **Rij);
     int model_init();
@@ -199,14 +199,14 @@ void allocate( int natoms, int ntypes,int * error);
 
 char* get_model_partcl_typs(int *nparticleTypes,int* error);
 char* get_test_partcl_typs(int *nparticleTypes,int* error);
-int get_partcl_type_code(char *atom, int * error);
-void set_partcl_type_code(char *atom, int code, int* error);
+int get_partcl_type_code(const char *atom, int * error);
+void set_partcl_type_code(const char *atom, int code, int* error);
 
 char * get_params(int *nVpar,int *error);
 char * get_free_params(int *nVpar,int *error);
 char * get_fixed_params(int *nVpar,int *error);
 
-static char * get_model_kim_str(char * modelname,int *kimerr);
+static char * get_model_kim_str(const char * modelname,int *kimerr);
 
 
 char * get_NBC_method(int *error);
@@ -215,7 +215,7 @@ int is_half_neighbors(int *error);
 
     int get_neigh_mode(int *error);
     static char * get_status_msg(int status_code);
-    static int report_error(int line, char const* fl, char const* usermsg, int error);
+    static int report_error(int line, const char * fl, const char * usermsg, int error);
     int get_model_index_shift();
     void set_model_buffer(void * o,int *error);
     void * get_model_buffer(int *error);
@@ -253,15 +253,15 @@ int is_half_neighbors(int *error);
     Unit_Handling unit_h;
     //Unit_Handling related routines
 
-    static double get_scale_conversion(char const* u_from,char const* u_to, int *error);
+    static double get_scale_conversion(const char * u_from,const char * u_to, int *error);
     int get_unit_handling(int *error);
     char * get_unit_length(int *error);
     char * get_unit_energy(int *error);
     char * get_unit_charge(int *error);
     char * get_unit_temperature(int *error);
     char * get_unit_time(int *error);
-    double convert_to_act_unit( char const* length, char const* energy,
-      char const* charge,char const* temperature, char const* time,
+    double convert_to_act_unit( const char * length, const char * energy,
+      const char * charge,const char * temperature, const char * time,
       double length_exponent, double energy_exponent, double charge_exponent,
       double temperature_exponent, double time_exponent, int* kimerror);
 
@@ -271,7 +271,7 @@ int is_half_neighbors(int *error);
 private:
     KIM_IOline *inlines;
     int numlines;
-   char* name_temp;
+   const char* name_temp;
 
     bool locator_neigh_mode;
     bool iterator_neigh_mode;
@@ -348,11 +348,11 @@ private:
 
     // other..
     static void fatal_error_print();
-    int preinit(char * initfile,char *modelname);
-    int preinit(char * modelname);
-    int prestring_init(char * instrn);
-    int init_str_modelname(char *testname,char *inmdlstr);
-    static   bool read_file_str(char * strstream,KIM_IOline ** lns, int * numlns );
+    int preinit(const char * initfile,const char *modelname);
+    int preinit(const char * modelname);
+    int prestring_init(const char * instrn);
+    int init_str_modelname(const char *testname,const char *inmdlstr);
+    static   bool read_file_str(const char * strstream,KIM_IOline ** lns, int * numlns );
 
     static bool irrelevantVars2donotcompute(KIM_API_model & test, KIM_API_model & mdl);
     bool check_consistance_NBC_method();
@@ -360,9 +360,9 @@ private:
     static bool is_it_match_noFlagCount(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns, bool ignore_optional);
 
    char* get_a_type_of_params(int* nVpar, int* error, int typecode);
-    static bool is_it_par(char * name);
-    static bool is_it_fixed_par(char * name);
-    static bool is_it_free_par(char * name);
+    static bool is_it_par(const char * name);
+    static bool is_it_fixed_par(const char * name);
+    static bool is_it_free_par(const char * name);
 
     bool is_it_match(KIM_API_model &test,KIM_API_model & mdl);
     bool do_AtomsTypes_match(KIM_API_model &test,KIM_API_model & mdl);
@@ -374,10 +374,10 @@ private:
     void add_auxiliaries_if_needed();
     bool init_AtomsTypes();
     bool do_flag_match(KIM_API_model & tst, KIM_API_model &mdl);
-    bool is_it_in_and_is_it_flag(KIM_API_model &mdl,char *name);
-    bool is_it_in(KIM_API_model &mdl,char *name);
+    bool is_it_in_and_is_it_flag(KIM_API_model &mdl,const char *name);
+    bool is_it_in(KIM_API_model &mdl,const char *name);
     void * model_lib_handle;
-    bool add_element(char * inln);
+    bool add_element(const char * inln);
     void free();
 };
 std::ostream &operator<<(std::ostream &stream, KIM_API_model &a);

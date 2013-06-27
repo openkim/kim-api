@@ -64,7 +64,7 @@ static void strip_char_string(char* nm)
    }
 }
 
-static bool read_file_to_stringstream(char* infile, std::stringstream& ss)
+static bool read_file_to_stringstream(const char* infile, std::stringstream& ss)
 {
    std::ifstream myfile;
    myfile.open(infile);
@@ -287,13 +287,13 @@ void KIM_IOline:: init2empty(){
             requirements[0]='\0';
             comments[0]='\0';
 }
-bool KIM_IOline:: isitinput(char*str){
+bool KIM_IOline:: isitinput(const char*str){
             char tocmp [] ="MODEL_INPUT:";
             if(strlen(str)<strlen(tocmp)) return false;
             if(strncmp(str,tocmp,strlen(tocmp))==0) return true;
             return false;
 }
-bool KIM_IOline:: isitoutput(char*str){
+bool KIM_IOline:: isitoutput(const char*str){
             char tocmp [] ="MODEL_OUTPUT:";
             if(strlen(str)<strlen(tocmp)) return false;
             if(strncmp(str,tocmp,strlen(tocmp))==0) return true;
@@ -337,7 +337,7 @@ IOline::IOline(){
     for(int i=0; i<101;i++) name[i]='\0';
     for(int i=0; i<101;i++) value[i]='\0';
 }
-bool IOline:: getFields(const char *inputString){
+bool IOline:: getFields(char *inputString){
                 int i;
                 for(i=0; i<=(int)strlen(inputString); i++){
                     if(*(inputString+i)=='#'){return false;};
@@ -367,7 +367,7 @@ bool IOline:: getFields(const char *inputString){
                 return true;
 }
 
-int IOline::readlines_str(char* instrn, IOline** inlines, bool& success){
+int IOline::readlines_str(const char* instrn, IOline** inlines, bool& success){
    success = true;
     int counter=0;
         IOline inlne;
@@ -431,7 +431,7 @@ KIMBaseElement:: KIMBaseElement(){
 KIMBaseElement::~KIMBaseElement(){
 
 }
-bool KIMBaseElement:: init(char *nm,char * tp,intptr_t sz, intptr_t rnk, int *shp,void * pdata){
+bool KIMBaseElement:: init(const char *nm,const char * tp,intptr_t sz, intptr_t rnk, int *shp,void * pdata){
             flag = new KIMBaseElementFlag;
 
             unit = new KIMBaseElementUnit;
@@ -475,7 +475,7 @@ bool KIMBaseElement:: init(char *nm,char * tp,intptr_t sz, intptr_t rnk, int *sh
 
             return true;
 }
-bool KIMBaseElement::init(char *nm,char * tp,intptr_t sz, intptr_t rnk, int *shp){
+bool KIMBaseElement::init(const char *nm,const char * tp,intptr_t sz, intptr_t rnk, int *shp){
             bool getelemsize_success;
             int szelement=getelemsize(tp, getelemsize_success);
             if (! getelemsize_success) return false;
@@ -545,7 +545,7 @@ bool KIMBaseElement::equiv(KIM_IOline& kimioline, bool skip_specials){
    return false;
 }
 
-int KIMBaseElement::getelemsize(char *tp, bool& success){
+int KIMBaseElement::getelemsize(const char *tp, bool& success){
             success = true;
             char realkey[KIM_KEY_STRING_LENGTH]="real";      //key defenitions
             char doublekey[KIM_KEY_STRING_LENGTH]="double";
@@ -746,14 +746,14 @@ KIM_API_model:: ~KIM_API_model(){
          delete [] neiOfAnAtom;
       }
 }
-int KIM_API_model:: preinit(char * initfile,char *modelname){
+int KIM_API_model:: preinit(const char * initfile,const char *modelname){
    std::stringstream buffer;
    if (!read_file_to_stringstream(initfile, buffer)) return KIM_STATUS_FAIL;
 
    return prestring_init((char*) buffer.str().c_str());
  }
 
-int KIM_API_model::prestring_init(char *instrn){
+int KIM_API_model::prestring_init(const char *instrn){
         if (!read_file_str(instrn,&inlines,&numlines)) return KIM_STATUS_FAIL;
 
 
@@ -853,7 +853,7 @@ void KIM_API_model::free(int *error){
         }
  }
 
-int KIM_API_model::set_data(char const* nm, intptr_t size, void *dt){
+int KIM_API_model::set_data(const char * nm, intptr_t size, void *dt){
         // set data into preinit element correctly calculates all
         int error;
         int ind=get_index((char*) nm, &error);
@@ -862,7 +862,7 @@ int KIM_API_model::set_data(char const* nm, intptr_t size, void *dt){
         } //no data in KIM_API_model
         return set_data_by_index(ind, size, dt);
 }
-int KIM_API_model::set_method_data(char const* nm, intptr_t size, func_ptr dt){
+int KIM_API_model::set_method_data(const char * nm, intptr_t size, func_ptr dt){
         // set data into preinit element correctly calculates all
         int error;
         int ind=get_index((char*) nm, &error);
@@ -920,12 +920,12 @@ int KIM_API_model::set_method_data_by_index(int ind, intptr_t size, func_ptr dt)
         return KIM_STATUS_OK;
 }
 
-void * KIM_API_model::get_data(char *nm,int *error){
+void * KIM_API_model::get_data(const char *nm,int *error){
    int i=get_index(nm, error);
    return get_data_by_index(i, error);
 }
 
-func_ptr KIM_API_model::get_method_data(char *nm,int *error){
+func_ptr KIM_API_model::get_method_data(const char *nm,int *error){
    int i=get_index(nm, error);
    return get_method_data_by_index(i, error);
 }
@@ -944,7 +944,7 @@ func_ptr KIM_API_model::get_method_data_by_index(int ind, int* error){
         return (*this)[ind].data.fp;
 }
 
-int KIM_API_model::get_index(char *nm,int *error){
+int KIM_API_model::get_index(const char *nm,int *error){
         for(int i=0; i< model.size;i++){
             if(strcmp((*this)[i].name,nm)==0) {
                 *error =KIM_STATUS_OK;
@@ -955,16 +955,16 @@ int KIM_API_model::get_index(char *nm,int *error){
         return -1;
 }
 
-intptr_t KIM_API_model::get_size(char *nm,int *error){
+intptr_t KIM_API_model::get_size(const char *nm,int *error){
         int ind=get_index(nm,error);
         return get_size_by_index(ind, error);
 }
-intptr_t KIM_API_model::get_shape(char *nm,int * shape, int *error){
+intptr_t KIM_API_model::get_shape(const char *nm,int * shape, int *error){
         int ind=get_index(nm,error);
         return get_shape_by_index(ind, shape, error);
 }
 
-void KIM_API_model::set_shape(char const* nm, int* shape, int rank, int* error){
+void KIM_API_model::set_shape(const char * nm, int* shape, int rank, int* error){
     //size will be calculated and set too
         int ind=get_index((char*) nm,error);
         *error =KIM_STATUS_ARG_UNKNOWN;
@@ -1005,7 +1005,7 @@ void KIM_API_model::set_shape(char const* nm, int* shape, int rank, int* error){
             return;
         }
 }
-void KIM_API_model::set_compute(char *nm, int flag, int *error){
+void KIM_API_model::set_compute(const char *nm, int flag, int *error){
    *error = KIM_STATUS_FAIL;
    int ind = get_index(nm, error);
    set_compute_by_index(ind, flag, error);
@@ -1022,7 +1022,7 @@ void KIM_API_model::set_compute_by_index(int ind, int flag, int *error){
 
    return;
 }
-int KIM_API_model::get_compute(char *nm, int* error){
+int KIM_API_model::get_compute(const char *nm, int* error){
    int ind = get_index(nm, error);
    if (*error != KIM_STATUS_OK) return KIM_STATUS_ARG_UNKNOWN;
    return get_compute_by_index(ind, error);
@@ -1036,7 +1036,7 @@ KIMBaseElement & KIM_API_model::operator[](int i){
         KIMBaseElement **pel =(KIMBaseElement**) model.data.p;
         return *pel[i];
 }
-KIMBaseElement & KIM_API_model::operator[](char *nm){
+KIMBaseElement & KIM_API_model::operator[](const char *nm){
         int error;
         int ind=get_index(nm,&error);
         if (error == KIM_STATUS_FAIL){
@@ -1048,7 +1048,7 @@ KIMBaseElement & KIM_API_model::operator[](char *nm){
         return *pel[ind];
 }
 
-bool KIM_API_model::read_file_str(char* strstream, KIM_IOline** lns, int* numlns){
+bool KIM_API_model::read_file_str(const char* strstream, KIM_IOline** lns, int* numlns){
         int counter=0;
         KIM_IOline inln;
 
@@ -1231,14 +1231,14 @@ bool KIM_API_model::is_it_match(KIM_API_model &test,KIM_API_model & mdl){
     return false;
 }
 
-bool KIM_API_model::is_it_in_and_is_it_flag(KIM_API_model& mdl,char * name){
+bool KIM_API_model::is_it_in_and_is_it_flag(KIM_API_model& mdl,const char * name){
    int error;
    int i = mdl.get_index(name,&error);
    if (i<0) return false;
    if (strcmp(mdl[i].type,"flag")!=0) return false;
    return true;
 }
-bool KIM_API_model::is_it_in(KIM_API_model& mdl, char* name){
+bool KIM_API_model::is_it_in(KIM_API_model& mdl, const char* name){
    int error;
    int i = mdl.get_index(name,&error);
    if (i<0) return false;
@@ -1373,7 +1373,7 @@ bool KIM_API_model::do_AtomsTypes_match(KIM_API_model& test, KIM_API_model& mdl)
     return true;
 }
 
-bool KIM_API_model::is_it_fixed_par(char* name){
+bool KIM_API_model::is_it_fixed_par(const char* name){
      char tmpname[KIM_KEY_STRING_LENGTH]="";
      strncpy(&tmpname[0],name,strlen(name)+1);
      char * tmp = strtok(tmpname,"_");if(tmp == NULL) return false;
@@ -1383,7 +1383,7 @@ bool KIM_API_model::is_it_fixed_par(char* name){
      }
      return false;
 }
-bool KIM_API_model::is_it_free_par(char* name){
+bool KIM_API_model::is_it_free_par(const char* name){
      char tmpname[KIM_KEY_STRING_LENGTH]="";
      strncpy(&tmpname[0],name,strlen(name)+1);
      char * tmp = strtok(tmpname,"_");if(tmp == NULL) return false;
@@ -1393,7 +1393,7 @@ bool KIM_API_model::is_it_free_par(char* name){
      }
      return false;
 }
-bool KIM_API_model::is_it_par(char* name){
+bool KIM_API_model::is_it_par(const char* name){
     return is_it_free_par(name) || is_it_fixed_par(name);
 }
 
@@ -1402,7 +1402,7 @@ extern "C"{
   #include "model_kim_str_include.h"
 }
 
-char * KIM_API_model::get_model_kim_str(char* modelname,int * kimerr){
+char * KIM_API_model::get_model_kim_str(const char* modelname,int * kimerr){
      //redirecting std::cout > kimlog
     *kimerr=KIM_STATUS_FAIL;
     char kimlog[2048] = "./kim.log";
@@ -1428,7 +1428,7 @@ char * KIM_API_model::get_model_kim_str(char* modelname,int * kimerr){
 
 #else
 
-char * KIM_API_model::get_model_kim_str(char* modelname,int * kimerr){
+char * KIM_API_model::get_model_kim_str(const char* modelname,int * kimerr){
     void * tmp_model_lib_handle = NULL;
     *kimerr= KIM_STATUS_FAIL;
     char model_kim_str_name[2048];
@@ -1484,7 +1484,7 @@ char * KIM_API_model::get_model_kim_str(char* modelname,int * kimerr){
 }
 #endif
 
-int KIM_API_model::init(char* testname, char* modelname){
+int KIM_API_model::init(const char* testname, const char* modelname){
 
     //redirecting std::cout > kimlog
    char kimlog[2048] = "./kim.log";
@@ -1511,7 +1511,7 @@ void KIM_API_model::fatal_error_print(){
 }
 
 
-int KIM_API_model::init_str_modelname(char* testname, char* inmdlstr){
+int KIM_API_model::init_str_modelname(const char* testname, const char* inmdlstr){
    int error;
    char testinputfile[2048] = KIM_TESTS_DIR_VAL;
     strcat(testinputfile,"/");strcat(testinputfile,testname);strcat(testinputfile,"/");
@@ -1565,7 +1565,7 @@ int KIM_API_model::init_str_modelname(char* testname, char* inmdlstr){
     }
 }
 
-int KIM_API_model::preinit(char* modelname){
+int KIM_API_model::preinit(const char* modelname){
     //redirecting std::cout > kimlog
    char kimlog[2048] = "./kim.log";
     std::streambuf * psbuf, * backup; std::ofstream filekimlog;
@@ -1584,7 +1584,7 @@ int KIM_API_model::preinit(char* modelname){
     return result;
 }
 
-int KIM_API_model::string_init(char* in_tststr, char* modelname){
+int KIM_API_model::string_init(const char* in_tststr, const char* modelname){
    int error;
     //redirecting std::cout > kimlog
    char kimlog[2048] = "./kim.log";
@@ -1649,7 +1649,7 @@ int KIM_API_model::string_init(char* in_tststr, char* modelname){
     }
 }
 
-int KIM_API_model::match(char* teststr, char* modelstr){
+int KIM_API_model::match(const char* teststr, const char* modelstr){
    int error;
     //redirecting std::cout > kimlog
    char kimlog[2048] = "./kim.log";
@@ -2169,7 +2169,7 @@ int  KIM_API_model::get_neigh_mode(int*kimerr){
     }
 }
 
-int KIM_API_model::get_partcl_type_code(char* atom, int * error){
+int KIM_API_model::get_partcl_type_code(const char* atom, int * error){
     *error =KIM_STATUS_FAIL;
     if (atom == NULL)  {
         *error = KIM_STATUS_PARTICLE_TYPES_UNDEFINED;
@@ -2186,7 +2186,7 @@ int KIM_API_model::get_partcl_type_code(char* atom, int * error){
     return res->code;
 }
 
-void KIM_API_model::set_partcl_type_code(char* atom, int code, int* error){
+void KIM_API_model::set_partcl_type_code(const char* atom, int code, int* error){
    *error = KIM_STATUS_FAIL;
     if (atom == NULL)  {
         *error = KIM_STATUS_PARTICLE_TYPES_UNDEFINED;
@@ -2311,7 +2311,7 @@ char * KIM_API_model::get_status_msg(int status_code) {
 
 }
 
-int KIM_API_model::report_error(int ln,char const* fl,char const* usermsg,int ier){
+int KIM_API_model::report_error(int ln,const char * fl,const char * usermsg,int ier){
     if(ier <= 0){
         char * kimstatus =get_status_msg(ier);
         std::cout<<"* Error: at line "<<ln<<" in "<<fl<< std::endl<<"\tMessage: "<<usermsg<<std::endl;
@@ -2410,7 +2410,7 @@ bool KIM_API_model::fij_related_things_match(KIM_API_model& test, KIM_API_model&
 
 }
 
-bool KIM_API_model::add_element(char* instring){
+bool KIM_API_model::add_element(const char* instring){
         KIM_IOline inln;
 
 
@@ -2553,7 +2553,7 @@ int KIM_API_model::process_d2Edr2(KIM_API_model **ppkim,double *de,double **r,do
 
 
 //related to Unit_Handling
-double KIM_API_model::get_scale_conversion( char const* u_from,char const* u_to, int *error){
+double KIM_API_model::get_scale_conversion( const char* u_from,const char * u_to, int *error){
     return Unit_Handling::get_scale_conversion(u_from,u_to,error);
 }
 int KIM_API_model::get_unit_handling(int *error){
@@ -2576,8 +2576,8 @@ char * KIM_API_model::get_unit_time(int *error){
 }
 
 double KIM_API_model::convert_to_act_unit(
-   char const* length, char const* energy, char const* charge,
-   char const* temperature, char const* time,
+   const char * length, const char* energy, const char* charge,
+   const char * temperature, const char * time,
    double length_exponent, double energy_exponent, double charge_exponent,
    double temperature_exponent, double time_exponent, int* kimerror){
    return Unit_Handling::convert_to_act_unit((void *)this, length, energy, charge, temperature, time,

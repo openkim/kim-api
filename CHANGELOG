@@ -71,6 +71,8 @@
 
 * Updated example Tests and Models to use the new get/set method_data routines.
 
+* Added `const' to api string parameters to avoid warnings in Models and Tests
+
 * Added get/set method_data routines to properly transfer pointers to functions
   or methods via the api.
 
