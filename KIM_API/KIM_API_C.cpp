@@ -218,18 +218,18 @@ int  KIM_API_set_data(void *kimmdl,const char *nm, intptr_t size, void *dt){
     if(mdl->set_data(nm,size,dt)) return KIM_STATUS_OK;
     return KIM_STATUS_FAIL;
 }
-int  KIM_API_set_method_data(void *kimmdl,const char *nm, intptr_t size, func_ptr dt){
+int  KIM_API_set_method(void *kimmdl,const char *nm, intptr_t size, func_ptr dt){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    if(mdl->set_method_data(nm,size,dt)) return KIM_STATUS_OK;
+    if(mdl->set_method(nm,size,dt)) return KIM_STATUS_OK;
     return KIM_STATUS_FAIL;
 }
 void * KIM_API_get_data(void *kimmdl,const char *nm,int *error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     return mdl->get_data(nm,error);
 }
-func_ptr KIM_API_get_method_data(void *kimmdl,const char *nm,int *error){
+func_ptr KIM_API_get_method(void *kimmdl,const char *nm,int *error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    return mdl->get_method_data(nm,error);
+    return mdl->get_method(nm,error);
 }
 
 intptr_t KIM_API_get_size(void *kimmdl,const char *nm,int *error){
@@ -300,7 +300,7 @@ int KIM_API_set_data_by_index(void *kimmdl,int I, intptr_t size, void *dt){
 
         return error;
 }
-int KIM_API_set_method_data_by_index(void *kimmdl,int I, intptr_t size, func_ptr dt){
+int KIM_API_set_method_by_index(void *kimmdl,int I, intptr_t size, func_ptr dt){
      KIM_API_model * mdl=(KIM_API_model *) kimmdl;
      int error = KIM_STATUS_FAIL;
      if (mdl == NULL) return error;
@@ -326,7 +326,7 @@ void * KIM_API_get_data_by_index(void *kimmdl,int I,int *error){
     *error =KIM_STATUS_OK;
     return (*mdl)[I].data.p;
 }
-func_ptr KIM_API_get_method_data_by_index(void *kimmdl,int I,int *error){
+func_ptr KIM_API_get_method_by_index(void *kimmdl,int I,int *error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     *error = KIM_STATUS_FAIL;
     if (mdl == NULL) return NULL;
@@ -405,13 +405,13 @@ void KIM_API_setm_data(void *kimmdl, int *err, int numargs, ... ){
     *err=KIM_STATUS_OK;
     va_end(listPointer);
 }
-void KIM_API_setm_method_data(void *kimmdl, int *err, int numargs, ... ){
+void KIM_API_setm_method(void *kimmdl, int *err, int numargs, ... ){
     KIM_API_model *pkim = (KIM_API_model *) kimmdl;
     *err=KIM_STATUS_FAIL;
     va_list listPointer;
     va_start(listPointer,numargs);
     if(numargs % 4 != 0) {
-        std::cout<<"setm_method_data: numargs must be multiple of 4"<<std::endl;
+        std::cout<<"setm_method: numargs must be multiple of 4"<<std::endl;
         *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_4;
         va_end(listPointer);
         return;
@@ -429,9 +429,9 @@ void KIM_API_setm_method_data(void *kimmdl, int *err, int numargs, ... ){
             return;
         }else if(key ==0) continue;
 
-        if(dt==NULL) std::cout<<"setm_method_data: WARNING: for "<<nm<<" data is NULL\n";
-        if(!pkim->set_method_data(nm,size,dt)){
-            std::cout<<"setm_method_data: set data for "<<nm<<" failed\n";
+        if(dt==NULL) std::cout<<"setm_method: WARNING: for "<<nm<<" data is NULL\n";
+        if(!pkim->set_method(nm,size,dt)){
+            std::cout<<"setm_method: set data for "<<nm<<" failed\n";
             va_end(listPointer);
             return;
         }
@@ -476,13 +476,13 @@ void KIM_API_setm_data_by_index(void *kimmdl, int *err, int numargs, ... ){
     *err=KIM_STATUS_OK;
     va_end(listPointer);
 }
-void KIM_API_setm_method_data_by_index(void *kimmdl, int *err, int numargs, ... ){
+void KIM_API_setm_method_by_index(void *kimmdl, int *err, int numargs, ... ){
     KIM_API_model *pkim = (KIM_API_model *) kimmdl;
      *err=KIM_STATUS_FAIL;
     va_list listPointer;
     va_start(listPointer,numargs);
     if(numargs % 4 != 0) {
-        std::cout<<"setm_method_data_by_index: numargs must be multiple of 4"<<std::endl;
+        std::cout<<"setm_method_by_index: numargs must be multiple of 4"<<std::endl;
         *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_4;
         va_end(listPointer);
         return;
@@ -500,10 +500,10 @@ void KIM_API_setm_method_data_by_index(void *kimmdl, int *err, int numargs, ... 
             return;
         }else if(key ==0) continue;
 
-        if(dt==NULL) std::cout<<"setm_method_data_by_index: WARNING: for argument group "<<i<<" data is NULL\n";
+        if(dt==NULL) std::cout<<"setm_method_by_index: WARNING: for argument group "<<i<<" data is NULL\n";
 
-        if(!pkim->set_method_data_by_index(ind,size,dt)){
-            std::cout<<"setm_method_data_by_index: set data for argument group"<<i<<" failed\n";
+        if(!pkim->set_method_by_index(ind,size,dt)){
+            std::cout<<"setm_method_by_index: set data for argument group"<<i<<" failed\n";
             va_end(listPointer);
             return;
         }
@@ -545,13 +545,13 @@ void KIM_API_getm_data(void *kimmdl, int *err,int numargs, ...){
     *err=KIM_STATUS_OK;
     va_end(listPointer);
 }
-void KIM_API_getm_method_data(void *kimmdl, int *err,int numargs, ...){
+void KIM_API_getm_method(void *kimmdl, int *err,int numargs, ...){
     KIM_API_model *pkim = (KIM_API_model *) kimmdl;
     *err=KIM_STATUS_FAIL;
     va_list listPointer;
     va_start(listPointer,numargs);
     if(numargs % 3 != 0) {
-        std::cout<<"getm_method_data: numargs must be multiple of 3"<<std::endl;
+        std::cout<<"getm_method: numargs must be multiple of 3"<<std::endl;
         *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3;
         va_end(listPointer);
         return;
@@ -568,9 +568,9 @@ void KIM_API_getm_method_data(void *kimmdl, int *err,int numargs, ...){
             return;
         }else if(key ==0) continue;
 
-        *dt = pkim->get_method_data(nm,err);
+        *dt = pkim->get_method(nm,err);
         if(*err != KIM_STATUS_OK){
-            std::cout<<"getm_method_data: get data for "<<nm<<" failed\n";
+            std::cout<<"getm_method: get data for "<<nm<<" failed\n";
             va_end(listPointer);
             return;
         }
@@ -613,13 +613,13 @@ void KIM_API_getm_data_by_index(void *kimmdl,int *err,int numargs, ...){
     *err=KIM_STATUS_OK;
     va_end(listPointer);
 }
-void KIM_API_getm_method_data_by_index(void *kimmdl,int *err,int numargs, ...){
+void KIM_API_getm_method_by_index(void *kimmdl,int *err,int numargs, ...){
     KIM_API_model *pkim = (KIM_API_model *) kimmdl;
     *err=KIM_STATUS_FAIL;
     va_list listPointer;
     va_start(listPointer,numargs);
     if(numargs % 3 != 0) {
-        std::cout<<"getm_method_data_by_index: numargs must be multiple of 3"<<std::endl;
+        std::cout<<"getm_method_by_index: numargs must be multiple of 3"<<std::endl;
         *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3;
         va_end(listPointer);
         return;
@@ -636,9 +636,9 @@ void KIM_API_getm_method_data_by_index(void *kimmdl,int *err,int numargs, ...){
             return;
         }else if(key ==0) continue;
 
-        *dt = pkim->get_method_data_by_index(ind,err);
+        *dt = pkim->get_method_by_index(ind,err);
         if(*err != KIM_STATUS_OK){
-            std::cout<<"getm_method_data_by_index: get data for argument group "<<i<<" failed\n";
+            std::cout<<"getm_method_by_index: get data for argument group "<<i<<" failed\n";
             va_end(listPointer);
             return;
         }
@@ -991,15 +991,15 @@ int kim_api_is_half_neighbors_f_(void * kimmdl,int *ier){
 int  kim_api_set_data_(void *kimmdl,char **nm,  intptr_t *size, void *dt){
     return KIM_API_set_data(*(KIM_API_model **)kimmdl,*nm,*size,*(char**)dt);
 }
-int  kim_api_set_method_data_(void *kimmdl,char **nm,  intptr_t *size, func_ptr *dt){
-    return KIM_API_set_method_data(*(KIM_API_model **)kimmdl,*nm,*size,*dt);
+int  kim_api_set_method_(void *kimmdl,char **nm,  intptr_t *size, func_ptr *dt){
+    return KIM_API_set_method(*(KIM_API_model **)kimmdl,*nm,*size,*dt);
 }
 
 void * kim_api_get_data_(void *kimmdl,char **nm,int *error){
     return KIM_API_get_data(*(KIM_API_model **)kimmdl,*nm,error);
 }
-func_ptr kim_api_get_method_data_(void *kimmdl,char **nm,int *error){
-    return KIM_API_get_method_data(*(KIM_API_model **)kimmdl,*nm,error);
+func_ptr kim_api_get_method_(void *kimmdl,char **nm,int *error){
+    return KIM_API_get_method(*(KIM_API_model **)kimmdl,*nm,error);
 }
 
 intptr_t kim_api_get_size_(void *kimmdl,char **nm,int *error){
@@ -1030,14 +1030,14 @@ int kim_api_get_index_(void *kimmdl,char **nm,int *error){
 int kim_api_set_data_by_index_(void *kimmdl,int * I, intptr_t * size, void *dt){
    return KIM_API_set_data_by_index(*(KIM_API_model **)kimmdl,*I,*size,*(char**)dt);
 }
-int kim_api_set_method_data_by_index_(void *kimmdl,int * I, intptr_t * size, func_ptr *dt){
-   return KIM_API_set_method_data_by_index(*(KIM_API_model **)kimmdl,*I,*size,*dt);
+int kim_api_set_method_by_index_(void *kimmdl,int * I, intptr_t * size, func_ptr *dt){
+   return KIM_API_set_method_by_index(*(KIM_API_model **)kimmdl,*I,*size,*dt);
 }
 void * kim_api_get_data_by_index_(void *kimmdl,int * I,int *error){
     return KIM_API_get_data_by_index(*(KIM_API_model **)kimmdl,*I,error);
 }
-func_ptr kim_api_get_method_data_by_index_(void *kimmdl,int * I,int *error){
-    return KIM_API_get_method_data_by_index(*(KIM_API_model **)kimmdl,*I,error);
+func_ptr kim_api_get_method_by_index_(void *kimmdl,int * I,int *error){
+    return KIM_API_get_method_by_index(*(KIM_API_model **)kimmdl,*I,error);
 }
 
 intptr_t kim_api_get_size_by_index_(void *kimmdl,int * I,int *error){

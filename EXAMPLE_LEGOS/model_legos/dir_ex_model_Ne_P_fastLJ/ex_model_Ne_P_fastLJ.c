@@ -2116,12 +2116,12 @@ int model_init(void *km)
    char* NBCstr;
 
    /* store function pointers in KIM object */
-   KIM_API_setm_method_data(pkim, &ier, 2*4,
+   KIM_API_setm_method(pkim, &ier, 2*4,
                              "reinit",  1, (func_ptr) &reinit,  1,
                              "destroy", 1, (func_ptr) &destroy, 1);
    if (KIM_STATUS_OK > ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_setm_method_data", ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_setm_method", ier);
       return ier;
    }
 
@@ -2187,37 +2187,37 @@ int model_init(void *km)
    }
    if (!strcmp("NEIGH_RVEC_H",NBCstr))
    {
-      ier = KIM_API_set_method_data(pkim, "compute", 1,
+      ier = KIM_API_set_method(pkim, "compute", 1,
                                     (func_ptr) &neigh_rvec_h_compute);
    }
    else if (!strcmp("NEIGH_PURE_H",NBCstr))
    {
-      ier = KIM_API_set_method_data(pkim, "compute", 1,
+      ier = KIM_API_set_method(pkim, "compute", 1,
                                     (func_ptr) &neigh_pure_h_compute);
    }
    else if (!strcmp("NEIGH_RVEC_F",NBCstr))
    {
-      ier = KIM_API_set_method_data(pkim, "compute", 1,
+      ier = KIM_API_set_method(pkim, "compute", 1,
                                     (func_ptr) &neigh_rvec_f_compute);
    }
    else if (!strcmp("NEIGH_PURE_F",NBCstr))
    {
-      ier = KIM_API_set_method_data(pkim, "compute", 1,
+      ier = KIM_API_set_method(pkim, "compute", 1,
                                     (func_ptr) &neigh_pure_f_compute);
    }
    else if (!strcmp("MI_OPBC_H",NBCstr))
    {
-      ier = KIM_API_set_method_data(pkim, "compute", 1,
+      ier = KIM_API_set_method(pkim, "compute", 1,
                                     (func_ptr) &mi_opbc_h_compute);
    }
    else if (!strcmp("MI_OPBC_F",NBCstr))
    {
-      ier = KIM_API_set_method_data(pkim, "compute", 1,
+      ier = KIM_API_set_method(pkim, "compute", 1,
                                     (func_ptr) &mi_opbc_f_compute);
    }
    else if (!strcmp("CLUSTER",NBCstr))
    {
-      ier = KIM_API_set_method_data(pkim, "compute", 1,
+      ier = KIM_API_set_method(pkim, "compute", 1,
                                     (func_ptr) &cluster_compute);
    }
    else

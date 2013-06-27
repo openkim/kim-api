@@ -96,9 +96,9 @@ int KIM_API_is_half_neighbors(void *kimmdl,int * error);
 
 /* element access methods */
 int  KIM_API_set_data(void *kimmdl,const char *nm,  intptr_t size, void *dt);
-int  KIM_API_set_method_data(void *kimmdl,const char *nm,  intptr_t size, func_ptr dt);
+int  KIM_API_set_method(void *kimmdl,const char *nm,  intptr_t size, func_ptr dt);
 void * KIM_API_get_data(void *kimmdl,const char *nm,int * error);
-func_ptr KIM_API_get_method_data(void *kimmdl,const char *nm,int * error);
+func_ptr KIM_API_get_method(void *kimmdl,const char *nm,int * error);
 
 intptr_t KIM_API_get_size(void *kimmdl,const char *nm, int * error);
 intptr_t KIM_API_get_shape(void *kimmdl,const char *nm, int * shape, int *error);
@@ -111,9 +111,9 @@ int KIM_API_get_compute(void *kimmdl,const char *nm,int *error);
 int KIM_API_get_index(void *kimmdl,const char *nm, int * error);
 
 int KIM_API_set_data_by_index(void *kimmdl,int I, intptr_t size, void *dt);
-int KIM_API_set_method_data_by_index(void *kimmdl,int I, intptr_t size, func_ptr dt);
+int KIM_API_set_method_by_index(void *kimmdl,int I, intptr_t size, func_ptr dt);
 void * KIM_API_get_data_by_index(void *kimmdl,int I, int *error);
-func_ptr KIM_API_get_method_data_by_index(void *kimmdl,int I, int *error);
+func_ptr KIM_API_get_method_by_index(void *kimmdl,int I, int *error);
 
 intptr_t KIM_API_get_size_by_index(void *kimmdl,int I,int *error);
 intptr_t KIM_API_get_shape_by_index(void *kimmdl,int I, int * shape,int *error);
@@ -148,13 +148,13 @@ double KIM_API_convert_to_act_unit(void * kimmdl,
 /* multiple data set/get methods */
 
 void KIM_API_setm_data(void *kimmdl, int *error, int numargs, ... );
-void KIM_API_setm_method_data(void *kimmdl, int *error, int numargs, ... );
+void KIM_API_setm_method(void *kimmdl, int *error, int numargs, ... );
 void KIM_API_setm_data_by_index(void *kimmdl, int *error, int numargs, ... );
-void KIM_API_setm_method_data_by_index(void *kimmdl, int *error, int numargs, ... );
+void KIM_API_setm_method_by_index(void *kimmdl, int *error, int numargs, ... );
 void KIM_API_getm_data(void *kimmdl, int *error,int numargs, ...);
-void KIM_API_getm_method_data(void *kimmdl, int *error,int numargs, ...);
+void KIM_API_getm_method(void *kimmdl, int *error,int numargs, ...);
 void KIM_API_getm_data_by_index(void *kimmdl,int *error,int numargs, ...);
-void KIM_API_getm_method_data_by_index(void *kimmdl,int *error,int numargs, ...);
+void KIM_API_getm_method_by_index(void *kimmdl,int *error,int numargs, ...);
 void KIM_API_getm_index(void *kimmdl, int *error, int numargs, ...);
 void KIM_API_setm_compute(void *kimmdl, int *error, int numargs, ...);
 void KIM_API_setm_compute_by_index(void *kimmdl, int *error, int numargs, ...);
@@ -207,9 +207,9 @@ int kim_api_is_half_neighbors_f_(void * kimmdl,int *ier);
 /* element access methods */
 
 int  kim_api_set_data_(void *kimmdl,char **nm,  intptr_t *size, void *dt);
-int  kim_api_set_method_data_(void *kimmdl,char **nm,  intptr_t *size, func_ptr *dt);
+int  kim_api_set_method_(void *kimmdl,char **nm,  intptr_t *size, func_ptr *dt);
 void * kim_api_get_data_(void *kimmdl,char **nm, int *error);
-func_ptr kim_api_get_method_data_(void *kimmdl,char **nm, int *error);
+func_ptr kim_api_get_method_(void *kimmdl,char **nm, int *error);
 
 intptr_t kim_api_get_size_(void *kimmdl,char **nm,int *error);
 intptr_t kim_api_get_shape_(void *kimmdl,char **nm, int ** shape, int *error);
@@ -222,9 +222,9 @@ int kim_api_get_compute_(void *kimmdl,char **nm, int *error);
 int kim_api_get_index_(void *kimmdl,char**nm, int *error);
 
 int kim_api_set_data_by_index_(void *kimmdl,int * I, intptr_t * size, void *dt);
-int kim_api_set_method_data_by_index_(void *kimmdl,int * I, intptr_t * size, func_ptr *dt);
+int kim_api_set_method_by_index_(void *kimmdl,int * I, intptr_t * size, func_ptr *dt);
 void * kim_api_get_data_by_index_(void *kimmdl,int * I, int *error);
-func_ptr kim_api_get_method_data_by_index_(void *kimmdl,int * I, int *error);
+func_ptr kim_api_get_method_by_index_(void *kimmdl,int * I, int *error);
 
 intptr_t kim_api_get_size_by_index_(void *kimmdl,int * I, int *error);
 intptr_t kim_api_get_shape_by_index_(void *kimmdl,int * I, int ** shape, int *error);

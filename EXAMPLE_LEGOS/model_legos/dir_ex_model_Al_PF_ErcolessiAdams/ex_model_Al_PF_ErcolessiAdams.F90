@@ -1102,7 +1102,7 @@ integer irlast;           pointer(pirlast,irlast)
 integer ielast;           pointer(pielast,ielast)
 
 ! store function pointers in KIM object
-call kim_api_setm_method_data_f(pkim, ier, &
+call kim_api_setm_method_f(pkim, ier, &
      "compute", one, loc(Compute_Energy_Forces), 1, &
      "destroy", one, loc(Destroy),               1)
 if (ier.lt.KIM_STATUS_OK) then

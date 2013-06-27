@@ -316,10 +316,10 @@ static int compute(void* km)
    }
    if (NBC!=3)
    {
-      get_neigh = (get_neigh_ptr) KIM_API_get_method_data_by_index(pkim, buffer->get_neigh_ind, &ier);
+      get_neigh = (get_neigh_ptr) KIM_API_get_method_by_index(pkim, buffer->get_neigh_ind, &ier);
       if (KIM_STATUS_OK > ier)
       {
-         KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_method_data_by_index", ier);
+         KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_method_by_index", ier);
          return ier;
       }
    }
@@ -638,7 +638,7 @@ int model_driver_init(void *km, char* paramfile_names, int* nmstrlen, int* numpa
    paramfile1name = paramfile_names;
 
    /* store pointer to functions in KIM object */
-   KIM_API_setm_method_data(pkim, &ier, 3*4,
+   KIM_API_setm_method(pkim, &ier, 3*4,
                      "compute", 1, &compute, 1,
                      "reinit",  1, &reinit,  1,
                      "destroy", 1, &destroy, 1);

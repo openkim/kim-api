@@ -69,11 +69,11 @@
 
 * Changed directory names from trailing `s' to trailing `S'.
 
-* Updated example Tests and Models to use the new get/set method_data routines.
+* Updated example Tests and Models to use the new get/set method routines.
 
 * Added `const' to api string parameters to avoid warnings in Models and Tests
 
-* Added get/set method_data routines to properly transfer pointers to functions
+* Added get/set method routines to properly transfer pointers to functions
   or methods via the api.
 
 * Added support to examples for NEIGH_RVEC_H.

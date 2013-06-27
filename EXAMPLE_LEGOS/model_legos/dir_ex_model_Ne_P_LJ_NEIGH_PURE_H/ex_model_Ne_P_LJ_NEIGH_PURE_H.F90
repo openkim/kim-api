@@ -141,7 +141,7 @@ integer function model_init(pkim)
 
   ! store pointer to compute function in KIM object
   one=1
-  ier = kim_api_set_method_data_f(pkim,"compute",one,loc(calculate_wrap_f77))
+  ier = kim_api_set_method_f(pkim,"compute",one,loc(calculate_wrap_f77))
   if (ier.lt.KIM_STATUS_OK)  then
      idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
                                    "kim_api_set_data_f", ier)

@@ -826,12 +826,12 @@ int model_init(void *km)
    int ier;
 
    /* store pointer to compute function in KIM object */
-   KIM_API_setm_method_data(pkim, &ier, 2*4,
+   KIM_API_setm_method(pkim, &ier, 2*4,
                      "compute", 1, (func_ptr) &compute, 1,
                      "destroy", 1, (func_ptr) &destroy, 1);
    if (KIM_STATUS_OK > ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_setm_method_data", ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_setm_method", ier);
       return ier;
    }
 

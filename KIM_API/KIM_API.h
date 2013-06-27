@@ -161,14 +161,14 @@ public:
 
     void free(int *error);
     int set_data(const char * nm, intptr_t size, void *dt);
-    int set_method_data(const char * nm, intptr_t size, func_ptr dt);
+    int set_method(const char * nm, intptr_t size, func_ptr dt);
     int set_data_by_index(int ind,intptr_t size, void *dt);
-    int set_method_data_by_index(int ind,intptr_t size, func_ptr dt);
+    int set_method_by_index(int ind,intptr_t size, func_ptr dt);
 
     void * get_data(const char *nm,int *error);
-    func_ptr get_method_data(const char *nm,int *error);
+    func_ptr get_method(const char *nm,int *error);
     void * get_data_by_index(int ind,int *error);
-    func_ptr get_method_data_by_index(int ind,int *error);
+    func_ptr get_method_by_index(int ind,int *error);
 
 
     int get_index(const char *nm, int * error);
@@ -229,13 +229,13 @@ int is_half_neighbors(int *error);
    //multiple data set/get methods
    //
   void setm_data(int *err, int numargs, ... );      //++
-  void setm_method_data(int *err, int numargs, ... );      //++
+  void setm_method(int *err, int numargs, ... );      //++
   void setm_data_by_index(int *err, int numargs, ... );  //++
-  void setm_method_data_by_index(int *err, int numargs, ... );  //++
+  void setm_method_by_index(int *err, int numargs, ... );  //++
   void getm_data(int *err,int numargs, ...);        //++
-  void getm_method_data(int *err,int numargs, ...);        //++
+  void getm_method(int *err,int numargs, ...);        //++
   void getm_data_by_index(int *err,int numargs, ...);    //++
-  void getm_method_data_by_index(int *err,int numargs, ...);    //++
+  void getm_method_by_index(int *err,int numargs, ...);    //++
   void getm_index(int *err, int numargs, ...);      //++
   void setm_compute(int *err, int numargs, ...);    //++
   void setm_compute_by_index(int *err, int numargs, ...);//++

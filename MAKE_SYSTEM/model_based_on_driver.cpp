@@ -109,8 +109,8 @@ extern "C" {
       param_file_names = NULL;
       if (KIM_STATUS_OK > ier) return ier;
 
-      driver_destroy = (*((KIM_API_model**)km))->get_method_data((char*) "destroy", &ier);
-      (*((KIM_API_model**)km))->set_method_data((char*) "destroy",1, (func_ptr) model_destroy);
+      driver_destroy = (*((KIM_API_model**)km))->get_method((char*) "destroy", &ier);
+      (*((KIM_API_model**)km))->set_method((char*) "destroy",1, (func_ptr) model_destroy);
 #else
       int ier = (*MODEL_DRIVER_NAME_STR_init_pointer)(km, param_file_names, &nmstrlen, &numparamfiles);
       delete [] param_file_names;

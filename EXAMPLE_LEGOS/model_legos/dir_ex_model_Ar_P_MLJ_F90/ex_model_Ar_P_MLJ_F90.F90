@@ -498,7 +498,7 @@ integer ier, idum
 double precision cutoff; pointer(pcutoff,cutoff)
 
 ! store pointer to compute function in KIM object
-ier = kim_api_set_method_data_f(pkim,"compute",one,loc(Compute_Energy_Forces))
+ier = kim_api_set_method_f(pkim,"compute",one,loc(Compute_Energy_Forces))
 if (ier.lt.KIM_STATUS_OK) then
    idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
                                  "kim_api_set_data", ier)
