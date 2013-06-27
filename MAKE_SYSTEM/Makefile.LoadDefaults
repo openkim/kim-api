@@ -63,7 +63,7 @@ endif
 ifeq      ($(KIM_COMPILERSUITE),GCC)
    include $(KIM_DIR)/MAKE_SYSTEM/COMPILER_DEFAULTS/Makefile.GCC
 else ifeq ($(KIM_COMPILERSUITE),INTEL)
-   include $(KIM_DIR)/MAKE_SYSTEM/COMPILER_DEFAULTS/Makfile.INTEL
+   include $(KIM_DIR)/MAKE_SYSTEM/COMPILER_DEFAULTS/Makefile.INTEL
 endif
 
 # load linker options

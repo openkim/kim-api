@@ -31,6 +31,13 @@
 #
 
 
+# check version of make
+NEED_MAKE_VERSION  := 3.82
+MAKE_VERSION_IS_OK := $(filter $(NEED_MAKE_VERSION),$(firstword $(sort $(MAKE_VERSION) $(NEED_MAKE_VERSION))))
+ifndef MAKE_VERSION_IS_OK
+   $(error openkim-api requires gnu make version 3.82 or above)
+endif
+
 # sanity checks
 ifndef KIM_DIR
    $(error Make variable KIM_DIR must be defined)
@@ -66,25 +73,25 @@ else
 endif
 
 
-ifndef OBJONLYFLAG
+ifeq ($(flavor OBJONLYFLAG),undefined)
    $(error Make variable OBJONLYFLAG must be defined)
 endif
-ifndef OUTPUTINFLAG
+ifeq ($(flavor  OUTPUTINFLAG),undefined)
    $(error Make variable OUTPUTINFLAG must be defined)
 endif
-ifndef PICFLAG
+ifeq ($(flavor PICFLAG),undefined)
    ifneq ($(KIM_LINK),static-link)
       $(error Make variable PICFLAG must be defined)
    endif
 endif
-ifndef FCRAYFLAG
+ifeq ($(flavor FCRAYFLAG),undefined)
    $(error Make variable FCRAYFLAG must be defined)
 endif
-ifndef LDDYNAMICLIB
+ifeq ($(flavor LDDYNAMICLIB),undefined)
    ifneq ($(KIM_LINK),static-link)
       $(error Make variable LDDYNAMICLIB must be defined)
    endif
 endif
-ifndef XLANGLDLIBS
+ifeq ($(flavor XLANGLDLIBS),undefined)
    $(error Make variable XLANGLDLIBS must be defined)
 endif

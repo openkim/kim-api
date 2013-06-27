@@ -490,10 +490,10 @@ program TEST_NAME_STR
      ave_force_error = sqrt(ave_force_error)/dble(DIM*N)
      print *
      print '(a,ES25.15)', "Average force error = ",ave_force_error
-     print *,
+     print *
      print '(a,ES25.15)', "Energy error        = ",abs(energy-conf_energy)/ &
                                                    max(abs(conf_energy),eps_prec)
-     print *,
+     print *
 
      ! Free temporary storage
      !
