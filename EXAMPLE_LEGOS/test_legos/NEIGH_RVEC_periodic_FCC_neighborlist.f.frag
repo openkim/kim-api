@@ -1,6 +1,6 @@
 !-------------------------------------------------------------------------------
 !
-! NEIGH_RVEC_periodic_FCC_neighborlist
+! Neigh_RVEC_periodic_FCC_neighborlist
 !
 !-------------------------------------------------------------------------------
 subroutine NEIGH_RVEC_periodic_FCC_neighborlist(half, CellsPerHalfSide, cutoff,  &
@@ -80,7 +80,7 @@ subroutine NEIGH_RVEC_periodic_FCC_neighborlist(half, CellsPerHalfSide, cutoff, 
                     if (dot_product(dx,dx).lt.cutoff2) then
                        ! we have a neighbor
                        a(atomi) = a(atomi) + 1
-                       neighborList(a(atomi),atomi) = atomj
+                       neighborList(a(atomi),atomi) = 1 ! note: should be atomj
                        RijList(:,a(atomi)-1,atomi)  = dx
                     endif
                  enddo
