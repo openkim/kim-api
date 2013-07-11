@@ -67,7 +67,7 @@ subroutine NEIGH_RVEC_periodic_FCC_neighborlist(half, CellsPerHalfSide, cutoff, 
         enddo
      enddo
 
-     ! For i<j, atom i gets all images of atom j; atom j gets no atom i images
+     ! atom i gets half of the other image atoms
      do atomi = 1, N
         do atomj = atomi+1, 4
            do i = -CellsPerHalfSide, CellsPerHalfSide
@@ -76,12 +76,15 @@ subroutine NEIGH_RVEC_periodic_FCC_neighborlist(half, CellsPerHalfSide, cutoff, 
                  latVec(2) = j*FCCspacing
                  do k = -CellsPerHalfSide, CellsPerHalfSide
                     latVec(3) = k*FCCspacing
-                    dx = (latVec + FCCshifts(:,atomj)) - FCCshifts(:,atomi)
-                    if (dot_product(dx,dx).lt.cutoff2) then
-                       ! we have a neighbor
-                       a(atomi) = a(atomi) + 1
-                       neighborList(a(atomi),atomi) = 1 ! note: should be atomj
-                       RijList(:,a(atomi)-1,atomi)  = dx
+                    if ((i.ge.0 .and. atomj.lt.4) .or. (atomj.eq.4 .and. i.gt.0) &
+                         .or. ( atomj.eq.4 .and. (i.eq.0 .and. (j.ge.0))) )  then
+                       dx = (latVec + FCCshifts(:,atomj)) - FCCshifts(:,atomi)
+                       if (dot_product(dx,dx).lt.cutoff2) then
+                          ! we have a neighbor
+                          a(atomi) = a(atomi) + 1
+                          neighborList(a(atomi),atomi) = 1
+                          RijList(:,a(atomi)-1,atomi)  = dx
+                       endif
                     endif
                  enddo
               enddo
