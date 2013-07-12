@@ -39,8 +39,8 @@ KIM_DIR = $(HOME)/openkim-api-vX.X.X
 #KIM_TESTS_DIR =
 
 KIM_COMPILERSUITE = GCC
-KIM_SYSTEMLINKER = darwin
-KIM_SYSTEMARCH = 32bit
+KIM_SYSTEMLINKER = linux
+KIM_SYSTEMARCH = 64bit
 KIM_LINK = dynamic-load
 
 # load default compiler options

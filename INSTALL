@@ -99,12 +99,12 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
    (e) Set the value of KIM_SYSTEMLINKER. Possible values are `linux',
        `freebsd', and `darwin'.
 
-       KIM_SYSTEMLINKER = darwin
+       KIM_SYSTEMLINKER = linux
 
    (f) Set the value of KIM_SYSTEMARCH.  Possible values are `32bit' and
        `64bit'.
 
-       KIM_SYSTEMARCH = 32bit
+       KIM_SYSTEMARCH = 64bit
 
    (g) Set the value of KIM_LINK.  Possible values are `dynamic-load',
        `dynamic-link', and `static-link'.
