@@ -33,6 +33,12 @@
 #
 
 
+=== openkim-api-v1.2.1 =========================================================
+
+
+* Reverted to gnu make v3.81 from v3.82 to better represent actual needs.
+
+
 === openkim-api-v1.2.0 =========================================================
 
 

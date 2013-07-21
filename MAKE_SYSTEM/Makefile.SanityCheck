@@ -32,10 +32,10 @@
 
 
 # check version of make
-NEED_MAKE_VERSION  := 3.82
+NEED_MAKE_VERSION  := 3.81
 MAKE_VERSION_IS_OK := $(filter $(NEED_MAKE_VERSION),$(firstword $(sort $(MAKE_VERSION) $(NEED_MAKE_VERSION))))
 ifndef MAKE_VERSION_IS_OK
-   $(error openkim-api requires gnu make version 3.82 or above)
+   $(error openkim-api requires gnu make version $(NEED_MAKE_VERSION) or above)
 endif
 
 # sanity checks
