@@ -734,6 +734,7 @@ KIM_API_model:: KIM_API_model(){
 }
 KIM_API_model:: ~KIM_API_model(){
       // free();
+
       for(int i=0;i<n_NBC_methods;i++){
          delete [] arg_NBC_methods[i];
       }
@@ -780,19 +781,27 @@ int KIM_API_model::prestring_init(const char *instrn){
                 char * name =& (inlines[i].name[0]);
                 char * type =& (inlines[i].type[0]);
 
-                el->init(name,type,0,rank,shape); //preinit element with zero size
-                //here to add checking is it derived or is it base units
-                strncpy(el->unit->dim,inlines[i].dim,strlen(inlines[i].dim)+1);
+                if (el->init(name,type,0,rank,shape)) //preinit element with zero size
+                {
+                   //here to add checking is it derived or is it base units
+                   strncpy(el->unit->dim,inlines[i].dim,strlen(inlines[i].dim)+1);
 
-                el->flag->calculate = 1;
-                el->flag->peratom = 1;//per something else
-                if(inlines[i].isitperatom()) el->flag->peratom = 0; //per atom
+                   el->flag->calculate = 1;
+                   el->flag->peratom = 1;//per something else
+                   if(inlines[i].isitperatom()) el->flag->peratom = 0; //per atom
+                }
+                else
+                {
+                   ErrorCode = KIM_STATUS_FAIL;
+                }
                 KIMBaseElement **pel =(KIMBaseElement**) model.data.p;
                 pel[ii] =  el;
                 ii++;
                 delete [] shape;
             }
         }
+        if (ErrorCode == KIM_STATUS_FAIL) return ErrorCode;
+
         //resize inlines (remove spec type variables)
         KIM_IOline * inlinesnew = new KIM_IOline[numlines - nAtomsTypes+3];
         ii=0;
@@ -1666,6 +1675,9 @@ int KIM_API_model::match(const char* teststr, const char* modelstr){
     if(error != KIM_STATUS_OK)
     {
        test.free();
+       //redirecting back to > std::cout
+       std::cout.rdbuf(backup); filekimlog.close();
+
        return KIM_STATUS_FAIL;
     }
 
@@ -1675,6 +1687,9 @@ int KIM_API_model::match(const char* teststr, const char* modelstr){
     {
        test.free();
        mdl.free();
+       //redirecting back to > std::cout
+       std::cout.rdbuf(backup); filekimlog.close();
+
        return KIM_STATUS_FAIL;
     }
 
@@ -2439,18 +2454,23 @@ bool KIM_API_model::add_element(const char* instring){
         char * name =& (inlines[numlines].name[0]);
         char * type =& (inlines[numlines].type[0]);
 
-        el->init(name,type,0,rank,shape); //preinit element with zero size
-        strncpy(el->unit->dim,inlines[numlines].dim,strlen(inlines[numlines].dim)+1);
+        if (el->init(name,type,0,rank,shape)) //preinit element with zero size
+        {
+           strncpy(el->unit->dim,inlines[numlines].dim,strlen(inlines[numlines].dim)+1);
 
-        el->flag->calculate = 1;
-        el->flag->peratom = 1;//per something else
-        if(inlines[numlines].isitperatom()) el->flag->peratom = 0; //per atom
-        KIMBaseElement **pel =(KIMBaseElement**) model.data.p;
-        pel[(int)model.size] =  el;
-        delete [] shape;
-
-        numlines ++;
-        model.size++;
+           el->flag->calculate = 1;
+           el->flag->peratom = 1;//per something else
+           if(inlines[numlines].isitperatom()) el->flag->peratom = 0; //per atom
+           KIMBaseElement **pel =(KIMBaseElement**) model.data.p;
+           pel[(int)model.size] =  el;
+           delete [] shape;
+           numlines ++;
+           model.size++;
+        }
+        else
+        {
+           return false;
+        }
 
         return true;
 }
