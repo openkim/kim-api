@@ -7,3 +7,6 @@
 old-*
 .kimignore
 Makefile.KIM_Config
+/Makefile.ModelDriversList
+/Makefile.ModelsList
+/Makefile.TestsList

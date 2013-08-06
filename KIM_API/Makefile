@@ -35,6 +35,10 @@
 
 include Makefile.KIM_Config
 
+KIM_LISTS = $(KIM_DIR)/Makefile.ModelsList \
+            $(KIM_DIR)/Makefile.ModelDriversList \
+            $(KIM_DIR)/Makefile.TestsList
+
 # Definition of c and fortran .o file list
 OBJC = KIM_API.o KIM_API_C.o standard_kim_str.o Unit_Handling.o KIM_AUX.o
 OBJF90 = KIM_API_F.o
@@ -49,10 +53,8 @@ endif
 # Set defines
 KIMDEFINES = $(KIM_DEFINE_VALUES)
 
-# create lists
-MODEL_DRIVERS_LIST = $(notdir $(filter-out $(shell if test -e "$(KIM_MODEL_DRIVERS_DIR)/.kimignore"; then cat "$(KIM_MODEL_DRIVERS_DIR)/.kimignore";fi;),$(filter-out .%,$(shell find "$(KIM_MODEL_DRIVERS_DIR)/" -maxdepth 1 -mindepth 1 -type d -exec basename {} \;))))
-MODELS_LIST = $(notdir $(filter-out $(shell if test -e "$(KIM_MODELS_DIR)/.kimignore"; then cat "$(KIM_MODELS_DIR)/.kimignore";fi;),$(filter-out .%,$(shell find "$(KIM_MODELS_DIR)/" -maxdepth 1 -mindepth 1 -type d -exec basename {} \;))))
-MODELS_TARGETS := $(addprefix ., $(addsuffix .make-temp, $(MODELS_LIST)))
+# load lists
+include $(KIM_LISTS)
 # create list of models that have been deleted from the $(KIM_MODELS_DIR)/ since the last time make was executed
 DELETED_MODELS_TARGETS := $(filter-out $(MODELS_TARGETS), $(shell find . -name ".*.make-temp" -exec basename {} \;))
 # If there are deleted models, remove files and touch .models-deleted to force a reconfigure
@@ -83,7 +85,7 @@ else
         false; else true; fi
 endif
 
-Makefile: $(KIM_MAKE_FILES)
+Makefile: $(KIM_MAKE_FILES) $(KIM_LISTS)
 	@touch Makefile
 
 ifneq ($(KIM_LINK),static-link)
