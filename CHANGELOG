@@ -33,6 +33,14 @@
 #
 
 
+=== openkim-api-v1.2.2 =========================================================
+
+
+* Improved speed of make system when many Models/Tests (and Drivers) exist
+
+* Improved an aspect of the api's error checking/reporting
+
+
 === openkim-api-v1.2.1 =========================================================
 
 
