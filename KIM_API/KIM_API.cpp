@@ -347,7 +347,7 @@ bool IOline:: getFields(char *inputString){
                 if(i>=(int)strlen(inputString)){return false;};
                 int j=0;
 
-                for(i=i;i<=(int)strlen(inputString); i++){
+                for(;i<=(int)strlen(inputString); i++){
                         if(*(inputString+i)=='#'){value[j]='\0';i+=2;break;};
                         value[j]=*(inputString+i);
                         j++;
@@ -356,7 +356,7 @@ bool IOline:: getFields(char *inputString){
 
                 j=0;
                 if(i>=(int)strlen(inputString)){comment[0]='\0';strip();return true;};
-                for(i=i;i<=(int)strlen(inputString); i++){
+                for(;i<=(int)strlen(inputString); i++){
                         comment[j]=*(inputString + i);
                         comment[j+1]='\0';
                         j++;
