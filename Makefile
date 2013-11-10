@@ -161,9 +161,9 @@ endif
 
 uninstall-cleanup:
 	@printf "Uninstalling... $(package_name) directories.\n"
-	@if test \( -d "$(DESTDIR)$(libdir)/$(package_name)/MODELS" \); then rmdir --ignore-fail-on-non-empty "$(DESTDIR)$(libdir)/$(package_name)/MODELS"; fi
-	@if test \( -d "$(DESTDIR)$(libdir)/$(package_name)/MODEL_DRIVERS" \); then rmdir --ignore-fail-on-non-empty "$(DESTDIR)$(libdir)/$(package_name)/MODEL_DRIVERS"; fi
-	@if test \( -d "$(DESTDIR)$(libdir)/$(package_name)" \); then rmdir --ignore-fail-on-non-empty "$(DESTDIR)$(libdir)/$(package_name)"; fi
+	@if test \( -d "$(DESTDIR)$(libdir)/$(package_name)/MODELS" \); then rmdir "$(DESTDIR)$(libdir)/$(package_name)/MODELS" >& /dev/null; fi
+	@if test \( -d "$(DESTDIR)$(libdir)/$(package_name)/MODEL_DRIVERS" \); then rmdir "$(DESTDIR)$(libdir)/$(package_name)/MODEL_DRIVERS" >& /dev/null; fi
+	@if test \( -d "$(DESTDIR)$(libdir)/$(package_name)" \); then rmdir "$(DESTDIR)$(libdir)/$(package_name)" >& /dev/null; fi
 
 kim-api-objects: Makefile kim-api-objects-making-echo
 	@$(MAKE) $(MAKE_FLAGS) -C $(KIM_DIR)/KIM_API/ objects

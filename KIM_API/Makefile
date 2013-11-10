@@ -232,4 +232,4 @@ else
 	@rm -f "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.a"
 endif
 	@rm -f $(addsuffix ",$(addprefix "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/,KIM_API.h KIM_API_C.h KIM_API_status.h kim_kinds.mod kim_api.mod))
-	@if test \( -d "$(DESTDIR)$(libdir)/$(package_name)/KIM_API" \); then rmdir --ignore-fail-on-non-empty "$(DESTDIR)$(libdir)/$(package_name)/KIM_API"; fi
+	@if test \( -d "$(DESTDIR)$(libdir)/$(package_name)/KIM_API" \); then rmdir "$(DESTDIR)$(libdir)/$(package_name)/KIM_API" >& /dev/null; fi

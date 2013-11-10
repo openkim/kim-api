@@ -150,7 +150,7 @@ uninstall:
 ifneq (static-link,$(KIM_LINK))
 	@printf ".\n"
 	@rm -f "$(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)/$(MODEL_NAME).so"
-	@if test \( -d "$(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)" \); then rmdir --ignore-fail-on-non-empty "$(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)"; fi
+	@if test \( -d "$(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)" \); then rmdir "$(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)" >& /dev/null; fi
 else
 	@printf ": nothing to be done for static-link.\n"
 endif
