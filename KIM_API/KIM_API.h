@@ -43,7 +43,6 @@
 #define number_NBC_methods 7
 #define KIM_KEY_STRING_LENGTH 64
 
-#include "KIM_API_DIRS.h"
 #include "KIM_AUX.h"
 
 //#define intptr_t int  // for 32 bit machines

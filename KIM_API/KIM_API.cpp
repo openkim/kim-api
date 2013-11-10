@@ -42,6 +42,7 @@
 
 #include "KIM_API.h"
 #include "KIM_API_status.h"
+#include "KIM_API_DIRS.h"
 
 #if KIM_LINK_VALUE == KIM_LINK_DYNAMIC_LOAD
 #include <dlfcn.h>
