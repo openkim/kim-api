@@ -26,6 +26,7 @@
 //    Valeriu Smirichinski
 //    Ryan S. Elliott
 //    Ellad B. Tadmor
+//    Tobias Brink
 //
 
 //
@@ -173,7 +174,10 @@ int KIM_IOline::get_rank(){
             strncpy(shapetmp,shape,strlen(shape)+1);
             if(shapetmp[0]=='[' && shapetmp[strlen(shape)-1]==']'){
                 tmp = strtok(shapetmp,"[,]");
-                if (tmp==NULL) return 0;
+                if (tmp==NULL) {
+                  delete [] shapetmp;
+                  return 0;
+                }
                 int c=0;
                 while (tmp!=NULL){
                     tmp = strtok(NULL,"[,]");
@@ -191,7 +195,10 @@ int *  KIM_IOline::get_shape(){
             char* shapetmp = new char[strlen(shape)+1];
             strncpy(shapetmp,shape,strlen(shape)+1);
             int rnk = get_rank();
-            if (rnk < 1) return NULL;
+            if (rnk < 1) {
+              delete [] shapetmp;
+              return NULL;
+            }
             int *shp = new int[rnk];
             int i=0;
             char *tmp =strtok(shapetmp,"[,]");
