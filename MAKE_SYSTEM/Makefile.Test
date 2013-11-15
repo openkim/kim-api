@@ -40,7 +40,7 @@ include $(KIM_DIR)/MAKE_SYSTEM/Makefile.SanityCheck
 
 all: $(TEST_NAME)
 
-$(TEST_NAME): $(LOCALOBJ) $(strip $(TEST_NAME)).o $(KIM_LIB_FILE)
+$(TEST_NAME): $(strip $(TEST_NAME)).o $(LOCALOBJ) $(KIM_LIB_FILE)
 	@printf "Creating... Test executable... $@.\n"
 	@$(LD) $(LDFLAGS) $(LOCALOBJ) $< $(KIM_LIB) $(XLANGLDLIBS) $(LDDYNAMICLIB) $(OUTPUTINFLAG) $@
 
