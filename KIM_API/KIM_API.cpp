@@ -1613,7 +1613,20 @@ int KIM_API_model::string_init(const char* in_tststr, const char* modelname){
     KIM_API_model test,mdl;
     char* in_mdlstr = get_model_kim_str(modelname, &error);
     if (error != KIM_STATUS_OK) {
-       if (in_mdlstr == NULL) std::free(in_mdlstr);
+       if (in_mdlstr != NULL) std::free(in_mdlstr);
+       //redirecting back to > std::cout
+       std::cout.rdbuf(backup); filekimlog.close();
+       return error;
+    }
+
+    mdl.name_temp = modelname;
+    error = mdl.prestring_init(in_mdlstr);
+    if(error != KIM_STATUS_OK)
+    {
+       std::cout<<"mdl.prestring_init failed with error status:"<<get_status_msg(error)<<std::endl;
+       std::free(in_mdlstr);
+       //redirecting back to > std::cout
+       std::cout.rdbuf(backup); filekimlog.close();
        return error;
     }
 
@@ -1621,17 +1634,20 @@ int KIM_API_model::string_init(const char* in_tststr, const char* modelname){
     test.name_temp = (char*) "test_name";
     error = test.prestring_init(in_tststr);
     if(error != KIM_STATUS_OK)
+    {
        std::cout<<"test.prestring_init failed with error status:"<<get_status_msg(error)<<std::endl;
-
-    mdl.name_temp = modelname;
-    error = mdl.prestring_init(in_mdlstr);
-    if(error != KIM_STATUS_OK)
-       std::cout<<"mdl.prestring_init failed with error status:"<<get_status_msg(error)<<std::endl;
+       std::free(in_mdlstr);
+       mdl.free();
+       //redirecting back to > std::cout
+       std::cout.rdbuf(backup); filekimlog.close();
+       return error;
+    }
 
     //check if they match
     if (is_it_match(test,mdl)){
        this->name_temp = mdl.model.name;
         this->prestring_init(in_mdlstr);
+        std::free(in_mdlstr);
         this->unit_h=test.unit_h;
         if (!(this->irrelevantVars2donotcompute(test,*this))) return KIM_STATUS_FAIL;
         for (int i=0;i<this->nAtomsTypes;++i) {
@@ -1646,23 +1662,26 @@ int KIM_API_model::string_init(const char* in_tststr, const char* modelname){
         char computestr [] = "compute";
         compute_index = get_index(computestr, &error);
         get_neigh_index = get_index((char*) "get_neigh", &error);
-        if (!(this->fij_related_things_add_set_index())) return KIM_STATUS_FAIL;
-
-        std::free(in_mdlstr);
-        //redirecting back to > std::cout
-        std::cout.rdbuf(backup); filekimlog.close();
-
-        return KIM_STATUS_OK;
+        if (!(this->fij_related_things_add_set_index()))
+        {
+           //redirecting back to > std::cout
+           std::cout.rdbuf(backup); filekimlog.close();
+           return KIM_STATUS_FAIL;
+        }
+        else
+        {
+           //redirecting back to > std::cout
+           std::cout.rdbuf(backup); filekimlog.close();
+           return KIM_STATUS_OK;
+        }
     }else{
-        mdl.free();
- std::cout<<"Do not match  " << modelname << " and "<< test.model.name <<std::endl;
-       test.free();
-
        std::free(in_mdlstr);
+       mdl.free();
+       std::cout<<"Do not match  " << modelname << " and "<< test.model.name <<std::endl;
+       test.free();
        //redirecting back to > std::cout
-        std::cout.rdbuf(backup); filekimlog.close();
-
-        return KIM_STATUS_FAIL;
+       std::cout.rdbuf(backup); filekimlog.close();
+       return KIM_STATUS_FAIL;
     }
 }
 

@@ -198,7 +198,7 @@ examples-all:
           printf "*@installing...@%-50s@copied@to@$(KIM_TESTS_DIR)\n" $(exmpl)@ | sed -e 's/ /./g' -e 's/@/ /g'; \
           cp -r $(KIM_DIR)/EXAMPLES/TESTS/$(exmpl) "$(KIM_TESTS_DIR)/"; fi;)
 
-examples-clean:
+examples-clean: kim_lists-clean
 	@printf "Removing all installed example files...\n"
 	@$(foreach dr,$(notdir $(wildcard $(KIM_DIR)/EXAMPLES/MODEL_DRIVERS/*)), rm -rf "$(KIM_MODEL_DRIVERS_DIR)/$(dr)";)
 	@$(foreach dr,$(notdir $(wildcard $(KIM_DIR)/EXAMPLES/MODELS/*)), rm -rf "$(KIM_MODELS_DIR)/$(dr)";)
