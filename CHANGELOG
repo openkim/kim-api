@@ -33,6 +33,20 @@
 #
 
 
+=== openkim-api-v1.2.3 =========================================================
+
+* Fixed bugs in the KIM_API_string_init() function (discovered by Daniel Schopf)
+
+* Fixed a memory leak in the api (patch provided by Tobias Brink)
+
+* Moved `include "KIM_API_DIRS.h"' from KIM_API.h to KIM_API.cpp.  This ensures
+  that this header file does not need to be installed by the `make install'
+  command.
+
+* Changes to Makefiles to improve portability (of `make uninstall')
+
+* Some minor changes to api code to remove compiler warnings from some compilers
+
 === openkim-api-v1.2.2 =========================================================
 
 
