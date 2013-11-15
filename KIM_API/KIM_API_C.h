@@ -101,6 +101,7 @@ void * KIM_API_get_data(void *kimmdl,const char *nm,int * error);
 func_ptr KIM_API_get_method(void *kimmdl,const char *nm,int * error);
 
 intptr_t KIM_API_get_size(void *kimmdl,const char *nm, int * error);
+intptr_t KIM_API_get_rank(void *kimmdl,const char *nm, int * error);
 intptr_t KIM_API_get_shape(void *kimmdl,const char *nm, int * shape, int *error);
 void KIM_API_set_shape(void *kimmdl,const char *nm, int * shape, int rank,int *error);
 
@@ -116,6 +117,7 @@ void * KIM_API_get_data_by_index(void *kimmdl,int I, int *error);
 func_ptr KIM_API_get_method_by_index(void *kimmdl,int I, int *error);
 
 intptr_t KIM_API_get_size_by_index(void *kimmdl,int I,int *error);
+intptr_t KIM_API_get_rank_by_index(void *kimmdl,int I,int *error);
 intptr_t KIM_API_get_shape_by_index(void *kimmdl,int I, int * shape,int *error);
 
 int KIM_API_get_compute_by_index(void *kimmdl,int I,int * error);
@@ -212,6 +214,7 @@ void * kim_api_get_data_(void *kimmdl,char **nm, int *error);
 func_ptr kim_api_get_method_(void *kimmdl,char **nm, int *error);
 
 intptr_t kim_api_get_size_(void *kimmdl,char **nm,int *error);
+intptr_t kim_api_get_rank_(void *kimmdl,char **nm,int *error);
 intptr_t kim_api_get_shape_(void *kimmdl,char **nm, int ** shape, int *error);
 void kim_api_set_shape_(void *kimmdl,char **nm, int ** shape, int * rank,int *error);
 
@@ -227,6 +230,7 @@ void * kim_api_get_data_by_index_(void *kimmdl,int * I, int *error);
 func_ptr kim_api_get_method_by_index_(void *kimmdl,int * I, int *error);
 
 intptr_t kim_api_get_size_by_index_(void *kimmdl,int * I, int *error);
+intptr_t kim_api_get_rank_by_index_(void *kimmdl,int * I, int *error);
 intptr_t kim_api_get_shape_by_index_(void *kimmdl,int * I, int ** shape, int *error);
 
 int kim_api_get_compute_by_index_(void *kimmdl,int * I, int *error);

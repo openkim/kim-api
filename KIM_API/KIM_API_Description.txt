@@ -668,6 +668,40 @@ Corresponding Fortran style interface:
 
 ******************************************************************************
 
+intptr_t KIM_API_get_rank(void *kimmdl, char *nm, int *kimerror);
+
+     The functionality of this routine is the same as KIM_API_get_data,
+     except it returns the rank of the data in terms of underlying
+     elements. (For example, if the data is an array of shape
+     [numberOfParticles,3], KIM_API_get_rank() will return 2) If no
+     data with name `nm' is in the KIM API object, a negative value
+     will be returned.
+
+Arguments:
+
+      void *kimmdl
+              pointer to KIM_API_model object (in C++ style, the definition
+              will be (KIM_API_model *))
+
+      char *nm
+              null terminated string is the name of the argument field exactly
+              as it appears in the .kim descriptor file
+
+      int *kimerror
+              error code: KIM_STATUS_OK   -- successful completion,
+                          KIM_STATUS_FAIL -- unsuccessful
+
+Corresponding Fortran style interface:
+
+      integer(kind=kim_intptr) function kim_api_get_rank_f(kimmdl, nm, kimerror)
+                      integer(kind=kim_intptr) :: kimmdl
+                      integer(kind=kim_intptr) :: kim_api_get_rank_f
+                      character (len=*) :: nm
+                      integer :: kimerror
+      end function kim_api_get_rank_f
+
+******************************************************************************
+
 intptr_t KIM_API_get_shape(void *kimmdl, char *nm, int *shape, int *kimerror);
 
     This routine returns the rank of `nm' and provides its shape in the argument
@@ -1917,6 +1951,8 @@ void *KIM_API_get_data_by_index(void *kimmdl, int I, int *kimerror);
 func_ptr KIM_API_get_method_by_index(void *kimmdl, int I, int *kimerror);
 
 intptr_t KIM_API_get_size_by_index(void *kimmdl, int I, int *kimerror);
+
+intptr_t KIM_API_get_rank_by_index(void *kimmdl, int I, int *kimerror);
 
 intptr_t KIM_API_get_shape_by_index(void *kimmdl, int I, int *shape, int *kimerror);
 

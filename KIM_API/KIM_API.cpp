@@ -976,6 +976,10 @@ intptr_t KIM_API_model::get_size(const char *nm,int *error){
         int ind=get_index(nm,error);
         return get_size_by_index(ind, error);
 }
+intptr_t KIM_API_model::get_rank(const char *nm,int *error){
+        int ind=get_index(nm,error);
+        return get_rank_by_index(ind, error);
+}
 intptr_t KIM_API_model::get_shape(const char *nm,int * shape, int *error){
         int ind=get_index(nm,error);
         return get_shape_by_index(ind, shape, error);
@@ -3110,6 +3114,13 @@ intptr_t KIM_API_model::get_size_by_index(int I,int *error){
     if (this == NULL) return 0;
     *error =KIM_STATUS_OK;
     return (*this)[I].size;
+}
+
+intptr_t KIM_API_model::get_rank_by_index(int I,int *error){
+    *error =KIM_STATUS_FAIL;
+    if (this == NULL) return 0;
+    *error =KIM_STATUS_OK;
+    return (*this)[I].rank;
 }
 
 intptr_t KIM_API_model::get_shape_by_index(int I, int * shape,int *error){

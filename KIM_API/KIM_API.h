@@ -172,6 +172,7 @@ public:
 
     int get_index(const char *nm, int * error);
     intptr_t get_size(const char *nm,int *error);
+    intptr_t get_rank(const char *nm,int *error);
     intptr_t get_shape(const char *nm,int * shape,int *error);
     void set_shape(const char * nm, int * shape, int rank, int *error);
     void set_compute(const char *nm, int flag, int *error);
@@ -182,6 +183,7 @@ public:
     void print(int *error);
 
     intptr_t get_size_by_index(int I,int *error);
+    intptr_t get_rank_by_index(int I,int *error);
     intptr_t get_shape_by_index(int I, int * shape,int *error);
     int get_compute_by_index(int I,int * error);
 

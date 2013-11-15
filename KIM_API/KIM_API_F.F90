@@ -173,6 +173,12 @@ module kim_api
             integer::error
         end function kim_api_get_size
 
+        function kim_api_get_rank(kimmdl,nm,error)
+          use kim_kinds
+            integer(kind=kim_intptr) :: kimmdl,nm,kim_api_get_rank
+            integer::error
+        end function kim_api_get_rank
+
         function kim_api_get_neigh_mode_f(kimmdl,error)
           use kim_kinds
             integer(kind=kim_intptr) :: kimmdl
@@ -276,6 +282,12 @@ module kim_api
             integer(kind=kim_intptr) :: kimmdl,kim_api_get_size_by_index
             integer :: I,error
         end function kim_api_get_size_by_index
+
+        function kim_api_get_rank_by_index(kimmdl,I,error)
+          use kim_kinds
+            integer(kind=kim_intptr) :: kimmdl,kim_api_get_rank_by_index
+            integer :: I,error
+        end function kim_api_get_rank_by_index
 
         function kim_api_get_shape_by_index(kimmdl,I,shapea,error)
           use kim_kinds
@@ -656,6 +668,19 @@ module kim_api
             kim_api_get_size_f = kim_api_get_size(kimmdl,pstr,error)
         end function kim_api_get_size_f
 
+        integer(kind=kim_intptr) function kim_api_get_rank_f(kimmdl,nm,error)
+            integer(kind=kim_intptr) :: kimmdl
+            character (len=*) ::nm
+
+            character (len=KIM_KEY_STRING_LENGTH) :: str2send
+            character (len=KIM_KEY_STRING_LENGTH) :: str; pointer (pstr,str)
+            integer::error
+            str2send = attachnull(trim(nm))
+            pstr = loc(str2send)
+
+            kim_api_get_rank_f = kim_api_get_rank(kimmdl,pstr,error)
+        end function kim_api_get_rank_f
+
         integer(kind=kim_intptr) function kim_api_get_shape_f(kimmdl,nm, shape,error)
             ! returns rank and place correct shape (shape has to be allocated )
             ! if unssaccesfull returns -1
@@ -754,6 +779,12 @@ module kim_api
             integer :: I,error
             kim_api_get_size_by_index_f = kim_api_get_size_by_index(kimmdl,I,error)
         end function kim_api_get_size_by_index_f
+
+        integer(kind=kim_intptr) function kim_api_get_rank_by_index_f(kimmdl,I,error)
+            integer(kind=kim_intptr) :: kimmdl
+            integer :: I,error
+            kim_api_get_rank_by_index_f = kim_api_get_rank_by_index(kimmdl,I,error)
+        end function kim_api_get_rank_by_index_f
 
         integer(kind=kim_intptr) function kim_api_get_shape_by_index_f(kimmdl,I,shape,error)
             integer(kind=kim_intptr) :: kimmdl

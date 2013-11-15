@@ -235,7 +235,10 @@ func_ptr KIM_API_get_method(void *kimmdl,const char *nm,int *error){
 intptr_t KIM_API_get_size(void *kimmdl,const char *nm,int *error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     return mdl->get_size(nm,error);
-
+}
+intptr_t KIM_API_get_rank(void *kimmdl,const char *nm,int *error){
+    KIM_API_model * mdl=(KIM_API_model *) kimmdl;
+    return mdl->get_rank(nm,error);
 }
 intptr_t KIM_API_get_shape(void *kimmdl,const char *nm, int * shape, int *error){
 
@@ -340,7 +343,13 @@ intptr_t KIM_API_get_size_by_index(void *kimmdl,int I, int *error){
     if (mdl == NULL) return 0;
     *error =KIM_STATUS_OK;
     return (*mdl)[I].size;
-
+}
+intptr_t KIM_API_get_rank_by_index(void *kimmdl,int I, int *error){
+    KIM_API_model * mdl=(KIM_API_model *) kimmdl;
+    *error =KIM_STATUS_FAIL;
+    if (mdl == NULL) return 0;
+    *error =KIM_STATUS_OK;
+    return (*mdl)[I].rank;
 }
 intptr_t KIM_API_get_shape_by_index(void *kimmdl,int I, int * shape,int *error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
@@ -1006,6 +1015,10 @@ intptr_t kim_api_get_size_(void *kimmdl,char **nm,int *error){
     return KIM_API_get_size(*(KIM_API_model **)kimmdl,*nm,error);
 }
 
+intptr_t kim_api_get_rank_(void *kimmdl,char **nm,int *error){
+    return KIM_API_get_rank(*(KIM_API_model **)kimmdl,*nm,error);
+}
+
 intptr_t kim_api_get_shape_(void *kimmdl,char **nm, int ** shape,int *error){
     return KIM_API_get_shape(*(KIM_API_model **)kimmdl,*nm,*shape,error);
 }
@@ -1042,6 +1055,9 @@ func_ptr kim_api_get_method_by_index_(void *kimmdl,int * I,int *error){
 
 intptr_t kim_api_get_size_by_index_(void *kimmdl,int * I,int *error){
     return KIM_API_get_size_by_index(*(KIM_API_model **)kimmdl,*I,error);
+}
+intptr_t kim_api_get_rank_by_index_(void *kimmdl,int * I,int *error){
+    return KIM_API_get_rank_by_index(*(KIM_API_model **)kimmdl,*I,error);
 }
 intptr_t kim_api_get_shape_by_index_(void *kimmdl,int * I, int ** shape,int *error){
     return KIM_API_get_shape_by_index(*(KIM_API_model **)kimmdl,*I,*shape,error);
