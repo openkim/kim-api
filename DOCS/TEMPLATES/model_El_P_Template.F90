@@ -500,7 +500,7 @@ cutoff = model_cutoff
 
 ier = KIM_STATUS_OK
 42 continue
-model_<FILL element name>_P_<FILL model name>_init = ier
+model_init = ier
 return
 
 end function model_init

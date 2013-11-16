@@ -771,7 +771,7 @@ cutoff = model_cutoff
 
 ier = KIM_STATUS_OK
 42 continue
-ex_model_init = ier
+model_init = ier
 return
 end function model_init
 
