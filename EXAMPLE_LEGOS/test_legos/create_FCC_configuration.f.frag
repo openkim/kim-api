@@ -49,8 +49,8 @@ subroutine create_FCC_configuration(FCCspacing, nCellsPerSide, periodic, coords,
            do m=1,4
               a = a+1
               coords(:,a) = latVec + FCCshifts(:,m)
-              if ((i.eq.nCellsPerside/2) .and. (j.eq.nCellsPerSide/2) .and. &
-                   (k.eq.nCellsPerSide/2) .and. (m.eq.1)) then
+              if ((i.eq.nCellsPerside/2+1) .and. (j.eq.nCellsPerSide/2+1) .and. &
+                   (k.eq.nCellsPerSide/2+1) .and. (m.eq.1)) then
                  coords(:,1) = latVec + FCCshifts(:,m) ! put middle atom as atom #1
                  a = a - 1
               endif
