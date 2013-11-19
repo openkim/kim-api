@@ -221,8 +221,8 @@ else
 	@cp -f libkim.a "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.a"
 	@chmod 644 "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.a"
 endif
-	@cp -f KIM_API.h KIM_API_C.h KIM_API_status.h kim_kinds.mod kim_api.mod "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/"
-	@chmod 644 $(addsuffix ",$(addprefix "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/,KIM_API.h KIM_API_C.h KIM_API_status.h kim_kinds.mod kim_api.mod))
+	@cp -f KIM_API.h KIM_API_C.h KIM_API_status.h kim_kinds.mod kim_api.mod Unit_Handling.h KIM_AUX.h "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/"
+	@chmod 644 $(addsuffix ",$(addprefix "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/,KIM_API.h KIM_API_C.h KIM_API_status.h Unit_Handling.h KIM_AUX.h kim_kinds.mod kim_api.mod))
 
 uninstall:
 	@printf "Uninstalling...($(DESTDIR)$(libdir)/$(package_name)/KIM_API)......... KIM_API.\n"
@@ -231,5 +231,5 @@ ifneq (static-link,$(KIM_LINK))
 else
 	@rm -f "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.a"
 endif
-	@rm -f $(addsuffix ",$(addprefix "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/,KIM_API.h KIM_API_C.h KIM_API_status.h kim_kinds.mod kim_api.mod))
+	@rm -f $(addsuffix ",$(addprefix "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/,KIM_API.h KIM_API_C.h KIM_API_status.h Unit_Handling.h KIM_AUX.h kim_kinds.mod kim_api.mod))
 	@if test \( -d "$(DESTDIR)$(libdir)/$(package_name)/KIM_API" \); then rmdir "$(DESTDIR)$(libdir)/$(package_name)/KIM_API" >& /dev/null; fi
