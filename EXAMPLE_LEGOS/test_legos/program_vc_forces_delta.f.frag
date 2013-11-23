@@ -77,7 +77,7 @@ program vc_forces_delta
   integer(kind=kim_intptr), parameter  :: SizeOne = 1
 
   double precision, allocatable        :: forces_old(:,:)
-  character(len=3)                     :: model_types(max_types)
+  character(len=KIM_KEY_STRING_LENGTH) :: model_types(max_types)
   character(len=KIM_KEY_STRING_LENGTH) :: model_NBCs(max_NBCs)
   integer                              :: num_types
   integer                              :: num_NBCs
