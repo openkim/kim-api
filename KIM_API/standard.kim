@@ -637,6 +637,12 @@ Neigh_BothAccess            flag        # need both locator and iterator modes
 # These are the KIM standard methods for dealing with neighbor lists and
 # boundary conditions.
 #
+# For each listed particle, i, in the configuration a:
+#   `full neighbor list' provides a list of every particle, j, that is a
+#                        neighbor of particle i;
+#   `half neighbor list' provides a list of every particle, j >= i, that is a
+#                        neighbor of particle i.
+#
 ################################################################################
 
 # In the CLUSTER method, the Model receives the number of particles and
