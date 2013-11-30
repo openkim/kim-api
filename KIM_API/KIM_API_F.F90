@@ -47,7 +47,7 @@ end module kim_kinds
 module kim_api
   use kim_kinds
     implicit none
-    integer,parameter :: KIM_KEY_STRING_LENGTH = 64 !
+    integer,parameter :: KIM_KEY_STRING_LENGTH = 128 !
 
     interface
         !explicite inteface to C-side code

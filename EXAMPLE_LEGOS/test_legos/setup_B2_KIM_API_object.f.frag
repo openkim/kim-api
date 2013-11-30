@@ -10,8 +10,8 @@ subroutine setup_B2_KIM_API_object(pkim, testname, modelname, specname1, specnam
 
   !-- Transferred variables
   integer(kind=kim_intptr), intent(in)  :: pkim
-  character(len=80),        intent(in)  :: testname
-  character(len=80),        intent(in)  :: modelname
+  character(len=KIM_KEY_STRING_LENGTH), intent(in)  :: testname
+  character(len=KIM_KEY_STRING_LENGTH), intent(in)  :: modelname
   character(len=2),         intent(in)  :: specname1
   character(len=2),         intent(in)  :: specname2
 

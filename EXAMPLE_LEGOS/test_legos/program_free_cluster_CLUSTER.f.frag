@@ -62,8 +62,8 @@ program TEST_NAME_STR
   !
   ! KIM variables
   !
-  character(len=80)         :: testname     = "TEST_NAME_STR"
-  character(len=80)         :: modelname
+  character(len=KIM_KEY_STRING_LENGTH) :: testname = "TEST_NAME_STR"
+  character(len=KIM_KEY_STRING_LENGTH) :: modelname
   integer(kind=kim_intptr)  :: pkim
   integer                   :: ier, idum
   integer numberOfParticles;   pointer(pnAtoms,numberOfParticles)
@@ -154,8 +154,8 @@ program TEST_NAME_STR
 
   ! print results to screen
   print '(80(''-''))'
-  print '("This is Test          : ",A)', testname
-  print '("Results for KIM Model : ",A)', modelname
+  print '("This is Test          : ",A)', trim(testname)
+  print '("Results for KIM Model : ",A)', trim(modelname)
   print '("Forces:")'
   print '("Atom     ' // &
   'X                        ' // &

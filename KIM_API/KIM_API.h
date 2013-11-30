@@ -41,7 +41,7 @@
 #include <stdarg.h>
 
 #define number_NBC_methods 7
-#define KIM_KEY_STRING_LENGTH 64
+#define KIM_KEY_STRING_LENGTH 128
 
 #include "KIM_AUX.h"
 

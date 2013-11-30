@@ -11,8 +11,8 @@ subroutine setup_KIM_API_object(pkim, testname, modelname, N, specname, SupportH
 
   !-- Transferred variables
   integer(kind=kim_intptr), intent(in)  :: pkim
-  character(len=80),        intent(in)  :: testname
-  character(len=80),        intent(in)  :: modelname
+  character(len=KIM_KEY_STRING_LENGTH), intent(in) :: testname
+  character(len=KIM_KEY_STRING_LENGTH), intent(in) :: modelname
   integer,                  intent(in)  :: N
   character(len=2),         intent(in)  :: specname
   integer,                  intent(in)  :: SupportHalf

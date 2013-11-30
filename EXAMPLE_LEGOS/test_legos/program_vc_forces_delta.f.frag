@@ -90,7 +90,7 @@ program vc_forces_delta
   double precision,dimension(100)      :: deltas, deltas_estimated
   double precision,        allocatable :: cluster_coords(:,:)
   double precision,        allocatable :: cluster_disps(:,:)
-  character(len=3),        allocatable :: cluster_types(:)
+  character(len=KIM_KEY_STRING_LENGTH), allocatable :: cluster_types(:)
   integer I,J,type,idisp
 
   ! neighbor list
@@ -103,8 +103,8 @@ program vc_forces_delta
   !
   ! KIM variables
   !
-  character(len=80)         :: testname     = "vc_forces_delta"
-  character(len=80)         :: modelname
+  character(len=KIM_KEY_STRING_LENGTH) :: testname     = "vc_forces_delta"
+  character(len=KIM_KEY_STRING_LENGTH) :: modelname
   character(len=KIM_KEY_STRING_LENGTH) :: NBC_Method; pointer(pNBC_Method,NBC_Method)
   integer nbc  ! 0- NEIGH_RVEC_H, 1- NEIGH_PURE_H, 2- NEIGH_RVEC_F, 3- NEIGH_PURE_F,
                ! 4- MI_OPBC_H,    5- MI_OPBC_F,    6- CLUSTER
@@ -179,8 +179,8 @@ program vc_forces_delta
   print *,'VERIFICATION CHECK: DELTA DERIVATIVE VERIFICATION OF FORCES'
   print *
   print '(120(''-''))'
-  print '("This is Test          : ",A)', testname
-  print '("Results for KIM Model : ",A)', modelname
+  print '("This is Test          : ",A)', trim(testname)
+  print '("Results for KIM Model : ",A)', trim(modelname)
 
   ! Loop over all NBCs and perform numerical derivative check for each one
   !

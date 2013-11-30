@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
 
    /* KIM variable declarations */
    char testname[] = "TEST_NAME_STR";
-   char modelname[80];
+   char modelname[KIM_KEY_STRING_LENGTH];
    void* pkim;
    int status;
    int partcl_type_code;

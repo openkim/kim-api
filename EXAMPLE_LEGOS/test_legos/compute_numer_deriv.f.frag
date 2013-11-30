@@ -14,7 +14,7 @@ double precision,         intent(inout) :: coords(DIM,N)
 double precision,         intent(in)    :: cutoff
 double precision,         intent(in)    :: cutpad
 double precision,         intent(in)    :: boxSideLengths(DIM)
-character(len=64),        intent(in)    :: NBC_Method
+character(len=KIM_KEY_STRING_LENGTH), intent(in) :: NBC_Method
 logical,                  intent(inout) :: do_update_list
 double precision,         intent(inout) :: coordsave(DIM,N)
 integer,                  intent(inout) :: neighborList(N+1,N)

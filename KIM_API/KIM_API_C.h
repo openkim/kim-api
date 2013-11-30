@@ -40,7 +40,7 @@
 
 #include <stdint.h>
 
-#define KIM_KEY_STRING_LENGTH 64
+#define KIM_KEY_STRING_LENGTH 128
 
 #ifdef  __cplusplus
 extern "C" {

@@ -22,7 +22,6 @@ integer :: i
 character(len=103)  :: divider
 character(len=1)    :: cr
 character(len=1024) :: type_line
-character(len=64)   :: type64
 character(len=32)   :: nbcline
 
 ! Initialize error flag
@@ -83,8 +82,7 @@ kim_descriptor = &
    '# Symbol/name               Type                    code'                   // cr
 
    do i = 1,num_types
-      type64 = model_types(i)
-      write(type_line,'(a65,''spec'',20x,i4)') type64,0
+      write(type_line,'(a,'' '',''spec'',20x,i4)') trim(model_types(i)),0
       kim_descriptor = trim(kim_descriptor) // trim(type_line) // cr
    enddo
 

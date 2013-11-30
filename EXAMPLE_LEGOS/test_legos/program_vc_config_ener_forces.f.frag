@@ -93,9 +93,9 @@ program TEST_NAME_STR
   !
   ! KIM variables
   !
-  character(len=80)         :: testname     = "TEST_NAME_STR"
-  character(len=80)         :: modelname
-  character(len=80)         :: configfile
+  character(len=KIM_KEY_STRING_LENGTH) :: testname     = "TEST_NAME_STR"
+  character(len=KIM_KEY_STRING_LENGTH) :: modelname
+  character(len=KIM_KEY_STRING_LENGTH) :: configfile
   character(len=KIM_KEY_STRING_LENGTH), pointer &
                             :: conf_types(:)    ! configuration atom types (element symbols)
   double precision, pointer :: conf_coors(:,:)  ! configuration coordinates
@@ -230,8 +230,8 @@ program TEST_NAME_STR
   print *,'VERIFICATION CHECK: COMPUTE ENERGY AND FORCES FOR CONFIGURATION'
   print *
   print '(120(''-''))'
-  print '("This is Test          : ",A)', testname
-  print '("Results for KIM Model : ",A)', modelname
+  print '("This is Test          : ",A)', trim(testname)
+  print '("Results for KIM Model : ",A)', trim(modelname)
   print *
   print *,'*** Read-in Configuration ***'
   print *

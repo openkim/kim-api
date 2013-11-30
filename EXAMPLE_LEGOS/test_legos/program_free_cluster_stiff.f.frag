@@ -82,8 +82,8 @@ program TEST_NAME_STR
   !
   ! KIM variables
   !
-  character(len=80)         :: testname     = "TEST_NAME_STR"
-  character(len=80)         :: modelname
+  character(len=KIM_KEY_STRING_LENGTH) :: testname = "TEST_NAME_STR"
+  character(len=KIM_KEY_STRING_LENGTH) :: modelname
   character(len=64) :: NBC_Method; pointer(pNBC_Method,NBC_Method)
   integer nbc  ! 0- NEIGH_RVEC_H, 1- NEIGH_PURE_H, 2- NEIGH_RVEC_F, 3- NEIGH_PURE_F,
                ! 4- MI_OPBC_H,    5- MI_OPBC_F,    6- CLUSTER
@@ -305,8 +305,8 @@ program TEST_NAME_STR
 
   ! print results to screen
   print '(80(''-''))'
-  print '("This is Test          : ",A)', testname
-  print '("Results for KIM Model : ",A)', modelname
+  print '("This is Test          : ",A)', trim(testname)
+  print '("Results for KIM Model : ",A)', trim(modelname)
   print '("Using NBC: ",A)', NBC_Method(1:(index(NBC_Method,char(0))-1))
   print '("Forces:")'
   print '("Atom     ' // &

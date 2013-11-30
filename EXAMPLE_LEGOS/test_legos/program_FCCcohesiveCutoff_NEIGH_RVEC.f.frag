@@ -62,7 +62,7 @@ program TEST_NAME_STR
 
   ! parameters controlling behavior of test
   !
-  character(len=80), parameter :: testname    = "TEST_NAME_STR"
+  character(len=KIM_KEY_STRING_LENGTH), parameter :: testname = "TEST_NAME_STR"
   character(len=2),  parameter :: specname    = 'SPECIES_NAME_STR'
   double precision,  parameter :: TOL         = 1.0d-8
   double precision,  parameter :: FCCspacing  = FCC_SPACING_STR
@@ -92,7 +92,7 @@ program TEST_NAME_STR
 
   ! KIM variables
   !
-  character(len=80)         :: modelname     ! KIM-compliant model name
+  character(len=KIM_KEY_STRING_LENGTH) :: modelname ! KIM-compliant model name
 
   integer(kind=kim_intptr)  :: pkim          ! pointer to KIM API object
 
@@ -196,8 +196,8 @@ program TEST_NAME_STR
      ! print results to screen
      !
      print '(80(''-''))'
-     print '("This is Test          : ",A)', testname
-     print '("Results for KIM Model : ",A)', modelname
+     print '("This is Test          : ",A)', trim(testname)
+     print '("Results for KIM Model : ",A)', trim(modelname)
      print *
      print '("Found minimum energy configuration to within",ES25.15)', TOL
      print *

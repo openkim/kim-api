@@ -15,8 +15,8 @@ double precision function get_model_cutoff_firsttime(testname, modelname)
   implicit none
 
   !-- Transferred variables
-  character(len=80),  intent(in)  :: testname
-  character(len=80),  intent(in)  :: modelname
+  character(len=KIM_KEY_STRING_LENGTH),  intent(in)  :: testname
+  character(len=KIM_KEY_STRING_LENGTH),  intent(in)  :: modelname
 
   !-- Local variables
   integer, parameter :: ATypes = 1  ! hard-wired to one atomic type
