@@ -101,7 +101,8 @@ C-------Local variables
       ENDIF
       IF (eper_flag.EQ.1) THEN
          DO 110 i = 1,natom
- 110        ea(i) = 0.D0
+            ea(i) = 0.D0
+ 110     CONTINUE
       ENDIF
       sumv = 0.D0
       cut2 = cutoff*cutoff
