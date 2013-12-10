@@ -188,14 +188,31 @@ KIM_LIB = -L$(KIM_DIR)/KIM_API/ -lkim
         #INSTALLTAG
 
 # KIM descriptor file make rule
-%_kim_str.cpp: %.kim
+%_kim_str.cpp: %.kim $(KIM_MAKE_FILES)
 	@printf "Creating... intermediate file... $@.\n"
-	@printf "extern \"C\" {\n"             > $*_kim_str.cpp
-	@printf "   $(MODEL_NAME_KIM_STR)\n"   >> $*_kim_str.cpp
-	@cat $(strip $(MODEL_NAME)).kim | tr -d '\r' | \
-	 sed -e 's,\\,\\\\,g'     \
-             -e 's,",\\",g'       \
-             -e 's,^,      ",g'   \
-             -e 's,$$,\\n",g'                 >> $*_kim_str.cpp
-	@printf "   ;\n"                      >> $*_kim_str.cpp
-	@printf "}\n"                         >> $*_kim_str.cpp
+	@fl_size=`cat $*.kim | tr -d '\r' | wc -c`;\
+         n=`expr $$fl_size / 65536`;\
+         if test $$n -eq 0; then n=1; else n=`expr $$n + 2`; fi;\
+         lines=`cat $*.kim | tr -d '\r' | wc -l`;\
+         dl=`expr $$lines / $$n`;\
+         printf "extern \"C\" {\n"                                                                 >  $*_kim_str.cpp;\
+         printf "   extern const int $(strip $(MODEL_NAME_KIM_STR))_chunks = %i;\n" `expr $$n + 1` >> $*_kim_str.cpp;\
+         printf "   extern const char* const $(strip $(MODEL_NAME_KIM_STR))[] =\n"                 >> $*_kim_str.cpp;\
+         printf "   {\n"                                                                           >> $*_kim_str.cpp;\
+         i=0;\
+         while test $$i -le $$n; do \
+            if test $$i -ne 0; then printf "\n      ,\n\n"                                         >> $*_kim_str.cpp; fi;\
+            lnstart=`expr $$i '*' $$dl - 2`;\
+            if test $$lnstart -lt 0; then lnstart=0; fi;\
+            lnend=`expr \( $$i + 1 \) '*' $$dl - 1`;\
+	    cat $(strip $(MODEL_NAME)).kim | tr -d '\r' | \
+            sed -e "1,$$lnstart d"   \
+                -e "$$lnend,\$$ d"   \
+	        -e 's,\\,\\\\,g'     \
+                -e 's,",\\",g'       \
+                -e 's,^,      ",g'   \
+                -e 's,$$,\\n",g'                                                                   >> $*_kim_str.cpp;\
+            i=`expr $$i + 1`;\
+        done;\
+        printf "   };\n"                                                                           >> $*_kim_str.cpp;\
+        printf "}\n"                                                                               >> $*_kim_str.cpp;

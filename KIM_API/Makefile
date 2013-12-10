@@ -164,7 +164,7 @@ KIM_AUX.o: KIM_AUX.h Makefile
 
 openkim-api-descriptor-file-match.o: openkim-api-descriptor-file-match.cpp KIM_API.h KIM_API_status.h Makefile
 
-model_init_include_stubs.o: model_init_include_stubs.c
+model_init_include_stubs.o: model_init_include_stubs.cpp
 
 openkim-api-descriptor-file-match: openkim-api-descriptor-file-match.o KIM_API.o KIM_API_DIRS.o KIM_AUX.o Unit_Handling.o standard_kim_str.o \
         $(if $(filter-out dynamic-load,$(KIM_LINK)),model_init_include_stubs.o,)
@@ -173,23 +173,29 @@ openkim-api-descriptor-file-match: openkim-api-descriptor-file-match.o KIM_API.o
 
 # targets for the models: for any new model, adds the appropriate lines to the model_init_include.h and model_inclue.cpp files
 $(MODELS_TARGETS): .models-deleted
-	@sh -c "if !(grep -i -q -s $(patsubst .%.make-temp,'%_init_pointer',$@) model_init_include.h); then echo \
-	extern "'\"'C'\"'" int \(\* $(patsubst .%.make-temp,%,$@)_init_pointer\)\(void \*\*\)\; >> model_init_include.h;  fi"
-	@sh -c "if !(grep -i -q -s $(patsubst .%.make-temp,'return %_init_pointer',$@) model_init_include.cpp); then \
-	echo \"\" if\(strcmp\(modelname,\\\"$(patsubst .%.make-temp,%,$@)\\\"\)==0\){ >> model_init_include.cpp;\
-	echo \"       \" return \(\* $(patsubst .%.make-temp,%,$@)_init_pointer\)\(\(void \*\*\) pkim\)\; >> model_init_include.cpp;\
-	echo \" }\" >> model_init_include.cpp;\
-	fi"
-	@sh -c "if !(grep -i -q -s $(patsubst .%.make-temp,'int %_init',$@) model_init_include_stubs.c); then echo \
-	int \(\* $(patsubst .%.make-temp,%,$@)_init_pointer\)\(void \*\*\) = 0\; >> model_init_include_stubs.c; \
-	echo char* `echo $(patsubst .%.make-temp,%,$@)`_kim_str = \\\"\\\"\; >> model_init_include_stubs.c;  fi"
-	@sh -c "if !(grep -i -q -s $(patsubst .%.make-temp,'char* %_kim_str',$@) model_kim_str_include.h); then echo \
-	extern char $(patsubst .%.make-temp,%,$@)_kim_str'[]'\; >> model_kim_str_include.h;  fi"
-	@sh -c "if !(grep -i -q -s $(patsubst .%.make-temp,'= %_kim_str',$@) model_kim_str_include.cpp); then \
-	echo \"\" if\(strcmp\(modelname,\\\"$(patsubst .%.make-temp,%,$@)\\\"\)==0\){ >> model_kim_str_include.cpp;\
-	echo \"       in_mdlstr = \" `echo $(patsubst .%.make-temp,%,$@)`_kim_str\; >> model_kim_str_include.cpp;\
-	echo \" }\" >> model_kim_str_include.cpp;\
-	fi"
+	@if ! grep -i -q -s $(patsubst .%.make-temp,'\* %_init_pointer',$@) model_init_include.h; then \
+            printf 'extern "C" int (* %s_init_pointer)(void **);\n' $(patsubst .%.make-temp,%,$@)                >> model_init_include.h;\
+         fi;
+	@if ! grep -i -q -s $(patsubst .%.make-temp,'return \*%_init_pointer',$@) model_init_include.cpp; then \
+            printf 'if (strcmp(modelname, "%s") == 0)\n{\n   return (*%s_init_pointer)((void **) pkim);\n}\n' \
+               $(patsubst .%.make-temp,%,$@) $(patsubst .%.make-temp,%,$@)                                       >> model_init_include.cpp;\
+         fi;
+	@if ! grep -i -q -s $(patsubst .%.make-temp,'char\*\* %_kim_str',$@) model_init_include_stubs.cpp; then \
+            printf 'int (* %s_init_pointer)(void **) = 0;\n' $(patsubst .%.make-temp,%,$@)                       >> model_init_include_stubs.cpp;\
+            printf 'char** %s_kim_str = 0;\n' $(patsubst .%.make-temp,%,$@)                                      >> model_init_include_stubs.cpp;\
+            printf 'int %s_kim_str_chunks = 0;\n' $(patsubst .%.make-temp,%,$@)                                  >> model_init_include_stubs.cpp;\
+         fi;
+	@if ! grep -i -q -s $(patsubst .%.make-temp,'char\* const %_kim_str',$@) model_kim_str_include.h; then \
+            printf 'extern const int %s_kim_str_chunks;\n' $(patsubst .%.make-temp,%,$@)                         >> model_kim_str_include.h;\
+            printf 'extern const char* const %s_kim_str[];\n' $(patsubst .%.make-temp,%,$@)                      >> model_kim_str_include.h;\
+         fi;
+	@if ! grep -i -q -s $(patsubst .%.make-temp,'= %_kim_str_chunks',$@) model_kim_str_include.cpp; then \
+            printf 'if (strcmp(modelname, "%s") == 0)\n' $(patsubst .%.make-temp,%,$@)                           >> model_kim_str_include.cpp;\
+            printf '{\n'                                                                                         >> model_kim_str_include.cpp;\
+            printf '   in_mdlstr_chunks = %s_kim_str_chunks;\n' $(patsubst .%.make-temp,%,$@)                    >> model_kim_str_include.cpp;\
+            printf '   in_mdlstr = (const char**) %s_kim_str;\n' $(patsubst .%.make-temp,%,$@)                   >> model_kim_str_include.cpp;\
+            printf '}\n'                                                                                         >> model_kim_str_include.cpp;\
+	 fi;
 	@touch $@
 	@echo "Configuring Model: $(patsubst .%.make-temp,%,$@)..."
 
@@ -198,7 +204,7 @@ $(MODELS_TARGETS): .models-deleted
 	@rm -f .*.make-temp $(addprefix model_init_include.,h cpp) $(addprefix model_kim_str_include.,h cpp)
 	@touch .models-deleted
 
-MODEL_NAME_KIM_STR = char standard_kim_str[] =
+MODEL_NAME_KIM_STR = standard_kim_str
 MODEL_NAME = standard
 # dependencies for autogenerated files
 model_init_include.h model_init_include.cpp: Makefile .models-deleted $(MODELS_TARGETS)
@@ -207,7 +213,7 @@ model_init_include.h model_init_include.cpp: Makefile .models-deleted $(MODELS_T
 
 clean:
 	@printf "Cleaning... KIM_API.\n"
-	@rm -f *.o .*.o *.a *.so .*.so *.mod  model_init_include.h model_init_include.cpp model_init_include_stubs.c model_kim_str_include.h model_kim_str_include.cpp \
+	@rm -f *.o .*.o *.a *.so .*.so *.mod  model_init_include.h model_init_include.cpp model_init_include_stubs.cpp model_kim_str_include.h model_kim_str_include.cpp \
         .*.make-temp .models-deleted standard_kim_str.cpp KIM_API_DIRS.cpp .KIM_API_DIRS.cpp &&\
         rm -f openkim-api-descriptor-file-match &&\
         rm -rf "$(KIM_DIR)/KIM_API/temp_archive_dir"

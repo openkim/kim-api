@@ -58,7 +58,7 @@ STATIC_COMP_WARNING:
         echo '*******                        $$KIM_DIR directory                       *******'; \
         echo '*******************************************************************************'; \
 
-MODEL_NAME_KIM_STR = char $(strip $(MODEL_NAME))_kim_str[] =
+MODEL_NAME_KIM_STR = $(strip $(MODEL_NAME))_kim_str
 
 all: $(strip $(MODEL_NAME)).kim $(MODEL_BUILD_TARGET)
 
@@ -116,14 +116,16 @@ export-list.txt: $(KIM_MAKE_FILES) Makefile
 ifeq (darwin, $(KIM_SYSTEMLINKER))
 	@printf "_$(MODEL_NAME)_init_pointer\n"             > $@
 	@printf "_$(MODEL_NAME)_kim_str\n"                 >> $@
+	@printf "_$(MODEL_NAME)_kim_str_chunks\n"          >> $@
 else # everything else (linux and freebsd)
-	@printf "{\n"                                       > $@
-	@printf "   global:\n"                             >> $@
-	@printf "           $(MODEL_NAME)_init_pointer;\n" >> $@
-	@printf "           $(MODEL_NAME)_kim_str;\n"      >> $@
-	@printf "\n"                                       >> $@
-	@printf "   local: *;\n"                           >> $@
-	@printf "};\n"                                     >> $@
+	@printf "{\n"                                         > $@
+	@printf "   global:\n"                               >> $@
+	@printf "           $(MODEL_NAME)_init_pointer;\n"   >> $@
+	@printf "           $(MODEL_NAME)_kim_str;\n"        >> $@
+	@printf "           $(MODEL_NAME)_kim_str_chunks;\n" >> $@
+	@printf "\n"                                         >> $@
+	@printf "   local: *;\n"                             >> $@
+	@printf "};\n"                                       >> $@
 endif
 
 Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/MAKE_SYSTEM/Makefile.ParameterizedModel
