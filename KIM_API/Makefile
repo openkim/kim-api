@@ -55,6 +55,7 @@ KIMDEFINES = $(KIM_DEFINE_VALUES)
 
 # load lists
 include $(KIM_LISTS)
+MODELS_TARGETS := $(addprefix ., $(addsuffix .make-temp, $(MODELS_LIST)))
 # create list of models that have been deleted from the $(KIM_MODELS_DIR)/ since the last time make was executed
 DELETED_MODELS_TARGETS := $(filter-out $(MODELS_TARGETS), $(shell find . -name ".*.make-temp" -exec basename {} \;))
 # If there are deleted models, remove files and touch .models-deleted to force a reconfigure
