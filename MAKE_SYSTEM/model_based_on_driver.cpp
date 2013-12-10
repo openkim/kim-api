@@ -128,15 +128,17 @@ static int process_paramfiles(char* param_file_names, int* nmstrlen)
 {
    *nmstrlen = L_tmpnam+1;
 
-   char* paramfile_strings[NUM_PARAMFILES];
+   const char** paramfile_strings[NUM_PARAMFILES];
    PARAMFILE_POINTERS_GO_HERE;
+   int paramfile_strings_chunks[NUM_PARAMFILES];
+   PARAMFILE_CHUNKS_GO_HERE;
 
    char* ret;
    std::fstream fl;
    for (int i=0; i<NUM_PARAMFILES; ++i)
    {
       // Note: the use of tmpnam() below may create a security hole.  Users should
-      //       be avoid running KIM Models with root (or other special) previlages.
+      //       avoid running KIM Models with root (or other special) previlages.
       ret=tmpnam(&(param_file_names[i*(L_tmpnam+1)]));
 
       if (ret == NULL)
@@ -152,7 +154,10 @@ static int process_paramfiles(char* param_file_names, int* nmstrlen)
          return KIM_STATUS_FAIL;
       }
 
-      fl << paramfile_strings[i];
+      for (int j=0; j<paramfile_strings_chunks[i]; ++j)
+      {
+         fl << paramfile_strings[i][j];
+      }
       fl.close();
    }
 

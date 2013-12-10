@@ -191,8 +191,7 @@ KIM_LIB = -L$(KIM_DIR)/KIM_API/ -lkim
 %_kim_str.cpp: %.kim $(KIM_MAKE_FILES)
 	@printf "Creating... intermediate file... $@.\n"
 	@fl_size=`cat $*.kim | tr -d '\r' | wc -c`;\
-         n=`expr $$fl_size / 65536`;\
-         if test $$n -eq 0; then n=1; else n=`expr $$n + 2`; fi;\
+         n=`expr $$fl_size / 65536 + 1`;\
          lines=`cat $*.kim | tr -d '\r' | wc -l`;\
          dl=`expr $$lines / $$n`;\
          printf "extern \"C\" {\n"                                                                 >  $*_kim_str.cpp;\
@@ -203,12 +202,12 @@ KIM_LIB = -L$(KIM_DIR)/KIM_API/ -lkim
          while test $$i -le $$n; do \
             if test $$i -ne 0; then printf "\n      ,\n\n"                                         >> $*_kim_str.cpp; fi;\
             lnstart=`expr $$i '*' $$dl - 2`;\
-            if test $$lnstart -lt 0; then lnstart=0; fi;\
+            if test $$lnstart -le 0; then begdel=":dummy"; else begdel="1,$$lnstart d"; fi;\
             lnend=`expr \( $$i + 1 \) '*' $$dl - 1`;\
-	    cat $(strip $(MODEL_NAME)).kim | tr -d '\r' | \
-            sed -e "1,$$lnstart d"   \
+            cat $(strip $(MODEL_NAME)).kim | tr -d '\r' | \
+            sed -e "$$begdel"        \
                 -e "$$lnend,\$$ d"   \
-	        -e 's,\\,\\\\,g'     \
+                -e 's,\\,\\\\,g'     \
                 -e 's,",\\",g'       \
                 -e 's,^,      ",g'   \
                 -e 's,$$,\\n",g'                                                                   >> $*_kim_str.cpp;\

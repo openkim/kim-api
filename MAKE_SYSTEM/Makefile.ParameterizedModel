@@ -85,19 +85,40 @@ $(strip $(MODEL_NAME)).cpp: $(KIM_DIR)/MAKE_SYSTEM/model_based_on_driver.cpp $(p
 	@printf "Creating... intermediate file... $@.\n"
 	@cat /dev/null > $(strip $(MODEL_NAME)).cpp
 	@$(foreach flnum,$(paramfile_num_list),\
-          echo "static char paramfile_$(flnum)[] ="                             >> $(strip $(MODEL_NAME)).cpp && \
-          cat $(PARAM_FILE_$(flnum)_NAME) | tr -d '\r' | \
-          sed -e 's,\\,\\\\,g'     \
-              -e 's,",\\",g'       \
-              -e 's,^,      ",g'   \
-              -e 's,$$,\\n",g'                                                  >> $(strip $(MODEL_NAME)).cpp && \
-          echo "   ;"                                                           >> $(strip $(MODEL_NAME)).cpp && \
-          echo ""                                                               >> $(strip $(MODEL_NAME)).cpp;)
+            fl_name=$(PARAM_FILE_$(flnum)_NAME);\
+            fl_size=`cat $$fl_name | tr -d '\r' | wc -c`;\
+            n=`expr $$fl_size / 65536 + 1`;\
+            lines=`cat $$fl_name | tr -d '\r' | wc -l`;\
+            dl=`expr $$lines / $$n`;\
+            printf "static const int paramfile_$(flnum)_chunks = %i;\n" `expr $$n + 1` >> $(strip $(MODEL_NAME)).cpp;\
+            printf "static const char* const paramfile_$(flnum)[] =\n"                 >> $(strip $(MODEL_NAME)).cpp;\
+            printf "{\n"                                                               >> $(strip $(MODEL_NAME)).cpp;\
+            i=0;\
+            while test $$i -le $$n; do \
+               if test $$i -ne 0; then printf "\n   ,\n\n"                             >> $(strip $(MODEL_NAME)).cpp; fi;\
+               lnstart=`expr $$i '*' $$dl - 2`;\
+               if test $$lnstart -le 0; then begdel=":dummy"; else begdel="1,$$lnstart d"; fi;\
+               lnend=`expr \( $$i + 1 \) '*' $$dl - 1`;\
+               cat $$fl_name | tr -d '\r' | \
+               sed -e "$$begdel"        \
+                   -e "$$lnend,\$$ d"   \
+                   -e 's,\\,\\\\,g'     \
+                   -e 's,",\\",g'       \
+                   -e 's,^,   ",g'      \
+                   -e 's,$$,\\n",g'                                                    >> $(strip $(MODEL_NAME)).cpp;\
+               i=`expr $$i + 1`;\
+           done;\
+           printf "};\n\n"                                                             >> $(strip $(MODEL_NAME)).cpp;\
+         )
         # make sed script
-	@echo "/PARAMFILE_POINTERS_GO_HERE;/ {" > tmp-sed-script
-	@$(foreach flnum,$(paramfile_num_list),echo "i\\" >> tmp-sed-script; echo "   paramfile_strings[$(flnum)-1] = paramfile_$(flnum);" >> tmp-sed-script;)
-	@echo "d" >> tmp-sed-script
-	@echo "}" >> tmp-sed-script
+	@printf "/PARAMFILE_POINTERS_GO_HERE;/ {\n" > tmp-sed-script
+	@$(foreach flnum,$(paramfile_num_list),printf 'i\\\n' >> tmp-sed-script; printf "   paramfile_strings[$(flnum)-1] = (const char**) paramfile_$(flnum);\n" >> tmp-sed-script;)
+	@printf "d\n" >> tmp-sed-script
+	@printf "}\n" >> tmp-sed-script
+	@printf "/PARAMFILE_CHUNKS_GO_HERE;/ {\n" >> tmp-sed-script
+	@$(foreach flnum,$(paramfile_num_list),printf 'i\\\n' >> tmp-sed-script; printf "   paramfile_strings_chunks[$(flnum)-1] = paramfile_$(flnum)_chunks;\n" >> tmp-sed-script;)
+	@printf "d\n" >> tmp-sed-script
+	@printf "}\n" >> tmp-sed-script
         # create actual model code to call model driver
 	@cat $(KIM_DIR)/MAKE_SYSTEM/model_based_on_driver.cpp | \
          sed -e "s,MODEL_DRIVER_NAME_STR,$(MODEL_DRIVER_NAME),g"                                              \
