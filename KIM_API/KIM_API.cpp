@@ -1489,12 +1489,12 @@ char * KIM_API_model::get_model_kim_str(const char* modelname,int * kimerr){
        itr->append(modelname); itr->append("/");
        itr->append(modelname); itr->append(".so");
        tmp_model_lib_handle = dlopen(itr->c_str(), RTLD_NOW);
-       if (tmp_model_lib_handle) break;
+       if (tmp_model_lib_handle != NULL) break;
        std::cout<< "* Error (KIM_API_model::get_model_kim_str): Cannot find Model shared library file for Model name: ";
        std::cout<<modelname<<std::endl<<dlerror()<<std::endl;
        fprintf(stderr,"%s not found...\n",itr->c_str());
     }
-    if(!tmp_model_lib_handle) {
+    if(tmp_model_lib_handle == NULL) {
        //redirecting back to > std::cout
        std::cout.rdbuf(backup); filekimlog.close();
        return NULL;
@@ -1628,10 +1628,13 @@ int KIM_API_model::preinit(const char* modelname){
     //preinit model
 
     int error;
+    int result = KIM_STATUS_FAIL;
     char* in_mdlstr = get_model_kim_str(modelname, &error);
-    this->name_temp = modelname;
-    int result = this->prestring_init(in_mdlstr);
-
+    if (error == KIM_STATUS_OK)
+    {
+       this->name_temp = modelname;
+       result = this->prestring_init(in_mdlstr);
+    }
     std::free(in_mdlstr);
     //redirecting back to > std::cout
     std::cout.rdbuf(backup); filekimlog.close();
