@@ -33,7 +33,31 @@
 #
 
 
+=== openkim-api-v1.3.0 =========================================================
+
+
+* change KIM_KEY_STRING_LENGTH to 128 (despite git log that says 257)
+
+* Split .kim files and parameter files into chunks to stay under C++ supported
+  string literal length.
+
+* Fix for dynamic-link compile option
+
+* Some minor code fixes/updates and documentation updates
+
+* Updates to `make install'
+
+* Fix bug in FCC example Tests
+
+* Fix/Update Templates
+
+* Fix a bug in Makefile.Test
+
+* Added KIM_API_get_rank and KIM_API_get_rank_by_index functions
+
+
 === openkim-api-v1.2.3 =========================================================
+
 
 * Fixed bugs in the KIM_API_string_init() function (discovered by Daniel Schopf)
 
@@ -46,6 +70,7 @@
 * Changes to Makefiles to improve portability (of `make uninstall')
 
 * Some minor changes to api code to remove compiler warnings from some compilers
+
 
 === openkim-api-v1.2.2 =========================================================
 
