@@ -75,7 +75,7 @@ examples-clean: examples-clean-all
 ########### for internal use ###########
 %-making-echo:
 	@printf "\n%79s\n" " " | sed -e 's/ /*/g'
-	@printf "%-77s%2s\n" "** Making... $(patsubst %-all,%,$*)" "**"
+	@printf "%-77s%2s\n" "** Making... `printf "$(patsubst %-all,%,$*)" | sed -e 's/@/ /g'`" "**"
 	@printf "%79s\n" " " | sed -e 's/ /*/g'
 
 config: $(KIM_CONFIG_FILES)
@@ -227,7 +227,7 @@ examples-force-all:
           printf "*@installing..@%-50s@copied@to@$(KIM_TESTS_DIR)\n" $(exmpl)@ | sed -e 's/ /./g' -e 's/@/ /g'; \
           cp -r $(KIM_DIR)/EXAMPLES/TESTS/$(exmpl) "$(KIM_TESTS_DIR)/"; fi;)
 
-$(patsubst %,%-all,$(MODELS_LIST)): %: Makefile Model..........\ %-making-echo | kim-api-objects
+$(patsubst %,%-all,$(MODELS_LIST)): %: Makefile Model..........@%-making-echo | kim-api-objects
 	@$(MAKE) $(MAKE_FLAGS) -C $(KIM_MODELS_DIR)/$(patsubst %-all,%,$@) all
 
 $(patsubst %,%-clean,$(MODELS_LIST)):
@@ -239,7 +239,7 @@ $(patsubst %,%-install,$(MODELS_LIST)):
 $(patsubst %,%-uninstall,$(MODELS_LIST)):
 	@$(MAKE) $(MAKE_FLAGS) -C $(KIM_MODELS_DIR)/$(patsubst %-uninstall,%,$@) uninstall
 
-$(patsubst %,%-all,$(MODEL_DRIVERS_LIST)): %: Makefile Model\ Driver...\ %-making-echo | kim-api-objects
+$(patsubst %,%-all,$(MODEL_DRIVERS_LIST)): %: Makefile Model@Driver...@%-making-echo | kim-api-objects
 	@$(MAKE) $(MAKE_FLAGS) -C $(KIM_MODEL_DRIVERS_DIR)/$(patsubst %-all,%,$@) all
 
 $(patsubst %,%-clean,$(MODEL_DRIVERS_LIST)):
@@ -251,7 +251,7 @@ $(patsubst %,%-install,$(MODEL_DRIVERS_LIST)):
 $(patsubst %,%-uninstall,$(MODEL_DRIVERS_LIST)):
 	@$(MAKE) $(MAKE_FLAGS) -C $(KIM_MODEL_DRIVERS_DIR)/$(patsubst %-uninstall,%,$@) uninstall
 
-$(patsubst %,%-all,$(TESTS_LIST)): %: Makefile Test...........\ %-making-echo | kim-api-objects kim-api-libs $(patsubst %,%-all,$(MODELS_LIST))
+$(patsubst %,%-all,$(TESTS_LIST)): %: Makefile Test...........@%-making-echo | kim-api-objects kim-api-libs $(patsubst %,%-all,$(MODELS_LIST))
 	@$(MAKE) $(MAKE_FLAGS) -C $(KIM_TESTS_DIR)/$(patsubst %-all,%,$@) all
 
 $(patsubst %,%-clean,$(TESTS_LIST)):
