@@ -103,7 +103,7 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
 
    (f) Set the value of KIM_SYSTEMARCH.  Possible values are `32bit' and
        `64bit'.
-
+ 
        KIM_SYSTEMARCH = 64bit
 
    (g) Set the value of KIM_LINK.  Possible values are `dynamic-load',
@@ -121,7 +121,8 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
    (h) Set override values for other variables, if necessary, by adding the
        desired variable name (after the "# overwrite default variable values
        here" line) and filling in appropriate values.  (NOTE: GCC 4.4 requires
-       that LDFLAGS be set as `LDFLAGS = -lgfortran -lgfortranstart'.)
+       that LDFLAGS be set as `LDFLAGS = -lgfortran -lgfortranstart' or
+       possibly `LD = $(FC)' and `LDFLAGS = -lgfortran -lgfortranbegin'.)
 
        # overwrite default variable values here
 
@@ -129,6 +130,7 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
        CC =
        CXX =
        FC =
+       LD = 
 
        # overwrite default compiler option flag lists
        FFLAGS   =
