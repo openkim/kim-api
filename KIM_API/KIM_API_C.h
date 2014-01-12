@@ -166,6 +166,7 @@ void KIM_API_getm_compute_by_index(void *kimmdl, int *error,int numargs, ...);
 /* total ?? service routines */
 
 /* fortran interface */
+/* THE BELOW IS DEPRECATED */
 int kim_api_init_(void * kimmdl,char ** testname, char **mdlname);
 int kim_api_model_info_(void * kimmdl,char ** mdlname);
 int kim_api_string_init_(void * kimmdl, char **testinputstring, char ** modelname);

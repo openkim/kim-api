@@ -892,6 +892,7 @@ double KIM_API_convert_to_act_unit(void * kimmdl,
 }
 
 
+// THE BELOW IS DEPRECATED
 //Fortran interface
 //global methots
 int kim_api_init_(void * kimmdl,char ** testname, char **mdlname){

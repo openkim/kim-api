@@ -175,11 +175,11 @@ $
 #
 #                           KIM string     C/C++ type      Fortran type
 #
-#                           `integer'      int             integer
-#                           `float'        float           real
-#                           `double'       double          double precision
-#                           `method'       void *          cray pointer
-#                           `pointer'      void *          cray pointer
+#                           `integer'      int             integer(c_int)
+#                           `float'        float           real(c_float)
+#                           `double'       double          real(c_double)
+#                           `method'       void (*)()      c_funptr
+#                           `pointer'      void *          c_ptr
 #
 #                           The first thre are self-explanatory.  (Note:
 #                           programmers should use the types listed above, as
@@ -187,7 +187,7 @@ $
 #                           code created one a single machine using a single
 #                           compiler suite will work correctly together.  In
 #                           particular, Fortran programmers should not use more
-#                           specific types such as `integer*4' or `double' as
+#                           specific types such as `integer*4' or `real*8' as
 #                           these could lead to compatibility problems on some
 #                           machines.)  The `method' type allows the Model
 #                           (Test) to provide pointers to functions/subroutines
@@ -196,13 +196,6 @@ $
 #                           pointing to an arbitrary location in memory and is
 #                           a catch-all type that can be used when none of the
 #                           other types are appropriate.
-#
-#                           NOTE: that in Fortran pointers to memory are
-#                                 currently implemented using the cray pointer
-#                                 extension which is widely supported by
-#                                 Fortran compilers.  In future releases,
-#                                 native pointer capabilities in Fortran 2003
-#                                 may be adopted.
 #
 #                  3) Unit: This string defines the physical units of the
 #                           values (which must all be the same for all

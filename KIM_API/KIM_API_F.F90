@@ -33,6 +33,13 @@
 !
 
 
+!
+! THIS FILE IS DEPRECATED
+!
+! Fortran users should now use the Fortran 2003 iso_c_bindings support provided
+! by the KIM_API_F03 module
+!
+
 #include "KIM_API_status.h"
 
 module kim_kinds

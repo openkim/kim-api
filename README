@@ -98,12 +98,7 @@ Source License.
 The current version of the openkim-api package supports the following features:
 
 * Currently supported programming languages:
-  C, C++, FORTRAN 77, Fortran 90/95.
-
-  (Partial support for Fortran 2003 is available.  If you are interested in
-  working with the openkim-api and Fortran 2003, please contact the developers
-  at --- openkim@googlegroups.com --- and they will provide you with the latest
-  development code and examples.)
+  C, C++, FORTRAN 77, Fortran 90/95, Fortran 2003.
 
 * Support for static and dynamic linking of programs using the openkim-api
 

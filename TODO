@@ -64,8 +64,6 @@ Items planned for future releases.
 
 * Implement support for force-fields (CHARMM/GROMACS) type KIM Models.
 
-* Implement full support for Fortran 2003
-
 * Add Doxygen commenting for improved code documentation.
 
 * Implement a framework for unit and regression testing of all the code in the
