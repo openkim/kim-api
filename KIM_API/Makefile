@@ -42,12 +42,13 @@ KIM_LISTS = $(KIM_DIR)/Makefile.ModelsList \
 # Definition of c and fortran .o file list
 OBJC = KIM_API.o KIM_API_C.o standard_kim_str.o Unit_Handling.o KIM_AUX.o KIM_API_DIRS.o
 OBJF90 = KIM_API_F.o
+OBJF03 = KIM_API_F03.o
 
 #fortran on/of
 ifdef KIM_NO_FORTRAN
    ALLOBJ = $(OBJC)
 else
-   ALLOBJ = $(OBJC) $(OBJF90)
+   ALLOBJ = $(OBJC) $(OBJF90) $(OBJF03)
 endif
 
 # Set defines
@@ -124,6 +125,8 @@ KIM_API.o: $(if $(filter-out dynamic-load,$(KIM_LINK)),model_init_include.h mode
 KIM_API_C.o: KIM_API.h KIM_API_C.h Makefile
 
 KIM_API_F.o: Makefile
+
+KIM_API_F03.o: Makefile
 
 KIM_AUX.o: KIM_AUX.h Makefile
 
