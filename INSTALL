@@ -122,7 +122,7 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
        desired variable name (after the "# overwrite default variable values
        here" line) and filling in appropriate values.  (NOTE: GCC 4.4 requires
        that LDFLAGS be set as `LDFLAGS = -lgfortran -lgfortranstart' or
-       possibly `LD = $(FC)' and `LDFLAGS = -lgfortran -lgfortranbegin'.)
+       possibly `LD = $(FC)' and `LDFLAGS = -lstdc++'.)
 
        # overwrite default variable values here
 
