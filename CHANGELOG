@@ -33,6 +33,17 @@
 #
 
 
+=== openkim-api-v1.3.1 =========================================================
+
+
+* Fixes to make system to avoid undefined `directoryPATH()' symbol with INTEL
+  compilers and CYGWIN systems
+
+* Added notes to INSTALL for gun 4.4 and CYGWIN systems
+
+* Fixes to make system to work with gnu make 3.81 (avoid segmentation faults)
+
+
 === openkim-api-v1.3.0 =========================================================
 
 
