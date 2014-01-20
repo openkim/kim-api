@@ -40,7 +40,7 @@ KIM_LISTS = $(KIM_DIR)/Makefile.ModelsList \
             $(KIM_DIR)/Makefile.TestsList
 
 # Definition of c and fortran .o file list
-OBJC = KIM_API.o KIM_API_C.o standard_kim_str.o Unit_Handling.o KIM_AUX.o
+OBJC = KIM_API.o KIM_API_C.o standard_kim_str.o Unit_Handling.o KIM_AUX.o KIM_API_DIRS.o
 OBJF90 = KIM_API_F.o
 
 #fortran on/of
@@ -103,24 +103,23 @@ else
 endif
 libkim.so: libkim.a $(if $(filter-out dynamic-load,$(KIM_LINK)), \
                         $(foreach mdl, $(MODELS_LIST), $(KIM_MODELS_DIR)/$(mdl)/$(mdl).so) \
-                        $(foreach mdldrv, $(MODEL_DRIVERS_LIST), $(KIM_MODEL_DRIVERS_DIR)/$(mdldrv)/$(mdldrv).so),\
-                        KIM_API_DIRS.o .KIM_API_DIRS.o)
+                        $(foreach mdldrv, $(MODEL_DRIVERS_LIST), $(KIM_MODEL_DRIVERS_DIR)/$(mdldrv)/$(mdldrv).so),)
 	@printf "Creating... openkim-api library... $@.\n";
 	@$(LD) $(LDSHAREDFLAG) $(LINKSONAME)$(KIM_DIR)/KIM_API/$@ $(LDFLAGS) $(OUTPUTINFLAG) $@ \
                $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
                $(LDDYNAMICLIB) $(XLANGLDLIBS) \
                $(if $(filter-out dynamic-load,$(KIM_LINK)),\
                   $(foreach mdl, $(MODELS_LIST),$(KIM_MODELS_DIR)/$(mdl)/$(mdl).so) \
-                  $(foreach mdldrv, $(MODEL_DRIVERS_LIST),$(KIM_MODEL_DRIVERS_DIR)/$(mdldrv)/$(mdldrv).so),KIM_API_DIRS.o)
+                  $(foreach mdldrv, $(MODEL_DRIVERS_LIST),$(KIM_MODEL_DRIVERS_DIR)/$(mdldrv)/$(mdldrv).so),)
 	@$(LD) $(LDSHAREDFLAG) $(LINKSONAME)$(DESTDIR)$(libdir)/$(package_name)/KIM_API/$@ $(LDFLAGS) $(OUTPUTINFLAG) .$@ \
                $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
                $(LDDYNAMICLIB) $(XLANGLDLIBS) \
                $(if $(filter-out dynamic-load,$(KIM_LINK)),\
                   $(foreach mdl, $(MODELS_LIST),$(KIM_MODELS_DIR)/$(mdl)/.$(mdl).so) \
-                  $(foreach mdldrv, $(MODEL_DRIVERS_LIST),$(KIM_MODEL_DRIVERS_DIR)/$(mdldrv)/.$(mdldrv).so), .KIM_API_DIRS.o)
+                  $(foreach mdldrv, $(MODEL_DRIVERS_LIST),$(KIM_MODEL_DRIVERS_DIR)/$(mdldrv)/.$(mdldrv).so),)
 
 KIM_API.o: KIM_DEFINE_VALUES += -D KIM_TESTS_DIR_VAL=\"$(KIM_TESTS_DIR)\"
-KIM_API.o: $(if $(filter-out dynamic-load,$(KIM_LINK)),model_init_include.h model_init_include.cpp model_kim_str_include.cpp,) KIM_API.h KIM_API.cpp KIM_AUX.h Makefile
+KIM_API.o: $(if $(filter-out dynamic-load,$(KIM_LINK)),model_init_include.h model_init_include.cpp model_kim_str_include.cpp,) KIM_API.h KIM_API.cpp KIM_AUX.h KIM_API_DIRS.h Makefile
 
 KIM_API_C.o: KIM_API.h KIM_API_C.h Makefile
 
