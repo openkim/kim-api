@@ -42,7 +42,7 @@ module kim_api_f03
     subroutine kim_api_c_free(cp) bind(c, name="free")
       use, intrinsic :: iso_c_binding
       implicit none
-      type(c_ptr), intent(in) :: cp
+      type(c_ptr), value :: cp
     end subroutine kim_api_c_free
 
     subroutine kim_api_allocate(kimmdl, natoms, ntypes, error) &

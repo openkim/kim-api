@@ -79,7 +79,7 @@ AUTO_GEN_MODELS = ex_model_Al_PF_ErcolessiAdams    \
                   ex_model_Ar_P_MLJ_C              \
                   ex_model_Ar_P_MLJ_CLUSTER_C      \
                   ex_model_Ar_P_MLJ_CLUSTER_F90    \
-                  ex_model_Ar_P_MLJ_F90            \
+                  ex_model_Ar_P_MLJ_F03            \
                   ex_model_Ar_P_MLJ_MI_OPBC_H_F    \
                   ex_model_Ar_P_MLJ_NEIGH_PURE_H_F \
                   ex_model_Ar_P_MLJ_NEIGH_RVEC_F   \
@@ -632,8 +632,8 @@ ex_model_Ar_P_MLJ_C: dir_ex_model_Ar_P_MLJ_C               \
 	cp $(KIM_DIR)/LICENSE.CDDL $(KIM_EX_MODELS_DIR)/$@
 	cp -rf dir_$@/* $(KIM_EX_MODELS_DIR)/$@/
 
-ex_model_Ar_P_MLJ_F90: dir_ex_model_Ar_P_MLJ_F90               \
-                       $(wildcard dir_ex_model_Ar_P_MLJ_F90/*) \
+ex_model_Ar_P_MLJ_F03: dir_ex_model_Ar_P_MLJ_F03               \
+                       $(wildcard dir_ex_model_Ar_P_MLJ_F03/*) \
                        Makefile
 	mkdir -p $(KIM_EX_MODELS_DIR)/$@
 	@touch $(KIM_EX_MODELS_DIR)/$@
