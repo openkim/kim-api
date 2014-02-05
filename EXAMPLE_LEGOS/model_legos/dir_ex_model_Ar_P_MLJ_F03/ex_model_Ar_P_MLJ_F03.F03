@@ -297,15 +297,15 @@ if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
    return
 endif
 
-call c_f_pointer(pN,              N)
-call c_f_pointer(pparticleTypes,  particleTypes,  [N])
-call c_f_pointer(pcoor,           coor,           [DIM,N])
-call c_f_pointer(pnumContrib,     numContrib)
-call c_f_pointer(pboxSideLengths, boxSideLengths, [DIM])
+call c_f_pointer(pN,             N)
+call c_f_pointer(pparticleTypes, particleTypes, [N])
+call c_f_pointer(pcoor,          coor,          [DIM,N])
+if (HalfOrFull.eq.1)  call c_f_pointer(pnumContrib,     numContrib)
+if (NBC.eq.2)         call c_f_pointer(pboxSideLengths, boxSideLengths, [DIM])
 if (comp_energy.eq.1) call c_f_pointer(penergy,         energy)
-if (comp_force.eq.1)  call c_f_pointer(pforce,  force,  [DIM,N])
-if (comp_enepot.eq.1) call c_f_pointer(penepot, enepot, [N])
-if (comp_virial.eq.1) call c_f_pointer(pvirial, virial, [6])
+if (comp_force.eq.1)  call c_f_pointer(pforce,          force,          [DIM,N])
+if (comp_enepot.eq.1) call c_f_pointer(penepot,         enepot,         [N])
+if (comp_virial.eq.1) call c_f_pointer(pvirial,         virial,         [6])
 
 if (HalfOrFull.eq.1) then
    if (NBC.ne.3) then ! non-CLUSTER cases
@@ -330,10 +330,10 @@ Compute_Energy_Forces = KIM_STATUS_OK ! everything is ok
 
 ! Initialize potential energies, forces, virial term
 !
-if (comp_enepot.eq.1) enepot(1:N)      = 0.d0
-if (comp_energy.eq.1) energy           = 0.d0
-if (comp_force.eq.1)  force(1:DIM,1:N) = 0.d0
-if (comp_virial.eq.1) virial           = 0.d0
+if (comp_enepot.eq.1) enepot = 0.d0
+if (comp_energy.eq.1) energy = 0.d0
+if (comp_force.eq.1)  force  = 0.d0
+if (comp_virial.eq.1) virial = 0.d0
 
 ! Initialize neighbor handling for CLUSTER NBC
 !
