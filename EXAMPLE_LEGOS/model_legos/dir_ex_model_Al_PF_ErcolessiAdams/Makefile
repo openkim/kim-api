@@ -38,8 +38,8 @@ include ../Makefile.KIM_Config
 
 # set model specific details
 MODEL_NAME := ex_model_Al_PF_ErcolessiAdams
-MODEL_INIT_FUNCTION_NAME := ErcolessiAdams_init
-MODEL_INIT_FUNCTION_LANG := Fortran
+MODEL_INIT_FUNCTION_NAME := ercolessiadams_init
+MODEL_INIT_FUNCTION_LANG := C
 
 LOCALOBJ = ex_model_Al_PF_ErcolessiAdams.o
 
