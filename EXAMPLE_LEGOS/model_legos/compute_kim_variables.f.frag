@@ -1,20 +1,19 @@
     !-- KIM variables
-    integer numberOfParticles;        pointer(pnAtoms,numberOfParticles)
-    integer nparticleTypes;           pointer(pnparticleTypes,nparticleTypes)
-    integer particleTypes(1);         pointer(pparticleTypes,particleTypes)
-    double precision model_cutoff;    pointer(pcutoff,model_cutoff)
-    double precision model_epsilon;   pointer(pepsilon,model_epsilon)
-    double precision model_sigma;     pointer(psigma,model_sigma)
-    double precision model_cutnorm;   pointer(pcutnorm,model_cutnorm)
-    double precision model_A;         pointer(pA,model_A)
-    double precision model_B;         pointer(pB,model_B)
-    double precision model_C;         pointer(pC,model_C)
-    double precision model_sigmasq;   pointer(psigmasq,model_sigmasq)
-    double precision model_cutsq;     pointer(pcutsq,model_cutsq)
-    double precision energy;          pointer(penergy,energy)
-    double precision coordum(DIM,1);  pointer(pcoor,coordum)
-    double precision forcedum(DIM,1); pointer(pforce,forcedum)
-    double precision enepotdum(1);    pointer(penepot,enepotdum)
-    double precision virialdum(1);    pointer(pvirial,virialdum)
-    double precision, pointer :: coor(:,:),force(:,:),ene_pot(:),virial_global(:)
-    integer comp_energy, comp_force, comp_enepot, comp_virial
+    integer(c_int), pointer :: numberOfParticles; type(c_ptr) :: pnAtoms
+    integer(c_int), pointer :: nparticleTypes;    type(c_ptr) :: pnparticleTypes
+    integer(c_int), pointer :: particleTypes(:);  type(c_ptr) :: pparticleTypes
+    real(c_double), pointer :: model_cutoff;      type(c_ptr) :: pcutoff
+    real(c_double), pointer :: model_epsilon;     type(c_ptr) :: pepsilon
+    real(c_double), pointer :: model_sigma;       type(c_ptr) :: psigma
+    real(c_double), pointer :: model_cutnorm;     type(c_ptr) :: pcutnorm
+    real(c_double), pointer :: model_A;           type(c_ptr) :: pA
+    real(c_double), pointer :: model_B;           type(c_ptr) :: pB
+    real(c_double), pointer :: model_C;           type(c_ptr) :: pC
+    real(c_double), pointer :: model_sigmasq;     type(c_ptr) :: psigmasq
+    real(c_double), pointer :: model_cutsq;       type(c_ptr) :: pcutsq
+    real(c_double), pointer :: energy;            type(c_ptr) :: penergy
+    real(c_double), pointer :: coor(:,:);         type(c_ptr) :: pcoor
+    real(c_double), pointer :: force(:,:);        type(c_ptr) :: pforce
+    real(c_double), pointer :: enepot(:);         type(c_ptr) :: penepot
+    real(c_double), pointer :: virial(:);         type(c_ptr) :: pvirial
+    integer(c_int) comp_energy, comp_force, comp_enepot, comp_virial

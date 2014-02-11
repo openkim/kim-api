@@ -1,2 +1,2 @@
-    integer i,j
-    double precision, dimension(DIM) :: Rij
+    integer(c_int) i,j
+    real(c_double), dimension(DIM) :: Rij

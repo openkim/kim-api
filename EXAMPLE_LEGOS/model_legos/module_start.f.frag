@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2013, Regents of the University of Minnesota.
+! Copyright (c) 2013--2014, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -44,7 +44,8 @@
 #define THIS_FILE_NAME __FILE__
 
 module MODEL_NAME_STR
-  use KIM_API
+  use, intrinsic :: iso_c_binding
+  use KIM_API_F03
   implicit none
 
   save
@@ -60,13 +61,13 @@ contains
 ! Compute energy and forces on atoms from the positions.
 !
 !-------------------------------------------------------------------------------
-  integer function Compute_Energy_Forces(pkim)
+  integer(c_int) function Compute_Energy_Forces(pkim) bind(c)
     implicit none
 
     !-- Transferred variables
-    integer(kind=kim_intptr), intent(in)  :: pkim
+    type(c_ptr), intent(in)  :: pkim
 
     !-- Local variables
-    integer, parameter :: DIM=3
-    double precision r,Rsqij,phi,dphi,d2phi,dEidr
-    integer idum
+    integer(c_int), parameter :: DIM=3
+    real(c_double) r,Rsqij,phi,dphi,d2phi,dEidr
+    integer(c_int) idum

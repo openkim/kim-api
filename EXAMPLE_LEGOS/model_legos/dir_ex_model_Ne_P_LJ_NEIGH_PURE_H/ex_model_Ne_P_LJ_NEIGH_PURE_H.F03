@@ -37,7 +37,7 @@
 #define TRUEFALSE(TRUTH) merge(1,0,(TRUTH))
 
 module ex_model_Ne_P_LJ_NEIGH_PURE_H
-  use, intrinsic :: iso_c_bindings
+  use, intrinsic :: iso_c_binding
   use  KIM_API_F03
   implicit none
 
@@ -125,7 +125,7 @@ contains
     !
     call calculate(model_cutoff,sigma,epsilon,pkim,x,f,ea,numberofatoms, &
                    numContrib,potenergy,e_flag,f_flag,eper_flag,         &
-                   kim_api_get_neigh_f,calculate_wrap_f77)
+                   kim_api_get_neigh,calculate_wrap_f77)
 
     return
   end function calculate_wrap_f77
@@ -135,7 +135,7 @@ end module ex_model_Ne_P_LJ_NEIGH_PURE_H
 
 !  Model Initiation routine
 integer(c_int) function model_init(pkim) bind(c)
-  use, intrinsic :: iso_c_bindings
+  use, intrinsic :: iso_c_binding
   use ex_model_Ne_P_LJ_NEIGH_PURE_H
   use KIM_API_F03
   implicit none
@@ -151,7 +151,7 @@ integer(c_int) function model_init(pkim) bind(c)
   real(c_double), pointer :: cutoff;  type(c_ptr) :: pcutoff ! cutoff radius
 
   ! store pointer to compute function in KIM object
-  ier = kim_api_set_method(pkim,"compute",one,f_funloc(calculate_wrap_f77))
+  ier = kim_api_set_method(pkim,"compute",one,c_funloc(calculate_wrap_f77))
   if (ier.lt.KIM_STATUS_OK)  then
      idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                  "kim_api_set_data", ier)

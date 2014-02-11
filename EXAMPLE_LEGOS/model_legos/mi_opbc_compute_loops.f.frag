@@ -1,32 +1,35 @@
     ! determine whether half or full lists are being used
-    pNBC_Method = kim_api_get_nbc_method_f(pkim, Compute_Energy_Forces)
+    pNBC_Method = kim_api_get_nbc_method(pkim, Compute_Energy_Forces)
     if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                     "kim_api_get_nbc_method_f", Compute_Energy_Forces)
+       idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_get_nbc_method", Compute_Energy_Forces)
        return
     endif
+    call c_f_pointer(pNBC_Method, NBC_Method)
     if (index(NBC_Method,"MI_OPBC_H").eq.1) then
        HalfOrFull = 1
     elseif (index(NBC_Method,"MI_OPBC_F").eq.1) then
        HalfOrFull = 2
     else
        Compute_Energy_Forces = KIM_STATUS_FAIL
-       idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                     "Unsupported NBC type", Compute_Energy_Forces)
+       idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                   "Unsupported NBC type", Compute_Energy_Forces)
        return
     endif
-    call free(pNBC_Method) ! don't forget to release the memory...
+    call KIM_API_c_free(pNBC_Method) ! don't forget to release the memory...
+    NBC_Method => null()
 
     ! get boxSideLengths & numberContributingParticles
-    call kim_api_getm_data_f(pkim, Compute_Energy_Forces,    &
+    call kim_api_getm_data(pkim, Compute_Energy_Forces,      &
          "boxSideLengths",              pboxSideLengths,  1, &
          "numberContributingParticles", pnumContrib,      1)
     if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
-       idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                     "kim_api_getm_data_f", Compute_Energy_Forces)
+       idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_getm_data", Compute_Energy_Forces)
        return
     endif
-
+    call c_f_pointer(pboxSideLengths, boxSideLengths, [DIM])
+    call c_f_pointer(pnumContrib, numContrib)
 
     !  Compute energy and forces
     !
@@ -36,12 +39,13 @@
        !
        atom = i ! request neighbors for atom i
 
-       Compute_Energy_Forces = kim_api_get_neigh_f(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij_dummy)
+       Compute_Energy_Forces = kim_api_get_neigh(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij)
        if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
-          idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                        "kim_api_get_neigh", Compute_Energy_Forces)
+          idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                      "kim_api_get_neigh", Compute_Energy_Forces)
           return
        endif
+       call c_f_pointer(pnei1atom, nei1atom, [numnei])
 
        ! Loop over the neighbors of atom i
        !
@@ -63,10 +67,10 @@
                 dEidr = 0.5d0*dphi                      !      regular contribution
              endif
              if (comp_enepot.eq.1) then                 !
-                ene_pot(i) = ene_pot(i) + 0.5d0*phi     ! accumulate energy
+                enepot(i) = enepot(i) + 0.5d0*phi       ! accumulate energy
                 if ((HalfOrFull.eq.1) .and. &
                     (j .le. numContrib)) then           ! HALF mode
-                   ene_pot(j) = ene_pot(j) + 0.5d0*phi  ! (i and j share it)
+                   enepot(j) = enepot(j) + 0.5d0*phi    ! (i and j share it)
                 endif                                   !
              endif                                      !
              if (comp_energy.eq.1) then                 !
@@ -78,12 +82,12 @@
                 endif                                   !
              endif
              if (comp_virial.eq.1) then                 ! accumul. virial
-                virial_global(1) = virial_global(1) + Rij(1)*Rij(1)*dEidr/r
-                virial_global(2) = virial_global(2) + Rij(2)*Rij(2)*dEidr/r
-                virial_global(3) = virial_global(3) + Rij(3)*Rij(3)*dEidr/r
-                virial_global(4) = virial_global(4) + Rij(2)*Rij(3)*dEidr/r
-                virial_global(5) = virial_global(5) + Rij(1)*Rij(3)*dEidr/r
-                virial_global(6) = virial_global(6) + Rij(1)*Rij(2)*dEidr/r
+                virial(1) = virial(1) + Rij(1)*Rij(1)*dEidr/r
+                virial(2) = virial(2) + Rij(2)*Rij(2)*dEidr/r
+                virial(3) = virial(3) + Rij(3)*Rij(3)*dEidr/r
+                virial(4) = virial(4) + Rij(2)*Rij(3)*dEidr/r
+                virial(5) = virial(5) + Rij(1)*Rij(3)*dEidr/r
+                virial(6) = virial(6) + Rij(1)*Rij(2)*dEidr/r
              endif                                      !
              if (comp_force.eq.1) then                  !
                 force(:,i) = force(:,i) + dEidr*Rij/r   ! accumulate force on atom i

@@ -14,19 +14,19 @@
                   r,phi,dphi,d2phi)                     ! compute pair potential
              dEidr = dphi                               ! compute dEidr -- double contribution
              if (comp_enepot.eq.1) then                 !
-                ene_pot(i) = ene_pot(i) + 0.5d0*phi     ! accumulate energy
-                ene_pot(j) = ene_pot(j) + 0.5d0*phi     ! (i and j share it)
+                enepot(i) = enepot(i) + 0.5d0*phi       ! accumulate energy
+                enepot(j) = enepot(j) + 0.5d0*phi       ! (i and j share it)
              endif                                      !
              if (comp_energy.eq.1) then                 !
                 energy = energy + phi                   ! half neigh case
              endif                                      !
              if (comp_virial.eq.1) then                 !
-                virial_global(1) = virial_global(1) + Rij(1)*Rij(1)*dEidr/r
-                virial_global(2) = virial_global(2) + Rij(2)*Rij(2)*dEidr/r
-                virial_global(3) = virial_global(3) + Rij(3)*Rij(3)*dEidr/r
-                virial_global(4) = virial_global(4) + Rij(2)*Rij(3)*dEidr/r
-                virial_global(5) = virial_global(5) + Rij(1)*Rij(3)*dEidr/r
-                virial_global(6) = virial_global(6) + Rij(1)*Rij(2)*dEidr/r
+                virial(1) = virial(1) + Rij(1)*Rij(1)*dEidr/r
+                virial(2) = virial(2) + Rij(2)*Rij(2)*dEidr/r
+                virial(3) = virial(3) + Rij(3)*Rij(3)*dEidr/r
+                virial(4) = virial(4) + Rij(2)*Rij(3)*dEidr/r
+                virial(5) = virial(5) + Rij(1)*Rij(3)*dEidr/r
+                virial(6) = virial(6) + Rij(1)*Rij(2)*dEidr/r
              endif                                      !
              if (comp_force.eq.1) then                  !
                 force(:,i) = force(:,i) + dEidr*Rij/r   ! accumulate force on atom i
