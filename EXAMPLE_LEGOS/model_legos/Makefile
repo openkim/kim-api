@@ -473,7 +473,7 @@ ex_model_Ne_P_Morse: model_Morse_README \
 ex_model_driver_P_LJ: model_driver_LJ_README \
                       model_driver_Makefile  \
                       model_driver_P_LJ.kim  \
-                      model_driver_P_LJ.F90  \
+                      model_driver_P_LJ.F03  \
                       Makefile
         # make directory
 	mkdir -p $(KIM_EX_MODEL_DRIVERS_DIR)/$@
@@ -482,11 +482,11 @@ ex_model_driver_P_LJ: model_driver_LJ_README \
         # make README file in the directory
 	$(D_CAT) model_driver_LJ_README | sed -e 's/MODEL_DRIVER_NAME_STR/$@/g'                                 >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/README
         # make Makefile in the directory
-	$(D_CAT) model_driver_Makefile | sed -e 's/MODEL_DRIVER_NAME_STR/$@/g' -e 's/MODEL_DRIVER_LANG/Fortran/' >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/Makefile
+	$(D_CAT) model_driver_Makefile | sed -e 's/MODEL_DRIVER_NAME_STR/$@/g' -e 's/MODEL_DRIVER_LANG/C/'      >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) model_driver_P_LJ.kim                                                                          >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$@.kim
         # make .F03 file in the directory
-	$(F_CAT) model_driver_P_LJ.F90 | $(SED_CMD) \
+	$(F_CAT) model_driver_P_LJ.F03 | $(SED_CMD) \
          | sed -e `echo $@ | tr A-Z a-z | sed -e 's/^\(.*\)/s\/MODEL_DRIVER_NAME_LC_STR\/\1\/g/'` \
                -e 's/MODEL_DRIVER_NAME_STR/$@/g'                                                                >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$@.F03
 
