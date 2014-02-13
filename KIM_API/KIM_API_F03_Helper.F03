@@ -36,6 +36,7 @@
 #include "KIM_API_status.h"
 
 module kim_api_f03_helper
+  use, intrinsic :: iso_c_binding
   implicit none
   interface
     integer(c_int) function kim_api_init(kimmdl, testname, mdlname) &
@@ -49,7 +50,6 @@ module kim_api_f03_helper
     integer(c_int) function kim_api_string_init(kimmdl, testdescriptor, &
       modelname) &
       bind(c, name="KIM_API_string_init")
-      ! untested
       use, intrinsic :: iso_c_binding
       type(c_ptr),      value :: kimmdl
       character(c_char)       :: testdescriptor(*)
@@ -58,7 +58,6 @@ module kim_api_f03_helper
 
     integer(c_int) function kim_api_model_info(kimmdl, modelname) &
       bind(c, name="KIM_API_model_info")
-      ! untested
       use, intrinsic :: iso_c_binding
       type(c_ptr),      value :: kimmdl
       character(c_char)       :: modelname(*)
@@ -91,7 +90,7 @@ module kim_api_f03_helper
     end function kim_api_get_data
 
     type(c_funptr) function kim_api_get_method(kimmdl, nm, error) &
-      bind(c, name="KIM_API_get_method")  ! untested
+      bind(c, name="KIM_API_get_method")
       use, intrinsic :: iso_c_binding
       type(c_ptr),      value :: kimmdl
       character(c_char)       :: nm(*)
@@ -177,7 +176,7 @@ module kim_api_f03_helper
     end subroutine kim_api_set_partcl_type_code
 
     type(c_ptr) function kim_api_get_model_kim_str(modelname, error) &
-      bind(c, name="KIM_API_get_model_kim_str")  ! untested
+      bind(c, name="KIM_API_get_model_kim_str")
       use, intrinsic :: iso_c_binding
       character(c_char) :: modelname(*)
       integer(c_int)    :: error
@@ -259,34 +258,42 @@ module kim_api_f03_helper
   end interface
 
 contains
-  integer function errcheck_mltpl(error, msgfrom, grarg, nm, ind)
-    use, intrinsic :: iso_c_binding
+
+  integer(c_int) function errcheck_mltpl_integer(error, msgfrom, grarg, ind)
     implicit none
-    integer                     :: error
-    character(len=*)            :: msgfrom
-    integer                     :: grarg
-    character(c_char), optional :: nm(*)
-    integer,           optional :: ind
-    
-    errcheck_mltpl = KIM_STATUS_OK
-    
+    integer(c_int),   intent(in) :: error
+    character(len=*), intent(in) :: msgfrom
+    integer(c_int),   intent(in) :: grarg
+    integer(c_int),   intent(in) :: ind
+
+    errcheck_mltpl_integer = KIM_STATUS_OK
+
     if (error .ge. KIM_STATUS_OK) return
-    
-    errcheck_mltpl = KIM_STATUS_FAIL
-    
-    if (present(nm) .and. present(ind)) then
-      print*, "failed:", msgfrom, ", for group argument ", grarg, &
-        " and kim_name "!, nm, ", kim_index", ind
-    else if (present(nm)) then
-      print*, "failed:", msgfrom, ", for group argument ", grarg, &
-        " and kim_name "!, nm
-    else if (present(ind)) then
-      print*, "failed:", msgfrom, ", for group argument ", grarg, &
-        " and kim_index"!, ind
-    else
-      print*, "failed:", msgfrom, ", for group argument ", grarg
-    endif
-    
-    errcheck_mltpl = KIM_STATUS_FAIL
-  end function errcheck_mltpl
+
+    errcheck_mltpl_integer = KIM_STATUS_FAIL
+
+    print *, "failed:", trim(msgfrom), ", for group argument ", grarg, &
+      " and index", ind
+
+    errcheck_mltpl_integer = KIM_STATUS_FAIL
+  end function errcheck_mltpl_integer
+
+  integer(c_int) function errcheck_mltpl_character(error, msgfrom, grarg, nm)
+    implicit none
+    integer(c_int),    intent(in) :: error
+    character(len=*),  intent(in) :: msgfrom
+    integer(c_int),    intent(in) :: grarg
+    character(len=*),  intent(in) :: nm
+
+    errcheck_mltpl_character = KIM_STATUS_OK
+
+    if (error .ge. KIM_STATUS_OK) return
+
+    errcheck_mltpl_character = KIM_STATUS_FAIL
+
+    print *, "failed:", trim(msgfrom), ", for group argument ", grarg, &
+      " and name", trim(nm)
+
+    errcheck_mltpl_character = KIM_STATUS_FAIL
+  end function errcheck_mltpl_character
 end module kim_api_f03_helper

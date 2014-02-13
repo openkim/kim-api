@@ -19,13 +19,13 @@
 #
 
 #
-# Copyright (c) 2013, Regents of the University of Minnesota.
+# Copyright (c) 2013--2014, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
-#    Valeriu Smirichinski
 #    Ryan S. Elliott
 #    Ellad B. Tadmor
+#    Valeriu Smirichinski
 #
 
 #
@@ -126,7 +126,11 @@ KIM_API_C.o: KIM_API.h KIM_API_C.h Makefile
 
 KIM_API_F.o: Makefile
 
-KIM_API_F03.o: KIM_API_F03_Helper.o Makefile
+KIM_API_F03.o: KIM_API_F03_Multiples.incl KIM_API_F03_Helper.o Makefile
+
+KIM_API_F03_Multiples.incl: CreateGetSetMultipleRoutines.sh Makefile
+	@printf "Creating... KIM_API_F03_Multiples.incl.\n"
+	@./CreateGetSetMultipleRoutines.sh > KIM_API_F03_Multiples.incl
 
 KIM_API_F03_Helper.o: Makefile
 
@@ -218,7 +222,7 @@ model_init_include.h model_init_include.cpp: Makefile .models-deleted $(MODELS_T
 clean:
 	@printf "Cleaning... KIM_API.\n"
 	@rm -f *.o .*.o *.a *.so .*.so *.mod  model_init_include.h model_init_include.cpp model_init_include_stubs.cpp model_kim_str_include.h model_kim_str_include.cpp \
-        .*.make-temp .models-deleted standard_kim_str.cpp KIM_API_DIRS.cpp .KIM_API_DIRS.cpp &&\
+        .*.make-temp .models-deleted standard_kim_str.cpp KIM_API_F03_Multiples.incl KIM_API_DIRS.cpp .KIM_API_DIRS.cpp &&\
         rm -f openkim-api-descriptor-file-match &&\
         rm -rf "$(KIM_DIR)/KIM_API/temp_archive_dir"
 
@@ -232,8 +236,8 @@ else
 	@cp -f libkim.a "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.a"
 	@chmod 644 "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.a"
 endif
-	@cp -f KIM_API.h KIM_API_C.h KIM_API_status.h kim_kinds.mod kim_api.mod Unit_Handling.h KIM_AUX.h "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/"
-	@chmod 644 $(addsuffix ",$(addprefix "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/,KIM_API.h KIM_API_C.h KIM_API_status.h Unit_Handling.h KIM_AUX.h kim_kinds.mod kim_api.mod))
+	@cp -f KIM_API.h KIM_API_C.h KIM_API_status.h kim_kinds.mod kim_api.mod kim_api_f03.mod Unit_Handling.h KIM_AUX.h "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/"
+	@chmod 644 $(addsuffix ",$(addprefix "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/,KIM_API.h KIM_API_C.h KIM_API_status.h Unit_Handling.h KIM_AUX.h kim_kinds.mod kim_api.mod kim_api_f03.mod))
 
 uninstall:
 	@printf "Uninstalling...($(DESTDIR)$(libdir)/$(package_name)/KIM_API)......... KIM_API.\n"
@@ -242,5 +246,5 @@ ifneq (static-link,$(KIM_LINK))
 else
 	@rm -f "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.a"
 endif
-	@rm -f $(addsuffix ",$(addprefix "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/,KIM_API.h KIM_API_C.h KIM_API_status.h Unit_Handling.h KIM_AUX.h kim_kinds.mod kim_api.mod))
+	@rm -f $(addsuffix ",$(addprefix "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/,KIM_API.h KIM_API_C.h KIM_API_status.h Unit_Handling.h KIM_AUX.h kim_kinds.mod kim_api.mod kim_api_f03.mod))
 	@if test \( -d "$(DESTDIR)$(libdir)/$(package_name)/KIM_API" \); then rmdir "$(DESTDIR)$(libdir)/$(package_name)/KIM_API" >& /dev/null; fi

@@ -5,6 +5,7 @@
 /model_init_include.h
 /model_kim_str_include.cpp
 /model_kim_str_include.h
+/KIM_API_F03_Multiples.incl
 /.*.make-temp
 /.models-deleted
 
