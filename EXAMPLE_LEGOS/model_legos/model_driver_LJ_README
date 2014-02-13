@@ -19,7 +19,7 @@
 #
 
 #
-# Copyright (c) 2013, Regents of the University of Minnesota.
+# Copyright (c) 2013-2014, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
@@ -34,7 +34,7 @@
 
 
 This directory (MODEL_DRIVER_NAME_STR) contains a shifted Lennard-Jones
-pair potential Model driver written in Fortran 90.
+pair potential Model driver written in Fortran 2003.
 
    phi(r) = 4 * epsilon * ( (sigma/r)^12 - (sigma/r)^6 ) + shift
 
@@ -67,8 +67,8 @@ Makefile
 README
     This file
 
-MODEL_DRIVER_NAME_STR.F90
-    Fortran 90 file that contains the implementation of the Lennard-Jones
+MODEL_DRIVER_NAME_STR.F03
+    Fortran 2003 file that contains the implementation of the Lennard-Jones
     potential Model Driver
 
 MODEL_DRIVER_NAME_STR.kim

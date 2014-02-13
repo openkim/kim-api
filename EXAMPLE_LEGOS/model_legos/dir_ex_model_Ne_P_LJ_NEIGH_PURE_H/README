@@ -19,10 +19,11 @@
 #
 
 #
-# Copyright (c) 2013, Regents of the University of Minnesota.
+# Copyright (c) 2013--2014, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
+#    Ryan S. Elliott
 #    Valeriu Smirichinski
 #
 
@@ -37,7 +38,8 @@ complies with the KIM API interface standard, using the NEIGH_PURE_H NBC and
 iterator mode, and supports optional computation of `energy', `forces' and
 `particleEnergy'.
 
-The contents of the directory are as follows (before any compilation if performed):
+The contents of the directory are as follows (before any compilation if
+performed):
 
 LICENSE.CDDL
      The Common Development and Distribution License (CDDL) Version 1.0 file
@@ -48,8 +50,8 @@ Makefile
 README
      This file
 
-ex_model_Ne_P_LJ_NEIGH_PURE_H.F90
-     F90 wrapper interface with KIM API
+ex_model_Ne_P_LJ_NEIGH_PURE_H.F03
+     F03 wrapper interface with KIM API
 
 ex_model_Ne_P_LJ_NEIGH_PURE_H.kim
      KIM descriptor file, contains all variables and methods that are exposed

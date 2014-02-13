@@ -19,7 +19,7 @@
 #
 
 #
-# Copyright (c) 2013, Regents of the University of Minnesota.
+# Copyright (c) 2013--2014, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
@@ -33,7 +33,7 @@
 
 
 This directory (ex_model_ArNe_P_MLJ_NIGH_RVEC_F) contains a modified Lennard
-Jones (LJ) Model for Argon and Neon with smoothed cutoff radius written in F90.
+Jones (LJ) Model for Argon and Neon with smoothed cutoff radius written in F03.
 It complies with the KIM API interface standard, using the NEIGH_RVEC_F NBC and
 locator mode, and publishes its parameters, and supports optional computation
 of `energy', `forces', `particleEnergy', and `virial'
@@ -49,7 +49,7 @@ Makefile
 README
      This file
 
-ex_model_ArNe_P_MLJ_NEIGH_RVEC_F.F90
+ex_model_ArNe_P_MLJ_NEIGH_RVEC_F.F03
      Fortran module file that contains the implementation of the LJ potential
 
 ex_model_ArNe_P_MLJ_NEIGH_RVEC_F.kim

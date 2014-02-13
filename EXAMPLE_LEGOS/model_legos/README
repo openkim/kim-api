@@ -19,7 +19,7 @@
 #
 
 #
-# Copyright (c) 2013, Regents of the University of Minnesota.
+# Copyright (c) 2013--2014, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
@@ -85,8 +85,8 @@ dir_ex_model_ArNe_P_MLJ_NEIGH_RVEC_F/
 dir_ex_model_Ar_P_MLJ_C/
      Directory containing the ex_model_Ar_P_MLJ_C Model
 
-dir_ex_model_Ar_P_MLJ_F90/
-     Directory containing the ex_model_Ar_P_MLJ_F90 Model
+dir_ex_model_Ar_P_MLJ_F03/
+     Directory containing the ex_model_Ar_P_MLJ_F03 Model
 
 dir_ex_model_Cu_PF_Johnson/
      Directory containing the ex_model_Cu_PF_Johnson Model
@@ -154,8 +154,8 @@ model_driver_Makefile
 model_driver_Morse_README
      This file contains the README file for the Morse Model Driver
 
-model_driver_P_LJ.F90
-     This file contains the LJ pair potential Model Driver F90 code.
+model_driver_P_LJ.F03
+     This file contains the LJ pair potential Model Driver F03 code.
 
 model_driver_P_LJ.kim
      This file contains the LJ pair potential KIM descriptor file for use

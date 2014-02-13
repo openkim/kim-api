@@ -19,7 +19,7 @@
 #
 
 #
-# Copyright (c) 2013, Regents of the University of Minnesota.
+# Copyright (c) 2013--2014, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
@@ -34,10 +34,11 @@
 
 
 This directory (ex_model_Al_PF_ErcolessiAdams) contains an EAM Model created by
-Ercolessi and Adams (for aluminum) written in F90 and based on the pair
+Ercolessi and Adams (for aluminum) written in F03 and based on the pair
 functional template in DOCs/TEMPLATEs/.
 
-The contents of the directory are as follows (before any compilation if performed):
+The contents of the directory are as follows (before any compilation if
+performed):
 
 LICENSE.CDDL
      The Common Development and Distribution License (CDDL) Version 1.0 file
@@ -48,7 +49,7 @@ Makefile
 README
      This file
 
-ex_model_Al_PF_ErcolessiAdams.F90
+ex_model_Al_PF_ErcolessiAdams.F03
      Fortran module file that contains the implementation of the Ercolessi and
      Adams EAM Model
 
