@@ -203,6 +203,28 @@ module kim_api_f03
       type(c_ptr)           :: rij
     end function kim_api_get_neigh
 
+    integer(c_int) function kim_api_process_dEdr(kimmdl, dE, dr, dx, i, j) &
+      bind(c, name="KIM_API_process_dEdr")
+      use, intrinsic :: iso_c_binding
+      type(c_ptr)           :: kimmdl
+      real(c_double)        :: dE
+      real(c_double)        :: dr
+      type(c_ptr)           :: dx
+      integer(c_int)        :: i
+      integer(c_int)        :: j
+    end function kim_api_process_dEdr
+
+    integer(c_int) function kim_api_process_d2Edr2(kimmdl, dE, dr, dx, i, j) &
+      bind(c, name="KIM_API_process_d2Edr2")
+      use, intrinsic :: iso_c_binding
+      type(c_ptr)           :: kimmdl
+      real(c_double)        :: dE
+      type(c_ptr)           :: dr
+      type(c_ptr)           :: dx
+      type(c_ptr)           :: i
+      type(c_ptr)           :: j
+    end function kim_api_process_d2Edr2
+
     type(c_ptr) function kim_api_get_status_msg(status_code) &
       bind(c, name="KIM_API_get_status_msg")
       use, intrinsic :: iso_c_binding
