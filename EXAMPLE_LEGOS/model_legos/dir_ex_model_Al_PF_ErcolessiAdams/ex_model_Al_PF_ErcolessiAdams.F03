@@ -78,9 +78,9 @@ real(c_double), parameter :: model_cutsq  = model_cutoff**2
 !                                              ! called `parname' with a value
 !                                              ! equal to `value' (a number)
 !
-! real(c_double), parameter :: parname = value ! This defines a real
-!                                              ! real(c_double) parameter called
-!                                              ! `parname' with a value equal to
+! real(c_double), parameter :: parname = value ! This defines a real(c_double)
+!                                              ! parameter called `parname'
+!                                              ! with a value equal to
 !                                              ! `value' (a number)
 !-------------------------------------------------------------------------------
 integer(c_int), parameter :: npt= 17
