@@ -32,7 +32,9 @@
 # Release: This file is part of the openkim-api.git repository.
 #
 
-
+ifeq ($(wildcard Makefile.KIM_Config),)
+  $(error Makefile.KIM_Config does not exist.  Please create this file in order to compile the openkim-api package)
+endif
 include Makefile.KIM_Config
 
 KIM_LISTS = Makefile.ModelsList Makefile.ModelDriversList Makefile.TestsList

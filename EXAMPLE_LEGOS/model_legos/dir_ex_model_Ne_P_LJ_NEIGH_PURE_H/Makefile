@@ -32,6 +32,9 @@
 
 
 # load all basic KIM make configuration
+ifeq ($(wildcard ../Makefile.KIM_Config),)
+  $(error ../Makefile.KIM_Config does not exist.  Something is wrong with your openkim-api package setup)
+endif
 include ../Makefile.KIM_Config
 
 # set model specific details
