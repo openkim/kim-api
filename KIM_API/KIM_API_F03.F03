@@ -282,7 +282,7 @@ module kim_api_f03
     end function kim_api_get_data_by_index
 
     type(c_funptr) function kim_api_get_method_by_index(kimmdl, I, error) &
-      bind(c, name="KIM_API_get_method_by_index")  ! untested
+      bind(c, name="KIM_API_get_method_by_index")
       use, intrinsic :: iso_c_binding
       type(c_ptr),    value :: kimmdl
       integer(c_int), value :: I
@@ -330,32 +330,30 @@ contains
   integer(c_int) function kim_api_init(kimmdl, testname, mdlname)
     use :: kim_api_f03_helper, only : c_call => kim_api_init
     implicit none
-    type(c_ptr),      intent(in) :: kimmdl
-    character(len=*), intent(in) :: testname
-    character(len=*), intent(in) :: mdlname
+    type(c_ptr),      intent(out) :: kimmdl
+    character(len=*), intent(in)  :: testname
+    character(len=*), intent(in)  :: mdlname
 
     kim_api_init = c_call(kimmdl, trim(testname)//c_null_char, &
       trim(mdlname)//c_null_char)
   end function kim_api_init
 
   integer(c_int) function kim_api_string_init(kimmdl, testdescriptor, modelname)
-    ! untested
     use :: kim_api_f03_helper, only : c_call => kim_api_string_init
     implicit none
-    type(c_ptr),      intent(in) :: kimmdl
-    character(len=*), intent(in) :: testdescriptor
-    character(len=*), intent(in) :: modelname
+    type(c_ptr),      intent(out) :: kimmdl
+    character(len=*), intent(in)  :: testdescriptor
+    character(len=*), intent(in)  :: modelname
 
     kim_api_string_init = c_call(kimmdl, &
       trim(testdescriptor)//c_null_char, trim(modelname)//c_null_char)
   end function kim_api_string_init
 
   integer(c_int) function kim_api_model_info(kimmdl, modelname)
-    ! untested
     use :: kim_api_f03_helper, only : c_call => kim_api_model_info
     implicit none
-    type(c_ptr),      intent(in) :: kimmdl
-    character(len=*), intent(in) :: modelname
+    type(c_ptr),      intent(out) :: kimmdl
+    character(len=*), intent(in)  :: modelname
 
     kim_api_model_info = c_call(kimmdl, &
       trim(modelname)//c_null_char)
@@ -401,7 +399,6 @@ contains
   end function kim_api_get_data
 
   type(c_funptr) function kim_api_get_method(kimmdl, nm, error)
-    ! untested
     use :: kim_api_f03_helper, only : c_call => kim_api_get_method
     implicit none
     type(c_ptr),      intent(in) :: kimmdl
@@ -526,7 +523,6 @@ contains
   end subroutine kim_api_set_partcl_type_code
 
   type(c_ptr) function kim_api_get_model_kim_str(modelname, error)
-    ! untested
     use :: kim_api_f03_helper, only : c_call => kim_api_get_model_kim_str
     implicit none
     character(len=*), intent(in)  :: modelname

@@ -51,16 +51,16 @@ module kim_api_f03_helper
       modelname) &
       bind(c, name="KIM_API_string_init")
       use, intrinsic :: iso_c_binding
-      type(c_ptr),      value :: kimmdl
-      character(c_char)       :: testdescriptor(*)
-      character(c_char)       :: modelname(*)
+      type(c_ptr)       :: kimmdl
+      character(c_char) :: testdescriptor(*)
+      character(c_char) :: modelname(*)
     end function kim_api_string_init
 
     integer(c_int) function kim_api_model_info(kimmdl, modelname) &
       bind(c, name="KIM_API_model_info")
       use, intrinsic :: iso_c_binding
-      type(c_ptr),      value :: kimmdl
-      character(c_char)       :: modelname(*)
+      type(c_ptr)       :: kimmdl
+      character(c_char) :: modelname(*)
     end function kim_api_model_info
 
     integer(c_int) function kim_api_set_data(kimmdl, nm, size, dt) &
