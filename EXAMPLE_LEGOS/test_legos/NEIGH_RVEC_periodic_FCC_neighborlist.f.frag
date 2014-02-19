@@ -6,26 +6,27 @@
 subroutine NEIGH_RVEC_periodic_FCC_neighborlist(half, CellsPerHalfSide, cutoff,  &
                                                 FCCspacing, N, NN, neighborList, &
                                                 coords, RijList)
-  use KIM_API
+  use, intrinsic :: iso_c_binding
+  use KIM_API_F03
   implicit none
 
   !-- Transferred variables
-  logical,                               intent(in)  :: half
-  integer,                               intent(in)  :: CellsPerHalfSide
-  double precision,                      intent(in)  :: cutoff
-  double precision,                      intent(in)  :: FCCspacing
-  integer,                               intent(in)  :: N
-  integer,                               intent(in)  :: NN
-  integer, dimension(NN+1,N),            intent(out) :: neighborList
-  double precision, dimension(3,N),      intent(out) :: coords
-  double precision, dimension(3,NN+1,N), intent(out) :: RijList
+  logical,                             intent(in)  :: half
+  integer(c_int),                      intent(in)  :: CellsPerHalfSide
+  real(c_double),                      intent(in)  :: cutoff
+  real(c_double),                      intent(in)  :: FCCspacing
+  integer(c_int),                      intent(in)  :: N
+  integer(c_int),                      intent(in)  :: NN
+  integer(c_int), dimension(NN+1,N),   intent(out) :: neighborList
+  real(c_double), dimension(3,N),      intent(out) :: coords
+  real(c_double), dimension(3,NN+1,N), intent(out) :: RijList
 
   !-- Local variables
-  double precision dx(3)
-  double precision cutoff2
-  double precision FCCshifts(3,4)
-  double precision latVec(3)
-  integer atom, atomi, atomj, a(4), i, j, k, m
+  real(c_double) dx(3)
+  real(c_double) cutoff2
+  real(c_double) FCCshifts(3,4)
+  real(c_double) latVec(3)
+  integer(c_int) atom, atomi, atomj, a(4), i, j, k, m
 
   if (N.ne.1) then ! check assumption that N==1
      print *,"* ERROR: NEIGH_RVEC_periodic_FCC_neighborlist called with N.ne.1"

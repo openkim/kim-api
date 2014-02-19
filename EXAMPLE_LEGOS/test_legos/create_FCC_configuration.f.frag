@@ -16,20 +16,21 @@
 !
 !-------------------------------------------------------------------------------
 subroutine create_FCC_configuration(FCCspacing, nCellsPerSide, periodic, coords, MiddleAtomId)
+  use, intrinsic :: iso_c_binding
   implicit none
 
   !-- Transferred variables
-  double precision, intent(in)  :: FCCspacing
-  integer,          intent(in)  :: nCellsPerSide
-  logical,          intent(in)  :: periodic
-  double precision, intent(out) :: coords(3,*)
-  integer,          intent(out) :: MiddleAtomId
+  real(c_double), intent(in)  :: FCCspacing
+  integer(c_int), intent(in)  :: nCellsPerSide
+  logical,        intent(in)  :: periodic
+  real(c_double), intent(out) :: coords(3,*)
+  integer(c_int), intent(out) :: MiddleAtomId
   !
   ! cluster setup variables
   !
-  double precision FCCshifts(3,4)
-  double precision latVec(3)
-  integer a, i, j, k, m
+  real(c_double) FCCshifts(3,4)
+  real(c_double) latVec(3)
+  integer(c_int) a, i, j, k, m
 
   ! Create a cubic FCC cluster
   !

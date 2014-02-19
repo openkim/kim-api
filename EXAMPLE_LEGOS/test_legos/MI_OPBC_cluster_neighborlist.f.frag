@@ -5,22 +5,23 @@
 !
 !-------------------------------------------------------------------------------
 subroutine MI_OPBC_cluster_neighborlist(half, numberOfParticles, coords, rcut, boxSideLengths, neighborList)
-  use KIM_API
+  use, intrinsic :: iso_c_binding
+  use KIM_API_F03
   implicit none
 
   !-- Transferred variables
-  logical,                                                     intent(in)  :: half
-  integer,                                                     intent(in)  :: numberOfParticles
-  double precision, dimension(3,numberOfParticles),            intent(in)  :: coords
-  double precision,                                            intent(in)  :: rcut
-  double precision, dimension(3),                              intent(in)  :: boxSideLengths
-  integer,   dimension(numberOfParticles+1,numberOfParticles), intent(out) :: neighborList ! not memory efficient
+  logical,                                        intent(in)  :: half
+  integer(c_int),                                 intent(in)  :: numberOfParticles
+  real(c_double), dimension(3,numberOfParticles), intent(in)  :: coords
+  real(c_double),                                 intent(in)  :: rcut
+  real(c_double), dimension(3),                   intent(in)  :: boxSideLengths
+  integer(c_int), dimension(numberOfParticles+1,numberOfParticles), intent(out) :: neighborList ! not memory efficient
 
   !-- Local variables
-  integer i, j, a
-  double precision dx(3)
-  double precision r2
-  double precision rcut2
+  integer(c_int) i, j, a
+  real(c_double) dx(3)
+  real(c_double) r2
+  real(c_double) rcut2
 
   rcut2 = rcut**2
 

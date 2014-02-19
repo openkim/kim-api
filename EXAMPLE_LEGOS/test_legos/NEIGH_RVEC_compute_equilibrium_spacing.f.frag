@@ -10,70 +10,72 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
              DIM,CellsPerCutoff,MinSpacing,MaxSpacing,  &
              TOL,N,NNeighbors,neighborlist,RijList,     &
              verbose,RetSpacing,RetEnergy)
-  use KIM_API
+  use, intrinsic :: iso_c_binding
+  use KIM_API_F03
   implicit none
 
   !-- Transferred variables
-  integer(kind=kim_intptr), intent(in)     :: pkim
-  integer,                  intent(in)     :: DIM
-  integer,                  intent(in)     :: CellsPerCutoff
-  double precision,         intent(in)     :: MinSpacing
-  double precision,         intent(in)     :: MaxSpacing
-  double precision,         intent(in)     :: TOL
-  integer,                  intent(in)     :: N
-  integer,                  intent(in)     :: NNeighbors
-  integer,                  intent(inout)  :: neighborList(NNeighbors+1,N)
-  double precision,         intent(inout)  :: RijList(3,NNeighbors+1,N)
-  logical,                  intent(in)     :: verbose
-  double precision,         intent(out)    :: RetSpacing
-  double precision,         intent(out)    :: RetEnergy
+  type(c_ptr),    intent(in)     :: pkim
+  integer(c_int), intent(in)     :: DIM
+  integer(c_int), intent(in)     :: CellsPerCutoff
+  real(c_double), intent(in)     :: MinSpacing
+  real(c_double), intent(in)     :: MaxSpacing
+  real(c_double), intent(in)     :: TOL
+  integer(c_int), intent(in)     :: N
+  integer(c_int), intent(in)     :: NNeighbors
+  integer(c_int), intent(inout)  :: neighborList(NNeighbors+1,N)
+  real(c_double), intent(inout)  :: RijList(3,NNeighbors+1,N)
+  logical,        intent(in)     :: verbose
+  real(c_double), intent(out)    :: RetSpacing
+  real(c_double), intent(out)    :: RetEnergy
 
   !-- Local variables
-  double precision,         parameter :: Golden      = (1.d0 + sqrt(5.d0))/2.d0
-  integer ier, idum
-  double precision Spacings(4)
-  double precision Energies(4)
-  double precision energy;           pointer(penergy,energy)
-  double precision coordum(DIM,1);   pointer(pcoor,coordum)
-  double precision, pointer :: coords(:,:)
-  double precision cutoff;           pointer(pcutoff,cutoff)
-  double precision, parameter :: cutpad = CUTOFF_PADDING_STR ! cutoff radius padding
+  real(c_double), parameter :: Golden = (1.d0 + sqrt(5.d0))/2.d0
+  integer(c_int) ier, idum
+  real(c_double) Spacings(4)
+  real(c_double) Energies(4)
+  real(c_double), pointer :: energy;           type(c_ptr) :: penergy
+  real(c_double), pointer :: coords(:,:);      type(c_ptr) :: pcoor
+  real(c_double), pointer :: cutoff;           type(c_ptr) :: pcutoff
+  real(c_double), parameter :: cutpad = CUTOFF_PADDING_STR ! cutoff radius padding
   logical :: halfflag  ! .true. = half neighbor list; .false. = full neighbor list
-  character(len=64) NBC_Method;  pointer(pNBC_Method,NBC_Method)
+  character(len=KIM_KEY_STRING_LENGTH), pointer :: NBC_Method; type(c_ptr) :: pNBC_Method
 
   ! Unpack data from KIM object
   !
-  call kim_api_getm_data_f(pkim, ier, &
+  call kim_api_getm_data(pkim, ier, &
        "energy",      penergy, 1, &
        "coordinates", pcoor,   1, &
        "cutoff",      pcutoff, 1)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                   "kim_api_getm_data_f", ier)
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_getm_data", ier)
      stop
   endif
-
-  call KIM_to_F90_real_array_2d(coordum, coords, DIM, N)
+  call c_f_pointer(penergy, energy)
+  call c_f_pointer(pcoor, coords, [DIM,N])
+  call c_f_pointer(pcutoff, cutoff)
 
   ! determine which neighbor list type to use
   !
-  pNBC_Method = kim_api_get_nbc_method_f(pkim, ier) ! don't forget to free
+  pNBC_Method = kim_api_get_nbc_method(pkim, ier) ! don't forget to free
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                   "kim_api_get_nbc_method", ier)
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_get_nbc_method", ier)
      stop
   endif
+  call c_f_pointer(pNBC_Method, NBC_Method)
   if (index(NBC_Method,"NEIGH_RVEC_H").eq.1) then
      halfflag = .true.
   elseif (index(NBC_Method,"NEIGH_RVEC_F").eq.1) then
      halfflag = .false.
   else
      ier = KIM_STATUS_FAIL
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                   "Unknown NBC method", ier)
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                 "Unknown NBC method", ier)
      return
   endif
-  call free(pNBC_Method) ! free the memory
+  call KIM_API_c_free(pNBC_Method); NBC_Method => null() ! free the memory
 
   ! Initialize for minimization
   !
@@ -83,10 +85,10 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
                                             (cutoff+cutpad), Spacings(1), &
                                             N, NNeighbors,                &
                                             neighborList, coords, RijList)
-  ier = kim_api_model_compute_f(pkim)
+  ier = kim_api_model_compute(pkim)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                   "kim_api_model_compute_f", ier)
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_model_compute", ier)
      stop
   endif
   Energies(1) = energy
@@ -101,10 +103,10 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
                                             N, NNeighbors,                &
                                             neighborList, coords, RijList)
   ! Call model compute
-  ier = kim_api_model_compute_f(pkim)
+  ier = kim_api_model_compute(pkim)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                   "kim_api_model_compute_f", ier)
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_model_compute", ier)
      stop
   endif
   Energies(3) = energy
@@ -119,10 +121,10 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
                                             N, NNeighbors,                &
                                             neighborList, coords, RijList)
   ! Call model compute
-  ier = kim_api_model_compute_f(pkim)
+  ier = kim_api_model_compute(pkim)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                   "kim_api_model_compute_f", ier)
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_model_compute", ier)
      stop
   endif
   Energies(2) = energy
@@ -141,10 +143,10 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
                                                N, NNeighbors,                &
                                                neighborList, coords, RijList)
      ! Call model compute
-     ier = kim_api_model_compute_f(pkim)
+     ier = kim_api_model_compute(pkim)
      if (ier.lt.KIM_STATUS_OK) then
-        idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                      "kim_api_model_compute_f", ier)
+        idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                    "kim_api_model_compute", ier)
         stop
      endif
      Energies(4) = energy

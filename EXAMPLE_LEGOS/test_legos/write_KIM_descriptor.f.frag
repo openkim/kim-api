@@ -6,19 +6,20 @@
 !-------------------------------------------------------------------------------
 subroutine Write_KIM_descriptor(NBC_method, max_types, model_types, num_types, &
                                 kim_descriptor, ier)
-use KIM_API
+use, intrinsic :: iso_c_binding
+use KIM_API_F03
 implicit none
 
 !-- Transferred variables
 character(len=KIM_KEY_STRING_LENGTH), intent(in)   :: NBC_method
-integer,                              intent(in)   :: max_types
+integer(c_int),                       intent(in)   :: max_types
 character(len=KIM_KEY_STRING_LENGTH), intent(in)   :: model_types(max_types)
-integer,                              intent(in)   :: num_types
+integer(c_int),                       intent(in)   :: num_types
 character(len=10000),                 intent(out)  :: kim_descriptor
-integer,                              intent(out)  :: ier
+integer(c_int),                       intent(out)  :: ier
 
 !-- Local variables
-integer :: i
+integer(c_int) :: i
 character(len=103)  :: divider
 character(len=1)    :: cr
 character(len=1024) :: type_line

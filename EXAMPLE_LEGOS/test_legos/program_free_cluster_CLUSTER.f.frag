@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2013, Regents of the University of Minnesota.
+! Copyright (c) 2013--2014, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -49,14 +49,15 @@
 !
 !-------------------------------------------------------------------------------
 program TEST_NAME_STR
-  use KIM_API
+  use, intrinsic :: iso_c_binding
+  use KIM_API_F03
   implicit none
 
-  double precision, parameter :: FCCspacing     = FCC_SPACING_STR
-  integer,          parameter :: nCellsPerSide  = 2
-  integer,          parameter :: DIM            = 3
-  integer,          parameter :: ATypes         = 1
-  integer,          parameter :: &
+  real(c_double), parameter :: FCCspacing     = FCC_SPACING_STR
+  integer(c_int), parameter :: nCellsPerSide  = 2
+  integer(c_int), parameter :: DIM            = 3
+  integer(c_int), parameter :: ATypes         = 1
+  integer(c_int), parameter :: &
        N = 4*(nCellsPerSide)**3 + 6*(nCellsPerSide)**2 + 3*(nCellsPerSide) + 1
 
   !
@@ -64,80 +65,79 @@ program TEST_NAME_STR
   !
   character(len=KIM_KEY_STRING_LENGTH) :: testname = "TEST_NAME_STR"
   character(len=KIM_KEY_STRING_LENGTH) :: modelname
-  integer(kind=kim_intptr)  :: pkim
-  integer                   :: ier, idum
-  integer numberOfParticles;   pointer(pnAtoms,numberOfParticles)
-  integer numberParticleTypes; pointer(pnparticleTypes,numberParticleTypes)
-  integer particleTypesdum(1); pointer(pparticleTypesdum,particleTypesdum)
-
-  double precision cutoff;               pointer(pcutoff,cutoff)
-  double precision energy;               pointer(penergy,energy)
-  double precision virialglobdum(1);     pointer(pvirialglob,virialglobdum)
-  double precision coordum(DIM,1);       pointer(pcoor,coordum)
-  double precision forcesdum(DIM,1);     pointer(pforces,forcesdum)
-  integer I
-  double precision, pointer  :: coords(:,:), forces(:,:), virial_global(:)
-  integer, pointer :: particleTypes(:)
-  integer middleDum
-
+  type(c_ptr)    :: pkim
+  integer(c_int) :: ier, idum
+  integer(c_int) :: I
+  integer(c_int) :: middleDum
+  integer(c_int), pointer :: numberOfParticles;   type(c_ptr) :: pnAtoms
+  integer(c_int), pointer :: numberParticleTypes; type(c_ptr) :: pnparticleTypes
+  integer(c_int), pointer :: particleTypes(:);    type(c_ptr) :: pparticleTypes
+  real(c_double), pointer :: cutoff;              type(c_ptr) :: pcutoff
+  real(c_double), pointer :: energy;              type(c_ptr) :: penergy
+  real(c_double), pointer :: virial_global(:);    type(c_ptr) :: pvirialglob
+  real(c_double), pointer :: coords(:,:);         type(c_ptr) :: pcoor
+  real(c_double), pointer :: forces(:,:);         type(c_ptr) :: pforces
 
   ! Get KIM Model name to use
   print '("Please enter a valid KIM model name: ")'
   read(*,*) modelname
 
   ! Initialize the KIM object
-  ier = kim_api_init_f(pkim, testname, modelname)
+  ier = kim_api_init(pkim, testname, modelname)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                   "kim_api_init_f", ier)
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_init", ier)
      stop
   endif
   ! Allocate memory via the KIM system
-  call kim_api_allocate_f(pkim, N, ATypes, ier)
+  call kim_api_allocate(pkim, N, ATypes, ier)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                   "kim_api_allocate_f", ier)
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_allocate", ier)
      stop
   endif
 
   ! call model's init routine
-  ier = kim_api_model_init_f(pkim)
+  ier = kim_api_model_init(pkim)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                   "kim_api_model_init", ier)
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_model_init", ier)
      stop
   endif
 
 
   ! Unpack data from KIM object
   !
-  call kim_api_getm_data_f(pkim, ier, &
+  call kim_api_getm_data(pkim, ier, &
        "numberOfParticles",   pnAtoms,           1, &
        "numberParticleTypes", pnparticleTypes,   1, &
-       "particleTypes",       pparticleTypesdum, 1, &
+       "particleTypes",       pparticleTypes,    1, &
        "coordinates",         pcoor,             1, &
        "cutoff",              pcutoff,           1, &
        "energy",              penergy,           1, &
        "virial",              pvirialglob,       1, &
        "forces",              pforces,           1)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                   "kim_api_getm_data_f", ier)
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_getm_data", ier)
      stop
   endif
-
-  call KIM_to_F90_int_array_1d(particleTypesdum, particleTypes, N)
-  call KIM_to_F90_real_array_2d(coordum, coords, DIM, N)
-  call KIM_to_F90_real_array_1d(virialglobdum, virial_global, 6)
-  call KIM_to_F90_real_array_2d(forcesdum, forces, DIM, N)
+  call c_f_pointer(pnAtoms, numberOfParticles)
+  call c_f_pointer(pnparticleTypes, numberParticleTypes)
+  call c_f_pointer(pparticleTypes,  particleTypes, [N])
+  call c_f_pointer(pcoor, coords, [DIM,N])
+  call c_f_pointer(pcutoff, cutoff)
+  call c_f_pointer(penergy, energy)
+  call c_f_pointer(pvirialglob, virial_global, [6])
+  call c_f_pointer(pforces, forces, [DIM,N])
 
   ! Set values
   numberOfParticles   = N
   numberParticleTypes = ATypes
-  particleTypes(:)    = kim_api_get_partcl_type_code_f(pkim, "SPECIES_NAME_STR", ier)
+  particleTypes(:)    = kim_api_get_partcl_type_code(pkim, "SPECIES_NAME_STR", ier)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                   "kim_api_get_partcl_type_code_f", ier)
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_get_partcl_type_code", ier)
      stop
   endif
 
@@ -145,10 +145,10 @@ program TEST_NAME_STR
   call create_FCC_configuration(FCCspacing, nCellsPerSide, .false., coords, middleDum)
 
   ! Call model compute
-  ier = kim_api_model_compute_f(pkim)
+  ier = kim_api_model_compute(pkim)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                   "kim_api_model_compute", ier)
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_model_compute", ier)
      stop
   endif
 
@@ -168,16 +168,16 @@ program TEST_NAME_STR
   print '("                ",3ES25.15)', (virial_global(I),I=4,6)
 
   ! don't forget to destroy and deallocate
-  ier = kim_api_model_destroy_f(pkim)
+  ier = kim_api_model_destroy(pkim)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                   "kim_api_model_destroy", ier)
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_model_destroy", ier)
      stop
   endif
   call kim_api_free(pkim, ier)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                   "kim_api_free", ier)
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_free", ier)
      stop
   endif
 

@@ -5,25 +5,26 @@
 !-------------------------------------------------------------------------------
 subroutine NEIGH_RVEC_periodic_B2_neighborlist(half,CellsPerHalfSide, cutoff,  &
                                       B2spacing, NN, neighborList, coords, RijList)
-  use KIM_API
+  use, intrinsic :: iso_c_binding
+  use KIM_API_F03
   implicit none
 
   !-- Transferred variables
-  logical,                               intent(in)  :: half
-  integer,                               intent(in)  :: CellsPerHalfSide
-  double precision,                      intent(in)  :: cutoff
-  double precision,                      intent(in)  :: B2spacing
-  integer,                               intent(in)  :: NN
-  integer, dimension(NN+1,1),            intent(out) :: neighborList
-  double precision, dimension(3,2),      intent(out) :: coords
-  double precision, dimension(3,NN+1,1), intent(out) :: RijList
+  logical,                             intent(in)  :: half
+  integer(c_int),                      intent(in)  :: CellsPerHalfSide
+  real(c_double),                      intent(in)  :: cutoff
+  real(c_double),                      intent(in)  :: B2spacing
+  integer(c_int),                      intent(in)  :: NN
+  integer(c_int), dimension(NN+1,1),   intent(out) :: neighborList
+  real(c_double), dimension(3,2),      intent(out) :: coords
+  real(c_double), dimension(3,NN+1,1), intent(out) :: RijList
 
   !-- Local variables
-  double precision dx(3)
-  double precision cutoff2
-  double precision B2shifts(3,2)
-  double precision latVec(3)
-  integer atom, a, i, j, k, m
+  real(c_double) dx(3)
+  real(c_double) cutoff2
+  real(c_double) B2shifts(3,2)
+  real(c_double) latVec(3)
+  integer(c_int) atom, a, i, j, k, m
 
   cutoff2 = cutoff**2
 

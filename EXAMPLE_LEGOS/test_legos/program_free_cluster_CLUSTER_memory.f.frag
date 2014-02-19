@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2013, Regents of the University of Minnesota.
+! Copyright (c) 2013--2014, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -49,38 +49,38 @@
 !
 !-------------------------------------------------------------------------------
 program TEST_NAME_STR
-  use KIM_API
+  use, intrinsic :: iso_c_binding
+  use KIM_API_F03
   implicit none
 
-  double precision, parameter :: FCCspacing     = FCC_SPACING_STR
-  integer,          parameter :: nCellsPerSide  = 2
-  integer,          parameter :: DIM            = 3
-  integer,          parameter :: ATypes         = 1
-  integer,          parameter :: &
+  real(c_double), parameter :: FCCspacing     = FCC_SPACING_STR
+  integer(c_int), parameter :: nCellsPerSide  = 2
+  integer(c_int), parameter :: DIM            = 3
+  integer(c_int), parameter :: ATypes         = 1
+  integer(c_int), parameter :: &
        N = 4*(nCellsPerSide)**3 + 6*(nCellsPerSide)**2 + 3*(nCellsPerSide) + 1
-  integer(kind=kim_intptr), parameter :: one    = 1
-  integer(kind=kim_intptr), parameter :: NN     = N
-  integer(kind=kim_intptr), parameter :: DIMN   = DIM*N
-  integer(kind=kim_intptr), parameter :: six    = 6
+  integer(c_int), parameter :: one    = 1
+  integer(c_int), parameter :: NN     = N
+  integer(c_int), parameter :: DIMN   = DIM*N
+  integer(c_int), parameter :: six    = 6
 
   !
   ! KIM variables
   !
   character(len=KIM_KEY_STRING_LENGTH) :: testname     = "TEST_NAME_STR"
   character(len=KIM_KEY_STRING_LENGTH) :: modelname
-  integer(kind=kim_intptr)  :: pkim
-  integer                   :: ier, idum
-  integer numberOfParticles;
-  integer numberParticleTypes;
-  integer particleTypes(N);
-
-  double precision cutoff;
-  double precision energy;
-  double precision virialglob(6);
-  double precision coor(DIM,N);
-  double precision forces(DIM,N);
-  integer I
-  integer middleDum
+  type(c_ptr)    :: pkim
+  integer(c_int) :: ier, idum
+  integer(c_int) :: I
+  integer(c_int) :: middleDum
+  integer(c_int), target :: numberOfParticles
+  integer(c_int), target :: numberParticleTypes
+  integer(c_int), target :: particleTypes(N)
+  real(c_double), target :: cutoff
+  real(c_double), target :: energy
+  real(c_double), target :: virialglob(6)
+  real(c_double), target :: coords(DIM,N)
+  real(c_double), target :: forces(DIM,N)
 
 
   ! Get KIM Model name to use
@@ -88,49 +88,49 @@ program TEST_NAME_STR
   read(*,*) modelname
 
   ! Initialize the KIM object
-  ier = kim_api_init_f(pkim, testname, modelname)
+  ier = kim_api_init(pkim, testname, modelname)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                   "kim_api_init_f", ier)
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_init", ier)
      stop
   endif
   ! register memory with KIM object
-  call kim_api_setm_data_f(pkim, ier, &
-       "numberOfParticles",   DIMN, loc(numberOfParticles),   TRUEFALSE(.true.), &
-       "numberParticleTypes", one,  loc(numberParticleTypes), TRUEFALSE(.true.), &
-       "particleTypes",       NN,   loc(particleTypes),       TRUEFALSE(.true.), &
-       "coordinates",         DIMN, loc(coor),                TRUEFALSE(.true.), &
-       "cutoff",              one,  loc(cutoff),              TRUEFALSE(.true.), &
-       "energy",              one,  loc(energy),              TRUEFALSE(.true.), &
-       "forces",              DIMN, loc(forces),              TRUEFALSE(.true.), &
-       "virial",              six,  loc(virialglob),          TRUEFALSE(.true.))
+  call kim_api_setm_data(pkim, ier, &
+       "numberOfParticles",   DIMN, c_loc(numberOfParticles),   TRUEFALSE(.true.), &
+       "numberParticleTypes", one,  c_loc(numberParticleTypes), TRUEFALSE(.true.), &
+       "particleTypes",       NN,   c_loc(particleTypes),       TRUEFALSE(.true.), &
+       "coordinates",         DIMN, c_loc(coords),              TRUEFALSE(.true.), &
+       "cutoff",              one,  c_loc(cutoff),              TRUEFALSE(.true.), &
+       "energy",              one,  c_loc(energy),              TRUEFALSE(.true.), &
+       "forces",              DIMN, c_loc(forces),              TRUEFALSE(.true.), &
+       "virial",              six,  c_loc(virialglob),          TRUEFALSE(.true.))
 
   ! call model's init routine
-  ier = kim_api_model_init_f(pkim)
+  ier = kim_api_model_init(pkim)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                   "kim_api_model_init", ier)
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_model_init", ier)
      stop
   endif
 
   ! Set values
   numberOfParticles   = N
   numberParticleTypes = ATypes
-  particleTypes(:)    = kim_api_get_partcl_type_code_f(pkim, "SPECIES_NAME_STR", ier)
+  particleTypes(:)    = kim_api_get_partcl_type_code(pkim, "SPECIES_NAME_STR", ier)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                   "kim_api_get_partcl_type_code_f", ier)
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_get_partcl_type_code", ier)
      stop
   endif
 
   ! set up the cluster atom positions
-  call create_FCC_configuration(FCCspacing, nCellsPerSide, .false., coor, middleDum)
+  call create_FCC_configuration(FCCspacing, nCellsPerSide, .false., coords, middleDum)
 
   ! Call model compute
-  ier = kim_api_model_compute_f(pkim)
+  ier = kim_api_model_compute(pkim)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                   "kim_api_model_compute", ier)
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_model_compute", ier)
      stop
   endif
 
@@ -150,16 +150,16 @@ program TEST_NAME_STR
   print '("                ",3ES25.15)', (virialglob(I),I=4,6)
 
   ! don't forget to destroy and deallocate
-  ier = kim_api_model_destroy_f(pkim)
+  ier = kim_api_model_destroy(pkim)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                   "kim_api_model_destroy", ier)
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_model_destroy", ier)
      stop
   endif
   call kim_api_free(pkim, ier)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                   "kim_api_free", ier)
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_free", ier)
      stop
   endif
 

@@ -4,30 +4,31 @@
 !
 !-------------------------------------------------------------------------------
 subroutine free_KIM_API_object(pkim)
-  use KIM_API
+  use, intrinsic :: iso_c_binding
+  use KIM_API_F03
   implicit none
 
   !-- Transferred variables
-  integer(kind=kim_intptr), intent(in)  :: pkim
+  type(c_ptr), intent(in)  :: pkim
 
   !-- Local variables
-  integer ier, idum
+  integer(c_int) ier, idum
 
   ! call the model destroy function
   !
-  ier = kim_api_model_destroy_f(pkim)
+  ier = kim_api_model_destroy(pkim)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                   "kim_api_model_destroy_f", ier)
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_model_destroy", ier)
      stop
   endif
 
   ! free all KIM API object storage
   !
-  call kim_api_free_f(pkim, ier)
+  call kim_api_free(pkim, ier)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                   "kim_api_free_f", ier)
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_free", ier)
      stop
   endif
 

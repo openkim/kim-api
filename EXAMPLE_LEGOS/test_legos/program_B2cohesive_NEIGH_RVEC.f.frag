@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2013, Regents of the University of Minnesota.
+! Copyright (c) 2013--2014, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -55,61 +55,71 @@
 !
 !-------------------------------------------------------------------------------
 program TEST_NAME_STR
-  use KIM_API
+  use, intrinsic :: iso_c_binding
+  use KIM_API_F03
   implicit none
+
+  type neighObject_type
+     type(c_ptr)    :: pneighborList
+     type(c_ptr)    :: pRijList
+     integer(c_int) :: NNeighbors
+  end type neighObject_type
+
+!============================== INTERFACE TO EXTERNAL ROUTINES ================
+
+  interface
+     subroutine setup_neighborlist_Rij_KIM_access(pkim, NLRvecLocs)
+        use, intrinsic :: iso_c_binding
+        Import :: neighObject_type
+        type(c_ptr), intent(in)    :: pkim
+        type(neighObject_type), target, intent(in) :: NLRvecLocs
+     end subroutine setup_neighborlist_Rij_KIM_access
+  end interface
 
 !============================== VARIABLE DEFINITIONS ==========================
 
   ! parameters controlling behavior of test
   !
   character(len=KIM_KEY_STRING_LENGTH), parameter :: testname = "TEST_NAME_STR"
-  character(len=2),  parameter :: specname1   = 'SPECIES1_NAME_STR'
-  character(len=2),  parameter :: specname2   = 'SPECIES2_NAME_STR'
-  double precision,  parameter :: TOL         = 1.0d-8
-  double precision,  parameter :: B2spacing   = B2_SPACING_STR
-  double precision,  parameter :: MinSpacing  = 0.800d0*B2spacing
-  double precision,  parameter :: MaxSpacing  = 1.200d0*B2spacing
-  integer,           parameter :: DIM         = 3
-  integer,           parameter :: SupportHalf = 1            ! True
+  character(len=2), parameter :: specname1   = 'SPECIES1_NAME_STR'
+  character(len=2), parameter :: specname2   = 'SPECIES2_NAME_STR'
+  real(c_double),   parameter :: TOL         = 1.0d-8
+  real(c_double),   parameter :: B2spacing   = B2_SPACING_STR
+  real(c_double),   parameter :: MinSpacing  = 0.800d0*B2spacing
+  real(c_double),   parameter :: MaxSpacing  = 1.200d0*B2spacing
+  integer(c_int),   parameter :: DIM         = 3
+  integer(c_int),   parameter :: SupportHalf = 1            ! True
 
   ! significant local variables
   !
-  double precision     :: rcut               ! cutoff radius of the potential
+  real(c_double)  :: rcut               ! cutoff radius of the potential
+  real(c_double)  :: FinalSpacing       ! crystal lattice parameter
+  real(c_double)  :: FinalEnergy        ! energy per atom of crystal
+                                        ! at current spacing
+  integer(c_int)  :: CellsPerRcut       ! number of unit cells along
+                                        ! box (of size rcut) side
+  integer(c_int)  :: N                  ! number of atoms
 
-  integer(kind=kim_intptr), allocatable :: NLRvecLocs(:)     ! neighbor list pointers
-  integer,                  allocatable :: neighborList(:,:) ! neighbor list storage
-  double precision,         allocatable :: RijList(:,:,:)    ! Rij vector list storage
-
-  integer              :: NNeighbors         ! maximum number of neighbors for an atom
-
-  double precision     :: FinalSpacing       ! crystal lattice parameter
-
-  double precision     :: FinalEnergy        ! energy per atom of crystal
-                                             ! at current spacing
-
-  integer              :: CellsPerRcut       ! number of unit cells along
-                                             ! box (of size rcut) side
-
+  ! neighbor list
+  !
+  type(neighObject_type), target :: NLRvecLocs
+  integer(c_int), allocatable, target :: neighborList(:,:)
+  real(c_double), allocatable, target :: RijList(:,:,:)
+  integer(c_int)  :: NNeighbors         ! maximum number of neighbors for an atom
 
   ! KIM variables
   !
   character(len=KIM_KEY_STRING_LENGTH) :: modelname  ! KIM-compliant model name
+  type(c_ptr)    :: pkim          ! pointer to KIM API object
+  integer(c_int) :: ier           ! error flag
 
-  integer(kind=kim_intptr)  :: pkim          ! pointer to KIM API object
-
-  integer                   :: ier           ! error flag
-
-  double precision coordum(DIM,1);   pointer(pcoor,coordum)         ! coordinate
-
-  double precision cutoff; pointer(pcutoff,cutoff)                  ! cutoff
-
-  integer                   :: N                          ! number of atoms
+  real(c_double), pointer :: cutoff;        type(c_ptr) :: pcutoff
 
 
   ! other variables
   !
-  double precision, external  ::  get_model_cutoff_firsttime
-  integer                     ::  idum
+  real(c_double), external ::  get_model_cutoff_firsttime
+  integer(c_int)           ::  idum
 
 !========================= END VARIABLE DEFINITIONS ==========================
 
@@ -136,12 +146,13 @@ program TEST_NAME_STR
   !
   ! First, access the `cutoff' arguemt
   !
-  pcutoff = kim_api_get_data_f(pkim, "cutoff", ier)
+  pcutoff = kim_api_get_data(pkim, "cutoff", ier)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                   "kim_api_get_data_f", ier)
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_get_data", ier)
      stop
   endif
+  call c_f_pointer(pcutoff, cutoff)
   rcut = cutoff
   !
   ! Second, determine how many neighbors we will need
@@ -153,11 +164,9 @@ program TEST_NAME_STR
   !
   allocate(neighborList(NNeighbors+1,N))
   allocate(RijList(3,NNeighbors+1,N))
-  allocate(NLRvecLocs(3))
-  !
-  NLRvecLocs(1) = loc(neighborList)
-  NLRvecLocs(2) = loc(RijList)
-  NLRvecLocs(3) = NNeighbors
+  NLRvecLocs%pneighborList = c_loc(neighborList)
+  NLRvecLocs%pRijList = c_loc(RijList)
+  NLRvecLocs%NNeighbors = NNeighbors
   call setup_neighborlist_Rij_KIM_access(pkim, NLRvecLocs)
 
 
@@ -185,7 +194,6 @@ program TEST_NAME_STR
   !
   deallocate(neighborList)
   deallocate(RijList)
-  deallocate(NLRvecLocs)
   call free_KIM_API_object(pkim)
 
   stop
@@ -204,70 +212,72 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
              DIM,CellsPerRcut,MinSpacing,MaxSpacing, &
              TOL,N,NNeighbors,neighborlist,RijList,  &
              verbose,RetSpacing,RetEnergy)
-  use KIM_API
+  use, intrinsic :: iso_c_binding
+  use KIM_API_F03
   implicit none
 
   !-- Transferred variables
-  integer(kind=kim_intptr), intent(in)     :: pkim
-  integer,                  intent(in)     :: DIM
-  integer,                  intent(in)     :: CellsPerRcut
-  double precision,         intent(in)     :: MinSpacing
-  double precision,         intent(in)     :: MaxSpacing
-  double precision,         intent(in)     :: TOL
-  integer,                  intent(in)     :: N
-  integer,                  intent(in)     :: NNeighbors
-  integer,                  intent(inout)  :: neighborList(NNeighbors+1,N)
-  double precision,         intent(inout)  :: RijList(3,NNeighbors+1,N)
-  logical,                  intent(in)     :: verbose
-  double precision,         intent(out)    :: RetSpacing
-  double precision,         intent(out)    :: RetEnergy
+  type(c_ptr),    intent(in)     :: pkim
+  integer(c_int), intent(in)     :: DIM
+  integer(c_int), intent(in)     :: CellsPerRcut
+  real(c_double), intent(in)     :: MinSpacing
+  real(c_double), intent(in)     :: MaxSpacing
+  real(c_double), intent(in)     :: TOL
+  integer(c_int), intent(in)     :: N
+  integer(c_int), intent(in)     :: NNeighbors
+  integer(c_int), intent(inout)  :: neighborList(NNeighbors+1,N)
+  real(c_double), intent(inout)  :: RijList(3,NNeighbors+1,N)
+  logical,        intent(in)     :: verbose
+  real(c_double), intent(out)    :: RetSpacing
+  real(c_double), intent(out)    :: RetEnergy
 
   !-- Local variables
-  double precision,         parameter :: Golden      = (1.d0 + sqrt(5.d0))/2.d0
-  integer ier, idum
-  double precision Spacings(4)
-  double precision Energies(4)
-  double precision energy;           pointer(penergy,energy)
-  double precision coordum(DIM,1);   pointer(pcoor,coordum)
-  double precision, pointer :: coords(:,:)
-  double precision cutoff;           pointer(pcutoff,cutoff)
-  double precision, parameter :: cutpad = CUTOFF_PADDING_STR ! cutoff radius padding
+  real(c_double), parameter :: Golden = (1.d0 + sqrt(5.d0))/2.d0
+  integer(c_int) ier, idum
+  real(c_double) Spacings(4)
+  real(c_double) Energies(4)
+  real(c_double), pointer :: energy;       type(c_ptr) penergy
+  real(c_double), pointer :: coords(:,:);  type(c_ptr) pcoor
+  real(c_double), pointer :: cutoff;       type(c_ptr) pcutoff
+  real(c_double), parameter :: cutpad = CUTOFF_PADDING_STR ! cutoff radius padding
   logical :: halfflag  ! .true. = half neighbor list; .false. = full neighbor list
-  character(len=64) NBC_Method;  pointer(pNBC_Method,NBC_Method)
+  character(len=KIM_KEY_STRING_LENGTH), pointer :: NBC_Method; type(c_ptr) :: pNBC_Method
 
   ! Unpack data from KIM object
   !
-  call kim_api_getm_data_f(pkim, ier, &
+  call kim_api_getm_data(pkim, ier, &
        "energy",      penergy, 1, &
        "coordinates", pcoor,   1, &
        "cutoff",      pcutoff, 1)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                   "kim_api_getm_data_f", ier)
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_getm_data", ier)
      stop
   endif
-
-  call KIM_to_F90_real_array_2d(coordum, coords, DIM, N)
+  call c_f_pointer(penergy, energy)
+  call c_f_pointer(pcoor, coords, [DIM,N])
+  call c_f_pointer(pcutoff, cutoff)
 
   ! determine which neighbor list type to use
   !
-  pNBC_Method = kim_api_get_nbc_method_f(pkim, ier) ! don't forget to free
+  pNBC_Method = kim_api_get_nbc_method(pkim, ier) ! don't forget to free
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                   "kim_api_get_nbc_method", ier)
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                "kim_api_get_nbc_method", ier)
      stop
   endif
+  call c_f_pointer(pNBC_Method, NBC_Method)
   if (index(NBC_Method,"NEIGH_RVEC_H").eq.1) then
      halfflag = .true.
   elseif (index(NBC_Method,"NEIGH_RVEC_F").eq.1) then
      halfflag = .false.
   else
      ier = KIM_STATUS_FAIL
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                   "Unknown NBC method", ier)
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                 "Unknown NBC method", ier)
      return
   endif
-  call free(pNBC_Method) ! free the memory
+  call KIM_API_c_free(pNBC_Method); NBC_Method => null()  ! free the memory
 
   ! Initialize for minimization
   !
@@ -276,10 +286,10 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   call NEIGH_RVEC_periodic_B2_neighborlist(halfflag, CellsPerRcut,       &
                                            (cutoff+cutpad), Spacings(1), &
                                            NNeighbors, neighborList, coords, RijList)
-  ier = kim_api_model_compute_f(pkim)
+  ier = kim_api_model_compute(pkim)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                   "kim_api_model_compute_f", ier)
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_model_compute", ier)
      stop
   endif
   Energies(1) = energy
@@ -293,10 +303,10 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
                                            (cutoff+cutpad), Spacings(3), &
                                            NNeighbors, neighborList, coords, RijList)
   ! Call model compute
-  ier = kim_api_model_compute_f(pkim)
+  ier = kim_api_model_compute(pkim)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                   "kim_api_model_compute_f", ier)
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_model_compute", ier)
      stop
   endif
   Energies(3) = energy
@@ -310,10 +320,10 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
                                            (cutoff+cutpad), Spacings(2), &
                                            NNeighbors, neighborList, coords, RijList)
   ! Call model compute
-  ier = kim_api_model_compute_f(pkim)
+  ier = kim_api_model_compute(pkim)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                   "kim_api_model_compute_f", ier)
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_model_compute", ier)
      stop
   endif
   Energies(2) = energy
@@ -331,10 +341,10 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
                                               (cutoff+cutpad), Spacings(4), &
                                               NNeighbors, neighborList, coords, RijList)
      ! Call model compute
-     ier = kim_api_model_compute_f(pkim)
+     ier = kim_api_model_compute(pkim)
      if (ier.lt.KIM_STATUS_OK) then
-        idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                      "kim_api_model_compute_f", ier)
+        idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                    "kim_api_model_compute", ier)
         stop
      endif
      Energies(4) = energy

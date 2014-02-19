@@ -1,37 +1,38 @@
 subroutine compute_numer_deriv(atomnum,dir,pkim,DIM,N,coords,cutoff,cutpad,   &
                                boxSideLengths,NBC_Method,do_update_list,coordsave, &
                                neighborList,RijList,deriv,deriv_err,ier)
-use KIM_API
+use, intrinsic :: iso_c_binding
+use KIM_API_F03
 implicit none
 
 !--Transferred variables
-integer,                  intent(in)    :: atomnum
-integer,                  intent(in)    :: dir
-integer(kind=kim_intptr), intent(in)    :: pkim
-integer,                  intent(in)    :: DIM
-integer,                  intent(in)    :: N
-double precision,         intent(inout) :: coords(DIM,N)
-double precision,         intent(in)    :: cutoff
-double precision,         intent(in)    :: cutpad
-double precision,         intent(in)    :: boxSideLengths(DIM)
+integer(c_int), intent(in)    :: atomnum
+integer(c_int), intent(in)    :: dir
+type(c_ptr),    intent(in)    :: pkim
+integer(c_int), intent(in)    :: DIM
+integer(c_int), intent(in)    :: N
+real(c_double), intent(inout) :: coords(DIM,N)
+real(c_double), intent(in)    :: cutoff
+real(c_double), intent(in)    :: cutpad
+real(c_double), intent(in)    :: boxSideLengths(DIM)
 character(len=KIM_KEY_STRING_LENGTH), intent(in) :: NBC_Method
-logical,                  intent(inout) :: do_update_list
-double precision,         intent(inout) :: coordsave(DIM,N)
-integer,                  intent(inout) :: neighborList(N+1,N)
-double precision,         intent(inout) :: RijList(DIM,N+1,N)
-double precision,         intent(out)   :: deriv
-double precision,         intent(out)   :: deriv_err
-integer,                  intent(out)   :: ier
+logical,        intent(inout) :: do_update_list
+real(c_double), intent(inout) :: coordsave(DIM,N)
+integer(c_int), intent(inout) :: neighborList(N+1,N)
+real(c_double), intent(inout) :: RijList(DIM,N+1,N)
+real(c_double), intent(out)   :: deriv
+real(c_double), intent(out)   :: deriv_err
+integer(c_int), intent(out)   :: ier
 
 !-- Local variables
-double precision,  parameter :: eps_init = 1.d-6
-integer, parameter :: number_eps_levels = 15
-double precision  eps, deriv_last, deriv_err_last
-integer i,idum
+real(c_double), parameter :: eps_init = 1.d-6
+integer(c_int), parameter :: number_eps_levels = 15
+real(c_double)  eps, deriv_last, deriv_err_last
+integer(c_int)  i,idum
 logical doing_neighbors
 
 !-- KIM variables
-double precision energy;         pointer(penergy,energy)
+real(c_double), pointer :: energy; type(c_ptr) :: penergy
 
 ! Initialize error flag
 ier = KIM_STATUS_OK
@@ -40,12 +41,13 @@ deriv_last = 0.d0 ! initialize
 
 ! Unpack data from KIM object
 !
-penergy = kim_api_get_data_f(pkim, "energy", ier)
+penergy = kim_api_get_data(pkim, "energy", ier)
 if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                 "kim_api_get_data_f", ier)
+   idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                              "kim_api_get_data", ier)
    stop
 endif
+call c_f_pointer(penergy, energy)
 
 ! Figure out if neighbor list is being generated
 !
@@ -58,8 +60,8 @@ deriv_err_last = huge(1.d0)
 do i=1,number_eps_levels
    deriv = dfridr(eps,deriv_err)
    if (ier.lt.KIM_STATUS_OK) then
-      idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                    "compute_numer_deriv",ier)
+      idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                  "compute_numer_deriv",ier)
       stop
    endif
    if (deriv_err>deriv_err_last) then
@@ -91,23 +93,23 @@ contains
    ! for the error in each component of the gradient is returned in grad_err().
    !
    !--------------------------------------------------------------------------------
-   double precision function dfridr(h,err)
+   real(c_double) function dfridr(h,err)
    implicit none
 
    !-- Transferred variables
-   double precision, intent(inout) :: h
-   double precision, intent(out)   :: err
+   real(c_double), intent(inout) :: h
+   real(c_double), intent(out)   :: err
 
    !-- Local variables
-   integer, parameter :: NTAB=10     ! Maximum size of tableau
-   double precision,  parameter :: CON=1.4d0   ! Stepsize increased by CON at each iter
-   double precision,  parameter :: CON2=CON*CON
-   double precision,  parameter :: BIG=huge(1.d0)
-   double precision,  parameter :: SAFE=2.d0   ! Returns when error is SAFE worse than
-                                     ! the best so far
-   integer i,j
-   integer idum
-   double precision errt,fac,hh,a(NTAB,NTAB),fp,fm,coordorig
+   integer(c_int), parameter :: NTAB=10     ! Maximum size of tableau
+   real(c_double), parameter :: CON=1.4d0   ! Stepsize increased by CON at each iter
+   real(c_double), parameter :: CON2=CON*CON
+   real(c_double), parameter :: BIG=huge(1.d0)
+   real(c_double), parameter :: SAFE=2.d0   ! Returns when error is SAFE worse than
+                                            ! the best so far
+   integer(c_int) i,j
+   integer(c_int) idum
+   real(c_double) errt,fac,hh,a(NTAB,NTAB),fp,fm,coordorig
 
    dfridr = 0.d0 ! initialize
 
@@ -122,10 +124,10 @@ contains
    if (doing_neighbors) &
       call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
                                do_update_list,coordsave,neighborList,RijList,ier)
-   ier = kim_api_model_compute_f(pkim)
+   ier = kim_api_model_compute(pkim)
    if (ier.lt.KIM_STATUS_OK) then
-      idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                    "kim_api_model_compute",ier)
+      idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                  "kim_api_model_compute",ier)
       stop
    endif
    fp = energy
@@ -133,10 +135,10 @@ contains
    if (doing_neighbors) &
       call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
                                do_update_list,coordsave,neighborList,RijList,ier)
-   ier = kim_api_model_compute_f(pkim)
+   ier = kim_api_model_compute(pkim)
    if (ier.lt.KIM_STATUS_OK) then
-      idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                    "kim_api_model_compute",ier)
+      idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                  "kim_api_model_compute",ier)
       stop
    endif
    fm = energy
@@ -155,10 +157,10 @@ contains
       if (doing_neighbors) &
          call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
                                   do_update_list,coordsave,neighborList,RijList,ier)
-      ier = kim_api_model_compute_f(pkim)
+      ier = kim_api_model_compute(pkim)
       if (ier.lt.KIM_STATUS_OK) then
-         idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                       "kim_api_model_compute",ier)
+         idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                     "kim_api_model_compute",ier)
          stop
       endif
       fp = energy
@@ -166,10 +168,10 @@ contains
       if (doing_neighbors) &
          call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
                                   do_update_list,coordsave,neighborList,RijList,ier)
-      ier = kim_api_model_compute_f(pkim)
+      ier = kim_api_model_compute(pkim)
       if (ier.lt.KIM_STATUS_OK) then
-         idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                       "kim_api_model_compute",ier)
+         idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                     "kim_api_model_compute",ier)
          stop
       endif
       fm = energy

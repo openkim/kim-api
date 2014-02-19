@@ -5,44 +5,46 @@
 ! This function implements Locator and Iterator modes
 !
 !-------------------------------------------------------------------------------
-integer function get_neigh_no_Rij(pkim,mode,request,atom,numnei,pnei1atom,pRij)
-  use KIM_API
+integer(c_int) function get_neigh_no_Rij(pkim,mode,request,atom,numnei,pnei1atom,pRij) bind(c)
+  use, intrinsic :: iso_c_binding
+  use KIM_API_F03
   implicit none
 
   !-- Transferred variables
-  integer(kind=kim_intptr), intent(in)  :: pkim
-  integer,                  intent(in)  :: mode
-  integer,                  intent(in)  :: request
-  integer,                  intent(out) :: atom
-  integer,                  intent(out) :: numnei
-  integer nei1atom(1); pointer(pnei1atom, nei1atom) ! actual cray pointer associated with nei1atom
-  double precision  Rij(3,1);    pointer(pRij, Rij)
+  type(c_ptr),    intent(in)  :: pkim
+  integer(c_int), intent(in)  :: mode
+  integer(c_int), intent(in)  :: request
+  integer(c_int), intent(out) :: atom
+  integer(c_int), intent(out) :: numnei
+  type(c_ptr),    intent(out) :: pnei1atom
+  type(c_ptr),    intent(out) :: pRij
 
   !-- Local variables
-  integer, save :: iterVal = 0
-  integer  atomToReturn
-  integer  neighborListdum(1); pointer(pneighborListdum, neighborListdum)
-  integer, pointer :: neighborList(:,:)
-  integer  ier, idum
-  integer  numberOfParticles; pointer(pnAtoms, numberOfParticles)
-  integer  N
+  integer(c_int), save :: iterVal = 0
+  integer(c_int)  atomToReturn
+  integer(c_int), pointer :: neighborList(:,:); type(c_ptr) :: pneighborList
+  integer(c_int), pointer :: numberOfParticles; type(c_ptr) :: pnAtoms
+  integer(c_int)  N
+  integer(c_int)  ier, idum
+
+  ! unpack number of particles
+  pnAtoms = kim_api_get_data(pkim, "numberOfParticles", ier)
+  if (ier.lt.KIM_STATUS_OK) then
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                   "kim_api_get_data", ier)
+     stop
+  endif
+  call c_f_pointer(pnAtoms, numberOfParticles)
+  N = numberOfParticles
 
   ! unpack neighbor list object
-  pneighborListdum = kim_api_get_data_f(pkim, "neighObject", ier)
+  pneighborList = kim_api_get_data(pkim, "neighObject", ier)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                   "kim_api_get_data_f", ier)
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_get_data", ier)
      stop
   endif
-
-  pnAtoms = kim_api_get_data_f(pkim, "numberOfParticles", ier)
-  if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                   "kim_api_get_data_f", ier)
-     stop
-  endif
-  N = numberOfParticles
-  call KIM_to_F90_int_array_2d(neighborListdum, neighborlist, N+1, N)
+  call c_f_pointer(pneighborList, neighborList, [N+1,N])
 
   ! check mode and request
   if (mode.eq.0) then ! iterator mode
@@ -59,23 +61,23 @@ integer function get_neigh_no_Rij(pkim,mode,request,atom,numnei,pnei1atom,pRij)
            atomToReturn = iterVal
         endif
      else
-        idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                      "Invalid request in get_neigh_no_Rij", KIM_STATUS_NEIGH_INVALID_REQUEST)
+        idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                    "Invalid request in get_neigh_no_Rij", KIM_STATUS_NEIGH_INVALID_REQUEST)
         get_neigh_no_Rij = KIM_STATUS_NEIGH_INVALID_REQUEST
         return
      endif
   elseif (mode.eq.1) then ! locator mode
      if ( (request.gt.N) .or. (request.lt.1)) then
-        idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                      "Invalid atom ID in get_neigh_no_Rij", KIM_STATUS_PARTICLE_INVALID_ID)
+        idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                    "Invalid atom ID in get_neigh_no_Rij", KIM_STATUS_PARTICLE_INVALID_ID)
         get_neigh_no_Rij = KIM_STATUS_PARTICLE_INVALID_ID
         return
      else
         atomToReturn = request
      endif
   else ! not iterator or locator mode
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                   "Invalid mode in get_neigh_no_Rij", KIM_STATUS_NEIGH_INVALID_MODE)
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                 "Invalid mode in get_neigh_no_Rij", KIM_STATUS_NEIGH_INVALID_MODE)
      get_neigh_no_Rij = KIM_STATUS_NEIGH_INVALID_MODE
      return
   endif
@@ -87,10 +89,10 @@ integer function get_neigh_no_Rij(pkim,mode,request,atom,numnei,pnei1atom,pRij)
   numnei = neighborList(1,atom)
 
   ! set the location for the returned neighbor list
-  pnei1atom = loc(neighborList(2,atom))
+  pnei1atom = c_loc(neighborList(2,atom))
 
   ! set pointer to Rij to NULL
-  pRij = 0
+  pRij = c_null_ptr
 
   get_neigh_no_Rij = KIM_STATUS_OK
   return

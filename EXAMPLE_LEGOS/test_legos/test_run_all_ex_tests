@@ -299,7 +299,7 @@ footer
 
 
 #---------------------------------------------------------------------------------------------------------------
-header "ex_test_Ar_free_cluster_CLUSTER_F90"  \
+header "ex_test_Ar_free_cluster_CLUSTER_F03"  \
        "   |"                                 \
        "   |-- ex_model_Ar_P_LJ"              \
        "   |-- ex_model_Ar_P_MLJ_C"           \
@@ -309,27 +309,27 @@ header "ex_test_Ar_free_cluster_CLUSTER_F90"  \
        "   |-- ex_model_Ar_P_Morse"           \
        "   |"
 
-divider "ex_test_Ar_free_cluster_CLUSTER_F90 --- ex_model_Ar_P_LJ"
-echo ex_model_Ar_P_LJ              | ./ex_test_Ar_free_cluster_CLUSTER_F90/ex_test_Ar_free_cluster_CLUSTER_F90 >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
+divider "ex_test_Ar_free_cluster_CLUSTER_F03 --- ex_model_Ar_P_LJ"
+echo ex_model_Ar_P_LJ              | ./ex_test_Ar_free_cluster_CLUSTER_F03/ex_test_Ar_free_cluster_CLUSTER_F03 >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
-divider "ex_test_Ar_free_cluster_CLUSTER_F90 --- ex_model_Ar_P_MLJ_C"
-echo ex_model_Ar_P_MLJ_C           | ./ex_test_Ar_free_cluster_CLUSTER_F90/ex_test_Ar_free_cluster_CLUSTER_F90 >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
+divider "ex_test_Ar_free_cluster_CLUSTER_F03 --- ex_model_Ar_P_MLJ_C"
+echo ex_model_Ar_P_MLJ_C           | ./ex_test_Ar_free_cluster_CLUSTER_F03/ex_test_Ar_free_cluster_CLUSTER_F03 >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
-divider "ex_test_Ar_free_cluster_CLUSTER_F90 --- ex_model_Ar_P_MLJ_F03"
-echo ex_model_Ar_P_MLJ_F03         | ./ex_test_Ar_free_cluster_CLUSTER_F90/ex_test_Ar_free_cluster_CLUSTER_F90 >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
+divider "ex_test_Ar_free_cluster_CLUSTER_F03 --- ex_model_Ar_P_MLJ_F03"
+echo ex_model_Ar_P_MLJ_F03         | ./ex_test_Ar_free_cluster_CLUSTER_F03/ex_test_Ar_free_cluster_CLUSTER_F03 >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
-divider "ex_test_Ar_free_cluster_CLUSTER_F90 --- ex_model_Ar_P_MLJ_CLUSTER_C"
-echo ex_model_Ar_P_MLJ_CLUSTER_C   | ./ex_test_Ar_free_cluster_CLUSTER_F90/ex_test_Ar_free_cluster_CLUSTER_F90 >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
+divider "ex_test_Ar_free_cluster_CLUSTER_F03 --- ex_model_Ar_P_MLJ_CLUSTER_C"
+echo ex_model_Ar_P_MLJ_CLUSTER_C   | ./ex_test_Ar_free_cluster_CLUSTER_F03/ex_test_Ar_free_cluster_CLUSTER_F03 >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
-divider "ex_test_Ar_free_cluster_CLUSTER_F90 --- ex_model_Ar_P_MLJ_CLUSTER_F90"
-echo ex_model_Ar_P_MLJ_CLUSTER_F03 | ./ex_test_Ar_free_cluster_CLUSTER_F90/ex_test_Ar_free_cluster_CLUSTER_F90 >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
+divider "ex_test_Ar_free_cluster_CLUSTER_F03 --- ex_model_Ar_P_MLJ_CLUSTER_F03"
+echo ex_model_Ar_P_MLJ_CLUSTER_F03 | ./ex_test_Ar_free_cluster_CLUSTER_F03/ex_test_Ar_free_cluster_CLUSTER_F03 >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
-divider "ex_test_Ar_free_cluster_CLUSTER_F90 --- ex_model_Ar_P_Morse"
-echo ex_model_Ar_P_Morse           | ./ex_test_Ar_free_cluster_CLUSTER_F90/ex_test_Ar_free_cluster_CLUSTER_F90 >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
+divider "ex_test_Ar_free_cluster_CLUSTER_F03 --- ex_model_Ar_P_Morse"
+echo ex_model_Ar_P_Morse           | ./ex_test_Ar_free_cluster_CLUSTER_F03/ex_test_Ar_free_cluster_CLUSTER_F03 >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 footer
 
 #---------------------------------------------------------------------------------------------------------------
-header "ex_test_Ar_free_cluster_CLUSTER_memory_F90"  \
+header "ex_test_Ar_free_cluster_CLUSTER_memory_F03"  \
        "   |"                                 \
        "   |-- ex_model_Ar_P_LJ"              \
        "   |-- ex_model_Ar_P_MLJ_C"           \
@@ -339,23 +339,23 @@ header "ex_test_Ar_free_cluster_CLUSTER_memory_F90"  \
        "   |-- ex_model_Ar_P_Morse"           \
        "   |"
 
-divider "ex_test_Ar_free_cluster_CLUSTER_memory_F90 --- ex_model_Ar_P_LJ"
-echo ex_model_Ar_P_LJ              | ./ex_test_Ar_free_cluster_CLUSTER_memory_F90/ex_test_Ar_free_cluster_CLUSTER_memory_F90 >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
+divider "ex_test_Ar_free_cluster_CLUSTER_memory_F03 --- ex_model_Ar_P_LJ"
+echo ex_model_Ar_P_LJ              | ./ex_test_Ar_free_cluster_CLUSTER_memory_F03/ex_test_Ar_free_cluster_CLUSTER_memory_F03 >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
-divider "ex_test_Ar_free_cluster_CLUSTER_memory_F90 --- ex_model_Ar_P_MLJ_C"
-echo ex_model_Ar_P_MLJ_C           | ./ex_test_Ar_free_cluster_CLUSTER_memory_F90/ex_test_Ar_free_cluster_CLUSTER_memory_F90 >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
+divider "ex_test_Ar_free_cluster_CLUSTER_memory_F03 --- ex_model_Ar_P_MLJ_C"
+echo ex_model_Ar_P_MLJ_C           | ./ex_test_Ar_free_cluster_CLUSTER_memory_F03/ex_test_Ar_free_cluster_CLUSTER_memory_F03 >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
-divider "ex_test_Ar_free_cluster_CLUSTER_memory_F90 --- ex_model_Ar_P_MLJ_F03"
-echo ex_model_Ar_P_MLJ_F03         | ./ex_test_Ar_free_cluster_CLUSTER_memory_F90/ex_test_Ar_free_cluster_CLUSTER_memory_F90 >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
+divider "ex_test_Ar_free_cluster_CLUSTER_memory_F03 --- ex_model_Ar_P_MLJ_F03"
+echo ex_model_Ar_P_MLJ_F03         | ./ex_test_Ar_free_cluster_CLUSTER_memory_F03/ex_test_Ar_free_cluster_CLUSTER_memory_F03 >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
-divider "ex_test_Ar_free_cluster_CLUSTER_memory_F90 --- ex_model_Ar_P_MLJ_CLUSTER_C"
-echo ex_model_Ar_P_MLJ_CLUSTER_C   | ./ex_test_Ar_free_cluster_CLUSTER_memory_F90/ex_test_Ar_free_cluster_CLUSTER_memory_F90 >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
+divider "ex_test_Ar_free_cluster_CLUSTER_memory_F03 --- ex_model_Ar_P_MLJ_CLUSTER_C"
+echo ex_model_Ar_P_MLJ_CLUSTER_C   | ./ex_test_Ar_free_cluster_CLUSTER_memory_F03/ex_test_Ar_free_cluster_CLUSTER_memory_F03 >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
-divider "ex_test_Ar_free_cluster_CLUSTER_memory_F90 --- ex_model_Ar_P_MLJ_CLUSTER_F90"
-echo ex_model_Ar_P_MLJ_CLUSTER_F03 | ./ex_test_Ar_free_cluster_CLUSTER_memory_F90/ex_test_Ar_free_cluster_CLUSTER_memory_F90 >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
+divider "ex_test_Ar_free_cluster_CLUSTER_memory_F03 --- ex_model_Ar_P_MLJ_CLUSTER_F03"
+echo ex_model_Ar_P_MLJ_CLUSTER_F03 | ./ex_test_Ar_free_cluster_CLUSTER_memory_F03/ex_test_Ar_free_cluster_CLUSTER_memory_F03 >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 
-divider "ex_test_Ar_free_cluster_CLUSTER_memory_F90 --- ex_model_Ar_P_Morse"
-echo ex_model_Ar_P_Morse           | ./ex_test_Ar_free_cluster_CLUSTER_memory_F90/ex_test_Ar_free_cluster_CLUSTER_memory_F90 >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
+divider "ex_test_Ar_free_cluster_CLUSTER_memory_F03 --- ex_model_Ar_P_Morse"
+echo ex_model_Ar_P_Morse           | ./ex_test_Ar_free_cluster_CLUSTER_memory_F03/ex_test_Ar_free_cluster_CLUSTER_memory_F03 >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1))
 footer
 
 #---------------------------------------------------------------------------------------------------------------

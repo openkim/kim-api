@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2013, Regents of the University of Minnesota.
+! Copyright (c) 2013--2014, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -55,61 +55,70 @@
 !
 !-------------------------------------------------------------------------------
 program TEST_NAME_STR
-  use KIM_API
+  use, intrinsic :: iso_c_binding
+  use KIM_API_F03
   implicit none
+
+  type neighObject_type
+     type(c_ptr)    :: pneighborList
+     type(c_ptr)    :: pRijList
+     integer(c_int) :: NNeighbors
+  end type neighObject_type
+
+!============================== INTERFACE TO EXTERNAL ROUTINES ================
+
+  interface
+     subroutine setup_neighborlist_Rij_KIM_access(pkim, NLRvecLocs)
+        use, intrinsic :: iso_c_binding
+        Import :: neighObject_type
+        type(c_ptr), intent(in)    :: pkim
+        type(neighObject_type), target, intent(in) :: NLRvecLocs
+     end subroutine setup_neighborlist_Rij_KIM_access
+  end interface
 
 !============================== VARIABLE DEFINITIONS ==========================
 
   ! parameters controlling behavior of test
   !
   character(len=KIM_KEY_STRING_LENGTH), parameter :: testname = "TEST_NAME_STR"
-  character(len=2),  parameter :: specname    = 'SPECIES_NAME_STR'
-  double precision,  parameter :: TOL         = 1.0d-8
-  double precision,  parameter :: FCCspacing  = FCC_SPACING_STR
-  double precision,  parameter :: MinSpacing  = 0.800d0*FCCspacing
-  double precision,  parameter :: MaxSpacing  = 1.200d0*FCCspacing
-  integer,           parameter :: DIM         = 3
-  integer,           parameter :: SupportHalf = 1            ! True
+  character(len=2), parameter :: specname    = 'SPECIES_NAME_STR'
+  real(c_double),   parameter :: TOL         = 1.0d-8
+  real(c_double),   parameter :: FCCspacing  = FCC_SPACING_STR
+  real(c_double),   parameter :: MinSpacing  = 0.800d0*FCCspacing
+  real(c_double),   parameter :: MaxSpacing  = 1.200d0*FCCspacing
+  integer(c_int),   parameter :: DIM         = 3
+  integer(c_int),   parameter :: SupportHalf = 1            ! True
 
   ! significant local variables
   !
-  integer(kind=kim_intptr), allocatable :: NLRvecLocs(:)     ! neighbor list pointers
-  integer,                  allocatable :: neighborList(:,:) ! neighbor list storage
-  double precision,         allocatable :: RijList(:,:,:)    ! Rij vector list storage
+  real(c_double) :: FinalSpacing       ! crystal lattice parameter
+  real(c_double) :: FinalEnergy        ! energy per atom of crystal
+                                       ! at current spacing
+  integer(c_int) :: CellsPerCutoff     ! number of unit cells along
+                                       ! box (of size cutoff) side
+  real(c_double) :: MaxCutoff          ! maximum value for cutoff radius
+  integer(c_int) :: N                          ! number of atoms
 
-  integer              :: NNeighbors         ! maximum number of neighbors for an atom
-
-  double precision     :: FinalSpacing       ! crystal lattice parameter
-
-  double precision     :: FinalEnergy        ! energy per atom of crystal
-                                             ! at current spacing
-
-  integer              :: CellsPerCutoff     ! number of unit cells along
-                                             ! box (of size cutoff) side
-
-  double precision     :: MaxCutoff          ! maximum value for cutoff radius
-
+  ! neighbor list
+  !
+  type(neighObject_type), target :: NLRvecLocs
+  integer(c_int), allocatable, target :: neighborList(:,:)
+  real(c_double), allocatable, target :: RijList(:,:,:)
+  integer(c_int)  :: NNeighbors         ! maximum number of neighbors for an atom
 
   ! KIM variables
   !
-  character(len=KIM_KEY_STRING_LENGTH) :: modelname ! KIM-compliant model name
+  character(len=KIM_KEY_STRING_LENGTH) :: modelname  ! KIM-compliant model name
+  type(c_ptr)    :: pkim          ! pointer to KIM API object
+  integer(c_int) :: ier           ! error flag
 
-  integer(kind=kim_intptr)  :: pkim          ! pointer to KIM API object
-
-  integer                   :: ier           ! error flag
-
-  double precision coordum(DIM,1); pointer(pcoor,coordum)              ! coordinate
-
-  double precision param_cutoff;   pointer(pparam_cutoff,param_cutoff) ! parameter cutoff radius
-
-  integer                   :: N                          ! number of atoms
-
+  real(c_double), pointer :: param_cutoff;  type(c_ptr) :: pparam_cutoff
 
   ! other variables
   !
-  double precision, external  ::  get_model_cutoff_firsttime
-  integer,          external  ::  check_model_parameters
-  integer                     ::  idum
+  real(c_double), external  ::  get_model_cutoff_firsttime
+  integer(c_int), external  ::  check_model_parameters
+  integer(c_int)            ::  idum
 
 !========================= END VARIABLE DEFINITIONS ==========================
 
@@ -134,19 +143,20 @@ program TEST_NAME_STR
   ier = check_model_parameters(pkim)
   if (ier.ne.KIM_STATUS_OK) then
      ! PARAM_FREE_cutoff is not provided by the Model
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                    "exiting...", ier);
      stop
   endif
   !
   ! access the PARAM_FREE_cutoff parameter
   !
-  pparam_cutoff = kim_api_get_data_f(pkim, "PARAM_FREE_cutoff", ier)
+  pparam_cutoff = kim_api_get_data(pkim, "PARAM_FREE_cutoff", ier)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                   "kim_api_get_data_f", ier)
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_get_data", ier)
      stop
   endif
+  call c_f_pointer(pparam_cutoff, param_cutoff)
 
   ! Set MaxCutoff to be 2.0 more than the Model's normal cutoff
   !
@@ -155,10 +165,10 @@ program TEST_NAME_STR
 
   ! Set up for first iteration of the loop over the cutoff radius
   param_cutoff = param_cutoff - 2.0d0
-  ier = kim_api_model_reinit_f(pkim)
+  ier = kim_api_model_reinit(pkim)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                   "kim_api_model_reinit_f", ier)
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                 "kim_api_model_reinit", ier)
      stop
   endif
 
@@ -175,10 +185,9 @@ program TEST_NAME_STR
   !
   allocate(neighborList(NNeighbors+1,N))
   allocate(RijList(3,NNeighbors+1,N))
-  allocate(NLRvecLocs(3))
-  NLRvecLocs(1) = loc(neighborList)
-  NLRvecLocs(2) = loc(RijList)
-  NLRvecLocs(3) = NNeighbors
+  NLRvecLocs%pneighborList = c_loc(neighborList)
+  NLRvecLocs%pRijList = c_loc(RijList)
+  NLRvecLocs%NNeighbors = NNeighbors
   call setup_neighborlist_Rij_KIM_access(pkim, NLRvecLocs)
   !
 
@@ -210,10 +219,10 @@ program TEST_NAME_STR
      ! increment cutoff
      !
      param_cutoff = param_cutoff + 1.0
-     ier = kim_api_model_reinit_f(pkim)
+     ier = kim_api_model_reinit(pkim)
      if (ier.lt.KIM_STATUS_OK) then
-        idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                      "kim_api_model_reinit_f", ier)
+        idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                    "kim_api_model_reinit", ier)
         stop
      endif
 
@@ -223,7 +232,6 @@ program TEST_NAME_STR
   !
   deallocate(neighborList)
   deallocate(RijList)
-  deallocate(NLRvecLocs)
   call free_KIM_API_object(pkim)
 
   stop
@@ -238,21 +246,24 @@ end program TEST_NAME_STR
 !    list and 0 if it is not in the list
 !
 !-------------------------------------------------------------------------------
-integer function check_model_parameters(pkim)
-  use KIM_API
+integer(c_int) function check_model_parameters(pkim)
+  use, intrinsic :: iso_c_binding
+  use KIM_API_F03
   implicit none
 
   !-- Transferred variables
-  integer(kind=kim_intptr), intent(in) :: pkim
+  type(c_ptr), intent(in) :: pkim
 
   !-- Local variables
-  character(len=KIM_KEY_STRING_LENGTH) :: listOfParameters(1); pointer(plistOfParameters,listOfParameters)
-  integer nParams
-  integer paramIndex
-  integer i
-  integer ier
+  character(len=KIM_KEY_STRING_LENGTH), pointer :: listOfParameters(:)
+  type(c_ptr)    :: plistOfParameters
+  integer(c_int) :: nParams
+  integer(c_int) :: paramIndex
+  integer(c_int) :: i
+  integer(c_int) :: ier
 
-  plistOfParameters = kim_api_get_params_f(pkim, nParams, ier)
+  plistOfParameters = kim_api_get_params(pkim, nParams, ier)
+  call c_f_pointer(plistOfParameters, listOfParameters, [nParams])
   paramIndex = 0
   print '("The model has defined the following parameters:")'
   do i=1,nParams
@@ -261,7 +272,7 @@ integer function check_model_parameters(pkim)
         paramIndex = i
      endif
   enddo
-  call free(plistOfParameters) ! deallocate memory
+  call KIM_API_c_free(plistOfParameters) ! deallocate memory
 
   if (paramIndex .gt. 0) then
      print '("PARAM_FREE_cutoff IS in the list, at index ",I2)', paramIndex

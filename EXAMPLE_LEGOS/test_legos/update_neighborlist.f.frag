@@ -1,27 +1,28 @@
 subroutine update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
                                do_update_list,coordsave,neighborList,RijList,ier)
-use KIM_API
+use, intrinsic :: iso_c_binding
+use KIM_API_F03
 implicit none
 
 !-- Transferred variables
-integer,           intent(in)    :: DIM
-integer,           intent(in)    :: N
-double precision,  intent(in)    :: coords(DIM,N)
-double precision,  intent(in)    :: cutoff
-double precision,  intent(in)    :: cutpad
-double precision,  intent(in)    :: boxSideLengths(DIM)
+integer(c_int),    intent(in)    :: DIM
+integer(c_int),    intent(in)    :: N
+real(c_double),    intent(in)    :: coords(DIM,N)
+real(c_double),    intent(in)    :: cutoff
+real(c_double),    intent(in)    :: cutpad
+real(c_double),    intent(in)    :: boxSideLengths(DIM)
 character(len=64), intent(in)    :: NBC_Method
 logical,           intent(inout) :: do_update_list
-double precision,  intent(inout) :: coordsave(DIM,N)
-integer,           intent(inout) :: neighborList(N+1,N)
-double precision,  intent(inout) :: RijList(DIM,N+1,N)
-integer,           intent(out)   :: ier
+real(c_double),    intent(inout) :: coordsave(DIM,N)
+integer(c_int),    intent(inout) :: neighborList(N+1,N)
+real(c_double),    intent(inout) :: RijList(DIM,N+1,N)
+integer(c_int),    intent(out)   :: ier
 
 !-- Local variables
-integer nbc  ! 0- NEIGH_RVEC_H, 1- NEIGH_PURE_H, 2- NEIGH_RVEC_F, 3- NEIGH_PURE_F, 
+integer(c_int) nbc  ! 0- NEIGH_RVEC_H, 1- NEIGH_PURE_H, 2- NEIGH_RVEC_F, 3- NEIGH_PURE_F, 
              ! 4- MI_OPBC_H, 5- MI_OPBC_F 
-double precision disp, disp1, disp2, cutrange, dispvec(DIM)
-integer i, idum
+real(c_double) disp, disp1, disp2, cutrange, dispvec(DIM)
+integer(c_int) i, idum
 
 ! Initialize error code
 !
@@ -43,8 +44,8 @@ elseif (index(NBC_Method,"MI_OPBC_F").eq.1) then
    nbc = 5
 else
    ier = KIM_STATUS_FAIL
-   idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                 "Unknown NBC method", ier)
+   idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                               "Unknown NBC method", ier)
    stop
 endif
 

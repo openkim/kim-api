@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2013, Regents of the University of Minnesota.
+! Copyright (c) 2013--2014, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -58,46 +58,53 @@
 !
 !-------------------------------------------------------------------------------
 program vc_forces_delta
-  use KIM_API
+  use, intrinsic :: iso_c_binding
+  use KIM_API_F03
   implicit none
 
-  integer,           external  :: get_neigh_no_Rij
-  integer,           external  :: get_neigh_Rij
-  integer,           parameter :: nCellsPerSide  = 2
-  integer,           parameter :: DIM            = 3
-  double precision,  parameter :: cutpad         = 0.75d0
-  integer,           parameter :: max_types      = 30 ! most species a Model can support
-  integer,           parameter :: max_NBCs       = 20 ! maximum number of NBC methods
-  double precision,  parameter :: eps_prec       = epsilon(1.d0)
-  integer, parameter :: ndisp          = 100  ! number of displacements in one test
-  double precision   FCCspacing
-
-  integer, parameter :: &
+  integer(c_int), external  :: get_neigh_no_Rij
+  integer(c_int), external  :: get_neigh_Rij
+  integer(c_int), parameter :: nCellsPerSide  = 2
+  integer(c_int), parameter :: DIM            = 3
+  real(c_double), parameter :: cutpad         = 0.75d0
+  integer(c_int), parameter :: max_types      = 30 ! most species a Model can support
+  integer(c_int), parameter :: max_NBCs       = 20 ! maximum number of NBC methods
+  real(c_double), parameter :: eps_prec       = epsilon(1.d0)
+  integer(c_int), parameter :: ndisp          = 100 ! number of displacements in one test
+  real(c_double)            :: FCCspacing
+  integer(c_int), parameter :: &
        N = 4*(nCellsPerSide)**3 + 6*(nCellsPerSide)**2 + 3*(nCellsPerSide) + 1
-  integer(kind=kim_intptr), parameter  :: SizeOne = 1
+  integer(c_int), parameter :: SizeOne = 1
 
-  double precision, allocatable        :: forces_old(:,:)
   character(len=KIM_KEY_STRING_LENGTH) :: model_types(max_types)
   character(len=KIM_KEY_STRING_LENGTH) :: model_NBCs(max_NBCs)
-  integer                              :: num_types
-  integer                              :: num_NBCs
-  integer                              :: nfail
-  character(len=4)                     :: passfail
-  double precision                     :: energy_old
-  double precision                     :: abs_mean_delta
-  double precision                     :: error
-  double precision                     :: abs_mean_error
-  double precision,dimension(100)      :: deltas, deltas_estimated
-  double precision,        allocatable :: cluster_coords(:,:)
-  double precision,        allocatable :: cluster_disps(:,:)
   character(len=KIM_KEY_STRING_LENGTH), allocatable :: cluster_types(:)
-  integer I,J,type,idisp
+  real(c_double), allocatable   :: forces_old(:,:)
+  integer(c_int)                :: num_types
+  integer(c_int)                :: num_NBCs
+  integer(c_int)                :: nfail
+  character(len=4)              :: passfail
+  real(c_double)                :: energy_old
+  real(c_double)                :: abs_mean_delta
+  real(c_double)                :: error
+  real(c_double)                :: abs_mean_error
+  real(c_double),dimension(100) :: deltas, deltas_estimated
+  real(c_double), allocatable   :: cluster_coords(:,:)
+  real(c_double), allocatable   :: cluster_disps(:,:)
+  integer(c_int)                :: I,J,type,idisp
 
+  !
   ! neighbor list
-  integer,                  allocatable :: neighborList(:,:)
-  integer(kind=kim_intptr), allocatable :: NLRvecLocs(:)
-  double precision,         allocatable :: RijList(:,:,:)
-  double precision,         allocatable :: coordsave(:,:)
+  !
+  type neighObject_type
+     type(c_ptr)    :: pneighborList
+     type(c_ptr)    :: pRijList
+     integer(c_int) :: NNeighbors
+  end type neighObject_type
+  type(neighObject_type), target :: NLRvecLocs
+  integer(c_int), allocatable, target :: neighborList(:,:)
+  real(c_double), allocatable, target :: RijList(:,:,:)
+  real(c_double), allocatable         :: coordsave(:,:)
   logical do_update_list
 
   !
@@ -105,26 +112,24 @@ program vc_forces_delta
   !
   character(len=KIM_KEY_STRING_LENGTH) :: testname     = "vc_forces_delta"
   character(len=KIM_KEY_STRING_LENGTH) :: modelname
-  character(len=KIM_KEY_STRING_LENGTH) :: NBC_Method; pointer(pNBC_Method,NBC_Method)
-  integer nbc  ! 0- NEIGH_RVEC_H, 1- NEIGH_PURE_H, 2- NEIGH_RVEC_F, 3- NEIGH_PURE_F,
+  character(len=KIM_KEY_STRING_LENGTH), pointer :: NBC_Method; type(c_ptr) :: pNBC_Method
+  integer(c_int) nbc  ! 0- NEIGH_RVEC_H, 1- NEIGH_PURE_H, 2- NEIGH_RVEC_F, 3- NEIGH_PURE_F,
                ! 4- MI_OPBC_H,    5- MI_OPBC_F,    6- CLUSTER
-  integer(kind=kim_intptr)  :: pkim
-  integer                   :: ier, idum, inbc
-  integer numberOfParticles;   pointer(pnAtoms,numberOfParticles)
-  integer numContrib;          pointer(pnumContrib,numContrib)
-  integer numberParticleTypes; pointer(pnparticleTypes,numberParticleTypes)
-  integer particleTypesdum(1); pointer(pparticleTypesdum,particleTypesdum)
+  type(c_ptr)             :: pkim
+  integer(c_int)          :: ier, idum, inbc
+  integer(c_int)          :: middleDum
+  real(c_double)          :: rnd
+  character(len=10000)    :: test_descriptor_string
+  integer(c_int), pointer :: numberOfParticles;   type(c_ptr) pnAtoms
+  integer(c_int), pointer :: numContrib;          type(c_ptr) pnumContrib
+  integer(c_int), pointer :: numberParticleTypes; type(c_ptr) pnparticleTypes
+  integer(c_int), pointer :: particleTypes(:);    type(c_ptr) pparticleTypes
+  real(c_double), pointer :: cutoff;              type(c_ptr) pcutoff
+  real(c_double), pointer :: energy;              type(c_ptr) penergy
+  real(c_double), pointer :: coords(:,:);         type(c_ptr) pcoor
+  real(c_double), pointer :: forces(:,:);         type(c_ptr) pforces
+  real(c_double), pointer :: boxSideLengths(:);   type(c_ptr) pboxSideLengths
 
-  double precision cutoff;               pointer(pcutoff,cutoff)
-  double precision energy;               pointer(penergy,energy)
-  double precision coordum(DIM,1);       pointer(pcoor,coordum)
-  double precision forcesdum(DIM,1);     pointer(pforces,forcesdum)
-  double precision boxSideLengths(DIM);  pointer(pboxSideLengths,boxSideLengths)
-  double precision, pointer  :: coords(:,:), forces(:,:)
-  integer, pointer :: particleTypes(:)
-  integer middleDum
-  character(len=10000) :: test_descriptor_string
-  double precision rnd
 
   ! Initialize error flag
   ier = KIM_STATUS_OK
@@ -137,8 +142,8 @@ program vc_forces_delta
   !
   call Get_Model_Supported_Types(modelname, max_types, model_types, num_types, ier)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                   "Get_Model_Supported_Types", ier)
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                 "Get_Model_Supported_Types", ier)
      stop
   endif
 
@@ -146,8 +151,8 @@ program vc_forces_delta
   !
   call Get_Model_NBC_methods(modelname, max_NBCs, model_NBCs, num_NBCs, ier)
   if (ier.lt.KIM_STATUS_OK) then
-     idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                   "Get_Model_NBC_methods", ier)
+     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                 "Get_Model_NBC_methods", ier)
      stop
   endif
 
@@ -191,32 +196,33 @@ program vc_forces_delta
      call Write_KIM_descriptor(model_NBCs(inbc), max_types, model_types, num_types, &
                                test_descriptor_string, ier)
      if (ier.lt.KIM_STATUS_OK) then
-        idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                      "Write_KIM_descriptor", ier)
+        idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                    "Write_KIM_descriptor", ier)
         stop
      endif
 
      ! Create empty KIM object conforming to fields in the KIM descriptor files
      ! of the Test and Model
      !
-     ier = kim_api_string_init_f(pkim,trim(test_descriptor_string)//char(0),modelname)
+     ier = kim_api_string_init(pkim,trim(test_descriptor_string)//char(0),modelname)
      if (ier.lt.KIM_STATUS_OK) then
-        idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                      "kim_api_string_init_f", ier)
+        idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                    "kim_api_string_init", ier)
         stop
      endif
 
      ! Double check that the NBC method being used is what we think it is
      !
-     pNBC_Method = kim_api_get_nbc_method_f(pkim, ier) ! don't forget to free
+     pNBC_Method = kim_api_get_nbc_method(pkim, ier) ! don't forget to free
      if (ier.lt.KIM_STATUS_OK) then
-        idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                      "kim_api_get_nbc_method", ier)
+        idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                    "kim_api_get_nbc_method", ier)
         stop
      endif
+     call c_f_pointer(pNBC_Method, NBC_Method)
      if (index(NBC_Method,trim(model_NBCs(inbc))).ne.1) then
         ier = KIM_STATUS_FAIL
-        idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
+        idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
               "Internal Error: Selected NBC method different from requested value", ier)
         stop
      endif
@@ -239,17 +245,17 @@ program vc_forces_delta
         nbc = 6
      else
         ier = KIM_STATUS_FAIL
-        idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                      "Unknown NBC method", ier)
+        idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                    "Unknown NBC method", ier)
         stop
      endif
 
      ! Allocate memory via the KIM system
      !
-     call kim_api_allocate_f(pkim, N, num_types, ier)
+     call kim_api_allocate(pkim, N, num_types, ier)
      if (ier.lt.KIM_STATUS_OK) then
-        idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                      "kim_api_allocate_f", ier)
+        idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                    "kim_api_allocate", ier)
         stop
      endif
 
@@ -259,21 +265,21 @@ program vc_forces_delta
      if (nbc.le.5) then
         allocate(neighborList(N+1,N))
         if (nbc.eq.0.or.nbc.eq.2) then
-           allocate(RijList(DIM,N+1,N), NLRvecLocs(3))
-           NLRvecLocs(1) = loc(neighborList)
-           NLRvecLocs(2) = loc(RijList)
-           NLRvecLocs(3) = N
-           ier = kim_api_set_data_f(pkim, "neighObject", SizeOne, loc(NLRvecLocs))
+           allocate(RijList(DIM,N+1,N))
+           NLRvecLocs%pneighborList = c_loc(neighborList)
+           NLRvecLocs%pRijList = c_loc(RijList)
+           NLRvecLocs%NNeighbors = N
+           ier = kim_api_set_data(pkim, "neighObject", SizeOne, c_loc(NLRvecLocs))
            if (ier.lt.KIM_STATUS_OK) then
-              idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                            "kim_api_set_data_f", ier)
+              idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                          "kim_api_set_data", ier)
               stop
            endif
         else
-           ier = kim_api_set_data_f(pkim, "neighObject", SizeOne, loc(neighborList))
+           ier = kim_api_set_data(pkim, "neighObject", SizeOne, c_loc(neighborList))
            if (ier.lt.KIM_STATUS_OK) then
-              idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                            "kim_api_set_data_f", ier)
+              idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                          "kim_api_set_data", ier)
               stop
            endif
         endif
@@ -282,78 +288,84 @@ program vc_forces_delta
      ! Set pointer in KIM object to neighbor list routine
      !
      if (nbc.eq.0) then
-        ier = kim_api_set_method_f(pkim, "get_neigh", SizeOne, loc(get_neigh_Rij))
+        ier = kim_api_set_method(pkim, "get_neigh", SizeOne, c_funloc(get_neigh_Rij))
         if (ier.lt.KIM_STATUS_OK) then
-           idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                         "kim_api_set_method_f", ier)
+           idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                       "kim_api_set_method", ier)
            stop
         endif
      elseif (nbc.eq.1) then
-        ier = kim_api_set_method_f(pkim, "get_neigh", SizeOne, loc(get_neigh_no_Rij))
+        ier = kim_api_set_method(pkim, "get_neigh", SizeOne, c_funloc(get_neigh_no_Rij))
         if (ier.lt.KIM_STATUS_OK) then
-           idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                         "kim_api_set_method_f", ier)
+           idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                       "kim_api_set_method", ier)
            stop
         endif
      elseif (nbc.eq.2) then
-        ier = kim_api_set_method_f(pkim, "get_neigh", SizeOne, loc(get_neigh_Rij))
+        ier = kim_api_set_method(pkim, "get_neigh", SizeOne, c_funloc(get_neigh_Rij))
         if (ier.lt.KIM_STATUS_OK) then
-           idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                         "kim_api_set_method_f", ier)
+           idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                       "kim_api_set_method", ier)
            stop
         endif
      elseif (nbc.eq.3) then
-        ier = kim_api_set_method_f(pkim, "get_neigh", SizeOne, loc(get_neigh_no_Rij))
+        ier = kim_api_set_method(pkim, "get_neigh", SizeOne, c_funloc(get_neigh_no_Rij))
         if (ier.lt.KIM_STATUS_OK) then
-           idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                         "kim_api_set_method_f", ier)
+           idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                      "kim_api_set_method", ier)
            stop
         endif
      elseif (nbc.eq.4) then
-        ier = kim_api_set_method_f(pkim, "get_neigh", SizeOne, loc(get_neigh_no_Rij))
+        ier = kim_api_set_method(pkim, "get_neigh", SizeOne, c_funloc(get_neigh_no_Rij))
         if (ier.lt.KIM_STATUS_OK) then
-           idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                         "kim_api_set_method_f", ier)
+           idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                       "kim_api_set_method", ier)
            stop
         endif
      elseif (nbc.eq.5) then
-        ier = kim_api_set_method_f(pkim, "get_neigh", SizeOne, loc(get_neigh_no_Rij))
+        ier = kim_api_set_method(pkim, "get_neigh", SizeOne, c_funloc(get_neigh_no_Rij))
         if (ier.lt.KIM_STATUS_OK) then
-           idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                         "kim_api_set_method_f", ier)
+           idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                       "kim_api_set_method", ier)
            stop
         endif
      endif
 
      ! Initialize Model
      !
-     ier = kim_api_model_init_f(pkim)
+     ier = kim_api_model_init(pkim)
      if (ier.lt.KIM_STATUS_OK) then
-        idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                      "kim_api_model_init", ier)
+        idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                    "kim_api_model_init", ier)
         stop
      endif
 
      ! Unpack data from KIM object
      !
-     call kim_api_getm_data_f(pkim, ier, &
+     call kim_api_getm_data(pkim, ier, &
           "numberOfParticles",           pnAtoms,           1,                               &
           "numberContributingParticles", pnumContrib,       TRUEFALSE(nbc.eq.0.or.nbc.eq.1.or.nbc.eq.4), &
           "numberParticleTypes",         pnparticleTypes,   1,                               &
-          "particleTypes",               pparticleTypesdum, 1,                               &
+          "particleTypes",               pparticleTypes,    1,                               &
           "coordinates",                 pcoor,             1,                               &
           "cutoff",                      pcutoff,           1,                               &
           "boxSideLengths",              pboxSideLengths,   TRUEFALSE(nbc.eq.4.or.nbc.eq.5), &
           "energy",                      penergy,           1,                               &
           "forces",                      pforces,           1)
      if (ier.lt.KIM_STATUS_OK) then
-        idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                      "kim_api_getm_data_f", ier)
+        idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                    "kim_api_getm_data", ier)
         stop
      endif
-     call KIM_to_F90_int_array_1d(particleTypesdum, particleTypes, N)
-     call KIM_to_F90_real_array_2d(coordum, coords, DIM, N)
-     call KIM_to_F90_real_array_2d(forcesdum, forces, DIM, N)
+     call c_f_pointer(pnAtoms, numberOfParticles)
+     if ((nbc.eq.0).or.(nbc.eq.1).or.(nbc.eq.4)) call c_f_pointer(pnumContrib, numContrib)
+     call c_f_pointer(pnparticleTypes, numberParticleTypes)
+     call c_f_pointer(pparticleTypes,  particleTypes, [N])
+     call c_f_pointer(pcoor, coords, [DIM,N])
+     call c_f_pointer(pcutoff, cutoff)
+     if ((nbc.eq.4).or.(nbc.eq.5)) call c_f_pointer(pboxSideLengths, boxSideLengths, [DIM])
+     call c_f_pointer(penergy, energy)
+     call c_f_pointer(pforces, forces, [DIM,N])
 
      ! Scale reference FCC configuration based on cutoff radius.
      ! (This is only done once.)
@@ -372,11 +384,11 @@ program vc_forces_delta
      if (nbc.eq.0.or.nbc.eq.1.or.nbc.eq.4) numContrib = N
      numberParticleTypes = num_types
      do i=1,N
-        particleTypes(i) = kim_api_get_partcl_type_code_f(pkim,trim(cluster_types(i)),ier)
+        particleTypes(i) = kim_api_get_partcl_type_code(pkim,trim(cluster_types(i)),ier)
      enddo
      if (ier.lt.KIM_STATUS_OK) then
-        idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                      "kim_api_get_partcl_type_code_f", ier)
+        idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                    "kim_api_get_partcl_type_code", ier)
         stop
      endif
      do i=1,N
@@ -395,8 +407,8 @@ program vc_forces_delta
            call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
                                     do_update_list,coordsave,neighborList,RijList,ier)
            if (ier.lt.KIM_STATUS_OK) then
-              idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                            "update_neighborlist", ier)
+              idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                          "update_neighborlist", ier)
               stop
            endif
         endif
@@ -404,10 +416,10 @@ program vc_forces_delta
 
         ! Call model compute to get forces (gradient)
         !
-        ier = kim_api_model_compute_f(pkim)
+        ier = kim_api_model_compute(pkim)
         if (ier.lt.KIM_STATUS_OK) then
-           idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                         "kim_api_model_compute", ier)
+           idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                       "kim_api_model_compute", ier)
            stop
         endif
         ! Copy forces and energy to a place where the model can not change them
@@ -433,15 +445,15 @@ program vc_forces_delta
            call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
                                     do_update_list,coordsave,neighborList,RijList,ier)
            if (ier.lt.KIM_STATUS_OK) then
-              idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                            "update_neighborlist", ier)
+              idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                          "update_neighborlist", ier)
               stop
            endif
         endif
-        ier = kim_api_model_compute_f(pkim)
+        ier = kim_api_model_compute(pkim)
         if (ier.lt.KIM_STATUS_OK) then
-           idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                         "kim_api_model_compute", ier)
+           idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                       "kim_api_model_compute", ier)
            stop
         endif
 
@@ -484,26 +496,25 @@ program vc_forces_delta
 
      ! Free temporary storage
      !
-     call free(pNBC_Method)
+     call KIM_API_c_free(pNBC_Method); NBC_Method => null()  ! free the memory
      deallocate(forces_old)
      deallocate(coordsave)
      if (nbc.le.5) then ! deallocate neighbor list storage
         deallocate(neighborList)
         if (nbc.eq.0.or.nbc.eq.2) then
-           deallocate(NLRvecLocs)
            deallocate(RijList)
         endif
      endif
-     ier = kim_api_model_destroy_f(pkim)
+     ier = kim_api_model_destroy(pkim)
      if (ier.lt.KIM_STATUS_OK) then
-        idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                      "kim_api_model_destroy", ier)
+        idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                    "kim_api_model_destroy", ier)
         stop
      endif
      call kim_api_free(pkim, ier)
      if (ier.lt.KIM_STATUS_OK) then
-        idum = kim_api_report_error_f(__LINE__, THIS_FILE_NAME, &
-                                      "kim_api_free", ier)
+        idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                    "kim_api_free", ier)
         stop
      endif
 
