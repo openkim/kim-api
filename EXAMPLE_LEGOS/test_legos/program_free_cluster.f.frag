@@ -284,7 +284,7 @@ program TEST_NAME_STR
 
   ! set up the cluster atom positions
   call create_FCC_configuration(FCCspacing, nCellsPerSide, .false., coords, middleDum)
-  if (nbc.eq.4 .or. nbc.eq.5) boxSideLengths(:) = 600.d0 ! large enough to make the cluster isolated
+  if (nbc.eq.4 .or. nbc.eq.5) boxSideLengths(:) = 600.0_cd ! large enough to make the cluster isolated
 
   ! compute neighbor lists
   if (nbc.eq.0) then

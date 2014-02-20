@@ -29,7 +29,7 @@ subroutine MI_OPBC_cluster_neighborlist(half, numberOfParticles, coords, rcut, b
      a = 1
      do j=1,numberOfParticles
         dx(:) = coords(:, j) - coords(:, i)
-        where (abs(dx) > 0.5d0*boxSideLengths)  ! apply PBC
+        where (abs(dx) > 0.5_cd*boxSideLengths)  ! apply PBC
            dx = dx - sign(boxSideLengths,dx)
         endwhere
         r2 = dot_product(dx, dx)

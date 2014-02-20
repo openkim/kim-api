@@ -56,8 +56,8 @@ if (.not.do_update_list) then   ! if update not requested
 
    ! check whether a neighbor list update is necessary even if it hasn't been
    ! requested using the "two max sum" criterion
-   disp1 = 0.d0
-   disp2 = 0.d0
+   disp1 = 0.0_cd
+   disp2 = 0.0_cd
    do i=1,N
       dispvec(1:DIM) = coords(1:DIM,i) - coordsave(1:DIM,i)
       disp = sqrt( dot_product(dispvec,dispvec) )

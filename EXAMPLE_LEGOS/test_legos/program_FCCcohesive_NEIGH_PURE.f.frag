@@ -75,10 +75,10 @@ program TEST_NAME_STR
   !
   character(len=KIM_KEY_STRING_LENGTH), parameter :: testname = "TEST_NAME_STR"
   character(len=2), parameter :: specname    = 'SPECIES_NAME_STR'
-  real(c_double),   parameter :: TOL         = 1.0d-8
+  real(c_double),   parameter :: TOL         = 1.0e-8_cd
   real(c_double),   parameter :: FCCspacing  = FCC_SPACING_STR
-  real(c_double),   parameter :: MinSpacing  = 0.800d0*FCCspacing
-  real(c_double),   parameter :: MaxSpacing  = 1.200d0*FCCspacing
+  real(c_double),   parameter :: MinSpacing  = 0.800_cd*FCCspacing
+  real(c_double),   parameter :: MaxSpacing  = 1.200_cd*FCCspacing
   integer(c_int),   parameter :: DIM         = 3
   integer(c_int),   parameter :: SupportHalf = 1  ! True
 
@@ -190,7 +190,7 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
   real(c_double), intent(out)    :: RetEnergy
 
   !-- Local variables
-  real(c_double), parameter :: Golden = (1.d0 + sqrt(5.d0))/2.d0
+  real(c_double), parameter :: Golden = (1.0_cd + sqrt(5.0_cd))/2.0_cd
   integer(c_int)            :: ier, idum
   real(c_double)            :: Spacings(4)
   real(c_double)            :: Energies(4)
@@ -273,7 +273,7 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
      print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(3), Spacings(3)
 
   ! setup and compute for first intermediate spacing
-  Spacings(2) = MinSpacing + (2.0 - Golden)*(MaxSpacing - MinSpacing)
+  Spacings(2) = MinSpacing + (2.0_cd - Golden)*(MaxSpacing - MinSpacing)
   call create_FCC_configuration(Spacings(2), 2*CellsPerRcut, .true., coords, MiddleAtomId)
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
   call NEIGH_PURE_periodic_neighborlist(halfflag, N, coords, (cutoff+cutpad), &

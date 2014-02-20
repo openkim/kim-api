@@ -29,8 +29,8 @@ subroutine NEIGH_RVEC_periodic_B2_neighborlist(half,CellsPerHalfSide, cutoff,  &
   cutoff2 = cutoff**2
 
   ! Cubic B2 cell positions ----------------------------------------------------------------------
-  B2shifts(1,1) = 0.d0;           B2shifts(2,1) = 0.d0;           B2shifts(3,1) = 0.d0
-  B2shifts(1,2) = 0.5*B2spacing;  B2shifts(2,2) = 0.5*B2spacing;  B2shifts(3,2) = 0.5*B2spacing
+  B2shifts(1,1) = 0.0_cd;            B2shifts(2,1) = 0.0_cd;            B2shifts(3,1) = 0.0_cd
+  B2shifts(1,2) = 0.5_cd*B2spacing;  B2shifts(2,2) = 0.5_cd*B2spacing;  B2shifts(3,2) = 0.5_cd*B2spacing
 
   ! set coords
   coords(:,1) = B2shifts(1,1)

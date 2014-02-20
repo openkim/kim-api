@@ -34,15 +34,15 @@ subroutine NEIGH_RVEC_periodic_FCC_neighborlist(half, CellsPerHalfSide, cutoff, 
   endif
 
   ! set coords
-  coords(:,1) = 0.0d0
+  coords(:,1) = 0.0_cd
 
   cutoff2 = cutoff**2
 
   ! Cubic FCC cell positions ----------------------------------------------------------------------
-  FCCshifts(1,1) = 0.d0;           FCCshifts(2,1) = 0.d0;           FCCshifts(3,1) = 0.d0
-  FCCshifts(1,2) = 0.5*FCCspacing; FCCshifts(2,2) = 0.5*FCCspacing; FCCshifts(3,2) = 0.d0
-  FCCshifts(1,3) = 0.5*FCCspacing; FCCshifts(2,3) = 0.d0;           FCCshifts(3,3) = 0.5*FCCspacing
-  FCCshifts(1,4) = 0.d0;           FCCshifts(2,4) = 0.5*FCCspacing; FCCshifts(3,4) = 0.5*FCCspacing
+  FCCshifts(1,1) = 0.0_cd;            FCCshifts(2,1) = 0.0_cd;            FCCshifts(3,1) = 0.0_cd
+  FCCshifts(1,2) = 0.5_cd*FCCspacing; FCCshifts(2,2) = 0.5_cd*FCCspacing; FCCshifts(3,2) = 0.0_cd
+  FCCshifts(1,3) = 0.5_cd*FCCspacing; FCCshifts(2,3) = 0.0_cd;            FCCshifts(3,3) = 0.5_cd*FCCspacing
+  FCCshifts(1,4) = 0.0_cd;            FCCshifts(2,4) = 0.5_cd*FCCspacing; FCCshifts(3,4) = 0.5_cd*FCCspacing
 
   if (half) then
      ! Each atom gets half of its own neighbor-self images

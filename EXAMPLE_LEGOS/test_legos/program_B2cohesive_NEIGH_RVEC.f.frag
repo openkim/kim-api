@@ -83,10 +83,10 @@ program TEST_NAME_STR
   character(len=KIM_KEY_STRING_LENGTH), parameter :: testname = "TEST_NAME_STR"
   character(len=2), parameter :: specname1   = 'SPECIES1_NAME_STR'
   character(len=2), parameter :: specname2   = 'SPECIES2_NAME_STR'
-  real(c_double),   parameter :: TOL         = 1.0d-8
+  real(c_double),   parameter :: TOL         = 1.0e-8_cd
   real(c_double),   parameter :: B2spacing   = B2_SPACING_STR
-  real(c_double),   parameter :: MinSpacing  = 0.800d0*B2spacing
-  real(c_double),   parameter :: MaxSpacing  = 1.200d0*B2spacing
+  real(c_double),   parameter :: MinSpacing  = 0.800_cd*B2spacing
+  real(c_double),   parameter :: MaxSpacing  = 1.200_cd*B2spacing
   integer(c_int),   parameter :: DIM         = 3
   integer(c_int),   parameter :: SupportHalf = 1            ! True
 
@@ -157,7 +157,7 @@ program TEST_NAME_STR
   !
   ! Second, determine how many neighbors we will need
   !
-  CellsPerRcut = ceiling(rcut/MinSpacing+ 0.05d0) ! the 0.05 is a saftey factor
+  CellsPerRcut = ceiling(rcut/MinSpacing+ 0.05_cd) ! the 0.05 is a saftey factor
   NNeighbors = 2*((2*CellsPerRcut + 1)**3)
   !
   ! allocate memory for the neighbor list and Rij vectors
@@ -232,7 +232,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   real(c_double), intent(out)    :: RetEnergy
 
   !-- Local variables
-  real(c_double), parameter :: Golden = (1.d0 + sqrt(5.d0))/2.d0
+  real(c_double), parameter :: Golden = (1.0_cd + sqrt(5.0_cd))/2.0_cd
   integer(c_int) ier, idum
   real(c_double) Spacings(4)
   real(c_double) Energies(4)
@@ -314,7 +314,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
      print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(3), Spacings(3)
 
   ! setup and compute for first intermediate spacing
-  Spacings(2) = MinSpacing + (2.0 - Golden)*(MaxSpacing - MinSpacing)
+  Spacings(2) = MinSpacing + (2.0_cd - Golden)*(MaxSpacing - MinSpacing)
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
   call NEIGH_RVEC_periodic_B2_neighborlist(halfflag, CellsPerRcut,       &
                                            (cutoff+cutpad), Spacings(2), &

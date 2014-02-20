@@ -25,7 +25,7 @@ real(c_double), intent(out)   :: deriv_err
 integer(c_int), intent(out)   :: ier
 
 !-- Local variables
-real(c_double), parameter :: eps_init = 1.d-6
+real(c_double), parameter :: eps_init = 1.e-6_cd
 integer(c_int), parameter :: number_eps_levels = 15
 real(c_double)  eps, deriv_last, deriv_err_last
 integer(c_int)  i,idum
@@ -37,7 +37,7 @@ real(c_double), pointer :: energy; type(c_ptr) :: penergy
 ! Initialize error flag
 ier = KIM_STATUS_OK
 
-deriv_last = 0.d0 ! initialize
+deriv_last = 0.0_cd ! initialize
 
 ! Unpack data from KIM object
 !
@@ -56,7 +56,7 @@ doing_neighbors = .not.(index(NBC_Method,"CLUSTER").eq.1)
 ! Outer loop of Ridders' method for computing numerical derivative
 !
 eps = eps_init
-deriv_err_last = huge(1.d0)
+deriv_err_last = huge(1.0_cd)
 do i=1,number_eps_levels
    deriv = dfridr(eps,deriv_err)
    if (ier.lt.KIM_STATUS_OK) then
@@ -69,7 +69,7 @@ do i=1,number_eps_levels
       deriv_err = deriv_err_last
       exit
    endif
-   eps = eps*10.d0
+   eps = eps*10.0_cd
    deriv_last  = deriv
    deriv_err_last = deriv_err
 enddo
@@ -102,18 +102,18 @@ contains
 
    !-- Local variables
    integer(c_int), parameter :: NTAB=10     ! Maximum size of tableau
-   real(c_double), parameter :: CON=1.4d0   ! Stepsize increased by CON at each iter
+   real(c_double), parameter :: CON=1.4_cd  ! Stepsize increased by CON at each iter
    real(c_double), parameter :: CON2=CON*CON
-   real(c_double), parameter :: BIG=huge(1.d0)
-   real(c_double), parameter :: SAFE=2.d0   ! Returns when error is SAFE worse than
+   real(c_double), parameter :: BIG=huge(1.0_cd)
+   real(c_double), parameter :: SAFE=2.0_cd ! Returns when error is SAFE worse than
                                             ! the best so far
    integer(c_int) i,j
    integer(c_int) idum
    real(c_double) errt,fac,hh,a(NTAB,NTAB),fp,fm,coordorig
 
-   dfridr = 0.d0 ! initialize
+   dfridr = 0.0_cd ! initialize
 
-   if (h.eq.0.d0) then
+   if (h.eq.0.0_cd) then
       ier = KIM_STATUS_FAIL
       return
    endif
@@ -146,7 +146,7 @@ contains
    if (doing_neighbors) &
       call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
                                do_update_list,coordsave,neighborList,RijList,ier)
-   a(1,1)=(fp-fm)/(2.d0*hh)
+   a(1,1)=(fp-fm)/(2.0_cd*hh)
    err=BIG
    ! successive columns in the Neville tableau will go to smaller step sizes
    ! and higher orders of extrapolation
@@ -179,12 +179,12 @@ contains
       if (doing_neighbors) &
          call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
                                   do_update_list,coordsave,neighborList,RijList,ier)
-      a(1,i)=(fp-fm)/(2.d0*hh)
+      a(1,i)=(fp-fm)/(2.0_cd*hh)
       fac=CON2
       ! compute extrapolations of various orders, requiring no new function
       ! evaluations
       do j=2,i
-         a(j,i)=(a(j-1,i)*fac-a(j-1,i-1))/(fac-1.d0)
+         a(j,i)=(a(j-1,i)*fac-a(j-1,i-1))/(fac-1.0_cd)
          fac=CON2*fac
          ! The error strategy is to compute each new extrapolation to one order
          ! lower, both at the present step size and the previous one.

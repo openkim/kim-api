@@ -38,6 +38,7 @@
 module kim_api_f03
   use, intrinsic :: iso_c_binding
   implicit none
+  integer(c_int), parameter :: cd = c_double
   integer, parameter :: KIM_KEY_STRING_LENGTH = 128
   interface
     subroutine kim_api_c_free(cp) bind(c, name="free")

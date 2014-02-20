@@ -30,7 +30,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   real(c_double), intent(out)    :: RetEnergy
 
   !-- Local variables
-  real(c_double), parameter :: Golden = (1.d0 + sqrt(5.d0))/2.d0
+  real(c_double), parameter :: Golden = (1.0_cd + sqrt(5.0_cd))/2.0_cd
   integer(c_int) ier, idum
   real(c_double) Spacings(4)
   real(c_double) Energies(4)
@@ -114,7 +114,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
      print *, "Energy/atom = ", Energies(3), "; Spacing = ", Spacings(3)
 
   ! setup and compute for first intermediate spacing
-  Spacings(2) = MinSpacing + (2.0 - Golden)*(MaxSpacing - MinSpacing)
+  Spacings(2) = MinSpacing + (2.0_cd - Golden)*(MaxSpacing - MinSpacing)
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
   call NEIGH_RVEC_periodic_FCC_neighborlist(halfflag, CellsPerCutoff,     &
                                             (cutoff+cutpad), Spacings(2), &

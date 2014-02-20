@@ -65,10 +65,10 @@ program TEST_NAME_STR
   integer(c_int), external  :: get_neigh_Rij
   integer(c_int), parameter :: nCellsPerSide  = 2
   integer(c_int), parameter :: DIM            = 3
-  real(c_double), parameter :: cutpad         = 0.75d0
+  real(c_double), parameter :: cutpad         = 0.75_cd
   integer(c_int), parameter :: max_types      = 30 ! most species a Model can support
   integer(c_int), parameter :: max_NBCs       = 20     ! maximum number of NBC methods
-  real(c_double), parameter :: eps_prec       = epsilon(1.d0)
+  real(c_double), parameter :: eps_prec       = epsilon(1.0_cd)
   real(c_double)  FCCspacing
 
   integer(c_int), parameter :: &
@@ -130,7 +130,7 @@ program TEST_NAME_STR
   character(len=10000) :: test_descriptor_string
   real(c_double) rnd, deriv, deriv_err
 
-  term_max = 0.d0 ! initialize
+  term_max = 0.0_cd ! initialize
 
   ! Initialize error flag
   ier = KIM_STATUS_OK
@@ -165,7 +165,7 @@ program TEST_NAME_STR
      type = 1 + int(rnd*num_types)
      cluster_types(i) = model_types(type)
   enddo
-  FCCspacing = 1.d0  ! initially generate an FCC cluster with lattice
+  FCCspacing = 1.0_cd  ! initially generate an FCC cluster with lattice
                      ! spacing equal to one. This is scaled below based
                      ! on the cutoff radius of the model.
   call create_FCC_configuration(FCCspacing, nCellsPerSide, .false., &
@@ -175,7 +175,7 @@ program TEST_NAME_STR
   do I=1,N
      do J=1,DIM
         call random_number(rnd)  ! return random number between 0 and 1
-        cluster_disps(J,I) = 0.1d0*(rnd-0.5d0)
+        cluster_disps(J,I) = 0.1_cd*(rnd-0.5_cd)
      enddo
   enddo
 
@@ -371,8 +371,8 @@ program TEST_NAME_STR
      ! Scale reference FCC configuration based on cutoff radius.
      ! (This is only done once.)
      if (inbc.eq.1) then
-        FCCspacing = 0.75d0*cutoff ! set the FCC spacing to a fraction
-                                   ! of the cutoff radius
+        FCCspacing = 0.75_cd*cutoff ! set the FCC spacing to a fraction
+                                    ! of the cutoff radius
         do i=1,N
            cluster_coords(:,i) = FCCspacing*cluster_coords(:,i)
         enddo
@@ -395,7 +395,7 @@ program TEST_NAME_STR
      do i=1,N
         coords(:,i) = cluster_coords(:,i) + cluster_disps(:,i)
      enddo
-     if (nbc.eq.4.or.nbc.eq.5) boxSideLengths(:) = 600.d0 ! large enough to make the cluster isolated
+     if (nbc.eq.4.or.nbc.eq.5) boxSideLengths(:) = 600.0_cd ! large enough to make the cluster isolated
 
      ! Compute neighbor lists
      !
@@ -456,8 +456,8 @@ program TEST_NAME_STR
      print '(A6,2X,A4,2X,A3,2X,2A25,3A15,2X,A4)',"Atom","Type","Dir", "Force_model",   &
            "Force_numer",  "Force diff", "pred error", "weight",          &
            "stat"
-     forcediff_sumsq = 0.d0
-     weight_sum = 0.d0
+     forcediff_sumsq = 0.0_cd
+     weight_sum = 0.0_cd
      do I=1,N
         do J=1,DIM
            forcediff = abs(forces(J,I)-forces_num(J,I))

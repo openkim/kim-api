@@ -66,10 +66,10 @@ program vc_forces_delta
   integer(c_int), external  :: get_neigh_Rij
   integer(c_int), parameter :: nCellsPerSide  = 2
   integer(c_int), parameter :: DIM            = 3
-  real(c_double), parameter :: cutpad         = 0.75d0
+  real(c_double), parameter :: cutpad         = 0.75_cd
   integer(c_int), parameter :: max_types      = 30 ! most species a Model can support
   integer(c_int), parameter :: max_NBCs       = 20 ! maximum number of NBC methods
-  real(c_double), parameter :: eps_prec       = epsilon(1.d0)
+  real(c_double), parameter :: eps_prec       = epsilon(1.0_cd)
   integer(c_int), parameter :: ndisp          = 100 ! number of displacements in one test
   real(c_double)            :: FCCspacing
   integer(c_int), parameter :: &
@@ -164,9 +164,9 @@ program vc_forces_delta
      type = 1 + int(rnd*num_types)
      cluster_types(i) = model_types(type)
   enddo
-  FCCspacing = 1.d0  ! initially generate an FCC cluster with lattice
-                     ! spacing equal to one. This is scaled below based
-                     ! on the cutoff radius of the model.
+  FCCspacing = 1.0_cd  ! initially generate an FCC cluster with lattice
+                       ! spacing equal to one. This is scaled below based
+                       ! on the cutoff radius of the model.
   call create_FCC_configuration(FCCspacing, nCellsPerSide, .false., &
                                 cluster_coords, middleDum)
   ! Generate random displacements for all atoms
@@ -174,7 +174,7 @@ program vc_forces_delta
   do I=1,N
      do J=1,DIM
         call random_number(rnd)  ! return random number between 0 and 1
-        cluster_disps(J,I) = 0.1d0*(rnd-0.5d0)
+        cluster_disps(J,I) = 0.1_cd*(rnd-0.5_cd)
      enddo
   enddo
 
@@ -370,8 +370,8 @@ program vc_forces_delta
      ! Scale reference FCC configuration based on cutoff radius.
      ! (This is only done once.)
      if (inbc.eq.1) then
-        FCCspacing = 0.75d0*cutoff ! set the FCC spacing to a fraction
-                                   ! of the cutoff radius
+        FCCspacing = 0.75_cd*cutoff ! set the FCC spacing to a fraction
+                                    ! of the cutoff radius
         do i=1,N
            cluster_coords(:,i) = FCCspacing*cluster_coords(:,i)
         enddo
@@ -394,7 +394,7 @@ program vc_forces_delta
      do i=1,N
         coords(:,i) = cluster_coords(:,i) + cluster_disps(:,i)
      enddo
-     if (nbc.eq.4.or.nbc.eq.5) boxSideLengths(:) = 600.d0 ! large enough to make the cluster isolated
+     if (nbc.eq.4.or.nbc.eq.5) boxSideLengths(:) = 600.0_cd ! large enough to make the cluster isolated
 
 
      do_update_list = .true.
@@ -434,7 +434,7 @@ program vc_forces_delta
         do I=1,N
            do J=1,DIM
               call random_number(rnd)  ! return random number between 0 and 1
-              cluster_disps(J,I) = 1d-4*(rnd-0.5d0)
+              cluster_disps(J,I) = 1e-4_cd*(rnd-0.5_cd)
               coords(J,I) = coords(J,I) + cluster_disps(J,I)
            enddo
         enddo

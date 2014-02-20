@@ -17,6 +17,7 @@
 !-------------------------------------------------------------------------------
 subroutine create_FCC_configuration(FCCspacing, nCellsPerSide, periodic, coords, MiddleAtomId)
   use, intrinsic :: iso_c_binding
+  use KIM_API_F03
   implicit none
 
   !-- Transferred variables
@@ -34,10 +35,10 @@ subroutine create_FCC_configuration(FCCspacing, nCellsPerSide, periodic, coords,
 
   ! Create a cubic FCC cluster
   !
-  FCCshifts(1,1) = 0.d0;           FCCshifts(2,1) = 0.d0;           FCCshifts(3,1) = 0.d0
-  FCCshifts(1,2) = 0.5*FCCspacing; FCCshifts(2,2) = 0.5*FCCspacing; FCCshifts(3,2) = 0.d0
-  FCCshifts(1,3) = 0.5*FCCspacing; FCCshifts(2,3) = 0.d0;           FCCshifts(3,3) = 0.5*FCCspacing
-  FCCshifts(1,4) = 0.d0;           FCCshifts(2,4) = 0.5*FCCspacing; FCCshifts(3,4) = 0.5*FCCspacing
+  FCCshifts(1,1) = 0.0_cd;            FCCshifts(2,1) = 0.0_cd;            FCCshifts(3,1) = 0.0_cd
+  FCCshifts(1,2) = 0.5_cd*FCCspacing; FCCshifts(2,2) = 0.5_cd*FCCspacing; FCCshifts(3,2) = 0.0_cd
+  FCCshifts(1,3) = 0.5_cd*FCCspacing; FCCshifts(2,3) = 0.0_cd;            FCCshifts(3,3) = 0.5_cd*FCCspacing
+  FCCshifts(1,4) = 0.0_cd;            FCCshifts(2,4) = 0.5_cd*FCCspacing; FCCshifts(3,4) = 0.5_cd*FCCspacing
 
   MiddleAtomID = 1 ! Always put middle atom as #1
   a = 1            ! leave space for middle atom as atom #1

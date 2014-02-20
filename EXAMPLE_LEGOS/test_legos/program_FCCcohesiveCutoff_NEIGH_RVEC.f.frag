@@ -82,10 +82,10 @@ program TEST_NAME_STR
   !
   character(len=KIM_KEY_STRING_LENGTH), parameter :: testname = "TEST_NAME_STR"
   character(len=2), parameter :: specname    = 'SPECIES_NAME_STR'
-  real(c_double),   parameter :: TOL         = 1.0d-8
+  real(c_double),   parameter :: TOL         = 1.0e-8_cd
   real(c_double),   parameter :: FCCspacing  = FCC_SPACING_STR
-  real(c_double),   parameter :: MinSpacing  = 0.800d0*FCCspacing
-  real(c_double),   parameter :: MaxSpacing  = 1.200d0*FCCspacing
+  real(c_double),   parameter :: MinSpacing  = 0.800_cd*FCCspacing
+  real(c_double),   parameter :: MaxSpacing  = 1.200_cd*FCCspacing
   integer(c_int),   parameter :: DIM         = 3
   integer(c_int),   parameter :: SupportHalf = 1            ! True
 
@@ -160,11 +160,11 @@ program TEST_NAME_STR
 
   ! Set MaxCutoff to be 2.0 more than the Model's normal cutoff
   !
-  MaxCutoff = param_cutoff + 2.0d0
+  MaxCutoff = param_cutoff + 2.0_cd
 
 
   ! Set up for first iteration of the loop over the cutoff radius
-  param_cutoff = param_cutoff - 2.0d0
+  param_cutoff = param_cutoff - 2.0_cd
   ier = kim_api_model_reinit(pkim)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
@@ -178,7 +178,7 @@ program TEST_NAME_STR
 
   ! determine maximum number of neighbors we will need
   !
-  CellsPerCutoff = ceiling(param_cutoff/MinSpacing+ 0.05d0) ! the 0.05 is a saftey factor
+  CellsPerCutoff = ceiling(param_cutoff/MinSpacing+ 0.05_cd) ! the 0.05 is a saftey factor
   NNeighbors = 4*((2*CellsPerCutoff + 1)**3)
   !
   ! allocate memory for the neighbor list and Rij vectors

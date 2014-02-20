@@ -66,10 +66,10 @@ program TEST_NAME_STR
   integer(c_int), external  :: get_neigh_Rij
   integer(c_int), parameter :: nCellsPerSide  = 2
   integer(c_int), parameter :: DIM            = 3
-  real(c_double), parameter :: cutpad         = 0.75d0
+  real(c_double), parameter :: cutpad         = 0.75_cd
   integer(c_int), parameter :: max_types      = 30     ! most species allowed in a config
   integer(c_int), parameter :: max_NBCs       = 20     ! maximum number of NBC methods
-  real(c_double), parameter :: eps_prec       = epsilon(1.d0)
+  real(c_double), parameter :: eps_prec       = epsilon(1.0_cd)
   integer(c_int)            :: in
   integer(c_int)            :: N
   real(c_double)            :: max_force_component
@@ -153,7 +153,7 @@ program TEST_NAME_STR
      read(in,*,err=30) conf_types(i), conf_coors(:,i)
   enddo
   read(in,*,err=40) conf_energy
-  max_force_component = 0.d0
+  max_force_component = 0.0_cd
   do i=1,N
      read(in,*,err=50) conf_forces(:,i)
      max_force_component = max(max_force_component, &
@@ -448,7 +448,7 @@ program TEST_NAME_STR
      do i=1,N
         coords(:,i) = conf_coors(:,i)
      enddo
-     if (nbc.eq.4.or.nbc.eq.5) boxSideLengths(:) = 600.d0 ! large enough to make the cluster isolated
+     if (nbc.eq.4.or.nbc.eq.5) boxSideLengths(:) = 600.0_cd ! large enough to make the cluster isolated
 
      ! Compute neighbor lists
      !
@@ -489,7 +489,7 @@ program TEST_NAME_STR
      print *,'*** Energy and Forces Agreement ***'
      print *
      print '(A6,2X,A4,2X,A)',"Atom","Type","Force Error"
-     ave_force_error = 0.d0
+     ave_force_error = 0.0_cd
      do i=1,N
         do j=1,DIM
            force_err(j) = abs(forces(j,i)-conf_forces(j,i))/ &
