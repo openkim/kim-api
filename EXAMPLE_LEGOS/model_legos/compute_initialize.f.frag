@@ -81,7 +81,7 @@
 
     ! Initialize potential energies, forces, virial term
     !
-    if (comp_enepot.eq.1) enepot = 0.d0
-    if (comp_energy.eq.1) energy = 0.d0
-    if (comp_force.eq.1)  force  = 0.d0
-    if (comp_virial.eq.1) virial = 0.d0
+    if (comp_enepot.eq.1) enepot = 0.0_cd
+    if (comp_energy.eq.1) energy = 0.0_cd
+    if (comp_force.eq.1)  force  = 0.0_cd
+    if (comp_virial.eq.1) virial = 0.0_cd

@@ -23,12 +23,12 @@
              r = sqrt(Rsqij)                                ! compute distance
              call pair(model_epsilon,model_sigma,model_A,model_B, model_C, &
                   r,phi,dphi,d2phi)                         ! compute pair potential
-             dEidr = 0.5d0*dphi                             !
+             dEidr = 0.5_cd*dphi                            !
              if (comp_enepot.eq.1) then                     !
-                enepot(i) = enepot(i) + 0.5d0*phi           ! accumulate energy
+                enepot(i) = enepot(i) + 0.5_cd*phi          ! accumulate energy
              endif                                          !
              if (comp_energy.eq.1) then                     !
-                energy = energy + 0.5d0*phi                 ! full neigh case
+                energy = energy + 0.5_cd*phi                ! full neigh case
              endif                                          !
              if (comp_virial.eq.1) then                     ! accumul. virial
                 virial(1) = virial(1) + Rij(1,jj)*Rij(1,jj)*dEidr/r

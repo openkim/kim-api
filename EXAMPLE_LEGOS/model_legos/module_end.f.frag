@@ -23,9 +23,9 @@
     sor6 = sor6*sor6       !  (sig/r)^6
     sor12= sor6*sor6       !  (sig/r)^12
 
-    phi   =  4.d0*epsilon*(sor12-sor6) + A*rsq + B*r + C
-    dphi  = 24.d0*epsilon*(-2.d0*sor12+sor6)/r  + 2.d0*A*r + B
-    d2phi = 24.d0*epsilon*(26.d0*sor12-7.d0*sor6)/rsq + 2.d0*A
+    phi   =  4.0_cd*epsilon*(sor12-sor6) + A*rsq + B*r + C
+    dphi  = 24.0_cd*epsilon*(-2.0_cd*sor12+sor6)/r  + 2.0_cd*A*r + B
+    d2phi = 24.0_cd*epsilon*(26.0_cd*sor12-7.0_cd*sor6)/rsq + 2.0_cd*A
 
   end subroutine pair
 
@@ -97,11 +97,11 @@
 
     model_cutoff = model_Pcutoff
     model_cutnorm = model_cutoff/model_sigma
-    model_A = 12.d0*model_epsilon*(-26.d0 + 7.d0*model_cutnorm**6)/ &
+    model_A = 12.0_cd*model_epsilon*(-26.0_cd + 7.0_cd*model_cutnorm**6)/ &
          (model_cutnorm**14*model_sigma**2)
-    model_B = 96.d0*model_epsilon*(7.d0-2.d0*model_cutnorm**6)/     &
+    model_B = 96.0_cd*model_epsilon*(7.0_cd-2.0_cd*model_cutnorm**6)/     &
          (model_cutnorm**13*model_sigma)
-    model_C = 28.d0*model_epsilon*(-13.d0+4.d0*model_cutnorm**6)/   &
+    model_C = 28.0_cd*model_epsilon*(-13.0_cd+4.0_cd*model_cutnorm**6)/   &
          (model_cutnorm**12)
     model_sigmasq = model_sigma**2
     model_cutsq = model_cutoff**2
@@ -247,13 +247,13 @@ integer(c_int) function model_init(pkim) bind(c)
 
   model_cutnorm = model_cutoff/model_sigma
 
-  model_A = 12.d0*model_epsilon*(-26.d0 + 7.d0*model_cutnorm**6)/ &
+  model_A = 12.0_cd*model_epsilon*(-26.0_cd + 7.0_cd*model_cutnorm**6)/ &
        (model_cutnorm**14*model_sigma**2)
 
-  model_B = 96.d0*model_epsilon*(7.d0-2.d0*model_cutnorm**6)/     &
+  model_B = 96.0_cd*model_epsilon*(7.0_cd-2.0_cd*model_cutnorm**6)/     &
        (model_cutnorm**13*model_sigma)
 
-  model_C = 28.d0*model_epsilon*(-13.d0+4.d0*model_cutnorm**6)/   &
+  model_C = 28.0_cd*model_epsilon*(-13.0_cd+4.0_cd*model_cutnorm**6)/   &
        (model_cutnorm**12)
 
   model_sigmasq = model_sigma**2

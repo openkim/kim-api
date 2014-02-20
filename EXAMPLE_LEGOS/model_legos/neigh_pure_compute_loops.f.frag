@@ -59,13 +59,13 @@
                  (j .le. numContrib)) then              ! HALF mode
                 dEidr = dphi                            !      double contribution
              else                                       ! FULL mode
-                dEidr = 0.5d0*dphi                      !      regular contribution
+                dEidr = 0.5_cd*dphi                     !      regular contribution
              endif
              if (comp_enepot.eq.1) then                 !
-                enepot(i) = enepot(i) + 0.5d0*phi       ! accumulate energy
+                enepot(i) = enepot(i) + 0.5_cd*phi      ! accumulate energy
                 if ((HalfOrFull.eq.1) .and. &
                      (j .le. numContrib)) then
-                   enepot(j) = enepot(j) + 0.5d0*phi    ! (i and j share it)
+                   enepot(j) = enepot(j) + 0.5_cd*phi   ! (i and j share it)
                 endif                                   !
              endif                                      !
              if (comp_energy.eq.1) then                 !
@@ -73,7 +73,7 @@
                    (j .le. numContrib)) then            ! HALF mode
                    energy = energy + phi                ! half neigh case
                 else                                    !
-                   energy = energy + 0.5d0*phi          ! full neigh case
+                   energy = energy + 0.5_cd*phi         ! full neigh case
                 endif                                   !
              endif
              if (comp_virial.eq.1) then                 ! accumul. virial

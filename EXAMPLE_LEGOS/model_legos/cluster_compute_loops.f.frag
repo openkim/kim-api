@@ -14,8 +14,8 @@
                   r,phi,dphi,d2phi)                     ! compute pair potential
              dEidr = dphi                               ! compute dEidr -- double contribution
              if (comp_enepot.eq.1) then                 !
-                enepot(i) = enepot(i) + 0.5d0*phi       ! accumulate energy
-                enepot(j) = enepot(j) + 0.5d0*phi       ! (i and j share it)
+                enepot(i) = enepot(i) + 0.5_cd*phi      ! accumulate energy
+                enepot(j) = enepot(j) + 0.5_cd*phi      ! (i and j share it)
              endif                                      !
              if (comp_energy.eq.1) then                 !
                 energy = energy + phi                   ! half neigh case
