@@ -57,24 +57,8 @@
 program TEST_NAME_STR
   use, intrinsic :: iso_c_binding
   use KIM_API_F03
+  use mod_neighborlist
   implicit none
-
-  type neighObject_type
-     type(c_ptr)    :: pneighborList
-     type(c_ptr)    :: pRijList
-     integer(c_int) :: NNeighbors
-  end type neighObject_type
-
-!============================== INTERFACE TO EXTERNAL ROUTINES ================
-
-  interface
-     subroutine setup_neighborlist_Rij_KIM_access(pkim, NLRvecLocs)
-        use, intrinsic :: iso_c_binding
-        Import :: neighObject_type
-        type(c_ptr), intent(in)    :: pkim
-        type(neighObject_type), target, intent(in) :: NLRvecLocs
-     end subroutine setup_neighborlist_Rij_KIM_access
-  end interface
 
 !============================== VARIABLE DEFINITIONS ==========================
 

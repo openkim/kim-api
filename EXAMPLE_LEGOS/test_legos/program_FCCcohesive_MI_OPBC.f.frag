@@ -56,18 +56,8 @@
 program TEST_NAME_STR
   use, intrinsic :: iso_c_binding
   use KIM_API_F03
+  use mod_neighborlist
   implicit none
-
-!============================== INTERFACE TO EXTERNAL ROUTINES ================
-
-  interface
-     subroutine setup_neighborlist_no_Rij_KIM_access(pkim, N, neighborList)
-        use, intrinsic :: iso_c_binding
-        type(c_ptr),            intent(in) :: pkim
-        integer(c_int),         intent(in) :: N
-        integer(c_int), target, intent(in) :: neighborList(N+1,N)
-     end subroutine setup_neighborlist_no_Rij_KIM_access
-  end interface
 
 !============================== VARIABLE DEFINITIONS ==========================
 

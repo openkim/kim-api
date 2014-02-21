@@ -60,10 +60,9 @@
 program TEST_NAME_STR
   use, intrinsic :: iso_c_binding
   use KIM_API_F03
+  use mod_neighborlist
   implicit none
 
-  integer(c_int), external  :: get_neigh_no_Rij
-  integer(c_int), external  :: get_neigh_Rij
   integer(c_int), parameter :: nCellsPerSide  = 2
   integer(c_int), parameter :: DIM            = 3
   real(c_double), parameter :: cutpad         = 0.75_cd
@@ -86,11 +85,6 @@ program TEST_NAME_STR
   !
   ! neighbor list
   !
-  type neighObject_type
-     type(c_ptr)    :: pneighborList
-     type(c_ptr)    :: pRijList
-     integer(c_int) :: NNeighbors
-  end type neighObject_type
   type(neighObject_type), target :: NLRvecLocs
   integer(c_int), allocatable, target :: neighborList(:,:)
   real(c_double), allocatable, target :: RijList(:,:,:)

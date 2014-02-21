@@ -102,12 +102,11 @@ run_forces_numer_deriv_for_all_models: test_run_forces_numer_deriv_for_all_model
 ex_test_Al_free_cluster: $(COMMON_FRAGMENTS)                    \
                          test_free_cluster_README               \
                          descriptor_file_neighborlist           \
+                         mod_neighborlist.f.frag                \
                          program_free_cluster.f.frag            \
                          MI_OPBC_cluster_neighborlist.f.frag    \
                          NEIGH_PURE_cluster_neighborlist.f.frag \
                          NEIGH_RVEC_cluster_neighborlist.f.frag \
-                         get_neigh_no_Rij.f.frag                \
-                         get_neigh_Rij.f.frag                   \
                          create_FCC_configuration.f.frag
         # make directory
 	mkdir -p $(KIM_EX_TESTS_DIR)/$@
@@ -153,10 +152,12 @@ ex_test_Al_free_cluster: $(COMMON_FRAGMENTS)                    \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "virial                      double       energy              [6]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
         # make .F03 file in the directory
+	$(F_CAT) mod_neighborlist.f.frag                                                                      >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) program_free_cluster.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Al/g' \
                -e 's/FCC_SPACING_STR/4.050d0 ! in angstroms/g' \
-               -e 's/CUTOFF_PADDING_STR/0.750d0 ! in angstroms/g'                                             >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+               -e 's/CUTOFF_PADDING_STR/0.750d0 ! in angstroms/g'                                             >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) MI_OPBC_cluster_neighborlist.f.frag                                                          >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
@@ -164,21 +165,16 @@ ex_test_Al_free_cluster: $(COMMON_FRAGMENTS)                    \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) NEIGH_RVEC_cluster_neighborlist.f.frag                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	$(F_CAT) get_neigh_no_Rij.f.frag                                                                      >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	$(F_CAT) get_neigh_Rij.f.frag                                                                         >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) create_FCC_configuration.f.frag                                                              >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 
 ex_test_Al_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
                                 test_FCCcohesive_README                      \
                                 descriptor_file_neighborlist                 \
+                                mod_neighborlist.f.frag                      \
                                 program_FCCcohesive_MI_OPBC.f.frag           \
                                 get_model_cutoff_firsttime.f.frag            \
                                 setup_KIM_API_object.f.frag                  \
-                                setup_neighborlist_no_Rij_KIM_access.f.frag  \
                                 MI_OPBC_periodic_neighborlist.f.frag         \
-                                get_neigh_no_Rij.f.frag                      \
                                 free_KIM_API_object.f.frag                   \
                                 create_FCC_configuration.f.frag
         # make directory
@@ -212,34 +208,31 @@ ex_test_Al_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "reinit                      method       none                []"                                >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
         # make .F03 file in the directory
+	$(F_CAT) mod_neighborlist.f.frag                                                                      >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) program_FCCcohesive_MI_OPBC.f.frag  | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Al/g' \
                -e 's/CUTOFF_PADDING_STR/0.750d0 ! in angstroms/g' \
                -e 's/FCC_SPACING_STR/4.050d0 ! in angstroms/g' \
-                                                                                                              >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+                                                                                                              >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) get_model_cutoff_firsttime.f.frag                                                            >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) setup_KIM_API_object.f.frag                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	$(F_CAT) setup_neighborlist_no_Rij_KIM_access.f.frag                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) free_KIM_API_object.f.frag                                                                   >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) MI_OPBC_periodic_neighborlist.f.frag                                                         >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	$(F_CAT) get_neigh_no_Rij.f.frag                                                                      >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) create_FCC_configuration.f.frag                                                              >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 
 ex_test_ArNe_B2cohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                        \
                                     test_B2cohesive_README                     \
                                     descriptor_file_neighborlist               \
+                                    mod_neighborlist.f.frag                    \
                                     program_B2cohesive_NEIGH_RVEC.f.frag       \
                                     setup_B2_KIM_API_object.f.frag             \
-                                    setup_neighborlist_Rij_KIM_access.f.frag   \
                                     NEIGH_RVEC_periodic_B2_neighborlist.f.frag \
-                                    get_neigh_Rij.f.frag                       \
                                     free_KIM_API_object.f.frag
         # make directory
 	mkdir -p $(KIM_EX_TESTS_DIR)/$@
@@ -271,32 +264,30 @@ ex_test_ArNe_B2cohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                        \
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "reinit                      method       none                []"                                >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
         # make .F03 file in the directory
+	$(F_CAT) mod_neighborlist.f.frag                                                                      >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) program_B2cohesive_NEIGH_RVEC.f.frag  | $(SED_CMD) \
          | sed -e 's/SPECIES1_NAME_STR/Ar/g' \
                -e 's/SPECIES2_NAME_STR/Ne/g' \
                -e 's/CUTOFF_PADDING_STR/0.750d0 ! in angstroms/g' \
                -e 's/B2_SPACING_STR/5.260d0 ! in angstroms/g' \
-                                                                                                              >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+                                                                                                              >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) setup_B2_KIM_API_object.f.frag                                                               >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	$(F_CAT) setup_neighborlist_Rij_KIM_access.f.frag                                                     >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) free_KIM_API_object.f.frag                                                                   >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) NEIGH_RVEC_periodic_B2_neighborlist.f.frag                                                   >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	$(F_CAT) get_neigh_Rij.f.frag                                                                         >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 
 ex_test_Ar_FCCcohesiveCutoff_NEIGH_RVEC: $(COMMON_FRAGMENTS)                           \
                                          test_FCCcohesiveCutoff_README                 \
                                          descriptor_file_neighborlist                  \
+                                         mod_neighborlist.f.frag                       \
                                          program_FCCcohesiveCutoff_NEIGH_RVEC.f.frag   \
                                          NEIGH_RVEC_compute_equilibrium_spacing.f.frag \
                                          setup_KIM_API_object.f.frag                   \
-                                         setup_neighborlist_Rij_KIM_access.f.frag      \
                                          NEIGH_RVEC_periodic_FCC_neighborlist.f.frag   \
-                                         get_neigh_Rij.f.frag                          \
                                          free_KIM_API_object.f.frag
         # make directory
 	mkdir -p $(KIM_EX_TESTS_DIR)/$@
@@ -327,32 +318,29 @@ ex_test_Ar_FCCcohesiveCutoff_NEIGH_RVEC: $(COMMON_FRAGMENTS)                    
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "reinit                      method       none                []"                                >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
         # make .F03 file in the directory
+	$(F_CAT) mod_neighborlist.f.frag                                                                      >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) program_FCCcohesiveCutoff_NEIGH_RVEC.f.frag  | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
-               -e 's/FCC_SPACING_STR/5.26d0 ! in angstroms/g'                                                 >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+               -e 's/FCC_SPACING_STR/5.26d0 ! in angstroms/g'                                                 >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) NEIGH_RVEC_compute_equilibrium_spacing.f.frag | sed -e 's/CUTOFF_PADDING_STR/0.750d0 ! in angstroms/g' \
                                                                                                               >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) setup_KIM_API_object.f.frag                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	$(F_CAT) setup_neighborlist_Rij_KIM_access.f.frag                                                     >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) free_KIM_API_object.f.frag                                                                   >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) NEIGH_RVEC_periodic_FCC_neighborlist.f.frag                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	$(F_CAT) get_neigh_Rij.f.frag                                                                         >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 
 ex_test_Ar_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
                                 test_FCCcohesive_README                      \
                                 descriptor_file_neighborlist                 \
+                                mod_neighborlist.f.frag                      \
                                 program_FCCcohesive_MI_OPBC.f.frag           \
                                 get_model_cutoff_firsttime.f.frag            \
                                 setup_KIM_API_object.f.frag                  \
-                                setup_neighborlist_no_Rij_KIM_access.f.frag  \
                                 MI_OPBC_periodic_neighborlist.f.frag         \
-                                get_neigh_no_Rij.f.frag                      \
                                 free_KIM_API_object.f.frag                   \
                                 create_FCC_configuration.f.frag
         # make directory
@@ -385,34 +373,31 @@ ex_test_Ar_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "reinit                      method       none                []"                                >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
         # make .F03 file in the directory
+	$(F_CAT) mod_neighborlist.f.frag                                                                      >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) program_FCCcohesive_MI_OPBC.f.frag  | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
                -e 's/CUTOFF_PADDING_STR/0.750d0 ! in angstroms/g' \
-               -e 's/FCC_SPACING_STR/5.26d0 ! in angstroms/g'                                                 >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+               -e 's/FCC_SPACING_STR/5.26d0 ! in angstroms/g'                                                 >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) get_model_cutoff_firsttime.f.frag                                                            >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) setup_KIM_API_object.f.frag                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	$(F_CAT) setup_neighborlist_no_Rij_KIM_access.f.frag                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) free_KIM_API_object.f.frag                                                                   >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) MI_OPBC_periodic_neighborlist.f.frag                                                         >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	$(F_CAT) get_neigh_no_Rij.f.frag                                                                      >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) create_FCC_configuration.f.frag                                                              >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 
 ex_test_Ar_FCCcohesive_NEIGH_PURE: $(COMMON_FRAGMENTS)                          \
                                    test_FCCcohesive_README                      \
                                    descriptor_file_neighborlist                 \
+                                   mod_neighborlist.f.frag                      \
                                    program_FCCcohesive_NEIGH_PURE.f.frag        \
                                    get_model_cutoff_firsttime.f.frag            \
                                    setup_KIM_API_object.f.frag                  \
-                                   setup_neighborlist_no_Rij_KIM_access.f.frag  \
                                    NEIGH_PURE_periodic_neighborlist.f.frag      \
-                                   get_neigh_no_Rij.f.frag                      \
                                    free_KIM_API_object.f.frag                   \
                                    create_FCC_configuration.f.frag
         # make directory
@@ -443,34 +428,31 @@ ex_test_Ar_FCCcohesive_NEIGH_PURE: $(COMMON_FRAGMENTS)                          
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "reinit                      method       none                []"                                >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
         # make .F03 file in the directory
+	$(F_CAT) mod_neighborlist.f.frag                                                                      >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) program_FCCcohesive_NEIGH_PURE.f.frag  | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
                -e 's/CUTOFF_PADDING_STR/0.750d0 ! in angstroms/g' \
-               -e 's/FCC_SPACING_STR/5.26d0 ! in angstroms/g'                                                 >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+               -e 's/FCC_SPACING_STR/5.26d0 ! in angstroms/g'                                                 >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) get_model_cutoff_firsttime.f.frag                                                            >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) setup_KIM_API_object.f.frag                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	$(F_CAT) setup_neighborlist_no_Rij_KIM_access.f.frag                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) free_KIM_API_object.f.frag                                                                   >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) NEIGH_PURE_periodic_neighborlist.f.frag                                                      >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	$(F_CAT) get_neigh_no_Rij.f.frag                                                                      >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) create_FCC_configuration.f.frag                                                              >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 
 ex_test_Ar_FCCcohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                           \
                                    test_FCCcohesive_README                       \
                                    descriptor_file_neighborlist                  \
+                                   mod_neighborlist.f.frag                       \
                                    program_FCCcohesive_NEIGH_RVEC.f.frag         \
                                    NEIGH_RVEC_compute_equilibrium_spacing.f.frag \
                                    setup_KIM_API_object.f.frag                   \
-                                   setup_neighborlist_Rij_KIM_access.f.frag      \
                                    NEIGH_RVEC_periodic_FCC_neighborlist.f.frag   \
-                                   get_neigh_Rij.f.frag                          \
                                    free_KIM_API_object.f.frag
         # make directory
 	mkdir -p $(KIM_EX_TESTS_DIR)/$@
@@ -500,23 +482,21 @@ ex_test_Ar_FCCcohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                          
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "reinit                      method       none                []"                                >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
         # make .F03 file in the directory
+	$(F_CAT) mod_neighborlist.f.frag                                                                      >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) program_FCCcohesive_NEIGH_RVEC.f.frag  | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
                -e 's/CUTOFF_PADDING_STR/0.750d0 ! in angstroms/g' \
-               -e 's/FCC_SPACING_STR/5.26d0 ! in angstroms/g'                                                 >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+               -e 's/FCC_SPACING_STR/5.26d0 ! in angstroms/g'                                                 >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) NEIGH_RVEC_compute_equilibrium_spacing.f.frag | sed -e 's/CUTOFF_PADDING_STR/0.750d0 ! in angstroms/g' \
                                                                                                               >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) setup_KIM_API_object.f.frag                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	$(F_CAT) setup_neighborlist_Rij_KIM_access.f.frag                                                     >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) free_KIM_API_object.f.frag                                                                   >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) NEIGH_RVEC_periodic_FCC_neighborlist.f.frag                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	$(F_CAT) get_neigh_Rij.f.frag                                                                         >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 
 ex_test_Ar_free_cluster_CLUSTER_C: $(COMMON_FRAGMENTS)                 \
                                    test_free_cluster_README            \
@@ -630,12 +610,11 @@ ex_test_Ar_free_cluster_CLUSTER_memory_F03: $(COMMON_FRAGMENTS)                 
 ex_test_Ar_free_cluster: $(COMMON_FRAGMENTS)                    \
                          test_free_cluster_README               \
                          descriptor_file_neighborlist           \
+                         mod_neighborlist.f.frag                \
                          program_free_cluster.f.frag            \
                          MI_OPBC_cluster_neighborlist.f.frag    \
                          NEIGH_PURE_cluster_neighborlist.f.frag \
                          NEIGH_RVEC_cluster_neighborlist.f.frag \
-                         get_neigh_no_Rij.f.frag                \
-                         get_neigh_Rij.f.frag                   \
                          create_FCC_configuration.f.frag        \
         # make directory
 	mkdir -p $(KIM_EX_TESTS_DIR)/$@
@@ -681,10 +660,12 @@ ex_test_Ar_free_cluster: $(COMMON_FRAGMENTS)                    \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "virial                      double       energy              [6]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
         # make .F03 file in the directory
+	$(F_CAT) mod_neighborlist.f.frag                                                                      >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) program_free_cluster.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
                -e 's/FCC_SPACING_STR/5.26d0 ! in angstroms/g' \
-               -e 's/CUTOFF_PADDING_STR/0.750d0 ! in angstroms/g'                                             >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+               -e 's/CUTOFF_PADDING_STR/0.750d0 ! in angstroms/g'                                             >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) MI_OPBC_cluster_neighborlist.f.frag                                                          >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
@@ -692,21 +673,16 @@ ex_test_Ar_free_cluster: $(COMMON_FRAGMENTS)                    \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) NEIGH_RVEC_cluster_neighborlist.f.frag                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	$(F_CAT) get_neigh_no_Rij.f.frag                                                                      >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	$(F_CAT) get_neigh_Rij.f.frag                                                                         >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) create_FCC_configuration.f.frag                                                              >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 
 ex_test_Cu_free_cluster: $(COMMON_FRAGMENTS)                    \
                          test_free_cluster_README               \
                          descriptor_file_neighborlist           \
+                         mod_neighborlist.f.frag                \
                          program_free_cluster.f.frag            \
                          MI_OPBC_cluster_neighborlist.f.frag    \
                          NEIGH_PURE_cluster_neighborlist.f.frag \
                          NEIGH_RVEC_cluster_neighborlist.f.frag \
-                         get_neigh_no_Rij.f.frag                \
-                         get_neigh_Rij.f.frag                   \
                          create_FCC_configuration.f.frag
         # make directory
 	mkdir -p $(KIM_EX_TESTS_DIR)/$@
@@ -752,10 +728,12 @@ ex_test_Cu_free_cluster: $(COMMON_FRAGMENTS)                    \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "virial                      double       energy              [6]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
         # make .F03 file in the directory
+	$(F_CAT) mod_neighborlist.f.frag                                                                      >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) program_free_cluster.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Cu/g' \
                -e 's/FCC_SPACING_STR/3.610d0 ! in angstroms/g' \
-               -e 's/CUTOFF_PADDING_STR/0.750d0 ! in angstroms/g'                                             >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+               -e 's/CUTOFF_PADDING_STR/0.750d0 ! in angstroms/g'                                             >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) MI_OPBC_cluster_neighborlist.f.frag                                                          >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
@@ -763,21 +741,16 @@ ex_test_Cu_free_cluster: $(COMMON_FRAGMENTS)                    \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) NEIGH_RVEC_cluster_neighborlist.f.frag                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	$(F_CAT) get_neigh_no_Rij.f.frag                                                                      >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	$(F_CAT) get_neigh_Rij.f.frag                                                                         >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) create_FCC_configuration.f.frag                                                              >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 
 ex_test_Ne_free_cluster: $(COMMON_FRAGMENTS)                    \
                          test_free_cluster_README               \
                          descriptor_file_neighborlist           \
+                         mod_neighborlist.f.frag                \
                          program_free_cluster.f.frag            \
                          MI_OPBC_cluster_neighborlist.f.frag    \
                          NEIGH_PURE_cluster_neighborlist.f.frag \
                          NEIGH_RVEC_cluster_neighborlist.f.frag \
-                         get_neigh_no_Rij.f.frag                \
-                         get_neigh_Rij.f.frag                   \
                          create_FCC_configuration.f.frag
         # make directory
 	mkdir -p $(KIM_EX_TESTS_DIR)/$@
@@ -823,10 +796,12 @@ ex_test_Ne_free_cluster: $(COMMON_FRAGMENTS)                    \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "virial                      double       energy              [6]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
         # make .F03 file in the directory
+	$(F_CAT) mod_neighborlist.f.frag                                                                      >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) program_free_cluster.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ne/g' \
                -e 's/FCC_SPACING_STR/4.430d0 ! in angstroms/g' \
-               -e 's/CUTOFF_PADDING_STR/0.750d0 ! in angstroms/g'                                             >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+               -e 's/CUTOFF_PADDING_STR/0.750d0 ! in angstroms/g'                                             >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) MI_OPBC_cluster_neighborlist.f.frag                                                          >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
@@ -834,21 +809,16 @@ ex_test_Ne_free_cluster: $(COMMON_FRAGMENTS)                    \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) NEIGH_RVEC_cluster_neighborlist.f.frag                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	$(F_CAT) get_neigh_no_Rij.f.frag                                                                      >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	$(F_CAT) get_neigh_Rij.f.frag                                                                         >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) create_FCC_configuration.f.frag                                                              >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 
 ex_test_Ne_free_cluster_SI: $(COMMON_FRAGMENTS)                    \
                             test_free_cluster_README               \
                             descriptor_file_neighborlist           \
+                            mod_neighborlist.f.frag                \
                             program_free_cluster.f.frag            \
                             MI_OPBC_cluster_neighborlist.f.frag    \
                             NEIGH_PURE_cluster_neighborlist.f.frag \
                             NEIGH_RVEC_cluster_neighborlist.f.frag \
-                            get_neigh_no_Rij.f.frag                \
-                            get_neigh_Rij.f.frag                   \
                             create_FCC_configuration.f.frag
         # make directory
 	mkdir -p $(KIM_EX_TESTS_DIR)/$@
@@ -894,10 +864,12 @@ ex_test_Ne_free_cluster_SI: $(COMMON_FRAGMENTS)                    \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "virial                      double       energy              [6]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
         # make .F03 file in the directory
+	$(F_CAT) mod_neighborlist.f.frag                                                                      >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) program_free_cluster.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ne/g' \
                -e 's/FCC_SPACING_STR/4.430d-10 ! in meters/g' \
-               -e 's/CUTOFF_PADDING_STR/0.750d-10 ! in meters/g'                                              >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+               -e 's/CUTOFF_PADDING_STR/0.750d-10 ! in meters/g'                                              >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) MI_OPBC_cluster_neighborlist.f.frag                                                          >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
@@ -905,21 +877,16 @@ ex_test_Ne_free_cluster_SI: $(COMMON_FRAGMENTS)                    \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) NEIGH_RVEC_cluster_neighborlist.f.frag                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	$(F_CAT) get_neigh_no_Rij.f.frag                                                                      >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	$(F_CAT) get_neigh_Rij.f.frag                                                                         >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) create_FCC_configuration.f.frag                                                              >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 
 ex_test_Ne_free_cluster_stiff: $(COMMON_FRAGMENTS)                    \
                                test_free_cluster_stiff_README         \
                                descriptor_file_neighborlist           \
+                               mod_neighborlist.f.frag                \
                                program_free_cluster_stiff.f.frag      \
                                MI_OPBC_cluster_neighborlist.f.frag    \
                                NEIGH_PURE_cluster_neighborlist.f.frag \
                                NEIGH_RVEC_cluster_neighborlist.f.frag \
-                               get_neigh_no_Rij.f.frag                \
-                               get_neigh_Rij.f.frag                   \
                                create_FCC_configuration.f.frag
         # make directory
 	mkdir -p $(KIM_EX_TESTS_DIR)/$@
@@ -967,20 +934,18 @@ ex_test_Ne_free_cluster_stiff: $(COMMON_FRAGMENTS)                    \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "virial                      double       energy              [6]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
         # make .F03 file in the directory
+	$(F_CAT) mod_neighborlist.f.frag                                                                      >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) program_free_cluster_stiff.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ne/g' \
                -e 's/FCC_SPACING_STR/4.430d0 ! in angstroms/g' \
-               -e 's/CUTOFF_PADDING_STR/0.750d0 ! in angstroms/g'                                             >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+               -e 's/CUTOFF_PADDING_STR/0.750d0 ! in angstroms/g'                                             >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) MI_OPBC_cluster_neighborlist.f.frag                                                          >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) NEIGH_PURE_cluster_neighborlist.f.frag                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) NEIGH_RVEC_cluster_neighborlist.f.frag                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	$(F_CAT) get_neigh_no_Rij.f.frag                                                                      >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	$(F_CAT) get_neigh_Rij.f.frag                                                                         >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) create_FCC_configuration.f.frag                                                              >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 
@@ -1004,6 +969,7 @@ ex_test_demo_F03: dir_ex_test_demo_F03               \
 vc_forces_delta: Makefile                               \
                  test_Makefile                          \
                  vc_forces_delta_README                 \
+                 mod_neighborlist.f.frag                \
                  program_vc_forces_delta.f.frag         \
                  get_model_supported_types.f.frag       \
                  get_model_NBC_methods.f.frag           \
@@ -1013,8 +979,6 @@ vc_forces_delta: Makefile                               \
                  NEIGH_PURE_cluster_neighborlist.f.frag \
                  NEIGH_RVEC_cluster_neighborlist.f.frag \
                  NEIGH_RVEC_update_Rij_vectors.f.frag   \
-                 get_neigh_no_Rij.f.frag                \
-                 get_neigh_Rij.f.frag                   \
                  create_FCC_configuration.f.frag
         # make directory
 	mkdir -p $(KIM_EX_TESTS_DIR)/$@
@@ -1025,7 +989,9 @@ vc_forces_delta: Makefile                               \
         # make Makefile in the directory
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .F03 file in the directory
-	$(F_CAT) program_vc_forces_delta.f.frag  | $(SED_CMD)                                                 >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) mod_neighborlist.f.frag                                                                      >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) program_vc_forces_delta.f.frag  | $(SED_CMD)                                                 >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) get_model_supported_types.f.frag                                                             >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
@@ -1043,15 +1009,12 @@ vc_forces_delta: Makefile                               \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) NEIGH_RVEC_update_Rij_vectors.f.frag                                                         >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	$(F_CAT) get_neigh_no_Rij.f.frag                                                                      >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	$(F_CAT) get_neigh_Rij.f.frag                                                                         >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) create_FCC_configuration.f.frag                                                              >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 
 vc_forces_numer_deriv: Makefile                               \
                        test_Makefile                          \
                        vc_forces_numer_deriv_README           \
+                       mod_neighborlist.f.frag                \
                        program_vc_forces_numer_deriv.f.frag   \
                        get_model_supported_types.f.frag       \
                        get_model_NBC_methods.f.frag           \
@@ -1061,8 +1024,6 @@ vc_forces_numer_deriv: Makefile                               \
                        NEIGH_PURE_cluster_neighborlist.f.frag \
                        NEIGH_RVEC_cluster_neighborlist.f.frag \
                        NEIGH_RVEC_update_Rij_vectors.f.frag   \
-                       get_neigh_no_Rij.f.frag                \
-                       get_neigh_Rij.f.frag                   \
                        create_FCC_configuration.f.frag        \
                        compute_numer_deriv.f.frag
         # make directory
@@ -1074,7 +1035,9 @@ vc_forces_numer_deriv: Makefile                               \
         # make Makefile in the directory
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .F03 file in the directory
-	$(F_CAT) program_vc_forces_numer_deriv.f.frag  | $(SED_CMD)                                           >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) mod_neighborlist.f.frag                                                                      >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) program_vc_forces_numer_deriv.f.frag  | $(SED_CMD)                                           >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) get_model_supported_types.f.frag                                                             >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
@@ -1092,10 +1055,6 @@ vc_forces_numer_deriv: Makefile                               \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) NEIGH_RVEC_update_Rij_vectors.f.frag                                                         >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	$(F_CAT) get_neigh_no_Rij.f.frag                                                                      >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	$(F_CAT) get_neigh_Rij.f.frag                                                                         >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) create_FCC_configuration.f.frag                                                              >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) compute_numer_deriv.f.frag                                                                   >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
@@ -1103,6 +1062,7 @@ vc_forces_numer_deriv: Makefile                               \
 vc_config_ener_forces: Makefile                                 \
                        test_Makefile                            \
                        vc_config_ener_forces_README             \
+                       mod_neighborlist.f.frag                  \
                        program_vc_config_ener_forces.f.frag     \
                        get_model_NBC_methods.f.frag             \
                        write_KIM_descriptor.f.frag              \
@@ -1110,9 +1070,7 @@ vc_config_ener_forces: Makefile                                 \
                        MI_OPBC_cluster_neighborlist.f.frag      \
                        NEIGH_PURE_cluster_neighborlist.f.frag   \
                        NEIGH_RVEC_cluster_neighborlist.f.frag   \
-                       NEIGH_RVEC_update_Rij_vectors.f.frag     \
-                       get_neigh_no_Rij.f.frag                  \
-                       get_neigh_Rij.f.frag
+                       NEIGH_RVEC_update_Rij_vectors.f.frag
         # make directory
 	mkdir -p $(KIM_EX_TESTS_DIR)/$@
 	@touch $(KIM_EX_TESTS_DIR)/$@
@@ -1122,7 +1080,9 @@ vc_config_ener_forces: Makefile                                 \
         # make Makefile in the directory
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .F03 file in the directory
-	$(F_CAT) program_vc_config_ener_forces.f.frag  | $(SED_CMD)                                           >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) mod_neighborlist.f.frag                                                                      >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) program_vc_config_ener_forces.f.frag  | $(SED_CMD)                                           >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) get_model_NBC_methods.f.frag                                                                 >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
@@ -1137,11 +1097,6 @@ vc_config_ener_forces: Makefile                                 \
 	$(F_CAT) NEIGH_RVEC_cluster_neighborlist.f.frag                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) NEIGH_RVEC_update_Rij_vectors.f.frag                                                         >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	$(F_CAT) get_neigh_no_Rij.f.frag                                                                      >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	$(F_CAT) get_neigh_Rij.f.frag                                                                         >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 
 .PHONY: clean
 
