@@ -36,16 +36,16 @@
 
 # usage: run_all_ex_tests [filename]
 #
-# If `filename' is given each actual Test output will be redirected to a separate file.
-# This option facilitates the comparison of Test results for different Models using
-# `diff' or another comparison utility program.
+# If `filename' is given each actual Test output will be redirected to a
+# separate file.  This option facilitates the comparison of Test results for
+# different Models using `diff' or another comparison utility program.
 #
-# When the optional argument is given the output is put in a series of files with names
-# filename.TEST_NUM.MODEL_NUM.  Here `filename' is the value provided on the command line,
-# `TEST_NUM' is a two digit integer sequentially numbering the example Tests in the order
-# they are executed below, and `MODEL_NUM' is a two digit integer sequentially numbering the
-# Models that each Test is executed with in the order they are executed below.
-#
+# When the optional argument is given the output is put in a series of files
+# with names filename.TEST_NUM.MODEL_NUM.  Here `filename' is the value
+# provided on the command line, `TEST_NUM' is a two digit integer sequentially
+# numbering the example Tests in the order they are executed below, and
+# `MODEL_NUM' is a two digit integer sequentially numbering the Models that
+# each Test is executed with in the order they are executed below.
 
 TEST_NUM=0
 MODEL_NUM=0

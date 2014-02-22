@@ -4,7 +4,8 @@
 !                           allocate memory and set known values.
 !
 !-------------------------------------------------------------------------------
-subroutine setup_B2_KIM_API_object(pkim, testname, modelname, specname1, specname2)
+subroutine setup_B2_KIM_API_object(pkim, testname, modelname, specname1, &
+                                   specname2)
   use, intrinsic :: iso_c_binding
   use KIM_API_F03
   implicit none

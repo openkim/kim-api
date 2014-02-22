@@ -86,7 +86,7 @@ program TEST_NAME_STR
   type(neighObject_type), target :: NLRvecLocs
   integer(c_int), allocatable, target :: neighborList(:,:)
   real(c_double), allocatable, target :: RijList(:,:,:)
-  integer(c_int)  :: NNeighbors         ! maximum number of neighbors for an atom
+  integer(c_int)  :: NNeighbors  ! maximum number of neighbors for an atom
 
   ! KIM variables
   !
@@ -94,7 +94,7 @@ program TEST_NAME_STR
   type(c_ptr)             :: pkim     ! pointer to KIM API object
   integer(c_int)          :: ier      ! error flag
   integer(c_int)          :: N        ! number of atoms
-  real(c_double), pointer :: cutoff;  type(c_ptr) :: pcutoff  ! cutoff radius of Model
+  real(c_double), pointer :: cutoff;  type(c_ptr) :: pcutoff  ! cutoff radius
 
 
   ! other variables
@@ -136,7 +136,8 @@ program TEST_NAME_STR
   !
   ! Second, determine how many neighbors we will need
   !
-  CellsPerCutoff = ceiling(cutoff/MinSpacing+ 0.05_cd) ! the 0.05 is a saftey factor
+  ! the 0.05 is a saftey factor
+  CellsPerCutoff = ceiling(cutoff/MinSpacing+ 0.05_cd)
   NNeighbors = 4*((2*CellsPerCutoff + 1)**3)
   !
   ! allocate memory for the neighbor list and Rij vectors
@@ -165,7 +166,8 @@ program TEST_NAME_STR
   print *
   print '("Found minimum energy configuration to within",ES25.15)', TOL
   print *
-  print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', FinalEnergy, FinalSpacing
+  print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', FinalEnergy, &
+        FinalSpacing
   print '(80(''-''))'
 
 

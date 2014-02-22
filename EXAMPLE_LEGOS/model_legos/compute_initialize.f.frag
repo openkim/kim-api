@@ -1,5 +1,5 @@
-    ! Check to see if we have been asked to compute the energy, forces, energyperatom,
-    ! and virial
+    ! Check to see if we have been asked to compute the energy, forces,
+    ! energyperatom, and virial
     !
     call kim_api_getm_compute(pkim, Compute_Energy_Forces, &
          "energy",         comp_energy, 1, &
@@ -8,7 +8,8 @@
          "virial",         comp_virial, 1)
     if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
        idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                                   "kim_api_getm_compute", Compute_Energy_Forces)
+                                   "kim_api_getm_compute",   &
+                                   Compute_Energy_Forces)
        return
     endif
 
@@ -36,7 +37,8 @@
     call c_f_pointer(pcutoff,         model_cutoff)
     call c_f_pointer(pcoor,           coor,          [DIM,numberOfParticles])
     if (comp_energy.eq.1) call c_f_pointer(penergy, energy)
-    if (comp_force.eq.1)  call c_f_pointer(pforce,  force,  [DIM,numberOfParticles])
+    if (comp_force.eq.1)  call c_f_pointer(pforce,  force,  &
+                                                        [DIM,numberOfParticles])
     if (comp_enepot.eq.1) call c_f_pointer(penepot, enepot, [numberOfParticles])
     if (comp_virial.eq.1) call c_f_pointer(pvirial, virial, [6])
 

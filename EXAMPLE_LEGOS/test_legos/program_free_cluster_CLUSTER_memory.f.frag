@@ -96,14 +96,14 @@ program TEST_NAME_STR
   endif
   ! register memory with KIM object
   call kim_api_setm_data(pkim, ier, &
-       "numberOfParticles",   DIMN, c_loc(numberOfParticles),   TRUEFALSE(.true.), &
-       "numberParticleTypes", one,  c_loc(numberParticleTypes), TRUEFALSE(.true.), &
-       "particleTypes",       NN,   c_loc(particleTypes),       TRUEFALSE(.true.), &
-       "coordinates",         DIMN, c_loc(coords),              TRUEFALSE(.true.), &
-       "cutoff",              one,  c_loc(cutoff),              TRUEFALSE(.true.), &
-       "energy",              one,  c_loc(energy),              TRUEFALSE(.true.), &
-       "forces",              DIMN, c_loc(forces),              TRUEFALSE(.true.), &
-       "virial",              six,  c_loc(virialglob),          TRUEFALSE(.true.))
+   "numberOfParticles",   DIMN, c_loc(numberOfParticles),   TRUEFALSE(.true.), &
+   "numberParticleTypes", one,  c_loc(numberParticleTypes), TRUEFALSE(.true.), &
+   "particleTypes",       NN,   c_loc(particleTypes),       TRUEFALSE(.true.), &
+   "coordinates",         DIMN, c_loc(coords),              TRUEFALSE(.true.), &
+   "cutoff",              one,  c_loc(cutoff),              TRUEFALSE(.true.), &
+   "energy",              one,  c_loc(energy),              TRUEFALSE(.true.), &
+   "forces",              DIMN, c_loc(forces),              TRUEFALSE(.true.), &
+   "virial",              six,  c_loc(virialglob),          TRUEFALSE(.true.))
 
   ! call model's init routine
   ier = kim_api_model_init(pkim)
@@ -124,7 +124,8 @@ program TEST_NAME_STR
   endif
 
   ! set up the cluster atom positions
-  call create_FCC_configuration(FCCspacing, nCellsPerSide, .false., coords, middleDum)
+  call create_FCC_configuration(FCCspacing, nCellsPerSide, .false., coords, &
+                                middleDum)
 
   ! Call model compute
   ier = kim_api_model_compute(pkim)

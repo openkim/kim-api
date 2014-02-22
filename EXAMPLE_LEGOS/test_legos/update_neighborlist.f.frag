@@ -1,5 +1,6 @@
-subroutine update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
-                               do_update_list,coordsave,neighborList,RijList,ier)
+subroutine update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths, &
+                               NBC_Method,do_update_list,coordsave, &
+                               neighborList,RijList,ier)
 use, intrinsic :: iso_c_binding
 use KIM_API_F03
 implicit none
@@ -19,8 +20,9 @@ real(c_double),    intent(inout) :: RijList(DIM,N+1,N)
 integer(c_int),    intent(out)   :: ier
 
 !-- Local variables
-integer(c_int) nbc  ! 0- NEIGH_RVEC_H, 1- NEIGH_PURE_H, 2- NEIGH_RVEC_F, 3- NEIGH_PURE_F, 
-             ! 4- MI_OPBC_H, 5- MI_OPBC_F 
+! 0- NEIGH_RVEC_H, 1- NEIGH_PURE_H, 2- NEIGH_RVEC_F, 3- NEIGH_PURE_F,
+! 4- MI_OPBC_H, 5- MI_OPBC_F 
+integer(c_int) nbc
 real(c_double) disp, disp1, disp2, cutrange, dispvec(DIM)
 integer(c_int) i, idum
 
@@ -80,17 +82,23 @@ if (do_update_list) then
    ! compute neighbor lists
    cutrange = cutoff + cutpad
    if (nbc.eq.0) then
-      call NEIGH_RVEC_cluster_neighborlist(.true., N, coords, cutrange, N, neighborList, RijList)
+      call NEIGH_RVEC_cluster_neighborlist(.true., N, coords, cutrange, N, &
+                                           neighborList, RijList)
    elseif (nbc.eq.1) then
-      call NEIGH_PURE_cluster_neighborlist(.true., N, coords, cutrange, neighborList)
+      call NEIGH_PURE_cluster_neighborlist(.true., N, coords, cutrange, &
+                                           neighborList)
    elseif (nbc.eq.2) then
-      call NEIGH_RVEC_cluster_neighborlist(.false., N, coords, cutrange, N, neighborList, RijList)
+      call NEIGH_RVEC_cluster_neighborlist(.false., N, coords, cutrange, &
+                                           N, neighborList, RijList)
    elseif (nbc.eq.3) then
-      call NEIGH_PURE_cluster_neighborlist(.false., N, coords, cutrange, neighborList)
+      call NEIGH_PURE_cluster_neighborlist(.false., N, coords, cutrange, &
+                                           neighborList)
    elseif (nbc.eq.4) then
-      call MI_OPBC_cluster_neighborlist(.true., N, coords, cutrange, boxSideLengths, neighborList)
+      call MI_OPBC_cluster_neighborlist(.true., N, coords, cutrange, &
+                                        boxSideLengths, neighborList)
    elseif (nbc.eq.5) then
-      call MI_OPBC_cluster_neighborlist(.false., N, coords, cutrange, boxSideLengths, neighborList)
+      call MI_OPBC_cluster_neighborlist(.false., N, coords, cutrange, &
+                                        boxSideLengths, neighborList)
    endif
 
    ! neighbor list uptodate, no need to compute again for now
@@ -101,7 +109,8 @@ else
    ! Even though neighbor lists are uptodate Rij vectors still need to be
    ! computed
    if (nbc.eq.0.or.nbc.eq.2) &
-      call NEIGH_RVEC_update_Rij_vectors(DIM, N, coords, N, neighborList, RijList)
+      call NEIGH_RVEC_update_Rij_vectors(DIM, N, coords, N, neighborList, &
+                                         RijList)
 
 endif
 

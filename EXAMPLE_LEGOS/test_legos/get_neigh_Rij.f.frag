@@ -5,7 +5,8 @@
 ! This function implements Locator and Iterator mode
 !
 !-------------------------------------------------------------------------------
-integer(c_int) function get_neigh_Rij(pkim,mode,request,atom,numnei,pnei1atom,pRij) bind(c)
+integer(c_int) function get_neigh_Rij(pkim,mode,request,atom,numnei,pnei1atom, &
+                                      pRij) bind(c)
   use, intrinsic :: iso_c_binding
   use KIM_API_F03
   implicit none
@@ -74,14 +75,16 @@ integer(c_int) function get_neigh_Rij(pkim,mode,request,atom,numnei,pnei1atom,pR
         endif
      else
         idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                                    "Invalid request in get_neigh_Rij", KIM_STATUS_NEIGH_INVALID_REQUEST)
+                                    "Invalid request in get_neigh_Rij", &
+                                    KIM_STATUS_NEIGH_INVALID_REQUEST)
         get_neigh_Rij = KIM_STATUS_NEIGH_INVALID_REQUEST
         return
      endif
   elseif (mode.eq.1) then ! locator mode
      if ( (request.gt.N) .or. (request.lt.1)) then
         idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                                    "Invalid atom ID in get_neigh_Rij", KIM_STATUS_PARTICLE_INVALID_ID)
+                                    "Invalid atom ID in get_neigh_Rij", &
+                                    KIM_STATUS_PARTICLE_INVALID_ID)
         get_neigh_Rij = KIM_STATUS_PARTICLE_INVALID_ID
         return
      else
@@ -89,7 +92,8 @@ integer(c_int) function get_neigh_Rij(pkim,mode,request,atom,numnei,pnei1atom,pR
      endif
   else ! not iterator or locator mode
      idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                                 "Invalid mode in get_neigh_Rij", KIM_STATUS_NEIGH_INVALID_MODE)
+                                 "Invalid mode in get_neigh_Rij", &
+                                 KIM_STATUS_NEIGH_INVALID_MODE)
      get_neigh_Rij = KIM_STATUS_NEIGH_INVALID_MODE
      return
   endif

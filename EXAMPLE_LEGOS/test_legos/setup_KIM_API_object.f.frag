@@ -5,7 +5,8 @@
 !
 !-------------------------------------------------------------------------------
 #define TRUEFALSE(TRUTH) merge(1,0,(TRUTH))
-subroutine setup_KIM_API_object(pkim, testname, modelname, N, specname, SupportHalf)
+subroutine setup_KIM_API_object(pkim, testname, modelname, N, specname, &
+                                SupportHalf)
   use, intrinsic :: iso_c_binding
   use KIM_API_F03
   implicit none
@@ -73,7 +74,8 @@ subroutine setup_KIM_API_object(pkim, testname, modelname, N, specname, SupportH
      stop
   endif
   call c_f_pointer(pnAtoms, numberOfParticles)
-  if ((SupportHalf.eq.1).and.(isHalf.eq.1)) call c_f_pointer(pnumContrib, numContrib)
+  if ((SupportHalf.eq.1).and.(isHalf.eq.1)) call c_f_pointer(pnumContrib, &
+                                                             numContrib)
   call c_f_pointer(pnparticleTypes, numberParticleTypes)
   call c_f_pointer(pparticleTypes,  particleTypes, [N])
 

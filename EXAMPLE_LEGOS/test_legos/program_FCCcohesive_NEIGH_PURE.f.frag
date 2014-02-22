@@ -72,13 +72,14 @@ program TEST_NAME_STR
 
   ! significant local variables
   !
-  real(c_double)                      :: rcut              ! cutoff radius of the potential
-  integer(c_int), allocatable, target :: neighborList(:,:) ! neighbor list storage
-  real(c_double)                      :: FinalSpacing      ! crystal lattice parameter
-  real(c_double)                      :: FinalEnergy       ! energy per atom of crystal
-                                                           ! at current spacing
-  integer(c_int)                      :: CellsPerRcut      ! number of unit cells along
-                                                           ! box (of size rcut) side
+  real(c_double)                      :: rcut  ! cutoff radius of the potential
+  integer(c_int), allocatable, target :: neighborList(:,:) ! neighbor list mem
+  real(c_double)                      :: FinalSpacing  ! lattice parameter
+  real(c_double)                      :: FinalEnergy   ! energy/atom of crystal
+                                                       ! at current spacing
+  integer(c_int)                      :: CellsPerRcut  ! number of unit cells
+                                                       ! along box (of size 
+                                                       ! rcut) side
 
   ! KIM variables
   !
@@ -135,7 +136,8 @@ program TEST_NAME_STR
   print *
   print '("Found minimum energy configuration to within",ES25.15)', TOL
   print *
-  print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', FinalEnergy, FinalSpacing
+  print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', FinalEnergy, &
+        FinalSpacing
   print '(80(''-''))'
 
 
@@ -187,8 +189,9 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
   real(c_double), pointer   :: coords(:,:);    type(c_ptr) :: pcoor
   real(c_double), pointer   :: cutoff;         type(c_ptr) :: pcutoff
   real(c_double), parameter :: cutpad = CUTOFF_PADDING_STR ! cutoff radius padding
-  logical :: halfflag  ! .true. = half neighbor list; .false. = full neighbor list
-  character(len=KIM_KEY_STRING_LENGTH), pointer :: NBC_Method; type(c_ptr) :: pNBC_Method
+  logical :: halfflag  ! .true. = half neigh list; .false. = full neigh list
+  character(len=KIM_KEY_STRING_LENGTH), pointer :: NBC_Method
+  type(c_ptr) :: pNBC_Method
 
   ! Unpack data from KIM object
   !
@@ -229,7 +232,8 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
   ! Initialize for minimization
   !
   Spacings(1) = MinSpacing
-  call create_FCC_configuration(Spacings(1), 2*CellsPerRcut, .true., coords, MiddleAtomId)
+  call create_FCC_configuration(Spacings(1), 2*CellsPerRcut, .true., coords, &
+                                MiddleAtomId)
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
   call NEIGH_PURE_periodic_neighborlist(halfflag, N, coords, (cutoff+cutpad), &
                                         MiddleAtomId, neighborList)
@@ -241,11 +245,13 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
   endif
   Energies(1) = energy
   if (verbose) &
-     print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(1), Spacings(1)
+     print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(1), &
+           Spacings(1)
 
   ! setup and compute for max spacing
   Spacings(3) = MaxSpacing
-  call create_FCC_configuration(Spacings(3), 2*CellsPerRcut, .true., coords, MiddleAtomId)
+  call create_FCC_configuration(Spacings(3), 2*CellsPerRcut, .true., coords, &
+                                MiddleAtomId)
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
   call NEIGH_PURE_periodic_neighborlist(halfflag, N, coords, (cutoff+cutpad), &
                                         MiddleAtomId, neighborList)
@@ -258,11 +264,13 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
   endif
   Energies(3) = energy
   if (verbose) &
-     print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(3), Spacings(3)
+     print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(3), &
+           Spacings(3)
 
   ! setup and compute for first intermediate spacing
   Spacings(2) = MinSpacing + (2.0_cd - Golden)*(MaxSpacing - MinSpacing)
-  call create_FCC_configuration(Spacings(2), 2*CellsPerRcut, .true., coords, MiddleAtomId)
+  call create_FCC_configuration(Spacings(2), 2*CellsPerRcut, .true., coords, &
+                                MiddleAtomId)
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
   call NEIGH_PURE_periodic_neighborlist(halfflag, N, coords, (cutoff+cutpad), &
                                         MiddleAtomId, neighborList)
@@ -275,7 +283,8 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
   endif
   Energies(2) = energy
   if (verbose) &
-     print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(2), Spacings(2)
+     print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(2), &
+           Spacings(2)
 
 
   ! iterate until convergence.
@@ -284,9 +293,10 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
      ! set new spacing
      Spacings(4) = (Spacings(1) + Spacings(3)) - Spacings(2)
      ! compute new atom coordinates based on new spacing
-     call create_FCC_configuration(Spacings(4), 2*CellsPerRcut, .true., coords, MiddleAtomId)
+     call create_FCC_configuration(Spacings(4), 2*CellsPerRcut, .true., coords,&
+                                   MiddleAtomId)
      ! compute new neighbor lists (could be done more intelligently, I'm sure)
-     call NEIGH_PURE_periodic_neighborlist(halfflag, N, coords, (cutoff+cutpad), &
+     call NEIGH_PURE_periodic_neighborlist(halfflag,N,coords,(cutoff+cutpad), &
                                            MiddleAtomId, neighborList)
      ! Call model compute
      ier = kim_api_model_compute(pkim)
@@ -297,7 +307,8 @@ subroutine NEIGH_PURE_compute_equilibrium_spacing(pkim, &
      endif
      Energies(4) = energy
      if (verbose) &
-        print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(4), Spacings(4)
+        print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(4),&
+              Spacings(4)
 
      ! determine the new interval
      if (Energies(4) .lt. Energies(2)) then

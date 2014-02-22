@@ -1,21 +1,25 @@
 !-------------------------------------------------------------------------------
 !
-! MI_OPBC_cluster_neighborlist : construct a half or full neighbor list using the
-!                                atom coordinates in coords()
+! MI_OPBC_cluster_neighborlist : construct a half or full neighbor list using
+!                                the atom coordinates in coords()
 !
 !-------------------------------------------------------------------------------
-subroutine MI_OPBC_cluster_neighborlist(half, numberOfParticles, coords, rcut, boxSideLengths, neighborList)
+subroutine MI_OPBC_cluster_neighborlist(half, numberOfParticles, coords, rcut, &
+                                        boxSideLengths, neighborList)
   use, intrinsic :: iso_c_binding
   use KIM_API_F03
   implicit none
 
   !-- Transferred variables
-  logical,                                        intent(in)  :: half
-  integer(c_int),                                 intent(in)  :: numberOfParticles
-  real(c_double), dimension(3,numberOfParticles), intent(in)  :: coords
-  real(c_double),                                 intent(in)  :: rcut
-  real(c_double), dimension(3),                   intent(in)  :: boxSideLengths
-  integer(c_int), dimension(numberOfParticles+1,numberOfParticles), intent(out) :: neighborList ! not memory efficient
+  logical,        intent(in) :: half
+  integer(c_int), intent(in) :: numberOfParticles
+  real(c_double), dimension(3,numberOfParticles), &
+                  intent(in) :: coords
+  real(c_double), intent(in) :: rcut
+  real(c_double), dimension(3), &
+                  intent(in) :: boxSideLengths
+  integer(c_int), dimension(numberOfParticles+1,numberOfParticles), &
+                  intent(out) :: neighborList ! not memory efficient
 
   !-- Local variables
   integer(c_int) i, j, a

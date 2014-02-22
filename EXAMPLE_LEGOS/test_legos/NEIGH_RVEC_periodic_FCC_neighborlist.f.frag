@@ -3,9 +3,9 @@
 ! Neigh_RVEC_periodic_FCC_neighborlist
 !
 !-------------------------------------------------------------------------------
-subroutine NEIGH_RVEC_periodic_FCC_neighborlist(half, CellsPerHalfSide, cutoff,  &
-                                                FCCspacing, N, NN, neighborList, &
-                                                coords, RijList)
+subroutine NEIGH_RVEC_periodic_FCC_neighborlist(half,CellsPerHalfSide,cutoff, &
+                                                FCCspacing,N,NN,neighborList, &
+                                                coords,RijList)
   use, intrinsic :: iso_c_binding
   use KIM_API_F03
   implicit none
@@ -38,11 +38,19 @@ subroutine NEIGH_RVEC_periodic_FCC_neighborlist(half, CellsPerHalfSide, cutoff, 
 
   cutoff2 = cutoff**2
 
-  ! Cubic FCC cell positions ----------------------------------------------------------------------
-  FCCshifts(1,1) = 0.0_cd;            FCCshifts(2,1) = 0.0_cd;            FCCshifts(3,1) = 0.0_cd
-  FCCshifts(1,2) = 0.5_cd*FCCspacing; FCCshifts(2,2) = 0.5_cd*FCCspacing; FCCshifts(3,2) = 0.0_cd
-  FCCshifts(1,3) = 0.5_cd*FCCspacing; FCCshifts(2,3) = 0.0_cd;            FCCshifts(3,3) = 0.5_cd*FCCspacing
-  FCCshifts(1,4) = 0.0_cd;            FCCshifts(2,4) = 0.5_cd*FCCspacing; FCCshifts(3,4) = 0.5_cd*FCCspacing
+  ! Cubic FCC cell positions ---------------------------------------------------
+  FCCshifts(1,1) = 0.0_cd
+  FCCshifts(2,1) = 0.0_cd
+  FCCshifts(3,1) = 0.0_cd
+  FCCshifts(1,2) = 0.5_cd*FCCspacing
+  FCCshifts(2,2) = 0.5_cd*FCCspacing
+  FCCshifts(3,2) = 0.0_cd
+  FCCshifts(1,3) = 0.5_cd*FCCspacing
+  FCCshifts(2,3) = 0.0_cd
+  FCCshifts(3,3) = 0.5_cd*FCCspacing
+  FCCshifts(1,4) = 0.0_cd
+  FCCshifts(2,4) = 0.5_cd*FCCspacing
+  FCCshifts(3,4) = 0.5_cd*FCCspacing
 
   if (half) then
      ! Each atom gets half of its own neighbor-self images
@@ -54,7 +62,8 @@ subroutine NEIGH_RVEC_periodic_FCC_neighborlist(half, CellsPerHalfSide, cutoff, 
               latVec(2) = j*FCCspacing
               do k = -CellsPerHalfSide, CellsPerHalfSide
                  latVec(3) = k*FCCspacing
-                 if (i.gt.0 .or. (i.eq.0 .and. (j.gt.0 .or. (j.eq.0 .and. k.gt.0)))) then
+                 if (i.gt.0 .or. (i.eq.0 .and. (j.gt.0 .or. (j.eq.0 .and. &
+                                                             k.gt.0)))) then
                     dx = latVec
                     if (dot_product(dx,dx).lt.cutoff2) then
                        ! we have a neighbor
@@ -77,8 +86,8 @@ subroutine NEIGH_RVEC_periodic_FCC_neighborlist(half, CellsPerHalfSide, cutoff, 
                  latVec(2) = j*FCCspacing
                  do k = -CellsPerHalfSide, CellsPerHalfSide
                     latVec(3) = k*FCCspacing
-                    if ((i.ge.0 .and. atomj.lt.4) .or. (atomj.eq.4 .and. i.gt.0) &
-                         .or. ( atomj.eq.4 .and. (i.eq.0 .and. (j.ge.0))) )  then
+                    if ((i.ge.0 .and. atomj.lt.4).or.(atomj.eq.4 .and. i.gt.0) &
+                         .or.( atomj.eq.4 .and. (i.eq.0 .and. (j.ge.0))) )  then
                        dx = (latVec + FCCshifts(:,atomj)) - FCCshifts(:,atomi)
                        if (dot_product(dx,dx).lt.cutoff2) then
                           ! we have a neighbor
@@ -106,7 +115,8 @@ subroutine NEIGH_RVEC_periodic_FCC_neighborlist(half, CellsPerHalfSide, cutoff, 
               do m=1,4
                  dx = latVec + FCCshifts(:,m)
                  if (dot_product(dx,dx).lt.cutoff2) then
-                    if (.not.( (i.eq.0) .and. (j.eq.0) .and. (k.eq.0) .and. (m.eq.1) )) then
+                    if (.not.( (i.eq.0) .and. (j.eq.0) .and. (k.eq.0) .and. &
+                               (m.eq.1) )) then
                        ! we have a neighbor
                        a(atom) = a(atom)+1
                        neighborList(a(atom),1) = 1

@@ -86,9 +86,11 @@ program TEST_NAME_STR
   !
   character(len=KIM_KEY_STRING_LENGTH) :: testname = "TEST_NAME_STR"
   character(len=KIM_KEY_STRING_LENGTH) :: modelname
-  character(len=KIM_KEY_STRING_LENGTH), pointer :: NBC_Method; type(c_ptr) :: pNBC_Method
-  integer(c_int) nbc  ! 0- NEIGH_RVEC_H, 1- NEIGH_PURE_H, 2- NEIGH_RVEC_F, 3- NEIGH_PURE_F,
-               ! 4- MI_OPBC_H,    5- MI_OPBC_F,    6- CLUSTER
+  character(len=KIM_KEY_STRING_LENGTH), pointer :: NBC_Method
+  type(c_ptr) :: pNBC_Method
+  ! 0- NEIGH_RVEC_H, 1- NEIGH_PURE_H, 2- NEIGH_RVEC_F, 3- NEIGH_PURE_F,
+  ! 4- MI_OPBC_H,    5- MI_OPBC_F,    6- CLUSTER
+  integer(c_int) nbc
   type(c_ptr)    :: pkim
   integer(c_int) :: ier, idum
   integer(c_int) :: I,J
@@ -182,42 +184,48 @@ program TEST_NAME_STR
   endif
 
   if (nbc.eq.0) then
-     ier = kim_api_set_method(pkim, "get_neigh", SizeOne, c_funloc(get_neigh_Rij))
+     ier = kim_api_set_method(pkim, "get_neigh", SizeOne, &
+                              c_funloc(get_neigh_Rij))
      if (ier.lt.KIM_STATUS_OK) then
         idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                     "kim_api_set_method", ier)
         stop
      endif
   elseif (nbc.eq.1) then
-     ier = kim_api_set_method(pkim, "get_neigh", SizeOne, c_funloc(get_neigh_no_Rij))
+     ier = kim_api_set_method(pkim, "get_neigh", SizeOne, &
+                              c_funloc(get_neigh_no_Rij))
      if (ier.lt.KIM_STATUS_OK) then
         idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                     "kim_api_set_method", ier)
         stop
      endif
   elseif (nbc.eq.2) then
-     ier = kim_api_set_method(pkim, "get_neigh", SizeOne, c_funloc(get_neigh_Rij))
+     ier = kim_api_set_method(pkim, "get_neigh", SizeOne, &
+                              c_funloc(get_neigh_Rij))
      if (ier.lt.KIM_STATUS_OK) then
         idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                     "kim_api_set_method", ier)
         stop
      endif
   elseif (nbc.eq.3) then
-     ier = kim_api_set_method(pkim, "get_neigh", SizeOne, c_funloc(get_neigh_no_Rij))
+     ier = kim_api_set_method(pkim, "get_neigh", SizeOne, &
+                              c_funloc(get_neigh_no_Rij))
      if (ier.lt.KIM_STATUS_OK) then
         idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                     "kim_api_set_method", ier)
         stop
      endif
   elseif (nbc.eq.4) then
-     ier = kim_api_set_method(pkim, "get_neigh", SizeOne, c_funloc(get_neigh_no_Rij))
+     ier = kim_api_set_method(pkim, "get_neigh", SizeOne, &
+                              c_funloc(get_neigh_no_Rij))
      if (ier.lt.KIM_STATUS_OK) then
         idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                     "kim_api_set_method", ier)
         stop
      endif
   elseif (nbc.eq.5) then
-     ier = kim_api_set_method(pkim, "get_neigh", SizeOne, c_funloc(get_neigh_no_Rij))
+     ier = kim_api_set_method(pkim, "get_neigh", SizeOne, &
+                              c_funloc(get_neigh_no_Rij))
      if (ier.lt.KIM_STATUS_OK) then
         idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                       "kim_api_set_method", ier)
@@ -256,12 +264,14 @@ program TEST_NAME_STR
      stop
   endif
   call c_f_pointer(pnAtoms, numberOfParticles)
-  if ((nbc.eq.0).or.(nbc.eq.1).or.(nbc.eq.4)) call c_f_pointer(pnumContrib, numContrib)
+  if ((nbc.eq.0).or.(nbc.eq.1).or.(nbc.eq.4)) call c_f_pointer(pnumContrib, &
+                                                               numContrib)
   call c_f_pointer(pnparticleTypes, numberParticleTypes)
   call c_f_pointer(pparticleTypes,  particleTypes, [N])
   call c_f_pointer(pcoor, coords, [DIM,N])
   call c_f_pointer(pcutoff, cutoff)
-  if ((nbc.eq.4).or.(nbc.eq.5)) call c_f_pointer(pboxSideLengths, boxSideLengths, [DIM])
+  if ((nbc.eq.4).or.(nbc.eq.5)) call c_f_pointer(pboxSideLengths, &
+                                                 boxSideLengths, [DIM])
   call c_f_pointer(penergy, energy)
   call c_f_pointer(pvirialglob, virial_global, [6])
   call c_f_pointer(pforces, forces, [DIM,N])
@@ -279,22 +289,30 @@ program TEST_NAME_STR
   endif
 
   ! set up the cluster atom positions
-  call create_FCC_configuration(FCCspacing, nCellsPerSide, .false., coords, middleDum)
-  if ((nbc.eq.4).or.(nbc.eq.5)) boxSideLengths(:) = 600.0_cd ! large enough to make the cluster isolated
+  call create_FCC_configuration(FCCspacing, nCellsPerSide, .false., coords, &
+                                middleDum)
+ ! set boxSideLengths large enough to make the cluster isolated
+  if ((nbc.eq.4).or.(nbc.eq.5)) boxSideLengths(:) = 600.0_cd
 
   ! compute neighbor lists
   if (nbc.eq.0) then
-     call NEIGH_RVEC_cluster_neighborlist(.true., N, coords, (cutoff+cutpad), N, neighborList, RijList)
+     call NEIGH_RVEC_cluster_neighborlist(.true., N, coords, (cutoff+cutpad), &
+                                          N, neighborList, RijList)
   elseif (nbc.eq.1) then
-     call NEIGH_PURE_cluster_neighborlist(.true., N, coords, (cutoff+cutpad), neighborList)
+     call NEIGH_PURE_cluster_neighborlist(.true., N, coords, (cutoff+cutpad), &
+                                          neighborList)
   elseif (nbc.eq.2) then
-     call NEIGH_RVEC_cluster_neighborlist(.false., N, coords, (cutoff+cutpad), N, neighborList, RijList)
+     call NEIGH_RVEC_cluster_neighborlist(.false., N, coords, (cutoff+cutpad), &
+                                          N, neighborList, RijList)
   elseif (nbc.eq.3) then
-     call NEIGH_PURE_cluster_neighborlist(.false., N, coords, (cutoff+cutpad), neighborList)
+     call NEIGH_PURE_cluster_neighborlist(.false., N, coords, (cutoff+cutpad), &
+                                          neighborList)
   elseif (nbc.eq.4) then
-     call MI_OPBC_cluster_neighborlist(.true., N, coords, (cutoff+cutpad), boxSideLengths, neighborList)
+     call MI_OPBC_cluster_neighborlist(.true., N, coords, (cutoff+cutpad), &
+                                       boxSideLengths, neighborList)
   elseif (nbc.eq.5) then
-     call MI_OPBC_cluster_neighborlist(.false., N, coords, (cutoff+cutpad), boxSideLengths, neighborList)
+     call MI_OPBC_cluster_neighborlist(.false., N, coords, (cutoff+cutpad), &
+                                       boxSideLengths, neighborList)
   else
      ! nothing to do for CLUSTER
   endif

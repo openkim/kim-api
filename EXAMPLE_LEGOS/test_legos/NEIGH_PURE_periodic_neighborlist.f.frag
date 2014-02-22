@@ -3,18 +3,21 @@
 ! NEIGH_PURE_periodic_neighborlist  (only give middle atom neighbors)
 !
 !-------------------------------------------------------------------------------
-subroutine NEIGH_PURE_periodic_neighborlist(half, numberOfParticles, coords, cutoff, MiddleAtomId, neighborList)
+subroutine NEIGH_PURE_periodic_neighborlist(half, numberOfParticles, coords, &
+                                            cutoff, MiddleAtomId, neighborList)
   use, intrinsic :: iso_c_binding
   use KIM_API_F03
   implicit none
 
   !-- Transferred variables
-  logical,                                        intent(in)  :: half
-  integer(c_int),                                 intent(in)  :: numberOfParticles
-  real(c_double), dimension(3,numberOfParticles), intent(in)  :: coords
-  real(c_double),                                 intent(in)  :: cutoff
-  integer(c_int),                                 intent(in)  :: MiddleAtomId
-  integer(c_int), dimension(numberOfParticles+1,numberOfParticles), intent(out) :: neighborList ! not memory efficient
+  logical,        intent(in)  :: half
+  integer(c_int), intent(in)  :: numberOfParticles
+  real(c_double), dimension(3,numberOfParticles), &
+                  intent(in)  :: coords
+  real(c_double), intent(in)  :: cutoff
+  integer(c_int), intent(in)  :: MiddleAtomId
+  integer(c_int), dimension(numberOfParticles+1,numberOfParticles), &
+                  intent(out) :: neighborList ! not memory efficient
 
   !-- Local variables
   integer(c_int) i, j, a
@@ -32,7 +35,8 @@ subroutine NEIGH_PURE_periodic_neighborlist(half, numberOfParticles, coords, cut
         if (r2.le.cutoff2) then
            ! atom j is a neighbor of atom i
            if (half) then
-               if ( ((i.eq.MiddleAtomId) .or. (j.eq.MiddleAtomId)) .and. (i .lt. j) ) then
+               if ( ((i.eq.MiddleAtomId) .or. (j.eq.MiddleAtomId)) .and. &
+                    (i .lt. j) ) then
                   a = a+1
                   neighborList(a,i) = j
                endif

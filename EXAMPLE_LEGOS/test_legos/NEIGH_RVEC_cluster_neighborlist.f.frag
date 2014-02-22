@@ -3,19 +3,23 @@
 ! NEIGH_RVEC_cluster_neighborlist
 !
 !-------------------------------------------------------------------------------
-subroutine NEIGH_RVEC_cluster_neighborlist(half, numberOfParticles, coords, cutoff, NN, neighborList, RijList)
+subroutine NEIGH_RVEC_cluster_neighborlist(half, numberOfParticles, coords, &
+                                           cutoff, NN, neighborList, RijList)
   use, intrinsic :: iso_c_binding
   use KIM_API_F03
   implicit none
 
   !-- Transferred variables
-  logical,                                             intent(in)  :: half
-  integer(c_int),                                      intent(in)  :: numberOfParticles
-  real(c_double), dimension(3,numberOfParticles),      intent(in)  :: coords
-  real(c_double),                                      intent(in)  :: cutoff
-  integer(c_int),                                      intent(in)  :: NN
-  integer(c_int), dimension(NN+1,numberOfParticles),   intent(out) :: neighborList
-  real(c_double), dimension(3,NN+1,numberOfParticles), intent(out) :: RijList
+  logical,        intent(in)  :: half
+  integer(c_int), intent(in)  :: numberOfParticles
+  real(c_double), dimension(3,numberOfParticles), &
+                  intent(in)  :: coords
+  real(c_double), intent(in)  :: cutoff
+  integer(c_int), intent(in)  :: NN
+  integer(c_int), dimension(NN+1,numberOfParticles), &
+                  intent(out) :: neighborList
+  real(c_double), dimension(3,NN+1,numberOfParticles), &
+                  intent(out) :: RijList
 
   !-- Local variables
   integer(c_int) i, j, a

@@ -38,8 +38,9 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   real(c_double), pointer :: coords(:,:);      type(c_ptr) :: pcoor
   real(c_double), pointer :: cutoff;           type(c_ptr) :: pcutoff
   real(c_double), parameter :: cutpad = CUTOFF_PADDING_STR ! cutoff radius padding
-  logical :: halfflag  ! .true. = half neighbor list; .false. = full neighbor list
-  character(len=KIM_KEY_STRING_LENGTH), pointer :: NBC_Method; type(c_ptr) :: pNBC_Method
+  logical :: halfflag  ! .true. = half neigh list; .false. = full neigh list
+  character(len=KIM_KEY_STRING_LENGTH), pointer :: NBC_Method;
+  type(c_ptr) :: pNBC_Method
 
   ! Unpack data from KIM object
   !

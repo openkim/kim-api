@@ -65,8 +65,8 @@ program TEST_NAME_STR
   integer(c_int), parameter :: nCellsPerSide  = 2
   integer(c_int), parameter :: DIM            = 3
   real(c_double), parameter :: cutpad         = 0.75_cd
-  integer(c_int), parameter :: max_types      = 30 ! most species a Model can support
-  integer(c_int), parameter :: max_NBCs       = 20     ! maximum number of NBC methods
+  integer(c_int), parameter :: max_types      = 30 ! most species supported
+  integer(c_int), parameter :: max_NBCs       = 20 ! maximum number of NBCs
   real(c_double), parameter :: eps_prec       = epsilon(1.0_cd)
   real(c_double)  FCCspacing
 
@@ -106,9 +106,11 @@ program TEST_NAME_STR
   !
   character(len=KIM_KEY_STRING_LENGTH) :: testname     = "TEST_NAME_STR"
   character(len=KIM_KEY_STRING_LENGTH) :: modelname
-  character(len=KIM_KEY_STRING_LENGTH), pointer :: NBC_Method; type(c_ptr) :: pNBC_Method
-  integer(c_int) nbc  ! 0- NEIGH_RVEC_H, 1- NEIGH_PURE_H, 2- NEIGH_RVEC_F, 3- NEIGH_PURE_F,
-               ! 4- MI_OPBC_H,    5- MI_OPBC_F,    6- CLUSTER
+  character(len=KIM_KEY_STRING_LENGTH), pointer :: NBC_Method
+  type(c_ptr) :: pNBC_Method
+  ! 0- NEIGH_RVEC_H, 1- NEIGH_PURE_H, 2- NEIGH_RVEC_F, 3- NEIGH_PURE_F,
+  ! 4- MI_OPBC_H,    5- MI_OPBC_F,    6- CLUSTER
+  integer(c_int) nbc
   type(c_ptr) pkim
   integer(c_int) ier, idum, inbc
   integer(c_int), pointer :: numberOfParticles;   type(c_ptr) :: pnAtoms
@@ -135,7 +137,8 @@ program TEST_NAME_STR
 
   ! Get list of particle types supported by the model
   !
-  call Get_Model_Supported_Types(modelname, max_types, model_types, num_types, ier)
+  call Get_Model_Supported_Types(modelname, max_types, model_types, num_types, &
+                                 ier)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                  "Get_Model_Supported_Types", ier)
@@ -188,8 +191,8 @@ program TEST_NAME_STR
 
      ! Write out KIM descriptor string for Test for current NBC
      !
-     call Write_KIM_descriptor(model_NBCs(inbc), max_types, model_types, num_types, &
-                               test_descriptor_string, ier)
+     call Write_KIM_descriptor(model_NBCs(inbc), max_types, model_types, &
+                               num_types, test_descriptor_string, ier)
      if (ier.lt.KIM_STATUS_OK) then
         idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                     "Write_KIM_descriptor", ier)
@@ -199,7 +202,7 @@ program TEST_NAME_STR
      ! Create empty KIM object conforming to fields in the KIM descriptor files
      ! of the Test and Model
      !
-     ier = kim_api_string_init(pkim,trim(test_descriptor_string)//char(0),modelname)
+     ier = kim_api_string_init(pkim,trim(test_descriptor_string),modelname)
      if (ier.lt.KIM_STATUS_OK) then
         idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                     "kim_api_string_init", ier)
@@ -218,7 +221,8 @@ program TEST_NAME_STR
      if (index(NBC_Method,trim(model_NBCs(inbc))).ne.1) then
         ier = KIM_STATUS_FAIL
         idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-              "Internal Error: Selected NBC method different from requested value", ier)
+         "Internal Error: Selected NBC method different from requested value", &
+         ier)
         stop
      endif
 
@@ -264,14 +268,16 @@ program TEST_NAME_STR
            NLRvecLocs%pneighborList = c_loc(neighborList)
            NLRvecLocs%pRijList = c_loc(RijList)
            NLRvecLocs%NNeighbors = N
-           ier = kim_api_set_data(pkim, "neighObject", SizeOne, c_loc(NLRvecLocs))
+           ier = kim_api_set_data(pkim, "neighObject", SizeOne, &
+                                  c_loc(NLRvecLocs))
            if (ier.lt.KIM_STATUS_OK) then
               idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                           "kim_api_set_data", ier)
               stop
            endif
         else
-           ier = kim_api_set_data(pkim, "neighObject", SizeOne, c_loc(neighborList))
+           ier = kim_api_set_data(pkim, "neighObject", SizeOne, &
+                                  c_loc(neighborList))
            if (ier.lt.KIM_STATUS_OK) then
               idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                           "kim_api_set_data", ier)
@@ -283,42 +289,48 @@ program TEST_NAME_STR
      ! Set pointer in KIM object to neighbor list routine
      !
      if (nbc.eq.0) then
-        ier = kim_api_set_method(pkim, "get_neigh", SizeOne, c_funloc(get_neigh_Rij))
+        ier = kim_api_set_method(pkim, "get_neigh", SizeOne, &
+                                 c_funloc(get_neigh_Rij))
         if (ier.lt.KIM_STATUS_OK) then
            idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                        "kim_api_set_method", ier)
            stop
         endif
      elseif (nbc.eq.1) then
-        ier = kim_api_set_method(pkim, "get_neigh", SizeOne, c_funloc(get_neigh_no_Rij))
+        ier = kim_api_set_method(pkim, "get_neigh", SizeOne, &
+                                 c_funloc(get_neigh_no_Rij))
         if (ier.lt.KIM_STATUS_OK) then
            idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                        "kim_api_set_method", ier)
            stop
         endif
      elseif (nbc.eq.2) then
-        ier = kim_api_set_method(pkim, "get_neigh", SizeOne, c_funloc(get_neigh_Rij))
+        ier = kim_api_set_method(pkim, "get_neigh", SizeOne, &
+                                 c_funloc(get_neigh_Rij))
         if (ier.lt.KIM_STATUS_OK) then
            idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                        "kim_api_set_method", ier)
            stop
         endif
      elseif (nbc.eq.3) then
-        ier = kim_api_set_method(pkim, "get_neigh", SizeOne, c_funloc(get_neigh_no_Rij))
+        ier = kim_api_set_method(pkim, "get_neigh", SizeOne, &
+                                 c_funloc(get_neigh_no_Rij))
         if (ier.lt.KIM_STATUS_OK) then
            idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                        "kim_api_set_method", ier)
            stop
         endif
      elseif (nbc.eq.4) then
-        ier = kim_api_set_method(pkim, "get_neigh", SizeOne, c_funloc(get_neigh_no_Rij))
+        ier = kim_api_set_method(pkim, "get_neigh", SizeOne, &
+                                 c_funloc(get_neigh_no_Rij))
         if (ier.lt.KIM_STATUS_OK) then
            idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                        "kim_api_set_method", ier)
            stop
         endif
      elseif (nbc.eq.5) then
-        ier = kim_api_set_method(pkim, "get_neigh", SizeOne, c_funloc(get_neigh_no_Rij))
+        ier = kim_api_set_method(pkim, "get_neigh", SizeOne, &
+                                 c_funloc(get_neigh_no_Rij))
         if (ier.lt.KIM_STATUS_OK) then
            idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                        "kim_api_set_method", ier)
@@ -359,8 +371,10 @@ program TEST_NAME_STR
      call c_f_pointer(pcutoff,         cutoff)
      call c_f_pointer(penergy,         energy)
      call c_f_pointer(pforces,         forces,        [DIM,N])
-     if (nbc.eq.0.or.nbc.eq.1.or.nbc.eq.4) call c_f_pointer(pnumContrib, numContrib)
-     if (nbc.eq.4.or.nbc.eq.5) call c_f_pointer(pboxSideLengths, boxSideLengths, [DIM])
+     if (nbc.eq.0.or.nbc.eq.1.or.nbc.eq.4) call c_f_pointer(pnumContrib, &
+                                                            numContrib)
+     if (nbc.eq.4.or.nbc.eq.5) call c_f_pointer(pboxSideLengths, &
+                                                boxSideLengths, [DIM])
 
      ! Scale reference FCC configuration based on cutoff radius.
      ! (This is only done once.)
@@ -379,7 +393,9 @@ program TEST_NAME_STR
      if (nbc.eq.0.or.nbc.eq.1.or.nbc.eq.4) numContrib = N
      numberParticleTypes = num_types
      do i=1,N
-        particleTypes(i) = kim_api_get_partcl_type_code(pkim,trim(cluster_types(i)),ier)
+        particleTypes(i) = kim_api_get_partcl_type_code(pkim, &
+                                                        trim(cluster_types(i)),&
+                                                        ier)
      enddo
      if (ier.lt.KIM_STATUS_OK) then
         idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
@@ -389,15 +405,17 @@ program TEST_NAME_STR
      do i=1,N
         coords(:,i) = cluster_coords(:,i) + cluster_disps(:,i)
      enddo
-     if (nbc.eq.4.or.nbc.eq.5) boxSideLengths(:) = 600.0_cd ! large enough to make the cluster isolated
+     ! set boxSideLengths large enough to make the cluster isolated
+     if (nbc.eq.4.or.nbc.eq.5) boxSideLengths(:) = 600.0_cd
 
      ! Compute neighbor lists
      !
      if (nbc.le.5) then
         do_update_list = .true.
         allocate(coordsave(DIM,N))
-        call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths,NBC_Method,  &
-                                 do_update_list,coordsave,neighborList,RijList,ier)
+        call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths, &
+                                 NBC_Method,do_update_list,coordsave, &
+                                 neighborList,RijList,ier)
         if (ier.lt.KIM_STATUS_OK) then
            idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                        "update_neighborlist", ier)
@@ -429,8 +447,9 @@ program TEST_NAME_STR
      do I=1,N
         do J=1,DIM
            call compute_numer_deriv(I,J,pkim,DIM,N,coords,cutoff,cutpad,   &
-                                    boxSideLengths,NBC_Method,do_update_list,coordsave, &
-                                    neighborList,RijList,deriv,deriv_err,ier)
+                                    boxSideLengths,NBC_Method,do_update_list, &
+                                    coordsave,neighborList,RijList,deriv, &
+                                    deriv_err,ier)
            if (ier.lt.KIM_STATUS_OK) then
               idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                           "compute_numer_deriv", ier)
@@ -447,8 +466,8 @@ program TEST_NAME_STR
      print '("NBC Method = ",A28)', NBC_Method(1:(index(NBC_Method,char(0))-1))
      print '(41(''=''))'
      print *
-     print '(A6,2X,A4,2X,A3,2X,2A25,3A15,2X,A4)',"Atom","Type","Dir", "Force_model",   &
-           "Force_numer",  "Force diff", "pred error", "weight",          &
+     print '(A6,2X,A4,2X,A3,2X,2A25,3A15,2X,A4)',"Atom","Type","Dir", &
+           "Force_model", "Force_numer", "Force diff", "pred error", "weight", &
            "stat"
      forcediff_sumsq = 0.0_cd
      weight_sum = 0.0_cd

@@ -89,7 +89,7 @@ program TEST_NAME_STR
   type(neighObject_type), target :: NLRvecLocs
   integer(c_int), allocatable, target :: neighborList(:,:)
   real(c_double), allocatable, target :: RijList(:,:,:)
-  integer(c_int)  :: NNeighbors         ! maximum number of neighbors for an atom
+  integer(c_int)  :: NNeighbors  ! maximum number of neighbors for an atom
 
   ! KIM variables
   !
@@ -114,8 +114,8 @@ program TEST_NAME_STR
   read(*,*) modelname
 
 
-  ! We'll use just two atom (one SPECIES1_NAME_STR and one SPECIES2_NAME_STR) for
-  ! this calculation!
+  ! We'll use just two atom (one SPECIES1_NAME_STR and one SPECIES2_NAME_STR)
+  ! for this calculation!
   !
   N = 2
 
@@ -170,7 +170,8 @@ program TEST_NAME_STR
   print *
   print '("Found minimum energy configuration to within",ES25.15)', TOL
   print *
-  print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', FinalEnergy, FinalSpacing
+  print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', FinalEnergy, &
+        FinalSpacing
   print '(80(''-''))'
 
 
@@ -225,7 +226,8 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   real(c_double), pointer :: cutoff;       type(c_ptr) pcutoff
   real(c_double), parameter :: cutpad = CUTOFF_PADDING_STR ! cutoff radius padding
   logical :: halfflag  ! .true. = half neighbor list; .false. = full neighbor list
-  character(len=KIM_KEY_STRING_LENGTH), pointer :: NBC_Method; type(c_ptr) :: pNBC_Method
+  character(len=KIM_KEY_STRING_LENGTH), pointer :: NBC_Method
+  type(c_ptr) :: pNBC_Method
 
   ! Unpack data from KIM object
   !
@@ -269,7 +271,8 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
   call NEIGH_RVEC_periodic_B2_neighborlist(halfflag, CellsPerRcut,       &
                                            (cutoff+cutpad), Spacings(1), &
-                                           NNeighbors, neighborList, coords, RijList)
+                                           NNeighbors, neighborList, coords, &
+                                           RijList)
   ier = kim_api_model_compute(pkim)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
@@ -278,14 +281,16 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   endif
   Energies(1) = energy
   if (verbose) &
-     print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(1), Spacings(1)
+     print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(1), &
+           Spacings(1)
 
   ! setup and compute for max spacing
   Spacings(3) = MaxSpacing
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
   call NEIGH_RVEC_periodic_B2_neighborlist(halfflag, CellsPerRcut,       &
                                            (cutoff+cutpad), Spacings(3), &
-                                           NNeighbors, neighborList, coords, RijList)
+                                           NNeighbors, neighborList, coords, &
+                                           RijList)
   ! Call model compute
   ier = kim_api_model_compute(pkim)
   if (ier.lt.KIM_STATUS_OK) then
@@ -295,14 +300,16 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   endif
   Energies(3) = energy
   if (verbose) &
-     print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(3), Spacings(3)
+     print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(3), &
+           Spacings(3)
 
   ! setup and compute for first intermediate spacing
   Spacings(2) = MinSpacing + (2.0_cd - Golden)*(MaxSpacing - MinSpacing)
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
   call NEIGH_RVEC_periodic_B2_neighborlist(halfflag, CellsPerRcut,       &
                                            (cutoff+cutpad), Spacings(2), &
-                                           NNeighbors, neighborList, coords, RijList)
+                                           NNeighbors, neighborList, coords, &
+                                           RijList)
   ! Call model compute
   ier = kim_api_model_compute(pkim)
   if (ier.lt.KIM_STATUS_OK) then
@@ -312,7 +319,8 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   endif
   Energies(2) = energy
   if (verbose) &
-     print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(2), Spacings(2)
+     print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(2), &
+           Spacings(2)
 
 
   ! iterate until convergence.
@@ -323,7 +331,8 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
      ! compute new neighbor lists (could be done more intelligently, I'm sure)
      call NEIGH_RVEC_periodic_B2_neighborlist(halfflag, CellsPerRcut,       &
                                               (cutoff+cutpad), Spacings(4), &
-                                              NNeighbors, neighborList, coords, RijList)
+                                              NNeighbors, neighborList, coords,&
+                                              RijList)
      ! Call model compute
      ier = kim_api_model_compute(pkim)
      if (ier.lt.KIM_STATUS_OK) then
@@ -333,7 +342,8 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
      endif
      Energies(4) = energy
      if (verbose) &
-        print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(4), Spacings(4)
+        print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(4),&
+              Spacings(4)
 
      ! determine the new interval
      if (Energies(4) .lt. Energies(2)) then

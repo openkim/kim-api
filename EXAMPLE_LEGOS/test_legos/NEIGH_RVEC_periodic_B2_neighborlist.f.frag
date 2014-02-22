@@ -4,7 +4,8 @@
 !
 !-------------------------------------------------------------------------------
 subroutine NEIGH_RVEC_periodic_B2_neighborlist(half,CellsPerHalfSide, cutoff,  &
-                                      B2spacing, NN, neighborList, coords, RijList)
+                                               B2spacing, NN, neighborList,    &
+                                               coords, RijList)
   use, intrinsic :: iso_c_binding
   use KIM_API_F03
   implicit none
@@ -28,9 +29,13 @@ subroutine NEIGH_RVEC_periodic_B2_neighborlist(half,CellsPerHalfSide, cutoff,  &
 
   cutoff2 = cutoff**2
 
-  ! Cubic B2 cell positions ----------------------------------------------------------------------
-  B2shifts(1,1) = 0.0_cd;            B2shifts(2,1) = 0.0_cd;            B2shifts(3,1) = 0.0_cd
-  B2shifts(1,2) = 0.5_cd*B2spacing;  B2shifts(2,2) = 0.5_cd*B2spacing;  B2shifts(3,2) = 0.5_cd*B2spacing
+  ! Cubic B2 cell positions ----------------------------------------------------
+  B2shifts(1,1) = 0.0_cd
+  B2shifts(2,1) = 0.0_cd
+  B2shifts(3,1) = 0.0_cd
+  B2shifts(1,2) = 0.5_cd*B2spacing
+  B2shifts(2,2) = 0.5_cd*B2spacing
+  B2shifts(3,2) = 0.5_cd*B2spacing
 
   ! set coords
   coords(:,1) = B2shifts(1,1)
@@ -46,7 +51,8 @@ subroutine NEIGH_RVEC_periodic_B2_neighborlist(half,CellsPerHalfSide, cutoff,  &
               latVec(2) = j*B2spacing
               do k = -CellsPerHalfSide, CellsPerHalfSide
                  latVec(3) = k*B2spacing
-                 if (i.gt.0 .or. (i.eq.0 .and. (j.gt.0 .or. (j.eq.0 .and. k.gt.0)))) then
+                 if (i.gt.0 .or. (i.eq.0 .and. (j.gt.0 .or. &
+                                                  (j.eq.0 .and. k.gt.0)))) then
                     dx = latVec
                     if (dot_product(dx,dx).lt.cutoff2) then
                        ! we have a neighbor
@@ -94,7 +100,8 @@ subroutine NEIGH_RVEC_periodic_B2_neighborlist(half,CellsPerHalfSide, cutoff,  &
                  do m=1,2
                     dx = (latVec + B2shifts(:,m)) - B2shifts(:,atom)
                     if (dot_product(dx,dx).lt.cutoff2) then
-                       if (.not.( (i.eq.0) .and. (j.eq.0) .and. (k.eq.0) .and. (m.eq.atom) )) then
+                       if (.not.( (i.eq.0) .and. (j.eq.0) .and. (k.eq.0) .and. &
+                                  (m.eq.atom) )) then
                           ! we have a neighbor
                           a = a+1
                           neighborList(a,atom) = m
