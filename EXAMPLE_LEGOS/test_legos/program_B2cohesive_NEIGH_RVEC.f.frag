@@ -59,6 +59,7 @@ program TEST_NAME_STR
   use KIM_API_F03
   use mod_neighborlist
   implicit none
+  integer(c_int), parameter :: cd = c_double ! used for literal constants
 
 !============================== VARIABLE DEFINITIONS ==========================
 
@@ -200,6 +201,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   use, intrinsic :: iso_c_binding
   use KIM_API_F03
   implicit none
+  integer(c_int), parameter :: cd = c_double ! used for literal constants
 
   !-- Transferred variables
   type(c_ptr),    intent(in)     :: pkim

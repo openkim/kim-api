@@ -62,6 +62,7 @@ program TEST_NAME_STR
   use KIM_API_F03
   use mod_neighborlist
   implicit none
+  integer(c_int), parameter :: cd = c_double ! used for literal constants
 
   integer(c_int), parameter :: nCellsPerSide  = 2
   integer(c_int), parameter :: DIM            = 3
@@ -98,7 +99,7 @@ program TEST_NAME_STR
   character(len=KIM_KEY_STRING_LENGTH) :: modelname
   character(len=KIM_KEY_STRING_LENGTH) :: configfile
   ! configuration atom types (element symbols)
-  character(len=KIM_KEY_STRING_LENGTH), pointer conf_types(:)
+  character(len=KIM_KEY_STRING_LENGTH), pointer :: conf_types(:)
   real(c_double), pointer :: conf_coors(:,:)  ! configuration coordinates
   real(c_double), pointer :: conf_forces(:,:) ! configuration forces
   real(c_double)          :: conf_energy      ! configuration energy

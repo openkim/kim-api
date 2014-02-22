@@ -64,6 +64,7 @@ program TEST_NAME_STR
   use KIM_API_F03
   use mod_neighborlist
   implicit none
+  integer(c_int), parameter :: cd = c_double ! used for literal constants
 
   real(c_double), parameter :: FCCspacing     = FCC_SPACING_STR
   integer(c_int), parameter :: nCellsPerSide  = 2

@@ -8,6 +8,7 @@
 !-------------------------------------------------------------------------------
   subroutine pair(epsilon,sigma,A,B,C,r,phi,dphi,d2phi)
     implicit none
+    integer(c_int), parameter :: cd = c_double ! used for literal constants
 
     !-- Transferred variables
     real(c_double), intent(in)  :: epsilon, sigma, A, B, C
@@ -36,6 +37,7 @@
 !-------------------------------------------------------------------------------
   integer(c_int) function ReInit(pkim) bind(c)
     implicit none
+    integer(c_int), parameter :: cd = c_double ! used for literal constants
 
     !-- Transferred variables
     type(c_ptr), intent(in) :: pkim
@@ -189,6 +191,7 @@ integer(c_int) function model_init(pkim) bind(c)
   use MODEL_NAME_STR
   use KIM_API_F03
   implicit none
+  integer(c_int), parameter :: cd = c_double ! used for literal constants
 
   !-- Transferred variables
   type(c_ptr), intent(in) :: pkim

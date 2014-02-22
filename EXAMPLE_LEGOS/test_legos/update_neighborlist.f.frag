@@ -4,6 +4,7 @@ subroutine update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths, &
 use, intrinsic :: iso_c_binding
 use KIM_API_F03
 implicit none
+integer(c_int), parameter :: cd = c_double ! used for literal constants
 
 !-- Transferred variables
 integer(c_int),    intent(in)    :: DIM

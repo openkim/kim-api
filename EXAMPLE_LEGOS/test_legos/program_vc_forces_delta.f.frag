@@ -62,6 +62,7 @@ program vc_forces_delta
   use KIM_API_F03
   use mod_neighborlist
   implicit none
+  integer(c_int), parameter :: cd = c_double ! used for literal constants
 
   integer(c_int), parameter :: nCellsPerSide  = 2
   integer(c_int), parameter :: DIM            = 3

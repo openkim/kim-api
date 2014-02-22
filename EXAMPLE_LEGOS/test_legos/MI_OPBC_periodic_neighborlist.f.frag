@@ -10,6 +10,7 @@ subroutine MI_OPBC_periodic_neighborlist(half, numberOfParticles, coords,    &
   use, intrinsic :: iso_c_binding
   use KIM_API_F03
   implicit none
+  integer(c_int), parameter :: cd = c_double ! used for literal constants
 
   !-- Transferred variables
   logical,        intent(in)  :: half

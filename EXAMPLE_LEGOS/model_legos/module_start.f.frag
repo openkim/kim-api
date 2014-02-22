@@ -50,6 +50,8 @@ module MODEL_NAME_STR
 
   save
   private
+  integer(c_int), parameter :: cd = c_double ! used for literal constants
+
   public Compute_Energy_Forces
   public ReInit
   public Destroy
