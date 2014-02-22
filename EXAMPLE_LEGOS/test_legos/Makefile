@@ -102,6 +102,7 @@ run_forces_numer_deriv_for_all_models: test_run_forces_numer_deriv_for_all_model
 ex_test_Al_free_cluster: $(COMMON_FRAGMENTS)                    \
                          test_free_cluster_README               \
                          descriptor_file_neighborlist           \
+                         program_CDDL_header.f.frag             \
                          mod_neighborlist.f.frag                \
                          program_free_cluster.f.frag            \
                          MI_OPBC_cluster_neighborlist.f.frag    \
@@ -152,7 +153,9 @@ ex_test_Al_free_cluster: $(COMMON_FRAGMENTS)                    \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "virial                      double       energy              [6]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
         # make .F03 file in the directory
-	$(F_CAT) mod_neighborlist.f.frag                                                                      >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) program_CDDL_header.f.frag                                                                   >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) mod_neighborlist.f.frag                                                                      >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) program_free_cluster.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Al/g' \
@@ -170,6 +173,7 @@ ex_test_Al_free_cluster: $(COMMON_FRAGMENTS)                    \
 ex_test_Al_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
                                 test_FCCcohesive_README                      \
                                 descriptor_file_neighborlist                 \
+                                program_CDDL_header.f.frag                   \
                                 mod_neighborlist.f.frag                      \
                                 program_FCCcohesive_MI_OPBC.f.frag           \
                                 get_model_cutoff_firsttime.f.frag            \
@@ -208,7 +212,9 @@ ex_test_Al_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "reinit                      method       none                []"                                >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
         # make .F03 file in the directory
-	$(F_CAT) mod_neighborlist.f.frag                                                                      >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) program_CDDL_header.f.frag                                                                   >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) mod_neighborlist.f.frag                                                                      >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) program_FCCcohesive_MI_OPBC.f.frag  | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Al/g' \
@@ -229,6 +235,7 @@ ex_test_Al_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
 ex_test_ArNe_B2cohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                        \
                                     test_B2cohesive_README                     \
                                     descriptor_file_neighborlist               \
+                                    program_CDDL_header.f.frag                 \
                                     mod_neighborlist.f.frag                    \
                                     program_B2cohesive_NEIGH_RVEC.f.frag       \
                                     setup_B2_KIM_API_object.f.frag             \
@@ -264,7 +271,9 @@ ex_test_ArNe_B2cohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                        \
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "reinit                      method       none                []"                                >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
         # make .F03 file in the directory
-	$(F_CAT) mod_neighborlist.f.frag                                                                      >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) program_CDDL_header.f.frag                                                                   >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) mod_neighborlist.f.frag                                                                      >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) program_B2cohesive_NEIGH_RVEC.f.frag  | $(SED_CMD) \
          | sed -e 's/SPECIES1_NAME_STR/Ar/g' \
@@ -283,6 +292,7 @@ ex_test_ArNe_B2cohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                        \
 ex_test_Ar_FCCcohesiveCutoff_NEIGH_RVEC: $(COMMON_FRAGMENTS)                           \
                                          test_FCCcohesiveCutoff_README                 \
                                          descriptor_file_neighborlist                  \
+                                         program_CDDL_header.f.frag                    \
                                          mod_neighborlist.f.frag                       \
                                          program_FCCcohesiveCutoff_NEIGH_RVEC.f.frag   \
                                          NEIGH_RVEC_compute_equilibrium_spacing.f.frag \
@@ -318,7 +328,9 @@ ex_test_Ar_FCCcohesiveCutoff_NEIGH_RVEC: $(COMMON_FRAGMENTS)                    
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "reinit                      method       none                []"                                >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
         # make .F03 file in the directory
-	$(F_CAT) mod_neighborlist.f.frag                                                                      >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) program_CDDL_header.f.frag                                                                   >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) mod_neighborlist.f.frag                                                                      >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) program_FCCcohesiveCutoff_NEIGH_RVEC.f.frag  | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
@@ -336,6 +348,7 @@ ex_test_Ar_FCCcohesiveCutoff_NEIGH_RVEC: $(COMMON_FRAGMENTS)                    
 ex_test_Ar_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
                                 test_FCCcohesive_README                      \
                                 descriptor_file_neighborlist                 \
+                                program_CDDL_header.f.frag                   \
                                 mod_neighborlist.f.frag                      \
                                 program_FCCcohesive_MI_OPBC.f.frag           \
                                 get_model_cutoff_firsttime.f.frag            \
@@ -373,7 +386,9 @@ ex_test_Ar_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "reinit                      method       none                []"                                >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
         # make .F03 file in the directory
-	$(F_CAT) mod_neighborlist.f.frag                                                                      >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) program_CDDL_header.f.frag                                                                   >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) mod_neighborlist.f.frag                                                                      >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) program_FCCcohesive_MI_OPBC.f.frag  | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
@@ -393,6 +408,7 @@ ex_test_Ar_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
 ex_test_Ar_FCCcohesive_NEIGH_PURE: $(COMMON_FRAGMENTS)                          \
                                    test_FCCcohesive_README                      \
                                    descriptor_file_neighborlist                 \
+                                   program_CDDL_header.f.frag                   \
                                    mod_neighborlist.f.frag                      \
                                    program_FCCcohesive_NEIGH_PURE.f.frag        \
                                    get_model_cutoff_firsttime.f.frag            \
@@ -428,7 +444,9 @@ ex_test_Ar_FCCcohesive_NEIGH_PURE: $(COMMON_FRAGMENTS)                          
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "reinit                      method       none                []"                                >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
         # make .F03 file in the directory
-	$(F_CAT) mod_neighborlist.f.frag                                                                      >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) program_CDDL_header.f.frag                                                                   >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) mod_neighborlist.f.frag                                                                      >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) program_FCCcohesive_NEIGH_PURE.f.frag  | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
@@ -448,6 +466,7 @@ ex_test_Ar_FCCcohesive_NEIGH_PURE: $(COMMON_FRAGMENTS)                          
 ex_test_Ar_FCCcohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                           \
                                    test_FCCcohesive_README                       \
                                    descriptor_file_neighborlist                  \
+                                   program_CDDL_header.f.frag                    \
                                    mod_neighborlist.f.frag                       \
                                    program_FCCcohesive_NEIGH_RVEC.f.frag         \
                                    NEIGH_RVEC_compute_equilibrium_spacing.f.frag \
@@ -482,7 +501,9 @@ ex_test_Ar_FCCcohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                          
 	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "reinit                      method       none                []"                                >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
         # make .F03 file in the directory
-	$(F_CAT) mod_neighborlist.f.frag                                                                      >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) program_CDDL_header.f.frag                                                                   >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) mod_neighborlist.f.frag                                                                      >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) program_FCCcohesive_NEIGH_RVEC.f.frag  | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
@@ -537,6 +558,7 @@ ex_test_Ar_free_cluster_CLUSTER_C: $(COMMON_FRAGMENTS)                 \
 
 ex_test_Ar_free_cluster_CLUSTER_F03: $(COMMON_FRAGMENTS)                 \
                                      test_free_cluster_README            \
+                                     program_CDDL_header.f.frag          \
                                      program_free_cluster_CLUSTER.f.frag \
                                      create_FCC_configuration.f.frag
         # make directory
@@ -565,14 +587,17 @@ ex_test_Ar_free_cluster_CLUSTER_F03: $(COMMON_FRAGMENTS)                 \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "virial                      double       energy              [6]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
         # make .F03 file in the directory
+	$(F_CAT) program_CDDL_header.f.frag                                                                   >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) program_free_cluster_CLUSTER.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
-         | sed -e 's/FCC_SPACING_STR/5.26d0 ! in angstroms/g'                                                 >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+         | sed -e 's/FCC_SPACING_STR/5.26d0 ! in angstroms/g'                                                 >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) create_FCC_configuration.f.frag                                                              >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 
 ex_test_Ar_free_cluster_CLUSTER_memory_F03: $(COMMON_FRAGMENTS)                        \
                                             test_free_cluster_README                   \
+                                            program_CDDL_header.f.frag                 \
                                             program_free_cluster_CLUSTER_memory.f.frag \
                                             create_FCC_configuration.f.frag
         # make directory
@@ -601,15 +626,18 @@ ex_test_Ar_free_cluster_CLUSTER_memory_F03: $(COMMON_FRAGMENTS)                 
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "virial                      double       energy              [6]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
         # make .F03 file in the directory
+	$(F_CAT) program_CDDL_header.f.frag                                                                   >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) program_free_cluster_CLUSTER_memory.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
-         | sed -e 's/FCC_SPACING_STR/5.26d0 ! in angstroms/g'                                                 >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+         | sed -e 's/FCC_SPACING_STR/5.26d0 ! in angstroms/g'                                                 >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) create_FCC_configuration.f.frag                                                              >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 
 ex_test_Ar_free_cluster: $(COMMON_FRAGMENTS)                    \
                          test_free_cluster_README               \
                          descriptor_file_neighborlist           \
+                         program_CDDL_header.f.frag             \
                          mod_neighborlist.f.frag                \
                          program_free_cluster.f.frag            \
                          MI_OPBC_cluster_neighborlist.f.frag    \
@@ -660,7 +688,9 @@ ex_test_Ar_free_cluster: $(COMMON_FRAGMENTS)                    \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "virial                      double       energy              [6]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
         # make .F03 file in the directory
-	$(F_CAT) mod_neighborlist.f.frag                                                                      >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) program_CDDL_header.f.frag                                                                   >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) mod_neighborlist.f.frag                                                                      >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) program_free_cluster.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
@@ -678,6 +708,7 @@ ex_test_Ar_free_cluster: $(COMMON_FRAGMENTS)                    \
 ex_test_Cu_free_cluster: $(COMMON_FRAGMENTS)                    \
                          test_free_cluster_README               \
                          descriptor_file_neighborlist           \
+                         program_CDDL_header.f.frag             \
                          mod_neighborlist.f.frag                \
                          program_free_cluster.f.frag            \
                          MI_OPBC_cluster_neighborlist.f.frag    \
@@ -728,7 +759,9 @@ ex_test_Cu_free_cluster: $(COMMON_FRAGMENTS)                    \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "virial                      double       energy              [6]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
         # make .F03 file in the directory
-	$(F_CAT) mod_neighborlist.f.frag                                                                      >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) program_CDDL_header.f.frag                                                                   >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) mod_neighborlist.f.frag                                                                      >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) program_free_cluster.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Cu/g' \
@@ -746,6 +779,7 @@ ex_test_Cu_free_cluster: $(COMMON_FRAGMENTS)                    \
 ex_test_Ne_free_cluster: $(COMMON_FRAGMENTS)                    \
                          test_free_cluster_README               \
                          descriptor_file_neighborlist           \
+                         program_CDDL_header.f.frag             \
                          mod_neighborlist.f.frag                \
                          program_free_cluster.f.frag            \
                          MI_OPBC_cluster_neighborlist.f.frag    \
@@ -796,7 +830,9 @@ ex_test_Ne_free_cluster: $(COMMON_FRAGMENTS)                    \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "virial                      double       energy              [6]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
         # make .F03 file in the directory
-	$(F_CAT) mod_neighborlist.f.frag                                                                      >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) program_CDDL_header.f.frag                                                                   >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) mod_neighborlist.f.frag                                                                      >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) program_free_cluster.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ne/g' \
@@ -814,6 +850,7 @@ ex_test_Ne_free_cluster: $(COMMON_FRAGMENTS)                    \
 ex_test_Ne_free_cluster_SI: $(COMMON_FRAGMENTS)                    \
                             test_free_cluster_README               \
                             descriptor_file_neighborlist           \
+                            program_CDDL_header.f.frag             \
                             mod_neighborlist.f.frag                \
                             program_free_cluster.f.frag            \
                             MI_OPBC_cluster_neighborlist.f.frag    \
@@ -864,7 +901,9 @@ ex_test_Ne_free_cluster_SI: $(COMMON_FRAGMENTS)                    \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "virial                      double       energy              [6]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
         # make .F03 file in the directory
-	$(F_CAT) mod_neighborlist.f.frag                                                                      >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) program_CDDL_header.f.frag                                                                   >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) mod_neighborlist.f.frag                                                                      >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) program_free_cluster.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ne/g' \
@@ -882,6 +921,7 @@ ex_test_Ne_free_cluster_SI: $(COMMON_FRAGMENTS)                    \
 ex_test_Ne_free_cluster_stiff: $(COMMON_FRAGMENTS)                    \
                                test_free_cluster_stiff_README         \
                                descriptor_file_neighborlist           \
+                               program_CDDL_header.f.frag             \
                                mod_neighborlist.f.frag                \
                                program_free_cluster_stiff.f.frag      \
                                MI_OPBC_cluster_neighborlist.f.frag    \
@@ -934,7 +974,9 @@ ex_test_Ne_free_cluster_stiff: $(COMMON_FRAGMENTS)                    \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
 	echo "virial                      double       energy              [6]"                               >> $(KIM_EX_TESTS_DIR)/$@/$@.kim
         # make .F03 file in the directory
-	$(F_CAT) mod_neighborlist.f.frag                                                                      >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) program_CDDL_header.f.frag                                                                   >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) mod_neighborlist.f.frag                                                                      >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) program_free_cluster_stiff.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ne/g' \
@@ -969,6 +1011,7 @@ ex_test_demo_F03: dir_ex_test_demo_F03               \
 vc_forces_delta: Makefile                               \
                  test_Makefile                          \
                  vc_forces_delta_README                 \
+                 program_CDDL_header.f.frag             \
                  mod_neighborlist.f.frag                \
                  program_vc_forces_delta.f.frag         \
                  get_model_supported_types.f.frag       \
@@ -989,7 +1032,9 @@ vc_forces_delta: Makefile                               \
         # make Makefile in the directory
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .F03 file in the directory
-	$(F_CAT) mod_neighborlist.f.frag                                                                      >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) program_CDDL_header.f.frag                                                                   >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) mod_neighborlist.f.frag                                                                      >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) program_vc_forces_delta.f.frag  | $(SED_CMD)                                                 >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
@@ -1014,6 +1059,7 @@ vc_forces_delta: Makefile                               \
 vc_forces_numer_deriv: Makefile                               \
                        test_Makefile                          \
                        vc_forces_numer_deriv_README           \
+                       program_CDDL_header.f.frag             \
                        mod_neighborlist.f.frag                \
                        program_vc_forces_numer_deriv.f.frag   \
                        get_model_supported_types.f.frag       \
@@ -1035,7 +1081,9 @@ vc_forces_numer_deriv: Makefile                               \
         # make Makefile in the directory
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .F03 file in the directory
-	$(F_CAT) mod_neighborlist.f.frag                                                                      >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) program_CDDL_header.f.frag                                                                   >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) mod_neighborlist.f.frag                                                                      >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) program_vc_forces_numer_deriv.f.frag  | $(SED_CMD)                                           >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
@@ -1062,6 +1110,7 @@ vc_forces_numer_deriv: Makefile                               \
 vc_config_ener_forces: Makefile                                 \
                        test_Makefile                            \
                        vc_config_ener_forces_README             \
+                       program_CDDL_header.f.frag               \
                        mod_neighborlist.f.frag                  \
                        program_vc_config_ener_forces.f.frag     \
                        get_model_NBC_methods.f.frag             \
@@ -1080,7 +1129,9 @@ vc_config_ener_forces: Makefile                                 \
         # make Makefile in the directory
 	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .F03 file in the directory
-	$(F_CAT) mod_neighborlist.f.frag                                                                      >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) program_CDDL_header.f.frag                                                                   >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) mod_neighborlist.f.frag                                                                      >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) program_vc_config_ener_forces.f.frag  | $(SED_CMD)                                           >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03

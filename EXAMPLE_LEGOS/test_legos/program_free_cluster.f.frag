@@ -30,6 +30,11 @@
 !
 
 
+!
+! Release: This file is part of the openkim-api.git package.
+!
+
+
 !*******************************************************************************
 !**
 !**  PROGRAM TEST_NAME_STR
@@ -45,8 +50,6 @@
 !**        MI_OPBC_H
 !**        MI_OPBC_F
 !**        CLUSTER
-!**
-!**  Release: This file is part of the openkim-api.git repository.
 !**
 !*******************************************************************************
 

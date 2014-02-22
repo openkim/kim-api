@@ -6,9 +6,6 @@
 !
 !-------------------------------------------------------------------------------
 
-#include "KIM_API_status.h"
-#define THIS_FILE_NAME __FILE__
-
 module mod_neighborlist
 
   use, intrinsic :: iso_c_binding
