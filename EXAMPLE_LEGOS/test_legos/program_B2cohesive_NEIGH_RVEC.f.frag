@@ -33,8 +33,8 @@ program TEST_NAME_STR
   character(len=2), parameter :: specname2   = 'SPECIES2_NAME_STR'
   real(c_double),   parameter :: TOL         = 1.0e-8_cd
   real(c_double),   parameter :: B2spacing   = B2_SPACING_STR
-  real(c_double),   parameter :: MinSpacing  = 0.800_cd*B2spacing
-  real(c_double),   parameter :: MaxSpacing  = 1.200_cd*B2spacing
+  real(c_double),   parameter :: MinSpacing  = 0.60_cd*B2spacing
+  real(c_double),   parameter :: MaxSpacing  = 1.20_cd*B2spacing
   integer(c_int),   parameter :: DIM         = 3
   integer(c_int),   parameter :: SupportHalf = 1            ! True
 
