@@ -41,7 +41,6 @@ subroutine setup_neighborlist_Rij_KIM_access(pkim, NLRvecLocs)
 
   !-- Local variables
   integer(c_int), parameter :: SizeOne = 1
-  integer(c_int), external  :: get_neigh_Rij
   integer(c_int)            :: ier, idum
 
   ! store pointers to neighbor list object and access function
@@ -53,7 +52,7 @@ subroutine setup_neighborlist_Rij_KIM_access(pkim, NLRvecLocs)
      stop
   endif
   ier = kim_api_set_method(pkim, "get_neigh", SizeOne, &
-        loc_get_neigh_Rij())
+                           c_funloc(get_neigh_Rij))
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                  "kim_api_set_method", ier)
@@ -82,7 +81,6 @@ subroutine setup_neighborlist_no_Rij_KIM_access(pkim, N, neighborList)
 
   !-- Local variables
   integer(c_int), parameter :: SizeOne = 1
-  integer(c_int), external  :: get_neigh_no_Rij
   integer(c_int)            :: ier, idum
 
   ! store pointers to neighbor list object and access function
@@ -90,28 +88,20 @@ subroutine setup_neighborlist_no_Rij_KIM_access(pkim, N, neighborList)
   ier = kim_api_set_data(pkim, "neighObject", SizeOne, c_loc(neighborList))
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                                   "kim_api_set_data", ier)
+                                 "kim_api_set_data", ier)
      stop
   endif
   ier = kim_api_set_method(pkim, "get_neigh", SizeOne, &
-        loc_get_neigh_no_Rij())
+                           c_funloc(get_neigh_no_Rij))
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                                   "kim_api_set_method", ier)
+                                 "kim_api_set_method", ier)
      stop
   endif
 
   return
 
 end subroutine setup_neighborlist_no_Rij_KIM_access
-
-type(c_funptr) function loc_get_neigh_no_Rij()
-loc_get_neigh_no_Rij = c_funloc(get_neigh_no_Rij)
-end function loc_get_neigh_no_Rij
-
-type(c_funptr) function loc_get_neigh_Rij()
-loc_get_neigh_Rij = c_funloc(get_neigh_Rij)
-end function loc_get_neigh_Rij
 
 !-------------------------------------------------------------------------------
 !
