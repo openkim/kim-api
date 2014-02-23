@@ -127,7 +127,12 @@ int main()
 
    /* Get KIM Model names */
    printf("Please enter two valid KIM Model names: \n");
-   scanf("%s %s", modelname0, modelname1);
+   status = scanf("%s %s", modelname0, modelname1);
+   if (2 != status)
+   {
+     KIM_API_report_error(__LINE__, __FILE__, "Unable to read two model names",
+                          status);
+   }
 
    /* initialize the two models */
    status = KIM_API_init(&pkim_periodic_model_0, testname, modelname0);

@@ -83,7 +83,13 @@ int main(int argc, char* argv[])
 
    /* Get KIM Model name to use */
    printf("Please enter a valid KIM model name: \n");
-   scanf("%s",modelname);
+   status = scanf("%s",modelname);
+   if (1 != status)
+   {
+     KIM_API_report_error(__LINE__, __FILE__, "Unable to read modelname",
+                          status);
+     exit(1);
+   }
 
    /* Initialize the KIM Model */
    status = KIM_API_init(&pkim, testname, modelname);
