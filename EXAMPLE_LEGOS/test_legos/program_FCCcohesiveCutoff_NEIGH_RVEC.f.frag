@@ -223,6 +223,7 @@ integer(c_int) function check_model_parameters(pkim)
      endif
   enddo
   call KIM_API_c_free(plistOfParameters) ! deallocate memory
+  listOfParameters => null()
 
   if (paramIndex .gt. 0) then
      print '("PARAM_FREE_cutoff IS in the list, at index ",I2)', paramIndex

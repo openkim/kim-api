@@ -44,7 +44,7 @@ do i=1,num_types
 enddo
 
 ! free temporary storage
-call KIM_API_c_free(ptypes)
+call KIM_API_c_free(ptypes); types => null()
 call kim_api_free(pkim,ier)
 
 return
