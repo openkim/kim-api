@@ -4,22 +4,20 @@
 !
 !-------------------------------------------------------------------------------
 subroutine NEIGH_RVEC_periodic_B2_neighborlist(half,CellsPerHalfSide, cutoff,  &
-                                               B2spacing, NN, neighborList,    &
-                                               coords, RijList)
+                                               B2spacing, neighObject, coords)
   use, intrinsic :: iso_c_binding
   use KIM_API_F03
+  use mod_neighborlist
   implicit none
   integer(c_int), parameter :: cd = c_double ! used for literal constants
 
   !-- Transferred variables
-  logical,                             intent(in)  :: half
-  integer(c_int),                      intent(in)  :: CellsPerHalfSide
-  real(c_double),                      intent(in)  :: cutoff
-  real(c_double),                      intent(in)  :: B2spacing
-  integer(c_int),                      intent(in)  :: NN
-  integer(c_int), dimension(NN+1,1),   intent(out) :: neighborList
-  real(c_double), dimension(3,2),      intent(out) :: coords
-  real(c_double), dimension(3,NN+1,1), intent(out) :: RijList
+  logical,                             intent(in)    :: half
+  integer(c_int),                      intent(in)    :: CellsPerHalfSide
+  real(c_double),                      intent(in)    :: cutoff
+  real(c_double),                      intent(in)    :: B2spacing
+  type(neighObject_type),              intent(inout) :: neighObject
+  real(c_double), dimension(3,2),      intent(out)   :: coords
 
   !-- Local variables
   real(c_double) dx(3)
@@ -58,15 +56,15 @@ subroutine NEIGH_RVEC_periodic_B2_neighborlist(half,CellsPerHalfSide, cutoff,  &
                     if (dot_product(dx,dx).lt.cutoff2) then
                        ! we have a neighbor
                        a = a + 1
-                       neighborList(a,atom) = atom
-                       RijList(:,a-1,atom)  = dx
+                       neighObject%neighborList(a,atom) = atom
+                       neighObject%RijList(:,a-1,atom)  = dx
                     endif
                  endif
               enddo
            enddo
         enddo
         ! this atom has a-1 neighbors (so far)
-        neighborList(1,atom) = a - 1
+        neighObject%neighborList(1,atom) = a - 1
      enddo
 
      ! Atom 1 gets all images of atom 2; atom 2 gets no atom 1 images
@@ -80,15 +78,15 @@ subroutine NEIGH_RVEC_periodic_B2_neighborlist(half,CellsPerHalfSide, cutoff,  &
               if (dot_product(dx,dx).lt.cutoff2) then
                  ! we have a neighbor
                  a = a + 1
-                 neighborList(a,atom) = 2
-                 RijList(:,a-1,atom)  = dx
+                 neighObject%neighborList(a,atom) = 2
+                 neighObject%RijList(:,a-1,atom)  = dx
               endif
            enddo
         enddo
      enddo
 
      ! atom 1 has a-1 neighbors
-     neighborList(1,1) = a - 1
+     neighObject%neighborList(1,1) = a - 1
   else
      do atom = 1,2
         a = 1
@@ -105,8 +103,8 @@ subroutine NEIGH_RVEC_periodic_B2_neighborlist(half,CellsPerHalfSide, cutoff,  &
                                   (m.eq.atom) )) then
                           ! we have a neighbor
                           a = a+1
-                          neighborList(a,atom) = m
-                          RijList(:,a-1,atom)  = dx
+                          neighObject%neighborList(a,atom) = m
+                          neighObject%RijList(:,a-1,atom)  = dx
                        endif
                     endif
                  enddo
@@ -114,7 +112,7 @@ subroutine NEIGH_RVEC_periodic_B2_neighborlist(half,CellsPerHalfSide, cutoff,  &
            enddo
         enddo
         ! atom 1 has a-1 neighbors
-        neighborList(1,atom) = a-1
+        neighObject%neighborList(1,atom) = a-1
      enddo
   endif
 

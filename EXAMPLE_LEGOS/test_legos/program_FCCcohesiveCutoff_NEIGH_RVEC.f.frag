@@ -49,9 +49,7 @@ program TEST_NAME_STR
 
   ! neighbor list
   !
-  type(neighObject_type), target :: NLRvecLocs
-  integer(c_int), allocatable, target :: neighborList(:,:)
-  real(c_double), allocatable, target :: RijList(:,:,:)
+  type(neighObject_type), target :: neighObject
   integer(c_int)  :: NNeighbors  ! maximum number of neighbors for an atom
 
   ! KIM variables
@@ -132,12 +130,9 @@ program TEST_NAME_STR
   !
   ! allocate memory for the neighbor list and Rij vectors
   !
-  allocate(neighborList(NNeighbors+1,N))
-  allocate(RijList(3,NNeighbors+1,N))
-  NLRvecLocs%pneighborList = c_loc(neighborList)
-  NLRvecLocs%pRijList = c_loc(RijList)
-  NLRvecLocs%NNeighbors = NNeighbors
-  call setup_neighborlist_Rij_KIM_access(pkim, NLRvecLocs)
+  allocate(neighObject%neighborList(NNeighbors+1,N))
+  allocate(neighObject%RijList(3,NNeighbors+1,N))
+  call setup_neighborlist_KIM_access(pkim, neighObject)
   !
 
   ! loop over an increasing cutoff radius
@@ -148,8 +143,7 @@ program TEST_NAME_STR
      !
      call NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
           DIM,CellsPerCutoff,MinSpacing,MaxSpacing,    &
-          TOL,N,NNeighbors,neighborlist,RijList,       &
-          .false.,FinalSpacing,FinalEnergy)
+          TOL,N,neighObject,.false.,FinalSpacing,FinalEnergy)
 
      ! print results to screen
      !
@@ -180,8 +174,8 @@ program TEST_NAME_STR
 
   ! Don't forget to free and/or deallocate
   !
-  deallocate(neighborList)
-  deallocate(RijList)
+  deallocate(neighObject%neighborList)
+  deallocate(neighObject%RijList)
   call free_KIM_API_object(pkim)
 
   stop

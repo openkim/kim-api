@@ -50,10 +50,8 @@ program TEST_NAME_STR
   !
   ! neighbor list
   !
-  type(neighObject_type), target :: NLRvecLocs
-  integer(c_int), allocatable, target :: neighborList(:,:)
-  real(c_double), allocatable, target :: RijList(:,:,:)
-  real(c_double), allocatable         :: coordsave(:,:)
+  type(neighObject_type), target :: neighObject
+  real(c_double), allocatable    :: coordsave(:,:)
   logical do_update_list
 
   !
@@ -293,78 +291,27 @@ program TEST_NAME_STR
      ! store pointers to neighbor list object and access function
      !
      if (nbc.le.5) then
-        allocate(neighborList(N+1,N))
+        allocate(neighObject%neighborList(N+1,N))
         if (nbc.eq.0 .or. nbc.eq.2) then
-           allocate(RijList(DIM,N+1,N))
-           NLRvecLocs%pneighborList = c_loc(neighborList)
-           NLRvecLocs%pRijList = c_loc(RijList)
-           NLRvecLocs%NNeighbors = N
-           ier = kim_api_set_data(pkim, "neighObject", SizeOne, &
-                                  c_loc(NLRvecLocs))
-           if (ier.lt.KIM_STATUS_OK) then
-              idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                                          "kim_api_set_data", ier)
-              stop
-           endif
-        else
-           ier = kim_api_set_data(pkim, "neighObject", SizeOne, &
-                                  c_loc(neighborList))
-           if (ier.lt.KIM_STATUS_OK) then
-              idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                                          "kim_api_set_data", ier)
-              stop
-           endif
+          allocate(neighObject%RijList(DIM,N+1,N))
+        endif
+        ier = kim_api_set_data(pkim, "neighObject", SizeOne, &
+                               c_loc(neighObject))
+        if (ier.lt.KIM_STATUS_OK) then
+          idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
+                                      "kim_api_set_data", ier)
+          stop
         endif
      endif
 
      ! Set pointer in KIM object to neighbor list routine
      !
-     if (nbc.eq.0) then
+     if (nbc.ne.6) then
         ier = kim_api_set_method(pkim, "get_neigh", SizeOne, &
-                                 c_funloc(get_neigh_Rij))
+                                 c_funloc(get_neigh))
         if (ier.lt.KIM_STATUS_OK) then
            idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                        "kim_api_set_method", ier)
-           stop
-        endif
-     elseif (nbc.eq.1) then
-        ier = kim_api_set_method(pkim, "get_neigh", SizeOne, &
-                                 c_funloc(get_neigh_no_Rij))
-        if (ier.lt.KIM_STATUS_OK) then
-           idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                                       "kim_api_set_method", ier)
-           stop
-        endif
-     elseif (nbc.eq.2) then
-        ier = kim_api_set_method(pkim, "get_neigh", SizeOne, &
-                                 c_funloc(get_neigh_Rij))
-        if (ier.lt.KIM_STATUS_OK) then
-           idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                                       "kim_api_set_method", ier)
-           stop
-        endif
-     elseif (nbc.eq.3) then
-        ier = kim_api_set_method(pkim, "get_neigh", SizeOne, &
-                                 c_funloc(get_neigh_no_Rij))
-        if (ier.lt.KIM_STATUS_OK) then
-           idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                                       "kim_api_set_method", ier)
-           stop
-        endif
-     elseif (nbc.eq.4) then
-        ier = kim_api_set_method(pkim, "get_neigh", SizeOne, &
-                                 c_funloc(get_neigh_no_Rij))
-        if (ier.lt.KIM_STATUS_OK) then
-           idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                                       "kim_api_set_multiple_data", ier)
-           stop
-        endif
-     elseif (nbc.eq.5) then
-        ier = kim_api_set_method(pkim, "get_neigh", SizeOne, &
-                                 c_funloc(get_neigh_no_Rij))
-        if (ier.lt.KIM_STATUS_OK) then
-           idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                                       "kim_api_set_multiple_data", ier)
            stop
         endif
      endif
@@ -434,7 +381,7 @@ program TEST_NAME_STR
         allocate(coordsave(DIM,N))
         call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths, &
                                  NBC_Method,do_update_list,coordsave, &
-                                 neighborList,RijList,ier)
+                                 neighObject,ier)
         if (ier.lt.KIM_STATUS_OK) then
            idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                        "update_neighborlist", ier)
@@ -489,10 +436,10 @@ program TEST_NAME_STR
      !
      call KIM_API_c_free(pNBC_Method); NBC_Method => null()  ! free the memory
      if (nbc.le.5) then ! deallocate neighbor list storage
-        deallocate(neighborList)
+        deallocate(neighObject%neighborList)
         deallocate(coordsave)
         if (nbc.eq.0.or.nbc.eq.2) then
-           deallocate(RijList)
+           deallocate(neighObject%RijList)
         endif
      endif
      ier = kim_api_model_destroy(pkim)

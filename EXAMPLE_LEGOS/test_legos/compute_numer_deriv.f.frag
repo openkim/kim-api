@@ -1,30 +1,29 @@
 subroutine compute_numer_deriv(atomnum,dir,pkim,DIM,N,coords,cutoff,cutpad,   &
                                boxSideLengths,NBC_Method,do_update_list,      &
-                               coordsave,neighborList,RijList,deriv,deriv_err,&
-                               ier)
+                               coordsave,neighObject,deriv,deriv_err,ier)
 use, intrinsic :: iso_c_binding
 use KIM_API_F03
+use mod_neighborlist
 implicit none
 integer(c_int), parameter :: cd = c_double ! used for literal constants
 
 !--Transferred variables
-integer(c_int), intent(in)    :: atomnum
-integer(c_int), intent(in)    :: dir
-type(c_ptr),    intent(in)    :: pkim
-integer(c_int), intent(in)    :: DIM
-integer(c_int), intent(in)    :: N
-real(c_double), intent(inout) :: coords(DIM,N)
-real(c_double), intent(in)    :: cutoff
-real(c_double), intent(in)    :: cutpad
-real(c_double), intent(in)    :: boxSideLengths(DIM)
+integer(c_int),         intent(in)    :: atomnum
+integer(c_int),         intent(in)    :: dir
+type(c_ptr),            intent(in)    :: pkim
+integer(c_int),         intent(in)    :: DIM
+integer(c_int),         intent(in)    :: N
+real(c_double),         intent(inout) :: coords(DIM,N)
+real(c_double),         intent(in)    :: cutoff
+real(c_double),         intent(in)    :: cutpad
+real(c_double),         intent(in)    :: boxSideLengths(DIM)
 character(len=KIM_KEY_STRING_LENGTH), intent(in) :: NBC_Method
-logical,        intent(inout) :: do_update_list
-real(c_double), intent(inout) :: coordsave(DIM,N)
-integer(c_int), intent(inout) :: neighborList(N+1,N)
-real(c_double), intent(inout) :: RijList(DIM,N+1,N)
-real(c_double), intent(out)   :: deriv
-real(c_double), intent(out)   :: deriv_err
-integer(c_int), intent(out)   :: ier
+logical,                intent(inout) :: do_update_list
+real(c_double),         intent(inout) :: coordsave(DIM,N)
+type(neighObject_type), intent(inout) :: neighObject
+real(c_double),         intent(out)   :: deriv
+real(c_double),         intent(out)   :: deriv_err
+integer(c_int),         intent(out)   :: ier
 
 !-- Local variables
 real(c_double), parameter :: eps_init = 1.e-6_cd
@@ -128,7 +127,7 @@ contains
    if (doing_neighbors) &
       call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths, &
                                NBC_Method,do_update_list,coordsave,       &
-                               neighborList,RijList,ier)
+                               neighObject,ier)
    ier = kim_api_model_compute(pkim)
    if (ier.lt.KIM_STATUS_OK) then
       idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
@@ -140,7 +139,7 @@ contains
    if (doing_neighbors) &
       call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths, &
                                NBC_Method,do_update_list,coordsave,       &
-                               neighborList,RijList,ier)
+                               neighObject,ier)
    ier = kim_api_model_compute(pkim)
    if (ier.lt.KIM_STATUS_OK) then
       idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
@@ -152,7 +151,7 @@ contains
    if (doing_neighbors) &
       call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths, &
                                NBC_Method,do_update_list,coordsave,       &
-                               neighborList,RijList,ier)
+                               neighObject,ier)
    a(1,1)=(fp-fm)/(2.0_cd*hh)
    err=BIG
    ! successive columns in the Neville tableau will go to smaller step sizes
@@ -164,7 +163,7 @@ contains
       if (doing_neighbors) &
          call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths, &
                                   NBC_Method,do_update_list,coordsave,       &
-                                  neighborList,RijList,ier)
+                                  neighObject,ier)
       ier = kim_api_model_compute(pkim)
       if (ier.lt.KIM_STATUS_OK) then
          idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
@@ -176,7 +175,7 @@ contains
       if (doing_neighbors) &
          call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths, &
                                   NBC_Method,do_update_list,coordsave,       &
-                                  neighborList,RijList,ier)
+                                  neighObject,ier)
       ier = kim_api_model_compute(pkim)
       if (ier.lt.KIM_STATUS_OK) then
          idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
@@ -188,7 +187,7 @@ contains
       if (doing_neighbors) &
          call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths, &
                                   NBC_Method,do_update_list,coordsave,       &
-                                  neighborList,RijList,ier)
+                                  neighObject,ier)
       a(1,i)=(fp-fm)/(2.0_cd*hh)
       fac=CON2
       ! compute extrapolations of various orders, requiring no new function

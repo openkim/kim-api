@@ -40,7 +40,7 @@ program TEST_NAME_STR
   ! significant local variables
   !
   real(c_double)                      :: rcut  ! cutoff radius of the potential
-  integer(c_int), allocatable, target :: neighborList(:,:)  ! neighbor list mem
+  type(neighObject_type), target      :: neighObject   ! neighbor list object
   real(c_double)                      :: FinalSpacing  ! lattice parameter
   real(c_double)                      :: FinalEnergy   ! energy/atom of crystal
                                                        ! at current spacing
@@ -82,8 +82,8 @@ program TEST_NAME_STR
   ! allocate storage for neighbor lists, compute them for the first time,
   ! and store necessary pointers in KIM API object
   !
-  allocate(neighborList(N+1, N))
-  call setup_neighborlist_no_Rij_KIM_access(pkim, N, neighborList)
+  allocate(neighObject%neighborList(N+1, N))
+  call setup_neighborlist_KIM_access(pkim, neighObject)
 
 
   ! find equilibrium spacing by minimizing coheseive energy with respect
@@ -91,7 +91,7 @@ program TEST_NAME_STR
   !
   call MI_OPBC_compute_equilibrium_spacing(pkim, &
          DIM,CellsPerSide,MinSpacing,MaxSpacing, &
-         TOL,N,neighborlist,.false.,             &
+         TOL,N,neighObject,.false.,              &
          FinalSpacing,FinalEnergy)
 
   ! print results to screen
@@ -109,7 +109,7 @@ program TEST_NAME_STR
 
   ! Don't forget to free and/or deallocate
   !
-  deallocate(neighborList)
+  deallocate(neighObject%neighborList)
   call free_KIM_API_object(pkim)
 
   stop
@@ -126,25 +126,26 @@ end program TEST_NAME_STR
 !-------------------------------------------------------------------------------
 subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
              DIM,CellsPerSide,MinSpacing,MaxSpacing, &
-             TOL,N,neighborlist,verbose,             &
+             TOL,N,neighObject,verbose,              &
              RetSpacing,RetEnergy)
   use, intrinsic :: iso_c_binding
   use KIM_API_F03
+  use mod_neighborlist
   implicit none
   integer(c_int), parameter :: cd = c_double ! used for literal constants
 
   !-- Transferred variables
-  type(c_ptr),    intent(in)     :: pkim
-  integer(c_int), intent(in)     :: DIM
-  integer(c_int), intent(in)     :: CellsPerSide
-  real(c_double), intent(in)     :: MinSpacing
-  real(c_double), intent(in)     :: MaxSpacing
-  real(c_double), intent(in)     :: TOL
-  integer(c_int), intent(in)     :: N
-  integer(c_int), intent(inout)  :: neighborList(N+1,N)
-  logical,        intent(in)     :: verbose
-  real(c_double), intent(out)    :: RetSpacing
-  real(c_double), intent(out)    :: RetEnergy
+  type(c_ptr),            intent(in)    :: pkim
+  integer(c_int),         intent(in)    :: DIM
+  integer(c_int),         intent(in)    :: CellsPerSide
+  real(c_double),         intent(in)    :: MinSpacing
+  real(c_double),         intent(in)    :: MaxSpacing
+  real(c_double),         intent(in)    :: TOL
+  integer(c_int),         intent(in)    :: N
+  type(neighObject_type), intent(inout) :: neighObject
+  logical,                intent(in)    :: verbose
+  real(c_double),         intent(out)   :: RetSpacing
+  real(c_double),         intent(out)   :: RetEnergy
 
   !-- Local variables
   real(c_double), parameter :: Golden = (1.0_cd + sqrt(5.0_cd))/2.0_cd
@@ -207,7 +208,7 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   boxSideLengths(:) = Spacings(1)*CellsPerSide
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
   call MI_OPBC_periodic_neighborlist(halfflag, N, coords, (cutoff+cutpad), &
-                                     boxSideLengths, MiddleAtomId, neighborList)
+                                     boxSideLengths, MiddleAtomId, neighObject)
   ier = kim_api_model_compute(pkim)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
@@ -226,7 +227,7 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   boxSideLengths(:) = Spacings(3)*CellsPerSide
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
   call MI_OPBC_periodic_neighborlist(halfflag, N, coords, (cutoff+cutpad), &
-                                     boxSideLengths, MiddleAtomId, neighborList)
+                                     boxSideLengths, MiddleAtomId, neighObject)
   ! Call model compute
   ier = kim_api_model_compute(pkim)
   if (ier.lt.KIM_STATUS_OK) then
@@ -246,7 +247,7 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   boxSideLengths(:) = Spacings(2)*CellsPerSide
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
   call MI_OPBC_periodic_neighborlist(halfflag, N, coords, (cutoff+cutpad), &
-                                     boxSideLengths, MiddleAtomId, neighborList)
+                                     boxSideLengths, MiddleAtomId, neighObject)
   ! Call model compute
   ier = kim_api_model_compute(pkim)
   if (ier.lt.KIM_STATUS_OK) then
@@ -273,7 +274,7 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
      ! compute new neighbor lists (could be done more intelligently, I'm sure)
      call MI_OPBC_periodic_neighborlist(halfflag, N, coords, (cutoff+cutpad), &
                                         boxSideLengths, MiddleAtomId, &
-                                        neighborList)
+                                        neighObject)
      ! Call model compute
      ier = kim_api_model_compute(pkim)
      if (ier.lt.KIM_STATUS_OK) then

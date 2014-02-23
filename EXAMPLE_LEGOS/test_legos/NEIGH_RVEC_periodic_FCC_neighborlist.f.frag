@@ -4,24 +4,22 @@
 !
 !-------------------------------------------------------------------------------
 subroutine NEIGH_RVEC_periodic_FCC_neighborlist(half,CellsPerHalfSide,cutoff, &
-                                                FCCspacing,N,NN,neighborList, &
-                                                coords,RijList)
+                                                FCCspacing,N,neighObject, &
+                                                coords)
   use, intrinsic :: iso_c_binding
   use KIM_API_F03
+  use mod_neighborlist
   implicit none
   integer(c_int), parameter :: cd = c_double ! used for literal constants
 
   !-- Transferred variables
-  logical,                             intent(in)  :: half
-  integer(c_int),                      intent(in)  :: CellsPerHalfSide
-  real(c_double),                      intent(in)  :: cutoff
-  real(c_double),                      intent(in)  :: FCCspacing
-  integer(c_int),                      intent(in)  :: N
-  integer(c_int),                      intent(in)  :: NN
-  integer(c_int), dimension(NN+1,N),   intent(out) :: neighborList
-  real(c_double), dimension(3,N),      intent(out) :: coords
-  real(c_double), dimension(3,NN+1,N), intent(out) :: RijList
-
+  logical,                             intent(in)    :: half
+  integer(c_int),                      intent(in)    :: CellsPerHalfSide
+  real(c_double),                      intent(in)    :: cutoff
+  real(c_double),                      intent(in)    :: FCCspacing
+  integer(c_int),                      intent(in)    :: N
+  real(c_double), dimension(3,N),      intent(out)   :: coords
+  type(neighObject_type),              intent(inout) :: neighObject
   !-- Local variables
   real(c_double) dx(3)
   real(c_double) cutoff2
@@ -69,8 +67,8 @@ subroutine NEIGH_RVEC_periodic_FCC_neighborlist(half,CellsPerHalfSide,cutoff, &
                     if (dot_product(dx,dx).lt.cutoff2) then
                        ! we have a neighbor
                        a(atom) = a(atom) + 1
-                       neighborList(a(atom),atom) = atom
-                       RijList(:,a(atom)-1,atom)  = dx
+                       neighObject%neighborList(a(atom),atom) = atom
+                       neighObject%RijList(:,a(atom)-1,atom)  = dx
                     endif
                  endif
               enddo
@@ -93,8 +91,8 @@ subroutine NEIGH_RVEC_periodic_FCC_neighborlist(half,CellsPerHalfSide,cutoff, &
                        if (dot_product(dx,dx).lt.cutoff2) then
                           ! we have a neighbor
                           a(atomi) = a(atomi) + 1
-                          neighborList(a(atomi),atomi) = 1
-                          RijList(:,a(atomi)-1,atomi)  = dx
+                          neighObject%neighborList(a(atomi),atomi) = 1
+                          neighObject%RijList(:,a(atomi)-1,atomi)  = dx
                        endif
                     endif
                  enddo
@@ -102,7 +100,7 @@ subroutine NEIGH_RVEC_periodic_FCC_neighborlist(half,CellsPerHalfSide,cutoff, &
            enddo
         enddo
         ! atomi has a(atomi)-1 neighbors
-        neighborList(1,atomi) = a(atomi) - 1
+        neighObject%neighborList(1,atomi) = a(atomi) - 1
      enddo
   else
      atom = 1
@@ -120,8 +118,8 @@ subroutine NEIGH_RVEC_periodic_FCC_neighborlist(half,CellsPerHalfSide,cutoff, &
                                (m.eq.1) )) then
                        ! we have a neighbor
                        a(atom) = a(atom)+1
-                       neighborList(a(atom),1) = 1
-                       RijList(:,a(atom)-1,1) = dx
+                       neighObject%neighborList(a(atom),1) = 1
+                       neighObject%RijList(:,a(atom)-1,1) = dx
                     endif
                  endif
               enddo
@@ -129,7 +127,7 @@ subroutine NEIGH_RVEC_periodic_FCC_neighborlist(half,CellsPerHalfSide,cutoff, &
         enddo
      enddo
      ! atom has a(atom)-1 neighbors
-     neighborList(1,1) = a(atom)-1
+     neighObject%neighborList(1,1) = a(atom)-1
   endif
 
   return
