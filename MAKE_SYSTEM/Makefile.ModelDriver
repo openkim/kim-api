@@ -59,7 +59,8 @@ STATIC_COMP_WARNING:
 
 all: $(MODEL_DRIVER_BUILD_TARGET)
 
-ifneq ("C", "$(MODEL_DRIVER_INIT_FUNCTION_LANG)")
+# This feature should be removed once cray pointers go awasy
+ifeq ("Fortran", "$(MODEL_DRIVER_INIT_FUNCTION_LANG)")
    MODEL_DRIVER_INIT_FUNC_NAME = `echo $(MODEL_DRIVER_INIT_FUNCTION_NAME) | tr 'A-Z' 'a-z'`_
 else
    MODEL_DRIVER_INIT_FUNC_NAME = $(MODEL_DRIVER_INIT_FUNCTION_NAME)
