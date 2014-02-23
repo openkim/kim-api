@@ -61,6 +61,7 @@ public Compute_Energy_Forces, &
        model_cutoff
 
 ! Below are the definitions and values of all Model parameters
+integer(c_int), parameter :: cd = c_double ! used for literal constants
 integer(c_int), parameter :: DIM=3                  ! dimensionality of space
 integer(c_int), parameter :: speccode = 1           ! internal species code
 real(c_double), parameter :: model_cutoff  = <FILL cutoff radius> ! cutoff radius
@@ -103,7 +104,7 @@ real(c_double), intent(out) :: phi
 
 if (r .gt. model_cutoff) then
    ! Argument exceeds cutoff radius
-   phi = 0.d0
+   phi = 0.0_cd
 else
    phi = !<FILL functional form of phi(r)>
 endif
@@ -127,8 +128,8 @@ real(c_double), intent(out) :: phi,dphi
 
 if (r .gt. model_cutoff) then
    ! Argument exceeds cutoff radius
-   phi    = 0.d0
-   dphi   = 0.d0
+   phi    = 0.0_cd
+   dphi   = 0.0_cd
 else
    phi  = !<FILL functional form of phi(r)>
    dphi = !<FILL functional form of dphi(r)>
@@ -149,7 +150,7 @@ type(c_ptr), intent(in)  :: pkim
 
 !-- Local variables
 real(c_double) :: Rij(DIM)
-real(c_double) :: r,Rsqij,phi,dphi,dEidr = 0.d0
+real(c_double) :: r,Rsqij,phi,dphi,dEidr = 0.0_cd
 integer(c_int) :: i,j,jj,numnei,atom_ret,comp_force,comp_enepot,comp_virial, &
                   comp_energy
 character (len=80) :: error_message
@@ -313,10 +314,10 @@ Compute_Energy_Forces = KIM_STATUS_OK ! everything is ok
 
 ! Initialize potential energies, forces, virial term
 !
-if (comp_enepot.eq.1) enepot = 0.d0
-if (comp_energy.eq.1) energy = 0.d0
-if (comp_force.eq.1)  force  = 0.d0
-if (comp_virial.eq.1) virial = 0.d0
+if (comp_enepot.eq.1) enepot = 0.0_cd
+if (comp_energy.eq.1) energy = 0.0_cd
+if (comp_force.eq.1)  force  = 0.0_cd
+if (comp_virial.eq.1) virial = 0.0_cd
 
 ! Initialize neighbor handling for CLUSTER NBC
 !
@@ -407,7 +408,7 @@ do
       ! apply periodic boundary conditions if required
       !
       if (NBC.eq.2) then
-         where ( abs(Rij) .gt. 0.5d0*boxSideLengths )
+         where ( abs(Rij) .gt. 0.5_cd*boxSideLengths )
                                                  ! periodic boundary conditions
             Rij = Rij - sign(boxSideLengths,Rij) ! applied where needed.
          end where
@@ -426,7 +427,7 @@ do
                 (j .le. numberContrib)) then     ! HALF mode
                dEidr = dphi                      !      double contribution
             else                                 ! FULL mode
-               dEidr = 0.5d0*dphi                !      regular contribution
+               dEidr = 0.5_cd*dphi               !      regular contribution
             endif
          else
             call calc_phi(r,phi)                 ! compute just pair potential
@@ -435,17 +436,17 @@ do
          ! contribution to energy
          !
          if (comp_enepot.eq.1) then
-            enepot(i) = enepot(i) + 0.5d0*phi    ! accumulate energy
+            enepot(i) = enepot(i) + 0.5_cd*phi   ! accumulate energy
             if ((HalfOrFull.eq.1) .and. &
                 (j .le. numberContrib)) &        ! HALF mode
-               enepot(j) = enepot(j) + 0.5d0*phi ! (i and j share it)
+               enepot(j) = enepot(j) + 0.5_cd*phi! (i and j share it)
          endif
          if (comp_energy.eq.1) then
             if ((HalfOrFull.eq.1) .and. &
                 (j .le. numberContrib)) then     ! HALF mode
                energy = energy + phi             !    add v to total energy
             else                                 ! FULL mode
-               energy = energy + 0.5d0*phi       !    add half v to total energy
+               energy = energy + 0.5_cd*phi      !    add half v to total energy
             endif
          endif
 

@@ -59,6 +59,7 @@ module ex_model_ArNe_P_MLJ_NEIGH_RVEC_F
   public Destroy
 
   ! Species indices
+  integer(c_int), parameter :: cd = c_double ! used for literal constants
   integer(c_int), parameter :: Ar = 1
   integer(c_int), parameter :: Ne = 2
 
@@ -189,10 +190,10 @@ contains
 
     ! Initialize potential energies, forces, virial term
     !
-    if (comp_enepot.eq.1) enepot = 0.d0
-    if (comp_energy.eq.1) energy = 0.d0
-    if (comp_force.eq.1)  force  = 0.d0
-    if (comp_virial.eq.1) virial = 0.d0
+    if (comp_enepot.eq.1) enepot = 0.0_cd
+    if (comp_energy.eq.1) energy = 0.0_cd
+    if (comp_force.eq.1)  force  = 0.0_cd
+    if (comp_virial.eq.1) virial = 0.0_cd
 
 
     !  Compute energy and forces
@@ -244,12 +245,12 @@ contains
              endif
              call pair(CurEpsilon, CurSigma, CurA, CurB, CurC, &
                   r, phi, dphi, d2phi)            ! compute pair potential
-             dEidr = 0.5d0*dphi                   ! compute dEidr
+             dEidr = 0.5_cd*dphi                  ! compute dEidr
              if (comp_enepot.eq.1) then
-                enepot(i) = enepot(i) + 0.5d0*phi ! accumulate energy
+                enepot(i) = enepot(i) + 0.5_cd*phi! accumulate energy
              endif
              if (comp_energy.eq.1) then
-                energy = energy + 0.5d0*phi       ! full neigh case
+                energy = energy + 0.5_cd*phi      ! full neigh case
              endif
              if (comp_virial.eq.1) then           ! accumul. virial
                 virial(1) = virial(1) + Rij(1,jj)*Rij(1,jj)*dEidr/r
@@ -293,9 +294,9 @@ contains
     sor6 = sor6*sor6       !  (sig/r)^6
     sor12= sor6*sor6       !  (sig/r)^12
 
-    phi   =  4.d0*epsilon*(sor12-sor6) + A*rsq + B*r + C
-    dphi  = 24.d0*epsilon*(-2.d0*sor12+sor6)/r  + 2.d0*A*r + B
-    d2phi = 24.d0*epsilon*(26.d0*sor12-7.d0*sor6)/rsq + 2.d0*A
+    phi   =  4.0_cd*epsilon*(sor12-sor6) + A*rsq + B*r + C
+    dphi  = 24.0_cd*epsilon*(-2.0_cd*sor12+sor6)/r  + 2.0_cd*A*r + B
+    d2phi = 24.0_cd*epsilon*(26.0_cd*sor12-7.0_cd*sor6)/rsq + 2.0_cd*A
 
   end subroutine pair
 
@@ -364,14 +365,14 @@ contains
 
     model_cutoff = model_Pcutoff
     model_cutnorm(1:3) = model_cutoff/model_sigma(1:3)
-    model_A(1:3) = 12.d0*model_epsilon(1:3)   &
-      *(-26.d0 + 7.d0*model_cutnorm(1:3)**6)/ &
+    model_A(1:3) = 12.0_cd*model_epsilon(1:3)   &
+      *(-26.0_cd + 7.0_cd*model_cutnorm(1:3)**6)/ &
       (model_cutnorm(1:3)**14*model_sigma(1:3)**2)
-    model_B(1:3) = 96.d0*model_epsilon(1:3)   &
-      *(7.d0-2.d0*model_cutnorm(1:3)**6)/     &
+    model_B(1:3) = 96.0_cd*model_epsilon(1:3)   &
+      *(7.0_cd-2.0_cd*model_cutnorm(1:3)**6)/     &
       (model_cutnorm(1:3)**13*model_sigma(1:3))
-    model_C(1:3) = 28.d0*model_epsilon(1:3)   &
-      *(-13.d0+4.d0*model_cutnorm(1:3)**6)/   &
+    model_C(1:3) = 28.0_cd*model_epsilon(1:3)   &
+      *(-13.0_cd+4.0_cd*model_cutnorm(1:3)**6)/   &
       (model_cutnorm(1:3)**12)
     model_sigmasq(1:3) = model_sigma(1:3)**2
     model_cutsq = model_cutoff**2
@@ -460,6 +461,7 @@ integer(c_int) function model_init(pkim) bind(c)
   use ex_model_ArNe_P_MLJ_NEIGH_RVEC_F
   use KIM_API_F03
   implicit none
+  integer(c_int), parameter :: cd = c_double ! used for literal constants
 
   !-- Transferred variables
   type(c_ptr), intent(in) :: pkim
@@ -498,7 +500,7 @@ integer(c_int) function model_init(pkim) bind(c)
      goto 42
   endif
   call c_f_pointer(pmodel_cutoff, model_cutoff)
-  model_cutoff = 8.15d0 ! cutoff distance in angstroms
+  model_cutoff = 8.15_cd ! cutoff distance in angstroms
 
   ! Allocate memory for parameters
   allocate( model_epsilon(three) )
@@ -513,24 +515,24 @@ integer(c_int) function model_init(pkim) bind(c)
 
   ! Set Parameter values
   !
-  model_sigma(1) = 3.40d0 ! LJ Argon sigma in angstroms
-  model_sigma(2) = 2.74d0 ! LJ Neon  sigma in angstroms
+  model_sigma(1) = 3.40_cd ! LJ Argon sigma in angstroms
+  model_sigma(2) = 2.74_cd ! LJ Neon  sigma in angstroms
   ! Lorentz/Berthelot Mixing Rule
-  model_sigma(3) = 0.5d0*(model_sigma(1) + model_sigma(2))
-  model_epsilon(1) = 0.0104d0 ! LJ Argon epsilon in eV
-  model_epsilon(2) = 0.0031d0 ! LJ Neon  epsilon in eV
+  model_sigma(3) = 0.5_cd*(model_sigma(1) + model_sigma(2))
+  model_epsilon(1) = 0.0104_cd ! LJ Argon epsilon in eV
+  model_epsilon(2) = 0.0031_cd ! LJ Neon  epsilon in eV
   ! Lorentz/Berthelot Mixing Rule
   model_epsilon(3) = sqrt(model_epsilon(1)*model_epsilon(2))
   model_Pcutoff = model_cutoff
   model_cutnorm(1:3) = model_cutoff/model_sigma(1:3)
-  model_A(1:3) = 12.d0*model_epsilon(1:3)   &
-    *(-26.d0 + 7.d0*model_cutnorm(1:3)**6)/ &
+  model_A(1:3) = 12.0_cd*model_epsilon(1:3)   &
+    *(-26.0_cd + 7.0_cd*model_cutnorm(1:3)**6)/ &
     (model_cutnorm(1:3)**14*model_sigma(1:3)**2)
-  model_B(1:3) = 96.d0*model_epsilon(1:3)   &
-    *(7.d0-2.d0*model_cutnorm(1:3)**6)/     &
+  model_B(1:3) = 96.0_cd*model_epsilon(1:3)   &
+    *(7.0_cd-2.0_cd*model_cutnorm(1:3)**6)/     &
     (model_cutnorm(1:3)**13*model_sigma(1:3))
-  model_C(1:3) = 28.d0*model_epsilon(1:3)   &
-    *(-13.d0+4.d0*model_cutnorm(1:3)**6)/   &
+  model_C(1:3) = 28.0_cd*model_epsilon(1:3)   &
+    *(-13.0_cd+4.0_cd*model_cutnorm(1:3)**6)/   &
     (model_cutnorm(1:3)**12)
   model_sigmasq(1:3) = model_sigma(1:3)**2
   model_cutsq = model_cutoff**2

@@ -60,10 +60,11 @@ public Compute_Energy_Forces, &
        model_cutoff
 
 ! Below are the definitions and values of all Model parameters
-integer(c_int), parameter :: DIM=3                  ! dimensionality of space
-integer(c_int), parameter :: speccode = 1           ! internal species code
-real(c_double), parameter :: model_cutoff  = 8.15d0 ! cutoff radius
-                                                    ! in angstroms
+integer(c_int), parameter :: cd = c_double ! used for literal constants
+integer(c_int), parameter :: DIM=3                   ! dimensionality of space
+integer(c_int), parameter :: speccode = 1            ! internal species code
+real(c_double), parameter :: model_cutoff  = 8.15_cd ! cutoff radius
+                                                     ! in angstroms
 real(c_double), parameter :: model_cutsq   = model_cutoff**2
 
 !-------------------------------------------------------------------------------
@@ -81,15 +82,16 @@ real(c_double), parameter :: model_cutsq   = model_cutoff**2
 !                                                ! with a value equal to
 !                                                ! `value' (a number)
 !-------------------------------------------------------------------------------
-real(c_double), parameter :: lj_epsilon = 0.0104d0
-real(c_double), parameter :: lj_sigma   = 3.40d0
+real(c_double), parameter :: lj_epsilon = 0.0104_cd
+real(c_double), parameter :: lj_sigma   = 3.40_cd
 real(c_double), parameter :: lj_cutnorm = model_cutoff/lj_sigma
-real(c_double), parameter :: lj_A = 12.d0*lj_epsilon*(-26.d0 &
-                              + 7.d0*lj_cutnorm**6)/(lj_cutnorm**14*lj_sigma**2)
-real(c_double), parameter :: lj_B = 96.d0*lj_epsilon*(7.d0 &
-                              - 2.d0*lj_cutnorm**6)/(lj_cutnorm**13*lj_sigma)
-real(c_double), parameter :: lj_C = 28.d0*lj_epsilon*(-13.d0 &
-                              + 4.d0*lj_cutnorm**6)/(lj_cutnorm**12)
+real(c_double), parameter :: lj_A = 12.0_cd*lj_epsilon*(-26.0_cd &
+                              + 7.0_cd*lj_cutnorm**6)/(lj_cutnorm**14 &
+                              *lj_sigma**2)
+real(c_double), parameter :: lj_B = 96.0_cd*lj_epsilon*(7.0_cd &
+                              - 2.0_cd*lj_cutnorm**6)/(lj_cutnorm**13*lj_sigma)
+real(c_double), parameter :: lj_C = 28.0_cd*lj_epsilon*(-13.0_cd &
+                              + 4.0_cd*lj_cutnorm**6)/(lj_cutnorm**12)
 
 contains
 
@@ -115,9 +117,9 @@ sor6 = sor6*sor6       !  (sig/r)^6
 sor12= sor6*sor6       !  (sig/r)^12
 if (r .gt. model_cutoff) then
    ! Argument exceeds cutoff radius
-   phi = 0.d0
+   phi = 0.0_cd
 else
-   phi = 4.d0*lj_epsilon*(sor12-sor6) + lj_A*rsq + lj_B*r + lj_C
+   phi = 4.0_cd*lj_epsilon*(sor12-sor6) + lj_A*rsq + lj_B*r + lj_C
 endif
 
 end subroutine calc_phi
@@ -144,11 +146,11 @@ sor6 = sor6*sor6       !  (sig/r)^6
 sor12= sor6*sor6       !  (sig/r)^12
 if (r .gt. model_cutoff) then
    ! Argument exceeds cutoff radius
-   phi    = 0.d0
-   dphi   = 0.d0
+   phi    = 0.0_cd
+   dphi   = 0.0_cd
 else
-   phi  = 4.d0*lj_epsilon*(sor12-sor6) + lj_A*rsq + lj_B*r + lj_C
-   dphi = 24.d0*lj_epsilon*(-2.d0*sor12+sor6)/r  + 2.d0*lj_A*r + lj_B
+   phi  = 4.0_cd*lj_epsilon*(sor12-sor6) + lj_A*rsq + lj_B*r + lj_C
+   dphi = 24.0_cd*lj_epsilon*(-2.0_cd*sor12+sor6)/r  + 2.0_cd*lj_A*r + lj_B
 endif
 
 end subroutine calc_phi_dphi
@@ -166,7 +168,7 @@ type(c_ptr), intent(in)  :: pkim
 
 !-- Local variables
 real(c_double) :: Rij(DIM)
-real(c_double) :: r,Rsqij,phi,dphi,dEidr = 0.d0
+real(c_double) :: r,Rsqij,phi,dphi,dEidr = 0.0_cd
 integer(c_int) :: i,j,jj,numnei,atom_ret,comp_force,comp_enepot,comp_virial, &
                   comp_energy
 character (len=80) :: error_message
@@ -330,10 +332,10 @@ Compute_Energy_Forces = KIM_STATUS_OK ! everything is ok
 
 ! Initialize potential energies, forces, virial term
 !
-if (comp_enepot.eq.1) enepot = 0.d0
-if (comp_energy.eq.1) energy = 0.d0
-if (comp_force.eq.1)  force  = 0.d0
-if (comp_virial.eq.1) virial = 0.d0
+if (comp_enepot.eq.1) enepot = 0.0_cd
+if (comp_energy.eq.1) energy = 0.0_cd
+if (comp_force.eq.1)  force  = 0.0_cd
+if (comp_virial.eq.1) virial = 0.0_cd
 
 ! Initialize neighbor handling for CLUSTER NBC
 !
@@ -424,7 +426,7 @@ do
       ! apply periodic boundary conditions if required
       !
       if (NBC.eq.2) then
-         where ( abs(Rij) .gt. 0.5d0*boxSideLengths )
+         where ( abs(Rij) .gt. 0.5_cd*boxSideLengths )
                                                  ! periodic boundary conditions
             Rij = Rij - sign(boxSideLengths,Rij) ! applied where needed.
          end where
@@ -443,7 +445,7 @@ do
                 (j .le. numberContrib)) then     ! HALF mode
                dEidr = dphi                      !      double contribution
             else                                 ! FULL mode
-               dEidr = 0.5d0*dphi                !      regular contribution
+               dEidr = 0.5_cd*dphi               !      regular contribution
             endif
          else
             call calc_phi(r,phi)                 ! compute just pair potential
@@ -452,17 +454,17 @@ do
          ! contribution to energy
          !
          if (comp_enepot.eq.1) then
-            enepot(i) = enepot(i) + 0.5d0*phi    ! accumulate energy
+            enepot(i) = enepot(i) + 0.5_cd*phi   ! accumulate energy
             if ((HalfOrFull.eq.1) .and. &
                 (j .le. numberContrib)) &        ! HALF mode
-               enepot(j) = enepot(j) + 0.5d0*phi ! (i and j share it)
+               enepot(j) = enepot(j) + 0.5_cd*phi! (i and j share it)
          endif
          if (comp_energy.eq.1) then
             if ((HalfOrFull.eq.1) .and. &
                 (j .le. numberContrib)) then     ! HALF mode
                energy = energy + phi             !    add v to total energy
             else                                 ! FULL mode
-               energy = energy + 0.5d0*phi       !    add half v to total energy
+               energy = energy + 0.5_cd*phi      !    add half v to total energy
             endif
          endif
 

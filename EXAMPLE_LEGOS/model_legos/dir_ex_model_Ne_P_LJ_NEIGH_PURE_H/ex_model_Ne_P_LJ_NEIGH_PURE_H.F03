@@ -46,10 +46,12 @@ module ex_model_Ne_P_LJ_NEIGH_PURE_H
   public model_cutoff
   public calculate_wrap_f77
 
+  integer(c_int), parameter :: cd = c_double ! used for literal constants
+
   !-- LJ parameters
-  real(c_double), parameter :: model_cutoff  = 8.1500d0
-  real(c_double), parameter :: sigma         = 2.7400d0
-  real(c_double), parameter :: epsilon       = 0.0031d0
+  real(c_double), parameter :: model_cutoff  = 8.1500_cd
+  real(c_double), parameter :: sigma         = 2.7400_cd
+  real(c_double), parameter :: epsilon       = 0.0031_cd
 
 contains
 

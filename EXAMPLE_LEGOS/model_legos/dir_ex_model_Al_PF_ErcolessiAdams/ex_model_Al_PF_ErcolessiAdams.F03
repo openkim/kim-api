@@ -62,10 +62,11 @@ public Compute_Energy_Forces, &
        Destroy
 
 ! Below are the definitions and values of all Model parameters
+integer(c_int), parameter :: cd = c_double  ! used for literal constants
 integer(c_int), parameter :: DIM = 3        ! dimensionality of space
 integer(c_int), parameter :: speccode = 1   ! internal species code
-real(c_double), parameter :: model_cutoff = 5.55805441821810d0 ! cutoff radius
-                                                               ! in angstroms
+real(c_double), parameter :: model_cutoff = 5.55805441821810_cd ! cutoff radius
+                                                                ! in angstroms
 real(c_double), parameter :: model_cutsq  = model_cutoff**2
 
 !-------------------------------------------------------------------------------
@@ -345,7 +346,7 @@ real(c_double) dx
 
 if (r .gt. model_cutoff) then
    ! Argument exceeds cutoff radius
-   phi = 0.d0
+   phi = 0.0_cd
 else
    i = seval_i(npt,r,x,irlast)
    dx = r - x(i)
@@ -373,13 +374,13 @@ real(c_double) dx
 
 if (r .gt. model_cutoff) then
    ! Argument exceeds cutoff radius
-   phi    = 0.d0
-   dphi   = 0.d0
+   phi    = 0.0_cd
+   dphi   = 0.0_cd
 else
    i = seval_i(npt,r,x,irlast)
    dx = r - x(i)
    phi  = yv2(i) + dx*(Bv2(i) + dx*(Cv2(i) + dx*Dv2(i)))
-   dphi = Bv2(i) + dx*(2.d0*Cv2(i) + 3.d0*dx*Dv2(i))
+   dphi = Bv2(i) + dx*(2.0_cd*Cv2(i) + 3.0_cd*dx*Dv2(i))
 endif
 
 end subroutine calc_phi_dphi
@@ -403,7 +404,7 @@ real(c_double) dx
 
 if (r .gt. model_cutoff) then
    ! Argument exceeds cutoff radius
-   g = 0.d0
+   g = 0.0_cd
 else
    i = seval_i(npt,r,x,irlast)
    dx = r - x(i)
@@ -431,11 +432,11 @@ real(c_double) dx
 
 if (r .gt. model_cutoff) then
    ! Argument exceeds cutoff radius
-   dg = 0.d0
+   dg = 0.0_cd
 else
    i = seval_i(npt,r,x,irlast)
    dx = r - x(i)
-   dg = Brh(i) + dx*(2.d0*Crh(i) + 3.d0*dx*Drh(i))
+   dg = Brh(i) + dx*(2.0_cd*Crh(i) + 3.0_cd*dx*Drh(i))
 endif
 
 end subroutine calc_dg
@@ -459,7 +460,7 @@ real(c_double) dx
 
 if (rho .le. rhomin) then
    ! Argument less than the minimum stored value
-   U = 0.d0
+   U = 0.0_cd
 else
    i = seval_i(nuu,rho,xuu,ielast)
    dx = rho - xuu(i)
@@ -487,13 +488,13 @@ real(c_double) dx
 
 if (rho .le. rhomin) then
    ! Argument less than the minimum stored value
-   U  = 0.d0
-   dU = 0.d0
+   U  = 0.0_cd
+   dU = 0.0_cd
 else
    i = seval_i(nuu,rho,xuu,ielast)
    dx = rho - xuu(i)
    U  = yuu(i) + dx*(Buu(i) + dx*(Cuu(i) + dx*Duu(i)))
-   dU = Buu(i) + dx*(2.d0*Cuu(i) + 3.d0*dx*Duu(i))
+   dU = Buu(i) + dx*(2.0_cd*Cuu(i) + 3.0_cd*dx*Duu(i))
 endif
 
 end subroutine calc_U_dU
@@ -565,7 +566,7 @@ type(c_ptr), intent(in) :: pkim
 
 !-- Local variables
 real(c_double) :: Rij(DIM)
-real(c_double) :: r,Rsqij,phi,dphi,g,dg,dU,U,dphieff = 0.d0
+real(c_double) :: r,Rsqij,phi,dphi,g,dg,dU,U,dphieff = 0.0_cd
 real(c_double) :: dphii,dUi,Ei,dphij,dUj,Ej
 integer(c_int) :: i,j,jj,numnei,comp_force,comp_enepot,comp_virial,comp_energy
 real(c_double), allocatable :: rho(:),derU(:)
@@ -741,11 +742,11 @@ Compute_Energy_Forces = KIM_STATUS_OK ! everything is ok
 !       because it's initial value is set during the embedding energy
 !       calculation.
 !
-if (comp_energy.eq.1) energy = 0.d0
-if (comp_force.eq.1)  force  = 0.d0
-if (comp_virial.eq.1) virial = 0.d0
+if (comp_energy.eq.1) energy = 0.0_cd
+if (comp_force.eq.1)  force  = 0.0_cd
+if (comp_virial.eq.1) virial = 0.0_cd
 allocate( rho(N) )  ! pair functional electron density
-rho = 0.d0
+rho = 0.0_cd
 ! EAM embedded energy deriv
 if (comp_force.eq.1.or.comp_virial.eq.1) allocate( derU(N) )
 
@@ -808,7 +809,7 @@ do
       ! apply periodic boundary conditions if required
       !
       if (NBC.eq.2) then
-         where ( abs(Rij) .gt. 0.5d0*boxSideLengths )  ! PBCs
+         where ( abs(Rij) .gt. 0.5_cd*boxSideLengths ) ! PBCs
             Rij = Rij - sign(boxSideLengths,Rij)       ! applied where needed.
          end where
       endif
@@ -843,7 +844,7 @@ do i = 1,N
 
    ! accumulate the embedding energy contribution
    !
-   ! Assuming U(rho=0) = 0.0d0
+   ! Assuming U(rho=0) = 0.0_cd
    !
    if (comp_enepot.eq.1) then  ! accumulate embedding energy contribution
       enepot(i) = U
@@ -904,7 +905,7 @@ do
       ! apply periodic boundary conditions if required
       !
       if (NBC.eq.2) then
-         where ( abs(Rij) .gt. 0.5d0*boxSideLengths )  ! PBCs
+         where ( abs(Rij) .gt. 0.5_cd*boxSideLengths ) ! PBCs
             Rij = Rij - sign(boxSideLengths,Rij)       ! applied where needed.
          end where
       endif
@@ -922,15 +923,15 @@ do
                                                   !   first deriv
             if ((HalfOrFull.eq.1) .and. &
                 (j .le. numberContrib)) then      ! HALF mode
-               dphii  = 0.5d0*dphi
-               dphij  = 0.5d0*dphi
+               dphii  = 0.5_cd*dphi
+               dphij  = 0.5_cd*dphi
                dUi    = derU(i)*dg
                dUj    = derU(j)*dg
             else                                  ! FULL mode
-               dphii  = 0.5d0*dphi
-               dphij  = 0.0d0
+               dphii  = 0.5_cd*dphi
+               dphij  = 0.0_cd
                dUi    = derU(i)*dg
-               dUj    = 0.0d0
+               dUj    = 0.0_cd
             endif
             dphieff = dphii + dphij + dUi + dUj
          else
@@ -938,11 +939,11 @@ do
          endif
          if ((HalfOrFull.eq.1) .and. &
              (j .le. numberContrib)) then         ! HALF mode
-            Ei     = 0.5d0*phi
-            Ej     = 0.5d0*phi
+            Ei     = 0.5_cd*phi
+            Ej     = 0.5_cd*phi
          else                                     ! FULL mode
-            Ei     = 0.5d0*phi
-            Ej     = 0.0d0
+            Ei     = 0.5_cd*phi
+            Ej     = 0.0_cd
          endif
 
          ! contribution to energy

@@ -62,6 +62,7 @@ public Compute_Energy_Forces, &
        Destroy
 
 ! Below are the definitions and values of all Model parameters
+integer(c_int), parameter :: cd = c_double  ! used for literal constants
 integer(c_int), parameter :: DIM = 3        ! dimensionality of space
 integer(c_int), parameter :: speccode = 1   ! internal species code
 real(c_double), parameter :: model_cutoff = <FILL cutoff radius> ! cutoff radius
@@ -104,7 +105,7 @@ real(c_double), intent(out)   :: phi
 
 if (r .gt. model_cutoff) then
    ! Argument exceeds cutoff radius
-   phi = 0.d0
+   phi = 0.0_cd
 else
    phi = !<FILL functional form of phi(r)>
 endif
@@ -128,8 +129,8 @@ real(c_double), intent(out)   :: phi,dphi
 
 if (r .gt. model_cutoff) then
    ! Argument exceeds cutoff radius
-   phi    = 0.d0
-   dphi   = 0.d0
+   phi    = 0.0_cd
+   dphi   = 0.0_cd
 else
    phi  = !<FILL functional form of phi(r)>
    dphi = !<FILL functional form of dphi(r)>
@@ -154,7 +155,7 @@ real(c_double), intent(out)   :: g
 
 if (r .gt. model_cutoff) then
    ! Argument exceeds cutoff radius
-   g = 0.d0
+   g = 0.0_cd
 else
    g = !<FILL functional form of g(r)>
 endif
@@ -178,7 +179,7 @@ real(c_double), intent(out)   :: dg
 
 if (r .gt. model_cutoff) then
    ! Argument exceeds cutoff radius
-   dg = 0.d0
+   dg = 0.0_cd
 else
    dg = !<FILL functional form of dg(r)>
 endif
@@ -238,7 +239,7 @@ type(c_ptr), intent(in) :: pkim
 
 !-- Local variables
 real(c_double) :: Rij(DIM)
-real(c_double) :: r,Rsqij,phi,dphi,g,dg,dU,U,dphieff = 0.d0
+real(c_double) :: r,Rsqij,phi,dphi,g,dg,dU,U,dphieff = 0.0_cd
 real(c_double) :: dphii,dUi,Ei,dphij,dUj,Ej
 integer(c_int) :: i,j,jj,numnei,comp_force,comp_enepot,comp_virial,comp_energy
 real(c_double), allocatable :: rho(:),derU(:)
@@ -408,11 +409,11 @@ Compute_Energy_Forces = KIM_STATUS_OK ! everything is ok
 !       because it's initial value is set during the embedding energy
 !       calculation.
 !
-if (comp_energy.eq.1) energy = 0.d0
-if (comp_force.eq.1)  force  = 0.d0
-if (comp_virial.eq.1) virial = 0.d0
+if (comp_energy.eq.1) energy = 0.0_cd
+if (comp_force.eq.1)  force  = 0.0_cd
+if (comp_virial.eq.1) virial = 0.0_cd
 allocate( rho(N) )  ! pair functional electron density
-rho = 0.d0
+rho = 0.0_cd
 ! EAM embedded energy deriv
 if (comp_force.eq.1.or.comp_virial.eq.1) allocate( derU(N) )
 
@@ -475,7 +476,7 @@ do
       ! apply periodic boundary conditions if required
       !
       if (NBC.eq.2) then
-         where ( abs(Rij) .gt. 0.5d0*boxSideLengths )  ! PBCs
+         where ( abs(Rij) .gt. 0.5_cd*boxSideLengths ) ! PBCs
             Rij = Rij - sign(boxSideLengths,Rij)       ! applied where needed.
          end where
       endif
@@ -510,7 +511,7 @@ do i = 1,N
 
    ! accumulate the embedding energy contribution
    !
-   ! Assuming U(rho=0) = 0.0d0
+   ! Assuming U(rho=0) = 0.0_cd
    !
    if (comp_enepot.eq.1) then  ! accumulate embedding energy contribution
       enepot(i) = U
@@ -571,7 +572,7 @@ do
       ! apply periodic boundary conditions if required
       !
       if (NBC.eq.2) then
-         where ( abs(Rij) .gt. 0.5d0*boxSideLengths )  ! PBCs
+         where ( abs(Rij) .gt. 0.5_cd*boxSideLengths ) ! PBCs
             Rij = Rij - sign(boxSideLengths,Rij)       ! applied where needed.
          end where
       endif
@@ -589,15 +590,15 @@ do
                                                   !   first deriv
             if ((HalfOrFull.eq.1) .and. &
                 (j .le. numberContrib)) then      ! HALF mode
-               dphii  = 0.5d0*dphi
-               dphij  = 0.5d0*dphi
+               dphii  = 0.5_cd*dphi
+               dphij  = 0.5_cd*dphi
                dUi    = derU(i)*dg
                dUj    = derU(j)*dg
             else                                  ! FULL mode
-               dphii  = 0.5d0*dphi
-               dphij  = 0.0d0
+               dphii  = 0.5_cd*dphi
+               dphij  = 0.0_cd
                dUi    = derU(i)*dg
-               dUj    = 0.0d0
+               dUj    = 0.0_cd
             endif
             dphieff = dphii + dphij + dUi + dUj
          else
@@ -605,11 +606,11 @@ do
          endif
          if ((HalfOrFull.eq.1) .and. &
              (j .le. numberContrib)) then         ! HALF mode
-            Ei     = 0.5d0*phi
-            Ej     = 0.5d0*phi
+            Ei     = 0.5_cd*phi
+            Ej     = 0.5_cd*phi
          else                                     ! FULL mode
-            Ei     = 0.5d0*phi
-            Ej     = 0.0d0
+            Ei     = 0.5_cd*phi
+            Ej     = 0.0_cd
          endif
 
          ! contribution to energy
@@ -796,5 +797,5 @@ ier = KIM_STATUS_OK
 42 continue
 model_init = ier
 return
-end function model_init
 
+end function model_init

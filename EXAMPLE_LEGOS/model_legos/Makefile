@@ -176,9 +176,9 @@ ex_model_Ar_P_MLJ_CLUSTER_F03: $(COMMON_FRAGMENTS)                    \
 	echo "    "                                                                                           >> $(KIM_EX_MODELS_DIR)/$@/$@.F03
 	$(F_CAT) cluster_compute_loops.f.frag                                                                 >> $(KIM_EX_MODELS_DIR)/$@/$@.F03
 	$(F_CAT) module_end.f.frag | $(SED_CMD) \
-         | sed -e 's/CUTOFF_VALUE_STR/model_cutoff = 8.15d0 ! cutoff distance in angstroms/g' \
-               -e 's/SIGMA_VALUE_STR/model_sigma = 3.40d0 ! LJ Argon sigma in angstroms/g'    \
-               -e 's/EPSILON_VALUE_STR/model_epsilon = 0.0104d0 ! LJ Argon epsilon in eV/g'                   >> $(KIM_EX_MODELS_DIR)/$@/$@.F03
+         | sed -e 's/CUTOFF_VALUE_STR/model_cutoff = 8.15_cd ! cutoff distance in angstroms/g' \
+               -e 's/SIGMA_VALUE_STR/model_sigma = 3.40_cd ! LJ Argon sigma in angstroms/g'    \
+               -e 's/EPSILON_VALUE_STR/model_epsilon = 0.0104_cd ! LJ Argon epsilon in eV/g'                  >> $(KIM_EX_MODELS_DIR)/$@/$@.F03
 
 ex_model_Ar_P_MLJ_MI_OPBC_H_F: $(COMMON_FRAGMENTS)                               \
                                mi_opbc_neigh_pure_compute_local_variables.f.frag \
@@ -231,9 +231,9 @@ ex_model_Ar_P_MLJ_MI_OPBC_H_F: $(COMMON_FRAGMENTS)                              
 	echo "    "                                                                                           >> $(KIM_EX_MODELS_DIR)/$@/$@.F03
 	$(F_CAT) mi_opbc_compute_loops.f.frag                                                                 >> $(KIM_EX_MODELS_DIR)/$@/$@.F03
 	$(F_CAT) module_end.f.frag | $(SED_CMD) \
-         | sed -e 's/CUTOFF_VALUE_STR/model_cutoff = 8.15d0 ! cutoff distance in angstroms/g' \
-               -e 's/SIGMA_VALUE_STR/model_sigma = 3.40d0 ! LJ Argon sigma in angstroms/g'    \
-               -e 's/EPSILON_VALUE_STR/model_epsilon = 0.0104d0 ! LJ Argon epsilon in eV/g'                   >> $(KIM_EX_MODELS_DIR)/$@/$@.F03
+         | sed -e 's/CUTOFF_VALUE_STR/model_cutoff = 8.15_cd ! cutoff distance in angstroms/g' \
+               -e 's/SIGMA_VALUE_STR/model_sigma = 3.40_cd ! LJ Argon sigma in angstroms/g'    \
+               -e 's/EPSILON_VALUE_STR/model_epsilon = 0.0104_cd ! LJ Argon epsilon in eV/g'                  >> $(KIM_EX_MODELS_DIR)/$@/$@.F03
 
 ex_model_Ar_P_MLJ_NEIGH_PURE_H_F: $(COMMON_FRAGMENTS)                               \
                                   mi_opbc_neigh_pure_compute_local_variables.f.frag \
@@ -285,9 +285,9 @@ ex_model_Ar_P_MLJ_NEIGH_PURE_H_F: $(COMMON_FRAGMENTS)                           
 	echo "    "                                                                                           >> $(KIM_EX_MODELS_DIR)/$@/$@.F03
 	$(F_CAT) neigh_pure_compute_loops.f.frag                                                              >> $(KIM_EX_MODELS_DIR)/$@/$@.F03
 	$(F_CAT) module_end.f.frag | $(SED_CMD) \
-         | sed -e 's/CUTOFF_VALUE_STR/model_cutoff = 8.15d0 ! cutoff distance in angstroms/g' \
-               -e 's/SIGMA_VALUE_STR/model_sigma = 3.40d0 ! LJ Argon sigma in angstroms/g'    \
-                -e 's/EPSILON_VALUE_STR/model_epsilon = 0.0104d0 ! LJ Argon epsilon in eV/g'                  >> $(KIM_EX_MODELS_DIR)/$@/$@.F03
+         | sed -e 's/CUTOFF_VALUE_STR/model_cutoff = 8.15_cd ! cutoff distance in angstroms/g' \
+               -e 's/SIGMA_VALUE_STR/model_sigma = 3.40_cd ! LJ Argon sigma in angstroms/g'    \
+                -e 's/EPSILON_VALUE_STR/model_epsilon = 0.0104_cd ! LJ Argon epsilon in eV/g'                 >> $(KIM_EX_MODELS_DIR)/$@/$@.F03
 
 ex_model_Ar_P_MLJ_NEIGH_RVEC_F: $(COMMON_FRAGMENTS)                           \
                                 neigh_rvec_compute_local_variables.f.frag     \
@@ -335,9 +335,9 @@ ex_model_Ar_P_MLJ_NEIGH_RVEC_F: $(COMMON_FRAGMENTS)                           \
 	echo "    "                                                                                           >> $(KIM_EX_MODELS_DIR)/$@/$@.F03
 	$(F_CAT) neigh_rvec_compute_loops.f.frag                                                              >> $(KIM_EX_MODELS_DIR)/$@/$@.F03
 	$(F_CAT) module_end.f.frag | $(SED_CMD) \
-         | sed -e 's/CUTOFF_VALUE_STR/model_cutoff = 8.15d0 ! cutoff distance in angstroms/g' \
-         | sed -e 's/SIGMA_VALUE_STR/model_sigma = 3.40d0 ! LJ Argon sigma in angstroms/g'    \
-         | sed -e 's/EPSILON_VALUE_STR/model_epsilon = 0.0104d0 ! LJ Argon epsilon in eV/g'                   >> $(KIM_EX_MODELS_DIR)/$@/$@.F03
+         | sed -e 's/CUTOFF_VALUE_STR/model_cutoff = 8.15_cd ! cutoff distance in angstroms/g' \
+         | sed -e 's/SIGMA_VALUE_STR/model_sigma = 3.40_cd ! LJ Argon sigma in angstroms/g'    \
+         | sed -e 's/EPSILON_VALUE_STR/model_epsilon = 0.0104_cd ! LJ Argon epsilon in eV/g'                  >> $(KIM_EX_MODELS_DIR)/$@/$@.F03
 
 ex_model_driver_P_Morse: model_driver_Morse_README \
                          model_driver_Makefile     \
