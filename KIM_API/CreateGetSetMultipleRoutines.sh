@@ -29,7 +29,7 @@
 #    Ryan S. Elliott
 #
 
-function createGetM()
+createGetM()
 {
 printf "subroutine kim_api_getm_%s( &\n" $subject
 printf "  kimmdl, error, &\n"
@@ -105,7 +105,7 @@ printf "end subroutine kim_api_getm_%s\n" $subject
 printf "\n"
 }
 
-function createSetM()
+createSetM()
 {
 printf "subroutine kim_api_setm_%s( &\n" $subject
 printf "  kimmdl, error, &\n"
