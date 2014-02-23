@@ -355,7 +355,7 @@ contains
        return
     endif
 
-    call c_f_pointer(pmodel_cutoff,  model_cutoff,  [3])
+    call c_f_pointer(pmodel_cutoff,  model_cutoff)
     call c_f_pointer(pmodel_cutnorm, model_cutnorm, [3])
     call c_f_pointer(pmodel_A,       model_A,       [3])
     call c_f_pointer(pmodel_B,       model_B,       [3])
