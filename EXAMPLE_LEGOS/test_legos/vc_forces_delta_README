@@ -98,5 +98,5 @@ Makefile
 README
      This file.
 
-vc_forces_delta.F90
-     F90 program that implements the test.
+vc_forces_delta.F03
+     Fortran 2003 program that implements the test.

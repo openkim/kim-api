@@ -36,5 +36,5 @@
 This directory (MODEL_DRIVERS) contains a directory for each Model Driver to be
 compiled as part of the openkim-api package.
 
-Copy any Model Driver directories (from EXAMPLES or http://openKIM.org) you
+Copy any Model Driver directories (from EXAMPLES or https://OpenKIM.org) you
 want to compile into this directory.

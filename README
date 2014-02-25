@@ -62,7 +62,7 @@ nucleation and motion.
 
 This software package is an implementation of the application programming
 interface (API) standard for interatomic models being developed as part of the
-Knowledgebase of Interatomic Models (KIM) project.  KIM (http://openKIM.org) is
+Knowledgebase of Interatomic Models (KIM) project.  KIM (https://openKIM.org) is
 a current initiative to develop and implement standards for the atomistic
 simulation of materials.  The effort aims to help bring order to the efforts of
 the education, research, and industrial communities and to make it easier for
@@ -204,13 +204,13 @@ MAKE_SYSTEM/
 
 MODELS/
      Each Model is stored in its own directory.  This is where you should place
-     Model directories downloaded from http://openKIM.org. (Or use `make
+     Model directories downloaded from https://OpenKIM.org. (Or use `make
      examples' to copy the example Models to this directory.)
 
 MODEL_DRIVERS/
      Each Model Driver is stored in its own directory.  This is where you
      should place Model Driver directories downloaded from
-     http://openKIM.org. (Or use `make examples' to copy the example Model
+     https://OpenKIM.org. (Or use `make examples' to copy the example Model
      Drivers to this directory.)
 
 Makefile
@@ -227,7 +227,7 @@ README
 
 TESTS/
      Each Test is stored in its own directory.  This is where you should place
-     Test directories downloaded from http://openKIM.org. (Or use `make
+     Test directories downloaded from https://OpenKIM.org. (Or use `make
      examples' to copy the example Tests to this directory.)
 
 TODO

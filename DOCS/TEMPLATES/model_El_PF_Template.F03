@@ -72,7 +72,7 @@ real(c_double), parameter :: model_cutsq  = model_cutoff**2
 !-------------------------------------------------------------------------------
 ! Below are the definitions and values of all additional model parameters
 !
-! Recall that the Fortran 90 format for declaring parameters is as follows:
+! Recall that the Fortran 2003 format for declaring parameters is as follows:
 !
 ! integer(c_int), parameter :: parname = value ! This defines an
 !                                              ! integer(c_int) parameter

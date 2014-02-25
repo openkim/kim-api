@@ -148,10 +148,10 @@ ex_model_Ar_P_MLJ_CLUSTER_F03 (Fortran 2003)
      (NBC) method, which is the simplest computation to understand.  For this
      reason, looking at the compute() or Compute_Energy_Forces() subroutines,
      respectively, for this Model is a good place to get started when first
-     trying to understand how a KIM compliant Model works.  Note that these
-     Models publish their parameters. This means that they must also provide
+     trying to understand how a KIM-compliant Model works.  Note that these
+     Models publish their parameters.  This means that they must also provide
      reinitialization and destroy routines in addition to the required
-     initialization routine. Examples of Models that do not publish parameters
+     initialization routine.  Examples of Models that do not publish parameters
      (which makes the initialization routine simpler) are described below.
 
 ex_model_Ne_P_LJ_NEIGH_PURE_H (FORTRAN 77)

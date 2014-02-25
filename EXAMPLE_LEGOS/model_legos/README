@@ -40,8 +40,9 @@ the example Models
 The following files are in this directory:
 
 Makefile
-     This is the make file that creates the example Models directories in the
-     directory ../../EXAMPLES/MODELS/
+     This is the make file that creates the example Models and Drivers
+     directories in the directory ../../EXAMPLES/MODELS/ and
+     ../../EXAMPLES/MODEL_DRIVERS/
 
 README
      This file
@@ -94,8 +95,14 @@ dir_ex_model_Cu_PF_Johnson/
 dir_ex_model_Ne_P_LJ_NEIGH_PURE_H/
      Directory containing the ex_model_Ne_P_LJ_NEIGH_PURE_H Model
 
-dir_ex_model_Ne_P_LJ_NEIGH_PURE_H_F/
-     Directory containing the ex_model_Ne_P_LJ_NEIGH_PURE_H_F Model
+dir_ex_model_Ne_P_MLJ_NEIGH_RVEC_F/
+     Directory containing the ex_model_Ne_P_MLJ_NEIGH_RVEC_F Model
+
+dir_ex_model_Ne_P_MLJ_NEIGH_RVEC_H/
+     Directory containing the ex_model_Ne_P_MLJ_NEIGH_RVEC_H Model
+
+dir_ex_model_Ne_P_MLJ_NEIGH_RVEC_H_F/
+     Directory containing the ex_model_Ne_P_MLJ_NEIGH_RVEC_H_F Model
 
 dir_ex_model_Ne_P_fastLJ/
      Directory containing the ex_model_Ne_P_fastLJ Model

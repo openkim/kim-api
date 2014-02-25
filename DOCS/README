@@ -52,7 +52,7 @@ STEP 1
 
    Read openkim-api-vX.X.X-introduction.pdf which is located in the DOCS
    directory (same directory as this file).  This pdf file contains a
-   presentation providing an overview of the openKIM project and basic concepts
+   presentation providing an overview of the OpenKIM project and basic concepts
    related to the openkim-api.
 
 
@@ -95,7 +95,7 @@ STEP 3
 
    which will run the Test `ex_test_Ar_free_cluster' with the
    `ex_model_Ar_P_MLJ_C' Model.  In this case, this is a Test written in
-   Fortran 90 running a modified Lennard-Jones potential for Ar written in C.
+   Fortran 2003 running a modified Lennard-Jones potential for Ar written in C.
 
 
 STEP 4
@@ -111,8 +111,8 @@ STEP 4
 
    ex_test_Ar_free_cluster_CLUSTER_C
 
-   which is written in C. (The same program written in Fortran 90 called
-   `ex_test_Ar_free_cluster_CLUSTER_F90' is also provided.)  This test computes
+   which is written in C. (The same program written in Fortran 2003 called
+   `ex_test_Ar_free_cluster_CLUSTER_F03' is also provided.)  This test computes
    the energy and forces on the atoms of an isolated cluster of Ar atoms
    arranged in a face-centered cubic (FCC) structure.  The Tests do not provide
    neighbor list handling.  The called Model must loop over all atoms to find
@@ -140,13 +140,13 @@ STEP 4
 
    ex_model_Ar_P_MLJ_CLUSTER_C
 
-   which is written in C.  (The same program written in Fortran 90, called
-   `ex_model_Ar_P_MLJ_CLUSTER_F90', is also provided.)  This is a modified
-   Lennard-Jones potential written in Fortran 90 for Ar (here "modified"
-   reflects the fact that a quadratic function is added to the Lennard-Jones
-   potential to obtain a smooth cutoff).  The Model only works with the
-   `CLUSTER' neighbor list and boundary condition (NBC) method which does not
-   use neighbor list information.
+   which is written in C.  (The same program written in Fortran 2003, called
+   `ex_model_Ar_P_MLJ_CLUSTER_F03', is also provided.)  This is a modified
+   Lennard-Jones potential for Ar (here "modified" reflects the fact that a
+   quadratic function is added to the Lennard-Jones potential to obtain a
+   smooth cutoff).  The Model only works with the `CLUSTER' neighbor list and
+   boundary condition (NBC) method which does not use neighbor list
+   information.
 
    The computer code for this Model and corresponding KIM descriptor file are
    located in
@@ -234,10 +234,6 @@ STEP 5
 
 This directory contains the following files and directories:
 
-openkim-api-vX.X.X-introduction.pdf
-     presentation file describing the concepts on which the openkim-api system
-     is based.
-
 KIM_API_Description.txt
      A link to the file in ../KIM_API which describes the openkim-api functions.
 
@@ -247,6 +243,10 @@ README
 TEMPLATES/
      Directory containing templates and instructions for creating your own KIM
      Models.
+
+openkim-api-vX.X.X-introduction.pdf
+     presentation file describing the concepts on which the openkim-api system
+     is based.
 
 standard.kim
      A link to the file in ../KIM_API which describes the openkim-api descriptor

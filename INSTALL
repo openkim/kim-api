@@ -45,12 +45,14 @@ SYSTEM REQUIREMENTS
 
 To install the openkim-api package you need the following:
 
-1. A Unix/Linux/Mac OSX system.
+1. A Unix/Linux/Mac OSX/Cygwin system.
 
-2. GNU make, and
+2. GNU make (3.81 or later), and
 
 3. GNU compilers (gcc, g++, gfortran) version 4.2.x or higher or the
-   corresponding Intel compilers, version 11.1 or higher.
+   corresponding Intel compilers, version 11.1 or higher.  NOTE: gfortran 4.6.x
+   is known to have subtle bugs, and SHOULD NOT BE USED with the openkim-api
+   software package.
 
 -------------------------------------------------------------------------------
 
@@ -65,7 +67,7 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
 
 1. Set up the Makefile.KIM_Config file
 
-   (a) Copy the file Makefile.KIM_Config.example to Makefile.KIM_Config
+   (a) Copy the file `Makefile.KIM_Config.example' to `Makefile.KIM_Config'.
        For example, if you untarred the `openkim-api-vX.X.X.tgz' tarball in
        your home directory, you would do:
 
@@ -122,7 +124,7 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
        desired variable name (after the "# overwrite default variable values
        here" line) and filling in appropriate values.  (NOTE: GCC 4.4 requires
        that LDFLAGS be set as `LDFLAGS = -lgfortran -lgfortranstart' or
-       possibly `LD = $(FC)' and `LDFLAGS = -lstdc++'.)  For CYGWIN systems
+       possibly `LD = $(FC)' and `LDFLAGS = -lstdc++'.)  For Cygwin systems
        add the following line `PICFLAG =' to avoid warnings about the
        -fPIC option.
 
@@ -191,10 +193,10 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
    The provided example Tests read in the name of a Model (or Models) which
    they use to perform their calculations.  For most Tests the name of the
    Model can be piped in using an `echo' command.  For example, the following
-   Fortran 90 Test reads in one Model:
+   Fortran 2003 Test reads in one Model:
 
-   % cd $KD/TESTS/ex_test_Ar_free_cluster_CLUSTER_F90
-   % echo "ex_model_Ar_P_MLJ_CLUSTER_C" | ./ex_test_Ar_free_cluster_CLUSTER_F90
+   % cd $KD/TESTS/ex_test_Ar_free_cluster_CLUSTER_F03
+   % echo "ex_model_Ar_P_MLJ_CLUSTER_C" | ./ex_test_Ar_free_cluster_CLUSTER_F03
 
   (See the README files in the Test directories for an explanation of what
    the Tests do.)

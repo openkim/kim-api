@@ -354,8 +354,8 @@ program vc_forces_delta
                                        "kim_api_model_compute", ier)
            stop
         endif
-        ! Copy forces and energy to a place where the model can not change them
-        energy_old = energy ! may fail with gfortran cray pointer bug
+        ! Copy forces and energy to a place where the model cannot change them
+        energy_old = energy
         forces_old(:,:) = forces
 
         ! Generate random displacements for all atoms. The displacements are not

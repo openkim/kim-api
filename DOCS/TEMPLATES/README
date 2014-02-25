@@ -90,7 +90,7 @@ model_El_P_Template.params
      Parameter file for a Model based on a pair potential Model Driver.
 
 model_driver_P_Template.F03
-     F03 template file for a pair potential Model Driver.
+     Fortran 2003 template file for a pair potential Model Driver.
 
 model_driver_P_Template.c
      C template file for a pair potential Model Driver.
@@ -122,8 +122,8 @@ Models.  Detailed directions are also given below.
 (c) The template `model_El_PF_Template.F03' can be compared with
     `ex_model_Al_PF_ErcolessiAdams.F03'.
 
-(d) The template `model_El_PF_Template.C' can be compared with
-    `ex_model_Cu_PF_Johnson.F03'.
+(d) The template `model_El_PF_Template.c' can be compared with
+    `ex_model_Cu_PF_Johnson.c'.
 
 (e) The template `model_driver_P_Template.F03' can be compared with
     `ex_model_driver_P_LJ.F03'
@@ -138,7 +138,7 @@ for example use the `vimdiff' command:
    % cd $KD
    % vimdiff EXAMPLES/MODELS/ex_model_Ar_P_MLJ_F03/ex_model_Ar_P_MLJ_F03.F03 DOCS/TEMPLATES/model_El_P_Template.F03
 
-Alternatively use the `ediff' feature of the emacs editor.
+Alternatively use the excellent `ediff' feature of the emacs editor.
 
 -----------------------------------------------------------------------------
 
@@ -147,7 +147,7 @@ STEP 3
 You are now ready to create a new KIM-compliant Model based on the provided
 templates.
 
-The directions below show how to use the Fortran 90 template for a pair
+The directions below show how to use the Fortran 2003 template for a pair
 potential (model_El_P_Template.F03) and turn it into a Model for argon (Ar)
 using a Buckingham potential.  (The procedure for a Model written in C is
 essentially identical. See comments below.)
@@ -196,9 +196,11 @@ essentially identical. See comments below.)
       `ex_test_Ar_multiple_models' for an example of such usage).  The only
       case where static variables can be used is if they are "hard-wired" so
       that the Model can only work with those constant values.  In Fortran this
-      is done using the "parameter" statement.  In C, use preprocessor `#define'
-      statements.  Otherwise variables need to be stored as PARAM_FREE_ or
-      PARAM_FIXED_ variables in the KIM API object.  See the discussion in the
+      is done using the "parameter" statement.  In C, use preprocessor
+      `#define' statements.  Otherwise variables need to be stored as
+      PARAM_FREE_ or PARAM_FIXED_ variables in the KIM API object.
+      Alternatively you can use the "model buffer" feature of the KIM API to
+      store a pointer to a data structure.  See the discussion in the
       standard.kim file.
 
     - Fill in the necessary code in the routines calc_phi() and calc_phi_dphi().
@@ -269,12 +271,13 @@ Buckingham Model Driver and a Ne KIM Model based on it are given below.
 
     - Model Driver name which appears in several places in the file.
 
-    - Fill in the Model Driver parameters which are required in several places in the file.
+    - Fill in the Model Driver parameters which are required in several places
+      in the file.
 
     - Fill in the necessary code in the routines calc_phi() and calc_phi_dphi().
 
-    - Specify the format for reading in the parameter data (in Fortran 90 you can
-      simply set this to `*'.)
+    - Specify the format for reading in the parameter data (in Fortran 2003 you
+      can simply set this to `*'.)
 
 (e) Edit the Makefile and change the Model Driver name and model_init function
     values appropriately.  (Search for the word "FILL".) Also change the

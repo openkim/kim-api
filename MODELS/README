@@ -36,5 +36,5 @@
 This directory (MODELS) contains a directory for each Model to be compiled as
 part of the openkim-api package.
 
-Copy any Model directories (from EXAMPLES or http://openKIM.org) you want to
+Copy any Model directories (from EXAMPLES or https://OpenKIM.org) you want to
 compile into this directory.

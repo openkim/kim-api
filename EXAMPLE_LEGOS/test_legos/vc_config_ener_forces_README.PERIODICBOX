@@ -112,5 +112,5 @@ Makefile
 README
      This file.
 
-vc_config_ener_forces.F90
-     F90 program that implements the test.
+vc_config_ener_forces.F03
+     Fortran 2003 program that implements the test.

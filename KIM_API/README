@@ -39,6 +39,10 @@ files.
 The contents of the directory are as follows (before any compilation if
 performed):
 
+CreateGetSetMultipleRoutines.sh
+     A shell script to generate fortran code for the get/set multiple arguments
+     api Fortran 2003 service routines.
+
 KIM_API.cpp
      C++ implementations for core service routines and methods.
 

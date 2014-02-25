@@ -36,9 +36,6 @@ related files.
 
 The contents of the directory are as follows:
 
-standard.kim
-     kim descriptor file with description of all standard variables.
-
 COMPILER_DEFAULTS/
      Directory containing the various standard compiler default setting values
 
@@ -63,8 +60,8 @@ Makefile.ParameterizedModel
      Parameterized Models
 
 Makefile.SanityCheck
-     Makefile the verifies that all necessary settings variables have been
-     set by the user and that they are appropriate values
+     Makefile that verifies all necessary settings variables have been
+     set by the user and that they have appropriate values
 
 Makefile.Test
      Makefile containing the openkim-api make system's definitions for Tests

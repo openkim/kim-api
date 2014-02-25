@@ -49,8 +49,8 @@ Makefile
 README
      This file.
 
-TEST_NAME_STR.F90
-     F90 program that implements the test.
+TEST_NAME_STR.F03
+     Fortran 2003 program that implements the test.
 
 TEST_NAME_STR.kim
      KIM descriptor file, contains all variables and methods that are exposed

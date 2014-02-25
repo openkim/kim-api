@@ -62,6 +62,11 @@ NEIGH_RVEC_cluster_neighborlist.f.frag
      This Fortran file contains the routine for creating neighbor lists for use
      with the NEIGH_RVEC methods for free cluster systems.
 
+NEIGH_RVEC_compute_equilibrium_spacing.f.frag
+     This Fortran file contains the routine for computing the equilibrium
+     spacing of an FCC crystal for use with the NEIGH_RVEC methods using the
+     golden search algorithm.
+
 NEIGH_RVEC_periodic_B2_neighborlist.f.frag
      This Fortran file contains the routine for creating neighbor lists for use
      with the NEIGH_RVEC methods for periodic B2 systems.
@@ -73,11 +78,6 @@ NEIGH_RVEC_periodic_FCC_neighborlist.f.frag
 NEIGH_RVEC_update_Rij_vectors.f.frag
      This Fortran file contains the routine for updating the relative position
      vectors in the neighbor list.
-
-NEIGH_RVEC_compute_equilibrium_spacing.f.frag
-     This Fortran file contains the routine for computing the equilibrium
-     spacing of an FCC crystal for use with the NEIGH_RVEC methods using the
-     golden search algorithm.
 
 README
      This file
@@ -112,9 +112,6 @@ descriptor_file_start_SI
 dir_ex_test_Ar_multiple_models/
      Directory containing the ex_test_Ar_multiple_models Test.
 
-dir_ex_test_demo_F03/
-     Directory containing the ex_test_demo_F03 Test.
-
 free_KIM_API_object.f.frag
      This Fortran file contains the free_KIM_API_object routine that is used
      the by FCCcohesive Tests.
@@ -131,13 +128,10 @@ get_model_supported_types.f.frag
      This Fortran file contains the get_model_supported_types routine that is
      used by the numerical derivative check.
 
-get_neigh_Rij.f.frag
-     This Fortran file contains the routine for accessing neighbor lists that
-     include Rij relative position vectors.
-
-get_neigh_no_Rij.f.frag
-     This Fortran file contains the routine for accessing neighbor lists that
-     do not include Rij relative position vectors.
+mod_neighborlist.f.frac
+     This Fortran file contains the mod_neighborlist module that defines the 
+     neighObjct_Type type and the get_neigh and setup_neighborlist_KIM_access
+     routines.
 
 program_B2cohesive_NEIGH_RVEC.f.frag
      This Fortran file contains the main program for the
@@ -169,11 +163,11 @@ program_free_cluster_CLUSTER.c.frag
 
 program_free_cluster_CLUSTER.f.frag
      This Fortran file contains the main program for the
-     ex_test_*_free_cluster_CLUSTER_F90 example test.
+     ex_test_*_free_cluster_CLUSTER_F03 example test.
 
 program_free_cluster_CLUSTER_memory.f.frag
      This Fortran file contains the main program for the
-     ex_test_*_free_cluster_CLUSTER_memory_F90 example test.
+     ex_test_*_free_cluster_CLUSTER_memory_F03 example test.
 
 program_free_cluster_stiff.f.frag
      This Fortran file contains the main program for the
@@ -198,14 +192,6 @@ setup_B2_KIM_API_object.f.frag
 setup_KIM_API_object.f.frag
      This Fortran file contains the setup_KIM_API_obejct routine used by the
      FCCcohesive Tests.
-
-setup_neighborlist_Rij_KIM_access.f.frag
-     This Fortran file contains the setup_neighborlist_Rij_KIM_access routine
-     used by the cohesive Tests.
-
-setup_neighborlist_no_Rij_KIM_access.f.frag
-     This Fortran file contains the setup_neighborlist_no_Rij_KIM_access
-     routine used by the cohesive Tests.
 
 test_B2cohesive_README
      This file contains the README file that is used to generate README files
