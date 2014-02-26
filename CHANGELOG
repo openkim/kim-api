@@ -33,6 +33,28 @@
 #
 
 
+=== openkim-api-v1.4.0 =========================================================
+
+
+* Improvements to robustness and efficiency of MAKE_SYSTEM
+
+* Updated copyright years in files
+
+* Updated documentation to reflect new Fortran 2003 bindings
+
+* Converted DOCS/TEMPLATES/ to Fortran 2003 bindings
+
+* Made significant improvement to neighbor list handling in example Tests
+
+* Made some minor improvements to example Models and Model Drivers
+
+* Converted example Models, Model Drivers, and Tests to Fortran 2003 bindings
+
+* DEPRECATED all Cray pointer bindings and associated code
+
+* Added Fortran 2003 bindings
+
+
 === openkim-api-v1.3.1 =========================================================
 
 
