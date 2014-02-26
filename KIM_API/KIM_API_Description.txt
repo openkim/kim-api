@@ -50,8 +50,8 @@ implemented as Fortran Subroutines and all other C api functions are
 implemented as Fortran Functions.
 
 NOTE: older versions of this package used the "Cray Pointer" Fortran extension
-to support C/Fortran interoperability.  This support is still available, but is
-now DEPRECATED.  This functionality will be removed in a future release.
+to support C/Fortran interoperability.  This is no longer supported and the
+Cray pointer bindings have been removed.
 
 Pointers to data versus pointers to methods (functions):
 
@@ -75,14 +75,6 @@ STATUS codes: The KIM API uses a set of defined status code keys to return
          status code, `kimerror', returned by a KIM API service routine that is
          less than KIM_STATUS_OK (i.e., "kimerror < KIM_STATUS_OK") indicates
          an error has occurred.
-
-DEPRECATED: Fortran style: integer, parameter :: kim_intptr = 4 (or 8)
-
-         This parameter is defined in the Fortran 90 module `kim_api'
-         in the file KIM_API_F.F90 and gives the length of an integer variable
-         that can be used to store CRAY pointers. Depending on the system, its
-         value is 4 (on 32 bit machines) or 8 (on 64 bit machines).
-
 
 ==============================  GLOBAL METHODS  ==============================
 

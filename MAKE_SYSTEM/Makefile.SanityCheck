@@ -100,9 +100,6 @@ ifeq ($(flavor PICFLAG),undefined)
       $(error Make variable PICFLAG must be defined)
    endif
 endif
-ifeq ($(flavor FCRAYFLAG),undefined)
-   $(error Make variable FCRAYFLAG must be defined)
-endif
 ifeq ($(flavor LDDYNAMICLIB),undefined)
    ifneq ($(KIM_LINK),static-link)
       $(error Make variable LDDYNAMICLIB must be defined)

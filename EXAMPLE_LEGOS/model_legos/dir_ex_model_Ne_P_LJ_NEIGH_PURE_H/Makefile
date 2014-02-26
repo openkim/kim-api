@@ -40,7 +40,6 @@ include ../Makefile.KIM_Config
 # set model specific details
 MODEL_NAME := ex_model_Ne_P_LJ_NEIGH_PURE_H
 MODEL_INIT_FUNCTION_NAME := model_init
-MODEL_INIT_FUNCTION_LANG := Fortran2003
 
 LOCALOBJ = ex_model_Ne_P_LJ_NEIGH_PURE_H.o ex_model_Ne_P_LJ_NEIGH_PURE_H_compute.o
 

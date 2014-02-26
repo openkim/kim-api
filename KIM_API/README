@@ -62,9 +62,6 @@ KIM_API_DIRS.h
 KIM_API_Description.txt
      Description of KIM API service routines.
 
-KIM_API_F.F90
-     Implementation of DEPRECATED Fortran-style interface for KIM API.
-
 KIM_API_F03.F03
      Implementation of Fortran 2003-style interface for KIM API.
 

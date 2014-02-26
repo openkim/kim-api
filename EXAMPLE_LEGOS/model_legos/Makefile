@@ -114,7 +114,7 @@ ex_model_Ar_P_MLJ_CLUSTER_C: model_P_MLJ_CLUSTER_C.c             \
          | sed -e "s/NBC_NAME_STR/CLUSTER/g" \
                -e "s/LANGUAGE_STR/C/g"                                                                        >  $(KIM_EX_MODELS_DIR)/$@/README
         # make Makefile in the directory
-	$(D_CAT) model_Makefile | $(SED_CMD) | sed -e 's/MODEL_LANG/C/'                                       >  $(KIM_EX_MODELS_DIR)/$@/Makefile
+	$(D_CAT) model_Makefile | $(SED_CMD)                                                                  >  $(KIM_EX_MODELS_DIR)/$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start \
          | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    1/g'                >  $(KIM_EX_MODELS_DIR)/$@/$@.kim
@@ -150,7 +150,7 @@ ex_model_Ar_P_MLJ_CLUSTER_F03: $(COMMON_FRAGMENTS)                    \
          | sed -e "s/NBC_NAME_STR/CLUSTER/g" \
                -e "s/LANGUAGE_STR/F03/g"                                                                      >  $(KIM_EX_MODELS_DIR)/$@/README
         # make Makefile in the directory
-	$(D_CAT) model_Makefile | $(SED_CMD) | sed -e 's/MODEL_LANG/Fortran2003/'                             >  $(KIM_EX_MODELS_DIR)/$@/Makefile
+	$(D_CAT) model_Makefile | $(SED_CMD)                                                                  >  $(KIM_EX_MODELS_DIR)/$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start \
          | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    1/g'                >  $(KIM_EX_MODELS_DIR)/$@/$@.kim
@@ -193,7 +193,7 @@ ex_model_Ar_P_MLJ_MI_OPBC_H_F: $(COMMON_FRAGMENTS)                              
          | sed -e "s/NBC_NAME_STR/MI_OPBC_[H|F]/g" \
                -e "s/LANGUAGE_STR/F03/g"                                                                      >  $(KIM_EX_MODELS_DIR)/$@/README
         # make Makefile in the directory
-	$(D_CAT) model_Makefile | $(SED_CMD) | sed -e 's/MODEL_LANG/Fortran2003/'                             >  $(KIM_EX_MODELS_DIR)/$@/Makefile
+	$(D_CAT) model_Makefile | $(SED_CMD)                                                                  >  $(KIM_EX_MODELS_DIR)/$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start \
          | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    1/g'                >  $(KIM_EX_MODELS_DIR)/$@/$@.kim
@@ -248,7 +248,7 @@ ex_model_Ar_P_MLJ_NEIGH_PURE_H_F: $(COMMON_FRAGMENTS)                           
          | sed -e "s/NBC_NAME_STR/NEIGH_PURE_[H|F]/g" \
                -e "s/LANGUAGE_STR/F03/g"                                                                      >  $(KIM_EX_MODELS_DIR)/$@/README
         # make Makefile in the directory
-	$(D_CAT) model_Makefile | $(SED_CMD) | sed -e 's/MODEL_LANG/Fortran2003/'                             >  $(KIM_EX_MODELS_DIR)/$@/Makefile
+	$(D_CAT) model_Makefile | $(SED_CMD)                                                                  >  $(KIM_EX_MODELS_DIR)/$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start \
                                   | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    1/g' \
@@ -302,7 +302,7 @@ ex_model_Ar_P_MLJ_NEIGH_RVEC_F: $(COMMON_FRAGMENTS)                           \
          | sed -e "s/NBC_NAME_STR/NEIGH_RVEC_F/g" \
                -e "s/LANGUAGE_STR/F03/g"                                                                      >  $(KIM_EX_MODELS_DIR)/$@/README
         # make Makefile in the directory
-	$(D_CAT) model_Makefile | $(SED_CMD) | sed -e 's/MODEL_LANG/Fortran2003/'                             >  $(KIM_EX_MODELS_DIR)/$@/Makefile
+	$(D_CAT) model_Makefile | $(SED_CMD)                                                                  >  $(KIM_EX_MODELS_DIR)/$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start \
          | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    1/g'                >  $(KIM_EX_MODELS_DIR)/$@/$@.kim
@@ -351,7 +351,7 @@ ex_model_driver_P_Morse: model_driver_Morse_README \
         # make README file in the directory
 	$(D_CAT) model_driver_Morse_README | sed -e 's/MODEL_DRIVER_NAME_STR/$@/g'                            >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/README
         # make Makefile in the directory
-	$(D_CAT) model_driver_Makefile | sed -e 's/MODEL_DRIVER_NAME_STR/$@/g' -e 's/MODEL_DRIVER_LANG/C/'    >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/Makefile
+	$(D_CAT) model_driver_Makefile | sed -e 's/MODEL_DRIVER_NAME_STR/$@/g'                                >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) model_driver_P_Morse.kim                                                                     >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$@.kim
         # make .c file in the directory
@@ -482,7 +482,7 @@ ex_model_driver_P_LJ: model_driver_LJ_README \
         # make README file in the directory
 	$(D_CAT) model_driver_LJ_README | sed -e 's/MODEL_DRIVER_NAME_STR/$@/g'                                 >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/README
         # make Makefile in the directory
-	$(D_CAT) model_driver_Makefile | sed -e 's/MODEL_DRIVER_NAME_STR/$@/g' -e 's/MODEL_DRIVER_LANG/C/'      >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/Makefile
+	$(D_CAT) model_driver_Makefile | sed -e 's/MODEL_DRIVER_NAME_STR/$@/g'                                  >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) model_driver_P_LJ.kim                                                                          >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$@.kim
         # make .F03 file in the directory

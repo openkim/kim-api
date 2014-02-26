@@ -53,7 +53,6 @@ FNOCPPFLAG       = -nocpp
 FCPPFLAG         = -cpp
 FFORTRANFILEFLAG = -Tf
 PICFLAG          = -fPIC
-FCRAYFLAG        =
 LDDYNAMICLIB     =
 # Define linking options for using $(LD) to link other language objects
 XLANGLDLIBS      = -nofor_main -cxxlib

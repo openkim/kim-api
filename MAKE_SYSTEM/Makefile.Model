@@ -39,7 +39,6 @@ include $(KIM_DIR)/MAKE_SYSTEM/Makefile.SanityCheck
 
 # Clean up variables
 MODEL_NAME := $(strip $(MODEL_NAME))
-MODEL_INIT_FUNCTION_LANG := $(strip $(MODEL_INIT_FUNCTION_LANG))
 MODEL_INIT_FUNCTION_NAME := $(strip $(MODEL_INIT_FUNCTION_NAME))
 
 # Set SO variables
@@ -69,22 +68,15 @@ $(KIM_STR_NAME).cpp: $(MODEL_NAME).kim
 
 all: $(MODEL_BUILD_TARGET)
 
-# This feature should be removed once cray pointers go awasy
-ifeq ("Fortran", "$(MODEL_INIT_FUNCTION_LANG)")
-   MODEL_INIT_FUNC_NAME = `echo $(MODEL_INIT_FUNCTION_NAME) | tr 'A-Z' 'a-z'`_
-else
-   MODEL_INIT_FUNC_NAME = $(MODEL_INIT_FUNCTION_NAME)
-endif
-
 .INTERMEDIATE: init_wrapper.cpp
 init_wrapper.cpp: Makefile
 	@printf "Creating... intermediate file... $@.\n"
-	$(QUELL)printf "extern \"C\"\n"                                    > $@
-	$(QUELL)printf "{\n"                                              >> $@
-	$(QUELL)printf "   int $(MODEL_INIT_FUNC_NAME)(void *kimmdl);\n"  >> $@
-	$(QUELL)printf "   int (* $(MODEL_NAME)_init_pointer)(void*) =\n" >> $@
-	$(QUELL)printf "      $(MODEL_INIT_FUNC_NAME);\n"                 >> $@
-	$(QUELL)printf "}\n"                                              >> $@
+	$(QUELL)printf "extern \"C\"\n"                                                 > $@
+	$(QUELL)printf "{\n"                                                           >> $@
+	$(QUELL)printf "   int $(strip $(MODEL_INIT_FUNCTION_NAME))(void *kimmdl);\n"  >> $@
+	$(QUELL)printf "   int (* $(strip $(MODEL_NAME))_init_pointer)(void*) =\n"     >> $@
+	$(QUELL)printf "      $(strip $(MODEL_INIT_FUNCTION_NAME));\n"                 >> $@
+	$(QUELL)printf "}\n"                                                           >> $@
 
 lib$(MODEL_LIB).a: lib$(MODEL_LIB_BUILD).a
 	@printf "Creating... $@.\n"

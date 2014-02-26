@@ -53,7 +53,7 @@ OBJF03 = KIM_API_F03.o KIM_API_F03_Helper.o
 ifdef KIM_NO_FORTRAN
    ALLOBJ = $(OBJC)
 else
-   ALLOBJ = $(OBJC) $(OBJF90) $(OBJF03)
+   ALLOBJ = $(OBJC) $(OBJF03)
 endif
 
 # Set defines
@@ -147,8 +147,6 @@ KIM_API.o: KIM_DEFINE_VALUES += -D STANDARD_KIM_STR_NAME=$(MODEL_NAME)_$(KIM_STR
 KIM_API.o: $(if $(filter-out dynamic-load,$(KIM_LINK)),model_init_include.h model_init_include.cpp model_kim_str_include.cpp,) KIM_API.h KIM_API.cpp KIM_AUX.h KIM_API_DIRS.h Makefile
 
 KIM_API_C.o: KIM_API.h KIM_API_C.h Makefile
-
-KIM_API_F.o: Makefile
 
 KIM_API_F03.o: KIM_API_F03_Multiples.incl KIM_API_F03_Helper.o Makefile
 
