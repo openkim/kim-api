@@ -96,6 +96,196 @@ int KIM_API_init(void *kimmdl, char *testname, char *modelname);
     successful completion or KIM_STATUS_FAIL otherwise.  Also if it is
     unsuccessful, kimmdl will have NULL value.
 
+    Here the process of matching a Test KIM descriptor file and a Model KIM
+    descriptor file is described in detail.  For a final positive match result
+    to occur, a positive match must be obtained in EACH AND EVERY ONE of the
+    below steps:
+
+    (1) Syntax and standard conformance: The Test and Model KIM descriptor
+        files are read.  Each item in the file is parsed and compared for
+        correct syntax and conformance with the `standard.kim' file.  If both
+        the files a syntactically correct and conform to the `standard.kim'
+        file definitions, a positive match is obtained.  Otherwise, a negative
+        match is obtained and the routine returns KIM_STATUS_FAIL.
+
+    (2) Unit matching: If the Model's Unit_Handling value is `flexible' a
+        positive match is obtained and the routine skips to the next step
+        below.  Otherwise, the Test's base unit values are compared, one by
+        one, to the Model's base unit values.  If all five values are equal, a
+        positive match is obtained.  Otherwise, a negative match is obtained
+        and the routine returns KIM_STATUS_FAIL.
+
+    (3) Particle type matching: For each particle type symbol name listed by
+        the Test, the Model's list of particle type symbol names is searched
+        for the corresponding entry.  If every particle type symbol listed by
+        the Test is found in the Model's symbol list, a positive match is
+        obtained.  If both the Model's and Test's list are empty, then the
+        model and test support a single "unnamed" particle type and a positive
+        match is obtained.  Otherwise, a negative match is obtained and the
+        routine returns KIM_STATUS_FAIL.
+
+    (4) Neighbor list access matching: The following is a list of the possible
+        cases and their matching result.
+
+              Test        Model         Matching Result
+              ----------- ------------- ---------------
+              Iter        Iter          positive match
+              Iter        Loca          negative match
+              Iter        Iter&Loca     positive match
+              Iter        Both          negative match
+              Loca        Iter          negative match
+              Loca        Loca          positive match
+              Loca        Iter&Loca     positive match
+              Loca        Both          negative match
+              Iter&Loca   Iter          positive match
+              Iter&Loca   Loca          positive match
+              Iter&Loca   Iter&Loca     positive match
+              Iter&Loca   Both          positive match
+              Both        Iter          positive match
+              Both        Loca          positive match
+              Both        Iter&Loca     positive match
+              Both        Both          positive match
+
+    (5) NBC method matching: If one or more of the Test's listed NBC methods is
+        also in the Model's listed NBC methods a positive match is obtained.
+        When more than one common NBC method exists, the NBC method listed
+        closest to the top of the Test's NBC method list is selected as the
+        "active" NBC method.  If no common NBC methods are listed a negative
+        match is obtained and the routine returns KIM_STATUS_FAIL.
+
+    (6) Matching for MODEL_INPUT arguments required by active NBC method:
+        Depending on the active NBC method (determined in step (5) above), the
+        Model's and Test's MODEL_INPUT section must include the following
+        arguments:
+
+              CLUSTER:
+                    `coordinates'
+
+              NEIGH_PURE_H:
+                    `coordinates'
+                    `numberContributingParticles'
+                    `neighObject'
+                    `get_neigh'
+
+              NEIGH_PURE_F:
+                    `coordinates'
+                    `neighObject'
+                    `get_neigh'
+
+              NEIGH_RVEC_H:
+                    `coordinates'
+                    `numberContributingParticles'
+                    `neighObject'
+                    `get_neigh'
+
+              NEIGH_RVEC_F:
+                    `coordinates'
+                    `neighObject'
+                    `get_neigh'
+
+              MI_OPBC_H:
+                    `coordinates'
+                    `boxSideLengths'
+                    `numberContributingParticles'
+                    `neighObject'
+                    `get_neigh'
+
+              MI_OPBC_F:
+                    `coordinates'
+                    `boxSideLengths'
+                    `neighObject'
+                    `get_neigh'
+
+        If all required arguments are found in both the Model's and Test's list
+        of MODEL_INPUT arguments, then a positive match is obtained.
+        Otherwise, a negative match is obtained and the routine returned
+        KIM_STATUS_FAIL.
+
+    (7) Mandatory arguments matching: The following arguments are mandatory and
+        must be included in any KIM descriptor file:
+
+              MODEL_INPUT section
+                `numberOfParticles'
+                `numberParticleTypes'
+                `particleTypes'      (not required if the
+                                      SUPPORTED_ATOM/PARTICLES_TYPES
+                                      section is empty.  That is, if the Model
+                                      and Test only support a single "unnamed"
+                                      particle type.)
+                `coordinates'        (this has already been confirmed in step 6)
+              MODEL_OUTPUT section
+                `compute'
+                `reinit'
+                `destroy'
+                `cutoff'
+
+        If all of the above arguments (except possibly, as described above,
+        `particleTypes') are present in both the Model and Test KIM descriptor
+        files, then a positive match is obtained.  Otherwise, a negative match
+        is obtained and the routine returns KIM_STATUS_FAIL.
+
+    (8) MODEL_INPUT matching: If the Model's MODEL_INPUT list of arguments
+        includes `process_dEdr' or `process_d2Edr2', then its MODEL_OUTPUT list
+        of arguments may not contain `virial', `particleVirial', or `hessian'.
+        If it does, a negative match is obtained and the routine returns
+        KIM_STATUS_FAIL.
+
+        If the Test's MODEL_INPUT list of arguments includes `process_dEdr' or
+        `process_d2Edr2', then its MODEL_OUTPUT list of arguments may not
+        contain `virial', `particleVirial', or `hessian'.  If it does, a
+        negative match is obtained and the routine returns KIM_STATUS_FAIL.
+
+        If the Model's MODEL_INPUT list of arguments contains `process_dEdr'
+        and the Test's MODEL_INPUT list of arguments does not contain
+        `process_dEdr', then (in memory) the routine adds `virial' and
+        `particleVirial' arguments, with the `optional' keyword, to the Model's
+        MODEL_OUTPUT list of arguments.
+
+        If the Model's MODEL_INPUT list of arguments contains `process_dEdr'
+        and `process_d2Edr2', then (in memory) the routine adds `hessian', with
+        the `optional' keyword, to the Model's MODEL_OUTPUT list of arguments.
+
+        For each non-optional argument in the Model's MODEL_INPUT list of
+        arguments, a corresponding entry must exist in the Test's MODEL_INPUT
+        list of arguments.  If at least one such argument is missing from the
+        Test's list, a negative match is obtained and the routine returns
+        KIM_STATUS_FAIL.
+
+        For each argument in the Test's MODEL_INPUT list of arguments, a
+        corresponding entry (either "optional" or required) must exist in the
+        Model's MODEL_INPUT list of arguments.  If all such arguments are
+        present, then a positive match is obtained.  If at least one such
+        argument is missing from the Model's list, a negative match is obtained
+        and the routine returns KIM_STATUS_FAIL.
+
+        Finally, all optional arguments in the Model's MODEL_INPUT list of
+        arguments which are not contained in the Test's MODEL_INPUT list of
+        arguments have their `compute' flag set to KIM_COMPUTE_FALSE.
+
+    (9) MODEL_OUTPUT matching: For each non-optional argument in the Model's
+        MODEL_OUTPUT list of arguments, a corresponding entry must exist in the
+        Test's MODEL_OUTPUT list of arguments.  If at least one such argument
+        is missing from the Test's list, a negative match is obtained and the
+        routine returns KIM_STATUS_FAIL.
+
+        For each argument in the Test's MODEL_OUTPUT list of arguments, a
+        corresponding entry (either "optional" or required) must exist in the
+        Model's MODEL_OUTPUT list of arguments.  If all such arguments are
+        present, then a positive match is obtained.  If at least one such
+        argument is missing from the Model's list, a negative match is obtained
+        and the routine returns KIM_STATUS_FAIL.
+
+	For each argument in the Test's MODEL_OUTPUT list of arguments, the
+	argument's `compute' flag is set to KIM_COMPUTE_TRUE.  If the `virial'
+	or `particleVirial' arguments were added to the Model's MODEL_OUTPUT
+	list of arguments in step 8 and any of these arguments are contained in
+	the Test's MODEL_OUTPUT list of arguments, then the `process_dEdr'
+	argument's `compute' flag is set to KIM_COMPUTE_TRUE.  If the `hessian'
+	argument was added to the Model's MODEL_OUTPUT list of arguments in
+	step 8 and this argument is in the Test's MODEL_OUTPUT list of
+	arguments, then the `compute' flags of the `process_dEdr' and
+	`process_d2Edr2' arguments are set to KIM_COMPUTE_TRUE.
+
 Arguments:
 
       void *kimmdl
@@ -125,6 +315,10 @@ int KIM_API_string_init(void *kimmdl, char *testdescriptor, char *modelname);
     However, in this case the argument `testname' is a (long) null (or eof)
     terminated string with the complete content of the Test's KIM descriptor
     file.
+
+    For a description of the process of matching a Test KIM descriptor file and
+    a Model KIM descriptor file performed by this routine, see the entry for
+    KIM_API_init() above.
 
 Arguments:
 
@@ -997,8 +1191,8 @@ char *KIM_API_get_NBC_method(void *kimmdl, int *kimerror);
     memory pointed to by this pointer is allocated by the routine, but should
     be released by the user to avoid a memory leak (Fortran 2003 users should
     use KIM_API_c_free()).  The string is the NBC (Neighbor list and Boundary
-    Conditions) method in use by the KIM_API object `kimmdl'.  (See the
-    standard.kim file for more information on NBC methods.)
+    Conditions) "active" NBC method in use by the KIM_API object `kimmdl'.
+    (See the standard.kim file for more information on NBC methods.)
 
 Arguments:
       void *kimmdl

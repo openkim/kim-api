@@ -971,9 +971,9 @@ process_d2Edr2              method       none               []
 # neighObject : A pointer to the data for the neighbor list that is provided by
 #               the Test.
 #
-# This argument is required for Models/Tests that support the following any NBC
-# other than CLUSTER.  If supported, a Test must allocate memory for this
-# argument and register it in the KIM API object (via KIM_API_allocate() or
+# This argument is required for Models/Tests that support any NBC other than
+# CLUSTER.  If supported, a Test must allocate memory for this argument and
+# register it in the KIM API object (via KIM_API_allocate() or
 # KIM_API_set_data()) before the KIM_API_model_compute() function is called.
 # The Test is free to change this pointer at any time.
 #
