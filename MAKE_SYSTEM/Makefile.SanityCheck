@@ -38,6 +38,16 @@ ifndef MAKE_VERSION_IS_OK
    $(error openkim-api requires gnu make version $(NEED_MAKE_VERSION) or above)
 endif
 
+# check version of gfortran
+ifeq ($(KIM_COMPILERSUITE),GCC)
+  GFVER = $(subst ., ,$(shell $(FC) -dumpversion))
+  ifeq   ($(word 1,$(GFVER)),4)
+    ifeq ($(word 2,$(GFVER)),6)
+       $(error openkim-api should not be used with gfortran 4.6.X)
+    endif
+  endif
+endif
+
 # sanity checks
 ifndef KIM_DIR
    $(error Make variable KIM_DIR must be defined)
