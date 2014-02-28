@@ -601,10 +601,10 @@ int KIM_API_get_model_index_shift(void *kimmdl);
     This routine returns an integer that indicates the offset in indices
     between Tests and Models for array access. The return value can be only
     -1,0 or +1.
-    If the Test has ZeroBasedList and the Model has OneBasedList  the return value is +1
-    If the Test has OneBasedList  and the Model has OneBasedList  the return value is  0
-    If the Test has ZeroBasedList and the Model has ZeroBasedList the return value is  0
-    If the Test has OneBasedList  and the Model has ZeroBasedList the return value is -1
+    If the Test has ZeroBasedLists and the Model has OneBasedLists  the return value is +1
+    If the Test has OneBasedLists  and the Model has OneBasedLists  the return value is  0
+    If the Test has ZeroBasedLists and the Model has ZeroBasedLists the return value is  0
+    If the Test has OneBasedLists  and the Model has ZeroBasedLists the return value is -1
 
 Arguments:
 
@@ -1484,7 +1484,7 @@ int KIM_API_process_dEdr(void **km, double *dEdr, double *r, double **dx, &
     `j'.  The Test can use this information to compute, via the chain-rule,
     many properties.  Examples include forces, the virial, and other
     thermodynamic tensions.  The KIM API performs automatic index conversion
-    (based on ZeroBasedList and OneBasedList flag settings) before calling the
+    (based on ZeroBasedLists and OneBasedLists flag settings) before calling the
     Test's supplied process_dEdr function.  If the Test provides a process_dEdr
     function, it must register, in the KIM API object, a pointer to this
     function.  The function must conform to the following interface:
@@ -1545,7 +1545,7 @@ int KIM_API_process_d2Edr2(void **km, double *d2Edr2, double **r, &
     The Test can use this information (often in conjunction with information
     from process_dEdr) to compute, via the chain-rule, many properties.  An
     example is the hessian.  The KIM API performs automatic index conversion
-    (based on ZeroBasedList and OneBasedList flag settings) before calling the
+    (based on ZeroBasedLists and OneBasedLists flag settings) before calling the
     Test's supplied process_d2Edr2 function.  If the Test provides a
     process_d2Edr2 function, it must register, in the KIM API object, a pointer
     to this function.  The function must conform to the following interface:
