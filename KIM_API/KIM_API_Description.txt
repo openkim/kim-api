@@ -1065,7 +1065,14 @@ int KIM_API_model_init(void *kimmdl);
         `nmstrlen' make up the extent of the paramfile_name array.  The i-th
         row of this array will contain a null-terminated string with the
         absolute path to the Model's i-th parameter file, which the Model
-        Driver should read from.
+        Driver should read from.  The original parameter files are compiled
+        into the Model's code which is stored in the corresponding library
+        file.  At the time of the KIM_API_model_init() function call, these
+        files are copied into temporary files with names obtained from the
+        "tmpnam" system call.  These files are available to the Model Driver
+        code only during the call to its model_init function.  After this
+        function returns the system deletes these file from the system's
+        filesystem by invoking the "remove" system call.
 
 Arguments:
       void *kimmdl
