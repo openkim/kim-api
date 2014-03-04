@@ -135,16 +135,35 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
                reported this bug and are awaiting its fix.  In the meantime,
                the following workaround has been identified:
 
-               (i)   You must compile the openkim-api and associated Models,
+               (i) You must have a "multi-library" version of gfortran
+                   installed on your mac due the need (see (ii) below) to
+                   compile for a 32bit architecture.  This means that GCC must
+                   have been configured with the "--enable-multilib" flag.  To
+                   check your version execute `gfortran -v' and look for the
+                   string "--enable-multilib".  In order to install a multilib
+                   version of gfortran on your mac you can use a package
+                   manager such as Homebrew, Mac Ports, or fink.  Follow the
+                   instructions for installing the package manager of your
+                   choice.  Then execute the command to install gfortran.
+
+                   For Homebrew the command is:
+                     % brew install gfortran --enable-multilib
+
+                   For Mac Ports the command is:
+                     % sudo port select --set gcc mp-gcc48
+                     (Note, this may require that you compile the package from
+                      source in order to get the correct version.)
+
+               (ii)  You must compile the openkim-api and associated Models,
                      Tests, etc. using the `KIM_SYSTEMARCH = 32bit' setting.
 
-               (ii)  Item (i) above, may mean that you will need to tell your
+               (iii) Item (ii) above, may mean that you will need to tell your
                      compilers to use 32bit mode (for example):
                         `CC  = gcc -m32'
                         `CXX = g++ -m32'
                         `FC  = gfortran -m32'
 
-               (iii) You need to have the following line in this section of the
+               (iv)  You need to have the following line in this section of the
                      Makefile.KIM_Config file in order to avoid harmless
                      compiler warnings:
                         `LDFLAGS += -read_only_relocs suppress'
