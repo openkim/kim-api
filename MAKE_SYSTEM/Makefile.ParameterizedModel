@@ -87,7 +87,7 @@ $(strip $(MODEL_NAME)).cpp: $(KIM_DIR)/MAKE_SYSTEM/model_based_on_driver.cpp $(p
 	@$(foreach flnum,$(paramfile_num_list),\
             fl_name=$(PARAM_FILE_$(flnum)_NAME);\
             fl_size=`cat $$fl_name | tr -d '\r' | wc -c`;\
-            n=`expr $$fl_size / 65536 + 1`;\
+            n=`expr $$fl_size / 65536 + 2`;\
             lines=`cat $$fl_name | tr -d '\r' | wc -l`;\
             dl=`expr $$lines / $$n`;\
             printf "static const int paramfile_$(flnum)_chunks = %i;\n" `expr $$n + 1` >> $(strip $(MODEL_NAME)).cpp;\

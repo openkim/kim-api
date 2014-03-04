@@ -191,7 +191,7 @@ KIM_LIB = -L$(KIM_DIR)/KIM_API/ -lkim
 %_kim_str.cpp: %.kim $(KIM_MAKE_FILES)
 	@printf "Creating... intermediate file... $@.\n"
 	@fl_size=`cat $*.kim | tr -d '\r' | wc -c`;\
-         n=`expr $$fl_size / 65536 + 1`;\
+         n=`expr $$fl_size / 65536 + 2`;\
          lines=`cat $*.kim | tr -d '\r' | wc -l`;\
          dl=`expr $$lines / $$n`;\
          printf "extern \"C\" {\n"                                                                 >  $*_kim_str.cpp;\
