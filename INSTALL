@@ -105,7 +105,7 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
 
    (f) Set the value of KIM_SYSTEMARCH.  Possible values are `32bit' and
        `64bit'.
- 
+
        KIM_SYSTEMARCH = 64bit
 
    (g) Set the value of KIM_LINK.  Possible values are `dynamic-load',
@@ -122,11 +122,36 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
 
    (h) Set override values for other variables, if necessary, by adding the
        desired variable name (after the "# overwrite default variable values
-       here" line) and filling in appropriate values.  (NOTE: GCC 4.4 requires
-       that LDFLAGS be set as `LDFLAGS = -lgfortran -lgfortranstart' or
-       possibly `LD = $(FC)' and `LDFLAGS = -lstdc++'.)  For Cygwin systems
-       add the following line `PICFLAG =' to avoid warnings about the
-       -fPIC option.
+       here" line) and filling in appropriate values.
+
+       * NOTE: GCC 4.4 requires that LDFLAGS be set as
+               `LDFLAGS = -lgfortran -lgfortranstart' or possibly
+               `LD = $(FC)' and `LDFLAGS = -lstdc++'.
+
+       * NOTE: As of 2014-01-20, gfortran on Darwin OS (Mac OSX) has a bug
+               associated with the use of iso_c_binding Fortran/C
+               interoperability features which are now standard in openkim-api.
+               (See http://gcc.gnu.org/bugzilla/show_bug.cgi?id=59888) We have
+               reported this bug and are awaiting its fix.  In the meantime,
+               the following workaround has been identified:
+
+               (i)   You must compile the openkim-api and associated Models,
+                     Tests, etc. using the `KIM_SYSTEMARCH = 32bit' setting.
+
+               (ii)  Item (i) above, may mean that you will need to tell your
+                     compilers to use 32bit mode (for example):
+                        `CC  = gcc -m32'
+                        `CXX = g++ -m32'
+                        `FC  = gfortran -m32'
+
+               (iii) You need to have the following line in this section of the
+                     Makefile.KIM_Config file in order to avoid harmless
+                     compiler warnings:
+                        `LDFLAGS += -read_only_relocs suppress'
+
+       * NOTE: For Cygwin systems add the following line `PICFLAG =' to avoid
+               warnings about the -fPIC option.
+
 
        # overwrite default variable values here
 
@@ -134,7 +159,7 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
        CC =
        CXX =
        FC =
-       LD = 
+       LD =
 
        # overwrite default compiler option flag lists
        FFLAGS   =
