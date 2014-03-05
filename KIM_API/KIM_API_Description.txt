@@ -743,7 +743,12 @@ int KIM_API_set_method(void *kimmdl, char *nm, intptr_t size, func_ptr dt);
     overwritten by this operation, a memory leak may result. (This could
     indicate that storage for the same data has been allocated more than once.)
     Thus, care must be taken if this routine is used in conjunction with
-    KIM_API_allocate for array data.
+    KIM_API_allocate for array data.  This routine assumes that the shape of
+    the associated argument has been fully specified, except possibly for the
+    `fast-index' (see discussion of shape entries in standard.kim).  The
+    routine computes the product of the shape entries not including the
+    fast-index and sets a new shape value for the fast-index by dividing `size'
+    by this product.
 
     NOTE: Prior to calling this routine a valid KIM API object must be obtained
           by calling KIM_API_init().
