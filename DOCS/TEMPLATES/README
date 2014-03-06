@@ -208,9 +208,11 @@ essentially identical. See comments below.)
     - Add any necessary initialization into the _init() routine.
 
 (e) Edit the Makefile and change the Model name and model_init function values
-    appropriately.  (Search for the word "FILL".)  Also change the "Release:"
-    line to indicate that the file is part of your new Model and not part of
-    the openkim-api release.
+    appropriately.  Add the Model's object file (model_Ar_P_Buckingham.o) to
+    the LOCALOBJ line.  In this example the LOCALCLEAN line can be left
+    blank. (Search for the word "FILL" to find the locations in the file that
+    need to be edited.)  Also change the "Release:" line to indicate that the
+    file is part of your new Model and not part of the openkim-api release.
 
 (f) Compile the new Model into the API package:
 
