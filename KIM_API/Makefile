@@ -44,7 +44,7 @@ ifndef MODELS_LIST
 endif
 
 # Definition of c and fortran .o file list
-OBJC = KIM_API.o KIM_API_C.o standard_kim_str.o Unit_Handling.o KIM_AUX.o KIM_API_DIRS.o
+OBJC = KIM_API.o KIM_API_C.o standard_kim_str.o Unit_Handling.o KIM_AUX.o
 OBJF90 = KIM_API_F.o
 OBJF03 = KIM_API_F03.o KIM_API_F03_Helper.o
 
@@ -94,9 +94,10 @@ Makefile: $(KIM_MAKE_FILES)
 	@touch Makefile
 
 ifneq ($(KIM_LINK),static-link)
-   libkim.a: $(ALLOBJ)
+   libkim.a: $(ALLOBJ) KIM_API_DIRS.o .KIM_API_DIRS.o
 	@printf "Creating... openkim-api library... $@.\n";
-	@ar rcs $@ $(ALLOBJ)
+	@ar rcs $@ $(ALLOBJ) KIM_API_DIRS.o
+	@ar rcs .$@ $(ALLOBJ) .KIM_API_DIRS.o
 else
    libkim.a: $(ALLOBJ) # should also depend on MODEL and MODEL DRIVER archives
 	@printf "Creating... openkim-api library... $@.\n";
@@ -105,9 +106,9 @@ else
         ar rcs $(KIM_DIR)/KIM_API/$@ *.o $(addprefix $(KIM_DIR)/KIM_API/,$(ALLOBJ)) && \
         cd $(KIM_DIR)/KIM_API/ && rm -rf $(KIM_DIR)/KIM_API/temp_archive_dir
 endif
-libkim.so: libkim.a $(if $(filter-out dynamic-load,$(KIM_LINK)), \
-                        $(foreach mdl, $(MODELS_LIST), $(KIM_MODELS_DIR)/$(mdl)/$(mdl).so) \
-                        $(foreach mdldrv, $(MODEL_DRIVERS_LIST), $(KIM_MODEL_DRIVERS_DIR)/$(mdldrv)/$(mdldrv).so),)
+libkim.so: libkim.a .libkim.a $(if $(filter-out dynamic-load,$(KIM_LINK)), \
+                                  $(foreach mdl, $(MODELS_LIST), $(KIM_MODELS_DIR)/$(mdl)/$(mdl).so) \
+                                  $(foreach mdldrv, $(MODEL_DRIVERS_LIST), $(KIM_MODEL_DRIVERS_DIR)/$(mdldrv)/$(mdldrv).so),)
 	@printf "Creating... openkim-api library... $@.\n";
 	@$(LD) $(LDSHAREDFLAG) $(LINKSONAME)$(KIM_DIR)/KIM_API/$@ $(LDFLAGS) $(OUTPUTINFLAG) $@ \
                $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
@@ -116,7 +117,7 @@ libkim.so: libkim.a $(if $(filter-out dynamic-load,$(KIM_LINK)), \
                   $(foreach mdl, $(MODELS_LIST),$(KIM_MODELS_DIR)/$(mdl)/$(mdl).so) \
                   $(foreach mdldrv, $(MODEL_DRIVERS_LIST),$(KIM_MODEL_DRIVERS_DIR)/$(mdldrv)/$(mdldrv).so),)
 	@$(LD) $(LDSHAREDFLAG) $(LINKSONAME)$(DESTDIR)$(libdir)/$(package_name)/KIM_API/$@ $(LDFLAGS) $(OUTPUTINFLAG) .$@ \
-               $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
+               $(LDWHOLEARCHIVESTARTFLAG) .$< $(LDWHOLEARCHIVEENDFLAG) \
                $(LDDYNAMICLIB) $(XLANGLDLIBS) \
                $(if $(filter-out dynamic-load,$(KIM_LINK)),\
                   $(foreach mdl, $(MODELS_LIST),$(KIM_MODELS_DIR)/$(mdl)/.$(mdl).so) \
@@ -155,16 +156,16 @@ KIM_AUX.o: KIM_AUX.h Makefile
 	@printf "         break;\n"                                                                                              >> $@
 	@printf "      case KIM_MODEL_DRIVERS_DIR:\n"                                                                            >> $@
 	@$(if $(filter-out KIM_API_DIRS.cpp,$@),                                                                                       \
-              printf "         lst->push_back(std::string(\"$(libdir)/$(package_name)/MODEL_DRIVERS\"));\n"                      >> $@;\
+              printf "         lst->push_back(std::string(\".\"));\n"                                                            >> $@;\
               printf "         lst->push_back(std::string(getenv(\"HOME\")).append(\"/.kim/$(package_name)/MODEL_DRIVERS\"));\n" >> $@;\
-              printf "         lst->push_back(std::string(\".\"));\n"                                                            >> $@,\
+              printf "         lst->push_back(std::string(\"$(libdir)/$(package_name)/MODEL_DRIVERS\"));\n"                      >> $@,\
               printf "         lst->push_back(std::string(\"$(KIM_MODEL_DRIVERS_DIR)\"));\n"                                     >> $@)
 	@printf "         break;\n"                                                                                              >> $@
 	@printf "      case KIM_MODELS_DIR:\n"                                                                                   >> $@
 	@$(if $(filter-out KIM_API_DIRS.cpp,$@),                                                                                       \
-              printf "         lst->push_back(std::string(\"$(libdir)/$(package_name)/MODELS\"));\n"                             >> $@;\
+              printf "         lst->push_back(std::string(\".\"));\n"                                                            >> $@;\
               printf "         lst->push_back(std::string(getenv(\"HOME\")).append(\"/.kim/$(package_name)/MODELS\"));\n"        >> $@;\
-              printf "         lst->push_back(std::string(\".\"));\n"                                                            >> $@,\
+              printf "         lst->push_back(std::string(\"$(libdir)/$(package_name)/MODELS\"));\n"                             >> $@,\
               printf "         lst->push_back(std::string(\"$(KIM_MODELS_DIR)\"));\n"                                            >> $@)
 	@printf "         break;\n"                                                                                              >> $@
 	@printf "      default:\n"                                                                                               >> $@
@@ -224,7 +225,7 @@ model_init_include.h model_init_include.cpp: Makefile .models-deleted $(MODELS_T
 
 clean:
 	@printf "Cleaning... KIM_API.\n"
-	@rm -f *.o .*.o *.a *.so .*.so *.mod  model_init_include.h model_init_include.cpp model_init_include_stubs.cpp model_kim_str_include.h model_kim_str_include.cpp \
+	@rm -f *.o .*.o *.a .*.a *.so .*.so *.mod  model_init_include.h model_init_include.cpp model_init_include_stubs.cpp model_kim_str_include.h model_kim_str_include.cpp \
         .*.make-temp .models-deleted standard_kim_str.cpp KIM_API_F03_Multiples.incl KIM_API_DIRS.cpp .KIM_API_DIRS.cpp &&\
         rm -f openkim-api-descriptor-file-match &&\
         rm -rf "$(KIM_DIR)/KIM_API/temp_archive_dir"
