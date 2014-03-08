@@ -46,7 +46,7 @@ KIM_LINK = dynamic-load
 # load default compiler options
 include $(KIM_DIR)/MAKE_SYSTEM/Makefile.LoadDefaults
 
-# overwrite default variable values here
+# overwrite default compiler options and other variables here
 
 # load rest of generic make settings
 include $(KIM_DIR)/MAKE_SYSTEM/Makefile.Generic
