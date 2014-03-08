@@ -282,9 +282,11 @@ Buckingham Model Driver and a Ne KIM Model based on it are given below.
       can simply set this to `*'.)
 
 (e) Edit the Makefile and change the Model Driver name and model_init function
-    values appropriately.  (Search for the word "FILL".) Also change the
-    "Release:" line to indicate that the file is part of your new Model and not
-    part of the openkim-api release.
+    values appropriately.  Add the Model's object file
+    (model_driver_P_Buckingham.o) to the LOCALOBJ line.  In this example the
+    LOCALCLEAN line can be left blank.  (Search for the word "FILL".)  Also
+    change the "Release:" line to indicate that the file is part of your new
+    Model and not part of the openkim-api release.
 
 (f) Compile the new Model Driver into the API package:
 

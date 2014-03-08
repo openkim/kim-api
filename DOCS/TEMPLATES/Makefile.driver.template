@@ -45,7 +45,7 @@ MODEL_DRIVER_NAME := <FILL model driver name>
 MODEL_DRIVER_INIT_FUNCTION_NAME := model_driver_init
 MODEL_DRIVER_INIT_FUNCTION_LANG := <FILL language name>
 
-LOCALOBJ = <FILL .o files required by the model, or leave blank>
+LOCALOBJ = <FILL .o files required by the model>
 
 LOCALCLEAN = <FILL additional files to be deleted on clean, or leave blank>
 
