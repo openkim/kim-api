@@ -222,7 +222,10 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
        `make all'            -- same as `make'
        `make clean'          -- will remove appropriate .o, .mod, .a, .so and
                                 executable files
-       `make install'        -- install files to `/usr/local/lib' by default
+       `make install'        -- install files to `/usr/local/lib/' by default
+                                or to `$(prefix)/lib/' if prefix is specified,
+                                or to `$(libdir)/' if libdir is specified
+                                (see above).
        `make uninstall'      -- delete files installed by `make install'
        `make openkim-api'    -- compiles only the API
        `make examples'       -- copies examples into the appropriate
@@ -249,6 +252,128 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
 5. Each Test (and Model) has its own Makefile for compiling and linking.  If
    changes are made to the code, perform the `make' portion of step (3) again
    (from the $KD directory).
+
+6. If you wish, install the KIM API to a system directory.
+
+     % make install
+
+   The compiled versions of the KIM API library, Model Drivers, and Models will
+   be copied to `$(libdir)/$(package_name)/KIM_API',
+   `$(libdir)/$(package_name)/MODEL_DRIVERS', and
+   `$(libdir)/$(package_name)/MODELS', respectively.  The default value for
+   libdir is `$(prefix)/lib'.  Additionally, the MAKE_SYSTEM and supporting
+   header and mod files will be copied to `$(libdir)/$(package_name)/' to
+   support subsequent compilation against the installed KIM API package.
+
+   Once the KIM API package has been installed, the original source directory
+   ($KD) may be deleted.
+
+   If the KIM API was compiled with KIM_LINK=dynamic-load, the installed KIM
+   API will look for Model Driver and Model directories in three different
+   locations.  For Model Drivers these, listed in the order they are searched,
+   are:
+
+     `.'                                            ("CWD Model Drivers")
+     `$(HOME)/.kim/$(package_name)/MODEL_DRIVERS/'  ("User Model Drivers")
+     `$(libdir)/$(package_name)/MODEL_DRIVERS/'     ("System Model Drivers")
+
+   For Models these, listed in the order they are searched, are:
+
+     `.'                                            ("CWD Models")
+     `$(HOME)/.kim/$(package_name)/MODELS/'         ("User Models")
+     `$(libdir)/$(package_name)/MODELS/'            ("System Models")
+
+   After the KIM API has been installed (and the original source directory has
+   been deleted) it is still possible to compile Model Drivers and Models.
+   These can be placed in the current working directory (CWD), or installed in
+   the user's home directory (under the ${HOME}/.kim/ subdirectory), or
+   installed in the system-wide Model Drivers and Models directories.  To
+   create a new Model Driver of Model and install it in the appropriate
+   system-wide directory or in the user's home directory, follow these steps:
+
+   (a) If it doesn't already exist, create the user directory (note, here I
+       will assume that an environment variable ${package_name} is set to the
+       same value as package_name in your Makefile.KIM_Config file):
+
+         % mkdir ${HOME}/.kim
+         % mkdir ${HOME}/.kim/${package_name}
+         % mkdir ${HOME}/.kim/${package_name}/MODEL_DRIVERS
+         % mkdir ${HOME}/.kim/${package_name}/MODELS
+
+   (b) Create a Makefile.KIM_Config containing just the following line in each
+       of the ${HOME}/.kim/${package_name}/MODEL_DRIVERS and
+       ${HOME}/.kim/${package_name}/MODELS directories:
+
+         include $(libdir)/$(package_name)/Makefile.KIM_Config
+
+       Here you should replace $(libdir) and $(package_name) with their
+       explicit values so that you get a explicit absolute path to the
+       installed version of Makefile.KIM_Config.
+
+   (c) We'll work with the case of a Model (a Model Driver is analogous) such
+       as those you can download from openkim.org.  For example, execute the
+       following commands:
+
+         % md=EAM_Johnson_NearestNeighbor_Cu__MO_887933271505_000
+         % mkdir ${HOME}/.kim/${package_name}/MODELS/${md}
+         % cd ${HOME}/.kim/${package_name}/MODELS/${md}/
+         % wget --content-disposition "https://kim-items.openkim.org/archive?kimid=${md}&compression=gz"
+         % tar zxvf ${md}.tgz
+         % rm ${md}.tgz
+
+   (d) Change to the Model directory and execute `make':
+
+         % cd ${HOME}/.kim/${package_name}/MODELS/${md}/${md}
+         % make
+
+       Once this compilation completes successfully, you have a new Model
+       installed in the user's home directory.  There is no need to perform a
+       `make install' in this case.
+
+   (e) If you have the permission to write to the system-wide directories where
+       the KIM API Model Drivers and Models are installed and you want to
+       install this Model in the appropriate system-wide directory, then you
+       can execute the following command in order to do so:
+
+         % make install
+
+       Once this command completes successfully, you have installed the Model
+       to the system-wide directory, and you can delete the Model source
+       directory:
+
+         % cd ${HOME}/.kim/${package_name}/MODELS/
+         % rm -rf ${md}
+
+   To create a Model Driver or Model in the current working directory (CWD),
+   follow these steps:
+
+   (a) Create a Makefile.KIM_Config containing just the following line in the
+       current directory
+
+         include $(libdir)/$(package_name)/Makefile.KIM_Config
+
+       Here you should replace $(libdir) and $(package_name) with their
+       explicit values so that you get a explicit absolute path to the
+       installed version of Makefile.KIM_Config.
+
+   (b) We'll work with the case of a Model (a Model Driver is analogous) such
+       as those you can download from openkim.org.  For example, execute the
+       following commands:
+
+         % md=EAM_Johnson_NearestNeighbor_Cu__MO_887933271505_000
+         % mkdir ./${md}
+         % cd ./${md}/
+         % wget --content-disposition "https://kim-items.openkim.org/archive?kimid=${md}&compression=gz"
+         % tar zxvf ${md}.tgz
+         % rm ${md}.tgz
+
+   (d) Change to the Model directory and execute `make':
+
+         % cd ./${md}
+         % make
+
+       Once this compilation completes successfully, you have a new
+       Model in the current working directory (CWD).
 
 
 Once the installation is successfully completed, read the README file in
