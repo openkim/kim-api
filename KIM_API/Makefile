@@ -240,8 +240,10 @@ else
 	@cp -f libkim.a "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.a"
 	@chmod 644 "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.a"
 endif
+ifeq  (dynamic-load,$(KIM_LINK))
 	@cp -f KIM_API.h KIM_API_C.h KIM_API_status.h kim_kinds.mod kim_api.mod kim_api_f03.mod Unit_Handling.h KIM_AUX.h "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/"
 	@chmod 644 $(addsuffix ",$(addprefix "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/,KIM_API.h KIM_API_C.h KIM_API_status.h Unit_Handling.h KIM_AUX.h kim_kinds.mod kim_api.mod kim_api_f03.mod))
+endif
 
 uninstall:
 	@printf "Uninstalling...($(DESTDIR)$(libdir)/$(package_name)/KIM_API)......... KIM_API.\n"

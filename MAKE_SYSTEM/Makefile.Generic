@@ -171,7 +171,7 @@ KIM_LIB = -L$(KIM_DIR)/KIM_API/ -lkim
 %.so: %.a export-list.txt
 	@printf "Creating... $@.\n"
 	@$(LD) $(LDSHAREDFLAG) \
-               $(LINKSONAME)$(if $(filter MODEL_NAME,$(.VARIABLES)),$(KIM_MODELS_DIR),$(KIM_MODEL_DRIVERS_DIR))/$*/$*.so \
+               $(LINKSONAME)$(if $(filter-out dynamic-load,$(KIM_LINK)),$(if $(filter MODEL_NAME,$(.VARIABLES)),$(KIM_MODELS_DIR),$(KIM_MODEL_DRIVERS_DIR))/$*/,)$*.so \
                $(LDEXPORTLISTFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@  \
                $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
                $(if $(filter-out dynamic-load,$(KIM_LINK)),,-L$(KIM_DIR)/KIM_API/ -lkim) \
@@ -179,7 +179,7 @@ KIM_LIB = -L$(KIM_DIR)/KIM_API/ -lkim
                $(LDDYNAMICLIB) $(XLANGLDLIBS)
         #INSTALLTAG - lines between tags will be removed by install target
 	@$(LD) $(LDSHAREDFLAG) \
-               $(LINKSONAME)$(DESTDIR)$(libdir)/$(package_name)/$(if $(filter MODEL_NAME,$(.VARIABLES)),MODELS,MODEL_DRIVERS)/$*/$*.so \
+               $(LINKSONAME)$(if $(filter-out dynamic-load,$(KIM_LINK)),$(DESTDIR)$(libdir)/$(package_name)/$(if $(filter MODEL_NAME,$(.VARIABLES)),MODELS,MODEL_DRIVERS)/$*/,)$*.so \
                $(LDEXPORTLISTFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@  \
                $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
                $(if $(filter-out dynamic-load,$(KIM_LINK)),,$(KIM_DIR)/KIM_API/.libkim.so) \
