@@ -114,7 +114,7 @@ install: all
 ifneq (static-link,$(KIM_LINK))
 	@printf ".\n"
 	@mkdir -p $(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)
-	@cp .$(MODEL_NAME).so $(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)/$(MODEL_NAME).so
+	@cp $(if $(KIM_INSTALLED),,.)$(MODEL_NAME).so $(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)/$(MODEL_NAME).so
 	@chmod 644 $(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)/$(MODEL_NAME).so
 else
 	@printf ": nothing to be done for static-link.\n"

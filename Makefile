@@ -117,6 +117,7 @@ ifeq (dynamic-load,$(KIM_LINK))
              -e 's|^ *KIM_DIR *=.*|KIM_DIR = $(libdir)/$(package_name)|' \
              Makefile.KIM_Config > $(DESTDIR)$(libdir)/$(package_name)/Makefile.KIM_Config
 	@chmod 644 $(DESTDIR)$(libdir)/$(package_name)/Makefile.KIM_Config
+	@printf '/^KIM_DIR =/i\nKIM_INSTALLED = yes\n.\nw\nq\n' | ed $(DESTDIR)$(libdir)/$(package_name)/Makefile.KIM_Config >& /dev/null
 else ifeq (dynamic-link,$(KIM_LINK))
 	@if test \( -d $(DESTDIR)$(libdir)/$(package_name)/MAKE_SYSTEM \) -o \( -f $(DESTDIR)$(libdir)/$(package_name)/Makefile.KIM_Config \); then \
             printf ": removing KIM_Config files for dynamic-load"; \
@@ -145,9 +146,9 @@ endif
 
 uninstall-cleanup:
 	@printf "Uninstalling... $(package_name) directories.\n"
-	@if test \( -d "$(DESTDIR)$(libdir)/$(package_name)/MODELS" \); then rmdir "$(DESTDIR)$(libdir)/$(package_name)/MODELS" >& /dev/null; fi
-	@if test \( -d "$(DESTDIR)$(libdir)/$(package_name)/MODEL_DRIVERS" \); then rmdir "$(DESTDIR)$(libdir)/$(package_name)/MODEL_DRIVERS" >& /dev/null; fi
-	@if test \( -d "$(DESTDIR)$(libdir)/$(package_name)" \); then rmdir "$(DESTDIR)$(libdir)/$(package_name)" >& /dev/null; fi
+	@if test \( -d "$(DESTDIR)$(libdir)/$(package_name)/MODELS" \); then rmdir "$(DESTDIR)$(libdir)/$(package_name)/MODELS" >& /dev/null || true; fi
+	@if test \( -d "$(DESTDIR)$(libdir)/$(package_name)/MODEL_DRIVERS" \); then rmdir "$(DESTDIR)$(libdir)/$(package_name)/MODEL_DRIVERS" >& /dev/null || true; fi
+	@if test \( -d "$(DESTDIR)$(libdir)/$(package_name)" \); then rmdir "$(DESTDIR)$(libdir)/$(package_name)" >& /dev/null || true; fi
 
 kim-api-objects: Makefile kim-api-objects-making-echo
 	@$(MAKE) $(MAKE_FLAGS) -C $(KIM_DIR)/KIM_API/ objects

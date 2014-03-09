@@ -344,6 +344,11 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
          % cd ${HOME}/.kim/${package_name}/MODELS/
          % rm -rf ${md}
 
+       NOTE: If the Model is based on a Model Driver (i.e., a Parameterized
+             Model), then the associated Model Driver must be installed to the
+             system-wide directory before the Parameterized Model is compiled
+             and installed.
+
    To create a Model Driver or Model in the current working directory (CWD),
    follow these steps:
 
@@ -374,6 +379,25 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
 
        Once this compilation completes successfully, you have a new
        Model in the current working directory (CWD).
+
+   (e) If you have the permission to write to the system-wide directories where
+       the KIM API Model Drivers and Models are installed and you want to
+       install this Model in the appropriate system-wide directory, then you
+       can execute the following command in order to do so:
+
+         % make install
+
+       Once this command completes successfully, you have installed the Model
+       to the system-wide directory, and you can delete the Model source
+       directory:
+
+         % cd ../
+         % rm -rf ${md}
+
+       NOTE: if the Model is based on a Model Driver (i.e., a Parameterized
+             Model), then the associated Model Driver must be installed to the
+             system-wide directory before the Parameterized Model is compiled
+             and installed.
 
 
 Once the installation is successfully completed, read the README file in
