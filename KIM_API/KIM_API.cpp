@@ -1488,17 +1488,23 @@ char * KIM_API_model::get_model_kim_str(const char* modelname,int * kimerr){
        itr->append("/");
        itr->append(modelname); itr->append("/");
        itr->append(modelname); itr->append(".so");
+       std::cout<< "* Info (KIM_API_model::get_model_kim_str): Looking for Model shared library file " << itr->c_str() <<std::endl;
        tmp_model_lib_handle = dlopen(itr->c_str(), RTLD_NOW);
        if (tmp_model_lib_handle != NULL) break;
        std::cout<< "* Error (KIM_API_model::get_model_kim_str): Cannot find Model shared library file for Model name: ";
        std::cout<<modelname<<std::endl<<dlerror()<<std::endl;
-       fprintf(stderr,"%s not found...\n",itr->c_str());
     }
     if(tmp_model_lib_handle == NULL) {
        //redirecting back to > std::cout
        std::cout.rdbuf(backup); filekimlog.close();
+       fprintf(stderr,"Cannot find Model shared library file for Model name: %s.\n",modelname);
        return NULL;
     }
+    else
+    {
+      std::cout<< "* Info (KIM_API_model::get_model_kim_str): Found Model shared library file for Model name: " << modelname << std::endl;
+    }
+    
 
     const int* const model_str_chunks = (const int* const) dlsym(tmp_model_lib_handle, model_kim_str_chunks_name);
     char* dlsym_error = dlerror();
@@ -1855,15 +1861,16 @@ int KIM_API_model::model_init(){
        itr->append("/");
        itr->append(modelname); itr->append("/");
        itr->append(modelname); itr->append(".so");
+       std::cout<< "* Info (KIM_API_model::model_init): Looking for Model shared library file " << itr->c_str() <<std::endl;
        model_lib_handle = dlopen(itr->c_str(), RTLD_NOW);
        if (model_lib_handle) break;
-       std::cout<< "* Info: KIM_API_model::model_init: model initiliser failed for ";
+       std::cout<< "* Error (KIM_API_model::model_init): Cannot find Model shared library file for Model name: " << modelname << std::endl;
        std::cout<<modelname<<std::endl<<dlerror()<<std::endl;
-       fprintf(stderr,"%s not found...\n",itr->c_str());
     }
     if(!model_lib_handle) {
        //redirecting back to > std::cout
        std::cout.rdbuf(backup); filekimlog.close();
+       fprintf(stderr,"Cannot find Model shared library file for Model name: %s.\n",modelname);
        return KIM_STATUS_FAIL;
     }
 
