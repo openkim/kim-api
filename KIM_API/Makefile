@@ -91,17 +91,17 @@ else
 endif
 
 Makefile: $(KIM_MAKE_FILES)
-	@touch Makefile
+	$(QUELL)touch Makefile
 
 ifneq ($(KIM_LINK),static-link)
    libkim.a: $(ALLOBJ) KIM_API_DIRS.o .KIM_API_DIRS.o
 	@printf "Creating... openkim-api library... $@.\n";
-	@ar rcs $@ $(ALLOBJ) KIM_API_DIRS.o
-	@ar rcs .$@ $(ALLOBJ) .KIM_API_DIRS.o
+	$(QUELL)ar rcs $@ $(ALLOBJ) KIM_API_DIRS.o
+	$(QUELL)ar rcs .$@ $(ALLOBJ) .KIM_API_DIRS.o
 else
    libkim.a: $(ALLOBJ) # should also depend on MODEL and MODEL DRIVER archives
 	@printf "Creating... openkim-api library... $@.\n";
-	@mkdir $(KIM_DIR)/KIM_API/temp_archive_dir && cd $(KIM_DIR)/KIM_API/temp_archive_dir && \
+	$(QUELL)mkdir $(KIM_DIR)/KIM_API/temp_archive_dir && cd $(KIM_DIR)/KIM_API/temp_archive_dir && \
         $(foreach arch, $(shell find $(KIM_MODEL_DRIVERS_DIR) $(KIM_MODELS_DIR) -name "*.a"),ar x $(arch);) \
         ar rcs $(KIM_DIR)/KIM_API/$@ *.o $(addprefix $(KIM_DIR)/KIM_API/,$(ALLOBJ)) && \
         cd $(KIM_DIR)/KIM_API/ && rm -rf $(KIM_DIR)/KIM_API/temp_archive_dir
@@ -110,18 +110,18 @@ libkim.so: libkim.a .libkim.a $(if $(filter-out dynamic-load,$(KIM_LINK)), \
                                   $(foreach mdl, $(MODELS_LIST), $(KIM_MODELS_DIR)/$(mdl)/$(mdl).so) \
                                   $(foreach mdldrv, $(MODEL_DRIVERS_LIST), $(KIM_MODEL_DRIVERS_DIR)/$(mdldrv)/$(mdldrv).so),)
 	@printf "Creating... openkim-api library... $@.\n";
-	@$(LD) $(LDSHAREDFLAG) $(LINKSONAME)$(KIM_DIR)/KIM_API/$@ $(LDFLAGS) $(OUTPUTINFLAG) $@ \
-               $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
-               $(LDDYNAMICLIB) $(XLANGLDLIBS) \
-               $(if $(filter-out dynamic-load,$(KIM_LINK)),\
-                  $(foreach mdl, $(MODELS_LIST),$(KIM_MODELS_DIR)/$(mdl)/$(mdl).so) \
-                  $(foreach mdldrv, $(MODEL_DRIVERS_LIST),$(KIM_MODEL_DRIVERS_DIR)/$(mdldrv)/$(mdldrv).so),)
-	@$(LD) $(LDSHAREDFLAG) $(LINKSONAME)$(DESTDIR)$(libdir)/$(package_name)/KIM_API/$@ $(LDFLAGS) $(OUTPUTINFLAG) .$@ \
-               $(LDWHOLEARCHIVESTARTFLAG) .$< $(LDWHOLEARCHIVEENDFLAG) \
-               $(LDDYNAMICLIB) $(XLANGLDLIBS) \
-               $(if $(filter-out dynamic-load,$(KIM_LINK)),\
-                  $(foreach mdl, $(MODELS_LIST),$(KIM_MODELS_DIR)/$(mdl)/.$(mdl).so) \
-                  $(foreach mdldrv, $(MODEL_DRIVERS_LIST),$(KIM_MODEL_DRIVERS_DIR)/$(mdldrv)/.$(mdldrv).so),)
+	$(QUELL)$(LD) $(LDSHAREDFLAG) $(LINKSONAME)$(KIM_DIR)/KIM_API/$@ $(LDFLAGS) $(OUTPUTINFLAG) $@ \
+                      $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
+                      $(LDDYNAMICLIB) $(XLANGLDLIBS) \
+                      $(if $(filter-out dynamic-load,$(KIM_LINK)),\
+                         $(foreach mdl, $(MODELS_LIST),$(KIM_MODELS_DIR)/$(mdl)/$(mdl).so) \
+                         $(foreach mdldrv, $(MODEL_DRIVERS_LIST),$(KIM_MODEL_DRIVERS_DIR)/$(mdldrv)/$(mdldrv).so),)
+	$(QUELL)$(LD) $(LDSHAREDFLAG) $(LINKSONAME)$(DESTDIR)$(libdir)/$(package_name)/KIM_API/$@ $(LDFLAGS) $(OUTPUTINFLAG) .$@ \
+                      $(LDWHOLEARCHIVESTARTFLAG) .$< $(LDWHOLEARCHIVEENDFLAG) \
+                      $(LDDYNAMICLIB) $(XLANGLDLIBS) \
+                      $(if $(filter-out dynamic-load,$(KIM_LINK)),\
+                         $(foreach mdl, $(MODELS_LIST),$(KIM_MODELS_DIR)/$(mdl)/.$(mdl).so) \
+                         $(foreach mdldrv, $(MODEL_DRIVERS_LIST),$(KIM_MODEL_DRIVERS_DIR)/$(mdldrv)/.$(mdldrv).so),)
 
 KIM_API.o: KIM_DEFINE_VALUES += -D KIM_TESTS_DIR_VAL=\"$(KIM_TESTS_DIR)\"
 KIM_API.o: $(if $(filter-out dynamic-load,$(KIM_LINK)),model_init_include.h model_init_include.cpp model_kim_str_include.cpp,) KIM_API.h KIM_API.cpp KIM_AUX.h KIM_API_DIRS.h Makefile
@@ -134,7 +134,7 @@ KIM_API_F03.o: KIM_API_F03_Multiples.incl KIM_API_F03_Helper.o Makefile
 
 KIM_API_F03_Multiples.incl: CreateGetSetMultipleRoutines.sh Makefile
 	@printf "Creating... KIM_API_F03_Multiples.incl.\n"
-	@./CreateGetSetMultipleRoutines.sh > KIM_API_F03_Multiples.incl
+	$(QUELL)./CreateGetSetMultipleRoutines.sh > KIM_API_F03_Multiples.incl
 
 KIM_API_F03_Helper.o: Makefile
 
@@ -142,37 +142,37 @@ KIM_AUX.o: KIM_AUX.h Makefile
 
 %_API_DIRS.cpp: $(KIM_MAKE_FILES) Makefile
 	@printf "Creating... intermediate file... $@.\n"
-	@printf "#include <cstdlib>\n"                                                                                            > $@
-	@printf "#include \"KIM_API_DIRS.h\"\n"                                                                                  >> $@
-	@printf "\n"                                                                                                             >> $@
-	@printf "void directoryPath(DirectoryPathType type, std::list<std::string>* const lst)\n"                                >> $@
-	@printf "{\n"                                                                                                            >> $@
-	@printf "   switch (type)\n"                                                                                             >> $@
-	@printf "   {\n"                                                                                                         >> $@
-	@printf "      case KIM_DIR:\n"                                                                                          >> $@
-	@$(if $(filter-out KIM_API_DIRS.cpp,$@),                                                                                       \
-              printf "         lst->push_back(std::string(\"$(libdir)/$(package_name)\"));\n"                                    >> $@,\
-              printf "         lst->push_back(std::string(\"$(KIM_DIR)\"));\n"                                                   >> $@)
-	@printf "         break;\n"                                                                                              >> $@
-	@printf "      case KIM_MODEL_DRIVERS_DIR:\n"                                                                            >> $@
-	@$(if $(filter-out KIM_API_DIRS.cpp,$@),                                                                                       \
-              printf "         lst->push_back(std::string(\".\"));\n"                                                            >> $@;\
-              printf "         lst->push_back(std::string(getenv(\"HOME\")).append(\"/.kim/$(package_name)/MODEL_DRIVERS\"));\n" >> $@;\
-              printf "         lst->push_back(std::string(\"$(libdir)/$(package_name)/MODEL_DRIVERS\"));\n"                      >> $@,\
-              printf "         lst->push_back(std::string(\"$(KIM_MODEL_DRIVERS_DIR)\"));\n"                                     >> $@)
-	@printf "         break;\n"                                                                                              >> $@
-	@printf "      case KIM_MODELS_DIR:\n"                                                                                   >> $@
-	@$(if $(filter-out KIM_API_DIRS.cpp,$@),                                                                                       \
-              printf "         lst->push_back(std::string(\".\"));\n"                                                            >> $@;\
-              printf "         lst->push_back(std::string(getenv(\"HOME\")).append(\"/.kim/$(package_name)/MODELS\"));\n"        >> $@;\
-              printf "         lst->push_back(std::string(\"$(libdir)/$(package_name)/MODELS\"));\n"                             >> $@,\
-              printf "         lst->push_back(std::string(\"$(KIM_MODELS_DIR)\"));\n"                                            >> $@)
-	@printf "         break;\n"                                                                                              >> $@
-	@printf "      default:\n"                                                                                               >> $@
-	@printf "         break;\n"                                                                                              >> $@
-	@printf "   }\n"                                                                                                         >> $@
-	@printf "   return;\n"                                                                                                   >> $@
-	@printf "}\n"                                                                                                            >> $@
+	$(QUELL)printf "#include <cstdlib>\n"                                                                                            > $@
+	$(QUELL)printf "#include \"KIM_API_DIRS.h\"\n"                                                                                  >> $@
+	$(QUELL)printf "\n"                                                                                                             >> $@
+	$(QUELL)printf "void directoryPath(DirectoryPathType type, std::list<std::string>* const lst)\n"                                >> $@
+	$(QUELL)printf "{\n"                                                                                                            >> $@
+	$(QUELL)printf "   switch (type)\n"                                                                                             >> $@
+	$(QUELL)printf "   {\n"                                                                                                         >> $@
+	$(QUELL)printf "      case KIM_DIR:\n"                                                                                          >> $@
+	$(QUELL)$(if $(filter-out KIM_API_DIRS.cpp,$@),                                                                                       \
+                     printf "         lst->push_back(std::string(\"$(libdir)/$(package_name)\"));\n"                                    >> $@,\
+                     printf "         lst->push_back(std::string(\"$(KIM_DIR)\"));\n"                                                   >> $@)
+	$(QUELL)printf "         break;\n"                                                                                              >> $@
+	$(QUELL)printf "      case KIM_MODEL_DRIVERS_DIR:\n"                                                                            >> $@
+	$(QUELL)$(if $(filter-out KIM_API_DIRS.cpp,$@),                                                                                       \
+                     printf "         lst->push_back(std::string(\".\"));\n"                                                            >> $@;\
+                     printf "         lst->push_back(std::string(getenv(\"HOME\")).append(\"/.kim/$(package_name)/MODEL_DRIVERS\"));\n" >> $@;\
+                     printf "         lst->push_back(std::string(\"$(libdir)/$(package_name)/MODEL_DRIVERS\"));\n"                      >> $@,\
+                     printf "         lst->push_back(std::string(\"$(KIM_MODEL_DRIVERS_DIR)\"));\n"                                     >> $@)
+	$(QUELL)printf "         break;\n"                                                                                              >> $@
+	$(QUELL)printf "      case KIM_MODELS_DIR:\n"                                                                                   >> $@
+	$(QUELL)$(if $(filter-out KIM_API_DIRS.cpp,$@),                                                                                       \
+                     printf "         lst->push_back(std::string(\".\"));\n"                                                            >> $@;\
+                     printf "         lst->push_back(std::string(getenv(\"HOME\")).append(\"/.kim/$(package_name)/MODELS\"));\n"        >> $@;\
+                     printf "         lst->push_back(std::string(\"$(libdir)/$(package_name)/MODELS\"));\n"                             >> $@,\
+                     printf "         lst->push_back(std::string(\"$(KIM_MODELS_DIR)\"));\n"                                            >> $@)
+	$(QUELL)printf "         break;\n"                                                                                              >> $@
+	$(QUELL)printf "      default:\n"                                                                                               >> $@
+	$(QUELL)printf "         break;\n"                                                                                              >> $@
+	$(QUELL)printf "   }\n"                                                                                                         >> $@
+	$(QUELL)printf "   return;\n"                                                                                                   >> $@
+	$(QUELL)printf "}\n"                                                                                                            >> $@
 
 openkim-api-descriptor-file-match.o: openkim-api-descriptor-file-match.cpp KIM_API.h KIM_API_status.h Makefile
 
@@ -181,40 +181,40 @@ model_init_include_stubs.o: model_init_include_stubs.cpp
 openkim-api-descriptor-file-match: openkim-api-descriptor-file-match.o KIM_API.o KIM_API_DIRS.o KIM_AUX.o Unit_Handling.o standard_kim_str.o \
         $(if $(filter-out dynamic-load,$(KIM_LINK)),model_init_include_stubs.o,)
 	@printf "Creating... $@.\n"
-	@$(LD) $(LDFLAGS) -o $@ $@.o KIM_API.o KIM_API_DIRS.o KIM_AUX.o Unit_Handling.o standard_kim_str.o $(if $(filter-out dynamic-load,$(KIM_LINK)),model_init_include_stubs.o,) $(XLANGLDLIBS) $(LDDYNAMICLIB)
+	$(QUELL)$(LD) $(LDFLAGS) -o $@ $@.o KIM_API.o KIM_API_DIRS.o KIM_AUX.o Unit_Handling.o standard_kim_str.o $(if $(filter-out dynamic-load,$(KIM_LINK)),model_init_include_stubs.o,) $(XLANGLDLIBS) $(LDDYNAMICLIB)
 
 # targets for the models: for any new model, adds the appropriate lines to the model_init_include.h and model_inclue.cpp files
 $(MODELS_TARGETS): .models-deleted
-	@if ! grep -i -q -s $(patsubst .%.make-temp,'\* %_init_pointer',$@) model_init_include.h; then \
-            printf 'extern "C" int (* %s_init_pointer)(void **);\n' $(patsubst .%.make-temp,%,$@)                >> model_init_include.h;\
-         fi;
-	@if ! grep -i -q -s $(patsubst .%.make-temp,'return \*%_init_pointer',$@) model_init_include.cpp; then \
-            printf 'if (strcmp(modelname, "%s") == 0)\n{\n   return (*%s_init_pointer)((void **) pkim);\n}\n' \
-               $(patsubst .%.make-temp,%,$@) $(patsubst .%.make-temp,%,$@)                                       >> model_init_include.cpp;\
-         fi;
-	@if ! grep -i -q -s $(patsubst .%.make-temp,'char\*\* %_kim_str',$@) model_init_include_stubs.cpp; then \
-            printf 'int (* %s_init_pointer)(void **) = 0;\n' $(patsubst .%.make-temp,%,$@)                       >> model_init_include_stubs.cpp;\
-            printf 'char** %s_kim_str = 0;\n' $(patsubst .%.make-temp,%,$@)                                      >> model_init_include_stubs.cpp;\
-            printf 'int %s_kim_str_chunks = 0;\n' $(patsubst .%.make-temp,%,$@)                                  >> model_init_include_stubs.cpp;\
-         fi;
-	@if ! grep -i -q -s $(patsubst .%.make-temp,'char\* const %_kim_str',$@) model_kim_str_include.h; then \
-            printf 'extern const int %s_kim_str_chunks;\n' $(patsubst .%.make-temp,%,$@)                         >> model_kim_str_include.h;\
-            printf 'extern const char* const %s_kim_str[];\n' $(patsubst .%.make-temp,%,$@)                      >> model_kim_str_include.h;\
-         fi;
-	@if ! grep -i -q -s $(patsubst .%.make-temp,'= %_kim_str_chunks',$@) model_kim_str_include.cpp; then \
-            printf 'if (strcmp(modelname, "%s") == 0)\n' $(patsubst .%.make-temp,%,$@)                           >> model_kim_str_include.cpp;\
-            printf '{\n'                                                                                         >> model_kim_str_include.cpp;\
-            printf '   in_mdlstr_chunks = %s_kim_str_chunks;\n' $(patsubst .%.make-temp,%,$@)                    >> model_kim_str_include.cpp;\
-            printf '   in_mdlstr = (const char**) %s_kim_str;\n' $(patsubst .%.make-temp,%,$@)                   >> model_kim_str_include.cpp;\
-            printf '}\n'                                                                                         >> model_kim_str_include.cpp;\
-	 fi;
-	@touch $@
+	$(QUELL)if ! grep -i -q -s $(patsubst .%.make-temp,'\* %_init_pointer',$@) model_init_include.h; then \
+                   printf 'extern "C" int (* %s_init_pointer)(void **);\n' $(patsubst .%.make-temp,%,$@)                >> model_init_include.h;\
+                fi;
+	$(QUELL)if ! grep -i -q -s $(patsubst .%.make-temp,'return \*%_init_pointer',$@) model_init_include.cpp; then \
+                   printf 'if (strcmp(modelname, "%s") == 0)\n{\n   return (*%s_init_pointer)((void **) pkim);\n}\n' \
+                   $(patsubst .%.make-temp,%,$@) $(patsubst .%.make-temp,%,$@)                                       >> model_init_include.cpp;\
+                fi;
+	$(QUELL)if ! grep -i -q -s $(patsubst .%.make-temp,'char\*\* %_kim_str',$@) model_init_include_stubs.cpp; then \
+                printf 'int (* %s_init_pointer)(void **) = 0;\n' $(patsubst .%.make-temp,%,$@)                       >> model_init_include_stubs.cpp;\
+                printf 'char** %s_kim_str = 0;\n' $(patsubst .%.make-temp,%,$@)                                      >> model_init_include_stubs.cpp;\
+                printf 'int %s_kim_str_chunks = 0;\n' $(patsubst .%.make-temp,%,$@)                                  >> model_init_include_stubs.cpp;\
+                fi;
+	$(QUELL)if ! grep -i -q -s $(patsubst .%.make-temp,'char\* const %_kim_str',$@) model_kim_str_include.h; then \
+                   printf 'extern const int %s_kim_str_chunks;\n' $(patsubst .%.make-temp,%,$@)                         >> model_kim_str_include.h;\
+                   printf 'extern const char* const %s_kim_str[];\n' $(patsubst .%.make-temp,%,$@)                      >> model_kim_str_include.h;\
+                fi;
+	$(QUELL)if ! grep -i -q -s $(patsubst .%.make-temp,'= %_kim_str_chunks',$@) model_kim_str_include.cpp; then \
+                   printf 'if (strcmp(modelname, "%s") == 0)\n' $(patsubst .%.make-temp,%,$@)                           >> model_kim_str_include.cpp;\
+                   printf '{\n'                                                                                         >> model_kim_str_include.cpp;\
+                   printf '   in_mdlstr_chunks = %s_kim_str_chunks;\n' $(patsubst .%.make-temp,%,$@)                    >> model_kim_str_include.cpp;\
+                   printf '   in_mdlstr = (const char**) %s_kim_str;\n' $(patsubst .%.make-temp,%,$@)                   >> model_kim_str_include.cpp;\
+                   printf '}\n'                                                                                         >> model_kim_str_include.cpp;\
+                fi;
+	$(QUELL)touch $@
 	@echo "Configuring Model: $(patsubst .%.make-temp,%,$@)..."
 
 # If .models-deleted doesn't exist or Makefile is newer, delete files and then create .models-deleted.
 .models-deleted : Makefile
-	@rm -f .*.make-temp $(addprefix model_init_include.,h cpp) $(addprefix model_kim_str_include.,h cpp)
-	@touch .models-deleted
+	$(QUELL)rm -f .*.make-temp $(addprefix model_init_include.,h cpp) $(addprefix model_kim_str_include.,h cpp)
+	$(QUELL)touch .models-deleted
 
 MODEL_NAME_KIM_STR = standard_kim_str
 MODEL_NAME = standard
@@ -225,32 +225,32 @@ model_init_include.h model_init_include.cpp: Makefile .models-deleted $(MODELS_T
 
 clean:
 	@printf "Cleaning... KIM_API.\n"
-	@rm -f *.o .*.o *.a .*.a *.so .*.so *.mod  model_init_include.h model_init_include.cpp model_init_include_stubs.cpp model_kim_str_include.h model_kim_str_include.cpp \
-        .*.make-temp .models-deleted standard_kim_str.cpp KIM_API_F03_Multiples.incl KIM_API_DIRS.cpp .KIM_API_DIRS.cpp &&\
-        rm -f openkim-api-descriptor-file-match &&\
-        rm -rf "$(KIM_DIR)/KIM_API/temp_archive_dir"
+	$(QUELL)rm -f *.o .*.o *.a .*.a *.so .*.so *.mod  model_init_include.h model_init_include.cpp model_init_include_stubs.cpp model_kim_str_include.h model_kim_str_include.cpp \
+                      .*.make-temp .models-deleted standard_kim_str.cpp KIM_API_F03_Multiples.incl KIM_API_DIRS.cpp .KIM_API_DIRS.cpp &&\
+                rm -f openkim-api-descriptor-file-match &&\
+                rm -rf "$(KIM_DIR)/KIM_API/temp_archive_dir"
 
 install: objects libs
 	@printf "Installing...($(DESTDIR)$(libdir)/$(package_name)/KIM_API)......... KIM_API.\n"
-	@mkdir -p $(DESTDIR)$(libdir)/$(package_name)/KIM_API
+	$(QUELL)mkdir -p $(DESTDIR)$(libdir)/$(package_name)/KIM_API
 ifneq (static-link,$(KIM_LINK))
-	@cp -f .libkim.so "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.so"
-	@chmod 644 "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.so"
+	$(QUELL)cp -f .libkim.so "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.so"
+	$(QUELL)chmod 644 "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.so"
 else
-	@cp -f libkim.a "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.a"
-	@chmod 644 "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.a"
+	$(QUELL)cp -f libkim.a "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.a"
+	$(QUELL)chmod 644 "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.a"
 endif
 ifeq  (dynamic-load,$(KIM_LINK))
-	@cp -f KIM_API.h KIM_API_C.h KIM_API_status.h kim_kinds.mod kim_api.mod kim_api_f03.mod Unit_Handling.h KIM_AUX.h "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/"
-	@chmod 644 $(addsuffix ",$(addprefix "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/,KIM_API.h KIM_API_C.h KIM_API_status.h Unit_Handling.h KIM_AUX.h kim_kinds.mod kim_api.mod kim_api_f03.mod))
+	$(QUELL)cp -f KIM_API.h KIM_API_C.h KIM_API_status.h kim_kinds.mod kim_api.mod kim_api_f03.mod Unit_Handling.h KIM_AUX.h "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/"
+	$(QUELL)chmod 644 $(addsuffix ",$(addprefix "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/,KIM_API.h KIM_API_C.h KIM_API_status.h Unit_Handling.h KIM_AUX.h kim_kinds.mod kim_api.mod kim_api_f03.mod))
 endif
 
 uninstall:
 	@printf "Uninstalling...($(DESTDIR)$(libdir)/$(package_name)/KIM_API)......... KIM_API.\n"
 ifneq (static-link,$(KIM_LINK))
-	@rm -f "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.so"
+	$(QUELL)rm -f "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.so"
 else
-	@rm -f "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.a"
+	$(QUELL)rm -f "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.a"
 endif
-	@rm -f $(addsuffix ",$(addprefix "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/,KIM_API.h KIM_API_C.h KIM_API_status.h Unit_Handling.h KIM_AUX.h kim_kinds.mod kim_api.mod kim_api_f03.mod))
-	@if test \( -d "$(DESTDIR)$(libdir)/$(package_name)/KIM_API" \); then rmdir "$(DESTDIR)$(libdir)/$(package_name)/KIM_API" >& /dev/null; fi
+	$(QUELL)rm -f $(addsuffix ",$(addprefix "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/,KIM_API.h KIM_API_C.h KIM_API_status.h Unit_Handling.h KIM_AUX.h kim_kinds.mod kim_api.mod kim_api_f03.mod))
+	$(QUELL)if test \( -d "$(DESTDIR)$(libdir)/$(package_name)/KIM_API" \); then rmdir "$(DESTDIR)$(libdir)/$(package_name)/KIM_API" >& /dev/null; fi

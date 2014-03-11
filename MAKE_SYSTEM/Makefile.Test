@@ -42,13 +42,13 @@ all: $(TEST_NAME)
 
 $(TEST_NAME): $(strip $(TEST_NAME)).o $(LOCALOBJ) $(KIM_LIB_FILE)
 	@printf "Creating... Test executable... $@.\n"
-	@$(LD) $(LDFLAGS) $(LOCALOBJ) $< $(KIM_LIB) $(XLANGLDLIBS) $(LDDYNAMICLIB) $(OUTPUTINFLAG) $@
+	$(QUELL)$(LD) $(LDFLAGS) $(LOCALOBJ) $< $(KIM_LIB) $(XLANGLDLIBS) $(LDDYNAMICLIB) $(OUTPUTINFLAG) $@
 
 $(strip $(TEST_NAME)).o: $(LOCALOBJ) Makefile
 
 Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/MAKE_SYSTEM/Makefile.Test
-	@touch Makefile
+	$(QUELL)touch Makefile
 
 clean:
 	@printf "Cleaning... Test........... $(TEST_NAME).\n"
-	@rm -f *.mod $(LOCALOBJ) $(strip $(TEST_NAME)).o $(TEST_NAME) $(LOCAL_CLEAN)
+	$(QUELL)rm -f *.mod $(LOCALOBJ) $(strip $(TEST_NAME)).o $(TEST_NAME) $(LOCAL_CLEAN)

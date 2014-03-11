@@ -120,9 +120,15 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
        some instances.  `static-link' only works with ONE Model and AT MOST ONE
        Model Driver (in order to avoid the possibility of symbol clashes).
 
-   (h) Set override values for other variables, if necessary, by adding the
-       desired variable name (after the "# overwrite default variable values
-       here" line) and filling in appropriate values.
+   (h) Set the value of KIM_MAKE_VERBOSITY, if a value other than the default
+       is (`quiet') desired.  Possible values are `quite' and `full'.
+
+       KIM_MAKE_VERBOSITY = quiet
+
+   (i) Override default compiler options and other variables, if necessary, by
+       adding the desired variable name (after the "# override default compiler
+       options and other variables here" line) and filling in appropriate
+       values.
 
        * NOTE: GCC 4.4 requires that LDFLAGS be set as
                `LDFLAGS = -lgfortran -lgfortranstart' or possibly
@@ -172,30 +178,30 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
                warnings about the -fPIC option.
 
 
-       # overwrite default variable values here
+       # override default compiler options and other variables here
 
-       # overwrite default compiler options
+       # override default compiler options
        CC =
        CXX =
        FC =
        LD =
 
-       # overwrite default compiler option flag lists
+       # override default compiler option flag lists
        FFLAGS   =
        CCFLAGS  =
        CXXFLAGS =
        LDFLAGS  =
 
-       # overwrite default linker options
+       # override default linker options
        LDSHAREDFLAG =
        LINKSONAME =
        LDWHOLEARCHIVESTARTFLAG =
        LDWHOLEARCHIVEENDFLAG =
 
-       # overwrite default install directories
-       package_name =
-       prefix =
-       libdir =
+       # override default install directories
+       package_name = # default is 'openkim-api'
+       prefix =       # default is '/usr/local'
+       libdir =       # default is '$(prefix)/lib'
 
 
 2. In the remainder of the documentation we will use the string $KD to

@@ -51,12 +51,12 @@ endif
 
 .PHONY: STATIC_COMP_WARNING clean install uninstall
 STATIC_COMP_WARNING:
-	@echo ''; \
-        echo '*******************************************************************************'; \
-        echo '*******                  Compiling in static link mode                  *******'; \
-        echo '*******            You probably want to execute make from the           *******'; \
-        echo '*******                        $$KIM_DIR directory                       *******'; \
-        echo '*******************************************************************************'; \
+	@printf '\n'; \
+        printf '*******************************************************************************\n'; \
+        printf '*******                  Compiling in static link mode                  *******\n'; \
+        printf '*******            You probably want to execute make from the           *******\n'; \
+        printf '*******                        $$KIM_DIR directory                       *******\n'; \
+        printf '*******************************************************************************\n'; \
 
 MODEL_NAME_KIM_STR = $(strip $(MODEL_NAME))_kim_str
 
@@ -87,20 +87,20 @@ num_paramfiles = $(words $(paramfile_num_list))
 
 $(strip $(MODEL_NAME)).kim: $(driver_location)/$(strip $(MODEL_DRIVER_NAME))/$(strip $(MODEL_DRIVER_NAME)).kim Makefile
 	@printf "Creating... intermediate file... $@.\n"
-	@$(foreach spec,$(filter-out $(shell cat $(driver_location)/$(strip $(MODEL_DRIVER_NAME))/$(strip $(MODEL_DRIVER_NAME)).kim | \
-                                      sed -e '/^SPECIES_\([0-9]\{3\}\)_NAME_STR.*$$/!d' -e 's/^\(SPECIES_[0-9]\{3\}_NAME\)_STR.*$$/\1/'), \
-                                      $(species_list)),\
-           echo "*** $(spec) is defined in Makefile, but $(spec)_STR is not in $(strip $(MODEL_DRIVER_NAME)).kim. ***" && echo && false;)
-	@cat $(driver_location)/$(strip $(MODEL_DRIVER_NAME))/$(strip $(MODEL_DRIVER_NAME)).kim | \
-         sed -e "s,MODEL_NAME_STR,$(strip $(MODEL_NAME)),g"                                             \
-             $(foreach spec,$(species_list),-e 's,$(spec)_STR,$($(spec)),g') \
-             -e '/SPECIES_[0-9]\{3\}_NAME_STR/d' \
-         > $(strip $(MODEL_NAME)).kim
+	$(QUELL)$(foreach spec,$(filter-out $(shell cat $(driver_location)/$(strip $(MODEL_DRIVER_NAME))/$(strip $(MODEL_DRIVER_NAME)).kim |            \
+                                                    sed -e '/^SPECIES_\([0-9]\{3\}\)_NAME_STR.*$$/!d' -e 's/^\(SPECIES_[0-9]\{3\}_NAME\)_STR.*$$/\1/'), \
+                                            $(species_list)),\
+                    printf "*** $(spec) is defined in Makefile, but $(spec)_STR is not in $(strip $(MODEL_DRIVER_NAME)).kim. ***\n\n" && false;)
+	$(QUELL)cat $(driver_location)/$(strip $(MODEL_DRIVER_NAME))/$(strip $(MODEL_DRIVER_NAME)).kim | \
+                sed -e "s,MODEL_NAME_STR,$(strip $(MODEL_NAME)),g"                                       \
+                    $(foreach spec,$(species_list),-e 's,$(spec)_STR,$($(spec)),g')                      \
+                    -e '/SPECIES_[0-9]\{3\}_NAME_STR/d'                                                  \
+                > $(strip $(MODEL_NAME)).kim
 
 $(strip $(MODEL_NAME)).cpp: $(KIM_DIR)/MAKE_SYSTEM/model_based_on_driver.cpp $(paramfile_name_list) Makefile
 	@printf "Creating... intermediate file... $@.\n"
-	@cat /dev/null > $(strip $(MODEL_NAME)).cpp
-	@$(foreach flnum,$(paramfile_num_list),\
+	$(QUELL)cat /dev/null > $(strip $(MODEL_NAME)).cpp
+	$(QUELL)$(foreach flnum,$(paramfile_num_list),\
             fl_name=$(PARAM_FILE_$(flnum)_NAME);\
             fl_size=`cat $$fl_name | tr -d '\r' | wc -c`;\
             n=`expr $$fl_size / 65536 + 2`;\
@@ -127,64 +127,64 @@ $(strip $(MODEL_NAME)).cpp: $(KIM_DIR)/MAKE_SYSTEM/model_based_on_driver.cpp $(p
            printf "};\n\n"                                                             >> $(strip $(MODEL_NAME)).cpp;\
          )
         # make sed script
-	@printf "/PARAMFILE_POINTERS_GO_HERE;/ {\n" > tmp-sed-script
-	@$(foreach flnum,$(paramfile_num_list),printf 'i\\\n' >> tmp-sed-script; printf "   paramfile_strings[$(flnum)-1] = (const char**) paramfile_$(flnum);\n" >> tmp-sed-script;)
-	@printf "d\n" >> tmp-sed-script
-	@printf "}\n" >> tmp-sed-script
-	@printf "/PARAMFILE_CHUNKS_GO_HERE;/ {\n" >> tmp-sed-script
-	@$(foreach flnum,$(paramfile_num_list),printf 'i\\\n' >> tmp-sed-script; printf "   paramfile_strings_chunks[$(flnum)-1] = paramfile_$(flnum)_chunks;\n" >> tmp-sed-script;)
-	@printf "d\n" >> tmp-sed-script
-	@printf "}\n" >> tmp-sed-script
+	$(QUELL)printf "/PARAMFILE_POINTERS_GO_HERE;/ {\n" > tmp-sed-script
+	$(QUELL)$(foreach flnum,$(paramfile_num_list),printf 'i\\\n' >> tmp-sed-script; printf "   paramfile_strings[$(flnum)-1] = (const char**) paramfile_$(flnum);\n" >> tmp-sed-script;)
+	$(QUELL)printf "d\n" >> tmp-sed-script
+	$(QUELL)printf "}\n" >> tmp-sed-script
+	$(QUELL)printf "/PARAMFILE_CHUNKS_GO_HERE;/ {\n" >> tmp-sed-script
+	$(QUELL)$(foreach flnum,$(paramfile_num_list),printf 'i\\\n' >> tmp-sed-script; printf "   paramfile_strings_chunks[$(flnum)-1] = paramfile_$(flnum)_chunks;\n" >> tmp-sed-script;)
+	$(QUELL)printf "d\n" >> tmp-sed-script
+	$(QUELL)printf "}\n" >> tmp-sed-script
         # create actual model code to call model driver
-	@cat $(KIM_DIR)/MAKE_SYSTEM/model_based_on_driver.cpp |                                                                          \
-         sed -e "s,MODEL_DRIVER_NAME_STR,$(MODEL_DRIVER_NAME),g"                                                                         \
-             -e "s,MODEL_NAME_STR,$(MODEL_NAME),g"                                                                                       \
-             -e "s,MODEL_DRIVER_SO_NAME_STR,$(driver_runtime_location)/$(strip $(MODEL_DRIVER_NAME))/$(strip $(MODEL_DRIVER_NAME)).so,g" \
-             -e "s,NUM_PARAMFILES,$(num_paramfiles),g"                                                                                   \
-             -f tmp-sed-script                                                   >> $(strip $(MODEL_NAME)).cpp
-	@rm -f tmp-sed-script
+	$(QUELL)cat $(KIM_DIR)/MAKE_SYSTEM/model_based_on_driver.cpp |                                                                          \
+                sed -e "s,MODEL_DRIVER_NAME_STR,$(MODEL_DRIVER_NAME),g"                                                                         \
+                    -e "s,MODEL_NAME_STR,$(MODEL_NAME),g"                                                                                       \
+                    -e "s,MODEL_DRIVER_SO_NAME_STR,$(driver_runtime_location)/$(strip $(MODEL_DRIVER_NAME))/$(strip $(MODEL_DRIVER_NAME)).so,g" \
+                    -e "s,NUM_PARAMFILES,$(num_paramfiles),g"                                                                                   \
+                    -f tmp-sed-script                                                   >> $(strip $(MODEL_NAME)).cpp
+	$(QUELL)rm -f tmp-sed-script
 
 $(strip $(MODEL_NAME)).a: $(strip $(MODEL_NAME)).o $(strip $(MODEL_NAME))_kim_str.o
 	@printf "Creating... $@.\n"
-	@ar rcs $@ $(strip $(MODEL_NAME)).o $(strip $(MODEL_NAME))_kim_str.o 
+	$(QUELL)ar rcs $@ $(strip $(MODEL_NAME)).o $(strip $(MODEL_NAME))_kim_str.o
 
 export-list.txt: $(KIM_MAKE_FILES) Makefile
 	@printf "Creating... $@.\n"
 ifeq (darwin, $(KIM_SYSTEMLINKER))
-	@printf "_$(MODEL_NAME)_init_pointer\n"             > $@
-	@printf "_$(MODEL_NAME)_kim_str\n"                 >> $@
-	@printf "_$(MODEL_NAME)_kim_str_chunks\n"          >> $@
+	$(QUELL)printf "_$(MODEL_NAME)_init_pointer\n"             > $@
+	$(QUELL)printf "_$(MODEL_NAME)_kim_str\n"                 >> $@
+	$(QUELL)printf "_$(MODEL_NAME)_kim_str_chunks\n"          >> $@
 else # everything else (linux and freebsd)
-	@printf "{\n"                                         > $@
-	@printf "   global:\n"                               >> $@
-	@printf "           $(MODEL_NAME)_init_pointer;\n"   >> $@
-	@printf "           $(MODEL_NAME)_kim_str;\n"        >> $@
-	@printf "           $(MODEL_NAME)_kim_str_chunks;\n" >> $@
-	@printf "\n"                                         >> $@
-	@printf "   local: *;\n"                             >> $@
-	@printf "};\n"                                       >> $@
+	$(QUELL)printf "{\n"                                         > $@
+	$(QUELL)printf "   global:\n"                               >> $@
+	$(QUELL)printf "           $(MODEL_NAME)_init_pointer;\n"   >> $@
+	$(QUELL)printf "           $(MODEL_NAME)_kim_str;\n"        >> $@
+	$(QUELL)printf "           $(MODEL_NAME)_kim_str_chunks;\n" >> $@
+	$(QUELL)printf "\n"                                         >> $@
+	$(QUELL)printf "   local: *;\n"                             >> $@
+	$(QUELL)printf "};\n"                                       >> $@
 endif
 
 Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/MAKE_SYSTEM/Makefile.ParameterizedModel
-	@touch Makefile
+	$(QUELL)touch Makefile
 
 clean:
 	@printf "Cleaning... Model.......... $(MODEL_NAME).\n"
-	@rm -f $(addprefix $(strip $(MODEL_NAME)).,cpp o a so) .$(strip $(MODEL_NAME)).so $(strip $(MODEL_NAME)).kim $(addprefix $(strip $(MODEL_NAME))_kim_str.,cpp o) \
-               export-list.txt
+	$(QUELL)rm -f $(addprefix $(strip $(MODEL_NAME)).,cpp o a so) .$(strip $(MODEL_NAME)).so $(strip $(MODEL_NAME)).kim $(addprefix $(strip $(MODEL_NAME))_kim_str.,cpp o) \
+                      export-list.txt
 
 install: all
 	@printf "Installing...($(DESTDIR)$(libdir)/$(package_name)/MODELS).......... Model.......... $(MODEL_NAME)"
 ifneq (static-link,$(KIM_LINK))
 	@printf ".\n"
-	@if test \( x"$(driver_runtime_location)" != x"$(KIM_MODEL_DRIVERS_DIR)" \); then                 \
-            printf "  Cannot install a Parameterized Model whose associated Model Driver\n";              \
-            printf "  has not been installed.  Please install the Model Driver and try again.\n";         \
-            false;                                                                                        \
-         fi
-	@mkdir -p $(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)
-	@cp $(if $(KIM_INSTALLED),,.)$(MODEL_NAME).so $(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)/$(MODEL_NAME).so
-	@chmod 644 $(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)/$(MODEL_NAME).so
+	$(QUELL)if test \( x"$(driver_runtime_location)" != x"$(KIM_MODEL_DRIVERS_DIR)" \); then                 \
+                   printf "  Cannot install a Parameterized Model whose associated Model Driver\n";              \
+                   printf "  has not been installed.  Please install the Model Driver and try again.\n";         \
+                  false;                                                                                        \
+                fi
+	$(QUELL)mkdir -p $(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)
+	$(QUELL)cp $(if $(KIM_INSTALLED),,.)$(MODEL_NAME).so $(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)/$(MODEL_NAME).so
+	$(QUELL)chmod 644 $(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)/$(MODEL_NAME).so
 else
 	@printf ": nothing to be done for static-link.\n"
 endif
@@ -193,8 +193,8 @@ uninstall:
 	@printf "Uninstalling...($(DESTDIR)$(libdir)/$(package_name)/MODELS).......... Model.......... $(MODEL_NAME)"
 ifneq (static-link,$(KIM_LINK))
 	@printf ".\n"
-	@rm -f "$(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)/$(MODEL_NAME).so"
-	@if test \( -d "$(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)" \); then rmdir "$(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)" >& /dev/null; fi
+	$(QUELL)rm -f "$(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)/$(MODEL_NAME).so"
+	$(QUELL)if test \( -d "$(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)" \); then rmdir "$(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)" >& /dev/null; fi
 else
 	@printf ": nothing to be done for static-link.\n"
 endif

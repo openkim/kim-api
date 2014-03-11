@@ -47,6 +47,11 @@ ifndef KIM_TESTS_DIR
    KIM_TESTS_DIR := $(KIM_DIR)/TESTS
 endif
 
+# Make Verbosity
+ifndef KIM_MAKE_VERBOSITY
+   KIM_MAKE_VERBOSITY := quiet
+endif
+
 # INSTALL stuff
 package_name = openkim-api
 prefix = /usr/local
