@@ -42,7 +42,7 @@ all: $(TEST_NAME)
 
 $(TEST_NAME): $(strip $(TEST_NAME)).o $(LOCALOBJ) $(KIM_LIB_FILE)
 	@printf "Creating... Test executable... $@.\n"
-	$(QUELL)$(LD) $(LDFLAGS) $(LOCALOBJ) $< $(KIM_LIB) $(XLANGLDLIBS) $(LDDYNAMICLIB) $(OUTPUTINFLAG) $@
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(LOCALOBJ) $< $(KIM_LIB) $(XLANGLDLIBS) $(LDDYNAMICLIB) $(OUTPUTINFLAG) $@
 
 $(strip $(TEST_NAME)).o: $(LOCALOBJ) Makefile
 

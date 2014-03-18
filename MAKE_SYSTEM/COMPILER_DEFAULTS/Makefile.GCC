@@ -43,6 +43,8 @@ FC  = gfortran
 LD  = $(CXX)
 
 # Define the names for typical/required compiler option flags
+ARCH32FLAG   = -m32
+ARCH64FLAG   = -m64
 OBJONLYFLAG  = -c
 OUTPUTINFLAG = -o
 PICFLAG      = -fPIC

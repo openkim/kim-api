@@ -110,13 +110,13 @@ libkim.so: libkim.a .libkim.a $(if $(filter-out dynamic-load,$(KIM_LINK)), \
                                   $(foreach mdl, $(MODELS_LIST), $(KIM_MODELS_DIR)/$(mdl)/$(mdl).so) \
                                   $(foreach mdldrv, $(MODEL_DRIVERS_LIST), $(KIM_MODEL_DRIVERS_DIR)/$(mdldrv)/$(mdldrv).so),)
 	@printf "Creating... openkim-api library... $@.\n";
-	$(QUELL)$(LD) $(LDSHAREDFLAG) $(LINKSONAME)$(KIM_DIR)/KIM_API/$@ $(LDFLAGS) $(OUTPUTINFLAG) $@ \
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDSHAREDFLAG) $(LINKSONAME)$(KIM_DIR)/KIM_API/$@ $(LDFLAGS) $(OUTPUTINFLAG) $@ \
                       $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
                       $(LDDYNAMICLIB) $(XLANGLDLIBS) \
                       $(if $(filter-out dynamic-load,$(KIM_LINK)),\
                          $(foreach mdl, $(MODELS_LIST),$(KIM_MODELS_DIR)/$(mdl)/$(mdl).so) \
                          $(foreach mdldrv, $(MODEL_DRIVERS_LIST),$(KIM_MODEL_DRIVERS_DIR)/$(mdldrv)/$(mdldrv).so),)
-	$(QUELL)$(LD) $(LDSHAREDFLAG) $(LINKSONAME)$(DESTDIR)$(libdir)/$(package_name)/KIM_API/$@ $(LDFLAGS) $(OUTPUTINFLAG) .$@ \
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDSHAREDFLAG) $(LINKSONAME)$(DESTDIR)$(libdir)/$(package_name)/KIM_API/$@ $(LDFLAGS) $(OUTPUTINFLAG) .$@ \
                       $(LDWHOLEARCHIVESTARTFLAG) .$< $(LDWHOLEARCHIVEENDFLAG) \
                       $(LDDYNAMICLIB) $(XLANGLDLIBS) \
                       $(if $(filter-out dynamic-load,$(KIM_LINK)),\
@@ -181,7 +181,7 @@ model_init_include_stubs.o: model_init_include_stubs.cpp
 openkim-api-descriptor-file-match: openkim-api-descriptor-file-match.o KIM_API.o $(if $(filter-out static-link,$(KIM_LINK)),KIM_API_DIRS.o,) KIM_AUX.o Unit_Handling.o standard_kim_str.o \
         $(if $(filter-out dynamic-load,$(KIM_LINK)),model_init_include_stubs.o,)
 	@printf "Creating... $@.\n"
-	$(QUELL)$(LD) $(LDFLAGS) -o $@ $@.o KIM_API.o $(if $(filter-out static-link,$(KIM_LINK)),KIM_API_DIRS.o,) KIM_AUX.o Unit_Handling.o standard_kim_str.o $(if $(filter-out dynamic-load,$(KIM_LINK)),model_init_include_stubs.o,) $(XLANGLDLIBS) $(LDDYNAMICLIB)
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) -o $@ $@.o KIM_API.o $(if $(filter-out static-link,$(KIM_LINK)),KIM_API_DIRS.o,) KIM_AUX.o Unit_Handling.o standard_kim_str.o $(if $(filter-out dynamic-load,$(KIM_LINK)),model_init_include_stubs.o,) $(XLANGLDLIBS) $(LDDYNAMICLIB)
 
 # targets for the models: for any new model, adds the appropriate lines to the model_init_include.h and model_inclue.cpp files
 $(MODELS_TARGETS): .models-deleted

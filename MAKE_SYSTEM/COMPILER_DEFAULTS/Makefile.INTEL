@@ -43,6 +43,8 @@ FC  = ifort
 LD  = $(FC)
 
 # Define the names for typical/required compiler option flags
+ARCH32FLAG   =
+ARCH64FLAG   =
 OBJONLYFLAG  = -c
 OUTPUTINFLAG = -o
 PICFLAG      = -fPIC
