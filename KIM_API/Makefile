@@ -99,7 +99,7 @@ ifneq ($(KIM_LINK),static-link)
 	$(QUELL)ar rcs $@ $(ALLOBJ) KIM_API_DIRS.o
 	$(QUELL)ar rcs .$@ $(ALLOBJ) .KIM_API_DIRS.o
 else
-   libkim.a: $(ALLOBJ) # should also depend on MODEL and MODEL DRIVER archives
+   libkim.a: $(ALLOBJ) $(shell find $(KIM_MODEL_DRIVERS_DIR) $(KIM_MODELS_DIR) -name "*.a")
 	@printf "Creating... openkim-api library... $@.\n";
 	$(QUELL)mkdir $(KIM_DIR)/KIM_API/temp_archive_dir && cd $(KIM_DIR)/KIM_API/temp_archive_dir && \
         $(foreach arch, $(shell find $(KIM_MODEL_DRIVERS_DIR) $(KIM_MODELS_DIR) -name "*.a"),ar x $(arch);) \
@@ -178,10 +178,10 @@ openkim-api-descriptor-file-match.o: openkim-api-descriptor-file-match.cpp KIM_A
 
 model_init_include_stubs.o: model_init_include_stubs.cpp
 
-openkim-api-descriptor-file-match: openkim-api-descriptor-file-match.o KIM_API.o KIM_API_DIRS.o KIM_AUX.o Unit_Handling.o standard_kim_str.o \
+openkim-api-descriptor-file-match: openkim-api-descriptor-file-match.o KIM_API.o $(if $(filter-out static-link,$(KIM_LINK)),KIM_API_DIRS.o,) KIM_AUX.o Unit_Handling.o standard_kim_str.o \
         $(if $(filter-out dynamic-load,$(KIM_LINK)),model_init_include_stubs.o,)
 	@printf "Creating... $@.\n"
-	$(QUELL)$(LD) $(LDFLAGS) -o $@ $@.o KIM_API.o KIM_API_DIRS.o KIM_AUX.o Unit_Handling.o standard_kim_str.o $(if $(filter-out dynamic-load,$(KIM_LINK)),model_init_include_stubs.o,) $(XLANGLDLIBS) $(LDDYNAMICLIB)
+	$(QUELL)$(LD) $(LDFLAGS) -o $@ $@.o KIM_API.o $(if $(filter-out static-link,$(KIM_LINK)),KIM_API_DIRS.o,) KIM_AUX.o Unit_Handling.o standard_kim_str.o $(if $(filter-out dynamic-load,$(KIM_LINK)),model_init_include_stubs.o,) $(XLANGLDLIBS) $(LDDYNAMICLIB)
 
 # targets for the models: for any new model, adds the appropriate lines to the model_init_include.h and model_inclue.cpp files
 $(MODELS_TARGETS): .models-deleted
