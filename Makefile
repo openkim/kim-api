@@ -37,9 +37,9 @@ ifeq ($(wildcard Makefile.KIM_Config),)
 endif
 include Makefile.KIM_Config
 
-export MODEL_DRIVERS_LIST := $(patsubst $(KIM_MODEL_DRIVERS_DIR)/%/,%,$(filter-out $(KIM_MODEL_DRIVERS_DIR)/,$(sort $(dir $(wildcard $(KIM_MODEL_DRIVERS_DIR)/*/)))))
-export MODELS_LIST        := $(patsubst $(KIM_MODELS_DIR)/%/,%,$(filter-out $(KIM_MODELS_DIR)/,$(sort $(dir $(wildcard $(KIM_MODELS_DIR)/*/)))))
-export TESTS_LIST         := $(patsubst $(KIM_TESTS_DIR)/%/,%,$(filter-out $(KIM_TESTS_DIR)/,$(sort $(dir $(wildcard $(KIM_TESTS_DIR)/*/)))))
+export MODEL_DRIVERS_LIST := $(filter-out $(if $(wildcard $(KIM_MODEL_DRIVERS_DIR)/.kimignore),$(shell cat $(KIM_MODEL_DRIVERS_DIR)/.kimignore),),$(patsubst $(KIM_MODEL_DRIVERS_DIR)/%/,%,$(filter-out $(KIM_MODEL_DRIVERS_DIR)/,$(sort $(dir $(wildcard $(KIM_MODEL_DRIVERS_DIR)/*/))))))
+export MODELS_LIST        := $(filter-out $(if $(wildcard $(KIM_MODELS_DIR)/.kimignore),$(shell cat $(KIM_MODELS_DIR)/.kimignore),),$(patsubst $(KIM_MODELS_DIR)/%/,%,$(filter-out $(KIM_MODELS_DIR)/,$(sort $(dir $(wildcard $(KIM_MODELS_DIR)/*/))))))
+export TESTS_LIST         := $(filter-out $(if $(wildcard $(KIM_TESTS_DIR)/.kimignore),$(shell cat $(KIM_TESTS_DIR)/.kimignore),),$(patsubst $(KIM_TESTS_DIR)/%/,%,$(filter-out $(KIM_TESTS_DIR)/,$(sort $(dir $(wildcard $(KIM_TESTS_DIR)/*/))))))
 
 KIM_CONFIG_FILES = $(KIM_DIR)/KIM_API/Makefile.KIM_Config $(KIM_MODEL_DRIVERS_DIR)/Makefile.KIM_Config $(KIM_MODELS_DIR)/Makefile.KIM_Config $(KIM_TESTS_DIR)/Makefile.KIM_Config
 

@@ -38,9 +38,9 @@ endif
 include Makefile.KIM_Config
 
 ifndef MODELS_LIST
-  MODEL_DRIVERS_LIST := $(patsubst $(KIM_MODEL_DRIVERS_DIR)/%/,%,$(filter-out $(KIM_MODEL_DRIVERS_DIR)/,$(sort $(dir $(wildcard $(KIM_MODEL_DRIVERS_DIR)/*/)))))
-  MODELS_LIST        := $(patsubst $(KIM_MODELS_DIR)/%/,%,$(filter-out $(KIM_MODELS_DIR)/,$(sort $(dir $(wildcard $(KIM_MODELS_DIR)/*/)))))
-  TESTS_LIST         := $(patsubst $(KIM_TESTS_DIR)/%/,%,$(filter-out $(KIM_TESTS_DIR)/,$(sort $(dir $(wildcard $(KIM_TESTS_DIR)/*/)))))
+  MODEL_DRIVERS_LIST := $(filter-out $(if $(wildcard $(KIM_MODEL_DRIVERS_DIR)/.kimignore),$(shell cat $(KIM_MODEL_DRIVERS_DIR)/.kimignore),),$(patsubst $(KIM_MODEL_DRIVERS_DIR)/%/,%,$(filter-out $(KIM_MODEL_DRIVERS_DIR)/,$(sort $(dir $(wildcard $(KIM_MODEL_DRIVERS_DIR)/*/))))))
+  MODELS_LIST        := $(filter-out $(if $(wildcard $(KIM_MODELS_DIR)/.kimignore),$(shell cat $(KIM_MODELS_DIR)/.kimignore),),$(patsubst $(KIM_MODELS_DIR)/%/,%,$(filter-out $(KIM_MODELS_DIR)/,$(sort $(dir $(wildcard $(KIM_MODELS_DIR)/*/))))))
+  TESTS_LIST         := $(filter-out $(if $(wildcard $(KIM_TESTS_DIR)/.kimignore),$(shell cat $(KIM_TESTS_DIR)/.kimignore),),$(patsubst $(KIM_TESTS_DIR)/%/,%,$(filter-out $(KIM_TESTS_DIR)/,$(sort $(dir $(wildcard $(KIM_TESTS_DIR)/*/))))))
 endif
 
 # Definition of c and fortran .o file list
