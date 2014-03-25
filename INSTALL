@@ -130,9 +130,9 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
        options and other variables here" line) and filling in appropriate
        values.
 
-       * NOTE: GCC 4.4 requires that LDFLAGS be set as
-               `LDFLAGS = -lgfortran -lgfortranstart' or possibly
-               `LD = $(FC)' and `LDFLAGS = -lstdc++'.
+       * NOTE: GCC 4.4 requires that LDLIBS be set as
+               `LDLIBS = -lgfortran -lgfortranstart' or possibly
+               `LD = $(FC)' and `LDLIBS = -lstdc++'.
 
        * NOTE: As of 2014-01-20, gfortran on Darwin OS (Mac OSX) has a bug
                associated with the use of iso_c_binding Fortran/C
@@ -191,6 +191,7 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
        CCFLAGS  =
        CXXFLAGS =
        LDFLAGS  =
+       LDLIBS   =
 
        # override default linker options
        LDSHAREDFLAG =

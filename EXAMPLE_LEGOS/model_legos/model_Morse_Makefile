@@ -50,6 +50,7 @@ PARAM_FILE_001_NAME := MODEL_NAME_STR.params
 #CCFLAGS  +=
 #CXXFLAGS +=
 #LDFLAGS  +=
+#LDLIBS   +=
 
 # load remaining KIM make configuration
 include $(KIM_DIR)/MAKE_SYSTEM/Makefile.ParameterizedModel

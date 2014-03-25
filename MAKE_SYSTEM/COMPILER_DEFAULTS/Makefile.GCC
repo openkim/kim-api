@@ -58,3 +58,4 @@ FFLAGS   = -O3 -g -Wall -pedantic
 CCFLAGS  = -O3 -g -Wall -ansi -pedantic
 CXXFLAGS = -O3 -g -Wall -ansi -pedantic
 LDFLAGS  =
+LDLIBS   =

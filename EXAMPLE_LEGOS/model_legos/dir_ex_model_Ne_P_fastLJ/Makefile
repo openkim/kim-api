@@ -52,6 +52,7 @@ LOCALCLEAN =
 #CCFLAGS  +=
 #CXXFLAGS +=
 #LDFLAGS  +=
+#LDLIBS   +=
 
 # load remaining KIM make configuration
 include $(KIM_DIR)/MAKE_SYSTEM/Makefile.Model
