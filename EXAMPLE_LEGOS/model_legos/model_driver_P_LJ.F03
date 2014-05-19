@@ -698,13 +698,13 @@ do i = 1, numparamfiles
 end do
 
 ! store function pointers in KIM object
-call kim_api_setm_data(pkim, ier, &
+call kim_api_setm_method(pkim, ier, &
      "compute", one, c_funloc(Compute_Energy_Forces), 1, &
      "reinit",  one, c_funloc(reinit),                1, &
      "destroy", one, c_funloc(destroy),               1)
 if (ier.lt.KIM_STATUS_OK) then
    idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                               "kim_api_setm_data", ier)
+                               "kim_api_setm_method", ier)
    goto 42
 endif
 

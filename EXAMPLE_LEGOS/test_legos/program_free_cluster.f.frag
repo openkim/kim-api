@@ -134,10 +134,10 @@ program TEST_NAME_STR
   endif
 
   if (nbc.ne.6) then
-     ier = kim_api_set_data(pkim, "get_neigh", SizeOne, c_funloc(get_neigh))
+     ier = kim_api_set_method(pkim, "get_neigh", SizeOne, c_funloc(get_neigh))
      if (ier.lt.KIM_STATUS_OK) then
         idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                                    "kim_api_set_data", ier)
+                                    "kim_api_set_method", ier)
         stop
      endif
   endif
