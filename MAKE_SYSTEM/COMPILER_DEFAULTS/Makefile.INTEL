@@ -43,15 +43,20 @@ FC  = ifort
 LD  = $(FC)
 
 # Define the names for typical/required compiler option flags
-ARCH32FLAG   =
-ARCH64FLAG   =
-OBJONLYFLAG  = -c
-OUTPUTINFLAG = -o
-PICFLAG      = -fPIC
-FCRAYFLAG    =
-LDDYNAMICLIB =
+ARCH32FLAG       =
+ARCH64FLAG       =
+OBJONLYFLAG      = -c
+OUTPUTINFLAG     = -o
+FFIXEDFLAG       = -fixed
+FFREEFLAG        = -free
+FNOCPPFLAG       = -nocpp
+FCPPFLAG         = -cpp
+FFORTRANFILEFLAG = -Tf
+PICFLAG          = -fPIC
+FCRAYFLAG        =
+LDDYNAMICLIB     =
 # Define linking options for using $(LD) to link other language objects
-XLANGLDLIBS  = -nofor_main -cxxlib
+XLANGLDLIBS      = -nofor_main -cxxlib
 
 # Define optional compiler option flag lists
 FFLAGS   = -O3 -g -warn all

@@ -43,15 +43,20 @@ FC  = gfortran
 LD  = $(CXX)
 
 # Define the names for typical/required compiler option flags
-ARCH32FLAG   = -m32
-ARCH64FLAG   = -m64
-OBJONLYFLAG  = -c
-OUTPUTINFLAG = -o
-PICFLAG      = -fPIC
-FCRAYFLAG    = -fcray-pointer
-LDDYNAMICLIB = -ldl
+ARCH32FLAG       = -m32
+ARCH64FLAG       = -m64
+OBJONLYFLAG      = -c
+OUTPUTINFLAG     = -o
+FFIXEDFLAG       = -ffixed-form
+FFREEFLAG        = -ffree-form
+FNOCPPFLAG       = -nocpp
+FCPPFLAG         = -cpp
+FFORTRANFILEFLAG =
+PICFLAG          = -fPIC
+FCRAYFLAG        = -fcray-pointer
+LDDYNAMICLIB     = -ldl
 # Define linking options for using $(LD) to link other language objects
-XLANGLDLIBS  = -lgfortran
+XLANGLDLIBS      = -lgfortran
 
 # Define optional compiler option flag lists
 FFLAGS   = -O3 -g -Wall -pedantic
