@@ -33,6 +33,29 @@
 #
 
 
+=== openkim-api-v1.4.1 =========================================================
+
+
+* Added additional compiler flags to support differences between GCC and INTEL
+
+* Fixed examples that used set_data when they should have used set_method.
+
+* Added LDLIBS flag in split functionality of LDFLAGS variable more 
+  appropriately.  This is more inline with standard Makefile practice.
+
+* Now 32Bit and 64Bit settings add -m32 and -m64 compiler flags automatically
+
+* Added KIM_MAKE_VERBOSITY setting to Make system
+
+* Updates to README, INSTALL, and Templates
+
+* Make system improvements and fixes
+
+* Added checks for known buggy compilers
+
+* Updated and corrected documentation
+
+
 === openkim-api-v1.4.0 =========================================================
 
 
