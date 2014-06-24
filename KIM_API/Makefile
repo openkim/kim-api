@@ -73,10 +73,10 @@ endif
 all: objects libs
 
 ifneq ($(KIM_LINK),static-link)
-   objects: $(ALLOBJ)
+   objects: $(ALLOBJ) KIM_API_DIRS.o .KIM_API_DIRS.o
    libs: libkim.so openkim-api-descriptor-file-match
 else
-   objects: models_check $(ALLOBJ)
+   objects: models_check $(ALLOBJ) KIM_API_DIRS.o
    libs: models_check libkim.a openkim-api-descriptor-file-match
 
    models_check:
@@ -142,39 +142,12 @@ KIM_API_F03_Helper.o: Makefile
 
 KIM_AUX.o: KIM_AUX.h Makefile
 
-%_API_DIRS.cpp: $(KIM_MAKE_FILES) Makefile
-	@printf "Creating... intermediate file... $@.\n"
-	$(QUELL)printf "#include <cstdlib>\n"                                                                                            > $@
-	$(QUELL)printf "#include \"KIM_API_DIRS.h\"\n"                                                                                  >> $@
-	$(QUELL)printf "\n"                                                                                                             >> $@
-	$(QUELL)printf "void directoryPath(DirectoryPathType type, std::list<std::string>* const lst)\n"                                >> $@
-	$(QUELL)printf "{\n"                                                                                                            >> $@
-	$(QUELL)printf "   switch (type)\n"                                                                                             >> $@
-	$(QUELL)printf "   {\n"                                                                                                         >> $@
-	$(QUELL)printf "      case KIM_DIR:\n"                                                                                          >> $@
-	$(QUELL)$(if $(filter-out KIM_API_DIRS.cpp,$@),                                                                                       \
-                     printf "         lst->push_back(std::string(\"$(libdir)/$(package_name)\"));\n"                                    >> $@,\
-                     printf "         lst->push_back(std::string(\"$(KIM_DIR)\"));\n"                                                   >> $@)
-	$(QUELL)printf "         break;\n"                                                                                              >> $@
-	$(QUELL)printf "      case KIM_MODEL_DRIVERS_DIR:\n"                                                                            >> $@
-	$(QUELL)$(if $(filter-out KIM_API_DIRS.cpp,$@),                                                                                       \
-                     printf "         lst->push_back(std::string(\".\"));\n"                                                            >> $@;\
-                     printf "         lst->push_back(std::string(getenv(\"HOME\")).append(\"/.kim/$(package_name)/MODEL_DRIVERS\"));\n" >> $@;\
-                     printf "         lst->push_back(std::string(\"$(libdir)/$(package_name)/MODEL_DRIVERS\"));\n"                      >> $@,\
-                     printf "         lst->push_back(std::string(\"$(KIM_MODEL_DRIVERS_DIR)\"));\n"                                     >> $@)
-	$(QUELL)printf "         break;\n"                                                                                              >> $@
-	$(QUELL)printf "      case KIM_MODELS_DIR:\n"                                                                                   >> $@
-	$(QUELL)$(if $(filter-out KIM_API_DIRS.cpp,$@),                                                                                       \
-                     printf "         lst->push_back(std::string(\".\"));\n"                                                            >> $@;\
-                     printf "         lst->push_back(std::string(getenv(\"HOME\")).append(\"/.kim/$(package_name)/MODELS\"));\n"        >> $@;\
-                     printf "         lst->push_back(std::string(\"$(libdir)/$(package_name)/MODELS\"));\n"                             >> $@,\
-                     printf "         lst->push_back(std::string(\"$(KIM_MODELS_DIR)\"));\n"                                            >> $@)
-	$(QUELL)printf "         break;\n"                                                                                              >> $@
-	$(QUELL)printf "      default:\n"                                                                                               >> $@
-	$(QUELL)printf "         break;\n"                                                                                              >> $@
-	$(QUELL)printf "   }\n"                                                                                                         >> $@
-	$(QUELL)printf "   return;\n"                                                                                                   >> $@
-	$(QUELL)printf "}\n"                                                                                                            >> $@
+KIM_API_DIRS.o: Makefile
+KIM_API_DIRS.o: KIM_DEFINE_VALUES += -D KIMDIR=\"$(KIM_DIR)\"                       \
+                                     -D MODELDIR=\"$(KIM_MODELS_DIR)\"              \
+                                     -D MODELDRIVERDIR=\"$(KIM_MODEL_DRIVERS_DIR)\"
+.KIM_API_DIRS.o: Makefile
+.KIM_API_DIRS.o: KIM_DEFINE_VALUES += -D LIBDIR=\"$(libdir)\" -D PACKAGENAME=\"$(package_name)\"
 
 openkim-api-descriptor-file-match.o: openkim-api-descriptor-file-match.cpp KIM_API.h KIM_API_status.h Makefile
 
@@ -228,7 +201,7 @@ model_init_include.h model_init_include.cpp: Makefile .models-deleted $(MODELS_T
 clean:
 	@printf "Cleaning... KIM_API.\n"
 	$(QUELL)rm -f *.o .*.o *.a .*.a *.so .*.so *.mod  model_init_include.h model_init_include.cpp model_init_include_stubs.cpp model_kim_str_include.h model_kim_str_include.cpp \
-                      .*.make-temp .models-deleted standard_kim_str.cpp KIM_API_F03_Multiples.incl KIM_API_DIRS.cpp .KIM_API_DIRS.cpp &&\
+                      .*.make-temp .models-deleted standard_kim_str.cpp KIM_API_F03_Multiples.incl &&\
                 rm -f openkim-api-descriptor-file-match &&\
                 rm -rf "$(KIM_DIR)/KIM_API/temp_archive_dir"
 
