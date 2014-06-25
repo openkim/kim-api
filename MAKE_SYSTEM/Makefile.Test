@@ -37,18 +37,20 @@ ifndef KIM_DIR
 endif
 include $(KIM_DIR)/MAKE_SYSTEM/Makefile.SanityCheck
 
+# Clean up variables
+TEST_NAME := $(strip $(TEST_NAME))
 
 all: $(TEST_NAME)
 
-$(TEST_NAME): $(strip $(TEST_NAME)).o $(LOCALOBJ) $(KIMLIBFILE)
+$(TEST_NAME): $(TEST_NAME).o $(LOCALOBJ) $(KIMLIBFILE)
 	@printf "Creating... Test executable... $@.\n"
 	$(QUELL)$(LD) $(ARCHFLAG) $(KIMLIBFLAGS) $(LDFLAGS) $(LOCALOBJ) $< $(KIMLIB) $(XLANGLDLIBS) $(LDDYNAMICLIB) $(LDLIBS) $(OUTPUTINFLAG) $@
 
-$(strip $(TEST_NAME)).o: $(LOCALOBJ) Makefile
+$(TEST_NAME).o: $(LOCALOBJ) Makefile
 
 Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/MAKE_SYSTEM/Makefile.Test
 	$(QUELL)touch Makefile
 
 clean:
 	@printf "Cleaning... Test........... $(TEST_NAME).\n"
-	$(QUELL)rm -f *.mod $(LOCALOBJ) $(strip $(TEST_NAME)).o $(TEST_NAME) $(LOCAL_CLEAN)
+	$(QUELL)rm -f *.mod $(LOCALOBJ) $(TEST_NAME).o $(TEST_NAME) $(LOCAL_CLEAN)

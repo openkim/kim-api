@@ -37,9 +37,13 @@ ifndef KIM_DIR
 endif
 include $(KIM_DIR)/MAKE_SYSTEM/Makefile.SanityCheck
 
+# Clean up variables
+MODEL_DRIVER_NAME := $(strip $(MODEL_DRIVER_NAME))
+MODEL_DRIVER_INIT_FUNCTION_LANG := $(strip $(MODEL_DRIVER_INIT_FUNCTION_LANG))
+MODEL_DRIVER_INIT_FUNCTION_NAME := $(strip $(MODEL_DRIVER_INIT_FUNCTION_NAME))
 
 #build target .a or .so for models
-MODEL_DRIVER_BUILD_TARGET := $(strip $(MODEL_DRIVER_NAME)).a
+MODEL_DRIVER_BUILD_TARGET := $(MODEL_DRIVER_NAME).a
 ifneq ($(KIM_LINK),static-link)
    MODEL_DRIVER_BUILD_TARGET += $(patsubst %.a,%.so, $(MODEL_DRIVER_BUILD_TARGET))
 else
@@ -67,17 +71,17 @@ else
 endif
 %_init_wrapper.cpp: Makefile
 	@printf "Creating... intermediate file... $@.\n"
-	$(QUELL)printf "extern \"C\"\n"                                                  > $@
-	$(QUELL)printf "{\n"                                                            >> $@
-	$(QUELL)printf "   int $(strip $(MODEL_DRIVER_INIT_FUNC_NAME))(void *kimmdl, char *paramfile_names, int *nmstrlen, int *numparamfiles);\n" >> $@
-	$(QUELL)printf "   int (* $(strip $(MODEL_DRIVER_NAME))_init_pointer)(void*,\n" >> $@
-	$(QUELL)printf "      char*, int*, int*) =\n"                                   >> $@
-	$(QUELL)printf "      $(strip $(MODEL_DRIVER_INIT_FUNC_NAME));\n"               >> $@
-	$(QUELL)printf "}\n"                                                            >> $@
+	$(QUELL)printf "extern \"C\"\n"                                        > $@
+	$(QUELL)printf "{\n"                                                   >> $@
+	$(QUELL)printf "   int $(MODEL_DRIVER_INIT_FUNC_NAME)(void *kimmdl, char *paramfile_names, int *nmstrlen, int *numparamfiles);\n" >> $@
+	$(QUELL)printf "   int (* $(MODEL_DRIVER_NAME)_init_pointer)(void*,\n" >> $@
+	$(QUELL)printf "      char*, int*, int*) =\n"                          >> $@
+	$(QUELL)printf "      $(MODEL_DRIVER_INIT_FUNC_NAME);\n"               >> $@
+	$(QUELL)printf "}\n"                                                   >> $@
 
-$(strip $(MODEL_DRIVER_NAME)).a: $(LOCALOBJ) $(strip $(MODEL_DRIVER_NAME))_init_wrapper.o 
+$(MODEL_DRIVER_NAME).a: $(LOCALOBJ) $(MODEL_DRIVER_NAME)_init_wrapper.o 
 	@printf "Creating... $@.\n"
-	$(QUELL)ar rcs $@ $(LOCALOBJ) $(strip $(MODEL_DRIVER_NAME))_init_wrapper.o
+	$(QUELL)ar rcs $@ $(LOCALOBJ) $(MODEL_DRIVER_NAME)_init_wrapper.o
 
 export-list.txt: $(KIM_MAKE_FILES) Makefile
 ifeq (darwin, $(KIM_SYSTEMLINKER))
@@ -98,9 +102,9 @@ Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/MAKE_SYSTEM/Makefile.ModelDriver
 
 clean:
 	@printf "Cleaning... Model Driver... $(MODEL_DRIVER_NAME).\n"
-	$(QUELL)rm -f $(LOCALOBJ) *.mod $(addprefix $(strip $(MODEL_DRIVER_NAME)).,a so) .$(MODEL_DRIVER_NAME).so \
+	$(QUELL)rm -f $(LOCALOBJ) *.mod $(addprefix $(MODEL_DRIVER_NAME).,a so) .$(MODEL_DRIVER_NAME).so \
                       export-list.txt \
-                      $(addprefix $(strip $(MODEL_DRIVER_NAME))_init_wrapper.,o cpp) $(LOCALCLEAN)
+                      $(addprefix $(MODEL_DRIVER_NAME)_init_wrapper.,o cpp) $(LOCALCLEAN)
 
 install: all
 	@printf "Installing...($(DESTDIR)$(libdir)/$(package_name)/MODEL_DRIVERS)... Model Driver... $(MODEL_DRIVER_NAME)"

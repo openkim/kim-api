@@ -37,9 +37,13 @@ ifndef KIM_DIR
 endif
 include $(KIM_DIR)/MAKE_SYSTEM/Makefile.SanityCheck
 
+# Clean up variables
+MODEL_NAME := $(strip $(MODEL_NAME))
+MODEL_INIT_FUNCTION_LANG := $(strip $(MODEL_INIT_FUNCTION_LANG))
+MODEL_INIT_FUNCTION_NAME := $(strip $(MODEL_INIT_FUNCTION_NAME))
 
 #build target .a or .so for models
-MODEL_BUILD_TARGET := $(strip $(MODEL_NAME)).a
+MODEL_BUILD_TARGET := $(MODEL_NAME).a
 ifneq ($(KIM_LINK),static-link)
    MODEL_BUILD_TARGET += $(patsubst %.a,%.so, $(MODEL_BUILD_TARGET))
 else
@@ -57,7 +61,7 @@ STATIC_COMP_WARNING:
         printf '*******                        $$KIM_DIR directory                       *******\n'; \
         printf '*******************************************************************************\n'; \
 
-MODEL_NAME_KIM_STR = $(strip $(MODEL_NAME))_kim_str
+MODEL_NAME_KIM_STR = $(MODEL_NAME)_kim_str
 
 all: $(MODEL_BUILD_TARGET)
 
@@ -69,16 +73,16 @@ else
 endif
 %_init_wrapper.cpp: Makefile
 	@printf "Creating... intermediate file... $@.\n"
-	$(QUELL)printf "extern \"C\"\n"                                             > $@
-	$(QUELL)printf "{\n"                                                       >> $@
-	$(QUELL)printf "   int $(strip $(MODEL_INIT_FUNC_NAME))(void *kimmdl);\n"  >> $@
-	$(QUELL)printf "   int (* $(strip $(MODEL_NAME))_init_pointer)(void*) =\n" >> $@
-	$(QUELL)printf "      $(strip $(MODEL_INIT_FUNC_NAME));\n"                 >> $@
-	$(QUELL)printf "}\n"                                                       >> $@
+	$(QUELL)printf "extern \"C\"\n"                                    > $@
+	$(QUELL)printf "{\n"                                              >> $@
+	$(QUELL)printf "   int $(MODEL_INIT_FUNC_NAME)(void *kimmdl);\n"  >> $@
+	$(QUELL)printf "   int (* $(MODEL_NAME)_init_pointer)(void*) =\n" >> $@
+	$(QUELL)printf "      $(MODEL_INIT_FUNC_NAME);\n"                 >> $@
+	$(QUELL)printf "}\n"                                              >> $@
 
-$(strip $(MODEL_NAME)).a: $(LOCALOBJ) $(strip $(MODEL_NAME))_init_wrapper.o $(strip $(MODEL_NAME))_kim_str.o
+$(MODEL_NAME).a: $(LOCALOBJ) $(MODEL_NAME)_init_wrapper.o $(MODEL_NAME)_kim_str.o
 	@printf "Creating... $@.\n"
-	$(QUELL)ar rcs $@ $(LOCALOBJ) $(strip $(MODEL_NAME))_init_wrapper.o $(strip $(MODEL_NAME))_kim_str.o
+	$(QUELL)ar rcs $@ $(LOCALOBJ) $(MODEL_NAME)_init_wrapper.o $(MODEL_NAME)_kim_str.o
 
 export-list.txt: $(KIM_MAKE_FILES) Makefile
 	@printf "Creating... $@.\n"
@@ -104,10 +108,10 @@ Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/MAKE_SYSTEM/Makefile.Model
 
 clean:
 	@printf "Cleaning... Model.......... $(MODEL_NAME).\n"
-	$(QUELL)rm -f $(LOCALOBJ) *.mod $(addprefix $(strip $(MODEL_NAME)).,a so) .$(MODEL_NAME).so\
+	$(QUELL)rm -f $(LOCALOBJ) *.mod $(addprefix $(MODEL_NAME).,a so) .$(MODEL_NAME).so\
                       export-list.txt \
-                      $(addprefix $(strip $(MODEL_NAME))_kim_str.,o cpp) \
-                      $(addprefix $(strip $(MODEL_NAME))_init_wrapper.,o cpp) $(LOCALCLEAN)
+                      $(addprefix $(MODEL_NAME)_kim_str.,o cpp) \
+                      $(addprefix $(MODEL_NAME)_init_wrapper.,o cpp) $(LOCALCLEAN)
 
 install: all
 	@printf "Installing...($(DESTDIR)$(libdir)/$(package_name)/MODELS).......... Model.......... $(MODEL_NAME)"
