@@ -38,6 +38,7 @@
 #include <fstream>
 #include "KIM_API.h"
 #include "KIM_API_status.h"
+#include "KIM_API_DIRS.h"
 
 static int process_paramfiles(char* param_file_names, int* nmstrlen);
 
@@ -82,13 +83,29 @@ extern "C" {
          return KIM_STATUS_FAIL;
       }
 #if KIM_LINK_VALUE == KIM_LINK_DYNAMIC_LOAD
-      driver_lib_handle = dlopen("MODEL_DRIVER_SO_NAME_STR",RTLD_NOW);
-      if (!driver_lib_handle) {
-         std::cout << "Error at " << __LINE__ << " of file " << __FILE__
-                   << std::endl;
-         std::cout << dlerror() << std::endl;
-         return KIM_STATUS_FAIL;
+      std::list<std::string> lst;
+      directoryPath(KIM_MODEL_DRIVERS_DIR, &lst);
+      std::list<std::string>::iterator itr;
+      for (itr = lst.begin(); itr != lst.end(); ++itr)
+      {
+        itr->append("/");
+        itr->append("MODEL_DRIVER_NAME_STR"); itr->append("/");
+        itr->append("MODEL_DRIVER_NAME_STR"); itr->append(".so");
+        //std::cout<< "* Info (MODEL_NAME_STR_init): Looking for Model Driver shared library file " << itr->c_str() <<std::endl;
+        driver_lib_handle = dlopen(itr->c_str(), RTLD_NOW);
+        if (driver_lib_handle != NULL) break;
+        //std::cout<< "* Error (MODEL_NAME_STR_init): Cannot find Model Driver shared library file for Model Driver name: ";
+        //std::cout<< "MODEL_DRIVER_NAME_STR" <<std::endl<<dlerror()<<std::endl;
       }
+      if(driver_lib_handle == NULL) {
+        std::cerr << "Cannot load MODEL_DRIVER_NAME_STR shared library for MODEL_NAME_STR" << std::endl;
+        return KIM_STATUS_FAIL;
+      }
+      else
+      {
+        //std::cout<< "* Info (MODEL_NAME_STR_init): Found Model Driver shared library file for Model Driver name: " << "MODEL_DRIVER_NAME_STR" << std::endl;
+      }
+
       typedef int (*Driver_Init)(void *km, char* paramfilenames,
                                  int* nmstrlen, int* numparamfiles);
       Driver_Init drvr_init =

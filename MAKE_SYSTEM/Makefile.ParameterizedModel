@@ -66,20 +66,18 @@ MODEL_NAME_KIM_STR = $(MODEL_NAME)_kim_str
 
 all: $(MODEL_NAME).kim $(MODEL_BUILD_TARGET)
 
-ifneq ($(KIM_INSTALLED),yes)
-   driver_location         := $(KIM_MODEL_DRIVERS_DIR)
-   driver_runtime_location := $(KIM_MODEL_DRIVERS_DIR)
+ifeq (yes,$(shell if test -f $(HOME)/.$(package_name)/config-v$(VERSION_MAJOR); then printf "yes"; fi))
+   USERDIR = $(wildcard $(shell grep model_drivers_dir $(HOME)/.$(package_name)/config-v$(VERSION_MAJOR) | sed -e 's/[^=]*=[[:space:]]*//'))
 else
-   ifeq      (yes,$(shell if test -d ../$(MODEL_DRIVER_NAME); then printf "yes"; fi))
-      driver_location         := ..
-      driver_runtime_location := .
-   else ifeq (yes,$(shell if test -d $(HOME)/.kim/MODEL_DRIVERS/(MODEL_DRIVER_NAME); then printf "yes"; fi))
-      dirver_location         := $(HOME)/.kim/MODEL_DRIVERS
-      dirver_runtime_location := $(HOME)/.kim/MODEL_DRIVERS
-   else
-      driver_location         := $(KIM_MODEL_DRIVERS_DIR)
-      driver_runtime_location := $(KIM_MODEL_DRIVERS_DIR)
-   endif
+   USERDIR = /doesnotexist
+endif
+
+ifeq      (yes,$(shell if test -d ../$(MODEL_DRIVER_NAME); then printf "yes"; fi))
+   driver_location         := ..
+else ifeq (yes,$(shell if test -d $(USERDIR); then printf "yes"; fi))
+   driver_location         := $(USERDIR)
+else
+   driver_location         := $(KIM_MODEL_DRIVERS_DIR)
 endif
 
 species_list = $(sort $(strip $(filter SPECIES_%_NAME,$(.VARIABLES))))
@@ -143,7 +141,6 @@ $(MODEL_NAME).cpp: $(KIM_DIR)/MAKE_SYSTEM/model_based_on_driver.cpp $(paramfile_
 	$(QUELL)cat $(KIM_DIR)/MAKE_SYSTEM/model_based_on_driver.cpp |                                                                          \
                 sed -e "s,MODEL_DRIVER_NAME_STR,$(MODEL_DRIVER_NAME),g"                                                                         \
                     -e "s,MODEL_NAME_STR,$(MODEL_NAME),g"                                                                                       \
-                    -e "s,MODEL_DRIVER_SO_NAME_STR,$(driver_runtime_location)/$(strip $(MODEL_DRIVER_NAME))/$(strip $(MODEL_DRIVER_NAME)).so,g" \
                     -e "s,NUM_PARAMFILES,$(num_paramfiles),g"                                                                                   \
                     -f tmp-sed-script                                                   >> $(MODEL_NAME).cpp
 	$(QUELL)rm -f tmp-sed-script
@@ -181,10 +178,10 @@ install: all
 	@printf "Installing...($(DESTDIR)$(libdir)/$(package_name)/MODELS).......... Model.......... $(MODEL_NAME)"
 ifneq (static-link,$(KIM_LINK))
 	@printf ".\n"
-	$(QUELL)if test \( x"$(driver_runtime_location)" != x"$(KIM_MODEL_DRIVERS_DIR)" \); then                 \
+	$(QUELL)if test \( x"$(driver_location)" != x"$(KIM_MODEL_DRIVERS_DIR)" \); then                         \
                    printf "  Cannot install a Parameterized Model whose associated Model Driver\n";              \
                    printf "  has not been installed.  Please install the Model Driver and try again.\n";         \
-                  false;                                                                                        \
+                  false;                                                                                         \
                 fi
 	$(QUELL)mkdir -p $(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)
 	$(QUELL)cp $(if $(KIM_INSTALLED),,.)$(MODEL_NAME).so $(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)/$(MODEL_NAME).so

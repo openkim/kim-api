@@ -117,6 +117,8 @@ ifeq (dynamic-load,$(KIM_LINK))
                     Makefile.KIM_Config > $(DESTDIR)$(libdir)/$(package_name)/Makefile.KIM_Config
 	$(QUELL)chmod 644 $(DESTDIR)$(libdir)/$(package_name)/Makefile.KIM_Config
 	$(QUELL)printf '/^KIM_DIR =/i\nKIM_INSTALLED = yes\n.\nw\nq\n' | ed $(DESTDIR)$(libdir)/$(package_name)/Makefile.KIM_Config >& /dev/null
+	$(QUELL)cp Makefile.Version $(DESTDIR)$(libdir)/$(package_name)/Makefile.Version
+	$(QUELL)chmod 644 $(DESTDIR)$(libdir)/$(package_name)/Makefile.Version
 	@printf ".\n"
 else ifeq (dynamic-link,$(KIM_LINK))
 	$(QUELL)if test \( -d $(DESTDIR)$(libdir)/$(package_name)/MAKE_SYSTEM \) -o \( -f $(DESTDIR)$(libdir)/$(package_name)/Makefile.KIM_Config \); then \

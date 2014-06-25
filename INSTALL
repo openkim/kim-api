@@ -71,7 +71,7 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
        For example, if you untarred the `openkim-api-vX.X.X.tgz' tarball in
        your home directory, you would do:
 
-       % cd $HOME/openkim-api-vX.X.X
+       % cd ${HOME}/openkim-api-vX.X.X
        % cp Makefile.KIM_Config.example Makefile.KIM_Config
 
        The `%' symbol represents the bash sell prompt and should not be typed.
@@ -199,19 +199,19 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
        libdir =       # default is '$(prefix)/lib'
 
 
-2. In the remainder of the documentation we will use the string $KD to
+2. In the remainder of the documentation we will use the string ${KD} to
    represent the location of the openkim-api source package (the value of the
    KIM_DIR variable discussed above).  If you wish to, type the below commands
    exactly as written to set the shell variable KD to the appropriate value:
 
    bash:
-   % export KD=$HOME/openkim-api-vX.X.X
+   % export KD=${HOME}/openkim-api-vX.X.X
 
 
 3. To compile the package, including the provided examples, change to the
-   $KD directory and execute `make examples' and then `make':
+   ${KD} directory and execute `make examples' and then `make':
 
-   % cd $KD
+   % cd ${KD}
    % make examples
    % make
 
@@ -243,7 +243,7 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
    Model can be piped in using an `echo' command.  For example, the following
    Fortran 2003 Test reads in one Model:
 
-   % cd $KD/TESTS/ex_test_Ar_free_cluster_CLUSTER_F03
+   % cd ${KD}/TESTS/ex_test_Ar_free_cluster_CLUSTER_F03
    % echo "ex_model_Ar_P_MLJ_CLUSTER_C" | ./ex_test_Ar_free_cluster_CLUSTER_F03
 
   (See the README files in the Test directories for an explanation of what
@@ -252,7 +252,7 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
 
 5. Each Test (and Model) has its own Makefile for compiling and linking.  If
    changes are made to the code, perform the `make' portion of step (3) again
-   (from the $KD directory).
+   (from the ${KD} directory).
 
 6. If you wish, install the KIM API to a system directory.
 
@@ -267,142 +267,156 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
    support subsequent compilation against the installed KIM API package.
 
    Once the KIM API package has been installed, the original source directory
-   ($KD) may be deleted.
+   (${KD}) may be deleted.
 
    If the KIM API was compiled with KIM_LINK=dynamic-load, the installed KIM
-   API will look for Model Driver and Model directories in three different
-   locations.  For Model Drivers these, listed in the order they are searched,
-   are:
+   API will look for Model Driver and Model directories in two different
+   locations.  For Model Drivers the directories, listed in the order they are
+   searched, are:
 
-     `.'                                            ("CWD Model Drivers")
-     `$(HOME)/.kim/$(package_name)/MODEL_DRIVERS/'  ("User Model Drivers")
-     `$(libdir)/$(package_name)/MODEL_DRIVERS/'     ("System Model Drivers")
+     `.'                                             ("CWD Model Drivers")
+     `$(libdir)/$(package_name)/MODEL_DRIVERS/'      ("System Model Drivers")
 
-   For Models these, listed in the order they are searched, are:
+   For Models the directories, listed in the order they are searched, are:
 
-     `.'                                            ("CWD Models")
-     `$(HOME)/.kim/$(package_name)/MODELS/'         ("User Models")
-     `$(libdir)/$(package_name)/MODELS/'            ("System Models")
+     `.'                                             ("CWD Models")
+     `$(libdir)/$(package_name)/MODELS/'             ("System Models")
+
+   You can specify an additional directory to be searched by creating the file
+   `${HOME}/.${package_name}/config-vX' where X is replaced by the major
+   version number for this release of the openkim-api package (as defined in
+   the file Makefile.Version).  The file `${HOME}/.${package_name}/config-vX'
+   has a strict format.  It must contain exactly two lines.  These must be of
+   the form:
+
+     model_drivers_dir = XXX
+     models_dir = YYY
+
+   where XXX and YYY are replaced by paths (beginning with `/' or '~/' only)
+   for where you will store your Model Drivers and Models, respectively.  Once
+   you have created this file the KIM API will use the following, modified,
+   procedure.  For Model Drivers the directories, listed in the order they are
+   searched, are:
+
+     `.'                                             ("CWD Model Drivers")
+     as listed in ${HOME}/.$(package_name)/config-vX ("User Model Drivers")
+     `$(libdir)/$(package_name)/MODEL_DRIVERS/'      ("System Model Drivers")
+
+   For Models the directories, listed in the order they are searched, are:
+
+     `.'                                             ("CWD Models")
+     as listed in $(HOME)/.$(package_name)/config-vX ("User Models")
+     `$(libdir)/$(package_name)/MODELS/'             ("System Models")
 
    After the KIM API has been installed (and the original source directory has
    been deleted) it is still possible to compile Model Drivers and Models.
    These can be placed in the current working directory (CWD), or installed in
-   the user's home directory (under the ${HOME}/.kim/ subdirectory), or
-   installed in the system-wide Model Drivers and Models directories.  To
-   create a new Model Driver of Model and install it in the appropriate
-   system-wide directory or in the user's home directory, follow these steps:
+   the directory listed in the `config-vX' file, or installed in the
+   system-wide Model Drivers and Models directories.  To create a new Model
+   Driver of Model and install it in the appropriate system-wide directory or
+   in the directory listed in the `config-vX' file, follow these steps:
 
-   (a) If it doesn't already exist, create the user directory (note, here I
-       will assume that an environment variable ${package_name} is set to the
-       same value as package_name in your Makefile.KIM_Config file):
+   (a) If you don't want to set up a user specified directory, skip to the next
+       item.  Otherwise, create these files now (here we will use
+       `~/my-kim-items' as an example):
 
-         % mkdir ${HOME}/.kim
-         % mkdir ${HOME}/.kim/${package_name}
-         % mkdir ${HOME}/.kim/${package_name}/MODEL_DRIVERS
-         % mkdir ${HOME}/.kim/${package_name}/MODELS
+         % package_name=openkim-api
+         % mkdir ${HOME}/.${package_name}
+         % cd ${HOME}/.${package_name}
+         % printf "model_drivers_dir = ~/my-kim-items\n" > config-vX
+         % printf "models_dir = ~/my-kim-items\n" >> config-vX
 
-   (b) Create a Makefile.KIM_Config containing just the following line in each
-       of the ${HOME}/.kim/${package_name}/MODEL_DRIVERS and
-       ${HOME}/.kim/${package_name}/MODELS directories:
+       Don't forget to replace `X' with the major version number of this
+       package.  Although here we use the same directory for Model Drivers and
+       Models, this is not necessary and separate directories may be specified.
+       Now skip to step (c).
 
-         include $(libdir)/$(package_name)/Makefile.KIM_Config
+   (b) For those who want to work in the current directory (CWD) and/or install
+       additional Model Drivers and Models system-wide, we'll create a set of
+       temporaries directory in which to work (here we use `~/my-kim-items' as
+       an example):
 
-       Here you should replace $(libdir) and $(package_name) with their
-       explicit values so that you get a explicit absolute path to the
-       installed version of Makefile.KIM_Config.
+         % mkdir ${HOME}/my-kim-items
 
-   (c) We'll work with the case of a Model (a Model Driver is analogous) such
-       as those you can download from openkim.org.  For example, execute the
-       following commands:
+   (c) Next, for convenience, we'll create an environment variable pointing to
+       our working directory:
 
-         % md=EAM_Johnson_NearestNeighbor_Cu__MO_887933271505_000
-         % mkdir ${HOME}/.kim/${package_name}/MODELS/${md}
-         % cd ${HOME}/.kim/${package_name}/MODELS/${md}/
+         % WD=${HOME}/my-kim-items
+
+   (d) Create a Makefile.KIM_Config in the ${WD} directory (assuming the
+       default value of prefix and libdir):
+
+         % libdir=/usr/local/lib
+         % cd ${WD}
+         % printf "include ${libdir}/${package_name}/Makefile.KIM_Config\n" > ${WD}/Makefile.KIM_Config
+
+   (e) We'll work with the case of a Model Driver and an associated
+       Parameterized Model such as those you can download from openkim.org.
+       For example, execute the following commands:
+
+         % md=EAM_Dynamo__MD_120291908751_000
          % wget --content-disposition "https://kim-items.openkim.org/archive?kimid=${md}&compression=gz"
          % tar zxvf ${md}.tgz
          % rm ${md}.tgz
+         % mo=EAM_Dynamo_Angelo_Moody_NiAlH__MO_418978237058_000
+         % wget --content-disposition "https://kim-items.openkim.org/archive?kimid=${mo}&compression=gz"
+         % tar zxvf ${mo}.tgz
+         % rm ${mo}.tgz
 
-   (d) Change to the Model directory and execute `make':
+   (f) Compile the Model Driver and Model:
 
-         % cd ${HOME}/.kim/${package_name}/MODELS/${md}/${md}
+         % cd ${WD}/${md}
+         % make
+         % cd ${WD}/${mo}
          % make
 
-       Once this compilation completes successfully, you have a new Model
-       installed in the user's home directory.  There is no need to perform a
-       `make install' in this case.
+       You can now use the Model from the current working directory (${WD}).
+       For example, you could copy, compile and run the example Verification
+       Check `vc_forces_numer_deriv':
 
-   (e) If you have the permission to write to the system-wide directories where
-       the KIM API Model Drivers and Models are installed and you want to
-       install this Model in the appropriate system-wide directory, then you
-       can execute the following command in order to do so:
-
-         % make install
-
-       Once this command completes successfully, you have installed the Model
-       to the system-wide directory, and you can delete the Model source
-       directory:
-
-         % cd ${HOME}/.kim/${package_name}/MODELS/
-         % rm -rf ${md}
-
-       NOTE: If the Model is based on a Model Driver (i.e., a Parameterized
-             Model), then the associated Model Driver must be installed to the
-             system-wide directory before the Parameterized Model is compiled
-             and installed.
-
-   To create a Model Driver or Model in the current working directory (CWD),
-   follow these steps:
-
-   (a) Create a Makefile.KIM_Config containing just the following line in the
-       current directory
-
-         include $(libdir)/$(package_name)/Makefile.KIM_Config
-
-       Here you should replace $(libdir) and $(package_name) with their
-       explicit values so that you get a explicit absolute path to the
-       installed version of Makefile.KIM_Config.
-
-   (b) We'll work with the case of a Model (a Model Driver is analogous) such
-       as those you can download from openkim.org.  For example, execute the
-       following commands:
-
-         % md=EAM_Johnson_NearestNeighbor_Cu__MO_887933271505_000
-         % mkdir ./${md}
-         % cd ./${md}/
-         % wget --content-disposition "https://kim-items.openkim.org/archive?kimid=${md}&compression=gz"
-         % tar zxvf ${md}.tgz
-         % rm ${md}.tgz
-
-   (d) Change to the Model directory and execute `make':
-
-         % cd ./${md}
+         % cd ${WD}
+         % cp ${KD}/EXAMPLES/TESTS/vc_forces_numer_deriv/* ${WD}
+         % printf ',s/\.\.\/Makefile.KIM_Config/.\/Makefile.KIM_Config/g\nw\nq\n' | ed Makefile
          % make
+         % printf ${mo} | ./vc_forces_numer_deriv
 
-       Once this compilation completes successfully, you have a new
-       Model in the current working directory (CWD).
+       If you have setup the config-vX file, you have a new Model installed in
+       the user directory and you can skip the rest of the below steps.  In
+       order to use your new Model you can, for example, compile and run the
+       example Verification Check `vc_forces_numer_deriv' in whatever directory
+       you like:
 
-   (e) If you have the permission to write to the system-wide directories where
+         % EXD=${HOME}/my-executable
+         % mkdir ${EXD}
+         % cd ${EXD}
+         % cp ${KD}/EXAMPLES/TESTS/vc_forces_numer_deriv/* ${EXD}
+         % printf "include ${prefix}/${libdir}/${package_name}/Makefile.KIM_Config\n" > ${EXD}/Makefile.KIM_Config
+         % printf ',s/\.\.\/Makefile.KIM_Config/.\/Makefile.KIM_Config/g\nw\nq\n' | ed Makefile
+         % make
+         % printf ${mo} | ./vc_forces_numer_deriv
+
+   (g) If you have the permission to write to the system-wide directories where
        the KIM API Model Drivers and Models are installed and you want to
-       install this Model in the appropriate system-wide directory, then you
-       can execute the following command in order to do so:
+       install this Model Driver and Model in the appropriate system-wide
+       directories, then execute the following commands in order to do so:
 
+         % cd ${WD}/${md}
+         % make install
+         % cd ${WD}/${mo}
          % make install
 
-       Once this command completes successfully, you have installed the Model
-       to the system-wide directory, and you can delete the Model source
-       directory:
+       (Note: for Parameterized Models you must install the associated Model
+       Driver before installing the Model, as we have done above.)  You have
+       now installed the Model Driver and Model to the system-wide directories
+       and you can delete the source directories:
 
-         % cd ../
-         % rm -rf ${md}
+         % cd ${WD}
+         % rm -rf ${WD}/${md}
+         % rm -rf ${WD}/${mo}
 
-       NOTE: if the Model is based on a Model Driver (i.e., a Parameterized
-             Model), then the associated Model Driver must be installed to the
-             system-wide directory before the Parameterized Model is compiled
-             and installed.
-
-
-Once the installation is successfully completed, read the README file in
-the DOCs directory for a step-by-step guide to learning the openkim-api.
+Once the compilation (and optional installation) is successfully completed,
+read the README file in the DOCs directory for a step-by-step guide to learning
+the openkim-api.
 
 *******************************************************************************
 

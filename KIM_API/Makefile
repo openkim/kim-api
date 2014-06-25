@@ -147,7 +147,9 @@ KIM_API_DIRS.o: KIM_DEFINE_VALUES += -D KIMDIR=\"$(KIM_DIR)\"                   
                                      -D MODELDIR=\"$(KIM_MODELS_DIR)\"              \
                                      -D MODELDRIVERDIR=\"$(KIM_MODEL_DRIVERS_DIR)\"
 .KIM_API_DIRS.o: Makefile
-.KIM_API_DIRS.o: KIM_DEFINE_VALUES += -D LIBDIR=\"$(libdir)\" -D PACKAGENAME=\"$(package_name)\"
+.KIM_API_DIRS.o: KIM_DEFINE_VALUES += -D LIBDIR=\"$(libdir)\"               \
+                                      -D PACKAGENAME=\"$(package_name)\"    \
+                                      -D VERSION_MAJOR=\"$(VERSION_MAJOR)\"
 
 openkim-api-descriptor-file-match.o: openkim-api-descriptor-file-match.cpp KIM_API.h KIM_API_status.h Makefile
 
@@ -216,8 +218,8 @@ else
 	$(QUELL)chmod 644 "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.a"
 endif
 ifeq  (dynamic-load,$(KIM_LINK))
-	$(QUELL)cp -f KIM_API.h KIM_API_C.h KIM_API_status.h kim_kinds.mod kim_api.mod kim_api_f03.mod Unit_Handling.h KIM_AUX.h "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/"
-	$(QUELL)chmod 644 $(addsuffix ",$(addprefix "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/,KIM_API.h KIM_API_C.h KIM_API_status.h Unit_Handling.h KIM_AUX.h kim_kinds.mod kim_api.mod kim_api_f03.mod))
+	$(QUELL)cp -f KIM_API.h KIM_API_C.h KIM_API_status.h KIM_API_DIRS.h kim_kinds.mod kim_api.mod kim_api_f03.mod Unit_Handling.h KIM_AUX.h "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/"
+	$(QUELL)chmod 644 $(addsuffix ",$(addprefix "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/,KIM_API.h KIM_API_C.h KIM_API_status.h KIM_API_DIRS.h Unit_Handling.h KIM_AUX.h kim_kinds.mod kim_api.mod kim_api_f03.mod))
 endif
 
 uninstall:
@@ -227,5 +229,5 @@ ifneq (static-link,$(KIM_LINK))
 else
 	$(QUELL)rm -f "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.a"
 endif
-	$(QUELL)rm -f $(addsuffix ",$(addprefix "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/,KIM_API.h KIM_API_C.h KIM_API_status.h Unit_Handling.h KIM_AUX.h kim_kinds.mod kim_api.mod kim_api_f03.mod))
+	$(QUELL)rm -f $(addsuffix ",$(addprefix "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/,KIM_API.h KIM_API_C.h KIM_API_status.h Unit_Handling.h KIM_AUX.h KIM_API_DIRS.h kim_kinds.mod kim_api.mod kim_api_f03.mod))
 	$(QUELL)if test \( -d "$(DESTDIR)$(libdir)/$(package_name)/KIM_API" \); then rmdir "$(DESTDIR)$(libdir)/$(package_name)/KIM_API" >& /dev/null; fi
