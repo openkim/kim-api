@@ -36,7 +36,7 @@
 
 # Define FreeBSD linker switches
 LDSHAREDFLAG = -shared -undefined suppress -flat_namespace
-LDEXPORTLISTFLAG = -exported_symbols_list export-list.txt
+LDEXPORTLISTFLAG = -exported_symbols_list $(EXPORT_LIST_NAME)
 LINKSONAME = -Wl,-headerpad_max_install_names -Wl,-install_name,
 LDWHOLEARCHIVESTARTFLAG = -Wl,-force_load
 LDWHOLEARCHIVEENDFLAG =

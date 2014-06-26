@@ -83,7 +83,8 @@ $(MODEL_DRIVER_NAME).a: $(LOCALOBJ) $(MODEL_DRIVER_NAME)_init_wrapper.o
 	@printf "Creating... $@.\n"
 	$(QUELL)ar rcs $@ $(LOCALOBJ) $(MODEL_DRIVER_NAME)_init_wrapper.o
 
-export-list.txt: $(KIM_MAKE_FILES) Makefile
+$(EXPORT_LIST_NAME): $(KIM_MAKE_FILES) Makefile
+	@printf "Creating... intermediate file... $@.\n"
 ifeq (darwin, $(KIM_SYSTEMLINKER))
 	$(QUELL)printf "_$(MODEL_DRIVER_NAME)_init_pointer\n"             > $@
 else # everything else (linux and freebsd)
@@ -103,7 +104,6 @@ Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/MAKE_SYSTEM/Makefile.ModelDriver
 clean:
 	@printf "Cleaning... Model Driver... $(MODEL_DRIVER_NAME).\n"
 	$(QUELL)rm -f $(LOCALOBJ) *.mod $(addprefix $(MODEL_DRIVER_NAME).,a so) .$(MODEL_DRIVER_NAME).so \
-                      export-list.txt \
                       $(addprefix $(MODEL_DRIVER_NAME)_init_wrapper.,o cpp) $(LOCALCLEAN)
 
 install: all

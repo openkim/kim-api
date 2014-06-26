@@ -84,8 +84,8 @@ $(MODEL_NAME).a: $(LOCALOBJ) $(MODEL_NAME)_init_wrapper.o $(MODEL_NAME)_kim_str.
 	@printf "Creating... $@.\n"
 	$(QUELL)ar rcs $@ $(LOCALOBJ) $(MODEL_NAME)_init_wrapper.o $(MODEL_NAME)_kim_str.o
 
-export-list.txt: $(KIM_MAKE_FILES) Makefile
-	@printf "Creating... $@.\n"
+$(EXPORT_LIST_NAME): $(KIM_MAKE_FILES) Makefile
+	@printf "Creating... intermediate file... $@.\n"
 ifeq (darwin, $(KIM_SYSTEMLINKER))
 	$(QUELL)printf "_$(MODEL_NAME)_init_pointer\n"               > $@
 	$(QUELL)printf "_$(MODEL_NAME)_kim_str\n"                   >> $@
@@ -109,7 +109,6 @@ Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/MAKE_SYSTEM/Makefile.Model
 clean:
 	@printf "Cleaning... Model.......... $(MODEL_NAME).\n"
 	$(QUELL)rm -f $(LOCALOBJ) *.mod $(addprefix $(MODEL_NAME).,a so) .$(MODEL_NAME).so\
-                      export-list.txt \
                       $(addprefix $(MODEL_NAME)_kim_str.,o cpp) \
                       $(addprefix $(MODEL_NAME)_init_wrapper.,o cpp) $(LOCALCLEAN)
 

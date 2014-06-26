@@ -36,7 +36,7 @@
 
 # Define FreeBSD linker switches
 LDSHAREDFLAG = -dynamiclib
-LDEXPORTLISTFLAG = -Wl,--version-script=export-list.txt
+LDEXPORTLISTFLAG = -Wl,--version-script=$(EXPORT_LIST_NAME)
 LINKSONAME = -Wl,-soname=
 LDWHOLEARCHIVESTARTFLAG = -Wl,--whole-archive
 LDWHOLEARCHIVEENDFLAG = -Wl,--no-whole-archive

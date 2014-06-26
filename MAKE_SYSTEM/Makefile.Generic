@@ -181,7 +181,7 @@ KIM_FTYPE_STANDARD_COMPILE_LIST = $(ARCHFLAG) $(PICFLAG) $(FCRAYFLAG) $(KIMINCLU
 	$(QUELL)$(FC) $(FFREEFLAG) $(FCPPFLAG)    $(KIM_FTYPE_STANDARD_COMPILE_LIST)
 
 # Library pattern rule
-%.so: %.a export-list.txt
+%.so: %.a $(EXPORT_LIST_NAME)
 	@printf "Creating... $@.\n"
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDSHAREDFLAG) \
                $(LINKSONAME)$(if $(filter-out dynamic-load,$(KIM_LINK)),$(if $(filter MODEL_NAME,$(.VARIABLES)),$(KIM_MODELS_DIR),$(KIM_MODEL_DRIVERS_DIR))/$*/,)$*.so \
