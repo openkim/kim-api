@@ -88,7 +88,7 @@ paramfile_name_list = $(strip $(foreach paramfl,$(paramfile_list), $($(paramfl))
 num_paramfiles = $(words $(paramfile_num_list))
 
 $(MODEL_NAME).kim: $(driver_location)/$(MODEL_DRIVER_NAME)/$(MODEL_DRIVER_NAME).kim Makefile
-	@printf "Creating... intermediate file... $@.\n"
+	@printf "Creating... $@.\n"
 	$(QUELL)$(foreach spec,$(filter-out $(shell cat $(driver_location)/$(MODEL_DRIVER_NAME)/$(MODEL_DRIVER_NAME).kim |            \
                                                     sed -e '/^SPECIES_\([0-9]\{3\}\)_NAME_STR.*$$/!d' -e 's/^\(SPECIES_[0-9]\{3\}_NAME\)_STR.*$$/\1/'), \
                                             $(species_list)),\
@@ -99,6 +99,7 @@ $(MODEL_NAME).kim: $(driver_location)/$(MODEL_DRIVER_NAME)/$(MODEL_DRIVER_NAME).
                     -e '/SPECIES_[0-9]\{3\}_NAME_STR/d'                                \
                 > $(MODEL_NAME).kim
 
+.INTERMEDIATE: $(MODEL_NAME).cpp
 $(MODEL_NAME).cpp: $(KIM_DIR)/MAKE_SYSTEM/model_based_on_driver.cpp $(paramfile_name_list) Makefile
 	@printf "Creating... intermediate file... $@.\n"
 	$(QUELL)cat /dev/null > $(MODEL_NAME).cpp
@@ -171,7 +172,7 @@ Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/MAKE_SYSTEM/Makefile.ParameterizedModel
 
 clean:
 	@printf "Cleaning... Model.......... $(MODEL_NAME).\n"
-	$(QUELL)rm -f $(addprefix $(MODEL_NAME).,cpp o a so) .$(MODEL_NAME).so $(MODEL_NAME).kim $(addprefix $(MODEL_NAME)_kim_str.,cpp o) \
+	$(QUELL)rm -f $(addprefix $(MODEL_NAME).,o a so) .$(MODEL_NAME).so $(MODEL_NAME).kim $(addprefix $(MODEL_NAME)_kim_str.,cpp o) \
                       export-list.txt
 
 install: all
