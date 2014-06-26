@@ -1195,13 +1195,13 @@ bool KIM_API_model::is_it_match(KIM_API_model &test,KIM_API_model & mdl){
     //preinit model from standard template kim file
    KIM_API_model stdmdl;
 
-   extern const int standard_kim_str_chunks;
-   extern const char* const standard_kim_str[];
-   char* const standard_kim = new char[standard_kim_str_chunks * CPP_MAX_STRING_LITERAL_LENGTH];
+   extern const int STANDARD_KDF_STR_CHUNKS_NAME;
+   extern const char* const STANDARD_KDF_STR_NAME[];
+   char* const standard_kim = new char[STANDARD_KDF_STR_CHUNKS_NAME * CPP_MAX_STRING_LITERAL_LENGTH];
    standard_kim[0] = '\0';
-   for (int i=0;i<standard_kim_str_chunks;++i)
+   for (int i=0;i<STANDARD_KDF_STR_CHUNKS_NAME;++i)
    {
-      strcat(standard_kim, standard_kim_str[i]);
+      strcat(standard_kim, STANDARD_KDF_STR_NAME[i]);
    }
 
    stdmdl.name_temp = (char*) "standard";
@@ -1469,10 +1469,10 @@ char * KIM_API_model::get_model_kim_str(const char* modelname,int * kimerr){
 char * KIM_API_model::get_model_kim_str(const char* modelname,int * kimerr){
     void * tmp_model_lib_handle = NULL;
     *kimerr= KIM_STATUS_FAIL;
-    char model_kim_str_name[KIM_LINE_LENGTH];
-    sprintf(model_kim_str_name,"%s_kim_str",modelname);
-    char model_kim_str_chunks_name[KIM_LINE_LENGTH];
-    sprintf(model_kim_str_chunks_name,"%s_kim_str_chunks",modelname);
+    char model_kdf_str_name[KIM_LINE_LENGTH];
+    sprintf(model_kdf_str_name,"%s_" KDF_STR_NAME,modelname);
+    char model_kdf_str_chunks_name[KIM_LINE_LENGTH];
+    sprintf(model_kdf_str_chunks_name,"%s_" KDF_STR_NAME "_chunks",modelname);
 
     //redirecting std::cout > kimlog
     char kimlog[2048] = "./kim.log";
@@ -1506,7 +1506,7 @@ char * KIM_API_model::get_model_kim_str(const char* modelname,int * kimerr){
     }
     
 
-    const int* const model_str_chunks = (const int* const) dlsym(tmp_model_lib_handle, model_kim_str_chunks_name);
+    const int* const model_str_chunks = (const int* const) dlsym(tmp_model_lib_handle, model_kdf_str_chunks_name);
     char* dlsym_error = dlerror();
     if (dlsym_error) {
         std::cerr << "Cannot load symbol: " << dlsym_error <<std::endl;
@@ -1517,7 +1517,7 @@ char * KIM_API_model::get_model_kim_str(const char* modelname,int * kimerr){
 
         return NULL;
     }
-    const char** const model_str_ptr = (const char** const) dlsym(tmp_model_lib_handle, model_kim_str_name);
+    const char** const model_str_ptr = (const char** const) dlsym(tmp_model_lib_handle, model_kdf_str_name);
     dlsym_error = dlerror();
     if (dlsym_error) {
         std::cerr << "Cannot load symbol: " << dlsym_error <<std::endl;

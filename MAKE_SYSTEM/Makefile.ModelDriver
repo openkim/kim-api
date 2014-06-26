@@ -69,7 +69,9 @@ ifeq ("Fortran", "$(MODEL_DRIVER_INIT_FUNCTION_LANG)")
 else
    MODEL_DRIVER_INIT_FUNC_NAME = $(MODEL_DRIVER_INIT_FUNCTION_NAME)
 endif
-%_init_wrapper.cpp: Makefile
+
+.INTERMEDIATE: driver_init_wrapper.cpp
+driver_init_wrapper.cpp: Makefile
 	@printf "Creating... intermediate file... $@.\n"
 	$(QUELL)printf "extern \"C\"\n"                                        > $@
 	$(QUELL)printf "{\n"                                                   >> $@
@@ -79,9 +81,9 @@ endif
 	$(QUELL)printf "      $(MODEL_DRIVER_INIT_FUNC_NAME);\n"               >> $@
 	$(QUELL)printf "}\n"                                                   >> $@
 
-$(MODEL_DRIVER_NAME).a: $(LOCALOBJ) $(MODEL_DRIVER_NAME)_init_wrapper.o 
+$(MODEL_DRIVER_NAME).a: $(LOCALOBJ) driver_init_wrapper.o
 	@printf "Creating... $@.\n"
-	$(QUELL)ar rcs $@ $(LOCALOBJ) $(MODEL_DRIVER_NAME)_init_wrapper.o
+	$(QUELL)ar rcs $@ $(LOCALOBJ) driver_init_wrapper.o
 
 $(EXPORT_LIST_NAME): $(KIM_MAKE_FILES) Makefile
 	@printf "Creating... intermediate file... $@.\n"
@@ -104,7 +106,7 @@ Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/MAKE_SYSTEM/Makefile.ModelDriver
 clean:
 	@printf "Cleaning... Model Driver... $(MODEL_DRIVER_NAME).\n"
 	$(QUELL)rm -f $(LOCALOBJ) *.mod $(addprefix $(MODEL_DRIVER_NAME).,a so) .$(MODEL_DRIVER_NAME).so \
-                      $(addprefix $(MODEL_DRIVER_NAME)_init_wrapper.,o cpp) $(LOCALCLEAN)
+                      driver_init_wrapper.o $(LOCALCLEAN)
 
 install: all
 	@printf "Installing...($(DESTDIR)$(libdir)/$(package_name)/MODEL_DRIVERS)... Model Driver... $(MODEL_DRIVER_NAME)"

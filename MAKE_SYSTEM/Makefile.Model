@@ -61,7 +61,7 @@ STATIC_COMP_WARNING:
         printf '*******                        $$KIM_DIR directory                       *******\n'; \
         printf '*******************************************************************************\n'; \
 
-MODEL_NAME_KIM_STR = $(MODEL_NAME)_kim_str
+$(KDF_STR_NAME).cpp: $(MODEL_NAME).kim
 
 all: $(MODEL_BUILD_TARGET)
 
@@ -71,7 +71,9 @@ ifeq ("Fortran", "$(MODEL_INIT_FUNCTION_LANG)")
 else
    MODEL_INIT_FUNC_NAME = $(MODEL_INIT_FUNCTION_NAME)
 endif
-%_init_wrapper.cpp: Makefile
+
+.INTERMEDIATE: init_wrapper.cpp
+init_wrapper.cpp: Makefile
 	@printf "Creating... intermediate file... $@.\n"
 	$(QUELL)printf "extern \"C\"\n"                                    > $@
 	$(QUELL)printf "{\n"                                              >> $@
@@ -80,25 +82,25 @@ endif
 	$(QUELL)printf "      $(MODEL_INIT_FUNC_NAME);\n"                 >> $@
 	$(QUELL)printf "}\n"                                              >> $@
 
-$(MODEL_NAME).a: $(LOCALOBJ) $(MODEL_NAME)_init_wrapper.o $(MODEL_NAME)_kim_str.o
+$(MODEL_NAME).a: $(LOCALOBJ) init_wrapper.o $(KDF_STR_NAME).o
 	@printf "Creating... $@.\n"
-	$(QUELL)ar rcs $@ $(LOCALOBJ) $(MODEL_NAME)_init_wrapper.o $(MODEL_NAME)_kim_str.o
+	$(QUELL)ar rcs $@ $(LOCALOBJ) init_wrapper.o $(KDF_STR_NAME).o
 
 $(EXPORT_LIST_NAME): $(KIM_MAKE_FILES) Makefile
 	@printf "Creating... intermediate file... $@.\n"
 ifeq (darwin, $(KIM_SYSTEMLINKER))
-	$(QUELL)printf "_$(MODEL_NAME)_init_pointer\n"               > $@
-	$(QUELL)printf "_$(MODEL_NAME)_kim_str\n"                   >> $@
-	$(QUELL)printf "_$(MODEL_NAME)_kim_str_chunks\n"            >> $@
+	$(QUELL)printf "_$(MODEL_NAME)_init_pointer\n"                       > $@
+	$(QUELL)printf "_$(MODEL_NAME)_$(KDF_STR_NAME)\n"                   >> $@
+	$(QUELL)printf "_$(MODEL_NAME)_$(KDF_STR_NAME)_chunks\n"            >> $@
 else # everything else (linux and freebsd)
-	$(QUELL)printf "{\n"                                         > $@
-	$(QUELL)printf "   global:\n"                               >> $@
-	$(QUELL)printf "           $(MODEL_NAME)_init_pointer;\n"   >> $@
-	$(QUELL)printf "           $(MODEL_NAME)_kim_str;\n"        >> $@
-	$(QUELL)printf "           $(MODEL_NAME)_kim_str_chunks;\n" >> $@
-	$(QUELL)printf "\n"                                         >> $@
-	$(QUELL)printf "   local: *;\n"                             >> $@
-	$(QUELL)printf "};\n"                                       >> $@
+	$(QUELL)printf "{\n"                                                 > $@
+	$(QUELL)printf "   global:\n"                                       >> $@
+	$(QUELL)printf "           $(MODEL_NAME)_init_pointer;\n"           >> $@
+	$(QUELL)printf "           $(MODEL_NAME)_$(KDF_STR_NAME);\n"        >> $@
+	$(QUELL)printf "           $(MODEL_NAME)_$(KDF_STR_NAME)_chunks;\n" >> $@
+	$(QUELL)printf "\n"                                                 >> $@
+	$(QUELL)printf "   local: *;\n"                                     >> $@
+	$(QUELL)printf "};\n"                                               >> $@
 endif
 
 $(LOCALOBJ): Makefile
@@ -109,8 +111,8 @@ Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/MAKE_SYSTEM/Makefile.Model
 clean:
 	@printf "Cleaning... Model.......... $(MODEL_NAME).\n"
 	$(QUELL)rm -f $(LOCALOBJ) *.mod $(addprefix $(MODEL_NAME).,a so) .$(MODEL_NAME).so\
-                      $(addprefix $(MODEL_NAME)_kim_str.,o cpp) \
-                      $(addprefix $(MODEL_NAME)_init_wrapper.,o cpp) $(LOCALCLEAN)
+                      $(KDF_STR_NAME).o \
+                      init_wrapper.o $(LOCALCLEAN)
 
 install: all
 	@printf "Installing...($(DESTDIR)$(libdir)/$(package_name)/MODELS).......... Model.......... $(MODEL_NAME)"

@@ -201,19 +201,21 @@ KIM_FTYPE_STANDARD_COMPILE_LIST = $(ARCHFLAG) $(PICFLAG) $(FCRAYFLAG) $(KIMINCLU
         #INSTALLTAG
 
 # KIM descriptor file make rule
-%_kim_str.cpp: %.kim $(KIM_MAKE_FILES)
+KDF_STR_NAME = kim_str
+.INTERMEDIATE: $(KDF_STR_NAME).cpp
+$(KDF_STR_NAME).cpp: $(KIM_MAKE_FILES) # $(MODEL_NAME).kim dependency added in another Makefile
 	@printf "Creating... intermediate file... $@.\n"
-	$(QUELL)fl_size=`cat $*.kim | tr -d '\r' | wc -c`;\
+	$(QUELL)fl_size=`cat $(MODEL_NAME).kim | tr -d '\r' | wc -c`;\
          n=`expr $$fl_size / 65536 + 2`;\
-         lines=`cat $*.kim | tr -d '\r' | wc -l`;\
+         lines=`cat $(MODEL_NAME).kim | tr -d '\r' | wc -l`;\
          dl=`expr $$lines / $$n`;\
-         printf "extern \"C\" {\n"                                                        >  $*_kim_str.cpp;\
-         printf "   extern const int $(MODEL_NAME_KIM_STR)_chunks = %i;\n" `expr $$n + 1` >> $*_kim_str.cpp;\
-         printf "   extern const char* const $(MODEL_NAME_KIM_STR)[] =\n"                 >> $*_kim_str.cpp;\
-         printf "   {\n"                                                                  >> $*_kim_str.cpp;\
+         printf "extern \"C\" {\n"                                                                >  $@;\
+         printf "   extern const int $(MODEL_NAME)_$(KDF_STR_NAME)_chunks = %i;\n" `expr $$n + 1` >> $@;\
+         printf "   extern const char* const $(MODEL_NAME)_$(KDF_STR_NAME)[] =\n"                 >> $@;\
+         printf "   {\n"                                                                          >> $@;\
          i=0;\
          while test $$i -le $$n; do \
-            if test $$i -ne 0; then printf "\n      ,\n\n"                                >> $*_kim_str.cpp; fi;\
+            if test $$i -ne 0; then printf "\n      ,\n\n"                                        >> $@; fi;\
             lnstart=`expr $$i '*' $$dl - 2`;\
             if test $$lnstart -le 0; then begdel=":dummy"; else begdel="1,$$lnstart d"; fi;\
             lnend=`expr \( $$i + 1 \) '*' $$dl - 1`;\
@@ -223,8 +225,8 @@ KIM_FTYPE_STANDARD_COMPILE_LIST = $(ARCHFLAG) $(PICFLAG) $(FCRAYFLAG) $(KIMINCLU
                 -e 's,\\,\\\\,g'     \
                 -e 's,",\\",g'       \
                 -e 's,^,      ",g'   \
-                -e 's,$$,\\n",g'                                                          >> $*_kim_str.cpp;\
+                -e 's,$$,\\n",g'                                                                  >> $@;\
             i=`expr $$i + 1`;\
         done;\
-        printf "   };\n"                                                                  >> $*_kim_str.cpp;\
-        printf "}\n"                                                                      >> $*_kim_str.cpp;
+        printf "   };\n"                                                                          >> $@;\
+        printf "}\n"                                                                              >> $@;

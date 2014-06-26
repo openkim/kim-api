@@ -62,7 +62,7 @@ STATIC_COMP_WARNING:
         printf '*******                        $$KIM_DIR directory                       *******\n'; \
         printf '*******************************************************************************\n'; \
 
-MODEL_NAME_KIM_STR = $(MODEL_NAME)_kim_str
+$(KDF_STR_NAME).cpp: $(MODEL_NAME).kim
 
 all: $(MODEL_NAME).kim $(MODEL_BUILD_TARGET)
 
@@ -146,22 +146,22 @@ $(MODEL_NAME).cpp: $(KIM_DIR)/MAKE_SYSTEM/model_based_on_driver.cpp $(paramfile_
                     -f tmp-sed-script                                                   >> $(MODEL_NAME).cpp
 	$(QUELL)rm -f tmp-sed-script
 
-$(MODEL_NAME).a: $(MODEL_NAME).o $(MODEL_NAME)_kim_str.o
+$(MODEL_NAME).a: $(MODEL_NAME).o $(KDF_STR_NAME).o
 	@printf "Creating... $@.\n"
-	$(QUELL)ar rcs $@ $(MODEL_NAME).o $(MODEL_NAME)_kim_str.o
+	$(QUELL)ar rcs $@ $(MODEL_NAME).o $(KDF_STR_NAME).o
 
 $(EXPORT_LIST_NAME): $(KIM_MAKE_FILES) Makefile
 	@printf "Creating... intermediate file... $@.\n"
 ifeq (darwin, $(KIM_SYSTEMLINKER))
 	$(QUELL)printf "_$(MODEL_NAME)_init_pointer\n"             > $@
-	$(QUELL)printf "_$(MODEL_NAME)_kim_str\n"                 >> $@
-	$(QUELL)printf "_$(MODEL_NAME)_kim_str_chunks\n"          >> $@
+	$(QUELL)printf "_$(MODEL_NAME)_$(KDF_STR_NAME)\n"         >> $@
+	$(QUELL)printf "_$(MODEL_NAME)_$(KDF_STR_NAME)_chunks\n"  >> $@
 else # everything else (linux and freebsd)
 	$(QUELL)printf "{\n"                                         > $@
 	$(QUELL)printf "   global:\n"                               >> $@
 	$(QUELL)printf "           $(MODEL_NAME)_init_pointer;\n"   >> $@
-	$(QUELL)printf "           $(MODEL_NAME)_kim_str;\n"        >> $@
-	$(QUELL)printf "           $(MODEL_NAME)_kim_str_chunks;\n" >> $@
+	$(QUELL)printf "           $(KDF_STR_NAME);\n"              >> $@
+	$(QUELL)printf "           $(KDF_STR_NAME)_chunks;\n"       >> $@
 	$(QUELL)printf "\n"                                         >> $@
 	$(QUELL)printf "   local: *;\n"                             >> $@
 	$(QUELL)printf "};\n"                                       >> $@
@@ -172,7 +172,7 @@ Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/MAKE_SYSTEM/Makefile.ParameterizedModel
 
 clean:
 	@printf "Cleaning... Model.......... $(MODEL_NAME).\n"
-	$(QUELL)rm -f $(addprefix $(MODEL_NAME).,o a so) .$(MODEL_NAME).so $(MODEL_NAME).kim $(addprefix $(MODEL_NAME)_kim_str.,cpp o)
+	$(QUELL)rm -f $(addprefix $(MODEL_NAME).,o a so) .$(MODEL_NAME).so $(MODEL_NAME).kim $(KDF_STR_NAME).o
 
 install: all
 	@printf "Installing...($(DESTDIR)$(libdir)/$(package_name)/MODELS).......... Model.......... $(MODEL_NAME)"
