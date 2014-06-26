@@ -1487,7 +1487,7 @@ char * KIM_API_model::get_model_kim_str(const char* modelname,int * kimerr){
     {
        itr->append("/");
        itr->append(modelname); itr->append("/");
-       itr->append(modelname); itr->append(".so");
+       itr->append(MODELLIBFILE); itr->append(".so");
        std::cout<< "* Info (KIM_API_model::get_model_kim_str): Looking for Model shared library file " << itr->c_str() <<std::endl;
        tmp_model_lib_handle = dlopen(itr->c_str(), RTLD_NOW);
        if (tmp_model_lib_handle != NULL) break;
@@ -1860,7 +1860,7 @@ int KIM_API_model::model_init(){
     {
        itr->append("/");
        itr->append(modelname); itr->append("/");
-       itr->append(modelname); itr->append(".so");
+       itr->append(MODELLIBFILE); itr->append(".so");
        std::cout<< "* Info (KIM_API_model::model_init): Looking for Model shared library file " << itr->c_str() <<std::endl;
        model_lib_handle = dlopen(itr->c_str(), RTLD_NOW);
        if (model_lib_handle) break;

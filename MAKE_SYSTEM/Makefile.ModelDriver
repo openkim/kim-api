@@ -43,7 +43,7 @@ MODEL_DRIVER_INIT_FUNCTION_LANG := $(strip $(MODEL_DRIVER_INIT_FUNCTION_LANG))
 MODEL_DRIVER_INIT_FUNCTION_NAME := $(strip $(MODEL_DRIVER_INIT_FUNCTION_NAME))
 
 #build target .a or .so for models
-MODEL_DRIVER_BUILD_TARGET := $(MODEL_DRIVER_NAME).a
+MODEL_DRIVER_BUILD_TARGET := $(MODELDRIVERLIBFILE).a
 ifneq ($(KIM_LINK),static-link)
    MODEL_DRIVER_BUILD_TARGET += $(patsubst %.a,%.so, $(MODEL_DRIVER_BUILD_TARGET))
 else
@@ -81,7 +81,7 @@ driver_init_wrapper.cpp: Makefile
 	$(QUELL)printf "      $(MODEL_DRIVER_INIT_FUNC_NAME);\n"               >> $@
 	$(QUELL)printf "}\n"                                                   >> $@
 
-$(MODEL_DRIVER_NAME).a: $(LOCALOBJ) driver_init_wrapper.o
+$(MODELDRIVERLIBFILE).a: $(LOCALOBJ) driver_init_wrapper.o
 	@printf "Creating... $@.\n"
 	$(QUELL)ar rcs $@ $(LOCALOBJ) driver_init_wrapper.o
 
@@ -105,7 +105,7 @@ Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/MAKE_SYSTEM/Makefile.ModelDriver
 
 clean:
 	@printf "Cleaning... Model Driver... $(MODEL_DRIVER_NAME).\n"
-	$(QUELL)rm -f $(LOCALOBJ) *.mod $(addprefix $(MODEL_DRIVER_NAME).,a so) .$(MODEL_DRIVER_NAME).so \
+	$(QUELL)rm -f $(LOCALOBJ) *.mod $(addprefix $(MODEL_DRIVER_NAME).,a so) .$(MODELDRIVERLIBFILE).so \
                       driver_init_wrapper.o $(LOCALCLEAN)
 
 install: all
@@ -113,8 +113,8 @@ install: all
 ifneq (static-link,$(KIM_LINK))
 	@printf ".\n"
 	$(QUELL)mkdir -p $(DESTDIR)$(libdir)/$(package_name)/MODEL_DRIVERS/$(MODEL_DRIVER_NAME)
-	$(QUELL)cp $(if $(KIM_INSTALLED),,.)$(MODEL_DRIVER_NAME).so $(DESTDIR)$(libdir)/$(package_name)/MODEL_DRIVERS/$(MODEL_DRIVER_NAME)/$(MODEL_DRIVER_NAME).so
-	$(QUELL)chmod 644 $(DESTDIR)$(libdir)/$(package_name)/MODEL_DRIVERS/$(MODEL_DRIVER_NAME)/$(MODEL_DRIVER_NAME).so
+	$(QUELL)cp $(if $(KIM_INSTALLED),,.)$(MODELDRIVERLIBFILE).so $(DESTDIR)$(libdir)/$(package_name)/MODEL_DRIVERS/$(MODEL_DRIVER_NAME)/$(MODELDRIVERLIBFILE).so
+	$(QUELL)chmod 644 $(DESTDIR)$(libdir)/$(package_name)/MODEL_DRIVERS/$(MODEL_DRIVER_NAME)/$(MODELDRIVERLIBFILE).so
 	$(QUELL)$(if $(filter-out dynamic-load,$(KIM_LINK)),,cp $(MODEL_DRIVER_NAME).kim $(DESTDIR)$(libdir)/$(package_name)/MODEL_DRIVERS/$(MODEL_DRIVER_NAME)/$(MODEL_DRIVER_NAME).kim)
 	$(QUELL)$(if $(filter-out dynamic-load,$(KIM_LINK)),,chmod 644 $(DESTDIR)$(libdir)/$(package_name)/MODEL_DRIVERS/$(MODEL_DRIVER_NAME)/$(MODEL_DRIVER_NAME).kim)
 	$(QUELL)$(if $(filter-out dynamic-link,$(KIM_LINK)),,if test \( -f $(DESTDIR)$(libdir)/$(package_name)/MODEL_DRIVERS/$(MODEL_DRIVER_NAME)/$(MODEL_DRIVER_NAME).kim \); then \
@@ -127,7 +127,7 @@ uninstall:
 	@printf "Uninstalling...($(DESTDIR)$(libdir)/$(package_name)/MODEL_DRIVERS)... Model Driver... $(MODEL_DRIVER_NAME)"
 ifneq (static-link,$(KIM_LINK))
 	@printf ".\n"
-	$(QUELL)rm -f "$(DESTDIR)$(libdir)/$(package_name)/MODEL_DRIVERS/$(MODEL_DRIVER_NAME)/$(MODEL_DRIVER_NAME).so"
+	$(QUELL)rm -f "$(DESTDIR)$(libdir)/$(package_name)/MODEL_DRIVERS/$(MODEL_DRIVER_NAME)/$(MODELDRIVERLIBFILE).so"
 	$(QUELL)$(if $(filter-out dynamic-load,$(KIM_LINK)),,rm -f "$(DESTDIR)$(libdir)/$(package_name)/MODEL_DRIVERS/$(MODEL_DRIVER_NAME)/$(MODEL_DRIVER_NAME).kim")
 	$(QUELL)if test \( -d "$(DESTDIR)$(libdir)/$(package_name)/MODEL_DRIVERS/$(MODEL_DRIVER_NAME)" \); then rmdir "$(DESTDIR)$(libdir)/$(package_name)/MODEL_DRIVERS/$(MODEL_DRIVER_NAME)" >& /dev/null; fi;
 else

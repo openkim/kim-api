@@ -43,7 +43,7 @@ MODEL_INIT_FUNCTION_LANG := $(strip $(MODEL_INIT_FUNCTION_LANG))
 MODEL_INIT_FUNCTION_NAME := $(strip $(MODEL_INIT_FUNCTION_NAME))
 
 #build target .a or .so for models
-MODEL_BUILD_TARGET := $(MODEL_NAME).a
+MODEL_BUILD_TARGET := $(MODELLIBFILE).a
 ifneq ($(KIM_LINK),static-link)
    MODEL_BUILD_TARGET += $(patsubst %.a,%.so, $(MODEL_BUILD_TARGET))
 else
@@ -82,7 +82,7 @@ init_wrapper.cpp: Makefile
 	$(QUELL)printf "      $(MODEL_INIT_FUNC_NAME);\n"                 >> $@
 	$(QUELL)printf "}\n"                                              >> $@
 
-$(MODEL_NAME).a: $(LOCALOBJ) init_wrapper.o $(KDF_STR_NAME).o
+$(MODELLIBFILE).a: $(LOCALOBJ) init_wrapper.o $(KDF_STR_NAME).o
 	@printf "Creating... $@.\n"
 	$(QUELL)ar rcs $@ $(LOCALOBJ) init_wrapper.o $(KDF_STR_NAME).o
 
@@ -110,7 +110,7 @@ Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/MAKE_SYSTEM/Makefile.Model
 
 clean:
 	@printf "Cleaning... Model.......... $(MODEL_NAME).\n"
-	$(QUELL)rm -f $(LOCALOBJ) *.mod $(addprefix $(MODEL_NAME).,a so) .$(MODEL_NAME).so\
+	$(QUELL)rm -f $(LOCALOBJ) *.mod $(addprefix $(MODELLIBFILE).,a so) .$(MODELLIBFILE).so\
                       $(KDF_STR_NAME).o \
                       init_wrapper.o $(LOCALCLEAN)
 
@@ -119,8 +119,8 @@ install: all
 ifneq (static-link,$(KIM_LINK))
 	@printf ".\n"
 	$(QUELL)mkdir -p $(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)
-	$(QUELL)cp $(if $(KIM_INSTALLED),,.)$(MODEL_NAME).so $(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)/$(MODEL_NAME).so
-	$(QUELL)chmod 644 $(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)/$(MODEL_NAME).so
+	$(QUELL)cp $(if $(KIM_INSTALLED),,.)$(MODELLIBFILE).so $(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)/$(MODELLIBFILE).so
+	$(QUELL)chmod 644 $(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)/$(MODELLIBFILE).so
 else
 	@printf ": nothing to be done for static-link.\n"
 endif
@@ -129,7 +129,7 @@ uninstall:
 	@printf "Uninstalling...($(DESTDIR)$(libdir)/$(package_name)/MODELS).......... Model.......... $(MODEL_NAME)"
 ifneq (static-link,$(KIM_LINK))
 	@printf ".\n"
-	$(QUELL)rm -f "$(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)/$(MODEL_NAME).so"
+	$(QUELL)rm -f "$(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)/$(MODELLIBFILE).so"
 	$(QUELL)if test \( -d "$(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)" \); then rmdir "$(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)" >& /dev/null; fi
 
 else

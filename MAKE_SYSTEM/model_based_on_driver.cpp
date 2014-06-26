@@ -90,7 +90,7 @@ extern "C" {
       {
         itr->append("/");
         itr->append("MODEL_DRIVER_NAME_STR"); itr->append("/");
-        itr->append("MODEL_DRIVER_NAME_STR"); itr->append(".so");
+        itr->append("MODEL_DRIVER_LIBNAME_STR"); itr->append(".so");
         //std::cout<< "* Info (MODEL_NAME_STR_init): Looking for Model Driver shared library file " << itr->c_str() <<std::endl;
         driver_lib_handle = dlopen(itr->c_str(), RTLD_NOW);
         if (driver_lib_handle != NULL) break;

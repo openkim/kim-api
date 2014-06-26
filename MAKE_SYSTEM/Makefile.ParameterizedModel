@@ -44,7 +44,7 @@ MODEL_DRIVER_NAME := $(strip $(MODEL_DRIVER_NAME))
 # Set defines
 KIMDEFINES = $(KIM_DEFINE_VALUES)
 
-MODEL_BUILD_TARGET := $(MODEL_NAME).a
+MODEL_BUILD_TARGET := $(MODELLIBFILE).a
 ifneq ($(KIM_LINK),static-link)
    MODEL_BUILD_TARGET += $(patsubst %.a,%.so, $(MODEL_BUILD_TARGET))
 else
@@ -99,22 +99,23 @@ $(MODEL_NAME).kim: $(driver_location)/$(MODEL_DRIVER_NAME)/$(MODEL_DRIVER_NAME).
                     -e '/SPECIES_[0-9]\{3\}_NAME_STR/d'                                \
                 > $(MODEL_NAME).kim
 
-.INTERMEDIATE: $(MODEL_NAME).cpp
-$(MODEL_NAME).cpp: $(KIM_DIR)/MAKE_SYSTEM/model_based_on_driver.cpp $(paramfile_name_list) Makefile
+PARAM_MODEL_NAME = parameterized-model
+.INTERMEDIATE: $(PARAM_MODEL_NAME).cpp
+$(PARAM_MODEL_NAME).cpp: $(KIM_DIR)/MAKE_SYSTEM/model_based_on_driver.cpp $(paramfile_name_list) Makefile
 	@printf "Creating... intermediate file... $@.\n"
-	$(QUELL)cat /dev/null > $(MODEL_NAME).cpp
+	$(QUELL)cat /dev/null > $(PARAM_MODEL_NAME).cpp
 	$(QUELL)$(foreach flnum,$(paramfile_num_list),\
             fl_name=$(PARAM_FILE_$(flnum)_NAME);\
             fl_size=`cat $$fl_name | tr -d '\r' | wc -c`;\
             n=`expr $$fl_size / 65536 + 2`;\
             lines=`cat $$fl_name | tr -d '\r' | wc -l`;\
             dl=`expr $$lines / $$n`;\
-            printf "static const int paramfile_$(flnum)_chunks = %i;\n" `expr $$n + 1` >> $(MODEL_NAME).cpp;\
-            printf "static const char* const paramfile_$(flnum)[] =\n"                 >> $(MODEL_NAME).cpp;\
-            printf "{\n"                                                               >> $(MODEL_NAME).cpp;\
+            printf "static const int paramfile_$(flnum)_chunks = %i;\n" `expr $$n + 1` >> $@;\
+            printf "static const char* const paramfile_$(flnum)[] =\n"                 >> $@;\
+            printf "{\n"                                                               >> $@;\
             i=0;\
             while test $$i -le $$n; do \
-               if test $$i -ne 0; then printf "\n   ,\n\n"                             >> $(MODEL_NAME).cpp; fi;\
+               if test $$i -ne 0; then printf "\n   ,\n\n"                             >> $@; fi;\
                lnstart=`expr $$i '*' $$dl - 2`;\
                if test $$lnstart -le 0; then begdel=":dummy"; else begdel="1,$$lnstart d"; fi;\
                lnend=`expr \( $$i + 1 \) '*' $$dl - 1`;\
@@ -124,10 +125,10 @@ $(MODEL_NAME).cpp: $(KIM_DIR)/MAKE_SYSTEM/model_based_on_driver.cpp $(paramfile_
                    -e 's,\\,\\\\,g'     \
                    -e 's,",\\",g'       \
                    -e 's,^,   ",g'      \
-                   -e 's,$$,\\n",g'                                                    >> $(MODEL_NAME).cpp;\
+                   -e 's,$$,\\n",g'                                                    >> $@;\
                i=`expr $$i + 1`;\
            done;\
-           printf "};\n\n"                                                             >> $(MODEL_NAME).cpp;\
+           printf "};\n\n"                                                             >> $@;\
          )
         # make sed script
 	$(QUELL)printf "/PARAMFILE_POINTERS_GO_HERE;/ {\n" > tmp-sed-script
@@ -139,16 +140,17 @@ $(MODEL_NAME).cpp: $(KIM_DIR)/MAKE_SYSTEM/model_based_on_driver.cpp $(paramfile_
 	$(QUELL)printf "d\n" >> tmp-sed-script
 	$(QUELL)printf "}\n" >> tmp-sed-script
         # create actual model code to call model driver
-	$(QUELL)cat $(KIM_DIR)/MAKE_SYSTEM/model_based_on_driver.cpp |                                                                          \
-                sed -e "s,MODEL_DRIVER_NAME_STR,$(MODEL_DRIVER_NAME),g"                                                                         \
-                    -e "s,MODEL_NAME_STR,$(MODEL_NAME),g"                                                                                       \
-                    -e "s,NUM_PARAMFILES,$(num_paramfiles),g"                                                                                   \
-                    -f tmp-sed-script                                                   >> $(MODEL_NAME).cpp
+	$(QUELL)cat $(KIM_DIR)/MAKE_SYSTEM/model_based_on_driver.cpp |                       \
+                sed -e "s,MODEL_DRIVER_NAME_STR,$(MODEL_DRIVER_NAME),g"                      \
+                    -e "s,MODEL_DRIVER_LIBNAME_STR,$(MODELDRIVERLIBFILE),g"                  \
+                    -e "s,MODEL_NAME_STR,$(MODEL_NAME),g"                                    \
+                    -e "s,NUM_PARAMFILES,$(num_paramfiles),g"                                \
+                    -f tmp-sed-script                                                  >> $@
 	$(QUELL)rm -f tmp-sed-script
 
-$(MODEL_NAME).a: $(MODEL_NAME).o $(KDF_STR_NAME).o
+$(MODELLIBFILE).a: $(PARAM_MODEL_NAME).o $(KDF_STR_NAME).o
 	@printf "Creating... $@.\n"
-	$(QUELL)ar rcs $@ $(MODEL_NAME).o $(KDF_STR_NAME).o
+	$(QUELL)ar rcs $@ $(PARAM_MODEL_NAME).o $(KDF_STR_NAME).o
 
 $(EXPORT_LIST_NAME): $(KIM_MAKE_FILES) Makefile
 	@printf "Creating... intermediate file... $@.\n"
@@ -172,7 +174,7 @@ Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/MAKE_SYSTEM/Makefile.ParameterizedModel
 
 clean:
 	@printf "Cleaning... Model.......... $(MODEL_NAME).\n"
-	$(QUELL)rm -f $(addprefix $(MODEL_NAME).,o a so) .$(MODEL_NAME).so $(MODEL_NAME).kim $(KDF_STR_NAME).o
+	$(QUELL)rm -f $(addsuffix $(MODELLIBFILE).,a so) .$(MODELLIBNAME).so $(PARAM_MODEL_NAME).o $(MODEL_NAME).kim $(KDF_STR_NAME).o
 
 install: all
 	@printf "Installing...($(DESTDIR)$(libdir)/$(package_name)/MODELS).......... Model.......... $(MODEL_NAME)"
@@ -184,8 +186,8 @@ ifneq (static-link,$(KIM_LINK))
                   false;                                                                                         \
                 fi
 	$(QUELL)mkdir -p $(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)
-	$(QUELL)cp $(if $(KIM_INSTALLED),,.)$(MODEL_NAME).so $(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)/$(MODEL_NAME).so
-	$(QUELL)chmod 644 $(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)/$(MODEL_NAME).so
+	$(QUELL)cp $(if $(KIM_INSTALLED),,.)$(MODEL_NAME).so $(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)/$(PARAM_MODEL_NAME).so
+	$(QUELL)chmod 644 $(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)/$(PARAM_MODEL_NAME).so
 else
 	@printf ": nothing to be done for static-link.\n"
 endif
@@ -194,7 +196,7 @@ uninstall:
 	@printf "Uninstalling...($(DESTDIR)$(libdir)/$(package_name)/MODELS).......... Model.......... $(MODEL_NAME)"
 ifneq (static-link,$(KIM_LINK))
 	@printf ".\n"
-	$(QUELL)rm -f "$(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)/$(MODEL_NAME).so"
+	$(QUELL)rm -f "$(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)/$(PARAM_MODEL_NAME).so"
 	$(QUELL)if test \( -d "$(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)" \); then rmdir "$(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)" >& /dev/null; fi
 else
 	@printf ": nothing to be done for static-link.\n"

@@ -74,10 +74,10 @@ all: objects libs
 
 ifneq ($(KIM_LINK),static-link)
    objects: $(ALLOBJ) KIM_API_DIRS.o .KIM_API_DIRS.o
-   libs: libkim.so openkim-api-descriptor-file-match
+   libs: $(KIMLIBFILE).so openkim-api-descriptor-file-match
 else
    objects: models_check $(ALLOBJ) KIM_API_DIRS.o
-   libs: models_check libkim.a openkim-api-descriptor-file-match
+   libs: models_check $(KIMLIBFILE).a openkim-api-descriptor-file-match
 
    models_check:
 	@if test \( $(words $(MODELS_LIST)) -ne 1 \) -o \( $(words $(MODEL_DRIVERS_LIST)) -gt 1 \); then \
@@ -94,19 +94,19 @@ Makefile: $(KIM_MAKE_FILES)
 	$(QUELL)touch Makefile
 
 ifneq ($(KIM_LINK),static-link)
-   libkim.a: $(ALLOBJ) KIM_API_DIRS.o .KIM_API_DIRS.o
+   $(KIMLIBFILE).a: $(ALLOBJ) KIM_API_DIRS.o .KIM_API_DIRS.o
 	@printf "Creating... openkim-api library... $@.\n";
 	$(QUELL)ar rcs $@ $(ALLOBJ) KIM_API_DIRS.o
 	$(QUELL)ar rcs .$@ $(ALLOBJ) .KIM_API_DIRS.o
 else
-   libkim.a: $(ALLOBJ) $(shell find $(KIM_MODEL_DRIVERS_DIR) $(KIM_MODELS_DIR) -name "*.a")
+   $(KIMLIBFILE).a: $(ALLOBJ) $(shell find $(KIM_MODEL_DRIVERS_DIR) $(KIM_MODELS_DIR) -name "*.a")
 	@printf "Creating... openkim-api library... $@.\n";
 	$(QUELL)mkdir $(KIM_DIR)/KIM_API/temp_archive_dir && cd $(KIM_DIR)/KIM_API/temp_archive_dir && \
         $(foreach arch, $(shell find $(KIM_MODEL_DRIVERS_DIR) $(KIM_MODELS_DIR) -name "*.a"),ar x $(arch);) \
         ar rcs $(KIM_DIR)/KIM_API/$@ *.o $(addprefix $(KIM_DIR)/KIM_API/,$(ALLOBJ)) && \
         cd $(KIM_DIR)/KIM_API/ && rm -rf $(KIM_DIR)/KIM_API/temp_archive_dir
 endif
-libkim.so: libkim.a .libkim.a $(if $(filter-out dynamic-load,$(KIM_LINK)), \
+$(KIMLIBFILE).so: $(KIMLIBFILE).a .$(KIMLIBFILE).a $(if $(filter-out dynamic-load,$(KIM_LINK)), \
                                   $(foreach mdl, $(MODELS_LIST), $(KIM_MODELS_DIR)/$(mdl)/$(mdl).so) \
                                   $(foreach mdldrv, $(MODEL_DRIVERS_LIST), $(KIM_MODEL_DRIVERS_DIR)/$(mdldrv)/$(mdldrv).so),)
 	@printf "Creating... openkim-api library... $@.\n";
@@ -128,6 +128,7 @@ libkim.so: libkim.a .libkim.a $(if $(filter-out dynamic-load,$(KIM_LINK)), \
 KIM_API.o: KIM_DEFINE_VALUES += -D STANDARD_KDF_STR_NAME=$(MODEL_NAME)_$(KDF_STR_NAME)               \
                                 -D STANDARD_KDF_STR_CHUNKS_NAME=$(MODEL_NAME)_$(KDF_STR_NAME)_chunks \
                                 -D KDF_STR_NAME=\"$(KDF_STR_NAME)\"                                  \
+                                -D MODELLIBFILE=\"$(MODELLIBFILE)\"                                  \
                                 -D KIM_TESTS_DIR_VAL=\"$(KIM_TESTS_DIR)\"
 KIM_API.o: $(if $(filter-out dynamic-load,$(KIM_LINK)),model_init_include.h model_init_include.cpp model_kim_str_include.cpp,) KIM_API.h KIM_API.cpp KIM_AUX.h KIM_API_DIRS.h Makefile
 
@@ -214,11 +215,11 @@ install: objects libs
 	@printf "Installing...($(DESTDIR)$(libdir)/$(package_name)/KIM_API)......... KIM_API.\n"
 	$(QUELL)mkdir -p $(DESTDIR)$(libdir)/$(package_name)/KIM_API
 ifneq (static-link,$(KIM_LINK))
-	$(QUELL)cp -f .libkim.so "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.so"
-	$(QUELL)chmod 644 "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.so"
+	$(QUELL)cp -f .$(KIMLIBFILE).so "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/$(KIMLIBFILE).so"
+	$(QUELL)chmod 644 "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/$(KIMLIBFILE).so"
 else
-	$(QUELL)cp -f libkim.a "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.a"
-	$(QUELL)chmod 644 "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.a"
+	$(QUELL)cp -f $(KIMLIBFILE).a "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/$(KIMLIBFILE).a"
+	$(QUELL)chmod 644 "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/$(KIMLIBFILE).a"
 endif
 ifeq  (dynamic-load,$(KIM_LINK))
 	$(QUELL)cp -f KIM_API.h KIM_API_C.h KIM_API_status.h KIM_API_DIRS.h kim_kinds.mod kim_api.mod kim_api_f03.mod Unit_Handling.h KIM_AUX.h "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/"
@@ -228,9 +229,9 @@ endif
 uninstall:
 	@printf "Uninstalling...($(DESTDIR)$(libdir)/$(package_name)/KIM_API)......... KIM_API.\n"
 ifneq (static-link,$(KIM_LINK))
-	$(QUELL)rm -f "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.so"
+	$(QUELL)rm -f "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/$(KIMLIBFILE).so"
 else
-	$(QUELL)rm -f "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/libkim.a"
+	$(QUELL)rm -f "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/$(KIMLIBFILE).a"
 endif
 	$(QUELL)rm -f $(addsuffix ",$(addprefix "$(DESTDIR)$(libdir)/$(package_name)/KIM_API/,KIM_API.h KIM_API_C.h KIM_API_status.h Unit_Handling.h KIM_AUX.h KIM_API_DIRS.h kim_kinds.mod kim_api.mod kim_api_f03.mod))
 	$(QUELL)if test \( -d "$(DESTDIR)$(libdir)/$(package_name)/KIM_API" \); then rmdir "$(DESTDIR)$(libdir)/$(package_name)/KIM_API" >& /dev/null; fi

@@ -87,13 +87,17 @@ ifeq ($(KIM_LINK),static-link)
 endif
 
 # Set correct lib file name depending on type of compilation
+KIM_LIB_NAME = kim
+KIMLIBFILE = lib$(KIM_LIB_NAME)
+MODELLIBFILE = $(KIMLIBFILE)-model
+MODELDRIVERLIBFILE = $(KIMLIBFILE)-model-driver
 ifneq ($(KIM_LINK),static-link)
-   KIMLIBFILE = $(KIM_DIR)/KIM_API/libkim.so
+   KIMLIBFULLFILE = $(KIM_DIR)/KIM_API/$(KIMLIBFILE).a
 else
-   KIMLIBFILE = $(KIM_DIR)/KIM_API/libkim.a
+   KIMLIBFULLFILE = $(KIM_DIR)/KIM_API/$(KIMLIBFILE).so
 endif
 KIMLIBFLAGS = -L$(KIM_DIR)/KIM_API/
-KIMLIB      = -lkim
+KIMLIB      = -l$(KIM_LIB_NAME)
 
 #set default goals allways all
 .DEFAULT_GOAL := all
@@ -195,7 +199,7 @@ KIM_FTYPE_STANDARD_COMPILE_LIST = $(ARCHFLAG) $(PICFLAG) $(FCRAYFLAG) $(KIMINCLU
                $(LINKSONAME)$(if $(filter-out dynamic-load,$(KIM_LINK)),$(DESTDIR)$(libdir)/$(package_name)/$(if $(filter MODEL_NAME,$(.VARIABLES)),MODELS,MODEL_DRIVERS)/$*/,)$*.so \
                $(LDEXPORTLISTFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@  \
                $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
-               $(if $(filter-out dynamic-load,$(KIM_LINK)),,$(KIM_DIR)/KIM_API/.libkim.so) \
+               $(if $(filter-out dynamic-load,$(KIM_LINK)),,$(KIM_DIR)/KIM_API/.$(KIMLIBFILE).so) \
                $(if $(filter-out dynamic-link,$(KIM_LINK)),,$(if $(filter MODEL_DRIVER_NAME,$(.VARIABLES)),$(if $(filter MODEL_NAME,$(.VARIABLES)),$(KIM_MODEL_DRIVERS_DIR)/$(MODEL_DRIVER_NAME)/.$(MODEL_DRIVER_NAME).so,),)) \
                $(LDDYNAMICLIB) $(XLANGLDLIBS) $(LDLIBS)
         #INSTALLTAG
