@@ -121,7 +121,7 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
        Model Driver (in order to avoid the possibility of symbol clashes).
 
    (h) Set the value of KIM_MAKE_VERBOSITY, if a value other than the default
-       is (`quiet') desired.  Possible values are `quite' and `full'.
+       (`quiet') is desired.  Possible values are `quite' and `full'.
 
        KIM_MAKE_VERBOSITY = quiet
 
@@ -129,47 +129,6 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
        adding the desired variable name (after the "# override default compiler
        options and other variables here" line) and filling in appropriate
        values.
-
-       * NOTE: GCC 4.4 requires that LDLIBS be set as
-               `LDLIBS = -lgfortran -lgfortranstart' or possibly
-               `LD = $(FC)' and `LDLIBS = -lstdc++'.
-
-       * NOTE: As of 2014-01-20, gfortran on Darwin OS (Mac OSX) has a bug
-               associated with the use of iso_c_binding Fortran/C
-               interoperability features which are now standard in openkim-api.
-               (See http://gcc.gnu.org/bugzilla/show_bug.cgi?id=59888) We have
-               reported this bug and are awaiting its fix.  In the meantime,
-               the following workaround has been identified:
-
-               (i) You must have a "multi-library" version of gfortran
-                   installed on your mac due the need (see (ii) below) to
-                   compile for a 32bit architecture.  This means that GCC must
-                   have been configured with the "--enable-multilib" flag.  To
-                   check your version execute `gfortran -v' and look for the
-                   string "--enable-multilib".  In order to install a multilib
-                   version of gfortran on your mac you can use a package
-                   manager such as Homebrew, Mac Ports, or fink.  Follow the
-                   instructions for installing the package manager of your
-                   choice.  Then execute the command to install gfortran.
-
-                   For Homebrew the command is:
-                     % brew install gcc
-
-                   For Mac Ports the command is:
-                     % sudo port select --set gcc mp-gcc48
-                     (Note, this may require that you compile the package from
-                      source in order to get the correct version.)
-
-               (ii)  You must compile the openkim-api and associated Models,
-                     Tests, etc. using the `KIM_SYSTEMARCH = 32bit' setting.
-
-               (iii) You need to have the following line in this section of the
-                     Makefile.KIM_Config file in order to avoid harmless
-                     compiler warnings:
-                        `LDFLAGS += -read_only_relocs suppress'
-
-       * NOTE: For Cygwin systems add the following line `PICFLAG =' to avoid
-               warnings about the -fPIC option.
 
 
        # override default compiler options and other variables here
@@ -193,20 +152,77 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
        LDWHOLEARCHIVESTARTFLAG =
        LDWHOLEARCHIVEENDFLAG =
 
+
+       * NOTE: GCC 4.4 requires that LDLIBS be set as
+               `LDLIBS = -lgfortran -lgfortranstart' or possibly
+               `LD = $(FC)' and `LDLIBS = -lstdc++'.
+
+       * NOTE: As of 2014-01-20, gfortran on Darwin OS (Mac OSX) has a bug
+               associated with the use of iso_c_binding Fortran/C
+               interoperability features which are now standard in openkim-api.
+               (See http://gcc.gnu.org/bugzilla/show_bug.cgi?id=59888) We have
+               reported this bug and are awaiting its fix.  In the meantime,
+               the following workaround has been identified:
+
+               (1) You must have a "multi-library" version of gfortran
+                   installed on your mac due the need (see (ii) below) to
+                   compile for a 32bit architecture.  This means that GCC must
+                   have been configured with the "--enable-multilib" flag.  To
+                   check your version execute `gfortran -v' and look for the
+                   string "--enable-multilib".  In order to install a multilib
+                   version of gfortran on your mac you can use a package
+                   manager such as Homebrew, Mac Ports, or fink.  Follow the
+                   instructions for installing the package manager of your
+                   choice.  Then execute the command to install gfortran.
+
+                   For Homebrew the command is:
+                     % brew install gcc
+
+                   For Mac Ports the command is:
+                     % sudo port select --set gcc mp-gcc48
+                     (Note, this may require that you compile the package from
+                      source in order to get the correct version.)
+
+               (2) You must compile the openkim-api and associated Models,
+                   Tests, etc. using the `KIM_SYSTEMARCH = 32bit' setting.
+
+               (3) You need to have the following line in this section of the
+                   Makefile.KIM_Config file in order to avoid harmless compiler
+                   warnings:
+                     `LDFLAGS += -read_only_relocs suppress'
+
+       * NOTE: For Cygwin systems add the following line `PICFLAG =' to avoid
+               warnings about the -fPIC option.
+
+   (j) Override default install options, if necessary, by adding the desired
+       variable name (after the "# override default install options" line) and
+       filling in appropriate values.
+
        # override default install directories
        package_name = # default is 'openkim-api'
        prefix =       # default is '/usr/local'
-       libdir =       # default is '$(prefix)/lib'
+       exec_prefix =  # default is '$(prefix)'
+       libdir =       # default is '$(exec_prefix)/lib'
+       bindir =       # default is '$(exec_prefix)/bin'
 
+
+       * NOTE: See item 6 below for more details on the installation process.
+
+       * NOTE: The package_name variable is used as part of the installation
+               directory name and the KIM API library file name.
+
+       * NOTE: See the GNU Coding Standards, Section 7.2 for more details on
+               the meaning of the remaining standard variables.
+
+       * NOTE: Staged installs are supported via the DESTDIR variable.  See
+         Section 7.2.4 of the GNU Coding Standards.
 
 2. In the remainder of the documentation we will use the string ${KD} to
    represent the location of the openkim-api source package (the value of the
    KIM_DIR variable discussed above).  If you wish to, type the below commands
    exactly as written to set the shell variable KD to the appropriate value:
 
-   bash:
    % export KD=${HOME}/openkim-api-vX.X.X
-
 
 3. To compile the package, including the provided examples, change to the
    ${KD} directory and execute `make examples' and then `make':
@@ -223,10 +239,10 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
        `make all'            -- same as `make'
        `make clean'          -- will remove appropriate .o, .mod, .a, .so and
                                 executable files
-       `make install'        -- install files to `/usr/local/lib/' by default
-                                or to `$(prefix)/lib/' if prefix is specified,
-                                or to `$(libdir)/' if libdir is specified
-                                (see above).
+
+       `make install'        -- install files to system-wide location as
+                                described in item 6 below.
+
        `make uninstall'      -- delete files installed by `make install'
        `make openkim-api'    -- compiles only the API
        `make examples'       -- copies examples into the appropriate
@@ -240,31 +256,32 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
 
    The provided example Tests read in the name of a Model (or Models) which
    they use to perform their calculations.  For most Tests the name of the
-   Model can be piped in using an `echo' command.  For example, the following
+   Model can be piped in using an `printf' command.  For example, the following
    Fortran 2003 Test reads in one Model:
 
    % cd ${KD}/TESTS/ex_test_Ar_free_cluster_CLUSTER_F03
-   % echo "ex_model_Ar_P_MLJ_CLUSTER_C" | ./ex_test_Ar_free_cluster_CLUSTER_F03
+   % printf "ex_model_Ar_P_MLJ_CLUSTER_C" | ./ex_test_Ar_free_cluster_CLUSTER_F03
 
   (See the README files in the Test directories for an explanation of what
    the Tests do.)
 
-
 5. Each Test (and Model) has its own Makefile for compiling and linking.  If
-   changes are made to the code, perform the `make' portion of step (3) again
+   changes are made to the code, perform the `make' portion of step 3 again
    (from the ${KD} directory).
 
-6. If you wish, install the KIM API to a system directory.
+6. If you wish, install the KIM API to the system-wide directories.
 
-     % make install
+   % make install
 
    The compiled versions of the KIM API library, Model Drivers, and Models will
-   be copied to `$(libdir)/$(package_name)/KIM_API',
-   `$(libdir)/$(package_name)/MODEL_DRIVERS', and
-   `$(libdir)/$(package_name)/MODELS', respectively.  The default value for
-   libdir is `$(prefix)/lib'.  Additionally, the MAKE_SYSTEM and supporting
-   header and mod files will be copied to `$(libdir)/$(package_name)/' to
-   support subsequent compilation against the installed KIM API package.
+   be copied to `$(libdir)/$(full_package_name)'.  The default value for libdir
+   is `$(exec_prefix)/lib', the default value for exec_prefix is `$(prefix)',
+   and the default value for prefix is `/usr/local'.  This, the default value
+   of libdir is `/usr/local/lib'.  The value of full_package_name is
+   `$(package_name)-v$(VERSION_MAJOR)'.  Additionally, if appropriate, the
+   MAKE_SYSTEM and supporting header and mod files will be copied to
+   `$(libdir)/$(full_package_name)/include' to support subsequent compilation
+   against the installed KIM API package.
 
    Once the KIM API package has been installed, the original source directory
    (${KD}) may be deleted.
@@ -275,12 +292,12 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
    searched, are:
 
      `.'                                             ("CWD Model Drivers")
-     `$(libdir)/$(package_name)/MODEL_DRIVERS/'      ("System Model Drivers")
+     `$(libdir)/$(full_package_name)/MODEL_DRIVERS/' ("System Model Drivers")
 
    For Models the directories, listed in the order they are searched, are:
 
      `.'                                             ("CWD Models")
-     `$(libdir)/$(package_name)/MODELS/'             ("System Models")
+     `$(libdir)/$(full_package_name)/MODELS/'        ("System Models")
 
    You can specify an additional directory to be searched by creating the file
    `${HOME}/.${package_name}/config-vX' where X is replaced by the major
@@ -293,20 +310,20 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
      models_dir = YYY
 
    where XXX and YYY are replaced by paths (beginning with `/' or '~/' only)
-   for where you will store your Model Drivers and Models, respectively.  Once
-   you have created this file the KIM API will use the following, modified,
-   procedure.  For Model Drivers the directories, listed in the order they are
-   searched, are:
+   which indicate where you will store your Model Drivers and Models,
+   respectively.  Once you have created this file the KIM API will use the
+   following, modified, procedure.  For Model Drivers the directories, listed
+   in the order they are searched, are:
 
      `.'                                             ("CWD Model Drivers")
      as listed in ${HOME}/.$(package_name)/config-vX ("User Model Drivers")
-     `$(libdir)/$(package_name)/MODEL_DRIVERS/'      ("System Model Drivers")
+     `$(libdir)/$(full_package_name)/MODEL_DRIVERS/' ("System Model Drivers")
 
    For Models the directories, listed in the order they are searched, are:
 
      `.'                                             ("CWD Models")
      as listed in $(HOME)/.$(package_name)/config-vX ("User Models")
-     `$(libdir)/$(package_name)/MODELS/'             ("System Models")
+     `$(libdir)/$(full_package_name)/MODELS/'        ("System Models")
 
    After the KIM API has been installed (and the original source directory has
    been deleted) it is still possible to compile Model Drivers and Models.
@@ -320,11 +337,11 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
        item.  Otherwise, create these files now (here we will use
        `~/my-kim-items' as an example):
 
-         % package_name=openkim-api
-         % mkdir ${HOME}/.${package_name}
-         % cd ${HOME}/.${package_name}
-         % printf "model_drivers_dir = ~/my-kim-items\n" > config-vX
-         % printf "models_dir = ~/my-kim-items\n" >> config-vX
+       % package_name=openkim-api
+       % mkdir ${HOME}/.${package_name}
+       % cd ${HOME}/.${package_name}
+       % printf "model_drivers_dir = ~/my-kim-items\n" > config-vX
+       % printf "models_dir = ~/my-kim-items\n" >> config-vX
 
        Don't forget to replace `X' with the major version number of this
        package.  Although here we use the same directory for Model Drivers and
@@ -336,49 +353,50 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
        temporaries directory in which to work (here we use `~/my-kim-items' as
        an example):
 
-         % mkdir ${HOME}/my-kim-items
+       % mkdir ${HOME}/my-kim-items
 
    (c) Next, for convenience, we'll create an environment variable pointing to
        our working directory:
 
-         % WD=${HOME}/my-kim-items
+       % WD=${HOME}/my-kim-items
 
-   (d) Create a Makefile.KIM_Config in the ${WD} directory (assuming the
-       default value of prefix and libdir):
+   (d) Create a Makefile.KIM_Config in the ${WD} directory (assuming all default values):
 
-         % libdir=/usr/local/lib
-         % cd ${WD}
-         % printf "include ${libdir}/${package_name}/Makefile.KIM_Config\n" > ${WD}/Makefile.KIM_Config
+       % libdir=/usr/local/lib
+       % VERSION_MAJOR=X # don't forget to replace X with the appropriate value
+       % full_package_name=${package_name}-v${VERSION_MAJOR}
+       % cd ${WD}
+       % printf "include ${libdir}/${full_package_name}/Makefile.KIM_Config\n" > ${WD}/Makefile.KIM_Config
 
    (e) We'll work with the case of a Model Driver and an associated
        Parameterized Model such as those you can download from openkim.org.
        For example, execute the following commands:
 
-         % md=EAM_Dynamo__MD_120291908751_000
-         % wget --content-disposition "https://kim-items.openkim.org/archive?kimid=${md}&compression=gz"
-         % tar zxvf ${md}.tgz
-         % rm ${md}.tgz
-         % mo=EAM_Dynamo_Angelo_Moody_NiAlH__MO_418978237058_000
-         % wget --content-disposition "https://kim-items.openkim.org/archive?kimid=${mo}&compression=gz"
-         % tar zxvf ${mo}.tgz
-         % rm ${mo}.tgz
+       % md=EAM_Dynamo__MD_120291908751_000
+       % wget --content-disposition "https://kim-items.openkim.org/archive?kimid=${md}&compression=gz"
+       % tar zxvf ${md}.tgz
+       % rm ${md}.tgz
+       % mo=EAM_Dynamo_Angelo_Moody_NiAlH__MO_418978237058_000
+       % wget --content-disposition "https://kim-items.openkim.org/archive?kimid=${mo}&compression=gz"
+       % tar zxvf ${mo}.tgz
+       % rm ${mo}.tgz
 
    (f) Compile the Model Driver and Model:
 
-         % cd ${WD}/${md}
-         % make
-         % cd ${WD}/${mo}
-         % make
+       % cd ${WD}/${md}
+       % make
+       % cd ${WD}/${mo}
+       % make
 
        You can now use the Model from the current working directory (${WD}).
        For example, you could copy, compile and run the example Verification
        Check `vc_forces_numer_deriv':
 
-         % cd ${WD}
-         % cp ${KD}/EXAMPLES/TESTS/vc_forces_numer_deriv/* ${WD}
-         % printf ',s/\.\.\/Makefile.KIM_Config/.\/Makefile.KIM_Config/g\nw\nq\n' | ed Makefile
-         % make
-         % printf ${mo} | ./vc_forces_numer_deriv
+       % cd ${WD}
+       % cp ${KD}/EXAMPLES/TESTS/vc_forces_numer_deriv/* ${WD}
+       % printf ',s|\.\./Makefile.KIM_Config|./Makefile.KIM_Config|g\nw\nq\n' | ed Makefile
+       % make
+       % printf ${mo} | ./vc_forces_numer_deriv
 
        If you have setup the config-vX file, you have a new Model installed in
        the user directory and you can skip the rest of the below steps.  In
@@ -386,33 +404,32 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
        example Verification Check `vc_forces_numer_deriv' in whatever directory
        you like:
 
-         % EXD=${HOME}/my-executable
-         % mkdir ${EXD}
-         % cd ${EXD}
-         % cp ${KD}/EXAMPLES/TESTS/vc_forces_numer_deriv/* ${EXD}
-         % printf "include ${prefix}/${libdir}/${package_name}/Makefile.KIM_Config\n" > ${EXD}/Makefile.KIM_Config
-         % printf ',s/\.\.\/Makefile.KIM_Config/.\/Makefile.KIM_Config/g\nw\nq\n' | ed Makefile
-         % make
-         % printf ${mo} | ./vc_forces_numer_deriv
+       % EXD=${HOME}/my-executable
+       % mkdir ${EXD}
+       % cd ${EXD}
+       % cp ${KD}/EXAMPLES/TESTS/vc_forces_numer_deriv/* ${EXD}
+       % printf "include ${prefix}/${libdir}/${package_name}/Makefile.KIM_Config\n" > ${EXD}/Makefile.KIM_Config
+       % printf ',s|\.\./Makefile.KIM_Config|./Makefile.KIM_Config|g\nw\nq\n' | ed Makefile
+       % make
+       % printf ${mo} | ./vc_forces_numer_deriv
 
-   (g) If you have the permission to write to the system-wide directories where
-       the KIM API Model Drivers and Models are installed and you want to
-       install this Model Driver and Model in the appropriate system-wide
-       directories, then execute the following commands in order to do so:
+   (g) If you want to install this Model Driver and Model in the appropriate
+       system-wide directories, then execute the following commands in order to
+       do so:
 
-         % cd ${WD}/${md}
-         % make install
-         % cd ${WD}/${mo}
-         % make install
+       % cd ${WD}/${md}
+       % make install
+       % cd ${WD}/${mo}
+       % make install
 
        (Note: for Parameterized Models you must install the associated Model
        Driver before installing the Model, as we have done above.)  You have
        now installed the Model Driver and Model to the system-wide directories
        and you can delete the source directories:
 
-         % cd ${WD}
-         % rm -rf ${WD}/${md}
-         % rm -rf ${WD}/${mo}
+       % cd ${WD}
+       % rm -rf ${WD}/${md}
+       % rm -rf ${WD}/${mo}
 
 Once the compilation (and optional installation) is successfully completed,
 read the README file in the DOCs directory for a step-by-step guide to learning

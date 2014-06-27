@@ -37,14 +37,18 @@ ifndef KIM_DIR
 endif
 
 # The openkim-api subdirectories:
+modelsdir = MODELS
+modeldriversdir = MODEL_DRIVERS
+testsdir = TESTS
+
 ifndef KIM_MODEL_DRIVERS_DIR
-   KIM_MODEL_DRIVERS_DIR := $(KIM_DIR)/MODEL_DRIVERS
+   KIM_MODEL_DRIVERS_DIR := $(KIM_DIR)/$(modeldriversdir)
 endif
 ifndef KIM_MODELS_DIR
-   KIM_MODELS_DIR := $(KIM_DIR)/MODELS
+   KIM_MODELS_DIR := $(KIM_DIR)/$(modelsdir)
 endif
 ifndef KIM_TESTS_DIR
-   KIM_TESTS_DIR := $(KIM_DIR)/TESTS
+   KIM_TESTS_DIR := $(KIM_DIR)/$(testsdir)
 endif
 
 # Make Verbosity
@@ -53,9 +57,12 @@ ifndef KIM_MAKE_VERBOSITY
 endif
 
 # INSTALL stuff
+INSTALL_PROGRAM = install
 package_name = openkim-api
 prefix = /usr/local
-libdir = $(prefix)/lib
+exec_prefix = $(prefix)
+libdir = $(exec_prefix)/lib
+bindir = $(exec_prefix)/bin
 
 # sanity check
 ifeq      ($(KIM_COMPILERSUITE),GCC)

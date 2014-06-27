@@ -9,7 +9,7 @@ std::string userDirs[2];
 void getUserDirs()
 {
   std::string configFile(getenv("HOME"));
-  configFile.append("/.").append(PACKAGENAME);
+  configFile.append("/.").append(FULLPACKAGENAME);
   configFile.append("/config-v").append(VERSION_MAJOR);
 
   std::ifstream cfl;
@@ -114,7 +114,7 @@ void directoryPath(DirectoryPathType type, std::list<std::string>* const lst)
   switch (type)
   {
     case KIM_DIR:
-      lst->push_back(std::string(LIBDIR).append(PACKAGENAME));
+      lst->push_back(std::string(LIBDIR).append(FULLPACKAGENAME));
       break;
     case KIM_MODEL_DRIVERS_DIR:
       lst->push_back(std::string("."));
@@ -123,7 +123,8 @@ void directoryPath(DirectoryPathType type, std::list<std::string>* const lst)
         lst->push_back(userDirs[0]);
       }
       lst->push_back(std::string(LIBDIR)
-                     .append("/").append(PACKAGENAME).append("/MODEL_DRIVERS"));
+                     .append("/").append(FULLPACKAGENAME).append("/")
+                     .append(MODELDRIVERSDIR));
       break;
     case KIM_MODELS_DIR:
       lst->push_back(std::string("."));
@@ -132,7 +133,8 @@ void directoryPath(DirectoryPathType type, std::list<std::string>* const lst)
         lst->push_back(userDirs[1]);
       }
       lst->push_back(std::string(LIBDIR)
-                     .append("/").append(PACKAGENAME).append("/MODELS"));
+                     .append("/").append(FULLPACKAGENAME).append("/")
+                     .append(MODELSDIR));
       break;
     default:
       break;

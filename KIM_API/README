@@ -94,7 +94,7 @@ Unit_Handling.cpp
 Unit_Handling.h
      Header file declaring the unit handling functions.
 
-openkim-api-descriptor-file-match.cpp
+api-descriptor-file-match.cpp
      A helper application that takes a Model descriptor file and a Test
      descriptor file and prints out either MATCH or NOMATCH.
 

@@ -38,6 +38,18 @@ endif
 include $(KIM_DIR)/MAKE_SYSTEM/Makefile.SanityCheck
 include $(KIM_DIR)/Makefile.Version
 
+# Clean up version variables
+VERSION_MAJOR := $(strip $(VERSION_MAJOR))
+VERSION_MINOR := $(strip $(VERSION_MINOR))
+VERSION_PATCH := $(strip $(VERSION_PATCH))
+VERSION_RELEASE := $(strip $(VERSION_RELEASE))
+VERSION_BUILD := $(strip $(VERSION_BUILD))
+VERSION_FULL := $(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_PATCH)$(if $(VERSION_RELEASE),-$(VERSION_RELEASE))$(if $(VERSION_BUILD),+$(VERSION_BUILD))
+
+# Set full package name
+full_package_name = $(package_name)-v$(VERSION_MAJOR)
+
+
 # define list of Makefiles in the KIM make system to be used for dependencies
 KIM_MAKE_FILES = $(KIM_DIR)/Makefile.KIM_Config                           \
                  $(KIM_DIR)/MAKE_SYSTEM/Makefile.Generic                 \
@@ -87,11 +99,11 @@ ifeq ($(KIM_LINK),static-link)
 endif
 
 # Set correct lib file name depending on type of compilation
-KIM_LIB_NAME = kim
+KIM_LIB_NAME = $(full_package_name)
 KIMLIBFILE = lib$(KIM_LIB_NAME)
 MODELLIBFILE = $(KIMLIBFILE)-model
 MODELDRIVERLIBFILE = $(KIMLIBFILE)-model-driver
-ifneq ($(KIM_LINK),static-link)
+ifeq ($(KIM_LINK),static-link)
    KIMLIBFULLFILE = $(KIM_DIR)/KIM_API/$(KIMLIBFILE).a
 else
    KIMLIBFULLFILE = $(KIM_DIR)/KIM_API/$(KIMLIBFILE).so
@@ -192,15 +204,15 @@ KIM_FTYPE_STANDARD_COMPILE_LIST = $(ARCHFLAG) $(PICFLAG) $(FCRAYFLAG) $(KIMINCLU
                $(LDEXPORTLISTFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@  \
                $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
                $(if $(filter-out dynamic-load,$(KIM_LINK)),,$(KIMLIBFLAGS) $(KIMLIB)) \
-               $(if $(filter-out dynamic-link,$(KIM_LINK)),,$(if $(filter MODEL_DRIVER_NAME,$(.VARIABLES)),$(if $(filter MODEL_NAME,$(.VARIABLES)),$(KIM_MODEL_DRIVERS_DIR)/$(MODEL_DRIVER_NAME)/$(MODEL_DRIVER_NAME).so,),)) \
+               $(if $(filter-out dynamic-link,$(KIM_LINK)),,$(if $(filter MODEL_DRIVER_NAME,$(.VARIABLES)),$(if $(filter MODEL_NAME,$(.VARIABLES)),$(KIM_MODEL_DRIVERS_DIR)/$(MODEL_DRIVER_NAME)/$(MODELDRIVERLIBFILE).so,),)) \
                $(LDDYNAMICLIB) $(XLANGLDLIBS) $(LDLIBS)
         #INSTALLTAG - lines between tags will be removed by install target
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDSHAREDFLAG) \
-               $(LINKSONAME)$(if $(filter-out dynamic-load,$(KIM_LINK)),$(DESTDIR)$(libdir)/$(package_name)/$(if $(filter MODEL_NAME,$(.VARIABLES)),MODELS,MODEL_DRIVERS)/$*/,)$*.so \
+               $(LINKSONAME)$(if $(filter-out dynamic-load,$(KIM_LINK)),$(DESTDIR)$(libdir)/$(package_name)/$(if $(filter MODEL_NAME,$(.VARIABLES)),$(modelsdir),$(modeldriversdir))/$*/,)$*.so \
                $(LDEXPORTLISTFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@  \
                $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
                $(if $(filter-out dynamic-load,$(KIM_LINK)),,$(KIM_DIR)/KIM_API/.$(KIMLIBFILE).so) \
-               $(if $(filter-out dynamic-link,$(KIM_LINK)),,$(if $(filter MODEL_DRIVER_NAME,$(.VARIABLES)),$(if $(filter MODEL_NAME,$(.VARIABLES)),$(KIM_MODEL_DRIVERS_DIR)/$(MODEL_DRIVER_NAME)/.$(MODEL_DRIVER_NAME).so,),)) \
+               $(if $(filter-out dynamic-link,$(KIM_LINK)),,$(if $(filter MODEL_DRIVER_NAME,$(.VARIABLES)),$(if $(filter MODEL_NAME,$(.VARIABLES)),$(KIM_MODEL_DRIVERS_DIR)/$(MODEL_DRIVER_NAME)/.$(MODELDRIVERLIBFILE).so,),)) \
                $(LDDYNAMICLIB) $(XLANGLDLIBS) $(LDLIBS)
         #INSTALLTAG
 

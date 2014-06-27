@@ -53,7 +53,7 @@ else
    endif
 endif
 
-.PHONY: STATIC_COMP_WARNING clean install uninstall
+.PHONY: STATIC_COMP_WARNING clean install installdirs uninstall
 STATIC_COMP_WARNING:
 	@printf '\n'; \
         printf '*******************************************************************************\n'; \
@@ -176,8 +176,15 @@ clean:
 	@printf "Cleaning... Model.......... $(MODEL_NAME).\n"
 	$(QUELL)rm -f $(addsuffix $(MODELLIBFILE).,a so) .$(MODELLIBNAME).so $(PARAM_MODEL_NAME).o $(MODEL_NAME).kim $(KDF_STR_NAME).o
 
-install: all
-	@printf "Installing...($(DESTDIR)$(libdir)/$(package_name)/MODELS).......... Model.......... $(MODEL_NAME)"
+install_parammodeldir = $(MODEL_NAME)
+
+installdirs:
+ifneq (static-link,$(KIM_LINK))
+	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(DESTDIR)$(libdir)/$(full_package_name)/$(modelsdir)/$(install_parammodeldir)"
+endif
+
+install: all installdirs
+	@printf "Installing...($(DESTDIR)$(libdir)/$(full_package_name)/$(modelsdir)).......... Model.......... $(MODEL_NAME)"
 ifneq (static-link,$(KIM_LINK))
 	@printf ".\n"
 	$(QUELL)if test \( x"$(driver_location)" != x"$(KIM_MODEL_DRIVERS_DIR)" \); then                         \
@@ -185,19 +192,16 @@ ifneq (static-link,$(KIM_LINK))
                    printf "  has not been installed.  Please install the Model Driver and try again.\n";         \
                   false;                                                                                         \
                 fi
-	$(QUELL)mkdir -p $(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)
-	$(QUELL)cp $(if $(KIM_INSTALLED),,.)$(MODEL_NAME).so $(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)/$(PARAM_MODEL_NAME).so
-	$(QUELL)chmod 644 $(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)/$(PARAM_MODEL_NAME).so
+	$(QUELL)$(INSTALL_PROGRAM) -m 0644 "$(if $(KIM_INSTALLED),,.)$(MODELLIBFILE).so" "$(DESTDIR)$(libdir)/$(full_package_name)/$(modelsdir)/$(install_parammodeldir)/$(MODELLIBFILE).so"
 else
 	@printf ": nothing to be done for static-link.\n"
 endif
 
 uninstall:
-	@printf "Uninstalling...($(DESTDIR)$(libdir)/$(package_name)/MODELS).......... Model.......... $(MODEL_NAME)"
+	@printf "Uninstalling...($(DESTDIR)$(libdir)/$(full_package_name)/$(modelsdir)).......... Model.......... $(MODEL_NAME)"
 ifneq (static-link,$(KIM_LINK))
 	@printf ".\n"
-	$(QUELL)rm -f "$(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)/$(PARAM_MODEL_NAME).so"
-	$(QUELL)if test \( -d "$(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)" \); then rmdir "$(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)" >& /dev/null; fi
+	$(QUELL)rm -rf "$(DESTDIR)$(libdir)/$(full_package_name)/$(modelsdir)/$(install_parammodeldir)"
 else
 	@printf ": nothing to be done for static-link.\n"
 endif

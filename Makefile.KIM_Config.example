@@ -46,10 +46,18 @@ KIM_LINK = dynamic-load
 # load default compiler options
 include $(KIM_DIR)/MAKE_SYSTEM/Makefile.LoadDefaults
 
-# overwrite default verbosity value (uncomment the line below if desired)
+# override default verbosity value (uncomment the line below if desired)
 # KIM_MAKE_VERBOSITY = full
 
 # override default compiler options and other variables here
+
+
+# override default install options
+#package_name =
+#prefix =
+#exec_prefix =
+#libdir =
+#bindir =
 
 # load rest of generic make settings
 include $(KIM_DIR)/MAKE_SYSTEM/Makefile.Generic

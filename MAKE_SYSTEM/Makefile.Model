@@ -52,7 +52,7 @@ else
    endif
 endif
 
-.PHONY: STATIC_COMP_WARNING clean install uninstall
+.PHONY: STATIC_COMP_WARNING clean install installdirs uninstall
 STATIC_COMP_WARNING:
 	@printf '\n'; \
         printf '*******************************************************************************\n'; \
@@ -114,24 +114,27 @@ clean:
                       $(KDF_STR_NAME).o \
                       init_wrapper.o $(LOCALCLEAN)
 
-install: all
-	@printf "Installing...($(DESTDIR)$(libdir)/$(package_name)/MODELS).......... Model.......... $(MODEL_NAME)"
+install_modeldir = $(MODEL_NAME)
+
+installdirs:
+ifneq (static-link,$(KIM_LINK))
+	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(DESTDIR)$(libdir)/$(full_package_name)/$(modelsdir)/$(install_modeldir)"
+endif
+
+install: all installdirs
+	@printf "Installing...($(DESTDIR)$(libdir)/$(full_package_name)/$(modelsdir)).......... Model.......... $(MODEL_NAME)"
 ifneq (static-link,$(KIM_LINK))
 	@printf ".\n"
-	$(QUELL)mkdir -p $(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)
-	$(QUELL)cp $(if $(KIM_INSTALLED),,.)$(MODELLIBFILE).so $(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)/$(MODELLIBFILE).so
-	$(QUELL)chmod 644 $(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)/$(MODELLIBFILE).so
+	$(QUELL)$(INSTALL_PROGRAM) -m 0644 "$(if $(KIM_INSTALLED),,.)$(MODELLIBFILE).so" "$(DESTDIR)$(libdir)/$(full_package_name)/$(modelsdir)/$(install_modeldir)/$(MODELLIBFILE).so"
 else
 	@printf ": nothing to be done for static-link.\n"
 endif
 
 uninstall:
-	@printf "Uninstalling...($(DESTDIR)$(libdir)/$(package_name)/MODELS).......... Model.......... $(MODEL_NAME)"
+	@printf "Uninstalling...($(DESTDIR)$(libdir)/$(full_package_name)/$(modelsdir)).......... Model.......... $(MODEL_NAME)"
 ifneq (static-link,$(KIM_LINK))
 	@printf ".\n"
-	$(QUELL)rm -f "$(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)/$(MODELLIBFILE).so"
-	$(QUELL)if test \( -d "$(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)" \); then rmdir "$(DESTDIR)$(libdir)/$(package_name)/MODELS/$(MODEL_NAME)" >& /dev/null; fi
-
+	$(QUELL)rm -rf "$(DESTDIR)$(libdir)/$(full_package_name)/$(modelsdir)/$(install_modeldir)"
 else
 	@printf ": nothing to be done for static-link.\n"
 endif
