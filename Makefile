@@ -124,7 +124,8 @@ ifeq (dynamic-load,$(KIM_LINK))
 	$(QUELL)for fl in $(install_make); do $(INSTALL_PROGRAM) -m 0644 "$(install_makedir)/$$fl" "$(DESTDIR)$(libdir)/$(full_package_name)/$(install_makedir)/$$fl"; done
 	$(QUELL)printf ',s|^ *prefix *=.*|prefix = $(prefix)|\nw\nq\n' | ed "$(DESTDIR)$(libdir)/$(full_package_name)/$(install_makedir)/Makefile.LoadDefaults" >& /dev/null
 	$(QUELL)printf ',s|^ *libdir *=.*|libdir = $(libdir)|\nw\nq\n' | ed "$(DESTDIR)$(libdir)/$(full_package_name)/$(install_makedir)/Makefile.LoadDefaults" >& /dev/null
-	$(QUELL)printf '/ *#INSTALLTAG/,/ *#INSTALLTAG/d\nw\nq\n' | ed "$(DESTDIR)$(libdir)/$(full_package_name)/$(install_makedir)/Makefile.Generic" >& /dev/null
+	$(QUELL)printf ',s|^ *KIMINCLUDEFLAG *=.*|KIMINCLUDEFLAG = -I$$(KIM_DIR)/include|\nw\nq\n' | ed "$(DESTDIR)$(libdir)/$(full_package_name)/$(install_makedir)/Makefile.Generic" >& /dev/null
+	$(QUELL)printf ',s|/KIM_API||g\nw\nq\n' | ed "$(DESTDIR)$(libdir)/$(full_package_name)/$(install_makedir)/Makefile.Generic" >& /dev/null
         # Install compiler defaults directory
 	$(QUELL)for fl in $(install_compiler); do $(INSTALL_PROGRAM) -m 0644 "$(install_compilerdir)/$$fl" "$(DESTDIR)$(libdir)/$(full_package_name)/$(install_compilerdir)/$$fl"; done
         # Install linker defaults directory
@@ -135,10 +136,9 @@ ifeq (dynamic-load,$(KIM_LINK))
 	$(QUELL)printf 'g/KIM_MODELS_DIR/d\nw\nq\n' | ed "$(DESTDIR)$(libdir)/$(full_package_name)/Makefile.KIM_Config" >& /dev/null
 	$(QUELL)printf 'g/KIM_TESTS_DIR/d\nw\nq\n'| ed "$(DESTDIR)$(libdir)/$(full_package_name)/Makefile.KIM_Config" >& /dev/null
 	$(QUELL)printf ',s|^ *KIM_DIR *=.*|KIM_DIR = $(libdir)/$(full_package_name)|\nw\nq\n' | ed "$(DESTDIR)$(libdir)/$(full_package_name)/Makefile.KIM_Config" >& /dev/null
-	$(QUELL)printf '/^KIM_DIR =/i\nKIM_INSTALLED = yes\n.\nw\nq\n' | ed "$(DESTDIR)$(libdir)/$(full_package_name)/Makefile.KIM_Config" >& /dev/null
         # Install version file
 	$(QUELL)$(INSTALL_PROGRAM) -m 0644 Makefile.Version "$(DESTDIR)$(libdir)/$(full_package_name)/Makefile.Version"
-	$(QUELL)printf ',s|.*git rev-parse.*|VERSION_BUILDMETADATA = $(shell git rev-parse --short HEAD)|\nw\nq\n' | ed "$(DESTDIR)$(libdir)/$(full_package_name)/Makefile.Version" >& /dev/null
+	$(QUELL)printf ',s|.*git rev-parse.*|VERSION_BUILD_METADATA = $(shell git rev-parse --short HEAD)|\nw\nq\n' | ed "$(DESTDIR)$(libdir)/$(full_package_name)/Makefile.Version" >& /dev/null
 	@printf ".\n"
 else ifeq (dynamic-link,$(KIM_LINK))
 	$(QUELL)if test \( -d "$(DESTDIR)$(libdir)/$(full_package_name)/$(install_makedir)" \) -o \
@@ -169,6 +169,7 @@ else
 	@printf ": nothing to be done for static-link.\n"
 endif
 	$(QUELL)if test \( -d "$(DESTDIR)$(libdir)/$(full_package_name)" \); then rmdir "$(DESTDIR)$(libdir)/$(full_package_name)" >& /dev/null || true; fi
+	$(QUELL)if test \( -d "$(DESTDIR)$(includedir)" \); then rmdir "$(DESTDIR)$(includedir)" >& /dev/null || true; fi
 	$(QUELL)if test \( -d "$(DESTDIR)$(bindir)" \); then rmdir "$(DESTDIR)$(bindir)" >& /dev/null || true; fi
 	$(QUELL)if test \( -d "$(DESTDIR)$(libdir)" \); then rmdir "$(DESTDIR)$(libdir)" >& /dev/null || true; fi
 	$(QUELL)if test \( -d "$(DESTDIR)$(exec_prefix)" \); then rmdir "$(DESTDIR)$(exec_prefix)" >& /dev/null || true; fi

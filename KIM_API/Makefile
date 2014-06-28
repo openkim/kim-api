@@ -119,7 +119,7 @@ $(KIMLIBFILE).so: $(KIMLIBFILE).a .$(KIMLIBFILE).a $(if $(filter-out dynamic-loa
                          $(foreach mdl, $(MODELS_LIST),$(KIM_MODELS_DIR)/$(mdl)/$(MODELLIBFILE).so) \
                          $(foreach mdldrv, $(MODEL_DRIVERS_LIST),$(KIM_MODEL_DRIVERS_DIR)/$(mdldrv)/$(MODELDRIVERLIBFILE).so),) \
                       $(LDLIBS)
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDSHAREDFLAG) $(LINKSONAME)$(DESTDIR)$(libdir)/$(full_package_name)/KIM_API/$@ $(LDFLAGS) $(OUTPUTINFLAG) .$@ \
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDSHAREDFLAG) $(LINKSONAME)$(libdir)/$(full_package_name)/$@ $(LDFLAGS) $(OUTPUTINFLAG) .$@ \
                       $(LDWHOLEARCHIVESTARTFLAG) .$< $(LDWHOLEARCHIVEENDFLAG) \
                       $(LDDYNAMICLIB) $(XLANGLDLIBS) \
                       $(if $(filter-out dynamic-load,$(KIM_LINK)),\
@@ -224,6 +224,7 @@ install_bin = $(full_package_name)-descriptor-file-match
 installdirs:
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(DESTDIR)$(bindir)"
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(DESTDIR)$(libdir)/$(full_package_name)/$(install_includedir)"
+	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(DESTDIR)$(includedir)"
 ifneq (static-link,$(KIM_LINK))
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(DESTDIR)$(libdir)/$(full_package_name)/$(install_modelsdir)"
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(DESTDIR)$(libdir)/$(full_package_name)/$(install_modeldriversdir)"
@@ -238,6 +239,7 @@ libs-install: libs installdirs
 	@printf "Installing...($(DESTDIR)$(libdir)/$(full_package_name))................................. KIM_API"
 	$(QUELL)for fl in $(install_bin); do $(INSTALL_PROGRAM) -m 0755 "$$fl" "$(DESTDIR)$(bindir)/$$fl"; done
 	$(QUELL)for fl in $(install_include); do $(INSTALL_PROGRAM) -m 0644 "$$fl" "$(DESTDIR)$(libdir)/$(full_package_name)/$(install_includedir)/$$fl"; done
+	$(QUELL)ln -fs "$(libdir)/$(full_package_name)/$(install_includedir)" "$(DESTDIR)$(includedir)/$(full_package_name)"
 ifneq (static-link,$(KIM_LINK))
 	$(QUELL)$(INSTALL_PROGRAM) -m 0644 ".$(KIMLIBFILE).so" "$(DESTDIR)$(libdir)/$(full_package_name)/lib$(package_name)-v$(VERSION_FULL).so"
 	$(QUELL)ln -fs "lib$(package_name)-v$(VERSION_FULL).so" "$(DESTDIR)$(libdir)/$(full_package_name)/$(KIMLIBFILE).so"
@@ -259,6 +261,7 @@ libs-uninstall: uninstall-cleanup
 	@printf "Uninstalling...($(DESTDIR)$(libdir)/$(full_package_name))................................. KIM_API.\n"
 	$(QUELL)for fl in $(install_bin); do rm -f "$(DESTDIR)$(bindir)/$$fl"; done
 	$(QUELL)rm -rf "$(DESTDIR)$(libdir)/$(full_package_name)/$(install_includedir)"
+	$(QUELL)rm -f "$(DESTDIR)$(includedir)/$(full_package_name)"
 ifneq (static-link,$(KIM_LINK))
 	$(QUELL)rm -f "$(DESTDIR)$(libdir)/$(KIMLIBFILE).so"
 	$(QUELL)rm -f "$(DESTDIR)$(libdir)/$(full_package_name)/$(KIMLIBFILE).so"
@@ -271,6 +274,5 @@ endif
 
 uninstall-cleanup:
 	@printf "Uninstalling...($(DESTDIR)$(libdir)/$(full_package_name))................................. subdirectories.\n"
-	$(QUELL)if test \( -d "$(DESTDIR)$(bindir)" \); then rmdir "$(DESTDIR)$(bindir)" >& /dev/null || true; fi
 	$(QUELL)if test \( -d "$(DESTDIR)$(libdir)/$(full_package_name)/$(install_modelsdir)" \); then rmdir "$(DESTDIR)$(libdir)/$(full_package_name)/$(install_modelsdir)" >& /dev/null || true; fi
 	$(QUELL)if test \( -d "$(DESTDIR)$(libdir)/$(full_package_name)/$(install_modeldriversdir)" \); then rmdir "$(DESTDIR)$(libdir)/$(full_package_name)/$(install_modeldriversdir)" >& /dev/null || true; fi

@@ -125,7 +125,7 @@ install: all installdirs
 	@printf "Installing...($(DESTDIR)$(libdir)/$(full_package_name)/$(modelsdir)).......... Model.......... $(MODEL_NAME)"
 ifneq (static-link,$(KIM_LINK))
 	@printf ".\n"
-	$(QUELL)$(INSTALL_PROGRAM) -m 0644 "$(if $(KIM_INSTALLED),,.)$(MODELLIBFILE).so" "$(DESTDIR)$(libdir)/$(full_package_name)/$(modelsdir)/$(install_modeldir)/$(MODELLIBFILE).so"
+	$(QUELL)$(INSTALL_PROGRAM) -m 0644 ".$(MODELLIBFILE).so" "$(DESTDIR)$(libdir)/$(full_package_name)/$(modelsdir)/$(install_modeldir)/$(MODELLIBFILE).so"
 else
 	@printf ": nothing to be done for static-link.\n"
 endif

@@ -119,7 +119,7 @@ install: all installdirs
 	@printf "Installing...($(DESTDIR)$(libdir)/$(full_package_name)/$(modeldriversdir))... Model Driver... $(MODEL_DRIVER_NAME)"
 ifneq (static-link,$(KIM_LINK))
 	@printf ".\n"
-	$(QUELL)$(INSTALL_PROGRAM) -m 0644 "$(if $(KIM_INSTALLED),,.)$(MODELDRIVERLIBFILE).so" "$(DESTDIR)$(libdir)/$(full_package_name)/$(modeldriversdir)/$(install_modeldriverdir)/$(MODELDRIVERLIBFILE).so"
+	$(QUELL)$(INSTALL_PROGRAM) -m 0644 ".$(MODELDRIVERLIBFILE).so" "$(DESTDIR)$(libdir)/$(full_package_name)/$(modeldriversdir)/$(install_modeldriverdir)/$(MODELDRIVERLIBFILE).so"
   ifeq (dynamic-load,$(KIM_LINK))
 	$(QUELL)$(INSTALL_PROGRAM) -m 0644 "$(MODEL_DRIVER_NAME).kim" "$(DESTDIR)$(libdir)/$(full_package_name)/$(modeldriversdir)/$(install_modeldriverdir)/$(MODEL_DRIVER_NAME).kim"
   else

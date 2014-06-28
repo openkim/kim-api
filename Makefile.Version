@@ -52,14 +52,18 @@
 # manually.
 #
 # The BUILD_METADATA value can be set to any value allowed by the Semantic
-# Versioning specification.  Within the git repository for the openkim-api
-# package the value is always obtained from the "git rev-parse" command.  This
-# sets the BUILD_METADATA to the current commit hash value.  The packaging
-# script will automatically set this value to "" for official releases.  The
-# value may be changed by package manager tools, if this is desirable.
+# Versioning specification.  By default, the value is set to indicate the
+# compile settings KIM_COMPILERSUITE, KIM_SYSTEMLINKER, KIM_SYSARCH, and
+# KIM_LINK specified in the Makefile.KIM_Config file.  Within the git
+# repository for the openkim-api package the value has the current commit hash
+# value prepended via the "git rev-pars command".  The packaging script will
+# automatically remove the "git rev-parse command" for official releases.  The
+# value of BUILD_METADATA may be changed by package manager tools, if this is
+# desirable.
 #
+
 VERSION_MAJOR = 1
 VERSION_MINOR = 5
 VERSION_PATCH = 0
 VERSION_PRERELEASE = git
-VERSION_BUILD_METADATA = $(shell git rev-parse --short HEAD)
+VERSION_BUILD_METADATA = $(shell git rev-parse --short HEAD).$(KIM_COMPILERSUITE).$(KIM_SYSTEMLINKER).$(KIM_SYSTEMARCH).$(KIM_LINK)

@@ -31,7 +31,7 @@
 # check for errors
 
 if test $# -lt 4; then
-  printf "usage: %s packagename major minor patch [prerelease [build_metadata]]\n" $0
+  printf "usage: %s packagename major minor patch [prerelease]\n" $0
   exit
 fi
 
@@ -44,15 +44,11 @@ patch=$4
 versionstring=v${major}.${minor}.${patch}
 if test $# -ge 5; then
   prerelease=$5
+  prerelease_w_space=" ${prerelease}"
   versionstring=${versionstring}-${prerelease}
 else
   prerelease=""
-fi
-if test $# -ge 6; then
-  build=$6
-  versionstring=${versionstring}+${build}
-else
-  build=""
+  prerelease_w_space=""
 fi
 
 # check for more errors
@@ -95,8 +91,8 @@ printf "By `git config user.name` (`git config user.email`) on `date`.\n"       
 rm -rf '.git'
 
 ed Makefile.Version <<EOF
-,s/^VERSION_PRERELEASE.*/VERSION_PRERELEASE = ${prerelease}/
-,s/^VERSION_BUILD_METADATA.*/VERSION_BUILD_METADATA = ${build}/
+,s/^VERSION_PRERELEASE.*/VERSION_PRERELEASE =${prerelease_w_space}/
+g/VERSION_BUILD_METADATA/s/\$(shell[^)]*)\.//
 w
 EOF
 

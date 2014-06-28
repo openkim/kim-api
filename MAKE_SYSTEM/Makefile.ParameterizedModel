@@ -192,7 +192,7 @@ ifneq (static-link,$(KIM_LINK))
                    printf "  has not been installed.  Please install the Model Driver and try again.\n";         \
                   false;                                                                                         \
                 fi
-	$(QUELL)$(INSTALL_PROGRAM) -m 0644 "$(if $(KIM_INSTALLED),,.)$(MODELLIBFILE).so" "$(DESTDIR)$(libdir)/$(full_package_name)/$(modelsdir)/$(install_parammodeldir)/$(MODELLIBFILE).so"
+	$(QUELL)$(INSTALL_PROGRAM) -m 0644 ".$(MODELLIBFILE).so" "$(DESTDIR)$(libdir)/$(full_package_name)/$(modelsdir)/$(install_parammodeldir)/$(MODELLIBFILE).so"
 else
 	@printf ": nothing to be done for static-link.\n"
 endif

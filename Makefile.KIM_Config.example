@@ -55,6 +55,7 @@ include $(KIM_DIR)/MAKE_SYSTEM/Makefile.LoadDefaults
 # override default install options
 #package_name =
 #prefix =
+#includedir =
 #exec_prefix =
 #libdir =
 #bindir =

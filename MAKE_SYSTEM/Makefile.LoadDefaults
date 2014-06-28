@@ -60,6 +60,7 @@ endif
 INSTALL_PROGRAM = install
 package_name = openkim-api
 prefix = /usr/local
+includedir = $(prefix)/include
 exec_prefix = $(prefix)
 libdir = $(exec_prefix)/lib
 bindir = $(exec_prefix)/bin

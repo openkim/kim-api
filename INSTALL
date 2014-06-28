@@ -120,6 +120,11 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
        some instances.  `static-link' only works with ONE Model and AT MOST ONE
        Model Driver (in order to avoid the possibility of symbol clashes).
 
+       * NOTE: When using the dynamic-link or static-link settings the entire
+               KIM API must be recompiled when the list of Model Drivers and/or
+               Models to be compiled changes.  This is not the case for the
+               dynamic-load setting.
+
    (h) Set the value of KIM_MAKE_VERBOSITY, if a value other than the default
        (`quiet') is desired.  Possible values are `quite' and `full'.
 
@@ -201,6 +206,7 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
        # override default install directories
        package_name = # default is 'openkim-api'
        prefix =       # default is '/usr/local'
+       includedir =   # default is '$(prefix)/include'
        exec_prefix =  # default is '$(prefix)'
        libdir =       # default is '$(exec_prefix)/lib'
        bindir =       # default is '$(exec_prefix)/bin'
@@ -269,7 +275,13 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
    changes are made to the code, perform the `make' portion of step 3 again
    (from the ${KD} directory).
 
-6. If you wish, install the KIM API to the system-wide directories.
+6. If you wish, install the KIM API to the system-wide directories.  (Recall
+   that if you are using the KIM_LINK=dynamic-link or KIM_LINK=static-link
+   settings you must recompile and install the entire KIM API package in order
+   to make changes (additions, deletions, updates) to the set of system-wide
+   installed Model Drivers and Models.  Conversely, if you are using the
+   KIM_LINK=dynmaic-load setting, then you can make changes to the system-wide
+   installed Model Drivers and Models at any time.)
 
    % make install
 
@@ -325,13 +337,14 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
      as listed in $(HOME)/.$(package_name)/config-vX ("User Models")
      `$(libdir)/$(full_package_name)/MODELS/'        ("System Models")
 
-   After the KIM API has been installed (and the original source directory has
-   been deleted) it is still possible to compile Model Drivers and Models.
-   These can be placed in the current working directory (CWD), or installed in
-   the directory listed in the `config-vX' file, or installed in the
-   system-wide Model Drivers and Models directories.  To create a new Model
-   Driver of Model and install it in the appropriate system-wide directory or
-   in the directory listed in the `config-vX' file, follow these steps:
+   If the KIM API has been installed using KIM_LINK=dynamic-load and the
+   original source directory has been deleted, it is still possible to compile
+   Model Drivers and Models.  These can be placed in the current working
+   directory (CWD), or installed in the directory listed in the `config-vX'
+   file, or installed in the system-wide Model Drivers and Models directories.
+   To create a new Model Driver of Model and install it in the appropriate
+   system-wide directory or in the directory listed in the `config-vX' file,
+   follow these steps:
 
    (a) If you don't want to set up a user specified directory, skip to the next
        item.  Otherwise, create these files now (here we will use

@@ -42,9 +42,9 @@ include $(KIM_DIR)/Makefile.Version
 VERSION_MAJOR := $(strip $(VERSION_MAJOR))
 VERSION_MINOR := $(strip $(VERSION_MINOR))
 VERSION_PATCH := $(strip $(VERSION_PATCH))
-VERSION_RELEASE := $(strip $(VERSION_RELEASE))
-VERSION_BUILD := $(strip $(VERSION_BUILD))
-VERSION_FULL := $(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_PATCH)$(if $(VERSION_RELEASE),-$(VERSION_RELEASE))$(if $(VERSION_BUILD),+$(VERSION_BUILD))
+VERSION_PRERELEASE := $(strip $(VERSION_PRERELEASE))
+VERSION_BUILD_METADATA := $(strip $(VERSION_BUILD_METADATA))
+VERSION_FULL := $(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_PATCH)$(if $(VERSION_PRERELEASE),-$(VERSION_PRERELEASE))$(if $(VERSION_BUILD_METADATA),+$(VERSION_BUILD_METADATA))
 
 # Set full package name
 full_package_name = $(package_name)-v$(VERSION_MAJOR)
@@ -108,7 +108,7 @@ ifeq ($(KIM_LINK),static-link)
 else
    KIMLIBFULLFILE = $(KIM_DIR)/KIM_API/$(KIMLIBFILE).so
 endif
-KIMLIBFLAGS = -L$(KIM_DIR)/KIM_API/
+KIMLIBFLAGS = -L$(KIM_DIR)/KIM_API
 KIMLIB      = -l$(KIM_LIB_NAME)
 
 #set default goals allways all
@@ -200,21 +200,19 @@ KIM_FTYPE_STANDARD_COMPILE_LIST = $(ARCHFLAG) $(PICFLAG) $(FCRAYFLAG) $(KIMINCLU
 %.so: %.a $(EXPORT_LIST_NAME)
 	@printf "Creating... $@.\n"
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDSHAREDFLAG) \
-               $(LINKSONAME)$(if $(filter-out dynamic-load,$(KIM_LINK)),$(if $(filter MODEL_NAME,$(.VARIABLES)),$(KIM_MODELS_DIR),$(KIM_MODEL_DRIVERS_DIR))/$*/,)$*.so \
+               $(LINKSONAME)$(if $(filter MODEL_NAME,$(.VARIABLES)),$(KIM_MODELS_DIR)/$(MODEL_NAME),$(KIM_MODEL_DRIVERS_DIR)/$(MODEL_DRIVER_NAME))/$*.so \
                $(LDEXPORTLISTFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@  \
                $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
                $(if $(filter-out dynamic-load,$(KIM_LINK)),,$(KIMLIBFLAGS) $(KIMLIB)) \
                $(if $(filter-out dynamic-link,$(KIM_LINK)),,$(if $(filter MODEL_DRIVER_NAME,$(.VARIABLES)),$(if $(filter MODEL_NAME,$(.VARIABLES)),$(KIM_MODEL_DRIVERS_DIR)/$(MODEL_DRIVER_NAME)/$(MODELDRIVERLIBFILE).so,),)) \
                $(LDDYNAMICLIB) $(XLANGLDLIBS) $(LDLIBS)
-        #INSTALLTAG - lines between tags will be removed by install target
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDSHAREDFLAG) \
-               $(LINKSONAME)$(if $(filter-out dynamic-load,$(KIM_LINK)),$(DESTDIR)$(libdir)/$(package_name)/$(if $(filter MODEL_NAME,$(.VARIABLES)),$(modelsdir),$(modeldriversdir))/$*/,)$*.so \
+               $(LINKSONAME)$(libdir)/$(full_package_name)/$(if $(filter MODEL_NAME,$(.VARIABLES)),$(modelsdir)/$(MODEL_NAME),$(modeldriversdir)/$(MODEL_DRIVER_NAME))/$*.so \
                $(LDEXPORTLISTFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@  \
                $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
                $(if $(filter-out dynamic-load,$(KIM_LINK)),,$(KIM_DIR)/KIM_API/.$(KIMLIBFILE).so) \
                $(if $(filter-out dynamic-link,$(KIM_LINK)),,$(if $(filter MODEL_DRIVER_NAME,$(.VARIABLES)),$(if $(filter MODEL_NAME,$(.VARIABLES)),$(KIM_MODEL_DRIVERS_DIR)/$(MODEL_DRIVER_NAME)/.$(MODELDRIVERLIBFILE).so,),)) \
                $(LDDYNAMICLIB) $(XLANGLDLIBS) $(LDLIBS)
-        #INSTALLTAG
 
 # KIM descriptor file make rule
 KDF_STR_NAME = kim_str
