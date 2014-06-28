@@ -1,5 +1,5 @@
 /*descriptor-file-match
-/model_init_include_stubs.c
+/model_init_include_stubs.cpp
 /model_init_include_stubs.o
 /model_init_include.cpp
 /model_init_include.h

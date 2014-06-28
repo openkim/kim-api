@@ -114,7 +114,7 @@ void directoryPath(DirectoryPathType type, std::list<std::string>* const lst)
   switch (type)
   {
     case KIM_DIR:
-      lst->push_back(std::string(LIBDIR).append(FULLPACKAGENAME));
+      lst->push_back(std::string(PACKAGEDIR));
       break;
     case KIM_MODEL_DRIVERS_DIR:
       lst->push_back(std::string("."));
@@ -122,9 +122,7 @@ void directoryPath(DirectoryPathType type, std::list<std::string>* const lst)
       {
         lst->push_back(userDirs[0]);
       }
-      lst->push_back(std::string(LIBDIR)
-                     .append("/").append(FULLPACKAGENAME).append("/")
-                     .append(MODELDRIVERSDIR));
+      lst->push_back(std::string(PACKAGEDIR).append("/").append(MODELDRIVERSDIR));
       break;
     case KIM_MODELS_DIR:
       lst->push_back(std::string("."));
@@ -132,9 +130,7 @@ void directoryPath(DirectoryPathType type, std::list<std::string>* const lst)
       {
         lst->push_back(userDirs[1]);
       }
-      lst->push_back(std::string(LIBDIR)
-                     .append("/").append(FULLPACKAGENAME).append("/")
-                     .append(MODELSDIR));
+      lst->push_back(std::string(PACKAGEDIR).append("/").append(MODELSDIR));
       break;
     default:
       break;

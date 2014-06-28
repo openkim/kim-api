@@ -37,6 +37,9 @@ ifndef KIM_DIR
 endif
 
 # The openkim-api subdirectories:
+makedir = MAKE_SYSTEM
+makecompilerdir = $(makedir)/COMPILER_DEFAULTS
+makelinkerdir = $(makedir)/LINKER_DEFAULTS
 modelsdir = MODELS
 modeldriversdir = MODEL_DRIVERS
 testsdir = TESTS
@@ -57,13 +60,18 @@ ifndef KIM_MAKE_VERBOSITY
 endif
 
 # INSTALL stuff
-INSTALL_PROGRAM = install
 package_name = openkim-api
 prefix = /usr/local
 includedir = $(prefix)/include
 exec_prefix = $(prefix)
 libdir = $(exec_prefix)/lib
 bindir = $(exec_prefix)/bin
+
+# INSTALL short cut values for internal use
+INSTALL_PROGRAM = install
+full_package_name = $(package_name)-v$(VERSION_MAJOR)
+package_dir = $(libdir)/$(full_package_name)
+dest_package_dir = $(DESTDIR)$(package_dir)
 
 # sanity check
 ifeq      ($(KIM_COMPILERSUITE),GCC)

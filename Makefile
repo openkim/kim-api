@@ -47,11 +47,10 @@ KIM_CONFIG_FILES = $(KIM_DIR)/KIM_API/Makefile.KIM_Config $(KIM_MODEL_DRIVERS_DI
             $(patsubst %,%-all,  $(MODELS_LIST) $(MODEL_DRIVERS_LIST) $(TESTS_LIST)) \
         clean kim-api-clean config-clean \
             $(patsubst %,%-clean,$(MODELS_LIST) $(MODEL_DRIVERS_LIST) $(TESTS_LIST)) \
-        install installdirs kim-api-objects-install kim-api-libs-install config-install \
+        install install-check installdirs kim-api-objects-install kim-api-libs-install config-install \
             $(patsubst %,%-install,$(MODELS_LIST) $(MODEL_DRIVERS_LIST)) \
         uninstall kim-api-objects-uninstall kim-api-libs-uninstall config-uninstall \
-            $(patsubst %,%-uninstall,$(MODELS_LIST) $(MODEL_DRIVERS_LIST)) \
-        openkim-api kim-api-objects kim-api-libs \
+        kim-api-objects kim-api-libs \
         examples examples-all \
         examples-force examples-force-all \
         examples-clean examples-clean-all
@@ -68,13 +67,11 @@ endif
 # other targets
 clean: config $(patsubst %,%-clean,$(MODELS_LIST) $(MODEL_DRIVERS_LIST) $(TESTS_LIST)) kim-api-clean config-clean
 ifeq (dynamic-load,$(KIM_LINK))
-  install: config installdirs kim-api-objects-install kim-api-libs-install $(patsubst %,%-install,$(MODEL_DRIVERS_LIST) $(MODELS_LIST)) config-install
-  uninstall: config $(patsubst %,%-uninstall,$(MODELS_LIST) $(MODEL_DRIVERS_LIST)) kim-api-objects-uninstall kim-api-libs-uninstall config-uninstall
+  install: install-check config kim-api-objects-install kim-api-libs-install $(patsubst %,%-install,$(MODEL_DRIVERS_LIST) $(MODELS_LIST)) config-install
 else
-  install: config installdirs kim-api-objects-install $(patsubst %,%-install,$(MODEL_DRIVERS_LIST) $(MODELS_LIST)) kim-api-libs-install config-install
-  uninstall: config kim-api-objects-uninstall $(patsubst %,%-uninstall,$(MODELS_LIST) $(MODEL_DRIVERS_LIST)) kim-api-libs-uninstall config-uninstall
+  install: install-check config kim-api-objects-install $(patsubst %,%-install,$(MODEL_DRIVERS_LIST) $(MODELS_LIST)) kim-api-libs-install config-install
 endif
-openkim-api: config kim-api-objects kim-api-libs # compile the openkim-api
+uninstall: config kim-api-objects-uninstall kim-api-libs-uninstall config-uninstall
 examples: config examples-all                    # copy examples to appropriate directories then make
 examples-force: config examples-force-all
 examples-clean: examples-clean-all
@@ -102,78 +99,90 @@ config-clean:
 	$(QUELL)rm -f $(KIM_CONFIG_FILES)
 
 
-install_makedir = MAKE_SYSTEM
+install_makedir = $(dest_package_dir)/$(makedir)
 install_make = Makefile.Generic Makefile.LoadDefaults Makefile.Model Makefile.ModelDriver Makefile.ParameterizedModel Makefile.SanityCheck Makefile.Test model_based_on_driver.cpp
-install_compilerdir = $(install_makedir)/COMPILER_DEFAULTS
+install_compilerdir = $(dest_package_dir)/$(makecompilerdir)
 install_compiler = Makefile.GCC Makefile.INTEL
-install_linkerdir = $(install_makedir)/LINKER_DEFAULTS
+install_linkerdir = $(dest_package_dir)/$(makelinkerdir)
 install_linker = Makefile.DARWIN Makefile.FREEBSD Makefile.LINUX
 
-installdirs:
-	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(DESTDIR)$(libdir)/$(full_package_name)"
-ifeq (dynamic-load,$(KIM_LINK))
-	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(DESTDIR)$(libdir)/$(full_package_name)/$(install_makedir)"
-	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(DESTDIR)$(libdir)/$(full_package_name)/$(install_compilerdir)"
-	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(DESTDIR)$(libdir)/$(full_package_name)/$(install_linkerdir)"
+install-check:
+ifneq (dynamic-load,$(KIM_LINK))
+	@if test -d "$(dest_package_dir)"; then \
+        printf "*******************************************************************************\n"; \
+        printf "*******               This package is already installed.                *******\n"; \
+        printf "*******                 Please 'make uninstall' first.                  *******\n"; \
+        printf "*******************************************************************************\n"; \
+        false; else true; fi
+else
+        # should we check that the installed stuff is actually dynamic-load and the right settings (32bit, etc.)?
+	$(QUELL)if test -d "$(dest_package_dir)"; then \
+                  rm -rf "$(install_linkerdir)"; \
+                  rm -rf "$(install_compilerdir)"; \
+                  rm -rf "$(install_makedir)"; \
+                  rm -f  "$(dest_package_dir)/Makefile.KIM_Config"; \
+                  rm -f  "$(dest_package_dir)/Makefile.Version"; \
+                fi
 endif
 
-config-install:
-	@printf "Installing...($(DESTDIR)$(libdir)/$(full_package_name))................................. KIM_Config files"
+installdirs:
+ifeq (dynamic-load,$(KIM_LINK))
+	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(install_makedir)"
+	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(install_compilerdir)"
+	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(install_linkerdir)"
+endif
+
+config-install: installdirs
+	@printf "Installing...($(dest_package_dir))................................. KIM_Config files"
 ifeq (dynamic-load,$(KIM_LINK))
         # Install make directory
-	$(QUELL)for fl in $(install_make); do $(INSTALL_PROGRAM) -m 0644 "$(install_makedir)/$$fl" "$(DESTDIR)$(libdir)/$(full_package_name)/$(install_makedir)/$$fl"; done
-	$(QUELL)printf ',s|^ *prefix *=.*|prefix = $(prefix)|\nw\nq\n' | ed "$(DESTDIR)$(libdir)/$(full_package_name)/$(install_makedir)/Makefile.LoadDefaults" >& /dev/null
-	$(QUELL)printf ',s|^ *libdir *=.*|libdir = $(libdir)|\nw\nq\n' | ed "$(DESTDIR)$(libdir)/$(full_package_name)/$(install_makedir)/Makefile.LoadDefaults" >& /dev/null
-	$(QUELL)printf ',s|^ *KIMINCLUDEFLAG *=.*|KIMINCLUDEFLAG = -I$$(KIM_DIR)/include|\nw\nq\n' | ed "$(DESTDIR)$(libdir)/$(full_package_name)/$(install_makedir)/Makefile.Generic" >& /dev/null
-	$(QUELL)printf ',s|/KIM_API||g\nw\nq\n' | ed "$(DESTDIR)$(libdir)/$(full_package_name)/$(install_makedir)/Makefile.Generic" >& /dev/null
+	$(QUELL)for fl in $(install_make); do $(INSTALL_PROGRAM) -m 0644 "$(makedir)/$$fl" "$(install_makedir)/$$fl"; done
+#??????
+	$(QUELL)printf ',s|^ *KIMINCLUDEFLAG *=.*|KIMINCLUDEFLAG = -I$$(KIM_DIR)/include|\nw\nq\n' | ed "$(install_makedir)/Makefile.Generic" >& /dev/null
+	$(QUELL)printf ',s|/KIM_API||g\nw\nq\n' | ed "$(install_makedir)/Makefile.Generic" >& /dev/null
+#??????
         # Install compiler defaults directory
-	$(QUELL)for fl in $(install_compiler); do $(INSTALL_PROGRAM) -m 0644 "$(install_compilerdir)/$$fl" "$(DESTDIR)$(libdir)/$(full_package_name)/$(install_compilerdir)/$$fl"; done
+	$(QUELL)for fl in $(install_compiler); do $(INSTALL_PROGRAM) -m 0644 "$(makecompilerdir)/$$fl" "$(install_compilerdir)/$$fl"; done
         # Install linker defaults directory
-	$(QUELL)for fl in $(install_linker); do $(INSTALL_PROGRAM) -m 0644 "$(install_linkerdir)/$$fl" "$(DESTDIR)$(libdir)/$(full_package_name)/$(install_linkerdir)/$$fl"; done
+	$(QUELL)for fl in $(install_linker); do $(INSTALL_PROGRAM) -m 0644 "$(makelinkerdir)/$$fl" "$(install_linkerdir)/$$fl"; done
         # Install KIM_Config file
-	$(QUELL)$(INSTALL_PROGRAM) -m 0644 Makefile.KIM_Config "$(DESTDIR)$(libdir)/$(full_package_name)/Makefile.KIM_Config"
-	$(QUELL)printf 'g/KIM_MODEL_DRIVERS_DIR/d\nw\nq\n' | ed "$(DESTDIR)$(libdir)/$(full_package_name)/Makefile.KIM_Config" >& /dev/null
-	$(QUELL)printf 'g/KIM_MODELS_DIR/d\nw\nq\n' | ed "$(DESTDIR)$(libdir)/$(full_package_name)/Makefile.KIM_Config" >& /dev/null
-	$(QUELL)printf 'g/KIM_TESTS_DIR/d\nw\nq\n'| ed "$(DESTDIR)$(libdir)/$(full_package_name)/Makefile.KIM_Config" >& /dev/null
-	$(QUELL)printf ',s|^ *KIM_DIR *=.*|KIM_DIR = $(libdir)/$(full_package_name)|\nw\nq\n' | ed "$(DESTDIR)$(libdir)/$(full_package_name)/Makefile.KIM_Config" >& /dev/null
+	$(QUELL)$(INSTALL_PROGRAM) -m 0644 Makefile.KIM_Config "$(dest_package_dir)/Makefile.KIM_Config"
+	$(QUELL)fl="$(dest_package_dir)/Makefile.KIM_Config" && \
+                printf 'g/KIM_MODEL_DRIVERS_DIR/d\nw\nq\n' | ed "$$fl" >& /dev/null                && \
+                printf 'g/KIM_MODELS_DIR/d\nw\nq\n'        | ed "$$fl" >& /dev/null                && \
+                printf 'g/KIM_TESTS_DIR/d\nw\nq\n'         | ed "$$fl" >& /dev/null                && \
+                printf ',s|^ *KIM_DIR *=.*|KIM_DIR = $(dest_package_dir)|\nw\nq\n' | ed "$$fl" >& /dev/null
         # Install version file
-	$(QUELL)$(INSTALL_PROGRAM) -m 0644 Makefile.Version "$(DESTDIR)$(libdir)/$(full_package_name)/Makefile.Version"
-	$(QUELL)printf ',s|.*git rev-parse.*|VERSION_BUILD_METADATA = $(shell git rev-parse --short HEAD)|\nw\nq\n' | ed "$(DESTDIR)$(libdir)/$(full_package_name)/Makefile.Version" >& /dev/null
-	@printf ".\n"
-else ifeq (dynamic-link,$(KIM_LINK))
-	$(QUELL)if test \( -d "$(DESTDIR)$(libdir)/$(full_package_name)/$(install_makedir)" \) -o \
-                        \( -f "$(DESTDIR)$(libdir)/$(full_package_name)/Makefile.KIM_Config" \) -o \
-                        \( -f "$(DESTDIR)$(libdir)/$(full_package_name)/Makefile.Version" \); then \
-                  printf ": removing KIM_Config files for dynamic-load"; \
-                  rm -rf "$(DESTDIR)$(libdir)/$(full_package_name)/$(install_makedir)"; \
-                  rm -f "$(DESTDIR)$(libdir)/$(full_package_name)/Makefile.KIM_Config"; \
-                  rm -f "$(DESTDIR)$(libdir)/$(full_package_name)/Makefile.Version"; \
-                else \
-                  printf ": nothing to be done for dynamic-link"; \
-                fi;
+	$(QUELL)$(INSTALL_PROGRAM) -m 0644 Makefile.Version "$(dest_package_dir)/Makefile.Version"
+	$(QUELL)printf ',s|\$$(shell[^)]*).|$(shell git rev-parse --short HEAD)|\nw\nq\n' | ed "$(dest_package_dir)/Makefile.Version" >& /dev/null  # create-package script ensures this is a null-op if not in the git repo
 	@printf ".\n"
 else
-	@printf ": nothing to be done for static-link.\n"
+	@printf ": nothing to be done for $(KIM_LINK).\n";
 endif
 
+install-set-default-to-v%: EXT:=$(if $(filter-out static-link,$(KIM_LINK)),so,a)
+install-set-default-to-v%:
+	@Printf "Setting default $(package_name) to $(package_name)-v$*\n"
+        # ignore the bin files at this stage (maybe add support for default bins later...)
+	$(QUELL)fl="$(DESTDIR)$(includedir)/$(package_name)"       && if test -L "$$fl"; then rm -f "$$fl"; fi && ln -fs "$(package_name)-v$*" "$$fl"
+	$(QUELL)fl="$(DESTDIR)$(libdir)/lib$(package_name).$(EXT)" && if test -L "$$fl"; then rm -f "$$fl"; fi && ln -fs "lib$(package_name)-v$*.$(EXT)" "$$fl"
+
+uninstall-set-default: EXT:=$(if $(filter-out static-link,$(KIM_LINK)),so,a)
+uninstall-set-default:
+	@Printf "Removing default $(package_name) settings.\n"
+	$(QUELL)fl="$(DESTDIR)$(includedir)/$(package_name)"       && if test -L "$$fl"; then rm -f "$$fl"; fi
+	$(QUELL)fl="$(DESTDIR)$(libdir)/lib$(package_name).$(EXT)" && if test -L "$$fl"; then rm -f "$$fl"; fi
+
 config-uninstall:
-	@printf "Uninstalling...($(DESTDIR)$(libdir)/$(full_package_name))................................. KIM_Config files"
-ifeq (dynamic-load,$(KIM_LINK))
-	$(QUELL)if test \( -d "$(DESTDIR)$(libdir)/$(full_package_name)/$(install_makedir)" \); then rm -rf "$(DESTDIR)$(libdir)/$(full_package_name)/$(install_makedir)"; fi;
-	$(QUELL)if test \( -f "$(DESTDIR)$(libdir)/$(full_package_name)/Makefile.KIM_Config" \); then rm -f "$(DESTDIR)$(libdir)/$(full_package_name)/Makefile.KIM_Config"; fi;
-	$(QUELL)if test \( -f "$(DESTDIR)$(libdir)/$(full_package_name)/Makefile.Version" \); then rm -f "$(DESTDIR)$(libdir)/$(full_package_name)/Makefile.Version"; fi;
-	@printf ".\n"
-else ifeq (dynamic-link,$(KIM_LINK))
-	@printf ": nothing to be done for dynamic-link.\n"
-else
-	@printf ": nothing to be done for static-link.\n"
-endif
-	$(QUELL)if test \( -d "$(DESTDIR)$(libdir)/$(full_package_name)" \); then rmdir "$(DESTDIR)$(libdir)/$(full_package_name)" >& /dev/null || true; fi
-	$(QUELL)if test \( -d "$(DESTDIR)$(includedir)" \); then rmdir "$(DESTDIR)$(includedir)" >& /dev/null || true; fi
-	$(QUELL)if test \( -d "$(DESTDIR)$(bindir)" \); then rmdir "$(DESTDIR)$(bindir)" >& /dev/null || true; fi
-	$(QUELL)if test \( -d "$(DESTDIR)$(libdir)" \); then rmdir "$(DESTDIR)$(libdir)" >& /dev/null || true; fi
-	$(QUELL)if test \( -d "$(DESTDIR)$(exec_prefix)" \); then rmdir "$(DESTDIR)$(exec_prefix)" >& /dev/null || true; fi
-	$(QUELL)if test \( -d "$(DESTDIR)$(prefix)" \); then rmdir "$(DESTDIR)$(prefix)" >& /dev/null || true; fi
+	@printf "Uninstalling...($(dest_package_dir))................................. KIM_Config files.\n"
+        # Make sure the package directory is gone
+	$(QUELL)if test -d "$(dest_package_dir)"; then rm -rf "$(dest_package_dir)"; fi
+        # Uninstall the rest
+	$(QUELL)if test -d "$(DESTDIR)$(includedir)"; then rmdir "$(DESTDIR)$(includedir)" >& /dev/null || true; fi
+	$(QUELL)if test -d "$(DESTDIR)$(bindir)"; then rmdir "$(DESTDIR)$(bindir)" >& /dev/null || true; fi
+	$(QUELL)if test -d "$(DESTDIR)$(libdir)"; then rmdir "$(DESTDIR)$(libdir)" >& /dev/null || true; fi
+	$(QUELL)if test -d "$(DESTDIR)$(exec_prefix)"; then rmdir "$(DESTDIR)$(exec_prefix)" >& /dev/null || true; fi
+	$(QUELL)if test -d "$(DESTDIR)$(prefix)"; then rmdir "$(DESTDIR)$(prefix)" >& /dev/null || true; fi
 
 kim-api-objects: Makefile kim-api-objects-making-echo
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(KIM_DIR)/KIM_API/ objects
@@ -252,9 +261,6 @@ $(patsubst %,%-clean,$(MODELS_LIST)):
 $(patsubst %,%-install,$(MODELS_LIST)):
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(KIM_MODELS_DIR)/$(patsubst %-install,%,$@) install
 
-$(patsubst %,%-uninstall,$(MODELS_LIST)):
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(KIM_MODELS_DIR)/$(patsubst %-uninstall,%,$@) uninstall
-
 $(patsubst %,%-all,$(MODEL_DRIVERS_LIST)): %: Makefile Model@Driver...@%-making-echo | kim-api-objects
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(KIM_MODEL_DRIVERS_DIR)/$(patsubst %-all,%,$@) all
 
@@ -263,9 +269,6 @@ $(patsubst %,%-clean,$(MODEL_DRIVERS_LIST)):
 
 $(patsubst %,%-install,$(MODEL_DRIVERS_LIST)):
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(KIM_MODEL_DRIVERS_DIR)/$(patsubst %-install,%,$@) install
-
-$(patsubst %,%-uninstall,$(MODEL_DRIVERS_LIST)):
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(KIM_MODEL_DRIVERS_DIR)/$(patsubst %-uninstall,%,$@) uninstall
 
 $(patsubst %,%-all,$(TESTS_LIST)): %: Makefile Test...........@%-making-echo | kim-api-objects kim-api-libs $(patsubst %,%-all,$(MODELS_LIST))
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(KIM_TESTS_DIR)/$(patsubst %-all,%,$@) all

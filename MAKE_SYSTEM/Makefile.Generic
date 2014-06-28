@@ -46,9 +46,6 @@ VERSION_PRERELEASE := $(strip $(VERSION_PRERELEASE))
 VERSION_BUILD_METADATA := $(strip $(VERSION_BUILD_METADATA))
 VERSION_FULL := $(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_PATCH)$(if $(VERSION_PRERELEASE),-$(VERSION_PRERELEASE))$(if $(VERSION_BUILD_METADATA),+$(VERSION_BUILD_METADATA))
 
-# Set full package name
-full_package_name = $(package_name)-v$(VERSION_MAJOR)
-
 
 # define list of Makefiles in the KIM make system to be used for dependencies
 KIM_MAKE_FILES = $(KIM_DIR)/Makefile.KIM_Config                           \
@@ -84,8 +81,6 @@ else ifeq ($(KIM_LINK),dynamic-load)
    KIM_LINK_VALUE = 2
 endif
 
-# Set include flag
-KIMINCLUDEFLAG = -I$(KIM_DIR)/KIM_API
 
 # Set KIM define values to be used with KIMDEFINES when needed
 KIM_DEFINE_VALUES =                    \
@@ -99,17 +94,22 @@ ifeq ($(KIM_LINK),static-link)
 endif
 
 # Set correct lib file name depending on type of compilation
-KIM_LIB_NAME = $(full_package_name)
-KIMLIBFILE = lib$(KIM_LIB_NAME)
-MODELLIBFILE = $(KIMLIBFILE)-model
-MODELDRIVERLIBFILE = $(KIMLIBFILE)-model-driver
-ifeq ($(KIM_LINK),static-link)
-   KIMLIBFULLFILE = $(KIM_DIR)/KIM_API/$(KIMLIBFILE).a
-else
-   KIMLIBFULLFILE = $(KIM_DIR)/KIM_API/$(KIMLIBFILE).so
-endif
+LIB_ROOT = $(package_name)
+KIM_LIB = $(LIB_ROOT)-v$(VERSION_MAJOR)
+KIM_LIB_BUILD = $(LIB_ROOT)-v$(VERSION_FULL)
+KIM_LIB_for_dependencies = $(KIM_DIR)/KIM_API/lib$(KIM_LIB).$(if $(filter-out static-link,$(KIM_LINK)),so,a)
+MODEL_LIB = $(LIB_ROOT)-model-v$(VERSION_MAJOR)
+MODEL_LIB_BUILD = $(LIB_ROOT)-model-v$(VERSION_FULL)
+MODEL_DRIVER_LIB = $(LIB_ROOT)-model-driver-v$(VERSION_MAJOR)
+MODEL_DRIVER_LIB_BUILD = $(LIB_ROOT)-model-driver-v$(VERSION_FULL)
+
+# Set include flag
+KIMINCLUDEFLAG = -I$(KIM_DIR)/KIM_API
+
+# Set link flags
 KIMLIBFLAGS = -L$(KIM_DIR)/KIM_API
-KIMLIB      = -l$(KIM_LIB_NAME)
+KIMLIB      = -l$(KIM_LIB)
+
 
 #set default goals allways all
 .DEFAULT_GOAL := all
@@ -197,21 +197,23 @@ KIM_FTYPE_STANDARD_COMPILE_LIST = $(ARCHFLAG) $(PICFLAG) $(FCRAYFLAG) $(KIMINCLU
 	$(QUELL)$(FC) $(FFREEFLAG) $(FCPPFLAG)    $(KIM_FTYPE_STANDARD_COMPILE_LIST)
 
 # Library pattern rule
+# SO_IS_MODEL is set in anoter Makefile
+# SO_IS_PARAMETERIZED is set in another Makefile
 %.so: %.a $(EXPORT_LIST_NAME)
 	@printf "Creating... $@.\n"
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDSHAREDFLAG) \
-               $(LINKSONAME)$(if $(filter MODEL_NAME,$(.VARIABLES)),$(KIM_MODELS_DIR)/$(MODEL_NAME),$(KIM_MODEL_DRIVERS_DIR)/$(MODEL_DRIVER_NAME))/$*.so \
-               $(LDEXPORTLISTFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@  \
+               $(LINKSONAME)$(if $(SO_IS_MODEL),$(KIM_MODELS_DIR)/$(MODEL_NAME)/lib$(MODEL_LIB),$(KIM_MODEL_DRIVERS_DIR)/$(MODEL_DRIVER_NAME)/lib$(MODEL_DRIVER_LIB)).so \
+               $(LDEXPORTLISTFLAG) $(LDFLAGS) $(OUTPUTINFLAG) lib$(if $(SO_IS_MODEL),$(MODEL_LIB_BUILD),$(MODEL_DRIVER_LIB_BUILD)).so \
                $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
                $(if $(filter-out dynamic-load,$(KIM_LINK)),,$(KIMLIBFLAGS) $(KIMLIB)) \
-               $(if $(filter-out dynamic-link,$(KIM_LINK)),,$(if $(filter MODEL_DRIVER_NAME,$(.VARIABLES)),$(if $(filter MODEL_NAME,$(.VARIABLES)),$(KIM_MODEL_DRIVERS_DIR)/$(MODEL_DRIVER_NAME)/$(MODELDRIVERLIBFILE).so,),)) \
+               $(if $(filter-out dynamic-link,$(KIM_LINK)),,$(if $(SO_IS_PARAMETERIZED),$(KIM_MODEL_DRIVERS_DIR)/$(MODEL_DRIVER_NAME)/lib$(MODEL_DRIVER_LIB_BUILD).so,)) \
                $(LDDYNAMICLIB) $(XLANGLDLIBS) $(LDLIBS)
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDSHAREDFLAG) \
-               $(LINKSONAME)$(libdir)/$(full_package_name)/$(if $(filter MODEL_NAME,$(.VARIABLES)),$(modelsdir)/$(MODEL_NAME),$(modeldriversdir)/$(MODEL_DRIVER_NAME))/$*.so \
-               $(LDEXPORTLISTFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@  \
+               $(LINKSONAME)$(package_dir)/$(if $(SO_IS_MODEL),$(modelsdir)/$(MODEL_NAME)/lib$(MODEL_LIB),$(modeldriversdir)/$(MODEL_DRIVER_NAME)/lib$(MODEL_DRIVER_LIB)).so \
+               $(LDEXPORTLISTFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .lib$(if $(SO_IS_MODEL),$(MODEL_LIB_BUILD),$(MODEL_DRIVER_LIB_BUILD)).so \
                $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
-               $(if $(filter-out dynamic-load,$(KIM_LINK)),,$(KIM_DIR)/KIM_API/.$(KIMLIBFILE).so) \
-               $(if $(filter-out dynamic-link,$(KIM_LINK)),,$(if $(filter MODEL_DRIVER_NAME,$(.VARIABLES)),$(if $(filter MODEL_NAME,$(.VARIABLES)),$(KIM_MODEL_DRIVERS_DIR)/$(MODEL_DRIVER_NAME)/.$(MODELDRIVERLIBFILE).so,),)) \
+               $(if $(filter-out dynamic-load,$(KIM_LINK)),,$(KIM_DIR)/KIM_API/.lib$(KIM_LIB_BUILD).so) \
+               $(if $(filter-out dynamic-link,$(KIM_LINK)),,$(if $(SO_IS_PARAMETERIZED),$(KIM_MODEL_DRIVERS_DIR)/$(MODEL_DRIVER_NAME)/.lib$(MODEL_DRIVER_LIB_BUILD).so,)) \
                $(LDDYNAMICLIB) $(XLANGLDLIBS) $(LDLIBS)
 
 # KIM descriptor file make rule

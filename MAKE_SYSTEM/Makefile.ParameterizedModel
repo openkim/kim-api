@@ -41,12 +41,16 @@ include $(KIM_DIR)/MAKE_SYSTEM/Makefile.SanityCheck
 MODEL_NAME := $(strip $(MODEL_NAME))
 MODEL_DRIVER_NAME := $(strip $(MODEL_DRIVER_NAME))
 
+# Set SO variables
+%.so: SO_IS_MODEL:=true
+%.so: SO_IS_PARAMETERIZED:=true
+
 # Set defines
 KIMDEFINES = $(KIM_DEFINE_VALUES)
 
-MODEL_BUILD_TARGET := $(MODELLIBFILE).a
+MODEL_BUILD_TARGET := lib$(MODEL_LIB).a
 ifneq ($(KIM_LINK),static-link)
-   MODEL_BUILD_TARGET += $(patsubst %.a,%.so, $(MODEL_BUILD_TARGET))
+   MODEL_BUILD_TARGET := $(patsubst %.a,%.so, $(MODEL_BUILD_TARGET))
 else
    ifneq ("1","$(MAKELEVEL)")
      MODEL_BUILD_TARGET += STATIC_COMP_WARNING
@@ -66,18 +70,19 @@ $(KDF_STR_NAME).cpp: $(MODEL_NAME).kim
 
 all: $(MODEL_NAME).kim $(MODEL_BUILD_TARGET)
 
+# Find the driver files
 ifeq (yes,$(shell if test -f $(HOME)/.$(package_name)/config-v$(VERSION_MAJOR); then printf "yes"; fi))
    USERDIR = $(wildcard $(shell grep model_drivers_dir $(HOME)/.$(package_name)/config-v$(VERSION_MAJOR) | sed -e 's/[^=]*=[[:space:]]*//'))
 else
    USERDIR = /doesnotexist
 endif
-
+#
 ifeq      (yes,$(shell if test -d ../$(MODEL_DRIVER_NAME); then printf "yes"; fi))
-   driver_location         := ..
+   driver_location := ..
 else ifeq (yes,$(shell if test -d $(USERDIR); then printf "yes"; fi))
-   driver_location         := $(USERDIR)
+   driver_location := $(USERDIR)
 else
-   driver_location         := $(KIM_MODEL_DRIVERS_DIR)
+   driver_location := $(KIM_MODEL_DRIVERS_DIR)
 endif
 
 species_list = $(sort $(strip $(filter SPECIES_%_NAME,$(.VARIABLES))))
@@ -87,13 +92,14 @@ paramfile_num_list = $(strip $(subst _NAME,,$(subst PARAM_FILE_,,$(paramfile_lis
 paramfile_name_list = $(strip $(foreach paramfl,$(paramfile_list), $($(paramfl))))
 num_paramfiles = $(words $(paramfile_num_list))
 
-$(MODEL_NAME).kim: $(driver_location)/$(MODEL_DRIVER_NAME)/$(MODEL_DRIVER_NAME).kim Makefile
+$(MODEL_NAME).kim: drv_kim_name:=$(driver_location)/$(MODEL_DRIVER_NAME)/$(MODEL_DRIVER_NAME).kim
+$(MODEL_NAME).kim: $(drv_kim_name) Makefile
 	@printf "Creating... $@.\n"
-	$(QUELL)$(foreach spec,$(filter-out $(shell cat $(driver_location)/$(MODEL_DRIVER_NAME)/$(MODEL_DRIVER_NAME).kim |            \
+	$(QUELL)$(foreach spec,$(filter-out $(shell cat $(drv_kim_name) | \
                                                     sed -e '/^SPECIES_\([0-9]\{3\}\)_NAME_STR.*$$/!d' -e 's/^\(SPECIES_[0-9]\{3\}_NAME\)_STR.*$$/\1/'), \
                                             $(species_list)),\
                     printf "*** $(spec) is defined in Makefile, but $(spec)_STR is not in $(MODEL_DRIVER_NAME).kim. ***\n\n" && false;)
-	$(QUELL)cat $(driver_location)/$(MODEL_DRIVER_NAME)/$(MODEL_DRIVER_NAME).kim | \
+	$(QUELL)cat $(drv_kim_name) | \
                 sed -e "s,MODEL_NAME_STR,$(MODEL_NAME),g"                              \
                     $(foreach spec,$(species_list),-e 's,$(spec)_STR,$($(spec)),g')    \
                     -e '/SPECIES_[0-9]\{3\}_NAME_STR/d'                                \
@@ -142,13 +148,21 @@ $(PARAM_MODEL_NAME).cpp: $(KIM_DIR)/MAKE_SYSTEM/model_based_on_driver.cpp $(para
         # create actual model code to call model driver
 	$(QUELL)cat $(KIM_DIR)/MAKE_SYSTEM/model_based_on_driver.cpp |                       \
                 sed -e "s,MODEL_DRIVER_NAME_STR,$(MODEL_DRIVER_NAME),g"                      \
-                    -e "s,MODEL_DRIVER_LIBNAME_STR,$(MODELDRIVERLIBFILE),g"                  \
+                    -e "s,MODEL_DRIVER_LIBNAME_STR,lib$(MODEL_DRIVER_LIB),g"                 \
                     -e "s,MODEL_NAME_STR,$(MODEL_NAME),g"                                    \
                     -e "s,NUM_PARAMFILES,$(num_paramfiles),g"                                \
                     -f tmp-sed-script                                                  >> $@
 	$(QUELL)rm -f tmp-sed-script
 
-$(MODELLIBFILE).a: $(PARAM_MODEL_NAME).o $(KDF_STR_NAME).o
+lib$(MODEL_LIB).a: lib$(MODEL_LIB_BUILD).a
+	@printf "Creating... $@.\n"
+	$(QUELL)ln -fs "lib$(MODEL_LIB_BUILD).a" "lib$(MODEL_LIB).a"
+
+lib$(MODEL_LIB).so: lib$(MODEL_LIB_BUILD).so
+	@printf "Creating... $@.\n"
+	$(QUELL)ln -fs "lib$(MODEL_LIB_BUILD).so" "lib$(MODEL_LIB).so"
+
+lib$(MODEL_LIB_BUILD).a: $(PARAM_MODEL_NAME).o $(KDF_STR_NAME).o
 	@printf "Creating... $@.\n"
 	$(QUELL)ar rcs $@ $(PARAM_MODEL_NAME).o $(KDF_STR_NAME).o
 
@@ -174,17 +188,20 @@ Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/MAKE_SYSTEM/Makefile.ParameterizedModel
 
 clean:
 	@printf "Cleaning... Model.......... $(MODEL_NAME).\n"
-	$(QUELL)rm -f $(addsuffix $(MODELLIBFILE).,a so) .$(MODELLIBNAME).so $(PARAM_MODEL_NAME).o $(MODEL_NAME).kim $(KDF_STR_NAME).o
+	$(QUELL)rm -f $(addprefix lib$(MODEL_LIB).,a so) $(addprefix lib$(MODEL_LIB_BUILD).,a so) .lib$(MODEL_LIB_BUILD).so \
+                      $(PARAM_MODEL_NAME).o $(MODEL_NAME).kim $(KDF_STR_NAME).o
 
-install_parammodeldir = $(MODEL_NAME)
+install_parammodeldir = $(dest_package_dir)/$(modelsdir)/$(MODEL_NAME)
 
 installdirs:
 ifneq (static-link,$(KIM_LINK))
-	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(DESTDIR)$(libdir)/$(full_package_name)/$(modelsdir)/$(install_parammodeldir)"
+	$(QUELL)fl="$(install_parammodeldir)" && \
+                if test -d "$$fl"; then rm -rf "$$fl"; fi && \
+                $(INSTALL_PROGRAM) -d -m 0755  "$$fl"
 endif
 
 install: all installdirs
-	@printf "Installing...($(DESTDIR)$(libdir)/$(full_package_name)/$(modelsdir)).......... Model.......... $(MODEL_NAME)"
+	@printf "Installing...($(dest_package_dir))................. Model.......... $(MODEL_NAME)"
 ifneq (static-link,$(KIM_LINK))
 	@printf ".\n"
 	$(QUELL)if test \( x"$(driver_location)" != x"$(KIM_MODEL_DRIVERS_DIR)" \); then                         \
@@ -192,16 +209,17 @@ ifneq (static-link,$(KIM_LINK))
                    printf "  has not been installed.  Please install the Model Driver and try again.\n";         \
                   false;                                                                                         \
                 fi
-	$(QUELL)$(INSTALL_PROGRAM) -m 0644 ".$(MODELLIBFILE).so" "$(DESTDIR)$(libdir)/$(full_package_name)/$(modelsdir)/$(install_parammodeldir)/$(MODELLIBFILE).so"
+	$(QUELL)$(INSTALL_PROGRAM) -m 0755 ".lib$(MODEL_LIB_BUILD).so" "$(install_parammodeldir)/lib$(MODEL_LIB_BUILD).so"
+	$(QUELL)ln -fs "lib$(MODEL_LIB_BUILD).so" "$(install_parammodeldir)/lib$(MODEL_LIB).so"
 else
 	@printf ": nothing to be done for static-link.\n"
 endif
 
 uninstall:
-	@printf "Uninstalling...($(DESTDIR)$(libdir)/$(full_package_name)/$(modelsdir)).......... Model.......... $(MODEL_NAME)"
+	@printf "Uninstalling...($(dest_package_dir))................. Model.......... $(MODEL_NAME)"
 ifneq (static-link,$(KIM_LINK))
 	@printf ".\n"
-	$(QUELL)rm -rf "$(DESTDIR)$(libdir)/$(full_package_name)/$(modelsdir)/$(install_parammodeldir)"
+	$(QUELL)fl="$(install_parammodeldir)" && if test -d "$$fl"; then rm -rf "$$fl"; fi
 else
 	@printf ": nothing to be done for static-link.\n"
 endif

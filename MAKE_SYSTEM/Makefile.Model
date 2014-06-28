@@ -42,10 +42,14 @@ MODEL_NAME := $(strip $(MODEL_NAME))
 MODEL_INIT_FUNCTION_LANG := $(strip $(MODEL_INIT_FUNCTION_LANG))
 MODEL_INIT_FUNCTION_NAME := $(strip $(MODEL_INIT_FUNCTION_NAME))
 
+# Set SO variables
+%.so: SO_IS_MODEL:=true
+%.so: SO_IS_PARAMETERIZED:=
+
 #build target .a or .so for models
-MODEL_BUILD_TARGET := $(MODELLIBFILE).a
+MODEL_BUILD_TARGET := lib$(MODEL_LIB).a
 ifneq ($(KIM_LINK),static-link)
-   MODEL_BUILD_TARGET += $(patsubst %.a,%.so, $(MODEL_BUILD_TARGET))
+   MODEL_BUILD_TARGET := $(patsubst %.a,%.so, $(MODEL_BUILD_TARGET))
 else
    ifneq ("1","$(MAKELEVEL)")
      MODEL_BUILD_TARGET += STATIC_COMP_WARNING
@@ -82,7 +86,15 @@ init_wrapper.cpp: Makefile
 	$(QUELL)printf "      $(MODEL_INIT_FUNC_NAME);\n"                 >> $@
 	$(QUELL)printf "}\n"                                              >> $@
 
-$(MODELLIBFILE).a: $(LOCALOBJ) init_wrapper.o $(KDF_STR_NAME).o
+lib$(MODEL_LIB).a: lib$(MODEL_LIB_BUILD).a
+	@printf "Creating... $@.\n"
+	$(QUELL)ln -fs "lib$(MODEL_LIB_BUILD).a" "lib$(MODEL_LIB).a"
+
+lib$(MODEL_LIB).so: lib$(MODEL_LIB_BUILD).so
+	@printf "Creating... $@.\n"
+	$(QUELL)ln -fs "lib$(MODEL_LIB_BUILD).so" "lib$(MODEL_LIB).so"
+
+lib$(MODEL_LIB_BUILD).a: $(LOCALOBJ) init_wrapper.o $(KDF_STR_NAME).o
 	@printf "Creating... $@.\n"
 	$(QUELL)ar rcs $@ $(LOCALOBJ) init_wrapper.o $(KDF_STR_NAME).o
 
@@ -110,31 +122,33 @@ Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/MAKE_SYSTEM/Makefile.Model
 
 clean:
 	@printf "Cleaning... Model.......... $(MODEL_NAME).\n"
-	$(QUELL)rm -f $(LOCALOBJ) *.mod $(addprefix $(MODELLIBFILE).,a so) .$(MODELLIBFILE).so\
-                      $(KDF_STR_NAME).o \
-                      init_wrapper.o $(LOCALCLEAN)
+	$(QUELL)rm -f $(LOCALOBJ) *.mod $(addprefix lib$(MODEL_LIB).,a so) $(addprefix lib$(MODEL_LIB_BUILD).,a so) \
+                     .$(MODEL_LIB_BUILD).so $(KDF_STR_NAME).o init_wrapper.o $(LOCALCLEAN)
 
-install_modeldir = $(MODEL_NAME)
+install_modeldir = $(dest_package_dir)/$(modelsdir)/$(MODEL_NAME)
 
 installdirs:
 ifneq (static-link,$(KIM_LINK))
-	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(DESTDIR)$(libdir)/$(full_package_name)/$(modelsdir)/$(install_modeldir)"
+	$(QUELL)fl="$(install_modeldir)" && \
+                if test -d "$$fl"; then rm -rf "$$fl"; fi && \
+                $(INSTALL_PROGRAM) -d -m 0755 "$$fl"
 endif
 
 install: all installdirs
-	@printf "Installing...($(DESTDIR)$(libdir)/$(full_package_name)/$(modelsdir)).......... Model.......... $(MODEL_NAME)"
+	@printf "Installing...($(dest_package_dir))................. Model.......... $(MODEL_NAME)"
 ifneq (static-link,$(KIM_LINK))
 	@printf ".\n"
-	$(QUELL)$(INSTALL_PROGRAM) -m 0644 ".$(MODELLIBFILE).so" "$(DESTDIR)$(libdir)/$(full_package_name)/$(modelsdir)/$(install_modeldir)/$(MODELLIBFILE).so"
+	$(QUELL)$(INSTALL_PROGRAM) -m 0755 ".lib$(MODEL_LIB_BUILD).so" "$(install_modeldir)/lib$(MODEL_LIB_BUILD).so"
+	$(QUELL)ln -fs "lib$(MODEL_LIB_BUILD).so" "$(install_modeldir)/lib$(MODEL_LIB).so"
 else
 	@printf ": nothing to be done for static-link.\n"
 endif
 
 uninstall:
-	@printf "Uninstalling...($(DESTDIR)$(libdir)/$(full_package_name)/$(modelsdir)).......... Model.......... $(MODEL_NAME)"
+	@printf "Uninstalling...($(dest_package_dir))................. Model.......... $(MODEL_NAME)"
 ifneq (static-link,$(KIM_LINK))
 	@printf ".\n"
-	$(QUELL)rm -rf "$(DESTDIR)$(libdir)/$(full_package_name)/$(modelsdir)/$(install_modeldir)"
+	$(QUELL)fl="$(install_modeldir)" && if test -d "$$fl"; then rm -rf "$$fl"; fi
 else
 	@printf ": nothing to be done for static-link.\n"
 endif

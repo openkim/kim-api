@@ -250,13 +250,24 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
                                 described in item 6 below.
 
        `make uninstall'      -- delete files installed by `make install'
-       `make openkim-api'    -- compiles only the API
        `make examples'       -- copies examples into the appropriate
                                 directories (no overwrite)
        `make examples-force' -- copies examples into the appropriate
                                 directories (overwrite)
        `make examples-clean' -- remove all examples from the MODEL_DRIVERS,
                                 MODELS, and TESTS directories.
+
+     For system administrators there are also the following utility targets:
+
+       `make install-set-default-to-vX'  -- This target creates generic
+                                            ${includedir}/${package_name} and
+                                            ${libdir}/${package_name} symlinks
+                                            to the corresponding -vX versions.
+                                            This effectively sets the "default"
+                                            library available for users.
+       `make uninstall-set-default'      -- This target removes the generic
+                                            ${includedir}/${package_name} and
+                                            ${libdir}/${package_name} symlinks.
 
 4. Verify that the compilation was successful by running a Test.
 
@@ -288,12 +299,17 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
    The compiled versions of the KIM API library, Model Drivers, and Models will
    be copied to `$(libdir)/$(full_package_name)'.  The default value for libdir
    is `$(exec_prefix)/lib', the default value for exec_prefix is `$(prefix)',
-   and the default value for prefix is `/usr/local'.  This, the default value
+   and the default value for prefix is `/usr/local'.  Thus, the default value
    of libdir is `/usr/local/lib'.  The value of full_package_name is
-   `$(package_name)-v$(VERSION_MAJOR)'.  Additionally, if appropriate, the
-   MAKE_SYSTEM and supporting header and mod files will be copied to
-   `$(libdir)/$(full_package_name)/include' to support subsequent compilation
-   against the installed KIM API package.
+   `$(package_name)-v$(VERSION_MAJOR)'.  Additionally the supporting header and
+   mod files will be copied to `$(libdir)/$(full_package_name)/include' to
+   support subsequent compilation against the installed KIM API package.
+
+   If you want these files to be the default version of the KIM API package on
+   your system (i.e., accessible via ${includedir}/${package_name} and
+   ${libdir}/${package_name}), then do:
+
+   % make install-set-default-to-vX
 
    Once the KIM API package has been installed, the original source directory
    (${KD}) may be deleted.
@@ -376,10 +392,8 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
    (d) Create a Makefile.KIM_Config in the ${WD} directory (assuming all default values):
 
        % libdir=/usr/local/lib
-       % VERSION_MAJOR=X # don't forget to replace X with the appropriate value
-       % full_package_name=${package_name}-v${VERSION_MAJOR}
        % cd ${WD}
-       % printf "include ${libdir}/${full_package_name}/Makefile.KIM_Config\n" > ${WD}/Makefile.KIM_Config
+       % printf "include ${libdir}/${package_name}/Makefile.KIM_Config\n" > ${WD}/Makefile.KIM_Config
 
    (e) We'll work with the case of a Model Driver and an associated
        Parameterized Model such as those you can download from openkim.org.
