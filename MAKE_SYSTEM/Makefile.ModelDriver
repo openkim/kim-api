@@ -130,12 +130,13 @@ ifneq (static-link,$(KIM_LINK))
                 $(INSTALL_PROGRAM) -d -m 0755 "$$fl"
 endif
 
+install: DOT:=$(shell if test -f ".lib$(MODEL_DRIVER_LIB_BUILD).so"; then printf "."; fi)
 install: all installdirs
 	@printf "Installing...($(dest_package_dir))................. Model Driver... $(MODEL_DRIVER_NAME)"
 ifneq (static-link,$(KIM_LINK))
 	@printf ".\n"
         # Install lib files
-	$(QUELL)$(INSTALL_PROGRAM) -m 0755 ".lib$(MODEL_DRIVER_LIB_BUILD).so" "$(install_modeldriverdir)/lib$(MODEL_DRIVER_LIB_BUILD).so"
+	$(QUELL)$(INSTALL_PROGRAM) -m 0755 "$(DOT)lib$(MODEL_DRIVER_LIB_BUILD).so" "$(install_modeldriverdir)/lib$(MODEL_DRIVER_LIB_BUILD).so"
 	$(QUELL)ln -fs "lib$(MODEL_DRIVER_LIB_BUILD).so" "$(install_modeldriverdir)/lib$(MODEL_DRIVER_LIB).so"
         # Install kim files
   ifeq (dynamic-load,$(KIM_LINK))

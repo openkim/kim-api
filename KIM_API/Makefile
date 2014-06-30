@@ -168,7 +168,7 @@ KIM_API_DIRS.o: KIM_DEFINE_VALUES += -D KIMDIR=\"$(KIM_DIR)\"                   
 .KIM_API_DIRS.o: KIM_DEFINE_VALUES += -D PACKAGEDIR=\"$(package_dir)\"            \
                                       -D MODELDRIVERSDIR=\"$(modeldriversdir)\"   \
                                       -D MODELSDIR=\"$(modelsdir)\"               \
-                                      -D FULLPACKAGENAME=\"$(full_package_name)\" \
+                                      -D PACKAGENAME=\"$(package_name)\" \
                                       -D VERSION_MAJOR=\"$(VERSION_MAJOR)\"
 
 descriptor-file-match.o: descriptor-file-match.cpp KIM_API.h KIM_API_status.h Makefile
@@ -265,7 +265,7 @@ ifneq (static-link,$(KIM_LINK))
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(install_modeldriversdir)"
 endif
 
-install: objects-install lib-install
+install: objects-install libs-install
 
 objects-install: install-check objects
 	@true

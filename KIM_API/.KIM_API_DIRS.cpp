@@ -9,7 +9,7 @@ std::string userDirs[2];
 void getUserDirs()
 {
   std::string configFile(getenv("HOME"));
-  configFile.append("/.").append(FULLPACKAGENAME);
+  configFile.append("/.").append(PACKAGENAME);
   configFile.append("/config-v").append(VERSION_MAJOR);
 
   std::ifstream cfl;

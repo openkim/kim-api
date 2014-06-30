@@ -196,25 +196,28 @@ KIM_FTYPE_STANDARD_COMPILE_LIST = $(ARCHFLAG) $(PICFLAG) $(FCRAYFLAG) $(KIMINCLU
 	@printf "Creating... $@.\n"
 	$(QUELL)$(FC) $(FFREEFLAG) $(FCPPFLAG)    $(KIM_FTYPE_STANDARD_COMPILE_LIST)
 
-# Library pattern rule
+# Model Driver and Model Library pattern rule
 # SO_IS_MODEL is set in anoter Makefile
 # SO_IS_PARAMETERIZED is set in another Makefile
+%.so: SO_NEEDS_DOT:=$(if $(filter dynamic-load,$(KIM_LINK)),$(if $(shell if test -f "$(KIM_DIR)/KIM_API/.lib$(KIM_LIB_BUILD).so"; then printf "yes"; fi),true,),)
 %.so: %.a $(EXPORT_LIST_NAME)
 	@printf "Creating... $@.\n"
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDSHAREDFLAG) \
-               $(LINKSONAME)$(if $(SO_IS_MODEL),$(KIM_MODELS_DIR)/$(MODEL_NAME)/lib$(MODEL_LIB),$(KIM_MODEL_DRIVERS_DIR)/$(MODEL_DRIVER_NAME)/lib$(MODEL_DRIVER_LIB)).so \
-               $(LDEXPORTLISTFLAG) $(LDFLAGS) $(OUTPUTINFLAG) lib$(if $(SO_IS_MODEL),$(MODEL_LIB_BUILD),$(MODEL_DRIVER_LIB_BUILD)).so \
-               $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
-               $(if $(filter-out dynamic-load,$(KIM_LINK)),,$(KIMLIBFLAGS) $(KIMLIB)) \
-               $(if $(filter-out dynamic-link,$(KIM_LINK)),,$(if $(SO_IS_PARAMETERIZED),$(KIM_MODEL_DRIVERS_DIR)/$(MODEL_DRIVER_NAME)/lib$(MODEL_DRIVER_LIB_BUILD).so,)) \
-               $(LDDYNAMICLIB) $(XLANGLDLIBS) $(LDLIBS)
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDSHAREDFLAG) \
-               $(LINKSONAME)$(package_dir)/$(if $(SO_IS_MODEL),$(modelsdir)/$(MODEL_NAME)/lib$(MODEL_LIB),$(modeldriversdir)/$(MODEL_DRIVER_NAME)/lib$(MODEL_DRIVER_LIB)).so \
-               $(LDEXPORTLISTFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .lib$(if $(SO_IS_MODEL),$(MODEL_LIB_BUILD),$(MODEL_DRIVER_LIB_BUILD)).so \
-               $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
-               $(if $(filter-out dynamic-load,$(KIM_LINK)),,$(KIM_DIR)/KIM_API/.lib$(KIM_LIB_BUILD).so) \
-               $(if $(filter-out dynamic-link,$(KIM_LINK)),,$(if $(SO_IS_PARAMETERIZED),$(KIM_MODEL_DRIVERS_DIR)/$(MODEL_DRIVER_NAME)/.lib$(MODEL_DRIVER_LIB_BUILD).so,)) \
-               $(LDDYNAMICLIB) $(XLANGLDLIBS) $(LDLIBS)
+                $(LINKSONAME)$(if $(SO_IS_MODEL),$(KIM_MODELS_DIR)/$(MODEL_NAME)/lib$(MODEL_LIB),$(KIM_MODEL_DRIVERS_DIR)/$(MODEL_DRIVER_NAME)/lib$(MODEL_DRIVER_LIB)).so \
+                $(LDEXPORTLISTFLAG) $(LDFLAGS) $(OUTPUTINFLAG) lib$(if $(SO_IS_MODEL),$(MODEL_LIB_BUILD),$(MODEL_DRIVER_LIB_BUILD)).so \
+                $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
+                $(if $(filter-out dynamic-load,$(KIM_LINK)),,$(KIMLIBFLAGS) $(KIMLIB)) \
+                $(if $(filter-out dynamic-link,$(KIM_LINK)),,$(if $(SO_IS_PARAMETERIZED),$(KIM_MODEL_DRIVERS_DIR)/$(MODEL_DRIVER_NAME)/lib$(MODEL_DRIVER_LIB_BUILD).so,)) \
+                $(LDDYNAMICLIB) $(XLANGLDLIBS) $(LDLIBS)
+	$(QUELL)if test x"$(SO_NEEDS_DOT)" = x"true"; then \
+                 $(LD) $(ARCHFLAG) $(LDSHAREDFLAG) \
+                 $(LINKSONAME)$(package_dir)/$(if $(SO_IS_MODEL),$(modelsdir)/$(MODEL_NAME)/lib$(MODEL_LIB),$(modeldriversdir)/$(MODEL_DRIVER_NAME)/lib$(MODEL_DRIVER_LIB)).so \
+                 $(LDEXPORTLISTFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .lib$(if $(SO_IS_MODEL),$(MODEL_LIB_BUILD),$(MODEL_DRIVER_LIB_BUILD)).so \
+                 $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
+                 $(if $(filter-out dynamic-load,$(KIM_LINK)),,$(KIM_DIR)/KIM_API/.lib$(KIM_LIB_BUILD).so) \
+                 $(if $(filter-out dynamic-link,$(KIM_LINK)),,$(if $(SO_IS_PARAMETERIZED),$(KIM_MODEL_DRIVERS_DIR)/$(MODEL_DRIVER_NAME)/.lib$(MODEL_DRIVER_LIB_BUILD).so,)) \
+                 $(LDDYNAMICLIB) $(XLANGLDLIBS) $(LDLIBS); \
+               fi
 
 # KIM descriptor file make rule
 KDF_STR_NAME = kim_str

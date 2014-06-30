@@ -134,11 +134,12 @@ ifneq (static-link,$(KIM_LINK))
                 $(INSTALL_PROGRAM) -d -m 0755 "$$fl"
 endif
 
+install: DOT:=$(shell if test -f ".lib$(MODEL_LIB_BUILD).so"; then printf "."; fi)
 install: all installdirs
 	@printf "Installing...($(dest_package_dir))................. Model.......... $(MODEL_NAME)"
 ifneq (static-link,$(KIM_LINK))
 	@printf ".\n"
-	$(QUELL)$(INSTALL_PROGRAM) -m 0755 ".lib$(MODEL_LIB_BUILD).so" "$(install_modeldir)/lib$(MODEL_LIB_BUILD).so"
+	$(QUELL)$(INSTALL_PROGRAM) -m 0755 "$(DOT)lib$(MODEL_LIB_BUILD).so" "$(install_modeldir)/lib$(MODEL_LIB_BUILD).so"
 	$(QUELL)ln -fs "lib$(MODEL_LIB_BUILD).so" "$(install_modeldir)/lib$(MODEL_LIB).so"
 else
 	@printf ": nothing to be done for static-link.\n"

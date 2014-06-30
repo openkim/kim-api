@@ -72,14 +72,14 @@ all: $(MODEL_NAME).kim $(MODEL_BUILD_TARGET)
 
 # Find the driver files
 ifeq (yes,$(shell if test -f $(HOME)/.$(package_name)/config-v$(VERSION_MAJOR); then printf "yes"; fi))
-   USERDIR = $(wildcard $(shell grep model_drivers_dir $(HOME)/.$(package_name)/config-v$(VERSION_MAJOR) | sed -e 's/[^=]*=[[:space:]]*//'))
+   USERDIR = $(shell grep model_drivers_dir $(HOME)/.$(package_name)/config-v$(VERSION_MAJOR) | sed -e 's/[^=]*=[[:space:]]*//' -e 's|^~|$(HOME)|')
 else
    USERDIR = /doesnotexist
 endif
 #
 ifeq      (yes,$(shell if test -d ../$(MODEL_DRIVER_NAME); then printf "yes"; fi))
    driver_location := ..
-else ifeq (yes,$(shell if test -d $(USERDIR); then printf "yes"; fi))
+else ifeq (yes,$(shell if test -d $(USERDIR)/$(MODEL_DRIVER_NAME); then printf "yes"; fi))
    driver_location := $(USERDIR)
 else
    driver_location := $(KIM_MODEL_DRIVERS_DIR)
@@ -200,16 +200,18 @@ ifneq (static-link,$(KIM_LINK))
                 $(INSTALL_PROGRAM) -d -m 0755  "$$fl"
 endif
 
+install: DOT:=$(shell if test -f ".lib$(MODEL_LIB_BUILD).so"; then printf "."; fi)
 install: all installdirs
 	@printf "Installing...($(dest_package_dir))................. Model.......... $(MODEL_NAME)"
 ifneq (static-link,$(KIM_LINK))
 	@printf ".\n"
-	$(QUELL)if test \( x"$(driver_location)" != x"$(KIM_MODEL_DRIVERS_DIR)" \); then                         \
-                   printf "  Cannot install a Parameterized Model whose associated Model Driver\n";              \
-                   printf "  has not been installed.  Please install the Model Driver and try again.\n";         \
-                  false;                                                                                         \
+	$(QUELL)if test \( x"$(driver_location)" != x"$(KIM_MODEL_DRIVERS_DIR)" \); then             \
+                   printf "  Cannot install a Parameterized Model whose associated Model Driver\n";  \
+                   printf "  has not been installed.  Please (1) install the Model Driver,\n";       \
+                   printf "  (2) remove the Model Driver source directory, and (3) try again.\n";    \
+                  false;                                                                             \
                 fi
-	$(QUELL)$(INSTALL_PROGRAM) -m 0755 ".lib$(MODEL_LIB_BUILD).so" "$(install_parammodeldir)/lib$(MODEL_LIB_BUILD).so"
+	$(QUELL)$(INSTALL_PROGRAM) -m 0755 "$(DOT)lib$(MODEL_LIB_BUILD).so" "$(install_parammodeldir)/lib$(MODEL_LIB_BUILD).so"
 	$(QUELL)ln -fs "lib$(MODEL_LIB_BUILD).so" "$(install_parammodeldir)/lib$(MODEL_LIB).so"
 else
 	@printf ": nothing to be done for static-link.\n"
