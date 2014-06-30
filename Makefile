@@ -154,7 +154,9 @@ ifeq (dynamic-load,$(KIM_LINK))
                 printf ',s|^ *KIM_DIR *=.*|KIM_DIR = $(dest_package_dir)|\nw\nq\n' | ed "$$fl" > /dev/null 2>&1
         # Install version file
 	$(QUELL)$(INSTALL_PROGRAM) -m 0644 Makefile.Version "$(dest_package_dir)/Makefile.Version"
-	$(QUELL)printf ',s|\$$(shell[^)]*).|$(shell git rev-parse --short HEAD)|\nw\nq\n' | ed "$(dest_package_dir)/Makefile.Version" > /dev/null 2>&1 # create-package script ensures this is a null-op if not in the git repo
+	$(QUELL)if test x"true" = x"$(shell git rev-parse --is-inside-work-tree 2> /dev/null)"; then \
+                  printf ',s|\$$(shell[^)]*).|$(shell git rev-parse --short HEAD)|\nw\nq\n' | ed "$(dest_package_dir)/Makefile.Version" > /dev/null 2>&1; \
+                fi
 	@printf ".\n"
 else
 	@printf ": nothing to be done for $(KIM_LINK).\n";
