@@ -50,11 +50,12 @@ else
   prerelease=""
   prerelease_w_space=""
 fi
+fullpackagename=${packagename}-${versionstring}
 
 # check for more errors
 
-if test -e $packagename; then
-  printf "File '$packagename' exits! exiting...\n"
+if test -e "${fullpackagename}"; then
+  printf "File '${fullpackagename}' exits! exiting...\n"
   exit
 fi
 
@@ -75,12 +76,11 @@ if test $patch -ne `grep VERSION_PATCH Makefile.Version | sed -e 's/VERSION_PATC
 fi
 
 
-fullpackagename=${packagename}-${versionstring}
 git clone . $fullpackagename
 
 cd $fullpackagename
 
-versionfile=openkim-api.version.info
+versionfile=${packagename}.version.info
 printf "This package ($fullpackagename) created from commit\n"                           >  $versionfile
 printf "\n"                                                                              >> $versionfile
 git rev-parse HEAD                                                                       >> $versionfile
@@ -119,7 +119,7 @@ EOF
 done
 
 ed MAKE_SYSTEM/Makefile.LoadDefaults <<EOF
-,s/^ *package_name *=.*/package_name = $fullpackagename/
+,s/^ *package_name *=.*/package_name = $packagename/
 w
 EOF
 
