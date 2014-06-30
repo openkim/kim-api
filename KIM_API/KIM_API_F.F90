@@ -63,6 +63,11 @@ module kim_api
             integer(kind=kim_intptr) :: kimmdl,testname,mdlname
         end function kim_api_init
 
+        integer function kim_api_file_init(kimmdl,testkimfile,mdlname)
+          use kim_kinds
+            integer(kind=kim_intptr) :: kimmdl,testkimfile,mdlname
+        end function kim_api_file_init
+
         integer function kim_api_model_info(kimmdl,mdlname)
           use kim_kinds
             integer(kind=kim_intptr) :: kimmdl,mdlname
@@ -519,6 +524,19 @@ module kim_api
             ps2=loc(mdlnamesnd)
             kim_api_init_f =kim_api_init(kimmdl,ps1,ps2)
      end function kim_api_init_f
+
+    integer function kim_api_file_init_f(kimmdl,testkimfile,mdlname)
+            character (len=*) :: testkimfile,mdlname
+            integer(kind=kim_intptr) :: kimmdl
+            character (len=KIM_KEY_STRING_LENGTH)::testkimfilesnd,mdlnamesnd
+            character (len=KIM_KEY_STRING_LENGTH):: s1,s2
+            pointer(ps1,s1);pointer(ps2,s2)
+            testkimfilesnd=attachnull(trim(testkimfile))
+            mdlnamesnd=attachnull(trim(mdlname))
+            ps1=loc(testkimfilesnd)
+            ps2=loc(mdlnamesnd)
+            kim_api_file_init_f =kim_api_file_init(kimmdl,ps1,ps2)
+     end function kim_api_file_init_f
 
     integer function kim_api_model_info_f(kimmdl,mdlname)
             character (len=*) :: mdlname

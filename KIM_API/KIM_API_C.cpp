@@ -54,6 +54,17 @@ int KIM_API_init(void * kimmdl, const char *testname, const char *mdlname){
     return KIM_STATUS_FAIL;
 }
 
+int KIM_API_file_init(void * kimmdl, const char *testkimfile, const char *mdlname){
+  KIM_API_model * mdl;
+  mdl = new KIM_API_model[1];
+  if(mdl->file_init(testkimfile,mdlname)) {
+    *(KIM_API_model **)kimmdl = mdl;
+    return KIM_STATUS_OK;
+  }
+  *(KIM_API_model **)kimmdl=NULL;
+  return KIM_STATUS_FAIL;
+}
+
 int KIM_API_model_info(void * kimmdl, const char * mdlname){
     KIM_API_model * mdl;
     mdl = new KIM_API_model[1];

@@ -4,7 +4,7 @@
 !                           allocate memory and set known values.
 !
 !-------------------------------------------------------------------------------
-subroutine setup_B2_KIM_API_object(pkim, testname, modelname, specname1, &
+subroutine setup_B2_KIM_API_object(pkim, testkimfile, modelname, specname1, &
                                    specname2)
   use, intrinsic :: iso_c_binding
   use KIM_API_F03
@@ -12,7 +12,7 @@ subroutine setup_B2_KIM_API_object(pkim, testname, modelname, specname1, &
 
   !-- Transferred variables
   type(c_ptr),                          intent(out) :: pkim
-  character(len=KIM_KEY_STRING_LENGTH), intent(in)  :: testname
+  character(len=KIM_KEY_STRING_LENGTH), intent(in)  :: testkimfile
   character(len=KIM_KEY_STRING_LENGTH), intent(in)  :: modelname
   character(len=2),                     intent(in)  :: specname1
   character(len=2),                     intent(in)  :: specname2
@@ -27,10 +27,10 @@ subroutine setup_B2_KIM_API_object(pkim, testname, modelname, specname1, &
 
   ! Initialize KIM API object
   !
-  ier = kim_api_init(pkim, testname, modelname)
+  ier = kim_api_file_init(pkim, testkimfile, modelname)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                                 "kim_api_init", ier)
+                                 "kim_api_file_init", ier)
      stop
   endif
   call kim_api_allocate(pkim, N, ATypes, ier)

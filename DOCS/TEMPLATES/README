@@ -131,11 +131,11 @@ Models.  Detailed directions are also given below.
 (f) The template `model_driver_P_Template.c' can be compared with
     `ex_model_driver_P_Morse.c'
 
-Recall that Models are stored under $KD/EXAMPLES/MODELS and Model Drivers
-are stored under $KD/EXAMPLES/MODEL_DRIVERS.  To compare files, you can
+Recall that Models are stored under ${KD}/EXAMPLES/MODELS and Model Drivers
+are stored under ${KD}/EXAMPLES/MODEL_DRIVERS.  To compare files, you can
 for example use the `vimdiff' command:
 
-   % cd $KD
+   % cd ${KD}
    % vimdiff EXAMPLES/MODELS/ex_model_Ar_P_MLJ_F03/ex_model_Ar_P_MLJ_F03.F03 DOCS/TEMPLATES/model_El_P_Template.F03
 
 Alternatively use the excellent `ediff' feature of the emacs editor.
@@ -154,16 +154,16 @@ essentially identical. See comments below.)
 
 (a) Create a new directory under MODELS for the Ar pair potential:
 
-    % cd $KD/MODELS
+    % cd ${KD}/MODELS
     % mkdir model_Ar_P_Buckingham
 
 (b) Copy the .F03, .kim and Makefile templates into the new directory and
     rename:
 
-    % cd $KD/MODELS/model_Ar_P_Buckingham
-    % cp $KD/DOCS/TEMPLATES/model_El_P_Template.F03 model_Ar_P_Buckingham.F03
-    % cp $KD/DOCS/TEMPLATES/model_El_P_Template.f.kim model_Ar_P_Buckingham.kim
-    % cp $KD/DOCS/TEMPLATES/Makefile.template Makefile
+    % cd ${KD}/MODELS/model_Ar_P_Buckingham
+    % cp ${KD}/DOCS/TEMPLATES/model_El_P_Template.F03 model_Ar_P_Buckingham.F03
+    % cp ${KD}/DOCS/TEMPLATES/model_El_P_Template.f.kim model_Ar_P_Buckingham.kim
+    % cp ${KD}/DOCS/TEMPLATES/Makefile.template Makefile
 
     Note: For a Model written in C, copy the .c and .c.kim templates.
 
@@ -216,7 +216,7 @@ essentially identical. See comments below.)
 
 (f) Compile the new Model into the API package:
 
-    % cd $KD
+    % cd ${KD}
     % make
 
     Correct any errors until the compilation succeeds.
@@ -244,16 +244,16 @@ Buckingham Model Driver and a Ne KIM Model based on it are given below.
 (a) Create a new directory under MODEL_DRIVERS for the Buckingham pair
     potential Model Driver:
 
-    % cd $KD/MODEL_DRIVERS
+    % cd ${KD}/MODEL_DRIVERS
     % mkdir model_driver_P_Buckingham
 
 (b) Copy the .F03, .kim and Makefile templates into the new directory and
     rename:
 
-    % cd $KD/MODEL_DRIVERS/model_driver_P_Buckingham
-    % cp $KD/DOCS/TEMPLATES/model_driver_P_Template.F03 model_driver_P_Buckingham.F03
-    % cp $KD/DOCS/TEMPLATES/model_driver_P_Template.f.kim model_driver_P_Buckingham.kim
-    % cp $KD/DOCS/TEMPLATES/Makefile.driver.template Makefile
+    % cd ${KD}/MODEL_DRIVERS/model_driver_P_Buckingham
+    % cp ${KD}/DOCS/TEMPLATES/model_driver_P_Template.F03 model_driver_P_Buckingham.F03
+    % cp ${KD}/DOCS/TEMPLATES/model_driver_P_Template.f.kim model_driver_P_Buckingham.kim
+    % cp ${KD}/DOCS/TEMPLATES/Makefile.driver.template Makefile
 
     Note: For a Model written in C, copy the .c and .c.kim templates.
 
@@ -290,22 +290,22 @@ Buckingham Model Driver and a Ne KIM Model based on it are given below.
 
 (f) Compile the new Model Driver into the API package:
 
-    % cd $KD
+    % cd ${KD}
     % make
 
     Correct any errors until the compilation succeeds.
 
 (g) Create a new directory under MODELS for the Ne pair potential:
 
-    % cd $KD/MODELS
+    % cd ${KD}/MODELS
     % mkdir model_Ne_P_Buckingham
 
 (h) Copy the `Makefile.driver.based.model.template' and
     model_El_P_Template.params files into the new directory and rename:
 
-    % cd $KD/MODELS/model_Ne_P_Buckingham
-    % cp $KD/DOCS/TEMPLATES/Makefile.driver.based.model.template Makefile
-    % cp $KD/DOCS/TEMPLATES/model_El_P_Template.params model_Ne_P_Buckingham.params
+    % cd ${KD}/MODELS/model_Ne_P_Buckingham
+    % cp ${KD}/DOCS/TEMPLATES/Makefile.driver.based.model.template Makefile
+    % cp ${KD}/DOCS/TEMPLATES/model_El_P_Template.params model_Ne_P_Buckingham.params
 
 (i) Edit the Makefile and change the Model name, Model Driver name, and
     SPECIES_001_NAME appropriately. (Search for the word "FILL".)  Also change
@@ -318,7 +318,7 @@ Buckingham Model Driver and a Ne KIM Model based on it are given below.
 
 (k)  Compile the new Model into the API package:
 
-     % cd $KD
+     % cd ${KD}
      % make
 
      Correct any errors until the compilation succeeds.

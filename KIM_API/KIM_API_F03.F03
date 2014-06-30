@@ -338,6 +338,17 @@ contains
       trim(mdlname)//c_null_char)
   end function kim_api_init
 
+  integer(c_int) function kim_api_file_init(kimmdl, testkimfile, mdlname)
+    use :: kim_api_f03_helper, only : c_call => kim_api_file_init
+    implicit none
+    type(c_ptr),      intent(out) :: kimmdl
+    character(len=*), intent(in)  :: testkimfile
+    character(len=*), intent(in)  :: mdlname
+
+    kim_api_file_init = c_call(kimmdl, trim(testkimfile)//c_null_char, &
+      trim(mdlname)//c_null_char)
+  end function kim_api_file_init
+
   integer(c_int) function kim_api_string_init(kimmdl, testdescriptor, modelname)
     use :: kim_api_f03_helper, only : c_call => kim_api_string_init
     implicit none

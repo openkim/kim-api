@@ -47,9 +47,8 @@ Makefile
 README
      This file.
 
-ex_test_Ar_multiple_models.c
-     Code for the test.
-
-ex_test_Ar_multiple_models.kim
+descriptor.kim
      KIM descriptor file for the test.
 
+ex_test_Ar_multiple_models.c
+     Code for the test.

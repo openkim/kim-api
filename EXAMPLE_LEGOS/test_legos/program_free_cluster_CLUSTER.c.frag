@@ -92,10 +92,10 @@ int main(int argc, char* argv[])
    }
 
    /* Initialize the KIM Model */
-   status = KIM_API_init(&pkim, testname, modelname);
+   status = KIM_API_file_init(&pkim, "descriptor.kim", modelname);
    if (KIM_STATUS_OK > status)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_init", status);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_file_init", status);
       exit(1);
    }
 

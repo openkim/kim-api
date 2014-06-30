@@ -52,6 +52,6 @@ README
 TEST_NAME_STR.F03
      Fortran 2003 program that implements the test.
 
-TEST_NAME_STR.kim
+descriptor.kim
      KIM descriptor file, contains all variables and methods that are exposed
      through the KIM API interface.

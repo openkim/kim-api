@@ -10,13 +10,13 @@
 !       This procedure needs to be improved in the future.
 !
 !-------------------------------------------------------------------------------
-real(c_double) function get_model_cutoff_firsttime(testname, modelname)
+real(c_double) function get_model_cutoff_firsttime(testkimfile, modelname)
   use, intrinsic :: iso_c_binding
   use KIM_API_F03
   implicit none
 
   !-- Transferred variables
-  character(len=KIM_KEY_STRING_LENGTH),  intent(in)  :: testname
+  character(len=KIM_KEY_STRING_LENGTH),  intent(in)  :: testkimfile
   character(len=KIM_KEY_STRING_LENGTH),  intent(in)  :: modelname
 
   !-- Local variables
@@ -27,10 +27,10 @@ real(c_double) function get_model_cutoff_firsttime(testname, modelname)
   real(c_double), pointer :: cutoff; type(c_ptr) :: pcutoff
 
   ! Initialize the KIM object
-  ier = kim_api_init(pkim_temp, testname, modelname)
+  ier = kim_api_file_init(pkim_temp, testkimfile, modelname)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                                 "kim_api_init", ier)
+                                 "kim_api_file_init", ier)
      stop
   endif
 

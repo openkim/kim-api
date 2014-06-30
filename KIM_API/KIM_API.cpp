@@ -1552,11 +1552,37 @@ int KIM_API_model::init(const char* testname, const char* modelname){
     filekimlog.open(kimlog);
     backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);
 
+    char testinputfile[2048] = KIM_TESTS_DIR_VAL;
+    strcat(testinputfile,"/");strcat(testinputfile,testname);strcat(testinputfile,"/");
+    strcat(testinputfile,testname);strcat(testinputfile,".kim");
+
     int error;
     char* in_mdlstr = get_model_kim_str(modelname, &error);
     if (error == KIM_STATUS_OK) {
        name_temp = modelname;
-       error = init_str_modelname(testname,in_mdlstr);
+       error = init_str_modelname(testinputfile,in_mdlstr);
+    }
+
+    std::free(in_mdlstr);
+   //redirecting back to > std::cout
+    std::cout.rdbuf(backup); filekimlog.close();
+
+    return error;
+}
+
+int KIM_API_model::file_init(const char* testkimfile, const char* modelname){
+
+    //redirecting std::cout > kimlog
+   char kimlog[2048] = "./kim.log";
+    std::streambuf * psbuf, * backup; std::ofstream filekimlog;
+    filekimlog.open(kimlog);
+    backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);
+
+    int error;
+    char* in_mdlstr = get_model_kim_str(modelname, &error);
+    if (error == KIM_STATUS_OK) {
+       name_temp = modelname;
+       error = init_str_modelname(testkimfile,in_mdlstr);
     }
 
     std::free(in_mdlstr);
@@ -1571,13 +1597,8 @@ void KIM_API_model::fatal_error_print(){
 }
 
 
-int KIM_API_model::init_str_modelname(const char* testname, const char* inmdlstr){
+int KIM_API_model::init_str_modelname(const char* testinputfile, const char* inmdlstr){
    int error;
-   char testinputfile[2048] = KIM_TESTS_DIR_VAL;
-    strcat(testinputfile,"/");strcat(testinputfile,testname);strcat(testinputfile,"/");
-    strcat(testinputfile,testname);strcat(testinputfile,".kim");
-
-
 
     //check test-model match and preinit test-model-API
     KIM_API_model test,mdl;
@@ -1588,8 +1609,8 @@ int KIM_API_model::init_str_modelname(const char* testname, const char* inmdlstr
         return KIM_STATUS_FAIL;
     }
 
-    test.name_temp = testname;
-    if(!test.preinit(testinputfile,testname)){
+    test.name_temp = "Test";
+    if(!test.preinit(testinputfile,"Test")){
         std::cout<<"preinit  failed with error status: "<<this->get_status_msg(ErrorCode)<<std::endl;
         return KIM_STATUS_FAIL;
     }
@@ -1617,7 +1638,7 @@ int KIM_API_model::init_str_modelname(const char* testname, const char* inmdlstr
         return KIM_STATUS_OK;
     }else{
 
-       std::cout<<"Do not match  " << mdl.model.name  << " and "<< testname <<std::endl;
+       std::cout<<"Do not match  " << mdl.model.name  << " and "<< "Test" <<std::endl;
        mdl.free();
        test.free();
 
@@ -2013,7 +2034,7 @@ bool KIM_API_model::irrelevantVars2donotcompute(KIM_API_model & test, KIM_API_mo
 void KIM_API_model::allocate( int natoms, int ntypes, int * error){
     // in process
     if ( this->model.data.p == NULL) {
-        std::cout<<"* Error (KIM_API_model::allocate): KIM API object not initialized with KIM_API_init()."<<std::endl;
+        std::cout<<"* Error (KIM_API_model::allocate): KIM API object not initialized with KIM_API_file_init()."<<std::endl;
         *error = KIM_STATUS_FAIL;
         return;
     }

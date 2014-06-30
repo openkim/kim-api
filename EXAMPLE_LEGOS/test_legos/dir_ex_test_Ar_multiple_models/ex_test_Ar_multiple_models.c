@@ -122,6 +122,7 @@ int main()
    double energy_cluster_model_1;
 
    char testname[] = "ex_test_Ar_multiple_models";
+   char testkimfile[] = "descriptor.kim";
    char modelname0[NAMESTRLEN];
    char modelname1[NAMESTRLEN];
 
@@ -135,18 +136,18 @@ int main()
    }
 
    /* initialize the two models */
-   status = KIM_API_init(&pkim_periodic_model_0, testname, modelname0);
+   status = KIM_API_file_init(&pkim_periodic_model_0, testkimfile, modelname0);
    if (KIM_STATUS_OK > status)
-      KIM_API_report_error(__LINE__, __FILE__,"KIM_API_init() for MODEL_ZERO for periodic",status);
-   status = KIM_API_init(&pkim_cluster_model_0, testname, modelname0);
+      KIM_API_report_error(__LINE__, __FILE__,"KIM_API_file_init() for MODEL_ZERO for periodic",status);
+   status = KIM_API_file_init(&pkim_cluster_model_0, testkimfile, modelname0);
    if (KIM_STATUS_OK > status)
-      KIM_API_report_error(__LINE__, __FILE__,"KIM_API_init() for MODEL_ZERO for cluster",status);
-   status = KIM_API_init(&pkim_periodic_model_1, testname, modelname1);
+      KIM_API_report_error(__LINE__, __FILE__,"KIM_API_file_init() for MODEL_ZERO for cluster",status);
+   status = KIM_API_file_init(&pkim_periodic_model_1, testkimfile, modelname1);
    if (KIM_STATUS_OK > status)
-      KIM_API_report_error(__LINE__, __FILE__,"KIM_API_init() for MODEL_ONE for periodic",status);
-   status = KIM_API_init(&pkim_cluster_model_1, testname, modelname1);
+      KIM_API_report_error(__LINE__, __FILE__,"KIM_API_file_init() for MODEL_ONE for periodic",status);
+   status = KIM_API_file_init(&pkim_cluster_model_1, testkimfile, modelname1);
    if (KIM_STATUS_OK > status)
-      KIM_API_report_error(__LINE__, __FILE__,"KIM_API_init() for MODEL_ONE cluster",status);
+      KIM_API_report_error(__LINE__, __FILE__,"KIM_API_file_init() for MODEL_ONE cluster",status);
 
    /* Register memory */
    KIM_API_setm_data(pkim_periodic_model_0, &status, 7*4,

@@ -192,34 +192,34 @@ ex_model_ArNe_P_MLJ_NEIGH_RVEC_F (Fortran 2003)
 
 ex_model_Ar_P_MLJ_C (C)
      This Model is based on the template file
-     $KD/DOCs/TEMPLATEs/model_El_P_Template.c.  Thus, it is useful to
+     ${KD}/DOCs/TEMPLATEs/model_El_P_Template.c.  Thus, it is useful to
      compare the file ex_model_Ar_P_MLJ_C.c with
-     $KD/DOCs/TEMPLATEs/model_El_P_Template.c to see the relatively few
+     ${KD}/DOCs/TEMPLATEs/model_El_P_Template.c to see the relatively few
      changes required to implement the modified Lennard-Jones model.  The
      template implements all NBCs and Iterator and Locator modes in a way that
      results in a very compact compute() function.
 
 ex_model_Ar_P_MLJ_F03 (Fortran 2003)
      This Model is based on the template file
-     $KD/DOCs/TEMPLATEs/model_El_P_Template.F03.  Thus, it is useful to
+     ${KD}/DOCs/TEMPLATEs/model_El_P_Template.F03.  Thus, it is useful to
      compare the file ex_model_Ar_P_MLJ_F03.F03 with
-     $KD/DOCs/TEMPLATEs/model_El_P_Template.F03 to see the relatively few
+     ${KD}/DOCs/TEMPLATEs/model_El_P_Template.F03 to see the relatively few
      changes required to implement the modified Lennard-Jones model.  The
      template implements all NBCs and Iterator and Locator modes in a way that
      results in a very compact Compute_Energy_Forces() subroutine.
 
 ex_model_Al_PF_ErcolessiAdams (Fortran 2003)
      This Model is based on the template file
-     $KD/DOCs/TEMPLATEs/model_El_PF_Template.F03.  Thus, it is useful to
+     ${KD}/DOCs/TEMPLATEs/model_El_PF_Template.F03.  Thus, it is useful to
      compare the file ex_model_Al_PF_ErcolessiAdams.F03 with
-     $KDDOCs/TEMPLATEs/model_El_PF_Template.F03 to see the relatively
+     ${KD}/DOCs/TEMPLATEs/model_El_PF_Template.F03 to see the relatively
      simple changes required to implement a pair functional Model.
 
 ex_model_Cu_PF_Johnson (C)
      This Model is based on the template file
-     $KD/DOCs/TEMPLATEs/model_El_PF_Template.c.  Thus, it is useful to
+     ${KD}/DOCs/TEMPLATEs/model_El_PF_Template.c.  Thus, it is useful to
      compare the file ex_model_Cu_PF_Johnson.c with
-     $KDDOCs/TEMPLATEs/model_El_PF_Template.c to see the relatively
+     ${KD}/DOCs/TEMPLATEs/model_El_PF_Template.c to see the relatively
      simple changes required to implement a pair functional Model.
 
 ex_model_Ar_P_LJ (F03)
@@ -227,7 +227,7 @@ ex_model_Ne_P_LJ (F03)
      These Models are based on the KIM Model Driver model_driver_P_LJ.  They
      only consist of a simple Makefile and a parameters file.  Everything else
      is handled by the KIM Model Driver.  See the directory
-     $KD/MODEL_DRIVERS/model_driver_P_LJ/ for more details on how KIM
+     ${KD}/MODEL_DRIVERS/model_driver_P_LJ/ for more details on how KIM
      Model Drivers are handled.
 
 ex_model_Ar_P_Morse (C)
@@ -235,7 +235,7 @@ ex_model_Ne_P_Morse (C)
      These Models are based on the KIM Model Driver model_driver_P_Morse.  They
      only consist of a simple Makefile and a parameters file.  Everything else
      is handled by the KIM Model Driver.  See the directory
-     $KD/MODEL_DRIVERS/model_driver_P_Morse/ for more details on how KIM
+     ${KD}/MODEL_DRIVERS/model_driver_P_Morse/ for more details on how KIM
      Model Drivers are handled.
 
 ex_model_Ne_P_fastLJ (C)

@@ -47,6 +47,14 @@ module kim_api_f03_helper
       character(c_char) :: mdlname(*)
     end function kim_api_init
 
+    integer(c_int) function kim_api_file_init(kimmdl, testkimfile, mdlname) &
+      bind(c, name="KIM_API_file_init")
+      use, intrinsic :: iso_c_binding
+      type(c_ptr)       :: kimmdl
+      character(c_char) :: testkimfile(*)
+      character(c_char) :: mdlname(*)
+    end function kim_api_file_init
+
     integer(c_int) function kim_api_string_init(kimmdl, testdescriptor, &
       modelname) &
       bind(c, name="KIM_API_string_init")

@@ -188,6 +188,7 @@ public:
     int get_compute_by_index(int I,int * error);
 
     int init(const char * testname,const char * modelname);
+    int file_init(const char * testkimfile,const char * modelname);
     int string_init(const char * intststr,const char * modelname);
    int match(const char* teststring, const char* modelstring);
     int model_compute();

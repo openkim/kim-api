@@ -29,6 +29,7 @@ program TEST_NAME_STR
   ! parameters controlling behavior of test
   !
   character(len=KIM_KEY_STRING_LENGTH), parameter :: testname = "TEST_NAME_STR"
+  character(len=KIM_KEY_STRING_LENGTH), parameter :: testkimfile = "descriptor.kim"
   character(len=2), parameter :: specname    = 'SPECIES_NAME_STR'
   real(c_double),   parameter :: TOL         = 1.0e-8_cd
   real(c_double),   parameter :: FCCspacing  = FCC_SPACING_STR
@@ -69,14 +70,14 @@ program TEST_NAME_STR
   ! Get model cutoff radius and compute number of atoms needed
   ! (We need 2*cutoff, use 2.125*cutoff for saftey)
   !
-  rcut = get_model_cutoff_firsttime(testname, modelname)
+  rcut = get_model_cutoff_firsttime(testkimfile, modelname)
   CellsPerSide = ceiling((2.125_cd*rcut)/(MinSpacing))
   N = 4*(CellsPerSide**3)
 
 
   ! Setup the KIM API object
   !
-  call setup_KIM_API_object(pkim, testname, modelname, N, specname, SupportHalf)
+  call setup_KIM_API_object(pkim, testkimfile, modelname, N, specname, SupportHalf)
 
 
   ! allocate storage for neighbor lists, compute them for the first time,

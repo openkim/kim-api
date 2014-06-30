@@ -43,7 +43,7 @@ files to facilitate the learning process.
 STEP 0
 
    If you have not already done so, read the README file in the API root
-   directory, referred to as $KD (by default: openkim-api-vX.X.X), and
+   directory, referred to as ${KD} (by default: openkim-api-vX.X.X), and
    follow the instructions in the INSTALL file in the same directory to install
    the openkim-api package.
 
@@ -62,13 +62,13 @@ STEP 2
    potentials) and Tests (simulation codes) which demonstrate how the API
    works.  Read about the provided Models and Tests in these two files:
 
-   $KD/EXAMPLES/MODELS/EXAMPLES.README
-   $KD/EXAMPLES/TESTS/EXAMPLES.README
+   ${KD}/EXAMPLES/MODELS/EXAMPLES.README
+   ${KD}/EXAMPLES/TESTS/EXAMPLES.README
 
    Or, if you have already done `make examples', these files can be found at
 
-   $KD/MODELS/EXAMPLES.README
-   $KD/TESTS/EXAMPLES.README
+   ${KD}/MODELS/EXAMPLES.README
+   ${KD}/TESTS/EXAMPLES.README
 
    These files include a list of the Models/Tests and brief descriptions of
    what they do.
@@ -80,10 +80,10 @@ STEP 2
 STEP 3
 
    Included with the package is a script that runs all of the possible
-   combinations of Models and Tests (see $KD/TESTS/EXAMPLES.README for the
+   combinations of Models and Tests (see ${KD}/TESTS/EXAMPLES.README for the
    list of Model/Test compatibilities).  Run this script:
 
-   % cd $KD/TESTS
+   % cd ${KD}/TESTS
    % ./run_all_ex_tests > run_all_ex_tests.out 2>&1
 
    The above command redirects the output to the file `run_all_ex_tests.out'.
@@ -91,7 +91,8 @@ STEP 3
    looks like.  To run an individual Test/Model combination by yourself from
    the command line, you can type (for example):
 
-   % echo "ex_model_Ar_P_MLJ_C" | $KD/TESTS/ex_test_Ar_free_cluster/ex_test_Ar_free_cluster
+   % cd ${KD}/TESTS/ex_test_Ar_free_cluster
+   % echo "ex_model_Ar_P_MLJ_C" | ./ex_test_Ar_free_cluster
 
    which will run the Test `ex_test_Ar_free_cluster' with the
    `ex_model_Ar_P_MLJ_C' Model.  In this case, this is a Test written in
@@ -104,8 +105,8 @@ STEP 4
    next step is to understand how it works.  This is the stage where we need to
    start looking at computer code.
 
-   The list of Models and Tests is given in $KD/MODELS/EXAMPLES.README and
-   $KD/TESTS/EXAMPLES.README, respectively.  Each of those files includes
+   The list of Models and Tests is given in ${KD}/MODELS/EXAMPLES.README and
+   ${KD}/TESTS/EXAMPLES.README, respectively.  Each of those files includes
    a brief description of the Models/Tests in order of increasing complexity
    and noting the programming language.  For example, the simplest Test is
 
@@ -121,14 +122,14 @@ STEP 4
    The computer code for this Model and corresponding KIM descriptor file are
    located in
 
-   $KD/TESTS/ex_test_Ar_free_cluster_CLUSTER_C/ex_test_Ar_free_cluster_CLUSTER_C.c
-   $KD/TESTS/ex_test_Ar_free_cluster_CLUSTER_C/ex_test_Ar_free_cluster_CLUSTER_C.kim
+   ${KD}/TESTS/ex_test_Ar_free_cluster_CLUSTER_C/ex_test_Ar_free_cluster_CLUSTER_C.c
+   ${KD}/TESTS/ex_test_Ar_free_cluster_CLUSTER_C/descriptor.kim
 
    Read through these two files (or the corresponding files for the Fortran
    Test).  As you read, you can refer to the following files:
 
-   $KD/DOCs/KIM_API_Description.txt
-   $KD/DOCs/standard.kim
+   ${KD}/DOCs/KIM_API_Description.txt
+   ${KD}/DOCs/standard.kim
 
    The first file, `KIM_API_Description.txt', is a reference file which
    explains the functioning of the different KIM API service routines which are
@@ -151,8 +152,8 @@ STEP 4
    The computer code for this Model and corresponding KIM descriptor file are
    located in
 
-   $KD/MODELS/ex_model_Ar_P_MLJ_CLUSTER_C/ex_model_Ar_P_MLJ_CLUSTER_C.c
-   $KD/MODELS/ex_model_Ar_P_MLJ_CLUSTER_C/ex_model_Ar_P_MLJ_CLUSTER_C.kim
+   ${KD}/MODELS/ex_model_Ar_P_MLJ_CLUSTER_C/ex_model_Ar_P_MLJ_CLUSTER_C.c
+   ${KD}/MODELS/ex_model_Ar_P_MLJ_CLUSTER_C/descriptor.kim
 
    Read through these files (or the corresponding files for the Fortran Model)
    referring to `KIM_API_Description.txt' and `standard.kim' as explained
@@ -162,7 +163,7 @@ STEP 4
    continue working down the list of Tests and Models in the EXAMPLES.README
    files exploring code of increasing complexity.
 
-   At the end of the list of Models in $KD/MODELS/EXAMPLES.README, you
+   At the end of the list of Models in ${KD}/MODELS/EXAMPLES.README, you
    will find several Models that are generated from Model Drivers.  A Model
    Driver is an implementation of a Model class (as opposed to a particular
    instance of a Model).  A Model for a given material can be created from a
@@ -172,20 +173,20 @@ STEP 4
    for a given material are obtained once the Lennard-Jones parameters (sigma,
    epsilon and cutoff radius) are specified.  Model Drivers are handled
    differently than Models within the openkim-api package.  Model Drivers are
-   stored separately within the $KD/MODEL_DRIVERS directory.  Read the
+   stored separately within the ${KD}/MODEL_DRIVERS directory.  Read the
    EXAMPLES.README within that directory for a description of the existing
    Model Drivers.  Every Model generated from a Model Driver will have its own
-   directory under $KD/MODELS just like a regular KIM Model.  However, the
+   directory under ${KD}/MODELS just like a regular KIM Model.  However, the
    contents of the directory will be different.  First, the `Makefile' will be
    different.  It will contain the name of the associated Model Driver routine
    along with additional information.  Second, instead of a code file
    containing the implementation of the Model, there will be a data file (or
    files), whose name(s) is(are) listed in the Makefile, containing the
    parameters to be read in by the Model Driver.  (See the README file in the
-   corresponding Model Driver directory under $KD/MODEL_DRIVERS for a
+   corresponding Model Driver directory under ${KD}/MODEL_DRIVERS for a
    description of the parameters and expected format.)  To understand how the
    Model works, study the code of the Model Driver which is stored in the
-   appropriate directory under $KD/MODEL_DRIVERS.  Also, after compiling
+   appropriate directory under ${KD}/MODEL_DRIVERS.  Also, after compiling
    the Model, read the C++ file $MODEL_NAME.cpp (where $MODEL_NAME is the name
    of the model).  This file is generated by the openkim-api package Makefile
    system and implements the connection between the Model and its Model Driver.
@@ -201,7 +202,7 @@ STEP 5
    A description of the templates and directions for how to use them to create
    a new KIM-compliant model are given in
 
-   $KD/DOCS/TEMPLATES/README
+   ${KD}/DOCS/TEMPLATES/README
 
    Read this file and then follow the instructions to create a new
    KIM-compliant pair potential.  As a particular example, create a

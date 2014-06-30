@@ -86,7 +86,8 @@ DEPRECATED: Fortran style: integer, parameter :: kim_intptr = 4 (or 8)
 
 ==============================  GLOBAL METHODS  ==============================
 
-int KIM_API_init(void *kimmdl, char *testname, char *modelname);
+DEPRECATED int KIM_API_init(void *kimmdl, char *testname, char *modelname);
+int KIM_API_file_init(void *kimmdl, char *testkimfile, char *modelname);
 
     This routine creates the KIM API object that can store every pointer to the
     data described in the KIM descriptor file for the model.  It also checks if
@@ -292,12 +293,16 @@ Arguments:
               reference pointer to KIM_API_model object (in C++ style, the
               definition will be (KIM_API_model **)).
 
-      char *testname
+DEPRECATED      char *testname
               null terminated character string that defines Test name. The
               routine prepends the Tests' directory string (defined by the Make
               variable KIM_TESTS_DIR, which is specified in the file
               Makefile.KIM_Config) to obtain the file location of the Test
               descriptor (.kim) file.
+
+      char *testkimfile
+              null terminated character string giving the relative or absolute
+              path name to the Test's KIM descriptor file.
 
       char *modelname
               null terminated character string that defines the Model name.
@@ -311,14 +316,14 @@ Arguments:
 
 int KIM_API_string_init(void *kimmdl, char *testdescriptor, char *modelname);
 
-    This routine performs the same function as the KIM_API_init() routine.
+    This routine performs the same function as the KIM_API_file_init() routine.
     However, in this case the argument `testname' is a (long) null (or eof)
     terminated string with the complete content of the Test's KIM descriptor
     file.
 
     For a description of the process of matching a Test KIM descriptor file and
     a Model KIM descriptor file performed by this routine, see the entry for
-    KIM_API_init() above.
+    KIM_API_file_init() above.
 
 Arguments:
 
@@ -375,8 +380,8 @@ void KIM_API_allocate(void *kimmdl, int nParticles, int nParticleTypes, int *kim
     memory leak).
 
     NOTE: Prior to calling this routine a valid KIM API object must be obtained
-          by calling KIM_API_init().  However, calling this routine multiple
-          times with the same KIM API object will cause a memory leak.
+          by calling KIM_API_file_init().  However, calling this routine
+          multiple times with the same KIM API object will cause a memory leak.
 
     Here the process of allocating memory for KIM API arguments and updating
     their associated shape values is described in detail (See also, the
@@ -751,7 +756,7 @@ int KIM_API_set_method(void *kimmdl, char *nm, intptr_t size, func_ptr dt);
     by this product.
 
     NOTE: Prior to calling this routine a valid KIM API object must be obtained
-          by calling KIM_API_init().
+          by calling KIM_API_file_init().
 
 Arguments:
 
@@ -1005,16 +1010,16 @@ int KIM_API_model_init(void *kimmdl);
 
     This routine will initialize the Model associated with the KIM API object
     by calling the init routine supplied by the Model.  It uses the Model's
-    name (which is stored in KIM API object by the KIM_API_init routine).  The
-    return value will be KIM_STATUS_OK in case of success and KIM_STATUS_FAIL
-    otherwise.
+    name (which is stored in KIM API object by the KIM_API_file_init routine).
+    The return value will be KIM_STATUS_OK in case of success and
+    KIM_STATUS_FAIL otherwise.
 
     NOTES:
 
     (1) In order to call KIM_API_model_init() it is necessary to have a valid
-        KIM API object pointed to by `kimmdl' (see KIM_API_init() above).  The
-        mandatory argument `cutoff' must be registered in this KIM API object
-        and it must have memory allocated to it (via either the
+        KIM API object pointed to by `kimmdl' (see KIM_API_file_init() above).
+        The mandatory argument `cutoff' must be registered in this KIM API
+        object and it must have memory allocated to it (via either the
         KIM_API_allocate() or KIM_API_set_data() routines).
 
     (2) The Model's init routine must store its cutoff value in the KIM API
@@ -1095,7 +1100,7 @@ int KIM_API_model_reinit(void *kimmdl);
     NOTES:
 
     (1) In order to call KIM_API_model_reinit() it is necessary to have a valid
-        KIM API object pointed to by `kimmdl' (see KIM_API_init()).
+        KIM API object pointed to by `kimmdl' (see KIM_API_file_init()).
         Additionally, KIM_API_model_init() must have been previously executed
         for this KIM API object.
 

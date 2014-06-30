@@ -46,6 +46,7 @@ program TEST_NAME_STR
   ! KIM variables
   !
   character(len=KIM_KEY_STRING_LENGTH) :: testname = "TEST_NAME_STR"
+  character(len=KIM_KEY_STRING_LENGTH) :: testkimfile = "descriptor.kim"
   character(len=KIM_KEY_STRING_LENGTH) :: modelname
   character(len=KIM_KEY_STRING_LENGTH), pointer :: NBC_Method
   type(c_ptr) :: pNBC_Method
@@ -73,10 +74,10 @@ program TEST_NAME_STR
   read(*,*) modelname
 
   ! Initialize the KIM object
-  ier = kim_api_init(pkim, testname, modelname)
+  ier = kim_api_file_init(pkim, testkimfile, modelname)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                                 "kim_api_init", ier)
+                                 "kim_api_file_init", ier)
      stop
   endif
 

@@ -50,6 +50,7 @@ typedef void (* func_ptr)();
 
 /* global methods */
 int KIM_API_init(void * kimmdl, const char *testname, const char *modelname);
+int KIM_API_file_init(void * kimmdl, const char *testkimfile, const char *modelname);
 
 int KIM_API_model_info(void * kimmdl, const char * mdlname);
 
@@ -168,6 +169,7 @@ void KIM_API_getm_compute_by_index(void *kimmdl, int *error,int numargs, ...);
 /* fortran interface */
 /* THE BELOW IS DEPRECATED */
 int kim_api_init_(void * kimmdl,char ** testname, char **mdlname);
+int kim_api_file_init_(void * kimmdl,char ** testkimfile, char **mdlname);
 int kim_api_model_info_(void * kimmdl,char ** mdlname);
 int kim_api_string_init_(void * kimmdl, char **testinputstring, char ** modelname);
 void kim_api_allocate_(void *kimmdl, int *natoms, int *ntypes, int *error);

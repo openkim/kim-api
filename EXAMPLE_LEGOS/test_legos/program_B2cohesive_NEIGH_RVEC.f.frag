@@ -29,6 +29,7 @@ program TEST_NAME_STR
   ! parameters controlling behavior of test
   !
   character(len=KIM_KEY_STRING_LENGTH), parameter :: testname = "TEST_NAME_STR"
+  character(len=KIM_KEY_STRING_LENGTH), parameter :: testkimfile = "descriptor.kim"
   character(len=2), parameter :: specname1   = 'SPECIES1_NAME_STR'
   character(len=2), parameter :: specname2   = 'SPECIES2_NAME_STR'
   real(c_double),   parameter :: TOL         = 1.0e-8_cd
@@ -84,7 +85,7 @@ program TEST_NAME_STR
 
   ! Setup the KIM API object
   !
-  call setup_B2_KIM_API_object(pkim, testname, modelname, specname1, specname2)
+  call setup_B2_KIM_API_object(pkim, testkimfile, modelname, specname1, specname2)
 
 
   ! allocate storage for neighbor lists, compute them for the first time,
