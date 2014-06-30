@@ -220,17 +220,17 @@ KIM_FTYPE_STANDARD_COMPILE_LIST = $(ARCHFLAG) $(PICFLAG) $(FCRAYFLAG) $(KIMINCLU
                fi
 
 # KIM descriptor file make rule
-KDF_STR_NAME = kim_str
-.INTERMEDIATE: $(KDF_STR_NAME).cpp
-$(KDF_STR_NAME).cpp: $(KIM_MAKE_FILES) # $(MODEL_NAME).kim dependency added in another Makefile
+KIM_STR_NAME = kim_str
+.INTERMEDIATE: $(KIM_STR_NAME).cpp
+$(KIM_STR_NAME).cpp: $(KIM_MAKE_FILES) # $(MODEL_NAME).kim dependency added in another Makefile
 	@printf "Creating... intermediate file... $@.\n"
 	$(QUELL)fl_size=`cat $(MODEL_NAME).kim | tr -d '\r' | wc -c`;\
          n=`expr $$fl_size / 65536 + 2`;\
          lines=`cat $(MODEL_NAME).kim | tr -d '\r' | wc -l`;\
          dl=`expr $$lines / $$n`;\
          printf "extern \"C\" {\n"                                                                >  $@;\
-         printf "   extern const int $(MODEL_NAME)_$(KDF_STR_NAME)_chunks = %i;\n" `expr $$n + 1` >> $@;\
-         printf "   extern const char* const $(MODEL_NAME)_$(KDF_STR_NAME)[] =\n"                 >> $@;\
+         printf "   extern const int $(MODEL_NAME)_$(KIM_STR_NAME)_chunks = %i;\n" `expr $$n + 1` >> $@;\
+         printf "   extern const char* const $(MODEL_NAME)_$(KIM_STR_NAME)[] =\n"                 >> $@;\
          printf "   {\n"                                                                          >> $@;\
          i=0;\
          while test $$i -le $$n; do \

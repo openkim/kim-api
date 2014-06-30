@@ -66,7 +66,7 @@ STATIC_COMP_WARNING:
         printf '*******                        $$KIM_DIR directory                       *******\n'; \
         printf '*******************************************************************************\n'; \
 
-$(KDF_STR_NAME).cpp: $(MODEL_NAME).kim
+$(KIM_STR_NAME).cpp: $(MODEL_NAME).kim
 
 all: $(MODEL_NAME).kim $(MODEL_BUILD_TARGET)
 
@@ -162,22 +162,22 @@ lib$(MODEL_LIB).so: lib$(MODEL_LIB_BUILD).so
 	@printf "Creating... $@.\n"
 	$(QUELL)ln -fs "lib$(MODEL_LIB_BUILD).so" "lib$(MODEL_LIB).so"
 
-lib$(MODEL_LIB_BUILD).a: $(PARAM_MODEL_NAME).o $(KDF_STR_NAME).o
+lib$(MODEL_LIB_BUILD).a: $(PARAM_MODEL_NAME).o $(KIM_STR_NAME).o
 	@printf "Creating... $@.\n"
-	$(QUELL)ar rcs $@ $(PARAM_MODEL_NAME).o $(KDF_STR_NAME).o
+	$(QUELL)ar rcs $@ $(PARAM_MODEL_NAME).o $(KIM_STR_NAME).o
 
 $(EXPORT_LIST_NAME): $(KIM_MAKE_FILES) Makefile
 	@printf "Creating... intermediate file... $@.\n"
 ifeq (darwin, $(KIM_SYSTEMLINKER))
 	$(QUELL)printf "_$(MODEL_NAME)_init_pointer\n"             > $@
-	$(QUELL)printf "_$(MODEL_NAME)_$(KDF_STR_NAME)\n"         >> $@
-	$(QUELL)printf "_$(MODEL_NAME)_$(KDF_STR_NAME)_chunks\n"  >> $@
+	$(QUELL)printf "_$(MODEL_NAME)_$(KIM_STR_NAME)\n"         >> $@
+	$(QUELL)printf "_$(MODEL_NAME)_$(KIM_STR_NAME)_chunks\n"  >> $@
 else # everything else (linux and freebsd)
 	$(QUELL)printf "{\n"                                         > $@
 	$(QUELL)printf "   global:\n"                               >> $@
 	$(QUELL)printf "           $(MODEL_NAME)_init_pointer;\n"   >> $@
-	$(QUELL)printf "           $(KDF_STR_NAME);\n"              >> $@
-	$(QUELL)printf "           $(KDF_STR_NAME)_chunks;\n"       >> $@
+	$(QUELL)printf "           $(KIM_STR_NAME);\n"              >> $@
+	$(QUELL)printf "           $(KIM_STR_NAME)_chunks;\n"       >> $@
 	$(QUELL)printf "\n"                                         >> $@
 	$(QUELL)printf "   local: *;\n"                             >> $@
 	$(QUELL)printf "};\n"                                       >> $@
@@ -189,7 +189,7 @@ Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/MAKE_SYSTEM/Makefile.ParameterizedModel
 clean:
 	@printf "Cleaning... Model.......... $(MODEL_NAME).\n"
 	$(QUELL)rm -f $(addprefix lib$(MODEL_LIB).,a so) $(addprefix lib$(MODEL_LIB_BUILD).,a so) .lib$(MODEL_LIB_BUILD).so \
-                      $(PARAM_MODEL_NAME).o $(MODEL_NAME).kim $(KDF_STR_NAME).o
+                      $(PARAM_MODEL_NAME).o $(MODEL_NAME).kim $(KIM_STR_NAME).o
 
 install_parammodeldir = $(dest_package_dir)/$(modelsdir)/$(MODEL_NAME)
 
