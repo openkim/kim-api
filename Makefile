@@ -138,8 +138,8 @@ ifeq (dynamic-load,$(KIM_LINK))
         # Install make directory
 	$(QUELL)for fl in $(install_make); do $(INSTALL_PROGRAM) -m 0644 "$(makedir)/$$fl" "$(install_makedir)/$$fl"; done
 #??????
-	$(QUELL)printf ',s|^ *KIMINCLUDEFLAG *=.*|KIMINCLUDEFLAG = -I$$(KIM_DIR)/include|\nw\nq\n' | ed "$(install_makedir)/Makefile.Generic" >& /dev/null
-	$(QUELL)printf ',s|/KIM_API||g\nw\nq\n' | ed "$(install_makedir)/Makefile.Generic" >& /dev/null
+	$(QUELL)printf ',s|^ *KIMINCLUDEFLAG *=.*|KIMINCLUDEFLAG = -I$$(KIM_DIR)/include|\nw\nq\n' | ed "$(install_makedir)/Makefile.Generic" > /dev/null 2>&1
+	$(QUELL)printf ',s|/KIM_API||g\nw\nq\n' | ed "$(install_makedir)/Makefile.Generic" > /dev/null 2>&1
 #??????
         # Install compiler defaults directory
 	$(QUELL)for fl in $(install_compiler); do $(INSTALL_PROGRAM) -m 0644 "$(makecompilerdir)/$$fl" "$(install_compilerdir)/$$fl"; done
@@ -148,13 +148,13 @@ ifeq (dynamic-load,$(KIM_LINK))
         # Install KIM_Config file
 	$(QUELL)$(INSTALL_PROGRAM) -m 0644 Makefile.KIM_Config "$(dest_package_dir)/Makefile.KIM_Config"
 	$(QUELL)fl="$(dest_package_dir)/Makefile.KIM_Config" && \
-                printf 'g/KIM_MODEL_DRIVERS_DIR/d\nw\nq\n' | ed "$$fl" >& /dev/null                && \
-                printf 'g/KIM_MODELS_DIR/d\nw\nq\n'        | ed "$$fl" >& /dev/null                && \
-                printf 'g/KIM_TESTS_DIR/d\nw\nq\n'         | ed "$$fl" >& /dev/null                && \
-                printf ',s|^ *KIM_DIR *=.*|KIM_DIR = $(dest_package_dir)|\nw\nq\n' | ed "$$fl" >& /dev/null
+                printf 'g/KIM_MODEL_DRIVERS_DIR/d\nw\nq\n' | ed "$$fl" > /dev/null 2>&1 && \
+                printf 'g/KIM_MODELS_DIR/d\nw\nq\n'        | ed "$$fl" > /dev/null 2>&1 && \
+                printf 'g/KIM_TESTS_DIR/d\nw\nq\n'         | ed "$$fl" > /dev/null 2>&1 && \
+                printf ',s|^ *KIM_DIR *=.*|KIM_DIR = $(dest_package_dir)|\nw\nq\n' | ed "$$fl" > /dev/null 2>&1
         # Install version file
 	$(QUELL)$(INSTALL_PROGRAM) -m 0644 Makefile.Version "$(dest_package_dir)/Makefile.Version"
-	$(QUELL)printf ',s|\$$(shell[^)]*).|$(shell git rev-parse --short HEAD)|\nw\nq\n' | ed "$(dest_package_dir)/Makefile.Version" >& /dev/null  # create-package script ensures this is a null-op if not in the git repo
+	$(QUELL)printf ',s|\$$(shell[^)]*).|$(shell git rev-parse --short HEAD)|\nw\nq\n' | ed "$(dest_package_dir)/Makefile.Version" > /dev/null 2>&1 # create-package script ensures this is a null-op if not in the git repo
 	@printf ".\n"
 else
 	@printf ": nothing to be done for $(KIM_LINK).\n";
@@ -180,11 +180,11 @@ config-uninstall:
         # Make sure the package directory is gone
 	$(QUELL)if test -d "$(dest_package_dir)"; then rm -rf "$(dest_package_dir)"; fi
         # Uninstall the rest
-	$(QUELL)if test -d "$(DESTDIR)$(includedir)"; then rmdir "$(DESTDIR)$(includedir)" >& /dev/null || true; fi
-	$(QUELL)if test -d "$(DESTDIR)$(bindir)"; then rmdir "$(DESTDIR)$(bindir)" >& /dev/null || true; fi
-	$(QUELL)if test -d "$(DESTDIR)$(libdir)"; then rmdir "$(DESTDIR)$(libdir)" >& /dev/null || true; fi
-	$(QUELL)if test -d "$(DESTDIR)$(exec_prefix)"; then rmdir "$(DESTDIR)$(exec_prefix)" >& /dev/null || true; fi
-	$(QUELL)if test -d "$(DESTDIR)$(prefix)"; then rmdir "$(DESTDIR)$(prefix)" >& /dev/null || true; fi
+	$(QUELL)if test -d "$(DESTDIR)$(includedir)"; then rmdir "$(DESTDIR)$(includedir)" > /dev/null 2>&1 || true; fi
+	$(QUELL)if test -d "$(DESTDIR)$(bindir)"; then rmdir "$(DESTDIR)$(bindir)" > /dev/null 2>&1 || true; fi
+	$(QUELL)if test -d "$(DESTDIR)$(libdir)"; then rmdir "$(DESTDIR)$(libdir)" > /dev/null 2>&1 || true; fi
+	$(QUELL)if test -d "$(DESTDIR)$(exec_prefix)"; then rmdir "$(DESTDIR)$(exec_prefix)" > /dev/null 2>&1 || true; fi
+	$(QUELL)if test -d "$(DESTDIR)$(prefix)"; then rmdir "$(DESTDIR)$(prefix)" > /dev/null 2>&1 || true; fi
 
 kim-api-objects: Makefile kim-api-objects-making-echo
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(KIM_DIR)/KIM_API/ objects
