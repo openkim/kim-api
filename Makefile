@@ -162,7 +162,7 @@ endif
 
 install-set-default-to-v%: EXT:=$(if $(filter-out static-link,$(KIM_LINK)),so,a)
 install-set-default-to-v%:
-	@Printf "Setting default $(package_name) to $(package_name)-v$*\n"
+	@printf "Setting default $(package_name) to $(package_name)-v$*\n"
         # ignore the bin files at this stage (maybe add support for default bins later...)
 	$(QUELL)fl="$(DESTDIR)$(includedir)/$(package_name)"       && if test -L "$$fl"; then rm -f "$$fl"; fi && ln -fs "$(package_name)-v$*" "$$fl"
 	$(QUELL)fl="$(DESTDIR)$(libdir)/$(package_name)"           && if test -L "$$fl"; then rm -f "$$fl"; fi && ln -fs "$(package_name)-v$*" "$$fl"
@@ -170,7 +170,7 @@ install-set-default-to-v%:
 
 uninstall-set-default: EXT:=$(if $(filter-out static-link,$(KIM_LINK)),so,a)
 uninstall-set-default:
-	@Printf "Removing default $(package_name) settings.\n"
+	@printf "Removing default $(package_name) settings.\n"
 	$(QUELL)fl="$(DESTDIR)$(includedir)/$(package_name)"       && if test -L "$$fl"; then rm -f "$$fl"; fi
 	$(QUELL)fl="$(DESTDIR)$(libdir)/$(package_name)"           && if test -L "$$fl"; then rm -f "$$fl"; fi
 	$(QUELL)fl="$(DESTDIR)$(libdir)/lib$(package_name).$(EXT)" && if test -L "$$fl"; then rm -f "$$fl"; fi
