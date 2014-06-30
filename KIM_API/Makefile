@@ -231,8 +231,10 @@ clean:
 install_modelsdir = $(dest_package_dir)/$(modelsdir)
 install_modeldriversdir = $(dest_package_dir)/$(modeldriversdir)
 install_includedir = $(dest_package_dir)/include
+install_nodest_includedir = $(package_dir)/include
 install_include = KIM_API.h KIM_API_C.h KIM_API_status.h KIM_API_DIRS.h Unit_Handling.h KIM_AUX.h kim_kinds.mod kim_api.mod kim_api_f03.mod
 install_bindir = $(dest_package_dir)/bin
+install_nodest_bindir = $(package_dir)/bin
 install_bin = $(full_package_name)-descriptor-file-match
 
 install-check:
@@ -274,10 +276,10 @@ libs-install: libs installdirs
 	@printf "Installing...($(dest_package_dir))................................. KIM_API"
         # Install bin files
 	$(QUELL)for fl in $(install_bin); do $(INSTALL_PROGRAM) -m 0755 "$$fl" "$(install_bindir)/$$fl"; done
-	$(QUELL)for fl in $(install_bin); do ln -fs "$(install_bindir)/$$fl" "$(DESTDIR)$(bindir)/$$fl"; done
+	$(QUELL)for fl in $(install_bin); do ln -fs "$(install_nodest_bindir)/$$fl" "$(DESTDIR)$(bindir)/$$fl"; done
         # Install include files
 	$(QUELL)for fl in $(install_include); do $(INSTALL_PROGRAM) -m 0644 "$$fl" "$(install_includedir)/$$fl"; done
-	$(QUELL)ln -fs "$(install_includedir)" "$(DESTDIR)$(includedir)/$(full_package_name)"
+	$(QUELL)ln -fs "$(install_nodest_includedir)" "$(DESTDIR)$(includedir)/$(full_package_name)"
         # Install lib files
 ifneq (static-link,$(KIM_LINK))
 	$(QUELL)$(INSTALL_PROGRAM) -m 0755 ".lib$(KIM_LIB_BUILD).so" "$(dest_package_dir)/lib$(KIM_LIB_BUILD).so"
