@@ -33,6 +33,33 @@
 #
 
 
+=== openkim-api-v1.5.0 =========================================================
+
+* Documentation updates, including an extensive discussion of the installation
+  process in INSTALL.
+
+* Update examples to use KIM_API_file_init() and name their ".kim" file
+  "descriptor.kim" in accordance with the new convention of the openkim.org
+  processing pipeline.
+
+* Deprecate KIM_API_init() and add KIM_API_file_init() to replace it as the
+  primary openkim.org Tests should initialize the KIM API and specify their KIM
+  descriptor files.
+
+* Portability fixes for the make system
+
+* Move away from naming various files based on the item (Model Driver, Model,
+  Test) name.  Instead establish standard names for each item type.
+
+* Added Makefile.Version to provided the make system with version information
+  and set policy (based on SemVer 2.0.0) for how, when, and why to update the
+  version.
+
+* Significant updates to the make system.  Primarily associated with
+  installation of the KIM API to a system-wide location, and its use once
+  installed there.
+
+
 === openkim-api-v1.4.1 =========================================================
 
 
@@ -40,7 +67,7 @@
 
 * Fixed examples that used set_data when they should have used set_method.
 
-* Added LDLIBS flag in split functionality of LDFLAGS variable more 
+* Added LDLIBS flag in split functionality of LDFLAGS variable more
   appropriately.  This is more inline with standard Makefile practice.
 
 * Now 32Bit and 64Bit settings add -m32 and -m64 compiler flags automatically

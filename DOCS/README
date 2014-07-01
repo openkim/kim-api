@@ -153,7 +153,7 @@ STEP 4
    located in
 
    ${KD}/MODELS/ex_model_Ar_P_MLJ_CLUSTER_C/ex_model_Ar_P_MLJ_CLUSTER_C.c
-   ${KD}/MODELS/ex_model_Ar_P_MLJ_CLUSTER_C/descriptor.kim
+   ${KD}/MODELS/ex_model_Ar_P_MLJ_CLUSTER_C/ex_model_Ar_P_MLJ_CLUSTER_C.kim
 
    Read through these files (or the corresponding files for the Fortran Model)
    referring to `KIM_API_Description.txt' and `standard.kim' as explained
