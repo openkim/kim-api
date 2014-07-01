@@ -67,14 +67,14 @@ get/set method routines.
 
 In the following description several constants are used:
 
-STATUS codes: The openkim-api uses a set of defined status code keys to return
+STATUS codes: The KIM API uses a set of defined status code keys to return
          information to the user.  These symbolic code keys are defined in the
          KIM_API_status.h file which can be #include'd by any source file.  The
          codes associated with these keys (defined in KIM_API_status.h) are
          subject to change and should not be used directly.  By convention, any
-         status code, `kimerror', returned by an openkim-api service routine
-         that is less than KIM_STATUS_OK (i.e., "kimerror < KIM_STATUS_OK")
-         indicates an error has occurred.
+         status code, `kimerror', returned by a KIM API service routine that is
+         less than KIM_STATUS_OK (i.e., "kimerror < KIM_STATUS_OK") indicates
+         an error has occurred.
 
 DEPRECATED: Fortran style: integer, parameter :: kim_intptr = 4 (or 8)
 
@@ -309,8 +309,8 @@ DEPRECATED      char *testname
               The routine uses this name to find the character string in memory
               that contains the Model's descriptor (.kim) file.  At compile
               time the descriptor file is stored in the Model's binary library
-              file.  Thus, it is necessary to perform a `make' of the
-              openkim-api package after editing a Model's .kim file.
+              file.  Thus, it is necessary to perform a `make' of the KIM API
+              package after editing a Model's .kim file.
 
 ******************************************************************************
 
@@ -340,8 +340,8 @@ Arguments:
               The routine uses this name to find the character string in memory
               that contains the Model's descriptor (.kim) file.  At compile
               time the descriptor file is stored in the Model's binary library
-              file.  Thus, it is necessary to perform a `make' of the
-              openkim-api package after editing a Model's .kim file.
+              file.  Thus, it is necessary to perform a `make' of the KIM API
+              package after editing a Model's .kim file.
 
 ******************************************************************************
 
@@ -366,8 +366,8 @@ Arguments:
               The routine uses this name to find the character string in memory
               that contains the Model's descriptor (.kim) file.  At compile
               time the descriptor file is stored in the Model's binary library
-              file.  Thus, it is necessary to perform a `make' of the
-              openkim-api package after editing a Model's .kim file.
+              file.  Thus, it is necessary to perform a `make' of the KIM API
+              package after editing a Model's .kim file.
 
 ******************************************************************************
 
@@ -1047,7 +1047,7 @@ int KIM_API_model_init(void *kimmdl);
               type(c_ptr), intent(in) :: pkim
 
     (4) ***Model Drivers*** The KIM_API, as described in this document, has no
-        knowledge of the Model Driver concept.  The openkim-api Makefile system
+        knowledge of the Model Driver concept.  The KIM API Makefile system
         does all the magic to completely hide the distinction between a
         "standard Model" and a "driver based Model".  In practice, there is
         only one interface difference between a Model and a Model Driver.  This

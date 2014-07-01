@@ -33,17 +33,17 @@
 #
 
 
-=========================== The openkim-api package ===========================
+============================= The KIM API package ===========================--
 
-This file contains instructions for installing the openkim-api package.
-If you are new to KIM and the openkim-api (application programming interface)
-start by reading the README file in this directory.
+This file contains instructions for installing the KIM API package.  If you are
+new to KIM and the KIM API (application programming interface) start by reading
+the README file in this directory.
 
 -------------------------------------------------------------------------------
 
 SYSTEM REQUIREMENTS
 
-To install the openkim-api package you need the following:
+To install the KIM API package you need the following:
 
 1. A Unix/Linux/Mac OSX/Cygwin system.
 
@@ -51,14 +51,14 @@ To install the openkim-api package you need the following:
 
 3. GNU compilers (gcc, g++, gfortran) version 4.2.x or higher or the
    corresponding Intel compilers, version 11.1 or higher.  NOTE: gfortran 4.6.x
-   is known to have subtle bugs, and SHOULD NOT BE USED with the openkim-api
+   is known to have subtle bugs, and SHOULD NOT BE USED with the KIM API
    software package.
 
 -------------------------------------------------------------------------------
 
-INSTRUCTIONS for installing, compiling and linking this openkim-api release:
+INSTRUCTIONS for installing, compiling and linking this KIM API release:
 
-0. If you have previously used the openkim-api package (versions 1.1.1 or
+0. If you have previously used the KIM API package (versions 1.1.1 or
    below), it is recommended that you remove all associated environment
    variables from your environment.  (These include, KIM_DIR, KIM_INTEL,
    KIM_SYSTEM32, KIM_DYNAMIC, KIM_API_DIR, KIM_TESTS_DIR,
@@ -90,8 +90,8 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
        KIM_MODELS_DIR =
        KIM_TESTS_DIR =
 
-       If these lines are commented out, defaults will be provided by the
-       openkim-api make system.
+       If these lines are commented out, defaults will be provided by the KIM
+       API make system.
 
    (d) Set the value of KIM_COMPILERSUITE.  Possible values are `GCC' and
        `INTEL'.
@@ -164,7 +164,7 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
 
        * NOTE: As of 2014-01-20, gfortran on Darwin OS (Mac OSX) has a bug
                associated with the use of iso_c_binding Fortran/C
-               interoperability features which are now standard in openkim-api.
+               interoperability features which are now standard in KIM API.
                (See http://gcc.gnu.org/bugzilla/show_bug.cgi?id=59888) We have
                reported this bug and are awaiting its fix.  In the meantime,
                the following workaround has been identified:
@@ -188,8 +188,8 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
                      (Note, this may require that you compile the package from
                       source in order to get the correct version.)
 
-               (2) You must compile the openkim-api and associated Models,
-                   Tests, etc. using the `KIM_SYSTEMARCH = 32bit' setting.
+               (2) You must compile the KIM API and associated Models, Tests,
+                   etc. using the `KIM_SYSTEMARCH = 32bit' setting.
 
                (3) You need to have the following line in this section of the
                    Makefile.KIM_Config file in order to avoid harmless compiler
@@ -203,7 +203,7 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
        variable name (after the "# override default install options" line) and
        filling in appropriate values.
 
-       # override default install directories
+       # override default install options
        package_name = # default is 'openkim-api'
        prefix =       # default is '/usr/local'
        includedir =   # default is '$(prefix)/include'
@@ -224,9 +224,10 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
          Section 7.2.4 of the GNU Coding Standards.
 
 2. In the remainder of the documentation we will use the string ${KD} to
-   represent the location of the openkim-api source package (the value of the
+   represent the location of the KIM API source package (the value of the
    KIM_DIR variable discussed above).  If you wish to, type the below commands
-   exactly as written to set the shell variable KD to the appropriate value:
+   exactly (except for replacing the X.X.X as appropriate) as written to set
+   the shell variable KD to the appropriate value:
 
    % export KD=${HOME}/openkim-api-vX.X.X
 
@@ -237,11 +238,11 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
    % make examples
    % make
 
-     This builds all Model Drivers, Models, Tests, and the openkim-api service
+     This builds all Model Drivers, Models, Tests, and the KIM API service
      routine library.  The targets defined by the Makefile in this directory
      include:
 
-       `make'                -- compiles the API and all Models and Tests
+       `make'                -- compiles the KIM API and all Models and Tests
        `make all'            -- same as `make'
        `make clean'          -- will remove appropriate .o, .mod, .a, .so and
                                 executable files
@@ -307,7 +308,7 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
 
    If you want these files to be the default version of the KIM API package on
    your system (i.e., accessible via ${includedir}/${package_name} and
-   ${libdir}/${package_name}), then do:
+   ${libdir}/lib${package_name}.so), then do:
 
    % make install-set-default-to-vX
 
@@ -329,22 +330,22 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
 
    You can specify an additional directory to be searched by creating the file
    `${HOME}/.${package_name}/config-vX' where X is replaced by the major
-   version number for this release of the openkim-api package (as defined in
-   the file Makefile.Version).  The file `${HOME}/.${package_name}/config-vX'
-   has a strict format.  It must contain exactly two lines.  These must be of
-   the form:
+   version number for this release of the KIM API package (as defined in the
+   file Makefile.Version).  The file `${HOME}/.${package_name}/config-vX' has a
+   strict format.  It must contain exactly two lines.  These must be of the
+   form:
 
      model_drivers_dir = XXX
      models_dir = YYY
 
-   where XXX and YYY are replaced by paths (beginning with `/' or '~/' only)
+   where XXX and YYY are replaced by paths (beginning with `/' or `~/' only)
    which indicate where you will store your Model Drivers and Models,
    respectively.  Once you have created this file the KIM API will use the
    following, modified, procedure.  For Model Drivers the directories, listed
    in the order they are searched, are:
 
      `.'                                             ("CWD Model Drivers")
-     as listed in ${HOME}/.$(package_name)/config-vX ("User Model Drivers")
+     as listed in $(HOME)/.$(package_name)/config-vX ("User Model Drivers")
      `$(libdir)/$(full_package_name)/MODEL_DRIVERS/' ("System Model Drivers")
 
    For Models the directories, listed in the order they are searched, are:
@@ -356,9 +357,9 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
    If the KIM API has been installed using KIM_LINK=dynamic-load and the
    original source directory has been deleted, it is still possible to compile
    Model Drivers and Models.  These can be placed in the current working
-   directory (CWD), or installed in the directory listed in the `config-vX'
-   file, or installed in the system-wide Model Drivers and Models directories.
-   To create a new Model Driver of Model and install it in the appropriate
+   directory (CWD), or in the directory listed in the `config-vX' file, or
+   installed in the system-wide Model Drivers and Models directories.  To
+   create a new Model Driver of Model and install it in the appropriate
    system-wide directory or in the directory listed in the `config-vX' file,
    follow these steps:
 
@@ -396,8 +397,8 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
        % printf "include ${libdir}/${package_name}/Makefile.KIM_Config\n" > ${WD}/Makefile.KIM_Config
 
    (e) We'll work with the case of a Model Driver and an associated
-       Parameterized Model such as those you can download from openkim.org.
-       For example, execute the following commands:
+       Parameterized Model such as those you can download from
+       https://openkim.org.  For example, execute the following commands:
 
        % md=EAM_Dynamo__MD_120291908751_000
        % wget --content-disposition "https://kim-items.openkim.org/archive?kimid=${md}&compression=gz"
@@ -446,21 +447,23 @@ INSTRUCTIONS for installing, compiling and linking this openkim-api release:
 
        % cd ${WD}/${md}
        % make install
+       % cd ${WD}
+       % rm -rf ${WD}/${md}
        % cd ${WD}/${mo}
        % make install
 
-       (Note: for Parameterized Models you must install the associated Model
-       Driver before installing the Model, as we have done above.)  You have
-       now installed the Model Driver and Model to the system-wide directories
-       and you can delete the source directories:
+       (Note: for Parameterized Models you must install and delete the
+       associated Model Driver before installing the Model, as we have done
+       above.)  You have now installed the Model Driver and Model to the
+       system-wide directories and you can delete the remaining source
+       directories:
 
        % cd ${WD}
-       % rm -rf ${WD}/${md}
        % rm -rf ${WD}/${mo}
 
 Once the compilation (and optional installation) is successfully completed,
 read the README file in the DOCs directory for a step-by-step guide to learning
-the openkim-api.
+the KIM API.
 
 *******************************************************************************
 

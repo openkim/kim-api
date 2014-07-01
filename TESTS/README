@@ -34,7 +34,7 @@
 
 
 This directory (TESTS) contains a directory for each Test to be compiled as
-part of the openkim-api package.
+part of the KIM API package.
 
-Copy any Test directories (from EXAMPLES or https://OpenKIM.org) you want to
+Copy any Test directories (from EXAMPLES or https://openkim.org) you want to
 compile into this directory.

@@ -33,7 +33,7 @@
 #
 
 
-=========================== The openkim-api package ===========================
+============================= The KIM API package =============================
 
 This directory contains template files for creating new KIM-compliant Models
 and Model Drivers.  See the instructions below on how to use these files.
@@ -316,7 +316,7 @@ Buckingham Model Driver and a Ne KIM Model based on it are given below.
      word "FILL".)  Also change the "Release:" line to indicate that the file
      is part of your new Model and not part of the openkim-api release.
 
-(k)  Compile the new Model into the API package:
+(k)  Compile the new Model into the KIM API package:
 
      % cd ${KD}
      % make

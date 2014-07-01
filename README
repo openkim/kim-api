@@ -33,10 +33,10 @@
 #
 
 
-=========================== The openkim-api package ===========================
+============================= The KMI API package =============================
 
-This file provides an introduction to the openkim-api package.  This is the
-first file that you should read after unpacking the package.
+This file provides an introduction to the KIM API package.  This is the first
+file that you should read after unpacking the package.
 
 OVERVIEW:
 
@@ -62,7 +62,7 @@ nucleation and motion.
 
 This software package is an implementation of the application programming
 interface (API) standard for interatomic models being developed as part of the
-Knowledgebase of Interatomic Models (KIM) project.  KIM (https://openKIM.org) is
+Knowledgebase of Interatomic Models (KIM) project.  KIM (https://openkim.org) is
 a current initiative to develop and implement standards for the atomistic
 simulation of materials.  The effort aims to help bring order to the efforts of
 the education, research, and industrial communities and to make it easier for
@@ -84,23 +84,23 @@ field.  The KIM project has several main objectives:
    sustainability plan, and establishment of a long-term home for its content.
 
 
-THE OPENKIM-API PACKAGE:
+THE KIM API PACKAGE:
 
-The openkim-api package aims to give computer programmers the ability to write
+The KIM API package aims to give computer programmers the ability to write
 atomistic or molecular simulation programs and routines capable of seamlessly
 interfacing and interacting with other programs and routines, regardless of the
 programming language (C, C++, FORTRAN 77, Fortran 90/95/2003, Python, etc.) in
 which the codes are written.
 
-This version of the openkim-api package is distributed under the CDDL Open
-Source License.
+This version of the KIM API package is distributed under the CDDL Open Source
+License.
 
-The current version of the openkim-api package supports the following features:
+The current version of the KIM API package supports the following features:
 
 * Currently supported programming languages:
   C, C++, FORTRAN 77, Fortran 90/95, Fortran 2003.
 
-* Support for static and dynamic linking of programs using the openkim-api
+* Support for static and dynamic linking of programs using the KIM API
 
 * Support for automatic translation between zero-based lists (C-style numbering
   beginning with 0) and one-based lists (Fortran-style numbering beginning
@@ -117,24 +117,24 @@ The current version of the openkim-api package supports the following features:
               these data types can be use to create multi-dimensional array
               `arguments' that are exchanged between Models and Tests.
 
-     Currently, the openkim-api does not define any (more complex) data
-     structures.  However, in the future (as the need arises, and in
-     consultation with the atomistic and molecular simulation community)
-     additional data types and data structures may be introduced.
+     Currently, the KIM API does not define any (more complex) data structures.
+     However, in the future (as the need arises, and in consultation with the
+     atomistic and molecular simulation community) additional data types and
+     data structures may be introduced.
 
-* Physical Units: The openkim-api supports the specification of physical units
-  for each `argument' exchanged between a Model and Test.  A Model is either
+* Physical Units: The KIM API supports the specification of physical units for
+  each `argument' exchanged between a Model and Test.  A Model is either
   `fixed' or `flexible' with regard to units.  `fixed' means it is unable to
   convert to a different set of units.  `flexible' means it can convert its
   values to the Test's units.
 
 * Neighbor lists and Boundary Conditions (NBC) methods: To facilitate
-  computational efficiency, the openkim-api defines a number of standard
-  methods by which a Test may provide a Model with information about the
-  neighbors of each atom in a configuration.  These currently include options
-  that allow for common techniques, such as the use of the `minimum image'
-  convention for orthogonal periodic boundary conditions, `padding atoms', and
-  neighbor lists with relative position vectors.
+  computational efficiency, the KIM API defines a number of standard methods by
+  which a Test may provide a Model with information about the neighbors of each
+  atom in a configuration.  These currently include options that allow for
+  common techniques, such as the use of the `minimum image' convention for
+  orthogonal periodic boundary conditions, `padding atoms', and neighbor lists
+  with relative position vectors.
 
 * Neighbor list routines are expected to be provided by the calling Test.  The
   API provides support for `Locator' and `Iterator' neighbor list modes.  (A
@@ -143,21 +143,21 @@ The current version of the openkim-api package supports the following features:
   atom (i.e. its number) and its neighbors.)  The API also supports half
   (symmetric and unsymmetric) and full neighbor lists.
 
-* Particle Species: The openkim-api provides the ability to designate the
-  physical species (or, more generally, type) of each particle in a simulation.
+* Particle Species: The KIM API provides the ability to designate the physical
+  species (or, more generally, type) of each particle in a simulation.
   Currently, only one identifier is provided for each element in the periodic
   table.  In the future support for Models such as CHARMM and similar
   force-fields will be added.
 
-* Model Parameters: The openkim.org philosophy views a `Model' as a
-  well-defined computational code that includes fixed specific values for all
-  parameters needed to perform an actual computation.  However, it is often
-  useful to explore how a Model's predictions vary as the values of its
-  parameters are varied.  For this reason, the openkim-api provides the ability
-  for a Model to `publish' its parameters so that a Test may modify them during
-  the course of a simulation.
+* Model Parameters: The OpenKIM philosophy views a `Model' as a well-defined
+  computational code that includes fixed specific values for all parameters
+  needed to perform an actual computation.  However, it is often useful to
+  explore how a Model's predictions vary as the values of its parameters are
+  varied.  For this reason, the KIM API provides the ability for a Model to
+  `publish' its parameters so that a Test may modify them during the course of
+  a simulation.
 
-* Model Drivers: The openkim-api package provides the ability to create Model
+* Model Drivers: The KIM API package provides the ability to create Model
   Driver routines.  A Model for a given material can be created from a Model
   Driver by providing a file or files with the appropriate parameter values for
   the material of interest.
@@ -166,8 +166,8 @@ For more information on all of the above, see the files in the DOCs directory
 described below.  Features planned for future releases are described in the
 TODO file in this directory.  (See list of directory contents below.)
 
-Your next step after reading this file is to install the openkim-api package.
-See the detailed instructions in the INSTALL file in this directory.
+Your next step after reading this file is to install the KIM API package.  See
+the detailed instructions in the INSTALL file in this directory.
 
 -------------------------------------------------------------------------------
 
@@ -180,7 +180,7 @@ CHANGELOG
 DOCS/
      documentation directory.  This directory contains the file
      openkim-api-vX.X.X-introduction.pdf which provides an overview of this
-     release of the openkim-api package, links to the files
+     release of the KIM API package, links to the files
      KIM_API_Descriptions.txt and standard.kim, and a TEMPLATES directory
      containing template files for creating your own KIM Models.  (See the
      README file in that directory.)
@@ -190,48 +190,48 @@ EXAMPLES/
      Tests.
 
 INSTALL
-     detailed instructions on how to install the openkim-api package
+     detailed instructions on how to install the KIM API package
 
 KIM_API/
-     directory containing the openkim-api service routines
+     directory containing the KIM API service routines
 
 LICENSE.CDDL
      The Common Development and Distribution License (CDDL) Version 1.0 file
 
 MAKE_SYSTEM/
-     directory containing the common Makefiles and default settings used by
-     the openkim-api package make system.
+     directory containing the common Makefiles and default settings used by the
+     KIM API package make system.
 
 MODELS/
      Each Model is stored in its own directory.  This is where you should place
-     Model directories downloaded from https://OpenKIM.org. (Or use `make
+     Model directories downloaded from https://openkim.org.  (Or use `make
      examples' to copy the example Models to this directory.)
 
 MODEL_DRIVERS/
      Each Model Driver is stored in its own directory.  This is where you
-     should place Model Driver directories downloaded from
-     https://OpenKIM.org. (Or use `make examples' to copy the example Model
-     Drivers to this directory.)
+     should place Model Driver directories downloaded from https://openkim.org.
+     (Or use `make examples' to copy the example Model Drivers to this
+     directory.)
 
 Makefile
-     make file for compiling the openkim-api services routines and example
-     Tests and Models.
+     make file for compiling the KIM API services routines and example Tests
+     and Models.
 
 Makefile.KIM_Config.example
      Example Makefile.KIM_Config file.  This file provides the basic settings
-     needed to compile the openkim-api system and associated Model Drivers,
-     Models, and Tests.
+     needed to compile the KIM API system and associated Model Drivers, Models,
+     and Tests.
 
 README
      This file.
 
 TESTS/
      Each Test is stored in its own directory.  This is where you should place
-     Test directories downloaded from https://OpenKIM.org. (Or use `make
+     Test directories downloaded from https://openkim.org.  (Or use `make
      examples' to copy the example Tests to this directory.)
 
 TODO
-     A file listing features planed for future releases of the openkim-api
+     A file listing features planed for future releases of the KIM API
 
 
 *******************************************************************************

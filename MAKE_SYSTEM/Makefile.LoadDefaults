@@ -36,7 +36,7 @@ ifndef KIM_DIR
    $(error Make variable KIM_DIR must be defined.)
 endif
 
-# The openkim-api subdirectories:
+# The KIM API subdirectories:
 makedir = MAKE_SYSTEM
 makecompilerdir = $(makedir)/COMPILER_DEFAULTS
 makelinkerdir = $(makedir)/LINKER_DEFAULTS

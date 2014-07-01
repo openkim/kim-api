@@ -33,7 +33,7 @@
 
 # load all basic KIM make configuration
 ifeq ($(wildcard ../Makefile.KIM_Config),)
-  $(error ../Makefile.KIM_Config does not exist.  Something is wrong with your openkim-api package setup)
+  $(error ../Makefile.KIM_Config does not exist.  Something is wrong with your KIM API package setup)
 endif
 include ../Makefile.KIM_Config
 

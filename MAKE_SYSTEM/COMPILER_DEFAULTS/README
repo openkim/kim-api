@@ -31,7 +31,7 @@ t#
 #
 
 
-This directory (COMPILER_DEFAULTS) contains the openkim-api Make system
+This directory (COMPILER_DEFAULTS) contains the KIM API Make system
 compiler defaults.
 
 The contents of the directory are as follows:

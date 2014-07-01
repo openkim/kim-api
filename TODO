@@ -34,7 +34,7 @@
 
 
 This file contains a list of planned improvements and new features for the
-openkim-api package.
+KIM API package.
 
 --------------------------------------------------------------------------------
 Items planned for the next significant release.
@@ -67,4 +67,4 @@ Items planned for future releases.
 * Add Doxygen commenting for improved code documentation.
 
 * Implement a framework for unit and regression testing of all the code in the
-  openkim-api package.
+  KIM API package.

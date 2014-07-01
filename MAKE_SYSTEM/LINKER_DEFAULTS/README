@@ -31,7 +31,7 @@ t#
 #
 
 
-This directory (LINKER_DEFAULTS) contains the openkim-api Make system linker
+This directory (LINKER_DEFAULTS) contains the KIM API Make system linker
 defaults
 
 The contents of the directory are as follows:

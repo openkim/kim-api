@@ -31,8 +31,8 @@
 #
 
 #
-# This file defines the version information for the openkim-api package.
-# The values specified here must conform to the Semantic Versioning 2.0.0
+# This file defines the version information for the KIM API package.  The
+# values specified here must conform to the Semantic Versioning 2.0.0
 # specification.
 #
 # The PATCH value should be incremented IMMEDIATELY after an official release.
@@ -46,16 +46,15 @@
 # increment the MAJOR version value.
 #
 # The PRERELEASE value is restricted to be either "" or "git".  The value is ""
-# only for official releases of the openkim-api package.  The packaging script
-# will automatically change this value from "git" to "" as it creates the
-# release tarball.  Thus, "git" value of PRERELEASE should not be changed
-# manually.
+# only for official releases of the KIM API package.  The packaging script will
+# automatically change this value from "git" to "" as it creates the release
+# tarball.  Thus, "git" value of PRERELEASE should not be changed manually.
 #
 # The BUILD_METADATA value can be set to any value allowed by the Semantic
 # Versioning specification.  By default, the value is set to indicate the
 # compile settings KIM_COMPILERSUITE, KIM_SYSTEMLINKER, KIM_SYSARCH, and
 # KIM_LINK specified in the Makefile.KIM_Config file.  Within the git
-# repository for the openkim-api package the value has the current commit hash
+# repository for the KIM API package the value has the current commit hash
 # value prepended via the "git rev-pars command".  The packaging script will
 # automatically remove the "git rev-parse command" for official releases.  The
 # value of BUILD_METADATA may be changed by package manager tools, if this is

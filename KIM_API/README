@@ -33,7 +33,7 @@ t#
 #
 
 
-This directory (KIM_API) contains the openkim-api service routines and related
+This directory (KIM_API) contains the KIM API service routines and related
 files.
 
 The contents of the directory are as follows (before any compilation if
@@ -57,7 +57,7 @@ KIM_API_C.h
 
 KIM_API_DIRS.h
      Header file defining a routine to supply directory locations to be searched
-     by the API.
+     by the KIM API.
 
 KIM_API_Description.txt
      Description of KIM API service routines.

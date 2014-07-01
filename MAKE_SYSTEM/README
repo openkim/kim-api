@@ -31,8 +31,8 @@ t#
 #
 
 
-This directory (MAKE_SYSTEM) contains the openkim-api service routines and
-related files.
+This directory (MAKE_SYSTEM) contains the KIM API service routines and related
+files.
 
 The contents of the directory are as follows:
 
@@ -43,20 +43,20 @@ LINKER_DEFAULTS/
      Directory containing the various standard linker default setting values
 
 Makefile.Generic
-     Makefile containing common definitions for the openkim-api make system
+     Makefile containing common definitions for the KIM API make system
 
 Makefile.LoadDefaults
-     Makefile for loading default values the openkim-api make system
+     Makefile for loading default values the KIM API make system
 
 Makefile.Model
-     Makefile containing the openkim-api make system's definitions for Models
+     Makefile containing the KIM API make system's definitions for Models
 
 Makefile.ModelDriver
-     Makefile containing the openkim-api make system's definitions for Model
+     Makefile containing the KIM API make system's definitions for Model
      Drivers
 
 Makefile.ParameterizedModel
-     Makefile containing the openkim-api make system's definitions for
+     Makefile containing the KIM API make system's definitions for
      Parameterized Models
 
 Makefile.SanityCheck
@@ -64,7 +64,7 @@ Makefile.SanityCheck
      set by the user and that they have appropriate values
 
 Makefile.Test
-     Makefile containing the openkim-api make system's definitions for Tests
+     Makefile containing the KIM API make system's definitions for Tests
 
 README
      This file

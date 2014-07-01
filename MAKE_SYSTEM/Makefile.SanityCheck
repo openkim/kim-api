@@ -35,7 +35,7 @@
 NEED_MAKE_VERSION  := 3.81
 MAKE_VERSION_IS_OK := $(filter $(NEED_MAKE_VERSION),$(firstword $(sort $(MAKE_VERSION) $(NEED_MAKE_VERSION))))
 ifndef MAKE_VERSION_IS_OK
-   $(error openkim-api requires gnu make version $(NEED_MAKE_VERSION) or above)
+   $(error KIM API requires gnu make version $(NEED_MAKE_VERSION) or above)
 endif
 
 # check version of gfortran
@@ -44,7 +44,7 @@ ifeq ($(KIM_COMPILERSUITE),GCC)
   GFORTRAN_VERSION := $(shell $(FC) -dumpversion)
   GFORTRAN_VERSION_IS_OK := $(filter $(NEED_GFORTRAN_VERSION),$(firstword $(sort $(GFORTRAN_VERSION) $(NEED_GFORTRAN_VERSION))))
   ifndef GFORTRAN_VERSION_IS_OK
-     $(error openkim-api should not be used with gfortran below $(NEED_GFORTRAN_VERSION))
+     $(error KIM API should not be used with gfortran below $(NEED_GFORTRAN_VERSION))
   endif
 endif
 

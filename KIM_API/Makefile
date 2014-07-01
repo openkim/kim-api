@@ -33,7 +33,7 @@
 #
 
 ifeq ($(wildcard Makefile.KIM_Config),)
-  $(error Makefile.KIM_Config does not exist.  Something is wrong with your openkim-api package setup)
+  $(error Makefile.KIM_Config does not exist.  Something is wrong with your KIM API package setup)
 endif
 include Makefile.KIM_Config
 
@@ -104,19 +104,19 @@ Makefile: $(KIM_MAKE_FILES)
 	$(QUELL)touch Makefile
 
 lib$(KIM_LIB).%: lib$(KIM_LIB_BUILD).%
-	@printf "Creating... openkim-api library... $@.\n";
+	@printf "Creating... KIM API library....... $@.\n";
 	$(QUELL)ln -fs "lib$(KIM_LIB_BUILD).$*" "lib$(KIM_LIB).$*"
 
 ifneq ($(KIM_LINK),static-link)
    lib$(KIM_LIB_BUILD).a: $(ALLOBJ) KIM_API_DIRS.o .KIM_API_DIRS.o
-	@printf "Creating... openkim-api library... $@.\n";
+	@printf "Creating... KIM API library....... $@.\n";
 	$(QUELL)ar rcs $@ $(ALLOBJ) KIM_API_DIRS.o
 	$(QUELL)ar rcs .$@ $(ALLOBJ) .KIM_API_DIRS.o
 else
    lib$(KIM_LIB_BUILD).a: MD_DEPS:= $(addprefix $(KIM_DIR)/$(modeldriversdir)/,$(addsuffix /lib$(MODEL_DRIVER_LIB_BUILD).a,$(MODEL_DRIVERS_LIST)))
    lib$(KIM_LIB_BUILD).a: MO_DEPS:= $(addprefix $(KIM_DIR)/$(modelsdir)/,$(addsuffix /lib$(MODEL_LIB_BUILD).a,$(MODELS_LIST)))
    lib$(KIM_LIB_BUILD).a: $(ALLOBJ) $(MD_DEPS) $(MO_DEPS)
-	@printf "Creating... openkim-api library... $@.\n";
+	@printf "Creating... KIM API library....... $@.\n";
 	$(QUELL)mkdir $(KIM_DIR)/KIM_API/temp_archive_dir && cd $(KIM_DIR)/KIM_API/temp_archive_dir && \
         $(foreach arch, $(MD_DEPS) $(MO_DEPS),ar x $(arch);) \
         ar rcs $(KIM_DIR)/KIM_API/$@ *.o $(addprefix $(KIM_DIR)/KIM_API/,$(ALLOBJ)) && \
@@ -127,7 +127,7 @@ lib$(KIM_LIB_BUILD).so: MO_DEPS :=$(if $(filter-out dynamic-load,$(KIM_LINK)),$(
 lib$(KIM_LIB_BUILD).so: DMD_DEPS:=$(if $(filter-out dynamic-load,$(KIM_LINK)),$(foreach mdldrv, $(MODEL_DRIVERS_LIST), $(KIM_MODEL_DRIVERS_DIR)/$(mdldrv)/.lib$(MODEL_DRIVER_LIB_BUILD).so),)
 lib$(KIM_LIB_BUILD).so: DMO_DEPS:=$(if $(filter-out dynamic-load,$(KIM_LINK)),$(foreach mdl, $(MODELS_LIST), $(KIM_MODELS_DIR)/$(mdl)/.lib$(MODEL_LIB_BUILD).so),)
 lib$(KIM_LIB_BUILD).so: lib$(KIM_LIB_BUILD).a .lib$(KIM_LIB_BUILD).a $(MD_DEPS) $(MO_DEPS)
-	@printf "Creating... openkim-api library... $@.\n";
+	@printf "Creating... KIM API library....... $@.\n";
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDSHAREDFLAG) $(LINKSONAME)$(KIM_DIR)/KIM_API/lib$(KIM_LIB).so $(LDFLAGS) $(OUTPUTINFLAG) $@ \
                       $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
                       $(LDDYNAMICLIB) $(XLANGLDLIBS) \
