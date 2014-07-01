@@ -40,6 +40,7 @@ include ../Makefile.KIM_Config
 
 # set model specific details
 MODEL_NAME := ex_model_Ne_P_fastLJ
+MODEL_KIM_FILE := model_Ne_P_fastLJ.kim
 MODEL_INIT_FUNCTION_NAME := model_init
 
 LOCALOBJ = ex_model_Ne_P_fastLJ.o

@@ -39,6 +39,7 @@ include $(KIM_DIR)/MAKE_SYSTEM/Makefile.SanityCheck
 
 # Clean up variables
 MODEL_NAME := $(strip $(MODEL_NAME))
+MODEL_KIM_FILE := $(strip $(MODEL_KIM_FILE))
 MODEL_INIT_FUNCTION_NAME := $(strip $(MODEL_INIT_FUNCTION_NAME))
 
 # Set SO variables
@@ -64,7 +65,7 @@ STATIC_COMP_WARNING:
         printf '*******                        $$KIM_DIR directory                       *******\n'; \
         printf '*******************************************************************************\n'; \
 
-$(KIM_STR_NAME).cpp: $(MODEL_NAME).kim
+$(KIM_STR_NAME).cpp: $(MODEL_KIM_FILE)
 
 all: $(MODEL_BUILD_TARGET)
 

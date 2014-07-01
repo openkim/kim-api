@@ -164,14 +164,14 @@ model_driver_Morse_README
 model_driver_P_LJ.F03
      This file contains the LJ pair potential Model Driver F03 code.
 
-model_driver_P_LJ.kim
+model_driver_P_LJ.kim.tpl
      This file contains the LJ pair potential KIM descriptor file for use
      with the Models based on the LJ Model Driver
 
 model_driver_P_Morse.c
      This file contains the Morse pair potential Model Driver C code.
 
-model_driver_P_Morse.kim
+model_driver_P_Morse.kim.tpl
      This file contains the Morse pair potential KIM descriptor file for use
      with the Models based on the Morse Model Driver
 

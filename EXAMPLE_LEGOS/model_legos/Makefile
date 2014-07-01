@@ -37,7 +37,7 @@ KIM_EX_MODEL_DRIVERS_DIR := $(KIM_DIR)/EXAMPLES/MODEL_DRIVERS
 
 VPATH = $(KIM_EX_MODELS_DIR) $(KIM_EX_MODEL_DRIVERS_DIR)
 
-SED_CMD = sed -e "s/MODEL_NAME_STR/$@/g"
+SED_CMD = sed -e "s/MODEL_NAME_STR/$@/g" -e "s/MODEL_KIM_NAME_STR/${subst ex_,,$@}/g"
 
 ifeq ($(flavor debug),undefined)
    F_CAT := cat
@@ -114,21 +114,21 @@ ex_model_Ar_P_MLJ_CLUSTER_C: model_P_MLJ_CLUSTER_C.c             \
          | sed -e "s/NBC_NAME_STR/CLUSTER/g" \
                -e "s/LANGUAGE_STR/C/g"                                                                        >  $(KIM_EX_MODELS_DIR)/$@/README
         # make Makefile in the directory
-	$(D_CAT) model_Makefile | $(SED_CMD)                                                                  >  $(KIM_EX_MODELS_DIR)/$@/Makefile
+	$(D_CAT) model_Makefile | $(SED_CMD) | sed -e 's/MODEL_KIM_FILE_STR/$(subst ex_,,$@).kim/'            >  $(KIM_EX_MODELS_DIR)/$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start \
-         | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    1/g'                >  $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo "CLUSTER                     flag"                                                               >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	$(D_CAT) descriptor_file_params                                                                       >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
+         | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    1/g'                >  $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo "CLUSTER                     flag"                                                               >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	$(D_CAT) descriptor_file_params                                                                       >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
         # make .c file in the directory
 	$(C_CAT) model_P_MLJ_CLUSTER_C.c | $(SED_CMD) \
             | sed -e 's/SPECIES_NAME_STR/Ar/g' \
@@ -150,21 +150,21 @@ ex_model_Ar_P_MLJ_CLUSTER_F03: $(COMMON_FRAGMENTS)                    \
          | sed -e "s/NBC_NAME_STR/CLUSTER/g" \
                -e "s/LANGUAGE_STR/F03/g"                                                                      >  $(KIM_EX_MODELS_DIR)/$@/README
         # make Makefile in the directory
-	$(D_CAT) model_Makefile | $(SED_CMD)                                                                  >  $(KIM_EX_MODELS_DIR)/$@/Makefile
+	$(D_CAT) model_Makefile | $(SED_CMD) | sed -e 's/MODEL_KIM_FILE_STR/$(subst ex_,,$@).kim/'            >  $(KIM_EX_MODELS_DIR)/$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start \
-         | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    1/g'                >  $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo "CLUSTER                     flag"                                                               >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	$(D_CAT) descriptor_file_params                                                                       >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
+         | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    1/g'                >  $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo "CLUSTER                     flag"                                                               >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	$(D_CAT) descriptor_file_params                                                                       >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
         # make .F03 file in the directory
 	$(F_CAT) module_start.f.frag | $(SED_CMD)                                                             >  $(KIM_EX_MODELS_DIR)/$@/$@.F03
 	$(F_CAT) cluster_compute_local_variables.f.frag                                                       >> $(KIM_EX_MODELS_DIR)/$@/$@.F03
@@ -193,32 +193,32 @@ ex_model_Ar_P_MLJ_MI_OPBC_H_F: $(COMMON_FRAGMENTS)                              
          | sed -e "s/NBC_NAME_STR/MI_OPBC_[H|F]/g" \
                -e "s/LANGUAGE_STR/F03/g"                                                                      >  $(KIM_EX_MODELS_DIR)/$@/README
         # make Makefile in the directory
-	$(D_CAT) model_Makefile | $(SED_CMD)                                                                  >  $(KIM_EX_MODELS_DIR)/$@/Makefile
+	$(D_CAT) model_Makefile | $(SED_CMD) | sed -e 's/MODEL_KIM_FILE_STR/$(subst ex_,,$@).kim/'            >  $(KIM_EX_MODELS_DIR)/$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start \
-         | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    1/g'                >  $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo "Neigh_LocaAccess            flag"                                                               >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo "MI_OPBC_H                   flag"                                                               >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo "MI_OPBC_F                   flag"                                                               >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo "numberContributingParticles integer      none                []                 optional"       >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo "get_neigh                   method       none                []                 optional"       >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo "neighObject                 pointer      none                []"                                >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo "boxSideLengths              double       length              [3]"                               >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	$(D_CAT) descriptor_file_params                                                                       >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
+         | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    1/g'                >  $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo "Neigh_LocaAccess            flag"                                                               >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo "MI_OPBC_H                   flag"                                                               >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo "MI_OPBC_F                   flag"                                                               >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo "numberContributingParticles integer      none                []                 optional"       >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo "get_neigh                   method       none                []                 optional"       >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo "neighObject                 pointer      none                []"                                >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo "boxSideLengths              double       length              [3]"                               >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	$(D_CAT) descriptor_file_params                                                                       >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
         # make .F03 file in the directory
 	$(F_CAT) module_start.f.frag | $(SED_CMD)                                                             >  $(KIM_EX_MODELS_DIR)/$@/$@.F03
 	$(F_CAT) mi_opbc_neigh_pure_compute_local_variables.f.frag                                            >> $(KIM_EX_MODELS_DIR)/$@/$@.F03
@@ -248,31 +248,31 @@ ex_model_Ar_P_MLJ_NEIGH_PURE_H_F: $(COMMON_FRAGMENTS)                           
          | sed -e "s/NBC_NAME_STR/NEIGH_PURE_[H|F]/g" \
                -e "s/LANGUAGE_STR/F03/g"                                                                      >  $(KIM_EX_MODELS_DIR)/$@/README
         # make Makefile in the directory
-	$(D_CAT) model_Makefile | $(SED_CMD)                                                                  >  $(KIM_EX_MODELS_DIR)/$@/Makefile
+	$(D_CAT) model_Makefile | $(SED_CMD) | sed -e 's/MODEL_KIM_FILE_STR/$(subst ex_,,$@).kim/'            >  $(KIM_EX_MODELS_DIR)/$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start \
                                   | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    1/g' \
-                                                                                                              >  $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo "Neigh_LocaAccess            flag"                                                               >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo "NEIGH_PURE_H                flag"                                                               >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo "NEIGH_PURE_F                flag"                                                               >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo "numberContributingParticles integer      none                []                 optional"       >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo "get_neigh                   method       none                []                 optional"       >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo "neighObject                 pointer      none                []"                                >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	$(D_CAT) descriptor_file_params                                                                       >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
+                                                                                                              >  $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo "Neigh_LocaAccess            flag"                                                               >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo "NEIGH_PURE_H                flag"                                                               >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo "NEIGH_PURE_F                flag"                                                               >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo "numberContributingParticles integer      none                []                 optional"       >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo "get_neigh                   method       none                []                 optional"       >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo "neighObject                 pointer      none                []"                                >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	$(D_CAT) descriptor_file_params                                                                       >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
         # make .F03 file in the directory
 	$(F_CAT) module_start.f.frag | $(SED_CMD)                                                             >  $(KIM_EX_MODELS_DIR)/$@/$@.F03
 	$(F_CAT) mi_opbc_neigh_pure_compute_local_variables.f.frag                                            >> $(KIM_EX_MODELS_DIR)/$@/$@.F03
@@ -302,27 +302,27 @@ ex_model_Ar_P_MLJ_NEIGH_RVEC_F: $(COMMON_FRAGMENTS)                           \
          | sed -e "s/NBC_NAME_STR/NEIGH_RVEC_F/g" \
                -e "s/LANGUAGE_STR/F03/g"                                                                      >  $(KIM_EX_MODELS_DIR)/$@/README
         # make Makefile in the directory
-	$(D_CAT) model_Makefile | $(SED_CMD)                                                                  >  $(KIM_EX_MODELS_DIR)/$@/Makefile
+	$(D_CAT) model_Makefile | $(SED_CMD) | sed -e 's/MODEL_KIM_FILE_STR/$(subst ex_,,$@).kim/'            >  $(KIM_EX_MODELS_DIR)/$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start \
-         | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    1/g'                >  $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo "Neigh_LocaAccess            flag"                                                               >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo "NEIGH_RVEC_F                flag"                                                               >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo "get_neigh                   method       none                []"                                >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo "neighObject                 pointer      none                []"                                >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
-	$(D_CAT) descriptor_file_params                                                                       >> $(KIM_EX_MODELS_DIR)/$@/$@.kim
+         | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    1/g'                >  $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo "Neigh_LocaAccess            flag"                                                               >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo "NEIGH_RVEC_F                flag"                                                               >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo "get_neigh                   method       none                []"                                >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo "neighObject                 pointer      none                []"                                >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	$(D_CAT) descriptor_file_params                                                                       >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
         # make .F03 file in the directory
 	$(F_CAT) module_start.f.frag | $(SED_CMD)                                                             >  $(KIM_EX_MODELS_DIR)/$@/$@.F03
 	$(F_CAT) neigh_rvec_compute_local_variables.f.frag                                                    >> $(KIM_EX_MODELS_DIR)/$@/$@.F03
@@ -339,21 +339,23 @@ ex_model_Ar_P_MLJ_NEIGH_RVEC_F: $(COMMON_FRAGMENTS)                           \
          | sed -e 's/SIGMA_VALUE_STR/model_sigma = 3.40_cd ! LJ Argon sigma in angstroms/g'    \
          | sed -e 's/EPSILON_VALUE_STR/model_epsilon = 0.0104_cd ! LJ Argon epsilon in eV/g'                  >> $(KIM_EX_MODELS_DIR)/$@/$@.F03
 
-ex_model_driver_P_Morse: model_driver_Morse_README \
-                         model_driver_Makefile     \
-                         model_driver_P_Morse.kim  \
-                         model_driver_P_Morse.c    \
+ex_model_driver_P_Morse: model_driver_Morse_README    \
+                         model_driver_Makefile        \
+                         model_driver_P_Morse.kim.tpl \
+                         model_driver_P_Morse.c       \
                          Makefile
         # make directory
 	mkdir -p $(KIM_EX_MODEL_DRIVERS_DIR)/$@
 	@touch $(KIM_EX_MODEL_DRIVERS_DIR)/$@
 	cp $(KIM_DIR)/LICENSE.CDDL $(KIM_EX_MODEL_DRIVERS_DIR)/$@
         # make README file in the directory
-	$(D_CAT) model_driver_Morse_README | sed -e 's/MODEL_DRIVER_NAME_STR/$@/g'                            >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/README
+	$(D_CAT) model_driver_Morse_README | sed -e 's/MODEL_DRIVER_NAME_STR/$@/g' \
+                                                 -e 's/MODEL_DRIVER_KIM_NAME_STR/${subst ex_,,$@}/g'          >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/README
         # make Makefile in the directory
-	$(D_CAT) model_driver_Makefile | sed -e 's/MODEL_DRIVER_NAME_STR/$@/g'                                >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/Makefile
+	$(D_CAT) model_driver_Makefile | sed -e 's/MODEL_DRIVER_NAME_STR/$@/g' \
+                                          -e 's/MODEL_DRIVER_KIM_FILE_TEMPLATE_STR/$(subst ex_,,$@).kim.tpl/' >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/Makefile
         # make .kim file in the directory
-	$(D_CAT) model_driver_P_Morse.kim                                                                     >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$@.kim
+	$(D_CAT) model_driver_P_Morse.kim.tpl                                                                 >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$(subst ex_,,$@).kim.tpl
         # make .c file in the directory
 	$(C_CAT) model_driver_P_Morse.c | $(SED_CMD) \
          | sed -e `echo $@ | tr A-Z a-z | sed -e 's/^\(.*\)/s\/MODEL_DRIVER_NAME_LC_STR\/\1\/g/'` \
@@ -470,21 +472,23 @@ ex_model_Ne_P_Morse: model_Morse_README \
 	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)/$@/$@.params
 
 
-ex_model_driver_P_LJ: model_driver_LJ_README \
-                      model_driver_Makefile  \
-                      model_driver_P_LJ.kim  \
-                      model_driver_P_LJ.F03  \
+ex_model_driver_P_LJ: model_driver_LJ_README    \
+                      model_driver_Makefile     \
+                      model_driver_P_LJ.kim.tpl \
+                      model_driver_P_LJ.F03     \
                       Makefile
         # make directory
 	mkdir -p $(KIM_EX_MODEL_DRIVERS_DIR)/$@
 	@touch $(KIM_EX_MODEL_DRIVERS_DIR)/$@
 	cp $(KIM_DIR)/LICENSE.CDDL $(KIM_EX_MODEL_DRIVERS_DIR)/$@
         # make README file in the directory
-	$(D_CAT) model_driver_LJ_README | sed -e 's/MODEL_DRIVER_NAME_STR/$@/g'                                 >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/README
+	$(D_CAT) model_driver_LJ_README | sed -e 's/MODEL_DRIVER_NAME_STR/$@/g' \
+                                              -e 's/MODEL_DRIVER_KIM_NAME_STR/${subst ex_,,$@}/g'               >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/README
         # make Makefile in the directory
-	$(D_CAT) model_driver_Makefile | sed -e 's/MODEL_DRIVER_NAME_STR/$@/g'                                  >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/Makefile
+	$(D_CAT) model_driver_Makefile | sed -e 's/MODEL_DRIVER_NAME_STR/$@/g' \
+                                          -e 's/MODEL_DRIVER_KIM_FILE_TEMPLATE_STR/$(subst ex_,,$@).kim.tpl/'   >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/Makefile
         # make .kim file in the directory
-	$(D_CAT) model_driver_P_LJ.kim                                                                          >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$@.kim
+	$(D_CAT) model_driver_P_LJ.kim.tpl                                                                      >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$(subst ex_,,$@).kim.tpl
         # make .F03 file in the directory
 	$(F_CAT) model_driver_P_LJ.F03 | $(SED_CMD) \
          | sed -e `echo $@ | tr A-Z a-z | sed -e 's/^\(.*\)/s\/MODEL_DRIVER_NAME_LC_STR\/\1\/g/'` \
@@ -498,6 +502,7 @@ ex_model_Ar_P_LJ: model_LJ_README \
 	cp $(KIM_DIR)/LICENSE.CDDL $(KIM_EX_MODELS_DIR)/$@
         # make README file in the directory
 	$(D_CAT) model_LJ_README | sed -e 's/MODEL_NAME_STR/$@/g' \
+                                  -e 's/MODEL_KIM_NAME_STR/${subst ex_,,$@}/g' \
                                   -e 's/MODEL_DRIVER_NAME_STR/ex_model_driver_P_LJ/g' \
                                   -e 's/SPECIES_NAME_STR/Ar/g'                                                >  $(KIM_EX_MODELS_DIR)/$@/README
         # make Makefile in the directory
@@ -553,6 +558,7 @@ ex_model_Ne_P_LJ: model_LJ_README \
 	cp $(KIM_DIR)/LICENSE.CDDL $(KIM_EX_MODELS_DIR)/$@
         # make README file in the directory
 	$(D_CAT) model_LJ_README | sed -e 's/MODEL_NAME_STR/$@/g' \
+                                  -e 's/MODEL_KIM_NAME_STR/${subst ex_,,$@}/g' \
                                   -e 's/MODEL_DRIVER_NAME_STR/ex_model_driver_P_LJ/g' \
                                   -e 's/SPECIES_NAME_STR/Ne/g'                                                >  $(KIM_EX_MODELS_DIR)/$@/README
         # make Makefile in the directory

@@ -222,11 +222,11 @@ KIM_FTYPE_STANDARD_COMPILE_LIST = $(ARCHFLAG) $(PICFLAG) $(KIMINCLUDEFLAG) $(KIM
 # KIM descriptor file make rule
 KIM_STR_NAME = kim_str
 .INTERMEDIATE: $(KIM_STR_NAME).cpp
-$(KIM_STR_NAME).cpp: $(KIM_MAKE_FILES) # $(MODEL_NAME).kim dependency added in another Makefile
+$(KIM_STR_NAME).cpp: $(KIM_MAKE_FILES) # ".kim" dependency added in another Makefile
 	@printf "Creating... intermediate file... $@.\n"
-	$(QUELL)fl_size=`cat $(MODEL_NAME).kim | tr -d '\r' | wc -c`;\
+	$(QUELL)fl_size=`cat $(MODEL_KIM_FILE) | tr -d '\r' | wc -c`;\
          n=`expr $$fl_size / 65536 + 2`;\
-         lines=`cat $(MODEL_NAME).kim | tr -d '\r' | wc -l`;\
+         lines=`cat $(MODEL_KIM_FILE) | tr -d '\r' | wc -l`;\
          dl=`expr $$lines / $$n`;\
          printf "extern \"C\" {\n"                                                                >  $@;\
          printf "   extern const int $(MODEL_NAME)_$(KIM_STR_NAME)_chunks = %i;\n" `expr $$n + 1` >> $@;\
@@ -238,7 +238,7 @@ $(KIM_STR_NAME).cpp: $(KIM_MAKE_FILES) # $(MODEL_NAME).kim dependency added in a
             lnstart=`expr $$i '*' $$dl - 2`;\
             if test $$lnstart -le 0; then begdel=":dummy"; else begdel="1,$$lnstart d"; fi;\
             lnend=`expr \( $$i + 1 \) '*' $$dl - 1`;\
-            cat $(MODEL_NAME).kim | tr -d '\r' | \
+            cat $(MODEL_KIM_FILE) | tr -d '\r' | \
             sed -e "$$begdel"        \
                 -e "$$lnend,\$$ d"   \
                 -e 's,\\,\\\\,g'     \

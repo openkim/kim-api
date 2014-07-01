@@ -54,7 +54,7 @@ README
 MODEL_NAME_STR.LANGUAGE_STR
      LANGUAGE_STR file that contains the implementation of the modified LJ potential
 
-MODEL_NAME_STR.kim
+MODEL_KIM_NAME_STR.kim
      KIM descriptor file, contains all variables and methods that are exposed
      through the KIM API interface
 

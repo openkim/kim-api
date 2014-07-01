@@ -39,6 +39,7 @@ include ../Makefile.KIM_Config
 
 # set model specific details
 MODEL_NAME := ex_model_Ne_P_LJ_NEIGH_PURE_H
+MODEL_KIM_FILE := model_Ne_P_LJ_NEIGH_PURE_H.kim
 MODEL_INIT_FUNCTION_NAME := model_init
 
 LOCALOBJ = ex_model_Ne_P_LJ_NEIGH_PURE_H.o ex_model_Ne_P_LJ_NEIGH_PURE_H_compute.o

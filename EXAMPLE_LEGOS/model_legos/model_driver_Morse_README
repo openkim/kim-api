@@ -74,7 +74,7 @@ README
 MODEL_DRIVER_NAME_STR.c
     C file that contains the implementation of the Morse potential Model Driver
 
-MODEL_DRIVER_NAME_STR.kim
+MODEL_DRIVER_KIM_NAME_STR.kim.tpl
     Template KIM descriptor file containing all variables and methods that are
     exposed by the driver through the KIM API interface.  This file will be
     used (by the make system) to generate a KIM descriptor file for each KIM

@@ -41,6 +41,7 @@ include ../Makefile.KIM_Config
 
 # set model specific details
 MODEL_NAME := MODEL_NAME_STR
+MODEL_KIM_FILE := MODEL_KIM_FILE_STR
 MODEL_INIT_FUNCTION_NAME := model_init
 
 LOCALOBJ = MODEL_NAME_STR.o

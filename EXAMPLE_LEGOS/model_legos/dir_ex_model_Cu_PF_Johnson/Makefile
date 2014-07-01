@@ -40,6 +40,7 @@ include ../Makefile.KIM_Config
 
 # set model specific details
 MODEL_NAME := ex_model_Cu_PF_Johnson
+MODEL_KIM_FILE := model_Cu_PF_Johnson.kim
 MODEL_INIT_FUNCTION_NAME := model_init
 
 LOCALOBJ = ex_model_Cu_PF_Johnson.o

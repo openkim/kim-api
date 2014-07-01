@@ -66,9 +66,10 @@ STATIC_COMP_WARNING:
         printf '*******                        $$KIM_DIR directory                       *******\n'; \
         printf '*******************************************************************************\n'; \
 
-$(KIM_STR_NAME).cpp: $(MODEL_NAME).kim
+$(KIM_STR_NAME).cpp: MODEL_KIM_FILE := descriptor.kim
+$(KIM_STR_NAME).cpp: descriptor.kim
 
-all: $(MODEL_NAME).kim $(MODEL_BUILD_TARGET)
+all: descriptor.kim $(MODEL_BUILD_TARGET)
 
 # Find the driver files
 ifeq (yes,$(shell if test -f $(HOME)/.$(package_name)/config-v$(VERSION_MAJOR); then printf "yes"; fi))
@@ -92,18 +93,18 @@ paramfile_num_list = $(strip $(subst _NAME,,$(subst PARAM_FILE_,,$(paramfile_lis
 paramfile_name_list = $(strip $(foreach paramfl,$(paramfile_list), $($(paramfl))))
 num_paramfiles = $(words $(paramfile_num_list))
 
-$(MODEL_NAME).kim: drv_kim_name:=$(driver_location)/$(MODEL_DRIVER_NAME)/$(MODEL_DRIVER_NAME).kim
-$(MODEL_NAME).kim: $(drv_kim_name) Makefile
+# descriptor.kim should not be INTERMEDIATE, so that the openkim.org pipeline can use it.
+descriptor.kim: drv_kim_name:="$(driver_location)/$(MODEL_DRIVER_NAME)/$(shell $(MAKE) -C $(driver_location)/$(MODEL_DRIVER_NAME) dotkimfiletemplate)"
+descriptor.kim: $(drv_kim_name) Makefile
 	@printf "Creating... $@.\n"
 	$(QUELL)$(foreach spec,$(filter-out $(shell cat $(drv_kim_name) | \
                                                     sed -e '/^SPECIES_\([0-9]\{3\}\)_NAME_STR.*$$/!d' -e 's/^\(SPECIES_[0-9]\{3\}_NAME\)_STR.*$$/\1/'), \
                                             $(species_list)),\
-                    printf "*** $(spec) is defined in Makefile, but $(spec)_STR is not in $(MODEL_DRIVER_NAME).kim. ***\n\n" && false;)
+                    printf "*** $(spec) is defined in Makefile, but $(spec)_STR is not in $(drv_kim_name). ***\n\n" && false;)
 	$(QUELL)cat $(drv_kim_name) | \
-                sed -e "s,MODEL_NAME_STR,$(MODEL_NAME),g"                              \
-                    $(foreach spec,$(species_list),-e 's,$(spec)_STR,$($(spec)),g')    \
+                sed $(foreach spec,$(species_list),-e 's,$(spec)_STR,$($(spec)),g')    \
                     -e '/SPECIES_[0-9]\{3\}_NAME_STR/d'                                \
-                > $(MODEL_NAME).kim
+                > descriptor.kim
 
 PARAM_MODEL_NAME = parameterized-model
 .INTERMEDIATE: $(PARAM_MODEL_NAME).cpp
@@ -189,7 +190,7 @@ Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/MAKE_SYSTEM/Makefile.ParameterizedModel
 clean:
 	@printf "Cleaning... Model.......... $(MODEL_NAME).\n"
 	$(QUELL)rm -f $(addprefix lib$(MODEL_LIB).,a so) $(addprefix lib$(MODEL_LIB_BUILD).,a so) .lib$(MODEL_LIB_BUILD).so \
-                      $(PARAM_MODEL_NAME).o $(MODEL_NAME).kim $(KIM_STR_NAME).o
+                      $(PARAM_MODEL_NAME).o descriptor.kim $(KIM_STR_NAME).o
 
 install_parammodeldir = $(dest_package_dir)/$(modelsdir)/$(MODEL_NAME)
 

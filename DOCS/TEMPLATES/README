@@ -95,10 +95,10 @@ model_driver_P_Template.F03
 model_driver_P_Template.c
      C template file for a pair potential Model Driver.
 
-model_driver_P_Template.c.kim
+model_driver_P_Template.c.kim.tpl
      KIM descriptor file for the C pair potential Driver template.
 
-model_driver_P_Template.f.kim
+model_driver_P_Template.f.kim.tpl
      KIM descriptor file for the Fortran pair potential Driver template.
 
 -----------------------------------------------------------------------------
@@ -207,12 +207,13 @@ essentially identical. See comments below.)
 
     - Add any necessary initialization into the _init() routine.
 
-(e) Edit the Makefile and change the Model name and model_init function values
-    appropriately.  Add the Model's object file (model_Ar_P_Buckingham.o) to
-    the LOCALOBJ line.  In this example the LOCALCLEAN line can be left
-    blank. (Search for the word "FILL" to find the locations in the file that
-    need to be edited.)  Also change the "Release:" line to indicate that the
-    file is part of your new Model and not part of the openkim-api release.
+(e) Edit the Makefile and change the Model name, the name of the Model's ".kim"
+    file, and model_init function values appropriately.  Add the Model's object
+    file (model_Ar_P_Buckingham.o) to the LOCALOBJ line.  In this example the
+    LOCALCLEAN line can be left blank. (Search for the word "FILL" to find the
+    locations in the file that need to be edited.)  Also change the "Release:"
+    line to indicate that the file is part of your new Model and not part of
+    the openkim-api release.
 
 (f) Compile the new Model into the API package:
 
@@ -252,18 +253,18 @@ Buckingham Model Driver and a Ne KIM Model based on it are given below.
 
     % cd ${KD}/MODEL_DRIVERS/model_driver_P_Buckingham
     % cp ${KD}/DOCS/TEMPLATES/model_driver_P_Template.F03 model_driver_P_Buckingham.F03
-    % cp ${KD}/DOCS/TEMPLATES/model_driver_P_Template.f.kim model_driver_P_Buckingham.kim
+    % cp ${KD}/DOCS/TEMPLATES/model_driver_P_Template.f.kim.tpl model_driver_P_Buckingham.kim.tpl
     % cp ${KD}/DOCS/TEMPLATES/Makefile.driver.template Makefile
 
     Note: For a Model written in C, copy the .c and .c.kim templates.
 
-(c) Edit the .kim file and define the parameters used by this Model Driver.
+(c) Edit the .kim.tpl file and define the parameters used by this Model Driver.
     (Search for the word "FILL" which indicates where changes are necessary.)
     Also change the "Release:" line to indicate that the file is part of your
     new Model and not part of the openkim-api release.  To edit a file on a
     unix machine, use for example:
 
-    % pico model_driver_Buckingham.kim
+    % pico model_driver_Buckingham.kim.tpl
 
 (d) Edit the .F03 (or .c) file making all necessary changes.  (Search for the
     word "FILL".)  The main changes are:
@@ -281,12 +282,12 @@ Buckingham Model Driver and a Ne KIM Model based on it are given below.
     - Specify the format for reading in the parameter data (in Fortran 2003 you
       can simply set this to `*'.)
 
-(e) Edit the Makefile and change the Model Driver name and model_init function
-    values appropriately.  Add the Model's object file
-    (model_driver_P_Buckingham.o) to the LOCALOBJ line.  In this example the
-    LOCALCLEAN line can be left blank.  (Search for the word "FILL".)  Also
-    change the "Release:" line to indicate that the file is part of your new
-    Model and not part of the openkim-api release.
+(e) Edit the Makefile and change the Model Driver name, Model Driver ".kim"
+    template file name, and model_init function values appropriately.  Add the
+    Model's object file (model_driver_P_Buckingham.o) to the LOCALOBJ line.  In
+    this example the LOCALCLEAN line can be left blank.  (Search for the word
+    "FILL".)  Also change the "Release:" line to indicate that the file is part
+    of your new Model and not part of the openkim-api release.
 
 (f) Compile the new Model Driver into the API package:
 

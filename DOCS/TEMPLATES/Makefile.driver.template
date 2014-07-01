@@ -42,6 +42,7 @@ include ../Makefile.KIM_Config
 
 # set model driver specific details
 MODEL_DRIVER_NAME := <FILL model driver name>
+MODEL_DRIVER_KIM_FILE_TEMPLATE := <FILL model driver kim file template name>
 MODEL_DRIVER_INIT_FUNCTION_NAME := model_driver_init
 
 LOCALOBJ = <FILL .o files required by the model>

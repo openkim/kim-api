@@ -41,6 +41,7 @@ include ../Makefile.KIM_Config
 
 # set model specific details
 MODEL_NAME := ex_model_Ar_P_MLJ_F03
+MODEL_KIM_FILE := model_Ar_P_MLJ_F03.kim
 MODEL_INIT_FUNCTION_NAME := model_init
 
 LOCALOBJ = ex_model_Ar_P_MLJ_F03.o

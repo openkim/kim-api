@@ -41,6 +41,7 @@ include ../Makefile.KIM_Config
 
 # set model specific details
 MODEL_NAME := ex_model_Al_PF_ErcolessiAdams
+MODEL_KIM_FILE := model_Al_PF_ErcolessiAdams.kim
 MODEL_INIT_FUNCTION_NAME := ercolessiadams_init
 
 LOCALOBJ = ex_model_Al_PF_ErcolessiAdams.o
