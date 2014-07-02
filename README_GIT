@@ -29,7 +29,7 @@
 #
 
 #
-# Release: This file is part of the openkim-api.git repository.
+# Release: This file is part of the kim-api.git repository.
 #
 
 
@@ -39,42 +39,51 @@ This file provides supplemental information for users who want to work with the
 KIM API package through github.com and the git revision control program.
 
 There are only a couple of significant differences between the source tarball
-files that are distributed as openkim-api-vX.X.X.tgz and the openkim-api git
+files that are distributed as kim-api-vX.X.X.tgz and the kim-api git
 repository.
 
 1. The primary difference is that in the git repository there are no example
-   Models, Model Drivers, or Tests in the EXAMPLES directory.  Instead the user
-   must generate the examples by the following process:
+   Models, Model Drivers, Simulators, or OpenKIM Tests in the examples
+   directory.  Instead the user must generate the examples by the following
+   process:
 
-   % cd ${KD}/EXAMPLE_LEGOS
+   % cd ${KD}/examples/example_legos
    % make
 
    This will cobble together the example files form the various fragments
-   stored in the ${KD}/EXAMPLE_LEGOS/model_legos and
-   ${KD}/EXAMPLE_LEGOS/test_legos directories and save them in the
-   ${KD}/EXAMPLES/MODELS/, ${KD}/EXAMPLES/MODEL_DRIVERS/, and
-   ${KD}/EXAMPLES/TESTS/ directories, respectively.  This need only be done
-   once (for every time the git repository is updated from github.com).  This
-   process will overwrite any changes to files made in the ${KD}/EXAMPLES
-   directory, so make a backup of these directories if you don't want to lose
-   your changes.
+   stored in the ${KD}/examples/example_legos/model_legos,
+   ${KD}/examples/example_legos/simulators_legos, and
+   ${KD}/examples/example_legos/openkim_test_legos directories and save them in
+   the ${KD}/examples/models/, ${KD}/examples/model_drivers/,
+   ${KD}/examples/simulators, and ${KD}/examples/openkim_tests/ directories,
+   respectively.  This need only be done once (for every time the git
+   repository is updated from github.com).  This process will overwrite any
+   changes to files made in the ${KD}/examples directory, so make a backup of
+   these directories if you don't want to lose your changes.
 
 2. The git repository has the files:
 
-      ${KD}/DOCs/openkim-api-introduction.pdf
-      ${KD}/DOCs/openkim-api-introduction.pptx
+      ${KD}/docs/kim-api-introduction.pdf
+      ${KD}/docs/kim-api-introduction.pptx
 
-   whereas the openkim-api-vX.X.X.tgz package has the file
+   whereas the kim-api-vX.X.X.tgz package has the file
 
-      ${KD}/DOCs/openkim-api-vX.X.X-introduction.pdf
+      ${KD}/docs/kim-api-vX.X.X-introduction.pdf
 
-3. The openkim-api-vX.X.X.tgz package has the file
+3. The kim-api-vX.X.X.tgz package has the file
 
-      ${KD}/openkim-api.version.info
+      ${KD}/kim-api.release.info
 
    which contains the SHA1 Hash value of the git commit object from which the
    package was created, along with the date, time, and user name and email
    address of the person who created the package.
+
+4. The git repository has the directory:
+
+      ${KD}/scripts
+
+   which contains the scripts used by the package maintainers to create
+   official release tarballs.
 
 *******************************************************************************
 
@@ -85,7 +94,7 @@ relevant information to
 
 openkim@googlegroups.com
 
-The members of the openkim development team actively monitor this email list
+The members of the OpenKIM development team actively monitor this email list
 and will do their best to help you with your question in a timely fashion.
 
 *******************************************************************************

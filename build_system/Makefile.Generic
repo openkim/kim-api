@@ -1,0 +1,261 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the Common Development
+# and Distribution License Version 1.0 (the "License").
+#
+# You can obtain a copy of the license at
+# http://www.opensource.org/licenses/CDDL-1.0.  See the License for the
+# specific language governing permissions and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each file and
+# include the License file in a prominent location with the name LICENSE.CDDL.
+# If applicable, add the following below this CDDL HEADER, with the fields
+# enclosed by brackets "[]" replaced with your own identifying information:
+#
+# Portions Copyright (c) [yyyy] [name of copyright owner]. All rights reserved.
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2013--2014, Regents of the University of Minnesota.
+# All rights reserved.
+#
+# Contributors:
+#    Ryan S. Elliott
+#
+
+#
+# Release: This file is part of the kim-api.git repository.
+#
+
+
+# sanity checks
+ifndef KIM_DIR
+   $(error Make variable KIM_DIR must be defined)
+endif
+include $(KIM_DIR)/$(builddir)/Makefile.SanityCheck
+include $(KIM_DIR)/Makefile.Version
+
+# Clean up version variables
+VERSION_MAJOR := $(strip $(VERSION_MAJOR))
+VERSION_MINOR := $(strip $(VERSION_MINOR))
+VERSION_PATCH := $(strip $(VERSION_PATCH))
+VERSION_PRERELEASE := $(strip $(VERSION_PRERELEASE))
+VERSION_BUILD_METADATA := $(strip $(VERSION_BUILD_METADATA))
+VERSION_FULL := $(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_PATCH)$(if $(VERSION_PRERELEASE),-$(VERSION_PRERELEASE))$(if $(VERSION_BUILD_METADATA),+$(VERSION_BUILD_METADATA))
+
+
+# The KIM API subdirectories:
+examplesdir = examples
+modelsdir = models
+modeldriversdir = model_drivers
+srcdir = $(KIM_DIR)/src
+
+# Set correct lib file name depending on type of compilation
+LIB_ROOT = $(package_name)
+KIM_LIB = $(LIB_ROOT)-v$(VERSION_MAJOR)
+KIM_LIB_BUILD = $(LIB_ROOT)-v$(VERSION_FULL)
+KIM_LIB_for_dependencies = $(srcdir)/lib$(KIM_LIB).$(if $(filter-out static-link,$(KIM_LINK)),so,a)
+MODEL_LIB = $(LIB_ROOT)-model-v$(VERSION_MAJOR)
+MODEL_LIB_BUILD = $(LIB_ROOT)-model-v$(VERSION_FULL)
+MODEL_DRIVER_LIB = $(LIB_ROOT)-model-driver-v$(VERSION_MAJOR)
+MODEL_DRIVER_LIB_BUILD = $(LIB_ROOT)-model-driver-v$(VERSION_FULL)
+
+
+# Set include flag
+KIMINCLUDEFLAGS = -I$(srcdir)
+
+# Set link flags
+KIMLDFLAGS = -L$(srcdir)
+KIMLDLIBS  = -l$(KIM_LIB)
+
+
+# define list of Makefiles in the KIM build system to be used for dependencies
+KIM_MAKE_FILES = $(KIM_DIR)/Makefile.KIM_Config                \
+                 $(KIM_DIR)/$(builddir)/Makefile.Generic       \
+                 $(KIM_DIR)/$(builddir)/Makefile.LoadDefaults  \
+                 $(KIM_DIR)/$(builddir)/Makefile.SanityCheck   \
+                 $(KIM_DIR)/$(buildcompilerdir)/Makefile.GCC   \
+                 $(KIM_DIR)/$(buildcompilerdir)/Makefile.INTEL \
+                 $(KIM_DIR)/$(buildlinkerdir)/Makefile.LINUX   \
+                 $(KIM_DIR)/$(buildlinkerdir)/Makefile.FREEBSD \
+                 $(KIM_DIR)/$(buildlinkerdir)/Makefile.DARWIN
+
+
+# set appropriate flag values
+ifeq      ($(KIM_BUILD_VERBOSITY),quiet)
+  QUELL = @
+else ifeq ($(KIM_BUILD_VERBOSITY),full)
+  QUELL = # empty value
+endif
+
+ifeq ($(KIM_SYSTEMARCH),32bit)
+   KIM_ARCHTYPE = 0
+   ARCHFLAG = $(ARCH32FLAG)
+else ifeq ($(KIM_SYSTEMARCH),64bit)
+   KIM_ARCHTYPE = 1
+   ARCHFLAG = $(ARCH64FLAG)
+endif
+
+ifeq ($(KIM_LINK),static-link)
+   KIM_LINK_VALUE = 0
+else ifeq ($(KIM_LINK),dynamic-link)
+   KIM_LINK_VALUE = 1
+else ifeq ($(KIM_LINK),dynamic-load)
+   KIM_LINK_VALUE = 2
+endif
+
+
+# Set KIM define values to be used with KIMDEFINES when needed
+KIM_DEFINE_VALUES =                    \
+   -D KIM_ARCHTYPE=$(KIM_ARCHTYPE)     \
+   -D KIM_LINK_VALUE=$(KIM_LINK_VALUE)
+
+# Set common compiler flags for dynamic linking
+ifeq ($(KIM_LINK),static-link)
+   PICFLAG =
+   LDDYNAMICFLAG =
+endif
+
+
+#set default goals allways all
+.DEFAULT_GOAL := all
+
+# C/C++ Compiler pattern rules
+KIM_CTYPE_STANDARD_COMPILE_LIST = $(ARCHFLAG) $(PICFLAG) $(KIMINCLUDEFLAGS) $(KIMDEFINES) $(OBJONLYFLAG) $(CCFLAGS) $<
+# C
+%.o:%.c Makefile    # C with preprocessing
+	@printf "Creating... $@.\n"
+	$(QUELL)$(CC)  $(KIM_CTYPE_STANDARD_COMPILE_LIST)
+%.o:%.i Makefile    # C without preprocessing
+	@printf "Creating... $@.\n"
+	$(QUELL)$(CC)  $(KIM_CTYPE_STANDARD_COMPILE_LIST)
+# C++
+%.o:%.cpp Makefile  # C++ with preprocessing
+	@printf "Creating... $@.\n"
+	$(QUELL)$(CXX) $(KIM_CTYPE_STANDARD_COMPILE_LIST)
+%.o:%.ii Makefile   # C++ without preprocessing
+	@printf "Creating... $@.\n"
+	$(QUELL)$(CXX) $(KIM_CTYPE_STANDARD_COMPILE_LIST)
+%.o:%.cc Makefile   # C++ with preprocessing
+	@printf "Creating... $@.\n"
+	$(QUELL)$(CXX) $(KIM_CTYPE_STANDARD_COMPILE_LIST)
+%.o:%.cxx Makefile  # C++ with preprocessing
+	@printf "Creating... $@.\n"
+	$(QUELL)$(CXX) $(KIM_CTYPE_STANDARD_COMPILE_LIST)
+%.o:%.cpp Makefile  # C++ with preprocessing
+	@printf "Creating... $@.\n"
+	$(QUELL)$(CXX) $(KIM_CTYPE_STANDARD_COMPILE_LIST)
+%.o:%.C Makefile    # C++ with preprocessing
+	@printf "Creating... $@.\n"
+	$(QUELL)$(CXX) $(KIM_CTYPE_STANDARD_COMPILE_LIST)
+
+# Fortran Compiler pattern rules
+KIM_FTYPE_STANDARD_COMPILE_LIST = $(ARCHFLAG) $(PICFLAG) $(KIMINCLUDEFLAGS) $(KIMDEFINES) $(OBJONLYFLAG) $(FFLAGS) $(FFORTRANFILEFLAG) $<
+# Fixed form code
+%.o:%.f Makefile    # FORTRAN 77 without preprocessing
+	@printf "Creating... $@.\n"
+	$(QUELL)$(FC) $(FFIXEDFLAG) $(FNOCPPFLAG) $(KIM_FTYPE_STANDARD_COMPILE_LIST)
+%.o:%.for Makefile  # FORTRAN 77 without preprocessing
+	@printf "Creating... $@.\n"
+	$(QUELL)$(FC) $(FFIXEDFLAG) $(FNOCPPFLAG) $(KIM_FTYPE_STANDARD_COMPILE_LIST)
+%.o:%.ftn Makefile  # FORTRAN 77 without preprocessing
+	@printf "Creating... $@.\n"
+	$(QUELL)$(FC) $(FFIXEDFLAG) $(FNOCPPFLAG) $(KIM_FTYPE_STANDARD_COMPILE_LIST)
+%.o:%.fpp Makefile  # FORTRAN 77 with preprocessing
+	@printf "Creating... $@.\n"
+	$(QUELL)$(FC) $(FFIXEDFLAG) $(FCPPFLAG)   $(KIM_FTYPE_STANDARD_COMPILE_LIST)
+%.o:%.F Makefile    # FORTRAN 77 with preprocessing
+	@printf "Creating... $@.\n"
+	$(QUELL)$(FC) $(FFIXEDFLAG) $(FCPPFLAG)   $(KIM_FTYPE_STANDARD_COMPILE_LIST)
+%.o:%.FOR Makefile  # FORTRAN 77 with preprocessing
+	@printf "Creating... $@.\n"
+	$(QUELL)$(FC) $(FFIXEDFLAG) $(FCPPFLAG)   $(KIM_FTYPE_STANDARD_COMPILE_LIST)
+%.o:%.FTN Makefile  # FORTRAN 77 with preprocessing
+	@printf "Creating... $@.\n"
+	$(QUELL)$(FC) $(FFIXEDFLAG) $(FCPPFLAG)   $(KIM_FTYPE_STANDARD_COMPILE_LIST)
+%.o:%.FPP Makefile  # FORTRAN 77 with preprocessing
+	@printf "Creating... $@.\n"
+	$(QUELL)$(FC) $(FFIXEDFLAG) $(FCPPFLAG)   $(KIM_FTYPE_STANDARD_COMPILE_LIST)
+# Free form code
+%.o:%.f90 Makefile  # Fortran 90 without preprocessing
+	@printf "Creating... $@.\n"
+	$(QUELL)$(FC) $(FFREEFLAG) $(FNOCPPFLAG)  $(KIM_FTYPE_STANDARD_COMPILE_LIST)
+%.o:%.f95 Makefile  # Fortran 95 without preprocessing
+	@printf "Creating... $@.\n"
+	$(QUELL)$(FC) $(FFREEFLAG) $(FNOCPPFLAG)  $(KIM_FTYPE_STANDARD_COMPILE_LIST)
+%.o:%.f03 Makefile  # Fortran 2003 without preprocessing
+	@printf "Creating... $@.\n"
+	$(QUELL)$(FC) $(FFREEFLAG) $(FNOCPPFLAG)  $(KIM_FTYPE_STANDARD_COMPILE_LIST)
+%.o:%.f08 Makefile  # Fortran 2008 without preprocessing
+	@printf "Creating... $@.\n"
+	$(QUELL)$(FC) $(FFREEFLAG) $(FNOCPPFLAG)  $(KIM_FTYPE_STANDARD_COMPILE_LIST)
+%.o:%.F90 Makefile  # Fortran 90 with preprocessing
+	@printf "Creating... $@.\n"
+	$(QUELL)$(FC) $(FFREEFLAG) $(FCPPFLAG)    $(KIM_FTYPE_STANDARD_COMPILE_LIST)
+%.o:%.F95 Makefile  # Fortran 95 with preprocessing
+	@printf "Creating... $@.\n"
+	$(QUELL)$(FC) $(FFREEFLAG) $(FCPPFLAG)    $(KIM_FTYPE_STANDARD_COMPILE_LIST)
+%.o:%.F03 Makefile  # Fortran 2003 with preprocessing
+	@printf "Creating... $@.\n"
+	$(QUELL)$(FC) $(FFREEFLAG) $(FCPPFLAG)    $(KIM_FTYPE_STANDARD_COMPILE_LIST)
+%.o:%.F08 Makefile  # Fortran 2008 with preprocessing
+	@printf "Creating... $@.\n"
+	$(QUELL)$(FC) $(FFREEFLAG) $(FCPPFLAG)    $(KIM_FTYPE_STANDARD_COMPILE_LIST)
+
+
+# Model Driver and Model Library pattern rule
+# SO_IS_MODEL is set in anoter Makefile
+# SO_IS_PARAMETERIZED is set in another Makefile
+%.so: SO_NEEDS_DOT:=$(if $(filter dynamic-load,$(KIM_LINK)),$(if $(shell if test -f "$(srcdir)/.lib$(KIM_LIB_BUILD).so"; then printf "yes"; fi),true,),)
+%.so: %.a $(EXPORT_LIST_NAME)
+	@printf "Creating... $@.\n"
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDSHAREDFLAG) \
+                $(LINKSONAME)$(if $(SO_IS_MODEL),$(srcdir)/$(modelsdir)/$(MODEL_NAME)/lib$(MODEL_LIB),$(srcdir)/$(modeldriversdir)/$(MODEL_DRIVER_NAME)/lib$(MODEL_DRIVER_LIB)).so \
+                $(LDEXPORTLISTFLAG) $(LDFLAGS) $(OUTPUTINFLAG) lib$(if $(SO_IS_MODEL),$(MODEL_LIB_BUILD),$(MODEL_DRIVER_LIB_BUILD)).so \
+                $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
+                $(if $(filter-out dynamic-load,$(KIM_LINK)),,$(KIMLDFLAGS) $(KIMLDLIBS)) \
+                $(if $(filter-out dynamic-link,$(KIM_LINK)),,$(if $(SO_IS_PARAMETERIZED),$(srcdir)/$(modeldriversdir)/$(MODEL_DRIVER_NAME)/lib$(MODEL_DRIVER_LIB_BUILD).so,)) \
+                $(LDDYNAMICLIB) $(XLANGLDLIBS) $(LDLIBS)
+	$(QUELL)if test x"$(SO_NEEDS_DOT)" = x"true"; then \
+                 $(LD) $(ARCHFLAG) $(LDSHAREDFLAG) \
+                 $(LINKSONAME)$(package_dir)/$(if $(SO_IS_MODEL),$(modelsdir)/$(MODEL_NAME)/lib$(MODEL_LIB),$(modeldriversdir)/$(MODEL_DRIVER_NAME)/lib$(MODEL_DRIVER_LIB)).so \
+                 $(LDEXPORTLISTFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .lib$(if $(SO_IS_MODEL),$(MODEL_LIB_BUILD),$(MODEL_DRIVER_LIB_BUILD)).so \
+                 $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
+                 $(if $(filter-out dynamic-load,$(KIM_LINK)),,$(srcdir)/.lib$(KIM_LIB_BUILD).so) \
+                 $(if $(filter-out dynamic-link,$(KIM_LINK)),,$(if $(SO_IS_PARAMETERIZED),$(modeldriversdir)/$(MODEL_DRIVER_NAME)/.lib$(MODEL_DRIVER_LIB_BUILD).so,)) \
+                 $(LDDYNAMICLIB) $(XLANGLDLIBS) $(LDLIBS); \
+               fi
+
+# KIM descriptor file make rule
+KIM_STR_NAME = kim_str
+.INTERMEDIATE: $(KIM_STR_NAME).cpp
+$(KIM_STR_NAME).cpp: $(KIM_MAKE_FILES) # ".kim" dependency added in another Makefile
+	@printf "Creating... intermediate file... $@.\n"
+	$(QUELL)fl_size=`cat $(MODEL_KIM_FILE) | tr -d '\r' | wc -c`;\
+         n=`expr $$fl_size / 65536 + 2`;\
+         lines=`cat $(MODEL_KIM_FILE) | tr -d '\r' | wc -l`;\
+         dl=`expr $$lines / $$n`;\
+         printf "extern \"C\" {\n"                                                                >  $@;\
+         printf "   extern const int $(MODEL_NAME)_$(KIM_STR_NAME)_chunks = %i;\n" `expr $$n + 1` >> $@;\
+         printf "   extern const char* const $(MODEL_NAME)_$(KIM_STR_NAME)[] =\n"                 >> $@;\
+         printf "   {\n"                                                                          >> $@;\
+         i=0;\
+         while test $$i -le $$n; do \
+            if test $$i -ne 0; then printf "\n      ,\n\n"                                        >> $@; fi;\
+            lnstart=`expr $$i '*' $$dl - 2`;\
+            if test $$lnstart -le 0; then begdel=":dummy"; else begdel="1,$$lnstart d"; fi;\
+            lnend=`expr \( $$i + 1 \) '*' $$dl - 1`;\
+            cat $(MODEL_KIM_FILE) | tr -d '\r' | \
+            sed -e "$$begdel"        \
+                -e "$$lnend,\$$ d"   \
+                -e 's,\\,\\\\,g'     \
+                -e 's,",\\",g'       \
+                -e 's,^,      ",g'   \
+                -e 's,$$,\\n",g'                                                                  >> $@;\
+            i=`expr $$i + 1`;\
+        done;\
+        printf "   };\n"                                                                          >> $@;\
+        printf "}\n"                                                                              >> $@;

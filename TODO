@@ -29,7 +29,7 @@
 #
 
 #
-# Release: This file is part of the openkim-api.git repository.
+# Release: This file is part of the kim-api.git repository.
 #
 
 
@@ -37,7 +37,7 @@ This file contains a list of planned improvements and new features for the
 KIM API package.
 
 --------------------------------------------------------------------------------
-Items planned for the next significant release.
+Items planned for future releases.
 --------------------------------------------------------------------------------
 
 * Introduce a "sparse array" type (for use with `hessian' and similar arguments)
@@ -46,16 +46,12 @@ Items planned for the next significant release.
 
 * Refactor the core KIM API code for improved readability and maintenance.
 
---------------------------------------------------------------------------------
-Items planned for future releases.
---------------------------------------------------------------------------------
+* Implement full support for Simulators written in Python
 
-* Implement full support for Tests written in Python
+* Implement full support for Simulators written in Java
 
-* Implement full support for Tests written in Java
-
-* Create an example Model and Test written in C++ that makes full use of the
-  object oriented nature of the language.
+* Create an example Model and Simulator/Test written in C++ that makes full use
+  of the object oriented nature of the language.
 
 * Implement a new NBC method, similar to NEIGH_RVEC_F, that includes a
   ForceTransformation() function that can be applied to each atom.  This will

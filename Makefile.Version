@@ -27,7 +27,7 @@
 #
 
 #
-# Release: This file is part of the openkim-api.git repository.
+# Release: This file is part of the kim-api.git repository.
 #
 
 #
@@ -48,14 +48,14 @@
 # The PRERELEASE value is restricted to be either "" or "git".  The value is ""
 # only for official releases of the KIM API package.  The packaging script will
 # automatically change this value from "git" to "" as it creates the release
-# tarball.  Thus, "git" value of PRERELEASE should not be changed manually.
+# tarball.  Thus, the "git" value of PRERELEASE should not be changed manually.
 #
 # The BUILD_METADATA value can be set to any value allowed by the Semantic
 # Versioning specification.  By default, the value is set to indicate the
 # compile settings KIM_COMPILERSUITE, KIM_SYSTEMLINKER, KIM_SYSARCH, and
 # KIM_LINK specified in the Makefile.KIM_Config file.  Within the git
 # repository for the KIM API package the value has the current commit hash
-# value prepended via the "git rev-pars command".  The packaging script will
+# value prepended via the "git rev-parse command".  The packaging script will
 # automatically remove the "git rev-parse command" for official releases.  The
 # value of BUILD_METADATA may be changed by package manager tools, if this is
 # desirable.

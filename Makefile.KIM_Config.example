@@ -27,16 +27,10 @@
 #
 
 #
-# Release: This file is part of the openkim-api.git repository.
-#
-#
-# this make file builds/cleans everything
+# Release: This file is part of the kim-api.git repository.
 #
 
-KIM_DIR = $(HOME)/openkim-api-vX.X.X
-#KIM_MODEL_DRIVERS_DIR =
-#KIM_MODELS_DIR =
-#KIM_TESTS_DIR =
+KIM_DIR = $(HOME)/kim-api-vX.X.X
 
 KIM_COMPILERSUITE = GCC
 KIM_SYSTEMLINKER = linux
@@ -44,10 +38,10 @@ KIM_SYSTEMARCH = 64bit
 KIM_LINK = dynamic-load
 
 # load default compiler options
-include $(KIM_DIR)/MAKE_SYSTEM/Makefile.LoadDefaults
+include $(KIM_DIR)/build_system/Makefile.LoadDefaults
 
 # override default verbosity value (uncomment the line below if desired)
-# KIM_MAKE_VERBOSITY = full
+# KIM_BUILD_VERBOSITY = full
 
 # override default compiler options and other variables here
 
@@ -61,4 +55,4 @@ include $(KIM_DIR)/MAKE_SYSTEM/Makefile.LoadDefaults
 #bindir =
 
 # load rest of generic make settings
-include $(KIM_DIR)/MAKE_SYSTEM/Makefile.Generic
+include $(KIM_DIR)/build_system/Makefile.Generic

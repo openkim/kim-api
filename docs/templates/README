@@ -1,0 +1,345 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the Common Development
+# and Distribution License Version 1.0 (the "License").
+#
+# You can obtain a copy of the license at
+# http://www.opensource.org/licenses/CDDL-1.0.  See the License for the
+# specific language governing permissions and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each file and
+# include the License file in a prominent location with the name LICENSE.CDDL.
+# If applicable, add the following below this CDDL HEADER, with the fields
+# enclosed by brackets "[]" replaced with your own identifying information:
+#
+# Portions Copyright (c) [yyyy] [name of copyright owner]. All rights reserved.
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2013--2014, Regents of the University of Minnesota.
+# All rights reserved.
+#
+# Contributors:
+#    Ryan S. Elliott
+#    Ellad B. Tadmor
+#    Valeriu Smirichinski
+#
+
+#
+# Release: This file is part of the kim-api.git repository.
+#
+
+
+============================= The KIM API package =============================
+
+This directory contains template files for creating new KIM-Compliant Model
+Drivers and Models.  See the instructions below on how to use these files.
+
+-----------------------------------------------------------------------------
+
+STEP 1
+
+Start by reviewing the contents of this directory.  It contains the following
+files:
+
+Makefile.Model.template
+     A template for the Makefile that needs to be placed in a new Model
+     directory.
+
+Makefile.ModelDriver.template
+     A template for the Makefile that needs to be placed in a new Model
+     Driver directory.
+
+Makefile.ParameterizedModel.template
+     A template for the Makefile that needs to be placed in a new Model
+     directory for Parameterized Models.
+
+README
+     This file.
+
+model_El_PF_Template.F03
+     Fortran 2003 template file for a pair functional (EAM, Finnis-Sinclair,
+     effective medium theory, glue, etc.) Model.
+
+model_El_PF_Template.c
+     C template file for a pair functional (EAM, Finnis-Sinclair,
+     effective medium theory, glue, etc.) Model.
+
+model_El_PF_Template.c.kim
+     KIM descriptor file for the C pair functional template.
+
+model_El_PF_Template.f.kim
+     KIM descriptor file for the Fortran pair functional template.
+
+model_El_P_Template.F03
+     Fortran 2003 template file for a pair potential Model.
+
+model_El_P_Template.c
+     C template file for a pair potential Model.
+
+model_El_P_Template.c.kim
+     KIM descriptor file for the C pair potential template.
+
+model_El_P_Template.f.kim
+     KIM descriptor file for the Fortran pair potential template.
+
+model_El_P_Template.params
+     Parameter file for a Model based on a pair potential Model Driver.
+
+model_driver_P_Template.F03
+     Fortran 2003 template file for a pair potential Model Driver.
+
+model_driver_P_Template.c
+     C template file for a pair potential Model Driver.
+
+model_driver_P_Template.c.kim.tpl
+     KIM descriptor file for the C pair potential Driver template.
+
+model_driver_P_Template.f.kim.tpl
+     KIM descriptor file for the Fortran pair potential Driver template.
+
+-----------------------------------------------------------------------------
+
+STEP 2
+
+Next, we take a first look at the templates.
+
+The templates are designed to facilitate the creation of new KIM-Compliant
+Model Drivers and Models.  As a first step, we suggest that you compare the
+templates with functioning KIM Models provided with this KIM API release.  This
+will allow you to see what changes are needed to turn the templates into
+Models.  Detailed directions are also given below.
+
+(a) The template `model_El_P_Template.c' can be compared with
+    `ex_model_Ar_P_MLJ_C.c'.
+
+(b) The template `model_El_P_Template.F03' can be compared with
+    `ex_model_Ar_P_MLJ_F03.F03'.
+
+(c) The template `model_El_PF_Template.F03' can be compared with
+    `ex_model_Al_PF_ErcolessiAdams.F03'.
+
+(d) The template `model_El_PF_Template.c' can be compared with
+    `ex_model_Cu_PF_Johnson.c'.
+
+(e) The template `model_driver_P_Template.F03' can be compared with
+    `ex_model_driver_P_LJ.F03'
+
+(f) The template `model_driver_P_Template.c' can be compared with
+    `ex_model_driver_P_Morse.c'
+
+Recall that Model Drivers are stored under ${KD}/examples/model_drivers and
+Models are stored under ${KD}/examples/models.  To compare files, you can for
+example use the `vimdiff' command:
+
+   % cd ${KD}
+   % vimdiff examples/models/ex_model_Ar_P_MLJ_F03/ex_model_Ar_P_MLJ_F03.F03 docs/templates/model_El_P_Template.F03
+
+Alternatively use the excellent `ediff' feature of the emacs editor.
+
+-----------------------------------------------------------------------------
+
+STEP 3
+
+You are now ready to create a new KIM-Compliant Model based on the provided
+templates.
+
+The directions below show how to use the Fortran 2003 template for a pair
+potential (model_El_P_Template.F03) and turn it into a Model for argon (Ar)
+using a Buckingham potential.  (The procedure for a Model written in C is
+essentially identical. See comments below.)
+
+(a) Create a new directory under MODELS for the Ar pair potential:
+
+    % cd ${KD}/src/models
+    % mkdir model_Ar_P_Buckingham
+
+(b) Copy the .F03, .kim and Makefile templates into the new directory and
+    rename:
+
+    % cd ${KD}/src/models/model_Ar_P_Buckingham
+    % cp ${KD}/docs/templates/model_El_P_Template.F03 model_Ar_P_Buckingham.F03
+    % cp ${KD}/docs/templates/model_El_P_Template.f.kim model_Ar_P_Buckingham.kim
+    % cp ${KD}/docs/templates/Makefile.Model.template Makefile
+
+    Note: For a Model written in C, copy the .c and .c.kim templates.
+
+(c) Edit the .kim file and enter the species type.  (Search for the word "FILL"
+    which indicates where changes are necessary.)  Also, change the "Release:"
+    line to indicate that the file is part of your new Model and not part of
+    the kim-api release.  To edit a file on a unix machine, use for example:
+
+    % pico model_Ar_P_Buckingham.kim
+
+(d) Edit the .F03 (or .c) file making all necessary changes.  (Search for the
+    word "FILL".)  The main changes are:
+
+    - The "Release:" line should be changed from referencing the kim-api
+      release to something more appropriate.
+
+    - Model name which appears in several places in the file.
+
+    - Fill in the Model cutoff radius.
+
+    - Define static parameters if necessary.  If these parameters need to be
+      accessed outside the module (as in the _init() routine) add them to the
+      list of public variables at the top of the module.
+
+      Note: A Model cannot rely on static storage between calls.  A basic
+      assumption in the KIM API is that *all* information needed by a Model to
+      run is stored in the KIM API object.  This is necessary to allow multiple
+      instances of the same Model being used simultaneously (see the Test
+      `ex_test_Ar_multiple_models' for an example of such usage).  The only
+      case where static variables can be used is if they are "hard-wired" so
+      that the Model can only work with those constant values.  In Fortran this
+      is done using the "parameter" statement.  In C, use preprocessor
+      `#define' statements.  Otherwise variables need to be stored as
+      PARAM_FREE_ or PARAM_FIXED_ variables in the KIM API object.
+      Alternatively you can use the "model buffer" feature of the KIM API to
+      store a pointer to a data structure.  See the discussion in the
+      standard.kim file.
+
+    - Fill in the necessary code in the routines calc_phi() and calc_phi_dphi().
+
+    - Add any necessary initialization into the _init() routine.
+
+(e) Edit the Makefile and change the Model name, the name of the Model's ".kim"
+    file, and model_init function values appropriately.  Add the Model's object
+    file (model_Ar_P_Buckingham.o) to the LOCALOBJ line.  In this example the
+    LOCALCLEAN line can be left blank.  (Search for the word "FILL" to find the
+    locations in the file that need to be edited.)  Also change the "Release:"
+    line to indicate that the file is part of your new Model and not part of
+    the kim-api release.
+
+(f) Compile the new Model into the KIM API package:
+
+    % cd ${KD}
+    % make
+
+    Correct any errors until the compilation succeeds.
+
+(g) You can now run Simulators that are compatible with your Model simply by
+    giving your new Model name as an argument.
+
+    Note: If you run a Simulator and it does not seem to be working, remember
+          to check the kim.log file for any messages.
+
+-----------------------------------------------------------------------------
+
+STEP 4
+
+In STEP 3, you created a KIM-Compliant Model for Ar based on the Buckingham
+functional form.  You will now see how you can create a Buckingham Model Driver
+and the specific Model for Ar by specifying the appropriate parameters.  The
+Model Driver approach has the advantage that once the Model Driver is created
+it is easy to create many Models that use this form for different materials or
+even different parameterizations for the same material.
+
+The directions for using the supplied templates to create a new KIM-Compliant
+Buckingham Model Driver and a Ne KIM Model based on it are given below.
+
+(a) Create a new directory under src/model_drivers for the Buckingham pair
+    potential Model Driver:
+
+    % cd ${KD}/src/model_drivers
+    % mkdir model_driver_P_Buckingham
+
+(b) Copy the .F03, .kim and Makefile templates into the new directory and
+    rename:
+
+    % cd ${KD}/src/model_drivers/model_driver_P_Buckingham
+    % cp ${KD}/docs/templates/model_driver_P_Template.F03 model_driver_P_Buckingham.F03
+    % cp ${KD}/docs/templates/model_driver_P_Template.f.kim.tpl model_driver_P_Buckingham.kim.tpl
+    % cp ${KD}/docs/templates/Makefile.ModelDriver.template Makefile
+
+    Note: For a Model written in C, copy the .c and .c.kim.tpl templates.
+
+(c) Edit the .kim.tpl file and define the parameters used by this Model Driver.
+    (Search for the word "FILL" which indicates where changes are necessary.)
+    Also change the "Release:" line to indicate that the file is part of your
+    new Model and not part of the kim-api release.  To edit a file on a unix
+    machine, use for example:
+
+    % pico model_driver_Buckingham.kim.tpl
+
+(d) Edit the .F03 (or .c) file making all necessary changes.  (Search for the
+    word "FILL".)  The main changes are:
+
+    - The "Release:" line should be changed from referencing the kim-api
+      release to something more appropriate.
+
+    - Model Driver name which appears in several places in the file.
+
+    - Fill in the Model Driver parameters which are required in several places
+      in the file.
+
+    - Fill in the necessary code in the routines calc_phi() and calc_phi_dphi().
+
+    - Specify the format for reading in the parameter data (in Fortran 2003 you
+      can simply set this to `*'.)
+
+(e) Edit the Makefile and change the Model Driver name, Model Driver ".kim.tpl"
+    template file name, and model_init function values appropriately.  Add the
+    Model's object file (model_driver_P_Buckingham.o) to the LOCALOBJ line.  In
+    this example the LOCALCLEAN line can be left blank.  (Search for the word
+    "FILL".)  Also change the "Release:" line to indicate that the file is part
+    of your new Model and not part of the kim-api release.
+
+(f) Compile the new Model Driver into the API package:
+
+    % cd ${KD}
+    % make
+
+    Correct any errors until the compilation succeeds.
+
+(g) Create a new directory under src/models for the Ne pair potential:
+
+    % cd ${KD}/src/models
+    % mkdir model_Ne_P_Buckingham
+
+(h) Copy the `Makefile.ParameterizedModel.template' and
+    model_El_P_Template.params files into the new directory and rename:
+
+    % cd ${KD}/src/models/model_Ne_P_Buckingham
+    % cp ${KD}/docs/templates/Makefile.ParameterizedModel.template Makefile
+    % cp ${KD}/docs/templates/model_El_P_Template.params model_Ne_P_Buckingham.params
+
+(i) Edit the Makefile and change the Model name, Model Driver name, and
+    SPECIES_001_NAME appropriately. (Search for the word "FILL".)  Also change
+    the "Release:" line to indicate that the file is part of your new Model and
+    not part of the kim-api release.
+
+(j) Edit the model_Ne_P_Buckingham.params file appropriately. (Search for the
+     word "FILL".)  Also change the "Release:" line to indicate that the file
+     is part of your new Model and not part of the kim-api release.
+
+(k)  Compile the new Model into the KIM API package:
+
+     % cd ${KD}
+     % make
+
+     Correct any errors until the compilation succeeds.
+
+(l)  You can now run Simulators that are compatible with your Model simply by
+     giving your new Model name as an argument.
+
+     Note: If you run a Simulator and it does not seem to be working, remember
+           to check the kim.log file for any messages.
+
+
+*******************************************************************************
+
+SUPPORT
+
+If you have problems or questions, send an email with your question and all
+relevant information to
+
+openkim@googlegroups.com
+
+The members of the OpenKIM development team actively monitor this email list
+and will do their best to help you with your question in a timely fashion.
+
+*******************************************************************************
