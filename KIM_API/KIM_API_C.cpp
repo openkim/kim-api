@@ -909,6 +909,9 @@ double KIM_API_convert_to_act_unit(void * kimmdl,
 int kim_api_init_(void * kimmdl,char ** testname, char **mdlname){
     return KIM_API_init(kimmdl,*testname,*mdlname);
 }
+int kim_api_file_init_(void * kimmdl,char ** testkimfile, char **mdlname){
+    return KIM_API_file_init(kimmdl,*testkimfile,*mdlname);
+}
 int kim_api_model_info_(void * kimmdl,char ** mdlname){
     return KIM_API_model_info(kimmdl,*mdlname);
 }

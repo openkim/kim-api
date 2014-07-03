@@ -65,7 +65,7 @@ else # everything else: dynamic-link static-link
 endif
 
 # other targets
-clean: config $(patsubst %,%-clean,$(MODELS_LIST) $(MODEL_DRIVERS_LIST) $(TESTS_LIST)) kim-api-clean config-clean
+clean: config $(patsubst %,%-clean,$(MODEL_DRIVERS_LIST) $(MODELS_LIST) $(TESTS_LIST)) kim-api-clean config-clean
 ifeq (dynamic-load,$(KIM_LINK))
   install: install-check config kim-api-objects-install kim-api-libs-install $(patsubst %,%-install,$(MODEL_DRIVERS_LIST) $(MODELS_LIST)) config-install
 else
