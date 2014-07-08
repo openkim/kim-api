@@ -75,7 +75,12 @@ all: descriptor.kim $(MODEL_BUILD_TARGET)
 ifeq ($(srcdir),$(KIM_DIR)) # INSTALLED
    LOCTMP = $(HOME)
 else
-   LOCTMP = $(KIM_DIR)
+   ifeq (install,$(MAKECMDGOALS)) # in case examples are "added" and build and installation is requested
+      # avoid error where example model driver is in user directory and in install directory
+      LOCTMP = /dev/null
+   else
+      LOCTMP = $(KIM_DIR)
+   endif
 endif
 ifeq (yes,$(shell if test -f $(LOCTMP)/.$(package_name)/config-v$(VERSION_MAJOR); then printf "yes"; fi))
    USERDIR = $(shell grep model_drivers_dir $(LOCTMP)/.$(package_name)/config-v$(VERSION_MAJOR) | sed -e 's/[^=]*=[[:space:]]*//' -e 's|^~|$(HOME)|')

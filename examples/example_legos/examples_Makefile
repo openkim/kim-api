@@ -43,32 +43,41 @@ include Makefile.KIM_Config
 
 all: model-drivers-all models-all openkim-tests-all simulators-all
 
-model-drivers-all:
+model-drivers-all: Example\ Model\ Drivers-making-echo
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modeldriversdir) all
 
-models-all:
+models-all: Example\ Model-making-echo
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modelsdir) all
 
-openkim-tests-all:
+openkim-tests-all: Example\ OpenKIM\ Tests-making-echo
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C openkim_tests all
 
-simulators-all:
+simulators-all: Example\ Simulators-making-echo
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C simulators all
 
 
 #
 # Main clean settings and rules
 #
-.PHONY: model-drivers-clean models-clean openkim-tests-clean simulators-clean
+.PHONY: clean model-drivers-clean models-clean openkim-tests-clean simulators-clean
 
-model-drivers-clean:
+clean: model-drivers-clean models-clean openkim-tests-clean simulators-clean
+
+model-drivers-clean: Example\ Model\ Drivers-making-echo
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modeldriversdir) clean
 
-models-clean:
+models-clean: Example\ Model-making-echo
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modelsdir) clean
 
-openkim-tests-clean:
+openkim-tests-clean: Example\ OpenKIM\ Tests-making-echo
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C openkim_tests clean
 
-simulators-clean:
+simulators-clean: Example\ Simulators-making-echo
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C simulators clean
+
+
+########### for internal use ###########
+%-making-echo:
+	@printf "\n%79s\n" " " | sed -e 's/ /*/g'
+	@printf "%-77s%2s\n" "** Working on... `printf "$(patsubst %-all,%,$*)" | sed -e 's/@/ /g'`" "**"
+	@printf "%79s\n" " " | sed -e 's/ /*/g'

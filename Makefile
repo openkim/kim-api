@@ -395,5 +395,5 @@ examples-clean: config
 ########### for internal use ###########
 %-making-echo:
 	@printf "\n%79s\n" " " | sed -e 's/ /*/g'
-	@printf "%-77s%2s\n" "** Making... `printf "$(patsubst %-all,%,$*)" | sed -e 's/@/ /g'`" "**"
+	@printf "%-77s%2s\n" "** Building... `printf "$(patsubst %-all,%,$*)" | sed -e 's/@/ /g'`" "**"
 	@printf "%79s\n" " " | sed -e 's/ /*/g'
