@@ -57,7 +57,7 @@ else
    endif
 endif
 
-.PHONY: STATIC_COMP_WARNING clean install installdirs uninstall
+.PHONY: STATIC_COMP_WARNING clean install installdirs uninstall kim-item-type model-name model-driver-name
 STATIC_COMP_WARNING:
 	@printf '\n'; \
         printf '*******************************************************************************\n'; \
@@ -104,7 +104,7 @@ paramfile_name_list = $(strip $(foreach paramfl,$(paramfile_list), $($(paramfl))
 num_paramfiles = $(words $(paramfile_num_list))
 
 # descriptor.kim should not be INTERMEDIATE, so that the openkim.org pipeline can use it.
-descriptor.kim: drv_kim_name="$(driver_location)/$(MODEL_DRIVER_NAME)/$(shell $(MAKE) -C $(driver_location)/$(MODEL_DRIVER_NAME) dotkimfiletemplate)"
+descriptor.kim: drv_kim_name="$(driver_location)/$(MODEL_DRIVER_NAME)/$(shell $(MAKE) -C $(driver_location)/$(MODEL_DRIVER_NAME) model-driver-kim-file-template)"
 descriptor.kim: $(drv_kim_name) Makefile
 	@printf "Creating... $@.\n"
 	$(QUELL)$(foreach spec,$(filter-out $(shell cat $(drv_kim_name) | \
@@ -193,6 +193,15 @@ else # everything else (linux and freebsd)
 	$(QUELL)printf "   local: *;\n"                                     >> $@
 	$(QUELL)printf "};\n"                                               >> $@
 endif
+
+kim-item-type:
+	$(QUELL)printf "ParameterizedModel"
+
+model-name:
+	$(QUELL)printf "$(MODEL_NAME)"
+
+model-driver-name:
+	$(QUELL)printf "$(MODEL_DRIVER_NAME)"
 
 Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/$(builddir)/Makefile.ParameterizedModel
 	$(QUELL)touch Makefile

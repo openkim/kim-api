@@ -56,7 +56,7 @@ else
    endif
 endif
 
-.PHONY: STATIC_COMP_WARNING clean install installdirs uninstall
+.PHONY: STATIC_COMP_WARNING clean install installdirs uninstall kim-item-type model-name model-kim-file
 STATIC_COMP_WARNING:
 	@printf '\n'; \
         printf '*******************************************************************************\n'; \
@@ -107,6 +107,15 @@ else # everything else (linux and freebsd)
 	$(QUELL)printf "   local: *;\n"                                     >> $@
 	$(QUELL)printf "};\n"                                               >> $@
 endif
+
+kim-item-type:
+	$(QUELL)printf "Model"
+
+model-name:
+	$(QUELL)printf "$(MODEL_NAME)"
+
+model-kim-file:
+	$(QUELL)printf "$(MODEL_KIM_FILE)"
 
 $(LOCALOBJ): Makefile
 

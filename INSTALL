@@ -54,7 +54,7 @@ To install the KIM API package you need the following:
    is known to have subtle bugs, and SHOULD NOT BE USED with the KIM API
    software package.
 
-4. wget (needed for use with the `make add-<...>' build targets.
+4. wget and tar (needed for use with the `make add-<...>' build targets.
 
 -------------------------------------------------------------------------------
 
@@ -269,11 +269,23 @@ INSTRUCTIONS for building and installing this KIM API release:
      EAM_Dynamo_Angelo_Moody_NiAlH__MO_418978237058_000
 
 3. To build the package "in place", including the provided examples, and
-   confirm that everything works as expeced, execute the following commands:
+   confirm that everything works as expeced, execute the following commands.
 
+   First, change to the KIM API package directory:
    % cd ${KD}
+
+   Second, "add" the OpenKIM Model Drivers and Models of interest:
+
    % make add-EAM_Dynamo__MD_120291908751_000
    % make add-EAM_Dynamo_Angelo_Moody_NiAlH__MO_418978237058_000
+
+   Alternatively, you can just "add" the OpenKIM Model of interest and the
+   associated Model Driver, if any, will also be added automatically:
+
+   % make add-EAM_Dynamo_Angelo_Moody_NiAlH__MO_418978237058_000
+
+   Finally, build the package and the provided examples:
+
    % make
    % make examples
 
@@ -294,6 +306,8 @@ INSTRUCTIONS for building and installing this KIM API release:
 
      `add-OpenKIM'                -- "add" all OpenKIM Model Drivers and Models
      `add-<Extended KIM ID>'      -- "add" <Extended KIM ID> from OpenKIM
+                                     including the associated Model Driver, if
+                                     appropriate
      `add-examples'               -- "add" example Model Drivers and Models
 
      `rm-all'                     -- "rm" all "added" Model Drivers and Models

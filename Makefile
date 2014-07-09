@@ -144,7 +144,7 @@ ls-model-drivers:
 
 ls-models:
 	$(QUELL)$(foreach ml,$(notdir $(shell find "$(srcdir)/$(modelsdir)" -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)),\
-          printf "*@existing.....@%-50s@found@in@@@$(srcdir)/$(modelsdir)\n" $(mdr)@ | sed -e 's/ /./g' -e 's/@/ /g';)
+          printf "*@existing.....@%-50s@found@in@@@$(srcdir)/$(modelsdir)\n" $(ml)@ | sed -e 's/ /./g' -e 's/@/ /g';)
 
 ls-all: ls-model-drivers ls-models
 
@@ -167,19 +167,39 @@ add-examples:
           cp -r "$(KIM_DIR)/$(examplesdir)/$(modelsdir)/$(exmpl)" "$(srcdir)/$(modelsdir)/"; fi;)
 
 add-OpenKIM:
-	$(QUULL)printf "Complete download of OpenKIM Repository Model Drivers and Models not yet possible.\n" && false
+	$(QUULL)printf "Complete download of OpenKIM Repository Model Drivers and Models not yet available.\n" && false
 
-add-%:
+add-%: config
 	$(QUELL)if test x"__MD_" = x`printf "$*" | sed 's/.*\(__MD_\).*/\1/'`; then \
-                  (cd "$(srcdir)/$(modeldriversdir)" && \
-                   wget -nv --content-disposition 'https://kim-items.openkim.org/archive?kimid=$*&compression=gz' && \
-                   tar zxvf "$*.tgz" && \
-                   rm -f "$*.tgz"); \
+                  if test -e "$(srcdir)/$(modeldriversdir)/$*"; then \
+                    printf "*@existing.....@%-50s@no@download@performed!\n" $*@ | sed -e 's/ /./g' -e 's/@/ /g'; \
+                  else \
+                    printf "*@adding.......@%-50s@to@$(srcdir)/$(modeldriversdir)\n" $*@ | sed -e 's/ /./g' -e 's/@/ /g'; \
+                    (cd "$(srcdir)/$(modeldriversdir)" && \
+                     if wget -q --content-disposition 'https://kim-items.openkim.org/archive?kimid=$*&compression=gz'; then \
+                       tar zxvf "$*.tgz" 2>&1 | sed -e 's/^/                /' && \
+                       rm -f "$*.tgz"; \
+                     else \
+                       printf "                Unable to download $* from https://openkim.org.  Check the KIM Item ID for errors.\n" && false; \
+                     fi); \
+                  fi; \
                 elif test x"__MO_" = x`printf "$*" | sed 's/.*\(__MO_\).*/\1/'`; then \
-                  (cd "$(srcdir)/$(modelsdir)" && \
-                   wget -nv --content-disposition 'https://kim-items.openkim.org/archive?kimid=$*&compression=gz' && \
-                   tar zxvf "$*.tgz" && \
-                   rm -f "$*.tgz"); \
+                  if test -e "$(srcdir)/$(modelsdir)/$*"; then \
+                    printf "*@existing.....@%-50s@no@download@performed!\n" $*@ | sed -e 's/ /./g' -e 's/@/ /g'; \
+                  else \
+                    printf "*@adding.......@%-50s@to@$(srcdir)/$(modelsdir)\n" $*@ | sed -e 's/ /./g' -e 's/@/ /g'; \
+                    (cd "$(srcdir)/$(modelsdir)" && \
+                     if wget -q --content-disposition 'https://kim-items.openkim.org/archive?kimid=$*&compression=gz'; then \
+                       tar zxvf "$*.tgz" 2>&1 | sed -e 's/^/                /' && \
+                       rm -f "$*.tgz" && \
+                       if test x"ParameterizedModel" = x"`$(MAKE) $(MAKE_FLAGS) -C $* kim-item-type`"; then \
+                         dvr="`$(MAKE) $(MAKE_FLAGS) -C $* model-driver-name`"; \
+                         $(MAKE) $(MAKE_FLAGS) -C $(KIM_DIR) add-$${dvr}; \
+                       fi; \
+                     else \
+                       printf "                Unable to download $* from https://openkim.org.  Check the KIM Item ID for errors.\n" && false; \
+                     fi); \
+                  fi; \
                 elif test \( x"ex_model_driver_" = x`printf "$*" | sed 's/^\(ex_model_driver_\).*/\1/'` -a -d "$(KIM_DIR)/$(examplesdir)/$(modeldriversdir)/$*" \); then \
                    if test -e "$(srcdir)/$(modeldriversdir)/$*"; then \
                      printf "*@existing.....@%-50s@no@copy@performed!\n" $*@ | sed -e 's/ /./g' -e 's/@/ /g'; else \
