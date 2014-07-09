@@ -522,7 +522,11 @@ int KIM_API_model_compute(void *kimmdl);
 
     This routine executes the `compute' method of the Model by using the
     address of the compute routine stored in KIM API object.  Return value:
-    KIM_STATUS_OK on success or KIM_STATUS_FAIL on failure.
+    KIM_STATUS_OK on success or KIM_STATUS_MODEL_UNSUPPORTED_CONFIGURATION if
+    the Model is unable to perform the computation for the supplied
+    configuration (e.g., it doesn't support the particular combination of
+    particle types in the configuration) or else KIM_STATUS_FAIL for other
+    types of failure.
 
     NOTES:
 
