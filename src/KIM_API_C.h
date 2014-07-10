@@ -59,29 +59,43 @@ void KIM_API_free(void *kimmdl,int * error);
 void KIM_API_print(void *kimmdl,int *error);
 int KIM_API_model_compute(void *kimmdl);
 int KIM_API_model_init(void * kimmdl);
-char * KIM_API_get_model_kim_str(const char *modelname,int * error);
+int KIM_API_get_model_kim_str(const char *modelname, char** const kimString);
 int KIM_API_model_destroy(void * kimmdl);
 int KIM_API_model_reinit(void * kimmdl);
 
 
+  int KIM_API_get_num_model_species(void* kimmdl, int* numberSpecies,
+                                    int* maxStringLength);
+  int KIM_API_get_model_species(void* kimmdl, const int index,
+                                const char** const speciesString);
+  int KIM_API_get_num_sim_species(void* kimmdl, int* numberSpecies,
+                                  int* maxStringLength);
+  int KIM_API_get_sim_species(void* kimmdl, const int index,
+                              const char** const speciesString);
 
-char * KIM_API_get_model_partcl_typs(void * kimmdl,int* nATypes, int * error);
-char * KIM_API_get_sim_partcl_typs(void * kimmdl,int* nATypes, int * error);
 int KIM_API_get_partcl_type_code(void * kimmdl, const char* atom, int * error);
 void KIM_API_set_partcl_type_code(void * kimmdl, const char* atom, int code, int * error);
 
-char * KIM_API_get_params(void * kimmdl,int* nVpar, int * error);
-char * KIM_API_get_free_params(void * kimmdl,int* nVpar, int * error);
-char * KIM_API_get_fixed_params(void * kimmdl,int* nVpar, int * error);
-
-char * KIM_API_get_NBC_method(void *kimmdl,int * error);
+  int KIM_API_get_num_params(void* kimmdl, int* numberParameters,
+                             int* maxStringLength);
+  int KIM_API_get_parameter(void* kimmdl, const int index,
+                            const char** const parameterString);
+  int KIM_API_get_num_free_params(void* kimmdl, int* numberFreeParameters,
+                                  int* maxStringLength);
+  int KIM_API_get_free_parameter(void* kimmdl, const int index,
+                                 const char** const freeParameterString);
+  int KIM_API_get_num_fixed_params(void* kimmdl, int* numberFixedParameters,
+                                   int* maxStringLength);
+  int KIM_API_get_fixed_parameter(void* kimmdl, const int index,
+                                  const char** const fixedParameterString);
+  int KIM_API_get_NBC_method(void* kimmdl, const char** const NBC_String);
 
 int KIM_API_get_neigh(void *kimmdl,int mode,int request,
         int *atom, int *numnei, int **nei1atom, double **Rij);
 
 int KIM_API_get_neigh_mode(void *kimmdl,int *error);
 
-char * KIM_API_get_status_msg(int error);
+  int KIM_API_get_status_msg(const int status_code, const char** const status_msg);
 
 int KIM_API_report_error(int ln,const char * fl,const char * usermsg,int error);
 

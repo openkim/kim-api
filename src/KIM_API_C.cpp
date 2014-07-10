@@ -103,8 +103,9 @@ int KIM_API_model_init(void * kimmdl){
     return KIM_STATUS_FAIL;
 }
 
-char * KIM_API_get_model_kim_str(const char * modelname,int * kimerr){
-    return KIM_API_model::get_model_kim_str(modelname,kimerr);
+int KIM_API_get_model_kim_str(const char * modelname, char** const kimString)
+{
+    return KIM_API_model::get_model_kim_str(modelname, kimString);
 }
 
 int KIM_API_model_compute(void *kimmdl){
@@ -124,31 +125,82 @@ int KIM_API_model_destroy(void * kimmdl){
     return mdl->model_destroy();
 }
 
-char * KIM_API_get_model_partcl_typs(void * kimmdl,int* nATypes, int* error){
-    KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    return mdl->get_model_partcl_typs(nATypes,error);
-}
-char * KIM_API_get_sim_partcl_typs(void * kimmdl,int* nATypes, int* error){
-    KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    return mdl->get_sim_partcl_typs(nATypes,error);
+int KIM_API_get_num_model_species(void* kimmdl, int* numberSpecies,
+                                  int* maxStringLength)
+{
+  KIM_API_model * mdl=(KIM_API_model *) kimmdl;
+  return mdl->get_num_model_species(numberSpecies, maxStringLength);
 }
 
-char * KIM_API_get_params(void * kimmdl,int* nVpar, int* error){
-     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-     return mdl->get_params(nVpar,error);
+int KIM_API_get_model_species(void* kimmdl, const int index,
+                              const char** const speciesString)
+{
+  KIM_API_model * mdl=(KIM_API_model *) kimmdl;
+  return mdl->get_model_species(index, speciesString);
 }
-char * KIM_API_get_free_params(void * kimmdl,int* nVpar, int* error){
-     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-     return mdl->get_free_params(nVpar,error);
+
+int KIM_API_get_num_sim_species(void* kimmdl, int* numberSpecies,
+                                int* maxStringLength)
+{
+  KIM_API_model * mdl=(KIM_API_model *) kimmdl;
+  return mdl->get_num_sim_species(numberSpecies, maxStringLength);
 }
-char * KIM_API_get_fixed_params(void * kimmdl,int* nVpar, int* error){
-     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-     return mdl->get_fixed_params(nVpar,error);
+
+int KIM_API_get_sim_species(void* kimmdl, const int index,
+                            const char** const speciesString)
+{
+  KIM_API_model * mdl=(KIM_API_model *) kimmdl;
+  return mdl->get_sim_species(index, speciesString);
 }
-char * KIM_API_get_NBC_method(void *kimmdl,int * error){
-     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-     return mdl->get_NBC_method(error);
+
+int KIM_API_get_num_params(void* kimmdl, int* numberParameters,
+                           int* maxStringLength)
+{
+  KIM_API_model * mdl=(KIM_API_model *) kimmdl;
+  return mdl->get_num_params(numberParameters, maxStringLength);
 }
+
+int KIM_API_get_parameter(void* kimmdl, const int index,
+                          const char** const parameterString)
+{
+  KIM_API_model * mdl=(KIM_API_model *) kimmdl;
+  return mdl->get_parameter(index, parameterString);
+}
+
+int KIM_API_get_num_free_params(void* kimmdl, int* numberFreeParameters,
+                                int* maxStringLength)
+{
+  KIM_API_model * mdl=(KIM_API_model *) kimmdl;
+  return mdl->get_num_free_params(numberFreeParameters, maxStringLength);
+}
+
+int KIM_API_get_free_parameter(void* kimmdl, const int index,
+                               const char** const freeParameterString)
+{
+  KIM_API_model * mdl=(KIM_API_model *) kimmdl;
+  return mdl->get_free_parameter(index, freeParameterString);
+}
+
+int KIM_API_get_num_fixed_params(void* kimmdl, int* numberFixedParameters,
+                                 int* maxStringLength)
+{
+  KIM_API_model * mdl=(KIM_API_model *) kimmdl;
+  return mdl->get_num_fixed_params(numberFixedParameters, maxStringLength);
+}
+
+int KIM_API_get_fixed_parameter(void* kimmdl, const int index,
+                                const char** const fixedParameterString)
+{
+  KIM_API_model * mdl=(KIM_API_model *) kimmdl;
+  return mdl->get_fixed_parameter(index, fixedParameterString);
+}
+
+int KIM_API_get_NBC_method(void *kimmdl, const char** const NBC_String)
+{
+  KIM_API_model * mdl=(KIM_API_model *) kimmdl;
+  return mdl->get_NBC_method(NBC_String);
+}
+
 int KIM_API_get_partcl_type_code(void * kimmdl, const char* atom, int * error){
      KIM_API_model * mdl=(KIM_API_model *) kimmdl;
      return mdl->get_partcl_type_code(atom,error);
@@ -172,8 +224,10 @@ int KIM_API_process_dEdr(void **ppkim, double * dE, double * dr, double **dx, in
 int KIM_API_process_d2Edr2(void **ppkim, double * dE, double ** dr, double **dx,int **i, int **j){
    return KIM_API_model::process_d2Edr2((KIM_API_model **)ppkim,dE,dr,dx,i,j);
  }
-char * KIM_API_get_status_msg(int error){
-    return KIM_API_model::get_status_msg(error);
+
+int KIM_API_get_status_msg(const int status_code, const char** const status_msg)
+{
+  return KIM_API_model::get_status_msg(status_code, status_msg);
 }
 
 int KIM_API_report_error(int ln, const char *fl,const char *usermsg,int ier){
