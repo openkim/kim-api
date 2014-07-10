@@ -153,7 +153,7 @@ static int compute(void* km)
    int IterOrLoca;
    int HalfOrFull;
    int NBC;
-   char* NBCstr;
+   const char* NBCstr;
    int numberContrib;
 
    int* nAtoms;
@@ -175,7 +175,7 @@ static int compute(void* km)
     * HalfOrFull = 1 -- Half
     *            = 2 -- Full
     *****************************/
-   NBCstr = (char*) KIM_API_get_NBC_method(pkim, &ier);
+   ier = KIM_API_get_NBC_method(pkim, &NBCstr);
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_NBC_method", ier);
@@ -222,7 +222,6 @@ static int compute(void* km)
       KIM_API_report_error(__LINE__, __FILE__, "Unknown NBC method", ier);
       return ier;
    }
-   free(NBCstr); /* don't forget to release the memory... */
 
    /* determine neighbor list handling mode */
    if (NBC != 3)

@@ -2113,7 +2113,7 @@ int model_init(void *km)
    double* cutoff;
    int ier;
    struct model_buffer* buffer;
-   char* NBCstr;
+   const char* NBCstr;
 
    /* store function pointers in KIM object */
    KIM_API_setm_method(pkim, &ier, 2*4,
@@ -2179,7 +2179,7 @@ int model_init(void *km)
                                          - pow((buffer->sigma/(*cutoff)),6.0));
 
    /* Determine neighbor list boundary condition (NBC) */
-   NBCstr = KIM_API_get_NBC_method(pkim, &ier);
+   ier = KIM_API_get_NBC_method(pkim, &NBCstr);
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_NBC_method", ier);
@@ -2226,7 +2226,6 @@ int model_init(void *km)
       KIM_API_report_error(__LINE__, __FILE__, "Unknown NBC method", ier);
       return ier;
    }
-   free(NBCstr); /* don't forget to release the memory... */
 
    buffer->model_index_shift = KIM_API_get_model_index_shift(pkim);
 

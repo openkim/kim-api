@@ -626,7 +626,7 @@ int model_driver_init(void *km, char* paramfile_names, int* nmstrlen, int* numpa
    int ier;
    double dummy;
    struct model_buffer* buffer;
-   char* NBCstr;
+   const char* NBCstr;
 
    /* set paramfile1name */
    if (*numparamfiles != 1)
@@ -742,7 +742,7 @@ int model_driver_init(void *km, char* paramfile_names, int* nmstrlen, int* numpa
    buffer->shift = -buffer->shift;
 
    /* Determine neighbor list boundary condition (NBC) */
-   NBCstr = KIM_API_get_NBC_method(pkim, &ier);
+   ier = KIM_API_get_NBC_method(pkim, &NBCstr);
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_NBC_method", ier);
@@ -770,7 +770,6 @@ int model_driver_init(void *km, char* paramfile_names, int* nmstrlen, int* numpa
       KIM_API_report_error(__LINE__, __FILE__, "Unknown NBC method", ier);
       return ier;
    }
-   free(NBCstr); /* don't forget to release the memory... */
 
    /* Determine if Half or Full neighbor lists are being used */
    /*****************************

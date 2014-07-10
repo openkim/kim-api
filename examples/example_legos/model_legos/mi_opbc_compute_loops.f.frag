@@ -1,12 +1,11 @@
     ! determine whether half or full lists are being used
-    pNBC_Method = kim_api_get_nbc_method(pkim, Compute_Energy_Forces)
+    Compute_Energy_Forces = kim_api_get_nbc_method(pkim, NBC_Method)
     if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
        idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                    "kim_api_get_nbc_method", &
                                    Compute_Energy_Forces)
        return
     endif
-    call c_f_pointer(pNBC_Method, NBC_Method)
     if (index(NBC_Method,"MI_OPBC_H").eq.1) then
        HalfOrFull = 1
     elseif (index(NBC_Method,"MI_OPBC_F").eq.1) then
@@ -18,8 +17,6 @@
                                    Compute_Energy_Forces)
        return
     endif
-    call KIM_API_c_free(pNBC_Method) ! don't forget to release the memory...
-    NBC_Method => null()
 
     ! get boxSideLengths & numberContributingParticles
     call kim_api_getm_data(pkim, Compute_Energy_Forces,      &
