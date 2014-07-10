@@ -19,34 +19,30 @@ integer(c_int),                       intent(out)  :: ier
 
 !-- Local variables
 integer(c_int) :: i
+integer(c_int) :: maxStringLength
 
 !-- KIM variables
-character(len=KIM_KEY_STRING_LENGTH), pointer :: types(:); type(c_ptr) :: ptypes
+character(len=KIM_KEY_STRING_LENGTH) :: species
 type(c_ptr) pkim
 
 ! Initialize error flag
-ier = KIM_STATUS_OK
+ier = KIM_STATUS_FAIL
 
 ! Generate empty KIM object containing generic model info
 ier = kim_api_model_info(pkim, modelname)
 if (ier.lt.KIM_STATUS_OK) return
 
 ! Get species supported by the model
-ptypes = kim_api_get_model_partcl_typs(pkim,num_types,ier)
+ier = kim_api_get_num_model_species(pkim, num_types, maxStringLength)
 if (ier.lt.KIM_STATUS_OK) return
-if (num_types.gt.max_types) then
-   ier = KIM_STATUS_FAIL
-   return
-endif
-call c_f_pointer(ptypes, types, [num_types])
+if (num_types.gt.max_types) return
 do i=1,num_types
-   model_types(i) = types(i)(1:scan(types(i),char(0))-1)
+   ier = kim_api_get_model_species(pkim, i, species)
+   if (ier.lt.KIM_STATUS_OK) return
+   model_types(i) = trim(species)
 enddo
 
-! free temporary storage
-call KIM_API_c_free(ptypes); types => null()
-call kim_api_free(pkim,ier)
-
+ier = KIM_STATUS_OK
 return
 
 end subroutine Get_Model_Supported_Types

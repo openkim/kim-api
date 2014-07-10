@@ -200,25 +200,24 @@ integer(c_int) function check_model_parameters(pkim)
   type(c_ptr), intent(in) :: pkim
 
   !-- Local variables
-  character(len=KIM_KEY_STRING_LENGTH), pointer :: listOfParameters(:)
-  type(c_ptr)    :: plistOfParameters
+  character(len=KIM_KEY_STRING_LENGTH) :: parameter
   integer(c_int) :: nParams
+  integer(c_int) :: maxStringLength
   integer(c_int) :: paramIndex
   integer(c_int) :: i
   integer(c_int) :: ier
 
-  plistOfParameters = kim_api_get_params(pkim, nParams, ier)
-  call c_f_pointer(plistOfParameters, listOfParameters, [nParams])
-  paramIndex = 0
+  ier = kim_api_get_num_params(pkim, nParams, maxStringLength)
+
   print '("The model has defined the following parameters:")'
+
   do i=1,nParams
-     print *, i, listOfParameters(i)(1:(index(listOfParameters(i),char(0))-1))
-     if (index(listOfParameters(i),"PARAM_FREE_cutoff").eq.1) then
+     ier = kim_api_get_parameter(pkim, i, parameter)
+     print *, i, trim(parameter)
+     if (index(parameter,"PARAM_FREE_cutoff").eq.1) then
         paramIndex = i
      endif
   enddo
-  call KIM_API_c_free(plistOfParameters) ! deallocate memory
-  listOfParameters => null()
 
   if (paramIndex .gt. 0) then
      print '("PARAM_FREE_cutoff IS in the list, at index ",I2)', paramIndex

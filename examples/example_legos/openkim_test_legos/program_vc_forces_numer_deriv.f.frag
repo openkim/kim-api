@@ -69,8 +69,7 @@ program TEST_NAME_STR
   !
   character(len=KIM_KEY_STRING_LENGTH) :: testname     = "TEST_NAME_STR"
   character(len=KIM_KEY_STRING_LENGTH) :: modelname
-  character(len=KIM_KEY_STRING_LENGTH), pointer :: NBC_Method
-  type(c_ptr) :: pNBC_Method
+  character(len=KIM_KEY_STRING_LENGTH) :: NBC_Method
   ! 0- NEIGH_RVEC_H, 1- NEIGH_PURE_H, 2- NEIGH_RVEC_F, 3- NEIGH_PURE_F,
   ! 4- MI_OPBC_H,    5- MI_OPBC_F,    6- CLUSTER
   integer(c_int) nbc
@@ -174,8 +173,7 @@ program TEST_NAME_STR
 
      ! Double check that the NBC method being used is what we think it is
      !
-     pNBC_Method = kim_api_get_nbc_method(pkim, ier) ! don't forget to free
-     call c_f_pointer(pNBC_Method, NBC_Method)
+     ier = kim_api_get_nbc_method(pkim, NBC_Method)
      if (ier.lt.KIM_STATUS_OK) then
         idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                     "kim_api_get_nbc_method", ier)
@@ -374,7 +372,7 @@ program TEST_NAME_STR
      ! print results to screen
      !
      print '(41(''=''))'
-     print '("NBC Method = ",A28)', NBC_Method(1:(index(NBC_Method,char(0))-1))
+     print '("NBC Method = ",A28)', trim(NBC_Method)
      print '(41(''=''))'
      print *
      print '(A6,2X,A4,2X,A3,2X,2A25,3A15,2X,A4)',"Atom","Type","Dir", &
@@ -424,7 +422,6 @@ program TEST_NAME_STR
 
      ! Free temporary storage
      !
-     call KIM_API_c_free(pNBC_Method); NBC_Method => null()
      deallocate(forces_num)
      deallocate(forces_num_err)
      if (nbc.le.5) then ! deallocate neighbor list storage

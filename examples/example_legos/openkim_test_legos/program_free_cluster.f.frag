@@ -48,8 +48,7 @@ program TEST_NAME_STR
   character(len=KIM_KEY_STRING_LENGTH) :: testname = "TEST_NAME_STR"
   character(len=KIM_KEY_STRING_LENGTH) :: testkimfile = "descriptor.kim"
   character(len=KIM_KEY_STRING_LENGTH) :: modelname
-  character(len=KIM_KEY_STRING_LENGTH), pointer :: NBC_Method
-  type(c_ptr) :: pNBC_Method
+  character(len=KIM_KEY_STRING_LENGTH) :: NBC_Method
   ! 0- NEIGH_RVEC_H, 1- NEIGH_PURE_H, 2- NEIGH_RVEC_F, 3- NEIGH_PURE_F,
   ! 4- MI_OPBC_H,    5- MI_OPBC_F,    6- CLUSTER
   integer(c_int) nbc
@@ -83,13 +82,12 @@ program TEST_NAME_STR
   endif
 
   ! determine which NBC scenerio to use
-  pNBC_Method = kim_api_get_nbc_method(pkim, ier) ! don't forget to free
+  ier = kim_api_get_nbc_method(pkim, NBC_Method)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                  "kim_api_get_nbc_method", ier)
      stop
   endif
-  call c_f_pointer(pNBC_Method, NBC_Method)
   if (index(NBC_Method,"NEIGH_RVEC_H").eq.1) then
      nbc = 0
   elseif (index(NBC_Method,"NEIGH_PURE_H").eq.1) then
@@ -235,7 +233,7 @@ program TEST_NAME_STR
   print '(80(''-''))'
   print '("This is Test          : ",A)', trim(testname)
   print '("Results for KIM Model : ",A)', trim(modelname)
-  print '("Using NBC: ",A)', NBC_Method(1:(index(NBC_Method,char(0))-1))
+  print '("Using NBC: ",A)', trim(NBC_Method)
   print '("Forces:")'
   print '("Atom     ' // &
   'X                        ' // &
@@ -248,7 +246,6 @@ program TEST_NAME_STR
   print '("                ",3ES25.15)', (virial_global(I),I=4,6)
 
   ! Don't forget to free and/or deallocate
-  call KIM_API_c_free(pNBC_Method); NBC_Method => null()  ! free the memory
   if (nbc.lt.6) deallocate(neighObject%neighborList)
   if (nbc.eq.0 .or. nbc.eq.2) then
      deallocate(neighObject%RijList)

@@ -39,8 +39,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   real(c_double), pointer :: cutoff;           type(c_ptr) :: pcutoff
   real(c_double), parameter :: cutpad = CUTOFF_PADDING_STR ! cutoff radius padding
   logical :: halfflag  ! .true. = half neigh list; .false. = full neigh list
-  character(len=KIM_KEY_STRING_LENGTH), pointer :: NBC_Method;
-  type(c_ptr) :: pNBC_Method
+  character(len=KIM_KEY_STRING_LENGTH) :: NBC_Method;
 
   ! Unpack data from KIM object
   !
@@ -59,13 +58,12 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
 
   ! determine which neighbor list type to use
   !
-  pNBC_Method = kim_api_get_nbc_method(pkim, ier) ! don't forget to free
+  ier = kim_api_get_nbc_method(pkim, NBC_Method)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                  "kim_api_get_nbc_method", ier)
      stop
   endif
-  call c_f_pointer(pNBC_Method, NBC_Method)
   if (index(NBC_Method,"NEIGH_RVEC_H").eq.1) then
      halfflag = .true.
   elseif (index(NBC_Method,"NEIGH_RVEC_F").eq.1) then
@@ -76,7 +74,6 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
                                  "Unknown NBC method", ier)
      return
   endif
-  call KIM_API_c_free(pNBC_Method); NBC_Method => null() ! free the memory
 
   ! Initialize for minimization
   !
