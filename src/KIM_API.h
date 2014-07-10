@@ -198,24 +198,29 @@ public:
 
 void allocate( int natoms, int ntypes,int * error);
 
-char* get_model_partcl_typs(int *nparticleTypes,int* error);
-char* get_sim_partcl_typs(int *nparticleTypes,int* error);
+  int get_num_model_species(int* numberSpecies, int* maxStringLength);
+  int get_model_species(const int index, const char** const speciesString);
+  int get_num_sim_species(int* numberSpecies, int* maxStringLength);
+  int get_sim_species(const int index, const char** const speciesString);
+
 int get_partcl_type_code(const char *atom, int * error);
 void set_partcl_type_code(const char *atom, int code, int* error);
 
-char * get_params(int *nVpar,int *error);
-char * get_free_params(int *nVpar,int *error);
-char * get_fixed_params(int *nVpar,int *error);
+  int get_num_params(int* numberParameters, int* maxStringLength);
+  int get_parameter(const int index, const char** const parameterString);
+  int get_num_free_params(int* numberFreeParameters, int* maxStringLength);
+  int get_free_parameter(const int index, const char** const freeParameterString);
+  int get_num_fixed_params(int* numberFixedParameters, int* maxStringLength);
+  int get_fixed_parameter(const int index, const char** const fixedParameterString);
 
-static char * get_model_kim_str(const char * modelname,int *kimerr);
+  static int get_model_kim_str(const char* const modelname, char** const kimString);
 
-
-char * get_NBC_method(int *error);
+  int get_NBC_method(const char** const NBC_String);
 int is_half_neighbors(int *error);
 
 
     int get_neigh_mode(int *error);
-    static char * get_status_msg(int status_code);
+  static int get_status_msg(const int status_code, const char** const status_msg);
     static int report_error(int line, const char * fl, const char * usermsg, int error);
     int get_model_index_shift();
     void set_model_buffer(void * o,int *error);

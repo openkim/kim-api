@@ -1433,9 +1433,10 @@ extern "C"{
   #include "model_kim_str_include.h"
 }
 
-char * KIM_API_model::get_model_kim_str(const char* modelname,int * kimerr){
+int KIM_API_model::get_model_kim_str(const char* const modelname,
+                                     char** const kimString)
+{
      //redirecting std::cout > kimlog
-    *kimerr=KIM_STATUS_FAIL;
     char kimlog[2048] = "./kim.log";
     std::streambuf * psbuf, * backup; std::ofstream filekimlog;
     filekimlog.open(kimlog);
@@ -1448,7 +1449,8 @@ char * KIM_API_model::get_model_kim_str(const char* modelname,int * kimerr){
 
     if (in_mdlstr == NULL){
        std::cout<<"* Error (KIM_API_model::get_model_kim_str): Unknown KIM Model name " << modelname << "." << std::endl;
-       return NULL;
+       *kimString = NULL;
+       return KIM_STATUS_FAIL;
     }
 
     char* const str_cpy = (char* const) malloc(in_mdlstr_chunks * CPP_MAX_STRING_LITERAL_LENGTH);
@@ -1460,15 +1462,16 @@ char * KIM_API_model::get_model_kim_str(const char* modelname,int * kimerr){
 
     //redirecting back to > std::cout
     std::cout.rdbuf(backup); filekimlog.close();
-    *kimerr= KIM_STATUS_OK;
-    return str_cpy;
+    *kimString = str_cpy;
+    return KIM_STATUS_OK;
 }
 
 #else
 
-char * KIM_API_model::get_model_kim_str(const char* modelname,int * kimerr){
+int KIM_API_model::get_model_kim_str(const char* const modelname,
+                                     char** const kimString)
+{
     void * tmp_model_lib_handle = NULL;
-    *kimerr= KIM_STATUS_FAIL;
     char model_kim_str_name[KIM_LINE_LENGTH];
     sprintf(model_kim_str_name,"%s_" KIM_STR_NAME,modelname);
     char model_kim_str_chunks_name[KIM_LINE_LENGTH];
@@ -1498,7 +1501,8 @@ char * KIM_API_model::get_model_kim_str(const char* modelname,int * kimerr){
        //redirecting back to > std::cout
        std::cout.rdbuf(backup); filekimlog.close();
        fprintf(stderr,"Cannot find Model shared library file for Model name: %s.\n",modelname);
-       return NULL;
+       *kimString = NULL;
+       return KIM_STATUS_FAIL;
     }
     else
     {
@@ -1515,7 +1519,8 @@ char * KIM_API_model::get_model_kim_str(const char* modelname,int * kimerr){
         //redirecting back to > std::cout
         std::cout.rdbuf(backup); filekimlog.close();
 
-        return NULL;
+        *kimString = NULL;
+        return KIM_STATUS_FAIL;
     }
     const char** const model_str_ptr = (const char** const) dlsym(tmp_model_lib_handle, model_kim_str_name);
     dlsym_error = dlerror();
@@ -1526,7 +1531,8 @@ char * KIM_API_model::get_model_kim_str(const char* modelname,int * kimerr){
         //redirecting back to > std::cout
         std::cout.rdbuf(backup); filekimlog.close();
 
-        return NULL;
+        *kimString = NULL;
+        return KIM_STATUS_FAIL;
     }
 
     char* const str_cpy = (char* const) malloc(*model_str_chunks * CPP_MAX_STRING_LITERAL_LENGTH);
@@ -1539,8 +1545,8 @@ char * KIM_API_model::get_model_kim_str(const char* modelname,int * kimerr){
     dlclose(tmp_model_lib_handle);
    //redirecting back to > std::cout
     std::cout.rdbuf(backup); filekimlog.close();
-    *kimerr= KIM_STATUS_OK;
-    return str_cpy;
+    *kimString = str_cpy;
+    return KIM_STATUS_OK;
 }
 #endif
 
@@ -1553,7 +1559,8 @@ int KIM_API_model::file_init(const char* testkimfile, const char* modelname){
     backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);
 
     int error;
-    char* in_mdlstr = get_model_kim_str(modelname, &error);
+    char* in_mdlstr;
+    error = get_model_kim_str(modelname, &in_mdlstr);
     if (error == KIM_STATUS_OK) {
        name_temp = modelname;
        error = init_str_modelname(testkimfile,in_mdlstr);
@@ -1579,13 +1586,17 @@ int KIM_API_model::init_str_modelname(const char* testinputfile, const char* inm
     //preinit test and model API object
     mdl.name_temp = name_temp;
     if(!mdl.prestring_init(inmdlstr)){
-        std::cout<<"prestring_init  failed with error status: "<<this->get_status_msg(ErrorCode)<<std::endl;
+      const char* msg;
+      get_status_msg(ErrorCode, &msg);
+        std::cout<<"prestring_init  failed with error status: "<<msg<<std::endl;
         return KIM_STATUS_FAIL;
     }
 
     test.name_temp = "Test";
     if(!test.preinit(testinputfile,"Test")){
-        std::cout<<"preinit  failed with error status: "<<this->get_status_msg(ErrorCode)<<std::endl;
+      const char* msg;
+      get_status_msg(ErrorCode, &msg);
+        std::cout<<"preinit  failed with error status: "<<msg<<std::endl;
         return KIM_STATUS_FAIL;
     }
 
@@ -1630,7 +1641,8 @@ int KIM_API_model::preinit(const char* modelname){
 
     int error;
     int result = KIM_STATUS_FAIL;
-    char* in_mdlstr = get_model_kim_str(modelname, &error);
+    char* in_mdlstr;
+    error = get_model_kim_str(modelname, &in_mdlstr);
     if (error == KIM_STATUS_OK)
     {
        this->name_temp = modelname;
@@ -1652,9 +1664,9 @@ int KIM_API_model::string_init(const char* in_tststr, const char* modelname){
 
     //check test-model match and preinit test-model-API
     KIM_API_model test,mdl;
-    char* in_mdlstr = get_model_kim_str(modelname, &error);
+    char* in_mdlstr;
+    error = get_model_kim_str(modelname, &in_mdlstr);
     if (error != KIM_STATUS_OK) {
-       if (in_mdlstr != NULL) std::free(in_mdlstr);
        //redirecting back to > std::cout
        std::cout.rdbuf(backup); filekimlog.close();
        return error;
@@ -1664,7 +1676,9 @@ int KIM_API_model::string_init(const char* in_tststr, const char* modelname){
     error = mdl.prestring_init(in_mdlstr);
     if(error != KIM_STATUS_OK)
     {
-       std::cout<<"mdl.prestring_init failed with error status:"<<get_status_msg(error)<<std::endl;
+      const char* msg;
+      get_status_msg(ErrorCode, &msg);
+       std::cout<<"mdl.prestring_init failed with error status:"<<msg<<std::endl;
        std::free(in_mdlstr);
        //redirecting back to > std::cout
        std::cout.rdbuf(backup); filekimlog.close();
@@ -1676,7 +1690,9 @@ int KIM_API_model::string_init(const char* in_tststr, const char* modelname){
     error = test.prestring_init(in_tststr);
     if(error != KIM_STATUS_OK)
     {
-       std::cout<<"test.prestring_init failed with error status:"<<get_status_msg(error)<<std::endl;
+      const char* msg;
+      get_status_msg(ErrorCode, &msg);
+       std::cout<<"test.prestring_init failed with error status:"<<msg<<std::endl;
        std::free(in_mdlstr);
        mdl.free();
        //redirecting back to > std::cout
@@ -2089,79 +2105,105 @@ bool KIM_API_model::init_AtomsTypes(){
     return true;
 }
 
-char * KIM_API_model::get_model_partcl_typs(int* nATypes, int* error){
-    *error=KIM_STATUS_FAIL;
-    if (nAtomsTypes==0){
-        *nATypes = 0;
-        *error =KIM_STATUS_OK; //success but no atoms type specified
-        return NULL;
+int KIM_API_model::get_num_model_species(int* numberSpecies,
+                                         int* maxStringLength)
+{
+  *numberSpecies = nAtomsTypes;
+  *maxStringLength = 0;
+  for (int i=0; i<nAtomsTypes; ++i)
+  {
+    int len = strlen(AtomsTypes[i].symbol);
+    if (len > *maxStringLength)
+    {
+      *maxStringLength = len;
     }
-    if (nAtomsTypes < 0){
-        *error =KIM_STATUS_FAIL;//was internal error in init nAtomsTypes
-        return NULL;
-    }
-    *nATypes = nAtomsTypes;
-    char * listatypes=(char *)malloc(nAtomsTypes*KIM_KEY_STRING_LENGTH);
+  }
 
-    for (int i=0;i<nAtomsTypes*KIM_KEY_STRING_LENGTH;i++) listatypes[i] = '\0';
-    for(int i=0; i<nAtomsTypes; i++){
-        strncpy(listatypes + i*KIM_KEY_STRING_LENGTH, AtomsTypes[i].symbol,strlen( AtomsTypes[i].symbol)+1);
-    }
-    *error =KIM_STATUS_OK;//success
-    return  listatypes;
+  return KIM_STATUS_OK;
 }
-char * KIM_API_model::get_sim_partcl_typs(int* nATypes, int* error){
-    *error=KIM_STATUS_FAIL;
-    if (nAtomsTypes==0){
-        *nATypes = 0;
-        *error =KIM_STATUS_OK; //success but no atoms type specified
-        return NULL;
-    }
-    if (nAtomsTypes < 0){
-        *error =KIM_STATUS_FAIL;//was internal error in init nAtomsTypes
-        return NULL;
-    }
+int KIM_API_model::get_model_species(const int index,
+                                     const char** const speciesString)
+{
+  if (0 == nAtomsTypes) return KIM_STATUS_FAIL;
+  if ((index < 0) || (index>nAtomsTypes))
+  {
+    return KIM_STATUS_FAIL;
+  }
 
-    int count=0;
-    for(int i=0;i<nAtomsTypes;++i){
-       if (AtomsTypes[i].requestedByTest) ++count;
-    }
-    *nATypes = count;
-    char * listatypes=(char *)malloc(count*KIM_KEY_STRING_LENGTH);
-
-    for (int i=0;i<count*KIM_KEY_STRING_LENGTH;i++) listatypes[i] = '\0';
-    int progress=0;
-    for(int i=0; i<nAtomsTypes; i++){
-       if (AtomsTypes[i].requestedByTest){
-          strncpy(listatypes + progress*KIM_KEY_STRING_LENGTH, AtomsTypes[i].symbol,strlen( AtomsTypes[i].symbol)+1);
-          ++progress;
-       }
-    }
-    *error =KIM_STATUS_OK;//success
-    return  listatypes;
+  *speciesString = AtomsTypes[index].symbol;
+  return KIM_STATUS_OK;
 }
-char * KIM_API_model::get_NBC_method(int* error){
-    *error=KIM_STATUS_FAIL;
-    if(strcmp(this->NBC_method_current,"none")==0) {
-        // no NBC methods are specified
-        return NULL;
+
+int KIM_API_model::get_num_sim_species(int* numberSpecies,
+                                       int* maxStringLength)
+{
+  *numberSpecies = 0;
+  *maxStringLength = 0;
+  for (int i=0; i<nAtomsTypes; ++i)
+  {
+    if (AtomsTypes[i].requestedByTest)
+    {
+      ++(*numberSpecies);
+      int len = strlen(AtomsTypes[i].symbol);
+      if (len > *maxStringLength)
+      {
+        *maxStringLength = len;
+      }
     }
-    char *method = (char *)malloc(KIM_KEY_STRING_LENGTH);
-    for (int i=0;i<KIM_KEY_STRING_LENGTH;i++) method[i] = '\0';
-    strcpy(method,this->NBC_method_current);
-    *error=KIM_STATUS_OK; //success
-    return method;
+  }
+
+  return KIM_STATUS_OK;
+}
+
+int KIM_API_model::get_sim_species(const int index,
+                                   const char** const speciesString)
+{
+  if (0 == nAtomsTypes) return KIM_STATUS_FAIL;
+
+  int count = 0;
+  for (int i=0; i<nAtomsTypes; ++i)
+  {
+    if (AtomsTypes[i].requestedByTest) ++count;
+  }
+  if ((index < 0) || (index>count))
+  {
+    return KIM_STATUS_FAIL;
+  }
+
+  int correspondingIndex = -1;
+  for (int i=0; i<nAtomsTypes; ++i)
+  {
+    if (AtomsTypes[i].requestedByTest) ++correspondingIndex;
+    if (correspondingIndex == index)
+    {
+      *speciesString = AtomsTypes[i].symbol;
+      return KIM_STATUS_OK;
+    }
+  }
+
+  // should never get here
+  return KIM_STATUS_FAIL;
+}
+
+int KIM_API_model::get_NBC_method(const char** const NBC_String)
+{
+  if(strcmp(this->NBC_method_current,"none")==0) {
+    // no NBC methods are specified
+    *NBC_String = NULL;
+    return KIM_STATUS_FAIL;
+  }
+  *NBC_String = NBC_method_current;
+  return KIM_STATUS_OK;
 }
 
 int KIM_API_model::is_half_neighbors(int* kimerr){
    const int is_half = 1;
    const int is_full = 0;
-    char * method = NULL;
     *kimerr=KIM_STATUS_FAIL;
-    method = (char *) get_NBC_method(kimerr);
+    const char* method;
+    *kimerr = get_NBC_method(&method);
 
     if(*kimerr!=1){
-       if (method!=NULL) std::free((void *)method);
         return is_half;
     }
 
@@ -2169,73 +2211,125 @@ int KIM_API_model::is_half_neighbors(int* kimerr){
     if (strcmp(method,"NEIGH_PURE_F")==0) answer = is_full;
     if (strcmp(method,"NEIGH_RVEC_F")==0) answer = is_full;
     if (strcmp(method,"MI_OPBC_F")==0) answer = is_full;
-    if (method!=NULL) std::free((void *)method);
     *kimerr=KIM_STATUS_OK;
     return answer;
 }
 
-char * KIM_API_model::get_a_type_of_params(int* nVpar, int* error, int typecode){
-    int count;
-    count=0;
-    *error=KIM_STATUS_FAIL;
-    char * listvpar;
-    for(int i=0; i< model.size; i++){
-       if (typecode == 0){ // any type of parameter
-          if(is_it_par((*this)[i].name)) count++;
-       }
-       else if (typecode == 1){ // free parameter
-          if(is_it_free_par((*this)[i].name)) count++;
-       }
-       else if (typecode == 2){ // fixed parameter
-          if(is_it_fixed_par((*this)[i].name)) count++;
-       }
-       else { // unknown
-          *error=KIM_STATUS_FAIL;
-          return NULL;
-       }
+int KIM_API_model::get_num_params(int* numberParameters, int* maxStringLength)
+{
+  *numberParameters = 0;
+  *maxStringLength = 0;
+  for (int i=0; i<model.size; ++i)
+  {
+    if (is_it_par((*this)[i].name))
+    {
+      ++(*numberParameters);
+      int len = strlen((*this)[i].name);
+      if (len > *maxStringLength)
+      {
+        *maxStringLength = len;
+      }
     }
-    if (count==0) {
-        *nVpar=0;
-        *error=KIM_STATUS_OK;  //success but no parameters
-        return NULL;
+  }
+
+  return KIM_STATUS_OK;
+}
+
+int KIM_API_model::get_parameter(const int index, const char** const parameterString)
+{
+  int correspondingIndex = -1;
+  for (int i=0; i<model.size; ++i)
+  {
+    if (is_it_par((*this)[i].name)) ++correspondingIndex;
+    if (correspondingIndex == index)
+    {
+      *parameterString = (*this)[i].name;
+      return KIM_STATUS_OK;
     }
-    *nVpar=count;
-    listvpar = (char *)malloc(KIM_KEY_STRING_LENGTH * count);
-    for (int i=0;i<count*KIM_KEY_STRING_LENGTH;i++) listvpar[i] = '\0';
-    count=0;
-    int flag;
-    for (int i=0;i<model.size;i++){
-       flag = 0;
-       if (typecode == 0){ // any type of parameter
-          if(is_it_par((*this)[i].name)) flag=1;
-       }
-       else if (typecode == 1){ // free parameter
-          if(is_it_free_par((*this)[i].name)) flag=1;
-       }
-       else if (typecode == 2){ // fixed parameter
-          if(is_it_fixed_par((*this)[i].name)) flag=1;
-       }
-       else { // unknown
-          *error=KIM_STATUS_FAIL;
-          return NULL;
-       }
-       if(flag==1){
-          strncpy(listvpar+count*KIM_KEY_STRING_LENGTH, (*this)[i].name, strlen((*this)[i].name) +1 );
-          count++;
-       }
+  }
+
+  // In case the requested index is not valid
+  return KIM_STATUS_FAIL;
+}
+
+int KIM_API_model::get_num_free_params(int* numberParameters,
+                                       int* maxStringLength)
+{
+  *numberParameters = 0;
+  *maxStringLength = 0;
+  for (int i=0; i<model.size; ++i)
+  {
+    if (is_it_free_par((*this)[i].name))
+    {
+      ++(*numberParameters);
+      int len = strlen((*this)[i].name);
+      if (len > *maxStringLength)
+      {
+        *maxStringLength = len;
+      }
     }
-    *error =KIM_STATUS_OK;//success
-    return  listvpar;
+  }
+
+  return KIM_STATUS_OK;
 }
-char * KIM_API_model::get_params(int* nVpar, int* error){
-   return get_a_type_of_params(nVpar, error, 0);
+
+int KIM_API_model::get_free_parameter(const int index,
+                                      const char** const parameterString)
+{
+  int correspondingIndex = -1;
+  for (int i=0; i<model.size; ++i)
+  {
+    if (is_it_free_par((*this)[i].name)) ++correspondingIndex;
+    if (correspondingIndex == index)
+    {
+      *parameterString = (*this)[i].name;
+      return KIM_STATUS_OK;
+    }
+  }
+
+  // In case the requested index is not valid
+  return KIM_STATUS_FAIL;
 }
-char * KIM_API_model::get_free_params(int* nVpar, int* error){
-   return get_a_type_of_params(nVpar, error, 1);
+
+int KIM_API_model::get_num_fixed_params(int* numberParameters,
+                                        int* maxStringLength)
+{
+  *numberParameters = 0;
+  *maxStringLength = 0;
+  for (int i=0; i<model.size; ++i)
+  {
+    if (is_it_fixed_par((*this)[i].name))
+    {
+      ++(*numberParameters);
+      int len = strlen((*this)[i].name);
+      if (len > *maxStringLength)
+      {
+        *maxStringLength = len;
+      }
+    }
+  }
+
+  return KIM_STATUS_OK;
 }
-char * KIM_API_model::get_fixed_params(int* nVpar, int* error){
-   return get_a_type_of_params(nVpar, error, 2);
+
+int KIM_API_model::get_fixed_parameter(const int index,
+                                       const char** const parameterString)
+{
+  int correspondingIndex = -1;
+  for (int i=0; i<model.size; ++i)
+  {
+    if (is_it_fixed_par((*this)[i].name)) ++correspondingIndex;
+    if (correspondingIndex == index)
+    {
+      *parameterString = (*this)[i].name;
+      return KIM_STATUS_OK;
+    }
+  }
+
+  // In case the requested index is not valid
+  return KIM_STATUS_FAIL;
 }
+
 int  KIM_API_model::get_neigh_mode(int*kimerr){
     *kimerr=KIM_STATUS_OK;
 
@@ -2347,10 +2441,12 @@ bool KIM_API_model::check_consistance_NBC_method(){
     }
     return true;
 }
-char * KIM_API_model::get_status_msg(int status_code) {
+int KIM_API_model::get_status_msg(const int status_code,
+                                  const char** const status_msg)
+{
     int mincode=-24,maxcode=3,offset=24;
 
-    char KIM_STATUS_MSG[][KIM_KEY_STRING_LENGTH]=
+    static const char KIM_STATUS_MSG[][KIM_KEY_STRING_LENGTH]=
    {
     {"configuration is not supported by the Model"},
     {"base units: are not supported or not the same phys.dimensions"},
@@ -2382,25 +2478,21 @@ char * KIM_API_model::get_status_msg(int status_code) {
     { "iterator has been successfully initialized"}};
 
     if (status_code < mincode || status_code > maxcode) {
-        char * retstr = (char *)malloc(KIM_KEY_STRING_LENGTH);
-        strcpy(retstr,"the error code is not among KIM_STATUS codes");
-        return retstr;
+      *status_msg = "the error code is not among KIM_STATUS codes";
+      return KIM_STATUS_FAIL;
     }else{
         int ind = offset + status_code;
-        char * retstr = (char *)malloc(KIM_KEY_STRING_LENGTH);
-        for (int i=0;i<KIM_KEY_STRING_LENGTH;i++) retstr[i]='\0';
-        strcpy(retstr,&(KIM_STATUS_MSG[ind][0]));
-        return retstr;
+        *status_msg = KIM_STATUS_MSG[ind];
+        return KIM_STATUS_OK;
     }
-
 }
 
 int KIM_API_model::report_error(int ln,const char * fl,const char * usermsg,int ier){
     if(ier <= 0){
-        char * kimstatus =get_status_msg(ier);
+      const char* kimstatus;
+      get_status_msg(ier, &kimstatus);
         std::cout<<"* Error: at line "<<ln<<" in "<<fl<< std::endl<<"\tMessage: "<<usermsg<<std::endl;
         std::cout<<"\tKIM_STATUS_MSG: "<<kimstatus<<std::endl;
-        std::free((void *) kimstatus);
         return KIM_STATUS_FAIL;
     }
     return KIM_STATUS_OK;
