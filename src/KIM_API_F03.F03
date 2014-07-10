@@ -134,23 +134,50 @@ module kim_api_f03
       type(c_ptr), value :: kimmdl
     end function kim_api_model_reinit
 
-    type(c_ptr) function kim_api_get_model_partcl_typs(kimmdl, nptypes, &
-      error) &
-      bind(c, name="KIM_API_get_model_partcl_typs")
+    integer(c_int) function kim_api_get_num_model_species(kimmdl, &
+      numberSpecies, maxStringLength) &
+      bind(c, name="KIM_API_get_num_model_species")
       use, intrinsic :: iso_c_binding
       type(c_ptr),   value :: kimmdl
-      integer(c_int)       :: nptypes
-      integer(c_int)       :: error
-    end function kim_api_get_model_partcl_typs
+      integer(c_int)       :: numberSpecies
+      integer(c_int)       :: maxStringLength
+    end function kim_api_get_num_model_species
 
-    type(c_ptr) function kim_api_get_sim_partcl_typs(kimmdl, nptypes, &
-      error) &
-      bind(c, name="KIM_API_get_sim_partcl_typs")
+    integer(c_int) function kim_api_get_num_sim_species(kimmdl, &
+      numberSpecies, maxStringLength) &
+      bind(c, name="KIM_API_get_num_sim_species")
       use, intrinsic :: iso_c_binding
       type(c_ptr),   value :: kimmdl
-      integer(c_int)       :: nptypes
-      integer(c_int)       :: error
-    end function kim_api_get_sim_partcl_typs
+      integer(c_int)       :: numberSpecies
+      integer(c_int)       :: maxStringLength
+    end function kim_api_get_num_sim_species
+
+    integer(c_int) function kim_api_get_num_params(kimmdl, &
+      numberParameters, maxStringLength) &
+      bind(c, name="KIM_API_get_num_params")
+      use, intrinsic :: iso_c_binding
+      type(c_ptr),   value :: kimmdl
+      integer(c_int)       :: numberParameters
+      integer(c_int)       :: maxStringLength
+    end function kim_api_get_num_params
+
+    integer(c_int) function kim_api_get_num_free_params(kimmdl, &
+      numberFreeParameters, maxStringLength) &
+      bind(c, name="KIM_API_get_num_free_params")
+      use, intrinsic :: iso_c_binding
+      type(c_ptr),   value :: kimmdl
+      integer(c_int)       :: numberFreeParameters
+      integer(c_int)       :: maxStringLength
+    end function kim_api_get_num_free_params
+
+    integer(c_int) function kim_api_get_num_fixed_params(kimmdl, &
+      numberFixedParameters, maxStringLength) &
+      bind(c, name="KIM_API_get_num_fixed_params")
+      use, intrinsic :: iso_c_binding
+      type(c_ptr),   value :: kimmdl
+      integer(c_int)       :: numberFixedParameters
+      integer(c_int)       :: maxStringLength
+    end function kim_api_get_num_fixed_params
 
     type(c_ptr) function kim_api_get_params(kimmdl, nvpar, error) &
       bind(c, name="KIM_API_get_params")
@@ -175,13 +202,6 @@ module kim_api_f03
       integer(c_int)       :: nvpar
       integer(c_int)       :: error
     end function kim_api_get_fixed_params
-
-    type(c_ptr) function kim_api_get_nbc_method(kimmdl, error) &
-      bind(c, name="KIM_API_get_NBC_method")
-      use, intrinsic :: iso_c_binding
-      type(c_ptr),   value :: kimmdl
-      integer(c_int)       :: error
-    end function kim_api_get_nbc_method
 
     integer(c_int) function kim_api_get_neigh_mode(kimmdl, error) &
       bind(c, name="KIM_API_get_neigh_mode")
@@ -224,12 +244,6 @@ module kim_api_f03
       type(c_ptr)           :: i
       type(c_ptr)           :: j
     end function kim_api_process_d2Edr2
-
-    type(c_ptr) function kim_api_get_status_msg(status_code) &
-      bind(c, name="KIM_API_get_status_msg")
-      use, intrinsic :: iso_c_binding
-      integer(c_int), value :: status_code
-    end function kim_api_get_status_msg
 
     integer(c_int) function kim_api_get_unit_handling(kimmdl, error) &
       bind(c, name="KIM_API_get_unit_handling")
@@ -358,6 +372,147 @@ contains
     kim_api_model_info = c_call(kimmdl, &
       trim(modelname)//c_null_char)
   end function kim_api_model_info
+
+  integer(c_int) function kim_api_get_nbc_method(kimmdl, NBC_String)
+    use :: kim_api_f03_helper, only : c_call => kim_api_get_nbc_method
+    implicit none
+    type(c_ptr),      intent(in)  :: kimmdl
+    character(len=*), intent(out) :: NBC_String
+
+    type(c_ptr) :: pNBC_String
+    character(len=len(NBC_String)), pointer :: fpNBC_String
+    integer(c_int) :: nullindex
+
+    kim_api_get_nbc_method = c_call(kimmdl, pNBC_String)
+    if (kim_api_get_nbc_method.lt.KIM_STATUS_OK) return
+    call c_f_pointer(pNBC_String, fpNBC_String)
+    nullindex = scan(fpNBC_String, char(0))-1
+    if (nullindex.eq.0) then
+      kim_api_get_nbc_method = KIM_STATUS_FAIL
+    else
+      NBC_String = fpNBC_String(1:nullindex)
+    endif
+    return
+  end function kim_api_get_nbc_method
+
+  integer(c_int) function kim_api_get_model_species(kimmdl, index, &
+    speciesString)
+    use :: kim_api_f03_helper, only : c_call => kim_api_get_model_species
+    implicit none
+    type(c_ptr),      intent(in)  :: kimmdl
+    integer(c_int),   intent(in)  :: index
+    character(len=*), intent(out) :: speciesString
+
+    type(c_ptr) :: pspeciesString
+    character(len=len(speciesString)), pointer :: fpSpeciesString
+    integer(c_int) :: nullindex
+
+    kim_api_get_model_species = c_call(kimmdl, index-1, pSpeciesString)
+    if (kim_api_get_model_species.lt.KIM_STATUS_OK) return
+    call c_f_pointer(pSpeciesString, fpSpeciesString)
+    nullindex = scan(fpSpeciesString, char(0))-1
+    if (nullindex.eq.0) then
+      kim_api_get_model_species = KIM_STATUS_FAIL
+    else
+      speciesString = fpSpeciesString(1:nullindex)
+    endif
+    return
+  end function kim_api_get_model_species
+
+  integer(c_int) function kim_api_get_sim_species(kimmdl, index, &
+    speciesString)
+    use :: kim_api_f03_helper, only : c_call => kim_api_get_sim_species
+    implicit none
+    type(c_ptr),      intent(in)  :: kimmdl
+    integer(c_int),   intent(in)  :: index
+    character(len=*), intent(out) :: speciesString
+
+    type(c_ptr) :: pspeciesString
+    character(len=len(speciesString)), pointer :: fpSpeciesString
+    integer(c_int) :: nullindex
+
+    kim_api_get_sim_species = c_call(kimmdl, index-1, pSpeciesString)
+    if (kim_api_get_sim_species.lt.KIM_STATUS_OK) return
+    call c_f_pointer(pSpeciesString, fpSpeciesString)
+    nullindex = scan(fpSpeciesString, char(0))-1
+    if (nullindex.eq.0) then
+      kim_api_get_sim_species = KIM_STATUS_FAIL
+    else
+      speciesString = fpSpeciesString(1:nullindex)
+    endif
+    return
+  end function kim_api_get_sim_species
+
+  integer(c_int) function kim_api_get_parameter(kimmdl, index, parameterString)
+    use :: kim_api_f03_helper, only : c_call => kim_api_get_parameter
+    implicit none
+    type(c_ptr),      intent(in)  :: kimmdl
+    integer(c_int),   intent(in)  :: index
+    character(len=*), intent(out) :: parameterString
+
+    type(c_ptr) :: pParameterString
+    character(len=len(parameterString)), pointer :: fpParameterString
+    integer(c_int) :: nullindex
+
+    kim_api_get_parameter = c_call(kimmdl, index-1, pParameterString)
+    if (kim_api_get_parameter.lt.KIM_STATUS_OK) return
+    call c_f_pointer(pParameterString, fpParameterString)
+    nullindex = scan(fpParameterString, char(0))-1
+    if (nullindex.eq.0) then
+      kim_api_get_parameter = KIM_STATUS_FAIL
+    else
+      parameterString = fpParameterString(1:nullindex)
+    endif
+    return
+  end function kim_api_get_parameter
+
+  integer(c_int) function kim_api_get_free_parameter(kimmdl, index, &
+    freeParameterString)
+    use :: kim_api_f03_helper, only : c_call => kim_api_get_free_parameter
+    implicit none
+    type(c_ptr),      intent(in)  :: kimmdl
+    integer(c_int),   intent(in)  :: index
+    character(len=*), intent(out) :: freeParameterString
+
+    type(c_ptr) :: pFreeParameterString
+    character(len=len(freeParameterString)), pointer :: fpFreeParameterString
+    integer(c_int) :: nullindex
+
+    kim_api_get_free_parameter = c_call(kimmdl, index-1, pFreeParameterString)
+    if (kim_api_get_free_parameter.lt.KIM_STATUS_OK) return
+    call c_f_pointer(pFreeParameterString, fpFreeParameterString)
+    nullindex = scan(fpFreeParameterString, char(0))-1
+    if (nullindex.eq.0) then
+      kim_api_get_free_parameter = KIM_STATUS_FAIL
+    else
+      freeParameterString = fpFreeParameterString(1:nullindex)
+    endif
+    return
+  end function kim_api_get_free_parameter
+
+  integer(c_int) function kim_api_get_fixed_parameter(kimmdl, index, &
+    fixedParameterString)
+    use :: kim_api_f03_helper, only : c_call => kim_api_get_fixed_parameter
+    implicit none
+    type(c_ptr),      intent(in)  :: kimmdl
+    integer(c_int),   intent(in)  :: index
+    character(len=*), intent(out) :: fixedParameterString
+
+    type(c_ptr) :: pFixedParameterString
+    character(len=len(fixedParameterString)), pointer :: fpFixedParameterString
+    integer(c_int) :: nullindex
+
+    kim_api_get_fixed_parameter = c_call(kimmdl, index-1, pFixedParameterString)
+    if (kim_api_get_fixed_parameter.lt.KIM_STATUS_OK) return
+    call c_f_pointer(pFixedParameterString, fpFixedParameterString)
+    nullindex = scan(fpFixedParameterString, char(0))-1
+    if (nullindex.eq.0) then
+      kim_api_get_fixed_parameter = KIM_STATUS_FAIL
+    else
+      fixedParameterString = fpFixedParameterString(1:nullindex)
+    endif
+    return
+  end function kim_api_get_fixed_parameter
 
   integer(c_int) function kim_api_set_data(kimmdl, nm, size, dt)
     use :: kim_api_f03_helper, only : c_call => kim_api_set_data
@@ -522,14 +677,49 @@ contains
     call c_call(kimmdl, trim(particle)//c_null_char, code, error)
   end subroutine kim_api_set_partcl_type_code
 
-  type(c_ptr) function kim_api_get_model_kim_str(modelname, error)
+  integer(c_int) function kim_api_get_model_kim_str(modelname, kimString)
     use :: kim_api_f03_helper, only : c_call => kim_api_get_model_kim_str
     implicit none
     character(len=*), intent(in)  :: modelname
-    integer(c_int),   intent(out) :: error
+    character(len=*), intent(out) :: kimString
 
-    kim_api_get_model_kim_str = c_call(trim(modelname)//c_null_char, error)
+    type(c_ptr)                            :: pkimString
+    character(len=len(kimString)), pointer :: fpKIM_String
+    integer(c_int) :: nullindex
+
+    kim_api_get_model_kim_str = c_call(trim(modelname)//c_null_char, pkimString)
+    if (kim_api_get_model_kim_str.lt.KIM_STATUS_OK) return
+    call c_f_pointer(pkimString, fpKIM_String)
+    nullindex = scan(fpKIM_String, char(0))-1
+    if (nullindex.eq.0) then
+      kim_api_get_model_kim_str = KIM_STATUS_FAIL
+    else
+      kimString = fpKIM_String(1:nullindex)
+    endif
+    return
   end function kim_api_get_model_kim_str
+
+  integer(c_int) function kim_api_get_status_msg(status_code, status_msg)
+    use :: kim_api_f03_helper, only : c_call => kim_api_get_status_msg
+    implicit none
+    integer(c_int),   intent(in)  :: status_code
+    character(len=*), intent(out) :: status_msg
+
+    type(c_ptr) :: pstatus_msg
+    character(len=len(status_msg)), pointer :: fpstatus_msg
+    integer(c_int) :: nullindex
+
+    kim_api_get_status_msg = c_call(status_code, pstatus_msg)
+    if (kim_api_get_status_msg.lt.KIM_STATUS_OK) return
+    call c_f_pointer(pstatus_msg, fpstatus_msg)
+    nullindex = scan(fpstatus_msg, char(0))-1
+    if (nullindex.eq.0) then
+      kim_api_get_status_msg = KIM_STATUS_FAIL
+    else
+      status_msg = fpstatus_msg(1:nullindex)
+    endif
+    return
+  end function kim_api_get_status_msg
 
   integer(c_int) function kim_api_report_error(ln, fl, usermsg, status_code)
     use :: kim_api_f03_helper, only : c_call => kim_api_report_error

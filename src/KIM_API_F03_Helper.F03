@@ -63,6 +63,53 @@ module kim_api_f03_helper
       character(c_char) :: modelname(*)
     end function kim_api_model_info
 
+    integer(c_int) function kim_api_get_nbc_method(kimmdl, NBC_String) &
+      bind(c, name="KIM_API_get_NBC_method")
+      use, intrinsic :: iso_c_binding
+      type(c_ptr),         value :: kimmdl
+      type(c_ptr)                :: NBC_String
+    end function kim_api_get_nbc_method
+
+    integer(c_int) function kim_api_get_model_species(kimmdl, index, &
+      speciesString) bind(c, name="KIM_API_get_model_species")
+      use, intrinsic :: iso_c_binding
+      type(c_ptr),         value :: kimmdl
+      integer(c_int),      value :: index
+      type(c_ptr)                :: speciesString
+    end function kim_api_get_model_species
+
+    integer(c_int) function kim_api_get_sim_species(kimmdl, index, &
+      speciesString) bind(c, name="KIM_API_get_sim_species")
+      use, intrinsic :: iso_c_binding
+      type(c_ptr),         value :: kimmdl
+      integer(c_int),      value :: index
+      type(c_ptr)                :: speciesString
+    end function kim_api_get_sim_species
+
+    integer(c_int) function kim_api_get_parameter(kimmdl, index, &
+      parameterString) bind(c, name="KIM_API_get_parameter")
+      use, intrinsic :: iso_c_binding
+      type(c_ptr),         value :: kimmdl
+      integer(c_int),      value :: index
+      type(c_ptr)                :: parameterString
+    end function kim_api_get_parameter
+
+    integer(c_int) function kim_api_get_free_parameter(kimmdl, index, &
+      freeParameterString) bind(c, name="KIM_API_get_free_parameter")
+      use, intrinsic :: iso_c_binding
+      type(c_ptr),         value :: kimmdl
+      integer(c_int),      value :: index
+      type(c_ptr)                :: freeParameterString
+    end function kim_api_get_free_parameter
+
+    integer(c_int) function kim_api_get_fixed_parameter(kimmdl, index, &
+      fixedParameterString) bind(c, name="KIM_API_get_fixed_parameter")
+      use, intrinsic :: iso_c_binding
+      type(c_ptr),         value :: kimmdl
+      integer(c_int),      value :: index
+      type(c_ptr)                :: fixedParameterString
+    end function kim_api_get_fixed_parameter
+
     integer(c_int) function kim_api_set_data(kimmdl, nm, size, dt) &
       bind(c, name="KIM_API_set_data")
       use, intrinsic :: iso_c_binding
@@ -175,12 +222,19 @@ module kim_api_f03_helper
       integer(c_int)          :: error
     end subroutine kim_api_set_partcl_type_code
 
-    type(c_ptr) function kim_api_get_model_kim_str(modelname, error) &
+    integer(c_int) function kim_api_get_model_kim_str(modelname, kimString) &
       bind(c, name="KIM_API_get_model_kim_str")
       use, intrinsic :: iso_c_binding
       character(c_char) :: modelname(*)
-      integer(c_int)    :: error
+      type(c_ptr)       :: kimString
     end function kim_api_get_model_kim_str
+
+    integer(c_int) function kim_api_get_status_msg(status_code, status_msg) &
+      bind(c, name="KIM_API_get_status_msg")
+      use, intrinsic :: iso_c_binding
+      integer(c_int),   value :: status_code
+      type(c_ptr)             :: status_msg
+    end function kim_api_get_status_msg
 
     integer(c_int) function kim_api_report_error(ln, fl, usermsg, status_code) &
       bind(c, name="KIM_API_report_error")
