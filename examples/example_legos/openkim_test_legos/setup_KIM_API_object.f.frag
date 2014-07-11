@@ -20,13 +20,13 @@ subroutine setup_KIM_API_object(pkim, testkimfile, modelname, N, specname, &
   integer(c_int),                       intent(in)  :: SupportHalf
 
   !-- Local variables
-  integer(c_int), parameter :: ATypes = 1  ! hard-wired to one atomic type
+  integer(c_int), parameter :: ASpecies = 1  ! hard-wired to one atomic species
   integer(c_int) ier, idum
   integer(c_int) isHalf
   integer(c_int), pointer :: numberOfParticles;   type(c_ptr) :: pnAtoms
   integer(c_int), pointer :: numContrib;          type(c_ptr) :: pnumContrib
-  integer(c_int), pointer :: numberParticleTypes; type(c_ptr) :: pnparticleTypes
-  integer(c_int), pointer :: particleTypes(:);    type(c_ptr) :: pparticleTypes
+  integer(c_int), pointer :: numberOfSpecies; type(c_ptr) :: pnOfSpecies
+  integer(c_int), pointer :: particleSpecies(:);  type(c_ptr) :: pparticleSpecies
 
   ! Initialize KIM API object
   !
@@ -36,7 +36,7 @@ subroutine setup_KIM_API_object(pkim, testkimfile, modelname, N, specname, &
                                  "kim_api_file_init", ier)
      stop
   endif
-  call kim_api_allocate(pkim, N, ATypes, ier)
+  call kim_api_allocate(pkim, N, ASpecies, ier)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                  "kim_api_allocate", ier)
@@ -66,8 +66,8 @@ subroutine setup_KIM_API_object(pkim, testkimfile, modelname, N, specname, &
        "numberOfParticles",           pnAtoms,           1, &
        "numberContributingParticles", pnumContrib,          &
            TRUEFALSE((SupportHalf.eq.1).and.(isHalf.eq.1)), &
-       "numberParticleTypes",         pnparticleTypes,   1, &
-       "particleTypes",               pparticleTypes,    1)
+       "numberOfSpecies",             pnOfSpecies,       1, &
+       "particleSpecies",             pparticleSpecies,  1)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                  "kim_api_getm_data", ier)
@@ -76,18 +76,18 @@ subroutine setup_KIM_API_object(pkim, testkimfile, modelname, N, specname, &
   call c_f_pointer(pnAtoms, numberOfParticles)
   if ((SupportHalf.eq.1).and.(isHalf.eq.1)) call c_f_pointer(pnumContrib, &
                                                              numContrib)
-  call c_f_pointer(pnparticleTypes, numberParticleTypes)
-  call c_f_pointer(pparticleTypes,  particleTypes, [N])
+  call c_f_pointer(pnOfSpecies, numberOfSpecies)
+  call c_f_pointer(pparticleSpecies,  particleSpecies, [N])
 
   ! Set values
   !
   numberOfParticles   = N
   if ((SupportHalf.eq.1).and.(isHalf.eq.1)) numContrib = 1
-  numberParticleTypes = ATypes
-  particleTypes(:)        = kim_api_get_partcl_type_code(pkim, specname, ier)
+  numberOfSpecies = ASpecies
+  particleSpecies(:)        = kim_api_get_species_code(pkim, specname, ier)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                                 "kim_api_get_partcl_type_code", ier)
+                                 "kim_api_get_species_code", ier)
      stop
   endif
 

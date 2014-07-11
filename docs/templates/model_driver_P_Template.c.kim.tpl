@@ -46,7 +46,7 @@ Unit_time        := ps
 
 
 #######################################################################################################
-SUPPORTED_ATOM/PARTICLES_TYPES:
+PARTICLE_SPECIES:
 # Symbol/name               Type                    code
 
 SPECIES1_NAME_STR                          spec                    1
@@ -83,9 +83,9 @@ numberOfParticles           integer      none                []
 
 numberContributingParticles integer      none                []                 optional
 
-numberParticleTypes         integer      none                []
+numberOfSpecies             integer      none                []
 
-particleTypes               integer      none                [numberOfParticles]
+particleSpecies             integer      none                [numberOfParticles]
 
 coordinates                 double       length              [numberOfParticles,3]
 

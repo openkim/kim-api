@@ -183,7 +183,7 @@ real(c_double), pointer :: boxSideLengths(:); type(c_ptr) :: pboxSideLengths
 real(c_double), pointer :: Rij_list(:,:);     type(c_ptr) :: pRij_list
 integer(c_int), pointer :: numContrib;        type(c_ptr) :: pnumContrib
 integer(c_int), pointer :: nei1atom(:);       type(c_ptr) :: pnei1atom
-integer(c_int), pointer :: particleTypes(:);  type(c_ptr) :: pparticleTypes
+integer(c_int), pointer :: particleSpecies(:);  type(c_ptr) :: pparticleSpecies
 real(c_double), pointer :: virial(:);         type(c_ptr) :: pvirial
 character(len=KIM_KEY_STRING_LENGTH) :: NBC_Method
 integer(c_int) IterOrLoca
@@ -281,7 +281,7 @@ endif
 !
 call kim_api_getm_data(pkim, Compute_Energy_Forces,                           &
  "numberOfParticles",           pN,              1,                           &
- "particleTypes",               pparticleTypes,  1,                           &
+ "particleSpecies",             pparticleSpecies,1,                           &
  "coordinates",                 pcoor,           1,                           &
  "numberContributingParticles", pnumContrib,     TRUEFALSE(HalfOrFull.eq.1),  &
  "boxSideLengths",              pboxSideLengths, TRUEFALSE(NBC.eq.2),         &
@@ -296,7 +296,7 @@ if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
 endif
 
 call c_f_pointer(pN,             N)
-call c_f_pointer(pparticleTypes, particleTypes, [N])
+call c_f_pointer(pparticleSpecies, particleSpecies, [N])
 call c_f_pointer(pcoor,          coor,          [DIM,N])
 if (HalfOrFull.eq.1)  call c_f_pointer(pnumContrib,     numContrib)
 if (NBC.eq.2)         call c_f_pointer(pboxSideLengths, boxSideLengths, [DIM])
@@ -313,13 +313,13 @@ if (HalfOrFull.eq.1) then
    endif
 endif
 
-! Check to be sure that the atom types are correct
+! Check to be sure that the atom species are correct
 !
 Compute_Energy_Forces = KIM_STATUS_FAIL ! assume an error
 do i = 1,N
-   if (particleTypes(i).ne.speccode) then
+   if (particleSpecies(i).ne.speccode) then
       idum = kim_api_report_error(__LINE__, THIS_FILE_NAME,           &
-                                  "Unexpected species type detected", &
+                                  "Unexpected species specie detected", &
                                   Compute_Energy_Forces)
       return
    endif

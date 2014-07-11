@@ -4,8 +4,8 @@ MODEL_INPUT:
 
 numberOfParticles           integer      none                []
 
-numberParticleTypes         integer      none                []
+numberOfSpecies             integer      none                []
 
-particleTypes               integer      none                [numberOfParticles]
+particleSpecies             integer      none                [numberOfParticles]
 
 coordinates                 double       length              [numberOfParticles,3]

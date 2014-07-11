@@ -30,7 +30,7 @@ program vc_forces_delta
   integer(c_int), parameter :: nCellsPerSide  = 2
   integer(c_int), parameter :: DIM            = 3
   real(c_double), parameter :: cutpad         = 0.75_cd
-  integer(c_int), parameter :: max_types      = 30 ! most species supported
+  integer(c_int), parameter :: max_species      = 30 ! most species supported
   integer(c_int), parameter :: max_NBCs       = 20 ! maximum number of NBCs
   real(c_double), parameter :: eps_prec       = epsilon(1.0_cd)
   integer(c_int), parameter :: ndisp          = 100 ! number of displacements
@@ -40,11 +40,11 @@ program vc_forces_delta
        N = 4*(nCellsPerSide)**3 + 6*(nCellsPerSide)**2 + 3*(nCellsPerSide) + 1
   integer(c_int), parameter :: SizeOne = 1
 
-  character(len=KIM_KEY_STRING_LENGTH) :: model_types(max_types)
+  character(len=KIM_KEY_STRING_LENGTH) :: model_species(max_species)
   character(len=KIM_KEY_STRING_LENGTH) :: model_NBCs(max_NBCs)
-  character(len=KIM_KEY_STRING_LENGTH), allocatable :: cluster_types(:)
+  character(len=KIM_KEY_STRING_LENGTH), allocatable :: cluster_species(:)
   real(c_double), allocatable   :: forces_old(:,:)
-  integer(c_int)                :: num_types
+  integer(c_int)                :: num_species
   integer(c_int)                :: num_NBCs
   integer(c_int)                :: nfail
   character(len=4)              :: passfail
@@ -55,7 +55,7 @@ program vc_forces_delta
   real(c_double),dimension(100) :: deltas, deltas_estimated
   real(c_double), allocatable   :: cluster_coords(:,:)
   real(c_double), allocatable   :: cluster_disps(:,:)
-  integer(c_int)                :: I,J,type,idisp
+  integer(c_int)                :: I,J,species,idisp
 
   !
   ! neighbor list
@@ -80,8 +80,8 @@ program vc_forces_delta
   character(len=10000)    :: test_descriptor_string
   integer(c_int), pointer :: numberOfParticles;   type(c_ptr) pnAtoms
   integer(c_int), pointer :: numContrib;          type(c_ptr) pnumContrib
-  integer(c_int), pointer :: numberParticleTypes; type(c_ptr) pnparticleTypes
-  integer(c_int), pointer :: particleTypes(:);    type(c_ptr) pparticleTypes
+  integer(c_int), pointer :: numberOfSpecies;     type(c_ptr) pnOfSpecies
+  integer(c_int), pointer :: particleSpecies(:);  type(c_ptr) pparticleSpecies
   real(c_double), pointer :: cutoff;              type(c_ptr) pcutoff
   real(c_double), pointer :: energy;              type(c_ptr) penergy
   real(c_double), pointer :: coords(:,:);         type(c_ptr) pcoor
@@ -96,13 +96,13 @@ program vc_forces_delta
   print '("Please enter a valid KIM model name: ")'
   read(*,*) modelname
 
-  ! Get list of particle types supported by the model
+  ! Get list of particle species supported by the model
   !
-  call Get_Model_Supported_Types(modelname, max_types, model_types, num_types, &
+  call Get_Model_Supported_Species(modelname, max_species, model_species, num_species, &
                                  ier)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                                 "Get_Model_Supported_Types", ier)
+                                 "Get_Model_Supported_Species", ier)
      stop
   endif
 
@@ -117,11 +117,11 @@ program vc_forces_delta
 
   ! Setup random cluster
   !
-  allocate(cluster_coords(3,N),cluster_disps(3,N),cluster_types(N))
+  allocate(cluster_coords(3,N),cluster_disps(3,N),cluster_species(N))
   do i=1,N
      call random_number(rnd)  ! return random number between 0 and 1
-     type = 1 + int(rnd*num_types)
-     cluster_types(i) = model_types(type)
+     species = 1 + int(rnd*num_species)
+     cluster_species(i) = model_species(species)
   enddo
   FCCspacing = 1.0_cd  ! initially generate an FCC cluster with lattice
                        ! spacing equal to one. This is scaled below based
@@ -152,8 +152,8 @@ program vc_forces_delta
 
      ! Write out KIM descriptor string for Test for current NBC
      !
-     call Write_KIM_descriptor(model_NBCs(inbc), max_types, model_types, &
-                               num_types, test_descriptor_string, ier)
+     call Write_KIM_descriptor(model_NBCs(inbc), max_species, model_species, &
+                               num_species, test_descriptor_string, ier)
      if (ier.lt.KIM_STATUS_OK) then
         idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                     "Write_KIM_descriptor", ier)
@@ -211,7 +211,7 @@ program vc_forces_delta
 
      ! Allocate memory via the KIM system
      !
-     call kim_api_allocate(pkim, N, num_types, ier)
+     call kim_api_allocate(pkim, N, num_species, ier)
      if (ier.lt.KIM_STATUS_OK) then
         idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                     "kim_api_allocate", ier)
@@ -269,8 +269,8 @@ program vc_forces_delta
      call kim_api_getm_data(pkim, ier, &
           "numberOfParticles",           pnAtoms,           1,                               &
           "numberContributingParticles", pnumContrib,       TRUEFALSE(nbc.eq.0.or.nbc.eq.1.or.nbc.eq.4), &
-          "numberParticleTypes",         pnparticleTypes,   1,                               &
-          "particleTypes",               pparticleTypes,    1,                               &
+          "numberOfSpecies",             pnOfSpecies,       1,                               &
+          "particleSpecies",             pparticleSpecies,  1,                               &
           "coordinates",                 pcoor,             1,                               &
           "cutoff",                      pcutoff,           1,                               &
           "boxSideLengths",              pboxSideLengths,   TRUEFALSE(nbc.eq.4.or.nbc.eq.5), &
@@ -284,8 +284,8 @@ program vc_forces_delta
      call c_f_pointer(pnAtoms, numberOfParticles)
      if ((nbc.eq.0).or.(nbc.eq.1).or.(nbc.eq.4)) call c_f_pointer(pnumContrib, &
                                                                   numContrib)
-     call c_f_pointer(pnparticleTypes, numberParticleTypes)
-     call c_f_pointer(pparticleTypes,  particleTypes, [N])
+     call c_f_pointer(pnOfSpecies, numberOfSpecies)
+     call c_f_pointer(pparticleSpecies, particleSpecies, [N])
      call c_f_pointer(pcoor, coords, [DIM,N])
      call c_f_pointer(pcutoff, cutoff)
      if ((nbc.eq.4).or.(nbc.eq.5)) call c_f_pointer(pboxSideLengths, &
@@ -308,15 +308,15 @@ program vc_forces_delta
      !
      numberOfParticles   = N
      if (nbc.eq.0.or.nbc.eq.1.or.nbc.eq.4) numContrib = N
-     numberParticleTypes = num_types
+     numberOfSpecies = num_species
      do i=1,N
-        particleTypes(i) = kim_api_get_partcl_type_code(pkim, &
-                                                        trim(cluster_types(i)),&
-                                                        ier)
+        particleSpecies(i) = kim_api_get_species_code(pkim, &
+                                                      trim(cluster_species(i)),&
+                                                      ier)
      enddo
      if (ier.lt.KIM_STATUS_OK) then
         idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                                    "kim_api_get_partcl_type_code", ier)
+                                    "kim_api_get_species_code", ier)
         stop
      endif
      do i=1,N
@@ -457,7 +457,7 @@ program vc_forces_delta
 
   ! Free cluster storage
   !
-  deallocate(cluster_coords,cluster_disps,cluster_types)
+  deallocate(cluster_coords,cluster_disps,cluster_species)
 
   stop
 

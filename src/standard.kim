@@ -39,7 +39,7 @@
 #
 # This file defines the KIM API standard argument names and their properties,
 # the Neighbor Boundary Condition (NBC) methods supported by the KIM API, the
-# list of standard atom/particle types known to KIM, and a set of conventions
+# list of standard particle species known to KIM, and a set of conventions
 # defined by KIM that help to ensure that Models and Simulators are able to
 # successfully communicate with each other.
 #
@@ -102,7 +102,7 @@
 #         section.  Currently, there are five sections defined by the KIM
 #         standard:
 #
-#            * SUPPORTED_ATOM/PARTICLES_TYPES
+#            * PARTICLE_SPECIES
 #            * CONVENTIONS
 #            * MODEL_INPUT
 #            * MODEL_OUTPUT
@@ -119,21 +119,21 @@
 #         currently three types of Data lines:
 #
 #            * Species Data lines
-#               This line type defines the atom/particle types supported by the
+#               This line type defines the particle species supported by the
 #               Simulator/Model and should only be used within the
-#               SUPPORTED_ATOM/PARTICLES_TYPES section of the KIM descriptor
-#               file.  The line consists of three white-space separated (case
-#               sensitive) strings of maximum KIM_KEY_STRING_LENGTH length.
-#               The three strings, in order, are as follows:
+#               PARTICLE_SPECIES section of the KIM descriptor file.  The line
+#               consists of three white-space separated (case sensitive)
+#               strings of maximum KIM_KEY_STRING_LENGTH length.  The three
+#               strings, in order, are as follows:
 #
 #                  1) Name: This string gives a unique name to the
-#                           atom/particle type.  This name is checked against
+#                           particle species.  This name is checked against
 #                           the standard list in `standard.kim' (below).
 #
 #                  2) Type: This must be `spec'.
 $
 #                  3) code: This is the non-negative integer that the Model
-#                           uses internally to identify the atom/particle type.
+#                           uses internally to identify the particle species.
 #                           The special value of `-1' indicates that the Model
 #                           will set the code value during the execution of its
 #                           `model_init' function.  The value specified by a
@@ -233,11 +233,11 @@ $
 #                            the corresponding dimension.  Otherwise one of the
 #                            three following strings may be used:
 #
-#                            `numberOfParticles', `numberParticleTypes', `:'
+#                            `numberOfParticles', `numberOfSpecies', `:'
 #
 #                            If either of the first two options is present, the
 #                            KIM_API_allocate() function will substitute the
-#                            value of its `nParticles' or its `nParticleTypes'
+#                            value of its `nParticles' or its `nSpecies'
 #                            arguments, respectively.  If, after this
 #                            substitution the extents of EACH dimension is
 #                            known, then the KIM_API_allocate() function will
@@ -274,19 +274,20 @@ $
 #                                     of `numberOfParticles' values.  If the
 #                                     KIM_API_allocate function is called as
 #
-#                       KIM_API_allocate(pkim, nParticles, nParticleTypes, kimerr)
+#                       KIM_API_allocate(pkim, nParticles, nSpeciess, kimerr)
 #
 #                                     it will allocate memory for this
 #                                     argument using the value of `nParticles'.
 #
-#                            * [numberParticleTypes] - This defines a vector
-#                                    (rank=1) of `numberParticleTypes' values.  If
-#                                    the KIM_API_allocate function is called as
+#                            * [numberOfSpecies] - This defines a vector
+#                                     (rank=1) of `numberOfSpecies'
+#                                     values.  If the KIM_API_allocate function
+#                                     is called as
 #
-#                       KIM_API_allocate(pkim, nParticles, nParticleTypes, kimerr)
+#                       KIM_API_allocate(pkim, nParticles, nSpeciess, kimerr)
 #
 #                                    it will allocated memory for this argument
-#                                    using the value of `nParticleTypes'.
+#                                    using the value of `nSpecies'.
 #
 #                            * [12,10,5] - This defines a three-dimensional
 #                                    array (rank=3) of size 12 by 10 by 5.
@@ -344,7 +345,7 @@ $
 #                                    can be allocated by the KIM_API_allocate()
 #                                    function.
 #
-#                            * [:,:,:,12,:,numberParticleTypes] - This defines
+#                            * [:,:,:,12,:,numberOfSpecies] - This defines
 #                                   a six-dimensional array (rank=6).  Memory
 #                                   for this array cannot be allocated by the
 #                                   KIM_API_allocate() function.  The Simulator
@@ -411,25 +412,26 @@ Unit_time        := ps
 
 ################################################################################
 #
-# The SUPPORTED_ATOM/PARTICLES_TYPES section
+# The PARTICLE_SPECIES section
 #
 ################################################################################
 
-SUPPORTED_ATOM/PARTICLES_TYPES:
+PARTICLE_SPECIES:
 
 ################################################################################
 #
-# The list of standard KIM atom/particle types
+# The list of standard KIM particle species
 #
-# The code listed in 'standard.kim' is the atomic number.  However, this value
-# is ignored and only the code value provided by the Model is retained.
+# The code listed in 'standard.kim' is, where appropriate, the atomic number.
+# However, this value is ignored and only the code value provided by the Model
+# is retained.
 #
 # In order for a Simulator and Model to match, a Model must be able to support
-# all atom/particle types required by the Simulator as indicated in its
-# descriptor file.  If no lines appear in the SUPPORTED_ATOM/PARTICLES_TYPES
-# section for both the Simulator and the Model, then a Simulator/Model match is
-# possible.  This option allows for Models and Simulators that do not assign
-# any specific physical type to their (single) particle type.
+# all particle species required by the Simulator as indicated in its descriptor
+# file.  If no lines appear in the PARTICLE_SPECIES section for both the
+# Simulator and the Model, then a Simulator/Model match is possible.  This
+# option allows for Models and Simulators that do not assign any specific
+# physical type to their (single) particle species.
 #
 # Symbol/name               Type         code
 #
@@ -837,42 +839,42 @@ numberContributingParticles integer      none               []
 
 ################################################################################
 #
-# numberParticleTypes: The number of types of atoms/particles contained in the
-#                      configuration passed between the Model and Simulator.
+# numberOfSpecies: The number of species of particles contained in the
+#                  configuration passed between the Model and Simulator.
 #
 # This argument is required for any Model/Simulator that specifies one or more
-# atom/particle types in the SUPPORTED_ATOM/PARTICLE_TYPES section.  If
-# supported, a Simulator must allocate memory for this argument and register it
-# in the KIM API object (via KIM_API_allocate() or KIM_API_set_data()) before
-# the KIM_API_model_compute() function is called.  The Simulator is free to
-# change this pointer at any time.
+# particle species in the PARTICLE_SPECIES section.  If supported, a Simulator
+# must allocate memory for this argument and register it in the KIM API object
+# (via KIM_API_allocate() or KIM_API_set_data()) before the
+# KIM_API_model_compute() function is called.  The Simulator is free to change
+# this pointer at any time.
 #
 # Name                      Type         Unit              Shape
 #
-numberParticleTypes         integer      none              []
+numberOfSpecies             integer      none              []
 
 ################################################################################
 #
-# particleTypes : A vector of integers indicating the type of each particle in
-#                 the configuration passed between the Model and Simulator.
+# particleSpecies : A vector of integers indicating the species of each
+#                   particle in the configuration passed between the Model and
+#                   Simulator.
 #
 # The values in this vector must correspond to the `code' specified in the
 # Model's KIM descriptor file.  This argument is required for any
-# Model/Simulator that specifies one or more atom/particle types in the
-# SUPPORTED_ATOM/PARTICLE_TYPES section.  If supported, a Simulator must
-# allocate memory for this argument and register it in the KIM API object (via
-# KIM_API_allocate() or KIM_API_set_data()) before the KIM_API_model_compute()
-# function is called.  The Simulator is free to change this pointer at any
-# time.
+# Model/Simulator that specifies one or more particle species in the
+# PARTICLE_SPECIES section.  If supported, a Simulator must allocate memory for
+# this argument and register it in the KIM API object (via KIM_API_allocate()
+# or KIM_API_set_data()) before the KIM_API_model_compute() function is called.
+# The Simulator is free to change this pointer at any time.
 #
 # Name                      Type         Unit               Shape
 #
-particleTypes               integer      none               [numberOfParticles]
+particleSpecies             integer      none               [numberOfParticles]
 
 ################################################################################
 #
 # coordinates : An array of floating-point numbers specifying the spatial
-#               location of each of the numberOfParticles atom/particle in the
+#               location of each of the numberOfParticles particles in the
 #               configuration passed between the Model and Simulator.
 #
 # This argument is required for all Models and Simulators.  A Simulator must
@@ -1115,7 +1117,7 @@ energy                      double       energy             []
 ################################################################################
 #
 # forces : An array of floating-point numbers corresponding to the total force
-#          acting each atom/particle in the configuration of particles passed
+#          acting on each particle in the configuration of particles passed
 #          between the Model and Simulator.  The force vector on a particle is
 #          defined as the negative of the gradient of the energy with respect
 #          to the particle's coordinate vector.

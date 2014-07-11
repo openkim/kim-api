@@ -167,7 +167,7 @@ essentially identical. See comments below.)
 
     Note: For a Model written in C, copy the .c and .c.kim templates.
 
-(c) Edit the .kim file and enter the species type.  (Search for the word "FILL"
+(c) Edit the .kim file and enter the species.  (Search for the word "FILL"
     which indicates where changes are necessary.)  Also, change the "Release:"
     line to indicate that the file is part of your new Model and not part of
     the kim-api release.  To edit a file on a unix machine, use for example:

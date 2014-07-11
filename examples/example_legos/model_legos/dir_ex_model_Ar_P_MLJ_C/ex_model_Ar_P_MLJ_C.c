@@ -157,7 +157,7 @@ static int compute(void* km)
    int numberContrib;
 
    int* nAtoms;
-   int* particleTypes;
+   int* particleSpecies;
    double* Rij_list;
    double* coords;
    double* energy;
@@ -262,7 +262,7 @@ static int compute(void* km)
    /* unpack data from KIM object */
    KIM_API_getm_data(pkim, &ier, 9*3,
                      "numberOfParticles",           &nAtoms,         1,
-                     "particleTypes",               &particleTypes,  1,
+                     "particleSpecies",             &particleSpecies,1,
                      "coordinates",                 &coords,         1,
                      "numberContributingParticles", &numContrib,     (HalfOrFull==1),
                      "boxSideLengths",              &boxSideLengths, (NBC==2),
@@ -292,14 +292,14 @@ static int compute(void* km)
       numberContrib = *nAtoms;
    }
 
-   /* Check to be sure that the atom types are correct */
+   /* Check to be sure that the atom species are correct */
    /**/
    ier = KIM_STATUS_FAIL; /* assume an error */
    for (i = 0; i < *nAtoms; ++i)
    {
-      if ( SPECCODE != particleTypes[i])
+      if ( SPECCODE != particleSpecies[i])
       {
-         KIM_API_report_error(__LINE__, __FILE__, "Unexpected species type detected", ier);
+         KIM_API_report_error(__LINE__, __FILE__, "Unexpected species detected", ier);
          return ier;
       }
    }

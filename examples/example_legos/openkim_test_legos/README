@@ -124,8 +124,8 @@ get_model_cutoff_firsttime.f.frag
      This Fortran file contains the get_model_cutoff_firsttime routine that is
      used by the FCCcohesive Tests.
 
-get_model_supported_types.f.frag
-     This Fortran file contains the get_model_supported_types routine that is
+get_model_supported_species.f.frag
+     This Fortran file contains the get_model_supported_species routine that is
      used by the numerical derivative check.
 
 mod_neighborlist.f.frag

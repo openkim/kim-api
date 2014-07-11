@@ -108,14 +108,14 @@ int KIM_API_file_init(void *kimmdl, char *simkimfile, char *modelname);
         a positive match is obtained.  Otherwise, a negative match is obtained
         and the routine returns KIM_STATUS_FAIL.
 
-    (3) Particle type matching: For each particle type symbol name listed by
-        the Simulator, the Model's list of particle type symbol names is
-        searched for the corresponding entry.  If every particle type symbol
+    (3) Particle species matching: For each particle species symbol name listed
+        by the Simulator, the Model's list of particle species symbol names is
+        searched for the corresponding entry.  If every particle species symbol
         listed by the Simulator is found in the Model's symbol list, a positive
         match is obtained.  If both the Model's and Simulator's list are empty,
-        then the Model and Simulator support a single "unnamed" particle type
-        and a positive match is obtained.  Otherwise, a negative match is
-        obtained and the routine returns KIM_STATUS_FAIL.
+        then the Model and Simulator support a single "unnamed" particle
+        species and a positive match is obtained.  Otherwise, a negative match
+        is obtained and the routine returns KIM_STATUS_FAIL.
 
     (4) Neighbor list access matching: The following is a list of the possible
         cases and their matching result.
@@ -200,12 +200,11 @@ int KIM_API_file_init(void *kimmdl, char *simkimfile, char *modelname);
 
               MODEL_INPUT section
                 `numberOfParticles'
-                `numberParticleTypes'
-                `particleTypes'      (not required if the
-                                      SUPPORTED_ATOM/PARTICLES_TYPES section is
-                                      empty.  That is, if the Model and
-                                      Simulator only support a single "unnamed"
-                                      particle type.)
+                `numberOfSpecies'
+                `particleSpecies'    (not required if the PARTICLE_SPECIES
+                                     section is empty.  That is, if the Model
+                                     and Simulator only support a single
+                                     "unnamed" particle species.)
                 `coordinates'        (this has already been confirmed in step 6)
               MODEL_OUTPUT section
                 `compute'
@@ -214,7 +213,7 @@ int KIM_API_file_init(void *kimmdl, char *simkimfile, char *modelname);
                 `cutoff'
 
         If all of the above arguments (except possibly, as described above,
-        `particleTypes') are present in both the Model and Simulator KIM
+        `particleSpecies') are present in both the Model and Simulator KIM
         descriptor files, then a positive match is obtained.  Otherwise, a
         negative match is obtained and the routine returns KIM_STATUS_FAIL.
 
@@ -338,8 +337,8 @@ int KIM_API_model_info(void *kimmdl, char *modelname);
     This routine creates a KIM API object that represents the capabilities of a
     Model.  Standard library routines (described below) can be used to probe
     this object in order to determine (most) of the items listed in the Model's
-    KIM descriptor file. For example, A Simulator could determine what
-    atom/particle types are supported by a Model and adjust it's calculations
+    KIM descriptor file. For example, A Simulator could determine what particle
+    species are supported by a Model and adjust it's calculations
     appropriately.  Return value: KIM_STATUS_OK if successful and
     KIM_STATUS_FAIL if unsuccessful.
 
@@ -359,7 +358,7 @@ Arguments:
 
 ******************************************************************************
 
-void KIM_API_allocate(void *kimmdl, int nParticles, int nParticleTypes, int *kimerror);
+void KIM_API_allocate(void *kimmdl, int nParticles, int nSpecies, int *kimerror);
 
     This routine allocates memory for each data argument stored in the
     initialized KIM API object kimmdl.  It will return with an error code if an
@@ -380,14 +379,14 @@ void KIM_API_allocate(void *kimmdl, int nParticles, int nParticleTypes, int *kim
         MODEL_PARAMETERS lists of arguments, the routine converts the shape
         string, specified in the KIM descriptor file, into an integer shape
         array.  The three supported non-integer string values: `:',
-        `numberOfParticles', `numberParticleTypes' are converted to 0, the
-        value of the `nParticles' argument to this routine, and the value of
-        the `nParticleTypes' argument to this routine, respectively.  All
-        integer extent values specified in the KIM descriptor file are simply
-        transferred into the integer shape array.  (NOTE: here, the values
-        specified in the KIM descriptor file take precedence over any changes
-        that may have been made, via the KIM_API_set_shape() routine, to the
-        argument's integer shape array values.)
+        `numberOfParticles', `numberSpecies' are converted to 0, the value of
+        the `nParticles' argument to this routine, and the value of the
+        `nSpecies' argument to this routine, respectively.  All integer extent
+        values specified in the KIM descriptor file are simply transferred into
+        the integer shape array.  (NOTE: here, the values specified in the KIM
+        descriptor file take precedence over any changes that may have been
+        made, via the KIM_API_set_shape() routine, to the argument's integer
+        shape array values.)
 
     (2) For each argument in the Model's MODEL_INPUT and MODEL_OUTPUT lists of
         arguments:
@@ -426,7 +425,7 @@ void KIM_API_allocate(void *kimmdl, int nParticles, int nParticleTypes, int *kim
         is called a second time.)
 
     NOTE: This routine does not set the value of the `numberOfParticles' and
-    `numberParticleTypes' arguments after allocating their memory.  This
+    `numberSpecies' arguments after allocating their memory.  This
     responsibility is left to the Simulator.
 
 Arguments:
@@ -438,8 +437,8 @@ Arguments:
       int nParticles
               total number of particles.
 
-      int nParticleTypes
-              number of particles types.
+      int nSpeciess
+              number of particles species.
 
       int *kimerror
               error code: KIM_STATUS_OK    -- successful completion,
@@ -507,7 +506,7 @@ int KIM_API_model_compute(void *kimmdl);
     KIM_STATUS_OK on success or KIM_STATUS_MODEL_UNSUPPORTED_CONFIGURATION if
     the Model is unable to perform the computation for the supplied
     configuration (e.g., it doesn't support the particular combination of
-    particle types in the configuration) or else KIM_STATUS_FAIL for other
+    particle species in the configuration) or else KIM_STATUS_FAIL for other
     types of failure.
 
     NOTES:
@@ -1395,16 +1394,16 @@ Arguments:
 
 ******************************************************************************
 
-int KIM_API_get_partcl_type_code(void *kimmdl, char* particle, int *kimerror);
+int KIM_API_get_species_code(void *kimmdl, char* particle, int *kimerror);
 
-    This routine returns the particle type ID for a given particle symbol, as
-    defined by the Model associated with the KIM API object.  The routine
-    returns KIM_STATUS_PARTICLE_TYPES_UNDEFINED if no atom/particle types have
+    This routine returns the particle species ID for a given particle symbol,
+    as defined by the Model associated with the KIM API object.  The routine
+    returns KIM_STATUS_PARTICLE_SPECIES_UNDEFINED if no particle species have
     been provided in the .kim files.  (See the standard.kim file for more
-    information on atom/particle types.)  The routine returns
-    KIM_STATUS_PARTICLE_INVALID_TYPE if the supplied symbol, particle, is not
-    among the KIM supported particle symbols.  (See standard.kim for the list
-    of supported atom/particle types.)
+    information on particle species.)  The routine returns
+    KIM_STATUS_PARTICLE_INVALID_SPECIES if the supplied symbol, particle, is
+    not among the KIM supported particle symbols.  (See standard.kim for the
+    list of supported particle species.)
 
 Arguments:
       void *kimmdl
@@ -1417,25 +1416,25 @@ Arguments:
       int *kimerror
               error code: KIM_STATUS_OK                       -- successful completion
                           KIM_STATUS_FAIL                     -- unsuccessful
-                          KIM_STATUS_PARTICLE_INVALID_TYPE    -- symbol is not among the
+                          KIM_STATUS_PARTICLE_INVALID_SPECIES -- symbol is not among the
                                                                  KIM supported atom symbols
-                          KIM_STATUS_PARTICLE_TYPES_UNDEFINED -- no atom/particle types have
-                                                                 been specified by the
-                                                                 Simulator or Model.
+                          KIM_STATUS_PARTICLE_SPECIES_UNDEFINED -- no particle species
+                                                                   have been specified by
+                                                                   the Simulator or Model.
 
 ******************************************************************************
 
-void KIM_API_set_partcl_type_code(void *kimmdl, char* particle, int code, int *kimerror);
+void KIM_API_set_species_code(void *kimmdl, char* particle, int code, int *kimerror);
 
-    This routine sets the particle type ID for a given particle symbol.  Only
-    those particle types which the Model listed with code `-1' in its
+    This routine sets the particle species ID for a given particle symbol.
+    Only those particle species which the Model listed with code `-1' in its
     descriptor file may be changed.  The routine returns
-    KIM_STATUS_PARTICLE_TYPES_UNDEFINED if no atom/particle types have been
+    KIM_STATUS_PARTICLE_SPECIES_UNDEFINED if no particle species have been
     provided in the .kim files.  (See the standard.kim file for more
-    information on atom/particle types.)  The routine returns
-    KIM_STATUS_PARTICLE_INVALID_TYPE if the supplied symbol, particle, is not
-    among the KIM supported particle symbols.  (See standard.kim for the list
-    of supported atom/particle types.)
+    information on particle speciess.)  The routine returns
+    KIM_STATUS_PARTICLE_INVALID_SPECIES if the supplied symbol, particle, is
+    not among the KIM supported particle symbols.  (See standard.kim for the
+    list of supported particle species.)
 
 Arguments:
       void *kimmdl
@@ -1446,16 +1445,16 @@ Arguments:
               atom/particle symbol
 
       int code
-              integer value used by the Model to represent the specified particle type
+              integer value used by the Model to represent the specified particle species
 
       int *kimerror
               error code: KIM_STATUS_OK                       -- successful completion
                           KIM_STATUS_FAIL                     -- unsuccessful
-                          KIM_STATUS_PARTICLE_INVALID_TYPE    -- symbol is not among the
+                          KIM_STATUS_PARTICLE_INVALID_SPECIES -- symbol is not among the
                                                                  KIM supported atom symbols
-                          KIM_STATUS_PARTICLE_TYPES_UNDEFINED -- no atom/particle types have
-                                                                 been specified by the
-                                                                 Simulator or Model.
+                          KIM_STATUS_PARTICLE_SPECIES_UNDEFINED -- no particle species
+                                                                   have been specified by
+                                                                   the Simulator or Model.
 
 ******************************************************************************
 

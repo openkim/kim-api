@@ -104,8 +104,8 @@ static int compute(void* km)
    int comp_virial;
 
    int* nAtoms;
-   int* nparticleTypes;
-   int* particleTypes;
+   int* nOfSpecies;
+   int* particleSpecies;
    double* cutoff;
    double* epsilon;
    double* sigma;
@@ -137,37 +137,37 @@ static int compute(void* km)
 
    /* unpack data from KIM object */
    KIM_API_getm_data(pkim, &ier, 17*3,
-                     "numberOfParticles",   &nAtoms,         1,
-                     "numberParticleTypes", &nparticleTypes, 1,
-                     "particleTypes",       &particleTypes,  1,
-                     "cutoff",              &cutoff,         1,
-                     "PARAM_FREE_epsilon",  &epsilon,        1,
-                     "PARAM_FREE_sigma",    &sigma,          1,
-                     "PARAM_FIXED_cutnorm", &cutnorm,        1,
-                     "PARAM_FIXED_A",       &A,              1,
-                     "PARAM_FIXED_B",       &B,              1,
-                     "PARAM_FIXED_C",       &C,              1,
-                     "PARAM_FIXED_sigmasq", &sigmasq,        1,
-                     "PARAM_FIXED_cutsq",   &cutsq,          1,
-                     "coordinates",         &coords,         1,
-                     "energy",              &energy,         (comp_energy==1),
-                     "forces",              &force,          (comp_force==1),
-                     "particleEnergy",      &particleEnergy, (comp_particleEnergy==1),
-                     "virial",              &virial,         (comp_virial==1));
+                     "numberOfParticles",   &nAtoms            1,
+                     "numberOfSpecies",     &nOfSpecies,       1,
+                     "particleSpecies",     &particleSpecies,  1,
+                     "cutoff",              &cutoff,           1,
+                     "PARAM_FREE_epsilon",  &epsilon,          1,
+                     "PARAM_FREE_sigma",    &sigma,            1,
+                     "PARAM_FIXED_cutnorm", &cutnorm,          1,
+                     "PARAM_FIXED_A",       &A,                1,
+                     "PARAM_FIXED_B",       &B,                1,
+                     "PARAM_FIXED_C",       &C,                1,
+                     "PARAM_FIXED_sigmasq", &sigmasq,          1,
+                     "PARAM_FIXED_cutsq",   &cutsq,            1,
+                     "coordinates",         &coords,           1,
+                     "energy",              &energy,           (comp_energy==1),
+                     "forces",              &force,            (comp_force==1),
+                     "particleEnergy",      &particleEnergy,   (comp_particleEnergy==1),
+                     "virial",              &virial,           (comp_virial==1));
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data", ier);
       return ier;
    }
 
-   /* Check to be sure that the atom types are correct */
+   /* Check to be sure that the species are correct */
    /**/
    ier = KIM_STATUS_FAIL; /* assume an error */
    for (i = 0; i < *nAtoms; ++i)
    {
-      if (Ar != particleTypes[i])
+      if (Ar != particleSpecies[i])
       {
-         KIM_API_report_error(__LINE__, __FILE__, "Wrong atomType", i);
+         KIM_API_report_error(__LINE__, __FILE__, "Wrong Species", i);
          return ier;
       }
    }

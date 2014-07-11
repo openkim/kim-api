@@ -47,7 +47,7 @@
 #define FCCSPACING    5.260
 #define NCELLSPERSIDE 2
 #define DIM           3
-#define ATYPES        1
+#define ASPECIES        1
 #define NCLUSTERATOMS (4*(NCELLSPERSIDE*NCELLSPERSIDE*NCELLSPERSIDE) + 6*(NCELLSPERSIDE*NCELLSPERSIDE) + 3*(NCELLSPERSIDE) + 1)
 
 /* Define prototypes */
@@ -67,12 +67,12 @@ int main(int argc, char* argv[])
    char modelname[KIM_KEY_STRING_LENGTH];
    void* pkim;
    int status;
-   int partcl_type_code;
+   int species_code;
 
    /* model inputs */
    int* numberOfParticles;
-   int* numberParticleTypes;
-   int* particleTypes;
+   int* numberOfSpecies;
+   int* particleSpecies;
    double* coords;
    /* model outputs */
    double* cutoff;
@@ -100,7 +100,7 @@ int main(int argc, char* argv[])
    }
 
    /* Allocate memory via the KIM system */
-   KIM_API_allocate(pkim, NCLUSTERATOMS, ATYPES, &status);
+   KIM_API_allocate(pkim, NCLUSTERATOMS, ASPECIES, &status);
    if (KIM_STATUS_OK > status)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_allocate", status);
@@ -118,8 +118,8 @@ int main(int argc, char* argv[])
    /* Unpack data from KIM object */
    KIM_API_getm_data(pkim, &status, 8*3,
                      "numberOfParticles",   &numberOfParticles,   1,
-                     "numberParticleTypes", &numberParticleTypes, 1,
-                     "particleTypes",       &particleTypes,       1,
+                     "numberOfSpecies",     &numberOfSpecies,     1,
+                     "particleSpecies",     &particleSpecies,     1,
                      "coordinates",         &coords,              1,
                      "cutoff",              &cutoff,              1,
                      "energy",              &energy,              1,
@@ -132,17 +132,17 @@ int main(int argc, char* argv[])
    }
 
    /* Set values */
-   *numberOfParticles   = NCLUSTERATOMS;
-   *numberParticleTypes = ATYPES;
-   partcl_type_code = KIM_API_get_partcl_type_code(pkim, "SPECIES_NAME_STR", &status);
+   *numberOfParticles = NCLUSTERATOMS;
+   *numberOfSpecies = ASPECIES;
+   species_code = KIM_API_get_species_code(pkim, "SPECIES_NAME_STR", &status);
    if (KIM_STATUS_OK > status)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_partcl_type_code", status);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_species_code", status);
       exit(1);
    }
    for (i = 0; i < *numberOfParticles; ++i)
    {
-      particleTypes[i] = partcl_type_code;
+      particleSpecies[i] = species_code;
    }
 
    /* set up the cluster atom positions */

@@ -46,12 +46,12 @@ module kim_api_f03
       type(c_ptr), value :: cp
     end subroutine kim_api_c_free
 
-    subroutine kim_api_allocate(kimmdl, natoms, ntypes, error) &
+    subroutine kim_api_allocate(kimmdl, natoms, nspecies, error) &
       bind(c, name="KIM_API_allocate")
       use, intrinsic :: iso_c_binding
       type(c_ptr),    value :: kimmdl
       integer(c_int), value :: natoms
-      integer(c_int), value :: ntypes
+      integer(c_int), value :: nspecies
       integer(c_int)        :: error
     end subroutine kim_api_allocate
 
@@ -655,19 +655,19 @@ contains
     kim_api_get_index = c_call(kimmdl, trim(nm)//c_null_char, error)
   end function kim_api_get_index
 
-  integer(c_int) function kim_api_get_partcl_type_code(kimmdl, particle, error)
-    use :: kim_api_f03_helper, only : c_call => kim_api_get_partcl_type_code
+  integer(c_int) function kim_api_get_species_code(kimmdl, particle, error)
+    use :: kim_api_f03_helper, only : c_call => kim_api_get_species_code
     implicit none
     type(c_ptr),      intent(in)  :: kimmdl
     character(len=*), intent(in)  :: particle
     integer(c_int),   intent(out) :: error
 
-    kim_api_get_partcl_type_code = c_call(kimmdl, trim(particle)//c_null_char, &
+    kim_api_get_species_code = c_call(kimmdl, trim(particle)//c_null_char, &
       error)
-  end function kim_api_get_partcl_type_code
+  end function kim_api_get_species_code
 
-  subroutine kim_api_set_partcl_type_code(kimmdl, particle, code, error)
-    use :: kim_api_f03_helper, only : c_call => kim_api_set_partcl_type_code
+  subroutine kim_api_set_species_code(kimmdl, particle, code, error)
+    use :: kim_api_f03_helper, only : c_call => kim_api_set_species_code
     implicit none
     type(c_ptr),      intent(in)  :: kimmdl
     character(len=*), intent(in)  :: particle
@@ -675,7 +675,7 @@ contains
     integer(c_int),   intent(out) :: error
 
     call c_call(kimmdl, trim(particle)//c_null_char, code, error)
-  end subroutine kim_api_set_partcl_type_code
+  end subroutine kim_api_set_species_code
 
   integer(c_int) function kim_api_get_model_kim_str(modelname, kimString)
     use :: kim_api_f03_helper, only : c_call => kim_api_get_model_kim_str

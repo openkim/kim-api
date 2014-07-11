@@ -146,10 +146,9 @@ The current version of the KIM API package supports the following features:
   also supports half (symmetric and unsymmetric) and full neighbor lists.
 
 * Particle Species: The KIM API provides the ability to designate the physical
-  species (or, more generally, type) of each particle in a simulation.
-  Currently, only one identifier is provided for each element in the periodic
-  table.  In the future support for Models such as CHARMM and similar
-  force-fields will be added.
+  species of each particle in a simulation.  Currently, only one identifier is
+  provided for each element in the periodic table.  In the future support for
+  Models such as CHARMM and similar force-fields will be added.
 
 * Model Parameters: The OpenKIM philosophy views a `Model' as a well-defined
   computational code that includes fixed specific values for all parameters

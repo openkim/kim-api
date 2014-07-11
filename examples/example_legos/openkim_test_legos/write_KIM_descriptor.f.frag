@@ -1,10 +1,10 @@
 !-------------------------------------------------------------------------------
 !
 !  Write KIM descriptor file for MiniMol for given NBC and set of
-!  support species types
+!  supported species
 !
 !-------------------------------------------------------------------------------
-subroutine Write_KIM_descriptor(NBC_method, max_types, model_types, num_types, &
+subroutine Write_KIM_descriptor(NBC_method, max_species, model_species, num_species, &
                                 kim_descriptor, ier)
 use, intrinsic :: iso_c_binding
 use KIM_API_F03
@@ -12,9 +12,9 @@ implicit none
 
 !-- Transferred variables
 character(len=KIM_KEY_STRING_LENGTH), intent(in)   :: NBC_method
-integer(c_int),                       intent(in)   :: max_types
-character(len=KIM_KEY_STRING_LENGTH), intent(in)   :: model_types(max_types)
-integer(c_int),                       intent(in)   :: num_types
+integer(c_int),                       intent(in)   :: max_species
+character(len=KIM_KEY_STRING_LENGTH), intent(in)   :: model_species(max_species)
+integer(c_int),                       intent(in)   :: num_species
 character(len=10000),                 intent(out)  :: kim_descriptor
 integer(c_int),                       intent(out)  :: ier
 
@@ -22,7 +22,7 @@ integer(c_int),                       intent(out)  :: ier
 integer(c_int) :: i
 character(len=103)  :: divider
 character(len=1)    :: cr
-character(len=1024) :: type_line
+character(len=1024) :: species_line
 character(len=32)   :: nbcline
 
 ! Initialize error flag
@@ -79,12 +79,12 @@ kim_descriptor = &
                                                                                    cr // &
                                                                                    cr // &
    divider                                                                      // cr // &
-   'SUPPORTED_ATOM/PARTICLES_TYPES:'                                            // cr // &
+   'PARTICLE_SPECIES:'                                                          // cr // &
    '# Symbol/name               Type                    code'                   // cr
 
-   do i = 1,num_types
-      write(type_line,'(a,'' '',''spec'',20x,i4)') trim(model_types(i)),0
-      kim_descriptor = trim(kim_descriptor) // trim(type_line) // cr
+   do i = 1,num_species
+      write(species_line,'(a,'' '',''spec'',20x,i4)') trim(model_species(i)),0
+      kim_descriptor = trim(kim_descriptor) // trim(species_line) // cr
    enddo
 
    nbcline = NBC_method(1:28) // 'flag'
@@ -107,9 +107,9 @@ kim_descriptor = &
    '# Name                      Type         Unit       Shape              requirements' // cr // &
    'numberOfParticles           integer      none       []'                     // cr // &
                                                                                    cr // &
-   'numberParticleTypes         integer      none       []'                     // cr // &
+   'numberOfSpecies             integer      none       []'                     // cr // &
                                                                                    cr // &
-   'particleTypes               integer      none       [numberOfParticles]'    // cr // &
+   'particleSpecies             integer      none       [numberOfParticles]'    // cr // &
                                                                                    cr // &
    'coordinates                 double       length     [numberOfParticles,3]'  // cr // &
                                                                                    cr // &

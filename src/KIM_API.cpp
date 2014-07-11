@@ -211,7 +211,7 @@ int *  KIM_IOline::get_shape(){
             delete [] shapetmp;
             return shp;
  }
-int * KIM_IOline::get_shape(int natoms, int ntypes){
+int * KIM_IOline::get_shape(int natoms, int nspecies){
             char* shapetmp = new char[strlen(shape)+1];
             char tmpstring[128];
             strncpy(shapetmp,shape,strlen(shape)+1);
@@ -226,7 +226,7 @@ int * KIM_IOline::get_shape(int natoms, int ntypes){
                 if(shp[i]==0){
                     strcpy(tmpstring,tmp);
                     strip(tmpstring);
-                    if(strcmp(tmpstring,"numberParticleTypes")==0) shp[i]=ntypes;
+                    if(strcmp(tmpstring,"numberSpecies")==0) shp[i]=nspecies;
                     if(strcmp(tmpstring,"numberOfParticles")==0) shp[i]=(int)natoms;
                 }
                 tmp = strtok(NULL,"[,]");
@@ -2021,7 +2021,7 @@ bool KIM_API_model::irrelevantVars2donotcompute(KIM_API_model & test, KIM_API_mo
     return true;
 }
 
-void KIM_API_model::allocate( int natoms, int ntypes, int * error){
+void KIM_API_model::allocate( int natoms, int nspecies, int * error){
     // in process
     if ( this->model.data.p == NULL) {
         std::cout<<"* Error (KIM_API_model::allocate): KIM API object not initialized with KIM_API_file_init()."<<std::endl;
@@ -2030,7 +2030,7 @@ void KIM_API_model::allocate( int natoms, int ntypes, int * error){
     }
     for(int i=0; i<this->model.size;i++){
         intptr_t rank = (intptr_t)this->inlines[i].get_rank();
-        int *shape = this->inlines[i].get_shape(natoms,ntypes);
+        int *shape = this->inlines[i].get_shape(natoms,nspecies);
         int calculate = (*this)[i].flag->calculate;
         bool isitparam = this->is_it_par((*this)[i].name);
         intptr_t sz=0;
@@ -2347,35 +2347,35 @@ int  KIM_API_model::get_neigh_mode(int*kimerr){
     }
 }
 
-int KIM_API_model::get_partcl_type_code(const char* atom, int * error){
+int KIM_API_model::get_species_code(const char* atom, int * error){
     *error =KIM_STATUS_FAIL;
     if (atom == NULL)  {
-        *error = KIM_STATUS_PARTICLE_TYPES_UNDEFINED;
-        return KIM_STATUS_PARTICLE_TYPES_UNDEFINED; //no atom symbol provided
+        *error = KIM_STATUS_PARTICLE_SPECIES_UNDEFINED;
+        return KIM_STATUS_PARTICLE_SPECIES_UNDEFINED; //no atom symbol provided
     }
     Atom_Map key, *res=NULL;
     strcpy(key.symbol,atom);
     res = (Atom_Map *)bsearch((void *)&key,AtomsTypes,nAtomsTypes,sizeof(Atom_Map),&(Atom_Map::comparator));
     if (res == NULL) {
-        *error = KIM_STATUS_PARTICLE_INVALID_TYPE;
-        return  KIM_STATUS_PARTICLE_INVALID_TYPE; //did not find atom symbol among atom types
+        *error = KIM_STATUS_PARTICLE_INVALID_SPECIES;
+        return  KIM_STATUS_PARTICLE_INVALID_SPECIES; //did not find atom symbol among atom species
     }
     *error=KIM_STATUS_OK;
     return res->code;
 }
 
-void KIM_API_model::set_partcl_type_code(const char* atom, int code, int* error){
+void KIM_API_model::set_species_code(const char* atom, int code, int* error){
    *error = KIM_STATUS_FAIL;
     if (atom == NULL)  {
-        *error = KIM_STATUS_PARTICLE_TYPES_UNDEFINED;
+        *error = KIM_STATUS_PARTICLE_SPECIES_UNDEFINED;
         return; //no atom symbol provided
     }
     Atom_Map key, *res=NULL;
     strcpy(key.symbol,atom);
     res = (Atom_Map *)bsearch((void *)&key,AtomsTypes,nAtomsTypes,sizeof(Atom_Map),&(Atom_Map::comparator));
     if (res == NULL) {
-        *error = KIM_STATUS_PARTICLE_INVALID_TYPE;
-        return; //did not find atom symbol among atom types
+        *error = KIM_STATUS_PARTICLE_INVALID_SPECIES;
+        return; //did not find atom symbol among atom species
     }
     if (res->readOnly) {
        *error = KIM_STATUS_FAIL;
@@ -2467,7 +2467,7 @@ int KIM_API_model::get_status_msg(const int status_code,
     { "invalid KIM API object"},
     { "negative index in shape"},
     { "invalid mode value"},
-    { "no atom/particle types have been specified by the Test or Model"},
+    { "no particle species have been specified by the Test or Model"},
     { "provided rank does not match KIM API argument rank"},
     { "invalid atom id requested (request out of range)"},
     { "symbol is not among supported atom symbols"},

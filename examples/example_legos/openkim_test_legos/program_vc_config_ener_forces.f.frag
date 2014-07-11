@@ -31,7 +31,7 @@ program TEST_NAME_STR
   integer(c_int), parameter :: nCellsPerSide  = 2
   integer(c_int), parameter :: DIM            = 3
   real(c_double), parameter :: cutpad         = 0.75_cd
-  integer(c_int), parameter :: max_types      = 30  ! max species allowed
+  integer(c_int), parameter :: max_species      = 30  ! max species allowed
   integer(c_int), parameter :: max_NBCs       = 20  ! maximum number of NBCs
   real(c_double), parameter :: eps_prec       = epsilon(1.0_cd)
   integer(c_int)            :: in
@@ -39,12 +39,12 @@ program TEST_NAME_STR
   real(c_double)            :: max_force_component
   real(c_double)            :: scaled_eps_prec
   integer(c_int)            :: SizeOne = 1
-  integer(c_int)            :: num_types_in_config
+  integer(c_int)            :: num_species_in_config
   integer(c_int)            :: num_NBCs
   logical                   :: found
   integer(c_int)            :: i,j
   real(c_double)            :: force_err(DIM),ave_force_error
-  character(len=KIM_KEY_STRING_LENGTH) :: types_in_config(max_types)
+  character(len=KIM_KEY_STRING_LENGTH) :: species_in_config(max_species)
   character(len=KIM_KEY_STRING_LENGTH) :: model_NBCs(max_NBCs)
 
   !
@@ -60,8 +60,8 @@ program TEST_NAME_STR
   character(len=KIM_KEY_STRING_LENGTH) :: testname     = "TEST_NAME_STR"
   character(len=KIM_KEY_STRING_LENGTH) :: modelname
   character(len=KIM_KEY_STRING_LENGTH) :: configfile
-  ! configuration atom types (element symbols)
-  character(len=KIM_KEY_STRING_LENGTH), pointer :: conf_types(:)
+  ! configuration atom species (element symbols)
+  character(len=KIM_KEY_STRING_LENGTH), pointer :: conf_species(:)
   real(c_double), pointer :: conf_coors(:,:)  ! configuration coordinates
   real(c_double), pointer :: conf_forces(:,:) ! configuration forces
   real(c_double)          :: conf_energy      ! configuration energy
@@ -75,8 +75,8 @@ program TEST_NAME_STR
   character(len=10000)    :: test_descriptor_string
   integer(c_int), pointer :: numberOfParticles;    type(c_ptr) pnAtoms
   integer(c_int), pointer :: numContrib;           type(c_ptr) pnumContrib
-  integer(c_int), pointer :: numberParticleTypes;  type(c_ptr) pnparticleTypes
-  integer(c_int), pointer :: particleTypes(:);     type(c_ptr) pparticleTypes
+  integer(c_int), pointer :: numberOfSpecies;      type(c_ptr) pnOfSpecies
+  integer(c_int), pointer :: particleSpecies(:);   type(c_ptr) pparticleSpecies
   real(c_double), pointer :: cutoff;               type(c_ptr) pcutoff
   real(c_double), pointer :: energy;               type(c_ptr) penergy
   real(c_double), pointer :: coords(:,:);          type(c_ptr) pcoor
@@ -105,11 +105,11 @@ program TEST_NAME_STR
      stop
   endif
   ! dynamically allocate memory
-  allocate(conf_types(N),conf_coors(DIM,N),conf_forces(DIM,N))
+  allocate(conf_species(N),conf_coors(DIM,N),conf_forces(DIM,N))
 !@--- IN FUTURE WILL BE CHANGED TO READ IN PERIODIC BOX INFO
 !@--- read(in,*,err=20) conf_boxsize(:)
   do i=1,N
-     read(in,*,err=30) conf_types(i), conf_coors(:,i)
+     read(in,*,err=30) conf_species(i), conf_coors(:,i)
   enddo
   read(in,*,err=40) conf_energy
   max_force_component = 0.0_cd
@@ -165,17 +165,17 @@ program TEST_NAME_STR
 
   ! Generate list of species appearing in config
   !
-  num_types_in_config = 1
-  types_in_config(1) = conf_types(1)
+  num_species_in_config = 1
+  species_in_config(1) = conf_species(1)
   do i=2,N
      found = .false.
-     do j=1,num_types_in_config
-        found = (trim(conf_types(i))==trim(types_in_config(j)))
+     do j=1,num_species_in_config
+        found = (trim(conf_species(i))==trim(species_in_config(j)))
         if (found) exit
      enddo
      if (.not.found) then
-        num_types_in_config = num_types_in_config + 1
-        types_in_config(num_types_in_config) = conf_types(i)
+        num_species_in_config = num_species_in_config + 1
+        species_in_config(num_species_in_config) = conf_species(i)
      endif
   enddo
 
@@ -201,14 +201,14 @@ program TEST_NAME_STR
   print *
   print '(a,f20.10)', "Energy = ",conf_energy
   print *
-  print '(A6,2X,A4,2X,A)',"Atom","Type","Coordinates"
+  print '(A6,2X,A4,2X,A)',"Atom","Spec","Coordinates"
   do i=1,N
-     print '(I6,2X,A4,2X,3ES25.15)',i,conf_types(i), conf_coors(:,i)
+     print '(I6,2X,A4,2X,3ES25.15)',i,conf_species(i), conf_coors(:,i)
   enddo
   print *
-  print '(A6,2X,A4,2X,A)',"Atom","Type","Force"
+  print '(A6,2X,A4,2X,A)',"Atom","Spec","Force"
   do i=1,N
-     print '(I6,2X,A4,2X,3ES25.15)',i,conf_types(i),conf_forces(:,i)
+     print '(I6,2X,A4,2X,3ES25.15)',i,conf_species(i),conf_forces(:,i)
   enddo
   print *
 
@@ -218,8 +218,8 @@ program TEST_NAME_STR
 
      ! Write out KIM descriptor string for Test for current NBC
      !
-     call Write_KIM_descriptor(model_NBCs(inbc), max_types, types_in_config, &
-                               num_types_in_config, test_descriptor_string, ier)
+     call Write_KIM_descriptor(model_NBCs(inbc), max_species, species_in_config, &
+                               num_species_in_config, test_descriptor_string, ier)
      if (ier.lt.KIM_STATUS_OK) then
         idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                     "Write_KIM_descriptor", ier)
@@ -278,7 +278,7 @@ program TEST_NAME_STR
 
      ! Allocate memory via the KIM system
      !
-     call kim_api_allocate(pkim, N, num_types_in_config, ier)
+     call kim_api_allocate(pkim, N, num_species_in_config, ier)
      if (ier.lt.KIM_STATUS_OK) then
         idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                     "kim_api_allocate", ier)
@@ -328,8 +328,8 @@ program TEST_NAME_STR
      call kim_api_getm_data(pkim, ier, &
           "numberOfParticles",           pnAtoms,           1,                               &
           "numberContributingParticles", pnumContrib,       TRUEFALSE(nbc.eq.0.or.nbc.eq.1.or.nbc.eq.4), &
-          "numberParticleTypes",         pnparticleTypes,   1,                               &
-          "particleTypes",               pparticleTypes,    1,                               &
+          "numberOfSpecies",             pnOfSpecies,       1,                               &
+          "particleSpecies",             pparticleSpecies,  1,                               &
           "coordinates",                 pcoor,             1,                               &
           "cutoff",                      pcutoff,           1,                               &
           "boxSideLengths",              pboxSideLengths,   TRUEFALSE(nbc.eq.4.or.nbc.eq.5), &
@@ -343,8 +343,8 @@ program TEST_NAME_STR
      call c_f_pointer(pnAtoms, numberOfParticles)
      if ((nbc.eq.0).or.(nbc.eq.1).or.(nbc.eq.4)) call c_f_pointer(pnumContrib, &
                                                                   numContrib)
-     call c_f_pointer(pnparticleTypes, numberParticleTypes)
-     call c_f_pointer(pparticleTypes,  particleTypes, [N])
+     call c_f_pointer(pnOfSpecies,      numberOfSpecies)
+     call c_f_pointer(pparticleSpecies, particleSpecies, [N])
      call c_f_pointer(pcoor, coords, [DIM,N])
      call c_f_pointer(pcutoff, cutoff)
      if ((nbc.eq.4).or.(nbc.eq.5)) call c_f_pointer(pboxSideLengths, &
@@ -356,14 +356,14 @@ program TEST_NAME_STR
      !
      numberOfParticles   = N
      if (nbc.eq.0.or.nbc.eq.1.or.nbc.eq.4) numContrib = N
-     numberParticleTypes = num_types_in_config
+     numberOfSpecies = num_species_in_config
      do i=1,N
-        particleTypes(i) = kim_api_get_partcl_type_code(pkim,&
-                                                        trim(conf_types(i)),ier)
+        particleSpecies(i) = kim_api_get_species_code(pkim,&
+                                                      trim(conf_species(i)),ier)
      enddo
      if (ier.lt.KIM_STATUS_OK) then
         idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                                    "kim_api_get_partcl_type_code", ier)
+                                    "kim_api_get_species_code", ier)
         stop
      endif
      do i=1,N
@@ -404,21 +404,21 @@ program TEST_NAME_STR
      print *
      print '(a,f20.10)', "Energy = ",energy
      print *
-     print '(A6,2X,A4,2X,A)',"Atom","Type","Computed Force"
+     print '(A6,2X,A4,2X,A)',"Atom","Spec","Computed Force"
      do i=1,N
-        print '(I6,2X,A4,2X,3ES25.15)',i,conf_types(i),forces(:,i)
+        print '(I6,2X,A4,2X,3ES25.15)',i,conf_species(i),forces(:,i)
      enddo
      print *
      print *,'*** Energy and Forces Agreement ***'
      print *
-     print '(A6,2X,A4,2X,A)',"Atom","Type","Force Error"
+     print '(A6,2X,A4,2X,A)',"Atom","Spec","Force Error"
      ave_force_error = 0.0_cd
      do i=1,N
         do j=1,DIM
            force_err(j) = abs(forces(j,i)-conf_forces(j,i))/ &
                           max(abs(conf_forces(j,i)),scaled_eps_prec)
         enddo
-        print '(I6,2X,A4,2X,3ES25.15)',i,conf_types(i),force_err(:)
+        print '(I6,2X,A4,2X,3ES25.15)',i,conf_species(i),force_err(:)
         ave_force_error = ave_force_error + dot_product(force_err,force_err)
      enddo
      ave_force_error = sqrt(ave_force_error)/dble(DIM*N)
@@ -461,7 +461,7 @@ program TEST_NAME_STR
 
   ! Free configuration storage
   !
-  deallocate(conf_types,conf_coors,conf_forces)
+  deallocate(conf_species,conf_coors,conf_forces)
   stop
 
 end program TEST_NAME_STR

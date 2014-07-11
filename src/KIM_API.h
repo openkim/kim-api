@@ -87,7 +87,7 @@ public:
         bool getFields(char *inString);
         int get_rank();
         int * get_shape();
-        int * get_shape(int natoms, int ntypes);
+        int * get_shape(int natoms, int nspecies);
         bool isitsizedefined();
         bool isitperatom();
         bool isitoptional();
@@ -196,15 +196,15 @@ public:
     int model_reinit();
     int model_destroy();
 
-void allocate( int natoms, int ntypes,int * error);
+void allocate( int natoms, int nspecies,int * error);
 
   int get_num_model_species(int* numberSpecies, int* maxStringLength);
   int get_model_species(const int index, const char** const speciesString);
   int get_num_sim_species(int* numberSpecies, int* maxStringLength);
   int get_sim_species(const int index, const char** const speciesString);
 
-int get_partcl_type_code(const char *atom, int * error);
-void set_partcl_type_code(const char *atom, int code, int* error);
+int get_species_code(const char *atom, int * error);
+void set_species_code(const char *atom, int code, int* error);
 
   int get_num_params(int* numberParameters, int* maxStringLength);
   int get_parameter(const int index, const char** const parameterString);
@@ -365,7 +365,6 @@ private:
     static bool is_it_match(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns, bool ignore_optional, bool match_regular);
     static bool is_it_match_noFlagCount(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns, bool ignore_optional);
 
-   char* get_a_type_of_params(int* nVpar, int* error, int typecode);
     static bool is_it_par(const char * name);
     static bool is_it_fixed_par(const char * name);
     static bool is_it_free_par(const char * name);

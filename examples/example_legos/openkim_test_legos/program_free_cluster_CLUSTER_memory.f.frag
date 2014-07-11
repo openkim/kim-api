@@ -20,7 +20,7 @@ program TEST_NAME_STR
   real(c_double), parameter :: FCCspacing     = FCC_SPACING_STR
   integer(c_int), parameter :: nCellsPerSide  = 2
   integer(c_int), parameter :: DIM            = 3
-  integer(c_int), parameter :: ATypes         = 1
+  integer(c_int), parameter :: ASpecies         = 1
   integer(c_int), parameter :: &
        N = 4*(nCellsPerSide)**3 + 6*(nCellsPerSide)**2 + 3*(nCellsPerSide) + 1
   integer(c_int), parameter :: one    = 1
@@ -39,8 +39,8 @@ program TEST_NAME_STR
   integer(c_int) :: I
   integer(c_int) :: middleDum
   integer(c_int), target :: numberOfParticles
-  integer(c_int), target :: numberParticleTypes
-  integer(c_int), target :: particleTypes(N)
+  integer(c_int), target :: numberOfSpecies
+  integer(c_int), target :: particleSpecies(N)
   real(c_double), target :: cutoff
   real(c_double), target :: energy
   real(c_double), target :: virialglob(6)
@@ -62,8 +62,8 @@ program TEST_NAME_STR
   ! register memory with KIM object
   call kim_api_setm_data(pkim, ier, &
    "numberOfParticles",   DIMN, c_loc(numberOfParticles),   TRUEFALSE(.true.), &
-   "numberParticleTypes", one,  c_loc(numberParticleTypes), TRUEFALSE(.true.), &
-   "particleTypes",       NN,   c_loc(particleTypes),       TRUEFALSE(.true.), &
+   "numberOfSpecies",     one,  c_loc(numberOfSpecies),     TRUEFALSE(.true.), &
+   "particleSpecies",     NN,   c_loc(particleSpecies),     TRUEFALSE(.true.), &
    "coordinates",         DIMN, c_loc(coords),              TRUEFALSE(.true.), &
    "cutoff",              one,  c_loc(cutoff),              TRUEFALSE(.true.), &
    "energy",              one,  c_loc(energy),              TRUEFALSE(.true.), &
@@ -80,11 +80,11 @@ program TEST_NAME_STR
 
   ! Set values
   numberOfParticles   = N
-  numberParticleTypes = ATypes
-  particleTypes(:)    = kim_api_get_partcl_type_code(pkim, "SPECIES_NAME_STR", ier)
+  numberOfSpecies = ASpecies
+  particleSpecies(:)    = kim_api_get_species_code(pkim, "SPECIES_NAME_STR", ier)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                                 "kim_api_get_partcl_type_code", ier)
+                                 "kim_api_get_species_code", ier)
      stop
   endif
 

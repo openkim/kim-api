@@ -62,10 +62,10 @@
 #define KIM_STATUS_API_OBJECT_INVALID               -8
 #define KIM_STATUS_ARG_INVALID_SHAPE                -7
 #define KIM_STATUS_NEIGH_INVALID_MODE               -6
-#define KIM_STATUS_PARTICLE_TYPES_UNDEFINED         -5
+#define KIM_STATUS_PARTICLE_SPECIES_UNDEFINED       -5
 #define KIM_STATUS_ARG_INVALID_RANK                 -4
 #define KIM_STATUS_PARTICLE_INVALID_ID              -3
-#define KIM_STATUS_PARTICLE_INVALID_TYPE            -2
+#define KIM_STATUS_PARTICLE_INVALID_SPECIES         -2
 #define KIM_STATUS_ARG_UNKNOWN                      -1
 #define KIM_STATUS_FAIL                              0
 #define KIM_STATUS_OK                                1

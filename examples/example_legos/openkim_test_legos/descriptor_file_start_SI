@@ -45,7 +45,7 @@ Unit_time        := s
 
 
 #######################################################################################################
-SUPPORTED_ATOM/PARTICLES_TYPES:
+PARTICLE_SPECIES:
 # Symbol/name               Type                    code
 
 SPECIES_LINE_STR

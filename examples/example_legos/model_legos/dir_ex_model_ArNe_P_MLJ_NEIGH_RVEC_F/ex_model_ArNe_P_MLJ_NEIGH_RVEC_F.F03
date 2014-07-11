@@ -85,8 +85,8 @@ contains
     !-- KIM variables
     integer(c_int), pointer :: numberOfParticles; 
     type(c_ptr) :: pnumberOfParticles
-    integer(c_int), pointer :: nparticleTypes;    type(c_ptr) :: pnparticleTypes
-    integer(c_int), pointer :: particleTypes(:);  type(c_ptr) :: pparticleTypes
+    integer(c_int), pointer :: nOfSpecies;        type(c_ptr) :: pnOfSpecies
+    integer(c_int), pointer :: particleSpecies(:);type(c_ptr) :: pparticleSpecies
     real(c_double), pointer :: model_cutoff;      type(c_ptr) :: pmodel_cutoff
     real(c_double), pointer :: model_epsilon(:);  type(c_ptr) :: pmodel_epsilon
     real(c_double), pointer :: model_sigma(:);    type(c_ptr) :: pmodel_sigma
@@ -122,16 +122,16 @@ contains
 
     ! Unpack data from KIM object
     !
-    call kim_api_getm_data(pkim, Compute_Energy_Forces, &
-         "numberOfParticles",   pnumberOfParticles, 1,                        &
-         "numberParticleTypes", pnparticleTypes,    1,                        &
-         "particleTypes",       pparticleTypes,     1,                        &
-         "cutoff",              pmodel_cutoff,      1,                        &
-         "coordinates",         pcoor,              1,                        &
-         "energy",              penergy,         TRUEFALSE(comp_energy.eq.1), &
-         "forces",              pforce,          TRUEFALSE(comp_force.eq.1),  &
-         "particleEnergy",      penepot,         TRUEFALSE(comp_enepot.eq.1), &
-         "virial",              pvirial,         TRUEFALSE(comp_virial.eq.1))
+    call kim_api_getm_data(pkim,  Compute_Energy_Forces, &
+         "numberOfParticles",     pnumberOfParticles,   1,                     &
+         "numberOfSpecies",       pnOfSpecies,          1,                     &
+         "particleSpecies",       pparticleSpecies,     1,                     &
+         "cutoff",                pmodel_cutoff,        1,                     &
+         "coordinates",           pcoor,                1,                     &
+         "energy",                penergy,        TRUEFALSE(comp_energy.eq.1), &
+         "forces",                pforce,         TRUEFALSE(comp_force.eq.1),  &
+         "particleEnergy",        penepot,        TRUEFALSE(comp_enepot.eq.1), &
+         "virial",                pvirial,        TRUEFALSE(comp_virial.eq.1))
     if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
        idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                    "kim_api_getm_data", Compute_Energy_Forces)
@@ -139,10 +139,10 @@ contains
     endif
 
     call c_f_pointer(pnumberOfParticles, numberOfParticles)
-    call c_f_pointer(pnparticleTypes,    nparticleTypes)
-    call c_f_pointer(pparticleTypes,     particleTypes, [numberOfParticles])
+    call c_f_pointer(pnOfSpecies,        nOfSpecies)
+    call c_f_pointer(pparticleSpecies,   particleSpecies, [numberOfParticles])
     call c_f_pointer(pmodel_cutoff,      model_cutoff)
-    call c_f_pointer(pcoor,              coor,          [DIM,numberOfParticles])
+    call c_f_pointer(pcoor,              coor,            [DIM,numberOfParticles])
     if (comp_energy.eq.1) call c_f_pointer(penergy, energy)
     if (comp_force.eq.1)  then
       call c_f_pointer(pforce, force, [DIM,numberOfParticles])
@@ -175,13 +175,13 @@ contains
     call c_f_pointer(pmodel_sigmasq, model_sigmasq, [3])
     call c_f_pointer(pmodel_cutsq,   model_cutsq)
 
-    ! Check to be sure that the atom types are correct
+    ! Check to be sure that the atom species are correct
     Compute_Energy_Forces = KIM_STATUS_FAIL ! assume an error
     do i = 1,numberOfParticles
-       if (.not. ( (particleTypes(i).eq.Ar) .or. (particleTypes(i).eq.Ne) ) ) &
+       if (.not. ( (particleSpecies(i).eq.Ar) .or. (particleSpecies(i).eq.Ne) ) ) &
          then
          idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                                     "Wrong Atom Type", Compute_Energy_Forces)
+                                     "Wrong Atom Specie", Compute_Energy_Forces)
           return
        endif
     enddo
@@ -222,15 +222,15 @@ contains
           Rsqij = dot_product(Rij(:,jj),Rij(:,jj)) ! compute square distance
           if ( Rsqij < model_cutsq ) then          ! particles are interacting?
              r = sqrt(Rsqij)                       ! compute distance
-             if ((particleTypes(i).eq.Ar).and. &
-                 (particleTypes(nei1atom(jj)).eq.Ar)) then
+             if ((particleSpecies(i).eq.Ar).and. &
+                 (particleSpecies(nei1atom(jj)).eq.Ar)) then
                 CurEpsilon = model_epsilon(Ar)
                 CurSigma   = model_sigma(Ar)
                 CurA       = model_A(Ar)
                 CurB       = model_B(Ar)
                 CurC       = model_C(Ar)
-             else if ((particleTypes(i).eq.Ne).and. &
-                      (particleTypes(nei1atom(jj)).eq.Ne)) then
+             else if ((particleSpecies(i).eq.Ne).and. &
+                      (particleSpecies(nei1atom(jj)).eq.Ne)) then
                 CurEpsilon = model_epsilon(Ne)
                 CurSigma   = model_sigma(Ne)
                 CurA       = model_A(Ne)

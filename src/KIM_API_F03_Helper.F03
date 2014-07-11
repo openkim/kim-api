@@ -204,23 +204,23 @@ module kim_api_f03_helper
       integer(c_int)          :: error
     end function kim_api_get_index
 
-    integer(c_int) function kim_api_get_partcl_type_code(kimmdl, particle, &
+    integer(c_int) function kim_api_get_species_code(kimmdl, particle, &
       error) &
-      bind(c, name="KIM_API_get_partcl_type_code")
+      bind(c, name="KIM_API_get_species_code")
       use, intrinsic :: iso_c_binding
       type(c_ptr),      value :: kimmdl
       character(c_char)       :: particle(*)
       integer(c_int)          :: error
-    end function kim_api_get_partcl_type_code
+    end function kim_api_get_species_code
 
-    subroutine kim_api_set_partcl_type_code(kimmdl, particle, code, error) &
-      bind(c, name="KIM_API_set_partcl_type_code")
+    subroutine kim_api_set_species_code(kimmdl, particle, code, error) &
+      bind(c, name="KIM_API_set_species_code")
       use, intrinsic :: iso_c_binding
       type(c_ptr),      value :: kimmdl
       character(c_char)       :: particle(*)
       integer(c_int),   value :: code
       integer(c_int)          :: error
-    end subroutine kim_api_set_partcl_type_code
+    end subroutine kim_api_set_species_code
 
     integer(c_int) function kim_api_get_model_kim_str(modelname, kimString) &
       bind(c, name="KIM_API_get_model_kim_str")

@@ -84,7 +84,7 @@ type BUFFER_TYPE
   integer(c_int) :: process_d2Edr2_ind
   integer(c_int) :: model_index_shift
   integer(c_int) :: numberOfParticles_ind
-  integer(c_int) :: particleTypes_ind
+  integer(c_int) :: particleSpecies_ind
   integer(c_int) :: coordinates_ind
   integer(c_int) :: numberContributingParticles_ind
   integer(c_int) :: boxSideLengths_ind
@@ -250,7 +250,7 @@ real(c_double), pointer :: boxSideLengths(:); type(c_ptr) :: pboxSideLengths
 real(c_double), pointer :: Rij_list(:,:);     type(c_ptr) :: pRij_list
 integer(c_int), pointer :: numContrib;        type(c_ptr) :: pnumContrib
 integer(c_int), pointer :: nei1atom(:);       type(c_ptr) :: pnei1atom
-integer(c_int), pointer :: particleTypes(:);  type(c_ptr) :: pparticleTypes
+integer(c_int), pointer :: particleSpecies(:);type(c_ptr) :: pparticleSpecies
 
 
 numberContrib = 0 ! initialize
@@ -297,7 +297,7 @@ endif
 !
 call kim_api_getm_data_by_index(pkim, Compute_Energy_Forces, &
      buf%numberOfParticles_ind,           pN,              1,                               &
-     buf%particleTypes_ind,               pparticleTypes,  1,                               &
+     buf%particleSpecies_ind,             pparticleSpecies,1,                               &
      buf%coordinates_ind,                 pcoor,           1,                               &
      buf%numberContributingParticles_ind, pnumContrib,     TRUEFALSE(buf%HalfOrFull.eq.1),  &
      buf%boxSideLengths_ind,              pboxSideLengths, TRUEFALSE(buf%NBC.eq.2),         &
@@ -312,7 +312,7 @@ if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
 endif
 
 call c_f_pointer(pN,             N)
-call c_f_pointer(pparticleTypes, particleTypes, [N])
+call c_f_pointer(pparticleSpecies, particleSpecies, [N])
 call c_f_pointer(pcoor,          coor,          [DIM,N])
 if (buf%HalfOrFull.eq.1) then
    if (buf%NBC.ne.3) then ! non-CLUSTER cases
@@ -336,13 +336,13 @@ if (comp_process_d2Edr2.eq.1) then
   allocate( j_pairs(2)       )
 endif
 
-! Check to be sure that the atom types are correct
+! Check to be sure that the atom species are correct
 !
 Compute_Energy_Forces = KIM_STATUS_FAIL ! assume an error
 do i = 1,N
-   if (particleTypes(i).ne.speccode) then
-      idum = kim_api_report_error(__LINE__, THIS_FILE_NAME,           &
-                                  "Unexpected species type detected", &
+   if (particleSpecies(i).ne.speccode) then
+      idum = kim_api_report_error(__LINE__, THIS_FILE_NAME,      &
+                                  "Unexpected species detected", &
                                   Compute_Energy_Forces)
       return
    endif
@@ -847,7 +847,7 @@ buf%model_index_shift = kim_api_get_model_index_shift(pkim)
 call kim_api_getm_index(pkim, ier,                                           &
      "cutoff",                      buf%cutoff_ind,                       1, &
      "numberOfParticles",           buf%numberOfParticles_ind,            1, &
-     "particleTypes",               buf%particleTypes_ind,                1, &
+     "particleSpecies",             buf%particleSpecies_ind,              1, &
      "numberContributingParticles", buf%numberContributingParticles_ind,  1, &
      "coordinates",                 buf%coordinates_ind,                  1, &
      "get_neigh",                   buf%get_neigh_ind,                    1, &

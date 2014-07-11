@@ -1017,7 +1017,7 @@ vc_forces_delta: Makefile                               \
                  program_CDDL_header.f.frag             \
                  mod_neighborlist.f.frag                \
                  program_vc_forces_delta.f.frag         \
-                 get_model_supported_types.f.frag       \
+                 get_model_supported_species.f.frag     \
                  get_model_NBC_methods.f.frag           \
                  write_KIM_descriptor.f.frag            \
                  update_neighborlist.f.frag             \
@@ -1041,7 +1041,7 @@ vc_forces_delta: Makefile                               \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) program_vc_forces_delta.f.frag  | $(SED_CMD)                                                 >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	$(F_CAT) get_model_supported_types.f.frag                                                             >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) get_model_supported_species.f.frag                                                           >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) get_model_NBC_methods.f.frag                                                                 >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
@@ -1065,7 +1065,7 @@ vc_forces_numer_deriv: Makefile                               \
                        program_CDDL_header.f.frag             \
                        mod_neighborlist.f.frag                \
                        program_vc_forces_numer_deriv.f.frag   \
-                       get_model_supported_types.f.frag       \
+                       get_model_supported_species.f.frag     \
                        get_model_NBC_methods.f.frag           \
                        write_KIM_descriptor.f.frag            \
                        update_neighborlist.f.frag             \
@@ -1090,7 +1090,7 @@ vc_forces_numer_deriv: Makefile                               \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) program_vc_forces_numer_deriv.f.frag  | $(SED_CMD)                                           >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	$(F_CAT) get_model_supported_types.f.frag                                                             >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) get_model_supported_species.f.frag                                                           >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) get_model_NBC_methods.f.frag                                                                 >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03

@@ -192,7 +192,7 @@ static int neigh_rvec_h_compute(void* km)
    four_eps_sigma6 = 4.0*(*epsilon)*pow(*sigma,6.0);
    four_eps_sigma12 = 4.0*(*epsilon)*pow(*sigma,12.0);
 
-   /* Assume the atom types are correct! */
+   /* Assume the atom species are correct! */
 
    /* reset neighbor iterator */
    ier = (*get_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
@@ -475,7 +475,7 @@ static int neigh_pure_h_compute(void* km)
    four_eps_sigma6 = 4.0*(*epsilon)*pow(*sigma,6.0);
    four_eps_sigma12 = 4.0*(*epsilon)*pow(*sigma,12.0);
 
-   /* Assume the atom types are correct! */
+   /* Assume the atom species are correct! */
 
    /* reset neighbor iterator */
    ier = (*get_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
@@ -754,7 +754,7 @@ static int neigh_rvec_f_compute(void* km)
    four_eps_sigma6 = 4.0*(*epsilon)*pow(*sigma,6.0);
    four_eps_sigma12 = 4.0*(*epsilon)*pow(*sigma,12.0);
 
-   /* Assume the atom types are correct! */
+   /* Assume the atom species are correct! */
 
    /* reset neighbor iterator */
    ier = (*get_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
@@ -1032,7 +1032,7 @@ static int neigh_pure_f_compute(void* km)
    four_eps_sigma6 = 4.0*(*epsilon)*pow(*sigma,6.0);
    four_eps_sigma12 = 4.0*(*epsilon)*pow(*sigma,12.0);
 
-   /* Assume the atom types are correct! */
+   /* Assume the atom species are correct! */
 
    /* reset neighbor iterator */
    ier = (*get_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
@@ -1312,7 +1312,7 @@ static int mi_opbc_h_compute(void* km)
    four_eps_sigma6 = 4.0*(*epsilon)*pow(*sigma,6.0);
    four_eps_sigma12 = 4.0*(*epsilon)*pow(*sigma,12.0);
 
-   /* Assume the atom types are correct! */
+   /* Assume the atom species are correct! */
 
    /* reset neighbor iterator */
    ier = (*get_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
@@ -1605,7 +1605,7 @@ static int mi_opbc_f_compute(void* km)
    four_eps_sigma6 = 4.0*(*epsilon)*pow(*sigma,6.0);
    four_eps_sigma12 = 4.0*(*epsilon)*pow(*sigma,12.0);
 
-   /* Assume the atom types are correct! */
+   /* Assume the atom species are correct! */
 
    /* reset neighbor iterator */
    ier = (*get_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
@@ -1882,7 +1882,7 @@ static int cluster_compute(void* km)
    four_eps_sigma6 = 4.0*(*epsilon)*pow(*sigma,6.0);
    four_eps_sigma12 = 4.0*(*epsilon)*pow(*sigma,12.0);
 
-   /* Assume the atom types are correct! */
+   /* Assume the atom species are correct! */
 
    if ((comp_force == 1)          && (comp_energy == 1) &&
        (comp_particleEnergy == 0) && (comp_process_dEdr == 0))

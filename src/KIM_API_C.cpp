@@ -76,9 +76,9 @@ int KIM_API_model_info(void * kimmdl, const char * mdlname){
     return KIM_STATUS_FAIL;
  }
 
- void KIM_API_allocate(void *kimmdl, int natoms, int ntypes,int * error){
+ void KIM_API_allocate(void *kimmdl, int natoms, int nspecies,int * error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    mdl->allocate(natoms,ntypes,error);
+    mdl->allocate(natoms,nspecies,error);
  }
 void KIM_API_free(void *kimmdl,int * error){
     KIM_API_model * mdl=*(KIM_API_model **) kimmdl;
@@ -201,13 +201,13 @@ int KIM_API_get_NBC_method(void *kimmdl, const char** const NBC_String)
   return mdl->get_NBC_method(NBC_String);
 }
 
-int KIM_API_get_partcl_type_code(void * kimmdl, const char* atom, int * error){
+int KIM_API_get_species_code(void * kimmdl, const char* atom, int * error){
      KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-     return mdl->get_partcl_type_code(atom,error);
+     return mdl->get_species_code(atom,error);
 }
-void KIM_API_set_partcl_type_code(void * kimmdl, const char* atom, int code, int * error){
+void KIM_API_set_species_code(void * kimmdl, const char* atom, int code, int * error){
      KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-     return mdl->set_partcl_type_code(atom, code, error);
+     return mdl->set_species_code(atom, code, error);
 }
 
 

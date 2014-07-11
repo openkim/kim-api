@@ -96,7 +96,7 @@ struct model_buffer {
    int process_d2Edr2_ind;
    int model_index_shift;
    int numberOfParticles_ind;
-   int particleTypes_ind;
+   int particleSpecies_ind;
    int coordinates_ind;
    int numberContributingParticles_ind;
    int boxSideLengths_ind;
@@ -228,7 +228,7 @@ static int compute(void* km)
    int request;
 
    int* nAtoms;
-   int* particleTypes;
+   int* particleSpecies;
    double* cutoff;
    double* cutsq;
    double* <FILL parameter 1>;
@@ -280,7 +280,7 @@ static int compute(void* km)
    KIM_API_getm_data_by_index(pkim, &ier, 10*3,
                               buffer->cutoff_ind,                      &cutoff,         1,
                               buffer->numberOfParticles_ind,           &nAtoms,         1,
-                              buffer->particleTypes_ind,               &particleTypes,  1,
+                              buffer->particleSpecies_ind,             &particleSpecies,1,
                               buffer->coordinates_ind,                 &coords,         1,
                               buffer->numberContributingParticles_ind, &numContrib,     (HalfOrFull==1),
                               buffer->get_neigh_ind,                   &get_neigh,      (NBC!=0),
@@ -306,14 +306,14 @@ static int compute(void* km)
       }
    }
 
-   /* Check to be sure that the atom types are correct */
+   /* Check to be sure that the species are correct */
    /**/
    ier = KIM_STATUS_FAIL; /* assume an error */
    for (i = 0; i < *nAtoms; ++i)
    {
-      if ( SPECCODE != particleTypes[i])
+      if ( SPECCODE != particleSpecies[i])
       {
-         KIM_API_report_error(__LINE__, __FILE__, "Unexpected species type detected", ier);
+         KIM_API_report_error(__LINE__, __FILE__, "Unexpected species detected", ier);
          return ier;
       }
    }
@@ -770,7 +770,7 @@ int model_driver_init(void *km, char* paramfile_names, int* nmstrlen, int* numpa
    KIM_API_getm_index(pkim, &ier, 12*3,
                       "cutoff",                      &(buffer->cutoff_ind),                      1,
                       "numberOfParticles",           &(buffer->numberOfParticles_ind),           1,
-                      "particleTypes",               &(buffer->particleTypes_ind),               1,
+                      "particleSpecies",             &(buffer->particleSpecies_ind),             1,
                       "numberContributingParticles", &(buffer->numberContributingParticles_ind), 1,
                       "coordinates",                 &(buffer->coordinates_ind),                 1,
                       "get_neigh",                   &(buffer->get_neigh_ind),                   1,

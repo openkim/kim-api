@@ -72,7 +72,7 @@ contains
     real(c_double), pointer :: f(:,:);     type(c_ptr) :: pf  ! force
     real(c_double), pointer :: ea(:);      type(c_ptr) :: pea ! energy per atom
     real(c_double), pointer :: potenergy;  type(c_ptr) :: ppotenergy ! total en.
-    integer(c_int), pointer :: attypes(:); type(c_ptr) :: pattypes ! atom types
+    integer(c_int), pointer :: atspecies(:); type(c_ptr) :: patspecies ! atom species
     integer(c_int), pointer :: numberofatoms; type(c_ptr) :: pnumberofatoms
     integer(c_int), pointer :: numContrib;    type(c_ptr) :: pnumContrib
     integer(c_int) i, e_flag, f_flag, eper_flag, idum
@@ -95,7 +95,7 @@ contains
     call kim_api_getm_data(pkim, calculate_wrap_f77, &
      "numberOfParticles",           pnumberofatoms, 1,                         &
      "numberContributingParticles", pnumContrib,    1,                         &
-     "particleTypes",               pattypes,       1,                         &
+     "particleSpecies",             patspecies,     1,                         &
      "coordinates",                 px,             1,                         &
      "forces",                      pf,             TRUEFALSE(f_flag.eq.1),    &
      "energy",                      ppotenergy,     TRUEFALSE(e_flag.eq.1),    &
@@ -108,17 +108,17 @@ contains
 
     call c_f_pointer(pnumberofatoms, numberofatoms)
     call c_f_pointer(pnumContrib,    numContrib)
-    call c_f_pointer(pattypes,       attypes,      [numberofatoms])
+    call c_f_pointer(patspecies,     atspecies,    [numberofatoms])
     call c_f_pointer(px,             x,            [3,numberofatoms])
     if (f_flag.eq.1)    call c_f_pointer(pf,   f,  [3,numberofatoms])
     if (eper_flag.eq.1) call c_f_pointer(pea, ea,  [numberofatoms])
     if (e_flag.eq.1)    call c_f_pointer(ppotenergy, potenergy)
 
     do i=1,numberofatoms
-       if (attypes(i).ne.1) then ! check for correct atom types Ne=1
+       if (atspecies(i).ne.1) then ! check for correct atom species Ne=1
           calculate_wrap_f77 = KIM_STATUS_FAIL
           idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                                      "Wrong Atom Type", calculate_wrap_f77)
+                                      "Wrong Atom Species", calculate_wrap_f77)
           return
        endif
     enddo

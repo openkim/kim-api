@@ -97,12 +97,12 @@ int main()
    void* pkim_cluster_model_1;
    /* model inputs */
    int numberOfParticles_periodic = 1;
-   int numberOfParticles_cluster  = NCLUSTERATOMS;
-   int numberParticleTypes = 1;
-   int particleTypes_periodic_model_0;
-   int particleTypes_periodic_model_1;
-   int particleTypes_cluster_model_0[NCLUSTERATOMS];
-   int particleTypes_cluster_model_1[NCLUSTERATOMS];
+   int numberOfParticles_cluster = NCLUSTERATOMS;
+   int numberOfSpecies = 1;
+   int particleSpecies_periodic_model_0;
+   int particleSpecies_periodic_model_1;
+   int particleSpecies_cluster_model_0[NCLUSTERATOMS];
+   int particleSpecies_cluster_model_1[NCLUSTERATOMS];
    int numContrib_periodic = 1;
    int numContrib_cluster  = NCLUSTERATOMS;
    double coords_periodic[DIM] = {0.0, 0.0, 0.0};
@@ -151,49 +151,49 @@ int main()
 
    /* Register memory */
    KIM_API_setm_data(pkim_periodic_model_0, &status, 7*4,
-    "numberOfParticles",           1,                              &numberOfParticles_periodic,     1,
-    "numberParticleTypes",         1,                              &numberParticleTypes,            1,
-    "particleTypes",               1,                              &particleTypes_periodic_model_0, 1,
-    "coordinates",                 DIM*numberOfParticles_periodic, coords_periodic,                 1,
-    "neighObject",                 1,                              &nl_periodic_model_0,            1,
-    "cutoff",                      1,                              &cutoff_periodic_model_0,        1,
-    "energy",                      1,                              &energy_periodic_model_0,        1);
+    "numberOfParticles", 1,                              &numberOfParticles_periodic,       1,
+    "numberOfSpecies",   1,                              &numberOfSpecies,                  1,
+    "particleSpecies",   1,                              &particleSpecies_periodic_model_0, 1,
+    "coordinates",       DIM*numberOfParticles_periodic, coords_periodic,                   1,
+    "neighObject",       1,                              &nl_periodic_model_0,              1,
+    "cutoff",            1,                              &cutoff_periodic_model_0,          1,
+    "energy",            1,                              &energy_periodic_model_0,          1);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data",status);
    status = KIM_API_set_method(pkim_periodic_model_0, "get_neigh", 1, (func_ptr) &get_periodic_neigh);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_set_method",status);
 
    KIM_API_setm_data(pkim_periodic_model_1, &status, 7*4,
-    "numberOfParticles",           1,                              &numberOfParticles_periodic,     1,
-    "numberParticleTypes",         1,                              &numberParticleTypes,            1,
-    "particleTypes",               1,                              &particleTypes_periodic_model_1, 1,
-    "coordinates",                 DIM*numberOfParticles_periodic, coords_periodic,                 1,
-    "neighObject",                 1,                              &nl_periodic_model_1,            1,
-    "cutoff",                      1,                              &cutoff_periodic_model_1,        1,
-    "energy",                      1,                              &energy_periodic_model_1,        1);
+    "numberOfParticles", 1,                              &numberOfParticles_periodic,       1,
+    "numberOfSpecies",   1,                              &numberOfSpecies,                  1,
+    "particleSpecies",   1,                              &particleSpecies_periodic_model_1, 1,
+    "coordinates",       DIM*numberOfParticles_periodic, coords_periodic,                   1,
+    "neighObject",       1,                              &nl_periodic_model_1,              1,
+    "cutoff",            1,                              &cutoff_periodic_model_1,          1,
+    "energy",            1,                              &energy_periodic_model_1,          1);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data",status);
    status = KIM_API_set_method(pkim_periodic_model_1, "get_neigh", 1, (func_ptr) &get_periodic_neigh);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_set_method",status);
 
    KIM_API_setm_data(pkim_cluster_model_0, &status, 7*4,
-    "numberOfParticles",           1,                             &numberOfParticles_cluster,     1,
-    "numberParticleTypes",         1,                             &numberParticleTypes,           1,
-    "particleTypes",               1,                             &particleTypes_cluster_model_0, 1,
-    "coordinates",                 DIM*numberOfParticles_cluster, coords_cluster,                 1,
-    "neighObject",                 1,                             &nl_cluster_model_0,            1,
-    "cutoff",                      1,                             &cutoff_cluster_model_0,        1,
-    "energy",                      1,                             &energy_cluster_model_0,        1);
+    "numberOfParticles", 1,                             &numberOfParticles_cluster,       1,
+    "numberOfSpecies",   1,                             &numberOfSpecies,                 1,
+    "particleSpecies",   1,                             &particleSpecies_cluster_model_0, 1,
+    "coordinates",       DIM*numberOfParticles_cluster, coords_cluster,                   1,
+    "neighObject",       1,                             &nl_cluster_model_0,              1,
+    "cutoff",            1,                             &cutoff_cluster_model_0,          1,
+    "energy",            1,                             &energy_cluster_model_0,          1);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data",status);
    status = KIM_API_set_method(pkim_cluster_model_0, "get_neigh", 1, (func_ptr) &get_cluster_neigh);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_set_method",status);
 
    KIM_API_setm_data(pkim_cluster_model_1, &status, 7*4,
-    "numberOfParticles",           1,                             &numberOfParticles_cluster,     1,
-    "numberParticleTypes",         1,                             &numberParticleTypes,           1,
-    "particleTypes",               1,                             &particleTypes_cluster_model_1, 1,
-    "coordinates",                 DIM*numberOfParticles_cluster, coords_cluster,                 1,
-    "neighObject",                 1,                             &nl_cluster_model_1,            1,
-    "cutoff",                      1,                             &cutoff_cluster_model_1,        1,
-    "energy",                      1,                             &energy_cluster_model_1,        1);
+    "numberOfParticles", 1,                             &numberOfParticles_cluster,       1,
+    "numberOfSpecies",   1,                             &numberOfSpecies,                 1,
+    "particleSpecies",   1,                             &particleSpecies_cluster_model_1, 1,
+    "coordinates",       DIM*numberOfParticles_cluster, coords_cluster,                   1,
+    "neighObject",       1,                             &nl_cluster_model_1,              1,
+    "cutoff",            1,                             &cutoff_cluster_model_1,          1,
+    "energy",            1,                             &energy_cluster_model_1,          1);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data",status);
    status = KIM_API_set_method(pkim_cluster_model_1, "get_neigh", 1, (func_ptr) &get_cluster_neigh);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_set_method",status);
@@ -208,21 +208,21 @@ int main()
    status = KIM_API_model_init(pkim_cluster_model_1);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_model_init", status);
 
-   /* setup particleTypes */
-   particleTypes_periodic_model_0 = KIM_API_get_partcl_type_code(pkim_periodic_model_0, "Ar", &status);
-   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_partcl_type_code", status);
+   /* setup particleSpecies */
+   particleSpecies_periodic_model_0 = KIM_API_get_species_code(pkim_periodic_model_0, "Ar", &status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_species_code", status);
 
-   particleTypes_cluster_model_0[0] = KIM_API_get_partcl_type_code(pkim_cluster_model_0, "Ar", &status);
-   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_partcl_type_code", status);
+   particleSpecies_cluster_model_0[0] = KIM_API_get_species_code(pkim_cluster_model_0, "Ar", &status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_species_code", status);
    for (i = 1; i < NCLUSTERATOMS; ++i)
-      particleTypes_cluster_model_0[i] = particleTypes_cluster_model_0[0];
-   particleTypes_periodic_model_1 = KIM_API_get_partcl_type_code(pkim_periodic_model_1, "Ar", &status);
-   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_partcl_type_code", status);
+      particleSpecies_cluster_model_0[i] = particleSpecies_cluster_model_0[0];
+   particleSpecies_periodic_model_1 = KIM_API_get_species_code(pkim_periodic_model_1, "Ar", &status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_species_code", status);
 
-   particleTypes_cluster_model_1[0] = KIM_API_get_partcl_type_code(pkim_cluster_model_1, "Ar", &status);
-   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_partcl_type_code", status);
+   particleSpecies_cluster_model_1[0] = KIM_API_get_species_code(pkim_cluster_model_1, "Ar", &status);
+   if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_species_code", status);
    for (i = 1; i < NCLUSTERATOMS; ++i)
-      particleTypes_cluster_model_1[i] = particleTypes_cluster_model_1[0];
+      particleSpecies_cluster_model_1[i] = particleSpecies_cluster_model_1[0];
 
 
    /* Determine which neighbor list type to use */

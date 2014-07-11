@@ -45,7 +45,7 @@ Unit_temperature := K
 Unit_time        := ps
 
 #######################################################################################################
-SUPPORTED_ATOM/PARTICLES_TYPES:
+PARTICLE_SPECIES:
 # Symbol/name               Type                    code
 
 SPECIES_LINE_STR
