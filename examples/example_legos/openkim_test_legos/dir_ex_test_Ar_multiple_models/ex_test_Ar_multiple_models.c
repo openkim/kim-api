@@ -45,7 +45,7 @@
 #define FCCSPACING    5.260
 #define DIM           3
 #define NCELLSPERSIDE 2
-#define NCLUSTERATOMS (4*(NCELLSPERSIDE*NCELLSPERSIDE*NCELLSPERSIDE) + 6*(NCELLSPERSIDE*NCELLSPERSIDE) + 3*(NCELLSPERSIDE) + 1)
+#define NCLUSTERPARTS (4*(NCELLSPERSIDE*NCELLSPERSIDE*NCELLSPERSIDE) + 6*(NCELLSPERSIDE*NCELLSPERSIDE) + 3*(NCELLSPERSIDE) + 1)
 /* Define neighborlist structure */
 typedef struct
 {
@@ -62,11 +62,11 @@ void fcc_periodic_neighborlist(int half, int CellsPerHalfSide, double cutoff,
 void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
                               double cutoff, NeighList* nl);
 
-int get_periodic_neigh(void* kimmdl, int *mode, int *request, int* atom,
-                       int* numnei, int** nei1atom, double** Rij);
+int get_periodic_neigh(void* kimmdl, int *mode, int *request, int* part,
+                       int* numnei, int** nei1part, double** Rij);
 
-int get_cluster_neigh(void* kimmdl, int *mode, int *request, int* atom,
-                      int* numnei, int** nei1atom, double** Rij);
+int get_cluster_neigh(void* kimmdl, int *mode, int *request, int* part,
+                      int* numnei, int** nei1part, double** Rij);
 
 void create_FCC_cluster(double FCCspacing, int nCellsPerSide, double *coords);
 
@@ -97,16 +97,16 @@ int main()
    void* pkim_cluster_model_1;
    /* model inputs */
    int numberOfParticles_periodic = 1;
-   int numberOfParticles_cluster = NCLUSTERATOMS;
+   int numberOfParticles_cluster = NCLUSTERPARTS;
    int numberOfSpecies = 1;
    int particleSpecies_periodic_model_0;
    int particleSpecies_periodic_model_1;
-   int particleSpecies_cluster_model_0[NCLUSTERATOMS];
-   int particleSpecies_cluster_model_1[NCLUSTERATOMS];
+   int particleSpecies_cluster_model_0[NCLUSTERPARTS];
+   int particleSpecies_cluster_model_1[NCLUSTERPARTS];
    int numContrib_periodic = 1;
-   int numContrib_cluster  = NCLUSTERATOMS;
+   int numContrib_cluster  = NCLUSTERPARTS;
    double coords_periodic[DIM] = {0.0, 0.0, 0.0};
-   double coords_cluster[NCLUSTERATOMS][DIM];
+   double coords_cluster[NCLUSTERPARTS][DIM];
    NeighList nl_periodic_model_0;
    NeighList nl_periodic_model_1;
    NeighList nl_cluster_model_0;
@@ -214,14 +214,14 @@ int main()
 
    particleSpecies_cluster_model_0[0] = KIM_API_get_species_code(pkim_cluster_model_0, "Ar", &status);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_species_code", status);
-   for (i = 1; i < NCLUSTERATOMS; ++i)
+   for (i = 1; i < NCLUSTERPARTS; ++i)
       particleSpecies_cluster_model_0[i] = particleSpecies_cluster_model_0[0];
    particleSpecies_periodic_model_1 = KIM_API_get_species_code(pkim_periodic_model_1, "Ar", &status);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_species_code", status);
 
    particleSpecies_cluster_model_1[0] = KIM_API_get_species_code(pkim_cluster_model_1, "Ar", &status);
    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_species_code", status);
-   for (i = 1; i < NCLUSTERATOMS; ++i)
+   for (i = 1; i < NCLUSTERPARTS; ++i)
       particleSpecies_cluster_model_1[i] = particleSpecies_cluster_model_1[0];
 
 
@@ -260,37 +260,37 @@ int main()
    nl_periodic_model_0.NNeighbors = (int*) malloc(sizeof(int));
    if (NULL==nl_periodic_model_0.NNeighbors) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
-   nl_cluster_model_0.NNeighbors = (int*) malloc(NCLUSTERATOMS*sizeof(int));
+   nl_cluster_model_0.NNeighbors = (int*) malloc(NCLUSTERPARTS*sizeof(int));
    if (NULL==nl_cluster_model_0.NNeighbors) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
    nl_periodic_model_1.NNeighbors = (int*) malloc(sizeof(int));
    if (NULL==nl_periodic_model_1.NNeighbors) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
-   nl_cluster_model_1.NNeighbors = (int*) malloc(NCLUSTERATOMS*sizeof(int));
+   nl_cluster_model_1.NNeighbors = (int*) malloc(NCLUSTERPARTS*sizeof(int));
    if (NULL==nl_cluster_model_1.NNeighbors) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
    nl_periodic_model_0.neighborList = (int*) malloc(NNeighbors[0]*sizeof(int));
    if (NULL==nl_periodic_model_0.neighborList) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
-   nl_cluster_model_0.neighborList = (int*) malloc(NCLUSTERATOMS*NCLUSTERATOMS*sizeof(int));
+   nl_cluster_model_0.neighborList = (int*) malloc(NCLUSTERPARTS*NCLUSTERPARTS*sizeof(int));
    if (NULL==nl_cluster_model_0.neighborList) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
    nl_periodic_model_1.neighborList = (int*) malloc(NNeighbors[1]*sizeof(int));
    if (NULL==nl_periodic_model_1.neighborList) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
-   nl_cluster_model_1.neighborList = (int*) malloc(NCLUSTERATOMS*NCLUSTERATOMS*sizeof(int));
+   nl_cluster_model_1.neighborList = (int*) malloc(NCLUSTERPARTS*NCLUSTERPARTS*sizeof(int));
    if (NULL==nl_cluster_model_1.neighborList) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
    nl_periodic_model_0.RijList = (double*) malloc(DIM*NNeighbors[0]*sizeof(double));
    if (NULL==nl_periodic_model_0.RijList) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
-   nl_cluster_model_0.RijList = (double*) malloc(DIM*NCLUSTERATOMS*NCLUSTERATOMS*sizeof(double));
+   nl_cluster_model_0.RijList = (double*) malloc(DIM*NCLUSTERPARTS*NCLUSTERPARTS*sizeof(double));
    if (NULL==nl_cluster_model_0.RijList) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
    nl_periodic_model_1.RijList = (double*) malloc(DIM*NNeighbors[1]*sizeof(double));
    if (NULL==nl_periodic_model_1.RijList) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
-   nl_cluster_model_1.RijList = (double*) malloc(DIM*NCLUSTERATOMS*NCLUSTERATOMS*sizeof(double));
+   nl_cluster_model_1.RijList = (double*) malloc(DIM*NCLUSTERPARTS*NCLUSTERPARTS*sizeof(double));
    if (NULL==nl_cluster_model_1.RijList) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
    /* ready to compute */
@@ -310,13 +310,13 @@ int main()
                                 CellsPerCutoff[0], (cutoff_periodic_model_0 + cutpad),
                                 CurrentSpacing, &nl_periodic_model_0);
       fcc_cluster_neighborlist(halfflag_cluster_model_0,
-                               NCLUSTERATOMS, &(coords_cluster[0][0]),
+                               NCLUSTERPARTS, &(coords_cluster[0][0]),
                                (cutoff_cluster_model_0 + cutpad), &nl_cluster_model_0);
       fcc_periodic_neighborlist(halfflag_periodic_model_1,
                                 CellsPerCutoff[1], (cutoff_periodic_model_1 + cutpad),
                                 CurrentSpacing, &nl_periodic_model_1);
       fcc_cluster_neighborlist(halfflag_cluster_model_1,
-                               NCLUSTERATOMS, &(coords_cluster[0][0]),
+                               NCLUSTERPARTS, &(coords_cluster[0][0]),
                                (cutoff_cluster_model_1 + cutpad), &nl_cluster_model_1);
 
       /* call compute functions */
@@ -333,11 +333,11 @@ int main()
       if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"compute", status);
 
       /* print the results */
-      printf("Energy for %i atoms = %20.10e, %20.10e, %20.10e, %20.10e, %20.10e\n",
-             NCLUSTERATOMS,
-             energy_periodic_model_0*NCLUSTERATOMS,
+      printf("Energy for %i parts = %20.10e, %20.10e, %20.10e, %20.10e, %20.10e\n",
+             NCLUSTERPARTS,
+             energy_periodic_model_0*NCLUSTERPARTS,
              energy_cluster_model_0,
-             energy_periodic_model_1*NCLUSTERATOMS,
+             energy_periodic_model_1*NCLUSTERPARTS,
              energy_cluster_model_1,
              CurrentSpacing);
    }
@@ -503,12 +503,12 @@ void fcc_periodic_neighborlist(int half, int CellsPerHalfSide, double cutoff,
    return;
 }
 
-int get_periodic_neigh(void* kimmdl, int *mode, int *request, int* atom,
-                       int* numnei, int** nei1atom, double** Rij)
+int get_periodic_neigh(void* kimmdl, int *mode, int *request, int* part,
+                       int* numnei, int** nei1part, double** Rij)
 {
    /* local variables */
    intptr_t* pkim = *((intptr_t**) kimmdl);
-   int atomToReturn;
+   int partToReturn;
    int status;
    int* numberOfParticles;
    NeighList* nl;
@@ -540,7 +540,7 @@ int get_periodic_neigh(void* kimmdl, int *mode, int *request, int* atom,
          }
          else
          {
-            atomToReturn = (*nl).iteratorId;
+            partToReturn = (*nl).iteratorId;
          }
       }
       else /* invalid request value */
@@ -553,12 +553,12 @@ int get_periodic_neigh(void* kimmdl, int *mode, int *request, int* atom,
    {
       if ((*request >= *numberOfParticles) || (*request < 0)) /* invalid id */
       {
-         KIM_API_report_error(__LINE__, __FILE__,"Invalid atom ID in get_periodic_neigh", KIM_STATUS_PARTICLE_INVALID_ID);
+         KIM_API_report_error(__LINE__, __FILE__,"Invalid part ID in get_periodic_neigh", KIM_STATUS_PARTICLE_INVALID_ID);
          return KIM_STATUS_PARTICLE_INVALID_ID;
       }
       else
       {
-         atomToReturn = *request;
+         partToReturn = *request;
       }
    }
    else /* invalid mode */
@@ -567,14 +567,14 @@ int get_periodic_neigh(void* kimmdl, int *mode, int *request, int* atom,
       return KIM_STATUS_NEIGH_INVALID_MODE;
    }
 
-   /* set the returned atom */
-   *atom = atomToReturn;
+   /* set the returned part */
+   *part = partToReturn;
 
-   /* set the returned number of neighbors for the returned atom */
+   /* set the returned number of neighbors for the returned part */
    *numnei = *((*nl).NNeighbors);
 
    /* set the location for the returned neighbor list */
-   *nei1atom = (*nl).neighborList;
+   *nei1part = (*nl).neighborList;
 
    /* set the pointer to Rij to appropriate value */
    *Rij = (*nl).RijList;
@@ -594,7 +594,7 @@ void create_FCC_cluster(double FCCspacing, int nCellsPerSide, double *coords)
    int m;
    int n;
 
-   /* create a cubic FCC cluster of atoms */
+   /* create a cubic FCC cluster of parts */
    FCCshifts[0][0] = 0.0;            FCCshifts[0][1] = 0.0;            FCCshifts[0][2] = 0.0;
    FCCshifts[1][0] = 0.5*FCCspacing; FCCshifts[1][1] = 0.5*FCCspacing; FCCshifts[1][2] = 0.0;
    FCCshifts[2][0] = 0.5*FCCspacing; FCCshifts[2][1] = 0.0;            FCCshifts[2][2] = 0.5*FCCspacing;
@@ -731,29 +731,29 @@ void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
          {
             if ((half && i < j) || (!half && i != j))
             {
-               /* atom j is a neighbor of atom i */
-               (*nl).neighborList[i*NCLUSTERATOMS + a] = j;
+               /* part j is a neighbor of part i */
+               (*nl).neighborList[i*NCLUSTERPARTS + a] = j;
                for (k = 0; k < DIM; ++k)
                {
-                  (*nl).RijList[i*DIM*NCLUSTERATOMS + a*DIM + k] = dx[k];
+                  (*nl).RijList[i*DIM*NCLUSTERPARTS + a*DIM + k] = dx[k];
                }
                a++;
             }
          }
       }
-      /* atom i has `a' neighbors */
+      /* part i has `a' neighbors */
       (*nl).NNeighbors[i] = a;
    }
 
    return;
 }
 
-int get_cluster_neigh(void* kimmdl, int *mode, int *request, int* atom,
-                      int* numnei, int** nei1atom, double** Rij)
+int get_cluster_neigh(void* kimmdl, int *mode, int *request, int* part,
+                      int* numnei, int** nei1part, double** Rij)
 {
    /* local variables */
    intptr_t* pkim = *((intptr_t**) kimmdl);
-   int atomToReturn;
+   int partToReturn;
    int status;
    int* numberOfParticles;
    NeighList* nl;
@@ -785,7 +785,7 @@ int get_cluster_neigh(void* kimmdl, int *mode, int *request, int* atom,
          }
          else
          {
-            atomToReturn = (*nl).iteratorId;
+            partToReturn = (*nl).iteratorId;
          }
       }
       else /* invalid request value */
@@ -798,12 +798,12 @@ int get_cluster_neigh(void* kimmdl, int *mode, int *request, int* atom,
    {
       if ((*request >= *numberOfParticles) || (*request < 0)) /* invalid id */
       {
-         KIM_API_report_error(__LINE__, __FILE__,"Invalid atom ID in get_cluster_neigh", KIM_STATUS_PARTICLE_INVALID_ID);
+         KIM_API_report_error(__LINE__, __FILE__,"Invalid part ID in get_cluster_neigh", KIM_STATUS_PARTICLE_INVALID_ID);
          return KIM_STATUS_PARTICLE_INVALID_ID;
       }
       else
       {
-         atomToReturn = *request;
+         partToReturn = *request;
       }
    }
    else /* invalid mode */
@@ -812,17 +812,17 @@ int get_cluster_neigh(void* kimmdl, int *mode, int *request, int* atom,
       return KIM_STATUS_NEIGH_INVALID_MODE;
    }
 
-   /* set the returned atom */
-   *atom = atomToReturn;
+   /* set the returned part */
+   *part = partToReturn;
 
-   /* set the returned number of neighbors for the returned atom */
-   *numnei = (*nl).NNeighbors[*atom];
+   /* set the returned number of neighbors for the returned part */
+   *numnei = (*nl).NNeighbors[*part];
 
    /* set the location for the returned neighbor list */
-   *nei1atom = &((*nl).neighborList[(*atom)*NCLUSTERATOMS]);
+   *nei1part = &((*nl).neighborList[(*part)*NCLUSTERPARTS]);
 
    /* set the pointer to Rij to appropriate value */
-   *Rij = &((*nl).RijList[(*atom)*DIM*NCLUSTERATOMS]);
+   *Rij = &((*nl).RijList[(*part)*DIM*NCLUSTERPARTS]);
 
    return KIM_STATUS_OK;
 }

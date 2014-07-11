@@ -34,24 +34,24 @@
     !
     do i = 1,numberOfParticles
 
-       ! Get neighbors for atom i
+       ! Get neighbors for particle i
        !
-       atom = i ! request neighbors for atom i
+       part = i ! request neighbors for part i
 
-       Compute_Energy_Forces = kim_api_get_neigh(pkim,1,atom,atom_ret,numnei, &
-                                                 pnei1atom,pRij)
+       Compute_Energy_Forces = kim_api_get_neigh(pkim,1,part,part_ret,numnei, &
+                                                 pnei1part,pRij)
        if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
           idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                       "kim_api_get_neigh",      &
                                       Compute_Energy_Forces)
           return
        endif
-       call c_f_pointer(pnei1atom, nei1atom, [numnei])
+       call c_f_pointer(pnei1part, nei1part, [numnei])
 
-       ! Loop over the neighbors of atom i
+       ! Loop over the neighbors of particle i
        !
        do jj = 1, numnei
-          j = nei1atom(jj)
+          j = nei1part(jj)
           Rij(:) = coor(:,j) - coor(:,i)              ! distance vec between i j
           where ( abs(Rij) > 0.5_cd*boxSideLengths )  ! PBCs
              Rij = Rij - sign(boxSideLengths,Rij)     ! applied where needed.
@@ -91,8 +91,8 @@
                 virial(6) = virial(6) + Rij(1)*Rij(2)*dEidr/r
              endif
              if (comp_force.eq.1) then
-                force(:,i) = force(:,i) + dEidr*Rij/r ! accumulate force atom i
-                force(:,j) = force(:,j) - dEidr*Rij/r ! accumulate force atom j
+                force(:,i) = force(:,i) + dEidr*Rij/r ! accumulate force particle i
+                force(:,j) = force(:,j) - dEidr*Rij/r ! accumulate force particle j
              endif
           endif
        enddo

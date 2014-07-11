@@ -33,7 +33,7 @@
 
 /*                                                                      */
 /* KIM compliant program to compute the energy of and forces and virial */
-/* on an isolated cluster of SPECIES_NAME_STR atoms                                   */
+/* on an isolated cluster of SPECIES_NAME_STR particles                              */
 /*                                                                      */
 /* Release: This file is part of the kim-api.git repository.            */
 /*                                                                      */
@@ -48,11 +48,11 @@
 #define NCELLSPERSIDE 2
 #define DIM           3
 #define ASPECIES        1
-#define NCLUSTERATOMS (4*(NCELLSPERSIDE*NCELLSPERSIDE*NCELLSPERSIDE) + 6*(NCELLSPERSIDE*NCELLSPERSIDE) + 3*(NCELLSPERSIDE) + 1)
+#define NCLUSTERPARTS (4*(NCELLSPERSIDE*NCELLSPERSIDE*NCELLSPERSIDE) + 6*(NCELLSPERSIDE*NCELLSPERSIDE) + 3*(NCELLSPERSIDE) + 1)
 
 /* Define prototypes */
 static void create_FCC_configuration(double FCCspacing, int nCellsPerSide, int periodic,
-                                     double *coords, int *MiddleAtomId);
+                                     double *coords, int *MiddlePartId);
 
 
 /* Main program */
@@ -100,7 +100,7 @@ int main(int argc, char* argv[])
    }
 
    /* Allocate memory via the KIM system */
-   KIM_API_allocate(pkim, NCLUSTERATOMS, ASPECIES, &status);
+   KIM_API_allocate(pkim, NCLUSTERPARTS, ASPECIES, &status);
    if (KIM_STATUS_OK > status)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_allocate", status);
@@ -132,7 +132,7 @@ int main(int argc, char* argv[])
    }
 
    /* Set values */
-   *numberOfParticles = NCLUSTERATOMS;
+   *numberOfParticles = NCLUSTERPARTS;
    *numberOfSpecies = ASPECIES;
    species_code = KIM_API_get_species_code(pkim, "SPECIES_NAME_STR", &status);
    if (KIM_STATUS_OK > status)
@@ -145,7 +145,7 @@ int main(int argc, char* argv[])
       particleSpecies[i] = species_code;
    }
 
-   /* set up the cluster atom positions */
+   /* set up the cluster particles positions */
    create_FCC_configuration(FCCSPACING, NCELLSPERSIDE, 0, coords, &middleDum);
 
    /* Call model compute */
@@ -161,7 +161,7 @@ int main(int argc, char* argv[])
    printf("This is Test          : %s\n",testname);
    printf("Results for KIM Model : %s\n",modelname);
    printf("Forces:\n");
-   printf("Atom     "
+   printf("Part     "
           "X                        "
           "Y                        "
           "Z                        "

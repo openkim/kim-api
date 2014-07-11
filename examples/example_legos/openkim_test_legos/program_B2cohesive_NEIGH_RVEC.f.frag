@@ -3,7 +3,7 @@
 !**  PROGRAM TEST_NAME_STR
 !**
 !**  KIM compliant program to find (using the Golden section search algorithm)
-!**  the minimum energy of one atom in a periodic B2 crystal of SPECIES1_NAME_STR and SPECIES2_NAME_STR as a
+!**  the minimum energy of one particle in a periodic B2 crystal of SPECIES1_NAME_STR and SPECIES2_NAME_STR as a
 !**  function of lattice spacing.
 !**
 !**  Works with the following NBC methods:
@@ -43,16 +43,16 @@ program TEST_NAME_STR
   !
   real(c_double)  :: rcut               ! cutoff radius of the potential
   real(c_double)  :: FinalSpacing       ! crystal lattice parameter
-  real(c_double)  :: FinalEnergy        ! energy per atom of crystal
+  real(c_double)  :: FinalEnergy        ! energy per particle of crystal
                                         ! at current spacing
   integer(c_int)  :: CellsPerRcut       ! number of unit cells along
                                         ! box (of size rcut) side
-  integer(c_int)  :: N                  ! number of atoms
+  integer(c_int)  :: N                  ! number of particles
 
   ! neighbor list
   !
   type(neighObject_type), target :: neighObject
-  integer(c_int)  :: NNeighbors  ! maximum number of neighbors for an atom
+  integer(c_int)  :: NNeighbors  ! maximum number of neighbors for a particle
 
   ! KIM variables
   !
@@ -77,7 +77,7 @@ program TEST_NAME_STR
   read(*,*) modelname
 
 
-  ! We'll use just two atom (one SPECIES1_NAME_STR and one SPECIES2_NAME_STR)
+  ! We'll use just two particles (one SPECIES1_NAME_STR and one SPECIES2_NAME_STR)
   ! for this calculation!
   !
   N = 2
@@ -130,7 +130,7 @@ program TEST_NAME_STR
   print *
   print '("Found minimum energy configuration to within",ES25.15)', TOL
   print *
-  print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', FinalEnergy, &
+  print '("Energy/part = ",ES25.15,"; Spacing = ",ES25.15)', FinalEnergy, &
         FinalSpacing
   print '(80(''-''))'
 
@@ -237,7 +237,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   endif
   Energies(1) = energy
   if (verbose) &
-     print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(1), &
+     print '("Energy/part = ",ES25.15,"; Spacing = ",ES25.15)', Energies(1), &
            Spacings(1)
 
   ! setup and compute for max spacing
@@ -255,7 +255,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   endif
   Energies(3) = energy
   if (verbose) &
-     print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(3), &
+     print '("Energy/part = ",ES25.15,"; Spacing = ",ES25.15)', Energies(3), &
            Spacings(3)
 
   ! setup and compute for first intermediate spacing
@@ -273,7 +273,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   endif
   Energies(2) = energy
   if (verbose) &
-     print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(2), &
+     print '("Energy/part = ",ES25.15,"; Spacing = ",ES25.15)', Energies(2), &
            Spacings(2)
 
 
@@ -295,7 +295,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
      endif
      Energies(4) = energy
      if (verbose) &
-        print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(4),&
+        print '("Energy/part = ",ES25.15,"; Spacing = ",ES25.15)', Energies(4),&
               Spacings(4)
 
      ! determine the new interval

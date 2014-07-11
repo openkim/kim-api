@@ -65,7 +65,7 @@ end subroutine setup_neighborlist_KIM_access
 ! This function implements Locator and Iterator mode
 !
 !-------------------------------------------------------------------------------
-integer(c_int) function get_neigh(pkim,mode,request,atom,numnei,pnei1atom, &
+integer(c_int) function get_neigh(pkim,mode,request,part,numnei,pnei1part, &
                                   pRij) bind(c)
   implicit none
 
@@ -73,28 +73,28 @@ integer(c_int) function get_neigh(pkim,mode,request,atom,numnei,pnei1atom, &
   type(c_ptr),    intent(in)  :: pkim
   integer(c_int), intent(in)  :: mode
   integer(c_int), intent(in)  :: request
-  integer(c_int), intent(out) :: atom
+  integer(c_int), intent(out) :: part
   integer(c_int), intent(out) :: numnei
-  type(c_ptr),    intent(out) :: pnei1atom
+  type(c_ptr),    intent(out) :: pnei1part
   type(c_ptr),    intent(out) :: pRij
 
   !-- Local variables
   integer(c_int), parameter :: DIM = 3
   integer(c_int), save :: iterVal = 0
   integer(c_int)  N
-  integer(c_int)  atomToReturn
-  integer(c_int), pointer :: numberOfParticles;   type(c_ptr) :: pnAtoms
+  integer(c_int)  partToReturn
+  integer(c_int), pointer :: numberOfParticles;   type(c_ptr) :: pnParts
   type(neighObject_type), pointer :: neighObject; type(c_ptr) :: pneighObject
   integer(c_int)  ier, idum
 
   ! unpack number of particles
-  pnAtoms = kim_api_get_data(pkim, "numberOfParticles", ier)
+  pnParts = kim_api_get_data(pkim, "numberOfParticles", ier)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                  "kim_api_get_data", ier)
      stop
   endif
-  call c_f_pointer(pnAtoms, numberOfParticles)
+  call c_f_pointer(pnParts, numberOfParticles)
 
   ! unpack neighbor list object
   pneighObject = kim_api_get_data(pkim, "neighObject", ier)
@@ -119,7 +119,7 @@ integer(c_int) function get_neigh(pkim,mode,request,atom,numnei,pnei1atom, &
            get_neigh = KIM_STATUS_NEIGH_ITER_PAST_END
            return
         else
-           atomToReturn = iterVal
+           partToReturn = iterVal
         endif
      else
         idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
@@ -131,12 +131,12 @@ integer(c_int) function get_neigh(pkim,mode,request,atom,numnei,pnei1atom, &
   elseif (mode.eq.1) then ! locator mode
      if ( (request.gt.N) .or. (request.lt.1)) then
         idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                                    "Invalid atom ID in get_neigh", &
+                                    "Invalid part ID in get_neigh", &
                                     KIM_STATUS_PARTICLE_INVALID_ID)
         get_neigh = KIM_STATUS_PARTICLE_INVALID_ID
         return
      else
-        atomToReturn = request
+        partToReturn = request
      endif
   else ! not iterator or locator mode
      idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
@@ -146,18 +146,18 @@ integer(c_int) function get_neigh(pkim,mode,request,atom,numnei,pnei1atom, &
      return
   endif
 
-  ! set the returned atom
-  atom = atomToReturn
+  ! set the returned part
+  part = partToReturn
 
-  ! set the returned number of neighbors for the returned atom
-  numnei = neighObject%neighborList(1,atom)
+  ! set the returned number of neighbors for the returned part
+  numnei = neighObject%neighborList(1,part)
 
   ! set the location for the returned neighbor list
-  pnei1atom = c_loc(neighObject%neighborList(2,atom))
+  pnei1part = c_loc(neighObject%neighborList(2,part))
 
   ! set pointer to Rij to appropriate value
   if (associated(neighObject%RijList)) then
-    pRij = c_loc(neighObject%RijList(1,1,atom))
+    pRij = c_loc(neighObject%RijList(1,1,part))
   else
     pRij = c_null_ptr
   endif

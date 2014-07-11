@@ -60,11 +60,11 @@ C-------Local variables
 
 C*******************************************************************************
 C
-C  FORTRAN 77 SUBROUTINE to compute energy and forces on atoms from the
+C  FORTRAN 77 SUBROUTINE to compute energy and forces on particles from the
 C  positions.
 C
 C*******************************************************************************
-      SUBROUTINE calculate(cutoff,sigma,epsilon,pkim,x,f,ea,natom,
+      SUBROUTINE calculate(cutoff,sigma,epsilon,pkim,x,f,ea,npart,
      &                     ncontrib,en,e_flag,f_flag,eper_flag,
      &                     kimget_neigh,ier)
       USE, INTRINSIC :: ISO_C_BINDING
@@ -73,8 +73,8 @@ C*******************************************************************************
 C-------Transferred variables
       REAL(C_DOUBLE) cutoff,sigma,epsilon
       type(C_PTR) pkim
-      INTEGER(C_INT) natom,ier,e_flag,f_flag,eper_flag
-      REAL(C_DOUBLE) x(3,natom),f(3,natom),ea(natom)
+      INTEGER(C_INT) npart,ier,e_flag,f_flag,eper_flag
+      REAL(C_DOUBLE) x(3,npart),f(3,npart),ea(npart)
       REAL(C_DOUBLE) en
       INTEGER(C_INT) kimget_neigh
       EXTERNAL kimget_neigh
@@ -86,20 +86,20 @@ C-------Local variables
       REAL(C_DOUBLE) r
       REAL(C_DOUBLE) xi(3),xj(3),dx(3)
       REAL(C_DOUBLE) Rij(3,512)
-      INTEGER(C_INT) nei1atom(1)
-      INTEGER(C_INT) retcode,mode,request,atom
+      INTEGER(C_INT) nei1part(1)
+      INTEGER(C_INT) retcode,mode,request,part
 
-      atom = 0
+      part = 0
       numnei = 0
       IF (f_flag.EQ.1) THEN
-         DO 100 i = 1,natom
+         DO 100 i = 1,npart
             f(1,i) = 0.D0
             f(2,i) = 0.D0
             f(3,i) = 0.D0
  100     CONTINUE
       ENDIF
       IF (eper_flag.EQ.1) THEN
-         DO 110 i = 1,natom
+         DO 110 i = 1,npart
             ea(i) = 0.D0
  110     CONTINUE
       ENDIF
@@ -110,8 +110,8 @@ C-------Local variables
 C     Iterator mode (reset iterator to beginning)
       mode = 0
       request = 0
-      retcode=kimget_neigh(pkim,mode,request,atom,
-     &                     numnei,nei1atom,Rij)
+      retcode=kimget_neigh(pkim,mode,request,part,
+     &                     numnei,nei1part,Rij)
       IF (retcode.NE.KIM_STATUS_NEIGH_ITER_INIT_OK) THEN
          WRITE(*,'("model_Ne_pure_LJ_NEIGH_PURE_*.F error: ",I5)')
      &      retcode
@@ -120,7 +120,7 @@ C     Iterator mode (reset iterator to beginning)
       ENDIF
       retcode = KIM_STATUS_OK
 
-C     Loop over atoms and compute energy and forces
+C     Loop over particles and compute energy and forces
  120  CONTINUE
       IF (retcode.NE.KIM_STATUS_OK) GOTO 140
 
@@ -128,7 +128,7 @@ C     Increment iterator
       mode = 0
       request = 1
       retcode = kimget_neigh(pkim,mode,request,
-     &                       atom,numnei,nei1atom,Rij)
+     &                       part,numnei,nei1part,Rij)
       IF (retcode.EQ.KIM_STATUS_NEIGH_ITER_PAST_END) THEN
          ier = KIM_STATUS_OK
          GOTO 140
@@ -138,12 +138,12 @@ C     Increment iterator
          ier = retcode
          RETURN
       ENDIF
-      i = atom
+      i = part
       xi(1) = x(1,i)
       xi(2) = x(2,i)
       xi(3) = x(3,i)
       DO 130 jj = 1,numnei
-         j = nei1atom(jj)
+         j = nei1part(jj)
          xj(1) = x(1,j)
          xj(2) = x(2,j)
          xj(3) = x(3,j)

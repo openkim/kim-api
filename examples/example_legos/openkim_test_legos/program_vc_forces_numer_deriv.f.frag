@@ -75,7 +75,7 @@ program TEST_NAME_STR
   integer(c_int) nbc
   type(c_ptr) pkim
   integer(c_int) ier, idum, inbc
-  integer(c_int), pointer :: numberOfParticles;   type(c_ptr) :: pnAtoms
+  integer(c_int), pointer :: numberOfParticles;   type(c_ptr) :: pnParts
   integer(c_int), pointer :: numContrib;          type(c_ptr) :: pnumContrib
   integer(c_int), pointer :: numberOfSpecies;     type(c_ptr) :: pnOfSpecies
   integer(c_int), pointer :: particleSpecies(:);  type(c_ptr) :: pparticleSpecies
@@ -129,7 +129,7 @@ program TEST_NAME_STR
                      ! on the cutoff radius of the model.
   call create_FCC_configuration(FCCspacing, nCellsPerSide, .false., &
                                 cluster_coords, middleDum)
-  ! Generate random displacements for all atoms
+  ! Generate random displacements for all particles
   !
   do I=1,N
      do J=1,DIM
@@ -260,7 +260,7 @@ program TEST_NAME_STR
      ! Unpack data from KIM object
      !
      call kim_api_getm_data(pkim, ier, &
-          "numberOfParticles",           pnAtoms,           1,                               &
+          "numberOfParticles",           pnParts,           1,                               &
           "numberContributingParticles", pnumContrib,       TRUEFALSE(nbc.eq.0.or.nbc.eq.1.or.nbc.eq.4), &
           "numberOfSpecies",             pnOfSpecies,       1,                               &
           "particleSpecies",             pparticleSpecies,  1,                               &
@@ -274,7 +274,7 @@ program TEST_NAME_STR
                                     "kim_api_getm_data", ier)
         stop
      endif
-     call c_f_pointer(pnAtoms,          numberOfParticles)
+     call c_f_pointer(pnParts,          numberOfParticles)
      call c_f_pointer(pnOfSpecies,      numberOfSpecies)
      call c_f_pointer(pparticleSpecies, particleSpecies, [N])
      call c_f_pointer(pcoor,            coords,          [DIM,N])
@@ -375,7 +375,7 @@ program TEST_NAME_STR
      print '("NBC Method = ",A28)', trim(NBC_Method)
      print '(41(''=''))'
      print *
-     print '(A6,2X,A4,2X,A3,2X,2A25,3A15,2X,A4)',"Atom","Spec","Dir", &
+     print '(A6,2X,A4,2X,A3,2X,2A25,3A15,2X,A4)',"Part","Spec","Dir", &
            "Force_model", "Force_numer", "Force diff", "pred error", "weight", &
            "stat"
      forcediff_sumsq = 0.0_cd
@@ -415,7 +415,7 @@ program TEST_NAME_STR
      print '("alpha = |Force_model - Force_numer|_w/(DIM*N) = ",ES15.5," (units of force)")', &
            alpha
      print *
-     print '(''Maximum term obtained for Atom = '',I6,'', Dir = '',I1,' // &
+     print '(''Maximum term obtained for Part = '',I6,'', Dir = '',I1,' // &
         ''', forcediff = '',ES15.5, '', forcediff/force_model = '',ES15.5)', &
         Imax,Jmax,abs(forces(Jmax,Imax)-forces_num(Jmax,Imax)),           &
         abs(forces(Jmax,Imax)-forces_num(Jmax,Imax))/abs(forces(Jmax,Imax))

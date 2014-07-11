@@ -555,7 +555,7 @@ end function seval_i
 
 !-------------------------------------------------------------------------------
 !
-! Compute energy and forces on atoms from the positions.
+! Compute energy and forces on particles from the positions.
 !
 !-------------------------------------------------------------------------------
 integer(c_int) function Compute_Energy_Forces(pkim) bind(c)
@@ -581,7 +581,7 @@ real(c_double), pointer :: enepot(:);         type(c_ptr) :: penepot
 real(c_double), pointer :: boxSideLengths(:); type(c_ptr) :: pboxSideLengths
 real(c_double), pointer :: Rij_list(:,:);     type(c_ptr) :: pRij_list
 integer(c_int), pointer :: numContrib;        type(c_ptr) :: pnumContrib
-integer(c_int), pointer :: nei1atom(:);       type(c_ptr) :: pnei1atom
+integer(c_int), pointer :: nei1part(:);       type(c_ptr) :: pnei1part
 integer(c_int), pointer :: particleSpecies(:);type(c_ptr) :: pparticleSpecies
 real(c_double), pointer :: virial(:);         type(c_ptr) :: pvirial
 integer(c_int), pointer :: irlast;            type(c_ptr) :: pirlast
@@ -592,7 +592,7 @@ integer(c_int) HalfOrFull
 integer(c_int) NBC
 integer(c_int) numberContrib
 integer(c_int) idum
-integer(c_int) atom_ret
+integer(c_int) part_ret
 
 numberContrib = 0 ! initialize
 
@@ -664,7 +664,7 @@ else
    IterOrLoca = 2   ! for CLUSTER NBC
 endif
 
-! Check to see if we have been asked to compute the forces, energyperatom,
+! Check to see if we have been asked to compute the forces, energyperpart,
 ! energy and virial
 !
 call kim_api_getm_compute(pkim, Compute_Energy_Forces, &
@@ -719,7 +719,7 @@ if (HalfOrFull.eq.1) then
    endif
 endif
 
-! Check to be sure that the atom species are correct
+! Check to be sure that the species are correct
 !
 Compute_Energy_Forces = KIM_STATUS_FAIL ! assume an error
 do i = 1,N
@@ -749,7 +749,7 @@ if (comp_force.eq.1.or.comp_virial.eq.1) allocate( derU(N) )
 ! Initialize neighbor handling for CLUSTER NBC
 !
 if (NBC.eq.3) then
-   allocate( nei1atom(N) )
+   allocate( nei1part(N) )
 endif
 
 !
@@ -759,8 +759,8 @@ endif
 ! Reset iterator if one is being used
 !
 if (IterOrLoca.eq.1) then
-   Compute_Energy_Forces = kim_api_get_neigh(pkim,0,0,atom_ret,numnei, &
-                                             pnei1atom,pRij_list)
+   Compute_Energy_Forces = kim_api_get_neigh(pkim,0,0,part_ret,numnei, &
+                                             pnei1part,pRij_list)
    if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
       idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                   "kim_api_get_neigh", Compute_Energy_Forces)
@@ -774,25 +774,25 @@ endif
 i = 0
 do
 
-   ! Set up neighbor list for next atom for all NBC methods
+   ! Set up neighbor list for next part for all NBC methods
    !
-   call get_current_atom_neighbors(IterOrLoca,NBC,N,pkim,i,numnei,nei1atom, &
+   call get_current_part_neighbors(IterOrLoca,NBC,N,pkim,i,numnei,nei1part, &
                                    Rij_list,Compute_Energy_Forces)
-   ! atom counter incremented past end of list
+   ! particle counter incremented past end of list
    if (Compute_Energy_Forces.eq.KIM_STATUS_NEIGH_ITER_PAST_END) exit
 
    if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
       idum = kim_api_report_error(__LINE__, THIS_FILE_NAME,     &
-                                  "get_current_atom_neighbors", &
+                                  "get_current_part_neighbors", &
                                   Compute_Energy_Forces)
       return
    endif
 
-   ! Loop over the neighbors of atom i
+   ! Loop over the neighbors of particles i
    !
    do jj = 1, numnei
 
-      j = nei1atom(jj)                    ! get neighbor ID
+      j = nei1part(jj)                    ! get neighbor ID
 
       ! compute relative position vector
       !
@@ -859,8 +859,8 @@ enddo
 ! Reset iterator if one is being used
 !
 if (IterOrLoca.eq.1) then
-   Compute_Energy_Forces = kim_api_get_neigh(pkim,0,0,atom_ret,numnei, &
-                                             pnei1atom,pRij_list)
+   Compute_Energy_Forces = kim_api_get_neigh(pkim,0,0,part_ret,numnei, &
+                                             pnei1part,pRij_list)
    if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
       idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                   "kim_api_get_neigh", Compute_Energy_Forces)
@@ -871,24 +871,24 @@ endif
 i = 0
 do
 
-   ! Set up neighbor list for next atom for all NBC methods
+   ! Set up neighbor list for next particle for all NBC methods
    !
-   call get_current_atom_neighbors(IterOrLoca,NBC,N,pkim,i,numnei,nei1atom, &
+   call get_current_part_neighbors(IterOrLoca,NBC,N,pkim,i,numnei,nei1part, &
                                    Rij_list,Compute_Energy_Forces)
-   ! atom counter incremented past end of list
+   ! particle counter incremented past end of list
    if (Compute_Energy_Forces.eq.KIM_STATUS_NEIGH_ITER_PAST_END) exit
    if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
       idum = kim_api_report_error(__LINE__, THIS_FILE_NAME,     &
-                                  "get_current_atom_neighbors", &
+                                  "get_current_part_neighbors", &
                                   Compute_Energy_Forces)
       return
    endif
 
-   ! Loop over the neighbors of atom i
+   ! Loop over the neighbors of particle i
    !
    do jj = 1, numnei
 
-      j = nei1atom(jj)                   ! get neighbor ID
+      j = nei1part(jj)                   ! get neighbor ID
 
       ! compute relative position vector
       !
@@ -967,8 +967,8 @@ do
          ! contribution to forces
          !
          if (comp_force.eq.1) then                        ! Ei contribution
-            force(:,i) = force(:,i) + dphieff*Rij/r ! accumulate force on atom i
-            force(:,j) = force(:,j) - dphieff*Rij/r ! accumulate force on atom j
+            force(:,i) = force(:,i) + dphieff*Rij/r ! accumulate force on particle i
+            force(:,j) = force(:,j) - dphieff*Rij/r ! accumulate force on particle j
          endif
 
       endif
@@ -979,7 +979,7 @@ enddo  ! infinite do loop (terminated by exit statements above)
 
 ! Free temporary storage
 !
-if (NBC.eq.3) deallocate( nei1atom )
+if (NBC.eq.3) deallocate( nei1part )
 deallocate( rho )
 if (comp_force.eq.1.or.comp_virial.eq.1) deallocate( derU )
 
@@ -992,11 +992,11 @@ end function Compute_Energy_Forces
 
 !-------------------------------------------------------------------------------
 !
-! Get list of neighbors for current atom using all NBC methods
+! Get list of neighbors for current particle using all NBC methods
 !
 !-------------------------------------------------------------------------------
-subroutine get_current_atom_neighbors(IterOrLoca,NBC,N,pkim,      &
-                                      atom,numnei,nei1atom,Rij_list,ier)
+subroutine get_current_part_neighbors(IterOrLoca,NBC,N,pkim,      &
+                                      part,numnei,nei1part,Rij_list,ier)
 implicit none
 
 !-- Transferred variables
@@ -1004,20 +1004,20 @@ integer(c_int),          intent(in)    :: IterOrLoca
 integer(c_int),          intent(in)    :: NBC
 integer(c_int),          intent(in)    :: N
 type(c_ptr),             intent(in)    :: pkim
-integer(c_int),          intent(inout) :: atom
+integer(c_int),          intent(inout) :: part
 integer(c_int),          intent(out)   :: numnei
 integer(c_int),          intent(out)   :: ier
-integer(c_int), pointer, intent(inout) :: nei1atom(:);  type(c_ptr) :: pnei1atom
+integer(c_int), pointer, intent(inout) :: nei1part(:);  type(c_ptr) :: pnei1part
 real(c_double), pointer, intent(inout) :: Rij_list(:,:);type(c_ptr) :: pRij_list
 
 !-- Local variables
-integer(c_int) atom_ret, jj
+integer(c_int) part_ret, jj
 integer(c_int) idum
 
-! Set up neighbor list for next atom for all NBC methods
+! Set up neighbor list for next particle for all NBC methods
 !
 if (IterOrLoca.eq.1) then    ! ITERATOR mode
-   ier = kim_api_get_neigh(pkim,0,1,atom_ret,numnei,pnei1atom,pRij_list)
+   ier = kim_api_get_neigh(pkim,0,1,part_ret,numnei,pnei1part,pRij_list)
    if (ier.eq.KIM_STATUS_NEIGH_ITER_PAST_END) then
                           ! past end of the list, terminate loop in
       return              ! calling routine
@@ -1027,23 +1027,23 @@ if (IterOrLoca.eq.1) then    ! ITERATOR mode
                                   "kim_api_get_neigh", ier)
       return
    endif
-   atom = atom_ret
-   call c_f_pointer(pnei1atom, nei1atom, [numnei])
+   part = part_ret
+   call c_f_pointer(pnei1part, nei1part, [numnei])
    if (NBC.eq.0) call c_f_pointer(pRij_list, Rij_list, [DIM,numnei])
 else                         ! LOCATOR mode
 
-   atom = atom + 1
-   if (atom.gt.N) then                     ! incremented past end of list,
+   part = part + 1
+   if (part.gt.N) then                     ! incremented past end of list,
       ier = KIM_STATUS_NEIGH_ITER_PAST_END ! terminate loop in calling routine
       return
    endif
 
    if (NBC.eq.3) then ! CLUSTER NBC method
-      numnei = N - atom   ! number of neighbors in list atom+1, ..., N
-      nei1atom(1:numnei) = (/ (atom+jj, jj = 1,numnei) /)
+      numnei = N - part   ! number of neighbors in list part+1, ..., N
+      nei1part(1:numnei) = (/ (part+jj, jj = 1,numnei) /)
       ier = KIM_STATUS_OK
    else
-      ier = kim_api_get_neigh(pkim,1,atom,atom_ret,numnei,pnei1atom,pRij_list)
+      ier = kim_api_get_neigh(pkim,1,part,part_ret,numnei,pnei1part,pRij_list)
       if (ier.ne.KIM_STATUS_OK) then ! some sort of problem, exit
          idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                        "kim_api_get_neigh", ier)
@@ -1051,13 +1051,13 @@ else                         ! LOCATOR mode
          return
       endif
 
-      call c_f_pointer(pnei1atom, nei1atom, [numnei])
+      call c_f_pointer(pnei1part, nei1part, [numnei])
       if (NBC.eq.0) call c_f_pointer(pRij_list, Rij_list, [DIM,numnei])
    endif
 endif
 
 return
-end subroutine get_current_atom_neighbors
+end subroutine get_current_part_neighbors
 
 !-------------------------------------------------------------------------------
 !

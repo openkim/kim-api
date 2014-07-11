@@ -54,9 +54,9 @@ Items planned for future releases.
   of the object oriented nature of the language.
 
 * Implement a new NBC method, similar to NEIGH_RVEC_F, that includes a
-  ForceTransformation() function that can be applied to each atom.  This will
-  provide additional support for exotic boundary conditions such as "Objective
-  Boundary Conditions", twist boundary conditions, etc.
+  ForceTransformation() function that can be applied to each particle.  This
+  will provide additional support for exotic boundary conditions such as
+  "Objective Boundary Conditions", twist boundary conditions, etc.
 
 * Implement support for force-fields (CHARMM/GROMACS) type KIM Models.
 

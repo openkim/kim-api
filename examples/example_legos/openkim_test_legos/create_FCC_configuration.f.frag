@@ -2,21 +2,21 @@
 !
 ! create_FCC_configuration subroutine
 !
-!  creates a cubic configuration of FCC atoms with lattice spacing `FCCspacing'
-!  and `nCellsPerSide' cells along each direction.
+!  creates a cubic configuration of FCC particles with lattice spacing
+!  `FCCspacing' and `nCellsPerSide' cells along each direction.
 !
-!  With periodic==.true. this will result in a total number of atoms equal to
-!  4*(nCellsPerSide)**3 + 6*(nCellsPerSide)**2 + 3*(nCellsPerSide) + 1
+!  With periodic==.true. this will result in a total number of particles equal
+!  to 4*(nCellsPerSide)**3 + 6*(nCellsPerSide)**2 + 3*(nCellsPerSide) + 1
 !
-!  With periodic==.false. this will result in a total number of atoms equal to
-!  4*(nCellsPerSide)**3
+!  With periodic==.false. this will result in a total number of particles equal
+!  to 4*(nCellsPerSide)**3
 !
-!  Returns the Id of the atom situated in the middle of the configuration
-!  (this atom will have the most neighbors.)
+!  Returns the Id of the particle situated in the middle of the configuration
+!  (this particle will have the most neighbors.)
 !
 !-------------------------------------------------------------------------------
 subroutine create_FCC_configuration(FCCspacing, nCellsPerSide, periodic, &
-                                    coords, MiddleAtomId)
+                                    coords, MiddlePartId)
   use, intrinsic :: iso_c_binding
   use KIM_API_F03
   implicit none
@@ -27,7 +27,7 @@ subroutine create_FCC_configuration(FCCspacing, nCellsPerSide, periodic, &
   integer(c_int), intent(in)  :: nCellsPerSide
   logical,        intent(in)  :: periodic
   real(c_double), intent(out) :: coords(3,*)
-  integer(c_int), intent(out) :: MiddleAtomId
+  integer(c_int), intent(out) :: MiddlePartId
   !
   ! cluster setup variables
   !
@@ -50,8 +50,8 @@ subroutine create_FCC_configuration(FCCspacing, nCellsPerSide, periodic, &
   FCCshifts(2,4) = 0.5_cd*FCCspacing
  FCCshifts(3,4) = 0.5_cd*FCCspacing
 
-  MiddleAtomID = 1 ! Always put middle atom as #1
-  a = 1            ! leave space for middle atom as atom #1
+  MiddlePartID = 1 ! Always put middle particle as #1
+  a = 1            ! leave space for middle particle as particle #1
   do i=1,nCellsPerSide
      latVec(1) = (i-1)*FCCspacing
      do j=1,nCellsPerSide
@@ -63,7 +63,7 @@ subroutine create_FCC_configuration(FCCspacing, nCellsPerSide, periodic, &
               coords(:,a) = latVec + FCCshifts(:,m)
               if ((i.eq.nCellsPerside/2+1).and.(j.eq.nCellsPerSide/2+1) .and. &
                    (k.eq.nCellsPerSide/2+1) .and. (m.eq.1)) then
-                 coords(:,1) = latVec + FCCshifts(:,m) ! put middle atom as #1
+                 coords(:,1) = latVec + FCCshifts(:,m) ! put middle particle as #1
                  a = a - 1
               endif
            enddo

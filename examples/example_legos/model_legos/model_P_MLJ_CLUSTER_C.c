@@ -156,7 +156,7 @@ static int compute(void* km)
    int comp_particleEnergy;
    int comp_virial;
 
-   int* nAtoms;
+   int* nParts;
    int* particleSpecies;
    double* cutoff;
    double* epsilon;
@@ -185,7 +185,7 @@ static int compute(void* km)
 
    /* unpack data from KIM object */
    KIM_API_getm_data(pkim, &ier, 7*3,
-                     "numberOfParticles", &nAtoms,         1,
+                     "numberOfParticles", &nParts,         1,
                      "particleSpecies",   &particleSpecies,1,
                      "energy",            &energy,         comp_energy,
                      "coordinates",       &coords,         1,
@@ -213,10 +213,10 @@ static int compute(void* km)
       return ier;
    }
 
-   /* Check to be sure that the atom species are correct */
+   /* Check to be sure that the particle species are correct */
    /**/
    ier = KIM_STATUS_FAIL; /* assume an error */
-   for (i = 0; i < *nAtoms; ++i)
+   for (i = 0; i < *nParts; ++i)
    {
       if ( SPECCODE != particleSpecies[i])
       {
@@ -229,7 +229,7 @@ static int compute(void* km)
    /* initialize potential energies, forces, and virial term */
    if (comp_particleEnergy)
    {
-      for (i = 0; i < *nAtoms; ++i)
+      for (i = 0; i < *nParts; ++i)
       {
          particleEnergy[i] = 0.0;
       }
@@ -241,7 +241,7 @@ static int compute(void* km)
 
    if (comp_force)
    {
-      for (i = 0; i < *nAtoms; ++i)
+      for (i = 0; i < *nParts; ++i)
       {
          for (k = 0; k < DIM; ++k)
          {
@@ -260,12 +260,12 @@ static int compute(void* km)
 
    /* Compute energy and forces */
 
-   /* We'll use a half list approach                                  */
-   /* Don't need to consider the last atom since all its interactions */
-   /* are accounted for eariler in the loop                           */
-   for (i = 0; i < *nAtoms-1; ++i)
+   /* We'll use a half list approach                                      */
+   /* Don't need to consider the last particle since all its interactions */
+   /* are accounted for eariler in the loop                               */
+   for (i = 0; i < *nParts-1; ++i)
    {
-      for (j = i+1; j < *nAtoms; ++j)
+      for (j = i+1; j < *nParts; ++j)
       {
          /* compute relative position vector and squared distance */
          Rsqij = 0.0;
@@ -320,8 +320,8 @@ static int compute(void* km)
             {
                for (k = 0; k < DIM; ++k)
                {
-                  force[i*DIM + k] += dphi*Rij[k]/R; /* accumulate force on atom i */
-                  force[j*DIM + k] -= dphi*Rij[k]/R; /* accumulate force on atom j */
+                  force[i*DIM + k] += dphi*Rij[k]/R; /* accumulate force on particle i */
+                  force[j*DIM + k] -= dphi*Rij[k]/R; /* accumulate force on particle j */
                }
             }
          }

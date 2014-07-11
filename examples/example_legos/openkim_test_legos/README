@@ -87,12 +87,12 @@ compute_numer_deriv.f.frag
      of a Model's energy.
 
 create_FCC_configuration.c.frag
-     This C file contains the routine for creating a cluster of atoms in a
+     This C file contains the routine for creating a cluster of particles in a
      perfect FCC crystal configuration.
 
 create_FCC_configuration.f.frag
-     This Fortran file contains the routine for creating a cluster of atoms in
-     a perfect FCC crystal configuration.
+     This Fortran file contains the routine for creating a cluster of particles
+     in a perfect FCC crystal configuration.
 
 descriptor_file_input
      This file contains the input section of the KIM descriptor file.

@@ -1,10 +1,10 @@
 !-------------------------------------------------------------------------------
 !
-! NEIGH_PURE_periodic_neighborlist  (only give middle atom neighbors)
+! NEIGH_PURE_periodic_neighborlist  (only give middle particle neighbors)
 !
 !-------------------------------------------------------------------------------
 subroutine NEIGH_PURE_periodic_neighborlist(half, numberOfParticles, coords, &
-                                            cutoff, MiddleAtomId, neighObject)
+                                            cutoff, MiddlePartId, neighObject)
   use, intrinsic :: iso_c_binding
   use KIM_API_F03
   use mod_neighborlist
@@ -16,7 +16,7 @@ subroutine NEIGH_PURE_periodic_neighborlist(half, numberOfParticles, coords, &
   real(c_double), dimension(3,numberOfParticles), &
                           intent(in)    :: coords
   real(c_double),         intent(in)    :: cutoff
-  integer(c_int),         intent(in)    :: MiddleAtomId
+  integer(c_int),         intent(in)    :: MiddlePartId
   type(neighObject_type), intent(inout) :: neighObject
 
   !-- Local variables
@@ -33,22 +33,22 @@ subroutine NEIGH_PURE_periodic_neighborlist(half, numberOfParticles, coords, &
         dx(:) = coords(:, j) - coords(:, i)
         r2 = dot_product(dx, dx)
         if (r2.le.cutoff2) then
-           ! atom j is a neighbor of atom i
+           ! part j is a neighbor of part i
            if (half) then
-               if ( ((i.eq.MiddleAtomId) .or. (j.eq.MiddleAtomId)) .and. &
+               if ( ((i.eq.MiddlePartId) .or. (j.eq.MiddlePartId)) .and. &
                     (i .lt. j) ) then
                   a = a+1
                   neighObject%neighborList(a,i) = j
                endif
            else
-               if (i.eq.MiddleAtomId .and. i.ne.j) then
+               if (i.eq.MiddlePartId .and. i.ne.j) then
                   a = a+1
                   neighObject%neighborList(a,i) = j
                endif
            endif
         endif
      enddo
-     ! atom i has a-1 neighbors
+     ! part i has a-1 neighbors
      neighObject%neighborList(1,i) = a-1
   enddo
 

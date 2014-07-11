@@ -3,8 +3,8 @@
 !**  PROGRAM TEST_NAME_STR
 !**
 !**  KIM compliant program to find (using the Golden section search algorithm)
-!**  the minimum energy of one atom in a periodic FCC crystal (spec="SPECIES_NAME_STR") as a
-!**  function of lattice spacing.
+!**  the minimum energy of one particle in a periodic FCC crystal (spec="SPECIES_NAME_STR")
+!**  as a function of lattice spacing.
 !**
 !**  Works with the following NBC methods:
 !**        MI_OPBC_H
@@ -43,8 +43,9 @@ program TEST_NAME_STR
   real(c_double)                      :: rcut  ! cutoff radius of the potential
   type(neighObject_type), target      :: neighObject   ! neighbor list object
   real(c_double)                      :: FinalSpacing  ! lattice parameter
-  real(c_double)                      :: FinalEnergy   ! energy/atom of crystal
-                                                       ! at current spacing
+  real(c_double)                      :: FinalEnergy   ! energy/particle of
+                                                       ! crystal at current
+                                                       ! spacing
   integer(c_int)                      :: CellsPerSide  ! number of unit cells
                                                        ! along box side
 
@@ -52,7 +53,7 @@ program TEST_NAME_STR
   !
   character(len=KIM_KEY_STRING_LENGTH) :: modelname  ! KIM-compliant model name
   type(c_ptr)             :: pkim          ! pointer to KIM API object
-  integer(c_int)          :: N             ! number of atoms
+  integer(c_int)          :: N             ! number of particles
 
   ! other variables
   !
@@ -67,7 +68,7 @@ program TEST_NAME_STR
   read(*,*) modelname
 
 
-  ! Get model cutoff radius and compute number of atoms needed
+  ! Get model cutoff radius and compute number of particles needed
   ! (We need 2*cutoff, use 2.125*cutoff for saftey)
   !
   rcut = get_model_cutoff_firsttime(testkimfile, modelname)
@@ -103,7 +104,7 @@ program TEST_NAME_STR
   print *
   print '("Found minimum energy configuration to within",ES25.15)', TOL
   print *
-  print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', FinalEnergy, &
+  print '("Energy/part = ",ES25.15,"; Spacing = ",ES25.15)', FinalEnergy, &
         FinalSpacing
   print '(80(''-''))'
 
@@ -153,7 +154,7 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   integer(c_int)            :: ier, idum
   real(c_double) Spacings(4)
   real(c_double) Energies(4)
-  integer(c_int) MiddleAtomId
+  integer(c_int) MiddlePartId
   real(c_double), pointer :: energy;            type(c_ptr) :: penergy
   real(c_double), pointer :: coords(:,:);       type(c_ptr) :: pcoor
   real(c_double), pointer :: cutoff;            type(c_ptr) :: pcutoff
@@ -202,11 +203,11 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   !
   Spacings(1) = MinSpacing
   call create_FCC_configuration(Spacings(1), CellsPerSide, .true., coords, &
-                                MiddleAtomId)
+                                MiddlePartId)
   boxSideLengths(:) = Spacings(1)*CellsPerSide
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
   call MI_OPBC_periodic_neighborlist(halfflag, N, coords, (cutoff+cutpad), &
-                                     boxSideLengths, MiddleAtomId, neighObject)
+                                     boxSideLengths, MiddlePartId, neighObject)
   ier = kim_api_model_compute(pkim)
   if (ier.lt.KIM_STATUS_OK) then
      idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
@@ -215,17 +216,17 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   endif
   Energies(1) = energy
   if (verbose) &
-     print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(1), &
+     print '("Energy/part = ",ES25.15,"; Spacing = ",ES25.15)', Energies(1), &
            Spacings(1)
 
   ! setup and compute for max spacing
   Spacings(3) = MaxSpacing
   call create_FCC_configuration(Spacings(3), CellsPerSide, .true., coords, &
-                                MiddleAtomId)
+                                MiddlePartId)
   boxSideLengths(:) = Spacings(3)*CellsPerSide
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
   call MI_OPBC_periodic_neighborlist(halfflag, N, coords, (cutoff+cutpad), &
-                                     boxSideLengths, MiddleAtomId, neighObject)
+                                     boxSideLengths, MiddlePartId, neighObject)
   ! Call model compute
   ier = kim_api_model_compute(pkim)
   if (ier.lt.KIM_STATUS_OK) then
@@ -235,17 +236,17 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   endif
   Energies(3) = energy
   if (verbose) &
-     print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(3), &
+     print '("Energy/part = ",ES25.15,"; Spacing = ",ES25.15)', Energies(3), &
            Spacings(3)
 
   ! setup and compute for first intermediate spacing
   Spacings(2) = MinSpacing + (2.0_cd - Golden)*(MaxSpacing - MinSpacing)
   call create_FCC_configuration(Spacings(2), CellsPerSide, .true., coords, &
-                                MiddleAtomId)
+                                MiddlePartId)
   boxSideLengths(:) = Spacings(2)*CellsPerSide
   ! compute new neighbor lists (could be done more intelligently, I'm sure)
   call MI_OPBC_periodic_neighborlist(halfflag, N, coords, (cutoff+cutpad), &
-                                     boxSideLengths, MiddleAtomId, neighObject)
+                                     boxSideLengths, MiddlePartId, neighObject)
   ! Call model compute
   ier = kim_api_model_compute(pkim)
   if (ier.lt.KIM_STATUS_OK) then
@@ -255,7 +256,7 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   endif
   Energies(2) = energy
   if (verbose) &
-     print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(2), &
+     print '("Energy/part = ",ES25.15,"; Spacing = ",ES25.15)', Energies(2), &
            Spacings(2)
 
 
@@ -264,14 +265,14 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
   do while (abs(Spacings(3) - Spacings(1)) .gt. TOL)
      ! set new spacing
      Spacings(4) = (Spacings(1) + Spacings(3)) - Spacings(2)
-     ! compute new atom coordinates based on new spacing
+     ! compute new particle coordinates based on new spacing
      call create_FCC_configuration(Spacings(4), CellsPerSide, .true., coords, &
-                                   MiddleAtomId)
+                                   MiddlePartId)
      ! set new boxSideLengths
      boxSideLengths(:)  = Spacings(4)*CellsPerSide
      ! compute new neighbor lists (could be done more intelligently, I'm sure)
      call MI_OPBC_periodic_neighborlist(halfflag, N, coords, (cutoff+cutpad), &
-                                        boxSideLengths, MiddleAtomId, &
+                                        boxSideLengths, MiddlePartId, &
                                         neighObject)
      ! Call model compute
      ier = kim_api_model_compute(pkim)
@@ -282,7 +283,7 @@ subroutine MI_OPBC_compute_equilibrium_spacing(pkim, &
      endif
      Energies(4) = energy
      if (verbose) &
-        print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', Energies(4),&
+        print '("Energy/part = ",ES25.15,"; Spacing = ",ES25.15)', Energies(4),&
               Spacings(4)
 
      ! determine the new interval

@@ -1,10 +1,10 @@
     !  Compute energy and forces
     !
     ! We'll use a half list approach
-    ! Don't need to consider the last atom since all its interactions
+    ! Don't need to consider the last particle since all its interactions
     ! are accounted for earlier in the loop
     do i = 1, numberOfParticles-1
-       ! Loop over atoms > i
+       ! Loop over parts > i
        do j = i+1, numberOfParticles
           Rij(:) = coor(:,j) - coor(:,i)    ! distance vector between i j
           Rsqij = dot_product(Rij,Rij)      ! compute square distance
@@ -29,8 +29,8 @@
                 virial(6) = virial(6) + Rij(1)*Rij(2)*dEidr/r
              endif
              if (comp_force.eq.1) then
-                force(:,i) = force(:,i) + dEidr*Rij/r  ! accumulate force atom i
-                force(:,j) = force(:,j) - dEidr*Rij/r  ! accumulate force atom j
+                force(:,i) = force(:,i) + dEidr*Rij/r  ! accumulate force particle i
+                force(:,j) = force(:,j) - dEidr*Rij/r  ! accumulate force particle j
              endif
           endif
        enddo

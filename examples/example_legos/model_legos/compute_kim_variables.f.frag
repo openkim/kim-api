@@ -1,5 +1,5 @@
     !-- KIM variables
-    integer(c_int), pointer :: numberOfParticles;  type(c_ptr) :: pnAtoms
+    integer(c_int), pointer :: numberOfParticles;  type(c_ptr) :: pnParts
     integer(c_int), pointer :: nOfSpecies;         type(c_ptr) :: pnOfSpecies
     integer(c_int), pointer :: particleSpecies(:); type(c_ptr) :: pparticleSpecies
     real(c_double), pointer :: model_cutoff;       type(c_ptr) :: pcutoff

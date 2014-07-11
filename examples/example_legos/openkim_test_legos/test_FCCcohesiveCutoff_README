@@ -33,11 +33,10 @@
 #
 
 
-This directory (TEST_NAME_STR) contains a test that computes
-the minimum energy per atom in an infinite perfect FCC crystal of SPECIES_NAME_STR atoms
-for a range of values for the Model's cutoff parameter.
-(The test uses the most efficient calculation method possible for the NBC
-method it uses.)
+This directory (TEST_NAME_STR) contains a test that computes the minimum energy
+per particle in an infinite perfect FCC crystal of SPECIES_NAME_STR particles
+for a range of values for the Model's cutoff parameter.  (The test uses the
+most efficient calculation method possible for the NBC method it uses.)
 
 
 The following files are in the directory (before any compilation is performed):

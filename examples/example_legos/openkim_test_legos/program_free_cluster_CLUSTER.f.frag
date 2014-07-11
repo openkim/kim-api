@@ -3,7 +3,7 @@
 !**  PROGRAM TEST_NAME_STR
 !**
 !**  KIM compliant program to compute the energy of and forces and virial on an
-!**  isolated cluster of SPECIES_NAME_STR atoms
+!**  isolated cluster of SPECIES_NAME_STR particles
 !**
 !*******************************************************************************
 
@@ -34,7 +34,7 @@ program TEST_NAME_STR
   integer(c_int) :: ier, idum
   integer(c_int) :: I
   integer(c_int) :: middleDum
-  integer(c_int), pointer :: numberOfParticles;   type(c_ptr) :: pnAtoms
+  integer(c_int), pointer :: numberOfParticles;   type(c_ptr) :: pnParts
   integer(c_int), pointer :: numberOfSpecies;     type(c_ptr) :: pnOfSpecies
   integer(c_int), pointer :: particleSpecies(:);  type(c_ptr) :: pparticleSpecies
   real(c_double), pointer :: cutoff;              type(c_ptr) :: pcutoff
@@ -74,7 +74,7 @@ program TEST_NAME_STR
   ! Unpack data from KIM object
   !
   call kim_api_getm_data(pkim, ier, &
-       "numberOfParticles", pnAtoms,           1, &
+       "numberOfParticles", pnParts,           1, &
        "numberOfSpecies",   pnOfSpecies,       1, &
        "particleSpecies",   pparticleSpecies,  1, &
        "coordinates",       pcoor,             1, &
@@ -87,7 +87,7 @@ program TEST_NAME_STR
                                  "kim_api_getm_data", ier)
      stop
   endif
-  call c_f_pointer(pnAtoms, numberOfParticles)
+  call c_f_pointer(pnParts, numberOfParticles)
   call c_f_pointer(pnOfSpecies, numberOfSpecies)
   call c_f_pointer(pparticleSpecies, particleSpecies, [N])
   call c_f_pointer(pcoor, coords, [DIM,N])
@@ -106,7 +106,7 @@ program TEST_NAME_STR
      stop
   endif
 
-  ! set up the cluster atom positions
+  ! set up the cluster part positions
   call create_FCC_configuration(FCCspacing, nCellsPerSide, .false., coords, middleDum)
 
   ! Call model compute
@@ -122,7 +122,7 @@ program TEST_NAME_STR
   print '("This is Test          : ",A)', trim(testname)
   print '("Results for KIM Model : ",A)', trim(modelname)
   print '("Forces:")'
-  print '("Atom     ' // &
+  print '("Part     ' // &
   'X                        ' // &
   'Y                        ' // &
   'Z                        ")'

@@ -24,7 +24,7 @@ subroutine NEIGH_RVEC_periodic_B2_neighborlist(half,CellsPerHalfSide, cutoff,  &
   real(c_double) cutoff2
   real(c_double) B2shifts(3,2)
   real(c_double) latVec(3)
-  integer(c_int) atom, a, i, j, k, m
+  integer(c_int) part, a, i, j, k, m
 
   cutoff2 = cutoff**2
 
@@ -41,8 +41,8 @@ subroutine NEIGH_RVEC_periodic_B2_neighborlist(half,CellsPerHalfSide, cutoff,  &
   coords(:,2) = B2shifts(1,2)
 
   if (half) then
-     ! Each atom gets half of its own neighbor-self images
-     do atom = 2,1,-1  ! have atom 1 be last in the loop
+     ! Each part gets half of its own neighbor-self images
+     do part = 2,1,-1  ! have part 1 be last in the loop
         a = 1
         do i = 0, CellsPerHalfSide
            latVec(1) = i*B2spacing
@@ -56,18 +56,18 @@ subroutine NEIGH_RVEC_periodic_B2_neighborlist(half,CellsPerHalfSide, cutoff,  &
                     if (dot_product(dx,dx).lt.cutoff2) then
                        ! we have a neighbor
                        a = a + 1
-                       neighObject%neighborList(a,atom) = atom
-                       neighObject%RijList(:,a-1,atom)  = dx
+                       neighObject%neighborList(a,part) = part
+                       neighObject%RijList(:,a-1,part)  = dx
                     endif
                  endif
               enddo
            enddo
         enddo
-        ! this atom has a-1 neighbors (so far)
-        neighObject%neighborList(1,atom) = a - 1
+        ! this part has a-1 neighbors (so far)
+        neighObject%neighborList(1,part) = a - 1
      enddo
 
-     ! Atom 1 gets all images of atom 2; atom 2 gets no atom 1 images
+     ! Part 1 gets all images of part 2; part 2 gets no part 1 images
      do i = -CellsPerHalfSide, CellsPerHalfSide
         latVec(1) = i*B2spacing
         do j = -CellsPerHalfSide, CellsPerHalfSide
@@ -78,17 +78,17 @@ subroutine NEIGH_RVEC_periodic_B2_neighborlist(half,CellsPerHalfSide, cutoff,  &
               if (dot_product(dx,dx).lt.cutoff2) then
                  ! we have a neighbor
                  a = a + 1
-                 neighObject%neighborList(a,atom) = 2
-                 neighObject%RijList(:,a-1,atom)  = dx
+                 neighObject%neighborList(a,part) = 2
+                 neighObject%RijList(:,a-1,part)  = dx
               endif
            enddo
         enddo
      enddo
 
-     ! atom 1 has a-1 neighbors
+     ! part 1 has a-1 neighbors
      neighObject%neighborList(1,1) = a - 1
   else
-     do atom = 1,2
+     do part = 1,2
         a = 1
         do i=-CellsPerHalfSide,CellsPerHalfSide
            latVec(1) = i*B2spacing
@@ -97,22 +97,22 @@ subroutine NEIGH_RVEC_periodic_B2_neighborlist(half,CellsPerHalfSide, cutoff,  &
               do k=-CellsPerHalfSide,CellsPerHalfSide
                  latVec(3) = k*B2spacing
                  do m=1,2
-                    dx = (latVec + B2shifts(:,m)) - B2shifts(:,atom)
+                    dx = (latVec + B2shifts(:,m)) - B2shifts(:,part)
                     if (dot_product(dx,dx).lt.cutoff2) then
                        if (.not.( (i.eq.0) .and. (j.eq.0) .and. (k.eq.0) .and. &
-                                  (m.eq.atom) )) then
+                                  (m.eq.part) )) then
                           ! we have a neighbor
                           a = a+1
-                          neighObject%neighborList(a,atom) = m
-                          neighObject%RijList(:,a-1,atom)  = dx
+                          neighObject%neighborList(a,part) = m
+                          neighObject%RijList(:,a-1,part)  = dx
                        endif
                     endif
                  enddo
               enddo
            enddo
         enddo
-        ! atom 1 has a-1 neighbors
-        neighObject%neighborList(1,atom) = a-1
+        ! part 1 has a-1 neighbors
+        neighObject%neighborList(1,part) = a-1
      enddo
   endif
 

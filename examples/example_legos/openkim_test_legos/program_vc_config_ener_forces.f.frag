@@ -60,7 +60,7 @@ program TEST_NAME_STR
   character(len=KIM_KEY_STRING_LENGTH) :: testname     = "TEST_NAME_STR"
   character(len=KIM_KEY_STRING_LENGTH) :: modelname
   character(len=KIM_KEY_STRING_LENGTH) :: configfile
-  ! configuration atom species (element symbols)
+  ! configuration species (element symbols)
   character(len=KIM_KEY_STRING_LENGTH), pointer :: conf_species(:)
   real(c_double), pointer :: conf_coors(:,:)  ! configuration coordinates
   real(c_double), pointer :: conf_forces(:,:) ! configuration forces
@@ -73,7 +73,7 @@ program TEST_NAME_STR
   type(c_ptr)             :: pkim
   integer(c_int)          :: ier, idum, inbc
   character(len=10000)    :: test_descriptor_string
-  integer(c_int), pointer :: numberOfParticles;    type(c_ptr) pnAtoms
+  integer(c_int), pointer :: numberOfParticles;    type(c_ptr) pnParts
   integer(c_int), pointer :: numContrib;           type(c_ptr) pnumContrib
   integer(c_int), pointer :: numberOfSpecies;      type(c_ptr) pnOfSpecies
   integer(c_int), pointer :: particleSpecies(:);   type(c_ptr) pparticleSpecies
@@ -101,7 +101,7 @@ program TEST_NAME_STR
   if (N<1) then
      ier = KIM_STATUS_FAIL
      idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-           "Error: Number of atoms is less than 1", ier)
+           "Error: Number of particles is less than 1", ier)
      stop
   endif
   ! dynamically allocate memory
@@ -129,7 +129,7 @@ program TEST_NAME_STR
 10  continue
     ier = KIM_STATUS_FAIL
     idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-           "Error reading in the number of atoms N in the configuration", ier)
+           "Error reading in the number of particles N in the configuration", ier)
     stop
 
 !20 continue
@@ -201,12 +201,12 @@ program TEST_NAME_STR
   print *
   print '(a,f20.10)', "Energy = ",conf_energy
   print *
-  print '(A6,2X,A4,2X,A)',"Atom","Spec","Coordinates"
+  print '(A6,2X,A4,2X,A)',"Part","Spec","Coordinates"
   do i=1,N
      print '(I6,2X,A4,2X,3ES25.15)',i,conf_species(i), conf_coors(:,i)
   enddo
   print *
-  print '(A6,2X,A4,2X,A)',"Atom","Spec","Force"
+  print '(A6,2X,A4,2X,A)',"Part","Spec","Force"
   do i=1,N
      print '(I6,2X,A4,2X,3ES25.15)',i,conf_species(i),conf_forces(:,i)
   enddo
@@ -326,7 +326,7 @@ program TEST_NAME_STR
      ! Unpack data from KIM object
      !
      call kim_api_getm_data(pkim, ier, &
-          "numberOfParticles",           pnAtoms,           1,                               &
+          "numberOfParticles",           pnParts,           1,                               &
           "numberContributingParticles", pnumContrib,       TRUEFALSE(nbc.eq.0.or.nbc.eq.1.or.nbc.eq.4), &
           "numberOfSpecies",             pnOfSpecies,       1,                               &
           "particleSpecies",             pparticleSpecies,  1,                               &
@@ -340,7 +340,7 @@ program TEST_NAME_STR
                                     "kim_api_getm_data", ier)
         stop
      endif
-     call c_f_pointer(pnAtoms, numberOfParticles)
+     call c_f_pointer(pnParts, numberOfParticles)
      if ((nbc.eq.0).or.(nbc.eq.1).or.(nbc.eq.4)) call c_f_pointer(pnumContrib, &
                                                                   numContrib)
      call c_f_pointer(pnOfSpecies,      numberOfSpecies)
@@ -404,14 +404,14 @@ program TEST_NAME_STR
      print *
      print '(a,f20.10)', "Energy = ",energy
      print *
-     print '(A6,2X,A4,2X,A)',"Atom","Spec","Computed Force"
+     print '(A6,2X,A4,2X,A)',"Part","Spec","Computed Force"
      do i=1,N
         print '(I6,2X,A4,2X,3ES25.15)',i,conf_species(i),forces(:,i)
      enddo
      print *
      print *,'*** Energy and Forces Agreement ***'
      print *
-     print '(A6,2X,A4,2X,A)',"Atom","Spec","Force Error"
+     print '(A6,2X,A4,2X,A)',"Part","Spec","Force Error"
      ave_force_error = 0.0_cd
      do i=1,N
         do j=1,DIM

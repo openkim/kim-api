@@ -1,11 +1,11 @@
 !-------------------------------------------------------------------------------
 !
 ! MI_OPBC_periodic_neighborlist : construct a half or full neighbor list using
-!                                 the atom coordinates in coords()
+!                                 the particle coordinates in coords()
 !
 !-------------------------------------------------------------------------------
 subroutine MI_OPBC_periodic_neighborlist(half, numberOfParticles, coords,    &
-                                         rcut, boxSideLengths, MiddleAtomID, &
+                                         rcut, boxSideLengths, MiddlePartID, &
                                          neighObject)
   use, intrinsic :: iso_c_binding
   use KIM_API_F03
@@ -21,7 +21,7 @@ subroutine MI_OPBC_periodic_neighborlist(half, numberOfParticles, coords,    &
   real(c_double),         intent(in)    :: rcut
   real(c_double), dimension(3), &
                           intent(in)    :: boxSideLengths
-  integer(c_int),         intent(in)    :: MiddleAtomID
+  integer(c_int),         intent(in)    :: MiddlePartID
   type(neighObject_type), intent(inout) :: neighObject
   !-- Local variables
   integer(c_int) i, j, a
@@ -40,22 +40,22 @@ subroutine MI_OPBC_periodic_neighborlist(half, numberOfParticles, coords,    &
         endwhere
         r2 = dot_product(dx, dx)
         if (r2.le.rcut2) then
-           ! atom j is a neighbor of atom i
+           ! part j is a neighbor of part i
            if (half) then
-               if ( ((i.eq.MiddleAtomId) .or. (j.eq.MiddleAtomId)) .and. &
+               if ( ((i.eq.MiddlePartId) .or. (j.eq.MiddlePartId)) .and. &
                     (i .lt. j) ) then
                   a = a+1
                   neighObject%neighborList(a,i) = j
                endif
            else
-               if (i.eq.MiddleAtomId .and. i.ne.j) then
+               if (i.eq.MiddlePartId .and. i.ne.j) then
                   a = a+1
                   neighObject%neighborList(a,i) = j
                endif
            endif
         endif
      enddo
-     ! atom i has a-1 neighbors
+     ! part i has a-1 neighbors
      neighObject%neighborList(1,i) = a-1
   enddo
 

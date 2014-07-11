@@ -96,14 +96,14 @@ static int compute(void* km)
    int j;
    int jj;
    int k;
-   int numOfAtomNeigh;
-   int currentAtom;
+   int numOfPartNeigh;
+   int currentPart;
    int comp_energy;
    int comp_force;
    int comp_particleEnergy;
    int comp_virial;
 
-   int* nAtoms;
+   int* nParts;
    int* nOfSpecies;
    int* particleSpecies;
    double* cutoff;
@@ -121,7 +121,7 @@ static int compute(void* km)
    double* force;
    double* particleEnergy;
    double* virial;
-   int* neighListOfCurrentAtom;
+   int* neighListOfCurrentPart;
 
    /* check to see if we have been asked to compute the forces, particleEnergy, energy and virial */
    KIM_API_getm_compute(pkim, &ier, 4*3,
@@ -137,7 +137,7 @@ static int compute(void* km)
 
    /* unpack data from KIM object */
    KIM_API_getm_data(pkim, &ier, 17*3,
-                     "numberOfParticles",   &nAtoms            1,
+                     "numberOfParticles",   &nParts            1,
                      "numberOfSpecies",     &nOfSpecies,       1,
                      "particleSpecies",     &particleSpecies,  1,
                      "cutoff",              &cutoff,           1,
@@ -163,7 +163,7 @@ static int compute(void* km)
    /* Check to be sure that the species are correct */
    /**/
    ier = KIM_STATUS_FAIL; /* assume an error */
-   for (i = 0; i < *nAtoms; ++i)
+   for (i = 0; i < *nParts; ++i)
    {
       if (Ar != particleSpecies[i])
       {
@@ -176,7 +176,7 @@ static int compute(void* km)
    /* initialize potential energies, forces, and virial term */
    if (comp_particleEnergy)
    {
-      for (i = 0; i < *nAtoms; ++i)
+      for (i = 0; i < *nParts; ++i)
       {
          particleEnergy[i] = 0.0;
       }
@@ -188,7 +188,7 @@ static int compute(void* km)
 
    if (comp_force)
    {
-      for (i = 0; i < *nAtoms; ++i)
+      for (i = 0; i < *nParts; ++i)
       {
          for (k = 0; k < DIM; ++k)
          {
@@ -206,7 +206,7 @@ static int compute(void* km)
    }
 
    /* reset neighbor iterator */
-   ier = KIM_API_get_neigh(pkim, 0, 0, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+   ier = KIM_API_get_neigh(pkim, 0, 0, &currentPart, &numOfPartNeigh, &neighListOfCurrentPart, &Rij);
    if (KIM_STATUS_NEIGH_ITER_INIT_OK != ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_neigh", ier);
@@ -215,15 +215,15 @@ static int compute(void* km)
    }
 
    /* Compute energy and forces */
-   ier = KIM_API_get_neigh(pkim, 0, 1, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+   ier = KIM_API_get_neigh(pkim, 0, 1, &currentPart, &numOfPartNeigh, &neighListOfCurrentPart, &Rij);
    while (KIM_STATUS_OK == ier)
    {
-      i = currentAtom;
+      i = currentPart;
 
-      /* loop over the neighbors of currentAtom */
-      for (jj = 0; jj < numOfAtomNeigh; ++ jj)
+      /* loop over the neighbors of currentPart */
+      for (jj = 0; jj < numOfPartNeigh; ++ jj)
       {
-         j = neighListOfCurrentAtom[jj];
+         j = neighListOfCurrentPart[jj];
 
          /* compute square distance */
          Rsqij = 0.0;
@@ -245,7 +245,7 @@ static int compute(void* km)
             /* accumulate energy */
             if (comp_particleEnergy)
             {
-               particleEnergy[currentAtom] += 0.5*phi;
+               particleEnergy[currentPart] += 0.5*phi;
             }
             else if (comp_energy)
             {
@@ -277,7 +277,7 @@ static int compute(void* km)
       }
 
       /* increment iterator */
-      ier = KIM_API_get_neigh(pkim, 0, 1, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+      ier = KIM_API_get_neigh(pkim, 0, 1, &currentPart, &numOfPartNeigh, &neighListOfCurrentPart, &Rij);
    }
 
 
@@ -286,7 +286,7 @@ static int compute(void* km)
    if (comp_particleEnergy && comp_energy)
    {
       *energy = 0.0;
-      for (i = 0; i < *nAtoms; ++i)
+      for (i = 0; i < *nParts; ++i)
       {
          *energy += particleEnergy[i];
       }

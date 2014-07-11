@@ -78,7 +78,7 @@ program vc_forces_delta
   integer(c_int)          :: middleDum
   real(c_double)          :: rnd
   character(len=10000)    :: test_descriptor_string
-  integer(c_int), pointer :: numberOfParticles;   type(c_ptr) pnAtoms
+  integer(c_int), pointer :: numberOfParticles;   type(c_ptr) pnParts
   integer(c_int), pointer :: numContrib;          type(c_ptr) pnumContrib
   integer(c_int), pointer :: numberOfSpecies;     type(c_ptr) pnOfSpecies
   integer(c_int), pointer :: particleSpecies(:);  type(c_ptr) pparticleSpecies
@@ -128,7 +128,7 @@ program vc_forces_delta
                        ! on the cutoff radius of the model.
   call create_FCC_configuration(FCCspacing, nCellsPerSide, .false., &
                                 cluster_coords, middleDum)
-  ! Generate random displacements for all atoms
+  ! Generate random displacements for all parts
   !
   do I=1,N
      do J=1,DIM
@@ -267,7 +267,7 @@ program vc_forces_delta
      ! Unpack data from KIM object
      !
      call kim_api_getm_data(pkim, ier, &
-          "numberOfParticles",           pnAtoms,           1,                               &
+          "numberOfParticles",           pnParts,           1,                               &
           "numberContributingParticles", pnumContrib,       TRUEFALSE(nbc.eq.0.or.nbc.eq.1.or.nbc.eq.4), &
           "numberOfSpecies",             pnOfSpecies,       1,                               &
           "particleSpecies",             pparticleSpecies,  1,                               &
@@ -281,7 +281,7 @@ program vc_forces_delta
                                     "kim_api_getm_data", ier)
         stop
      endif
-     call c_f_pointer(pnAtoms, numberOfParticles)
+     call c_f_pointer(pnParts, numberOfParticles)
      if ((nbc.eq.0).or.(nbc.eq.1).or.(nbc.eq.4)) call c_f_pointer(pnumContrib, &
                                                                   numContrib)
      call c_f_pointer(pnOfSpecies, numberOfSpecies)
@@ -356,9 +356,9 @@ program vc_forces_delta
         energy_old = energy
         forces_old(:,:) = forces
 
-        ! Generate random displacements for all atoms. The displacements are not
-        ! just meant to distort the system, as above. Instead, these are
-        ! actually used to test how well the change in energy deu to this
+        ! Generate random displacements for all particles. The displacements
+        ! are not just meant to distort the system, as above. Instead, these
+        ! are actually used to test how well the change in energy deu to this
         ! displacement can be reproduced by a first-order approximation.
         !
         do I=1,N

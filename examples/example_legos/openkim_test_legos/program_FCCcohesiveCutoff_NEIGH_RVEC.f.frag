@@ -3,7 +3,7 @@
 !**  PROGRAM TEST_NAME_STR
 !**
 !**  KIM compliant program to find (using the Golden section search algorithm)
-!**  the minimum energy of one atom in a periodic FCC crystal (spec="SPECIES_NAME_STR") as a
+!**  the minimum energy of one particle in a periodic FCC crystal (spec="SPECIES_NAME_STR") as a
 !**  function of lattice spacing.
 !**
 !**  Works with the following NBC methods:
@@ -41,17 +41,17 @@ program TEST_NAME_STR
   ! significant local variables
   !
   real(c_double) :: FinalSpacing       ! crystal lattice parameter
-  real(c_double) :: FinalEnergy        ! energy per atom of crystal
+  real(c_double) :: FinalEnergy        ! energy per particle of crystal
                                        ! at current spacing
   integer(c_int) :: CellsPerCutoff     ! number of unit cells along
                                        ! box (of size cutoff) side
   real(c_double) :: MaxCutoff          ! maximum value for cutoff radius
-  integer(c_int) :: N                          ! number of atoms
+  integer(c_int) :: N                          ! number of particles
 
   ! neighbor list
   !
   type(neighObject_type), target :: neighObject
-  integer(c_int)  :: NNeighbors  ! maximum number of neighbors for an atom
+  integer(c_int)  :: NNeighbors  ! maximum number of neighbors for a particle
 
   ! KIM variables
   !
@@ -76,7 +76,7 @@ program TEST_NAME_STR
   read(*,*) modelname
 
 
-  ! We'll use just one atom for this calculation!
+  ! We'll use just one particle for this calculation!
   !
   N = 1
 
@@ -156,7 +156,7 @@ program TEST_NAME_STR
      print *
      print '("cutoff = ",ES25.15)', param_cutoff
      print *
-     print '("Energy/atom = ",ES25.15,"; Spacing = ",ES25.15)', FinalEnergy, &
+     print '("Energy/part = ",ES25.15,"; Spacing = ",ES25.15)', FinalEnergy, &
            FinalSpacing
      print '(80(''-''))'
 

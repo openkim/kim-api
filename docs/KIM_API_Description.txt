@@ -1127,11 +1127,10 @@ Arguments:
 int KIM_API_get_model_species(void *kimmdl, const int index, const char** const speciesString);
 
     This routine outputs the requested (index) Model particle species string.
-    Each string is an atom/particle species symbol.  The order in which the
-    species are indexed is unspecified, but fixed for the lifetime of the
-    kimmdl object.  In the case where no particle species are specified by the
-    Model or Simulator, the routine returns KIM_STATUS_FAIL for all values of
-    index.
+    Each string is a particle species symbol.  The order in which the species
+    are indexed is unspecified, but fixed for the lifetime of the kimmdl
+    object.  In the case where no particle species are specified by the Model
+    or Simulator, the routine returns KIM_STATUS_FAIL for all values of index.
 
 Return value:
       KIM_STATUS_OK   -- successful completion
@@ -1179,11 +1178,11 @@ Arguments:
 int KIM_API_get_sim_species(void *kimmdl, const int index, const char** const speciesString);
 
     This routine outputs the requested (index) Simulator particle species
-    string.  Each string is an atom/particle species symbol.  The order in
-    which the species are indexed is unspecified, but fixed for the lifetime of
-    the kimmdl object.  In the case where no particle species are specified by
-    the Model or Simulator, the routine returns KIM_STATUS_FAIL for all values
-    of index.
+    string.  Each string is a particle species symbol.  The order in which the
+    species are indexed is unspecified, but fixed for the lifetime of the
+    kimmdl object.  In the case where no particle species are specified by the
+    Model or Simulator, the routine returns KIM_STATUS_FAIL for all values of
+    index.
 
 Return value:
       KIM_STATUS_OK   -- successful completion
@@ -1411,13 +1410,13 @@ Arguments:
               will be (KIM_API_model *)).
 
       char *particle
-              atom/particle symbol
+              particle symbol
 
       int *kimerror
               error code: KIM_STATUS_OK                       -- successful completion
                           KIM_STATUS_FAIL                     -- unsuccessful
                           KIM_STATUS_PARTICLE_INVALID_SPECIES -- symbol is not among the
-                                                                 KIM supported atom symbols
+                                                                 KIM supported particle symbols
                           KIM_STATUS_PARTICLE_SPECIES_UNDEFINED -- no particle species
                                                                    have been specified by
                                                                    the Simulator or Model.
@@ -1442,7 +1441,7 @@ Arguments:
               will be (KIM_API_model *)).
 
       char *particle
-              atom/particle symbol
+              particle symbol
 
       int code
               integer value used by the Model to represent the specified particle species
@@ -1451,7 +1450,7 @@ Arguments:
               error code: KIM_STATUS_OK                       -- successful completion
                           KIM_STATUS_FAIL                     -- unsuccessful
                           KIM_STATUS_PARTICLE_INVALID_SPECIES -- symbol is not among the
-                                                                 KIM supported atom symbols
+                                                                 KIM supported particle symbols
                           KIM_STATUS_PARTICLE_SPECIES_UNDEFINED -- no particle species
                                                                    have been specified by
                                                                    the Simulator or Model.
@@ -1520,14 +1519,14 @@ int KIM_API_get_neigh(void *kimmdl, int mode, int request, int *particle,
                      int *particle, int *numnei, int **nei1particle,
                      double **rij);
        integer(c_int) function get_neigh(pkim, mode, request,& ! in Fortran 2003
-                                         atom, numnei, pnei1atom, &
+                                         part, numnei, pnei1part, &
                                          pRij) bind(c)
           type(c_ptr)),   intent(in)  :: pkim
           integer(c_int), intent(in)  :: mode
           integer(c_int), intent(in)  :: request
-          integer(c_int), intent(out) :: atom
+          integer(c_int), intent(out) :: part
           integer(c_int), intent(out) :: numnei
-          type(c_ptr),    intent(out) :: pnei1atom
+          type(c_ptr),    intent(out) :: pnei1part
           type(c_ptr),    intent(out) :: pRij
 
     Two modes are supported: `Iterator' and `Locator'.  In Iterator mode, the

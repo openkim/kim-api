@@ -3,7 +3,7 @@
 !**  PROGRAM TEST_NAME_STR
 !**
 !**  KIM compliant program to compute the energy of and forces and virial on an
-!**  isolated cluster of SPECIES_NAME_STR atoms
+!**  isolated cluster of SPECIES_NAME_STR particles
 !**
 !**  Works with the following NBC methods:
 !**        NEIGH_RVEC_H
@@ -57,7 +57,7 @@ program TEST_NAME_STR
   integer(c_int) :: ier, idum
   integer(c_int) :: middleDum
   integer(c_int) :: I
-  integer(c_int), pointer :: numberOfParticles;   type(c_ptr) :: pnAtoms
+  integer(c_int), pointer :: numberOfParticles;   type(c_ptr) :: pnParts
   integer(c_int), pointer :: numContrib;          type(c_ptr) :: pnumContrib
   integer(c_int), pointer :: numberOfSpecies;     type(c_ptr) :: pnOfSpecies
   integer(c_int), pointer :: particleSpecies(:);  type(c_ptr) :: pparticleSpecies
@@ -153,7 +153,7 @@ program TEST_NAME_STR
   ! Unpack data from KIM object
   !
   call kim_api_getm_data(pkim, ier, &
-       "numberOfParticles",           pnAtoms,          1,                                   &
+       "numberOfParticles",           pnParts,          1,                                   &
        "numberContributingParticles", pnumContrib,      TRUEFALSE((nbc.eq.0).or.(nbc.eq.1).or.(nbc.eq.4)), &
        "numberOfSpecies",             pnOfSpecies,      1,                                   &
        "particleSpecies",             pparticleSpecies, 1,                                   &
@@ -168,7 +168,7 @@ program TEST_NAME_STR
                                  "kim_api_getm_data", ier)
      stop
   endif
-  call c_f_pointer(pnAtoms, numberOfParticles)
+  call c_f_pointer(pnParts, numberOfParticles)
   if ((nbc.eq.0).or.(nbc.eq.1).or.(nbc.eq.4)) call c_f_pointer(pnumContrib, &
                                                                numContrib)
   call c_f_pointer(pnOfSpecies, numberOfSpecies)
@@ -192,7 +192,7 @@ program TEST_NAME_STR
      stop
   endif
 
-  ! set up the cluster atom positions
+  ! set up the cluster part positions
   call create_FCC_configuration(FCCspacing, nCellsPerSide, .false., coords, &
                                 middleDum)
  ! set boxSideLengths large enough to make the cluster isolated
@@ -235,7 +235,7 @@ program TEST_NAME_STR
   print '("Results for KIM Model : ",A)', trim(modelname)
   print '("Using NBC: ",A)', trim(NBC_Method)
   print '("Forces:")'
-  print '("Atom     ' // &
+  print '("Part     ' // &
   'X                        ' // &
   'Y                        ' // &
   'Z                        ")'

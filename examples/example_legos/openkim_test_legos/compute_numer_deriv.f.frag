@@ -1,4 +1,4 @@
-subroutine compute_numer_deriv(atomnum,dir,pkim,DIM,N,coords,cutoff,cutpad,   &
+subroutine compute_numer_deriv(partnum,dir,pkim,DIM,N,coords,cutoff,cutpad,   &
                                boxSideLengths,NBC_Method,do_update_list,      &
                                coordsave,neighObject,deriv,deriv_err,ier)
 use, intrinsic :: iso_c_binding
@@ -8,7 +8,7 @@ implicit none
 integer(c_int), parameter :: cd = c_double ! used for literal constants
 
 !--Transferred variables
-integer(c_int),         intent(in)    :: atomnum
+integer(c_int),         intent(in)    :: partnum
 integer(c_int),         intent(in)    :: dir
 type(c_ptr),            intent(in)    :: pkim
 integer(c_int),         intent(in)    :: DIM
@@ -122,8 +122,8 @@ contains
    endif
 
    hh = h
-   coordorig = coords(dir,atomnum)
-   coords(dir,atomnum) = coordorig + hh
+   coordorig = coords(dir,partnum)
+   coords(dir,partnum) = coordorig + hh
    if (doing_neighbors) &
       call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths, &
                                NBC_Method,do_update_list,coordsave,       &
@@ -135,7 +135,7 @@ contains
       stop
    endif
    fp = energy
-   coords(dir,atomnum) = coordorig - hh
+   coords(dir,partnum) = coordorig - hh
    if (doing_neighbors) &
       call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths, &
                                NBC_Method,do_update_list,coordsave,       &
@@ -147,7 +147,7 @@ contains
       stop
    endif
    fm = energy
-   coords(dir,atomnum) = coordorig
+   coords(dir,partnum) = coordorig
    if (doing_neighbors) &
       call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths, &
                                NBC_Method,do_update_list,coordsave,       &
@@ -159,7 +159,7 @@ contains
    do i=2,NTAB
       ! try new, smaller step size
       hh=hh/CON
-      coords(dir,atomnum) = coordorig + hh
+      coords(dir,partnum) = coordorig + hh
       if (doing_neighbors) &
          call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths, &
                                   NBC_Method,do_update_list,coordsave,       &
@@ -171,7 +171,7 @@ contains
          stop
       endif
       fp = energy
-      coords(dir,atomnum) = coordorig - hh
+      coords(dir,partnum) = coordorig - hh
       if (doing_neighbors) &
          call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths, &
                                   NBC_Method,do_update_list,coordsave,       &
@@ -183,7 +183,7 @@ contains
          stop
       endif
       fm = energy
-      coords(dir,atomnum) = coordorig
+      coords(dir,partnum) = coordorig
       if (doing_neighbors) &
          call update_neighborlist(DIM,N,coords,cutoff,cutpad,boxSideLengths, &
                                   NBC_Method,do_update_list,coordsave,       &

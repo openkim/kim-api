@@ -2,21 +2,21 @@
  *
  * create_FCC_configuration function
  *
- *  creates a cubic configuration of FCC atoms with lattice spacing
+ *  creates a cubic configuration of FCC particles with lattice spacing
  *  `FCCspacing' and `nCellsPerSide' cells along each direction.
  *
- *  With periodic==0. this will result in a total number of atoms equal to
+ *  With periodic==0. this will result in a total number of particles equal to
  *  4*(nCellsPerSide)**3 + 6*(nCellsPerSide)**2 + 3*(nCellsPerSide) + 1
  *
- *  With periodic==1 this will result in a total number of atoms equal to
+ *  With periodic==1 this will result in a total number of particles equal to
  *  4*(nCellsPerSide)**3
  *
- *  Returns the Id of the atom situated in the middle of the configuration
- *  (this atom will have the most neighbors.)
+ *  Returns the Id of the particle situated in the middle of the configuration
+ *  (this particle will have the most neighbors.)
  *
  ******************************************************************************/
 static void create_FCC_configuration(double FCCspacing, int nCellsPerSide, int periodic,
-                                     double *coords, int* MiddleAtomId)
+                                     double *coords, int* MiddlePartId)
 {
    /* local variables */
    double FCCshifts[4][3];
@@ -34,8 +34,8 @@ static void create_FCC_configuration(double FCCspacing, int nCellsPerSide, int p
    FCCshifts[2][0] = 0.5*FCCspacing; FCCshifts[2][1] = 0.0;            FCCshifts[2][2] = 0.5*FCCspacing;
    FCCshifts[3][0] = 0.0;            FCCshifts[3][1] = 0.5*FCCspacing; FCCshifts[3][2] = 0.5*FCCspacing;
 
-   *MiddleAtomId = 0; /* Always put middle atom as #0 */
-   a = 1;            /* leave space for middle atom as atom #0 */
+   *MiddlePartId = 0; /* Always put middle particle as #0 */
+   a = 1;            /* leave space for middle particle as particle #0 */
    for (i = 0; i < nCellsPerSide; ++i)
    {
       latVec[0] = ((double) i)*FCCspacing;
@@ -54,7 +54,7 @@ static void create_FCC_configuration(double FCCspacing, int nCellsPerSide, int p
                if ((nCellsPerSide/2 == i) && (nCellsPerSide/2 == j) &&
                    (nCellsPerSide/2 == k) && (1 == m))
                {
-                  /* put middle atom as atom #0 */
+                  /* put middle particle as particle #0 */
                   for (n = 0; n < DIM; ++n)
                   {
                      coords[n] = latVec[n] + FCCshifts[m][n];

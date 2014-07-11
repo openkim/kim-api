@@ -287,9 +287,9 @@ ex_test_Ar_free_cluster_CLUSTER_memory_F03 (Fortran 2003)
      introduction to the basic steps required for a Test to setup and interact
      with a KIM Model.  They setup a KIM API object for the user's requested
      KIM Model (which must support the CLUSTER neighbor list and boundary
-     condition (NBC) method), create a cluster of 63 atoms with positions
+     condition (NBC) method), create a cluster of 63 particles with positions
      corresponding to a 2x2x2 FCC cubic cell, and compute the total energy and
-     force components on each atom.  The results are printed to the screen.
+     force components on each particle.  The results are printed to the screen.
      The only difference between these Tests is that one is written in C and
      two are written in Fortran 2003.  The difference between the two F03 codes
      is that one uses the KIM API to allocate memory and the other

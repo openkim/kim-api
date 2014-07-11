@@ -33,14 +33,14 @@ subroutine NEIGH_RVEC_cluster_neighborlist(half, numberOfParticles, coords, &
         r2 = dot_product(dx, dx)
         if (r2.le.cutoff2) then
            if ((half .and. i.lt.j) .or. (.not.half .and. i.ne.j)) then
-              ! atom j is a neighbor of atom i
+              ! part j is a neighbor of part i
               a = a+1
               neighObject%neighborList(a,i) = j
               neighObject%RijList(:,a-1,i) = dx
            endif
         endif
      enddo
-     ! atom i has a-1 neighbors
+     ! part i has a-1 neighbors
      neighObject%neighborList(1,i) = a-1
   enddo
 

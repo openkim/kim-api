@@ -67,7 +67,7 @@ contains
 
 !-------------------------------------------------------------------------------
 !
-! Compute energy and forces on atoms from the positions.
+! Compute energy and forces on particles from the positions.
 !
 !-------------------------------------------------------------------------------
   integer(c_int) function Compute_Energy_Forces(pkim) bind(c)
@@ -80,7 +80,7 @@ contains
     integer(c_int), parameter :: DIM=3
     real(c_double) r,Rsqij,phi,dphi,d2phi,dEidr
     real(c_double) CurEpsilon, CurSigma, CurA, CurB, CurC
-    integer(c_int) i,j,jj,numnei,atom,atom_ret
+    integer(c_int) i,j,jj,numnei,part,part_ret
 
     !-- KIM variables
     integer(c_int), pointer :: numberOfParticles; 
@@ -102,11 +102,11 @@ contains
     real(c_double), pointer :: enepot(:);         type(c_ptr) :: penepot
     real(c_double), pointer :: virial(:);         type(c_ptr) :: pvirial
     real(c_double), pointer :: Rij(:,:);          type(c_ptr) :: pRij
-    integer(c_int), pointer :: nei1atom(:);       type(c_ptr) :: pnei1atom
+    integer(c_int), pointer :: nei1part(:);       type(c_ptr) :: pnei1part
     integer(c_int) :: comp_force, comp_enepot, comp_virial, comp_energy
     integer(c_int) :: idum
 
-    ! Check to see if we have been asked to compute the forces, energyperatom,
+    ! Check to see if we have been asked to compute the forces, energyperpart,
     ! energy and virial
     call kim_api_getm_compute(pkim, Compute_Energy_Forces,  &
          "energy",         comp_energy,  1, &
@@ -175,13 +175,13 @@ contains
     call c_f_pointer(pmodel_sigmasq, model_sigmasq, [3])
     call c_f_pointer(pmodel_cutsq,   model_cutsq)
 
-    ! Check to be sure that the atom species are correct
+    ! Check to be sure that the species are correct
     Compute_Energy_Forces = KIM_STATUS_FAIL ! assume an error
     do i = 1,numberOfParticles
        if (.not. ( (particleSpecies(i).eq.Ar) .or. (particleSpecies(i).eq.Ne) ) ) &
          then
          idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                                     "Wrong Atom Specie", Compute_Energy_Forces)
+                                     "Wrong Species", Compute_Energy_Forces)
           return
        endif
     enddo
@@ -200,11 +200,11 @@ contains
     !
     do i = 1,numberOfParticles
 
-       ! Get neighbors for atom i
+       ! Get neighbors for particle i
        !
-       atom = i ! request neighbors for atom i
-       Compute_Energy_Forces = kim_api_get_neigh(pkim,1,atom,atom_ret,numnei, &
-                                                 pnei1atom,pRij)
+       part = i ! request neighbors for particle i
+       Compute_Energy_Forces = kim_api_get_neigh(pkim,1,part,part_ret,numnei, &
+                                                 pnei1part,pRij)
        if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
           idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                       "kim_api_get_neigh_f",    &
@@ -212,25 +212,25 @@ contains
           return
        endif
 
-       call c_f_pointer(pnei1atom, nei1atom, [numnei])
+       call c_f_pointer(pnei1part, nei1part, [numnei])
        call c_f_pointer(pRij,      Rij,      [DIM,numnei])
 
-       ! Loop over the neighbors of atom i
+       ! Loop over the neighbors of particle i
        !
        do jj = 1, numnei
-          j = nei1atom(jj)
+          j = nei1part(jj)
           Rsqij = dot_product(Rij(:,jj),Rij(:,jj)) ! compute square distance
           if ( Rsqij < model_cutsq ) then          ! particles are interacting?
              r = sqrt(Rsqij)                       ! compute distance
              if ((particleSpecies(i).eq.Ar).and. &
-                 (particleSpecies(nei1atom(jj)).eq.Ar)) then
+                 (particleSpecies(nei1part(jj)).eq.Ar)) then
                 CurEpsilon = model_epsilon(Ar)
                 CurSigma   = model_sigma(Ar)
                 CurA       = model_A(Ar)
                 CurB       = model_B(Ar)
                 CurC       = model_C(Ar)
              else if ((particleSpecies(i).eq.Ne).and. &
-                      (particleSpecies(nei1atom(jj)).eq.Ne)) then
+                      (particleSpecies(nei1part(jj)).eq.Ne)) then
                 CurEpsilon = model_epsilon(Ne)
                 CurSigma   = model_sigma(Ne)
                 CurA       = model_A(Ne)
@@ -261,9 +261,9 @@ contains
                 virial(6) = virial(6) + Rij(1,jj)*Rij(2,jj)*dEidr/r
              endif
              if (comp_force.eq.1) then
-                ! accumulate force on atom i
+                ! accumulate force on particle i
                 force(:,i) = force(:,i) + dEidr*Rij(:,jj)/r
-                ! accumulate force on atom j
+                ! accumulate force on particle j
                 force(:,j) = force(:,j) - dEidr*Rij(:,jj)/r
              endif
           endif

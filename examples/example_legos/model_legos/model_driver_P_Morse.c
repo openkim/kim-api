@@ -230,8 +230,8 @@ static int compute(void* km)
    int *pj_pairs = &(j_pairs[0]);
    int jj;
    int k;
-   int currentAtom;
-   int* neighListOfCurrentAtom;
+   int currentPart;
+   int* neighListOfCurrentPart;
    struct model_buffer* buffer;
    int comp_energy;
    int comp_force;
@@ -246,7 +246,7 @@ static int compute(void* km)
    int one = 1;
    int request;
 
-   int* nAtoms;
+   int* nParts;
    int* particleSpecies;
    double* cutoff;
    double* cutsq;
@@ -262,7 +262,7 @@ static int compute(void* km)
    double* boxSideLengths;
    int* numContrib;
    int numberContrib;
-   int numOfAtomNeigh;
+   int numOfPartNeigh;
    typedef int (*get_neigh_ptr)(void *,int *,int *,int *, int *, int **, double **);
    get_neigh_ptr get_neigh = NULL;
 
@@ -301,7 +301,7 @@ static int compute(void* km)
 
    KIM_API_getm_data_by_index(pkim, &ier, 9*3,
                               buffer->cutoff_ind,                      &cutoff,         1,
-                              buffer->numberOfParticles_ind,           &nAtoms,         1,
+                              buffer->numberOfParticles_ind,           &nParts,         1,
                               buffer->particleSpecies_ind,             &particleSpecies,1,
                               buffer->coordinates_ind,                 &coords,         1,
                               buffer->numberContributingParticles_ind, &numContrib,     (HalfOrFull==1),
@@ -332,18 +332,18 @@ static int compute(void* km)
       }
       else /* CLUSTER cases */
       {
-         numberContrib = *nAtoms;
+         numberContrib = *nParts;
       }
    }
    else
    {  /* provide initialization even if not used */
-      numberContrib = *nAtoms;
+      numberContrib = *nParts;
    }
 
    /* Check to be sure that the species are correct */
    /**/
    ier = KIM_STATUS_FAIL; /* assume an error */
-   for (i = 0; i < *nAtoms; ++i)
+   for (i = 0; i < *nParts; ++i)
    {
       if ( SPECCODE != particleSpecies[i])
       {
@@ -356,7 +356,7 @@ static int compute(void* km)
    /* initialize potential energies, forces, and virial term */
    if (comp_particleEnergy)
    {
-      for (i = 0; i < *nAtoms; ++i)
+      for (i = 0; i < *nParts; ++i)
       {
          particleEnergy[i] = 0.0;
       }
@@ -368,7 +368,7 @@ static int compute(void* km)
 
    if (comp_force)
    {
-      for (i = 0; i < *nAtoms; ++i)
+      for (i = 0; i < *nParts; ++i)
       {
          for (k = 0; k < DIM; ++k)
          {
@@ -380,15 +380,15 @@ static int compute(void* km)
    /* Initialize neighbor handling for CLUSTER NBC */
    if (3 == NBC) /* CLUSTER */
    {
-      neighListOfCurrentAtom = (int *) malloc((*nAtoms)*sizeof(int));
+      neighListOfCurrentPart = (int *) malloc((*nParts)*sizeof(int));
    }
 
    /* Initialize neighbor handling for Iterator mode */
 
    if (1 == IterOrLoca)
    {
-      ier = (*get_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh,
-                          &neighListOfCurrentAtom, &Rij_list);
+      ier = (*get_neigh)(&pkim, &zero, &zero, &currentPart, &numOfPartNeigh,
+                          &neighListOfCurrentPart, &Rij_list);
       /* check for successful initialization */
       if (KIM_STATUS_NEIGH_ITER_INIT_OK != ier)
       {
@@ -405,11 +405,11 @@ static int compute(void* km)
    while( 1 )
    {
 
-      /* Set up neighbor list for next atom for all NBC methods */
+      /* Set up neighbor list for next part for all NBC methods */
       if (1 == IterOrLoca) /* ITERATOR mode */
       {
-         ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh,
-                             &neighListOfCurrentAtom, &Rij_list);
+         ier = (*get_neigh)(&pkim, &zero, &one, &currentPart, &numOfPartNeigh,
+                             &neighListOfCurrentPart, &Rij_list);
          if (KIM_STATUS_NEIGH_ITER_PAST_END == ier) /* the end of the list, terminate loop */
          {
             break;
@@ -420,22 +420,22 @@ static int compute(void* km)
             return ier;
          }
 
-         i = currentAtom + model_index_shift;
+         i = currentPart + model_index_shift;
       }
       else
       {
          i++;
-         if (*nAtoms <= i) /* incremented past end of list, terminate loop */
+         if (*nParts <= i) /* incremented past end of list, terminate loop */
          {
             break;
          }
 
          if (3 == NBC) /* CLUSTER NBC method */
          {
-            numOfAtomNeigh = *nAtoms - (i + 1);
-            for (k = 0; k < numOfAtomNeigh; ++k)
+            numOfPartNeigh = *nParts - (i + 1);
+            for (k = 0; k < numOfPartNeigh; ++k)
             {
-               neighListOfCurrentAtom[k] = i + k + 1 - model_index_shift;
+               neighListOfCurrentPart[k] = i + k + 1 - model_index_shift;
             }
             ier = KIM_STATUS_OK;
          }
@@ -443,8 +443,8 @@ static int compute(void* km)
          {
             request = i - model_index_shift;
             ier = (*get_neigh)(&pkim, &one, &request,
-                                &currentAtom, &numOfAtomNeigh,
-                                &neighListOfCurrentAtom, &Rij_list);
+                                &currentPart, &numOfPartNeigh,
+                                &neighListOfCurrentPart, &Rij_list);
             if (KIM_STATUS_OK != ier) /* some sort of problem, exit */
             {
                KIM_API_report_error(__LINE__, __FILE__, "get_neigh", ier);
@@ -454,11 +454,11 @@ static int compute(void* km)
          }
       }
 
-      /* loop over the neighbors of atom i */
-      for (jj = 0; jj < numOfAtomNeigh; ++ jj)
+      /* loop over the neighbors of particle i */
+      for (jj = 0; jj < numOfPartNeigh; ++ jj)
       {
 
-         j = neighListOfCurrentAtom[jj] + model_index_shift; /* get neighbor ID */
+         j = neighListOfCurrentPart[jj] + model_index_shift; /* get neighbor ID */
 
          /* compute relative position vector and squared distance */
          Rsqij = 0.0;
@@ -548,7 +548,7 @@ static int compute(void* km)
             if (comp_particleEnergy)
             {
                particleEnergy[i] += 0.5*phi;
-               /* if half list add energy for the other atom in the pair */
+               /* if half list add energy for the other particle in the pair */
                if ((1 == HalfOrFull) && (j < numberContrib)) particleEnergy[j] += 0.5*phi;
             }
             if (comp_energy)
@@ -589,8 +589,8 @@ static int compute(void* km)
             {
                for (k = 0; k < DIM; ++k)
                {
-                  force[i*DIM + k] += dEidr*Rij[k]/R; /* accumulate force on atom i */
-                  force[j*DIM + k] -= dEidr*Rij[k]/R; /* accumulate force on atom j */
+                  force[i*DIM + k] += dEidr*Rij[k]/R; /* accumulate force on particle i */
+                  force[j*DIM + k] -= dEidr*Rij[k]/R; /* accumulate force on particle j */
                }
             }
          }
@@ -600,7 +600,7 @@ static int compute(void* km)
    /* Free temporary storage */
    if (3 == NBC)
    {
-      free(neighListOfCurrentAtom);
+      free(neighListOfCurrentPart);
    }
 
    /* everything is great */

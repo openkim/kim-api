@@ -25,7 +25,7 @@ subroutine NEIGH_RVEC_periodic_FCC_neighborlist(half,CellsPerHalfSide,cutoff, &
   real(c_double) cutoff2
   real(c_double) FCCshifts(3,4)
   real(c_double) latVec(3)
-  integer(c_int) atom, atomi, atomj, a(4), i, j, k, m
+  integer(c_int) part, parti, partj, a(4), i, j, k, m
 
   if (N.ne.1) then ! check assumption that N==1
      print *,"* ERROR: NEIGH_RVEC_periodic_FCC_neighborlist called with N.ne.1"
@@ -52,9 +52,9 @@ subroutine NEIGH_RVEC_periodic_FCC_neighborlist(half,CellsPerHalfSide,cutoff, &
   FCCshifts(3,4) = 0.5_cd*FCCspacing
 
   if (half) then
-     ! Each atom gets half of its own neighbor-self images
-     do atom = 1, N
-        a(atom) = 1
+     ! Each particle gets half of its own neighbor-self images
+     do part = 1, N
+        a(part) = 1
         do i = 0, CellsPerHalfSide
            latVec(1) = i*FCCspacing
            do j = -CellsPerHalfSide, CellsPerHalfSide
@@ -66,9 +66,9 @@ subroutine NEIGH_RVEC_periodic_FCC_neighborlist(half,CellsPerHalfSide,cutoff, &
                     dx = latVec
                     if (dot_product(dx,dx).lt.cutoff2) then
                        ! we have a neighbor
-                       a(atom) = a(atom) + 1
-                       neighObject%neighborList(a(atom),atom) = atom
-                       neighObject%RijList(:,a(atom)-1,atom)  = dx
+                       a(part) = a(part) + 1
+                       neighObject%neighborList(a(part),part) = part
+                       neighObject%RijList(:,a(part)-1,part)  = dx
                     endif
                  endif
               enddo
@@ -76,35 +76,35 @@ subroutine NEIGH_RVEC_periodic_FCC_neighborlist(half,CellsPerHalfSide,cutoff, &
         enddo
      enddo
 
-     ! atom i gets half of the other image atoms
-     do atomi = 1, N
-        do atomj = atomi+1, 4
+     ! particle i gets half of the other image particles
+     do parti = 1, N
+        do partj = parti+1, 4
            do i = -CellsPerHalfSide, CellsPerHalfSide
               latVec(1) = i*FCCspacing
               do j = -CellsPerHalfSide, CellsPerHalfSide
                  latVec(2) = j*FCCspacing
                  do k = -CellsPerHalfSide, CellsPerHalfSide
                     latVec(3) = k*FCCspacing
-                    if ((i.ge.0 .and. atomj.lt.4).or.(atomj.eq.4 .and. i.gt.0) &
-                         .or.( atomj.eq.4 .and. (i.eq.0 .and. (j.ge.0))) )  then
-                       dx = (latVec + FCCshifts(:,atomj)) - FCCshifts(:,atomi)
+                    if ((i.ge.0 .and. partj.lt.4).or.(partj.eq.4 .and. i.gt.0) &
+                         .or.( partj.eq.4 .and. (i.eq.0 .and. (j.ge.0))) )  then
+                       dx = (latVec + FCCshifts(:,partj)) - FCCshifts(:,parti)
                        if (dot_product(dx,dx).lt.cutoff2) then
                           ! we have a neighbor
-                          a(atomi) = a(atomi) + 1
-                          neighObject%neighborList(a(atomi),atomi) = 1
-                          neighObject%RijList(:,a(atomi)-1,atomi)  = dx
+                          a(parti) = a(parti) + 1
+                          neighObject%neighborList(a(parti),parti) = 1
+                          neighObject%RijList(:,a(parti)-1,parti)  = dx
                        endif
                     endif
                  enddo
               enddo
            enddo
         enddo
-        ! atomi has a(atomi)-1 neighbors
-        neighObject%neighborList(1,atomi) = a(atomi) - 1
+        ! parti has a(parti)-1 neighbors
+        neighObject%neighborList(1,parti) = a(parti) - 1
      enddo
   else
-     atom = 1
-     a(atom) = 1
+     part = 1
+     a(part) = 1
      do i=-CellsPerHalfSide,CellsPerHalfSide
         latVec(1) = i*FCCspacing
         do j=-CellsPerHalfSide,CellsPerHalfSide
@@ -117,17 +117,17 @@ subroutine NEIGH_RVEC_periodic_FCC_neighborlist(half,CellsPerHalfSide,cutoff, &
                     if (.not.( (i.eq.0) .and. (j.eq.0) .and. (k.eq.0) .and. &
                                (m.eq.1) )) then
                        ! we have a neighbor
-                       a(atom) = a(atom)+1
-                       neighObject%neighborList(a(atom),1) = 1
-                       neighObject%RijList(:,a(atom)-1,1) = dx
+                       a(part) = a(part)+1
+                       neighObject%neighborList(a(part),1) = 1
+                       neighObject%RijList(:,a(part)-1,1) = dx
                     endif
                  endif
               enddo
            enddo
         enddo
      enddo
-     ! atom has a(atom)-1 neighbors
-     neighObject%neighborList(1,1) = a(atom)-1
+     ! part has a(part)-1 neighbors
+     neighObject%neighborList(1,1) = a(part)-1
   endif
 
   return

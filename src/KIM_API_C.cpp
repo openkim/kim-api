@@ -76,9 +76,9 @@ int KIM_API_model_info(void * kimmdl, const char * mdlname){
     return KIM_STATUS_FAIL;
  }
 
- void KIM_API_allocate(void *kimmdl, int natoms, int nspecies,int * error){
+ void KIM_API_allocate(void *kimmdl, int nparts, int nspecies,int * error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    mdl->allocate(natoms,nspecies,error);
+    mdl->allocate(nparts,nspecies,error);
  }
 void KIM_API_free(void *kimmdl,int * error){
     KIM_API_model * mdl=*(KIM_API_model **) kimmdl;
@@ -201,21 +201,21 @@ int KIM_API_get_NBC_method(void *kimmdl, const char** const NBC_String)
   return mdl->get_NBC_method(NBC_String);
 }
 
-int KIM_API_get_species_code(void * kimmdl, const char* atom, int * error){
+int KIM_API_get_species_code(void * kimmdl, const char* species, int * error){
      KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-     return mdl->get_species_code(atom,error);
+     return mdl->get_species_code(species,error);
 }
-void KIM_API_set_species_code(void * kimmdl, const char* atom, int code, int * error){
+void KIM_API_set_species_code(void * kimmdl, const char* species, int code, int * error){
      KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-     return mdl->set_species_code(atom, code, error);
+     return mdl->set_species_code(species, code, error);
 }
 
 
 
 int KIM_API_get_neigh(void *kimmdl,int mode,int request,
-        int *atom, int *numnei, int **nei1atom, double **Rij){
+        int *part, int *numnei, int **nei1part, double **Rij){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    return mdl->get_neigh(mode,request,atom,numnei,nei1atom,Rij);
+    return mdl->get_neigh(mode,request,part,numnei,nei1part,Rij);
 }
 
 int KIM_API_process_dEdr(void **ppkim, double * dE, double * dr, double **dx, int *i, int *j){

@@ -106,8 +106,8 @@ static int neigh_rvec_h_compute(void* km)
    int j;
    int jj;
    int k;
-   int numOfAtomNeigh;
-   int currentAtom;
+   int numOfPartNeigh;
+   int currentPart;
    int comp_energy;
    int comp_force;
    int comp_particleEnergy;
@@ -115,7 +115,7 @@ static int neigh_rvec_h_compute(void* km)
    struct model_buffer* buffer;
    int model_index_shift;
 
-   int* nAtoms;
+   int* nParts;
    double* cutoff;
    double* epsilon;
    double* sigma;
@@ -126,7 +126,7 @@ static int neigh_rvec_h_compute(void* km)
    double* energy;
    double* force;
    double* particleEnergy;
-   int* neighListOfCurrentAtom;
+   int* neighListOfCurrentPart;
    int (*get_neigh)(void *,int *,int *,int *, int *, int **, double **);
 
    int *numberContrib;
@@ -176,7 +176,7 @@ static int neigh_rvec_h_compute(void* km)
    KIM_API_getm_data_by_index(pkim, &ier, 8*3,
                               buffer->cutoff_ind,                      &cutoff,         1,
                               buffer->coordinates_ind,                 &coords,         1,
-                              buffer->numberOfParticles_ind,           &nAtoms,         1,
+                              buffer->numberOfParticles_ind,           &nParts,         1,
                               buffer->numberContributingParticles_ind, &numberContrib,  1,
                               buffer->get_neigh_ind,                   &get_neigh,      1,
                               buffer->energy_ind,                      &energy,         comp_energy,
@@ -192,10 +192,10 @@ static int neigh_rvec_h_compute(void* km)
    four_eps_sigma6 = 4.0*(*epsilon)*pow(*sigma,6.0);
    four_eps_sigma12 = 4.0*(*epsilon)*pow(*sigma,12.0);
 
-   /* Assume the atom species are correct! */
+   /* Assume the species are correct! */
 
    /* reset neighbor iterator */
-   ier = (*get_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+   ier = (*get_neigh)(&pkim, &zero, &zero, &currentPart, &numOfPartNeigh, &neighListOfCurrentPart, &Rij);
    if (KIM_STATUS_NEIGH_ITER_INIT_OK != ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_neigh", ier);
@@ -204,14 +204,14 @@ static int neigh_rvec_h_compute(void* km)
    }
 
    /* Compute energy and forces */
-   ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+   ier = (*get_neigh)(&pkim, &zero, &one, &currentPart, &numOfPartNeigh, &neighListOfCurrentPart, &Rij);
 
    if ((comp_force == 1)          && (comp_energy == 1) &&
        (comp_particleEnergy == 0) && (comp_process_dEdr == 0))
    {
       /* initialize potential energies, forces, and virial term */
       *energy = 0.0;
-      for (i = 0; i < *nAtoms; ++i)
+      for (i = 0; i < *nParts; ++i)
       {
          for (k = 0; k < DIM; ++k)
          {
@@ -221,13 +221,13 @@ static int neigh_rvec_h_compute(void* km)
 
       while (KIM_STATUS_OK == ier)
       {
-         i = currentAtom + model_index_shift;
+         i = currentPart + model_index_shift;
          zi=i*DIM;
 
-         /* loop over the neighbors of currentAtom */
-         for (jj = 0; jj < numOfAtomNeigh; ++ jj)
+         /* loop over the neighbors of currentPart */
+         for (jj = 0; jj < numOfPartNeigh; ++ jj)
          {
-            j = neighListOfCurrentAtom[jj] + model_index_shift;
+            j = neighListOfCurrentPart[jj] + model_index_shift;
             z = jj*DIM;
             zj = j*DIM;
 
@@ -265,7 +265,7 @@ static int neigh_rvec_h_compute(void* km)
          }
 
          /* increment iterator */
-         ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+         ier = (*get_neigh)(&pkim, &zero, &one, &currentPart, &numOfPartNeigh, &neighListOfCurrentPart, &Rij);
       }
    }
    else
@@ -273,7 +273,7 @@ static int neigh_rvec_h_compute(void* km)
       /* initialize potential energies, forces, and virial term */
       if (comp_particleEnergy)
       {
-         for (i = 0; i < *nAtoms; ++i)
+         for (i = 0; i < *nParts; ++i)
          {
             particleEnergy[i] = 0.0;
          }
@@ -286,7 +286,7 @@ static int neigh_rvec_h_compute(void* km)
 
       if (comp_force)
       {
-         for (i = 0; i < *nAtoms; ++i)
+         for (i = 0; i < *nParts; ++i)
          {
             for (k = 0; k < DIM; ++k)
             {
@@ -297,13 +297,13 @@ static int neigh_rvec_h_compute(void* km)
 
       while (KIM_STATUS_OK == ier)
       {
-         i = currentAtom + model_index_shift;;
+         i = currentPart + model_index_shift;;
          zi=i*DIM;
 
-         /* loop over the neighbors of currentAtom */
-         for (jj = 0; jj < numOfAtomNeigh; ++ jj)
+         /* loop over the neighbors of currentPart */
+         for (jj = 0; jj < numOfPartNeigh; ++ jj)
          {
-            j = neighListOfCurrentAtom[jj] + model_index_shift;
+            j = neighListOfCurrentPart[jj] + model_index_shift;
             z = jj*DIM;
             zj = j*DIM;
 
@@ -334,7 +334,7 @@ static int neigh_rvec_h_compute(void* km)
                /* accumulate energy */
                if (comp_particleEnergy)
                {
-                  particleEnergy[currentAtom] += 0.5*phi;
+                  particleEnergy[currentPart] += 0.5*phi;
                   if (j < *numberContrib) particleEnergy[j] += 0.5*phi;
                }
 
@@ -365,7 +365,7 @@ static int neigh_rvec_h_compute(void* km)
          }
 
          /* increment iterator */
-         ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+         ier = (*get_neigh)(&pkim, &zero, &one, &currentPart, &numOfPartNeigh, &neighListOfCurrentPart, &Rij);
       }
    }
 
@@ -389,8 +389,8 @@ static int neigh_pure_h_compute(void* km)
    int j;
    int jj;
    int k;
-   int numOfAtomNeigh;
-   int currentAtom;
+   int numOfPartNeigh;
+   int currentPart;
    int comp_energy;
    int comp_force;
    int comp_particleEnergy;
@@ -398,7 +398,7 @@ static int neigh_pure_h_compute(void* km)
    struct model_buffer* buffer;
    int model_index_shift;
 
-   int* nAtoms;
+   int* nParts;
    double* cutoff;
    double* epsilon;
    double* sigma;
@@ -409,7 +409,7 @@ static int neigh_pure_h_compute(void* km)
    double* energy;
    double* force;
    double* particleEnergy;
-   int* neighListOfCurrentAtom;
+   int* neighListOfCurrentPart;
    int (*get_neigh)(void *,int *,int *,int *, int *, int **, double **);
 
    int *numberContrib;
@@ -458,7 +458,7 @@ static int neigh_pure_h_compute(void* km)
    /* unpack data from KIM object */
    KIM_API_getm_data_by_index(pkim, &ier, 8*3,
                               buffer->cutoff_ind,                      &cutoff,         1,
-                              buffer->numberOfParticles_ind,           &nAtoms,         1,
+                              buffer->numberOfParticles_ind,           &nParts,         1,
                               buffer->numberContributingParticles_ind, &numberContrib,  1,
                               buffer->get_neigh_ind,                   &get_neigh,      1,
                               buffer->coordinates_ind,                 &coords,         1,
@@ -475,10 +475,10 @@ static int neigh_pure_h_compute(void* km)
    four_eps_sigma6 = 4.0*(*epsilon)*pow(*sigma,6.0);
    four_eps_sigma12 = 4.0*(*epsilon)*pow(*sigma,12.0);
 
-   /* Assume the atom species are correct! */
+   /* Assume the species are correct! */
 
    /* reset neighbor iterator */
-   ier = (*get_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+   ier = (*get_neigh)(&pkim, &zero, &zero, &currentPart, &numOfPartNeigh, &neighListOfCurrentPart, &Rij);
    if (KIM_STATUS_NEIGH_ITER_INIT_OK != ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_neigh", ier);
@@ -487,14 +487,14 @@ static int neigh_pure_h_compute(void* km)
    }
 
    /* Compute energy and forces */
-   ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+   ier = (*get_neigh)(&pkim, &zero, &one, &currentPart, &numOfPartNeigh, &neighListOfCurrentPart, &Rij);
 
    if ((comp_force == 1)          && (comp_energy == 1) &&
        (comp_particleEnergy == 0) && (comp_process_dEdr == 0))
    {
       /* initialize potential energies, forces, and virial term */
       *energy = 0.0;
-      for (i = 0; i < *nAtoms; ++i)
+      for (i = 0; i < *nParts; ++i)
       {
          for (k = 0; k < DIM; ++k)
          {
@@ -504,13 +504,13 @@ static int neigh_pure_h_compute(void* km)
 
       while (KIM_STATUS_OK == ier)
       {
-         i = currentAtom + model_index_shift;
+         i = currentPart + model_index_shift;
          zi=i*DIM;
 
-         /* loop over the neighbors of currentAtom */
-         for (jj = 0; jj < numOfAtomNeigh; ++ jj)
+         /* loop over the neighbors of currentPart */
+         for (jj = 0; jj < numOfPartNeigh; ++ jj)
          {
-            j = neighListOfCurrentAtom[jj] + model_index_shift;
+            j = neighListOfCurrentPart[jj] + model_index_shift;
             zj = j*DIM;
 
             /* compute square distance */
@@ -547,7 +547,7 @@ static int neigh_pure_h_compute(void* km)
          }
 
          /* increment iterator */
-         ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+         ier = (*get_neigh)(&pkim, &zero, &one, &currentPart, &numOfPartNeigh, &neighListOfCurrentPart, &Rij);
       }
    }
    else
@@ -555,7 +555,7 @@ static int neigh_pure_h_compute(void* km)
       /* initialize potential energies, forces, and virial term */
       if (comp_particleEnergy)
       {
-         for (i = 0; i < *nAtoms; ++i)
+         for (i = 0; i < *nParts; ++i)
          {
             particleEnergy[i] = 0.0;
          }
@@ -568,7 +568,7 @@ static int neigh_pure_h_compute(void* km)
 
       if (comp_force)
       {
-         for (i = 0; i < *nAtoms; ++i)
+         for (i = 0; i < *nParts; ++i)
          {
             for (k = 0; k < DIM; ++k)
             {
@@ -579,13 +579,13 @@ static int neigh_pure_h_compute(void* km)
 
       while (KIM_STATUS_OK == ier)
       {
-         i = currentAtom + model_index_shift;;
+         i = currentPart + model_index_shift;;
          zi=i*DIM;
 
-         /* loop over the neighbors of currentAtom */
-         for (jj = 0; jj < numOfAtomNeigh; ++ jj)
+         /* loop over the neighbors of currentPart */
+         for (jj = 0; jj < numOfPartNeigh; ++ jj)
          {
-            j = neighListOfCurrentAtom[jj] + model_index_shift;
+            j = neighListOfCurrentPart[jj] + model_index_shift;
             zj = j*DIM;
 
             /* compute square distance */
@@ -615,7 +615,7 @@ static int neigh_pure_h_compute(void* km)
                /* accumulate energy */
                if (comp_particleEnergy)
                {
-                  particleEnergy[currentAtom] += 0.5*phi;
+                  particleEnergy[currentPart] += 0.5*phi;
                   if (j < *numberContrib) particleEnergy[j] += 0.5*phi;
                }
 
@@ -646,7 +646,7 @@ static int neigh_pure_h_compute(void* km)
          }
 
          /* increment iterator */
-         ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+         ier = (*get_neigh)(&pkim, &zero, &one, &currentPart, &numOfPartNeigh, &neighListOfCurrentPart, &Rij);
       }
    }
 
@@ -670,8 +670,8 @@ static int neigh_rvec_f_compute(void* km)
    int j;
    int jj;
    int k;
-   int numOfAtomNeigh;
-   int currentAtom;
+   int numOfPartNeigh;
+   int currentPart;
    int comp_energy;
    int comp_force;
    int comp_particleEnergy;
@@ -679,7 +679,7 @@ static int neigh_rvec_f_compute(void* km)
    struct model_buffer* buffer;
    int model_index_shift;
 
-   int* nAtoms;
+   int* nParts;
    double* cutoff;
    double* epsilon;
    double* sigma;
@@ -690,7 +690,7 @@ static int neigh_rvec_f_compute(void* km)
    double* energy;
    double* force;
    double* particleEnergy;
-   int* neighListOfCurrentAtom;
+   int* neighListOfCurrentPart;
    int (*get_neigh)(void *,int *,int *,int *, int *, int **, double **);
 
    double dx[3];
@@ -739,7 +739,7 @@ static int neigh_rvec_f_compute(void* km)
    KIM_API_getm_data_by_index(pkim, &ier, 7*3,
                               buffer->cutoff_ind,            &cutoff,         1,
                               buffer->coordinates_ind,       &coords,         1,
-                              buffer->numberOfParticles_ind, &nAtoms,         1,
+                              buffer->numberOfParticles_ind, &nParts,         1,
                               buffer->get_neigh_ind,         &get_neigh,      1,
                               buffer->energy_ind,            &energy,         comp_energy,
                               buffer->forces_ind,            &force,          comp_force,
@@ -754,10 +754,10 @@ static int neigh_rvec_f_compute(void* km)
    four_eps_sigma6 = 4.0*(*epsilon)*pow(*sigma,6.0);
    four_eps_sigma12 = 4.0*(*epsilon)*pow(*sigma,12.0);
 
-   /* Assume the atom species are correct! */
+   /* Assume the species are correct! */
 
    /* reset neighbor iterator */
-   ier = (*get_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+   ier = (*get_neigh)(&pkim, &zero, &zero, &currentPart, &numOfPartNeigh, &neighListOfCurrentPart, &Rij);
    if (KIM_STATUS_NEIGH_ITER_INIT_OK != ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_neigh", ier);
@@ -766,14 +766,14 @@ static int neigh_rvec_f_compute(void* km)
    }
 
    /* Compute energy and forces */
-   ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+   ier = (*get_neigh)(&pkim, &zero, &one, &currentPart, &numOfPartNeigh, &neighListOfCurrentPart, &Rij);
 
    if ((comp_force == 1)          && (comp_energy == 1) &&
        (comp_particleEnergy == 0) && (comp_process_dEdr == 0))
    {
       /* initialize potential energies, forces, and virial term */
       *energy = 0.0;
-      for (i = 0; i < *nAtoms; ++i)
+      for (i = 0; i < *nParts; ++i)
       {
          for (k = 0; k < DIM; ++k)
          {
@@ -783,13 +783,13 @@ static int neigh_rvec_f_compute(void* km)
 
       while (KIM_STATUS_OK == ier)
       {
-         i = currentAtom + model_index_shift;
+         i = currentPart + model_index_shift;
          zi=i*DIM;
 
-         /* loop over the neighbors of currentAtom */
-         for (jj = 0; jj < numOfAtomNeigh; ++ jj)
+         /* loop over the neighbors of currentPart */
+         for (jj = 0; jj < numOfPartNeigh; ++ jj)
          {
-            j = neighListOfCurrentAtom[jj] + model_index_shift;
+            j = neighListOfCurrentPart[jj] + model_index_shift;
             z = jj*DIM;
             zj = j*DIM;
 
@@ -826,7 +826,7 @@ static int neigh_rvec_f_compute(void* km)
          }
 
          /* increment iterator */
-         ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+         ier = (*get_neigh)(&pkim, &zero, &one, &currentPart, &numOfPartNeigh, &neighListOfCurrentPart, &Rij);
       }
    }
    else
@@ -834,7 +834,7 @@ static int neigh_rvec_f_compute(void* km)
       /* initialize potential energies, forces, and virial term */
       if (comp_particleEnergy)
       {
-         for (i = 0; i < *nAtoms; ++i)
+         for (i = 0; i < *nParts; ++i)
          {
             particleEnergy[i] = 0.0;
          }
@@ -847,7 +847,7 @@ static int neigh_rvec_f_compute(void* km)
 
       if (comp_force)
       {
-         for (i = 0; i < *nAtoms; ++i)
+         for (i = 0; i < *nParts; ++i)
          {
             for (k = 0; k < DIM; ++k)
             {
@@ -858,13 +858,13 @@ static int neigh_rvec_f_compute(void* km)
 
       while (KIM_STATUS_OK == ier)
       {
-         i = currentAtom + model_index_shift;;
+         i = currentPart + model_index_shift;;
          zi=i*DIM;
 
-         /* loop over the neighbors of currentAtom */
-         for (jj = 0; jj < numOfAtomNeigh; ++ jj)
+         /* loop over the neighbors of currentPart */
+         for (jj = 0; jj < numOfPartNeigh; ++ jj)
          {
-            j = neighListOfCurrentAtom[jj] + model_index_shift;
+            j = neighListOfCurrentPart[jj] + model_index_shift;
             z = jj*DIM;
             zj = j*DIM;
 
@@ -894,7 +894,7 @@ static int neigh_rvec_f_compute(void* km)
                /* accumulate energy */
                if (comp_particleEnergy)
                {
-                  particleEnergy[currentAtom] += 0.5*phi;
+                  particleEnergy[currentPart] += 0.5*phi;
                }
 
                if (comp_energy)
@@ -924,7 +924,7 @@ static int neigh_rvec_f_compute(void* km)
          }
 
          /* increment iterator */
-         ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+         ier = (*get_neigh)(&pkim, &zero, &one, &currentPart, &numOfPartNeigh, &neighListOfCurrentPart, &Rij);
       }
    }
 
@@ -948,8 +948,8 @@ static int neigh_pure_f_compute(void* km)
    int j;
    int jj;
    int k;
-   int numOfAtomNeigh;
-   int currentAtom;
+   int numOfPartNeigh;
+   int currentPart;
    int comp_energy;
    int comp_force;
    int comp_particleEnergy;
@@ -957,7 +957,7 @@ static int neigh_pure_f_compute(void* km)
    struct model_buffer* buffer;
    int model_index_shift;
 
-   int* nAtoms;
+   int* nParts;
    double* cutoff;
    double* epsilon;
    double* sigma;
@@ -968,7 +968,7 @@ static int neigh_pure_f_compute(void* km)
    double* energy;
    double* force;
    double* particleEnergy;
-   int* neighListOfCurrentAtom;
+   int* neighListOfCurrentPart;
    int (*get_neigh)(void *,int *,int *,int *, int *, int **, double **);
 
    double dx[3];
@@ -1016,7 +1016,7 @@ static int neigh_pure_f_compute(void* km)
    /* unpack data from KIM object */
    KIM_API_getm_data_by_index(pkim, &ier, 7*3,
                               buffer->cutoff_ind,            &cutoff,         1,
-                              buffer->numberOfParticles_ind, &nAtoms,         1,
+                              buffer->numberOfParticles_ind, &nParts,         1,
                               buffer->coordinates_ind,       &coords,         1,
                               buffer->get_neigh_ind,         &get_neigh,      1,
                               buffer->energy_ind,            &energy,         comp_energy,
@@ -1032,10 +1032,10 @@ static int neigh_pure_f_compute(void* km)
    four_eps_sigma6 = 4.0*(*epsilon)*pow(*sigma,6.0);
    four_eps_sigma12 = 4.0*(*epsilon)*pow(*sigma,12.0);
 
-   /* Assume the atom species are correct! */
+   /* Assume the species are correct! */
 
    /* reset neighbor iterator */
-   ier = (*get_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+   ier = (*get_neigh)(&pkim, &zero, &zero, &currentPart, &numOfPartNeigh, &neighListOfCurrentPart, &Rij);
    if (KIM_STATUS_NEIGH_ITER_INIT_OK != ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_neigh", ier);
@@ -1044,14 +1044,14 @@ static int neigh_pure_f_compute(void* km)
    }
 
    /* Compute energy and forces */
-   ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+   ier = (*get_neigh)(&pkim, &zero, &one, &currentPart, &numOfPartNeigh, &neighListOfCurrentPart, &Rij);
 
    if ((comp_force == 1)          && (comp_energy == 1) &&
        (comp_particleEnergy == 0) && (comp_process_dEdr == 0))
    {
       /* initialize potential energies, forces, and virial term */
       *energy = 0.0;
-      for (i = 0; i < *nAtoms; ++i)
+      for (i = 0; i < *nParts; ++i)
       {
          for (k = 0; k < DIM; ++k)
          {
@@ -1061,13 +1061,13 @@ static int neigh_pure_f_compute(void* km)
 
       while (KIM_STATUS_OK == ier)
       {
-         i = currentAtom + model_index_shift;
+         i = currentPart + model_index_shift;
          zi=i*DIM;
 
-         /* loop over the neighbors of currentAtom */
-         for (jj = 0; jj < numOfAtomNeigh; ++ jj)
+         /* loop over the neighbors of currentPart */
+         for (jj = 0; jj < numOfPartNeigh; ++ jj)
          {
-            j = neighListOfCurrentAtom[jj] + model_index_shift;
+            j = neighListOfCurrentPart[jj] + model_index_shift;
             zj = j*DIM;
 
             /* compute square distance */
@@ -1103,7 +1103,7 @@ static int neigh_pure_f_compute(void* km)
          }
 
          /* increment iterator */
-         ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+         ier = (*get_neigh)(&pkim, &zero, &one, &currentPart, &numOfPartNeigh, &neighListOfCurrentPart, &Rij);
       }
    }
    else
@@ -1111,7 +1111,7 @@ static int neigh_pure_f_compute(void* km)
       /* initialize potential energies, forces, and virial term */
       if (comp_particleEnergy)
       {
-         for (i = 0; i < *nAtoms; ++i)
+         for (i = 0; i < *nParts; ++i)
          {
             particleEnergy[i] = 0.0;
          }
@@ -1124,7 +1124,7 @@ static int neigh_pure_f_compute(void* km)
 
       if (comp_force)
       {
-         for (i = 0; i < *nAtoms; ++i)
+         for (i = 0; i < *nParts; ++i)
          {
             for (k = 0; k < DIM; ++k)
             {
@@ -1135,13 +1135,13 @@ static int neigh_pure_f_compute(void* km)
 
       while (KIM_STATUS_OK == ier)
       {
-         i = currentAtom + model_index_shift;;
+         i = currentPart + model_index_shift;;
          zi=i*DIM;
 
-         /* loop over the neighbors of currentAtom */
-         for (jj = 0; jj < numOfAtomNeigh; ++ jj)
+         /* loop over the neighbors of currentPart */
+         for (jj = 0; jj < numOfPartNeigh; ++ jj)
          {
-            j = neighListOfCurrentAtom[jj] + model_index_shift;
+            j = neighListOfCurrentPart[jj] + model_index_shift;
             zj = j*DIM;
 
             /* compute square distance */
@@ -1170,7 +1170,7 @@ static int neigh_pure_f_compute(void* km)
                /* accumulate energy */
                if (comp_particleEnergy)
                {
-                  particleEnergy[currentAtom] += 0.5*phi;
+                  particleEnergy[currentPart] += 0.5*phi;
                }
 
                if (comp_energy)
@@ -1200,7 +1200,7 @@ static int neigh_pure_f_compute(void* km)
          }
 
          /* increment iterator */
-         ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+         ier = (*get_neigh)(&pkim, &zero, &one, &currentPart, &numOfPartNeigh, &neighListOfCurrentPart, &Rij);
       }
    }
 
@@ -1224,8 +1224,8 @@ static int mi_opbc_h_compute(void* km)
    int j;
    int jj;
    int k;
-   int numOfAtomNeigh;
-   int currentAtom;
+   int numOfPartNeigh;
+   int currentPart;
    int comp_energy;
    int comp_force;
    int comp_particleEnergy;
@@ -1233,7 +1233,7 @@ static int mi_opbc_h_compute(void* km)
    struct model_buffer* buffer;
    int model_index_shift;
 
-   int* nAtoms;
+   int* nParts;
    double* cutoff;
    double* epsilon;
    double* sigma;
@@ -1245,7 +1245,7 @@ static int mi_opbc_h_compute(void* km)
    double* force;
    double* particleEnergy;
    double* boxSideLengths;
-   int* neighListOfCurrentAtom;
+   int* neighListOfCurrentPart;
    int (*get_neigh)(void *,int *,int *,int *, int *, int **, double **);
 
    int *numberContrib;
@@ -1295,7 +1295,7 @@ static int mi_opbc_h_compute(void* km)
    KIM_API_getm_data_by_index(pkim, &ier, 9*3,
                               buffer->cutoff_ind,                      &cutoff,         1,
                               buffer->coordinates_ind,                 &coords,         1,
-                              buffer->numberOfParticles_ind,           &nAtoms,         1,
+                              buffer->numberOfParticles_ind,           &nParts,         1,
                               buffer->numberContributingParticles_ind, &numberContrib,  1,
                               buffer->boxSideLengths_ind,              &boxSideLengths, 1,
                               buffer->get_neigh_ind,                   &get_neigh,      1,
@@ -1312,10 +1312,10 @@ static int mi_opbc_h_compute(void* km)
    four_eps_sigma6 = 4.0*(*epsilon)*pow(*sigma,6.0);
    four_eps_sigma12 = 4.0*(*epsilon)*pow(*sigma,12.0);
 
-   /* Assume the atom species are correct! */
+   /* Assume the species are correct! */
 
    /* reset neighbor iterator */
-   ier = (*get_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+   ier = (*get_neigh)(&pkim, &zero, &zero, &currentPart, &numOfPartNeigh, &neighListOfCurrentPart, &Rij);
    if (KIM_STATUS_NEIGH_ITER_INIT_OK != ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_neigh", ier);
@@ -1324,14 +1324,14 @@ static int mi_opbc_h_compute(void* km)
    }
 
    /* Compute energy and forces */
-   ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+   ier = (*get_neigh)(&pkim, &zero, &one, &currentPart, &numOfPartNeigh, &neighListOfCurrentPart, &Rij);
 
    if ((comp_force == 1)          && (comp_energy == 1) &&
        (comp_particleEnergy == 0) && (comp_process_dEdr == 0))
    {
       /* initialize potential energies, forces, and virial term */
       *energy = 0.0;
-      for (i = 0; i < *nAtoms; ++i)
+      for (i = 0; i < *nParts; ++i)
       {
          for (k = 0; k < DIM; ++k)
          {
@@ -1341,13 +1341,13 @@ static int mi_opbc_h_compute(void* km)
 
       while (KIM_STATUS_OK == ier)
       {
-         i = currentAtom + model_index_shift;
+         i = currentPart + model_index_shift;
          zi=i*DIM;
 
-         /* loop over the neighbors of currentAtom */
-         for (jj = 0; jj < numOfAtomNeigh; ++ jj)
+         /* loop over the neighbors of currentPart */
+         for (jj = 0; jj < numOfPartNeigh; ++ jj)
          {
-            j = neighListOfCurrentAtom[jj] + model_index_shift;
+            j = neighListOfCurrentPart[jj] + model_index_shift;
             zj = j*DIM;
 
             /* compute neighbor vector and square distance */
@@ -1390,7 +1390,7 @@ static int mi_opbc_h_compute(void* km)
          }
 
          /* increment iterator */
-         ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+         ier = (*get_neigh)(&pkim, &zero, &one, &currentPart, &numOfPartNeigh, &neighListOfCurrentPart, &Rij);
       }
    }
    else
@@ -1398,7 +1398,7 @@ static int mi_opbc_h_compute(void* km)
       /* initialize potential energies, forces, and virial term */
       if (comp_particleEnergy)
       {
-         for (i = 0; i < *nAtoms; ++i)
+         for (i = 0; i < *nParts; ++i)
          {
             particleEnergy[i] = 0.0;
          }
@@ -1411,7 +1411,7 @@ static int mi_opbc_h_compute(void* km)
 
       if (comp_force)
       {
-         for (i = 0; i < *nAtoms; ++i)
+         for (i = 0; i < *nParts; ++i)
          {
             for (k = 0; k < DIM; ++k)
             {
@@ -1422,13 +1422,13 @@ static int mi_opbc_h_compute(void* km)
 
       while (KIM_STATUS_OK == ier)
       {
-         i = currentAtom + model_index_shift;;
+         i = currentPart + model_index_shift;;
          zi=i*DIM;
 
-         /* loop over the neighbors of currentAtom */
-         for (jj = 0; jj < numOfAtomNeigh; ++ jj)
+         /* loop over the neighbors of currentPart */
+         for (jj = 0; jj < numOfPartNeigh; ++ jj)
          {
-            j = neighListOfCurrentAtom[jj] + model_index_shift;
+            j = neighListOfCurrentPart[jj] + model_index_shift;
             zj = j*DIM;
 
             /* compute neighbor vector and square distance */
@@ -1464,7 +1464,7 @@ static int mi_opbc_h_compute(void* km)
                /* accumulate energy */
                if (comp_particleEnergy)
                {
-                  particleEnergy[currentAtom] += 0.5*phi;
+                  particleEnergy[currentPart] += 0.5*phi;
                   if (j < *numberContrib) particleEnergy[j] += 0.5*phi;
                }
 
@@ -1495,7 +1495,7 @@ static int mi_opbc_h_compute(void* km)
          }
 
          /* increment iterator */
-         ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+         ier = (*get_neigh)(&pkim, &zero, &one, &currentPart, &numOfPartNeigh, &neighListOfCurrentPart, &Rij);
       }
    }
 
@@ -1519,8 +1519,8 @@ static int mi_opbc_f_compute(void* km)
    int j;
    int jj;
    int k;
-   int numOfAtomNeigh;
-   int currentAtom;
+   int numOfPartNeigh;
+   int currentPart;
    int comp_energy;
    int comp_force;
    int comp_particleEnergy;
@@ -1528,7 +1528,7 @@ static int mi_opbc_f_compute(void* km)
    struct model_buffer* buffer;
    int model_index_shift;
 
-   int* nAtoms;
+   int* nParts;
    double* cutoff;
    double* epsilon;
    double* sigma;
@@ -1540,7 +1540,7 @@ static int mi_opbc_f_compute(void* km)
    double* force;
    double* particleEnergy;
    double* boxSideLengths;
-   int* neighListOfCurrentAtom;
+   int* neighListOfCurrentPart;
    int (*get_neigh)(void *,int *,int *,int *, int *, int **, double **);
 
    double dx[3];
@@ -1588,7 +1588,7 @@ static int mi_opbc_f_compute(void* km)
    /* unpack data from KIM object */
    KIM_API_getm_data_by_index(pkim, &ier, 8*3,
                               buffer->cutoff_ind,            &cutoff,         1,
-                              buffer->numberOfParticles_ind, &nAtoms,         1,
+                              buffer->numberOfParticles_ind, &nParts,         1,
                               buffer->coordinates_ind,       &coords,         1,
                               buffer->boxSideLengths_ind,    &boxSideLengths, 1,
                               buffer->get_neigh_ind,         &get_neigh,      1,
@@ -1605,10 +1605,10 @@ static int mi_opbc_f_compute(void* km)
    four_eps_sigma6 = 4.0*(*epsilon)*pow(*sigma,6.0);
    four_eps_sigma12 = 4.0*(*epsilon)*pow(*sigma,12.0);
 
-   /* Assume the atom species are correct! */
+   /* Assume the species are correct! */
 
    /* reset neighbor iterator */
-   ier = (*get_neigh)(&pkim, &zero, &zero, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+   ier = (*get_neigh)(&pkim, &zero, &zero, &currentPart, &numOfPartNeigh, &neighListOfCurrentPart, &Rij);
    if (KIM_STATUS_NEIGH_ITER_INIT_OK != ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_neigh", ier);
@@ -1617,14 +1617,14 @@ static int mi_opbc_f_compute(void* km)
    }
 
    /* Compute energy and forces */
-   ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+   ier = (*get_neigh)(&pkim, &zero, &one, &currentPart, &numOfPartNeigh, &neighListOfCurrentPart, &Rij);
 
    if ((comp_force == 1)          && (comp_energy == 1) &&
        (comp_particleEnergy == 0) && (comp_process_dEdr == 0))
    {
       /* initialize potential energies, forces, and virial term */
       *energy = 0.0;
-      for (i = 0; i < *nAtoms; ++i)
+      for (i = 0; i < *nParts; ++i)
       {
          for (k = 0; k < DIM; ++k)
          {
@@ -1634,13 +1634,13 @@ static int mi_opbc_f_compute(void* km)
 
       while (KIM_STATUS_OK == ier)
       {
-         i = currentAtom + model_index_shift;
+         i = currentPart + model_index_shift;
          zi=i*DIM;
 
-         /* loop over the neighbors of currentAtom */
-         for (jj = 0; jj < numOfAtomNeigh; ++ jj)
+         /* loop over the neighbors of currentPart */
+         for (jj = 0; jj < numOfPartNeigh; ++ jj)
          {
-            j = neighListOfCurrentAtom[jj] + model_index_shift;
+            j = neighListOfCurrentPart[jj] + model_index_shift;
             zj = j*DIM;
 
             /* compute neighbor vector and square distance */
@@ -1682,7 +1682,7 @@ static int mi_opbc_f_compute(void* km)
          }
 
          /* increment iterator */
-         ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+         ier = (*get_neigh)(&pkim, &zero, &one, &currentPart, &numOfPartNeigh, &neighListOfCurrentPart, &Rij);
       }
    }
    else
@@ -1690,7 +1690,7 @@ static int mi_opbc_f_compute(void* km)
       /* initialize potential energies, forces, and virial term */
       if (comp_particleEnergy)
       {
-         for (i = 0; i < *nAtoms; ++i)
+         for (i = 0; i < *nParts; ++i)
          {
             particleEnergy[i] = 0.0;
          }
@@ -1703,7 +1703,7 @@ static int mi_opbc_f_compute(void* km)
 
       if (comp_force)
       {
-         for (i = 0; i < *nAtoms; ++i)
+         for (i = 0; i < *nParts; ++i)
          {
             for (k = 0; k < DIM; ++k)
             {
@@ -1714,13 +1714,13 @@ static int mi_opbc_f_compute(void* km)
 
       while (KIM_STATUS_OK == ier)
       {
-         i = currentAtom + model_index_shift;;
+         i = currentPart + model_index_shift;;
          zi=i*DIM;
 
-         /* loop over the neighbors of currentAtom */
-         for (jj = 0; jj < numOfAtomNeigh; ++ jj)
+         /* loop over the neighbors of currentPart */
+         for (jj = 0; jj < numOfPartNeigh; ++ jj)
          {
-            j = neighListOfCurrentAtom[jj] + model_index_shift;
+            j = neighListOfCurrentPart[jj] + model_index_shift;
             zj = j*DIM;
 
             /* compute neighbor vector and square distance */
@@ -1755,7 +1755,7 @@ static int mi_opbc_f_compute(void* km)
                /* accumulate energy */
                if (comp_particleEnergy)
                {
-                  particleEnergy[currentAtom] += 0.5*phi;
+                  particleEnergy[currentPart] += 0.5*phi;
                }
 
                if (comp_energy)
@@ -1785,7 +1785,7 @@ static int mi_opbc_f_compute(void* km)
          }
 
          /* increment iterator */
-         ier = (*get_neigh)(&pkim, &zero, &one, &currentAtom, &numOfAtomNeigh, &neighListOfCurrentAtom, &Rij);
+         ier = (*get_neigh)(&pkim, &zero, &one, &currentPart, &numOfPartNeigh, &neighListOfCurrentPart, &Rij);
       }
    }
 
@@ -1814,7 +1814,7 @@ static int cluster_compute(void* km)
    int comp_process_dEdr;
    struct model_buffer* buffer;
 
-   int* nAtoms;
+   int* nParts;
    double* cutoff;
    double* epsilon;
    double* sigma;
@@ -1867,7 +1867,7 @@ static int cluster_compute(void* km)
    /* unpack data from KIM object */
    KIM_API_getm_data_by_index(pkim, &ier, 6*3,
                               buffer->cutoff_ind,            &cutoff,         1,
-                              buffer->numberOfParticles_ind, &nAtoms,         1,
+                              buffer->numberOfParticles_ind, &nParts,         1,
                               buffer->coordinates_ind,       &coords,         1,
                               buffer->energy_ind,            &energy,         comp_energy,
                               buffer->forces_ind,            &force,          comp_force,
@@ -1882,14 +1882,14 @@ static int cluster_compute(void* km)
    four_eps_sigma6 = 4.0*(*epsilon)*pow(*sigma,6.0);
    four_eps_sigma12 = 4.0*(*epsilon)*pow(*sigma,12.0);
 
-   /* Assume the atom species are correct! */
+   /* Assume the species are correct! */
 
    if ((comp_force == 1)          && (comp_energy == 1) &&
        (comp_particleEnergy == 0) && (comp_process_dEdr == 0))
    {
       /* initialize potential energies, forces, and virial term */
       *energy = 0.0;
-      for (i = 0; i < *nAtoms; ++i)
+      for (i = 0; i < *nParts; ++i)
       {
          for (k = 0; k < DIM; ++k)
          {
@@ -1897,12 +1897,12 @@ static int cluster_compute(void* km)
          }
       }
 
-      for (i = 0; i < *nAtoms; i++)
+      for (i = 0; i < *nParts; i++)
       {
          zi=i*DIM;
 
-         /* loop over the neighbors of currentAtom */
-         for (j = i+1; j < *nAtoms; ++ j)
+         /* loop over the neighbors of currentPart */
+         for (j = i+1; j < *nParts; ++ j)
          {
             zj = j*DIM;
 
@@ -1946,7 +1946,7 @@ static int cluster_compute(void* km)
       /* initialize potential energies, forces, and virial term */
       if (comp_particleEnergy)
       {
-         for (i = 0; i < *nAtoms; ++i)
+         for (i = 0; i < *nParts; ++i)
          {
             particleEnergy[i] = 0.0;
          }
@@ -1959,7 +1959,7 @@ static int cluster_compute(void* km)
 
       if (comp_force)
       {
-         for (i = 0; i < *nAtoms; ++i)
+         for (i = 0; i < *nParts; ++i)
          {
             for (k = 0; k < DIM; ++k)
             {
@@ -1968,12 +1968,12 @@ static int cluster_compute(void* km)
          }
       }
 
-      for (i = 0; i < *nAtoms; i++)
+      for (i = 0; i < *nParts; i++)
       {
          zi=i*DIM;
 
-         /* loop over the neighbors of currentAtom */
-         for (j = i+1; j < *nAtoms; j++)
+         /* loop over the neighbors of currentPart */
+         for (j = i+1; j < *nParts; j++)
          {
             zj = j*DIM;
 

@@ -67,10 +67,10 @@ Notes:
 
 STRUCTURE OF ATOMIC CONFIGURATION FILE
 
-The file containing the atom configuration, energy and forces must have the
+The file containing the particle configuration, energy and forces must have the
 following format:
 
-N                                   Number of atoms
+N                                   Number of particles
 
 spec1  x-coor1  y-coor1  z-coor1    Space delimited species and positions (three
   .        .        .        .      coordinates per line) where "spec" is an
@@ -81,7 +81,7 @@ specN  x-coorN  y-coorN  z-coorN
 Energy                              Total energy of the configuration
 
 x-force1  y-force1  z-force1        Components of the force vector acting
-    .        .        .             on each atom
+    .        .        .             on each particle
     .        .        .
     .        .        .
 x-forceN  y-forceN  z-forceN

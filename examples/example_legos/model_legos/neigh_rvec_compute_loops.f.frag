@@ -2,24 +2,24 @@
     !
     do i = 1,numberOfParticles
 
-       ! Get neighbors for atom i
+       ! Get neighbors for particle i
        !
-       atom = i ! request neighbors for atom i
-       Compute_Energy_Forces = kim_api_get_neigh(pkim,1,atom,atom_ret,numnei, &
-                                                 pnei1atom,pRij)
+       part = i ! request neighbors for part i
+       Compute_Energy_Forces = kim_api_get_neigh(pkim,1,part,part_ret,numnei, &
+                                                 pnei1part,pRij)
        if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
           idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                       "kim_api_get_neigh",      &
                                       Compute_Energy_Forces)
           return
        endif
-       call c_f_pointer(pnei1atom, nei1atom, [numnei])
+       call c_f_pointer(pnei1part, nei1part, [numnei])
        call c_f_pointer(pRij,      Rij,      [DIM,numnei])
 
-       ! Loop over the neighbors of atom i
+       ! Loop over the neighbors of part i
        !
        do jj = 1, numnei
-          j = nei1atom(jj)
+          j = nei1part(jj)
           Rsqij = dot_product(Rij(:,jj),Rij(:,jj))  ! compute square distance
           if ( Rsqij < model_cutsq ) then           ! particles are interacting?
              r = sqrt(Rsqij)                        ! compute distance

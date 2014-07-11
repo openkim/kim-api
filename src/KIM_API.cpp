@@ -211,7 +211,7 @@ int *  KIM_IOline::get_shape(){
             delete [] shapetmp;
             return shp;
  }
-int * KIM_IOline::get_shape(int natoms, int nspecies){
+int * KIM_IOline::get_shape(int nparts, int nspecies){
             char* shapetmp = new char[strlen(shape)+1];
             char tmpstring[128];
             strncpy(shapetmp,shape,strlen(shape)+1);
@@ -227,7 +227,7 @@ int * KIM_IOline::get_shape(int natoms, int nspecies){
                     strcpy(tmpstring,tmp);
                     strip(tmpstring);
                     if(strcmp(tmpstring,"numberSpecies")==0) shp[i]=nspecies;
-                    if(strcmp(tmpstring,"numberOfParticles")==0) shp[i]=(int)natoms;
+                    if(strcmp(tmpstring,"numberOfParticles")==0) shp[i]=(int)nparts;
                 }
                 tmp = strtok(NULL,"[,]");
                 i++;
@@ -1947,8 +1947,8 @@ int KIM_API_model::model_compute(){
   return error;
 }
 
-int KIM_API_model::get_neigh(int mode, int request, int *atom,
-        int *numnei, int** nei1atom, double** Rij){
+int KIM_API_model::get_neigh(int mode, int request, int *part,
+        int *numnei, int** nei1part, double** Rij){
     int locrequest=request;
     int locmode = mode;
 
@@ -1962,24 +1962,24 @@ int KIM_API_model::get_neigh(int mode, int request, int *atom,
 
     if (model_index_shift==0) {
        if (mode==0 && request == 0) { // reset iterator
-            return (*get_neigh)((void **)&pkim,&locmode, &locrequest, atom, numnei, nei1atom, Rij ) ;
+            return (*get_neigh)((void **)&pkim,&locmode, &locrequest, part, numnei, nei1part, Rij ) ;
         }else{
 
-            int erkey = (*get_neigh)((void **)&pkim,&locmode, &locrequest, atom, numnei, nei1atom, Rij );
+            int erkey = (*get_neigh)((void **)&pkim,&locmode, &locrequest, part, numnei, nei1part, Rij );
             return erkey;
         }
     }else if (model_index_shift == 1 || model_index_shift == -1){
 
         int req=request;
         if (mode ==1) req = request - model_index_shift;
-        int at = *atom;
+        int at = *part;
 
         if (mode==0 && request == 0) { // reset iterator
-            return (*get_neigh)((void **)&pkim,&locmode, &req, &at, numnei, nei1atom, Rij );
+            return (*get_neigh)((void **)&pkim,&locmode, &req, &at, numnei, nei1part, Rij );
         }else{
-            int erkey = (*get_neigh)((void **)&pkim,&locmode, &req, &at, numnei, nei1atom, Rij );
+            int erkey = (*get_neigh)((void **)&pkim,&locmode, &req, &at, numnei, nei1part, Rij );
             if (erkey == 1){
-                *atom= at + model_index_shift;
+                *part= at + model_index_shift;
                 if (neiOfAnAtomSize < *numnei) {
                    delete [] neiOfAnAtom;
                    neiOfAnAtom = new int[*numnei];
@@ -1991,9 +1991,9 @@ int KIM_API_model::get_neigh(int mode, int request, int *atom,
                    neiOfAnAtomSize = *numnei;
                 }
                 for (int i = 0; i<(*numnei);i++){
-                   neiOfAnAtom[i] = (*nei1atom)[i] + model_index_shift;
+                   neiOfAnAtom[i] = (*nei1part)[i] + model_index_shift;
                 }
-                *nei1atom = &(neiOfAnAtom[0]);
+                *nei1part = &(neiOfAnAtom[0]);
             }
             return erkey;
         }
@@ -2021,7 +2021,7 @@ bool KIM_API_model::irrelevantVars2donotcompute(KIM_API_model & test, KIM_API_mo
     return true;
 }
 
-void KIM_API_model::allocate( int natoms, int nspecies, int * error){
+void KIM_API_model::allocate( int nparts, int nspecies, int * error){
     // in process
     if ( this->model.data.p == NULL) {
         std::cout<<"* Error (KIM_API_model::allocate): KIM API object not initialized with KIM_API_file_init()."<<std::endl;
@@ -2030,7 +2030,7 @@ void KIM_API_model::allocate( int natoms, int nspecies, int * error){
     }
     for(int i=0; i<this->model.size;i++){
         intptr_t rank = (intptr_t)this->inlines[i].get_rank();
-        int *shape = this->inlines[i].get_shape(natoms,nspecies);
+        int *shape = this->inlines[i].get_shape(nparts,nspecies);
         int calculate = (*this)[i].flag->calculate;
         bool isitparam = this->is_it_par((*this)[i].name);
         intptr_t sz=0;
@@ -2347,14 +2347,14 @@ int  KIM_API_model::get_neigh_mode(int*kimerr){
     }
 }
 
-int KIM_API_model::get_species_code(const char* atom, int * error){
+int KIM_API_model::get_species_code(const char* species, int * error){
     *error =KIM_STATUS_FAIL;
-    if (atom == NULL)  {
+    if (species == NULL)  {
         *error = KIM_STATUS_PARTICLE_SPECIES_UNDEFINED;
         return KIM_STATUS_PARTICLE_SPECIES_UNDEFINED; //no atom symbol provided
     }
     Atom_Map key, *res=NULL;
-    strcpy(key.symbol,atom);
+    strcpy(key.symbol,species);
     res = (Atom_Map *)bsearch((void *)&key,AtomsTypes,nAtomsTypes,sizeof(Atom_Map),&(Atom_Map::comparator));
     if (res == NULL) {
         *error = KIM_STATUS_PARTICLE_INVALID_SPECIES;
@@ -2364,14 +2364,14 @@ int KIM_API_model::get_species_code(const char* atom, int * error){
     return res->code;
 }
 
-void KIM_API_model::set_species_code(const char* atom, int code, int* error){
+void KIM_API_model::set_species_code(const char* species, int code, int* error){
    *error = KIM_STATUS_FAIL;
-    if (atom == NULL)  {
+    if (species == NULL)  {
         *error = KIM_STATUS_PARTICLE_SPECIES_UNDEFINED;
         return; //no atom symbol provided
     }
     Atom_Map key, *res=NULL;
-    strcpy(key.symbol,atom);
+    strcpy(key.symbol,species);
     res = (Atom_Map *)bsearch((void *)&key,AtomsTypes,nAtomsTypes,sizeof(Atom_Map),&(Atom_Map::comparator));
     if (res == NULL) {
         *error = KIM_STATUS_PARTICLE_INVALID_SPECIES;
@@ -2463,14 +2463,14 @@ int KIM_API_model::get_status_msg(const int status_code,
     { "numargs is not divisiable by 3(in KIM_API...multiple routine)"},
     { "invalid value for `request' provided"},
     { "get_neigh method in KIM API object is not set(NULL value)"},
-    { "number of neighs of atom too big to allocate for conversion"},
+    { "number of neighs of particle too big to allocate for conversion"},
     { "invalid KIM API object"},
     { "negative index in shape"},
     { "invalid mode value"},
     { "no particle species have been specified by the Test or Model"},
     { "provided rank does not match KIM API argument rank"},
-    { "invalid atom id requested (request out of range)"},
-    { "symbol is not among supported atom symbols"},
+    { "invalid particle id requested (request out of range)"},
+    { "symbol is not among supported particle symbols"},
     { "argument name provided is not in KIM API object"},
     { "unsuccessful completion"},
     { "successful completion"},

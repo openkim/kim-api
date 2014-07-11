@@ -114,10 +114,10 @@ STEP 4
 
    which is written in C.  (The same program written in Fortran 2003 called
    `ex_test_Ar_free_cluster_CLUSTER_F03' is also provided.)  This test computes
-   the energy and forces on the atoms of an isolated cluster of Ar atoms
-   arranged in a face-centered cubic (FCC) structure.  The Tests do not provide
-   neighbor list handling.  The called Model must loop over all atoms to find
-   the neighbors of a given atom.
+   the energy and forces on the particles of an isolated cluster of Ar
+   particles arranged in a face-centered cubic (FCC) structure.  The Tests do
+   not provide neighbor list handling.  The called Model must loop over all
+   particles to find the neighbors of a given particle.
 
    The source code for this Model and corresponding KIM descriptor file are
    located in

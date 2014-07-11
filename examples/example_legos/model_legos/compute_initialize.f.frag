@@ -1,5 +1,5 @@
     ! Check to see if we have been asked to compute the energy, forces,
-    ! energyperatom, and virial
+    ! energyperpart, and virial
     !
     call kim_api_getm_compute(pkim, Compute_Energy_Forces, &
          "energy",         comp_energy, 1, &
@@ -16,7 +16,7 @@
     ! Unpack data from KIM object
     !
     call kim_api_getm_data(pkim,  Compute_Energy_Forces,          &
-         "numberOfParticles",     pnAtoms,           1,           &
+         "numberOfParticles",     pnParts,           1,           &
          "numberOfSpecies",       pnOfSpecies,       1,           &
          "particleSpecies",       pparticleSpecies,  1,           &
          "cutoff",                pcutoff,           1,           &
@@ -31,7 +31,7 @@
        return
     endif
 
-    call c_f_pointer(pnAtoms,          numberOfParticles)
+    call c_f_pointer(pnParts,          numberOfParticles)
     call c_f_pointer(pnOfSpecies,      nOfSpecies)
     call c_f_pointer(pparticleSpecies, particleSpecies, [numberOfParticles])
     call c_f_pointer(pcutoff,          model_cutoff)
@@ -66,7 +66,7 @@
     call c_f_pointer(psigmasq, model_sigmasq)
     call c_f_pointer(pcutsq,   model_cutsq)
 
-    ! Check to be sure that the atom species are correct by comparing
+    ! Check to be sure that the species are correct by comparing
     ! the provided species codes to the value given here (which should
     ! be the same as that given in the .kim file).
     !
@@ -74,7 +74,7 @@
     do i = 1,numberOfParticles
        if (.not. (particleSpecies(i) .eq. SPECIES_CODE_STR)) then
           idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                                      "Wrong Atom Species", Compute_Energy_Forces)
+                                      "Wrong Species", Compute_Energy_Forces)
           return
        endif
     enddo

@@ -175,20 +175,20 @@ ex_model_Ne_P_MLJ_NEIGH_RVEC_H (C)
      provide parallel examples of an implementation of the NEIGH_RVEC_F and
      NEIGH_RVEC_H NBC methods, respectively.  These NBC methods include
      relative position vectors (Rij's) as well as the usual neighbor list of
-     atom Id's.
+     particle Id's.
 
 ex_model_Ar_P_MLJ_MI_OPBC_H_F (Fortran 2003)
      This Model implements the MI_OPBC_H and MI_OPBC_F NBC methods.  This is,
      arguably, the most complex method and requires that both the Simulator and
      Model apply the "minimum image" convention (using the `boxSideLengths'
-     argument) to determine an atom's neighbors and the corresponding relative
-     position vectors.
+     argument) to determine a particle's neighbors and the corresponding
+     relative position vectors.
 
 ex_model_ArNe_P_MLJ_NEIGH_RVEC_F (Fortran 2003)
      This Model is the same as ex_model_Ar_P_MLJ_NEIGH_RVEC_F except that it
-     supports interactions between argon and neon atoms.  Thus, it is useful to
-     compare these two Models in order to see what changes are required for a
-     KIM Model to support multiple species interactions.
+     supports interactions between argon and neon particles.  Thus, it is
+     useful to compare these two Models in order to see what changes are
+     required for a KIM Model to support multiple species interactions.
 
 ex_model_Ar_P_MLJ_C (C)
      This Model is based on the template file

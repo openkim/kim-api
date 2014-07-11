@@ -54,7 +54,7 @@ int KIM_API_file_init(void * kimmdl, const char *simkimfile, const char *modelna
 int KIM_API_model_info(void * kimmdl, const char * mdlname);
 
 int KIM_API_string_init(void * kimmdl, const char *siminputstring, const char * modelname);
-void KIM_API_allocate(void *kimmdl, int natoms, int nspecies, int * error);
+void KIM_API_allocate(void *kimmdl, int nparts, int nspecies, int * error);
 void KIM_API_free(void *kimmdl,int * error);
 void KIM_API_print(void *kimmdl,int *error);
 int KIM_API_model_compute(void *kimmdl);
@@ -73,8 +73,8 @@ int KIM_API_model_reinit(void * kimmdl);
   int KIM_API_get_sim_species(void* kimmdl, const int index,
                               const char** const speciesString);
 
-int KIM_API_get_species_code(void * kimmdl, const char* atom, int * error);
-void KIM_API_set_species_code(void * kimmdl, const char* atom, int code, int * error);
+int KIM_API_get_species_code(void * kimmdl, const char* species, int * error);
+void KIM_API_set_species_code(void * kimmdl, const char* species, int code, int * error);
 
   int KIM_API_get_num_params(void* kimmdl, int* numberParameters,
                              int* maxStringLength);
@@ -91,7 +91,7 @@ void KIM_API_set_species_code(void * kimmdl, const char* atom, int code, int * e
   int KIM_API_get_NBC_method(void* kimmdl, const char** const NBC_String);
 
 int KIM_API_get_neigh(void *kimmdl,int mode,int request,
-        int *atom, int *numnei, int **nei1atom, double **Rij);
+        int *part, int *numnei, int **nei1part, double **Rij);
 
 int KIM_API_get_neigh_mode(void *kimmdl,int *error);
 

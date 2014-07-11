@@ -20,7 +20,7 @@ real(c_double) function get_model_cutoff_firsttime(testkimfile, modelname)
   character(len=KIM_KEY_STRING_LENGTH),  intent(in)  :: modelname
 
   !-- Local variables
-  integer(c_int), parameter :: ASpecies = 1  ! hard-wired to one atomic specie
+  integer(c_int), parameter :: ASpecies = 1  ! hard-wired to one atomic species
   integer(c_int) ier, idum
   type(c_ptr) pkim_temp
   integer(c_int) N
@@ -34,7 +34,7 @@ real(c_double) function get_model_cutoff_firsttime(testkimfile, modelname)
      stop
   endif
 
-  ! To get the `cutoff', we use 1 atom to allocate memory via the KIM system
+  ! To get the `cutoff', we use 1 particle to allocate memory via the KIM system
   !
   N = 1
   call kim_api_allocate(pkim_temp, N, ASpecies, ier)

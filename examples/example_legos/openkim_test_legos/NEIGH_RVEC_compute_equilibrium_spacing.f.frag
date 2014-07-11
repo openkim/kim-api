@@ -90,7 +90,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   endif
   Energies(1) = energy
   if (verbose) &
-     print *, "Energy/atom = ", Energies(1), "; Spacing = ", Spacings(1)
+     print *, "Energy/part = ", Energies(1), "; Spacing = ", Spacings(1)
 
   ! setup and compute for max spacing
   Spacings(3) = MaxSpacing
@@ -107,7 +107,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   endif
   Energies(3) = energy
   if (verbose) &
-     print *, "Energy/atom = ", Energies(3), "; Spacing = ", Spacings(3)
+     print *, "Energy/part = ", Energies(3), "; Spacing = ", Spacings(3)
 
   ! setup and compute for first intermediate spacing
   Spacings(2) = MinSpacing + (2.0_cd - Golden)*(MaxSpacing - MinSpacing)
@@ -124,7 +124,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
   endif
   Energies(2) = energy
   if (verbose) &
-     print *, "Energy/atom = ", Energies(2), "; Spacing = ", Spacings(2)
+     print *, "Energy/part = ", Energies(2), "; Spacing = ", Spacings(2)
 
 
   ! iterate until convergence.
@@ -145,7 +145,7 @@ subroutine NEIGH_RVEC_compute_equilibrium_spacing(pkim, &
      endif
      Energies(4) = energy
      if (verbose) &
-        print *, "Energy/atom = ", Energies(4), "; Spacing = ", Spacings(4)
+        print *, "Energy/part = ", Energies(4), "; Spacing = ", Spacings(4)
 
      ! determine the new interval
      if (Energies(4) .lt. Energies(2)) then

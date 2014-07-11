@@ -78,9 +78,9 @@ static void calc_g(double r, double* g);
 static void calc_dg(double r, double* dg);
 static void calc_U(double rho, double* U);
 static void calc_U_dU(double rho, double* U, double* dU);
-static void get_current_atom_neighbors(int IterOrLoca, int HalfOrFull, int NBC,
-                                       int nAtoms, intptr_t* pkim, int* i, int* numOfAtomNeigh,
-                                       int** neighListOfCurrentAtom, double** Rij_list,
+static void get_current_part_neighbors(int IterOrLoca, int HalfOrFull, int NBC,
+                                       int nParts, intptr_t* pkim, int* i, int* numOfPartNeigh,
+                                       int** neighListOfCurrentPart, double** Rij_list,
                                        int* ier);
 
 
@@ -210,7 +210,7 @@ static int compute(void* km)
    int j;
    int jj;
    int k;
-   int numOfAtomNeigh;
+   int numOfPartNeigh;
    int comp_force;
    int comp_particleEnergy;
    int comp_virial;
@@ -219,7 +219,7 @@ static int compute(void* km)
    double U;
    double* derU;
 
-   int* nAtoms;
+   int* nParts;
    double* energy;
    double* coords;
    double* force;
@@ -227,7 +227,7 @@ static int compute(void* km)
    double* boxSideLengths;
    double* Rij_list;
    int* numContrib;
-   int* neighListOfCurrentAtom;
+   int* neighListOfCurrentPart;
    int* particleSpecies;
    double* virial;
    char* NBCstr;
@@ -235,7 +235,7 @@ static int compute(void* km)
    int HalfOrFull;
    int NBC;
    int numberContrib;
-   int currentAtom;
+   int currentPart;
 
    /* Determine neighbor list boundary condition (NBC) */
    /* and half versus full mode: */
@@ -331,7 +331,7 @@ static int compute(void* km)
 
    /* unpack data from KIM object */
    KIM_API_getm_data(pkim, &ier, 9*3,
-                     "numberOfParticles",           &nAtoms,         1,
+                     "numberOfParticles",           &nParts,         1,
                      "particleSpecies",             &particleSpecies,1,
                      "coordinates",                 &coords,         1,
                      "numberContributingParticles", &numContrib,     (HalfOrFull==1),
@@ -354,13 +354,13 @@ static int compute(void* km)
       }
       else
       {
-         numberContrib = *nAtoms;
+         numberContrib = *nParts;
       }
    }
 
    /* Check to be sure that the species are correct */
    ier = KIM_STATUS_FAIL; /* assume an error */
-   for (i = 0; i < *nAtoms; ++i)
+   for (i = 0; i < *nParts; ++i)
    {
       if ( SPECCODE != particleSpecies[i])
       {
@@ -381,7 +381,7 @@ static int compute(void* km)
 
    if (comp_force)
    {
-      for (i = 0; i < *nAtoms; ++i)
+      for (i = 0; i < *nParts; ++i)
       {
          for (k = 0; k < DIM; ++k)
          {
@@ -399,8 +399,8 @@ static int compute(void* km)
    }
 
    /* pair functional electron density */
-   rho = (double*) malloc((*nAtoms)*sizeof(double));
-   for (i = 0; i < *nAtoms; ++i)
+   rho = (double*) malloc((*nParts)*sizeof(double));
+   for (i = 0; i < *nParts; ++i)
    {
       rho[i] = 0.0;
    }
@@ -408,13 +408,13 @@ static int compute(void* km)
    /* EAM embedded energy deriv */
    if ((comp_force) || (comp_virial))
    {
-      derU = (double*) malloc((*nAtoms)*sizeof(double));
+      derU = (double*) malloc((*nParts)*sizeof(double));
    }
 
    /* Initialize neighbor handling for CLUSTER NBC */
    if (3 == NBC) /* CLUSTER */
    {
-      neighListOfCurrentAtom = (int *) malloc((*nAtoms)*sizeof(int));
+      neighListOfCurrentPart = (int *) malloc((*nParts)*sizeof(int));
    }
 
    /* Compute energy and forces */
@@ -422,8 +422,8 @@ static int compute(void* km)
    /* Reset iterator if one is being used */
    if (1 == IterOrLoca)
    {
-      ier = KIM_API_get_neigh(pkim, 0, 0, &currentAtom, &numOfAtomNeigh,
-                              &neighListOfCurrentAtom, &Rij_list);
+      ier = KIM_API_get_neigh(pkim, 0, 0, &currentPart, &numOfPartNeigh,
+                              &neighListOfCurrentPart, &Rij_list);
       /* check for successful initialization */
       if (KIM_STATUS_NEIGH_ITER_INIT_OK != ier)
       {
@@ -439,22 +439,22 @@ static int compute(void* km)
    i = -1;
    while( 1 )
    {
-      /* Set up neighbor list for next atom for all NBC methods */
-      get_current_atom_neighbors(IterOrLoca, HalfOrFull, NBC, *nAtoms, pkim,
-                                 &i, &numOfAtomNeigh, &neighListOfCurrentAtom,
+      /* Set up neighbor list for next particle for all NBC methods */
+      get_current_part_neighbors(IterOrLoca, HalfOrFull, NBC, *nParts, pkim,
+                                 &i, &numOfPartNeigh, &neighListOfCurrentPart,
                                  &Rij_list, &ier);
 
-      if (ier == KIM_STATUS_NEIGH_ITER_PAST_END) break; /* atom counter incremented past end of list */
+      if (ier == KIM_STATUS_NEIGH_ITER_PAST_END) break; /* particle counter incremented past end of list */
       if (KIM_STATUS_OK > ier)
       {
-         KIM_API_report_error(__LINE__, __FILE__, "get_current_atom_neighbors", ier);
+         KIM_API_report_error(__LINE__, __FILE__, "get_current_part_neighbors", ier);
          return ier;
       }
 
-      /* loop over the neighbors of atom i */
-      for (jj = 0; jj < numOfAtomNeigh; ++ jj)
+      /* loop over the neighbors of particle i */
+      for (jj = 0; jj < numOfPartNeigh; ++ jj)
       {
-         j = neighListOfCurrentAtom[jj]; /* get neighbor ID */
+         j = neighListOfCurrentPart[jj]; /* get neighbor ID */
 
          /* compute relative position vector and squared distance */
          Rsqij = 0.0;
@@ -500,7 +500,7 @@ static int compute(void* km)
    /* Now that we know the electron densities, calculate embedding part
     * of energy U and its derivative U' (derU)
     */
-   for (i = 0; i < *nAtoms; ++i)
+   for (i = 0; i < *nParts; ++i)
    {
       if (comp_force || comp_virial)
       {
@@ -533,8 +533,8 @@ static int compute(void* km)
    /* Reset iterator if one is being used */
    if (1 == IterOrLoca)
    {
-      ier = KIM_API_get_neigh(pkim, 0, 0, &currentAtom, &numOfAtomNeigh,
-                              &neighListOfCurrentAtom, &Rij_list);
+      ier = KIM_API_get_neigh(pkim, 0, 0, &currentPart, &numOfPartNeigh,
+                              &neighListOfCurrentPart, &Rij_list);
       /* check for successful initialization */
       if (KIM_STATUS_NEIGH_ITER_INIT_OK != ier)
       {
@@ -547,22 +547,22 @@ static int compute(void* km)
    i = -1;
    while( 1 )
    {
-      /* Set up neighbor list for next atom for all NBC methods */
-      get_current_atom_neighbors(IterOrLoca, HalfOrFull, NBC, *nAtoms, pkim,
-                                 &i, &numOfAtomNeigh, &neighListOfCurrentAtom,
+      /* Set up neighbor list for next particle for all NBC methods */
+      get_current_part_neighbors(IterOrLoca, HalfOrFull, NBC, *nParts, pkim,
+                                 &i, &numOfPartNeigh, &neighListOfCurrentPart,
                                  &Rij_list, &ier);
 
-      if (ier == KIM_STATUS_NEIGH_ITER_PAST_END) break; /* atom counter incremented past end of list */
+      if (ier == KIM_STATUS_NEIGH_ITER_PAST_END) break; /* particle counter incremented past end of list */
       if (KIM_STATUS_OK > ier)
       {
-         KIM_API_report_error(__LINE__, __FILE__, "get_current_atom_neighbors", ier);
+         KIM_API_report_error(__LINE__, __FILE__, "get_current_part_neighbors", ier);
          return ier;
       }
 
-      /* loop over the neighbors of atom i */
-      for (jj = 0; jj < numOfAtomNeigh; ++ jj)
+      /* loop over the neighbors of particle i */
+      for (jj = 0; jj < numOfPartNeigh; ++ jj)
       {
-         j = neighListOfCurrentAtom[jj]; /* get neighbor ID */
+         j = neighListOfCurrentPart[jj]; /* get neighbor ID */
 
          /* compute relative position vector and squared distance */
          Rsqij = 0.0;
@@ -669,8 +669,8 @@ static int compute(void* km)
             {  /* Ei contribution */
                for (k = 0; k < DIM; ++k)
                {
-                  force[i*DIM + k] += dphieff*Rij[k]/r; /* accumulate force on atom i */
-                  force[j*DIM + k] -= dphieff*Rij[k]/r; /* accumulate force on atom j */
+                  force[i*DIM + k] += dphieff*Rij[k]/r; /* accumulate force on particle i */
+                  force[j*DIM + k] -= dphieff*Rij[k]/r; /* accumulate force on particle j */
                }
             }
          }
@@ -680,7 +680,7 @@ static int compute(void* km)
    /* Free temporary storage */
    if (3 == NBC)
    {
-      free(neighListOfCurrentAtom);
+      free(neighListOfCurrentPart);
    }
    free(rho);
    if (comp_force || comp_virial)
@@ -693,17 +693,17 @@ static int compute(void* km)
    return ier;
 }
 
-static void get_current_atom_neighbors(int IterOrLoca, int HalfOrFull, int NBC, int nAtoms,
-                                       intptr_t* pkim, int* i, int* numOfAtomNeigh,
-                                       int** neighListOfCurrentAtom, double** Rij_list, int* ier)
+static void get_current_part_neighbors(int IterOrLoca, int HalfOrFull, int NBC, int nParts,
+                                       intptr_t* pkim, int* i, int* numOfPartNeigh,
+                                       int** neighListOfCurrentPart, double** Rij_list, int* ier)
 {
-   int currentAtom;
+   int currentPart;
    int k;
-   /* Set up neighbor list for next atom for all NBC methods */
+   /* Set up neighbor list for next particle for all NBC methods */
    if (1 == IterOrLoca) /* ITERATOR mode */
    {
-      *ier = KIM_API_get_neigh(pkim, 0, 1, &currentAtom, numOfAtomNeigh,
-                               neighListOfCurrentAtom, Rij_list);
+      *ier = KIM_API_get_neigh(pkim, 0, 1, &currentPart, numOfPartNeigh,
+                               neighListOfCurrentPart, Rij_list);
       if (KIM_STATUS_NEIGH_ITER_PAST_END == *ier) /* the end of the list, terminate loop */
       {
          return;
@@ -714,12 +714,12 @@ static void get_current_atom_neighbors(int IterOrLoca, int HalfOrFull, int NBC, 
          return;
       }
 
-      *i = currentAtom;
+      *i = currentPart;
    }
    else
    {
       (*i)++;
-      if (nAtoms <= *i) /* incremented past end of list, terminate loop */
+      if (nParts <= *i) /* incremented past end of list, terminate loop */
       {
          *ier = KIM_STATUS_NEIGH_ITER_PAST_END;
          return;
@@ -727,17 +727,17 @@ static void get_current_atom_neighbors(int IterOrLoca, int HalfOrFull, int NBC, 
 
       if (3 == NBC)     /* CLUSTER NBC method */
       {
-         *numOfAtomNeigh = nAtoms - (*i + 1);
-         for (k = 0; k < *numOfAtomNeigh; ++k)
+         *numOfPartNeigh = nParts - (*i + 1);
+         for (k = 0; k < *numOfPartNeigh; ++k)
          {
-            (*neighListOfCurrentAtom)[k] = *i + k + 1;
+            (*neighListOfCurrentPart)[k] = *i + k + 1;
          }
          *ier = KIM_STATUS_OK;
       }
       else              /* All other NBCs */
       {
-         *ier = KIM_API_get_neigh(pkim, 1, *i, &currentAtom, numOfAtomNeigh,
-                                  neighListOfCurrentAtom, Rij_list);
+         *ier = KIM_API_get_neigh(pkim, 1, *i, &currentPart, numOfPartNeigh,
+                                  neighListOfCurrentPart, Rij_list);
          if (KIM_STATUS_OK != *ier) /* some sort of problem, return */
          {
             KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_neigh", *ier);

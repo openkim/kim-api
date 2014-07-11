@@ -60,7 +60,7 @@ contains
 
 !-------------------------------------------------------------------------------
 !
-! Compute energy and forces on atoms from the positions.
+! Compute energy and forces on particles from the positions.
 !
 !-------------------------------------------------------------------------------
   integer(c_int) function Compute_Energy_Forces(pkim) bind(c)

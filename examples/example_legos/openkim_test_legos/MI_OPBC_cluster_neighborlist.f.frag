@@ -1,7 +1,7 @@
 !-------------------------------------------------------------------------------
 !
 ! MI_OPBC_cluster_neighborlist : construct a half or full neighbor list using
-!                                the atom coordinates in coords()
+!                                the particle coordinates in coords()
 !
 !-------------------------------------------------------------------------------
 subroutine MI_OPBC_cluster_neighborlist(half, numberOfParticles, coords, rcut, &
@@ -40,14 +40,14 @@ subroutine MI_OPBC_cluster_neighborlist(half, numberOfParticles, coords, rcut, &
         if (r2.le.rcut2) then
            if (i.ne.j) then
               if ( (j .gt. i) .or. ((.not. half) .AND. (i.ne.j)) ) then
-                  ! atom j is a neighbor of atom i
+                  ! part j is a neighbor of part i
                   a = a+1
                   neighObject%neighborList(a,i) = j
               endif
            endif
         endif
      enddo
-     ! atom i has a-1 neighbors
+     ! part i has a-1 neighbors
      neighObject%neighborList(1,i) = a-1
   enddo
 

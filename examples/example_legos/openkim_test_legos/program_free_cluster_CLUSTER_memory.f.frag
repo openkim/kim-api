@@ -3,7 +3,7 @@
 !**  PROGRAM TEST_NAME_STR
 !**
 !**  KIM compliant program to compute the energy of and forces and virial on an
-!**  isolated cluster of SPECIES_NAME_STR atoms
+!**  isolated cluster of SPECIES_NAME_STR particles
 !**
 !*******************************************************************************
 
@@ -88,7 +88,7 @@ program TEST_NAME_STR
      stop
   endif
 
-  ! set up the cluster atom positions
+  ! set up the cluster particle positions
   call create_FCC_configuration(FCCspacing, nCellsPerSide, .false., coords, &
                                 middleDum)
 
@@ -105,7 +105,7 @@ program TEST_NAME_STR
   print '("This is Test          : ",A)', trim(testname)
   print '("Results for KIM Model : ",A)', trim(modelname)
   print '("Forces:")'
-  print '("Atom     ' // &
+  print '("Part     ' // &
   'X                        ' // &
   'Y                        ' // &
   'Z                        ")'

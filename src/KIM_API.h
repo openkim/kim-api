@@ -87,7 +87,7 @@ public:
         bool getFields(char *inString);
         int get_rank();
         int * get_shape();
-        int * get_shape(int natoms, int nspecies);
+        int * get_shape(int nparts, int nspecies);
         bool isitsizedefined();
         bool isitperatom();
         bool isitoptional();
@@ -191,20 +191,20 @@ public:
     int string_init(const char * intststr,const char * modelname);
    int match(const char* simstring, const char* modelstring);
     int model_compute();
-    int get_neigh(int mode,int request, int *atom, int *numnei, int **nei1atom, double **Rij);
+    int get_neigh(int mode,int request, int *part, int *numnei, int **nei1part, double **Rij);
     int model_init();
     int model_reinit();
     int model_destroy();
 
-void allocate( int natoms, int nspecies,int * error);
+void allocate( int nparts, int nspecies,int * error);
 
   int get_num_model_species(int* numberSpecies, int* maxStringLength);
   int get_model_species(const int index, const char** const speciesString);
   int get_num_sim_species(int* numberSpecies, int* maxStringLength);
   int get_sim_species(const int index, const char** const speciesString);
 
-int get_species_code(const char *atom, int * error);
-void set_species_code(const char *atom, int code, int* error);
+int get_species_code(const char *species, int * error);
+void set_species_code(const char *species, int code, int* error);
 
   int get_num_params(int* numberParameters, int* maxStringLength);
   int get_parameter(const int index, const char** const parameterString);

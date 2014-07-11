@@ -57,7 +57,7 @@ contains
 
   !-----------------------------------------------------------------------------
   !
-  ! Computes energy and forces on atoms from the positions.
+  ! Computes energy and forces on particles from the positions.
   ! (f03 wrapper that calls the actual f77 routine)
   !
   !-----------------------------------------------------------------------------
@@ -70,15 +70,15 @@ contains
     !-- Local variables
     real(c_double), pointer :: x(:,:);     type(c_ptr) :: px  ! position
     real(c_double), pointer :: f(:,:);     type(c_ptr) :: pf  ! force
-    real(c_double), pointer :: ea(:);      type(c_ptr) :: pea ! energy per atom
+    real(c_double), pointer :: ea(:);      type(c_ptr) :: pea ! energy per particle
     real(c_double), pointer :: potenergy;  type(c_ptr) :: ppotenergy ! total en.
-    integer(c_int), pointer :: atspecies(:); type(c_ptr) :: patspecies ! atom species
-    integer(c_int), pointer :: numberofatoms; type(c_ptr) :: pnumberofatoms
+    integer(c_int), pointer :: atspecies(:); type(c_ptr) :: patspecies ! species
+    integer(c_int), pointer :: numberofparts; type(c_ptr) :: pnumberofparts
     integer(c_int), pointer :: numContrib;    type(c_ptr) :: pnumContrib
     integer(c_int) i, e_flag, f_flag, eper_flag, idum
     external calculate
 
-    ! Check to see if we have been asked to compute the forces and energyperatom
+    ! Check to see if we have been asked to compute the forces and energyperpart
     !
     call kim_api_getm_compute(pkim, calculate_wrap_f77, &
          "energy",         e_flag,    1,   &
@@ -93,7 +93,7 @@ contains
     ! Unpack data from KIM object
     !
     call kim_api_getm_data(pkim, calculate_wrap_f77, &
-     "numberOfParticles",           pnumberofatoms, 1,                         &
+     "numberOfParticles",           pnumberofparts, 1,                         &
      "numberContributingParticles", pnumContrib,    1,                         &
      "particleSpecies",             patspecies,     1,                         &
      "coordinates",                 px,             1,                         &
@@ -106,26 +106,26 @@ contains
        return
     endif
 
-    call c_f_pointer(pnumberofatoms, numberofatoms)
+    call c_f_pointer(pnumberofparts, numberofparts)
     call c_f_pointer(pnumContrib,    numContrib)
-    call c_f_pointer(patspecies,     atspecies,    [numberofatoms])
-    call c_f_pointer(px,             x,            [3,numberofatoms])
-    if (f_flag.eq.1)    call c_f_pointer(pf,   f,  [3,numberofatoms])
-    if (eper_flag.eq.1) call c_f_pointer(pea, ea,  [numberofatoms])
+    call c_f_pointer(patspecies,     atspecies,    [numberofparts])
+    call c_f_pointer(px,             x,            [3,numberofparts])
+    if (f_flag.eq.1)    call c_f_pointer(pf,   f,  [3,numberofparts])
+    if (eper_flag.eq.1) call c_f_pointer(pea, ea,  [numberofparts])
     if (e_flag.eq.1)    call c_f_pointer(ppotenergy, potenergy)
 
-    do i=1,numberofatoms
-       if (atspecies(i).ne.1) then ! check for correct atom species Ne=1
+    do i=1,numberofparts
+       if (atspecies(i).ne.1) then ! check for correct species Ne=1
           calculate_wrap_f77 = KIM_STATUS_FAIL
           idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                                      "Wrong Atom Species", calculate_wrap_f77)
+                                      "Wrong Species", calculate_wrap_f77)
           return
        endif
     enddo
 
     ! Call FORTRAN 77 code that does actual calculation
     !
-    call calculate(model_cutoff,sigma,epsilon,pkim,x,f,ea,numberofatoms, &
+    call calculate(model_cutoff,sigma,epsilon,pkim,x,f,ea,numberofparts, &
                    numContrib,potenergy,e_flag,f_flag,eper_flag,         &
                    kim_api_get_neigh,calculate_wrap_f77)
 

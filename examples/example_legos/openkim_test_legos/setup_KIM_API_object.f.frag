@@ -20,10 +20,10 @@ subroutine setup_KIM_API_object(pkim, testkimfile, modelname, N, specname, &
   integer(c_int),                       intent(in)  :: SupportHalf
 
   !-- Local variables
-  integer(c_int), parameter :: ASpecies = 1  ! hard-wired to one atomic species
+  integer(c_int), parameter :: ASpecies = 1  ! hard-wired to 1 particle species
   integer(c_int) ier, idum
   integer(c_int) isHalf
-  integer(c_int), pointer :: numberOfParticles;   type(c_ptr) :: pnAtoms
+  integer(c_int), pointer :: numberOfParticles;   type(c_ptr) :: pnParts
   integer(c_int), pointer :: numContrib;          type(c_ptr) :: pnumContrib
   integer(c_int), pointer :: numberOfSpecies; type(c_ptr) :: pnOfSpecies
   integer(c_int), pointer :: particleSpecies(:);  type(c_ptr) :: pparticleSpecies
@@ -63,7 +63,7 @@ subroutine setup_KIM_API_object(pkim, testkimfile, modelname, N, specname, &
   ! Unpack data from KIM object whose values need to be set
   !
   call kim_api_getm_data(pkim, ier, &
-       "numberOfParticles",           pnAtoms,           1, &
+       "numberOfParticles",           pnParts,           1, &
        "numberContributingParticles", pnumContrib,          &
            TRUEFALSE((SupportHalf.eq.1).and.(isHalf.eq.1)), &
        "numberOfSpecies",             pnOfSpecies,       1, &
@@ -73,7 +73,7 @@ subroutine setup_KIM_API_object(pkim, testkimfile, modelname, N, specname, &
                                  "kim_api_getm_data", ier)
      stop
   endif
-  call c_f_pointer(pnAtoms, numberOfParticles)
+  call c_f_pointer(pnParts, numberOfParticles)
   if ((SupportHalf.eq.1).and.(isHalf.eq.1)) call c_f_pointer(pnumContrib, &
                                                              numContrib)
   call c_f_pointer(pnOfSpecies, numberOfSpecies)

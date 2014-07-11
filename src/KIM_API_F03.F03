@@ -46,11 +46,11 @@ module kim_api_f03
       type(c_ptr), value :: cp
     end subroutine kim_api_c_free
 
-    subroutine kim_api_allocate(kimmdl, natoms, nspecies, error) &
+    subroutine kim_api_allocate(kimmdl, nparts, nspecies, error) &
       bind(c, name="KIM_API_allocate")
       use, intrinsic :: iso_c_binding
       type(c_ptr),    value :: kimmdl
-      integer(c_int), value :: natoms
+      integer(c_int), value :: nparts
       integer(c_int), value :: nspecies
       integer(c_int)        :: error
     end subroutine kim_api_allocate
@@ -211,15 +211,15 @@ module kim_api_f03
     end function kim_api_get_neigh_mode
 
     integer(c_int) function kim_api_get_neigh(kimmdl, mode, request, &
-      atom, numnei, nei1atom, rij) &
+      part, numnei, nei1part, rij) &
       bind(c, name="KIM_API_get_neigh")
       use, intrinsic :: iso_c_binding
       type(c_ptr),    value :: kimmdl
       integer(c_int), value :: mode
       integer(c_int), value :: request
-      integer(c_int)        :: atom
+      integer(c_int)        :: part
       integer(c_int)        :: numnei
-      type(c_ptr)           :: nei1atom
+      type(c_ptr)           :: nei1part
       type(c_ptr)           :: rij
     end function kim_api_get_neigh
 
