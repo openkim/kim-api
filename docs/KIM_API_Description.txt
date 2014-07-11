@@ -451,31 +451,13 @@ void KIM_API_c_free(void *cp);
 
     This routine is only available in the Forgran 2003 bindings.  It provides
     access to the c "free" memory deallocation routine.  It should be used in
-    order to release memory originally allocated by KIM API functions.  For for
-    example, this function should be used in conjunction with the following KIM
-    API functions (not necessarily a complete list):
-    KIM_API_get_model_partcl_typs(), KIM_API_get_sim_partcl_typs(),
-    KIM_API_get_params(), KIM_API_get_free_params(),
-    KIM_API_get_fixed_params(), KIM_API_get_NBC_method(),
+    order to release memory originally allocated by
     KIM_API_get_model_kim_str().
-
-deallocates all memory allocated by KIM_API_allocate and also
-    destroys the KIM API object.
-
-    NOTE: Prior to calling this routine, the Simulator is responsible for
-          calling the KIM_API_model_destroy() function and deallocating any
-          memory associated with arguments in the KIM API object as
-          appropriate.
 
 Arguments:
 
-      void *kimmdl
-              reference pointer to KIM_API_model object (in C++ style, the
-              definition will be (KIM_API_model **)).
-
-      int *kimerror
-              error code: KIM_STATUS_OK   -- successful completion,
-                          KIM_STATUS_FAIL -- unsuccessful
+      void *cp
+              pointer to memory address to be freed.
 
 ******************************************************************************
 
@@ -1120,157 +1102,296 @@ Arguments:
 
 ******************************************************************************
 
-char *KIM_API_get_model_partcl_typs(void *kimmdl, int *nPTypes, int *kimerror);
+int KIM_API_get_num_model_species(void *kimmdl, int* numberSpecies, int* maxStringLength);
 
-    This routine returns a sorted list of the Model's supported particle
-    types. This routine returns a pointer to an array of fixed size text
-    strings.  (The text strings are of size KIM_KEY_STRING_LENGTH, which is a
-    constant defined by the KIM API.)  The memory pointed to by this pointer is
-    allocated by the routine, but should be released by the user to avoid a
-    memory leak (Fortran 2003 users should use KIM_API_c_free()).  Each string
-    is an atom/particle symbol.  In the case where no particle types are
-    specified by the Model or Simulator, the routine returns NULL.
+    This routine outputs the number of species supported by the Model and the
+    associated maximum length of the particle species name strings.
+
+Return value:
+      KIM_STATUS_OK   -- successful completion
+      KIM_STATUS_FAIL -- unsuccessful
 
 Arguments:
       void *kimmdl
               pointer to KIM_API_model object (in C++ style, the definition
               will be (KIM_API_model *)).
 
-      int *nPTypes
-              total number of particle types. In case of error will be
-              negative.
+      int* numberSpecies
+              the number of particle species supported by the Model
 
-      int *kimerror
-              error code: KIM_STATUS_OK   -- successful completion,
-                          KIM_STATUS_FAIL -- unsuccessful
+      int* maxStringLength
+              the maximum string length found in the list of the Model's
+              supported particle species name strings.
 
 ******************************************************************************
 
-char *KIM_API_get_sim_partcl_typs(void *kimmdl, int *nPTypes, int *kimerror);
+int KIM_API_get_model_species(void *kimmdl, const int index, const char** const speciesString);
 
-    This routine returns a sorted list of the Simulator's supported particle
-    types.  This routine returns a pointer to an array of fixed size text
-    strings.  (The text strings are of size KIM_KEY_STRING_LENGTH, which is a
-    constant defined by the KIM API.)  The memory pointed to by this pointer is
-    allocated by the routine, but should be released by the user to avoid a
-    memory leak (Fortran 2003 users should use KIM_API_c_free()).  Each string
-    is an atom/particle symbol.  In the case where no particle types are
-    specified by the Model or Simulator, the routine returns NULL.
+    This routine outputs the requested (index) Model particle species string.
+    Each string is an atom/particle species symbol.  The order in which the
+    species are indexed is unspecified, but fixed for the lifetime of the
+    kimmdl object.  In the case where no particle species are specified by the
+    Model or Simulator, the routine returns KIM_STATUS_FAIL for all values of
+    index.
+
+Return value:
+      KIM_STATUS_OK   -- successful completion
+      KIM_STATUS_FAIL -- unsuccessful
 
 Arguments:
       void *kimmdl
               pointer to KIM_API_model object (in C++ style, the definition
               will be (KIM_API_model *)).
 
-      int *nPTypes
-              total number of particle types. In case of error will be
-              negative.
+      const int index
+              For C/C++ valid values are 0 <= index < numberSpecies.  For
+              Fortran, valid values are 0 < index <= numberSpecies.  Here,
+              numberSpecies is the value provided by the
+              KIM_API_get_num_model_species() routine.
 
-      int *kimerror
-              error code: KIM_STATUS_OK   -- successful completion,
-                          KIM_STATUS_FAIL -- unsuccessful
+      const char** const speciesString
+              The species name string.
 
 ******************************************************************************
 
-char *KIM_API_get_params(void *kimmdl, int *nVpar, int *kimerror);
+int KIM_API_get_num_sim_species(void *kimmdl, int* numberSpecies, int* maxStringLength);
 
-    This routine returns a pointer to an array of fixed size text strings, each
-    string is the name of a Model parameter argument.  (The text strings are of
-    size KIM_KEY_STRING_LENGTH, which is a constant defined by the KIM API.)
-    The memory pointed to by this pointer is allocated by the routine, but
-    should be released by the user to avoid a memory leak (Fortran 2003 users
-    should use KIM_API_c_free()).  A Model parameter argument is one whose name
-    starts with `PARAM_FREE_' or `PARAM_FIXED_'.  Each parameter argument
-    described in the Model's .kim file will have a place in the KIM API object,
-    but it will not be checked against the standard.kim file.  (See the
-    standard.kim file for more information on Model parameters.)
+    This routine outputs the number of species supported by the Simulator and
+    the associated maximum length of the particle species name strings.
+
+Return value:
+      KIM_STATUS_OK   -- successful completion
+      KIM_STATUS_FAIL -- unsuccessful
 
 Arguments:
       void *kimmdl
               pointer to KIM_API_model object (in C++ style, the definition
               will be (KIM_API_model *)).
 
-      int *nVpar
-              total number of parameters.
+      int* numberSpecies
+              the number of particle species supported by the Simulator
 
-      int *kimerror
-              error code: KIM_STATUS_OK   -- successful completion,
-                          KIM_STATUS_FAIL -- unsuccessful
+      int* maxStringLength
+              the maximum string length found in the list of the Simulator's
+              supported particle species name strings.
 
 ******************************************************************************
 
-char *KIM_API_get_free_params(void *kimmdl, int *nVpar, int *kimerror);
+int KIM_API_get_sim_species(void *kimmdl, const int index, const char** const speciesString);
 
-    This routine returns a pointer to an array of fixed size text strings, each
-    string is the name of one of the Model's FREE parameter arguments.  (The
-    text strings are of size KIM_KEY_STRING_LENGTH, which is a constant defined
-    by the KIM API.)  The memory pointed to by this pointer is allocated by the
-    routine, but should be released by the user to avoid a memory leak (Fortran
-    2003 users should use KIM_API_c_free()).  A Model FREE parameter argument
-    is one whose name starts with `PARAM_FREE_'.  Each FREE parameter argument
-    described in the Model's .kim file will have a place in the KIM API object,
-    but it will not be checked against the standard.kim file.  (See the
-    standard.kim file for more information on Model FREE parameters.)
+    This routine outputs the requested (index) Simulator particle species
+    string.  Each string is an atom/particle species symbol.  The order in
+    which the species are indexed is unspecified, but fixed for the lifetime of
+    the kimmdl object.  In the case where no particle species are specified by
+    the Model or Simulator, the routine returns KIM_STATUS_FAIL for all values
+    of index.
+
+Return value:
+      KIM_STATUS_OK   -- successful completion
+      KIM_STATUS_FAIL -- unsuccessful
 
 Arguments:
       void *kimmdl
               pointer to KIM_API_model object (in C++ style, the definition
               will be (KIM_API_model *)).
 
-      int *nVpar
-              total number of parameters.
+      const int index
+              For C/C++ valid values are 0 <= index < numberSpecies.  For
+              Fortran, valid values are 0 < index <= numberSpecies.  Here,
+              numberSpecies is the value provided by the
+              KIM_API_get_num_sim_species() routine.
 
-      int *kimerror
-              error code: KIM_STATUS_OK   -- successful completion,
-                          KIM_STATUS_FAIL -- unsuccessful
+      const char** const speciesString
+              The species name string.
 
 ******************************************************************************
 
-char *KIM_API_get_fixed_params(void *kimmdl, int *nVpar, int *kimerror);
+int KIM_API_get_num_params(void *kimmdl, int* numberParameters, int* maxStringLength);
 
-    This routine returns a pointer to an array of fixed size text strings, each
-    string is the name of one of the Model's FIXED parameter arguments.  (The
-    text strings are of size KIM_KEY_STRING_LENGTH, which is a constant defined
-    by the KIM API.)  The memory pointed to by this pointer is allocated by the
-    routine, but should be released by the user to avoid a memory leak (Fortran
-    2003 users should use KIM_API_c_free()).  A Model FIXED parameter argument
-    is one whose name starts with `PARAM_FIXED_'.  Each FIXED parameter
-    argument described in the Model's .kim file will have a place in the KIM
-    API object, but it will not be checked against the standard.kim file.  (See
-    the standard.kim file for more information on Model FIXED parameters.)
+    This routine outputs the number of parameters supported by the Model and
+    the associated maximum length of the parameter name strings.  A Model
+    parameter argument is one whose name starts with `PARAM_FREE_' or
+    `PARAM_FIXED_'.  Each parameter argument described in the Model's ".kim"
+    file will have a place in the KIM API object, but it will not be checked
+    against the standard.kim file.  (See the standard.kim file for more
+    information on Model parameters.)
+
+Return value:
+      KIM_STATUS_OK   -- successful completion
+      KIM_STATUS_FAIL -- unsuccessful
 
 Arguments:
       void *kimmdl
               pointer to KIM_API_model object (in C++ style, the definition
               will be (KIM_API_model *)).
 
-      int *nVpar
-              total number of parameters.
+      int* numberParameters
+              the number of parameters supported by the Model
 
-      int *kimerror
-              error code: KIM_STATUS_OK   -- successful completion,
-                          KIM_STATUS_FAIL -- unsuccessful
+      int* maxStringLength
+              the maximum string length found in the list of the Model's
+              supported parameter name strings.
 
 ******************************************************************************
 
-char *KIM_API_get_NBC_method(void *kimmdl, int *kimerror);
+int KIM_API_get_parameter(void *kimmdl, const int index, const char** const parameterString);
 
-    This routine returns a pointer to a fixed size text string (of size
-    KIM_KEY_STRING_LENGTH, which is a constant defined by the KIM API).  The
-    memory pointed to by this pointer is allocated by the routine, but should
-    be released by the user to avoid a memory leak (Fortran 2003 users should
-    use KIM_API_c_free()).  The string is the NBC (Neighbor list and Boundary
-    Conditions) "active" NBC method in use by the KIM_API object `kimmdl'.
-    (See the standard.kim file for more information on NBC methods.)
+    This routine outputs the requested (index) Model parameter name string.
+    The order in which the parameters are indexed is unspecified, but fixed for
+    the lifetime of the kimmdl object.  In the case where no parameters are
+    supported the Model, the routine returns KIM_STATUS_FAIL for all values of
+    index.
+
+Return value:
+      KIM_STATUS_OK   -- successful completion
+      KIM_STATUS_FAIL -- unsuccessful
 
 Arguments:
       void *kimmdl
               pointer to KIM_API_model object (in C++ style, the definition
               will be (KIM_API_model *)).
 
-      int *kimerror
-              error code: KIM_STATUS_OK   -- successful completion,
-                          KIM_STATUS_FAIL -- unsuccessful
+      const int index
+              For C/C++ valid values are 0 <= index < numberParameters.  For
+              Fortran, valid values are 0 < index <= numberParameters.  Here,
+              numberParameters is the value provided by the
+              KIM_API_get_num_params() routine.
+
+      const char** const parameterString
+              The parameter name string.
+
+******************************************************************************
+
+int KIM_API_get_num_free_params(void *kimmdl, int* numberFreeParameters, int* maxStringLength);
+
+    This routine outputs the number of free parameters supported by the Model
+    and the associated maximum length of the parameter name strings.  A Model
+    free parameter argument is one whose name starts with `PARAM_FREE_'.  Each
+    parameter argument described in the Model's ".kim" file will have a place
+    in the KIM API object, but it will not be checked against the standard.kim
+    file.  (See the standard.kim file for more information on Model
+    parameters.)
+
+Return value:
+      KIM_STATUS_OK   -- successful completion
+      KIM_STATUS_FAIL -- unsuccessful
+
+Arguments:
+      void *kimmdl
+              pointer to KIM_API_model object (in C++ style, the definition
+              will be (KIM_API_model *)).
+
+      int* numberFreeParameters
+              the number of free parameters supported by the Model
+
+      int* maxStringLength
+              the maximum string length found in the list of the Model's
+              supported free parameter name strings.
+
+******************************************************************************
+
+int KIM_API_get_free_parameter(void *kimmdl, const int index, const char** const freeParameterString);
+
+    This routine outputs the requested (index) Model free parameter name
+    string.  The order in which the parameters are indexed is unspecified, but
+    fixed for the lifetime of the kimmdl object.  In the case where no free
+    parameters are supported the Model, the routine returns KIM_STATUS_FAIL for
+    all values of index.
+
+Return value:
+      KIM_STATUS_OK   -- successful completion
+      KIM_STATUS_FAIL -- unsuccessful
+
+Arguments:
+      void *kimmdl
+              pointer to KIM_API_model object (in C++ style, the definition
+              will be (KIM_API_model *)).
+
+      const int index
+              For C/C++ valid values are 0 <= index < numberFreeParameters.
+              For Fortran, valid values are 0 < index <= numberFreeParameters.
+              Here, numberFreeParameters is the value provided by the
+              KIM_API_get_num_free_params() routine.
+
+      const char** const freeParameterString
+              The free parameter name string.
+
+******************************************************************************
+
+int KIM_API_get_num_fixed_params(void *kimmdl, int* numberFixedParameters, int* maxStringLength);
+
+    This routine outputs the number of fixed parameters supported by the Model
+    and the associated maximum length of the parameter name strings.  A Model
+    fixed parameter argument is one whose name starts with `PARAM_FIXED_'.
+    Each parameter argument described in the Model's ".kim" file will have a
+    place in the KIM API object, but it will not be checked against the
+    standard.kim file.  (See the standard.kim file for more information on
+    Model parameters.)
+
+Return value:
+      KIM_STATUS_OK   -- successful completion
+      KIM_STATUS_FAIL -- unsuccessful
+
+Arguments:
+      void *kimmdl
+              pointer to KIM_API_model object (in C++ style, the definition
+              will be (KIM_API_model *)).
+
+      int* numberFixedParameters
+              the number of fixed parameters supported by the Model
+
+      int* maxStringLength
+              the maximum string length found in the list of the Model's
+              supported fixed parameter name strings.
+
+******************************************************************************
+
+int KIM_API_get_fixed_parameter(void *kimmdl, const int index, const char** const fixedParameterString);
+
+    This routine outputs the requested (index) Model fixed parameter name
+    string.  The order in which the parameters are indexed is unspecified, but
+    fixed for the lifetime of the kimmdl object.  In the case where no fixed
+    parameters are supported the Model, the routine returns KIM_STATUS_FAIL for
+    all values of index.
+
+Return value:
+      KIM_STATUS_OK   -- successful completion
+      KIM_STATUS_FAIL -- unsuccessful
+
+Arguments:
+      void *kimmdl
+              pointer to KIM_API_model object (in C++ style, the definition
+              will be (KIM_API_model *)).
+
+      const int index
+              For C/C++ valid values are 0 <= index < numberFixedParameters.
+              For Fortran, valid values are 0 < index <= numberFixedParameters.
+              Here, numberFixedParameters is the value provided by the
+              KIM_API_get_num_fixed_params() routine.
+
+      const char** const fixedParameterString
+              The fixed parameter name string.
+
+******************************************************************************
+
+int KIM_API_get_NBC_method(void *kimmdl, const char** const NBC_String);
+
+    This routine outputs a string with the NBC name.  The string is the NBC
+    (Neighbor list and Boundary Conditions) "active" NBC method in use by the
+    KIM_API object `kimmdl'.  (See the standard.kim file for more information
+    on NBC methods.)
+
+Return value:
+      KIM_STATUS_OK   -- successful completion
+      KIM_STATUS_FAIL -- unsuccessful
+
+Arguments:
+      void *kimmdl
+              pointer to KIM_API_model object (in C++ style, the definition
+              will be (KIM_API_model *)).
+
+      const char** const NBC_String
+              The NBC string.
 
 ******************************************************************************
 
@@ -1338,22 +1459,25 @@ Arguments:
 
 ******************************************************************************
 
-char *KIM_API_get_model_kim_str(char *modelname, int *kimerror);
+int KIM_API_get_model_kim_str(char *modelname, char** const kimString);
 
-    This routines returns a pointer to a NULL terminated string containing the
+    This routines outputs a pointer to a NULL terminated string containing the
     complete KIM descriptor file for the Model modelname.  The memory pointed
     to by this pointer is allocated by the routine, but should be released by
     the user to avoid a memory leak (Fortran 2003 users should use
     KIM_API_c_free()).  If any errors occur they are fatal and the routine
     prints a message to kim.log and exits.
 
+Return value:
+      KIM_STATUS_OK
+
 Arguments:
 
       char *modelname
               model name in KIM
 
-      int *kimerror
-              error code: KIM_STATUS_OK  -- successful completion
+      char** const kimString
+              The Model's ".kim" file string
 
 ******************************************************************************
 
@@ -1614,15 +1738,22 @@ Arguments:
 
 ******************************************************************************
 
-char *KIM_API_get_status_msg(int status_code);
+int KIM_API_get_status_msg(int status_code, const char** const status_msg);
 
-    This routine returns a null terminated character string that describes the
+    This routine outputs a null terminated character string that describes the
     `status_code'.  `status_code' should contain a `kimerror' code returned by
     a KIM library routine.
+
+Return value:
+      KIM_STATUS_OK   -- successful completion
+      KIM_STATUS_FAIL -- unsuccessful
 
 Arguments:
       int status_code
               kimerror code for which a description is desired.
+
+      const char** const status_msg
+              The message string
 
 ******************************************************************************
 
