@@ -179,6 +179,9 @@ add-%: config
                      if wget -q --content-disposition 'https://kim-items.openkim.org/archive?kimid=$*&compression=gz'; then \
                        tar zxvf "$*.tgz" 2>&1 | sed -e 's/^/                /' && \
                        rm -f "$*.tgz"; \
+                       if test 0 -lt `grep -c MAKE_SYSTEM $*/Makefile`; then \
+                         printf "*** WARNING *** $* appears to be written for an older, incompatible, version of the KIM API.\n"; \
+                       fi; \
                      else \
                        printf "                Unable to download $* from https://openkim.org.  Check the KIM Item ID for errors.\n" && false; \
                      fi); \
@@ -192,7 +195,9 @@ add-%: config
                      if wget -q --content-disposition 'https://kim-items.openkim.org/archive?kimid=$*&compression=gz'; then \
                        tar zxvf "$*.tgz" 2>&1 | sed -e 's/^/                /' && \
                        rm -f "$*.tgz" && \
-                       if test x"ParameterizedModel" = x"`$(MAKE) $(MAKE_FLAGS) -C $* kim-item-type`"; then \
+                       if test 0 -lt `grep -c MAKE_SYSTEM $*/Makefile`; then \
+                         printf "*** WARNING *** $* appears to be written for an older, incompatible, version of the KIM API.\n"; \
+                       elif test x"ParameterizedModel" = x"`$(MAKE) $(MAKE_FLAGS) -C $* kim-item-type`"; then \
                          dvr="`$(MAKE) $(MAKE_FLAGS) -C $* model-driver-name`"; \
                          $(MAKE) $(MAKE_FLAGS) -C $(KIM_DIR) add-$${dvr}; \
                        fi; \
