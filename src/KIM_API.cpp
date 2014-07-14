@@ -763,8 +763,11 @@ int KIM_API_model:: preinit(const char * initfile,const char *modelname){
  }
 
 int KIM_API_model::prestring_init(const char *instrn){
-        if (!read_file_str(instrn,&inlines,&numlines)) return KIM_STATUS_FAIL;
-
+        if (!read_file_str(instrn,&inlines,&numlines))
+        {
+          ErrorCode = KIM_STATUS_FAIL;
+          return ErrorCode;
+        }
 
         int *shape=NULL;
         char pointer_str [] = "pointer";
@@ -831,7 +834,11 @@ int KIM_API_model::prestring_init(const char *instrn){
         IOline *extrainput;
         bool readlines_str_success;
         IOline::readlines_str(instrn,&extrainput, readlines_str_success);
-        if (!readlines_str_success) return KIM_STATUS_FAIL;
+        if (!readlines_str_success)
+        {
+          ErrorCode = KIM_STATUS_FAIL;
+          return ErrorCode;
+        }
         // do nothing for now
         delete [] extrainput;
         unit_h.init_str(instrn,&ErrorCode);
@@ -1587,7 +1594,7 @@ int KIM_API_model::init_str_modelname(const char* testinputfile, const char* inm
     mdl.name_temp = name_temp;
     if(!mdl.prestring_init(inmdlstr)){
       const char* msg;
-      get_status_msg(ErrorCode, &msg);
+      get_status_msg(mdl.ErrorCode, &msg);
         std::cout<<"prestring_init  failed with error status: "<<msg<<std::endl;
         return KIM_STATUS_FAIL;
     }
@@ -1595,7 +1602,7 @@ int KIM_API_model::init_str_modelname(const char* testinputfile, const char* inm
     test.name_temp = "Test";
     if(!test.preinit(testinputfile,"Test")){
       const char* msg;
-      get_status_msg(ErrorCode, &msg);
+      get_status_msg(test.ErrorCode, &msg);
         std::cout<<"preinit  failed with error status: "<<msg<<std::endl;
         return KIM_STATUS_FAIL;
     }
@@ -1677,7 +1684,7 @@ int KIM_API_model::string_init(const char* in_tststr, const char* modelname){
     if(error != KIM_STATUS_OK)
     {
       const char* msg;
-      get_status_msg(ErrorCode, &msg);
+      get_status_msg(mdl.ErrorCode, &msg);
        std::cout<<"mdl.prestring_init failed with error status:"<<msg<<std::endl;
        std::free(in_mdlstr);
        //redirecting back to > std::cout
@@ -1691,7 +1698,7 @@ int KIM_API_model::string_init(const char* in_tststr, const char* modelname){
     if(error != KIM_STATUS_OK)
     {
       const char* msg;
-      get_status_msg(ErrorCode, &msg);
+      get_status_msg(test.ErrorCode, &msg);
        std::cout<<"test.prestring_init failed with error status:"<<msg<<std::endl;
        std::free(in_mdlstr);
        mdl.free();
