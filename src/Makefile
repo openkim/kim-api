@@ -142,19 +142,22 @@ KIM_API.o: KIM_DEFINE_VALUES += -D STANDARD_KIM_STR_NAME=$(MODEL_NAME)_$(KIM_STR
                                 -D STANDARD_KIM_STR_CHUNKS_NAME=$(MODEL_NAME)_$(KIM_STR_NAME)_chunks \
                                 -D KIM_STR_NAME=\"$(KIM_STR_NAME)\"                                  \
                                 -D MODELLIBFILE=\"lib$(MODEL_LIB)\"
-KIM_API.o: $(if $(filter-out dynamic-load,$(KIM_LINK)),model_init_include.h model_init_include.cpp model_kim_str_include.cpp,) KIM_API.h KIM_API.cpp KIM_AUX.h KIM_API_DIRS.h Makefile
+KIM_API.o: $(if $(filter-out dynamic-load,$(KIM_LINK)),model_init_include.h model_init_include.cpp model_kim_str_include.cpp,) \
+           KIM_API.h KIM_API_status.h KIM_API_DIRS.h KIM_API.cpp Makefile
 
-KIM_API_C.o: KIM_API.h KIM_API_C.h Makefile
+KIM_API_C.o: KIM_API.h KIM_API_C.h KIM_API_status.h KIM_API_C.cpp Makefile
 
-KIM_API_F03.o: KIM_API_F03_Multiples.incl KIM_API_F03_Helper.o Makefile
+KIM_API_F03.o: KIM_API_status.h KIM_API_F03_Multiples.incl KIM_API_F03_Helper.o Makefile
 
 KIM_API_F03_Multiples.incl: scripts/CreateGetSetMultipleRoutines.sh Makefile
 	@printf "Creating... KIM_API_F03_Multiples.incl.\n"
 	$(QUELL)scripts/CreateGetSetMultipleRoutines.sh > KIM_API_F03_Multiples.incl
 
-KIM_API_F03_Helper.o: Makefile
+KIM_API_F03_Helper.o: KIM_API_status.h Makefile
 
-KIM_AUX.o: KIM_AUX.h Makefile
+KIM_AUX.o: KIM_AUX.h KIM_API.h KIM_API_status.h Makefile
+
+KIM_API_DIRS.o: KIM_API_DIRS.h Makefile
 
 .INTERMEDIATE: .KIM_API_DIRS.cpp
 .KIM_API_DIRS.cpp: KIM_API_DIRS.cpp Makefile
@@ -168,6 +171,8 @@ KIM_AUX.o: KIM_AUX.h Makefile
                                       -D MODELSDIR=\"$(modelsdir)\" \
                                       -D PACKAGENAME=\"$(package_name)\" \
                                       -D VERSION_MAJOR=\"$(VERSION_MAJOR)\"
+
+Unit_Handling.o: Unit_Handling.h KIM_API.h KIM_API_status.h Makefile
 
 # targets for the models: for any new model, adds the appropriate lines to the model_init_include.h and model_inclue.cpp files
 $(MODELS_TARGETS): .models-deleted
