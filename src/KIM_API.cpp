@@ -35,6 +35,7 @@
 
 
 #include <cstdlib>
+#include <cctype>
 #include <iostream>
 #include <fstream>
 #include <cstring>
@@ -844,8 +845,429 @@ int KIM_API_model::prestring_init(const char *instrn){
         unit_h.init_str(instrn,&ErrorCode);
         if(ErrorCode < KIM_STATUS_OK) return ErrorCode;
 
+        // check for version number reported by Model/Simulator
+        if(!does_it_have_a_version_number(instrn) && 0!=strcmp("standard", name_temp))
+        {
+          std::cout << "* Error (KIM_API_model::prestring_init(): "<<name_temp << " '.kim' file contains invalid KIM_API_Version setting." << std::endl;
+          ErrorCode = KIM_STATUS_FAIL;
+          return ErrorCode;
+        }
+
         ErrorCode = KIM_STATUS_OK;
         return ErrorCode;
+}
+
+bool KIM_API_model::does_it_have_a_version_number(
+    const char* const instrn)
+{
+  IOline * IOlines=NULL;
+  bool readlines_str_success;
+  int nlines = IOline::readlines_str((char*) instrn,&IOlines,readlines_str_success);
+  if (!readlines_str_success) return false;
+
+  for (int i=0; i<nlines;++i)
+  {
+    if (!strcmp(IOlines[i].name, "KIM_API_Version"))
+    {
+      char temp_str[KIM_KEY_STRING_LENGTH];
+      strncpy(temp_str, IOlines[i].value, KIM_KEY_STRING_LENGTH - 1);
+
+      // Get Major version
+      char* tmp = strtok(temp_str, ".");
+      if (tmp == NULL)
+      {
+        delete [] IOlines;
+        return false;
+      }
+      char* end;
+      tempVersionMajor = strtol(tmp, &end, 10);
+      if ('\0' != *end)
+      {
+        delete [] IOlines;
+        return false;
+      }
+
+      // Get Minor version
+      tmp = strtok(NULL, ".");
+      if (tmp == NULL)
+      {
+        delete [] IOlines;
+        return false;
+      }
+      tempVersionMinor = strtol(tmp, &end, 10);
+      if ('\0' != *end)
+      {
+        delete [] IOlines;
+        return false;
+      }
+
+      // Check that remaining string is a valid PATCH value
+      tmp = strtok(NULL, ".");
+      if (NULL != tmp)
+      {
+        strtol(tmp, &end, 10);
+        if ('\0' != *end)
+        {
+          delete [] IOlines;
+          return false;
+        }
+      }
+
+      delete [] IOlines;
+      return true;
+    }
+  }
+
+  if (IOlines != NULL) delete [] IOlines;
+  return false;
+}
+
+int KIM_API_model::get_version(const char** const version)
+{
+  *version = KIM_API_VERSION;
+  return KIM_STATUS_OK;
+}
+
+int KIM_API_model::get_version_major(int* const major)
+{
+  *major = KIM_API_VERSION_MAJOR;
+  return KIM_STATUS_OK;
+}
+
+int KIM_API_model::get_version_minor(int* const minor)
+{
+  *minor = KIM_API_VERSION_MINOR;
+  return KIM_STATUS_OK;
+}
+
+int KIM_API_model::get_version_patch(int* const patch)
+{
+  *patch = KIM_API_VERSION_PATCH;
+  return KIM_STATUS_OK;
+}
+
+int KIM_API_model::get_version_prerelease(const char** const prerelease)
+{
+  *prerelease = KIM_API_VERSION_PRERELEASE;
+  return KIM_STATUS_OK;
+}
+
+int KIM_API_model::get_version_build_metadata(const char** const build_metadata)
+{
+  *build_metadata = KIM_API_VERSION_BUILD_METADATA;
+  return KIM_STATUS_OK;
+}
+
+int KIM_API_model::version_newer(const char* const versionA,
+                                 const char* const versionB,
+                                 int* const result)
+{
+  unsigned len = strlen(versionA);
+  if (len < strlen(versionB)) len = strlen(versionB);
+  len = len + 1;
+
+  int A_Major;
+  int A_Minor;
+  int A_Patch;
+  char* const A_Prerelease = new char[len];
+  char* const A_Build = new char[len];
+
+  int B_Major;
+  int B_Minor;
+  int B_Patch;
+  char* const B_Prerelease = new char[len];
+  char* const B_Build = new char[len];
+
+  int retval = KIM_STATUS_FAIL;
+  *result = -1;
+
+  if (!parse_semver(versionA, &A_Major, &A_Minor, &A_Patch, A_Prerelease,
+                    A_Build))
+  {
+    retval = KIM_STATUS_FAIL;
+    goto exit;
+  }
+
+  if (!parse_semver(versionB, &B_Major, &B_Minor, &B_Patch, B_Prerelease,
+                    B_Build))
+  {
+    retval = KIM_STATUS_FAIL;
+    goto exit;
+  }
+
+  retval = KIM_STATUS_OK;
+
+  if (A_Major > B_Major)
+  {
+    *result = 1;
+    goto exit;
+  }
+  else if (A_Major < B_Major)
+  {
+    *result = 0;
+    goto exit;
+  }
+  // Major values are equal
+
+  if (A_Minor > B_Minor)
+  {
+    *result = 1;
+    goto exit;
+  }
+  else if (A_Minor < B_Minor)
+  {
+    *result = 0;
+    goto exit;
+  }
+  // Minor values are equal
+
+  if (A_Patch > B_Patch)
+  {
+    *result = 1;
+    goto exit;
+  }
+  else if (A_Patch < B_Patch)
+  {
+    *result = 0;
+    goto exit;
+  }
+  // Patch values are equal
+
+  if ('\0' == A_Prerelease[0] && '\0' != B_Prerelease[0])
+  {
+    *result = 1;
+    goto exit;
+  }
+  else if ('\0' != A_Prerelease[0] && '\0' == B_Prerelease[0])
+  {
+    *result = 0;
+    goto exit;
+  }
+  else if ('\0' == A_Prerelease[0] && '\0' == B_Prerelease[0])
+  {
+    *result = 0; // A and B are equal
+    goto exit;
+  }
+  // Both are prereleases of the same version
+
+  char* A_tok;
+  char* A_Context;
+  char* B_tok;
+  char* B_Context;
+  A_tok = strtok_r(A_Prerelease, ".", &A_Context);
+  B_tok = strtok_r(B_Prerelease, ".", &B_Context);
+
+  while (A_tok != NULL && B_tok != NULL)
+  {
+    int Aint;
+    char* A_End;
+    Aint = strtol(A_tok, &A_End, 10);
+    int Bint;
+    char* B_End;
+    Bint = strtol(B_tok, &B_End, 10);
+
+    if ('\0' != *A_End && '\0' == *B_End) // A numeric & B alpha
+    {
+      *result = 1;
+      goto exit;
+    }
+    else if ('\0' == *A_End && '\0' != *B_End) // A alpha & B numeric
+    {
+      *result = 0;
+      goto exit;
+    }
+    else if ('\0' != *A_End && '\0' != *B_End) // Both alpha
+    {
+      int cmp = strcmp(A_tok, B_tok);
+      if (cmp > 0)
+      {
+        *result = 1;
+        goto exit;
+      }
+      else if (cmp < 0)
+      {
+        *result = 0;
+        goto exit;
+      }
+      // equal strings
+    }
+    else // Both numeric
+    {
+      if (Aint > Bint)
+      {
+        *result = 1;
+        goto exit;
+      }
+      else if (Aint < Bint)
+      {
+        *result = 0;
+        goto exit;
+      }
+      // equal numbers
+    }
+    // equal identifiers
+
+    A_tok = strtok_r(NULL, ".", &A_Context);
+    B_tok = strtok_r(NULL, ".", &B_Context);
+  }
+
+  if (A_tok != NULL && B_tok == NULL)
+  {
+    *result = 1;
+    goto exit;
+  }
+  else if (A_tok == NULL && B_tok != NULL)
+  {
+    *result = 0;
+    goto exit;
+  }
+
+ exit:
+  delete [] A_Prerelease;
+  delete [] A_Build;
+  delete [] B_Prerelease;
+  delete [] B_Build;
+
+  return retval;
+}
+
+bool KIM_API_model::parse_semver(const char* const version, int* const major,
+                                 int* const minor, int* const patch,
+                                 char* const prerelease,
+                                 char* const build_metadata)
+{
+  unsigned len = strlen(version) + 1;
+  char* const ver = new char[len];
+  strcpy(ver, version);
+
+  bool hasPrerelease = false;
+  bool hasBuild = false;
+  for (unsigned i=0; i<len; ++i)
+  {
+    if ('-' == ver[i])
+    {
+      hasPrerelease = true;
+
+      for (; i<len; ++i)
+      {
+        if ('+' == ver[i])
+        {
+          hasBuild = true;
+          break;
+        }
+      }
+      break;
+    }
+  }
+
+  char* tok;
+  tok = strtok(ver, ".");
+
+  char* end;
+  int val;
+
+  val = strtol(tok, &end, 10);
+  if ('\0' != *end)
+  {
+    delete [] ver;
+    return false;
+  }
+  *major = val;
+
+  tok = strtok(NULL, ".");
+  if (NULL == tok)
+  {
+    delete [] ver;
+    return false;
+  }
+  val = strtol(tok, &end, 10);
+  if ('\0' != *end)
+  {
+    delete [] ver;
+    return false;
+  }
+  *minor = val;
+
+  tok = strtok(NULL, "-");
+  if (NULL == tok)
+  {
+    delete [] ver;
+    return false;
+  }
+  val = strtol(tok, &end, 10);
+  if ('\0' != *end)
+  {
+    delete [] ver;
+    return false;
+  }
+  *patch = val;
+
+  if (hasPrerelease)
+  {
+    tok = strtok(NULL, "+");
+    if (NULL == tok) // empty prerelease
+    {
+      delete [] ver;
+      return false;
+    }
+    // validate prerelease
+    for (unsigned i=0; i < strlen(tok); ++i)
+    {
+      if (!isalnum(tok[i]) && !('-' == tok[i]) && !('.' == tok[i]))
+      {
+        delete [] ver;
+        return false;
+      }
+    }
+    strcpy(prerelease, tok);
+
+    if (hasBuild)
+    {
+      tok = strtok(NULL, "+");
+      if (NULL == tok) // empty build
+      {
+        delete [] ver;
+        return false;
+      }
+      // validate build
+      for (unsigned i=0; i < strlen(tok); ++i)
+      {
+        if (!isalnum(tok[i]) && !('-' == tok[i]) && !('.' == tok[i]))
+        {
+          delete [] ver;
+          return false;
+        }
+      }
+      strcpy(build_metadata, tok);
+    }
+  }
+
+  delete [] ver;
+  return true;
+}
+
+int KIM_API_model::get_version_model_major(int* const major) const
+{
+  *major = modelVersionMajor;
+  return KIM_STATUS_OK;
+}
+
+int KIM_API_model::get_version_model_minor(int* const minor) const
+{
+  *minor = modelVersionMinor;
+  return KIM_STATUS_OK;
+}
+
+int KIM_API_model::get_version_simulator_major(int* const major) const
+{
+  *major = simulatorVersionMajor;
+  return KIM_STATUS_OK;
+}
+
+int KIM_API_model::get_version_simulator_minor(int* const minor) const
+{
+  *minor = simulatorVersionMinor;
+  return KIM_STATUS_OK;
 }
 
 void KIM_API_model::free(int *error){
@@ -1244,11 +1666,11 @@ bool KIM_API_model::is_it_match(KIM_API_model &test,KIM_API_model & mdl){
     bool process_fij_related = this->fij_related_things_match(test,mdl);
     bool units_match = Unit_Handling::do_unit_match(test.unit_h,mdl.unit_h);
 
-    if(!test2standardmatch) std::cout<<"* Error (KIM_API_model::is_it_match): There are non-standard variables in Test descriptor file:"<<std::endl;
+    if(!test2standardmatch) std::cout<<"* Error (KIM_API_model::is_it_match): There are non-standard variables in Simulator descriptor file:"<<std::endl;
     if(!model2standardmatch) std::cout<<"* Error (KIM_API_model::is_it_match): There are non-standard variables in Model descriptor file:"<<std::endl;
-    if(!test2standardAtomsTypesMatch) std::cout<<"* Error (KIM_API_model::is_it_match): There are non-standard AtomsTypes in Test descriptor file:"<<std::endl;
+    if(!test2standardAtomsTypesMatch) std::cout<<"* Error (KIM_API_model::is_it_match): There are non-standard AtomsTypes in Simulator descriptor file:"<<std::endl;
     if(!model2standardAtomsTypesMatch) std::cout<<"* Error (KIM_API_model::is_it_match):there are non-standard AtomsTypes in Model descriptor file:"<<std::endl;
-    if(!test2modelAtomsTypesMatch) std::cout<<"* Error (KIM_API_model::is_it_match): Test-Model AtomsTypes do not match:"<<std::endl;
+    if(!test2modelAtomsTypesMatch) std::cout<<"* Error (KIM_API_model::is_it_match): Simulator-Model AtomsTypes do not match:"<<std::endl;
     if(!NBC_methodsmatch) std::cout<<"* Error (KIM_API_model::is_it_match): NBC methods do not match:"<<std::endl;
     if(!process_fij_related) std::cout<<
        "* Error (KIM_API_model::is_it_match): (virial,particleVirial,hessian,process_d1/2Edr) do not match:"<<std::endl;
@@ -1310,7 +1732,7 @@ bool KIM_API_model::do_flag_match(KIM_API_model& tst, KIM_API_model& mdl){
 
     //logic for Zero or One base list handling
     if ((!ZeroBasedLists_tst && !OneBasedLists_tst)||(ZeroBasedLists_tst && OneBasedLists_tst) ) {
-        std::cout<< "* Error (KIM_API_model::do_flag_match): Test descriptor file must have ONE of ZeroBasedLists or OneBasedLists."<<std::endl;
+        std::cout<< "* Error (KIM_API_model::do_flag_match): Simulator descriptor file must have ONE of ZeroBasedLists or OneBasedLists."<<std::endl;
         return false;
     }
      if ((!ZeroBasedLists_mdl && !OneBasedLists_mdl)||(ZeroBasedLists_mdl && OneBasedLists_mdl)) {
@@ -1515,7 +1937,7 @@ int KIM_API_model::get_model_kim_str(const char* const modelname,
     {
       std::cout<< "* Info (KIM_API_model::get_model_kim_str): Found Model shared library file for Model name: " << modelname << std::endl;
     }
-    
+
 
     const int* const model_str_chunks = (const int* const) dlsym(tmp_model_lib_handle, model_kim_str_chunks_name);
     char* dlsym_error = dlerror();
@@ -1599,8 +2021,8 @@ int KIM_API_model::init_str_modelname(const char* testinputfile, const char* inm
         return KIM_STATUS_FAIL;
     }
 
-    test.name_temp = "Test";
-    if(!test.preinit(testinputfile,"Test")){
+    test.name_temp = "Simulator";
+    if(!test.preinit(testinputfile,"Simulator")){
       const char* msg;
       get_status_msg(test.ErrorCode, &msg);
         std::cout<<"preinit  failed with error status: "<<msg<<std::endl;
@@ -1621,6 +2043,12 @@ int KIM_API_model::init_str_modelname(const char* testinputfile, const char* inm
         locator_neigh_mode=mdl.locator_neigh_mode;
         iterator_neigh_mode=mdl.iterator_neigh_mode;
         both_neigh_mode=mdl.both_neigh_mode;
+
+        this->modelVersionMajor = mdl.tempVersionMajor;
+        this->modelVersionMinor = mdl.tempVersionMinor;
+        this->simulatorVersionMajor = test.tempVersionMajor;
+        this->simulatorVersionMinor = test.tempVersionMinor;
+
         test.free(); mdl.free();
         char computestr [] = "compute";
         compute_index = get_index(computestr, &error);
@@ -1630,7 +2058,7 @@ int KIM_API_model::init_str_modelname(const char* testinputfile, const char* inm
         return KIM_STATUS_OK;
     }else{
 
-       std::cout<<"Do not match  " << mdl.model.name  << " and "<< "Test" <<std::endl;
+       std::cout<<"Do not match  " << mdl.model.name  << " and "<< "Simulator" <<std::endl;
        mdl.free();
        test.free();
 
@@ -1693,7 +2121,7 @@ int KIM_API_model::string_init(const char* in_tststr, const char* modelname){
     }
 
     //preinit test and model API object
-    test.name_temp = (char*) "test_name";
+    test.name_temp = (char*) "simulator_name";
     error = test.prestring_init(in_tststr);
     if(error != KIM_STATUS_OK)
     {
@@ -1722,6 +2150,12 @@ int KIM_API_model::string_init(const char* in_tststr, const char* modelname){
         locator_neigh_mode=mdl.locator_neigh_mode;
         iterator_neigh_mode=mdl.iterator_neigh_mode;
         both_neigh_mode=mdl.both_neigh_mode;
+
+        this->modelVersionMajor = mdl.tempVersionMajor;
+        this->modelVersionMinor = mdl.tempVersionMinor;
+        this->simulatorVersionMajor = test.tempVersionMajor;
+        this->simulatorVersionMinor = test.tempVersionMinor;
+
         test.free(); mdl.free();
         char computestr [] = "compute";
         compute_index = get_index(computestr, &error);
@@ -1761,7 +2195,7 @@ int KIM_API_model::match(const char* teststr, const char* modelstr){
     KIM_API_model test,mdl;
 
     //preinit test and model API object
-    test.name_temp = (char*) "test_name";
+    test.name_temp = (char*) "simulator_name";
     error = test.prestring_init(teststr);
     if(error != KIM_STATUS_OK)
     {
@@ -2013,7 +2447,7 @@ int KIM_API_model::get_neigh(int mode, int request, int *part,
 
 bool KIM_API_model::irrelevantVars2donotcompute(KIM_API_model & test, KIM_API_model & mdl){
    if(! is_it_match_noFlagCount(test,mdl.inlines,mdl.numlines,false)) {
-        std::cout<<"* Error (KIM_API_model::irrelevantVars2donotcompute): Test and Model descriptor files are incompatible (do not match)."<<std::endl;
+        std::cout<<"* Error (KIM_API_model::irrelevantVars2donotcompute): Simulator and Model descriptor files are incompatible (do not match)."<<std::endl;
         return false;
     }
     for(int i=0; i<mdl.numlines;i++){
@@ -2474,7 +2908,7 @@ int KIM_API_model::get_status_msg(const int status_code,
     { "invalid KIM API object"},
     { "negative index in shape"},
     { "invalid mode value"},
-    { "no particle species have been specified by the Test or Model"},
+    { "no particle species have been specified by the Simulator or Model"},
     { "provided rank does not match KIM API argument rank"},
     { "invalid particle id requested (request out of range)"},
     { "symbol is not among supported particle symbols"},
@@ -2544,7 +2978,7 @@ bool KIM_API_model::fij_related_things_match(KIM_API_model& test, KIM_API_model&
                                                      tst_particleVirial_required ||
                                                      tst_hessian_required)) {
        std::cout << "* Error (KIM_API_model::fij_related_things_match): "
-          "Test descriptor file cannot list both `process_dEdr' or "
+          "Simulator descriptor file cannot list both `process_dEdr' or "
           "`process_d2Edr2'  and any of `virial', `particleVirial', or `hessian'"
             << std::endl;
        return false;

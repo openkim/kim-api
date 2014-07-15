@@ -40,6 +40,59 @@ module kim_api_f03
   implicit none
   integer, parameter :: KIM_KEY_STRING_LENGTH = 128
   interface
+    integer(c_int) function kim_api_get_version_major(major) &
+      bind(c, name="KIM_API_get_version_major")
+      use, intrinsic :: iso_c_binding
+      implicit none
+      integer(c_int) :: major
+    end function kim_api_get_version_major
+
+    integer(c_int) function kim_api_get_version_minor(minor) &
+      bind(c, name="KIM_API_get_version_minor")
+      use, intrinsic :: iso_c_binding
+      implicit none
+      integer(c_int) :: minor
+    end function kim_api_get_version_minor
+
+    integer(c_int) function kim_api_get_version_patch(patch) &
+      bind(c, name="KIM_API_get_version_patch")
+      use, intrinsic :: iso_c_binding
+      implicit none
+      integer(c_int) :: patch
+    end function kim_api_get_version_patch
+
+    integer(c_int) function kim_api_get_version_model_major(kimmdl, major) &
+      bind(c, name="KIM_API_get_version_model_major")
+      use, intrinsic :: iso_c_binding
+      implicit none
+      type(c_ptr)    :: kimmdl
+      integer(c_int) :: major
+    end function kim_api_get_version_model_major
+
+    integer(c_int) function kim_api_get_version_model_minor(kimmdl, minor) &
+      bind(c, name="KIM_API_get_version_model_minor")
+      use, intrinsic :: iso_c_binding
+      implicit none
+      type(c_ptr)    :: kimmdl
+      integer(c_int) :: minor
+    end function kim_api_get_version_model_minor
+
+    integer(c_int) function kim_api_get_version_simulator_major(kimmdl, major) &
+      bind(c, name="KIM_API_get_version_simulator_major")
+      use, intrinsic :: iso_c_binding
+      implicit none
+      type(c_ptr)    :: kimmdl
+      integer(c_int) :: major
+    end function kim_api_get_version_simulator_major
+
+    integer(c_int) function kim_api_get_version_simulator_minor(kimmdl, minor) &
+      bind(c, name="KIM_API_get_version_simulator_minor")
+      use, intrinsic :: iso_c_binding
+      implicit none
+      type(c_ptr)    :: kimmdl
+      integer(c_int) :: minor
+    end function kim_api_get_version_simulator_minor
+
     subroutine kim_api_c_free(cp) bind(c, name="free")
       use, intrinsic :: iso_c_binding
       implicit none
@@ -340,6 +393,83 @@ module kim_api_f03
   end interface
 
 contains
+
+  integer(c_int) function kim_api_get_version(version)
+    use :: kim_api_f03_helper, only : c_call => kim_api_get_version
+    implicit none
+    character(len=*), intent(out) :: version
+
+    type(c_ptr) :: pVersion
+    character(len=len(version)), pointer :: fpVersion
+    integer(c_int) :: nullindex
+
+    kim_api_get_version = c_call(pVersion)
+
+    if (kim_api_get_version.lt.KIM_STATUS_OK) return
+    call c_f_pointer(pVersion, fpVersion)
+    nullindex = scan(fpVersion, char(0))-1
+    if (nullindex.eq.0) then
+      kim_api_get_version = KIM_STATUS_FAIL
+    else
+      version = fpVersion(1:nullindex)
+    endif
+    return
+  end function kim_api_get_version
+
+  integer(c_int) function kim_api_get_version_prerelease(prerelease)
+    use :: kim_api_f03_helper, only : c_call => kim_api_get_version_prerelease
+    implicit none
+    character(len=*), intent(out) :: prerelease
+
+    type(c_ptr) :: pPrerelease
+    character(len=len(prerelease)), pointer :: fpPrerelease
+    integer(c_int) :: nullindex
+
+    kim_api_get_version_prerelease = c_call(pPrerelease)
+
+    if (kim_api_get_version_prerelease.lt.KIM_STATUS_OK) return
+    call c_f_pointer(pPrerelease, fpPrerelease)
+    nullindex = scan(fpPrerelease, char(0))-1
+    if (nullindex.eq.0) then
+      kim_api_get_version_prerelease = KIM_STATUS_FAIL
+    else
+      prerelease = fpPrerelease(1:nullindex)
+    endif
+    return
+  end function kim_api_get_version_prerelease
+
+  integer(c_int) function kim_api_get_version_build_metadata(build_metadata)
+    use :: kim_api_f03_helper, only : c_call => kim_api_get_version_build_metadata
+    implicit none
+    character(len=*), intent(out) :: build_metadata
+
+    type(c_ptr) :: pBuild_metadata
+    character(len=len(build_metadata)), pointer :: fpBuild_metadata
+    integer(c_int) :: nullindex
+
+    kim_api_get_version_build_metadata = c_call(pBuild_metadata)
+
+    if (kim_api_get_version_build_metadata.lt.KIM_STATUS_OK) return
+    call c_f_pointer(pBuild_metadata, fpBuild_metadata)
+    nullindex = scan(fpBuild_metadata, char(0))-1
+    if (nullindex.eq.0) then
+      kim_api_get_version_build_metadata = KIM_STATUS_FAIL
+    else
+      build_metadata = fpBuild_metadata(1:nullindex)
+    endif
+    return
+  end function kim_api_get_version_build_metadata
+
+  integer(c_int) function kim_api_version_newer(versionA, versionB, result)
+    use :: kim_api_f03_helper, only : c_call => kim_api_get_version_newer
+    implicit none
+    character(len=*), intent(in)  :: versionA
+    character(len=*), intent(in)  :: versionB
+    integer(c_int),   intent(out) :: result
+
+    kim_api_version_newer = c_call(trim(versionA)//c_null_char, &
+      trim(versionB)//c_null_char, result)
+  end function kim_api_version_newer
 
   integer(c_int) function kim_api_file_init(kimmdl, simkimfile, mdlname)
     use :: kim_api_f03_helper, only : c_call => kim_api_file_init

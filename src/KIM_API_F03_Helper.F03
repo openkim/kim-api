@@ -39,6 +39,32 @@ module kim_api_f03_helper
   use, intrinsic :: iso_c_binding
   implicit none
   interface
+    integer(c_int) function kim_api_get_version(version) &
+      bind(c, name="KIM_API_get_version")
+      use, intrinsic :: iso_c_binding
+      type(c_ptr) :: version
+    end function kim_api_get_version
+
+    integer(c_int) function kim_api_get_version_prerelease(prerelease) &
+      bind(c, name="KIM_API_get_version_prerelease")
+      use, intrinsic :: iso_c_binding
+      type(c_ptr) :: prerelease
+    end function kim_api_get_version_prerelease
+
+    integer(c_int) function kim_api_get_version_build_metadata(build_metadata) &
+      bind(c, name="KIM_API_get_version_build_metadata")
+      use, intrinsic :: iso_c_binding
+      type(c_ptr) :: build_metadata
+    end function kim_api_get_version_build_metadata
+
+    integer(c_int) function kim_api_get_version_newer(versionA, versionB, &
+      result) bind(c, name="KIM_API_version_newer")
+      use, intrinsic :: iso_c_binding
+      character(c_char) :: versionA(*)
+      character(c_char) :: versionB(*)
+      integer(c_int) :: result
+    end function kim_api_get_version_newer
+
     integer(c_int) function kim_api_file_init(kimmdl, simkimfile, mdlname) &
       bind(c, name="KIM_API_file_init")
       use, intrinsic :: iso_c_binding

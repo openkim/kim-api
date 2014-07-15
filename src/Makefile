@@ -138,6 +138,25 @@ lib$(KIM_LIB_BUILD).so: lib$(KIM_LIB_BUILD).a .lib$(KIM_LIB_BUILD).a $(MD_DEPS) 
                       $(DMD_DEPS) $(DMO_DEPS) \
                       $(LDLIBS)
 
+KIM_API_Version.h: KIM_API_Version.h.tpl Makefile
+	@printf "Creating... KIM_API_Version.h.\n"
+	$(QUELL)cat KIM_API_Version.h.tpl | sed -e 's/versionMajor/$(VERSION_MAJOR)/g' \
+                                                -e 's/versionMinor/$(VERSION_MINOR)/g' \
+                                                -e 's/versionPatch/$(VERSION_PATCH)/g' \
+                                                -e 's/versionPrerelease/"$(VERSION_PRERELEASE)"/g' \
+                                                -e 's/versionBuildMetadata/"$(VERSION_BUILD_METADATA)"/g' \
+                                                -e 's/versionString/"$(VERSION_FULL)"/g' \
+                > $@
+
+%.h:
+	@touch $@
+
+KIM_API.h: KIM_API_Version.h Makefile
+
+KIM_API_C.h: KIM_API_Version.h Makefile
+
+KIM_API_status.h: KIM_API_Version.h Makefile
+
 KIM_API.o: KIM_DEFINE_VALUES += -D STANDARD_KIM_STR_NAME=$(MODEL_NAME)_$(KIM_STR_NAME)               \
                                 -D STANDARD_KIM_STR_CHUNKS_NAME=$(MODEL_NAME)_$(KIM_STR_NAME)_chunks \
                                 -D KIM_STR_NAME=\"$(KIM_STR_NAME)\"                                  \
@@ -213,7 +232,7 @@ model_init_include.h model_init_include.cpp: Makefile .models-deleted $(MODELS_T
 clean:
 	@printf "Cleaning... src.\n"
 	$(QUELL)rm -f *.o .*.o *.a .*.a *.so .*.so *.mod  model_init_include.h model_init_include.cpp model_kim_str_include.h model_kim_str_include.cpp \
-                      .*.make-temp .models-deleted KIM_API_F03_Multiples.incl &&\
+                      .*.make-temp .models-deleted KIM_API_Version.h KIM_API_F03_Multiples.incl &&\
                 rm -rf "$(srcdir)/temp_archive_dir"
 
 
@@ -221,7 +240,7 @@ install_modelsdir = $(dest_package_dir)/$(modelsdir)
 install_modeldriversdir = $(dest_package_dir)/$(modeldriversdir)
 install_includedir = $(dest_package_dir)/include
 install_nodest_includedir = $(package_dir)/include
-install_include = KIM_API.h KIM_API_C.h KIM_API_status.h KIM_API_DIRS.h Unit_Handling.h KIM_AUX.h kim_api_f03.mod
+install_include = KIM_API.h KIM_API_C.h KIM_API_status.h KIM_API_Version.h KIM_API_DIRS.h Unit_Handling.h KIM_AUX.h kim_api_f03.mod
 
 install-check:
 ifneq (dynamic-load,$(KIM_LINK))

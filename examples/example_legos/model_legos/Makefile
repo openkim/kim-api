@@ -37,6 +37,7 @@ KIM_EX_MODEL_DRIVERS_DIR := $(KIM_DIR)/examples/model_drivers
 
 VPATH = $(KIM_EX_MODELS_DIR) $(KIM_EX_MODEL_DRIVERS_DIR)
 
+SED_VER_CMD = "s/VERSION_STR/1.6.0/g"
 SED_CMD = sed -e "s/MODEL_NAME_STR/$@/g" -e "s/MODEL_KIM_NAME_STR/${subst ex_,,$@}/g"
 
 ifeq ($(flavor debug),undefined)
@@ -123,7 +124,8 @@ ex_model_Ar_P_MLJ_CLUSTER_C: model_P_MLJ_CLUSTER_C.c             \
 	$(D_CAT) model_Makefile | $(SED_CMD) | sed -e 's/MODEL_KIM_FILE_STR/$(subst ex_,,$@).kim/'            >  $(KIM_EX_MODELS_DIR)/$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start \
-         | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    1/g'                >  $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+         | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    1/g' \
+               -e $(SED_VER_CMD)                                                                              >  $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
 	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
 	echo "CLUSTER                     flag"                                                               >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
 	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
@@ -159,7 +161,8 @@ ex_model_Ar_P_MLJ_CLUSTER_F03: $(COMMON_FRAGMENTS)                    \
 	$(D_CAT) model_Makefile | $(SED_CMD) | sed -e 's/MODEL_KIM_FILE_STR/$(subst ex_,,$@).kim/'            >  $(KIM_EX_MODELS_DIR)/$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start \
-         | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    1/g'                >  $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+         | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    1/g' \
+               -e $(SED_VER_CMD)                                                                              >  $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
 	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
 	echo "CLUSTER                     flag"                                                               >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
 	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
@@ -202,7 +205,8 @@ ex_model_Ar_P_MLJ_MI_OPBC_H_F: $(COMMON_FRAGMENTS)                              
 	$(D_CAT) model_Makefile | $(SED_CMD) | sed -e 's/MODEL_KIM_FILE_STR/$(subst ex_,,$@).kim/'            >  $(KIM_EX_MODELS_DIR)/$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start \
-         | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    1/g'                >  $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+         | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    1/g' \
+               -e $(SED_VER_CMD)                                                                              >  $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
 	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
 	echo "Neigh_LocaAccess            flag"                                                               >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
 	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
@@ -258,7 +262,7 @@ ex_model_Ar_P_MLJ_NEIGH_PURE_H_F: $(COMMON_FRAGMENTS)                           
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start \
                                   | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    1/g' \
-                                                                                                              >  $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+                                        -e $(SED_VER_CMD)                                                     >  $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
 	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
 	echo "Neigh_LocaAccess            flag"                                                               >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
 	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
@@ -311,7 +315,8 @@ ex_model_Ar_P_MLJ_NEIGH_RVEC_F: $(COMMON_FRAGMENTS)                           \
 	$(D_CAT) model_Makefile | $(SED_CMD) | sed -e 's/MODEL_KIM_FILE_STR/$(subst ex_,,$@).kim/'            >  $(KIM_EX_MODELS_DIR)/$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start \
-         | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    1/g'                >  $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+         | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    1/g' \
+               -e $(SED_VER_CMD)                                                                              >  $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
 	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
 	echo "Neigh_LocaAccess            flag"                                                               >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
 	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
@@ -361,7 +366,7 @@ ex_model_driver_P_Morse: model_driver_Morse_README    \
 	$(D_CAT) model_driver_Makefile | sed -e 's/MODEL_DRIVER_NAME_STR/$@/g' \
                                           -e 's/MODEL_DRIVER_KIM_FILE_TEMPLATE_STR/$(subst ex_,,$@).kim.tpl/' >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/Makefile
         # make .kim file in the directory
-	$(D_CAT) model_driver_P_Morse.kim.tpl                                                                 >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$(subst ex_,,$@).kim.tpl
+	$(D_CAT) model_driver_P_Morse.kim.tpl | sed -e $(SED_VER_CMD)                                         >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$(subst ex_,,$@).kim.tpl
         # make .c file in the directory
 	$(C_CAT) model_driver_P_Morse.c | $(SED_CMD) \
          | sed -e `echo $@ | tr A-Z a-z | sed -e 's/^\(.*\)/s\/MODEL_DRIVER_NAME_LC_STR\/\1\/g/'` \
@@ -494,7 +499,7 @@ ex_model_driver_P_LJ: model_driver_LJ_README    \
 	$(D_CAT) model_driver_Makefile | sed -e 's/MODEL_DRIVER_NAME_STR/$@/g' \
                                           -e 's/MODEL_DRIVER_KIM_FILE_TEMPLATE_STR/$(subst ex_,,$@).kim.tpl/'   >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/Makefile
         # make .kim file in the directory
-	$(D_CAT) model_driver_P_LJ.kim.tpl                                                                      >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$(subst ex_,,$@).kim.tpl
+	$(D_CAT) model_driver_P_LJ.kim.tpl | sed -e $(SED_VER_CMD)                                              >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$(subst ex_,,$@).kim.tpl
         # make .F03 file in the directory
 	$(F_CAT) model_driver_P_LJ.F03 | $(SED_CMD) \
          | sed -e `echo $@ | tr A-Z a-z | sed -e 's/^\(.*\)/s\/MODEL_DRIVER_NAME_LC_STR\/\1\/g/'` \

@@ -43,6 +43,66 @@
 #include "KIM_API_status.h"
 
 //global methods
+int KIM_API_get_version(const char** const version)
+{
+  return KIM_API_model::get_version(version);
+}
+
+int KIM_API_get_version_major(int* const major)
+{
+  return KIM_API_model::get_version_major(major);
+}
+
+int KIM_API_get_version_minor(int* const minor)
+{
+  return KIM_API_model::get_version_minor(minor);
+}
+
+int KIM_API_get_version_patch(int* const patch)
+{
+  return KIM_API_model::get_version_patch(patch);
+}
+
+int KIM_API_get_version_prerelease(const char** const prerelease)
+{
+  return KIM_API_model::get_version_prerelease(prerelease);
+}
+
+int KIM_API_get_version_build_metadata(const char** const build_metadata)
+{
+  return KIM_API_model::get_version_build_metadata(build_metadata);
+}
+
+int KIM_API_version_newer(const char* const versionA,
+                          const char* const versionB,
+                          int* const result)
+{
+  return KIM_API_model::version_newer(versionA, versionB, result);
+}
+
+int KIM_API_get_version_model_major(void* kimmdl, int* const major)
+{
+  KIM_API_model* mdl = (KIM_API_model*) kimmdl;
+  return mdl->get_version_model_major(major);
+}
+
+int KIM_API_get_version_model_minor(void* kimmdl, int* const minor)
+{
+  KIM_API_model* mdl = (KIM_API_model*) kimmdl;
+  return mdl->get_version_model_minor(minor);
+}
+int KIM_API_get_version_simulator_major(void* kimmdl, int* const major)
+{
+  KIM_API_model* mdl = (KIM_API_model*) kimmdl;
+  return mdl->get_version_simulator_major(major);
+}
+
+int KIM_API_get_version_simulator_minor(void* kimmdl, int* const minor)
+{
+  KIM_API_model* mdl = (KIM_API_model*) kimmdl;
+  return mdl->get_version_simulator_minor(minor);
+}
+
 int KIM_API_file_init(void * kimmdl, const char *simkimfile, const char *mdlname){
   KIM_API_model * mdl;
   mdl = new KIM_API_model[1];

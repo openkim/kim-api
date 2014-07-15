@@ -64,6 +64,9 @@ KIM_API_F03.F03
 KIM_API_F03_Helper.F03
      Implementation of helper routines for the Fortran 2003-style interface.
 
+KIM_API_Version.h.tpl
+     Template file from which the KIM_API_Version.h header file is created.
+
 KIM_API_status.h
      Header file defining the KIM API status codes.
 

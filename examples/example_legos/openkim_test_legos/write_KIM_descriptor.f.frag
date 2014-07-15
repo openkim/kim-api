@@ -70,6 +70,7 @@ kim_descriptor = &
    '#'                                                                          // cr // &
    divider                                                                      // cr // &
                                                                                    cr // &
+   'KIM_API_Version := 1.6.0'                                                   // cr // &
                                                                                    cr // &
    'Unit_length      := A'                                                      // cr // &
    'Unit_energy      := eV'                                                     // cr // &

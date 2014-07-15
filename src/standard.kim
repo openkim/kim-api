@@ -377,6 +377,23 @@ $
 #
 ################################################################################
 #
+# KIM_API_Version line:
+#
+# This line lists the (oldest) KIM API version for which the Model or Simulator
+# is known to be compatible.  The format is <MAJOR>.<MINOR>[.<PATCH>].  Some
+# examples are:
+#
+#    KIM_API_Version := 1.6
+#    KIM_API_Version := 1.6.4
+#
+# The <PATCH> value, if provided, is ignored.  All ".kim" files must have a
+# KIM_API_Version line; except for this file (standard.kim) which should not
+# have a KIM_API_Version line.
+#
+################################################################################
+
+################################################################################
+#
 # Each Model KIM descriptor file must have a Unit_Handling line.
 # There are two options:
 #

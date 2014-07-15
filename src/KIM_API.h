@@ -43,6 +43,7 @@
 #define number_NBC_methods 7
 #define KIM_KEY_STRING_LENGTH 128
 
+#include "KIM_API_Version.h"
 #include "KIM_AUX.h"
 
 //#define intptr_t int  // for 32 bit machines
@@ -154,6 +155,21 @@ public:
     KIMBaseElement model;
     KIM_API_model();
     ~KIM_API_model();
+
+  static int get_version(const char** const version);
+  static int get_version_major(int* const major);
+  static int get_version_minor(int* const minor);
+  static int get_version_patch(int* const patch);
+  static int get_version_prerelease(const char** const prerelease);
+  static int get_version_build_metadata(const char** const build_metadata);
+  static int version_newer(const char* const versionA,
+                           const char* const versionB,
+                           int* const result);
+
+  int get_version_model_major(int* const major) const;
+  int get_version_model_minor(int* const minor) const;
+  int get_version_simulator_major(int* const major) const;
+  int get_version_simulator_minor(int* const minor) const;
 
     int model_info(const char * modelname) {return preinit(modelname);} //does not have error
                                                                   // because it returns OK or FAIL
@@ -299,6 +315,13 @@ private:
     Atom_Map * AtomsTypes;
     int nAtomsTypes;
 
+  int tempVersionMajor;
+  int tempVersionMinor;
+  int modelVersionMajor;
+  int modelVersionMinor;
+  int simulatorVersionMajor;
+  int simulatorVersionMinor;
+
     //"CLUSTER"
     char NBC_method_A[KIM_KEY_STRING_LENGTH];
     char arg_NBC_method_A[1][KIM_KEY_STRING_LENGTH];
@@ -371,6 +394,11 @@ private:
 
     bool is_it_match(KIM_API_model &test,KIM_API_model & mdl);
     bool do_AtomsTypes_match(KIM_API_model &test,KIM_API_model & mdl);
+
+  static bool parse_semver(const char* const version, int* const major,
+                           int* const minor, int* const patch,
+                           char* const prerelease, char* const build_metadata);
+  bool does_it_have_a_version_number(const char* const instrn);
 
     char NBC_method_current[KIM_KEY_STRING_LENGTH];
     bool NBC_methods_match(KIM_API_model &test,KIM_API_model &mdl);

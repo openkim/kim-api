@@ -39,6 +39,7 @@
 #define KIMHDR_KIM_API_C_H
 
 #include <stdint.h>
+#include "KIM_API_Version.h"
 
 #define KIM_KEY_STRING_LENGTH 128
 
@@ -49,6 +50,21 @@ extern "C" {
 typedef void (* func_ptr)();
 
 /* global methods */
+  int KIM_API_get_version(const char** const version);
+  int KIM_API_get_version_major(int* const major);
+  int KIM_API_get_version_minor(int* const minor);
+  int KIM_API_get_version_patch(int* const patch);
+  int KIM_API_get_version_prerelease(const char** const prerelease);
+  int KIM_API_get_version_build_metadata(const char** const build_metadata);
+  int KIM_API_version_newer(const char* const versionA,
+                            const char* const versionB,
+                            int* const result);
+
+  int KIM_API_get_version_model_major(void* kimmdl, int* const major);
+  int KIM_API_get_version_model_minor(void* kimmdl, int* const minor);
+  int KIM_API_get_version_simulator_major(void* kimmdl, int* const major);
+  int KIM_API_get_version_simulator_minor(void* kimmdl, int* const minor);
+
 int KIM_API_file_init(void * kimmdl, const char *simkimfile, const char *modelname);
 
 int KIM_API_model_info(void * kimmdl, const char * mdlname);

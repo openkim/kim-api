@@ -74,6 +74,7 @@ KIMLDLIBS  = -l$(KIM_LIB)
 
 # define list of Makefiles in the KIM build system to be used for dependencies
 KIM_MAKE_FILES = $(KIM_DIR)/Makefile.KIM_Config                \
+                 $(KIM_DIR)/Makefile.Version                   \
                  $(KIM_DIR)/$(builddir)/Makefile.Generic       \
                  $(KIM_DIR)/$(builddir)/Makefile.LoadDefaults  \
                  $(KIM_DIR)/$(builddir)/Makefile.SanityCheck   \
