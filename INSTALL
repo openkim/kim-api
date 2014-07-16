@@ -268,8 +268,8 @@ INSTRUCTIONS for building and installing this KIM API release:
    Finally, we will assume that you want to "add" the following OpenKIM Model
    Drivers and Models for "system-wide" use (see item 7 below):
 
-     EAM_Dynamo__MD_120291908751_000
-     EAM_Dynamo_Angelo_Moody_NiAlH__MO_418978237058_000
+     EAM_Dynamo__MD_120291908751_001
+     EAM_Dynamo_Angelo_Moody_NiAlH__MO_418978237058_001
 
 3. To build the package "in place", including the provided examples, and
    confirm that everything works as expeced, execute the following commands.
@@ -279,13 +279,13 @@ INSTRUCTIONS for building and installing this KIM API release:
 
    Second, "add" the OpenKIM Model Drivers and Models of interest:
 
-   % make add-EAM_Dynamo__MD_120291908751_000
-   % make add-EAM_Dynamo_Angelo_Moody_NiAlH__MO_418978237058_000
+   % make add-EAM_Dynamo__MD_120291908751_001
+   % make add-EAM_Dynamo_Angelo_Moody_NiAlH__MO_418978237058_001
 
    Alternatively, you can just "add" the OpenKIM Model of interest and the
    associated Model Driver, if any, will also be added automatically:
 
-   % make add-EAM_Dynamo_Angelo_Moody_NiAlH__MO_418978237058_000
+   % make add-EAM_Dynamo_Angelo_Moody_NiAlH__MO_418978237058_001
 
    Finally, build the package and the provided examples:
 
@@ -498,11 +498,11 @@ INSTRUCTIONS for building and installing this KIM API release:
        Parameterized Model such as those you can download from
        https://openkim.org.  For example, execute the following commands:
 
-       % md=Pair_Morse_Shifted__MD_552566534109_000
+       % md=Pair_Morse_Shifted__MD_552566534109_001
        % wget --content-disposition "https://kim-items.openkim.org/archive?kimid=${md}&compression=gz"
        % tar zxvf ${md}.tgz
        % rm ${md}.tgz
-       % mo=Pair_Morse_Shifted_Jelinek_Ar__MO_831902330215_000
+       % mo=Pair_Morse_Shifted_Jelinek_Ar__MO_831902330215_001
        % wget --content-disposition "https://kim-items.openkim.org/archive?kimid=${mo}&compression=gz"
        % tar zxvf ${mo}.tgz
        % rm ${mo}.tgz
