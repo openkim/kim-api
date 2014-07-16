@@ -33,6 +33,54 @@
 #
 
 
+=== kim-api-v1.6.0 =============================================================
+
+* Documentation updates.
+
+* Model Driver Template and training model examples are now generated from a
+  single consistent "lego" file.  Training examples are not included in
+  official release tarballs.
+
+* Add SemVer version routines to the KIM API.  ".kim" files now require a
+  KIM_API_Version line to indicate the Model/Simulator compatibility.
+
+* Change terminology from "Particle Types" to "Particle Species" for clarity
+  and uniformity with the rest of the OpenKIM project.  (See
+  KIM_API_get_model_species(), and similar routines.)
+
+* Changed KIM API routines that output strings.  This avoids output of arrays
+  of strings, which are unnatural in C/C++ and allows for more natural handling
+  of string arguments in Fortran. (See: KIM_API_get_NBC_method(),
+  KIM_API_get_params(), and similar routines.)
+
+* Simulators and OpenKIM Tests now should use the "kim-api-build-config"
+  utility in order to obtain appropriate compiler and linker flags for building
+  against the KIM API.
+
+* Changed CCFLAGS to more standard CFLAGS Make variable.
+
+* Build system now provides ability to download Model Drivers and Models
+  directly from openkim.org.
+
+* Change package name from "openkim-api" to "kim-api".
+
+* Rename this file (CHANGELOG) to NEWS, to better follow convention.
+
+* A complete restructuring of the package directory layout has been performed
+  in order to conform to more standard practices and to better reflect the
+  intended behavior and use of the package components.
+
+* Model Drivers now specify the name of their ".kim" file template in their
+  Makefile.  The conventional name for these files now ends in ".kim.tpl".
+
+* Model ".kim" file name is now specified in the Makefile and can be anything
+  the developer desires.
+
+* Remove deprecated KIM_API_init() routine.
+
+* Remove deprecated Fortran Cray pointer support.
+
+
 === openkim-api-v1.5.0 =========================================================
 
 * Documentation updates, including an extensive discussion of the installation
