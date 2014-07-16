@@ -197,9 +197,9 @@ add-%: config
                        rm -f "$*.tgz" && \
                        if test 0 -lt `grep -c MAKE_SYSTEM $*/Makefile`; then \
                          printf "*** WARNING *** $* appears to be written for an older, incompatible, version of the KIM API.\n"; \
-                       elif test x"ParameterizedModel" = x"`$(MAKE) $(MAKE_FLAGS) -C $* kim-item-type`"; then \
-                         dvr="`$(MAKE) $(MAKE_FLAGS) -C $* model-driver-name`"; \
-                         $(MAKE) $(MAKE_FLAGS) -C $(KIM_DIR) add-$${dvr}; \
+                       elif test x"ParameterizedModel" = x"`$(MAKE) $(MAKE_FLAGS) -C \"$*\" kim-item-type`"; then \
+                         dvr="`$(MAKE) $(MAKE_FLAGS) -C \"$*\" model-driver-name`"; \
+                         $(MAKE) $(MAKE_FLAGS) -C "$(KIM_DIR)" add-$${dvr}; \
                        fi; \
                      else \
                        printf "                Unable to download $* from https://openkim.org.  Check the KIM Item ID for errors.\n" && false; \
@@ -216,6 +216,12 @@ add-%: config
                      printf "*@existing.....@%-50s@no@copy@performed!\n" $*@ | sed -e 's/ /./g' -e 's/@/ /g'; else \
                      printf "*@adding.......@%-50s@copied@to@@$(srcdir)/$(modelsdir)\n" $*@ | sed -e 's/ /./g' -e 's/@/ /g'; \
                      cp -r "$(KIM_DIR)/$(examplesdir)/$(modelsdir)/$*" "$(srcdir)/$(modelsdir)/"; \
+                     if test x"ParameterizedModel" = x"`$(MAKE) $(MAKE_FLAGS) -C \"$(srcdir)/$(modelsdir)/$*\" kim-item-type`"; then \
+                       dvr="`$(MAKE) $(MAKE_FLAGS) -C \"$(srcdir)/$(modelsdir)/$*\" model-driver-name`"; \
+                       $(MAKE) $(MAKE_FLAGS) -C "$(KIM_DIR)" add-$${dvr}; \
+                     else \
+                       printf "IN THE ESLE...\n"; \
+                     fi; \
                    fi; \
                 else \
                   printf "Unknown OpenKIM item or example name: $*.\n" && false; \
