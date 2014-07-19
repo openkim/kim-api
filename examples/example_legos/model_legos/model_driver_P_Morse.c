@@ -61,7 +61,8 @@
 
 /* Define prototypes for Model Driver init */
 /**/
-int model_driver_init(void* km, char* paramfile_names, int* nmstrlen, int* numparamfiles);
+int model_driver_init(void* km, char* paramfile_names, int* nmstrlen,
+                      int* numparamfiles);
 
 /* Define prototypes for Model (Driver) reinit, compute, and destroy */
 /* defined as static to avoid namespace clashes with other Models    */
@@ -85,10 +86,12 @@ static void calc_phi_d2phi(double* epsilon,
                            double* C,
                            double* Rzero,
                            double* shift,
-                           double* cutoff, double r, double* phi, double* dphi, double* d2phi);
+                           double* cutoff, double r, double* phi, double* dphi,
+                           double* d2phi);
 
 /* Define model_buffer structure */
-struct model_buffer {
+struct model_buffer
+{
   int NBC;
   int HalfOrFull;
   int IterOrLoca;
@@ -101,11 +104,10 @@ struct model_buffer {
   int numberOfParticles_ind;
   int particleSpecies_ind;
   int coordinates_ind;
-  int numberContributingParticles_ind;
+  int numberContribParticles_ind;
   int boxSideLengths_ind;
   int get_neigh_ind;
   int cutoff_ind;
-
 
   double Pcutoff;
   double cutsq;
@@ -172,12 +174,14 @@ static void calc_phi_dphi(double* epsilon,
   return;
 }
 
-/* Calculate pair potential phi(r) and its 1st & 2nd derivatives dphi(r), d2phi(r) */
+/* Calculate pair potential phi(r) and its 1st & 2nd derivatives dphi(r), */
+/* d2phi(r) */
 static void calc_phi_d2phi(double* epsilon,
                            double* C,
                            double* Rzero,
                            double* shift,
-                           double* cutoff, double r, double* phi, double* dphi, double* d2phi)
+                           double* cutoff, double r, double* phi,
+                           double* dphi, double* d2phi)
 {
   /* local variables */
   double ep;
@@ -263,7 +267,8 @@ static int compute(void* km)
   int* numContrib;
   int numberContrib;
   int numOfPartNeigh;
-  typedef int (*get_neigh_ptr)(void *,int *,int *,int *, int *, int **, double **);
+  typedef int (*get_neigh_ptr)(void *,int *,int *,int *, int *, int **,
+                               double **);
   get_neigh_ptr get_neigh = NULL;
 
 
@@ -286,29 +291,33 @@ static int compute(void* km)
   Rzero = &(buffer->Rzero);
   shift = &(buffer->shift);
 
-  /* check to see if we have been asked to compute the forces, particleEnergy, and d1Edr */
-  KIM_API_getm_compute_by_index(pkim, &ier, 5*3,
-                                buffer->energy_ind,         &comp_energy,         1,
-                                buffer->forces_ind,         &comp_force,          1,
-                                buffer->particleEnergy_ind, &comp_particleEnergy, 1,
-                                buffer->process_dEdr_ind,   &comp_process_dEdr,   1,
-                                buffer->process_d2Edr2_ind, &comp_process_d2Edr2, 1);
+  /* check to see if we have been asked to compute the forces, */
+  /* particleEnergy, and d1Edr */
+  KIM_API_getm_compute_by_index(
+      pkim, &ier, 5*3,
+      buffer->energy_ind,         &comp_energy,         1,
+      buffer->forces_ind,         &comp_force,          1,
+      buffer->particleEnergy_ind, &comp_particleEnergy, 1,
+      buffer->process_dEdr_ind,   &comp_process_dEdr,   1,
+      buffer->process_d2Edr2_ind, &comp_process_d2Edr2, 1);
   if (KIM_STATUS_OK > ier)
   {
-    KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_compute_by_index", ier);
+    KIM_API_report_error(__LINE__, __FILE__,
+                         "KIM_API_getm_compute_by_index", ier);
     return ier;
   }
 
-  KIM_API_getm_data_by_index(pkim, &ier, 9*3,
-                             buffer->cutoff_ind,                      &cutoff,         1,
-                             buffer->numberOfParticles_ind,           &nParts,         1,
-                             buffer->particleSpecies_ind,             &particleSpecies,1,
-                             buffer->coordinates_ind,                 &coords,         1,
-                             buffer->numberContributingParticles_ind, &numContrib,     (HalfOrFull==1),
-                             buffer->boxSideLengths_ind,              &boxSideLengths, (NBC==2),
-                             buffer->energy_ind,                      &energy,         comp_energy,
-                             buffer->forces_ind,                      &force,          comp_force,
-                             buffer->particleEnergy_ind,              &particleEnergy, comp_particleEnergy);
+  KIM_API_getm_data_by_index(
+      pkim, &ier, 9*3,
+      buffer->cutoff_ind,                 &cutoff,         1,
+      buffer->numberOfParticles_ind,      &nParts,         1,
+      buffer->particleSpecies_ind,        &particleSpecies,1,
+      buffer->coordinates_ind,            &coords,         1,
+      buffer->numberContribParticles_ind, &numContrib,     (HalfOrFull==1),
+      buffer->boxSideLengths_ind,         &boxSideLengths, (NBC==2),
+      buffer->energy_ind,                 &energy,         comp_energy,
+      buffer->forces_ind,                 &force,          comp_force,
+      buffer->particleEnergy_ind,         &particleEnergy, comp_particleEnergy);
   if (KIM_STATUS_OK > ier)
   {
     KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data_by_index", ier);
@@ -316,27 +325,32 @@ static int compute(void* km)
   }
   if (NBC!=3)
   {
-    get_neigh = (get_neigh_ptr) KIM_API_get_method_by_index(pkim, buffer->get_neigh_ind, &ier);
+    get_neigh = (get_neigh_ptr)
+        KIM_API_get_method_by_index(pkim, buffer->get_neigh_ind, &ier);
     if (KIM_STATUS_OK > ier)
     {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_method_by_index", ier);
+      KIM_API_report_error(__LINE__, __FILE__,
+                           "KIM_API_get_method_by_index", ier);
       return ier;
     }
   }
 
   if (HalfOrFull == 1)
   {
-    if (3 != NBC) /* non-CLUSTER cases */
+    if (3 != NBC)
     {
+      /* non-CLUSTER cases */
       numberContrib = *numContrib;
     }
-    else /* CLUSTER cases */
+    else
     {
+      /* CLUSTER cases */
       numberContrib = *nParts;
     }
   }
   else
-  {  /* provide initialization even if not used */
+  {
+    /* provide initialization even if not used */
     numberContrib = *nParts;
   }
 
@@ -347,11 +361,12 @@ static int compute(void* km)
   {
     if ( SPECCODE != particleSpecies[i])
     {
-      KIM_API_report_error(__LINE__, __FILE__, "Unexpected species detected", ier);
+      KIM_API_report_error(__LINE__, __FILE__,
+                           "Unexpected species detected", ier);
       return ier;
     }
   }
-  ier = KIM_STATUS_OK; /* everything is ok */
+  ier = KIM_STATUS_OK;  /* everything is ok */
 
   /* initialize potential energies, forces, and virial term */
   if (comp_particleEnergy)
@@ -378,8 +393,9 @@ static int compute(void* km)
   }
 
   /* Initialize neighbor handling for CLUSTER NBC */
-  if (3 == NBC) /* CLUSTER */
+  if (3 == NBC)
   {
+    /* CLUSTER */
     neighListOfCurrentPart = (int *) malloc((*nParts)*sizeof(int));
   }
 
@@ -406,16 +422,19 @@ static int compute(void* km)
   {
 
     /* Set up neighbor list for next part for all NBC methods */
-    if (1 == IterOrLoca) /* ITERATOR mode */
+    if (1 == IterOrLoca)
     {
+      /* ITERATOR mode */
       ier = (*get_neigh)(&pkim, &zero, &one, &currentPart, &numOfPartNeigh,
                          &neighListOfCurrentPart, &Rij_list);
-      if (KIM_STATUS_NEIGH_ITER_PAST_END == ier) /* the end of the list, terminate loop */
+      if (KIM_STATUS_NEIGH_ITER_PAST_END == ier)
       {
+        /* the end of the list, terminate loop */
         break;
       }
-      if (KIM_STATUS_OK > ier) /* some sort of problem, exit */
+      if (KIM_STATUS_OK > ier)
       {
+        /* some sort of problem, exit */
         KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_neigh", ier);
         return ier;
       }
@@ -425,13 +444,15 @@ static int compute(void* km)
     else
     {
       i++;
-      if (*nParts <= i) /* incremented past end of list, terminate loop */
+      if (*nParts <= i)
       {
+        /* incremented past end of list, terminate loop */
         break;
       }
 
-      if (3 == NBC) /* CLUSTER NBC method */
+      if (3 == NBC)
       {
+        /* CLUSTER NBC method */
         numOfPartNeigh = *nParts - (i + 1);
         for (k = 0; k < numOfPartNeigh; ++k)
         {
@@ -445,8 +466,9 @@ static int compute(void* km)
         ier = (*get_neigh)(&pkim, &one, &request,
                            &currentPart, &numOfPartNeigh,
                            &neighListOfCurrentPart, &Rij_list);
-        if (KIM_STATUS_OK != ier) /* some sort of problem, exit */
+        if (KIM_STATUS_OK != ier)
         {
+          /* some sort of problem, exit */
           KIM_API_report_error(__LINE__, __FILE__, "get_neigh", ier);
           ier = KIM_STATUS_FAIL;
           return ier;
@@ -457,19 +479,20 @@ static int compute(void* km)
     /* loop over the neighbors of particle i */
     for (jj = 0; jj < numOfPartNeigh; ++ jj)
     {
-
-      j = neighListOfCurrentPart[jj] + model_index_shift; /* get neighbor ID */
+      j = neighListOfCurrentPart[jj] + model_index_shift;  /* get neighbor ID */
 
       /* compute relative position vector and squared distance */
       Rsqij = 0.0;
       for (k = 0; k < DIM; ++k)
       {
-        if (0 != NBC) /* all methods except NEIGH_RVEC */
+        if (0 != NBC)
         {
+          /* all methods except NEIGH_RVEC */
           Rij[k] = coords[j*DIM + k] - coords[i*DIM + k];
         }
-        else          /* NEIGH_RVEC_F method */
+        else
         {
+          /* NEIGH_RVEC_F method */
           Rij[k] = Rij_list[jj*DIM + k];
         }
 
@@ -487,8 +510,9 @@ static int compute(void* km)
       }
 
       /* compute energy and force */
-      if (Rsqij < *cutsq) /* particles are interacting ? */
+      if (Rsqij < *cutsq)
       {
+        /* particles are interacting ? */
         R = sqrt(Rsqij);
         if (comp_process_d2Edr2)
         {
@@ -549,7 +573,10 @@ static int compute(void* km)
         {
           particleEnergy[i] += 0.5*phi;
           /* if half list add energy for the other particle in the pair */
-          if ((1 == HalfOrFull) && (j < numberContrib)) particleEnergy[j] += 0.5*phi;
+          if ((1 == HalfOrFull) && (j < numberContrib))
+          {
+            particleEnergy[j] += 0.5*phi;
+          }
         }
         if (comp_energy)
         {
@@ -581,7 +608,8 @@ static int compute(void* km)
           i_pairs[0] = i_pairs[1] = i;
           j_pairs[0] = j_pairs[1] = j;
 
-          ier = KIM_API_process_d2Edr2(km, &d2Eidr, &pR_pairs, &pRij_pairs, &pi_pairs, &pj_pairs);
+          ier = KIM_API_process_d2Edr2(km, &d2Eidr, &pR_pairs, &pRij_pairs,
+                                       &pi_pairs, &pj_pairs);
         }
 
         /* contribution to forces */
@@ -589,13 +617,13 @@ static int compute(void* km)
         {
           for (k = 0; k < DIM; ++k)
           {
-            force[i*DIM + k] += dEidr*Rij[k]/R; /* accumulate force on particle i */
-            force[j*DIM + k] -= dEidr*Rij[k]/R; /* accumulate force on particle j */
+            force[i*DIM + k] += dEidr*Rij[k]/R;  /* accumulate force on i */
+            force[j*DIM + k] -= dEidr*Rij[k]/R;  /* accumulate force on j */
           }
         }
       }
-    } /* loop on jj */
-  }    /* infinite while loop (terminated by break statements above */
+    }  /* loop on jj */
+  }  /* infinite while loop (terminated by break statements above */
 
   /* Free temporary storage */
   if (3 == NBC)
@@ -610,7 +638,8 @@ static int compute(void* km)
 }
 
 /* Initialization function */
-int model_driver_init(void *km, char* paramfile_names, int* nmstrlen, int* numparamfiles)
+int model_driver_init(void *km, char* paramfile_names, int* nmstrlen,
+                      int* numparamfiles)
 {
   /* KIM variables */
   intptr_t* pkim = *((intptr_t**) km);
@@ -632,7 +661,8 @@ int model_driver_init(void *km, char* paramfile_names, int* nmstrlen, int* numpa
   if (*numparamfiles != 1)
   {
     ier = KIM_STATUS_FAIL;
-    KIM_API_report_error(__LINE__, __FILE__, "Incorrect number of parameter files.", ier);
+    KIM_API_report_error(__LINE__, __FILE__,
+                         "Incorrect number of parameter files.", ier);
     return ier;
   }
   paramfile1name = paramfile_names;
@@ -653,14 +683,16 @@ int model_driver_init(void *km, char* paramfile_names, int* nmstrlen, int* numpa
   if (fid == NULL)
   {
     ier = KIM_STATUS_FAIL;
-    KIM_API_report_error(__LINE__, __FILE__, "Unable to open parameter file for Morse parameters", ier);
+    KIM_API_report_error(
+        __LINE__, __FILE__,
+        "Unable to open parameter file for Morse parameters", ier);
     return ier;
   }
 
   ier = fscanf(fid, "%lf \n%lf \n%lf \n%lf",
                &cutoff,  /* cutoff distance in angstroms */
-               &epsilon, /* Morse epsilon in eV */
-               &C,       /* Morse C in 1/Angstroms */
+               &epsilon,  /* Morse epsilon in eV */
+               &C,  /* Morse C in 1/Angstroms */
                &Rzero);  /* Morse Rzero in Angstroms */
   fclose(fid);
 
@@ -668,7 +700,8 @@ int model_driver_init(void *km, char* paramfile_names, int* nmstrlen, int* numpa
   if (4 != ier)
   {
     ier = KIM_STATUS_FAIL;
-    KIM_API_report_error(__LINE__, __FILE__, "Unable to read all Morse parameters", ier);
+    KIM_API_report_error(__LINE__, __FILE__,
+                         "Unable to read all Morse parameters", ier);
     return ier;
   }
 
@@ -677,7 +710,8 @@ int model_driver_init(void *km, char* paramfile_names, int* nmstrlen, int* numpa
                                         1.0, 0.0,  0.0, 0.0, 0.0, &ier);
   if (KIM_STATUS_OK > ier)
   {
-    KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_to_act_unit", ier);
+    KIM_API_report_error(__LINE__, __FILE__,
+                         "KIM_API_convert_to_act_unit", ier);
     return ier;
   }
 
@@ -685,7 +719,8 @@ int model_driver_init(void *km, char* paramfile_names, int* nmstrlen, int* numpa
                                          0.0, 1.0,  0.0, 0.0, 0.0, &ier);
   if (KIM_STATUS_OK > ier)
   {
-    KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_to_act_unit", ier);
+    KIM_API_report_error(__LINE__, __FILE__,
+                         "KIM_API_convert_to_act_unit", ier);
     return ier;
   }
 
@@ -693,7 +728,8 @@ int model_driver_init(void *km, char* paramfile_names, int* nmstrlen, int* numpa
                                    -1.0, 0.0,  0.0, 0.0, 0.0, &ier);
   if (KIM_STATUS_OK > ier)
   {
-    KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_to_act_unit", ier);
+    KIM_API_report_error(__LINE__, __FILE__,
+                         "KIM_API_convert_to_act_unit", ier);
     return ier;
   }
 
@@ -701,7 +737,8 @@ int model_driver_init(void *km, char* paramfile_names, int* nmstrlen, int* numpa
                                        1.0, 0.0,  0.0, 0.0, 0.0, &ier);
   if (KIM_STATUS_OK > ier)
   {
-    KIM_API_report_error(__LINE__, __FILE__, "KIM_API_convert_to_act_unit", ier);
+    KIM_API_report_error(__LINE__, __FILE__,
+                         "KIM_API_convert_to_act_unit", ier);
     return ier;
   }
 
@@ -772,10 +809,10 @@ int model_driver_init(void *km, char* paramfile_names, int* nmstrlen, int* numpa
   }
 
   /* Determine if Half or Full neighbor lists are being used */
-  /*****************************
-   * HalfOrFull = 1 -- Half
-   *            = 2 -- Full
-   *****************************/
+  /*****************************/
+  /* HalfOrFull = 1 -- Half    */
+  /*            = 2 -- Full    */
+  /*****************************/
   if (KIM_API_is_half_neighbors(pkim, &ier))
   {
     buffer->HalfOrFull = 1;
@@ -788,10 +825,10 @@ int model_driver_init(void *km, char* paramfile_names, int* nmstrlen, int* numpa
   /* determine neighbor list handling mode */
   if (buffer->NBC != 3)
   {
-    /*****************************
-     * IterOrLoca = 1 -- Iterator
-     *            = 2 -- Locator
-     *****************************/
+    /******************************/
+    /* IterOrLoca = 1 -- Iterator */
+    /*            = 2 -- Locator  */
+    /******************************/
     buffer->IterOrLoca = KIM_API_get_neigh_mode(pkim, &ier);
     if (KIM_STATUS_OK > ier)
     {
@@ -801,30 +838,32 @@ int model_driver_init(void *km, char* paramfile_names, int* nmstrlen, int* numpa
     if ((buffer->IterOrLoca != 1) && (buffer->IterOrLoca != 2))
     {
       ier = KIM_STATUS_FAIL;
-      KIM_API_report_error(__LINE__, __FILE__, "Unsupported IterOrLoca mode", ier);
+      KIM_API_report_error(__LINE__, __FILE__,
+                           "Unsupported IterOrLoca mode", ier);
       return ier;
     }
   }
   else
   {
-    buffer->IterOrLoca = 2;   /* for CLUSTER NBC */
+    buffer->IterOrLoca = 2;  /* for CLUSTER NBC */
   }
 
   buffer->model_index_shift = KIM_API_get_model_index_shift(pkim);
 
-  KIM_API_getm_index(pkim, &ier, 12*3,
-                     "cutoff",                      &(buffer->cutoff_ind),                      1,
-                     "numberOfParticles",           &(buffer->numberOfParticles_ind),           1,
-                     "particleSpecies",             &(buffer->particleSpecies_ind),             1,
-                     "numberContributingParticles", &(buffer->numberContributingParticles_ind), 1,
-                     "coordinates",                 &(buffer->coordinates_ind),                 1,
-                     "get_neigh",                   &(buffer->get_neigh_ind),                   1,
-                     "boxSideLengths",              &(buffer->boxSideLengths_ind),              1,
-                     "energy",                      &(buffer->energy_ind),                      1,
-                     "forces",                      &(buffer->forces_ind),                      1,
-                     "particleEnergy",              &(buffer->particleEnergy_ind),              1,
-                     "process_dEdr",                &(buffer->process_dEdr_ind),                1,
-                     "process_d2Edr2",              &(buffer->process_d2Edr2_ind),              1
+  KIM_API_getm_index(
+      pkim, &ier, 12*3,
+      "cutoff",                      &(buffer->cutoff_ind),                 1,
+      "numberOfParticles",           &(buffer->numberOfParticles_ind),      1,
+      "particleSpecies",             &(buffer->particleSpecies_ind),        1,
+      "numberContributingParticles", &(buffer->numberContribParticles_ind), 1,
+      "coordinates",                 &(buffer->coordinates_ind),            1,
+      "get_neigh",                   &(buffer->get_neigh_ind),              1,
+      "boxSideLengths",              &(buffer->boxSideLengths_ind),         1,
+      "energy",                      &(buffer->energy_ind),                 1,
+      "forces",                      &(buffer->forces_ind),                 1,
+      "particleEnergy",              &(buffer->particleEnergy_ind),         1,
+      "process_dEdr",                &(buffer->process_dEdr_ind),           1,
+      "process_d2Edr2",              &(buffer->process_d2Edr2_ind),         1
                      );
   if (KIM_STATUS_OK > ier)
   {
