@@ -254,7 +254,7 @@ static int compute(void* km)                                                    
 {                                                                               /*12345678901234*/
   /* local variables */                                                         /*12345678901234*/
   intptr_t* pkim = *((intptr_t**) km);                                          /*12345678901234*/
-  double R;                                                                     /*.2345678901234*/
+  double R;                                                                     /*12345678901234*/
   double R_pairs[2];                                                            /*...45678901234*/
   double *pR_pairs = &(R_pairs[0]);                                             /*...45678901234*/
   double Rsqij;                                                                 /*12345678901234*/
@@ -743,6 +743,13 @@ static int compute(void* km)                                                    
       }                                                                         /*.....678901234*/
     }                                                                           /*.....678901234*/
                                                                                 /*..............*/
+    ++i;                                                                        /*....5.........*/
+    if (*nParts <= i)                                                           /*....5.........*/
+    {                                                                           /*....5.........*/
+      /* incremented past end of list, terminate loop */                        /*....5.........*/
+      break;                                                                    /*....5.........*/
+    }                                                                           /*....5.........*/
+                                                                                /*....5.........*/
     if (3 == NBC)                                                               /*....5.........*/
     {                                                                           /*....5.........*/
       /* CLUSTER NBC method */                                                  /*....5.........*/
@@ -811,7 +818,7 @@ static int compute(void* km)                                                    
       if (Rsqij < cutsq)                                                        /*123456789.....*/
       {                                                                         /*12345678901234*/
         /* particles are interacting ? */                                       /*12345678901234*/
-        R = sqrt(Rsqij);                                                        /*.2345678901234*/
+        R = sqrt(Rsqij);                                                        /*12345678901234*/
         if (comp_process_d2Edr2)                                                /*...45678901234*/
         if (comp_hessian)                                                       /*..3...........*/
         {                                                                       /*..345678901234*/
@@ -893,6 +900,12 @@ static int compute(void* km)                                                    
                    &<FILL_parameter_4>,                                         /*.23456789.....*/
                    cutoff, R, &phi);                                            /*.23456789.....*/
         }                                                                       /*.2345678901234*/
+                                                                                /*..............*/
+        calc_phi(&<FILL_parameter_1>,                                           /*1.............*/
+                 &<FILL_parameter_2>,                                           /*1.............*/
+                 &<FILL_parameter_3>,                                           /*1.............*/
+                 &<FILL_parameter_4>,                                           /*1.............*/
+                 cutoff, R, &phi);                                              /*1.............*/
                                                                                 /*.2345678901234*/
         /* contribution to energy */                                            /*.2345678901234*/
         if (comp_particleEnergy)                                                /*.2345678901234*/
