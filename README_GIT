@@ -56,10 +56,10 @@ repository.
    ${KD}/examples/example_legos/openkim_test_legos directories and save them in
    the ${KD}/examples/models/, ${KD}/examples/model_drivers/,
    ${KD}/examples/simulators, and ${KD}/examples/openkim_tests/ directories,
-   respectively.  This need only be done once (for every time the git
-   repository is updated from github.com).  This process will overwrite any
-   changes to files made in the ${KD}/examples directory, so make a backup of
-   these directories if you don't want to lose your changes.
+   respectively.  It also generates the templates in ${KD}/docs/templates.
+   This need only be done once (for every time the git repository is updated
+   from github.com).  This process will overwrite any changes to files, so make
+   a backup of these directories if you don't want to lose your changes.
 
 2. The git repository has the files:
 

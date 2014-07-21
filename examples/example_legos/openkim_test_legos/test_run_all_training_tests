@@ -1,0 +1,203 @@
+#!/bin/sh
+
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the Common Development
+# and Distribution License Version 1.0 (the "License").
+#
+# You can obtain a copy of the license at
+# http://www.opensource.org/licenses/CDDL-1.0.  See the License for the
+# specific language governing permissions and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each file and
+# include the License file in a prominent location with the name LICENSE.CDDL.
+# If applicable, add the following below this CDDL HEADER, with the fields
+# enclosed by brackets "[]" replaced with your own identifying information:
+#
+# Portions Copyright (c) [yyyy] [name of copyright owner]. All rights reserved.
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2014, Regents of the University of Minnesota.
+# All rights reserved.
+#
+# Contributors:
+#    Ryan S. Elliott
+#    Ellad B. Tadmor
+#
+
+#
+# Release: This file is part of the kim-api.git repository.
+#
+
+
+# usage: run_all_training_tests [filename]
+#
+# If `filename' is given each actual Test output will be redirected to a
+# separate file.  This option facilitates the comparison of Test results for
+# different Models using `diff' or another comparison utility program.
+#
+# When the optional argument is given the output is put in a series of files
+# with names filename.TEST_NUM.MODEL_NUM.  Here `filename' is the value
+# provided on the command line, `TEST_NUM' is a two digit integer sequentially
+# numbering the example Tests in the order they are executed below, and
+# `MODEL_NUM' is a two digit integer sequentially numbering the Models that
+# each Test is executed with in the order they are executed below.
+
+TEST_NUM=0
+MODEL_NUM=0
+if test $# -gt 0; then
+  redirect='$1.`printf "%02i" $TEST_NUM`.`printf "%02i" $MODEL_NUM`';
+else
+  redirect='1';
+fi
+
+header(){
+printf "****************************************************************************************************\n"
+printf "****************************************************************************************************\n"
+printf "**                                                                                                **\n"
+while [ "$*" != "" ]
+do
+  printf "** %-94s **\n" "$1"
+  shift
+done
+printf "**                                                                                                **\n"
+printf "****************************************************************************************************\n"
+}
+footer(){
+printf "\n"
+printf "\n"
+printf "\n"
+TEST_NUM=$(($TEST_NUM + 1))
+MODEL_NUM=0
+}
+divider(){
+printf "\n"
+printf "****************************************************************************************************\n"
+printf "** %-94s **\n" "$1"
+printf "****************************************************************************************************\n"
+printf "\n"
+}
+
+#--------------------------------------------------------------------------------------------------------------
+test_name=ex_test_Ar_free_cluster_energy
+header "${test_name}"                  \
+       "   |"                          \
+       "   |-- ex_mode_Ar_P_Morse_01C" \
+       "   |-- ex_mode_Ar_P_Morse_02C" \
+       "   |-- ex_mode_Ar_P_Morse_03C" \
+       "   |-- ex_mode_Ar_P_Morse_04C" \
+       "   |-- ex_mode_Ar_P_Morse_05C" \
+       "   |-- ex_mode_Ar_P_Morse_06C" \
+       "   |-- ex_mode_Ar_P_Morse_07C" \
+       "   |-- ex_mode_Ar_P_Morse_08C" \
+       "   |-- ex_mode_Ar_P_Morse_09C" \
+       "   |-- ex_mode_Ar_P_Morse_10C" \
+       "   |-- ex_mode_Ar_P_Morse_11C" \
+       "   |-- ex_mode_Ar_P_Morse_12C" \
+       "   |-- ex_mode_Ar_P_Morse_14C" \
+       "   |"
+
+for num in 01 02 03 04 05 06 07 08 09 10 11 12 14; do
+  divider "${test_name} --- ex_model_Ar_P_Morse_${num}C";
+  (cd "${test_name}" && printf "ex_model_Ar_P_Morse_${num}C" |  ./"${test_name}") >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1));
+done
+footer
+
+#--------------------------------------------------------------------------------------------------------------
+test_name=ex_test_Ar_free_cluster
+header "${test_name}"                  \
+       "   |"                          \
+       "   |-- ex_mode_Ar_P_Morse_03C" \
+       "   |-- ex_mode_Ar_P_Morse_04C" \
+       "   |-- ex_mode_Ar_P_Morse_05C" \
+       "   |-- ex_mode_Ar_P_Morse_06C" \
+       "   |-- ex_mode_Ar_P_Morse_07C" \
+       "   |-- ex_mode_Ar_P_Morse_08C" \
+       "   |-- ex_mode_Ar_P_Morse_09C" \
+       "   |-- ex_mode_Ar_P_Morse_10C" \
+       "   |-- ex_mode_Ar_P_Morse_11C" \
+       "   |-- ex_mode_Ar_P_Morse_12C" \
+       "   |-- ex_mode_Ar_P_Morse_14C" \
+       "   |"
+
+for num in 03 04 05 06 07 08 09 10 11 12 14; do
+  divider "${test_name} --- ex_model_Ar_P_Morse_${num}C";
+  (cd "${test_name}" && printf "ex_model_Ar_P_Morse_${num}C" |  ./"${test_name}") >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1));
+done
+footer
+
+#--------------------------------------------------------------------------------------------------------------
+test_name=ex_test_Ar_FCCcohesive_NEIGH_PURE
+header "${test_name}"                  \
+       "   |"                          \
+       "   |-- ex_mode_Ar_P_Morse_05C" \
+       "   |-- ex_mode_Ar_P_Morse_06C" \
+       "   |-- ex_mode_Ar_P_Morse_07C" \
+       "   |-- ex_mode_Ar_P_Morse_08C" \
+       "   |-- ex_mode_Ar_P_Morse_09C" \
+       "   |-- ex_mode_Ar_P_Morse_10C" \
+       "   |-- ex_mode_Ar_P_Morse_11C" \
+       "   |-- ex_mode_Ar_P_Morse_12C" \
+       "   |-- ex_mode_Ar_P_Morse_14C" \
+       "   |"
+
+for num in 05 06 07 08 09 10 11 12 14; do
+  divider "${test_name} --- ex_model_Ar_P_Morse_${num}C";
+  (cd "${test_name}" && printf "ex_model_Ar_P_Morse_${num}C" |  ./"${test_name}") >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1));
+done
+footer
+
+#--------------------------------------------------------------------------------------------------------------
+test_name=ex_test_Ar_FCCcohesive_NEIGH_RVEC
+header "${test_name}"                  \
+       "   |"                          \
+       "   |-- ex_mode_Ar_P_Morse_08C" \
+       "   |-- ex_mode_Ar_P_Morse_09C" \
+       "   |-- ex_mode_Ar_P_Morse_10C" \
+       "   |-- ex_mode_Ar_P_Morse_11C" \
+       "   |-- ex_mode_Ar_P_Morse_12C" \
+       "   |-- ex_mode_Ar_P_Morse_14C" \
+       "   |"
+
+for num in 08 09 10 11 12 14; do
+  divider "${test_name} --- ex_model_Ar_P_Morse_${num}C";
+  (cd "${test_name}" && printf "ex_model_Ar_P_Morse_${num}C" |  ./"${test_name}") >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1));
+done
+footer
+
+#--------------------------------------------------------------------------------------------------------------
+test_name=ex_test_Ar_FCCcohesive_MI_OPBC
+header "${test_name}"                  \
+       "   |"                          \
+       "   |-- ex_mode_Ar_P_Morse_09C" \
+       "   |-- ex_mode_Ar_P_Morse_10C" \
+       "   |-- ex_mode_Ar_P_Morse_11C" \
+       "   |-- ex_mode_Ar_P_Morse_12C" \
+       "   |-- ex_mode_Ar_P_Morse_14C" \
+       "   |"
+
+for num in 09 10 11 12 14; do
+  divider "${test_name} --- ex_model_Ar_P_Morse_${num}C";
+  (cd "${test_name}" && printf "ex_model_Ar_P_Morse_${num}C" |  ./"${test_name}") >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1));
+done
+footer
+
+#--------------------------------------------------------------------------------------------------------------
+test_name=ex_test_Ar_FCCcohesiveCutoff_NEIGH_RVEC
+header "${test_name}"                  \
+       "   |"                          \
+       "   |-- ex_mode_Ar_P_Morse_10C" \
+       "   |-- ex_mode_Ar_P_Morse_11C" \
+       "   |-- ex_mode_Ar_P_Morse_12C" \
+       "   |-- ex_mode_Ar_P_Morse_14C" \
+       "   |"
+
+for num in 10 11 12 14; do
+  divider "${test_name} --- ex_model_Ar_P_Morse_${num}C";
+  (cd "${test_name}" && printf "ex_model_Ar_P_Morse_${num}C" |  ./"${test_name}") >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1));
+done
+footer

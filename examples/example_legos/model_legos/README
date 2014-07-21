@@ -175,7 +175,8 @@ model_driver_P_LJ.kim.tpl
      with the Models based on the LJ Model Driver
 
 model_driver_P_Morse.c
-     This file contains the Morse pair potential Model Driver C code.
+     This file contains the code that generates the model driver template,
+     the Morse Model driver, and the C training examples.
 
 model_driver_P_Morse.kim.tpl
      This file contains the Morse pair potential KIM descriptor file for use

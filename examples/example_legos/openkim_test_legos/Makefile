@@ -79,6 +79,7 @@ AUTO_GEN_TESTS = ex_test_Al_free_cluster                        \
                  ex_test_Ar_free_cluster_CLUSTER_F03            \
                  ex_test_Ar_free_cluster_CLUSTER_memory_F03     \
                  ex_test_Ar_free_cluster                        \
+                 ex_test_Ar_free_cluster_energy                 \
                  ex_test_Ar_multiple_models                     \
                  ex_test_Cu_free_cluster                        \
                  ex_test_Ne_free_cluster                        \
@@ -89,7 +90,7 @@ AUTO_GEN_TESTS = ex_test_Al_free_cluster                        \
                  vc_forces_numer_deriv
 
 
-all: $(AUTO_GEN_TESTS) EXAMPLES.README $(KIM_EX_TESTS_DIR)/Makefile run_all_ex_tests run_forces_numer_deriv_for_all_models
+all: $(AUTO_GEN_TESTS) EXAMPLES.README $(KIM_EX_TESTS_DIR)/Makefile run_all_ex_tests run_all_training_tests run_forces_numer_deriv_for_all_models
 
 $(KIM_EX_TESTS_DIR)/Makefile: openkim_tests_Makefile Makefile
 	cp openkim_tests_Makefile $(KIM_EX_TESTS_DIR)/Makefile
@@ -99,6 +100,9 @@ EXAMPLES.README: test_EXAMPLES.README Makefile
 
 run_all_ex_tests: test_run_all_ex_tests
 	cp test_run_all_ex_tests $(KIM_EX_TESTS_DIR)/run_all_ex_tests
+
+run_all_training_tests: test_run_all_training_tests
+	cp test_run_all_training_tests $(KIM_EX_TESTS_DIR)/run_all_training_tests
 
 run_forces_numer_deriv_for_all_models: test_run_forces_numer_deriv_for_all_models
 	cp test_run_forces_numer_deriv_for_all_models $(KIM_EX_TESTS_DIR)/run_forces_numer_deriv_for_all_models
@@ -707,6 +711,74 @@ ex_test_Ar_free_cluster: $(COMMON_FRAGMENTS)                    \
 	$(F_CAT) mod_neighborlist.f.frag                                                                      >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) program_free_cluster.f.frag | $(SED_CMD) \
+         | sed -e 's/SPECIES_NAME_STR/Ar/g' \
+               -e 's/FCC_SPACING_STR/5.26d0 ! in angstroms/g' \
+               -e 's/CUTOFF_PADDING_STR/0.750d0 ! in angstroms/g'                                             >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) MI_OPBC_cluster_neighborlist.f.frag                                                          >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) NEIGH_PURE_cluster_neighborlist.f.frag                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) NEIGH_RVEC_cluster_neighborlist.f.frag                                                       >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) create_FCC_configuration.f.frag                                                              >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
+
+ex_test_Ar_free_cluster_energy: $(COMMON_FRAGMENTS)                    \
+                                test_free_cluster_energy_README        \
+                                descriptor_file_neighborlist           \
+                                program_CDDL_header.f.frag             \
+                                mod_neighborlist.f.frag                \
+                                program_free_cluster_energy.f.frag     \
+                                MI_OPBC_cluster_neighborlist.f.frag    \
+                                NEIGH_PURE_cluster_neighborlist.f.frag \
+                                NEIGH_RVEC_cluster_neighborlist.f.frag \
+                                create_FCC_configuration.f.frag        \
+        # make directory
+	mkdir -p $(KIM_EX_TESTS_DIR)/$@
+	@touch $(KIM_EX_TESTS_DIR)/$@
+	cp $(KIM_DIR)/LICENSE.CDDL $(KIM_EX_TESTS_DIR)/$@
+        # make README file in the directory
+	$(D_CAT) test_free_cluster_energy_README | $(SED_CMD) \
+         | sed -e 's/LANGUAGE_STR/F03/g' \
+         | sed -e 's/SPECIES_NAME_STR/Ar/g'                                                                   >  $(KIM_EX_TESTS_DIR)/$@/README
+        # make Makefile in the directory
+	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
+        # make .kim file in the directory
+	$(D_CAT) descriptor_file_start \
+         | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    18/g' \
+               -e $(SED_VER_CMD)                                                                              >  $(KIM_EX_TESTS_DIR)/$@/descriptor.kim
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/descriptor.kim
+	echo "NEIGH_RVEC_H                flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/descriptor.kim
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/descriptor.kim
+	echo "NEIGH_PURE_H                flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/descriptor.kim
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/descriptor.kim
+	echo "NEIGH_RVEC_F                flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/descriptor.kim
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/descriptor.kim
+	echo "NEIGH_PURE_F                flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/descriptor.kim
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/descriptor.kim
+	echo "MI_OPBC_H                   flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/descriptor.kim
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/descriptor.kim
+	echo "MI_OPBC_F                   flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/descriptor.kim
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/descriptor.kim
+	echo "CLUSTER                     flag"                                                               >> $(KIM_EX_TESTS_DIR)/$@/descriptor.kim
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/descriptor.kim
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/descriptor.kim
+	$(D_CAT) descriptor_file_input                                                                        >> $(KIM_EX_TESTS_DIR)/$@/descriptor.kim
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/descriptor.kim
+	$(D_CAT) descriptor_file_neighborlist                                                                 >> $(KIM_EX_TESTS_DIR)/$@/descriptor.kim
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/descriptor.kim
+	echo "numberContributingParticles integer      none                []"                                >> $(KIM_EX_TESTS_DIR)/$@/descriptor.kim
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/descriptor.kim
+	echo "boxSideLengths              double       length              [3]"                               >> $(KIM_EX_TESTS_DIR)/$@/descriptor.kim
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/descriptor.kim
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/descriptor.kim
+	$(D_CAT) descriptor_file_output                                                                       >> $(KIM_EX_TESTS_DIR)/$@/descriptor.kim
+        # make .F03 file in the directory
+	$(F_CAT) program_CDDL_header.f.frag                                                                   >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) mod_neighborlist.f.frag                                                                      >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) program_free_cluster_energy.f.frag | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g' \
                -e 's/FCC_SPACING_STR/5.26d0 ! in angstroms/g' \
                -e 's/CUTOFF_PADDING_STR/0.750d0 ! in angstroms/g'                                             >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
