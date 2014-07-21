@@ -424,6 +424,15 @@ ex_model_driver_P_Morse_13C: model_driver_Morse_README    \
                                           -e 's/MODEL_DRIVER_KIM_FILE_TEMPLATE_STR/$(subst ex_,,$@).kim.tpl/' >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) model_driver_P_Morse.kim.tpl | sed -e $(SED_VER_CMD)                                         >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$(subst ex_,,$@).kim.tpl
+	diff --unchanged-line-format=" %4dn %L" --old-line-format="%c'A'%4dn %L" --new-line-format="D     %L" -d \
+              $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$(subst ex_,,$@).kim.tpl \
+              $(KIM_EX_MODELS_DIR)/ex_model_Ar_P_Morse_12C/model_Ar_P_Morse_12C.kim \
+              > $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$(subst ex_,,$@).kim.numbered; true
+	diff --unchanged-line-format=" %4dn %L" --old-line-format="%c'A'%4dn %L" --new-line-format="D     %L" -d \
+              $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$(subst ex_,,$@).kim.tpl \
+              $(KIM_EX_MODELS_DIR)/ex_model_Ar_P_Morse_12C/model_Ar_P_Morse_12C.kim \
+              | sed -e "s/^D.*/`printf '\x1b[31m'`&`printf '\x1b[0m'`/" -e "s/^A.*/`printf '\x1b[34m'`&`printf '\x1b[0m'`/" \
+              > $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$(subst ex_,,$@).kim.colorized-numbered; true
         # make .c file in the directory
 	sed -e '/$(VER_REG_EXP_13)/d' \
             -e 's|[[:space:]]*$(VER_REG_EXP)[[:space:]]*$$||' \
@@ -431,6 +440,15 @@ ex_model_driver_P_Morse_13C: model_driver_Morse_README    \
             $(PARAMETER_SED_CMDS) \
                model_driver_P_Morse.c > $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$@.c
 	printf ',g/^[[:space:]]*[{}][[:space:]]*$$/s/^[[:space:]]*/ /\\\n-,.j\nw\nq\n' | ed $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$@.c
+	diff --unchanged-line-format=" %4dn %L" --old-line-format="%c'A'%4dn %L" --new-line-format="D     %L" -d \
+              $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$@.c \
+              $(KIM_EX_MODELS_DIR)/ex_model_Ar_P_Morse_12C/ex_model_Ar_P_Morse_12C.c \
+              > $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$@.c.numbered; true
+	diff --unchanged-line-format=" %4dn %L" --old-line-format="%c'A'%4dn %L" --new-line-format="D     %L" -d \
+              $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$@.c \
+              $(KIM_EX_MODELS_DIR)/ex_model_Ar_P_Morse_12C/ex_model_Ar_P_Morse_12C.c \
+              | sed -e "s/^D.*/`printf '\x1b[31m'`&`printf '\x1b[0m'`/" -e "s/^A.*/`printf '\x1b[34m'`&`printf '\x1b[0m'`/" \
+              > $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$@.c.colorized-numbered; true
 
 ex_model_Ar_P_Morse_%C: model_driver_P_Morse.c      \
                         model_training_C_README     \
@@ -474,6 +492,18 @@ ex_model_Ar_P_Morse_%C: model_driver_P_Morse.c      \
             $(if $(filter-out 11,$*),,                 -e '/fixed/d'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              -e "/^destroy.*]$$/`printf '{N\nd\n}'`"                                             -e "/^energy.*]$$/`printf '{N\nd\n}'`"                                                                            -e "/^virial/`printf '{N\nd\n}'`" -e "/^particleVirial/`printf '{N\nd\n}'`" -e "/^hessian/`printf '{N\nd\n}'`"                                  )\
             $(if $(filter-out 12,$*),,                 -e '/fixed/d'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 -e "/^destroy.*optional/`printf '{N\nd\n}'`"                                                                                     -e "/^energy.*]$$/`printf '{N\nd\n}'`"                                                                            -e "/^virial/`printf '{N\nd\n}'`" -e "/^particleVirial/`printf '{N\nd\n}'`" -e "/^hessian/`printf '{N\nd\n}'`"                                  )\
                                                                                                               >  $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+	if test $* -gt 1; then \
+         diff --unchanged-line-format=" %4dn %L" --old-line-format="%c'A'%4dn %L" --new-line-format="D     %L" -d \
+              $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim \
+              $(KIM_EX_MODELS_DIR)/ex_model_Ar_P_Morse_`printf "%02i" $$(($* - 1))`C/model_Ar_P_Morse_`printf "%02i" $$(($* - 1))`C.kim \
+              >& $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim.numbered; \
+         diff --unchanged-line-format=" %4dn %L" --old-line-format="%c'A'%4dn %L" --new-line-format="D     %L" -d \
+              $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim \
+              $(KIM_EX_MODELS_DIR)/ex_model_Ar_P_Morse_`printf "%02i" $$(($* - 1))`C/model_Ar_P_Morse_`printf "%02i" $$(($* - 1))`C.kim \
+              | sed -e "s/^D.*/`printf '\x1b[31m'`&`printf '\x1b[0m'`/" -e "s/^A.*/`printf '\x1b[34m'`&`printf '\x1b[0m'`/" \
+              >& $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim.colorized-numbered; \
+              true; \
+        fi;
         # make .c file in the directory
 	sed -e '/$(VER_REG_EXP_$*)/d' \
             -e 's|[[:space:]]*$(VER_REG_EXP)[[:space:]]*$$||' \
@@ -481,6 +511,18 @@ ex_model_Ar_P_Morse_%C: model_driver_P_Morse.c      \
             $(PARAMETER_SED_CMDS) \
                model_driver_P_Morse.c > $(KIM_EX_MODELS_DIR)/$@/$@.c
 	printf ',g/^[[:space:]]*[{}][[:space:]]*$$/s/^[[:space:]]*/ /\\\n-,.j\nw\nq\n' | ed $(KIM_EX_MODELS_DIR)/$@/$@.c
+	if test $* -gt 1; then \
+         diff --unchanged-line-format=" %4dn %L" --old-line-format="%c'A'%4dn %L" --new-line-format="D     %L" -d \
+              $(KIM_EX_MODELS_DIR)/$@/$@.c \
+              $(KIM_EX_MODELS_DIR)/ex_model_Ar_P_Morse_`printf "%02i" $$(($* - 1))`C/ex_model_Ar_P_Morse_`printf "%02i" $$(($* - 1))`C.c \
+              >& $(KIM_EX_MODELS_DIR)/$@/$@.c.numbered; \
+         diff --unchanged-line-format=" %4dn %L" --old-line-format="%c'A'%4dn %L" --new-line-format="D     %L" -d \
+              $(KIM_EX_MODELS_DIR)/$@/$@.c \
+              $(KIM_EX_MODELS_DIR)/ex_model_Ar_P_Morse_`printf "%02i" $$(($* - 1))`C/ex_model_Ar_P_Morse_`printf "%02i" $$(($* - 1))`C.c \
+              | sed -e "s/^D.*/`printf '\x1b[31m'`&`printf '\x1b[0m'`/" -e "s/^A.*/`printf '\x1b[34m'`&`printf '\x1b[0m'`/" \
+              >& $(KIM_EX_MODELS_DIR)/$@/$@.c.colorized-numbered; \
+              true; \
+        fi;
 
 ex_model_Ar_P_Morse_14C: model_Morse_README \
                          Makefile
