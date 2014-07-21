@@ -32,10 +32,11 @@
 
 
 KIM_DIR := ../../..
+KIM_TEMPLATES_DIR := $(KIM_DIR)/docs/templates
 KIM_EX_MODELS_DIR := $(KIM_DIR)/examples/models
 KIM_EX_MODEL_DRIVERS_DIR := $(KIM_DIR)/examples/model_drivers
 
-VPATH = $(KIM_EX_MODELS_DIR) $(KIM_EX_MODEL_DRIVERS_DIR)
+VPATH = $(KIM_EX_MODELS_DIR) $(KIM_EX_MODEL_DRIVERS_DIR) $(KIM_TEMPLATE_DIR)
 
 
 VER_REG_EXP =    \/\*..............\*\/
@@ -140,6 +141,7 @@ AUTO_GEN_MODELS = ex_model_Al_PF_ErcolessiAdams    \
                   ex_model_Ar_P_Morse_11C          \
                   ex_model_Ar_P_Morse_12C          \
                   ex_model_driver_P_Morse_13C      \
+                  model_driver_P_Template.c        \
                   ex_model_Ar_P_Morse_14C
 
 all: $(AUTO_GEN_MODELS) EXAMPLES.README $(KIM_EX_MODELS_DIR)/Makefile $(KIM_EX_MODEL_DRIVERS_DIR)/Makefile
@@ -397,6 +399,13 @@ ex_model_Ar_P_MLJ_NEIGH_RVEC_F: $(COMMON_FRAGMENTS)                           \
          | sed -e 's/CUTOFF_VALUE_STR/model_cutoff = 8.15_cd ! cutoff distance in angstroms/g' \
          | sed -e 's/SIGMA_VALUE_STR/model_sigma = 3.40_cd ! LJ Argon sigma in angstroms/g'    \
          | sed -e 's/EPSILON_VALUE_STR/model_epsilon = 0.0104_cd ! LJ Argon epsilon in eV/g'                  >> $(KIM_EX_MODELS_DIR)/$@/$@.F03
+
+model_driver_P_Template.c: model_driver_P_Morse.c \
+                           Makefile
+        # make .c file in the directory
+	sed -e '/$(VER_REG_EXP_14)/d' \
+            -e 's|[[:space:]]*$(VER_REG_EXP)[[:space:]]*$$||' \
+               model_driver_P_Morse.c > $(KIM_TEMPLATES_DIR)/$@
 
 ex_model_driver_P_Morse_13C: model_driver_Morse_README    \
                              model_driver_Makefile        \
