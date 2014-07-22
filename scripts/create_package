@@ -37,6 +37,8 @@ fi
 
 # DO IT
 
+cd "`git rev-parse --show-toplevel`"
+
 packagename=$1
 major=$2
 minor=$3
@@ -75,8 +77,6 @@ if test $patch -ne `grep VERSION_PATCH Makefile.Version | sed -e 's/VERSION_PATC
   exit
 fi
 
-cd "`git rev-parse --show-toplevel`"
-
 git clone . $fullpackagename
 
 cd $fullpackagename
@@ -106,8 +106,8 @@ cd ../..
 mv 'docs/kim-api-introduction.pdf' "docs/$fullpackagename-introduction.pdf"
 
 rm -rf 'examples/example_legos'
-rm -rf 'examples/models/ex_model_Ar_P_Morse_*C'
-rm -rf 'examples/model_drivers/ex_model_P_Morse_13C'
+rm -rf examples/models/ex_model_Ar_P_Morse_*C
+rm -rf 'examples/model_drivers/ex_model_driver_P_Morse_13C'
 rm -f  'examples/openkim_tests/run_all_training_tests'
 rm -rf 'examples/openkim_tests/ex_test_Ar_free_cluster_energy'
 
