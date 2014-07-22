@@ -126,7 +126,7 @@ ex_test_Al_free_cluster: $(COMMON_FRAGMENTS)                    \
           | sed -e 's/LANGUAGE_STR/F03/g' \
           | sed -e 's/SPECIES_NAME_STR/Al/g'                                                                  >  $(KIM_EX_TESTS_DIR)/$@/README
         # make Makefile in the directory
-	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
+	$(D_CAT) test_Makefile | $(SED_CMD) -e 's/LANGUAGE_EXTENSION_STR/F03/g' -e 's/LANGUAGE_COMPILER_VAR_STR/FC/g' >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start \
          | sed -e 's/SPECIES_LINE_STR/Al                          spec                    13/g' \
@@ -198,7 +198,7 @@ ex_test_Al_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
 	$(D_CAT) test_FCCcohesive_README  | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Al/g'                                                                   >  $(KIM_EX_TESTS_DIR)/$@/README
         # make Makefile in the directory
-	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
+	$(D_CAT) test_Makefile | $(SED_CMD) -e 's/LANGUAGE_EXTENSION_STR/F03/g' -e 's/LANGUAGE_COMPILER_VAR_STR/FC/g' >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start \
          | sed -e 's/SPECIES_LINE_STR/Al                          spec                    13/g' \
@@ -260,7 +260,7 @@ ex_test_ArNe_B2cohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                        \
          | sed -e 's/SPECIES1_NAME_STR/Ar/g' \
          | sed -e 's/SPECIES2_NAME_STR/Ne/g'                                                                  >  $(KIM_EX_TESTS_DIR)/$@/README
         # make Makefile in the directory
-	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
+	$(D_CAT) test_Makefile | $(SED_CMD) -e 's/LANGUAGE_EXTENSION_STR/F03/g' -e 's/LANGUAGE_COMPILER_VAR_STR/FC/g' >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start \
          | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    18\nNe                      spec                    10/g' \
@@ -317,7 +317,7 @@ ex_test_Ar_FCCcohesiveCutoff_NEIGH_RVEC: $(COMMON_FRAGMENTS)                    
 	$(D_CAT) test_FCCcohesiveCutoff_README  | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g'                                                                   >  $(KIM_EX_TESTS_DIR)/$@/README
         # make Makefile in the directory
-	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
+	$(D_CAT) test_Makefile | $(SED_CMD) -e 's/LANGUAGE_EXTENSION_STR/F03/g' -e 's/LANGUAGE_COMPILER_VAR_STR/FC/g' >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start \
          | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    18/g' \
@@ -375,7 +375,7 @@ ex_test_Ar_FCCcohesive_MI_OPBC: $(COMMON_FRAGMENTS)                          \
 	$(D_CAT) test_FCCcohesive_README  | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g'                                                                   >  $(KIM_EX_TESTS_DIR)/$@/README
         # make Makefile in the directory
-	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
+	$(D_CAT) test_Makefile | $(SED_CMD) -e 's/LANGUAGE_EXTENSION_STR/F03/g' -e 's/LANGUAGE_COMPILER_VAR_STR/FC/g' >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start \
          | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    18/g' \
@@ -436,7 +436,7 @@ ex_test_Ar_FCCcohesive_NEIGH_PURE: $(COMMON_FRAGMENTS)                          
 	$(D_CAT) test_FCCcohesive_README  | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g'                                                                   >  $(KIM_EX_TESTS_DIR)/$@/README
         # make Makefile in the directory
-	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
+	$(D_CAT) test_Makefile | $(SED_CMD) -e 's/LANGUAGE_EXTENSION_STR/F03/g' -e 's/LANGUAGE_COMPILER_VAR_STR/FC/g' >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start \
          | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    18/g' \
@@ -494,7 +494,7 @@ ex_test_Ar_FCCcohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                          
 	$(D_CAT) test_FCCcohesive_README  | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ar/g'                                                                   >  $(KIM_EX_TESTS_DIR)/$@/README
         # make Makefile in the directory
-	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
+	$(D_CAT) test_Makefile | $(SED_CMD) -e 's/LANGUAGE_EXTENSION_STR/F03/g' -e 's/LANGUAGE_COMPILER_VAR_STR/FC/g' >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start \
          | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    18/g' \
@@ -546,7 +546,7 @@ ex_test_Ar_free_cluster_CLUSTER_C: $(COMMON_FRAGMENTS)                 \
          | sed -e 's/LANGUAGE_STR/c/g' \
          | sed -e 's/SPECIES_NAME_STR/Ar/g'                                                                   >  $(KIM_EX_TESTS_DIR)/$@/README
         # make Makefile in the directory
-	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
+	$(D_CAT) test_Makefile | $(SED_CMD) -e 's/LANGUAGE_EXTENSION_STR/c/g' -e 's/LANGUAGE_COMPILER_VAR_STR/CC/g' >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start \
          | sed -e 's/OneBasedLists /ZeroBasedLists/g' \
@@ -585,7 +585,7 @@ ex_test_Ar_free_cluster_CLUSTER_F03: $(COMMON_FRAGMENTS)                 \
          | sed -e 's/LANGUAGE_STR/F03/g' \
          | sed -e 's/SPECIES_NAME_STR/Ar/g'                                                                   >  $(KIM_EX_TESTS_DIR)/$@/README
         # make Makefile in the directory
-	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
+	$(D_CAT) test_Makefile | $(SED_CMD) -e 's/LANGUAGE_EXTENSION_STR/F03/g' -e 's/LANGUAGE_COMPILER_VAR_STR/FC/g' >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start \
          | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    18/g' \
@@ -625,7 +625,7 @@ ex_test_Ar_free_cluster_CLUSTER_memory_F03: $(COMMON_FRAGMENTS)                 
          | sed -e 's/LANGUAGE_STR/F03/g' \
          | sed -e 's/SPECIES_NAME_STR/Ar/g'                                                                   >  $(KIM_EX_TESTS_DIR)/$@/README
         # make Makefile in the directory
-	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
+	$(D_CAT) test_Makefile | $(SED_CMD) -e 's/LANGUAGE_EXTENSION_STR/F03/g' -e 's/LANGUAGE_COMPILER_VAR_STR/FC/g' >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start \
          | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    18/g' \
@@ -670,7 +670,7 @@ ex_test_Ar_free_cluster: $(COMMON_FRAGMENTS)                    \
          | sed -e 's/LANGUAGE_STR/F03/g' \
          | sed -e 's/SPECIES_NAME_STR/Ar/g'                                                                   >  $(KIM_EX_TESTS_DIR)/$@/README
         # make Makefile in the directory
-	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
+	$(D_CAT) test_Makefile | $(SED_CMD) -e 's/LANGUAGE_EXTENSION_STR/F03/g' -e 's/LANGUAGE_COMPILER_VAR_STR/FC/g' >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start \
          | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    18/g' \
@@ -742,7 +742,7 @@ ex_test_Ar_free_cluster_energy: $(COMMON_FRAGMENTS)                    \
          | sed -e 's/LANGUAGE_STR/F03/g' \
          | sed -e 's/SPECIES_NAME_STR/Ar/g'                                                                   >  $(KIM_EX_TESTS_DIR)/$@/README
         # make Makefile in the directory
-	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
+	$(D_CAT) test_Makefile | $(SED_CMD) -e 's/LANGUAGE_EXTENSION_STR/F03/g' -e 's/LANGUAGE_COMPILER_VAR_STR/FC/g' >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start \
          | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    18/g' \
@@ -810,7 +810,7 @@ ex_test_Cu_free_cluster: $(COMMON_FRAGMENTS)                    \
          | sed -e 's/LANGUAGE_STR/F03/g' \
          | sed -e 's/SPECIES_NAME_STR/Cu/g'                                                                   >  $(KIM_EX_TESTS_DIR)/$@/README
         # make Makefile in the directory
-	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
+	$(D_CAT) test_Makefile | $(SED_CMD) -e 's/LANGUAGE_EXTENSION_STR/F03/g' -e 's/LANGUAGE_COMPILER_VAR_STR/FC/g' >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start \
          | sed -e 's/SPECIES_LINE_STR/Cu                          spec                    29/g' \
@@ -882,7 +882,7 @@ ex_test_Ne_free_cluster: $(COMMON_FRAGMENTS)                    \
          | sed -e 's/LANGUAGE_STR/F03/g' \
          | sed -e 's/SPECIES_NAME_STR/Ne/g'                                                                   >  $(KIM_EX_TESTS_DIR)/$@/README
         # make Makefile in the directory
-	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
+	$(D_CAT) test_Makefile | $(SED_CMD) -e 's/LANGUAGE_EXTENSION_STR/F03/g' -e 's/LANGUAGE_COMPILER_VAR_STR/FC/g' >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start \
          | sed -e 's/SPECIES_LINE_STR/Ne                          spec                    10/g' \
@@ -954,7 +954,7 @@ ex_test_Ne_free_cluster_SI: $(COMMON_FRAGMENTS)                    \
          | sed -e 's/LANGUAGE_STR/F03/g' \
          | sed -e 's/SPECIES_NAME_STR/Ne/g'                                                                   >  $(KIM_EX_TESTS_DIR)/$@/README
         # make Makefile in the directory
-	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
+	$(D_CAT) test_Makefile | $(SED_CMD) -e 's/LANGUAGE_EXTENSION_STR/F03/g' -e 's/LANGUAGE_COMPILER_VAR_STR/FC/g' >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start_SI \
          | sed -e 's/SPECIES_LINE_STR/Ne                          spec                    10/g' \
@@ -1025,7 +1025,7 @@ ex_test_Ne_free_cluster_stiff: $(COMMON_FRAGMENTS)                    \
 	$(D_CAT) test_free_cluster_stiff_README | $(SED_CMD) \
          | sed -e 's/SPECIES_NAME_STR/Ne/g'                                                                   >  $(KIM_EX_TESTS_DIR)/$@/README
         # make Makefile in the directory
-	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
+	$(D_CAT) test_Makefile | $(SED_CMD) -e 's/LANGUAGE_EXTENSION_STR/F03/g' -e 's/LANGUAGE_COMPILER_VAR_STR/FC/g' >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start \
          | sed -e 's/SPECIES_LINE_STR/Ne                          spec                    10/g' \
@@ -1120,7 +1120,7 @@ vc_forces_delta: Makefile                               \
         # make README file in the directory
 	$(D_CAT) vc_forces_delta_README | $(SED_CMD)                                                          >  $(KIM_EX_TESTS_DIR)/$@/README
         # make Makefile in the directory
-	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
+	$(D_CAT) test_Makefile | $(SED_CMD) -e 's/LANGUAGE_EXTENSION_STR/F03/g' -e 's/LANGUAGE_COMPILER_VAR_STR/FC/g' >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .F03 file in the directory
 	$(F_CAT) program_CDDL_header.f.frag                                                                   >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
@@ -1169,7 +1169,7 @@ vc_forces_numer_deriv: Makefile                               \
         # make README file in the directory
 	$(D_CAT) vc_forces_numer_deriv_README | $(SED_CMD)                                                    >  $(KIM_EX_TESTS_DIR)/$@/README
         # make Makefile in the directory
-	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
+	$(D_CAT) test_Makefile | $(SED_CMD) -e 's/LANGUAGE_EXTENSION_STR/F03/g' -e 's/LANGUAGE_COMPILER_VAR_STR/FC/g' >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .F03 file in the directory
 	$(F_CAT) program_CDDL_header.f.frag                                                                   >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
@@ -1217,7 +1217,7 @@ vc_config_ener_forces: Makefile                                 \
         # make README file in the directory
 	$(D_CAT) vc_config_ener_forces_README | $(SED_CMD)                                                    >  $(KIM_EX_TESTS_DIR)/$@/README
         # make Makefile in the directory
-	$(D_CAT) test_Makefile | $(SED_CMD)                                                                   >  $(KIM_EX_TESTS_DIR)/$@/Makefile
+	$(D_CAT) test_Makefile | $(SED_CMD) -e 's/LANGUAGE_EXTENSION_STR/F03/g' -e 's/LANGUAGE_COMPILER_VAR_STR/FC/g' >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .F03 file in the directory
 	$(F_CAT) program_CDDL_header.f.frag                                                                   >  $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03

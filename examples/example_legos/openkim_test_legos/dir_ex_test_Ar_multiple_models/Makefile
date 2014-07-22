@@ -31,25 +31,39 @@
 #
 
 
-# load all basic KIM make configuration
-ifeq ($(wildcard ../Makefile.KIM_Config),)
-  $(error ../Makefile.KIM_Config does not exist.  Something is wrong with your KIM API package setup)
+ifeq ($(wildcard ../Makefile.KIM_Config_Helper),)
+  KIM_CONFIG_HELPER = kim-api-build-config
+else
+  include ../Makefile.KIM_Config_Helper
 endif
-include ../Makefile.KIM_Config
+ifeq ($(shell $(KIM_CONFIG_HELPER) --version 2> /dev/null),)
+  $(error $(KIM_CONFIG_HELPER) utility is not available.  Something is wrong with your KIM API package setup)
+endif
 
-# set test specific details
+CC           = $(shell $(KIM_CONFIG_HELPER) --cc)
+CXX          = $(shell $(KIM_CONFIG_HELPER) --cxx)
+FC           = $(shell $(KIM_CONFIG_HELPER) --fc)
+LD           = $(shell $(KIM_CONFIG_HELPER) --ld)
+INCLUDES     = $(shell $(KIM_CONFIG_HELPER) --includes)
+CFLAGS       = $(shell $(KIM_CONFIG_HELPER) --cflags)
+CXXFLAGS     = $(shell $(KIM_CONFIG_HELPER) --cxxflags)
+FFLAGS       = $(shell $(KIM_CONFIG_HELPER) --fflags)
+LDFLAGS      = $(shell $(KIM_CONFIG_HELPER) --ldflags)
+LDLIBS       = $(shell $(KIM_CONFIG_HELPER) --ldlibs)
+OBJONLYFLAG  = $(shell $(KIM_CONFIG_HELPER) --objonlyflag)
+OUTPUTINFLAG = $(shell $(KIM_CONFIG_HELPER) --outputinflag)
+
+.PHONY: all clean
+
 TEST_NAME := ex_test_Ar_multiple_models
 
-LOCALOBJ =
+all: $(TEST_NAME)
 
-LOCALCLEAN =
+$(TEST_NAME).o: $(TEST_NAME).c Makefile
+	$(CC) $(INCLUDES) $(CFLAGS) $(OBJONLYFLAG) $<
 
-# APPEND to compiler option flag lists
-#FFLAGS   +=
-#CFLAGS   +=
-#CXXFLAGS +=
-#LDFLAGS  +=
-#LDLIBS   +=
+$(TEST_NAME): $(TEST_NAME).o
+	$(LD) $(LDFLAGS) $< $(LDLIBS) $(OUTPUTINFLAG) $@
 
-# load remaining KIM make configuration
-include $(KIM_DIR)/$(builddir)/Makefile.Test
+clean:
+	rm -f $(TEST_NAME) $(TEST_NAME).o

@@ -57,10 +57,6 @@ Makefile.SanityCheck
      Makefile that verifies all necessary settings have been set by the user
      and that they have appropriate values
 
-Makefile.Test
-     Makefile containing the KIM API build system's definitions for OpenKIM
-     Tests
-
 README
      This file
 

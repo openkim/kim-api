@@ -37,7 +37,11 @@ include Makefile.KIM_Config
 
 VPATH = ../
 
-all: $(full_package_name)-descriptor-file-match
+# Set defines
+KIMDEFINES = $(KIM_DEFINE_VALUES)
+
+all: $(full_package_name)-descriptor-file-match \
+     $(full_package_name)-build-config
 
 Makefile: $(KIM_MAKE_FILES)
 	$(QUELL)touch Makefile
@@ -53,18 +57,44 @@ ifneq (static-link,$(KIM_LINK))
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) -o .$@ $< ../.lib$(KIM_LIB_BUILD).so $(LDLIBS)
 else
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) -o $@ $< ../lib$(KIM_LIB_BUILD).a $(LDLIBS)
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) -o .$@ $< ../lib$(KIM_LIB_BUILD).a $(LDLIBS)
 endif
+
+
+%uild-config.o: KIM_DEFINE_VALUES += -D 'CC_STRING="$(CC)"' \
+                                     -D 'CXX_STRING="$(CXX)"' \
+                                     -D 'FC_STRING="$(FC)"' \
+                                     -D 'LD_STRING="$(LD)"' \
+                                     -D 'INCLUDES_STRING="$(if $(filter-out .build-config.o,$@),$(KIMINCLUDEFLAGS),$(package_dir)/include)"' \
+                                     -D 'CFLAGS_STRING="$(ARCHFLAG) $(PICFLAG) $(CFLAGS)"' \
+                                     -D 'CXXFLAGS_STRING="$(ARCHFLAG) $(PICFLAG) $(CXXFLAGS)"' \
+                                     -D 'FFLAGS_STRING="$(ARCHFLAG) $(PICFLAG) $(FFLAGS)"' \
+                                     -D 'LDFLAGS_STRING="$(ARCHFLAG) $(KIMLDFLAGS) $(LDFLAGS)"' \
+                                     -D 'LDLIBS_STRING="$(KIMLDLIBS) $(XLANGLDLIBS) $(LDLIBS)"' \
+                                     -D 'OBJONLYFLAG_STRING="$(OBJONLYFLAG)"' \
+                                     -D 'OUTPUTINFLAG_STRING="$(OUTPUTINFLAG)"' \
+                                     -D 'MAKEFILEKIMCONFIG_STRING="include $(if $(filter-out .build-config.o,$@),$(KIM_DIR),$(package_dir))/Makefile.KIM_Config"' \
+                                     -D 'VERSION_STRING="$(VERSION_FULL)"'
+%build-config.o: build-config.cpp Makefile
+	@printf "Creating... $@.\n"
+	$(QUELL)$(CXX) $(KIM_CTYPE_STANDARD_COMPILE_LIST) $< $(OUTPUTINFLAG) $@
+
+$(full_package_name)-build-config: build-config.o .build-config.o
+	@printf "Creating... $@.\n"
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) -o $@ $<
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) -o .$@ .$<
 
 .PHONY: all clean install installdirs uninstall
 
 clean:
 	@printf "Cleaning... src/utils.\n"
-	$(QUELL)rm -f *.o $(full_package_name)-descriptor-file-match .$(full_package_name)-descriptor-file-match
+	$(QUELL)rm -f *.o .*.o $(full_package_name)-descriptor-file-match .$(full_package_name)-descriptor-file-match \
+                   $(full_package_name)-build-config .$(full_package_name)-build-config
 
 
 install_bindir = $(dest_package_dir)/bin
 install_nodest_bindir = $(package_dir)/bin
-install_bin = $(full_package_name)-descriptor-file-match
+install_bin = $(full_package_name)-descriptor-file-match $(full_package_name)-build-config
 
 install-check:
 ifneq (dynamic-load,$(KIM_LINK))
@@ -88,11 +118,7 @@ installdirs:
 install: all installdirs
 	@printf "Installing...($(dest_package_dir))................................. bin"
         # Install bin files
-ifneq (static-link,$(KIM_LINK))
 	$(QUELL)for fl in $(install_bin); do $(INSTALL_PROGRAM) -m 0755 ".$$fl" "$(install_bindir)/$$fl"; done
-else
-	$(QUELL)for fl in $(install_bin); do $(INSTALL_PROGRAM) -m 0755 "$$fl" "$(install_bindir)/$$fl"; done
-endif
 	$(QUELL)for fl in $(install_bin); do ln -fs "$(install_nodest_bindir)/$$fl" "$(DESTDIR)$(bindir)/$$fl"; done
 	@printf ".\n"
 

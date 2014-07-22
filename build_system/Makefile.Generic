@@ -124,87 +124,87 @@ endif
 #set default goals allways all
 .DEFAULT_GOAL := all
 
-# C/C++ Compiler pattern rules
-KIM_CTYPE_STANDARD_COMPILE_LIST = $(ARCHFLAG) $(PICFLAG) $(KIMINCLUDEFLAGS) $(KIMDEFINES) $(OBJONLYFLAG) $(CFLAGS) $<
-# C
+# C Compiler pattern rules
+KIM_CTYPE_STANDARD_COMPILE_LIST = $(ARCHFLAG) $(PICFLAG) $(KIMINCLUDEFLAGS) $(KIMDEFINES) $(OBJONLYFLAG) $(CFLAGS)
 %.o:%.c Makefile    # C with preprocessing
 	@printf "Creating... $@.\n"
-	$(QUELL)$(CC)  $(KIM_CTYPE_STANDARD_COMPILE_LIST)
+	$(QUELL)$(CC)  $(KIM_CTYPE_STANDARD_COMPILE_LIST) $<
 %.o:%.i Makefile    # C without preprocessing
 	@printf "Creating... $@.\n"
-	$(QUELL)$(CC)  $(KIM_CTYPE_STANDARD_COMPILE_LIST)
-# C++
+	$(QUELL)$(CC)  $(KIM_CTYPE_STANDARD_COMPILE_LIST) $<
+# C++ Compiler pattern rules
+KIM_CXXTYPE_STANDARD_COMPILE_LIST = $(ARCHFLAG) $(PICFLAG) $(KIMINCLUDEFLAGS) $(KIMDEFINES) $(OBJONLYFLAG) $(CXXFLAGS)
 %.o:%.cpp Makefile  # C++ with preprocessing
 	@printf "Creating... $@.\n"
-	$(QUELL)$(CXX) $(KIM_CTYPE_STANDARD_COMPILE_LIST)
+	$(QUELL)$(CXX) $(KIM_CXXTYPE_STANDARD_COMPILE_LIST) $<
 %.o:%.ii Makefile   # C++ without preprocessing
 	@printf "Creating... $@.\n"
-	$(QUELL)$(CXX) $(KIM_CTYPE_STANDARD_COMPILE_LIST)
+	$(QUELL)$(CXX) $(KIM_CXXTYPE_STANDARD_COMPILE_LIST) $<
 %.o:%.cc Makefile   # C++ with preprocessing
 	@printf "Creating... $@.\n"
-	$(QUELL)$(CXX) $(KIM_CTYPE_STANDARD_COMPILE_LIST)
+	$(QUELL)$(CXX) $(KIM_CXXTYPE_STANDARD_COMPILE_LIST) $<
 %.o:%.cxx Makefile  # C++ with preprocessing
 	@printf "Creating... $@.\n"
-	$(QUELL)$(CXX) $(KIM_CTYPE_STANDARD_COMPILE_LIST)
+	$(QUELL)$(CXX) $(KIM_CXXTYPE_STANDARD_COMPILE_LIST) $<
 %.o:%.cpp Makefile  # C++ with preprocessing
 	@printf "Creating... $@.\n"
-	$(QUELL)$(CXX) $(KIM_CTYPE_STANDARD_COMPILE_LIST)
+	$(QUELL)$(CXX) $(KIM_CXXTYPE_STANDARD_COMPILE_LIST) $<
 %.o:%.C Makefile    # C++ with preprocessing
 	@printf "Creating... $@.\n"
-	$(QUELL)$(CXX) $(KIM_CTYPE_STANDARD_COMPILE_LIST)
+	$(QUELL)$(CXX) $(KIM_CXXTYPE_STANDARD_COMPILE_LIST) $<
 
 # Fortran Compiler pattern rules
-KIM_FTYPE_STANDARD_COMPILE_LIST = $(ARCHFLAG) $(PICFLAG) $(KIMINCLUDEFLAGS) $(KIMDEFINES) $(OBJONLYFLAG) $(FFLAGS) $(FFORTRANFILEFLAG) $<
+KIM_FTYPE_STANDARD_COMPILE_LIST = $(ARCHFLAG) $(PICFLAG) $(KIMINCLUDEFLAGS) $(KIMDEFINES) $(OBJONLYFLAG) $(FFLAGS) $(FFORTRANFILEFLAG)
 # Fixed form code
 %.o:%.f Makefile    # FORTRAN 77 without preprocessing
 	@printf "Creating... $@.\n"
-	$(QUELL)$(FC) $(FFIXEDFLAG) $(FNOCPPFLAG) $(KIM_FTYPE_STANDARD_COMPILE_LIST)
+	$(QUELL)$(FC) $(FFIXEDFLAG) $(FNOCPPFLAG) $(KIM_FTYPE_STANDARD_COMPILE_LIST) $<
 %.o:%.for Makefile  # FORTRAN 77 without preprocessing
 	@printf "Creating... $@.\n"
-	$(QUELL)$(FC) $(FFIXEDFLAG) $(FNOCPPFLAG) $(KIM_FTYPE_STANDARD_COMPILE_LIST)
+	$(QUELL)$(FC) $(FFIXEDFLAG) $(FNOCPPFLAG) $(KIM_FTYPE_STANDARD_COMPILE_LIST) $<
 %.o:%.ftn Makefile  # FORTRAN 77 without preprocessing
 	@printf "Creating... $@.\n"
-	$(QUELL)$(FC) $(FFIXEDFLAG) $(FNOCPPFLAG) $(KIM_FTYPE_STANDARD_COMPILE_LIST)
+	$(QUELL)$(FC) $(FFIXEDFLAG) $(FNOCPPFLAG) $(KIM_FTYPE_STANDARD_COMPILE_LIST) $<
 %.o:%.fpp Makefile  # FORTRAN 77 with preprocessing
 	@printf "Creating... $@.\n"
-	$(QUELL)$(FC) $(FFIXEDFLAG) $(FCPPFLAG)   $(KIM_FTYPE_STANDARD_COMPILE_LIST)
+	$(QUELL)$(FC) $(FFIXEDFLAG) $(FCPPFLAG)   $(KIM_FTYPE_STANDARD_COMPILE_LIST) $<
 %.o:%.F Makefile    # FORTRAN 77 with preprocessing
 	@printf "Creating... $@.\n"
-	$(QUELL)$(FC) $(FFIXEDFLAG) $(FCPPFLAG)   $(KIM_FTYPE_STANDARD_COMPILE_LIST)
+	$(QUELL)$(FC) $(FFIXEDFLAG) $(FCPPFLAG)   $(KIM_FTYPE_STANDARD_COMPILE_LIST) $<
 %.o:%.FOR Makefile  # FORTRAN 77 with preprocessing
 	@printf "Creating... $@.\n"
-	$(QUELL)$(FC) $(FFIXEDFLAG) $(FCPPFLAG)   $(KIM_FTYPE_STANDARD_COMPILE_LIST)
+	$(QUELL)$(FC) $(FFIXEDFLAG) $(FCPPFLAG)   $(KIM_FTYPE_STANDARD_COMPILE_LIST) $<
 %.o:%.FTN Makefile  # FORTRAN 77 with preprocessing
 	@printf "Creating... $@.\n"
-	$(QUELL)$(FC) $(FFIXEDFLAG) $(FCPPFLAG)   $(KIM_FTYPE_STANDARD_COMPILE_LIST)
+	$(QUELL)$(FC) $(FFIXEDFLAG) $(FCPPFLAG)   $(KIM_FTYPE_STANDARD_COMPILE_LIST) $<
 %.o:%.FPP Makefile  # FORTRAN 77 with preprocessing
 	@printf "Creating... $@.\n"
-	$(QUELL)$(FC) $(FFIXEDFLAG) $(FCPPFLAG)   $(KIM_FTYPE_STANDARD_COMPILE_LIST)
+	$(QUELL)$(FC) $(FFIXEDFLAG) $(FCPPFLAG)   $(KIM_FTYPE_STANDARD_COMPILE_LIST) $<
 # Free form code
 %.o:%.f90 Makefile  # Fortran 90 without preprocessing
 	@printf "Creating... $@.\n"
-	$(QUELL)$(FC) $(FFREEFLAG) $(FNOCPPFLAG)  $(KIM_FTYPE_STANDARD_COMPILE_LIST)
+	$(QUELL)$(FC) $(FFREEFLAG) $(FNOCPPFLAG)  $(KIM_FTYPE_STANDARD_COMPILE_LIST) $<
 %.o:%.f95 Makefile  # Fortran 95 without preprocessing
 	@printf "Creating... $@.\n"
-	$(QUELL)$(FC) $(FFREEFLAG) $(FNOCPPFLAG)  $(KIM_FTYPE_STANDARD_COMPILE_LIST)
+	$(QUELL)$(FC) $(FFREEFLAG) $(FNOCPPFLAG)  $(KIM_FTYPE_STANDARD_COMPILE_LIST) $<
 %.o:%.f03 Makefile  # Fortran 2003 without preprocessing
 	@printf "Creating... $@.\n"
-	$(QUELL)$(FC) $(FFREEFLAG) $(FNOCPPFLAG)  $(KIM_FTYPE_STANDARD_COMPILE_LIST)
+	$(QUELL)$(FC) $(FFREEFLAG) $(FNOCPPFLAG)  $(KIM_FTYPE_STANDARD_COMPILE_LIST) $<
 %.o:%.f08 Makefile  # Fortran 2008 without preprocessing
 	@printf "Creating... $@.\n"
-	$(QUELL)$(FC) $(FFREEFLAG) $(FNOCPPFLAG)  $(KIM_FTYPE_STANDARD_COMPILE_LIST)
+	$(QUELL)$(FC) $(FFREEFLAG) $(FNOCPPFLAG)  $(KIM_FTYPE_STANDARD_COMPILE_LIST) $<
 %.o:%.F90 Makefile  # Fortran 90 with preprocessing
 	@printf "Creating... $@.\n"
-	$(QUELL)$(FC) $(FFREEFLAG) $(FCPPFLAG)    $(KIM_FTYPE_STANDARD_COMPILE_LIST)
+	$(QUELL)$(FC) $(FFREEFLAG) $(FCPPFLAG)    $(KIM_FTYPE_STANDARD_COMPILE_LIST) $<
 %.o:%.F95 Makefile  # Fortran 95 with preprocessing
 	@printf "Creating... $@.\n"
-	$(QUELL)$(FC) $(FFREEFLAG) $(FCPPFLAG)    $(KIM_FTYPE_STANDARD_COMPILE_LIST)
+	$(QUELL)$(FC) $(FFREEFLAG) $(FCPPFLAG)    $(KIM_FTYPE_STANDARD_COMPILE_LIST) $<
 %.o:%.F03 Makefile  # Fortran 2003 with preprocessing
 	@printf "Creating... $@.\n"
-	$(QUELL)$(FC) $(FFREEFLAG) $(FCPPFLAG)    $(KIM_FTYPE_STANDARD_COMPILE_LIST)
+	$(QUELL)$(FC) $(FFREEFLAG) $(FCPPFLAG)    $(KIM_FTYPE_STANDARD_COMPILE_LIST) $<
 %.o:%.F08 Makefile  # Fortran 2008 with preprocessing
 	@printf "Creating... $@.\n"
-	$(QUELL)$(FC) $(FFREEFLAG) $(FCPPFLAG)    $(KIM_FTYPE_STANDARD_COMPILE_LIST)
+	$(QUELL)$(FC) $(FFREEFLAG) $(FCPPFLAG)    $(KIM_FTYPE_STANDARD_COMPILE_LIST) $<
 
 
 # Model Driver and Model Library pattern rule

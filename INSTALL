@@ -487,12 +487,17 @@ INSTRUCTIONS for building and installing this KIM API release:
 
        % WD=${HOME}/my-kim-items
 
-   (d) Create a Makefile.KIM_Config in the ${WD} directory (using our assumed
-   configuration values):
+   (d) Create a Makefile.KIM_Config in the ${WD} directory (we will use the
+       provided "build-config" utility to do this):
 
+       % PATH=${PATH}:${HOME}/bin  # Make sure that ${HOME}/bin is on the path
        % libdir=${HOME}/lib
        % cd ${WD}
-       % printf "include ${libdir}/${package_name}/Makefile.KIM_Config\n" > ${WD}/Makefile.KIM_Config
+       % ${package_name}-build-config --makefile-kim-config > ${WD}/Makefile.KIM_Config
+
+       The ${pakcage-name}-build-config (kim-api-build-config, by default)
+       utility outputs various strings that can be used to help build
+       Simulators and, as used here, to create Makefile.KIM_Config files.
 
    (e) We will work with the case of a Model Driver and an associated
        Parameterized Model such as those you can download from
@@ -521,7 +526,6 @@ INSTRUCTIONS for building and installing this KIM API release:
        % cd ${WD}
        % cp ${KD}/examples/openkim_tests/vc_forces_numer_deriv/vc_forces_numer_deriv.F03 ${WD}
        % cp ${KD}/examples/openkim_tests/vc_forces_numer_deriv/Makefile ${WD}
-       % printf ',s|\.\./Makefile.KIM_Config|./Makefile.KIM_Config|g\nw\nq\n' | ed Makefile
        % make
        % printf "${mo}" | ./vc_forces_numer_deriv
 
@@ -536,8 +540,6 @@ INSTRUCTIONS for building and installing this KIM API release:
        % cd ${EXD}
        % cp ${KD}/examples/openkim_tests/vc_forces_numer_deriv/vc_forces_numer_deriv.F03 ${EXD}
        % cp ${KD}/examples/openkim_tests/vc_forces_numer_deriv/Makefile ${EXD}
-       % printf "include ${prefix}/${libdir}/${package_name}/Makefile.KIM_Config\n" > ${EXD}/Makefile.KIM_Config
-       % printf ',s|\.\./Makefile.KIM_Config|./Makefile.KIM_Config|g\nw\nq\n' | ed Makefile
        % make
        % printf "${mo}" | ./vc_forces_numer_deriv
 
