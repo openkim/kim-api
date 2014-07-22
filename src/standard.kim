@@ -1170,10 +1170,10 @@ particleEnergy              double       energy             [numberOfParticles]
 # virial : A symmetric second-order tensor corresponding to the total virial
 #          for the configuration of particles passed between the Model and
 #          Simulator.  The "stress" sign convention is used: tensile quantities
-#          are positive and compressive quantities are negative.  Thus, the
-#          trace of the virial (sum of the 11, 22, and 33 components) is
-#          related to the pressure, however the sign convention is opposite
-#          that normally used for pressure.
+#          are positive and compressive quantities are negative. Thus, the
+#          pressure is the negative of the spherical part of the Cauchy stress
+#          which is given by one third the sum of the 11, 22 and 33 components
+#          of the virial divided by a representative volume.
 #
 # The components of this 3 x 3 symmetric tensor are stored in a compact vector
 # form with 6 components in accordance with the Voigt convention:
