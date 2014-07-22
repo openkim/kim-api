@@ -44,7 +44,8 @@ all: $(TEST_NAME)
 
 $(TEST_NAME): $(TEST_NAME).o $(LOCALOBJ) $(KIM_LIB_for_dependencies)
 	@printf "Creating... Test executable... $@.\n"
-	$(QUELL)$(LD) $(ARCHFLAG) $(KIMLDFLAGS) $(LDFLAGS) $(LOCALOBJ) $< $(KIMLDLIBS) $(XLANGLDLIBS) $(LDDYNAMICLIB) $(LDLIBS) $(OUTPUTINFLAG) $@
+	$(QUELL)$(LD) $(ARCHFLAG) $(KIMLDFLAGS) $(LDFLAGS) $(LOCALOBJ) $< $(KIMLDLIBS) $(XLANGLDLIBS) $(LDLIBS) $(OUTPUTINFLAG) $@
+# do I really need XLANGLDLIBS?
 
 $(TEST_NAME).o: $(LOCALOBJ) Makefile
 

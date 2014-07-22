@@ -48,7 +48,7 @@ LOCALCLEAN =
 
 # APPEND to compiler option flag lists
 #FFLAGS   +=
-#CCFLAGS  +=
+#CFLAGS   +=
 #CXXFLAGS +=
 #LDFLAGS  +=
 #LDLIBS   +=

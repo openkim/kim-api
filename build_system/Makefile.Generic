@@ -125,7 +125,7 @@ endif
 .DEFAULT_GOAL := all
 
 # C/C++ Compiler pattern rules
-KIM_CTYPE_STANDARD_COMPILE_LIST = $(ARCHFLAG) $(PICFLAG) $(KIMINCLUDEFLAGS) $(KIMDEFINES) $(OBJONLYFLAG) $(CCFLAGS) $<
+KIM_CTYPE_STANDARD_COMPILE_LIST = $(ARCHFLAG) $(PICFLAG) $(KIMINCLUDEFLAGS) $(KIMDEFINES) $(OBJONLYFLAG) $(CFLAGS) $<
 # C
 %.o:%.c Makefile    # C with preprocessing
 	@printf "Creating... $@.\n"

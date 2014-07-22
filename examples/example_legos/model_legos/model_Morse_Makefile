@@ -47,7 +47,7 @@ PARAM_FILE_001_NAME := MODEL_NAME_STR.params
 
 # APPEND to compiler option flag lists
 #FFLAGS   +=
-#CCFLAGS  +=
+#CFLAGS   +=
 #CXXFLAGS +=
 #LDFLAGS  +=
 #LDLIBS   +=

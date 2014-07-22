@@ -168,7 +168,7 @@ INSTRUCTIONS for building and installing this KIM API release:
 
        # override default compiler option flag lists
        FFLAGS   =
-       CCFLAGS  =
+       CFLAGS   =
        CXXFLAGS =
        LDFLAGS  =
        LDLIBS   =
