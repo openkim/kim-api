@@ -37,7 +37,8 @@
 
 This file contains instructions for installing the KIM API package.  If you are
 new to KIM and the KIM API (application programming interface) start by reading
-the README file in this directory.
+the README file in this directory.  NOTE: shell commands provided in this file
+are designed for use in the bash shell.
 
 -------------------------------------------------------------------------------
 
@@ -77,6 +78,25 @@ of the configuration setting `KIM_LINK', described below, the set of accessible
 Models is either (for `static-link' or `dynamic-link') defined and fixed at
 build time, or (for `dynamic-load') may be changed at any time and even may be
 different for each user account on the system.
+
+
+QUICK START (default settings are appropriate for most Linux systems):
+
+To install the KIM API to the standard location (/usr/local)
+
+% cp Makefile.KIM_Config.example Makefile.KIM_Config
+% printf "g/^KIM_DIR/d\\ni\nKIM_DIR := `pwd`\n.\nw\nq\n" | ed Makefile.KIM_Config
+% make
+% make install
+
+To install the KIM API to an alternative location (/path/to/alternate/location)
+
+% cp Makefile.KIM_Config.example Makefile.KIM_Config
+% printf "g/^KIM_DIR/d\\ni\nKIM_DIR = `pwd`\n.\nw\nq\n" | ed Makefile.KIM_Config
+% prefix=/path/to/alternate/location
+% printf "g/^#prefix/d\\ni\nprefix = ${prefix}\n.\nw\nq\n" | ed Makefile.KIM_Config
+% make
+% make install
 
 
 INSTRUCTIONS for building and installing this KIM API release:
@@ -275,6 +295,7 @@ INSTRUCTIONS for building and installing this KIM API release:
    confirm that everything works as expeced, execute the following commands.
 
    First, change to the KIM API package directory:
+
    % cd ${KD}
 
    Second, "add" the OpenKIM Model Drivers and Models of interest:
@@ -491,6 +512,7 @@ INSTRUCTIONS for building and installing this KIM API release:
        `${prefix}/my-kim-items' as an example):
 
        % mkdir ${prefix}/my-kim-items
+       % package_name=kim-api # for use in (d) below
 
    (c) Next, for convenience, we'll create an environment variable pointing to
        our working directory:
