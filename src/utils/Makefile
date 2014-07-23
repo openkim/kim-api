@@ -65,11 +65,11 @@ endif
                                      -D 'CXX_STRING="$(CXX)"' \
                                      -D 'FC_STRING="$(FC)"' \
                                      -D 'LD_STRING="$(LD)"' \
-                                     -D 'INCLUDES_STRING="$(if $(filter-out .build-config.o,$@),$(KIMINCLUDEFLAGS),$(package_dir)/include)"' \
+                                     -D 'INCLUDES_STRING="$(if $(filter-out .build-config.o,$@),$(KIMINCLUDEFLAGS),-I$(package_dir)/include)"' \
                                      -D 'CFLAGS_STRING="$(ARCHFLAG) $(PICFLAG) $(CFLAGS)"' \
                                      -D 'CXXFLAGS_STRING="$(ARCHFLAG) $(PICFLAG) $(CXXFLAGS)"' \
                                      -D 'FFLAGS_STRING="$(ARCHFLAG) $(PICFLAG) $(FFLAGS)"' \
-                                     -D 'LDFLAGS_STRING="$(ARCHFLAG) $(KIMLDFLAGS) $(LDFLAGS)"' \
+                                     -D 'LDFLAGS_STRING="$(ARCHFLAG) $(if $(filter-out .build-config.o,$@),$(KIMLDFLAGS),-L$(package_dir)) $(LDFLAGS)"' \
                                      -D 'LDLIBS_STRING="$(KIMLDLIBS) $(XLANGLDLIBS) $(LDLIBS)"' \
                                      -D 'OBJONLYFLAG_STRING="$(OBJONLYFLAG)"' \
                                      -D 'OUTPUTINFLAG_STRING="$(OUTPUTINFLAG)"' \

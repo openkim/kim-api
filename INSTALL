@@ -257,13 +257,13 @@ INSTRUCTIONS for building and installing this KIM API release:
    exactly (except for replacing the X.X.X as appropriate) as written to set
    the (bash) shell variable KD to the appropriate value:
 
-   % export KD=${HOME}/kim-api-vX.X.X
+   % KD=${HOME}/kim-api-vX.X.X
 
    We will assume you are using the following settings (with all other settings
    having their default values):
 
-   KIM_LINK = dynamic-load
-   prefix = $(HOME)
+     KIM_LINK = dynamic-load
+     prefix = $(HOME)/my-kim-files
 
    Finally, we will assume that you want to "add" the following OpenKIM Model
    Drivers and Models for "system-wide" use (see item 7 below):
@@ -350,7 +350,7 @@ INSTRUCTIONS for building and installing this KIM API release:
    the Model can be piped in using an `printf' command.  For example, the
    following Fortran 2003 Test reads in one Model name:
 
-   % cd ${KD}/exmples/openkim_tests/ex_test_Ar_free_cluster_CLUSTER_F03
+   % cd ${KD}/examples/openkim_tests/ex_test_Ar_free_cluster_CLUSTER_F03
    % printf "ex_model_Ar_P_MLJ_CLUSTER_C" | ./ex_test_Ar_free_cluster_CLUSTER_F03
 
    (See the README files in the openkim_tests/* directories for an explanation
@@ -361,14 +361,16 @@ INSTRUCTIONS for building and installing this KIM API release:
            for the KIM API library in the directory ${KD}/src.  If you only
            need to use the KIM API briefly, this is a perfectly acceptable way
            to use the KIM API. In fact, you can have other Simulators, such as
-           LAMMPS or IMD, like to this "in place" version of the KIM API by
+           LAMMPS or IMD, link to this "in place" version of the KIM API by
            appropriately configuring these packages.  However, if you expect to
            use the KIM API on a routine basis, it is recommended that you
            install the KIM API to a "system-wide" location.  See item 7 below
            for more details on the installation process.
 
 5. The KIM API will look for Model Driver and Model directories in three
-   different locations.  For Model Drivers the directories, listed in the order
+   different locations: the current working directory (CWD), the directory
+   listed in the user configuration file, and the system-wide Model Drivers and
+   Models directories.  For Model Drivers the directories, listed in the order
    they are searched, are:
 
      (a) `.'                                            ("CWD Model Drivers")
@@ -385,9 +387,14 @@ INSTRUCTIONS for building and installing this KIM API release:
    "User Models" directories to be searched.  Create this file in the directory
    `${configloc}/.${package_name}/config-vX' where X is replaced by the major
    version number for this release of the KIM API package (as defined in the
-   file Makefile.Version).  The file `${configloc}/.${package_name}/config-vX'
-   has a strict format.  It must contain exactly two lines.  These must be of
-   the form:
+   file Makefile.Version).  For "in place" use of the KIM API, libloc=${KD}/src
+   and configloc=${KD}.  For "installed" use of the KIM API,
+   libloc=$(libdir)/$(full_package_name) and configloc=$(HOME).  By default,
+   package_name=kim-api, full_package_name=kim-api-vX, and
+   libdir=/usr/local/lib.
+
+   The file `${configloc}/.${package_name}/config-vX' has a strict format.  It
+   must contain exactly two lines.  These must be of the form:
 
      model_drivers_dir = XXX
      models_dir = YYY
@@ -395,11 +402,6 @@ INSTRUCTIONS for building and installing this KIM API release:
    where XXX and YYY are replaced by paths (beginning with `/' or `~/' only)
    which indicate where you will store your Model Drivers and Models,
    respectively.
-
-   For "in place" use of the KIM API, libloc=${KD}/src and configloc=${KD}.
-   For "installed" use of the KIM API, libloc=$(libdir)/$(full_package_name)
-   and configloc=$(HOME).  By default, package_name=kim-api,
-   full_package_name=kim-api-vX, and libdir=/usr/local/lib.
 
    * NOTE: executing `make examples' automatically creates the file
            `${KD}/.kim-api/config-vX' with the following content:
@@ -413,7 +415,7 @@ INSTRUCTIONS for building and installing this KIM API release:
            item 4.  The contents of this user configuration file may be changed
            as you wish.
 
-6. Each example Model Driver, Model, Simulator and OpenKIM Test has its own
+6. Each example Model Driver, Model, Simulator, and OpenKIM Test has its own
    Makefile for building.  If changes are made to the example codes, simply run
    `make' from the associated directory to update the build for that item.
 
@@ -445,11 +447,18 @@ INSTRUCTIONS for building and installing this KIM API release:
    % make install-set-default-to-vX
 
    Once the KIM API package has been installed, the original source directory
-   (${KD}) may be deleted.
+   (${KD}) may be deleted.  However, first we will make a copy, to our prefix
+   directory (${HOME}/my-kim-files), of a couple of files that will be used
+   later, in the next step.
+
+   % prefix=${HOME}/my-kim-files
+   % cp ${KD}/examples/openkim_tests/vc_forces_numer_deriv/vc_forces_numer_deriv.F03 ${prefix}/
+   % cp ${KD}/examples/openkim_tests/vc_forces_numer_deriv/Makefile ${prefix}/
+
+   Now we can delete the KIM API source package:
 
    % cd ${HOME}
    % rm -r ${KD}
-
 
 8. If the KIM API has been installed using KIM_LINK=dynamic-load and the
    original source directory has been deleted, it is still possible to compile
@@ -461,14 +470,15 @@ INSTRUCTIONS for building and installing this KIM API release:
    file, follow these steps:
 
    (a) If you don't want to set up a user configuration file, skip to item (b).
-       Otherwise, create these files now (here we will use `~/my-kim-items' as
-       an example):
+       Otherwise, create these files now (here we will use
+       `${prefix}/my-kim-items' as an example):
 
+       % mkdir ${prefix}/my-kim-items
        % package_name=kim-api
        % mkdir ${HOME}/.${package_name}
        % cd ${HOME}/.${package_name}
-       % printf "model_drivers_dir = ~/my-kim-items\n" > config-vX
-       % printf "models_dir = ~/my-kim-items\n" >> config-vX
+       % printf "model_drivers_dir = ~/my-kim-files/my-kim-items\n" > config-vX
+       % printf "models_dir = ~/my-kim-files/my-kim-items\n" >> config-vX
 
        Do not forget to replace `X' with the major version number of this
        package.  Although here we use the same directory for Model Drivers and
@@ -477,21 +487,21 @@ INSTRUCTIONS for building and installing this KIM API release:
 
    (b) For those who want to work in the current directory (CWD) and/or install
        additional Model Drivers and Models system-wide, we'll create a
-       temporary directory in which to work (here we use `~/my-kim-items' as an
-       example):
+       temporary directory in which to work (here we use
+       `${prefix}/my-kim-items' as an example):
 
-       % mkdir ${HOME}/my-kim-items
+       % mkdir ${prefix}/my-kim-items
 
    (c) Next, for convenience, we'll create an environment variable pointing to
        our working directory:
 
-       % WD=${HOME}/my-kim-items
+       % WD=${prefix}/my-kim-items
 
    (d) Create a Makefile.KIM_Config in the ${WD} directory (we will use the
        provided "build-config" utility to do this):
 
-       % PATH=${PATH}:${HOME}/bin  # Make sure that ${HOME}/bin is on the path
-       % libdir=${HOME}/lib
+       % PATH=${PATH}:${prefix}/bin  # Make sure that ${prefix}/bin is on the path
+       % libdir=${prefix}/lib
        % cd ${WD}
        % ${package_name}-build-config --makefile-kim-config > ${WD}/Makefile.KIM_Config
 
@@ -524,8 +534,8 @@ INSTRUCTIONS for building and installing this KIM API release:
        Check `vc_forces_numer_deriv':
 
        % cd ${WD}
-       % cp ${KD}/examples/openkim_tests/vc_forces_numer_deriv/vc_forces_numer_deriv.F03 ${WD}
-       % cp ${KD}/examples/openkim_tests/vc_forces_numer_deriv/Makefile ${WD}
+       % cp ${prefix}/vc_forces_numer_deriv.F03 ${WD}
+       % cp ${prefix}/Makefile ${WD}
        % make
        % printf "${mo}" | ./vc_forces_numer_deriv
 
@@ -535,11 +545,11 @@ INSTRUCTIONS for building and installing this KIM API release:
        compile and run the example Verification Check `vc_forces_numer_deriv'
        in whatever directory you like:
 
-       % EXD=${HOME}/my-executable
+       % EXD=${prefix}/my-executable
        % mkdir ${EXD}
        % cd ${EXD}
-       % cp ${KD}/examples/openkim_tests/vc_forces_numer_deriv/vc_forces_numer_deriv.F03 ${EXD}
-       % cp ${KD}/examples/openkim_tests/vc_forces_numer_deriv/Makefile ${EXD}
+       % cp ${prefix}/vc_forces_numer_deriv.F03 ${EXD}
+       % cp ${prefix}/Makefile ${EXD}
        % make
        % printf "${mo}" | ./vc_forces_numer_deriv
 
@@ -563,6 +573,12 @@ INSTRUCTIONS for building and installing this KIM API release:
 
        % cd ${WD}
        % rm -rf ${WD}/${mo}
+
+       Finally, you can run the executable again:
+
+       % cd ${EXD}
+       % printf "${mo}" | ./vc_forces_numer_deriv
+
 
 Once the compilation and installation is successfully completed, read the
 README file in the docs directory for a step-by-step guide to learning more
