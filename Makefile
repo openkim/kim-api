@@ -268,14 +268,14 @@ rm-all-models:
 rm-all: rm-all-model-drivers rm-all-models
 
 rm-%:
-	$(QUELL)if test \( x"__MD_" = x`printf "$*" | sed 's/.*\(__MD_\).*/\1/'` -a -d "$(srcdir)/$(modeldriversdir)/$*" \); then \
+	$(QUELL)if test \( -d "$(srcdir)/$(modeldriversdir)/$*" \); then \
                   printf "*@removing.....@%-50s@rm'ed@from@$(srcdir)/$(modeldriversdir)\n" $*@ | sed -e 's/ /./g' -e 's/@/ /g'; \
                   (cd "$(srcdir)/$(modeldriversdir)" && rm -rf "$*"); \
-                elif test \( x"__MO_" = x`printf "$*" | sed 's/.*\(__MO_\).*/\1/'` -a -d "$(srcdir)/$(modelsdir)/$*" \); then \
+                elif test \( -d "$(srcdir)/$(modelsdir)/$*" \); then \
                   printf "*@removing.....@%-50s@rm'ed@from@$(srcdir)/$(modelsdir)\n" $*@ | sed -e 's/ /./g' -e 's/@/ /g'; \
                   (cd "$(srcdir)/$(modelsdir)" && rm -rf "$*"); \
                 else \
-                  printf "OpenKIM item name, $*, not found.  Nothing removed.\n"; \
+                  printf "Item name, $*, not found.  Nothing removed.\n"; \
                 fi
 
 
