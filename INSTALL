@@ -88,6 +88,7 @@ To install the KIM API to the standard location (/usr/local)
 % printf "g/^KIM_DIR/d\\ni\nKIM_DIR := `pwd`\n.\nw\nq\n" | ed Makefile.KIM_Config
 % make
 % make install
+% make install-set-default-to-vX  # replace X with the major version of this package
 
 To install the KIM API to an alternative location (/path/to/alternate/location)
 
@@ -97,6 +98,7 @@ To install the KIM API to an alternative location (/path/to/alternate/location)
 % printf "g/^#prefix/d\\ni\nprefix = ${prefix}\n.\nw\nq\n" | ed Makefile.KIM_Config
 % make
 % make install
+% make install-set-default-to-vX  # replace X with the major version of this package
 
 
 INSTRUCTIONS for building and installing this KIM API release:
