@@ -48,16 +48,24 @@ Makefile: $(KIM_MAKE_FILES)
 
 descriptor-file-match.o: descriptor-file-match.cpp KIM_API.h KIM_API_status.h Makefile
 
-$(full_package_name)-descriptor-file-match: descriptor-file-match.o $(if $(filter-out static-link,$(KIM_LINK)),\
-                                                                           lib$(KIM_LIB_BUILD).so .lib$(KIM_LIB_BUILD).so,\
-                                                                           lib$(KIM_LIB_BUILD).a)
+$(full_package_name)-descriptor-file-match: descriptor-file-match.o \
+                                            $(if $(filter-out dynamic-link,$(KIM_LINK)),,\
+                                                 ../KIM_API.o ../Unit_Handling.o ../kim_str.o ../KIM_AUX.o \
+                                                 ../model_init_include_stubs.cpp) \
+                                            $(if $(filter-out static-link,$(KIM_LINK)),\
+                                                 lib$(KIM_LIB_BUILD).so .lib$(KIM_LIB_BUILD).so,\
+                                                 lib$(KIM_LIB_BUILD).a)
 	@printf "Creating... $@.\n"
 ifneq (static-link,$(KIM_LINK))
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) -o $@ $< ../lib$(KIM_LIB_BUILD).so $(LDLIBS)
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) -o .$@ $< ../.lib$(KIM_LIB_BUILD).so $(LDLIBS)
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).so $(LDLIBS)
+  ifeq (dynamic-load,$(KIM_LINK))
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ $< ../.lib$(KIM_LIB_BUILD).so $(LDLIBS)
+  else
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ $< ../KIM_API.o ../Unit_Handling.o ../kim_str.o ../KIM_AUX.o ../model_init_include_stubs.cpp $(LDLIBS)
+  endif
 else
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) -o $@ $< ../lib$(KIM_LIB_BUILD).a $(LDLIBS)
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) -o .$@ $< ../lib$(KIM_LIB_BUILD).a $(LDLIBS)
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).a $(LDLIBS)
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ $< ../lib$(KIM_LIB_BUILD).a $(LDLIBS)
 endif
 
 
@@ -81,8 +89,8 @@ endif
 
 $(full_package_name)-build-config: build-config.o .build-config.o
 	@printf "Creating... $@.\n"
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) -o $@ $<
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) -o .$@ .$<
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $<
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ .$<
 
 .PHONY: all clean install installdirs uninstall
 

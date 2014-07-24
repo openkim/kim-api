@@ -112,8 +112,8 @@ ifneq ($(KIM_LINK),static-link)
 	$(QUELL)ar rcs $@ $(ALLOBJ) KIM_API_DIRS.o
 	$(QUELL)ar rcs .$@ $(ALLOBJ) .KIM_API_DIRS.o
 else
-   lib$(KIM_LIB_BUILD).a: MD_DEPS:= $(addprefix $(modeldriversdir)/,$(addsuffix /lib$(MODEL_DRIVER_LIB_BUILD).a,$(MODEL_DRIVERS_LIST)))
-   lib$(KIM_LIB_BUILD).a: MO_DEPS:= $(addprefix $(modelsdir)/,$(addsuffix /lib$(MODEL_LIB_BUILD).a,$(MODELS_LIST)))
+   lib$(KIM_LIB_BUILD).a: MD_DEPS:= $(addprefix $(srcdir)/$(modeldriversdir)/,$(addsuffix /lib$(MODEL_DRIVER_LIB_BUILD).a,$(MODEL_DRIVERS_LIST)))
+   lib$(KIM_LIB_BUILD).a: MO_DEPS:= $(addprefix $(srcdir)/$(modelsdir)/,$(addsuffix /lib$(MODEL_LIB_BUILD).a,$(MODELS_LIST)))
    lib$(KIM_LIB_BUILD).a: $(ALLOBJ) $(MD_DEPS) $(MO_DEPS)
 	@printf "Creating... KIM API library....... $@.\n";
 	$(QUELL)mkdir temp_archive_dir && cd temp_archive_dir && \
@@ -202,6 +202,11 @@ $(MODELS_TARGETS): .models-deleted
                    printf 'if (strcmp(modelname, "%s") == 0)\n{\n   return (*%s_init_pointer)((void **) pkim);\n}\n' \
                    $(patsubst .%.make-temp,%,$@) $(patsubst .%.make-temp,%,$@)                                          >> model_init_include.cpp;\
                 fi;
+	$(QUELL)if ! grep -i -q -s $(patsubst .%.make-temp,'char\*\* %_kim_str',$@) model_init_include_stubs.cpp; then \
+                   printf 'int (* %s_init_pointer)(void **) = 0;\n' $(patsubst .%.make-temp,%,$@)                       >> model_init_include_stubs.cpp;\
+                   printf 'char** %s_kim_str = 0;\n' $(patsubst .%.make-temp,%,$@)                                      >> model_init_include_stubs.cpp;\
+                   printf 'int %s_kim_str_chunks = 0;\n' $(patsubst .%.make-temp,%,$@)                                  >> model_init_include_stubs.cpp;\
+                fi;
 	$(QUELL)if ! grep -i -q -s $(patsubst .%.make-temp,'char\* const %_kim_str',$@) model_kim_str_include.h; then \
                    printf 'extern const int %s_kim_str_chunks;\n' $(patsubst .%.make-temp,%,$@)                         >> model_kim_str_include.h;\
                    printf 'extern const char* const %s_kim_str[];\n' $(patsubst .%.make-temp,%,$@)                      >> model_kim_str_include.h;\
@@ -231,7 +236,7 @@ model_init_include.h model_init_include.cpp: Makefile .models-deleted $(MODELS_T
 
 clean:
 	@printf "Cleaning... src.\n"
-	$(QUELL)rm -f *.o .*.o *.a .*.a *.so .*.so *.mod  model_init_include.h model_init_include.cpp model_kim_str_include.h model_kim_str_include.cpp \
+	$(QUELL)rm -f *.o .*.o *.a .*.a *.so .*.so *.mod  model_init_include.h model_init_include.cpp model_init_include_stubs.cpp model_kim_str_include.h model_kim_str_include.cpp \
                       .*.make-temp .models-deleted KIM_API_Version.h KIM_API_F03_Multiples.incl &&\
                 rm -rf "$(srcdir)/temp_archive_dir"
 

@@ -390,11 +390,11 @@ INSTRUCTIONS for building and installing this KIM API release:
            install the KIM API to a "system-wide" location.  See item 7 below
            for more details on the installation process.
 
-5. The KIM API will look for Model Driver and Model directories in three
-   different locations: the current working directory (CWD), the directory
-   listed in the user configuration file, and the system-wide Model Drivers and
-   Models directories.  For Model Drivers the directories, listed in the order
-   they are searched, are:
+5. When compiled with KIM_LINK=dynamic-load, the KIM API will look for Model
+   Driver and Model directories in three different locations: the current
+   working directory (CWD), the directory listed in the user configuration
+   file, and the system-wide Model Drivers and Models directories.  For Model
+   Drivers the directories, listed in the order they are searched, are:
 
      (a) `.'                                            ("CWD Model Drivers")
      (b) as listed in the user configuration file       ("User Model Drivers")

@@ -1,5 +1,6 @@
 /model_init_include.cpp
 /model_init_include.h
+/model_init_include_stubs.cpp
 /model_kim_str_include.cpp
 /model_kim_str_include.h
 /KIM_API_F03_Multiples.incl

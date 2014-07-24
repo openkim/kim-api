@@ -31,13 +31,15 @@
 #
 
 
-ifeq ($(wildcard ../Makefile.KIM_Config_Helper),)
-  KIM_CONFIG_HELPER = kim-api-build-config
-else
-  include ../Makefile.KIM_Config_Helper
-endif
-ifeq ($(shell $(KIM_CONFIG_HELPER) --version 2> /dev/null),)
-  $(error $(KIM_CONFIG_HELPER) utility is not available.  Something is wrong with your KIM API package setup)
+ifneq (clean,$(MAKECMDGOALS))
+  ifeq ($(wildcard ../Makefile.KIM_Config_Helper),)
+    KIM_CONFIG_HELPER = kim-api-build-config
+  else
+    include ../Makefile.KIM_Config_Helper
+  endif
+  ifeq ($(shell $(KIM_CONFIG_HELPER) --version 2> /dev/null),)
+    $(error $(KIM_CONFIG_HELPER) utility is not available.  Something is wrong with your KIM API package setup)
+  endif
 endif
 
 CC           = $(shell $(KIM_CONFIG_HELPER) --cc)

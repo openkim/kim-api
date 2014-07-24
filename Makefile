@@ -231,8 +231,6 @@ add-%: config
                      if test x"ParameterizedModel" = x"`$(MAKE) $(MAKE_FLAGS) -C \"$(srcdir)/$(modelsdir)/$*\" kim-item-type`"; then \
                        dvr="`$(MAKE) $(MAKE_FLAGS) -C \"$(srcdir)/$(modelsdir)/$*\" model-driver-name`"; \
                        $(MAKE) $(MAKE_FLAGS) -C "$(KIM_DIR)" add-$${dvr}; \
-                     else \
-                       printf "IN THE ESLE...\n"; \
                      fi; \
                    fi; \
                 else \
@@ -428,7 +426,7 @@ $(INPLACE_CONFIG): Makefile
 	$(QUELL)printf "model_drivers_dir = %s\n" $(KIM_DIR)/$(examplesdir)/$(modeldriversdir) >  $@; \
                 printf "models_dir = %s\n" $(KIM_DIR)/$(examplesdir)/$(modelsdir)              >> $@
 
-examples: all $(INPLACE_CONFIG) examples-all
+examples: all $(if $(filter dynamic-load,$(KIM_LINK)),$(INPLACE_CONFIG),) examples-all
 
 examples-all:
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(KIM_DIR)/$(examplesdir) all
