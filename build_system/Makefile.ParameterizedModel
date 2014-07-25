@@ -92,9 +92,12 @@ ifeq      (yes,$(shell if test -d ../$(MODEL_DRIVER_NAME); then printf "yes"; fi
    driver_location := ..
 else ifeq (yes,$(shell if test -d $(USERDIR)/$(MODEL_DRIVER_NAME); then printf "yes"; fi))
    driver_location := $(USERDIR)
-else
+else ifeq (yes,$(shell if test -d $(srcdir)/$(modeldriversdir)/$(MODEL_DRIVER_NAME); then printf "yes"; fi))
    driver_location := $(srcdir)/$(modeldriversdir)
+else
+   $(error Model Driver, $(MODEL_DRIVER_NAME), not found.)
 endif
+
 
 species_list = $(sort $(strip $(filter SPECIES_%_NAME,$(.VARIABLES))))
 paramfile_list =  $(sort $(strip $(filter PARAM_FILE_%_NAME,$(.VARIABLES))))

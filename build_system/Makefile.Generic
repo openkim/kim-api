@@ -211,6 +211,7 @@ KIM_FTYPE_STANDARD_COMPILE_LIST = $(ARCHFLAG) $(PICFLAG) $(KIMINCLUDEFLAGS) $(KI
 # SO_IS_MODEL is set in anoter Makefile
 # SO_IS_PARAMETERIZED is set in another Makefile
 %.so: SO_NEEDS_DOT=$(if $(filter static-link,$(KIM_LINK)),false,true)
+%.so: DOT=$(shell if test -f "$(srcdir)/.lib$(KIM_LIB_BUILD).so"; then printf "."; fi)
 %.so: %.a $(EXPORT_LIST_NAME)
 	@printf "Creating... $@.\n"
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDSHAREDFLAG) \
@@ -225,8 +226,8 @@ KIM_FTYPE_STANDARD_COMPILE_LIST = $(ARCHFLAG) $(PICFLAG) $(KIMINCLUDEFLAGS) $(KI
                  $(LINKSONAME)$(package_dir)/$(if $(SO_IS_MODEL),$(modelsdir)/$(MODEL_NAME)/lib$(MODEL_LIB),$(modeldriversdir)/$(MODEL_DRIVER_NAME)/lib$(MODEL_DRIVER_LIB)).so \
                  $(LDEXPORTLISTFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .lib$(if $(SO_IS_MODEL),$(MODEL_LIB_BUILD),$(MODEL_DRIVER_LIB_BUILD)).so \
                  $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
-                 $(if $(filter-out dynamic-load,$(KIM_LINK)),,$(srcdir)/.lib$(KIM_LIB_BUILD).so) \
-                 $(if $(filter-out dynamic-link,$(KIM_LINK)),,$(if $(SO_IS_PARAMETERIZED),$(modeldriversdir)/$(MODEL_DRIVER_NAME)/.lib$(MODEL_DRIVER_LIB_BUILD).so,)) \
+                 $(if $(filter-out dynamic-load,$(KIM_LINK)),,$(srcdir)/$(DOT)lib$(KIM_LIB_BUILD).so) \
+                 $(if $(filter-out dynamic-link,$(KIM_LINK)),,$(if $(SO_IS_PARAMETERIZED),$(srcdir)/$(modeldriversdir)/$(MODEL_DRIVER_NAME)/.lib$(MODEL_DRIVER_LIB_BUILD).so,)) \
                  $(LDDYNAMICLIB) $(XLANGLDLIBS) $(LDLIBS); \
                fi
 

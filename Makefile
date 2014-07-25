@@ -349,7 +349,7 @@ ifeq (dynamic-load,$(KIM_LINK))
         # Install version file
 	$(QUELL)$(INSTALL_PROGRAM) -m 0644 Makefile.Version "$(dest_package_dir)/Makefile.Version"
   ifeq (true,$(shell git rev-parse --is-inside-work-tree 2> /dev/null))
-	$(QUELL)printf ',s|\$$(shell[^)]*).|$(shell git rev-parse --short HEAD)|\nw\nq\n' | ed "$(dest_package_dir)/Makefile.Version" > /dev/null 2>&1
+	$(QUELL)printf ',s|\$$(shell[^)]*)|$(shell git rev-parse --short HEAD)|\nw\nq\n' | ed "$(dest_package_dir)/Makefile.Version" > /dev/null 2>&1
   endif
 	@printf ".\n"
 else
