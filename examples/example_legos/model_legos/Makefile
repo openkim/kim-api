@@ -493,15 +493,16 @@ ex_model_Ar_P_Morse_%C: model_driver_P_Morse.c      \
             $(if $(filter-out 12,$*),,                 -e '/fixed/d'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 -e "/^destroy.*optional/`printf '{N\nd\n}'`"                                                                                     -e "/^energy.*]$$/`printf '{N\nd\n}'`"                                                                            -e "/^virial/`printf '{N\nd\n}'`" -e "/^particleVirial/`printf '{N\nd\n}'`" -e "/^hessian/`printf '{N\nd\n}'`"                                  )\
                                                                                                               >  $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
 	if test $* -gt 1; then \
+         idminus=`expr "$*" - "1"`; \
          diff --unchanged-line-format=" %4dn %L" --old-line-format="%c'A'%4dn %L" --new-line-format="D     %L" -d \
               $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim \
-              $(KIM_EX_MODELS_DIR)/ex_model_Ar_P_Morse_`printf "%02i" $$((10#$* - 1))`C/model_Ar_P_Morse_`printf "%02i" $$((10#$* - 1))`C.kim \
-              >& $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim.numbered; \
+              $(KIM_EX_MODELS_DIR)/ex_model_Ar_P_Morse_`printf "%02i" $$idminus`C/model_Ar_P_Morse_`printf "%02i" $$idminus`C.kim \
+              > $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim.numbered 2>&1; \
          diff --unchanged-line-format=" %4dn %L" --old-line-format="%c'A'%4dn %L" --new-line-format="D     %L" -d \
               $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim \
-              $(KIM_EX_MODELS_DIR)/ex_model_Ar_P_Morse_`printf "%02i" $$((10#$* - 1))`C/model_Ar_P_Morse_`printf "%02i" $$((10#$* - 1))`C.kim \
+              $(KIM_EX_MODELS_DIR)/ex_model_Ar_P_Morse_`printf "%02i" $$idminus`C/model_Ar_P_Morse_`printf "%02i" $$idminus`C.kim \
               | sed -e "s/^D.*/`printf '\x1b[31m'`&`printf '\x1b[0m'`/" -e "s/^A.*/`printf '\x1b[34m'`&`printf '\x1b[0m'`/" \
-              >& $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim.colorized-numbered; \
+              > $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim.colorized-numbered 2>&1; \
               true; \
         fi;
         # make .c file in the directory
@@ -512,15 +513,16 @@ ex_model_Ar_P_Morse_%C: model_driver_P_Morse.c      \
                model_driver_P_Morse.c > $(KIM_EX_MODELS_DIR)/$@/$@.c
 	printf ',g/^[[:space:]]*[{}][[:space:]]*$$/s/^[[:space:]]*/ /\\\n-,.j\nw\nq\n' | ed $(KIM_EX_MODELS_DIR)/$@/$@.c
 	if test $* -gt 1; then \
+         idminus=`expr "$*" - "1"`; \
          diff --unchanged-line-format=" %4dn %L" --old-line-format="%c'A'%4dn %L" --new-line-format="D     %L" -d \
               $(KIM_EX_MODELS_DIR)/$@/$@.c \
-              $(KIM_EX_MODELS_DIR)/ex_model_Ar_P_Morse_`printf "%02i" $$((10#$* - 1))`C/ex_model_Ar_P_Morse_`printf "%02i" $$((10#$* - 1))`C.c \
-              >& $(KIM_EX_MODELS_DIR)/$@/$@.c.numbered; \
+              $(KIM_EX_MODELS_DIR)/ex_model_Ar_P_Morse_`printf "%02i" $$idminus`C/ex_model_Ar_P_Morse_`printf "%02i" $$idminus`C.c \
+              > $(KIM_EX_MODELS_DIR)/$@/$@.c.numbered 2>&1; \
          diff --unchanged-line-format=" %4dn %L" --old-line-format="%c'A'%4dn %L" --new-line-format="D     %L" -d \
               $(KIM_EX_MODELS_DIR)/$@/$@.c \
-              $(KIM_EX_MODELS_DIR)/ex_model_Ar_P_Morse_`printf "%02i" $$((10#$* - 1))`C/ex_model_Ar_P_Morse_`printf "%02i" $$((10#$* - 1))`C.c \
+              $(KIM_EX_MODELS_DIR)/ex_model_Ar_P_Morse_`printf "%02i" $$idminus`C/ex_model_Ar_P_Morse_`printf "%02i" $$idminus`C.c \
               | sed -e "s/^D.*/`printf '\x1b[31m'`&`printf '\x1b[0m'`/" -e "s/^A.*/`printf '\x1b[34m'`&`printf '\x1b[0m'`/" \
-              >& $(KIM_EX_MODELS_DIR)/$@/$@.c.colorized-numbered; \
+              > $(KIM_EX_MODELS_DIR)/$@/$@.c.colorized-numbered 2>&1; \
               true; \
         fi;
 
