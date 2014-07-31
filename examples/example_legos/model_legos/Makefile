@@ -600,6 +600,7 @@ ex_model_driver_P_Morse: model_driver_Morse_README    \
         # make .c file in the directory
 	sed -e '/$(VER_REG_EXP_13)/d' \
             -e 's|[[:space:]]*$(VER_REG_EXP)[[:space:]]*$$||' \
+            -e 's/<FILL_model_driver_name>/$@/g' \
             $(PARAMETER_SED_CMDS) \
                model_driver_P_Morse.c > $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$@.c
 
