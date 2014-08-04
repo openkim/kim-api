@@ -207,7 +207,7 @@ static int compute(void* km)
    double g;
    double dg;
    double dU;
-   double dphieff;
+   double dphieff = 0.0;
    double dphii;
    double dUi;
    double Ei;
@@ -226,8 +226,8 @@ static int compute(void* km)
    int comp_energy;
    double* rho;
    double U;
-   double* derU;
-
+   double* derU = 0;
+   
    int* nParts;
    double* energy;
    double* coords;
@@ -239,7 +239,7 @@ static int compute(void* km)
    int* neighListOfCurrentPart;
    int* particleSpecies;
    double* virial;
-   char* NBCstr;
+   const char* NBCstr;
    int IterOrLoca;
    int HalfOrFull;
    int NBC;
@@ -252,7 +252,7 @@ static int compute(void* km)
     * HalfOrFull = 1 -- Half
     *            = 2 -- Full
     *****************************/
-   NBCstr = (char*) KIM_API_get_NBC_method(pkim, &ier);
+   ier = KIM_API_get_NBC_method(pkim, &NBCstr);
    if (KIM_STATUS_OK > ier)
    {
       KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_NBC_method", ier);
@@ -299,7 +299,6 @@ static int compute(void* km)
       KIM_API_report_error(__LINE__, __FILE__, "Unknown NBC method", ier);
       return ier;
    }
-   free(NBCstr); /* don't forget to release the memory... */
 
    /* determine neighbor list handling mode */
    if (NBC != 3)
@@ -366,8 +365,12 @@ static int compute(void* km)
          numberContrib = *nParts;
       }
    }
+   else
+   { /* provide initialization even if not used */
+      numberContrib = *nParts;
+   }
 
-   /* Check to be sure that the species are correct */
+   /* Check to be sure that the particle species are correct */
    ier = KIM_STATUS_FAIL; /* assume an error */
    for (i = 0; i < *nParts; ++i)
    {
@@ -779,12 +782,12 @@ int model_init(void *km)
    int ier;
 
    /* store pointer to compute function in KIM object */
-   KIM_API_setm_data(pkim, &ier, 2*4,
-                     "compute", 1, (void*) &compute, 1,
-                     "destroy", 1, (void*) &destroy, 1);
+   KIM_API_setm_method(pkim, &ier, 2*4,
+                     "compute", 1, (func_ptr) &compute, 1,
+                     "destroy", 1, (func_ptr) &destroy, 1);
    if (KIM_STATUS_OK > ier)
    {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_setm_data", ier);
+      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_setm_method", ier);
       return ier;
    }
 

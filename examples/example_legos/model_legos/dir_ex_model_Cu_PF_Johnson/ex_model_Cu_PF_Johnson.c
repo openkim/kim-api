@@ -505,8 +505,8 @@ static int compute(void* km)
          KIM_API_report_error(__LINE__, __FILE__, "get_current_part_neighbors", ier);
          return ier;
       }
-      
-      /* loop over the neighbors of part i */
+
+      /* loop over the neighbors of particle i */
       for (jj = 0; jj < numOfPartNeigh; ++ jj)
       {
          j = neighListOfCurrentPart[jj]; /* get neighbor ID */
@@ -551,7 +551,7 @@ static int compute(void* km)
       } /* loop on jj */
    }    /* infinite while loop (terminated by break statements above */
 
-   
+
    /* Now that we know the electron densities, calculate embedding part
     * of energy U and its derivative U' (derU)
     */
@@ -613,7 +613,7 @@ static int compute(void* km)
          KIM_API_report_error(__LINE__, __FILE__, "get_current_part_neighbors", ier);
          return ier;
       }
-      
+
       /* loop over the neighbors of particle i */
       for (jj = 0; jj < numOfPartNeigh; ++ jj)
       {
@@ -768,7 +768,7 @@ static void get_current_part_neighbors(int IterOrLoca, int HalfOrFull, int NBC, 
          KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_neigh", *ier);
          return;
       }
-      
+
       *i = currentPart;
    }
    else
@@ -779,7 +779,7 @@ static void get_current_part_neighbors(int IterOrLoca, int HalfOrFull, int NBC, 
          *ier = KIM_STATUS_NEIGH_ITER_PAST_END;
          return;
       }
-      
+
       if (3 == NBC)     /* CLUSTER NBC method */
       {
          *numOfPartNeigh = nParts - (*i + 1);
