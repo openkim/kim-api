@@ -36,7 +36,7 @@ KIM_TEMPLATES_DIR := $(KIM_DIR)/docs/templates
 KIM_EX_MODELS_DIR := $(KIM_DIR)/examples/models
 KIM_EX_MODEL_DRIVERS_DIR := $(KIM_DIR)/examples/model_drivers
 
-VPATH = $(KIM_EX_MODELS_DIR) $(KIM_EX_MODEL_DRIVERS_DIR) $(KIM_TEMPLATE_DIR)
+VPATH = $(KIM_EX_MODELS_DIR) $(KIM_EX_MODEL_DRIVERS_DIR) $(KIM_TEMPLATES_DIR)
 
 
 VER_REG_EXP =    \/\*..............\*\/
@@ -66,11 +66,6 @@ PARAMETER_SED_CMDS = \
             -e 's/<FILL_parameter_type_parameter_2>/PARAM_FREE_C/g' \
             -e 's/<FILL_parameter_type_parameter_3>/PARAM_FREE_Rzero/g' \
             -e 's/<FILL_parameter_type_parameter_4>/PARAM_FIXED_shift/g'
-
-#model_driver_P_Template.c: model_driver_P_Morse.c Makefile
-#	sed -e '/$(VER_REG_EXP_14)/d' \
-#            -e 's|[[:space:]]*$(VER_REG_EXP)[[:space:]]*$$||' \
-#               $< > $@
 
 SED_VER_CMD = "s/VERSION_STR/1.6.0/g"
 SED_CMD = sed -e "s/MODEL_NAME_STR/$@/g" -e "s/MODEL_KIM_NAME_STR/${subst ex_,,$@}/g"
@@ -142,6 +137,8 @@ AUTO_GEN_MODELS = ex_model_Al_PF_ErcolessiAdams    \
                   ex_model_Ar_P_Morse_12C          \
                   ex_model_driver_P_Morse_13C      \
                   model_driver_P_Template.c        \
+                  model_El_P_Template.F03          \
+                  model_El_P_Template.f.kim        \
                   ex_model_Ar_P_Morse_14C
 
 all: $(AUTO_GEN_MODELS) EXAMPLES.README $(KIM_EX_MODELS_DIR)/Makefile $(KIM_EX_MODEL_DRIVERS_DIR)/Makefile
@@ -887,7 +884,30 @@ ex_model_Ar_P_MLJ_F03: dir_ex_model_Ar_P_MLJ_F03               \
 	mkdir -p $(KIM_EX_MODELS_DIR)/$@
 	@touch $(KIM_EX_MODELS_DIR)/$@
 	cp $(KIM_DIR)/LICENSE.CDDL $(KIM_EX_MODELS_DIR)/$@
-	cp -rf dir_$@/* $(KIM_EX_MODELS_DIR)/$@/
+	cp -f dir_$@/Makefile $(KIM_EX_MODELS_DIR)/$@/Makefile
+	sed -e '/\!\..$$/d' \
+            -e 's|[[:space:]]*\!..$$||' \
+            -e 's/<FILL_model_name>/$@/g' \
+            -e 's/<FILL_model_class_name>/Lennard-Jones/g' \
+            -e 's/<FILL_element_name>/Ar/g' \
+            -e 's/<FILL_model_reference>/Ashcroft and Mermin/g' \
+            dir_$@/$@.F03 > $(KIM_EX_MODELS_DIR)/$@/$@.F03
+	cp -f dir_$@/README $(KIM_EX_MODELS_DIR)/$@/README
+	sed -e $(SED_VER_CMD) \
+            -e 's/<FILL_species_name>/Ar                 /g' \
+            dir_$@/model_Ar_P_MLJ_F03.kim > $(KIM_EX_MODELS_DIR)/$@/model_Ar_P_MLJ_F03.kim
+
+model_El_P_Template.F03: dir_ex_model_Ar_P_MLJ_F03/ex_model_Ar_P_MLJ_F03.F03 \
+                         Makefile
+	sed -e '/!.\.$$/d' \
+            -e 's|[[:space:]]*!..$$||' \
+            dir_ex_model_Ar_P_MLJ_F03/ex_model_Ar_P_MLJ_F03.F03 > $(KIM_TEMPLATES_DIR)/$@
+
+model_El_P_Template.f.kim: dir_ex_model_Ar_P_MLJ_F03/model_Ar_P_MLJ_F03.kim \
+                           Makefile
+	sed -e $(SED_VER_CMD) \
+            dir_ex_model_Ar_P_MLJ_F03/model_Ar_P_MLJ_F03.kim > $(KIM_TEMPLATES_DIR)/model_El_P_Template.f.kim
+
 
 ex_model_Ne_P_LJ_NEIGH_PURE_H: dir_ex_model_Ne_P_LJ_NEIGH_PURE_H               \
                                $(wildcard dir_ex_model_Ne_P_LJ_NEIGH_PURE_H/*) \
