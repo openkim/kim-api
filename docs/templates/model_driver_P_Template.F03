@@ -330,8 +330,8 @@ endif
 Compute_Energy_Forces = KIM_STATUS_FAIL ! assume an error
 do i = 1,N
    if (particleSpecies(i).ne.speccode) then
-      idum = kim_api_report_error(__LINE__, THIS_FILE_NAME,           &
-                                  "Unexpected species specie detected", &
+      idum = kim_api_report_error(__LINE__, THIS_FILE_NAME,      &
+                                  "Unexpected species detected", &
                                   Compute_Energy_Forces)
       return
    endif
@@ -657,7 +657,7 @@ character(len=nmstrlen), pointer :: paramfile(:)
 !-- Local variables
 integer(c_int), parameter :: one=1
 integer(c_int) i,j,ier, idum
-type(BUFFER_TYPE), pointer :: buf;
+type(BUFFER_TYPE), pointer :: buf
 character (len=80) :: error_message
 ! define variables for all model parameters to be read in
 real(c_double) in_cutoff
@@ -668,8 +668,7 @@ real(c_double) in_<FILL last parameter>
 
 !-- KIM variables
 real(c_double), pointer :: cutoff; type(c_ptr) :: pcutoff
-character(len=KIM_KEY_STRING_LENGTH), pointer :: NBC_Method
-type(c_ptr)pNBC_Method
+character(len=KIM_KEY_STRING_LENGTH) :: NBC_Method
 
 
 call c_f_pointer(pparamfile, paramfile, [numparamfiles])
@@ -719,7 +718,8 @@ if (ier.lt.KIM_STATUS_OK) then
                              "kim_api_convert_to_act_unit", ier)
    goto 42
 endif
-<FILL parameter 1> = <FILL parameter 1> * kim_api_convert_to_act_unit_f(pkim, "A", "eV", "e", "K", "ps", &
+
+<FILL parameter 1> = <FILL parameter 1> * kim_api_convert_to_act_unit(pkim, "A", "eV", "e", "K", "ps", &
                                                                       <FILL exponents (5) for parameter 1>, ier)
 if (ier.lt.KIM_STATUS_OK) then
    idum=kim_api_report_error(__LINE__, THIS_FILE_NAME, &
@@ -727,7 +727,7 @@ if (ier.lt.KIM_STATUS_OK) then
    goto 42
 endif
 
-<FILL parameter 2> = <FILL parameter 2> * kim_api_convert_to_act_unit_f(pkim, "A", "eV", "e", "K", "ps", &
+<FILL parameter 2> = <FILL parameter 2> * kim_api_convert_to_act_unit(pkim, "A", "eV", "e", "K", "ps", &
                                                                       <FILL exponents (5) for parameter 2>, ier)
 if (ier.lt.KIM_STATUS_OK) then
    idum=kim_api_report_error(__LINE__, THIS_FILE_NAME, &
@@ -765,13 +765,12 @@ buf%<FILL parameter 2? = in_<FILL parameter 2>
 ! *****************************
 !
 !
-pNBC_Method = kim_api_get_nbc_method(pkim, ier)
+ier = kim_api_get_nbc_method(pkim, NBC_Method)
 if (ier.lt.KIM_STATUS_OK) then
    idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                                "kim_api_get_nbc_method", ier)
    goto 42
 endif
-call c_f_pointer(pNBC_Method, NBC_Method)
 if (index(NBC_Method,"NEIGH_RVEC_H").eq.1) then
    buf%NBC        = 0
    buf%HalfOrFull = 1
@@ -799,8 +798,6 @@ else
                                "Unknown NBC method", ier)
    goto 42
 endif
-call KIM_API_c_free(pNBC_Method) ! don't forget to release the memory...
-NBC_Method => null()
 
 ! Determine neighbor list handling mode
 !
