@@ -307,10 +307,10 @@ Buckingham Model Driver and a Ne KIM Model based on it are given below.
     % cp ${KD}/docs/templates/Makefile.ParameterizedModel.template Makefile
     % cp ${KD}/docs/templates/model_El_P_Template.params model_Ne_P_Buckingham.params
 
-(i) Edit the Makefile and change the Model name, Model Driver name, and
-    SPECIES_001_NAME appropriately. (Search for the word "FILL".)  Also change
-    the "Release:" line to indicate that the file is part of your new Model and
-    not part of the kim-api release.
+(i) Edit the Makefile and change the Model name, Model Driver name,
+    SPECIES_001_NAME, and Parameter file name appropriately. (Search for the
+    word "FILL".)  Also change the "Release:" line to indicate that the file is
+    part of your new Model and not part of the kim-api release.
 
 (j) Edit the model_Ne_P_Buckingham.params file appropriately. (Search for the
      word "FILL".)  Also change the "Release:" line to indicate that the file

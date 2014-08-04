@@ -33,11 +33,11 @@
 #
 
 
-This directory (ex_model_Ar_P_MLJ_C) contains a modified Lennard Jones (LJ)
-Model with smoothed cutoff radius written in C.  It complies with the KIM API
-library, supporting all NBCs and Locator and Iterator mode, and publishes its
-parameters, and supports optional computation of `energy', `forces',
-`particleEnergy', and `virial'.
+This directory (MODEL_NAME_STR) contains a modified Lennard Jones (LJ)
+Model with smoothed cutoff radius written in LANGUAGE_STR.  It complies with
+the KIM API library, supporting all NBCs and Locator and Iterator mode, and
+publishes its parameters, and supports optional computation of `energy',
+`forces', `particleEnergy', and `virial'.
 
 
 The following files are in this directory (before any compilation is performed):
@@ -51,9 +51,10 @@ Makefile
 README
      this file
 
-ex_model_Ar_P_MLJ_C.c
-     C file that contains the implementation of the modified LJ potential
+MODEL_NAME_STR.LANGUAGE_STR
+     LANGUAGE_STR file that contains the implementation of the modified LJ
+     potential.
 
-model_Ar_P_MLJ_C.kim
+MODEL_KIM_NAME_STR.kim
      KIM descriptor file, contains all variables and methods that are exposed
-     through the KIM API interface
+     through the KIM API interface.

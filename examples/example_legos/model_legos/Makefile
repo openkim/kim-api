@@ -136,11 +136,13 @@ AUTO_GEN_MODELS = ex_model_Al_PF_ErcolessiAdams     \
                   ex_model_Ar_P_Morse_11C           \
                   ex_model_Ar_P_Morse_12C           \
                   ex_model_driver_P_Morse_13C       \
+                  ex_model_Ar_P_Morse_14C           \
                   model_driver_P_Template.c         \
                   model_driver_P_Template.c.kim.tpl \
                   model_El_P_Template.F03           \
                   model_El_P_Template.f.kim         \
-                  ex_model_Ar_P_Morse_14C
+                  model_El_P_Template.c             \
+                  model_El_P_Template.c.kim
 
 all: $(AUTO_GEN_MODELS) EXAMPLES.README $(KIM_EX_MODELS_DIR)/Makefile $(KIM_EX_MODEL_DRIVERS_DIR)/Makefile
 
@@ -413,7 +415,6 @@ model_driver_P_Template.c.kim.tpl: model_driver_P_Morse.kim.tpl \
                -e 's/<FILL_parameter_type_parameter_2>/PARAM_FREE_C               /g' \
                -e 's/<FILL_parameter_type_parameter_3>/PARAM_FREE_Rzero           /g' \
                -e 's/<FILL_parameter_type_parameter_4>/PARAM_FIXED_shift          /g' \
-               -e 's/SPECIES_001_NAME_STR/<FILL_species_name> /g' \
                -e 's/<FILL_parameter_1_unit>/energy          /g' \
                -e 's/<FILL_parameter_2_unit>/length\^-1       /g' \
                -e 's/<FILL_parameter_3_unit>/length          /g' \
@@ -886,43 +887,74 @@ ex_model_ArNe_P_MLJ_NEIGH_RVEC_F: dir_ex_model_ArNe_P_MLJ_NEIGH_RVEC_F          
 	cp $(KIM_DIR)/LICENSE.CDDL $(KIM_EX_MODELS_DIR)/$@
 	cp -rf dir_$@/* $(KIM_EX_MODELS_DIR)/$@/
 
-ex_model_Ar_P_MLJ_C: dir_ex_model_Ar_P_MLJ_C               \
-                     $(wildcard dir_ex_model_Ar_P_MLJ_C/*) \
+ex_model_Ar_P_MLJ_C: dir_model_El_P_MLJ/README             \
+                     dir_model_El_P_MLJ/model_El_P_MLJ.c   \
+                     dir_model_El_P_MLJ/model_El_P_MLJ.kim \
+                     model_Makefile                        \
                      Makefile
 	mkdir -p $(KIM_EX_MODELS_DIR)/$@
-	@touch $(KIM_EX_MODELS_DIR)/$@
 	cp $(KIM_DIR)/LICENSE.CDDL $(KIM_EX_MODELS_DIR)/$@
-	cp -rf dir_$@/* $(KIM_EX_MODELS_DIR)/$@/
+	sed -e 's/MODEL_NAME_STR/$@/g' \
+            -e 's/MODEL_KIM_FILE_STR/$(subst ex_,,$@).kim/g' model_Makefile > $(KIM_EX_MODELS_DIR)/$@/Makefile
+	sed -e 's/MODEL_NAME_STR/$@/g' \
+            -e 's/LANGUAGE_STR/C/g' \
+            -e 's/MODEL_KIM_NAME_STR/$(subst ex_,,$@)/g' dir_model_El_P_MLJ/README > $(KIM_EX_MODELS_DIR)/$@/README
+	sed -e '/\/\*\..\*\/$$/d' \
+            -e 's|[[:space:]]*/\*..\*/$$||' \
+            -e 's/<FILL_model_name>  /$@/g' \
+            -e 's/<FILL_model_reference>/Ashcroft and Mermin   /g' \
+            dir_model_El_P_MLJ/model_El_P_MLJ.c > $(KIM_EX_MODELS_DIR)/$@/$@.c
+	sed -e $(SED_VER_CMD) \
+            -e 's/<FILL_species_name>/Ar                 /g' \
+            -e 's/BASED_LIST_STR/ZeroBasedLists/g' \
+            dir_model_El_P_MLJ/model_El_P_MLJ.kim > $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
 
-ex_model_Ar_P_MLJ_F03: dir_ex_model_Ar_P_MLJ_F03               \
-                       $(wildcard dir_ex_model_Ar_P_MLJ_F03/*) \
+ex_model_Ar_P_MLJ_F03: dir_model_El_P_MLJ/README             \
+                       dir_model_El_P_MLJ/model_El_P_MLJ.F03 \
+                       dir_model_El_P_MLJ/model_El_P_MLJ.kim \
+                       model_Makefile                        \
                        Makefile
 	mkdir -p $(KIM_EX_MODELS_DIR)/$@
-	@touch $(KIM_EX_MODELS_DIR)/$@
 	cp $(KIM_DIR)/LICENSE.CDDL $(KIM_EX_MODELS_DIR)/$@
-	cp -f dir_$@/Makefile $(KIM_EX_MODELS_DIR)/$@/Makefile
+	sed -e 's/MODEL_NAME_STR/$@/g' \
+            -e 's/MODEL_KIM_FILE_STR/$(subst ex_,,$@).kim/g' model_Makefile > $(KIM_EX_MODELS_DIR)/$@/Makefile
+	sed -e 's/MODEL_NAME_STR/$@/g' \
+            -e 's/LANGUAGE_STR/F03/g' \
+            -e 's/MODEL_KIM_NAME_STR/$(subst ex_,,$@)/g' dir_model_El_P_MLJ/README > $(KIM_EX_MODELS_DIR)/$@/README
 	sed -e '/\!\..$$/d' \
             -e 's|[[:space:]]*\!..$$||' \
             -e 's/<FILL_model_name>/$@/g' \
-            -e 's/<FILL_model_class_name>/Lennard-Jones/g' \
-            -e 's/<FILL_element_name>/Ar/g' \
             -e 's/<FILL_model_reference>/Ashcroft and Mermin/g' \
-            dir_$@/$@.F03 > $(KIM_EX_MODELS_DIR)/$@/$@.F03
-	cp -f dir_$@/README $(KIM_EX_MODELS_DIR)/$@/README
+            dir_model_El_P_MLJ/model_El_P_MLJ.F03 > $(KIM_EX_MODELS_DIR)/$@/$@.F03
 	sed -e $(SED_VER_CMD) \
             -e 's/<FILL_species_name>/Ar                 /g' \
-            dir_$@/model_Ar_P_MLJ_F03.kim > $(KIM_EX_MODELS_DIR)/$@/model_Ar_P_MLJ_F03.kim
+            -e 's/BASED_LIST_STR/OneBasedLists /g' \
+            dir_model_El_P_MLJ/model_El_P_MLJ.kim > $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
 
-model_El_P_Template.F03: dir_ex_model_Ar_P_MLJ_F03/ex_model_Ar_P_MLJ_F03.F03 \
+model_El_P_Template.c: dir_model_El_P_MLJ/model_El_P_MLJ.c \
+                       Makefile
+	sed -e '/\/\*.\.\*\/$$/d' \
+            -e 's|[[:space:]]*/\*..\*/$$||' \
+            dir_model_El_P_MLJ/model_El_P_MLJ.c > $(KIM_TEMPLATES_DIR)/$@
+
+model_El_P_Template.c.kim: dir_model_El_P_MLJ/model_El_P_MLJ.kim \
+                           Makefile
+	sed -e $(SED_VER_CMD) \
+            -e 's/BASED_LIST_STR/ZeroBasedLists/g' \
+            dir_model_El_P_MLJ/model_El_P_MLJ.kim > $(KIM_TEMPLATES_DIR)/model_El_P_Template.c.kim
+
+
+model_El_P_Template.F03: dir_model_El_P_MLJ/model_El_P_MLJ.F03 \
                          Makefile
 	sed -e '/!.\.$$/d' \
             -e 's|[[:space:]]*!..$$||' \
-            dir_ex_model_Ar_P_MLJ_F03/ex_model_Ar_P_MLJ_F03.F03 > $(KIM_TEMPLATES_DIR)/$@
+            dir_model_El_P_MLJ/model_El_P_MLJ.F03 > $(KIM_TEMPLATES_DIR)/$@
 
-model_El_P_Template.f.kim: dir_ex_model_Ar_P_MLJ_F03/model_Ar_P_MLJ_F03.kim \
+model_El_P_Template.f.kim: dir_model_El_P_MLJ/model_El_P_MLJ.kim \
                            Makefile
 	sed -e $(SED_VER_CMD) \
-            dir_ex_model_Ar_P_MLJ_F03/model_Ar_P_MLJ_F03.kim > $(KIM_TEMPLATES_DIR)/model_El_P_Template.f.kim
+            -e 's/BASED_LIST_STR/OneBasedLists /g' \
+            dir_model_El_P_MLJ/model_El_P_MLJ.kim > $(KIM_TEMPLATES_DIR)/model_El_P_Template.f.kim
 
 
 ex_model_Ne_P_LJ_NEIGH_PURE_H: dir_ex_model_Ne_P_LJ_NEIGH_PURE_H               \

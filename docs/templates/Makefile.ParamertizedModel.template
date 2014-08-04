@@ -44,7 +44,7 @@ include ../Makefile.KIM_Config
 MODEL_DRIVER_NAME   := <FILL model driver name>
 MODEL_NAME          := <FILL model name>
 SPECIES_001_NAME    := <FILL species name>
-PARAM_FILE_001_NAME := $(strip $(MODEL_NAME)).params
+PARAM_FILE_001_NAME := <FILL parameter file name>
 
 # load remaining KIM make configuration
 include $(KIM_DIR)/$(builddir)/Makefile.ParameterizedModel

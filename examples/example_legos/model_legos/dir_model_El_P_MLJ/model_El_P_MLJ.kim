@@ -37,7 +37,7 @@
 #
 #######################################################################################################
 
-KIM_API_Version := 1.6.0
+KIM_API_Version := VERSION_STR
 
 Unit_Handling    := fixed
 Unit_length      := A
@@ -51,14 +51,14 @@ Unit_time        := ps
 PARTICLE_SPECIES:
 # Symbol/name               Type                    code
 
-Ar                          spec                    1
+<FILL_species_name>         spec                    1
 
 
 #######################################################################################################
 CONVENTIONS:
 # Name                      Type
 
-ZeroBasedLists              flag
+BASED_LIST_STR              flag
 
 Neigh_IterAccess            flag
 

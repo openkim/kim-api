@@ -1,6 +1,6 @@
 ! Markup tag documentation:                                                     !..
 !    1 - ex_model_Ar_P_MLJ_F03.F03                                              !..
-!    2 - ex_model_El_P_Template.F03                                             !..
+!    2 - model_El_P_Template.F03                                                !..
 !                                                                               !..
 !                                                                               !12
 ! CDDL HEADER START                                                             !12
@@ -45,7 +45,7 @@
 !**                                                                             !12
 !**  MODULE <FILL_model_name>                                                   !12
 !**                                                                             !12
-!**  Lennard-Jones pair potential model for Ar                                  !1.
+!**  Modified Lennard-Jones pair potential (with smooth cutoff) model for Ar    !1.
 !**  <FILL_model_class_name> pair potential model for <FILL_element_name>       !.2
 !**                                                                             !12
 !**  Reference: <FILL_model_reference>                                          !12
