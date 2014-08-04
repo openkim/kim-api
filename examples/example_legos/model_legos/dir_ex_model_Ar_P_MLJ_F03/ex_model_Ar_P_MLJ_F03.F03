@@ -295,9 +295,9 @@ if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
    return
 endif
 
-call c_f_pointer(pN,             N)
+call c_f_pointer(pN,               N)
 call c_f_pointer(pparticleSpecies, particleSpecies, [N])
-call c_f_pointer(pcoor,          coor,          [DIM,N])
+call c_f_pointer(pcoor,            coor,            [DIM,N])
 if (HalfOrFull.eq.1)  call c_f_pointer(pnumContrib,     numContrib)
 if (NBC.eq.2)         call c_f_pointer(pboxSideLengths, boxSideLengths, [DIM])
 if (comp_energy.eq.1) call c_f_pointer(penergy,         energy)
@@ -318,8 +318,8 @@ endif
 Compute_Energy_Forces = KIM_STATUS_FAIL ! assume an error
 do i = 1,N
    if (particleSpecies(i).ne.speccode) then
-      idum = kim_api_report_error(__LINE__, THIS_FILE_NAME,           &
-                                  "Unexpected species specie detected", &
+      idum = kim_api_report_error(__LINE__, THIS_FILE_NAME,      &
+                                  "Unexpected species detected", &
                                   Compute_Energy_Forces)
       return
    endif
@@ -362,7 +362,7 @@ endif
 i = 0
 do
 
-   ! Set up neighbor list for next part for all NBC methods
+   ! Set up neighbor list for next particle for all NBC methods
    !
    if (IterOrLoca.eq.1) then ! ITERATOR mode
       Compute_Energy_Forces = kim_api_get_neigh(pkim,0,1,part_ret,numnei, &
