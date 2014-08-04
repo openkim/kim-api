@@ -28,6 +28,14 @@
 #    Valeriu Smirichinski
 #
 
+#
+# Portions Copyright (c) <FILL_year>, <FILL_copyright_holder>.
+# All rights reserved.
+#
+# Contributors:
+#    <FILL_your_name>
+#
+
 #######################################################################################################
 #
 # Release: This file is part of the kim-api.git repository.

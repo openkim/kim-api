@@ -29,6 +29,14 @@
 !    Stephen M. Whalen
 !
 
+!
+! Portions Copyright (c) <FILL_year>, <FILL_copyright_holder>.
+! All rights reserved.
+!
+! Contributors:
+!    <FILL_your_name>
+!
+
 !****************************************************************************
 !**
 !**  MODULE model_driver_P_<FILL model driver name>

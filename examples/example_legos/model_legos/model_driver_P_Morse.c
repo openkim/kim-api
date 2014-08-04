@@ -47,7 +47,7 @@
 /*                                                                            *//*12345678901234*/
                                                                                 /*.............4*/
 /*                                                                            *//*.............4*/
-/* Copyright (c) <FILL_year>, <FILL_copyright_holder>.             .          *//*.............4*/
+/* Portions Copyright (c) <FILL_year>, <FILL_copyright_holder>.               *//*.............4*/
 /* All rights reserved.                                                       *//*.............4*/
 /*                                                                            *//*.............4*/
 /* Contributors:                                                              *//*.............4*/

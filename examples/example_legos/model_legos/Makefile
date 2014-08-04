@@ -411,14 +411,7 @@ model_driver_P_Template.c.kim.tpl: model_driver_P_Morse.kim.tpl \
                                    Makefile
 	$(D_CAT) model_driver_P_Morse.kim.tpl | \
            sed -e $(SED_VER_CMD) \
-               -e 's/<FILL_parameter_type_parameter_1>/PARAM_FREE_epsilon         /g' \
-               -e 's/<FILL_parameter_type_parameter_2>/PARAM_FREE_C               /g' \
-               -e 's/<FILL_parameter_type_parameter_3>/PARAM_FREE_Rzero           /g' \
-               -e 's/<FILL_parameter_type_parameter_4>/PARAM_FIXED_shift          /g' \
-               -e 's/<FILL_parameter_1_unit>/energy          /g' \
-               -e 's/<FILL_parameter_2_unit>/length\^-1       /g' \
-               -e 's/<FILL_parameter_3_unit>/length          /g' \
-               -e 's/<FILL_parameter_4_unit>/energy          /g' \
+               -e 's/^@//' \
            >  $(KIM_TEMPLATES_DIR)/$@
 
 ex_model_driver_P_Morse_13C: model_driver_Morse_README    \
@@ -437,16 +430,26 @@ ex_model_driver_P_Morse_13C: model_driver_Morse_README    \
 	$(D_CAT) model_driver_Makefile | sed -e 's/MODEL_DRIVER_NAME_STR/$@/g' \
                                           -e 's/MODEL_DRIVER_KIM_FILE_TEMPLATE_STR/$(subst ex_,,$@).kim.tpl/' >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/Makefile
         # make .kim file in the directory
-	$(D_CAT) model_driver_P_Morse.kim.tpl | sed -e $(SED_VER_CMD)                                         >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$(subst ex_,,$@).kim.tpl
+	$(D_CAT) model_driver_P_Morse.kim.tpl | \
+           sed -e $(SED_VER_CMD)\
+               -e 's/<FILL_parameter_type_parameter_1>/PARAM_FREE_epsilon         /g' \
+               -e 's/<FILL_parameter_type_parameter_2>/PARAM_FREE_C               /g' \
+               -e 's/<FILL_parameter_type_parameter_3>/PARAM_FREE_Rzero           /g' \
+               -e 's/<FILL_parameter_type_parameter_4>/PARAM_FIXED_shift          /g' \
+               -e 's/<FILL_parameter_1_unit>/energy          /g' \
+               -e 's/<FILL_parameter_2_unit>/length\^-1       /g' \
+               -e 's/<FILL_parameter_3_unit>/length          /g' \
+               -e 's/<FILL_parameter_4_unit>/energy          /g' \
+               >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$(subst ex_,,$@).kim.tpl
 	diff --unchanged-line-format=" %4dn %L" --old-line-format="%c'A'%4dn %L" --new-line-format="D     %L" -d \
               $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$(subst ex_,,$@).kim.tpl \
               $(KIM_EX_MODELS_DIR)/ex_model_Ar_P_Morse_12C/model_Ar_P_Morse_12C.kim \
-              > $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$(subst ex_,,$@).kim.numbered; true
+              > $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$(subst ex_,,$@).kim.tpl.numbered; true
 	diff --unchanged-line-format=" %4dn %L" --old-line-format="%c'A'%4dn %L" --new-line-format="D     %L" -d \
               $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$(subst ex_,,$@).kim.tpl \
               $(KIM_EX_MODELS_DIR)/ex_model_Ar_P_Morse_12C/model_Ar_P_Morse_12C.kim \
               | sed -e "s/^D.*/`printf '\x1b[31m'`&`printf '\x1b[0m'`/" -e "s/^A.*/`printf '\x1b[34m'`&`printf '\x1b[0m'`/" \
-              > $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$(subst ex_,,$@).kim.colorized-numbered; true
+              > $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$(subst ex_,,$@).kim.tpl.colorized-numbered; true
         # make .c file in the directory
 	sed -e '/$(VER_REG_EXP_13)/d' \
             -e 's|[[:space:]]*$(VER_REG_EXP)[[:space:]]*$$||' \
@@ -610,7 +613,17 @@ ex_model_driver_P_Morse: model_driver_Morse_README    \
 	$(D_CAT) model_driver_Makefile | sed -e 's/MODEL_DRIVER_NAME_STR/$@/g' \
                                           -e 's/MODEL_DRIVER_KIM_FILE_TEMPLATE_STR/$(subst ex_,,$@).kim.tpl/' >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/Makefile
         # make .kim file in the directory
-	$(D_CAT) model_driver_P_Morse.kim.tpl | sed -e $(SED_VER_CMD)                                         >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$(subst ex_,,$@).kim.tpl
+	$(D_CAT) model_driver_P_Morse.kim.tpl | \
+           sed -e '/^@/d' -e $(SED_VER_CMD) \
+               -e 's/<FILL_parameter_type_parameter_1>/PARAM_FREE_epsilon         /g' \
+               -e 's/<FILL_parameter_type_parameter_2>/PARAM_FREE_C               /g' \
+               -e 's/<FILL_parameter_type_parameter_3>/PARAM_FREE_Rzero           /g' \
+               -e 's/<FILL_parameter_type_parameter_4>/PARAM_FIXED_shift          /g' \
+               -e 's/<FILL_parameter_1_unit>/energy          /g' \
+               -e 's/<FILL_parameter_2_unit>/length\^-1       /g' \
+               -e 's/<FILL_parameter_3_unit>/length          /g' \
+               -e 's/<FILL_parameter_4_unit>/energy          /g' \
+               >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$(subst ex_,,$@).kim.tpl
         # make .c file in the directory
 	sed -e '/$(VER_REG_EXP_13)/d' \
             -e 's|[[:space:]]*$(VER_REG_EXP)[[:space:]]*$$||' \
@@ -897,7 +910,7 @@ ex_model_Ar_P_MLJ_C: dir_model_El_P_MLJ/README             \
 	sed -e 's/MODEL_NAME_STR/$@/g' \
             -e 's/MODEL_KIM_FILE_STR/$(subst ex_,,$@).kim/g' model_Makefile > $(KIM_EX_MODELS_DIR)/$@/Makefile
 	sed -e 's/MODEL_NAME_STR/$@/g' \
-            -e 's/LANGUAGE_STR/C/g' \
+            -e 's/LANGUAGE_STR/c/g' \
             -e 's/MODEL_KIM_NAME_STR/$(subst ex_,,$@)/g' dir_model_El_P_MLJ/README > $(KIM_EX_MODELS_DIR)/$@/README
 	sed -e '/\/\*\..\*\/$$/d' \
             -e 's|[[:space:]]*/\*..\*/$$||' \
@@ -905,6 +918,7 @@ ex_model_Ar_P_MLJ_C: dir_model_El_P_MLJ/README             \
             -e 's/<FILL_model_reference>/Ashcroft and Mermin   /g' \
             dir_model_El_P_MLJ/model_El_P_MLJ.c > $(KIM_EX_MODELS_DIR)/$@/$@.c
 	sed -e $(SED_VER_CMD) \
+            -e '/^@/d' \
             -e 's/<FILL_species_name>/Ar                 /g' \
             -e 's/BASED_LIST_STR/ZeroBasedLists/g' \
             dir_model_El_P_MLJ/model_El_P_MLJ.kim > $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
@@ -927,6 +941,7 @@ ex_model_Ar_P_MLJ_F03: dir_model_El_P_MLJ/README             \
             -e 's/<FILL_model_reference>/Ashcroft and Mermin/g' \
             dir_model_El_P_MLJ/model_El_P_MLJ.F03 > $(KIM_EX_MODELS_DIR)/$@/$@.F03
 	sed -e $(SED_VER_CMD) \
+            -e '/^@/d' \
             -e 's/<FILL_species_name>/Ar                 /g' \
             -e 's/BASED_LIST_STR/OneBasedLists /g' \
             dir_model_El_P_MLJ/model_El_P_MLJ.kim > $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
@@ -940,6 +955,7 @@ model_El_P_Template.c: dir_model_El_P_MLJ/model_El_P_MLJ.c \
 model_El_P_Template.c.kim: dir_model_El_P_MLJ/model_El_P_MLJ.kim \
                            Makefile
 	sed -e $(SED_VER_CMD) \
+            -e 's/^@//' \
             -e 's/BASED_LIST_STR/ZeroBasedLists/g' \
             dir_model_El_P_MLJ/model_El_P_MLJ.kim > $(KIM_TEMPLATES_DIR)/model_El_P_Template.c.kim
 
@@ -953,6 +969,7 @@ model_El_P_Template.F03: dir_model_El_P_MLJ/model_El_P_MLJ.F03 \
 model_El_P_Template.f.kim: dir_model_El_P_MLJ/model_El_P_MLJ.kim \
                            Makefile
 	sed -e $(SED_VER_CMD) \
+            -e 's/^@//' \
             -e 's/BASED_LIST_STR/OneBasedLists /g' \
             dir_model_El_P_MLJ/model_El_P_MLJ.kim > $(KIM_TEMPLATES_DIR)/model_El_P_Template.f.kim
 

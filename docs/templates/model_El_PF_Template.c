@@ -18,16 +18,25 @@
 *
 * CDDL HEADER END
 *
+*/
 
-*
+/*
 * Copyright (c) 2013--2014, Regents of the University of Minnesota.
-# All rights reserved.
+* All rights reserved.
 *
 * Contributors:
 *    Ryan S. Elliott
 *    Ellad B. Tadmor
 *    Stephen M. Whalen
-*    <FILL your name here>
+*
+*/
+
+/*
+* Portions Copyright (c) <FILL_year>, <FILL_copyright_holder>.
+* All rights reserved.
+*
+* Contributors:
+*    <FILL_your_name>
 *
 */
 

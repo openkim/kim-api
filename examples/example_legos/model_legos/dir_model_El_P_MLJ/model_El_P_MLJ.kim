@@ -28,6 +28,14 @@
 #    Valeriu Smirichinski
 #    Stephen M. Whalen
 #
+@
+@#
+@# Portions Copyright (c) <FILL_year>, <FILL_copyright_holder>.
+@# All rights reserved.
+@#
+@# Contributors:
+@#    <FILL_your_name>
+@#
 
 #######################################################################################################
 #

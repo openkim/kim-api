@@ -27,7 +27,14 @@
 !    Ellad B. Tadmor
 !    Valeriu Smirichinski
 !    Stephen M. Whalen
-!    <FILL your name here>
+!
+
+!
+! Portions Copyright (c) <FILL_year>, <FILL_copyright_holder>.
+! All rights reserved.
+!
+! Contributors:
+!    <FILL_your_name>
 !
 
 !****************************************************************************

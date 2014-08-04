@@ -36,7 +36,7 @@
 /*                                                                            *//*12*/
                                                                                 /*.2*/
 /*                                                                            *//*.2*/
-/* Copyright (c) <FILL_year>, <FILL_copyright_holder>.                        *//*.2*/
+/* Portions Copyright (c) <FILL_year>, <FILL_copyright_holder>.               *//*.2*/
 /* All rights reserved.                                                       *//*.2*/
 /*                                                                            *//*.2*/
 /* Contributors:                                                              *//*.2*/
