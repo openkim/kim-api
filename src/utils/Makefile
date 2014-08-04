@@ -85,7 +85,7 @@ endif
                                      -D 'VERSION_STRING="$(VERSION_FULL)"'
 %build-config.o: build-config.cpp Makefile
 	@printf "Creating... $@.\n"
-	$(QUELL)$(CXX) $(KIM_CTYPE_STANDARD_COMPILE_LIST) $< $(OUTPUTINFLAG) $@
+	$(QUELL)$(CXX) $(KIM_CXXTYPE_STANDARD_COMPILE_LIST) $< $(OUTPUTINFLAG) $@
 
 $(full_package_name)-build-config: build-config.o .build-config.o
 	@printf "Creating... $@.\n"
