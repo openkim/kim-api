@@ -104,41 +104,42 @@ COMMON_FRAGMENTS = module_start.f.frag          \
                    descriptor_file_params       \
                    Makefile
 
-AUTO_GEN_MODELS = ex_model_Al_PF_ErcolessiAdams    \
-                  ex_model_Cu_PF_Johnson           \
-                  ex_model_ArNe_P_MLJ_NEIGH_RVEC_F \
-                  ex_model_Ar_P_MLJ_C              \
-                  ex_model_Ar_P_MLJ_CLUSTER_C      \
-                  ex_model_Ar_P_MLJ_CLUSTER_F03    \
-                  ex_model_Ar_P_MLJ_F03            \
-                  ex_model_Ar_P_MLJ_MI_OPBC_H_F    \
-                  ex_model_Ar_P_MLJ_NEIGH_PURE_H_F \
-                  ex_model_Ar_P_MLJ_NEIGH_RVEC_F   \
-                  ex_model_Ne_P_LJ_NEIGH_PURE_H    \
-                  ex_model_Ne_P_MLJ_NEIGH_RVEC_H   \
-                  ex_model_driver_P_Morse          \
-                  ex_model_Ar_P_Morse              \
-                  ex_model_Ne_P_Morse              \
-                  ex_model_driver_P_LJ             \
-                  ex_model_Ar_P_LJ                 \
-                  ex_model_Ne_P_LJ                 \
-                  ex_model_Ne_P_fastLJ             \
-                  ex_model_Ar_P_Morse_01C          \
-                  ex_model_Ar_P_Morse_02C          \
-                  ex_model_Ar_P_Morse_03C          \
-                  ex_model_Ar_P_Morse_04C          \
-                  ex_model_Ar_P_Morse_05C          \
-                  ex_model_Ar_P_Morse_06C          \
-                  ex_model_Ar_P_Morse_07C          \
-                  ex_model_Ar_P_Morse_08C          \
-                  ex_model_Ar_P_Morse_09C          \
-                  ex_model_Ar_P_Morse_10C          \
-                  ex_model_Ar_P_Morse_11C          \
-                  ex_model_Ar_P_Morse_12C          \
-                  ex_model_driver_P_Morse_13C      \
-                  model_driver_P_Template.c        \
-                  model_El_P_Template.F03          \
-                  model_El_P_Template.f.kim        \
+AUTO_GEN_MODELS = ex_model_Al_PF_ErcolessiAdams     \
+                  ex_model_Cu_PF_Johnson            \
+                  ex_model_ArNe_P_MLJ_NEIGH_RVEC_F  \
+                  ex_model_Ar_P_MLJ_C               \
+                  ex_model_Ar_P_MLJ_CLUSTER_C       \
+                  ex_model_Ar_P_MLJ_CLUSTER_F03     \
+                  ex_model_Ar_P_MLJ_F03             \
+                  ex_model_Ar_P_MLJ_MI_OPBC_H_F     \
+                  ex_model_Ar_P_MLJ_NEIGH_PURE_H_F  \
+                  ex_model_Ar_P_MLJ_NEIGH_RVEC_F    \
+                  ex_model_Ne_P_LJ_NEIGH_PURE_H     \
+                  ex_model_Ne_P_MLJ_NEIGH_RVEC_H    \
+                  ex_model_driver_P_Morse           \
+                  ex_model_Ar_P_Morse               \
+                  ex_model_Ne_P_Morse               \
+                  ex_model_driver_P_LJ              \
+                  ex_model_Ar_P_LJ                  \
+                  ex_model_Ne_P_LJ                  \
+                  ex_model_Ne_P_fastLJ              \
+                  ex_model_Ar_P_Morse_01C           \
+                  ex_model_Ar_P_Morse_02C           \
+                  ex_model_Ar_P_Morse_03C           \
+                  ex_model_Ar_P_Morse_04C           \
+                  ex_model_Ar_P_Morse_05C           \
+                  ex_model_Ar_P_Morse_06C           \
+                  ex_model_Ar_P_Morse_07C           \
+                  ex_model_Ar_P_Morse_08C           \
+                  ex_model_Ar_P_Morse_09C           \
+                  ex_model_Ar_P_Morse_10C           \
+                  ex_model_Ar_P_Morse_11C           \
+                  ex_model_Ar_P_Morse_12C           \
+                  ex_model_driver_P_Morse_13C       \
+                  model_driver_P_Template.c         \
+                  model_driver_P_Template.c.kim.tpl \
+                  model_El_P_Template.F03           \
+                  model_El_P_Template.f.kim         \
                   ex_model_Ar_P_Morse_14C
 
 all: $(AUTO_GEN_MODELS) EXAMPLES.README $(KIM_EX_MODELS_DIR)/Makefile $(KIM_EX_MODEL_DRIVERS_DIR)/Makefile
@@ -403,6 +404,21 @@ model_driver_P_Template.c: model_driver_P_Morse.c \
 	sed -e '/$(VER_REG_EXP_14)/d' \
             -e 's|[[:space:]]*$(VER_REG_EXP)[[:space:]]*$$||' \
                model_driver_P_Morse.c > $(KIM_TEMPLATES_DIR)/$@
+
+model_driver_P_Template.c.kim.tpl: model_driver_P_Morse.kim.tpl \
+                                   Makefile
+	$(D_CAT) model_driver_P_Morse.kim.tpl | \
+           sed -e $(SED_VER_CMD) \
+               -e 's/<FILL_parameter_type_parameter_1>/PARAM_FREE_epsilon         /g' \
+               -e 's/<FILL_parameter_type_parameter_2>/PARAM_FREE_C               /g' \
+               -e 's/<FILL_parameter_type_parameter_3>/PARAM_FREE_Rzero           /g' \
+               -e 's/<FILL_parameter_type_parameter_4>/PARAM_FIXED_shift          /g' \
+               -e 's/SPECIES_001_NAME_STR/<FILL_species_name> /g' \
+               -e 's/<FILL_parameter_1_unit>/energy          /g' \
+               -e 's/<FILL_parameter_2_unit>/length\^-1       /g' \
+               -e 's/<FILL_parameter_3_unit>/length          /g' \
+               -e 's/<FILL_parameter_4_unit>/energy          /g' \
+           >  $(KIM_TEMPLATES_DIR)/$@
 
 ex_model_driver_P_Morse_13C: model_driver_Morse_README    \
                              model_driver_Makefile        \

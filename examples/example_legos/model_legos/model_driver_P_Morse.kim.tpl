@@ -51,7 +51,7 @@ Unit_time        := ps
 PARTICLE_SPECIES:
 # Symbol/name               Type                    code
 
-SPECIES_001_NAME_STR                         spec                    1
+SPECIES_001_NAME_STR        spec                    1
 
 
 #######################################################################################################
@@ -129,12 +129,12 @@ MODEL_PARAMETERS:
 
 PARAM_FREE_cutoff           double       length              []
 
-PARAM_FREE_epsilon          double       energy              []
-
-PARAM_FREE_C                double       length^-1           []
-
-PARAM_FREE_Rzero            double       length              []
-
 PARAM_FIXED_cutsq           double       length^2            []
 
-PARAM_FIXED_shift           double       energy              []
+<FILL_parameter_type_parameter_1> double       <FILL_parameter_1_unit>    []
+
+<FILL_parameter_type_parameter_2> double       <FILL_parameter_2_unit>    []
+
+<FILL_parameter_type_parameter_3> double       <FILL_parameter_3_unit>    []
+
+<FILL_parameter_type_parameter_4> double       <FILL_parameter_4_unit>    []
