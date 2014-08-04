@@ -205,9 +205,9 @@ real(c_double), pointer :: boxSideLengths(:); type(c_ptr) :: pboxSideLengths    
 real(c_double), pointer :: Rij_list(:,:);     type(c_ptr) :: pRij_list          !12
 integer(c_int), pointer :: numContrib;        type(c_ptr) :: pnumContrib        !12
 integer(c_int), pointer :: nei1part(:);       type(c_ptr) :: pnei1part          !12
-integer(c_int), pointer :: particleSpecies(:);  type(c_ptr) :: pparticleSpecies !12
+integer(c_int), pointer :: particleSpecies(:);type(c_ptr) :: pparticleSpecies   !12
 real(c_double), pointer :: virial(:);         type(c_ptr) :: pvirial            !12
-character(len=KIM_KEY_STRING_LENGTH) :: NBC_Method                              !12
+character(len=KIM_KEY_STRING_LENGTH) NBC_Method                                 !12
 integer(c_int) IterOrLoca                                                       !12
 integer(c_int) HalfOrFull                                                       !12
 integer(c_int) NBC                                                              !12
@@ -234,12 +234,12 @@ endif                                                                           
 if (index(NBC_Method,"NEIGH_RVEC_H").eq.1) then                                 !12
    NBC = 0                                                                      !12
    HalfOrFull = 1                                                               !12
-elseif (index(NBC_Method,"NEIGH_PURE_H").eq.1) then                             !12
-   NBC = 1                                                                      !12
-   HalfOrFull = 1                                                               !12
 elseif (index(NBC_Method,"NEIGH_RVEC_F").eq.1) then                             !12
    NBC = 0                                                                      !12
    HalfOrFull = 2                                                               !12
+elseif (index(NBC_Method,"NEIGH_PURE_H").eq.1) then                             !12
+   NBC = 1                                                                      !12
+   HalfOrFull = 1                                                               !12
 elseif (index(NBC_Method,"NEIGH_PURE_F").eq.1) then                             !12
    NBC = 1                                                                      !12
    HalfOrFull = 2                                                               !12
