@@ -56,7 +56,6 @@ program TEST_NAME_STR
   type(c_ptr)    :: pkim
   integer(c_int) :: ier, idum
   integer(c_int) :: middleDum
-  integer(c_int) :: I
   integer(c_int), pointer :: numberOfParticles;   type(c_ptr) :: pnParts
   integer(c_int), pointer :: numContrib;          type(c_ptr) :: pnumContrib
   integer(c_int), pointer :: numberOfSpecies;     type(c_ptr) :: pnOfSpecies
