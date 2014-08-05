@@ -68,4 +68,4 @@ $(TEST_NAME): $(TEST_NAME).o
 	$(LD) $(LDFLAGS) $< $(LDLIBS) $(OUTPUTINFLAG) $@
 
 clean:
-	rm -f $(TEST_NAME) $(TEST_NAME).o
+	rm -f $(TEST_NAME) $(TEST_NAME).o kim.log
