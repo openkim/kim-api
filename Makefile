@@ -416,7 +416,7 @@ uninstall-set-default:
 #
 # Examples build settings and rules
 #
-.PHONY: examples examples-all examples-clean
+.PHONY: examples examples-all examples-clean examples-clean-all
 
 INPLACE_CONFIG = $(KIM_DIR)/.$(package_name)/config-v$(VERSION_MAJOR)
 
@@ -431,7 +431,9 @@ examples: all $(if $(filter dynamic-load,$(KIM_LINK)),$(INPLACE_CONFIG),) exampl
 examples-all:
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(KIM_DIR)/$(examplesdir) all
 
-examples-clean: config
+examples-clean: config $(INPLACE_CONFIG) examples-clean-all config-clean
+
+examples-clean-all:
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(KIM_DIR)/$(examplesdir) clean
 	$(QUELL)rm -rf $(KIM_DIR)/.$(package_name)
 
