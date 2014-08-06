@@ -32,11 +32,17 @@
 
 
 #include <cstdlib>
+#include <cstring>
 #include <iostream>
 #include <fstream>
 #include "KIM_API.h"
 #include "KIM_API_status.h"
 #include "KIM_API_DIRS.h"
+
+// define number of X's to use in mkstemp call
+#define NUM_XS 12
+#define FL_NAME_LEN (L_tmpnam+25+NUM_XS+1)
+#define FL_STRING "kim-model-parameter-file-XXXXXXXXXXXX"
 
 static int process_paramfiles(char* param_file_names, int* nmstrlen);
 
@@ -75,10 +81,19 @@ extern "C" {
   int MODEL_NAME_STR_init(void* km) {
     int numparamfiles = NUM_PARAMFILES;
     int nmstrlen;
-    char* param_file_names = new char[NUM_PARAMFILES*(L_tmpnam+1)];
+    char* param_file_names = new char[NUM_PARAMFILES*(FL_NAME_LEN)];
+    char* param_file_names_copy = new char[NUM_PARAMFILES*(FL_NAME_LEN)];
 
     if (KIM_STATUS_OK != process_paramfiles(param_file_names, &nmstrlen)) {
+      delete [] param_file_names;
+      delete [] param_file_names_copy;
       return KIM_STATUS_FAIL;
+    }
+    for (int i=0; i<NUM_PARAMFILES; ++i)
+    {
+      strncpy(&(param_file_names_copy[i*(FL_NAME_LEN)]),
+              &(param_file_names[i*(FL_NAME_LEN)]),
+              FL_NAME_LEN);
     }
 #if KIM_LINK_VALUE == KIM_LINK_DYNAMIC_LOAD
     std::list<std::string> lst;
@@ -100,6 +115,8 @@ extern "C" {
     if(driver_lib_handle == NULL) {
       std::cerr << "Cannot load MODEL_DRIVER_NAME_STR shared library for"
           " MODEL_NAME_STR" << std::endl;
+      delete [] param_file_names;
+      delete [] param_file_names_copy;
       return KIM_STATUS_FAIL;
     }
     else
@@ -118,15 +135,19 @@ extern "C" {
     if (dlsym_error) {
       std::cerr << "Cannot load symbol: " << dlsym_error << std::endl;
       dlclose(driver_lib_handle);
+      delete [] param_file_names;
+      delete [] param_file_names_copy;
       return KIM_STATUS_FAIL;
     }
     int ier = 0;
-    ier = (*drvr_init)(km, param_file_names, &nmstrlen, &numparamfiles);
+    ier = (*drvr_init)(km, param_file_names_copy, &nmstrlen, &numparamfiles);
     for (int i=0; i<numparamfiles; ++i) {
-      remove(&(param_file_names[i*(L_tmpnam+1)]));
+      remove(&(param_file_names[i*(FL_NAME_LEN)]));
     }
     delete [] param_file_names;
+    delete [] param_file_names_copy;
     param_file_names = NULL;
+    param_file_names_copy = NULL;
     if (KIM_STATUS_OK > ier) return ier;
 
     driver_destroy = (*((KIM_API_model**)km))
@@ -134,10 +155,15 @@ extern "C" {
     (*((KIM_API_model**)km))->set_method((char*) "destroy",1,
                                          (func_ptr) model_destroy);
 #else
-    int ier = (*MODEL_DRIVER_NAME_STR_init_pointer)(km, param_file_names,
+    int ier = (*MODEL_DRIVER_NAME_STR_init_pointer)(km, param_file_names_copy,
                                                     &nmstrlen, &numparamfiles);
+    for (int i=0; i<numparamfiles; ++i) {
+      remove(&(param_file_names[i*(FL_NAME_LEN)]));
+    }
     delete [] param_file_names;
+    delete [] param_file_names_copy;
     param_file_names = NULL;
+    param_file_names_copy = NULL;
     if (KIM_STATUS_OK > ier) return ier;
 #endif
 
@@ -149,40 +175,40 @@ int (* MODEL_NAME_STR_init_pointer)(void*) = MODEL_NAME_STR_init;
 
 static int process_paramfiles(char* param_file_names, int* nmstrlen)
 {
-  *nmstrlen = L_tmpnam+1;
+  *nmstrlen = FL_NAME_LEN;
 
   const char** paramfile_strings[NUM_PARAMFILES];
   PARAMFILE_POINTERS_GO_HERE;
   int paramfile_strings_chunks[NUM_PARAMFILES];
   PARAMFILE_CHUNKS_GO_HERE;
 
-  char* ret;
-  std::fstream fl;
   for (int i=0; i<NUM_PARAMFILES; ++i)
   {
-    // Note: the use of tmpnam() below may create a security hole.  Users should
-    //       avoid running KIM Models with root (or other special) previlages.
-    ret=tmpnam(&(param_file_names[i*(L_tmpnam+1)]));
-
-    if (ret == NULL)
+    int ret;
+    ret = snprintf(&(param_file_names[i*(FL_NAME_LEN)]),
+                   FL_NAME_LEN, "%s/" FL_STRING, P_tmpdir);
+    if (ret >= FL_NAME_LEN)
     {
-      std::cerr << "Cannot obtain unique temporary file name: tmpnam() failed."
+      std::cerr
+          << "FL_NAME_LEN too short for this system: Failed in process_paramfiles()."
+          << std::endl;
+      return KIM_STATUS_FAIL;
+    }
+
+    int fileid = mkstemp(&(param_file_names[i*(FL_NAME_LEN)]));
+    if (fileid == -1)
+    {
+      std::cerr << "Cannot open temporary file: mkstemp() failed."
                 << std::endl;
       return KIM_STATUS_FAIL;
     }
 
-    fl.open(&(param_file_names[i*(L_tmpnam+1)]),std::fstream::out);
-    if (fl.fail())
-    {
-      std::cerr << "Unable to open temporary file." << std::endl;
-      return KIM_STATUS_FAIL;
-    }
-
+    FILE* fl = fdopen(fileid,"w");
     for (int j=0; j<paramfile_strings_chunks[i]; ++j)
     {
-      fl << paramfile_strings[i][j];
+      fprintf(fl, "%s", paramfile_strings[i][j]);
     }
-    fl.close();
+    fclose(fl);  // also closed the fileid
   }
 
   return KIM_STATUS_OK;
