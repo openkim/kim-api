@@ -109,13 +109,13 @@ else # everything else (linux and freebsd)
 endif
 
 kim-item-type:
-	$(QUELL)printf "Model"
+	@printf "Model"
 
 model-name:
-	$(QUELL)printf "$(MODEL_NAME)"
+	@printf "$(MODEL_NAME)"
 
 model-kim-file:
-	$(QUELL)printf "$(MODEL_KIM_FILE)"
+	@printf "$(MODEL_KIM_FILE)"
 
 $(LOCALOBJ): Makefile
 

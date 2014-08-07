@@ -198,13 +198,13 @@ else # everything else (linux and freebsd)
 endif
 
 kim-item-type:
-	$(QUELL)printf "ParameterizedModel"
+	@printf "ParameterizedModel"
 
 model-name:
-	$(QUELL)printf "$(MODEL_NAME)"
+	@printf "$(MODEL_NAME)"
 
 model-driver-name:
-	$(QUELL)printf "$(MODEL_DRIVER_NAME)"
+	@printf "$(MODEL_DRIVER_NAME)"
 
 Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/$(builddir)/Makefile.ParameterizedModel
 	$(QUELL)touch Makefile

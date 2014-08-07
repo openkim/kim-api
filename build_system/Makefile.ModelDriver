@@ -104,13 +104,13 @@ else # everything else (linux and freebsd)
 endif
 
 kim-item-type:
-	$(QUELL)printf "ModelDriver"
+	@printf "ModelDriver"
 
 model-drvier-name:
-	$(QUELL)printf "$(MODEL_DRIVER_NAME)"
+	@printf "$(MODEL_DRIVER_NAME)"
 
 model-driver-kim-file-template:
-	$(QUELL)printf "$(MODEL_DRIVER_KIM_FILE_TEMPLATE)"
+	@printf "$(MODEL_DRIVER_KIM_FILE_TEMPLATE)"
 
 $(LOCALOBJ): Makefile
 
