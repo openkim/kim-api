@@ -37,6 +37,13 @@ KIM_EX_TESTS_DIR := $(KIM_DIR)/examples/openkim_tests
 
 VPATH = $(KIM_EX_TESTS_DIR)
 
+
+VER_REG_EXP =    \/\/...
+VER_REG_EXP_01 = \/\/\...[[:space:]]*$$
+VER_REG_EXP_02 = \/\/.\..[[:space:]]*$$
+VER_REG_EXP_03 = \/\/..\.[[:space:]]*$$
+
+
 SED_VER_CMD = "s/VERSION_STR/1.6.0/g"
 SED_CMD = sed -e "s/TEST_NAME_STR/$@/g"
 
@@ -85,6 +92,9 @@ AUTO_GEN_TESTS = ex_test_Al_free_cluster                        \
                  ex_test_Ne_free_cluster                        \
                  ex_test_Ne_free_cluster_SI                     \
                  ex_test_Ne_free_cluster_stiff                  \
+                 ex_test_Ar_01CPP                               \
+                 ex_test_Ar_02CPP                               \
+                 ex_test_Ar_03CPP                               \
                  vc_config_ener_forces                          \
                  vc_forces_delta                                \
                  vc_forces_numer_deriv
@@ -311,6 +321,70 @@ ex_test_ArNe_B2cohesive_NEIGH_RVEC: $(COMMON_FRAGMENTS)                        \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) NEIGH_RVEC_periodic_B2_neighborlist.f.frag                                                   >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
+
+
+ex_test_Ar_%CPP: test_training_CXX.cpp        \
+                 test_training_CXX_README     \
+                 test_training_CXX_descriptor \
+                 test_Makefile                \
+                 Makefile
+        # make directory
+	mkdir -p $(KIM_EX_TESTS_DIR)/$@
+	@touch $(KIM_EX_TESTS_DIR)/$@
+	cp $(KIM_DIR)/LICENSE.CDDL $(KIM_EX_TESTS_DIR)/$@
+        # make README file in the directory
+	$(D_CAT) test_training_CXX_README | $(SED_CMD) \
+          $(if $(filter-out 01,$*),, -e '/^\* particleEnergy/d' -e '/^\* forces/d' -e '/^\* virial/d' -e '/^\* particleVirial/d' -e '/^\* hessian/d')\
+          $(if $(filter-out 02,$*),,                                               -e '/^\* virial/d' -e '/^\* particleVirial/d' -e '/^\* hessian/d')\
+          $(if $(filter-out 03,$*),,)\
+          > $(KIM_EX_TESTS_DIR)/$@/README
+        # make Makefile in the directory
+	$(D_CAT) test_Makefile | $(SED_CMD) \
+                                 -e 's/LANGUAGE_EXTENSION_STR/cpp/g' \
+                                 -e 's/LANGUAGE_COMPILER_VAR_STR/CXX/g' \
+                                 -e 's/(FFLAGS)/(CXXFLAGS)/g' \
+                                 -e 's/[[:space:]]*CLEAN_ADDITIONAL_FILES_STR//g' \
+                                 >  $(KIM_EX_TESTS_DIR)/$@/Makefile
+        # make .kim file in the directory
+	$(D_CAT) test_training_CXX_descriptor | $(SED_CMD) \
+          -e $(SED_VER_CMD) \
+          $(if $(filter-out 01,$*),, -e "/^particleEnergy/`printf '{N\nd\n}'`" -e "/^forces/`printf '{N\nd\n}'`" -e "/^virial/`printf '{N\nd\n}'`" -e "/^particleVirial/`printf '{N\nd\n}'`" -e "/^hessian/`printf '{N\nd\n}'`")\
+          $(if $(filter-out 02,$*),,                                                                             -e "/^virial/`printf '{N\nd\n}'`" -e "/^particleVirial/`printf '{N\nd\n}'`" -e "/^hessian/`printf '{N\nd\n}'`")\
+          $(if $(filter-out 03,$*),,)\
+          > $(KIM_EX_TESTS_DIR)/$@/descriptor.kim
+	if test $* -gt 1; then \
+         idminus=`expr "$*" - "1"`; \
+         diff --unchanged-line-format=" %4dn %L" --old-line-format="%c'A'%4dn %L" --new-line-format="D     %L" -d \
+              $(KIM_EX_TESTS_DIR)/$@/descriptor.kim \
+              $(KIM_EX_TESTS_DIR)/ex_test_Ar_`printf "%02i" $$idminus`CPP/descriptor.kim \
+              > $(KIM_EX_TESTS_DIR)/$@/descriptor.kim.numbered 2>&1; \
+         diff --unchanged-line-format=" %4dn %L" --old-line-format="%c'A'%4dn %L" --new-line-format="D     %L" -d \
+              $(KIM_EX_TESTS_DIR)/$@/descriptor.kim \
+              $(KIM_EX_TESTS_DIR)/ex_test_Ar_`printf "%02i" $$idminus`CPP/descriptor.kim \
+              | sed -e "s/^D.*/`printf '\x1b[31m'`&`printf '\x1b[0m'`/" -e "s/^A.*/`printf '\x1b[34m'`&`printf '\x1b[0m'`/" \
+              > $(KIM_EX_TESTS_DIR)/$@/descriptor.kim.colorized-numbered 2>&1; \
+              true; \
+        fi;
+        # make .cpp file in the directory
+	$(SED_CMD) \
+            -e '/$(VER_REG_EXP_$*)/d' \
+            -e 's|[[:space:]]*$(VER_REG_EXP)[[:space:]]*$$||' \
+            test_training_CXX.cpp  > $(KIM_EX_TESTS_DIR)/$@/$@.cpp
+	printf ',g/^[[:space:]]*[{}][[:space:]]*$$/s/^[[:space:]]*/ /\\\n-,.j\nw\nq\n' | ed $(KIM_EX_TESTS_DIR)/$@/$@.cpp
+	if test $* -gt 1; then \
+         idminus=`expr "$*" - "1"`; \
+         diff --unchanged-line-format=" %4dn %L" --old-line-format="%c'A'%4dn %L" --new-line-format="D     %L" -d \
+              $(KIM_EX_TESTS_DIR)/$@/$@.cpp \
+              $(KIM_EX_TESTS_DIR)/ex_test_Ar_`printf "%02i" $$idminus`CPP/ex_test_Ar_`printf "%02i" $$idminus`CPP.cpp \
+              > $(KIM_EX_TESTS_DIR)/$@/$@.cpp.numbered 2>&1; \
+         diff --unchanged-line-format=" %4dn %L" --old-line-format="%c'A'%4dn %L" --new-line-format="D     %L" -d \
+              $(KIM_EX_TESTS_DIR)/$@/$@.cpp \
+              $(KIM_EX_TESTS_DIR)/ex_test_Ar_`printf "%02i" $$idminus`CPP/ex_test_Ar_`printf "%02i" $$idminus`CPP.cpp \
+              | sed -e "s/^D.*/`printf '\x1b[31m'`&`printf '\x1b[0m'`/" -e "s/^A.*/`printf '\x1b[34m'`&`printf '\x1b[0m'`/" \
+              > $(KIM_EX_TESTS_DIR)/$@/$@.cpp.colorized-numbered 2>&1; \
+              true; \
+        fi;
+
 
 ex_test_Ar_FCCcohesiveCutoff_NEIGH_RVEC: $(COMMON_FRAGMENTS)                           \
                                          test_FCCcohesiveCutoff_README                 \
