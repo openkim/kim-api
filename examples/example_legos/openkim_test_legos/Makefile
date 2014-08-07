@@ -578,6 +578,7 @@ ex_test_Ar_free_cluster_CLUSTER_C: $(COMMON_FRAGMENTS)                 \
 	$(D_CAT) test_Makefile | $(SED_CMD) \
                                  -e 's/LANGUAGE_EXTENSION_STR/c/g' \
                                  -e 's/LANGUAGE_COMPILER_VAR_STR/CC/g' \
+                                 -e 's/(FFLAGS)/(CFLAGS)/g' \
                                  -e 's/[[:space:]]*CLEAN_ADDITIONAL_FILES_STR//g' \
                                  >  $(KIM_EX_TESTS_DIR)/$@/Makefile
         # make .kim file in the directory
