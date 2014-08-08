@@ -54,6 +54,7 @@ static func_ptr driver_destroy;
 extern "C" {
 
 #if KIM_LINK_VALUE == KIM_LINK_DYNAMIC_LOAD
+#include <unistd.h>
 #include <dlfcn.h>
   static int model_destroy(void* km);
 #else
@@ -106,15 +107,19 @@ extern "C" {
       itr->append("MODEL_DRIVER_LIBNAME_STR"); itr->append(".so");
       //std::cout<< "* Info (MODEL_NAME_STR_init): Looking for Model Driver"
       //    " shared library file " << itr->c_str() <<std::endl;
-      driver_lib_handle = dlopen(itr->c_str(), RTLD_NOW);
+      if (0 == access(itr->c_str(), F_OK))
+      {
+        driver_lib_handle = dlopen(itr->c_str(), RTLD_NOW);
+      }
       if (driver_lib_handle != NULL) break;
       //std::cout<< "* Error (MODEL_NAME_STR_init): Cannot find Model Driver"
       //    " shared library file for Model Driver name: ";
       //std::cout<< "MODEL_DRIVER_NAME_STR" <<std::endl<<dlerror()<<std::endl;
     }
     if(driver_lib_handle == NULL) {
-      std::cerr << "Cannot load MODEL_DRIVER_NAME_STR shared library for"
+      std::cout << "* Error (MODEL_NAME_STR_init()): A problem occurred with the MODEL_DRIVER_NAME_STR shared library for"
           " MODEL_NAME_STR" << std::endl;
+      std::cout << dlerror() << std::endl;
       delete [] param_file_names;
       delete [] param_file_names_copy;
       return KIM_STATUS_FAIL;
@@ -133,7 +138,7 @@ extern "C" {
                               "MODEL_DRIVER_NAME_STR_init_pointer"));
     const char *dlsym_error = dlerror();
     if (dlsym_error) {
-      std::cerr << "Cannot load symbol: " << dlsym_error << std::endl;
+      std::cout << "* Error (MODEL_NAME_STR_init()): Cannot load symbol: " << dlsym_error << std::endl;
       dlclose(driver_lib_handle);
       delete [] param_file_names;
       delete [] param_file_names_copy;

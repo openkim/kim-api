@@ -47,6 +47,7 @@
 #include "KIM_API_DIRS.h"
 
 #if KIM_LINK_VALUE == KIM_LINK_DYNAMIC_LOAD
+#include <unistd.h>
 #include <dlfcn.h>
 #endif
 
@@ -319,7 +320,7 @@ std::istream &operator>>(std::istream &stream, KIM_IOline &a){
         char inputline[KIM_LINE_LENGTH];
         stream.getline(inputline,KIM_LINE_LENGTH-1);
         if(stream.fail() && !stream.eof()){
-           std::cerr << "* Error (operator>> KIM_IOline): Input line in .kim file longer than KIM_LINE_LENGTH (default 512) characters.\n"
+           std::cout << "* Error (operator>> KIM_IOline): Input line in .kim file longer than KIM_LINE_LENGTH (default 512) characters.\n"
                 << "         The line is: `"
                 << inputline << "'";
            a.goodformat=false;
@@ -848,7 +849,7 @@ int KIM_API_model::prestring_init(const char *instrn){
         // check for version number reported by Model/Simulator
         if(!does_it_have_a_version_number(instrn) && 0!=strcmp("standard", name_temp))
         {
-          std::cout << "* Error (KIM_API_model::prestring_init(): "<<name_temp << " '.kim' file contains invalid KIM_API_Version setting." << std::endl;
+          std::cout << "* Error (KIM_API_model::prestring_init()): "<<name_temp << " '.kim' file contains invalid KIM_API_Version setting." << std::endl;
           ErrorCode = KIM_STATUS_FAIL;
           return ErrorCode;
         }
@@ -1479,7 +1480,7 @@ int KIM_API_model::get_compute(const char *nm, int* error){
 }
 KIMBaseElement & KIM_API_model::operator[](int i){
         if ((i > (*this).model.size) || (i < 0)){
-           std::cout<<"* Error (KIM_API_model::operator[](int i): invalid index." <<std::endl;
+          std::cout<<"* Error (KIM_API_model::operator[](int i): invalid index: " << i <<std::endl;
            KIM_API_model::fatal_error_print();
            exit(326);
         }
@@ -1490,7 +1491,7 @@ KIMBaseElement & KIM_API_model::operator[](const char *nm){
         int error;
         int ind=get_index(nm,&error);
         if (error == KIM_STATUS_FAIL){
-           std::cout<<"* Error (KIM_API_model::operator[](char *nm): name not found." <<std::endl;
+          std::cout<<"* Error (KIM_API_model::operator[](char *nm): name not found: " << nm <<std::endl;
            KIM_API_model::fatal_error_print();
            exit(325);
         }
@@ -1668,9 +1669,9 @@ bool KIM_API_model::is_it_match(KIM_API_model &test,KIM_API_model & mdl){
 
     if(!test2standardmatch) std::cout<<"* Error (KIM_API_model::is_it_match): There are non-standard variables in Simulator descriptor file:"<<std::endl;
     if(!model2standardmatch) std::cout<<"* Error (KIM_API_model::is_it_match): There are non-standard variables in Model descriptor file:"<<std::endl;
-    if(!test2standardAtomsTypesMatch) std::cout<<"* Error (KIM_API_model::is_it_match): There are non-standard AtomsTypes in Simulator descriptor file:"<<std::endl;
-    if(!model2standardAtomsTypesMatch) std::cout<<"* Error (KIM_API_model::is_it_match):there are non-standard AtomsTypes in Model descriptor file:"<<std::endl;
-    if(!test2modelAtomsTypesMatch) std::cout<<"* Error (KIM_API_model::is_it_match): Simulator-Model AtomsTypes do not match:"<<std::endl;
+    if(!test2standardAtomsTypesMatch) std::cout<<"* Error (KIM_API_model::is_it_match): There are non-standard Species in Simulator descriptor file:"<<std::endl;
+    if(!model2standardAtomsTypesMatch) std::cout<<"* Error (KIM_API_model::is_it_match):there are non-standard Species in Model descriptor file:"<<std::endl;
+    if(!test2modelAtomsTypesMatch) std::cout<<"* Error (KIM_API_model::is_it_match): Simulator-Model Species do not match:"<<std::endl;
     if(!NBC_methodsmatch) std::cout<<"* Error (KIM_API_model::is_it_match): NBC methods do not match:"<<std::endl;
     if(!process_fij_related) std::cout<<
        "* Error (KIM_API_model::is_it_match): (virial,particleVirial,hessian,process_d1/2Edr) do not match:"<<std::endl;
@@ -1920,16 +1921,19 @@ int KIM_API_model::get_model_kim_str(const char* const modelname,
        itr->append("/");
        itr->append(modelname); itr->append("/");
        itr->append(MODELLIBFILE); itr->append(".so");
-       std::cout<< "* Info (KIM_API_model::get_model_kim_str): Looking for Model shared library file " << itr->c_str() <<std::endl;
-       tmp_model_lib_handle = dlopen(itr->c_str(), RTLD_NOW);
+       //std::cout<< "* Info (KIM_API_model::get_model_kim_str): Looking for Model shared library file " << itr->c_str() <<std::endl;
+       if (0 == access(itr->c_str(), F_OK))
+       {
+         tmp_model_lib_handle = dlopen(itr->c_str(), RTLD_NOW);
+       }
        if (tmp_model_lib_handle != NULL) break;
-       std::cout<< "* Error (KIM_API_model::get_model_kim_str): Cannot find Model shared library file for Model name: ";
-       std::cout<<modelname<<std::endl<<dlerror()<<std::endl;
     }
     if(tmp_model_lib_handle == NULL) {
        //redirecting back to > std::cout
+       std::cout<< "* Error (KIM_API_model::get_model_kim_str): A problem occurred with the Model shared library file for Model name: ";
+       std::cout<<modelname<<std::endl<<dlerror()<<std::endl;
        std::cout.rdbuf(backup); filekimlog.close();
-       fprintf(stderr,"Cannot find Model shared library file for Model name: %s.\n",modelname);
+       fprintf(stderr,"A problem occurred with the Model shared library file for Model name: %s.\n",modelname);
        *kimString = NULL;
        return KIM_STATUS_FAIL;
     }
@@ -1942,7 +1946,7 @@ int KIM_API_model::get_model_kim_str(const char* const modelname,
     const int* const model_str_chunks = (const int* const) dlsym(tmp_model_lib_handle, model_kim_str_chunks_name);
     char* dlsym_error = dlerror();
     if (dlsym_error) {
-        std::cerr << "Cannot load symbol: " << dlsym_error <<std::endl;
+        std::cout << "* Error (KIM_API_model::get_model_kim_str): Cannot load symbol: " << dlsym_error <<std::endl;
         dlclose(tmp_model_lib_handle);
 
         //redirecting back to > std::cout
@@ -1954,7 +1958,7 @@ int KIM_API_model::get_model_kim_str(const char* const modelname,
     const char** const model_str_ptr = (const char** const) dlsym(tmp_model_lib_handle, model_kim_str_name);
     dlsym_error = dlerror();
     if (dlsym_error) {
-        std::cerr << "Cannot load symbol: " << dlsym_error <<std::endl;
+        std::cout << "* Error (KIM_API_model::get_model_kim_str): Cannot load symbol: " << dlsym_error <<std::endl;
         dlclose(tmp_model_lib_handle);
 
         //redirecting back to > std::cout
@@ -2270,7 +2274,7 @@ int KIM_API_model::model_init(){
     filekimlog.open(kimlog,std::ofstream::app);
     backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);
 
-std::cout<< "* Info: KIM_API_model::model_init: call statically linked initialize routine for::"<<modelname<<std::endl;
+std::cout<< "* Info: (KIM_API_model::model_init): call statically linked initialize routine for::"<<modelname<<std::endl;
     //redirecting back to > std::cout
     std::cout.rdbuf(backup); filekimlog.close();
 
@@ -2280,7 +2284,7 @@ std::cout<< "* Info: KIM_API_model::model_init: call statically linked initializ
     filekimlog.open(kimlog,std::ofstream::app);
     backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);
 
-    std::cout<< "* Info: KIM_API_model::model_init: model initiliser failed for ";
+    std::cout<< "* Info: (KIM_API_model::model_init): model initiliser failed for ";
     std::cout<<modelname<<std::endl;
 
      //redirecting back to > std::cout
@@ -2313,20 +2317,23 @@ int KIM_API_model::model_init(){
        itr->append("/");
        itr->append(modelname); itr->append("/");
        itr->append(MODELLIBFILE); itr->append(".so");
-       std::cout<< "* Info (KIM_API_model::model_init): Looking for Model shared library file " << itr->c_str() <<std::endl;
-       model_lib_handle = dlopen(itr->c_str(), RTLD_NOW);
+       //std::cout<< "* Info (KIM_API_model::model_init): Looking for Model shared library file " << itr->c_str() <<std::endl;
+       if (0 == access(itr->c_str(), F_OK))
+       {
+         model_lib_handle = dlopen(itr->c_str(), RTLD_NOW);
+       }
        if (model_lib_handle) break;
-       std::cout<< "* Error (KIM_API_model::model_init): Cannot find Model shared library file for Model name: " << modelname << std::endl;
-       std::cout<<modelname<<std::endl<<dlerror()<<std::endl;
     }
     if(!model_lib_handle) {
        //redirecting back to > std::cout
+       std::cout<< "* Error (KIM_API_model::model_init): A problem occurred with the Model shared library file for Model name: " << modelname << std::endl;
+       std::cout<<modelname<<std::endl<<dlerror()<<std::endl;
        std::cout.rdbuf(backup); filekimlog.close();
-       fprintf(stderr,"Cannot find Model shared library file for Model name: %s.\n",modelname);
+       fprintf(stderr,"A problem occurred with the Model shared library file for Model name: %s.\n",modelname);
        return KIM_STATUS_FAIL;
     }
 
-std::cout<<"* Info: KIM_API_model::model_init: call dynamically linked initialize routine for:"<<modelname<<std::endl;
+std::cout<<"* Info: (KIM_API_model::model_init): call dynamically linked initialize routine for:"<<modelname<<std::endl;
 std::cout<<"               from the shared library:"<<itr->c_str()<<std::endl;
     sprintf(model_init_routine_name,"%s_init_pointer",modelname);
 
@@ -2334,7 +2341,7 @@ std::cout<<"               from the shared library:"<<itr->c_str()<<std::endl;
     Model_Init mdl_init = *((Model_Init*)dlsym(model_lib_handle,model_init_routine_name));
     const char *dlsym_error = dlerror();
     if (dlsym_error) {
-        std::cerr << "* Error (KIM_API_model::model_init): Cannot load symbol: " << dlsym_error <<std::endl;
+        std::cout << "* Error (KIM_API_model::model_init): Cannot load symbol: " << dlsym_error <<std::endl;
         dlclose(model_lib_handle);
 
         //redirecting back to > std::cout
@@ -2426,7 +2433,7 @@ int KIM_API_model::get_neigh(int mode, int request, int *part,
                    neiOfAnAtom = new int[*numnei];
                    if (neiOfAnAtom == NULL) {
                       neiOfAnAtomSize = 0;
-                      std::cout << std::endl << "* Error (KIM_API_model::get_neigh): numnei too big to allocate memory for index conversion." << std::endl;
+                      std::cout << std::endl << "* Error (KIM_API_model::get_neigh): numnei too big to allocate memory for index conversion: " << *numnei << std::endl;
                       return KIM_STATUS_NEIGH_TOO_MANY_NEIGHBORS;
                    }
                    neiOfAnAtomSize = *numnei;
@@ -2891,32 +2898,32 @@ int KIM_API_model::get_status_msg(const int status_code,
    {
     {"configuration is not supported by the Model"},
     {"base units: are not supported or not the same phys.dimensions"},
-    {" unsupported Unit_time  "},
-    {" unsupported Unit_temperature  "},
-    {" unsupported Unit_charge  "},
-    {" unsupported Unit_energy  "},
-    {" unsupported Unit_length  "},
+    {"unsupported Unit_time"},
+    {"unsupported Unit_temperature"},
+    {"unsupported Unit_charge"},
+    {"unsupported Unit_energy"},
+    {"unsupported Unit_length"},
     {"Unit_Handling must be \"flexible\" or \"fixed\" "},
-    {"group argument must be 1 or 0(in KIM_API...multiple routine)"},//
-    { "numargs is not divisiable by 4(in KIM_API...multiple routine)"},
-    { "wrong optional arguments (in a kim_api_...multiple_f routine)"},
-    { "numargs is not divisible by 2 (in KIM_API...multiple routine)"},
-    { "numargs is not divisiable by 3(in KIM_API...multiple routine)"},
-    { "invalid value for `request' provided"},
-    { "get_neigh method in KIM API object is not set(NULL value)"},
-    { "number of neighs of particle too big to allocate for conversion"},
-    { "invalid KIM API object"},
-    { "negative index in shape"},
-    { "invalid mode value"},
-    { "no particle species have been specified by the Simulator or Model"},
-    { "provided rank does not match KIM API argument rank"},
-    { "invalid particle id requested (request out of range)"},
-    { "symbol is not among supported particle symbols"},
-    { "argument name provided is not in KIM API object"},
-    { "unsuccessful completion"},
-    { "successful completion"},
-    { "iterator has been incremented past end of list"},
-    { "iterator has been successfully initialized"}};
+    {"group argument must be 1 or 0 (in KIM_API...multiple routine)"},
+    {"numargs is not divisiable by 4(in KIM_API...multiple routine)"},
+    {"wrong optional arguments (in a kim_api_...multiple routine)"},
+    {"numargs is not divisible by 2 (in KIM_API...multiple routine)"},
+    {"numargs is not divisiable by 3 (in KIM_API...multiple routine)"},
+    {"invalid value for `request' provided"},
+    {"get_neigh method in KIM API object is not set (NULL value)"},
+    {"number of neighs of particle too big to allocate for conversion"},
+    {"invalid KIM API object"},
+    {"negative index in shape"},
+    {"invalid mode value"},
+    {"no particle species have been specified by the Simulator or Model"},
+    {"provided rank does not match KIM API argument rank"},
+    {"invalid particle id requested (request out of range)"},
+    {"symbol is not among supported particle symbols"},
+    {"argument name provided is not in KIM API object"},
+    {"unsuccessful completion"},
+    {"successful completion"},
+    {"iterator has been incremented past end of list"},
+    {"iterator has been successfully initialized"}};
 
     if (status_code < mincode || status_code > maxcode) {
       *status_msg = "the error code is not among KIM_STATUS codes";
