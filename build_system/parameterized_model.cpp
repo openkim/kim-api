@@ -47,7 +47,7 @@
 static int process_paramfiles(char* param_file_names, int* nmstrlen);
 
 #if KIM_LINK_VALUE == KIM_LINK_DYNAMIC_LOAD
-static void* driver_lib_handle;
+static void* driver_lib_handle = NULL;
 static func_ptr driver_destroy;
 #endif
 
@@ -74,7 +74,6 @@ extern "C" {
 
     // close driver library
     dlclose(driver_lib_handle);
-
     return ier;
   }
 #endif
@@ -97,6 +96,7 @@ extern "C" {
               FL_NAME_LEN);
     }
 #if KIM_LINK_VALUE == KIM_LINK_DYNAMIC_LOAD
+    void* tmp_driver_lib_handle = NULL;
     std::list<std::string> lst;
     directoryPath(KIM_MODEL_DRIVERS_DIR, &lst);
     std::list<std::string>::iterator itr;
@@ -109,16 +109,17 @@ extern "C" {
       //    " shared library file " << itr->c_str() <<std::endl;
       if (0 == access(itr->c_str(), F_OK))
       {
-        driver_lib_handle = dlopen(itr->c_str(), RTLD_NOW);
+        tmp_driver_lib_handle = dlopen(itr->c_str(), RTLD_NOW);
       }
-      if (driver_lib_handle != NULL) break;
+      if (tmp_driver_lib_handle != NULL) break;
       //std::cout<< "* Error (MODEL_NAME_STR_init): Cannot find Model Driver"
       //    " shared library file for Model Driver name: ";
       //std::cout<< "MODEL_DRIVER_NAME_STR" <<std::endl<<dlerror()<<std::endl;
     }
-    if(driver_lib_handle == NULL) {
-      std::cout << "* Error (MODEL_NAME_STR_init()): A problem occurred with the MODEL_DRIVER_NAME_STR shared library for"
-          " MODEL_NAME_STR" << std::endl;
+    if(tmp_driver_lib_handle == NULL) {
+      std::cout << "* Error (MODEL_NAME_STR_init()):"
+          " A problem occurred with the MODEL_DRIVER_NAME_STR shared library"
+          " for MODEL_NAME_STR" << std::endl;
       std::cout << dlerror() << std::endl;
       delete [] param_file_names;
       delete [] param_file_names_copy;
@@ -126,6 +127,7 @@ extern "C" {
     }
     else
     {
+      driver_lib_handle = tmp_driver_lib_handle;
       //std::cout<< "* Info (MODEL_NAME_STR_init): Found Model Driver shared"
       //    " library file for Model Driver name: "
       //         << "MODEL_DRIVER_NAME_STR" << std::endl;
@@ -137,8 +139,10 @@ extern "C" {
         *((Driver_Init*)dlsym(driver_lib_handle,
                               "MODEL_DRIVER_NAME_STR_init_pointer"));
     const char *dlsym_error = dlerror();
-    if (dlsym_error) {
-      std::cout << "* Error (MODEL_NAME_STR_init()): Cannot load symbol: " << dlsym_error << std::endl;
+    if (dlsym_error)
+    {
+      std::cout << "* Error (MODEL_NAME_STR_init()): Cannot load symbol: "
+                << dlsym_error << std::endl;
       dlclose(driver_lib_handle);
       delete [] param_file_names;
       delete [] param_file_names_copy;

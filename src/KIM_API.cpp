@@ -741,6 +741,8 @@ KIM_API_model:: KIM_API_model(){
        virial_need2add=false;
        particleVirial_need2add=false;
        hessian_need2add=false;
+
+       model_lib_handle = NULL;
 }
 KIM_API_model:: ~KIM_API_model(){
       // free();
@@ -2322,9 +2324,9 @@ int KIM_API_model::model_init(){
        {
          model_lib_handle = dlopen(itr->c_str(), RTLD_NOW);
        }
-       if (model_lib_handle) break;
+       if (NULL != model_lib_handle) break;
     }
-    if(!model_lib_handle) {
+    if(NULL == model_lib_handle) {
        //redirecting back to > std::cout
        std::cout<< "* Error (KIM_API_model::model_init): A problem occurred with the Model shared library file for Model name: " << modelname << std::endl;
        std::cout<<modelname<<std::endl<<dlerror()<<std::endl;
