@@ -69,6 +69,14 @@ models_check:
         printf "*******************************************************************************\n"; \
         false; else true; fi
 
+INPLACE_CONFIG = $(KIM_DIR)/.$(package_name)/config-v$(VERSION_MAJOR)
+
+$(INPLACE_CONFIG): Makefile
+	@printf "Creating... User Config file.... $@.\n"
+	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 $(KIM_DIR)/.$(package_name)
+	$(QUELL)printf "model_drivers_dir = %s\n" $(KIM_DIR)/$(examplesdir)/$(modeldriversdir) >  $@; \
+                printf "models_dir = %s\n" $(KIM_DIR)/$(examplesdir)/$(modelsdir)              >> $@
+
 KIM_CONFIG_FILES = $(srcdir)/Makefile.KIM_Config \
                    $(srcdir)/utils/Makefile.KIM_Config \
                    $(srcdir)/$(modeldriversdir)/Makefile.KIM_Config \
@@ -80,7 +88,7 @@ KIM_CONFIG_FILES = $(srcdir)/Makefile.KIM_Config \
 KIM_SIMULATOR_CONFIG_FILES = $(KIM_DIR)/$(examplesdir)/openkim_tests/Makefile.KIM_Config_Helper \
                              $(KIM_DIR)/$(examplesdir)/simulators/Makefile.KIM_Config_Helper
 
-config: $(KIM_CONFIG_FILES) $(KIM_SIMULATOR_CONFIG_FILES)
+config: $(KIM_CONFIG_FILES) $(INPLACE_CONFIG) $(KIM_SIMULATOR_CONFIG_FILES)
 
 $(KIM_CONFIG_FILES): Makefile $(KIM_DIR)/Makefile.KIM_Config
 	$(QUELL)if test -d $(dir $@); then \
@@ -143,6 +151,7 @@ config-clean:
 	@printf "Cleaning... KIM_Config files.\n"
 	$(QUELL)rm -f $(KIM_CONFIG_FILES)
 	$(QUELL)rm -f $(KIM_SIMULATOR_CONFIG_FILES)
+	$(QUELL)rm -rf $(KIM_DIR)/.$(package_name)
 
 
 #
@@ -418,24 +427,15 @@ uninstall-set-default:
 #
 .PHONY: examples examples-all examples-clean examples-clean-all
 
-INPLACE_CONFIG = $(KIM_DIR)/.$(package_name)/config-v$(VERSION_MAJOR)
-
-$(INPLACE_CONFIG): Makefile
-	@printf "Creating... User Config file.... $@.\n"
-	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 $(KIM_DIR)/.$(package_name)
-	$(QUELL)printf "model_drivers_dir = %s\n" $(KIM_DIR)/$(examplesdir)/$(modeldriversdir) >  $@; \
-                printf "models_dir = %s\n" $(KIM_DIR)/$(examplesdir)/$(modelsdir)              >> $@
-
-examples: all $(if $(filter dynamic-load,$(KIM_LINK)),$(INPLACE_CONFIG),) examples-all
+examples: all examples-all
 
 examples-all:
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(KIM_DIR)/$(examplesdir) all
 
-examples-clean: config $(INPLACE_CONFIG) examples-clean-all config-clean
+examples-clean: config examples-clean-all config-clean
 
 examples-clean-all:
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(KIM_DIR)/$(examplesdir) clean
-	$(QUELL)rm -rf $(KIM_DIR)/.$(package_name)
 
 
 ########### for internal use ###########
