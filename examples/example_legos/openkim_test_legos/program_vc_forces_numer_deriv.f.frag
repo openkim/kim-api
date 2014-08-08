@@ -44,7 +44,7 @@ program TEST_NAME_STR
   character(len=KIM_KEY_STRING_LENGTH) :: model_NBCs(max_NBCs)
   integer(c_int)                       :: num_species
   integer(c_int)                       :: num_NBCs
-  character(len=4)                     :: passfail
+  character(len=5)                     :: passfail
   real(c_double)                       :: forcediff
   real(c_double)                       :: forcediff_sumsq
   real(c_double)                       :: weight

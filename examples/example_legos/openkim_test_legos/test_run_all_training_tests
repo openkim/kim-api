@@ -83,6 +83,78 @@ printf "\n"
 }
 
 #--------------------------------------------------------------------------------------------------------------
+test_name=ex_test_Ar_01CPP
+header "${test_name}"                  \
+       "   |"                          \
+       "   |-- ex_mode_Ar_P_Morse_01C" \
+       "   |-- ex_mode_Ar_P_Morse_02C" \
+       "   |-- ex_mode_Ar_P_Morse_03C" \
+       "   |-- ex_mode_Ar_P_Morse_04C" \
+       "   |-- ex_mode_Ar_P_Morse_05C" \
+       "   |-- ex_mode_Ar_P_Morse_06C" \
+       "   |-- ex_mode_Ar_P_Morse_07C" \
+       "   |-- ex_mode_Ar_P_Morse_08C" \
+       "   |-- ex_mode_Ar_P_Morse_09C" \
+       "   |-- ex_mode_Ar_P_Morse_10C" \
+       "   |-- ex_mode_Ar_P_Morse_11C" \
+       "   |-- ex_mode_Ar_P_Morse_12C" \
+       "   |-- ex_mode_Ar_P_Morse_14C" \
+       "   |"
+
+for num in 01 02 03 04 05 06 07 08 09 10 11 12 14; do
+  divider "${test_name} --- ex_model_Ar_P_Morse_${num}C";
+  (cd "${test_name}" && printf "ex_model_Ar_P_Morse_${num}C" |  ./"${test_name}") >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1));
+done
+footer
+
+#--------------------------------------------------------------------------------------------------------------
+test_name=ex_test_Ar_02CPP
+header "${test_name}"                  \
+       "   |"                          \
+       "   |-- ex_mode_Ar_P_Morse_02C" \
+       "   |-- ex_mode_Ar_P_Morse_03C" \
+       "   |-- ex_mode_Ar_P_Morse_04C" \
+       "   |-- ex_mode_Ar_P_Morse_05C" \
+       "   |-- ex_mode_Ar_P_Morse_06C" \
+       "   |-- ex_mode_Ar_P_Morse_07C" \
+       "   |-- ex_mode_Ar_P_Morse_08C" \
+       "   |-- ex_mode_Ar_P_Morse_09C" \
+       "   |-- ex_mode_Ar_P_Morse_10C" \
+       "   |-- ex_mode_Ar_P_Morse_11C" \
+       "   |-- ex_mode_Ar_P_Morse_12C" \
+       "   |-- ex_mode_Ar_P_Morse_14C" \
+       "   |"
+
+for num in 02 03 04 05 06 07 08 09 10 11 12 14; do
+  divider "${test_name} --- ex_model_Ar_P_Morse_${num}C";
+  (cd "${test_name}" && printf "ex_model_Ar_P_Morse_${num}C" |  ./"${test_name}") >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1));
+done
+footer
+
+#--------------------------------------------------------------------------------------------------------------
+test_name=ex_test_Ar_03CPP
+header "${test_name}"                  \
+       "   |"                          \
+       "   |-- ex_mode_Ar_P_Morse_03C" \
+       "   |-- ex_mode_Ar_P_Morse_04C" \
+       "   |-- ex_mode_Ar_P_Morse_05C" \
+       "   |-- ex_mode_Ar_P_Morse_06C" \
+       "   |-- ex_mode_Ar_P_Morse_07C" \
+       "   |-- ex_mode_Ar_P_Morse_08C" \
+       "   |-- ex_mode_Ar_P_Morse_09C" \
+       "   |-- ex_mode_Ar_P_Morse_10C" \
+       "   |-- ex_mode_Ar_P_Morse_11C" \
+       "   |-- ex_mode_Ar_P_Morse_12C" \
+       "   |-- ex_mode_Ar_P_Morse_14C" \
+       "   |"
+
+for num in 03 04 05 06 07 08 09 10 11 12 14; do
+  divider "${test_name} --- ex_model_Ar_P_Morse_${num}C";
+  (cd "${test_name}" && printf "ex_model_Ar_P_Morse_${num}C" |  ./"${test_name}") >&$redirect && MODEL_NUM=$(($MODEL_NUM + 1));
+done
+footer
+
+#--------------------------------------------------------------------------------------------------------------
 test_name=ex_test_Ar_free_cluster_energy
 header "${test_name}"                  \
        "   |"                          \
