@@ -64,8 +64,8 @@ ifneq (static-link,$(KIM_LINK))
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ $< ../KIM_API.o ../Unit_Handling.o ../kim_str.o ../KIM_AUX.o ../model_init_include_stubs.cpp $(LDLIBS)
   endif
 else
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).a $(LDLIBS)
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ $< ../lib$(KIM_LIB_BUILD).a $(LDLIBS)
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).a  $(XLANGLDLIBS) $(LDLIBS)
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ $< ../lib$(KIM_LIB_BUILD).a $(XLANGLDLIBS) $(LDLIBS)
 endif
 
 
