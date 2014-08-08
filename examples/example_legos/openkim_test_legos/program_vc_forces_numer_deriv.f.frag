@@ -384,9 +384,9 @@ program TEST_NAME_STR
         do J=1,DIM
            forcediff = abs(forces(J,I)-forces_num(J,I))
            if (forcediff<forces_num_err(J,I)) then
-              passfail = "    "
+              passfail = "ideal"
            else
-              passfail = "over"
+              passfail = "     "
            endif
            weight = max(abs(forces_num(J,I)),eps_prec)/ &
                     max(abs(forces_num_err(J,I)),eps_prec)
@@ -399,11 +399,11 @@ program TEST_NAME_STR
            forcediff_sumsq = forcediff_sumsq + term
            weight_sum = weight_sum + weight
            if (J.eq.1) then
-              print '(I6,2X,I4,2X,I3,2X,2ES25.15,3ES15.5,2X,A4)', &
+              print '(I6,2X,I4,2X,I3,2X,2ES25.15,3ES15.5,2X,A5)', &
                      I,particleSpecies(I),J,forces(J,I),forces_num(J,I), &
                      forcediff,forces_num_err(J,I),weight,passfail
            else
-              print '(14X,I3,2X,2ES25.15,3ES15.5,2X,A4)', &
+              print '(14X,I3,2X,2ES25.15,3ES15.5,2X,A5)', &
                      J,forces(J,I),forces_num(J,I), &
                      forcediff,forces_num_err(J,I),weight,passfail
            endif

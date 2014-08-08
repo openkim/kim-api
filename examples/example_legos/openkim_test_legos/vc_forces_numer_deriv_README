@@ -46,7 +46,7 @@ Notes:
    kim_api_string_init to set up the KIM object.
 
 2. It figures out which species a Model supports using
-   KIM_API_get_model_partcl_typs.
+   KIM_API_get_model_species.
 
 3. It checks a single configuration: a perturbed fcc cluster made of a random
    arrangement of the supported species with spacing scaled by a factor based
@@ -71,7 +71,7 @@ Notes:
    difference between these values in absolute value is also printed (`Force
    diff') as well as the error predicted by Ridders' method (`pred error').
    Ideally, one would expect the force difference to be less than the predicted
-   error.  If that is not the case the term `over' is printed at the end of the
+   error.  If that is the case the term `ok' is printed at the end of the
    line.  (Most potentials fail this check for most degrees of freedom, so this
    is not a good criterion.)
 
