@@ -33,6 +33,20 @@
 #
 
 
+=== kim-api-v1.6.1 =============================================================
+
+* Updates to Model Driver and Model template files (in docs/templates/)
+
+* Changed the internal mechanism for handling parameter files to remove a
+  security hole associated with the use of tmpnam().
+
+* Revise kim.log entries to be more informative and clear
+
+* Bug fixes in build system, examples, and build system
+
+* Other small documentation and code improvements
+
+
 === kim-api-v1.6.0 =============================================================
 
 * Documentation updates.
