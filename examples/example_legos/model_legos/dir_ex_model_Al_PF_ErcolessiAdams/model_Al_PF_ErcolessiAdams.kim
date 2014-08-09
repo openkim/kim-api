@@ -28,6 +28,14 @@
 #    Valeriu Smirichinski
 #    Stephen M. Whalen
 #
+@
+@#
+@# Portions Copyright (c) <FILL_year>, <FILL_copyright_holder>.
+@# All rights reserved.
+@#
+@# Contributors:
+@#    <FILL_your_name>
+@#
 
 #######################################################################################################
 #
@@ -37,7 +45,8 @@
 #
 #######################################################################################################
 
-KIM_API_Version := 1.6.0
+
+KIM_API_Version := VERSION_STR
 
 Unit_Handling    := fixed
 Unit_length      := A
@@ -51,7 +60,7 @@ Unit_time        := ps
 PARTICLE_SPECIES:
 # Symbol/name               Type                    code
 
-Al                          spec                    1
+<FILL_species_name>         spec                    1
 
 
 #######################################################################################################
@@ -126,3 +135,5 @@ MODEL_PARAMETERS:
 # Name                      Type         Unit                Shape              Requirements
 PARAM_FIXED_irlast          integer      none                []
 PARAM_FIXED_ielast          integer      none                []
+@
+@# --- No published parameters ---

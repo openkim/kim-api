@@ -36,6 +36,15 @@ KIM_TEMPLATES_DIR := $(KIM_DIR)/docs/templates
 KIM_EX_MODELS_DIR := $(KIM_DIR)/examples/models
 KIM_EX_MODEL_DRIVERS_DIR := $(KIM_DIR)/examples/model_drivers
 
+include $(KIM_DIR)/Makefile.Version
+# Clean up version variables
+VERSION_MAJOR := $(strip $(VERSION_MAJOR))
+VERSION_MINOR := $(strip $(VERSION_MINOR))
+VERSION_PATCH := $(strip $(VERSION_PATCH))
+VERSION_PRERELEASE := $(strip $(VERSION_PRERELEASE))
+VERSION_BUILD_METADATA := $(strip $(VERSION_BUILD_METADATA))
+VERSION_FULL := $(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_PATCH)$(if $(VERSION_PRERELEASE),-$(VERSION_PRERELEASE))$(if $(VERSION_BUILD_METADATA),+$(VERSION_BUILD_METADATA))
+
 VPATH = $(KIM_EX_MODELS_DIR) $(KIM_EX_MODEL_DRIVERS_DIR) $(KIM_TEMPLATES_DIR)
 
 
@@ -67,7 +76,7 @@ PARAMETER_SED_CMDS = \
             -e 's/<FILL_parameter_type_parameter_3>/PARAM_FREE_Rzero/g' \
             -e 's/<FILL_parameter_type_parameter_4>/PARAM_FIXED_shift/g'
 
-SED_VER_CMD = "s/VERSION_STR/1.6.0/g"
+SED_VER_CMD = "s/VERSION_STR/$(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_PATCH)/g"
 SED_CMD = sed -e "s/MODEL_NAME_STR/$@/g" -e "s/MODEL_KIM_NAME_STR/${subst ex_,,$@}/g"
 
 ifeq ($(flavor debug),undefined)
@@ -142,7 +151,8 @@ AUTO_GEN_MODELS = ex_model_Al_PF_ErcolessiAdams     \
                   model_El_P_Template.F03           \
                   model_El_P_Template.f.kim         \
                   model_El_P_Template.c             \
-                  model_El_P_Template.c.kim
+                  model_El_P_Template.c.kim         \
+                  model_El_PF_Template.f.kim
 
 all: $(AUTO_GEN_MODELS) EXAMPLES.README $(KIM_EX_MODELS_DIR)/Makefile $(KIM_EX_MODEL_DRIVERS_DIR)/Makefile
 
@@ -882,7 +892,19 @@ ex_model_Al_PF_ErcolessiAdams: dir_ex_model_Al_PF_ErcolessiAdams              \
 	mkdir -p $(KIM_EX_MODELS_DIR)/$@
 	@touch $(KIM_EX_MODELS_DIR)/$@
 	cp $(KIM_DIR)/LICENSE.CDDL $(KIM_EX_MODELS_DIR)/$@
-	cp -rf dir_$@/* $(KIM_EX_MODELS_DIR)/$@/
+	cp dir_$@/Makefile $(KIM_EX_MODELS_DIR)/$@/Makefile
+	cp dir_$@/$@.F03 $(KIM_EX_MODELS_DIR)/$@/$@.F03
+	cp dir_$@/README $(KIM_EX_MODELS_DIR)/$@/README
+	sed -e $(SED_VER_CMD) \
+            -e '/^@/d' \
+            dir_$@/$(subst ex_,,$@).kim > $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
+
+model_El_PF_Template.f.kim: dir_ex_model_Al_PF_ErcolessiAdams/model_Al_PF_ErcolessiAdams.kim \
+                            Makefile
+	sed -e $(SED_VER_CMD) \
+            -e 's/^@//g' \
+            -e '/^PARAM/d' \
+            dir_ex_model_Al_PF_ErcolessiAdams/model_Al_PF_ErcolessiAdams.kim > $(KIM_TEMPLATES_DIR)/$@
 
 ex_model_Cu_PF_Johnson: dir_ex_model_Cu_PF_Johnson                      \
                                $(wildcard dir_ex_model_Cu_PF_Johnson/*) \

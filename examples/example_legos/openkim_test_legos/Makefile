@@ -35,6 +35,16 @@
 KIM_DIR := ../../..
 KIM_EX_TESTS_DIR := $(KIM_DIR)/examples/openkim_tests
 
+include $(KIM_DIR)/Makefile.Version
+# Clean up version variables
+VERSION_MAJOR := $(strip $(VERSION_MAJOR))
+VERSION_MINOR := $(strip $(VERSION_MINOR))
+VERSION_PATCH := $(strip $(VERSION_PATCH))
+VERSION_PRERELEASE := $(strip $(VERSION_PRERELEASE))
+VERSION_BUILD_METADATA := $(strip $(VERSION_BUILD_METADATA))
+VERSION_FULL := $(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_PATCH)$(if $(VERSION_PRERELEASE),-$(VERSION_PRERELEASE))$(if $(VERSION_BUILD_METADATA),+$(VERSION_BUILD_METADATA))
+
+
 VPATH = $(KIM_EX_TESTS_DIR)
 
 
@@ -44,7 +54,7 @@ VER_REG_EXP_02 = \/\/.\..[[:space:]]*$$
 VER_REG_EXP_03 = \/\/..\.[[:space:]]*$$
 
 
-SED_VER_CMD = "s/VERSION_STR/1.6.0/g"
+SED_VER_CMD = "s/VERSION_STR/$(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_PATCH)/g"
 SED_CMD = sed -e "s/TEST_NAME_STR/$@/g"
 
 ifeq ($(flavor debug),undefined)
