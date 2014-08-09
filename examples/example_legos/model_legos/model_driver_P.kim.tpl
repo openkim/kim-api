@@ -45,6 +45,7 @@
 #
 #######################################################################################################
 
+
 KIM_API_Version := VERSION_STR
 
 Unit_Handling    := flexible
@@ -67,6 +68,7 @@ CONVENTIONS:
 # Name                      Type
 
 ZeroBasedLists              flag
+OneBasedLists               flag
 
 Neigh_IterAccess            flag
 

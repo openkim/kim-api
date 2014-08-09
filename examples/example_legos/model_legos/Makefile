@@ -148,10 +148,12 @@ AUTO_GEN_MODELS = ex_model_Al_PF_ErcolessiAdams     \
                   ex_model_Ar_P_Morse_14C           \
                   model_driver_P_Template.c         \
                   model_driver_P_Template.c.kim.tpl \
+                  model_driver_P_Template.f.kim.tpl \
                   model_El_P_Template.F03           \
                   model_El_P_Template.f.kim         \
                   model_El_P_Template.c             \
                   model_El_P_Template.c.kim         \
+                  model_El_PF_Template.c.kim        \
                   model_El_PF_Template.f.kim
 
 all: $(AUTO_GEN_MODELS) EXAMPLES.README $(KIM_EX_MODELS_DIR)/Makefile $(KIM_EX_MODEL_DRIVERS_DIR)/Makefile
@@ -417,17 +419,26 @@ model_driver_P_Template.c: model_driver_P_Morse.c \
             -e 's|[[:space:]]*$(VER_REG_EXP)[[:space:]]*$$||' \
                model_driver_P_Morse.c > $(KIM_TEMPLATES_DIR)/$@
 
-model_driver_P_Template.c.kim.tpl: model_driver_P_Morse.kim.tpl \
+model_driver_P_Template.c.kim.tpl: model_driver_P.kim.tpl \
                                    Makefile
-	$(D_CAT) model_driver_P_Morse.kim.tpl | \
+	$(D_CAT) model_driver_P.kim.tpl | \
            sed -e $(SED_VER_CMD) \
                -e 's/^@//' \
+               -e '/OneBasedLists/d' \
            >  $(KIM_TEMPLATES_DIR)/$@
 
-ex_model_driver_P_Morse_13C: model_driver_Morse_README    \
-                             model_driver_Makefile        \
-                             model_driver_P_Morse.kim.tpl \
-                             model_driver_P_Morse.c       \
+model_driver_P_Template.f.kim.tpl: model_driver_P.kim.tpl \
+                                   Makefile
+	$(D_CAT) model_driver_P.kim.tpl | \
+           sed -e $(SED_VER_CMD) \
+               -e 's/^@//' \
+               -e '/ZeroBasedLists/d' \
+           >  $(KIM_TEMPLATES_DIR)/$@
+
+ex_model_driver_P_Morse_13C: model_driver_Morse_README \
+                             model_driver_Makefile     \
+                             model_driver_P.kim.tpl    \
+                             model_driver_P_Morse.c    \
                              Makefile
         # make directory
 	mkdir -p $(KIM_EX_MODEL_DRIVERS_DIR)/$@
@@ -440,8 +451,10 @@ ex_model_driver_P_Morse_13C: model_driver_Morse_README    \
 	$(D_CAT) model_driver_Makefile | sed -e 's/MODEL_DRIVER_NAME_STR/$@/g' \
                                           -e 's/MODEL_DRIVER_KIM_FILE_TEMPLATE_STR/$(subst ex_,,$@).kim.tpl/' >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/Makefile
         # make .kim file in the directory
-	$(D_CAT) model_driver_P_Morse.kim.tpl | \
+	$(D_CAT) model_driver_P.kim.tpl | \
            sed -e $(SED_VER_CMD)\
+               -e '/^@/d' \
+               -e '/^OneBasedLists/d' \
                -e 's/<FILL_parameter_type_parameter_1>/PARAM_FREE_epsilon         /g' \
                -e 's/<FILL_parameter_type_parameter_2>/PARAM_FREE_C               /g' \
                -e 's/<FILL_parameter_type_parameter_3>/PARAM_FREE_Rzero           /g' \
@@ -553,7 +566,8 @@ ex_model_Ar_P_Morse_%C: model_driver_P_Morse.c      \
               true; \
         fi;
 
-ex_model_Ar_P_Morse_14C: model_Morse_README \
+ex_model_Ar_P_Morse_14C: model_Morse_README   \
+                         model_Morse_Makefile \
                          Makefile
         # make directory
 	mkdir -p $(KIM_EX_MODELS_DIR)/$@
@@ -607,10 +621,10 @@ ex_model_Ar_P_Morse_14C: model_Morse_README \
 	echo "#    Ellad B. Tadmor"                                                                           >> $(KIM_EX_MODELS_DIR)/$@/$@.params
 	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)/$@/$@.params
 
-ex_model_driver_P_Morse: model_driver_Morse_README    \
-                         model_driver_Makefile        \
-                         model_driver_P_Morse.kim.tpl \
-                         model_driver_P_Morse.c       \
+ex_model_driver_P_Morse: model_driver_Morse_README \
+                         model_driver_Makefile     \
+                         model_driver_P.kim.tpl    \
+                         model_driver_P_Morse.c    \
                          Makefile
         # make directory
 	mkdir -p $(KIM_EX_MODEL_DRIVERS_DIR)/$@
@@ -623,8 +637,9 @@ ex_model_driver_P_Morse: model_driver_Morse_README    \
 	$(D_CAT) model_driver_Makefile | sed -e 's/MODEL_DRIVER_NAME_STR/$@/g' \
                                           -e 's/MODEL_DRIVER_KIM_FILE_TEMPLATE_STR/$(subst ex_,,$@).kim.tpl/' >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/Makefile
         # make .kim file in the directory
-	$(D_CAT) model_driver_P_Morse.kim.tpl | \
+	$(D_CAT) model_driver_P.kim.tpl | \
            sed -e '/^@/d' -e $(SED_VER_CMD) \
+               -e '/OneBasedLists/d' \
                -e 's/<FILL_parameter_type_parameter_1>/PARAM_FREE_epsilon         /g' \
                -e 's/<FILL_parameter_type_parameter_2>/PARAM_FREE_C               /g' \
                -e 's/<FILL_parameter_type_parameter_3>/PARAM_FREE_Rzero           /g' \
@@ -752,10 +767,10 @@ ex_model_Ne_P_Morse: model_Morse_README \
 	echo "#"                                                                                              >> $(KIM_EX_MODELS_DIR)/$@/$@.params
 
 
-ex_model_driver_P_LJ: model_driver_LJ_README    \
-                      model_driver_Makefile     \
-                      model_driver_P_LJ.kim.tpl \
-                      model_driver_P_LJ.F03     \
+ex_model_driver_P_LJ: model_driver_LJ_README \
+                      model_driver_Makefile  \
+                      model_driver_P.kim.tpl \
+                      model_driver_P_LJ.F03  \
                       Makefile
         # make directory
 	mkdir -p $(KIM_EX_MODEL_DRIVERS_DIR)/$@
@@ -768,7 +783,18 @@ ex_model_driver_P_LJ: model_driver_LJ_README    \
 	$(D_CAT) model_driver_Makefile | sed -e 's/MODEL_DRIVER_NAME_STR/$@/g' \
                                           -e 's/MODEL_DRIVER_KIM_FILE_TEMPLATE_STR/$(subst ex_,,$@).kim.tpl/'   >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/Makefile
         # make .kim file in the directory
-	$(D_CAT) model_driver_P_LJ.kim.tpl | sed -e $(SED_VER_CMD)                                              >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$(subst ex_,,$@).kim.tpl
+	$(D_CAT) model_driver_P.kim.tpl | \
+           sed -e '/^@/d' -e $(SED_VER_CMD) \
+               -e '/ZeroBasedLists/d' \
+               -e 's/<FILL_parameter_type_parameter_1>/PARAM_FREE_epsilon         /g' \
+               -e 's/<FILL_parameter_type_parameter_2>/PARAM_FREE_sigma           /g' \
+               -e "/<FILL_parameter_type_parameter_3>/`printf '{N\nd\n}'`" \
+               -e 's/<FILL_parameter_type_parameter_4>/PARAM_FIXED_shift          /g' \
+               -e 's/<FILL_parameter_1_unit>/energy          /g' \
+               -e 's/<FILL_parameter_2_unit>/length\^-1       /g' \
+               -e "/<FILL_parameter_3_unit>/`printf '{N\nd\n}'`" \
+               -e 's/<FILL_parameter_4_unit>/energy          /g' \
+               >  $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$(subst ex_,,$@).kim.tpl
         # make .F03 file in the directory
 	$(F_CAT) model_driver_P_LJ.F03 | $(SED_CMD) \
          | sed -e `echo $@ | tr A-Z a-z | sed -e 's/^\(.*\)/s\/MODEL_DRIVER_NAME_LC_STR\/\1\/g/'` \
@@ -897,12 +923,21 @@ ex_model_Al_PF_ErcolessiAdams: dir_ex_model_Al_PF_ErcolessiAdams              \
 	cp dir_$@/README $(KIM_EX_MODELS_DIR)/$@/README
 	sed -e $(SED_VER_CMD) \
             -e '/^@/d' \
+            -e 's/<FILL_species_name>/Al                 /g' \
             dir_$@/$(subst ex_,,$@).kim > $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
 
 model_El_PF_Template.f.kim: dir_ex_model_Al_PF_ErcolessiAdams/model_Al_PF_ErcolessiAdams.kim \
                             Makefile
 	sed -e $(SED_VER_CMD) \
             -e 's/^@//g' \
+            -e '/^PARAM/d' \
+            dir_ex_model_Al_PF_ErcolessiAdams/model_Al_PF_ErcolessiAdams.kim > $(KIM_TEMPLATES_DIR)/$@
+
+model_El_PF_Template.c.kim: dir_ex_model_Al_PF_ErcolessiAdams/model_Al_PF_ErcolessiAdams.kim \
+                            Makefile
+	sed -e $(SED_VER_CMD) \
+            -e 's/^@//g' \
+            -e 's/OneBasedLists /ZeroBasedLists/g' \
             -e '/^PARAM/d' \
             dir_ex_model_Al_PF_ErcolessiAdams/model_Al_PF_ErcolessiAdams.kim > $(KIM_TEMPLATES_DIR)/$@
 
@@ -978,7 +1013,7 @@ model_El_P_Template.c.kim: dir_model_El_P_MLJ/model_El_P_MLJ.kim \
                            Makefile
 	sed -e $(SED_VER_CMD) \
             -e 's/^@//' \
-            -e 's/BASED_LIST_STR/ZeroBasedLists/g' \
+            -e 's/BASED_LIST_STR /ZeroBasedLists/g' \
             dir_model_El_P_MLJ/model_El_P_MLJ.kim > $(KIM_TEMPLATES_DIR)/model_El_P_Template.c.kim
 
 
@@ -993,7 +1028,14 @@ model_El_P_Template.f.kim: dir_model_El_P_MLJ/model_El_P_MLJ.kim \
 	sed -e $(SED_VER_CMD) \
             -e 's/^@//' \
             -e 's/BASED_LIST_STR/OneBasedLists /g' \
-            dir_model_El_P_MLJ/model_El_P_MLJ.kim > $(KIM_TEMPLATES_DIR)/model_El_P_Template.f.kim
+            dir_model_El_P_MLJ/model_El_P_MLJ.kim > $(KIM_TEMPLATES_DIR)/$@
+
+model_El_P_Template.c.kim: dir_model_El_P_MLJ/model_El_P_MLJ.kim \
+                           Makefile
+	sed -e $(SED_VER_CMD) \
+            -e 's/^@//' \
+            -e 's/BASED_LIST_STR/ZeroBasedLists /g' \
+            dir_model_El_P_MLJ/model_El_P_MLJ.kim > $(KIM_TEMPLATES_DIR)/$@
 
 
 ex_model_Ne_P_LJ_NEIGH_PURE_H: dir_ex_model_Ne_P_LJ_NEIGH_PURE_H               \
