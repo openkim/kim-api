@@ -33,6 +33,15 @@
 #
 
 
+=== kim-api-v1.6.2 =============================================================
+
+* Correct KIM_API_Versions in template ".kim" files
+
+* Update make clean target for Model Drivers and Models
+
+* All template ".kim" files now generated from "legos" in git repo
+
+
 === kim-api-v1.6.1 =============================================================
 
 * Updates to Model Driver and Model template files (in docs/templates/)
