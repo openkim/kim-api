@@ -35,6 +35,7 @@
 #
 #######################################################################################################
 
+
 KIM_API_Version := VERSION_STR
 
 Unit_Handling    := flexible
@@ -47,7 +48,7 @@ Unit_time        := ps
 
 
 #######################################################################################################
-SUPPORTED_ATOM/PARTICLES_TYPES:
+PARTICLE_SPECIES:
 # Symbol/name               Type                    code
 
 Ar                          spec                    1
@@ -63,11 +64,13 @@ Neigh_IterAccess            flag
 
 Neigh_LocaAccess            flag
 
+NEIGH_RVEC_H                flag
+
 NEIGH_PURE_H                flag
 
-NEIGH_PURE_F                flag
-
 NEIGH_RVEC_F                flag
+
+NEIGH_PURE_F                flag
 
 MI_OPBC_H                   flag
 
@@ -109,9 +112,9 @@ destroy                     method       none                []                 
 
 destroy                     method       none                []
 
-compute                     method       none                []
-
 reinit                      method       none                []                 optional
+
+compute                     method       none                []
 
 cutoff                      double       length              []
 
@@ -129,18 +132,19 @@ particleVirial              double       energy              [numberOfParticles,
 
 hessian                     double       pressure            [numberOfParticles,numberOfParticles,3,3]  optional
 
+
 #######################################################################################################
 MODEL_PARAMETERS:
 # Name                      Type         Unit                Shape              Requirements
 
 PARAM_FREE_cutoff           double       length              []
 
+PARAM_FIXED_cutsq           double       length^2            []
+
 PARAM_FREE_epsilon          double       energy              []
 
 PARAM_FREE_C                double       length^-1           []
 
 PARAM_FREE_Rzero            double       length              []
-
-PARAM_FIXED_cutsq           double       length^2            []
 
 PARAM_FIXED_shift           double       energy              []

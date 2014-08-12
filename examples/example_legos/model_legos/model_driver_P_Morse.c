@@ -596,7 +596,8 @@ static int compute(void* km)                                                    
   }                                                                             /*12345678901234*/
   ier = KIM_STATUS_OK;  /* everything is ok */                                  /*12345678901234*/
                                                                                 /*12345678901234*/
-  /* initialize potential energies, forces, and virial term */                  /*.2345678901234*/
+  /* initialize potential energies, forces */                                   /*.2............*/
+  /* initialize potential energies, forces, and virial term */                  /*..345678901234*/
   if (comp_particleEnergy)                                                      /*.2345678901234*/
   {                                                                             /*.2345678901234*/
     for (i = 0; i < *nParts; ++i)                                               /*.2345678901234*/
@@ -1064,7 +1065,7 @@ static int compute(void* km)                                                    
         }                                                                       /*.2345678901234*/
       }                                                                         /*12345678901234*/
     }  /* loop on jj */                                                         /*12345678901234*/
-  }  /* infinite while loop (terminated by break statements above */            /*12345678901234*/
+  }  /* infinite while loop (terminated by break statements above) */           /*12345678901234*/
                                                                                 /*....5678901234*/
   /* Free temporary storage */                                                  /*....5678901234*/
   if (3 == NBC)                                                                 /*....5678901234*/
