@@ -568,12 +568,13 @@ static int compute(void* km)
       }
 
       /* accumulate the embedding energy contribution */
-      /* Assuming U)rho=0) = 0.0 */
+      /* Assuming U(rho=0) = 0.0 */
       if (comp_particleEnergy)
       {
-         particleEnergy[i] += U;
+        /* This serves also to initialize particleEnergy */
+         particleEnergy[i] = U;
       }
-      else if (comp_energy)
+      if (comp_energy)
       {
          *energy += U;
       }
