@@ -981,6 +981,11 @@ int KIM_API_model::version_newer(const char* const versionA,
   char* const B_Prerelease = new char[len];
   char* const B_Build = new char[len];
 
+  std::stringstream A_PR;
+  std::string A_tok;
+  std::stringstream B_PR;
+  std::string B_tok;
+
   int retval = KIM_STATUS_FAIL;
   *result = -1;
 
@@ -1053,22 +1058,20 @@ int KIM_API_model::version_newer(const char* const versionA,
   }
   // Both are prereleases of the same version
 
-  char* A_tok;
-  char* A_Context;
-  char* B_tok;
-  char* B_Context;
-  A_tok = strtok_r(A_Prerelease, ".", &A_Context);
-  B_tok = strtok_r(B_Prerelease, ".", &B_Context);
+  A_PR << A_Prerelease;
+  B_PR << B_Prerelease;
 
-  while (A_tok != NULL && B_tok != NULL)
+  std::getline(A_PR, A_tok, '.');
+  std::getline(B_PR, B_tok, '.');
+
+  while (!A_PR.eof() && !B_PR.eof())
   {
     int Aint;
     char* A_End;
-    Aint = strtol(A_tok, &A_End, 10);
+    Aint = strtol(A_tok.c_str(), &A_End, 10);
     int Bint;
     char* B_End;
-    Bint = strtol(B_tok, &B_End, 10);
-
+    Bint = strtol(B_tok.c_str(), &B_End, 10);
     if ('\0' != *A_End && '\0' == *B_End) // A numeric & B alpha
     {
       *result = 1;
@@ -1081,13 +1084,12 @@ int KIM_API_model::version_newer(const char* const versionA,
     }
     else if ('\0' != *A_End && '\0' != *B_End) // Both alpha
     {
-      int cmp = strcmp(A_tok, B_tok);
-      if (cmp > 0)
+      if (A_tok > B_tok)
       {
         *result = 1;
         goto exit;
       }
-      else if (cmp < 0)
+      else if (A_tok < B_tok)
       {
         *result = 0;
         goto exit;
@@ -1110,17 +1112,23 @@ int KIM_API_model::version_newer(const char* const versionA,
     }
     // equal identifiers
 
-    A_tok = strtok_r(NULL, ".", &A_Context);
-    B_tok = strtok_r(NULL, ".", &B_Context);
+    std::getline(A_PR, A_tok, '.');
+    std::getline(B_PR, B_tok, '.');
   }
 
-  if (A_tok != NULL && B_tok == NULL)
+  if (A_PR.eof() && !B_PR.eof())
   {
     *result = 1;
     goto exit;
   }
-  else if (A_tok == NULL && B_tok != NULL)
+  else if (!A_PR.eof() &&  B_PR.eof())
   {
+    *result = 0;
+    goto exit;
+  }
+  else
+  {
+    // versions are equal (thus, A is not newer than B)
     *result = 0;
     goto exit;
   }
