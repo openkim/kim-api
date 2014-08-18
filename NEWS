@@ -33,6 +33,17 @@
 #
 
 
+=== kim-api-v1.6.3 =============================================================
+
+* Fixed install to recognize := and = in Makefiles
+
+* Removed use of non-standard strtok_r()
+
+* Fixes to ex_model_Cu_PF_Johnson & model_El_PF_Template.c
+
+* Fixes build system
+
+
 === kim-api-v1.6.2 =============================================================
 
 * Correct KIM_API_Versions in template ".kim" files
