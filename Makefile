@@ -345,8 +345,8 @@ config-install: installdirs
 ifeq (dynamic-load,$(KIM_LINK))
         # Install make directory
 	$(QUELL)for fl in $(install_make); do $(INSTALL_PROGRAM) -m 0644 "$(builddir)/$$fl" "$(install_builddir)/$$fl"; done
-	$(QUELL)printf ',s|^ *srcdir *=.*|srcdir = $$(KIM_DIR)|\nw\nq\n' | ed "$(install_builddir)/Makefile.Generic" > /dev/null 2>&1
-	$(QUELL)printf ',s|^ *KIMINCLUDEFLAGS *=.*|KIMINCLUDEFLAGS = -I$$(KIM_DIR)/include|\nw\nq\n' | ed "$(install_builddir)/Makefile.Generic" > /dev/null 2>&1
+	$(QUELL)printf ',s|^ *srcdir *:*=.*|srcdir = $$(KIM_DIR)|\nw\nq\n' | ed "$(install_builddir)/Makefile.Generic" > /dev/null 2>&1
+	$(QUELL)printf ',s|^ *KIMINCLUDEFLAGS *:*=.*|KIMINCLUDEFLAGS = -I$$(KIM_DIR)/include|\nw\nq\n' | ed "$(install_builddir)/Makefile.Generic" > /dev/null 2>&1
         # Install compiler defaults directory
 	$(QUELL)for fl in $(install_compiler); do $(INSTALL_PROGRAM) -m 0644 "$(buildcompilerdir)/$$fl" "$(install_compilerdir)/$$fl"; done
         # Install linker defaults directory
@@ -354,7 +354,7 @@ ifeq (dynamic-load,$(KIM_LINK))
         # Install KIM_Config file
 	$(QUELL)$(INSTALL_PROGRAM) -m 0644 Makefile.KIM_Config "$(dest_package_dir)/Makefile.KIM_Config"
 	$(QUELL)fl="$(dest_package_dir)/Makefile.KIM_Config" && \
-                printf ',s|^ *KIM_DIR *=.*|KIM_DIR = $(dest_package_dir)|\nw\nq\n' | ed "$$fl" > /dev/null 2>&1
+                printf ',s|^ *KIM_DIR *:*=.*|KIM_DIR = $(dest_package_dir)|\nw\nq\n' | ed "$$fl" > /dev/null 2>&1
         # Install version file
 	$(QUELL)$(INSTALL_PROGRAM) -m 0644 Makefile.Version "$(dest_package_dir)/Makefile.Version"
   ifeq (true,$(shell git rev-parse --is-inside-work-tree 2> /dev/null))
