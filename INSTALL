@@ -228,6 +228,7 @@ INSTRUCTIONS for building and installing this KIM API release:
                      % brew install gcc
 
                    For Mac Ports the command is:
+                     % sudo port install gcc48 +universal
                      % sudo port select --set gcc mp-gcc48
                      (Note, this may require that you build the package from
                       source in order to get the correct version.)
