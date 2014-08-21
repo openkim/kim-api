@@ -57,11 +57,11 @@ $(full_package_name)-descriptor-file-match: descriptor-file-match.o \
                                                  lib$(KIM_LIB_BUILD).a)
 	@printf "Creating... $@.\n"
 ifneq (static-link,$(KIM_LINK))
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).so $(LDLIBS)
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).so $(XLANGLDLIBS) $(LDLIBS)
   ifeq (dynamic-load,$(KIM_LINK))
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ $< ../.lib$(KIM_LIB_BUILD).so $(LDLIBS)
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ $< ../.lib$(KIM_LIB_BUILD).so $(XLANGLDLIBS) $(LDLIBS)
   else
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ $< ../KIM_API.o ../Unit_Handling.o ../kim_str.o ../KIM_AUX.o ../model_init_include_stubs.cpp $(LDLIBS)
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ $< ../KIM_API.o ../Unit_Handling.o ../kim_str.o ../KIM_AUX.o ../model_init_include_stubs.cpp $(XLANGLDLIBS) $(LDLIBS)
   endif
 else
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).a  $(XLANGLDLIBS) $(LDLIBS)
@@ -89,8 +89,8 @@ endif
 
 $(full_package_name)-build-config: build-config.o .build-config.o
 	@printf "Creating... $@.\n"
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $<
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ .$<
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< $(XLANGLDLIBS)
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ .$< $(XLANGLDLIBS)
 
 .PHONY: all clean install installdirs uninstall
 
