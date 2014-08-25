@@ -106,34 +106,49 @@ int KIM_API_get_version_simulator_minor(void* kimmdl, int* const minor)
 int KIM_API_file_init(void * kimmdl, const char *simkimfile, const char *mdlname){
   KIM_API_model * mdl;
   mdl = new KIM_API_model[1];
-  if(mdl->file_init(simkimfile,mdlname)) {
+  int error = mdl->file_init(simkimfile,mdlname);
+  if(error == KIM_STATUS_OK) {
     *(KIM_API_model **)kimmdl = mdl;
-    return KIM_STATUS_OK;
+    return error;
   }
-  *(KIM_API_model **)kimmdl=NULL;
-  return KIM_STATUS_FAIL;
+  else
+  {
+    *(KIM_API_model **)kimmdl=NULL;
+    delete [] mdl;
+    return error;
+  }
 }
 
 int KIM_API_model_info(void * kimmdl, const char * mdlname){
     KIM_API_model * mdl;
     mdl = new KIM_API_model[1];
-    if(mdl->model_info(mdlname)) {
+    int error = mdl->model_info(mdlname);
+    if(error == KIM_STATUS_OK) {
         *(KIM_API_model **)kimmdl = mdl;
-        return KIM_STATUS_OK;
+        return error;
     }
-    *(KIM_API_model **)kimmdl=NULL;
-    return KIM_STATUS_FAIL;
+    else
+    {
+      *(KIM_API_model **)kimmdl=NULL;
+      delete [] mdl;
+      return error;
+    }
 }
 
  int KIM_API_string_init(void * kimmdl, const char *siminputstring, const char * mdlname){
      KIM_API_model * mdl;
     mdl = new KIM_API_model[1];
-    if(mdl->string_init(siminputstring,mdlname)) {
+    int error = mdl->string_init(siminputstring,mdlname);
+    if(error == KIM_STATUS_OK) {
         *(KIM_API_model **)kimmdl = mdl;
-        return KIM_STATUS_OK;
+        return error;
     }
-    *(KIM_API_model **)kimmdl=NULL;
-    return KIM_STATUS_FAIL;
+    else
+    {
+      *(KIM_API_model **)kimmdl=NULL;
+      delete [] mdl;
+      return error;
+    }
  }
 
  void KIM_API_allocate(void *kimmdl, int nparts, int nspecies,int * error){
