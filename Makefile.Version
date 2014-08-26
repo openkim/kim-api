@@ -35,8 +35,8 @@
 # values specified here must conform to the Semantic Versioning 2.0.0
 # specification.
 #
-# Starting with version 2.0.0, the KIM API package conforms to the Semantic
-# Versioning 2.0.0 specification.  Versions of the KIM API package before 2.0.0
+# Starting with version 1.6.0, the KIM API package conforms to the Semantic
+# Versioning 2.0.0 specification.  Versions of the KIM API package before 1.6.0
 # do not necessarily follow this standard.
 #
 # The PATCH value should be incremented IMMEDIATELY after an official release.
