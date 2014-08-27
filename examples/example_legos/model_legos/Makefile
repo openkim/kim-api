@@ -478,8 +478,11 @@ ex_model_driver_P_Morse_13C: model_driver_Morse_README \
             -e 's|[[:space:]]*$(VER_REG_EXP)[[:space:]]*$$||' \
             -e 's/<FILL_model_driver_name>/$@/g' \
             $(PARAMETER_SED_CMDS) \
-               model_driver_P_Morse.c > $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$@.c
-	printf ',g/^[[:space:]]*[{}][[:space:]]*$$/s/^[[:space:]]*/ /\\\n-,.j\nw\nq\n' | ed $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$@.c
+               model_driver_P_Morse.c | \
+        sed -e :lab\
+            -e '$$!N;s/\n[[:space:]]*\([{}]\)[[:space:]]*$$/ \1/;t lab' \
+            -e 'P;D' \
+        > $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$@.c
 	diff --unchanged-line-format=" %4dn %L" --old-line-format="%c'A'%4dn %L" --new-line-format="D     %L" -d \
               $(KIM_EX_MODEL_DRIVERS_DIR)/$@/$@.c \
               $(KIM_EX_MODELS_DIR)/ex_model_Ar_P_Morse_12C/ex_model_Ar_P_Morse_12C.c \
@@ -550,8 +553,11 @@ ex_model_Ar_P_Morse_%C: model_driver_P_Morse.c      \
             -e 's|[[:space:]]*$(VER_REG_EXP)[[:space:]]*$$||' \
             -e 's/<FILL_model_driver_name>/$@ /g' \
             $(PARAMETER_SED_CMDS) \
-               model_driver_P_Morse.c > $(KIM_EX_MODELS_DIR)/$@/$@.c
-	printf ',g/^[[:space:]]*[{}][[:space:]]*$$/s/^[[:space:]]*/ /\\\n-,.j\nw\nq\n' | ed $(KIM_EX_MODELS_DIR)/$@/$@.c
+               model_driver_P_Morse.c | \
+        sed -e :lab\
+            -e '$$!N;s/\n[[:space:]]*\([{}]\)[[:space:]]*$$/ \1/;t lab' \
+            -e 'P;D' \
+        > $(KIM_EX_MODELS_DIR)/$@/$@.c
 	if test $* -gt 1; then \
          idminus=`expr "$*" - "1"`; \
          diff --unchanged-line-format=" %4dn %L" --old-line-format="%c'A'%4dn %L" --new-line-format="D     %L" -d \

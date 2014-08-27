@@ -306,7 +306,7 @@ endif
 
 # build targets involved in "make install"
 install_builddir = $(dest_package_dir)/$(builddir)
-install_make = Makefile.Generic Makefile.LoadDefaults Makefile.Model Makefile.ModelDriver Makefile.ParameterizedModel Makefile.SanityCheck parameterized_model.cpp
+install_make = Makefile.LoadDefaults Makefile.Model Makefile.ModelDriver Makefile.ParameterizedModel Makefile.SanityCheck parameterized_model.cpp
 install_compilerdir = $(dest_package_dir)/$(buildcompilerdir)
 install_compiler = Makefile.GCC Makefile.INTEL
 install_linkerdir = $(dest_package_dir)/$(buildlinkerdir)
@@ -351,20 +351,28 @@ config-install: installdirs
 ifeq (dynamic-load,$(KIM_LINK))
         # Install make directory
 	$(QUELL)for fl in $(install_make); do $(INSTALL_PROGRAM) -m 0644 "$(builddir)/$$fl" "$(install_builddir)/$$fl"; done
-	$(QUELL)printf ',s|^ *srcdir *:*=.*|srcdir = $$(KIM_DIR)|\nw\nq\n' | ed "$(install_builddir)/Makefile.Generic" > /dev/null 2>&1
-	$(QUELL)printf ',s|^ *KIMINCLUDEFLAGS *:*=.*|KIMINCLUDEFLAGS = -I$$(KIM_DIR)/include|\nw\nq\n' | ed "$(install_builddir)/Makefile.Generic" > /dev/null 2>&1
+	$(QUELL)fl="Makefile.Generic" && \
+                sed -e 's|^[[:space:]]*srcdir[[:space:]]*:*=.*$$|srcdir = $$(KIM_DIR)|' \
+                    -e 's|^[[:space:]]*KIMINCLUDEFLAGS[[:space:]]*:*=.*$$|KIMINCLUDEFLAGS = -I$$(KIM_DIR)/include|' $(builddir)/$$fl \
+                > "$(install_builddir)/$$fl" && \
+                chmod 0644 "$(install_builddir)/$$fl"
         # Install compiler defaults directory
 	$(QUELL)for fl in $(install_compiler); do $(INSTALL_PROGRAM) -m 0644 "$(buildcompilerdir)/$$fl" "$(install_compilerdir)/$$fl"; done
         # Install linker defaults directory
 	$(QUELL)for fl in $(install_linker); do $(INSTALL_PROGRAM) -m 0644 "$(buildlinkerdir)/$$fl" "$(install_linkerdir)/$$fl"; done
         # Install KIM_Config file
-	$(QUELL)$(INSTALL_PROGRAM) -m 0644 Makefile.KIM_Config "$(dest_package_dir)/Makefile.KIM_Config"
-	$(QUELL)fl="$(dest_package_dir)/Makefile.KIM_Config" && \
-                printf ',s|^ *KIM_DIR *:*=.*|KIM_DIR = $(dest_package_dir)|\nw\nq\n' | ed "$$fl" > /dev/null 2>&1
+	$(QUELL)fl="Makefile.KIM_Config" && \
+                sed -e 's|^[[:space:]]*KIM_DIR[[:space:]]*:*=.*$$|KIM_DIR = $(dest_package_dir)|' \
+                    -e 's|^[[:space:]]*prefix[[:space:]]*:*=.*$$|prefix = $(prefix)|' \
+                $$fl > "$(dest_package_dir)/$$fl" && \
+                chmod 0644 "$(dest_package_dir)/$$fl"
         # Install version file
 	$(QUELL)$(INSTALL_PROGRAM) -m 0644 Makefile.Version "$(dest_package_dir)/Makefile.Version"
   ifeq (true,$(shell git rev-parse --is-inside-work-tree 2> /dev/null))
-	$(QUELL)printf ',s|\$$(shell[^)]*)|$(shell git rev-parse --short HEAD)|\nw\nq\n' | ed "$(dest_package_dir)/Makefile.Version" > /dev/null 2>&1
+	$(QUELL)sed -e 's|\$$(shell[^)]*)|$(shell git rev-parse --short HEAD)|' Makefile.Version > "$(dest_package_dir)/Makefile.Version" && \
+                chmod 0644 "$(dest_package_dir)/Makefile.Version"
+  else
+	$(QUELL)$(INSTALL_PROGRAM) -m 0644 Makefile.Version "$(dest_package_dir)/Makefile.Version"
   endif
 	@printf ".\n"
 else

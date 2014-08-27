@@ -379,8 +379,11 @@ ex_test_Ar_%CPP: test_training_CXX.cpp        \
 	$(SED_CMD) \
             -e '/$(VER_REG_EXP_$*)/d' \
             -e 's|[[:space:]]*$(VER_REG_EXP)[[:space:]]*$$||' \
-            test_training_CXX.cpp  > $(KIM_EX_TESTS_DIR)/$@/$@.cpp
-	printf ',g/^[[:space:]]*[{}][[:space:]]*$$/s/^[[:space:]]*/ /\\\n-,.j\nw\nq\n' | ed $(KIM_EX_TESTS_DIR)/$@/$@.cpp
+            test_training_CXX.cpp | \
+        sed -e :lab\
+            -e '$$!N;s/\n[[:space:]]*\([{}]\)[[:space:]]*$$/ \1/;t lab' \
+            -e 'P;D' \
+        > $(KIM_EX_TESTS_DIR)/$@/$@.cpp
 	if test $* -gt 1; then \
          idminus=`expr "$*" - "1"`; \
          diff --unchanged-line-format=" %4dn %L" --old-line-format="%c'A'%4dn %L" --new-line-format="D     %L" -d \

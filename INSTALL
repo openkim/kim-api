@@ -55,8 +55,8 @@ To install the KIM API package you need the following:
    is known to have subtle bugs, and SHOULD NOT BE USED with the KIM API
    software package.
 
-4. Standard utilities: ar, printf, sed, ed, grep, find, cat, test, cp, touch,
-   rm, rmdir, ln, install (needed for use in the build system).
+4. Standard utilities: ar, printf, sed, grep, find, cat, test, cp, touch,
+   rm, rmdir, ln, chmod, install (needed for use in the build system).
 
 5. wget and tar (needed for use with the `make add-<...>' build targets).
 
@@ -85,7 +85,7 @@ QUICK START (default settings are appropriate for most Linux systems):
 To install the KIM API to the standard location (/usr/local)
 
 % cp Makefile.KIM_Config.example Makefile.KIM_Config
-% printf "g/^KIM_DIR/d\\ni\nKIM_DIR = `pwd`\n.\nw\nq\n" | ed Makefile.KIM_Config
+% sed -e 's|^KIM_DIR.*$|KIM_DIR = '`pwd`'|' Makefile.KIM_Config.example > Makefile.KIM_Config
 % make
 % make install
 % make install-set-default-to-vX  # replace X with the major version of this package
@@ -93,9 +93,10 @@ To install the KIM API to the standard location (/usr/local)
 To install the KIM API to an alternative location (/path/to/alternate/location)
 
 % cp Makefile.KIM_Config.example Makefile.KIM_Config
-% printf "g/^KIM_DIR/d\\ni\nKIM_DIR = `pwd`\n.\nw\nq\n" | ed Makefile.KIM_Config
 % prefix=/path/to/alternate/location
-% printf "g/^#prefix/d\\ni\nprefix = ${prefix}\n.\nw\nq\n" | ed Makefile.KIM_Config
+% sed -e 's|^KIM_DIR.*$|KIM_DIR = '`pwd`'|' \
+      -e 's|^#prefix.*$|prefix = '${prefix}'|' \
+      Makefile.KIM_Config.example > Makefile.KIM_Config
 % make
 % make install
 % make install-set-default-to-vX  # replace X with the major version of this package
