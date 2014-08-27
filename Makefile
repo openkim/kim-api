@@ -243,7 +243,13 @@ add-%: config
                      fi; \
                    fi; \
                 else \
-                  printf "Unknown OpenKIM item or example name: $*.\n" && false; \
+                  printf "Unknown OpenKIM Model Driver or Model item or example name: $*.\n" && \
+                  printf "NOTE: The KIM API only supports download of Models (*__MO_*) and\n" && \
+                  printf "      Model Drivers (*__MD_*) from openkim.org.  OpenKIM Tests are\n" && \
+                  printf "      just special cases of Simulators with which the KIM API may be\n" && \
+                  printf "      linked.  Thus, no special support for downloading Tests (*__TE_*)\n" && \
+                  printf "      is provided by the KIM API package.\n" && \
+                  false; \
                 fi
 
 

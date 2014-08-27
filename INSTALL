@@ -332,7 +332,7 @@ INSTRUCTIONS for building and installing this KIM API release:
      `ls-models'                  -- list all "added" Models
 
      `add-OpenKIM'                -- "add" all OpenKIM Model Drivers and Models
-     `add-<Extended KIM ID>'      -- "add" <Extended KIM ID> from OpenKIM
+     `add-<Extended KIM ID>'      -- "add" Model <Extended KIM ID> from OpenKIM
                                      including the associated Model Driver, if
                                      appropriate
      `add-examples'               -- "add" example Model Drivers and Models
