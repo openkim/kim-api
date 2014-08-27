@@ -236,8 +236,14 @@ model_init_include.h model_init_include.cpp: Makefile .models-deleted $(MODELS_T
 
 clean:
 	@printf "Cleaning... src.\n"
-	$(QUELL)rm -f *.o .*.o *.a .*.a *.so .*.so *.mod  model_init_include.h model_init_include.cpp model_init_include_stubs.cpp model_kim_str_include.h model_kim_str_include.cpp \
-                      .*.make-temp .models-deleted KIM_API_Version.h KIM_API_F03_Multiples.incl &&\
+	$(QUELL)rm -f *.o .*.o *.a .*.a *.so .*.so *.mod  \
+                      model_init_include.h model_init_include.cpp \
+                      model_init_include_stubs.cpp model_kim_str_include.h \
+                      model_kim_str_include.cpp \
+                      .*.make-temp .models-deleted \
+                      KIM_API_Version.h KIM_API_F03_Multiples.incl \
+                      $(KIM_STR_NAME).cpp .KIM_API_DIRS.cpp \
+                      && \
                 rm -rf "$(srcdir)/temp_archive_dir"
 
 
