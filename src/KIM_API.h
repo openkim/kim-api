@@ -48,6 +48,12 @@
 
 //#define intptr_t int  // for 32 bit machines
 
+// A macro to disallow the copy constructor and operator= functions.
+// This should be used in the private: declarations for a class
+#define DISALLOW_COPY_AND_ASSIGN(TypeName) \
+  TypeName(const TypeName&);               \
+  void operator=(const TypeName&)
+
 class KIMBaseElementFlag{
 public:
         int peratom; //0 -- peratom, 1--per something else
@@ -293,6 +299,8 @@ int is_half_neighbors(int *error);
         return &process_DE_instance;
     }
 private:
+  DISALLOW_COPY_AND_ASSIGN(KIM_API_model);
+
     KIM_IOline *inlines;
     int numlines;
    const char* name_temp;
