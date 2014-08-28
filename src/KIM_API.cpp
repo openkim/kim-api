@@ -1873,6 +1873,32 @@ extern "C"{
   #include "model_kim_str_include.h"
 }
 
+int KIM_API_model::get_model_kim_str_len(const char* const modelname,
+                                         int* const kimStringLen)
+{
+     //redirecting std::cout > kimlog
+    char kimlog[2048] = "./kim.log";
+    std::streambuf * psbuf, * backup; std::ofstream filekimlog;
+    filekimlog.open(kimlog);
+    backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);
+
+    unsigned int in_mdlstr_len = 0;
+    const unsigned char* in_mdlstr = NULL;
+
+    #include "model_kim_str_include.cpp"
+
+    if (in_mdlstr == NULL){
+       std::cout<<"* Error (KIM_API_model::get_model_kim_str): Unknown KIM Model name " << modelname << "." << std::endl;
+       *kimStringLen = 0;
+       return KIM_STATUS_FAIL;
+    }
+
+    //redirecting back to > std::cout
+    std::cout.rdbuf(backup); filekimlog.close();
+    *kimStringLen = (int) in_mdlstr_len;
+    return KIM_STATUS_OK;
+}
+
 int KIM_API_model::get_model_kim_str(const char* const modelname,
                                      char** const kimString)
 {
@@ -1907,6 +1933,72 @@ int KIM_API_model::get_model_kim_str(const char* const modelname,
 }
 
 #else
+
+int KIM_API_model::get_model_kim_str_len(const char* const modelname,
+                                         int* const kimStringLen)
+{
+    void * tmp_model_lib_handle = NULL;
+    char model_kim_str_name[KIM_LINE_LENGTH];
+    sprintf(model_kim_str_name,"%s_" KIM_STR_NAME,modelname);
+    char model_kim_str_len_name[KIM_LINE_LENGTH];
+    sprintf(model_kim_str_len_name,"%s_" KIM_STR_NAME "_len",modelname);
+
+    //redirecting std::cout > kimlog
+    char kimlog[2048] = "./kim.log";
+    std::streambuf * psbuf, * backup; std::ofstream filekimlog;
+    filekimlog.open(kimlog);
+    backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);
+
+    std::list<std::string> lst;
+    directoryPath(KIM_MODELS_DIR, &lst);
+    std::list<std::string>::iterator itr;
+    for (itr = lst.begin(); itr != lst.end(); ++itr)
+    {
+       itr->append("/");
+       itr->append(modelname); itr->append("/");
+       itr->append(MODELLIBFILE); itr->append(".so");
+       //std::cout<< "* Info (KIM_API_model::get_model_kim_str): Looking for Model shared library file " << itr->c_str() <<std::endl;
+       if (0 == access(itr->c_str(), F_OK))
+       {
+         tmp_model_lib_handle = dlopen(itr->c_str(), RTLD_NOW);
+       }
+       if (tmp_model_lib_handle != NULL) break;
+    }
+    if(tmp_model_lib_handle == NULL) {
+       //redirecting back to > std::cout
+       std::cout<< "* Error (KIM_API_model::get_model_kim_str): A problem occurred with the Model shared library file for Model name: ";
+       std::cout<<modelname<<std::endl<<dlerror()<<std::endl;
+       std::cout.rdbuf(backup); filekimlog.close();
+       fprintf(stderr,"A problem occurred with the Model shared library file for Model name: %s.\n",modelname);
+       *kimStringLen = 0;
+       return KIM_STATUS_FAIL;
+    }
+    else
+    {
+      std::cout<< "* Info (KIM_API_model::get_model_kim_str): Found Model shared library file for Model name: " << modelname << std::endl;
+    }
+
+
+    const unsigned int* const model_str_len = (const unsigned int* const) dlsym(tmp_model_lib_handle, model_kim_str_len_name);
+    char* dlsym_error = dlerror();
+    if (dlsym_error) {
+        std::cout << "* Error (KIM_API_model::get_model_kim_str): Cannot load symbol: " << dlsym_error <<std::endl;
+        dlclose(tmp_model_lib_handle);
+
+        //redirecting back to > std::cout
+        std::cout.rdbuf(backup); filekimlog.close();
+
+        *kimStringLen = 0;
+        return KIM_STATUS_FAIL;
+    }
+
+    *kimStringLen = (int) *model_str_len;
+
+    dlclose(tmp_model_lib_handle);
+   //redirecting back to > std::cout
+    std::cout.rdbuf(backup); filekimlog.close();
+    return KIM_STATUS_OK;
+}
 
 int KIM_API_model::get_model_kim_str(const char* const modelname,
                                      char** const kimString)

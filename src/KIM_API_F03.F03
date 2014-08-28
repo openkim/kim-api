@@ -807,6 +807,16 @@ contains
     call c_call(kimmdl, trim(particle)//c_null_char, code, error)
   end subroutine kim_api_set_species_code
 
+  integer(c_int) function kim_api_get_model_kim_str_len(modelname, kimStringLen)
+    use :: kim_api_f03_helper, only : c_call => kim_api_get_model_kim_str_len
+    implicit none
+    character(len=*), intent(in)  :: modelname
+    integer(c_int),   intent(out) :: kimStringLen
+
+    kim_api_get_model_kim_str_len = c_call(trim(modelname)//c_null_char, kimStringLen)
+    return
+  end function kim_api_get_model_kim_str_len
+
   integer(c_int) function kim_api_get_model_kim_str(modelname, kimString)
     use :: kim_api_f03_helper, only : c_call => kim_api_get_model_kim_str
     implicit none

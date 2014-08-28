@@ -1545,17 +1545,38 @@ Arguments:
 
 ******************************************************************************
 
+int KIM_API_get_model_kim_str_len(char *modelname, int* const kimStringLen);
+
+    This routines outputs an integer corresponding to the length of the KIM
+    descriptor file string for the Model modelname.  If any errors occur the
+    routine prints a message to kim.log and returns.
+
+Return value:
+      KIM_STATUS_OK   - on success
+      KIM_STATUS_FAIL - on error
+
+Arguments:
+
+      char *modelname
+              model name in KIM
+
+      int* const kimStringLen
+              The length of the Model's ".kim" file string
+
+******************************************************************************
+
 int KIM_API_get_model_kim_str(char *modelname, char** const kimString);
 
     This routines outputs a pointer to a NULL terminated string containing the
     complete KIM descriptor file for the Model modelname.  The memory pointed
     to by this pointer is allocated by the routine, but should be released by
     the user to avoid a memory leak (Fortran 2003 users should use
-    KIM_API_c_free()).  If any errors occur they are fatal and the routine
-    prints a message to kim.log and exits.
+    KIM_API_c_free()).  If any errors occur the routine prints a message to
+    kim.log and returns.
 
 Return value:
-      KIM_STATUS_OK
+      KIM_STATUS_OK   - on success
+      KIM_STATUS_FAIL - on error
 
 Arguments:
 

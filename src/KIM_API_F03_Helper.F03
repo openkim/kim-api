@@ -248,6 +248,13 @@ module kim_api_f03_helper
       integer(c_int)          :: error
     end subroutine kim_api_set_species_code
 
+    integer(c_int) function kim_api_get_model_kim_str_len(modelname, kimStringLen) &
+      bind(c, name="KIM_API_get_model_kim_str_len")
+      use, intrinsic :: iso_c_binding
+      character(c_char) :: modelname(*)
+      integer(c_int)    :: kimStringLen
+    end function kim_api_get_model_kim_str_len
+
     integer(c_int) function kim_api_get_model_kim_str(modelname, kimString) &
       bind(c, name="KIM_API_get_model_kim_str")
       use, intrinsic :: iso_c_binding

@@ -178,6 +178,11 @@ int KIM_API_model_init(void * kimmdl){
     return KIM_STATUS_FAIL;
 }
 
+int KIM_API_get_model_kim_str_len(const char * modelname, int* const kimStringLen)
+{
+    return KIM_API_model::get_model_kim_str_len(modelname, kimStringLen);
+}
+
 int KIM_API_get_model_kim_str(const char * modelname, char** const kimString)
 {
     return KIM_API_model::get_model_kim_str(modelname, kimString);
