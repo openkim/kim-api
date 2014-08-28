@@ -186,10 +186,10 @@ static int process_paramfiles(char* param_file_names, int* nmstrlen)
 {
   *nmstrlen = FL_NAME_LEN;
 
-  const char** paramfile_strings[NUM_PARAMFILES];
+  const unsigned char* paramfile_strings[NUM_PARAMFILES];
   PARAMFILE_POINTERS_GO_HERE;
-  int paramfile_strings_chunks[NUM_PARAMFILES];
-  PARAMFILE_CHUNKS_GO_HERE;
+  unsigned int paramfile_strings_len[NUM_PARAMFILES];
+  PARAMFILE_LENS_GO_HERE;
 
   for (int i=0; i<NUM_PARAMFILES; ++i)
   {
@@ -203,7 +203,6 @@ static int process_paramfiles(char* param_file_names, int* nmstrlen)
           << std::endl;
       return KIM_STATUS_FAIL;
     }
-
     int fileid = mkstemp(&(param_file_names[i*(FL_NAME_LEN)]));
     if (fileid == -1)
     {
@@ -213,10 +212,7 @@ static int process_paramfiles(char* param_file_names, int* nmstrlen)
     }
 
     FILE* fl = fdopen(fileid,"w");
-    for (int j=0; j<paramfile_strings_chunks[i]; ++j)
-    {
-      fprintf(fl, "%s", paramfile_strings[i][j]);
-    }
+    fwrite(paramfile_strings[i], paramfile_strings_len[i], 1, fl);
     fclose(fl);  // also closed the fileid
   }
 

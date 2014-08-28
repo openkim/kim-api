@@ -65,7 +65,7 @@ STATIC_COMP_WARNING:
         printf '*******                        $$KIM_DIR directory                       *******\n'; \
         printf '*******************************************************************************\n'; \
 
-$(KIM_STR_NAME).cpp: $(MODEL_KIM_FILE)
+$(KIM_STR_NAME).c: $(MODEL_KIM_FILE)
 
 all: $(MODEL_BUILD_TARGET)
 
@@ -96,13 +96,13 @@ $(EXPORT_LIST_NAME): $(KIM_MAKE_FILES) Makefile
 ifeq (darwin, $(KIM_SYSTEMLINKER))
 	$(QUELL)printf "_$(MODEL_NAME)_init_pointer\n"                       > $@
 	$(QUELL)printf "_$(MODEL_NAME)_$(KIM_STR_NAME)\n"                   >> $@
-	$(QUELL)printf "_$(MODEL_NAME)_$(KIM_STR_NAME)_chunks\n"            >> $@
+	$(QUELL)printf "_$(MODEL_NAME)_$(KIM_STR_NAME)_len\n"               >> $@
 else # everything else (linux and freebsd)
 	$(QUELL)printf "{\n"                                                 > $@
 	$(QUELL)printf "   global:\n"                                       >> $@
 	$(QUELL)printf "           $(MODEL_NAME)_init_pointer;\n"           >> $@
 	$(QUELL)printf "           $(MODEL_NAME)_$(KIM_STR_NAME);\n"        >> $@
-	$(QUELL)printf "           $(MODEL_NAME)_$(KIM_STR_NAME)_chunks;\n" >> $@
+	$(QUELL)printf "           $(MODEL_NAME)_$(KIM_STR_NAME)_len;\n"    >> $@
 	$(QUELL)printf "\n"                                                 >> $@
 	$(QUELL)printf "   local: *;\n"                                     >> $@
 	$(QUELL)printf "};\n"                                               >> $@
@@ -127,7 +127,7 @@ clean:
 	$(QUELL)rm -f $(LOCALOBJ) *.mod $(addprefix lib$(MODEL_LIB).,a so) \
                       $(addprefix lib$(MODEL_LIB_BUILD).,a so) \
                       $(addprefix .$(MODEL_LIB_BUILD).,a so) \
-                      $(addprefix $(KIM_STR_NAME).,o cpp) \
+                      $(addprefix $(KIM_STR_NAME).,o c) \
                       $(addprefix init_wrapper.,o cpp) $(LOCALCLEAN) \
                       $(EXPORT_LIST_NAME)
 

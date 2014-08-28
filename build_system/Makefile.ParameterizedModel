@@ -66,8 +66,8 @@ STATIC_COMP_WARNING:
         printf '*******                        $$KIM_DIR directory                       *******\n'; \
         printf '*******************************************************************************\n'; \
 
-$(KIM_STR_NAME).cpp: MODEL_KIM_FILE := descriptor.kim
-$(KIM_STR_NAME).cpp: descriptor.kim
+$(KIM_STR_NAME).c: MODEL_KIM_FILE := descriptor.kim
+$(KIM_STR_NAME).c: descriptor.kim
 
 all: descriptor.kim $(MODEL_BUILD_TARGET)
 
@@ -123,40 +123,21 @@ PARAM_MODEL_NAME = parameterized-model
 .INTERMEDIATE: $(PARAM_MODEL_NAME).cpp
 $(PARAM_MODEL_NAME).cpp: $(KIM_DIR)/$(builddir)/parameterized_model.cpp $(paramfile_name_list) Makefile
 	@printf "Creating... intermediate file... $@.\n"
-	$(QUELL)cat /dev/null > $(PARAM_MODEL_NAME).cpp
+	$(QUELL)cat /dev/null > $@
 	$(QUELL)$(foreach flnum,$(paramfile_num_list),\
             fl_name=$(PARAM_FILE_$(flnum)_NAME);\
-            fl_size=`cat $$fl_name | tr -d '\r' | wc -c`;\
-            n=`expr $$fl_size / 65536 + 2`;\
-            lines=`cat $$fl_name | tr -d '\r' | wc -l`;\
-            dl=`expr $$lines / $$n`;\
-            printf "static const int paramfile_$(flnum)_chunks = %i;\n" `expr $$n + 1` >> $@;\
-            printf "static const char* const paramfile_$(flnum)[] =\n"                 >> $@;\
-            printf "{\n"                                                               >> $@;\
-            i=0;\
-            while test $$i -le $$n; do \
-               if test $$i -ne 0; then printf "\n   ,\n\n"                             >> $@; fi;\
-               lnstart=`expr $$i '*' $$dl - 2`;\
-               if test $$lnstart -le 0; then begdel=":dummy"; else begdel="1,$$lnstart d"; fi;\
-               lnend=`expr \( $$i + 1 \) '*' $$dl - 1`;\
-               cat $$fl_name | tr -d '\r' | \
-               sed -e "$$begdel"        \
-                   -e "$$lnend,\$$ d"   \
-                   -e 's,\\,\\\\,g'     \
-                   -e 's,",\\",g'       \
-                   -e 's,^,   ",g'      \
-                   -e 's,$$,\\n",g'                                                    >> $@;\
-               i=`expr $$i + 1`;\
-           done;\
-           printf "};\n\n"                                                             >> $@;\
+            varnm=`printf "$${fl_name}" | \
+                       sed -e 's/^\([[:digit:]]\)/__\1/' -e 's/[^[[:alnum:]]]/_/g'` && \
+                xxd -i $${fl_name} | \
+                sed -e "s/$${varnm}/paramfile_$(flnum)/g" >> $@; \
          )
         # make sed script
 	$(QUELL)printf "/PARAMFILE_POINTERS_GO_HERE;/ {\n" > tmp-sed-script
-	$(QUELL)$(foreach flnum,$(paramfile_num_list),printf 'i\\\n' >> tmp-sed-script; printf "   paramfile_strings[$(flnum)-1] = (const char**) paramfile_$(flnum);\n" >> tmp-sed-script;)
+	$(QUELL)$(foreach flnum,$(paramfile_num_list),printf 'i\\\n' >> tmp-sed-script; printf "   paramfile_strings[$(flnum)-1] = paramfile_$(flnum);\n" >> tmp-sed-script;)
 	$(QUELL)printf "d\n" >> tmp-sed-script
 	$(QUELL)printf "}\n" >> tmp-sed-script
-	$(QUELL)printf "/PARAMFILE_CHUNKS_GO_HERE;/ {\n" >> tmp-sed-script
-	$(QUELL)$(foreach flnum,$(paramfile_num_list),printf 'i\\\n' >> tmp-sed-script; printf "   paramfile_strings_chunks[$(flnum)-1] = paramfile_$(flnum)_chunks;\n" >> tmp-sed-script;)
+	$(QUELL)printf "/PARAMFILE_LENS_GO_HERE;/ {\n" >> tmp-sed-script
+	$(QUELL)$(foreach flnum,$(paramfile_num_list),printf 'i\\\n' >> tmp-sed-script; printf "   paramfile_strings_len[$(flnum)-1] = paramfile_$(flnum)_len;\n" >> tmp-sed-script;)
 	$(QUELL)printf "d\n" >> tmp-sed-script
 	$(QUELL)printf "}\n" >> tmp-sed-script
         # create actual model code to call model driver
@@ -185,13 +166,13 @@ $(EXPORT_LIST_NAME): $(KIM_MAKE_FILES) Makefile
 ifeq (darwin, $(KIM_SYSTEMLINKER))
 	$(QUELL)printf "_$(MODEL_NAME)_init_pointer\n"             > $@
 	$(QUELL)printf "_$(MODEL_NAME)_$(KIM_STR_NAME)\n"         >> $@
-	$(QUELL)printf "_$(MODEL_NAME)_$(KIM_STR_NAME)_chunks\n"  >> $@
+	$(QUELL)printf "_$(MODEL_NAME)_$(KIM_STR_NAME)_len\n"     >> $@
 else # everything else (linux and freebsd)
 	$(QUELL)printf "{\n"                                                > $@
 	$(QUELL)printf "   global:\n"                                       >> $@
 	$(QUELL)printf "           $(MODEL_NAME)_init_pointer;\n"           >> $@
 	$(QUELL)printf "           $(MODEL_NAME)_$(KIM_STR_NAME);\n"        >> $@
-	$(QUELL)printf "           $(MODEL_NAME)_$(KIM_STR_NAME)_chunks;\n" >> $@
+	$(QUELL)printf "           $(MODEL_NAME)_$(KIM_STR_NAME)_len;\n"    >> $@
 	$(QUELL)printf "\n"                                                 >> $@
 	$(QUELL)printf "   local: *;\n"                                     >> $@
 	$(QUELL)printf "};\n"                                               >> $@
@@ -215,7 +196,7 @@ clean:
                       $(addprefix lib$(MODEL_LIB_BUILD).,a so) \
                       $(addprefix .lib$(MODEL_LIB_BUILD).,a so) \
                       $(addprefix $(PARAM_MODEL_NAME).,o cpp) \
-                      $(addprefix $(KIM_STR_NAME).,o cpp) \
+                      $(addprefix $(KIM_STR_NAME).,o c) \
                       $(EXPORT_LIST_NAME) descriptor.kim
 
 install_parammodeldir = $(dest_package_dir)/$(modelsdir)/$(MODEL_NAME)

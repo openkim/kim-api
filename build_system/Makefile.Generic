@@ -233,31 +233,10 @@ KIM_FTYPE_STANDARD_COMPILE_LIST = $(ARCHFLAG) $(PICFLAG) $(KIMINCLUDEFLAGS) $(KI
 
 # KIM descriptor file make rule
 KIM_STR_NAME = kim_str
-.INTERMEDIATE: $(KIM_STR_NAME).cpp
-$(KIM_STR_NAME).cpp: $(KIM_MAKE_FILES) # ".kim" dependency added in another Makefile
+.INTERMEDIATE: $(KIM_STR_NAME).c
+$(KIM_STR_NAME).c: $(KIM_MAKE_FILES) # ".kim" dependency added in another Makefile
 	@printf "Creating... intermediate file... $@.\n"
-	$(QUELL)fl_size=`cat $(MODEL_KIM_FILE) | tr -d '\r' | wc -c`;\
-         n=`expr $$fl_size / 65536 + 2`;\
-         lines=`cat $(MODEL_KIM_FILE) | tr -d '\r' | wc -l`;\
-         dl=`expr $$lines / $$n`;\
-         printf "extern \"C\" {\n"                                                                >  $@;\
-         printf "   extern const int $(MODEL_NAME)_$(KIM_STR_NAME)_chunks = %i;\n" `expr $$n + 1` >> $@;\
-         printf "   extern const char* const $(MODEL_NAME)_$(KIM_STR_NAME)[] =\n"                 >> $@;\
-         printf "   {\n"                                                                          >> $@;\
-         i=0;\
-         while test $$i -le $$n; do \
-            if test $$i -ne 0; then printf "\n      ,\n\n"                                        >> $@; fi;\
-            lnstart=`expr $$i '*' $$dl - 2`;\
-            if test $$lnstart -le 0; then begdel=":dummy"; else begdel="1,$$lnstart d"; fi;\
-            lnend=`expr \( $$i + 1 \) '*' $$dl - 1`;\
-            cat $(MODEL_KIM_FILE) | tr -d '\r' | \
-            sed -e "$$begdel"        \
-                -e "$$lnend,\$$ d"   \
-                -e 's,\\,\\\\,g'     \
-                -e 's,",\\",g'       \
-                -e 's,^,      ",g'   \
-                -e 's,$$,\\n",g'                                                                  >> $@;\
-            i=`expr $$i + 1`;\
-        done;\
-        printf "   };\n"                                                                          >> $@;\
-        printf "}\n"                                                                              >> $@;
+	$(QUELL)varnm=`printf "$(MODEL_KIM_FILE)" | \
+                       sed -e 's/^\([[:digit:]]\)/__\1/' -e 's/[^[[:alnum:]]]/_/g'` && \
+                xxd -i $(MODEL_KIM_FILE) | \
+                sed -e "s/$${varnm}/$(MODEL_NAME)_$(KIM_STR_NAME)/g" > $@

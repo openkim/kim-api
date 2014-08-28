@@ -965,7 +965,7 @@ int KIM_API_model::version_newer(const char* const versionA,
                                  const char* const versionB,
                                  int* const result)
 {
-  unsigned len = strlen(versionA);
+  unsigned int len = strlen(versionA);
   if (len < strlen(versionB)) len = strlen(versionB);
   len = len + 1;
 
@@ -1147,13 +1147,13 @@ bool KIM_API_model::parse_semver(const char* const version, int* const major,
                                  char* const prerelease,
                                  char* const build_metadata)
 {
-  unsigned len = strlen(version) + 1;
+  unsigned int len = strlen(version) + 1;
   char* const ver = new char[len];
   strcpy(ver, version);
 
   bool hasPrerelease = false;
   bool hasBuild = false;
-  for (unsigned i=0; i<len; ++i)
+  for (unsigned int i=0; i<len; ++i)
   {
     if ('-' == ver[i])
     {
@@ -1222,7 +1222,7 @@ bool KIM_API_model::parse_semver(const char* const version, int* const major,
       return false;
     }
     // validate prerelease
-    for (unsigned i=0; i < strlen(tok); ++i)
+    for (unsigned int i=0; i < strlen(tok); ++i)
     {
       if (!isalnum(tok[i]) && !('-' == tok[i]) && !('.' == tok[i]))
       {
@@ -1241,7 +1241,7 @@ bool KIM_API_model::parse_semver(const char* const version, int* const major,
         return false;
       }
       // validate build
-      for (unsigned i=0; i < strlen(tok); ++i)
+      for (unsigned int i=0; i < strlen(tok); ++i)
       {
         if (!isalnum(tok[i]) && !('-' == tok[i]) && !('.' == tok[i]))
         {
@@ -1635,14 +1635,12 @@ bool KIM_API_model::is_it_match(KIM_API_model &test,KIM_API_model & mdl){
     //preinit model from standard template kim file
    KIM_API_model stdmdl;
 
-   extern const int STANDARD_KIM_STR_CHUNKS_NAME;
-   extern const char* const STANDARD_KIM_STR_NAME[];
-   char* const standard_kim = new char[STANDARD_KIM_STR_CHUNKS_NAME * CPP_MAX_STRING_LITERAL_LENGTH];
-   standard_kim[0] = '\0';
-   for (int i=0;i<STANDARD_KIM_STR_CHUNKS_NAME;++i)
-   {
-      strcat(standard_kim, STANDARD_KIM_STR_NAME[i]);
-   }
+   extern const unsigned int STANDARD_KIM_STR_LEN_NAME;
+   extern const unsigned char STANDARD_KIM_STR_NAME[];
+
+   char* const standard_kim = new char[STANDARD_KIM_STR_LEN_NAME + 1];
+   memcpy(standard_kim, STANDARD_KIM_STR_NAME, STANDARD_KIM_STR_LEN_NAME);
+   standard_kim[STANDARD_KIM_STR_LEN_NAME] = '\0';
 
    stdmdl.name_temp = (char*) "standard";
    if(!stdmdl.prestring_init(standard_kim)){
@@ -1908,8 +1906,8 @@ int KIM_API_model::get_model_kim_str(const char* const modelname,
     filekimlog.open(kimlog);
     backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);
 
-    int in_mdlstr_chunks = 0;
-    const char** in_mdlstr = NULL;
+    unsigned int in_mdlstr_len = 0;
+    const unsigned char* in_mdlstr = NULL;
 
     #include "model_kim_str_include.cpp"
 
@@ -1919,12 +1917,9 @@ int KIM_API_model::get_model_kim_str(const char* const modelname,
        return KIM_STATUS_FAIL;
     }
 
-    char* const str_cpy = (char* const) malloc(in_mdlstr_chunks * CPP_MAX_STRING_LITERAL_LENGTH);
-    str_cpy[0] = '\0';
-    for (int i=0; i<in_mdlstr_chunks; ++i)
-    {
-       strcat(str_cpy, in_mdlstr[i]);
-    }
+    char* const str_cpy = (char* const) malloc(in_mdlstr_len + 1);
+    memcpy(str_cpy, in_mdlstr, in_mdlstr_len);
+    str_cpy[in_mdlstr_len] = '\0';
 
     //redirecting back to > std::cout
     std::cout.rdbuf(backup); filekimlog.close();
@@ -2006,8 +2001,8 @@ int KIM_API_model::get_model_kim_str(const char* const modelname,
     void * tmp_model_lib_handle = NULL;
     char model_kim_str_name[KIM_LINE_LENGTH];
     sprintf(model_kim_str_name,"%s_" KIM_STR_NAME,modelname);
-    char model_kim_str_chunks_name[KIM_LINE_LENGTH];
-    sprintf(model_kim_str_chunks_name,"%s_" KIM_STR_NAME "_chunks",modelname);
+    char model_kim_str_len_name[KIM_LINE_LENGTH];
+    sprintf(model_kim_str_len_name,"%s_" KIM_STR_NAME "_len",modelname);
 
     //redirecting std::cout > kimlog
     char kimlog[2048] = "./kim.log";
@@ -2045,7 +2040,7 @@ int KIM_API_model::get_model_kim_str(const char* const modelname,
     }
 
 
-    const int* const model_str_chunks = (const int* const) dlsym(tmp_model_lib_handle, model_kim_str_chunks_name);
+    const unsigned int* const model_str_len = (const unsigned int* const) dlsym(tmp_model_lib_handle, model_kim_str_len_name);
     char* dlsym_error = dlerror();
     if (dlsym_error) {
         std::cout << "* Error (KIM_API_model::get_model_kim_str): Cannot load symbol: " << dlsym_error <<std::endl;
@@ -2057,7 +2052,7 @@ int KIM_API_model::get_model_kim_str(const char* const modelname,
         *kimString = NULL;
         return KIM_STATUS_FAIL;
     }
-    const char** const model_str_ptr = (const char** const) dlsym(tmp_model_lib_handle, model_kim_str_name);
+    const unsigned char* model_str_ptr = (const unsigned char* ) dlsym(tmp_model_lib_handle, model_kim_str_name);
     dlsym_error = dlerror();
     if (dlsym_error) {
         std::cout << "* Error (KIM_API_model::get_model_kim_str): Cannot load symbol: " << dlsym_error <<std::endl;
@@ -2070,12 +2065,9 @@ int KIM_API_model::get_model_kim_str(const char* const modelname,
         return KIM_STATUS_FAIL;
     }
 
-    char* const str_cpy = (char* const) malloc(*model_str_chunks * CPP_MAX_STRING_LITERAL_LENGTH);
-    str_cpy[0] = '\0';
-    for (int i=0; i<*model_str_chunks; ++i)
-    {
-       strcat(str_cpy, model_str_ptr[i]);
-    }
+    char* const str_cpy = (char* const) malloc(*model_str_len + 1);
+    memcpy(str_cpy, model_str_ptr, *model_str_len);
+    str_cpy[*model_str_len] = '\0';
 
     dlclose(tmp_model_lib_handle);
    //redirecting back to > std::cout
