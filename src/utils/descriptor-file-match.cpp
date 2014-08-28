@@ -40,34 +40,34 @@ int main(int argc, char* argv[])
 {
    if (argc != 3)
    {
-      std::cerr << "Usage: " << argv[0] << " TestKimFile ModelKimFile"
+      std::cerr << "Usage: " << argv[0] << " SimulatorKIM_File ModelKIM_File"
                 << std::endl;
       std::cout << "NOMATCH" << std::endl;
       return 1;
    }
 
-   std::fstream testkimfile;
-   std::fstream modelkimfile;
-   testkimfile.open(argv[1], std::fstream::in);
-   modelkimfile.open(argv[2], std::fstream::in);
+   std::fstream simulatorKIM_File;
+   std::fstream modelKIM_File;
+   simulatorKIM_File.open(argv[1], std::fstream::in);
+   modelKIM_File.open(argv[2], std::fstream::in);
 
-   if (testkimfile.fail() || modelkimfile.fail())
+   if (simulatorKIM_File.fail() || modelKIM_File.fail())
    {
       std::cerr << "file open failed." << std::endl;
       std::cout << "NOMATCH" << std::endl;
       return 1;
    }
 
-   std::stringstream testkimfile_str;
-   std::stringstream modelkimfile_str;
-   testkimfile_str << testkimfile.rdbuf();
-   modelkimfile_str << modelkimfile.rdbuf();
+   std::stringstream simulatorKIM_FileStr;
+   std::stringstream modelKIM_FileStr;
+   simulatorKIM_FileStr << simulatorKIM_File.rdbuf();
+   modelKIM_FileStr << modelKIM_File.rdbuf();
 
    KIM_API_model kim;
    int error;
 
-   error = kim.match((char*) testkimfile_str.str().c_str(),
-                     (char*) modelkimfile_str.str().c_str());
+   error = kim.match((char*) simulatorKIM_FileStr.str().c_str(),
+                     (char*) modelKIM_FileStr.str().c_str());
 
    int retval;
    if (error == KIM_STATUS_OK)
