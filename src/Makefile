@@ -132,7 +132,7 @@ lib$(KIM_LIB_BUILD).so: lib$(KIM_LIB_BUILD).a .lib$(KIM_LIB_BUILD).a $(MD_DEPS) 
                       $(LDDYNAMICLIB) $(XLANGLDLIBS) \
                       $(MD_DEPS) $(MO_DEPS) \
                       $(LDLIBS)
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDSHAREDFLAG) $(LINKSONAME)$(package_dir)/lib$(KIM_LIB).so $(LDFLAGS) $(OUTPUTINFLAG) .$@ \
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDSHAREDFLAG) $(LINKSONAME)$(LINKSOPATH)lib$(KIM_LIB).so $(LDFLAGS) $(OUTPUTINFLAG) .$@ \
                       $(LDWHOLEARCHIVESTARTFLAG) .$< $(LDWHOLEARCHIVEENDFLAG) \
                       $(LDDYNAMICLIB) $(XLANGLDLIBS) \
                       $(DMD_DEPS) $(DMO_DEPS) \

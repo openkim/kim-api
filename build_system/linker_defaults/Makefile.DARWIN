@@ -38,5 +38,6 @@
 LDSHAREDFLAG = -shared -undefined suppress -flat_namespace
 LDEXPORTLISTFLAG = -exported_symbols_list $(EXPORT_LIST_NAME)
 LINKSONAME = -Wl,-headerpad_max_install_names -Wl,-install_name,
+LINKSOPATH = $(package_dir)/
 LDWHOLEARCHIVESTARTFLAG = -Wl,-force_load
 LDWHOLEARCHIVEENDFLAG =

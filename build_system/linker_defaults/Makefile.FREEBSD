@@ -38,5 +38,6 @@
 LDSHAREDFLAG = -dynamiclib
 LDEXPORTLISTFLAG = -Wl,--version-script=$(EXPORT_LIST_NAME)
 LINKSONAME = -Wl,-soname=
+LINKSOPATH = $(package_dir)/
 LDWHOLEARCHIVESTARTFLAG = -Wl,--whole-archive
 LDWHOLEARCHIVEENDFLAG = -Wl,--no-whole-archive
