@@ -166,7 +166,7 @@ INSTRUCTIONS for building and installing this KIM API release:
                dynamic-load setting.
 
    (g) Set the value of KIM_BUILD_VERBOSITY, if a value other than the default
-       (`quiet') is desired.  Possible values are `quite' and `full'.
+       (`quiet') is desired.  Possible values are `quiet' and `full'.
 
        KIM_BUILD_VERBOSITY = quiet
 
@@ -299,7 +299,7 @@ INSTRUCTIONS for building and installing this KIM API release:
      EAM_Dynamo_Angelo_Moody_NiAlH__MO_418978237058_001
 
 3. To build the package "in place", including the provided examples, and
-   confirm that everything works as expeced, execute the following commands.
+   confirm that everything works as expected, execute the following commands.
 
    First, change to the KIM API package directory:
 
@@ -350,7 +350,7 @@ INSTRUCTIONS for building and installing this KIM API release:
 
      `install'                    -- install KIM API library, associated
                                      executable utilities, and "added" Model
-                                     Drviers and Models to system-wide location
+                                     Drivers and Models to system-wide location
                                      as described in item 7 below.
      `install-set-default-to-vX'  -- create generic
                                      ${includedir}/${package_name} and
