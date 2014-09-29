@@ -40,7 +40,7 @@ endif
 
 # check version of gfortran
 ifeq ($(KIM_COMPILERSUITE),GCC)
-  NEED_GFORTRAN_VERSION := 4.7.0
+  NEED_GFORTRAN_VERSION := 4.7 # use 4.7 instead of 4.7.0 to accomodate those version where -dumpversion does not inclue the patch number
   GFORTRAN_VERSION := $(shell $(FC) -dumpversion)
   GFORTRAN_VERSION_IS_OK := $(filter $(NEED_GFORTRAN_VERSION),$(firstword $(sort $(GFORTRAN_VERSION) $(NEED_GFORTRAN_VERSION))))
   ifndef GFORTRAN_VERSION_IS_OK
