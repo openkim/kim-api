@@ -543,11 +543,11 @@ INSTRUCTIONS for building and installing this KIM API release:
        https://openkim.org.  For example, execute the following commands:
 
        % md=Pair_Morse_Shifted__MD_552566534109_001
-       % wget --content-disposition "https://kim-items.openkim.org/archive?kimid=${md}&compression=gz"
+       % wget --content-disposition "https://openkim.org/download/${md}.tgz"
        % tar zxvf ${md}.tgz
        % rm ${md}.tgz
        % mo=Pair_Morse_Shifted_Jelinek_Ar__MO_831902330215_001
-       % wget --content-disposition "https://kim-items.openkim.org/archive?kimid=${mo}&compression=gz"
+       % wget --content-disposition "https://openkim.org/download/${mo}.tgz"
        % tar zxvf ${mo}.tgz
        % rm ${mo}.tgz
 

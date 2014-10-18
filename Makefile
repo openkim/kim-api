@@ -197,7 +197,7 @@ add-%: config
                   else \
                     printf "*@adding.......@%-50s@to@$(srcdir)/$(modeldriversdir)\n" $*@ | sed -e 's/ /./g' -e 's/@/ /g'; \
                     (cd "$(srcdir)/$(modeldriversdir)" && \
-                     if wget -q --content-disposition 'https://kim-items.openkim.org/archive?kimid=$*&compression=gz'; then \
+                     if wget -q --content-disposition 'https://openkim.org/download/$*.tgz'; then \
                        tar zxvf "$*.tgz" 2>&1 | sed -e 's/^/                /' && \
                        rm -f "$*.tgz"; \
                        if test 0 -lt `grep -c MAKE_SYSTEM $*/Makefile`; then \
@@ -213,7 +213,7 @@ add-%: config
                   else \
                     printf "*@adding.......@%-50s@to@$(srcdir)/$(modelsdir)\n" $*@ | sed -e 's/ /./g' -e 's/@/ /g'; \
                     (cd "$(srcdir)/$(modelsdir)" && \
-                     if wget -q --content-disposition 'https://kim-items.openkim.org/archive?kimid=$*&compression=gz'; then \
+                     if wget -q --content-disposition 'https://openkim.org/download/$*.tgz'; then \
                        tar zxvf "$*.tgz" 2>&1 | sed -e 's/^/                /' && \
                        rm -f "$*.tgz" && \
                        if test 0 -lt `grep -c MAKE_SYSTEM $*/Makefile`; then \
