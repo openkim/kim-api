@@ -107,7 +107,7 @@ paramfile_name_list = $(strip $(foreach paramfl,$(paramfile_list), $($(paramfl))
 num_paramfiles = $(words $(paramfile_num_list))
 
 # descriptor.kim should not be INTERMEDIATE, so that the openkim.org pipeline can use it.
-descriptor.kim: drv_kim_name="$(driver_location)/$(MODEL_DRIVER_NAME)/$(shell $(MAKE) $(MAKE_FLAGS) -C $(driver_location)/$(MODEL_DRIVER_NAME) model-driver-kim-file-template 2> /dev/null)"
+drv_kim_name=$(driver_location)/$(MODEL_DRIVER_NAME)/$(shell $(MAKE) $(MAKE_FLAGS) -C $(driver_location)/$(MODEL_DRIVER_NAME) model-driver-kim-file-template 2> /dev/null)
 descriptor.kim: $(drv_kim_name) Makefile
 	@printf "Creating... $@.\n"
 	$(QUELL)$(foreach spec,$(filter-out $(shell cat $(drv_kim_name) | \
