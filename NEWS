@@ -33,6 +33,27 @@
 #
 
 
+=== kim-api-v1.7.0 =============================================================
+
+* Use 'xxd' utility for encapsulation of KIM descriptor files and param. files
+
+* Added LINKSOPATH variable to build system for advanced system install options
+
+* Added KIM_API_get_kim_str_len() routine
+
+* Fix inconsistencies in ex_test_Ar_multiple_models
+
+* remove build system dependency on 'ed' program
+
+* Update 'make add-*' mechanism to use permanent url's for openkim.org items
+
+* Fix bugs and minor improvements to build system
+
+* Minor improvements to error messages
+
+* Updates to documentation
+
+
 === kim-api-v1.6.3 =============================================================
 
 * Fixed install to recognize := and = in Makefiles
