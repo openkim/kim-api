@@ -127,7 +127,7 @@ $(PARAM_MODEL_NAME).cpp: $(KIM_DIR)/$(builddir)/parameterized_model.cpp $(paramf
 	$(QUELL)$(foreach flnum,$(paramfile_num_list),\
             fl_name=$(PARAM_FILE_$(flnum)_NAME);\
             varnm=`printf "$${fl_name}" | \
-                       sed -e 's/^\([[:digit:]]\)/__\1/' -e 's/[^[[:alnum:]]]/_/g'` && \
+                       sed -e 's/^\([[:digit:]]\)/__\1/' -e 's/[^[:alnum:]]/_/g'` && \
                 xxd -i $${fl_name} | \
                 sed -e "s/$${varnm}/paramfile_$(flnum)/g" >> $@; \
          )
