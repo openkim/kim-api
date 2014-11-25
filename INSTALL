@@ -84,7 +84,6 @@ QUICK START (default settings are appropriate for most Linux systems):
 
 To install the KIM API to the standard location (/usr/local)
 
-% cp Makefile.KIM_Config.example Makefile.KIM_Config
 % sed -e 's|^KIM_DIR.*$|KIM_DIR = '`pwd`'|' Makefile.KIM_Config.example > Makefile.KIM_Config
 % make
 % make install
@@ -92,7 +91,6 @@ To install the KIM API to the standard location (/usr/local)
 
 To install the KIM API to an alternative location (/path/to/alternate/location)
 
-% cp Makefile.KIM_Config.example Makefile.KIM_Config
 % prefix=/path/to/alternate/location
 % sed -e 's|^KIM_DIR.*$|KIM_DIR = '`pwd`'|' \
       -e 's|^#prefix.*$|prefix = '${prefix}'|' \
