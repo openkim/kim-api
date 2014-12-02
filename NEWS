@@ -33,6 +33,13 @@
 #
 
 
+=== kim-api-v1.7.1 =============================================================
+
+* Bug fix for build of parameterized Models
+
+* Minor documentation update
+
+
 === kim-api-v1.7.0 =============================================================
 
 * Use 'xxd' utility for encapsulation of KIM descriptor files and param. files
