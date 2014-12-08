@@ -657,6 +657,13 @@ Neigh_BothAccess            flag        # need both locator and iterator modes
 #   `half neighbor list' provides a list of every particle, j >= i, that is a
 #                        neighbor of particle i.
 #
+# Neighbor lists provided by a Simulator must contain all particles in the
+# configuration within the Model's cutoff radius.  However, it is typical that
+# Simulators will include, for efficiency reasons, additional particles that
+# are outside the cutoff (the so-called "skin").  The Model is responsible for
+# determining which particles in the neighbor list are inside its cutoff
+# distance.
+#
 ################################################################################
 
 # In the CLUSTER method, the Model receives the number of particles and
