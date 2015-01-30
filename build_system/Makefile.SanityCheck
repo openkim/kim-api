@@ -48,6 +48,12 @@ ifeq ($(KIM_COMPILERSUITE),GCC)
   endif
 endif
 
+# check availability of xxd program
+ifeq ($(shell xxd -i /dev/null > /dev/null 2>&1 && printf "OK"),OK)
+else
+   $(error KIM API requires the 'xxd' utility to be installed in order to build)
+endif
+
 # sanity checks
 ifeq      ($(KIM_BUILD_VERBOSITY),quiet)
 else ifeq ($(KIM_BUILD_VERBOSITY),full)
