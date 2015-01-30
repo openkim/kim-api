@@ -342,6 +342,14 @@ program TEST_NAME_STR
         stop
      endif
 
+     ! Print results to screen
+     !
+     print '(41(''=''))'
+     print '("NBC Method = ",A28,"  Energy = ",ES25.15)', trim(NBC_Method), &
+                                                          energy
+     print '(41(''=''))'
+     print *
+
      ! Turn off force computation
      !
      call kim_api_set_compute(pkim, "forces", KIM_COMPUTE_FALSE, ier)
@@ -369,12 +377,8 @@ program TEST_NAME_STR
         enddo
      enddo
 
-     ! print results to screen
+     ! Continue printing results to screen
      !
-     print '(41(''=''))'
-     print '("NBC Method = ",A28)', trim(NBC_Method)
-     print '(41(''=''))'
-     print *
      print '(A6,2X,A4,2X,A3,2X,2A25,3A15,2X,A4)',"Part","Spec","Dir", &
            "Force_model", "Force_numer", "Force diff", "pred error", "weight", &
            "stat"
