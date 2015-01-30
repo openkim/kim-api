@@ -236,7 +236,7 @@ void set_species_code(const char *species, int code, int* error);
   int get_fixed_parameter(const int index, const char** const fixedParameterString);
 
   static int get_model_kim_str_len(const char* const modelname, int* const kimStirngLen);
-  static int get_model_kim_str(const char* const modelname, char** const kimString);
+  static int get_model_kim_str(const char* const modelname, const char** const kimString);
 
 
   int get_NBC_method(const char** const NBC_String);

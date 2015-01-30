@@ -76,7 +76,7 @@ void KIM_API_print(void *kimmdl,int *error);
 int KIM_API_model_compute(void *kimmdl);
 int KIM_API_model_init(void * kimmdl);
 int KIM_API_get_model_kim_str_len(const char *modelname, int* const kimStringLen);
-int KIM_API_get_model_kim_str(const char *modelname, char** const kimString);
+int KIM_API_get_model_kim_str(const char *modelname, const char** const kimString);
 int KIM_API_model_destroy(void * kimmdl);
 int KIM_API_model_reinit(void * kimmdl);
 

@@ -1902,7 +1902,7 @@ int KIM_API_model::get_model_kim_str_len(const char* const modelname,
 }
 
 int KIM_API_model::get_model_kim_str(const char* const modelname,
-                                     char** const kimString)
+                                     const char** const kimString)
 {
      //redirecting std::cout > kimlog
     char kimlog[2048] = "./kim.log";
@@ -1921,13 +1921,9 @@ int KIM_API_model::get_model_kim_str(const char* const modelname,
        return KIM_STATUS_FAIL;
     }
 
-    char* const str_cpy = (char* const) malloc(in_mdlstr_len + 1);
-    memcpy(str_cpy, in_mdlstr, in_mdlstr_len);
-    str_cpy[in_mdlstr_len] = '\0';
-
     //redirecting back to > std::cout
     std::cout.rdbuf(backup); filekimlog.close();
-    *kimString = str_cpy;
+    *kimString = in_mdlstr;
     return KIM_STATUS_OK;
 }
 
@@ -2003,7 +1999,7 @@ int KIM_API_model::get_model_kim_str_len(const char* const modelname,
 }
 
 int KIM_API_model::get_model_kim_str(const char* const modelname,
-                                     char** const kimString)
+                                     const char** const kimString)
 {
     void * tmp_model_lib_handle = NULL;
     char model_kim_str_name[KIM_LINE_LENGTH];
@@ -2096,15 +2092,14 @@ int KIM_API_model::file_init(const char* testkimfile, const char* modelname){
     backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);
 
     int error;
-    char* in_mdlstr;
+    const char* in_mdlstr;
     error = get_model_kim_str(modelname, &in_mdlstr);
     if (error == KIM_STATUS_OK) {
        name_temp = modelname;
        error = init_str_modelname(testkimfile,in_mdlstr);
     }
 
-    std::free(in_mdlstr);
-   //redirecting back to > std::cout
+    //redirecting back to > std::cout
     std::cout.rdbuf(backup); filekimlog.close();
 
     return error;
@@ -2184,14 +2179,13 @@ int KIM_API_model::preinit(const char* modelname){
 
     int error;
     int result = KIM_STATUS_FAIL;
-    char* in_mdlstr;
+    const char* in_mdlstr;
     error = get_model_kim_str(modelname, &in_mdlstr);
     if (error == KIM_STATUS_OK)
     {
        this->name_temp = modelname;
        result = this->prestring_init(in_mdlstr);
     }
-    std::free(in_mdlstr);
     //redirecting back to > std::cout
     std::cout.rdbuf(backup); filekimlog.close();
     return result;
@@ -2207,7 +2201,7 @@ int KIM_API_model::string_init(const char* in_tststr, const char* modelname){
 
     //check test-model match and preinit test-model-API
     KIM_API_model test,mdl;
-    char* in_mdlstr;
+    const char* in_mdlstr;
     error = get_model_kim_str(modelname, &in_mdlstr);
     if (error != KIM_STATUS_OK) {
        //redirecting back to > std::cout
@@ -2222,7 +2216,6 @@ int KIM_API_model::string_init(const char* in_tststr, const char* modelname){
       const char* msg;
       get_status_msg(mdl.ErrorCode, &msg);
        std::cout<<"mdl.prestring_init failed with error status:"<<msg<<std::endl;
-       std::free(in_mdlstr);
        //redirecting back to > std::cout
        std::cout.rdbuf(backup); filekimlog.close();
        return error;
@@ -2236,7 +2229,6 @@ int KIM_API_model::string_init(const char* in_tststr, const char* modelname){
       const char* msg;
       get_status_msg(test.ErrorCode, &msg);
        std::cout<<"test.prestring_init failed with error status:"<<msg<<std::endl;
-       std::free(in_mdlstr);
        mdl.free();
        //redirecting back to > std::cout
        std::cout.rdbuf(backup); filekimlog.close();
@@ -2247,7 +2239,6 @@ int KIM_API_model::string_init(const char* in_tststr, const char* modelname){
     if (is_it_match(test,mdl)){
        this->name_temp = mdl.model.name;
         this->prestring_init(in_mdlstr);
-        std::free(in_mdlstr);
         this->unit_h=test.unit_h;
         if (!(this->irrelevantVars2donotcompute(test,*this))) return KIM_STATUS_FAIL;
         for (int i=0;i<this->nAtomsTypes;++i) {
@@ -2281,7 +2272,6 @@ int KIM_API_model::string_init(const char* in_tststr, const char* modelname){
            return KIM_STATUS_OK;
         }
     }else{
-       std::free(in_mdlstr);
        mdl.free();
        std::cout<<"Do not match  " << modelname << " and "<< test.model.name <<std::endl;
        test.free();

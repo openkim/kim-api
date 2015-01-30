@@ -556,22 +556,6 @@ Arguments:
 
 ******************************************************************************
 
-(deprecated) void KIM_API_c_free(void *cp);
-
-To be used by: Model/Simulator
-
-    This routine is only available in the Fortran 2003 bindings.  It provides
-    access to the c "free" memory deallocation routine.  It should be used in
-    order to release memory originally allocated by
-    KIM_API_get_model_kim_str().
-
-Arguments:
-
-      void *cp
-              pointer to memory address to be freed.
-
-******************************************************************************
-
 void KIM_API_free(void *kimmdl, int *kimerror);
 
 To be used by: Simulator
@@ -1667,12 +1651,9 @@ Arguments:
 
 To be used by: Simulator
 
-    This routines outputs a pointer to a NULL terminated string containing the
-    complete KIM descriptor file for the Model modelname.  The memory pointed
-    to by this pointer is allocated by the routine, but should be released by
-    the user to avoid a memory leak (Fortran 2003 users should use
-    KIM_API_c_free()).  If any errors occur the routine prints a message to
-    kim.log and returns.
+    This routines outputs the complete KIM descriptor file string for the Model
+    modelname.  If any errors occur the routine prints a message to kim.log and
+    returns.
 
 Return value:
       KIM_STATUS_OK   - on success

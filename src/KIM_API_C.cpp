@@ -183,7 +183,7 @@ int KIM_API_get_model_kim_str_len(const char * modelname, int* const kimStringLe
     return KIM_API_model::get_model_kim_str_len(modelname, kimStringLen);
 }
 
-int KIM_API_get_model_kim_str(const char * modelname, char** const kimString)
+int KIM_API_get_model_kim_str(const char * modelname, const char** const kimString)
 {
     return KIM_API_model::get_model_kim_str(modelname, kimString);
 }
