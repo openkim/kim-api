@@ -218,7 +218,11 @@ int * KIM_IOline::get_shape(int nparts, int nspecies){
             char tmpstring[128];
             strncpy(shapetmp,shape,strlen(shape)+1);
             int rnk = get_rank();
-            if (rnk < 1) return NULL;
+            if (rnk < 1)
+            {
+              delete [] shapetmp;
+              return NULL;
+            }
             int *shp = new int[rnk];
             int i=0;
             char *tmp =strtok(shapetmp,"[,]");
