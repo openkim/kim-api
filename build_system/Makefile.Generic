@@ -234,9 +234,9 @@ KIM_FTYPE_STANDARD_COMPILE_LIST = $(ARCHFLAG) $(PICFLAG) $(KIMINCLUDEFLAGS) $(KI
 # KIM descriptor file make rule
 KIM_STR_NAME = kim_str
 .INTERMEDIATE: $(KIM_STR_NAME).c
-$(KIM_STR_NAME).c: $(KIM_MAKE_FILES) # ".kim" dependency added in another Makefile
+$(KIM_STR_NAME).c: Makefile $(KIM_MAKE_FILES) # ".kim" dependency added in another Makefile
 	@printf "Creating... intermediate file... $@.\n"
 	$(QUELL)varnm=`printf "$(MODEL_KIM_FILE)" | \
-                       sed -e 's/^\([[:digit:]]\)/__\1/' -e 's/[^[[:alnum:]]]/_/g'` && \
+                       sed -e 's/^\([[:digit:]]\)/__\1/' -e 's/[^[:alnum:]]/_/g'` && \
                 xxd -i $(MODEL_KIM_FILE) | \
                 sed -e "s/$${varnm}/$(MODEL_NAME)_$(KIM_STR_NAME)/g" > $@
