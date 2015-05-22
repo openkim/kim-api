@@ -362,7 +362,7 @@ ifeq (dynamic-load,$(KIM_LINK))
 	$(QUELL)for fl in $(install_linker); do $(INSTALL_PROGRAM) -m 0644 "$(buildlinkerdir)/$$fl" "$(install_linkerdir)/$$fl"; done
         # Install KIM_Config file
 	$(QUELL)fl="Makefile.KIM_Config" && \
-                sed -e 's|^[[:space:]]*KIM_DIR[[:space:]]*:*=.*$$|KIM_DIR = $(dest_package_dir)|' \
+                sed -e 's|^[[:space:]]*KIM_DIR[[:space:]]*:*=.*$$|KIM_DIR = $(package_dir)|' \
                     -e 's|^[[:space:]]*prefix[[:space:]]*:*=.*$$|prefix = $(prefix)|' \
                 $$fl > "$(dest_package_dir)/$$fl" && \
                 chmod 0644 "$(dest_package_dir)/$$fl"
