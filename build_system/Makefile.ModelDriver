@@ -120,9 +120,7 @@ Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/$(builddir)/Makefile.ModelDriver
 clean:
 	@printf "Cleaning... Model Driver... $(MODEL_DRIVER_NAME).\n"
 	$(QUELL)rm -f $(LOCALOBJ) *.mod \
-                      $(addprefix lib$(MODEL_DRIVER_LIB).,a so) \
-                      $(addprefix lib$(MODEL_DRIVER_LIB_BUILD).,a so) \
-                      $(addprefix .lib$(MODEL_DRIVER_LIB_BUILD).,a so) \
+                      lib$(LIB_ROOT)* .lib$(LIB_ROOT)* \
                       $(addprefix driver_init_wrapper.,o cpp) \
                       $(EXPORT_LIST_NAME) $(LOCALCLEAN)
 
