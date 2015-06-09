@@ -35,10 +35,16 @@
 # this make file builds/cleans the examples
 #
 
-.PHONY: all
+.PHONY: all clean
 
 KIM_DIR := ../..
 KIM_EX_DIR := $(KIM_DIR)/examples
+
+CLEAN_DIR_LIST := $(KIM_EX_DIR)/model_drivers   \
+                  $(KIM_EX_DIR)/models          \
+                  $(KIM_EX_DIR)/simulators      \
+                  $(KIM_EX_DIR)/openkim_tests   \
+                  $(KIM_DIR)/docs/templates
 
 all:
 	cp examples_Makefile $(KIM_EX_DIR)/Makefile
@@ -47,3 +53,13 @@ all:
 	$(MAKE) -C simulator_legos all
 	@printf "\n"
 	$(MAKE) -C openkim_test_legos all
+
+clean:
+	@git clean -X -d -n $(CLEAN_DIR_LIST) \
+         && \
+         read -p "Proceed (y,N)? : " answer \
+         && \
+         if test \( "xY" = "x$${answer}" \) -o \
+                 \( "xy" = "x$${answer}" \); then \
+           git clean -X -d -f $(CLEAN_DIR_LIST); \
+         fi

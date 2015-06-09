@@ -61,6 +61,13 @@ repository.
    from github.com).  This process will overwrite any changes to files, so make
    a backup of these directories if you don't want to lose your changes.
 
+   It is also possible to remove all of these files using the
+
+   % make clean
+
+   command.  This command wraps the 'git clean' utility for just the specific
+   directories mentioned above.
+
 2. The git repository has the files:
 
       ${KD}/docs/kim-api-introduction.pdf
