@@ -30,7 +30,7 @@ program vc_forces_delta
   integer(c_int), parameter :: nCellsPerSide  = 2
   integer(c_int), parameter :: DIM            = 3
   real(c_double), parameter :: cutpad         = 0.75_cd
-  integer(c_int), parameter :: max_species      = 30 ! most species supported
+  integer(c_int), parameter :: max_species      = 200 ! most species supported
   integer(c_int), parameter :: max_NBCs       = 20 ! maximum number of NBCs
   real(c_double), parameter :: eps_prec       = epsilon(1.0_cd)
   integer(c_int), parameter :: ndisp          = 100 ! number of displacements

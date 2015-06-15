@@ -31,7 +31,7 @@ program TEST_NAME_STR
   integer(c_int), parameter :: nCellsPerSide  = 2
   integer(c_int), parameter :: DIM            = 3
   real(c_double), parameter :: cutpad         = 0.75_cd
-  integer(c_int), parameter :: max_species      = 30  ! max species allowed
+  integer(c_int), parameter :: max_species      = 200  ! max species allowed
   integer(c_int), parameter :: max_NBCs       = 20  ! maximum number of NBCs
   real(c_double), parameter :: eps_prec       = epsilon(1.0_cd)
   integer(c_int)            :: in
