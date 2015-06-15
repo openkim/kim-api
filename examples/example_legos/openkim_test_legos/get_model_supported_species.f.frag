@@ -35,7 +35,10 @@ if (ier.lt.KIM_STATUS_OK) return
 ! Get species supported by the model
 ier = kim_api_get_num_model_species(pkim, num_species, maxStringLength)
 if (ier.lt.KIM_STATUS_OK) return
-if (num_species.gt.max_species) return
+if (num_species.gt.max_species) then
+  ier = KIM_STATUS_FAIL
+  return
+endif
 do i=1,num_species
    ier = kim_api_get_model_species(pkim, i, species)
    if (ier.lt.KIM_STATUS_OK) return
