@@ -63,6 +63,11 @@ MODEL_LIB_BUILD = $(LIB_ROOT)-model-v$(VERSION_FULL)
 MODEL_DRIVER_LIB = $(LIB_ROOT)-model-driver-v$(VERSION_MAJOR)
 MODEL_DRIVER_LIB_BUILD = $(LIB_ROOT)-model-driver-v$(VERSION_FULL)
 
+# Update LINKSOPATH, if prefix is non-standard
+ifeq ($(filter / /usr /usr/local,$(prefix)),)
+   LINKSOPATH = $(package_dir)/
+endif
+
 
 # Set include flag
 KIMINCLUDEFLAGS = -I$(srcdir)

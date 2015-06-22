@@ -38,6 +38,6 @@
 LDSHAREDFLAG = -shared
 LDEXPORTLISTFLAG = -Wl,--version-script=$(EXPORT_LIST_NAME)
 LINKSONAME = -Wl,-soname=
-LINKSOPATH = $(package_dir)/
+LINKSOPATH = # default to no path in library soname (assuming prefix is one of / /usr or /usr/local
 LDWHOLEARCHIVESTARTFLAG = -Wl,--whole-archive
 LDWHOLEARCHIVEENDFLAG = -Wl,--no-whole-archive

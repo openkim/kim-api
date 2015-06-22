@@ -34,7 +34,7 @@
 # We use the standard make variables defined by the GNU standard
 # http://www.gnu.org/software/make/manual/html_node/Implicit-Variables.html
 
-# Define FreeBSD linker switches
+# Define darwin linker switches
 LDSHAREDFLAG = -shared -undefined suppress -flat_namespace
 LDEXPORTLISTFLAG = -exported_symbols_list $(EXPORT_LIST_NAME)
 LINKSONAME = -Wl,-headerpad_max_install_names -Wl,-install_name,

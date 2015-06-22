@@ -273,9 +273,6 @@ INSTRUCTIONS for building and installing this KIM API release:
        * NOTE: Staged installs are supported via the DESTDIR variable.  See
                Section 7.2.4 of the GNU Coding Standards.
 
-       * NOTE: set LINKSOPATH to empty in order to use advanced standard shared
-               library management techniques, such as LD_LIBRARY_PATH, etc..
-
 2. In the remainder of the documentation we will use the string ${KD} to
    represent the location of the KIM API source package (the value of the
    KIM_DIR variable discussed above).  If you wish to, type the below commands
