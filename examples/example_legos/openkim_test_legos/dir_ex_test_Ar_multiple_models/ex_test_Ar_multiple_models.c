@@ -48,6 +48,12 @@
 #define NCLUSTERPARTS (4*(NCELLSPERSIDE*NCELLSPERSIDE*NCELLSPERSIDE) + \
                        6*(NCELLSPERSIDE*NCELLSPERSIDE)                 \
                        + 3*(NCELLSPERSIDE) + 1)
+
+#define REPORT_ERROR(LN, FL, MSG, STAT) {       \
+    KIM_API_report_error(LN, FL, MSG, STAT);    \
+    exit(STAT);                                 \
+  }
+
 /* Define neighborlist structure */
 typedef struct
 {
@@ -137,31 +143,31 @@ int main()
   status = scanf("%s %s", modelname0, modelname1);
   if (2 != status)
   {
-    KIM_API_report_error(__LINE__, __FILE__, "Unable to read two model names",
-                         status);
+    REPORT_ERROR(__LINE__, __FILE__, "Unable to read two model names",
+                 status);
   }
 
   /* initialize the two models */
   status = KIM_API_file_init(&pkim_periodic_model_0, testkimfile, modelname0);
   if (KIM_STATUS_OK > status)
-    KIM_API_report_error(__LINE__, __FILE__,
-                         "KIM_API_file_init() for MODEL_ZERO for periodic",
-                         status);
+    REPORT_ERROR(__LINE__, __FILE__,
+                 "KIM_API_file_init() for MODEL_ZERO for periodic",
+                 status);
   status = KIM_API_file_init(&pkim_cluster_model_0, testkimfile, modelname0);
   if (KIM_STATUS_OK > status)
-    KIM_API_report_error(__LINE__, __FILE__,
-                         "KIM_API_file_init() for MODEL_ZERO for cluster",
-                         status);
+    REPORT_ERROR(__LINE__, __FILE__,
+                 "KIM_API_file_init() for MODEL_ZERO for cluster",
+                 status);
   status = KIM_API_file_init(&pkim_periodic_model_1, testkimfile, modelname1);
   if (KIM_STATUS_OK > status)
-    KIM_API_report_error(__LINE__, __FILE__,
-                         "KIM_API_file_init() for MODEL_ONE for periodic",
-                         status);
+    REPORT_ERROR(__LINE__, __FILE__,
+                 "KIM_API_file_init() for MODEL_ONE for periodic",
+                 status);
   status = KIM_API_file_init(&pkim_cluster_model_1, testkimfile, modelname1);
   if (KIM_STATUS_OK > status)
-    KIM_API_report_error(__LINE__, __FILE__,
-                         "KIM_API_file_init() for MODEL_ONE cluster",
-                         status);
+    REPORT_ERROR(__LINE__, __FILE__,
+                 "KIM_API_file_init() for MODEL_ONE cluster",
+                 status);
 
   /* Assign shapes & register memory */
   particleSpeciesShapePeriodic[0] = numberOfParticles_periodic;
@@ -173,11 +179,10 @@ int main()
 
   /* Model 0, periodic */
   KIM_API_set_shape(pkim_periodic_model_0, "particleSpecies", particleSpeciesShapePeriodic, 1, &status);
-  if (KIM_STATUS_OK > status)
-    KIM_API_report_error(__LINE__, __FILE__,"KIM_API_set_shape",status);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"KIM_API_set_shape",status);
   KIM_API_set_shape(pkim_periodic_model_0, "coordinates", coordinatesShapePeriodic, 2, &status);
   if (KIM_STATUS_OK > status)
-    KIM_API_report_error(__LINE__, __FILE__,"KIM_API_set_shape",status);
+    REPORT_ERROR(__LINE__, __FILE__,"KIM_API_set_shape",status);
   KIM_API_setm_data(pkim_periodic_model_0, &status, 7*4,
                     "numberOfParticles", 1,                              &numberOfParticles_periodic,       1,
                     "numberOfSpecies",   1,                              &numberOfSpecies,                  1,
@@ -186,17 +191,16 @@ int main()
                     "neighObject",       1,                              &nl_periodic_model_0,              1,
                     "cutoff",            1,                              &cutoff_periodic_model_0,          1,
                     "energy",            1,                              &energy_periodic_model_0,          1);
-  if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data",status);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"KIM_API_setm_data",status);
   status = KIM_API_set_method(pkim_periodic_model_0, "get_neigh", 1, (func_ptr) &get_periodic_neigh);
-  if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_set_method",status);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"KIM_API_set_method",status);
 
   /* Model 1, periodic */
   KIM_API_set_shape(pkim_periodic_model_1, "particleSpecies", particleSpeciesShapePeriodic, 1, &status);
   if (KIM_STATUS_OK > status)
-    KIM_API_report_error(__LINE__, __FILE__,"KIM_API_set_shape",status);
+    REPORT_ERROR(__LINE__, __FILE__,"KIM_API_set_shape",status);
   KIM_API_set_shape(pkim_periodic_model_1, "coordinates", coordinatesShapePeriodic, 2, &status);
-  if (KIM_STATUS_OK > status)
-    KIM_API_report_error(__LINE__, __FILE__,"KIM_API_set_shape",status);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"KIM_API_set_shape",status);
   KIM_API_setm_data(pkim_periodic_model_1, &status, 7*4,
                     "numberOfParticles", 1,                              &numberOfParticles_periodic,       1,
                     "numberOfSpecies",   1,                              &numberOfSpecies,                  1,
@@ -205,17 +209,16 @@ int main()
                     "neighObject",       1,                              &nl_periodic_model_1,              1,
                     "cutoff",            1,                              &cutoff_periodic_model_1,          1,
                     "energy",            1,                              &energy_periodic_model_1,          1);
-  if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data",status);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"KIM_API_setm_data",status);
   status = KIM_API_set_method(pkim_periodic_model_1, "get_neigh", 1, (func_ptr) &get_periodic_neigh);
-  if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_set_method",status);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"KIM_API_set_method",status);
 
   /* Model 0, cluster */
   KIM_API_set_shape(pkim_cluster_model_0, "particleSpecies", particleSpeciesShapeCluster, 1, &status);
   if (KIM_STATUS_OK > status)
-    KIM_API_report_error(__LINE__, __FILE__,"KIM_API_set_shape",status);
+    REPORT_ERROR(__LINE__, __FILE__,"KIM_API_set_shape",status);
   KIM_API_set_shape(pkim_cluster_model_0, "coordinates", coordinatesShapeCluster, 2, &status);
-  if (KIM_STATUS_OK > status)
-    KIM_API_report_error(__LINE__, __FILE__,"KIM_API_set_shape",status);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"KIM_API_set_shape",status);
   KIM_API_setm_data(pkim_cluster_model_0, &status, 7*4,
                     "numberOfParticles", 1,                             &numberOfParticles_cluster,       1,
                     "numberOfSpecies",   1,                             &numberOfSpecies,                 1,
@@ -224,17 +227,16 @@ int main()
                     "neighObject",       1,                             &nl_cluster_model_0,              1,
                     "cutoff",            1,                             &cutoff_cluster_model_0,          1,
                     "energy",            1,                             &energy_cluster_model_0,          1);
-  if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data",status);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"KIM_API_setm_data",status);
   status = KIM_API_set_method(pkim_cluster_model_0, "get_neigh", 1, (func_ptr) &get_cluster_neigh);
-  if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_set_method",status);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"KIM_API_set_method",status);
 
   /* Model 1, cluster */
   KIM_API_set_shape(pkim_cluster_model_1, "particleSpecies", particleSpeciesShapeCluster, 1, &status);
   if (KIM_STATUS_OK > status)
-    KIM_API_report_error(__LINE__, __FILE__,"KIM_API_set_shape",status);
+    REPORT_ERROR(__LINE__, __FILE__,"KIM_API_set_shape",status);
   KIM_API_set_shape(pkim_cluster_model_1, "coordinates", coordinatesShapeCluster, 2, &status);
-  if (KIM_STATUS_OK > status)
-    KIM_API_report_error(__LINE__, __FILE__,"KIM_API_set_shape",status);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"KIM_API_set_shape",status);
   KIM_API_setm_data(pkim_cluster_model_1, &status, 7*4,
                     "numberOfParticles", 1,                             &numberOfParticles_cluster,       1,
                     "numberOfSpecies",   1,                             &numberOfSpecies,                 1,
@@ -243,61 +245,61 @@ int main()
                     "neighObject",       1,                             &nl_cluster_model_1,              1,
                     "cutoff",            1,                             &cutoff_cluster_model_1,          1,
                     "energy",            1,                             &energy_cluster_model_1,          1);
-  if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data",status);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"KIM_API_setm_data",status);
   status = KIM_API_set_method(pkim_cluster_model_1, "get_neigh", 1, (func_ptr) &get_cluster_neigh);
-  if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_set_method",status);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"KIM_API_set_method",status);
 
   /* call model init routines */
   status = KIM_API_model_init(pkim_periodic_model_0);
-  if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_model_init", status);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"KIM_API_model_init", status);
   status = KIM_API_model_init(pkim_cluster_model_0);
-  if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_model_init", status);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"KIM_API_model_init", status);
   status = KIM_API_model_init(pkim_periodic_model_1);
-  if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_model_init", status);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"KIM_API_model_init", status);
   status = KIM_API_model_init(pkim_cluster_model_1);
-  if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_model_init", status);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"KIM_API_model_init", status);
 
   /* setup particleSpecies */
   particleSpecies_periodic_model_0 = KIM_API_get_species_code(pkim_periodic_model_0, "Ar", &status);
-  if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_species_code", status);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"get_species_code", status);
 
   particleSpecies_cluster_model_0[0] = KIM_API_get_species_code(pkim_cluster_model_0, "Ar", &status);
-  if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_species_code", status);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"get_species_code", status);
   for (i = 1; i < NCLUSTERPARTS; ++i)
     particleSpecies_cluster_model_0[i] = particleSpecies_cluster_model_0[0];
   particleSpecies_periodic_model_1 = KIM_API_get_species_code(pkim_periodic_model_1, "Ar", &status);
-  if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_species_code", status);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"get_species_code", status);
 
   particleSpecies_cluster_model_1[0] = KIM_API_get_species_code(pkim_cluster_model_1, "Ar", &status);
-  if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_species_code", status);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"get_species_code", status);
   for (i = 1; i < NCLUSTERPARTS; ++i)
     particleSpecies_cluster_model_1[i] = particleSpecies_cluster_model_1[0];
 
 
   /* Determine which neighbor list type to use */
   halfflag_periodic_model_0 = (KIM_API_is_half_neighbors(pkim_periodic_model_0, &status));
-  if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"is_half_neighbors", status);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"is_half_neighbors", status);
   KIM_API_setm_data(pkim_periodic_model_0, &status, 1*4,
                     "numberContributingParticles", 1, &numContrib_periodic, (1==halfflag_periodic_model_0));
-  if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data", status);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"KIM_API_setm_data", status);
 
   halfflag_periodic_model_1 = (KIM_API_is_half_neighbors(pkim_periodic_model_1, &status));
-  if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"is_half_neighbors", status);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"is_half_neighbors", status);
   KIM_API_setm_data(pkim_periodic_model_1, &status, 1*4,
                     "numberContributingParticles", 1, &numContrib_periodic, (1==halfflag_periodic_model_1));
-  if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data", status);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"KIM_API_setm_data", status);
 
   halfflag_cluster_model_0 = (KIM_API_is_half_neighbors(pkim_cluster_model_0, &status));
-  if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"is_half_neighbors", status);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"is_half_neighbors", status);
   KIM_API_setm_data(pkim_cluster_model_0, &status, 1*4,
                     "numberContributingParticles", 1, &numContrib_cluster, (1==halfflag_cluster_model_0));
-  if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data", status);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"KIM_API_setm_data", status);
 
   halfflag_cluster_model_1 = (KIM_API_is_half_neighbors(pkim_cluster_model_1, &status));
-  if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"is_half_neighbors", status);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"is_half_neighbors", status);
   KIM_API_setm_data(pkim_cluster_model_1, &status, 1*4,
                     "numberContributingParticles", 1, &numContrib_cluster, (1==halfflag_cluster_model_1));
-  if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"KIM_API_setm_data", status);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"KIM_API_setm_data", status);
 
 
   /* setup neighbor lists */
@@ -307,40 +309,40 @@ int main()
   NNeighbors[1] = 4*pow((2*CellsPerCutoff[1] + 1),DIM);
   /* allocate memory for list */
   nl_periodic_model_0.NNeighbors = (int*) malloc(sizeof(int));
-  if (NULL==nl_periodic_model_0.NNeighbors) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
+  if (NULL==nl_periodic_model_0.NNeighbors) REPORT_ERROR(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
   nl_cluster_model_0.NNeighbors = (int*) malloc(NCLUSTERPARTS*sizeof(int));
-  if (NULL==nl_cluster_model_0.NNeighbors) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
+  if (NULL==nl_cluster_model_0.NNeighbors) REPORT_ERROR(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
   nl_periodic_model_1.NNeighbors = (int*) malloc(sizeof(int));
-  if (NULL==nl_periodic_model_1.NNeighbors) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
+  if (NULL==nl_periodic_model_1.NNeighbors) REPORT_ERROR(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
   nl_cluster_model_1.NNeighbors = (int*) malloc(NCLUSTERPARTS*sizeof(int));
-  if (NULL==nl_cluster_model_1.NNeighbors) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
+  if (NULL==nl_cluster_model_1.NNeighbors) REPORT_ERROR(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
   nl_periodic_model_0.neighborList = (int*) malloc(NNeighbors[0]*sizeof(int));
-  if (NULL==nl_periodic_model_0.neighborList) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
+  if (NULL==nl_periodic_model_0.neighborList) REPORT_ERROR(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
   nl_cluster_model_0.neighborList = (int*) malloc(NCLUSTERPARTS*NCLUSTERPARTS*sizeof(int));
-  if (NULL==nl_cluster_model_0.neighborList) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
+  if (NULL==nl_cluster_model_0.neighborList) REPORT_ERROR(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
   nl_periodic_model_1.neighborList = (int*) malloc(NNeighbors[1]*sizeof(int));
-  if (NULL==nl_periodic_model_1.neighborList) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
+  if (NULL==nl_periodic_model_1.neighborList) REPORT_ERROR(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
   nl_cluster_model_1.neighborList = (int*) malloc(NCLUSTERPARTS*NCLUSTERPARTS*sizeof(int));
-  if (NULL==nl_cluster_model_1.neighborList) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
+  if (NULL==nl_cluster_model_1.neighborList) REPORT_ERROR(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
   nl_periodic_model_0.RijList = (double*) malloc(DIM*NNeighbors[0]*sizeof(double));
-  if (NULL==nl_periodic_model_0.RijList) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
+  if (NULL==nl_periodic_model_0.RijList) REPORT_ERROR(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
   nl_cluster_model_0.RijList = (double*) malloc(DIM*NCLUSTERPARTS*NCLUSTERPARTS*sizeof(double));
-  if (NULL==nl_cluster_model_0.RijList) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
+  if (NULL==nl_cluster_model_0.RijList) REPORT_ERROR(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
   nl_periodic_model_1.RijList = (double*) malloc(DIM*NNeighbors[1]*sizeof(double));
-  if (NULL==nl_periodic_model_1.RijList) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
+  if (NULL==nl_periodic_model_1.RijList) REPORT_ERROR(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
   nl_cluster_model_1.RijList = (double*) malloc(DIM*NCLUSTERPARTS*NCLUSTERPARTS*sizeof(double));
-  if (NULL==nl_cluster_model_1.RijList) KIM_API_report_error(__LINE__, __FILE__,"malloc unsuccessful", -1);
+  if (NULL==nl_cluster_model_1.RijList) REPORT_ERROR(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
   /* ready to compute */
   printf("--------------------------------------------------------------------------------\n");
@@ -370,16 +372,16 @@ int main()
 
     /* call compute functions */
     status = KIM_API_model_compute(pkim_periodic_model_0);
-    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"compute", status);
+    if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"compute", status);
 
     status = KIM_API_model_compute(pkim_cluster_model_0);
-    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"compute", status);
+    if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"compute", status);
 
     status = KIM_API_model_compute(pkim_periodic_model_1);
-    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"compute", status);
+    if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"compute", status);
 
     status = KIM_API_model_compute(pkim_cluster_model_1);
-    if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"compute", status);
+    if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"compute", status);
 
     /* print the results */
     printf("Energy for %i parts = %20.10e, %20.10e, %20.10e, %20.10e, %20.10e\n",
@@ -394,16 +396,16 @@ int main()
 
   /* call model destroy */
   status = KIM_API_model_destroy(pkim_periodic_model_0);
-  if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"destroy", status);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"destroy", status);
 
   status = KIM_API_model_destroy(pkim_cluster_model_0);
-  if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"destroy", status);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"destroy", status);
 
   status = KIM_API_model_destroy(pkim_periodic_model_1);
-  if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"destroy", status);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"destroy", status);
 
   status = KIM_API_model_destroy(pkim_cluster_model_1);
-  if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"destroy", status);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"destroy", status);
 
   /* free memory of neighbor lists */
   free(nl_periodic_model_0.NNeighbors);
@@ -421,13 +423,13 @@ int main()
 
   /* free pkim objects */
   KIM_API_free(&pkim_periodic_model_0, &status);
-  if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"free", status);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"free", status);
   KIM_API_free(&pkim_periodic_model_1, &status);
-  if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"free", status);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"free", status);
   KIM_API_free(&pkim_cluster_model_0, &status);
-  if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"free", status);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"free", status);
   KIM_API_free(&pkim_cluster_model_1, &status);
-  if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"free", status);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"free", status);
 
   /* everything is great */
   return 0;
@@ -567,10 +569,18 @@ int get_periodic_neigh(void* kimmdl, int *mode, int *request, int* part,
 
   /* unpack neighbor list object */
   numberOfParticles = (int*) KIM_API_get_data(pkim, "numberOfParticles", &status);
-  if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_data", status);
+  if (KIM_STATUS_OK > status)
+  {
+    KIM_API_report_error(__LINE__, __FILE__,"get_data", status);
+    return status;
+  }
 
   nl = (NeighList*) KIM_API_get_data(pkim, "neighObject", &status);
-  if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_data", status);
+  if (KIM_STATUS_OK > status)
+  {
+    KIM_API_report_error(__LINE__, __FILE__,"get_data", status);
+    return status;
+  }
 
   /* check mode and request */
   if (0 == *mode) /* iterator mode */
@@ -812,10 +822,18 @@ int get_cluster_neigh(void* kimmdl, int *mode, int *request, int* part,
 
   /* unpack neighbor list object */
   numberOfParticles = (int*) KIM_API_get_data(pkim, "numberOfParticles", &status);
-  if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_data", status);
+  if (KIM_STATUS_OK > status)
+  {
+    KIM_API_report_error(__LINE__, __FILE__,"get_data", status);
+    return status;
+  }
 
   nl = (NeighList*) KIM_API_get_data(pkim, "neighObject", &status);
-  if (KIM_STATUS_OK > status) KIM_API_report_error(__LINE__, __FILE__,"get_data", status);
+  if (KIM_STATUS_OK > status)
+  {
+    KIM_API_report_error(__LINE__, __FILE__,"get_data", status);
+    return status;
+  }
 
   /* check mode and request */
   if (0 == *mode) /* iterator mode */
