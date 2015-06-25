@@ -60,18 +60,17 @@ D. KIM API Installation scenario recipes
        D.1.2 Installed-(nonstandard)-build
    D.2 Inplace-build
 
-E. Adding Models and/or Model Drivers to the system-collection
+E. Adding Models and/or Model Drivers to the collections
+   E.1 Adding Models and/or Model Drivers to the system-collection
+   E.2 Setting up and adding Models and/or Model Drivers to the user-collection
+       E.2.1 Setting up the user-collection
+       E.2.2 Adding Models and Model Drivers to the user-collection
+   E.3 Adding Models and/or Model Drivers to the CWD-collection
 
-F. Setting up and adding Models and/or Model Drivers to the user-collection
-   F.1 Setting up the user-collection
-   F.2 Adding Models and Model Drivers to the user-collection
-
-G. Using the CWD-collection
-
-H. Advanced documentation for KIM API build and install process
-   H.1. The Makefile.KIM_Config file
-   H.2. Make targets defined by the top level KIM API Makefile
-   H.3. Advanced details of the installation process
+F. Advanced documentation for KIM API build and install process
+   F.1 The Makefile.KIM_Config file
+   F.2 Make targets defined by the top level KIM API Makefile
+   F.3 Advanced details of the installation process
 
 -------------------------------------------------------------------------------
 
@@ -112,10 +111,9 @@ C. PACKAGE LAYOUT AND OPERATION OVERVIEW
 
 
 The KIM API package is a system-level library that aims to give computer
-programmers the ability to write atomistic or molecular simulation programs and
-routines capable of seamlessly interfacing and interacting with other programs
-and routines, regardless of the programming language in which the codes are
-written.
+programmers the ability to write atomistic or molecular simulation programs
+that can seamlessly interface with implementations of interatomic models,
+regardless of the programming language in which the codes are written.
 
 C.1. BUILD TYPES
 
@@ -142,24 +140,24 @@ code directories are no longer needed and should be removed in order to keep
 your system tidy.
 
 With the KIM API successfully installed on your system, it is possible to build
-other KIM-Compliant Simulators against the KIM API library.  Each such
-Simulator has its own build instructions that should be followed in order to
-build it with KIM API support enabled.
+KIM-Compliant Simulators (such as molecular dynamics programs) against the
+KIM API library.  Each such Simulator has its own build instructions that should
+be followed in order to build it with KIM API support enabled.
 
 C.1.2 INPLACE-BUILD
 
 This build type allows for the use of the KIM API package directly from the
 package source code directories.  This type of usage is primarily for initial
-evaluation and testing of the package.  It is not meant to be used as an
-alternative to the installed-build described above.
+evaluation and testing of the package.  It is not meant to be used as a
+permanent alternative to the installed-build described above.
 
 For inplace-build, the KIM API source code is compiled and setup so that you
-can run the example simulator codes with the example models.  This is also a
-good way to explore the example source code and learn the KIM API.
+can run the example Simulator codes with the example models.  This is also a
+good way to explore the example source code and learn about the KIM API.
 
 It is possible to build other KIM-Compliant Simulators against an inplace-build
 of the KIM API.  This may involve nothing more than adding the
-kim-api-vX.X.X/src/utils directory to you PATH.  However, using an
+kim-api-vX.Y.Z/src/utils directory to you PATH.  However, using an
 installed-build is preferred.
 
 C.2 MODEL AND MODEL DRIVER COLLECTIONS
@@ -235,9 +233,9 @@ To create an installed-(standard)-build and install to the default directory
 part of the systems standard PATH setting.
 
 $ cd "${HOME}"
-$ wget https://s3.openkim.org/kim-api/kim-api-vX.X.X.tgz  # replace X.X.X with the current version numbers
-$ tar zxvf kim-api-vX.X.X.tgz
-$ cd kim-api-vX.X.X
+$ wget https://s3.openkim.org/kim-api/kim-api-vX.Y.Z.tgz  # replace X.Y.Z with the current version number
+$ tar zxvf kim-api-vX.Y.Z.tgz
+$ cd kim-api-vX.Y.Z
 $ sed -e 's|^KIM_DIR.*$|KIM_DIR = '`pwd`'|' Makefile.KIM_Config.example > Makefile.KIM_Config
 $ make add-EAM_Dynamo_Angelo_Moody_NiAlH__MO_418978237058_001
 $ make
@@ -245,7 +243,7 @@ $ sudo make install
 $ sudo make install-set-default-to-vX  # replace X with the major version of this package
 $ cp -r ./examples/openkim_tests/vc_forces_numer_deriv "${HOME}/"
 $ cd "${HOME}"
-$ rm -r kim-api-vX.X.X  kim-api-vX.X.X.tgz # replace X.X.X with the current version numbers
+$ rm -r kim-api-vX.Y.Z  kim-api-vX.Y.Z.tgz # replace X.Y.Z with the current version number
 $ cd vc_forces_numer_deriv
 $ make
 $ printf "EAM_Dynamo_Angelo_Moody_NiAlH__MO_418978237058_001" | ./vc_forces_numer_deriv
@@ -261,9 +259,9 @@ directory "$(HOME)/local" do the below.  Here we will add a line to the user's
 .bashrc file that puts "${HOME}/local/bin" on the user's PATH setting.
 
 $ cd "${HOME}"
-$ wget https://s3.openkim.org/kim-api/kim-api-vX.X.X.tgz  # replace X.X.X with the current version numbers
-$ tar zxvf kim-api-vX.X.X.tgz
-$ cd kim-api-vX.X.X
+$ wget https://s3.openkim.org/kim-api/kim-api-vX.Y.Z.tgz  # replace X.Y.Z with the current version number
+$ tar zxvf kim-api-vX.Y.Z.tgz
+$ cd kim-api-vX.Y.Z
 $ sed -e 's|^KIM_DIR.*$|KIM_DIR = '`pwd`'|'      \
       -e 's|^#prefix.*$|prefix = $(HOME)/local|' \
       Makefile.KIM_Config.example > Makefile.KIM_Config
@@ -273,7 +271,7 @@ $ make install
 $ make install-set-default-to-vX  # replace X with the major version of this package
 $ cp -r ./examples/openkim_tests/vc_forces_numer_deriv "${HOME}/"
 $ cd "${HOME}"
-$ rm -r kim-api-vX.X.X kim-api-vX.X.X.tgz  # replace X.X.X with the current version numbers
+$ rm -r kim-api-vX.Y.Z kim-api-vX.Y.Z.tgz  # replace X.Y.Z with the current version number
 $ printf "PATH=${PATH}:${HOME}/local/bin\n" >> "${HOME}/.bashrc"
 $ source "${HOME}/.bashrc"
 $ cd vc_forces_numer_deriv
@@ -295,10 +293,10 @@ different settings, see section H.1 for details about the KIM API build
 settings.  The commands given below are for the bash shell.
 
 $ cd "${HOME}"
-$ wget https://s3.openkim.org/kim-api/kim-api-vX.X.X.tgz  # replace X.X.X with the current version numbers
-$ tar zxvf kim-api-vX.X.X.tgz
-$ rm kim-api-vX.X.X.tgz
-$ cd kim-api-vX.X.X  # replace X.X.X with the package version numbers
+$ wget https://s3.openkim.org/kim-api/kim-api-vX.Y.Z.tgz  # replace X.Y.Z with the current version number
+$ tar zxvf kim-api-vX.Y.Z.tgz
+$ rm kim-api-vX.Y.Z.tgz
+$ cd kim-api-vX.Y.Z  # replace X.Y.Z with the package version number
 $ sed -e 's|^KIM_DIR.*$|KIM_DIR = '`pwd`'|' Makefile.KIM_Config.example > Makefile.KIM_Config
 $ make add-EAM_Dynamo_Angelo_Moody_NiAlH__MO_418978237058_001
 $ make
@@ -318,11 +316,18 @@ directory for a step-by-step guide.
 
 -------------------------------------------------------------------------------
 
-E. ADDING MODELS AND/OR MODEL DRIVERS TO THE SYSTEM-COLLECTION
+E. ADDING MODELS AND/OR MODEL DRIVERS TO THE COLLECTIONS
+
+
+Here we describe how to add Models and/or Model Drivers to the
+system-collection, user-collection, and the CWD-collection.
+
+E.1 ADDING MODELS AND/OR MODEL DRIVERS TO THE SYSTEM-COLLECTION
 
 Once you have an installed-build, it is easy to add additional Models and/or
-Model Drivers to the system-collection.  Here we will demonstrate how to do
-this.  We'll assume an installed-(standard)-build.
+Model Drivers to the system-collection.  Here we will demonstrate how to add
+a Model that requires a Model Driver, so we first install the Driver and then
+the Model.  We'll assume an installed-(standard)-build.
 
 $ cd "${HOME}"
 $ kim-api-build-config --makefile-kim-config > ./Makefile.KIM_Config
@@ -353,19 +358,15 @@ $ printf "Pair_Morse_Shifted_Jelinek_Ar__MO_831902330215_001" | ./vc_forces_nume
         delete the associated Model Driver before installing the Model,
         as we have done above.
 
--------------------------------------------------------------------------------
+E.2 SETTING UP AND ADDING MODELS AND/OR MODEL DRIVERS TO THE USER-COLLECTION
 
-F. SETTING UP AND ADDING MODELS AND/OR MODEL DRIVERS TO THE USER-COLLECTION
-
-F.1 SETTING UP THE USER-COLLECTION
+E.2.1 SETTING UP THE USER-COLLECTION
 
 The user-collection of Models and Model Drivers is stored in a user
 configurable location (actually one location for Models and one location for
 Model Drivers, although these can, in fact, be the same).  The user
 configuration file is named at "${HOME}/.kim-api/config-vX". (Here, X is the
-major version number.  Also, the directory name "${HOME}/.kim-api" is more
-generally given by "$(HOME)/.$(package_name)".  See section H.3 for more
-details.)
+major version number.)
 
 The file "${HOME}/.kim-api/config-vX" has a strict format.  It must contain
 exactly two lines.  These must be of the form:
@@ -394,12 +395,11 @@ $ kim-api-build-config --makefile-kim-config > ./model_drivers/Makefile.KIM_Conf
 $ kim-api-build-config --makefile-kim-config > ./models/Makefile.KIM_Config
 $ cd "${HOME}"
 
-
-F.2 ADDING MODELS AND MODEL DRIVERS TO THE USER-COLLECTION
+E.2.2 ADDING MODELS AND MODEL DRIVERS TO THE USER-COLLECTION
 
 The process for adding Models and Model Drivers to the user-collection involves
 just downloading and building the items.  Here, we'll illustrate the process
-with an example, using the setup described in the above section F.1.
+with an example, using the setup described in the above section E.2.1.
 
 $ umd="${HOME}/local/my-user-collection/model_drivers"
 $ md=Pair_Lennard_Jones_Shifted__MD_498634107543_001
@@ -424,10 +424,7 @@ $ rm "${mo}.tgz"
 $ cd "${HOME}/vc_forces_numer_deriv"  # we'll assume this is already built
 $ printf "Pair_Lennard_Jones_Shifted_Bernardes_HighCutoff_Ar__MO_242741380554_001" | ./vc_forces_numer_deriv
 
--------------------------------------------------------------------------------
-
-G. USING THE CWD-COLLECTION
-
+E.3 ADDING MODELS AND/OR MODEL DRIVERS TO THE CWD-COLLECTION
 
 The process for adding Models and Model Drivers to the CWD-collection involves
 just downloading and building the items.  Here, we'll illustrate the process
@@ -446,28 +443,28 @@ $ printf "Pair_Exp6_Hogervorst_Mixing_Kong_Chakrabarty_ArNe__MO_946046425752_001
 
 -------------------------------------------------------------------------------
 
-H. ADVANCED DOCUMENTATION FOR KIM API BUILD AND INSTALL PROCESS
+F. ADVANCED DOCUMENTATION FOR KIM API BUILD AND INSTALL PROCESS
 
 
-H.1. THE Makefile.KIM_Config FILE
+F.1. THE Makefile.KIM_Config FILE
 
-Here the process of creating the configuration settings for the KIM API build,
-which are contained in the Makefile.KIM_Config file, is described.
+Here we describe the process of creating the configuration settings for the
+KIM API build, which are contained in the Makefile.KIM_Config file.
 
 (a) Copy the file `Makefile.KIM_Config.example' to `Makefile.KIM_Config'.
-    For example, if you untarred the `kim-api-vX.X.X.tgz' tarball in your
+    For example, if you untarred the `kim-api-vX.Y.Z.tgz' tarball in your
     home directory, you would do:
 
-    $ cd ${HOME}/kim-api-vX.X.X
+    $ cd ${HOME}/kim-api-vX.Y.Z
     $ cp Makefile.KIM_Config.example Makefile.KIM_Config
 
-    (Above `vX.X.X' represents the current release number.)
+    (Above `vX.Y.Z' represents the current version number.)
 
 (b) Edit the file Makefile.KIM_Config and set the appropriate value for the
     KIM_DIR variable.  This must expand to an absolute path.  Using the same
     assumptions as in (a), this would be
 
-    KIM_DIR = $(HOME)/kim-api-vX.X.X
+    KIM_DIR = $(HOME)/kim-api-vX.Y.Z
 
 (c) Set the value of KIM_COMPILERSUITE.
     Possible values are `GCC' and `INTEL'.
@@ -597,10 +594,13 @@ which are contained in the Makefile.KIM_Config file, is described.
     bindir =       # default is '$(exec_prefix)/bin'
 
 
-    * NOTE: See item @@@ below for more details on the installation process.
+    * NOTE: See item F.3 below for more details on the installation process.
 
     * NOTE: The package_name variable is used as part of the installation
             directory name and the KIM API library file name.
+
+    * NOTE: The KIM API library will look for the user-collection configuration
+            file in the directory '${HOME}/.${package_name}'
 
     * NOTE: See the GNU Coding Standards, Section 7.2 for more details on
             the meaning of the remaining standard variables.
@@ -608,7 +608,7 @@ which are contained in the Makefile.KIM_Config file, is described.
     * NOTE: Staged installs are supported via the DESTDIR variable.  See
             Section 7.2.4 of the GNU Coding Standards.
 
-H.2 MAKE TARGETS DEFINED BY THE TOP LEVEL KIM API Makefile
+F.2 MAKE TARGETS DEFINED BY THE TOP LEVEL KIM API Makefile
 
 The targets defined by the top level KIM API Makefile include:
 
@@ -662,7 +662,7 @@ TARGETS FOR BUILDING AND CLEANING THE EXAMPLES
                                 executable files from examples/ directory
                                 and its subdirectories
 
-H.3 ADVANCED DETAILS OF THE INSTALLATION PROCESS
+F.3 ADVANCED DETAILS OF THE INSTALLATION PROCESS
 
 Upon `make install', the compiled versions of the KIM API library, associated
 binary utilities, and the system-collection of Model Drivers and Models will be

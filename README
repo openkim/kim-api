@@ -25,7 +25,6 @@
 # Contributors:
 #    Ryan S. Elliott
 #    Ellad B. Tadmor
-#    Valeriu Smirichinski
 #
 
 #
@@ -33,7 +32,7 @@
 #
 
 
-============================= The KMI API package =============================
+============================= The KIM API package =============================
 
 This file provides an introduction to the KIM API package.  This is the first
 file that you should read after unpacking the package.
@@ -65,7 +64,7 @@ interface (API) standard for interatomic models developed as part of the Open
 Knowledgebase of Interatomic Models (OpenKIM) project.  OpenKIM
 (https://openkim.org) is a current initiative to develop and implement
 standards for the atomistic simulation of materials.  The effort aims to help
-bring order to the efforts of the education, research, and industrial
+bring order to the efforts of the academic, research, and industry
 communities and to make it easier for new (and existing) scientists to leverage
 the work of others in this important field.  The OpenKIM project has several
 main objectives:
@@ -88,10 +87,10 @@ main objectives:
 THE KIM API PACKAGE:
 
 The KIM API package is a system-level library that aims to give computer
-programmers the ability to write atomistic or molecular simulation programs and
-routines capable of seamlessly interfacing and interacting with other programs
-and routines, regardless of the programming language (C, C++, FORTRAN 77,
-Fortran 90/95/2003, Python, etc.) in which the codes are written.
+programmers the ability to write atomistic or molecular simulation programs
+that can seamlessly interface with implementations of interatomic models,
+regardless of the programming language (C, C++, FORTRAN 77, Fortran 90/95/2003,
+Python, etc.) in which the codes are written.
 
 This version of the KIM API package is distributed under the CDDL Open Source
 License.
@@ -148,7 +147,7 @@ The current version of the KIM API package supports the following features:
 * Particle Species: The KIM API provides the ability to designate the physical
   species of each particle in a simulation.  Currently, only one identifier is
   provided for each element in the periodic table.  In the future support for
-  Models such as CHARMM and similar force-fields will be added.
+  Models that require multiple types of each element will be added.
 
 * Model Parameters: The OpenKIM philosophy views a `Model' as a well-defined
   computational code that includes fixed specific values for all parameters
