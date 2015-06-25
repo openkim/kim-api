@@ -39,7 +39,7 @@ This file provides supplemental information for users who want to work with the
 KIM API package through github.com and the git revision control program.
 
 There are only a couple of significant differences between the source tarball
-files that are distributed as kim-api-vX.X.X.tgz and the kim-api git
+files that are distributed as kim-api-vX.Y.Z.tgz and the kim-api git
 repository.
 
 1. The primary difference is that in the git repository there are no example
@@ -73,11 +73,11 @@ repository.
       ${KD}/docs/kim-api-introduction.pdf
       ${KD}/docs/kim-api-introduction.pptx
 
-   whereas the kim-api-vX.X.X.tgz package has the file
+   whereas the kim-api-vX.Y.Z.tgz package has the file
 
-      ${KD}/docs/kim-api-vX.X.X-introduction.pdf
+      ${KD}/docs/kim-api-vX.Y.Z-introduction.pdf
 
-3. The kim-api-vX.X.X.tgz package has the file
+3. The kim-api-vX.Y.Z.tgz package has the file
 
       ${KD}/kim-api.release.info
 

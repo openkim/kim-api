@@ -30,7 +30,7 @@
 # Release: This file is part of the kim-api.git repository.
 #
 
-KIM_DIR = $(HOME)/kim-api-vX.X.X
+KIM_DIR = $(HOME)/kim-api-vX.Y.Z
 
 KIM_COMPILERSUITE = GCC
 KIM_SYSTEMLINKER = linux

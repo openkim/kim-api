@@ -43,14 +43,14 @@ facilitate the learning process.
 STEP 0
 
    If you have not already done so, read the README file in the KIM API root
-   directory, referred to as ${KD} (by default: kim-api-vX.X.X), and follow the
+   directory, referred to as ${KD} (by default: kim-api-vX.Y.Z), and follow the
    instructions in the INSTALL file in the same directory to install the KIM
    API package.
 
 
 STEP 1
 
-   Read kim-api-vX.X.X-introduction.pdf which is located in the docs directory
+   Read kim-api-vX.Y.Z-introduction.pdf which is located in the docs directory
    (same directory as this file).  This pdf file contains a presentation
    providing an overview of the OpenKIM project and basic concepts related to
    the KIM API.
@@ -242,7 +242,7 @@ KIM_API_Description.txt
 README
      This file.
 
-kim-api-vX.X.X-introduction.pdf
+kim-api-vX.Y.Z-introduction.pdf
      Presentation file describing the concepts on which the KIM API system is
      based.
 

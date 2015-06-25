@@ -171,7 +171,7 @@ the detailed instructions in the INSTALL file in this directory.
 
 -------------------------------------------------------------------------------
 
-This directory (by default, kim-api-vX.X.X) contains the following files and
+This directory (by default, kim-api-vX.Y.Z) contains the following files and
 directories:
 
 INSTALL
@@ -207,7 +207,7 @@ build_system/
 
 docs/
      Documentation directory.  This directory contains the file
-     kim-api-vX.X.X-introduction.pdf which provides an overview of this release
+     kim-api-vX.Y.Z-introduction.pdf which provides an overview of this release
      of the KIM API package, the file KIM_API_Descriptions.txt, a link to the
      file standard.kim, and a templates directory containing template files for
      creating your own KIM Models.  (See the README file in that directory.)
