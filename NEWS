@@ -32,6 +32,40 @@
 #
 
 
+=== kim-api-v1.7.2 =============================================================
+
+* Updated copyright years in files
+
+* Rewrite of INSTALL file to provide a significantly improved description and
+  instructions for build and installation of the KIM API
+
+* Fix error checking bug in ex_test_Ar_multiple_models Test
+
+* Improve the build and install process to better follow standard conventions
+  for library soname values.
+
+* Increased the maximum number of species supported by the example Tests to 200
+
+* Fixed bug in example Tests related to maximum number of supported species
+
+* Updated 'make clean' so that it removes all old library files in the source
+  directories
+
+* Fixed default make target for Parameterized Models
+
+* Fixed a bug in the installation process associated with the use of DESTDIR
+
+* Fixed a regular expression error in the build system
+
+* Fixed memory leak in internal KIM API code
+
+* Added sanity check to make sure that the 'xxd' utility is available
+
+* vc_forces_numer_deriv now outputs configuration energy
+
+* Documentation updates
+
+
 === kim-api-v1.7.1 =============================================================
 
 * Bug fix for build of parameterized Models
