@@ -37,7 +37,7 @@
 /*                                                                            *//*12345678901234*/
                                                                                 /*12345678901234*/
 /*                                                                            *//*12345678901234*/
-/* Copyright (c) 2013--2014, Regents of the University of Minnesota.          *//*12345678901234*/
+/* Copyright (c) 2013--2015, Regents of the University of Minnesota.          *//*12345678901234*/
 /* All rights reserved.                                                       *//*12345678901234*/
 /*                                                                            *//*12345678901234*/
 /* Contributors:                                                              *//*12345678901234*/

@@ -21,7 +21,7 @@
 */
 
 /*
-* Copyright (c) 2013--2014, Regents of the University of Minnesota.
+* Copyright (c) 2013--2015, Regents of the University of Minnesota.
 * All rights reserved.
 *
 * Contributors:

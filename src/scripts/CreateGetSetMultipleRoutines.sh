@@ -22,7 +22,7 @@
 #
 
 #
-# Copyright (c) 2014, Regents of the University of Minnesota.
+# Copyright (c) 2014--2015, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
@@ -263,4 +263,3 @@ hasSize='yes'
 subroutine=false
 createGetM
 createSetM
-
