@@ -13,3 +13,4 @@ Makefile.KIM_Config
 export-list.txt
 kim_str.cpp
 /.kim-api
+/config.status

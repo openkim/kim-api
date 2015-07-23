@@ -205,6 +205,10 @@ build_system/
      A directory containing the common Makefiles and default settings used by
      the KIM API package build system.
 
+configure
+     A shell script to configure the KIM API and create a Makefile.KIM_Config
+     file.
+
 docs/
      Documentation directory.  This directory contains the file
      kim-api-vX.Y.Z-introduction.pdf which provides an overview of this release

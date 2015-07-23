@@ -218,10 +218,9 @@ D.1 INSTALLED-BUILD
 In this scenario the KIM API is built and installed and the system-collection
 is populated with a single Model and its associated Model Driver, both from
 openkim.org.  Additionally, one of the example Simulators is copied to the
-user's home directory and used to test the installed-build.  This scenario uses
-the default settings, which are appropriate for most 64bit Linux systems.  If
-you need different settings, see section H.1 for details about the KIM API
-build settings.  The commands given below are for the bash shell.
+user's home directory and used to test the installed-build.  If you need
+special settings, see `./configure --help` and section H.1 for details about
+the KIM API build settings.  The commands given below are for the bash shell.
 
 We'll detail the two flavors: installed-(standard)-build and
 installed-(nonstandard)-build.
@@ -236,7 +235,7 @@ $ cd "${HOME}"
 $ wget https://s3.openkim.org/kim-api/kim-api-vX.Y.Z.tgz  # replace X.Y.Z with the current version number
 $ tar zxvf kim-api-vX.Y.Z.tgz
 $ cd kim-api-vX.Y.Z
-$ sed -e 's|^KIM_DIR.*$|KIM_DIR = '`pwd`'|' Makefile.KIM_Config.example > Makefile.KIM_Config
+$ ./configure
 $ make add-EAM_Dynamo_Angelo_Moody_NiAlH__MO_418978237058_001
 $ make
 $ sudo make install
@@ -262,9 +261,7 @@ $ cd "${HOME}"
 $ wget https://s3.openkim.org/kim-api/kim-api-vX.Y.Z.tgz  # replace X.Y.Z with the current version number
 $ tar zxvf kim-api-vX.Y.Z.tgz
 $ cd kim-api-vX.Y.Z
-$ sed -e 's|^KIM_DIR.*$|KIM_DIR = '`pwd`'|'      \
-      -e 's|^#prefix.*$|prefix = $(HOME)/local|' \
-      Makefile.KIM_Config.example > Makefile.KIM_Config
+$ ./configure --prefix=${HOME}/local
 $ make add-EAM_Dynamo_Angelo_Moody_NiAlH__MO_418978237058_001
 $ make
 $ make install
@@ -297,7 +294,7 @@ $ wget https://s3.openkim.org/kim-api/kim-api-vX.Y.Z.tgz  # replace X.Y.Z with t
 $ tar zxvf kim-api-vX.Y.Z.tgz
 $ rm kim-api-vX.Y.Z.tgz
 $ cd kim-api-vX.Y.Z  # replace X.Y.Z with the package version number
-$ sed -e 's|^KIM_DIR.*$|KIM_DIR = '`pwd`'|' Makefile.KIM_Config.example > Makefile.KIM_Config
+$ ./configure
 $ make add-EAM_Dynamo_Angelo_Moody_NiAlH__MO_418978237058_001
 $ make
 $ make examples
@@ -448,8 +445,10 @@ F. ADVANCED DOCUMENTATION FOR KIM API BUILD AND INSTALL PROCESS
 
 F.1. THE Makefile.KIM_Config FILE
 
-Here we describe the process of creating the configuration settings for the
-KIM API build, which are contained in the Makefile.KIM_Config file.
+Here we describe the process of creating the configuration settings for the KIM
+API build, which are contained in the Makefile.KIM_Config file.  This is
+usually done by the `configure' script.  However, it may also be done by hand
+if necessary.
 
 (a) Copy the file `Makefile.KIM_Config.example' to `Makefile.KIM_Config'.
     For example, if you untarred the `kim-api-vX.Y.Z.tgz' tarball in your
