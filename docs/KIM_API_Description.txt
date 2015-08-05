@@ -558,7 +558,7 @@ void KIM_API_c_free(void *cp);
 
 To be used by: Model/Simulator
 
-    This routine is only available in the Forgran 2003 bindings.  It provides
+    This routine is only available in the Fortran 2003 bindings.  It provides
     access to the c "free" memory deallocation routine.  It should be used in
     order to release memory originally allocated by
     KIM_API_get_model_kim_str().
@@ -940,12 +940,13 @@ intptr_t KIM_API_get_rank(void *kimmdl, char *nm, int *kimerror);
 
 To be used by: Model/Simulator
 
-     The functionality of this routine is the same as KIM_API_get_data,
-     except it returns the rank of the data in terms of underlying
-     elements. (For example, if the data is an array of shape
-     [numberOfParticles,3], KIM_API_get_rank() will return 2) If no
-     data with name `nm' is in the KIM API object, a negative value
-     will be returned.
+     The functionality of this routine is the same as KIM_API_get_data, except
+     it returns the rank of the data in terms of underlying elements. (For
+     example, if the data is an array of shape [numberOfParticles,3],
+     KIM_API_get_rank() will return 2).  The routine returns 0 for scalar
+     values (scalars are indicated with `[]' in KIM descriptor files).  If no
+     data with name `nm' is in the KIM API object, a negative value will be
+     returned.
 
 Arguments:
 
@@ -967,9 +968,10 @@ intptr_t KIM_API_get_shape(void *kimmdl, char *nm, int *shape, int *kimerror);
 
 To be used by: Model/Simulator
 
-    This routine returns the rank of `nm' and provides its shape in the argument
-    `shape'.  If the name of the argument is not in the KIM API object, a
-    negative value will be returned.
+    This routine returns the rank of `nm' and provides its shape in the
+    argument `shape' (see KIM_API_get_rank for some additional details).  If
+    the name of the argument is not in the KIM API object, a negative value
+    will be returned.
 
 Arguments:
 
@@ -988,7 +990,8 @@ Arguments:
               by this function).  Shape gives the extent of each index for the
               array data. Shape[0] is the slowest changing index.  Shape has to
               be allocated and should have sufficient memory to hold a value
-              for each dimension.
+              for each dimension.  If rank==0, then the `shape' array is not
+              modified in any way.
 
       int *kimerror
                 error code: KIM_STATUS_OK   -- successful completion,
@@ -1608,7 +1611,7 @@ To be used by: Model
     descriptor file may be changed.  The routine returns
     KIM_STATUS_PARTICLE_SPECIES_UNDEFINED if no particle species have been
     provided in the .kim files.  (See the standard.kim file for more
-    information on particle speciess.)  The routine returns
+    information on particle species.)  The routine returns
     KIM_STATUS_PARTICLE_INVALID_SPECIES if the supplied symbol, particle, is
     not among the KIM supported particle symbols.  (See standard.kim for the
     list of supported particle species.)
