@@ -98,7 +98,18 @@ else
    ifeq (,$(MAKECMDGOALS))  # empty goal, in this case, means stop here
       MAKECMDGOALS=empty-so-stop
    endif
-   $(if $(filter-out clean kim-item-type model-name model-driver-name,$(MAKECMDGOALS)),$(error Model Driver, $(MODEL_DRIVER_NAME), not found),)
+   ifeq (,$(filter-out clean kim-item-type model-name model-driver-name,$(MAKECMDGOALS)))
+      # all good
+   else
+      $(warning Looked for $(MODEL_DRIVER_NAME) in ../)
+      ifeq (,$(filter-out /doesnotexist,$(USERDIR)))
+        # do nothing
+      else
+        $(warning Looked for $(MODEL_DRIVER_NAME) in $(USERDIR)/)
+      endif
+     $(warning Looked for $(MODEL_DRIVER_NAME) in $(srcdir)/$(modeldriversdir)/)
+     $(error Model Driver, $(MODEL_DRIVER_NAME), not found)
+  endif
 endif
 
 
