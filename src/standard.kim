@@ -567,9 +567,9 @@ Ds                          spec         110            # Darmstadtium
 Rg                          spec         111            # Roentgenium
 Cn                          spec         112            # Copernicium
 Uut                         spec         113            # Ununtrium
-Uuq                         spec         114            # Ununquadium
+Fl                          spec         114            # Flerovium
 Uup                         spec         115            # Ununpentium
-Uuh                         spec         116            # Ununhexium
+Lv                          spec         116            # Livermorium
 Uus                         spec         117            # Ununseptium
 Uuo                         spec         118            # Ununoctium
 electron                    spec         200            # electrons
