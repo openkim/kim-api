@@ -181,7 +181,7 @@ $
 #                           `method'       void (*)()      c_funptr
 #                           `pointer'      void *          c_ptr
 #
-#                           The first thre are self-explanatory.  (Note:
+#                           The first three are self-explanatory.  (Note:
 #                           programmers should use the types listed above, as
 #                           this will best ensure that cross language compiled
 #                           code created one a single machine using a single
@@ -255,7 +255,7 @@ $
 #                            NOTE that multi-dimensional arrays are defined as
 #                            in C with the `fast-index' corresponding to the
 #                            last in the list.  No conversion is necessary to
-#                            use such an array in Fortan.  The Fortran
+#                            use such an array in Fortran.  The Fortran
 #                            programmer simply needs to define the dimensions
 #                            of the array in the reverse order.  For example, a
 #                            KIM Shape string [10,3] corresponds to a C array
@@ -1273,6 +1273,14 @@ MODEL_PARAMETERS:
 # Two types of model parameters are allowed (the Unit and Requirements strings
 # are ignored for MODEL_PARAMETER lines):
 #
+# If supported, a Model must allocate memory for these arguments and register
+# it in the KIM API object (via KIM_API_set_data()) during the
+# KIM_API_model_init() function call.  The Model may change these pointers
+# during any call to KIM_API_model_reinit().  However, the Model must be sure
+# to account for any changes made by the Simulator to the existing parameter
+# values before deallocating the parameter memory.  The Model must deallocate
+# the parameter memory during the call to KIM_API_model_destroy().
+#
 # 1) PARAM_FIXED_<label> : A parameter that should not be changed by the
 #                          Simulator.  A `fixed parameter' may also be used by
 #                          the Model for persistent storage between calls to
@@ -1297,12 +1305,6 @@ MODEL_PARAMETERS:
 # static memory since it may be called with different KIM API objects.  Any
 # information that should persist between calls must be stored in the KIM API
 # object.  Fixed parameters may be used for this purpose as noted above.
-#
-#
-# Memory for PARAM_* arguments is **NOT** allocated in any case by the KIM API
-# (and should not be allocated by a Simulator).  The Model is responsible for
-# allocating (in the model_init function) and freeing (in the model_destroy
-# function) all memory for its parameters.
 #
 # Examples
 #

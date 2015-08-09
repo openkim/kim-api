@@ -478,6 +478,10 @@ To be used by: Simulator
           by calling KIM_API_file_init().  However, calling this routine
           multiple times with the same KIM API object will cause a memory leak.
 
+    NOTE: This routine does not allocate memory for a Model's parameters.  The
+          Model is responsible for doing this during a call to
+          KIM_API_model_init().
+
     Here the process of allocating memory for KIM API arguments and updating
     their associated shape values is described in detail (See also, the
     discussion of the `Shape' string component of the `Data' line type
@@ -1163,7 +1167,8 @@ To be used by: Simulator
         stored in the KIM API object.  Fixed parameters may be used for this
         purpose or the Model Buffer (See details and cautionary notes about
         this in the documentation for KIM_API_set/get_model_buffer and also in
-        the standard.kim file.)
+        the standard.kim file.)  The Model is always responsible for allocating
+        the memory necessary to store its parameters.
 
     (3) The Model must define a model_init function (the name of this function
         can be any valid function name; this name must be specified in the
