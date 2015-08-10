@@ -188,7 +188,20 @@ add-examples:
           cp -r "$(KIM_DIR)/$(examplesdir)/$(modelsdir)/$(exmpl)" "$(srcdir)/$(modelsdir)/"; fi;)
 
 add-OpenKIM:
-	$(QUULL)printf "Complete download of OpenKIM Repository Model Drivers and Models not yet available.\n" && false
+	$(QUELL)query='query={"type":"mo","kim-api-version":{"$$regex":"^1\\."}}' && \
+                query="$${query}"'&fields={"kimcode":1, "kim-api-version":1}' && \
+                query="$${query}"'&database=obj' && \
+                list=`wget -q -O - --post-data="$${query}" https://query.openkim.org/api \
+                      | \
+                      sed -e 's/\[//g' -e 's/\]//g' \
+                      -e 's/{"kim-api-version": "\([0-9.]*\)", "kimcode": "\([^"]*\)"},*/\1:\2/g'` && \
+                for model in $${list}; do \
+                  minor=`printf "$${model}" | sed -e 's/1\.\([^.:]*\).*/\1/'`; \
+                  modname=`printf "$${model}" | sed -e 's/.*://'`; \
+                  if test $${minor} -ge 6; then \
+                    make add-$${modname}; \
+                  fi; \
+                done
 
 add-%: config
 	$(QUELL)if test x"__MD_" = x`printf "$*" | sed 's/.*\(__MD_\).*/\1/'`; then \
