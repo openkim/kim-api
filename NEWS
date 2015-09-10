@@ -32,7 +32,7 @@
 #
 
 
-=== kim-api-v1.7.2 =============================================================
+=== kim-api-v1.7.2 ============== 25Jun2015 ====================================
 
 * Updated copyright years in files
 
@@ -66,14 +66,14 @@
 * Documentation updates
 
 
-=== kim-api-v1.7.1 =============================================================
+=== kim-api-v1.7.1 ============== 02Dec2014 ====================================
 
 * Bug fix for build of parameterized Models
 
 * Minor documentation update
 
 
-=== kim-api-v1.7.0 =============================================================
+=== kim-api-v1.7.0 ============== 21Nov2014 ====================================
 
 * Use 'xxd' utility for encapsulation of KIM descriptor files and param. files
 
@@ -94,7 +94,7 @@
 * Updates to documentation
 
 
-=== kim-api-v1.6.3 =============================================================
+=== kim-api-v1.6.3 ============== 18Aug2014 ====================================
 
 * Fixed install to recognize := and = in Makefiles
 
@@ -105,7 +105,7 @@
 * Fixes build system
 
 
-=== kim-api-v1.6.2 =============================================================
+=== kim-api-v1.6.2 ============== 11Aug2014 ====================================
 
 * Correct KIM_API_Versions in template ".kim" files
 
@@ -114,7 +114,7 @@
 * All template ".kim" files now generated from "legos" in git repo
 
 
-=== kim-api-v1.6.1 =============================================================
+=== kim-api-v1.6.1 ============== 08Aug2014 ====================================
 
 * Updates to Model Driver and Model template files (in docs/templates/)
 
@@ -128,7 +128,7 @@
 * Other small documentation and code improvements
 
 
-=== kim-api-v1.6.0 =============================================================
+=== kim-api-v1.6.0 ============== 28Jul2014 ====================================
 
 * Documentation updates.
 
@@ -176,7 +176,7 @@
 * Remove deprecated Fortran Cray pointer support.
 
 
-=== openkim-api-v1.5.0 =========================================================
+=== openkim-api-v1.5.0 ========== 16Jul2014 ====================================
 
 * Documentation updates, including an extensive discussion of the installation
   process in INSTALL.
@@ -203,7 +203,7 @@
   installed there.
 
 
-=== openkim-api-v1.4.1 =========================================================
+=== openkim-api-v1.4.1 ========== 19May2014 ====================================
 
 
 * Added additional compiler flags to support differences between GCC and INTEL
@@ -226,7 +226,7 @@
 * Updated and corrected documentation
 
 
-=== openkim-api-v1.4.0 =========================================================
+=== openkim-api-v1.4.0 ========== 26Feb2014 ====================================
 
 
 * Improvements to robustness and efficiency of MAKE_SYSTEM
@@ -248,7 +248,7 @@
 * Added Fortran 2003 bindings
 
 
-=== openkim-api-v1.3.1 =========================================================
+=== openkim-api-v1.3.1 ========== 20Jan2014 ====================================
 
 
 * Fixes to make system to avoid undefined `directoryPATH()' symbol with INTEL
@@ -259,7 +259,7 @@
 * Fixes to make system to work with gnu make 3.81 (avoid segmentation faults)
 
 
-=== openkim-api-v1.3.0 =========================================================
+=== openkim-api-v1.3.0 ========== 10Dec2013 ====================================
 
 
 * change KIM_KEY_STRING_LENGTH to 128 (despite git log that says 257)
@@ -282,7 +282,7 @@
 * Added KIM_API_get_rank and KIM_API_get_rank_by_index functions
 
 
-=== openkim-api-v1.2.3 =========================================================
+=== openkim-api-v1.2.3 ========== 15Nov2013 ====================================
 
 
 * Fixed bugs in the KIM_API_string_init() function (discovered by Daniel Schopf)
@@ -298,7 +298,7 @@
 * Some minor changes to api code to remove compiler warnings from some compilers
 
 
-=== openkim-api-v1.2.2 =========================================================
+=== openkim-api-v1.2.2 ========== 17Sep2013 ====================================
 
 
 * Improved speed of make system when many Models/Tests (and Drivers) exist
@@ -306,13 +306,13 @@
 * Improved an aspect of the api's error checking/reporting
 
 
-=== openkim-api-v1.2.1 =========================================================
+=== openkim-api-v1.2.1 ========== 21Jul2013 ====================================
 
 
 * Reverted to gnu make v3.81 from v3.82 to better represent actual needs.
 
 
-=== openkim-api-v1.2.0 =========================================================
+=== openkim-api-v1.2.0 ========== 12Jul2013 ====================================
 
 
 * Documentation updates.
@@ -369,7 +369,7 @@
   vc_forces_delta to the distribution.
 
 
-=== openkim-api-v1.1.1 =========================================================
+=== openkim-api-v1.1.1 ========== 19Aug2012 ====================================
 
 
 * Added run_forces_numer_deriv_for_all_models script that will run and
@@ -398,7 +398,7 @@
   management and PARAM_* handling
 
 
-=== openkim-api-v1.1.0 =========================================================
+=== openkim-api-v1.1.0 ========== 12Jul2012 ====================================
 
 
 * Documentation updates
@@ -472,7 +472,7 @@
 * Significant clean-up/rearrangement of core api code
 
 
-=== openkim-api-v1.0.1 =========================================================
+=== openkim-api-v1.0.1 ========== 25Feb2012 ====================================
 
 
 * Bug fix to ex_model_Ne_P_fastLJ
@@ -482,7 +482,7 @@
 * Documentation updates
 
 
-=== openkim-api-v1.0.0 =========================================================
+=== openkim-api-v1.0.0 ========== 22Feb2012 ====================================
 
 
 * Moved all examples to EXAMPLES directory and added `make examples' target.
@@ -520,7 +520,7 @@
 * Bug fixes.
 
 
-=== openkim-api-v0.2.0 =========================================================
+=== openkim-api-v0.2.0 ========== 15Sep2011 ====================================
 
 
 * Updated documentation
@@ -550,7 +550,7 @@
 * Bug fixes
 
 
-=== openkim-api-v0.1.2 =========================================================
+=== openkim-api-v0.1.2 ========== 22Aug2011 ====================================
 
 
 * Fixed a number of bugs in the examples related to running on 64bit machines
@@ -559,7 +559,7 @@
   machines
 
 
-=== openkim-api-v0.1.1 =========================================================
+=== openkim-api-v0.1.1 ========== 16Aug2011 ====================================
 
 
 * Fixed memory handling bug associated with the service functions
@@ -575,7 +575,7 @@
   git convention that the extension `.git' refers to a bare repository
 
 
-=== openkim-api-v0.1.0 =========================================================
+=== openkim-api-v0.1.0 ========== 08Aug2011 ====================================
 
 
 * Added TEMPLATE files to help users create their own KIM Models.
