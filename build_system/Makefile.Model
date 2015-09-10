@@ -56,6 +56,9 @@ else
    endif
 endif
 
+# Add this file and item makefile to makefiles list
+KIM_MAKE_FILES += $(KIM_DIR)/$(builddir)/Makefile.Model Makefile
+
 .PHONY: STATIC_COMP_WARNING clean install installdirs uninstall kim-item-type model-name model-kim-file
 STATIC_COMP_WARNING:
 	@printf '\n'; \
@@ -70,7 +73,7 @@ $(KIM_STR_NAME).c: $(MODEL_KIM_FILE)
 all: $(MODEL_BUILD_TARGET)
 
 .INTERMEDIATE: init_wrapper.cpp
-init_wrapper.cpp: Makefile
+init_wrapper.cpp: $(KIM_MAKE_FILES)
 	@printf "Creating... intermediate file... $@.\n"
 	$(QUELL)printf "extern \"C\"\n"                                                 > $@
 	$(QUELL)printf "{\n"                                                           >> $@
@@ -91,7 +94,7 @@ lib$(MODEL_LIB_BUILD).a: $(LOCALOBJ) init_wrapper.o $(KIM_STR_NAME).o
 	@printf "Creating... $@.\n"
 	$(QUELL)ar rcs $@ $(LOCALOBJ) init_wrapper.o $(KIM_STR_NAME).o
 
-$(EXPORT_LIST_NAME): $(KIM_MAKE_FILES) Makefile
+$(EXPORT_LIST_NAME): $(KIM_MAKE_FILES)
 	@printf "Creating... intermediate file... $@.\n"
 ifeq (darwin, $(KIM_SYSTEMLINKER))
 	$(QUELL)printf "_$(MODEL_NAME)_init_pointer\n"                       > $@
@@ -117,10 +120,7 @@ model-name:
 model-kim-file:
 	@printf "$(MODEL_KIM_FILE)"
 
-$(LOCALOBJ): Makefile
-
-Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/$(builddir)/Makefile.Model
-	$(QUELL)touch Makefile
+$(LOCALOBJ): $(KIM_MAKE_FILES)
 
 clean:
 	@printf "Cleaning... Model.......... $(MODEL_NAME).\n"

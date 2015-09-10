@@ -43,10 +43,10 @@ KIMDEFINES = $(KIM_DEFINE_VALUES)
 all: $(full_package_name)-descriptor-file-match \
      $(full_package_name)-build-config
 
-Makefile: $(KIM_MAKE_FILES)
-	$(QUELL)touch Makefile
+# Add the local Makefile to KIM_MAKE_FILES
+KIM_MAKE_FILES += Makefile
 
-descriptor-file-match.o: descriptor-file-match.cpp KIM_API.h KIM_API_status.h Makefile
+descriptor-file-match.o: descriptor-file-match.cpp KIM_API.h KIM_API_status.h $(KIM_MAKE_FILES)
 
 $(full_package_name)-descriptor-file-match: descriptor-file-match.o \
                                             $(if $(filter-out dynamic-link,$(KIM_LINK)),,\
@@ -83,7 +83,7 @@ endif
                                      -D 'OUTPUTINFLAG_STRING="$(OUTPUTINFLAG)"' \
                                      -D 'MAKEFILEKIMCONFIG_STRING="include $(if $(filter-out .build-config.o,$@),$(KIM_DIR),$(package_dir))/Makefile.KIM_Config"' \
                                      -D 'VERSION_STRING="$(VERSION_FULL)"'
-%build-config.o: build-config.cpp Makefile
+%build-config.o: build-config.cpp $(KIM_MAKE_FILES)
 	@printf "Creating... $@.\n"
 	$(QUELL)$(CXX) $(KIM_CXXTYPE_STANDARD_COMPILE_LIST) $< $(OUTPUTINFLAG) $@
 

@@ -56,6 +56,9 @@ else
    endif
 endif
 
+# Add this file and item makefile to makefiles list
+KIM_MAKE_FILES += $(KIM_DIR)/$(builddir)/Makefile.ModelDriver Makefile
+
 .PHONY: STATIC_COMP_WARNING clean install installdirs uninstall kim-item-type model-drvier-name model-driver-kim-file-template
 STATIC_COMP_WARNING:
 	@printf '\n'; \
@@ -68,7 +71,7 @@ STATIC_COMP_WARNING:
 all: $(MODEL_DRIVER_BUILD_TARGET)
 
 .INTERMEDIATE: driver_init_wrapper.cpp
-driver_init_wrapper.cpp: Makefile
+driver_init_wrapper.cpp: $(KIM_MAKE_FILES)
 	@printf "Creating... intermediate file... $@.\n"
 	$(QUELL)printf "extern \"C\"\n"                                                  > $@
 	$(QUELL)printf "{\n"                                                            >> $@
@@ -90,7 +93,7 @@ lib$(MODEL_DRIVER_LIB_BUILD).a: $(LOCALOBJ) driver_init_wrapper.o
 	@printf "Creating... $@.\n"
 	$(QUELL)ar rcs $@ $(LOCALOBJ) driver_init_wrapper.o
 
-$(EXPORT_LIST_NAME): $(KIM_MAKE_FILES) Makefile
+$(EXPORT_LIST_NAME): $(KIM_MAKE_FILES)
 	@printf "Creating... intermediate file... $@.\n"
 ifeq (darwin, $(KIM_SYSTEMLINKER))
 	$(QUELL)printf "_$(MODEL_DRIVER_NAME)_init_pointer\n"             > $@
@@ -112,10 +115,7 @@ model-drvier-name:
 model-driver-kim-file-template:
 	@printf "$(MODEL_DRIVER_KIM_FILE_TEMPLATE)"
 
-$(LOCALOBJ): Makefile
-
-Makefile: $(KIM_MAKE_FILES) $(KIM_DIR)/$(builddir)/Makefile.ModelDriver
-	$(QUELL)touch Makefile
+$(LOCALOBJ): $(KIM_MAKE_FILES)
 
 clean:
 	@printf "Cleaning... Model Driver... $(MODEL_DRIVER_NAME).\n"
