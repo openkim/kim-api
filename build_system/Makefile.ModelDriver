@@ -59,7 +59,7 @@ endif
 # Add this file and item makefile to makefiles list
 KIM_MAKE_FILES += $(KIM_DIR)/$(builddir)/Makefile.ModelDriver Makefile
 
-.PHONY: STATIC_COMP_WARNING clean install installdirs uninstall kim-item-type model-drvier-name model-driver-kim-file-template
+.PHONY: STATIC_COMP_WARNING clean install installdirs uninstall kim-item-type model-driver-name model-driver-kim-file-template
 STATIC_COMP_WARNING:
 	@printf '\n'; \
         printf '*******************************************************************************\n'; \
@@ -109,7 +109,7 @@ endif
 kim-item-type:
 	@printf "ModelDriver"
 
-model-drvier-name:
+model-driver-name:
 	@printf "$(MODEL_DRIVER_NAME)"
 
 model-driver-kim-file-template:
