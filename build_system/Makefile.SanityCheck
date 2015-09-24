@@ -38,6 +38,18 @@ ifndef MAKE_VERSION_IS_OK
    $(error KIM API requires gnu make version $(NEED_MAKE_VERSION) or above)
 endif
 
+# check for existence of compilers
+# check for existence of compilers
+ifeq ($(shell $(CC) --version 2>&1),)
+  $(error C compiler "$(CC)" not found)
+endif
+ifeq ($(shell $(CXX) --version 2>&1),)
+  $(error C++ compiler "$(CXX)" not found)
+endif
+ifeq ($(shell $(FC) --version 2>&1),)
+  $(error Fortran compiler "$(FC)" not found)
+endif
+
 # check version of gfortran
 ifeq ($(KIM_COMPILERSUITE),GCC)
   NEED_GFORTRAN_VERSION := 4.7 # use 4.7 instead of 4.7.0 to accomodate those version where -dumpversion does not inclue the patch number
