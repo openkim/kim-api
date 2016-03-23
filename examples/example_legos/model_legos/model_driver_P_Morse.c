@@ -812,7 +812,7 @@ static int compute(void* km)                                                    
         /* apply periodic boundary conditions if required */                    /*........901234*/
         if (2 == NBC)                                                           /*........901234*/
         {                                                                       /*........901234*/
-          if (abs(Rij[k]) > 0.5*boxSideLengths[k])                              /*........901234*/
+          if (fabs(Rij[k]) > 0.5*boxSideLengths[k])                             /*........901234*/
           {                                                                     /*........901234*/
             Rij[k] -= (Rij[k]/fabs(Rij[k]))*boxSideLengths[k];                  /*........901234*/
           }                                                                     /*........901234*/
