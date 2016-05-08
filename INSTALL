@@ -254,7 +254,7 @@ directory for a step-by-step guide.
 D.1.2 INSTALLED-(NONSTANDARD)-BUILD
 
 To create an installed-(nonstandard)-build and install to the user's home
-directory "$(HOME)/local" do the below.  Here we will add a line to the user's
+directory "${HOME}/local" do the below.  Here we will add a line to the user's
 .bashrc file that puts "${HOME}/local/bin" on the user's PATH setting.
 
 $ cd "${HOME}"
