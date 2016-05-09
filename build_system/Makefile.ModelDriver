@@ -73,13 +73,15 @@ all: $(MODEL_DRIVER_BUILD_TARGET)
 .INTERMEDIATE: driver_init_wrapper.cpp
 driver_init_wrapper.cpp: $(KIM_MAKE_FILES)
 	@printf "Creating... intermediate file... $@.\n"
-	$(QUELL)printf "extern \"C\"\n"                                                  > $@
-	$(QUELL)printf "{\n"                                                            >> $@
+	$(QUELL)printf "extern \"C\"\n"                                                                                                                 > $@
+	$(QUELL)printf "{\n"                                                                                                                           >> $@
 	$(QUELL)printf "   int $(strip $(MODEL_DRIVER_INIT_FUNCTION_NAME))(void *kimmdl, char *paramfile_names, int *nmstrlen, int *numparamfiles);\n" >> $@
-	$(QUELL)printf "   int (* $(strip $(MODEL_DRIVER_NAME))_init_pointer)(void*,\n" >> $@
-	$(QUELL)printf "      char*, int*, int*) =\n"                                   >> $@
-	$(QUELL)printf "      $(strip $(MODEL_DRIVER_INIT_FUNCTION_NAME));\n"           >> $@
-	$(QUELL)printf "}\n"                                                            >> $@
+	$(QUELL)printf "   int (* $(strip $(MODEL_DRIVER_NAME))_init_pointer)(void*,\n"                                                                >> $@
+	$(QUELL)printf "      char*, int*, int*) =\n"                                                                                                  >> $@
+	$(QUELL)printf "      $(strip $(MODEL_DRIVER_INIT_FUNCTION_NAME));\n"                                                                          >> $@
+	$(QUELL)printf "   char $(strip $(MODEL_DRIVER_NAME))_compiled_with_version[]\n"                                                               >> $@
+	$(QUELL)printf "      = \"$(VERSION_FULL)\";\n"                                                                                                >> $@
+	$(QUELL)printf "}\n"                                                                                                                           >> $@
 
 lib$(MODEL_DRIVER_LIB).a: lib$(MODEL_DRIVER_LIB_BUILD).a
 	@printf "Creating... $@.\n"
@@ -96,14 +98,16 @@ lib$(MODEL_DRIVER_LIB_BUILD).a: $(LOCALOBJ) driver_init_wrapper.o
 $(EXPORT_LIST_NAME): $(KIM_MAKE_FILES)
 	@printf "Creating... intermediate file... $@.\n"
 ifeq (darwin, $(KIM_SYSTEMLINKER))
-	$(QUELL)printf "_$(MODEL_DRIVER_NAME)_init_pointer\n"             > $@
+	$(QUELL)printf "_$(MODEL_DRIVER_NAME)_init_pointer\n"                       > $@
+	$(QUELL)printf "_$(MODEL_DRIVER_NAME)_compiled_with_version\n"             >> $@
 else # everything else (linux and freebsd)
-	$(QUELL)printf "{\n"                                              > $@
-	$(QUELL)printf "   global:\n"                                    >> $@
-	$(QUELL)printf "           $(MODEL_DRIVER_NAME)_init_pointer;\n" >> $@
-	$(QUELL)printf "\n"                                              >> $@
-	$(QUELL)printf "   local: *;\n"                                  >> $@
-	$(QUELL)printf "};\n"                                            >> $@
+	$(QUELL)printf "{\n"                                                        > $@
+	$(QUELL)printf "   global:\n"                                              >> $@
+	$(QUELL)printf "           $(MODEL_DRIVER_NAME)_init_pointer;\n"           >> $@
+	$(QUELL)printf "           $(MODEL_DRIVER_NAME)_compiled_with_version;\n"  >> $@
+	$(QUELL)printf "\n"                                                        >> $@
+	$(QUELL)printf "   local: *;\n"                                            >> $@
+	$(QUELL)printf "};\n"                                                      >> $@
 endif
 
 kim-item-type:

@@ -54,6 +54,9 @@ static func_ptr driver_destroy;
 
 extern "C" {
 
+  char MODEL_NAME_STR_compiled_with_version[] =
+      "VERSION_FULL_STR";
+
 #if KIM_LINK_VALUE == KIM_LINK_DYNAMIC_LOAD
 #include <unistd.h>
 #include <dlfcn.h>
