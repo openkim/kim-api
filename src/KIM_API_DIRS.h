@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2013--2015, Regents of the University of Minnesota.
+// Copyright (c) 2013--2016, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -43,6 +43,6 @@ enum DirectoryPathType
    KIM_MODELS_DIR
 };
 
-void directoryPath(DirectoryPathType type, std::list<std::string>* const lst);
+void searchPaths(DirectoryPathType type, std::list<std::string>* const lst);
 
 #endif /* KIMHDR_KIM_API_DIRS_H */

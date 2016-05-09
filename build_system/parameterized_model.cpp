@@ -100,7 +100,7 @@ extern "C" {
     void* tmp_driver_lib_handle = NULL;
     std::stringstream messageText;
     std::list<std::string> lst;
-    directoryPath(KIM_MODEL_DRIVERS_DIR, &lst);
+    searchPaths(KIM_MODEL_DRIVERS_DIR, &lst);
     std::list<std::string>::iterator itr;
     for (itr = lst.begin(); itr != lst.end(); ++itr)
     {

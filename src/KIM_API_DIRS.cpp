@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2013--2015, Regents of the University of Minnesota.
+// Copyright (c) 2013--2016, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -33,27 +33,62 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <cctype>
 #include <iostream>
 #include <fstream>
+#include <sstream>
+#include <vector>
 #include "KIM_API_DIRS.h"
 
 #define LINELEN 256
-std::string userDirs[2];
-void getUserDirs()
+
+void sanitizeString(std::string &str)
 {
-  std::string configFile;
+  std::string::iterator itr;
+  for (itr=str.begin(); itr != str.end(); ++itr)
+  {
+    if (isalnum(*itr))
+    {
+      *itr = toupper(*itr);
+    }
+    else
+    {
+      *itr = '_';
+    }
+  }
+}
+
+std::string getConfigFileName()
+{
+  std::string configFileName;
+
   if (INPLACE)
   {
-    configFile = KIMDIR;
+    configFileName = KIMDIR;
   }
   else
   {
-    configFile = getenv("HOME");
+    configFileName = getenv("HOME");
+  }
+  configFileName.append("/.").append(PACKAGENAME);
+  configFileName.append("/config-v").append(VERSION_MAJOR);
+
+  std::string varName(PACKAGENAME);
+  sanitizeString(varName);
+  varName.append("_CONFIG_FILE");
+  char const* const varVal = getenv(varName.c_str());
+  if (NULL != varVal)
+  {
+    configFileName = varVal;
   }
 
-  configFile.append("/.").append(PACKAGENAME);
-  configFile.append("/config-v").append(VERSION_MAJOR);
+  return configFileName;
+}
 
+std::vector<std::string> getUserDirs()
+{
+  std::vector<std::string> userDirs(2);
+  std::string configFile(getConfigFileName());
   std::ifstream cfl;
   cfl.open(configFile.c_str(), std::ifstream::in);
   if (!cfl)
@@ -136,26 +171,48 @@ void getUserDirs()
     cfl.close();
   }
 
-  return;
+  return userDirs;
 }
 
-void directoryPath(DirectoryPathType type, std::list<std::string>* const lst)
+void pushEnvDirs(DirectoryPathType type,
+                 std::list<std::string>* const lst)
 {
+
+  std::string varName = PACKAGENAME;
+  sanitizeString(varName);
   switch (type)
   {
     case KIM_MODEL_DRIVERS_DIR:
+      varName.append("_MODEL_DRIVERS_DIR");
+      break;
     case KIM_MODELS_DIR:
-      getUserDirs();
+      varName.append("_MODELS_DIR");
       break;
     default:
       break;
-
   }
+  char const* const varVal = getenv(varName.c_str());
+  if (NULL != varVal)
+  {
+    std::string varValString(varVal);
+    std::istringstream iss(varValString);
+    std::string token;
+    while (std::getline(iss, token, ':'))
+    {
+      lst->push_back(token);
+    }
+  }
+}
+
+void searchPaths(DirectoryPathType type, std::list<std::string>* const lst)
+{
+  std::vector<std::string> userDirs = getUserDirs();
 
   switch (type)
   {
     case KIM_MODEL_DRIVERS_DIR:
       lst->push_back(std::string("."));
+      pushEnvDirs(type,lst);
       if (0 != userDirs[0].compare(""))
       {
         lst->push_back(userDirs[0]);
@@ -165,6 +222,7 @@ void directoryPath(DirectoryPathType type, std::list<std::string>* const lst)
       break;
     case KIM_MODELS_DIR:
       lst->push_back(std::string("."));
+      pushEnvDirs(type,lst);
       if (0 != userDirs[1].compare(""))
       {
         lst->push_back(userDirs[1]);

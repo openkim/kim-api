@@ -1949,7 +1949,7 @@ int KIM_API_model::get_model_kim_str_len(const char* const modelname,
     backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);
 
     std::list<std::string> lst;
-    directoryPath(KIM_MODELS_DIR, &lst);
+    searchPaths(KIM_MODELS_DIR, &lst);
     std::list<std::string>::iterator itr;
     bool accessible = false;
     for (itr = lst.begin(); itr != lst.end(); ++itr)
@@ -2031,7 +2031,7 @@ int KIM_API_model::get_model_kim_str(const char* const modelname,
     backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);
 
     std::list<std::string> lst;
-    directoryPath(KIM_MODELS_DIR, &lst);
+    searchPaths(KIM_MODELS_DIR, &lst);
     std::list<std::string>::iterator itr;
     bool accessible = false;
     for (itr = lst.begin(); itr != lst.end(); ++itr)
@@ -2438,9 +2438,8 @@ int KIM_API_model::model_init(){
     filekimlog.open(kimlog, std::ofstream::app);
     backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);
 
-//    sprintf(model_slib_file,"%s/%s/%s.so",directoryPath(srcdir)/$(modelsdir),modelname,modelname);
     std::list<std::string> lst;
-    directoryPath(KIM_MODELS_DIR, &lst);
+    searchPaths(KIM_MODELS_DIR, &lst);
     std::list<std::string>::iterator itr;
     bool accessible = false;
     for (itr = lst.begin(); itr != lst.end(); ++itr)
