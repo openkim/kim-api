@@ -41,7 +41,8 @@ VPATH = ../
 KIMDEFINES = $(KIM_DEFINE_VALUES)
 
 all: $(full_package_name)-descriptor-file-match \
-     $(full_package_name)-build-config
+     $(full_package_name)-build-config \
+     $(full_package_name)-collections-info
 
 # Add the local Makefile to KIM_MAKE_FILES
 KIM_MAKE_FILES += Makefile
@@ -92,17 +93,40 @@ $(full_package_name)-build-config: build-config.o .build-config.o
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< $(XLANGLDLIBS)
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ .$< $(XLANGLDLIBS)
 
+collections-info.o: collections-info.cpp KIM_API_DIRS.h $(KIM_MAKE_FILES)
+
+$(full_package_name)-collections-info: collections-info.o \
+                                            $(if $(filter-out dynamic-link,$(KIM_LINK)),,\
+                                                 ../KIM_API_DIRS.o ../.KIM_API_DIRS.o) \
+                                            $(if $(filter-out static-link,$(KIM_LINK)),\
+                                                 lib$(KIM_LIB_BUILD).so .lib$(KIM_LIB_BUILD).so,\
+                                                 lib$(KIM_LIB_BUILD).a)
+	@printf "Creating... $@.\n"
+ifneq (static-link,$(KIM_LINK))
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).so $(XLANGLDLIBS) $(LDLIBS)
+  ifeq (dynamic-load,$(KIM_LINK))
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ $< ../.lib$(KIM_LIB_BUILD).so $(XLANGLDLIBS) $(LDLIBS)
+  else
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ $<  ../.KIM_API_DIRS.o $(XLANGLDLIBS) $(LDLIBS)
+  endif
+else
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).a  $(XLANGLDLIBS) $(LDLIBS)
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ $< ../.lib$(KIM_LIB_BUILD).a $(XLANGLDLIBS) $(LDLIBS)
+endif
+
+
 .PHONY: all clean install installdirs uninstall
 
 clean:
 	@printf "Cleaning... src/utils.\n"
 	$(QUELL)rm -f *.o .*.o $(full_package_name)-descriptor-file-match .$(full_package_name)-descriptor-file-match \
-                   $(full_package_name)-build-config .$(full_package_name)-build-config
+                   $(full_package_name)-build-config .$(full_package_name)-build-config \
+                   $(full_package_name)-collections-info .$(full_package_name)-collections-info
 
 
 install_bindir = $(dest_package_dir)/bin
 install_nodest_bindir = $(package_dir)/bin
-install_bin = $(full_package_name)-descriptor-file-match $(full_package_name)-build-config
+install_bin = $(full_package_name)-descriptor-file-match $(full_package_name)-build-config $(full_package_name)-collections-info
 
 install-check:
 ifneq (dynamic-load,$(KIM_LINK))

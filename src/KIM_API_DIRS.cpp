@@ -38,6 +38,9 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <dirent.h>
+#include <sys/stat.h>
+#include <dlfcn.h>
 #include "KIM_API_DIRS.h"
 
 #define LINELEN 256
@@ -238,4 +241,114 @@ void searchPaths(DirectoryPathType type, std::list<std::string>* const lst)
       break;
   }
   return;
+}
+
+void getSubDirectories(std::string const &dir, std::list<std::string> &list)
+{
+  list.clear();
+
+  DIR* dirp = NULL;
+  struct dirent* dp = NULL;
+
+  if (NULL != (dirp = opendir(dir.c_str())))
+  {
+    do
+    {
+      std::string fullPath(dir);
+      struct stat statBuf;
+      if ((NULL != (dp = readdir(dirp))) &&
+          (0 != strcmp(dp->d_name, ".")) && (0 != strcmp(dp->d_name, "..")))
+      {
+        fullPath.append("/").append(dp->d_name);
+        if ((0 == stat(fullPath.c_str(), &statBuf)) &&
+            (S_ISDIR(statBuf.st_mode)))
+        {
+          list.push_back(fullPath);
+        }
+      }
+    }
+    while (NULL != dp);
+  }
+}
+
+enum ITEMS_ENTREIS {IE_NAME, IE_DIR, IE_VER};
+void getAvailableItems(DirectoryPathType type,
+                       std::list<std::vector<std::string> > &list)
+{
+  std::list<std::string> paths;
+  searchPaths(type, &paths);
+
+  std::list<std::string>::const_iterator itr;
+  for (itr = paths.begin(); itr != paths.end(); ++itr)
+  {
+    std::list<std::string> items;
+    getSubDirectories(*itr, items);
+
+    std::list<std::string>::const_iterator itemItr;
+    for (itemItr = items.begin(); itemItr != items.end(); ++itemItr)
+    {
+      std::size_t split = itemItr->find_last_of("/");
+      std::vector<std::string> entry(3);
+      entry[IE_NAME] = itemItr->substr(split+1);
+      entry[IE_DIR] = itemItr->substr(0,split);
+
+      std::string lib = entry[IE_DIR] + "/" + entry[IE_NAME] + "/";
+      switch (type)
+      {
+        case KIM_MODELS_DIR:
+          lib.append(MODELLIBFILE);
+          break;
+        case KIM_MODEL_DRIVERS_DIR:
+          lib.append(MODELDRIVERLIBFILE);
+          break;
+        default:
+          break;
+      }
+      lib.append(".so");
+      void* tmp_lib_handle = NULL;
+      tmp_lib_handle = dlopen(lib.c_str(), RTLD_NOW);
+      if (tmp_lib_handle != NULL)
+      {
+        std::string verSymbolName = entry[IE_NAME] + "_compiled_with_version";
+        char const* const verSymbolPtr = (char const* const)
+            dlsym(tmp_lib_handle, verSymbolName.c_str());
+        char* dlsym_error = dlerror();
+        if (dlsym_error)
+        {
+          std::cerr << "* Error (getAvailableItems): Cannot load symbol: "
+                    << dlsym_error <<std::endl;
+          entry[IE_VER] = "unknown";
+        }
+        else
+        {
+          entry[IE_VER] = verSymbolPtr;
+        }
+
+        list.push_back(entry);
+        dlclose(tmp_lib_handle);
+      }
+    }
+  }
+}
+
+bool findItem(DirectoryPathType type, std::string const& name,
+             std::vector<std::string>* const Item)
+{
+  bool success = false;
+  std::list<std::vector<std::string> > list;
+  getAvailableItems(type, list);
+
+
+  for (std::list<std::vector<std::string> >::const_iterator
+           itr = list.begin(); itr != list.end(); ++itr)
+  {
+    if ((*itr)[0] == name)
+    {
+      *Item = *itr;
+      success = true;
+      break;
+    }
+  }
+
+  return success;
 }

@@ -209,10 +209,13 @@ kim-api-clean:
 utils-clean:
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(srcdir)/utils clean
 
-config-clean:
+config-clean: inplace-config-clean
 	@printf "Cleaning... KIM_Config files.\n"
 	$(QUELL)rm -f $(KIM_CONFIG_FILES)
 	$(QUELL)rm -f $(KIM_SIMULATOR_CONFIG_FILES)
+
+inplace-config-clean:
+	@printf "Cleaning... User config file....\n"
 	$(QUELL)rm -rf $(KIM_DIR)/$(user_config_file_dir_name)
 
 
@@ -374,9 +377,9 @@ rm-%:
         $(patsubst %,%-install,$(MODEL_DRIVERS_LIST) $(MODELS_LIST))
 
 ifeq (dynamic-load,$(KIM_LINK))
-  install: install-check config kim-api-objects-install kim-api-libs-install utils-install $(patsubst %,%-install,$(MODEL_DRIVERS_LIST) $(MODELS_LIST)) config-install
+  install: install-check config inplace-config-clean kim-api-objects-install kim-api-libs-install utils-install $(patsubst %,%-install,$(MODEL_DRIVERS_LIST) $(MODELS_LIST)) config-install
 else
-  install: install-check config kim-api-objects-install $(patsubst %,%-install,$(MODEL_DRIVERS_LIST) $(MODELS_LIST)) kim-api-libs-install utils-install config-install
+  install: install-check config inplace-config-clean kim-api-objects-install $(patsubst %,%-install,$(MODEL_DRIVERS_LIST) $(MODELS_LIST)) kim-api-libs-install utils-install config-install
 endif
 
 # build targets involved in "make install"
@@ -467,6 +470,7 @@ install-set-default-to-v%:
 	@printf "Setting default $(package_name) to $(package_name)-v$*\n"
 	$(QUELL)fl="$(DESTDIR)$(bindir)/$(package_name)-descriptor-file-match" && if test -L "$$fl"; then rm -f "$$fl"; fi && ln -fs "$(package_name)-v$*-descriptor-file-match" "$$fl"
 	$(QUELL)fl="$(DESTDIR)$(bindir)/$(package_name)-build-config"          && if test -L "$$fl"; then rm -f "$$fl"; fi && ln -fs "$(package_name)-v$*-build-config" "$$fl"
+	$(QUELL)fl="$(DESTDIR)$(bindir)/$(package_name)-collections-info"      && if test -L "$$fl"; then rm -f "$$fl"; fi && ln -fs "$(package_name)-v$*-collections-info" "$$fl"
 	$(QUELL)fl="$(DESTDIR)$(includedir)/$(package_name)"       && if test -L "$$fl"; then rm -f "$$fl"; fi && ln -fs "$(package_name)-v$*" "$$fl"
 	$(QUELL)fl="$(DESTDIR)$(libdir)/$(package_name)"           && if test -L "$$fl"; then rm -f "$$fl"; fi && ln -fs "$(package_name)-v$*" "$$fl"
 	$(QUELL)fl="$(DESTDIR)$(libdir)/lib$(package_name).$(EXT)" && if test -L "$$fl"; then rm -f "$$fl"; fi && ln -fs "lib$(package_name)-v$*.$(EXT)" "$$fl"
@@ -506,6 +510,7 @@ uninstall-set-default:
 	@printf "Removing default $(package_name) settings.\n"
 	$(QUELL)fl="$(DESTDIR)$(bindir)/$(package_name)-descriptor-file-match" && if test -L "$$fl"; then rm -f "$$fl"; fi
 	$(QUELL)fl="$(DESTDIR)$(bindir)/$(package_name)-build-config"          && if test -L "$$fl"; then rm -f "$$fl"; fi
+	$(QUELL)fl="$(DESTDIR)$(bindir)/$(package_name)-collections-info"      && if test -L "$$fl"; then rm -f "$$fl"; fi
 	$(QUELL)fl="$(DESTDIR)$(includedir)/$(package_name)"       && if test -L "$$fl"; then rm -f "$$fl"; fi
 	$(QUELL)fl="$(DESTDIR)$(libdir)/$(package_name)"           && if test -L "$$fl"; then rm -f "$$fl"; fi
 	$(QUELL)fl="$(DESTDIR)$(libdir)/lib$(package_name).$(EXT)" && if test -L "$$fl"; then rm -f "$$fl"; fi

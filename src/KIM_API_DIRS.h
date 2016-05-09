@@ -36,6 +36,7 @@
 
 #include <string>
 #include <list>
+#include <vector>
 
 enum DirectoryPathType
 {
@@ -43,6 +44,14 @@ enum DirectoryPathType
    KIM_MODELS_DIR
 };
 
-void searchPaths(DirectoryPathType type, std::list<std::string>* const lst);
+bool findItem(DirectoryPathType type, std::string const& name,
+              std::vector<std::string>* const Item);
+
+// needed by collection-info
+std::string getConfigFileName();
+void pushEnvDirs(DirectoryPathType type, std::list<std::string>* const lst);
+std::vector<std::string> getUserDirs();
+void getAvailableItems(DirectoryPathType type,
+                       std::list<std::vector<std::string> > &list);
 
 #endif /* KIMHDR_KIM_API_DIRS_H */

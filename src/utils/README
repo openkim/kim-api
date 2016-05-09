@@ -44,6 +44,13 @@ Makefile
 README
      This file.
 
+build-config.cpp
+     A helper application that returns build configuration values
+
+collections-info.cpp
+     A helper application that returns configuration values and lists of
+     currently available models and model drivers
+
 descriptor-file-match.cpp
      A helper application that takes a Model descriptor file and a Simulator
      descriptor file and prints out either MATCH or NOMATCH.

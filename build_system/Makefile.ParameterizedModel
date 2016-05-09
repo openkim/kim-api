@@ -76,45 +76,22 @@ all: descriptor.kim $(MODEL_BUILD_TARGET)
 
 # Find the driver files
 ifeq ($(srcdir),$(KIM_DIR)) # INSTALLED
-   LOCTMP = $(user_config_file_root_name)
+   COLLECTIONS_INFO = $(srcdir)/bin/$(full_package_name)-collections-info
 else
-   ifeq (install,$(MAKECMDGOALS)) # in case examples are "added" and build and installation is requested
-      # avoid error where example model driver is in user directory and in install directory
-      LOCTMP = /dev/null
-   else
-      LOCTMP = $(KIM_DIR)
-   endif
-endif
-ifeq (yes,$(shell if test -f $(LOCTMP)/$(user_config_file_dir_name)/config-v$(VERSION_MAJOR); then printf "yes"; fi))
-   USERDIR = $(shell grep model_drivers_dir $(LOCTMP)/$(user_config_file_dir_name)/config-v$(VERSION_MAJOR) | sed -e 's/[^=]*=[[:space:]]*//' -e 's|^~|$(HOME)|')
-else
-   USERDIR = /doesnotexist
+   COLLECTIONS_INFO = $(srcdir)/utils/$(full_package_name)-collections-info
 endif
 #
-ifeq      (yes,$(shell if test -d ../$(MODEL_DRIVER_NAME); then printf "yes"; fi))
-   driver_location := ..
-else ifeq (yes,$(shell if test -d $(USERDIR)/$(MODEL_DRIVER_NAME); then printf "yes"; fi))
-   driver_location := $(USERDIR)
-else ifeq (yes,$(shell if test -d $(srcdir)/$(modeldriversdir)/$(MODEL_DRIVER_NAME); then printf "yes"; fi))
-   driver_location := $(srcdir)/$(modeldriversdir)
-else
+driver_location = $(shell $(COLLECTIONS_INFO) model_drivers find $(MODEL_DRIVER_NAME) | sed -e 's/[^ ]* \([^ ]*\).*/\1/')
+ifeq (,$(driver_location))
    ifeq (,$(MAKECMDGOALS))  # empty goal, in this case, means stop here
       MAKECMDGOALS=empty-so-stop
    endif
    ifeq (,$(filter-out clean kim-item-type model-name model-driver-name,$(MAKECMDGOALS)))
       # all good
    else
-      $(warning Looked for $(MODEL_DRIVER_NAME) in ../)
-      ifeq (,$(filter-out /doesnotexist,$(USERDIR)))
-        # do nothing
-      else
-        $(warning Looked for $(MODEL_DRIVER_NAME) in $(USERDIR)/)
-      endif
-     $(warning Looked for $(MODEL_DRIVER_NAME) in $(srcdir)/$(modeldriversdir)/)
      $(error Model Driver, $(MODEL_DRIVER_NAME), not found)
   endif
 endif
-
 
 species_list = $(sort $(strip $(filter SPECIES_%_NAME,$(.VARIABLES))))
 paramfile_list =  $(sort $(strip $(filter PARAM_FILE_%_NAME,$(.VARIABLES))))

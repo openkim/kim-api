@@ -192,7 +192,9 @@ KIM_API_DIRS.o: KIM_API_DIRS.h $(KIM_MAKE_FILES)
                                       -D USERROOT=$(if $(filter-out $(HOME),$(user_config_file_root_name)),1,0) \
                                       -D USERCONFIGFILEROOTNAME=\"$(user_config_file_root_name)\" \
                                       -D USERCONFIGFILEDIRNAME=\"$(user_config_file_dir_name)\" \
-                                      -D VERSION_MAJOR=\"$(VERSION_MAJOR)\"
+                                      -D VERSION_MAJOR=\"$(VERSION_MAJOR)\" \
+                                      -D MODELLIBFILE=\"lib$(MODEL_LIB)\" \
+                                      -D MODELDRIVERLIBFILE=\"lib$(MODEL_DRIVER_LIB)\"
 
 Unit_Handling.o: Unit_Handling.h KIM_API.h KIM_API_status.h $(KIM_MAKE_FILES)
 

@@ -1948,69 +1948,56 @@ int KIM_API_model::get_model_kim_str_len(const char* const modelname,
     filekimlog.open(kimlog);
     backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);
 
-    std::list<std::string> lst;
-    searchPaths(KIM_MODELS_DIR, &lst);
-    std::list<std::string>::iterator itr;
-    bool accessible = false;
-    for (itr = lst.begin(); itr != lst.end(); ++itr)
+    std::vector<std::string> item;
+    bool accessible = findItem(KIM_MODELS_DIR, modelname, &item);
+    if (accessible)
     {
-       itr->append("/");
-       itr->append(modelname); itr->append("/");
-       itr->append(MODELLIBFILE); itr->append(".so");
-       //std::cout<< "* Info (KIM_API_model::get_model_kim_str): Looking for Model shared library file " << itr->c_str() <<std::endl;
-       if (0 == access(itr->c_str(), F_OK))
-       {
-         accessible = true;
-         tmp_model_lib_handle = dlopen(itr->c_str(), RTLD_NOW);
-       }
-       else
-       {
-         accessible = false;
-       }
-       if (tmp_model_lib_handle != NULL) break;
+      std::string libFileName
+          = item[1] + "/" + item[0] + "/" + MODELLIBFILE + ".so";
+      tmp_model_lib_handle = dlopen(libFileName.c_str(), RTLD_NOW);
     }
     if (!accessible)
     {
-       //redirecting back to > std::cout
-       std::cout<< "* Error (KIM_API_model::get_model_kim_str_len): The Model shared library file is not readable for Model name: '";
-       std::cout<<modelname<<"'"<<std::endl;
-       std::cout.rdbuf(backup); filekimlog.close();
-       fprintf(stderr,"The Model shared library file is not readable for Model name: '%s'.\n",modelname);
-       *kimStringLen = 0;
-       return KIM_STATUS_FAIL;
+      //redirecting back to > std::cout
+      std::cout<< "* Error (KIM_API_model::get_model_kim_str_len): The Model shared library file is not readable for Model name: '";
+      std::cout<<modelname<<"'"<<std::endl;
+      std::cout.rdbuf(backup); filekimlog.close();
+      fprintf(stderr,"The Model shared library file is not readable for Model name: '%s'.\n",modelname);
+      *kimStringLen = 0;
+      return KIM_STATUS_FAIL;
     }
-    else if(tmp_model_lib_handle == NULL) {
-       //redirecting back to > std::cout
-       std::cout<< "* Error (KIM_API_model::get_model_kim_str_len): A problem occurred with the Model shared library file for Model name: '";
-       std::cout<<modelname<<"'" <<std::endl<<dlerror()<<std::endl;
-       std::cout.rdbuf(backup); filekimlog.close();
-       fprintf(stderr,"A problem occurred with the Model shared library file for Model name: '%s'.\n",modelname);
-       *kimStringLen = 0;
-       return KIM_STATUS_FAIL;
+    else if(tmp_model_lib_handle == NULL)
+    {
+      //redirecting back to > std::cout
+      std::cout<< "* Error (KIM_API_model::get_model_kim_str_len): A problem occurred with the Model shared library file for Model name: '";
+      std::cout<<modelname<<"'" <<std::endl<<dlerror()<<std::endl;
+      std::cout.rdbuf(backup); filekimlog.close();
+      fprintf(stderr,"A problem occurred with the Model shared library file for Model name: '%s'.\n",modelname);
+      *kimStringLen = 0;
+      return KIM_STATUS_FAIL;
     }
     else
     {
       std::cout<< "* Info (KIM_API_model::get_model_kim_str_len): Found Model shared library file for Model name: '" << modelname << "'" << std::endl;
     }
 
-
     const unsigned int* const model_str_len = (const unsigned int* const) dlsym(tmp_model_lib_handle, model_kim_str_len_name);
     char* dlsym_error = dlerror();
     if (dlsym_error) {
-        std::cout << "* Error (KIM_API_model::get_model_kim_str): Cannot load symbol: " << dlsym_error <<std::endl;
-        dlclose(tmp_model_lib_handle);
+      std::cout << "* Error (KIM_API_model::get_model_kim_str): Cannot load symbol: " << dlsym_error <<std::endl;
+      dlclose(tmp_model_lib_handle);
 
-        //redirecting back to > std::cout
-        std::cout.rdbuf(backup); filekimlog.close();
+      //redirecting back to > std::cout
+      std::cout.rdbuf(backup); filekimlog.close();
 
-        *kimStringLen = 0;
-        return KIM_STATUS_FAIL;
+      *kimStringLen = 0;
+      return KIM_STATUS_FAIL;
     }
 
     *kimStringLen = (int) *model_str_len;
 
     dlclose(tmp_model_lib_handle);
-   //redirecting back to > std::cout
+    //redirecting back to > std::cout
     std::cout.rdbuf(backup); filekimlog.close();
     return KIM_STATUS_OK;
 }
@@ -2030,26 +2017,13 @@ int KIM_API_model::get_model_kim_str(const char* const modelname,
     filekimlog.open(kimlog);
     backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);
 
-    std::list<std::string> lst;
-    searchPaths(KIM_MODELS_DIR, &lst);
-    std::list<std::string>::iterator itr;
-    bool accessible = false;
-    for (itr = lst.begin(); itr != lst.end(); ++itr)
+    std::vector<std::string> item;
+    bool accessible = findItem(KIM_MODELS_DIR, modelname, &item);
+    if (accessible)
     {
-       itr->append("/");
-       itr->append(modelname); itr->append("/");
-       itr->append(MODELLIBFILE); itr->append(".so");
-       //std::cout<< "* Info (KIM_API_model::get_model_kim_str): Looking for Model shared library file " << itr->c_str() <<std::endl;
-       if (0 == access(itr->c_str(), F_OK))
-       {
-         accessible = true;
-         tmp_model_lib_handle = dlopen(itr->c_str(), RTLD_NOW);
-       }
-       else
-       {
-         accessible = false;
-       }
-       if (tmp_model_lib_handle != NULL) break;
+      std::string libFileName
+          = item[1] + "/" + item[0] + "/" + MODELLIBFILE + ".so";
+      tmp_model_lib_handle = dlopen(libFileName.c_str(), RTLD_NOW);
     }
     if(!accessible)
     {
@@ -2438,26 +2412,13 @@ int KIM_API_model::model_init(){
     filekimlog.open(kimlog, std::ofstream::app);
     backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);
 
-    std::list<std::string> lst;
-    searchPaths(KIM_MODELS_DIR, &lst);
-    std::list<std::string>::iterator itr;
-    bool accessible = false;
-    for (itr = lst.begin(); itr != lst.end(); ++itr)
+    std::vector<std::string> item;
+    bool accessible = findItem(KIM_MODELS_DIR, modelname, &item);
+    if (accessible)
     {
-       itr->append("/");
-       itr->append(modelname); itr->append("/");
-       itr->append(MODELLIBFILE); itr->append(".so");
-       //std::cout<< "* Info (KIM_API_model::model_init): Looking for Model shared library file " << itr->c_str() <<std::endl;
-       if (0 == access(itr->c_str(), F_OK))
-       {
-         accessible = true;
-         model_lib_handle = dlopen(itr->c_str(), RTLD_NOW);
-       }
-       else
-       {
-         accessible = false;
-       }
-       if (NULL != model_lib_handle) break;
+      std::string libFileName
+          = item[1] + "/" + item[0] + "/" + MODELLIBFILE + ".so";
+      model_lib_handle = dlopen(libFileName.c_str(), RTLD_NOW);
     }
     if(!accessible)
     {
@@ -2477,8 +2438,8 @@ int KIM_API_model::model_init(){
       return KIM_STATUS_FAIL;
     }
 
-std::cout<<"* Info: (KIM_API_model::model_init): call dynamically linked initialize routine for:"<<modelname<<std::endl;
-std::cout<<"               from the shared library:"<<itr->c_str()<<std::endl;
+    std::cout<<"* Info: (KIM_API_model::model_init): call dynamically linked initialize routine for:"<<modelname<<std::endl;
+    std::cout<<"               from the shared library in:"<< item[1] << "/" << item[0] <<std::endl;
     sprintf(model_init_routine_name,"%s_init_pointer",modelname);
 
     typedef int (*Model_Init)(void **);//prototype for model_init

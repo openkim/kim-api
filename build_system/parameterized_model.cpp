@@ -102,29 +102,14 @@ extern "C" {
 #if KIM_LINK_VALUE == KIM_LINK_DYNAMIC_LOAD
     void* tmp_driver_lib_handle = NULL;
     std::stringstream messageText;
-    std::list<std::string> lst;
-    searchPaths(KIM_MODEL_DRIVERS_DIR, &lst);
-    std::list<std::string>::iterator itr;
-    for (itr = lst.begin(); itr != lst.end(); ++itr)
+    std::vector<std::string> item;
+    bool accessible
+        = findItem(KIM_MODEL_DRIVERS_DIR, "MODEL_DRIVER_NAME_STR", &item);
+    if (accessible)
     {
-      itr->append("/");
-      itr->append("MODEL_DRIVER_NAME_STR"); itr->append("/");
-      itr->append("MODEL_DRIVER_LIBNAME_STR"); itr->append(".so");
-      if (0 == access(itr->c_str(), F_OK))
-      {
-        tmp_driver_lib_handle = dlopen(itr->c_str(), RTLD_NOW);
-      }
-      if (tmp_driver_lib_handle != NULL)
-      {
-        messageText << "  * Found Model Driver shared library file "
-                    << itr->c_str() <<std::endl;
-        break;
-      }
-      else
-      {
-        messageText << "  * Did not find Model Driver shared library file "
-                    << itr->c_str() <<std::endl;
-      }
+      std::string libFileName
+          = item[1] + "/" + item[0] + "/" + "MODEL_DRIVER_LIBNAME_STR" + ".so";
+      tmp_driver_lib_handle = dlopen(libFileName.c_str(), RTLD_NOW);
     }
     if(tmp_driver_lib_handle == NULL) {
       std::cout << "* Error (MODEL_NAME_STR_init()):" << std::endl
