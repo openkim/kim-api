@@ -36,6 +36,67 @@ endif
 include Makefile.KIM_Config
 
 #
+# List of available targets
+#
+.PHONY: help
+
+help:
+	@printf "TARGETS FOR HELP\n"
+	@printf "'help'                       -- print this list of targets\n"
+	@printf "\n"
+	@printf "TARGETS FOR BUILDING AND CLEANING THE KIM API PACKAGE\n"
+	@printf "'all'                        -- build the KIM API library and all 'added'\n"
+	@printf "                                Model Drivers and Models; same as 'make'\n"
+	@printf "'clean'                      -- delete appropriate .o, .mod, .a, .so and\n"
+	@printf "                                executable files from src/ directory and\n"
+	@printf "                                its subdirectories\n"
+	@printf "\n"
+	@printf "TARGETS FOR MANIPULATING THE SYSTEM-COLLECTION AT BUILD TIME\n"
+	@printf "'ls-all'                     -- list all 'added' Model Drivers and Models\n"
+	@printf "'ls-model-drivers'           -- list all 'added' Model Drivers\n"
+	@printf "'ls-models'                  -- list all 'added' Models\n"
+	@printf "\n"
+	@printf "'add-OpenKIM'                -- 'add' all OpenKIM Model Drivers and Models\n"
+	@printf "'add-<Extended KIM ID>'      -- 'add' Model <Extended KIM ID> from OpenKIM\n"
+	@printf "                                including the associated Model Driver, if\n"
+	@printf "                                appropriate\n"
+	@printf "'add-examples'               -- 'add' example Model Drivers and Models\n"
+	@printf "\n"
+	@printf "'rm-all'                     -- 'rm' all 'added' Model Drivers and Models\n"
+	@printf "'rm-all-model-drivers'       -- 'rm' all 'added' Model Drivers\n"
+	@printf "'rm-all-models'              -- 'rm' all 'added' Models\n"
+	@printf "'rm-<Extended KIM ID>'       -- 'rm' the 'added' <Extended KIM ID> item\n"
+	@printf "'rm-examples'                -- 'rm' the 'added' example Drivers and Models\n"
+	@printf "\n"
+	@printf "TARGETS FOR INSTALLING THE KIM API PACKAGE\n"
+	@printf "'install'                    -- install KIM API library, associated\n"
+	@printf "                                executable utilities, and 'added' Model\n"
+	@printf "                                Drivers and Models to system-wide location\n"
+	@printf "                                as described in item 7 below.\n"
+	@printf "'install-set-default-to-vX'  -- create generic\n"
+	@printf "                                $(includedir)/$(package_name) and\n"
+	@printf "                                ${libdir}/${package_name} symlinks to the\n"
+	@printf "                                corresponding $(package_name)-vX versions.\n"
+	@printf "                                This effectively sets the 'default'\n"
+	@printf "                                library available for users on the system.\n"
+	@printf "\n"
+	@printf "TARGETS FOR UNINSTALLING THE KIM API PACKAGE\n"
+	@printf "'uninstall'                  -- delete files installed by 'make install'\n"
+	@printf "'uninstall-set-default'      -- remove the generic\n"
+	@printf "                                $(includedir)/$(package_name) and\n"
+	@printf "                                $(libdir)/$(package_name) symlinks.\n"
+	@printf "\n"
+	@printf "\n"
+	@printf "TARGETS FOR BUILDING AND CLEANING THE EXAMPLES\n"
+	@printf "'examples'                   -- build all provided examples\n"
+	@printf "'examples-all'               -- same as 'make examples'\n"
+	@printf "'examples-clean'             -- delete appropriate .o, .mod, .a, .so and\n"
+	@printf "                                executable files from examples/ directory\n"
+	@printf "                                and its subdirectories\n"
+	@printf "\n"
+
+
+#
 # List of "installed" model drivers and models
 #
 export MODEL_DRIVERS_LIST := $(filter-out $(if $(wildcard $(srcdir)/$(modeldriversdir)/.kimignore),$(shell cat $(srcdir)/$(modeldriversdir)/.kimignore),),$(patsubst $(srcdir)/$(modeldriversdir)/%/,%,$(filter-out $(srcdir)/$(modeldriversdir)/,$(sort $(dir $(wildcard $(srcdir)/$(modeldriversdir)/*/))))))

@@ -612,6 +612,7 @@ F.2 MAKE TARGETS DEFINED BY THE TOP LEVEL KIM API Makefile
 The targets defined by the top level KIM API Makefile include:
 
 TARGETS FOR BUILDING AND CLEANING THE KIM API PACKAGE
+`help'                       -- print this list of targets
 `all'                        -- build the KIM API library and all "added"
                                 Model Drivers and Models; same as `make'
 `clean'                      -- delete appropriate .o, .mod, .a, .so and
