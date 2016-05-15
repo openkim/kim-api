@@ -31,10 +31,16 @@
 //
 
 
+#include <string>
 #include <fstream>
 #include <sstream>
+#include <string>
 #include "KIM_API.h"
 #include "KIM_API_status.h"
+
+void replaceAll(std::string& str,
+                std::string const& from,
+                std::string const& to);
 
 int main(int argc, char* argv[])
 {
@@ -58,16 +64,36 @@ int main(int argc, char* argv[])
       return 1;
    }
 
-   std::stringstream simulatorKIM_FileStr;
-   std::stringstream modelKIM_FileStr;
-   simulatorKIM_FileStr << simulatorKIM_File.rdbuf();
-   modelKIM_FileStr << modelKIM_File.rdbuf();
+   std::string simulatorKIM;
+   {
+     std::stringstream simulatorKIM_FileStr;
+     simulatorKIM_FileStr << simulatorKIM_File.rdbuf();
+     simulatorKIM = simulatorKIM_FileStr.str();
+   }
+   if (std::string::npos != simulatorKIM.find("\r"))
+   {
+     std::cerr << "error: simulator file contains carriage-return characters."
+               << std::endl;
+     replaceAll(simulatorKIM, "\r","");
+   }
+
+   std::string modelKIM;
+   {
+     std::stringstream modelKIM_FileStr;
+     modelKIM_FileStr << modelKIM_File.rdbuf();
+     modelKIM = modelKIM_FileStr.str();
+   }
+   if (std::string::npos != modelKIM.find("\r"))
+   {
+     std::cerr << "error: model file contains carriage-return characters."
+               << std::endl;
+     replaceAll(modelKIM, "\r","");
+   }
 
    KIM_API_model kim;
    int error;
 
-   error = kim.match((char*) simulatorKIM_FileStr.str().c_str(),
-                     (char*) modelKIM_FileStr.str().c_str());
+   error = kim.match((char*) simulatorKIM.c_str(), (char*) modelKIM.c_str());
 
    int retval;
    if (error == KIM_STATUS_OK)
@@ -82,4 +108,25 @@ int main(int argc, char* argv[])
    }
 
    return retval;
+}
+
+
+void replaceAll(std::string& str,
+                std::string const& from,
+                std::string const& to)
+{
+  if(from.empty())
+    return;
+  std::string wsRet;
+  wsRet.reserve(str.length());
+  size_t start_pos = 0, pos;
+  while((pos = str.find(from, start_pos)) != std::string::npos)
+  {
+    wsRet += str.substr(start_pos, pos - start_pos);
+    wsRet += to;
+    pos += from.length();
+    start_pos = pos;
+  }
+  wsRet += str.substr(start_pos);
+  str.swap(wsRet);  // faster than str = wsRet;
 }
