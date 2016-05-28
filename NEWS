@@ -19,7 +19,7 @@
 #
 
 #
-# Copyright (c) 2013--2015, Regents of the University of Minnesota.
+# Copyright (c) 2013--2016, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
@@ -30,6 +30,27 @@
 #
 # Release: This file is part of the kim-api.git repository.
 #
+
+
+=== kim-api-v1.7.3 ============== 02Jun2016 ====================================
+
+* Added a `configure' script for setting up Makefile.KIM_Config
+
+* Added support for environment-variable-collection
+
+* Added support for user_config_file_dir_name setting
+
+* Documentation update/improvements
+
+* Minor improvements to error messages
+
+* Added `make add-OpenKIM' feature
+
+* Added `make help' feature
+
+* Added release dates to NEWS file
+
+* Bug fixs
 
 
 === kim-api-v1.7.2 ============== 25Jun2015 ====================================
