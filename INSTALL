@@ -52,7 +52,8 @@ C. Package layout and operation overview
    C.2 Model and Model Driver collections
        C.2.1 The system-collection
        C.2.2 The user-collection
-       C.2.3 The CWD-collection
+       C.2.3 The environment-variable-collection
+       C.2.4 The CWD-collection
 
 D. KIM API Installation scenario recipes
    D.1 Installed-build
@@ -65,7 +66,8 @@ E. Adding Models and/or Model Drivers to the collections
    E.2 Setting up and adding Models and/or Model Drivers to the user-collection
        E.2.1 Setting up the user-collection
        E.2.2 Adding Models and Model Drivers to the user-collection
-   E.3 Adding Models and/or Model Drivers to the CWD-collection
+   E.3 Adding Models and/or Model Drivers to the environment-variable-collection
+   E.4 Adding Models and/or Model Drivers to the CWD-collection
 
 F. Advanced documentation for KIM API build and install process
    F.1 The Makefile.KIM_Config file
@@ -129,8 +131,8 @@ where the KIM API is installed within the system's file system.
 
 The KIM API package is designed to be installed to a standard system-wide
 directory ("/usr/local", by default, but "/" or "/usr" are also standard
-locations) with its libraries placed in (/usr/local/lib), header files placed
-in (/usr/local/include), and binaries placed in (/usr/local/bin).  If you do
+locations) with its libraries placed in /usr/local/lib, header files placed
+in /usr/local/include, and binaries placed in /usr/local/bin.  If you do
 not have root access to your system, the KIM API may be installed to the
 standard directories (${HOME}/local/lib, ${HOME}/local/include, and
 ${HOME}/local/bin, respectively) within your user account home directory.  Of
@@ -163,17 +165,19 @@ installed-build is preferred.
 C.2 MODEL AND MODEL DRIVER COLLECTIONS
 
 When compiled with the KIM_LINK option (see section H.1) set to its default
-value of "dynamic-load", a build of the KIM API supports three "collections" of
+value of "dynamic-load", a build of the KIM API supports four "collections" of
 Models and Model Drivers.  These are the "system-collection", the
-"user-collection", and the "CWD-collection" as described below.  If the
-KIM_LINK option is set to anything other than "dynamic-load" a build of the KIM
-API supports only the system-collection.
+"user-collection", the "environment-variable-collection", and the
+"CWD-collection" as described below.  If the KIM_LINK option is set to anything
+other than "dynamic-load" a build of the KIM API supports only the
+system-collection.
 
 When the KIM API needs to use a particular Model or Model Driver, it looks for
-the Model by name, first in the CWD-collection, then in the user-collection,
-and finally in the system-collection.  It uses the first match that it finds.
-Note, it is possible for a Model and its Driver to be located in different
-collections.  The search for each is a separate and independent procedure.
+the Model by name, first in the CWD-collection, then in the
+environment-variable-collection, then in the user-collection, and finally in
+the system-collection.  It uses the first match that it finds.  Note, it is
+possible for a Model and its Driver to be located in different collections.
+The search for each is a separate and independent procedure.
 
 C.2.1 THE SYSTEM-COLLECTION
 
@@ -200,7 +204,26 @@ location that is set by a configuration file in the user's home directory.  The
 user-collection may be populated with Models and Model Drivers after an
 installed-build of the KIM API has been completed.
 
-C.2.3 THE CWD-COLLECTION
+C.2.3 THE ENVIRONMENT-VARIABLE-COLLECTION
+
+The environment-variable-collection is a collection of Models and Model Drivers
+that are specified by the run-time environment of the process for the Simulator
+that uses the KIM API library.  The locations of this collection are specified
+by the environment variables "KIM_API_MODELS_DIR" and
+"KIM_API_MODEL_DRIVERS_DIR".  These variables should contain colon ':'
+separated lists of absolute directory names where the collection Models and
+Model Drivers, respectively, are located.  (For example, in bash you could
+execute the command
+
+$ export KIM_API_MODELS_DIR=/my-kim-stuff/models-i-am-developing:/my-kim-stuff/misc-models
+
+to have the KIM API look for Models in /my-kim-stuff/models-i-am-developing
+first and then look in /my-kim-stuff/misc-models.  Similarly for Model
+Drivers.)  The environment-variable-collection may be populated with Models and
+Model Drivers after an installed-build of the KIM API has been completed.
+
+
+C.2.4 THE CWD-COLLECTION
 
 The CWD-collection is a collection of Models and Model Drivers that are
 available to a Simulator at run-time.  The collection is located in the
@@ -229,7 +252,7 @@ D.1.1 INSTALLED-(STANDARD)-BUILD
 
 To create an installed-(standard)-build and install to the default directory
 "/usr/local" do the below.  Here we assume that "/usr/local/bin" is included as
-part of the systems standard PATH setting.
+part of the system's standard PATH setting.
 
 $ cd "${HOME}"
 $ wget https://s3.openkim.org/kim-api/kim-api-vX.Y.Z.tgz  # replace X.Y.Z with the current version number
@@ -317,7 +340,8 @@ E. ADDING MODELS AND/OR MODEL DRIVERS TO THE COLLECTIONS
 
 
 Here we describe how to add Models and/or Model Drivers to the
-system-collection, user-collection, and the CWD-collection.
+system-collection, user-collection, environment-variable-collection, and the
+CWD-collection.
 
 E.1 ADDING MODELS AND/OR MODEL DRIVERS TO THE SYSTEM-COLLECTION
 
@@ -362,11 +386,19 @@ E.2.1 SETTING UP THE USER-COLLECTION
 The user-collection of Models and Model Drivers is stored in a user
 configurable location (actually one location for Models and one location for
 Model Drivers, although these can, in fact, be the same).  The user
-configuration file is named at "${HOME}/.kim-api/config-vX". (Here, X is the
-major version number.)
+configuration file is "${HOME}/.kim-api/config-vX". (Here, X is the major
+version number.)  Alternatively, the user configuration file can be specified
+by the environment variable KIM_API_USER_CONFIG_FILE.  (For example, in bash
+you could execute the command
 
-The file "${HOME}/.kim-api/config-vX" has a strict format.  It must contain
-exactly two lines.  These must be of the form:
+$ export KIM_API_USER_CONFIG_FILE=/my-kim-stuff/config-file
+
+to have the KIM API look in /my-kim-stuff/config-file for the user-collection
+configuration values as described below.)  The environment variable, if set,
+takes precedence over the standard file name.
+
+The user configuration file has a strict format.  It must contain exactly two
+lines.  These must be of the form:
 
   model_drivers_dir = XXX
   models_dir = YYY
@@ -421,7 +453,38 @@ $ rm "${mo}.tgz"
 $ cd "${HOME}/vc_forces_numer_deriv"  # we'll assume this is already built
 $ printf "Pair_Lennard_Jones_Shifted_Bernardes_HighCutoff_Ar__MO_242741380554_001" | ./vc_forces_numer_deriv
 
-E.3 ADDING MODELS AND/OR MODEL DRIVERS TO THE CWD-COLLECTION
+E.3 ADDING MODELS AND/OR MODEL DRIVERS TO THE ENVIRONMENT-VARIABLE-COLLECTION
+
+The process for adding Models and Model Drivers to the
+environment-variable-collection involves just downloading and building the
+items.  Here, we'll illustrate the process with an example.
+
+$ mkdir -p "${HOME}/my-env-collection/model_drivers"
+$ export KIM_API_MODEL_DRIVERS_DIR="${HOME}/my-env-collection/model_drivers"
+$ md=Pair_Morse_Shifted__MD_552566534109_001
+$ cd "${KIM_API_MODEL_DRIVERS_DIR}"
+$ wget --content-disposition "https://openkim.org/download/${md}.tgz"
+$ tar zxvf "${md}.tgz"
+$ cd "${md}"
+$ make
+$ cd ../
+$ rm "${md}.tgz"
+
+$ mkdir -p "${HOME}/my-env-collection/models"
+$ export KIM_API_MODELS_DIR="${HOME}/my-env-collection/models"
+$ mo=Pair_Morse_Shifted_GirifalcoWeizer_HighCutoff_Cu__MO_151002396060_001
+$ cd "${KIM_API_MODELS_DIR}"
+$ wget --content-disposition "https://openkim.org/download/${mo}.tgz"
+$ tar zxvf "${mo}.tgz"
+$ cd "${mo}"
+$ make
+$ cd ../
+$ rm "${mo}.tgz"
+
+$ cd "${HOME}/vc_forces_numer_deriv"  # we'll assume this is already built
+$ printf "Pair_Morse_Shifted_GirifalcoWeizer_HighCutoff_Cu__MO_151002396060_001" | ./vc_forces_numer_deriv
+
+E.4 ADDING MODELS AND/OR MODEL DRIVERS TO THE CWD-COLLECTION
 
 The process for adding Models and Model Drivers to the CWD-collection involves
 just downloading and building the items.  Here, we'll illustrate the process
@@ -580,12 +643,26 @@ if necessary.
     * NOTE: For Cygwin systems add the following line `PICFLAG =' to avoid
             warnings about the -fPIC option.
 
+(i) Override default name options, if necessary, by adding the desired variable
+    name (after the "# override default name options" line) and filling in
+    appropriate values.
+
+    # override default name options
+    package_name =               # default is 'kim-api'
+    user_config_file_dir_name =  # default is '.$(package_name)'
+
+
+    * NOTE: The package_name variable is used as part of the installation
+            directory name and the KIM API library file name.
+
+    * NOTE: The KIM API library will look for the user-collection configuration
+            file in the directory '${HOME}/${user_config_file_dir_name}'
+
 (i) Override default install options, if necessary, by adding the desired
     variable name (after the "# override default install options" line) and
     filling in appropriate values.
 
     # override default install options
-    package_name = # default is 'kim-api'
     prefix =       # default is '/usr/local'
     includedir =   # default is '$(prefix)/include'
     exec_prefix =  # default is '$(prefix)'
@@ -594,12 +671,6 @@ if necessary.
 
 
     * NOTE: See item F.3 below for more details on the installation process.
-
-    * NOTE: The package_name variable is used as part of the installation
-            directory name and the KIM API library file name.
-
-    * NOTE: The KIM API library will look for the user-collection configuration
-            file in the directory '${HOME}/.${package_name}'
 
     * NOTE: See the GNU Coding Standards, Section 7.2 for more details on
             the meaning of the remaining standard variables.

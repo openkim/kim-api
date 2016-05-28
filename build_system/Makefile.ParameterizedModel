@@ -85,8 +85,8 @@ else
       LOCTMP = $(KIM_DIR)
    endif
 endif
-ifeq (yes,$(shell if test -f $(LOCTMP)/.$(package_name)/config-v$(VERSION_MAJOR); then printf "yes"; fi))
-   USERDIR = $(shell grep model_drivers_dir $(LOCTMP)/.$(package_name)/config-v$(VERSION_MAJOR) | sed -e 's/[^=]*=[[:space:]]*//' -e 's|^~|$(HOME)|')
+ifeq (yes,$(shell if test -f $(LOCTMP)/$(user_config_file_dir_name)/config-v$(VERSION_MAJOR); then printf "yes"; fi))
+   USERDIR = $(shell grep model_drivers_dir $(LOCTMP)/$(user_config_file_dir_name)/config-v$(VERSION_MAJOR) | sed -e 's/[^=]*=[[:space:]]*//' -e 's|^~|$(HOME)|')
 else
    USERDIR = /doesnotexist
 endif

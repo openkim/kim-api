@@ -70,12 +70,12 @@ std::string getConfigFileName()
   {
     configFileName = getenv("HOME");
   }
-  configFileName.append("/.").append(PACKAGENAME);
+  configFileName.append("/").append(USERCONFIGFILEDIRNAME);
   configFileName.append("/config-v").append(VERSION_MAJOR);
 
   std::string varName(PACKAGENAME);
   sanitizeString(varName);
-  varName.append("_CONFIG_FILE");
+  varName.append("_USER_CONFIG_FILE");
   char const* const varVal = getenv(varName.c_str());
   if (NULL != varVal)
   {

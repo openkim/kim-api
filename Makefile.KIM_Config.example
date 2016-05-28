@@ -46,8 +46,11 @@ include $(KIM_DIR)/build_system/Makefile.LoadDefaults
 # override default compiler options and other variables here
 
 
-# override default install options
+# override default name options
 #package_name =
+#user_config_file_dir_name =
+
+# override default install options
 #prefix =
 #includedir =
 #exec_prefix =

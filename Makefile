@@ -131,11 +131,11 @@ models_check:
         printf "*******************************************************************************\n"; \
         false; else true; fi
 
-INPLACE_CONFIG = $(KIM_DIR)/.$(package_name)/config-v$(VERSION_MAJOR)
+INPLACE_CONFIG = $(KIM_DIR)/$(user_config_file_dir_name)/config-v$(VERSION_MAJOR)
 
 $(INPLACE_CONFIG): $(KIM_MAKE_FILES)
 	@printf "Creating... User Config file.... $@.\n"
-	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 $(KIM_DIR)/.$(package_name)
+	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 $(KIM_DIR)/$(user_config_file_dir_name)
 	$(QUELL)printf "model_drivers_dir = %s\n" $(KIM_DIR)/$(examplesdir)/$(modeldriversdir) >  $@; \
                 printf "models_dir = %s\n" $(KIM_DIR)/$(examplesdir)/$(modelsdir)              >> $@
 
@@ -213,7 +213,7 @@ config-clean:
 	@printf "Cleaning... KIM_Config files.\n"
 	$(QUELL)rm -f $(KIM_CONFIG_FILES)
 	$(QUELL)rm -f $(KIM_SIMULATOR_CONFIG_FILES)
-	$(QUELL)rm -rf $(KIM_DIR)/.$(package_name)
+	$(QUELL)rm -rf $(KIM_DIR)/$(user_config_file_dir_name)
 
 
 #

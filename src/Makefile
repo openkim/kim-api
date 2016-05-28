@@ -189,6 +189,7 @@ KIM_API_DIRS.o: KIM_API_DIRS.h $(KIM_MAKE_FILES)
                                       -D MODELDRIVERSDIR=\"$(modeldriversdir)\" \
                                       -D MODELSDIR=\"$(modelsdir)\" \
                                       -D PACKAGENAME=\"$(package_name)\" \
+                                      -D USERCONFIGFILEDIRNAME=\"$(user_config_file_dir_name)\" \
                                       -D VERSION_MAJOR=\"$(VERSION_MAJOR)\"
 
 Unit_Handling.o: Unit_Handling.h KIM_API.h KIM_API_status.h $(KIM_MAKE_FILES)

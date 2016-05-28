@@ -41,8 +41,11 @@ ifndef KIM_BUILD_VERBOSITY
    KIM_BUILD_VERBOSITY := quiet
 endif
 
-# INSTALL stuff
+# Names
 package_name = kim-api
+user_config_file_dir_name = .$(package_name)
+
+# INSTALL stuff
 prefix = /usr/local
 includedir = $(prefix)/include
 exec_prefix = $(prefix)
