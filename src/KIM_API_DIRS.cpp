@@ -66,6 +66,10 @@ std::string getConfigFileName()
   {
     configFileName = KIMDIR;
   }
+  else if (USERROOT)
+  {
+    configFileName = USERCONFIGFILEROOTNAME;
+  }
   else
   {
     configFileName = getenv("HOME");

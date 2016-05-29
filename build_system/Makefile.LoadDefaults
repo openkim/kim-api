@@ -43,7 +43,8 @@ endif
 
 # Names
 package_name = kim-api
-user_config_file_dir_name = .$(package_name)
+user_config_file_dir_name  = .$(package_name)
+user_config_file_root_name = $(HOME)#  undocumented feature
 
 # INSTALL stuff
 prefix = /usr/local

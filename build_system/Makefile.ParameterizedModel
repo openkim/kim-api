@@ -76,7 +76,7 @@ all: descriptor.kim $(MODEL_BUILD_TARGET)
 
 # Find the driver files
 ifeq ($(srcdir),$(KIM_DIR)) # INSTALLED
-   LOCTMP = $(HOME)
+   LOCTMP = $(user_config_file_root_name)
 else
    ifeq (install,$(MAKECMDGOALS)) # in case examples are "added" and build and installation is requested
       # avoid error where example model driver is in user directory and in install directory

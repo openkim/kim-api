@@ -189,6 +189,8 @@ KIM_API_DIRS.o: KIM_API_DIRS.h $(KIM_MAKE_FILES)
                                       -D MODELDRIVERSDIR=\"$(modeldriversdir)\" \
                                       -D MODELSDIR=\"$(modelsdir)\" \
                                       -D PACKAGENAME=\"$(package_name)\" \
+                                      -D USERROOT=$(if $(filter-out $(HOME),$(user_config_file_root_name)),1,0) \
+                                      -D USERCONFIGFILEROOTNAME=\"$(user_config_file_root_name)\" \
                                       -D USERCONFIGFILEDIRNAME=\"$(user_config_file_dir_name)\" \
                                       -D VERSION_MAJOR=\"$(VERSION_MAJOR)\"
 
