@@ -69,4 +69,4 @@ VERSION_MAJOR = 1
 VERSION_MINOR = 7
 VERSION_PATCH = 4
 VERSION_PRERELEASE = git
-VERSION_BUILD_METADATA = $(shell git rev-parse --short HEAD).$(KIM_COMPILERSUITE).$(KIM_SYSTEMLINKER).$(KIM_SYSTEMARCH).$(KIM_LINK)
+VERSION_BUILD_METADATA = $(shell git rev-parse --short HEAD)$(shell if ! (git diff --quiet && git diff --cached --quiet); then printf ".dirty"; fi).$(KIM_COMPILERSUITE).$(KIM_SYSTEMLINKER).$(KIM_SYSTEMARCH).$(KIM_LINK)
