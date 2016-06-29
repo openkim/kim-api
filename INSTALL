@@ -263,6 +263,7 @@ $ make add-EAM_Dynamo_Angelo_Moody_NiAlH__MO_418978237058_001
 $ make
 $ sudo make install
 $ sudo make install-set-default-to-vX  # replace X with the major version of this package
+$ sudo ldconfig  # on Redhat-like systems you may need to first add /usr/local/lib to /etc/ld.so.conf
 $ cp -r ./examples/openkim_tests/vc_forces_numer_deriv "${HOME}/"
 $ cd "${HOME}"
 $ rm -r kim-api-vX.Y.Z  kim-api-vX.Y.Z.tgz # replace X.Y.Z with the current version number
