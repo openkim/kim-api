@@ -368,7 +368,7 @@ if test "x" = "x${systemArch}"; then
         printf "64bit\n"
       fi
       ;;
-    i386)
+    i686|i386)
       systemArch=32bit
       if test "no" = "${quiet}"; then
         printf "32bit\n"
