@@ -104,6 +104,7 @@ num_paramfiles = $(words $(paramfile_num_list))
 drv_kim_name=$(driver_location)/$(MODEL_DRIVER_NAME)/$(shell $(MAKE) $(MAKE_FLAGS) -C $(driver_location)/$(MODEL_DRIVER_NAME) model-driver-kim-file-template 2> /dev/null)
 descriptor.kim: $(drv_kim_name) $(KIM_MAKE_FILES)
 	@printf "Creating... $@.\n"
+	@printf "  Using ModelDriver in... $(driver_location)/$(MODEL_DRIVER_NAME).\n"
 	$(QUELL)$(foreach spec,$(filter-out $(shell cat $(drv_kim_name) | \
                                                     sed -e '/^SPECIES_\([0-9]\{3\}\)_NAME_STR.*$$/!d' -e 's/^\(SPECIES_[0-9]\{3\}_NAME\)_STR.*$$/\1/'), \
                                             $(species_list)),\
@@ -117,6 +118,7 @@ PARAM_MODEL_NAME = parameterized-model
 .INTERMEDIATE: $(PARAM_MODEL_NAME).cpp
 $(PARAM_MODEL_NAME).cpp: $(KIM_DIR)/$(builddir)/parameterized_model.cpp $(paramfile_name_list) $(KIM_MAKE_FILES)
 	@printf "Creating... intermediate file... $@.\n"
+	@printf "  Using ModelDriver in... $(driver_location)/$(MODEL_DRIVER_NAME).\n"
 	$(QUELL)cat /dev/null > $@
 	$(QUELL)$(foreach flnum,$(paramfile_num_list),\
             fl_name=$(PARAM_FILE_$(flnum)_NAME);\
