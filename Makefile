@@ -445,9 +445,8 @@ ifeq (dynamic-load,$(KIM_LINK))
                 $$fl > "$(dest_package_dir)/$$fl" && \
                 chmod 0644 "$(dest_package_dir)/$$fl"
         # Install version file
-	$(QUELL)$(INSTALL_PROGRAM) -m 0644 Makefile.Version "$(dest_package_dir)/Makefile.Version"
   ifeq (true,$(shell git rev-parse --is-inside-work-tree 2> /dev/null))
-	$(QUELL)sed -e 's|\$$(shell[^)]*)|$(shell git rev-parse --short HEAD)|' Makefile.Version > "$(dest_package_dir)/Makefile.Version" && \
+	$(QUELL)sed -e 's|^VERSION_BUILD_METADATA.*$$|VERSION_BUILD_METADATA = $(VERSION_BUILD_METADATA)|' Makefile.Version > "$(dest_package_dir)/Makefile.Version" && \
                 chmod 0644 "$(dest_package_dir)/Makefile.Version"
   else
 	$(QUELL)$(INSTALL_PROGRAM) -m 0644 Makefile.Version "$(dest_package_dir)/Makefile.Version"
