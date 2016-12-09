@@ -264,7 +264,7 @@ add-OpenKIM:
                   minor=`printf "$${model}" | sed -e 's/1\.\([^.:]*\).*/\1/'`; \
                   modname=`printf "$${model}" | sed -e 's/.*://'`; \
                   if test $${minor} -ge 6; then \
-                    make add-$${modname}; \
+                    $(MAKE) add-$${modname}; \
                   fi; \
                 done
 
