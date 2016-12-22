@@ -59,11 +59,7 @@ $(full_package_name)-descriptor-file-match: descriptor-file-match.o \
 	@printf "Creating... $@.\n"
 ifneq (static-link,$(KIM_LINK))
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).so $(XLANGLDLIBS) $(LDLIBS)
-  ifeq (dynamic-load,$(KIM_LINK))
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ $< ../.lib$(KIM_LIB_BUILD).so $(XLANGLDLIBS) $(LDLIBS)
-  else
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ $< ../KIM_API.o ../Unit_Handling.o ../kim_str.o ../KIM_AUX.o ../model_init_include_stubs.cpp $(XLANGLDLIBS) $(LDLIBS)
-  endif
 else
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).a  $(XLANGLDLIBS) $(LDLIBS)
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ $< ../lib$(KIM_LIB_BUILD).a $(XLANGLDLIBS) $(LDLIBS)
@@ -104,11 +100,7 @@ $(full_package_name)-collections-info: collections-info.o \
 	@printf "Creating... $@.\n"
 ifneq (static-link,$(KIM_LINK))
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).so $(XLANGLDLIBS) $(LDLIBS)
-  ifeq (dynamic-load,$(KIM_LINK))
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ $< ../.lib$(KIM_LIB_BUILD).so $(XLANGLDLIBS) $(LDLIBS)
-  else
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ $<  ../.KIM_API_DIRS.o $(XLANGLDLIBS) $(LDLIBS)
-  endif
 else
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).a  $(XLANGLDLIBS) $(LDLIBS)
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ $< ../.lib$(KIM_LIB_BUILD).a $(XLANGLDLIBS) $(LDLIBS)
@@ -139,7 +131,8 @@ ifneq (dynamic-load,$(KIM_LINK))
 else
         # should we check that the installed stuff is actually dynamic-load and the right settings (32bit, etc.)?
 	$(QUELL)if test -d "$(dest_package_dir)"; then \
-                  rm -rf "$(install_bindir)"; \                  for fl in $(install_bin); do rm -f "$(DESTDIR)$(bindir)/$$fl"; done; \
+                  rm -rf "$(install_bindir)"; \
+                  for fl in $(install_bin); do rm -f "$(DESTDIR)$(bindir)/$$fl"; done; \
                 fi
 endif
 

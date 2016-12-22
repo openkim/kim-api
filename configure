@@ -22,7 +22,7 @@
 #
 
 #
-# Copyright (c) 2015, Regents of the University of Minnesota.
+# Copyright (c) 2015--2016, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
@@ -62,9 +62,8 @@ usage () {
          "or \`darwin'"
   printf "  --system-arch=ARG       System architecture: \`32bit' or %s\n" \
          "\`64bit'"
-  printf "  --link-type=ARG         linking type: [\`dynamic-load'], %s\n" \
-         "\`dynamic-link',"
-  printf "                          or \`static-link'\n"
+  printf "  --link-type=ARG         linking type: [\`dynamic-load'] or %s\n" \
+         "\`static-link'"
   printf "  --build-verbosity=ARG   Build verbosity: [\`quiet'] or \`full'\n"
   printf "\n"
   printf "Installation directories:\n"
@@ -208,9 +207,6 @@ do
       case `stripOption $1` in
         dynamic-load)
           linkType='dynamic-load'
-          ;;
-        dynamic-link)
-          linkType='dynamic-link'
           ;;
         static-link)
           linkType='static-link'

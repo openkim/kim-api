@@ -107,10 +107,8 @@ endif
 
 ifeq ($(KIM_LINK),static-link)
    KIM_LINK_VALUE = 0
-else ifeq ($(KIM_LINK),dynamic-link)
-   KIM_LINK_VALUE = 1
 else ifeq ($(KIM_LINK),dynamic-load)
-   KIM_LINK_VALUE = 2
+   KIM_LINK_VALUE = 1
 endif
 
 
@@ -224,7 +222,6 @@ KIM_FTYPE_STANDARD_COMPILE_LIST = $(ARCHFLAG) $(PICFLAG) $(KIMINCLUDEFLAGS) $(KI
                 $(LDEXPORTLISTFLAG) $(LDFLAGS) $(OUTPUTINFLAG) lib$(if $(SO_IS_MODEL),$(MODEL_LIB_BUILD),$(MODEL_DRIVER_LIB_BUILD)).so \
                 $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
                 $(if $(filter-out dynamic-load,$(KIM_LINK)),,$(KIMLDFLAGS) $(KIMLDLIBS)) \
-                $(if $(filter-out dynamic-link,$(KIM_LINK)),,$(if $(SO_IS_PARAMETERIZED),$(srcdir)/$(modeldriversdir)/$(MODEL_DRIVER_NAME)/lib$(MODEL_DRIVER_LIB_BUILD).so,)) \
                 $(LDDYNAMICLIB) $(XLANGLDLIBS) $(LDLIBS)
 	$(QUELL)if test x"$(SO_NEEDS_DOT)" = x"true"; then \
                  $(LD) $(ARCHFLAG) $(LDSHAREDFLAG) \
@@ -232,7 +229,6 @@ KIM_FTYPE_STANDARD_COMPILE_LIST = $(ARCHFLAG) $(PICFLAG) $(KIMINCLUDEFLAGS) $(KI
                  $(LDEXPORTLISTFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .lib$(if $(SO_IS_MODEL),$(MODEL_LIB_BUILD),$(MODEL_DRIVER_LIB_BUILD)).so \
                  $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
                  $(if $(filter-out dynamic-load,$(KIM_LINK)),,$(srcdir)/$(DOT)lib$(KIM_LIB_BUILD).so) \
-                 $(if $(filter-out dynamic-link,$(KIM_LINK)),,$(if $(SO_IS_PARAMETERIZED),$(srcdir)/$(modeldriversdir)/$(MODEL_DRIVER_NAME)/.lib$(MODEL_DRIVER_LIB_BUILD).so,)) \
                  $(LDDYNAMICLIB) $(XLANGLDLIBS) $(LDLIBS); \
                fi
 

@@ -168,9 +168,8 @@ When compiled with the KIM_LINK option (see section H.1) set to its default
 value of "dynamic-load", a build of the KIM API supports four "collections" of
 Models and Model Drivers.  These are the "system-collection", the
 "user-collection", the "environment-variable-collection", and the
-"CWD-collection" as described below.  If the KIM_LINK option is set to anything
-other than "dynamic-load" a build of the KIM API supports only the
-system-collection.
+"CWD-collection" as described below.  If the KIM_LINK option is set to
+"static-link" a build of the KIM API supports only the system-collection.
 
 When the KIM API needs to use a particular Model or Model Driver, it looks for
 the Model by name, first in the CWD-collection, then in the
@@ -191,9 +190,9 @@ API package files during the install process.
 Additional Models and Model Drivers may be built and installed to the
 system-collection at anytime after an installed-build of the KIM API has been
 completed and the original KIM API package source code directories have been
-deleted.  However, if a value of KIM_LINK other than "dynamic-load" is used for
-the KIM API build, then the system-collection may not be modified after its
-initial installation.
+deleted.  However, if the KIM_LINK option was set to "static-link" for the KIM
+API build, then the system-collection may not be modified after its initial
+installation.
 
 C.2.2 THE USER-COLLECTION
 
@@ -545,24 +544,20 @@ if necessary.
     KIM_SYSTEMARCH = 64bit
 
 (f) Set the value of KIM_LINK.
-    Possible values are `dynamic-load', `dynamic-link', and `static-link'.
+    Possible values are `dynamic-load' and `static-link'.
 
     KIM_LINK = dynamic-load
 
-    `dynamic-load' is the default and preferred setting.  (Unless
-    performance or other issues require it, you should use dynamic-load.)
-    `dynamic-link' is like `dynamic-load' but does not use the dl.h library.
-    This setting requires a more complicated build process, but may improve
-    computation time in some instances.  `static-link' only works with ONE
-    Model and AT MOST ONE Model Driver (in order to avoid the possibility of
-    symbol clashes).  This setting is designed for use in production runs on
-    massively parallel computing systems where the use of dynamic libraries
-    may have a significant negative impact on run times.
+    `dynamic-load' is the default and preferred setting.  (Unless performance
+    or other issues require it, you should use dynamic-load.)  `static-link'
+    only works with ONE Model and AT MOST ONE Model Driver (in order to avoid
+    the possibility of symbol clashes).  This setting is designed for use in
+    production runs on massively parallel computing systems where the use of
+    dynamic libraries may have a significant negative impact on run times.
 
-    * NOTE: When using the dynamic-link or static-link settings the entire
-            KIM API must be recompiled in order to make changes to the
-            system-collection.  This is not the case for the dynamic-load
-            setting.
+    * NOTE: When using the static-link setting the entire KIM API must be
+            recompiled in order to make changes to the system-collection.  This
+            is not the case for the dynamic-load setting.
 
 (g) Set the value of KIM_BUILD_VERBOSITY, if a value other than the default
     (`quiet') is desired.  Possible values are `quiet' and `full'.

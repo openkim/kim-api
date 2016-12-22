@@ -76,17 +76,8 @@ KIM_MAKE_FILES += Makefile
 all: objects libs
 
 ifneq ($(KIM_LINK),static-link)
-   objects: $(if $(filter dynamic-link,$(KIM_LINK)),models_check,) $(ALLOBJ) KIM_API_DIRS.o .KIM_API_DIRS.o
-   libs: $(if $(filter dynamic-link,$(KIM_LINK)),models_check,) lib$(KIM_LIB).so
-
-   models_check:
-	@if test \( $(words $(MODELS_LIST)) -eq 0 \); then \
-        printf "*******************************************************************************\n"; \
-        printf "*******          Can't compile the API for dynamic-link with            *******\n"; \
-        printf "*******                %3i Models and %3i Model Drivers                 *******\n" $(words $(MODELS_LIST)) $(words $(MODEL_DRIVERS_LIST)); \
-        printf "*******          Dyanamic linking requires ONE OR MORE Models           *******\n"; \
-        printf "*******************************************************************************\n"; \
-        false; else true; fi
+   objects: $(ALLOBJ) KIM_API_DIRS.o .KIM_API_DIRS.o
+   libs: lib$(KIM_LIB).so
 else
    objects: models_check $(ALLOBJ) KIM_API_DIRS.o
    libs: models_check lib$(KIM_LIB).a
