@@ -78,7 +78,7 @@ endif
                                      -D 'LDLIBS_STRING="$(KIMLDLIBS) $(XLANGLDLIBS) $(LDLIBS)"' \
                                      -D 'OBJONLYFLAG_STRING="$(OBJONLYFLAG)"' \
                                      -D 'OUTPUTINFLAG_STRING="$(OUTPUTINFLAG)"' \
-                                     -D 'MAKEFILEKIMCONFIG_STRING="include $(if $(filter-out .build-config.o,$@),$(KIM_DIR),$(package_dir))/Makefile.KIM_Config"' \
+                                     -D 'MAKEFILEKIMCONFIG_STRING="$(if $(filter-out .build-config.o,$@),$(KIM_DIR),$(package_dir))/Makefile.KIM_Config"' \
                                      -D 'VERSION_STRING="$(VERSION_FULL)"'
 %build-config.o: build-config.cpp $(KIM_MAKE_FILES)
 	@printf "Creating... $@.\n"

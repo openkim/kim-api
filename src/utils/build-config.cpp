@@ -103,7 +103,40 @@ int main(int argc, char* argv[])
   }
   else if (argc == 2)
   {
-    if (!strcmp(argv[1], "--cc"))
+    if (!strcmp(argv[1], "--makefile-kim-config"))
+    {
+      printf("include " MAKEFILEKIMCONFIG_STRING "\n");
+      printf("\n");
+      printf(".PHONY: all clean\n");
+      printf("\n");
+      printf("ITEMS_LIST=$(shell find . -type d -depth 1 -not -name '.*')\n");
+      printf("\n");
+      printf("all: $(patsubst %%,%%-all,$(ITEMS_LIST))\n");
+      printf("clean: $(patsubst %%,%%-clean,$(ITEMS_LIST))\n");
+      printf("\n");
+      printf("$(patsubst %%,%%-all,$(ITEMS_LIST)): ");
+      printf("%%: $(KIM_MAKE_FILES) ...............@%%-making-echo\n");
+      printf("  $(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(patsubst %%-all,%%,$@) "
+             "all\n");
+      printf("$(patsubst %%,%%-clean,$(ITEMS_LIST)):\n");
+      printf("  $(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(patsubst %%-clean,%%,$@) "
+             "clean\n");
+      printf("\n\n");
+      printf("########### for internal use ###########\n");
+      printf("%%-making-echo:\n");
+      printf("  @printf '\\n%%79s\\n' ' ' | sed -e 's/ /*/g'\n");
+      printf("  @printf '%%-77s%%2s\\n' \"** Building... ");
+      printf("`printf '$(patsubst %%-all,%%,$*)' | sed -e 's/@/ /g'`\" ");
+      printf("'**'\n");
+      printf("  @printf '%%79s\\n' ' ' | sed -e 's/ /*/g'\n");
+      return result;
+    }
+    else if (!strcmp(argv[1], "--master-config"))
+    {
+      printf(MAKEFILEKIMCONFIG_STRING "\n");
+      return result;
+    }
+    else if (!strcmp(argv[1], "--cc"))
     {
       printf(CC_STRING "\n");
       return result;
@@ -131,34 +164,6 @@ int main(int argc, char* argv[])
     else if (!strcmp(argv[1], "--outputinflag"))
     {
       printf(OUTPUTINFLAG_STRING "\n");
-      return result;
-    }
-    else if (!strcmp(argv[1], "--makefile-kim-config"))
-    {
-      printf(MAKEFILEKIMCONFIG_STRING "\n");
-      printf("\n");
-      printf(".PHONY: all clean\n");
-      printf("\n");
-      printf("ITEMS_LIST=$(shell find . -type d -depth 1 -not -name '.*')\n");
-      printf("\n");
-      printf("all: $(patsubst %%,%%-all,$(ITEMS_LIST))\n");
-      printf("clean: $(patsubst %%,%%-clean,$(ITEMS_LIST))\n");
-      printf("\n");
-      printf("$(patsubst %%,%%-all,$(ITEMS_LIST)): ");
-      printf("%%: $(KIM_MAKE_FILES) ...............@%%-making-echo\n");
-      printf("  $(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(patsubst %%-all,%%,$@) "
-             "all\n");
-      printf("$(patsubst %%,%%-clean,$(ITEMS_LIST)):\n");
-      printf("  $(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(patsubst %%-clean,%%,$@) "
-             "clean\n");
-      printf("\n\n");
-      printf("########### for internal use ###########\n");
-      printf("%%-making-echo:\n");
-      printf("  @printf '\\n%%79s\\n' ' ' | sed -e 's/ /*/g'\n");
-      printf("  @printf '%%-77s%%2s\\n' \"** Building... ");
-      printf("`printf '$(patsubst %%-all,%%,$*)' | sed -e 's/@/ /g'`\" ");
-      printf("'**'\n");
-      printf("  @printf '%%79s\\n' ' ' | sed -e 's/ /*/g'\n");
       return result;
     }
     else if (!strcmp(argv[1], "--version"))
@@ -191,6 +196,7 @@ int main(int argc, char* argv[])
   fprintf(stderr, "Usage: %s option [option [...]]\n", argv[0]);
   fprintf(stderr, "  Stand-alone Options:\n");
   fprintf(stderr, "    --makefile-kim-config\n");
+  fprintf(stderr, "    --master-config\n");
   fprintf(stderr, "    --cc\n");
   fprintf(stderr, "    --cxx\n");
   fprintf(stderr, "    --fc\n");
