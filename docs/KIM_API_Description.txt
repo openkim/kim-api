@@ -78,8 +78,7 @@ STATUS codes: The KIM API uses a set of defined status code keys to return
               occurred.
 
 ==============================  GLOBAL METHODS  ==============================
-
-int KIM_API_file_init(void *kimmdl, char *simkimfile, char *modelname);
+(deprecated) int KIM_API_file_init(void *kimmdl, char *simkimfile, char *modelname);
 
 To be used by: Simulator
 
@@ -124,22 +123,22 @@ To be used by: Simulator
 
               Simulator   Model         Matching Result
               ----------- ------------- ---------------
-              Iter        Iter          positive match
-              Iter        Loca          negative match
-              Iter        Iter&Loca     positive match
-              Iter        Both          negative match
-              Loca        Iter          negative match
+              Iter        Iter          positive match  (deprecated)
+              Iter        Loca          negative match  (deprecated)
+              Iter        Iter&Loca     positive match  (deprecated)
+              Iter        Both          negative match  (deprecated)
+              Loca        Iter          negative match  (deprecated)
               Loca        Loca          positive match
-              Loca        Iter&Loca     positive match
-              Loca        Both          negative match
-              Iter&Loca   Iter          positive match
-              Iter&Loca   Loca          positive match
-              Iter&Loca   Iter&Loca     positive match
-              Iter&Loca   Both          positive match
-              Both        Iter          positive match
-              Both        Loca          positive match
-              Both        Iter&Loca     positive match
-              Both        Both          positive match
+              Loca        Iter&Loca     positive match  (deprecated)
+              Loca        Both          negative match  (deprecated)
+              Iter&Loca   Iter          positive match  (deprecated)
+              Iter&Loca   Loca          positive match  (deprecated)
+              Iter&Loca   Iter&Loca     positive match  (deprecated)
+              Iter&Loca   Both          positive match  (deprecated)
+              Both        Iter          positive match  (deprecated)
+              Both        Loca          positive match  (deprecated)
+              Both        Iter&Loca     positive match  (deprecated)
+              Both        Both          positive match  (deprecated)
 
     (5) NBC method matching: If one or more of the Simulator's listed NBC
         methods is also in the Model's listed NBC methods a positive match is
@@ -149,15 +148,17 @@ To be used by: Simulator
         listed a negative match is obtained and the routine returns
         KIM_STATUS_FAIL.
 
+	All NBCs except "NEIGH_PURE_F" are deprecated.
+
     (6) Matching for MODEL_INPUT arguments required by active NBC method:
         Depending on the active NBC method (determined in step (5) above), the
         Model's and Simulator's MODEL_INPUT section must include the following
         arguments:
 
-              CLUSTER:
+              CLUSTER: (deprecated)
                     `coordinates'
 
-              NEIGH_PURE_H:
+              NEIGH_PURE_H: (deprecated)
                     `coordinates'
                     `numberContributingParticles'
                     `neighObject'
@@ -168,25 +169,25 @@ To be used by: Simulator
                     `neighObject'
                     `get_neigh'
 
-              NEIGH_RVEC_H:
+              NEIGH_RVEC_H: (deprecated)
                     `coordinates'
                     `numberContributingParticles'
                     `neighObject'
                     `get_neigh'
 
-              NEIGH_RVEC_F:
+              NEIGH_RVEC_F: (deprecated)
                     `coordinates'
                     `neighObject'
                     `get_neigh'
 
-              MI_OPBC_H:
+              MI_OPBC_H: (deprecated)
                     `coordinates'
                     `boxSideLengths'
                     `numberContributingParticles'
                     `neighObject'
                     `get_neigh'
 
-              MI_OPBC_F:
+              MI_OPBC_F: (deprecated)
                     `coordinates'
                     `boxSideLengths'
                     `neighObject'
@@ -194,7 +195,7 @@ To be used by: Simulator
 
         If all required arguments are found in both the Model's and Simulator's
         list of MODEL_INPUT arguments, then a positive match is obtained.
-        Otherwise, a negative match is obtained and the routine returned
+        Otherwise, a negative match is obtained and the routine returnes
         KIM_STATUS_FAIL.
 
     (7) Mandatory arguments matching: The following arguments are mandatory and
@@ -219,27 +220,24 @@ To be used by: Simulator
         descriptor files, then a positive match is obtained.  Otherwise, a
         negative match is obtained and the routine returns KIM_STATUS_FAIL.
 
-    (8) MODEL_INPUT matching: If the Model's MODEL_INPUT list of arguments
-        includes `process_dEdr' or `process_d2Edr2', then its MODEL_OUTPUT list
-        of arguments may not contain `virial', `particleVirial', or `hessian'.
-        If it does, a negative match is obtained and the routine returns
-        KIM_STATUS_FAIL.
+    (8) MODEL_INPUT matching:
 
-        If the Simulator's MODEL_INPUT list of arguments includes
+        (deprecated) If the Model's MODEL_INPUT list of arguments includes
         `process_dEdr' or `process_d2Edr2', then its MODEL_OUTPUT list of
         arguments may not contain `virial', `particleVirial', or `hessian'.  If
         it does, a negative match is obtained and the routine returns
         KIM_STATUS_FAIL.
 
-        If the Model's MODEL_INPUT list of arguments contains `process_dEdr'
-        and the Simulator's MODEL_INPUT list of arguments does not contain
-        `process_dEdr', then (in memory) the routine adds `virial' and
-        `particleVirial' arguments, with the `optional' keyword, to the Model's
-        MODEL_OUTPUT list of arguments.
+        (deprecated) If the Model's MODEL_INPUT list of arguments contains
+        `process_dEdr' and the Simulator's MODEL_INPUT list of arguments does
+        not contain `process_dEdr', then (in memory) the routine adds `virial'
+        and `particleVirial' arguments, with the `optional' keyword, to the
+        Model's MODEL_OUTPUT list of arguments.
 
-        If the Model's MODEL_INPUT list of arguments contains `process_dEdr'
-        and `process_d2Edr2', then (in memory) the routine adds `hessian', with
-        the `optional' keyword, to the Model's MODEL_OUTPUT list of arguments.
+        (deprecated) If the Model's MODEL_INPUT list of arguments contains
+        `process_dEdr' and `process_d2Edr2', then (in memory) the routine adds
+        `hessian', with the `optional' keyword, to the Model's MODEL_OUTPUT
+        list of arguments.
 
         For each non-optional argument in the Model's MODEL_INPUT list of
         arguments, a corresponding entry must exist in the Simulator's
@@ -272,8 +270,8 @@ To be used by: Simulator
         and the routine returns KIM_STATUS_FAIL.
 
 	For each argument in the Simulator's MODEL_OUTPUT list of arguments,
-	the argument's `compute' flag is set to KIM_COMPUTE_TRUE.  If the
-	`virial' or `particleVirial' arguments were added to the Model's
+	the argument's `compute' flag is set to KIM_COMPUTE_TRUE.  (deprecated)
+	If the `virial' or `particleVirial' arguments were added to the Model's
 	MODEL_OUTPUT list of arguments in step 8 and any of these arguments are
 	contained in the Simulator's MODEL_OUTPUT list of arguments, then the
 	`process_dEdr' argument's `compute' flag is set to KIM_COMPUTE_TRUE.
@@ -308,7 +306,7 @@ int KIM_API_string_init(void *kimmdl, char *simdescriptor, char *modelname);
 To be used by: Simulator
 
     This routine performs the same function as the KIM_API_file_init() routine.
-    However, in this case the argument `simkimname' is a (long) null (or eof)
+    However, in this case the argument `simdescriptor' is a (long) null (or eof)
     terminated string with the complete content of the Simulator's KIM
     descriptor file.
 
@@ -436,7 +434,7 @@ Arguments:
 
 ******************************************************************************
 
-int KIM_API_model_info(void *kimmdl, char *modelname);
+(deprecated) int KIM_API_model_info(void *kimmdl, char *modelname);
 
 To be used by: Simulator
 
@@ -464,7 +462,7 @@ Arguments:
 
 ******************************************************************************
 
-void KIM_API_allocate(void *kimmdl, int nParticles, int nSpecies, int *kimerror);
+(deprecated) void KIM_API_allocate(void *kimmdl, int nParticles, int nSpecies, int *kimerror);
 
 To be used by: Simulator
 
@@ -558,7 +556,7 @@ Arguments:
 
 ******************************************************************************
 
-void KIM_API_c_free(void *cp);
+(deprecated) void KIM_API_c_free(void *cp);
 
 To be used by: Model/Simulator
 
@@ -698,7 +696,7 @@ Arguments:
 
 ******************************************************************************
 
-int KIM_API_get_model_index_shift(void *kimmdl);
+(deprecated) int KIM_API_get_model_index_shift(void *kimmdl);
 
 To be used by: Model/Simulator
 
@@ -820,7 +818,7 @@ Arguments:
 
 ******************************************************************************
 
-int KIM_API_is_half_neighbors(void *kimmdl, int *kimerror);
+(deprecated) int KIM_API_is_half_neighbors(void *kimmdl, int *kimerror);
 
 To be used by: Model/Simulator
 
@@ -940,7 +938,7 @@ Arguments:
 
 ******************************************************************************
 
-intptr_t KIM_API_get_rank(void *kimmdl, char *nm, int *kimerror);
+(deprecated) intptr_t KIM_API_get_rank(void *kimmdl, char *nm, int *kimerror);
 
 To be used by: Model/Simulator
 
@@ -968,7 +966,7 @@ Arguments:
 
 ******************************************************************************
 
-intptr_t KIM_API_get_shape(void *kimmdl, char *nm, int *shape, int *kimerror);
+(deprecated) intptr_t KIM_API_get_shape(void *kimmdl, char *nm, int *shape, int *kimerror);
 
 To be used by: Model/Simulator
 
@@ -1003,7 +1001,7 @@ Arguments:
 
 ******************************************************************************
 
-void KIM_API_set_shape(void *kimmdl, char *nm, int *shape, int rank, int *kimerror);
+(deprecated) void KIM_API_set_shape(void *kimmdl, char *nm, int *shape, int rank, int *kimerror);
 
 To be used by: Model/Simulator
 
@@ -1109,7 +1107,7 @@ Arguments:
 
 ******************************************************************************
 
-int KIM_API_get_index(void *kimmdl, char*nm, int *kimerror);
+(deprecated) int KIM_API_get_index(void *kimmdl, char*nm, int *kimerror);
 
 To be used by: Model/Simulator
 
@@ -1552,7 +1550,7 @@ Arguments:
 
 ******************************************************************************
 
-int KIM_API_get_NBC_method(void *kimmdl, const char** const NBC_String);
+(deprecated) int KIM_API_get_NBC_method(void *kimmdl, const char** const NBC_String);
 
 To be used by: Model/Simulator
 
@@ -1690,7 +1688,7 @@ Arguments:
 
 ******************************************************************************
 
-int KIM_API_get_neigh_mode(void *kimmdl, int *kimerror);
+(deprecated) int KIM_API_get_neigh_mode(void *kimmdl, int *kimerror);
 
 To be used by: Model/Simulator
 
@@ -2211,21 +2209,21 @@ above.  These routines are meant to be used by both Simulators and Models.
 
 The prototypes of the supported "by index" routines are:
 
-int KIM_API_set_data_by_index(void *kimmdl, int I, intptr_t size, void *dt);
-int KIM_API_set_method_by_index(void *kimmdl, int I, intptr_t size, func_ptr dt);
+(deprecated) int KIM_API_set_data_by_index(void *kimmdl, int I, intptr_t size, void *dt);
+(deprecated) int KIM_API_set_method_by_index(void *kimmdl, int I, intptr_t size, func_ptr dt);
 
-void *KIM_API_get_data_by_index(void *kimmdl, int I, int *kimerror);
-func_ptr KIM_API_get_method_by_index(void *kimmdl, int I, int *kimerror);
+(deprecated) void *KIM_API_get_data_by_index(void *kimmdl, int I, int *kimerror);
+(deprecated) func_ptr KIM_API_get_method_by_index(void *kimmdl, int I, int *kimerror);
 
-intptr_t KIM_API_get_size_by_index(void *kimmdl, int I, int *kimerror);
+(deprecated) intptr_t KIM_API_get_size_by_index(void *kimmdl, int I, int *kimerror);
 
-intptr_t KIM_API_get_rank_by_index(void *kimmdl, int I, int *kimerror);
+(deprecated) intptr_t KIM_API_get_rank_by_index(void *kimmdl, int I, int *kimerror);
 
-intptr_t KIM_API_get_shape_by_index(void *kimmdl, int I, int *shape, int *kimerror);
+(deprecated) intptr_t KIM_API_get_shape_by_index(void *kimmdl, int I, int *shape, int *kimerror);
 
-void KIM_API_set_compute_by_index(void *kimmdl, int I, int flag, int *kimerror);
+(deprecated) void KIM_API_set_compute_by_index(void *kimmdl, int I, int flag, int *kimerror);
 
-int KIM_API_get_compute_by_index(void *kimmdl, int I, int *kimerror);
+(deprecated) int KIM_API_get_compute_by_index(void *kimmdl, int I, int *kimerror);
 
 
 
@@ -2242,17 +2240,17 @@ both Simulators and Models.  There are 13 of these routines:
 c-style:
       1) KIM_API_getm_compute
       2) KIM_API_setm_compute
-      3) KIM_API_getm_compute_by_index
-      4) KIM_API_setm_compute_by_index
+      3) KIM_API_getm_compute_by_index (deprecated)
+      4) KIM_API_setm_compute_by_index (deprecated)
       5) KIM_API_getm_data
       6) KIM_API_getm_method
       7) KIM_API_setm_data
       8) KIM_API_setm_method
-      9) KIM_API_getm_data_by_index
-     10) KIM_API_getm_method_by_index
-     11) KIM_API_setm_data_by_index
-     12) KIM_API_setm_method_by_index
-     13) KIM_API_getm_index
+      9) KIM_API_getm_data_by_index    (deprecated)
+     10) KIM_API_getm_method_by_index  (deprecated)
+     11) KIM_API_setm_data_by_index    (deprecated)
+     12) KIM_API_setm_method_by_index  (deprecated)
+     13) KIM_API_getm_index            (deprecated)
 
      Each of these routines provides access to multiple KIM API object
      arguments in one function call.  These routines have a uniform
@@ -2286,11 +2284,11 @@ c-style:
 
           Here VARIABLE_GROUP has 3 variables: char *name, int compute, int gkey
 
-      3.  void KIM_API_getm_compute_by_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
+      3.  (deprecated) void KIM_API_getm_compute_by_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
 
           Here VARIABLE_GROUP has 3 variables: int index, int *compute, int gkey
 
-      4.  void KIM_API_setm_compute_by_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
+      4.  (deprecated) void KIM_API_setm_compute_by_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
 
           Here VARIABLE_GROUP has 3 variables: int index, int compute, int gkey
 
@@ -2310,23 +2308,23 @@ c-style:
 
           Here VARIABLE_GROUP has 4 variables: char *name, intptr_t size, func_ptr data, int gkey
 
-      9.  void KIM_API_getm_data_by_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
+      9.  (deprecated) void KIM_API_getm_data_by_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
 
           Here VARIABLE_GROUP has 3 variables: int index, void **data, int gkey
 
-     10.  void KIM_API_getm_method_by_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
+     10.  (deprecated) void KIM_API_getm_method_by_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
 
           Here VARIABLE_GROUP has 3 variables: int index, func_ptr *method, int gkey
 
-     11.  void KIM_API_setm_data_by_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
+     11.  (deprecated) void KIM_API_setm_data_by_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
 
           Here VARIABLE_GROUP has 4 variables: int index, intptr_t size, void *data, int gkey
 
-     12.  void KIM_API_setm_method_by_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
+     12.  (deprecated) void KIM_API_setm_method_by_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
 
           Here VARIABLE_GROUP has 4 variables: int index, intptr_t size, func_ptr method, int gkey
 
-     13.  void KIM_API_getm_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...] );
+     13.  (deprecated) void KIM_API_getm_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...] );
 
           Here VARIABLE_GROUP has 3 variables: char *name, int *index, int gkey
 
