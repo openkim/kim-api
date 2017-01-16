@@ -763,6 +763,7 @@ This will create the following symbolic links:
 
    $(bindir)/$(package_name)-build-config  ->  $(full_package_name)-build-config
    $(bindir)/$(package_name)-descriptor-file-match  ->  $(full_package_name)-descriptor-file-match
+   $(bindir)/$(package_name)-collections-info  ->  $(full_package_name)-collections-info
    $(includedir)/$(package_name)  -> $(full_package_name)
    $(libdir)/$(package_name)  -> $(full_package_name)
    $(libdir)/lib$(package_name).so  ->  $(full_package_name).so
