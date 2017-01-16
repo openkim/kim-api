@@ -23,7 +23,7 @@
 !                                                                               !12
                                                                                 !12
 !                                                                               !12
-! Copyright (c) 2013--2016, Regents of the University of Minnesota.             !12
+! Copyright (c) 2013--2017, Regents of the University of Minnesota.             !12
 ! All rights reserved.                                                          !12
 !                                                                               !12
 ! Contributors:                                                                 !12
