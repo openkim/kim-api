@@ -32,6 +32,21 @@
 #
 
 
+=== kim-api-v1.8.0 ============== 17Jan2017 ====================================
+
+* Deprecated significatant features and methods in prep. for kim-api-v2.0.0
+
+* Updated `build-config' utility with more flexible options
+
+* Removed `KIM_LINK = dynamic-link' option of build system
+
+* Modified/Fixed/Improved the configuration and build system
+
+* Added `collections-info' utility for querying environment variables,
+  user configuration files, and lists of models and model drivers in the
+  collections.
+
+
 === kim-api-v1.7.3 ============== 02Jun2016 ====================================
 
 * Added a `configure' script for setting up Makefile.KIM_Config
