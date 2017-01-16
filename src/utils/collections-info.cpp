@@ -43,8 +43,8 @@ void usage(char const* const name)
             << name
             << " <command> [<args>]\n"
             << "Where <command> is one of the below.\n"
-            << "   env [models | model_drivers]\n"
-            << "   config_file [name | models | model_drivers]\n"
+            << "   env <models | model_drivers>\n"
+            << "   config_file <name | models | model_drivers>\n"
             << "   models [find <name>]\n"
             << "   model_drivers [find <name>]\n";
   // note: this interface is likely to change in future kim-api releases
@@ -164,7 +164,6 @@ int main(int argc, char* argv[])
 
   if (argc < 2)
   {
-    usage(argv[0]);
     returnVal = 1;
   }
   else
@@ -184,11 +183,11 @@ int main(int argc, char* argv[])
     }
     else
     {
-      usage(argv[0]);
       returnVal = 1;
     }
   }
 
+  if (returnVal != 0) usage(argv[0]);
   return returnVal;
 }
 
@@ -199,7 +198,6 @@ int processEnv(int argc, char* argv[])
   collectionsInfo::ENV_OPTIONS opt;
   if (argc != 3)
   {
-    usage(argv[0]);
     returnVal = 1;
   }
   else
@@ -233,7 +231,6 @@ int processConfigFile(int argc, char* argv[])
   collectionsInfo::CONFIG_FILE_OPTIONS opt;
   if (argc != 3)
   {
-    usage(argv[0]);
     returnVal = 1;
   }
   else
@@ -272,7 +269,6 @@ int processItems(int argc, char* argv[])
   std::string name;
   if ((argc == 3) || (argc > 4))
   {
-    usage(argv[0]);
     returnVal = 1;
   }
   else
