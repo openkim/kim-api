@@ -35,9 +35,20 @@
 
 # load all basic KIM make configuration
 ifeq ($(wildcard ../Makefile.KIM_Config),)
-  $(error ../Makefile.KIM_Config does not exist.  Something is wrong with your KIM API package setup)
+  ifeq ($(wildcard ../Makefile.KIM_Config_Helper),)
+    KIM_CONFIG_HELPER = kim-api-build-config
+  else
+    include ../Makefile.KIM_Config_Helper
+  endif
+  ifeq ($(shell $(KIM_CONFIG_HELPER) --version 2> /dev/null),)
+    $(error ../Makefile.KIM_Config does not exist and $(KIM_CONFIG_HELPER) utility is not available.  Something is wrong with your KIM API package setup)
+  else
+    MASTER_CONFIG = $(shell $(KIM_CONFIG_HELPER) --master-config)
+  endif
+else
+  MASTER_CONFIG = ../Makefile.KIM_Config
 endif
-include ../Makefile.KIM_Config
+include $(MASTER_CONFIG)
 
 # set model specific details
 MODEL_NAME := ex_model_Ne_P_MLJ_NEIGH_RVEC_F
