@@ -32,15 +32,76 @@
 
 #include <cstdio>
 #include <cstring>
+#include <sstream>
 
 #define SUCCESS                     0
 #define INVALID_NUMBER_OF_ARGUMENTS 1
-#define UNKNOWN_OPTION              2
+#define UNKNOWN_OPTION              3
+
+int processFlag(char const* const opt, std::stringstream * const outString)
+{
+  int result = SUCCESS;
+  if (!strcmp(opt, "--includes"))
+  {
+    *outString << INCLUDES_STRING << " ";
+    return result;
+  }
+  else if (!strcmp(opt, "--cflags"))
+  {
+    *outString << CFLAGS_STRING << " ";
+    return result;
+  }
+  else if (!strcmp(opt, "--cxxflags"))
+  {
+    *outString << CXXFLAGS_STRING << " ";
+    return result;
+  }
+  else if (!strcmp(opt, "--fflags"))
+  {
+    *outString << FFLAGS_STRING << " ";
+    return result;
+  }
+  else if (!strcmp(opt, "--ldflags"))
+  {
+    *outString << LDFLAGS_STRING << " ";
+    return result;
+  }
+  else if (!strcmp(opt, "--ldlibs"))
+  {
+    *outString << LDLIBS_STRING << " ";
+    return result;
+  }
+  else
+  {
+    result = UNKNOWN_OPTION;
+  }
+}
 
 int main(int argc, char* argv[])
 {
   int result = SUCCESS;
-  if (argc == 2)
+  if (argc > 2)
+  {
+    std::stringstream outString;
+    int i;
+    for (i = 1; i < argc; ++i)
+    {
+      result = processFlag(argv[i], &outString);
+      if (result != SUCCESS)
+      {
+        fprintf(stderr, "Incompatible or unknown options.\n");
+        // drop through with UNKNOWN_OPTION
+        break;
+      }
+    }
+    if ((i == argc) && (result == SUCCESS))
+    {
+      outString << "\n";
+      printf(outString.str().c_str());
+      return result;
+    }
+  }
+  else if (argc == 2)
   {
     if (!strcmp(argv[1], "--cc"))
     {
@@ -60,36 +121,6 @@ int main(int argc, char* argv[])
     else if (!strcmp(argv[1], "--ld"))
     {
       printf(LD_STRING "\n");
-      return result;
-    }
-    else if (!strcmp(argv[1], "--includes"))
-    {
-      printf(INCLUDES_STRING "\n");
-      return result;
-    }
-    else if (!strcmp(argv[1], "--cflags"))
-    {
-      printf(CFLAGS_STRING "\n");
-      return result;
-    }
-    else if (!strcmp(argv[1], "--cxxflags"))
-    {
-      printf(CXXFLAGS_STRING "\n");
-      return result;
-    }
-    else if (!strcmp(argv[1], "--fflags"))
-    {
-      printf(FFLAGS_STRING "\n");
-      return result;
-    }
-    else if (!strcmp(argv[1], "--ldflags"))
-    {
-      printf(LDFLAGS_STRING "\n");
-      return result;
-    }
-    else if (!strcmp(argv[1], "--ldlibs"))
-    {
-      printf(LDLIBS_STRING "\n");
       return result;
     }
     else if (!strcmp(argv[1], "--objonlyflag"))
@@ -115,19 +146,19 @@ int main(int argc, char* argv[])
       printf("\n");
       printf("$(patsubst %%,%%-all,$(ITEMS_LIST)): ");
       printf("%%: $(KIM_MAKE_FILES) ...............@%%-making-echo\n");
-      printf("	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(patsubst %%-all,%%,$@) "
+      printf("  $(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(patsubst %%-all,%%,$@) "
              "all\n");
       printf("$(patsubst %%,%%-clean,$(ITEMS_LIST)):\n");
-      printf("	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(patsubst %%-clean,%%,$@) "
+      printf("  $(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(patsubst %%-clean,%%,$@) "
              "clean\n");
       printf("\n\n");
       printf("########### for internal use ###########\n");
       printf("%%-making-echo:\n");
-      printf("	@printf '\\n%%79s\\n' ' ' | sed -e 's/ /*/g'\n");
-      printf("	@printf '%%-77s%%2s\\n' \"** Building... ");
+      printf("  @printf '\\n%%79s\\n' ' ' | sed -e 's/ /*/g'\n");
+      printf("  @printf '%%-77s%%2s\\n' \"** Building... ");
       printf("`printf '$(patsubst %%-all,%%,$*)' | sed -e 's/@/ /g'`\" ");
       printf("'**'\n");
-      printf("	@printf '%%79s\\n' ' ' | sed -e 's/ /*/g'\n");
+      printf("  @printf '%%79s\\n' ' ' | sed -e 's/ /*/g'\n");
       return result;
     }
     else if (!strcmp(argv[1], "--version"))
@@ -141,8 +172,15 @@ int main(int argc, char* argv[])
     }
     else
     {
+      std::stringstream outString;
+      result = processFlag(argv[1], &outString);
+      if (result == SUCCESS)
+      {
+        outString << "\n";
+        printf(outString.str().c_str());
+        return result;
+      }
       // else drop through with UNKNOWN_OPTION
-      result = UNKNOWN_OPTION;
     }
   }
   else
@@ -150,22 +188,24 @@ int main(int argc, char* argv[])
     result = INVALID_NUMBER_OF_ARGUMENTS;
   }
 
-  fprintf(stderr, "Usage: %s option\n", argv[0]);
-  fprintf(stderr, "  Options:\n");
+  fprintf(stderr, "Usage: %s option [option [...]]\n", argv[0]);
+  fprintf(stderr, "  Stand-alone Options:\n");
+  fprintf(stderr, "    --makefile-kim-config\n");
   fprintf(stderr, "    --cc\n");
   fprintf(stderr, "    --cxx\n");
   fprintf(stderr, "    --fc\n");
   fprintf(stderr, "    --ld\n");
+  fprintf(stderr, "    --objonlyflag\n");
+  fprintf(stderr, "    --outputinflag\n");
+  fprintf(stderr, "    --version\n");
+  fprintf(stderr, "    --help\n");
+  fprintf(stderr, "\n");
+  fprintf(stderr, "  Combinable Options:\n");
   fprintf(stderr, "    --includes\n");
   fprintf(stderr, "    --cflags\n");
   fprintf(stderr, "    --cxxflags\n");
   fprintf(stderr, "    --fflags\n");
   fprintf(stderr, "    --ldflags\n");
   fprintf(stderr, "    --ldlibs\n");
-  fprintf(stderr, "    --objonlyflag\n");
-  fprintf(stderr, "    --outputinflag\n");
-  fprintf(stderr, "    --makefile-kim-config\n");
-  fprintf(stderr, "    --version\n");
-  fprintf(stderr, "    --help\n");
   return result;
 }
