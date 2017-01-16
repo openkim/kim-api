@@ -1288,11 +1288,11 @@ MODEL_PARAMETERS:
 # values before deallocating the parameter memory.  The Model must deallocate
 # the parameter memory during the call to KIM_API_model_destroy().
 #
-# 1) PARAM_FIXED_<label> : A parameter that should not be changed by the
-#                          Simulator.  A `fixed parameter' may also be used by
-#                          the Model for persistent storage between calls to
-#                          the Model's compute routine and/or as local memory
-#                          space to avoid the overhead of memory
+# 1) (deprecated) PARAM_FIXED_<label> : A parameter that should not be changed
+#                          by the Simulator.  A `fixed parameter' may also be
+#                          used by the Model for persistent storage between
+#                          calls to the Model's compute routine and/or as local
+#                          memory space to avoid the overhead of memory
 #                          allocation/deallocation during each execution of the
 #                          compute routine.  However, this storage should not
 #                          depend on the content provided by the Simulator.
@@ -1321,11 +1321,10 @@ MODEL_PARAMETERS:
 # PARAM_FREE_Epsilon        double       energy             []
 # PARAM_FIXED_LJshift       double       energy             []
 #
-# In this example `PARAM_FIXED_LJshift' is a shift that brings the
-# Lennard-Jones potential to zero at the defined cutoff radius.
-# If the Sigma or Epsilon parameters are changed by the Simulator,
-# `PARAM_FIXED_LJshift' will be recomputed during required call to
-# model_reinit.
+# (deprecatd) In this example `PARAM_FIXED_LJshift' is a shift that brings the
+# Lennard-Jones potential to zero at the defined cutoff radius.  If the Sigma
+# or Epsilon parameters are changed by the Simulator, `PARAM_FIXED_LJshift'
+# will be recomputed during required call to model_reinit.
 #
 #
 ################################################################################

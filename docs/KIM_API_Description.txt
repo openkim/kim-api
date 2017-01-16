@@ -1430,7 +1430,7 @@ Arguments:
 
 ******************************************************************************
 
-int KIM_API_get_num_free_params(void *kimmdl, int* numberFreeParameters, int* maxStringLength);
+(deprecated) int KIM_API_get_num_free_params(void *kimmdl, int* numberFreeParameters, int* maxStringLength);
 
 To be used by: Model/Simulator
 
@@ -1460,7 +1460,7 @@ Arguments:
 
 ******************************************************************************
 
-int KIM_API_get_free_parameter(void *kimmdl, const int index, const char** const freeParameterString);
+(deprecated) int KIM_API_get_free_parameter(void *kimmdl, const int index, const char** const freeParameterString);
 
 To be used by: Model/Simulator
 
@@ -1490,7 +1490,7 @@ Arguments:
 
 ******************************************************************************
 
-int KIM_API_get_num_fixed_params(void *kimmdl, int* numberFixedParameters, int* maxStringLength);
+(deprecated) int KIM_API_get_num_fixed_params(void *kimmdl, int* numberFixedParameters, int* maxStringLength);
 
 To be used by: Model/Simulator
 
@@ -1520,7 +1520,7 @@ Arguments:
 
 ******************************************************************************
 
-int KIM_API_get_fixed_parameter(void *kimmdl, const int index, const char** const fixedParameterString);
+(deprecated) int KIM_API_get_fixed_parameter(void *kimmdl, const int index, const char** const fixedParameterString);
 
 To be used by: Model/Simulator
 
