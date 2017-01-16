@@ -41,7 +41,7 @@ ifeq (dynamic-load,$(KIM_LINK))
   all: $(patsubst %,%-all,$(MODELS_LIST))
 else
   all:
-	@printf "Nothing to be done for dynamic-link or static-link.\n"
+	@printf "Nothing to be done for static-link.\n"
 endif
 
 clean: $(patsubst %,%-clean,$(MODELS_LIST))

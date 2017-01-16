@@ -50,9 +50,6 @@ KIM_MAKE_FILES += Makefile
 descriptor-file-match.o: descriptor-file-match.cpp KIM_API.h KIM_API_status.h $(KIM_MAKE_FILES)
 
 $(full_package_name)-descriptor-file-match: descriptor-file-match.o \
-                                            $(if $(filter-out dynamic-link,$(KIM_LINK)),,\
-                                                 ../KIM_API.o ../Unit_Handling.o ../kim_str.o ../KIM_AUX.o \
-                                                 ../model_init_include_stubs.cpp) \
                                             $(if $(filter-out static-link,$(KIM_LINK)),\
                                                  lib$(KIM_LIB_BUILD).so .lib$(KIM_LIB_BUILD).so,\
                                                  lib$(KIM_LIB_BUILD).a)
@@ -92,8 +89,6 @@ $(full_package_name)-build-config: build-config.o .build-config.o
 collections-info.o: collections-info.cpp KIM_API_DIRS.h $(KIM_MAKE_FILES)
 
 $(full_package_name)-collections-info: collections-info.o \
-                                            $(if $(filter-out dynamic-link,$(KIM_LINK)),,\
-                                                 ../KIM_API_DIRS.o ../.KIM_API_DIRS.o) \
                                             $(if $(filter-out static-link,$(KIM_LINK)),\
                                                  lib$(KIM_LIB_BUILD).so .lib$(KIM_LIB_BUILD).so,\
                                                  lib$(KIM_LIB_BUILD).a)

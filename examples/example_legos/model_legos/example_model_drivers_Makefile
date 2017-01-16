@@ -41,7 +41,7 @@ ifeq (dynamic-load,$(KIM_LINK))
   all: $(patsubst %,%-all,$(MODEL_DRIVERS_LIST))
 else
   all:
-	@printf "Nothing to be done for dynamic-link or static-link.\n"
+	@printf "Nothing to be done for static-link.\n"
 endif
 
 clean: $(patsubst %,%-clean,$(MODEL_DRIVERS_LIST))
