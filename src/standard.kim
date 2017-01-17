@@ -624,39 +624,10 @@ OneBasedLists               flag        # Presence of this line indicates that
 
 ################################################################################
 #
-# The following three lines are related to the locator/iterator neighbor list
-# access mode.  These ensure that a Model will not try to use an access mode
-# that is not supported by the routines provided by the Simulator.
+# Documentation for neighbor list behavior
 #
-# If Neigh_IterAccess and Neigh_LocaAccess are both in the file, it means that
-# the Model/Simulator can work with either mode but does not require both.
-#
-# If Neigh_BothAccess is in the file, it means that the Model (Simulator)
-# requires (provides) both access modes in order to function.
-#
-# It is an error to include Neigh_BothAccess with either of the other two
-# options in a KIM descriptor (.kim) file.
-#
-################################################################################
-Neigh_IterAccess            flag        # works with iterator mode (deprecated)
-
-Neigh_LocaAccess            flag        # works with locator mode
-
-Neigh_BothAccess            flag        # need both locator and iterator modes (deprecated)
-
-
-################################################################################
-#
-# Neighbor list and Boundary Condition (NBC) methods
-#
-# These are the KIM standard methods for dealing with neighbor lists and
-# boundary conditions.
-#
-# For each listed particle, i, in the configuration a:
-#   `full neighbor list' provides a list of every particle, j, that is a
-#                        neighbor of particle i;
-#   `half neighbor list' provides a list of every particle, j >= i, that is a
-#                        neighbor of particle i. (deprecated)
+# For each listed particle, i, in the configuration a `full neighbor list'
+# provides a list of every particle, j, that is a neighbor of particle i.
 #
 # Neighbor lists provided by a Simulator must contain all particles in the
 # configuration within the Model's cutoff radius.  However, it is typical that
@@ -665,147 +636,27 @@ Neigh_BothAccess            flag        # need both locator and iterator modes (
 # determining which particles in the neighbor list are inside its cutoff
 # distance.
 #
-################################################################################
-
-# (deprecated) In the CLUSTER method, the Model receives the number of
-# particles and coordinates without additional information (such as neighbor
-# lists or other boundary condition specifiers) and computes requested
-# quantities under the assumption that the particles form an isolated cluster.
-# For example, if energy and forces are requested, it will compute the total
-# energy of all the particles based on the supplied particle coordinates and
-# the derivative of the total energy with respect to the positions of the
-# particles.
+# All models need `coordinates', a full neighbor list (with data stored in the
+# `neighObject' argument), and the `get_neigh' method supplied by the
+# Simulator.
 #
-CLUSTER                     flag        # (deprecated) The Model needs only
-                                        # coordinates to compute; a neighbor
-                                        # list is not used.
-
-# In the NEIGH_PURE methods (NEIGH_PURE_H (deprecated) and NEIGH_PURE_F), the
-# Model receives the number of particles, coordinates and a full or half
-# neighbor list. The neighbor list defines the environment of each particle,
-# from which the particles's energy is defined.  In the case of a half list
-# (deprecated), the value of the argument `numberContributingParticles'
-# indicates that the first `numberContributingParticles' contribute their
-# energy to the total and the remaining particles do not contribute to the
-# energy (they are "padding" particles).  When `numberContributingParticles' is
-# equal to `numberParticles' the half list is called "symmetric", otherwise it
-# is called "unsymmetric."  In the case of a full list, any particle that has
-# one or more neighbors contributes its energy to the total and those particles
-# with zero neighbors do not contribute to the total energy.  The model
-# computes the requested quantities using the supplied information.  For
-# example, if energy and forces are requested, it will compute the total energy
-# of all the particles based on their neighbor lists and the derivative of the
-# total energy with respect to the positions of the particles.  This method can
-# be used with codes that use padding particles to apply boundary conditions.
-# The padding particles are treated as regular particles by the Model, and it
-# is up to the calling code to discard some information such as the forces on
-# the padding particles and to compute the appropriate total energy from
+# The Model receives the number of particles, coordinates and a full neighbor
+# list. The neighbor list defines the environment of each particle, from which
+# the particles's energy is defined.  Any particle that has one or more
+# neighbors contributes its energy to the total and those particles with zero
+# neighbors do not contribute to the total energy.  The model computes the
+# requested quantities using the supplied information.  For example, if energy
+# and forces are requested, it will compute the total energy of all the
+# particles based on their neighbor lists and the derivative of the total
+# energy with respect to the positions of the particles.  This method can be
+# used with codes that use padding particles to apply boundary conditions.  The
+# padding particles are treated as regular particles by the Model, and it is up
+# to the calling code to discard some information such as the forces on the
+# padding particles and to compute the appropriate total energy from
 # per-particle energies of the physical particles, or to use a modified
 # neighbor list to obtain the desired values.
 #
-NEIGH_PURE_H                flag        # (deprecated) This is the Pure Half
-                                        # neighbor list method.  The model
-                                        # needs `coordinates', a half neighbor
-                                        # list (with data stored in the
-                                        # `neighObject' argument), the
-                                        # `numberContributingParticles', and
-                                        # the `get_neigh' method supplied by
-                                        # the Simulator.
-
-NEIGH_PURE_F                flag        # This is the Pure Full neighbor list
-                                        # method.  The model needs
-                                        # `coordinates', a full neighbor list
-                                        # (with data stored in the
-                                        # `neighObject' argument), and the
-                                        # `get_neigh' method supplied by the
-                                        # Simulator.
-
-
-# (deprecated) In the NEIGH_RVEC methods (NEIGH_RVEC_H and NEIGH_RVEC_F), the
-# Model receives the number of particles, coordinates, a half or full neighbor
-# list, and the relative position vectors r_ij (r_ij = x_j-x_i). The neighbor
-# list and r_ij vectors define the environment of each particle, from which the
-# particles's energy is defined.  In the case of a half list, a neighbor pair i
-# and j (where i < j) with relative position vector (RVEC) r_ij defines two
-# pieces of information: (1) j is a neighbor of i with RVEC r_ij and (2) i is a
-# neighbor of j with RVEC r_ji = -r_ij.  Additionally, the value of the
-# argument `numberContributingParticles' indicates that the first
-# `numberContributingParticles' contribute their energy to the total and the
-# remaining particles do not contribute to the energy (they are "padding"
-# particles).  When `numberContributingParticles' is equal to `numberParticles'
-# the half list is called "symmetric", otherwise it is called "unsymmetric."
-# In the case of a full list, any particle that has one or more neighbors
-# contributes its energy to the total and those particles with zero neighbors
-# do not contribute to the total energy.  The Model computes the requested
-# quantities using the supplied information.  For example, if energy and forces
-# are requested, it will compute the total energy of all the particles based on
-# their neighbor lists and the derivative of the total energy with respect to
-# the positions of the particles.  These methods enable the application of
-# general periodic boundary conditions, including multiple images.  A possible
-# future extension to these methods is to allow the Simulator to provide a
-# ForceTransformation() function for each neighbor, which would enable the
-# application of complex boundary conditions such as torsion and objective
-# boundary conditions.
-#
-NEIGH_RVEC_H                flag        # (deprecated) This is the Relative
-                                        # Vector Boundary Condition Half
-                                        # neighbor list method.  The Model
-                                        # needs `coordinates', a half neighbor
-                                        # list (with data stored in the
-                                        # `neighObject' argument),
-                                        # `numberContributingParticles', and
-                                        # the `get_neigh' method supplied by
-                                        # the Simulator.  The `neighObject'
-                                        # argument must also contain the
-                                        # relative position vectors (RVEC)
-                                        # (which are returned by the
-                                        # `get_neigh' function).
-
-NEIGH_RVEC_F                flag        # (deprecated) This is the Relative
-                                        # Vector Boundary Condition Full
-                                        # neighbor list method.  The Model
-                                        # needs `coordinates', a full neighbor
-                                        # list (with data stored in the
-                                        # `neighObject' argument), and the
-                                        # `get_neigh' method supplied by the
-                                        # Simulator.  The `neighObject'
-                                        # argument must also contain the
-                                        # relative position vectors (RVEC)
-                                        # (which are returned by the
-                                        # `get_neigh' function).
-
-# (deprecated) In the MI_OPBC methods (MI_OPBC_H and MI_OPBC_F), the Model
-# receives the number of particles and coordinates, the side lengths for the
-# periodic orthogonal box and a neighbor list.  It assumes all particles lie
-# inside the periodic box.  Side lengths of the box must be at least twice the
-# cutoff range.  This method computes the requested quantities under the
-# assumption that the particles are subjected to the minimum image, orthogonal,
-# periodic boundary conditions.
-#
-MI_OPBC_H                   flag        # (deprecated) This is the Minimum Image
-                                        # Orthogonal Periodic Boundary
-                                        # Condition Half neighbor list method.
-                                        # The Model needs `coordinates', a half
-                                        # neighbor list (with data stored in
-                                        # the `neighObject' argument),
-                                        # `numberContributingParticles', the
-                                        # `get_neigh' method supplied by the
-                                        # Simulator, and the `boxSideLengths'
-                                        # argument (which specifies the three
-                                        # side-lengths of the orthogonal
-                                        # simulation box).
-
-MI_OPBC_F                   flag        # (deprecated) This is the Minimum
-                                        # Image Orthogonal Periodic Boundary
-                                        # Condition Full neighbor list method.
-                                        # The Model needs `coordinates', a full
-                                        # neighbor list (with data stored in
-                                        # the `neighObject' argument), the
-                                        # `get_neigh' method supplied by the
-                                        # Simulator, and the `boxSideLengths'
-                                        # argument (which specifies the three
-                                        # side-lengths of the orthogonal
-                                        # simulation box).
+################################################################################
 
 
 ################################################################################
@@ -849,23 +700,6 @@ MODEL_INPUT:
 # Name                      Type         Unit                Shape
 #
 numberOfParticles           integer      none                []
-
-################################################################################
-#
-# (deprecated) numberContributingParticles: The number of particles that
-#                                           contribute to the energy (required
-#                                           for all half neighbor lists).
-#
-# This argument allows a half neighbor list to be "unsymmetric."  Only the
-# first `numberContributingParticles' particles will contribute their energy to
-# the total.  If supported, a Simulator must allocate memory for this argument
-# and register it in the KIM API object (via KIM_API_allocate() or
-# KIM_API_set_data()) before the KIM_API_model_compute() function is called.
-# The Simulator is free to change this pointer at any time.
-#
-# Name                      Type         Unit               Shape
-#
-numberContributingParticles integer      none               []
 
 ################################################################################
 #
@@ -916,34 +750,6 @@ particleSpecies             integer      none               [numberOfParticles]
 # Name                      Type         Unit               Shape
 #
 coordinates                 double       length             [numberOfParticles,3]
-
-################################################################################
-#
-# (deprecated) particleCharge : An array of floating-point numbers specifying
-#                               the charge of each particle.
-#
-# If supported, a Simulator must allocate memory for this argument and register
-# it in the KIM API object (via KIM_API_allocate() or KIM_API_set_data())
-# before the KIM_API_model_compute() function is called.  The Simulator is free
-# to change this pointer at any time.
-#
-# Name                      Type         Unit               Shape
-#
-particleCharge              double       charge             [numberOfParticles]
-
-################################################################################
-#
-# (deprecated) particleSize : An array of floating-point numbers specifying the
-#                             size of each particle.
-#
-# If supported, a Simulator must allocate memory for this argument and register
-# it in the KIM API object (via KIM_API_allocate() or KIM_API_set_data())
-# before the KIM_API_model_compute() function is called.  The Simulator is free
-# to change this pointer at any time.
-#
-# Name                      Type         Unit               Shape
-#
-particleSize                double       length             [numberOfParticles]
 
 ################################################################################
 #
@@ -1016,33 +822,6 @@ process_d2Edr2              method       none               []
 # Name                      Type         Unit               Shape
 #
 neighObject                 pointer      none               []
-
-################################################################################
-#
-# (deprecatd) boxSideLengths : A vector of three floating-point numbers
-#                              indicating the side lengths of the minimum-image
-#                              periodic orthogonal box.
-#
-# This argument is required for Models/Simulators that support the following
-# NBCs: MI_OPBC_H and MI_OPBC_F.  If supported, a Simulator must allocate
-# memory for this argument and register it in the KIM API object (via
-# KIM_API_allocate() or KIM_API_set_data()) before the KIM_API_model_compute()
-# function is called.  The Simulator is free to change this pointer at any
-# time.
-#
-# Name                      Type         Unit               Shape
-#
-boxSideLengths              double       length             [3]
-
-################################################################################
-#
-# (deprecated) temperature : A scalar specifying the system temperature.
-#
-# This argument is required for a special class of temperature-dependent models.
-#
-# Name                      Type         Unit               Shape
-#
-temperature                 double       temperature        []
 
 
 ################################################################################
@@ -1277,8 +1056,7 @@ MODEL_PARAMETERS:
 
 ################################################################################
 #
-# Two types of model parameters are allowed (the Unit and Requirements strings
-# are ignored for MODEL_PARAMETER lines):
+# (the Unit and Requirements strings are ignored for MODEL_PARAMETER lines):
 #
 # If supported, a Model must allocate memory for these arguments and register
 # it in the KIM API object (via KIM_API_set_data()) during the
@@ -1288,21 +1066,10 @@ MODEL_PARAMETERS:
 # values before deallocating the parameter memory.  The Model must deallocate
 # the parameter memory during the call to KIM_API_model_destroy().
 #
-# 1) (deprecated) PARAM_FIXED_<label> : A parameter that should not be changed
-#                          by the Simulator.  A `fixed parameter' may also be
-#                          used by the Model for persistent storage between
-#                          calls to the Model's compute routine and/or as local
-#                          memory space to avoid the overhead of memory
-#                          allocation/deallocation during each execution of the
-#                          compute routine.  However, this storage should not
-#                          depend on the content provided by the Simulator.
-#                          For persistent storage of this type the Model Buffer
-#                          should be used.
-#
-# 2) PARAM_FREE_<label> :  A parameter that may be changed by the Simulator
-#                          (which must then call the KIM_API_model_reinit()
-#                          function to inform the Model that its parameters
-#                          have changed).
+# PARAM_<label> :  A parameter that may be changed by the Simulator
+#                  (which must then call the KIM_API_model_reinit()
+#                  function to inform the Model that its parameters
+#                  have changed).
 #
 # In the above <label> is an arbitrary string of alphanumeric characters and
 # the underscore (`_') character.
@@ -1311,36 +1078,29 @@ MODEL_PARAMETERS:
 # IMPORTANT NOTE: It is important to stress that a Model may not store data in
 # static memory since it may be called with different KIM API objects.  Any
 # information that should persist between calls must be stored in the KIM API
-# object.  Fixed parameters may be used for this purpose as noted above.
+# object.  The model_buffer may be used for this purpose.
 #
 # Examples
 #
 # Name                      Type         Unit               Shape
 #
-# PARAM_FREE_Sigma          double       length             []
-# PARAM_FREE_Epsilon        double       energy             []
-# PARAM_FIXED_LJshift       double       energy             []
-#
-# (deprecatd) In this example `PARAM_FIXED_LJshift' is a shift that brings the
-# Lennard-Jones potential to zero at the defined cutoff radius.  If the Sigma
-# or Epsilon parameters are changed by the Simulator, `PARAM_FIXED_LJshift'
-# will be recomputed during required call to model_reinit.
+# PARAM_Sigma               double       length             []
+# PARAM_Epsilon             double       energy             []
 #
 #
 ################################################################################
 
 ################################################################################
 #
-# PARAM_FREE_cutoff : A standard free parameter that is used to store the
-#                     cutoff radius of the Model.  This parameter allows a
-#                     Simulator to modify a Model by changing its cutoff radius
-#                     as described above.
+# PARAM_cutoff : A standard parameter that is used to store the cutoff radius
+#                of the Model.  This parameter allows a Simulator to modify a
+#                Model by changing its cutoff radius as described above.
 #
 # NOTE: Currently this is the only standard parameter defined by the KIM API.
 #
 #
 # Name                      Type         Unit               Shape
 #
-PARAM_FREE_cutoff           double       length             []
+PARAM_cutoff                double       length             []
 
 # END of standard.kim file

@@ -37,16 +37,14 @@
 #define KIMHDR_KIM_API_H
 
 #include <iostream>
+#include <map>
 #include <stdint.h>
 #include <stdarg.h>
 
-#define number_NBC_methods 7
+#define NUMBER_REQUIRED_ARGUMENTS 10
 #define KIM_KEY_STRING_LENGTH 128
 
 #include "KIM_API_Version.h"
-#include "KIM_AUX.h"
-
-//#define intptr_t int  // for 32 bit machines
 
 // A macro to disallow the copy constructor and operator= functions.
 // This should be used in the private: declarations for a class
@@ -56,9 +54,6 @@
 
 class KIMBaseElementFlag{
 public:
-        int peratom; //0 -- peratom, 1--per something else
-        int freeable; // 0--freeable , 1 is not freeable, ... - error
-        int pointerchanged;// 0 -- changed therefore update, 1 don't update, ... =error
         int calculate; // 0 -- do not calculate, 1 -- calculate
         KIMBaseElementFlag();
 };
@@ -91,12 +86,11 @@ public:
 
         KIM_IOline();
 
-        bool getFields(char *inString);
+        bool getFields(char * const inString);
         int get_rank();
         int * get_shape();
         int * get_shape(int nparts, int nspecies);
         bool isitsizedefined();
-        bool isitperatom();
         bool isitoptional();
 
  private:
@@ -119,7 +113,7 @@ public:
 
         void strip(char *nm);
         IOline();
-        bool getFields(char *inputString);
+        bool getFields(char * const inputString);
         static int readlines_str(const char * inputstr, IOline ** lines, bool& success);
 }; //secondary input line handler //cout<<"SystemOfUnit:  file:"<<infile<<":"<<endl;
 std::ostream &operator<<(std::ostream &stream, IOline a);
@@ -137,19 +131,16 @@ public:
         intptr_t size; //Size in words defined by type
         intptr_t rank; // number of indexes
         int * shape; //1d array of integer showing the size of each index
-        void * ptrptr; // Auxilary structure for holding pointer to pointers
         char *name;
         char *type;
         KIMBaseElementUnit * unit;
         KIMBaseElementFlag *flag;
-        void *reserved;
         KIMBaseElement();
         ~KIMBaseElement();
         bool init(const char *nm,const char * tp,intptr_t sz, intptr_t rnk, int *shp,void * pdata);
-        bool init(const char *nm,const char * tp,intptr_t sz, intptr_t rnk, int *shp);
         void free();
         void nullify();
-        bool equiv(KIM_IOline& kimioline, bool skip_specials);
+        bool equiv(KIM_IOline& kimioline);
 
 static  int getelemsize(const char *tp, bool& success);
 };
@@ -177,48 +168,25 @@ public:
   int get_version_simulator_major(int* const major) const;
   int get_version_simulator_minor(int* const minor) const;
 
-    int model_info(const char * modelname) {return preinit(modelname);} //does not have error
-                                                                  // because it returns OK or FAIL
-
     void free(int *error);
     int set_data(const char * nm, intptr_t size, void *dt);
     int set_method(const char * nm, intptr_t size, func_ptr dt);
-    int set_data_by_index(int ind,intptr_t size, void *dt);
-    int set_method_by_index(int ind,intptr_t size, func_ptr dt);
 
     void * get_data(const char *nm,int *error);
     func_ptr get_method(const char *nm,int *error);
-    void * get_data_by_index(int ind,int *error);
-    func_ptr get_method_by_index(int ind,int *error);
 
-
-    int get_index(const char *nm, int * error);
     intptr_t get_size(const char *nm,int *error);
-    intptr_t get_rank(const char *nm,int *error);
-    intptr_t get_shape(const char *nm,int * shape,int *error);
-    void set_shape(const char * nm, int * shape, int rank, int *error);
     void set_compute(const char *nm, int flag, int *error);
-    void set_compute_by_index(int ind, int flag, int *error);
     int get_compute(const char *nm, int* error);
-    KIMBaseElement &operator[](int i);
-    KIMBaseElement &operator[](const char *nm);
     void print(int *error);
 
-    intptr_t get_size_by_index(int I,int *error);
-    intptr_t get_rank_by_index(int I,int *error);
-    intptr_t get_shape_by_index(int I, int * shape,int *error);
-    int get_compute_by_index(int I,int * error);
-
-    int file_init(const char * simkimfile,const char * modelname);
     int string_init(const char * intststr,const char * modelname);
    int match(const char* simstring, const char* modelstring);
     int model_compute();
-    int get_neigh(int mode,int request, int *part, int *numnei, int **nei1part, double **Rij);
+    int get_neigh(int request, int *numnei, int **nei1part);
     int model_init();
     int model_reinit();
     int model_destroy();
-
-void allocate( int nparts, int nspecies,int * error);
 
   int get_num_model_species(int* numberSpecies, int* maxStringLength);
   int get_model_species(const int index, const char** const speciesString);
@@ -230,23 +198,13 @@ void set_species_code(const char *species, int code, int* error);
 
   int get_num_params(int* numberParameters, int* maxStringLength);
   int get_parameter(const int index, const char** const parameterString);
-  int get_num_free_params(int* numberFreeParameters, int* maxStringLength);
-  int get_free_parameter(const int index, const char** const freeParameterString);
-  int get_num_fixed_params(int* numberFixedParameters, int* maxStringLength);
-  int get_fixed_parameter(const int index, const char** const fixedParameterString);
 
   static int get_model_kim_str_len(const char* const modelname, int* const kimStirngLen);
   static int get_model_kim_str(const char* const modelname, const char** const kimString);
 
 
-  int get_NBC_method(const char** const NBC_String);
-int is_half_neighbors(int *error);
-
-
-    int get_neigh_mode(int *error);
   static int get_status_msg(const int status_code, const char** const status_msg);
     static int report_error(int line, const char * fl, const char * usermsg, int error);
-    int get_model_index_shift();
     void set_model_buffer(void * o,int *error);
     void * get_model_buffer(int *error);
     void set_sim_buffer(void * o,int *error);
@@ -260,27 +218,14 @@ int is_half_neighbors(int *error);
    //
   void setm_data(int *err, int numargs, ... );      //++
   void setm_method(int *err, int numargs, ... );      //++
-  void setm_data_by_index(int *err, int numargs, ... );  //++
-  void setm_method_by_index(int *err, int numargs, ... );  //++
   void getm_data(int *err,int numargs, ...);        //++
   void getm_method(int *err,int numargs, ...);        //++
-  void getm_data_by_index(int *err,int numargs, ...);    //++
-  void getm_method_by_index(int *err,int numargs, ...);    //++
-  void getm_index(int *err, int numargs, ...);      //++
   void setm_compute(int *err, int numargs, ...);    //++
-  void setm_compute_by_index(int *err, int numargs, ...);//++
   void getm_compute(int *err,int numargs, ...);  //  ++
-  void getm_compute_by_index(int *err,int numargs, ...); //++
-
-   //related to process fij public variables
-    bool test_doing_process_dEdr;
-    bool test_doing_process_d2Edr2;
-    bool virial_need2add;
-    bool particleVirial_need2add;
-    bool hessian_need2add;
 
     //Unit_Handling object
     Unit_Handling unit_h;
+
     //Unit_Handling related routines
 
     static double get_scale_conversion(const char * u_from,const char * u_to, int *error);
@@ -295,9 +240,6 @@ int is_half_neighbors(int *error);
       double length_exponent, double energy_exponent, double charge_exponent,
       double temperature_exponent, double time_exponent, int* kimerror);
 
-    KIM_AUX::Process_DE * get_process_DE_instance(){//used in KIM_AUX
-        return &process_DE_instance;
-    }
 private:
   DISALLOW_COPY_AND_ASSIGN(KIM_API_model);
 
@@ -305,9 +247,6 @@ private:
     int numlines;
    const char* name_temp;
 
-    bool locator_neigh_mode;
-    bool iterator_neigh_mode;
-    bool both_neigh_mode;
     int ErrorCode;// reserved for proper errors handling
     int compute_index;
     int get_neigh_index;
@@ -315,8 +254,6 @@ private:
     int neiOfAnAtomSize;
 
     int model_index_shift; //0--no conversion, 1 -- from 0 to 1, -1 -- from 1 to 0
-    int AUX_index_shift; //0--noconversion, 1 -- from 0 to 1
-    KIM_AUX::Process_DE process_DE_instance;
     void * model_buffer; // stores everything that is not reflected  in .kim
                          // but nessssery for model instantiation
     void * test_buffer; // stores everything that is not reflected  in .kim
@@ -332,75 +269,27 @@ private:
   int simulatorVersionMajor;
   int simulatorVersionMinor;
 
-    //"CLUSTER"
-    char NBC_method_A[KIM_KEY_STRING_LENGTH];
-    char arg_NBC_method_A[1][KIM_KEY_STRING_LENGTH];
-    int narg_NBC_method_A;
 
-
-    //"MI_OPBC_H"
-    char NBC_method_B[KIM_KEY_STRING_LENGTH];
-    char arg_NBC_method_B[5][KIM_KEY_STRING_LENGTH];
-    int narg_NBC_method_B;
-
-
-    //"MI_OPBC_F"
-    char NBC_method_C[KIM_KEY_STRING_LENGTH];
-    char arg_NBC_method_C[4][KIM_KEY_STRING_LENGTH];
-    int narg_NBC_method_C;
-
-
-    //"NEIGH_RVEC_F"
-    char NBC_method_D[KIM_KEY_STRING_LENGTH];
-    char arg_NBC_method_D[3][KIM_KEY_STRING_LENGTH];
-    int narg_NBC_method_D;
-
-
-    //"NEIGH_RVEC_H"
-    char NBC_method_E[KIM_KEY_STRING_LENGTH];
-    char arg_NBC_method_E[4][KIM_KEY_STRING_LENGTH];
-    int narg_NBC_method_E;
-
-
-    //"NEIGH_PURE_F"
-    char NBC_method_F[KIM_KEY_STRING_LENGTH];
-    char arg_NBC_method_F[3][KIM_KEY_STRING_LENGTH];
-    int narg_NBC_method_F;
-
-    //"NEIGH_PURE_H"
-    char NBC_method_G[KIM_KEY_STRING_LENGTH];
-    char arg_NBC_method_G[4][KIM_KEY_STRING_LENGTH];
-    int narg_NBC_method_G;
-
-    int n_NBC_methods;
-    int * nnarg_NBC;
-    char ** NBC_methods;
-    char *** arg_NBC_methods;
-
-    //related to process fij variables
-
-    int virial_ind;
-    int particleVirial_ind;
-    int hessian_ind;
-    int process_dEdr_ind;
-    int process_d2Edr2_ind;
+  //Required arguments
+  static std::map<std::string,std::string> kim_str_map;
+  static char const * const required_arguments[];
 
     // other..
+    KIMBaseElement &operator[](int i);
+    KIMBaseElement &operator[](const char *nm);
+
+    int get_index(const char *nm, int * error);
     static void fatal_error_print();
-    int preinit(const char * initfile,const char *modelname);
     int preinit(const char * modelname);
     int prestring_init(const char * instrn);
-    int init_str_modelname(const char *simname,const char *inmdlstr);
     static   bool read_file_str(const char * strstream,KIM_IOline ** lns, int * numlns );
 
     static bool irrelevantVars2donotcompute(KIM_API_model & sim, KIM_API_model & mdl);
-    bool check_consistance_NBC_method();
-    static bool is_it_match(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns, bool ignore_optional, bool match_regular);
+    bool check_required_arguments();
+    static bool is_it_match(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns, bool ignore_optional);
     static bool is_it_match_noFlagCount(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns, bool ignore_optional);
 
     static bool is_it_par(const char * name);
-    static bool is_it_fixed_par(const char * name);
-    static bool is_it_free_par(const char * name);
 
     bool is_it_match(KIM_API_model &test,KIM_API_model & mdl);
     bool do_AtomsTypes_match(KIM_API_model &test,KIM_API_model & mdl);
@@ -410,17 +299,11 @@ private:
                            char* const prerelease, char* const build_metadata);
   bool does_it_have_a_version_number(const char* const instrn);
 
-    char NBC_method_current[KIM_KEY_STRING_LENGTH];
-    bool NBC_methods_match(KIM_API_model &test,KIM_API_model &mdl);
-    bool fij_related_things_match(KIM_API_model &test,KIM_API_model &mdl);
-    bool fij_related_things_add_set_index();
-    void add_auxiliaries_if_needed();
     bool init_AtomsTypes();
     bool do_flag_match(KIM_API_model & tst, KIM_API_model &mdl);
     bool is_it_in_and_is_it_flag(KIM_API_model &mdl,const char *name);
     bool is_it_in(KIM_API_model &mdl,const char *name);
     void * model_lib_handle;
-    bool add_element(const char * inln);
     void free();
 };
 std::ostream &operator<<(std::ostream &stream, KIM_API_model &a);

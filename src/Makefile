@@ -44,7 +44,7 @@ endif
 
 
 # Definition of c and fortran .o file list
-OBJC = KIM_API.o KIM_API_C.o $(KIM_STR_NAME).o Unit_Handling.o KIM_AUX.o
+OBJC = KIM_API.o KIM_API_C.o $(KIM_STR_NAME).o Unit_Handling.o
 OBJF90 = KIM_API_F.o
 OBJF03 = KIM_API_F03.o KIM_API_F03_Helper.o
 
@@ -139,6 +139,7 @@ KIM_API_Version.h: KIM_API_Version.h.tpl $(KIM_MAKE_FILES)
                                                 -e 's/versionString/"$(VERSION_FULL)"/g' \
                 > $@
 
+# improve this --- shouldn't need to touch files like this
 %.h:
 	@touch $@
 
@@ -164,8 +165,6 @@ KIM_API_F03_Multiples.incl: scripts/CreateGetSetMultipleRoutines.sh $(KIM_MAKE_F
 	$(QUELL)scripts/CreateGetSetMultipleRoutines.sh > KIM_API_F03_Multiples.incl
 
 KIM_API_F03_Helper.o: KIM_API_status.h $(KIM_MAKE_FILES)
-
-KIM_AUX.o: KIM_AUX.h KIM_API.h KIM_API_status.h $(KIM_MAKE_FILES)
 
 KIM_API_DIRS.o: KIM_API_DIRS.h $(KIM_MAKE_FILES)
 
@@ -247,7 +246,7 @@ install_modelsdir = $(dest_package_dir)/$(modelsdir)
 install_modeldriversdir = $(dest_package_dir)/$(modeldriversdir)
 install_includedir = $(dest_package_dir)/include
 install_nodest_includedir = $(package_dir)/include
-install_include = KIM_API.h KIM_API_C.h KIM_API_status.h KIM_API_Version.h KIM_API_DIRS.h Unit_Handling.h KIM_AUX.h kim_api_f03.mod
+install_include = KIM_API.h KIM_API_C.h KIM_API_status.h KIM_API_Version.h KIM_API_DIRS.h Unit_Handling.h kim_api_f03.mod
 
 install-check:
 ifneq (dynamic-load,$(KIM_LINK))

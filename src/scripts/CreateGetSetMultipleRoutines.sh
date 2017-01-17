@@ -189,29 +189,10 @@ printf "end subroutine kim_api_setm_%s\n" $subject
 printf "\n"
 }
 
-subject="index" # only getm (no setm)
-idtype="character"
-idkind='len=*'
-dttype="integer"
-dtkind="c_int"
-hasSize='yes'
-subroutine=false
-createGetM
-
 subject="data"
 idtype="character"
 idkind='len=*'
 dttype="type"
-dtkind="c_ptr"
-hasSize='yes'
-subroutine=false
-createGetM
-createSetM
-
-subject="data_by_index"
-idtype="integer"
-idkind="c_int"
-dtkind="type"
 dtkind="c_ptr"
 hasSize='yes'
 subroutine=false
@@ -231,32 +212,9 @@ unset hasSize
 subroutine=true
 createSetM
 
-#subroutine & no size argument in set
-subject="compute_by_index"
-idtype="integer"
-idkind="c_int"
-dttype="integer"
-dtkine="c_int"
-hasSize='yes'
-subroutine=false
-createGetM
-unset hasSize
-subroutine=true
-createSetM
-
 subject="method"
 idtype="character"
 idkind='len=*'
-dttype="type"
-dtkind="c_funptr"
-hasSize='yes'
-subroutine=false
-createGetM
-createSetM
-
-subject="method_by_index"
-idtype="integer"
-idkind="c_int"
 dttype="type"
 dtkind="c_funptr"
 hasSize='yes'

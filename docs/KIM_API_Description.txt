@@ -78,7 +78,7 @@ In the following description several constants are used:
               occurred.
 
 ==============================  GLOBAL METHODS  ==============================
-(deprecated) int KIM_API_file_init(void *kimmdl, char *simkimfile, char *modelname);
+int KIM_API_string_init(void *kimmdl, char *simdescriptor, char *modelname);
 
 To be used by: Simulator
 
@@ -118,87 +118,7 @@ To be used by: Simulator
         species and a positive match is obtained.  Otherwise, a negative match
         is obtained and the routine returns KIM_STATUS_FAIL.
 
-    (4) Neighbor list access matching: The following is a list of the possible
-        cases and their matching result.
-
-              Simulator   Model         Matching Result
-              ----------- ------------- ---------------
-              Iter        Iter          positive match  (deprecated)
-              Iter        Loca          negative match  (deprecated)
-              Iter        Iter&Loca     positive match  (deprecated)
-              Iter        Both          negative match  (deprecated)
-              Loca        Iter          negative match  (deprecated)
-              Loca        Loca          positive match
-              Loca        Iter&Loca     positive match  (deprecated)
-              Loca        Both          negative match  (deprecated)
-              Iter&Loca   Iter          positive match  (deprecated)
-              Iter&Loca   Loca          positive match  (deprecated)
-              Iter&Loca   Iter&Loca     positive match  (deprecated)
-              Iter&Loca   Both          positive match  (deprecated)
-              Both        Iter          positive match  (deprecated)
-              Both        Loca          positive match  (deprecated)
-              Both        Iter&Loca     positive match  (deprecated)
-              Both        Both          positive match  (deprecated)
-
-    (5) NBC method matching: If one or more of the Simulator's listed NBC
-        methods is also in the Model's listed NBC methods a positive match is
-        obtained.  When more than one common NBC method exists, the NBC method
-        listed closest to the top of the Simulator's NBC method list is
-        selected as the "active" NBC method.  If no common NBC methods are
-        listed a negative match is obtained and the routine returns
-        KIM_STATUS_FAIL.
-
-	All NBCs except "NEIGH_PURE_F" are deprecated.
-
-    (6) Matching for MODEL_INPUT arguments required by active NBC method:
-        Depending on the active NBC method (determined in step (5) above), the
-        Model's and Simulator's MODEL_INPUT section must include the following
-        arguments:
-
-              CLUSTER: (deprecated)
-                    `coordinates'
-
-              NEIGH_PURE_H: (deprecated)
-                    `coordinates'
-                    `numberContributingParticles'
-                    `neighObject'
-                    `get_neigh'
-
-              NEIGH_PURE_F:
-                    `coordinates'
-                    `neighObject'
-                    `get_neigh'
-
-              NEIGH_RVEC_H: (deprecated)
-                    `coordinates'
-                    `numberContributingParticles'
-                    `neighObject'
-                    `get_neigh'
-
-              NEIGH_RVEC_F: (deprecated)
-                    `coordinates'
-                    `neighObject'
-                    `get_neigh'
-
-              MI_OPBC_H: (deprecated)
-                    `coordinates'
-                    `boxSideLengths'
-                    `numberContributingParticles'
-                    `neighObject'
-                    `get_neigh'
-
-              MI_OPBC_F: (deprecated)
-                    `coordinates'
-                    `boxSideLengths'
-                    `neighObject'
-                    `get_neigh'
-
-        If all required arguments are found in both the Model's and Simulator's
-        list of MODEL_INPUT arguments, then a positive match is obtained.
-        Otherwise, a negative match is obtained and the routine returnes
-        KIM_STATUS_FAIL.
-
-    (7) Mandatory arguments matching: The following arguments are mandatory and
+    (4) Mandatory arguments matching: The following arguments are mandatory and
         must be included in any KIM descriptor file:
 
               MODEL_INPUT section
@@ -208,7 +128,9 @@ To be used by: Simulator
                                      section is empty.  That is, if the Model
                                      and Simulator only support a single
                                      "unnamed" particle species.)
-                `coordinates'        (this has already been confirmed in step 6)
+                `coordinates'
+                `neighObject'
+                `get_neigh'
               MODEL_OUTPUT section
                 `compute'
                 `reinit'
@@ -220,24 +142,7 @@ To be used by: Simulator
         descriptor files, then a positive match is obtained.  Otherwise, a
         negative match is obtained and the routine returns KIM_STATUS_FAIL.
 
-    (8) MODEL_INPUT matching:
-
-        (deprecated) If the Model's MODEL_INPUT list of arguments includes
-        `process_dEdr' or `process_d2Edr2', then its MODEL_OUTPUT list of
-        arguments may not contain `virial', `particleVirial', or `hessian'.  If
-        it does, a negative match is obtained and the routine returns
-        KIM_STATUS_FAIL.
-
-        (deprecated) If the Model's MODEL_INPUT list of arguments contains
-        `process_dEdr' and the Simulator's MODEL_INPUT list of arguments does
-        not contain `process_dEdr', then (in memory) the routine adds `virial'
-        and `particleVirial' arguments, with the `optional' keyword, to the
-        Model's MODEL_OUTPUT list of arguments.
-
-        (deprecated) If the Model's MODEL_INPUT list of arguments contains
-        `process_dEdr' and `process_d2Edr2', then (in memory) the routine adds
-        `hessian', with the `optional' keyword, to the Model's MODEL_OUTPUT
-        list of arguments.
+    (5) MODEL_INPUT matching:
 
         For each non-optional argument in the Model's MODEL_INPUT list of
         arguments, a corresponding entry must exist in the Simulator's
@@ -256,7 +161,7 @@ To be used by: Simulator
         arguments which are not contained in the Simulator's MODEL_INPUT list
         of arguments have their `compute' flag set to KIM_COMPUTE_FALSE.
 
-    (9) MODEL_OUTPUT matching: For each non-optional argument in the Model's
+    (6) MODEL_OUTPUT matching: For each non-optional argument in the Model's
         MODEL_OUTPUT list of arguments, a corresponding entry must exist in the
         Simulator's MODEL_OUTPUT list of arguments.  If at least one such
         argument is missing from the Simulator's list, a negative match is
@@ -270,49 +175,7 @@ To be used by: Simulator
         and the routine returns KIM_STATUS_FAIL.
 
 	For each argument in the Simulator's MODEL_OUTPUT list of arguments,
-	the argument's `compute' flag is set to KIM_COMPUTE_TRUE.  (deprecated)
-	If the `virial' or `particleVirial' arguments were added to the Model's
-	MODEL_OUTPUT list of arguments in step 8 and any of these arguments are
-	contained in the Simulator's MODEL_OUTPUT list of arguments, then the
-	`process_dEdr' argument's `compute' flag is set to KIM_COMPUTE_TRUE.
-	If the `hessian' argument was added to the Model's MODEL_OUTPUT list of
-	arguments in step 8 and this argument is in the Simulator's
-	MODEL_OUTPUT list of arguments, then the `compute' flags of the
-	`process_dEdr' and `process_d2Edr2' arguments are set to
-	KIM_COMPUTE_TRUE.
-
-Arguments:
-
-      void *kimmdl
-              reference pointer to KIM_API_model object (in C++ style, the
-              definition will be (KIM_API_model **)).
-
-      char *simkimfile
-              null terminated character string giving the relative or absolute
-              path name to the Simulator's KIM descriptor file.
-
-      char *modelname
-              null terminated character string that defines the Model name.
-              The routine uses this name to find the character string in memory
-              that contains the Model's descriptor (.kim) file.  At compile
-              time the descriptor file is stored in the Model's binary library
-              file.  Thus, it is necessary to perform a `make' of the KIM API
-              package after editing a Model's ".kim" file.
-
-******************************************************************************
-
-int KIM_API_string_init(void *kimmdl, char *simdescriptor, char *modelname);
-
-To be used by: Simulator
-
-    This routine performs the same function as the KIM_API_file_init() routine.
-    However, in this case the argument `simdescriptor' is a (long) null (or eof)
-    terminated string with the complete content of the Simulator's KIM
-    descriptor file.
-
-    For a description of the process of matching a Simulator KIM descriptor
-    file and a Model KIM descriptor file performed by this routine, see the
-    entry for KIM_API_file_init() above.
+	the argument's `compute' flag is set to KIM_COMPUTE_TRUE.
 
 Arguments:
 
@@ -434,134 +297,11 @@ Arguments:
 
 ******************************************************************************
 
-(deprecated) int KIM_API_model_info(void *kimmdl, char *modelname);
-
-To be used by: Simulator
-
-    This routine creates a KIM API object that represents the capabilities of a
-    Model.  Standard library routines (described below) can be used to probe
-    this object in order to determine (most) of the items listed in the Model's
-    KIM descriptor file. For example, A Simulator could determine what particle
-    species are supported by a Model and adjust it's calculations
-    appropriately.  Return value: KIM_STATUS_OK if successful and
-    KIM_STATUS_FAIL if unsuccessful.
-
-Arguments:
-
-      void *kimmdl
-              reference pointer to KIM_API_model object (in C++ style, the
-              definition will be (KIM_API_model **)).
-
-      char *modelname
-              null terminated character string that defines the Model name.
-              The routine uses this name to find the character string in memory
-              that contains the Model's descriptor (.kim) file.  At compile
-              time the descriptor file is stored in the Model's binary library
-              file.  Thus, it is necessary to perform a `make' of the KIM API
-              package after editing a Model's ".kim" file.
-
-******************************************************************************
-
-(deprecated) void KIM_API_allocate(void *kimmdl, int nParticles, int nSpecies, int *kimerror);
-
-To be used by: Simulator
-
-    This routine allocates memory for each data argument stored in the
-    initialized KIM API object kimmdl.  It will return with an error code if an
-    error occurs during allocation.  KIM_API_allocate should not be used in
-    conjunction with KIM_API_set_data for array data (this would create a
-    memory leak).
-
-    NOTE: Prior to calling this routine a valid KIM API object must be obtained
-          by calling KIM_API_file_init().  However, calling this routine
-          multiple times with the same KIM API object will cause a memory leak.
-
-    NOTE: This routine does not allocate memory for a Model's parameters.  The
-          Model is responsible for doing this during a call to
-          KIM_API_model_init().
-
-    Here the process of allocating memory for KIM API arguments and updating
-    their associated shape values is described in detail (See also, the
-    discussion of the `Shape' string component of the `Data' line type
-    contained in the `standard.kim' file.):
-
-    (1) For each argument in the Model's MODEL_INPUT, MODEL_OUTPUT, and
-        MODEL_PARAMETERS lists of arguments, the routine converts the shape
-        string, specified in the KIM descriptor file, into an integer shape
-        array.  The three supported non-integer string values: `:',
-        `numberOfParticles', `numberSpecies' are converted to 0, the value of
-        the `nParticles' argument to this routine, and the value of the
-        `nSpecies' argument to this routine, respectively.  All integer extent
-        values specified in the KIM descriptor file are simply transferred into
-        the integer shape array.  (NOTE: here, the values specified in the KIM
-        descriptor file take precedence over any changes that may have been
-        made, via the KIM_API_set_shape() routine, to the argument's integer
-        shape array values.)
-
-    (2) For each argument in the Model's MODEL_INPUT and MODEL_OUTPUT lists of
-        arguments:
-
-              (a) If the argument has an allocated memory block associated with
-                  it, from a previous call to KIM_API_allocate(), the memory
-                  block is released.
-
-              (a) If the argument type is `method' or `pointer', the argument's
-                  integer shape array is set to `[]' (rank=0), nothing is
-                  allocated, and the argument's pointer value is set to null.
-
-              (b) If the argument is `optional' and its `compute' flag has is
-                  KIM_COMPUTE_FALSE, the argument's first shape extent (for
-                  rank>=1) is set to zero (shape[0]=0), nothing is allocated,
-                  and the argument's pointer value is set to null.
-
-              (c) If the argument has a at least one extent value in its shape
-                  equal to 0, then nothing is allocated and the argument's
-                  pointer value is set to null.
-
-              (d) If the argument has rank=0 (it is a scalar) or if the
-                  argument's integer shape array has all strictly positive
-                  entries, then the appropriate size block of contiguous memory
-                  is allocated and the argument's pointer value is set to
-                  pointer to this block of memory.
-
-    (3) For each argument in the Model's MODEL_PARAMETERS list of arguments,
-        the argument's first shape extend value (when rank>=1) is set to 0
-        (shape[0]=0), nothing is allocated (the Model is responsible for
-        allocating parameter memory), and the argument's pointer value is set
-        to null.  (NOTE: this will generally cause a memory leak if
-        KIM_API_allocate() is called multiple times on the same KIM API object.
-        To avoid such memory leaks, If KIM_API_model_init() has been called,
-        then KIM_API_model_destroy() should be called before KIM_API_allocate()
-        is called a second time.)
-
-    NOTE: This routine does not set the value of the `numberOfParticles' and
-    `numberSpecies' arguments after allocating their memory.  This
-    responsibility is left to the Simulator.
-
-Arguments:
-
-      void *kimmdl
-              pointer to KIM_API_model object (in C++ style, the definition
-              will be (KIM_API_model *)).
-
-      int nParticles
-              total number of particles.
-
-      int nSpeciess
-              number of particles species.
-
-      int *kimerror
-              error code: KIM_STATUS_OK    -- successful completion,
-                          KIM_STATUS_FAIL  -- unsuccessful
-
-******************************************************************************
-
 void KIM_API_free(void *kimmdl, int *kimerror);
 
 To be used by: Simulator
 
-    This routine deallocates all memory allocated by KIM_API_allocate and also
-    destroys the KIM API object.
+    This routine destroys the KIM API object.
 
     NOTE: Prior to calling this routine, the Simulator is responsible for
           calling the KIM_API_model_destroy() function and deallocating any
@@ -680,26 +420,6 @@ Arguments:
 
 ******************************************************************************
 
-(deprecated) int KIM_API_get_model_index_shift(void *kimmdl);
-
-To be used by: Model/Simulator
-
-    This routine returns an integer that indicates the offset in indices
-    between Simulators and Models for array access. The return value can be
-    only -1,0 or +1.
-    If the Simulator has ZeroBasedLists and the Model has OneBasedLists  the return value is +1
-    If the Simulator has OneBasedLists  and the Model has OneBasedLists  the return value is  0
-    If the Simulator has ZeroBasedLists and the Model has ZeroBasedLists the return value is  0
-    If the Simulator has OneBasedLists  and the Model has ZeroBasedLists the return value is -1
-
-Arguments:
-
-      void *kimmdl
-              pointer to KIM_API_model object (in C++ style, the definition
-              will be (KIM_API_model *)).
-
-******************************************************************************
-
 void KIM_API_set_model_buffer(void *kimmdl, void *ob, int *kimerror);
 
 To be used by: Model
@@ -713,9 +433,7 @@ To be used by: Model
           Simulator) in the KIM API object (such as the number of particles, or
           the memory location of the `forces' argument).  In particular, the
           pointer values returned by KIM_API_get_data() are, generally, NOT
-          safe to store in the Model Buffer.  An example of a safe quantity to
-          store in the Model Buffer is the index for an argument returned by
-          the KIM_API_get_index() function.
+          safe to store in the Model Buffer.
 
 Arguments:
 
@@ -745,9 +463,7 @@ To be used by: Simulator
           the Model) in the KIM API object (such as the pointer to the Model's
           `compute' function, the pointers to its Parameters or their values).
           In particular, the pointer values returned by KIM_API_get_data() are,
-          generally, NOT safe to store in the Simulator Buffer.  An example of
-          a safe quantity to store in the Simulator Buffer is the index for an
-          argument returned by the KIM_API_get_index() function.
+          generally, NOT safe to store in the Simulator Buffer..
 
 Arguments:
 
@@ -800,30 +516,6 @@ Arguments:
               error code: KIM_STATUS_OK   -- successful completion,
                           KIM_STATUS_FAIL -- unsuccessful
 
-******************************************************************************
-
-(deprecated) int KIM_API_is_half_neighbors(void *kimmdl, int *kimerror);
-
-To be used by: Model/Simulator
-
-    This routine returns 1 if KIM_API Model object setting is for half
-    neighbors or 0 if it is for full neighbors.  The type of neighbor list
-    being used (if any) is determined by the "active" NBC method (See
-    KIM_API_get_NBC_method() below).  This is a convenience routine which makes
-    it easy to quickly determine the type of neighbor list in use.  This routine
-    returns 1 for the CLUSTER NBC method even though neighbor lists are not
-    used as part of the CLUSTER NBC method.
-
-Arguments:
-
-      void *kimmdl
-              pointer to KIM_API_model object (in C++ style, the definition
-              will be (KIM_API_model *)).
-
-      int *kimerror
-              error code: KIM_STATUS_OK   -- successful completion,
-                          KIM_STATUS_FAIL -- unsuccessful
-
 
 ================== ELEMENT ACCESS METHODS ROUTINES BY NAME ====================
 
@@ -840,13 +532,6 @@ To be used by: Model/Simulator
     KIM_STATUS_ARG_UNKNOWN.  If an existing pointer in the KIM API object is
     overwritten by this operation, a memory leak may result. (This could
     indicate that storage for the same data has been allocated more than once.)
-    Thus, care must be taken if this routine is used in conjunction with
-    KIM_API_allocate for array data.  This routine assumes that the shape of
-    the associated argument has been fully specified, except possibly for the
-    `fast-index' (see discussion of shape entries in standard.kim).  The
-    routine computes the product of the shape entries not including the
-    fast-index and sets a new shape value for the fast-index by dividing `size'
-    by this product.
 
     NOTE: Prior to calling this routine a valid KIM API object must be obtained
           by calling KIM_API_file_init().
@@ -901,36 +586,7 @@ intptr_t KIM_API_get_size(void *kimmdl, char *nm, int *kimerror);
 To be used by: Model/Simulator
 
      The functionality of this routine is the same as KIM_API_get_data, except
-     it returns the size of the data in terms of underlying elements. (For
-     example, if the data is an array of shape [numberOfParticles,3],
-     KIM_API_get_size() will return numberOfParticles*3.)  If no data with name
-     `nm' is in the KIM API object, a negative value will be returned.
-
-Arguments:
-
-      void *kimmdl
-              pointer to KIM_API_model object (in C++ style, the definition
-              will be (KIM_API_model *))
-
-      char *nm
-              null terminated string is the name of the argument field exactly
-              as it appears in the .kim descriptor file
-
-      int *kimerror
-              error code: KIM_STATUS_OK   -- successful completion,
-                          KIM_STATUS_FAIL -- unsuccessful
-
-******************************************************************************
-
-(deprecated) intptr_t KIM_API_get_rank(void *kimmdl, char *nm, int *kimerror);
-
-To be used by: Model/Simulator
-
-     The functionality of this routine is the same as KIM_API_get_data, except
-     it returns the rank of the data in terms of underlying elements. (For
-     example, if the data is an array of shape [numberOfParticles,3],
-     KIM_API_get_rank() will return 2).  The routine returns 0 for scalar
-     values (scalars are indicated with `[]' in KIM descriptor files).  If no
+     it returns the size of the data in terms of underlying elements.  If no
      data with name `nm' is in the KIM API object, a negative value will be
      returned.
 
@@ -947,83 +603,6 @@ Arguments:
       int *kimerror
               error code: KIM_STATUS_OK   -- successful completion,
                           KIM_STATUS_FAIL -- unsuccessful
-
-******************************************************************************
-
-(deprecated) intptr_t KIM_API_get_shape(void *kimmdl, char *nm, int *shape, int *kimerror);
-
-To be used by: Model/Simulator
-
-    This routine returns the rank of `nm' and provides its shape in the
-    argument `shape' (see KIM_API_get_rank for some additional details).  If
-    the name of the argument is not in the KIM API object, a negative value
-    will be returned.
-
-Arguments:
-
-      void *kimmdl
-              pointer to KIM_API_model object (in C++ style, the definition
-              will be (KIM_API_model *))
-
-      char *nm
-              null terminated string is the name of the argument field exactly
-              as it appears in the .kim descriptor file
-
-      int *shape
-              An array of integers for the shape of the array data. The routine
-              will set values in this array for each dimension of the data
-              object (the number of these is equal to the rank value returned
-              by this function).  Shape gives the extent of each index for the
-              array data. Shape[0] is the slowest changing index.  Shape has to
-              be allocated and should have sufficient memory to hold a value
-              for each dimension.  If rank==0, then the `shape' array is not
-              modified in any way.
-
-      int *kimerror
-                error code: KIM_STATUS_OK   -- successful completion,
-                            KIM_STATUS_FAIL -- unsuccessful
-
-******************************************************************************
-
-(deprecated) void KIM_API_set_shape(void *kimmdl, char *nm, int *shape, int rank, int *kimerror);
-
-To be used by: Model/Simulator
-
-    This routine sets the `shape' of `nm' and checks if the `rank' provided is
-    the same as that already stored in the KIM API object.  This will overwrite
-    all of the shape data stored in the KIM API object for this argument.  This
-    routine should not be used in conjunction with arguments for which
-    KIM_API_allocate() has previously allocated memory.
-
-Arguments:
-
-      void *kimmdl
-              pointer to KIM_API_model object (in C++ style, the definition
-              will be (KIM_API_model *))
-
-      char *nm
-              null terminated string is the name of the argument field exactly
-              as it appears in the .kim descriptor file
-
-      int *shape
-              An array of integers for the shape of the array data.  The
-              routine will use the values in this array for each dimension of
-              the data object (the number of these must be equal to the rank
-              value passed to the function).  Shape gives the range of each
-              index for the array data.  Shape[0] is the slowest changing
-              index.
-
-      int rank
-              Rank of the array and size of shape
-
-      int *kimerror
-              error code: KIM_STATUS_OK                -- successful completion,
-                          KIM_STATUS_ARG_UNKNOWN       -- name nm is not in KIM
-                          KIM_STATUS_ARG_INVALID_RANK  -- rank provided, does
-                                                          not match KIM API
-                                                          argument rank
-                          KIM_STATUS_ARG_INVALID_SHAPE -- negative index in
-                                                          shape
 
 ******************************************************************************
 
@@ -1091,33 +670,6 @@ Arguments:
 
 ******************************************************************************
 
-(deprecated) int KIM_API_get_index(void *kimmdl, char*nm, int *kimerror);
-
-To be used by: Model/Simulator
-
-    This routine returns the index of an argument field in the KIM API object.
-    This index serves as an integer offset that allows for efficient access to
-    the KIM API object.  (This eliminates the overhead in the element access
-    routines associated with using the string `nm' to search for the argument.)
-    This index is guaranteed to remain valid for the lifetime of the KIM API
-    object.
-
-Arguments:
-
-      void *kimmdl
-              pointer to KIM_API_model object (in C++ style, the definition
-              will be (KIM_API_model *)).
-
-      char *nm
-              null terminated string is the name of the argument field exactly
-              as it appears in the .kim descriptor file.
-
-      int *kimerror
-              error code: KIM_STATUS_OK   -- successful completion,
-                          KIM_STATUS_FAIL -- unsuccessful
-
-******************************************************************************
-
 int KIM_API_model_init(void *kimmdl);
 
 To be used by: Simulator
@@ -1133,24 +685,23 @@ To be used by: Simulator
     (1) In order to call KIM_API_model_init() it is necessary to have a valid
         KIM API object pointed to by `kimmdl' (see KIM_API_file_init() above).
         The mandatory argument `cutoff' must be registered in this KIM API
-        object and it must have memory allocated to it (via either the
-        KIM_API_allocate() or KIM_API_set_data() routines).
+        object and it must have memory allocated to it (via the
+        KIM_API_set_data() routine).
 
     (2) The Model's init routine must store its cutoff value in the KIM API
         object and register pointers to its `compute' function (and its
         `reinit' and `destroy' functions, if supported).  If the Model supports
         `flexible' units, it must query the KIM API object (via the
         KIM_API_get_unit_*() functions) and adjust its parameters
-        appropriately.  It may also publish its parameters as either fixed or
-        free (see the standard.kim file) and perform any other necessary
-        initialization steps.  It is important to stress that a Model may not
-        store data in static memory since it may be called with different KIM
-        API objects.  Any information that should persist between calls must be
-        stored in the KIM API object.  Fixed parameters may be used for this
-        purpose or the Model Buffer (See details and cautionary notes about
-        this in the documentation for KIM_API_set/get_model_buffer and also in
-        the standard.kim file.)  The Model is always responsible for allocating
-        the memory necessary to store its parameters.
+        appropriately.  It may also publish its parameters and perform any
+        other necessary initialization steps.  It is important to stress that a
+        Model may not store data in static memory since it may be called with
+        different KIM API objects.  Any information that should persist between
+        calls must be stored in the KIM API object.  (See details and
+        cautionary notes about this in the documentation for
+        KIM_API_set/get_model_buffer and also in the standard.kim file.)  The
+        Model is always responsible for allocating the memory necessary to
+        store its parameters.
 
     (3) The Model must define a model_init function (the name of this function
         can be any valid function name; this name must be specified in the
@@ -1217,7 +768,7 @@ To be used by: Simulator
     NOTES:
 
     (1) In order to call KIM_API_model_reinit() it is necessary to have a valid
-        KIM API object pointed to by `kimmdl' (see KIM_API_file_init()).
+        KIM API object pointed to by `kimmdl' (see KIM_API_string_init()).
         Additionally, KIM_API_model_init() must have been previously executed
         for this KIM API object.
 
@@ -1360,11 +911,10 @@ To be used by: Model/Simulator
 
     This routine outputs the number of parameters supported by the Model and
     the associated maximum length of the parameter name strings.  A Model
-    parameter argument is one whose name starts with `PARAM_FREE_' or
-    `PARAM_FIXED_'.  Each parameter argument described in the Model's ".kim"
-    file will have a place in the KIM API object, but it will not be checked
-    against the standard.kim file.  (See the standard.kim file for more
-    information on Model parameters.)
+    parameter argument is one whose name starts with `PARAM_'.  Each parameter
+    argument described in the Model's ".kim" file will have a place in the KIM
+    API object, but it will not be checked against the standard.kim file.  (See
+    the standard.kim file for more information on Model parameters.)
 
 Return value:
       KIM_STATUS_OK   -- successful completion
@@ -1411,149 +961,6 @@ Arguments:
 
       const char** const parameterString
               The parameter name string.
-
-******************************************************************************
-
-(deprecated) int KIM_API_get_num_free_params(void *kimmdl, int* numberFreeParameters, int* maxStringLength);
-
-To be used by: Model/Simulator
-
-    This routine outputs the number of free parameters supported by the Model
-    and the associated maximum length of the parameter name strings.  A Model
-    free parameter argument is one whose name starts with `PARAM_FREE_'.  Each
-    parameter argument described in the Model's ".kim" file will have a place
-    in the KIM API object, but it will not be checked against the standard.kim
-    file.  (See the standard.kim file for more information on Model
-    parameters.)
-
-Return value:
-      KIM_STATUS_OK   -- successful completion
-      KIM_STATUS_FAIL -- unsuccessful
-
-Arguments:
-      void *kimmdl
-              pointer to KIM_API_model object (in C++ style, the definition
-              will be (KIM_API_model *)).
-
-      int* numberFreeParameters
-              the number of free parameters supported by the Model
-
-      int* maxStringLength
-              the maximum string length found in the list of the Model's
-              supported free parameter name strings.
-
-******************************************************************************
-
-(deprecated) int KIM_API_get_free_parameter(void *kimmdl, const int index, const char** const freeParameterString);
-
-To be used by: Model/Simulator
-
-    This routine outputs the requested (index) Model free parameter name
-    string.  The order in which the parameters are indexed is unspecified, but
-    fixed for the lifetime of the kimmdl object.  In the case where no free
-    parameters are supported the Model, the routine returns KIM_STATUS_FAIL for
-    all values of index.
-
-Return value:
-      KIM_STATUS_OK   -- successful completion
-      KIM_STATUS_FAIL -- unsuccessful
-
-Arguments:
-      void *kimmdl
-              pointer to KIM_API_model object (in C++ style, the definition
-              will be (KIM_API_model *)).
-
-      const int index
-              For C/C++ valid values are 0 <= index < numberFreeParameters.
-              For Fortran, valid values are 0 < index <= numberFreeParameters.
-              Here, numberFreeParameters is the value provided by the
-              KIM_API_get_num_free_params() routine.
-
-      const char** const freeParameterString
-              The free parameter name string.
-
-******************************************************************************
-
-(deprecated) int KIM_API_get_num_fixed_params(void *kimmdl, int* numberFixedParameters, int* maxStringLength);
-
-To be used by: Model/Simulator
-
-    This routine outputs the number of fixed parameters supported by the Model
-    and the associated maximum length of the parameter name strings.  A Model
-    fixed parameter argument is one whose name starts with `PARAM_FIXED_'.
-    Each parameter argument described in the Model's ".kim" file will have a
-    place in the KIM API object, but it will not be checked against the
-    standard.kim file.  (See the standard.kim file for more information on
-    Model parameters.)
-
-Return value:
-      KIM_STATUS_OK   -- successful completion
-      KIM_STATUS_FAIL -- unsuccessful
-
-Arguments:
-      void *kimmdl
-              pointer to KIM_API_model object (in C++ style, the definition
-              will be (KIM_API_model *)).
-
-      int* numberFixedParameters
-              the number of fixed parameters supported by the Model
-
-      int* maxStringLength
-              the maximum string length found in the list of the Model's
-              supported fixed parameter name strings.
-
-******************************************************************************
-
-(deprecated) int KIM_API_get_fixed_parameter(void *kimmdl, const int index, const char** const fixedParameterString);
-
-To be used by: Model/Simulator
-
-    This routine outputs the requested (index) Model fixed parameter name
-    string.  The order in which the parameters are indexed is unspecified, but
-    fixed for the lifetime of the kimmdl object.  In the case where no fixed
-    parameters are supported the Model, the routine returns KIM_STATUS_FAIL for
-    all values of index.
-
-Return value:
-      KIM_STATUS_OK   -- successful completion
-      KIM_STATUS_FAIL -- unsuccessful
-
-Arguments:
-      void *kimmdl
-              pointer to KIM_API_model object (in C++ style, the definition
-              will be (KIM_API_model *)).
-
-      const int index
-              For C/C++ valid values are 0 <= index < numberFixedParameters.
-              For Fortran, valid values are 0 < index <= numberFixedParameters.
-              Here, numberFixedParameters is the value provided by the
-              KIM_API_get_num_fixed_params() routine.
-
-      const char** const fixedParameterString
-              The fixed parameter name string.
-
-******************************************************************************
-
-(deprecated) int KIM_API_get_NBC_method(void *kimmdl, const char** const NBC_String);
-
-To be used by: Model/Simulator
-
-    This routine outputs a string with the NBC name.  The string is the NBC
-    (Neighbor list and Boundary Conditions) "active" NBC method in use by the
-    KIM_API object `kimmdl'.  (See the standard.kim file for more information
-    on NBC methods.)
-
-Return value:
-      KIM_STATUS_OK   -- successful completion
-      KIM_STATUS_FAIL -- unsuccessful
-
-Arguments:
-      void *kimmdl
-              pointer to KIM_API_model object (in C++ style, the definition
-              will be (KIM_API_model *)).
-
-      const char** const NBC_String
-              The NBC string.
 
 ******************************************************************************
 
@@ -1669,35 +1076,10 @@ Arguments:
 
 ******************************************************************************
 
-(deprecated) int KIM_API_get_neigh_mode(void *kimmdl, int *kimerror);
+int KIM_API_get_neigh(void *kimmdl, int request, int *numnei,
+                      int **nei1particle);
 
-To be used by: Model/Simulator
-
-    This routine returns a code for the neighbor list mode that should be used
-    by the Model and Simulator.  The codes and their corresponding meanings
-    are:
-         1  -- for Iterator mode
-         2  -- for Locator mode
-         3  -- for Both (Model needs iterator and locator mode)
-
-    The routine returns a negative value if it encounters an error.
-
-Arguments:
-
-      void *kimmdl
-              pointer to KIM_API_model object (in C++ style the definition
-              will be (KIM_API_model *)).
-
-      int *kimerror
-              error code: KIM_STATUS_OK   -- successful completion,
-                          KIM_STATUS_FAIL -- unsuccessful
-
-******************************************************************************
-
-int KIM_API_get_neigh(void *kimmdl, int mode, int request, int *particle,
-                      int *numnei, int **nei1particle, double **rij);
-
-To be used by: Simulator
+To be used by: Model
 
     This routine provides standardized access to the neighbor list supplied by
     the Simulator.  The Simulator must have previously registered, in the KIM
@@ -1705,77 +1087,40 @@ To be used by: Simulator
     interface as above (except that `mode' and `request' must be of type `int
     *'). That is,
        extern "C"                                              // in C++
-       { int get_neigh(void *kimmdl, int *mode, int* request,
-                       int *particle, int *numnei, int **nei1particle,
-                       double **rij);
+       { int get_neigh(void *kimmdl, int* request, int *numnei,
+                       int **nei1particle);
        }
-       int get_neigh(void *kimmdl, int *mode, int* request,    /* in C */
-                     int *particle, int *numnei, int **nei1particle,
-                     double **rij);
-       integer(c_int) function get_neigh(pkim, mode, request,& ! in Fortran 2003
-                                         part, numnei, pnei1part, &
-                                         pRij) bind(c)
-          type(c_ptr)),   intent(in)  :: pkim
-          integer(c_int), intent(in)  :: mode
-          integer(c_int), intent(in)  :: request
-          integer(c_int), intent(out) :: part
-          integer(c_int), intent(out) :: numnei
-          type(c_ptr),    intent(out) :: pnei1part
-          type(c_ptr),    intent(out) :: pRij
-
-    Two modes are supported: `Iterator' and `Locator'.  In Iterator mode, the
-    Iterator should, first, be reset.  Then, a call to this function will
-    return the neighbor list for the "next" particle (the order in which
-    particles are returned is immaterial in Iterator mode, and therefore
-    undefined).  This process repeats until the neighbor list of every particle
-    has been returned and the iterator is incremented past the end of the list.
-    In Locator mode, the user explicitly requests the particle for which a
-    neighbor list is desired.  This mode must be used when the order in which
-    particle neighbor lists are processed is important.
+       int get_neigh(void *kimmdl, int* request, int *numnei,  /* in C */
+                     int **nei1particle);
+       integer(c_int) function get_neigh(pkim, request,     & ! in Fortran 2003
+                                         numnei, pnei1part) bind(c)
+          type(c_ptr)),   value, intent(in)  :: pkim
+          integer(c_int), value, intent(in)  :: request
+          integer(c_int),        intent(out) :: numnei
+          type(c_ptr),           intent(out) :: pnei1part
 
     NOTE: The list of neighbors returned for a given particle should not
-          include the particle itself unless it is an image particle with a
-          non-zero rij vector entry. (See explanation of rij vectors below.)
+          include the particle itself.
 
     The return value depends on the results of execution:
-      KIM_STATUS_NEIGH_ITER_INIT_OK             -- iterator has been
-                                                   successfully initialized
       KIM_STATUS_OK                             -- successful operation
-      KIM_STATUS_NEIGH_ITER_PAST_END            -- iterator has been
-                                                   incremented past end of list
       KIM_STATUS_NEIGH_INVALID_REQUEST          -- invalid particle ID requested
                                                    (request out of range)
-      KIM_STATUS_NEIGH_INVALID_MODE             -- invalid mode value
       KIM_STATUS_API_OBJECT_INVALID             -- invalid KIM API object
       KIM_STATUS_NEIGH_TOO_MANY_NEIGHBORS       -- Number of neighbors of a
                                                    particle too big to allocate
                                                    memory for index conversion
-      KIM_STATUS_NEIGH_METHOD_NOT_PROVIDED      -- get_neigh method in
-                                                   KIM API object is not
-                                                   set (NULL value)
 Arguments:
 
       void *kimmdl
               pointer to KIM_API_model object (in C++ style, the definition
               will be (KIM_API_model *)).
 
-      int mode
-              Operate in iterator or locator mode
-              mode = 0 : iterator mode
-              mode = 1 : locator mode
-
       int request
-              Requested operation
-              If mode = 0
-                  request = 0 : reset iterator (and return without neighbors)
-                  request = 1 : increment iterator
-              If mode = 1
-                  request = # : number of particle whose neighbor list is
-                                requested.  This id should be 0-based if the
-                                Model includes ZeroBasedLists in its KIM
-                                descriptor file and 1-based if OneBasedLists is
-                                included.  (The KIM API will automatically do
-                                any necessary conversions.)
+              number of particle whose neighbor list is requested.  This id
+              should be 0-based if the Model includes ZeroBasedLists in its KIM
+              descriptor file and 1-based if OneBasedLists is included.  (The
+              KIM API will automatically do any necessary conversions.)
 
       int *particle
               The number of the particle whose neighbor list is returned.  This
@@ -1792,15 +1137,6 @@ Arguments:
                0-based if the Model includes ZeroBasedLists in its KIM
                descriptor file and 1-based if OneBasedLists is included.  (The
                KIM API will automatically do any necessary conversions.)
-
-      double **rij
-              pointer argument which will point to the list of relative
-              position vectors of the neighbors of a `particle', i.e. if the
-              particle index is `i' and its neighbors are indexed by `j', then
-              r_ij = x_j - x_i (including boundary conditions if applied). This
-              data is only available for NBC method NEIGH_RVEC_F. The returned
-              value is NULL for all other NBC methods. (See standard.kim for
-              more information on NBC methods.)
 
 ******************************************************************************
 
@@ -1835,12 +1171,8 @@ To be used by: Model
           integer(c_int), intent(in) :: i
           integer(c_int), intent(in) :: j
 
-    If the Simulator does not provide its own process_dEdr routine, then the
-    KIM API standard process_dEdr routine is used.  If the standard
-    process_dEdr routine is used, the KIM API ensures that any appropriate
-    memory initializations are performed.  This routine currently supports the
-    computation of `virial' and `particleVirial'.  Return value: KIM_STATUS_OK
-    if successful and KIM_STATUS_FAIL if unsuccessful.
+    Return value: KIM_STATUS_OK if successful and KIM_STATUS_FAIL if
+    unsuccessful.
 
 Arguments:
 
@@ -1898,13 +1230,8 @@ To be used by: Model
           type(c_ptr),    intent(in) :: pi
           type(c_ptr),    intent(in) :: pj
 
-    If the Simulator does not provide its own process_d2Edr2 routine, then the
-    KIM API standard process_d2Edr2 routine is used.  If the standard
-    process_dEdr routine is used, the KIM API ensures that any appropriate
-    memory initializations are performed.  This routine and currently supports
-    the computation of `hessian' (process_dEdr is also required in order to
-    correctly compute the hessian).  Return value: KIM_STATUS_OK if successful
-    and KIM_STATUS_FAIL if unsuccessful.
+    Return value: KIM_STATUS_OK if successful and KIM_STATUS_FAIL if
+    unsuccessful.
 
 Arguments:
 
@@ -2181,33 +1508,6 @@ Arguments:
 
 
 
-==================ELEMENT ACCESS METHODS ROUTINES BY INDEX====================
-
-The "by index" routines have the same functionality as "by name" and the same
-arguments except "char *nm" is replaced by "int I".  The index of each argument
-in the KIM API object is obtained by the KIM_API_get_index() routine described
-above.  These routines are meant to be used by both Simulators and Models.
-
-The prototypes of the supported "by index" routines are:
-
-(deprecated) int KIM_API_set_data_by_index(void *kimmdl, int I, intptr_t size, void *dt);
-(deprecated) int KIM_API_set_method_by_index(void *kimmdl, int I, intptr_t size, func_ptr dt);
-
-(deprecated) void *KIM_API_get_data_by_index(void *kimmdl, int I, int *kimerror);
-(deprecated) func_ptr KIM_API_get_method_by_index(void *kimmdl, int I, int *kimerror);
-
-(deprecated) intptr_t KIM_API_get_size_by_index(void *kimmdl, int I, int *kimerror);
-
-(deprecated) intptr_t KIM_API_get_rank_by_index(void *kimmdl, int I, int *kimerror);
-
-(deprecated) intptr_t KIM_API_get_shape_by_index(void *kimmdl, int I, int *shape, int *kimerror);
-
-(deprecated) void KIM_API_set_compute_by_index(void *kimmdl, int I, int flag, int *kimerror);
-
-(deprecated) int KIM_API_get_compute_by_index(void *kimmdl, int I, int *kimerror);
-
-
-
 ******************************************************************************
 
                           MULTIPLE ACCESS ROUTINES
@@ -2216,22 +1516,16 @@ The prototypes of the supported "by index" routines are:
 
 In order to simplify access to KIM API object, MULTIPLE ACCESS ROUTINES are
 included among the KIM library methods.  These routines are meant to be used by
-both Simulators and Models.  There are 13 of these routines:
+both Simulators and Models.  There are 6 of these routines:
 
 c-style:
       1) KIM_API_getm_compute
       2) KIM_API_setm_compute
-      3) KIM_API_getm_compute_by_index (deprecated)
-      4) KIM_API_setm_compute_by_index (deprecated)
-      5) KIM_API_getm_data
-      6) KIM_API_getm_method
-      7) KIM_API_setm_data
-      8) KIM_API_setm_method
-      9) KIM_API_getm_data_by_index    (deprecated)
-     10) KIM_API_getm_method_by_index  (deprecated)
-     11) KIM_API_setm_data_by_index    (deprecated)
-     12) KIM_API_setm_method_by_index  (deprecated)
-     13) KIM_API_getm_index            (deprecated)
+      3) KIM_API_getm_data
+      4) KIM_API_getm_method
+      5) KIM_API_setm_data
+      6) KIM_API_setm_method
+
 
      Each of these routines provides access to multiple KIM API object
      arguments in one function call.  These routines have a uniform
@@ -2265,49 +1559,22 @@ c-style:
 
           Here VARIABLE_GROUP has 3 variables: char *name, int compute, int gkey
 
-      3.  (deprecated) void KIM_API_getm_compute_by_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
-
-          Here VARIABLE_GROUP has 3 variables: int index, int *compute, int gkey
-
-      4.  (deprecated) void KIM_API_setm_compute_by_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
-
-          Here VARIABLE_GROUP has 3 variables: int index, int compute, int gkey
-
-      5.  void KIM_API_getm_data(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
+      3.  void KIM_API_getm_data(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
 
           Here VARIABLE_GROUP has 3 variables: char *name, void **data, int gkey
 
-      6.  void KIM_API_getm_method(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
+      4.  void KIM_API_getm_method(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
 
           Here VARIABLE_GROUP has 3 variables: char *name, func_ptr *method, int gkey
 
-      7.  void KIM_API_setm_data(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
+      5.  void KIM_API_setm_data(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
 
           Here VARIABLE_GROUP has 4 variables: char *name, intptr_t size, void *data, int gkey
 
-      8.  void KIM_API_setm_method(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
+      5.  void KIM_API_setm_method(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
 
           Here VARIABLE_GROUP has 4 variables: char *name, intptr_t size, func_ptr data, int gkey
 
-      9.  (deprecated) void KIM_API_getm_data_by_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
-
-          Here VARIABLE_GROUP has 3 variables: int index, void **data, int gkey
-
-     10.  (deprecated) void KIM_API_getm_method_by_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
-
-          Here VARIABLE_GROUP has 3 variables: int index, func_ptr *method, int gkey
-
-     11.  (deprecated) void KIM_API_setm_data_by_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
-
-          Here VARIABLE_GROUP has 4 variables: int index, intptr_t size, void *data, int gkey
-
-     12.  (deprecated) void KIM_API_setm_method_by_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...]);
-
-          Here VARIABLE_GROUP has 4 variables: int index, intptr_t size, func_ptr method, int gkey
-
-     13.  (deprecated) void KIM_API_getm_index(void *kimmdl, int *kimerror, int numargs, VARIABLE_GROUP1, [VARIABLE_GROUP2, ...] );
-
-          Here VARIABLE_GROUP has 3 variables: char *name, int *index, int gkey
 
     `kimerror' in these routines will be KIM_STATUS_OK if the routine is successful,
     otherwise KIM_STATUS_FAIL (or other error codes < KIM_STATUS_OK).

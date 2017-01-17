@@ -70,13 +70,6 @@ KIM_API_Version.h.tpl
 KIM_API_status.h
      Header file defining the KIM API status codes.
 
-KIM_AUX.cpp
-     C++ implementation file containing auxiliary routines, including
-     the native process_dEdr and process_d2Edr2 functions.
-
-KIM_AUX.h
-     Header file declaring the auxiliary routines.
-
 Makefile
      Make file for building the KIM API library.
 

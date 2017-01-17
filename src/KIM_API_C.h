@@ -65,12 +65,7 @@ typedef void (* func_ptr)();
   int KIM_API_get_version_simulator_major(void* kimmdl, int* const major);
   int KIM_API_get_version_simulator_minor(void* kimmdl, int* const minor);
 
-int KIM_API_file_init(void * kimmdl, const char *simkimfile, const char *modelname);
-
-int KIM_API_model_info(void * kimmdl, const char * mdlname);
-
 int KIM_API_string_init(void * kimmdl, const char *siminputstring, const char * modelname);
-void KIM_API_allocate(void *kimmdl, int nparts, int nspecies, int * error);
 void KIM_API_free(void *kimmdl,int * error);
 void KIM_API_print(void *kimmdl,int *error);
 int KIM_API_model_compute(void *kimmdl);
@@ -97,33 +92,17 @@ void KIM_API_set_species_code(void * kimmdl, const char* species, int code, int 
                              int* maxStringLength);
   int KIM_API_get_parameter(void* kimmdl, const int index,
                             const char** const parameterString);
-  int KIM_API_get_num_free_params(void* kimmdl, int* numberFreeParameters,
-                                  int* maxStringLength);
-  int KIM_API_get_free_parameter(void* kimmdl, const int index,
-                                 const char** const freeParameterString);
-  int KIM_API_get_num_fixed_params(void* kimmdl, int* numberFixedParameters,
-                                   int* maxStringLength);
-  int KIM_API_get_fixed_parameter(void* kimmdl, const int index,
-                                  const char** const fixedParameterString);
-  int KIM_API_get_NBC_method(void* kimmdl, const char** const NBC_String);
 
-int KIM_API_get_neigh(void *kimmdl,int mode,int request,
-        int *part, int *numnei, int **nei1part, double **Rij);
-
-int KIM_API_get_neigh_mode(void *kimmdl,int *error);
+int KIM_API_get_neigh(void *kimmdl, int request, int *numnei, int **nei1part);
 
   int KIM_API_get_status_msg(const int status_code, const char** const status_msg);
 
 int KIM_API_report_error(int ln,const char * fl,const char * usermsg,int error);
 
-int KIM_API_get_model_index_shift(void *kimmdl);
-
 void KIM_API_set_model_buffer(void * kimmdl,void * ob, int * error);
 void * KIM_API_get_model_buffer(void * kimmdl, int * error);
 void KIM_API_set_sim_buffer(void * kimmdl,void * ob, int * error);
 void * KIM_API_get_sim_buffer(void * kimmdl, int * error);
-
-int KIM_API_is_half_neighbors(void *kimmdl,int * error);
 
 /* element access methods */
 int  KIM_API_set_data(void *kimmdl,const char *nm,  intptr_t size, void *dt);
@@ -132,26 +111,9 @@ void * KIM_API_get_data(void *kimmdl,const char *nm,int * error);
 func_ptr KIM_API_get_method(void *kimmdl,const char *nm,int * error);
 
 intptr_t KIM_API_get_size(void *kimmdl,const char *nm, int * error);
-intptr_t KIM_API_get_rank(void *kimmdl,const char *nm, int * error);
-intptr_t KIM_API_get_shape(void *kimmdl,const char *nm, int * shape, int *error);
-void KIM_API_set_shape(void *kimmdl,const char *nm, int * shape, int rank,int *error);
 
 void KIM_API_set_compute(void *kimmdl,const char *nm, int flag, int *error);
-void KIM_API_set_compute_by_index(void *kimmdl, int I, int flag, int *error);
 int KIM_API_get_compute(void *kimmdl,const char *nm,int *error);
-
-int KIM_API_get_index(void *kimmdl,const char *nm, int * error);
-
-int KIM_API_set_data_by_index(void *kimmdl,int I, intptr_t size, void *dt);
-int KIM_API_set_method_by_index(void *kimmdl,int I, intptr_t size, func_ptr dt);
-void * KIM_API_get_data_by_index(void *kimmdl,int I, int *error);
-func_ptr KIM_API_get_method_by_index(void *kimmdl,int I, int *error);
-
-intptr_t KIM_API_get_size_by_index(void *kimmdl,int I,int *error);
-intptr_t KIM_API_get_rank_by_index(void *kimmdl,int I,int *error);
-intptr_t KIM_API_get_shape_by_index(void *kimmdl,int I, int * shape,int *error);
-
-int KIM_API_get_compute_by_index(void *kimmdl,int I,int * error);
 
 int KIM_API_process_dEdr(void **kimmdl, double * dE, double * dr, double **dx,int *i, int *j);
 int KIM_API_process_d2Edr2(void **kimmdl, double * dE, double ** dr, double **dx,int **i, int **j);
@@ -182,17 +144,10 @@ double KIM_API_convert_to_act_unit(void * kimmdl,
 
 void KIM_API_setm_data(void *kimmdl, int *error, int numargs, ... );
 void KIM_API_setm_method(void *kimmdl, int *error, int numargs, ... );
-void KIM_API_setm_data_by_index(void *kimmdl, int *error, int numargs, ... );
-void KIM_API_setm_method_by_index(void *kimmdl, int *error, int numargs, ... );
 void KIM_API_getm_data(void *kimmdl, int *error,int numargs, ...);
 void KIM_API_getm_method(void *kimmdl, int *error,int numargs, ...);
-void KIM_API_getm_data_by_index(void *kimmdl,int *error,int numargs, ...);
-void KIM_API_getm_method_by_index(void *kimmdl,int *error,int numargs, ...);
-void KIM_API_getm_index(void *kimmdl, int *error, int numargs, ...);
 void KIM_API_setm_compute(void *kimmdl, int *error, int numargs, ...);
-void KIM_API_setm_compute_by_index(void *kimmdl, int *error, int numargs, ...);
 void KIM_API_getm_compute(void *kimmdl, int *error,int numargs, ...);
-void KIM_API_getm_compute_by_index(void *kimmdl, int *error,int numargs, ...);
 
 #ifdef  __cplusplus
 }

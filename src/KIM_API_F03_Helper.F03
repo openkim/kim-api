@@ -65,14 +65,6 @@ module kim_api_f03_helper
       integer(c_int) :: result
     end function kim_api_get_version_newer
 
-    integer(c_int) function kim_api_file_init(kimmdl, simkimfile, mdlname) &
-      bind(c, name="KIM_API_file_init")
-      use, intrinsic :: iso_c_binding
-      type(c_ptr)       :: kimmdl
-      character(c_char) :: simkimfile(*)
-      character(c_char) :: mdlname(*)
-    end function kim_api_file_init
-
     integer(c_int) function kim_api_string_init(kimmdl, simdescriptor, &
       modelname) &
       bind(c, name="KIM_API_string_init")
@@ -81,20 +73,6 @@ module kim_api_f03_helper
       character(c_char) :: simdescriptor(*)
       character(c_char) :: modelname(*)
     end function kim_api_string_init
-
-    integer(c_int) function kim_api_model_info(kimmdl, modelname) &
-      bind(c, name="KIM_API_model_info")
-      use, intrinsic :: iso_c_binding
-      type(c_ptr)       :: kimmdl
-      character(c_char) :: modelname(*)
-    end function kim_api_model_info
-
-    integer(c_int) function kim_api_get_nbc_method(kimmdl, NBC_String) &
-      bind(c, name="KIM_API_get_NBC_method")
-      use, intrinsic :: iso_c_binding
-      type(c_ptr),         value :: kimmdl
-      type(c_ptr)                :: NBC_String
-    end function kim_api_get_nbc_method
 
     integer(c_int) function kim_api_get_model_species(kimmdl, index, &
       speciesString) bind(c, name="KIM_API_get_model_species")
@@ -119,22 +97,6 @@ module kim_api_f03_helper
       integer(c_int),      value :: index
       type(c_ptr)                :: parameterString
     end function kim_api_get_parameter
-
-    integer(c_int) function kim_api_get_free_parameter(kimmdl, index, &
-      freeParameterString) bind(c, name="KIM_API_get_free_parameter")
-      use, intrinsic :: iso_c_binding
-      type(c_ptr),         value :: kimmdl
-      integer(c_int),      value :: index
-      type(c_ptr)                :: freeParameterString
-    end function kim_api_get_free_parameter
-
-    integer(c_int) function kim_api_get_fixed_parameter(kimmdl, index, &
-      fixedParameterString) bind(c, name="KIM_API_get_fixed_parameter")
-      use, intrinsic :: iso_c_binding
-      type(c_ptr),         value :: kimmdl
-      integer(c_int),      value :: index
-      type(c_ptr)                :: fixedParameterString
-    end function kim_api_get_fixed_parameter
 
     integer(c_int) function kim_api_set_data(kimmdl, nm, size, dt) &
       bind(c, name="KIM_API_set_data")
@@ -178,33 +140,6 @@ module kim_api_f03_helper
       integer(c_int)          :: error
     end function kim_api_get_size
 
-    integer(c_intptr_t) function kim_api_get_rank(kimmdl, nm, error) &
-      bind(c, name="KIM_API_get_rank")
-      use, intrinsic :: iso_c_binding
-      type(c_ptr),      value :: kimmdl
-      character(c_char)       :: nm(*)
-      integer(c_int)          :: error
-    end function kim_api_get_rank
-
-    integer(c_intptr_t) function kim_api_get_shape(kimmdl, nm, shape, error) &
-      bind(c, name="KIM_API_get_shape")
-      use, intrinsic :: iso_c_binding
-      type(c_ptr),      value :: kimmdl
-      character(c_char)       :: nm(*)
-      integer(c_int)          :: shape(*)
-      integer(c_int)          :: error
-    end function kim_api_get_shape
-
-    subroutine kim_api_set_shape(kimmdl, nm, shape, rank, error) &
-      bind(c, name="KIM_API_set_shape")
-      use, intrinsic :: iso_c_binding
-      type(c_ptr),      value :: kimmdl
-      character(c_char)       :: nm(*)
-      integer(c_int)          :: shape(*)
-      integer(c_int),   value :: rank
-      integer(c_int)          :: error
-    end subroutine kim_api_set_shape
-
     subroutine kim_api_set_compute(kimmdl, nm, flag, error) &
       bind(c, name="KIM_API_set_compute")
       use, intrinsic :: iso_c_binding
@@ -221,14 +156,6 @@ module kim_api_f03_helper
       character(c_char)       :: nm(*)
       integer(c_int)          :: error
     end function kim_api_get_compute
-
-    integer(c_int) function kim_api_get_index(kimmdl, nm, error) &
-      bind(c, name="KIM_API_get_index")
-      use, intrinsic :: iso_c_binding
-      type(c_ptr),      value :: kimmdl
-      character(c_char)       :: nm(*)
-      integer(c_int)          :: error
-    end function kim_api_get_index
 
     integer(c_int) function kim_api_get_species_code(kimmdl, particle, &
       error) &
@@ -314,34 +241,6 @@ module kim_api_f03_helper
       real(c_double),   value :: time_exponent
       integer(c_int)          :: error
     end function kim_api_convert_to_act_unit
-
-    integer(c_int) function kim_api_set_data_by_index(kimmdl, I, size, dt) &
-      bind(c, name="KIM_API_set_data_by_index")
-      use, intrinsic :: iso_c_binding
-      type(c_ptr),         value :: kimmdl
-      integer(c_int),      value :: I
-      integer(c_intptr_t), value :: size
-      type(c_ptr),         value :: dt
-    end function kim_api_set_data_by_index
-
-    integer(c_int) function kim_api_set_method_by_index(kimmdl, I, size, dt) &
-      bind(c, name="KIM_API_set_method_by_index")
-      use, intrinsic :: iso_c_binding
-      type(c_ptr),         value :: kimmdl
-      integer(c_int),      value :: I
-      integer(c_intptr_t), value :: size
-      type(c_funptr),      value :: dt
-    end function kim_api_set_method_by_index
-
-    integer(c_intptr_t) function kim_api_get_shape_by_index(kimmdl, I, shape, &
-      error) &
-      bind(c, name="KIM_API_get_shape_by_index")
-      use, intrinsic :: iso_c_binding
-      type(c_ptr),    value :: kimmdl
-      integer(c_int), value :: I
-      integer(c_int)        :: shape(*)
-      integer(c_int)        :: error
-    end function kim_api_get_shape_by_index
   end interface
 
 contains
