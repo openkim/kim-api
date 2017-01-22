@@ -122,26 +122,24 @@ bool KIM_IOline:: getFields(char * const inString){
             tmp = strtok(NULL," \t");if(tmp == NULL) return false;
             strncpy(type,tmp,strlen(tmp)+1);
 
+            if(strcmp(type,":=")==0) return false;
+
             if(strcmp(type,"flag")==0) {
                 strncpy(dim,"none",5);
-                strncpy(shape,"[]",3);
                 return true;
             }
 
             if(strcmp(type,"spec")==0) {
-                strncpy(dim,"none",5);
-                tmp = strtok(NULL," \t");if(tmp == NULL) return false;
-                strcat(shape,"[");
-                strcat(shape,tmp);
-                strcat(shape,"]");
+                tmp = strtok(NULL," \t");
+                if(tmp == NULL)
+                  return false;
+                else
+                  strncpy(dim,tmp,strlen(tmp)+1);
                 return true;
             }
 
             tmp = strtok(NULL," \t");if(tmp == NULL) return false;
             strncpy(dim,tmp,strlen(tmp)+1);
-
-            tmp = strtok(NULL," \t");if(tmp == NULL) return false;
-            strncpy(shape,tmp,strlen(tmp)+1);
 
             tmp = strtok(NULL," \t");if(tmp == NULL) return true;
             strncpy(requirements,tmp,strlen(tmp)+1);
@@ -149,93 +147,6 @@ bool KIM_IOline:: getFields(char * const inString){
             return true;
 }
 
-int KIM_IOline::get_rank(){
-            char *tmp;
-            char* shapetmp = new char[strlen(shape)+1];
-            strncpy(shapetmp,shape,strlen(shape)+1);
-            if(shapetmp[0]=='[' && shapetmp[strlen(shape)-1]==']'){
-                tmp = strtok(shapetmp,"[,]");
-                if (tmp==NULL) {
-                  delete [] shapetmp;
-                  return 0;
-                }
-                int c=0;
-                while (tmp!=NULL){
-                    tmp = strtok(NULL,"[,]");
-                    c++;
-                }
-                delete [] shapetmp;
-                return c;
-            }
-            std::cout<<"* Error (KIM_IOline::get_rank): bad shape format"<<std::endl;
-            delete [] shapetmp;
-            return 0;
- }
-int *  KIM_IOline::get_shape(){
-
-            char* shapetmp = new char[strlen(shape)+1];
-            strncpy(shapetmp,shape,strlen(shape)+1);
-            int rnk = get_rank();
-            if (rnk < 1) {
-              delete [] shapetmp;
-              return NULL;
-            }
-            int *shp = new int[rnk];
-            int i=0;
-            char *tmp =strtok(shapetmp,"[,]");
-            while(tmp!=NULL){
-                double dd = strtod(tmp,&tmp);
-                shp[i]=(int)dd;
-                tmp = strtok(NULL,"[,]");
-                i++;
-            }
-            delete [] shapetmp;
-            return shp;
- }
-int * KIM_IOline::get_shape(int nparts, int nspecies){
-            char* shapetmp = new char[strlen(shape)+1];
-            char tmpstring[128];
-            strncpy(shapetmp,shape,strlen(shape)+1);
-            int rnk = get_rank();
-            if (rnk < 1)
-            {
-              delete [] shapetmp;
-              return NULL;
-            }
-            int *shp = new int[rnk];
-            int i=0;
-            char *tmp =strtok(shapetmp,"[,]");
-            while(tmp!=NULL){
-                double dd = strtod(tmp,&tmp);
-                shp[i]=(int)dd;
-                if(shp[i]==0){
-                    strcpy(tmpstring,tmp);
-                    strip(tmpstring);
-                    if(strcmp(tmpstring,"numberSpecies")==0) shp[i]=nspecies;
-                    if(strcmp(tmpstring,"numberOfParticles")==0) shp[i]=(int)nparts;
-                }
-                tmp = strtok(NULL,"[,]");
-                i++;
-            }
-            delete [] shapetmp;
-            return shp;
-}
-
-bool KIM_IOline::isitsizedefined(){
-
-             int rnk =this->get_rank();
-             if (rnk < 1) return false;
-             int * shp = this->get_shape();
-             if (shp==NULL) return false;
-
-             int c=1;
-             for (int i=0; i<rnk;i++) c=c*shp[i];
-
-             delete [] shp;
-
-             if (c > 0) return true;
-             return false;
-}
 bool KIM_IOline::isitoptional(){
             if(strcmp(this->requirements,"optional")==0) return true;
             return false;
@@ -246,14 +157,12 @@ void KIM_IOline::strip(){
             strip(name);
             strip(type);
             strip(dim);
-            strip(shape);
             strip(requirements);
  }
 void KIM_IOline:: init2empty(){
             name[0]='\0';
             type[0]='\0';
             dim[0]='\0';
-            shape[0]='\0';
             requirements[0]='\0';
             comments[0]='\0';
 }
@@ -272,7 +181,7 @@ bool KIM_IOline:: isitoutput(const char*str){
 
 std::ostream &operator<<(std::ostream &stream, KIM_IOline a){
         stream<<a.name<<" "<<a.type<<" "<<a.dim<<" ";
-        stream<<a.shape<<" "<<a.requirements;
+        stream<<a.requirements;
         stream << std::endl;
         return stream;
 }
@@ -405,7 +314,7 @@ KIMBaseElement:: KIMBaseElement(){
 KIMBaseElement::~KIMBaseElement(){
 
 }
-bool KIMBaseElement:: init(const char *nm,const char * tp,intptr_t sz, intptr_t rnk, int *shp,void * pdata){
+bool KIMBaseElement:: init(const char *nm,const char * tp,intptr_t sz,void * pdata){
             flag = new KIMBaseElementFlag;
 
             unit = new KIMBaseElementUnit;
@@ -415,30 +324,7 @@ bool KIMBaseElement:: init(const char *nm,const char * tp,intptr_t sz, intptr_t 
             strcpy(name,nm);
             strncpy(type,tp,KIM_KEY_STRING_LENGTH);
 
-
-            if(rnk < 0) {
-               std::cout << "* Error (KIMBaseElement::init): KIMBaseElement_init:rnk < 0"<<std::endl;
-                return false;
-            }
             size = sz;
-            rank = rnk;
-            if(rank==1){
-                shape = new int[rank];
-
-                if(shp!=NULL){
-                   shape[0]=shp[0];
-                }else{
-                    shape[0]=sz;
-                }
-            }
-            if(rank > 1){
-                shape = new int[rank];
-                if (shp == NULL) {
-                  std::cout << "* Error (KIMBaseElement::init): KIMBaseElement_init:shp==NULL"<<std::endl;
-                  return false;
-                }
-                for (int i=0;i<rank;i++) shape[i]=shp[i];
-            }
             data.p = (void *)  (*(( intptr_t **)pdata));
 
 
@@ -449,7 +335,6 @@ bool KIMBaseElement:: init(const char *nm,const char * tp,intptr_t sz, intptr_t 
 void KIMBaseElement::free(){
            if(name!= NULL) delete [] name;
            if(type!=NULL) delete [] type;
-           if(shape!=NULL) delete [] shape;
            if(flag!=NULL) delete  flag;
            if(unit!=NULL) delete unit;
            nullify();
@@ -457,9 +342,7 @@ void KIMBaseElement::free(){
 }
 void KIMBaseElement::nullify(){
             data.p=NULL;
-            shape = NULL;
             size=0;
-            rank=0;
             name=NULL;
             type =NULL;
             flag = NULL;
@@ -470,18 +353,7 @@ bool KIMBaseElement::equiv(KIM_IOline& kimioline){
    if(strcmp(kimioline.name,name)==0)
       if(strcmp(kimioline.type,type)==0){
          if(strcmp(kimioline.type,"flag")==0) return true;
-         if(strcmp(kimioline.dim,unit->dim)==0)
-            if(kimioline.get_rank()==(int)(rank)) {
-               int *shp = kimioline.get_shape();
-               for(int i=0; i< (int)(rank);i++){
-                  if(shp[i]!=shape[i]){
-                     delete [] shp;
-                     return false;
-                  }
-               }
-               delete [] shp;
-               return true;
-            }
+         if(strcmp(kimioline.dim,unit->dim)==0) return true;
       }
    return false;
 }
@@ -523,13 +395,7 @@ std::ostream &operator<<(std::ostream &stream, KIMBaseElement a){
         return stream;
     }
     stream<<"name  : "<<a.name<< std::endl
-          <<" type          : "<<a.type << std::endl
-          <<" rank          : "<<a.rank<<std::endl;
-    if (a.rank>0 && a.shape!=NULL){
-       stream<<" shape         : [";
-       for(int i=0;i<a.rank-1;i++) stream<< a.shape[i] << ",";
-       stream << a.shape[a.rank-1] << "]" << std::endl;
-    }
+          <<" type          : "<<a.type << std::endl;
     stream<<" size          : "<<a.size<<std::endl;
     stream<<" flag calculate: "<<a.flag->calculate<<"   // 0 -- do not calculate, 1 -- calculate"<<std::endl;
     stream<<" dimension     : "<<a.unit->dim<<std::endl;
@@ -603,7 +469,6 @@ int KIM_API_model::prestring_init(const char *instrn){
           return ErrorCode;
         }
 
-        int *shape=NULL;
         char pointer_str [] = "pointer";
         //get Atoms Types and nAtomsTypes
         if (! init_AtomsTypes()) {
@@ -612,7 +477,7 @@ int KIM_API_model::prestring_init(const char *instrn){
         }
         bool bl_dummy;
         char* tmp_data = new char[(numlines-nAtomsTypes)*KIMBaseElement::getelemsize("pointer",bl_dummy)];
-        model.init(name_temp,pointer_str,(intptr_t)(numlines-nAtomsTypes+3),1,shape,&tmp_data);
+        model.init(name_temp,pointer_str,(intptr_t)(numlines-nAtomsTypes+3),&tmp_data);
         model.size =(intptr_t)(numlines-nAtomsTypes);
 
         int ii=0;
@@ -623,13 +488,11 @@ int KIM_API_model::prestring_init(const char *instrn){
 
                 KIMBaseElement *el = new KIMBaseElement ;
 
-                int rank=inlines[i].get_rank();
-                shape =inlines[i].get_shape();
                 char * name =& (inlines[i].name[0]);
                 char * type =& (inlines[i].type[0]);
 
                 int *dummy=NULL;
-                if (el->init(name,type,0,rank,shape, &dummy)) //preinit element with zero size
+                if (el->init(name,type,0, &dummy)) //preinit element with zero size
                 {
                    //here to add checking is it derived or is it base units
                    strncpy(el->unit->dim,inlines[i].dim,strlen(inlines[i].dim)+1);
@@ -643,7 +506,6 @@ int KIM_API_model::prestring_init(const char *instrn){
                 KIMBaseElement **pel =(KIMBaseElement**) model.data.p;
                 pel[ii] =  el;
                 ii++;
-                delete [] shape;
             }
         }
         if (ErrorCode == KIM_STATUS_FAIL) return ErrorCode;
@@ -1149,20 +1011,10 @@ int KIM_API_model::set_data(const char * nm, intptr_t size, void *dt){
     if (ind<0) {
             return KIM_STATUS_FAIL;
         } //no data in KIM_API_model
-        int c=1;
        (*this)[ind].data.p = dt;
 
         (*this)[ind].size = size;
 
-        if ((*this)[ind].rank > 1) {
-            for (int i=1;i<(*this)[ind].rank;i++) {
-                c=c * (*this)[ind].shape[i];
-            }
-            if(c!=0) (*this)[ind].shape[0] = size/c;
-        }
-        if ((*this)[ind].rank==1){
-            (*this)[ind].shape[0] = size;
-        }
         return KIM_STATUS_OK;
 }
 int KIM_API_model::set_method(const char * nm, intptr_t size, func_ptr dt){
@@ -1172,20 +1024,10 @@ int KIM_API_model::set_method(const char * nm, intptr_t size, func_ptr dt){
     if (ind<0) {
             return KIM_STATUS_FAIL;
         } //no data in KIM_API_model
-        int c=1;
        (*this)[ind].data.fp = dt;
 
         (*this)[ind].size = size;
 
-        if ((*this)[ind].rank > 1) {
-            for (int i=1;i<(*this)[ind].rank;i++) {
-                c=c * (*this)[ind].shape[i];
-            }
-            if(c!=0) (*this)[ind].shape[0] = size/c;
-        }
-        if ((*this)[ind].rank==1){
-            (*this)[ind].shape[0] = size;
-        }
         return KIM_STATUS_OK;
 }
 
@@ -2103,15 +1945,7 @@ bool KIM_API_model::init_AtomsTypes(){
     for(int i=0;i < numlines;i++){
         if (strcmp(inlines[i].type, "spec")==0){
             strncpy(AtomsTypes[ii].symbol,inlines[i].name,strlen(inlines[i].name)+1);
-            if(inlines[i].get_rank() !=1){
-                ErrorCode = -30;
-                std::cout <<" atom code error";
-                return false;
-            }
-            int * shp = inlines[i].get_shape();
-            AtomsTypes[ii].code = shp[0];
-            AtomsTypes[ii].readOnly = (shp[0] != -1);
-            delete [] shp;
+            AtomsTypes[ii].code = atoi(inlines[i].dim);
             ii++;
         }
     }
@@ -2293,7 +2127,7 @@ bool KIM_API_model::check_required_arguments(){
 int KIM_API_model::get_status_msg(const int status_code,
                                   const char** const status_msg)
 {
-    int mincode=-24,maxcode=3,offset=24;
+    int mincode=-23,maxcode=3,offset=23;
 
     static const char KIM_STATUS_MSG[][KIM_KEY_STRING_LENGTH]=
    {
@@ -2314,7 +2148,6 @@ int KIM_API_model::get_status_msg(const int status_code,
     {"get_neigh method in KIM API object is not set (NULL value)"},
     {"number of neighs of particle too big to allocate for conversion"},
     {"invalid KIM API object"},
-    {"negative index in shape"},
     {"invalid mode value"},
     {"no particle species have been specified by the Simulator or Model"},
     {"provided rank does not match KIM API argument rank"},

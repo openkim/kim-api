@@ -79,7 +79,6 @@ public:
         char name[KIM_KEY_STRING_LENGTH];
         char type[KIM_KEY_STRING_LENGTH];
         char dim[KIM_KEY_STRING_LENGTH];
-        char shape[KIM_KEY_STRING_LENGTH];
         char requirements[KIM_KEY_STRING_LENGTH];
         char comments[181];
         bool goodformat,input,output;
@@ -87,10 +86,6 @@ public:
         KIM_IOline();
 
         bool getFields(char * const inString);
-        int get_rank();
-        int * get_shape();
-        int * get_shape(int nparts, int nspecies);
-        bool isitsizedefined();
         bool isitoptional();
 
  private:
@@ -129,15 +124,13 @@ public:
       void (* fp)();
    } data;
         intptr_t size; //Size in words defined by type
-        intptr_t rank; // number of indexes
-        int * shape; //1d array of integer showing the size of each index
         char *name;
         char *type;
         KIMBaseElementUnit * unit;
         KIMBaseElementFlag *flag;
         KIMBaseElement();
         ~KIMBaseElement();
-        bool init(const char *nm,const char * tp,intptr_t sz, intptr_t rnk, int *shp,void * pdata);
+        bool init(const char *nm,const char * tp,intptr_t sz,void * pdata);
         void free();
         void nullify();
         bool equiv(KIM_IOline& kimioline);
