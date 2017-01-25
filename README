@@ -129,22 +129,9 @@ The current version of the KIM API package supports the following features:
   convert to a different set of units.  `flexible' means it can convert its
   values to the Simulator's units.
 
-* (deprecated) Neighbor lists and Boundary Conditions (NBC) methods: To
-  facilitate computational efficiency, the KIM API defines a number of standard
-  methods by which a Simulator may provide a Model with information about the
-  neighbors of each particle in a configuration.  These currently include
-  options that allow for common techniques, such as the use of the `minimum
-  image' convention for orthogonal periodic boundary conditions, `padding
-  particles', and neighbor lists with relative position vectors and `image
-  particles'.
-
 * Neighbor list routines are expected to be provided by the calling Simulator.
-  The API provides support for `Locator' and (deprecated) `Iterator' neighbor
-  list modes.  (A `Locator' returns the list of neighbors of a specified
-  particle.  An (deprecated) `Iterator' works by incrementing a particle
-  counter and returning the identity of the next particle (i.e. its number) and
-  its neighbors.)  The API also supports (deprecated) half (symmetric and
-  unsymmetric) and full neighbor lists.
+  The API provides support for `Locator' neighbor list modes.  A `Locator'
+  returns the list of neighbors of a specified particle.
 
 * Particle Species: The KIM API provides the ability to designate the physical
   species of each particle in a simulation.  Currently, only one identifier is
@@ -213,10 +200,9 @@ configure
 
 docs/
      Documentation directory.  This directory contains the file
-     kim-api-vX.Y.Z-introduction.pdf which provides an overview of this release
-     of the KIM API package, the file KIM_API_Descriptions.txt, a link to the
-     file standard.kim, and a templates directory containing template files for
-     creating your own KIM Models.  (See the README file in that directory.)
+     KIM_API_Descriptions.txt, a link to the file standard.kim, and a templates
+     directory containing template files for creating your own KIM Models.
+     (See the README file in that directory.)
 
 examples/
      A directory containing examples of interatomic Model Drivers, Models,

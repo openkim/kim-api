@@ -68,16 +68,7 @@ repository.
    command.  This command wraps the 'git clean' utility for just the specific
    directories mentioned above.
 
-2. The git repository has the files:
-
-      ${KD}/docs/kim-api-introduction.pdf
-      ${KD}/docs/kim-api-introduction.pptx
-
-   whereas the kim-api-vX.Y.Z.tgz package has the file
-
-      ${KD}/docs/kim-api-vX.Y.Z-introduction.pdf
-
-3. The kim-api-vX.Y.Z.tgz package has the file
+2. The kim-api-vX.Y.Z.tgz package has the file
 
       ${KD}/kim-api.release.info
 
@@ -85,7 +76,7 @@ repository.
    package was created, along with the date, time, and user name and email
    address of the person who created the package.
 
-4. The git repository has the directory:
+3. The git repository has the directory:
 
       ${KD}/scripts
 

@@ -1308,10 +1308,7 @@ bool KIM_API_model::do_flag_match(KIM_API_model& tst, KIM_API_model& mdl){
 bool KIM_API_model::do_AtomsTypes_match(KIM_API_model& test, KIM_API_model& mdl){
     bool match;
 
-    if (test.nAtomsTypes == 0 && strcmp(mdl.model.name,"standard")==0) return true;
-    if (test.nAtomsTypes == 0 && mdl.nAtomsTypes == 0) return true;
-    if (test.nAtomsTypes == 0 && mdl.nAtomsTypes > 0) return false;
-    if (test.nAtomsTypes > 0 && mdl.nAtomsTypes == 0) return false;
+    if (test.nAtomsTypes == 0 || mdl.nAtomsTypes == 0) return false;
     for (int i=0;i < test.nAtomsTypes; i++){
         match = false;
         for (int j=0;j<mdl.nAtomsTypes;j++){
@@ -1938,7 +1935,7 @@ bool KIM_API_model::init_AtomsTypes(){
     for(int i=0;i < numlines;i++){
         if (strcmp(inlines[i].type, "spec")==0) nAtomsTypes++;
     }
-    if (nAtomsTypes==0) return true;
+    if (nAtomsTypes==0) return false;
 
     AtomsTypes = new Atom_Map[nAtomsTypes];
     int ii=0;
@@ -2007,8 +2004,6 @@ int KIM_API_model::get_num_sim_species(int* numberSpecies,
 int KIM_API_model::get_sim_species(const int index,
                                    const char** const speciesString)
 {
-  if (0 == nAtomsTypes) return KIM_STATUS_FAIL;
-
   int count = 0;
   for (int i=0; i<nAtomsTypes; ++i)
   {
@@ -2074,8 +2069,8 @@ int KIM_API_model::get_parameter(const int index, const char** const parameterSt
 int KIM_API_model::get_species_code(const char* species, int * error){
     *error =KIM_STATUS_FAIL;
     if (species == NULL)  {
-        *error = KIM_STATUS_PARTICLE_SPECIES_UNDEFINED;
-        return KIM_STATUS_PARTICLE_SPECIES_UNDEFINED; //no atom symbol provided
+      *error = KIM_STATUS_FAIL;
+      return *error; //no atom symbol provided
     }
     Atom_Map key, *res=NULL;
     strcpy(key.symbol,species);
@@ -2091,8 +2086,8 @@ int KIM_API_model::get_species_code(const char* species, int * error){
 void KIM_API_model::set_species_code(const char* species, int code, int* error){
    *error = KIM_STATUS_FAIL;
     if (species == NULL)  {
-        *error = KIM_STATUS_PARTICLE_SPECIES_UNDEFINED;
-        return; //no atom symbol provided
+      *error = KIM_STATUS_FAIL;
+      return; //no atom symbol provided
     }
     Atom_Map key, *res=NULL;
     strcpy(key.symbol,species);
@@ -2127,7 +2122,7 @@ bool KIM_API_model::check_required_arguments(){
 int KIM_API_model::get_status_msg(const int status_code,
                                   const char** const status_msg)
 {
-    int mincode=-23,maxcode=3,offset=23;
+    int mincode=-19,maxcode=1,offset=19;
 
     static const char KIM_STATUS_MSG[][KIM_KEY_STRING_LENGTH]=
    {
@@ -2139,25 +2134,20 @@ int KIM_API_model::get_status_msg(const int status_code,
     {"unsupported Unit_energy"},
     {"unsupported Unit_length"},
     {"Unit_Handling must be \"flexible\" or \"fixed\" "},
+
     {"group argument must be 1 or 0 (in KIM_API...multiple routine)"},
     {"numargs is not divisiable by 4(in KIM_API...multiple routine)"},
     {"wrong optional arguments (in a kim_api_...multiple routine)"},
     {"numargs is not divisible by 2 (in KIM_API...multiple routine)"},
     {"numargs is not divisiable by 3 (in KIM_API...multiple routine)"},
-    {"invalid value for `request' provided"},
     {"get_neigh method in KIM API object is not set (NULL value)"},
     {"number of neighs of particle too big to allocate for conversion"},
     {"invalid KIM API object"},
-    {"invalid mode value"},
-    {"no particle species have been specified by the Simulator or Model"},
-    {"provided rank does not match KIM API argument rank"},
     {"invalid particle id requested (request out of range)"},
     {"symbol is not among supported particle symbols"},
     {"argument name provided is not in KIM API object"},
     {"unsuccessful completion"},
-    {"successful completion"},
-    {"iterator has been incremented past end of list"},
-    {"iterator has been successfully initialized"}};
+    {"successful completion"}};
 
     if (status_code < mincode || status_code > maxcode) {
       *status_msg = "the error code is not among KIM_STATUS codes";

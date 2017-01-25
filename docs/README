@@ -50,14 +50,6 @@ STEP 0
 
 STEP 1
 
-   Read kim-api-vX.Y.Z-introduction.pdf which is located in the docs directory
-   (same directory as this file).  This pdf file contains a presentation
-   providing an overview of the OpenKIM project and basic concepts related to
-   the KIM API.
-
-
-STEP 2
-
    The KIM API package comes with a number of example Models (interatomic
    potentials) and Simulators and OpenKIM Tests (simulation codes) which
    demonstrate how the API works.  Read about the provided Models, Simulators,
@@ -74,7 +66,7 @@ STEP 2
    build steps.
 
 
-STEP 3
+STEP 2
 
    Included with the package is a script that runs all of the possible
    combinations of Models and OpenKIM Tests (see
@@ -97,7 +89,7 @@ STEP 3
    Fortran 2003 running a modified Lennard-Jones potential for Ar written in C.
 
 
-STEP 4
+STEP 3
 
    Now that we have seen some examples of the KIM API in operation, the next
    step is to understand how it works.  This is the stage where we need to
@@ -193,7 +185,7 @@ STEP 4
    `make parameterized_model.cpp' and it will be generated.)
 
 
-STEP 5
+STEP 4
 
    At this stage, you are ready to create a new KIM-Compliant Model of your
    own.  To facilitate this process, the KIM API package includes template
@@ -241,10 +233,6 @@ KIM_API_Description.txt
 
 README
      This file.
-
-kim-api-vX.Y.Z-introduction.pdf
-     Presentation file describing the concepts on which the KIM API system is
-     based.
 
 standard.kim
      A link to the file in ../src which defines and describes the KIM API

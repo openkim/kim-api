@@ -37,11 +37,10 @@
 #
 ################################################################################
 #
-# This file defines the KIM API standard argument names and their properties,
-# the Neighbor Boundary Condition (NBC) methods supported by the KIM API, the
-# list of standard particle species known to KIM, and a set of conventions
-# defined by KIM that help to ensure that Models and Simulators are able to
-# successfully communicate with each other.
+# This file defines the KIM API standard argument names and their properties
+# supported by the KIM API, the list of standard particle species known to KIM,
+# and a set of conventions defined by KIM that help to ensure that Models and
+# Simulators are able to successfully communicate with each other.
 #
 # The requirements and capabilities of KIM Models and Simulators are defined in
 # an accompanying plain text document referred to as a "KIM descriptor file".
@@ -159,14 +158,14 @@ $
 #               or more values that must be shared between the Model and
 #               Simulator and should only be used within the MODEL_INPUT,
 #               MODEL_OUTPUT, and MODEL_PARAMETERS sections of the KIM
-#               descriptor file.  These are analogous the the arguments of a
-#               function call.  The line consists of five white-space separated
+#               descriptor file.  These are analogous to the arguments of a
+#               function call.  The line consists of four white-space separated
 #               (case sensitive) strings of maximum KIM_KEY_STRING_LENGTH
 #               length.  The values of these strings are checked against the
 #               standard list in `standard.kim' (below) for lines contained in
 #               the MODEL_INPUT and MODEL_OUTPUT sections of the KIM descriptor
 #               file (but not for lines in the MODEL_PARAMETERS section).  The
-#               five strings, in order, are as follows:
+#               four strings, in order, are as follows:
 #
 #                  1) Name: This string gives a unique name to the argument.
 #
@@ -220,37 +219,37 @@ $
 #                              * electric_field
 #                              * density
 #
-#                  4) Shape: This string defines the rank (number of array
-#                            dimensions) and extent (size of each dimension)
-#                            for the values associated with the argument
-#                            quantity.
+#                  4) Requirements: This string may be empty or `optional'.  An
+#                                   empty string indicates that the argument is
+#                                   required to be present by the
+#                                   Simulator/Model (i.e., the Simulator/Model
+#                                   will read from and/or write to the values
+#                                   associated with this argument).  Models may
+#                                   use the `optional' string.  If this is
+#                                   specified for an input argument, it means
+#                                   that the Model can run without receiving
+#                                   this argument (but it may use it if
+#                                   provided).  If specified for an output
+#                                   argument, it means that the argument will
+#                                   only be computed if required by the
+#                                   Simulator.
 #
-#                            The format of the string is a `[' followed by an
+#                  Argument Shape: The KIM API defines the "shape", rank
+#                            (number of array dimensions) and extent (size of
+#                            each dimension) for the values associated with the
+#                            argument quantity.  This definition is provided
+#                            fore each standard argument in `standard.kim'
+#                            (below) in the argument's documentation.
+#
+#                            The format of the shape is a `[' followed by an
 #                            (optional) comma separated list of integers or
 #                            character strings, followed by a `]'.
 #
-#                            If an integer is provided it sets the extent of
-#                            the corresponding dimension.  Otherwise one of the
-#                            three following strings may be used:
+#                            If an integer is provided it specifies the extent
+#                            of the corresponding dimension.  Otherwise one of
+#                            the two following strings may be used:
 #
-#                            `numberOfParticles', `numberOfSpecies', `:'
-#
-#                            If either of the first two options is present, the
-#                            KIM_API_allocate() function will substitute the
-#                            value of its `nParticles' or its `nSpecies'
-#                            arguments, respectively.  If, after this
-#                            substitution the extents of EACH dimension is
-#                            known, then the (deprecated) KIM_API_allocate()
-#                            function will allocate the memory for this
-#                            argument (otherwise, if any strings are equal to
-#                            `:', then memory for this argument will not be
-#                            allocated by the KIM_API_allocate() function and
-#                            must be allocated by the Simulator and registered
-#                            in the KIM API object using the KIM_API_set_data()
-#                            or KIM_API_setm_data() functions).
-#
-#                            White-space is not allowed between the `[' and `]'
-#                            characters.
+#                            `numberOfParticles' or `numberOfSpecies'
 #
 #                            NOTE that multi-dimensional arrays are defined as
 #                            in C with the `fast-index' corresponding to the
@@ -271,110 +270,22 @@ $
 #                                     values
 #
 #                            * [numberOfParticles] - This defines a vector (rank=1)
-#                                     of `numberOfParticles' values.  If the
-#                                     KIM_API_allocate function is called as
-#
-#                       KIM_API_allocate(pkim, nParticles, nSpeciess, kimerr)
-#
-#                                     it will allocate memory for this
-#                                     argument using the value of `nParticles'.
+#                                     of `numberOfParticles' values.
 #
 #                            * [numberOfSpecies] - This defines a vector
 #                                     (rank=1) of `numberOfSpecies'
-#                                     values.  If the KIM_API_allocate function
-#                                     is called as
-#
-#                       KIM_API_allocate(pkim, nParticles, nSpeciess, kimerr)
-#
-#                                    it will allocated memory for this argument
-#                                    using the value of `nSpecies'.
+#                                     values.
 #
 #                            * [12,10,5] - This defines a three-dimensional
 #                                    array (rank=3) of size 12 by 10 by 5.
-#                                    Memory for this array can be allocated by
-#                                    the KIM_API_allocate() function.
 #
 #                            * [numberOfParticles,12,15] - This defines a three-
 #                                    dimensional array (rank=3) of size
-#                                    `numberOfParticles' by 12 by 15.  Memory for
-#                                    this array can be allocated by the
-#                                    KIM_API_allocate() function.
-#
-#                            * [:,12] - This defines a two-dimensional array
-#                                    (rank=2) of size (an unspecified length)
-#                                    by 12.  In this case, KIM_API_allocate()
-#                                    will not allocate any memory for this
-#                                    argument.  When the only unknown dimension
-#                                    range is the (slowest) first dimension,
-#                                    the Simulator must allocate (and
-#                                    eventually free) memory for this argument
-#                                    and use the KIM_API_set_data() function in
-#                                    order to register the memory location of
-#                                    the values for this argument.  When this
-#                                    is done the KIM_API_set_data() function
-#                                    will determine (and set) the EXTENT of the
-#                                    first dimension using the known EXTENTs of
-#                                    the remaining dimensions and the `size'
-#                                    argument.  If the range of one or more
-#                                    dimensions other than the first is
-#                                    unknown, then the KIM_API_set_data()
-#                                    function does not try to determine the
-#                                    unknown EXTENT(s) and will exit with an
-#                                    error.  In this type of situation the
-#                                    KIM_API_set_shape() function (see below)
-#                                    must be used before KIM_API_set_data() is
-#                                    called.
-#
-#                                    NOTE: recall that for standard arguments
-#                                    the shape strings are compared with the
-#                                    corresponding values in standard.kim (this
-#                                    file).  Thus, specifying a constant
-#                                    EXTENT, such as the `12' in this example,
-#                                    has meaning for the Simulator/Model
-#                                    matching process.  Further, these values
-#                                    are stored in the KIM API object (zero is
-#                                    substituted wherever a `:' occurs) and can
-#                                    be retrieved at run-time (before they are
-#                                    overwritten by a call to (deprecated)
-#                                    KIM_API_set_shape()).
-#
+#                                    `numberOfParticles' by 12 by 15.
 #
 #                            * [12,numberOfParticles] - This defines a two-
 #                                    dimensional array (rank=2) of size 12 by
-#                                    `numberOfParticles'.  Memory for this array
-#                                    can be allocated by the KIM_API_allocate()
-#                                    function.
-#
-#                            * [:,:,:,12,:,numberOfSpecies] - This defines
-#                                   a six-dimensional array (rank=6).  Memory
-#                                   for this array cannot be allocated by the
-#                                   KIM_API_allocate() function.  The Simulator
-#                                   must use the (deprecated)
-#                                   KIM_API_set_shape() function to register
-#                                   the range of all dimensions (i.e, specify
-#                                   the explicit values for the shape).  Then,
-#                                   the Simulator must allocate (and eventually
-#                                   free) memory for this argument and use the
-#                                   KIM_API_set_data() function in order to
-#                                   register the memory location of the values
-#                                   for this argument.
-#
-#
-#
-#                  5) Requirements: This string may be empty or `optional'.  An
-#                                   empty string indicates that the argument is
-#                                   required to be present by the
-#                                   Simulator/Model (i.e., the Simulator/Model
-#                                   will read from and/or write to the values
-#                                   associated with this argument).  Models may
-#                                   use the `optional' string.  If this is
-#                                   specified for an input argument, it means
-#                                   that the Model can run without receiving
-#                                   this argument (but it may use it if
-#                                   provided).  If specified for an output
-#                                   argument, it means that the argument will
-#                                   only be computed if required by the
-#                                   Simulator.
+#                                    `numberOfParticles'.
 #
 ################################################################################
 #
@@ -670,12 +581,11 @@ MODEL_INPUT:
 ################################################################################
 #
 # Every data line in the input section of a KIM descriptor file of a Simulator
-# and Model consists of five fields:
+# and Model consists of four fields:
 #
 # Name
 # Type
 # Unit
-# Shape
 # Requirements
 #
 # Each of these lines must exactly match with one of the standard definitions
@@ -688,140 +598,133 @@ MODEL_INPUT:
 ################################################################################
 #
 # numberOfParticles : The number of particles in the configuration passed
-#                     between the Model and Simulator.
+#                     between the Model and Simulator.  Shape [].
 #
 # Particles are always numbered sequentially starting from 0 or 1 depending on
 # the ZeroBasedLists/OneBasedLists convention setting.  This argument is
 # required for all Models and Simulators.  A Simulator must allocate memory for
-# this argument and register it in the KIM API object (via KIM_API_allocate()
-# or KIM_API_set_data()) before the KIM_API_model_compute() function is called.
-# The Simulator is free to change this pointer at any time.
+# this argument and register it in the KIM API object (via KIM_API_set_data())
+# before the KIM_API_model_compute() function is called.  The Simulator is free
+# to change this pointer at any time.
 #
-# Name                      Type         Unit                Shape
+# Name                      Type         Unit
 #
-numberOfParticles           integer      none                []
+numberOfParticles           integer      none
 
 ################################################################################
 #
 # numberOfSpecies: The number of species of particles contained in the
 #                  configuration passed between the Model and Simulator.
+#                  Shape [].
 #
-# This argument is required for any Model/Simulator that specifies one or more
-# particle species in the PARTICLE_SPECIES section.  If supported, a Simulator
-# must allocate memory for this argument and register it in the KIM API object
-# (via KIM_API_allocate() or KIM_API_set_data()) before the
-# KIM_API_model_compute() function is called.  The Simulator is free to change
-# this pointer at any time.
+# This argument is required for all Models and Simulators.  The Simulator must
+# allocate memory for this argument and register it in the KIM API object (via
+# KIM_API_set_data()) before the KIM_API_model_compute() function is called.
+# The Simulator is free to change this pointer at any time.
 #
-# Name                      Type         Unit              Shape
+# Name                      Type         Unit
 #
-numberOfSpecies             integer      none              []
+numberOfSpecies             integer      none
 
 ################################################################################
 #
 # particleSpecies : A vector of integers indicating the species of each
 #                   particle in the configuration passed between the Model and
-#                   Simulator.
+#                   Simulator.  Shape [numberOfParticles].
 #
 # The values in this vector must correspond to the `code' specified in the
-# Model's KIM descriptor file.  This argument is required for any
-# Model/Simulator that specifies one or more particle species in the
-# PARTICLE_SPECIES section.  If supported, a Simulator must allocate memory for
-# this argument and register it in the KIM API object (via KIM_API_allocate()
-# or KIM_API_set_data()) before the KIM_API_model_compute() function is called.
-# The Simulator is free to change this pointer at any time.
+# Model's KIM descriptor file.  This argument is required for all Models and
+# Simulators.  The Simulator must allocate memory for this argument and
+# register it in the KIM API object (via KIM_API_set_data()) before the
+# KIM_API_model_compute() function is called.  The Simulator is free to change
+# this pointer at any time.
 #
-# Name                      Type         Unit               Shape
+# Name                      Type         Unit
 #
-particleSpecies             integer      none               [numberOfParticles]
+particleSpecies             integer      none
 
 ################################################################################
 #
 # coordinates : An array of floating-point numbers specifying the spatial
 #               location of each of the numberOfParticles particles in the
 #               configuration passed between the Model and Simulator.
+#               Shape [numberOfParticles,3].
 #
 # This argument is required for all Models and Simulators.  A Simulator must
 # allocate memory for this argument and register it in the KIM API object (via
-# KIM_API_allocate() or KIM_API_set_data()) before the KIM_API_model_compute()
-# function is called.  The Simulator is free to change this pointer at any
-# time.
+# KIM_API_set_data()) before the KIM_API_model_compute() function is called.
+# The Simulator is free to change this pointer at any time.
 #
-# Name                      Type         Unit               Shape
+# Name                      Type         Unit
 #
-coordinates                 double       length             [numberOfParticles,3]
+coordinates                 double       length
 
 ################################################################################
 #
 # get_neigh : A pointer to the neighbor list access function that is provided
-#             by the Simulator.
+#             by the Simulator.  Shape [].
 #
-# This argument is required for Models/Simulators that support any NBCs other
-# than CLUSTER. It is recommended that for Models this argument be optional to
-# ensure that a Model is compatible with the widest possible set of Simulators.
+# This argument is required for all Models and Simulators.
 #
-# If supported, a Simulator must allocate memory for this argument and register
-# it in the KIM API object (via KIM_API_allocate() or KIM_API_set_data())
-# before the KIM_API_model_compute() function is called.  The Simulator is free
-# to change this pointer at any time.
+# The Simulator must register a method pointer it in the KIM API object (via
+# KIM_API_set_method()) before the KIM_API_model_compute() function is called.
+# The Simulator is free to change this pointer at any time.
 #
-# Name                      Type         Unit               Shape
+# Name                      Type         Unit
 #
-get_neigh                   method       none               []
+get_neigh                   method       none
 
 ################################################################################
 #
 # process_dEdr : A pointer to a function that can compute arbitrary linear
 #                combinations of the first derivative of the Model's energy
-#                with respect to the distances between particles.
+#                with respect to the distances between particles.  Shape [].
 #
 # During the Model's compute loop, this function will be called multiple times
 # with a scalar value representing a contribution to the derivative of the
 # energy with respect to a pair distance.  The Simulator can use this
 # information to compute, via the chain-rule, many properties.  Examples
 # include forces, the virial and other thermodynamic tensions.  If supported, a
-# Simulator must allocate memory for this argument and register it in the KIM
-# API object (via KIM_API_allocate() or KIM_API_set_data()) before the
-# KIM_API_model_compute() function is called.  The Simulator is free to change
-# this pointer at any time.
+# Simulator must register a method pointer in the KIM API object (via
+# KIM_API_set_method()) before the KIM_API_model_compute() function is called.
+# The Simulator is free to change this pointer at any time.
 #
-# Name                      Type         Unit               Shape
+# Name                      Type         Unit
 #
-process_dEdr                method       none               []
+process_dEdr                method       none
 
 ################################################################################
 #
 # process_d2Edr2 : A pointer to a function that can compute arbitrary linear
 #                  combinations of the second derivative of the Model's energy
-#                  with respect to the distances between particles.
+#                  with respect to the distances between particles.  Shape [].
 #
 # The function will be called multiple times with a scalar value representing a
 # contribution to the second derivative of the energy with respect to two pair
 # distances.  The Simulator can use this information (often in conjunction with
 # process_dEdr) to compute, via the chain-rule, many properties.  An example is
-# the hessian.  If supported, a Simulator must allocate memory for this
-# argument and register it in the KIM API object (via KIM_API_allocate() or
-# KIM_API_set_data()) before the KIM_API_model_compute() function is called.
-# The Simulator is free to change this pointer at any time.
+# the hessian.  If supported, a Simulator must register a method pointer in the
+# KIM API object (via KIM_API_set_method()) before the KIM_API_model_compute()
+# function is called.  The Simulator is free to change this pointer at any
+# time.
 #
-# Name                      Type         Unit               Shape
+# Name                      Type         Unit
 #
-process_d2Edr2              method       none               []
+process_d2Edr2              method       none
 
 ################################################################################
 #
 # neighObject : A pointer to the data for the neighbor list that is provided by
 #               the Simulator.
 #
-# This argument is required for Models/Simulators that support any NBC other
-# than CLUSTER.  If supported, a Simulator must allocate memory for this
-# argument and register it in the KIM API object (via KIM_API_allocate() or
-# KIM_API_set_data()) before the KIM_API_model_compute() function is called.
-# The Simulator is free to change this pointer at any time.
+# This argument is required for all Models and Simulators.  The Simulator must
+# register a pointer in the KIM API object (via KIM_API_set_data()) before the
+# KIM_API_model_compute() function is called.  The Simulator is free to change
+# this pointer at any time.
 #
-# Name                      Type         Unit               Shape
+# Name                      Type         Unit
 #
-neighObject                 pointer      none               []
+neighObject                 pointer      none
 
 
 ################################################################################
@@ -835,7 +738,7 @@ MODEL_OUTPUT:
 ################################################################################
 #
 # The data lines in the output section of the KIM descriptor file of a
-# Simulator and Model consist of five fields and must satisfy the same
+# Simulator and Model consist of four fields and must satisfy the same
 # restrictions as the lines in the input section as explained above (following
 # the MODEL_INPUT section line).
 #
@@ -845,84 +748,82 @@ MODEL_OUTPUT:
 #
 # compute : A pointer to the Model's compute function which given the input
 #           defined in the MODEL_INPUT section will calculate quantities
-#           described in the MODEL_OUTPUT section.
+#           described in the MODEL_OUTPUT section.  Shape [].
 #
 # This argument is required for all Models and Simulators.  A Model must
-# register a pointer to its `compute' function during the execution of
+# register a method pointer to its `compute' function during the execution of
 # KIM_API_model_init().  The Model is free to change this pointer at any time.
 #
-# Name                      Type         Unit               Shape
+# Name                      Type         Unit
 #
-compute                     method       none               []
+compute                     method       none
 
 ################################################################################
 #
 # reinit : A pointer to the Model's reinit function (called to reinitialize a
 #          Model following a change to its parameters by a Simulator).
+#          Shape [].
 #
-# This argument is required if a Models publishes its parameters.  However, the
-# argument should be included, as optional, by all Models to ensure maximum
-# compatibility with Simulators (who should only include the argument if they
-# use it).  If supported, a Model must register a pointer to its `reinit'
+# This argument is required for all Models and Simulators.  If the Model
+# provides a reinit function, it must register a method pointer to its `reinit'
 # function during the execution of KIM_API_model_init().  The Model is free to
 # change this pointer at any time.
 #
-# Name                      Type         Unit               Shape
+# Name                      Type         Unit
 #
-reinit                      method       none               []
+reinit                      method       none
 
 ################################################################################
 #
 # destroy : A pointer to the Model's destroy function (called by a Simulator
 #           prior to a KIM_API_free() call to allow the Model to perform any
-#           necessary clean-up operations).
+#           necessary clean-up operations).  Shape [].
 #
-# This argument is required if a Model publishes its parameters (so that it can
-# free the memory that it allocated for its parameters in its init function).
-# However, the argument should be included by all Models (as optional, at
-# least) to ensure maximum compatibility with Simulators (who should only
-# include the argument if they use it).  If supported, a Model must register a
-# pointer to its `destroy' function during the execution of
-# KIM_API_model_init().  The Model is free to change this pointer at any time.
+# This argument is required for all Models and Simulators (so, if necessary the
+# Model can free the memory that it allocated in its init or reinit functions).
+# If a destroy method is provided by a Model, it must register a method pointer
+# to its `destroy' function during the execution of KIM_API_model_init().  The
+# Model is free to change this pointer at any time.
 #
-# Name                      Type         Unit               Shape
+# Name                      Type         Unit
 #
-destroy                     method       none               []
+destroy                     method       none
 
 ################################################################################
 #
 # cutoff : A floating-point number indicating the Model's range of interactions
-#          (i.e. its cutoff radius).
+#          (i.e. its cutoff radius).  Shape [].
 #
-# This argument is required for all Models/Simulators.  This value should not
-# be modified by the Simulator.  A Simulator must allocate memory for this
-# argument and register it in the KIM API object (via KIM_API_allocate() or
-# KIM_API_set_data()) before the KIM_API_model_init() function is called.  The
-# Simulator is free to change this pointer at any time.  However, when such a
-# change occurs, the Simulator must ensure that the value stored in the memory
-# pointed to is preserved.  If the Model allows for its cutoff distance to be
-# changed it will provide the parameter PARAM_FREE_cutoff (see below) which can
-# be changed.  Once the PARAM_FREE_cutoff parameter has been changed and the
-# Model's reinit function called, the Model must update the value of `cutoff'.
+# This argument is required for all Models and Simulators.  This value should
+# not be modified by the Simulator.  A Simulator must allocate memory for this
+# argument and register it in the KIM API object (via KIM_API_set_data())
+# before the KIM_API_model_init() function is called.  The Simulator is free to
+# change this pointer at any time.  However, when such a change occurs, the
+# Simulator must ensure that the value stored in the memory pointed to is
+# preserved.  If the Model allows for its cutoff distance to be changed it will
+# provide the parameter PARAM_cutoff (see below) which can be changed.  Once
+# the PARAM_cutoff parameter has been changed and the Model's reinit function
+# called, the Model must update the value of `cutoff'.
 #
-# Name                      Type         Unit               Shape
+# Name                      Type         Unit
 #
-cutoff                      double       length             []
+cutoff                      double       length
 
 ################################################################################
 #
 # energy : A floating-point number corresponding to the total energy of the
 #          configuration of particles passed between the Model and Simulator.
+#          Shape [].
 #
 # This argument should, ideally, be optional to ensure maximum Model/Simulator
 # compatibility.  If supported, a Simulator must allocate memory for this
-# argument and register it in the KIM API object (via KIM_API_allocate() or
-# KIM_API_set_data()) before the KIM_API_model_compute() function is called.
-# The Simulator is free to change this pointer at any time.
+# argument and register it in the KIM API object (via KIM_API_set_data())
+# before the KIM_API_model_compute() function is called.  The Simulator is free
+# to change this pointer at any time.
 #
-# Name                      Type         Unit               Shape
+# Name                      Type         Unit
 #
-energy                      double       energy             []
+energy                      double       energy
 
 ################################################################################
 #
@@ -930,33 +831,33 @@ energy                      double       energy             []
 #          acting on each particle in the configuration of particles passed
 #          between the Model and Simulator.  The force vector on a particle is
 #          defined as the negative of the gradient of the energy with respect
-#          to the particle's coordinate vector.
+#          to the particle's coordinate vector.  Shpae [numberOfParticles,3].
 #
 # This argument should be optional to ensure maximum Model/Simulator
 # compatibility.  If supported, a Simulator must allocate memory for this
-# argument and register it in the KIM API object (via KIM_API_allocate() or
-# KIM_API_set_data()) before the KIM_API_model_compute() function is called.
-# The Simulator is free to change this pointer at any time.
+# argument and register it in the KIM API object (via KIM_API_set_data())
+# before the KIM_API_model_compute() function is called.  The Simulator is free
+# to change this pointer at any time.
 #
-# Name                      Type         Unit               Shape
+# Name                      Type         Unit
 #
-forces                      double       force              [numberOfParticles,3]
+forces                      double       force
 
 ################################################################################
 #
 # particleEnergy : A vector of floating-point numbers corresponding to the
 #                 energy of each particle in the configuration passed between
-#                 the Model and Simulator.
+#                 the Model and Simulator.  Shape [numberOfParticles].
 #
 # This argument should, ideally, be optional to ensure maximum Model/Simulator
 # compatibility.  If supported, a Simulator must allocate memory for this
-# argument and register it in the KIM API object (via KIM_API_allocate() or
-# KIM_API_set_data()) before the KIM_API_model_compute() function is called.
-# The Simulator is free to change this pointer at any time.
+# argument and register it in the KIM API object (via KIM_API_set_data())
+# before the KIM_API_model_compute() function is called.  The Simulator is free
+# to change this pointer at any time.
 #
-# Name                      Type         Unit               Shape
+# Name                      Type         Unit
 #
-particleEnergy              double       energy             [numberOfParticles]
+particleEnergy              double       energy
 
 ################################################################################
 #
@@ -966,28 +867,22 @@ particleEnergy              double       energy             [numberOfParticles]
 #          are positive and compressive quantities are negative. Thus, the
 #          pressure is the negative of the spherical part of the Cauchy stress
 #          which is given by one third the sum of the 11, 22 and 33 components
-#          of the virial divided by a representative volume.
+#          of the virial divided by a representative volume.  Shape [6].
 #
 # The components of this 3 x 3 symmetric tensor are stored in a compact vector
 # form with 6 components in accordance with the Voigt convention:
 #
 # {11,22,33,23,13,12} or {xx,yy,zz,yz,xz,xy}
 #
-# (deprecated) A Model may support the virial computation by having the KIM API
-# compute it via the default process_dEdr mechanism.  (In this case the Model
-# will list the `process_dEdr' argument in its descriptor file and call the
-# KIM_API_process_dEdr() function in its compute loop.  The Simulator should
-# list `virial' in its descriptor file.)
-#
 # This argument should, ideally, be optional to ensure maximum Model/Simulator
 # compatibility.  If supported, a Simulator must allocate memory for this
-# argument and register it in the KIM API object (via KIM_API_allocate() or
-# KIM_API_set_data()) before the KIM_API_model_compute() function is called.
-# The Simulator is free to change this pointer at any time.
+# argument and register it in the KIM API object (via KIM_API_set_data())
+# before the KIM_API_model_compute() function is called.  The Simulator is free
+# to change this pointer at any time.
 #
-# Name                      Type         Unit               Shape
+# Name                      Type         Unit
 #
-virial                      double       energy             [6]
+virial                      double       energy
 
 ################################################################################
 #
@@ -998,53 +893,39 @@ virial                      double       energy             [6]
 #                  compressive quantities are negative.  Thus, the trace of the
 #                  virial (sum of the 11, 22, and 33 components) is related to
 #                  the pressure, however the sign convention is opposite that
-#                  normally used for pressure.
+#                  normally used for pressure.  Shape [numberOfParticles,6].
 #
 # The components of each 3 x 3 symmetric tensor are stored in a compact vector
 # form with 6 components in accordance with the Voigt convention:
 #
 # {11,22,33,23,13,12} or {xx,yy,zz,yz,xz,xy}
 #
-# (deprecated) A Model may support the virial computation by having the KIM API
-# compute it via the default process_dEdr mechanism.  (In this case the Model
-# will list the `process_dEdr' argument in its descriptor file and call the
-# KIM_API_process_dEdr() function in its compute loop.  The Simulator should
-# list `particleVirial' in its descriptor file.)
-#
 # This argument should, ideally, be optional to ensure maximum Model/Simulator
 # compatibility.  If supported, a Simulator must allocate memory for this
-# argument and register it in the KIM API object (via KIM_API_allocate() or
-# KIM_API_set_data()) before the KIM_API_model_compute() function is called.
-# The Simulator is free to change this pointer at any time.
+# argument and register it in the KIM API object (via KIM_API_set_data())
+# before the KIM_API_model_compute() function is called.  The Simulator is free
+# to change this pointer at any time.
 #
-# Name                      Type         Unit               Shape
+# Name                      Type         Unit
 #
-particleVirial              double       energy             [numberOfParticles,6]
+particleVirial              double       energy
 
 ################################################################################
 #
 # hessian : A matrix of second derivatives of the Model's energy.  For
 #           computational efficiency the matrix is stored as a
 #           numberOfParticles by numberOfParticles array of 3 by 3 matrices.
-#
-# (deprecated) A Model may support the hessian computation by having the KIM
-# API compute it via the default process_dEdr and process_dE2dr2 mechanisms.
-# (In this case the Model will list the `process_dEdr' and `process_dE2dr2'
-# arguments in its descriptor file and call the KIM_API_process_dEdr() and
-# KIM_API_process_d2Edr2() functions in its compute loop.  The Simulator should
-# list `hessian' in its descriptor file.)  In the future a sparse array format
-# may be introduces in order to reduce memory usage for this and other similar
-# arguments.
+#           Shape [numberOfParticles,numberOfParticles,3,3].
 #
 # This argument should, ideally, be optional to ensure maximum Model/Simulator
 # compatibility.  If supported, a Simulator must allocate memory for this
-# argument and register it in the KIM API object (via KIM_API_allocate() or
-# KIM_API_set_data()) before the KIM_API_model_compute() function is called.
-# The Simulator is free to change this pointer at any time.
+# argument and register it in the KIM API object (via KIM_API_set_data())
+# before the KIM_API_model_compute() function is called.  The Simulator is free
+# to change this pointer at any time.
 #
-# Name                      Type         Unit               Shape
+# Name                      Type         Unit
 #
-hessian                     double       pressure           [numberOfParticles,numberOfParticles,3,3]
+hessian                     double       pressure
 
 ################################################################################
 #
@@ -1095,12 +976,13 @@ MODEL_PARAMETERS:
 # PARAM_cutoff : A standard parameter that is used to store the cutoff radius
 #                of the Model.  This parameter allows a Simulator to modify a
 #                Model by changing its cutoff radius as described above.
+#                Shape [].
 #
 # NOTE: Currently this is the only standard parameter defined by the KIM API.
 #
 #
-# Name                      Type         Unit               Shape
+# Name                      Type         Unit
 #
-PARAM_cutoff                double       length             []
+PARAM_cutoff                double       length
 
 # END of standard.kim file

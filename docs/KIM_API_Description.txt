@@ -113,10 +113,8 @@ To be used by: Simulator
         by the Simulator, the Model's list of particle species symbol names is
         searched for the corresponding entry.  If every particle species symbol
         listed by the Simulator is found in the Model's symbol list, a positive
-        match is obtained.  If both the Model's and Simulator's list are empty,
-        then the Model and Simulator support a single "unnamed" particle
-        species and a positive match is obtained.  Otherwise, a negative match
-        is obtained and the routine returns KIM_STATUS_FAIL.
+        match is obtained. Otherwise, a negative match is obtained and the
+        routine returns KIM_STATUS_FAIL.
 
     (4) Mandatory arguments matching: The following arguments are mandatory and
         must be included in any KIM descriptor file:
@@ -124,10 +122,7 @@ To be used by: Simulator
               MODEL_INPUT section
                 `numberOfParticles'
                 `numberOfSpecies'
-                `particleSpecies'    (not required if the PARTICLE_SPECIES
-                                     section is empty.  That is, if the Model
-                                     and Simulator only support a single
-                                     "unnamed" particle species.)
+                `particleSpecies'
                 `coordinates'
                 `neighObject'
                 `get_neigh'
@@ -137,10 +132,10 @@ To be used by: Simulator
                 `destroy'
                 `cutoff'
 
-        If all of the above arguments (except possibly, as described above,
-        `particleSpecies') are present in both the Model and Simulator KIM
-        descriptor files, then a positive match is obtained.  Otherwise, a
-        negative match is obtained and the routine returns KIM_STATUS_FAIL.
+        If all of the above arguments are present in both the Model and
+        Simulator KIM descriptor files, then a positive match is obtained.
+        Otherwise, a negative match is obtained and the routine returns
+        KIM_STATUS_FAIL.
 
     (5) MODEL_INPUT matching:
 
@@ -826,8 +821,7 @@ To be used by: Model/Simulator
     This routine outputs the requested (index) Model particle species string.
     Each string is a particle species symbol.  The order in which the species
     are indexed is unspecified, but fixed for the lifetime of the kimmdl
-    object.  In the case where no particle species are specified by the Model
-    or Simulator, the routine returns KIM_STATUS_FAIL for all values of index.
+    object.
 
 Return value:
       KIM_STATUS_OK   -- successful completion
@@ -881,9 +875,7 @@ To be used by: Model/Simulator
     This routine outputs the requested (index) Simulator particle species
     string.  Each string is a particle species symbol.  The order in which the
     species are indexed is unspecified, but fixed for the lifetime of the
-    kimmdl object.  In the case where no particle species are specified by the
-    Model or Simulator, the routine returns KIM_STATUS_FAIL for all values of
-    index.
+    kimmdl object.
 
 Return value:
       KIM_STATUS_OK   -- successful completion
@@ -970,12 +962,9 @@ To be used by: Model/Simulator
 
     This routine returns the particle species ID for a given particle symbol,
     as defined by the Model associated with the KIM API object.  The routine
-    returns KIM_STATUS_PARTICLE_SPECIES_UNDEFINED if no particle species have
-    been provided in the .kim files.  (See the standard.kim file for more
-    information on particle species.)  The routine returns
-    KIM_STATUS_PARTICLE_INVALID_SPECIES if the supplied symbol, particle, is
-    not among the KIM supported particle symbols.  (See standard.kim for the
-    list of supported particle species.)
+    returns KIM_STATUS_PARTICLE_INVALID_SPECIES if the supplied symbol,
+    particle, is not among the KIM supported particle symbols.  (See
+    standard.kim for the list of supported particle species.)
 
 Arguments:
       void *kimmdl
@@ -990,9 +979,6 @@ Arguments:
                           KIM_STATUS_FAIL                     -- unsuccessful
                           KIM_STATUS_PARTICLE_INVALID_SPECIES -- symbol is not among the
                                                                  KIM supported particle symbols
-                          KIM_STATUS_PARTICLE_SPECIES_UNDEFINED -- no particle species
-                                                                   have been specified by
-                                                                   the Simulator or Model.
 
 ******************************************************************************
 
@@ -1003,9 +989,6 @@ To be used by: Model
     This routine sets the particle species ID for a given particle symbol.
     Only those particle species which the Model listed with code `-1' in its
     descriptor file may be changed.  The routine returns
-    KIM_STATUS_PARTICLE_SPECIES_UNDEFINED if no particle species have been
-    provided in the .kim files.  (See the standard.kim file for more
-    information on particle species.)  The routine returns
     KIM_STATUS_PARTICLE_INVALID_SPECIES if the supplied symbol, particle, is
     not among the KIM supported particle symbols.  (See standard.kim for the
     list of supported particle species.)
@@ -1026,9 +1009,6 @@ Arguments:
                           KIM_STATUS_FAIL                     -- unsuccessful
                           KIM_STATUS_PARTICLE_INVALID_SPECIES -- symbol is not among the
                                                                  KIM supported particle symbols
-                          KIM_STATUS_PARTICLE_SPECIES_UNDEFINED -- no particle species
-                                                                   have been specified by
-                                                                   the Simulator or Model.
 
 ******************************************************************************
 
