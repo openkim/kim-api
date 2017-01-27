@@ -526,19 +526,19 @@ double KIM_API_get_scale_conversion(const char *u_from,const char *u_to, int *er
 int    KIM_API_get_unit_handling(void *kimmdl, int *error){
     return ((KIM_API_model *)kimmdl)->get_unit_handling(error);
 }
-char * KIM_API_get_unit_length(void *kimmdl, int *error){
+char const * const KIM_API_get_unit_length(void *kimmdl, int *error){
     return ((KIM_API_model *)kimmdl)->get_unit_length(error);
 }
-char * KIM_API_get_unit_energy(void *kimmdl, int *error){
+char const * const KIM_API_get_unit_energy(void *kimmdl, int *error){
     return ((KIM_API_model *)kimmdl)->get_unit_energy(error);
 }
-char * KIM_API_get_unit_charge(void *kimmdl, int *error){
+char const * const KIM_API_get_unit_charge(void *kimmdl, int *error){
     return ((KIM_API_model *)kimmdl)->get_unit_charge(error);
 }
-char * KIM_API_get_unit_temperature(void *kimmdl, int *error){
+char const * const KIM_API_get_unit_temperature(void *kimmdl, int *error){
     return ((KIM_API_model *)kimmdl)->get_unit_temperature(error);
 }
-char * KIM_API_get_unit_time(void *kimmdl, int *error){
+char const * const KIM_API_get_unit_time(void *kimmdl, int *error){
     return ((KIM_API_model *)kimmdl)->get_unit_time(error);
 }
 double KIM_API_convert_to_act_unit(void * kimmdl,

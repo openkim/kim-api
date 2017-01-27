@@ -38,7 +38,6 @@
 module kim_api_f03
   use, intrinsic :: iso_c_binding
   implicit none
-  integer, parameter :: KIM_KEY_STRING_LENGTH = 128
   interface
     integer(c_int) function kim_api_get_version_major(major) &
       bind(c, name="KIM_API_get_version_major")

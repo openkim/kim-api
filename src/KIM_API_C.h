@@ -41,8 +41,6 @@
 #include <stdint.h>
 #include "KIM_API_Version.h"
 
-#define KIM_KEY_STRING_LENGTH 128
-
 #ifdef  __cplusplus
 extern "C" {
 #endif
@@ -120,11 +118,11 @@ int KIM_API_process_d2Edr2(void **kimmdl, double * dE, double ** dr, double **dx
 /* related to Unit_Handling */
 double KIM_API_get_scale_conversion(const char *u_from,const char *u_to, int *error);
 int    KIM_API_get_unit_handling(void *kimmdl,int *error);
-char * KIM_API_get_unit_length(void *kimmdl, int *error);
-char * KIM_API_get_unit_energy(void *kimmdl, int *error);
-char * KIM_API_get_unit_charge(void *kimmdl, int *error);
-char * KIM_API_get_unit_temperature(void *kimmdl, int *error);
-char * KIM_API_get_unit_time(void *kimmdl, int *error);
+char const * const KIM_API_get_unit_length(void *kimmdl, int *error);
+char const * const KIM_API_get_unit_energy(void *kimmdl, int *error);
+char const * const KIM_API_get_unit_charge(void *kimmdl, int *error);
+char const * const KIM_API_get_unit_temperature(void *kimmdl, int *error);
+char const * const KIM_API_get_unit_time(void *kimmdl, int *error);
 
 double KIM_API_convert_to_act_unit(void * kimmdl,
                                 const char *length,

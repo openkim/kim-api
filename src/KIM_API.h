@@ -42,7 +42,6 @@
 #include <stdarg.h>
 
 #define NUMBER_REQUIRED_ARGUMENTS 10
-#define KIM_KEY_STRING_LENGTH 128
 
 #include "KIM_API_Version.h"
 
@@ -61,14 +60,14 @@ public:
 
 class KIMBaseElementUnit{
 public:
-        char  dim [KIM_KEY_STRING_LENGTH];  // dimension (length, energy, time, mass, or derivatives...
+      std::string  dim;  // dimension (length, energy, time, mass, or derivatives...
       KIMBaseElementUnit();
       void init();
 };
 class Atom_Map{
 public:
     Atom_Map(): requestedByTest(false) {}
-    char symbol[KIM_KEY_STRING_LENGTH];
+    std::string symbol;
     bool readOnly;
     bool requestedByTest;
     int code;
@@ -76,11 +75,11 @@ public:
 };
 class KIM_IOline{
 public:
-        char name[KIM_KEY_STRING_LENGTH];
-        char type[KIM_KEY_STRING_LENGTH];
-        char dim[KIM_KEY_STRING_LENGTH];
-        char requirements[KIM_KEY_STRING_LENGTH];
-        char comments[181];
+        std::string name;
+        std::string type;
+        std::string dim;
+        std::string requirements;
+        std::string comments;
         bool goodformat,input,output;
 
         KIM_IOline();
@@ -89,7 +88,6 @@ public:
         bool isitoptional();
 
  private:
-        void strip(char * strv);
         void strip();
         void init2empty();
         bool isitinput(const char*str);
@@ -100,13 +98,12 @@ std::istream &operator>>(std::istream &stream, KIM_IOline &a);
 //stringstream &operator>>(stringstream &stream, KIM_IOline &a);
 class IOline{
 public:
-        char name[101];
-        char value[101];
-        char comment[121];
+        std::string name;
+        std::string value;
+        std::string comment;
         bool goodformat;
         void strip();
 
-        void strip(char *nm);
         IOline();
         bool getFields(char * const inputString);
         static int readlines_str(const char * inputstr, IOline ** lines, bool& success);
@@ -124,13 +121,14 @@ public:
       void (* fp)();
    } data;
         intptr_t size; //Size in words defined by type
-        char *name;
-        char *type;
+        std::string name;
+        std::string type;
         KIMBaseElementUnit * unit;
         KIMBaseElementFlag *flag;
         KIMBaseElement();
         ~KIMBaseElement();
-        bool init(const char *nm,const char * tp,intptr_t sz,void * pdata);
+        bool init(std::string const & nm,std::string const & tp,
+                  intptr_t sz,void * pdata);
         void free();
         void nullify();
         bool equiv(KIM_IOline& kimioline);
@@ -223,11 +221,11 @@ void set_species_code(const char *species, int code, int* error);
 
     static double get_scale_conversion(const char * u_from,const char * u_to, int *error);
     int get_unit_handling(int *error);
-    char * get_unit_length(int *error);
-    char * get_unit_energy(int *error);
-    char * get_unit_charge(int *error);
-    char * get_unit_temperature(int *error);
-    char * get_unit_time(int *error);
+    char const * const get_unit_length(int *error);
+    char const * const get_unit_energy(int *error);
+    char const * const get_unit_charge(int *error);
+    char const * const get_unit_temperature(int *error);
+    char const * const get_unit_time(int *error);
     double convert_to_act_unit( const char * length, const char * energy,
       const char * charge,const char * temperature, const char * time,
       double length_exponent, double energy_exponent, double charge_exponent,
@@ -238,7 +236,7 @@ private:
 
     KIM_IOline *inlines;
     int numlines;
-   const char* name_temp;
+    std::string name_temp;
 
     int ErrorCode;// reserved for proper errors handling
     int compute_index;
@@ -282,7 +280,7 @@ private:
     static bool is_it_match(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns, bool ignore_optional);
     static bool is_it_match_noFlagCount(KIM_API_model & mdtst,KIM_IOline * IOlines,int nlns, bool ignore_optional);
 
-    static bool is_it_par(const char * name);
+    static bool is_it_par(std::string const & name);
 
     bool is_it_match(KIM_API_model &test,KIM_API_model & mdl);
     bool do_AtomsTypes_match(KIM_API_model &test,KIM_API_model & mdl);

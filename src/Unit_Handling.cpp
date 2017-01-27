@@ -42,20 +42,20 @@
 #include "Unit_Handling.h"
 #include "KIM_API_status.h"
 
-char const* Unit_Handling::derived_list[]={
+std::string const Unit_Handling::derived_list[]={
     "dipole", "density", "dynamic_viscosity", "electric_field",
     "force", "mass","pressure", "stress", "torque", "velocity"
 };
 int Unit_Handling::nderived_list=10;
 
 
-char const* Unit_Handling::base_list[]={
+std::string const Unit_Handling::base_list[]={
     "length",  "energy", "charge", "temperature", "time"
 };
 int Unit_Handling::nbase_list=5;
 
  // list of supported base units for Unit_length
-char const* Unit_Handling::length_list[]={
+std::string const Unit_Handling::length_list[]={
      "A" ,               "Bohr" ,   "cm" ,  "m" , "nm"
 };
 double Unit_Handling::length_scale[]={
@@ -64,7 +64,7 @@ double Unit_Handling::length_scale[]={
 int Unit_Handling::nlength_list=5;
 
 // list of supported base units for Unit_energy
-char const* Unit_Handling::energy_list[]={
+std::string const Unit_Handling::energy_list[]={
   "amu*A^2/(ps)^2",  "erg",   "eV" ,          "Hartree" ,  "J", "kcal/mol" , "kJ/mol"
 };
 double Unit_Handling::energy_scale[]={
@@ -73,7 +73,7 @@ double Unit_Handling::energy_scale[]={
 int Unit_Handling::nenergy_list=7;
 
 // list of supported base units for Unit_charge
-char const* Unit_Handling::charge_list[]={
+std::string const Unit_Handling::charge_list[]={
      "C" ,        "e",   "statC"
 };
 double Unit_Handling::charge_scale[]={
@@ -82,7 +82,7 @@ double Unit_Handling::charge_scale[]={
 int Unit_Handling::ncharge_list=3;
 
 // list of supported base units for Unit_temperature
-char const* Unit_Handling::temperature_list[]={
+std::string const Unit_Handling::temperature_list[]={
      "K"
 };
 double Unit_Handling::temperature_scale[]={
@@ -91,7 +91,7 @@ double Unit_Handling::temperature_scale[]={
 int Unit_Handling::ntemperature_list=1;
 
 // list of supported base units for Unit_time
-char const* Unit_Handling::time_list[]={
+std::string const Unit_Handling::time_list[]={
    "fs" ,      "ps" ,  "ns",  "s"
 };
 double Unit_Handling::time_scale[]={
@@ -103,12 +103,12 @@ int Unit_Handling::ntime_list=4;
 
 
 Unit_Handling::Unit_Handling(){
-    char tmp[]="none";
-    strcpy(Unit_length,tmp);
-    strcpy(Unit_energy,tmp);
-    strcpy(Unit_charge,tmp);
-    strcpy(Unit_temperature,tmp);
-    strcpy(Unit_time,tmp);
+    char const tmp[]="none";
+    Unit_length = tmp;
+    Unit_energy = tmp;
+    Unit_charge = tmp;
+    Unit_temperature = tmp;
+    Unit_time = tmp;
     flexible_handling=false;
 }
 
@@ -120,25 +120,25 @@ void Unit_Handling::check_base_set_flexible(IOline* lines, int nlines, int* erro
     *error =KIM_STATUS_FAIL;
 
     for (int i=0;i<nlines;i++){
-        if(strcmp(lines[i].name,"Unit_Handling")==0){
-            if(strcmp(lines[i].value,"flexible")==0) {
+        if(lines[i].name == "Unit_Handling"){
+            if(lines[i].value == "flexible") {
                 flexible_handling=true;
-            }else if(strcmp(lines[i].value,"fixed")==0) {
+            }else if(lines[i].value == "fixed") {
                 flexible_handling=false;
             }else{
                 *error = KIM_STATUS_WRONG_UNIT_HANDLING;
                 return;
             }
-        }else if(strcmp(lines[i].name,"Unit_length")==0){
-            strcpy(Unit_length,lines[i].value);
-        }else if(strcmp(lines[i].name,"Unit_energy")==0){
-            strcpy(Unit_energy,lines[i].value);
-        }else if(strcmp(lines[i].name,"Unit_charge")==0){
-            strcpy(Unit_charge,lines[i].value);
-        }else if(strcmp(lines[i].name,"Unit_temperature")==0){
-            strcpy(Unit_temperature,lines[i].value);
-        }else if(strcmp(lines[i].name,"Unit_time")==0){
-            strcpy(Unit_time,lines[i].value);
+        }else if(lines[i].name == "Unit_length"){
+            Unit_length = lines[i].value;
+        }else if(lines[i].name == "Unit_energy"){
+            Unit_energy = lines[i].value;
+        }else if(lines[i].name == "Unit_charge"){
+            Unit_charge = lines[i].value;
+        }else if(lines[i].name == "Unit_temperature"){
+            Unit_temperature = lines[i].value;
+        }else if(lines[i].name == "Unit_time"){
+            Unit_time = lines[i].value;
         }
     }
     if(     ! is_Unit_length_supported()) {
@@ -162,43 +162,43 @@ void Unit_Handling::check_base_set_flexible(IOline* lines, int nlines, int* erro
 bool Unit_Handling::is_Unit_length_supported(){
     bool result = false;
     for(int i=0;i<nlength_list;i++){
-        if (strcmp(Unit_length,length_list[i])==0) result = true;
+        if (Unit_length == length_list[i]) result = true;
     }
     return result;
 }
 bool Unit_Handling::is_Unit_energy_supported(){
     bool result = false;
     for(int i=0;i<nenergy_list;i++){
-        if (strcmp(Unit_energy,energy_list[i])==0) result = true;
+        if (Unit_energy == energy_list[i]) result = true;
     }
     return result;
 }
 bool Unit_Handling::is_Unit_charge_supported(){
     bool result = false;
     for(int i=0;i<ncharge_list;i++){
-        if (strcmp(Unit_charge,charge_list[i])==0) result = true;
+        if (Unit_charge == charge_list[i]) result = true;
     }
     return result;
 }
 bool Unit_Handling::is_Unit_temperature_supported(){
     bool result = false;
     for(int i=0;i<ntemperature_list;i++){
-        if (strcmp(Unit_temperature,temperature_list[i])==0) result = true;
+        if (Unit_temperature == temperature_list[i]) result = true;
     }
     return result;
 }
 bool Unit_Handling::is_Unit_time_supported(){
     bool result = false;
     for(int i=0;i<ntime_list;i++){
-        if (strcmp(Unit_time,time_list[i])==0) result = true;
+        if (Unit_time == time_list[i]) result = true;
     }
     return result;
 }
 
-bool Unit_Handling::is_it_Unit_length(char const* unit,int *index){
+bool Unit_Handling::is_it_Unit_length(std::string const & unit,int *index){
      bool result = false;
     for(int i=0;i<nlength_list;i++){
-        if (strcmp(unit,length_list[i])==0) {
+        if (unit == length_list[i]) {
             result = true;
             *index = i;
             break;
@@ -206,10 +206,10 @@ bool Unit_Handling::is_it_Unit_length(char const* unit,int *index){
     }
     return result;
 }
-bool Unit_Handling::is_it_Unit_energy(char const* unit,int *index){
+bool Unit_Handling::is_it_Unit_energy(std::string const & unit,int *index){
     bool result = false;
     for(int i=0;i<nenergy_list;i++){
-        if (strcmp(unit,energy_list[i])==0) {
+        if (unit == energy_list[i]) {
             result = true;
             *index = i;
             break;
@@ -217,10 +217,10 @@ bool Unit_Handling::is_it_Unit_energy(char const* unit,int *index){
     }
     return result;
 }
-bool Unit_Handling::is_it_Unit_charge(char const* unit, int *index){
+bool Unit_Handling::is_it_Unit_charge(std::string const & unit, int *index){
     bool result = false;
     for(int i=0;i<ncharge_list;i++){
-        if (strcmp(unit,charge_list[i])==0){
+        if (unit == charge_list[i]){
             result = true;
             *index = i;
             break;
@@ -228,10 +228,10 @@ bool Unit_Handling::is_it_Unit_charge(char const* unit, int *index){
     }
     return result;
 }
-bool Unit_Handling::is_it_Unit_temperature(char const* unit, int *index){
+bool Unit_Handling::is_it_Unit_temperature(std::string const & unit, int *index){
     bool result = false;
     for(int i=0;i<ntemperature_list;i++){
-        if (strcmp(unit,temperature_list[i])==0){
+        if (unit == temperature_list[i]){
             result = true;
             *index = i;
             break;
@@ -239,10 +239,10 @@ bool Unit_Handling::is_it_Unit_temperature(char const* unit, int *index){
     }
     return result;
 }
-bool Unit_Handling::is_it_Unit_time(char const* unit,int *index){
+bool Unit_Handling::is_it_Unit_time(std::string const & unit,int *index){
     bool result = false;
     for(int i=0;i<ntime_list;i++){
-        if (strcmp(unit,time_list[i])==0){
+        if (unit == time_list[i]){
             result = true;
             *index = i;
             break;
@@ -261,21 +261,22 @@ void Unit_Handling::init_str(char const* inputstr, int* error){
     if (IOlines!= NULL) delete [] IOlines;
     return;
 }
-bool Unit_Handling::is_it_base(char const* unit){
+bool Unit_Handling::is_it_base(std::string const & unit){
     bool result = false;
     for(int i=0;i<nbase_list;i++){
-        if (strcmp(unit,base_list[i])==0) result = true;
+        if (unit == base_list[i]) result = true;
     }
     return result;
 }
-bool Unit_Handling::is_it_derived(char const* unit){
+bool Unit_Handling::is_it_derived(std::string const & unit){
     bool result = false;
     for(int i=0;i<nderived_list;i++){
-        if (strcmp(unit,derived_list[i])==0) result = true;
+        if (unit == derived_list[i]) result = true;
     }
     return result;
 }
-double Unit_Handling::get_scale_conversion(char const* u_from,char const* u_to, int *error){
+double Unit_Handling::get_scale_conversion(std::string const & u_from,std::string const &u_to,
+                                           int *error){
     *error=KIM_STATUS_FAIL;
      int ind_from =-1, ind_to=-1;
      double convert;
@@ -310,11 +311,11 @@ bool Unit_Handling::do_unit_match(Unit_Handling &test, Unit_Handling  &model){
         model.flexible_handling=true;
         return true;
     }
-    if(strcmp(test.Unit_length,model.Unit_length)==0)
-        if(strcmp(test.Unit_energy,model.Unit_energy)==0)
-            if(strcmp(test.Unit_charge,model.Unit_charge)==0)
-                if(strcmp(test.Unit_temperature,model.Unit_temperature)==0)
-                    if(strcmp(test.Unit_time,model.Unit_time)==0) return true;
+    if(test.Unit_length == model.Unit_length)
+        if(test.Unit_energy == model.Unit_energy)
+            if(test.Unit_charge == model.Unit_charge)
+                if(test.Unit_temperature == model.Unit_temperature)
+                    if(test.Unit_time == model.Unit_time) return true;
     return false;
 }
 void Unit_Handling::print(){
@@ -338,45 +339,25 @@ int Unit_Handling::get_unit_handling(int *error){
     *error = KIM_STATUS_OK;
     return 0;
 }
-char * Unit_Handling::get_unit_length(int *error){
-    *error = KIM_STATUS_FAIL;
-    char *tmp = (char *)malloc(KIM_KEY_STRING_LENGTH);
-    for(int i=0;i<KIM_KEY_STRING_LENGTH;i++) tmp[i]='\0';
-    strcpy(tmp,Unit_length);
+std::string const & Unit_Handling::get_unit_length(int *error){
     *error = KIM_STATUS_OK;
-    return tmp;
+    return Unit_length;
 }
-char * Unit_Handling::get_unit_energy(int *error){
-    *error = KIM_STATUS_FAIL;
-    char *tmp = (char *)malloc(KIM_KEY_STRING_LENGTH);
-    for(int i=0;i<KIM_KEY_STRING_LENGTH;i++) tmp[i]='\0';
-    strcpy(tmp,Unit_energy);
+std::string const & Unit_Handling::get_unit_energy(int *error){
     *error = KIM_STATUS_OK;
-    return tmp;
+    return Unit_energy;
 }
-char * Unit_Handling::get_unit_charge(int *error){
-    *error = KIM_STATUS_FAIL;
-    char *tmp = (char *)malloc(KIM_KEY_STRING_LENGTH);
-    for(int i=0;i<KIM_KEY_STRING_LENGTH;i++) tmp[i]='\0';
-    strcpy(tmp,Unit_charge);
+std::string const & Unit_Handling::get_unit_charge(int *error){
     *error = KIM_STATUS_OK;
-    return tmp;
+    return Unit_charge;
 }
-char * Unit_Handling::get_unit_temperature(int *error){
-    *error = KIM_STATUS_FAIL;
-    char *tmp = (char *)malloc(KIM_KEY_STRING_LENGTH);
-    for(int i=0;i<KIM_KEY_STRING_LENGTH;i++) tmp[i]='\0';
-    strcpy(tmp,Unit_temperature);
+std::string const & Unit_Handling::get_unit_temperature(int *error){
     *error = KIM_STATUS_OK;
-    return tmp;
+    return Unit_temperature;
 }
-char * Unit_Handling::get_unit_time(int *error){
-    *error = KIM_STATUS_FAIL;
-    char *tmp = (char *)malloc(KIM_KEY_STRING_LENGTH);
-    for(int i=0;i<KIM_KEY_STRING_LENGTH;i++) tmp[i]='\0';
-    strcpy(tmp,Unit_time);
+std::string const & Unit_Handling::get_unit_time(int *error){
     *error = KIM_STATUS_OK;
-    return tmp;
+    return Unit_time;
 }
 std::ostream &operator<<(std::ostream &stream, Unit_Handling &a){
     a.print(stream);
@@ -384,25 +365,23 @@ std::ostream &operator<<(std::ostream &stream, Unit_Handling &a){
 }
 
 double Unit_Handling::convert_to_act_unit(void *kim,
-      char const* length, char const* energy, char const* charge,
-      char const* temperature, char const* time,
+      std::string const & length, std::string const & energy, std::string const & charge,
+      std::string const & temperature, std::string const & time,
       double length_exponent, double energy_exponent, double charge_exponent,
       double temperature_exponent, double time_exponent, int* kimerror){
       KIM_API_model *kimmdl = (KIM_API_model *)kim;
-      char const* to_length = kimmdl->get_unit_length(kimerror);
-      char const* to_energy =kimmdl->get_unit_energy(kimerror);
-      char const* to_charge =kimmdl->get_unit_charge(kimerror);
-      char const* to_temperature = kimmdl->get_unit_temperature(kimerror);
-      char const* to_time = kimmdl->get_unit_time(kimerror);
+      std::string const & to_length = kimmdl->get_unit_length(kimerror);
+      std::string const & to_energy =kimmdl->get_unit_energy(kimerror);
+      std::string const & to_charge =kimmdl->get_unit_charge(kimerror);
+      std::string const & to_temperature = kimmdl->get_unit_temperature(kimerror);
+      std::string const & to_time = kimmdl->get_unit_time(kimerror);
 
       int error_length,error_energy,error_charge,error_temperature,error_time;
-      double scale_length = kimmdl->get_scale_conversion(length,to_length,&error_length);
-      double scale_energy = kimmdl->get_scale_conversion(energy,to_energy,&error_energy);
-      double scale_charge = kimmdl->get_scale_conversion(charge,to_charge,&error_charge);
-      double scale_temperature = kimmdl->get_scale_conversion(temperature,to_temperature,&error_temperature);
-      double scale_time = kimmdl->get_scale_conversion(time,to_time,&error_time);
-
-      free((void*) to_length);free((void*)to_energy);free((void*)to_charge);free((void*)to_temperature);free((void*)to_time);
+      double scale_length = kimmdl->get_scale_conversion(length.c_str(),to_length.c_str(),&error_length);
+      double scale_energy = kimmdl->get_scale_conversion(energy.c_str(),to_energy.c_str(),&error_energy);
+      double scale_charge = kimmdl->get_scale_conversion(charge.c_str(),to_charge.c_str(),&error_charge);
+      double scale_temperature = kimmdl->get_scale_conversion(temperature.c_str(),to_temperature.c_str(),&error_temperature);
+      double scale_time = kimmdl->get_scale_conversion(time.c_str(),to_time.c_str(),&error_time);
 
       if      (error_length < KIM_STATUS_OK){
               *kimerror = error_length;

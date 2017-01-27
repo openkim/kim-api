@@ -43,25 +43,25 @@ public:
     Unit_Handling();
     ~Unit_Handling();
     void init_str(char const* inputstr, int * error);
-    static double get_scale_conversion(char const* u_from,char const* u_to, int *error);
-    static bool is_it_base(char const* unit);
-    static bool is_it_derived(char const* unit);
+    static double get_scale_conversion(std::string const & u_from,std::string const & u_to, int *error);
+    static bool is_it_base(std::string const & unit);
+    static bool is_it_derived(std::string const & unit);
     static bool do_unit_match(Unit_Handling  &tst, Unit_Handling &mdl);
     void print();
     void print(std::ostream &stream);
     int get_unit_handling(int *error);
-    char * get_unit_length(int *error);
-    char * get_unit_energy(int *error);
-    char * get_unit_charge(int *error);
-    char * get_unit_temperature(int *error);
-    char * get_unit_time(int *error);
+    std::string const & get_unit_length(int *error);
+    std::string const & get_unit_energy(int *error);
+    std::string const & get_unit_charge(int *error);
+    std::string const & get_unit_temperature(int *error);
+    std::string const & get_unit_time(int *error);
 
     static double convert_to_act_unit(void *kimmdl,
-                                char const* length,
-                                char const* energy,
-                                char const* charge,
-                                char const* temperature,
-                                char const* time,
+                                std::string const & length,
+                                std::string const & energy,
+                                std::string const & charge,
+                                std::string const & temperature,
+                                std::string const & time,
                                 double length_exponent,
                                 double energy_exponent,
                                 double charge_exponent,
@@ -71,27 +71,27 @@ public:
 
 private:
     // list of  base & derived units
-    static char const* base_list[];     static int nbase_list;
-    static char const* derived_list[];  static int nderived_list;
+    static std::string const base_list[];     static int nbase_list;
+    static std::string const derived_list[];  static int nderived_list;
 
     // list of supported base units for Unit_length
-    static char const* length_list[];   static int nlength_list; static double length_scale[];
+    static std::string const length_list[];   static int nlength_list; static double length_scale[];
     // list of supported base units for Unit_energy
-    static char const* energy_list[];   static int nenergy_list; static double energy_scale[];
+    static std::string const energy_list[];   static int nenergy_list; static double energy_scale[];
     // list of supported base units for Unit_charge
-    static char const* charge_list[];   static int ncharge_list; static double charge_scale[];
+    static std::string const charge_list[];   static int ncharge_list; static double charge_scale[];
     // list of supported base units for Unit_temperature
-    static char const* temperature_list[];  static int ntemperature_list; static double temperature_scale[];
+    static std::string const temperature_list[];  static int ntemperature_list; static double temperature_scale[];
     // list of supported base units for Unit_time
-    static char const* time_list[];     static int ntime_list;   static double time_scale[];
+    static std::string const time_list[];     static int ntime_list;   static double time_scale[];
 
 
     //
-    char Unit_length[KIM_KEY_STRING_LENGTH];
-    char Unit_energy[KIM_KEY_STRING_LENGTH];
-    char Unit_charge[KIM_KEY_STRING_LENGTH];
-    char Unit_temperature[KIM_KEY_STRING_LENGTH];
-    char Unit_time[KIM_KEY_STRING_LENGTH];
+    std::string Unit_length;
+    std::string Unit_energy;
+    std::string Unit_charge;
+    std::string Unit_temperature;
+    std::string Unit_time;
     bool flexible_handling;
     void check_base_set_flexible(IOline *lines, int nlines, int *error);
     bool is_Unit_length_supported();
@@ -99,11 +99,11 @@ private:
     bool is_Unit_charge_supported();
     bool is_Unit_temperature_supported();
      bool is_Unit_time_supported();
-    static bool is_it_Unit_length(char const* unit,int *index);
-    static bool is_it_Unit_energy(char const* unit, int * index);
-    static bool is_it_Unit_charge(char const* unit, int *index);
-    static bool is_it_Unit_temperature(char const* unit, int *index);
-    static bool is_it_Unit_time(char const* unit, int *index);
+    static bool is_it_Unit_length(std::string const & unit, int *index);
+    static bool is_it_Unit_energy(std::string const & unit, int *index);
+    static bool is_it_Unit_charge(std::string const & unit, int *index);
+    static bool is_it_Unit_temperature(std::string const & unit, int *index);
+    static bool is_it_Unit_time(std::string const & unit, int *index);
 
 };
 std::ostream &operator<<(std::ostream &stream, Unit_Handling &a);

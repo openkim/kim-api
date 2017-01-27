@@ -122,8 +122,7 @@
 #               Simulator/Model and should only be used within the
 #               PARTICLE_SPECIES section of the KIM descriptor file.  The line
 #               consists of three white-space separated (case sensitive)
-#               strings of maximum KIM_KEY_STRING_LENGTH length.  The three
-#               strings, in order, are as follows:
+#               strings.  The three strings, in order, are as follows:
 #
 #                  1) Name: This string gives a unique name to the
 #                           particle species.  This name is checked against
@@ -143,9 +142,8 @@ $
 #               to ensure that Models and Simulators are able to work together,
 #               and should only be used within the CONVENTIONS section of the
 #               KIM descriptor file.  The line consists of two white-space
-#               separated (case sensitive) strings of maximum
-#               KIM_KEY_STRING_LENGTH length.  The two strings, in order, are
-#               as follows:
+#               separated (case sensitive) strings.  The two strings, in order,
+#               are as follows:
 #
 #                  1) Name: This string gives a unique name to the convention.
 #                           This name is checked against the standard list in
@@ -160,12 +158,12 @@ $
 #               MODEL_OUTPUT, and MODEL_PARAMETERS sections of the KIM
 #               descriptor file.  These are analogous to the arguments of a
 #               function call.  The line consists of four white-space separated
-#               (case sensitive) strings of maximum KIM_KEY_STRING_LENGTH
-#               length.  The values of these strings are checked against the
-#               standard list in `standard.kim' (below) for lines contained in
-#               the MODEL_INPUT and MODEL_OUTPUT sections of the KIM descriptor
-#               file (but not for lines in the MODEL_PARAMETERS section).  The
-#               four strings, in order, are as follows:
+#               (case sensitive) strings.  The values of these strings are
+#               checked against the standard list in `standard.kim' (below) for
+#               lines contained in the MODEL_INPUT and MODEL_OUTPUT sections of
+#               the KIM descriptor file (but not for lines in the
+#               MODEL_PARAMETERS section).  The four strings, in order, are as
+#               follows:
 #
 #                  1) Name: This string gives a unique name to the argument.
 #

@@ -41,6 +41,29 @@
 #include <cstring>
 #include <sstream>
 
+// String trimming utility routines
+#include <algorithm>
+#include <functional>
+#include <cctype>
+#include <locale>
+
+// trim from start (in place)
+static inline void ltrim(std::string &s) {
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(),
+            std::not1(std::ptr_fun<int, int>(std::isspace))));
+}
+
+// trim from end (in place)
+static inline void rtrim(std::string &s) {
+    s.erase(std::find_if(s.rbegin(), s.rend(),
+            std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+}
+
+// trim from both ends (in place)
+static inline void trim(std::string &s) {
+    ltrim(s);
+    rtrim(s);
+}
 
 #include "KIM_API.h"
 #include "KIM_API_status.h"
@@ -73,12 +96,12 @@ KIMBaseElementFlag:: KIMBaseElementFlag(){
     init();
 }
 void KIMBaseElementUnit::init(){
-    strncpy(dim,"none",KIM_KEY_STRING_LENGTH);
+  dim = "none";
 }
 int Atom_Map::comparator(const void* a1, const void* a2){
     Atom_Map *am1 =(Atom_Map *)a1;
     Atom_Map *am2 =(Atom_Map *)a2;
-    return strcmp(am1->symbol,am2->symbol);
+    return (am1->symbol.compare(am2->symbol));
 }
 
 KIM_IOline::KIM_IOline(){
@@ -92,15 +115,15 @@ bool KIM_IOline:: getFields(char * const inString){
             //check for comments part and get it removed
             tmp = strpbrk(inString,"#");
             if(tmp !=NULL) {
-                strncpy(comments,tmp,strlen(tmp)+1);
+                comments = tmp;
                 tmp[0]='\0';
 
             }
-             strip(inString);
+             strip_char_string(inString);
 
             if(inString[0] == '\0') return false;
             //check if it is input or output section
-            strip(inString);
+            strip_char_string(inString);
 
             if(isitinput(inString)){
                 input = true;
@@ -116,55 +139,54 @@ bool KIM_IOline:: getFields(char * const inString){
 
             //parse field
             tmp = strtok(inString," \t");if(tmp == NULL) return false;
-            strncpy(name,tmp,strlen(tmp)+1);
-
+            name = tmp;
 
             tmp = strtok(NULL," \t");if(tmp == NULL) return false;
-            strncpy(type,tmp,strlen(tmp)+1);
+            type = tmp;
 
-            if(strcmp(type,":=")==0) return false;
+            if(type == ":=") return false;
 
-            if(strcmp(type,"flag")==0) {
-                strncpy(dim,"none",5);
+            if(type == "flag") {
+                dim = "none";
                 return true;
             }
 
-            if(strcmp(type,"spec")==0) {
+            if(type == "spec") {
                 tmp = strtok(NULL," \t");
                 if(tmp == NULL)
                   return false;
                 else
-                  strncpy(dim,tmp,strlen(tmp)+1);
+                  dim = tmp;
                 return true;
             }
 
             tmp = strtok(NULL," \t");if(tmp == NULL) return false;
-            strncpy(dim,tmp,strlen(tmp)+1);
+            dim = tmp;
 
             tmp = strtok(NULL," \t");if(tmp == NULL) return true;
-            strncpy(requirements,tmp,strlen(tmp)+1);
+            requirements = tmp;
 
             return true;
 }
 
 bool KIM_IOline::isitoptional(){
-            if(strcmp(this->requirements,"optional")==0) return true;
+            if(this->requirements == "optional") return true;
             return false;
 }
 
-void KIM_IOline:: strip(char * strv){strip_char_string(strv);}
+
 void KIM_IOline::strip(){
-            strip(name);
-            strip(type);
-            strip(dim);
-            strip(requirements);
+            trim(name);
+            trim(type);
+            trim(dim);
+            trim(requirements);
  }
 void KIM_IOline:: init2empty(){
-            name[0]='\0';
-            type[0]='\0';
-            dim[0]='\0';
-            requirements[0]='\0';
-            comments[0]='\0';
+            name="";
+            type="";
+            dim="";
+            requirements="";
+            comments="";
 }
 bool KIM_IOline:: isitinput(const char*str){
             char tocmp [] ="MODEL_INPUT:";
@@ -192,6 +214,7 @@ std::istream &operator>>(std::istream &stream, KIM_IOline &a){
           std::cout << "* Error (operator>> KIM_IOline): unable to read .kim file line for some reason.\n";
            a.goodformat=false;
         }else{
+          //@@@@@
           char * const tmp = new char[inputline.length()+1];
           strcpy(tmp, inputline.c_str());
            if(a.getFields(tmp)){
@@ -205,41 +228,37 @@ std::istream &operator>>(std::istream &stream, KIM_IOline &a){
 }
 
 void IOline:: strip(){
-            strip(name);
-            strip(value);
-            strip(comment);
+            trim(name);
+            trim(value);
+            trim(comment);
 }
-void IOline::strip(char *nm){strip_char_string(nm);}
 
 IOline::IOline(){
     goodformat=false;
-    for(int i=0; i<121;i++) comment[i]='\0';
-    for(int i=0; i<101;i++) name[i]='\0';
-    for(int i=0; i<101;i++) value[i]='\0';
+    comment="";
+    name="";
+    value="";
 }
 bool IOline:: getFields(char * const inputString){
                 int i;
-                for(i=0; i<=(int)strlen(inputString); i++){
+                name="";
+                value="";
+                comment="";
+                for(i=0; i<(int)strlen(inputString); i++){
                     if(*(inputString+i)=='#'){return false;};
-                    if(*(inputString+i)==':' && *(inputString+i+1)=='='){name[i]='\0';i+=2;break;};
-                        name[i]=*(inputString+i);
+                    if(*(inputString+i)==':' && *(inputString+i+1)=='='){i+=2;break;};
+                    name.append(1,*(inputString+i));
                 }
                 if(i>=(int)strlen(inputString)){return false;};
-                int j=0;
 
-                for(;i<=(int)strlen(inputString); i++){
-                        if(*(inputString+i)=='#'){value[j]='\0';i+=2;break;};
-                        value[j]=*(inputString+i);
-                        j++;
-                        value[j]='\0';
+                for(;i<(int)strlen(inputString); i++){
+                        if(*(inputString+i)=='#'){i+=2;break;};
+                        value.append(1,*(inputString+i));
                 }
 
-                j=0;
-                if(i>=(int)strlen(inputString)){comment[0]='\0';strip();return true;};
-                for(;i<=(int)strlen(inputString); i++){
-                        comment[j]=*(inputString + i);
-                        comment[j+1]='\0';
-                        j++;
+                if(i>(int)strlen(inputString)){strip();return true;};
+                for(;i<(int)strlen(inputString); i++){
+                        comment.append(1,*(inputString + i));
                 }
 
                 strip();
@@ -314,15 +333,13 @@ KIMBaseElement:: KIMBaseElement(){
 KIMBaseElement::~KIMBaseElement(){
 
 }
-bool KIMBaseElement:: init(const char *nm,const char * tp,intptr_t sz,void * pdata){
+bool KIMBaseElement:: init(std::string const & nm,std::string const & tp,
+                           intptr_t sz,void * pdata){
             flag = new KIMBaseElementFlag;
 
             unit = new KIMBaseElementUnit;
-            name = new char[strlen(nm)+1];
-
-            type = new char[KIM_KEY_STRING_LENGTH];
-            strcpy(name,nm);
-            strncpy(type,tp,KIM_KEY_STRING_LENGTH);
+            name = nm;
+            type = tp;
 
             size = sz;
             data.p = (void *)  (*(( intptr_t **)pdata));
@@ -333,8 +350,6 @@ bool KIMBaseElement:: init(const char *nm,const char * tp,intptr_t sz,void * pda
             return true;
 }
 void KIMBaseElement::free(){
-           if(name!= NULL) delete [] name;
-           if(type!=NULL) delete [] type;
            if(flag!=NULL) delete  flag;
            if(unit!=NULL) delete unit;
            nullify();
@@ -343,17 +358,17 @@ void KIMBaseElement::free(){
 void KIMBaseElement::nullify(){
             data.p=NULL;
             size=0;
-            name=NULL;
-            type =NULL;
+            name="";
+            type ="";
             flag = NULL;
             unit = NULL;
 
 }
 bool KIMBaseElement::equiv(KIM_IOline& kimioline){
-   if(strcmp(kimioline.name,name)==0)
-      if(strcmp(kimioline.type,type)==0){
-         if(strcmp(kimioline.type,"flag")==0) return true;
-         if(strcmp(kimioline.dim,unit->dim)==0) return true;
+   if(kimioline.name == name)
+      if(kimioline.type == type){
+         if(kimioline.type == "flag") return true;
+         if(kimioline.dim == unit->dim) return true;
       }
    return false;
 }
@@ -390,7 +405,7 @@ int KIMBaseElement::getelemsize(const char *tp, bool& success){
 }
 
 std::ostream &operator<<(std::ostream &stream, KIMBaseElement a){
-    if (a.data.p==NULL && a.name == NULL && a.type==NULL) {
+    if (a.data.p==NULL && a.name == "" && a.type== "") {
         stream <<" KIMBaseElement is nullified "<<std::endl;
         return stream;
     }
@@ -408,13 +423,13 @@ std::ostream &operator<<(std::ostream &stream, KIMBaseElement a){
     if(a.data.p == NULL) {
         stream <<"NULL"<<std::endl;
         return stream;
-    }else if(strcmp(a.type,"double")==0){
+    }else if(a.type == "double"){
 
         for(int i=0;i<a.size;i++) stream<< ((double*)(a.data.p))[i]<<" ";
 
-    }else if(strcmp(a.type,"real")==0){
+    }else if(a.type == "real"){
         for(int i=0;i<a.size;i++) stream<< ((float*)(a.data.p))[i]<<" ";
-    }else if(strcmp(a.type,"integer")==0){
+    }else if(a.type == "integer"){
         for(int i=0;i<a.size;i++) stream<< ((int*)(a.data.p))[i]<<" ";
     }else{
         stream<<"address:"<<(intptr_t)a.data.p;
@@ -484,18 +499,18 @@ int KIM_API_model::prestring_init(const char *instrn){
         for (int i=0; i< numlines;i++){
 
             //check for spec type
-            if (!(strcmp(inlines[i].type,"spec")==0)) {
+            if (inlines[i].type != "spec") {
 
                 KIMBaseElement *el = new KIMBaseElement ;
 
-                char * name =& (inlines[i].name[0]);
-                char * type =& (inlines[i].type[0]);
+                std::string & name = inlines[i].name;
+                std::string & type = inlines[i].type;
 
                 int *dummy=NULL;
                 if (el->init(name,type,0, &dummy)) //preinit element with zero size
                 {
                    //here to add checking is it derived or is it base units
-                   strncpy(el->unit->dim,inlines[i].dim,strlen(inlines[i].dim)+1);
+                   el->unit->dim = inlines[i].dim;
 
                    el->flag->calculate = 1;
                 }
@@ -515,7 +530,7 @@ int KIM_API_model::prestring_init(const char *instrn){
         ii=0;
         for (int i=0; i< numlines;i++){
             //check for spec type
-            if (!(strcmp(inlines[i].type,"spec")==0)) {
+            if (inlines[i].type != "spec") {
                 inlinesnew[ii]=inlines[i];
                 ii++;
             }
@@ -531,7 +546,7 @@ int KIM_API_model::prestring_init(const char *instrn){
         IOline *extrainput;
         bool readlines_str_success;
         IOline::readlines_str(instrn,&extrainput, readlines_str_success);
-        if (!readlines_str_success)
+       if (!readlines_str_success)
         {
           ErrorCode = KIM_STATUS_FAIL;
           return ErrorCode;
@@ -542,7 +557,7 @@ int KIM_API_model::prestring_init(const char *instrn){
         if(ErrorCode < KIM_STATUS_OK) return ErrorCode;
 
         // check for version number reported by Model/Simulator
-        if(!does_it_have_a_version_number(instrn) && 0!=strcmp("standard", name_temp))
+        if(!does_it_have_a_version_number(instrn) && (name_temp != "standard"))
         {
           std::cout << "* Error (KIM_API_model::prestring_init()): "<<name_temp << " '.kim' file contains invalid KIM_API_Version setting." << std::endl;
           ErrorCode = KIM_STATUS_FAIL;
@@ -563,15 +578,16 @@ bool KIM_API_model::does_it_have_a_version_number(
 
   for (int i=0; i<nlines;++i)
   {
-    if (!strcmp(IOlines[i].name, "KIM_API_Version"))
+    if (IOlines[i].name == "KIM_API_Version")
     {
-      char temp_str[1024];
-      strncpy(temp_str, IOlines[i].value, 1023);
+      char * temp_str = new char[IOlines[i].value.length()+1];
+      strcpy(temp_str, IOlines[i].value.c_str());
 
       // Get Major version
       char* tmp = strtok(temp_str, ".");
       if (tmp == NULL)
       {
+        delete [] temp_str;
         delete [] IOlines;
         return false;
       }
@@ -579,6 +595,7 @@ bool KIM_API_model::does_it_have_a_version_number(
       tempVersionMajor = strtol(tmp, &end, 10);
       if ('\0' != *end)
       {
+        delete [] temp_str;
         delete [] IOlines;
         return false;
       }
@@ -587,12 +604,14 @@ bool KIM_API_model::does_it_have_a_version_number(
       tmp = strtok(NULL, ".");
       if (tmp == NULL)
       {
+        delete [] temp_str;
         delete [] IOlines;
         return false;
       }
       tempVersionMinor = strtol(tmp, &end, 10);
       if ('\0' != *end)
       {
+        delete [] temp_str;
         delete [] IOlines;
         return false;
       }
@@ -604,11 +623,13 @@ bool KIM_API_model::does_it_have_a_version_number(
         strtol(tmp, &end, 10);
         if ('\0' != *end)
         {
+          delete [] temp_str;
           delete [] IOlines;
           return false;
         }
       }
 
+      delete [] temp_str;
       delete [] IOlines;
       return true;
     }
@@ -1049,7 +1070,7 @@ func_ptr KIM_API_model::get_method(const char *nm,int *error){
 
 int KIM_API_model::get_index(const char *nm,int *error){
         for(int i=0; i< model.size;i++){
-            if(strcmp((*this)[i].name,nm)==0) {
+            if((*this)[i].name == nm) {
                 *error =KIM_STATUS_OK;
                 return i;
             }
@@ -1131,7 +1152,7 @@ bool KIM_API_model::is_it_match(KIM_API_model & mdtst,KIM_IOline * IOlines,int n
             match=true;
         }
 
-        if(strcmp(IOlines[i].type,"spec")==0){
+        if(IOlines[i].type == "spec"){
             match=true;
         }
         if ( is_it_par(IOlines[i].name) ) match=true;
@@ -1162,19 +1183,19 @@ bool KIM_API_model::is_it_match_noFlagCount(KIM_API_model & mdtst,KIM_IOline * I
             match=true;
         }
 
-        if(strcmp(IOlines[i].type,"spec")==0){
+        if(IOlines[i].type == "spec"){
             match=true;
         }
 
         if ( is_it_par(IOlines[i].name) ) match=true;
 
-        if(strcmp(IOlines[i].type,"flag")==0){
+        if(IOlines[i].type == "flag"){
             match=true;
         }
         for(int j=0;j<mdtst.model.size;j++){
             if(mdtst[j].equiv(IOlines[i])) {
                 match = true;
-            }else if(strcmp(IOlines[i].type,"flag")==0){
+            }else if(IOlines[i].type == "flag"){
                 match = true;
             }else if(is_it_par(IOlines[i].name)){
                 match = true;
@@ -1182,7 +1203,7 @@ bool KIM_API_model::is_it_match_noFlagCount(KIM_API_model & mdtst,KIM_IOline * I
 
             if (!match){
                   for (int m=0; m<NUMBER_REQUIRED_ARGUMENTS; ++m){
-                     if (!strcmp(mdtst.required_arguments[m],IOlines[i].name)){
+                     if (mdtst.required_arguments[m] == IOlines[i].name){
                         match=true;
                         break;
                      }
@@ -1202,21 +1223,14 @@ bool KIM_API_model::is_it_match(KIM_API_model &test,KIM_API_model & mdl){
     //preinit model from standard template kim file
    KIM_API_model stdmdl;
 
-   extern const unsigned int STANDARD_KIM_STR_LEN_NAME;
    extern const unsigned char STANDARD_KIM_STR_NAME[];
 
-   char* const standard_kim = new char[STANDARD_KIM_STR_LEN_NAME + 1];
-   memcpy(standard_kim, STANDARD_KIM_STR_NAME, STANDARD_KIM_STR_LEN_NAME);
-   standard_kim[STANDARD_KIM_STR_LEN_NAME] = '\0';
-
-   stdmdl.name_temp = (char*) "standard";
-   if(!stdmdl.prestring_init(standard_kim)){
+   stdmdl.name_temp = "standard";
+   if(!stdmdl.prestring_init((char*) STANDARD_KIM_STR_NAME)){
       std::cout<<" preinit of :"<<"standard.kim"<<" failed"<<std::endl;
       stdmdl.free();
-      delete [] standard_kim;
       return false;
    }
-   delete [] standard_kim;
 
     // test and mdl must be preinit.
     bool test2modelmatch= is_it_match(test,mdl.inlines,mdl.numlines,false);
@@ -1267,7 +1281,7 @@ bool KIM_API_model::is_it_in_and_is_it_flag(KIM_API_model& mdl,const char * name
    int error;
    int i = mdl.get_index(name,&error);
    if (i<0) return false;
-   if (strcmp(mdl[i].type,"flag")!=0) return false;
+   if (mdl[i].type != "flag") return false;
    return true;
 }
 bool KIM_API_model::is_it_in(KIM_API_model& mdl, const char* name){
@@ -1312,7 +1326,7 @@ bool KIM_API_model::do_AtomsTypes_match(KIM_API_model& test, KIM_API_model& mdl)
     for (int i=0;i < test.nAtomsTypes; i++){
         match = false;
         for (int j=0;j<mdl.nAtomsTypes;j++){
-            if(strcmp(test.AtomsTypes[i].symbol, mdl.AtomsTypes[j].symbol)==0){
+            if(test.AtomsTypes[i].symbol == mdl.AtomsTypes[j].symbol){
                 mdl.AtomsTypes[j].requestedByTest = true;
                 match = true;
                 break;
@@ -1327,13 +1341,13 @@ bool KIM_API_model::do_AtomsTypes_match(KIM_API_model& test, KIM_API_model& mdl)
     return true;
 }
 
-bool KIM_API_model::is_it_par(const char* name){
-     char tmpname[KIM_KEY_STRING_LENGTH];
-     strncpy(tmpname, name, KIM_KEY_STRING_LENGTH-1);
-     char * tmp = strtok(tmpname,"_");if(tmp == NULL) return false;
-     if(strcmp(tmp,"PARAM")==0) return true;
+bool KIM_API_model::is_it_par(std::string const & name){
+     std::size_t loc = name.find("_");
+     if (loc == std::string::npos) return false;
+     if (name.substr(0,loc) == "PARAM") return true;
      return false;
 }
+
 
 #if KIM_LINK_VALUE != KIM_LINK_DYNAMIC_LOAD
 extern "C"{
@@ -1344,9 +1358,8 @@ int KIM_API_model::get_model_kim_str_len(const char* const modelname,
                                          int* const kimStringLen)
 {
      //redirecting std::cout > kimlog
-    char kimlog[2048] = "./kim.log";
     std::streambuf * psbuf, * backup; std::ofstream filekimlog;
-    filekimlog.open(kimlog);
+    filekimlog.open("./kim.log");
     backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);
 
     unsigned int in_mdlstr_len = 0;
@@ -1372,9 +1385,8 @@ int KIM_API_model::get_model_kim_str(const char* const modelname,
                                      const char** const kimString)
 {
      //redirecting std::cout > kimlog
-    char kimlog[2048] = "./kim.log";
     std::streambuf * psbuf, * backup; std::ofstream filekimlog;
-    filekimlog.open(kimlog);
+    filekimlog.open("./kim.log");
     backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);
 
     unsigned int in_mdlstr_len = 0;
@@ -1933,16 +1945,16 @@ std::ostream &operator<<(std::ostream &stream, KIM_API_model &a){
 bool KIM_API_model::init_AtomsTypes(){
     nAtomsTypes=0;
     for(int i=0;i < numlines;i++){
-        if (strcmp(inlines[i].type, "spec")==0) nAtomsTypes++;
+        if (inlines[i].type == "spec") nAtomsTypes++;
     }
     if (nAtomsTypes==0) return false;
 
     AtomsTypes = new Atom_Map[nAtomsTypes];
     int ii=0;
     for(int i=0;i < numlines;i++){
-        if (strcmp(inlines[i].type, "spec")==0){
-            strncpy(AtomsTypes[ii].symbol,inlines[i].name,strlen(inlines[i].name)+1);
-            AtomsTypes[ii].code = atoi(inlines[i].dim);
+        if (inlines[i].type == "spec"){
+            AtomsTypes[ii].symbol = inlines[i].name;
+            AtomsTypes[ii].code = atoi(inlines[i].dim.c_str());
             ii++;
         }
     }
@@ -1958,7 +1970,7 @@ int KIM_API_model::get_num_model_species(int* numberSpecies,
   *maxStringLength = 0;
   for (int i=0; i<nAtomsTypes; ++i)
   {
-    int len = strlen(AtomsTypes[i].symbol);
+    int len = AtomsTypes[i].symbol.length();
     if (len > *maxStringLength)
     {
       *maxStringLength = len;
@@ -1976,7 +1988,7 @@ int KIM_API_model::get_model_species(const int index,
     return KIM_STATUS_FAIL;
   }
 
-  *speciesString = AtomsTypes[index].symbol;
+  *speciesString = AtomsTypes[index].symbol.c_str();
   return KIM_STATUS_OK;
 }
 
@@ -1990,7 +2002,7 @@ int KIM_API_model::get_num_sim_species(int* numberSpecies,
     if (AtomsTypes[i].requestedByTest)
     {
       ++(*numberSpecies);
-      int len = strlen(AtomsTypes[i].symbol);
+      int len = AtomsTypes[i].symbol.length();
       if (len > *maxStringLength)
       {
         *maxStringLength = len;
@@ -2020,7 +2032,7 @@ int KIM_API_model::get_sim_species(const int index,
     if (AtomsTypes[i].requestedByTest) ++correspondingIndex;
     if (correspondingIndex == index)
     {
-      *speciesString = AtomsTypes[i].symbol;
+      *speciesString = AtomsTypes[i].symbol.c_str();
       return KIM_STATUS_OK;
     }
   }
@@ -2038,7 +2050,7 @@ int KIM_API_model::get_num_params(int* numberParameters, int* maxStringLength)
     if (is_it_par((*this)[i].name))
     {
       ++(*numberParameters);
-      int len = strlen((*this)[i].name);
+      int len = (*this)[i].name.length();
       if (len > *maxStringLength)
       {
         *maxStringLength = len;
@@ -2057,7 +2069,7 @@ int KIM_API_model::get_parameter(const int index, const char** const parameterSt
     if (is_it_par((*this)[i].name)) ++correspondingIndex;
     if (correspondingIndex == index)
     {
-      *parameterString = (*this)[i].name;
+      *parameterString = (*this)[i].name.c_str();
       return KIM_STATUS_OK;
     }
   }
@@ -2073,7 +2085,7 @@ int KIM_API_model::get_species_code(const char* species, int * error){
       return *error; //no atom symbol provided
     }
     Atom_Map key, *res=NULL;
-    strcpy(key.symbol,species);
+    key.symbol = species;
     res = (Atom_Map *)bsearch((void *)&key,AtomsTypes,nAtomsTypes,sizeof(Atom_Map),&(Atom_Map::comparator));
     if (res == NULL) {
         *error = KIM_STATUS_PARTICLE_INVALID_SPECIES;
@@ -2090,7 +2102,7 @@ void KIM_API_model::set_species_code(const char* species, int code, int* error){
       return; //no atom symbol provided
     }
     Atom_Map key, *res=NULL;
-    strcpy(key.symbol,species);
+    key.symbol = species;
     res = (Atom_Map *)bsearch((void *)&key,AtomsTypes,nAtomsTypes,sizeof(Atom_Map),&(Atom_Map::comparator));
     if (res == NULL) {
         *error = KIM_STATUS_PARTICLE_INVALID_SPECIES;
@@ -2124,30 +2136,29 @@ int KIM_API_model::get_status_msg(const int status_code,
 {
     int mincode=-19,maxcode=1,offset=19;
 
-    static const char KIM_STATUS_MSG[][KIM_KEY_STRING_LENGTH]=
-   {
-    {"configuration is not supported by the Model"},
-    {"base units: are not supported or not the same phys.dimensions"},
-    {"unsupported Unit_time"},
-    {"unsupported Unit_temperature"},
-    {"unsupported Unit_charge"},
-    {"unsupported Unit_energy"},
-    {"unsupported Unit_length"},
-    {"Unit_Handling must be \"flexible\" or \"fixed\" "},
+    static const char* KIM_STATUS_MSG[]=
+        {"configuration is not supported by the Model",
+         "base units: are not supported or not the same phys.dimensions",
+         "unsupported Unit_time",
+         "unsupported Unit_temperature",
+         "unsupported Unit_charge",
+         "unsupported Unit_energy",
+         "unsupported Unit_length",
+         "Unit_Handling must be \"flexible\" or \"fixed\" ",
 
-    {"group argument must be 1 or 0 (in KIM_API...multiple routine)"},
-    {"numargs is not divisiable by 4(in KIM_API...multiple routine)"},
-    {"wrong optional arguments (in a kim_api_...multiple routine)"},
-    {"numargs is not divisible by 2 (in KIM_API...multiple routine)"},
-    {"numargs is not divisiable by 3 (in KIM_API...multiple routine)"},
-    {"get_neigh method in KIM API object is not set (NULL value)"},
-    {"number of neighs of particle too big to allocate for conversion"},
-    {"invalid KIM API object"},
-    {"invalid particle id requested (request out of range)"},
-    {"symbol is not among supported particle symbols"},
-    {"argument name provided is not in KIM API object"},
-    {"unsuccessful completion"},
-    {"successful completion"}};
+         "group argument must be 1 or 0 (in KIM_API...multiple routine)",
+         "numargs is not divisiable by 4(in KIM_API...multiple routine)",
+         "wrong optional arguments (in a kim_api_...multiple routine)",
+         "numargs is not divisible by 2 (in KIM_API...multiple routine)",
+         "numargs is not divisiable by 3 (in KIM_API...multiple routine)",
+         "get_neigh method in KIM API object is not set (NULL value)",
+         "number of neighs of particle too big to allocate for conversion",
+         "invalid KIM API object",
+         "invalid particle id requested (request out of range)",
+         "symbol is not among supported particle symbols",
+         "argument name provided is not in KIM API object",
+         "unsuccessful completion",
+         "successful completion"};
 
     if (status_code < mincode || status_code > maxcode) {
       *status_msg = "the error code is not among KIM_STATUS codes";
@@ -2244,20 +2255,20 @@ double KIM_API_model::get_scale_conversion( const char* u_from,const char * u_to
 int KIM_API_model::get_unit_handling(int *error){
     return unit_h.get_unit_handling(error);
 }
-char * KIM_API_model::get_unit_length(int *error){
-    return unit_h.get_unit_length(error);
+char const * const KIM_API_model::get_unit_length(int *error){
+  return unit_h.get_unit_length(error).c_str();
 }
-char * KIM_API_model::get_unit_energy(int *error){
-    return unit_h.get_unit_energy(error);
+char const * const KIM_API_model::get_unit_energy(int *error){
+  return unit_h.get_unit_energy(error).c_str();
 }
-char * KIM_API_model::get_unit_charge(int *error){
-    return unit_h.get_unit_charge(error);
+char const * const KIM_API_model::get_unit_charge(int *error){
+  return unit_h.get_unit_charge(error).c_str();
 }
-char * KIM_API_model::get_unit_temperature(int *error){
-    return unit_h.get_unit_temperature(error);
+char const * const KIM_API_model::get_unit_temperature(int *error){
+  return unit_h.get_unit_temperature(error).c_str();
 }
-char * KIM_API_model::get_unit_time(int *error){
-    return unit_h.get_unit_time(error);
+char const * const KIM_API_model::get_unit_time(int *error){
+  return unit_h.get_unit_time(error).c_str();
 }
 
 double KIM_API_model::convert_to_act_unit(
