@@ -187,6 +187,7 @@ ex_model_Ar_P_MLJ_CLUSTER_C: model_P_MLJ_CLUSTER_C.c             \
         # make .kim file in the directory
 	$(D_CAT) descriptor_file_start \
          | sed -e 's/SPECIES_LINE_STR/Ar                          spec                    1/g' \
+               -e 's/OneBasedLists /ZeroBasedLists/' \
                -e $(SED_VER_CMD)                                                                              >  $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
 	echo                                                                                                  >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
 	echo "CLUSTER                     flag"                                                               >> $(KIM_EX_MODELS_DIR)/$@/$(subst ex_,,$@).kim
