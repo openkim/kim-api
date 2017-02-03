@@ -89,7 +89,14 @@ ifeq (,$(driver_location))
    ifeq (,$(filter-out clean kim-item-type model-name model-driver-name,$(MAKECMDGOALS)))
       # all good
    else
-     $(error Model Driver, $(MODEL_DRIVER_NAME), not found)
+     # check for driver in CWD-collection of parent directory
+     driver_location = $(shell cd ..; $(COLLECTIONS_INFO) model_drivers find $(MODEL_DRIVER_NAME) 2> /dev/null| sed -e 's/[^ ]* \([^ ]*\).*/\1/')
+     ifeq (,$(driver_location))
+       $(error Model Driver, $(MODEL_DRIVER_NAME), not found)
+     else
+       # driver_location will have ./ at beginning, change it to ../
+       driver_location:=.$(driver_location)
+     endif
   endif
 endif
 
