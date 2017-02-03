@@ -116,19 +116,19 @@ int main(int argc, char* argv[])
       printf("\n");
       printf("$(patsubst %%,%%-all,$(ITEMS_LIST)): ");
       printf("%%: $(KIM_MAKE_FILES) ...............@%%-making-echo\n");
-      printf("  $(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(patsubst %%-all,%%,$@) "
+      printf("\t$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(patsubst %%-all,%%,$@) "
              "all\n");
       printf("$(patsubst %%,%%-clean,$(ITEMS_LIST)):\n");
-      printf("  $(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(patsubst %%-clean,%%,$@) "
+      printf("\t$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(patsubst %%-clean,%%,$@) "
              "clean\n");
       printf("\n\n");
       printf("########### for internal use ###########\n");
       printf("%%-making-echo:\n");
-      printf("  @printf '\\n%%79s\\n' ' ' | sed -e 's/ /*/g'\n");
-      printf("  @printf '%%-77s%%2s\\n' \"** Building... ");
+      printf("\t@printf '\\n%%79s\\n' ' ' | sed -e 's/ /*/g'\n");
+      printf("\t@printf '%%-77s%%2s\\n' \"** Building... ");
       printf("`printf '$(patsubst %%-all,%%,$*)' | sed -e 's/@/ /g'`\" ");
       printf("'**'\n");
-      printf("  @printf '%%79s\\n' ' ' | sed -e 's/ /*/g'\n");
+      printf("\t@printf '%%79s\\n' ' ' | sed -e 's/ /*/g'\n");
       return result;
     }
     else if (!strcmp(argv[1], "--master-config"))
