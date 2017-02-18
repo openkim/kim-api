@@ -74,6 +74,7 @@ int processFlag(char const* const opt, std::stringstream * const outString)
   else
   {
     result = UNKNOWN_OPTION;
+    return result;
   }
 }
 
@@ -97,7 +98,7 @@ int main(int argc, char* argv[])
     if ((i == argc) && (result == SUCCESS))
     {
       outString << "\n";
-      printf(outString.str().c_str());
+      printf("%s", outString.str().c_str());
       return result;
     }
   }
@@ -182,7 +183,7 @@ int main(int argc, char* argv[])
       if (result == SUCCESS)
       {
         outString << "\n";
-        printf(outString.str().c_str());
+        printf("%s", outString.str().c_str());
         return result;
       }
       // else drop through with UNKNOWN_OPTION

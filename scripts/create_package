@@ -93,7 +93,7 @@ rm -rf '.git'
 
 ed Makefile.Version <<EOF
 ,s/^VERSION_PRERELEASE.*/VERSION_PRERELEASE =${prerelease_w_space}/
-g/VERSION_BUILD_METADATA/s/\$(shell[^)]*)\.//
+,s/^VERSION_BUILD_METADATA.*/VERSION_BUILD_METADATA = \$(KIM_COMPILERSUITE).\$(KIM_SYSTEMLINKER).\$(KIM_SYSTEMARCH).\$(KIM_LINK)/
 w
 EOF
 
