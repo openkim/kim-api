@@ -1,0 +1,80 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the Common Development
+# and Distribution License Version 1.0 (the "License").
+#
+# You can obtain a copy of the license at
+# http://www.opensource.org/licenses/CDDL-1.0.  See the License for the
+# specific language governing permissions and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each file and
+# include the License file in a prominent location with the name LICENSE.CDDL.
+# If applicable, add the following below this CDDL HEADER, with the fields
+# enclosed by brackets "[]" replaced with your own identifying information:
+#
+# Portions Copyright (c) [yyyy] [name of copyright owner]. All rights reserved.
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2015, Regents of the University of Minnesota.
+# All rights reserved.
+#
+# Contributors:
+#    Ryan S. Elliott
+#    Andrew Akerson
+#
+
+
+This directory (LennardJones612_Universal__MO_826355984548_001) contains a
+Lennard-Jones model defined for the entire set of KIM API particle types.
+
+* Sigma parameters are set to (2^{-1/6})*r_0, where r_0 is the atomic covalent
+  radius.  Covalent radii for elements 1--96 were taken from Wolfram
+  Mathematica's `ElementData["CovalentRadius"]' command.  Covalent radii for
+  elements 97--118 were taken from Fig. 3 of the article Pyykko, M. Atsumi,
+  J. Chem. Eur. J. 15 (2009) 12770.
+
+* Epsilon parameters are set to the bond dissociation energy.  Bond
+  dissociation energies for elements 1--55, 57--60, and 61--84 were taken from
+  the CRC Handbook of Chemistry and Physics, 91st Edition, Ed. W.H. Haynes,
+  2010. (as posted here:
+  http://staff.ustc.edu.cn/~luo971/2010-91-CRC-BDEs-Tables.pdf)
+
+  The value (cohesive energy, in this case) for element 56 was obtained from
+  p. 50 in Charles Kittel. Introduction to Solid State Physics, 8th
+  edition. Hoboken, NJ: John Wiley & Sons, Inc, 2005.
+
+  The bond dissociation energy value for element 61 was obtained from
+  "Interpolation scheme for the cohesive energies for the lanthanides and
+  actinides" Borje Johansson and Anders Rosengren, Phys. Rev. B 11, 1367 (1975).
+
+  The bond dissociation energies for elements 85--118 were not found in the
+  literature.  Thus, the values used here are approximated by subtracting 10%
+  from the value for the element in the same Group (column) and previous Period
+  (row) of the periodic table.
+
+* Cutoff parameters are set to 4.0*sigma.  This corresponds to a cutoff energy
+  of approximately epsilon/1024.
+
+* Lorentz-Berthelot mixing rules are used for interactions between unlike
+  particles.  No shifting is performed; The potential is truncated at the
+  cutoff.
+
+The contents of the directory are as follows (before any compilation is
+performed):
+
+
+LICENSE.CDDL
+     The Common Development and Distribution License (CDDL) Version 1.0 file
+
+Makefile
+     Makefile to build the Model based on the specified KIM Model Driver
+
+README
+     This file
+
+LennardJones612_Universal.params
+     Parameters file providing the Lennard-Jones Model Parameters
