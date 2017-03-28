@@ -32,6 +32,19 @@
 #
 
 
+=== kim-api-v1.8.1 ============== 28Mar2017 ====================================
+
+* Added additional deprecations in prep. for kim-api-v2.0.0
+
+* Fixed other minor bugs in create_package script and build-config.cpp
+
+* Fixed bug in Makefile.ParameterizedModel
+
+* Fixed formatting error in Makefiles created by build-config utility
+
+* Fixed bug in ex_model_Ar_P_MLJ_CLUSTER_C example model
+
+
 === kim-api-v1.8.0 ============== 17Jan2017 ====================================
 
 * Deprecated significatant features and methods in prep. for kim-api-v2.0.0
