@@ -2506,7 +2506,6 @@ int KIM_API_model::get_neigh(int mode, int request, int *part,
     int locmode = mode;
 
     if(mode!=0 && mode!=1) return KIM_STATUS_NEIGH_INVALID_MODE;
-    if(this == NULL) return KIM_STATUS_API_OBJECT_INVALID;
     typedef int (*Get_Neigh)(void **, int *, int *, int *, int *, int **,double **);
 
     if (get_neigh_index < 0) return KIM_STATUS_API_OBJECT_INVALID;
@@ -3787,28 +3786,24 @@ void KIM_API_model::getm_compute_by_index(int* err, int numargs, ...){
 
 void KIM_API_model::print(int* error){
     *error =KIM_STATUS_FAIL;
-    if (this==NULL) return;
     std::cout<<(*this);
     *error=KIM_STATUS_OK;
 }
 
 intptr_t KIM_API_model::get_size_by_index(int I,int *error){
     *error =KIM_STATUS_FAIL;
-    if (this == NULL) return 0;
     *error =KIM_STATUS_OK;
     return (*this)[I].size;
 }
 
 intptr_t KIM_API_model::get_rank_by_index(int I,int *error){
     *error =KIM_STATUS_FAIL;
-    if (this == NULL) return 0;
     *error =KIM_STATUS_OK;
     return (*this)[I].rank;
 }
 
 intptr_t KIM_API_model::get_shape_by_index(int I, int * shape,int *error){
      *error =KIM_STATUS_OK;
-    if (this == NULL) return -2;
     *error =1;
      if((*this)[I].rank == 0){
             return 0;

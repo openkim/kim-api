@@ -110,7 +110,7 @@ int main(int argc, char* argv[])
       printf("\n");
       printf(".PHONY: all clean\n");
       printf("\n");
-      printf("ITEMS_LIST=$(shell find . -type d -depth 1 -not -name '.*')\n");
+      printf("ITEMS_LIST=$(shell find . -maxdepth 1 -mindepth 1 -type d -not -name '.*')\n");
       printf("\n");
       printf("all: $(patsubst %%,%%-all,$(ITEMS_LIST))\n");
       printf("clean: $(patsubst %%,%%-clean,$(ITEMS_LIST))\n");
