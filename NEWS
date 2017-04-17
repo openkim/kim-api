@@ -32,6 +32,11 @@
 #
 
 
+=== kim-api-v1.8.2 ============== 17Apr2017 ====================================
+
+* Fixed issues reaised by Tobias Brink (this==NULL; and `find` portability)
+
+
 === kim-api-v1.8.1 ============== 28Mar2017 ====================================
 
 * Added additional deprecations in prep. for kim-api-v2.0.0
