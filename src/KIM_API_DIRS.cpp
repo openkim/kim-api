@@ -270,6 +270,7 @@ void getSubDirectories(std::string const &dir, std::list<std::string> &list)
     while (NULL != dp);
     closedir(dirp);
   }
+  closedir(dirp);
 }
 
 enum ITEMS_ENTREIS {IE_NAME, IE_DIR, IE_VER};
