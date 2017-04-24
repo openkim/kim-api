@@ -268,6 +268,7 @@ void getSubDirectories(std::string const &dir, std::list<std::string> &list)
       }
     }
     while (NULL != dp);
+    closedir(dirp);
   }
 }
 
