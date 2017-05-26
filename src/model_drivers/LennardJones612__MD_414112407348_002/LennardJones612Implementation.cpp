@@ -39,8 +39,7 @@
 #include "LennardJones612Implementation.hpp"
 #include "KIM_SpeciesName.hpp"
 #include "KIM_UnitSystem.hpp"
-#include "KIM_Compute.hpp"
-#include "KIM_UTILITY_Compute.hpp"
+#include "KIM_COMPUTE_ArgumentName.hpp"
 
 #define MAXLINE 1024
 #define IGNORE_RESULT(fn) if(fn){}
@@ -149,7 +148,8 @@ int LennardJones612Implementation::Reinit(KIM::Simulator * const simulator)
 
 //******************************************************************************
 int LennardJones612Implementation::Compute(
-    KIM::Simulator const * const simulator)
+    KIM::Simulator const * const simulator,
+    KIM::COMPUTE::SimulatorComputeArguments const * const arguments)
 {
   int ier;
 
@@ -171,7 +171,7 @@ int LennardJones612Implementation::Compute(
   double* energy = 0;
   double* particleEnergy = 0;
   VectorOfSizeDIM* forces = 0;
-  ier = SetComputeMutableValues(simulator, isComputeProcess_dEdr,
+  ier = SetComputeMutableValues(simulator, arguments, isComputeProcess_dEdr,
                                 isComputeProcess_d2Edr2, isComputeEnergy,
                                 isComputeForces, isComputeParticleEnergy,
                                 particleSpecies, particleContributing,
@@ -687,6 +687,7 @@ int LennardJones612Implementation::SetReinitMutableValues(
 //******************************************************************************
 int LennardJones612Implementation::SetComputeMutableValues(
     KIM::Simulator const * const simulator,
+    KIM::COMPUTE::SimulatorComputeArguments const * const arguments,
     bool& isComputeProcess_dEdr,
     bool& isComputeProcess_d2Edr2,
     bool& isComputeEnergy,
@@ -707,17 +708,19 @@ int LennardJones612Implementation::SetComputeMutableValues(
   int compParticleEnergy;
   int compProcess_dEdr;
   int compProcess_d2Edr2;
-  ier = KIM::UTILITY::COMPUTE::getm_compute(
-      simulator,
-      KIM::COMPUTE::ARGUMENT_NAME::energy,         &compEnergy,         1,
-      KIM::COMPUTE::ARGUMENT_NAME::forces,         &compForces,         1,
-      KIM::COMPUTE::ARGUMENT_NAME::particleEnergy, &compParticleEnergy, 1,
-      KIM::COMPUTE::ARGUMENT_NAME::process_dEdr,   &compProcess_dEdr,   1,
-      KIM::COMPUTE::ARGUMENT_NAME::process_d2Edr2, &compProcess_d2Edr2, 1,
-      KIM::COMPUTE::ARGUMENT_NAME::End);
+
+  arguments->get_process_dEdr_compute(&compProcess_dEdr);
+  arguments->get_process_d2Edr2_compute(&compProcess_d2Edr2);
+
+  ier =
+      arguments->get_compute(KIM::COMPUTE::ARGUMENT_NAME::energy, &compEnergy)
+      || arguments->get_compute(KIM::COMPUTE::ARGUMENT_NAME::forces,
+                                &compForces)
+      || arguments->get_compute(KIM::COMPUTE::ARGUMENT_NAME::particleEnergy,
+                                &compParticleEnergy);
   if (ier)
   {
-    KIM::report_error(__LINE__, __FILE__, "getm_compute", ier);
+    KIM::report_error(__LINE__, __FILE__, "get_compute", ier);
     return ier;
   }
 
@@ -732,20 +735,25 @@ int LennardJones612Implementation::SetComputeMutableValues(
   // double const* cutoff;            // currently unused
   // int const* numberOfSpecies;  // currently unused
   int const* numberOfParticles;
-  ier = KIM::UTILITY::COMPUTE::getm_data(
-      simulator,
-      // KIM::COMPUTE::ARGUMENT_NAME::numberOfSpecies, &numberOfSpecies, 1,
-      KIM::COMPUTE::ARGUMENT_NAME::numberOfParticles, &numberOfParticles, 1,
-      KIM::COMPUTE::ARGUMENT_NAME::particleSpecies, &particleSpecies, 1,
-      KIM::COMPUTE::ARGUMENT_NAME::particleContributing, &particleContributing, 1,
-      KIM::COMPUTE::ARGUMENT_NAME::coordinates, &coordinates, 1,
-      KIM::COMPUTE::ARGUMENT_NAME::energy, &energy, compEnergy,
-      KIM::COMPUTE::ARGUMENT_NAME::particleEnergy, &particleEnergy, compParticleEnergy,
-      KIM::COMPUTE::ARGUMENT_NAME::forces, &forces, compForces,
-      KIM::COMPUTE::ARGUMENT_NAME::End);
+  ier =
+      arguments->get_data(KIM::COMPUTE::ARGUMENT_NAME::numberOfParticles,
+                          (void **) &numberOfParticles)
+      || arguments->get_data(KIM::COMPUTE::ARGUMENT_NAME::particleSpecies,
+                             (void **) &particleSpecies)
+      || arguments->get_data(KIM::COMPUTE::ARGUMENT_NAME::particleContributing,
+                             (void **) &particleContributing)
+      || arguments->get_data(KIM::COMPUTE::ARGUMENT_NAME::coordinates,
+                             (void **) &coordinates)
+      || (compEnergy ? arguments->get_data(KIM::COMPUTE::ARGUMENT_NAME::energy,
+                                           (void **) &energy) : false)
+      || (compParticleEnergy ? arguments->get_data(
+          KIM::COMPUTE::ARGUMENT_NAME::particleEnergy,
+          (void **) &particleEnergy) : false)
+      || (compForces ? arguments->get_data(KIM::COMPUTE::ARGUMENT_NAME::forces,
+                                           (void **) &forces) : false);
   if (ier)
   {
-    KIM::report_error(__LINE__, __FILE__, "getm_data", ier);
+    KIM::report_error(__LINE__, __FILE__, "get_data", ier);
     return ier;
   }
 

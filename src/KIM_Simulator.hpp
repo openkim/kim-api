@@ -36,6 +36,10 @@
 
 #include <string>
 
+#ifndef KIM_FUNC_HPP_
+#include "KIM_func.hpp"
+#endif
+
 #ifndef KIM_LANGUAGE_NAME_HPP_
 #include "KIM_LanguageName.hpp"
 #endif
@@ -53,8 +57,6 @@ class KIM_API_model;
 
 namespace KIM
 {
-typedef void (func)();
-
 // Forward declarations
 class SpeciesName;
 class ParameterDataType;
@@ -83,27 +85,9 @@ class Simulator{
   void set_compute_func(LanguageName const languageName,
                         func * const fptr);
 
-  // @@@ below move to KIM::COMPUTE::ArgumentList class
-  // data functions
-  int get_data(COMPUTE::ArgumentName const argumentName, void ** const ptr)
-      const;
-
-  // compute functions
-  int get_compute(COMPUTE::ArgumentName const argumentName, int * const flag)
-      const;
-
-  // who uses this?
-  int get_size(COMPUTE::ArgumentName const argumentName, int * const size)
-      const;
-  // @@@ above move to KIM::COMPUTE::ArgumentList class
 
   // @@@ add ostream argument to print() (?)
   void print() const;
-
-  void get_neighObject(void ** const ptr) const;
-  int get_neigh(int const neighborListIndex, int const particleNumber,
-                int * const numberOfNeighbors,
-                int const ** const neighborsOfParticle) const;
 
   // @@@ how would the Model use this inforamtion? can these be removed?
   void get_num_model_species(int * const numberOfSpecies) const;
@@ -126,13 +110,6 @@ class Simulator{
 
   void set_model_buffer(void const * const ptr);
   void get_model_buffer(void ** const ptr) const;
-
-  int process_dEdr(double const de, double const r, double const * const dx,
-                   int const i, int const j) const;
-
-  int process_d2Edr2(double const de, double const * const r,
-                     double const * const dx, int const * const i,
-                     int const * const j) const;
 
   int get_unit_handling(int * const flag) const;
   // @@@ to be moved to a UnitSystem class

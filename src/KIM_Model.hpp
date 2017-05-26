@@ -36,6 +36,10 @@
 
 #include <string>
 
+#ifndef KIM_FUNC_HPP_
+#include "KIM_func.hpp"
+#endif
+
 #ifndef KIM_LANGUAGE_NAME_HPP_
 #include "KIM_LanguageName.hpp"
 #endif
@@ -53,8 +57,6 @@ class KIM_API_model;
 
 namespace KIM
 {
-typedef void (func)();
-
 // Forward declarations
 class SpeciesName;
 class ParameterDataType;
@@ -66,15 +68,22 @@ class TimeUnit;
 namespace COMPUTE
 {
 class ArgumentName;
+class ModelComputeArguments;
 }
 
 
-class Model{
+class Model
+{
  public:
   static int create(std::string const & simulatorString,
                     std::string const & modelName,
                     Model ** const model);
   static void destroy(Model ** const model);
+
+  int create_compute_arguments(
+      COMPUTE::ModelComputeArguments ** const arguments) const;
+  void destroy_compute_arguments(
+      COMPUTE::ModelComputeArguments ** const arguments) const;
 
   void get_influence_distance(double * const influenceDistance) const;
 
@@ -82,35 +91,11 @@ class Model{
   void get_cutoffs(int * const numberOfCutoffs, double const ** const cutoffs)
       const;
 
-  // method functions
-  void set_get_neigh(LanguageName const languageName, func * const fptr);
-  void set_neighObject(void const * const ptr);
-
-  // @@@ below move to KIM::COMPUTE::ArgumentList class
-  // data functions
-  int set_data(COMPUTE::ArgumentName const argumentName, int const extent,
-               void const * const ptr);
-
-  // method functions
-  int set_method(COMPUTE::ArgumentName const argumentName, int const extent,
-                 LanguageName const languageName,
-                 func * const fptr);
-
-  // compute functions
-  int set_compute(COMPUTE::ArgumentName const argumentName, int flag);
-
-  // who uses this?
-  int get_size(COMPUTE::ArgumentName const argumentName, int * const size)
-      const;
-  // @@@ above move to KIM::COMPUTE::ArgumentList class
-
   // @@@ add ostream argument to print() (?)
   void print() const;
 
-  int compute() const;  // @@@ add KIM::COMPUTE::ArgumentList argument
-  int init();  // @@@ merge into create
+  int compute(COMPUTE::ModelComputeArguments const * const arguments) const;
   int reinit();  // @@@ rename to recreate (or other name)
-  int destroy_model();  // @@@ merge into destroy
 
   void get_num_model_species(int * const numberOfSpecies) const;
   int get_model_species(int const index, KIM::SpeciesName * const speciesName)

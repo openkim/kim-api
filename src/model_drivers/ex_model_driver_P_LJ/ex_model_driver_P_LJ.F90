@@ -78,7 +78,7 @@ integer(c_int), parameter          :: sigma_index   = 3
 !  Definition of Buffer type
 !
 !-------------------------------------------------------------------------------
-type BUFFER_TYPE
+type, bind(c) :: BUFFER_TYPE
   real(c_double) :: influence_distance
   real(c_double) :: Pcutoff
   real(c_double) :: cutsq
@@ -209,19 +209,21 @@ end subroutine calc_phi_dphi_d2phi
 ! Compute energy and forces on particles from the positions.
 !
 !-------------------------------------------------------------------------------
-subroutine Compute_Energy_Forces(simulator, ierr) bind(c)
+subroutine Compute_Energy_Forces(simulator, arguments, ierr) bind(c)
 use kim_simulator_module
-use kim_compute_module
-use kim_utility_compute_module
+use kim_compute_argument_name_module
+use kim_compute_simulator_compute_arguments_module
 implicit none
 
 !-- Transferred variables
 type(kim_simulator_type), intent(in) :: simulator
+type(kim_compute_simulator_compute_arguments_type), intent(in) :: arguments
 integer(c_int), intent(out) :: ierr
 
 !-- Local variables
 real(c_double) :: r,Rsqij,phi,dphi,d2phi,dEidr,d2Eidr
 integer(c_int) :: i,j,jj,numnei
+integer(c_int) :: ierr2
 integer(c_int) :: comp_force,comp_energy,comp_enepot,comp_process_dEdr, &
                   comp_process_d2Edr2
 type(BUFFER_TYPE), pointer :: buf; type(c_ptr) :: pbuf
@@ -253,35 +255,59 @@ model_cutoff = buf%influence_distance
 ! Check to see if we have been asked to compute the forces, energyperpart,
 ! energy and d1Edr
 !
-call kim_utility_compute_getm_compute(simulator, ierr, &
-  kim_compute_argument_name_energy, comp_energy, 1, &
-  kim_compute_argument_name_forces, comp_force, 1, &
-  kim_compute_argument_name_particle_energy, comp_enepot, 1, &
-  kim_compute_argument_name_process_dedr, comp_process_dedr, 1, &
-  kim_compute_argument_name_process_d2edr2, comp_process_d2edr2, 1)
+call kim_compute_simulator_compute_arguments_get_p_dedr_compute(arguments, &
+  comp_process_dedr)
+call kim_compute_simulator_compute_arguments_get_p_d2edr2_compute(arguments, &
+  comp_process_d2edr2)
+
+ierr = 0
+call kim_compute_simulator_compute_arguments_get_compute(arguments, &
+  kim_compute_argument_name_energy, comp_energy, ierr2)
+ierr = ierr + ierr2
+call kim_compute_simulator_compute_arguments_get_compute(arguments, &
+  kim_compute_argument_name_forces, comp_force, ierr2)
+ierr = ierr + ierr2
+call kim_compute_simulator_compute_arguments_get_compute(arguments, &
+  kim_compute_argument_name_particle_energy, comp_enepot, ierr2)
+ierr = ierr + ierr2
 if (ierr /= 0) then
    call kim_report_error(__LINE__, THIS_FILE_NAME,        &
-                               "kim_simulator_getm_compute", &
+                               "get_compute", &
                                ierr)
    return
 endif
 
 ! Unpack data from KIM object
 !
-call kim_simulator_get_data(simulator, &
-  kim_compute_argument_name_number_of_particles, pn, ierr)
+ierr = 0
+call kim_compute_simulator_compute_arguments_get_data(arguments, &
+  kim_compute_argument_name_number_of_particles, pn, ierr2)
+ierr = ierr + ierr2
 
-call kim_utility_compute_getm_data(simulator, ierr, &
-  kim_compute_argument_name_number_of_particles, pn, 1, &
-  kim_compute_argument_name_particle_species, pparticlespecies, 1, &
-  kim_compute_argument_name_particle_contributing, pparticlecontributing, 1, &
-  kim_compute_argument_name_coordinates, pcoor, 1, &
-  kim_compute_argument_name_energy, penergy, 1, &
-  kim_compute_argument_name_forces, pforce, 1, &
-  kim_compute_argument_name_particle_energy, penepot, 1)
+call kim_compute_simulator_compute_arguments_get_data(arguments, &
+  kim_compute_argument_name_number_of_particles, pn, ierr2)
+ierr = ierr + ierr2
+call kim_compute_simulator_compute_arguments_get_data(arguments, &
+  kim_compute_argument_name_particle_species, pparticlespecies, ierr2)
+ierr = ierr + ierr2
+call kim_compute_simulator_compute_arguments_get_data(arguments, &
+  kim_compute_argument_name_particle_contributing, pparticlecontributing, ierr2)
+ierr = ierr + ierr2
+call kim_compute_simulator_compute_arguments_get_data(arguments, &
+  kim_compute_argument_name_coordinates, pcoor, ierr2)
+ierr = ierr + ierr2
+call kim_compute_simulator_compute_arguments_get_data(arguments, &
+  kim_compute_argument_name_energy, penergy, ierr2)
+ierr = ierr + ierr2
+call kim_compute_simulator_compute_arguments_get_data(arguments, &
+  kim_compute_argument_name_forces, pforce, ierr2)
+ierr = ierr + ierr2
+call kim_compute_simulator_compute_arguments_get_data(arguments, &
+  kim_compute_argument_name_particle_energy, penepot, ierr2)
+ierr = ierr + ierr2
 if (ierr /= 0) then
    call kim_report_error(__LINE__, THIS_FILE_NAME,     &
-                               "kim_simulator_getm_data", &
+                               "get_data", &
                                ierr)
    return
 endif
@@ -335,7 +361,8 @@ do i = 1, N
   if (particleContributing(i) == 1) then
     ! Set up neighbor list for next particle
     !
-    call kim_simulator_get_neigh(simulator, 1, i, numnei, pnei1part, ierr)
+    call kim_compute_simulator_compute_arguments_get_neigh( &
+      arguments, 1, i, numnei, pnei1part, ierr)
     if (ierr /= 0) then
       ! some sort of problem, exit
       call kim_report_error(__LINE__, THIS_FILE_NAME, &
@@ -401,8 +428,8 @@ do i = 1, N
         ! contribution to process_dEdr
         !
         if (comp_process_dEdr.eq.1) then
-          call kim_simulator_process_dedr(simulator, deidr, r, c_loc(rij(1)), i, j, &
-            ierr)
+          call kim_compute_simulator_compute_arguments_process_dedr( &
+            arguments, deidr, r, c_loc(rij(1)), i, j, ierr)
         endif
 
         ! contribution to process_d2Edr2
@@ -416,7 +443,8 @@ do i = 1, N
           j_pairs(1) = j
           j_pairs(2) = j
 
-          call kim_simulator_process_d2edr2(simulator, d2eidr, &
+          call kim_compute_simulator_compute_arguments_process_d2edr2( &
+            arguments, d2eidr, &
             c_loc(r_pairs(1)),     &
             c_loc(Rij_pairs(1,1)), &
             c_loc(i_pairs(1)),     &
@@ -440,6 +468,7 @@ enddo  ! do i
 
 ! Free temporary storage
 !
+deallocate( Rij )
 if (comp_process_d2Edr2.eq.1) then
   deallocate( r_pairs   )
   deallocate( Rij_pairs )
@@ -461,7 +490,6 @@ end subroutine Compute_Energy_Forces
 !-------------------------------------------------------------------------------
 subroutine reinit(simulator, ierr) bind(c)
 use kim_simulator_module
-use kim_compute_module
 use kim_logger_module
 implicit none
 
@@ -535,9 +563,7 @@ use, intrinsic :: iso_c_binding
 use ex_model_driver_p_lj
 use kim_simulator_module
 use kim_model_module
-use kim_compute_module
 use kim_unit_system_module
-use kim_utility_compute_module
 implicit none
 integer(c_int), parameter :: cd = c_double ! used for literal constants
 

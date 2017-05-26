@@ -38,13 +38,12 @@
 
 #include <stdarg.h>
 
-#ifndef KIM_LANGUAGE_NAME_H_
-#include "KIM_LanguageName.h"
+#ifndef KIM_FUNC_H_
+#include "KIM_func.h"
 #endif
 
-#ifndef KIM_FUNC_DEFINED_
-#define KIM_FUNC_DEFINED_
-typedef void (func)();
+#ifndef KIM_LANGUAGE_NAME_H_
+#include "KIM_LanguageName.h"
 #endif
 
 /* Forward declarations */
@@ -107,11 +106,6 @@ void KIM_Simulator_set_cutoffs(KIM_Simulator * const simulator,
                                int const numberOfCutoffs,
                                double const * const cutoffs);
 
-/* *data functions */
-int KIM_Simulator_get_data(KIM_Simulator const * const simulator,
-                           KIM_COMPUTE_ArgumentName const argumentName,
-                           void ** const ptr);
-
 /* *method functions */
 void KIM_Simulator_set_reinit(KIM_Simulator * const simulator,
                               KIM_LanguageName const languageName,
@@ -123,24 +117,7 @@ void KIM_Simulator_set_compute_func(KIM_Simulator * const simulator,
                                     KIM_LanguageName const languageName,
                                     func * const fptr);
 
-/* *compute functions */
-int KIM_Simulator_get_compute(KIM_Simulator const * const simulator,
-                              KIM_COMPUTE_ArgumentName const argumentName,
-                              int * const flag);
-
-int KIM_Simulator_get_size(KIM_Simulator const * const simulator,
-                           KIM_COMPUTE_ArgumentName const argumentName,
-                           int * const size);
-
 void KIM_Simulator_print(KIM_Simulator const * const simulator);
-
-void KIM_Simulator_get_neighObject(KIM_Simulator const * const simulator,
-                                   void ** const ptr);
-int KIM_Simulator_get_neigh(KIM_Simulator const * const simulator,
-                            int const neighborListIndex,
-                            int const particleNumber,
-                            int * const numberOfNeighbors,
-                            int const ** const neighborsOfParticle);
 
 void KIM_Simulator_get_num_model_species(KIM_Simulator const * const simulator,
                                          int * const numberOfSpecies);
@@ -175,16 +152,6 @@ void KIM_Simulator_set_model_buffer(KIM_Simulator * const simulator,
                                     void const * const ptr);
 void KIM_Simulator_get_model_buffer(KIM_Simulator const * const simulator,
                                     void ** const ptr);
-
-int KIM_Simulator_process_dEdr(KIM_Simulator const * const simulator,
-                               double const de, double const r,
-                               double const * const dx, int const i,
-                               int const j);
-
-int KIM_Simulator_process_d2Edr2(KIM_Simulator const * const simulator,
-                                 double const de, double const * const r,
-                                 double const * const dx, int const * const i,
-                                 int const * const j);
 
 /* Unit_Handling related routines */
 int KIM_Simulator_get_unit_handling(KIM_Simulator const * const simulator,

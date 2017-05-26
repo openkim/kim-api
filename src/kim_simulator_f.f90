@@ -38,15 +38,10 @@ module kim_simulator_f_module
   public &
     set_influence_distance, &
     set_cutoffs, &
-    get_data, &
     set_reinit, &
     set_destroy, &
     set_compute_func, &
-    get_compute, &
-    get_size, &
     print_model, &
-    get_neigh_object, &
-    get_neigh, &
     get_num_model_species, &
     get_model_species, &
     get_num_sim_species, &
@@ -57,8 +52,6 @@ module kim_simulator_f_module
     set_parameter_description, &
     set_model_buffer, &
     get_model_buffer, &
-    process_dedr, &
-    process_d2edr2, &
     get_unit_handling, &
     get_unit_length, &
     get_unit_energy, &
@@ -86,18 +79,6 @@ module kim_simulator_f_module
       integer(c_int), intent(in), value :: number_of_cutoffs
       type(c_ptr), intent(in), value :: cutoffs_ptr
     end subroutine set_cutoffs
-
-    integer(c_int) function get_data(simulator, argument_name, ptr) &
-      bind(c, name="KIM_Simulator_get_data")
-      use, intrinsic :: iso_c_binding
-      use kim_compute_module, only : &
-        kim_compute_argument_name_type
-      use kim_simulator_module, only : kim_simulator_type
-      implicit none
-      type(kim_simulator_type), intent(in) :: simulator
-      type(kim_compute_argument_name_type), intent(in), value :: argument_name
-      type(c_ptr), intent(out) :: ptr
-    end function get_data
 
     subroutine set_reinit(simulator, language_name, fptr) &
       bind(c, name="KIM_Simulator_set_reinit")
@@ -135,58 +116,12 @@ module kim_simulator_f_module
       type(c_funptr), intent(in), value :: fptr
     end subroutine set_compute_func
 
-    integer(c_int) function get_compute(simulator, argument_name, flag) &
-      bind(c, name="KIM_Simulator_get_compute")
-      use, intrinsic :: iso_c_binding
-      use kim_compute_module, only : &
-        kim_compute_argument_name_type
-      use kim_simulator_module, only : kim_simulator_type
-      implicit none
-      type(kim_simulator_type), intent(in) :: simulator
-      type(kim_compute_argument_name_type), intent(in), value :: argument_name
-      integer(c_int), intent(out) :: flag
-    end function get_compute
-
-    integer(c_int) function get_size(simulator, argument_name, size) &
-      bind(c, name="KIM_Simulator_get_size")
-      use, intrinsic :: iso_c_binding
-      use kim_compute_module, only : &
-        kim_compute_argument_name_type
-      use kim_simulator_module, only : kim_simulator_type
-      implicit none
-      type(kim_simulator_type), intent(in) :: simulator
-      type(kim_compute_argument_name_type), intent(in), value :: argument_name
-      integer(c_int), intent(out) :: size
-    end function get_size
-
     subroutine print_model(simulator) bind(c, name="KIM_Simulator_print")
       use, intrinsic :: iso_c_binding
       use kim_simulator_module, only : kim_simulator_type
       implicit none
       type(kim_simulator_type), intent(in) :: simulator
     end subroutine print_model
-
-    subroutine get_neigh_object(simulator, ptr) &
-      bind(c, name="KIM_Simulator_get_neighObject")
-      use, intrinsic :: iso_c_binding
-      use kim_simulator_module, only : kim_simulator_type
-      implicit none
-      type(kim_simulator_type), intent(in) :: simulator
-      type(c_ptr), intent(out) :: ptr
-    end subroutine get_neigh_object
-
-    integer(c_int) function get_neigh(simulator, neighbor_list_index, &
-      particle_number, number_of_neighbors, neighbors_of_particle) &
-      bind(c, name="KIM_Simulator_get_neigh")
-      use, intrinsic :: iso_c_binding
-      use kim_simulator_module, only : kim_simulator_type
-      implicit none
-      type(kim_simulator_type), intent(in) :: simulator
-      integer(c_int), intent(in), value :: neighbor_list_index
-      integer(c_int), intent(in), value :: particle_number
-      integer(c_int), intent(out) :: number_of_neighbors
-      type(c_ptr), intent(out) :: neighbors_of_particle
-    end function get_neigh
 
     subroutine get_num_model_species(simulator, number_of_species) &
       bind(c, name="KIM_Simulator_get_num_model_species")
@@ -288,32 +223,6 @@ module kim_simulator_f_module
       type(kim_simulator_type), intent(in) :: simulator
       type(c_ptr), intent(out) :: ptr
     end subroutine get_model_buffer
-
-    integer(c_int) function process_dedr(simulator, de, r, dx, i, j) &
-      bind(c, name="KIM_Simulator_process_dedr")
-      use, intrinsic :: iso_c_binding
-      use kim_simulator_module, only : kim_simulator_type
-      implicit none
-      type(kim_simulator_type), intent(in) :: simulator
-      real(c_double), intent(in), value :: de
-      real(c_double), intent(in), value :: r
-      real(c_double), intent(in) :: dx
-      real(c_double), intent(in), value :: i
-      real(c_double), intent(in), value :: j
-    end function process_dedr
-
-    integer(c_int) function process_d2edr2(simulator, de, r, dx, i, j) &
-      bind(c, name="KIM_Simulator_process_d2edr2")
-      use, intrinsic :: iso_c_binding
-      use kim_simulator_module, only : kim_simulator_type
-      implicit none
-      type(kim_simulator_type), intent(in) :: simulator
-      real(c_double), intent(in), value :: de
-      type(c_ptr), intent(in), value :: r
-      type(c_ptr), intent(in), value :: dx
-      type(c_ptr), intent(in), value :: i
-      type(c_ptr), intent(in), value :: j
-    end function process_d2edr2
 
     integer(c_int) function get_unit_handling(simulator, flag) &
       bind(c, name="KIM_Simulator_get_unit_handling")
@@ -429,21 +338,6 @@ subroutine kim_simulator_set_cutoffs(simulator, number_of_cutoffs, cutoffs_ptr)
   call set_cutoffs(simulator, number_of_cutoffs, cutoffs_ptr)
 end subroutine kim_simulator_set_cutoffs
 
-subroutine kim_simulator_get_data(simulator, argument_name, ptr, ierr)
-  use, intrinsic :: iso_c_binding
-  use kim_compute_module, only : &
-    kim_compute_argument_name_type
-  use kim_simulator_module, only : kim_simulator_type
-  use kim_simulator_f_module, only : get_data
-  implicit none
-  type(kim_simulator_type), intent(in) :: simulator
-  type(kim_compute_argument_name_type), intent(in), value :: argument_name
-  type(c_ptr), intent(out) :: ptr
-  integer(c_int), intent(out) :: ierr
-
-  ierr = get_data(simulator, argument_name, ptr)
-end subroutine kim_simulator_get_data
-
 subroutine kim_simulator_set_reinit(simulator, language_name, fptr)
   use, intrinsic :: iso_c_binding
   use kim_language_name_module, only : &
@@ -486,36 +380,6 @@ subroutine kim_simulator_set_compute_func(simulator, language_name, fptr)
   call set_compute_func(simulator, language_name, fptr)
 end subroutine kim_simulator_set_compute_func
 
-subroutine kim_simulator_get_compute(simulator, argument_name, flag, ierr)
-  use, intrinsic :: iso_c_binding
-  use kim_compute_module, only : &
-    kim_compute_argument_name_type
-  use kim_simulator_module, only : kim_simulator_type
-  use kim_simulator_f_module, only : get_compute
-  implicit none
-  type(kim_simulator_type), intent(in) :: simulator
-  type(kim_compute_argument_name_type), intent(in), value :: argument_name
-  integer(c_int), intent(out) :: flag
-  integer(c_int), intent(out) :: ierr
-
-  ierr = get_compute(simulator, argument_name, flag)
-end subroutine kim_simulator_get_compute
-
-subroutine kim_simulator_get_size(simulator, argument_name, size, ierr)
-  use, intrinsic :: iso_c_binding
-  use kim_compute_module, only : &
-    kim_compute_argument_name_type
-  use kim_simulator_module, only : kim_simulator_type
-  use kim_simulator_f_module, only : get_size
-  implicit none
-  type(kim_simulator_type), intent(in) :: simulator
-  type(kim_compute_argument_name_type), intent(in), value :: argument_name
-  integer(c_int), intent(out) :: size
-  integer(c_int), intent(out) :: ierr
-
-  ierr = get_size(simulator, argument_name, size)
-end subroutine kim_simulator_get_size
-
 subroutine kim_simulator_print(simulator)
   use, intrinsic :: iso_c_binding
   use kim_simulator_module, only : kim_simulator_type
@@ -525,34 +389,6 @@ subroutine kim_simulator_print(simulator)
 
   call print_model(simulator)
 end subroutine kim_simulator_print
-
-subroutine kim_simulator_get_neigh_object(simulator, ptr)
-  use, intrinsic :: iso_c_binding
-  use kim_simulator_module, only : kim_simulator_type
-  use kim_simulator_f_module, only : get_neigh_object
-  implicit none
-  type(kim_simulator_type), intent(in) :: simulator
-  type(c_ptr), intent(out) :: ptr
-
-  call get_neigh_object(simulator, ptr)
-end subroutine kim_simulator_get_neigh_object
-
-subroutine kim_simulator_get_neigh(simulator, neighbor_list_index, &
-  particle_number, number_of_neighbors, neighbors_of_particle, ierr)
-  use, intrinsic :: iso_c_binding
-  use kim_simulator_module, only : kim_simulator_type
-  use kim_simulator_f_module, only : get_neigh
-  implicit none
-  type(kim_simulator_type), intent(in) :: simulator
-  integer(c_int), intent(in), value :: neighbor_list_index
-  integer(c_int), intent(in), value :: particle_number
-  integer(c_int), intent(out) :: number_of_neighbors
-  type(c_ptr), intent(out) :: neighbors_of_particle
-  integer(c_int), intent(out) :: ierr
-
-  ierr = get_neigh(simulator, neighbor_list_index-1, particle_number, &
-    number_of_neighbors, neighbors_of_particle)
-end subroutine kim_simulator_get_neigh
 
 subroutine kim_simulator_get_num_model_species(simulator, number_of_species)
   use, intrinsic :: iso_c_binding
@@ -682,38 +518,6 @@ subroutine kim_simulator_get_model_buffer(simulator, ptr)
 
   call get_model_buffer(simulator, ptr)
 end subroutine kim_simulator_get_model_buffer
-
-subroutine kim_simulator_process_dedr(simulator, de, r, dx, i, j, ierr)
-  use, intrinsic :: iso_c_binding
-  use kim_simulator_module, only : kim_simulator_type
-  use kim_simulator_f_module, only : process_dedr
-  implicit none
-  type(kim_simulator_type), intent(in) :: simulator
-  real(c_double), intent(in), value :: de
-  real(c_double), intent(in), value :: r
-  real(c_double), intent(in) :: dx
-  real(c_double), intent(in), value :: i
-  real(c_double), intent(in), value :: j
-  integer(c_int), intent(out) :: ierr
-
-  ierr = process_dedr(simulator, de, r, dx, i, j)
-end subroutine kim_simulator_process_dedr
-
-subroutine kim_simulator_process_d2edr2(simulator, de, r, dx, i, j, ierr)
-  use, intrinsic :: iso_c_binding
-  use kim_simulator_module, only : kim_simulator_type
-  use kim_simulator_f_module, only : process_d2edr2
-  implicit none
-  type(kim_simulator_type), intent(in) :: simulator
-  real(c_double), intent(in), value :: de
-  type(c_ptr), intent(in), value :: r
-  type(c_ptr), intent(in), value :: dx
-  type(c_ptr), intent(in), value :: i
-  type(c_ptr), intent(in), value :: j
-  integer(c_int), intent(out) :: ierr
-
-  ierr = process_d2edr2(simulator, de, r, dx, i, j)
-end subroutine kim_simulator_process_d2edr2
 
 subroutine kim_simulator_get_unit_handling(simulator, flag, ierr)
   use, intrinsic :: iso_c_binding

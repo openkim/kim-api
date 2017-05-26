@@ -31,7 +31,7 @@
 !
 
 
-module kim_compute_id_module
+module kim_compute_argument_name_id_module
   use, intrinsic :: iso_c_binding
   implicit none
   private
@@ -42,28 +42,22 @@ module kim_compute_id_module
     particle_species_id, &
     particle_contributing_id, &
     coordinates_id, &
-    process_dedr_id, &
-    process_d2edr2_id, &
     energy_id, &
     forces_id, &
     particle_energy_id, &
     virial_id, &
     particle_virial_id, &
-    hessian_id, &
-    end_id
+    hessian_id
 
   integer(c_int), parameter :: number_of_particles_id = 0
   integer(c_int), parameter :: number_of_species_id = 1
   integer(c_int), parameter :: particle_species_id = 2
   integer(c_int), parameter :: particle_contributing_id = 3
   integer(c_int), parameter :: coordinates_id = 4
-  integer(c_int), parameter :: process_dedr_id = 6
-  integer(c_int), parameter :: process_d2edr2_id = 7
-  integer(c_int), parameter :: energy_id = 12
-  integer(c_int), parameter :: forces_id = 13
-  integer(c_int), parameter :: particle_energy_id = 14
-  integer(c_int), parameter :: virial_id = 15
-  integer(c_int), parameter :: particle_virial_id = 16
-  integer(c_int), parameter :: hessian_id = 17
-  integer(c_int), parameter :: end_id = -32000
-end module kim_compute_id_module
+  integer(c_int), parameter :: energy_id = 5
+  integer(c_int), parameter :: forces_id = 6
+  integer(c_int), parameter :: particle_energy_id = 7
+  integer(c_int), parameter :: virial_id = 8
+  integer(c_int), parameter :: particle_virial_id = 9
+  integer(c_int), parameter :: hessian_id = 10
+end module kim_compute_argument_name_id_module

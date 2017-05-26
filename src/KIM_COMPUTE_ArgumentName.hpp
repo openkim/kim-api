@@ -30,41 +30,40 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
-#ifndef KIM_COMPUTE_HPP_
-#include "KIM_Compute.hpp"
-#endif
+
+#ifndef KIM_COMPUTE_ARGUMENT_NAME_HPP_
+#define KIM_COMPUTE_ARGUMENT_NAME_HPP_
 
 namespace KIM
 {
 namespace COMPUTE
 {
 
-ArgumentName::ArgumentName() : argumentID(0){}
-ArgumentName::ArgumentName(int const id) : argumentID(id){}
+class ArgumentName
+{
+  int argumentID;
+ public:
+  ArgumentName();
+  ArgumentName(int const id);
+  bool operator==(ArgumentName const & rhs) const;
+  bool operator!=(ArgumentName const & rhs) const;
+};
 
-bool ArgumentName::operator==(ArgumentName const & rhs) const
-{return argumentID == rhs.argumentID;}
-bool ArgumentName::operator!=(ArgumentName const & rhs) const
-{return argumentID != rhs.argumentID;}
-
-// Order doesn't matter as long as all values are unique
 namespace ARGUMENT_NAME
 {
-ArgumentName const numberOfParticles(0);
-ArgumentName const numberOfSpecies(1);
-ArgumentName const particleSpecies(2);
-ArgumentName const particleContributing(3);
-ArgumentName const coordinates(4);
-ArgumentName const process_dEdr(6);
-ArgumentName const process_d2Edr2(7);
-ArgumentName const energy(12);
-ArgumentName const forces(13);
-ArgumentName const particleEnergy(14);
-ArgumentName const virial(15);
-ArgumentName const particleVirial(16);
-ArgumentName const hessian(17);
-ArgumentName const End(-32000);
+extern ArgumentName const numberOfParticles;
+extern ArgumentName const numberOfSpecies;
+extern ArgumentName const particleSpecies;
+extern ArgumentName const particleContributing;
+extern ArgumentName const coordinates;
+extern ArgumentName const energy;
+extern ArgumentName const forces;
+extern ArgumentName const particleEnergy;
+extern ArgumentName const virial;
+extern ArgumentName const particleVirial;
+extern ArgumentName const hessian;
 }  // namespace ARGUMENT_NAME
 
 }  // namespace COMPUTE
 }  // namespace KIM
+#endif  // KIM_COMPUTE_ARGUMENT_NAME_HPP_

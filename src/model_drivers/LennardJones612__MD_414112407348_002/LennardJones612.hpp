@@ -32,6 +32,7 @@
 #define LENNARD_JONES_612_HPP_
 
 #include "KIM_Simulator.hpp"
+#include "KIM_COMPUTE_SimulatorComputeArguments.hpp"
 
 extern "C"
 {
@@ -57,7 +58,9 @@ class LennardJones612
   // an implicit this pointer added to the prototype by the C++ compiler
   static int Destroy(KIM::Simulator * const simulator);
   static int Reinit(KIM::Simulator * const simulator);
-  static int Compute(KIM::Simulator const * const simulator);
+  static int Compute(KIM::Simulator const * const simulator,
+                     KIM::COMPUTE::SimulatorComputeArguments
+                     const * const arguments);
 
  private:
   LennardJones612Implementation* implementation_;

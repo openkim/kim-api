@@ -42,12 +42,8 @@
 #include "KIM_Model.hpp"
 #endif
 
-#ifndef KIM_COMPUTE_HPP_
-#include "KIM_Compute.hpp"
-#endif
-
-#ifndef KIM_UNIT_SYSTEM_HPP_
-#include "KIM_UnitSystem.hpp"
+#ifndef KIM_COMPUTE_ARGUMENT_NAME_HPP_
+#include "KIM_COMPUTE_ArgumentName.hpp"
 #endif
 
 extern "C"
@@ -64,21 +60,24 @@ extern "C"
 #include "KIM_Model.h"
 #endif
 
-#ifndef KIM_COMPUTE_H_
-#include "KIM_Compute.h"
+#ifndef KIM_COMPUTE_ARGUMENT_NAME_H_
+#include "KIM_COMPUTE_ArgumentName.h"
 #endif
 
-#ifndef KIM_UNIT_SYSTEM_H_
-#include "KIM_UnitSystem.h"
+#ifndef KIM_COMPUTE_MODEL_COMPUTE_ARGUMENTS_H_
+#include "KIM_COMPUTE_ModelComputeArguments.h"
 #endif
+}  // extern "C"
 
-static KIM::COMPUTE::ArgumentName
+namespace
+{
+KIM::COMPUTE::ArgumentName
 makeArgumentNameCpp(KIM_COMPUTE_ArgumentName const argumentName)
 {
   return KIM::COMPUTE::ArgumentName(argumentName.argumentID);
 }
 
-static KIM_ParameterDataType
+KIM_ParameterDataType
 makeParameterDataTypeC(KIM::ParameterDataType const dataType)
 {
   KIM_ParameterDataType typ;
@@ -87,19 +86,18 @@ makeParameterDataTypeC(KIM::ParameterDataType const dataType)
   return typ;
 }
 
-
-static KIM::LanguageName
+KIM::LanguageName
 makeLanguageNameCpp(KIM_LanguageName const languageName)
 {
   return KIM::LanguageName(languageName.languageID);
 }
 
-static KIM::SpeciesName makeSpecNameCpp(KIM_SpeciesName const speciesName)
+KIM::SpeciesName makeSpecNameCpp(KIM_SpeciesName const speciesName)
 {
   return KIM::SpeciesName(speciesName.speciesID);
 }
 
-static KIM_SpeciesName makeSpecNameC(KIM::SpeciesName const speciesName)
+KIM_SpeciesName makeSpecNameC(KIM::SpeciesName const speciesName)
 {
   KIM_SpeciesName specN;
   KIM_SpeciesName *pSN = (KIM_SpeciesName*) & speciesName;
@@ -107,6 +105,11 @@ static KIM_SpeciesName makeSpecNameC(KIM::SpeciesName const speciesName)
   return specN;
 }
 
+}  // namespace
+
+
+extern "C"
+{
 int KIM_Model_create(char const * const simulatorString,
                      char const * const modelName,
                      KIM_Model ** const model)
@@ -128,6 +131,30 @@ void KIM_Model_destroy(KIM_Model ** const model)
   *model = 0;
 }
 
+int KIM_Model_create_compute_arguments(
+    KIM_Model const * const model,
+    KIM_COMPUTE_ModelComputeArguments ** const arguments)
+{
+  KIM::Model * pmodel = (KIM::Model *) model->p;
+  KIM::COMPUTE::ModelComputeArguments * pArguments;
+  int err = pmodel->create_compute_arguments(&pArguments);
+  (*arguments) = new KIM_COMPUTE_ModelComputeArguments;
+  (*arguments)->p = (void *) pArguments;
+  return err;
+}
+
+void KIM_Model_destroy_compute_arguments(
+    KIM_Model const * const model,
+    KIM_COMPUTE_ModelComputeArguments ** const arguments)
+{
+  KIM::Model * pmodel = (KIM::Model *) model->p;
+  KIM::COMPUTE::ModelComputeArguments *
+      pArguments = (KIM::COMPUTE::ModelComputeArguments *) (*arguments)->p;
+  pmodel->destroy_compute_arguments(& pArguments);
+  delete(*arguments);
+  *arguments = 0;
+}
+
 void KIM_Model_get_influence_distance(KIM_Model const * const model,
                                       double * const influenceDistance)
 {
@@ -143,91 +170,25 @@ void KIM_Model_get_cutoffs(KIM_Model const * const model,
   pmodel->get_cutoffs(numberOfCutoffs, cutoffs);
 }
 
-// *data functions
-int KIM_Model_set_data(KIM_Model * const model,
-                       KIM_COMPUTE_ArgumentName const argumentName,
-                       int const extent, void const * const ptr)
-{
-  KIM::Model * pmodel = (KIM::Model *) model->p;
-  KIM::COMPUTE::ArgumentName argN = makeArgumentNameCpp(argumentName);
-  return pmodel->set_data(argN, extent, ptr);
-}
-
-// *method functions
-int KIM_Model_set_method(KIM_Model * const model,
-                         KIM_COMPUTE_ArgumentName const argumentName,
-                         int const extent,
-                         KIM_LanguageName const languageName,
-                         func * const fptr)
-{
-  KIM::Model * pmodel = (KIM::Model *) model->p;
-  KIM::COMPUTE::ArgumentName argN = makeArgumentNameCpp(argumentName);
-  KIM::LanguageName langN = makeLanguageNameCpp(languageName);
-  return pmodel->set_method(argN, extent, langN, fptr);
-}
-
-void KIM_Model_set_get_neigh(KIM_Model * const model,
-                             KIM_LanguageName const languageName,
-                             func * const fptr)
-{
-  KIM::Model * pmodel = (KIM::Model *) model->p;
-  KIM::LanguageName langN = makeLanguageNameCpp(languageName);
-  return pmodel->set_get_neigh(langN, fptr);
-}
-
-void KIM_Model_set_neighObject(KIM_Model * const model,
-                               void const * const ptr)
-{
-  KIM::Model * pmodel = (KIM::Model *) model->p;
-  return pmodel->set_neighObject(ptr);
-}
-
-int KIM_Model_set_compute(KIM_Model * const model,
-                          KIM_COMPUTE_ArgumentName const argumentName, int flag)
-{
-  KIM::Model * pmodel = (KIM::Model *) model->p;
-  KIM::COMPUTE::ArgumentName argN = makeArgumentNameCpp(argumentName);
-  return pmodel->set_compute(argN, flag);
-}
-
-int KIM_Model_get_size(KIM_Model const * const model,
-                       KIM_COMPUTE_ArgumentName const argumentName,
-                       int * const size)
-{
-  KIM::Model * pmodel = (KIM::Model *) model->p;
-  KIM::COMPUTE::ArgumentName argN = makeArgumentNameCpp(argumentName);
-  return pmodel->get_size(argN, size);
-}
-
 void KIM_Model_print(KIM_Model const * const model)
 {
   KIM::Model * pmodel = (KIM::Model *) model->p;
   pmodel->print();
 }
 
-int KIM_Model_compute(KIM_Model const * const model)
+int KIM_Model_compute(KIM_Model const * const model,
+                      KIM_COMPUTE_ModelComputeArguments const * const arguments)
 {
   KIM::Model * pmodel = (KIM::Model *) model->p;
-  return pmodel->compute();
-}
-
-int KIM_Model_init(KIM_Model * const model)
-{
-  KIM::Model * pmodel = (KIM::Model *) model->p;
-  int err = pmodel->init();
-  return err;
+  KIM::COMPUTE::ModelComputeArguments *
+      pMCA = (KIM::COMPUTE::ModelComputeArguments *) arguments->p;
+  return pmodel->compute(pMCA);
 }
 
 int KIM_Model_reinit(KIM_Model * const model)
 {
   KIM::Model * pmodel = (KIM::Model *) model->p;
   return pmodel->reinit();
-}
-
-int KIM_Model_destroy_model(KIM_Model * const model)
-{
-  KIM::Model * pmodel = (KIM::Model *) model->p;
-  return pmodel->destroy_model();
 }
 
 void KIM_Model_get_num_model_species(KIM_Model const * const model,

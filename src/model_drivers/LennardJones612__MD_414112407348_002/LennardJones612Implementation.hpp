@@ -83,7 +83,8 @@ class LennardJones612Implementation
   ~LennardJones612Implementation();  // no explicit Destroy() needed here
 
   int Reinit(KIM::Simulator * const simulator);
-  int Compute(KIM::Simulator const * const simulator);
+  int Compute(KIM::Simulator const * const simulator,
+              KIM::COMPUTE::SimulatorComputeArguments const * const arguments);
 
  private:
   // Constant values that never change
@@ -173,6 +174,8 @@ class LennardJones612Implementation
   //
   // Related to Compute()
   int SetComputeMutableValues(KIM::Simulator const * const simulator,
+                              KIM::COMPUTE::SimulatorComputeArguments
+                              const * const arguments,
                               bool& isComputeProcess_dEdr,
                               bool& isComputeProcess_d2Edr2,
                               bool& isComputeEnergy,
@@ -197,6 +200,7 @@ class LennardJones612Implementation
             bool isComputeEnergy, bool isComputeForces,
             bool isComputeParticleEnergy, bool isShift >
   int Compute(KIM::Simulator const * const simulator,
+              KIM::COMPUTE::SimulatorComputeArguments const * const arguments,
               const int* const particleSpecies,
               const int* const particleContributing,
               const VectorOfSizeDIM* const coordinates,
@@ -230,6 +234,7 @@ template< bool isComputeProcess_dEdr, bool isComputeProcess_d2Edr2,
           bool isComputeParticleEnergy, bool isShift >
 int LennardJones612Implementation::Compute(
     KIM::Simulator const * const simulator,
+    KIM::COMPUTE::SimulatorComputeArguments const * const arguments,
     const int* const particleSpecies,
     const int* const particleContributing,
     const VectorOfSizeDIM* const coordinates,
@@ -291,7 +296,7 @@ int LennardJones612Implementation::Compute(
   {
     if (particleContributing[ii])
     {
-      simulator->get_neigh(0, ii, &numnei, &n1atom);
+      arguments->get_neigh(0, ii, &numnei, &n1atom);
       int const numNei = numnei;
       int const * const n1Atom = n1atom;
       int const i = ii;
@@ -384,7 +389,8 @@ int LennardJones612Implementation::Compute(
           {
             double const rij = sqrt(rij2);
             double const dEidr = dEidrByR*rij;
-            ier = simulator->process_dEdr(dEidr, rij, r_ij_const, i, j);
+            ier = arguments->process_dEdr(
+                simulator, dEidr, rij, r_ij_const, i, j);
             if (ier)
             {
               KIM::report_error(__LINE__, __FILE__, "process_dEdr", ier);
@@ -407,7 +413,8 @@ int LennardJones612Implementation::Compute(
             int const* const pis = &i_pairs[0];
             int const* const pjs = &j_pairs[0];
 
-            ier = simulator->process_d2Edr2(d2Eidr2, pRs, pRijConsts, pis, pjs);
+            ier = arguments->process_d2Edr2(
+                simulator, d2Eidr2, pRs, pRijConsts, pis, pjs);
           if (ier)
           {
             KIM::report_error(__LINE__, __FILE__, "process_d2Edr2", ier);

@@ -41,7 +41,7 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <dlfcn.h>
-#include "OLD_KIM_API_DIRS.h"
+#include "old_KIM_API_DIRS.h"
 
 #define LINELEN 256
 

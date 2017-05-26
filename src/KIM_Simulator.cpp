@@ -39,11 +39,11 @@
 #endif
 
 #ifndef KIM_SIMULATOR_HPP_
-#include "KIM_SIMULATOR.hpp"
+#include "KIM_Simulator.hpp"
 #endif
 
-#ifndef KIM_COMPUTE_HPP_
-#include "KIM_Compute.hpp"
+#ifndef KIM_COMPUTE_ARGUMENT_NAME_HPP_
+#include "KIM_COMPUTE_ArgumentName.hpp"
 #endif
 
 #ifndef KIM_UNIT_SYSTEM_HPP_
@@ -58,40 +58,6 @@ namespace KIM
 
 namespace
 {
-char const * const argumentString(COMPUTE::ArgumentName const argumentName)
-{
-  if (argumentName == COMPUTE::ARGUMENT_NAME::numberOfParticles)
-    return "numberOfParticles";
-  else if (argumentName == COMPUTE::ARGUMENT_NAME::numberOfSpecies)
-    return "numberOfSpecies";
-  else if (argumentName == COMPUTE::ARGUMENT_NAME::particleSpecies)
-    return "particleSpecies";
-  else if (argumentName == COMPUTE::ARGUMENT_NAME::particleContributing)
-    return "particleContributing";
-  else if (argumentName == COMPUTE::ARGUMENT_NAME::coordinates)
-    return "coordinates";
-  else if (argumentName == COMPUTE::ARGUMENT_NAME::process_dEdr)
-    return "process_dEdr";
-  else if (argumentName == COMPUTE::ARGUMENT_NAME::process_d2Edr2)
-    return "process_d2Edr2";
-  else if (argumentName == COMPUTE::ARGUMENT_NAME::energy)
-    return "energy";
-  else if (argumentName == COMPUTE::ARGUMENT_NAME::forces)
-    return "forces";
-  else if (argumentName == COMPUTE::ARGUMENT_NAME::particleEnergy)
-    return "particleEnergy";
-  else if (argumentName == COMPUTE::ARGUMENT_NAME::virial)
-    return "virial";
-  else if (argumentName == COMPUTE::ARGUMENT_NAME::particleVirial)
-    return "particleVirial";
-  else if (argumentName == COMPUTE::ARGUMENT_NAME::hessian)
-    return "hessian";
-  else if (argumentName == COMPUTE::ARGUMENT_NAME::End)
-    return "END";
-  else
-    return "None";
-}
-
 char const * const speciesString(SpeciesName const speciesName)
 {
   if (speciesName == SPECIES_NAME::electron) return "electron";
@@ -513,18 +479,6 @@ void Simulator::set_cutoffs(int const numberOfCutoffs, double const * const cuto
     pKIM->cutoffs[i] = cutoffs[i];
 }
 
-// *data functions
-int Simulator::get_data(COMPUTE::ArgumentName const argumentName,
-                        void ** const ptr) const
-{
-  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
-
-  int err;
-  *ptr = pKIM->get_data(argumentString(argumentName), &err);
-  return (err < KIM_STATUS_OK);
-}
-
-
 // *method functions
 void Simulator::set_reinit(LanguageName const languageName,
                            func * const fptr)
@@ -574,55 +528,12 @@ void Simulator::set_compute_func(LanguageName const languageName,
   //return (err < KIM_STATUS_OK);
 }
 
-// *compute functions
-int Simulator::get_compute(COMPUTE::ArgumentName const argumentName,
-                           int * const flag) const
-{
-  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
-
-  int err;
-  *flag = pKIM->get_compute(argumentString(argumentName), &err);
-  return (err < KIM_STATUS_OK);
-}
-
-int Simulator::get_size(COMPUTE::ArgumentName const argumentName,
-                        int * const size) const
-{
-  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
-
-  int err;
-  *size = pKIM->get_size(argumentString(argumentName), &err);
-  return (err < KIM_STATUS_OK);
-}
-
-
 void Simulator::print() const
 {
   OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
 
   int err;
   pKIM->print(&err);
-}
-
-void Simulator::get_neighObject(void ** const ptr) const
-{
-  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
-
-  int err;
-  *ptr = pKIM->get_data("neighObject", &err);
-  //return (err < KIM_STATUS_OK);
-}
-
-int Simulator::get_neigh(int const neighborListIndex, int const particleNumber,
-                         int * const numberOfNeighbors,
-                         int const ** const neighborsOfParticle) const
-{
-  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
-
-  if (neighborListIndex != 0) return true;  // multiple list handling not ready
-  int err = pKIM->get_neigh(neighborListIndex, particleNumber,
-                            numberOfNeighbors, (int **) neighborsOfParticle);
-  return err;  // Simulators should return 2.0 codes
 }
 
 void Simulator::get_num_model_species(int * const numberOfSpecies) const
@@ -720,37 +631,6 @@ void Simulator::get_model_buffer(void ** const ptr) const
   int err;
   *ptr = pKIM->get_model_buffer(&err);
 }
-
-int Simulator::process_dEdr(double const de, double const r,
-                            double const * const dx,
-                            int const i, int const j) const
-{
-  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
-
-  int err = OLD_KIM::KIM_API_model::process_dEdr(&pKIM,
-                                                 (double *) &de,
-                                                 (double *) &r,
-                                                 (double **) &dx,
-                                                 (int *) &i,
-                                                 (int *) &j);
-  return (err < KIM_STATUS_OK);
-}
-
-int Simulator::process_d2Edr2(double const de, double const * const r,
-                              double const * const dx, int const * const i,
-                              int const * const j) const
-{
-  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
-
-  int err = OLD_KIM::KIM_API_model::process_d2Edr2(&pKIM,
-                                                   (double *) &de,
-                                                   (double **) &r,
-                                                   (double **) &dx,
-                                                   (int **) &i,
-                                                   (int **) &j);
-  return (err < KIM_STATUS_OK);
-}
-
 
 
 //Unit_Handling related routines

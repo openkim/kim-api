@@ -38,16 +38,12 @@
 #include "KIM_Parameter.hpp"
 #endif
 
-#ifndef KIM_MODEL_HPP_
-#include "KIM_Model.hpp"
-#endif
-
 #ifndef KIM_SIMULATOR_HPP_
 #include "KIM_Simulator.hpp"
 #endif
 
-#ifndef KIM_COMPUTE_HPP_
-#include "KIM_Compute.hpp"
+#ifndef KIM_COMPUTE_ARGUMENT_NAME_HPP_
+#include "KIM_COMPUTE_ArgumentName.hpp"
 #endif
 
 #ifndef KIM_UNIT_SYSTEM_HPP_
@@ -68,14 +64,16 @@ extern "C"
 #include "KIM_Simulator.h"
 #endif
 
-#ifndef KIM_COMPUTE_H_
-#include "KIM_Compute.h"
+#ifndef KIM_COMPUTE_ARGUMENT_NAME_H_
+#include "KIM_COMPUTE_ArgumentName.h"
 #endif
 
 #ifndef KIM_UNIT_SYSTEM_H_
 #include "KIM_UnitSystem.h"
 #endif
 
+namespace
+{
 static KIM::LengthUnit makeLengthUnitCpp(KIM_LengthUnit const lengthUnit)
 {
   return KIM::LengthUnit(lengthUnit.lengthUnitID);
@@ -138,11 +136,11 @@ static KIM_TimeUnit makeTimeUnitC(KIM::TimeUnit const timeUnit)
   return timeU;
 }
 
-static KIM::COMPUTE::ArgumentName
-makeArgumentNameCpp(KIM_COMPUTE_ArgumentName const argumentName)
-{
-  return KIM::COMPUTE::ArgumentName(argumentName.argumentID);
-}
+//static KIM::COMPUTE::ArgumentName
+//makeArgumentNameCpp(KIM_COMPUTE_ArgumentName const argumentName)
+//{
+//  return KIM::COMPUTE::ArgumentName(argumentName.argumentID);
+//}
 
 static KIM::LanguageName
 makeLanguageNameCpp(KIM_LanguageName const languageName)
@@ -150,14 +148,14 @@ makeLanguageNameCpp(KIM_LanguageName const languageName)
   return KIM::LanguageName(languageName.languageID);
 }
 
-static KIM_LanguageName
-makeLanguageNameC(KIM::LanguageName const languageName)
-{
-  KIM_LanguageName langN;
-  KIM_LanguageName * pLN = (KIM_LanguageName*) & languageName;
-  langN.languageID = pLN->languageID;
-  return langN;
-}
+//static KIM_LanguageName
+//makeLanguageNameC(KIM::LanguageName const languageName)
+//{
+//  KIM_LanguageName langN;
+//  KIM_LanguageName * pLN = (KIM_LanguageName*) & languageName;
+//  langN.languageID = pLN->languageID;
+//  return langN;
+//}
 
 static KIM::SpeciesName makeSpecNameCpp(KIM_SpeciesName const speciesName)
 {
@@ -171,6 +169,7 @@ static KIM_SpeciesName makeSpecNameC(KIM::SpeciesName const speciesName)
   specN.speciesID = pSN->speciesID;
   return specN;
 }
+}  // namespace
 
 void KIM_Simulator_set_influence_distance(KIM_Simulator * const simulator,
                                           double * const influenceDistance)
@@ -185,15 +184,6 @@ void KIM_Simulator_set_cutoffs(KIM_Simulator * const simulator,
 {
   KIM::Simulator * psimulator = (KIM::Simulator *) simulator->p;
   psimulator->set_cutoffs(numberOfCutoffs, cutoffs);
-}
-
-// *data functions
-int KIM_Simulator_get_data(KIM_Simulator const * const simulator,
-                           KIM_COMPUTE_ArgumentName const argumentName,
-                           void ** const ptr)
-{
-  KIM::Simulator * psimulator = (KIM::Simulator *) simulator->p;
-  return psimulator->get_data(makeArgumentNameCpp(argumentName), ptr);
 }
 
 // *method functions
@@ -224,48 +214,10 @@ void KIM_Simulator_set_compute_func(KIM_Simulator * const simulator,
   psimulator->set_compute_func(langN, fptr);
 }
 
-
-// *compute functions
-int KIM_Simulator_get_compute(KIM_Simulator const * const simulator,
-                              KIM_COMPUTE_ArgumentName const argumentName,
-                              int * const flag)
-{
-  KIM::Simulator * psimulator = (KIM::Simulator *) simulator->p;
-  KIM::COMPUTE::ArgumentName argN = makeArgumentNameCpp(argumentName);
-  return psimulator->get_compute(argN, flag);
-}
-
-int KIM_Simulator_get_size(KIM_Simulator const * const simulator,
-                           KIM_COMPUTE_ArgumentName const argumentName,
-                           int * const size)
-{
-  KIM::Simulator * psimulator = (KIM::Simulator *) simulator->p;
-  KIM::COMPUTE::ArgumentName argN = makeArgumentNameCpp(argumentName);
-  return psimulator->get_size(argN, size);
-}
-
 void KIM_Simulator_print(KIM_Simulator const * const simulator)
 {
   KIM::Simulator * psimulator = (KIM::Simulator *) simulator->p;
   psimulator->print();
-}
-
-void KIM_Simulator_get_neighObject(KIM_Simulator const * const simulator,
-                                   void ** const ptr)
-{
-  KIM::Simulator * psimulator = (KIM::Simulator *) simulator->p;
-  psimulator->get_neighObject(ptr);
-}
-
-int KIM_Simulator_get_neigh(KIM_Simulator const * const simulator,
-                            int const neighborListIndex,
-                            int const particleNumber,
-                            int * const numberOfNeighbors,
-                            int const ** const neighborsOfParticle)
-{
-  KIM::Simulator * psimulator = (KIM::Simulator *) simulator->p;
-  return psimulator->get_neigh(neighborListIndex, particleNumber,
-                               numberOfNeighbors, neighborsOfParticle);
 }
 
 void KIM_Simulator_get_num_model_species(KIM_Simulator const * const simulator,
@@ -349,24 +301,6 @@ void KIM_Simulator_get_model_buffer(KIM_Simulator const * const simulator,
 {
   KIM::Simulator * psimulator = (KIM::Simulator *) simulator->p;
   psimulator->get_model_buffer(ptr);
-}
-
-int KIM_Simulator_process_dEdr(KIM_Simulator const * const simulator,
-                               double const de, double const r,
-                               double const * const dx, int const i,
-                               int const j)
-{
-  KIM::Simulator * psimulator = (KIM::Simulator *) simulator->p;
-  return psimulator->process_dEdr(de, r, dx, i, j);
-}
-
-int KIM_Simulator_process_d2Edr2(KIM_Simulator const * const simulator,
-                                 double const de, double const * const r,
-                                 double const * const dx, int const * const i,
-                                 int const * const j)
-{
-  KIM::Simulator * psimulator = (KIM::Simulator *) simulator->p;
-  return psimulator->process_d2Edr2(de, r, dx, i, j);
 }
 
 //Unit_Handling related routines

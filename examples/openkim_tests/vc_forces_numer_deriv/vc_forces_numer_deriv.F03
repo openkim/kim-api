@@ -65,14 +65,14 @@ contains
 ! This function implements Locator and Iterator mode
 !
 !-------------------------------------------------------------------------------
-subroutine get_neigh(simulator, neighbor_list_index, request, numnei, &
+subroutine get_neigh(arguments, neighbor_list_index, request, numnei, &
   pnei1part, ierr) bind(c)
-  use kim_simulator_module
-  use kim_compute_module
+  use kim_compute_argument_name_module
+  use kim_compute_simulator_compute_arguments_module
   implicit none
 
   !-- Transferred variables
-  type(kim_simulator_type), intent(in) :: simulator
+  type(kim_compute_simulator_compute_arguments_type), intent(in) :: arguments
   integer(c_int), value, intent(in) :: neighbor_list_index
   integer(c_int), value, intent(in)  :: request
   integer(c_int),        intent(out) :: numnei
@@ -90,17 +90,18 @@ subroutine get_neigh(simulator, neighbor_list_index, request, numnei, &
   endif
 
   ! unpack number of particles
-  call kim_simulator_get_data(simulator, &
+  call kim_compute_simulator_compute_arguments_get_data(arguments, &
     kim_compute_argument_name_number_of_particles, pnparts, ierr)
   if (ierr /= 0) then
      call kim_report_error(__LINE__, THIS_FILE_NAME, &
-                                 "kim_api_get_data", ierr)
+                                 "get_data", ierr)
      stop
   endif
   call c_f_pointer(pnParts, numberOfParticles)
 
   ! unpack neighbor list object
-  call kim_simulator_get_neigh_object(simulator, pneighobject)
+  call kim_compute_simulator_compute_arguments_get_neigh_object(arguments, &
+    pneighobject)
   call c_f_pointer(pneighObject, neighObject)
 
   N = size(neighObject%neighborList, 2)
@@ -141,8 +142,8 @@ program vc_forces_numer_deriv
   use, intrinsic :: iso_c_binding
   use kim_species_name_module
   use kim_model_module
-  use kim_compute_module
-  use kim_utility_compute_module
+  use kim_compute_argument_name_module
+  use kim_compute_model_compute_arguments_module
   use mod_neighborlist
   implicit none
   integer(c_int), parameter :: cd = c_double ! used for literal constants
@@ -187,7 +188,8 @@ program vc_forces_numer_deriv
   character(len=STRING_LENGTH) :: modelname
 
   type(kim_model_type), pointer :: model
-  integer(c_int) ierr
+  type(kim_compute_model_compute_arguments_type), pointer :: arguments
+  integer(c_int) ierr, ierr2
   integer(c_int), target :: numberOfParticles
   integer(c_int), target :: particleSpecies(N)
   integer(c_int), target :: particleContributing(N)
@@ -271,19 +273,39 @@ program vc_forces_numer_deriv
      stop
   endif
 
+  call kim_model_create_compute_arguments(model, arguments, ierr)
+  if (ierr /= 0) then
+    call kim_report_error(__LINE__, THIS_FILE_NAME, &
+      "create_compute_arguments", ierr)
+    stop
+  endif
+
   ! register memory with the KIM system
-  call kim_utility_compute_setm_data(model, ierr, &
-    kim_compute_argument_name_number_of_particles, 1, c_loc(numberOfParticles), TRUEFALSE(.true.), &
-    kim_compute_argument_name_number_of_species,   1, c_loc(num_species),       TRUEFALSE(.true.), &
-    kim_compute_argument_name_particle_species,    N, c_loc(particleSpecies),   TRUEFALSE(.TRUE.), &
-    kim_compute_argument_name_particle_contributing, N, c_loc(particleContributing), TRUEFALSE(.TRUE.), &
-    kim_compute_argument_name_coordinates,       3*N, c_loc(coords),            TRUEFALSE(.true.), &
-    kim_compute_argument_name_energy,              1, c_loc(energy),            TRUEFALSE(.true.), &
-    kim_compute_argument_name_forces,            3*N, c_loc(forces),            TRUEFALSE(.true.) &
-  )
+  ierr = 0
+  call kim_compute_model_compute_arguments_set_data(arguments, &
+    kim_compute_argument_name_number_of_particles, 1, c_loc(numberOfParticles), ierr2)
+  ierr = ierr + ierr2
+  call kim_compute_model_compute_arguments_set_data(arguments, &
+    kim_compute_argument_name_number_of_species,   1, c_loc(num_species), ierr2)
+  ierr = ierr + ierr2
+  call kim_compute_model_compute_arguments_set_data(arguments, &
+    kim_compute_argument_name_particle_species,    N, c_loc(particleSpecies), ierr2)
+  ierr = ierr + ierr2
+  call kim_compute_model_compute_arguments_set_data(arguments, &
+    kim_compute_argument_name_particle_contributing, N, c_loc(particleContributing), ierr2)
+  ierr = ierr + ierr2
+  call kim_compute_model_compute_arguments_set_data(arguments, &
+    kim_compute_argument_name_coordinates,       3*N, c_loc(coords), ierr2)
+  ierr = ierr + ierr2
+  call kim_compute_model_compute_arguments_set_data(arguments, &
+    kim_compute_argument_name_energy,              1, c_loc(energy), ierr2)
+  ierr = ierr + ierr2
+  call kim_compute_model_compute_arguments_set_data(arguments, &
+    kim_compute_argument_name_forces,            3*N, c_loc(forces), ierr2)
+  ierr = ierr + ierr2
   if (ierr /= 0) then
      call kim_report_error(__LINE__, THIS_FILE_NAME, &
-                                 "kim_api_setm_data", ierr)
+                                 "set_data", ierr)
      stop
   endif
 
@@ -291,21 +313,13 @@ program vc_forces_numer_deriv
   ! store pointers to neighbor list object and access function
   !
   allocate(neighObject%neighborList(N+1,N))
-  call kim_model_set_neigh_object(model, c_loc(neighobject))
+  call kim_compute_model_compute_arguments_set_neigh_object(arguments, &
+    c_loc(neighobject))
 
   ! Set pointer in KIM object to neighbor list routine
   !
-  call kim_model_set_get_neigh(model, kim_language_name_fortran, &
-    c_funloc(get_neigh))
-
-  ! Initialize Model
-  !
-  call kim_model_init(model, ierr)
-  if (ierr /= 0) then
-     call kim_report_error(__LINE__, THIS_FILE_NAME, &
-                                 "kim_api_model_init", ierr)
-     stop
-  endif
+  call kim_compute_model_compute_arguments_set_get_neigh(arguments, &
+    kim_language_name_fortran, c_funloc(get_neigh))
 
   call kim_model_get_influence_distance(model, influence_distance)
   call kim_model_get_cutoffs(model, number_of_cutoffs, cutoff_ptr)
@@ -354,7 +368,7 @@ program vc_forces_numer_deriv
 
   ! Call model compute to get forces (gradient)
   !
-  call kim_model_compute(model, ierr)
+  call kim_model_compute(model, arguments, ierr)
   if (ierr /= 0) then
      call kim_report_error(__LINE__, THIS_FILE_NAME, &
                                  "kim_api_model_compute", ierr)
@@ -370,11 +384,11 @@ program vc_forces_numer_deriv
 
   ! Turn off force computation
   !
-  call kim_model_set_compute(model, &
+  call kim_compute_model_compute_arguments_set_compute(arguments, &
     kim_compute_argument_name_forces, 0, ierr)
   if (ierr /= 0) then
      call kim_report_error(__LINE__, THIS_FILE_NAME, &
-                                 "kim_api_set_compute", ierr)
+                                 "set_compute", ierr)
      stop
   endif
 
@@ -383,8 +397,8 @@ program vc_forces_numer_deriv
   allocate(forces_num(DIM,N),forces_num_err(DIM,N))
   do I=1,N
      do J=1,DIM
-        call compute_numer_deriv(I,J,model,DIM,N,coords,cutoff,cutpad,   &
-                                 energy, do_update_list, &
+        call compute_numer_deriv(I,J,model,arguments,DIM,N,coords,cutoff, &
+                                 cutpad, energy, do_update_list, &
                                  coordsave,neighObject,deriv,deriv_err,ierr)
         if (ierr /= 0) then
            call kim_report_error(__LINE__, THIS_FILE_NAME, &
@@ -450,12 +464,7 @@ program vc_forces_numer_deriv
   deallocate(neighObject%neighborList)
   deallocate(coordsave)
 
-  call kim_model_destroy_model(model, ierr)
-  if (ierr /= 0) then
-     call kim_report_error(__LINE__, THIS_FILE_NAME, &
-                                 "kim_api_model_destroy", ierr)
-     stop
-  endif
+  call kim_model_destroy_compute_arguments(model, arguments)
   call kim_model_destroy(model)
 
   ! Print output footer
@@ -1208,12 +1217,12 @@ subroutine create_FCC_configuration(FCCspacing, nCellsPerSide, periodic, &
 
 end subroutine create_FCC_configuration
 
-subroutine compute_numer_deriv(partnum,dir,model,DIM,N,coords,cutoff,cutpad,   &
-                               energy, do_update_list,      &
+subroutine compute_numer_deriv(partnum,dir,model,arguments,DIM,N,coords,&
+                               cutoff,cutpad,energy, do_update_list,    &
                                coordsave,neighObject,deriv,deriv_err,ierr)
 use, intrinsic :: iso_c_binding
 use kim_model_module
-use kim_compute_module
+use kim_compute_model_compute_arguments_module
 use mod_neighborlist
 implicit none
 integer(c_int), parameter :: cd = c_double ! used for literal constants
@@ -1222,6 +1231,7 @@ integer(c_int), parameter :: cd = c_double ! used for literal constants
 integer(c_int),         intent(in)    :: partnum
 integer(c_int),         intent(in)    :: dir
 type(kim_model_type),   intent(in)    :: model
+type(kim_compute_model_compute_arguments_type), intent(in) :: arguments
 integer(c_int),         intent(in)    :: DIM
 integer(c_int),         intent(in)    :: N
 real(c_double),         intent(inout) :: coords(DIM,N)
@@ -1318,7 +1328,7 @@ contains
    call update_neighborlist(DIM,N,coords,cutoff,cutpad, &
                             do_update_list,coordsave,       &
                             neighObject,ierr)
-   call kim_model_compute(model, ierr)
+   call kim_model_compute(model, arguments, ierr)
    if (ierr /= 0) then
       call kim_report_error(__LINE__, THIS_FILE_NAME, &
                                   "kim_api_model_compute",ierr)
@@ -1329,7 +1339,7 @@ contains
    call update_neighborlist(DIM,N,coords,cutoff,cutpad,&
                             do_update_list,coordsave,       &
                             neighObject,ierr)
-   call kim_model_compute(model, ierr)
+   call kim_model_compute(model, arguments, ierr)
    if (ierr /= 0) then
       call kim_report_error(__LINE__, THIS_FILE_NAME, &
                                   "kim_api_model_compute",ierr)
@@ -1351,7 +1361,7 @@ contains
       call update_neighborlist(DIM,N,coords,cutoff,cutpad, &
                                do_update_list,coordsave,       &
                                neighObject,ierr)
-      call kim_model_compute(model, ierr)
+      call kim_model_compute(model, arguments, ierr)
       if (ierr /= 0) then
          call kim_report_error(__LINE__, THIS_FILE_NAME, &
                                      "kim_api_model_compute",ierr)
@@ -1362,7 +1372,7 @@ contains
       call update_neighborlist(DIM,N,coords,cutoff,cutpad, &
                                   do_update_list,coordsave,       &
                                   neighObject,ierr)
-      call kim_model_compute(model, ierr)
+      call kim_model_compute(model, arguments, ierr)
       if (ierr /= 0) then
          call kim_report_error(__LINE__, THIS_FILE_NAME, &
                                      "kim_api_model_compute",ierr)

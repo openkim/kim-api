@@ -39,9 +39,9 @@
 #include <string>
 #include "KIM_SpeciesName.hpp"
 #include "KIM_Model.hpp"
-#include "KIM_Simulator.hpp"
-#include "KIM_Compute.hpp"
-#include "KIM_UTILITY_Compute.hpp"
+#include "KIM_COMPUTE_ModelComputeArguments.hpp"
+#include "KIM_COMPUTE_SimulatorComputeArguments.hpp"
+#include "KIM_COMPUTE_ArgumentName.hpp"
 #include "KIM_Logger.hpp"
 
 #define NAMESTRLEN    128
@@ -71,7 +71,7 @@ char const * const descriptor();
 void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
                               double cutoff, NeighList* nl);
 
-int get_cluster_neigh(KIM::Simulator const * const simulator,
+int get_cluster_neigh(KIM::COMPUTE::SimulatorComputeArguments const * const arguments,
                       int const neighborListIndex,
                       int const particleNumber, int * const numberOfNeighbors,
                       int const ** const neighborsOfParticle);
@@ -108,7 +108,7 @@ int main()
   std::string modelname;
 
   /* Get KIM Model names */
-  printf("Please enter valid KIM Model name: \n");
+  std::cout << "Please enter valid KIM Model name: \n";
   std::cin >> modelname;
 
 
@@ -118,22 +118,26 @@ int main()
   if (error)
     REPORT_ERROR(__LINE__, __FILE__,"KIM_create_model_interface()",error);
 
-  error = KIM::UTILITY::COMPUTE::setm_data(
-      kim_cluster_model,
-      KIM::COMPUTE::ARGUMENT_NAME::numberOfParticles, 1,                       &numberOfParticles_cluster,       1,
-      KIM::COMPUTE::ARGUMENT_NAME::numberOfSpecies, 1,                         &numberOfSpecies,                 1,
-      KIM::COMPUTE::ARGUMENT_NAME::particleSpecies, numberOfParticles_cluster, particleSpecies_cluster_model,   1,
-      KIM::COMPUTE::ARGUMENT_NAME::particleContributing, numberOfParticles_cluster, particleContributing_cluster_model, 1,
-      KIM::COMPUTE::ARGUMENT_NAME::coordinates, DIM*numberOfParticles_cluster, coords_cluster,                   1,
-      KIM::COMPUTE::ARGUMENT_NAME::energy, 1,                                  &energy_cluster_model,            1,
-      KIM::COMPUTE::ARGUMENT_NAME::End);
-  if (error) REPORT_ERROR(__LINE__, __FILE__,"KIM_API_setm_data",error);
-  kim_cluster_model->set_get_neigh(KIM::LANGUAGE_NAME::Cpp, (KIM::func *) &get_cluster_neigh);
-  kim_cluster_model->set_neighObject((void *) &nl_cluster_model);
+  KIM::COMPUTE::ModelComputeArguments * arguments;
+  error = kim_cluster_model->create_compute_arguments(&arguments);
+  if (error)
+    REPORT_ERROR(__LINE__, __FILE__,"create_compute_arguments()",error);
 
-  /* call model init routine */
-  error = kim_cluster_model->init();
-  if (error) REPORT_ERROR(__LINE__, __FILE__,"KIM_API_model_init", error);
+  error = arguments->set_data(
+      KIM::COMPUTE::ARGUMENT_NAME::numberOfParticles, 1, &numberOfParticles_cluster)
+      || arguments->set_data(
+          KIM::COMPUTE::ARGUMENT_NAME::numberOfSpecies, 1, &numberOfSpecies)
+      || arguments->set_data(
+          KIM::COMPUTE::ARGUMENT_NAME::particleSpecies, numberOfParticles_cluster, particleSpecies_cluster_model)
+      || arguments->set_data(
+          KIM::COMPUTE::ARGUMENT_NAME::particleContributing, numberOfParticles_cluster, particleContributing_cluster_model)
+      || arguments->set_data(
+          KIM::COMPUTE::ARGUMENT_NAME::coordinates, DIM*numberOfParticles_cluster, coords_cluster)
+      || arguments->set_data(
+          KIM::COMPUTE::ARGUMENT_NAME::energy, 1, &energy_cluster_model);
+  if (error) REPORT_ERROR(__LINE__, __FILE__,"KIM_API_set_data",error);
+  arguments->set_get_neigh(KIM::LANGUAGE_NAME::Cpp, (KIM::func *) &get_cluster_neigh);
+  arguments->set_neighObject((void *) &nl_cluster_model);
 
   kim_cluster_model->get_influence_distance(&influence_distance_cluster_model);
   kim_cluster_model->get_cutoffs(&number_of_cutoffs, &cutoff_cluster_model);
@@ -172,7 +176,7 @@ int main()
                              (*cutoff_cluster_model + cutpad), &nl_cluster_model);
 
     /* call compute functions */
-    error = kim_cluster_model->compute();
+    error = kim_cluster_model->compute(arguments);
     if (error) REPORT_ERROR(__LINE__, __FILE__,"compute", error);
 
     /* print the results */
@@ -184,9 +188,7 @@ int main()
 
 
   /* call model destroy */
-  error = kim_cluster_model->destroy_model();
-  if (error) REPORT_ERROR(__LINE__, __FILE__,"destroy", error);
-
+  kim_cluster_model->destroy_compute_arguments(&arguments);
   KIM::Model::destroy(&kim_cluster_model);
 
   /* free memory of neighbor lists */
@@ -359,7 +361,7 @@ void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
   return;
 }
 
-int get_cluster_neigh(KIM::Simulator const * const simulator,
+int get_cluster_neigh(KIM::COMPUTE::SimulatorComputeArguments const * const arguments,
                       int const neighborListIndex,
                       int const particleNumber, int * const numberOfNeighbors,
                       int const ** const neighborsOfParticle)
@@ -375,14 +377,14 @@ int get_cluster_neigh(KIM::Simulator const * const simulator,
   *numberOfNeighbors = 0;
 
   /* unpack neighbor list object */
-  error = simulator->get_data(KIM::COMPUTE::ARGUMENT_NAME::numberOfParticles, (void **) &numberOfParticles);
+  error = arguments->get_data(KIM::COMPUTE::ARGUMENT_NAME::numberOfParticles, (void **) &numberOfParticles);
   if (error)
   {
     KIM::report_error(__LINE__, __FILE__,"get_data", error);
     return error;
   }
 
-  simulator->get_neighObject((void **) &nl);
+  arguments->get_neighObject((void **) &nl);
 
   if ((particleNumber >= *numberOfParticles) || (particleNumber < 0)) /* invalid id */
   {

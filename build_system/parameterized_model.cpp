@@ -36,13 +36,20 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+
+#ifndef KIM_SIMULATOR_HPP_
 #include "KIM_Simulator.hpp"
-#include "KIM_Simulator.hpp"
-#include "KIM_Compute.hpp"
+#endif
+
+#ifndef KIM_COMPUTE_ARGUMENT_NAME_HPP_
+#include "KIM_COMPUTE_ArgumentName.hpp"
+#endif
 
 extern "C"
 {
+#ifndef KIM_SIMULATOR_H_
 #include "KIM_Simulator.h"
+#endif
 }
 
 #include "old_KIM_API_status.h"
@@ -224,7 +231,7 @@ int MODEL_NAME_STR_init(KIM::Simulator * const simulator) {
   delete [] parameterFileNames_copy;
   parameterFileNames = NULL;
   parameterFileNames_copy = NULL;
-  if (KIM_STATUS_OK > ier) return ier;
+  if (ier) return ier;  // driver init functions should return 2.0 codes
 
   ier = get_destroy_helper(simulator, &driver_destroy_lang, (KIM::func **) &driver_destroy);
   simulator->set_destroy(KIM::LANGUAGE_NAME::Cpp, (KIM::func *) model_destroy);
@@ -240,7 +247,7 @@ int MODEL_NAME_STR_init(KIM::Simulator * const simulator) {
   parameterFileNames_copy = NULL;
   if (KIM_STATUS_OK > ier) return ier;
 #endif
-  return KIM_STATUS_OK;
+  return false;  // Models should return 2.0 codes
 }
 }
 

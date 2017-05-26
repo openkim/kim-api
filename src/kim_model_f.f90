@@ -38,19 +38,13 @@ module kim_model_f_module
   public &
     create, &
     destroy, &
+    create_compute_arguments, &
+    destroy_compute_arguments, &
     get_influence_distance, &
     get_cutoffs, &
-    set_data, &
-    set_method, &
-    set_get_neigh, &
-    set_neigh_object, &
-    set_compute, &
-    get_size, &
     print_model, &
     compute, &
-    init, &
     reinit, &
-    destroy_model, &
     get_num_model_species, &
     get_model_species, &
     get_model_kim_string_length, &
@@ -67,7 +61,6 @@ module kim_model_f_module
     integer(c_int) function create(simulator_string, model_name, &
       model) bind(c, name="KIM_Model_create")
       use, intrinsic :: iso_c_binding
-      use kim_model_module, only : kim_model_type
       implicit none
       character(c_char), intent(in) :: simulator_string(*)
       character(c_char), intent(in) :: model_name(*)
@@ -76,10 +69,27 @@ module kim_model_f_module
 
     subroutine destroy(model) bind(c, name="KIM_Model_destroy")
       use, intrinsic :: iso_c_binding
-      use kim_model_module, only : kim_model_type
       implicit none
       type(c_ptr), intent(inout) :: model
     end subroutine destroy
+
+    integer(c_int) function create_compute_arguments(model, arguments) &
+      bind(c, name="KIM_Model_create_compute_arguments")
+      use, intrinsic :: iso_c_binding
+      use kim_model_module, only : kim_model_type
+      implicit none
+      type(kim_model_type), intent(in) :: model
+      type(c_ptr), intent(out) :: arguments
+    end function create_compute_arguments
+
+    subroutine destroy_compute_arguments(model, arguments) &
+      bind(c, name="KIM_Model_destroy_compute_arguments")
+      use, intrinsic :: iso_c_binding
+      use kim_model_module, only : kim_model_type
+      implicit none
+      type(kim_model_type), intent(in) :: model
+      type(c_ptr), intent(inout) :: arguments
+    end subroutine destroy_compute_arguments
 
     subroutine get_influence_distance(model, influence_distance) &
       bind(c, name="KIM_Model_get_influence_distance")
@@ -100,79 +110,6 @@ module kim_model_f_module
       type(c_ptr), intent(out) :: cutoffs_ptr
     end subroutine get_cutoffs
 
-    integer(c_int) function set_data(model, argument_name, extent, ptr) &
-      bind(c, name="KIM_Model_set_data")
-      use, intrinsic :: iso_c_binding
-      use kim_compute_module, only : &
-        kim_compute_argument_name_type
-      use kim_model_module, only : kim_model_type
-      implicit none
-      type(kim_model_type), intent(inout) :: model
-      type(kim_compute_argument_name_type), intent(in), value :: argument_name
-      integer(c_int), intent(in), value :: extent
-      type(c_ptr), intent(in), value :: ptr
-    end function set_data
-
-    integer(c_int) function set_method(model, argument_name, extent, &
-      language_name, fptr) bind(c, name="KIM_Model_set_method")
-      use, intrinsic :: iso_c_binding
-      use kim_compute_module, only : &
-        kim_compute_argument_name_type
-      use kim_language_name_module, only : &
-        kim_language_name_type
-      use kim_model_module, only : kim_model_type
-      implicit none
-      type(kim_model_type), intent(inout) :: model
-      type(kim_compute_argument_name_type), intent(in), value :: argument_name
-      integer(c_int), intent(in), value :: extent
-      type(kim_language_name_type), intent(in), value :: language_name
-      type(c_funptr), intent(in), value :: fptr
-    end function set_method
-
-    subroutine set_get_neigh(model, language_name, fptr) &
-      bind(c, name="KIM_Model_set_get_neigh")
-      use, intrinsic :: iso_c_binding
-      use kim_language_name_module, only : kim_language_name_type
-      use kim_model_module, only : kim_model_type
-      implicit none
-      type(kim_model_type), intent(inout) :: model
-      type(kim_language_name_type), intent(in), value :: language_name
-      type(c_funptr), intent(in), value :: fptr
-    end subroutine set_get_neigh
-
-    subroutine set_neigh_object(model, ptr) &
-      bind(c, name="KIM_Model_set_neighObject")
-      use, intrinsic :: iso_c_binding
-      use kim_model_module, only : kim_model_type
-      implicit none
-      type(kim_model_type), intent(inout) :: model
-      type(c_ptr), intent(in), value :: ptr
-    end subroutine set_neigh_object
-
-    integer(c_int) function set_compute(model, argument_name, flag) &
-      bind(c, name="KIM_Model_set_compute")
-      use, intrinsic :: iso_c_binding
-      use kim_compute_module, only : &
-        kim_compute_argument_name_type
-      use kim_model_module, only : kim_model_type
-      implicit none
-      type(kim_model_type), intent(inout) :: model
-      type(kim_compute_argument_name_type), intent(in), value :: argument_name
-      integer(c_int), intent(in), value :: flag
-    end function set_compute
-
-    integer(c_int) function get_size(model, argument_name, size) &
-      bind(c, name="KIM_Model_get_size")
-      use, intrinsic :: iso_c_binding
-      use kim_compute_module, only : &
-        kim_compute_argument_name_type
-      use kim_model_module, only : kim_model_type
-      implicit none
-      type(kim_model_type), intent(in) :: model
-      type(kim_compute_argument_name_type), intent(in), value :: argument_name
-      integer(c_int), intent(out) :: size
-    end function get_size
-
     subroutine print_model(model) bind(c, name="KIM_Model_print")
       use, intrinsic :: iso_c_binding
       use kim_model_module, only : kim_model_type
@@ -180,19 +117,16 @@ module kim_model_f_module
       type(kim_model_type), intent(in) :: model
     end subroutine print_model
 
-    integer(c_int) function compute(model) bind(c, name="KIM_Model_compute")
+    integer(c_int) function compute(model, arguments) &
+      bind(c, name="KIM_Model_compute")
       use, intrinsic :: iso_c_binding
       use kim_model_module, only : kim_model_type
+      use kim_compute_model_compute_arguments_module, only : &
+        kim_compute_model_compute_arguments_type
       implicit none
       type(kim_model_type), intent(in) :: model
+      type(kim_compute_model_compute_arguments_type), intent(in) :: arguments
     end function compute
-
-    integer(c_int) function init(model) bind(c, name="KIM_Model_init")
-      use, intrinsic :: iso_c_binding
-      use kim_model_module, only : kim_model_type
-      implicit none
-      type(kim_model_type), intent(inout) :: model
-    end function init
 
     integer(c_int) function reinit(model) bind(c, name="KIM_Model_reinit")
       use, intrinsic :: iso_c_binding
@@ -200,14 +134,6 @@ module kim_model_f_module
       implicit none
       type(kim_model_type), intent(inout) :: model
     end function reinit
-
-    integer(c_int) function destroy_model(model) &
-      bind(c, name="KIM_Model_destroy_model")
-      use, intrinsic :: iso_c_binding
-      use kim_model_module, only : kim_model_type
-      implicit none
-      type(kim_model_type), intent(inout) :: model
-    end function destroy_model
 
     subroutine get_num_model_species(model, number_of_species) &
       bind(c, name="KIM_Model_get_num_model_species")
@@ -257,7 +183,7 @@ module kim_model_f_module
     end function get_species_code
 
     subroutine get_num_params(model, number_of_parameters) &
-      bind(c, name="KIM_Model_get_num_parames")
+      bind(c, name="KIM_Model_get_num_params")
       use, intrinsic :: iso_c_binding
       use kim_model_module, only : kim_model_type
       implicit none
@@ -351,6 +277,40 @@ subroutine kim_model_destroy(model)
   nullify(model)
 end subroutine kim_model_destroy
 
+subroutine kim_model_create_compute_arguments(model, arguments, ierr)
+  use, intrinsic :: iso_c_binding
+  use kim_model_module, only : kim_model_type
+  use kim_compute_model_compute_arguments_module, only : &
+    kim_compute_model_compute_arguments_type
+  use kim_model_f_module, only : create_compute_arguments
+  implicit none
+  type(kim_model_type), intent(in) :: model
+  type(kim_compute_model_compute_arguments_type), intent(out), pointer :: &
+    arguments
+  integer(c_int), intent(out) :: ierr
+  type(c_ptr) :: parguments
+
+  ierr = create_compute_arguments(model, parguments)
+  call c_f_pointer(parguments, arguments)
+end subroutine kim_model_create_compute_arguments
+
+subroutine kim_model_destroy_compute_arguments(model, arguments)
+  use, intrinsic :: iso_c_binding
+  use kim_model_module, only : kim_model_type
+  use kim_compute_model_compute_arguments_module, only : &
+    kim_compute_model_compute_arguments_type
+  use kim_model_f_module, only : destroy_compute_arguments
+  implicit none
+  type(kim_model_type), intent(in) :: model
+  type(kim_compute_model_compute_arguments_type), intent(inout), pointer :: &
+    arguments
+  type(c_ptr) :: parguments
+
+  parguments = c_loc(arguments)
+  call destroy_compute_arguments(model, parguments)
+  nullify(arguments)
+end subroutine kim_model_destroy_compute_arguments
+
 subroutine kim_model_get_influence_distance(model, influence_distance)
   use, intrinsic :: iso_c_binding
   use kim_model_module, only : kim_model_type
@@ -374,99 +334,6 @@ subroutine kim_model_get_cutoffs(model, number_of_cutoffs, cutoffs_ptr)
   call get_cutoffs(model, number_of_cutoffs, cutoffs_ptr)
 end subroutine kim_model_get_cutoffs
 
-subroutine kim_model_set_data(model, argument_name, extent, ptr, ierr)
-  use, intrinsic :: iso_c_binding
-  use kim_compute_module, only : &
-    kim_compute_argument_name_type
-  use kim_model_module, only : kim_model_type
-  use kim_model_f_module, only : set_data
-  implicit none
-  type(kim_model_type), intent(inout) :: model
-  type(kim_compute_argument_name_type), intent(in), value :: argument_name
-  integer(c_int), intent(in), value :: extent
-  type(c_ptr), intent(in), value :: ptr
-  integer(c_int), intent(out) :: ierr
-
-  ierr = set_data(model, argument_name, extent, ptr)
-end subroutine kim_model_set_data
-
-subroutine kim_model_set_method(model, argument_name, extent, language_name, &
-  fptr, ierr)
-  use, intrinsic :: iso_c_binding
-  use kim_compute_module, only : &
-    kim_compute_argument_name_type
-  use kim_language_name_module, only : &
-    kim_language_name_type
-  use kim_model_module, only : kim_model_type
-  use kim_model_f_module, only : set_method
-  implicit none
-  type(kim_model_type), intent(inout) :: model
-  type(kim_compute_argument_name_type), intent(in), value :: argument_name
-  integer(c_int), intent(in), value :: extent
-  type(kim_language_name_type), intent(in), value :: language_name
-  type(c_funptr), intent(in), value :: fptr
-  integer(c_int), intent(out) :: ierr
-
-  ierr = set_method(model, argument_name, extent, language_name, fptr)
-end subroutine kim_model_set_method
-
-subroutine kim_model_set_get_neigh(model, language_name, fptr)
-  use, intrinsic :: iso_c_binding
-  use kim_language_name_module, only : &
-    kim_language_name_type
-  use kim_model_module, only : kim_model_type
-  use kim_model_f_module, only : set_get_neigh
-  implicit none
-  type(kim_model_type), intent(inout) :: model
-  type(kim_language_name_type), intent(in), value :: language_name
-  type(c_funptr), intent(in), value :: fptr
-
-  call set_get_neigh(model, language_name, fptr)
-end subroutine kim_model_set_get_neigh
-
-subroutine kim_model_set_neigh_object(model, ptr)
-  use, intrinsic :: iso_c_binding
-  use kim_compute_module, only : &
-    kim_compute_argument_name_type
-  use kim_model_module, only : kim_model_type
-  use kim_model_f_module, only : set_neigh_object
-  implicit none
-  type(kim_model_type), intent(inout) :: model
-  type(c_ptr), intent(in), value :: ptr
-
-  call set_neigh_object(model, ptr)
-end subroutine kim_model_set_neigh_object
-
-subroutine kim_model_set_compute(model, argument_name, flag, ierr)
-  use, intrinsic :: iso_c_binding
-  use kim_compute_module, only : &
-    kim_compute_argument_name_type
-  use kim_model_module, only : kim_model_type
-  use kim_model_f_module, only : set_compute
-  implicit none
-  type(kim_model_type), intent(inout) :: model
-  type(kim_compute_argument_name_type), intent(in), value :: argument_name
-  integer(c_int), intent(in), value :: flag
-  integer(c_int), intent(out) :: ierr
-
-  ierr = set_compute(model, argument_name, flag)
-end subroutine kim_model_set_compute
-
-subroutine kim_model_get_size(model, argument_name, size, ierr)
-  use, intrinsic :: iso_c_binding
-  use kim_compute_module, only : &
-    kim_compute_argument_name_type
-  use kim_model_module, only : kim_model_type
-  use kim_model_f_module, only : get_size
-  implicit none
-  type(kim_model_type), intent(in) :: model
-  type(kim_compute_argument_name_type), intent(in), value :: argument_name
-  integer(c_int), intent(out) :: size
-  integer(c_int), intent(out) :: ierr
-
-  ierr = get_size(model, argument_name, size)
-end subroutine kim_model_get_size
-
 subroutine kim_model_print(model)
   use, intrinsic :: iso_c_binding
   use kim_model_module, only : kim_model_type
@@ -477,27 +344,19 @@ subroutine kim_model_print(model)
   call print_model(model)
 end subroutine kim_model_print
 
-subroutine kim_model_compute(model, ierr)
+subroutine kim_model_compute(model, arguments, ierr)
   use, intrinsic :: iso_c_binding
   use kim_model_module, only : kim_model_type
   use kim_model_f_module, only : compute
+  use kim_compute_model_compute_arguments_module, only : &
+    kim_compute_model_compute_arguments_type
   implicit none
   type(kim_model_type), intent(in) :: model
+  type(kim_compute_model_compute_arguments_type), intent(in) :: arguments
   integer(c_int), intent(out) :: ierr
 
-  ierr = compute(model)
+  ierr = compute(model, arguments)
 end subroutine kim_model_compute
-
-subroutine kim_model_init(model, ierr)
-  use, intrinsic :: iso_c_binding
-  use kim_model_module, only : kim_model_type
-  use kim_model_f_module, only : init
-  implicit none
-  type(kim_model_type), intent(inout) :: model
-  integer(c_int), intent(out) :: ierr
-
-  ierr = init(model)
-end subroutine kim_model_init
 
 subroutine kim_model_reinit(model, ierr)
   use, intrinsic :: iso_c_binding
@@ -509,17 +368,6 @@ subroutine kim_model_reinit(model, ierr)
 
   ierr = reinit(model)
 end subroutine kim_model_reinit
-
-subroutine kim_model_destroy_model(model, ierr)
-  use, intrinsic :: iso_c_binding
-  use kim_model_module, only : kim_model_type
-  use kim_model_f_module, only : destroy_model
-  implicit none
-  type(kim_model_type), intent(inout) :: model
-  integer(c_int), intent(out) :: ierr
-
-  ierr = destroy_model(model)
-end subroutine kim_model_destroy_model
 
 subroutine kim_model_get_num_model_species(model, number_of_species)
   use, intrinsic :: iso_c_binding

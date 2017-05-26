@@ -135,10 +135,12 @@ int LennardJones612::Reinit(KIM::Simulator * const simulator)
 
 //******************************************************************************
 // static member function
-int LennardJones612::Compute(KIM::Simulator const * const simulator)
+int LennardJones612::Compute(KIM::Simulator const * const simulator,
+                             KIM::COMPUTE::SimulatorComputeArguments
+                             const * const arguments)
 {
   LennardJones612 * simulatorObject;
   simulator->get_model_buffer(reinterpret_cast<void**>(&simulatorObject));
 
-  return simulatorObject->implementation_->Compute(simulator);
+  return simulatorObject->implementation_->Compute(simulator, arguments);
 }

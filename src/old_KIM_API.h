@@ -46,6 +46,8 @@
 #include "old_KIM_API_Version.h"
 #include "old_Unit_Handling.h"
 
+#include "KIM_COMPUTE_SimulatorComputeArguments.hpp"
+
 namespace KIM
 {
 class Model;
@@ -175,8 +177,8 @@ public:
 
     int string_init(const char * intststr,const char * modelname);
    int match(const char* simstring, const char* modelstring);
-    int model_compute();
-  int get_neigh(int neighborListIndex, int request, int *numnei, int **nei1part);
+  int model_compute(KIM::COMPUTE::SimulatorComputeArguments const * const arguments);
+  int get_neigh(KIM::COMPUTE::SimulatorComputeArguments const * const arguments, int neighborListIndex, int request, int *numnei, int **nei1part);
     int model_init();
     int model_reinit();
     int model_destroy();

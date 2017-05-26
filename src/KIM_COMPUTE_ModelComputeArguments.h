@@ -32,28 +32,75 @@
 /* Release: This file is part of the kim-api.git repository.                  */
 /*                                                                            */
 
-#ifndef KIM_COMPUTE_H_
-#include "KIM_Compute.h"
+
+#ifndef KIM_COMPUTE_MODEL_COMPUTE_ARGUMENTS_H_
+#define KIM_COMPUTE_MODEL_COMPUTE_ARGUMENTS_H_
+
+#ifndef KIM_FUNC_H_
+#include "KIM_func.h"
+#endif
+
+#ifndef KIM_LANGUAGE_NAME_H_
+#include "KIM_LanguageName.h"
+#endif
+
+/* Forward declarations */
+#ifndef KIM_COMPUTE_ARGUMENT_NAME_DEFINED_
+#define KIM_COMPUTE_ARGUMENT_NAME_DEFINED_
+typedef struct KIM_COMPUTE_ArgumentName KIM_COMPUTE_ArgumentName;
 #endif
 
 
-/* Order doesn't matter as long as all values are unique */
-KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles = {0};
-KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_numberOfSpecies = {1};
-KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_particleSpecies = {2};
-KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_particleContributing = {3};
-KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_coordinates = {4};
-KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_get_neigh = {5};
-KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_process_dEdr = {6};
-KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_process_d2Edr2 = {7};
-KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_neighObject = {8};
-KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_compute = {9};
-KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_reinit = {10};
-KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_destroy = {11};
-KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_energy = {12};
-KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_forces = {13};
-KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_particleEnergy = {14};
-KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_virial = {15};
-KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_particleVirial = {16};
-KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_hessian = {17};
-KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_End = {-32000};
+struct KIM_COMPUTE_ModelComputeArguments {
+  void * p;
+};
+
+#ifndef KIM_COMPUTE_MODEL_COMPUTE_ARGUMENTS_DEFINED_
+#define KIM_COMPUTE_MODEL_COMPUTE_ARGUMENTS_DEFINED_
+typedef struct KIM_COMPUTE_ModelComputeArguments
+KIM_COMPUTE_ModelComputeArguments;
+#endif
+
+void KIM_COMPUTE_ModelComputeArguments_set_get_neigh(
+    KIM_COMPUTE_ModelComputeArguments * const arguments,
+    KIM_LanguageName const languageName,
+    func * const fptr);
+void KIM_COMPUTE_ModelComputeArguments_set_neighObject(
+    KIM_COMPUTE_ModelComputeArguments * const arguments,
+    void const * const ptr);
+
+void KIM_COMPUTE_ModelComputeArguments_set_process_dEdr(
+    KIM_COMPUTE_ModelComputeArguments * const arguments,
+    KIM_LanguageName const languageName,
+    func * const fptr);
+void KIM_COMPUTE_ModelComputeArguments_set_process_d2Edr2(
+    KIM_COMPUTE_ModelComputeArguments * const arguments,
+    KIM_LanguageName const languageName,
+    func * const fptr);
+
+/* *data functions */
+int KIM_COMPUTE_ModelComputeArguments_set_data(
+    KIM_COMPUTE_ModelComputeArguments * const arguments,
+    KIM_COMPUTE_ArgumentName const argumentName,
+    int const extent,
+    void const * const ptr);
+
+/* *compute functions */
+int KIM_COMPUTE_ModelComputeArguments_set_compute(
+    KIM_COMPUTE_ModelComputeArguments * const arguments,
+    KIM_COMPUTE_ArgumentName const argumentName,
+    int flag);
+
+void KIM_COMPUTE_ModelComputeArguments_set_process_dEdr_compute(
+    KIM_COMPUTE_ModelComputeArguments * const arguments,
+    int flag);
+void KIM_COMPUTE_ModelComputeArguments_set_process_d2Edr2_compute(
+    KIM_COMPUTE_ModelComputeArguments * const arguments,
+    int flag);
+
+int KIM_COMPUTE_ModelComputeArguments_get_size(
+    KIM_COMPUTE_ModelComputeArguments const * const arguments,
+    KIM_COMPUTE_ArgumentName const argumentName,
+    int * const size);
+
+#endif  /* KIM_COMPUTE_MODEL_COMPUTE_ARGUMENTS_H_ */

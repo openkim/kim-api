@@ -38,13 +38,12 @@
 
 #include <stdarg.h>
 
-#ifndef KIM_LANGUAGE_NAME_H_
-#include "KIM_LanguageName.h"
+#ifndef KIM_FUNC_H_
+#include "KIM_func.h"
 #endif
 
-#ifndef KIM_FUNC_DEFINED_
-#define KIM_FUNC_DEFINED_
-typedef void (func)();
+#ifndef KIM_LANGUAGE_NAME_H_
+#include "KIM_LanguageName.h"
 #endif
 
 /* Forward declarations */
@@ -84,10 +83,10 @@ typedef struct KIM_TemperatureUnit KIM_TemperatureUnit;
 typedef struct KIM_TimeUnit KIM_TimeUnit;
 #endif
 
-struct KIM_COMPUTE_ArgumentName;
-#ifndef KIM_COMPUTE_ARGUMENT_NAME_DEFINED_
-#define KIM_COMPUTE_ARGUMENT_NAME_DEFINED_
-typedef struct KIM_COMPUTE_ArgumentName KIM_COMPUTE_ArgumentName;
+#ifndef KIM_COMPUTE_MODEL_COMPUTE_ARGUMENTS_DEFINED_
+#define KIM_COMPUTE_MODEL_COMPUTE_ARGUMENTS_DEFINED_
+typedef struct KIM_COMPUTE_ModelComputeArguments
+KIM_COMPUTE_ModelComputeArguments;
 #endif
 
 struct KIM_Model {
@@ -104,6 +103,14 @@ int KIM_Model_create(char const * const simulatorString,
                      KIM_Model ** const model);
 void KIM_Model_destroy(KIM_Model ** const model);
 
+int KIM_Model_create_compute_arguments(
+    KIM_Model const * const model,
+    KIM_COMPUTE_ModelComputeArguments ** const arguments);
+
+void KIM_Model_destroy_compute_arguments(
+    KIM_Model const * const model,
+    KIM_COMPUTE_ModelComputeArguments ** const arguments);
+
 void KIM_Model_get_influence_distance(KIM_Model const * const model,
                                       double * const influenceDistance);
 
@@ -111,41 +118,12 @@ void KIM_Model_get_cutoffs(KIM_Model const * const model,
                            int * const numberOfCutoffs,
                            double const ** const cutoffs);
 
-
-/* *data functions */
-int KIM_Model_set_data(KIM_Model * const model,
-                       KIM_COMPUTE_ArgumentName const argumentName,
-                       int const extent,
-                       void const * const ptr);
-
-/* *method functions */
-int KIM_Model_set_method(KIM_Model * const model,
-                         KIM_COMPUTE_ArgumentName const argumentName,
-                         int const extent,
-                         KIM_LanguageName const languageName,
-                         func * const fptr);
-
-void KIM_Model_set_get_neigh(KIM_Model * const model,
-                             KIM_LanguageName const languageName,
-                             func * const fptr);
-void KIM_Model_set_neighObject(KIM_Model * const model,
-                               void const * const ptr);
-
-/* *compute functions */
-int KIM_Model_set_compute(KIM_Model * const model,
-                          KIM_COMPUTE_ArgumentName const argumentName,
-                          int flag);
-
-int KIM_Model_get_size(KIM_Model const * const model,
-                       KIM_COMPUTE_ArgumentName const argumentName,
-                       int * const size);
-
 void KIM_Model_print(KIM_Model const * const model);
 
-int KIM_Model_compute(KIM_Model const * const model);
-int KIM_Model_init(KIM_Model * const model);
+int KIM_Model_compute(
+    KIM_Model const * const model,
+    KIM_COMPUTE_ModelComputeArguments const * const arguments);
 int KIM_Model_reinit(KIM_Model * const model);
-int KIM_Model_destroy_model(KIM_Model * const model);
 
 void KIM_Model_get_num_model_species(KIM_Model const * const model,
                                      int * const numberOfSpecies);

@@ -33,36 +33,88 @@
 /*                                                                            */
 
 
-#ifndef KIM_COMPUTE_H_
-#define KIM_COMPUTE_H_
+#ifndef KIM_COMPUTE_SIMULATOR_COMPUTE_ARGUMENTS_H_
+#define KIM_COMPUTE_SIMULATOR_COMPUTE_ARGUMENTS_H_
 
-struct KIM_COMPUTE_ArgumentName
-{
-  int argumentID;
-};
+#ifndef KIM_FUNC_H_
+#include "KIM_func.h"
+#endif
+
+#ifndef KIM_LANGUAGE_NAME_H_
+#include "KIM_LanguageName.h"
+#endif
+
+/* Forward declarations */
+struct KIM_COMPUTE_ArgumentName;
 #ifndef KIM_COMPUTE_ARGUMENT_NAME_DEFINED_
 #define KIM_COMPUTE_ARGUMENT_NAME_DEFINED_
 typedef struct KIM_COMPUTE_ArgumentName KIM_COMPUTE_ArgumentName;
 #endif
 
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_numberOfSpecies;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_particleSpecies;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_particleContributing;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_coordinates;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_get_neigh;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_process_dEdr;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_process_d2Edr2;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_neighObject;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_compute;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_reinit;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_destroy;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_energy;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_forces;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_particleEnergy;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_virial;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_particleVirial;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_hessian;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_End;
+struct KIM_Simulator;
+#ifndef KIM_SIMULATOR_DEFINED_
+#define KIM_SIMULATOR_DEFINED_
+typedef struct KIM_Simulator KIM_Simulator;
+#endif
 
-#endif  /* KIM_COMPUTE_H_ */
+
+struct KIM_COMPUTE_SimulatorComputeArguments {
+  void * p;
+};
+
+#ifndef KIM_COMPUTE_SIMULATOR_COMPUTE_ARGUMENTS_DEFINED_
+#define KIM_COMPUTE_SIMULATOR_COMPUTE_ARGUMENTS_DEFINED_
+typedef struct KIM_COMPUTE_SimulatorComputeArguments
+KIM_COMPUTE_SimulatorComputeArguments;
+#endif
+
+
+void KIM_COMPUTE_SimulatorComputeArguments_get_neighObject(
+    KIM_COMPUTE_SimulatorComputeArguments const * const arguments,
+    void ** const ptr);
+int KIM_COMPUTE_SimulatorComputeArguments_get_neigh(
+    KIM_COMPUTE_SimulatorComputeArguments const * const arguments,
+    int const neighborListIndex,
+    int const particleNumber,
+    int * const numberOfNeighbors,
+    int const ** const neighborsOfParticle);
+
+int KIM_COMPUTE_SimulatorComputeArguments_process_dEdr(
+    KIM_COMPUTE_SimulatorComputeArguments const * const arguments,
+    KIM_Simulator const * const simulator,
+    double const de, double const r,
+    double const * const dx, int const i,
+    int const j);
+
+int KIM_COMPUTE_SimulatorComputeArguments_process_d2Edr2(
+    KIM_COMPUTE_SimulatorComputeArguments const * const arguments,
+    KIM_Simulator const * const simulator,
+    double const de, double const * const r,
+    double const * const dx, int const * const i,
+    int const * const j);
+
+/* *data functions */
+int KIM_COMPUTE_SimulatorComputeArguments_get_data(
+    KIM_COMPUTE_SimulatorComputeArguments const * const arguments,
+    KIM_COMPUTE_ArgumentName const argumentName,
+    void ** const ptr);
+
+/* *compute functions */
+int KIM_COMPUTE_SimulatorComputeArguments_get_compute(
+    KIM_COMPUTE_SimulatorComputeArguments const * const arguments,
+    KIM_COMPUTE_ArgumentName const argumentName,
+    int * const flag);
+
+void KIM_COMPUTE_SimulatorComputeArguments_get_process_dEdr_compute(
+    KIM_COMPUTE_SimulatorComputeArguments const * const arguments,
+    int * const flag);
+void KIM_COMPUTE_SimulatorComputeArguments_get_process_d2Edr2_compute(
+    KIM_COMPUTE_SimulatorComputeArguments const * const arguments,
+    int * const flag);
+
+int KIM_COMPUTE_SimulatorComputeArguments_get_size(
+    KIM_COMPUTE_SimulatorComputeArguments const * const arguments,
+    KIM_COMPUTE_ArgumentName const argumentName,
+    int * const size);
+
+#endif  /* KIM_COMPUTE_SIMULATOR_COMPUTE_ARGUMENTS_H_ */

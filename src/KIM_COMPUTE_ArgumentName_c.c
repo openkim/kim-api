@@ -32,65 +32,20 @@
 /* Release: This file is part of the kim-api.git repository.                  */
 /*                                                                            */
 
-
-#ifndef KIM_UTILITY_COMPUTE_H_
-#define KIM_UTILITY_COMPUTE_H_
-
-/* Forward declarations */
-struct KIM_COMPUTE_ArgumentName;
-#ifndef KIM_COMPUTE_ARGUMENT_NAME_DEFINED_
-#define KIM_COMPUTE_ARGUMENT_NAME_DEFINED_
-typedef struct KIM_COMPUTE_ArgumentName KIM_COMPUTE_ArgumentName;
+#ifndef KIM_COMPUTE_ARGUMENT_NAME_H_
+#include "KIM_COMPUTE_ArgumentName.h"
 #endif
 
-struct KIM_Model;
-#ifndef KIM_MODEL_DEFINED_
-#define KIM_MODEL_DEFINED_
-typedef struct KIM_Model KIM_Model;
-#endif
 
-struct KIM_Simulator;
-#ifndef KIM_SIMULATOR_DEFINED_
-#define KIM_SIMULATOR_DEFINED_
-typedef struct KIM_Simulator KIM_Simulator;
-#endif
-
-#include <stdarg.h>
-
-int KIM_UTILITY_COMPUTE_getm_data(
-    KIM_Simulator const * const simulator,
-    KIM_COMPUTE_ArgumentName const argumentName, ...);
-int KIM_UTILITY_COMPUTE_vgetm_data(
-    KIM_Simulator const * const simulator,
-    KIM_COMPUTE_ArgumentName const argumentName, va_list argp);
-
-int KIM_UTILITY_COMPUTE_setm_data(
-    KIM_Model * const model,
-    KIM_COMPUTE_ArgumentName const argumentName, ...);
-int KIM_UTILITY_COMPUTE_vsetm_data(
-    KIM_Model * const model,
-    KIM_COMPUTE_ArgumentName const argumentName, va_list argp);
-
-/* *method functions */
-int KIM_UTILITY_COMPUTE_setm_method(
-    KIM_Model * const model,
-    KIM_COMPUTE_ArgumentName const argumentName, ...);
-int KIM_UTILITY_COMPUTE_vsetm_method(
-    KIM_Model * const model,
-    KIM_COMPUTE_ArgumentName const argumentName, va_list argp);
-
-/* *compute functions */
-int KIM_UTILITY_COMPUTE_getm_compute(
-    KIM_Simulator const * const simulator,
-    KIM_COMPUTE_ArgumentName const argumentName, ...);
-int KIM_UTILITY_COMPUTE_vgetm_compute(
-    KIM_Simulator const * const simulator,
-    KIM_COMPUTE_ArgumentName const argumentName, va_list argp);
-int KIM_UTILITY_COMPUTE_setm_compute(
-    KIM_Model * const model,
-    KIM_COMPUTE_ArgumentName const argumentName, ...);
-int KIM_UTILITY_COMPUTE_vsetm_compute(
-    KIM_Model * const model,
-    KIM_COMPUTE_ArgumentName const argumentName, va_list argp);
-
-#endif  /* KIM_UTILITY_COMPUTE_H_ */
+/* Order doesn't matter as long as all values are unique */
+KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles = {0};
+KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_numberOfSpecies = {1};
+KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_particleSpecies = {2};
+KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_particleContributing = {3};
+KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_coordinates = {4};
+KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_energy = {5};
+KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_forces = {6};
+KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_particleEnergy = {7};
+KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_virial = {8};
+KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_particleVirial = {9};
+KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_hessian = {10};

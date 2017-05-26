@@ -48,10 +48,14 @@
 #include <locale>
 
 #include "KIM_Model.hpp"
+#include "KIM_COMPUTE_ModelComputeArguments.hpp"
 #include "KIM_Model.h"
+#include "KIM_COMPUTE_ModelComputeArguments.h"
 
 #include "KIM_Simulator.hpp"
+#include "KIM_COMPUTE_SimulatorComputeArguments.hpp"
 #include "KIM_Simulator.h"
+#include "KIM_COMPUTE_SimulatorComputeArguments.h"
 
 // trim from start (in place)
 static inline void ltrim(std::string &s) {
@@ -412,6 +416,18 @@ KIM_API_model:: ~KIM_API_model(){
       if (neiOfAnAtomSize > 0) {
          delete [] neiOfAnAtom;
       }
+
+      KIMBaseElement ** pel = (KIMBaseElement**) model.data.p;
+      for (int i=0; i< model.size; ++i)
+      {
+        pel[i]->free();
+        delete pel[i];
+      }
+      delete [] (char *) model.data.p;
+      model.free();
+      delete [] cutoffs;
+      delete [] AtomsTypes;
+      delete [] inlines;
 }
 
 int KIM_API_model::prestring_init(const char *instrn){
@@ -1843,11 +1859,11 @@ int KIM_API_model::model_destroy(){
 #endif
   return error;
 }
-int KIM_API_model::model_compute(){
+int KIM_API_model::model_compute(KIM::COMPUTE::SimulatorComputeArguments const * const arguments){
   // set model_compute pointer
-  typedef int (*Model_Compute_cpp)(KIM::Simulator const * const);//prototype for model_compute for c++
-  typedef int (*Model_Compute_c)(KIM_Simulator const * const);//prototype for model_compute for c
-  typedef void (*Model_Compute_Fortran)(KIM_Simulator const * const, int * const ierr);//prototype for model_compute for fortran
+  typedef int (*Model_Compute_cpp)(KIM::Simulator const * const, KIM::COMPUTE::SimulatorComputeArguments const * const);//prototype for model_compute for c++
+  typedef int (*Model_Compute_c)(KIM_Simulator const * const, KIM_COMPUTE_SimulatorComputeArguments const * const);//prototype for model_compute for c
+  typedef void (*Model_Compute_Fortran)(KIM_Simulator const * const, KIM_COMPUTE_SimulatorComputeArguments const * const, int * const ierr);//prototype for model_compute for fortran
   int error = KIM_STATUS_FAIL;
   Model_Compute_cpp mdl_compute_cpp = (Model_Compute_cpp) (*this)[compute_index].data.fp;
   Model_Compute_c mdl_compute_c = (Model_Compute_c) (*this)[compute_index].data.fp;
@@ -1858,7 +1874,7 @@ int KIM_API_model::model_compute(){
   {
     if (mdl_compute_cpp == NULL) return error;
     //call model_compute
-    error = (*mdl_compute_cpp)((KIM::Simulator *) &MI);
+    error = (*mdl_compute_cpp)((KIM::Simulator *) &MI, arguments);
   }
   else if ((*this)[compute_index].lang == 2)
   {
@@ -1866,7 +1882,9 @@ int KIM_API_model::model_compute(){
     //call model_compute
     KIM_Simulator cMI;
     cMI.p = (void *) &MI;
-    error = (*mdl_compute_c)(&cMI);
+    KIM_COMPUTE_SimulatorComputeArguments cSCA;
+    cSCA.p = (void *) arguments;
+    error = (*mdl_compute_c)(&cMI, &cSCA);
   }
   else // Fortran
   {
@@ -1874,38 +1892,39 @@ int KIM_API_model::model_compute(){
     //call model_compute
     KIM_Simulator cMI;
     cMI.p = (void *) &MI;
-    (*mdl_compute_fortran)(&cMI, &error);
+    KIM_COMPUTE_SimulatorComputeArguments cSCA;
+    cSCA.p = (void *) arguments;
+    (*mdl_compute_fortran)(&cMI, &cSCA, &error);
   }
   return error;
 }
 
-int KIM_API_model::get_neigh(int neighborListIndex, int request, int *numnei, int** nei1part){
-  typedef int (*Get_Neigh_cpp)(KIM::Simulator const * const, int, int, int *, int **);
-  typedef int (*Get_Neigh_c)(KIM_Simulator const * const, int, int, int *, int **);
-  typedef void (*Get_Neigh_Fortran)(KIM_Simulator const * const, int, int, int *, int **, int *);
+int KIM_API_model::get_neigh(KIM::COMPUTE::SimulatorComputeArguments const * const arguments, int neighborListIndex, int request, int *numnei, int** nei1part){
+  typedef int (*Get_Neigh_cpp)(KIM::COMPUTE::SimulatorComputeArguments const * const, int, int, int *, int **);
+  typedef int (*Get_Neigh_c)(KIM_COMPUTE_SimulatorComputeArguments const * const, int, int, int *, int **);
+  typedef void (*Get_Neigh_Fortran)(KIM_COMPUTE_SimulatorComputeArguments const * const, int, int, int *, int **, int *);
 
   if (get_neigh_index < 0) return KIM_STATUS_API_OBJECT_INVALID;
     Get_Neigh_cpp get_neigh_cpp = (Get_Neigh_cpp)(*this)[get_neigh_index].data.fp;
     Get_Neigh_c get_neigh_c = (Get_Neigh_c)(*this)[get_neigh_index].data.fp;
     Get_Neigh_Fortran get_neigh_fortran = (Get_Neigh_Fortran)(*this)[get_neigh_index].data.fp;
-    KIM::Simulator Sim;
-    Sim.pimpl = (KIM::Simulator::SimulatorImplementation *) this;
-    KIM_Simulator cMI;
-    cMI.p = (void *) &Sim;
+
+    KIM_COMPUTE_SimulatorComputeArguments cSCA;
+    cSCA.p = (void *) arguments;
 
     if (model_index_shift==0) {
-      int erkey;
+      int erkey = true;
       if ((*this)[get_neigh_index].lang == 1)
       {
-        erkey = (*get_neigh_cpp)(&Sim, neighborListIndex, request, numnei, nei1part);
+        erkey = (*get_neigh_cpp)(arguments, neighborListIndex, request, numnei, nei1part);
       }
       else if ((*this)[get_neigh_index].lang == 2)
       {
-        erkey = (*get_neigh_c)(&cMI, neighborListIndex, request, numnei, nei1part);
+        erkey = (*get_neigh_c)(&cSCA, neighborListIndex, request, numnei, nei1part);
       }
       else // Fortran
       {
-        (*get_neigh_fortran)(&cMI, neighborListIndex+1, request, numnei, nei1part, &erkey);
+        (*get_neigh_fortran)(&cSCA, neighborListIndex+1, request, numnei, nei1part, &erkey);
       }
       return erkey;
     }
@@ -1916,15 +1935,15 @@ int KIM_API_model::get_neigh(int neighborListIndex, int request, int *numnei, in
         int erkey;
         if ((*this)[get_neigh_index].lang == 1)
         {
-          erkey = (*get_neigh_cpp)(&Sim, neighborListIndex, req, numnei, nei1part);
+          erkey = (*get_neigh_cpp)(arguments, neighborListIndex, req, numnei, nei1part);
         }
         else if ((*this)[get_neigh_index].lang == 2)
         {
-          erkey = (*get_neigh_c)(&cMI, neighborListIndex, req, numnei, nei1part);
+          erkey = (*get_neigh_c)(&cSCA, neighborListIndex, req, numnei, nei1part);
         }
         else // Fortran
         {
-          (*get_neigh_fortran)(&cMI, neighborListIndex+1, req, numnei, nei1part, &erkey);
+          (*get_neigh_fortran)(&cSCA, neighborListIndex+1, req, numnei, nei1part, &erkey);
         }
             if (!erkey){
                 if (neiOfAnAtomSize < *numnei) {

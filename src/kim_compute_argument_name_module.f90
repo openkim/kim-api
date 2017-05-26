@@ -31,9 +31,9 @@
 !
 
 
-module kim_compute_module
+module kim_compute_argument_name_module
   use, intrinsic :: iso_c_binding
-  use kim_compute_id_module
+  use kim_compute_argument_name_id_module
   implicit none
   private
 
@@ -44,15 +44,12 @@ module kim_compute_module
     kim_compute_argument_name_particle_species, &
     kim_compute_argument_name_particle_contributing, &
     kim_compute_argument_name_coordinates, &
-    kim_compute_argument_name_process_dedr, &
-    kim_compute_argument_name_process_d2edr2, &
     kim_compute_argument_name_energy, &
     kim_compute_argument_name_forces, &
     kim_compute_argument_name_particle_energy, &
     kim_compute_argument_name_virial, &
     kim_compute_argument_name_particle_virial, &
-    kim_compute_argument_name_hessian, &
-    kim_compute_argument_name_end
+    kim_compute_argument_name_hessian
 
   type, bind(c) :: kim_compute_argument_name_type
     integer(c_int) argument_id
@@ -74,12 +71,6 @@ module kim_compute_module
     kim_compute_argument_name_coordinates = &
     kim_compute_argument_name_type(coordinates_id)
   type(kim_compute_argument_name_type), parameter :: &
-    kim_compute_argument_name_process_dedr = &
-    kim_compute_argument_name_type(process_dedr_id)
-  type(kim_compute_argument_name_type), parameter :: &
-    kim_compute_argument_name_process_d2edr2 = &
-    kim_compute_argument_name_type(process_d2edr2_id)
-  type(kim_compute_argument_name_type), parameter :: &
     kim_compute_argument_name_energy = &
     kim_compute_argument_name_type(energy_id)
   type(kim_compute_argument_name_type), parameter :: &
@@ -97,7 +88,4 @@ module kim_compute_module
   type(kim_compute_argument_name_type), parameter :: &
     kim_compute_argument_name_hessian = &
     kim_compute_argument_name_type(hessian_id)
-  type(kim_compute_argument_name_type), parameter :: &
-    kim_compute_argument_name_end = &
-    kim_compute_argument_name_type(end_id)
-end module kim_compute_module
+end module kim_compute_argument_name_module

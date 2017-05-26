@@ -42,12 +42,8 @@
 #include "KIM_Model.hpp"
 #endif
 
-#ifndef KIM_COMPUTE_HPP_
-#include "KIM_Compute.hpp"
-#endif
-
-#ifndef KIM_UNIT_SYSTEM_HPP_
-#include "KIM_UnitSystem.hpp"
+#ifndef KIM_COMPUTE_ARGUMENT_NAME_HPP_
+#include "KIM_COMPUTE_ArgumentName.hpp"
 #endif
 
 #include "old_KIM_API.h"
@@ -58,40 +54,6 @@ namespace KIM
 
 namespace
 {
-char const * const argumentString(COMPUTE::ArgumentName const argumentName)
-{
-  if (argumentName == COMPUTE::ARGUMENT_NAME::numberOfParticles)
-    return "numberOfParticles";
-  else if (argumentName == COMPUTE::ARGUMENT_NAME::numberOfSpecies)
-    return "numberOfSpecies";
-  else if (argumentName == COMPUTE::ARGUMENT_NAME::particleSpecies)
-    return "particleSpecies";
-  else if (argumentName == COMPUTE::ARGUMENT_NAME::particleContributing)
-    return "particleContributing";
-  else if (argumentName == COMPUTE::ARGUMENT_NAME::coordinates)
-    return "coordinates";
-  else if (argumentName == COMPUTE::ARGUMENT_NAME::process_dEdr)
-    return "process_dEdr";
-  else if (argumentName == COMPUTE::ARGUMENT_NAME::process_d2Edr2)
-    return "process_d2Edr2";
-  else if (argumentName == COMPUTE::ARGUMENT_NAME::energy)
-    return "energy";
-  else if (argumentName == COMPUTE::ARGUMENT_NAME::forces)
-    return "forces";
-  else if (argumentName == COMPUTE::ARGUMENT_NAME::particleEnergy)
-    return "particleEnergy";
-  else if (argumentName == COMPUTE::ARGUMENT_NAME::virial)
-    return "virial";
-  else if (argumentName == COMPUTE::ARGUMENT_NAME::particleVirial)
-    return "particleVirial";
-  else if (argumentName == COMPUTE::ARGUMENT_NAME::hessian)
-    return "hessian";
-  else if (argumentName == COMPUTE::ARGUMENT_NAME::End)
-    return "END";
-  else
-    return "None";
-}
-
 char const * const speciesString(SpeciesName const speciesName)
 {
   if (speciesName == SPECIES_NAME::electron) return "electron";
@@ -393,16 +355,48 @@ int Model::create(std::string const & simulatorString,
   pModel->pimpl = (ModelImplementation *) mdl;
   *model = pModel;
   int err = mdl->string_init(simulatorString.c_str(), modelName.c_str());
-  return (err < KIM_STATUS_OK);
+  if (err >= KIM_STATUS_OK)  // string_init returns 1.0 codes
+  {
+    std::cout << "calling model_init" << std::endl;
+    err = mdl->model_init();  // Models return 2.0 codes
+  }
+  else
+  {
+    err = true;  // set 2.0 code
+  }
+  return err;  // err is a 2.0 code
 }
 
 void Model::destroy(Model ** const model)
 {
-  delete (OLD_KIM::KIM_API_model *) (*model)->pimpl;
+  OLD_KIM::KIM_API_model * mdl;
+  mdl = (OLD_KIM::KIM_API_model *) (*model)->pimpl;
+  mdl->model_destroy();
+  delete mdl;
 
   delete (*model);
 
   *model = 0;
+}
+
+int Model::create_compute_arguments(
+    COMPUTE::ModelComputeArguments ** const arguments) const
+{
+  Model* const M = new Model();
+  M->pimpl = pimpl;
+
+  *arguments = reinterpret_cast<COMPUTE::ModelComputeArguments *>(M);
+
+  return false;
+}
+
+void Model::destroy_compute_arguments(
+    COMPUTE::ModelComputeArguments ** const arguments) const
+{
+  Model* const M = reinterpret_cast<Model *>(*arguments);
+
+  delete M;
+  *arguments = 0;
 }
 
 void Model::get_influence_distance(double * const influenceDistance) const
@@ -421,83 +415,6 @@ void Model::get_cutoffs(int * const numberOfCutoffs, double const ** cutoffs)
     *cutoffs = pKIM->cutoffs;
 }
 
-int Model::set_data(COMPUTE::ArgumentName const argumentName,
-                    int const extent, void const * const ptr)
-{
-  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
-
-  int err = pKIM->set_data(argumentString(argumentName), (intptr_t) extent,
-                           (void *) ptr);
-  return (err < KIM_STATUS_OK);
-}
-
-
-// *method functions
-int Model::set_method(COMPUTE::ArgumentName const argumentName,
-                      int const extent,
-                      LanguageName const languageName,
-                      func * const fptr)
-{
-  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
-  int langN;
-  if (languageName == KIM::LANGUAGE_NAME::Cpp)
-    langN = 1;
-  else if (languageName == KIM::LANGUAGE_NAME::C)
-    langN = 2;
-  else  // Fortran
-    langN = 3;
-
-  int err = pKIM->set_method(argumentString(argumentName), (intptr_t) extent,
-                             langN, (func *) fptr);
-  return (err < KIM_STATUS_OK);
-}
-
-void Model::set_get_neigh(LanguageName const languageName,
-                          func * const fptr)
-{
-  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
-  int langN;
-  if (languageName == KIM::LANGUAGE_NAME::Cpp)
-    langN = 1;
-  else if (languageName == KIM::LANGUAGE_NAME::C)
-    langN = 2;
-  else  // Fortran
-    langN = 3;
-
-  pKIM->set_method("get_neigh", (intptr_t) 1, langN, (func *) fptr);
-  //return (err < KIM_STATUS_OK);
-}
-
-void Model::set_neighObject(void const * const ptr)
-{
-  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
-
-  pKIM->set_data("neighObject", (intptr_t) 1, (void *) ptr);
-  //return (err < KIM_STATUS_OK);
-}
-
-int Model::set_compute(COMPUTE::ArgumentName const argumentName, int flag)
-{
-  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
-
-  int err;
-  pKIM->set_compute(argumentString(argumentName), flag, &err);
-  return (err < KIM_STATUS_OK);
-}
-
-
-
-int Model::get_size(COMPUTE::ArgumentName const argumentName,
-                    int * const size) const
-{
-  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
-
-  int err;
-  *size = pKIM->get_size(argumentString(argumentName), &err);
-  return (err < KIM_STATUS_OK);
-}
-
-
 void Model::print() const
 {
   OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
@@ -506,18 +423,10 @@ void Model::print() const
   pKIM->print(&err);
 }
 
-int Model::compute() const
+int Model::compute(COMPUTE::ModelComputeArguments const * const arguments) const
 {
   OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
-  int err = pKIM->model_compute();
-  return err;  // Models should return 2.0 codes
-}
-
-
-int Model::init()
-{
-  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
-  int err = pKIM->model_init();
+  int err = pKIM->model_compute(reinterpret_cast<COMPUTE::SimulatorComputeArguments const * const>(arguments));
   return err;  // Models should return 2.0 codes
 }
 
@@ -526,14 +435,6 @@ int Model::reinit()
   OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
 
   int err = pKIM->model_reinit();
-  return err;  // Models should return 2.0 codes
-}
-
-int Model::destroy_model()
-{
-  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
-
-  int err = pKIM->model_destroy();
   return err;  // Models should return 2.0 codes
 }
 

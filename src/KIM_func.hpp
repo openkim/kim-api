@@ -31,42 +31,13 @@
 //
 
 
-#ifndef KIM_COMPUTE_HPP_
-#define KIM_COMPUTE_HPP_
+#ifndef KIM_FUNC_HPP_
+#define KIM_FUNC_HPP_
 
 namespace KIM
 {
-namespace COMPUTE
-{
 
-class ArgumentName
-{
-  int argumentID;
- public:
-  ArgumentName();
-  ArgumentName(int const id);
-  bool operator==(ArgumentName const & rhs) const;
-  bool operator!=(ArgumentName const & rhs) const;
-};
+typedef void (func)();
 
-namespace ARGUMENT_NAME
-{
-extern ArgumentName const numberOfParticles;
-extern ArgumentName const numberOfSpecies;
-extern ArgumentName const particleSpecies;
-extern ArgumentName const particleContributing;
-extern ArgumentName const coordinates;
-extern ArgumentName const process_dEdr;
-extern ArgumentName const process_d2Edr2;
-extern ArgumentName const energy;
-extern ArgumentName const forces;
-extern ArgumentName const particleEnergy;
-extern ArgumentName const virial;
-extern ArgumentName const particleVirial;
-extern ArgumentName const hessian;
-extern ArgumentName const End;
-}  // namespace ARGUMENT_NAME
-
-}  // namespace COMPUTE
 }  // namespace KIM
-#endif  // KIM_COMPUTE_HPP_
+#endif  // KIM_FUNC_HPP_

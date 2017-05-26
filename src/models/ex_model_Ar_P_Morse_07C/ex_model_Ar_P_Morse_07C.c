@@ -48,8 +48,8 @@
 #include <math.h>
 #include "KIM_SpeciesName.h"
 #include "KIM_Simulator.h"
-#include "KIM_Compute.h"
-#include "KIM_UTILITY_Compute.h"
+#include "KIM_COMPUTE_SimulatorComputeArguments.h"
+#include "KIM_COMPUTE_ArgumentName.h"
 #include "KIM_Logger.h"
 
 #define TRUE 1
@@ -70,7 +70,9 @@
 int model_init(KIM_Simulator * const simulator);
 
 /* Define prototype for compute routine */
-static int compute(KIM_Simulator const * const simulator);
+static int compute(
+    KIM_Simulator const * const simulator,
+    KIM_COMPUTE_SimulatorComputeArguments const * const arguments);
 static int model_destroy(KIM_Simulator * const simulator);
 
 /* Define prototypes for pair potential calculations */
@@ -165,7 +167,10 @@ static void calc_phi_d2phi(double* epsilon,
   return; }
 
 /* compute function */
-static int compute(KIM_Simulator const * const simulator) {
+static int compute(
+    KIM_Simulator const * const simulator,
+    KIM_COMPUTE_SimulatorComputeArguments const * const arguments)
+{
   /* local variables */
   double R;
   double R_pairs[2];
@@ -214,30 +219,54 @@ static int compute(KIM_Simulator const * const simulator) {
 
   /* check to see if we have been asked to compute the forces, */
   /* particleEnergy, and d1Edr */
-  ier = KIM_UTILITY_COMPUTE_getm_compute(
-      simulator,
-      KIM_COMPUTE_ARGUMENT_NAME_energy,         &comp_energy,         1,
-      KIM_COMPUTE_ARGUMENT_NAME_forces,         &comp_force,          1,
-      KIM_COMPUTE_ARGUMENT_NAME_particleEnergy, &comp_particleEnergy, 1,
-      KIM_COMPUTE_ARGUMENT_NAME_process_dEdr,   &comp_process_dEdr,   1,
-      KIM_COMPUTE_ARGUMENT_NAME_process_d2Edr2, &comp_process_d2Edr2, 1,
-      KIM_COMPUTE_ARGUMENT_NAME_End);
+  KIM_COMPUTE_SimulatorComputeArguments_get_process_dEdr_compute(
+      arguments, &comp_process_dEdr);
+  KIM_COMPUTE_SimulatorComputeArguments_get_process_d2Edr2_compute(
+      arguments, &comp_process_d2Edr2);
+
+  ier =
+      KIM_COMPUTE_SimulatorComputeArguments_get_compute(
+          arguments, KIM_COMPUTE_ARGUMENT_NAME_energy, &comp_energy)
+      ||
+      KIM_COMPUTE_SimulatorComputeArguments_get_compute(
+          arguments, KIM_COMPUTE_ARGUMENT_NAME_forces, &comp_force)
+      ||
+      KIM_COMPUTE_SimulatorComputeArguments_get_compute(
+          arguments, KIM_COMPUTE_ARGUMENT_NAME_particleEnergy,
+          &comp_particleEnergy);
   if (ier) {
-    KIM_report_error(__LINE__, __FILE__, "KIM_getm_compute", ier);
+    KIM_report_error(__LINE__, __FILE__, "get_compute", ier);
     return ier; }
 
-  ier = KIM_UTILITY_COMPUTE_getm_data(
-      simulator,
-      KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles, &nParts,         1,
-      KIM_COMPUTE_ARGUMENT_NAME_particleSpecies,   &particleSpecies,1,
-      KIM_COMPUTE_ARGUMENT_NAME_particleContributing, &particleContributing, 1,
-      KIM_COMPUTE_ARGUMENT_NAME_coordinates,       &coords,         1,
-      KIM_COMPUTE_ARGUMENT_NAME_energy,            &energy,         comp_energy,
-      KIM_COMPUTE_ARGUMENT_NAME_forces,            &force,          comp_force,
-      KIM_COMPUTE_ARGUMENT_NAME_particleEnergy,    &particleEnergy, comp_particleEnergy,
-      KIM_COMPUTE_ARGUMENT_NAME_End);
+  ier =
+      KIM_COMPUTE_SimulatorComputeArguments_get_data(
+          arguments, KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles,
+          (void **) &nParts)
+      ||
+      KIM_COMPUTE_SimulatorComputeArguments_get_data(
+          arguments, KIM_COMPUTE_ARGUMENT_NAME_particleSpecies,
+          (void **) &particleSpecies)
+      ||
+      KIM_COMPUTE_SimulatorComputeArguments_get_data(
+          arguments, KIM_COMPUTE_ARGUMENT_NAME_particleContributing,
+          (void **) &particleContributing)
+      ||
+      KIM_COMPUTE_SimulatorComputeArguments_get_data(
+          arguments, KIM_COMPUTE_ARGUMENT_NAME_coordinates, (void **) &coords)
+      ||
+      (comp_energy ? KIM_COMPUTE_SimulatorComputeArguments_get_data(
+          arguments, KIM_COMPUTE_ARGUMENT_NAME_energy, (void **) &energy)
+       : FALSE)
+      ||
+      (comp_force ? KIM_COMPUTE_SimulatorComputeArguments_get_data(
+          arguments, KIM_COMPUTE_ARGUMENT_NAME_forces, (void **) &force)
+       : FALSE)
+      ||
+      (comp_particleEnergy ? KIM_COMPUTE_SimulatorComputeArguments_get_data(
+          arguments, KIM_COMPUTE_ARGUMENT_NAME_particleEnergy,
+          (void **) &particleEnergy) : FALSE);
   if (ier) {
-    KIM_report_error(__LINE__, __FILE__, "KIM_getm_data", ier);
+    KIM_report_error(__LINE__, __FILE__, "get_data", ier);
     return ier; }
 
   /* set value of parameters */
@@ -281,8 +310,8 @@ static int compute(KIM_Simulator const * const simulator) {
   for (i = 0; i< *nParts; ++i) {
     if (particleContributing[i])
     {
-      ier = KIM_Simulator_get_neigh(simulator, 0, i, &numOfPartNeigh,
-                                &neighListOfCurrentPart);
+      ier = KIM_COMPUTE_SimulatorComputeArguments_get_neigh(
+          arguments, 0, i, &numOfPartNeigh, &neighListOfCurrentPart);
       if (ier) {
         /* some sort of problem, exit */
         KIM_report_error(__LINE__, __FILE__, "KIM_get_neigh", ier);
@@ -345,7 +374,8 @@ static int compute(KIM_Simulator const * const simulator) {
 
           /* contribution to process_dEdr */
           if (comp_process_dEdr) {
-            ier = KIM_Simulator_process_dEdr(simulator, dEidr, R, pRij, i, j); }
+            ier = KIM_COMPUTE_SimulatorComputeArguments_process_dEdr(
+                arguments, simulator, dEidr, R, pRij, i, j); }
 
           /* contribution to process_d2Edr2 */
           if (comp_process_d2Edr2) {
@@ -356,8 +386,9 @@ static int compute(KIM_Simulator const * const simulator) {
             i_pairs[0] = i_pairs[1] = i;
             j_pairs[0] = j_pairs[1] = j;
 
-            ier = KIM_Simulator_process_d2Edr2(simulator, d2Eidr, pR_pairs, pRij_pairs,
-                                           pi_pairs, pj_pairs); }
+            ier = KIM_COMPUTE_SimulatorComputeArguments_process_d2Edr2(
+                arguments, simulator, d2Eidr, pR_pairs, pRij_pairs,
+                pi_pairs, pj_pairs); }
 
           /* contribution to forces */
           if (comp_force) {
