@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2013--2017, Regents of the University of Minnesota.
+// Copyright (c) 2016--2017, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -30,28 +30,24 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
+#ifndef KIM_PARAMETER_HPP_
+#include "KIM_Parameter.hpp"
+#endif
 
-#ifndef KIMHDR_KIM_API_DIRS_H
-#define KIMHDR_KIM_API_DIRS_H
-
-#include <string>
-#include <list>
-#include <vector>
-
-enum DirectoryPathType
+namespace KIM
 {
-   KIM_MODEL_DRIVERS_DIR,
-   KIM_MODELS_DIR
-};
 
-bool findItem(DirectoryPathType type, std::string const& name,
-              std::vector<std::string>* const Item);
+ParameterDataType::ParameterDataType() : dataTypeID(0) {}
+ParameterDataType::ParameterDataType(int const id) : dataTypeID(id) {}
+bool ParameterDataType::operator==(ParameterDataType const & rhs) const
+{return dataTypeID==rhs.dataTypeID;}
+bool ParameterDataType::operator!=(ParameterDataType const & rhs) const
+{return dataTypeID!=rhs.dataTypeID;}
 
-// needed by collection-info
-std::string getConfigFileName();
-void pushEnvDirs(DirectoryPathType type, std::list<std::string>* const lst);
-std::vector<std::string> getUserDirs();
-void getAvailableItems(DirectoryPathType type,
-                       std::list<std::vector<std::string> > &list);
-
-#endif /* KIMHDR_KIM_API_DIRS_H */
+namespace PARAMETER_DATA_TYPE
+{
+ParameterDataType const Integer(1);
+ParameterDataType const Real(2);
+ParameterDataType const Double(3);
+}  // namespace PARAMETER_DATA_TYPE
+}  // namespace KIM

@@ -36,7 +36,8 @@
 
 #include "LennardJones612.hpp"
 #include "LennardJones612Implementation.hpp"
-#include "KIM_API_status.h"
+#include "KIM_Logger.hpp"
+#include "old_KIM_API_status.h"
 
 //==============================================================================
 //
@@ -45,17 +46,19 @@
 //==============================================================================
 
 //******************************************************************************
-int model_driver_init(void* km, char* paramfile_names, int* nmstrlen,
-                      int* numparamfiles)
+extern "C"
 {
-  KIM_API_model* const pkim = *static_cast<KIM_API_model**>(km);
+int model_driver_init(KIM::Model * const model,
+                      char const * const paramfile_names, int const nmstrlen,
+                      int const numparamfiles)
+{
   int ier;
 
   // read input files, convert units if needed, compute
   // interpolation coefficients, set cutoff, and publish parameters
   LennardJones612* const modelObject
-      = new LennardJones612(pkim, paramfile_names, *nmstrlen,
-                            *numparamfiles, &ier);
+      = new LennardJones612(model, paramfile_names, nmstrlen,
+                            numparamfiles, &ier);
   if (ier < KIM_STATUS_OK)
   {
     // constructor already reported the error
@@ -64,17 +67,12 @@ int model_driver_init(void* km, char* paramfile_names, int* nmstrlen,
   }
 
   // register pointer to LennardJones612 object in KIM object
-  pkim->set_model_buffer(static_cast<void*>(modelObject), &ier);
-  if (ier < KIM_STATUS_OK)
-  {
-    pkim->report_error(__LINE__, __FILE__, "set_model_buffer", ier);
-    delete modelObject;
-    return ier;
-  }
+  model->set_model_buffer(static_cast<void*>(modelObject));
 
   // everything is good
   ier = KIM_STATUS_OK;
   return ier;
+}
 }
 
 //==============================================================================
@@ -85,14 +83,14 @@ int model_driver_init(void* km, char* paramfile_names, int* nmstrlen,
 
 //******************************************************************************
 LennardJones612::LennardJones612(
-    KIM_API_model* const pkim,
+    KIM::Model * const model,
     char const* const parameterFileNames,
     int const parameterFileNameLength,
     int const numberParameterFiles,
     int* const ier)
 {
   implementation_ = new LennardJones612Implementation(
-      pkim,
+      model,
       parameterFileNames,
       parameterFileNameLength,
       numberParameterFiles,
@@ -106,17 +104,11 @@ LennardJones612::~LennardJones612()
 }
 
 //******************************************************************************
-int LennardJones612::Destroy(void* kimmdl)  // static member function
+// static member function
+int LennardJones612::Destroy(KIM::Model * const model)
 {
-  KIM_API_model* const pkim = *static_cast<KIM_API_model**>(kimmdl);
-  int ier;
-  LennardJones612* const modelObject
-      = (LennardJones612*) pkim->get_model_buffer(&ier);
-  if (ier < KIM_STATUS_OK)
-  {
-    pkim->report_error(__LINE__, __FILE__, "get_model_buffer", ier);
-    return ier;
-  }
+  LennardJones612 * modelObject;
+  model->get_model_buffer(reinterpret_cast<void**>(&modelObject));
 
   if (modelObject != NULL)
   {
@@ -124,42 +116,29 @@ int LennardJones612::Destroy(void* kimmdl)  // static member function
     delete modelObject;
 
     // nullify model buffer
-    pkim->set_model_buffer(NULL, &ier);
+    model->set_model_buffer(NULL);
   }
 
   // everything is good
-  ier = KIM_STATUS_OK;
-  return ier;
+  return KIM_STATUS_OK;
 }
 
 //******************************************************************************
-int LennardJones612::Reinit(void* kimmdl)  // static member function
+// static member function
+int LennardJones612::Reinit(KIM::Model * const model)
 {
-  KIM_API_model* const pkim = *static_cast<KIM_API_model**>(kimmdl);
-  int ier;
-  LennardJones612* const modelObject
-      = (LennardJones612*) pkim->get_model_buffer(&ier);
-  if (ier < KIM_STATUS_OK)
-  {
-    pkim->report_error(__LINE__, __FILE__, "get_model_buffer", ier);
-    return ier;
-  }
+  LennardJones612 * modelObject;
+  model->get_model_buffer(reinterpret_cast<void**>(&modelObject));
 
-  return modelObject->implementation_->Reinit(pkim);
+  return modelObject->implementation_->Reinit(model);
 }
 
 //******************************************************************************
-int LennardJones612::Compute(void* kimmdl)  // static member function
+// static member function
+int LennardJones612::Compute(KIM::Model const * const model)
 {
-  KIM_API_model* const pkim = *static_cast<KIM_API_model**>(kimmdl);
-  int ier;
-  LennardJones612* const modelObject
-      = static_cast<LennardJones612*>(pkim->get_model_buffer(&ier));
-  if (ier < KIM_STATUS_OK)
-  {
-    pkim->report_error(__LINE__, __FILE__, "get_model_buffer", ier);
-    return ier;
-  }
+  LennardJones612 * modelObject;
+  model->get_model_buffer(reinterpret_cast<void**>(&modelObject));
 
-  return modelObject->implementation_->Compute(pkim);
+  return modelObject->implementation_->Compute(model);
 }

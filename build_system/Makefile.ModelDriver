@@ -41,6 +41,20 @@ include $(KIM_DIR)/$(builddir)/Makefile.SanityCheck
 MODEL_DRIVER_NAME := $(strip $(MODEL_DRIVER_NAME))
 MODEL_DRIVER_KIM_FILE_TEMPLATE := $(strip $(MODEL_DRIVER_KIM_FILE_TEMPLATE))
 MODEL_DRIVER_INIT_FUNCTION_NAME := $(strip $(MODEL_DRIVER_INIT_FUNCTION_NAME))
+MODEL_DRIVER_INIT_FUNCTION_LANG := $(strip $(MODEL_DRIVER_INIT_FUNCTION_LANG))
+ifeq ($(MODEL_DRIVER_INIT_FUNCTION_LANG),C++)
+  MODEL_DRIVER_LANG := 1
+else
+  ifeq ($(MODEL_DRIVER_INIT_FUNCTION_LANG),C)
+    MODEL_DRIVER_LANG := 2
+  else
+    ifeq ($(MODEL_DRIVER_INIT_FUNCTION_LANG),Fortran)
+      MODEL_DRIVER_LANG := 3
+    else
+      $(error Unknown MODEL_DRIVER_INIT_FUNCTION_LANG value)
+    endif
+  endif
+endif
 
 # Set SO variables
 %.so: SO_IS_MODEL:=
@@ -81,6 +95,7 @@ driver_init_wrapper.cpp: $(KIM_MAKE_FILES)
 	$(QUELL)printf "      $(strip $(MODEL_DRIVER_INIT_FUNCTION_NAME));\n"                                                                          >> $@
 	$(QUELL)printf "   char $(strip $(MODEL_DRIVER_NAME))_compiled_with_version[]\n"                                                               >> $@
 	$(QUELL)printf "      = \"$(VERSION_FULL)\";\n"                                                                                                >> $@
+	$(QUELL)printf "   int $(strip $(MODEL_DRIVER_NAME))_language = $(MODEL_DRIVER_LANG);\n"                                                       >> $@
 	$(QUELL)printf "}\n"                                                                                                                           >> $@
 
 lib$(MODEL_DRIVER_LIB).a: lib$(MODEL_DRIVER_LIB_BUILD).a
@@ -100,11 +115,13 @@ $(EXPORT_LIST_NAME): $(KIM_MAKE_FILES)
 ifeq (darwin, $(KIM_SYSTEMLINKER))
 	$(QUELL)printf "_$(MODEL_DRIVER_NAME)_init_pointer\n"                       > $@
 	$(QUELL)printf "_$(MODEL_DRIVER_NAME)_compiled_with_version\n"             >> $@
+	$(QUELL)printf "_$(MODEL_DRIVER_NAME)_language\n"                          >> $@
 else # everything else (linux and freebsd)
 	$(QUELL)printf "{\n"                                                        > $@
 	$(QUELL)printf "   global:\n"                                              >> $@
 	$(QUELL)printf "           $(MODEL_DRIVER_NAME)_init_pointer;\n"           >> $@
 	$(QUELL)printf "           $(MODEL_DRIVER_NAME)_compiled_with_version;\n"  >> $@
+	$(QUELL)printf "           $(MODEL_DRIVER_NAME)_language;\n"               >> $@
 	$(QUELL)printf "\n"                                                        >> $@
 	$(QUELL)printf "   local: *;\n"                                            >> $@
 	$(QUELL)printf "};\n"                                                      >> $@

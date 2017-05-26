@@ -38,9 +38,12 @@
 #include <cstring>
 #include <cmath>
 
-#include "KIM_API.h"
-#include "Unit_Handling.h"
-#include "KIM_API_status.h"
+#include "old_KIM_API.h"
+#include "old_Unit_Handling.h"
+#include "old_KIM_API_status.h"
+
+namespace OLD_KIM
+{
 
 std::string const Unit_Handling::derived_list[]={
     "dipole", "density", "dynamic_viscosity", "electric_field",
@@ -359,10 +362,6 @@ std::string const & Unit_Handling::get_unit_time(int *error){
     *error = KIM_STATUS_OK;
     return Unit_time;
 }
-std::ostream &operator<<(std::ostream &stream, Unit_Handling &a){
-    a.print(stream);
-    return stream;
-}
 
 double Unit_Handling::convert_to_act_unit(void *kim,
       std::string const & length, std::string const & energy, std::string const & charge,
@@ -404,4 +403,11 @@ double Unit_Handling::convert_to_act_unit(void *kim,
              pow(scale_charge,charge_exponent)*pow(scale_temperature,temperature_exponent)*
              pow(scale_time, time_exponent);
 
+}
+
+} // namespace OLD_KIM
+
+std::ostream &operator<<(std::ostream &stream, OLD_KIM::Unit_Handling &a){
+    a.print(stream);
+    return stream;
 }

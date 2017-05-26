@@ -29,7 +29,7 @@
 #
 
 #
-# Release: This file is part of the kim-api.git repository.
+# Release: This file is part of the kim-api-v1.8.0 package.
 #
 
 
@@ -43,6 +43,7 @@ include ../Makefile.KIM_Config
 MODEL_DRIVER_NAME := ex_model_driver_P_LJ
 MODEL_DRIVER_KIM_FILE_TEMPLATE := model_driver_P_LJ.kim.tpl
 MODEL_DRIVER_INIT_FUNCTION_NAME := model_driver_init
+MODEL_DRIVER_INIT_FUNCTION_LANG := Fortran
 
 LOCALOBJ = ex_model_driver_P_LJ.o
 

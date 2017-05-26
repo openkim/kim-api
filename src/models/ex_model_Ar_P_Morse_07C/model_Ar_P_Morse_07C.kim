@@ -36,7 +36,7 @@
 #######################################################################################################
 
 
-KIM_API_Version := 1.8.0
+KIM_API_Version := 2.0.0
 
 Unit_Handling    := fixed
 Unit_length      := A
@@ -59,60 +59,47 @@ CONVENTIONS:
 
 ZeroBasedLists              flag
 
-Neigh_IterAccess            flag
-
-Neigh_LocaAccess            flag
-
-NEIGH_PURE_H                flag
-
-NEIGH_PURE_F                flag
-
-CLUSTER                     flag
-
 
 #######################################################################################################
 MODEL_INPUT:
-# Name                      Type         Unit                Shape              Requirements
+# Name                      Type         Unit              Requirements
 
-numberOfParticles           integer      none                []
+numberOfParticles           integer      none
 
-numberContributingParticles integer      none                []                 optional
+numberOfSpecies             integer      none
 
-numberOfSpecies             integer      none                []
+particleSpecies             integer      none
 
-particleSpecies             integer      none                [numberOfParticles]
+coordinates                 double       length
 
-coordinates                 double       length              [numberOfParticles,3]
+get_neigh                   method       none              optional
 
-get_neigh                   method       none                []                 optional
+neighObject                 pointer      none              optional
 
-neighObject                 pointer      none                []                 optional
+process_dEdr                method       none              optional
 
-process_dEdr                method       none                []                 optional
-
-process_d2Edr2              method       none                []                 optional
+process_d2Edr2              method       none              optional
 
 
 #######################################################################################################
 MODEL_OUTPUT:
-# Name                      Type         Unit                Shape              Requirements
+# Name                      Type         Unit              Requirements
 
-destroy                     method       none                []                 optional
+destroy                     method       none              optional
 
-reinit                      method       none                []                 optional
+reinit                      method       none              optional
 
-compute                     method       none                []
+compute                     method       none
 
-cutoff                      double       length              []
+cutoff                      double       length
 
-energy                      double       energy              []                 optional
+energy                      double       energy            optional
 
-forces                      double       force               [numberOfParticles,3]  optional
+forces                      double       force             optional
 
-particleEnergy              double       energy              [numberOfParticles]    optional
+particleEnergy              double       energy            optional
 
 
 #######################################################################################################
 MODEL_PARAMETERS:
-# Name                      Type         Unit                Shape              Requirements
-
+# Name                      Type         Unit              Requirements

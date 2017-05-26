@@ -46,8 +46,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#include "KIM_API_C.h"
-#include "KIM_API_status.h"
+#include "KIM_SpeciesName.h"
+#include "KIM_Model.h"
+#include "KIM_Compute.h"
+#include "KIM_UTILITY_Compute.h"
+#include "KIM_Logger.h"
 
 /******************************************************************************/
 /* Below are the definitions and values of all Model parameters               */
@@ -61,10 +64,10 @@
 
 
 /* Define prototype for Model init */
-int model_init(void* km);
+int model_init(KIM_Model * const model);
 
 /* Define prototype for compute routine */
-static int compute(void* km);
+static int compute(KIM_Model const * const model);
 
 /* Define prototypes for pair potential calculations */
 static void calc_phi(double* epsilon,
@@ -158,9 +161,8 @@ static void calc_phi_d2phi(double* epsilon,
   return; }
 
 /* compute function */
-static int compute(void* km) {
+static int compute(KIM_Model const * const model) {
   /* local variables */
-  intptr_t* pkim = *((intptr_t**) km);
   double R;
   double R_pairs[2];
   double *pR_pairs = &(R_pairs[0]);
@@ -173,7 +175,7 @@ static int compute(void* km) {
   double Rij[DIM];
   double *pRij = &(Rij[0]);
   double Rij_pairs[2][3];
-  double *pRij_pairs = &(Rij_pairs[0][0]);
+  double const * pRij_pairs = &(Rij_pairs[0][0]);
   int ier;
   int i;
   int i_pairs[2];
@@ -183,19 +185,12 @@ static int compute(void* km) {
   int *pj_pairs = &(j_pairs[0]);
   int jj;
   int k;
-  int currentPart;
-  int* neighListOfCurrentPart;
+  int const * neighListOfCurrentPart;
   int comp_energy;
   int comp_force;
   int comp_particleEnergy;
   int comp_process_dEdr;
   int comp_process_d2Edr2;
-  int NBC;
-  int HalfOrFull;
-  int IterOrLoca;
-  int zero = 0;
-  int one = 1;
-  int request;
 
   int* nParts;
   int* particleSpecies;
@@ -205,85 +200,39 @@ static int compute(void* km) {
   double C;
   double Rzero;
   double shift;
-  double* Rij_list;
   double* coords;
   double* energy;
   double* force;
   double* particleEnergy;
-  int* numContrib;
-  int numberContrib;
   int numOfPartNeigh;
-  const char* NBCstr;
   double dummy;
-
-  /* Determine neighbor list boundary condition (NBC) */
-  ier = KIM_API_get_NBC_method(pkim, &NBCstr);
-  if (KIM_STATUS_OK > ier) {
-    KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_NBC_method", ier);
-    return ier; }
-  if ((!strcmp("NEIGH_PURE_H",NBCstr)) || (!strcmp("NEIGH_PURE_F",NBCstr))) {
-    NBC = 1; }
-  else if (!strcmp("CLUSTER",NBCstr)) {
-    NBC = 3; }
-  else {
-    ier = KIM_STATUS_FAIL;
-    KIM_API_report_error(__LINE__, __FILE__, "Unknown NBC method", ier);
-    return ier; }
-
-  /* Determine if Half or Full neighbor lists are being used */
-  /*****************************/
-  /* HalfOrFull = 1 -- Half    */
-  /*            = 2 -- Full    */
-  /*****************************/
-  if (KIM_API_is_half_neighbors(pkim, &ier)) {
-    HalfOrFull = 1; }
-  else {
-    HalfOrFull = 2; }
-
-  /* determine neighbor list handling mode */
-  if (NBC != 3) {
-    /******************************/
-    /* IterOrLoca = 1 -- Iterator */
-    /*            = 2 -- Locator  */
-    /******************************/
-    IterOrLoca = KIM_API_get_neigh_mode(pkim, &ier);
-    if (KIM_STATUS_OK > ier) {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_neigh_mode", ier);
-      return ier; }
-    if ((IterOrLoca != 1) && (IterOrLoca != 2)) {
-      ier = KIM_STATUS_FAIL;
-      KIM_API_report_error(__LINE__, __FILE__,
-                           "Unsupported IterOrLoca mode", ier);
-      return ier; } }
-  else {
-    IterOrLoca = 2;  /* for CLUSTER NBC */ }
 
   /* check to see if we have been asked to compute the forces, */
   /* particleEnergy, and d1Edr */
-  KIM_API_getm_compute(pkim, &ier, 5*3,
-                       "energy",         &comp_energy,         1,
-                       "forces",         &comp_force,          1,
-                       "particleEnergy", &comp_particleEnergy, 1,
-                       "process_dEdr",   &comp_process_dEdr,   1,
-                       "process_d2Edr2", &comp_process_d2Edr2, 1
-                       );
+  ier = KIM_UTILITY_COMPUTE_getm_compute(
+      model,
+      KIM_COMPUTE_ARGUMENT_NAME_energy,         &comp_energy,         1,
+      KIM_COMPUTE_ARGUMENT_NAME_forces,         &comp_force,          1,
+      KIM_COMPUTE_ARGUMENT_NAME_particleEnergy, &comp_particleEnergy, 1,
+      KIM_COMPUTE_ARGUMENT_NAME_process_dEdr,   &comp_process_dEdr,   1,
+      KIM_COMPUTE_ARGUMENT_NAME_process_d2Edr2, &comp_process_d2Edr2, 1,
+      KIM_COMPUTE_ARGUMENT_NAME_End);
   if (KIM_STATUS_OK > ier) {
-    KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_compute", ier);
+    KIM_report_error(__LINE__, __FILE__, "KIM_getm_compute", ier);
     return ier; }
 
-  KIM_API_getm_data(
-      pkim, &ier, 8*3,
-      "cutoff",                      &cutoff,         1,
-      "numberOfParticles",           &nParts,         1,
-      "particleSpecies",             &particleSpecies,1,
-      "coordinates",                 &coords,         1,
-      "numberContributingParticles", &numContrib,     (HalfOrFull==1),
-      "energy",                      &energy,         comp_energy,
-      "forces",                      &force,          comp_force,
-      "particleEnergy",              &particleEnergy, comp_particleEnergy
-                    );
+  ier = KIM_UTILITY_COMPUTE_getm_data(
+      model,
+      KIM_COMPUTE_ARGUMENT_NAME_cutoff,            &cutoff,         1,
+      KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles, &nParts,         1,
+      KIM_COMPUTE_ARGUMENT_NAME_particleSpecies,   &particleSpecies,1,
+      KIM_COMPUTE_ARGUMENT_NAME_coordinates,       &coords,         1,
+      KIM_COMPUTE_ARGUMENT_NAME_energy,            &energy,         comp_energy,
+      KIM_COMPUTE_ARGUMENT_NAME_forces,            &force,          comp_force,
+      KIM_COMPUTE_ARGUMENT_NAME_particleEnergy,    &particleEnergy, comp_particleEnergy,
+      KIM_COMPUTE_ARGUMENT_NAME_End);
   if (KIM_STATUS_OK > ier) {
-    KIM_API_report_error(__LINE__, __FILE__, "KIM_API_getm_data", ier);
+    KIM_report_error(__LINE__, __FILE__, "KIM_getm_data", ier);
     return ier; }
 
   /* set value of parameters */
@@ -298,24 +247,13 @@ static int compute(void* km) {
   /* set shift to -shift */
   shift = -(shift);
 
-  if (HalfOrFull == 1) {
-    if (3 != NBC) {
-      /* non-CLUSTER cases */
-      numberContrib = *numContrib; }
-    else {
-      /* CLUSTER cases */
-      numberContrib = *nParts; } }
-  else {
-    /* provide initialization even if not used */
-    numberContrib = *nParts; }
-
   /* Check to be sure that the species are correct */
   /**/
   ier = KIM_STATUS_FAIL; /* assume an error */
   for (i = 0; i < *nParts; ++i) {
     if ( SPECCODE != particleSpecies[i]) {
-      KIM_API_report_error(__LINE__, __FILE__,
-                           "Unexpected species detected", ier);
+      KIM_report_error(__LINE__, __FILE__,
+                       "Unexpected species detected", ier);
       return ier; } }
   ier = KIM_STATUS_OK;  /* everything is ok */
 
@@ -331,63 +269,24 @@ static int compute(void* km) {
       for (k = 0; k < DIM; ++k) {
         force[i*DIM + k] = 0.0; } } }
 
-  /* Initialize neighbor handling for CLUSTER NBC */
-  if (3 == NBC) {
-    /* CLUSTER */
-    neighListOfCurrentPart = (int *) malloc((*nParts)*sizeof(int)); }
-
-  /* Initialize neighbor handling for Iterator mode */
-
-  if (1 == IterOrLoca) {
-    ier = KIM_API_get_neigh(pkim, zero, zero, &currentPart, &numOfPartNeigh,
-                            &neighListOfCurrentPart, &Rij_list);
-    /* check for successful initialization */
-    if (KIM_STATUS_NEIGH_ITER_INIT_OK != ier) {
-      KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_neigh", ier);
-      ier = KIM_STATUS_FAIL;
-      return ier; } }
-
   /* Compute energy and forces */
 
   /* loop over particles and compute enregy and forces */
   i = -1;
   while( 1 ) {
-    /* Set up neighbor list for next part for all NBC methods */
-    if (1 == IterOrLoca) {
-      /* ITERATOR mode */
-      ier = KIM_API_get_neigh(pkim, zero, one, &currentPart, &numOfPartNeigh,
-                              &neighListOfCurrentPart, &Rij_list);
-      if (KIM_STATUS_NEIGH_ITER_PAST_END == ier) {
-        /* the end of the list, terminate loop */
-        break; }
-      if (KIM_STATUS_OK > ier) {
-        /* some sort of problem, exit */
-        KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_neigh", ier);
-        return ier; }
 
-      i = currentPart; }
-    else {
-      i++;
-      if (*nParts <= i) {
-        /* incremented past end of list, terminate loop */
-        break; }
+    i++;
+    if (*nParts <= i) {
+      /* incremented past end of list, terminate loop */
+      break; }
 
-      if (3 == NBC) {
-        /* CLUSTER NBC method */
-        numOfPartNeigh = *nParts - (i + 1);
-        for (k = 0; k < numOfPartNeigh; ++k) {
-          neighListOfCurrentPart[k] = i + k + 1; }
-        ier = KIM_STATUS_OK; }
-      else {
-        request = i;
-        ier = KIM_API_get_neigh(pkim, one, request, &currentPart,
-                                &numOfPartNeigh, &neighListOfCurrentPart,
-                                &Rij_list);
-        if (KIM_STATUS_OK != ier) {
-          /* some sort of problem, exit */
-          KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_neigh", ier);
-          ier = KIM_STATUS_FAIL;
-          return ier; } } }
+    ier = KIM_Model_get_neigh(model, i, &numOfPartNeigh,
+                              &neighListOfCurrentPart);
+    if (KIM_STATUS_OK != ier) {
+      /* some sort of problem, exit */
+      KIM_report_error(__LINE__, __FILE__, "KIM_get_neigh", ier);
+      ier = KIM_STATUS_FAIL;
+      return ier; }
 
     /* loop over the neighbors of particle i */
     for (jj = 0; jj < numOfPartNeigh; ++ jj) {
@@ -414,14 +313,9 @@ static int compute(void* km) {
                          cutoff, R, &phi, &dphi, &d2phi);
 
           /* compute dEidr */
-          if ((1 == HalfOrFull) && (j < numberContrib)) {
-            /* Half mode -- double contribution */
-            dEidr = dphi;
-            d2Eidr = d2phi; }
-          else {
-            /* Full mode -- regular contribution */
-            dEidr = 0.5*dphi;
-            d2Eidr = 0.5*d2phi; } }
+          /* Full mode -- regular contribution */
+          dEidr = 0.5*dphi;
+          d2Eidr = 0.5*d2phi; }
         else if (comp_force || comp_process_dEdr) {
           /* compute pair potential and its derivative */
           calc_phi_dphi(&epsilon,
@@ -431,12 +325,8 @@ static int compute(void* km) {
                         cutoff, R, &phi, &dphi);
 
           /* compute dEidr */
-          if ((1 == HalfOrFull) && (j < numberContrib)) {
-            /* Half mode -- double contribution */
-            dEidr = dphi; }
-          else {
-            /* Full mode -- regular contribution */
-            dEidr = 0.5*dphi; } }
+          /* Full mode -- regular contribution */
+          dEidr = 0.5*dphi; }
         else {
           /* compute just pair potential */
           calc_phi(&epsilon,
@@ -447,21 +337,14 @@ static int compute(void* km) {
 
         /* contribution to energy */
         if (comp_particleEnergy) {
-          particleEnergy[i] += 0.5*phi;
-          /* if half list add energy for the other particle in the pair */
-          if ((1 == HalfOrFull) && (j < numberContrib)) {
-            particleEnergy[j] += 0.5*phi; } }
+          particleEnergy[i] += 0.5*phi; }
         if (comp_energy) {
-          if ((1 == HalfOrFull) && (j < numberContrib)) {
-            /* Half mode -- add v to total energy */
-            *energy += phi; }
-          else {
-            /* Full mode -- add half v to total energy */
-            *energy += 0.5*phi; } }
+          /* Full mode -- add half v to total energy */
+          *energy += 0.5*phi; }
 
         /* contribution to process_dEdr */
         if (comp_process_dEdr) {
-          ier = KIM_API_process_dEdr(km, &dEidr, &R, &pRij, &i, &j); }
+          ier = KIM_Model_process_dEdr(model, dEidr, R, pRij, i, j); }
 
         /* contribution to process_d2Edr2 */
         if (comp_process_d2Edr2) {
@@ -472,8 +355,8 @@ static int compute(void* km) {
           i_pairs[0] = i_pairs[1] = i;
           j_pairs[0] = j_pairs[1] = j;
 
-          ier = KIM_API_process_d2Edr2(km, &d2Eidr, &pR_pairs, &pRij_pairs,
-                                       &pi_pairs, &pj_pairs); }
+          ier = KIM_Model_process_d2Edr2(model, d2Eidr, pR_pairs, pRij_pairs,
+                                         pi_pairs, pj_pairs); }
 
         /* contribution to forces */
         if (comp_force) {
@@ -483,35 +366,29 @@ static int compute(void* km) {
     }  /* loop on jj */
   }  /* infinite while loop (terminated by break statements above) */
 
-  /* Free temporary storage */
-  if (3 == NBC) {
-    free(neighListOfCurrentPart); }
-
   /* everything is great */
   ier = KIM_STATUS_OK;
 
   return ier; }
 
 /* Initialization function */
-int model_init(void* km) {
-  /* KIM variables */
-  intptr_t* pkim = *((intptr_t**) km);
-
-  /* Local variables */
+int model_init(KIM_Model * const model) {
   double* model_cutoff;
   int ier;
 
   /* store pointer to function in KIM object */
-  ier = KIM_API_set_method(pkim, "compute", 1, (func_ptr) &compute);
+  ier = KIM_Model_set_method(model, KIM_COMPUTE_ARGUMENT_NAME_compute, 1,
+                             KIM_COMPUTE_LANGUAGE_NAME_C, (func *) &compute);
   if (KIM_STATUS_OK > ier) {
-    KIM_API_report_error(__LINE__, __FILE__, "KIM_API_set_data", ier);
+    KIM_report_error(__LINE__, __FILE__, "KIM_set_data", ier);
+    return ier; }
+  /* store model cutoff in KIM object */
+  ier = KIM_Model_get_data(model, KIM_COMPUTE_ARGUMENT_NAME_cutoff,
+                           (void **) &model_cutoff);
+  if (KIM_STATUS_OK > ier) {
+    KIM_report_error(__LINE__, __FILE__, "KIM_get_data", ier);
     return ier; }
 
-  /* store model cutoff in KIM object */
-  model_cutoff = (double*) KIM_API_get_data(pkim, "cutoff", &ier);
-  if (KIM_STATUS_OK > ier) {
-    KIM_API_report_error(__LINE__, __FILE__, "KIM_API_get_data", ier);
-    return ier; }
   *model_cutoff = CUTOFF;
 
   return KIM_STATUS_OK; }

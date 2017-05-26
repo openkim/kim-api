@@ -36,9 +36,11 @@
 #include <stdlib.h>
 #include <iomanip>
 #include <string>
-#include <sstream>
-#include "KIM_API.h"
-#include "KIM_API_status.h"
+#include "KIM_SpeciesName.hpp"
+#include "KIM_Model.hpp"
+#include "KIM_Compute.hpp"
+#include "KIM_UTILITY_Compute.hpp"
+#include "KIM_Logger.hpp"
 
 #define NAMESTRLEN    128
 
@@ -50,7 +52,7 @@
                        + 3*(NCELLSPERSIDE) + 1)
 
 #define REPORT_ERROR(LN, FL, MSG, STAT) {                 \
-    kim_cluster_model.report_error(LN, FL, MSG, STAT);    \
+    KIM::report_error(LN, FL, MSG, STAT);                 \
     exit(STAT);                                           \
   }
 
@@ -67,8 +69,9 @@ char const * const descriptor();
 void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
                               double cutoff, NeighList* nl);
 
-int get_cluster_neigh(void* kimmdl, int *mode, int *request, int* part,
-                      int* numnei, int** nei1part, double** Rij);
+int get_cluster_neigh(KIM::Model const * const model,
+                      int const particleNumber, int * const numberOfNeighbors,
+                      int const ** const neighborsOfParticle);
 
 void create_FCC_cluster(double FCCspacing, int nCellsPerSide, double *coords);
 
@@ -93,7 +96,7 @@ int main()
   double coords_cluster[NCLUSTERPARTS][DIM];
   NeighList nl_cluster_model;
   /* model outputs */
-  double cutoff_cluster_model;
+  double cutoff_cluster_model = -15;
   double energy_cluster_model;
 
   std::string modelname;
@@ -104,33 +107,35 @@ int main()
 
 
   /* initialize the model */
-  KIM_API_model kim_cluster_model;
-  status = kim_cluster_model.string_init(descriptor(), modelname.c_str());
+  KIM::Model * kim_cluster_model;
+  status = KIM::Model::create(descriptor(),modelname, &kim_cluster_model);
   if (KIM_STATUS_OK > status)
-    REPORT_ERROR(__LINE__, __FILE__,"KIM_API_string_init()",status);
+    REPORT_ERROR(__LINE__, __FILE__,"KIM_create_model_interface()",status);
 
-  kim_cluster_model.setm_data(&status, 7*4,
-                    "numberOfParticles", 1,                             &numberOfParticles_cluster,       1,
-                    "numberOfSpecies",   1,                             &numberOfSpecies,                 1,
-                    "particleSpecies",   numberOfParticles_cluster,     &particleSpecies_cluster_model,   1,
-                    "coordinates",       DIM*numberOfParticles_cluster, coords_cluster,                   1,
-                    "neighObject",       1,                             &nl_cluster_model,                1,
-                    "cutoff",            1,                             &cutoff_cluster_model,            1,
-                    "energy",            1,                             &energy_cluster_model,            1);
+  status = KIM::UTILITY::COMPUTE::setm_data(
+      kim_cluster_model,
+      KIM::COMPUTE::ARGUMENT_NAME::numberOfParticles, 1,                       &numberOfParticles_cluster,       1,
+      KIM::COMPUTE::ARGUMENT_NAME::numberOfSpecies, 1,                         &numberOfSpecies,                 1,
+      KIM::COMPUTE::ARGUMENT_NAME::particleSpecies, numberOfParticles_cluster, particleSpecies_cluster_model,   1,
+      KIM::COMPUTE::ARGUMENT_NAME::coordinates, DIM*numberOfParticles_cluster, coords_cluster,                   1,
+      KIM::COMPUTE::ARGUMENT_NAME::neighObject, 1,                             &nl_cluster_model,                1,
+      KIM::COMPUTE::ARGUMENT_NAME::cutoff, 1,                                  &cutoff_cluster_model,            1,
+      KIM::COMPUTE::ARGUMENT_NAME::energy, 1,                                  &energy_cluster_model,            1,
+      KIM::COMPUTE::ARGUMENT_NAME::End);
   if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"KIM_API_setm_data",status);
-  status = kim_cluster_model.set_method("get_neigh", 1, (func_ptr) &get_cluster_neigh);
+  status = kim_cluster_model->set_method(KIM::COMPUTE::ARGUMENT_NAME::get_neigh, 1, KIM::COMPUTE::LANGUAGE_NAME::Cpp, (KIM::func *) &get_cluster_neigh);
   if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"KIM_API_set_method",status);
 
   /* call model init routine */
-  status = kim_cluster_model.model_init();
+  status = kim_cluster_model->init();
   if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"KIM_API_model_init", status);
 
   /* setup particleSpecies */
-  particleSpecies_cluster_model[0] = kim_cluster_model.get_species_code("Ar", &status);
+  status =  kim_cluster_model->get_species_code(KIM::SPECIES_NAME::Ar,
+                                                &(particleSpecies_cluster_model[0]));
   if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"get_species_code", status);
   for (i = 1; i < NCLUSTERPARTS; ++i)
     particleSpecies_cluster_model[i] = particleSpecies_cluster_model[0];
-
   /* setup neighbor lists */
   /* allocate memory for list */
   nl_cluster_model.NNeighbors = new int[NCLUSTERPARTS];
@@ -154,7 +159,7 @@ int main()
                              (cutoff_cluster_model + cutpad), &nl_cluster_model);
 
     /* call compute functions */
-    status = kim_cluster_model.model_compute();
+    status = kim_cluster_model->compute();
     if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"compute", status);
 
     /* print the results */
@@ -166,8 +171,10 @@ int main()
 
 
   /* call model destroy */
-  status = kim_cluster_model.model_destroy();
+  status = kim_cluster_model->destroy_model();
   if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"destroy", status);
+
+  KIM::Model::destroy(&kim_cluster_model);
 
   /* free memory of neighbor lists */
   delete [] nl_cluster_model.NNeighbors;
@@ -339,89 +346,44 @@ void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
   return;
 }
 
-int get_cluster_neigh(void* kimmdl, int *mode, int *request, int* part,
-                      int* numnei, int** nei1part, double** Rij)
+int get_cluster_neigh(KIM::Model const * const model,
+                      int const particleNumber, int * const numberOfNeighbors,
+                      int const ** const neighborsOfParticle)
 {
   /* local variables */
-  KIM_API_model * pkim = *(KIM_API_model **) kimmdl;
-  int partToReturn;
   int status;
   int* numberOfParticles;
   NeighList* nl;
 
-  /* initialize numnei */
-  *numnei = 0;
+  /* initialize numNeigh */
+  *numberOfNeighbors = 0;
 
   /* unpack neighbor list object */
-  numberOfParticles = (int*) pkim->get_data("numberOfParticles", &status);
+  status = model->get_data(KIM::COMPUTE::ARGUMENT_NAME::numberOfParticles, (void **) &numberOfParticles);
   if (KIM_STATUS_OK > status)
   {
-    pkim->report_error(__LINE__, __FILE__,"get_data", status);
+    KIM::report_error(__LINE__, __FILE__,"get_data", status);
     return status;
   }
 
-  nl = (NeighList*) pkim->get_data("neighObject", &status);
+  status = model->get_data(KIM::COMPUTE::ARGUMENT_NAME::neighObject, (void **) &nl);
   if (KIM_STATUS_OK > status)
   {
-    pkim->report_error(__LINE__, __FILE__,"get_data", status);
+    KIM::report_error(__LINE__, __FILE__,"get_data", status);
     return status;
   }
 
-  /* check mode and request */
-  if (0 == *mode) /* iterator mode */
+  if ((particleNumber >= *numberOfParticles) || (particleNumber < 0)) /* invalid id */
   {
-    if (0 == *request) /* reset iterator */
-    {
-      (*nl).iteratorId = -1;
-      return KIM_STATUS_NEIGH_ITER_INIT_OK;
-    }
-    else if (1 == *request) /* increment iterator */
-    {
-      (*nl).iteratorId++;
-      if ((*nl).iteratorId >= *numberOfParticles)
-      {
-        return KIM_STATUS_NEIGH_ITER_PAST_END;
-      }
-      else
-      {
-        partToReturn = (*nl).iteratorId;
-      }
-    }
-    else /* invalid request value */
-    {
-      pkim->report_error(__LINE__, __FILE__,"Invalid request in get_cluster_neigh", KIM_STATUS_NEIGH_INVALID_REQUEST);
-      return KIM_STATUS_NEIGH_INVALID_REQUEST;
-    }
+    KIM::report_error(__LINE__, __FILE__,"Invalid part ID in get_cluster_neigh", KIM_STATUS_PARTICLE_INVALID_ID);
+    return KIM_STATUS_PARTICLE_INVALID_ID;
   }
-  else if (1 == *mode) /* locator mode */
-  {
-    if ((*request >= *numberOfParticles) || (*request < 0)) /* invalid id */
-    {
-      pkim->report_error(__LINE__, __FILE__,"Invalid part ID in get_cluster_neigh", KIM_STATUS_PARTICLE_INVALID_ID);
-      return KIM_STATUS_PARTICLE_INVALID_ID;
-    }
-    else
-    {
-      partToReturn = *request;
-    }
-  }
-  else /* invalid mode */
-  {
-    pkim->report_error(__LINE__, __FILE__,"Invalid mode in get_cluster_neigh", KIM_STATUS_NEIGH_INVALID_MODE);
-    return KIM_STATUS_NEIGH_INVALID_MODE;
-  }
-
-  /* set the returned part */
-  *part = partToReturn;
 
   /* set the returned number of neighbors for the returned part */
-  *numnei = (*nl).NNeighbors[*part];
+  *numberOfNeighbors = (*nl).NNeighbors[particleNumber];
 
   /* set the location for the returned neighbor list */
-  *nei1part = &((*nl).neighborList[(*part)*NCLUSTERPARTS]);
-
-  /* set the pointer to Rij to appropriate value */
-  *Rij = 0;
+  *neighborsOfParticle = &((*nl).neighborList[(particleNumber)*NCLUSTERPARTS]);
 
   return KIM_STATUS_OK;
 }
@@ -441,21 +403,19 @@ char const * const descriptor()
       "\n"
       "CONVENTIONS:\n"
       "ZeroBasedLists flag\n"
-      "Neigh_BothAccess flag\n"
-      "NEIGH_PURE_F flag\n"
       "\n"
       "MODEL_INPUT:\n"
-      "numberOfParticles integer none []\n"
-      "numberOfSpecies integer none []\n"
-      "particleSpecies integer none [numberOfParticles]\n"
-      "coordinates double length [numberOfParticles,3]\n"
-      "get_neigh method none []\n"
-      "neighObject pointer none []\n"
+      "numberOfParticles integer none\n"
+      "numberOfSpecies integer none\n"
+      "particleSpecies integer none\n"
+      "coordinates double length\n"
+      "get_neigh method none\n"
+      "neighObject pointer none\n"
       "\n"
       "MODEL_OUTPUT:\n"
-      "destroy method none []\n"
-      "compute method none []\n"
-      "reinit method none []\n"
-      "cutoff double length []\n"
-      "energy double energy []\n";
+      "destroy method none\n"
+      "compute method none\n"
+      "reinit method none\n"
+      "cutoff double length\n"
+      "energy double energy\n";
 }

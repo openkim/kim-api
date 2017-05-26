@@ -29,7 +29,7 @@
 
 #######################################################################################################
 #
-# Release: This file is part of the kim-api.git repository.
+# Release: This file is part of the kim-api-v1.8.0 package.
 #
 # See src/standard.kim for documentation about this file
 #
@@ -59,79 +59,53 @@ CONVENTIONS:
 
 OneBasedLists               flag
 
-Neigh_IterAccess            flag
-
-Neigh_LocaAccess            flag
-
-NEIGH_RVEC_H                flag
-
-NEIGH_PURE_H                flag
-
-NEIGH_RVEC_F                flag
-
-NEIGH_PURE_F                flag
-
-MI_OPBC_H                   flag
-
-MI_OPBC_F                   flag
-
-CLUSTER                     flag
-
 
 #######################################################################################################
 MODEL_INPUT:
-# Name                      Type         Unit                Shape              Requirements
+# Name                      Type         Unit    Requirements
 
-numberOfParticles           integer      none                []
+numberOfParticles           integer      none
 
-numberContributingParticles integer      none                []                 optional
+numberOfSpecies             integer      none
 
-numberOfSpecies             integer      none                []
+particleSpecies             integer      none
 
-particleSpecies             integer      none                [numberOfParticles]
+coordinates                 double       length
 
-coordinates                 double       length              [numberOfParticles,3]
+get_neigh                   method       none    optional
 
-boxSideLengths              double       length              [3]                optional
+neighObject                 pointer      none    optional
 
-get_neigh                   method       none                []                 optional
+process_dEdr                method       none    optional
 
-neighObject                 pointer      none                []                 optional
-
-process_dEdr                method       none                []                 optional
-
-process_d2Edr2              method       none                []                 optional
+process_d2Edr2              method       none    optional
 
 
 #######################################################################################################
 MODEL_OUTPUT:
-# Name                      Type         Unit                Shape              Requirements
+# Name                      Type         Unit     Requirements
 
-destroy                     method       none                []
+destroy                     method       none
 
-compute                     method       none                []
+compute                     method       none
 
-reinit                      method       none                []                 optional
+reinit                      method       none     optional
 
-cutoff                      double       length              []
+cutoff                      double       length
 
-energy                      double       energy              []                 optional
+energy                      double       energy   optional
 
-forces                      double       force               [numberOfParticles,3]  optional
+forces                      double       force    optional
 
-particleEnergy              double       energy              [numberOfParticles]    optional
+particleEnergy              double       energy   optional
 
 
 #######################################################################################################
 MODEL_PARAMETERS:
-# Name                      Type         Unit                Shape              Requirements
+# Name                      Type         Unit
 
-PARAM_FREE_cutoff           double       length              []
+PARAM_cutoff                double       length
 
-PARAM_FIXED_cutsq           double       length^2            []
+PARAM_epsilon               double       energy
 
-PARAM_FREE_epsilon          double       energy              []
-
-PARAM_FREE_sigma            double       length^-1           []
-
-PARAM_FIXED_shift           double       energy              []
+PARAM_sigma                 double       length^-1

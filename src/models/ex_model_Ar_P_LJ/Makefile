@@ -29,7 +29,7 @@
 #
 
 #
-# Release: This file is part of the kim-api.git repository.
+# Release: This file is part of the kim-api-v1.8.0 package.
 #
 
 

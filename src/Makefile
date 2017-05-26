@@ -44,9 +44,8 @@ endif
 
 
 # Definition of c and fortran .o file list
-OBJC = KIM_API.o KIM_API_C.o $(KIM_STR_NAME).o Unit_Handling.o
-OBJF90 = KIM_API_F.o
-OBJF03 = KIM_API_F03.o KIM_API_F03_Helper.o
+OBJC = KIM_Logger.o KIM_Logger_c.o KIM_SpeciesName.o KIM_SpeciesName_c.o KIM_Parameter.o KIM_Parameter_c.o KIM_Compute.o KIM_UTILITY_Compute.o KIM_Compute_c.o KIM_UTILITY_Compute_c.o KIM_Model.o KIM_Model_c.o KIM_UnitSystem.o KIM_UnitSystem_c.o KIM_semver.o KIM_semver_c.o old_KIM_API.o old_KIM_API_C.o $(KIM_STR_NAME).o old_Unit_Handling.o
+OBJF03 = kim_model_f.o kim_logger_f.o kim_utility_compute_module.o
 
 #fortran on/of
 ifdef KIM_NO_FORTRAN
@@ -76,10 +75,10 @@ KIM_MAKE_FILES += Makefile
 all: objects libs
 
 ifneq ($(KIM_LINK),static-link)
-   objects: $(ALLOBJ) KIM_API_DIRS.o .KIM_API_DIRS.o
+   objects: $(ALLOBJ) old_KIM_API_DIRS.o .old_KIM_API_DIRS.o
    libs: lib$(KIM_LIB).so
 else
-   objects: models_check $(ALLOBJ) KIM_API_DIRS.o
+   objects: models_check $(ALLOBJ) old_KIM_API_DIRS.o
    libs: models_check lib$(KIM_LIB).a
 
    models_check:
@@ -98,10 +97,10 @@ lib$(KIM_LIB).%: lib$(KIM_LIB_BUILD).%
 	$(QUELL)ln -fs "lib$(KIM_LIB_BUILD).$*" "lib$(KIM_LIB).$*"
 
 ifneq ($(KIM_LINK),static-link)
-   lib$(KIM_LIB_BUILD).a: $(ALLOBJ) KIM_API_DIRS.o .KIM_API_DIRS.o
+   lib$(KIM_LIB_BUILD).a: $(ALLOBJ) old_KIM_API_DIRS.o .old_KIM_API_DIRS.o
 	@printf "Creating... KIM API library....... $@.\n";
-	$(QUELL)ar rcs $@ $(ALLOBJ) KIM_API_DIRS.o
-	$(QUELL)ar rcs .$@ $(ALLOBJ) .KIM_API_DIRS.o
+	$(QUELL)ar rcs $@ $(ALLOBJ) old_KIM_API_DIRS.o
+	$(QUELL)ar rcs .$@ $(ALLOBJ) .old_KIM_API_DIRS.o
 else
    lib$(KIM_LIB_BUILD).a: MD_DEPS:= $(addprefix $(srcdir)/$(modeldriversdir)/,$(addsuffix /lib$(MODEL_DRIVER_LIB_BUILD).a,$(MODEL_DRIVERS_LIST)))
    lib$(KIM_LIB_BUILD).a: MO_DEPS:= $(addprefix $(srcdir)/$(modelsdir)/,$(addsuffix /lib$(MODEL_LIB_BUILD).a,$(MODELS_LIST)))
@@ -129,9 +128,9 @@ lib$(KIM_LIB_BUILD).so: lib$(KIM_LIB_BUILD).a .lib$(KIM_LIB_BUILD).a $(MD_DEPS) 
                       $(DMD_DEPS) $(DMO_DEPS) \
                       $(LDLIBS)
 
-KIM_API_Version.h: KIM_API_Version.h.tpl $(KIM_MAKE_FILES)
-	@printf "Creating... KIM_API_Version.h.\n"
-	$(QUELL)cat KIM_API_Version.h.tpl | sed -e 's/versionMajor/$(VERSION_MAJOR)/g' \
+old_KIM_API_Version.h: old_KIM_API_Version.h.tpl $(KIM_MAKE_FILES)
+	@printf "Creating... old_KIM_API_Version.h.\n"
+	$(QUELL)cat old_KIM_API_Version.h.tpl | sed -e 's/versionMajor/$(VERSION_MAJOR)/g' \
                                                 -e 's/versionMinor/$(VERSION_MINOR)/g' \
                                                 -e 's/versionPatch/$(VERSION_PATCH)/g' \
                                                 -e 's/versionPrerelease/"$(VERSION_PRERELEASE)"/g' \
@@ -143,38 +142,70 @@ KIM_API_Version.h: KIM_API_Version.h.tpl $(KIM_MAKE_FILES)
 %.h:
 	@touch $@
 
-KIM_API.h: KIM_API_Version.h $(KIM_MAKE_FILES)
+KIM_Logger.o: KIM_Logger.hpp KIM_Logger.cpp old_KIM_API.o $(KIM_MAKE_FILES)
+KIM_SpeciesName.o: KIM_SpeciesName.hpp KIM_SpeciesName.cpp $(KIM_MAKE_FILES)
+KIM_Parameter.o: KIM_Parameter.hpp KIM_Parameter.cpp $(KIM_MAKE_FILES)
+KIM_UnitSystem.o: KIM_UnitSystem.hpp KIM_UnitSystem.cpp old_KIM_API.o $(KIM_MAKE_FILES)
+KIM_Compute.o: KIM_Compute.hpp KIM_Compute.cpp $(KIM_MAKE_FILES)
+KIM_Model.o: KIM_Model.hpp KIM_Model.cpp old_KIM_API.o $(KIM_MAKE_FILES)
+KIM_UTILITYCompute.o: KIM_UTILITY_Compute.hpp KIM_UTILITY_Compute.cpp $(KIM_MAKE_FILES)
+KIM_semver.o: KIM_semver.hpp KIM_semver.cpp old_KIM_API.o $(KIM_MAKE_FILES)
 
-KIM_API_C.h: KIM_API_Version.h $(KIM_MAKE_FILES)
+KIM_Logger_c.o: KIM_Logger.h KIM_Logger_c.cpp old_KIM_API.o $(KIM_MAKE_FILES)
+KIM_SpeciesName_c.o: KIM_SpeciesName.h KIM_SpeciesName_c.c $(KIM_MAKE_FILES)
+KIM_Parameter_c.o: KIM_Parameter.h KIM_Parameter_c.c $(KIM_MAKE_FILES)
+KIM_UnitSystem_c.o: KIM_UnitSystem.h KIM_UnitSystem_c.c old_KIM_API.o $(KIM_MAKE_FILES)
+KIM_Compute_c.o: KIM_Compute.h KIM_Compute_c.c $(KIM_MAKE_FILES)
+KIM_Model_c.o: KIM_Model.h KIM_Model_c.cpp old_KIM_API.o $(KIM_MAKE_FILES)
+KIM_UTILITY_Compute_c.o: KIM_UTILITY_Compute.h KIM_UTILITY_Compute_c.c $(KIM_MAKE_FILES)
+KIM_semver_c.o: KIM_semver.h KIM_semver_c.cpp old_KIM_API.o $(KIM_MAKE_FILES)
 
-KIM_API_status.h: KIM_API_Version.h $(KIM_MAKE_FILES)
+kim_logger_module.mod: kim_logger_module.f90
+kim_logger_f.o: kim_logger_module.mod kim_logger_f.f90
+kim_species_id_module.mod: kim_species_id_module.f90
+kim_species_name_module.mod: kim_species_id_module.mod kim_species_name_module.f90
+kim_parameter_id_module.mod: kim_parameter_id_module.f90
+kim_parameter_module.mod: kim_parameter_id_module.mod kim_parameter_module.f90
+kim_unit_system_id_module.mod: kim_unit_system_id_module.f90
+kim_unit_system_module.mod: kim_unit_system_id_module.mod kim_unit_system_module.f90
+kim_compute_id_module.mod: kim_compute_id_module.f90
+kim_compute_module.mod: kim_compute_id_module.mod kim_compute_module.f90
+kim_model_module.mod: kim_compute_module.mod kim_species_name_module.mod kim_parameter_module.mod kim_unit_system_module.mod kim_model_module.f90
+kim_utility_compute_module.mod: kim_model_module.mod kim_compute_module.mod kim_utility_compute_module.f90
+kim_semver_module.mod: kim_semver_module.f90
+kim_model_f.o: kim_model_module.mod kim_model_f.f90
+kim_utility_compute_module.mod: kim_compute_module.mod kim_model_module.mod kim_utility_compute_module.f90
+kim_utility_compute_module.o: kim_compute_module.mod kim_model_module.mod kim_utility_compute_module.f90
 
-KIM_API.o: KIM_DEFINE_VALUES += -D STANDARD_KIM_STR_NAME=$(MODEL_NAME)_$(KIM_STR_NAME)               \
+.INTERMEDIATE: kim_utility_compute_module.f90
+kim_utility_compute_module.f90: scripts/CreateGetSetMultipleRoutines.sh
+	@printf "Creating... Intermediate file..... kim_utility_compute_module.f90.\n"
+	$(QUELL)scripts/CreateGetSetMultipleRoutines.sh > kim_utility_compute_module.f90
+
+old_KIM_API.h: old_KIM_API_Version.h $(KIM_MAKE_FILES)
+
+old_KIM_API_C.h: old_KIM_API_Version.h $(KIM_MAKE_FILES)
+
+old_KIM_API_status.h: old_KIM_API_Version.h $(KIM_MAKE_FILES)
+
+old_KIM_API.o: KIM_DEFINE_VALUES += -D STANDARD_KIM_STR_NAME=$(MODEL_NAME)_$(KIM_STR_NAME)               \
                                 -D STANDARD_KIM_STR_LEN_NAME=$(MODEL_NAME)_$(KIM_STR_NAME)_len       \
                                 -D KIM_STR_NAME=\"$(KIM_STR_NAME)\"                                  \
                                 -D MODELLIBFILE=\"lib$(MODEL_LIB)\"
-KIM_API.o: $(if $(filter-out dynamic-load,$(KIM_LINK)),model_init_include.h model_init_include.cpp model_kim_str_include.cpp,) \
-           KIM_API.h KIM_API_status.h KIM_API_DIRS.h KIM_API.cpp $(KIM_MAKE_FILES)
+old_KIM_API.o: $(if $(filter-out dynamic-load,$(KIM_LINK)),model_init_include.h model_init_include.cpp model_kim_str_include.cpp,) \
+           old_KIM_API.h old_KIM_API_status.h old_KIM_API_DIRS.h old_KIM_API.cpp $(KIM_MAKE_FILES)
 
-KIM_API_C.o: KIM_API.h KIM_API_C.h KIM_API_status.h KIM_API_C.cpp $(KIM_MAKE_FILES)
+old_KIM_API_C.o: old_KIM_API.h old_KIM_API_C.h old_KIM_API_status.h old_KIM_API_C.cpp $(KIM_MAKE_FILES)
 
-KIM_API_F03.o: KIM_API_status.h KIM_API_F03_Multiples.incl KIM_API_F03_Helper.o $(KIM_MAKE_FILES)
+old_KIM_API_DIRS.o: old_KIM_API_DIRS.h $(KIM_MAKE_FILES)
 
-KIM_API_F03_Multiples.incl: scripts/CreateGetSetMultipleRoutines.sh $(KIM_MAKE_FILES)
-	@printf "Creating... KIM_API_F03_Multiples.incl.\n"
-	$(QUELL)scripts/CreateGetSetMultipleRoutines.sh > KIM_API_F03_Multiples.incl
-
-KIM_API_F03_Helper.o: KIM_API_status.h $(KIM_MAKE_FILES)
-
-KIM_API_DIRS.o: KIM_API_DIRS.h $(KIM_MAKE_FILES)
-
-.INTERMEDIATE: .KIM_API_DIRS.cpp
-.KIM_API_DIRS.cpp: KIM_API_DIRS.cpp $(KIM_MAKE_FILES)
+.INTERMEDIATE: .old_KIM_API_DIRS.cpp
+.old_KIM_API_DIRS.cpp: old_KIM_API_DIRS.cpp $(KIM_MAKE_FILES)
 	@printf "Creating... Intermediate file..... $@.\n"
 	$(QUELL)cp $< $@
 
-%IM_API_DIRS.o: KIM_DEFINE_VALUES +=  -D INPLACE=$(if $(filter-out .KIM_API_DIRS.o,$@),1,0) \
-                                      -D PACKAGEDIR=\"$(if $(filter-out .KIM_API_DIRS.o,$@),$(srcdir),$(package_dir))\" \
+%IM_API_DIRS.o: KIM_DEFINE_VALUES +=  -D INPLACE=$(if $(filter-out .old_KIM_API_DIRS.o,$@),1,0) \
+                                      -D PACKAGEDIR=\"$(if $(filter-out .old_KIM_API_DIRS.o,$@),$(srcdir),$(package_dir))\" \
                                       -D KIMDIR=\"$(KIM_DIR)\" \
                                       -D MODELDRIVERSDIR=\"$(modeldriversdir)\" \
                                       -D MODELSDIR=\"$(modelsdir)\" \
@@ -186,7 +217,7 @@ KIM_API_DIRS.o: KIM_API_DIRS.h $(KIM_MAKE_FILES)
                                       -D MODELLIBFILE=\"lib$(MODEL_LIB)\" \
                                       -D MODELDRIVERLIBFILE=\"lib$(MODEL_DRIVER_LIB)\"
 
-Unit_Handling.o: Unit_Handling.h KIM_API.h KIM_API_status.h $(KIM_MAKE_FILES)
+old_Unit_Handling.o: old_Unit_Handling.h old_KIM_API.h old_KIM_API_status.h $(KIM_MAKE_FILES)
 
 # targets for the models: for any new model, adds the appropriate lines to the model_init_include.h and model_inclue.cpp files
 $(MODELS_TARGETS): .models-deleted
@@ -236,8 +267,8 @@ clean:
                       model_init_include_stubs.cpp model_kim_str_include.h \
                       model_kim_str_include.cpp \
                       .*.make-temp .models-deleted \
-                      KIM_API_Version.h KIM_API_F03_Multiples.incl \
-                      $(KIM_STR_NAME).c .KIM_API_DIRS.cpp \
+                      old_KIM_API_Version.h \
+                      $(KIM_STR_NAME).c .old_KIM_API_DIRS.cpp \
                       && \
                 rm -rf "$(srcdir)/temp_archive_dir"
 
@@ -246,7 +277,7 @@ install_modelsdir = $(dest_package_dir)/$(modelsdir)
 install_modeldriversdir = $(dest_package_dir)/$(modeldriversdir)
 install_includedir = $(dest_package_dir)/include
 install_nodest_includedir = $(package_dir)/include
-install_include = KIM_API.h KIM_API_C.h KIM_API_status.h KIM_API_Version.h KIM_API_DIRS.h Unit_Handling.h kim_api_f03.mod
+install_include = old_KIM_API.h old_KIM_API_C.h old_KIM_API_status.h old_KIM_API_Version.h old_KIM_API_DIRS.h old_Unit_Handling.h
 
 install-check:
 ifneq (dynamic-load,$(KIM_LINK))

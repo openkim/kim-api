@@ -36,9 +36,9 @@
 #######################################################################################################
 
 
-KIM_API_Version := 1.8.0
+KIM_API_Version := 2.0.0
 
-Unit_Handling    := flexible
+Unit_Handling    := fixed
 Unit_length      := A
 Unit_energy      := eV
 Unit_charge      := e
@@ -59,81 +59,43 @@ CONVENTIONS:
 
 ZeroBasedLists              flag
 
-Neigh_IterAccess            flag
-
-Neigh_LocaAccess            flag
-
-NEIGH_RVEC_H                flag
-
-NEIGH_PURE_H                flag
-
-NEIGH_RVEC_F                flag
-
-NEIGH_PURE_F                flag
-
-MI_OPBC_H                   flag
-
-MI_OPBC_F                   flag
-
-CLUSTER                     flag
-
 
 #######################################################################################################
 MODEL_INPUT:
-# Name                      Type         Unit                Shape              Requirements
+# Name                      Type         Unit                Requirements
 
-numberOfParticles           integer      none                []
+numberOfParticles           integer      none
 
-numberContributingParticles integer      none                []                 optional
+numberOfSpecies             integer      none
 
-numberOfSpecies             integer      none                []
+particleSpecies             integer      none
 
-particleSpecies             integer      none                [numberOfParticles]
+coordinates                 double       length
 
-coordinates                 double       length              [numberOfParticles,3]
+get_neigh                   method       none                optional
 
-boxSideLengths              double       length              [3]                optional
-
-get_neigh                   method       none                []                 optional
-
-neighObject                 pointer      none                []                 optional
-
-process_dEdr                method       none                []                 optional
-
-process_d2Edr2              method       none                []                 optional
+neighObject                 pointer      none                optional
 
 
 #######################################################################################################
 MODEL_OUTPUT:
-# Name                      Type         Unit                Shape              Requirements
+# Name                      Type         Unit                Requirements
 
-destroy                     method       none                []
+destroy                     method       none
 
-compute                     method       none                []
+compute                     method       none
 
-reinit                      method       none                []                 optional
+reinit                      method       none                optional
 
-cutoff                      double       length              []
+cutoff                      double       length
 
-energy                      double       energy              []                 optional
+energy                      double       energy              optional
 
-forces                      double       force               [numberOfParticles,3]  optional
+forces                      double       force               optional
 
-particleEnergy              double       energy              [numberOfParticles]    optional
+particleEnergy              double       energy              optional
 
 
 #######################################################################################################
 MODEL_PARAMETERS:
 # Name                      Type         Unit                Shape              Requirements
-
-PARAM_FREE_cutoff           double       length              []
-
-PARAM_FIXED_cutsq           double       length^2            []
-
-PARAM_FREE_epsilon          double       energy              []
-
-PARAM_FREE_C                double       length^-1           []
-
-PARAM_FREE_Rzero            double       length              []
-
-PARAM_FIXED_shift           double       energy              []

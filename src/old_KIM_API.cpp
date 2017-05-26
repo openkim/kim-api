@@ -47,6 +47,9 @@
 #include <cctype>
 #include <locale>
 
+#include "KIM_Model.hpp"
+#include "KIM_Model.h"
+
 // trim from start (in place)
 static inline void ltrim(std::string &s) {
     s.erase(s.begin(), std::find_if(s.begin(), s.end(),
@@ -65,14 +68,19 @@ static inline void trim(std::string &s) {
     rtrim(s);
 }
 
-#include "KIM_API.h"
-#include "KIM_API_status.h"
-#include "KIM_API_DIRS.h"
+#include "old_KIM_API.h"
+#include "old_KIM_API_status.h"
+#include "old_KIM_API_DIRS.h"
 
 #if KIM_LINK_VALUE == KIM_LINK_DYNAMIC_LOAD
 #include <unistd.h>
 #include <dlfcn.h>
 #endif
+
+extern const unsigned char STANDARD_KIM_STR_NAME[];
+
+namespace OLD_KIM
+{
 
 static void strip_char_string(char* nm)
 {
@@ -201,31 +209,6 @@ bool KIM_IOline:: isitoutput(const char*str){
             return false;
 }
 
-std::ostream &operator<<(std::ostream &stream, KIM_IOline a){
-        stream<<a.name<<" "<<a.type<<" "<<a.dim<<" ";
-        stream<<a.requirements;
-        stream << std::endl;
-        return stream;
-}
-std::istream &operator>>(std::istream &stream, KIM_IOline &a){
-        std::string inputline;
-        std::getline(stream, inputline);
-        if(stream.fail() && !stream.eof()){
-          std::cout << "* Error (operator>> KIM_IOline): unable to read .kim file line for some reason.\n";
-           a.goodformat=false;
-        }else{
-          //@@@@@
-          char * const tmp = new char[inputline.length()+1];
-          strcpy(tmp, inputline.c_str());
-           if(a.getFields(tmp)){
-              a.goodformat=true;
-           }else{
-              a.goodformat=false;
-           }
-           delete [] tmp;
-        }
-        return stream;
-}
 
 void IOline:: strip(){
             trim(name);
@@ -309,23 +292,6 @@ int IOline::readlines_str(const char* instrn, IOline** inlines, bool& success){
         return counter;
 }
 
-std::ostream &operator<<(std::ostream &stream, IOline a){
-        stream<<a.name<<" := "<<a.value<<" # "<<a.comment;
-        return stream;
-}
-std::istream &operator>>(std::istream &stream, IOline &a){
-        std::string inputline;
-        std::getline(stream, inputline);
-        char * const tmp = new char[inputline.length()+1];
-        strcpy(tmp, inputline.c_str());
-        if(a.getFields(tmp)){
-                a.goodformat=true;
-        }else{
-                a.goodformat=false;
-        }
-        delete [] tmp;
-        return stream;
-}
 
 KIMBaseElement:: KIMBaseElement(){
             nullify();
@@ -403,42 +369,6 @@ int KIMBaseElement::getelemsize(const char *tp, bool& success){
                return -1;
             }
 }
-
-std::ostream &operator<<(std::ostream &stream, KIMBaseElement a){
-    if (a.data.p==NULL && a.name == "" && a.type== "") {
-        stream <<" KIMBaseElement is nullified "<<std::endl;
-        return stream;
-    }
-    stream<<"name  : "<<a.name<< std::endl
-          <<" type          : "<<a.type << std::endl;
-    stream<<" size          : "<<a.size<<std::endl;
-    stream<<" flag calculate: "<<a.flag->calculate<<"   // 0 -- do not calculate, 1 -- calculate"<<std::endl;
-    stream<<" dimension     : "<<a.unit->dim<<std::endl;
-    // printin gata itself
-
-
-    stream<<" data: ";
-
-
-    if(a.data.p == NULL) {
-        stream <<"NULL"<<std::endl;
-        return stream;
-    }else if(a.type == "double"){
-
-        for(int i=0;i<a.size;i++) stream<< ((double*)(a.data.p))[i]<<" ";
-
-    }else if(a.type == "real"){
-        for(int i=0;i<a.size;i++) stream<< ((float*)(a.data.p))[i]<<" ";
-    }else if(a.type == "integer"){
-        for(int i=0;i<a.size;i++) stream<< ((int*)(a.data.p))[i]<<" ";
-    }else{
-        stream<<"address:"<<(intptr_t)a.data.p;
-    }
-    stream<<std::endl;
-
-    return stream;
-}
-
 
 char const* const KIM_API_model::required_arguments[] =
 {"cutoff",
@@ -1038,7 +968,7 @@ int KIM_API_model::set_data(const char * nm, intptr_t size, void *dt){
 
         return KIM_STATUS_OK;
 }
-int KIM_API_model::set_method(const char * nm, intptr_t size, func_ptr dt){
+int KIM_API_model::set_method(const char * nm, intptr_t size, int const language, func_ptr dt){
         // set data into preinit element correctly calculates all
         int error;
         int ind=get_index((char*) nm, &error);
@@ -1048,6 +978,8 @@ int KIM_API_model::set_method(const char * nm, intptr_t size, func_ptr dt){
        (*this)[ind].data.fp = dt;
 
         (*this)[ind].size = size;
+
+        (*this)[ind].lang = language;
 
         return KIM_STATUS_OK;
 }
@@ -1060,11 +992,12 @@ void * KIM_API_model::get_data(const char *nm,int *error){
         return (*this)[ind].data.p;
 }
 
-func_ptr KIM_API_model::get_method(const char *nm,int *error){
+func_ptr KIM_API_model::get_method(const char *nm,int * const language, int *error){
    int ind=get_index(nm, error);
         *error = KIM_STATUS_FAIL;
         if (ind<0) return NULL;
         *error =KIM_STATUS_OK;
+        *language = (*this)[ind].lang;
         return (*this)[ind].data.fp;
 }
 
@@ -1223,8 +1156,6 @@ bool KIM_API_model::is_it_match(KIM_API_model &test,KIM_API_model & mdl){
     //preinit model from standard template kim file
    KIM_API_model stdmdl;
 
-   extern const unsigned char STANDARD_KIM_STR_NAME[];
-
    stdmdl.name_temp = "standard";
    if(!stdmdl.prestring_init((char*) STANDARD_KIM_STR_NAME)){
       std::cout<<" preinit of :"<<"standard.kim"<<" failed"<<std::endl;
@@ -1368,7 +1299,7 @@ int KIM_API_model::get_model_kim_str_len(const char* const modelname,
     #include "model_kim_str_include.cpp"
 
     if (in_mdlstr == NULL){
-       std::cout<<"* Error (KIM_API_model::get_model_kim_str): Unknown KIM Model name " << modelname << "." << std::endl;
+       std::cout<<"* Error (KIM_API_model::get_model_kim_str_len): Unknown KIM Model name " << modelname << "." << std::endl;
        *kimStringLen = 0;
        //redirecting back to > std::cout
        std::cout.rdbuf(backup); filekimlog.close();
@@ -1730,11 +1661,19 @@ int KIM_API_model::model_reinit(){
    int reinit_ind = get_index((char*) "reinit", &error);
    if (error != KIM_STATUS_OK) return error;
 
-   KIM_API_model *pkim = this;
-   typedef int (*Model_Reinit)(void *);//prototype for model_reinit
-   Model_Reinit mdl_reinit = (Model_Reinit)(*this)[reinit_ind].data.fp;
-   if (mdl_reinit == NULL) return KIM_STATUS_FAIL;
-   return (*mdl_reinit)(&pkim);
+   typedef int (*Model_Reinit_cpp)(KIM::Model * const);//prototype for model_reinit for c++
+   typedef int (*Model_Reinit_c)(KIM_Model * const);//prototype for model_reinit for c
+   KIM::Model MI;
+   MI.pimpl = (KIM::Model::ModelImplementation *) this;
+   KIM_Model cMI;
+   cMI.p = (void *) &MI;
+   Model_Reinit_cpp mdl_reinit_cpp = (Model_Reinit_cpp)(*this)[reinit_ind].data.fp;
+   Model_Reinit_c mdl_reinit_c = (Model_Reinit_c)(*this)[reinit_ind].data.fp;
+   if (mdl_reinit_cpp == NULL) return KIM_STATUS_FAIL;
+   if ((*this)[reinit_ind].lang)
+     return (*mdl_reinit_cpp)(&MI);
+   else
+     return (*mdl_reinit_c)(&cMI);
 }
 
 #if KIM_LINK_VALUE != KIM_LINK_DYNAMIC_LOAD
@@ -1774,11 +1713,6 @@ std::cout<< "* Info: (KIM_API_model::model_init): call statically linked initial
 #else
 int KIM_API_model::model_init(){
     std::string modelname(this->model.name);
-    KIM_API_model * kim;
-    void ** pkim;
-    std::stringstream model_init_routine_name;
-    kim=this;
-    pkim =(void**) &kim;
 
     //redirecting std::cout > kimlog
     std::streambuf * psbuf, * backup; std::ofstream filekimlog;
@@ -1813,10 +1747,31 @@ int KIM_API_model::model_init(){
 
     std::cout<<"* Info: (KIM_API_model::model_init): call dynamically linked initialize routine for:"<<modelname<<std::endl;
     std::cout<<"               from the shared library in:"<< item[1] << "/" << item[0] <<std::endl;
-    model_init_routine_name << modelname << "_init_pointer";
 
-    typedef int (*Model_Init)(void **);//prototype for model_init
-    Model_Init mdl_init = *((Model_Init*)dlsym(model_lib_handle,model_init_routine_name.str().c_str()));
+    std::stringstream model_lang_name;
+    model_lang_name << modelname << "_language";
+    model_language =  *(int*) dlsym(model_lib_handle,model_lang_name.str().c_str());
+    typedef int (*Model_Init_cpp)(KIM::Model * const);//prototype for model_init for c++
+    typedef int (*Model_Init_c)(KIM_Model * const);//prototype for model_init for c
+    typedef void (*Model_Init_Fortran)(KIM_Model * const, int * const ierr);//prototype for model_init for Fortran
+    std::stringstream model_init_routine_name;
+    model_init_routine_name << modelname << "_init_pointer";
+    Model_Init_cpp mdl_init_cpp = 0;
+    Model_Init_c mdl_init_c = 0;
+    Model_Init_Fortran mdl_init_fortran = 0;
+
+    if (model_language == 1) // C++
+    {
+      mdl_init_cpp = *((Model_Init_cpp*)dlsym(model_lib_handle,model_init_routine_name.str().c_str()));
+    }
+    else if (model_language == 2) // C
+    {
+      mdl_init_c = *((Model_Init_c*)dlsym(model_lib_handle,model_init_routine_name.str().c_str()));
+    }
+    else // model_language == 3 // Fortran
+    {
+      mdl_init_fortran = *((Model_Init_Fortran*)dlsym(model_lib_handle,model_init_routine_name.str().c_str()));
+    }
     const char *dlsym_error = dlerror();
     if (dlsym_error) {
         std::cout << "* Error (KIM_API_model::model_init): Cannot load symbol: " << dlsym_error <<std::endl;
@@ -1830,21 +1785,50 @@ int KIM_API_model::model_init(){
 
     //redirecting back to > std::cout
     std::cout.rdbuf(backup); filekimlog.close();
-
-
-    return (*mdl_init)(pkim);
+    int err;
+    KIM::Model MI;
+    MI.pimpl = (KIM::Model::ModelImplementation *) this;
+    if (model_language == 1)
+    {
+      err = (*mdl_init_cpp)(&MI);
+    }
+    else if (model_language == 2)
+    {
+      KIM_Model cMI;
+      cMI.p = (void *) &MI;
+      err = (*mdl_init_c)(&cMI);
+    }
+    else // model_language == 3 // Fortran
+    {
+      KIM_Model cMI;
+      cMI.p = (void *) &MI;
+      (*mdl_init_fortran)(&cMI, &err);
+    }
+    return err;
 }
 #endif
 
 int KIM_API_model::model_destroy(){
-  typedef int (*Model_Destroy)(void *);//prototype for model_destroy
-  Model_Destroy mdl_destroy = (Model_Destroy) (*this)[(char*) "destroy"].data.fp;
+  typedef int (*Model_Destroy_cpp)(KIM::Model * const);//prototype for model_destroy for c++
+  typedef int (*Model_Destroy_c)(KIM_Model * const);//prototype for model_destroy for c
+  typedef void (*Model_Destroy_Fortran)(KIM_Model * const, int * const ierr);//prototype for model_destroy for Fortran
+  Model_Destroy_cpp mdl_destroy_cpp = (Model_Destroy_cpp) (*this)[(char*) "destroy"].data.fp;
+  Model_Destroy_c mdl_destroy_c = (Model_Destroy_c) (*this)[(char*) "destroy"].data.fp;
+  Model_Destroy_Fortran mdl_destroy_fortran = (Model_Destroy_Fortran) (*this)[(char*) "destroy"].data.fp;
   //call model_destroy
-  KIM_API_model *pkim = this;
+  KIM::Model MI;
+  MI.pimpl = (KIM::Model::ModelImplementation *) this;
+  KIM_Model cMI;
+  cMI.p = (void *) &MI;
 
   int error = KIM_STATUS_OK;
-  if (mdl_destroy != NULL) {
-     error = (*mdl_destroy)((void *)&pkim);
+  if (mdl_destroy_cpp != NULL) {
+    if ((*this)[(char*) "destroy"].lang == 1)
+      error = (*mdl_destroy_cpp)(&MI);
+    else if ((*this)[(char*) "destroy"].lang == 2)
+      error = (*mdl_destroy_c)(&cMI);
+    else // Fortran
+      (*mdl_destroy_fortran)(&cMI, &error);
   }
 
 #if KIM_LINK_VALUE == KIM_LINK_DYNAMIC_LOAD
@@ -1854,34 +1838,87 @@ int KIM_API_model::model_destroy(){
 }
 int KIM_API_model::model_compute(){
   // set model_compute pointer
-  typedef int (*Model_Compute)(void *);//prototype for model_compute
+  typedef int (*Model_Compute_cpp)(KIM::Model const * const);//prototype for model_compute for c++
+  typedef int (*Model_Compute_c)(KIM_Model const * const);//prototype for model_compute for c
+  typedef void (*Model_Compute_Fortran)(KIM_Model const * const, int * const ierr);//prototype for model_compute for fortran
   int error = KIM_STATUS_FAIL;
-  Model_Compute mdl_compute = (Model_Compute) (*this)[compute_index].data.fp;
-  if (mdl_compute == NULL) return error;
-
-  //call model_compute
-  KIM_API_model *pkim = this;
-  error = (*mdl_compute)((void *)&pkim);
-
+  Model_Compute_cpp mdl_compute_cpp = (Model_Compute_cpp) (*this)[compute_index].data.fp;
+  Model_Compute_c mdl_compute_c = (Model_Compute_c) (*this)[compute_index].data.fp;
+  Model_Compute_Fortran mdl_compute_fortran = (Model_Compute_Fortran) (*this)[compute_index].data.fp;
+  KIM::Model MI;
+  MI.pimpl = (KIM::Model::ModelImplementation *) this;
+  if ((*this)[compute_index].lang == 1)
+  {
+    if (mdl_compute_cpp == NULL) return error;
+    //call model_compute
+    error = (*mdl_compute_cpp)(&MI);
+  }
+  else if ((*this)[compute_index].lang == 2)
+  {
+    if (mdl_compute_c == NULL) return error;
+    //call model_compute
+    KIM_Model cMI;
+    cMI.p = (void *) &MI;
+    error = (*mdl_compute_c)(&cMI);
+  }
+  else // Fortran
+  {
+    if (mdl_compute_fortran == NULL) return error;
+    //call model_compute
+    KIM_Model cMI;
+    cMI.p = (void *) &MI;
+    (*mdl_compute_fortran)(&cMI, &error);
+  }
   return error;
 }
 
 int KIM_API_model::get_neigh(int request, int *numnei, int** nei1part){
-    typedef int (*Get_Neigh)(void *, int, int *, int **);
+  typedef int (*Get_Neigh_cpp)(KIM::Model const * const, int, int *, int **);
+  typedef int (*Get_Neigh_c)(KIM_Model const * const, int, int *, int **);
+  typedef void (*Get_Neigh_Fortran)(KIM_Model const * const, int, int *, int **, int *);
 
-    if (get_neigh_index < 0) return KIM_STATUS_API_OBJECT_INVALID;
-    Get_Neigh get_neigh = (Get_Neigh)(*this)[get_neigh_index].data.fp;
-    KIM_API_model *pkim = this;
+  if (get_neigh_index < 0) return KIM_STATUS_API_OBJECT_INVALID;
+    Get_Neigh_cpp get_neigh_cpp = (Get_Neigh_cpp)(*this)[get_neigh_index].data.fp;
+    Get_Neigh_c get_neigh_c = (Get_Neigh_c)(*this)[get_neigh_index].data.fp;
+    Get_Neigh_Fortran get_neigh_fortran = (Get_Neigh_Fortran)(*this)[get_neigh_index].data.fp;
+    KIM::Model MI;
+    MI.pimpl = (KIM::Model::ModelImplementation *) this;
+    KIM_Model cMI;
+    cMI.p = (void *) &MI;
 
     if (model_index_shift==0) {
-      int erkey = (*get_neigh)((void **)&pkim, request, numnei, nei1part);
+      int erkey;
+      if ((*this)[get_neigh_index].lang == 1)
+      {
+        erkey = (*get_neigh_cpp)(&MI, request, numnei, nei1part);
+      }
+      else if ((*this)[get_neigh_index].lang == 2)
+      {
+        erkey = (*get_neigh_c)(&cMI, request, numnei, nei1part);
+      }
+      else // Fortran
+      {
+        (*get_neigh_fortran)(&cMI, request, numnei, nei1part, &erkey);
+      }
       return erkey;
     }
     else if (model_index_shift == 1 || model_index_shift == -1){
 
         int req=request - model_index_shift;
 
-            int erkey = (*get_neigh)((void **)&pkim, req, numnei, nei1part);
+        int erkey;
+        if ((*this)[get_neigh_index].lang == 1)
+        {
+          erkey = (*get_neigh_cpp)(&MI, req, numnei, nei1part);
+        }
+        else if ((*this)[get_neigh_index].lang == 2)
+        {
+          erkey = (*get_neigh_c)(&cMI, req, numnei, nei1part);
+        }
+        else // Fortran
+        {
+          (*get_neigh_fortran)(&cMI, req, numnei, nei1part, &erkey);
+        }
             if (erkey == 1){
                 if (neiOfAnAtomSize < *numnei) {
                    delete [] neiOfAnAtom;
@@ -1924,24 +1961,6 @@ bool KIM_API_model::irrelevantVars2donotcompute(KIM_API_model & test, KIM_API_mo
     return true;
 }
 
-std::ostream &operator<<(std::ostream &stream, KIM_API_model &a){
-    stream<<"*************************************"<<std::endl;
-    stream<<"KIM API Object details:" << std::endl << std::endl;
-    stream << a.model;
-    stream<<"Active Units" << std::endl;
-    stream<< a.unit_h << std::endl;
-    stream<<"List of items in KIM API Ojbect" << std::endl;
-    stream<<"-------------------------------------"<<std::endl;
-    KIMBaseElement **pel =  (KIMBaseElement **)  a.model.data.p;
-    for(int i=0;i<a.model.size;i++)
-    {
-       stream << "index : " << i << std::endl
-              << *(pel[i]) << std::endl;
-    }
-    stream<<"*************************************"<<std::endl;
-
-    return stream;
-}
 bool KIM_API_model::init_AtomsTypes(){
     nAtomsTypes=0;
     for(int i=0;i < numlines;i++){
@@ -2321,16 +2340,17 @@ void KIM_API_model::setm_method(int *err, int numargs, ... ){
     *err=KIM_STATUS_FAIL;
     va_list listPointer;
     va_start(listPointer,numargs);
-    if(numargs % 4 != 0) {
-        std::cout<<"setm_method: numargs must be multiple of 4"<<std::endl;
+    if(numargs % 5 != 0) {
+        std::cout<<"setm_method: numargs must be multiple of 5"<<std::endl;
         *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_4;
         va_end(listPointer);
         return;
     }
 
-    for (int i=0; i<numargs/4; i++){
+    for (int i=0; i<numargs/5; i++){
         char *nm      = va_arg(listPointer, char *);
         intptr_t size = va_arg(listPointer, intptr_t);
+        int lang = va_arg(listPointer, int);
         func_ptr dt      = va_arg(listPointer, func_ptr);
 
         int key       =va_arg(listPointer, int);
@@ -2341,7 +2361,7 @@ void KIM_API_model::setm_method(int *err, int numargs, ... ){
         }else if(key ==0) continue;
 
         if(dt==NULL) std::cout<<"setm_method: WARNING: for "<<nm<<" data is NULL\n";
-        if(!this->set_method(nm,size,dt)){
+        if(!this->set_method(nm,size,lang,dt)){
             std::cout<<"setm_method: set data for "<<nm<<" failed\n";
             va_end(listPointer);
             return;
@@ -2390,8 +2410,8 @@ void KIM_API_model::getm_method(int *err,int numargs, ...){
     *err=KIM_STATUS_FAIL;
     va_list listPointer;
     va_start(listPointer,numargs);
-    if(numargs % 3 != 0) {
-        std::cout<<"getm_data: numargs must be multiple of 3"<<std::endl;
+    if(numargs % 4 != 0) {
+        std::cout<<"getm_data: numargs must be multiple of 4"<<std::endl;
         *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3;
         va_end(listPointer);
         return;
@@ -2399,6 +2419,7 @@ void KIM_API_model::getm_method(int *err,int numargs, ...){
 
     for (int i=0; i<numargs/3; i++){
         char *nm      = va_arg(listPointer, char *);
+        int * lang = va_arg(listPointer, int *);
         func_ptr *dt      = va_arg(listPointer, func_ptr *);
         int key       =va_arg(listPointer, int);
         if (key != 1 && key != 0 ){
@@ -2407,7 +2428,7 @@ void KIM_API_model::getm_method(int *err,int numargs, ...){
             return;
         }else if(key ==0) continue;
 
-        *dt = this->get_method(nm,err);
+        *dt = this->get_method(nm,lang,err);
         if(*err != KIM_STATUS_OK){
             std::cout<<"getm_data: get data for "<<nm<<" failed\n";
             va_end(listPointer);
@@ -2532,3 +2553,105 @@ int KIM_API_model::get_compute(const char *nm, int* error){
     *error = KIM_STATUS_OK;
     return (*this)[I].flag->calculate;
  }
+
+} // namespace OLD_KIM
+
+std::ostream &operator<<(std::ostream &stream, OLD_KIM::KIM_IOline a){
+        stream<<a.name<<" "<<a.type<<" "<<a.dim<<" ";
+        stream<<a.requirements;
+        stream << std::endl;
+        return stream;
+}
+std::istream &operator>>(std::istream &stream, OLD_KIM::KIM_IOline &a){
+        std::string inputline;
+        std::getline(stream, inputline);
+        if(stream.fail() && !stream.eof()){
+          std::cout << "* Error (operator>> KIM_IOline): unable to read .kim file line for some reason.\n";
+           a.goodformat=false;
+        }else{
+          //@@@@@
+          char * const tmp = new char[inputline.length()+1];
+          strcpy(tmp, inputline.c_str());
+           if(a.getFields(tmp)){
+              a.goodformat=true;
+           }else{
+              a.goodformat=false;
+           }
+           delete [] tmp;
+        }
+        return stream;
+}
+
+std::ostream &operator<<(std::ostream &stream, OLD_KIM::IOline a){
+        stream<<a.name<<" := "<<a.value<<" # "<<a.comment;
+        return stream;
+}
+std::istream &operator>>(std::istream &stream, OLD_KIM::IOline &a){
+        std::string inputline;
+        std::getline(stream, inputline);
+        char * const tmp = new char[inputline.length()+1];
+        strcpy(tmp, inputline.c_str());
+        if(a.getFields(tmp)){
+                a.goodformat=true;
+        }else{
+                a.goodformat=false;
+        }
+        delete [] tmp;
+        return stream;
+}
+
+std::ostream &operator<<(std::ostream &stream, OLD_KIM::KIMBaseElement a){
+    if (a.data.p==NULL && a.name == "" && a.type== "") {
+        stream <<" KIMBaseElement is nullified "<<std::endl;
+        return stream;
+    }
+    stream<<"name  : "<<a.name<< std::endl
+          <<" type          : "<<a.type << std::endl;
+    stream<<" size          : "<<a.size<<std::endl;
+    stream<<" flag calculate: "<<a.flag->calculate<<"   // 0 -- do not calculate, 1 -- calculate"<<std::endl;
+    stream<<" dimension     : "<<a.unit->dim<<std::endl;
+    // printin gata itself
+
+
+    stream<<" data: ";
+
+
+    if(a.data.p == NULL) {
+        stream <<"NULL"<<std::endl;
+        return stream;
+    }else if(a.type == "double"){
+
+        for(int i=0;i<a.size;i++) stream<< ((double*)(a.data.p))[i]<<" ";
+
+    }else if(a.type == "real"){
+        for(int i=0;i<a.size;i++) stream<< ((float*)(a.data.p))[i]<<" ";
+    }else if(a.type == "integer"){
+        for(int i=0;i<a.size;i++) stream<< ((int*)(a.data.p))[i]<<" ";
+    }else if(a.type == "method"){
+      stream<<"address:"<<(func *)a.data.fp << ", language:" << a.lang;
+    }else{
+        stream<<"address:"<<(intptr_t)a.data.p;
+    }
+    stream<<std::endl;
+
+    return stream;
+}
+
+std::ostream &operator<<(std::ostream &stream, OLD_KIM::KIM_API_model &a){
+    stream<<"*************************************"<<std::endl;
+    stream<<"KIM API Object details:" << std::endl << std::endl;
+    stream << a.model;
+    stream<<"Active Units" << std::endl;
+    stream<< a.unit_h << std::endl;
+    stream<<"List of items in KIM API Ojbect" << std::endl;
+    stream<<"-------------------------------------"<<std::endl;
+    OLD_KIM::KIMBaseElement **pel =  (OLD_KIM::KIMBaseElement **)  a.model.data.p;
+    for(int i=0;i<a.model.size;i++)
+    {
+       stream << "index : " << i << std::endl
+              << *(pel[i]) << std::endl;
+    }
+    stream<<"*************************************"<<std::endl;
+
+    return stream;
+}

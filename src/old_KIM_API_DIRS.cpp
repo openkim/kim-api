@@ -41,9 +41,12 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <dlfcn.h>
-#include "KIM_API_DIRS.h"
+#include "OLD_KIM_API_DIRS.h"
 
 #define LINELEN 256
+
+namespace OLD_KIM
+{
 
 void sanitizeString(std::string &str)
 {
@@ -328,6 +331,10 @@ void getAvailableItems(DirectoryPathType type,
         list.push_back(entry);
         dlclose(tmp_lib_handle);
       }
+      else
+      {
+        std::cerr << dlerror() << std::endl;
+      }
     }
   }
 }
@@ -352,4 +359,6 @@ bool findItem(DirectoryPathType type, std::string const& name,
   }
 
   return success;
+}
+
 }

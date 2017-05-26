@@ -33,10 +33,15 @@
 //
 
 
-#ifndef KIMHDR_UNIT_HANDLING_H
-#define KIMHDR_UNIT_HANDLING_H
+#ifndef KIMHDR_OLD_UNIT_HANDLING_H
+#define KIMHDR_OLD_UNIT_HANDLING_H
 
 #include <iostream>
+
+namespace OLD_KIM
+{
+
+class IOline;
 
 class Unit_Handling{
 public:
@@ -106,5 +111,9 @@ private:
     static bool is_it_Unit_time(std::string const & unit, int *index);
 
 };
-std::ostream &operator<<(std::ostream &stream, Unit_Handling &a);
-#endif  /* KIM_HDR_UNIT_HANDLING_H */
+
+} // namespace OLD_KIM
+
+std::ostream &operator<<(std::ostream &stream, OLD_KIM::Unit_Handling &a);
+
+#endif  /* KIM_HDR_OLD_UNIT_HANDLING_H */

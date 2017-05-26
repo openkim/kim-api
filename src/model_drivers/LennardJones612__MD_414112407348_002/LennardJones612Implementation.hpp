@@ -33,13 +33,19 @@
 
 #include <map>
 #include "LennardJones612.hpp"
-#include "KIM_API_status.h"
+#include "KIM_Logger.hpp"
+#include "old_KIM_API_status.h"
 
 #define DIMENSION 3
 #define ONE 1.0
 #define HALF 0.5
 
 #define MAX_PARAMETER_FILES 1
+
+#define PARAM_SHIFT_INDEX 0
+#define PARAM_CUTOFFS_INDEX 1
+#define PARAM_EPSILONS_INDEX 2
+#define PARAM_SIGMAS_INDEX 3
 
 
 //==============================================================================
@@ -49,189 +55,10 @@
 //==============================================================================
 
 // type declaration for get neighbor functions
-typedef int (GetNeighborFunction)(void**, int*, int*, int*, int*, int**,
-                                  double**);
+typedef int (GetNeighborFunction)(KIM::Model const * const, int const,
+                                  int * const, int const ** const);
 // type declaration for vector of constant dimension
 typedef double VectorOfSizeDIM[DIMENSION];
-
-// enumeration for the different types of NBC's
-enum NBCTypeEnum {Neigh_Rvec, Neigh_Pure, Mi_Opbc, Cluster};
-// enumeration for the different methods of computing rij
-enum RijEnum {Coordinates, RVec, MI_OPBC};
-
-//==============================================================================
-//
-// Helper class definitions
-//
-//==============================================================================
-
-// Iterator object for CLUSTER NBC
-class ClusterIterator
-{
- private:
-  int* list_;
-  int baseconvert_;
-  int const cachedNumberContributingParticles_;
-  int request_;
- public:
-  ClusterIterator(KIM_API_model* const pkim,
-                  GetNeighborFunction* const get_neigh,
-                  int const baseconvert,
-                  int const cachedNumberContributingParticles,
-                  int* const i,
-                  int* const numnei,
-                  int** const n1atom,
-                  double** const pRij)
-      : baseconvert_(baseconvert),
-        cachedNumberContributingParticles_(cachedNumberContributingParticles),
-        request_(0)
-  {
-    // allocate memory for neighbor list
-    list_ = new int[cachedNumberContributingParticles_];
-    for (int k = 0; k < cachedNumberContributingParticles_; ++k)
-      list_[k] = k - baseconvert_;
-
-    *i = request_;
-    // CLUSTER always uses half-list behavior
-    *numnei = cachedNumberContributingParticles_ - request_ - 1;
-    *n1atom = &(list_[request_ + 1]);
-    *pRij = NULL;
-  }
-  ~ClusterIterator()
-  {
-    delete [] list_;
-  }
-  bool done() const
-  {
-    return !(request_ < cachedNumberContributingParticles_);
-  }
-  int next(int* const i, int* const numnei, int** const n1atom,
-           double** const pRij)
-  {
-    ++request_;
-
-    *i = request_;
-    *numnei = cachedNumberContributingParticles_ - request_ - 1;
-    *n1atom = &(list_[request_ + 1]);
-    *pRij = NULL;
-    return KIM_STATUS_OK;
-  }
-};
-
-// Iterator object for Locator mode access to neighbor list
-class LocatorIterator
-{
- private:
-  KIM_API_model* const pkim_;
-  GetNeighborFunction* const get_neigh_;
-  int const baseconvert_;
-  int const cachedNumberContributingParticles_;
-  int request_;
-  int const mode_;
- public:
-  LocatorIterator(KIM_API_model* const pkim,
-                  GetNeighborFunction* const get_neigh,
-                  int const baseconvert,
-                  int const cachedNumberContributingParticles,
-                  int* const i,
-                  int* const numnei,
-                  int** const n1atom,
-                  double** const pRij)
-      : pkim_(pkim),
-        get_neigh_(get_neigh),
-        baseconvert_(baseconvert),
-        cachedNumberContributingParticles_(cachedNumberContributingParticles),
-        request_(-baseconvert_),  // set to first value (test-based indexing)
-    mode_(1)  // locator mode
-  {
-    next(i, numnei, n1atom, pRij);
-  }
-  bool done() const
-  {
-    return !(request_ + baseconvert_ <= cachedNumberContributingParticles_);
-  }
-  int next(int* const i, int* const numnei, int** const n1atom,
-           double** const pRij)
-  {
-    int ier;
-    // Allow for request_ to be incremented to one more than contributing
-    // without causing an error/warning from the openkim-api
-    int req = std::min(request_,
-                       cachedNumberContributingParticles_-baseconvert_-1);
-    ier = (*get_neigh_)(
-        reinterpret_cast<void**>(const_cast<KIM_API_model**>(&pkim_)),
-        (int*) &mode_,
-        &req,
-        (int*) i,
-        (int*) numnei,
-        (int**) n1atom,
-        (double**) pRij);
-    *i += baseconvert_;  // adjust index of current particle
-
-    ++request_;
-    return ier;
-  }
-};
-
-// Iterator object for Iterator mode access to neighbor list
-class IteratorIterator
-{
- private:
-  KIM_API_model* const pkim_;
-  GetNeighborFunction* const get_neigh_;
-  int const baseconvert_;
-  int request_;
-  int const mode_;
-  int ier_;
- public:
-  IteratorIterator(KIM_API_model* const pkim,
-                   GetNeighborFunction* const get_neigh,
-                   int const baseconvert,
-                   int const cachedNumberContributingParticles,
-                   int* const i,
-                   int* const numnei,
-                   int** const n1atom,
-                   double** const pRij)
-      : pkim_(pkim),
-        get_neigh_(get_neigh),
-        baseconvert_(baseconvert),
-        request_(0),  // reset iterator
-        mode_(0),     // iterator mode
-        ier_(KIM_STATUS_FAIL)
-  {
-    ier_ = (*get_neigh_)(
-        reinterpret_cast<void**>(const_cast<KIM_API_model**>(&pkim_)),
-        (int*) &mode_, &request_, i, numnei, n1atom, pRij);
-    if (ier_ != KIM_STATUS_NEIGH_ITER_INIT_OK)
-    {
-      pkim->report_error(__LINE__, __FILE__, "iterator init failed", ier_);
-      ier_ = KIM_STATUS_FAIL;
-    }
-    request_ = 1;  // increment iterator
-    // return initial set of neighbors
-    next(i, numnei, n1atom, pRij);
-  }
-  bool done() const
-  {
-    return ((ier_ == KIM_STATUS_FAIL) ||
-            (ier_ == KIM_STATUS_NEIGH_ITER_PAST_END));
-  }
-  int next(int* const i, int* const numnei, int** const n1atom,
-           double** const pRij)
-  {
-    ier_ = (*get_neigh_)(
-        reinterpret_cast<void**>(const_cast<KIM_API_model**>(&pkim_)),
-        (int*) &mode_,
-        &request_,
-        (int*) i,
-        (int*) numnei,
-        (int**) n1atom,
-        (double**) pRij);
-    *i += baseconvert_;  // adjust index of current particle
-
-    return ier_;
-  }
-};
 
 // helper routine declarations
 void AllocateAndInitialize2DArray(double**& arrayPtr, int const extentZero,
@@ -249,43 +76,20 @@ class LennardJones612Implementation
 {
  public:
   LennardJones612Implementation(
-      KIM_API_model* const pkim,
+      KIM::Model * const model,
       char const* const parameterFileNames,
       int const parameterFileNameLength,
       int const numberParameterFiles,
       int* const ier);
   ~LennardJones612Implementation();  // no explicit Destroy() needed here
 
-  int Reinit(KIM_API_model* pkim);
-  int Compute(KIM_API_model* pkim);
+  int Reinit(KIM::Model * const model);
+  int Compute(KIM::Model const * const model);
 
  private:
   // Constant values that never change
   //   Set in constructor (via SetConstantValues)
   //
-  //
-  // KIM API: Conventions
-  int baseconvert_;
-  NBCTypeEnum NBCType_;
-  bool isHalf_;
-  bool isLocatorMode_;
-  //
-  // KIM API: Model Input indices
-  int numberOfSpeciesIndex_;
-  int numberOfParticlesIndex_;
-  int numberContributingParticlesIndex_;
-  int particleSpeciesIndex_;
-  int coordinatesIndex_;
-  int boxSideLengthsIndex_;
-  int get_neighIndex_;
-  int process_dEdrIndex_;
-  int process_d2Edr2Index_;
-  //
-  // KIM API: Model Output indices
-  int cutoffIndex_;
-  int energyIndex_;
-  int forcesIndex_;
-  int particleEnergyIndex_;
   //
   // LennardJones612Implementation: constants
   int numberModelSpecies_;
@@ -338,18 +142,15 @@ class LennardJones612Implementation
   //
   // LennardJones612Implementation: values that change
   int cachedNumberOfParticles_;
-  int cachedNumberContributingParticles_;
 
 
   // Helper methods
   //
   //
   // Related to constructor
-  int SetConstantValues(KIM_API_model* const pkim);
-  int DetermineNBCTypeAndHalf(KIM_API_model* const pkim);
+  int SetConstantValues(KIM::Model const * const model);
   void AllocateFreeParameterMemory();
   static int OpenParameterFiles(
-      KIM_API_model* const pkim,
       char const* const parameterFileNames,
       int const parameterFileNameLength,
       int const numberParameterFiles,
@@ -358,51 +159,44 @@ class LennardJones612Implementation
       FILE* const parameterFilePointers[MAX_PARAMETER_FILES],
       int const numberParameterFiles);
   int ProcessParameterFiles(
-      KIM_API_model* const pkim,
+      KIM::Model const * const model,
       FILE* const parameterFilePointers[MAX_PARAMETER_FILES],
       int const numberParameterFiles);
   void getNextDataLine(FILE* const filePtr, char* const nextLine,
                        int const maxSize, int* endOfFileFlag);
-  int ConvertUnits(KIM_API_model* const pkim);
-  int RegisterKIMParameters(KIM_API_model* const pkim) const;
-  int RegisterKIMFunctions(KIM_API_model* const pkim) const;
+  int ConvertUnits(KIM::Model const * const model);
+  int RegisterKIMParameters(KIM::Model * const model) const;
+  int RegisterKIMFunctions(KIM::Model * const model) const;
   //
   // Related to Reinit()
-  int SetReinitMutableValues(KIM_API_model* const pkim);
+  int SetReinitMutableValues(KIM::Model const * const model);
   //
   // Related to Compute()
-  int SetComputeMutableValues(KIM_API_model* const pkim,
+  int SetComputeMutableValues(KIM::Model const * const model,
                               bool& isComputeProcess_dEdr,
                               bool& isComputeProcess_d2Edr2,
                               bool& isComputeEnergy,
                               bool& isComputeForces,
                               bool& isComputeParticleEnergy,
                               int const*& particleSpecies,
-                              GetNeighborFunction *& get_neigh,
-                              double const*& boxSideLengths,
                               VectorOfSizeDIM const*& coordinates,
                               double*& energy,
                               double*& particleEnergy,
                               VectorOfSizeDIM*& forces);
-  int CheckParticleSpecies(KIM_API_model* const pkim,
-                           int const* const particleSpecies) const;
+  int CheckParticleSpecies(int const* const particleSpecies) const;
   int GetComputeIndex(const bool& isComputeProcess_dEdr,
                       const bool& isComputeProcess_d2Edr2,
                       const bool& isComputeEnergy,
                       const bool& isComputeForces,
                       const bool& isComputeParticleEnergy,
                       const bool& isShift) const;
-  static void ApplyMIOPBC(double const* const boxSideLengths, double* const dx);
 
   // compute functions
-  template< class Iter, bool isHalf, RijEnum rijMethod,
-            bool isComputeProcess_dEdr, bool isComputeProcess_d2Edr2,
+  template< bool isComputeProcess_dEdr, bool isComputeProcess_d2Edr2,
             bool isComputeEnergy, bool isComputeForces,
             bool isComputeParticleEnergy, bool isShift >
-  int Compute(KIM_API_model* const pkim,
+  int Compute(KIM::Model const * const model,
               const int* const particleSpecies,
-              GetNeighborFunction* const get_neigh,
-              const double* const boxSideLengths,
               const VectorOfSizeDIM* const coordinates,
               double* const energy,
               VectorOfSizeDIM* const forces,
@@ -429,15 +223,12 @@ class LennardJones612Implementation
                 constFourEpsSig6_2D[iSpecies][jSpecies]) exshift;
 
 //******************************************************************************
-template< class Iter, bool isHalf, RijEnum rijMethod,
-          bool isComputeProcess_dEdr, bool isComputeProcess_d2Edr2,
+template< bool isComputeProcess_dEdr, bool isComputeProcess_d2Edr2,
           bool isComputeEnergy, bool isComputeForces,
           bool isComputeParticleEnergy, bool isShift >
 int LennardJones612Implementation::Compute(
-    KIM_API_model* const pkim,
+    KIM::Model const * const model,
     const int* const particleSpecies,
-    GetNeighborFunction* const get_neigh,
-    const double* const boxSideLengths,
     const VectorOfSizeDIM* const coordinates,
     double* const energy,
     VectorOfSizeDIM* const forces,
@@ -480,9 +271,7 @@ int LennardJones612Implementation::Compute(
   // Setup loop over contributing particles
   int ii = 0;
   int numnei = 0;
-  int* n1atom = 0;
-  double* pRij = 0;
-  int const baseConvert = baseconvert_;
+  int const * n1atom = 0;
   double const* const* const  constCutoffsSq2D = cutoffsSq2D_;
   double const* const* const  constFourEpsSig6_2D = fourEpsilonSigma6_2D_;
   double const* const* const  constFourEpsSig12_2D = fourEpsilonSigma12_2D_;
@@ -495,51 +284,25 @@ int LennardJones612Implementation::Compute(
   double const* const* const  constSixTwentyFourEpsSig12_2D
       = sixTwentyFourEpsilonSigma12_2D_;
   double const* const* const  constShifts2D = shifts2D_;
-  int const cachedNumContribParticles = cachedNumberContributingParticles_;
-  for (Iter iterator(pkim, get_neigh, baseConvert,
-                     cachedNumberContributingParticles_, &ii, &numnei, &n1atom,
-                     &pRij);
-       iterator.done() == false;
-       iterator.next(&ii, &numnei, &n1atom, &pRij))
+  for (ii = 0; ii < cachedNumberOfParticles_; ++ii)
   {
+    model->get_neigh(ii, &numnei, &n1atom);
     int const numNei = numnei;
     int const * const n1Atom = n1atom;
-    double const * const pRijConst = pRij;
     int const i = ii;
     int const iSpecies = particleSpecies[i];
 
     // Setup loop over neighbors of current particle
     for (int jj = 0; jj < numNei; ++jj)
-    { // adjust index of particle neighbor
-      int const j = n1Atom[jj] + baseConvert;
+    {
+      int const j = n1Atom[jj];
       int const jSpecies = particleSpecies[j];
       double* r_ij;
       double r_ijValue[DIMENSION];
-      // Compute r_ij appropriately
-      switch (rijMethod)
-      {
-        case Coordinates:
-        {
-          r_ij = r_ijValue;
-          for (int k = 0; k < DIMENSION; ++k)
-            r_ij[k] = coordinates[j][k] - coordinates[i][k];
-          break;
-        }
-        case MI_OPBC:
-        {
-          r_ij = r_ijValue;
-          for (int k = 0; k < DIMENSION; ++k)
-            r_ij[k] = coordinates[j][k] - coordinates[i][k];
-          // apply minimum image convention
-          ApplyMIOPBC(boxSideLengths, r_ij);
-          break;
-        }
-        case RVec:
-        {
-          r_ij = const_cast<double*>(&pRijConst[jj * DIMENSION]);
-          break;
-        }
-      }
+      // Compute r_ij
+      r_ij = r_ijValue;
+      for (int k = 0; k < DIMENSION; ++k)
+        r_ij[k] = coordinates[j][k] - coordinates[i][k];
       double const* const r_ij_const = const_cast<double*>(r_ij);
 
       // compute distance squared
@@ -563,14 +326,7 @@ int LennardJones612Implementation::Compute(
           d2phi =
               r6iv * (constSixTwentyFourEpsSig12_2D[iSpecies][jSpecies]*r6iv -
                       constOneSixtyEightEpsSig6_2D[iSpecies][jSpecies]) * r2iv;
-          if ((isHalf == true) && (j < cachedNumContribParticles))
-          {
-            d2Eidr2 = d2phi;
-          }
-          else
-          {
-            d2Eidr2 = 0.5*d2phi;
-          }
+          d2Eidr2 = 0.5*d2phi;
         }
 
         if ((isComputeProcess_dEdr == true) || (isComputeForces == true))
@@ -579,14 +335,7 @@ int LennardJones612Implementation::Compute(
               r6iv * (constTwentyFourEpsSig6_2D[iSpecies][jSpecies] -
                       constFortyEightEpsSig12_2D[iSpecies][jSpecies]*r6iv)
               * r2iv;
-          if ((isHalf == true) && (j < cachedNumContribParticles))
-          {
-            dEidrByR = dphiByR;
-          }
-          else
-          {
-            dEidrByR = 0.5*dphiByR;
-          }
+          dEidrByR = 0.5*dphiByR;
         }
 
         if ((isComputeEnergy == true) || (isComputeParticleEnergy == true))
@@ -604,14 +353,7 @@ int LennardJones612Implementation::Compute(
         // Contribution to energy
         if (isComputeEnergy == true)
         {
-          if ((isHalf == true) && (j < cachedNumContribParticles))
-          {
-            *energy += phi;
-          }
-          else
-          {
-            *energy += 0.5*phi;
-          }
+          *energy += 0.5*phi;
         }
 
         // Contribution to particleEnergy
@@ -619,10 +361,6 @@ int LennardJones612Implementation::Compute(
         {
           double const halfPhi = 0.5*phi;
           particleEnergy[i] += halfPhi;
-          if ((isHalf == true) && (j < cachedNumContribParticles))
-          {
-            particleEnergy[j] += halfPhi;
-          }
         }
 
         // Contribution to forces
@@ -641,15 +379,10 @@ int LennardJones612Implementation::Compute(
         {
           double const rij = sqrt(rij2);
           double const dEidr = dEidrByR*rij;
-          ier = pkim->process_dEdr(const_cast<KIM_API_model**>(&pkim),
-                                   const_cast<double*>(&dEidr),
-                                   const_cast<double*>(&rij),
-                                   const_cast<double**>(&r_ij_const),
-                                   const_cast<int*>(&i),
-                                   const_cast<int*>(&j));
+          ier = model->process_dEdr(dEidr, rij, r_ij_const, i, j);
           if (ier < KIM_STATUS_OK)
           {
-            pkim->report_error(__LINE__, __FILE__, "process_dEdr", ier);
+            KIM::report_error(__LINE__, __FILE__, "process_dEdr", ier);
             return ier;
           }
         }
@@ -669,16 +402,10 @@ int LennardJones612Implementation::Compute(
           int const* const pis = &i_pairs[0];
           int const* const pjs = &j_pairs[0];
 
-          ier = pkim->process_d2Edr2(const_cast<KIM_API_model**>(&pkim),
-                                     &d2Eidr2,
-                                     const_cast<double**>(&pRs),
-                                     const_cast<double**>(&pRijConsts),
-                                     const_cast<int**>(&pis),
-                                     const_cast<int**>(&pjs)
-                                     );
+          ier = model->process_d2Edr2(d2Eidr2, pRs, pRijConsts, pis, pjs);
           if (ier < KIM_STATUS_OK)
           {
-            pkim->report_error(__LINE__, __FILE__, "process_d2Edr2", ier);
+            KIM::report_error(__LINE__, __FILE__, "process_d2Edr2", ier);
             return ier;
           }
         }

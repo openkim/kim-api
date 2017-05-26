@@ -37,8 +37,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include "KIM_API_C.h"
-#include "KIM_API_status.h"
+#include "KIM_SpeciesName.h"
+#include "KIM_Model.h"
+#include "KIM_Compute.h"
+#include "KIM_UTILITY_Compute.h"
+#include "KIM_Logger.h"
 
 #define NAMESTRLEN    128
 
@@ -50,7 +53,7 @@
                        + 3*(NCELLSPERSIDE) + 1)
 
 #define REPORT_ERROR(LN, FL, MSG, STAT) {       \
-    KIM_API_report_error(LN, FL, MSG, STAT);    \
+    KIM_report_error(LN, FL, MSG, STAT);        \
     exit(STAT);                                 \
   }
 
@@ -63,11 +66,13 @@ typedef struct
 } NeighList;
 
 /* Define prototypes */
+char const * const descriptor();
 void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
                               double cutoff, NeighList* nl);
 
-int get_cluster_neigh(void* kimmdl, int *mode, int *request, int* part,
-                      int* numnei, int** nei1part, double** Rij);
+int get_cluster_neigh(KIM_Model const * const model,
+                      int const particleNumber, int * const numberOfNeighbors,
+                      int const ** const neighborsOfParticle);
 
 void create_FCC_cluster(double FCCspacing, int nCellsPerSide, double *coords);
 
@@ -86,20 +91,17 @@ int main()
 
 
   /* KIM variable declarations */
-  void* pkim_cluster_model;
+  KIM_Model * model;
   /* model inputs */
   int numberOfParticles_cluster = NCLUSTERPARTS;
   int numberOfSpecies = 1;
-  int particleSpeciesShapeCluster[1];
   int particleSpecies_cluster_model[NCLUSTERPARTS];
-  int coordinatesShapeCluster[2];
   double coords_cluster[NCLUSTERPARTS][DIM];
   NeighList nl_cluster_model;
   /* model outputs */
   double cutoff_cluster_model;
   double energy_cluster_model;
 
-  char testkimfile[] = "descriptor.kim";
   char modelname[NAMESTRLEN];
 
   /* Get KIM Model names */
@@ -112,38 +114,31 @@ int main()
   }
 
   /* initialize the model */
-  status = KIM_API_file_init(&pkim_cluster_model, testkimfile, modelname);
+  status = KIM_Model_create(descriptor(), modelname, &model);
   if (KIM_STATUS_OK > status)
-    REPORT_ERROR(__LINE__, __FILE__,"KIM_API_file_init()",status);
+    REPORT_ERROR(__LINE__, __FILE__,"KIM_create_model_interface()",status);
 
-  /* Assign shapes & register memory */
-  coordinatesShapeCluster[0] = numberOfParticles_cluster;
-  coordinatesShapeCluster[1] = 3;
-
-  KIM_API_set_shape(pkim_cluster_model, "particleSpecies", particleSpeciesShapeCluster, 1, &status);
-  if (KIM_STATUS_OK > status)
-    REPORT_ERROR(__LINE__, __FILE__,"KIM_API_set_shape",status);
-  KIM_API_set_shape(pkim_cluster_model, "coordinates", coordinatesShapeCluster, 2, &status);
-  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"KIM_API_set_shape",status);
-  KIM_API_setm_data(pkim_cluster_model, &status, 7*4,
-                    "numberOfParticles", 1,                             &numberOfParticles_cluster,       1,
-                    "numberOfSpecies",   1,                             &numberOfSpecies,                 1,
-                    "particleSpecies",   numberOfParticles_cluster,     &particleSpecies_cluster_model,   1,
-                    "coordinates",       DIM*numberOfParticles_cluster, coords_cluster,                   1,
-                    "neighObject",       1,                             &nl_cluster_model,                1,
-                    "cutoff",            1,                             &cutoff_cluster_model,            1,
-                    "energy",            1,                             &energy_cluster_model,            1);
-  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"KIM_API_setm_data",status);
-  status = KIM_API_set_method(pkim_cluster_model, "get_neigh", 1, (func_ptr) &get_cluster_neigh);
-  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"KIM_API_set_method",status);
+  status = KIM_UTILITY_COMPUTE_setm_data(
+      model,
+      KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles, 1,                             &numberOfParticles_cluster,       1,
+      KIM_COMPUTE_ARGUMENT_NAME_numberOfSpecies,   1,                             &numberOfSpecies,                 1,
+      KIM_COMPUTE_ARGUMENT_NAME_particleSpecies,   numberOfParticles_cluster,     particleSpecies_cluster_model,   1,
+      KIM_COMPUTE_ARGUMENT_NAME_coordinates,       DIM*numberOfParticles_cluster, coords_cluster,                   1,
+      KIM_COMPUTE_ARGUMENT_NAME_neighObject,       1,                             &nl_cluster_model,                1,
+      KIM_COMPUTE_ARGUMENT_NAME_cutoff,            1,                             &cutoff_cluster_model,            1,
+      KIM_COMPUTE_ARGUMENT_NAME_energy,            1,                             &energy_cluster_model,            1,
+      KIM_COMPUTE_ARGUMENT_NAME_End);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"KIM_setm_data",status);
+  status = KIM_Model_set_method(model, KIM_COMPUTE_ARGUMENT_NAME_get_neigh, 1, KIM_COMPUTE_LANGUAGE_NAME_C, (func *) &get_cluster_neigh);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"KIM_set_method",status);
 
   /* call model init routine */
-  status = KIM_API_model_init(pkim_cluster_model);
-  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"KIM_API_model_init", status);
+  status = KIM_Model_init(model);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"KIM_model_init", status);
 
   /* setup particleSpecies */
-  particleSpecies_cluster_model[0] = KIM_API_get_species_code(pkim_cluster_model, "Ar", &status);
-  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"get_species_code", status);
+  status = KIM_Model_get_species_code(model, KIM_SPECIES_NAME_Ar, &(particleSpecies_cluster_model[0]));
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"KIM_get_species_code", status);
   for (i = 1; i < NCLUSTERPARTS; ++i)
     particleSpecies_cluster_model[i] = particleSpecies_cluster_model[0];
 
@@ -169,8 +164,8 @@ int main()
                              (cutoff_cluster_model + cutpad), &nl_cluster_model);
 
     /* call compute functions */
-    status = KIM_API_model_compute(pkim_cluster_model);
-    if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"compute", status);
+    status = KIM_Model_compute(model);
+    if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"KIM_model_compute", status);
 
     /* print the results */
     printf("Energy for %i parts = %20.10e, %20.10e\n",
@@ -181,16 +176,15 @@ int main()
 
 
   /* call model destroy */
-  status = KIM_API_model_destroy(pkim_cluster_model);
-  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"destroy", status);
+  status = KIM_Model_destroy_model(model);
+  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"KIM_model_destroy", status);
 
   /* free memory of neighbor lists */
   free(nl_cluster_model.NNeighbors);
   free(nl_cluster_model.neighborList);
 
   /* free pkim objects */
-  KIM_API_free(&pkim_cluster_model, &status);
-  if (KIM_STATUS_OK > status) REPORT_ERROR(__LINE__, __FILE__,"free", status);
+  KIM_Model_destroy(&model);
 
   /* everything is great */
   return 0;
@@ -358,89 +352,79 @@ void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
   return;
 }
 
-int get_cluster_neigh(void* kimmdl, int *mode, int *request, int* part,
-                      int* numnei, int** nei1part, double** Rij)
+int get_cluster_neigh(KIM_Model const * const model,
+                      int const particleNumber, int * const numberOfNeighbors,
+                      int const ** const neighborsOfParticle)
 {
   /* local variables */
-  intptr_t* pkim = *((intptr_t**) kimmdl);
-  int partToReturn;
   int status;
   int* numberOfParticles;
   NeighList* nl;
 
-  /* initialize numnei */
-  *numnei = 0;
+  /* initialize numNeigh */
+  *numberOfNeighbors = 0;
 
   /* unpack neighbor list object */
-  numberOfParticles = (int*) KIM_API_get_data(pkim, "numberOfParticles", &status);
+  status = KIM_Model_get_data(model,
+                              KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles,
+                              (void **) &numberOfParticles);
   if (KIM_STATUS_OK > status)
   {
-    KIM_API_report_error(__LINE__, __FILE__,"get_data", status);
+    KIM_report_error(__LINE__, __FILE__,"KIM_get_data", status);
     return status;
   }
 
-  nl = (NeighList*) KIM_API_get_data(pkim, "neighObject", &status);
+  status = KIM_Model_get_data(model, KIM_COMPUTE_ARGUMENT_NAME_neighObject,
+                              (void **) &nl);
   if (KIM_STATUS_OK > status)
   {
-    KIM_API_report_error(__LINE__, __FILE__,"get_data", status);
+    KIM_report_error(__LINE__, __FILE__,"KIM_get_data", status);
     return status;
   }
 
-  /* check mode and request */
-  if (0 == *mode) /* iterator mode */
+  if ((particleNumber >= *numberOfParticles) || (particleNumber < 0)) /* invalid id */
   {
-    if (0 == *request) /* reset iterator */
-    {
-      (*nl).iteratorId = -1;
-      return KIM_STATUS_NEIGH_ITER_INIT_OK;
-    }
-    else if (1 == *request) /* increment iterator */
-    {
-      (*nl).iteratorId++;
-      if ((*nl).iteratorId >= *numberOfParticles)
-      {
-        return KIM_STATUS_NEIGH_ITER_PAST_END;
-      }
-      else
-      {
-        partToReturn = (*nl).iteratorId;
-      }
-    }
-    else /* invalid request value */
-    {
-      KIM_API_report_error(__LINE__, __FILE__,"Invalid request in get_cluster_neigh", KIM_STATUS_NEIGH_INVALID_REQUEST);
-      return KIM_STATUS_NEIGH_INVALID_REQUEST;
-    }
+    KIM_report_error(__LINE__, __FILE__,"Invalid part ID in get_cluster_neigh", KIM_STATUS_PARTICLE_INVALID_ID);
+    return KIM_STATUS_PARTICLE_INVALID_ID;
   }
-  else if (1 == *mode) /* locator mode */
-  {
-    if ((*request >= *numberOfParticles) || (*request < 0)) /* invalid id */
-    {
-      KIM_API_report_error(__LINE__, __FILE__,"Invalid part ID in get_cluster_neigh", KIM_STATUS_PARTICLE_INVALID_ID);
-      return KIM_STATUS_PARTICLE_INVALID_ID;
-    }
-    else
-    {
-      partToReturn = *request;
-    }
-  }
-  else /* invalid mode */
-  {
-    KIM_API_report_error(__LINE__, __FILE__,"Invalid mode in get_cluster_neigh", KIM_STATUS_NEIGH_INVALID_MODE);
-    return KIM_STATUS_NEIGH_INVALID_MODE;
-  }
-
-  /* set the returned part */
-  *part = partToReturn;
 
   /* set the returned number of neighbors for the returned part */
-  *numnei = (*nl).NNeighbors[*part];
+  *numberOfNeighbors = (*nl).NNeighbors[particleNumber];
 
   /* set the location for the returned neighbor list */
-  *nei1part = &((*nl).neighborList[(*part)*NCLUSTERPARTS]);
-
-  /* set the pointer to Rij to appropriate value */
-  *Rij = 0;
+  *neighborsOfParticle = &((*nl).neighborList[(particleNumber)*NCLUSTERPARTS]);
 
   return KIM_STATUS_OK;
+}
+
+char const * const descriptor()
+{
+  return
+      "KIM_API_Version := 1.6.0\n"
+      "Unit_length := A\n"
+      "Unit_energy := eV\n"
+      "Unit_charge := e\n"
+      "Unit_temperature := K\n"
+      "Unit_time := ps\n"
+      "\n"
+      "PARTICLE_SPECIES:\n"
+      "Ar spec 1\n"
+      "\n"
+      "CONVENTIONS:\n"
+      "ZeroBasedLists flag\n"
+      "\n"
+      "MODEL_INPUT:\n"
+      "numberOfParticles integer none\n"
+      "numberOfSpecies integer none\n"
+      "particleSpecies integer none\n"
+      "coordinates double length\n"
+      "get_neigh method none\n"
+      "neighObject pointer none\n"
+      "\n"
+      "MODEL_OUTPUT:\n"
+      "destroy method none\n"
+      "compute method none\n"
+      "reinit method none\n"
+      "cutoff double length\n"
+      "energy double energy\n";
 }

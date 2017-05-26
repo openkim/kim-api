@@ -42,39 +42,30 @@ printf "                          isShift))\n"                 >> $flName
 printf "   {\n"                                                >> $flName
 
 i=0
-for iter in ClusterIterator LocatorIterator IteratorIterator; do
-  for half in false true; do
-    for rij in Coordinates RVec MI_OPBC; do
-      for processdE in false true; do
-        for processd2E in false true; do
-          for energy in false true; do
-            for force in false true; do
-              for particleEnergy in false true; do
-                for sshift in false true; do
-                  printf "      case $i:\n"                                              >> $flName
-                  printf "         ier = Compute< $iter, $half, $rij,\n"                 >> $flName
-                  printf "                        $processdE, $processd2E,\n"            >> $flName
-                  printf "                        $energy, $force,\n"                    >> $flName
-                  printf "                        $particleEnergy, $sshift >(\n"         >> $flName
-                  printf "                  pkim,\n"                                     >> $flName
-                  printf "                  particleSpecies,\n"                          >> $flName
-                  printf "                  get_neigh,\n"                                >> $flName
-                  printf "                  boxSideLengths,\n"                           >> $flName
-                  printf "                  coordinates,\n"                              >> $flName
-                  printf "                  energy,\n"                                   >> $flName
-                  printf "                  forces,\n"                                   >> $flName
-                  printf "                  particleEnergy);\n"                          >> $flName
-                  printf "         break;\n"                                             >> $flName
-                  i=`expr $i + 1`
-                done # sshift
-              done # particleEnergy
-            done # force
-          done # energy
-        done # processd2E
-      done # processdE
-    done # rij
-  done # half
-done # iter
+for processdE in false true; do
+  for processd2E in false true; do
+    for energy in false true; do
+      for force in false true; do
+        for particleEnergy in false true; do
+          for sshift in false true; do
+            printf "      case $i:\n"                                              >> $flName
+            printf "         ier = Compute< $processdE, $processd2E,\n"            >> $flName
+            printf "                        $energy, $force,\n"                    >> $flName
+            printf "                        $particleEnergy, $sshift >(\n"         >> $flName
+            printf "                  model,\n"                                    >> $flName
+            printf "                  particleSpecies,\n"                          >> $flName
+            printf "                  coordinates,\n"                              >> $flName
+            printf "                  energy,\n"                                   >> $flName
+            printf "                  forces,\n"                                   >> $flName
+            printf "                  particleEnergy);\n"                          >> $flName
+            printf "         break;\n"                                             >> $flName
+            i=`expr $i + 1`
+          done # sshift
+        done # particleEnergy
+      done # force
+    done # energy
+  done # processd2E
+done # processdE
 
 printf "      default:\n"                                                         >> $flName
 printf "         std::cout << \"Unknown compute function index\" << std::endl;\n" >> $flName

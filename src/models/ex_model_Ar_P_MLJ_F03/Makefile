@@ -29,7 +29,7 @@
 #
 
 #
-# Release: This file is part of the kim-api.git repository.
+# Release: This file is part of the kim-api-v1.8.0 package.
 #
 
 
@@ -43,6 +43,7 @@ include ../Makefile.KIM_Config
 MODEL_NAME := ex_model_Ar_P_MLJ_F03
 MODEL_KIM_FILE := model_Ar_P_MLJ_F03.kim
 MODEL_INIT_FUNCTION_NAME := model_init
+MODEL_INIT_FUNCTION_LANG := Fortran
 
 LOCALOBJ = ex_model_Ar_P_MLJ_F03.o
 

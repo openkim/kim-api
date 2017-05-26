@@ -37,7 +37,11 @@
 
 #include "LennardJones612.hpp"
 #include "LennardJones612Implementation.hpp"
-#include "KIM_API_status.h"
+#include "KIM_SpeciesName.hpp"
+#include "KIM_UnitSystem.hpp"
+#include "KIM_Compute.hpp"
+#include "KIM_UTILITY_Compute.hpp"
+#include "old_KIM_API_status.h"
 
 #define MAXLINE 1024
 #define IGNORE_RESULT(fn) if(fn){}
@@ -49,27 +53,20 @@
 //
 //==============================================================================
 
+// Helper routine declaration
+namespace
+{
+char const * const speciesString(KIM::SpeciesName const speciesName);
+}
+
 //******************************************************************************
 LennardJones612Implementation::LennardJones612Implementation(
-    KIM_API_model* const pkim,
-    char const* const  parameterFileNames,
+    KIM::Model * const model,
+    char const * const  parameterFileNames,
     int const parameterFileNameLength,
     int const numberParameterFiles,
-    int* const ier)
-    : numberOfSpeciesIndex_(-1),  // initizlize index, pointer, and cached
-      numberOfParticlesIndex_(-1),    // member variables
-      numberContributingParticlesIndex_(-1),
-      particleSpeciesIndex_(-1),
-      coordinatesIndex_(-1),
-      boxSideLengthsIndex_(-1),
-      get_neighIndex_(-1),
-      process_dEdrIndex_(-1),
-      process_d2Edr2Index_(-1),
-      cutoffIndex_(-1),
-      energyIndex_(-1),
-      forcesIndex_(-1),
-      particleEnergyIndex_(-1),
-      numberModelSpecies_(0),
+    int * const ier)
+    : numberModelSpecies_(0),
       numberUniqueSpeciesPairs_(0),
       shift_(0),
       cutoffs_(0),
@@ -83,34 +80,33 @@ LennardJones612Implementation::LennardJones612Implementation(
       oneSixtyEightEpsilonSigma6_2D_(0),
       sixTwentyFourEpsilonSigma12_2D_(0),
       shifts2D_(0),
-      cachedNumberOfParticles_(0),
-      cachedNumberContributingParticles_(0)
+      cachedNumberOfParticles_(0)
 {
-  *ier = SetConstantValues(pkim);
+  *ier = SetConstantValues(model);
   if (*ier < KIM_STATUS_OK) return;
 
   AllocateFreeParameterMemory();
 
   FILE* parameterFilePointers[MAX_PARAMETER_FILES];
-  *ier = OpenParameterFiles(pkim, parameterFileNames, parameterFileNameLength,
+  *ier = OpenParameterFiles(parameterFileNames, parameterFileNameLength,
                             numberParameterFiles, parameterFilePointers);
   if (*ier < KIM_STATUS_OK) return;
 
-  *ier = ProcessParameterFiles(pkim, parameterFilePointers,
+  *ier = ProcessParameterFiles(model, parameterFilePointers,
                                numberParameterFiles);
   CloseParameterFiles(parameterFilePointers, numberParameterFiles);
   if (*ier < KIM_STATUS_OK) return;
 
-  *ier = ConvertUnits(pkim);
+  *ier = ConvertUnits(model);
   if (*ier < KIM_STATUS_OK) return;
 
-  *ier = SetReinitMutableValues(pkim);
+  *ier = SetReinitMutableValues(model);
   if (*ier < KIM_STATUS_OK) return;
 
-  *ier = RegisterKIMParameters(pkim);
+  *ier = RegisterKIMParameters(model);
   if (*ier < KIM_STATUS_OK) return;
 
-  *ier = RegisterKIMFunctions(pkim);
+  *ier = RegisterKIMFunctions(model);
   if (*ier < KIM_STATUS_OK) return;
 
   // everything is good
@@ -137,11 +133,11 @@ LennardJones612Implementation::~LennardJones612Implementation()
 }
 
 //******************************************************************************
-int LennardJones612Implementation::Reinit(KIM_API_model* const pkim)
+int LennardJones612Implementation::Reinit(KIM::Model * const model)
 {
   int ier;
 
-  ier = SetReinitMutableValues(pkim);
+  ier = SetReinitMutableValues(model);
   if (ier < KIM_STATUS_OK) return ier;
 
   // nothing else to do for this case
@@ -152,33 +148,31 @@ int LennardJones612Implementation::Reinit(KIM_API_model* const pkim)
 }
 
 //******************************************************************************
-int LennardJones612Implementation::Compute(KIM_API_model* const pkim)
+int LennardJones612Implementation::Compute(KIM::Model const * const model)
 {
   int ier;
 
   // KIM API Model Input compute flags
-  bool isComputeProcess_dEdr;
-  bool isComputeProcess_d2Edr2;
+  bool isComputeProcess_dEdr = false;
+  bool isComputeProcess_d2Edr2 = false;
   //
   // KIM API Model Output compute flags
-  bool isComputeEnergy;
-  bool isComputeForces;
-  bool isComputeParticleEnergy;
+  bool isComputeEnergy = false;
+  bool isComputeForces = false;
+  bool isComputeParticleEnergy = false;
   //
   // KIM API Model Input
   int const* particleSpecies = 0;
-  GetNeighborFunction * get_neigh = 0;
-  double const* boxSideLengths = 0;
   VectorOfSizeDIM const* coordinates = 0;
   //
   // KIM API Model Output
   double* energy = 0;
   double* particleEnergy = 0;
   VectorOfSizeDIM* forces = 0;
-  ier = SetComputeMutableValues(pkim, isComputeProcess_dEdr,
+  ier = SetComputeMutableValues(model, isComputeProcess_dEdr,
                                 isComputeProcess_d2Edr2, isComputeEnergy,
                                 isComputeForces, isComputeParticleEnergy,
-                                particleSpecies, get_neigh, boxSideLengths,
+                                particleSpecies,
                                 coordinates, energy, particleEnergy, forces);
   if (ier < KIM_STATUS_OK) return ier;
 
@@ -200,133 +194,19 @@ int LennardJones612Implementation::Compute(KIM_API_model* const pkim)
 //==============================================================================
 
 //******************************************************************************
-int LennardJones612Implementation::SetConstantValues(KIM_API_model* const pkim)
+int LennardJones612Implementation::
+SetConstantValues(KIM::Model const * const model)
 {
-  int ier = KIM_STATUS_FAIL;
-
-  // get baseconvert value from KIM API object
-  baseconvert_ = pkim->get_model_index_shift();
-
-  ier = DetermineNBCTypeAndHalf(pkim);
-  if (ier < KIM_STATUS_OK) return ier;
-
-  // set isLocator
-  if (NBCType_ != Cluster)
-  { // all NBC cases except CLUSTER
-    isLocatorMode_ = pkim->get_neigh_mode(&ier) == 2;  // Locator mode
-    if (ier < KIM_STATUS_OK)
-    {
-      pkim->report_error(__LINE__, __FILE__, "get_neigh_mode", ier);
-      return ier;
-    }
-  }
-  else
-  {  // use true as a default value for CLUSTER
-    isLocatorMode_ = true;
-  }
-
-  // obtain indices for various KIM API Object arguments
-  pkim->getm_index(
-      &ier, 3 * 13,
-      "numberOfSpecies",             &numberOfSpeciesIndex_,             1,
-      "numberOfParticles",           &numberOfParticlesIndex_,           1,
-      "numberContributingParticles", &numberContributingParticlesIndex_, 1,
-      "particleSpecies",             &particleSpeciesIndex_,             1,
-      "coordinates",                 &coordinatesIndex_,                 1,
-      "boxSideLengths",              &boxSideLengthsIndex_,              1,
-      "get_neigh",                   &get_neighIndex_,                   1,
-      "process_dEdr",                &process_dEdrIndex_,                1,
-      "process_d2Edr2",              &process_d2Edr2Index_,              1,
-      "cutoff",                      &cutoffIndex_,                      1,
-      "energy",                      &energyIndex_,                      1,
-      "forces",                      &forcesIndex_,                      1,
-      "particleEnergy",              &particleEnergyIndex_,              1);
-  if (ier < KIM_STATUS_OK)
-  {
-    pkim->report_error(__LINE__, __FILE__, "getm_index", ier);
-    return ier;
-  }
-
   // set numberModelSpecies & numberUniqueSpeciesPairs
-  int dummy;
-  ier = pkim->get_num_model_species(&numberModelSpecies_, &dummy);
-  if (ier < KIM_STATUS_OK)
-  {
-    pkim->report_error(__LINE__, __FILE__, "get_num_model_species", ier);
-    return ier;
-  }
+  model->get_num_model_species(&numberModelSpecies_);
   numberUniqueSpeciesPairs_ = ((numberModelSpecies_+1)*numberModelSpecies_)/2;
 
   // everything is good
-  ier = KIM_STATUS_OK;
-  return ier;
-}
-
-//******************************************************************************
-int LennardJones612Implementation::DetermineNBCTypeAndHalf(
-    KIM_API_model* const pkim)
-{
-  int ier;
-  const char* NBC;
-
-  // record the active NBC method
-  ier = pkim->get_NBC_method(&NBC);
-  if (ier < KIM_STATUS_OK)
-  {
-    pkim->report_error(__LINE__, __FILE__, "get_NBC_method", ier);
-    return ier;
-  }
-  if (strcmp(NBC, "NEIGH_RVEC_H") == 0)
-  {
-    NBCType_ = Neigh_Rvec;
-    isHalf_ = true;
-  }
-  else if (strcmp(NBC, "NEIGH_PURE_H") == 0)
-  {
-    NBCType_ = Neigh_Pure;
-    isHalf_ = true;
-  }
-  else if (strcmp(NBC, "NEIGH_RVEC_F") == 0)
-  {
-    NBCType_ = Neigh_Rvec;
-    isHalf_ = false;
-  }
-  else if (strcmp(NBC, "NEIGH_PURE_F") == 0)
-  {
-    NBCType_ = Neigh_Pure;
-    isHalf_ = false;
-  }
-  else if (strcmp(NBC, "MI_OPBC_H") == 0)
-  {
-    NBCType_ = Mi_Opbc;
-    isHalf_ = true;
-  }
-  else if (strcmp(NBC, "MI_OPBC_F") == 0)
-  {
-    NBCType_ = Mi_Opbc;
-    isHalf_ = false;
-  }
-  else if (strcmp(NBC, "CLUSTER") == 0)
-  {
-    NBCType_ = Cluster;
-    isHalf_ = true;
-  }
-  else
-  {
-    ier = KIM_STATUS_FAIL;
-    pkim->report_error(__LINE__, __FILE__,
-                       "(eam_init_) unknown NBC type", ier);
-    return ier;
-  }
-
-  // everything is good
-  ier = KIM_STATUS_OK;
-  return ier;
+  return KIM_STATUS_OK;
 }
 
 //******************************************************************************
 int LennardJones612Implementation::OpenParameterFiles(
-    KIM_API_model* const pkim,
     char const* const parameterFileNames,
     int const parameterFileNameLength,
     int const numberParameterFiles,
@@ -337,7 +217,7 @@ int LennardJones612Implementation::OpenParameterFiles(
   if (numberParameterFiles > MAX_PARAMETER_FILES)
   {
     ier = KIM_STATUS_FAIL;
-    pkim->report_error(__LINE__, __FILE__, "LennardJones612 given too many"
+    KIM::report_error(__LINE__, __FILE__, "LennardJones612 given too many"
                        " parameter files", ier);
     return ier;
   }
@@ -353,7 +233,7 @@ int LennardJones612Implementation::OpenParameterFiles(
               "LennardJones612 parameter file number %d cannot be opened",
               i);
       ier = KIM_STATUS_FAIL;
-      pkim->report_error(__LINE__, __FILE__, message, ier);
+      KIM::report_error(__LINE__, __FILE__, message, ier);
       for (int j = i - 1; i <= 0; --i)
       {
         fclose(parameterFilePointers[j]);
@@ -369,7 +249,7 @@ int LennardJones612Implementation::OpenParameterFiles(
 
 //******************************************************************************
 int LennardJones612Implementation::ProcessParameterFiles(
-    KIM_API_model* const pkim,
+    KIM::Model const * const model,
     FILE* const parameterFilePointers[MAX_PARAMETER_FILES],
     int const numberParameterFiles)
 {
@@ -388,7 +268,7 @@ int LennardJones612Implementation::ProcessParameterFiles(
   {
     sprintf(nextLine, "unable to read first line of the parameter file");
     ier = KIM_STATUS_FAIL;
-    pkim->report_error(__LINE__, __FILE__, nextLine, ier);
+    KIM::report_error(__LINE__, __FILE__, nextLine, ier);
     fclose(parameterFilePointers[0]);
     return ier;
   }
@@ -397,7 +277,7 @@ int LennardJones612Implementation::ProcessParameterFiles(
     sprintf(nextLine, "The value for N from the parameter file is inconsistent "
             "with numberModelSpecies_");
     ier = KIM_STATUS_FAIL;
-    pkim->report_error(__LINE__, __FILE__, nextLine, ier);
+    KIM::report_error(__LINE__, __FILE__, nextLine, ier);
     fclose(parameterFilePointers[0]);
     return ier;
   }
@@ -406,23 +286,24 @@ int LennardJones612Implementation::ProcessParameterFiles(
   const char** const particleNames = new const char*[numberModelSpecies_];
   for (int i = 0; i < numberModelSpecies_; ++i)
   {
-    const char* kimModelParticleSpecies;
-    ier = pkim->get_model_species(i, &kimModelParticleSpecies);
+    KIM::SpeciesName kimModelParticleSpecies;
+    ier = model->get_model_species(i, &kimModelParticleSpecies);
     if (ier < KIM_STATUS_OK)
     {
-      pkim->report_error(__LINE__, __FILE__, "get_model_species", ier);
+      KIM::report_error(__LINE__, __FILE__, "get_model_species", ier);
       delete [] particleNames;
       return ier;
     }
-    int const index = pkim->get_species_code(kimModelParticleSpecies, &ier);
+    int index;
+    ier = model->get_species_code(kimModelParticleSpecies, &index);
     if (index >= numberModelSpecies_)
     {
-      pkim->report_error(__LINE__, __FILE__, "get_species_code",
-                         KIM_STATUS_FAIL);
+      KIM::report_error(__LINE__, __FILE__, "get_species_code",
+                        KIM_STATUS_FAIL);
       delete [] particleNames;
       return KIM_STATUS_FAIL;
     }
-    particleNames[index] = kimModelParticleSpecies;
+    particleNames[index] = speciesString(kimModelParticleSpecies);
   }
 
   // set all values in the arrays to -1 for mixing later
@@ -443,7 +324,7 @@ int LennardJones612Implementation::ProcessParameterFiles(
     if (ier != 5)
     {
       sprintf(nextLine, "error reading lines of the parameter file");
-      pkim->report_error(__LINE__, __FILE__, nextLine, KIM_STATUS_FAIL);
+      KIM::report_error(__LINE__, __FILE__, nextLine, KIM_STATUS_FAIL);
       delete [] particleNames;
       return KIM_STATUS_FAIL;
     }
@@ -462,7 +343,7 @@ int LennardJones612Implementation::ProcessParameterFiles(
     if ((iIndex == -1) || (jIndex == -1))
     {
       sprintf(nextLine, "Unsupported Species name found in parameter file");
-      pkim->report_error(__LINE__, __FILE__, nextLine, KIM_STATUS_FAIL);
+      KIM::report_error(__LINE__, __FILE__, nextLine, KIM_STATUS_FAIL);
       delete [] particleNames;
       return KIM_STATUS_FAIL;
     }
@@ -495,7 +376,7 @@ int LennardJones612Implementation::ProcessParameterFiles(
   }
   if (ier == -1)
   {
-    pkim->report_error(__LINE__, __FILE__, nextLine, KIM_STATUS_FAIL);
+    KIM::report_error(__LINE__, __FILE__, nextLine, KIM_STATUS_FAIL);
     delete [] particleNames;
     return KIM_STATUS_FAIL;
   }
@@ -580,24 +461,24 @@ void LennardJones612Implementation::AllocateFreeParameterMemory()
 }
 
 //******************************************************************************
-int LennardJones612Implementation::ConvertUnits(KIM_API_model* const pkim)
+int LennardJones612Implementation::ConvertUnits(KIM::Model const * const model)
 {
   int ier;
 
   // define default base units
-  char length[] = "A";
-  char energy[] = "eV";
-  char charge[] = "e";
-  char temperature[] = "K";
-  char time[] = "ps";
+  KIM::LengthUnit length = KIM::UNITS::A;
+  KIM::EnergyUnit energy = KIM::UNITS::eV;
+  KIM::ChargeUnit charge = KIM::UNITS::e;
+  KIM::TemperatureUnit temperature = KIM::UNITS::K;
+  KIM::TimeUnit time = KIM::UNITS::ps;
 
   // changing units of cutoffs and sigmas
-  double const convertLength
-      = pkim->convert_to_act_unit(length, energy, charge, temperature, time,
-                                  1.0, 0.0, 0.0, 0.0, 0.0, &ier);
+  double convertLength;
+  ier = model->convert_to_act_unit(length, energy, charge, temperature, time,
+                                   1.0, 0.0, 0.0, 0.0, 0.0, &convertLength);
   if (ier < KIM_STATUS_OK)
   {
-    pkim->report_error(__LINE__, __FILE__, "convert_to_act_unit", ier);
+    KIM::report_error(__LINE__, __FILE__, "convert_to_act_unit", ier);
     return ier;
   }
   if (convertLength != ONE)
@@ -609,12 +490,12 @@ int LennardJones612Implementation::ConvertUnits(KIM_API_model* const pkim)
     }
   }
   // changing units of epsilons
-  double const convertEnergy
-      = pkim->convert_to_act_unit(length, energy, charge, temperature, time,
-                                  0.0, 1.0, 0.0, 0.0, 0.0, &ier);
+  double convertEnergy;
+  ier = model->convert_to_act_unit(length, energy, charge, temperature, time,
+                                   0.0, 1.0, 0.0, 0.0, 0.0, &convertEnergy);
   if (ier < KIM_STATUS_OK)
   {
-    pkim->report_error(__LINE__, __FILE__, "convert_to_act_unit", ier);
+    KIM::report_error(__LINE__, __FILE__, "convert_to_act_unit", ier);
     return ier;
   }
   if (convertEnergy != ONE)
@@ -632,33 +513,39 @@ int LennardJones612Implementation::ConvertUnits(KIM_API_model* const pkim)
 
 //******************************************************************************
 int LennardJones612Implementation::RegisterKIMParameters(
-    KIM_API_model* const pkim) const
+    KIM::Model * const model) const
 {
-  int ier;
+  int ier = KIM_STATUS_OK;
 
   // publish parameters
-  pkim->setm_data(&ier, 4 * 4,
-                  "PARAM_FREE_shift", 1,
-                  (void*) &shift_,
-                  1,
-                  //
-                  "PARAM_FREE_cutoffs",
-                  numberUniqueSpeciesPairs_,
-                  (void*) cutoffs_,
-                  1,
-                  //
-                  "PARAM_FREE_epsilons",
-                  numberUniqueSpeciesPairs_,
-                  (void*) epsilons_,
-                  1,
-                  //
-                  "PARAM_FREE_sigmas",
-                  numberUniqueSpeciesPairs_,
-                  (void*) sigmas_,
-                  1);
+  ier = model->set_parameter(PARAM_SHIFT_INDEX, 1, (void *) &shift_);
   if (ier < KIM_STATUS_OK)
   {
-    pkim->report_error(__LINE__, __FILE__, "setm_data", ier);
+    KIM::report_error(__LINE__, __FILE__, "set_parameter", ier);
+    return ier;
+  }
+  ier = model->set_parameter(PARAM_CUTOFFS_INDEX,
+                             numberUniqueSpeciesPairs_,
+                             (void *) cutoffs_);
+  if (ier < KIM_STATUS_OK)
+  {
+    KIM::report_error(__LINE__, __FILE__, "set_parameter", ier);
+    return ier;
+  }
+  ier = model->set_parameter(PARAM_EPSILONS_INDEX,
+                             numberUniqueSpeciesPairs_,
+                             (void *) epsilons_);
+  if (ier < KIM_STATUS_OK)
+  {
+    KIM::report_error(__LINE__, __FILE__, "set_parameter", ier);
+    return ier;
+  }
+  ier = model->set_parameter(PARAM_SIGMAS_INDEX,
+                             numberUniqueSpeciesPairs_,
+                             (void *) sigmas_);
+  if (ier < KIM_STATUS_OK)
+  {
+    KIM::report_error(__LINE__, __FILE__, "set_parameter", ier);
     return ier;
   }
 
@@ -669,19 +556,21 @@ int LennardJones612Implementation::RegisterKIMParameters(
 
 //******************************************************************************
 int LennardJones612Implementation::RegisterKIMFunctions(
-    KIM_API_model* const pkim)
+    KIM::Model * const model)
     const
 {
   int ier;
 
   // register the destroy() and reinit() functions
-  pkim->setm_method(&ier, 3 * 4,
-                    "destroy", 1, (func_ptr) &(LennardJones612::Destroy), 1,
-                    "reinit",  1, (func_ptr) &(LennardJones612::Reinit),  1,
-                    "compute", 1, (func_ptr) &(LennardJones612::Compute), 1);
+  ier = KIM::UTILITY::COMPUTE::setm_method(
+      model,
+      KIM::COMPUTE::ARGUMENT_NAME::destroy, 1, KIM::COMPUTE::LANGUAGE_NAME::Cpp, (KIM::func*) &(LennardJones612::Destroy), 1,
+      KIM::COMPUTE::ARGUMENT_NAME::reinit,  1, KIM::COMPUTE::LANGUAGE_NAME::Cpp, (KIM::func*) &(LennardJones612::Reinit),  1,
+      KIM::COMPUTE::ARGUMENT_NAME::compute, 1, KIM::COMPUTE::LANGUAGE_NAME::Cpp, (KIM::func*) &(LennardJones612::Compute), 1,
+      KIM::COMPUTE::ARGUMENT_NAME::End);
   if (ier < KIM_STATUS_OK)
   {
-    pkim->report_error(__LINE__, __FILE__, "setm_method", ier);
+    KIM::report_error(__LINE__, __FILE__, "setm_method", ier);
     return ier;
   }
 
@@ -692,7 +581,7 @@ int LennardJones612Implementation::RegisterKIMFunctions(
 
 //******************************************************************************
 int LennardJones612Implementation::SetReinitMutableValues(
-    KIM_API_model* const pkim)
+    KIM::Model const * const model)
 { // use (possibly) new values of free parameters to compute other quantities
   int ier;
 
@@ -722,54 +611,52 @@ int LennardJones612Implementation::SetReinitMutableValues(
   }
 
   // get cutoff pointer
-  double* const cutoff
-      = static_cast<double*>(pkim->get_data_by_index(cutoffIndex_, &ier));
+  double * cutoff;
+      ier = model->get_data(KIM::COMPUTE::ARGUMENT_NAME::cutoff,
+                            reinterpret_cast<void**>(&cutoff));
   if (ier < KIM_STATUS_OK)
   {
-    pkim->report_error(__LINE__, __FILE__, "get_data_by_index", ier);
+    KIM::report_error(__LINE__, __FILE__, "get_data", ier);
     return ier;
   }
 
   // update cutoff value in KIM API object
   *cutoff = 0;
-  int numberSpecies, maxStringLength;
-  ier = pkim->get_num_sim_species(&numberSpecies, &maxStringLength);
-  if (ier < KIM_STATUS_OK)
-  {
-    pkim->report_error(__LINE__, __FILE__, "get_num_sim_species", ier);
-    return ier;
-  }
-  const char* simSpeciesI;
-  const char* simSpeciesJ;
+  int numberSpecies;
+  model->get_num_sim_species(&numberSpecies);
+  KIM::SpeciesName simSpeciesI;
+  KIM::SpeciesName simSpeciesJ;
   for (int i = 0; i < numberSpecies; i++)
   {
-    ier = pkim->get_sim_species( i, &simSpeciesI);
+    ier = model->get_sim_species(i, &simSpeciesI);
     if (ier < KIM_STATUS_OK)
     {
-      pkim->report_error(__LINE__, __FILE__, "get_num_sim_species", ier);
+      KIM::report_error(__LINE__, __FILE__, "get_num_sim_species", ier);
       return ier;
     }
-    int const indexI = pkim->get_species_code(simSpeciesI, &ier);
+    int indexI;
+    ier = model->get_species_code(simSpeciesI, &indexI);
     if (indexI >= numberModelSpecies_ || ier<KIM_STATUS_OK )
     {
-      pkim->report_error(__LINE__, __FILE__, "get_species_code",
-                         KIM_STATUS_FAIL);
+      KIM::report_error(__LINE__, __FILE__, "get_species_code",
+                        KIM_STATUS_FAIL);
       return KIM_STATUS_FAIL;
     }
 
     for (int j = 0; j < numberSpecies; j++)
     {
-      ier = pkim->get_sim_species( i, &simSpeciesJ);
+      ier = model->get_sim_species(i, &simSpeciesJ);
       if (ier < KIM_STATUS_OK)
       {
-        pkim->report_error(__LINE__, __FILE__, "get_num_sim_species", ier);
-      return ier;
+        KIM::report_error(__LINE__, __FILE__, "get_num_sim_species", ier);
+        return ier;
       }
-      int const indexJ = pkim->get_species_code(simSpeciesJ, &ier);
+      int indexJ;
+      ier = model->get_species_code(simSpeciesJ, &indexJ);
       if (indexJ >= numberModelSpecies_ || ier<KIM_STATUS_OK )
       {
-        pkim->report_error(__LINE__, __FILE__, "get_species_code",
-                           KIM_STATUS_FAIL);
+        KIM::report_error(__LINE__, __FILE__, "get_species_code",
+                          KIM_STATUS_FAIL);
         return KIM_STATUS_FAIL;
       }
       if (*cutoff < cutoffsSq2D_[indexI][indexJ])
@@ -809,15 +696,13 @@ int LennardJones612Implementation::SetReinitMutableValues(
 
 //******************************************************************************
 int LennardJones612Implementation::SetComputeMutableValues(
-    KIM_API_model* const pkim,
+    KIM::Model const * const model,
     bool& isComputeProcess_dEdr,
     bool& isComputeProcess_d2Edr2,
     bool& isComputeEnergy,
     bool& isComputeForces,
     bool& isComputeParticleEnergy,
     int const*& particleSpecies,
-    GetNeighborFunction *& get_neigh,
-    double const*& boxSideLengths,
     VectorOfSizeDIM const*& coordinates,
     double*& energy,
     double*& particleEnergy,
@@ -831,15 +716,17 @@ int LennardJones612Implementation::SetComputeMutableValues(
   int compParticleEnergy;
   int compProcess_dEdr;
   int compProcess_d2Edr2;
-  pkim->getm_compute_by_index(&ier, 3 * 5,
-                              energyIndex_,         &compEnergy,         1,
-                              forcesIndex_,         &compForces,         1,
-                              particleEnergyIndex_, &compParticleEnergy, 1,
-                              process_dEdrIndex_,   &compProcess_dEdr,   1,
-                              process_d2Edr2Index_, &compProcess_d2Edr2, 1);
+  ier = KIM::UTILITY::COMPUTE::getm_compute(
+      model,
+      KIM::COMPUTE::ARGUMENT_NAME::energy,         &compEnergy,         1,
+      KIM::COMPUTE::ARGUMENT_NAME::forces,         &compForces,         1,
+      KIM::COMPUTE::ARGUMENT_NAME::particleEnergy, &compParticleEnergy, 1,
+      KIM::COMPUTE::ARGUMENT_NAME::process_dEdr,   &compProcess_dEdr,   1,
+      KIM::COMPUTE::ARGUMENT_NAME::process_d2Edr2, &compProcess_d2Edr2, 1,
+      KIM::COMPUTE::ARGUMENT_NAME::End);
   if (ier < KIM_STATUS_OK)
   {
-    pkim->report_error(__LINE__, __FILE__, "getm_compute_by_index", ier);
+    KIM::report_error(__LINE__, __FILE__, "getm_compute", ier);
     return ier;
   }
 
@@ -854,47 +741,25 @@ int LennardJones612Implementation::SetComputeMutableValues(
   // double const* cutoff;            // currently unused
   // int const* numberOfSpecies;  // currently unused
   int const* numberOfParticles;
-  int const* numberContributingParticles;
-  pkim->getm_data_by_index(
-      &ier, 3 * 8,
-      // cutoffIndex_, &cutoff, 1,
-      // numberOfSpeciesIndex_, &numberOfSpecies, 1,
-      numberOfParticlesIndex_, &numberOfParticles, 1,
-      numberContributingParticlesIndex_, &numberContributingParticles, isHalf_,
-      particleSpeciesIndex_, &particleSpecies, 1,
-      boxSideLengthsIndex_, &boxSideLengths, (NBCType_ == Mi_Opbc),
-      coordinatesIndex_, &coordinates, 1,
-      energyIndex_, &energy, compEnergy,
-      particleEnergyIndex_, &particleEnergy, compParticleEnergy,
-      forcesIndex_, &forces, compForces);
+  ier = KIM::UTILITY::COMPUTE::getm_data(
+      model,
+      // KIM::COMPUTE::ARGUMENT_NAME::cutoff, &cutoff, 1,
+      // KIM::COMPUTE::ARGUMENT_NAME::numberOfSpecies, &numberOfSpecies, 1,
+      KIM::COMPUTE::ARGUMENT_NAME::numberOfParticles, &numberOfParticles, 1,
+      KIM::COMPUTE::ARGUMENT_NAME::particleSpecies, &particleSpecies, 1,
+      KIM::COMPUTE::ARGUMENT_NAME::coordinates, &coordinates, 1,
+      KIM::COMPUTE::ARGUMENT_NAME::energy, &energy, compEnergy,
+      KIM::COMPUTE::ARGUMENT_NAME::particleEnergy, &particleEnergy, compParticleEnergy,
+      KIM::COMPUTE::ARGUMENT_NAME::forces, &forces, compForces,
+      KIM::COMPUTE::ARGUMENT_NAME::End);
   if (ier < KIM_STATUS_OK)
   {
-    pkim->report_error(__LINE__, __FILE__, "getm_data_by_index", ier);
+    KIM::report_error(__LINE__, __FILE__, "getm_data", ier);
     return ier;
-  }
-  if (NBCType_ != Cluster)
-  {
-    get_neigh = (GetNeighborFunction *)
-        pkim->get_method_by_index(get_neighIndex_, &ier);
-    if (ier < KIM_STATUS_OK)
-    {
-      pkim->report_error(__LINE__, __FILE__, "get_method_by_index", ier);
-      return ier;
-    }
   }
 
   // update values
   cachedNumberOfParticles_ = *numberOfParticles;
-
-  // set cachedNumberContributingParticles based on half/full neighbor list
-  if ((isHalf_) && (NBCType_ != Cluster))
-  {
-    cachedNumberContributingParticles_ = *numberContributingParticles;
-  }
-  else
-  { // set so that it can be used even with a full neighbor list
-    cachedNumberContributingParticles_ = *numberOfParticles;
-  }
 
   // everything is good
   ier = KIM_STATUS_OK;
@@ -903,7 +768,6 @@ int LennardJones612Implementation::SetComputeMutableValues(
 
 //******************************************************************************
 int LennardJones612Implementation::CheckParticleSpecies(
-    KIM_API_model* const pkim,
     int const* const particleSpecies)
     const
 {
@@ -913,8 +777,8 @@ int LennardJones612Implementation::CheckParticleSpecies(
     if ((particleSpecies[i] < 0) || (particleSpecies[i] >= numberModelSpecies_))
     {
       ier = KIM_STATUS_FAIL;
-      pkim->report_error(__LINE__, __FILE__,
-                         "unsupported particle species detected", ier);
+      KIM::report_error(__LINE__, __FILE__,
+                        "unsupported particle species detected", ier);
       return ier;
     }
   }
@@ -933,10 +797,7 @@ int LennardJones612Implementation::GetComputeIndex(
     const bool& isComputeParticleEnergy,
     const bool& isShift) const
 {
-  // const int iter = 3;
-  const int half = 2;
-  const int rij = 3;
-  const int processdE = 2;
+  //const int processdE = 2;
   const int processd2E = 2;
   const int energy = 2;
   const int force = 2;
@@ -945,27 +806,6 @@ int LennardJones612Implementation::GetComputeIndex(
 
 
   int index = 0;
-
-  // iter
-  //  Cluster  = 0
-  //        (for EAM when NBCType_==Cluster then isLocatorMode_==true)
-  //  Locator  = 1
-  //  Iterator = 2
-  index += (int(NBCType_ != Cluster) + int(!isLocatorMode_))
-      * half * rij * processdE * processd2E * energy * force * particleEnergy
-      * shift;
-
-  // half
-  index += (int(isHalf_))
-      * rij * processdE * processd2E * energy * force * particleEnergy * shift;
-
-  // rij
-  //  Coordinates = 0
-  //       (NBCType_ != Neigh_Rvec and != Mi_OPbc)
-  //  RVec        = 1
-  //  Mi_Opbc     = 2
-  index += (int(NBCType_ == Neigh_Rvec) + 2*int(NBCType_ == Mi_Opbc))
-      * processdE * processd2E * energy * force * particleEnergy * shift;
 
   // processdE
   index += (int(isComputeProcess_dEdr))
@@ -991,20 +831,6 @@ int LennardJones612Implementation::GetComputeIndex(
   index += (int(isShift));
 
   return index;
-}
-
-//******************************************************************************
-void LennardJones612Implementation::ApplyMIOPBC(
-    double const* const boxSideLengths,
-    double* const dx)
-{
-  double sign;
-  for (int i = 0; i < DIMENSION; ++i)
-  {
-    sign = dx[i] > 0 ? ONE : -ONE;
-    dx[i] = (abs(dx[i]) > HALF * boxSideLengths[i]) ? dx[i]
-        - sign * boxSideLengths[i] : dx[i];
-  }
 }
 
 //==============================================================================
@@ -1042,4 +868,151 @@ void Deallocate2DArray(double**& arrayPtr)
 
   // nullify pointer
   arrayPtr = 0;
+}
+
+namespace
+{
+char const * const speciesString(KIM::SpeciesName const speciesName)
+{
+  if (speciesName == KIM::SPECIES_NAME::electron) return "electron";
+  else if (speciesName == KIM::SPECIES_NAME::H) return "H";
+  else if (speciesName == KIM::SPECIES_NAME::He) return "He";
+  else if (speciesName == KIM::SPECIES_NAME::Li) return "Li";
+  else if (speciesName == KIM::SPECIES_NAME::Be) return "Be";
+  else if (speciesName == KIM::SPECIES_NAME::B) return "B";
+  else if (speciesName == KIM::SPECIES_NAME::C) return "C";
+  else if (speciesName == KIM::SPECIES_NAME::N) return "N";
+  else if (speciesName == KIM::SPECIES_NAME::O) return "O";
+  else if (speciesName == KIM::SPECIES_NAME::F) return "F";
+  else if (speciesName == KIM::SPECIES_NAME::Ne) return "Ne";
+  else if (speciesName == KIM::SPECIES_NAME::Na) return "Na";
+  else if (speciesName == KIM::SPECIES_NAME::Mg) return "Mg";
+  else if (speciesName == KIM::SPECIES_NAME::Al) return "Al";
+  else if (speciesName == KIM::SPECIES_NAME::Si) return "Si";
+  else if (speciesName == KIM::SPECIES_NAME::P) return "P";
+  else if (speciesName == KIM::SPECIES_NAME::S) return "S";
+  else if (speciesName == KIM::SPECIES_NAME::Cl) return "Cl";
+  else if (speciesName == KIM::SPECIES_NAME::Ar) return "Ar";
+  else if (speciesName == KIM::SPECIES_NAME::K) return "K";
+  else if (speciesName == KIM::SPECIES_NAME::Ca) return "Ca";
+  else if (speciesName == KIM::SPECIES_NAME::Sc) return "Sc";
+  else if (speciesName == KIM::SPECIES_NAME::Ti) return "Ti";
+  else if (speciesName == KIM::SPECIES_NAME::V) return "V";
+  else if (speciesName == KIM::SPECIES_NAME::Cr) return "Cr";
+  else if (speciesName == KIM::SPECIES_NAME::Mn) return "Mn";
+  else if (speciesName == KIM::SPECIES_NAME::Fe) return "Fe";
+  else if (speciesName == KIM::SPECIES_NAME::Co) return "Co";
+  else if (speciesName == KIM::SPECIES_NAME::Ni) return "Ni";
+  else if (speciesName == KIM::SPECIES_NAME::Cu) return "Cu";
+  else if (speciesName == KIM::SPECIES_NAME::Zn) return "Zn";
+  else if (speciesName == KIM::SPECIES_NAME::Ga) return "Ga";
+  else if (speciesName == KIM::SPECIES_NAME::Ge) return "Ge";
+  else if (speciesName == KIM::SPECIES_NAME::As) return "As";
+  else if (speciesName == KIM::SPECIES_NAME::Se) return "Se";
+  else if (speciesName == KIM::SPECIES_NAME::Br) return "Br";
+  else if (speciesName == KIM::SPECIES_NAME::Kr) return "Kr";
+  else if (speciesName == KIM::SPECIES_NAME::Rb) return "Rb";
+  else if (speciesName == KIM::SPECIES_NAME::Sr) return "Sr";
+  else if (speciesName == KIM::SPECIES_NAME::Y) return "Y";
+  else if (speciesName == KIM::SPECIES_NAME::Zr) return "Zr";
+  else if (speciesName == KIM::SPECIES_NAME::Nb) return "Nb";
+  else if (speciesName == KIM::SPECIES_NAME::Mo) return "Mo";
+  else if (speciesName == KIM::SPECIES_NAME::Tc) return "Tc";
+  else if (speciesName == KIM::SPECIES_NAME::Ru) return "Ru";
+  else if (speciesName == KIM::SPECIES_NAME::Rh) return "Rh";
+  else if (speciesName == KIM::SPECIES_NAME::Pd) return "Pd";
+  else if (speciesName == KIM::SPECIES_NAME::Ag) return "Ag";
+  else if (speciesName == KIM::SPECIES_NAME::Cd) return "Cd";
+  else if (speciesName == KIM::SPECIES_NAME::In) return "In";
+  else if (speciesName == KIM::SPECIES_NAME::Sn) return "Sn";
+  else if (speciesName == KIM::SPECIES_NAME::Sb) return "Sb";
+  else if (speciesName == KIM::SPECIES_NAME::Te) return "Te";
+  else if (speciesName == KIM::SPECIES_NAME::I) return "I";
+  else if (speciesName == KIM::SPECIES_NAME::Xe) return "Xe";
+  else if (speciesName == KIM::SPECIES_NAME::Cs) return "Cs";
+  else if (speciesName == KIM::SPECIES_NAME::Ba) return "Ba";
+  else if (speciesName == KIM::SPECIES_NAME::La) return "La";
+  else if (speciesName == KIM::SPECIES_NAME::Ce) return "Ce";
+  else if (speciesName == KIM::SPECIES_NAME::Pr) return "Pr";
+  else if (speciesName == KIM::SPECIES_NAME::Nd) return "Nd";
+  else if (speciesName == KIM::SPECIES_NAME::Pm) return "Pm";
+  else if (speciesName == KIM::SPECIES_NAME::Sm) return "Sm";
+  else if (speciesName == KIM::SPECIES_NAME::Eu) return "Eu";
+  else if (speciesName == KIM::SPECIES_NAME::Gd) return "Gd";
+  else if (speciesName == KIM::SPECIES_NAME::Tb) return "Tb";
+  else if (speciesName == KIM::SPECIES_NAME::Dy) return "Dy";
+  else if (speciesName == KIM::SPECIES_NAME::Ho) return "Ho";
+  else if (speciesName == KIM::SPECIES_NAME::Er) return "Er";
+  else if (speciesName == KIM::SPECIES_NAME::Tm) return "Tm";
+  else if (speciesName == KIM::SPECIES_NAME::Yb) return "Yb";
+  else if (speciesName == KIM::SPECIES_NAME::Lu) return "Lu";
+  else if (speciesName == KIM::SPECIES_NAME::Hf) return "Hf";
+  else if (speciesName == KIM::SPECIES_NAME::Ta) return "Ta";
+  else if (speciesName == KIM::SPECIES_NAME::W) return "W";
+  else if (speciesName == KIM::SPECIES_NAME::Re) return "Re";
+  else if (speciesName == KIM::SPECIES_NAME::Os) return "Os";
+  else if (speciesName == KIM::SPECIES_NAME::Ir) return "Ir";
+  else if (speciesName == KIM::SPECIES_NAME::Pt) return "Pt";
+  else if (speciesName == KIM::SPECIES_NAME::Au) return "Au";
+  else if (speciesName == KIM::SPECIES_NAME::Hg) return "Hg";
+  else if (speciesName == KIM::SPECIES_NAME::Tl) return "Tl";
+  else if (speciesName == KIM::SPECIES_NAME::Pb) return "Pb";
+  else if (speciesName == KIM::SPECIES_NAME::Bi) return "Bi";
+  else if (speciesName == KIM::SPECIES_NAME::Po) return "Po";
+  else if (speciesName == KIM::SPECIES_NAME::At) return "At";
+  else if (speciesName == KIM::SPECIES_NAME::Rn) return "Rn";
+  else if (speciesName == KIM::SPECIES_NAME::Fr) return "Fr";
+  else if (speciesName == KIM::SPECIES_NAME::Ra) return "Ra";
+  else if (speciesName == KIM::SPECIES_NAME::Ac) return "Ac";
+  else if (speciesName == KIM::SPECIES_NAME::Th) return "Th";
+  else if (speciesName == KIM::SPECIES_NAME::Pa) return "Pa";
+  else if (speciesName == KIM::SPECIES_NAME::U) return "U";
+  else if (speciesName == KIM::SPECIES_NAME::Np) return "Np";
+  else if (speciesName == KIM::SPECIES_NAME::Pu) return "Pu";
+  else if (speciesName == KIM::SPECIES_NAME::Am) return "Am";
+  else if (speciesName == KIM::SPECIES_NAME::Cm) return "Cm";
+  else if (speciesName == KIM::SPECIES_NAME::Bk) return "Bk";
+  else if (speciesName == KIM::SPECIES_NAME::Cf) return "Cf";
+  else if (speciesName == KIM::SPECIES_NAME::Es) return "Es";
+  else if (speciesName == KIM::SPECIES_NAME::Fm) return "Fm";
+  else if (speciesName == KIM::SPECIES_NAME::Md) return "Md";
+  else if (speciesName == KIM::SPECIES_NAME::No) return "No";
+  else if (speciesName == KIM::SPECIES_NAME::Lr) return "Lr";
+  else if (speciesName == KIM::SPECIES_NAME::Rf) return "Rf";
+  else if (speciesName == KIM::SPECIES_NAME::Db) return "Db";
+  else if (speciesName == KIM::SPECIES_NAME::Sg) return "Sg";
+  else if (speciesName == KIM::SPECIES_NAME::Bh) return "Bh";
+  else if (speciesName == KIM::SPECIES_NAME::Hs) return "Hs";
+  else if (speciesName == KIM::SPECIES_NAME::Mt) return "Mt";
+  else if (speciesName == KIM::SPECIES_NAME::Ds) return "Ds";
+  else if (speciesName == KIM::SPECIES_NAME::Rg) return "Rg";
+  else if (speciesName == KIM::SPECIES_NAME::Cn) return "Cn";
+  else if (speciesName == KIM::SPECIES_NAME::Uut) return "Uut";
+  else if (speciesName == KIM::SPECIES_NAME::Fl) return "Fl";
+  else if (speciesName == KIM::SPECIES_NAME::Uup) return "Uup";
+  else if (speciesName == KIM::SPECIES_NAME::Lv) return "Lv";
+  else if (speciesName == KIM::SPECIES_NAME::Uus) return "Uus";
+  else if (speciesName == KIM::SPECIES_NAME::Uuo) return "Uuo";
+  else if (speciesName == KIM::SPECIES_NAME::user01) return "user01";
+  else if (speciesName == KIM::SPECIES_NAME::user02) return "user02";
+  else if (speciesName == KIM::SPECIES_NAME::user03) return "user03";
+  else if (speciesName == KIM::SPECIES_NAME::user04) return "user04";
+  else if (speciesName == KIM::SPECIES_NAME::user05) return "user05";
+  else if (speciesName == KIM::SPECIES_NAME::user06) return "user06";
+  else if (speciesName == KIM::SPECIES_NAME::user07) return "user07";
+  else if (speciesName == KIM::SPECIES_NAME::user08) return "user08";
+  else if (speciesName == KIM::SPECIES_NAME::user09) return "user09";
+  else if (speciesName == KIM::SPECIES_NAME::user10) return "user10";
+  else if (speciesName == KIM::SPECIES_NAME::user11) return "user11";
+  else if (speciesName == KIM::SPECIES_NAME::user12) return "user12";
+  else if (speciesName == KIM::SPECIES_NAME::user13) return "user13";
+  else if (speciesName == KIM::SPECIES_NAME::user14) return "user14";
+  else if (speciesName == KIM::SPECIES_NAME::user15) return "user15";
+  else if (speciesName == KIM::SPECIES_NAME::user16) return "user16";
+  else if (speciesName == KIM::SPECIES_NAME::user17) return "user17";
+  else if (speciesName == KIM::SPECIES_NAME::user18) return "user18";
+  else if (speciesName == KIM::SPECIES_NAME::user19) return "user19";
+  else if (speciesName == KIM::SPECIES_NAME::user20) return "user20";
+  else return "";
+}
 }

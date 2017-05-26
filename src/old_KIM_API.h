@@ -33,8 +33,8 @@
 //
 
 
-#ifndef KIMHDR_KIM_API_H
-#define KIMHDR_KIM_API_H
+#ifndef KIMHDR_OLD_KIM_API_H
+#define KIMHDR_OLD_KIM_API_H
 
 #include <iostream>
 #include <map>
@@ -43,7 +43,16 @@
 
 #define NUMBER_REQUIRED_ARGUMENTS 10
 
-#include "KIM_API_Version.h"
+#include "old_KIM_API_Version.h"
+#include "old_Unit_Handling.h"
+
+namespace KIM
+{
+class Model;
+}
+
+namespace OLD_KIM
+{
 
 // A macro to disallow the copy constructor and operator= functions.
 // This should be used in the private: declarations for a class
@@ -93,9 +102,7 @@ public:
         bool isitinput(const char*str);
         bool isitoutput(const char*str);
 };//main input line handler
-std::ostream &operator<<(std::ostream &stream, KIM_IOline a);
-std::istream &operator>>(std::istream &stream, KIM_IOline &a);
-//stringstream &operator>>(stringstream &stream, KIM_IOline &a);
+
 class IOline{
 public:
         std::string name;
@@ -108,11 +115,6 @@ public:
         bool getFields(char * const inputString);
         static int readlines_str(const char * inputstr, IOline ** lines, bool& success);
 }; //secondary input line handler //cout<<"SystemOfUnit:  file:"<<infile<<":"<<endl;
-std::ostream &operator<<(std::ostream &stream, IOline a);
-std::istream &operator>>(std::istream &stream, IOline &a);
-
-
-#include "Unit_Handling.h"
 
 class KIMBaseElement{
 public:
@@ -120,6 +122,7 @@ public:
       void *p;
       void (* fp)();
    } data;
+  int lang;
         intptr_t size; //Size in words defined by type
         std::string name;
         std::string type;
@@ -135,7 +138,6 @@ public:
 
 static  int getelemsize(const char *tp, bool& success);
 };
-std::ostream &operator<<(std::ostream &stream, KIMBaseElement a);
 
 typedef void (*func_ptr)();
 class KIM_API_model{
@@ -161,10 +163,10 @@ public:
 
     void free(int *error);
     int set_data(const char * nm, intptr_t size, void *dt);
-    int set_method(const char * nm, intptr_t size, func_ptr dt);
+    int set_method(const char * nm, intptr_t size, int const language, func_ptr dt);
 
     void * get_data(const char *nm,int *error);
-    func_ptr get_method(const char *nm,int *error);
+    func_ptr get_method(const char *nm, int * const language, int *error);
 
     intptr_t get_size(const char *nm,int *error);
     void set_compute(const char *nm, int flag, int *error);
@@ -205,6 +207,8 @@ void set_species_code(const char *species, int code, int* error);
 
    static int process_d2Edr2(KIM_API_model **ppkim,double *de,double **rr,double ** pdx,int **ii,int **jj);
 
+  static int get_model_kim_str(const char* const modelname, char** const kimString);
+
    //multiple data set/get methods
    //
   void setm_data(int *err, int numargs, ... );      //++
@@ -238,6 +242,7 @@ private:
     int numlines;
     std::string name_temp;
 
+  int model_language;
     int ErrorCode;// reserved for proper errors handling
     int compute_index;
     int get_neigh_index;
@@ -296,6 +301,21 @@ private:
     bool is_it_in(KIM_API_model &mdl,const char *name);
     void * model_lib_handle;
     void free();
+
+  friend class KIM::Model;
 };
-std::ostream &operator<<(std::ostream &stream, KIM_API_model &a);
-#endif  /* KIMHDR_KIM_API_H */
+
+} /* OLD_KIM namespace */
+
+std::ostream &operator<<(std::ostream &stream, OLD_KIM::KIM_IOline a);
+std::istream &operator>>(std::istream &stream, OLD_KIM::KIM_IOline &a);
+//stringstream &operator>>(stringstream &stream, KIM_IOline &a);
+
+std::ostream &operator<<(std::ostream &stream, OLD_KIM::IOline a);
+std::istream &operator>>(std::istream &stream, OLD_KIM::IOline &a);
+
+std::ostream &operator<<(std::ostream &stream, OLD_KIM::KIMBaseElement a);
+
+std::ostream &operator<<(std::ostream &stream, OLD_KIM::KIM_API_model &a);
+
+#endif  /* KIMHDR_OLD_KIM_API_H */

@@ -195,77 +195,55 @@ CONVENTIONS:
 
 ZeroBasedLists              flag
 
-Neigh_IterAccess            flag
-
-Neigh_LocaAccess            flag
-
-NEIGH_RVEC_H                flag
-
-NEIGH_PURE_H                flag
-
-NEIGH_RVEC_F                flag
-
-NEIGH_PURE_F                flag
-
-MI_OPBC_H                   flag
-
-MI_OPBC_F                   flag
-
-CLUSTER                     flag
-
 
 ################################################################################
 MODEL_INPUT:
-# Name                      Type         Unit                Shape              Requirements
+# Name                      Type         Unit                Requirements
 
-numberOfParticles           integer      none                []
+numberOfParticles           integer      none
 
-numberContributingParticles integer      none                []                 optional
+numberOfSpecies             integer      none
 
-numberOfSpecies             integer      none                []
+particleSpecies             integer      none
 
-particleSpecies             integer      none                [numberOfParticles]
+coordinates                 double       length
 
-coordinates                 double       length              [numberOfParticles,3]
+get_neigh                   method       none                optional
 
-boxSideLengths              double       length              [3]                optional
+neighObject                 pointer      none                optional
 
-get_neigh                   method       none                []                 optional
+process_dEdr                method       none                optional
 
-neighObject                 pointer      none                []                 optional
-
-process_dEdr                method       none                []                 optional
-
-process_d2Edr2              method       none                []                 optional
+process_d2Edr2              method       none                optional
 
 
 ################################################################################
 MODEL_OUTPUT:
-# Name                      Type         Unit                Shape              Requirements
+# Name                      Type         Unit                Requirements
 
-destroy                     method       none                []
+destroy                     method       none
 
-compute                     method       none                []
+compute                     method       none
 
-reinit                      method       none                []                 optional
+reinit                      method       none                optional
 
-cutoff                      double       length              []
+cutoff                      double       length
 
-energy                      double       energy              []                 optional
+energy                      double       energy              optional
 
-forces                      double       force               [numberOfParticles,3]  optional
+forces                      double       force               optional
 
-particleEnergy              double       energy              [numberOfParticles]    optional
+particleEnergy              double       energy              optional
 
 
 ################################################################################
 MODEL_PARAMETERS:
-# Name                      Type         Unit                Shape              Requirements
+# Name                      Type         Unit                Requirements
 
-PARAM_FREE_shift            integer      none                []
+PARAM_shift                 integer      none
 
-PARAM_FREE_cutoffs          double       length              [:]  # upper triangular row-based arrangement
+PARAM_cutoffs               double       length
 
-PARAM_FREE_epsilons         double       energy              [:]  # upper triangular row-based arrangement
+PARAM_epsilons              double       energy
 
-PARAM_FREE_sigmas           double       length              [:]  # upper triangular row-based arrangement
+PARAM_sigmas                double       length

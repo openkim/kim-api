@@ -38,72 +38,75 @@
 #include <stdarg.h>
 #include <stdint.h>
 
-#include "KIM_API_C.h"
-#include "KIM_API.h"
-#include "KIM_API_status.h"
+#include "old_KIM_API_C.h"
+#include "old_KIM_API.h"
+#include "old_KIM_API_status.h"
+
+namespace OLD_KIM
+{
 
 //global methods
-int KIM_API_get_version(const char** const version)
+int old_KIM_API_get_version(const char** const version)
 {
   return KIM_API_model::get_version(version);
 }
 
-int KIM_API_get_version_major(int* const major)
+int old_KIM_API_get_version_major(int* const major)
 {
   return KIM_API_model::get_version_major(major);
 }
 
-int KIM_API_get_version_minor(int* const minor)
+int old_KIM_API_get_version_minor(int* const minor)
 {
   return KIM_API_model::get_version_minor(minor);
 }
 
-int KIM_API_get_version_patch(int* const patch)
+int old_KIM_API_get_version_patch(int* const patch)
 {
   return KIM_API_model::get_version_patch(patch);
 }
 
-int KIM_API_get_version_prerelease(const char** const prerelease)
+int old_KIM_API_get_version_prerelease(const char** const prerelease)
 {
   return KIM_API_model::get_version_prerelease(prerelease);
 }
 
-int KIM_API_get_version_build_metadata(const char** const build_metadata)
+int old_KIM_API_get_version_build_metadata(const char** const build_metadata)
 {
   return KIM_API_model::get_version_build_metadata(build_metadata);
 }
 
-int KIM_API_version_newer(const char* const versionA,
+int old_KIM_API_version_newer(const char* const versionA,
                           const char* const versionB,
                           int* const result)
 {
   return KIM_API_model::version_newer(versionA, versionB, result);
 }
 
-int KIM_API_get_version_model_major(void* kimmdl, int* const major)
+int old_KIM_API_get_version_model_major(void* kimmdl, int* const major)
 {
   KIM_API_model* mdl = (KIM_API_model*) kimmdl;
   return mdl->get_version_model_major(major);
 }
 
-int KIM_API_get_version_model_minor(void* kimmdl, int* const minor)
+int old_KIM_API_get_version_model_minor(void* kimmdl, int* const minor)
 {
   KIM_API_model* mdl = (KIM_API_model*) kimmdl;
   return mdl->get_version_model_minor(minor);
 }
-int KIM_API_get_version_simulator_major(void* kimmdl, int* const major)
+int old_KIM_API_get_version_simulator_major(void* kimmdl, int* const major)
 {
   KIM_API_model* mdl = (KIM_API_model*) kimmdl;
   return mdl->get_version_simulator_major(major);
 }
 
-int KIM_API_get_version_simulator_minor(void* kimmdl, int* const minor)
+int old_KIM_API_get_version_simulator_minor(void* kimmdl, int* const minor)
 {
   KIM_API_model* mdl = (KIM_API_model*) kimmdl;
   return mdl->get_version_simulator_minor(minor);
 }
 
-int KIM_API_string_init(void * kimmdl, const char *siminputstring, const char * mdlname){
+int old_KIM_API_string_init(void * kimmdl, const char *siminputstring, const char * mdlname){
      KIM_API_model * mdl;
     mdl = new KIM_API_model[1];
     int error = mdl->string_init(siminputstring,mdlname);
@@ -119,7 +122,7 @@ int KIM_API_string_init(void * kimmdl, const char *siminputstring, const char * 
     }
  }
 
-void KIM_API_free(void *kimmdl,int * error){
+void old_KIM_API_free(void *kimmdl,int * error){
     KIM_API_model * mdl=*(KIM_API_model **) kimmdl;
     *error=KIM_STATUS_OK;
     if (mdl==NULL) return;
@@ -128,7 +131,7 @@ void KIM_API_free(void *kimmdl,int * error){
     *(KIM_API_model **) kimmdl=NULL;
 
 }
-void KIM_API_print(void *kimmdl,int * error){
+void old_KIM_API_print(void *kimmdl,int * error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     *error =KIM_STATUS_FAIL;
     if (mdl==NULL) return;
@@ -136,162 +139,162 @@ void KIM_API_print(void *kimmdl,int * error){
     *error=KIM_STATUS_OK;
 }
 
-int KIM_API_model_init(void * kimmdl){
+int old_KIM_API_model_init(void * kimmdl){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     if(mdl->model_init()) return KIM_STATUS_OK;
     return KIM_STATUS_FAIL;
 }
 
-int KIM_API_get_model_kim_str_len(const char * modelname, int* const kimStringLen)
+int old_KIM_API_get_model_kim_str_len(const char * modelname, int* const kimStringLen)
 {
     return KIM_API_model::get_model_kim_str_len(modelname, kimStringLen);
 }
 
-int KIM_API_get_model_kim_str(const char * modelname, const char** const kimString)
+int old_KIM_API_get_model_kim_str(const char * modelname, const char** const kimString)
 {
     return KIM_API_model::get_model_kim_str(modelname, kimString);
 }
 
-int KIM_API_model_compute(void *kimmdl){
+int old_KIM_API_model_compute(void *kimmdl){
 
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
 
     return mdl->model_compute();
 
 }
-int KIM_API_model_reinit(void * kimmdl){
+int old_KIM_API_model_reinit(void * kimmdl){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     if (mdl->model_reinit()) return KIM_STATUS_OK;
     return KIM_STATUS_FAIL;
 }
-int KIM_API_model_destroy(void * kimmdl){
+int old_KIM_API_model_destroy(void * kimmdl){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     return mdl->model_destroy();
 }
 
-int KIM_API_get_num_model_species(void* kimmdl, int* numberSpecies,
+int old_KIM_API_get_num_model_species(void* kimmdl, int* numberSpecies,
                                   int* maxStringLength)
 {
   KIM_API_model * mdl=(KIM_API_model *) kimmdl;
   return mdl->get_num_model_species(numberSpecies, maxStringLength);
 }
 
-int KIM_API_get_model_species(void* kimmdl, const int index,
+int old_KIM_API_get_model_species(void* kimmdl, const int index,
                               const char** const speciesString)
 {
   KIM_API_model * mdl=(KIM_API_model *) kimmdl;
   return mdl->get_model_species(index, speciesString);
 }
 
-int KIM_API_get_num_sim_species(void* kimmdl, int* numberSpecies,
+int old_KIM_API_get_num_sim_species(void* kimmdl, int* numberSpecies,
                                 int* maxStringLength)
 {
   KIM_API_model * mdl=(KIM_API_model *) kimmdl;
   return mdl->get_num_sim_species(numberSpecies, maxStringLength);
 }
 
-int KIM_API_get_sim_species(void* kimmdl, const int index,
+int old_KIM_API_get_sim_species(void* kimmdl, const int index,
                             const char** const speciesString)
 {
   KIM_API_model * mdl=(KIM_API_model *) kimmdl;
   return mdl->get_sim_species(index, speciesString);
 }
 
-int KIM_API_get_num_params(void* kimmdl, int* numberParameters,
+int old_KIM_API_get_num_params(void* kimmdl, int* numberParameters,
                            int* maxStringLength)
 {
   KIM_API_model * mdl=(KIM_API_model *) kimmdl;
   return mdl->get_num_params(numberParameters, maxStringLength);
 }
 
-int KIM_API_get_parameter(void* kimmdl, const int index,
+int old_KIM_API_get_parameter(void* kimmdl, const int index,
                           const char** const parameterString)
 {
   KIM_API_model * mdl=(KIM_API_model *) kimmdl;
   return mdl->get_parameter(index, parameterString);
 }
 
-int KIM_API_get_species_code(void * kimmdl, const char* species, int * error){
+int old_KIM_API_get_species_code(void * kimmdl, const char* species, int * error){
      KIM_API_model * mdl=(KIM_API_model *) kimmdl;
      return mdl->get_species_code(species,error);
 }
-void KIM_API_set_species_code(void * kimmdl, const char* species, int code, int * error){
+void old_KIM_API_set_species_code(void * kimmdl, const char* species, int code, int * error){
      KIM_API_model * mdl=(KIM_API_model *) kimmdl;
      return mdl->set_species_code(species, code, error);
 }
 
 
 
-int KIM_API_get_neigh(void *kimmdl, int request, int *numnei, int **nei1part){
+int old_KIM_API_get_neigh(void *kimmdl, int request, int *numnei, int **nei1part){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     return mdl->get_neigh(request,numnei,nei1part);
 }
 
-int KIM_API_process_dEdr(void **ppkim, double * dE, double * dr, double **dx, int *i, int *j){
+int old_KIM_API_process_dEdr(void **ppkim, double * dE, double * dr, double **dx, int *i, int *j){
    return KIM_API_model::process_dEdr((KIM_API_model **)ppkim,dE,dr,dx,i,j);
 }
-int KIM_API_process_d2Edr2(void **ppkim, double * dE, double ** dr, double **dx,int **i, int **j){
+int old_KIM_API_process_d2Edr2(void **ppkim, double * dE, double ** dr, double **dx,int **i, int **j){
    return KIM_API_model::process_d2Edr2((KIM_API_model **)ppkim,dE,dr,dx,i,j);
  }
 
-int KIM_API_get_status_msg(const int status_code, const char** const status_msg)
+int old_KIM_API_get_status_msg(const int status_code, const char** const status_msg)
 {
   return KIM_API_model::get_status_msg(status_code, status_msg);
 }
 
-int KIM_API_report_error(int ln, const char *fl,const char *usermsg,int ier){
+int old_KIM_API_report_error(int ln, const char *fl,const char *usermsg,int ier){
     return KIM_API_model::report_error(ln,fl,usermsg,ier);
 }
 
-void KIM_API_set_model_buffer(void* kimmdl,void *ob,int * ier){
+void old_KIM_API_set_model_buffer(void* kimmdl,void *ob,int * ier){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     mdl->set_model_buffer(ob,ier);
 }
-void * KIM_API_get_model_buffer(void* kimmdl, int* ier){
+void * old_KIM_API_get_model_buffer(void* kimmdl, int* ier){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     return mdl->get_model_buffer(ier);
 }
 
-void KIM_API_set_sim_buffer(void* kimmdl,void *ob,int * ier){
+void old_KIM_API_set_sim_buffer(void* kimmdl,void *ob,int * ier){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     mdl->set_sim_buffer(ob,ier);
 }
-void * KIM_API_get_sim_buffer(void* kimmdl, int* ier){
+void * old_KIM_API_get_sim_buffer(void* kimmdl, int* ier){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     return mdl->get_sim_buffer(ier);
 }
 
 //element access methods by name
-int  KIM_API_set_data(void *kimmdl,const char *nm, intptr_t size, void *dt){
+int  old_KIM_API_set_data(void *kimmdl,const char *nm, intptr_t size, void *dt){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     if(mdl->set_data(nm,size,dt)) return KIM_STATUS_OK;
     return KIM_STATUS_FAIL;
 }
-int  KIM_API_set_method(void *kimmdl,const char *nm, intptr_t size, func_ptr dt){
+int  old_KIM_API_set_method(void *kimmdl,const char *nm, intptr_t size, int const language, func_ptr dt){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    if(mdl->set_method(nm,size,dt)) return KIM_STATUS_OK;
+    if(mdl->set_method(nm,size,language,dt)) return KIM_STATUS_OK;
     return KIM_STATUS_FAIL;
 }
-void * KIM_API_get_data(void *kimmdl,const char *nm,int *error){
+void * old_KIM_API_get_data(void *kimmdl,const char *nm,int *error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     return mdl->get_data(nm,error);
 }
-func_ptr KIM_API_get_method(void *kimmdl,const char *nm,int *error){
+func_ptr old_KIM_API_get_method(void *kimmdl,const char *nm,int * const language, int *error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    return mdl->get_method(nm,error);
+    return mdl->get_method(nm,language, error);
 }
 
-intptr_t KIM_API_get_size(void *kimmdl,const char *nm,int *error){
+intptr_t old_KIM_API_get_size(void *kimmdl,const char *nm,int *error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     return mdl->get_size(nm,error);
 }
 
-void KIM_API_set_compute(void *kimmdl,const char *nm, int flag, int *error){
+void old_KIM_API_set_compute(void *kimmdl,const char *nm, int flag, int *error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     mdl->set_compute(nm, flag, error);
 }
 
-int KIM_API_get_compute(void *kimmdl,const char *nm, int * error){
+int old_KIM_API_get_compute(void *kimmdl,const char *nm, int * error){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
     *error = KIM_STATUS_FAIL;
     int comp =mdl->get_compute(nm, error);
@@ -301,7 +304,7 @@ int KIM_API_get_compute(void *kimmdl,const char *nm, int * error){
 
 //multiple data set/get methods
 //
-void KIM_API_setm_data(void *kimmdl, int *err, int numargs, ... ){
+void old_KIM_API_setm_data(void *kimmdl, int *err, int numargs, ... ){
     KIM_API_model *pkim = (KIM_API_model *) kimmdl;
     *err=KIM_STATUS_FAIL;
     va_list listPointer;
@@ -336,13 +339,13 @@ void KIM_API_setm_data(void *kimmdl, int *err, int numargs, ... ){
     *err=KIM_STATUS_OK;
     va_end(listPointer);
 }
-void KIM_API_setm_method(void *kimmdl, int *err, int numargs, ... ){
+void old_KIM_API_setm_method(void *kimmdl, int *err, int numargs, ... ){
     KIM_API_model *pkim = (KIM_API_model *) kimmdl;
     *err=KIM_STATUS_FAIL;
     va_list listPointer;
     va_start(listPointer,numargs);
-    if(numargs % 4 != 0) {
-        std::cout<<"setm_method: numargs must be multiple of 4"<<std::endl;
+    if(numargs % 5 != 0) {
+        std::cout<<"setm_method: numargs must be multiple of 5"<<std::endl;
         *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_4;
         va_end(listPointer);
         return;
@@ -351,6 +354,7 @@ void KIM_API_setm_method(void *kimmdl, int *err, int numargs, ... ){
     for (int i=0; i<numargs/4; i++){
         char *nm      = va_arg(listPointer, char *);
         intptr_t size = va_arg(listPointer, intptr_t);
+        int lang = va_arg(listPointer, int);
         func_ptr dt      = va_arg(listPointer, func_ptr);
 
         int key       =va_arg(listPointer, int);
@@ -361,7 +365,7 @@ void KIM_API_setm_method(void *kimmdl, int *err, int numargs, ... ){
         }else if(key ==0) continue;
 
         if(dt==NULL) std::cout<<"setm_method: WARNING: for "<<nm<<" data is NULL\n";
-        if(!pkim->set_method(nm,size,dt)){
+        if(!pkim->set_method(nm,size,lang,dt)){
             std::cout<<"setm_method: set data for "<<nm<<" failed\n";
             va_end(listPointer);
             return;
@@ -372,7 +376,7 @@ void KIM_API_setm_method(void *kimmdl, int *err, int numargs, ... ){
     va_end(listPointer);
 }
 
-void KIM_API_getm_data(void *kimmdl, int *err,int numargs, ...){
+void old_KIM_API_getm_data(void *kimmdl, int *err,int numargs, ...){
     KIM_API_model *pkim = (KIM_API_model *) kimmdl;
     *err=KIM_STATUS_FAIL;
     va_list listPointer;
@@ -406,13 +410,13 @@ void KIM_API_getm_data(void *kimmdl, int *err,int numargs, ...){
     *err=KIM_STATUS_OK;
     va_end(listPointer);
 }
-void KIM_API_getm_method(void *kimmdl, int *err,int numargs, ...){
+void old_KIM_API_getm_method(void *kimmdl, int *err,int numargs, ...){
     KIM_API_model *pkim = (KIM_API_model *) kimmdl;
     *err=KIM_STATUS_FAIL;
     va_list listPointer;
     va_start(listPointer,numargs);
-    if(numargs % 3 != 0) {
-        std::cout<<"getm_method: numargs must be multiple of 3"<<std::endl;
+    if(numargs % 4 != 0) {
+        std::cout<<"getm_method: numargs must be multiple of 4"<<std::endl;
         *err=KIM_STATUS_NUMARGS_NOT_DIVISIBLE_BY_3;
         va_end(listPointer);
         return;
@@ -420,6 +424,7 @@ void KIM_API_getm_method(void *kimmdl, int *err,int numargs, ...){
 
     for (int i=0; i<numargs/3; i++){
         char *nm      = va_arg(listPointer, char *);
+        int *lang = va_arg(listPointer, int*);
         func_ptr *dt      = va_arg(listPointer, func_ptr *);
 
         int key       =va_arg(listPointer, int);
@@ -429,7 +434,7 @@ void KIM_API_getm_method(void *kimmdl, int *err,int numargs, ...){
             return;
         }else if(key ==0) continue;
 
-        *dt = pkim->get_method(nm,err);
+        *dt = pkim->get_method(nm,lang,err);
         if(*err != KIM_STATUS_OK){
             std::cout<<"getm_method: get data for "<<nm<<" failed\n";
             va_end(listPointer);
@@ -441,7 +446,7 @@ void KIM_API_getm_method(void *kimmdl, int *err,int numargs, ...){
     va_end(listPointer);
 }
 
-void KIM_API_setm_compute(void *kimmdl, int *err, int numargs, ...){
+void old_KIM_API_setm_compute(void *kimmdl, int *err, int numargs, ...){
     KIM_API_model *pkim = (KIM_API_model *) kimmdl;
     *err=KIM_STATUS_FAIL;
     va_list listPointer;
@@ -483,7 +488,7 @@ void KIM_API_setm_compute(void *kimmdl, int *err, int numargs, ...){
     va_end(listPointer);
 }
 
-void KIM_API_getm_compute(void *kimmdl, int *err,int numargs, ...){
+void old_KIM_API_getm_compute(void *kimmdl, int *err,int numargs, ...){
     KIM_API_model *pkim = (KIM_API_model *) kimmdl;
     *err=KIM_STATUS_FAIL;
     va_list listPointer;
@@ -520,28 +525,28 @@ void KIM_API_getm_compute(void *kimmdl, int *err,int numargs, ...){
 }
 
 //related to Unit_Handling
-double KIM_API_get_scale_conversion(const char *u_from,const char *u_to, int *error){
+double old_KIM_API_get_scale_conversion(const char *u_from,const char *u_to, int *error){
     return KIM_API_model::get_scale_conversion(u_from,u_to,error);
 }
-int    KIM_API_get_unit_handling(void *kimmdl, int *error){
+int    old_KIM_API_get_unit_handling(void *kimmdl, int *error){
     return ((KIM_API_model *)kimmdl)->get_unit_handling(error);
 }
-char const * const KIM_API_get_unit_length(void *kimmdl, int *error){
+char const * const old_KIM_API_get_unit_length(void *kimmdl, int *error){
     return ((KIM_API_model *)kimmdl)->get_unit_length(error);
 }
-char const * const KIM_API_get_unit_energy(void *kimmdl, int *error){
+char const * const old_KIM_API_get_unit_energy(void *kimmdl, int *error){
     return ((KIM_API_model *)kimmdl)->get_unit_energy(error);
 }
-char const * const KIM_API_get_unit_charge(void *kimmdl, int *error){
+char const * const old_KIM_API_get_unit_charge(void *kimmdl, int *error){
     return ((KIM_API_model *)kimmdl)->get_unit_charge(error);
 }
-char const * const KIM_API_get_unit_temperature(void *kimmdl, int *error){
+char const * const old_KIM_API_get_unit_temperature(void *kimmdl, int *error){
     return ((KIM_API_model *)kimmdl)->get_unit_temperature(error);
 }
-char const * const KIM_API_get_unit_time(void *kimmdl, int *error){
+char const * const old_KIM_API_get_unit_time(void *kimmdl, int *error){
     return ((KIM_API_model *)kimmdl)->get_unit_time(error);
 }
-double KIM_API_convert_to_act_unit(void * kimmdl,
+double old_KIM_API_convert_to_act_unit(void * kimmdl,
                                 const char *length,
                                 const char *energy,
                                 const char *charge,
@@ -555,4 +560,6 @@ double KIM_API_convert_to_act_unit(void * kimmdl,
                                 int *kimerror){
     return ((KIM_API_model *)kimmdl)->convert_to_act_unit(length,energy,charge,temperature,time,
             length_exponent,energy_exponent,charge_exponent,temperature_exponent,time_exponent, kimerror);
+}
+
 }

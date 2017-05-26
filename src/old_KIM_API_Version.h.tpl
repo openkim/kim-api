@@ -33,8 +33,8 @@
 */
 
 
-#ifndef KIMHDR_KIM_API_VERSION_H
-#define KIMHDR_KIM_API_VERSION_H
+#ifndef KIMHDR_OLD_KIM_API_VERSION_H
+#define KIMHDR_OLD_KIM_API_VERSION_H
 
 #define KIM_API_VERSION_MAJOR versionMajor
 #define KIM_API_VERSION_MINOR versionMinor
@@ -43,4 +43,4 @@
 #define KIM_API_VERSION_BUILD_METADATA versionBuildMetadata
 #define KIM_API_VERSION versionString
 
-#endif  /* KIMHDR_KIM_API_VERSION_H */
+#endif  /* KIMHDR_OLD_KIM_API_VERSION_H */

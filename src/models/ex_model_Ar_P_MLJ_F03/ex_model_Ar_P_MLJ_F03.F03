@@ -39,19 +39,18 @@
 !**
 !**  Language: Fortran 2003
 !**
-!**  Release: This file is part of the kim-api.git repository.
+!**  Release: This file is part of the kim-api-v1.8.0 package.
 !**
 !****************************************************************************
 
 
-#include "KIM_API_status.h"
+#include "old_KIM_API_status.h"
 #define THIS_FILE_NAME __FILE__
 #define TRUEFALSE(TRUTH) merge(1,0,(TRUTH))
 
 module ex_model_Ar_P_MLJ_F03
 
 use, intrinsic :: iso_c_binding
-use KIM_API_F03
 implicit none
 
 save
@@ -160,18 +159,21 @@ end subroutine calc_phi_dphi
 ! Compute energy and forces on particles from the positions.
 !
 !-------------------------------------------------------------------------------
-integer(c_int) function Compute_Energy_Forces(pkim) bind(c)
+subroutine Compute_Energy_Forces(model, ierr) bind(c)
+use kim_model_module
+use kim_compute_module
+use kim_utility_compute_module
 implicit none
 
 !-- Transferred variables
-type(c_ptr), intent(in)  :: pkim
+type(kim_model_type), intent(in) :: model
+integer(c_int), intent(out) :: ierr
 
 !-- Local variables
 real(c_double) :: Rij(DIM)
 real(c_double) :: r,Rsqij,phi,dphi,dEidr = 0.0_cd
 integer(c_int) :: i,j,jj,numnei,part_ret,comp_force,comp_enepot,comp_virial, &
                   comp_energy
-character (len=80) :: error_message
 
 !-- KIM variables
 integer(c_int), pointer :: N;                 type(c_ptr) :: pN
@@ -179,152 +181,60 @@ real(c_double), pointer :: energy;            type(c_ptr) :: penergy
 real(c_double), pointer :: coor(:,:);         type(c_ptr) :: pcoor
 real(c_double), pointer :: force(:,:);        type(c_ptr) :: pforce
 real(c_double), pointer :: enepot(:);         type(c_ptr) :: penepot
-real(c_double), pointer :: boxSideLengths(:); type(c_ptr) :: pboxSideLengths
-real(c_double), pointer :: Rij_list(:,:);     type(c_ptr) :: pRij_list
-integer(c_int), pointer :: numContrib;        type(c_ptr) :: pnumContrib
 integer(c_int), pointer :: nei1part(:);       type(c_ptr) :: pnei1part
 integer(c_int), pointer :: particleSpecies(:);type(c_ptr) :: pparticleSpecies
 real(c_double), pointer :: virial(:);         type(c_ptr) :: pvirial
-character(len=KIM_KEY_STRING_LENGTH) NBC_Method
-integer(c_int) IterOrLoca
-integer(c_int) HalfOrFull
-integer(c_int) NBC
-integer(c_int) numberContrib
-integer(c_int) idum
-
-numberContrib = 0 ! initialize
-
-! Determine neighbor list boundary condition (NBC)
-! and half versus full mode:
-! *****************************
-! * HalfOrFull = 1 -- Half
-! *            = 2 -- Full
-! *****************************
-!
-!
-Compute_Energy_Forces = kim_api_get_nbc_method(pkim, NBC_Method)
-if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                               "kim_api_get_nbc_method", &
-                               Compute_Energy_Forces)
-   return
-endif
-if (index(NBC_Method,"NEIGH_RVEC_H").eq.1) then
-   NBC = 0
-   HalfOrFull = 1
-elseif (index(NBC_Method,"NEIGH_RVEC_F").eq.1) then
-   NBC = 0
-   HalfOrFull = 2
-elseif (index(NBC_Method,"NEIGH_PURE_H").eq.1) then
-   NBC = 1
-   HalfOrFull = 1
-elseif (index(NBC_Method,"NEIGH_PURE_F").eq.1) then
-   NBC = 1
-   HalfOrFull = 2
-elseif (index(NBC_Method,"MI_OPBC_H").eq.1) then
-   NBC = 2
-   HalfOrFull = 1
-elseif (index(NBC_Method,"MI_OPBC_F").eq.1) then
-   NBC = 2
-   HalfOrFull = 2
-elseif (index(NBC_Method,"CLUSTER").eq.1) then
-   NBC = 3
-   HalfOrFull = 1
-else
-   Compute_Energy_Forces = KIM_STATUS_FAIL
-   idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                               "Unknown NBC method", Compute_Energy_Forces)
-   return
-endif
-
-! Determine neighbor list handling mode
-!
-if (NBC.ne.3) then
-   !*****************************
-   !* IterOrLoca = 1 -- Iterator
-   !*            = 2 -- Locator
-   !*****************************
-   IterOrLoca = kim_api_get_neigh_mode(pkim, Compute_Energy_Forces)
-   if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
-      idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                                  "kim_api_get_neigh_mode", &
-                                  Compute_Energy_Forces)
-      return
-   endif
-   if (IterOrLoca.ne.1 .and. IterOrLoca.ne.2) then
-      Compute_Energy_Forces = KIM_STATUS_FAIL
-      write(error_message,'(a,i1)') &
-         'Unsupported IterOrLoca mode = ',IterOrLoca
-      idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                                  error_message, Compute_Energy_Forces)
-      return
-   endif
-else
-   IterOrLoca = 2   ! for CLUSTER NBC
-endif
 
 ! Check to see if we have been asked to compute the forces, energyperpart,
 ! energy and virial
 !
-call kim_api_getm_compute(pkim, Compute_Energy_Forces, &
-     "energy",         comp_energy, 1, &
-     "forces",         comp_force,  1, &
-     "particleEnergy", comp_enepot, 1, &
-     "virial",         comp_virial, 1)
-if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                               "kim_api_getm_compute", Compute_Energy_Forces)
+call kim_utility_compute_getm_compute(model, ierr, &
+  kim_compute_argument_name_energy, comp_energy, 1, &
+  kim_compute_argument_name_forces, comp_force,  1, &
+  kim_compute_argument_name_particle_energy, comp_enepot, 1, &
+  kim_compute_argument_name_virial, comp_virial, 1)
+if (ierr.lt.KIM_STATUS_OK) then
+   call kim_report_error(__LINE__, THIS_FILE_NAME, &
+                               "kim_api_getm_compute", ierr)
    return
 endif
 
 ! Unpack data from KIM object
 !
-call kim_api_getm_data(pkim, Compute_Energy_Forces,                           &
- "numberOfParticles",           pN,              1,                           &
- "particleSpecies",             pparticleSpecies,1,                           &
- "coordinates",                 pcoor,           1,                           &
- "numberContributingParticles", pnumContrib,     TRUEFALSE(HalfOrFull.eq.1),  &
- "boxSideLengths",              pboxSideLengths, TRUEFALSE(NBC.eq.2),         &
- "energy",                      penergy,         TRUEFALSE(comp_energy.eq.1), &
- "forces",                      pforce,          TRUEFALSE(comp_force.eq.1),  &
- "particleEnergy",              penepot,         TRUEFALSE(comp_enepot.eq.1), &
- "virial",                      pvirial,         TRUEFALSE(comp_virial.eq.1))
-if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                               "kim_api_getm_data_f", Compute_Energy_Forces)
+call kim_utility_compute_getm_data(model, ierr, &
+  kim_compute_argument_name_number_of_particles, pN, 1, &
+  kim_compute_argument_name_particle_species, pparticleSpecies, 1, &
+  kim_compute_argument_name_coordinates, pcoor, 1, &
+  kim_compute_argument_name_energy, penergy, TRUEFALSE(comp_energy.eq.1), &
+  kim_compute_argument_name_forces, pforce, TRUEFALSE(comp_force.eq.1), &
+  kim_compute_argument_name_particle_energy, penepot, TRUEFALSE(comp_enepot.eq.1), &
+  kim_compute_argument_name_virial, pvirial, TRUEFALSE(comp_virial.eq.1))
+if (ierr.lt.KIM_STATUS_OK) then
+   call kim_report_error(__LINE__, THIS_FILE_NAME, &
+                               "kim_api_getm_data", ierr)
    return
 endif
 
 call c_f_pointer(pN,               N)
 call c_f_pointer(pparticleSpecies, particleSpecies, [N])
 call c_f_pointer(pcoor,            coor,            [DIM,N])
-if (HalfOrFull.eq.1)  call c_f_pointer(pnumContrib,     numContrib)
-if (NBC.eq.2)         call c_f_pointer(pboxSideLengths, boxSideLengths, [DIM])
 if (comp_energy.eq.1) call c_f_pointer(penergy,         energy)
 if (comp_force.eq.1)  call c_f_pointer(pforce,          force,          [DIM,N])
 if (comp_enepot.eq.1) call c_f_pointer(penepot,         enepot,         [N])
 if (comp_virial.eq.1) call c_f_pointer(pvirial,         virial,         [6])
 
-if (HalfOrFull.eq.1) then
-   if (NBC.ne.3) then ! non-CLUSTER cases
-      numberContrib = numContrib
-   else               ! CLUSTER case
-      numberContrib = N
-   endif
-endif
-
 ! Check to be sure that the species are correct
 !
-Compute_Energy_Forces = KIM_STATUS_FAIL ! assume an error
+ierr = KIM_STATUS_FAIL ! assume an error
 do i = 1,N
    if (particleSpecies(i).ne.speccode) then
-      idum = kim_api_report_error(__LINE__, THIS_FILE_NAME,      &
+      call kim_report_error(__LINE__, THIS_FILE_NAME,      &
                                   "Unexpected species detected", &
-                                  Compute_Energy_Forces)
+                                  ierr)
       return
    endif
 enddo
-Compute_Energy_Forces = KIM_STATUS_OK ! everything is ok
+ierr = KIM_STATUS_OK ! everything is ok
 
 ! Initialize potential energies, forces, virial term
 !
@@ -332,26 +242,6 @@ if (comp_enepot.eq.1) enepot = 0.0_cd
 if (comp_energy.eq.1) energy = 0.0_cd
 if (comp_force.eq.1)  force  = 0.0_cd
 if (comp_virial.eq.1) virial = 0.0_cd
-
-! Initialize neighbor handling for CLUSTER NBC
-!
-if (NBC.eq.3) then
-   allocate( nei1part(N) )
-endif
-
-! Initialize neighbor handling for Iterator mode
-!
-if (IterOrLoca.eq.1) then
-   Compute_Energy_Forces = kim_api_get_neigh(pkim,0,0,part_ret,numnei, &
-                                             pnei1part,pRij_list)
-   ! check for successful initialization
-   if (Compute_Energy_Forces.ne.KIM_STATUS_NEIGH_ITER_INIT_OK) then
-      idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                                  "kim_api_get_neigh", Compute_Energy_Forces)
-      Compute_Energy_Forces = KIM_STATUS_FAIL
-      return
-   endif
-endif
 
 !
 !  Compute energy and forces
@@ -362,48 +252,22 @@ endif
 i = 0
 do
 
-   ! Set up neighbor list for next particle for all NBC methods
+   ! Set up neighbor list for next particle
    !
-   if (IterOrLoca.eq.1) then ! ITERATOR mode
-      Compute_Energy_Forces = kim_api_get_neigh(pkim,0,1,part_ret,numnei, &
-                                                pnei1part,pRij_list)
-      if (Compute_Energy_Forces.eq.KIM_STATUS_NEIGH_ITER_PAST_END) exit
-                             ! incremented past the end of the list,
-                             ! terminate loop
-      if (Compute_Energy_Forces.lt.KIM_STATUS_OK) then
-                             ! some sort of problem, exit
-         idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                                     "kim_api_get_neigh",      &
-                                     Compute_Energy_Forces)
-         return
-      endif
-
-      i = part_ret
-
-   else                      ! LOCATOR mode
-      i = i + 1
-      if (i.gt.N) exit       ! incremented past end of list,
-                             ! terminate loop
-      if (NBC.eq.3) then     ! CLUSTER NBC method
-         numnei = N - i      ! number of neighbors in list i+1, ..., N
-         nei1part(1:numnei) = (/ (i+jj, jj = 1,numnei) /)
-         Compute_Energy_Forces = KIM_STATUS_OK
-      else
-         Compute_Energy_Forces = kim_api_get_neigh(pkim,1,i,part_ret,numnei, &
-                                                   pnei1part,pRij_list)
-         if (Compute_Energy_Forces.ne.KIM_STATUS_OK) then
-                             ! some sort of problem, exit
-            idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                                        "kim_api_get_neigh",      &
-                                        Compute_Energy_Forces)
-            Compute_Energy_Forces = KIM_STATUS_FAIL
-            return
-         endif
-      endif
+   i = i + 1
+   if (i.gt.N) exit       ! incremented past end of list,
+                          ! terminate loop
+   call kim_model_get_neigh(model, i, numnei, pnei1part, ierr)
+   if (ierr.ne.KIM_STATUS_OK) then
+     ! some sort of problem, exit
+     call kim_report_error(__LINE__, THIS_FILE_NAME, &
+       "kim_api_get_neigh",      &
+       ierr)
+     ierr = KIM_STATUS_FAIL
+     return
    endif
 
-   if (NBC.ne.3) call c_f_pointer(pnei1part, nei1part, [numnei])
-   if (NBC.eq.0) call c_f_pointer(pRij_list, Rij_list, [DIM,numnei])
+   call c_f_pointer(pnei1part, nei1part, [numnei])
 
    ! Loop over the neighbors of particle i
    !
@@ -413,20 +277,7 @@ do
 
       ! compute relative position vector
       !
-      if (NBC.ne.0) then                         ! all methods except NEIGH_RVEC
-         Rij(:) = coor(:,j) - coor(:,i)          ! distance vector between i j
-      else
-         Rij(:) = Rij_list(:,jj)
-      endif
-
-      ! apply periodic boundary conditions if required
-      !
-      if (NBC.eq.2) then
-         where ( abs(Rij) .gt. 0.5_cd*boxSideLengths )
-                                                 ! periodic boundary conditions
-            Rij = Rij - sign(boxSideLengths,Rij) ! applied where needed.
-         end where
-      endif
+      Rij(:) = coor(:,j) - coor(:,i)          ! distance vector between i j
 
       ! compute energy and forces
       !
@@ -437,12 +288,7 @@ do
          if (comp_force.eq.1.or.comp_virial.eq.1) then
             call calc_phi_dphi(r,phi,dphi)       ! compute pair potential
                                                  !   and it derivative
-            if ((HalfOrFull.eq.1) .and. &
-                (j .le. numberContrib)) then     ! HALF mode
-               dEidr = dphi                      !      double contribution
-            else                                 ! FULL mode
-               dEidr = 0.5_cd*dphi               !      regular contribution
-            endif
+            dEidr = 0.5_cd*dphi               !      regular contribution
          else
             call calc_phi(r,phi)                 ! compute just pair potential
          endif
@@ -451,17 +297,9 @@ do
          !
          if (comp_enepot.eq.1) then
             enepot(i) = enepot(i) + 0.5_cd*phi   ! accumulate energy
-            if ((HalfOrFull.eq.1) .and. &
-                (j .le. numberContrib)) &        ! HALF mode
-               enepot(j) = enepot(j) + 0.5_cd*phi! (i and j share it)
          endif
          if (comp_energy.eq.1) then
-            if ((HalfOrFull.eq.1) .and. &
-                (j .le. numberContrib)) then     ! HALF mode
-               energy = energy + phi             !    add v to total energy
-            else                                 ! FULL mode
-               energy = energy + 0.5_cd*phi      !    add half v to total energy
-            endif
+           energy = energy + 0.5_cd*phi      !    add half v to total energy
          endif
 
          ! contribution to virial tensor, virial(i,j)=r(i)*r(j)*(dV/dr)/r
@@ -488,16 +326,12 @@ do
 
 enddo  ! infinite do loop (terminated by exit statements above)
 
-! Free temporary storage
-!
-if (NBC.eq.3) deallocate( nei1part )
-
 ! Everything is great
 !
-Compute_Energy_Forces = KIM_STATUS_OK
+ierr = KIM_STATUS_OK
 return
 
-end function Compute_Energy_Forces
+end subroutine Compute_Energy_Forces
 
 end module ex_model_Ar_P_MLJ_F03
 
@@ -506,43 +340,42 @@ end module ex_model_Ar_P_MLJ_F03
 ! Model initialization routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-integer(c_int) function model_init(pkim) bind(c)
+subroutine model_init(model, ierr) bind(c)
 use, intrinsic :: iso_c_binding
 use ex_model_Ar_P_MLJ_F03
-use KIM_API_F03
+use kim_model_module
+use kim_compute_module
 implicit none
 
 !-- Transferred variables
-type(c_ptr), intent(in) :: pkim
-
-!-- Local variables
-integer(c_int), parameter :: one=1
-integer(c_int) ier, idum
+type(kim_model_type), intent(inout) :: model
+integer(c_int), intent(out) :: ierr
 
 !-- KIM variables
 real(c_double), pointer :: cutoff; type(c_ptr) :: pcutoff
 
 ! store pointer to compute function in KIM object
-ier = kim_api_set_method(pkim,"compute",one,c_funloc(Compute_Energy_Forces))
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                               "kim_api_set_method", ier)
+call kim_model_set_method(model, &
+  kim_compute_argument_name_compute, 1, &
+  kim_compute_language_name_fortran, c_funloc(Compute_Energy_Forces), ierr)
+if (ierr.lt.KIM_STATUS_OK) then
+   call kim_report_error(__LINE__, THIS_FILE_NAME, &
+                               "kim_api_set_method", ierr)
    goto 42
 endif
 
 ! store model cutoff in KIM object
-pcutoff =  kim_api_get_data(pkim,"cutoff",ier)
-if (ier.lt.KIM_STATUS_OK) then
-   idum = kim_api_report_error(__LINE__, THIS_FILE_NAME, &
-                               "kim_api_get_data", ier)
+call kim_model_get_data(model, kim_compute_argument_name_cutoff, pcutoff, ierr)
+if (ierr.lt.KIM_STATUS_OK) then
+   call kim_report_error(__LINE__, THIS_FILE_NAME, &
+                               "kim_api_get_data", ierr)
    goto 42
 endif
 call c_f_pointer(pcutoff, cutoff)
 cutoff = model_cutoff
 
-ier = KIM_STATUS_OK
+ierr = KIM_STATUS_OK
 42 continue
-model_init = ier
 return
 
-end function model_init
+end subroutine model_init

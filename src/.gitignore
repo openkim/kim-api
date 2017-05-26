@@ -3,8 +3,7 @@
 /model_init_include_stubs.cpp
 /model_kim_str_include.cpp
 /model_kim_str_include.h
-/KIM_API_F03_Multiples.incl
-/KIM_API_Version.h
+/old_KIM_API_F03_Multiples.incl
+/old_KIM_API_Version.h
 /.*.make-temp
 /.models-deleted
-

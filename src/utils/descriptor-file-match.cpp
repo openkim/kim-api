@@ -35,8 +35,8 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-#include "KIM_API.h"
-#include "KIM_API_status.h"
+#include "old_KIM_API.h"
+#include "old_KIM_API_status.h"
 
 void replaceAll(std::string& str,
                 std::string const& from,
@@ -90,7 +90,7 @@ int main(int argc, char* argv[])
      replaceAll(modelKIM, "\r","");
    }
 
-   KIM_API_model kim;
+   OLD_KIM::KIM_API_model kim;
    int error;
 
    error = kim.match((char*) simulatorKIM.c_str(), (char*) modelKIM.c_str());

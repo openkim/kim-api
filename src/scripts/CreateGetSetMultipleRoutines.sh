@@ -31,193 +31,149 @@
 
 createGetM()
 {
-printf "subroutine kim_api_getm_%s( &\n" $subject
-printf "  kimmdl, error, &\n"
+printf "subroutine kim_utility_compute_getm_%s( &\n" $subject
+printf "  model, ierr, &\n"
 for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14; do
-printf "  id$i,  dt$i,  k$i, &\n"
+printf "  argument_name_%02i, ${hasLanguage:+language_name_%02i,} value_%02i, flag_%02i, &\n" $i ${hasLanguage:+$i} $i $i
 done
-printf "  id15, dt15, k15 &\n"
+printf "  argument_name_15, ${hasLanguage:+language_name_15,} value_15, flag_15 &\n"
 printf "  )\n"
-printf "  use :: kim_api_f03_helper, only : errcheck_mltpl_%s\n" $idtype
+printf "  use, intrinsic :: iso_c_binding\n"
+printf "  use :: kim_model_module\n"
+printf "  use :: kim_compute_module\n"
 printf "  implicit none\n"
-printf "  type(c_ptr) :: kimmdl\n"
-printf "  integer(c_int) :: error\n"
-printf "  %s(%s) :: id1\n" $idtype $idkind
+printf "  type(kim_model_type), intent(in) :: model\n"
+printf "  integer(c_int), intent(out) :: ierr\n"
+printf "  %s(%s), intent(in) :: argument_name_01\n" $argumentNameType $argumentNameKind
 for i in 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
-printf "  %s(%s), optional :: id$i\n" $idtype $idkind
+printf "  %s(%s), intent(in), optional :: argument_name_%02i\n" $argumentNameType $argumentNameKind $i
 done
-printf "  %s(%s) :: dt1\n" $dttype $dtkind
-for i in 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
-printf "  %s(%s), optional :: dt$i\n" $dttype $dtkind
-done
-printf "  integer(c_int) :: k1\n"
-for i in 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
-printf "  integer(c_int), optional :: k$i\n"
-done
-printf "  character(len=40) :: msg="'"'"kim_api_getm_%s"'"' $subject
-printf "\n"
-printf "  if ((k1 .ne. 0) .and. (k1 .ne. 1)) then\n"
-printf "    error = KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY\n"
-printf "    if (errcheck_mltpl_%s(KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY, msg, 1, id1) &\n" $idtype
-printf "      .lt. KIM_STATUS_OK) return\n"
-printf "  end if\n"
-printf "  if (k1 .eq. 1) then\n"
-if test "x$subroutine" = "xtrue"; then
-printf "    call kim_api_get_%s(kimmdl, id1, dt1, error)\n" $subject
-else
-printf "    dt1 = kim_api_get_%s(kimmdl, id1, error);\n" $subject
+if test "x$hasLanguage" != "x"; then
+printf "  %s(%s), intent(in) :: language_name_01\n" $languageNameType $languageNameKind
+  for i in 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
+printf "  %s(%s), intent(in), optional :: language_name_%02i\n" $languageNameType $languageNameKind $i
+  done
 fi
-printf "    if (errcheck_mltpl_%s(error, msg, 1, id1) .lt. KIM_STATUS_OK) return\n" $idtype
-printf "  end if\n"
-printf "\n"
-printf "  !check rest of the arguments\n"
-printf "  error = KIM_STATUS_WRONG_MULTIPLE_ARGS\n"
-printf "  if (present(id2) .and. (.not.present(dt2))) then\n"
-printf "    if (errcheck_mltpl_%s(error, msg, 2, id2) .lt. KIM_STATUS_OK) return\n" $idtype
-for i in 3 4 5 6 7 8 9 10 11 12 13 14 15; do
-printf "  else if (present(id$i) .and. (.not.present(dt$i))) then\n"
-printf "    if (errcheck_mltpl_%s(error, msg, $i, id$i) .lt. KIM_STATUS_OK) return\n" $idtype
+printf "  %s(%s), intent(out) :: value_01\n" $valueType $valueKind
+for i in 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
+printf "  %s(%s), intent(out), optional :: value_%02i\n" $valueType $valueKind $i
 done
-printf "  end if\n"
-printf "\n"
-printf "  error = KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY\n"
-printf "  if (present(k2) .and. ((k2 .ne. 0) .and. (k2 .ne. 1))) then\n"
-printf "    if (errcheck_mltpl_%s(error, msg, 2, id2) .lt. KIM_STATUS_OK) return\n" $idtype
-for i in 3 4 5 6 7 8 9 10 11 12 13 14 15; do
-printf "  else if (present(k$i) .and. ((k$i .ne. 0) .and. (k$i .ne. 1))) then\n"
-printf "    if (errcheck_mltpl_%s(error, msg, $i, id$i) .lt. KIM_STATUS_OK) return\n" $idtype
+printf "  integer(c_int), intent(in) :: flag_01\n"
+for i in 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
+printf "  integer(c_int), intent(in), optional :: flag_%02i\n" $i
 done
+printf "\n"
+printf "  if (flag_01 == 1) then\n"
+printf "    call kim_model_get_%s(model, argument_name_01, ${hasLanguage:+language_name_01,} value_01, ierr)\n" $subject
+printf "    if (ierr /= 1) return\n"
 printf "  end if\n"
 printf "\n"
 printf "  !process arguments\n"
-printf "  error=KIM_STATUS_OK\n"
 for i in 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
-printf "  if (present(id$i) .and. (k$i .eq. 1)) then\n"
-if test "x$subroutine" = "xtrue"; then
-printf "    call kim_api_get_%s(kimmdl, id$i, dt$i, error)\n" $subject
-else
-printf "    dt$i = kim_api_get_%s(kimmdl, id$i, error);\n" $subject
-fi
+printf "  if (present(argument_name_%02i)) then\n" $i
+printf "    if (flag_%02i .eq. 1) then\n" $i
+printf "      call kim_model_get_%s(model, argument_name_%02i, ${hasLanguage:+language_name_%02i,} value_%02i, ierr)\n" $subject $i ${hasLanguage:+$i} $i
+printf "      if (ierr /= 1) return\n"
+printf "    end if\n"
 printf "  end if\n"
-printf "  if (errcheck_mltpl_%s(error, msg, $i, id$i) .lt. KIM_STATUS_OK) return\n" $idtype
 done
-printf "end subroutine kim_api_getm_%s\n" $subject
+printf "end subroutine kim_utility_compute_getm_%s\n" $subject
 printf "\n"
 }
 
 createSetM()
 {
-printf "subroutine kim_api_setm_%s( &\n" $subject
-printf "  kimmdl, error, &\n"
+printf "subroutine kim_utility_compute_setm_%s( &\n" $subject
+printf "  model, ierr, &\n"
 for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14; do
-printf "  id$i, ${hasSize:+sz$i,} dt$i,  k$i, &\n"
+printf "  argument_name_%02i, ${hasExtent:+extent_%02i,} ${hasLanguage:+language_name_%02i,} value_%02i, flag_%02i, &\n" $i ${hasExtent:+$i} ${hasLanguage:+$i} $i $i
 done
-printf "  id15, ${hasSize:+sz15,} dt15,  k15  &\n"
+printf "  argument_name_15, ${hasExtent:+extent_15,} ${hasLanguage:+language_name_15,} value_15, flag_15  &\n"
 printf "  )\n"
-printf "  use :: kim_api_f03_helper, only : errcheck_mltpl_%s\n" $idtype
+printf "  use, intrinsic :: iso_c_binding\n"
+printf "  use kim_model_module\n"
+printf "  use kim_compute_module\n"
 printf "  implicit none\n"
-printf "  type(c_ptr) :: kimmdl\n"
-printf "  integer(c_int) :: error\n"
-printf "  %s(%s) :: id1\n" $idtype $idkind
+printf "  type(kim_model_type), intent(inout) :: model\n"
+printf "  integer(c_int), intent(out) :: ierr\n"
+printf "  %s(%s), intent(in) :: argument_name_01\n" $argumentNameType $argumentNameKind
 for i in 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
-printf "  %s(%s), optional :: id$i\n" $idtype $idkind
+printf "  %s(%s), intent(in), optional :: argument_name_%02i\n" $argumentNameType $argumentNameKind $i
 done
-if test "x$hasSize" != "x"; then
-printf "  integer(c_int) :: sz1\n"
+if test "x$hasExtent" != "x"; then
+printf "  integer(c_int), intent(in) :: extent_01\n"
 for i in 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
-printf "  integer(c_int), optional :: sz$i\n"
+printf "  integer(c_int), intent(in), optional :: extent_%02i\n" $i
 done
 fi
-printf "  %s(%s) :: dt1\n" $dttype $dtkind
+if test "x$hasLanguage" != "x"; then
+printf "  %s(%s), intent(in) :: language_name_01\n" $languageNameType $languageNameKind
 for i in 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
-printf "  %s(%s), optional :: dt$i\n" $dttype $dtkind
+printf "  %s(%s), intent(in), optional :: language_name_%02i\n" $languageNameType $languageNameKind $i
 done
-printf "  integer(c_int) :: k1\n"
-for i in 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
-printf "  integer(c_int), optional :: k$i\n"
-done
-printf "  character(len=40) :: msg="'"'"kim_api_setm_%s"'"' $subject
-printf "\n"
-printf "  if ((k1 .ne. 0) .and. (k1 .ne. 1)) then\n"
-printf "    error = KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY\n"
-printf "    if (errcheck_mltpl_%s(KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY, msg, 1,id1) &\n" $idtype
-printf "      .lt. KIM_STATUS_OK) return\n"
-printf "  end if\n"
-printf "  if (k1 .eq. 1) then\n"
-if test "x$subroutine" = "xtrue"; then
-printf "    call kim_api_set_%s(kimmdl, id1, dt1, error)\n" $subject
-else
-printf "    error = kim_api_set_%s(kimmdl, id1, sz1, dt1);\n" $subject
 fi
-printf "    if (errcheck_mltpl_%s(error, msg, 1, id1) .lt. KIM_STATUS_OK) return\n" $idtype
-printf "  end if\n"
-printf "\n"
-printf "  !check rest of the arguments\n"
-printf "  error = KIM_STATUS_WRONG_MULTIPLE_ARGS\n"
-printf "  if (present(id2) .and. &\n"
-printf "    (${hasSize:+.not.present(sz2) .or.} .not. present(dt2) .or. .not.present(k2))) then\n"
-printf "    if (errcheck_mltpl_%s(error, msg, 2, id2) .lt. KIM_STATUS_OK) return\n" $idtype
-for i in 3 4 5 6 7 8 9 10 11 12 13 14 15; do
-printf "  else if (present(id$i) .and. &\n"
-printf "    (${hasSize:+.not.present(sz$i) .or.} .not.present(dt$i) .or. .not.present(k$i))) then\n"
-printf "    if (errcheck_mltpl_%s(error, msg, $i, id$i) .lt. KIM_STATUS_OK) return\n" $idtype
+printf "  %s(%s), intent(in) :: value_01\n" $valueType $valueKind
+for i in 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
+printf "  %s(%s), intent(in), optional :: value_%02i\n" $valueType $valueKind $i
 done
-printf "  end if\n"
-printf "\n"
-printf "  error = KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY\n"
-printf "  if (present(k2) .and. ((k2 .ne. 0) .and. (k2 .ne. 1)))then\n"
-printf "    if (errcheck_mltpl_%s(error, msg, 2,  id2) .lt. KIM_STATUS_OK) return\n" $idtype
-for i in 3 4 5 6 7 8 9 10 11 12 13 14 15; do
-printf "  else if(present(k$i) .and. ((k$i .ne. 0) .and. (k$i .ne. 1)))then\n"
-printf "    if  (errcheck_mltpl_%s(error, msg, $i,  id$i) .lt. KIM_STATUS_OK) return\n" $idtype
+printf "  integer(c_int), intent(in) :: flag_01\n"
+for i in 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
+printf "  integer(c_int), intent(in), optional :: flag_%02i\n" $i
 done
+printf "\n"
+printf "  if (flag_01 == 1) then\n"
+printf "    call kim_model_set_%s(model, argument_name_01, ${hasExtent:+extent_01,} ${hasLanguage:+language_name_01,} value_01, ierr)\n" $subject
+printf "    if (ierr /= 1) return\n"
 printf "  end if\n"
 printf "\n"
 printf "  !process arguments\n"
-printf "  error = KIM_STATUS_OK\n"
 for i in 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
-printf "  if (present(id$i) .and. (k$i .eq. 1)) then\n"
-if test "x$subroutine" = "xtrue"; then
-printf "    call kim_api_set_%s(kimmdl, id$i, dt$i, error)\n" $subject
-else
-printf "    error = kim_api_set_%s(kimmdl, id$i, sz$i, dt$i);\n" $subject
-fi
+printf "  if (present(argument_name_%02i)) then\n" $i
+printf "    if (flag_%02i .eq. 1) then\n" $i
+printf "      call kim_model_set_%s(model, argument_name_%02i, ${hasExtent:+extent_%02i,} ${hasLanguage:+language_name_%02i,} value_%02i, ierr)\n" $subject $i ${hasExtent:+$i} ${hasLanguage:+$i} $i
+printf "      if (ierr /= 1) return\n"
+printf "    end if\n"
 printf "  end if\n"
-printf "  if (errcheck_mltpl_%s(error, msg, $i, id$i) .lt. KIM_STATUS_OK) return\n" $idtype
 done
-printf "end subroutine kim_api_setm_%s\n" $subject
+printf "end subroutine kim_utility_compute_setm_%s\n" $subject
 printf "\n"
 }
 
-subject="data"
-idtype="character"
-idkind='len=*'
-dttype="type"
-dtkind="c_ptr"
-hasSize='yes'
-subroutine=false
-createGetM
-createSetM
+printf "module kim_utility_compute_module\n"
+printf "use, intrinsic :: iso_c_binding\n"
+printf "implicit none\n"
+printf "public\n"
+printf "contains\n"
 
-# subroutine & no size argument in set
-subject="compute"
-idtype="character"
-idkind='len=*'
-dttype="integer"
-dtkind="c_int"
-hasSize='yes'
-subroutine=false
+subject="data"
+argumentNameType="type"
+argumentNameKind="kim_compute_argument_name_type"
+valueType="type"
+valueKind="c_ptr"
+hasExtent="yes"
 createGetM
-unset hasSize
-subroutine=true
 createSetM
 
 subject="method"
-idtype="character"
-idkind='len=*'
-dttype="type"
-dtkind="c_funptr"
-hasSize='yes'
-subroutine=false
+argumentNameType="type"
+argumentNameKind="kim_compute_argument_name_type"
+valueType="type"
+valueKind="c_funptr"
+hasExtent="yes"
+hasLanguage="yes"
+languageNameType="type"
+languageNameKind="kim_compute_language_name_type"
 createGetM
 createSetM
+
+subject="compute"
+argumentNameType="type"
+argumentNameKind="kim_compute_argument_name_type"
+valueType="integer"
+valueKind="c_int"
+unset hasExtent
+unset hasLanguage
+createGetM
+createSetM
+
+printf "end module kim_utility_compute_module\n"

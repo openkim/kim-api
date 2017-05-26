@@ -39,8 +39,8 @@
 
 /* Note: All STATUS codes associated with an error must be less than KIM_STATUS_OK */
 
-#ifndef KIMHDR_KIM_API_STATUS_H
-#define KIMHDR_KIM_API_STATUS_H
+#ifndef KIMHDR_OLD_KIM_API_STATUS_H
+#define KIMHDR_OLD_KIM_API_STATUS_H
 
 #define KIM_STATUS_MODEL_UNSUPPORTED_CONFIGURATION -19
 #define KIM_STATUS_INCONSISTENT_BASE_UNIT          -18
@@ -76,4 +76,4 @@
 #define KIM_LINK_STATIC                              0
 #define KIM_LINK_DYNAMIC_LOAD                        1
 
-#endif /* KIMHDR_KIM_API_STATUS_H */
+#endif /* KIMHDR_OLD_KIM_API_STATUS_H */

@@ -47,7 +47,7 @@ all: $(full_package_name)-descriptor-file-match \
 # Add the local Makefile to KIM_MAKE_FILES
 KIM_MAKE_FILES += Makefile
 
-descriptor-file-match.o: descriptor-file-match.cpp KIM_API.h KIM_API_status.h $(KIM_MAKE_FILES)
+descriptor-file-match.o: descriptor-file-match.cpp old_KIM_API.h old_KIM_API_status.h $(KIM_MAKE_FILES)
 
 $(full_package_name)-descriptor-file-match: descriptor-file-match.o \
                                             $(if $(filter-out static-link,$(KIM_LINK)),\
@@ -86,7 +86,7 @@ $(full_package_name)-build-config: build-config.o .build-config.o
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< $(XLANGLDLIBS)
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ .$< $(XLANGLDLIBS)
 
-collections-info.o: collections-info.cpp KIM_API_DIRS.h $(KIM_MAKE_FILES)
+collections-info.o: collections-info.cpp old_KIM_API_DIRS.h $(KIM_MAKE_FILES)
 
 $(full_package_name)-collections-info: collections-info.o \
                                             $(if $(filter-out static-link,$(KIM_LINK)),\
