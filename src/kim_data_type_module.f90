@@ -31,26 +31,36 @@
 !
 
 
-module kim_parameter_module
+module kim_data_type_module
   use, intrinsic :: iso_c_binding
-  use kim_parameter_id_module
+  use kim_data_type_id_module
   implicit none
   private
 
   public &
-    kim_parameter_data_type_type, &
+    kim_data_type_type, &
+    kim_data_type_string, &
 
-    kim_parameter_data_type_integer, &
-    kim_parameter_data_type_real, &
-    kim_parameter_data_type_double
+    kim_data_type_integer, &
+    kim_data_type_double
 
-  type, bind(c) :: kim_parameter_data_type_type
-    integer(c_int) data_type_id
-  end type kim_parameter_data_type_type
-  type(kim_parameter_data_type_type), parameter :: &
-    kim_parameter_data_type_integer = kim_parameter_data_type_type(integer_id)
-  type(kim_parameter_data_type_type), parameter :: &
-    kim_parameter_data_type_real = kim_parameter_data_type_type(real_id)
-  type(kim_parameter_data_type_type), parameter :: &
-    kim_parameter_data_type_double = kim_parameter_data_type_type(double_id)
-end module kim_parameter_module
+  type, bind(c) :: kim_data_type_type
+    integer(c_int) :: data_type_id
+  end type kim_data_type_type
+
+  type(kim_data_type_type), parameter :: &
+    kim_data_type_integer = &
+    kim_data_type_type(integer_id)
+  type(kim_data_type_type), parameter :: &
+    kim_data_type_double = &
+    kim_data_type_type(double_id)
+
+  interface
+    subroutine kim_data_type_string(data_type, type_string)
+      import kim_data_type_type
+      implicit none
+      type(kim_data_type_type), intent(in), value :: data_type
+      character(len=*), intent(out) :: type_string
+    end subroutine kim_data_type_string
+  end interface
+end module kim_data_type_module

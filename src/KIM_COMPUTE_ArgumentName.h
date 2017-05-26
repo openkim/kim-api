@@ -36,14 +36,23 @@
 #ifndef KIM_COMPUTE_ARGUMENT_NAME_H_
 #define KIM_COMPUTE_ARGUMENT_NAME_H_
 
+/* Forward declarations */
+#ifndef KIM_DATA_TYPE_DEFINED_
+#define KIM_DATA_TYPE_DEFINED_
+typedef struct KIM_DataType KIM_DataType;
+#endif
+
 struct KIM_COMPUTE_ArgumentName
 {
-  int argumentID;
+  int argumentNameID;
 };
 #ifndef KIM_COMPUTE_ARGUMENT_NAME_DEFINED_
 #define KIM_COMPUTE_ARGUMENT_NAME_DEFINED_
 typedef struct KIM_COMPUTE_ArgumentName KIM_COMPUTE_ArgumentName;
 #endif
+
+char const * const KIM_COMPUTE_ArgumentNameString(
+    KIM_COMPUTE_ArgumentName const argumentName);
 
 extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles;
 extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_numberOfSpecies;
@@ -56,5 +65,15 @@ extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_particleEnergy;
 extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_virial;
 extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_particleVirial;
 extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_hessian;
+
+void KIM_COMPUTE_ARGUMENT_NAME_get_number_of_arguments(
+    int * const numberOfArguments);
+int KIM_COMPUTE_ARGUMENT_NAME_get_argument(
+    int const index,
+    KIM_COMPUTE_ArgumentName * const argumentName);
+
+int KIM_COMPUTE_ARGUMENT_NAME_get_argument_data_type(
+    KIM_COMPUTE_ArgumentName const argumentName,
+    KIM_DataType * const dataType);
 
 #endif  /* KIM_COMPUTE_ARGUMENT_NAME_H_ */

@@ -31,17 +31,17 @@
 !
 
 
-module kim_parameter_id_module
+module kim_compute_argument_attribute_id_module
   use, intrinsic :: iso_c_binding
   implicit none
   private
 
   public &
-    integer_id, &
-    real_id, &
-    double_id
+    not_supported_id, &
+    required_id, &
+    optional_id
 
-  integer(c_int), parameter :: integer_id = 1
-  integer(c_int), parameter :: real_id = 2
-  integer(c_int), parameter :: double_id = 3
-end module kim_parameter_id_module
+  integer(c_int), parameter :: not_supported_id = 0
+  integer(c_int), parameter :: required_id = 1
+  integer(c_int), parameter :: optional_id = 2
+end module kim_compute_argument_attribute_id_module

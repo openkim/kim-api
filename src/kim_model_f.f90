@@ -195,11 +195,11 @@ module kim_model_f_module
       bind(c, name="KIM_Model_get_parameter_data_type")
       use, intrinsic :: iso_c_binding
       use kim_model_module, only : kim_model_type
-      use kim_parameter_module, only : kim_parameter_data_type_type
+      use kim_data_type_module, only : kim_data_type_type
       implicit none
       type(kim_model_type), intent(in) :: model
       integer(c_int), intent(in), value :: index
-      type(kim_parameter_data_type_type), intent(out) :: data_type
+      type(kim_data_type_type), intent(out) :: data_type
     end function get_parameter_data_type
 
     integer(c_int) function get_parameter(model, index, extent, ptr) &
@@ -322,16 +322,19 @@ subroutine kim_model_get_influence_distance(model, influence_distance)
   call get_influence_distance(model, influence_distance)
 end subroutine kim_model_get_influence_distance
 
-subroutine kim_model_get_cutoffs(model, number_of_cutoffs, cutoffs_ptr)
+subroutine kim_model_get_cutoffs(model, number_of_cutoffs, cutoffs)
   use, intrinsic :: iso_c_binding
   use kim_model_module, only : kim_model_type
   use kim_model_f_module, only : get_cutoffs
   implicit none
   type(kim_model_type), intent(in) :: model
   integer(c_int), intent(out) :: number_of_cutoffs
-  type(c_ptr), intent(out) :: cutoffs_ptr
+  real(c_double), intent(out), pointer :: cutoffs(:)
+
+  type(c_ptr) cutoffs_ptr
 
   call get_cutoffs(model, number_of_cutoffs, cutoffs_ptr)
+  call c_f_pointer(cutoffs_ptr, cutoffs, [number_of_cutoffs])
 end subroutine kim_model_get_cutoffs
 
 subroutine kim_model_print(model)
@@ -454,12 +457,12 @@ end subroutine kim_model_get_num_params
 subroutine kim_model_get_parameter_data_type(model, index, data_type, ierr)
   use, intrinsic :: iso_c_binding
   use kim_model_module, only : kim_model_type
-  use kim_parameter_module, only : kim_parameter_data_type_type
+  use kim_data_type_module, only : kim_data_type_type
   use kim_model_f_module, only : get_parameter_data_type
   implicit none
   type(kim_model_type), intent(in) :: model
   integer(c_int), intent(in), value :: index
-  type(kim_parameter_data_type_type), intent(out) :: data_type
+  type(kim_data_type_type), intent(out) :: data_type
   integer(c_int), intent(out) :: ierr
 
   ierr = get_parameter_data_type(model, index-1, data_type)

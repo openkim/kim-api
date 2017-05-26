@@ -30,24 +30,36 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
-#ifndef KIM_PARAMETER_HPP_
-#include "KIM_Parameter.hpp"
-#endif
+
+#ifndef KIM_COMPUTE_ARGUMENT_ATTRIBUTE_HPP_
+#define KIM_COMPUTE_ARGUMENT_ATTRIBUTE_HPP_
+
+#include <string>
 
 namespace KIM
 {
-
-ParameterDataType::ParameterDataType() : dataTypeID(0) {}
-ParameterDataType::ParameterDataType(int const id) : dataTypeID(id) {}
-bool ParameterDataType::operator==(ParameterDataType const & rhs) const
-{return dataTypeID==rhs.dataTypeID;}
-bool ParameterDataType::operator!=(ParameterDataType const & rhs) const
-{return dataTypeID!=rhs.dataTypeID;}
-
-namespace PARAMETER_DATA_TYPE
+namespace COMPUTE
 {
-ParameterDataType const Integer(1);
-ParameterDataType const Real(2);
-ParameterDataType const Double(3);
-}  // namespace PARAMETER_DATA_TYPE
+
+class ArgumentAttribute
+{
+  int argumentAttributeID;
+ public:
+  ArgumentAttribute();
+  ArgumentAttribute(int const id);
+  bool operator==(ArgumentAttribute const & rhs) const;
+  bool operator!=(ArgumentAttribute const & rhs) const;
+  std::string string() const;
+};
+
+namespace ARGUMENT_ATTRIBUTE
+{
+extern ArgumentAttribute const notSupported;
+extern ArgumentAttribute const required;
+extern ArgumentAttribute const optional;
+}  // namespace ARGUMENT_ATTRIBUTE
+
+}  // namespace COMPUTE
 }  // namespace KIM
+
+#endif  // KIM_COMPUTE_ARGUMENT_ATTRIBUTE_HPP_

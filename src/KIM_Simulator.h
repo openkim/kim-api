@@ -58,11 +58,6 @@ typedef struct KIM_SpeciesName KIM_SpeciesName;
 typedef struct KIM_LengthUnit KIM_LengthUnit;
 #endif
 
-#ifndef KIM_PARAMETER_DATA_TYPE_DEFINED_
-#define KIM_PARAMETER_DATA_TYPE_DEFINED_
-typedef struct KIM_ParameterDataType KIM_ParameterDataType;
-#endif
-
 #ifndef KIM_ENERGY_UNIT_DEFINED_
 #define KIM_ENERGY_UNIT_DEFINED_
 typedef struct KIM_EnergyUnit KIM_EnergyUnit;

@@ -34,10 +34,6 @@
 #include "KIM_SpeciesName.hpp"
 #endif
 
-#ifndef KIM_PARAMETER_HPP_
-#include "KIM_Parameter.hpp"
-#endif
-
 #ifndef KIM_SIMULATOR_HPP_
 #include "KIM_Simulator.hpp"
 #endif
@@ -58,150 +54,6 @@ namespace KIM
 
 namespace
 {
-char const * const speciesString(SpeciesName const speciesName)
-{
-  if (speciesName == SPECIES_NAME::electron) return "electron";
-  else if (speciesName == SPECIES_NAME::H) return "H";
-  else if (speciesName == SPECIES_NAME::He) return "He";
-  else if (speciesName == SPECIES_NAME::Li) return "Li";
-  else if (speciesName == SPECIES_NAME::Be) return "Be";
-  else if (speciesName == SPECIES_NAME::B) return "B";
-  else if (speciesName == SPECIES_NAME::C) return "C";
-  else if (speciesName == SPECIES_NAME::N) return "N";
-  else if (speciesName == SPECIES_NAME::O) return "O";
-  else if (speciesName == SPECIES_NAME::F) return "F";
-  else if (speciesName == SPECIES_NAME::Ne) return "Ne";
-  else if (speciesName == SPECIES_NAME::Na) return "Na";
-  else if (speciesName == SPECIES_NAME::Mg) return "Mg";
-  else if (speciesName == SPECIES_NAME::Al) return "Al";
-  else if (speciesName == SPECIES_NAME::Si) return "Si";
-  else if (speciesName == SPECIES_NAME::P) return "P";
-  else if (speciesName == SPECIES_NAME::S) return "S";
-  else if (speciesName == SPECIES_NAME::Cl) return "Cl";
-  else if (speciesName == SPECIES_NAME::Ar) return "Ar";
-  else if (speciesName == SPECIES_NAME::K) return "K";
-  else if (speciesName == SPECIES_NAME::Ca) return "Ca";
-  else if (speciesName == SPECIES_NAME::Sc) return "Sc";
-  else if (speciesName == SPECIES_NAME::Ti) return "Ti";
-  else if (speciesName == SPECIES_NAME::V) return "V";
-  else if (speciesName == SPECIES_NAME::Cr) return "Cr";
-  else if (speciesName == SPECIES_NAME::Mn) return "Mn";
-  else if (speciesName == SPECIES_NAME::Fe) return "Fe";
-  else if (speciesName == SPECIES_NAME::Co) return "Co";
-  else if (speciesName == SPECIES_NAME::Ni) return "Ni";
-  else if (speciesName == SPECIES_NAME::Cu) return "Cu";
-  else if (speciesName == SPECIES_NAME::Zn) return "Zn";
-  else if (speciesName == SPECIES_NAME::Ga) return "Ga";
-  else if (speciesName == SPECIES_NAME::Ge) return "Ge";
-  else if (speciesName == SPECIES_NAME::As) return "As";
-  else if (speciesName == SPECIES_NAME::Se) return "Se";
-  else if (speciesName == SPECIES_NAME::Br) return "Br";
-  else if (speciesName == SPECIES_NAME::Kr) return "Kr";
-  else if (speciesName == SPECIES_NAME::Rb) return "Rb";
-  else if (speciesName == SPECIES_NAME::Sr) return "Sr";
-  else if (speciesName == SPECIES_NAME::Y) return "Y";
-  else if (speciesName == SPECIES_NAME::Zr) return "Zr";
-  else if (speciesName == SPECIES_NAME::Nb) return "Nb";
-  else if (speciesName == SPECIES_NAME::Mo) return "Mo";
-  else if (speciesName == SPECIES_NAME::Tc) return "Tc";
-  else if (speciesName == SPECIES_NAME::Ru) return "Ru";
-  else if (speciesName == SPECIES_NAME::Rh) return "Rh";
-  else if (speciesName == SPECIES_NAME::Pd) return "Pd";
-  else if (speciesName == SPECIES_NAME::Ag) return "Ag";
-  else if (speciesName == SPECIES_NAME::Cd) return "Cd";
-  else if (speciesName == SPECIES_NAME::In) return "In";
-  else if (speciesName == SPECIES_NAME::Sn) return "Sn";
-  else if (speciesName == SPECIES_NAME::Sb) return "Sb";
-  else if (speciesName == SPECIES_NAME::Te) return "Te";
-  else if (speciesName == SPECIES_NAME::I) return "I";
-  else if (speciesName == SPECIES_NAME::Xe) return "Xe";
-  else if (speciesName == SPECIES_NAME::Cs) return "Cs";
-  else if (speciesName == SPECIES_NAME::Ba) return "Ba";
-  else if (speciesName == SPECIES_NAME::La) return "La";
-  else if (speciesName == SPECIES_NAME::Ce) return "Ce";
-  else if (speciesName == SPECIES_NAME::Pr) return "Pr";
-  else if (speciesName == SPECIES_NAME::Nd) return "Nd";
-  else if (speciesName == SPECIES_NAME::Pm) return "Pm";
-  else if (speciesName == SPECIES_NAME::Sm) return "Sm";
-  else if (speciesName == SPECIES_NAME::Eu) return "Eu";
-  else if (speciesName == SPECIES_NAME::Gd) return "Gd";
-  else if (speciesName == SPECIES_NAME::Tb) return "Tb";
-  else if (speciesName == SPECIES_NAME::Dy) return "Dy";
-  else if (speciesName == SPECIES_NAME::Ho) return "Ho";
-  else if (speciesName == SPECIES_NAME::Er) return "Er";
-  else if (speciesName == SPECIES_NAME::Tm) return "Tm";
-  else if (speciesName == SPECIES_NAME::Yb) return "Yb";
-  else if (speciesName == SPECIES_NAME::Lu) return "Lu";
-  else if (speciesName == SPECIES_NAME::Hf) return "Hf";
-  else if (speciesName == SPECIES_NAME::Ta) return "Ta";
-  else if (speciesName == SPECIES_NAME::W) return "W";
-  else if (speciesName == SPECIES_NAME::Re) return "Re";
-  else if (speciesName == SPECIES_NAME::Os) return "Os";
-  else if (speciesName == SPECIES_NAME::Ir) return "Ir";
-  else if (speciesName == SPECIES_NAME::Pt) return "Pt";
-  else if (speciesName == SPECIES_NAME::Au) return "Au";
-  else if (speciesName == SPECIES_NAME::Hg) return "Hg";
-  else if (speciesName == SPECIES_NAME::Tl) return "Tl";
-  else if (speciesName == SPECIES_NAME::Pb) return "Pb";
-  else if (speciesName == SPECIES_NAME::Bi) return "Bi";
-  else if (speciesName == SPECIES_NAME::Po) return "Po";
-  else if (speciesName == SPECIES_NAME::At) return "At";
-  else if (speciesName == SPECIES_NAME::Rn) return "Rn";
-  else if (speciesName == SPECIES_NAME::Fr) return "Fr";
-  else if (speciesName == SPECIES_NAME::Ra) return "Ra";
-  else if (speciesName == SPECIES_NAME::Ac) return "Ac";
-  else if (speciesName == SPECIES_NAME::Th) return "Th";
-  else if (speciesName == SPECIES_NAME::Pa) return "Pa";
-  else if (speciesName == SPECIES_NAME::U) return "U";
-  else if (speciesName == SPECIES_NAME::Np) return "Np";
-  else if (speciesName == SPECIES_NAME::Pu) return "Pu";
-  else if (speciesName == SPECIES_NAME::Am) return "Am";
-  else if (speciesName == SPECIES_NAME::Cm) return "Cm";
-  else if (speciesName == SPECIES_NAME::Bk) return "Bk";
-  else if (speciesName == SPECIES_NAME::Cf) return "Cf";
-  else if (speciesName == SPECIES_NAME::Es) return "Es";
-  else if (speciesName == SPECIES_NAME::Fm) return "Fm";
-  else if (speciesName == SPECIES_NAME::Md) return "Md";
-  else if (speciesName == SPECIES_NAME::No) return "No";
-  else if (speciesName == SPECIES_NAME::Lr) return "Lr";
-  else if (speciesName == SPECIES_NAME::Rf) return "Rf";
-  else if (speciesName == SPECIES_NAME::Db) return "Db";
-  else if (speciesName == SPECIES_NAME::Sg) return "Sg";
-  else if (speciesName == SPECIES_NAME::Bh) return "Bh";
-  else if (speciesName == SPECIES_NAME::Hs) return "Hs";
-  else if (speciesName == SPECIES_NAME::Mt) return "Mt";
-  else if (speciesName == SPECIES_NAME::Ds) return "Ds";
-  else if (speciesName == SPECIES_NAME::Rg) return "Rg";
-  else if (speciesName == SPECIES_NAME::Cn) return "Cn";
-  else if (speciesName == SPECIES_NAME::Uut) return "Uut";
-  else if (speciesName == SPECIES_NAME::Fl) return "Fl";
-  else if (speciesName == SPECIES_NAME::Uup) return "Uup";
-  else if (speciesName == SPECIES_NAME::Lv) return "Lv";
-  else if (speciesName == SPECIES_NAME::Uus) return "Uus";
-  else if (speciesName == SPECIES_NAME::Uuo) return "Uuo";
-  else if (speciesName == SPECIES_NAME::user01) return "user01";
-  else if (speciesName == SPECIES_NAME::user02) return "user02";
-  else if (speciesName == SPECIES_NAME::user03) return "user03";
-  else if (speciesName == SPECIES_NAME::user04) return "user04";
-  else if (speciesName == SPECIES_NAME::user05) return "user05";
-  else if (speciesName == SPECIES_NAME::user06) return "user06";
-  else if (speciesName == SPECIES_NAME::user07) return "user07";
-  else if (speciesName == SPECIES_NAME::user08) return "user08";
-  else if (speciesName == SPECIES_NAME::user09) return "user09";
-  else if (speciesName == SPECIES_NAME::user10) return "user10";
-  else if (speciesName == SPECIES_NAME::user11) return "user11";
-  else if (speciesName == SPECIES_NAME::user12) return "user12";
-  else if (speciesName == SPECIES_NAME::user13) return "user13";
-  else if (speciesName == SPECIES_NAME::user14) return "user14";
-  else if (speciesName == SPECIES_NAME::user15) return "user15";
-  else if (speciesName == SPECIES_NAME::user16) return "user16";
-  else if (speciesName == SPECIES_NAME::user17) return "user17";
-  else if (speciesName == SPECIES_NAME::user18) return "user18";
-  else if (speciesName == SPECIES_NAME::user19) return "user19";
-  else if (speciesName == SPECIES_NAME::user20) return "user20";
-  else return "";
-}
-
 SpeciesName speciesCpp(std::string speciesName)
 {
   if (speciesName == "electron") return SPECIES_NAME::electron;
@@ -343,7 +195,7 @@ SpeciesName speciesCpp(std::string speciesName)
   else if (speciesName == "user18") return SPECIES_NAME::user18;
   else if (speciesName == "user19") return SPECIES_NAME::user19;
   else if (speciesName == "user20") return SPECIES_NAME::user20;
-  else return SPECIES_NAME::End;
+  else return SpeciesName(-1);
 }
 
 char const * const lengthUnitString(LengthUnit const length)
@@ -581,7 +433,7 @@ int Simulator::get_species_code(SpeciesName const speciesName,
   OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
 
   int err;
-  *code = pKIM->get_species_code(speciesString(speciesName), &err);
+  *code = pKIM->get_species_code(speciesName.string().c_str(), &err);
   return (err < KIM_STATUS_OK);
 }
 
@@ -592,7 +444,7 @@ int Simulator::set_species_code(SpeciesName const speciesName,
   OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
 
   int err;
-  pKIM->set_species_code(speciesString(speciesName), code, &err);
+  pKIM->set_species_code(speciesName.string().c_str(), code, &err);
   return (err < KIM_STATUS_OK);
 }
 

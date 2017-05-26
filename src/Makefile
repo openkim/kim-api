@@ -47,13 +47,15 @@ endif
 OBJCPP = KIM_LanguageName.o \
          KIM_Logger.o \
          KIM_SpeciesName.o \
-         KIM_Parameter.o \
+         KIM_ParticleNumbering.o \
+         KIM_DataType.o \
+         KIM_UnitSystem.o \
          KIM_COMPUTE_ArgumentName.o \
+         KIM_COMPUTE_ArgumentAttribute.o \
          KIM_COMPUTE_ModelComputeArguments.o \
          KIM_Model.o \
-         KIM_Simulator.o \
          KIM_COMPUTE_SimulatorComputeArguments.o \
-         KIM_UnitSystem.o \
+         KIM_Simulator.o \
          KIM_semver.o \
          old_KIM_API.o \
          $(KIM_STR_NAME).o \
@@ -62,20 +64,29 @@ OBJCPP = KIM_LanguageName.o \
 OBJC = KIM_LanguageName_c.o \
        KIM_Logger_c.o \
        KIM_SpeciesName_c.o \
-       KIM_Parameter_c.o \
+       KIM_ParticleNumbering_c.o \
+       KIM_DataType_c.o \
+       KIM_UnitSystem_c.o \
        KIM_COMPUTE_ArgumentName_c.o \
+       KIM_COMPUTE_ArgumentAttribute_c.o \
        KIM_COMPUTE_ModelComputeArguments_c.o \
        KIM_Model_c.o \
-       KIM_Simulator_c.o \
        KIM_COMPUTE_SimulatorComputeArguments_c.o \
-       KIM_UnitSystem_c.o \
+       KIM_Simulator_c.o \
        KIM_semver_c.o
 
-OBJF03 = kim_logger_f.o \
-         kim_model_f.o \
+OBJF03 = kim_language_name_f.o \
+         kim_logger_f.o \
+         kim_species_name_f.o \
+         kim_particle_numbering_f.o \
+         kim_data_type_f.o \
+         kim_unit_system_f.o \
+         kim_compute_argument_name_f.o \
+         kim_compute_argument_attribute_f.o \
          kim_compute_model_compute_arguments_f.o \
+         kim_model_f.o \
+         kim_compute_simulator_compute_arguments_f.o \
          kim_simulator_f.o \
-         kim_compute_simulator_compute_arguments_f.o
 
 #fortran on/of
 ifdef KIM_NO_FORTRAN
@@ -175,48 +186,71 @@ old_KIM_API_Version.h: old_KIM_API_Version.h.tpl $(KIM_MAKE_FILES)
 KIM_LanguageName.o: KIM_LanguageName.hpp KIM_LanguageName.cpp $(KIM_MAKE_FILES)
 KIM_Logger.o: KIM_Logger.hpp KIM_Logger.cpp old_KIM_API.o $(KIM_MAKE_FILES)
 KIM_SpeciesName.o: KIM_SpeciesName.hpp KIM_SpeciesName.cpp $(KIM_MAKE_FILES)
-KIM_Parameter.o: KIM_Parameter.hpp KIM_Parameter.cpp $(KIM_MAKE_FILES)
+KIM_DataType.o: KIM_DataType.hpp KIM_DataType.cpp $(KIM_MAKE_FILES)
+KIM_ParticleNumbering.o: KIM_ParticleNumbering.hpp KIM_ParticleNumbering.cpp $(KIM_MAKE_FILES)
 KIM_UnitSystem.o: KIM_UnitSystem.hpp KIM_UnitSystem.cpp old_KIM_API.o $(KIM_MAKE_FILES)
 KIM_COMPUTE_ArgumentName.o: KIM_COMPUTE_ArgumentName.hpp KIM_COMPUTE_ArgumentName.cpp $(KIM_MAKE_FILES)
+KIM_COMPUTE_ArgumentAttribute.o: KIM_COMPUTE_ArgumentAttribute.hpp KIM_COMPUTE_ArgumentAttribute.cpp $(KIM_MAKE_FILES)
 KIM_Model.o: KIM_Model.hpp KIM_Model.cpp old_KIM_API.o $(KIM_MAKE_FILES)
 KIM_COMPUTE_ModelComputeArguments.o: KIM_COMPUTE_ModelComputeArguments.hpp KIM_COMPUTE_ModelComputeArguments.cpp old_KIM_API.o $(KIM_MAKE_FILES)
 KIM_Simulator.o: KIM_Simulator.hpp KIM_Simulator.cpp old_KIM_API.o $(KIM_MAKE_FILES)
 KIM_COMPUTE_SimulatorComputeArguments.o: KIM_COMPUTE_SimulatorComputeArguments.hpp KIM_COMPUTE_SimulatorComputeArguments.cpp old_KIM_API.o $(KIM_MAKE_FILES)
 KIM_semver.o: KIM_semver.hpp KIM_semver.cpp old_KIM_API.o $(KIM_MAKE_FILES)
 
-KIM_LanguageName_c.o: KIM_LanguageName.h KIM_LanguageName_c.c $(KIM_MAKE_FILES)
-KIM_Logger_c.o: KIM_Logger.h KIM_Logger_c.cpp old_KIM_API.o $(KIM_MAKE_FILES)
-KIM_SpeciesName_c.o: KIM_SpeciesName.h KIM_SpeciesName_c.c $(KIM_MAKE_FILES)
-KIM_Parameter_c.o: KIM_Parameter.h KIM_Parameter_c.c $(KIM_MAKE_FILES)
-KIM_UnitSystem_c.o: KIM_UnitSystem.h KIM_UnitSystem_c.c old_KIM_API.o $(KIM_MAKE_FILES)
-KIM_COMPUTE_ArgumentName_c.o: KIM_COMPUTE_ArgumentName.h KIM_COMPUTE_ArgumentName_c.c $(KIM_MAKE_FILES)
-KIM_Model_c.o: KIM_Model.h KIM_Model_c.cpp old_KIM_API.o $(KIM_MAKE_FILES)
-KIM_COMPUTE_ModelComputeArguments_c.o: KIM_COMPUTE_ModelComputeArguments.h KIM_COMPUTE_ModelComputeArguments_c.cpp old_KIM_API.o $(KIM_MAKE_FILES)
-KIM_Simulator_c.o: KIM_Simulator.h KIM_Simulator_c.cpp old_KIM_API.o $(KIM_MAKE_FILES)
-KIM_COMPUTE_SimulatorComputeArguments_c.o: KIM_COMPUTE_SimulatorComputeArguments.h KIM_COMPUTE_SimulatorComputeArguments_c.cpp old_KIM_API.o $(KIM_MAKE_FILES)
-KIM_semver_c.o: KIM_semver.h KIM_semver_c.cpp old_KIM_API.o $(KIM_MAKE_FILES)
+KIM_LanguageName_c.o: KIM_LanguageName.h KIM_LanguageName_c.cpp $(KIM_MAKE_FILES)
+KIM_Logger_c.o: KIM_Logger.h KIM_Logger_c.cpp $(KIM_MAKE_FILES)
+KIM_SpeciesName_c.o: KIM_SpeciesName.h KIM_SpeciesName_c.cpp $(KIM_MAKE_FILES)
+KIM_DataType_c.o: KIM_DataType.h KIM_DataType_c.cpp $(KIM_MAKE_FILES)
+KIM_ParticleNumbering_c.o: KIM_ParticleNumbering.h KIM_ParticleNumbering_c.cpp $(KIM_MAKE_FILES)
+KIM_UnitSystem_c.o: KIM_UnitSystem.h KIM_UnitSystem_c.cpp $(KIM_MAKE_FILES)
+KIM_COMPUTE_ArgumentName_c.o: KIM_COMPUTE_ArgumentName.h KIM_COMPUTE_ArgumentName_c.cpp $(KIM_MAKE_FILES)
+KIM_COMPUTE_ArgumentAttribute_c.o: KIM_COMPUTE_ArgumentAttribute.h KIM_COMPUTE_ArgumentAttribute_c.cpp $(KIM_MAKE_FILES)
+KIM_Model_c.o: KIM_Model.h KIM_Model_c.cpp $(KIM_MAKE_FILES)
+KIM_COMPUTE_ModelComputeArguments_c.o: KIM_COMPUTE_ModelComputeArguments.h KIM_COMPUTE_ModelComputeArguments_c.cpp $(KIM_MAKE_FILES)
+KIM_Simulator_c.o: KIM_Simulator.h KIM_Simulator_c.cpp $(KIM_MAKE_FILES)
+KIM_COMPUTE_SimulatorComputeArguments_c.o: KIM_COMPUTE_SimulatorComputeArguments.h KIM_COMPUTE_SimulatorComputeArguments_c.cpp $(KIM_MAKE_FILES)
+KIM_semver_c.o: KIM_semver.h KIM_semver_c.cpp $(KIM_MAKE_FILES)
+
 
 kim_language_name_id_module.mod: kim_language_name_id_module.f90
 kim_language_name_module.mod: kim_language_name_id_module.mod kim_language_name_module.f90
+kim_language_name_f.o: kim_language_name_module.mod kim_language_name_f.f90
 kim_logger_module.mod: kim_logger_module.f90
 kim_logger_f.o: kim_logger_module.mod kim_logger_f.f90
-kim_species_id_module.mod: kim_species_id_module.f90
-kim_species_name_module.mod: kim_species_id_module.mod kim_species_name_module.f90
-kim_parameter_id_module.mod: kim_parameter_id_module.f90
-kim_parameter_module.mod: kim_parameter_id_module.mod kim_parameter_module.f90
-kim_unit_system_id_module.mod: kim_unit_system_id_module.f90
-kim_unit_system_module.mod: kim_unit_system_id_module.mod kim_unit_system_module.f90
+kim_species_name_id_module.mod: kim_species_name_id_module.f90
+kim_species_name_module.mod: kim_species_name_id_module.mod kim_species_name_module.f90
+kim_species_name_f.o: kim_species_name_module.mod kim_species_name_f.f90
+kim_particle_numbering_id_module.mod: kim_particle_numbering_id_module.f90
+kim_particle_numbering_module.mod: kim_particle_numbering_id_module.mod kim_particle_numbering_module.f90
+kim_particle_numbering_f.o: kim_particle_numbering_module.mod kim_particle_numbering_f.f90
+kim_data_type_id_module.mod: kim_data_type_id_module.f90
+kim_data_type_module.mod: kim_data_type_id_module.mod kim_data_type_module.f90
+kim_data_type_f.o: kim_data_type_module.mod kim_data_type_f.f90
 kim_compute_argument_name_id_module.mod: kim_compute_argument_name_id_module.f90
 kim_compute_argument_name_module.mod: kim_compute_argument_name_id_module.mod kim_compute_argument_name_module.f90
-kim_model_module.mod: kim_language_name_module.mod kim_compute_argument_name_module.mod kim_species_name_module.mod kim_parameter_module.mod kim_unit_system_module.mod kim_compute_model_compute_arguments_module.mod kim_model_module.f90
-kim_model_f.o: kim_model_module.mod kim_model_f.f90
-kim_compute_model_compute_arguments_module.mod: kim_compute_model_compute_arguments_module.f90 kim_language_name_module.mod
+kim_compute_argument_name_f.o: kim_compute_argument_name_module.mod kim_compute_argument_name_f.f90
+kim_compute_argument_attribute_id_module.mod: kim_compute_argument_attribute_id_module.f90
+kim_compute_argument_attribute_module.mod: kim_compute_argument_attribute_id_module.mod kim_compute_argument_attribute_module.f90
+kim_compute_argument_attribute_f.o: kim_compute_argument_attribute_module.mod kim_compute_argument_attribute_f.f90
+kim_compute_model_compute_arguments_module.mod:  kim_language_name_module.mod kim_compute_model_compute_arguments_module.f90
 kim_compute_model_compute_arguments_f.o: kim_compute_model_compute_arguments_module.mod kim_compute_model_compute_arguments_f.f90
-kim_simulator_module.mod: kim_language_name_module.mod kim_compute_argument_name_module.mod kim_species_name_module.mod kim_parameter_module.mod kim_unit_system_module.mod kim_simulator_module.f90
-kim_simulator_f.o: kim_simulator_module.mod kim_simulator_f.f90
-kim_compute_simulator_compute_arguments_module.mod: kim_compute_simulator_compute_arguments_module.f90
+kim_model_module.mod: kim_language_name_module.mod kim_species_name_module.mod kim_data_type_module.mod kim_compute_model_compute_arguments_module.mod kim_model_module.f90
+kim_model_f.o: kim_model_module.mod kim_model_f.f90
+kim_compute_simulator_compute_arguments_module.mod: kim_language_name_module.mod kim_compute_argument_name_module.mod kim_compute_simulator_compute_arguments_module.f90
 kim_compute_simulator_compute_arguments_f.o: kim_compute_simulator_compute_arguments_module.mod kim_compute_simulator_compute_arguments_f.f90
-kim_semver_module.mod: kim_semver_module.f90
+
+kim_unit_system_id_module.mod: kim_unit_system_id_module.f90
+kim_unit_system_module.mod: kim_unit_system_id_module.mod kim_unit_system_module.f90
+kim_unit_system_f.o: kim_unit_system_module.mod kim_unit_system_f.f90
+
+
+kim_simulator_module.mod: kim_language_name_module.mod kim_species_name_module.mod kim_unit_system_module.mod kim_simulator_module.f90
+kim_simulator_f.o: kim_simulator_module.mod kim_simulator_f.f90
+
+
+#kim_parameter_id_module.mod: kim_parameter_id_module.f90
+#kim_parameter_module.mod: kim_parameter_id_module.mod kim_parameter_module.f90
+#kim_semver_module.mod: kim_semver_module.f90
 
 old_KIM_API.h: old_KIM_API_Version.h $(KIM_MAKE_FILES)
 

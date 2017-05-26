@@ -78,8 +78,11 @@ class SimulatorComputeArguments
                      int const * const j) const;
 
   // data functions
-  int get_data(ArgumentName const argumentName, void ** const ptr)
+  int get_data(ArgumentName const argumentName, int const ** const ptr) const;
+  int get_data(ArgumentName const argumentName, int ** const ptr) const;
+  int get_data(ArgumentName const argumentName, double const ** const ptr)
       const;
+  int get_data(ArgumentName const argumentName, double ** const ptr) const;
 
   // compute functions
   int get_compute(ArgumentName const argumentName, int * const flag)

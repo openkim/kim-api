@@ -44,11 +44,19 @@ bool LanguageName::operator==(LanguageName const & rhs) const
 bool LanguageName::operator!=(LanguageName const & rhs) const
 {return languageID != rhs.languageID;}
 
+std::string LanguageName::string() const
+{
+  if (*this == LANGUAGE_NAME::Cpp) return "Cpp";
+  else if (*this == LANGUAGE_NAME::C) return "C";
+  else if (*this == LANGUAGE_NAME::Fortran) return "Fortran";
+  else return "unknown";
+}
+
 namespace LANGUAGE_NAME
 {
-LanguageName const Cpp(1);
-LanguageName const C(2);
-LanguageName const Fortran(3);
+LanguageName const Cpp(0);
+LanguageName const C(1);
+LanguageName const Fortran(2);
 }  // namespace LANGUAGE_NAME
 
 }  // namespace KIM

@@ -32,20 +32,24 @@
 /* Release: This file is part of the kim-api.git repository.                  */
 /*                                                                            */
 
-#ifndef KIM_COMPUTE_ARGUMENT_NAME_H_
-#include "KIM_COMPUTE_ArgumentName.h"
+
+#ifndef KIM_COMPUTE_ARGUMENT_ATTRIBUTE_H_
+#define KIM_COMPUTE_ARGUMENT_ATTRIBUTE_H_
+
+struct KIM_COMPUTE_ArgumentAttribute
+{
+  int argumentAttributeID;
+};
+#ifndef KIM_COMPUTE_ARGUMENT_ATTRIBUTE_DEFINED_
+#define KIM_COMPUTE_ARGUMENT_ATTRIBUTE_DEFINED_
+typedef struct KIM_COMPUTE_ArgumentAttribute KIM_COMPUTE_ArgumentAttribute;
 #endif
 
+char const * const KIM_COMPUTE_ArgumentAttributeString(
+    KIM_COMPUTE_ArgumentAttribute const argumentAttribute);
 
-/* Order doesn't matter as long as all values are unique */
-KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles = {0};
-KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_numberOfSpecies = {1};
-KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_particleSpecies = {2};
-KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_particleContributing = {3};
-KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_coordinates = {4};
-KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_energy = {5};
-KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_forces = {6};
-KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_particleEnergy = {7};
-KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_virial = {8};
-KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_particleVirial = {9};
-KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_hessian = {10};
+extern KIM_COMPUTE_ArgumentAttribute const KIM_COMPUTE_ARGUMENT_ATTRIBUTE_notSupported;
+extern KIM_COMPUTE_ArgumentAttribute const KIM_COMPUTE_ARGUMENT_ATTRIBUTE_required;
+extern KIM_COMPUTE_ArgumentAttribute const KIM_COMPUTE_ARGUMENT_ATTRIBUTE_optional;
+
+#endif  /* KIM_COMPUTE_ARGUMENT_ATTRIBUTE_H_ */

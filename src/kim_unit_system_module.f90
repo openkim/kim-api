@@ -39,10 +39,19 @@ module kim_unit_system_module
 
   public &
     kim_length_unit_type, &
+    kim_length_unit_string, &
+
     kim_energy_unit_type, &
+    kim_energy_unit_string, &
+
     kim_charge_unit_type, &
+    kim_charge_unit_string, &
+
     kim_temperature_unit_type, &
+    kim_temperature_unit_string, &
+
     kim_time_unit_type, &
+    kim_time_unit_string, &
 
     kim_units_a, &
     kim_units_bohr, &
@@ -130,4 +139,41 @@ module kim_unit_system_module
     kim_time_unit_type(ns_id)
   type(kim_time_unit_type), parameter :: kim_units_s = &
     kim_time_unit_type(s_id)
+
+  interface
+    subroutine kim_length_unit_string(length_unit, unit_string)
+      import kim_length_unit_type
+      implicit none
+      type(kim_length_unit_type), intent(in), value :: length_unit
+      character(len=*), intent(out) :: unit_string
+    end subroutine kim_length_unit_string
+
+    subroutine kim_energy_unit_string(energy_unit, unit_string)
+      import kim_energy_unit_type
+      implicit none
+      type(kim_energy_unit_type), intent(in), value :: energy_unit
+      character(len=*), intent(out) :: unit_string
+    end subroutine kim_energy_unit_string
+
+    subroutine kim_charge_unit_string(charge_unit, unit_string)
+      import kim_charge_unit_type
+      implicit none
+      type(kim_charge_unit_type), intent(in), value :: charge_unit
+      character(len=*), intent(out) :: unit_string
+    end subroutine kim_charge_unit_string
+
+    subroutine kim_temperature_unit_string(temperature_unit, unit_string)
+      import kim_temperature_unit_type
+      implicit none
+      type(kim_temperature_unit_type), intent(in), value :: temperature_unit
+      character(len=*), intent(out) :: unit_string
+    end subroutine kim_temperature_unit_string
+
+    subroutine kim_time_unit_string(time_unit, unit_string)
+      import kim_time_unit_type
+      implicit none
+      type(kim_time_unit_type), intent(in), value :: time_unit
+      character(len=*), intent(out) :: unit_string
+    end subroutine kim_time_unit_string
+  end interface
 end module kim_unit_system_module

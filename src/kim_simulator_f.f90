@@ -315,27 +315,27 @@ end module kim_simulator_f_module
 ! free functions to implement kim_simulator_module
 
 subroutine kim_simulator_set_influence_distance(simulator, &
-  influence_distance_ptr)
+  influence_distance)
   use, intrinsic :: iso_c_binding
   use kim_simulator_module, only : kim_simulator_type
   use kim_simulator_f_module, only : set_influence_distance
   implicit none
   type(kim_simulator_type), intent(inout) :: simulator
-  type(c_ptr), intent(in), value :: influence_distance_ptr
+  real(c_double), intent(in), target :: influence_distance
 
-  call set_influence_distance(simulator, influence_distance_ptr)
+  call set_influence_distance(simulator, c_loc(influence_distance))
 end subroutine kim_simulator_set_influence_distance
 
-subroutine kim_simulator_set_cutoffs(simulator, number_of_cutoffs, cutoffs_ptr)
+subroutine kim_simulator_set_cutoffs(simulator, number_of_cutoffs, cutoffs)
   use, intrinsic :: iso_c_binding
   use kim_simulator_module, only : kim_simulator_type
   use kim_simulator_f_module, only : set_cutoffs
   implicit none
   type(kim_simulator_type), intent(inout) :: simulator
   integer(c_int), intent(in), value :: number_of_cutoffs
-  type(c_ptr), intent(in), value :: cutoffs_ptr
+  real(c_double), intent(in), target :: cutoffs(number_of_cutoffs)
 
-  call set_cutoffs(simulator, number_of_cutoffs, cutoffs_ptr)
+  call set_cutoffs(simulator, number_of_cutoffs, c_loc(cutoffs))
 end subroutine kim_simulator_set_cutoffs
 
 subroutine kim_simulator_set_reinit(simulator, language_name, fptr)

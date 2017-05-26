@@ -58,8 +58,8 @@ class KIM_API_model;
 namespace KIM
 {
 // Forward declarations
+class DataType;
 class SpeciesName;
-class ParameterDataType;
 class LengthUnit;
 class EnergyUnit;
 class ChargeUnit;
@@ -97,6 +97,8 @@ class Model
   int compute(COMPUTE::ModelComputeArguments const * const arguments) const;
   int reinit();  // @@@ rename to recreate (or other name)
 
+  // @@@ how should this work?  maybe a "IsSpeciesSupported"?
+  // @@@ OR is this needed, since we have get_species_code?
   void get_num_model_species(int * const numberOfSpecies) const;
   int get_model_species(int const index, KIM::SpeciesName * const speciesName)
       const;
@@ -109,8 +111,7 @@ class Model
       const;
 
   void get_num_params(int * const numberOfParameters) const;
-  int get_parameter_data_type(int const index,
-                              ParameterDataType * const dataType) const;
+  int get_parameter_data_type(int const index, DataType * const dataType) const;
   int get_parameter(int const index, int * const extent, void ** const ptr);
   int get_parameter_description(int const index,
                                 std::string * const description) const;

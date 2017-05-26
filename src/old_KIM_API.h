@@ -125,6 +125,7 @@ public:
       void (* fp)();
    } data;
   int lang;
+  int optional;
         intptr_t size; //Size in words defined by type
         std::string name;
         std::string type;
@@ -172,8 +173,17 @@ public:
 
     intptr_t get_size(const char *nm,int *error);
     void set_compute(const char *nm, int flag, int *error);
+  int get_attribute(const char *nm, int* error);
     int get_compute(const char *nm, int* error);
     void print(int *error);
+
+  int no_match_init(int const particleNumbering,
+                    std::string const & lengthUnit,
+                    std::string const & energyUnit,
+                    std::string const & chargeUnit,
+                    std::string const & temperatureUnit,
+                    std::string const & timeUnit,
+                    std::string const & modelname);
 
     int string_init(const char * intststr,const char * modelname);
    int match(const char* simstring, const char* modelstring);

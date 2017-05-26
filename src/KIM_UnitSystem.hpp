@@ -47,6 +47,7 @@ class LengthUnit
   LengthUnit(int const id);
   bool operator==(LengthUnit const & rhs) const;
   bool operator!=(LengthUnit const & rhs) const;
+  std::string string() const;
 };
 
 class EnergyUnit
@@ -57,6 +58,7 @@ class EnergyUnit
   EnergyUnit(int const id);
   bool operator==(EnergyUnit const & rhs) const;
   bool operator!=(EnergyUnit const & rhs) const;
+  std::string string() const;
 };
 
 class ChargeUnit
@@ -67,6 +69,7 @@ class ChargeUnit
   ChargeUnit(int const id);
   bool operator==(ChargeUnit const & rhs) const;
   bool operator!=(ChargeUnit const & rhs) const;
+  std::string string() const;
 };
 
 class TemperatureUnit
@@ -77,6 +80,7 @@ class TemperatureUnit
   TemperatureUnit(int const id);
   bool operator==(TemperatureUnit const & rhs) const;
   bool operator!=(TemperatureUnit const & rhs) const;
+  std::string string() const;
 };
 
 class TimeUnit
@@ -87,6 +91,7 @@ class TimeUnit
   TimeUnit(int const id);
   bool operator==(TimeUnit const & rhs) const;
   bool operator!=(TimeUnit const & rhs) const;
+  std::string string() const;
 };
 
 namespace UNITS

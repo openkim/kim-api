@@ -239,32 +239,32 @@ static int compute(
     return ier; }
 
   ier =
-      KIM_COMPUTE_SimulatorComputeArguments_get_data(
-          arguments, KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles,
-          (void **) &nParts)
+      KIM_COMPUTE_SimulatorComputeArguments_get_data_int(
+          arguments, KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles, &nParts)
       ||
-      KIM_COMPUTE_SimulatorComputeArguments_get_data(
+      KIM_COMPUTE_SimulatorComputeArguments_get_data_int(
           arguments, KIM_COMPUTE_ARGUMENT_NAME_particleSpecies,
-          (void **) &particleSpecies)
+          &particleSpecies)
       ||
-      KIM_COMPUTE_SimulatorComputeArguments_get_data(
+      KIM_COMPUTE_SimulatorComputeArguments_get_data_int(
           arguments, KIM_COMPUTE_ARGUMENT_NAME_particleContributing,
-          (void **) &particleContributing)
+          &particleContributing)
       ||
-      KIM_COMPUTE_SimulatorComputeArguments_get_data(
-          arguments, KIM_COMPUTE_ARGUMENT_NAME_coordinates, (void **) &coords)
+      KIM_COMPUTE_SimulatorComputeArguments_get_data_double(
+          arguments, KIM_COMPUTE_ARGUMENT_NAME_coordinates, &coords)
       ||
-      (comp_energy ? KIM_COMPUTE_SimulatorComputeArguments_get_data(
-          arguments, KIM_COMPUTE_ARGUMENT_NAME_energy, (void **) &energy)
+      (comp_energy ? KIM_COMPUTE_SimulatorComputeArguments_get_data_double(
+          arguments, KIM_COMPUTE_ARGUMENT_NAME_energy, &energy)
        : FALSE)
       ||
-      (comp_force ? KIM_COMPUTE_SimulatorComputeArguments_get_data(
-          arguments, KIM_COMPUTE_ARGUMENT_NAME_forces, (void **) &force)
+      (comp_force ? KIM_COMPUTE_SimulatorComputeArguments_get_data_double(
+          arguments, KIM_COMPUTE_ARGUMENT_NAME_forces, &force)
        : FALSE)
       ||
-      (comp_particleEnergy ? KIM_COMPUTE_SimulatorComputeArguments_get_data(
-          arguments, KIM_COMPUTE_ARGUMENT_NAME_particleEnergy,
-          (void **) &particleEnergy) : FALSE);
+      (comp_particleEnergy ?
+       KIM_COMPUTE_SimulatorComputeArguments_get_data_double(
+           arguments, KIM_COMPUTE_ARGUMENT_NAME_particleEnergy,
+           &particleEnergy) : FALSE);
   if (ier) {
     KIM_report_error(__LINE__, __FILE__, "get_data", ier);
     return ier; }

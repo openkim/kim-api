@@ -33,12 +33,13 @@
 
 module kim_species_name_module
   use, intrinsic :: iso_c_binding
-  use kim_species_id_module
+  use kim_species_name_id_module
   implicit none
   private
 
   public &
     kim_species_name_type, &
+    kim_species_name_string, &
 
     kim_species_name_electron, &
     kim_species_name_h, &
@@ -179,10 +180,12 @@ module kim_species_name_module
     kim_species_name_user18, &
     kim_species_name_user19, &
     kim_species_name_user20, &
-    kim_species_name_end
+
+    kim_species_name_get_number_of_species, &
+    kim_species_name_get_species
 
   type, bind(c) :: kim_species_name_type
-    integer(c_int) species_id
+    integer(c_int) species_name_id
   end type kim_species_name_type
 
   type(kim_species_name_type), parameter :: kim_species_name_electron = &
@@ -463,6 +466,29 @@ module kim_species_name_module
     kim_species_name_type(user19_id)
   type(kim_species_name_type), parameter :: kim_species_name_user20 = &
     kim_species_name_type(user20_id)
-  type(kim_species_name_type), parameter :: kim_species_name_end = &
-    kim_species_name_type(end_id)
+
+  interface
+    subroutine kim_species_name_string(species_name, name_string)
+      import kim_species_name_type
+      implicit none
+      type(kim_species_name_type), intent(in), value :: species_name
+      character(len=*), intent(out) :: name_string
+    end subroutine kim_species_name_string
+
+    subroutine kim_species_name_get_number_of_species(&
+      number_of_species)
+      use, intrinsic :: iso_c_binding
+      implicit none
+      integer(c_int), intent(out) :: number_of_species
+    end subroutine kim_species_name_get_number_of_species
+
+    subroutine kim_species_name_get_species(index, species_name, ierr)
+      use, intrinsic :: iso_c_binding
+      import kim_species_name_type
+      implicit none
+      integer(c_int), intent(in), value :: index
+      type(kim_species_name_type), intent(out) :: species_name
+      integer(c_int), intent(out) :: ierr
+    end subroutine kim_species_name_get_species
+  end interface
 end module kim_species_name_module

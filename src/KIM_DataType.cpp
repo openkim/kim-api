@@ -30,30 +30,30 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
-
-#ifndef KIM_PARAMETER_HPP_
-#define KIM_PARAMETER_HPP_
-
-#include <string>
+#ifndef KIM_DATA_TYPE_HPP_
+#include "KIM_DataType.hpp"
+#endif
 
 namespace KIM
 {
 
-class ParameterDataType
-{
-  int dataTypeID;
- public:
-  ParameterDataType();
-  ParameterDataType(int const id);
-  bool operator==(ParameterDataType const & rhs) const;
-  bool operator!=(ParameterDataType const & rhs) const;
-};
+DataType::DataType() : dataTypeID(0) {}
+DataType::DataType(int const id) : dataTypeID(id) {}
+bool DataType::operator==(DataType const & rhs) const
+{return dataTypeID==rhs.dataTypeID;}
+bool DataType::operator!=(DataType const & rhs) const
+{return dataTypeID!=rhs.dataTypeID;}
 
-namespace PARAMETER_DATA_TYPE
+std::string DataType::string() const
 {
-extern ParameterDataType const Integer;
-extern ParameterDataType const Real;
-extern ParameterDataType const Double;
-}  // namespace PARAMETER_DATA_TYPE
+  if (*this == DATA_TYPE::Integer) return "Integer";
+  else if (*this == DATA_TYPE::Double) return "Double";
+  else return "unknown";
+}
+
+namespace DATA_TYPE
+{
+DataType const Integer(0);
+DataType const Double(1);
+}  // namespace DATA_TYPE
 }  // namespace KIM
-#endif  // KIM_PARAMETER_HPP_

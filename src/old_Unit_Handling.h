@@ -45,6 +45,12 @@ class IOline;
 
 class Unit_Handling{
 public:
+    std::string Unit_length;
+    std::string Unit_energy;
+    std::string Unit_charge;
+    std::string Unit_temperature;
+    std::string Unit_time;
+    bool flexible_handling;
     Unit_Handling();
     ~Unit_Handling();
     void init_str(char const* inputstr, int * error);
@@ -92,12 +98,6 @@ private:
 
 
     //
-    std::string Unit_length;
-    std::string Unit_energy;
-    std::string Unit_charge;
-    std::string Unit_temperature;
-    std::string Unit_time;
-    bool flexible_handling;
     void check_base_set_flexible(IOline *lines, int nlines, int *error);
     bool is_Unit_length_supported();
     bool is_Unit_energy_supported();

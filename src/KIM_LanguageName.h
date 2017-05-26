@@ -38,12 +38,14 @@
 
 struct KIM_LanguageName
 {
-  int languageID;
+  int languageNameID;
 };
 #ifndef KIM_LANGUAGE_NAME_DEFINED_
 #define KIM_LANGUAGE_NAME_DEFINED_
 typedef struct KIM_LanguageName KIM_LanguageName;
 #endif
+
+char const * const KIM_LanguageNameString(KIM_LanguageName const languageName);
 
 extern KIM_LanguageName const KIM_LANGUAGE_NAME_Cpp;
 extern KIM_LanguageName const KIM_LANGUAGE_NAME_C;

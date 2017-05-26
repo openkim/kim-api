@@ -53,6 +53,98 @@ module kim_compute_simulator_compute_arguments_module
     type(c_ptr) :: p
   end type kim_compute_simulator_compute_arguments_type
 
+  interface kim_compute_simulator_compute_arguments_get_data
+    subroutine kim_compute_simulator_compute_arguments_get_data_int0(&
+      arguments, argument_name, int0, ierr)
+      use, intrinsic :: iso_c_binding
+      use kim_compute_argument_name_module, only : &
+        kim_compute_argument_name_type
+      import kim_compute_simulator_compute_arguments_type
+      implicit none
+      type(kim_compute_simulator_compute_arguments_type), intent(in) :: &
+        arguments
+      type(kim_compute_argument_name_type), intent(in), value :: argument_name
+      integer(c_int), intent(out), pointer :: int0
+      integer(c_int), intent(out) :: ierr
+    end subroutine kim_compute_simulator_compute_arguments_get_data_int0
+
+    subroutine kim_compute_simulator_compute_arguments_get_data_int1(&
+      arguments, argument_name, extent1, int1, ierr)
+      use, intrinsic :: iso_c_binding
+      use kim_compute_argument_name_module, only : &
+        kim_compute_argument_name_type
+      import kim_compute_simulator_compute_arguments_type
+      implicit none
+      type(kim_compute_simulator_compute_arguments_type), intent(in) :: &
+        arguments
+      type(kim_compute_argument_name_type), intent(in), value :: argument_name
+      integer(c_int), intent(in), value :: extent1
+      integer(c_int), intent(out), pointer :: int1(:)
+      integer(c_int), intent(out) :: ierr
+    end subroutine kim_compute_simulator_compute_arguments_get_data_int1
+
+    subroutine kim_compute_simulator_compute_arguments_get_data_int2(&
+      arguments, argument_name, extent1, extent2, int2, ierr)
+      use, intrinsic :: iso_c_binding
+      use kim_compute_argument_name_module, only : &
+        kim_compute_argument_name_type
+      import kim_compute_simulator_compute_arguments_type
+      implicit none
+      type(kim_compute_simulator_compute_arguments_type), intent(in) :: &
+        arguments
+      type(kim_compute_argument_name_type), intent(in), value :: argument_name
+      integer(c_int), intent(in), value :: extent1
+      integer(c_int), intent(in), value :: extent2
+      integer(c_int), intent(out), pointer :: int2(:,:)
+      integer(c_int), intent(out) :: ierr
+    end subroutine kim_compute_simulator_compute_arguments_get_data_int2
+
+    subroutine kim_compute_simulator_compute_arguments_get_data_double0(&
+      arguments, argument_name, double0, ierr)
+      use, intrinsic :: iso_c_binding
+      use kim_compute_argument_name_module, only : &
+        kim_compute_argument_name_type
+      import kim_compute_simulator_compute_arguments_type
+      implicit none
+      type(kim_compute_simulator_compute_arguments_type), intent(in) :: &
+        arguments
+      type(kim_compute_argument_name_type), intent(in), value :: argument_name
+      real(c_double), intent(out), pointer :: double0
+      integer(c_int), intent(out) :: ierr
+    end subroutine kim_compute_simulator_compute_arguments_get_data_double0
+
+    subroutine kim_compute_simulator_compute_arguments_get_data_double1(&
+      arguments, argument_name, extent1, double1, ierr)
+      use, intrinsic :: iso_c_binding
+      use kim_compute_argument_name_module, only : &
+        kim_compute_argument_name_type
+      import kim_compute_simulator_compute_arguments_type
+      implicit none
+      type(kim_compute_simulator_compute_arguments_type), intent(in) :: &
+        arguments
+      type(kim_compute_argument_name_type), intent(in), value :: argument_name
+      integer(c_int), intent(in), value :: extent1
+      real(c_double), intent(out), pointer :: double1(:)
+      integer(c_int), intent(out) :: ierr
+    end subroutine kim_compute_simulator_compute_arguments_get_data_double1
+
+    subroutine kim_compute_simulator_compute_arguments_get_data_double2(&
+      arguments, argument_name, extent1, extent2, double2, ierr)
+      use, intrinsic :: iso_c_binding
+      use kim_compute_argument_name_module, only : &
+        kim_compute_argument_name_type
+      import kim_compute_simulator_compute_arguments_type
+      implicit none
+      type(kim_compute_simulator_compute_arguments_type), intent(in) :: &
+        arguments
+      type(kim_compute_argument_name_type), intent(in), value :: argument_name
+      integer(c_int), intent(in), value :: extent1
+      integer(c_int), intent(in), value :: extent2
+      real(c_double), intent(out), pointer :: double2(:,:)
+      integer(c_int), intent(out) :: ierr
+    end subroutine kim_compute_simulator_compute_arguments_get_data_double2
+  end interface kim_compute_simulator_compute_arguments_get_data
+
   interface
     subroutine kim_compute_simulator_compute_arguments_get_neigh_object( &
       arguments, ptr)
@@ -75,7 +167,7 @@ module kim_compute_simulator_compute_arguments_module
       integer(c_int), intent(in), value :: neighbor_list_index
       integer(c_int), intent(in), value :: particle_number
       integer(c_int), intent(out) :: number_of_neighbors
-      type(c_ptr), intent(out) :: neighbors_of_particle
+      integer(c_int), intent(out), pointer :: neighbors_of_particle(:)
       integer(c_int), intent(out) :: ierr
     end subroutine kim_compute_simulator_compute_arguments_get_neigh
 
@@ -108,20 +200,6 @@ module kim_compute_simulator_compute_arguments_module
       type(c_ptr), intent(in), value :: j
       integer(c_int), intent(out) :: ierr
     end subroutine kim_compute_simulator_compute_arguments_process_d2edr2
-
-    subroutine kim_compute_simulator_compute_arguments_get_data(arguments, &
-      argument_name, ptr, ierr)
-      use, intrinsic :: iso_c_binding
-      use kim_compute_argument_name_module, only : &
-        kim_compute_argument_name_type
-      import kim_compute_simulator_compute_arguments_type
-      implicit none
-      type(kim_compute_simulator_compute_arguments_type), intent(in) :: &
-        arguments
-      type(kim_compute_argument_name_type), intent(in), value :: argument_name
-      type(c_ptr), intent(out) :: ptr
-      integer(c_int), intent(out) :: ierr
-    end subroutine kim_compute_simulator_compute_arguments_get_data
 
     subroutine kim_compute_simulator_compute_arguments_get_compute(arguments, &
       argument_name, flag, ierr)

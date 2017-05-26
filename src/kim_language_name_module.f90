@@ -39,12 +39,14 @@ module kim_language_name_module
 
   public &
     kim_language_name_type, &
+    kim_language_name_string, &
+
     kim_language_name_cpp, &
     kim_language_name_c, &
     kim_language_name_fortran
 
   type, bind(c) :: kim_language_name_type
-    integer(c_int) :: language_id
+    integer(c_int) :: language_name_id
   end type kim_language_name_type
 
   type(kim_language_name_type), parameter :: &
@@ -56,4 +58,13 @@ module kim_language_name_module
   type(kim_language_name_type), parameter :: &
     kim_language_name_fortran = &
     kim_language_name_type(fortran_id)
+
+  interface
+    subroutine kim_language_name_string(language_name, name_string)
+      import kim_language_name_type
+      implicit none
+      type(kim_language_name_type), intent(in), value :: language_name
+      character(len=*), intent(out) :: name_string
+    end subroutine kim_language_name_string
+  end interface
 end module kim_language_name_module

@@ -34,10 +34,6 @@
 #include "KIM_SpeciesName.hpp"
 #endif
 
-#ifndef KIM_PARAMETER_HPP_
-#include "KIM_Parameter.hpp"
-#endif
-
 #ifndef KIM_SIMULATOR_HPP_
 #include "KIM_Simulator.hpp"
 #endif
@@ -56,10 +52,6 @@ extern "C"
 #include "KIM_SpeciesName.h"
 #endif
 
-#ifndef KIM_PARAMETER_H_
-#include "KIM_Parameter.h"
-#endif
-
 #ifndef KIM_SIMULATOR_H_
 #include "KIM_Simulator.h"
 #endif
@@ -71,14 +63,15 @@ extern "C"
 #ifndef KIM_UNIT_SYSTEM_H_
 #include "KIM_UnitSystem.h"
 #endif
+}  // extern "C"
 
 namespace
 {
-static KIM::LengthUnit makeLengthUnitCpp(KIM_LengthUnit const lengthUnit)
+KIM::LengthUnit makeLengthUnitCpp(KIM_LengthUnit const lengthUnit)
 {
   return KIM::LengthUnit(lengthUnit.lengthUnitID);
 }
-static KIM_LengthUnit makeLengthUnitC(KIM::LengthUnit const lengthUnit)
+KIM_LengthUnit makeLengthUnitC(KIM::LengthUnit const lengthUnit)
 {
   KIM_LengthUnit lengthU;
   KIM_LengthUnit * pLengthU = (KIM_LengthUnit *) &lengthUnit;
@@ -86,11 +79,11 @@ static KIM_LengthUnit makeLengthUnitC(KIM::LengthUnit const lengthUnit)
   return lengthU;
 }
 
-static KIM::EnergyUnit makeEnergyUnitCpp(KIM_EnergyUnit const energyUnit)
+KIM::EnergyUnit makeEnergyUnitCpp(KIM_EnergyUnit const energyUnit)
 {
   return KIM::EnergyUnit(energyUnit.energyUnitID);
 }
-static KIM_EnergyUnit makeEnergyUnitC(KIM::EnergyUnit const energyUnit)
+KIM_EnergyUnit makeEnergyUnitC(KIM::EnergyUnit const energyUnit)
 {
   KIM_EnergyUnit energyU;
   KIM_EnergyUnit * pEnergyU = (KIM_EnergyUnit *) &energyUnit;
@@ -98,11 +91,11 @@ static KIM_EnergyUnit makeEnergyUnitC(KIM::EnergyUnit const energyUnit)
   return energyU;
 }
 
-static KIM::ChargeUnit makeChargeUnitCpp(KIM_ChargeUnit const chargeUnit)
+KIM::ChargeUnit makeChargeUnitCpp(KIM_ChargeUnit const chargeUnit)
 {
   return KIM::ChargeUnit(chargeUnit.chargeUnitID);
 }
-static KIM_ChargeUnit makeChargeUnitC(KIM::ChargeUnit const chargeUnit)
+KIM_ChargeUnit makeChargeUnitC(KIM::ChargeUnit const chargeUnit)
 {
   KIM_ChargeUnit chargeU;
   KIM_ChargeUnit * pChargeU = (KIM_ChargeUnit *) &chargeUnit;
@@ -110,12 +103,12 @@ static KIM_ChargeUnit makeChargeUnitC(KIM::ChargeUnit const chargeUnit)
   return chargeU;
 }
 
-static KIM::TemperatureUnit makeTemperatureUnitCpp(
+KIM::TemperatureUnit makeTemperatureUnitCpp(
     KIM_TemperatureUnit const temperatureUnit)
 {
   return KIM::TemperatureUnit(temperatureUnit.temperatureUnitID);
 }
-static KIM_TemperatureUnit makeTemperatureUnitC(
+KIM_TemperatureUnit makeTemperatureUnitC(
     KIM::TemperatureUnit const temperatureUnit)
 {
   KIM_TemperatureUnit temperatureU;
@@ -124,11 +117,11 @@ static KIM_TemperatureUnit makeTemperatureUnitC(
   return temperatureU;
 }
 
-static KIM::TimeUnit makeTimeUnitCpp(KIM_TimeUnit const timeUnit)
+KIM::TimeUnit makeTimeUnitCpp(KIM_TimeUnit const timeUnit)
 {
   return KIM::TimeUnit(timeUnit.timeUnitID);
 }
-static KIM_TimeUnit makeTimeUnitC(KIM::TimeUnit const timeUnit)
+KIM_TimeUnit makeTimeUnitC(KIM::TimeUnit const timeUnit)
 {
   KIM_TimeUnit timeU;
   KIM_TimeUnit * plU = (KIM_TimeUnit *) &timeUnit;
@@ -136,41 +129,29 @@ static KIM_TimeUnit makeTimeUnitC(KIM::TimeUnit const timeUnit)
   return timeU;
 }
 
-//static KIM::COMPUTE::ArgumentName
-//makeArgumentNameCpp(KIM_COMPUTE_ArgumentName const argumentName)
-//{
-//  return KIM::COMPUTE::ArgumentName(argumentName.argumentID);
-//}
-
-static KIM::LanguageName
+KIM::LanguageName
 makeLanguageNameCpp(KIM_LanguageName const languageName)
 {
-  return KIM::LanguageName(languageName.languageID);
+  return KIM::LanguageName(languageName.languageNameID);
 }
 
-//static KIM_LanguageName
-//makeLanguageNameC(KIM::LanguageName const languageName)
-//{
-//  KIM_LanguageName langN;
-//  KIM_LanguageName * pLN = (KIM_LanguageName*) & languageName;
-//  langN.languageID = pLN->languageID;
-//  return langN;
-//}
-
-static KIM::SpeciesName makeSpecNameCpp(KIM_SpeciesName const speciesName)
+KIM::SpeciesName makeSpecNameCpp(KIM_SpeciesName const speciesName)
 {
-  return KIM::SpeciesName(speciesName.speciesID);
+  return KIM::SpeciesName(speciesName.speciesNameID);
 }
 
-static KIM_SpeciesName makeSpecNameC(KIM::SpeciesName const speciesName)
+KIM_SpeciesName makeSpecNameC(KIM::SpeciesName const speciesName)
 {
   KIM_SpeciesName specN;
   KIM_SpeciesName *pSN = (KIM_SpeciesName*) & speciesName;
-  specN.speciesID = pSN->speciesID;
+  specN.speciesNameID = pSN->speciesNameID;
   return specN;
 }
 }  // namespace
 
+
+extern "C"
+{
 void KIM_Simulator_set_influence_distance(KIM_Simulator * const simulator,
                                           double * const influenceDistance)
 {

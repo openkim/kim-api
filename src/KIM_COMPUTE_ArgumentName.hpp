@@ -34,19 +34,25 @@
 #ifndef KIM_COMPUTE_ARGUMENT_NAME_HPP_
 #define KIM_COMPUTE_ARGUMENT_NAME_HPP_
 
+#include <string>
+
 namespace KIM
 {
+// Forward declaration
+class DataType;
+
 namespace COMPUTE
 {
 
 class ArgumentName
 {
-  int argumentID;
+  int argumentNameID;
  public:
   ArgumentName();
   ArgumentName(int const id);
   bool operator==(ArgumentName const & rhs) const;
   bool operator!=(ArgumentName const & rhs) const;
+  std::string string() const;
 };
 
 namespace ARGUMENT_NAME
@@ -62,6 +68,18 @@ extern ArgumentName const particleEnergy;
 extern ArgumentName const virial;
 extern ArgumentName const particleVirial;
 extern ArgumentName const hessian;
+
+void get_number_of_arguments(int * const numberOfArguments);
+int get_argument(int const index, ArgumentName * const argumentName);
+
+int get_argument_data_type(ArgumentName const argumentName,
+                           DataType * const dataType);
+
+// @@@@@ should we have these?
+// int get_argument_shape(int const index, ArgumentName const argumentName,
+//                        int * const dimension, int const ** const extents);
+// int get_argument_unit(int const index, ArgumentName const argumentName,
+//                       Unit * const unit);
 }  // namespace ARGUMENT_NAME
 
 }  // namespace COMPUTE

@@ -47,7 +47,6 @@
 #endif
 
 /* Forward declarations */
-struct KIM_SpeciesName;
 #ifndef KIM_SPECIES_NAME_DEFINED_
 #define KIM_SPECIES_NAME_DEFINED_
 typedef struct KIM_SpeciesName KIM_SpeciesName;
@@ -58,9 +57,9 @@ typedef struct KIM_SpeciesName KIM_SpeciesName;
 typedef struct KIM_LengthUnit KIM_LengthUnit;
 #endif
 
-#ifndef KIM_PARAMETER_DATA_TYPE_DEFINED_
-#define KIM_PARAMETER_DATA_TYPE_DEFINED_
-typedef struct KIM_ParameterDataType KIM_ParameterDataType;
+#ifndef KIM_DATA_TYPE_DEFINED_
+#define KIM_DATA_TYPE_DEFINED_
+typedef struct KIM_DataType KIM_DataType;
 #endif
 
 #ifndef KIM_ENERGY_UNIT_DEFINED_
@@ -145,7 +144,7 @@ void KIM_Model_get_num_params(KIM_Model const * const model,
                               int * const numberOfParameters);
 int KIM_Model_get_parameter_data_type(KIM_Model const * const model,
                                       int const index,
-                                      KIM_ParameterDataType * const dataType);
+                                      KIM_DataType * const dataType);
 int KIM_Model_get_parameter(KIM_Model * const model, int const index,
                             int * const extent, void ** const ptr);
 int KIM_Model_get_parameter_description(KIM_Model const * const model,

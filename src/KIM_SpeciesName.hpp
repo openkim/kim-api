@@ -34,6 +34,8 @@
 #ifndef KIM_SPECIES_NAME_HPP_
 #define KIM_SPECIES_NAME_HPP_
 
+#include <string>
+
 namespace KIM
 {
 
@@ -45,6 +47,7 @@ class SpeciesName
   SpeciesName(int const id);
   bool operator==(SpeciesName const & rhs) const;
   bool operator!=(SpeciesName const & rhs) const;
+  std::string string() const;
 };
 
 namespace SPECIES_NAME
@@ -188,7 +191,9 @@ extern SpeciesName const user17;
 extern SpeciesName const user18;
 extern SpeciesName const user19;
 extern SpeciesName const user20;
-extern SpeciesName const End;
+
+void get_number_of_species(int * const numberOfSpecies);
+int get_species(int const index, SpeciesName * const speciesName);
 }  // namespace SPECIES_NAME
 
 }  // namespace KIM

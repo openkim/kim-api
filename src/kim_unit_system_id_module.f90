@@ -61,27 +61,27 @@ module kim_unit_system_id_module
     ns_id, &
     s_id
 
-  integer(c_int), parameter :: a_id = 1
-  integer(c_int), parameter :: bohr_id = 2
-  integer(c_int), parameter :: cm_id = 3
-  integer(c_int), parameter :: m_id = 4
-  integer(c_int), parameter :: nm_id = 5
+  integer(c_int), parameter :: a_id = 0
+  integer(c_int), parameter :: bohr_id = 1
+  integer(c_int), parameter :: cm_id = 2
+  integer(c_int), parameter :: m_id = 3
+  integer(c_int), parameter :: nm_id = 4
 
-  integer(c_int), parameter :: amu_a2_per_ps2_id = 1
-  integer(c_int), parameter :: erg_id = 2
-  integer(c_int), parameter :: ev_id = 3
-  integer(c_int), parameter :: hartree_id = 4
-  integer(c_int), parameter :: j_id = 5
-  integer(c_int), parameter :: kcal_mol_id = 6
+  integer(c_int), parameter :: amu_a2_per_ps2_id = 0
+  integer(c_int), parameter :: erg_id = 1
+  integer(c_int), parameter :: ev_id = 2
+  integer(c_int), parameter :: hartree_id = 3
+  integer(c_int), parameter :: j_id = 4
+  integer(c_int), parameter :: kcal_mol_id = 5
 
-  integer(c_int), parameter :: c_id = 1
-  integer(c_int), parameter :: e_id = 2
-  integer(c_int), parameter :: statc_id = 3
+  integer(c_int), parameter :: c_id = 0
+  integer(c_int), parameter :: e_id = 1
+  integer(c_int), parameter :: statc_id = 2
 
-  integer(c_int), parameter :: k_id = 1
+  integer(c_int), parameter :: k_id = 0
 
-  integer(c_int), parameter :: fs_id = 1
-  integer(c_int), parameter :: ps_id = 2
-  integer(c_int), parameter :: ns_id = 3
-  integer(c_int), parameter :: s_id = 4
+  integer(c_int), parameter :: fs_id = 0
+  integer(c_int), parameter :: ps_id = 1
+  integer(c_int), parameter :: ns_id = 2
+  integer(c_int), parameter :: s_id = 3
 end module kim_unit_system_id_module

@@ -33,19 +33,21 @@
 /*                                                                            */
 
 
-#ifndef KIM_PARAMETER_H_
-#define KIM_PARAMETER_H_
+#ifndef KIM_DATA_TYPE_H_
+#define KIM_DATA_TYPE_H_
 
-struct KIM_ParameterDataType
+struct KIM_DataType
 {
   int dataTypeID;
 };
-#ifndef KIM_PARAMETER_DATA_TYPE_DEFINED_
-#define KIM_PARAMETER_DATA_TYPE_DEFINED_
-typedef struct KIM_ParameterDataType KIM_ParameterDataType;
+#ifndef KIM_DATA_TYPE_DEFINED_
+#define KIM_DATA_TYPE_DEFINED_
+typedef struct KIM_DataType KIM_DataType;
 #endif
 
-extern KIM_ParameterDataType const KIM_PARAMETER_DATA_TYPE_Integer;
-extern KIM_ParameterDataType const KIM_PARAMETER_DATA_TYPE_Real;
-extern KIM_ParameterDataType const KIM_PARAMETER_DATA_TYPE_Double;
-#endif  /* KIM_PARAMETER_H_ */
+char const * const KIM_DataTypeString(KIM_DataType const dataType);
+
+extern KIM_DataType const KIM_DATA_TYPE_Integer;
+extern KIM_DataType const KIM_DATA_TYPE_Double;
+
+#endif  /* KIM_DATA_TYPE_H_ */

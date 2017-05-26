@@ -94,7 +94,7 @@ real(c_double), parameter :: lj_C = 28.0_cd*lj_epsilon*(-13.0_cd &
                               + 4.0_cd*lj_cutnorm**6)/(lj_cutnorm**12)
 
 type, bind(c) :: buffer_type
-  real(c_double) :: cutoff
+  real(c_double) :: cutoff(1)
 end type buffer_type
 
 contains
@@ -183,16 +183,15 @@ integer(c_int) :: i,j,jj,numnei,comp_force,comp_enepot,comp_virial, &
 integer(c_int) :: ierr2
 
 !-- KIM variables
-integer(c_int), pointer :: N;                 type(c_ptr) :: pN
-real(c_double), pointer :: energy;            type(c_ptr) :: penergy
-real(c_double), pointer :: coor(:,:);         type(c_ptr) :: pcoor
-real(c_double), pointer :: force(:,:);        type(c_ptr) :: pforce
-real(c_double), pointer :: enepot(:);         type(c_ptr) :: penepot
-integer(c_int), pointer :: nei1part(:);       type(c_ptr) :: pnei1part
-integer(c_int), pointer :: particleSpecies(:);type(c_ptr) :: pparticleSpecies
+integer(c_int), pointer :: N
+real(c_double), pointer :: energy
+real(c_double), pointer :: coor(:,:)
+real(c_double), pointer :: force(:,:)
+real(c_double), pointer :: enepot(:)
+integer(c_int), pointer :: nei1part(:)
+integer(c_int), pointer :: particleSpecies(:)
 integer(c_int), pointer :: particleContributing(:)
-type(c_ptr) :: pparticleContributing
-real(c_double), pointer :: virial(:);         type(c_ptr) :: pvirial
+real(c_double), pointer :: virial(:)
 
 ! Check to see if we have been asked to compute the forces, energyperpart,
 ! energy and virial
@@ -220,35 +219,35 @@ endif
 !
 ierr = 0
 call kim_compute_simulator_compute_arguments_get_data(arguments, &
-  kim_compute_argument_name_number_of_particles, pN, ierr2)
+  kim_compute_argument_name_number_of_particles, N, ierr2)
 ierr = ierr + ierr2
 call kim_compute_simulator_compute_arguments_get_data(arguments, &
-  kim_compute_argument_name_particle_species, pparticleSpecies, ierr2)
+  kim_compute_argument_name_particle_species, n, particleSpecies, ierr2)
 ierr = ierr + ierr2
 call kim_compute_simulator_compute_arguments_get_data(arguments, &
-  kim_compute_argument_name_particle_species, pparticleContributing, ierr2)
+  kim_compute_argument_name_particle_species, n, particleContributing, ierr2)
 ierr = ierr + ierr2
 call kim_compute_simulator_compute_arguments_get_data(arguments, &
-  kim_compute_argument_name_coordinates, pcoor, ierr2)
+  kim_compute_argument_name_coordinates, dim, n, coor, ierr2)
 ierr = ierr + ierr2
 if (comp_energy == 1) then
   call kim_compute_simulator_compute_arguments_get_data(arguments, &
-    kim_compute_argument_name_energy, penergy, ierr2)
+    kim_compute_argument_name_energy, energy, ierr2)
   ierr = ierr + ierr2
 endif
 if (comp_force == 1) then
   call kim_compute_simulator_compute_arguments_get_data(arguments, &
-    kim_compute_argument_name_forces, pforce, ierr2)
+    kim_compute_argument_name_forces, dim, n, force, ierr2)
   ierr = ierr + ierr2
 endif
 if (comp_enepot == 1) then
   call kim_compute_simulator_compute_arguments_get_data(arguments, &
-    kim_compute_argument_name_particle_energy, penepot, ierr2)
+    kim_compute_argument_name_particle_energy, n, enepot, ierr2)
   ierr = ierr + ierr2
 endif
 if (comp_virial == 1) then
   call kim_compute_simulator_compute_arguments_get_data(arguments, &
-    kim_compute_argument_name_virial, pvirial, ierr2)
+    kim_compute_argument_name_virial, 6, virial, ierr2)
   ierr = ierr + ierr2
 endif
 if (ierr /= 0) then
@@ -257,15 +256,6 @@ ierr = ierr + ierr2
                                "get_data", ierr)
    return
 endif
-
-call c_f_pointer(pN,               N)
-call c_f_pointer(pparticleSpecies, particleSpecies, [N])
-call c_f_pointer(pparticleContributing, particleContributing, [N])
-call c_f_pointer(pcoor,            coor,            [DIM,N])
-if (comp_energy.eq.1) call c_f_pointer(penergy,         energy)
-if (comp_force.eq.1)  call c_f_pointer(pforce,          force,          [DIM,N])
-if (comp_enepot.eq.1) call c_f_pointer(penepot,         enepot,         [N])
-if (comp_virial.eq.1) call c_f_pointer(pvirial,         virial,         [6])
 
 ! Check to be sure that the species are correct
 !
@@ -297,7 +287,7 @@ do i = 1, N
   if (particleContributing(i) == 1) then
     ! Set up neighbor list for next particle
     call kim_compute_simulator_compute_arguments_get_neigh( &
-      arguments, 1, i, numnei, pnei1part, ierr)
+      arguments, 1, i, numnei, nei1part, ierr)
     if (ierr /= 0) then
       ! some sort of problem, exit
       call kim_report_error(__LINE__, THIS_FILE_NAME, &
@@ -306,8 +296,6 @@ do i = 1, N
       ierr = 1
       return
     endif
-
-    call c_f_pointer(pnei1part, nei1part, [numnei])
 
     ! Loop over the neighbors of particle i
     !
@@ -428,8 +416,8 @@ call kim_simulator_set_destroy(simulator, kim_language_name_fortran, &
 allocate( buf )
 buf%cutoff = model_cutoff
 call kim_simulator_set_model_buffer(simulator, c_loc(buf))
-call kim_simulator_set_influence_distance(simulator, c_loc(buf%cutoff))
-call kim_simulator_set_cutoffs(simulator, 1, c_loc(buf%cutoff))
+call kim_simulator_set_influence_distance(simulator, buf%cutoff(1))
+call kim_simulator_set_cutoffs(simulator, 1, buf%cutoff)
 
 ierr = 0
 return

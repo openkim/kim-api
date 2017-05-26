@@ -136,12 +136,42 @@ int SimulatorComputeArguments::process_d2Edr2(Simulator const * const simulator,
 
 // *data functions
 int SimulatorComputeArguments::get_data(ArgumentName const argumentName,
-                                        void ** const ptr) const
+                                        int const ** const ptr) const
 {
   OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
 
   int err;
-  *ptr = pKIM->get_data(argumentString(argumentName), &err);
+  *ptr = (int*) pKIM->get_data(argumentString(argumentName), &err);
+  return (err < KIM_STATUS_OK);
+}
+
+int SimulatorComputeArguments::get_data(ArgumentName const argumentName,
+                                        int ** const ptr) const
+{
+  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
+
+  int err;
+  *ptr = (int*) pKIM->get_data(argumentString(argumentName), &err);
+  return (err < KIM_STATUS_OK);
+}
+
+int SimulatorComputeArguments::get_data(ArgumentName const argumentName,
+                                        double ** const ptr) const
+{
+  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
+
+  int err;
+  *ptr = (double*) pKIM->get_data(argumentString(argumentName), &err);
+  return (err < KIM_STATUS_OK);
+}
+
+int SimulatorComputeArguments::get_data(ArgumentName const argumentName,
+                                        double const ** const ptr) const
+{
+  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
+
+  int err;
+  *ptr = (double*) pKIM->get_data(argumentString(argumentName), &err);
   return (err < KIM_STATUS_OK);
 }
 

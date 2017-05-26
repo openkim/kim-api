@@ -79,7 +79,7 @@ integer(c_int), parameter          :: sigma_index   = 3
 !
 !-------------------------------------------------------------------------------
 type, bind(c) :: BUFFER_TYPE
-  real(c_double) :: influence_distance
+  real(c_double) :: influence_distance(1)
   real(c_double) :: Pcutoff
   real(c_double) :: cutsq
   real(c_double) :: epsilon
@@ -235,22 +235,21 @@ integer(c_int), pointer :: i_pairs(:), j_pairs(:)
 
 !-- KIM variables
 real(c_double) :: model_cutoff
-integer(c_int), pointer :: N;                 type(c_ptr) :: pN
-real(c_double), pointer :: energy;            type(c_ptr) :: penergy
-real(c_double), pointer :: coor(:,:);         type(c_ptr) :: pcoor
-real(c_double), pointer :: force(:,:);        type(c_ptr) :: pforce
-real(c_double), pointer :: enepot(:);         type(c_ptr) :: penepot
-integer(c_int), pointer :: nei1part(:);       type(c_ptr) :: pnei1part
-integer(c_int), pointer :: particleSpecies(:);type(c_ptr) :: pparticleSpecies
+integer(c_int), pointer :: N
+real(c_double), pointer :: energy
+real(c_double), pointer :: coor(:,:)
+real(c_double), pointer :: force(:,:)
+real(c_double), pointer :: enepot(:)
+integer(c_int), pointer :: nei1part(:)
+integer(c_int), pointer :: particleSpecies(:)
 integer(c_int), pointer :: particleContributing(:)
-type(c_ptr) :: pparticleContributing
 
 
 ! get model buffer from KIM object
 call kim_simulator_get_model_buffer(simulator, pbuf)
 call c_f_pointer(pbuf, buf)
 
-model_cutoff = buf%influence_distance
+model_cutoff = buf%influence_distance(1)
 
 ! Check to see if we have been asked to compute the forces, energyperpart,
 ! energy and d1Edr
@@ -281,29 +280,27 @@ endif
 !
 ierr = 0
 call kim_compute_simulator_compute_arguments_get_data(arguments, &
-  kim_compute_argument_name_number_of_particles, pn, ierr2)
+  kim_compute_argument_name_number_of_particles, n, ierr2)
 ierr = ierr + ierr2
 
 call kim_compute_simulator_compute_arguments_get_data(arguments, &
-  kim_compute_argument_name_number_of_particles, pn, ierr2)
+  kim_compute_argument_name_particle_species, n, particlespecies, ierr2)
 ierr = ierr + ierr2
 call kim_compute_simulator_compute_arguments_get_data(arguments, &
-  kim_compute_argument_name_particle_species, pparticlespecies, ierr2)
+  kim_compute_argument_name_particle_contributing, n, particlecontributing, &
+  ierr2)
 ierr = ierr + ierr2
 call kim_compute_simulator_compute_arguments_get_data(arguments, &
-  kim_compute_argument_name_particle_contributing, pparticlecontributing, ierr2)
+  kim_compute_argument_name_coordinates, dim, n, coor, ierr2)
 ierr = ierr + ierr2
 call kim_compute_simulator_compute_arguments_get_data(arguments, &
-  kim_compute_argument_name_coordinates, pcoor, ierr2)
+  kim_compute_argument_name_energy, energy, ierr2)
 ierr = ierr + ierr2
 call kim_compute_simulator_compute_arguments_get_data(arguments, &
-  kim_compute_argument_name_energy, penergy, ierr2)
+  kim_compute_argument_name_forces, dim, n, force, ierr2)
 ierr = ierr + ierr2
 call kim_compute_simulator_compute_arguments_get_data(arguments, &
-  kim_compute_argument_name_forces, pforce, ierr2)
-ierr = ierr + ierr2
-call kim_compute_simulator_compute_arguments_get_data(arguments, &
-  kim_compute_argument_name_particle_energy, penepot, ierr2)
+  kim_compute_argument_name_particle_energy, n, enepot, ierr2)
 ierr = ierr + ierr2
 if (ierr /= 0) then
    call kim_report_error(__LINE__, THIS_FILE_NAME,     &
@@ -311,16 +308,6 @@ if (ierr /= 0) then
                                ierr)
    return
 endif
-
-call c_f_pointer(pN,             N)
-call c_f_pointer(pparticleSpecies, particleSpecies, [N])
-call c_f_pointer(pparticleContributing, particleContributing, [N])
-call c_f_pointer(pcoor,          coor,          [DIM,N])
-
-if (comp_energy.eq.1) call c_f_pointer(penergy,         energy)
-if (comp_force.eq.1)  call c_f_pointer(pforce,          force,          [DIM,N])
-if (comp_enepot.eq.1) call c_f_pointer(penepot,         enepot,         [N])
-
 
 allocate( Rij(DIM) )
 if (comp_process_d2Edr2.eq.1) then
@@ -362,7 +349,7 @@ do i = 1, N
     ! Set up neighbor list for next particle
     !
     call kim_compute_simulator_compute_arguments_get_neigh( &
-      arguments, 1, i, numnei, pnei1part, ierr)
+      arguments, 1, i, numnei, nei1part, ierr)
     if (ierr /= 0) then
       ! some sort of problem, exit
       call kim_report_error(__LINE__, THIS_FILE_NAME, &
@@ -371,8 +358,6 @@ do i = 1, N
       ierr = 1
       return
     endif
-
-    call c_f_pointer(pnei1part, nei1part, [numnei])
 
     ! Loop over the neighbors of particle i
     !
@@ -680,8 +665,8 @@ call calc_phi(in_epsilon, &
 buf%shift   = -energy_at_cutoff
 
 ! store model cutoff in KIM object
-call kim_simulator_set_influence_distance(simulator, c_loc(buf%influence_distance))
-call kim_simulator_set_cutoffs(simulator, 1, c_loc(buf%influence_distance))
+call kim_simulator_set_influence_distance(simulator, buf%influence_distance(1))
+call kim_simulator_set_cutoffs(simulator, 1, buf%influence_distance)
 
 ! end setup buffer
 

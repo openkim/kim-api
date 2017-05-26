@@ -53,6 +53,7 @@ module mod_neighborlist
   public get_neigh
 
   type neighObject_type
+     integer(c_int) :: number_of_particles
      integer(c_int), pointer :: neighborList(:,:)
      real(c_double), pointer :: RijList(:,:,:)
   end type neighObject_type
@@ -65,14 +66,12 @@ contains
 ! This function implements Locator and Iterator mode
 !
 !-------------------------------------------------------------------------------
-subroutine get_neigh(arguments, neighbor_list_index, request, numnei, &
+subroutine get_neigh(data_object, neighbor_list_index, request, numnei, &
   pnei1part, ierr) bind(c)
-  use kim_compute_argument_name_module
-  use kim_compute_simulator_compute_arguments_module
   implicit none
 
   !-- Transferred variables
-  type(kim_compute_simulator_compute_arguments_type), intent(in) :: arguments
+  type(c_ptr),    value, intent(in) :: data_object
   integer(c_int), value, intent(in) :: neighbor_list_index
   integer(c_int), value, intent(in)  :: request
   integer(c_int),        intent(out) :: numnei
@@ -81,32 +80,18 @@ subroutine get_neigh(arguments, neighbor_list_index, request, numnei, &
 
   !-- Local variables
   integer(c_int), parameter :: DIM = 3
-  integer(c_int)  N
-  integer(c_int), pointer :: numberOfParticles;   type(c_ptr) :: pnParts
-  type(neighObject_type), pointer :: neighObject; type(c_ptr) :: pneighObject
+  integer(c_int) numberOfParticles
+  type(neighObject_type), pointer :: neighObject
 
   if (neighbor_list_index /= 1) then
     call kim_report_error(__LINE__, THIS_FILE_NAME, "wrong list index", 1)
   endif
 
-  ! unpack number of particles
-  call kim_compute_simulator_compute_arguments_get_data(arguments, &
-    kim_compute_argument_name_number_of_particles, pnparts, ierr)
-  if (ierr /= 0) then
-     call kim_report_error(__LINE__, THIS_FILE_NAME, &
-                                 "get_data", ierr)
-     stop
-  endif
-  call c_f_pointer(pnParts, numberOfParticles)
+  call c_f_pointer(data_object, neighObject)
 
-  ! unpack neighbor list object
-  call kim_compute_simulator_compute_arguments_get_neigh_object(arguments, &
-    pneighobject)
-  call c_f_pointer(pneighObject, neighObject)
+  numberOfParticles = neighObject%number_of_particles
 
-  N = size(neighObject%neighborList, 2)
-
-  if ( (request.gt.N) .or. (request.lt.1)) then
+  if ( (request.gt.numberOfParticles) .or. (request.lt.1)) then
     call kim_report_error(__LINE__, THIS_FILE_NAME, &
       "Invalid part ID in get_neigh", 1)
     ierr = 1
@@ -143,6 +128,7 @@ program vc_forces_numer_deriv
   use kim_species_name_module
   use kim_model_module
   use kim_compute_argument_name_module
+  use kim_compute_argument_attribute_module
   use kim_compute_model_compute_arguments_module
   use mod_neighborlist
   implicit none
@@ -195,11 +181,14 @@ program vc_forces_numer_deriv
   integer(c_int), target :: particleContributing(N)
   real(c_double) :: influence_distance
   integer(c_int) :: number_of_cutoffs
-  real(c_double), pointer :: cutoff; type(c_ptr) :: cutoff_ptr
+  real(c_double), pointer :: cutoffs(:)
+  real(c_double) :: cutoff
   real(c_double), target :: energy
   real(c_double), target :: coords(3,N)
   real(c_double), target :: forces(3,N)
   integer(c_int) middleDum
+  type(kim_compute_argument_attribute_type) argument_attribute
+  logical forces_optional
   character(len=10000) :: test_descriptor_string
   real(c_double) rnd, deriv, deriv_err
 
@@ -280,28 +269,38 @@ program vc_forces_numer_deriv
     stop
   endif
 
+  ! determine in forces is optional for the model
+  call kim_compute_model_compute_arguments_get_argument_attribute( &
+    arguments, kim_compute_argument_name_forces, argument_attribute)
+  if (argument_attribute%argument_attribute_id &
+    == kim_compute_argument_attribute_optional%argument_attribute_id) then
+    forces_optional = .true.
+  else
+    forces_optional = .false.
+  endif
+
   ! register memory with the KIM system
   ierr = 0
   call kim_compute_model_compute_arguments_set_data(arguments, &
-    kim_compute_argument_name_number_of_particles, 1, c_loc(numberOfParticles), ierr2)
+    kim_compute_argument_name_number_of_particles, numberOfParticles, ierr2)
   ierr = ierr + ierr2
   call kim_compute_model_compute_arguments_set_data(arguments, &
-    kim_compute_argument_name_number_of_species,   1, c_loc(num_species), ierr2)
+    kim_compute_argument_name_number_of_species, num_species, ierr2)
   ierr = ierr + ierr2
   call kim_compute_model_compute_arguments_set_data(arguments, &
-    kim_compute_argument_name_particle_species,    N, c_loc(particleSpecies), ierr2)
+    kim_compute_argument_name_particle_species, N, particleSpecies, ierr2)
   ierr = ierr + ierr2
   call kim_compute_model_compute_arguments_set_data(arguments, &
-    kim_compute_argument_name_particle_contributing, N, c_loc(particleContributing), ierr2)
+    kim_compute_argument_name_particle_contributing, N, particleContributing, ierr2)
   ierr = ierr + ierr2
   call kim_compute_model_compute_arguments_set_data(arguments, &
-    kim_compute_argument_name_coordinates,       3*N, c_loc(coords), ierr2)
+    kim_compute_argument_name_coordinates, 3, N, coords, ierr2)
   ierr = ierr + ierr2
   call kim_compute_model_compute_arguments_set_data(arguments, &
-    kim_compute_argument_name_energy,              1, c_loc(energy), ierr2)
+    kim_compute_argument_name_energy, energy, ierr2)
   ierr = ierr + ierr2
   call kim_compute_model_compute_arguments_set_data(arguments, &
-    kim_compute_argument_name_forces,            3*N, c_loc(forces), ierr2)
+    kim_compute_argument_name_forces, 3, N, forces, ierr2)
   ierr = ierr + ierr2
   if (ierr /= 0) then
      call kim_report_error(__LINE__, THIS_FILE_NAME, &
@@ -313,21 +312,20 @@ program vc_forces_numer_deriv
   ! store pointers to neighbor list object and access function
   !
   allocate(neighObject%neighborList(N+1,N))
-  call kim_compute_model_compute_arguments_set_neigh_object(arguments, &
-    c_loc(neighobject))
+  neighObject%number_of_particles = N
 
-  ! Set pointer in KIM object to neighbor list routine
+  ! Set pointer in KIM object to neighbor list routine and object
   !
-  call kim_compute_model_compute_arguments_set_get_neigh(arguments, &
-    kim_language_name_fortran, c_funloc(get_neigh))
+  call kim_compute_model_compute_arguments_set_neigh(arguments, &
+    kim_language_name_fortran, c_funloc(get_neigh), c_loc(neighobject))
 
   call kim_model_get_influence_distance(model, influence_distance)
-  call kim_model_get_cutoffs(model, number_of_cutoffs, cutoff_ptr)
+  call kim_model_get_cutoffs(model, number_of_cutoffs, cutoffs)
   if (number_of_cutoffs /= 1) then
     call kim_report_error(__LINE__, THIS_FILE_NAME, &
       "too many cutoffs", 1)
   endif
-  call c_f_pointer(cutoff_ptr, cutoff)
+  cutoff = cutoffs(1)
 
   ! Scale reference FCC configuration based on cutoff radius.
   FCCspacing = 0.75_cd*cutoff ! set the FCC spacing to a fraction
@@ -382,14 +380,16 @@ program vc_forces_numer_deriv
   print '(41(''=''))'
   print *
 
-  ! Turn off force computation
+  ! Turn off force computation, if possible
   !
-  call kim_compute_model_compute_arguments_set_compute(arguments, &
-    kim_compute_argument_name_forces, 0, ierr)
-  if (ierr /= 0) then
-     call kim_report_error(__LINE__, THIS_FILE_NAME, &
-                                 "set_compute", ierr)
-     stop
+  if (forces_optional) then
+    call kim_compute_model_compute_arguments_set_compute(arguments, &
+      kim_compute_argument_name_forces, 0, ierr)
+    if (ierr /= 0) then
+      call kim_report_error(__LINE__, THIS_FILE_NAME, &
+        "set_compute", ierr)
+      stop
+    endif
   endif
 
   ! Compute gradient using numerical differentiation
@@ -482,301 +482,31 @@ end program vc_forces_numer_deriv
 
 !--------------
 type(kim_species_name_type) function kim_species_name(species_name_string)
+  use, intrinsic :: iso_c_binding
   use kim_species_name_module
   implicit none
   character(len=*), intent(in) :: species_name_string
 
-  if (species_name_string == "electron") kim_species_name = kim_species_name_electron;
-  if (species_name_string == "H") kim_species_name = kim_species_name_H;
-  if (species_name_string == "He") kim_species_name = kim_species_name_He;
-  if (species_name_string == "Li") kim_species_name = kim_species_name_Li;
-  if (species_name_string == "Be") kim_species_name = kim_species_name_Be;
-  if (species_name_string == "B") kim_species_name = kim_species_name_B;
-  if (species_name_string == "C") kim_species_name = kim_species_name_C;
-  if (species_name_string == "N") kim_species_name = kim_species_name_N;
-  if (species_name_string == "O") kim_species_name = kim_species_name_O;
-  if (species_name_string == "F") kim_species_name = kim_species_name_F;
-  if (species_name_string == "Ne") kim_species_name = kim_species_name_Ne;
-  if (species_name_string == "Na") kim_species_name = kim_species_name_Na;
-  if (species_name_string == "Mg") kim_species_name = kim_species_name_Mg;
-  if (species_name_string == "Al") kim_species_name = kim_species_name_Al;
-  if (species_name_string == "Si") kim_species_name = kim_species_name_Si;
-  if (species_name_string == "P") kim_species_name = kim_species_name_P;
-  if (species_name_string == "S") kim_species_name = kim_species_name_S;
-  if (species_name_string == "Cl") kim_species_name = kim_species_name_Cl;
-  if (species_name_string == "Ar") kim_species_name = kim_species_name_Ar;
-  if (species_name_string == "K") kim_species_name = kim_species_name_K;
-  if (species_name_string == "Ca") kim_species_name = kim_species_name_Ca;
-  if (species_name_string == "Sc") kim_species_name = kim_species_name_Sc;
-  if (species_name_string == "Ti") kim_species_name = kim_species_name_Ti;
-  if (species_name_string == "V") kim_species_name = kim_species_name_V;
-  if (species_name_string == "Cr") kim_species_name = kim_species_name_Cr;
-  if (species_name_string == "Mn") kim_species_name = kim_species_name_Mn;
-  if (species_name_string == "Fe") kim_species_name = kim_species_name_Fe;
-  if (species_name_string == "Co") kim_species_name = kim_species_name_Co;
-  if (species_name_string == "Ni") kim_species_name = kim_species_name_Ni;
-  if (species_name_string == "Cu") kim_species_name = kim_species_name_Cu;
-  if (species_name_string == "Zn") kim_species_name = kim_species_name_Zn;
-  if (species_name_string == "Ga") kim_species_name = kim_species_name_Ga;
-  if (species_name_string == "Ge") kim_species_name = kim_species_name_Ge;
-  if (species_name_string == "As") kim_species_name = kim_species_name_As;
-  if (species_name_string == "Se") kim_species_name = kim_species_name_Se;
-  if (species_name_string == "Br") kim_species_name = kim_species_name_Br;
-  if (species_name_string == "Kr") kim_species_name = kim_species_name_Kr;
-  if (species_name_string == "Rb") kim_species_name = kim_species_name_Rb;
-  if (species_name_string == "Sr") kim_species_name = kim_species_name_Sr;
-  if (species_name_string == "Y") kim_species_name = kim_species_name_Y;
-  if (species_name_string == "Zr") kim_species_name = kim_species_name_Zr;
-  if (species_name_string == "Nb") kim_species_name = kim_species_name_Nb;
-  if (species_name_string == "Mo") kim_species_name = kim_species_name_Mo;
-  if (species_name_string == "Tc") kim_species_name = kim_species_name_Tc;
-  if (species_name_string == "Ru") kim_species_name = kim_species_name_Ru;
-  if (species_name_string == "Rh") kim_species_name = kim_species_name_Rh;
-  if (species_name_string == "Pd") kim_species_name = kim_species_name_Pd;
-  if (species_name_string == "Ag") kim_species_name = kim_species_name_Ag;
-  if (species_name_string == "Cd") kim_species_name = kim_species_name_Cd;
-  if (species_name_string == "In") kim_species_name = kim_species_name_In;
-  if (species_name_string == "Sn") kim_species_name = kim_species_name_Sn;
-  if (species_name_string == "Sb") kim_species_name = kim_species_name_Sb;
-  if (species_name_string == "Te") kim_species_name = kim_species_name_Te;
-  if (species_name_string == "I") kim_species_name = kim_species_name_I;
-  if (species_name_string == "Xe") kim_species_name = kim_species_name_Xe;
-  if (species_name_string == "Cs") kim_species_name = kim_species_name_Cs;
-  if (species_name_string == "Ba") kim_species_name = kim_species_name_Ba;
-  if (species_name_string == "La") kim_species_name = kim_species_name_La;
-  if (species_name_string == "Ce") kim_species_name = kim_species_name_Ce;
-  if (species_name_string == "Pr") kim_species_name = kim_species_name_Pr;
-  if (species_name_string == "Nd") kim_species_name = kim_species_name_Nd;
-  if (species_name_string == "Pm") kim_species_name = kim_species_name_Pm;
-  if (species_name_string == "Sm") kim_species_name = kim_species_name_Sm;
-  if (species_name_string == "Eu") kim_species_name = kim_species_name_Eu;
-  if (species_name_string == "Gd") kim_species_name = kim_species_name_Gd;
-  if (species_name_string == "Tb") kim_species_name = kim_species_name_Tb;
-  if (species_name_string == "Dy") kim_species_name = kim_species_name_Dy;
-  if (species_name_string == "Ho") kim_species_name = kim_species_name_Ho;
-  if (species_name_string == "Er") kim_species_name = kim_species_name_Er;
-  if (species_name_string == "Tm") kim_species_name = kim_species_name_Tm;
-  if (species_name_string == "Yb") kim_species_name = kim_species_name_Yb;
-  if (species_name_string == "Lu") kim_species_name = kim_species_name_Lu;
-  if (species_name_string == "Hf") kim_species_name = kim_species_name_Hf;
-  if (species_name_string == "Ta") kim_species_name = kim_species_name_Ta;
-  if (species_name_string == "W") kim_species_name = kim_species_name_W;
-  if (species_name_string == "Re") kim_species_name = kim_species_name_Re;
-  if (species_name_string == "Os") kim_species_name = kim_species_name_Os;
-  if (species_name_string == "Ir") kim_species_name = kim_species_name_Ir;
-  if (species_name_string == "Pt") kim_species_name = kim_species_name_Pt;
-  if (species_name_string == "Au") kim_species_name = kim_species_name_Au;
-  if (species_name_string == "Hg") kim_species_name = kim_species_name_Hg;
-  if (species_name_string == "Tl") kim_species_name = kim_species_name_Tl;
-  if (species_name_string == "Pb") kim_species_name = kim_species_name_Pb;
-  if (species_name_string == "Bi") kim_species_name = kim_species_name_Bi;
-  if (species_name_string == "Po") kim_species_name = kim_species_name_Po;
-  if (species_name_string == "At") kim_species_name = kim_species_name_At;
-  if (species_name_string == "Rn") kim_species_name = kim_species_name_Rn;
-  if (species_name_string == "Fr") kim_species_name = kim_species_name_Fr;
-  if (species_name_string == "Ra") kim_species_name = kim_species_name_Ra;
-  if (species_name_string == "Ac") kim_species_name = kim_species_name_Ac;
-  if (species_name_string == "Th") kim_species_name = kim_species_name_Th;
-  if (species_name_string == "Pa") kim_species_name = kim_species_name_Pa;
-  if (species_name_string == "U") kim_species_name = kim_species_name_U;
-  if (species_name_string == "Np") kim_species_name = kim_species_name_Np;
-  if (species_name_string == "Pu") kim_species_name = kim_species_name_Pu;
-  if (species_name_string == "Am") kim_species_name = kim_species_name_Am;
-  if (species_name_string == "Cm") kim_species_name = kim_species_name_Cm;
-  if (species_name_string == "Bk") kim_species_name = kim_species_name_Bk;
-  if (species_name_string == "Cf") kim_species_name = kim_species_name_Cf;
-  if (species_name_string == "Es") kim_species_name = kim_species_name_Es;
-  if (species_name_string == "Fm") kim_species_name = kim_species_name_Fm;
-  if (species_name_string == "Md") kim_species_name = kim_species_name_Md;
-  if (species_name_string == "No") kim_species_name = kim_species_name_No;
-  if (species_name_string == "Lr") kim_species_name = kim_species_name_Lr;
-  if (species_name_string == "Rf") kim_species_name = kim_species_name_Rf;
-  if (species_name_string == "Db") kim_species_name = kim_species_name_Db;
-  if (species_name_string == "Sg") kim_species_name = kim_species_name_Sg;
-  if (species_name_string == "Bh") kim_species_name = kim_species_name_Bh;
-  if (species_name_string == "Hs") kim_species_name = kim_species_name_Hs;
-  if (species_name_string == "Mt") kim_species_name = kim_species_name_Mt;
-  if (species_name_string == "Ds") kim_species_name = kim_species_name_Ds;
-  if (species_name_string == "Rg") kim_species_name = kim_species_name_Rg;
-  if (species_name_string == "Cn") kim_species_name = kim_species_name_Cn;
-  if (species_name_string == "Uut") kim_species_name = kim_species_name_Uut;
-  if (species_name_string == "Fl") kim_species_name = kim_species_name_Fl;
-  if (species_name_string == "Uup") kim_species_name = kim_species_name_Uup;
-  if (species_name_string == "Lv") kim_species_name = kim_species_name_Lv;
-  if (species_name_string == "Uus") kim_species_name = kim_species_name_Uus;
-  if (species_name_string == "Uuo") kim_species_name = kim_species_name_Uuo;
-  if (species_name_string == "user01") kim_species_name = kim_species_name_user01;
-  if (species_name_string == "user02") kim_species_name = kim_species_name_user02;
-  if (species_name_string == "user03") kim_species_name = kim_species_name_user03;
-  if (species_name_string == "user04") kim_species_name = kim_species_name_user04;
-  if (species_name_string == "user05") kim_species_name = kim_species_name_user05;
-  if (species_name_string == "user06") kim_species_name = kim_species_name_user06;
-  if (species_name_string == "user07") kim_species_name = kim_species_name_user07;
-  if (species_name_string == "user08") kim_species_name = kim_species_name_user08;
-  if (species_name_string == "user09") kim_species_name = kim_species_name_user09;
-  if (species_name_string == "user10") kim_species_name = kim_species_name_user10;
-  if (species_name_string == "user11") kim_species_name = kim_species_name_user11;
-  if (species_name_string == "user12") kim_species_name = kim_species_name_user12;
-  if (species_name_string == "user13") kim_species_name = kim_species_name_user13;
-  if (species_name_string == "user14") kim_species_name = kim_species_name_user14;
-  if (species_name_string == "user15") kim_species_name = kim_species_name_user15;
-  if (species_name_string == "user16") kim_species_name = kim_species_name_user16;
-  if (species_name_string == "user17") kim_species_name = kim_species_name_user17;
-  if (species_name_string == "user18") kim_species_name = kim_species_name_user18;
-  if (species_name_string == "user19") kim_species_name = kim_species_name_user19;
-  if (species_name_string == "user20") kim_species_name = kim_species_name_user20;
+  integer(c_int) number_of_species
+  type(kim_species_name_type) species_name
+  character(len=100) name_string
+  integer(c_int) i
+  integer(c_int) ierr
+
+  call kim_species_name_get_number_of_species(number_of_species)
+
+  do i=1,number_of_species
+    call kim_species_name_get_species(i, species_name, ierr)
+    call kim_species_name_string(species_name, name_string)
+
+    if (trim(name_string) == trim(species_name_string)) then
+      kim_species_name = species_name
+      exit
+    end if
+  end do
   return
 end function kim_species_name
 !--------------
-
-!--------------
-subroutine species_string(species_name, species_name_string)
-  use kim_species_name_module
-  implicit none
-  type(kim_species_name_type), intent(in), value :: species_name
-  character(len=*), intent(out) :: species_name_string
-
-  if (species_name%species_id == kim_species_name_electron%species_id) species_name_string = "electron"
-  if (species_name%species_id == kim_species_name_H%species_id) species_name_string = "H"
-  if (species_name%species_id == kim_species_name_He%species_id) species_name_string = "He"
-  if (species_name%species_id == kim_species_name_Li%species_id) species_name_string = "Li"
-  if (species_name%species_id == kim_species_name_Be%species_id) species_name_string = "Be"
-  if (species_name%species_id == kim_species_name_B%species_id) species_name_string = "B"
-  if (species_name%species_id == kim_species_name_C%species_id) species_name_string = "C"
-  if (species_name%species_id == kim_species_name_N%species_id) species_name_string = "N"
-  if (species_name%species_id == kim_species_name_O%species_id) species_name_string = "O"
-  if (species_name%species_id == kim_species_name_F%species_id) species_name_string = "F"
-  if (species_name%species_id == kim_species_name_Ne%species_id) species_name_string = "Ne"
-  if (species_name%species_id == kim_species_name_Na%species_id) species_name_string = "Na"
-  if (species_name%species_id == kim_species_name_Mg%species_id) species_name_string = "Mg"
-  if (species_name%species_id == kim_species_name_Al%species_id) species_name_string = "Al"
-  if (species_name%species_id == kim_species_name_Si%species_id) species_name_string = "Si"
-  if (species_name%species_id == kim_species_name_P%species_id) species_name_string = "P"
-  if (species_name%species_id == kim_species_name_S%species_id) species_name_string = "S"
-  if (species_name%species_id == kim_species_name_Cl%species_id) species_name_string = "Cl"
-  if (species_name%species_id == kim_species_name_Ar%species_id) species_name_string = "Ar"
-  if (species_name%species_id == kim_species_name_K%species_id) species_name_string = "K"
-  if (species_name%species_id == kim_species_name_Ca%species_id) species_name_string = "Ca"
-  if (species_name%species_id == kim_species_name_Sc%species_id) species_name_string = "Sc"
-  if (species_name%species_id == kim_species_name_Ti%species_id) species_name_string = "Ti"
-  if (species_name%species_id == kim_species_name_V%species_id) species_name_string = "V"
-  if (species_name%species_id == kim_species_name_Cr%species_id) species_name_string = "Cr"
-  if (species_name%species_id == kim_species_name_Mn%species_id) species_name_string = "Mn"
-  if (species_name%species_id == kim_species_name_Fe%species_id) species_name_string = "Fe"
-  if (species_name%species_id == kim_species_name_Co%species_id) species_name_string = "Co"
-  if (species_name%species_id == kim_species_name_Ni%species_id) species_name_string = "Ni"
-  if (species_name%species_id == kim_species_name_Cu%species_id) species_name_string = "Cu"
-  if (species_name%species_id == kim_species_name_Zn%species_id) species_name_string = "Zn"
-  if (species_name%species_id == kim_species_name_Ga%species_id) species_name_string = "Ga"
-  if (species_name%species_id == kim_species_name_Ge%species_id) species_name_string = "Ge"
-  if (species_name%species_id == kim_species_name_As%species_id) species_name_string = "As"
-  if (species_name%species_id == kim_species_name_Se%species_id) species_name_string = "Se"
-  if (species_name%species_id == kim_species_name_Br%species_id) species_name_string = "Br"
-  if (species_name%species_id == kim_species_name_Kr%species_id) species_name_string = "Kr"
-  if (species_name%species_id == kim_species_name_Rb%species_id) species_name_string = "Rb"
-  if (species_name%species_id == kim_species_name_Sr%species_id) species_name_string = "Sr"
-  if (species_name%species_id == kim_species_name_Y%species_id) species_name_string = "Y"
-  if (species_name%species_id == kim_species_name_Zr%species_id) species_name_string = "Zr"
-  if (species_name%species_id == kim_species_name_Nb%species_id) species_name_string = "Nb"
-  if (species_name%species_id == kim_species_name_Mo%species_id) species_name_string = "Mo"
-  if (species_name%species_id == kim_species_name_Tc%species_id) species_name_string = "Tc"
-  if (species_name%species_id == kim_species_name_Ru%species_id) species_name_string = "Ru"
-  if (species_name%species_id == kim_species_name_Rh%species_id) species_name_string = "Rh"
-  if (species_name%species_id == kim_species_name_Pd%species_id) species_name_string = "Pd"
-  if (species_name%species_id == kim_species_name_Ag%species_id) species_name_string = "Ag"
-  if (species_name%species_id == kim_species_name_Cd%species_id) species_name_string = "Cd"
-  if (species_name%species_id == kim_species_name_In%species_id) species_name_string = "In"
-  if (species_name%species_id == kim_species_name_Sn%species_id) species_name_string = "Sn"
-  if (species_name%species_id == kim_species_name_Sb%species_id) species_name_string = "Sb"
-  if (species_name%species_id == kim_species_name_Te%species_id) species_name_string = "Te"
-  if (species_name%species_id == kim_species_name_I%species_id) species_name_string = "I"
-  if (species_name%species_id == kim_species_name_Xe%species_id) species_name_string = "Xe"
-  if (species_name%species_id == kim_species_name_Cs%species_id) species_name_string = "Cs"
-  if (species_name%species_id == kim_species_name_Ba%species_id) species_name_string = "Ba"
-  if (species_name%species_id == kim_species_name_La%species_id) species_name_string = "La"
-  if (species_name%species_id == kim_species_name_Ce%species_id) species_name_string = "Ce"
-  if (species_name%species_id == kim_species_name_Pr%species_id) species_name_string = "Pr"
-  if (species_name%species_id == kim_species_name_Nd%species_id) species_name_string = "Nd"
-  if (species_name%species_id == kim_species_name_Pm%species_id) species_name_string = "Pm"
-  if (species_name%species_id == kim_species_name_Sm%species_id) species_name_string = "Sm"
-  if (species_name%species_id == kim_species_name_Eu%species_id) species_name_string = "Eu"
-  if (species_name%species_id == kim_species_name_Gd%species_id) species_name_string = "Gd"
-  if (species_name%species_id == kim_species_name_Tb%species_id) species_name_string = "Tb"
-  if (species_name%species_id == kim_species_name_Dy%species_id) species_name_string = "Dy"
-  if (species_name%species_id == kim_species_name_Ho%species_id) species_name_string = "Ho"
-  if (species_name%species_id == kim_species_name_Er%species_id) species_name_string = "Er"
-  if (species_name%species_id == kim_species_name_Tm%species_id) species_name_string = "Tm"
-  if (species_name%species_id == kim_species_name_Yb%species_id) species_name_string = "Yb"
-  if (species_name%species_id == kim_species_name_Lu%species_id) species_name_string = "Lu"
-  if (species_name%species_id == kim_species_name_Hf%species_id) species_name_string = "Hf"
-  if (species_name%species_id == kim_species_name_Ta%species_id) species_name_string = "Ta"
-  if (species_name%species_id == kim_species_name_W%species_id) species_name_string = "W"
-  if (species_name%species_id == kim_species_name_Re%species_id) species_name_string = "Re"
-  if (species_name%species_id == kim_species_name_Os%species_id) species_name_string = "Os"
-  if (species_name%species_id == kim_species_name_Ir%species_id) species_name_string = "Ir"
-  if (species_name%species_id == kim_species_name_Pt%species_id) species_name_string = "Pt"
-  if (species_name%species_id == kim_species_name_Au%species_id) species_name_string = "Au"
-  if (species_name%species_id == kim_species_name_Hg%species_id) species_name_string = "Hg"
-  if (species_name%species_id == kim_species_name_Tl%species_id) species_name_string = "Tl"
-  if (species_name%species_id == kim_species_name_Pb%species_id) species_name_string = "Pb"
-  if (species_name%species_id == kim_species_name_Bi%species_id) species_name_string = "Bi"
-  if (species_name%species_id == kim_species_name_Po%species_id) species_name_string = "Po"
-  if (species_name%species_id == kim_species_name_At%species_id) species_name_string = "At"
-  if (species_name%species_id == kim_species_name_Rn%species_id) species_name_string = "Rn"
-  if (species_name%species_id == kim_species_name_Fr%species_id) species_name_string = "Fr"
-  if (species_name%species_id == kim_species_name_Ra%species_id) species_name_string = "Ra"
-  if (species_name%species_id == kim_species_name_Ac%species_id) species_name_string = "Ac"
-  if (species_name%species_id == kim_species_name_Th%species_id) species_name_string = "Th"
-  if (species_name%species_id == kim_species_name_Pa%species_id) species_name_string = "Pa"
-  if (species_name%species_id == kim_species_name_U%species_id) species_name_string = "U"
-  if (species_name%species_id == kim_species_name_Np%species_id) species_name_string = "Np"
-  if (species_name%species_id == kim_species_name_Pu%species_id) species_name_string = "Pu"
-  if (species_name%species_id == kim_species_name_Am%species_id) species_name_string = "Am"
-  if (species_name%species_id == kim_species_name_Cm%species_id) species_name_string = "Cm"
-  if (species_name%species_id == kim_species_name_Bk%species_id) species_name_string = "Bk"
-  if (species_name%species_id == kim_species_name_Cf%species_id) species_name_string = "Cf"
-  if (species_name%species_id == kim_species_name_Es%species_id) species_name_string = "Es"
-  if (species_name%species_id == kim_species_name_Fm%species_id) species_name_string = "Fm"
-  if (species_name%species_id == kim_species_name_Md%species_id) species_name_string = "Md"
-  if (species_name%species_id == kim_species_name_No%species_id) species_name_string = "No"
-  if (species_name%species_id == kim_species_name_Lr%species_id) species_name_string = "Lr"
-  if (species_name%species_id == kim_species_name_Rf%species_id) species_name_string = "Rf"
-  if (species_name%species_id == kim_species_name_Db%species_id) species_name_string = "Db"
-  if (species_name%species_id == kim_species_name_Sg%species_id) species_name_string = "Sg"
-  if (species_name%species_id == kim_species_name_Bh%species_id) species_name_string = "Bh"
-  if (species_name%species_id == kim_species_name_Hs%species_id) species_name_string = "Hs"
-  if (species_name%species_id == kim_species_name_Mt%species_id) species_name_string = "Mt"
-  if (species_name%species_id == kim_species_name_Ds%species_id) species_name_string = "Ds"
-  if (species_name%species_id == kim_species_name_Rg%species_id) species_name_string = "Rg"
-  if (species_name%species_id == kim_species_name_Cn%species_id) species_name_string = "Cn"
-  if (species_name%species_id == kim_species_name_Uut%species_id) species_name_string = "Uut"
-  if (species_name%species_id == kim_species_name_Fl%species_id) species_name_string = "Fl"
-  if (species_name%species_id == kim_species_name_Uup%species_id) species_name_string = "Uup"
-  if (species_name%species_id == kim_species_name_Lv%species_id) species_name_string = "Lv"
-  if (species_name%species_id == kim_species_name_Uus%species_id) species_name_string = "Uus"
-  if (species_name%species_id == kim_species_name_Uuo%species_id) species_name_string = "Uuo"
-  if (species_name%species_id == kim_species_name_user01%species_id) species_name_string = "user01"
-  if (species_name%species_id == kim_species_name_user02%species_id) species_name_string = "user02"
-  if (species_name%species_id == kim_species_name_user03%species_id) species_name_string = "user03"
-  if (species_name%species_id == kim_species_name_user04%species_id) species_name_string = "user04"
-  if (species_name%species_id == kim_species_name_user05%species_id) species_name_string = "user05"
-  if (species_name%species_id == kim_species_name_user06%species_id) species_name_string = "user06"
-  if (species_name%species_id == kim_species_name_user07%species_id) species_name_string = "user07"
-  if (species_name%species_id == kim_species_name_user08%species_id) species_name_string = "user08"
-  if (species_name%species_id == kim_species_name_user09%species_id) species_name_string = "user09"
-  if (species_name%species_id == kim_species_name_user10%species_id) species_name_string = "user10"
-  if (species_name%species_id == kim_species_name_user11%species_id) species_name_string = "user11"
-  if (species_name%species_id == kim_species_name_user12%species_id) species_name_string = "user12"
-  if (species_name%species_id == kim_species_name_user13%species_id) species_name_string = "user13"
-  if (species_name%species_id == kim_species_name_user14%species_id) species_name_string = "user14"
-  if (species_name%species_id == kim_species_name_user15%species_id) species_name_string = "user15"
-  if (species_name%species_id == kim_species_name_user16%species_id) species_name_string = "user16"
-  if (species_name%species_id == kim_species_name_user17%species_id) species_name_string = "user17"
-  if (species_name%species_id == kim_species_name_user18%species_id) species_name_string = "user18"
-  if (species_name%species_id == kim_species_name_user19%species_id) species_name_string = "user19"
-  if (species_name%species_id == kim_species_name_user20%species_id) species_name_string = "user20"
-  return
-end subroutine species_string
 
 !-------------------------------------------------------------------------------
 !
@@ -933,7 +663,7 @@ kim_descriptor = &
    '# Symbol/name               Type                    code'                   // cr
 
  do i = 1,num_species
-   call species_string(model_species(i), species_name)
+   call kim_species_name_string(model_species(i), species_name)
    write(species_line,'(a,'' '',''spec'',20x,i4)') trim(species_name),0
       kim_descriptor = trim(kim_descriptor) // trim(species_line) // cr
    enddo

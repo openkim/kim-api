@@ -333,6 +333,7 @@ void KIMBaseElement::nullify(){
             size=0;
             name="";
             type ="";
+            optional=-1;
             flag = NULL;
             unit = NULL;
 
@@ -462,6 +463,11 @@ int KIM_API_model::prestring_init(const char *instrn){
                 int *dummy=NULL;
                 if (el->init(name,type,0, &dummy)) //preinit element with zero size
                 {
+                  if(inlines[i].isitoptional())
+                    el->optional = 1;
+                  else
+                    el->optional = 0;
+
                    //here to add checking is it derived or is it base units
                    el->unit->dim = inlines[i].dim;
 
@@ -1545,6 +1551,132 @@ int KIM_API_model::preinit(const char* modelname){
     return result;
 }
 
+int KIM_API_model::no_match_init(int const particleNumbering,
+                                 std::string const & lengthUnit,
+                                 std::string const & energyUnit,
+                                 std::string const & chargeUnit,
+                                 std::string const & temperatureUnit,
+                                 std::string const & timeUnit,
+                                 std::string const & modelname)
+{
+  int error;
+  //redirecting std::cout > kimlog
+  std::streambuf * psbuf, * backup; std::ofstream filekimlog;
+  filekimlog.open("./kim.log");
+  backup = std::cout.rdbuf();psbuf = filekimlog.rdbuf();std::cout.rdbuf(psbuf);
+
+  KIM_API_model mdl;
+  const char* in_mdlstr;
+  error = get_model_kim_str(modelname.c_str(), &in_mdlstr);
+  if (error != KIM_STATUS_OK) {
+    //redirecting back to > std::cout
+    std::cout.rdbuf(backup); filekimlog.close();
+    return error;
+  }
+
+  mdl.name_temp = modelname;
+  error = mdl.prestring_init(in_mdlstr);
+  if(error != KIM_STATUS_OK)
+  {
+    const char* msg;
+    get_status_msg(mdl.ErrorCode, &msg);
+    std::cout<<"mdl.prestring_init failed with error status:"<<msg<<std::endl;
+    //redirecting back to > std::cout
+    std::cout.rdbuf(backup); filekimlog.close();
+    return error;
+  }
+
+  KIM_API_model stdmdl;
+  stdmdl.name_temp = "standard";
+  if(!stdmdl.prestring_init((char*) STANDARD_KIM_STR_NAME)){
+    std::cout<<" preinit of :"<<"standard.kim"<<" failed"<<std::endl;
+    stdmdl.free();
+    return false;
+  }
+  bool model2standardmatch = is_it_match(stdmdl,mdl.inlines,mdl.numlines,true);
+  bool model2standardAtomsTypesMatch = do_AtomsTypes_match(mdl,stdmdl);
+  stdmdl.free();
+  bool required_args_match=mdl.check_required_arguments();
+
+  if(!model2standardmatch)
+  {
+    std::cout<<"* Error (KIM_API_model): There are non-standard variables in Model descriptor file:"<<std::endl;
+    //redirecting back to > std::cout
+    std::cout.rdbuf(backup); filekimlog.close();
+    return KIM_STATUS_FAIL;
+  }
+
+  if(!model2standardAtomsTypesMatch)
+  {
+    std::cout<<"* Error (KIM_API_model): There are non-standard Particle Nmaes in Model descriptor file:"<<std::endl;
+    //redirecting back to > std::cout
+    std::cout.rdbuf(backup); filekimlog.close();
+    return KIM_STATUS_FAIL;
+  }
+
+  if(!required_args_match)
+  {
+    std::cout<<"* Error (KIM_API_model): Missing required arguments:"<<std::endl;
+    //redirecting back to > std::cout
+    std::cout.rdbuf(backup); filekimlog.close();
+    return KIM_STATUS_FAIL;
+  }
+
+  Unit_Handling testUnits;
+  testUnits.Unit_length = lengthUnit;
+  testUnits.Unit_energy = energyUnit;
+  testUnits.Unit_charge = chargeUnit;
+  testUnits.Unit_temperature = temperatureUnit;
+  testUnits.Unit_time = timeUnit;
+  testUnits.flexible_handling = true;
+
+  if (!mdl.unit_h.flexible_handling)
+  {
+    std::cout << "* Error (KIM_API_model): Model must be flexible_handling of units" << std::endl;
+    mdl.free();
+    //redirecting back to > std::cout
+    std::cout.rdbuf(backup); filekimlog.close();
+    return KIM_STATUS_FAIL;
+  }
+
+  this->name_temp = mdl.model.name;
+  this->prestring_init(in_mdlstr);
+  this->unit_h=testUnits;
+
+  this->modelVersionMajor = mdl.tempVersionMajor;
+  this->modelVersionMinor = mdl.tempVersionMinor;
+
+  for (int i=0; i< this->model.size; ++i)
+  {
+    (((KIMBaseElement *) this->model.data.p)[i]).flag->calculate = 0;
+  }
+
+  // check flag for mdl
+  bool ZeroBasedLists_mdl =is_it_in_and_is_it_flag(mdl, (char*) "ZeroBasedLists");
+  bool OneBasedLists_mdl =is_it_in_and_is_it_flag(mdl, (char*) "OneBasedLists");
+  //logic for Zero or One base list handling
+  if ((!ZeroBasedLists_mdl && !OneBasedLists_mdl)||(ZeroBasedLists_mdl && OneBasedLists_mdl)) {
+    std::cout<< "* Error (KIM_API_model): Model descriptor file must have ONE of ZeroBasedLists or OneBasedLists."<<std::endl;
+    //redirecting back to > std::cout
+    std::cout.rdbuf(backup); filekimlog.close();
+  return false;
+  }
+
+  model_index_shift = 0;
+  if ((particleNumbering == 0) && OneBasedLists_mdl) model_index_shift = 1;
+  if ((particleNumbering == 1) && ZeroBasedLists_mdl) model_index_shift = -1;
+
+  mdl.free();
+  char computestr [] = "compute";
+  compute_index = get_index(computestr, &error);
+  get_neigh_index = get_index((char*) "get_neigh", &error);
+
+  //redirecting back to > std::cout
+  std::cout.rdbuf(backup); filekimlog.close();
+  return KIM_STATUS_OK;
+}
+
+
 int KIM_API_model::string_init(const char* in_tststr, const char* modelname){
    int error;
     //redirecting std::cout > kimlog
@@ -1900,31 +2032,30 @@ int KIM_API_model::model_compute(KIM::COMPUTE::SimulatorComputeArguments const *
 }
 
 int KIM_API_model::get_neigh(KIM::COMPUTE::SimulatorComputeArguments const * const arguments, int neighborListIndex, int request, int *numnei, int** nei1part){
-  typedef int (*Get_Neigh_cpp)(KIM::COMPUTE::SimulatorComputeArguments const * const, int, int, int *, int **);
-  typedef int (*Get_Neigh_c)(KIM_COMPUTE_SimulatorComputeArguments const * const, int, int, int *, int **);
-  typedef void (*Get_Neigh_Fortran)(KIM_COMPUTE_SimulatorComputeArguments const * const, int, int, int *, int **, int *);
+  typedef int (*Get_Neigh_cpp)(void const * const, int, int, int *, int **);
+  typedef int (*Get_Neigh_c)(void const * const, int, int, int *, int **);
+  typedef void (*Get_Neigh_Fortran)(void const * const , int, int, int *, int **, int *);
 
   if (get_neigh_index < 0) return KIM_STATUS_API_OBJECT_INVALID;
     Get_Neigh_cpp get_neigh_cpp = (Get_Neigh_cpp)(*this)[get_neigh_index].data.fp;
     Get_Neigh_c get_neigh_c = (Get_Neigh_c)(*this)[get_neigh_index].data.fp;
     Get_Neigh_Fortran get_neigh_fortran = (Get_Neigh_Fortran)(*this)[get_neigh_index].data.fp;
 
-    KIM_COMPUTE_SimulatorComputeArguments cSCA;
-    cSCA.p = (void *) arguments;
+    void const * const dataObject = (*this)["neighObject"].data.p;
 
     if (model_index_shift==0) {
       int erkey = true;
       if ((*this)[get_neigh_index].lang == 1)
       {
-        erkey = (*get_neigh_cpp)(arguments, neighborListIndex, request, numnei, nei1part);
+        erkey = (*get_neigh_cpp)(dataObject, neighborListIndex, request, numnei, nei1part);
       }
       else if ((*this)[get_neigh_index].lang == 2)
       {
-        erkey = (*get_neigh_c)(&cSCA, neighborListIndex, request, numnei, nei1part);
+        erkey = (*get_neigh_c)(dataObject, neighborListIndex, request, numnei, nei1part);
       }
       else // Fortran
       {
-        (*get_neigh_fortran)(&cSCA, neighborListIndex+1, request, numnei, nei1part, &erkey);
+        (*get_neigh_fortran)(dataObject, neighborListIndex+1, request, numnei, nei1part, &erkey);
       }
       return erkey;
     }
@@ -1935,15 +2066,15 @@ int KIM_API_model::get_neigh(KIM::COMPUTE::SimulatorComputeArguments const * con
         int erkey;
         if ((*this)[get_neigh_index].lang == 1)
         {
-          erkey = (*get_neigh_cpp)(arguments, neighborListIndex, req, numnei, nei1part);
+          erkey = (*get_neigh_cpp)(dataObject, neighborListIndex, req, numnei, nei1part);
         }
         else if ((*this)[get_neigh_index].lang == 2)
         {
-          erkey = (*get_neigh_c)(&cSCA, neighborListIndex, req, numnei, nei1part);
+          erkey = (*get_neigh_c)(dataObject, neighborListIndex, req, numnei, nei1part);
         }
         else // Fortran
         {
-          (*get_neigh_fortran)(&cSCA, neighborListIndex+1, req, numnei, nei1part, &erkey);
+          (*get_neigh_fortran)(dataObject, neighborListIndex+1, req, numnei, nei1part, &erkey);
         }
             if (!erkey){
                 if (neiOfAnAtomSize < *numnei) {
@@ -2575,6 +2706,15 @@ int KIM_API_model::get_compute(const char *nm, int* error){
     if ((I < 0) || (I >= model.size)) return KIM_STATUS_ARG_UNKNOWN;
     *error = KIM_STATUS_OK;
     return (*this)[I].flag->calculate;
+ }
+
+int KIM_API_model::get_attribute(const char *nm, int* error){
+   int I = get_index(nm, error);
+   if (*error != KIM_STATUS_OK) return KIM_STATUS_ARG_UNKNOWN;
+    *error = KIM_STATUS_FAIL;
+    if ((I < 0) || (I >= model.size)) return KIM_STATUS_ARG_UNKNOWN;
+    *error = KIM_STATUS_OK;
+    return (*this)[I].optional;
  }
 
 } // namespace OLD_KIM

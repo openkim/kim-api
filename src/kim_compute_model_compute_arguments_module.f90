@@ -39,8 +39,8 @@ module kim_compute_model_compute_arguments_module
 
   public &
     kim_compute_model_compute_arguments_type, &
-    kim_compute_model_compute_arguments_set_get_neigh, &
-    kim_compute_model_compute_arguments_set_neigh_object, &
+    kim_compute_model_compute_arguments_get_argument_attribute, &
+    kim_compute_model_compute_arguments_set_neigh, &
     kim_compute_model_compute_arguments_set_process_dedr, &
     kim_compute_model_compute_arguments_set_process_d2edr2, &
     kim_compute_model_compute_arguments_set_data, &
@@ -53,9 +53,111 @@ module kim_compute_model_compute_arguments_module
     type(c_ptr) :: p
   end type kim_compute_model_compute_arguments_type
 
+  interface kim_compute_model_compute_arguments_set_data
+    subroutine kim_compute_model_compute_arguments_set_data_int0(arguments, &
+      argument_name, int0, ierr)
+      use, intrinsic :: iso_c_binding
+      use kim_compute_argument_name_module, only : &
+        kim_compute_argument_name_type
+      import kim_compute_model_compute_arguments_type
+      implicit none
+      type(kim_compute_model_compute_arguments_type), intent(inout) :: arguments
+      type(kim_compute_argument_name_type), intent(in), value :: argument_name
+      integer(c_int), intent(in), target :: int0
+      integer(c_int), intent(out) :: ierr
+    end subroutine kim_compute_model_compute_arguments_set_data_int0
+
+    subroutine kim_compute_model_compute_arguments_set_data_int1(arguments, &
+      argument_name, extent1, int1, ierr)
+      use, intrinsic :: iso_c_binding
+      use kim_compute_argument_name_module, only : &
+        kim_compute_argument_name_type
+      import kim_compute_model_compute_arguments_type
+      implicit none
+      type(kim_compute_model_compute_arguments_type), intent(inout) :: arguments
+      type(kim_compute_argument_name_type), intent(in), value :: argument_name
+      integer(c_int), intent(in), value :: extent1
+      integer(c_int), intent(in), target :: int1(extent1)
+      integer(c_int), intent(out) :: ierr
+    end subroutine kim_compute_model_compute_arguments_set_data_int1
+
+    subroutine kim_compute_model_compute_arguments_set_data_int2(arguments, &
+      argument_name, extent1, extent2, int2, ierr)
+      use, intrinsic :: iso_c_binding
+      use kim_compute_argument_name_module, only : &
+        kim_compute_argument_name_type
+      import kim_compute_model_compute_arguments_type
+      implicit none
+      type(kim_compute_model_compute_arguments_type), intent(inout) :: arguments
+      type(kim_compute_argument_name_type), intent(in), value :: argument_name
+      integer(c_int), intent(in), value :: extent1
+      integer(c_int), intent(in), value :: extent2
+      integer(c_int), intent(in), target :: int2(extent1,extent2)
+      integer(c_int), intent(out) :: ierr
+    end subroutine kim_compute_model_compute_arguments_set_data_int2
+
+    subroutine kim_compute_model_compute_arguments_set_data_double0(arguments, &
+      argument_name, double0, ierr)
+      use, intrinsic :: iso_c_binding
+      use kim_compute_argument_name_module, only : &
+        kim_compute_argument_name_type
+      import kim_compute_model_compute_arguments_type
+      implicit none
+      type(kim_compute_model_compute_arguments_type), intent(inout) :: arguments
+      type(kim_compute_argument_name_type), intent(in), value :: argument_name
+      real(c_double), intent(in), target :: double0
+      integer(c_int), intent(out) :: ierr
+    end subroutine kim_compute_model_compute_arguments_set_data_double0
+
+    subroutine kim_compute_model_compute_arguments_set_data_double1(arguments, &
+      argument_name, extent1, double1, ierr)
+      use, intrinsic :: iso_c_binding
+      use kim_compute_argument_name_module, only : &
+        kim_compute_argument_name_type
+      import kim_compute_model_compute_arguments_type
+      implicit none
+      type(kim_compute_model_compute_arguments_type), intent(inout) :: arguments
+      type(kim_compute_argument_name_type), intent(in), value :: argument_name
+      integer(c_int), intent(in), value :: extent1
+      real(c_double), intent(in), target :: double1(extent1)
+      integer(c_int), intent(out) :: ierr
+    end subroutine kim_compute_model_compute_arguments_set_data_double1
+
+    subroutine kim_compute_model_compute_arguments_set_data_double2(arguments, &
+      argument_name, extent1, extent2, double2, ierr)
+      use, intrinsic :: iso_c_binding
+      use kim_compute_argument_name_module, only : &
+        kim_compute_argument_name_type
+      import kim_compute_model_compute_arguments_type
+      implicit none
+      type(kim_compute_model_compute_arguments_type), intent(inout) :: arguments
+      type(kim_compute_argument_name_type), intent(in), value :: argument_name
+      integer(c_int), intent(in), value :: extent1
+      integer(c_int), intent(in), value :: extent2
+      real(c_double), intent(in), target :: double2(extent1,extent2)
+      integer(c_int), intent(out) :: ierr
+    end subroutine kim_compute_model_compute_arguments_set_data_double2
+end interface kim_compute_model_compute_arguments_set_data
+
   interface
-    subroutine kim_compute_model_compute_arguments_set_get_neigh(arguments, &
-      language_name, fptr)
+    subroutine kim_compute_model_compute_arguments_get_argument_attribute( &
+      arguments, argument_name, argument_attribute)
+      use, intrinsic :: iso_c_binding
+      use kim_compute_argument_name_module, only : &
+        kim_compute_argument_name_type
+      use kim_compute_argument_attribute_module, only : &
+        kim_compute_argument_attribute_type
+      import kim_compute_model_compute_arguments_type
+      implicit none
+      type(kim_compute_model_compute_arguments_type), intent(in) :: &
+        arguments
+      type(kim_compute_argument_name_type), intent(in), value :: argument_name
+      type(kim_compute_argument_attribute_type), intent(out) :: &
+        argument_attribute
+    end subroutine kim_compute_model_compute_arguments_get_argument_attribute
+
+    subroutine kim_compute_model_compute_arguments_set_neigh(arguments, &
+      language_name, fptr, data_object)
       use, intrinsic :: iso_c_binding
       use kim_language_name_module, only : &
         kim_language_name_type
@@ -64,16 +166,8 @@ module kim_compute_model_compute_arguments_module
       type(kim_compute_model_compute_arguments_type), intent(inout) :: arguments
       type(kim_language_name_type), intent(in), value :: language_name
       type(c_funptr), intent(in), value :: fptr
-    end subroutine kim_compute_model_compute_arguments_set_get_neigh
-
-    subroutine kim_compute_model_compute_arguments_set_neigh_object(arguments, &
-      ptr)
-      use, intrinsic :: iso_c_binding
-      import kim_compute_model_compute_arguments_type
-      implicit none
-      type(kim_compute_model_compute_arguments_type), intent(inout) :: arguments
-      type(c_ptr), intent(in), value :: ptr
-    end subroutine kim_compute_model_compute_arguments_set_neigh_object
+      type(c_ptr), intent(in), value :: data_object
+    end subroutine kim_compute_model_compute_arguments_set_neigh
 
     subroutine kim_compute_model_compute_arguments_set_process_dedr(arguments, &
       language_name, fptr)
@@ -98,20 +192,6 @@ module kim_compute_model_compute_arguments_module
       type(kim_language_name_type), intent(in), value :: language_name
       type(c_funptr), intent(in), value :: fptr
     end subroutine kim_compute_model_compute_arguments_set_process_d2edr2
-
-    subroutine kim_compute_model_compute_arguments_set_data(arguments, &
-      argument_name, extent, ptr, ierr)
-      use, intrinsic :: iso_c_binding
-      use kim_compute_argument_name_module, only : &
-        kim_compute_argument_name_type
-      import kim_compute_model_compute_arguments_type
-      implicit none
-      type(kim_compute_model_compute_arguments_type), intent(inout) :: arguments
-      type(kim_compute_argument_name_type), intent(in), value :: argument_name
-      integer(c_int), intent(in), value :: extent
-      type(c_ptr), intent(in), value :: ptr
-      integer(c_int), intent(out) :: ierr
-    end subroutine kim_compute_model_compute_arguments_set_data
 
     subroutine kim_compute_model_compute_arguments_set_compute(arguments, &
       argument_name, flag, ierr)

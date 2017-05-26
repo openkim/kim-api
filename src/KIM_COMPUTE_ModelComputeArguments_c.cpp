@@ -38,6 +38,10 @@
 #include "KIM_COMPUTE_ArgumentName.hpp"
 #endif
 
+#ifndef KIM_COMPUTE_ARGUMENT_ATTRIBUGE_HPP_
+#include "KIM_COMPUTE_ArgumentAttribute.hpp"
+#endif
+
 extern "C"
 {
 #ifndef KIM_COMPUTE_MODEL_COMPUTE_ARGUMENTS_H_
@@ -47,6 +51,10 @@ extern "C"
 #ifndef KIM_COMPUTE_ARGUMENT_NAME_H_
 #include "KIM_COMPUTE_ArgumentName.h"
 #endif
+
+#ifndef KIM_COMPUTE_ARGUMENT_ATTRIBUGE_H_
+#include "KIM_COMPUTE_ArgumentAttribute.h"
+#endif
 }  // extern "C"
 
 namespace
@@ -54,37 +62,55 @@ namespace
 KIM::COMPUTE::ArgumentName
 makeArgumentNameCpp(KIM_COMPUTE_ArgumentName const argumentName)
 {
-  return KIM::COMPUTE::ArgumentName(argumentName.argumentID);
+  return KIM::COMPUTE::ArgumentName(argumentName.argumentNameID);
 }
 
 KIM::LanguageName
 makeLanguageNameCpp(KIM_LanguageName const languageName)
 {
-  return KIM::LanguageName(languageName.languageID);
+  return KIM::LanguageName(languageName.languageNameID);
+}
+
+KIM::COMPUTE::ArgumentAttribute makeArgumentAttributeCpp(
+    KIM_COMPUTE_ArgumentAttribute const argumentAttribute)
+{
+  return KIM::COMPUTE::ArgumentAttribute(argumentAttribute.argumentAttributeID);
+}
+
+KIM_COMPUTE_ArgumentAttribute const makeArgumentAttributeC(
+    KIM::COMPUTE::ArgumentAttribute argumentAttribute)
+{
+  KIM_COMPUTE_ArgumentAttribute * argumentAttributeC
+      = reinterpret_cast<KIM_COMPUTE_ArgumentAttribute *>(&argumentAttribute);
+  return *argumentAttributeC;
 }
 }  // namespace
 
 
 extern "C"
 {
-void KIM_COMPUTE_ModelComputeArguments_set_get_neigh(
+void KIM_COMPUTE_ModelComputeArguments_get_argument_attribute(
+    KIM_COMPUTE_ModelComputeArguments const * const arguments,
+    KIM_COMPUTE_ArgumentName const argumentName,
+    KIM_COMPUTE_ArgumentAttribute * const argumentAttribute)
+{
+  KIM::COMPUTE::ArgumentAttribute argumentAttributeCpp;
+  KIM::COMPUTE::ModelComputeArguments *
+      pArguments = (KIM::COMPUTE::ModelComputeArguments *) arguments->p;
+  pArguments->get_argument_attribute(makeArgumentNameCpp(argumentName),
+                                     &argumentAttributeCpp);
+  *argumentAttribute = makeArgumentAttributeC(argumentAttributeCpp);
+}
+
+void KIM_COMPUTE_ModelComputeArguments_set_neigh(
     KIM_COMPUTE_ModelComputeArguments * const arguments,
     KIM_LanguageName const languageName,
-    func * const fptr)
+    func * const fptr, void const * const dataObject)
 {
   KIM::COMPUTE::ModelComputeArguments *
       pArguments = (KIM::COMPUTE::ModelComputeArguments *) arguments->p;
   KIM::LanguageName langN = makeLanguageNameCpp(languageName);
-  return pArguments->set_get_neigh(langN, fptr);
-}
-
-void KIM_COMPUTE_ModelComputeArguments_set_neighObject(
-    KIM_COMPUTE_ModelComputeArguments * const arguments,
-    void const * const ptr)
-{
-  KIM::COMPUTE::ModelComputeArguments *
-      pArguments = (KIM::COMPUTE::ModelComputeArguments *) arguments->p;
-  return pArguments->set_neighObject(ptr);
+  return pArguments->set_neigh(langN, fptr, dataObject);
 }
 
 void KIM_COMPUTE_ModelComputeArguments_set_process_dEdr(
@@ -95,7 +121,7 @@ void KIM_COMPUTE_ModelComputeArguments_set_process_dEdr(
   KIM::COMPUTE::ModelComputeArguments *
       pArguments = (KIM::COMPUTE::ModelComputeArguments *) arguments->p;
   KIM::LanguageName langN = makeLanguageNameCpp(languageName);
-  return pArguments->set_process_dEdr(langN, fptr);
+  pArguments->set_process_dEdr(langN, fptr);
 }
 
 void KIM_COMPUTE_ModelComputeArguments_set_process_d2Edr2(
@@ -106,15 +132,26 @@ void KIM_COMPUTE_ModelComputeArguments_set_process_d2Edr2(
   KIM::COMPUTE::ModelComputeArguments *
       pArguments = (KIM::COMPUTE::ModelComputeArguments *) arguments->p;
   KIM::LanguageName langN = makeLanguageNameCpp(languageName);
-  return pArguments->set_process_d2Edr2(langN, fptr);
+  pArguments->set_process_d2Edr2(langN, fptr);
 }
 
 
 // *data functions
-int KIM_COMPUTE_ModelComputeArguments_set_data(
+int KIM_COMPUTE_ModelComputeArguments_set_data_int(
     KIM_COMPUTE_ModelComputeArguments * const arguments,
     KIM_COMPUTE_ArgumentName const argumentName,
-    int const extent, void const * const ptr)
+    int const extent, int const * const ptr)
+{
+  KIM::COMPUTE::ModelComputeArguments *
+      pArguments = (KIM::COMPUTE::ModelComputeArguments *) arguments->p;
+  KIM::COMPUTE::ArgumentName argN = makeArgumentNameCpp(argumentName);
+  return pArguments->set_data(argN, extent, ptr);
+}
+
+int KIM_COMPUTE_ModelComputeArguments_set_data_double(
+    KIM_COMPUTE_ModelComputeArguments * const arguments,
+    KIM_COMPUTE_ArgumentName const argumentName,
+    int const extent, double const * const ptr)
 {
   KIM::COMPUTE::ModelComputeArguments *
       pArguments = (KIM::COMPUTE::ModelComputeArguments *) arguments->p;
@@ -130,6 +167,28 @@ int KIM_COMPUTE_ModelComputeArguments_set_compute(
       pArguments = (KIM::COMPUTE::ModelComputeArguments *) arguments->p;
   KIM::COMPUTE::ArgumentName argN = makeArgumentNameCpp(argumentName);
   return pArguments->set_compute(argN, flag);
+}
+
+void KIM_COMPUTE_ModelComputeArguments_get_process_dEdr_attribute(
+    KIM_COMPUTE_ModelComputeArguments const * const arguments,
+    KIM_COMPUTE_ArgumentAttribute * const argumentAttribute)
+{
+  KIM::COMPUTE::ArgumentAttribute argumentAttributeCpp;
+  KIM::COMPUTE::ModelComputeArguments *
+      pArguments = (KIM::COMPUTE::ModelComputeArguments *) arguments->p;
+  pArguments->get_process_dEdr_attribute(&argumentAttributeCpp);
+  *argumentAttribute = makeArgumentAttributeC(argumentAttributeCpp);
+}
+
+void KIM_COMPUTE_ModelComputeArguments_get_process_d2Edr2_attribute(
+    KIM_COMPUTE_ModelComputeArguments const * const arguments,
+    KIM_COMPUTE_ArgumentAttribute * const argumentAttribute)
+{
+  KIM::COMPUTE::ArgumentAttribute argumentAttributeCpp;
+  KIM::COMPUTE::ModelComputeArguments *
+      pArguments = (KIM::COMPUTE::ModelComputeArguments *) arguments->p;
+  pArguments->get_process_d2Edr2_attribute(&argumentAttributeCpp);
+  *argumentAttribute = makeArgumentAttributeC(argumentAttributeCpp);
 }
 
 void KIM_COMPUTE_ModelComputeArguments_set_process_dEdr_compute(

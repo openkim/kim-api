@@ -31,7 +31,7 @@
 !
 
 
-module kim_species_id_module
+module kim_species_name_id_module
   use, intrinsic :: iso_c_binding
   implicit none
   private
@@ -175,8 +175,7 @@ module kim_species_id_module
     user17_id, &
     user18_id, &
     user19_id, &
-    user20_id, &
-    end_id
+    user20_id
 
   integer(c_int), parameter :: electron_id = 0
   integer(c_int), parameter :: h_id = 1
@@ -317,5 +316,4 @@ module kim_species_id_module
   integer(c_int), parameter :: user18_id = 218
   integer(c_int), parameter :: user19_id = 219
   integer(c_int), parameter :: user20_id = 220
-  integer(c_int), parameter :: end_id = 32000
-end module kim_species_id_module
+end module kim_species_name_id_module

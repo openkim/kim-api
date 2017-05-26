@@ -37,11 +37,13 @@
 #include <iostream>
 #include <iomanip>
 #include <string>
+#include "KIM_DataType.hpp"
 #include "KIM_SpeciesName.hpp"
 #include "KIM_Model.hpp"
 #include "KIM_COMPUTE_ModelComputeArguments.hpp"
 #include "KIM_COMPUTE_SimulatorComputeArguments.hpp"
 #include "KIM_COMPUTE_ArgumentName.hpp"
+#include "KIM_COMPUTE_ArgumentAttribute.hpp"
 #include "KIM_Logger.hpp"
 
 #define NAMESTRLEN    128
@@ -61,6 +63,7 @@
 /* Define neighborlist structure */
 typedef struct
 {
+  int numberOfParticles;
   int iteratorId;
   int* NNeighbors;
   int* neighborList;
@@ -71,9 +74,9 @@ char const * const descriptor();
 void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
                               double cutoff, NeighList* nl);
 
-int get_cluster_neigh(KIM::COMPUTE::SimulatorComputeArguments const * const arguments,
-                      int const neighborListIndex,
-                      int const particleNumber, int * const numberOfNeighbors,
+int get_cluster_neigh(void const * const dataObject,
+                      int const neighborListIndex, int const particleNumber,
+                      int * const numberOfNeighbors,
                       int const ** const neighborsOfParticle);
 
 void create_FCC_cluster(double FCCspacing, int nCellsPerSide, double *coords);
@@ -123,8 +126,41 @@ int main()
   if (error)
     REPORT_ERROR(__LINE__, __FILE__,"create_compute_arguments()",error);
 
+  // Check the Model's arguments (for fun)
+  int numberOfArguments;
+  KIM::COMPUTE::ARGUMENT_NAME::get_number_of_arguments(&numberOfArguments);
+  KIM::COMPUTE::ArgumentAttribute argumentAttribute;
+  for (int i=0; i<numberOfArguments; ++i)
+  {
+    KIM::COMPUTE::ArgumentName argumentName;
+    KIM::COMPUTE::ARGUMENT_NAME::get_argument(i, &argumentName);
+    KIM::DataType dataType;
+    KIM::COMPUTE::ARGUMENT_NAME::
+        get_argument_data_type(argumentName, &dataType);
+    arguments->get_argument_attribute(argumentName, &argumentAttribute);
+
+    std::cout << "Argument Name \""
+              << argumentName.string() << "\""
+              << " is of type \""
+              << dataType.string() << "\""
+              << " and has attribute \""
+              << argumentAttribute.string() << "\""
+              << std::endl;
+  }
+  arguments->get_process_dEdr_attribute(&argumentAttribute);
+  std::cout << "process_dEdr has attribute \""
+            << argumentAttribute.string() << "\""
+            << std::endl;
+  arguments->get_process_d2Edr2_attribute(&argumentAttribute);
+  std::cout << "process_d2Edr2 has attribute \""
+            << argumentAttribute.string() << "\""
+            << std::endl;
+
+
+
   error = arguments->set_data(
-      KIM::COMPUTE::ARGUMENT_NAME::numberOfParticles, 1, &numberOfParticles_cluster)
+      KIM::COMPUTE::ARGUMENT_NAME::numberOfParticles, 1,
+      (int *) &numberOfParticles_cluster)
       || arguments->set_data(
           KIM::COMPUTE::ARGUMENT_NAME::numberOfSpecies, 1, &numberOfSpecies)
       || arguments->set_data(
@@ -132,12 +168,11 @@ int main()
       || arguments->set_data(
           KIM::COMPUTE::ARGUMENT_NAME::particleContributing, numberOfParticles_cluster, particleContributing_cluster_model)
       || arguments->set_data(
-          KIM::COMPUTE::ARGUMENT_NAME::coordinates, DIM*numberOfParticles_cluster, coords_cluster)
+          KIM::COMPUTE::ARGUMENT_NAME::coordinates, DIM*numberOfParticles_cluster, (double*) coords_cluster)
       || arguments->set_data(
           KIM::COMPUTE::ARGUMENT_NAME::energy, 1, &energy_cluster_model);
   if (error) REPORT_ERROR(__LINE__, __FILE__,"KIM_API_set_data",error);
-  arguments->set_get_neigh(KIM::LANGUAGE_NAME::Cpp, (KIM::func *) &get_cluster_neigh);
-  arguments->set_neighObject((void *) &nl_cluster_model);
+  arguments->set_neigh(KIM::LANGUAGE_NAME::Cpp, (KIM::func *) &get_cluster_neigh, &nl_cluster_model);
 
   kim_cluster_model->get_influence_distance(&influence_distance_cluster_model);
   kim_cluster_model->get_cutoffs(&number_of_cutoffs, &cutoff_cluster_model);
@@ -155,6 +190,7 @@ int main()
 
   /* setup neighbor lists */
   /* allocate memory for list */
+  nl_cluster_model.numberOfParticles = NCLUSTERPARTS;
   nl_cluster_model.NNeighbors = new int[NCLUSTERPARTS];
   if (NULL==nl_cluster_model.NNeighbors) REPORT_ERROR(__LINE__, __FILE__,"new unsuccessful", -1);
 
@@ -361,32 +397,22 @@ void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
   return;
 }
 
-int get_cluster_neigh(KIM::COMPUTE::SimulatorComputeArguments const * const arguments,
-                      int const neighborListIndex,
-                      int const particleNumber, int * const numberOfNeighbors,
+int get_cluster_neigh(void const * const dataObject,
+                      int const neighborListIndex, int const particleNumber,
+                      int * const numberOfNeighbors,
                       int const ** const neighborsOfParticle)
 {
   /* local variables */
   int error = true;
-  int* numberOfParticles;
-  NeighList* nl;
+  NeighList* nl = (NeighList*) dataObject;
+  int numberOfParticles = nl->numberOfParticles;
 
   if (neighborListIndex != 0) return error;
 
   /* initialize numNeigh */
   *numberOfNeighbors = 0;
 
-  /* unpack neighbor list object */
-  error = arguments->get_data(KIM::COMPUTE::ARGUMENT_NAME::numberOfParticles, (void **) &numberOfParticles);
-  if (error)
-  {
-    KIM::report_error(__LINE__, __FILE__,"get_data", error);
-    return error;
-  }
-
-  arguments->get_neighObject((void **) &nl);
-
-  if ((particleNumber >= *numberOfParticles) || (particleNumber < 0)) /* invalid id */
+  if ((particleNumber >= numberOfParticles) || (particleNumber < 0)) /* invalid id */
   {
     KIM::report_error(__LINE__, __FILE__,"Invalid part ID in get_cluster_neigh", true);
     return true;
@@ -396,7 +422,7 @@ int get_cluster_neigh(KIM::COMPUTE::SimulatorComputeArguments const * const argu
   *numberOfNeighbors = (*nl).NNeighbors[particleNumber];
 
   /* set the location for the returned neighbor list */
-  *neighborsOfParticle = &((*nl).neighborList[(particleNumber)*NCLUSTERPARTS]);
+  *neighborsOfParticle = &((*nl).neighborList[(particleNumber)*numberOfParticles]);
 
   return false;
 }

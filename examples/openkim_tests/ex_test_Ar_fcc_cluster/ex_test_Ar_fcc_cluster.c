@@ -64,6 +64,7 @@
 /* Define neighborlist structure */
 typedef struct
 {
+  int numberOfParticles;
   int iteratorId;
   int* NNeighbors;
   int* neighborList;
@@ -75,7 +76,7 @@ void fcc_cluster_neighborlist(int allOrOne, int numberOfParticles,
                               double* coords, double cutoff, NeighList* nl);
 
 int get_cluster_neigh(
-    KIM_COMPUTE_SimulatorComputeArguments const * const arguments,
+    void const * const dataObject,
     int const neighborListIndex,
     int const particleNumber, int * const numberOfNeighbors,
     int const ** const neighborsOfParticle);
@@ -136,31 +137,30 @@ int main()
     REPORT_ERROR(__LINE__, __FILE__,"create_compute_arguments()",error);
 
   error =
-      KIM_COMPUTE_ModelComputeArguments_set_data(
+      KIM_COMPUTE_ModelComputeArguments_set_data_int(
           arguments, KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles, 1,
           &numberOfParticles_cluster)
       ||
-      KIM_COMPUTE_ModelComputeArguments_set_data(
+      KIM_COMPUTE_ModelComputeArguments_set_data_int(
           arguments, KIM_COMPUTE_ARGUMENT_NAME_numberOfSpecies, 1,
           &numberOfSpecies)
       ||
-      KIM_COMPUTE_ModelComputeArguments_set_data(
+      KIM_COMPUTE_ModelComputeArguments_set_data_int(
           arguments, KIM_COMPUTE_ARGUMENT_NAME_particleSpecies,
           numberOfParticles_cluster, particleSpecies_cluster_model)
       ||
-      KIM_COMPUTE_ModelComputeArguments_set_data(
+      KIM_COMPUTE_ModelComputeArguments_set_data_double(
           arguments, KIM_COMPUTE_ARGUMENT_NAME_coordinates,
-          DIM*numberOfParticles_cluster, coords_cluster)
+          DIM*numberOfParticles_cluster, (double*) &coords_cluster)
       ||
-      KIM_COMPUTE_ModelComputeArguments_set_data(
+      KIM_COMPUTE_ModelComputeArguments_set_data_double(
           arguments, KIM_COMPUTE_ARGUMENT_NAME_energy, 1,
           &energy);
   if (error) REPORT_ERROR(__LINE__, __FILE__,"KIM_setm_data",error);
-  KIM_COMPUTE_ModelComputeArguments_set_get_neigh(arguments,
-                                                  KIM_LANGUAGE_NAME_C,
-                                                  (func *) &get_cluster_neigh);
-  KIM_COMPUTE_ModelComputeArguments_set_neighObject(arguments,
-                                                    &nl_cluster_model);
+  KIM_COMPUTE_ModelComputeArguments_set_neigh(arguments,
+                                              KIM_LANGUAGE_NAME_C,
+                                              (func *) &get_cluster_neigh,
+                                              &nl_cluster_model);
 
   KIM_Model_get_influence_distance(model, &influence_distance_cluster_model);
   KIM_Model_get_cutoffs(model, &number_of_cutoffs_cluster_model, &cutoff_cluster_model);
@@ -182,6 +182,7 @@ int main()
 
   /* setup neighbor lists */
   /* allocate memory for list */
+  nl_cluster_model.numberOfParticles = NCLUSTERPARTS;
   nl_cluster_model.NNeighbors = (int*) malloc(NCLUSTERPARTS*sizeof(int));
   if (NULL==nl_cluster_model.NNeighbors) REPORT_ERROR(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
@@ -204,12 +205,12 @@ int main()
                              (*cutoff_cluster_model + cutpad), &nl_cluster_model);
 
     /* call compute functions */
-    error = KIM_COMPUTE_ModelComputeArguments_set_data(arguments, KIM_COMPUTE_ARGUMENT_NAME_particleContributing, 1, particleContributing_cluster_model);
+    error = KIM_COMPUTE_ModelComputeArguments_set_data_int(arguments, KIM_COMPUTE_ARGUMENT_NAME_particleContributing, 1, particleContributing_cluster_model);
     error = error || KIM_Model_compute(model, arguments);
     if (error) REPORT_ERROR(__LINE__, __FILE__,"KIM_model_compute", error);
     energy_cluster_model = energy;
 
-    error = KIM_COMPUTE_ModelComputeArguments_set_data(arguments, KIM_COMPUTE_ARGUMENT_NAME_particleContributing, 1, particleContributing_one_atom_model);
+    error = KIM_COMPUTE_ModelComputeArguments_set_data_int(arguments, KIM_COMPUTE_ARGUMENT_NAME_particleContributing, 1, particleContributing_one_atom_model);
     error = error || KIM_Model_compute(model, arguments);
     if (error) REPORT_ERROR(__LINE__, __FILE__,"KIM_model_compute", error);
     energy_one_atom_model = energy;
@@ -397,35 +398,22 @@ void fcc_cluster_neighborlist(int allOrOne, int numberOfParticles, double* coord
   return;
 }
 
-int get_cluster_neigh(KIM_COMPUTE_SimulatorComputeArguments const * const arguments,
+int get_cluster_neigh(void const * const dataObject,
                       int const neighborListIndex,
                       int const particleNumber, int * const numberOfNeighbors,
                       int const ** const neighborsOfParticle)
 {
   /* local variables */
   int error = TRUE;
-  int* numberOfParticles;
-  NeighList* nl;
+  NeighList* nl = (NeighList*) dataObject;
+  int numberOfParticles = nl->numberOfParticles;
 
   if (neighborListIndex != 0) return error;
 
   /* initialize numNeigh */
   *numberOfNeighbors = 0;
 
-  /* unpack neighbor list object */
-  error = KIM_COMPUTE_SimulatorComputeArguments_get_data(
-      arguments,
-      KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles,
-      (void **) &numberOfParticles);
-  if (error)
-  {
-    KIM_report_error(__LINE__, __FILE__,"KIM_get_data", error);
-    return error;
-  }
-
-  KIM_COMPUTE_SimulatorComputeArguments_get_neighObject(arguments, (void**) &nl);
-
-  if ((particleNumber >= *numberOfParticles) || (particleNumber < 0)) /* invalid id */
+  if ((particleNumber >= numberOfParticles) || (particleNumber < 0)) /* invalid id */
   {
     KIM_report_error(__LINE__, __FILE__,"Invalid part ID in get_cluster_neigh", TRUE);
     return TRUE;
@@ -435,7 +423,7 @@ int get_cluster_neigh(KIM_COMPUTE_SimulatorComputeArguments const * const argume
   *numberOfNeighbors = (*nl).NNeighbors[particleNumber];
 
   /* set the location for the returned neighbor list */
-  *neighborsOfParticle = &((*nl).neighborList[(particleNumber)*NCLUSTERPARTS]);
+  *neighborsOfParticle = &((*nl).neighborList[(particleNumber)*numberOfParticles]);
 
   return FALSE;
 }

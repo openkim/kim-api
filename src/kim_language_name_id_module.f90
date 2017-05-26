@@ -41,7 +41,7 @@ module kim_language_name_id_module
     c_id, &
     fortran_id
 
-  integer(c_int), parameter :: cpp_id = 1
-  integer(c_int), parameter :: c_id = 2
-  integer(c_int), parameter :: fortran_id = 3
+  integer(c_int), parameter :: cpp_id = 0
+  integer(c_int), parameter :: c_id = 1
+  integer(c_int), parameter :: fortran_id = 2
 end module kim_language_name_id_module

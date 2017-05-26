@@ -70,22 +70,22 @@ module kim_simulator_module
 
   interface
     subroutine kim_simulator_set_influence_distance(simulator, &
-      influence_distance_ptr)
+      influence_distance)
       use, intrinsic :: iso_c_binding
       import kim_simulator_type
       implicit none
       type(kim_simulator_type), intent(inout) :: simulator
-      type(c_ptr), intent(in), value :: influence_distance_ptr
+      real(c_double), intent(in), target :: influence_distance
     end subroutine kim_simulator_set_influence_distance
 
     subroutine kim_simulator_set_cutoffs(simulator, number_of_cutoffs, &
-      cutoffs_ptr)
+      cutoffs)
       use, intrinsic :: iso_c_binding
       import kim_simulator_type
       implicit none
       type(kim_simulator_type), intent(inout) :: simulator
       integer(c_int), intent(in), value :: number_of_cutoffs
-      type(c_ptr), intent(in), value :: cutoffs_ptr
+      real(c_double), intent(in), target :: cutoffs(number_of_cutoffs)
     end subroutine kim_simulator_set_cutoffs
 
     subroutine kim_simulator_set_reinit(simulator, language_name, fptr)

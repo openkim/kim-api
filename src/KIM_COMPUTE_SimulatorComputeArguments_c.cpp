@@ -62,7 +62,7 @@ namespace
 KIM::COMPUTE::ArgumentName
 makeArgumentNameCpp(KIM_COMPUTE_ArgumentName const argumentName)
 {
-  return KIM::COMPUTE::ArgumentName(argumentName.argumentID);
+  return KIM::COMPUTE::ArgumentName(argumentName.argumentNameID);
 }
 }  // namespace
 
@@ -118,10 +118,20 @@ int KIM_COMPUTE_SimulatorComputeArguments_process_d2Edr2(
 }
 
 // *data functions
-int KIM_COMPUTE_SimulatorComputeArguments_get_data(
+int KIM_COMPUTE_SimulatorComputeArguments_get_data_int(
     KIM_COMPUTE_SimulatorComputeArguments const * const arguments,
     KIM_COMPUTE_ArgumentName const argumentName,
-    void ** const ptr)
+    int ** const ptr)
+{
+  KIM::COMPUTE::SimulatorComputeArguments *
+      pArguments = (KIM::COMPUTE::SimulatorComputeArguments *) arguments->p;
+  return pArguments->get_data(makeArgumentNameCpp(argumentName), ptr);
+}
+
+int KIM_COMPUTE_SimulatorComputeArguments_get_data_double(
+    KIM_COMPUTE_SimulatorComputeArguments const * const arguments,
+    KIM_COMPUTE_ArgumentName const argumentName,
+    double ** const ptr)
 {
   KIM::COMPUTE::SimulatorComputeArguments *
       pArguments = (KIM::COMPUTE::SimulatorComputeArguments *) arguments->p;

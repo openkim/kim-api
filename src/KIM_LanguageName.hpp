@@ -34,6 +34,8 @@
 #ifndef KIM_LANGUAGE_NAME_HPP_
 #define KIM_LANGUAGE_NAME_HPP_
 
+#include <string>
+
 namespace KIM
 {
 class LanguageName
@@ -44,6 +46,7 @@ class LanguageName
   LanguageName(int const id);
   bool operator==(LanguageName const & rhs) const;
   bool operator!=(LanguageName const & rhs) const;
+  std::string string() const;
 };
 
 namespace LANGUAGE_NAME

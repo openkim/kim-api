@@ -32,12 +32,23 @@
 /* Release: This file is part of the kim-api.git repository.                  */
 /*                                                                            */
 
-#ifndef KIM_LANGUAGE_NAME_H_
-#include "KIM_LanguageName.h"
+
+#ifndef KIM_PARTICLE_NUMBERING_H_
+#define KIM_PARTICLE_NUMBERING_H_
+
+struct KIM_ParticleNumbering
+{
+  int particleNumberingID;
+};
+#ifndef KIM_PARTICLE_NUMBERING_DEFINED_
+#define KIM_PARTICLE_NUMBERING_DEFINED_
+typedef struct KIM_ParticleNumbering KIM_ParticleNumbering;
 #endif
 
+char const * const KIM_ParticleNumberingString(
+    KIM_ParticleNumbering const particleNumbering);
 
-/* Order doesn't matter as long as all values are unique */
-KIM_LanguageName const KIM_LANGUAGE_NAME_Cpp = {1};
-KIM_LanguageName const KIM_LANGUAGE_NAME_C = {2};
-KIM_LanguageName const KIM_LANGUAGE_NAME_Fortran = {3};
+extern KIM_ParticleNumbering const KIM_PARTICLE_NUMBERING_ZeroBased;
+extern KIM_ParticleNumbering const KIM_PARTICLE_NUMBERING_OneBased;
+
+#endif  /* KIM_PARTICLE_NUMBERING_H_ */

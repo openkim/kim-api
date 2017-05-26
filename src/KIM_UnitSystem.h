@@ -45,6 +45,8 @@ struct KIM_LengthUnit
 typedef struct KIM_LengthUnit KIM_LengthUnit;
 #endif
 
+char const* const KIM_LengthUnitString(KIM_LengthUnit const lengthUnit);
+
 struct KIM_EnergyUnit
 {
   int energyUnitID;
@@ -53,6 +55,8 @@ struct KIM_EnergyUnit
 #define KIM_ENERGY_UNIT_DEFINED_
 typedef struct KIM_EnergyUnit KIM_EnergyUnit;
 #endif
+
+char const* const KIM_EnergyUnitString(KIM_EnergyUnit const energyUnit);
 
 struct KIM_ChargeUnit
 {
@@ -63,6 +67,8 @@ struct KIM_ChargeUnit
 typedef struct KIM_ChargeUnit KIM_ChargeUnit;
 #endif
 
+char const * const KIM_ChargeUnitString(KIM_ChargeUnit const chargeUnit);
+
 struct KIM_TemperatureUnit
 {
   int temperatureUnitID;
@@ -72,6 +78,9 @@ struct KIM_TemperatureUnit
 typedef struct KIM_TemperatureUnit KIM_TemperatureUnit;
 #endif
 
+char const * const KIM_TemperatureUnitString(
+    KIM_TemperatureUnit const temperatureUnit);
+
 struct KIM_TimeUnit
 {
   int timeUnitID;
@@ -80,6 +89,8 @@ struct KIM_TimeUnit
 #define KIM_TIME_UNIT_DEFINED_
 typedef struct KIM_TimeUnit KIM_TimeUnit;
 #endif
+
+char const * const KIM_TimeUnitString(KIM_TimeUnit const timeUnit);
 
 extern KIM_LengthUnit const KIM_UNITS_A;
 extern KIM_LengthUnit const KIM_UNITS_Bohr;

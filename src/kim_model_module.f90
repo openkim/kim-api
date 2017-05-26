@@ -113,13 +113,13 @@ module kim_model_module
       real(c_double), intent(out) :: influence_distance
     end subroutine kim_model_get_influence_distance
 
-    subroutine kim_model_get_cutoffs(model, number_of_cutoffs, cutoffs_ptr)
+    subroutine kim_model_get_cutoffs(model, number_of_cutoffs, cutoffs)
       use, intrinsic :: iso_c_binding
       import kim_model_type
       implicit none
       type(kim_model_type), intent(in) :: model
       integer(c_int), intent(out) :: number_of_cutoffs
-      type(c_ptr), intent(out) :: cutoffs_ptr
+      real(c_double), intent(out), pointer :: cutoffs(:)
     end subroutine kim_model_get_cutoffs
 
     subroutine kim_model_print(model)
@@ -206,12 +206,12 @@ module kim_model_module
 
     subroutine kim_model_get_parameter_data_type(model, index, data_type, ierr)
       use, intrinsic :: iso_c_binding
-      use :: kim_parameter_module, only : kim_parameter_data_type_type
+      use :: kim_data_type_module, only : kim_data_type_type
       import kim_model_type
       implicit none
       type(kim_model_type), intent(in) :: model
       integer(c_int), intent(in), value :: index
-      type(kim_parameter_data_type_type), intent(out) :: data_type
+      type(kim_data_type_type), intent(out) :: data_type
       integer(c_int), intent(out) :: ierr
     end subroutine kim_model_get_parameter_data_type
 

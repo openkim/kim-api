@@ -44,6 +44,10 @@
 #include "KIM_LanguageName.h"
 #endif
 
+#ifndef KIM_COMPUTE_ARGUMENT_ATTRIBUTE_H_
+#include "KIM_COMPUTE_ArgumentAttribute.h"
+#endif
+
 /* Forward declarations */
 #ifndef KIM_COMPUTE_ARGUMENT_NAME_DEFINED_
 #define KIM_COMPUTE_ARGUMENT_NAME_DEFINED_
@@ -61,13 +65,15 @@ typedef struct KIM_COMPUTE_ModelComputeArguments
 KIM_COMPUTE_ModelComputeArguments;
 #endif
 
-void KIM_COMPUTE_ModelComputeArguments_set_get_neigh(
+void KIM_COMPUTE_ModelComputeArguments_get_argument_attribute(
+    KIM_COMPUTE_ModelComputeArguments const * const arguments,
+    KIM_COMPUTE_ArgumentName const argumentName,
+    KIM_COMPUTE_ArgumentAttribute * const argumentAttribute);
+
+void KIM_COMPUTE_ModelComputeArguments_set_neigh(
     KIM_COMPUTE_ModelComputeArguments * const arguments,
     KIM_LanguageName const languageName,
-    func * const fptr);
-void KIM_COMPUTE_ModelComputeArguments_set_neighObject(
-    KIM_COMPUTE_ModelComputeArguments * const arguments,
-    void const * const ptr);
+    func * const fptr, void const * const dataObject);
 
 void KIM_COMPUTE_ModelComputeArguments_set_process_dEdr(
     KIM_COMPUTE_ModelComputeArguments * const arguments,
@@ -79,11 +85,17 @@ void KIM_COMPUTE_ModelComputeArguments_set_process_d2Edr2(
     func * const fptr);
 
 /* *data functions */
-int KIM_COMPUTE_ModelComputeArguments_set_data(
+int KIM_COMPUTE_ModelComputeArguments_set_data_int(
     KIM_COMPUTE_ModelComputeArguments * const arguments,
     KIM_COMPUTE_ArgumentName const argumentName,
     int const extent,
-    void const * const ptr);
+    int const * const ptr);
+
+int KIM_COMPUTE_ModelComputeArguments_set_data_double(
+    KIM_COMPUTE_ModelComputeArguments * const arguments,
+    KIM_COMPUTE_ArgumentName const argumentName,
+    int const extent,
+    double const * const ptr);
 
 /* *compute functions */
 int KIM_COMPUTE_ModelComputeArguments_set_compute(

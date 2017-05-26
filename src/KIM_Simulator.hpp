@@ -59,7 +59,6 @@ namespace KIM
 {
 // Forward declarations
 class SpeciesName;
-class ParameterDataType;
 class LengthUnit;
 class EnergyUnit;
 class ChargeUnit;

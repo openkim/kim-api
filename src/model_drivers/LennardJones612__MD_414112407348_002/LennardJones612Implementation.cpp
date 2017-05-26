@@ -737,20 +737,20 @@ int LennardJones612Implementation::SetComputeMutableValues(
   int const* numberOfParticles;
   ier =
       arguments->get_data(KIM::COMPUTE::ARGUMENT_NAME::numberOfParticles,
-                          (void **) &numberOfParticles)
+                          &numberOfParticles)
       || arguments->get_data(KIM::COMPUTE::ARGUMENT_NAME::particleSpecies,
-                             (void **) &particleSpecies)
+                             &particleSpecies)
       || arguments->get_data(KIM::COMPUTE::ARGUMENT_NAME::particleContributing,
-                             (void **) &particleContributing)
+                              &particleContributing)
       || arguments->get_data(KIM::COMPUTE::ARGUMENT_NAME::coordinates,
-                             (void **) &coordinates)
+                             (double const ** const) &coordinates)
       || (compEnergy ? arguments->get_data(KIM::COMPUTE::ARGUMENT_NAME::energy,
-                                           (void **) &energy) : false)
+                                           &energy) : false)
       || (compParticleEnergy ? arguments->get_data(
-          KIM::COMPUTE::ARGUMENT_NAME::particleEnergy,
-          (void **) &particleEnergy) : false)
-      || (compForces ? arguments->get_data(KIM::COMPUTE::ARGUMENT_NAME::forces,
-                                           (void **) &forces) : false);
+          KIM::COMPUTE::ARGUMENT_NAME::particleEnergy, &particleEnergy) : false)
+      || (compForces ? arguments->get_data(
+          KIM::COMPUTE::ARGUMENT_NAME::forces,
+          (double const ** const) &forces) : false);
   if (ier)
   {
     KIM::report_error(__LINE__, __FILE__, "get_data", ier);

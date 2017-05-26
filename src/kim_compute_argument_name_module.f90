@@ -39,6 +39,8 @@ module kim_compute_argument_name_module
 
   public &
     kim_compute_argument_name_type, &
+    kim_compute_argument_name_string, &
+
     kim_compute_argument_name_number_of_particles, &
     kim_compute_argument_name_number_of_species, &
     kim_compute_argument_name_particle_species, &
@@ -49,7 +51,11 @@ module kim_compute_argument_name_module
     kim_compute_argument_name_particle_energy, &
     kim_compute_argument_name_virial, &
     kim_compute_argument_name_particle_virial, &
-    kim_compute_argument_name_hessian
+    kim_compute_argument_name_hessian, &
+
+    kim_compute_argument_name_get_number_of_arguments, &
+    kim_compute_argument_name_get_argument, &
+    kim_compute_argument_name_get_argument_data_type
 
   type, bind(c) :: kim_compute_argument_name_type
     integer(c_int) argument_id
@@ -88,4 +94,41 @@ module kim_compute_argument_name_module
   type(kim_compute_argument_name_type), parameter :: &
     kim_compute_argument_name_hessian = &
     kim_compute_argument_name_type(hessian_id)
+
+  interface
+    subroutine kim_compute_argument_name_string(argument_name, name_string)
+      import kim_compute_argument_name_type
+      implicit none
+      type(kim_compute_argument_name_type), intent(in), value :: argument_name
+      character(len=*), intent(out) :: name_string
+    end subroutine kim_compute_argument_name_string
+
+    subroutine kim_compute_argument_name_get_number_of_arguments( &
+      number_of_arguments)
+      use, intrinsic :: iso_c_binding
+      implicit none
+      integer(c_int), intent(out) :: number_of_arguments
+    end subroutine kim_compute_argument_name_get_number_of_arguments
+
+    subroutine kim_compute_argument_name_get_argument(index, argument_name, &
+      ierr)
+      use, intrinsic :: iso_c_binding
+      import kim_compute_argument_name_type
+      implicit none
+      integer(c_int), intent(in), value :: index
+      type(kim_compute_argument_name_type), intent(out) :: argument_name
+      integer(c_int), intent(out) :: ierr
+    end subroutine kim_compute_argument_name_get_argument
+
+    subroutine kim_compute_argument_name_get_argument_data_type(argument_name, &
+      data_type, ierr)
+      use, intrinsic :: iso_c_binding
+      use kim_data_type_module, only : kim_data_type_type
+      import kim_compute_argument_name_type
+      implicit none
+      type(kim_compute_argument_name_type), intent(in), value :: argument_name
+      type(kim_data_type_type), intent(out) :: data_type
+      integer(c_int), intent(out) :: ierr
+    end subroutine kim_compute_argument_name_get_argument_data_type
+  end interface
 end module kim_compute_argument_name_module

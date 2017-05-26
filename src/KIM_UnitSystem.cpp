@@ -46,12 +46,33 @@ bool LengthUnit::operator==(LengthUnit const & rhs) const
 bool LengthUnit::operator!=(LengthUnit const & rhs) const
 {return lengthUnitID!=rhs.lengthUnitID;}
 
+std::string LengthUnit::string() const
+{
+  if (*this == UNITS::A) return "A";
+  else if (*this == UNITS::Bohr) return "Bohr";
+  else if (*this == UNITS::cm) return "cm";
+  else if (*this == UNITS::m) return "m";
+  else if (*this == UNITS::nm) return "nm";
+  else return "unknown";
+}
+
 EnergyUnit::EnergyUnit() : energyUnitID(0){}
 EnergyUnit::EnergyUnit(int const id) : energyUnitID(id){}
 bool EnergyUnit::operator==(EnergyUnit const & rhs) const
 {return energyUnitID==rhs.energyUnitID;}
 bool EnergyUnit::operator!=(EnergyUnit const & rhs) const
 {return energyUnitID!=rhs.energyUnitID;}
+
+std::string EnergyUnit::string() const
+{
+  if (*this == UNITS::amu_A2_per_ps2) return "amu_A2_per_ps2";
+  else if (*this == UNITS::erg) return "erg";
+  else if (*this == UNITS::eV) return "eV";
+  else if (*this == UNITS::Hartree) return "Hartree";
+  else if (*this == UNITS::J) return "J";
+  else if (*this == UNITS::kcal_mol) return "kcal_mol";
+  else return "unknown";
+}
 
 ChargeUnit::ChargeUnit() : chargeUnitID(0){}
 ChargeUnit::ChargeUnit(int const id) : chargeUnitID(id){}
@@ -60,12 +81,26 @@ bool ChargeUnit::operator==(ChargeUnit const & rhs) const
 bool ChargeUnit::operator!=(ChargeUnit const & rhs) const
 {return chargeUnitID!=rhs.chargeUnitID;}
 
+std::string ChargeUnit::string() const
+{
+  if (*this == UNITS::C) return "C";
+  else if (*this == UNITS::e) return "e";
+  else if (*this == UNITS::statC) return "statC";
+  else return "unknown";
+}
+
 TemperatureUnit::TemperatureUnit() : temperatureUnitID(0){}
 TemperatureUnit::TemperatureUnit(int const id) : temperatureUnitID(id){}
 bool TemperatureUnit::operator==(TemperatureUnit const & rhs) const
 {return temperatureUnitID==rhs.temperatureUnitID;}
 bool TemperatureUnit::operator!=(TemperatureUnit const & rhs) const
 {return temperatureUnitID!=rhs.temperatureUnitID;}
+
+std::string TemperatureUnit::string() const
+{
+  if (*this == UNITS::K) return "K";
+  else return "unknown";
+}
 
 TimeUnit::TimeUnit() : timeUnitID(0){}
 TimeUnit::TimeUnit(int const id) : timeUnitID(id){}
@@ -74,30 +109,40 @@ bool TimeUnit::operator==(TimeUnit const & rhs) const
 bool TimeUnit::operator!=(TimeUnit const & rhs) const
 {return timeUnitID!=rhs.timeUnitID;}
 
+std::string TimeUnit::string() const
+{
+  if (*this == UNITS::fs) return "fs";
+  else if (*this == UNITS::ps) return "ps";
+  else if (*this == UNITS::ns) return "ns";
+  else if (*this == UNITS::s) return "s";
+  else return "unknown";
+}
+
+
 namespace UNITS
 {
-LengthUnit const A(1);
-LengthUnit const Bohr(2);
-LengthUnit const cm(3);
-LengthUnit const m(4);
-LengthUnit const nm(5);
+LengthUnit const A(0);
+LengthUnit const Bohr(1);
+LengthUnit const cm(2);
+LengthUnit const m(3);
+LengthUnit const nm(4);
 
-EnergyUnit const amu_A2_per_ps2(1);
-EnergyUnit const erg(2);
-EnergyUnit const eV(3);
-EnergyUnit const Hartree(4);
-EnergyUnit const J(5);
-EnergyUnit const kcal_mol(6);
+EnergyUnit const amu_A2_per_ps2(0);
+EnergyUnit const erg(1);
+EnergyUnit const eV(2);
+EnergyUnit const Hartree(3);
+EnergyUnit const J(4);
+EnergyUnit const kcal_mol(5);
 
-ChargeUnit const C(1);
-ChargeUnit const e(2);
-ChargeUnit const statC(3);
+ChargeUnit const C(0);
+ChargeUnit const e(1);
+ChargeUnit const statC(2);
 
-TemperatureUnit const K(1);
+TemperatureUnit const K(0);
 
-TimeUnit const fs(1);
-TimeUnit const ps(2);
-TimeUnit const ns(3);
-TimeUnit const s(4);
+TimeUnit const fs(0);
+TimeUnit const ps(1);
+TimeUnit const ns(2);
+TimeUnit const s(3);
 }  // namespace UNITS
 }  // namespace KIM

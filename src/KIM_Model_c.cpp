@@ -34,8 +34,8 @@
 #include "KIM_SpeciesName.hpp"
 #endif
 
-#ifndef KIM_PARAMETER_HPP_
-#include "KIM_Parameter.hpp"
+#ifndef KIM_DATA_TYPE_HPP_
+#include "KIM_DataType.hpp"
 #endif
 
 #ifndef KIM_MODEL_HPP_
@@ -52,8 +52,8 @@ extern "C"
 #include "KIM_SpeciesName.h"
 #endif
 
-#ifndef KIM_PARAMETER_H_
-#include "KIM_Parameter.h"
+#ifndef KIM_DATA_TYPE_H_
+#include "KIM_DataType.h"
 #endif
 
 #ifndef KIM_MODEL_H_
@@ -74,14 +74,14 @@ namespace
 KIM::COMPUTE::ArgumentName
 makeArgumentNameCpp(KIM_COMPUTE_ArgumentName const argumentName)
 {
-  return KIM::COMPUTE::ArgumentName(argumentName.argumentID);
+  return KIM::COMPUTE::ArgumentName(argumentName.argumentNameID);
 }
 
-KIM_ParameterDataType
-makeParameterDataTypeC(KIM::ParameterDataType const dataType)
+KIM_DataType
+makeDataTypeC(KIM::DataType const dataType)
 {
-  KIM_ParameterDataType typ;
-  KIM_ParameterDataType * pTyp = (KIM_ParameterDataType *) &dataType;
+  KIM_DataType typ;
+  KIM_DataType * pTyp = (KIM_DataType *) &dataType;
   typ.dataTypeID = pTyp->dataTypeID;
   return typ;
 }
@@ -89,20 +89,19 @@ makeParameterDataTypeC(KIM::ParameterDataType const dataType)
 KIM::LanguageName
 makeLanguageNameCpp(KIM_LanguageName const languageName)
 {
-  return KIM::LanguageName(languageName.languageID);
+  return KIM::LanguageName(languageName.languageNameID);
 }
 
 KIM::SpeciesName makeSpecNameCpp(KIM_SpeciesName const speciesName)
 {
-  return KIM::SpeciesName(speciesName.speciesID);
+  return KIM::SpeciesName(speciesName.speciesNameID);
 }
 
 KIM_SpeciesName makeSpecNameC(KIM::SpeciesName const speciesName)
 {
-  KIM_SpeciesName specN;
-  KIM_SpeciesName *pSN = (KIM_SpeciesName*) & speciesName;
-  specN.speciesID = pSN->speciesID;
-  return specN;
+  KIM_SpeciesName const * speciesNameC
+      = reinterpret_cast<KIM_SpeciesName const *>(&speciesName);
+  return *speciesNameC;
 }
 
 }  // namespace
@@ -225,14 +224,14 @@ void KIM_Model_get_num_params(KIM_Model const * const model,
 
 int KIM_Model_get_parameter_data_type(KIM_Model const * const model,
                                       int const index,
-                                      KIM_ParameterDataType * const dataType)
+                                      KIM_DataType * const dataType)
 {
   KIM::Model * pmodel = (KIM::Model *) model->p;
-  KIM::ParameterDataType typ;
+  KIM::DataType typ;
   int err = pmodel->get_parameter_data_type(index, &typ);
   if (err) return err;
 
-  *dataType = makeParameterDataTypeC(typ);
+  *dataType = makeDataTypeC(typ);
   return err;
 }
 
