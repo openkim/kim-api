@@ -49,14 +49,19 @@ struct KIM_Model;
 typedef struct KIM_Model KIM_Model;
 #endif
 
+struct KIM_Simulator;
+#ifndef KIM_SIMULATOR_DEFINED_
+#define KIM_SIMULATOR_DEFINED_
+typedef struct KIM_Simulator KIM_Simulator;
+#endif
 
 #include <stdarg.h>
 
 int KIM_UTILITY_COMPUTE_getm_data(
-    KIM_Model const * const model,
+    KIM_Simulator const * const simulator,
     KIM_COMPUTE_ArgumentName const argumentName, ...);
 int KIM_UTILITY_COMPUTE_vgetm_data(
-    KIM_Model const * const model,
+    KIM_Simulator const * const simulator,
     KIM_COMPUTE_ArgumentName const argumentName, va_list argp);
 
 int KIM_UTILITY_COMPUTE_setm_data(
@@ -67,13 +72,6 @@ int KIM_UTILITY_COMPUTE_vsetm_data(
     KIM_COMPUTE_ArgumentName const argumentName, va_list argp);
 
 /* *method functions */
-int KIM_UTILITY_COMPUTE_getm_method(
-    KIM_Model const * const model,
-    KIM_COMPUTE_ArgumentName const argumentName, ...);
-int KIM_UTILITY_COMPUTE_vgetm_method(
-    KIM_Model const * const model,
-    KIM_COMPUTE_ArgumentName const argumentName, va_list argp);
-
 int KIM_UTILITY_COMPUTE_setm_method(
     KIM_Model * const model,
     KIM_COMPUTE_ArgumentName const argumentName, ...);
@@ -83,10 +81,10 @@ int KIM_UTILITY_COMPUTE_vsetm_method(
 
 /* *compute functions */
 int KIM_UTILITY_COMPUTE_getm_compute(
-    KIM_Model const * const model,
+    KIM_Simulator const * const simulator,
     KIM_COMPUTE_ArgumentName const argumentName, ...);
 int KIM_UTILITY_COMPUTE_vgetm_compute(
-    KIM_Model const * const model,
+    KIM_Simulator const * const simulator,
     KIM_COMPUTE_ArgumentName const argumentName, va_list argp);
 int KIM_UTILITY_COMPUTE_setm_compute(
     KIM_Model * const model,

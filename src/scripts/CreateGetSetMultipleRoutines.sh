@@ -32,17 +32,17 @@
 createGetM()
 {
 printf "subroutine kim_utility_compute_getm_%s( &\n" $subject
-printf "  model, ierr, &\n"
+printf "  simulator, ierr, &\n"
 for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14; do
 printf "  argument_name_%02i, ${hasLanguage:+language_name_%02i,} value_%02i, flag_%02i, &\n" $i ${hasLanguage:+$i} $i $i
 done
 printf "  argument_name_15, ${hasLanguage:+language_name_15,} value_15, flag_15 &\n"
 printf "  )\n"
 printf "  use, intrinsic :: iso_c_binding\n"
-printf "  use :: kim_model_module\n"
+printf "  use :: kim_simulator_module\n"
 printf "  use :: kim_compute_module\n"
 printf "  implicit none\n"
-printf "  type(kim_model_type), intent(in) :: model\n"
+printf "  type(kim_simulator_type), intent(in) :: simulator\n"
 printf "  integer(c_int), intent(out) :: ierr\n"
 printf "  %s(%s), intent(in) :: argument_name_01\n" $argumentNameType $argumentNameKind
 for i in 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
@@ -64,7 +64,7 @@ printf "  integer(c_int), intent(in), optional :: flag_%02i\n" $i
 done
 printf "\n"
 printf "  if (flag_01 == 1) then\n"
-printf "    call kim_model_get_%s(model, argument_name_01, ${hasLanguage:+language_name_01,} value_01, ierr)\n" $subject
+printf "    call kim_simulator_get_%s(simulator, argument_name_01, ${hasLanguage:+language_name_01,} value_01, ierr)\n" $subject
 printf "    if (ierr /= 0) return\n"
 printf "  end if\n"
 printf "\n"
@@ -72,7 +72,7 @@ printf "  !process arguments\n"
 for i in 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
 printf "  if (present(argument_name_%02i)) then\n" $i
 printf "    if (flag_%02i .eq. 1) then\n" $i
-printf "      call kim_model_get_%s(model, argument_name_%02i, ${hasLanguage:+language_name_%02i,} value_%02i, ierr)\n" $subject $i ${hasLanguage:+$i} $i
+printf "      call kim_simulator_get_%s(simulator, argument_name_%02i, ${hasLanguage:+language_name_%02i,} value_%02i, ierr)\n" $subject $i ${hasLanguage:+$i} $i
 printf "      if (ierr /= 0) return\n"
 printf "    end if\n"
 printf "  end if\n"
@@ -93,6 +93,7 @@ printf "  )\n"
 printf "  use, intrinsic :: iso_c_binding\n"
 printf "  use kim_model_module\n"
 printf "  use kim_compute_module\n"
+printf "  ${hasLanguage:+use kim_language_name_module}\n"
 printf "  implicit none\n"
 printf "  type(kim_model_type), intent(inout) :: model\n"
 printf "  integer(c_int), intent(out) :: ierr\n"
@@ -162,8 +163,7 @@ valueKind="c_funptr"
 hasExtent="yes"
 hasLanguage="yes"
 languageNameType="type"
-languageNameKind="kim_compute_language_name_type"
-createGetM
+languageNameKind="kim_language_name_type"
 createSetM
 
 subject="compute"

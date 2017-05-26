@@ -32,37 +32,12 @@
 /* Release: This file is part of the kim-api.git repository.                  */
 /*                                                                            */
 
-
-#ifndef KIM_COMPUTE_H_
-#define KIM_COMPUTE_H_
-
-struct KIM_COMPUTE_ArgumentName
-{
-  int argumentID;
-};
-#ifndef KIM_COMPUTE_ARGUMENT_NAME_DEFINED_
-#define KIM_COMPUTE_ARGUMENT_NAME_DEFINED_
-typedef struct KIM_COMPUTE_ArgumentName KIM_COMPUTE_ArgumentName;
+#ifndef KIM_LANGUAGE_NAME_H_
+#include "KIM_LanguageName.h"
 #endif
 
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_numberOfSpecies;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_particleSpecies;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_particleContributing;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_coordinates;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_get_neigh;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_process_dEdr;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_process_d2Edr2;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_neighObject;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_compute;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_reinit;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_destroy;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_energy;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_forces;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_particleEnergy;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_virial;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_particleVirial;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_hessian;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_End;
 
-#endif  /* KIM_COMPUTE_H_ */
+/* Order doesn't matter as long as all values are unique */
+KIM_LanguageName const KIM_LANGUAGE_NAME_Cpp = {1};
+KIM_LanguageName const KIM_LANGUAGE_NAME_C = {2};
+KIM_LanguageName const KIM_LANGUAGE_NAME_Fortran = {3};

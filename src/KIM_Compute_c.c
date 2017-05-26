@@ -57,8 +57,3 @@ KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_virial = {15};
 KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_particleVirial = {16};
 KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_hessian = {17};
 KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_End = {-32000};
-
-
-KIM_COMPUTE_LanguageName const KIM_COMPUTE_LANGUAGE_NAME_Cpp = {1};
-KIM_COMPUTE_LanguageName const KIM_COMPUTE_LANGUAGE_NAME_C = {2};
-KIM_COMPUTE_LanguageName const KIM_COMPUTE_LANGUAGE_NAME_Fortran = {3};

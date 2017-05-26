@@ -48,7 +48,7 @@
 //******************************************************************************
 extern "C"
 {
-int model_driver_init(KIM::Model * const model,
+int model_driver_init(KIM::Simulator * const simulator,
                       char const * const paramfile_names, int const nmstrlen,
                       int const numparamfiles)
 {
@@ -56,18 +56,18 @@ int model_driver_init(KIM::Model * const model,
 
   // read input files, convert units if needed, compute
   // interpolation coefficients, set cutoff, and publish parameters
-  LennardJones612* const modelObject
-      = new LennardJones612(model, paramfile_names, nmstrlen,
+  LennardJones612* const simulatorObject
+      = new LennardJones612(simulator, paramfile_names, nmstrlen,
                             numparamfiles, &ier);
   if (ier)
   {
     // constructor already reported the error
-    delete modelObject;
+    delete simulatorObject;
     return ier;
   }
 
   // register pointer to LennardJones612 object in KIM object
-  model->set_model_buffer(static_cast<void*>(modelObject));
+  simulator->set_model_buffer(static_cast<void*>(simulatorObject));
 
   // everything is good
   ier = false;
@@ -83,14 +83,14 @@ int model_driver_init(KIM::Model * const model,
 
 //******************************************************************************
 LennardJones612::LennardJones612(
-    KIM::Model * const model,
+    KIM::Simulator * const simulator,
     char const* const parameterFileNames,
     int const parameterFileNameLength,
     int const numberParameterFiles,
     int* const ier)
 {
   implementation_ = new LennardJones612Implementation(
-      model,
+      simulator,
       parameterFileNames,
       parameterFileNameLength,
       numberParameterFiles,
@@ -105,18 +105,18 @@ LennardJones612::~LennardJones612()
 
 //******************************************************************************
 // static member function
-int LennardJones612::Destroy(KIM::Model * const model)
+int LennardJones612::Destroy(KIM::Simulator * const simulator)
 {
-  LennardJones612 * modelObject;
-  model->get_model_buffer(reinterpret_cast<void**>(&modelObject));
+  LennardJones612 * simulatorObject;
+  simulator->get_model_buffer(reinterpret_cast<void**>(&simulatorObject));
 
-  if (modelObject != NULL)
+  if (simulatorObject != NULL)
   {
     // delete object itself
-    delete modelObject;
+    delete simulatorObject;
 
     // nullify model buffer
-    model->set_model_buffer(NULL);
+    simulator->set_model_buffer(NULL);
   }
 
   // everything is good
@@ -125,20 +125,20 @@ int LennardJones612::Destroy(KIM::Model * const model)
 
 //******************************************************************************
 // static member function
-int LennardJones612::Reinit(KIM::Model * const model)
+int LennardJones612::Reinit(KIM::Simulator * const simulator)
 {
-  LennardJones612 * modelObject;
-  model->get_model_buffer(reinterpret_cast<void**>(&modelObject));
+  LennardJones612 * simulatorObject;
+  simulator->get_model_buffer(reinterpret_cast<void**>(&simulatorObject));
 
-  return modelObject->implementation_->Reinit(model);
+  return simulatorObject->implementation_->Reinit(simulator);
 }
 
 //******************************************************************************
 // static member function
-int LennardJones612::Compute(KIM::Model const * const model)
+int LennardJones612::Compute(KIM::Simulator const * const simulator)
 {
-  LennardJones612 * modelObject;
-  model->get_model_buffer(reinterpret_cast<void**>(&modelObject));
+  LennardJones612 * simulatorObject;
+  simulator->get_model_buffer(reinterpret_cast<void**>(&simulatorObject));
 
-  return modelObject->implementation_->Compute(model);
+  return simulatorObject->implementation_->Compute(simulator);
 }

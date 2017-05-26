@@ -47,7 +47,7 @@
 #include <string.h>
 #include <math.h>
 #include "KIM_SpeciesName.h"
-#include "KIM_Model.h"
+#include "KIM_Simulator.h"
 #include "KIM_Compute.h"
 #include "KIM_UTILITY_Compute.h"
 #include "KIM_Logger.h"
@@ -67,11 +67,11 @@
 
 
 /* Define prototype for Model init */
-int model_init(KIM_Model * const model);
+int model_init(KIM_Simulator * const simulator);
 
 /* Define prototype for compute routine */
-static int compute(KIM_Model const * const model);
-static int model_destroy(KIM_Model * const model);
+static int compute(KIM_Simulator const * const simulator);
+static int model_destroy(KIM_Simulator * const simulator);
 
 /* Define prototypes for pair potential calculations */
 static void calc_phi(double* epsilon,
@@ -165,7 +165,7 @@ static void calc_phi_d2phi(double* epsilon,
   return; }
 
 /* compute function */
-static int compute(KIM_Model const * const model) {
+static int compute(KIM_Simulator const * const simulator) {
   /* local variables */
   double R;
   double R_pairs[2];
@@ -215,7 +215,7 @@ static int compute(KIM_Model const * const model) {
   /* check to see if we have been asked to compute the forces, */
   /* particleEnergy, and d1Edr */
   ier = KIM_UTILITY_COMPUTE_getm_compute(
-      model,
+      simulator,
       KIM_COMPUTE_ARGUMENT_NAME_energy,         &comp_energy,         1,
       KIM_COMPUTE_ARGUMENT_NAME_forces,         &comp_force,          1,
       KIM_COMPUTE_ARGUMENT_NAME_particleEnergy, &comp_particleEnergy, 1,
@@ -227,7 +227,7 @@ static int compute(KIM_Model const * const model) {
     return ier; }
 
   ier = KIM_UTILITY_COMPUTE_getm_data(
-      model,
+      simulator,
       KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles, &nParts,         1,
       KIM_COMPUTE_ARGUMENT_NAME_particleSpecies,   &particleSpecies,1,
       KIM_COMPUTE_ARGUMENT_NAME_particleContributing, &particleContributing, 1,
@@ -241,7 +241,7 @@ static int compute(KIM_Model const * const model) {
     return ier; }
 
   /* set value of parameters */
-  KIM_Model_get_model_buffer(model, (void**) &cutoff);
+  KIM_Simulator_get_model_buffer(simulator, (void**) &cutoff);
   cutsq = (*cutoff)*(*cutoff);
   epsilon = EPSILON;
   C = PARAM_C;
@@ -281,7 +281,7 @@ static int compute(KIM_Model const * const model) {
   for (i = 0; i< *nParts; ++i) {
     if (particleContributing[i])
     {
-      ier = KIM_Model_get_neigh(model, 0, i, &numOfPartNeigh,
+      ier = KIM_Simulator_get_neigh(simulator, 0, i, &numOfPartNeigh,
                                 &neighListOfCurrentPart);
       if (ier) {
         /* some sort of problem, exit */
@@ -345,7 +345,7 @@ static int compute(KIM_Model const * const model) {
 
           /* contribution to process_dEdr */
           if (comp_process_dEdr) {
-            ier = KIM_Model_process_dEdr(model, dEidr, R, pRij, i, j); }
+            ier = KIM_Simulator_process_dEdr(simulator, dEidr, R, pRij, i, j); }
 
           /* contribution to process_d2Edr2 */
           if (comp_process_d2Edr2) {
@@ -356,7 +356,7 @@ static int compute(KIM_Model const * const model) {
             i_pairs[0] = i_pairs[1] = i;
             j_pairs[0] = j_pairs[1] = j;
 
-            ier = KIM_Model_process_d2Edr2(model, d2Eidr, pR_pairs, pRij_pairs,
+            ier = KIM_Simulator_process_d2Edr2(simulator, d2Eidr, pR_pairs, pRij_pairs,
                                            pi_pairs, pj_pairs); }
 
           /* contribution to forces */
@@ -374,35 +374,29 @@ static int compute(KIM_Model const * const model) {
   return ier; }
 
 /* Initialization function */
-int model_init(KIM_Model * const model) {
+int model_init(KIM_Simulator * const simulator) {
   double* model_cutoff;
-  int ier;
 
   /* store pointer to function in KIM object */
-  ier = KIM_Model_set_method(model, KIM_COMPUTE_ARGUMENT_NAME_compute, 1,
-                             KIM_COMPUTE_LANGUAGE_NAME_C, (func *) &compute);
-  if (ier) {
-    KIM_report_error(__LINE__, __FILE__, "KIM_set_data", ier);
-    return ier; }
-  ier = KIM_Model_set_method(model, KIM_COMPUTE_ARGUMENT_NAME_destroy, 1,
-                             KIM_COMPUTE_LANGUAGE_NAME_C, (func *) &model_destroy);
-  if (ier) {
-    KIM_report_error(__LINE__, __FILE__, "KIM_set_data", ier);
-    return ier; }
+  KIM_Simulator_set_compute_func(simulator, KIM_LANGUAGE_NAME_C,
+                                 (func *) &compute);
+  KIM_Simulator_set_destroy(simulator, KIM_LANGUAGE_NAME_C,
+                            (func *) &model_destroy);
+
   /* store model cutoff in KIM object */
   model_cutoff = (double*) malloc(sizeof(double));
   *model_cutoff = CUTOFF;
-  KIM_Model_set_model_buffer(model, model_cutoff);
-  KIM_Model_set_influence_distance(model, model_cutoff);
-  KIM_Model_set_cutoffs(model, 1, model_cutoff);
+  KIM_Simulator_set_model_buffer(simulator, model_cutoff);
+  KIM_Simulator_set_influence_distance(simulator, model_cutoff);
+  KIM_Simulator_set_cutoffs(simulator, 1, model_cutoff);
 
   return FALSE; }
 
 /* Initialization function */
-int model_destroy(KIM_Model * const model) {
+int model_destroy(KIM_Simulator * const simulator) {
   double* model_cutoff;
 
-  KIM_Model_get_model_buffer(model, (void **) &model_cutoff);
+  KIM_Simulator_get_model_buffer(simulator, (void **) &model_cutoff);
   free(model_cutoff);
 
   return FALSE; }

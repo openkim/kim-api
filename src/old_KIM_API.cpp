@@ -50,6 +50,9 @@
 #include "KIM_Model.hpp"
 #include "KIM_Model.h"
 
+#include "KIM_Simulator.hpp"
+#include "KIM_Simulator.h"
+
 // trim from start (in place)
 static inline void ltrim(std::string &s) {
     s.erase(s.begin(), std::find_if(s.begin(), s.end(),
@@ -1665,17 +1668,17 @@ int KIM_API_model::model_reinit(){
    int reinit_ind = get_index((char*) "reinit", &error);
    if (error != KIM_STATUS_OK) return error;
 
-   typedef int (*Model_Reinit_cpp)(KIM::Model * const);//prototype for model_reinit for c++
-   typedef int (*Model_Reinit_c)(KIM_Model * const);//prototype for model_reinit for c
+   typedef int (*Model_Reinit_cpp)(KIM::Simulator * const);//prototype for model_reinit for c++
+   typedef int (*Model_Reinit_c)(KIM_Simulator * const);//prototype for model_reinit for c
    KIM::Model MI;
    MI.pimpl = (KIM::Model::ModelImplementation *) this;
-   KIM_Model cMI;
+   KIM_Simulator cMI;
    cMI.p = (void *) &MI;
    Model_Reinit_cpp mdl_reinit_cpp = (Model_Reinit_cpp)(*this)[reinit_ind].data.fp;
    Model_Reinit_c mdl_reinit_c = (Model_Reinit_c)(*this)[reinit_ind].data.fp;
    if (mdl_reinit_cpp == NULL) return KIM_STATUS_FAIL;
    if ((*this)[reinit_ind].lang)
-     return (*mdl_reinit_cpp)(&MI);
+     return (*mdl_reinit_cpp)((KIM::Simulator *) &MI);
    else
      return (*mdl_reinit_c)(&cMI);
 }
@@ -1755,9 +1758,9 @@ int KIM_API_model::model_init(){
     std::stringstream model_lang_name;
     model_lang_name << modelname << "_language";
     model_language =  *(int*) dlsym(model_lib_handle,model_lang_name.str().c_str());
-    typedef int (*Model_Init_cpp)(KIM::Model * const);//prototype for model_init for c++
-    typedef int (*Model_Init_c)(KIM_Model * const);//prototype for model_init for c
-    typedef void (*Model_Init_Fortran)(KIM_Model * const, int * const ierr);//prototype for model_init for Fortran
+    typedef int (*Model_Init_cpp)(KIM::Simulator * const);//prototype for model_init for c++
+    typedef int (*Model_Init_c)(KIM_Simulator * const);//prototype for model_init for c
+    typedef void (*Model_Init_Fortran)(KIM_Simulator * const, int * const ierr);//prototype for model_init for Fortran
     std::stringstream model_init_routine_name;
     model_init_routine_name << modelname << "_init_pointer";
     Model_Init_cpp mdl_init_cpp = 0;
@@ -1794,17 +1797,17 @@ int KIM_API_model::model_init(){
     MI.pimpl = (KIM::Model::ModelImplementation *) this;
     if (model_language == 1)
     {
-      err = (*mdl_init_cpp)(&MI);
+      err = (*mdl_init_cpp)((KIM::Simulator *) &MI);
     }
     else if (model_language == 2)
     {
-      KIM_Model cMI;
+      KIM_Simulator cMI;
       cMI.p = (void *) &MI;
       err = (*mdl_init_c)(&cMI);
     }
     else // model_language == 3 // Fortran
     {
-      KIM_Model cMI;
+      KIM_Simulator cMI;
       cMI.p = (void *) &MI;
       (*mdl_init_fortran)(&cMI, &err);
     }
@@ -1813,22 +1816,22 @@ int KIM_API_model::model_init(){
 #endif
 
 int KIM_API_model::model_destroy(){
-  typedef int (*Model_Destroy_cpp)(KIM::Model * const);//prototype for model_destroy for c++
-  typedef int (*Model_Destroy_c)(KIM_Model * const);//prototype for model_destroy for c
-  typedef void (*Model_Destroy_Fortran)(KIM_Model * const, int * const ierr);//prototype for model_destroy for Fortran
+  typedef int (*Model_Destroy_cpp)(KIM::Simulator * const);//prototype for model_destroy for c++
+  typedef int (*Model_Destroy_c)(KIM_Simulator * const);//prototype for model_destroy for c
+  typedef void (*Model_Destroy_Fortran)(KIM_Simulator * const, int * const ierr);//prototype for model_destroy for Fortran
   Model_Destroy_cpp mdl_destroy_cpp = (Model_Destroy_cpp) (*this)[(char*) "destroy"].data.fp;
   Model_Destroy_c mdl_destroy_c = (Model_Destroy_c) (*this)[(char*) "destroy"].data.fp;
   Model_Destroy_Fortran mdl_destroy_fortran = (Model_Destroy_Fortran) (*this)[(char*) "destroy"].data.fp;
   //call model_destroy
   KIM::Model MI;
   MI.pimpl = (KIM::Model::ModelImplementation *) this;
-  KIM_Model cMI;
+  KIM_Simulator cMI;
   cMI.p = (void *) &MI;
 
   int error = false;
   if (mdl_destroy_cpp != NULL) {
     if ((*this)[(char*) "destroy"].lang == 1)
-      error = (*mdl_destroy_cpp)(&MI);
+      error = (*mdl_destroy_cpp)((KIM::Simulator *) &MI);
     else if ((*this)[(char*) "destroy"].lang == 2)
       error = (*mdl_destroy_c)(&cMI);
     else // Fortran
@@ -1842,9 +1845,9 @@ int KIM_API_model::model_destroy(){
 }
 int KIM_API_model::model_compute(){
   // set model_compute pointer
-  typedef int (*Model_Compute_cpp)(KIM::Model const * const);//prototype for model_compute for c++
-  typedef int (*Model_Compute_c)(KIM_Model const * const);//prototype for model_compute for c
-  typedef void (*Model_Compute_Fortran)(KIM_Model const * const, int * const ierr);//prototype for model_compute for fortran
+  typedef int (*Model_Compute_cpp)(KIM::Simulator const * const);//prototype for model_compute for c++
+  typedef int (*Model_Compute_c)(KIM_Simulator const * const);//prototype for model_compute for c
+  typedef void (*Model_Compute_Fortran)(KIM_Simulator const * const, int * const ierr);//prototype for model_compute for fortran
   int error = KIM_STATUS_FAIL;
   Model_Compute_cpp mdl_compute_cpp = (Model_Compute_cpp) (*this)[compute_index].data.fp;
   Model_Compute_c mdl_compute_c = (Model_Compute_c) (*this)[compute_index].data.fp;
@@ -1855,13 +1858,13 @@ int KIM_API_model::model_compute(){
   {
     if (mdl_compute_cpp == NULL) return error;
     //call model_compute
-    error = (*mdl_compute_cpp)(&MI);
+    error = (*mdl_compute_cpp)((KIM::Simulator *) &MI);
   }
   else if ((*this)[compute_index].lang == 2)
   {
     if (mdl_compute_c == NULL) return error;
     //call model_compute
-    KIM_Model cMI;
+    KIM_Simulator cMI;
     cMI.p = (void *) &MI;
     error = (*mdl_compute_c)(&cMI);
   }
@@ -1869,7 +1872,7 @@ int KIM_API_model::model_compute(){
   {
     if (mdl_compute_fortran == NULL) return error;
     //call model_compute
-    KIM_Model cMI;
+    KIM_Simulator cMI;
     cMI.p = (void *) &MI;
     (*mdl_compute_fortran)(&cMI, &error);
   }
@@ -1877,24 +1880,24 @@ int KIM_API_model::model_compute(){
 }
 
 int KIM_API_model::get_neigh(int neighborListIndex, int request, int *numnei, int** nei1part){
-  typedef int (*Get_Neigh_cpp)(KIM::Model const * const, int, int, int *, int **);
-  typedef int (*Get_Neigh_c)(KIM_Model const * const, int, int, int *, int **);
-  typedef void (*Get_Neigh_Fortran)(KIM_Model const * const, int, int, int *, int **, int *);
+  typedef int (*Get_Neigh_cpp)(KIM::Simulator const * const, int, int, int *, int **);
+  typedef int (*Get_Neigh_c)(KIM_Simulator const * const, int, int, int *, int **);
+  typedef void (*Get_Neigh_Fortran)(KIM_Simulator const * const, int, int, int *, int **, int *);
 
   if (get_neigh_index < 0) return KIM_STATUS_API_OBJECT_INVALID;
     Get_Neigh_cpp get_neigh_cpp = (Get_Neigh_cpp)(*this)[get_neigh_index].data.fp;
     Get_Neigh_c get_neigh_c = (Get_Neigh_c)(*this)[get_neigh_index].data.fp;
     Get_Neigh_Fortran get_neigh_fortran = (Get_Neigh_Fortran)(*this)[get_neigh_index].data.fp;
-    KIM::Model MI;
-    MI.pimpl = (KIM::Model::ModelImplementation *) this;
-    KIM_Model cMI;
-    cMI.p = (void *) &MI;
+    KIM::Simulator Sim;
+    Sim.pimpl = (KIM::Simulator::SimulatorImplementation *) this;
+    KIM_Simulator cMI;
+    cMI.p = (void *) &Sim;
 
     if (model_index_shift==0) {
       int erkey;
       if ((*this)[get_neigh_index].lang == 1)
       {
-        erkey = (*get_neigh_cpp)(&MI, neighborListIndex, request, numnei, nei1part);
+        erkey = (*get_neigh_cpp)(&Sim, neighborListIndex, request, numnei, nei1part);
       }
       else if ((*this)[get_neigh_index].lang == 2)
       {
@@ -1913,7 +1916,7 @@ int KIM_API_model::get_neigh(int neighborListIndex, int request, int *numnei, in
         int erkey;
         if ((*this)[get_neigh_index].lang == 1)
         {
-          erkey = (*get_neigh_cpp)(&MI, neighborListIndex, req, numnei, nei1part);
+          erkey = (*get_neigh_cpp)(&Sim, neighborListIndex, req, numnei, nei1part);
         }
         else if ((*this)[get_neigh_index].lang == 2)
         {

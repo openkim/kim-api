@@ -39,6 +39,7 @@
 #include <math.h>
 #include "KIM_SpeciesName.h"
 #include "KIM_Model.h"
+#include "KIM_Simulator.h"
 #include "KIM_Compute.h"
 #include "KIM_UTILITY_Compute.h"
 #include "KIM_Logger.h"
@@ -70,10 +71,10 @@ typedef struct
 
 /* Define prototypes */
 char const * const descriptor();
-void fcc_cluster_neighborlist(int allOrOne, int numberOfParticles, double* coords,
-                              double cutoff, NeighList* nl);
+void fcc_cluster_neighborlist(int allOrOne, int numberOfParticles,
+                              double* coords, double cutoff, NeighList* nl);
 
-int get_cluster_neigh(KIM_Model const * const model,
+int get_cluster_neigh(KIM_Simulator const * const simulator,
                       int const neighborListIndex,
                       int const particleNumber, int * const numberOfNeighbors,
                       int const ** const neighborsOfParticle);
@@ -134,12 +135,12 @@ int main()
       KIM_COMPUTE_ARGUMENT_NAME_numberOfSpecies,   1,                             &numberOfSpecies,                 1,
       KIM_COMPUTE_ARGUMENT_NAME_particleSpecies,   numberOfParticles_cluster,     particleSpecies_cluster_model,    1,
       KIM_COMPUTE_ARGUMENT_NAME_coordinates,       DIM*numberOfParticles_cluster, coords_cluster,                   1,
-      KIM_COMPUTE_ARGUMENT_NAME_neighObject,       1,                             &nl_cluster_model,                1,
       KIM_COMPUTE_ARGUMENT_NAME_energy,            1,                             &energy              ,            1,
       KIM_COMPUTE_ARGUMENT_NAME_End);
   if (error) REPORT_ERROR(__LINE__, __FILE__,"KIM_setm_data",error);
-  error = KIM_Model_set_method(model, KIM_COMPUTE_ARGUMENT_NAME_get_neigh, 1, KIM_COMPUTE_LANGUAGE_NAME_C, (func *) &get_cluster_neigh);
-  if (error) REPORT_ERROR(__LINE__, __FILE__,"KIM_set_method",error);
+  KIM_Model_set_get_neigh(model, KIM_LANGUAGE_NAME_C,
+                          (func *) &get_cluster_neigh);
+  KIM_Model_set_neighObject(model, &nl_cluster_model);
 
   /* call model init routine */
   error = KIM_Model_init(model);
@@ -381,7 +382,7 @@ void fcc_cluster_neighborlist(int allOrOne, int numberOfParticles, double* coord
   return;
 }
 
-int get_cluster_neigh(KIM_Model const * const model,
+int get_cluster_neigh(KIM_Simulator const * const simulator,
                       int const neighborListIndex,
                       int const particleNumber, int * const numberOfNeighbors,
                       int const ** const neighborsOfParticle)
@@ -397,22 +398,16 @@ int get_cluster_neigh(KIM_Model const * const model,
   *numberOfNeighbors = 0;
 
   /* unpack neighbor list object */
-  error = KIM_Model_get_data(model,
-                              KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles,
-                              (void **) &numberOfParticles);
+  error = KIM_Simulator_get_data(simulator,
+                                 KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles,
+                                 (void **) &numberOfParticles);
   if (error)
   {
     KIM_report_error(__LINE__, __FILE__,"KIM_get_data", error);
     return error;
   }
 
-  error = KIM_Model_get_data(model, KIM_COMPUTE_ARGUMENT_NAME_neighObject,
-                              (void **) &nl);
-  if (error)
-  {
-    KIM_report_error(__LINE__, __FILE__,"KIM_get_data", error);
-    return error;
-  }
+  KIM_Simulator_get_neighObject(simulator, (void**) &nl);
 
   if ((particleNumber >= *numberOfParticles) || (particleNumber < 0)) /* invalid id */
   {

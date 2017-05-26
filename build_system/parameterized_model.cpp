@@ -36,12 +36,13 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include "KIM_Model.hpp"
+#include "KIM_Simulator.hpp"
+#include "KIM_Simulator.hpp"
 #include "KIM_Compute.hpp"
 
 extern "C"
 {
-#include "KIM_Model.h"
+#include "KIM_Simulator.h"
 }
 
 #include "old_KIM_API_status.h"
@@ -56,9 +57,16 @@ static int process_paramfiles(char* parameterFileNames, int* nameStringLength);
 
 #if KIM_LINK_VALUE == KIM_LINK_DYNAMIC_LOAD
 static void* driver_lib_handle = NULL;
-static KIM::COMPUTE::LanguageName driver_destroy_lang;
+static KIM::LanguageName driver_destroy_lang;
 static KIM::func * driver_destroy;
 #endif
+
+namespace KIM
+{
+int get_destroy_helper(KIM::Simulator const * const simulator,
+                       KIM::LanguageName * const languageName,
+                       KIM::func ** const destroyFunctionPointer);
+}
 
 extern "C" {
 
@@ -70,35 +78,35 @@ int MODEL_NAME_STR_language = 1;
 #if KIM_LINK_VALUE == KIM_LINK_DYNAMIC_LOAD
 #include <unistd.h>
 #include <dlfcn.h>
-static int model_destroy(KIM::Model * const model);
+static int model_destroy(KIM::Simulator * const simulator);
 #else
 extern int (* MODEL_DRIVER_NAME_STR_init_pointer)(void*, char*, int*, int*);
 #endif
 
 
 #if KIM_LINK_VALUE == KIM_LINK_DYNAMIC_LOAD
-static int model_destroy(KIM::Model * const model) {
-  typedef int (*Driver_Destroy_cpp)(KIM::Model * const model);//prototype for c++
-  typedef int (*Driver_Destroy_c)(KIM_Model * const model);//prototype for c
-  typedef void (*Driver_Destroy_Fortran)(KIM_Model * const model, int * const ierr);//prototype for fortran
+static int model_destroy(KIM::Simulator * const simulator) {
+  typedef int (*Driver_Destroy_cpp)(KIM::Simulator * const simulator);//prototype for c++
+  typedef int (*Driver_Destroy_c)(KIM_Simulator * const simulator);//prototype for c
+  typedef void (*Driver_Destroy_Fortran)(KIM_Simulator * const simulator, int * const ierr);//prototype for fortran
   Driver_Destroy_cpp drvr_destroy_cpp = (Driver_Destroy_cpp) driver_destroy;
   Driver_Destroy_c drvr_destroy_c = (Driver_Destroy_c) driver_destroy;
   Driver_Destroy_Fortran drvr_destroy_fortran = (Driver_Destroy_Fortran) driver_destroy;
   int ier = KIM_STATUS_FAIL;
   //call driver_destroy
   if (drvr_destroy_cpp != NULL) {
-    if(driver_destroy_lang == KIM::COMPUTE::LANGUAGE_NAME::Cpp){
-      ier = (*drvr_destroy_cpp)(model);
+    if(driver_destroy_lang == KIM::LANGUAGE_NAME::Cpp){
+      ier = (*drvr_destroy_cpp)(simulator);
     }
-    else if (driver_destroy_lang == KIM::COMPUTE::LANGUAGE_NAME::C){
-      KIM_Model cModel;
-      cModel.p = (void *) model;
-      ier = (*drvr_destroy_c)(&cModel);
+    else if (driver_destroy_lang == KIM::LANGUAGE_NAME::C){
+      KIM_Simulator cSim;
+      cSim.p = (void *) simulator;
+      ier = (*drvr_destroy_c)(&cSim);
     }
-    else if (driver_destroy_lang == KIM::COMPUTE::LANGUAGE_NAME::Fortran){
-      KIM_Model cModel;
-      cModel.p = (void *) model;
-      (*drvr_destroy_fortran)(&cModel, &ier);
+    else if (driver_destroy_lang == KIM::LANGUAGE_NAME::Fortran){
+      KIM_Simulator cSim;
+      cSim.p = (void *) simulator;
+      (*drvr_destroy_fortran)(&cSim, &ier);
     }
     else {
       std::cout << "* Error (MODEL_NAME_STR_init()):" << std::endl
@@ -113,7 +121,7 @@ static int model_destroy(KIM::Model * const model) {
 }
 #endif
 
-int MODEL_NAME_STR_init(KIM::Model * const model) {
+int MODEL_NAME_STR_init(KIM::Simulator * const simulator) {
   int numparamfiles = NUM_PARAMFILES;
   int nameStringLength;
   char* parameterFileNames = new char[NUM_PARAMFILES*(FL_NAME_LEN)];
@@ -162,11 +170,11 @@ int MODEL_NAME_STR_init(KIM::Model * const model) {
   driver_lang_name << "MODEL_DRIVER_NAME_STR" << "_language";
   int driver_language = * (int*) dlsym(driver_lib_handle,driver_lang_name.str().c_str());
 
-  typedef int (*Driver_Init_cpp)(KIM::Model * const model, char const * const parameterFileNames,
+  typedef int (*Driver_Init_cpp)(KIM::Simulator * const simulator, char const * const parameterFileNames,
                                  int const nameStringLength, int const numberOfParameterFiles);
-  typedef int (*Driver_Init_c)(KIM_Model * const model, char const * const parameterFileNames,
+  typedef int (*Driver_Init_c)(KIM_Simulator * const simulator, char const * const parameterFileNames,
                                int const nameStringLength, int const numberOfParameterFiles);
-  typedef void (*Driver_Init_Fortran)(KIM_Model * const model, char const * const parameterFileNames,
+  typedef void (*Driver_Init_Fortran)(KIM_Simulator * const simulator, char const * const parameterFileNames,
                                       int const nameStringLength, int const numberOfParameterFiles,
                                       int * const ierr);
   Driver_Init_cpp drvr_init_cpp =
@@ -188,19 +196,19 @@ int MODEL_NAME_STR_init(KIM::Model * const model) {
 
   if (driver_language == 1)
   {
-    ier = (*drvr_init_cpp)(model, parameterFileNames_copy, nameStringLength, numparamfiles);
+    ier = (*drvr_init_cpp)(simulator, parameterFileNames_copy, nameStringLength, numparamfiles);
   }
   else if (driver_language == 2)
   {
-    KIM_Model cModel;
-    cModel.p = model;
-    ier = (*drvr_init_c)(&cModel, parameterFileNames_copy, nameStringLength, numparamfiles);
+    KIM_Simulator cSim;
+    cSim.p = simulator;
+    ier = (*drvr_init_c)(&cSim, parameterFileNames_copy, nameStringLength, numparamfiles);
   }
   else if (driver_language == 3)
   {
-    KIM_Model cModel;
-    cModel.p = model;
-    (*drvr_init_fortran)(&cModel, parameterFileNames_copy, nameStringLength, numparamfiles, &ier);
+    KIM_Simulator cSim;
+    cSim.p = simulator;
+    (*drvr_init_fortran)(&cSim, parameterFileNames_copy, nameStringLength, numparamfiles, &ier);
   }
   else
   {
@@ -218,8 +226,8 @@ int MODEL_NAME_STR_init(KIM::Model * const model) {
   parameterFileNames_copy = NULL;
   if (KIM_STATUS_OK > ier) return ier;
 
-  ier = model->get_method(KIM::COMPUTE::ARGUMENT_NAME::destroy, &driver_destroy_lang, (KIM::func **) &driver_destroy);
-  ier = model->set_method(KIM::COMPUTE::ARGUMENT_NAME::destroy, 1, KIM::COMPUTE::LANGUAGE_NAME::Cpp, (KIM::func *) model_destroy);
+  ier = get_destroy_helper(simulator, &driver_destroy_lang, (KIM::func **) &driver_destroy);
+  simulator->set_destroy(KIM::LANGUAGE_NAME::Cpp, (KIM::func *) model_destroy);
 #else
   int ier = (*MODEL_DRIVER_NAME_STR_init_pointer)(km, parameterFileNames_copy,
                                                   &nameStringLength, &numparamfiles);
@@ -236,7 +244,7 @@ int MODEL_NAME_STR_init(KIM::Model * const model) {
 }
 }
 
-int (* MODEL_NAME_STR_init_pointer)(KIM::Model * const model) = MODEL_NAME_STR_init;
+int (* MODEL_NAME_STR_init_pointer)(KIM::Simulator * const simulator) = MODEL_NAME_STR_init;
 
 static int process_paramfiles(char* parameterFileNames, int* nameStringLength)
 {

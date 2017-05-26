@@ -46,7 +46,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#include "KIM_Model.h"
+#include "KIM_Simulator.h"
 #include "KIM_Compute.h"
 #include "KIM_UTILITY_Compute.h"
 #include "KIM_Logger.h"
@@ -62,17 +62,17 @@
 
 
 /* Define prototype for Model Driver init */
-int model_driver_init(KIM_Model * const model,
+int model_driver_init(KIM_Simulator * const simulator,
                       char const * const parameterFileNames,
                       int const nameStringLength,
                       int const numberOfParameterFiles);
 
 /* Define prototypes for destroy */
 /* defined as static to avoid namespace clashes with other codes */
-static int destroy(KIM_Model * const model);
+static int destroy(KIM_Simulator * const simulator);
 
 /* Define prototype for compute routine */
-static int compute(KIM_Model const * const model);
+static int compute(KIM_Simulator const * const simulator);
 
 /* Define prototypes for pair potential calculations */
 static void calc_phi(double const * epsilon,
@@ -158,7 +158,7 @@ static void calc_phi_dphi(double const* epsilon,
 }
 
 /* compute function */
-static int compute(KIM_Model const * const model)
+static int compute(KIM_Simulator const * const simulator)
 {
   /* local variables */
   double R;
@@ -194,7 +194,7 @@ static int compute(KIM_Model const * const model)
   int numOfPartNeigh;
 
   /* get buffer from KIM object */
-  KIM_Model_get_model_buffer(model, (void **) &buffer);
+  KIM_Simulator_get_model_buffer(simulator, (void **) &buffer);
 
   /* unpack info from the buffer */
   cutoff = buffer->influenceDistance;
@@ -207,7 +207,7 @@ static int compute(KIM_Model const * const model)
   /* check to see if we have been asked to compute the forces, */
   /* particleEnergy, and d1Edr */
   ier = KIM_UTILITY_COMPUTE_getm_compute(
-      model,
+      simulator,
       KIM_COMPUTE_ARGUMENT_NAME_energy,         &comp_energy,         1,
       KIM_COMPUTE_ARGUMENT_NAME_forces,         &comp_force,          1,
       KIM_COMPUTE_ARGUMENT_NAME_particleEnergy, &comp_particleEnergy, 1,
@@ -219,7 +219,7 @@ static int compute(KIM_Model const * const model)
   }
 
   ier = KIM_UTILITY_COMPUTE_getm_data(
-      model,
+      simulator,
       KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles, &nParts,         1,
       KIM_COMPUTE_ARGUMENT_NAME_particleSpecies,   &particleSpecies,1,
       KIM_COMPUTE_ARGUMENT_NAME_particleContributing, &particleContributing,1,
@@ -279,8 +279,8 @@ static int compute(KIM_Model const * const model)
   {
     if (particleContributing[i])
     {
-      ier = KIM_Model_get_neigh(model, 0, i, &numOfPartNeigh,
-                                &neighListOfCurrentPart);
+      ier = KIM_Simulator_get_neigh(simulator, 0, i, &numOfPartNeigh,
+                                    &neighListOfCurrentPart);
       if (ier)
       {
         /* some sort of problem, exit */
@@ -361,7 +361,7 @@ static int compute(KIM_Model const * const model)
 }
 
 /* Initialization function */
-int model_driver_init(KIM_Model * const model,
+int model_driver_init(KIM_Simulator * const simulator,
                       char const * const parameterFileNames,
                       int const nameStringLength,
                       int const numberOfParameterFiles)
@@ -390,16 +390,9 @@ int model_driver_init(KIM_Model * const model,
   paramfile1name = parameterFileNames;
 
   /* store pointer to functions in KIM object */
-  ier = KIM_UTILITY_COMPUTE_setm_method(
-      model,
-      KIM_COMPUTE_ARGUMENT_NAME_compute, 1, KIM_COMPUTE_LANGUAGE_NAME_C, compute, 1,
-      KIM_COMPUTE_ARGUMENT_NAME_destroy, 1, KIM_COMPUTE_LANGUAGE_NAME_C, destroy, 1,
-      KIM_COMPUTE_ARGUMENT_NAME_End);
-  if (ier)
-  {
-    KIM_report_error(__LINE__, __FILE__, "KIM_setm_data", ier);
-    return ier;
-  }
+  KIM_Simulator_set_destroy(simulator, KIM_LANGUAGE_NAME_C, (func *) destroy);
+  KIM_Simulator_set_compute_func(simulator, KIM_LANGUAGE_NAME_C,
+                                 (func *) compute);
 
   /* Read in model parameters from parameter file */
   fid = fopen(paramfile1name, "r");
@@ -458,24 +451,24 @@ int model_driver_init(KIM_Model * const model,
   /* end setup buffer */
 
   /* store in model buffer */
-  KIM_Model_set_model_buffer(model, (void*) buffer);
+  KIM_Simulator_set_model_buffer(simulator, (void*) buffer);
 
   /* store model cutoff in KIM object */
-  KIM_Model_set_influence_distance(model, &(buffer->influenceDistance));
-  KIM_Model_set_cutoffs(model, 1, &(buffer->influenceDistance));
+  KIM_Simulator_set_influence_distance(simulator, &(buffer->influenceDistance));
+  KIM_Simulator_set_cutoffs(simulator, 1, &(buffer->influenceDistance));
 
   return FALSE;
 }
 
 /* destroy function */
-static int destroy(KIM_Model * const model)
+static int destroy(KIM_Simulator * const simulator)
 {
   /* Local variables */
   struct model_buffer* buffer;
   int ier;
 
   /* get model buffer from KIM object */
-  KIM_Model_get_model_buffer(model, (void **) &buffer);
+  KIM_Simulator_get_model_buffer(simulator, (void **) &buffer);
 
   /* free the buffer */
   free(buffer);

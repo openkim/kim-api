@@ -38,9 +38,14 @@
 
 #include <stdarg.h>
 
+#ifndef KIM_LANGUAGE_NAME_H_
+#include "KIM_LanguageName.h"
+#endif
 
+#ifndef KIM_FUNC_DEFINED_
+#define KIM_FUNC_DEFINED_
 typedef void (func)();
-
+#endif
 
 /* Forward declarations */
 struct KIM_SpeciesName;
@@ -85,12 +90,6 @@ struct KIM_COMPUTE_ArgumentName;
 typedef struct KIM_COMPUTE_ArgumentName KIM_COMPUTE_ArgumentName;
 #endif
 
-struct KIM_COMPUTE_LanguageName;
-#ifndef KIM_COMPUTE_LANGUAGE_NAME_DEFINED_
-#define KIM_COMPUTE_LANGUAGE_NAME_DEFINED_
-typedef struct KIM_COMPUTE_LanguageName KIM_COMPUTE_LanguageName;
-#endif
-
 struct KIM_Model {
   void * p;
 };
@@ -107,42 +106,32 @@ void KIM_Model_destroy(KIM_Model ** const model);
 
 void KIM_Model_get_influence_distance(KIM_Model const * const model,
                                       double * const influenceDistance);
-void KIM_Model_set_influence_distance(KIM_Model * const model,
-                                      double * const influenceDistance);
 
 void KIM_Model_get_cutoffs(KIM_Model const * const model,
                            int * const numberOfCutoffs,
                            double const ** const cutoffs);
-void KIM_Model_set_cutoffs(KIM_Model * const model, int const numberOfCutoffs,
-                           double const * const cutoffs);
-/* @@@ should set_cutoffs copy cutoffs values or just store pointer? (currently
-   store pointer) */
 
 
 /* *data functions */
-int KIM_Model_get_data(KIM_Model const * const model,
-                       KIM_COMPUTE_ArgumentName const argumentName,
-                       void ** const ptr);
 int KIM_Model_set_data(KIM_Model * const model,
                        KIM_COMPUTE_ArgumentName const argumentName,
                        int const extent,
                        void const * const ptr);
 
 /* *method functions */
-int KIM_Model_get_method(KIM_Model const * const model,
-                         KIM_COMPUTE_ArgumentName const argumentName,
-                         KIM_COMPUTE_LanguageName * const languageName,
-                         func ** const fptr);
 int KIM_Model_set_method(KIM_Model * const model,
                          KIM_COMPUTE_ArgumentName const argumentName,
                          int const extent,
-                         KIM_COMPUTE_LanguageName const languageName,
+                         KIM_LanguageName const languageName,
                          func * const fptr);
 
+void KIM_Model_set_get_neigh(KIM_Model * const model,
+                             KIM_LanguageName const languageName,
+                             func * const fptr);
+void KIM_Model_set_neighObject(KIM_Model * const model,
+                               void const * const ptr);
+
 /* *compute functions */
-int KIM_Model_get_compute(KIM_Model const * const model,
-                          KIM_COMPUTE_ArgumentName const argumentName,
-                          int * const flag);
 int KIM_Model_set_compute(KIM_Model * const model,
                           KIM_COMPUTE_ArgumentName const argumentName,
                           int flag);
@@ -154,11 +143,6 @@ int KIM_Model_get_size(KIM_Model const * const model,
 void KIM_Model_print(KIM_Model const * const model);
 
 int KIM_Model_compute(KIM_Model const * const model);
-int KIM_Model_get_neigh(KIM_Model const * const model,
-                        int const neighborListIndex,
-                        int const particleNumber,
-                        int * const numberOfNeighbors,
-                        int const ** const neighborsOfParticle);
 int KIM_Model_init(KIM_Model * const model);
 int KIM_Model_reinit(KIM_Model * const model);
 int KIM_Model_destroy_model(KIM_Model * const model);
@@ -169,10 +153,6 @@ int KIM_Model_get_model_species(KIM_Model const * const model, int const index,
                                 KIM_SpeciesName * const speciesName);
 
 /* @@@ these will go away */
-void KIM_Model_get_num_sim_species(KIM_Model const * const model,
-                                   int * const numberOfSpecies);
-int KIM_Model_get_sim_species(KIM_Model const * const model, int const index,
-                              KIM_SpeciesName * const speciesName);
 int KIM_Model_get_model_kim_string_length(char const * const modelName,
                                           int * const kimStringLength);
 int KIM_Model_get_model_kim_string(char const * const modelName,
@@ -182,10 +162,6 @@ int KIM_Model_get_model_kim_string(char const * const modelName,
 int KIM_Model_get_species_code(KIM_Model const * const model,
                                KIM_SpeciesName const speciesName,
                                int * const code);
-/* @@@ do we keep this mechanism, make it mandatory, or remove? */
-int KIM_Model_set_species_code(KIM_Model * const model,
-                               KIM_SpeciesName const speciesName,
-                               int const code);
 
 void KIM_Model_get_num_params(KIM_Model const * const model,
                               int * const numberOfParameters);
@@ -194,54 +170,11 @@ int KIM_Model_get_parameter_data_type(KIM_Model const * const model,
                                       KIM_ParameterDataType * const dataType);
 int KIM_Model_get_parameter(KIM_Model * const model, int const index,
                             int * const extent, void ** const ptr);
-int KIM_Model_set_parameter(KIM_Model * const model, int const index,
-                            int const extent, void * const ptr);
 int KIM_Model_get_parameter_description(KIM_Model const * const model,
                                         int const index,
                                         char const ** const description);
-int KIM_Model_set_parameter_description(KIM_Model * const model,
-                                        int const index,
-                                        char const * const description);
 
-void KIM_Model_set_model_buffer(KIM_Model * const model,
-                                void const * const ptr);
-void KIM_Model_get_model_buffer(KIM_Model const * const model,
-                                void ** const ptr);
 void KIM_Model_set_sim_buffer(KIM_Model * const model, void const * const ptr);
 void KIM_Model_get_sim_buffer(KIM_Model const * const model, void ** const ptr);
-
-int KIM_Model_process_dEdr(KIM_Model const * const model, double const de,
-                           double const r, double const * const dx, int const i,
-                           int const j);
-
-int KIM_Model_process_d2Edr2(KIM_Model const * const model, double const de,
-                             double const * const r, double const * const dx,
-                             int const * const i, int const * const j);
-
-/* Unit_Handling related routines */
-int KIM_Model_get_unit_handling(KIM_Model const * const model,
-                                int * const flag);
-void KIM_Model_get_unit_length(KIM_Model const * const model,
-                               KIM_LengthUnit * const length);
-void KIM_Model_get_unit_energy(KIM_Model const * const model,
-                               KIM_EnergyUnit * const energy);
-void KIM_Model_get_unit_charge(KIM_Model const * const model,
-                               KIM_ChargeUnit * const charge);
-void KIM_Model_get_unit_temperature(KIM_Model const * const model,
-                                    KIM_TemperatureUnit * const temperature);
-void KIM_Model_get_unit_time(KIM_Model const * const model,
-                             KIM_TimeUnit * const time);
-int KIM_Model_convert_to_act_unit(KIM_Model const * const model,
-                                  KIM_LengthUnit const length,
-                                  KIM_EnergyUnit const energy,
-                                  KIM_ChargeUnit const charge,
-                                  KIM_TemperatureUnit const temperature,
-                                  KIM_TimeUnit const time,
-                                  double const length_exponent,
-                                  double const energy_exponent,
-                                  double const charge_exponent,
-                                  double const temperature_exponent,
-                                  double const time_exponent,
-                                  double * const factor);
 
 #endif  /* KIM_MODEL_H_ */

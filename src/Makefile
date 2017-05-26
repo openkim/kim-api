@@ -44,14 +44,15 @@ endif
 
 
 # Definition of c and fortran .o file list
-OBJC = KIM_Logger.o KIM_Logger_c.o KIM_SpeciesName.o KIM_SpeciesName_c.o KIM_Parameter.o KIM_Parameter_c.o KIM_Compute.o KIM_UTILITY_Compute.o KIM_Compute_c.o KIM_UTILITY_Compute_c.o KIM_Model.o KIM_Model_c.o KIM_UnitSystem.o KIM_UnitSystem_c.o KIM_semver.o KIM_semver_c.o old_KIM_API.o old_KIM_API_C.o $(KIM_STR_NAME).o old_Unit_Handling.o
-OBJF03 = kim_model_f.o kim_logger_f.o kim_utility_compute_module.o
+OBJCPP = KIM_LanguageName.o KIM_Logger.o KIM_SpeciesName.o KIM_Parameter.o KIM_Compute.o KIM_UTILITY_Compute.o KIM_Model.o KIM_Simulator.o KIM_UnitSystem.o KIM_semver.o old_KIM_API.o $(KIM_STR_NAME).o old_Unit_Handling.o
+OBJC = KIM_LanguageName_c.o KIM_Logger_c.o KIM_SpeciesName_c.o KIM_Parameter_c.o KIM_Compute_c.o KIM_UTILITY_Compute_c.o KIM_Model_c.o KIM_Simulator_c.o KIM_UnitSystem_c.o KIM_semver_c.o old_KIM_API_C.o
+OBJF03 = kim_logger_f.o kim_utility_compute_module.o kim_model_f.o kim_simulator_f.o
 
 #fortran on/of
 ifdef KIM_NO_FORTRAN
-   ALLOBJ = $(OBJC)
+   ALLOBJ = $(OBJCPP) $(OBJC)
 else
-   ALLOBJ = $(OBJC) $(OBJF03)
+   ALLOBJ = $(OBJCPP) $(OBJC) $(OBJF03)
 endif
 
 # Set defines
@@ -142,24 +143,30 @@ old_KIM_API_Version.h: old_KIM_API_Version.h.tpl $(KIM_MAKE_FILES)
 %.h:
 	@touch $@
 
+KIM_LanguageName.o: KIM_LanguageName.hpp KIM_LanguageName.cpp $(KIM_MAKE_FILES)
 KIM_Logger.o: KIM_Logger.hpp KIM_Logger.cpp old_KIM_API.o $(KIM_MAKE_FILES)
 KIM_SpeciesName.o: KIM_SpeciesName.hpp KIM_SpeciesName.cpp $(KIM_MAKE_FILES)
 KIM_Parameter.o: KIM_Parameter.hpp KIM_Parameter.cpp $(KIM_MAKE_FILES)
 KIM_UnitSystem.o: KIM_UnitSystem.hpp KIM_UnitSystem.cpp old_KIM_API.o $(KIM_MAKE_FILES)
 KIM_Compute.o: KIM_Compute.hpp KIM_Compute.cpp $(KIM_MAKE_FILES)
 KIM_Model.o: KIM_Model.hpp KIM_Model.cpp old_KIM_API.o $(KIM_MAKE_FILES)
+KIM_Simulator.o: KIM_Simulator.hpp KIM_Simulator.cpp old_KIM_API.o $(KIM_MAKE_FILES)
 KIM_UTILITYCompute.o: KIM_UTILITY_Compute.hpp KIM_UTILITY_Compute.cpp $(KIM_MAKE_FILES)
 KIM_semver.o: KIM_semver.hpp KIM_semver.cpp old_KIM_API.o $(KIM_MAKE_FILES)
 
+KIM_LanguageName_c.o: KIM_LanguageName.h KIM_LanguageName_c.c $(KIM_MAKE_FILES)
 KIM_Logger_c.o: KIM_Logger.h KIM_Logger_c.cpp old_KIM_API.o $(KIM_MAKE_FILES)
 KIM_SpeciesName_c.o: KIM_SpeciesName.h KIM_SpeciesName_c.c $(KIM_MAKE_FILES)
 KIM_Parameter_c.o: KIM_Parameter.h KIM_Parameter_c.c $(KIM_MAKE_FILES)
 KIM_UnitSystem_c.o: KIM_UnitSystem.h KIM_UnitSystem_c.c old_KIM_API.o $(KIM_MAKE_FILES)
 KIM_Compute_c.o: KIM_Compute.h KIM_Compute_c.c $(KIM_MAKE_FILES)
 KIM_Model_c.o: KIM_Model.h KIM_Model_c.cpp old_KIM_API.o $(KIM_MAKE_FILES)
+KIM_Simulator_c.o: KIM_Simulator.h KIM_Simulator_c.cpp old_KIM_API.o $(KIM_MAKE_FILES)
 KIM_UTILITY_Compute_c.o: KIM_UTILITY_Compute.h KIM_UTILITY_Compute_c.c $(KIM_MAKE_FILES)
 KIM_semver_c.o: KIM_semver.h KIM_semver_c.cpp old_KIM_API.o $(KIM_MAKE_FILES)
 
+kim_language_name_id_module.mod: kim_language_name_id_module.f90
+kim_language_name_module.mod: kim_language_name_id_module.mod kim_language_name_module.f90
 kim_logger_module.mod: kim_logger_module.f90
 kim_logger_f.o: kim_logger_module.mod kim_logger_f.f90
 kim_species_id_module.mod: kim_species_id_module.f90
@@ -170,12 +177,14 @@ kim_unit_system_id_module.mod: kim_unit_system_id_module.f90
 kim_unit_system_module.mod: kim_unit_system_id_module.mod kim_unit_system_module.f90
 kim_compute_id_module.mod: kim_compute_id_module.f90
 kim_compute_module.mod: kim_compute_id_module.mod kim_compute_module.f90
-kim_model_module.mod: kim_compute_module.mod kim_species_name_module.mod kim_parameter_module.mod kim_unit_system_module.mod kim_model_module.f90
+kim_model_module.mod: kim_language_name_module.mod kim_compute_module.mod kim_species_name_module.mod kim_parameter_module.mod kim_unit_system_module.mod kim_model_module.f90
+kim_simulator_module.mod: kim_language_name_module.mod kim_compute_module.mod kim_species_name_module.mod kim_parameter_module.mod kim_unit_system_module.mod kim_simulator_module.f90
 kim_utility_compute_module.mod: kim_model_module.mod kim_compute_module.mod kim_utility_compute_module.f90
 kim_semver_module.mod: kim_semver_module.f90
 kim_model_f.o: kim_model_module.mod kim_model_f.f90
-kim_utility_compute_module.mod: kim_compute_module.mod kim_model_module.mod kim_utility_compute_module.f90
-kim_utility_compute_module.o: kim_compute_module.mod kim_model_module.mod kim_utility_compute_module.f90
+kim_simulator_f.o: kim_simulator_module.mod kim_simulator_f.f90
+kim_utility_compute_module.mod: kim_compute_module.mod kim_model_module.mod kim_simulator_module.mod kim_utility_compute_module.f90
+kim_utility_compute_module.o: kim_compute_module.mod kim_model_module.mod kim_simulator_module.mod kim_utility_compute_module.f90
 
 .INTERMEDIATE: kim_utility_compute_module.f90
 kim_utility_compute_module.f90: scripts/CreateGetSetMultipleRoutines.sh

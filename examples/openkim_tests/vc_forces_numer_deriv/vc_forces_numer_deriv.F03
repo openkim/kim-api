@@ -50,7 +50,7 @@ module mod_neighborlist
 
   use, intrinsic :: iso_c_binding
 
-  public setup_neighborlist_KIM_access, get_neigh
+  public get_neigh
 
   type neighObject_type
      integer(c_int), pointer :: neighborList(:,:)
@@ -60,61 +60,19 @@ contains
 
 !-------------------------------------------------------------------------------
 !
-! setup_neighborlist_KIM_access :
-!
-!    Store necessary pointers in KIM API object to access the neighbor list
-!    data and methods.
-!
-!-------------------------------------------------------------------------------
-  subroutine setup_neighborlist_KIM_access(model, neighObject)
-  use kim_model_module
-  use kim_compute_module
-  implicit none
-
-  !-- Transferred variables
-  type(kim_model_type), intent(inout) :: model
-  type(neighObject_type), target, intent(in) :: neighObject
-
-  !-- Local variables
-  integer(c_int)            :: ierr
-
-  ! store location of neighObject variable
-  !
-  call kim_model_set_data(model, &
-    kim_compute_argument_name_neigh_object, 1, c_loc(neighObject), ierr)
-  if (ierr /= 0) then
-     call kim_report_error(__LINE__, THIS_FILE_NAME, &
-                                 "kim_api_set_data", ierr)
-     stop
-  endif
-  call kim_model_set_method(model, &
-    kim_compute_argument_name_get_neigh, 1, &
-    kim_compute_language_name_fortran, c_funloc(get_neigh), ierr)
-  if (ierr /= 0) then
-     call kim_report_error(__LINE__, THIS_FILE_NAME, &
-                                 "kim_api_set_method", ierr)
-     stop
-  endif
-
-  return
-
-end subroutine setup_neighborlist_KIM_access
-
-!-------------------------------------------------------------------------------
-!
 ! get_neigh neighbor list access function
 !
 ! This function implements Locator and Iterator mode
 !
 !-------------------------------------------------------------------------------
-subroutine get_neigh(model, neighbor_list_index, request, numnei, pnei1part, &
-  ierr) bind(c)
-  use kim_model_module
+subroutine get_neigh(simulator, neighbor_list_index, request, numnei, &
+  pnei1part, ierr) bind(c)
+  use kim_simulator_module
   use kim_compute_module
   implicit none
 
   !-- Transferred variables
-  type(kim_model_type), intent(in) :: model
+  type(kim_simulator_type), intent(in) :: simulator
   integer(c_int), value, intent(in) :: neighbor_list_index
   integer(c_int), value, intent(in)  :: request
   integer(c_int),        intent(out) :: numnei
@@ -132,7 +90,7 @@ subroutine get_neigh(model, neighbor_list_index, request, numnei, pnei1part, &
   endif
 
   ! unpack number of particles
-  call kim_model_get_data(model, &
+  call kim_simulator_get_data(simulator, &
     kim_compute_argument_name_number_of_particles, pnparts, ierr)
   if (ierr /= 0) then
      call kim_report_error(__LINE__, THIS_FILE_NAME, &
@@ -142,13 +100,7 @@ subroutine get_neigh(model, neighbor_list_index, request, numnei, pnei1part, &
   call c_f_pointer(pnParts, numberOfParticles)
 
   ! unpack neighbor list object
-  call kim_model_get_data(model, &
-    kim_compute_argument_name_neigh_object, pneighobject, ierr)
-  if (ierr /= 0) then
-     call kim_report_error(__LINE__, THIS_FILE_NAME, &
-                                 "kim_api_get_data", ierr)
-     stop
-  endif
+  call kim_simulator_get_neigh_object(simulator, pneighobject)
   call c_f_pointer(pneighObject, neighObject)
 
   N = size(neighObject%neighborList, 2)
@@ -339,24 +291,12 @@ program vc_forces_numer_deriv
   ! store pointers to neighbor list object and access function
   !
   allocate(neighObject%neighborList(N+1,N))
-  call kim_model_set_data(model, kim_compute_argument_name_neigh_object, &
-    1, c_loc(neighobject), ierr)
-  if (ierr /= 0) then
-    call kim_report_error(__LINE__, THIS_FILE_NAME, &
-      "kim_api_set_data", ierr)
-    stop
-  endif
+  call kim_model_set_neigh_object(model, c_loc(neighobject))
 
   ! Set pointer in KIM object to neighbor list routine
   !
-  call kim_model_set_method(model, &
-    kim_compute_argument_name_get_neigh, 1, &
-    kim_compute_language_name_fortran, c_funloc(get_neigh), ierr)
-  if (ierr /= 0) then
-    call kim_report_error(__LINE__, THIS_FILE_NAME, &
-                                "kim_api_set_method", ierr)
-    stop
-  endif
+  call kim_model_set_get_neigh(model, kim_language_name_fortran, &
+    c_funloc(get_neigh))
 
   ! Initialize Model
   !
@@ -444,7 +384,7 @@ program vc_forces_numer_deriv
   do I=1,N
      do J=1,DIM
         call compute_numer_deriv(I,J,model,DIM,N,coords,cutoff,cutpad,   &
-                                 do_update_list, &
+                                 energy, do_update_list, &
                                  coordsave,neighObject,deriv,deriv_err,ierr)
         if (ierr /= 0) then
            call kim_report_error(__LINE__, THIS_FILE_NAME, &
@@ -1269,7 +1209,7 @@ subroutine create_FCC_configuration(FCCspacing, nCellsPerSide, periodic, &
 end subroutine create_FCC_configuration
 
 subroutine compute_numer_deriv(partnum,dir,model,DIM,N,coords,cutoff,cutpad,   &
-                               do_update_list,      &
+                               energy, do_update_list,      &
                                coordsave,neighObject,deriv,deriv_err,ierr)
 use, intrinsic :: iso_c_binding
 use kim_model_module
@@ -1287,6 +1227,7 @@ integer(c_int),         intent(in)    :: N
 real(c_double),         intent(inout) :: coords(DIM,N)
 real(c_double),         intent(in)    :: cutoff
 real(c_double),         intent(in)    :: cutpad
+real(c_double),         intent(inout) :: energy
 logical,                intent(inout) :: do_update_list
 real(c_double),         intent(inout) :: coordsave(DIM,N)
 type(neighObject_type), intent(inout) :: neighObject
@@ -1300,24 +1241,10 @@ integer(c_int), parameter :: number_eps_levels = 15
 real(c_double)  eps, deriv_last, deriv_err_last
 integer(c_int)  i
 
-!-- KIM variables
-real(c_double), pointer :: energy; type(c_ptr) :: penergy
-
 ! Initialize error flag
 ierr = 0
 
 deriv_last = 0.0_cd ! initialize
-
-! Unpack data from KIM object
-!
-call kim_model_get_data(model, &
-  kim_compute_argument_name_energy, penergy, ierr)
-if (ierr /= 0) then
-   call kim_report_error(__LINE__, THIS_FILE_NAME, &
-                              "kim_api_get_data", ierr)
-   stop
-endif
-call c_f_pointer(penergy, energy)
 
 ! Outer loop of Ridders' method for computing numerical derivative
 !

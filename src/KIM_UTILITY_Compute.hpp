@@ -40,6 +40,7 @@ namespace KIM
 {
 
 class Model;
+class Simulator;
 
 namespace COMPUTE
 {
@@ -51,9 +52,9 @@ namespace UTILITY  // @@@ rename (to shorten) for consistency with C?
 namespace COMPUTE
 {
 
-int getm_data(Model const * const model,
+int getm_data(Simulator const * const simulator,
               KIM::COMPUTE::ArgumentName const argumentName, ...);
-int vgetm_data(Model const * const model,
+int vgetm_data(Simulator const * const simulator,
                KIM::COMPUTE::ArgumentName const argumentName, va_list argp);
 
 int setm_data(Model * const model,
@@ -62,19 +63,14 @@ int vsetm_data(Model * const model,
                KIM::COMPUTE::ArgumentName const argumentName, va_list argp);
 
 
-int getm_method(Model const * const model,
-                KIM::COMPUTE::ArgumentName const argumentName, ...);
-int vgetm_method(Model const * const model,
-                 KIM::COMPUTE::ArgumentName const argumentName, va_list argp);
-
 int setm_method(Model * const model,
                 KIM::COMPUTE::ArgumentName const argumentName, ...);
 int vsetm_method(Model * const model,
                  KIM::COMPUTE::ArgumentName const argumentName, va_list argp);
 
-int getm_compute(Model const * const model,
+int getm_compute(Simulator const * const simulator,
                  KIM::COMPUTE::ArgumentName const argumentName, ...);
-int vgetm_compute(Model const * const model,
+int vgetm_compute(Simulator const * const simulator,
                   KIM::COMPUTE::ArgumentName const argumentName, va_list argp);
 
 int setm_compute(Model * const model,

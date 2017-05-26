@@ -31,11 +31,11 @@
 #ifndef LENNARD_JONES_612_HPP_
 #define LENNARD_JONES_612_HPP_
 
-#include "KIM_Model.hpp"
+#include "KIM_Simulator.hpp"
 
 extern "C"
 {
-int model_driver_init(KIM::Model * const model,
+int model_driver_init(KIM::Simulator * const simulator,
                       char const * const paramfile_names, int const nmstrlen,
                       int const numparamfiles);
 }
@@ -45,7 +45,7 @@ class LennardJones612Implementation;
 class LennardJones612
 {
  public:
-  LennardJones612(KIM::Model* const model,
+  LennardJones612(KIM::Simulator* const simulator,
                   char const* const parameterFileNames,
                   int const parameterFileNameLength,
                   int const numberParameterFiles,
@@ -55,9 +55,9 @@ class LennardJones612
   // no need to make these "extern" since KIM will only access them
   // via function pointers.  "static" is required so that there is not
   // an implicit this pointer added to the prototype by the C++ compiler
-  static int Destroy(KIM::Model * const model);
-  static int Reinit(KIM::Model * const model);
-  static int Compute(KIM::Model const * const model);
+  static int Destroy(KIM::Simulator * const simulator);
+  static int Reinit(KIM::Simulator * const simulator);
+  static int Compute(KIM::Simulator const * const simulator);
 
  private:
   LennardJones612Implementation* implementation_;

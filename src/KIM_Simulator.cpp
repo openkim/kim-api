@@ -38,8 +38,8 @@
 #include "KIM_Parameter.hpp"
 #endif
 
-#ifndef KIM_MODEL_HPP_
-#include "KIM_Model.hpp"
+#ifndef KIM_SIMULATOR_HPP_
+#include "KIM_SIMULATOR.hpp"
 #endif
 
 #ifndef KIM_COMPUTE_HPP_
@@ -379,64 +379,155 @@ SpeciesName speciesCpp(std::string speciesName)
   else if (speciesName == "user20") return SPECIES_NAME::user20;
   else return SPECIES_NAME::End;
 }
+
+char const * const lengthUnitString(LengthUnit const length)
+{
+  if (length == UNITS::A) return "A";
+  else if (length == UNITS::Bohr) return "Bohr";
+  else if (length == UNITS::cm) return "cm";
+  else if (length == UNITS::m) return "m";
+  else if (length == UNITS::nm) return "nm";
+  else return "";
+}
+
+LengthUnit lengthUnitCpp(std::string const length)
+{
+  if (length == "A") return UNITS::A;
+  else if (length == "Bohr") return UNITS::Bohr;
+  else if (length == "cm") return UNITS::cm;
+  else if (length == "m") return UNITS::m;
+  else if (length == "nm") return UNITS::nm;
+  else return LengthUnit(-1);
+}
+
+char const * const energyUnitString(EnergyUnit const energy)
+{
+  if (energy == UNITS::amu_A2_per_ps2) return "amu*A^2/(ps)^2";
+  else if (energy == UNITS::erg) return "erg";
+  else if (energy == UNITS::eV) return "eV";
+  else if (energy == UNITS::Hartree) return "Hartree";
+  else if (energy == UNITS::J) return "J";
+  else if (energy == UNITS::kcal_mol) return "kcal_mol";
+  else return "";
+}
+
+EnergyUnit energyUnitCpp(std::string const energy)
+{
+  if (energy == "amu*A^2/(ps)^2") return UNITS::amu_A2_per_ps2;
+  else if (energy == "erg") return UNITS::erg;
+  else if (energy == "eV") return UNITS::eV;
+  else if (energy == "Hartree") return UNITS::Hartree;
+  else if (energy == "J") return UNITS::J;
+  else if (energy == "kcal_mol") return UNITS::kcal_mol;
+  else return EnergyUnit(-1);
+}
+
+char const * const chargeUnitString(ChargeUnit const charge)
+{
+  if (charge == UNITS::C) return "C";
+  else if (charge == UNITS::e) return "e";
+  else if (charge == UNITS::statC) return "statC";
+  else return "";
+}
+
+ChargeUnit chargeUnitCpp(std::string const charge)
+{
+  if (charge == "C") return UNITS::C;
+  else if (charge == "e") return UNITS::e;
+  else if (charge == "statC") return UNITS::statC;
+  else return ChargeUnit(-1);
+}
+
+char const * const temperatureUnitString(TemperatureUnit const temperature)
+{
+  if (temperature == UNITS::K) return "K";
+  else return "";
+}
+
+TemperatureUnit temperatureUnitCpp(std::string const temperature)
+{
+  if (temperature == "K") return UNITS::K;
+  else return TemperatureUnit(-1);
+}
+
+char const * const timeUnitString(TimeUnit const time)
+{
+  if (time == UNITS::fs) return "fs";
+  else if (time == UNITS::ps) return "ps";
+  else if (time == UNITS::ns) return "ns";
+  else if (time == UNITS::s) return "s";
+  else return "";
+}
+
+TimeUnit timeUnitCpp(std::string const time)
+{
+  if (time == "fs") return UNITS::fs;
+  else if (time == "ps") return UNITS::ps;
+  else if (time == "ns") return UNITS::ns;
+  else if (time == "s") return UNITS::s;
+  else return TimeUnit(-1);
+}
+
+class circumvent
+{
+ public:
+  void * pimpl;
+};
 }  // namesapce
 
 
-int Model::create(std::string const & simulatorString,
-                  std::string const & modelName,
-                  Model ** const model)
+int get_destroy_helper(Simulator const * const simulator,
+                       LanguageName * const languageName,
+                       func ** const destroyFunctionPointer)
 {
-  OLD_KIM::KIM_API_model * mdl;
-  mdl = new OLD_KIM::KIM_API_model();
+  circumvent* cir = (circumvent *) simulator;
+  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) cir->pimpl;
 
-  Model * pModel = new Model();
-  pModel->pimpl = (ModelImplementation *) mdl;
-  *model = pModel;
-  int err = mdl->string_init(simulatorString.c_str(), modelName.c_str());
+  int err;
+  int langN;
+  *destroyFunctionPointer
+      = pKIM->get_method("destroy", &langN, &err);
+  if (langN == 1)
+    *languageName = KIM::LANGUAGE_NAME::Cpp;
+  else if (langN == 2)
+    *languageName = KIM::LANGUAGE_NAME::C;
+  else if (langN == 3)
+    *languageName = KIM::LANGUAGE_NAME::Fortran;
   return (err < KIM_STATUS_OK);
 }
 
-void Model::destroy(Model ** const model)
-{
-  delete (OLD_KIM::KIM_API_model *) (*model)->pimpl;
-
-  delete (*model);
-
-  *model = 0;
-}
-
-void Model::get_influence_distance(double * const influenceDistance) const
+void Simulator::set_influence_distance(double * const influenceDistance)
 {
   OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
-  *influenceDistance = *(pKIM->influenceDistance);
+  pKIM->influenceDistance = influenceDistance;
 }
 
-void Model::get_cutoffs(int * const numberOfCutoffs, double const ** cutoffs)
-    const
+void Simulator::set_cutoffs(int const numberOfCutoffs, double const * const cutoffs)
 {
   OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
 
-  *numberOfCutoffs = pKIM->numberOfCutoffs;
-  if (cutoffs != NULL)
-    *cutoffs = pKIM->cutoffs;
+  pKIM->numberOfCutoffs = numberOfCutoffs;
+  delete [] pKIM->cutoffs;
+  pKIM->cutoffs = new double[numberOfCutoffs];
+  for (int i=0; i<numberOfCutoffs; ++i)
+    pKIM->cutoffs[i] = cutoffs[i];
 }
 
-int Model::set_data(COMPUTE::ArgumentName const argumentName,
-                    int const extent, void const * const ptr)
+// *data functions
+int Simulator::get_data(COMPUTE::ArgumentName const argumentName,
+                        void ** const ptr) const
 {
   OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
 
-  int err = pKIM->set_data(argumentString(argumentName), (intptr_t) extent,
-                           (void *) ptr);
+  int err;
+  *ptr = pKIM->get_data(argumentString(argumentName), &err);
   return (err < KIM_STATUS_OK);
 }
 
 
 // *method functions
-int Model::set_method(COMPUTE::ArgumentName const argumentName,
-                      int const extent,
-                      LanguageName const languageName,
-                      func * const fptr)
+void Simulator::set_reinit(LanguageName const languageName,
+                           func * const fptr)
 {
   OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
   int langN;
@@ -447,13 +538,12 @@ int Model::set_method(COMPUTE::ArgumentName const argumentName,
   else  // Fortran
     langN = 3;
 
-  int err = pKIM->set_method(argumentString(argumentName), (intptr_t) extent,
-                             langN, (func *) fptr);
-  return (err < KIM_STATUS_OK);
+  pKIM->set_method("reinit", (intptr_t) 1, langN, (func *) fptr);
+  //return (err < KIM_STATUS_OK);
 }
 
-void Model::set_get_neigh(LanguageName const languageName,
-                          func * const fptr)
+void Simulator::set_destroy(LanguageName const languageName,
+                            func * const fptr)
 {
   OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
   int langN;
@@ -464,31 +554,39 @@ void Model::set_get_neigh(LanguageName const languageName,
   else  // Fortran
     langN = 3;
 
-  pKIM->set_method("get_neigh", (intptr_t) 1, langN, (func *) fptr);
+  pKIM->set_method("destroy", (intptr_t) 1, langN, (func *) fptr);
   //return (err < KIM_STATUS_OK);
 }
 
-void Model::set_neighObject(void const * const ptr)
+void Simulator::set_compute_func(LanguageName const languageName,
+                                 func * const fptr)
 {
   OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
+  int langN;
+  if (languageName == KIM::LANGUAGE_NAME::Cpp)
+    langN = 1;
+  else if (languageName == KIM::LANGUAGE_NAME::C)
+    langN = 2;
+  else  // Fortran
+    langN = 3;
 
-  pKIM->set_data("neighObject", (intptr_t) 1, (void *) ptr);
+  pKIM->set_method("compute", (intptr_t) 1, langN, (func *) fptr);
   //return (err < KIM_STATUS_OK);
 }
 
-int Model::set_compute(COMPUTE::ArgumentName const argumentName, int flag)
+// *compute functions
+int Simulator::get_compute(COMPUTE::ArgumentName const argumentName,
+                           int * const flag) const
 {
   OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
 
   int err;
-  pKIM->set_compute(argumentString(argumentName), flag, &err);
+  *flag = pKIM->get_compute(argumentString(argumentName), &err);
   return (err < KIM_STATUS_OK);
 }
 
-
-
-int Model::get_size(COMPUTE::ArgumentName const argumentName,
-                    int * const size) const
+int Simulator::get_size(COMPUTE::ArgumentName const argumentName,
+                        int * const size) const
 {
   OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
 
@@ -498,7 +596,7 @@ int Model::get_size(COMPUTE::ArgumentName const argumentName,
 }
 
 
-void Model::print() const
+void Simulator::print() const
 {
   OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
 
@@ -506,38 +604,28 @@ void Model::print() const
   pKIM->print(&err);
 }
 
-int Model::compute() const
-{
-  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
-  int err = pKIM->model_compute();
-  return err;  // Models should return 2.0 codes
-}
-
-
-int Model::init()
-{
-  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
-  int err = pKIM->model_init();
-  return err;  // Models should return 2.0 codes
-}
-
-int Model::reinit()
+void Simulator::get_neighObject(void ** const ptr) const
 {
   OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
 
-  int err = pKIM->model_reinit();
-  return err;  // Models should return 2.0 codes
+  int err;
+  *ptr = pKIM->get_data("neighObject", &err);
+  //return (err < KIM_STATUS_OK);
 }
 
-int Model::destroy_model()
+int Simulator::get_neigh(int const neighborListIndex, int const particleNumber,
+                         int * const numberOfNeighbors,
+                         int const ** const neighborsOfParticle) const
 {
   OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
 
-  int err = pKIM->model_destroy();
-  return err;  // Models should return 2.0 codes
+  if (neighborListIndex != 0) return true;  // multiple list handling not ready
+  int err = pKIM->get_neigh(neighborListIndex, particleNumber,
+                            numberOfNeighbors, (int **) neighborsOfParticle);
+  return err;  // Simulators should return 2.0 codes
 }
 
-void Model::get_num_model_species(int * const numberOfSpecies) const
+void Simulator::get_num_model_species(int * const numberOfSpecies) const
 {
   OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
 
@@ -545,8 +633,8 @@ void Model::get_num_model_species(int * const numberOfSpecies) const
   pKIM->get_num_model_species(numberOfSpecies, &maxStrLen);
 }
 
-int Model::get_model_species(int const index,
-                             SpeciesName * const speciesName) const
+int Simulator::get_model_species(int const index,
+                                 SpeciesName * const speciesName) const
 {
   OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
 
@@ -556,19 +644,28 @@ int Model::get_model_species(int const index,
   return (err < KIM_STATUS_OK);
 }
 
-
-int Model::get_model_kim_string(std::string const & modelName,
-                                std::string * const kimString)
+// @@@ these will go away
+void Simulator::get_num_sim_species(int * const numberOfSpecies) const
 {
-  char const * kimChar;
-  int err = OLD_KIM::KIM_API_model::get_model_kim_str(modelName.c_str(),
-                                                      &kimChar);
-  *kimString = kimChar;
+  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
+
+  int maxStrLen;
+  pKIM->get_num_sim_species(numberOfSpecies, &maxStrLen);
+}
+
+int Simulator::get_sim_species(int const index,
+                               SpeciesName * const speciesName) const
+{
+  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
+
+  char const * str;
+  int err = pKIM->get_sim_species(index, &str);
+  (*speciesName) = speciesCpp(str);
   return (err < KIM_STATUS_OK);
 }
 
-int Model::get_species_code(SpeciesName const speciesName,
-                            int * const code) const
+int Simulator::get_species_code(SpeciesName const speciesName,
+                                int * const code) const
 {
   OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
 
@@ -577,96 +674,178 @@ int Model::get_species_code(SpeciesName const speciesName,
   return (err < KIM_STATUS_OK);
 }
 
-
-void Model::get_num_params(int * const numberOfParameters) const
+// @@@ do we keep this mechanism, make it mandatory, or remove?
+int Simulator::set_species_code(SpeciesName const speciesName,
+                                int const code)
 {
   OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
 
-  int maxStrLen;
-  pKIM->get_num_params(numberOfParameters, &maxStrLen);
-}
-
-int Model::get_parameter(int const index, int * const extent,
-                         void ** const ptr)
-{
-  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
-
-  char const * str;
   int err;
-  err = pKIM->get_parameter((intptr_t) index, &str);
-  if (err != KIM_STATUS_OK) return true;
-
-  *ptr = pKIM->get_data(str, &err);
+  pKIM->set_species_code(speciesString(speciesName), code, &err);
   return (err < KIM_STATUS_OK);
 }
 
-int Model::get_parameter_data_type(int const index,
-                                   ParameterDataType * const dataType) const
-{
-  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
-
-  char const * str;
-  int err;
-  err = pKIM->get_parameter(index, &str);
-  int old_ind = pKIM->get_index(str, &err);
-  OLD_KIM::KIMBaseElement * KBE = (OLD_KIM::KIMBaseElement *) pKIM->model.data.p;
-  std::string type = KBE[old_ind].type;
-  ParameterDataType PDT;
-  if (type == "real")
-  {
-    PDT = PARAMETER_DATA_TYPE::Real;
-  }
-  else if (type == "double")
-  {
-    PDT = PARAMETER_DATA_TYPE::Double;
-  }
-  else if (type == "integer")
-  {
-    PDT = PARAMETER_DATA_TYPE::Integer;
-  }
-  else
-  {
-    // Unknown
-  }
-
-  *dataType = PDT;
-  return (err < KIM_STATUS_OK);
-}
-
-int Model::get_parameter_description(int const index,
-                                     std::string * const description) const
+int Simulator::set_parameter(int const index, int const extent, void * const ptr)
 {
   OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
 
   int err;
   char const * str;
   err = pKIM->get_parameter(index, &str);
-  *description = str;
+  if ((err < KIM_STATUS_OK)) return true;
+
+  err = pKIM->set_data(str, (intptr_t) extent, ptr);
+  return (err < KIM_STATUS_OK);
+}
+
+int Simulator::set_parameter_description(int const index,
+                                         std::string const & description)
+{
+  // @@@@@@  currently does nothing....
+  return false;
+}
+
+void Simulator::set_model_buffer(void const * const ptr)
+{
+  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
+
+  int err;
+  pKIM->set_model_buffer((void *) ptr, &err);
+}
+
+void Simulator::get_model_buffer(void ** const ptr) const
+{
+  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
+
+  int err;
+  *ptr = pKIM->get_model_buffer(&err);
+}
+
+int Simulator::process_dEdr(double const de, double const r,
+                            double const * const dx,
+                            int const i, int const j) const
+{
+  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
+
+  int err = OLD_KIM::KIM_API_model::process_dEdr(&pKIM,
+                                                 (double *) &de,
+                                                 (double *) &r,
+                                                 (double **) &dx,
+                                                 (int *) &i,
+                                                 (int *) &j);
+  return (err < KIM_STATUS_OK);
+}
+
+int Simulator::process_d2Edr2(double const de, double const * const r,
+                              double const * const dx, int const * const i,
+                              int const * const j) const
+{
+  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
+
+  int err = OLD_KIM::KIM_API_model::process_d2Edr2(&pKIM,
+                                                   (double *) &de,
+                                                   (double **) &r,
+                                                   (double **) &dx,
+                                                   (int **) &i,
+                                                   (int **) &j);
   return (err < KIM_STATUS_OK);
 }
 
 
-void Model::set_sim_buffer(void const * const ptr)
+
+//Unit_Handling related routines
+int Simulator::get_unit_handling(int * const flag) const
 {
   OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
 
   int err;
-  pKIM->set_sim_buffer((void *) ptr, &err);
+  *flag = pKIM->get_unit_handling(&err);
+
+  return (err < KIM_STATUS_OK);
 }
 
-void Model::get_sim_buffer(void ** const ptr) const
+void Simulator::get_unit_length(LengthUnit * const length) const
 {
   OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
 
   int err;
-  *ptr = pKIM->get_sim_buffer(&err);
+  std::string lengthString = pKIM->get_unit_length(&err);
+  *length = lengthUnitCpp(lengthString);
 }
 
-Model::Model() : pimpl(0)
+void Simulator::get_unit_energy(EnergyUnit * const energy) const
+{
+  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
+
+  int err;
+  std::string energyString = pKIM->get_unit_energy(&err);
+  *energy = energyUnitCpp(energyString);
+}
+
+void Simulator::get_unit_charge(ChargeUnit * const charge) const
+{
+  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
+
+  int err;
+  std::string chargeString = pKIM->get_unit_charge(&err);
+  *charge = chargeUnitCpp(chargeString);
+}
+
+void Simulator::get_unit_temperature(TemperatureUnit * const temperature)
+    const
+{
+  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
+
+  int err;
+  std::string temperatureString = pKIM->get_unit_temperature(&err);
+  *temperature = temperatureUnitCpp(temperatureString);
+}
+
+void Simulator::get_unit_time(TimeUnit * const time) const
+{
+  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
+
+  int err;
+  std::string timeString = pKIM->get_unit_time(&err);
+  *time = timeUnitCpp(timeString);
+}
+
+int Simulator::convert_to_act_unit(
+    LengthUnit const length,
+    EnergyUnit const energy,
+    ChargeUnit const charge,
+    TemperatureUnit const temperature,
+    TimeUnit const time,
+    double const length_exponent,
+    double const energy_exponent,
+    double const charge_exponent,
+    double const temperature_exponent,
+    double const time_exponent,
+    double * const factor) const
+{
+  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
+
+  int err;
+  *factor = pKIM->convert_to_act_unit(
+      (lengthUnitString(length)),
+      (energyUnitString(energy)),
+      (chargeUnitString(charge)),
+      (temperatureUnitString(temperature)),
+      (timeUnitString(time)),
+      (double) length_exponent,
+      (double) energy_exponent,
+      (double) charge_exponent,
+      (double) temperature_exponent,
+      (double) time_exponent,
+      &err);
+  return (err < KIM_STATUS_OK);
+}
+
+Simulator::Simulator() : pimpl(0)
 {
 }
 
-Model::~Model()
+Simulator::~Simulator()
 {
 }
 

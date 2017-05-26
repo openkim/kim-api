@@ -60,7 +60,7 @@ char const * const speciesString(KIM::SpeciesName const speciesName);
 
 //******************************************************************************
 LennardJones612Implementation::LennardJones612Implementation(
-    KIM::Model * const model,
+    KIM::Simulator * const simulator,
     char const * const  parameterFileNames,
     int const parameterFileNameLength,
     int const numberParameterFiles,
@@ -82,7 +82,7 @@ LennardJones612Implementation::LennardJones612Implementation(
       shifts2D_(0),
       cachedNumberOfParticles_(0)
 {
-  *ier = SetConstantValues(model);
+  *ier = SetConstantValues(simulator);
   if (*ier) return;
 
   AllocateFreeParameterMemory();
@@ -92,21 +92,21 @@ LennardJones612Implementation::LennardJones612Implementation(
                             numberParameterFiles, parameterFilePointers);
   if (*ier) return;
 
-  *ier = ProcessParameterFiles(model, parameterFilePointers,
+  *ier = ProcessParameterFiles(simulator, parameterFilePointers,
                                numberParameterFiles);
   CloseParameterFiles(parameterFilePointers, numberParameterFiles);
   if (*ier) return;
 
-  *ier = ConvertUnits(model);
+  *ier = ConvertUnits(simulator);
   if (*ier) return;
 
-  *ier = SetReinitMutableValues(model);
+  *ier = SetReinitMutableValues(simulator);
   if (*ier) return;
 
-  *ier = RegisterKIMParameters(model);
+  *ier = RegisterKIMParameters(simulator);
   if (*ier) return;
 
-  *ier = RegisterKIMFunctions(model);
+  *ier = RegisterKIMFunctions(simulator);
   if (*ier) return;
 
   // everything is good
@@ -133,11 +133,11 @@ LennardJones612Implementation::~LennardJones612Implementation()
 }
 
 //******************************************************************************
-int LennardJones612Implementation::Reinit(KIM::Model * const model)
+int LennardJones612Implementation::Reinit(KIM::Simulator * const simulator)
 {
   int ier;
 
-  ier = SetReinitMutableValues(model);
+  ier = SetReinitMutableValues(simulator);
   if (ier) return ier;
 
   // nothing else to do for this case
@@ -148,7 +148,8 @@ int LennardJones612Implementation::Reinit(KIM::Model * const model)
 }
 
 //******************************************************************************
-int LennardJones612Implementation::Compute(KIM::Model const * const model)
+int LennardJones612Implementation::Compute(
+    KIM::Simulator const * const simulator)
 {
   int ier;
 
@@ -170,7 +171,7 @@ int LennardJones612Implementation::Compute(KIM::Model const * const model)
   double* energy = 0;
   double* particleEnergy = 0;
   VectorOfSizeDIM* forces = 0;
-  ier = SetComputeMutableValues(model, isComputeProcess_dEdr,
+  ier = SetComputeMutableValues(simulator, isComputeProcess_dEdr,
                                 isComputeProcess_d2Edr2, isComputeEnergy,
                                 isComputeForces, isComputeParticleEnergy,
                                 particleSpecies, particleContributing,
@@ -196,10 +197,10 @@ int LennardJones612Implementation::Compute(KIM::Model const * const model)
 
 //******************************************************************************
 int LennardJones612Implementation::
-SetConstantValues(KIM::Model const * const model)
+SetConstantValues(KIM::Simulator const * const simulator)
 {
   // set numberModelSpecies & numberUniqueSpeciesPairs
-  model->get_num_model_species(&numberModelSpecies_);
+  simulator->get_num_model_species(&numberModelSpecies_);
   numberUniqueSpeciesPairs_ = ((numberModelSpecies_+1)*numberModelSpecies_)/2;
 
   // everything is good
@@ -250,7 +251,7 @@ int LennardJones612Implementation::OpenParameterFiles(
 
 //******************************************************************************
 int LennardJones612Implementation::ProcessParameterFiles(
-    KIM::Model const * const model,
+    KIM::Simulator const * const simulator,
     FILE* const parameterFilePointers[MAX_PARAMETER_FILES],
     int const numberParameterFiles)
 {
@@ -288,7 +289,7 @@ int LennardJones612Implementation::ProcessParameterFiles(
   for (int i = 0; i < numberModelSpecies_; ++i)
   {
     KIM::SpeciesName kimModelParticleSpecies;
-    ier = model->get_model_species(i, &kimModelParticleSpecies);
+    ier = simulator->get_model_species(i, &kimModelParticleSpecies);
     if (ier)
     {
       KIM::report_error(__LINE__, __FILE__, "get_model_species", ier);
@@ -296,7 +297,7 @@ int LennardJones612Implementation::ProcessParameterFiles(
       return ier;
     }
     int index;
-    ier = model->get_species_code(kimModelParticleSpecies, &index);
+    ier = simulator->get_species_code(kimModelParticleSpecies, &index);
     if (index >= numberModelSpecies_)
     {
       KIM::report_error(__LINE__, __FILE__, "get_species_code",
@@ -462,7 +463,8 @@ void LennardJones612Implementation::AllocateFreeParameterMemory()
 }
 
 //******************************************************************************
-int LennardJones612Implementation::ConvertUnits(KIM::Model const * const model)
+int LennardJones612Implementation::ConvertUnits(
+    KIM::Simulator const * const simulator)
 {
   int ier;
 
@@ -475,8 +477,8 @@ int LennardJones612Implementation::ConvertUnits(KIM::Model const * const model)
 
   // changing units of cutoffs and sigmas
   double convertLength;
-  ier = model->convert_to_act_unit(length, energy, charge, temperature, time,
-                                   1.0, 0.0, 0.0, 0.0, 0.0, &convertLength);
+  ier = simulator->convert_to_act_unit(length, energy, charge, temperature, time,
+                                       1.0, 0.0, 0.0, 0.0, 0.0, &convertLength);
   if (ier)
   {
     KIM::report_error(__LINE__, __FILE__, "convert_to_act_unit", ier);
@@ -492,8 +494,8 @@ int LennardJones612Implementation::ConvertUnits(KIM::Model const * const model)
   }
   // changing units of epsilons
   double convertEnergy;
-  ier = model->convert_to_act_unit(length, energy, charge, temperature, time,
-                                   0.0, 1.0, 0.0, 0.0, 0.0, &convertEnergy);
+  ier = simulator->convert_to_act_unit(length, energy, charge, temperature, time,
+                                       0.0, 1.0, 0.0, 0.0, 0.0, &convertEnergy);
   if (ier)
   {
     KIM::report_error(__LINE__, __FILE__, "convert_to_act_unit", ier);
@@ -514,36 +516,36 @@ int LennardJones612Implementation::ConvertUnits(KIM::Model const * const model)
 
 //******************************************************************************
 int LennardJones612Implementation::RegisterKIMParameters(
-    KIM::Model * const model) const
+    KIM::Simulator * const simulator) const
 {
   int ier = false;
 
   // publish parameters
-  ier = model->set_parameter(PARAM_SHIFT_INDEX, 1, (void *) &shift_);
+  ier = simulator->set_parameter(PARAM_SHIFT_INDEX, 1, (void *) &shift_);
   if (ier)
   {
     KIM::report_error(__LINE__, __FILE__, "set_parameter", ier);
     return ier;
   }
-  ier = model->set_parameter(PARAM_CUTOFFS_INDEX,
-                             numberUniqueSpeciesPairs_,
-                             (void *) cutoffs_);
+  ier = simulator->set_parameter(PARAM_CUTOFFS_INDEX,
+                                 numberUniqueSpeciesPairs_,
+                                 (void *) cutoffs_);
   if (ier)
   {
     KIM::report_error(__LINE__, __FILE__, "set_parameter", ier);
     return ier;
   }
-  ier = model->set_parameter(PARAM_EPSILONS_INDEX,
-                             numberUniqueSpeciesPairs_,
-                             (void *) epsilons_);
+  ier = simulator->set_parameter(PARAM_EPSILONS_INDEX,
+                                 numberUniqueSpeciesPairs_,
+                                 (void *) epsilons_);
   if (ier)
   {
     KIM::report_error(__LINE__, __FILE__, "set_parameter", ier);
     return ier;
   }
-  ier = model->set_parameter(PARAM_SIGMAS_INDEX,
-                             numberUniqueSpeciesPairs_,
-                             (void *) sigmas_);
+  ier = simulator->set_parameter(PARAM_SIGMAS_INDEX,
+                                 numberUniqueSpeciesPairs_,
+                                 (void *) sigmas_);
   if (ier)
   {
     KIM::report_error(__LINE__, __FILE__, "set_parameter", ier);
@@ -557,23 +559,18 @@ int LennardJones612Implementation::RegisterKIMParameters(
 
 //******************************************************************************
 int LennardJones612Implementation::RegisterKIMFunctions(
-    KIM::Model * const model)
+    KIM::Simulator * const simulator)
     const
 {
   int ier;
 
   // register the destroy() and reinit() functions
-  ier = KIM::UTILITY::COMPUTE::setm_method(
-      model,
-      KIM::COMPUTE::ARGUMENT_NAME::destroy, 1, KIM::COMPUTE::LANGUAGE_NAME::Cpp, (KIM::func*) &(LennardJones612::Destroy), 1,
-      KIM::COMPUTE::ARGUMENT_NAME::reinit,  1, KIM::COMPUTE::LANGUAGE_NAME::Cpp, (KIM::func*) &(LennardJones612::Reinit),  1,
-      KIM::COMPUTE::ARGUMENT_NAME::compute, 1, KIM::COMPUTE::LANGUAGE_NAME::Cpp, (KIM::func*) &(LennardJones612::Compute), 1,
-      KIM::COMPUTE::ARGUMENT_NAME::End);
-  if (ier)
-  {
-    KIM::report_error(__LINE__, __FILE__, "setm_method", ier);
-    return ier;
-  }
+  simulator->set_destroy(KIM::LANGUAGE_NAME::Cpp,
+                         (KIM::func*) &(LennardJones612::Destroy));
+  simulator->set_reinit(KIM::LANGUAGE_NAME::Cpp,
+                        (KIM::func*) &(LennardJones612::Reinit));
+  simulator->set_compute_func(KIM::LANGUAGE_NAME::Cpp,
+                              (KIM::func*) &(LennardJones612::Compute));
 
   // everything is good
   ier = false;
@@ -582,7 +579,7 @@ int LennardJones612Implementation::RegisterKIMFunctions(
 
 //******************************************************************************
 int LennardJones612Implementation::SetReinitMutableValues(
-    KIM::Model * const model)
+    KIM::Simulator * const simulator)
 { // use (possibly) new values of free parameters to compute other quantities
   int ier;
 
@@ -614,19 +611,19 @@ int LennardJones612Implementation::SetReinitMutableValues(
   // update cutoff value in KIM API object
   influenceDistance_ = 0.0;
   int numberSpecies;
-  model->get_num_sim_species(&numberSpecies);
+  simulator->get_num_sim_species(&numberSpecies);
   KIM::SpeciesName simSpeciesI;
   KIM::SpeciesName simSpeciesJ;
   for (int i = 0; i < numberSpecies; i++)
   {
-    ier = model->get_sim_species(i, &simSpeciesI);
+    ier = simulator->get_sim_species(i, &simSpeciesI);
     if (ier)
     {
       KIM::report_error(__LINE__, __FILE__, "get_num_sim_species", ier);
       return ier;
     }
     int indexI;
-    ier = model->get_species_code(simSpeciesI, &indexI);
+    ier = simulator->get_species_code(simSpeciesI, &indexI);
     if (indexI >= numberModelSpecies_ || ier )
     {
       KIM::report_error(__LINE__, __FILE__, "get_species_code",
@@ -636,14 +633,14 @@ int LennardJones612Implementation::SetReinitMutableValues(
 
     for (int j = 0; j < numberSpecies; j++)
     {
-      ier = model->get_sim_species(i, &simSpeciesJ);
+      ier = simulator->get_sim_species(i, &simSpeciesJ);
       if (ier)
       {
         KIM::report_error(__LINE__, __FILE__, "get_num_sim_species", ier);
         return ier;
       }
       int indexJ;
-      ier = model->get_species_code(simSpeciesJ, &indexJ);
+      ier = simulator->get_species_code(simSpeciesJ, &indexJ);
       if (indexJ >= numberModelSpecies_ || ier )
       {
         KIM::report_error(__LINE__, __FILE__, "get_species_code",
@@ -657,8 +654,8 @@ int LennardJones612Implementation::SetReinitMutableValues(
     }
   }
   influenceDistance_ = sqrt(influenceDistance_);
-  model->set_influence_distance(&influenceDistance_);
-  model->set_cutoffs(1, &influenceDistance_);
+  simulator->set_influence_distance(&influenceDistance_);
+  simulator->set_cutoffs(1, &influenceDistance_);
 
   // update shifts
   // compute and set shifts2D_ check if minus sign
@@ -689,7 +686,7 @@ int LennardJones612Implementation::SetReinitMutableValues(
 
 //******************************************************************************
 int LennardJones612Implementation::SetComputeMutableValues(
-    KIM::Model const * const model,
+    KIM::Simulator const * const simulator,
     bool& isComputeProcess_dEdr,
     bool& isComputeProcess_d2Edr2,
     bool& isComputeEnergy,
@@ -711,7 +708,7 @@ int LennardJones612Implementation::SetComputeMutableValues(
   int compProcess_dEdr;
   int compProcess_d2Edr2;
   ier = KIM::UTILITY::COMPUTE::getm_compute(
-      model,
+      simulator,
       KIM::COMPUTE::ARGUMENT_NAME::energy,         &compEnergy,         1,
       KIM::COMPUTE::ARGUMENT_NAME::forces,         &compForces,         1,
       KIM::COMPUTE::ARGUMENT_NAME::particleEnergy, &compParticleEnergy, 1,
@@ -736,7 +733,7 @@ int LennardJones612Implementation::SetComputeMutableValues(
   // int const* numberOfSpecies;  // currently unused
   int const* numberOfParticles;
   ier = KIM::UTILITY::COMPUTE::getm_data(
-      model,
+      simulator,
       // KIM::COMPUTE::ARGUMENT_NAME::numberOfSpecies, &numberOfSpecies, 1,
       KIM::COMPUTE::ARGUMENT_NAME::numberOfParticles, &numberOfParticles, 1,
       KIM::COMPUTE::ARGUMENT_NAME::particleSpecies, &particleSpecies, 1,

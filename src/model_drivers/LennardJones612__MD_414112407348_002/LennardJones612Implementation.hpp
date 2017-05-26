@@ -54,7 +54,7 @@
 //==============================================================================
 
 // type declaration for get neighbor functions
-typedef int (GetNeighborFunction)(KIM::Model const * const, int const,
+typedef int (GetNeighborFunction)(KIM::Simulator const * const, int const,
                                   int * const, int const ** const);
 // type declaration for vector of constant dimension
 typedef double VectorOfSizeDIM[DIMENSION];
@@ -75,15 +75,15 @@ class LennardJones612Implementation
 {
  public:
   LennardJones612Implementation(
-      KIM::Model * const model,
+      KIM::Simulator * const simulator,
       char const* const parameterFileNames,
       int const parameterFileNameLength,
       int const numberParameterFiles,
       int* const ier);
   ~LennardJones612Implementation();  // no explicit Destroy() needed here
 
-  int Reinit(KIM::Model * const model);
-  int Compute(KIM::Model const * const model);
+  int Reinit(KIM::Simulator * const simulator);
+  int Compute(KIM::Simulator const * const simulator);
 
  private:
   // Constant values that never change
@@ -148,7 +148,7 @@ class LennardJones612Implementation
   //
   //
   // Related to constructor
-  int SetConstantValues(KIM::Model const * const model);
+  int SetConstantValues(KIM::Simulator const * const simulator);
   void AllocateFreeParameterMemory();
   static int OpenParameterFiles(
       char const* const parameterFileNames,
@@ -159,20 +159,20 @@ class LennardJones612Implementation
       FILE* const parameterFilePointers[MAX_PARAMETER_FILES],
       int const numberParameterFiles);
   int ProcessParameterFiles(
-      KIM::Model const * const model,
+      KIM::Simulator const * const simulator,
       FILE* const parameterFilePointers[MAX_PARAMETER_FILES],
       int const numberParameterFiles);
   void getNextDataLine(FILE* const filePtr, char* const nextLine,
                        int const maxSize, int* endOfFileFlag);
-  int ConvertUnits(KIM::Model const * const model);
-  int RegisterKIMParameters(KIM::Model * const model) const;
-  int RegisterKIMFunctions(KIM::Model * const model) const;
+  int ConvertUnits(KIM::Simulator const * const simulator);
+  int RegisterKIMParameters(KIM::Simulator * const simulator) const;
+  int RegisterKIMFunctions(KIM::Simulator * const simulator) const;
   //
   // Related to Reinit()
-  int SetReinitMutableValues(KIM::Model * const model);
+  int SetReinitMutableValues(KIM::Simulator * const simulator);
   //
   // Related to Compute()
-  int SetComputeMutableValues(KIM::Model const * const model,
+  int SetComputeMutableValues(KIM::Simulator const * const simulator,
                               bool& isComputeProcess_dEdr,
                               bool& isComputeProcess_d2Edr2,
                               bool& isComputeEnergy,
@@ -196,7 +196,7 @@ class LennardJones612Implementation
   template< bool isComputeProcess_dEdr, bool isComputeProcess_d2Edr2,
             bool isComputeEnergy, bool isComputeForces,
             bool isComputeParticleEnergy, bool isShift >
-  int Compute(KIM::Model const * const model,
+  int Compute(KIM::Simulator const * const simulator,
               const int* const particleSpecies,
               const int* const particleContributing,
               const VectorOfSizeDIM* const coordinates,
@@ -229,7 +229,7 @@ template< bool isComputeProcess_dEdr, bool isComputeProcess_d2Edr2,
           bool isComputeEnergy, bool isComputeForces,
           bool isComputeParticleEnergy, bool isShift >
 int LennardJones612Implementation::Compute(
-    KIM::Model const * const model,
+    KIM::Simulator const * const simulator,
     const int* const particleSpecies,
     const int* const particleContributing,
     const VectorOfSizeDIM* const coordinates,
@@ -291,7 +291,7 @@ int LennardJones612Implementation::Compute(
   {
     if (particleContributing[ii])
     {
-      model->get_neigh(0, ii, &numnei, &n1atom);
+      simulator->get_neigh(0, ii, &numnei, &n1atom);
       int const numNei = numnei;
       int const * const n1Atom = n1atom;
       int const i = ii;
@@ -384,7 +384,7 @@ int LennardJones612Implementation::Compute(
           {
             double const rij = sqrt(rij2);
             double const dEidr = dEidrByR*rij;
-            ier = model->process_dEdr(dEidr, rij, r_ij_const, i, j);
+            ier = simulator->process_dEdr(dEidr, rij, r_ij_const, i, j);
             if (ier)
             {
               KIM::report_error(__LINE__, __FILE__, "process_dEdr", ier);
@@ -407,7 +407,7 @@ int LennardJones612Implementation::Compute(
             int const* const pis = &i_pairs[0];
             int const* const pjs = &j_pairs[0];
 
-            ier = model->process_d2Edr2(d2Eidr2, pRs, pRijConsts, pis, pjs);
+            ier = simulator->process_d2Edr2(d2Eidr2, pRs, pRijConsts, pis, pjs);
           if (ier)
           {
             KIM::report_error(__LINE__, __FILE__, "process_d2Edr2", ier);

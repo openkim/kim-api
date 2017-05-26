@@ -30,41 +30,25 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
-#ifndef KIM_COMPUTE_HPP_
-#include "KIM_Compute.hpp"
+#ifndef KIM_LANGUAGE_NAME_HPP_
+#include "KIM_LanguageName.hpp"
 #endif
 
 namespace KIM
 {
-namespace COMPUTE
+LanguageName::LanguageName(): languageID(0){}
+LanguageName::LanguageName(int const id): languageID(id){}
+
+bool LanguageName::operator==(LanguageName const & rhs) const
+{return languageID == rhs.languageID;}
+bool LanguageName::operator!=(LanguageName const & rhs) const
+{return languageID != rhs.languageID;}
+
+namespace LANGUAGE_NAME
 {
+LanguageName const Cpp(1);
+LanguageName const C(2);
+LanguageName const Fortran(3);
+}  // namespace LANGUAGE_NAME
 
-ArgumentName::ArgumentName() : argumentID(0){}
-ArgumentName::ArgumentName(int const id) : argumentID(id){}
-
-bool ArgumentName::operator==(ArgumentName const & rhs) const
-{return argumentID == rhs.argumentID;}
-bool ArgumentName::operator!=(ArgumentName const & rhs) const
-{return argumentID != rhs.argumentID;}
-
-// Order doesn't matter as long as all values are unique
-namespace ARGUMENT_NAME
-{
-ArgumentName const numberOfParticles(0);
-ArgumentName const numberOfSpecies(1);
-ArgumentName const particleSpecies(2);
-ArgumentName const particleContributing(3);
-ArgumentName const coordinates(4);
-ArgumentName const process_dEdr(6);
-ArgumentName const process_d2Edr2(7);
-ArgumentName const energy(12);
-ArgumentName const forces(13);
-ArgumentName const particleEnergy(14);
-ArgumentName const virial(15);
-ArgumentName const particleVirial(16);
-ArgumentName const hessian(17);
-ArgumentName const End(-32000);
-}  // namespace ARGUMENT_NAME
-
-}  // namespace COMPUTE
 }  // namespace KIM

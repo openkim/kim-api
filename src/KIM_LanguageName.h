@@ -33,36 +33,20 @@
 /*                                                                            */
 
 
-#ifndef KIM_COMPUTE_H_
-#define KIM_COMPUTE_H_
+#ifndef KIM_LANGUAGE_NAME_H_
+#define KIM_LANGUAGE_NAME_H_
 
-struct KIM_COMPUTE_ArgumentName
+struct KIM_LanguageName
 {
-  int argumentID;
+  int languageID;
 };
-#ifndef KIM_COMPUTE_ARGUMENT_NAME_DEFINED_
-#define KIM_COMPUTE_ARGUMENT_NAME_DEFINED_
-typedef struct KIM_COMPUTE_ArgumentName KIM_COMPUTE_ArgumentName;
+#ifndef KIM_LANGUAGE_NAME_DEFINED_
+#define KIM_LANGUAGE_NAME_DEFINED_
+typedef struct KIM_LanguageName KIM_LanguageName;
 #endif
 
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_numberOfSpecies;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_particleSpecies;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_particleContributing;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_coordinates;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_get_neigh;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_process_dEdr;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_process_d2Edr2;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_neighObject;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_compute;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_reinit;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_destroy;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_energy;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_forces;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_particleEnergy;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_virial;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_particleVirial;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_hessian;
-extern KIM_COMPUTE_ArgumentName const KIM_COMPUTE_ARGUMENT_NAME_End;
+extern KIM_LanguageName const KIM_LANGUAGE_NAME_Cpp;
+extern KIM_LanguageName const KIM_LANGUAGE_NAME_C;
+extern KIM_LanguageName const KIM_LANGUAGE_NAME_Fortran;
 
-#endif  /* KIM_COMPUTE_H_ */
+#endif  /* KIM_LANGUAGE_NAME_H_ */

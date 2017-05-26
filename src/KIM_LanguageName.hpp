@@ -30,41 +30,28 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
-#ifndef KIM_COMPUTE_HPP_
-#include "KIM_Compute.hpp"
-#endif
+
+#ifndef KIM_LANGUAGE_NAME_HPP_
+#define KIM_LANGUAGE_NAME_HPP_
 
 namespace KIM
 {
-namespace COMPUTE
+class LanguageName
 {
+  int languageID;
+ public:
+  LanguageName();
+  LanguageName(int const id);
+  bool operator==(LanguageName const & rhs) const;
+  bool operator!=(LanguageName const & rhs) const;
+};
 
-ArgumentName::ArgumentName() : argumentID(0){}
-ArgumentName::ArgumentName(int const id) : argumentID(id){}
-
-bool ArgumentName::operator==(ArgumentName const & rhs) const
-{return argumentID == rhs.argumentID;}
-bool ArgumentName::operator!=(ArgumentName const & rhs) const
-{return argumentID != rhs.argumentID;}
-
-// Order doesn't matter as long as all values are unique
-namespace ARGUMENT_NAME
+namespace LANGUAGE_NAME
 {
-ArgumentName const numberOfParticles(0);
-ArgumentName const numberOfSpecies(1);
-ArgumentName const particleSpecies(2);
-ArgumentName const particleContributing(3);
-ArgumentName const coordinates(4);
-ArgumentName const process_dEdr(6);
-ArgumentName const process_d2Edr2(7);
-ArgumentName const energy(12);
-ArgumentName const forces(13);
-ArgumentName const particleEnergy(14);
-ArgumentName const virial(15);
-ArgumentName const particleVirial(16);
-ArgumentName const hessian(17);
-ArgumentName const End(-32000);
-}  // namespace ARGUMENT_NAME
+extern LanguageName const Cpp;
+extern LanguageName const C;
+extern LanguageName const Fortran;
+}  // namespace LANGUAGE_NAME
 
-}  // namespace COMPUTE
 }  // namespace KIM
+#endif  // KIM_LANGUAGE_NAME_HPP_

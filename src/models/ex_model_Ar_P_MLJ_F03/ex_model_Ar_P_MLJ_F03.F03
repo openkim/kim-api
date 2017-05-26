@@ -158,14 +158,14 @@ end subroutine calc_phi_dphi
 ! Compute energy and forces on particles from the positions.
 !
 !-------------------------------------------------------------------------------
-subroutine Compute_Energy_Forces(model, ierr) bind(c)
-use kim_model_module
+subroutine Compute_Energy_Forces(simulator, ierr) bind(c)
+use kim_simulator_module
 use kim_compute_module
 use kim_utility_compute_module
 implicit none
 
 !-- Transferred variables
-type(kim_model_type), intent(in) :: model
+type(kim_simulator_type), intent(in) :: simulator
 integer(c_int), intent(out) :: ierr
 
 !-- Local variables
@@ -189,7 +189,7 @@ real(c_double), pointer :: virial(:);         type(c_ptr) :: pvirial
 ! Check to see if we have been asked to compute the forces, energyperpart,
 ! energy and virial
 !
-call kim_utility_compute_getm_compute(model, ierr, &
+call kim_utility_compute_getm_compute(simulator, ierr, &
   kim_compute_argument_name_energy, comp_energy, 1, &
   kim_compute_argument_name_forces, comp_force,  1, &
   kim_compute_argument_name_particle_energy, comp_enepot, 1, &
@@ -202,7 +202,7 @@ endif
 
 ! Unpack data from KIM object
 !
-call kim_utility_compute_getm_data(model, ierr, &
+call kim_utility_compute_getm_data(simulator, ierr, &
   kim_compute_argument_name_number_of_particles, pN, 1, &
   kim_compute_argument_name_particle_species, pparticleSpecies, 1, &
   kim_compute_argument_name_particle_species, pparticleContributing, 1, &
@@ -255,7 +255,7 @@ if (comp_virial.eq.1) virial = 0.0_cd
 do i = 1, N
   if (particleContributing(i) == 1) then
     ! Set up neighbor list for next particle
-    call kim_model_get_neigh(model, 1, i, numnei, pnei1part, ierr)
+    call kim_simulator_get_neigh(simulator, 1, i, numnei, pnei1part, ierr)
     if (ierr /= 0) then
       ! some sort of problem, exit
       call kim_report_error(__LINE__, THIS_FILE_NAME, &
@@ -340,36 +340,30 @@ end module ex_model_Ar_P_MLJ_F03
 ! Model initialization routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-subroutine model_init(model, ierr) bind(c)
+subroutine model_init(simulator, ierr) bind(c)
 use, intrinsic :: iso_c_binding
 use ex_model_Ar_P_MLJ_F03
-use kim_model_module
+use kim_simulator_module
 use kim_compute_module
 implicit none
 
 !-- Transferred variables
-type(kim_model_type), intent(inout) :: model
+type(kim_simulator_type), intent(inout) :: simulator
 integer(c_int), intent(out) :: ierr
 
 !-- KIM variables
 real(c_double), allocatable, target :: cutoff
 
 ! store pointer to compute function in KIM object
-call kim_model_set_method(model, &
-  kim_compute_argument_name_compute, 1, &
-  kim_compute_language_name_fortran, c_funloc(Compute_Energy_Forces), ierr)
-if (ierr /= 0) then
-   call kim_report_error(__LINE__, THIS_FILE_NAME, &
-                               "kim_api_set_method", ierr)
-   goto 42
-endif
+call kim_simulator_set_compute_func(simulator, kim_language_name_fortran, &
+  c_funloc(Compute_Energy_Forces))
 
 ! store model cutoff in KIM object
 allocate( cutoff )
 cutoff = model_cutoff
-call kim_model_set_sim_buffer(model, c_loc(cutoff))
-call kim_model_set_influence_distance(model, c_loc(cutoff))
-call kim_model_set_cutoffs(model, 1, c_loc(cutoff))
+call kim_simulator_set_model_buffer(simulator, c_loc(cutoff))
+call kim_simulator_set_influence_distance(simulator, c_loc(cutoff))
+call kim_simulator_set_cutoffs(simulator, 1, c_loc(cutoff))
 
 ierr = 0
 42 continue
@@ -382,20 +376,20 @@ end subroutine model_init
 ! Model destroy routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-subroutine model_destroy(model, ierr) bind(c)
+subroutine model_destroy(simulator, ierr) bind(c)
   use, intrinsic :: iso_c_binding
   use ex_model_Ar_P_MLJ_F03
-  use kim_model_module
+  use kim_simulator_module
   implicit none
 
   !-- Transferred variables
-  type(kim_model_type), intent(inout) :: model
+  type(kim_simulator_type), intent(inout) :: simulator
   integer(c_int), intent(out) :: ierr
 
   real(c_double), pointer :: cutoff; type(c_ptr) :: ptr
 
-  call kim_model_get_sim_buffer(model, ptr)
-  call kim_model_set_sim_buffer(model, c_null_ptr)
+  call kim_simulator_get_model_buffer(simulator, ptr)
+  call kim_simulator_set_model_buffer(simulator, c_null_ptr)
   call c_f_pointer(ptr, cutoff)
   deallocate(cutoff)
   ierr = 0  ! everything is good

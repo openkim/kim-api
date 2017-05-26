@@ -43,22 +43,26 @@
 #ifndef KIM_MODEL_H_
 #include "KIM_Model.h"
 #endif
+
+#ifndef KIM_SIMULATOR_H_
+#include "KIM_Simulator.h"
+#endif
 #define TRUE 1
 
 int KIM_UTILITY_COMPUTE_getm_data(
-    KIM_Model const * const model,
+    KIM_Simulator const * const simulator,
     KIM_COMPUTE_ArgumentName const argumentName, ...)
 {
   va_list argp;
   int err;
   va_start(argp, argumentName);
-  err = KIM_UTILITY_COMPUTE_vgetm_data(model, argumentName, argp);
+  err = KIM_UTILITY_COMPUTE_vgetm_data(simulator, argumentName, argp);
   va_end(argp);
   return err;
 }
 
 int KIM_UTILITY_COMPUTE_vgetm_data(
-    KIM_Model const * const model,
+    KIM_Simulator const * const simulator,
     KIM_COMPUTE_ArgumentName const argumentName, va_list argp)
 {
   int err = TRUE;
@@ -71,7 +75,7 @@ int KIM_UTILITY_COMPUTE_vgetm_data(
 
     if (flag)
     {
-      err = KIM_Model_get_data(model, argN, ptr);
+      err = KIM_Simulator_get_data(simulator, argN, ptr);
 
       if (err)
       {
@@ -126,48 +130,6 @@ int KIM_UTILITY_COMPUTE_vsetm_data(
   return err;
 }
 
-int KIM_UTILITY_COMPUTE_getm_method(
-    KIM_Model const * const model,
-    KIM_COMPUTE_ArgumentName const argumentName, ...)
-{
-  va_list argp;
-  int err;
-  va_start(argp, argumentName);
-  err = KIM_UTILITY_COMPUTE_vgetm_method(model, argumentName, argp);
-  va_end(argp);
-  return err;
-}
-
-int KIM_UTILITY_COMPUTE_vgetm_method(
-    KIM_Model const * const model,
-    KIM_COMPUTE_ArgumentName const argumentName, va_list argp)
-{
-  int err = TRUE;
-  KIM_COMPUTE_ArgumentName argN = argumentName;
-
-  while (argN.argumentID != KIM_COMPUTE_ARGUMENT_NAME_End.argumentID)
-  {
-    KIM_COMPUTE_LanguageName * const langN
-        = va_arg(argp, KIM_COMPUTE_LanguageName *);
-    func ** fptr = va_arg(argp, func **);
-    int flag = va_arg(argp, int);
-
-    if (flag)
-    {
-      err = KIM_Model_get_method(model, argN, langN, fptr);
-
-      if (err)
-      {
-        break;
-      }
-    }
-
-    argN = va_arg(argp, KIM_COMPUTE_ArgumentName);
-  }
-
-  return err;
-}
-
 int KIM_UTILITY_COMPUTE_setm_method(
     KIM_Model * const model,
     KIM_COMPUTE_ArgumentName const argumentName, ...)
@@ -190,7 +152,7 @@ int KIM_UTILITY_COMPUTE_vsetm_method(
   while (argN.argumentID != KIM_COMPUTE_ARGUMENT_NAME_End.argumentID)
   {
     int extent = va_arg(argp, int);
-    KIM_COMPUTE_LanguageName langN = va_arg(argp, KIM_COMPUTE_LanguageName);
+    KIM_LanguageName langN = va_arg(argp, KIM_LanguageName);
     func * fptr = va_arg(argp, func *);
     int flag = va_arg(argp, int);
 
@@ -211,19 +173,19 @@ int KIM_UTILITY_COMPUTE_vsetm_method(
 }
 
 int KIM_UTILITY_COMPUTE_getm_compute(
-    KIM_Model const * const model,
+    KIM_Simulator const * const simulator,
     KIM_COMPUTE_ArgumentName const argumentName, ...)
 {
   va_list argp;
   int err;
   va_start(argp, argumentName);
-  err = KIM_UTILITY_COMPUTE_vgetm_compute(model, argumentName, argp);
+  err = KIM_UTILITY_COMPUTE_vgetm_compute(simulator, argumentName, argp);
   va_end(argp);
   return err;
 }
 
 int KIM_UTILITY_COMPUTE_vgetm_compute(
-    KIM_Model const * const model,
+    KIM_Simulator const * const simulator,
     KIM_COMPUTE_ArgumentName const argumentName, va_list argp)
 {
   int err = TRUE;
@@ -236,7 +198,7 @@ int KIM_UTILITY_COMPUTE_vgetm_compute(
 
     if (flag)
     {
-      err = KIM_Model_get_compute(model, argN, ptr);
+      err = KIM_Simulator_get_compute(simulator, argN, ptr);
 
       if (err)
       {

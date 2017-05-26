@@ -44,25 +44,15 @@ module kim_compute_module
     kim_compute_argument_name_particle_species, &
     kim_compute_argument_name_particle_contributing, &
     kim_compute_argument_name_coordinates, &
-    kim_compute_argument_name_get_neigh, &
     kim_compute_argument_name_process_dedr, &
     kim_compute_argument_name_process_d2edr2, &
-    kim_compute_argument_name_neigh_object, &
-    kim_compute_argument_name_compute, &
-    kim_compute_argument_name_reinit, &
-    kim_compute_argument_name_destroy, &
     kim_compute_argument_name_energy, &
     kim_compute_argument_name_forces, &
     kim_compute_argument_name_particle_energy, &
     kim_compute_argument_name_virial, &
     kim_compute_argument_name_particle_virial, &
     kim_compute_argument_name_hessian, &
-    kim_compute_argument_name_end, &
-
-    kim_compute_language_name_type, &
-    kim_compute_language_name_cpp, &
-    kim_compute_language_name_c, &
-    kim_compute_language_name_fortran
+    kim_compute_argument_name_end
 
   type, bind(c) :: kim_compute_argument_name_type
     integer(c_int) argument_id
@@ -84,26 +74,11 @@ module kim_compute_module
     kim_compute_argument_name_coordinates = &
     kim_compute_argument_name_type(coordinates_id)
   type(kim_compute_argument_name_type), parameter :: &
-    kim_compute_argument_name_get_neigh = &
-    kim_compute_argument_name_type(get_neigh_id)
-  type(kim_compute_argument_name_type), parameter :: &
     kim_compute_argument_name_process_dedr = &
     kim_compute_argument_name_type(process_dedr_id)
   type(kim_compute_argument_name_type), parameter :: &
     kim_compute_argument_name_process_d2edr2 = &
     kim_compute_argument_name_type(process_d2edr2_id)
-  type(kim_compute_argument_name_type), parameter :: &
-    kim_compute_argument_name_neigh_object = &
-    kim_compute_argument_name_type(neigh_object_id)
-  type(kim_compute_argument_name_type), parameter :: &
-    kim_compute_argument_name_compute = &
-    kim_compute_argument_name_type(compute_id)
-  type(kim_compute_argument_name_type), parameter :: &
-    kim_compute_argument_name_reinit = &
-    kim_compute_argument_name_type(reinit_id)
-  type(kim_compute_argument_name_type), parameter :: &
-    kim_compute_argument_name_destroy = &
-    kim_compute_argument_name_type(destroy_id)
   type(kim_compute_argument_name_type), parameter :: &
     kim_compute_argument_name_energy = &
     kim_compute_argument_name_type(energy_id)
@@ -125,19 +100,4 @@ module kim_compute_module
   type(kim_compute_argument_name_type), parameter :: &
     kim_compute_argument_name_end = &
     kim_compute_argument_name_type(end_id)
-
-
-  type, bind(c) :: kim_compute_language_name_type
-    integer(c_int) :: language_id
-  end type kim_compute_language_name_type
-
-  type(kim_compute_language_name_type), parameter :: &
-    kim_compute_language_name_cpp = &
-    kim_compute_language_name_type(1)
-  type(kim_compute_language_name_type), parameter :: &
-    kim_compute_language_name_c = &
-    kim_compute_language_name_type(2)
-  type(kim_compute_language_name_type), parameter :: &
-    kim_compute_language_name_fortran = &
-    kim_compute_language_name_type(3)
 end module kim_compute_module

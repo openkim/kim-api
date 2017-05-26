@@ -56,13 +56,8 @@ extern ArgumentName const numberOfSpecies;
 extern ArgumentName const particleSpecies;
 extern ArgumentName const particleContributing;
 extern ArgumentName const coordinates;
-extern ArgumentName const get_neigh;
 extern ArgumentName const process_dEdr;
 extern ArgumentName const process_d2Edr2;
-extern ArgumentName const neighObject;
-extern ArgumentName const compute;
-extern ArgumentName const reinit;
-extern ArgumentName const destroy;
 extern ArgumentName const energy;
 extern ArgumentName const forces;
 extern ArgumentName const particleEnergy;
@@ -71,23 +66,6 @@ extern ArgumentName const particleVirial;
 extern ArgumentName const hessian;
 extern ArgumentName const End;
 }  // namespace ARGUMENT_NAME
-
-class LanguageName
-{
-  int languageID;
- public:
-  LanguageName();
-  LanguageName(int const id);
-  bool operator==(LanguageName const & rhs) const;
-  bool operator!=(LanguageName const & rhs) const;
-};
-
-namespace LANGUAGE_NAME
-{
-extern LanguageName const Cpp;
-extern LanguageName const C;
-extern LanguageName const Fortran;
-}  // namespace LANGUAGE_NAME
 
 }  // namespace COMPUTE
 }  // namespace KIM

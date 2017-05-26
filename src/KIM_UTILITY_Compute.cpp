@@ -42,6 +42,10 @@
 #include "KIM_Model.hpp"
 #endif
 
+#ifndef KIM_SIMULATOR_HPP_
+#include "KIM_SIMULATOR.hpp"
+#endif
+
 namespace KIM
 {
 namespace UTILITY
@@ -49,17 +53,17 @@ namespace UTILITY
 namespace COMPUTE
 {
 
-int getm_data(Model const * const model,
+int getm_data(Simulator const * const simulator,
               KIM::COMPUTE::ArgumentName const argumentName, ...)
 {
   va_list argp;
   va_start(argp, argumentName);
-  int err = vgetm_data(model, argumentName, argp);
+  int err = vgetm_data(simulator, argumentName, argp);
   va_end(argp);
   return err;
 }
 
-int vgetm_data(Model const * const model,
+int vgetm_data(Simulator const * const simulator,
                KIM::COMPUTE::ArgumentName const argumentName, va_list argp)
 {
   int err = true;
@@ -72,7 +76,7 @@ int vgetm_data(Model const * const model,
 
     if (flag)
     {
-      err = model->get_data(argN, ptr);
+      err = simulator->get_data(argN, ptr);
       if (err)
       {
         break;
@@ -110,45 +114,6 @@ int vsetm_data(Model * const model,
     if (flag)
     {
       err = model->set_data(argN, extent, ptr);
-
-      if (err)
-      {
-        break;
-      }
-    }
-
-    argN = va_arg(argp, KIM::COMPUTE::ArgumentName);
-  }
-
-  return err;
-}
-
-int getm_method(Model const * const model,
-                KIM::COMPUTE::ArgumentName const argumentName, ...)
-{
-  va_list argp;
-  va_start(argp, argumentName);
-  int err = vgetm_method(model, argumentName, argp);
-  va_end(argp);
-  return err;
-}
-
-int vgetm_method(Model const * const model,
-                 KIM::COMPUTE::ArgumentName const argumentName, va_list argp)
-{
-  int err = true;
-  KIM::COMPUTE::ArgumentName argN = argumentName;
-
-  while (argN != KIM::COMPUTE::ARGUMENT_NAME::End)
-  {
-    KIM::COMPUTE::LanguageName * const
-        langN = va_arg(argp, KIM::COMPUTE::LanguageName *);
-    func ** fptr = va_arg(argp, func **);
-    int flag = va_arg(argp, int);
-
-    if (flag)
-    {
-      err = model->get_method(argN, langN, fptr);
 
       if (err)
       {
@@ -201,17 +166,17 @@ int vsetm_method(Model * const model,
   return err;
 }
 
-int getm_compute(Model const * const model,
+int getm_compute(Simulator const * const simulator,
                  KIM::COMPUTE::ArgumentName const argumentName, ...)
 {
   va_list argp;
   va_start(argp, argumentName);
-  int err = vgetm_compute(model, argumentName, argp);
+  int err = vgetm_compute(simulator, argumentName, argp);
   va_end(argp);
   return err;
 }
 
-int vgetm_compute(Model const * const model,
+int vgetm_compute(Simulator const * const simulator,
                   KIM::COMPUTE::ArgumentName const argumentName, va_list argp)
 {
   int err = true;
@@ -224,7 +189,7 @@ int vgetm_compute(Model const * const model,
 
     if (flag)
     {
-      err = model->get_compute(argN, ptr);
+      err = simulator->get_compute(argN, ptr);
 
       if (err)
       {
