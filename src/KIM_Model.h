@@ -105,6 +105,20 @@ int KIM_Model_create(char const * const simulatorString,
                      KIM_Model ** const model);
 void KIM_Model_destroy(KIM_Model ** const model);
 
+void KIM_Model_get_influence_distance(KIM_Model const * const model,
+                                      double * const influenceDistance);
+void KIM_Model_set_influence_distance(KIM_Model * const model,
+                                      double * const influenceDistance);
+
+void KIM_Model_get_cutoffs(KIM_Model const * const model,
+                           int * const numberOfCutoffs,
+                           double const ** const cutoffs);
+void KIM_Model_set_cutoffs(KIM_Model * const model, int const numberOfCutoffs,
+                           double const * const cutoffs);
+/* @@@ should set_cutoffs copy cutoffs values or just store pointer? (currently
+   store pointer) */
+
+
 /* *data functions */
 int KIM_Model_get_data(KIM_Model const * const model,
                        KIM_COMPUTE_ArgumentName const argumentName,
@@ -140,7 +154,9 @@ int KIM_Model_get_size(KIM_Model const * const model,
 void KIM_Model_print(KIM_Model const * const model);
 
 int KIM_Model_compute(KIM_Model const * const model);
-int KIM_Model_get_neigh(KIM_Model const * const model, int particleNumber,
+int KIM_Model_get_neigh(KIM_Model const * const model,
+                        int const neighborListIndex,
+                        int const particleNumber,
                         int * const numberOfNeighbors,
                         int const ** const neighborsOfParticle);
 int KIM_Model_init(KIM_Model * const model);

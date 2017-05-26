@@ -54,6 +54,7 @@ namespace ARGUMENT_NAME
 extern ArgumentName const numberOfParticles;
 extern ArgumentName const numberOfSpecies;
 extern ArgumentName const particleSpecies;
+extern ArgumentName const particleContributing;
 extern ArgumentName const coordinates;
 extern ArgumentName const get_neigh;
 extern ArgumentName const process_dEdr;
@@ -62,7 +63,6 @@ extern ArgumentName const neighObject;
 extern ArgumentName const compute;
 extern ArgumentName const reinit;
 extern ArgumentName const destroy;
-extern ArgumentName const cutoff;
 extern ArgumentName const energy;
 extern ArgumentName const forces;
 extern ArgumentName const particleEnergy;

@@ -225,9 +225,9 @@ void old_KIM_API_set_species_code(void * kimmdl, const char* species, int code, 
 
 
 
-int old_KIM_API_get_neigh(void *kimmdl, int request, int *numnei, int **nei1part){
+int old_KIM_API_get_neigh(void *kimmdl, int neighborListIndex, int request, int *numnei, int **nei1part){
     KIM_API_model * mdl=(KIM_API_model *) kimmdl;
-    return mdl->get_neigh(request,numnei,nei1part);
+    return mdl->get_neigh(neighborListIndex, request,numnei,nei1part);
 }
 
 int old_KIM_API_process_dEdr(void **ppkim, double * dE, double * dr, double **dx, int *i, int *j){

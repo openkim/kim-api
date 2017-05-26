@@ -68,6 +68,8 @@ char const * const argumentString(COMPUTE::ArgumentName const argumentName)
     return "numberOfSpecies";
   else if (argumentName == COMPUTE::ARGUMENT_NAME::particleSpecies)
     return "particleSpecies";
+  else if (argumentName == COMPUTE::ARGUMENT_NAME::particleContributing)
+    return "particleContributing";
   else if (argumentName == COMPUTE::ARGUMENT_NAME::coordinates)
     return "coordinates";
   else if (argumentName == COMPUTE::ARGUMENT_NAME::get_neigh)
@@ -84,8 +86,6 @@ char const * const argumentString(COMPUTE::ArgumentName const argumentName)
     return "reinit";
   else if (argumentName == COMPUTE::ARGUMENT_NAME::destroy)
     return "destroy";
-  else if (argumentName == COMPUTE::ARGUMENT_NAME::cutoff)
-    return "cutoff";
   else if (argumentName == COMPUTE::ARGUMENT_NAME::energy)
     return "energy";
   else if (argumentName == COMPUTE::ARGUMENT_NAME::forces)
@@ -504,6 +504,39 @@ void Model::destroy(Model ** const model)
   *model = 0;
 }
 
+void Model::get_influence_distance(double * const influenceDistance) const
+{
+  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
+  *influenceDistance = *(pKIM->influenceDistance);
+}
+
+void Model::set_influence_distance(double * const influenceDistance)
+{
+  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
+  pKIM->influenceDistance = influenceDistance;
+}
+
+void Model::get_cutoffs(int * const numberOfCutoffs, double const ** cutoffs)
+    const
+{
+  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
+
+  *numberOfCutoffs = pKIM->numberOfCutoffs;
+  if (cutoffs != NULL)
+    *cutoffs = pKIM->cutoffs;
+}
+
+void Model::set_cutoffs(int const numberOfCutoffs, double const * const cutoffs)
+{
+  OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
+
+  pKIM->numberOfCutoffs = numberOfCutoffs;
+  delete [] pKIM->cutoffs;
+  pKIM->cutoffs = new double[numberOfCutoffs];
+  for (int i=0; i<numberOfCutoffs; ++i)
+    pKIM->cutoffs[i] = cutoffs[i];
+}
+
 // *data functions
 int Model::get_data(COMPUTE::ArgumentName const argumentName,
                     void ** const ptr) const
@@ -615,13 +648,15 @@ int Model::compute() const
 }
 
 
-int Model::get_neigh(int particleNumber, int * const numberOfNeighbors,
+int Model::get_neigh(int const neighborListIndex, int const particleNumber,
+                     int * const numberOfNeighbors,
                      int const ** const neighborsOfParticle) const
 {
   OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
 
-  int err = pKIM->get_neigh(particleNumber, numberOfNeighbors,
-                            (int **) neighborsOfParticle);
+  if (neighborListIndex != 0) return true;  // multiple list handling not ready
+  int err = pKIM->get_neigh(neighborListIndex, particleNumber,
+                            numberOfNeighbors, (int **) neighborsOfParticle);
   return err;  // Simulators should return 2.0 codes
 }
 

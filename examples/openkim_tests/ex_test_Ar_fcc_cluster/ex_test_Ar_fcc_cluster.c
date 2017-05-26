@@ -74,6 +74,7 @@ void fcc_cluster_neighborlist(int allOrOne, int numberOfParticles, double* coord
                               double cutoff, NeighList* nl);
 
 int get_cluster_neigh(KIM_Model const * const model,
+                      int const neighborListIndex,
                       int const particleNumber, int * const numberOfNeighbors,
                       int const ** const neighborsOfParticle);
 
@@ -99,14 +100,17 @@ int main()
   int numberOfParticles_cluster = NCLUSTERPARTS;
   int numberOfSpecies = 1;
   int particleSpecies_cluster_model[NCLUSTERPARTS];
+  int particleContributing_cluster_model[NCLUSTERPARTS];
+  int particleContributing_one_atom_model[NCLUSTERPARTS];
   double coords_cluster[NCLUSTERPARTS][DIM];
   NeighList nl_cluster_model;
-  NeighList nl_one_atom_model;
   /* model outputs */
-  double cutoff_cluster_model;
-  double energy = 0.0;
+  int number_of_cutoffs_cluster_model;
+  double influence_distance_cluster_model;
+  double const * cutoff_cluster_model;
   double energy_cluster_model = 0.0;
   double energy_one_atom_model = 0.0;
+  double energy = 0.0;
 
   char modelname[NAMESTRLEN];
 
@@ -130,8 +134,8 @@ int main()
       KIM_COMPUTE_ARGUMENT_NAME_numberOfSpecies,   1,                             &numberOfSpecies,                 1,
       KIM_COMPUTE_ARGUMENT_NAME_particleSpecies,   numberOfParticles_cluster,     particleSpecies_cluster_model,    1,
       KIM_COMPUTE_ARGUMENT_NAME_coordinates,       DIM*numberOfParticles_cluster, coords_cluster,                   1,
-      KIM_COMPUTE_ARGUMENT_NAME_cutoff,            1,                             &cutoff_cluster_model,            1,
-      KIM_COMPUTE_ARGUMENT_NAME_energy,            1,                             &energy,                          1,
+      KIM_COMPUTE_ARGUMENT_NAME_neighObject,       1,                             &nl_cluster_model,                1,
+      KIM_COMPUTE_ARGUMENT_NAME_energy,            1,                             &energy              ,            1,
       KIM_COMPUTE_ARGUMENT_NAME_End);
   if (error) REPORT_ERROR(__LINE__, __FILE__,"KIM_setm_data",error);
   error = KIM_Model_set_method(model, KIM_COMPUTE_ARGUMENT_NAME_get_neigh, 1, KIM_COMPUTE_LANGUAGE_NAME_C, (func *) &get_cluster_neigh);
@@ -141,23 +145,31 @@ int main()
   error = KIM_Model_init(model);
   if (error) REPORT_ERROR(__LINE__, __FILE__,"KIM_model_init", error);
 
+  KIM_Model_get_influence_distance(model, &influence_distance_cluster_model);
+  KIM_Model_get_cutoffs(model, &number_of_cutoffs_cluster_model, &cutoff_cluster_model);
+  if (number_of_cutoffs_cluster_model != 1) REPORT_ERROR(__LINE__, __FILE__, "too many cutoffs", TRUE);
+
   /* setup particleSpecies */
   error = KIM_Model_get_species_code(model, KIM_SPECIES_NAME_Ar, &(particleSpecies_cluster_model[0]));
   if (error) REPORT_ERROR(__LINE__, __FILE__,"KIM_get_species_code", error);
   for (i = 1; i < NCLUSTERPARTS; ++i)
     particleSpecies_cluster_model[i] = particleSpecies_cluster_model[0];
 
+  /* setup particleContributing */
+  for (i = 0; i < NCLUSTERPARTS; ++i)
+  {
+    particleContributing_cluster_model[i] = 1;  /* all particles contribute */
+    particleContributing_one_atom_model[i] = 0;  /* none (but 30 contribute */
+  }
+  particleContributing_one_atom_model[30] = 1;
+
   /* setup neighbor lists */
   /* allocate memory for list */
   nl_cluster_model.NNeighbors = (int*) malloc(NCLUSTERPARTS*sizeof(int));
   if (NULL==nl_cluster_model.NNeighbors) REPORT_ERROR(__LINE__, __FILE__,"malloc unsuccessful", -1);
-  nl_one_atom_model.NNeighbors = (int*) malloc(NCLUSTERPARTS*sizeof(int));
-  if (NULL==nl_one_atom_model.NNeighbors) REPORT_ERROR(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
   nl_cluster_model.neighborList = (int*) malloc(NCLUSTERPARTS*NCLUSTERPARTS*sizeof(int));
   if (NULL==nl_cluster_model.neighborList) REPORT_ERROR(__LINE__, __FILE__,"malloc unsuccessful", -1);
-  nl_one_atom_model.neighborList = (int*) malloc(NCLUSTERPARTS*NCLUSTERPARTS*sizeof(int));
-  if (NULL==nl_one_atom_model.neighborList) REPORT_ERROR(__LINE__, __FILE__,"malloc unsuccessful", -1);
 
   /* ready to compute */
   printf("--------------------------------------------------------------------------------\n");
@@ -172,16 +184,15 @@ int main()
     create_FCC_cluster(CurrentSpacing, NCELLSPERSIDE, &(coords_cluster[0][0]));
     /* compute neighbor lists */
     fcc_cluster_neighborlist(-1, NCLUSTERPARTS, &(coords_cluster[0][0]),
-                             (cutoff_cluster_model + cutpad), &nl_cluster_model);
-    fcc_cluster_neighborlist(30, NCLUSTERPARTS, &(coords_cluster[0][0]),
-                             (cutoff_cluster_model + cutpad), &nl_one_atom_model);
+                             (*cutoff_cluster_model + cutpad), &nl_cluster_model);
 
     /* call compute functions */
-    error = KIM_Model_set_data(model, KIM_COMPUTE_ARGUMENT_NAME_neighObject, 1, &nl_cluster_model);
+    error = KIM_Model_set_data(model, KIM_COMPUTE_ARGUMENT_NAME_particleContributing, 1, particleContributing_cluster_model);
     error = error || KIM_Model_compute(model);
     if (error) REPORT_ERROR(__LINE__, __FILE__,"KIM_model_compute", error);
     energy_cluster_model = energy;
-    error = KIM_Model_set_data(model, KIM_COMPUTE_ARGUMENT_NAME_neighObject, 1, &nl_one_atom_model);
+
+    error = KIM_Model_set_data(model, KIM_COMPUTE_ARGUMENT_NAME_particleContributing, 1, particleContributing_one_atom_model);
     error = error || KIM_Model_compute(model);
     if (error) REPORT_ERROR(__LINE__, __FILE__,"KIM_model_compute", error);
     energy_one_atom_model = energy;
@@ -200,9 +211,7 @@ int main()
 
   /* free memory of neighbor lists */
   free(nl_cluster_model.NNeighbors);
-  free(nl_one_atom_model.NNeighbors);
   free(nl_cluster_model.neighborList);
-  free(nl_one_atom_model.neighborList);
 
   /* free pkim objects */
   KIM_Model_destroy(&model);
@@ -373,13 +382,16 @@ void fcc_cluster_neighborlist(int allOrOne, int numberOfParticles, double* coord
 }
 
 int get_cluster_neigh(KIM_Model const * const model,
+                      int const neighborListIndex,
                       int const particleNumber, int * const numberOfNeighbors,
                       int const ** const neighborsOfParticle)
 {
   /* local variables */
-  int error;
+  int error = TRUE;
   int* numberOfParticles;
   NeighList* nl;
+
+  if (neighborListIndex != 0) return error;
 
   /* initialize numNeigh */
   *numberOfNeighbors = 0;
@@ -437,6 +449,7 @@ char const * const descriptor()
       "numberOfParticles integer none\n"
       "numberOfSpecies integer none\n"
       "particleSpecies integer none\n"
+      "particleContributing integer none\n"
       "coordinates double length\n"
       "get_neigh method none\n"
       "neighObject pointer none\n"
@@ -445,6 +458,5 @@ char const * const descriptor()
       "destroy method none\n"
       "compute method none\n"
       "reinit method none\n"
-      "cutoff double length\n"
       "energy double energy\n";
 }

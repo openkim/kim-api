@@ -72,6 +72,8 @@ numberOfSpecies             integer      none
 
 particleSpecies             integer      none
 
+particleContributing        integer      none
+
 coordinates                 double       length
 
 get_neigh                   method       none    optional
@@ -83,13 +85,11 @@ neighObject                 pointer      none    optional
 MODEL_OUTPUT:
 # Name                      Type         Unit    Requirements
 
-destroy                     method       none    optional
+destroy                     method       none
 
 compute                     method       none
 
 reinit                      method       none    optional
-
-cutoff                      double       length
 
 energy                      double       energy  optional
 

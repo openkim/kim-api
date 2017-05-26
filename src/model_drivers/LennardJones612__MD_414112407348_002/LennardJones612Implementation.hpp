@@ -125,6 +125,7 @@ class LennardJones612Implementation
   // none
   //
   // LennardJones612Implementation: values
+  double influenceDistance_;
   double** cutoffsSq2D_;
   double** fourEpsilonSigma6_2D_;
   double** fourEpsilonSigma12_2D_;
@@ -168,7 +169,7 @@ class LennardJones612Implementation
   int RegisterKIMFunctions(KIM::Model * const model) const;
   //
   // Related to Reinit()
-  int SetReinitMutableValues(KIM::Model const * const model);
+  int SetReinitMutableValues(KIM::Model * const model);
   //
   // Related to Compute()
   int SetComputeMutableValues(KIM::Model const * const model,
@@ -178,6 +179,7 @@ class LennardJones612Implementation
                               bool& isComputeForces,
                               bool& isComputeParticleEnergy,
                               int const*& particleSpecies,
+                              int const*& particleContributing,
                               VectorOfSizeDIM const*& coordinates,
                               double*& energy,
                               double*& particleEnergy,
@@ -196,6 +198,7 @@ class LennardJones612Implementation
             bool isComputeParticleEnergy, bool isShift >
   int Compute(KIM::Model const * const model,
               const int* const particleSpecies,
+              const int* const particleContributing,
               const VectorOfSizeDIM* const coordinates,
               double* const energy,
               VectorOfSizeDIM* const forces,
@@ -228,6 +231,7 @@ template< bool isComputeProcess_dEdr, bool isComputeProcess_d2Edr2,
 int LennardJones612Implementation::Compute(
     KIM::Model const * const model,
     const int* const particleSpecies,
+    const int* const particleContributing,
     const VectorOfSizeDIM* const coordinates,
     double* const energy,
     VectorOfSizeDIM* const forces,
@@ -285,129 +289,132 @@ int LennardJones612Implementation::Compute(
   double const* const* const  constShifts2D = shifts2D_;
   for (ii = 0; ii < cachedNumberOfParticles_; ++ii)
   {
-    model->get_neigh(ii, &numnei, &n1atom);
-    int const numNei = numnei;
-    int const * const n1Atom = n1atom;
-    int const i = ii;
-    int const iSpecies = particleSpecies[i];
-
-    // Setup loop over neighbors of current particle
-    for (int jj = 0; jj < numNei; ++jj)
+    if (particleContributing[ii])
     {
-      int const j = n1Atom[jj];
-      int const jSpecies = particleSpecies[j];
-      double* r_ij;
-      double r_ijValue[DIMENSION];
-      // Compute r_ij
-      r_ij = r_ijValue;
-      for (int k = 0; k < DIMENSION; ++k)
-        r_ij[k] = coordinates[j][k] - coordinates[i][k];
-      double const* const r_ij_const = const_cast<double*>(r_ij);
+      model->get_neigh(0, ii, &numnei, &n1atom);
+      int const numNei = numnei;
+      int const * const n1Atom = n1atom;
+      int const i = ii;
+      int const iSpecies = particleSpecies[i];
 
-      // compute distance squared
-      double const rij2 =
-          r_ij_const[0] * r_ij_const[0] +
-          r_ij_const[1] * r_ij_const[1] +
-          r_ij_const[2] * r_ij_const[2];
+      // Setup loop over neighbors of current particle
+      for (int jj = 0; jj < numNei; ++jj)
+      {
+        int const j = n1Atom[jj];
+        int const jSpecies = particleSpecies[j];
+        double* r_ij;
+        double r_ijValue[DIMENSION];
+        // Compute r_ij
+        r_ij = r_ijValue;
+        for (int k = 0; k < DIMENSION; ++k)
+          r_ij[k] = coordinates[j][k] - coordinates[i][k];
+        double const* const r_ij_const = const_cast<double*>(r_ij);
 
-      if (rij2 <= constCutoffsSq2D[iSpecies][jSpecies])
-      { // compute contribution to energy, force, etc.
-        double phi = 0.0;
-        double dphiByR = 0.0;
-        double d2phi = 0.0;
-        double dEidrByR = 0.0;
-        double d2Eidr2 = 0.0;
-        double const r2iv = 1.0/rij2;
-        double const r6iv = r2iv*r2iv*r2iv;
-        // Compute pair potential and its derivatives
-        if (isComputeProcess_d2Edr2 == true)
-        { // Compute d2phi
-          d2phi =
-              r6iv * (constSixTwentyFourEpsSig12_2D[iSpecies][jSpecies]*r6iv -
-                      constOneSixtyEightEpsSig6_2D[iSpecies][jSpecies]) * r2iv;
-          d2Eidr2 = 0.5*d2phi;
-        }
+        // compute distance squared
+        double const rij2 =
+            r_ij_const[0] * r_ij_const[0] +
+            r_ij_const[1] * r_ij_const[1] +
+            r_ij_const[2] * r_ij_const[2];
 
-        if ((isComputeProcess_dEdr == true) || (isComputeForces == true))
-        { // Compute dphi
-          dphiByR =
-              r6iv * (constTwentyFourEpsSig6_2D[iSpecies][jSpecies] -
-                      constFortyEightEpsSig12_2D[iSpecies][jSpecies]*r6iv)
-              * r2iv;
-          dEidrByR = 0.5*dphiByR;
-        }
-
-        if ((isComputeEnergy == true) || (isComputeParticleEnergy == true))
-        { // Compute phi
-          if (isShift == true)
-          {
-            LENNARD_JONES_PHI(- constShifts2D[iSpecies][jSpecies]);
+        if (rij2 <= constCutoffsSq2D[iSpecies][jSpecies])
+        { // compute contribution to energy, force, etc.
+          double phi = 0.0;
+          double dphiByR = 0.0;
+          double d2phi = 0.0;
+          double dEidrByR = 0.0;
+          double d2Eidr2 = 0.0;
+          double const r2iv = 1.0/rij2;
+          double const r6iv = r2iv*r2iv*r2iv;
+          // Compute pair potential and its derivatives
+          if (isComputeProcess_d2Edr2 == true)
+          { // Compute d2phi
+            d2phi =
+                r6iv * (constSixTwentyFourEpsSig12_2D[iSpecies][jSpecies]*r6iv -
+                        constOneSixtyEightEpsSig6_2D[iSpecies][jSpecies]) * r2iv;
+            d2Eidr2 = 0.5*d2phi;
           }
-          else
-          {
-            LENNARD_JONES_PHI(;);
+
+          if ((isComputeProcess_dEdr == true) || (isComputeForces == true))
+          { // Compute dphi
+            dphiByR =
+                r6iv * (constTwentyFourEpsSig6_2D[iSpecies][jSpecies] -
+                        constFortyEightEpsSig12_2D[iSpecies][jSpecies]*r6iv)
+                * r2iv;
+            dEidrByR = 0.5*dphiByR;
           }
-        }
 
-        // Contribution to energy
-        if (isComputeEnergy == true)
-        {
-          *energy += 0.5*phi;
-        }
-
-        // Contribution to particleEnergy
-        if (isComputeParticleEnergy == true)
-        {
-          double const halfPhi = 0.5*phi;
-          particleEnergy[i] += halfPhi;
-        }
-
-        // Contribution to forces
-        if (isComputeForces == true)
-        {
-          for (int k = 0; k < DIMENSION; ++k)
-          {
-            double const contrib = dEidrByR * r_ij_const[k];
-            forces[i][k] += contrib;
-            forces[j][k] -= contrib;
+          if ((isComputeEnergy == true) || (isComputeParticleEnergy == true))
+          { // Compute phi
+            if (isShift == true)
+            {
+              LENNARD_JONES_PHI(- constShifts2D[iSpecies][jSpecies]);
+            }
+            else
+            {
+              LENNARD_JONES_PHI(;);
+            }
           }
-        }
 
-        // Call process_dEdr
-        if (isComputeProcess_dEdr == true)
-        {
-          double const rij = sqrt(rij2);
-          double const dEidr = dEidrByR*rij;
-          ier = model->process_dEdr(dEidr, rij, r_ij_const, i, j);
-          if (ier)
+          // Contribution to energy
+          if (isComputeEnergy == true)
           {
-            KIM::report_error(__LINE__, __FILE__, "process_dEdr", ier);
-            return ier;
+            *energy += 0.5*phi;
           }
-        }
 
-        // Call process_d2Edr2
-        if (isComputeProcess_d2Edr2 == true)
-        {
-          double const rij = sqrt(rij2);
-          double const R_pairs[2] = {rij, rij};
-          double const* const pRs = &R_pairs[0];
-          double const Rij_pairs[6]
-              = {r_ij_const[0], r_ij_const[1], r_ij_const[2],
-                 r_ij_const[0], r_ij_const[1], r_ij_const[2]};
-          double const* const pRijConsts = &Rij_pairs[0];
-          int const i_pairs[2] = {i, i};
-          int const j_pairs[2] = {j, j};
-          int const* const pis = &i_pairs[0];
-          int const* const pjs = &j_pairs[0];
+          // Contribution to particleEnergy
+          if (isComputeParticleEnergy == true)
+          {
+            double const halfPhi = 0.5*phi;
+            particleEnergy[i] += halfPhi;
+          }
 
-          ier = model->process_d2Edr2(d2Eidr2, pRs, pRijConsts, pis, pjs);
+          // Contribution to forces
+          if (isComputeForces == true)
+          {
+            for (int k = 0; k < DIMENSION; ++k)
+            {
+              double const contrib = dEidrByR * r_ij_const[k];
+              forces[i][k] += contrib;
+              forces[j][k] -= contrib;
+            }
+          }
+
+          // Call process_dEdr
+          if (isComputeProcess_dEdr == true)
+          {
+            double const rij = sqrt(rij2);
+            double const dEidr = dEidrByR*rij;
+            ier = model->process_dEdr(dEidr, rij, r_ij_const, i, j);
+            if (ier)
+            {
+              KIM::report_error(__LINE__, __FILE__, "process_dEdr", ier);
+              return ier;
+            }
+          }
+
+          // Call process_d2Edr2
+          if (isComputeProcess_d2Edr2 == true)
+          {
+            double const rij = sqrt(rij2);
+            double const R_pairs[2] = {rij, rij};
+            double const* const pRs = &R_pairs[0];
+            double const Rij_pairs[6]
+                = {r_ij_const[0], r_ij_const[1], r_ij_const[2],
+                   r_ij_const[0], r_ij_const[1], r_ij_const[2]};
+            double const* const pRijConsts = &Rij_pairs[0];
+            int const i_pairs[2] = {i, i};
+            int const j_pairs[2] = {j, j};
+            int const* const pis = &i_pairs[0];
+            int const* const pjs = &j_pairs[0];
+
+            ier = model->process_d2Edr2(d2Eidr2, pRs, pRijConsts, pis, pjs);
           if (ier)
           {
             KIM::report_error(__LINE__, __FILE__, "process_d2Edr2", ier);
             return ier;
           }
         }
+      }  // if particleContributing
       }  // if particles i and j interact
     }  // end of first neighbor loop
   }  // end of loop over contributing particles

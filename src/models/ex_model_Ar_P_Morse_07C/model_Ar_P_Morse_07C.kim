@@ -70,6 +70,8 @@ numberOfSpecies             integer      none
 
 particleSpecies             integer      none
 
+particleContributing        integer      none
+
 coordinates                 double       length
 
 get_neigh                   method       none              optional
@@ -85,13 +87,11 @@ process_d2Edr2              method       none              optional
 MODEL_OUTPUT:
 # Name                      Type         Unit              Requirements
 
-destroy                     method       none              optional
+destroy                     method       none
 
 reinit                      method       none              optional
 
 compute                     method       none
-
-cutoff                      double       length
 
 energy                      double       energy            optional
 

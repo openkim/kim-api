@@ -206,6 +206,8 @@ numberOfSpecies             integer      none
 
 particleSpecies             integer      none
 
+particleContributing        integer      none
+
 coordinates                 double       length
 
 get_neigh                   method       none                optional
@@ -226,8 +228,6 @@ destroy                     method       none
 compute                     method       none
 
 reinit                      method       none                optional
-
-cutoff                      double       length
 
 energy                      double       energy              optional
 

@@ -643,6 +643,24 @@ particleSpecies             integer      none
 
 ################################################################################
 #
+# particleContributing : A vector of integers indicating the status
+#                  (==1-contributing; ==0-non-contributing) of each particle in
+#                  the configuration passed between the Model and Simulator.
+#                  Shape [numberOfParticles].
+#
+# The values in this vector provide the status "contributing" or
+# "non-contributing" for each particle in the configuration.  This argument is
+# required for all Models and Simulators.  The Simulator must allocate memory
+# for this argument and register it in the KIM API object (via
+# KIM_API_set_data()) before the KIM_API_model_compute() function is called.
+# The Simulator is free to change this pointer at any time.
+#
+# Name                      Type         Unit
+#
+particleContributing        integer      none
+
+################################################################################
+#
 # coordinates : An array of floating-point numbers specifying the spatial
 #               location of each of the numberOfParticles particles in the
 #               configuration passed between the Model and Simulator.
@@ -786,26 +804,6 @@ reinit                      method       none
 # Name                      Type         Unit
 #
 destroy                     method       none
-
-################################################################################
-#
-# cutoff : A floating-point number indicating the Model's range of interactions
-#          (i.e. its cutoff radius).  Shape [].
-#
-# This argument is required for all Models and Simulators.  This value should
-# not be modified by the Simulator.  A Simulator must allocate memory for this
-# argument and register it in the KIM API object (via KIM_API_set_data())
-# before the KIM_API_model_init() function is called.  The Simulator is free to
-# change this pointer at any time.  However, when such a change occurs, the
-# Simulator must ensure that the value stored in the memory pointed to is
-# preserved.  If the Model allows for its cutoff distance to be changed it will
-# provide the parameter PARAM_cutoff (see below) which can be changed.  Once
-# the PARAM_cutoff parameter has been changed and the Model's reinit function
-# called, the Model must update the value of `cutoff'.
-#
-# Name                      Type         Unit
-#
-cutoff                      double       length
 
 ################################################################################
 #

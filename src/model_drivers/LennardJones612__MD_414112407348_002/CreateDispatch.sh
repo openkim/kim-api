@@ -54,6 +54,7 @@ for processdE in false true; do
             printf "                        $particleEnergy, $sshift >(\n"         >> $flName
             printf "                  model,\n"                                    >> $flName
             printf "                  particleSpecies,\n"                          >> $flName
+            printf "                  particleContributing,\n"                     >> $flName
             printf "                  coordinates,\n"                              >> $flName
             printf "                  energy,\n"                                   >> $flName
             printf "                  forces,\n"                                   >> $flName

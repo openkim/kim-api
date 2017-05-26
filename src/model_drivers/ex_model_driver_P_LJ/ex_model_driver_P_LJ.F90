@@ -79,6 +79,7 @@ integer(c_int), parameter          :: sigma_index   = 3
 !
 !-------------------------------------------------------------------------------
 type BUFFER_TYPE
+  real(c_double) :: influence_distance
   real(c_double) :: Pcutoff
   real(c_double) :: cutsq
   real(c_double) :: epsilon
@@ -231,7 +232,7 @@ real(c_double), pointer :: r_pairs(:)
 integer(c_int), pointer :: i_pairs(:), j_pairs(:)
 
 !-- KIM variables
-real(c_double), pointer :: model_cutoff;      type(c_ptr) :: pmodel_cutoff
+real(c_double) :: model_cutoff
 integer(c_int), pointer :: N;                 type(c_ptr) :: pN
 real(c_double), pointer :: energy;            type(c_ptr) :: penergy
 real(c_double), pointer :: coor(:,:);         type(c_ptr) :: pcoor
@@ -239,23 +240,15 @@ real(c_double), pointer :: force(:,:);        type(c_ptr) :: pforce
 real(c_double), pointer :: enepot(:);         type(c_ptr) :: penepot
 integer(c_int), pointer :: nei1part(:);       type(c_ptr) :: pnei1part
 integer(c_int), pointer :: particleSpecies(:);type(c_ptr) :: pparticleSpecies
+integer(c_int), pointer :: particleContributing(:)
+type(c_ptr) :: pparticleContributing
 
 
 ! get model buffer from KIM object
 call kim_model_get_model_buffer(model, pbuf)
 call c_f_pointer(pbuf, buf)
 
-! Unpack the Model's cutoff stored in the KIM API object
-!
-call kim_model_get_data(model, kim_compute_argument_name_cutoff, &
-  pmodel_cutoff, ierr)
-if (ierr /= 0) then
-   call kim_report_error(__LINE__, THIS_FILE_NAME,    &
-                               "kim_model_get_data", &
-                               ierr)
-   return
-endif
-call c_f_pointer(pmodel_cutoff, model_cutoff)
+model_cutoff = buf%influence_distance
 
 ! Check to see if we have been asked to compute the forces, energyperpart,
 ! energy and d1Edr
@@ -281,6 +274,7 @@ call kim_model_get_data(model, &
 call kim_utility_compute_getm_data(model, ierr, &
   kim_compute_argument_name_number_of_particles, pn, 1, &
   kim_compute_argument_name_particle_species, pparticlespecies, 1, &
+  kim_compute_argument_name_particle_contributing, pparticlecontributing, 1, &
   kim_compute_argument_name_coordinates, pcoor, 1, &
   kim_compute_argument_name_energy, penergy, 1, &
   kim_compute_argument_name_forces, pforce, 1, &
@@ -294,6 +288,7 @@ endif
 
 call c_f_pointer(pN,             N)
 call c_f_pointer(pparticleSpecies, particleSpecies, [N])
+call c_f_pointer(pparticleContributing, particleContributing, [N])
 call c_f_pointer(pcoor,          coor,          [DIM,N])
 
 if (comp_energy.eq.1) call c_f_pointer(penergy,         energy)
@@ -335,29 +330,26 @@ if (comp_force.eq.1)  force  = 0.0_cd
 
 !  Loop over particles and compute energy and forces
 !
-i = 0
-do
+do i = 1, N
 
-   ! Set up neighbor list for next particle
-   !
-   i = i + 1
-   if (i.gt.N) exit          ! incremented past end of list,
-   ! terminate loop
-   call kim_model_get_neigh(model, i, numnei, pnei1part, ierr)
-   if (ierr /= 0) then
-     ! some sort of problem, exit
-     call kim_report_error(__LINE__, THIS_FILE_NAME, &
-       "kim_api_get_neigh",      &
-       ierr)
-     ierr = 1
-     return
-   endif
+  if (particleContributing(i) == 1) then
+    ! Set up neighbor list for next particle
+    !
+    call kim_model_get_neigh(model, 1, i, numnei, pnei1part, ierr)
+    if (ierr /= 0) then
+      ! some sort of problem, exit
+      call kim_report_error(__LINE__, THIS_FILE_NAME, &
+        "kim_api_get_neigh",      &
+        ierr)
+      ierr = 1
+      return
+    endif
 
-   call c_f_pointer(pnei1part, nei1part, [numnei])
+    call c_f_pointer(pnei1part, nei1part, [numnei])
 
-   ! Loop over the neighbors of particle i
-   !
-   do jj = 1, numnei
+    ! Loop over the neighbors of particle i
+    !
+    do jj = 1, numnei
 
       j = nei1part(jj)                        ! get neighbor ID
 
@@ -370,79 +362,81 @@ do
       Rsqij = dot_product(Rij,Rij)                ! compute square distance
       if ( Rsqij .lt. buf%cutsq ) then            ! particles are interacting?
 
-         r = sqrt(Rsqij)                          ! compute distance
-         if (comp_process_d2Edr2.eq.1) then
-            call calc_phi_dphi_d2phi(buf%epsilon, &
-                                     buf%sigma,   &
-                                     buf%shift,   &
-                                     buf%Pcutoff,  &
-                                     r,phi,dphi,d2phi) ! compute pair potential
-                                                       !   and it derivatives
-            dEidr  = 0.5_cd*dphi               !      regular contribution
-            d2Eidr = 0.5_cd*d2phi
-         elseif (comp_force.eq.1.or.comp_process_dEdr.eq.1) then
-            call calc_phi_dphi(buf%epsilon, &
-                               buf%sigma,   &
-                               buf%shift,   &
-                               buf%Pcutoff,  &
-                               r,phi,dphi)        ! compute pair potential
-                                                  !   and it derivative
+        r = sqrt(Rsqij)                          ! compute distance
+        if (comp_process_d2Edr2.eq.1) then
+          call calc_phi_dphi_d2phi(buf%epsilon, &
+            buf%sigma,   &
+            buf%shift,   &
+            buf%Pcutoff,  &
+            r,phi,dphi,d2phi) ! compute pair potential
+          !   and it derivatives
+          dEidr  = 0.5_cd*dphi               !      regular contribution
+          d2Eidr = 0.5_cd*d2phi
+        elseif (comp_force.eq.1.or.comp_process_dEdr.eq.1) then
+          call calc_phi_dphi(buf%epsilon, &
+            buf%sigma,   &
+            buf%shift,   &
+            buf%Pcutoff,  &
+            r,phi,dphi)        ! compute pair potential
+          !   and it derivative
 
-            dEidr = 0.5_cd*dphi                !      regular contribution
-         else
-            call calc_phi(buf%epsilon, &
-                          buf%sigma,   &
-                          buf%shift,   &
-                          buf%Pcutoff,  &
-                          r,phi)                  ! compute just pair potential
-         endif
+          dEidr = 0.5_cd*dphi                !      regular contribution
+        else
+          call calc_phi(buf%epsilon, &
+            buf%sigma,   &
+            buf%shift,   &
+            buf%Pcutoff,  &
+            r,phi)                  ! compute just pair potential
+        endif
 
-         ! contribution to energy
-         !
-         if (comp_enepot.eq.1) then
-            enepot(i) = enepot(i) + 0.5_cd*phi    ! accumulate energy
-         endif
-         if (comp_energy.eq.1) then
-            energy = energy + 0.5_cd*phi       !      add half v to total energy
-         endif
+        ! contribution to energy
+        !
+        if (comp_enepot.eq.1) then
+          enepot(i) = enepot(i) + 0.5_cd*phi    ! accumulate energy
+        endif
+        if (comp_energy.eq.1) then
+          energy = energy + 0.5_cd*phi       !      add half v to total energy
+        endif
 
-         ! contribution to process_dEdr
-         !
-         if (comp_process_dEdr.eq.1) then
-           call kim_model_process_dedr(model, deidr, r, c_loc(rij(1)), i, j, &
-             ierr)
-         endif
+        ! contribution to process_dEdr
+        !
+        if (comp_process_dEdr.eq.1) then
+          call kim_model_process_dedr(model, deidr, r, c_loc(rij(1)), i, j, &
+            ierr)
+        endif
 
-         ! contribution to process_d2Edr2
-         if (comp_process_d2Edr2.eq.1) then
-            r_pairs(1) = r
-            r_pairs(2) = r
-            Rij_pairs(:,1) = Rij
-            Rij_pairs(:,2) = Rij
-            i_pairs(1) = i
-            i_pairs(2) = i
-            j_pairs(1) = j
-            j_pairs(2) = j
+        ! contribution to process_d2Edr2
+        if (comp_process_d2Edr2.eq.1) then
+          r_pairs(1) = r
+          r_pairs(2) = r
+          Rij_pairs(:,1) = Rij
+          Rij_pairs(:,2) = Rij
+          i_pairs(1) = i
+          i_pairs(2) = i
+          j_pairs(1) = j
+          j_pairs(2) = j
 
-            call kim_model_process_d2edr2(model, d2eidr, &
-              c_loc(r_pairs(1)),     &
-              c_loc(Rij_pairs(1,1)), &
-              c_loc(i_pairs(1)),     &
-              c_loc(j_pairs(1)), ierr)
-         endif
+          call kim_model_process_d2edr2(model, d2eidr, &
+            c_loc(r_pairs(1)),     &
+            c_loc(Rij_pairs(1,1)), &
+            c_loc(i_pairs(1)),     &
+            c_loc(j_pairs(1)), ierr)
+        endif
 
-         ! contribution to forces
-         !
-         if (comp_force.eq.1) then
-            force(:,i) = force(:,i) + dEidr*Rij/r ! accumulate force on particle i
-            force(:,j) = force(:,j) - dEidr*Rij/r ! accumulate force on particle j
-         endif
+        ! contribution to forces
+        !
+        if (comp_force.eq.1) then
+          force(:,i) = force(:,i) + dEidr*Rij/r ! accumulate force on particle i
+          force(:,j) = force(:,j) - dEidr*Rij/r ! accumulate force on particle j
+        endif
 
       endif
 
-   enddo  ! loop on jj
+    enddo  ! loop on jj
 
-enddo  ! infinite do loop (terminated by exit statements above)
+  endif  ! if particleContributing
+
+enddo  ! do i
 
 ! Free temporary storage
 !
@@ -480,25 +474,16 @@ real(c_double) energy_at_cutoff
 type(BUFFER_TYPE), pointer :: buf; type(c_ptr) :: pbuf
 
 !-- KIM variables
-real(c_double), pointer :: cutoff; type(c_ptr) :: pcutoff
+real(c_double) :: cutoffs(1)
 
 ! get model buffer from KIM object
 call kim_model_get_model_buffer(model, pbuf)
 call c_f_pointer(pbuf, buf)
 
-call kim_model_get_data(model, kim_compute_argument_name_cutoff, pcutoff, ierr)
-if (ierr /= 0) then
-   call kim_report_error(__LINE__, THIS_FILE_NAME, &
-                               "kim_api_get_data", ierr)
-   return
-endif
-call c_f_pointer(pcutoff, cutoff)
-
-!
 ! Set new values in KIM object and buffer
 !
-cutoff    = buf%Pcutoff
-buf%cutsq = cutoff**2
+buf%influence_distance = buf%Pcutoff
+buf%cutsq = (buf%Pcutoff)**2
 ! calculate pair potential at r=cutoff with shift=0.0
 call calc_phi(buf%epsilon, &
               buf%sigma,   &
@@ -576,9 +561,6 @@ real(c_double) in_cutoff
 real(c_double) in_epsilon
 real(c_double) in_sigma
 real(c_double) energy_at_cutoff
-
-!-- KIM variables
-real(c_double), pointer :: cutoff; type(c_ptr) :: pcutoff
 
 call c_f_pointer(pparamfile, paramfile, [numparamfiles])
 
@@ -662,20 +644,11 @@ if (ierr /= 0) then
 endif
 in_sigma = in_sigma * factor
 
-! store model cutoff in KIM object
-call kim_model_get_data(model, kim_compute_argument_name_cutoff, pcutoff, ierr)
-if (ierr /= 0) then
-   call kim_report_error(__LINE__, THIS_FILE_NAME, &
-                               "kim_api_get_data", ierr)
-   goto 42
-endif
-call c_f_pointer(pcutoff, cutoff)
-cutoff = in_cutoff
-
 allocate( buf )
 
 ! setup buffer
 ! set value of parameters
+buf%influence_distance = in_cutoff
 buf%Pcutoff = in_cutoff
 buf%cutsq   = in_cutoff**2
 buf%epsilon = in_epsilon
@@ -686,6 +659,10 @@ call calc_phi(in_epsilon, &
               in_cutoff,  &
               in_cutoff, energy_at_cutoff)
 buf%shift   = -energy_at_cutoff
+
+! store model cutoff in KIM object
+call kim_model_set_influence_distance(model, c_loc(buf%influence_distance))
+call kim_model_set_cutoffs(model, 1, c_loc(buf%influence_distance))
 
 ! end setup buffer
 

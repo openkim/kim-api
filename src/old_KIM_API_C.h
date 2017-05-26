@@ -91,7 +91,7 @@ void old_KIM_API_set_species_code(void * kimmdl, const char* species, int code, 
   int old_KIM_API_get_parameter(void* kimmdl, const int index,
                                 const char** const parameterString);
 
-int old_KIM_API_get_neigh(void *kimmdl, int request, int *numnei, int **nei1part);
+int old_KIM_API_get_neigh(void *kimmdl, int neighborListIndex, int request, int *numnei, int **nei1part);
 
   int old_KIM_API_get_status_msg(const int status_code, const char** const status_msg);
 

@@ -73,6 +73,17 @@ class Model{
                     Model ** const model);
   static void destroy(Model ** const model);
 
+  void get_influence_distance(double * const influenceDistance) const;
+  // stores pointer value
+  void set_influence_distance(double * const influenceDistance);
+
+  // allows NULL as value of cutoffs (to get just numberOfCutoffs)
+  void get_cutoffs(int * const numberOfCutoffs, double const ** const cutoffs)
+      const;
+  // stores pointer value
+  void set_cutoffs(int const numberOfCutoffs, double const * const cutoffs);
+
+
   // @@@ below move to KIM::COMPUTE::ArgumentList class
   // data functions
   int get_data(COMPUTE::ArgumentName const argumentName, void ** const ptr)
@@ -101,7 +112,8 @@ class Model{
   void print() const;
 
   int compute() const;  // @@@ add KIM::COMPUTE::ArgumentList argument
-  int get_neigh(int particleNumber, int * const numberOfNeighbors,
+  int get_neigh(int const neighborListIndex, int const particleNumber,
+                int * const numberOfNeighbors,
                 int const ** const neighborsOfParticle) const;
   int init();  // @@@ merge into create
   int reinit();  // @@@ rename to recreate (or other name)

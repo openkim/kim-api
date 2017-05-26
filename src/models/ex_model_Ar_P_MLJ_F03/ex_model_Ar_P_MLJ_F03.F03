@@ -182,6 +182,8 @@ real(c_double), pointer :: force(:,:);        type(c_ptr) :: pforce
 real(c_double), pointer :: enepot(:);         type(c_ptr) :: penepot
 integer(c_int), pointer :: nei1part(:);       type(c_ptr) :: pnei1part
 integer(c_int), pointer :: particleSpecies(:);type(c_ptr) :: pparticleSpecies
+integer(c_int), pointer :: particleContributing(:)
+type(c_ptr) :: pparticleContributing
 real(c_double), pointer :: virial(:);         type(c_ptr) :: pvirial
 
 ! Check to see if we have been asked to compute the forces, energyperpart,
@@ -203,6 +205,7 @@ endif
 call kim_utility_compute_getm_data(model, ierr, &
   kim_compute_argument_name_number_of_particles, pN, 1, &
   kim_compute_argument_name_particle_species, pparticleSpecies, 1, &
+  kim_compute_argument_name_particle_species, pparticleContributing, 1, &
   kim_compute_argument_name_coordinates, pcoor, 1, &
   kim_compute_argument_name_energy, penergy, TRUEFALSE(comp_energy.eq.1), &
   kim_compute_argument_name_forces, pforce, TRUEFALSE(comp_force.eq.1), &
@@ -216,6 +219,7 @@ endif
 
 call c_f_pointer(pN,               N)
 call c_f_pointer(pparticleSpecies, particleSpecies, [N])
+call c_f_pointer(pparticleContributing, particleContributing, [N])
 call c_f_pointer(pcoor,            coor,            [DIM,N])
 if (comp_energy.eq.1) call c_f_pointer(penergy,         energy)
 if (comp_force.eq.1)  call c_f_pointer(pforce,          force,          [DIM,N])
@@ -248,29 +252,24 @@ if (comp_virial.eq.1) virial = 0.0_cd
 
 !  Loop over particles and compute energy and forces
 !
-i = 0
-do
+do i = 1, N
+  if (particleContributing(i) == 1) then
+    ! Set up neighbor list for next particle
+    call kim_model_get_neigh(model, 1, i, numnei, pnei1part, ierr)
+    if (ierr /= 0) then
+      ! some sort of problem, exit
+      call kim_report_error(__LINE__, THIS_FILE_NAME, &
+        "kim_api_get_neigh",      &
+        ierr)
+      ierr = 1
+      return
+    endif
 
-   ! Set up neighbor list for next particle
-   !
-   i = i + 1
-   if (i.gt.N) exit       ! incremented past end of list,
-                          ! terminate loop
-   call kim_model_get_neigh(model, i, numnei, pnei1part, ierr)
-   if (ierr /= 0) then
-     ! some sort of problem, exit
-     call kim_report_error(__LINE__, THIS_FILE_NAME, &
-       "kim_api_get_neigh",      &
-       ierr)
-     ierr = 1
-     return
-   endif
+    call c_f_pointer(pnei1part, nei1part, [numnei])
 
-   call c_f_pointer(pnei1part, nei1part, [numnei])
-
-   ! Loop over the neighbors of particle i
-   !
-   do jj = 1, numnei
+    ! Loop over the neighbors of particle i
+    !
+    do jj = 1, numnei
 
       j = nei1part(jj)                           ! get neighbor ID
 
@@ -283,47 +282,49 @@ do
       Rsqij = dot_product(Rij,Rij)               ! compute square distance
       if ( Rsqij .lt. model_cutsq ) then         ! particles are interacting?
 
-         r = sqrt(Rsqij)                         ! compute distance
-         if (comp_force.eq.1.or.comp_virial.eq.1) then
-            call calc_phi_dphi(r,phi,dphi)       ! compute pair potential
-                                                 !   and it derivative
-            dEidr = 0.5_cd*dphi               !      regular contribution
-         else
-            call calc_phi(r,phi)                 ! compute just pair potential
-         endif
+        r = sqrt(Rsqij)                         ! compute distance
+        if (comp_force.eq.1.or.comp_virial.eq.1) then
+          call calc_phi_dphi(r,phi,dphi)       ! compute pair potential
+          !   and it derivative
+          dEidr = 0.5_cd*dphi               !      regular contribution
+        else
+          call calc_phi(r,phi)                 ! compute just pair potential
+        endif
 
-         ! contribution to energy
-         !
-         if (comp_enepot.eq.1) then
-            enepot(i) = enepot(i) + 0.5_cd*phi   ! accumulate energy
-         endif
-         if (comp_energy.eq.1) then
-           energy = energy + 0.5_cd*phi      !    add half v to total energy
-         endif
+        ! contribution to energy
+        !
+        if (comp_enepot.eq.1) then
+          enepot(i) = enepot(i) + 0.5_cd*phi   ! accumulate energy
+        endif
+        if (comp_energy.eq.1) then
+          energy = energy + 0.5_cd*phi      !    add half v to total energy
+        endif
 
-         ! contribution to virial tensor, virial(i,j)=r(i)*r(j)*(dV/dr)/r
-         !
-         if (comp_virial.eq.1) then
-            virial(1) = virial(1) + Rij(1)*Rij(1)*dEidr/r
-            virial(2) = virial(2) + Rij(2)*Rij(2)*dEidr/r
-            virial(3) = virial(3) + Rij(3)*Rij(3)*dEidr/r
-            virial(4) = virial(4) + Rij(2)*Rij(3)*dEidr/r
-            virial(5) = virial(5) + Rij(1)*Rij(3)*dEidr/r
-            virial(6) = virial(6) + Rij(1)*Rij(2)*dEidr/r
-         endif
+        ! contribution to virial tensor, virial(i,j)=r(i)*r(j)*(dV/dr)/r
+        !
+        if (comp_virial.eq.1) then
+          virial(1) = virial(1) + Rij(1)*Rij(1)*dEidr/r
+          virial(2) = virial(2) + Rij(2)*Rij(2)*dEidr/r
+          virial(3) = virial(3) + Rij(3)*Rij(3)*dEidr/r
+          virial(4) = virial(4) + Rij(2)*Rij(3)*dEidr/r
+          virial(5) = virial(5) + Rij(1)*Rij(3)*dEidr/r
+          virial(6) = virial(6) + Rij(1)*Rij(2)*dEidr/r
+        endif
 
-         ! contribution to forces
-         !
-         if (comp_force.eq.1) then
-            force(:,i) = force(:,i) + dEidr*Rij/r ! accumulate force on i
-            force(:,j) = force(:,j) - dEidr*Rij/r ! accumulate force on j
-         endif
+        ! contribution to forces
+        !
+        if (comp_force.eq.1) then
+          force(:,i) = force(:,i) + dEidr*Rij/r ! accumulate force on i
+          force(:,j) = force(:,j) - dEidr*Rij/r ! accumulate force on j
+        endif
 
       endif
 
-   enddo  ! loop on jj
+    enddo  ! loop on jj
 
-enddo  ! infinite do loop (terminated by exit statements above)
+  endif  ! if particleContributing
+
+enddo  ! do i
 
 ! Everything is great
 !
@@ -351,7 +352,7 @@ type(kim_model_type), intent(inout) :: model
 integer(c_int), intent(out) :: ierr
 
 !-- KIM variables
-real(c_double), pointer :: cutoff; type(c_ptr) :: pcutoff
+real(c_double), allocatable, target :: cutoff
 
 ! store pointer to compute function in KIM object
 call kim_model_set_method(model, &
@@ -364,17 +365,38 @@ if (ierr /= 0) then
 endif
 
 ! store model cutoff in KIM object
-call kim_model_get_data(model, kim_compute_argument_name_cutoff, pcutoff, ierr)
-if (ierr /= 0) then
-   call kim_report_error(__LINE__, THIS_FILE_NAME, &
-                               "kim_api_get_data", ierr)
-   goto 42
-endif
-call c_f_pointer(pcutoff, cutoff)
+allocate( cutoff )
 cutoff = model_cutoff
+call kim_model_set_sim_buffer(model, c_loc(cutoff))
+call kim_model_set_influence_distance(model, c_loc(cutoff))
+call kim_model_set_cutoffs(model, 1, c_loc(cutoff))
 
 ierr = 0
 42 continue
 return
 
 end subroutine model_init
+
+!-------------------------------------------------------------------------------
+!
+! Model destroy routine (REQUIRED)
+!
+!-------------------------------------------------------------------------------
+subroutine model_destroy(model, ierr) bind(c)
+  use, intrinsic :: iso_c_binding
+  use ex_model_Ar_P_MLJ_F03
+  use kim_model_module
+  implicit none
+
+  !-- Transferred variables
+  type(kim_model_type), intent(inout) :: model
+  integer(c_int), intent(out) :: ierr
+
+  real(c_double), pointer :: cutoff; type(c_ptr) :: ptr
+
+  call kim_model_get_sim_buffer(model, ptr)
+  call kim_model_set_sim_buffer(model, c_null_ptr)
+  call c_f_pointer(ptr, cutoff)
+  deallocate(cutoff)
+  ierr = 0  ! everything is good
+end subroutine model_destroy

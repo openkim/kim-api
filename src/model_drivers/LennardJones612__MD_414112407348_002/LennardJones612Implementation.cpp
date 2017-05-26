@@ -71,6 +71,7 @@ LennardJones612Implementation::LennardJones612Implementation(
       cutoffs_(0),
       epsilons_(0),
       sigmas_(0),
+      influenceDistance_(0.0),
       cutoffsSq2D_(0),
       fourEpsilonSigma6_2D_(0),
       fourEpsilonSigma12_2D_(0),
@@ -162,6 +163,7 @@ int LennardJones612Implementation::Compute(KIM::Model const * const model)
   //
   // KIM API Model Input
   int const* particleSpecies = 0;
+  int const* particleContributing = 0;
   VectorOfSizeDIM const* coordinates = 0;
   //
   // KIM API Model Output
@@ -171,7 +173,7 @@ int LennardJones612Implementation::Compute(KIM::Model const * const model)
   ier = SetComputeMutableValues(model, isComputeProcess_dEdr,
                                 isComputeProcess_d2Edr2, isComputeEnergy,
                                 isComputeForces, isComputeParticleEnergy,
-                                particleSpecies,
+                                particleSpecies, particleContributing,
                                 coordinates, energy, particleEnergy, forces);
   if (ier) return ier;
 
@@ -580,7 +582,7 @@ int LennardJones612Implementation::RegisterKIMFunctions(
 
 //******************************************************************************
 int LennardJones612Implementation::SetReinitMutableValues(
-    KIM::Model const * const model)
+    KIM::Model * const model)
 { // use (possibly) new values of free parameters to compute other quantities
   int ier;
 
@@ -609,18 +611,8 @@ int LennardJones612Implementation::SetReinitMutableValues(
     }
   }
 
-  // get cutoff pointer
-  double * cutoff;
-      ier = model->get_data(KIM::COMPUTE::ARGUMENT_NAME::cutoff,
-                            reinterpret_cast<void**>(&cutoff));
-  if (ier)
-  {
-    KIM::report_error(__LINE__, __FILE__, "get_data", ier);
-    return ier;
-  }
-
   // update cutoff value in KIM API object
-  *cutoff = 0;
+  influenceDistance_ = 0.0;
   int numberSpecies;
   model->get_num_sim_species(&numberSpecies);
   KIM::SpeciesName simSpeciesI;
@@ -658,13 +650,15 @@ int LennardJones612Implementation::SetReinitMutableValues(
                           true);
         return true;
       }
-      if (*cutoff < cutoffsSq2D_[indexI][indexJ])
+      if (influenceDistance_ < cutoffsSq2D_[indexI][indexJ])
       {
-        *cutoff = cutoffsSq2D_[indexI][indexJ];
+        influenceDistance_ = cutoffsSq2D_[indexI][indexJ];
       }
     }
   }
-  *cutoff = sqrt(*cutoff);
+  influenceDistance_ = sqrt(influenceDistance_);
+  model->set_influence_distance(&influenceDistance_);
+  model->set_cutoffs(1, &influenceDistance_);
 
   // update shifts
   // compute and set shifts2D_ check if minus sign
@@ -702,6 +696,7 @@ int LennardJones612Implementation::SetComputeMutableValues(
     bool& isComputeForces,
     bool& isComputeParticleEnergy,
     int const*& particleSpecies,
+    int const*& particleContributing,
     VectorOfSizeDIM const*& coordinates,
     double*& energy,
     double*& particleEnergy,
@@ -742,10 +737,10 @@ int LennardJones612Implementation::SetComputeMutableValues(
   int const* numberOfParticles;
   ier = KIM::UTILITY::COMPUTE::getm_data(
       model,
-      // KIM::COMPUTE::ARGUMENT_NAME::cutoff, &cutoff, 1,
       // KIM::COMPUTE::ARGUMENT_NAME::numberOfSpecies, &numberOfSpecies, 1,
       KIM::COMPUTE::ARGUMENT_NAME::numberOfParticles, &numberOfParticles, 1,
       KIM::COMPUTE::ARGUMENT_NAME::particleSpecies, &particleSpecies, 1,
+      KIM::COMPUTE::ARGUMENT_NAME::particleContributing, &particleContributing, 1,
       KIM::COMPUTE::ARGUMENT_NAME::coordinates, &coordinates, 1,
       KIM::COMPUTE::ARGUMENT_NAME::energy, &energy, compEnergy,
       KIM::COMPUTE::ARGUMENT_NAME::particleEnergy, &particleEnergy, compParticleEnergy,

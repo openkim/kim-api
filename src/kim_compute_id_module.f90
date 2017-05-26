@@ -40,6 +40,7 @@ module kim_compute_id_module
     number_of_particles_id, &
     number_of_species_id, &
     particle_species_id, &
+    particle_contributing_id, &
     coordinates_id, &
     get_neigh_id, &
     process_dedr_id, &
@@ -48,7 +49,6 @@ module kim_compute_id_module
     compute_id, &
     reinit_id, &
     destroy_id, &
-    cutoff_id, &
     energy_id, &
     forces_id, &
     particle_energy_id, &
@@ -64,15 +64,15 @@ module kim_compute_id_module
   integer(c_int), parameter :: number_of_particles_id = 0
   integer(c_int), parameter :: number_of_species_id = 1
   integer(c_int), parameter :: particle_species_id = 2
-  integer(c_int), parameter :: coordinates_id = 3
-  integer(c_int), parameter :: get_neigh_id = 4
-  integer(c_int), parameter :: process_dedr_id = 5
-  integer(c_int), parameter :: process_d2edr2_id = 6
-  integer(c_int), parameter :: neigh_object_id = 7
-  integer(c_int), parameter :: compute_id = 8
-  integer(c_int), parameter :: reinit_id = 9
-  integer(c_int), parameter :: destroy_id = 10
-  integer(c_int), parameter :: cutoff_id = 11
+  integer(c_int), parameter :: particle_contributing_id = 3
+  integer(c_int), parameter :: coordinates_id = 4
+  integer(c_int), parameter :: get_neigh_id = 5
+  integer(c_int), parameter :: process_dedr_id = 6
+  integer(c_int), parameter :: process_d2edr2_id = 7
+  integer(c_int), parameter :: neigh_object_id = 8
+  integer(c_int), parameter :: compute_id = 9
+  integer(c_int), parameter :: reinit_id = 10
+  integer(c_int), parameter :: destroy_id = 11
   integer(c_int), parameter :: energy_id = 12
   integer(c_int), parameter :: forces_id = 13
   integer(c_int), parameter :: particle_energy_id = 14

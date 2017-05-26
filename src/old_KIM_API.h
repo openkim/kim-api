@@ -176,7 +176,7 @@ public:
     int string_init(const char * intststr,const char * modelname);
    int match(const char* simstring, const char* modelstring);
     int model_compute();
-    int get_neigh(int request, int *numnei, int **nei1part);
+  int get_neigh(int neighborListIndex, int request, int *numnei, int **nei1part);
     int model_init();
     int model_reinit();
     int model_destroy();
@@ -234,6 +234,12 @@ void set_species_code(const char *species, int code, int* error);
       const char * charge,const char * temperature, const char * time,
       double length_exponent, double energy_exponent, double charge_exponent,
       double temperature_exponent, double time_exponent, int* kimerror);
+
+
+  double * influenceDistance;
+  // cutoffs
+  int numberOfCutoffs;
+  double * cutoffs;
 
 private:
   DISALLOW_COPY_AND_ASSIGN(KIM_API_model);

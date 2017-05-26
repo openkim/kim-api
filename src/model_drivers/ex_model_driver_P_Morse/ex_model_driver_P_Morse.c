@@ -75,21 +75,23 @@ static int destroy(KIM_Model * const model);
 static int compute(KIM_Model const * const model);
 
 /* Define prototypes for pair potential calculations */
-static void calc_phi(double* epsilon,
-                     double* C,
-                     double* Rzero,
-                     double* shift,
-                     double* cutoff, double r, double* phi);
+static void calc_phi(double const * epsilon,
+                     double const * C,
+                     double const * Rzero,
+                     double const * shift,
+                     double const cutoff, double const r, double* phi);
 
-static void calc_phi_dphi(double* epsilon,
-                          double* C,
-                          double* Rzero,
-                          double* shift,
-                          double* cutoff, double r, double* phi, double* dphi);
+static void calc_phi_dphi(double const* epsilon,
+                          double const* C,
+                          double const* Rzero,
+                          double const* shift,
+                          double const cutoff, double const r,
+                          double* phi, double* dphi);
 
 /* Define model_buffer structure */
 struct model_buffer
 {
+  double influenceDistance;
   double cutsq;
   double epsilon;
   double C;
@@ -99,11 +101,11 @@ struct model_buffer
 
 
 /* Calculate pair potential phi(r) */
-static void calc_phi(double* epsilon,
-                     double* C,
-                     double* Rzero,
-                     double* shift,
-                     double* cutoff, double r, double* phi)
+static void calc_phi(double const* epsilon,
+                     double const* C,
+                     double const* Rzero,
+                     double const* shift,
+                     double const cutoff, double const r, double* phi)
 {
   /* local variables */
   double ep;
@@ -112,7 +114,7 @@ static void calc_phi(double* epsilon,
   ep = exp(-(*C)*(r-*Rzero));
   ep2 = ep*ep;
 
-  if (r > *cutoff)
+  if (r > cutoff)
   {
     /* Argument exceeds cutoff radius */
     *phi = 0.0;
@@ -126,11 +128,12 @@ static void calc_phi(double* epsilon,
 }
 
 /* Calculate pair potential phi(r) and its derivative dphi(r) */
-static void calc_phi_dphi(double* epsilon,
-                          double* C,
-                          double* Rzero,
-                          double* shift,
-                          double* cutoff, double r, double* phi, double* dphi)
+static void calc_phi_dphi(double const* epsilon,
+                          double const* C,
+                          double const* Rzero,
+                          double const* shift,
+                          double const cutoff, double const r,
+                          double* phi, double* dphi)
 {
   /* local variables */
   double ep;
@@ -139,7 +142,7 @@ static void calc_phi_dphi(double* epsilon,
   ep = exp(-(*C)*(r-*Rzero));
   ep2 = ep*ep;
 
-  if (r > *cutoff)
+  if (r > cutoff)
   {
     /* Argument exceeds cutoff radius */
     *phi = 0.0;
@@ -177,7 +180,8 @@ static int compute(KIM_Model const * const model)
 
   int* nParts;
   int* particleSpecies;
-  double* cutoff;
+  int* particleContributing;
+  double cutoff;
   double* cutsq;
   double* epsilon;
   double* C;
@@ -193,6 +197,7 @@ static int compute(KIM_Model const * const model)
   KIM_Model_get_model_buffer(model, (void **) &buffer);
 
   /* unpack info from the buffer */
+  cutoff = buffer->influenceDistance;
   cutsq = &(buffer->cutsq);
   epsilon = &(buffer->epsilon);
   C = &(buffer->C);
@@ -215,9 +220,9 @@ static int compute(KIM_Model const * const model)
 
   ier = KIM_UTILITY_COMPUTE_getm_data(
       model,
-      KIM_COMPUTE_ARGUMENT_NAME_cutoff,            &cutoff,         1,
       KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles, &nParts,         1,
       KIM_COMPUTE_ARGUMENT_NAME_particleSpecies,   &particleSpecies,1,
+      KIM_COMPUTE_ARGUMENT_NAME_particleContributing, &particleContributing,1,
       KIM_COMPUTE_ARGUMENT_NAME_coordinates,       &coords,         1,
       KIM_COMPUTE_ARGUMENT_NAME_energy,            &energy,         comp_energy,
       KIM_COMPUTE_ARGUMENT_NAME_forces,            &force,          comp_force,
@@ -270,88 +275,83 @@ static int compute(KIM_Model const * const model)
   /* Compute energy and forces */
 
   /* loop over particles and compute enregy and forces */
-  i = -1;
-  while( 1 )
+  for (i = 0; i < *nParts; ++i)
   {
-    i++;
-    if (*nParts <= i)
+    if (particleContributing[i])
     {
-      /* incremented past end of list, terminate loop */
-      break;
-    }
-
-    ier = KIM_Model_get_neigh(model, i, &numOfPartNeigh,
-                        &neighListOfCurrentPart);
-    if (ier)
-    {
-      /* some sort of problem, exit */
-      KIM_report_error(__LINE__, __FILE__, "KIM_get_neigh", ier);
-      ier = TRUE;
-      return ier;
-    }
-
-    /* loop over the neighbors of particle i */
-    for (jj = 0; jj < numOfPartNeigh; ++ jj)
-    {
-      j = neighListOfCurrentPart[jj];  /* get neighbor ID */
-
-      /* compute relative position vector and squared distance */
-      Rsqij = 0.0;
-      for (k = 0; k < DIM; ++k)
+      ier = KIM_Model_get_neigh(model, 0, i, &numOfPartNeigh,
+                                &neighListOfCurrentPart);
+      if (ier)
       {
-        Rij[k] = coords[j*DIM + k] - coords[i*DIM + k];
-        /* compute squared distance */
-        Rsqij += Rij[k]*Rij[k];
+        /* some sort of problem, exit */
+        KIM_report_error(__LINE__, __FILE__, "KIM_get_neigh", ier);
+        ier = TRUE;
+        return ier;
       }
 
-      /* compute energy and force */
-      if (Rsqij < *cutsq)
+      /* loop over the neighbors of particle i */
+      for (jj = 0; jj < numOfPartNeigh; ++ jj)
       {
-        /* particles are interacting ? */
-        R = sqrt(Rsqij);
-        if (comp_force)
-        {
-          /* compute pair potential and its derivative */
-          calc_phi_dphi(epsilon,
-                        C,
-                        Rzero,
-                        shift,
-                        cutoff, R, &phi, &dphi);
+        j = neighListOfCurrentPart[jj];  /* get neighbor ID */
 
-          /* compute dEidr */
-          dEidr = 0.5*dphi;
-        }
-        else
+        /* compute relative position vector and squared distance */
+        Rsqij = 0.0;
+        for (k = 0; k < DIM; ++k)
         {
-          /* compute just pair potential */
-          calc_phi(epsilon,
-                   C,
-                   Rzero,
-                   shift,
-                   cutoff, R, &phi);
+          Rij[k] = coords[j*DIM + k] - coords[i*DIM + k];
+          /* compute squared distance */
+          Rsqij += Rij[k]*Rij[k];
         }
 
-        /* contribution to energy */
-        if (comp_particleEnergy)
+        /* compute energy and force */
+        if (Rsqij < *cutsq)
         {
-          particleEnergy[i] += 0.5*phi;
-        }
-        if (comp_energy)
-        {
-          *energy += 0.5*phi;
-        }
-
-        /* contribution to forces */
-        if (comp_force)
-        {
-          for (k = 0; k < DIM; ++k)
+          /* particles are interacting ? */
+          R = sqrt(Rsqij);
+          if (comp_force)
           {
-            force[i*DIM + k] += dEidr*Rij[k]/R;  /* accumulate force on i */
-            force[j*DIM + k] -= dEidr*Rij[k]/R;  /* accumulate force on j */
+            /* compute pair potential and its derivative */
+            calc_phi_dphi(epsilon,
+                          C,
+                          Rzero,
+                          shift,
+                          cutoff, R, &phi, &dphi);
+
+            /* compute dEidr */
+            dEidr = 0.5*dphi;
           }
-        }
-      }
-    }  /* loop on jj */
+          else
+          {
+            /* compute just pair potential */
+            calc_phi(epsilon,
+                     C,
+                     Rzero,
+                     shift,
+                     cutoff, R, &phi);
+          }
+
+          /* contribution to energy */
+          if (comp_particleEnergy)
+          {
+            particleEnergy[i] += 0.5*phi;
+          }
+          if (comp_energy)
+          {
+            *energy += 0.5*phi;
+          }
+
+          /* contribution to forces */
+          if (comp_force)
+          {
+            for (k = 0; k < DIM; ++k)
+            {
+              force[i*DIM + k] += dEidr*Rij[k]/R;  /* accumulate force on i */
+              force[j*DIM + k] -= dEidr*Rij[k]/R;  /* accumulate force on j */
+            }
+          }
+        }  /* if Rsqij */
+      }  /* loop on jj */
+    }  /* if particleContributing */
   }  /* infinite while loop (terminated by break statements above) */
 
   /* everything is great */
@@ -375,7 +375,6 @@ int model_driver_init(KIM_Model * const model,
   double epsilon;
   double C;
   double Rzero;
-  double* model_cutoff;
   int ier;
   double dummy;
   struct model_buffer* buffer;
@@ -429,16 +428,6 @@ int model_driver_init(KIM_Model * const model,
     return ier;
   }
 
-  /* store model cutoff in KIM object */
-  ier = KIM_Model_get_data(model, KIM_COMPUTE_ARGUMENT_NAME_cutoff,
-                     (void **) &model_cutoff);
-  if (ier)
-  {
-    KIM_report_error(__LINE__, __FILE__, "KIM_get_data", ier);
-    return ier;
-  }
-  *model_cutoff = cutoff;
-
   /* allocate buffer */
   buffer = (struct model_buffer*) malloc(sizeof(struct model_buffer));
   if (NULL == buffer)
@@ -450,7 +439,8 @@ int model_driver_init(KIM_Model * const model,
 
   /* setup buffer */
   /* set value of parameters */
-  buffer->cutsq = (*model_cutoff)*(*model_cutoff);
+  buffer->influenceDistance = cutoff;
+  buffer->cutsq = (cutoff)*(cutoff);
   buffer->epsilon = epsilon;
   buffer->C = C;
   buffer->Rzero = Rzero;
@@ -461,7 +451,7 @@ int model_driver_init(KIM_Model * const model,
            &(buffer->C),
            &(buffer->Rzero),
            &dummy,
-           model_cutoff, *model_cutoff, &(buffer->shift));
+           cutoff, cutoff, &(buffer->shift));
   /* set shift to -shift */
   buffer->shift = -buffer->shift;
 
@@ -469,6 +459,10 @@ int model_driver_init(KIM_Model * const model,
 
   /* store in model buffer */
   KIM_Model_set_model_buffer(model, (void*) buffer);
+
+  /* store model cutoff in KIM object */
+  KIM_Model_set_influence_distance(model, &(buffer->influenceDistance));
+  KIM_Model_set_cutoffs(model, 1, &(buffer->influenceDistance));
 
   return FALSE;
 }

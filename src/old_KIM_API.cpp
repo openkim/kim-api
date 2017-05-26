@@ -371,10 +371,10 @@ int KIMBaseElement::getelemsize(const char *tp, bool& success){
 }
 
 char const* const KIM_API_model::required_arguments[] =
-{"cutoff",
- "numberOfSpecies",
+{"numberOfSpecies",
  "numberOfParticles",
  "particleSpecies",
+ "particleContributing",
  "coordinates",
  "neighObject",
  "get_neigh",
@@ -398,6 +398,10 @@ KIM_API_model:: KIM_API_model(){
        model_buffer=NULL;
 
        model_lib_handle = NULL;
+
+       influenceDistance = NULL;
+       numberOfCutoffs = 0;
+       cutoffs = NULL;
 }
 KIM_API_model:: ~KIM_API_model(){
       // free();
@@ -1872,10 +1876,10 @@ int KIM_API_model::model_compute(){
   return error;
 }
 
-int KIM_API_model::get_neigh(int request, int *numnei, int** nei1part){
-  typedef int (*Get_Neigh_cpp)(KIM::Model const * const, int, int *, int **);
-  typedef int (*Get_Neigh_c)(KIM_Model const * const, int, int *, int **);
-  typedef void (*Get_Neigh_Fortran)(KIM_Model const * const, int, int *, int **, int *);
+int KIM_API_model::get_neigh(int neighborListIndex, int request, int *numnei, int** nei1part){
+  typedef int (*Get_Neigh_cpp)(KIM::Model const * const, int, int, int *, int **);
+  typedef int (*Get_Neigh_c)(KIM_Model const * const, int, int, int *, int **);
+  typedef void (*Get_Neigh_Fortran)(KIM_Model const * const, int, int, int *, int **, int *);
 
   if (get_neigh_index < 0) return KIM_STATUS_API_OBJECT_INVALID;
     Get_Neigh_cpp get_neigh_cpp = (Get_Neigh_cpp)(*this)[get_neigh_index].data.fp;
@@ -1890,15 +1894,15 @@ int KIM_API_model::get_neigh(int request, int *numnei, int** nei1part){
       int erkey;
       if ((*this)[get_neigh_index].lang == 1)
       {
-        erkey = (*get_neigh_cpp)(&MI, request, numnei, nei1part);
+        erkey = (*get_neigh_cpp)(&MI, neighborListIndex, request, numnei, nei1part);
       }
       else if ((*this)[get_neigh_index].lang == 2)
       {
-        erkey = (*get_neigh_c)(&cMI, request, numnei, nei1part);
+        erkey = (*get_neigh_c)(&cMI, neighborListIndex, request, numnei, nei1part);
       }
       else // Fortran
       {
-        (*get_neigh_fortran)(&cMI, request, numnei, nei1part, &erkey);
+        (*get_neigh_fortran)(&cMI, neighborListIndex+1, request, numnei, nei1part, &erkey);
       }
       return erkey;
     }
@@ -1909,15 +1913,15 @@ int KIM_API_model::get_neigh(int request, int *numnei, int** nei1part){
         int erkey;
         if ((*this)[get_neigh_index].lang == 1)
         {
-          erkey = (*get_neigh_cpp)(&MI, req, numnei, nei1part);
+          erkey = (*get_neigh_cpp)(&MI, neighborListIndex, req, numnei, nei1part);
         }
         else if ((*this)[get_neigh_index].lang == 2)
         {
-          erkey = (*get_neigh_c)(&cMI, req, numnei, nei1part);
+          erkey = (*get_neigh_c)(&cMI, neighborListIndex, req, numnei, nei1part);
         }
         else // Fortran
         {
-          (*get_neigh_fortran)(&cMI, req, numnei, nei1part, &erkey);
+          (*get_neigh_fortran)(&cMI, neighborListIndex+1, req, numnei, nei1part, &erkey);
         }
             if (!erkey){
                 if (neiOfAnAtomSize < *numnei) {

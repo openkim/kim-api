@@ -198,6 +198,35 @@ void KIM_Model_destroy(KIM_Model ** const model)
   *model = 0;
 }
 
+void KIM_Model_get_influence_distance(KIM_Model const * const model,
+                                      double * const influenceDistance)
+{
+  KIM::Model * pmodel = (KIM::Model *) model->p;
+  pmodel->get_influence_distance(influenceDistance);
+}
+
+void KIM_Model_set_influence_distance(KIM_Model * const model,
+                                      double * const influenceDistance)
+{
+  KIM::Model * pmodel = (KIM::Model *) model->p;
+  pmodel->set_influence_distance(influenceDistance);
+}
+
+void KIM_Model_get_cutoffs(KIM_Model const * const model,
+                           int * const numberOfCutoffs,
+                           double const ** const cutoffs)
+{
+  KIM::Model * pmodel = (KIM::Model *) model->p;
+  pmodel->get_cutoffs(numberOfCutoffs, cutoffs);
+}
+
+void KIM_Model_set_cutoffs(KIM_Model * const model, int const numberOfCutoffs,
+                           double const * const cutoffs)
+{
+  KIM::Model * pmodel = (KIM::Model *) model->p;
+  pmodel->set_cutoffs(numberOfCutoffs, cutoffs);
+}
+
 // *data functions
 int KIM_Model_get_data(KIM_Model const * const model,
                        KIM_COMPUTE_ArgumentName const argumentName,
@@ -280,12 +309,14 @@ int KIM_Model_compute(KIM_Model const * const model)
   return pmodel->compute();
 }
 
-int KIM_Model_get_neigh(KIM_Model const * const model, int particleNumber,
-                  int * const numberOfNeighbors,
-                  int const ** const neighborsOfParticle)
+int KIM_Model_get_neigh(KIM_Model const * const model,
+                        int const neighborListIndex,
+                        int const particleNumber,
+                        int * const numberOfNeighbors,
+                        int const ** const neighborsOfParticle)
 {
   KIM::Model * pmodel = (KIM::Model *) model->p;
-  return pmodel->get_neigh(particleNumber, numberOfNeighbors,
+  return pmodel->get_neigh(neighborListIndex, particleNumber, numberOfNeighbors,
                            neighborsOfParticle);
 }
 

@@ -40,6 +40,10 @@ module kim_model_module
     kim_model_type, &
     kim_model_create, &
     kim_model_destroy, &
+    kim_model_get_influence_distance, &
+    kim_model_set_influence_distance, &
+    kim_model_get_cutoffs, &
+    kim_model_set_cutoffs, &
     kim_model_get_data, &
     kim_model_set_data, &
     kim_model_get_method, &
@@ -103,6 +107,40 @@ module kim_model_module
       implicit none
       type(kim_model_type), intent(inout), pointer :: model
     end subroutine kim_model_destroy
+
+    subroutine kim_model_get_influence_distance(model, influence_distance)
+      use, intrinsic :: iso_c_binding
+      import kim_model_type
+      implicit none
+      type(kim_model_type), intent(in) :: model
+      real(c_double), intent(out) :: influence_distance
+    end subroutine kim_model_get_influence_distance
+
+    subroutine kim_model_set_influence_distance(model, influence_distance_ptr)
+      use, intrinsic :: iso_c_binding
+      import kim_model_type
+      implicit none
+      type(kim_model_type), intent(inout) :: model
+      type(c_ptr), intent(in), value :: influence_distance_ptr
+    end subroutine kim_model_set_influence_distance
+
+    subroutine kim_model_get_cutoffs(model, number_of_cutoffs, cutoffs_ptr)
+      use, intrinsic :: iso_c_binding
+      import kim_model_type
+      implicit none
+      type(kim_model_type), intent(in) :: model
+      integer(c_int), intent(out) :: number_of_cutoffs
+      type(c_ptr), intent(out) :: cutoffs_ptr
+    end subroutine kim_model_get_cutoffs
+
+    subroutine kim_model_set_cutoffs(model, number_of_cutoffs, cutoffs_ptr)
+      use, intrinsic :: iso_c_binding
+      import kim_model_type
+      implicit none
+      type(kim_model_type), intent(inout) :: model
+      integer(c_int), intent(in), value :: number_of_cutoffs
+      type(c_ptr), intent(in), value :: cutoffs_ptr
+    end subroutine kim_model_set_cutoffs
 
     subroutine kim_model_get_data(model, argument_name, ptr, ierr)
       use, intrinsic :: iso_c_binding
@@ -213,12 +251,13 @@ module kim_model_module
       integer(c_int), intent(out) :: ierr
     end subroutine kim_model_compute
 
-    subroutine kim_model_get_neigh(model, particle_number, &
-      number_of_neighbors, neighbors_of_particle, ierr)
+    subroutine kim_model_get_neigh(model, neighbor_list_index, &
+      particle_number, number_of_neighbors, neighbors_of_particle, ierr)
       use, intrinsic :: iso_c_binding
       import kim_model_type
       implicit none
       type(kim_model_type), intent(in) :: model
+      integer(c_int), intent(in), value :: neighbor_list_index
       integer(c_int), intent(in), value :: particle_number
       integer(c_int), intent(out) :: number_of_neighbors
       type(c_ptr), intent(out) :: neighbors_of_particle

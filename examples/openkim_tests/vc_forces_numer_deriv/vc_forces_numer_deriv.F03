@@ -107,13 +107,15 @@ end subroutine setup_neighborlist_KIM_access
 ! This function implements Locator and Iterator mode
 !
 !-------------------------------------------------------------------------------
-subroutine get_neigh(model, request, numnei, pnei1part, ierr) bind(c)
+subroutine get_neigh(model, neighbor_list_index, request, numnei, pnei1part, &
+  ierr) bind(c)
   use kim_model_module
   use kim_compute_module
   implicit none
 
   !-- Transferred variables
   type(kim_model_type), intent(in) :: model
+  integer(c_int), value, intent(in) :: neighbor_list_index
   integer(c_int), value, intent(in)  :: request
   integer(c_int),        intent(out) :: numnei
   type(c_ptr),           intent(out) :: pnei1part
@@ -124,6 +126,10 @@ subroutine get_neigh(model, request, numnei, pnei1part, ierr) bind(c)
   integer(c_int)  N
   integer(c_int), pointer :: numberOfParticles;   type(c_ptr) :: pnParts
   type(neighObject_type), pointer :: neighObject; type(c_ptr) :: pneighObject
+
+  if (neighbor_list_index /= 1) then
+    call kim_report_error(__LINE__, THIS_FILE_NAME, "wrong list index", 1)
+  endif
 
   ! unpack number of particles
   call kim_model_get_data(model, &
@@ -232,7 +238,10 @@ program vc_forces_numer_deriv
   integer(c_int) ierr
   integer(c_int), target :: numberOfParticles
   integer(c_int), target :: particleSpecies(N)
-  real(c_double), target :: cutoff
+  integer(c_int), target :: particleContributing(N)
+  real(c_double) :: influence_distance
+  integer(c_int) :: number_of_cutoffs
+  real(c_double), pointer :: cutoff; type(c_ptr) :: cutoff_ptr
   real(c_double), target :: energy
   real(c_double), target :: coords(3,N)
   real(c_double), target :: forces(3,N)
@@ -315,8 +324,8 @@ program vc_forces_numer_deriv
     kim_compute_argument_name_number_of_particles, 1, c_loc(numberOfParticles), TRUEFALSE(.true.), &
     kim_compute_argument_name_number_of_species,   1, c_loc(num_species),       TRUEFALSE(.true.), &
     kim_compute_argument_name_particle_species,    N, c_loc(particleSpecies),   TRUEFALSE(.TRUE.), &
+    kim_compute_argument_name_particle_contributing, N, c_loc(particleContributing), TRUEFALSE(.TRUE.), &
     kim_compute_argument_name_coordinates,       3*N, c_loc(coords),            TRUEFALSE(.true.), &
-    kim_compute_argument_name_cutoff,              1, c_loc(cutoff),            TRUEFALSE(.true.), &
     kim_compute_argument_name_energy,              1, c_loc(energy),            TRUEFALSE(.true.), &
     kim_compute_argument_name_forces,            3*N, c_loc(forces),            TRUEFALSE(.true.) &
   )
@@ -358,6 +367,14 @@ program vc_forces_numer_deriv
      stop
   endif
 
+  call kim_model_get_influence_distance(model, influence_distance)
+  call kim_model_get_cutoffs(model, number_of_cutoffs, cutoff_ptr)
+  if (number_of_cutoffs /= 1) then
+    call kim_report_error(__LINE__, THIS_FILE_NAME, &
+      "too many cutoffs", 1)
+  endif
+  call c_f_pointer(cutoff_ptr, cutoff)
+
   ! Scale reference FCC configuration based on cutoff radius.
   FCCspacing = 0.75_cd*cutoff ! set the FCC spacing to a fraction
                               ! of the cutoff radius
@@ -375,6 +392,9 @@ program vc_forces_numer_deriv
                                  "kim_api_get_species_code", ierr)
      stop
   endif
+  do i=1,N
+    particleContributing(i) = 1  ! every particle contributes
+  enddo
   do i=1,N
      coords(:,i) = cluster_coords(:,i) + cluster_disps(:,i)
   enddo
@@ -985,6 +1005,8 @@ kim_descriptor = &
                                                                                    cr // &
    'particleSpecies             integer      none'                              // cr // &
                                                                                    cr // &
+   'particleContributing        integer      none'                              // cr // &
+                                                                                   cr // &
    'coordinates                 double       length'                            // cr // &
                                                                                    cr // &
    'get_neigh                   method       none'                              // cr // &
@@ -1000,8 +1022,6 @@ kim_descriptor = &
    'reinit                      method       none'                              // cr // &
                                                                                    cr // &
    'compute                     method       none'                              // cr // &
-                                                                                   cr // &
-   'cutoff                      double       length'                            // cr // &
                                                                                    cr // &
    'energy                      double       energy'                            // cr // &
                                                                                    cr // &

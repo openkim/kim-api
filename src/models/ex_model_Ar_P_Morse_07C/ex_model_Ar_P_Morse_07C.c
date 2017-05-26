@@ -71,6 +71,7 @@ int model_init(KIM_Model * const model);
 
 /* Define prototype for compute routine */
 static int compute(KIM_Model const * const model);
+static int model_destroy(KIM_Model * const model);
 
 /* Define prototypes for pair potential calculations */
 static void calc_phi(double* epsilon,
@@ -197,6 +198,7 @@ static int compute(KIM_Model const * const model) {
 
   int* nParts;
   int* particleSpecies;
+  int* particleContributing;
   double* cutoff;
   double cutsq;
   double epsilon;
@@ -226,9 +228,9 @@ static int compute(KIM_Model const * const model) {
 
   ier = KIM_UTILITY_COMPUTE_getm_data(
       model,
-      KIM_COMPUTE_ARGUMENT_NAME_cutoff,            &cutoff,         1,
       KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles, &nParts,         1,
       KIM_COMPUTE_ARGUMENT_NAME_particleSpecies,   &particleSpecies,1,
+      KIM_COMPUTE_ARGUMENT_NAME_particleContributing, &particleContributing, 1,
       KIM_COMPUTE_ARGUMENT_NAME_coordinates,       &coords,         1,
       KIM_COMPUTE_ARGUMENT_NAME_energy,            &energy,         comp_energy,
       KIM_COMPUTE_ARGUMENT_NAME_forces,            &force,          comp_force,
@@ -239,6 +241,7 @@ static int compute(KIM_Model const * const model) {
     return ier; }
 
   /* set value of parameters */
+  KIM_Model_get_model_buffer(model, (void**) &cutoff);
   cutsq = (*cutoff)*(*cutoff);
   epsilon = EPSILON;
   C = PARAM_C;
@@ -275,99 +278,95 @@ static int compute(KIM_Model const * const model) {
   /* Compute energy and forces */
 
   /* loop over particles and compute enregy and forces */
-  i = -1;
-  while( 1 ) {
+  for (i = 0; i< *nParts; ++i) {
+    if (particleContributing[i])
+    {
+      ier = KIM_Model_get_neigh(model, 0, i, &numOfPartNeigh,
+                                &neighListOfCurrentPart);
+      if (ier) {
+        /* some sort of problem, exit */
+        KIM_report_error(__LINE__, __FILE__, "KIM_get_neigh", ier);
+        ier = TRUE;
+        return ier; }
 
-    i++;
-    if (*nParts <= i) {
-      /* incremented past end of list, terminate loop */
-      break; }
+      /* loop over the neighbors of particle i */
+      for (jj = 0; jj < numOfPartNeigh; ++ jj) {
+        j = neighListOfCurrentPart[jj];  /* get neighbor ID */
 
-    ier = KIM_Model_get_neigh(model, i, &numOfPartNeigh,
-                              &neighListOfCurrentPart);
-    if (ier) {
-      /* some sort of problem, exit */
-      KIM_report_error(__LINE__, __FILE__, "KIM_get_neigh", ier);
-      ier = TRUE;
-      return ier; }
+        /* compute relative position vector and squared distance */
+        Rsqij = 0.0;
+        for (k = 0; k < DIM; ++k) {
+          Rij[k] = coords[j*DIM + k] - coords[i*DIM + k];
 
-    /* loop over the neighbors of particle i */
-    for (jj = 0; jj < numOfPartNeigh; ++ jj) {
-      j = neighListOfCurrentPart[jj];  /* get neighbor ID */
+          /* compute squared distance */
+          Rsqij += Rij[k]*Rij[k]; }
 
-      /* compute relative position vector and squared distance */
-      Rsqij = 0.0;
-      for (k = 0; k < DIM; ++k) {
-        Rij[k] = coords[j*DIM + k] - coords[i*DIM + k];
+        /* compute energy and force */
+        if (Rsqij < cutsq) {
+          /* particles are interacting ? */
+          R = sqrt(Rsqij);
+          if (comp_process_d2Edr2) {
+            /* compute pair potential and its derivatives */
+            calc_phi_d2phi(&epsilon,
+                           &C,
+                           &Rzero,
+                           &shift,
+                           cutoff, R, &phi, &dphi, &d2phi);
 
-        /* compute squared distance */
-        Rsqij += Rij[k]*Rij[k]; }
+            /* compute dEidr */
+            /* Full mode -- regular contribution */
+            dEidr = 0.5*dphi;
+            d2Eidr = 0.5*d2phi; }
+          else if (comp_force || comp_process_dEdr) {
+            /* compute pair potential and its derivative */
+            calc_phi_dphi(&epsilon,
+                          &C,
+                          &Rzero,
+                          &shift,
+                          cutoff, R, &phi, &dphi);
 
-      /* compute energy and force */
-      if (Rsqij < cutsq) {
-        /* particles are interacting ? */
-        R = sqrt(Rsqij);
-        if (comp_process_d2Edr2) {
-          /* compute pair potential and its derivatives */
-          calc_phi_d2phi(&epsilon,
-                         &C,
-                         &Rzero,
-                         &shift,
-                         cutoff, R, &phi, &dphi, &d2phi);
+            /* compute dEidr */
+            /* Full mode -- regular contribution */
+            dEidr = 0.5*dphi; }
+          else {
+            /* compute just pair potential */
+            calc_phi(&epsilon,
+                     &C,
+                     &Rzero,
+                     &shift,
+                     cutoff, R, &phi); }
 
-          /* compute dEidr */
-          /* Full mode -- regular contribution */
-          dEidr = 0.5*dphi;
-          d2Eidr = 0.5*d2phi; }
-        else if (comp_force || comp_process_dEdr) {
-          /* compute pair potential and its derivative */
-          calc_phi_dphi(&epsilon,
-                        &C,
-                        &Rzero,
-                        &shift,
-                        cutoff, R, &phi, &dphi);
+          /* contribution to energy */
+          if (comp_particleEnergy) {
+            particleEnergy[i] += 0.5*phi; }
+          if (comp_energy) {
+            /* Full mode -- add half v to total energy */
+            *energy += 0.5*phi; }
 
-          /* compute dEidr */
-          /* Full mode -- regular contribution */
-          dEidr = 0.5*dphi; }
-        else {
-          /* compute just pair potential */
-          calc_phi(&epsilon,
-                   &C,
-                   &Rzero,
-                   &shift,
-                   cutoff, R, &phi); }
+          /* contribution to process_dEdr */
+          if (comp_process_dEdr) {
+            ier = KIM_Model_process_dEdr(model, dEidr, R, pRij, i, j); }
 
-        /* contribution to energy */
-        if (comp_particleEnergy) {
-          particleEnergy[i] += 0.5*phi; }
-        if (comp_energy) {
-          /* Full mode -- add half v to total energy */
-          *energy += 0.5*phi; }
+          /* contribution to process_d2Edr2 */
+          if (comp_process_d2Edr2) {
+            R_pairs[0] = R_pairs[1] = R;
+            Rij_pairs[0][0] = Rij_pairs[1][0] = Rij[0];
+            Rij_pairs[0][1] = Rij_pairs[1][1] = Rij[1];
+            Rij_pairs[0][2] = Rij_pairs[1][2] = Rij[2];
+            i_pairs[0] = i_pairs[1] = i;
+            j_pairs[0] = j_pairs[1] = j;
 
-        /* contribution to process_dEdr */
-        if (comp_process_dEdr) {
-          ier = KIM_Model_process_dEdr(model, dEidr, R, pRij, i, j); }
+            ier = KIM_Model_process_d2Edr2(model, d2Eidr, pR_pairs, pRij_pairs,
+                                           pi_pairs, pj_pairs); }
 
-        /* contribution to process_d2Edr2 */
-        if (comp_process_d2Edr2) {
-          R_pairs[0] = R_pairs[1] = R;
-          Rij_pairs[0][0] = Rij_pairs[1][0] = Rij[0];
-          Rij_pairs[0][1] = Rij_pairs[1][1] = Rij[1];
-          Rij_pairs[0][2] = Rij_pairs[1][2] = Rij[2];
-          i_pairs[0] = i_pairs[1] = i;
-          j_pairs[0] = j_pairs[1] = j;
-
-          ier = KIM_Model_process_d2Edr2(model, d2Eidr, pR_pairs, pRij_pairs,
-                                         pi_pairs, pj_pairs); }
-
-        /* contribution to forces */
-        if (comp_force) {
-          for (k = 0; k < DIM; ++k) {
-            force[i*DIM + k] += dEidr*Rij[k]/R;  /* accumulate force on i */
-            force[j*DIM + k] -= dEidr*Rij[k]/R;  /* accumulate force on j */ } } }
-    }  /* loop on jj */
-  }  /* infinite while loop (terminated by break statements above) */
+          /* contribution to forces */
+          if (comp_force) {
+            for (k = 0; k < DIM; ++k) {
+              force[i*DIM + k] += dEidr*Rij[k]/R;  /* accumulate force on i */
+              force[j*DIM + k] -= dEidr*Rij[k]/R;  /* accumulate force on j */ } } }
+      }  /* loop on jj */
+    } /* if contributing */
+  }  /* loop on i */
 
   /* everything is great */
   ier = FALSE;
@@ -385,13 +384,25 @@ int model_init(KIM_Model * const model) {
   if (ier) {
     KIM_report_error(__LINE__, __FILE__, "KIM_set_data", ier);
     return ier; }
-  /* store model cutoff in KIM object */
-  ier = KIM_Model_get_data(model, KIM_COMPUTE_ARGUMENT_NAME_cutoff,
-                           (void **) &model_cutoff);
+  ier = KIM_Model_set_method(model, KIM_COMPUTE_ARGUMENT_NAME_destroy, 1,
+                             KIM_COMPUTE_LANGUAGE_NAME_C, (func *) &model_destroy);
   if (ier) {
-    KIM_report_error(__LINE__, __FILE__, "KIM_get_data", ier);
+    KIM_report_error(__LINE__, __FILE__, "KIM_set_data", ier);
     return ier; }
-
+  /* store model cutoff in KIM object */
+  model_cutoff = (double*) malloc(sizeof(double));
   *model_cutoff = CUTOFF;
+  KIM_Model_set_model_buffer(model, model_cutoff);
+  KIM_Model_set_influence_distance(model, model_cutoff);
+  KIM_Model_set_cutoffs(model, 1, model_cutoff);
+
+  return FALSE; }
+
+/* Initialization function */
+int model_destroy(KIM_Model * const model) {
+  double* model_cutoff;
+
+  KIM_Model_get_model_buffer(model, (void **) &model_cutoff);
+  free(model_cutoff);
 
   return FALSE; }

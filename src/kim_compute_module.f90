@@ -42,6 +42,7 @@ module kim_compute_module
     kim_compute_argument_name_number_of_particles, &
     kim_compute_argument_name_number_of_species, &
     kim_compute_argument_name_particle_species, &
+    kim_compute_argument_name_particle_contributing, &
     kim_compute_argument_name_coordinates, &
     kim_compute_argument_name_get_neigh, &
     kim_compute_argument_name_process_dedr, &
@@ -50,7 +51,6 @@ module kim_compute_module
     kim_compute_argument_name_compute, &
     kim_compute_argument_name_reinit, &
     kim_compute_argument_name_destroy, &
-    kim_compute_argument_name_cutoff, &
     kim_compute_argument_name_energy, &
     kim_compute_argument_name_forces, &
     kim_compute_argument_name_particle_energy, &
@@ -78,6 +78,9 @@ module kim_compute_module
     kim_compute_argument_name_particle_species = &
     kim_compute_argument_name_type(particle_species_id)
   type(kim_compute_argument_name_type), parameter :: &
+    kim_compute_argument_name_particle_contributing = &
+    kim_compute_argument_name_type(particle_contributing_id)
+  type(kim_compute_argument_name_type), parameter :: &
     kim_compute_argument_name_coordinates = &
     kim_compute_argument_name_type(coordinates_id)
   type(kim_compute_argument_name_type), parameter :: &
@@ -101,9 +104,6 @@ module kim_compute_module
   type(kim_compute_argument_name_type), parameter :: &
     kim_compute_argument_name_destroy = &
     kim_compute_argument_name_type(destroy_id)
-  type(kim_compute_argument_name_type), parameter :: &
-    kim_compute_argument_name_cutoff = &
-    kim_compute_argument_name_type(cutoff_id)
   type(kim_compute_argument_name_type), parameter :: &
     kim_compute_argument_name_energy = &
     kim_compute_argument_name_type(energy_id)
