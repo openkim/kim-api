@@ -58,6 +58,6 @@ XLANGLDLIBS      = -nofor_main -cxxlib
 # Define optional compiler option flag lists
 FFLAGS   = -O3 -g -warn all
 CFLAGS   = -O3 -g -Wall -ansi -pedantic
-CXXFLAGS = -O3 -g -Wall -ansi -pedantic
+CXXFLAGS = -O3 -g -Wall --std=c++11 -pedantic
 LDFLAGS  =
 LDLIBS   =

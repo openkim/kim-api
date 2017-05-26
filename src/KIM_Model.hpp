@@ -40,50 +40,38 @@
 #include "KIM_func.hpp"
 #endif
 
-#ifndef KIM_LANGUAGE_NAME_HPP_
-#include "KIM_LanguageName.hpp"
-#endif
-
-namespace OLD_KIM
-{
-class KIM_API_model;
-}
-
-// A macro to disallow the copy constructor and operator= functions.
-// This should be used in the private: declarations for a class
-#define DISALLOW_COPY_AND_ASSIGN(TypeName) \
-  TypeName(const TypeName&);               \
-  void operator=(const TypeName&)
-
 namespace KIM
 {
 // Forward declarations
+class LogVerbosity;
 class DataType;
+class LanguageName;
 class SpeciesName;
+class Numbering;
 class LengthUnit;
 class EnergyUnit;
 class ChargeUnit;
 class TemperatureUnit;
 class TimeUnit;
-namespace COMPUTE
-{
 class ArgumentName;
-class ModelComputeArguments;
-}
+class CallBackName;
+class Attribute;
+class ModelImplementation;
 
 
 class Model
 {
  public:
-  static int create(std::string const & simulatorString,
+  static int create(Numbering const numbering,
+                    LengthUnit const requestedLengthUnit,
+                    EnergyUnit const requestedEnergyUnit,
+                    ChargeUnit const requestedChargeUnit,
+                    TemperatureUnit const requestedTemperatureUnit,
+                    TimeUnit const requestedTimeUnit,
                     std::string const & modelName,
+                    int * const requestedUnitsAccepted,
                     Model ** const model);
   static void destroy(Model ** const model);
-
-  int create_compute_arguments(
-      COMPUTE::ModelComputeArguments ** const arguments) const;
-  void destroy_compute_arguments(
-      COMPUTE::ModelComputeArguments ** const arguments) const;
 
   void get_influence_distance(double * const influenceDistance) const;
 
@@ -91,45 +79,64 @@ class Model
   void get_cutoffs(int * const numberOfCutoffs, double const ** const cutoffs)
       const;
 
-  // @@@ add ostream argument to print() (?)
-  void print() const;
+  int get_argument_attribute(ArgumentName const argumentName,
+                             Attribute * const attribute) const;
+  int get_call_back_attribute(CallBackName const callBackName,
+                              Attribute * const attribute) const;
 
-  int compute(COMPUTE::ModelComputeArguments const * const arguments) const;
-  int reinit();  // @@@ rename to recreate (or other name)
+  void get_units(LengthUnit * const lengthUnit,
+                 EnergyUnit * const energyUnit,
+                 ChargeUnit * const chargeUnit,
+                 TemperatureUnit * const temperatureUnit,
+                 TimeUnit * const timeUnit) const;
 
-  // @@@ how should this work?  maybe a "IsSpeciesSupported"?
-  // @@@ OR is this needed, since we have get_species_code?
-  void get_num_model_species(int * const numberOfSpecies) const;
-  int get_model_species(int const index, KIM::SpeciesName * const speciesName)
-      const;
 
-  // @@@ this will go away
-  static int get_model_kim_string(std::string const & modelName,
-                                  std::string * const kimString);
+  // data functions
+  int set_data(ArgumentName const argumentName, int const * const ptr);
+  int set_data(ArgumentName const argumentName, double const * const ptr);
 
-  int get_species_code(KIM::SpeciesName const speciesName, int * const code)
-      const;
+  int set_call_back(CallBackName const callBackName,
+                    LanguageName const languageName,
+                    func * const fptr,
+                    void const * const dataObject);
+
+  int compute() const;
+  int ClearInfluenceDistanceAndCutoffsThenReinitializeModel();
+
+  int get_species_support_and_code(KIM::SpeciesName const speciesName,
+                                   int * const speciesIsSupported,
+                                   int * const code) const;
 
   void get_num_params(int * const numberOfParameters) const;
-  int get_parameter_data_type(int const index, DataType * const dataType) const;
-  int get_parameter(int const index, int * const extent, void ** const ptr);
-  int get_parameter_description(int const index,
-                                std::string * const description) const;
+  int get_parameter_data_type_and_description(
+      int const index, DataType * const dataType,
+      std::string * const description) const;
+  int get_parameter_extent_and_pointer(int const index, int * extent,
+                                       int ** const ptr);
+  int get_parameter_extent_and_pointer(int const index, int * extent,
+                                       int const ** const ptr) const;
+  int get_parameter_extent_and_pointer(int const index, int * extent,
+                                       double ** const ptr);
+  int get_parameter_extent_and_pointer(int const index, int * extent,
+                                       double const ** const ptr) const;
 
-  void set_sim_buffer(void const * const ptr);
+  void set_sim_buffer(void * const ptr);
   void get_sim_buffer(void ** const ptr) const;
 
-  // @@@ to be removed
-  friend class OLD_KIM::KIM_API_model;
+  std::string string() const;
+
+  void SetLogID(std::string const & logID);
+  void PushLogVerbosity(LogVerbosity const logVerbosity);
+  void PopLogVerbosity();
 
  private:
   // do not allow copy constructor or operator=
-  DISALLOW_COPY_AND_ASSIGN(Model);
+  Model(Model const &);
+  void operator=(Model const &);
 
   Model();
   ~Model();
 
-  class ModelImplementation;
   ModelImplementation * pimpl;
 };  // class Model
 }  // namespace KIM

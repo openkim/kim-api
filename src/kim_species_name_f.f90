@@ -37,11 +37,21 @@ module kim_species_name_f_module
   private
 
   public &
+    from_string, &
     string, &
     get_number_of_species, &
-    get_species
+    get_species_name
 
   interface
+    subroutine from_string(species_name_string, species_name) &
+      bind(c, name="KIM_SpeciesNameFromString")
+      use, intrinsic :: iso_c_binding
+      use kim_species_name_module, only : kim_species_name_type
+      implicit none
+      character(c_char), intent(in) :: species_name_string(*)
+      type(kim_species_name_type), intent(out) :: species_name
+    end subroutine from_string
+
     type(c_ptr) function string(species_name) &
       bind(c, name="KIM_SpeciesNameString")
       use, intrinsic :: iso_c_binding
@@ -57,20 +67,31 @@ module kim_species_name_f_module
       integer(c_int), intent(out) :: number_of_species
     end subroutine get_number_of_species
 
-    integer(c_int) function get_species(index, species_name) &
-      bind(c, name="KIM_SPECIES_NAME_get_species")
+    integer(c_int) function get_species_name(index, species_name) &
+      bind(c, name="KIM_SPECIES_NAME_get_species_name")
       use, intrinsic :: iso_c_binding
       use kim_species_name_module, only : kim_species_name_type
       implicit none
       integer(c_int), intent(in), value :: index
       type(kim_species_name_type), intent(out) :: species_name
-    end function get_species
+    end function get_species_name
 
   end interface
 end module kim_species_name_f_module
 
 
 ! free functions to implement kim_species_name_module
+
+subroutine kim_species_name_from_string(species_name_string, species_name)
+  use, intrinsic :: iso_c_binding
+  use kim_species_name_module, only : kim_species_name_type
+  use kim_species_name_f_module, only : from_string
+  implicit none
+  character(len=*), intent(in) :: species_name_string
+  type(kim_species_name_type), intent(out) :: species_name
+
+  call from_string(trim(species_name_string)//c_null_char, species_name)
+end subroutine kim_species_name_from_string
 
 subroutine kim_species_name_string(species_name, name_string)
   use, intrinsic :: iso_c_binding
@@ -99,14 +120,14 @@ subroutine kim_species_name_get_number_of_species(number_of_species)
   call get_number_of_species(number_of_species)
 end subroutine kim_species_name_get_number_of_species
 
-subroutine kim_species_name_get_species(index, species_name, ierr)
+subroutine kim_species_name_get_species_name(index, species_name, ierr)
   use, intrinsic :: iso_c_binding
   use kim_species_name_module, only : kim_species_name_type
-  use kim_species_name_f_module, only : get_species
+  use kim_species_name_f_module, only : get_species_name
   implicit none
   integer(c_int), intent(in), value :: index
   type(kim_species_name_type), intent(out) :: species_name
   integer(c_int), intent(out) :: ierr
 
-  ierr = get_species(index, species_name)
-end subroutine kim_species_name_get_species
+  ierr = get_species_name(index, species_name)
+end subroutine kim_species_name_get_species_name

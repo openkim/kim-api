@@ -57,7 +57,7 @@ srcdir = $(KIM_DIR)/src
 LIB_ROOT = $(package_name)
 KIM_LIB = $(LIB_ROOT)-v$(VERSION_MAJOR)
 KIM_LIB_BUILD = $(LIB_ROOT)-v$(VERSION_FULL)
-KIM_LIB_for_dependencies = $(srcdir)/lib$(KIM_LIB).$(if $(filter-out static-link,$(KIM_LINK)),so,a)
+KIM_LIB_for_dependencies = $(srcdir)/lib$(KIM_LIB).so
 MODEL_LIB = $(LIB_ROOT)-model-v$(VERSION_MAJOR)
 MODEL_LIB_BUILD = $(LIB_ROOT)-model-v$(VERSION_FULL)
 MODEL_DRIVER_LIB = $(LIB_ROOT)-model-driver-v$(VERSION_MAJOR)
@@ -105,23 +105,13 @@ else ifeq ($(KIM_SYSTEMARCH),64bit)
    ARCHFLAG = $(ARCH64FLAG)
 endif
 
-ifeq ($(KIM_LINK),static-link)
-   KIM_LINK_VALUE = 0
-else ifeq ($(KIM_LINK),dynamic-load)
-   KIM_LINK_VALUE = 1
-endif
+KIM_LINK_VALUE = 1
 
 
 # Set KIM define values to be used with KIMDEFINES when needed
 KIM_DEFINE_VALUES =                    \
    -D KIM_ARCHTYPE=$(KIM_ARCHTYPE)     \
    -D KIM_LINK_VALUE=$(KIM_LINK_VALUE)
-
-# Set common compiler flags for dynamic linking
-ifeq ($(KIM_LINK),static-link)
-   PICFLAG =
-   LDDYNAMICFLAG =
-endif
 
 
 #set default goals allways all
@@ -212,8 +202,7 @@ KIM_FTYPE_STANDARD_COMPILE_LIST = $(ARCHFLAG) $(PICFLAG) $(KIMINCLUDEFLAGS) $(KI
 
 # Model Driver and Model Library pattern rule
 # SO_IS_MODEL is set in anoter Makefile
-# SO_IS_PARAMETERIZED is set in another Makefile
-%.so: SO_NEEDS_DOT=$(if $(filter static-link,$(KIM_LINK)),false,true)
+%.so: SO_NEEDS_DOT=true
 %.so: DOT=$(shell if test -f "$(srcdir)/.lib$(KIM_LIB_BUILD).so"; then printf "."; fi)
 %.so: %.a $(EXPORT_LIST_NAME)
 	@printf "Creating... $@.\n"
@@ -221,23 +210,13 @@ KIM_FTYPE_STANDARD_COMPILE_LIST = $(ARCHFLAG) $(PICFLAG) $(KIMINCLUDEFLAGS) $(KI
                 $(LINKSONAME)$(if $(SO_IS_MODEL),$(srcdir)/$(modelsdir)/$(MODEL_NAME)/lib$(MODEL_LIB),$(srcdir)/$(modeldriversdir)/$(MODEL_DRIVER_NAME)/lib$(MODEL_DRIVER_LIB)).so \
                 $(LDEXPORTLISTFLAG) $(LDFLAGS) $(OUTPUTINFLAG) lib$(if $(SO_IS_MODEL),$(MODEL_LIB_BUILD),$(MODEL_DRIVER_LIB_BUILD)).so \
                 $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
-                $(if $(filter-out dynamic-load,$(KIM_LINK)),,$(KIMLDFLAGS) $(KIMLDLIBS)) \
+                $(KIMLDFLAGS) $(KIMLDLIBS) \
                 $(LDDYNAMICLIB) $(XLANGLDLIBS) $(LDLIBS)
 	$(QUELL)if test x"$(SO_NEEDS_DOT)" = x"true"; then \
                  $(LD) $(ARCHFLAG) $(LDSHAREDFLAG) \
                  $(LINKSONAME)$(package_dir)/$(if $(SO_IS_MODEL),$(modelsdir)/$(MODEL_NAME)/lib$(MODEL_LIB),$(modeldriversdir)/$(MODEL_DRIVER_NAME)/lib$(MODEL_DRIVER_LIB)).so \
                  $(LDEXPORTLISTFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .lib$(if $(SO_IS_MODEL),$(MODEL_LIB_BUILD),$(MODEL_DRIVER_LIB_BUILD)).so \
                  $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
-                 $(if $(filter-out dynamic-load,$(KIM_LINK)),,$(srcdir)/$(DOT)lib$(KIM_LIB_BUILD).so) \
+                 $(srcdir)/$(DOT)lib$(KIM_LIB_BUILD).so \
                  $(LDDYNAMICLIB) $(XLANGLDLIBS) $(LDLIBS); \
                fi
-
-# KIM descriptor file make rule
-KIM_STR_NAME = kim_str
-.INTERMEDIATE: $(KIM_STR_NAME).c
-$(KIM_STR_NAME).c: Makefile $(KIM_MAKE_FILES) # ".kim" dependency added in another Makefile
-	@printf "Creating... intermediate file... $@.\n"
-	$(QUELL)varnm=`printf "$(MODEL_KIM_FILE)" | \
-                       sed -e 's/^\([[:digit:]]\)/__\1/' -e 's/[^[:alnum:]]/_/g'` && \
-                xxd -i $(MODEL_KIM_FILE) | \
-                sed -e "s/$${varnm}/$(MODEL_NAME)_$(KIM_STR_NAME)/g" > $@

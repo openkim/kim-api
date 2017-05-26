@@ -95,9 +95,8 @@ else
 endif
 
 ifeq      ($(KIM_LINK),dynamic-load)
-else ifeq ($(KIM_LINK),static-link)
 else
-   $(error Make variable KIM_LINK must be 'static-link' or 'dynamic-load'.  Current value is: '$(KIM_LINK)')
+   $(error Make variable KIM_LINK must be 'dynamic-load'.  Current value is: '$(KIM_LINK)')
 endif
 
 
@@ -108,14 +107,10 @@ ifeq ($(flavor  OUTPUTINFLAG),undefined)
    $(error Make variable OUTPUTINFLAG must be defined)
 endif
 ifeq ($(flavor PICFLAG),undefined)
-   ifneq ($(KIM_LINK),static-link)
-      $(error Make variable PICFLAG must be defined)
-   endif
+   $(error Make variable PICFLAG must be defined)
 endif
 ifeq ($(flavor LDDYNAMICLIB),undefined)
-   ifneq ($(KIM_LINK),static-link)
-      $(error Make variable LDDYNAMICLIB must be defined)
-   endif
+   $(error Make variable LDDYNAMICLIB must be defined)
 endif
 ifeq ($(flavor XLANGLDLIBS),undefined)
    $(error Make variable XLANGLDLIBS must be defined)

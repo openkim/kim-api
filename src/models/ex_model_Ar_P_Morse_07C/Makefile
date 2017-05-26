@@ -52,7 +52,6 @@ include $(MASTER_CONFIG)
 
 # set model specific details
 MODEL_NAME := ex_model_Ar_P_Morse_07C
-MODEL_KIM_FILE := model_Ar_P_Morse_07C.kim
 MODEL_INIT_FUNCTION_NAME := model_init
 MODEL_INIT_FUNCTION_LANG := C
 

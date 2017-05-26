@@ -34,8 +34,6 @@
 #include "KIM_semver.hpp"
 #endif
 
-#include "old_KIM_API.h"
-
 namespace KIM
 {
 
@@ -43,11 +41,8 @@ namespace KIM
 int version_newer(std::string const & versionA,
                   std::string const & versionB)
 {
-  int result;
-  OLD_KIM::KIM_API_model::version_newer(versionA.c_str(),
-                                        versionB.c_str(),
-                                        &result);
-  return result;
+  // currently does nothing...
+  return true;
 }
 
 }  // namespace KIM

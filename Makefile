@@ -110,26 +110,12 @@ export MODELS_LIST        := $(filter-out $(if $(wildcard $(srcdir)/$(modelsdir)
         $(patsubst %,%-all,$(MODEL_DRIVERS_LIST) $(MODELS_LIST)) \
         utils-all kim-api-objects kim-api-libs
 
-ifeq (dynamic-load,$(KIM_LINK))
-   all: models_check config kim-api-objects kim-api-libs utils-all $(patsubst %,%-all,$(MODEL_DRIVERS_LIST) \
-        $(MODELS_LIST))
-else
-   all: models_check config kim-api-objects $(patsubst %,%-all,$(MODEL_DRIVERS_LIST) $(MODELS_LIST)) \
-        kim-api-libs utils-all
-endif
+all: config kim-api-objects kim-api-libs utils-all $(patsubst %,%-all,$(MODEL_DRIVERS_LIST) $(MODELS_LIST))
 
 # Add local Makefile to KIM_MAKE_FILES
 KIM_MAKE_FILES += Makefile
 
 # build targets involved in "make all"
-
-models_check:
-	@if test \( X"$(MODELS_LIST)" = X"" \) -a \( X"$(KIM_LINK)" = X"static-link" \); then     \
-        printf "*******************************************************************************\n"; \
-        printf "*******     Can't compile the API for static linking with no Models     *******\n"; \
-        printf "*******              Maybe you want to do 'make examples'               *******\n"; \
-        printf "*******************************************************************************\n"; \
-        false; else true; fi
 
 INPLACE_CONFIG = $(KIM_DIR)/$(user_config_file_dir_name)/config-v$(VERSION_MAJOR)
 
@@ -168,7 +154,7 @@ $(KIM_SIMULATOR_CONFIG_FILES): $(KIM_MAKE_FILES)
                   printf '# Do not edit!\n'                                                             >> $@; \
                   printf '\n'                                                                           >> $@; \
                   printf 'KIM_CONFIG_HELPER = $(KIM_DIR)/src/utils/$(full_package_name)-build-config\n' >> $@; \
-                  printf '$$(shell find . -perm +u+x -and -type f): $(KIM_DIR)/src/lib$(KIM_LIB_BUILD).$(if $(filter-out static-link,$(KIM_LINK)),so,a)\n' >> $@; \
+                  printf '$$(shell find . -perm +u+x -and -type f): $(KIM_DIR)/src/lib$(KIM_LIB_BUILD).so\n' >> $@; \
                 fi
 
 kim-api-objects: $(KIM_MAKE_FILES) kim-api-objects-making-echo
@@ -376,11 +362,8 @@ rm-%:
 .PHONY: install install-check installdirs kim-api-objects-install kim-api-libs-install config-install utils-install\
         $(patsubst %,%-install,$(MODEL_DRIVERS_LIST) $(MODELS_LIST))
 
-ifeq (dynamic-load,$(KIM_LINK))
-  install: install-check config inplace-config-clean kim-api-objects-install kim-api-libs-install utils-install $(patsubst %,%-install,$(MODEL_DRIVERS_LIST) $(MODELS_LIST)) config-install
-else
-  install: install-check config inplace-config-clean kim-api-objects-install $(patsubst %,%-install,$(MODEL_DRIVERS_LIST) $(MODELS_LIST)) kim-api-libs-install utils-install config-install
-endif
+install: install-check config inplace-config-clean kim-api-objects-install kim-api-libs-install utils-install $(patsubst %,%-install,$(MODEL_DRIVERS_LIST) $(MODELS_LIST)) config-install
+
 
 # build targets involved in "make install"
 install_builddir = $(dest_package_dir)/$(builddir)
@@ -391,14 +374,6 @@ install_linkerdir = $(dest_package_dir)/$(buildlinkerdir)
 install_linker = Makefile.DARWIN Makefile.FREEBSD Makefile.LINUX
 
 install-check:
-ifneq (dynamic-load,$(KIM_LINK))
-	@if test -d "$(dest_package_dir)"; then \
-        printf "*******************************************************************************\n"; \
-        printf "*******               This package is already installed.                *******\n"; \
-        printf "*******                 Please 'make uninstall' first.                  *******\n"; \
-        printf "*******************************************************************************\n"; \
-        false; else true; fi
-else
         # should we check that the installed stuff is actually dynamic-load and the right settings (32bit, etc.)?
 	$(QUELL)if test -d "$(dest_package_dir)"; then \
                   rm -rf "$(install_linkerdir)"; \
@@ -407,7 +382,6 @@ else
                   rm -f  "$(dest_package_dir)/Makefile.KIM_Config"; \
                   rm -f  "$(dest_package_dir)/Makefile.Version"; \
                 fi
-endif
 
 kim-api-objects-install:
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(srcdir) objects-install
@@ -426,7 +400,6 @@ $(patsubst %,%-install,$(MODELS_LIST)):
 
 config-install: installdirs
 	@printf "Installing...($(dest_package_dir))................................. KIM_Config files"
-ifeq (dynamic-load,$(KIM_LINK))
         # Install make directory
 	$(QUELL)for fl in $(install_make); do $(INSTALL_PROGRAM) -m 0644 "$(builddir)/$$fl" "$(install_builddir)/$$fl"; done
 	$(QUELL)fl="Makefile.Generic" && \
@@ -445,26 +418,21 @@ ifeq (dynamic-load,$(KIM_LINK))
                 $$fl > "$(dest_package_dir)/$$fl" && \
                 chmod 0644 "$(dest_package_dir)/$$fl"
         # Install version file
-  ifeq (true,$(shell git rev-parse --is-inside-work-tree 2> /dev/null))
+ifeq (true,$(shell git rev-parse --is-inside-work-tree 2> /dev/null))
 	$(QUELL)sed -e 's|^VERSION_BUILD_METADATA.*$$|VERSION_BUILD_METADATA = $(VERSION_BUILD_METADATA)|' Makefile.Version > "$(dest_package_dir)/Makefile.Version" && \
                 chmod 0644 "$(dest_package_dir)/Makefile.Version"
-  else
-	$(QUELL)$(INSTALL_PROGRAM) -m 0644 Makefile.Version "$(dest_package_dir)/Makefile.Version"
-  endif
-	@printf ".\n"
 else
-	@printf ": nothing to be done for $(KIM_LINK).\n";
+	$(QUELL)$(INSTALL_PROGRAM) -m 0644 Makefile.Version "$(dest_package_dir)/Makefile.Version"
 endif
+	@printf ".\n"
 
 installdirs:
-ifeq (dynamic-load,$(KIM_LINK))
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(install_builddir)"
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(install_compilerdir)"
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(install_linkerdir)"
-endif
 
 # targets for setting default system-wide library
-install-set-default-to-v%: EXT:=$(if $(filter-out static-link,$(KIM_LINK)),so,a)
+install-set-default-to-v%: EXT:=so
 install-set-default-to-v%:
 	@printf "Setting default $(package_name) to $(package_name)-v$*\n"
 	$(QUELL)fl="$(DESTDIR)$(bindir)/$(package_name)-descriptor-file-match" && if test -L "$$fl"; then rm -f "$$fl"; fi && ln -fs "$(package_name)-v$*-descriptor-file-match" "$$fl"
@@ -504,7 +472,7 @@ config-uninstall:
 	$(QUELL)if test -d "$(DESTDIR)$(prefix)"; then rmdir "$(DESTDIR)$(prefix)" > /dev/null 2>&1 || true; fi
 
 # targets for unsetting default system-wide library
-uninstall-set-default: EXT:=$(if $(filter-out static-link,$(KIM_LINK)),so,a)
+uninstall-set-default: EXT:=so
 uninstall-set-default:
 	@printf "Removing default $(package_name) settings.\n"
 	$(QUELL)fl="$(DESTDIR)$(bindir)/$(package_name)-descriptor-file-match" && if test -L "$$fl"; then rm -f "$$fl"; fi

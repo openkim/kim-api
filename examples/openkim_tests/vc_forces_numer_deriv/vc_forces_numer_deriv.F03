@@ -33,10 +33,33 @@
 !
 
 
-#define THIS_FILE_NAME __FILE__
-#define TRUEFALSE(TRUTH) merge(1,0,(TRUTH))
+module error
+  implicit none
+  public
 
-#define STRING_LENGTH 256
+contains
+  subroutine my_error(message, line, file)
+    implicit none
+    character(len=*), intent(in) :: message
+    integer, intent(in) :: line
+    character(len=*), intent(in) :: file
+
+    print *,"* Error : '", trim(message), "' ", line, ":", &
+      trim(file)
+    stop
+  end subroutine my_error
+
+  subroutine my_warning(message, line, file)
+    implicit none
+    character(len=*), intent(in) :: message
+    integer, intent(in) :: line
+    character(len=*), intent(in) :: file
+
+    print *,"* Error : '", trim(message), "' ", line, ":", &
+      trim(file)
+  end subroutine my_warning
+end module error
+
 
 !-------------------------------------------------------------------------------
 !
@@ -68,6 +91,7 @@ contains
 !-------------------------------------------------------------------------------
 subroutine get_neigh(data_object, neighbor_list_index, request, numnei, &
   pnei1part, ierr) bind(c)
+  use error
   implicit none
 
   !-- Transferred variables
@@ -84,7 +108,9 @@ subroutine get_neigh(data_object, neighbor_list_index, request, numnei, &
   type(neighObject_type), pointer :: neighObject
 
   if (neighbor_list_index /= 1) then
-    call kim_report_error(__LINE__, THIS_FILE_NAME, "wrong list index", 1)
+    call my_warning("wrong list index", __LINE__, __FILE__)
+    ierr = 1
+    return
   endif
 
   call c_f_pointer(data_object, neighObject)
@@ -92,8 +118,8 @@ subroutine get_neigh(data_object, neighbor_list_index, request, numnei, &
   numberOfParticles = neighObject%number_of_particles
 
   if ( (request.gt.numberOfParticles) .or. (request.lt.1)) then
-    call kim_report_error(__LINE__, THIS_FILE_NAME, &
-      "Invalid part ID in get_neigh", 1)
+    call my_warning("Invalid part ID in get_neigh", &
+      __LINE__, __FILE__)
     ierr = 1
     return
   endif
@@ -125,11 +151,15 @@ end module mod_neighborlist
 !-------------------------------------------------------------------------------
 program vc_forces_numer_deriv
   use, intrinsic :: iso_c_binding
+  use error
+  use kim_language_name_module
   use kim_species_name_module
+  use kim_numbering_module
   use kim_model_module
-  use kim_compute_argument_name_module
-  use kim_compute_argument_attribute_module
-  use kim_compute_model_compute_arguments_module
+  use kim_argument_name_module
+  use kim_call_back_name_module
+  use kim_attribute_module
+  use kim_unit_system_module
   use mod_neighborlist
   implicit none
   integer(c_int), parameter :: cd = c_double ! used for literal constants
@@ -170,12 +200,12 @@ program vc_forces_numer_deriv
   !
   ! KIM variables
   !
-  character(len=STRING_LENGTH) :: testname     = "vc_forces_numer_deriv"
-  character(len=STRING_LENGTH) :: modelname
+  character(len=256) :: testname     = "vc_forces_numer_deriv"
+  character(len=256) :: modelname
 
   type(kim_model_type), pointer :: model
-  type(kim_compute_model_compute_arguments_type), pointer :: arguments
   integer(c_int) ierr, ierr2
+  integer(c_int) species_is_supported
   integer(c_int), target :: numberOfParticles
   integer(c_int), target :: particleSpecies(N)
   integer(c_int), target :: particleContributing(N)
@@ -187,10 +217,13 @@ program vc_forces_numer_deriv
   real(c_double), target :: coords(3,N)
   real(c_double), target :: forces(3,N)
   integer(c_int) middleDum
-  type(kim_compute_argument_attribute_type) argument_attribute
   logical forces_optional
-  character(len=10000) :: test_descriptor_string
+  logical model_is_compatible
+  integer(c_int) requested_units_accepted
   real(c_double) rnd, deriv, deriv_err
+  real(c_double), pointer :: null_pointer
+
+  nullify(null_pointer)
 
   numberOfParticles = N
 
@@ -203,14 +236,51 @@ program vc_forces_numer_deriv
   print '("Please enter a valid KIM model name: ")'
   read(*,*) modelname
 
+  ! Print output header
+  !
+  print *
+  print *,'VERIFICATION CHECK: NUMERICAL DERIVATIVE VERIFICATION OF FORCES'
+  print *
+  print '(120(''-''))'
+  print '("This is Test          : ",A)', trim(testname)
+  print '("Results for KIM Model : ",A)', trim(modelname)
+
+  ! Create empty KIM object
+  !
+  call kim_model_create(kim_numbering_one_based, &
+    kim_length_unit_a, &
+    kim_energy_unit_ev, &
+    kim_charge_unit_e, &
+    kim_temperature_unit_k, &
+    kim_time_unit_ps, &
+    trim(modelname), &
+    requested_units_accepted, &
+    model, ierr)
+  if (ierr /= 0) then
+    call my_error("kim_api_create", __LINE__, __FILE__)
+  endif
+
+  ! check that we are compatible
+  if (requested_units_accepted == 0) then
+    call my_error("Must adapt to model units", __LINE__, __FILE__)
+  end if
+
+  call check_model_compatibility(model, forces_optional, model_is_compatible, &
+    ierr)
+  if (ierr /= 0) then
+    call my_error("error checking compatibility", __LINE__, __FILE__)
+  end if
+  if (.not. model_is_compatible) then
+    call my_error("incompatibility reported by check_model_compatibility", &
+      __LINE__, __FILE__)
+  end if
+
   ! Get list of particle species supported by the model
   !
-  call Get_Model_Supported_Species(trim(modelname), max_species, model_species, num_species, &
-                                 ierr)
+  call Get_Model_Supported_Species(model, max_species, model_species, &
+    num_species, ierr)
   if (ierr /= 0) then
-     call kim_report_error(__LINE__, THIS_FILE_NAME, &
-                                 "Get_Model_Supported_Species", ierr)
-     stop
+     call my_error("Get_Model_Supported_Species", __LINE__, __FILE__)
   endif
   ! Setup random cluster
   !
@@ -234,78 +304,28 @@ program vc_forces_numer_deriv
      enddo
   enddo
 
-  ! Print output header
-  !
-  print *
-  print *,'VERIFICATION CHECK: NUMERICAL DERIVATIVE VERIFICATION OF FORCES'
-  print *
-  print '(120(''-''))'
-  print '("This is Test          : ",A)', trim(testname)
-  print '("Results for KIM Model : ",A)', trim(modelname)
-
-  ! Write out KIM descriptor string for Test for current NBC
-  call Write_KIM_descriptor(max_species, model_species, &
-                            num_species, test_descriptor_string, ierr)
-  if (ierr /= 0) then
-    call kim_report_error(__LINE__, THIS_FILE_NAME, &
-                                 "Write_KIM_descriptor", ierr)
-     stop
-  endif
-
-  ! Create empty KIM object conforming to fields in the KIM descriptor files
-  ! of the Test and Model
-  !
-  call kim_model_create(trim(test_descriptor_string), trim(modelname), model, ierr)
-  if (ierr /= 0) then
-     call kim_report_error(__LINE__, THIS_FILE_NAME, &
-                                 "kim_api_string_init", ierr)
-     stop
-  endif
-
-  call kim_model_create_compute_arguments(model, arguments, ierr)
-  if (ierr /= 0) then
-    call kim_report_error(__LINE__, THIS_FILE_NAME, &
-      "create_compute_arguments", ierr)
-    stop
-  endif
-
-  ! determine in forces is optional for the model
-  call kim_compute_model_compute_arguments_get_argument_attribute( &
-    arguments, kim_compute_argument_name_forces, argument_attribute)
-  if (argument_attribute%argument_attribute_id &
-    == kim_compute_argument_attribute_optional%argument_attribute_id) then
-    forces_optional = .true.
-  else
-    forces_optional = .false.
-  endif
-
   ! register memory with the KIM system
   ierr = 0
-  call kim_compute_model_compute_arguments_set_data(arguments, &
-    kim_compute_argument_name_number_of_particles, numberOfParticles, ierr2)
+  call kim_model_set_data(model, &
+    kim_argument_name_number_of_particles, numberOfParticles, ierr2)
   ierr = ierr + ierr2
-  call kim_compute_model_compute_arguments_set_data(arguments, &
-    kim_compute_argument_name_number_of_species, num_species, ierr2)
+  call kim_model_set_data(model, &
+    kim_argument_name_particle_species, particleSpecies, ierr2)
   ierr = ierr + ierr2
-  call kim_compute_model_compute_arguments_set_data(arguments, &
-    kim_compute_argument_name_particle_species, N, particleSpecies, ierr2)
+  call kim_model_set_data(model, &
+    kim_argument_name_particle_contributing, particleContributing, ierr2)
   ierr = ierr + ierr2
-  call kim_compute_model_compute_arguments_set_data(arguments, &
-    kim_compute_argument_name_particle_contributing, N, particleContributing, ierr2)
+  call kim_model_set_data(model, &
+    kim_argument_name_coordinates, coords, ierr2)
   ierr = ierr + ierr2
-  call kim_compute_model_compute_arguments_set_data(arguments, &
-    kim_compute_argument_name_coordinates, 3, N, coords, ierr2)
+  call kim_model_set_data(model, &
+    kim_argument_name_energy, energy, ierr2)
   ierr = ierr + ierr2
-  call kim_compute_model_compute_arguments_set_data(arguments, &
-    kim_compute_argument_name_energy, energy, ierr2)
-  ierr = ierr + ierr2
-  call kim_compute_model_compute_arguments_set_data(arguments, &
-    kim_compute_argument_name_forces, 3, N, forces, ierr2)
+  call kim_model_set_data(model, &
+    kim_argument_name_forces, forces, ierr2)
   ierr = ierr + ierr2
   if (ierr /= 0) then
-     call kim_report_error(__LINE__, THIS_FILE_NAME, &
-                                 "set_data", ierr)
-     stop
+     call my_error("set_data", __LINE__, __FILE__)
   endif
 
   ! Allocate storage for neighbor lists and
@@ -316,14 +336,13 @@ program vc_forces_numer_deriv
 
   ! Set pointer in KIM object to neighbor list routine and object
   !
-  call kim_compute_model_compute_arguments_set_neigh(arguments, &
+  call kim_model_set_call_back(model, kim_call_back_name_get_neigh, &
     kim_language_name_fortran, c_funloc(get_neigh), c_loc(neighobject))
 
   call kim_model_get_influence_distance(model, influence_distance)
   call kim_model_get_cutoffs(model, number_of_cutoffs, cutoffs)
   if (number_of_cutoffs /= 1) then
-    call kim_report_error(__LINE__, THIS_FILE_NAME, &
-      "too many cutoffs", 1)
+    call my_error("too many cutoffs", __LINE__, __FILE__)
   endif
   cutoff = cutoffs(1)
 
@@ -336,13 +355,11 @@ program vc_forces_numer_deriv
   print '("Using FCC lattice parameter: ",f12.5)', FCCspacing
 
   do i=1,N
-    call kim_model_get_species_code(model, cluster_species(i), &
-      particleSpecies(i), ierr)
+    call kim_model_get_species_support_and_code(model, cluster_species(i), &
+      species_is_supported, particleSpecies(i), ierr)
   enddo
   if (ierr /= 0) then
-     call kim_report_error(__LINE__, THIS_FILE_NAME, &
-                                 "kim_api_get_species_code", ierr)
-     stop
+    call my_error("kim_api_get_species_code", __LINE__, __FILE__)
   endif
   do i=1,N
     particleContributing(i) = 1  ! every particle contributes
@@ -359,18 +376,14 @@ program vc_forces_numer_deriv
                            do_update_list,coordsave, &
                            neighObject,ierr)
   if (ierr /= 0) then
-    call kim_report_error(__LINE__, THIS_FILE_NAME, &
-      "update_neighborlist", ierr)
-    stop
+    call my_error("update_neighborlist", __LINE__, __FILE__)
   endif
 
   ! Call model compute to get forces (gradient)
   !
-  call kim_model_compute(model, arguments, ierr)
+  call kim_model_compute(model, ierr)
   if (ierr /= 0) then
-     call kim_report_error(__LINE__, THIS_FILE_NAME, &
-                                 "kim_api_model_compute", ierr)
-     stop
+     call my_error("kim_api_model_compute", __LINE__, __FILE__)
   endif
 
   ! Print results to screen
@@ -383,12 +396,9 @@ program vc_forces_numer_deriv
   ! Turn off force computation, if possible
   !
   if (forces_optional) then
-    call kim_compute_model_compute_arguments_set_compute(arguments, &
-      kim_compute_argument_name_forces, 0, ierr)
+    call kim_model_set_data(model, kim_argument_name_forces, null_pointer, ierr)
     if (ierr /= 0) then
-      call kim_report_error(__LINE__, THIS_FILE_NAME, &
-        "set_compute", ierr)
-      stop
+      call my_error("set_data", __LINE__, __FILE__)
     endif
   endif
 
@@ -397,13 +407,11 @@ program vc_forces_numer_deriv
   allocate(forces_num(DIM,N),forces_num_err(DIM,N))
   do I=1,N
      do J=1,DIM
-        call compute_numer_deriv(I,J,model,arguments,DIM,N,coords,cutoff, &
+        call compute_numer_deriv(I,J,model,DIM,N,coords,cutoff, &
                                  cutpad, energy, do_update_list, &
                                  coordsave,neighObject,deriv,deriv_err,ierr)
         if (ierr /= 0) then
-           call kim_report_error(__LINE__, THIS_FILE_NAME, &
-                                       "compute_numer_deriv", ierr)
-           stop
+          call my_error("compute_numer_deriv", __LINE__, __FILE__)
         endif
         forces_num(J,I) = -deriv
         forces_num_err(J,I) = deriv_err
@@ -464,7 +472,6 @@ program vc_forces_numer_deriv
   deallocate(neighObject%neighborList)
   deallocate(coordsave)
 
-  call kim_model_destroy_compute_arguments(model, arguments)
   call kim_model_destroy(model)
 
   ! Print output footer
@@ -480,33 +487,126 @@ program vc_forces_numer_deriv
 
 end program vc_forces_numer_deriv
 
-!--------------
-type(kim_species_name_type) function kim_species_name(species_name_string)
+
+!-------------------------------------------------------------------------------
+!
+!  Check if we are compatible with the model
+!
+!-------------------------------------------------------------------------------
+subroutine check_model_compatibility(model, forces_optional, &
+  model_is_compatible, ierr)
   use, intrinsic :: iso_c_binding
-  use kim_species_name_module
+  use error
+  use kim_model_module
+  use kim_attribute_module
+  use kim_argument_name_module
+  use kim_call_back_name_module
   implicit none
-  character(len=*), intent(in) :: species_name_string
 
-  integer(c_int) number_of_species
-  type(kim_species_name_type) species_name
-  character(len=100) name_string
+  !-- Transferred variables
+  type(kim_model_type), intent(in) :: model
+  logical, intent(out) :: forces_optional
+  logical, intent(out) :: model_is_compatible
+  integer(c_int), intent(out) :: ierr
+
+  !-- Local variables
   integer(c_int) i
-  integer(c_int) ierr
+  integer(c_int) number_of_arguments
+  integer(c_int) number_of_call_backs
+  type(kim_argument_name_type) argument_name
+  type(kim_attribute_type) attribute
+  type(kim_call_back_name_type) call_back_name
 
-  call kim_species_name_get_number_of_species(number_of_species)
 
-  do i=1,number_of_species
-    call kim_species_name_get_species(i, species_name, ierr)
-    call kim_species_name_string(species_name, name_string)
+  ! assume fail
+  model_is_compatible = .false.
+  ierr = 0
 
-    if (trim(name_string) == trim(species_name_string)) then
-      kim_species_name = species_name
-      exit
+  ! check arguments
+  call kim_argument_name_get_number_of_arguments(number_of_arguments)
+  do i=1,number_of_arguments
+    call kim_argument_name_get_argument_name(i, argument_name, ierr)
+    if (ierr /= 0) then
+      call my_warning("can't get argument name", &
+        __LINE__, __FILE__)
+      return
+    end if
+    call kim_model_get_argument_attribute(model, argument_name, attribute, ierr)
+    if (ierr /= 0) then
+      call my_warning("can't get argument attribute", &
+        __LINE__, __FILE__)
+      return
+    end if
+
+    ! can only handle energy and forces as required args
+    if (attribute == kim_attribute_required) then
+      if (.not. ((argument_name == kim_argument_name_energy) .or. &
+                 (argument_name == kim_argument_name_forces))) then
+        call my_warning("unsupported required argument", &
+          __LINE__, __FILE__)
+        ierr = 0
+        return
+      end if
+    end if
+
+    ! need both energy and forces not "notSupported"
+    if ((argument_name == kim_argument_name_energy) .and. &
+      (attribute == kim_attribute_not_supported)) then
+      call my_warning("model does not support energy", &
+        __LINE__, __FILE__)
+      ierr = 0
+      return
+    end if
+    if (argument_name == kim_argument_name_forces) then
+      if (attribute == kim_attribute_not_supported) then
+        call my_warning("model does not support forces", &
+          __LINE__, __FILE__)
+        ierr = 0
+        return
+      else if (attribute == kim_attribute_required) then
+        forces_optional = .false.
+      else if (attribute == kim_attribute_optional) then
+        forces_optional = .true.
+      else
+        call my_warning("unknown attribute for forces", &
+          __LINE__, __FILE__)
+        ierr = 0
+        return
+      end if
     end if
   end do
+
+  ! check call backs
+  call kim_call_back_name_get_number_of_call_backs(number_of_call_backs)
+  do i=1,number_of_call_backs
+    call kim_call_back_name_get_call_back_name(i, call_back_name, ierr)
+    if (ierr /= 0) then
+      call my_warning("can't get call back name", &
+        __LINE__, __FILE__)
+      return
+    end if
+    call kim_model_get_call_back_attribute(model, call_back_name, attribute, &
+      ierr)
+    if (ierr /= 0) then
+      call my_warning("can't get call back attribute", &
+        __LINE__, __FILE__)
+      return
+    end if
+
+    ! cannot handle any "required" call backs
+    if (attribute == kim_attribute_required) then
+      call my_warning("unsupported required call back", &
+        __LINE__, __FILE__)
+      ierr = 0
+      return
+    end if
+  end do
+
+  ! got to here, then everything must be OK
+  model_is_compatible = .true.
+  ierr = 0
   return
-end function kim_species_name
-!--------------
+end subroutine Check_Model_Compatibility
 
 !-------------------------------------------------------------------------------
 !
@@ -514,203 +614,50 @@ end function kim_species_name
 !  KIM Model `modelname'
 !
 !-------------------------------------------------------------------------------
-subroutine Get_Model_Supported_Species(modelname, max_species, model_species, &
+subroutine Get_Model_Supported_Species(model, max_species, model_species, &
                                        num_species, ier)
 use, intrinsic :: iso_c_binding
 
 use kim_model_module
 use kim_species_name_module
 implicit none
-interface
-  type(kim_species_name_type) function kim_species_name(species_name_string)
-    use kim_species_name_module
-    implicit none
-    character(len=*), intent(in) :: species_name_string
-  end function kim_species_name
-end interface
 
 !-- Transferred variables
-character(len=*),                     intent(in)   :: modelname
+type(kim_model_type),                 intent(in)   :: model
 integer(c_int),                       intent(in)   :: max_species
 type(kim_species_name_type), intent(out) :: model_species(max_species)
 integer(c_int),                       intent(out)  :: num_species
 integer(c_int),                       intent(out)  :: ier
 
 !-- Local variables
- integer(c_int) :: maxStringLength
- character(len=:), allocatable :: kim_file
- character(len=1024) :: line_string
- integer(c_int) :: newline_index
- integer(c_int) :: spec_index
- integer(c_int) :: name_index
+integer(c_int) i
+integer(c_int) total_num_species
+type(kim_species_name_type) :: species_name
+integer(c_int) species_is_supported
+integer(c_int) code
 
 ! Initialize error flag
 ier = 1
 
-call kim_model_get_model_kim_string_length(trim(modelname), maxStringLength, ier)
-allocate(character(len=(maxStringLength+20)) :: kim_file)
-call kim_model_get_model_kim_string(trim(modelname), kim_file, ier)
+call kim_species_name_get_number_of_species(total_num_species)
+
+if (total_num_species .gt. max_species) return
 
 num_species = 0
-newline_index = index(kim_file, new_line('A'))
-do while (newline_index /= 0)
-  line_string = adjustl(trim(kim_file(1:newline_index)))
-  kim_file=kim_file(newline_index+1:)
-  spec_index = index(line_string, " spec ")
-  if (spec_index /= 0) then
-    num_species = num_species+1
-    name_index = index(line_string, " ")
-    model_species(num_species) = kim_species_name(line_string(1:name_index))
+do i=1,total_num_species
+  call kim_species_name_get_species_name(i, species_name, ier)
+  call kim_model_get_species_support_and_code(model, species_name, &
+    species_is_supported, code, ier)
+  if ((ier == 0) .and. (species_is_supported .ne. 0)) then
+    num_species = num_species + 1
+    model_species(num_species) = species_name
   end if
-  newline_index = index(kim_file, new_line('A'))
 end do
-deallocate(kim_file)
 
 ier = 0
 return
 
 end subroutine Get_Model_Supported_Species
-
-!-------------------------------------------------------------------------------
-!
-!  Write KIM descriptor file for MiniMol for given set of
-!  supported species
-!
-!-------------------------------------------------------------------------------
-subroutine Write_KIM_descriptor(max_species, model_species, num_species, &
-                                kim_descriptor, ier)
-use, intrinsic :: iso_c_binding
-use kim_species_name_module
-implicit none
-interface
-  subroutine species_string(species_name, species_name_string)
-    use kim_species_name_module
-    implicit none
-    type(kim_species_name_type), intent(in), value :: species_name
-    character(len=*), intent(out) :: species_name_string
-  end subroutine species_string
-end interface
-!-- Transferred variables
-integer(c_int),                       intent(in)   :: max_species
-type(kim_species_name_type), intent(in) :: model_species(max_species)
-integer(c_int),                       intent(in)   :: num_species
-character(len=10000),                 intent(out)  :: kim_descriptor
-integer(c_int),                       intent(out)  :: ier
-
-!-- Local variables
-integer(c_int) :: i
-character(len=103)  :: divider
-character(len=1)    :: cr
-character(len=1024) :: species_line
-character(len=20)   :: species_name
-
-! Initialize error flag
-ier = 0
-
-! Define frequently used variables
-!
-cr = char(10)
-divider = '#######################################################################################################'
-
-! Write Minimol descriptor file into string kim_descriptor
-!
-kim_descriptor = &
-   divider                                                                      // cr // &
-   '#'                                                                          // cr // &
-   '# CDDL HEADER START'                                                        // cr // &
-   '#'                                                                          // cr // &
-   '# The contents of this file are subject to the terms of the Common Development' // cr // &
-   '# and Distribution License Version 1.0 (the "License").'                    // cr // &
-   '#'                                                                          // cr // &
-   '# You can obtain a copy of the license at'                                  // cr // &
-   '# http://www.opensource.org/licenses/CDDL-1.0.  See the License for the'    // cr // &
-   '# specific language governing permissions and limitations under the License.' // cr // &
-   '#'                                                                          // cr // &
-   '# When distributing Covered Code, include this CDDL HEADER in each file and'// cr // &
-   '# include the License file in a prominent location with the name LICENSE.CDDL.' // cr // &
-   '# If applicable, add the following below this CDDL HEADER, with the fields' // cr // &
-   '# enclosed by brackets "[]" replaced with your own identifying information:'// cr // &
-   '#'                                                                          // cr // &
-   '# Portions Copyright (c) [yyyy] [name of copyright owner]. All rights reserved.' // cr // &
-   '#'                                                                          // cr // &
-   '# CDDL HEADER END'                                                          // cr // &
-   '#'                                                                          // cr // &
-                                                                                   cr // &
-   '#'                                                                          // cr // &
-   '# Copyright (c) 2013--2017, Regents of the University of Minnesota.'        // cr // &
-   '# All rights reserved.'                                                     // cr // &
-   '#'                                                                          // cr // &
-   '# Contributors:'                                                            // cr // &
-   '#    Automatically generated by calling Test'                               // cr // &
-   '#'                                                                          // cr // &
-                                                                                   cr // &
-   '#'                                                                          // cr // &
-   '# See src/standard.kim for documentation about this file'                   // cr // &
-   '#'                                                                          // cr // &
-   divider                                                                      // cr // &
-                                                                                   cr // &
-   'KIM_API_Version := 2.0.0'                                                   // cr // &
-                                                                                   cr // &
-   'Unit_length      := A'                                                      // cr // &
-   'Unit_energy      := eV'                                                     // cr // &
-   'Unit_charge      := e'                                                      // cr // &
-   'Unit_temperature := K'                                                      // cr // &
-   'Unit_time        := ps'                                                     // cr // &
-                                                                                   cr // &
-                                                                                   cr // &
-   divider                                                                      // cr // &
-   'PARTICLE_SPECIES:'                                                          // cr // &
-   '# Symbol/name               Type                    code'                   // cr
-
- do i = 1,num_species
-   call kim_species_name_string(model_species(i), species_name)
-   write(species_line,'(a,'' '',''spec'',20x,i4)') trim(species_name),0
-      kim_descriptor = trim(kim_descriptor) // trim(species_line) // cr
-   enddo
-
-   kim_descriptor = trim(kim_descriptor) // &
-   divider                                                                      // cr // &
-   'CONVENTIONS:'                                                               // cr // &
-   '# Name                      Type'                                           // cr // &
-                                                                                   cr // &
-   'OneBasedLists               flag'                                           // cr // &
-                                                                                   cr // &
-   divider                                                                      // cr // &
-   'MODEL_INPUT:'                                                               // cr // &
-   '# Name                      Type         Unit       requirements'           // cr // &
-   'numberOfParticles           integer      none'                              // cr // &
-                                                                                   cr // &
-   'numberOfSpecies             integer      none'                              // cr // &
-                                                                                   cr // &
-   'particleSpecies             integer      none'                              // cr // &
-                                                                                   cr // &
-   'particleContributing        integer      none'                              // cr // &
-                                                                                   cr // &
-   'coordinates                 double       length'                            // cr // &
-                                                                                   cr // &
-   'get_neigh                   method       none'                              // cr // &
-                                                                                   cr // &
-   'neighObject                 pointer      none'                              // cr // &
-                                                                                   cr // &
-   divider                                                                      // cr // &
-   'MODEL_OUTPUT:'                                                              // cr // &
-   '# Name                      Type         Unit       requirements'           // cr // &
-                                                                                   cr // &
-   'destroy                     method       none'                              // cr // &
-                                                                                   cr // &
-   'reinit                      method       none'                              // cr // &
-                                                                                   cr // &
-   'compute                     method       none'                              // cr // &
-                                                                                   cr // &
-   'energy                      double       energy'                            // cr // &
-                                                                                   cr // &
-   'forces                      double       force'                             // cr // &
-                                                                                   cr // &
-   divider                                                                            // cr
-
-return
-
-end subroutine Write_KIM_descriptor
 
 subroutine update_neighborlist(DIM,N,coords,cutoff,cutpad, &
                                do_update_list,coordsave, &
@@ -947,12 +894,13 @@ subroutine create_FCC_configuration(FCCspacing, nCellsPerSide, periodic, &
 
 end subroutine create_FCC_configuration
 
-subroutine compute_numer_deriv(partnum,dir,model,arguments,DIM,N,coords,&
+subroutine compute_numer_deriv(partnum,dir,model,DIM,N,coords,&
                                cutoff,cutpad,energy, do_update_list,    &
                                coordsave,neighObject,deriv,deriv_err,ierr)
 use, intrinsic :: iso_c_binding
+use error
 use kim_model_module
-use kim_compute_model_compute_arguments_module
+use kim_model_module
 use mod_neighborlist
 implicit none
 integer(c_int), parameter :: cd = c_double ! used for literal constants
@@ -961,7 +909,6 @@ integer(c_int), parameter :: cd = c_double ! used for literal constants
 integer(c_int),         intent(in)    :: partnum
 integer(c_int),         intent(in)    :: dir
 type(kim_model_type),   intent(in)    :: model
-type(kim_compute_model_compute_arguments_type), intent(in) :: arguments
 integer(c_int),         intent(in)    :: DIM
 integer(c_int),         intent(in)    :: N
 real(c_double),         intent(inout) :: coords(DIM,N)
@@ -993,9 +940,8 @@ deriv_err_last = huge(1.0_cd)
 do i=1,number_eps_levels
    deriv = dfridr(eps,deriv_err)
    if (ierr /= 0) then
-      call kim_report_error(__LINE__, THIS_FILE_NAME, &
-                                  "compute_numer_deriv",ierr)
-      stop
+     call my_error("compute_numer_deriv", &
+       __LINE__, __FILE__)
    endif
    if (deriv_err>deriv_err_last) then
       deriv  = deriv_last
@@ -1058,22 +1004,20 @@ contains
    call update_neighborlist(DIM,N,coords,cutoff,cutpad, &
                             do_update_list,coordsave,       &
                             neighObject,ierr)
-   call kim_model_compute(model, arguments, ierr)
+   call kim_model_compute(model, ierr)
    if (ierr /= 0) then
-      call kim_report_error(__LINE__, THIS_FILE_NAME, &
-                                  "kim_api_model_compute",ierr)
-      stop
+     call my_error("kim_api_model_compute", &
+       __LINE__, __FILE__)
    endif
    fp = energy
    coords(dir,partnum) = coordorig - hh
    call update_neighborlist(DIM,N,coords,cutoff,cutpad,&
                             do_update_list,coordsave,       &
                             neighObject,ierr)
-   call kim_model_compute(model, arguments, ierr)
+   call kim_model_compute(model, ierr)
    if (ierr /= 0) then
-      call kim_report_error(__LINE__, THIS_FILE_NAME, &
-                                  "kim_api_model_compute",ierr)
-      stop
+     call my_error("kim_api_model_compute", &
+       __LINE__, __FILE__)
    endif
    fm = energy
    coords(dir,partnum) = coordorig
@@ -1091,22 +1035,20 @@ contains
       call update_neighborlist(DIM,N,coords,cutoff,cutpad, &
                                do_update_list,coordsave,       &
                                neighObject,ierr)
-      call kim_model_compute(model, arguments, ierr)
+      call kim_model_compute(model, ierr)
       if (ierr /= 0) then
-         call kim_report_error(__LINE__, THIS_FILE_NAME, &
-                                     "kim_api_model_compute",ierr)
-         stop
+        call my_error("kim_api_model_compute", &
+          __LINE__, __FILE__)
       endif
       fp = energy
       coords(dir,partnum) = coordorig - hh
       call update_neighborlist(DIM,N,coords,cutoff,cutpad, &
                                   do_update_list,coordsave,       &
                                   neighObject,ierr)
-      call kim_model_compute(model, arguments, ierr)
+      call kim_model_compute(model, ierr)
       if (ierr /= 0) then
-         call kim_report_error(__LINE__, THIS_FILE_NAME, &
-                                     "kim_api_model_compute",ierr)
-         stop
+        call my_error("kim_api_model_compute", &
+          __LINE__, __FILE__)
       endif
       fm = energy
       coords(dir,partnum) = coordorig

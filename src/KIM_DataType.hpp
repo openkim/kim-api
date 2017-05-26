@@ -41,8 +41,9 @@ namespace KIM
 
 class DataType
 {
-  int dataTypeID;
  public:
+  int dataTypeID;
+
   DataType();
   DataType(int const id);
   bool operator==(DataType const & rhs) const;
@@ -56,4 +57,16 @@ extern DataType const Integer;
 extern DataType const Double;
 }  // namespace DATA_TYPE
 }  // namespace KIM
+
+namespace std
+{
+template<>
+struct hash<KIM::DataType const>
+{
+  size_t operator()(KIM::DataType const & dataType) const
+  {
+    return dataType.dataTypeID;
+  }
+};
+}  // namespace std
 #endif  // KIM_DATA_TYPE_HPP_

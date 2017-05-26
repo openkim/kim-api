@@ -62,8 +62,7 @@ usage () {
          "or \`darwin'"
   printf "  --system-arch=ARG       System architecture: \`32bit' or %s\n" \
          "\`64bit'"
-  printf "  --link-type=ARG         linking type: [\`dynamic-load'] or %s\n" \
-         "\`static-link'"
+  printf "  --link-type=ARG         linking type: [\`dynamic-load']\n"
   printf "  --build-verbosity=ARG   Build verbosity: [\`quiet'] or \`full'\n"
   printf "\n"
   printf "Installation directories:\n"
@@ -207,9 +206,6 @@ do
       case `stripOption $1` in
         dynamic-load)
           linkType='dynamic-load'
-          ;;
-        static-link)
-          linkType='static-link'
           ;;
         *)
           printf "Unknown value for \`--link-type=' argument.\n"

@@ -42,7 +42,6 @@ include ../Makefile.KIM_Config
 # set model driver specific details
 MODEL_DRIVER_NAME   := ex_model_driver_P_LJ
 MODEL_NAME          := ex_model_Ar_P_LJ
-SPECIES_001_NAME    := Ar
 PARAM_FILE_001_NAME := ex_model_Ar_P_LJ.params
 
 # APPEND to compiler option flag lists

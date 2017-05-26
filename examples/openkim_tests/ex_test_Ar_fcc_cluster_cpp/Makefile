@@ -62,7 +62,7 @@ TEST_NAME := ex_test_Ar_fcc_cluster_cpp
 all: $(TEST_NAME)
 
 $(TEST_NAME).o: $(TEST_NAME).cpp Makefile
-	$(CC) $(INCLUDES) $(CFLAGS) $(OBJONLYFLAG) $<
+	$(CXX) $(INCLUDES) $(CXXFLAGS) $(OBJONLYFLAG) $<
 
 $(TEST_NAME): $(TEST_NAME).o
 	$(LD) $(LDFLAGS) $< $(LDLIBS) $(OUTPUTINFLAG) $@

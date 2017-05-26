@@ -53,7 +53,6 @@ include $(MASTER_CONFIG)
 # set model driver specific details
 MODEL_DRIVER_NAME   := ex_model_driver_P_Morse
 MODEL_NAME          := ex_model_Ar_P_Morse
-SPECIES_001_NAME    := Ar
 PARAM_FILE_001_NAME := ex_model_Ar_P_Morse.params
 
 # APPEND to compiler option flag lists

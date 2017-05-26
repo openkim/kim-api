@@ -42,14 +42,25 @@
 #include "KIM_func.h"
 #endif
 
-#ifndef KIM_LANGUAGE_NAME_H_
-#include "KIM_LanguageName.h"
+/* Forward declarations */
+#ifndef KIM_LOG_VERBOSITY_NAME_DEFINED_
+#define KIM_LOG_VERBOSITY_NAME_DEFINED_
+typedef struct KIM_LogVerbosity KIM_LogVerbosity;
 #endif
 
-/* Forward declarations */
 #ifndef KIM_SPECIES_NAME_DEFINED_
 #define KIM_SPECIES_NAME_DEFINED_
 typedef struct KIM_SpeciesName KIM_SpeciesName;
+#endif
+
+#ifndef KIM_LANGUAGE_NAME_DEFINED_
+#define KIM_LANGUAGE_NAME_DEFINED_
+typedef struct KIM_LanguageName KIM_LanguageName;
+#endif
+
+#ifndef KIM_NUMBERING_DEFINED_
+#define KIM_NUMBERING_DEFINED_
+typedef struct KIM_Numbering KIM_Numbering;
 #endif
 
 #ifndef KIM_LENGTH_UNIT_DEFINED_
@@ -82,13 +93,24 @@ typedef struct KIM_TemperatureUnit KIM_TemperatureUnit;
 typedef struct KIM_TimeUnit KIM_TimeUnit;
 #endif
 
-#ifndef KIM_COMPUTE_MODEL_COMPUTE_ARGUMENTS_DEFINED_
-#define KIM_COMPUTE_MODEL_COMPUTE_ARGUMENTS_DEFINED_
-typedef struct KIM_COMPUTE_ModelComputeArguments
-KIM_COMPUTE_ModelComputeArguments;
+#ifndef KIM_ARGUMENT_NAME_DEFINED_
+#define KIM_ARGUMENT_NAME_DEFINED_
+typedef struct KIM_ArgumentName KIM_ArgumentName;
 #endif
 
-struct KIM_Model {
+#ifndef KIM_CALL_BACK_NAME_DEFINED_
+#define KIM_CALL_BACK_NAME_DEFINED_
+typedef struct KIM_CallBackName KIM_CallBackName;
+#endif
+
+#ifndef KIM_ATTRIBUTE_DEFINED_
+#define KIM_ATTRIBUTE_DEFINED_
+typedef struct KIM_Attribute KIM_Attribute;
+#endif
+
+
+struct KIM_Model
+{
   void * p;
 };
 
@@ -97,18 +119,16 @@ struct KIM_Model {
 typedef struct KIM_Model KIM_Model;
 #endif
 
-int KIM_Model_create(char const * const simulatorString,
+int KIM_Model_create(KIM_Numbering const numbering,
+                     KIM_LengthUnit const requestedLengthUnit,
+                     KIM_EnergyUnit const requestedEnergyUnit,
+                     KIM_ChargeUnit const requestedChargeUnit,
+                     KIM_TemperatureUnit const requestedTemperatureUnit,
+                     KIM_TimeUnit const requestedTimeUnit,
                      char const * const modelName,
+                     int * const requestedUnitsAccepted,
                      KIM_Model ** const model);
 void KIM_Model_destroy(KIM_Model ** const model);
-
-int KIM_Model_create_compute_arguments(
-    KIM_Model const * const model,
-    KIM_COMPUTE_ModelComputeArguments ** const arguments);
-
-void KIM_Model_destroy_compute_arguments(
-    KIM_Model const * const model,
-    KIM_COMPUTE_ModelComputeArguments ** const arguments);
 
 void KIM_Model_get_influence_distance(KIM_Model const * const model,
                                       double * const influenceDistance);
@@ -117,41 +137,64 @@ void KIM_Model_get_cutoffs(KIM_Model const * const model,
                            int * const numberOfCutoffs,
                            double const ** const cutoffs);
 
-void KIM_Model_print(KIM_Model const * const model);
+int KIM_Model_get_argument_attribute(KIM_Model const * const model,
+                                     KIM_ArgumentName const argumentName,
+                                     KIM_Attribute * const attribute);
+int KIM_Model_get_call_back_attribute(KIM_Model const * const model,
+                                      KIM_CallBackName const callBackName,
+                                      KIM_Attribute * const attribute);
 
-int KIM_Model_compute(
-    KIM_Model const * const model,
-    KIM_COMPUTE_ModelComputeArguments const * const arguments);
-int KIM_Model_reinit(KIM_Model * const model);
-
-void KIM_Model_get_num_model_species(KIM_Model const * const model,
-                                     int * const numberOfSpecies);
-int KIM_Model_get_model_species(KIM_Model const * const model, int const index,
-                                KIM_SpeciesName * const speciesName);
-
-/* @@@ these will go away */
-int KIM_Model_get_model_kim_string_length(char const * const modelName,
-                                          int * const kimStringLength);
-int KIM_Model_get_model_kim_string(char const * const modelName,
-                                   char const ** const kimString);
+void KIM_Model_get_units(KIM_Model const * const model,
+                         KIM_LengthUnit * const lengthUnit,
+                         KIM_EnergyUnit * const energyUnit,
+                         KIM_ChargeUnit * const chargeUnit,
+                         KIM_TemperatureUnit * const temperatureUnit,
+                         KIM_TimeUnit * const timeUnit);
 
 
-int KIM_Model_get_species_code(KIM_Model const * const model,
-                               KIM_SpeciesName const speciesName,
-                               int * const code);
+/* *data functions */
+int KIM_Model_set_data_int(KIM_Model * const model,
+                           KIM_ArgumentName const argumentName,
+                           int const * const ptr);
+
+int KIM_Model_set_data_double(KIM_Model * const model,
+                              KIM_ArgumentName const argumentName,
+                              double const * const ptr);
+int KIM_Model_set_call_back(KIM_Model * const model,
+                            KIM_CallBackName const callBackName,
+                            KIM_LanguageName const languageName,
+                            func * const fptr,
+                            void const * const dataObject);
+
+int KIM_Model_compute(KIM_Model const * const model);
+int KIM_Model_ClearInfluenceDistanceAndCutoffsThenReinitializeModel(
+    KIM_Model * const model);
+
+int KIM_Model_get_species_support_and_code(KIM_Model const * const model,
+                                           KIM_SpeciesName const speciesName,
+                                           int * const speciesIsSupported,
+                                           int * const code);
 
 void KIM_Model_get_num_params(KIM_Model const * const model,
                               int * const numberOfParameters);
-int KIM_Model_get_parameter_data_type(KIM_Model const * const model,
-                                      int const index,
-                                      KIM_DataType * const dataType);
-int KIM_Model_get_parameter(KIM_Model * const model, int const index,
-                            int * const extent, void ** const ptr);
-int KIM_Model_get_parameter_description(KIM_Model const * const model,
-                                        int const index,
-                                        char const ** const description);
+int KIM_Model_get_parameter_data_type_and_description(
+    KIM_Model const * const model, int const index,
+    KIM_DataType * const dataType, char const ** const description);
+int KIM_Model_get_parameter_int_extent_and_pointer(
+    KIM_Model * const model, int const index,
+    int * const extent, int ** const ptr);
+int KIM_Model_get_parameter_double_extent_and_pointer(
+    KIM_Model * const model, int const index,
+    int * const extent, double ** const ptr);
 
-void KIM_Model_set_sim_buffer(KIM_Model * const model, void const * const ptr);
+void KIM_Model_set_sim_buffer(KIM_Model * const model, void * const ptr);
 void KIM_Model_get_sim_buffer(KIM_Model const * const model, void ** const ptr);
+
+char const * const KIM_Model_string(KIM_Model const * const model);
+
+void KIM_Model_SetLogID(KIM_Model * const model, char const * const logID);
+void KIM_Model_PushLogVerbosity(KIM_Model * const model,
+                                KIM_LogVerbosity const logVerbosity);
+void KIM_Model_PopLogVerbosity(KIM_Model * const model);
 
 #endif  /* KIM_MODEL_H_ */

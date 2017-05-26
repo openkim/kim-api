@@ -33,7 +33,6 @@ include ../Makefile.KIM_Config
 
 # set model driver specific details
 MODEL_DRIVER_NAME := LennardJones612__MD_414112407348_002
-MODEL_DRIVER_KIM_FILE_TEMPLATE := LennardJones612.kim.tpl
 MODEL_DRIVER_INIT_FUNCTION_NAME := model_driver_init
 MODEL_DRIVER_INIT_FUNCTION_LANG := C++
 

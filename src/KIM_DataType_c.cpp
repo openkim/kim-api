@@ -35,13 +35,13 @@
 #ifndef KIM_DATA_TYPE_HPP_
 #include "KIM_DataType.hpp"
 #endif
-
 extern "C"
 {
 #ifndef KIM_DATA_TYPE_H_
 #include "KIM_DataType.h"
 #endif
 }  // extern "C"
+
 
 namespace
 {
@@ -53,6 +53,16 @@ KIM::DataType const makeDataTypeCpp(KIM_DataType const dataType)
 
 extern "C"
 {
+int KIM_DataTypeEqual(KIM_DataType const left, KIM_DataType const right)
+{
+  return (left.dataTypeID == right.dataTypeID);
+}
+
+int KIM_DataTypeNotEqual(KIM_DataType const left, KIM_DataType const right)
+{
+  return (!KIM_DataTypeEqual(left, right));
+}
+
 char const * const KIM_DataTypeString(KIM_DataType const dataType)
 {
   return (makeDataTypeCpp(dataType)).string().c_str();

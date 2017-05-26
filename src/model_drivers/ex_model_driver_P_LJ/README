@@ -52,6 +52,7 @@ which define a KIM Model based on this KIM Model Driver.
 
 To create a KIM Model from this Model Driver, a parameter file is required.
 This file must have the following format:
+   Line 1: `SpeciesName' string with element symbol
    Line 1: `cutoff' value in angstroms
    Line 2: Lennard-Jones `epsilon' value in eV
    Line 3: Lennard-Jones `sigma' value in Angstroms

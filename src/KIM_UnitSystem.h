@@ -36,84 +36,24 @@
 #ifndef KIM_UNIT_SYSTEM_H_
 #define KIM_UNIT_SYSTEM_H_
 
-struct KIM_LengthUnit
-{
-  int lengthUnitID;
-};
-#ifndef KIM_LENGTH_UNIT_DEFINED_
-#define KIM_LENGTH_UNIT_DEFINED_
-typedef struct KIM_LengthUnit KIM_LengthUnit;
+#ifndef KIM_LENGTH_UNIT_H_
+#include "KIM_LengthUnit.h"
 #endif
 
-char const* const KIM_LengthUnitString(KIM_LengthUnit const lengthUnit);
-
-struct KIM_EnergyUnit
-{
-  int energyUnitID;
-};
-#ifndef KIM_ENERGY_UNIT_DEFINED_
-#define KIM_ENERGY_UNIT_DEFINED_
-typedef struct KIM_EnergyUnit KIM_EnergyUnit;
+#ifndef KIM_ENERGY_UNIT_H_
+#include "KIM_EnergyUnit.h"
 #endif
 
-char const* const KIM_EnergyUnitString(KIM_EnergyUnit const energyUnit);
-
-struct KIM_ChargeUnit
-{
-  int chargeUnitID;
-};
-#ifndef KIM_CHARGE_UNIT_DEFINED_
-#define KIM_CHARGE_UNIT_DEFINED_
-typedef struct KIM_ChargeUnit KIM_ChargeUnit;
+#ifndef KIM_CHARGE_UNIT_H_
+#include "KIM_ChargeUnit.h"
 #endif
 
-char const * const KIM_ChargeUnitString(KIM_ChargeUnit const chargeUnit);
-
-struct KIM_TemperatureUnit
-{
-  int temperatureUnitID;
-};
-#ifndef KIM_TEMPERATURE_UNIT_DEFINED_
-#define KIM_TEMPERATURE_UNIT_DEFINED_
-typedef struct KIM_TemperatureUnit KIM_TemperatureUnit;
+#ifndef KIM_TEMPERATURE_UNIT_H_
+#include "KIM_TemperatureUnit.h"
 #endif
 
-char const * const KIM_TemperatureUnitString(
-    KIM_TemperatureUnit const temperatureUnit);
-
-struct KIM_TimeUnit
-{
-  int timeUnitID;
-};
-#ifndef KIM_TIME_UNIT_DEFINED_
-#define KIM_TIME_UNIT_DEFINED_
-typedef struct KIM_TimeUnit KIM_TimeUnit;
+#ifndef KIM_TIME_UNIT_H_
+#include "KIM_TimeUnit.h"
 #endif
-
-char const * const KIM_TimeUnitString(KIM_TimeUnit const timeUnit);
-
-extern KIM_LengthUnit const KIM_UNITS_A;
-extern KIM_LengthUnit const KIM_UNITS_Bohr;
-extern KIM_LengthUnit const KIM_UNITS_cm;
-extern KIM_LengthUnit const KIM_UNITS_m;
-extern KIM_LengthUnit const KIM_UNITS_nm;
-
-extern KIM_EnergyUnit const KIM_UNITS_amu_A2_per_ps2;
-extern KIM_EnergyUnit const KIM_UNITS_erg;
-extern KIM_EnergyUnit const KIM_UNITS_eV;
-extern KIM_EnergyUnit const KIM_UNITS_Hartree;
-extern KIM_EnergyUnit const KIM_UNITS_J;
-extern KIM_EnergyUnit const KIM_UNITS_kcal_mol;
-
-extern KIM_ChargeUnit const KIM_UNITS_C;
-extern KIM_ChargeUnit const KIM_UNITS_e;
-extern KIM_ChargeUnit const KIM_UNITS_statC;
-
-extern KIM_TemperatureUnit const KIM_UNITS_K;
-
-extern KIM_TimeUnit const KIM_UNITS_fs;
-extern KIM_TimeUnit const KIM_UNITS_ps;
-extern KIM_TimeUnit const KIM_UNITS_ns;
-extern KIM_TimeUnit const KIM_UNITS_s;
 
 #endif  /* KIM_UNIT_SYSTEM_H_ */

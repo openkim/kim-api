@@ -40,6 +40,8 @@ module kim_species_name_module
   public &
     kim_species_name_type, &
     kim_species_name_string, &
+    operator (.eq.), &
+    operator (.ne.), &
 
     kim_species_name_electron, &
     kim_species_name_h, &
@@ -182,9 +184,10 @@ module kim_species_name_module
     kim_species_name_user20, &
 
     kim_species_name_get_number_of_species, &
-    kim_species_name_get_species
+    kim_species_name_get_species_name
 
   type, bind(c) :: kim_species_name_type
+    private
     integer(c_int) species_name_id
   end type kim_species_name_type
 
@@ -467,7 +470,23 @@ module kim_species_name_module
   type(kim_species_name_type), parameter :: kim_species_name_user20 = &
     kim_species_name_type(user20_id)
 
+  interface operator (.eq.)
+    module procedure kim_species_name_equal
+  end interface operator (.eq.)
+
+  interface operator (.ne.)
+    module procedure kim_species_name_not_equal
+  end interface operator (.ne.)
+
   interface
+    subroutine kim_species_name_from_string(species_name_string, species_name)
+      use, intrinsic :: iso_c_binding
+      import kim_species_name_type
+      implicit none
+      character(len=*), intent(in) :: species_name_string
+      type(kim_species_name_type), intent(out) :: species_name
+    end subroutine kim_species_name_from_string
+
     subroutine kim_species_name_string(species_name, name_string)
       import kim_species_name_type
       implicit none
@@ -482,13 +501,33 @@ module kim_species_name_module
       integer(c_int), intent(out) :: number_of_species
     end subroutine kim_species_name_get_number_of_species
 
-    subroutine kim_species_name_get_species(index, species_name, ierr)
+    subroutine kim_species_name_get_species_name(index, species_name, ierr)
       use, intrinsic :: iso_c_binding
       import kim_species_name_type
       implicit none
       integer(c_int), intent(in), value :: index
       type(kim_species_name_type), intent(out) :: species_name
       integer(c_int), intent(out) :: ierr
-    end subroutine kim_species_name_get_species
+    end subroutine kim_species_name_get_species_name
   end interface
+
+contains
+  logical function kim_species_name_equal(left, right)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    type(kim_species_name_type), intent(in) :: left
+    type(kim_species_name_type), intent(in) :: right
+
+    kim_species_name_equal &
+      = (left%species_name_id .eq. right%species_name_id)
+  end function kim_species_name_equal
+
+  logical function kim_species_name_not_equal(left, right)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    type(kim_species_name_type), intent(in) :: left
+    type(kim_species_name_type), intent(in) :: right
+
+    kim_species_name_not_equal = .not. (left .eq. right)
+  end function kim_species_name_not_equal
 end module kim_species_name_module

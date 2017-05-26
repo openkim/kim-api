@@ -40,6 +40,8 @@ module kim_language_name_module
   public &
     kim_language_name_type, &
     kim_language_name_string, &
+    operator (.eq.), &
+    operator (.ne.), &
 
     kim_language_name_cpp, &
     kim_language_name_c, &
@@ -59,6 +61,14 @@ module kim_language_name_module
     kim_language_name_fortran = &
     kim_language_name_type(fortran_id)
 
+  interface operator (.eq.)
+    module procedure kim_language_name_equal
+  end interface operator (.eq.)
+
+  interface operator (.ne.)
+    module procedure kim_language_name_not_equal
+  end interface operator (.ne.)
+
   interface
     subroutine kim_language_name_string(language_name, name_string)
       import kim_language_name_type
@@ -67,4 +77,24 @@ module kim_language_name_module
       character(len=*), intent(out) :: name_string
     end subroutine kim_language_name_string
   end interface
+
+contains
+  logical function kim_language_name_equal(left, right)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    type(kim_language_name_type), intent(in) :: left
+    type(kim_language_name_type), intent(in) :: right
+
+    kim_language_name_equal &
+      = (left%language_name_id .eq. right%language_name_id)
+  end function kim_language_name_equal
+
+  logical function kim_language_name_not_equal(left, right)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    type(kim_language_name_type), intent(in) :: left
+    type(kim_language_name_type), intent(in) :: right
+
+    kim_language_name_not_equal = .not. (left .eq. right)
+  end function kim_language_name_not_equal
 end module kim_language_name_module

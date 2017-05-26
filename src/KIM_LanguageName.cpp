@@ -36,13 +36,13 @@
 
 namespace KIM
 {
-LanguageName::LanguageName(): languageID(0){}
-LanguageName::LanguageName(int const id): languageID(id){}
+LanguageName::LanguageName(): languageNameID(0){}
+LanguageName::LanguageName(int const id): languageNameID(id){}
 
 bool LanguageName::operator==(LanguageName const & rhs) const
-{return languageID == rhs.languageID;}
+{return languageNameID == rhs.languageNameID;}
 bool LanguageName::operator!=(LanguageName const & rhs) const
-{return languageID != rhs.languageID;}
+{return languageNameID != rhs.languageNameID;}
 
 std::string LanguageName::string() const
 {

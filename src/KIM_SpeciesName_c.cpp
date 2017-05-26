@@ -35,13 +35,12 @@
 #ifndef KIM_SPECIES_NAME_HPP_
 #include "KIM_SpeciesName.hpp"
 #endif
-
 extern "C"
 {
 #ifndef KIM_SPECIES_NAME_H_
 #include "KIM_SpeciesName.h"
 #endif
-}  // Extern
+}  // extern "C"
 
 namespace
 {
@@ -60,6 +59,26 @@ KIM_SpeciesName const makeSpeciesNameC(KIM::SpeciesName speciesName)
 
 extern "C"
 {
+
+void KIM_SpeciesNameFromString(char const * const speciesNameString,
+                               KIM_SpeciesName * const speciesName)
+{
+  KIM::SpeciesName CppSpeciesName(speciesNameString);
+  *speciesName = makeSpeciesNameC(CppSpeciesName);
+}
+
+
+int KIM_SpeciesNameEqual(KIM_SpeciesName const left,
+                         KIM_SpeciesName const right)
+{
+  return (left.speciesNameID == right.speciesNameID);
+}
+
+int KIM_SpeciesNameNotEqual(KIM_SpeciesName const left,
+                            KIM_SpeciesName const right)
+{
+  return (!KIM_SpeciesNameEqual(left, right));
+}
 
 char const * const KIM_SpeciesNameString(KIM_SpeciesName const speciesName)
 {
@@ -207,16 +226,17 @@ KIM_SpeciesName const KIM_SPECIES_NAME_user18 = {218};  // user defined
 KIM_SpeciesName const KIM_SPECIES_NAME_user19 = {219};  // user defined
 KIM_SpeciesName const KIM_SPECIES_NAME_user20 = {220};  // user defined
 
+
 void KIM_SPECIES_NAME_get_number_of_species(int * const numberOfSpecies)
 {
   KIM::SPECIES_NAME::get_number_of_species(numberOfSpecies);
 }
 
-int KIM_SPECIES_NAME_get_species(int const index,
-                                 KIM_SpeciesName * const speciesName)
+int KIM_SPECIES_NAME_get_species_name(int const index,
+                                      KIM_SpeciesName * const speciesName)
 {
   KIM::SpeciesName speciesNameCpp;
-  int err = KIM::SPECIES_NAME::get_species(index, &speciesNameCpp);
+  int err = KIM::SPECIES_NAME::get_species_name(index, &speciesNameCpp);
   if (err) return err;
   *speciesName = makeSpeciesNameC(speciesNameCpp);
   return false;

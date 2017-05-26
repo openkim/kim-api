@@ -41,7 +41,6 @@ include ../Makefile.KIM_Config
 
 # set model driver specific details
 MODEL_DRIVER_NAME := ex_model_driver_P_LJ
-MODEL_DRIVER_KIM_FILE_TEMPLATE := model_driver_P_LJ.kim.tpl
 MODEL_DRIVER_INIT_FUNCTION_NAME := model_driver_init
 MODEL_DRIVER_INIT_FUNCTION_LANG := Fortran
 

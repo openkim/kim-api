@@ -46,11 +46,18 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include "KIM_Numbering.h"
+#include "KIM_LanguageName.h"
 #include "KIM_SpeciesName.h"
-#include "KIM_Simulator.h"
-#include "KIM_COMPUTE_SimulatorComputeArguments.h"
-#include "KIM_COMPUTE_ArgumentName.h"
-#include "KIM_Logger.h"
+#include "KIM_Attribute.h"
+#include "KIM_ArgumentName.h"
+#include "KIM_CallBackName.h"
+#include "KIM_LogVerbosity.h"
+#include "KIM_UnitSystem.h"
+#include "KIM_ModelInitialization.h"
+#include "KIM_ModelReinitialization.h"
+#include "KIM_ModelCompute.h"
+#include "KIM_ModelDestroy.h"
 
 #define TRUE 1
 #define FALSE 0
@@ -67,13 +74,18 @@
 
 
 /* Define prototype for Model init */
-int model_init(KIM_Simulator * const simulator);
+int model_init(KIM_ModelInitialization * const modelInitialization,
+               KIM_LengthUnit const requestedLengthUnit,
+               KIM_EnergyUnit const requestedEnergyUnit,
+               KIM_ChargeUnit const requestedChargeUnit,
+               KIM_TemperatureUnit const requestedTemperatureUnit,
+               KIM_TimeUnit const requestedTimeUnit);
 
 /* Define prototype for compute routine */
-static int compute(
-    KIM_Simulator const * const simulator,
-    KIM_COMPUTE_SimulatorComputeArguments const * const arguments);
-static int model_destroy(KIM_Simulator * const simulator);
+static int compute(KIM_ModelCompute const * const modelCompute);
+static int model_reinit(
+    KIM_ModelReinitialization * const modelReinitialization);
+static int model_destroy(KIM_ModelDestroy * const modelDestroy);
 
 /* Define prototypes for pair potential calculations */
 static void calc_phi(double* epsilon,
@@ -167,9 +179,8 @@ static void calc_phi_d2phi(double* epsilon,
   return; }
 
 /* compute function */
-static int compute(
-    KIM_Simulator const * const simulator,
-    KIM_COMPUTE_SimulatorComputeArguments const * const arguments)
+#include "KIM_ModelComputeLogMacros.h"
+static int compute(KIM_ModelCompute const * const modelCompute)
 {
   /* local variables */
   double R;
@@ -219,58 +230,51 @@ static int compute(
 
   /* check to see if we have been asked to compute the forces, */
   /* particleEnergy, and d1Edr */
-  KIM_COMPUTE_SimulatorComputeArguments_get_process_dEdr_compute(
-      arguments, &comp_process_dEdr);
-  KIM_COMPUTE_SimulatorComputeArguments_get_process_d2Edr2_compute(
-      arguments, &comp_process_d2Edr2);
+  LOG_INFORMATION("Checking if call backs are present.");
+  KIM_ModelCompute_is_call_back_present(modelCompute,
+                                        KIM_CALL_BACK_NAME_process_dEdr,
+                                        &comp_process_dEdr);
+  KIM_ModelCompute_is_call_back_present(modelCompute,
+                                        KIM_CALL_BACK_NAME_process_d2Edr2,
+                                        &comp_process_d2Edr2);
 
+  LOG_INFORMATION("Getting data pointers");
   ier =
-      KIM_COMPUTE_SimulatorComputeArguments_get_compute(
-          arguments, KIM_COMPUTE_ARGUMENT_NAME_energy, &comp_energy)
+      KIM_ModelCompute_get_data_int(modelCompute,
+                                    KIM_ARGUMENT_NAME_numberOfParticles,
+                                    &nParts)
       ||
-      KIM_COMPUTE_SimulatorComputeArguments_get_compute(
-          arguments, KIM_COMPUTE_ARGUMENT_NAME_forces, &comp_force)
+      KIM_ModelCompute_get_data_int(modelCompute,
+                                    KIM_ARGUMENT_NAME_particleSpecies,
+                                    &particleSpecies)
       ||
-      KIM_COMPUTE_SimulatorComputeArguments_get_compute(
-          arguments, KIM_COMPUTE_ARGUMENT_NAME_particleEnergy,
-          &comp_particleEnergy);
+      KIM_ModelCompute_get_data_int(modelCompute,
+                                    KIM_ARGUMENT_NAME_particleContributing,
+                                    &particleContributing)
+      ||
+      KIM_ModelCompute_get_data_double(modelCompute,
+                                       KIM_ARGUMENT_NAME_coordinates,
+                                       &coords)
+      ||
+      KIM_ModelCompute_get_data_double(modelCompute, KIM_ARGUMENT_NAME_energy,
+                                       &energy)
+      ||
+      KIM_ModelCompute_get_data_double(modelCompute, KIM_ARGUMENT_NAME_forces,
+                                       &force)
+      ||
+      KIM_ModelCompute_get_data_double(modelCompute,
+                                       KIM_ARGUMENT_NAME_particleEnergy,
+                                       &particleEnergy);
   if (ier) {
-    KIM_report_error(__LINE__, __FILE__, "get_compute", ier);
+    LOG_ERROR("get data pointers failed");
     return ier; }
 
-  ier =
-      KIM_COMPUTE_SimulatorComputeArguments_get_data_int(
-          arguments, KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles, &nParts)
-      ||
-      KIM_COMPUTE_SimulatorComputeArguments_get_data_int(
-          arguments, KIM_COMPUTE_ARGUMENT_NAME_particleSpecies,
-          &particleSpecies)
-      ||
-      KIM_COMPUTE_SimulatorComputeArguments_get_data_int(
-          arguments, KIM_COMPUTE_ARGUMENT_NAME_particleContributing,
-          &particleContributing)
-      ||
-      KIM_COMPUTE_SimulatorComputeArguments_get_data_double(
-          arguments, KIM_COMPUTE_ARGUMENT_NAME_coordinates, &coords)
-      ||
-      (comp_energy ? KIM_COMPUTE_SimulatorComputeArguments_get_data_double(
-          arguments, KIM_COMPUTE_ARGUMENT_NAME_energy, &energy)
-       : FALSE)
-      ||
-      (comp_force ? KIM_COMPUTE_SimulatorComputeArguments_get_data_double(
-          arguments, KIM_COMPUTE_ARGUMENT_NAME_forces, &force)
-       : FALSE)
-      ||
-      (comp_particleEnergy ?
-       KIM_COMPUTE_SimulatorComputeArguments_get_data_double(
-           arguments, KIM_COMPUTE_ARGUMENT_NAME_particleEnergy,
-           &particleEnergy) : FALSE);
-  if (ier) {
-    KIM_report_error(__LINE__, __FILE__, "get_data", ier);
-    return ier; }
+  comp_energy = (energy != 0);
+  comp_force = (force != 0);
+  comp_particleEnergy = (particleEnergy != 0);
 
   /* set value of parameters */
-  KIM_Simulator_get_model_buffer(simulator, (void**) &cutoff);
+  KIM_ModelCompute_get_model_buffer(modelCompute, (void**) &cutoff);
   cutsq = (*cutoff)*(*cutoff);
   epsilon = EPSILON;
   C = PARAM_C;
@@ -287,12 +291,12 @@ static int compute(
   ier = TRUE; /* assume an error */
   for (i = 0; i < *nParts; ++i) {
     if ( SPECCODE != particleSpecies[i]) {
-      KIM_report_error(__LINE__, __FILE__,
-                       "Unexpected species detected", ier);
+      LOG_ERROR("Unexpected species detected");
       return ier; } }
   ier = FALSE;  /* everything is ok */
 
   /* initialize potential energies, forces, and virial term */
+  LOG_INFORMATION("Initializing data");
   if (comp_particleEnergy) {
     for (i = 0; i < *nParts; ++i) {
       particleEnergy[i] = 0.0; } }
@@ -307,14 +311,15 @@ static int compute(
   /* Compute energy and forces */
 
   /* loop over particles and compute enregy and forces */
+  LOG_INFORMATION("Starting main compute loop");
   for (i = 0; i< *nParts; ++i) {
     if (particleContributing[i])
     {
-      ier = KIM_COMPUTE_SimulatorComputeArguments_get_neigh(
-          arguments, 0, i, &numOfPartNeigh, &neighListOfCurrentPart);
+      ier = KIM_ModelCompute_get_neigh(
+          modelCompute, 0, i, &numOfPartNeigh, &neighListOfCurrentPart);
       if (ier) {
         /* some sort of problem, exit */
-        KIM_report_error(__LINE__, __FILE__, "KIM_get_neigh", ier);
+        LOG_ERROR("GetNeighborList failed");
         ier = TRUE;
         return ier; }
 
@@ -374,8 +379,8 @@ static int compute(
 
           /* contribution to process_dEdr */
           if (comp_process_dEdr) {
-            ier = KIM_COMPUTE_SimulatorComputeArguments_process_dEdr(
-                arguments, simulator, dEidr, R, pRij, i, j); }
+            ier = KIM_ModelCompute_process_dEdr(
+                modelCompute, dEidr, R, pRij, i, j); }
 
           /* contribution to process_d2Edr2 */
           if (comp_process_d2Edr2) {
@@ -386,9 +391,9 @@ static int compute(
             i_pairs[0] = i_pairs[1] = i;
             j_pairs[0] = j_pairs[1] = j;
 
-            ier = KIM_COMPUTE_SimulatorComputeArguments_process_d2Edr2(
-                arguments, simulator, d2Eidr, pR_pairs, pRij_pairs,
-                pi_pairs, pj_pairs); }
+            ier = KIM_ModelCompute_process_d2Edr2(
+                modelCompute, d2Eidr, pR_pairs, pRij_pairs, pi_pairs, pj_pairs);
+          }
 
           /* contribution to forces */
           if (comp_force) {
@@ -398,6 +403,7 @@ static int compute(
       }  /* loop on jj */
     } /* if contributing */
   }  /* loop on i */
+  LOG_INFORMATION("Finished compute loop");
 
   /* everything is great */
   ier = FALSE;
@@ -405,29 +411,127 @@ static int compute(
   return ier; }
 
 /* Initialization function */
-int model_init(KIM_Simulator * const simulator) {
+#include "KIM_ModelInitializationLogMacros.h"
+int model_init(KIM_ModelInitialization * const modelInitialization,
+               KIM_LengthUnit const requestedLengthUnit,
+               KIM_EnergyUnit const requestedEnergyUnit,
+               KIM_ChargeUnit const requestedChargeUnit,
+               KIM_TemperatureUnit const requestedTemperatureUnit,
+               KIM_TimeUnit const requestedTimeUnit)
+{
   double* model_cutoff;
+  int error;
 
-  /* store pointer to function in KIM object */
-  KIM_Simulator_set_compute_func(simulator, KIM_LANGUAGE_NAME_C,
-                                 (func *) &compute);
-  KIM_Simulator_set_destroy(simulator, KIM_LANGUAGE_NAME_C,
-                            (func *) &model_destroy);
+  /* register numbering */
+  LOG_INFORMATION("Setting model numbering");
+  error = KIM_ModelInitialization_set_model_numbering(modelInitialization,
+                                                      KIM_NUMBERING_zeroBased);
+
+  /* register species */
+  LOG_INFORMATION("Setting species code");
+  error = error ||
+      KIM_ModelInitialization_set_species_code(modelInitialization,
+                                               KIM_SPECIES_NAME_Ar, SPECCODE);
+
+  /* register arguments */
+  LOG_INFORMATION("Register argument attributes");
+  error = error ||
+      KIM_ModelInitialization_set_argument_attribute(
+          modelInitialization,
+          KIM_ARGUMENT_NAME_energy, KIM_ATTRIBUTE_optional);
+  error = error ||
+      KIM_ModelInitialization_set_argument_attribute(
+          modelInitialization,
+          KIM_ARGUMENT_NAME_forces, KIM_ATTRIBUTE_optional);
+  error = error ||
+      KIM_ModelInitialization_set_argument_attribute(
+          modelInitialization,
+          KIM_ARGUMENT_NAME_particleEnergy, KIM_ATTRIBUTE_optional);
+
+  /* register call backs */
+  LOG_INFORMATION("Register call back attributes");
+  error = error ||
+      KIM_ModelInitialization_set_call_back_attribute(
+          modelInitialization,
+          KIM_CALL_BACK_NAME_process_dEdr, KIM_ATTRIBUTE_optional);
+  error = error ||
+      KIM_ModelInitialization_set_call_back_attribute(
+          modelInitialization,
+          KIM_CALL_BACK_NAME_process_d2Edr2, KIM_ATTRIBUTE_optional);
+
+  /* register function pointers */
+  LOG_INFORMATION("Register model function pointers");
+  error = error ||
+      KIM_ModelInitialization_set_compute_func(modelInitialization,
+                                               KIM_LANGUAGE_NAME_C,
+                                               (func *) &compute);
+  error = error ||
+      KIM_ModelInitialization_set_destroy(modelInitialization,
+                                          KIM_LANGUAGE_NAME_C,
+                                          (func *) &model_destroy);
+  error = error ||
+      KIM_ModelInitialization_set_reinit(modelInitialization,
+                                         KIM_LANGUAGE_NAME_C,
+                                         (func *) &model_reinit);
+
+  /* set units */
+  LOG_INFORMATION("Set model units");
+  error = error || KIM_ModelInitialization_set_units(
+      modelInitialization, /* ignoring requested units */
+      KIM_LENGTH_UNIT_A,
+      KIM_ENERGY_UNIT_eV,
+      KIM_CHARGE_UNIT_any,
+      KIM_TEMPERATURE_UNIT_any,
+      KIM_TIME_UNIT_any);
 
   /* store model cutoff in KIM object */
+  LOG_INFORMATION("Set influence distance and cutoffs");
   model_cutoff = (double*) malloc(sizeof(double));
   *model_cutoff = CUTOFF;
-  KIM_Simulator_set_model_buffer(simulator, model_cutoff);
-  KIM_Simulator_set_influence_distance(simulator, model_cutoff);
-  KIM_Simulator_set_cutoffs(simulator, 1, model_cutoff);
+  KIM_ModelInitialization_set_model_buffer(modelInitialization, model_cutoff);
 
-  return FALSE; }
+  /* register influence distance and cutoffs */
+  KIM_ModelInitialization_set_influence_distance(modelInitialization,
+                                                 model_cutoff);
+  KIM_ModelInitialization_set_cutoffs(modelInitialization, 1, model_cutoff);
+
+  if (error)
+  {
+    LOG_ERROR("Unable to successfully initialize model");
+    return TRUE;
+  }
+  else
+    return FALSE;
+}
+
+/* reinitialization function */
+#include "KIM_ModelReinitializationLogMacros.h"
+static int model_reinit(KIM_ModelReinitialization * const modelReinitialization)
+{
+  /* Local variables */
+  double * model_cutoff;
+
+  /* get model buffer from KIM object */
+  LOG_INFORMATION("Getting model buffer");
+  KIM_ModelReinitialization_get_model_buffer(modelReinitialization,
+                                             (void **) &model_cutoff);
+
+  LOG_INFORMATION("Resetting influence distance and cutoffs");
+  KIM_ModelReinitialization_set_influence_distance(
+      modelReinitialization, model_cutoff);
+  KIM_ModelReinitialization_set_cutoffs(modelReinitialization, 1, model_cutoff);
+
+  return FALSE;
+}
 
 /* Initialization function */
-int model_destroy(KIM_Simulator * const simulator) {
+#include "KIM_ModelDestroyLogMacros.h"
+int model_destroy(KIM_ModelDestroy * const modelDestroy) {
   double* model_cutoff;
 
-  KIM_Simulator_get_model_buffer(simulator, (void **) &model_cutoff);
+  LOG_INFORMATION("Getting buffer");
+  KIM_ModelDestroy_get_model_buffer(modelDestroy, (void **) &model_cutoff);
+  LOG_INFORMATION("Freeing model memory");
   free(model_cutoff);
 
   return FALSE; }

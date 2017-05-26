@@ -31,14 +31,26 @@
 #ifndef LENNARD_JONES_612_HPP_
 #define LENNARD_JONES_612_HPP_
 
-#include "KIM_Simulator.hpp"
-#include "KIM_COMPUTE_SimulatorComputeArguments.hpp"
+#include "KIM_LengthUnit.hpp"
+#include "KIM_EnergyUnit.hpp"
+#include "KIM_ChargeUnit.hpp"
+#include "KIM_TemperatureUnit.hpp"
+#include "KIM_TimeUnit.hpp"
+
+#include "KIM_ModelDriverInitialization.hpp"
+#include "KIM_ModelReinitialization.hpp"
+#include "KIM_ModelDestroy.hpp"
+#include "KIM_ModelCompute.hpp"
 
 extern "C"
 {
-int model_driver_init(KIM::Simulator * const simulator,
-                      char const * const paramfile_names, int const nmstrlen,
-                      int const numparamfiles);
+int model_driver_init(
+    KIM::ModelDriverInitialization * const modelDriverInitialization,
+    KIM::LengthUnit const requestedLengthUnit,
+    KIM::EnergyUnit const requestedEnergyUnit,
+    KIM::ChargeUnit const requestedChargeUnit,
+    KIM::TemperatureUnit const requestedTemperatureUnit,
+    KIM::TimeUnit const requestedTimeUnit);
 }
 
 class LennardJones612Implementation;
@@ -46,21 +58,22 @@ class LennardJones612Implementation;
 class LennardJones612
 {
  public:
-  LennardJones612(KIM::Simulator* const simulator,
-                  char const* const parameterFileNames,
-                  int const parameterFileNameLength,
-                  int const numberParameterFiles,
-                  int* const ier);
+  LennardJones612(
+      KIM::ModelDriverInitialization* const modelDriverInitialization,
+      KIM::LengthUnit const requestedLengthUnit,
+      KIM::EnergyUnit const requestedEnergyUnit,
+      KIM::ChargeUnit const requestedChargeUnit,
+      KIM::TemperatureUnit const requestedTemperatureUnit,
+      KIM::TimeUnit const requestedTimeUnit,
+      int* const ier);
   ~LennardJones612();
 
   // no need to make these "extern" since KIM will only access them
   // via function pointers.  "static" is required so that there is not
   // an implicit this pointer added to the prototype by the C++ compiler
-  static int Destroy(KIM::Simulator * const simulator);
-  static int Reinit(KIM::Simulator * const simulator);
-  static int Compute(KIM::Simulator const * const simulator,
-                     KIM::COMPUTE::SimulatorComputeArguments
-                     const * const arguments);
+  static int Destroy(KIM::ModelDestroy * const modelDestroy);
+  static int Reinit(KIM::ModelReinitialization * const modelReinitialization);
+  static int Compute(KIM::ModelCompute const * const modelCompute);
 
  private:
   LennardJones612Implementation* implementation_;

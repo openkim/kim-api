@@ -37,12 +37,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include "KIM_LanguageName.h"
 #include "KIM_SpeciesName.h"
+#include "KIM_Numbering.h"
 #include "KIM_Model.h"
-#include "KIM_COMPUTE_ModelComputeArguments.h"
-#include "KIM_COMPUTE_ArgumentName.h"
-#include "KIM_COMPUTE_SimulatorComputeArguments.h"
-#include "KIM_Logger.h"
+#include "KIM_Attribute.h"
+#include "KIM_ArgumentName.h"
+#include "KIM_CallBackName.h"
+#include "KIM_UnitSystem.h"
 
 #define TRUE 1
 #define FALSE 0
@@ -56,10 +58,20 @@
                        6*(NCELLSPERSIDE*NCELLSPERSIDE)                 \
                        + 3*(NCELLSPERSIDE) + 1)
 
-#define REPORT_ERROR(LN, FL, MSG, STAT) {       \
-    KIM_report_error(LN, FL, MSG, STAT);        \
-    exit(STAT);                                 \
+
+#define MY_ERROR(message)                                       \
+  {                                                             \
+    printf("* Error : \"%s\" %d:%s\n", message,                 \
+           __LINE__, __FILE__);                                 \
+    exit(1);                                                    \
   }
+
+#define MY_WARNING(message)                                             \
+  {                                                                     \
+    printf("* Error : \"%s\" %d:%s\n", message,                         \
+           __LINE__, __FILE__);                                         \
+  }
+
 
 /* Define neighborlist structure */
 typedef struct
@@ -71,7 +83,6 @@ typedef struct
 } NeighList;
 
 /* Define prototypes */
-char const * const descriptor();
 void fcc_cluster_neighborlist(int allOrOne, int numberOfParticles,
                               double* coords, double cutoff, NeighList* nl);
 
@@ -99,10 +110,9 @@ int main()
 
   /* KIM variable declarations */
   KIM_Model * model;
-  KIM_COMPUTE_ModelComputeArguments * arguments;
   /* model inputs */
   int numberOfParticles_cluster = NCLUSTERPARTS;
-  int numberOfSpecies = 1;
+  int speciesIsSupported;
   int particleSpecies_cluster_model[NCLUSTERPARTS];
   int particleContributing_cluster_model[NCLUSTERPARTS];
   int particleContributing_one_atom_model[NCLUSTERPARTS];
@@ -117,58 +127,124 @@ int main()
   double energy = 0.0;
 
   char modelname[NAMESTRLEN];
+  int requestedUnitsAccepted;
+  int modelArCode;
+  int numberOfAPI_Arguments;
+  KIM_ArgumentName argumentName;
+  KIM_Attribute attribute;
+  int numberOfAPI_CallBacks;
+  KIM_CallBackName callBackName;
+
+
 
   /* Get KIM Model names */
   printf("Please enter valid KIM Model name: \n");
   error = scanf("%s", modelname);
   if (1 != error)
   {
-    REPORT_ERROR(__LINE__, __FILE__, "Unable to read model name",
-                 error);
+    MY_ERROR("Unable to read model name");
   }
 
   /* initialize the model */
-  error = KIM_Model_create(descriptor(), modelname, &model);
-  if (error)
-    REPORT_ERROR(__LINE__, __FILE__,"KIM_create_model_interface()",error);
+  error = KIM_Model_create(KIM_NUMBERING_zeroBased,
+                           KIM_LENGTH_UNIT_A,
+                           KIM_ENERGY_UNIT_eV,
+                           KIM_CHARGE_UNIT_e,
+                           KIM_TEMPERATURE_UNIT_K,
+                           KIM_TIME_UNIT_ps,
+                           modelname,
+                           &requestedUnitsAccepted,
+                           &model);
+  if (error) MY_ERROR("KIM_create_model_interface()");
 
-  error = KIM_Model_create_compute_arguments(model, &arguments);
-  if (error)
-    REPORT_ERROR(__LINE__, __FILE__,"create_compute_arguments()",error);
+  /* Check for compatibility with the model */
+  if (!requestedUnitsAccepted) MY_ERROR("Must adapt to model units");
+
+  /* check species */
+  error = KIM_Model_get_species_support_and_code(
+      model, KIM_SPECIES_NAME_Ar, &speciesIsSupported, &modelArCode);
+  if ((error) || (!speciesIsSupported))
+  {
+    MY_ERROR("Species Ar not supported");
+  }
+
+  /* check arguments */
+  KIM_ARGUMENT_NAME_get_number_of_arguments(&numberOfAPI_Arguments);
+  for (i=0; i<numberOfAPI_Arguments; ++i)
+  {
+    error = KIM_ARGUMENT_NAME_get_argument_name(i, &argumentName);
+    if (error) MY_ERROR("can't get argument name");
+    error = KIM_Model_get_argument_attribute(model, argumentName, &attribute);
+    if (error) MY_ERROR("can't get argument attribute");
+
+    /* can only handle energy as a required arg */
+    if (KIM_AttributeEqual(attribute, KIM_ATTRIBUTE_required))
+    {
+      if (KIM_ArgumentNameNotEqual(argumentName, KIM_ARGUMENT_NAME_energy))
+      {
+        MY_ERROR("unsupported required argument");
+      }
+    }
+
+    /* must have energy */
+    if (KIM_ArgumentNameEqual(argumentName, KIM_ARGUMENT_NAME_energy))
+    {
+      if (! ((KIM_AttributeEqual(attribute, KIM_ATTRIBUTE_required))
+             ||
+             (KIM_AttributeEqual(attribute, KIM_ATTRIBUTE_optional))))
+      {
+        MY_ERROR("energy not available");
+      }
+    }
+  }
+
+  /* check call backs */
+  KIM_CALL_BACK_NAME_get_number_of_call_backs(&numberOfAPI_CallBacks);
+  for (i=0; i<numberOfAPI_CallBacks; ++i)
+  {
+    error = KIM_CALL_BACK_NAME_get_call_back_name(i, &callBackName);
+    if (error) MY_ERROR("can't get call back name");
+    error = KIM_Model_get_call_back_attribute(model, callBackName, &attribute);
+    if (error) MY_ERROR("can't get call back attribute");
+
+    /* cannot handle any "required" call backs */
+    if (KIM_AttributeEqual(attribute, KIM_ATTRIBUTE_required))
+    {
+      MY_ERROR("unsupported required call back");
+    }
+  }
+
+  /* We're compatible with the model.  Let's do it. */
 
   error =
-      KIM_COMPUTE_ModelComputeArguments_set_data_int(
-          arguments, KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles, 1,
-          &numberOfParticles_cluster)
+      KIM_Model_set_data_int(model, KIM_ARGUMENT_NAME_numberOfParticles,
+                             &numberOfParticles_cluster)
       ||
-      KIM_COMPUTE_ModelComputeArguments_set_data_int(
-          arguments, KIM_COMPUTE_ARGUMENT_NAME_numberOfSpecies, 1,
-          &numberOfSpecies)
+      KIM_Model_set_data_int(model, KIM_ARGUMENT_NAME_particleSpecies,
+                             particleSpecies_cluster_model)
       ||
-      KIM_COMPUTE_ModelComputeArguments_set_data_int(
-          arguments, KIM_COMPUTE_ARGUMENT_NAME_particleSpecies,
-          numberOfParticles_cluster, particleSpecies_cluster_model)
+      KIM_Model_set_data_double(model, KIM_ARGUMENT_NAME_coordinates,
+                                (double*) &coords_cluster)
       ||
-      KIM_COMPUTE_ModelComputeArguments_set_data_double(
-          arguments, KIM_COMPUTE_ARGUMENT_NAME_coordinates,
-          DIM*numberOfParticles_cluster, (double*) &coords_cluster)
-      ||
-      KIM_COMPUTE_ModelComputeArguments_set_data_double(
-          arguments, KIM_COMPUTE_ARGUMENT_NAME_energy, 1,
-          &energy);
-  if (error) REPORT_ERROR(__LINE__, __FILE__,"KIM_setm_data",error);
-  KIM_COMPUTE_ModelComputeArguments_set_neigh(arguments,
-                                              KIM_LANGUAGE_NAME_C,
-                                              (func *) &get_cluster_neigh,
-                                              &nl_cluster_model);
+      KIM_Model_set_data_double(model, KIM_ARGUMENT_NAME_energy, &energy);
+  if (error) MY_ERROR("KIM_setm_data");
+  KIM_Model_set_call_back(model,
+                          KIM_CALL_BACK_NAME_get_neigh,
+                          KIM_LANGUAGE_NAME_C,
+                          (func *) &get_cluster_neigh,
+                          &nl_cluster_model);
 
   KIM_Model_get_influence_distance(model, &influence_distance_cluster_model);
   KIM_Model_get_cutoffs(model, &number_of_cutoffs_cluster_model, &cutoff_cluster_model);
-  if (number_of_cutoffs_cluster_model != 1) REPORT_ERROR(__LINE__, __FILE__, "too many cutoffs", TRUE);
+  if (number_of_cutoffs_cluster_model != 1) MY_ERROR("too many cutoffs");
 
   /* setup particleSpecies */
-  error = KIM_Model_get_species_code(model, KIM_SPECIES_NAME_Ar, &(particleSpecies_cluster_model[0]));
-  if (error) REPORT_ERROR(__LINE__, __FILE__,"KIM_get_species_code", error);
+  error = KIM_Model_get_species_support_and_code(
+      model,
+      KIM_SPECIES_NAME_Ar,
+      &speciesIsSupported,
+      &(particleSpecies_cluster_model[0]));
+  if (error) MY_ERROR("KIM_get_species_code");
   for (i = 1; i < NCLUSTERPARTS; ++i)
     particleSpecies_cluster_model[i] = particleSpecies_cluster_model[0];
 
@@ -184,10 +260,10 @@ int main()
   /* allocate memory for list */
   nl_cluster_model.numberOfParticles = NCLUSTERPARTS;
   nl_cluster_model.NNeighbors = (int*) malloc(NCLUSTERPARTS*sizeof(int));
-  if (NULL==nl_cluster_model.NNeighbors) REPORT_ERROR(__LINE__, __FILE__,"malloc unsuccessful", -1);
+  if (NULL==nl_cluster_model.NNeighbors) MY_ERROR("malloc unsuccessful");
 
   nl_cluster_model.neighborList = (int*) malloc(NCLUSTERPARTS*NCLUSTERPARTS*sizeof(int));
-  if (NULL==nl_cluster_model.neighborList) REPORT_ERROR(__LINE__, __FILE__,"malloc unsuccessful", -1);
+  if (NULL==nl_cluster_model.neighborList) MY_ERROR("malloc unsuccessful");
 
   /* ready to compute */
   printf("--------------------------------------------------------------------------------\n");
@@ -205,14 +281,14 @@ int main()
                              (*cutoff_cluster_model + cutpad), &nl_cluster_model);
 
     /* call compute functions */
-    error = KIM_COMPUTE_ModelComputeArguments_set_data_int(arguments, KIM_COMPUTE_ARGUMENT_NAME_particleContributing, 1, particleContributing_cluster_model);
-    error = error || KIM_Model_compute(model, arguments);
-    if (error) REPORT_ERROR(__LINE__, __FILE__,"KIM_model_compute", error);
+    error = KIM_Model_set_data_int(model, KIM_ARGUMENT_NAME_particleContributing, particleContributing_cluster_model);
+    error = error || KIM_Model_compute(model);
+    if (error) MY_ERROR("KIM_model_compute");
     energy_cluster_model = energy;
 
-    error = KIM_COMPUTE_ModelComputeArguments_set_data_int(arguments, KIM_COMPUTE_ARGUMENT_NAME_particleContributing, 1, particleContributing_one_atom_model);
-    error = error || KIM_Model_compute(model, arguments);
-    if (error) REPORT_ERROR(__LINE__, __FILE__,"KIM_model_compute", error);
+    error = KIM_Model_set_data_int(model, KIM_ARGUMENT_NAME_particleContributing, particleContributing_one_atom_model);
+    error = error || KIM_Model_compute(model);
+    if (error) MY_ERROR("KIM_model_compute");
     energy_one_atom_model = energy;
 
     /* print the results */
@@ -226,9 +302,6 @@ int main()
   /* free memory of neighbor lists */
   free(nl_cluster_model.NNeighbors);
   free(nl_cluster_model.neighborList);
-
-  /* call model destroy compute arguments */
-  KIM_Model_destroy_compute_arguments(model, &arguments);
 
   /* free pkim objects */
   KIM_Model_destroy(&model);
@@ -415,7 +488,7 @@ int get_cluster_neigh(void const * const dataObject,
 
   if ((particleNumber >= numberOfParticles) || (particleNumber < 0)) /* invalid id */
   {
-    KIM_report_error(__LINE__, __FILE__,"Invalid part ID in get_cluster_neigh", TRUE);
+    MY_WARNING("Invalid part ID in get_cluster_neigh");
     return TRUE;
   }
 
@@ -426,36 +499,4 @@ int get_cluster_neigh(void const * const dataObject,
   *neighborsOfParticle = &((*nl).neighborList[(particleNumber)*numberOfParticles]);
 
   return FALSE;
-}
-
-char const * const descriptor()
-{
-  return
-      "KIM_API_Version := 1.6.0\n"
-      "Unit_length := A\n"
-      "Unit_energy := eV\n"
-      "Unit_charge := e\n"
-      "Unit_temperature := K\n"
-      "Unit_time := ps\n"
-      "\n"
-      "PARTICLE_SPECIES:\n"
-      "Ar spec 1\n"
-      "\n"
-      "CONVENTIONS:\n"
-      "ZeroBasedLists flag\n"
-      "\n"
-      "MODEL_INPUT:\n"
-      "numberOfParticles integer none\n"
-      "numberOfSpecies integer none\n"
-      "particleSpecies integer none\n"
-      "particleContributing integer none\n"
-      "coordinates double length\n"
-      "get_neigh method none\n"
-      "neighObject pointer none\n"
-      "\n"
-      "MODEL_OUTPUT:\n"
-      "destroy method none\n"
-      "compute method none\n"
-      "reinit method none\n"
-      "energy double energy\n";
 }

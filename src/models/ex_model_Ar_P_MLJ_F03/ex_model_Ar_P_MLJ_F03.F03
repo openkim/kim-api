@@ -44,9 +44,6 @@
 !****************************************************************************
 
 
-#define THIS_FILE_NAME __FILE__
-#define TRUEFALSE(TRUTH) merge(1,0,(TRUTH))
-
 module ex_model_Ar_P_MLJ_F03
 
 use, intrinsic :: iso_c_binding
@@ -55,8 +52,10 @@ implicit none
 save
 private
 public Compute_Energy_Forces, &
-       model_destroy, &
+       model_reinit_func, &
+       model_destroy_func, &
        model_cutoff, &
+       speccode, &
        buffer_type
 
 ! Below are the definitions and values of all Model parameters
@@ -164,22 +163,21 @@ end subroutine calc_phi_dphi
 ! Compute energy and forces on particles from the positions.
 !
 !-------------------------------------------------------------------------------
-subroutine Compute_Energy_Forces(simulator, arguments, ierr) bind(c)
-use kim_simulator_module
-use kim_compute_argument_name_module
-use kim_compute_simulator_compute_arguments_module
+#include "kim_model_compute_log_macros.fd"
+subroutine Compute_Energy_Forces(model_compute, ierr) bind(c)
+use kim_log_verbosity_module
+use kim_model_compute_module
+use kim_argument_name_module
 implicit none
 
 !-- Transferred variables
-type(kim_simulator_type), intent(in) :: simulator
-type(kim_compute_simulator_compute_arguments_type), intent(in) :: arguments
+type(kim_model_compute_type), intent(in) :: model_compute
 integer(c_int), intent(out) :: ierr
 
 !-- Local variables
 real(c_double) :: Rij(DIM)
 real(c_double) :: r,Rsqij,phi,dphi,dEidr = 0.0_cd
-integer(c_int) :: i,j,jj,numnei,comp_force,comp_enepot,comp_virial, &
-  comp_energy
+integer(c_int) :: i,j,jj,numnei,comp_force,comp_enepot,comp_virial, comp_energy
 integer(c_int) :: ierr2
 
 !-- KIM variables
@@ -193,79 +191,71 @@ integer(c_int), pointer :: particleSpecies(:)
 integer(c_int), pointer :: particleContributing(:)
 real(c_double), pointer :: virial(:)
 
-! Check to see if we have been asked to compute the forces, energyperpart,
-! energy and virial
-!
-ierr = 0
-call kim_compute_simulator_compute_arguments_get_compute(arguments, &
-  kim_compute_argument_name_energy, comp_energy, ierr2)
-ierr = ierr + ierr2
-call kim_compute_simulator_compute_arguments_get_compute(arguments, &
-  kim_compute_argument_name_forces, comp_force, ierr2)
-ierr = ierr + ierr2
-call kim_compute_simulator_compute_arguments_get_compute(arguments, &
-  kim_compute_argument_name_particle_energy, comp_enepot, ierr2)
-ierr = ierr + ierr2
-call kim_compute_simulator_compute_arguments_get_compute(arguments, &
-  kim_compute_argument_name_virial, comp_virial, ierr2)
-ierr = ierr + ierr2
-if (ierr /= 0) then
-   call kim_report_error(__LINE__, THIS_FILE_NAME, &
-                               "get_compute", ierr)
-   return
-endif
-
 ! Unpack data from KIM object
 !
 ierr = 0
-call kim_compute_simulator_compute_arguments_get_data(arguments, &
-  kim_compute_argument_name_number_of_particles, N, ierr2)
+call kim_model_compute_get_data(model_compute, &
+  kim_argument_name_number_of_particles, N, ierr2)
 ierr = ierr + ierr2
-call kim_compute_simulator_compute_arguments_get_data(arguments, &
-  kim_compute_argument_name_particle_species, n, particleSpecies, ierr2)
+call kim_model_compute_get_data(model_compute, &
+  kim_argument_name_particle_species, n, particleSpecies, ierr2)
 ierr = ierr + ierr2
-call kim_compute_simulator_compute_arguments_get_data(arguments, &
-  kim_compute_argument_name_particle_species, n, particleContributing, ierr2)
+call kim_model_compute_get_data(model_compute, &
+  kim_argument_name_particle_species, n, particleContributing, ierr2)
 ierr = ierr + ierr2
-call kim_compute_simulator_compute_arguments_get_data(arguments, &
-  kim_compute_argument_name_coordinates, dim, n, coor, ierr2)
+call kim_model_compute_get_data(model_compute, &
+  kim_argument_name_coordinates, dim, n, coor, ierr2)
 ierr = ierr + ierr2
-if (comp_energy == 1) then
-  call kim_compute_simulator_compute_arguments_get_data(arguments, &
-    kim_compute_argument_name_energy, energy, ierr2)
+call kim_model_compute_get_data(model_compute, kim_argument_name_energy, &
+  energy, ierr2)
+ierr = ierr + ierr2
+call kim_model_compute_get_data(model_compute, kim_argument_name_forces, dim, &
+  n, force, ierr2)
+ierr = ierr + ierr2
+call kim_model_compute_get_data(model_compute, &
+  kim_argument_name_particle_energy, n, enepot, ierr2)
+ierr = ierr + ierr2
+call kim_model_compute_get_data(model_compute, kim_argument_name_virial, 6, &
+  virial, ierr2)
   ierr = ierr + ierr2
-endif
-if (comp_force == 1) then
-  call kim_compute_simulator_compute_arguments_get_data(arguments, &
-    kim_compute_argument_name_forces, dim, n, force, ierr2)
-  ierr = ierr + ierr2
-endif
-if (comp_enepot == 1) then
-  call kim_compute_simulator_compute_arguments_get_data(arguments, &
-    kim_compute_argument_name_particle_energy, n, enepot, ierr2)
-  ierr = ierr + ierr2
-endif
-if (comp_virial == 1) then
-  call kim_compute_simulator_compute_arguments_get_data(arguments, &
-    kim_compute_argument_name_virial, 6, virial, ierr2)
-  ierr = ierr + ierr2
-endif
 if (ierr /= 0) then
-ierr = ierr + ierr2
-   call kim_report_error(__LINE__, THIS_FILE_NAME, &
-                               "get_data", ierr)
-   return
+  LOG_ERROR("get data")
+  return
 endif
+
+! Check to see if we have been asked to compute the forces, energyperpart,
+! energy and virial
+!
+if (associated(energy)) then
+  comp_energy = 1
+else
+  comp_energy = 0
+end if
+if (associated(force)) then
+  comp_force = 1
+else
+  comp_force = 0
+end if
+if (associated(enepot)) then
+  comp_enepot = 1
+else
+  comp_enepot = 0
+end if
+if (associated(virial)) then
+  comp_virial = 1
+else
+  comp_virial = 0
+end if
 
 ! Check to be sure that the species are correct
 !
 ierr = 1 ! assume an error
 do i = 1,N
    if (particleSpecies(i).ne.speccode) then
-      call kim_report_error(__LINE__, THIS_FILE_NAME,      &
-                                  "Unexpected species detected", &
-                                  ierr)
-      return
+     call kim_model_compute_log(model_compute, &
+       kim_log_verbosity_error, "Unexpected species detected", &
+       __LINE__, __FILE__)
+     return
    endif
 enddo
 ierr = 0 ! everything is ok
@@ -286,13 +276,11 @@ if (comp_virial.eq.1) virial = 0.0_cd
 do i = 1, N
   if (particleContributing(i) == 1) then
     ! Set up neighbor list for next particle
-    call kim_compute_simulator_compute_arguments_get_neigh( &
-      arguments, 1, i, numnei, nei1part, ierr)
+    call kim_model_compute_get_neigh( &
+      model_compute, 1, i, numnei, nei1part, ierr)
     if (ierr /= 0) then
       ! some sort of problem, exit
-      call kim_report_error(__LINE__, THIS_FILE_NAME, &
-        "kim_api_get_neigh",      &
-        ierr)
+      LOG_ERROR("GetNeighborList failed")
       ierr = 1
       return
     endif
@@ -368,23 +356,55 @@ end subroutine Compute_Energy_Forces
 ! Model destroy routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-subroutine model_destroy(simulator, ierr) bind(c)
+#include "kim_model_destroy_log_macros.fd"
+subroutine model_destroy_func(model_destroy, ierr) bind(c)
   use, intrinsic :: iso_c_binding
-  use kim_simulator_module
+  use kim_log_verbosity_module
+  use kim_model_destroy_module
   implicit none
 
   !-- Transferred variables
-  type(kim_simulator_type), intent(inout) :: simulator
+  type(kim_model_destroy_type), intent(inout) :: model_destroy
   integer(c_int), intent(out) :: ierr
 
   type(buffer_type), pointer :: buf; type(c_ptr) :: pbuf
 
-  call kim_simulator_get_model_buffer(simulator, pbuf)
+  call kim_model_destroy_get_model_buffer(model_destroy, pbuf)
   call c_f_pointer(pbuf, buf)
-  call kim_simulator_set_model_buffer(simulator, c_null_ptr)
+  LOG_INFORMATION("deallocating model buffer")
   deallocate(buf)
   ierr = 0  ! everything is good
-end subroutine model_destroy
+end subroutine model_destroy_func
+
+!-------------------------------------------------------------------------------
+!
+! Model reinit routine (REQUIRED)
+!
+!-------------------------------------------------------------------------------
+#include "kim_model_reinitialization_log_macros.fd"
+subroutine model_reinit_func(model_reinitialization, ierr) bind(c)
+  use, intrinsic :: iso_c_binding
+  use kim_log_verbosity_module
+  use kim_model_reinitialization_module
+  implicit none
+
+  !-- Transferred variables
+  type(kim_model_reinitialization_type), intent(inout) :: model_reinitialization
+  integer(c_int), intent(out) :: ierr
+
+  type(buffer_type), pointer :: buf; type(c_ptr) :: pbuf
+
+  call kim_model_reinitialization_get_model_buffer(model_reinitialization, pbuf)
+  call c_f_pointer(pbuf, buf)
+
+  LOG_INFORMATION("Resettings influence distance and cutoffs")
+  call kim_model_reinitialization_set_influence_distance(&
+    model_reinitialization, buf%cutoff(1))
+  call kim_model_reinitialization_set_cutoffs(model_reinitialization, 1, &
+    buf%cutoff)
+
+  ierr = 0  ! everything is good
+end subroutine model_reinit_func
 
 end module ex_model_Ar_P_MLJ_F03
 
@@ -393,33 +413,104 @@ end module ex_model_Ar_P_MLJ_F03
 ! Model initialization routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-subroutine model_init(simulator, ierr) bind(c)
+#include "kim_model_initialization_log_macros.fd"
+subroutine model_init(model_initialization, requested_length_unit, &
+  requested_energy_unit, requested_charge_unit, requested_temperature_unit, &
+  requested_time_unit, ierr) bind(c)
 use, intrinsic :: iso_c_binding
 use ex_model_Ar_P_MLJ_F03
-use kim_simulator_module
+use kim_log_verbosity_module
+use kim_numbering_module
+use kim_species_name_module
+use kim_argument_name_module
+use kim_attribute_module
+use kim_unit_system_module
+use kim_model_initialization_module
+use kim_language_name_module
 implicit none
 
 !-- Transferred variables
-type(kim_simulator_type), intent(inout) :: simulator
+type(kim_model_initialization_type), intent(inout) :: model_initialization
+type(kim_length_unit_type), intent(in) :: requested_length_unit
+type(kim_energy_unit_type), intent(in) :: requested_energy_unit
+type(kim_charge_unit_type), intent(in) :: requested_charge_unit
+type(kim_temperature_unit_type), intent(in) :: requested_temperature_unit
+type(kim_time_unit_type), intent(in) :: requested_time_unit
 integer(c_int), intent(out) :: ierr
 
 !-- KIM variables
+integer(c_int) :: ierr2
 type(buffer_type), pointer :: buf
 
-! store pointer to compute function in KIM object
-call kim_simulator_set_compute_func(simulator, kim_language_name_fortran, &
-  c_funloc(Compute_Energy_Forces))
-call kim_simulator_set_destroy(simulator, kim_language_name_fortran, &
-  c_funloc(model_destroy))
+ierr2 = 0
+
+! register numbering
+call kim_model_initialization_set_model_numbering(model_initialization, &
+  kim_numbering_one_based, ierr2);
+ierr = ierr + ierr2
+
+! register species
+call kim_model_initialization_set_species_code(model_initialization, &
+  kim_species_name_ar, speccode, ierr2)
+ierr = ierr + ierr2
+
+! register arguments
+call kim_model_initialization_set_argument_attribute(model_initialization, &
+  kim_argument_name_energy, kim_attribute_optional, ierr2)
+ierr = ierr + ierr2
+call kim_model_initialization_set_argument_attribute(model_initialization, &
+  kim_argument_name_forces, kim_attribute_optional, ierr2)
+ierr = ierr + ierr2
+call kim_model_initialization_set_argument_attribute(model_initialization, &
+  kim_argument_name_particle_energy, kim_attribute_optional, ierr2)
+ierr = ierr + ierr2
+call kim_model_initialization_set_argument_attribute(model_initialization, &
+  kim_argument_name_virial, kim_attribute_optional, ierr2)
+ierr = ierr + ierr2
+
+! register call backs
+! NONE
+
+! register function pointers
+call kim_model_initialization_set_compute_func(model_initialization, &
+  kim_language_name_fortran, c_funloc(Compute_Energy_Forces), ierr2)
+ierr = ierr + ierr2
+call kim_model_initialization_set_destroy(model_initialization, &
+  kim_language_name_fortran, c_funloc(model_destroy_func), ierr2)
+ierr = ierr + ierr2
+call kim_model_initialization_set_reinit(model_initialization, &
+  kim_language_name_fortran, c_funloc(model_reinit_func), ierr2)
+ierr = ierr + ierr2
+
+! set units
+call kim_model_initialization_set_units(model_initialization, &
+  kim_length_unit_a, &
+  kim_energy_unit_ev, &
+  kim_charge_unit_unused, &
+  kim_temperature_unit_unused, &
+  kim_time_unit_unused, &
+  ierr2)
+ierr = ierr + ierr2
 
 ! store model cutoff in KIM object
 allocate( buf )
 buf%cutoff = model_cutoff
-call kim_simulator_set_model_buffer(simulator, c_loc(buf))
-call kim_simulator_set_influence_distance(simulator, buf%cutoff(1))
-call kim_simulator_set_cutoffs(simulator, 1, buf%cutoff)
+call kim_model_initialization_set_model_buffer(model_initialization, c_loc(buf))
 
-ierr = 0
+! register influence distance and cutoffs
+call kim_model_initialization_set_influence_distance(model_initialization, &
+  buf%cutoff(1))
+
+call kim_model_initialization_set_cutoffs(model_initialization, 1, buf%cutoff)
+
+if (ierr /= 0) then
+  ierr = 1
+  ! LOG_ERROR("Unable to successfully initialize model")
+  call kim_model_initialization_log(model_initialization, &
+    kim_log_verbosity_error, "Unable to successfully initialize model", &
+    __LINE__, __FILE__)
+endif
+
 return
 
 end subroutine model_init

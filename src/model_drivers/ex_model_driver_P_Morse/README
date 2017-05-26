@@ -53,10 +53,11 @@ a KIM Model based on this KIM Model Driver.
 
 To create a KIM Model from this Model Driver, a parameter file is required.
 This file must have the following format:
-   Line 1: `cutoff' value in angstroms
-   Line 2: Morse `epsilon' value in eV
-   Line 3: Morse `C' value in 1/Angstroms
-   Line 4: Morse `Rzero' value in Angstroms
+   Line 1: `SpeciesName' string with element symbol
+   Line 2: `cutoff' value in angstroms
+   Line 3: Morse `epsilon' value in eV
+   Line 4: Morse `C' value in 1/Angstroms
+   Line 5: Morse `Rzero' value in Angstroms
 Any additional lines will be silently ignored.
 
 

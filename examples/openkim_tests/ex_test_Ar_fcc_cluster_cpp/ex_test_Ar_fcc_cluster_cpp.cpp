@@ -37,14 +37,17 @@
 #include <iostream>
 #include <iomanip>
 #include <string>
+#include "KIM_LogVerbosity.hpp"
+#include "KIM_Log.hpp"
+#include "KIM_LanguageName.hpp"
 #include "KIM_DataType.hpp"
 #include "KIM_SpeciesName.hpp"
+#include "KIM_Numbering.hpp"
 #include "KIM_Model.hpp"
-#include "KIM_COMPUTE_ModelComputeArguments.hpp"
-#include "KIM_COMPUTE_SimulatorComputeArguments.hpp"
-#include "KIM_COMPUTE_ArgumentName.hpp"
-#include "KIM_COMPUTE_ArgumentAttribute.hpp"
-#include "KIM_Logger.hpp"
+#include "KIM_ArgumentName.hpp"
+#include "KIM_CallBackName.hpp"
+#include "KIM_Attribute.hpp"
+#include "KIM_UnitSystem.hpp"
 
 #define NAMESTRLEN    128
 
@@ -55,10 +58,19 @@
                        6*(NCELLSPERSIDE*NCELLSPERSIDE)                 \
                        + 3*(NCELLSPERSIDE) + 1)
 
-#define REPORT_ERROR(LN, FL, MSG, STAT) {                 \
-    KIM::report_error(LN, FL, MSG, STAT);                 \
-    exit(STAT);                                           \
+#define MY_ERROR(message)                                       \
+  {                                                             \
+    std::cout << "* Error : \"" << message << "\" : "           \
+              << __LINE__ << ":" << __FILE__ << std::endl;      \
+    exit(1);                                                    \
   }
+
+#define MY_WARNING(message)                                             \
+  {                                                                     \
+    std::cout << "* Error : \"" << message << "\" : "                   \
+              << __LINE__ << ":" << __FILE__ << std::endl;              \
+  }
+
 
 /* Define neighborlist structure */
 typedef struct
@@ -70,7 +82,6 @@ typedef struct
 } NeighList;
 
 /* Define prototypes */
-char const * const descriptor();
 void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
                               double cutoff, NeighList* nl);
 
@@ -97,7 +108,6 @@ int main()
 
   /* model inputs */
   int numberOfParticles_cluster = NCLUSTERPARTS;
-  int numberOfSpecies = 1;
   int particleSpecies_cluster_model[NCLUSTERPARTS];
   int particleContributing_cluster_model[NCLUSTERPARTS];
   double coords_cluster[NCLUSTERPARTS][DIM];
@@ -117,71 +127,181 @@ int main()
 
   /* initialize the model */
   KIM::Model * kim_cluster_model;
-  error = KIM::Model::create(descriptor(),modelname, &kim_cluster_model);
+  int requestedUnitsAccepted;
+  error = KIM::Model::create(
+      KIM::NUMBERING::zeroBased,
+      KIM::LENGTH_UNIT::A,
+      KIM::ENERGY_UNIT::eV,
+      KIM::CHARGE_UNIT::e,
+      KIM::TEMPERATURE_UNIT::K,
+      KIM::TIME_UNIT::ps,
+      modelname,
+      &requestedUnitsAccepted,
+      &kim_cluster_model);
   if (error)
-    REPORT_ERROR(__LINE__, __FILE__,"KIM_create_model_interface()",error);
+  {
+    MY_ERROR("KIM_create_model_interface()");
+  }
 
-  KIM::COMPUTE::ModelComputeArguments * arguments;
-  error = kim_cluster_model->create_compute_arguments(&arguments);
-  if (error)
-    REPORT_ERROR(__LINE__, __FILE__,"create_compute_arguments()",error);
+  // Check for compatibility with the model
+  if (!requestedUnitsAccepted)
+  {
+    MY_ERROR("Must Adapt to model units");
+  }
 
-  // Check the Model's arguments (for fun)
+  // print model units
+  KIM::LengthUnit lengthUnit;
+  KIM::EnergyUnit energyUnit;
+  KIM::ChargeUnit chargeUnit;
+  KIM::TemperatureUnit temperatureUnit;
+  KIM::TimeUnit timeUnit;
+
+  kim_cluster_model->get_units(&lengthUnit, &energyUnit, &chargeUnit,
+                               &temperatureUnit, &timeUnit);
+
+  std::cout << "LengthUnit is \"" << lengthUnit.string() << "\"" << std::endl
+            << "EnergyUnit is \"" << energyUnit.string() << "\"" << std::endl
+            << "ChargeUnit is \"" << chargeUnit.string() << "\"" << std::endl
+            << "TemperatureUnit is \"" << temperatureUnit.string()
+            << "\"" << std::endl
+            << "TimeUnit is \"" << timeUnit.string() << "\"" << std::endl;
+
+  // check species
+  int speciesIsSupported;
+  int modelArCode;
+  error = kim_cluster_model->get_species_support_and_code(
+      KIM::SPECIES_NAME::Ar, &speciesIsSupported, &modelArCode);
+  if ((error) || (!speciesIsSupported))
+  {
+    MY_ERROR("Species Ar not supported");
+  }
+
+  // check arguments
   int numberOfArguments;
-  KIM::COMPUTE::ARGUMENT_NAME::get_number_of_arguments(&numberOfArguments);
-  KIM::COMPUTE::ArgumentAttribute argumentAttribute;
+  KIM::ARGUMENT_NAME::get_number_of_arguments(&numberOfArguments);
   for (int i=0; i<numberOfArguments; ++i)
   {
-    KIM::COMPUTE::ArgumentName argumentName;
-    KIM::COMPUTE::ARGUMENT_NAME::get_argument(i, &argumentName);
+    KIM::ArgumentName argumentName;
+    KIM::Attribute attribute;
+    KIM::ARGUMENT_NAME::get_argument_name(i, &argumentName);
     KIM::DataType dataType;
-    KIM::COMPUTE::ARGUMENT_NAME::
-        get_argument_data_type(argumentName, &dataType);
-    arguments->get_argument_attribute(argumentName, &argumentAttribute);
+    KIM::ARGUMENT_NAME::get_argument_data_type(argumentName, &dataType);
+    error = kim_cluster_model->get_argument_attribute(argumentName, &attribute);
+    if (error)
+      MY_ERROR("unable to get argument attribute");
 
     std::cout << "Argument Name \""
               << argumentName.string() << "\""
               << " is of type \""
               << dataType.string() << "\""
               << " and has attribute \""
-              << argumentAttribute.string() << "\""
+              << attribute.string() << "\""
               << std::endl;
+
+    // can only handle energy as a required arg
+    if (attribute == KIM::ATTRIBUTE::required)
+    {
+      if (argumentName != KIM::ARGUMENT_NAME::energy)
+      {
+        MY_ERROR("unsupported required argument");
+      }
+    }
+
+    // must have energy
+    if (argumentName == KIM::ARGUMENT_NAME::energy)
+    {
+      if (! ((attribute == KIM::ATTRIBUTE::required)
+             ||
+             (attribute == KIM::ATTRIBUTE::optional)))
+      {
+        MY_ERROR("energy not available");
+      }
+    }
   }
-  arguments->get_process_dEdr_attribute(&argumentAttribute);
-  std::cout << "process_dEdr has attribute \""
-            << argumentAttribute.string() << "\""
-            << std::endl;
-  arguments->get_process_d2Edr2_attribute(&argumentAttribute);
-  std::cout << "process_d2Edr2 has attribute \""
-            << argumentAttribute.string() << "\""
-            << std::endl;
 
+  // check call backs
+  int numberOfCallBacks;
+  KIM::CALL_BACK_NAME::get_number_of_call_backs(&numberOfCallBacks);
+  for (int i=0; i<numberOfCallBacks; ++i)
+  {
+    KIM::CallBackName callBackName;
+    KIM::CALL_BACK_NAME::get_call_back_name(i, &callBackName);
+    KIM::Attribute attribute;
+    kim_cluster_model->get_call_back_attribute(callBackName, &attribute);
 
+    std::cout << "CallBack Name \""
+              << callBackName.string() << "\""
+              << " has attribute \""
+              << attribute.string() << "\""
+              << std::endl;
 
-  error = arguments->set_data(
-      KIM::COMPUTE::ARGUMENT_NAME::numberOfParticles, 1,
-      (int *) &numberOfParticles_cluster)
-      || arguments->set_data(
-          KIM::COMPUTE::ARGUMENT_NAME::numberOfSpecies, 1, &numberOfSpecies)
-      || arguments->set_data(
-          KIM::COMPUTE::ARGUMENT_NAME::particleSpecies, numberOfParticles_cluster, particleSpecies_cluster_model)
-      || arguments->set_data(
-          KIM::COMPUTE::ARGUMENT_NAME::particleContributing, numberOfParticles_cluster, particleContributing_cluster_model)
-      || arguments->set_data(
-          KIM::COMPUTE::ARGUMENT_NAME::coordinates, DIM*numberOfParticles_cluster, (double*) coords_cluster)
-      || arguments->set_data(
-          KIM::COMPUTE::ARGUMENT_NAME::energy, 1, &energy_cluster_model);
-  if (error) REPORT_ERROR(__LINE__, __FILE__,"KIM_API_set_data",error);
-  arguments->set_neigh(KIM::LANGUAGE_NAME::Cpp, (KIM::func *) &get_cluster_neigh, &nl_cluster_model);
+    // cannot handle any "required" call backs
+    if (attribute == KIM::ATTRIBUTE::required)
+    {
+      MY_ERROR("unsupported required call back");
+    }
+  }
+
+  // We're compatible with the model. Let's do it.
+
+  int numberOfParameters;
+  kim_cluster_model->get_num_params(&numberOfParameters);
+  for (int i=0; i<numberOfParameters; ++i)
+  {
+    KIM::DataType dataType;
+    std::string str;
+    int extent;
+    kim_cluster_model->get_parameter_data_type_and_description(
+        i, &dataType, &str);
+    if (dataType == KIM::DATA_TYPE::Integer)
+    {
+      int const * intPtr;
+      kim_cluster_model->get_parameter_extent_and_pointer(i, &extent, &intPtr);
+      std::cout << "Parameter No. " << i
+                << " has data type \"" << dataType.string() << "\""
+                << " with extent " << extent
+                << " and description : " << str << std::endl;
+    }
+    else
+    {
+      double const * doublePtr;
+      kim_cluster_model->get_parameter_extent_and_pointer(i, &extent,
+                                                          &doublePtr);
+      std::cout << "Parameter No. " << i
+                << " has data type \"" << dataType.string() << "\""
+                << " with extent " << extent
+                << " and description : " << str << std::endl;
+    }
+  }
+
+  error = kim_cluster_model->set_data(
+      KIM::ARGUMENT_NAME::numberOfParticles, (int *) &numberOfParticles_cluster)
+      || kim_cluster_model->set_data(
+          KIM::ARGUMENT_NAME::particleSpecies, particleSpecies_cluster_model)
+      || kim_cluster_model->set_data(
+          KIM::ARGUMENT_NAME::particleContributing, particleContributing_cluster_model)
+      || kim_cluster_model->set_data(
+          KIM::ARGUMENT_NAME::coordinates, (double*) coords_cluster)
+      || kim_cluster_model->set_data(
+          KIM::ARGUMENT_NAME::energy, &energy_cluster_model);
+  if (error) MY_ERROR("KIM_API_set_data");
+  error = kim_cluster_model->set_call_back(KIM::CALL_BACK_NAME::get_neigh,
+                                           KIM::LANGUAGE_NAME::Cpp,
+                                           (KIM::func *) &get_cluster_neigh,
+                                           &nl_cluster_model);
+  if (error) MY_ERROR("set_call_back");
 
   kim_cluster_model->get_influence_distance(&influence_distance_cluster_model);
   kim_cluster_model->get_cutoffs(&number_of_cutoffs, &cutoff_cluster_model);
-  if (number_of_cutoffs != 1) REPORT_ERROR(__LINE__, __FILE__,"too many cutoffs", 1);
+  if (number_of_cutoffs != 1) MY_ERROR("too many cutoffs");
 
   /* setup particleSpecies */
-  error = kim_cluster_model->get_species_code(KIM::SPECIES_NAME::Ar,
-                                              &(particleSpecies_cluster_model[0]));
-  if (error) REPORT_ERROR(__LINE__, __FILE__,"get_species_code", error);
+  int isSpeciesSupported;
+  error = kim_cluster_model->get_species_support_and_code(
+      KIM::SPECIES_NAME::Ar,
+      &isSpeciesSupported,
+      &(particleSpecies_cluster_model[0]));
+  if (error) MY_ERROR("get_species_code");
   for (i = 1; i < NCLUSTERPARTS; ++i)
     particleSpecies_cluster_model[i] = particleSpecies_cluster_model[0];
   /* setup particleContributing */
@@ -192,10 +312,10 @@ int main()
   /* allocate memory for list */
   nl_cluster_model.numberOfParticles = NCLUSTERPARTS;
   nl_cluster_model.NNeighbors = new int[NCLUSTERPARTS];
-  if (NULL==nl_cluster_model.NNeighbors) REPORT_ERROR(__LINE__, __FILE__,"new unsuccessful", -1);
+  if (NULL==nl_cluster_model.NNeighbors) MY_ERROR("new unsuccessful");
 
   nl_cluster_model.neighborList = new int[NCLUSTERPARTS*NCLUSTERPARTS];
-  if (NULL==nl_cluster_model.neighborList) REPORT_ERROR(__LINE__, __FILE__,"new unsuccessful", -1);
+  if (NULL==nl_cluster_model.neighborList) MY_ERROR("new unsuccessful");
 
   /* ready to compute */
   std::cout << std::setiosflags(std::ios::scientific) << std::setprecision(10);
@@ -212,8 +332,8 @@ int main()
                              (*cutoff_cluster_model + cutpad), &nl_cluster_model);
 
     /* call compute functions */
-    error = kim_cluster_model->compute(arguments);
-    if (error) REPORT_ERROR(__LINE__, __FILE__,"compute", error);
+    error = kim_cluster_model->compute();
+    if (error) MY_ERROR("compute");
 
     /* print the results */
     std::cout << "Energy for " << NCLUSTERPARTS << " parts = "
@@ -224,7 +344,6 @@ int main()
 
 
   /* call model destroy */
-  kim_cluster_model->destroy_compute_arguments(&arguments);
   KIM::Model::destroy(&kim_cluster_model);
 
   /* free memory of neighbor lists */
@@ -414,7 +533,7 @@ int get_cluster_neigh(void const * const dataObject,
 
   if ((particleNumber >= numberOfParticles) || (particleNumber < 0)) /* invalid id */
   {
-    KIM::report_error(__LINE__, __FILE__,"Invalid part ID in get_cluster_neigh", true);
+    MY_WARNING("Invalid part ID in get_cluster_neigh");
     return true;
   }
 
@@ -425,36 +544,4 @@ int get_cluster_neigh(void const * const dataObject,
   *neighborsOfParticle = &((*nl).neighborList[(particleNumber)*numberOfParticles]);
 
   return false;
-}
-
-char const * const descriptor()
-{
-  return
-      "KIM_API_Version := 1.6.0\n"
-      "Unit_length := A\n"
-      "Unit_energy := eV\n"
-      "Unit_charge := e\n"
-      "Unit_temperature := K\n"
-      "Unit_time := ps\n"
-      "\n"
-      "PARTICLE_SPECIES:\n"
-      "Ar spec 1\n"
-      "\n"
-      "CONVENTIONS:\n"
-      "ZeroBasedLists flag\n"
-      "\n"
-      "MODEL_INPUT:\n"
-      "numberOfParticles integer none\n"
-      "numberOfSpecies integer none\n"
-      "particleSpecies integer none\n"
-      "particleContributing integer none\n"
-      "coordinates double length\n"
-      "get_neigh method none\n"
-      "neighObject pointer none\n"
-      "\n"
-      "MODEL_OUTPUT:\n"
-      "destroy method none\n"
-      "compute method none\n"
-      "reinit method none\n"
-      "energy double energy\n";
 }

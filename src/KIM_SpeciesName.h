@@ -46,6 +46,13 @@ struct KIM_SpeciesName
 typedef struct KIM_SpeciesName KIM_SpeciesName;
 #endif
 
+void KIM_SpeciesNameFromString(char const * const speciesNameString,
+                               KIM_SpeciesName * const speciesName);
+
+int KIM_SpeciesNameEqual(KIM_SpeciesName const left,
+                         KIM_SpeciesName const right);
+int KIM_SpeciesNameNotEqual(KIM_SpeciesName const left,
+                            KIM_SpeciesName const right);
 char const * const KIM_SpeciesNameString(KIM_SpeciesName const speciesName);
 
 extern KIM_SpeciesName const KIM_SPECIES_NAME_electron;
@@ -189,7 +196,7 @@ extern KIM_SpeciesName const KIM_SPECIES_NAME_user19;
 extern KIM_SpeciesName const KIM_SPECIES_NAME_user20;
 
 void KIM_SPECIES_NAME_get_number_of_species(int * const numberOfSpecies);
-int KIM_SPECIES_NAME_get_species(int const index,
-                                 KIM_SpeciesName * const speciesName);
+int KIM_SPECIES_NAME_get_species_name(int const index,
+                                      KIM_SpeciesName * const speciesName);
 
 #endif  /* KIM_SPECIES_NAME_H_ */

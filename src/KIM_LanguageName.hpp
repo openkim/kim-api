@@ -40,8 +40,9 @@ namespace KIM
 {
 class LanguageName
 {
-  int languageID;
  public:
+  int languageNameID;
+
   LanguageName();
   LanguageName(int const id);
   bool operator==(LanguageName const & rhs) const;
@@ -57,4 +58,16 @@ extern LanguageName const Fortran;
 }  // namespace LANGUAGE_NAME
 
 }  // namespace KIM
+
+namespace std
+{
+template<>
+struct hash<KIM::LanguageName const>
+{
+  size_t operator()(KIM::LanguageName const & languageName) const
+  {
+    return languageName.languageNameID;
+  }
+};
+}  // namespace std
 #endif  // KIM_LANGUAGE_NAME_HPP_

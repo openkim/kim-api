@@ -41,10 +41,12 @@ namespace KIM
 
 class SpeciesName
 {
-  int speciesID;
  public:
+  int speciesNameID;
+
   SpeciesName();
   SpeciesName(int const id);
+  SpeciesName(std::string const str);
   bool operator==(SpeciesName const & rhs) const;
   bool operator!=(SpeciesName const & rhs) const;
   std::string string() const;
@@ -193,8 +195,21 @@ extern SpeciesName const user19;
 extern SpeciesName const user20;
 
 void get_number_of_species(int * const numberOfSpecies);
-int get_species(int const index, SpeciesName * const speciesName);
+int get_species_name(int const index, SpeciesName * const speciesName);
 }  // namespace SPECIES_NAME
 
 }  // namespace KIM
+
+
+namespace std
+{
+template<>
+struct hash<KIM::SpeciesName const>
+{
+  size_t operator()(KIM::SpeciesName const & speciesName) const
+  {
+    return speciesName.speciesNameID;
+  }
+};
+}  // namespace std
 #endif  // KIM_SPECIES_NAME_HPP_

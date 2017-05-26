@@ -34,91 +34,24 @@
 #ifndef KIM_UNIT_SYSTEM_HPP_
 #define KIM_UNIT_SYSTEM_HPP_
 
-#include <string>
+#ifndef KIM_LENGTH_UNIT_HPP_
+#include "KIM_LengthUnit.hpp"
+#endif
 
-namespace KIM
-{
+#ifndef KIM_ENERGY_UNIT_HPP_
+#include "KIM_EnergyUnit.hpp"
+#endif
 
-class LengthUnit
-{
-  int lengthUnitID;
- public:
-  LengthUnit();
-  LengthUnit(int const id);
-  bool operator==(LengthUnit const & rhs) const;
-  bool operator!=(LengthUnit const & rhs) const;
-  std::string string() const;
-};
+#ifndef KIM_CHARGE_UNIT_HPP_
+#include "KIM_ChargeUnit.hpp"
+#endif
 
-class EnergyUnit
-{
-  int energyUnitID;
- public:
-  EnergyUnit();
-  EnergyUnit(int const id);
-  bool operator==(EnergyUnit const & rhs) const;
-  bool operator!=(EnergyUnit const & rhs) const;
-  std::string string() const;
-};
+#ifndef KIM_TEMPERATURE_UNIT_HPP_
+#include "KIM_TemperatureUnit.hpp"
+#endif
 
-class ChargeUnit
-{
-  int chargeUnitID;
- public:
-  ChargeUnit();
-  ChargeUnit(int const id);
-  bool operator==(ChargeUnit const & rhs) const;
-  bool operator!=(ChargeUnit const & rhs) const;
-  std::string string() const;
-};
+#ifndef KIM_TIME_UNIT_HPP_
+#include "KIM_TimeUnit.hpp"
+#endif
 
-class TemperatureUnit
-{
-  int temperatureUnitID;
- public:
-  TemperatureUnit();
-  TemperatureUnit(int const id);
-  bool operator==(TemperatureUnit const & rhs) const;
-  bool operator!=(TemperatureUnit const & rhs) const;
-  std::string string() const;
-};
-
-class TimeUnit
-{
-  int timeUnitID;
- public:
-  TimeUnit();
-  TimeUnit(int const id);
-  bool operator==(TimeUnit const & rhs) const;
-  bool operator!=(TimeUnit const & rhs) const;
-  std::string string() const;
-};
-
-namespace UNITS
-{
-extern LengthUnit const A;
-extern LengthUnit const Bohr;
-extern LengthUnit const cm;
-extern LengthUnit const m;
-extern LengthUnit const nm;
-
-extern EnergyUnit const amu_A2_per_ps2;
-extern EnergyUnit const erg;
-extern EnergyUnit const eV;
-extern EnergyUnit const Hartree;
-extern EnergyUnit const J;
-extern EnergyUnit const kcal_mol;
-
-extern ChargeUnit const C;
-extern ChargeUnit const e;
-extern ChargeUnit const statC;
-
-extern TemperatureUnit const K;
-
-extern TimeUnit const fs;
-extern TimeUnit const ps;
-extern TimeUnit const ns;
-extern TimeUnit const s;
-}  // namespace UNITS
-}  // namespace KIM
 #endif  // KIM_UNIT_SYSTEM_HPP_

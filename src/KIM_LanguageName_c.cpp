@@ -35,13 +35,13 @@
 #ifndef KIM_LANGUAGE_NAME_HPP_
 #include "KIM_LanguageName.hpp"
 #endif
-
 extern "C"
 {
 #ifndef KIM_LANGUAGE_NAME_H_
 #include "KIM_LanguageName.h"
 #endif
 }  // extern "C"
+
 
 namespace
 {
@@ -53,6 +53,18 @@ KIM::LanguageName const makeLanguageNameCpp(KIM_LanguageName languageName)
 
 extern "C"
 {
+int KIM_LanguageNameEqual(KIM_LanguageName const left,
+                          KIM_LanguageName const right)
+{
+  return (left.languageNameID == right.languageNameID);
+}
+
+int KIM_LanguageNameNotEqual(KIM_LanguageName const left,
+                             KIM_LanguageName const right)
+{
+  return (!KIM_LanguageNameEqual(left, right));
+}
+
 char const * const KIM_LanguageNameString(KIM_LanguageName languageName)
 {
   return (makeLanguageNameCpp(languageName)).string().c_str();

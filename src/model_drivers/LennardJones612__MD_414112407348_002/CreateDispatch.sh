@@ -52,8 +52,7 @@ for processdE in false true; do
             printf "         ier = Compute< $processdE, $processd2E,\n"            >> $flName
             printf "                        $energy, $force,\n"                    >> $flName
             printf "                        $particleEnergy, $sshift >(\n"         >> $flName
-            printf "                  simulator,\n"                                >> $flName
-            printf "                  arguments,\n"                                >> $flName
+            printf "                  modelCompute,\n"                             >> $flName
             printf "                  particleSpecies,\n"                          >> $flName
             printf "                  particleContributing,\n"                     >> $flName
             printf "                  coordinates,\n"                              >> $flName

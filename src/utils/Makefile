@@ -40,28 +40,11 @@ VPATH = ../
 # Set defines
 KIMDEFINES = $(KIM_DEFINE_VALUES)
 
-all: $(full_package_name)-descriptor-file-match \
-     $(full_package_name)-build-config \
+all: $(full_package_name)-build-config \
      $(full_package_name)-collections-info
 
 # Add the local Makefile to KIM_MAKE_FILES
 KIM_MAKE_FILES += Makefile
-
-descriptor-file-match.o: descriptor-file-match.cpp old_KIM_API.h old_KIM_API_status.h $(KIM_MAKE_FILES)
-
-$(full_package_name)-descriptor-file-match: descriptor-file-match.o \
-                                            $(if $(filter-out static-link,$(KIM_LINK)),\
-                                                 lib$(KIM_LIB_BUILD).so .lib$(KIM_LIB_BUILD).so,\
-                                                 lib$(KIM_LIB_BUILD).a)
-	@printf "Creating... $@.\n"
-ifneq (static-link,$(KIM_LINK))
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).so $(XLANGLDLIBS) $(LDLIBS)
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ $< ../.lib$(KIM_LIB_BUILD).so $(XLANGLDLIBS) $(LDLIBS)
-else
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).a  $(XLANGLDLIBS) $(LDLIBS)
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ $< ../lib$(KIM_LIB_BUILD).a $(XLANGLDLIBS) $(LDLIBS)
-endif
-
 
 %uild-config.o: KIM_DEFINE_VALUES += -D 'CC_STRING="$(CC)"' \
                                      -D 'CXX_STRING="$(CXX)"' \
@@ -88,48 +71,31 @@ $(full_package_name)-build-config: build-config.o .build-config.o
 
 collections-info.o: collections-info.cpp old_KIM_API_DIRS.h $(KIM_MAKE_FILES)
 
-$(full_package_name)-collections-info: collections-info.o \
-                                            $(if $(filter-out static-link,$(KIM_LINK)),\
-                                                 lib$(KIM_LIB_BUILD).so .lib$(KIM_LIB_BUILD).so,\
-                                                 lib$(KIM_LIB_BUILD).a)
+$(full_package_name)-collections-info: collections-info.o lib$(KIM_LIB_BUILD).so .lib$(KIM_LIB_BUILD).so
+
 	@printf "Creating... $@.\n"
-ifneq (static-link,$(KIM_LINK))
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).so $(XLANGLDLIBS) $(LDLIBS)
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ $< ../.lib$(KIM_LIB_BUILD).so $(XLANGLDLIBS) $(LDLIBS)
-else
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).a  $(XLANGLDLIBS) $(LDLIBS)
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ $< ../.lib$(KIM_LIB_BUILD).a $(XLANGLDLIBS) $(LDLIBS)
-endif
 
 
 .PHONY: all clean install installdirs uninstall
 
 clean:
 	@printf "Cleaning... src/utils.\n"
-	$(QUELL)rm -f *.o .*.o $(full_package_name)-descriptor-file-match .$(full_package_name)-descriptor-file-match \
-                   $(full_package_name)-build-config .$(full_package_name)-build-config \
+	$(QUELL)rm -f *.o .*.o $(full_package_name)-build-config .$(full_package_name)-build-config \
                    $(full_package_name)-collections-info .$(full_package_name)-collections-info
 
 
 install_bindir = $(dest_package_dir)/bin
 install_nodest_bindir = $(package_dir)/bin
-install_bin = $(full_package_name)-descriptor-file-match $(full_package_name)-build-config $(full_package_name)-collections-info
+install_bin = $(full_package_name)-build-config $(full_package_name)-collections-info
 
 install-check:
-ifneq (dynamic-load,$(KIM_LINK))
-	@if test -d "$(dest_package_dir)"; then \
-        printf "*******************************************************************************\n"; \
-        printf "*******               This package is already installed.                *******\n"; \
-        printf "*******                 Please 'make uninstall' first.                  *******\n"; \
-        printf "*******************************************************************************\n"; \
-        false; else true; fi
-else
         # should we check that the installed stuff is actually dynamic-load and the right settings (32bit, etc.)?
 	$(QUELL)if test -d "$(dest_package_dir)"; then \
                   rm -rf "$(install_bindir)"; \
                   for fl in $(install_bin); do rm -f "$(DESTDIR)$(bindir)/$$fl"; done; \
                 fi
-endif
 
 installdirs:
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(DESTDIR)$(bindir)"

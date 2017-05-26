@@ -33,13 +33,15 @@
 #ifndef KIM_SEMVER_HPP_
 #include "KIM_semver.hpp"
 #endif
-
 extern "C"
 {
 #ifndef KIM_SEMVER_H_
 #include "KIM_semver.h"
 #endif
+}  // extern "C"
 
+extern "C"
+{
 // break return convention: for compatibility with sorting routines
 int KIM_version_newer(char const * const versionA, char const * const versionB)
 {
