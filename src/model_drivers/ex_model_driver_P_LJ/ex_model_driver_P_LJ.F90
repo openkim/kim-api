@@ -42,7 +42,6 @@
 !**
 !****************************************************************************
 
-#include "old_KIM_API_status.h"
 #define THIS_FILE_NAME __FILE__
 
 module ex_model_driver_p_lj
@@ -250,7 +249,7 @@ call c_f_pointer(pbuf, buf)
 !
 call kim_model_get_data(model, kim_compute_argument_name_cutoff, &
   pmodel_cutoff, ierr)
-if (ierr.lt.KIM_STATUS_OK) then
+if (ierr /= 0) then
    call kim_report_error(__LINE__, THIS_FILE_NAME,    &
                                "kim_model_get_data", &
                                ierr)
@@ -267,7 +266,7 @@ call kim_utility_compute_getm_compute(model, ierr, &
   kim_compute_argument_name_particle_energy, comp_enepot, 1, &
   kim_compute_argument_name_process_dedr, comp_process_dedr, 1, &
   kim_compute_argument_name_process_d2edr2, comp_process_d2edr2, 1)
-if (ierr.lt.KIM_STATUS_OK) then
+if (ierr /= 0) then
    call kim_report_error(__LINE__, THIS_FILE_NAME,        &
                                "kim_model_getm_compute", &
                                ierr)
@@ -286,7 +285,7 @@ call kim_utility_compute_getm_data(model, ierr, &
   kim_compute_argument_name_energy, penergy, 1, &
   kim_compute_argument_name_forces, pforce, 1, &
   kim_compute_argument_name_particle_energy, penepot, 1)
-if (ierr.lt.KIM_STATUS_OK) then
+if (ierr /= 0) then
    call kim_report_error(__LINE__, THIS_FILE_NAME,     &
                                "kim_model_getm_data", &
                                ierr)
@@ -313,7 +312,7 @@ endif
 ! Check to be sure that the species are correct
 !
 
-ierr = KIM_STATUS_FAIL ! assume an error
+ierr = 1 ! assume an error
 do i = 1,N
    if (particleSpecies(i).ne.speccode) then
       call kim_report_error(__LINE__, THIS_FILE_NAME,      &
@@ -322,7 +321,7 @@ do i = 1,N
       return
    endif
 enddo
-ierr = KIM_STATUS_OK ! everything is ok
+ierr = 0 ! everything is ok
 
 ! Initialize potential energies, forces
 !
@@ -345,12 +344,12 @@ do
    if (i.gt.N) exit          ! incremented past end of list,
    ! terminate loop
    call kim_model_get_neigh(model, i, numnei, pnei1part, ierr)
-   if (ierr.ne.KIM_STATUS_OK) then
+   if (ierr /= 0) then
      ! some sort of problem, exit
      call kim_report_error(__LINE__, THIS_FILE_NAME, &
        "kim_api_get_neigh",      &
        ierr)
-     ierr = KIM_STATUS_FAIL
+     ierr = 1
      return
    endif
 
@@ -456,7 +455,7 @@ endif
 
 ! Everything is great
 !
-ierr = KIM_STATUS_OK
+ierr = 0
 return
 
 end subroutine Compute_Energy_Forces
@@ -488,7 +487,7 @@ call kim_model_get_model_buffer(model, pbuf)
 call c_f_pointer(pbuf, buf)
 
 call kim_model_get_data(model, kim_compute_argument_name_cutoff, pcutoff, ierr)
-if (ierr.lt.KIM_STATUS_OK) then
+if (ierr /= 0) then
    call kim_report_error(__LINE__, THIS_FILE_NAME, &
                                "kim_api_get_data", ierr)
    return
@@ -508,7 +507,7 @@ call calc_phi(buf%epsilon, &
               buf%Pcutoff,energy_at_cutoff)
 buf%shift = -energy_at_cutoff
 
-ierr = KIM_STATUS_OK
+ierr = 0
 return
 
 end subroutine reinit
@@ -535,7 +534,7 @@ call c_f_pointer(pbuf, buf)
 
 deallocate( buf )
 
-ierr = KIM_STATUS_OK
+ierr = 0
 return
 
 end subroutine destroy
@@ -596,7 +595,7 @@ call kim_utility_compute_setm_method(model, ierr, &
   kim_compute_argument_name_compute, 1, kim_compute_language_name_fortran, c_funloc(Compute_Energy_Forces), 1, &
   kim_compute_argument_name_reinit,  1, kim_compute_language_name_fortran, c_funloc(reinit), 1, &
   kim_compute_argument_name_destroy, 1, kim_compute_language_name_fortran, c_funloc(destroy), 1)
-if (ierr.lt.KIM_STATUS_OK) then
+if (ierr /= 0) then
    call kim_report_error(__LINE__, THIS_FILE_NAME, &
                                "kim_api_setm_method", ierr)
    goto 42
@@ -613,7 +612,7 @@ close(10)
 goto 200
 100 continue
 ! reading parameters failed
-ierr = KIM_STATUS_FAIL
+ierr = 1
 call kim_report_error(__LINE__, THIS_FILE_NAME, &
                             "Unable to read LJ parameters, kimerror = ",ierr)
 goto 42
@@ -628,7 +627,7 @@ call kim_model_convert_to_act_unit(model, &
   kim_units_k, &
   kim_units_ps, &
   1.0_cd, 0.0_cd, 0.0_cd, 0.0_cd, 0.0_cd, factor, ierr)
-if (ierr.lt.KIM_STATUS_OK) then
+if (ierr /= 0) then
   call kim_report_error(__LINE__, THIS_FILE_NAME, &
     "kim_api_convert_to_act_unit", ierr)
   goto 42
@@ -642,7 +641,7 @@ call kim_model_convert_to_act_unit(model, &
   kim_units_k, &
   kim_units_ps, &
   0.0_cd, 1.0_cd, 0.0_cd, 0.0_cd, 0.0_cd, factor, ierr)
-if (ierr.lt.KIM_STATUS_OK) then
+if (ierr /= 0) then
    call kim_report_error(__LINE__, THIS_FILE_NAME, &
                              "kim_api_convert_to_act_unit", ierr)
    goto 42
@@ -656,7 +655,7 @@ call kim_model_convert_to_act_unit(model, &
   kim_units_k, &
   kim_units_ps, &
   1.0_cd, 0.0_cd, 0.0_cd, 0.0_cd, 0.0_cd, factor, ierr)
-if (ierr.lt.KIM_STATUS_OK) then
+if (ierr /= 0) then
    call kim_report_error(__LINE__, THIS_FILE_NAME, &
                              "kim_api_convert_to_act_unit", ierr)
    goto 42
@@ -665,7 +664,7 @@ in_sigma = in_sigma * factor
 
 ! store model cutoff in KIM object
 call kim_model_get_data(model, kim_compute_argument_name_cutoff, pcutoff, ierr)
-if (ierr.lt.KIM_STATUS_OK) then
+if (ierr /= 0) then
    call kim_report_error(__LINE__, THIS_FILE_NAME, &
                                "kim_api_get_data", ierr)
    goto 42
@@ -695,27 +694,27 @@ call kim_model_set_model_buffer(model, c_loc(buf))
 
 ! set pointers to parameters in KIM object
 call kim_model_set_parameter(model, cutoff_index, 1, c_loc(buf%pcutoff), ierr)
-if (ierr.lt.KIM_STATUS_OK) then
+if (ierr /= 0) then
    call kim_report_error(__LINE__, THIS_FILE_NAME, &
                                "set_parameter", ierr);
    goto 42
 endif
 
 call kim_model_set_parameter(model, epsilon_index, 1, c_loc(buf%epsilon), ierr)
-if (ierr.lt.KIM_STATUS_OK) then
+if (ierr /= 0) then
    call kim_report_error(__LINE__, THIS_FILE_NAME, &
                                "set_parameter", ierr);
    goto 42
 endif
 
 call kim_model_set_parameter(model, sigma_index, 1, c_loc(buf%sigma), ierr)
-if (ierr.lt.KIM_STATUS_OK) then
+if (ierr /= 0) then
    call kim_report_error(__LINE__, THIS_FILE_NAME, &
                                "set_parameter", ierr);
    goto 42
 endif
 
-ierr = KIM_STATUS_OK
+ierr = 0
 42 continue
 return
 

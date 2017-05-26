@@ -34,7 +34,6 @@
 #include <map>
 #include "LennardJones612.hpp"
 #include "KIM_Logger.hpp"
-#include "old_KIM_API_status.h"
 
 #define DIMENSION 3
 #define ONE 1.0
@@ -234,7 +233,7 @@ int LennardJones612Implementation::Compute(
     VectorOfSizeDIM* const forces,
     double* const particleEnergy)
 {
-  int ier = KIM_STATUS_OK;
+  int ier = false;
 
   if ((isComputeEnergy == false) &&
       (isComputeParticleEnergy == false) &&
@@ -380,7 +379,7 @@ int LennardJones612Implementation::Compute(
           double const rij = sqrt(rij2);
           double const dEidr = dEidrByR*rij;
           ier = model->process_dEdr(dEidr, rij, r_ij_const, i, j);
-          if (ier < KIM_STATUS_OK)
+          if (ier)
           {
             KIM::report_error(__LINE__, __FILE__, "process_dEdr", ier);
             return ier;
@@ -403,7 +402,7 @@ int LennardJones612Implementation::Compute(
           int const* const pjs = &j_pairs[0];
 
           ier = model->process_d2Edr2(d2Eidr2, pRs, pRijConsts, pis, pjs);
-          if (ier < KIM_STATUS_OK)
+          if (ier)
           {
             KIM::report_error(__LINE__, __FILE__, "process_d2Edr2", ier);
             return ier;
@@ -414,7 +413,7 @@ int LennardJones612Implementation::Compute(
   }  // end of loop over contributing particles
 
   // everything is good
-  ier = KIM_STATUS_OK;
+  ier = false;
   return ier;
 }
 

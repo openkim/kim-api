@@ -62,7 +62,7 @@ int getm_data(Model const * const model,
 int vgetm_data(Model const * const model,
                KIM::COMPUTE::ArgumentName const argumentName, va_list argp)
 {
-  int err = KIM_STATUS_OK;
+  int err = true;
   KIM::COMPUTE::ArgumentName argN = argumentName;
 
   while (argN != KIM::COMPUTE::ARGUMENT_NAME::End)
@@ -73,8 +73,7 @@ int vgetm_data(Model const * const model,
     if (flag)
     {
       err = model->get_data(argN, ptr);
-
-      if (KIM_STATUS_OK > err)
+      if (err)
       {
         break;
       }
@@ -99,7 +98,7 @@ int setm_data(Model * const model,
 int vsetm_data(Model * const model,
                KIM::COMPUTE::ArgumentName const argumentName, va_list argp)
 {
-  int err = KIM_STATUS_OK;
+  int err = true;
   KIM::COMPUTE::ArgumentName argN = argumentName;
 
   while (argN != KIM::COMPUTE::ARGUMENT_NAME::End)
@@ -112,7 +111,7 @@ int vsetm_data(Model * const model,
     {
       err = model->set_data(argN, extent, ptr);
 
-      if (KIM_STATUS_OK > err)
+      if (err)
       {
         break;
       }
@@ -137,7 +136,7 @@ int getm_method(Model const * const model,
 int vgetm_method(Model const * const model,
                  KIM::COMPUTE::ArgumentName const argumentName, va_list argp)
 {
-  int err = KIM_STATUS_OK;
+  int err = true;
   KIM::COMPUTE::ArgumentName argN = argumentName;
 
   while (argN != KIM::COMPUTE::ARGUMENT_NAME::End)
@@ -151,7 +150,7 @@ int vgetm_method(Model const * const model,
     {
       err = model->get_method(argN, langN, fptr);
 
-      if (KIM_STATUS_OK > err)
+      if (err)
       {
         break;
       }
@@ -176,7 +175,7 @@ int setm_method(Model * const model,
 int vsetm_method(Model * const model,
                  KIM::COMPUTE::ArgumentName const argumentName, va_list argp)
 {
-  int err = KIM_STATUS_OK;
+  int err = true;
   KIM::COMPUTE::ArgumentName argN = argumentName;
 
   while (argN != KIM::COMPUTE::ARGUMENT_NAME::End)
@@ -190,7 +189,7 @@ int vsetm_method(Model * const model,
     {
       err = model->set_method(argN, extent, langN, ptr);
 
-      if (KIM_STATUS_OK > err)
+      if (err)
       {
         break;
       }
@@ -215,7 +214,7 @@ int getm_compute(Model const * const model,
 int vgetm_compute(Model const * const model,
                   KIM::COMPUTE::ArgumentName const argumentName, va_list argp)
 {
-  int err = KIM_STATUS_OK;
+  int err = true;
   KIM::COMPUTE::ArgumentName argN = argumentName;
 
   while (argN != KIM::COMPUTE::ARGUMENT_NAME::End)
@@ -227,7 +226,7 @@ int vgetm_compute(Model const * const model,
     {
       err = model->get_compute(argN, ptr);
 
-      if (KIM_STATUS_OK > err)
+      if (err)
       {
         break;
       }
@@ -252,7 +251,7 @@ int setm_compute(Model * const model,
 int vsetm_compute(Model * const model,
                   KIM::COMPUTE::ArgumentName const argumentName, va_list argp)
 {
-  int err = KIM_STATUS_OK;
+  int err = true;
   KIM::COMPUTE::ArgumentName argN = argumentName;
 
   while (argN != KIM::COMPUTE::ARGUMENT_NAME::End)
@@ -264,7 +263,7 @@ int vsetm_compute(Model * const model,
     {
       err = model->set_compute(argN, ptr);
 
-      if (KIM_STATUS_OK > err)
+      if (err)
       {
         break;
       }

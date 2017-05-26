@@ -37,7 +37,7 @@
 #include "LennardJones612.hpp"
 #include "LennardJones612Implementation.hpp"
 #include "KIM_Logger.hpp"
-#include "old_KIM_API_status.h"
+
 
 //==============================================================================
 //
@@ -59,7 +59,7 @@ int model_driver_init(KIM::Model * const model,
   LennardJones612* const modelObject
       = new LennardJones612(model, paramfile_names, nmstrlen,
                             numparamfiles, &ier);
-  if (ier < KIM_STATUS_OK)
+  if (ier)
   {
     // constructor already reported the error
     delete modelObject;
@@ -70,7 +70,7 @@ int model_driver_init(KIM::Model * const model,
   model->set_model_buffer(static_cast<void*>(modelObject));
 
   // everything is good
-  ier = KIM_STATUS_OK;
+  ier = false;
   return ier;
 }
 }
@@ -120,7 +120,7 @@ int LennardJones612::Destroy(KIM::Model * const model)
   }
 
   // everything is good
-  return KIM_STATUS_OK;
+  return false;
 }
 
 //******************************************************************************

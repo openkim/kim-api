@@ -43,6 +43,7 @@
 #ifndef KIM_MODEL_H_
 #include "KIM_Model.h"
 #endif
+#define TRUE 1
 
 int KIM_UTILITY_COMPUTE_getm_data(
     KIM_Model const * const model,
@@ -60,7 +61,7 @@ int KIM_UTILITY_COMPUTE_vgetm_data(
     KIM_Model const * const model,
     KIM_COMPUTE_ArgumentName const argumentName, va_list argp)
 {
-  int err = KIM_STATUS_OK;
+  int err = TRUE;
   KIM_COMPUTE_ArgumentName argN = argumentName;
 
   while (argN.argumentID != KIM_COMPUTE_ARGUMENT_NAME_End.argumentID)
@@ -72,7 +73,7 @@ int KIM_UTILITY_COMPUTE_vgetm_data(
     {
       err = KIM_Model_get_data(model, argN, ptr);
 
-      if (KIM_STATUS_OK > err)
+      if (err)
       {
         break;
       }
@@ -100,7 +101,7 @@ int KIM_UTILITY_COMPUTE_vsetm_data(
     KIM_Model * const model,
     KIM_COMPUTE_ArgumentName const argumentName, va_list argp)
 {
-  int err = KIM_STATUS_OK;
+  int err = TRUE;
   KIM_COMPUTE_ArgumentName argN = argumentName;
 
   while (argN.argumentID != KIM_COMPUTE_ARGUMENT_NAME_End.argumentID)
@@ -113,7 +114,7 @@ int KIM_UTILITY_COMPUTE_vsetm_data(
     {
       err = KIM_Model_set_data(model, argN, extent, ptr);
 
-      if (KIM_STATUS_OK > err)
+      if (err)
       {
         break;
       }
@@ -141,7 +142,7 @@ int KIM_UTILITY_COMPUTE_vgetm_method(
     KIM_Model const * const model,
     KIM_COMPUTE_ArgumentName const argumentName, va_list argp)
 {
-  int err = KIM_STATUS_OK;
+  int err = TRUE;
   KIM_COMPUTE_ArgumentName argN = argumentName;
 
   while (argN.argumentID != KIM_COMPUTE_ARGUMENT_NAME_End.argumentID)
@@ -155,7 +156,7 @@ int KIM_UTILITY_COMPUTE_vgetm_method(
     {
       err = KIM_Model_get_method(model, argN, langN, fptr);
 
-      if (KIM_STATUS_OK > err)
+      if (err)
       {
         break;
       }
@@ -183,7 +184,7 @@ int KIM_UTILITY_COMPUTE_vsetm_method(
     KIM_Model * const model,
     KIM_COMPUTE_ArgumentName const argumentName, va_list argp)
 {
-  int err = KIM_STATUS_OK;
+  int err = TRUE;
   KIM_COMPUTE_ArgumentName argN = argumentName;
 
   while (argN.argumentID != KIM_COMPUTE_ARGUMENT_NAME_End.argumentID)
@@ -197,7 +198,7 @@ int KIM_UTILITY_COMPUTE_vsetm_method(
     {
       err = KIM_Model_set_method(model, argN, extent, langN, fptr);
 
-      if (KIM_STATUS_OK > err)
+      if (err)
       {
         break;
       }
@@ -225,7 +226,7 @@ int KIM_UTILITY_COMPUTE_vgetm_compute(
     KIM_Model const * const model,
     KIM_COMPUTE_ArgumentName const argumentName, va_list argp)
 {
-  int err = KIM_STATUS_OK;
+  int err = TRUE;
   KIM_COMPUTE_ArgumentName argN = argumentName;
 
   while (argN.argumentID != KIM_COMPUTE_ARGUMENT_NAME_End.argumentID)
@@ -237,7 +238,7 @@ int KIM_UTILITY_COMPUTE_vgetm_compute(
     {
       err = KIM_Model_get_compute(model, argN, ptr);
 
-      if (KIM_STATUS_OK > err)
+      if (err)
       {
         break;
       }
@@ -265,7 +266,7 @@ int KIM_UTILITY_COMPUTE_vsetm_compute(
     KIM_Model * const model,
     KIM_COMPUTE_ArgumentName const argumentName, va_list argp)
 {
-  int err = KIM_STATUS_OK;
+  int err = TRUE;
   KIM_COMPUTE_ArgumentName argN = argumentName;
 
   while (argN.argumentID != KIM_COMPUTE_ARGUMENT_NAME_End.argumentID)
@@ -277,7 +278,7 @@ int KIM_UTILITY_COMPUTE_vsetm_compute(
     {
       err = KIM_Model_set_compute(model, argN, comp);
 
-      if (KIM_STATUS_OK > err)
+      if (err)
       {
         break;
       }

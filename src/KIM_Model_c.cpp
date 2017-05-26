@@ -50,8 +50,6 @@
 #include "KIM_UnitSystem.hpp"
 #endif
 
-#include "old_KIM_API_status.h"
-
 extern "C"
 {
 #ifndef KIM_SPECIES_NAME_H_
@@ -376,7 +374,7 @@ int KIM_Model_get_parameter_data_type(KIM_Model const * const model,
   KIM::Model * pmodel = (KIM::Model *) model->p;
   KIM::ParameterDataType typ;
   int err = pmodel->get_parameter_data_type(index, &typ);
-  if (err != KIM_STATUS_OK) return err;
+  if (err) return err;
 
   *dataType = makeParameterDataTypeC(typ);
   return err;
@@ -403,7 +401,7 @@ int KIM_Model_get_parameter_description(KIM_Model const * const model,
   KIM::Model * pmodel = (KIM::Model *) model->p;
   static std::string str;
   int err = pmodel->get_parameter_description(index, &str);
-  if (err != KIM_STATUS_OK) return err;
+  if (err) return err;
   *description = str.c_str();
   return err;
 }
@@ -456,7 +454,7 @@ int KIM_Model_get_model_kim_string_length(char const * const modelName,
 {
   std::string kimSTR;
   int err = KIM::Model::get_model_kim_string(modelName, &kimSTR);
-  if (err != KIM_STATUS_OK) return err;
+  if (err) return err;
 
   *kimStringLength = kimSTR.length();
   return err;

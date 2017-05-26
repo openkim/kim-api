@@ -1821,7 +1821,7 @@ int KIM_API_model::model_destroy(){
   KIM_Model cMI;
   cMI.p = (void *) &MI;
 
-  int error = KIM_STATUS_OK;
+  int error = false;
   if (mdl_destroy_cpp != NULL) {
     if ((*this)[(char*) "destroy"].lang == 1)
       error = (*mdl_destroy_cpp)(&MI);
@@ -1919,7 +1919,7 @@ int KIM_API_model::get_neigh(int request, int *numnei, int** nei1part){
         {
           (*get_neigh_fortran)(&cMI, req, numnei, nei1part, &erkey);
         }
-            if (erkey == 1){
+            if (!erkey){
                 if (neiOfAnAtomSize < *numnei) {
                    delete [] neiOfAnAtom;
                    neiOfAnAtom = new int[*numnei];
@@ -2190,11 +2190,8 @@ int KIM_API_model::get_status_msg(const int status_code,
 }
 
 int KIM_API_model::report_error(int ln,const char * fl,const char * usermsg,int ier){
-    if(ier <= 0){
-      const char* kimstatus;
-      get_status_msg(ier, &kimstatus);
+    if(ier){
         std::cout<<"* Error: at line "<<ln<<" in "<<fl<< std::endl<<"\tMessage: "<<usermsg<<std::endl;
-        std::cout<<"\tKIM_STATUS_MSG: "<<kimstatus<<std::endl;
         return KIM_STATUS_FAIL;
     }
     return KIM_STATUS_OK;

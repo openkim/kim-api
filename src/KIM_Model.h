@@ -39,8 +39,6 @@
 #include <stdarg.h>
 
 
-#include "old_KIM_API_status.h"
-
 typedef void (func)();
 
 

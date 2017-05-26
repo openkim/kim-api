@@ -33,7 +33,6 @@
 !
 
 
-#include "old_KIM_API_status.h"
 #define THIS_FILE_NAME __FILE__
 #define TRUEFALSE(TRUTH) merge(1,0,(TRUTH))
 
@@ -83,7 +82,7 @@ contains
   !
   call kim_model_set_data(model, &
     kim_compute_argument_name_neigh_object, 1, c_loc(neighObject), ierr)
-  if (ierr.lt.KIM_STATUS_OK) then
+  if (ierr /= 0) then
      call kim_report_error(__LINE__, THIS_FILE_NAME, &
                                  "kim_api_set_data", ierr)
      stop
@@ -91,7 +90,7 @@ contains
   call kim_model_set_method(model, &
     kim_compute_argument_name_get_neigh, 1, &
     kim_compute_language_name_fortran, c_funloc(get_neigh), ierr)
-  if (ierr.lt.KIM_STATUS_OK) then
+  if (ierr /= 0) then
      call kim_report_error(__LINE__, THIS_FILE_NAME, &
                                  "kim_api_set_method", ierr)
      stop
@@ -129,7 +128,7 @@ subroutine get_neigh(model, request, numnei, pnei1part, ierr) bind(c)
   ! unpack number of particles
   call kim_model_get_data(model, &
     kim_compute_argument_name_number_of_particles, pnparts, ierr)
-  if (ierr.lt.KIM_STATUS_OK) then
+  if (ierr /= 0) then
      call kim_report_error(__LINE__, THIS_FILE_NAME, &
                                  "kim_api_get_data", ierr)
      stop
@@ -139,7 +138,7 @@ subroutine get_neigh(model, request, numnei, pnei1part, ierr) bind(c)
   ! unpack neighbor list object
   call kim_model_get_data(model, &
     kim_compute_argument_name_neigh_object, pneighobject, ierr)
-  if (ierr.lt.KIM_STATUS_OK) then
+  if (ierr /= 0) then
      call kim_report_error(__LINE__, THIS_FILE_NAME, &
                                  "kim_api_get_data", ierr)
      stop
@@ -150,9 +149,8 @@ subroutine get_neigh(model, request, numnei, pnei1part, ierr) bind(c)
 
   if ( (request.gt.N) .or. (request.lt.1)) then
     call kim_report_error(__LINE__, THIS_FILE_NAME, &
-      "Invalid part ID in get_neigh", &
-      KIM_STATUS_PARTICLE_INVALID_ID)
-    ierr = KIM_STATUS_PARTICLE_INVALID_ID
+      "Invalid part ID in get_neigh", 1)
+    ierr = 1
     return
   endif
 
@@ -162,7 +160,7 @@ subroutine get_neigh(model, request, numnei, pnei1part, ierr) bind(c)
   ! set the location for the returned neighbor list
   pnei1part = c_loc(neighObject%neighborList(2,request))
 
-  ierr = KIM_STATUS_OK
+  ierr = 0
   return
 end subroutine get_neigh
 
@@ -247,7 +245,7 @@ program vc_forces_numer_deriv
   term_max = 0.0_cd ! initialize
 
   ! Initialize error flag
-  ierr = KIM_STATUS_OK
+  ierr = 0
 
   ! Get KIM Model name to use
   print '("Please enter a valid KIM model name: ")'
@@ -257,7 +255,7 @@ program vc_forces_numer_deriv
   !
   call Get_Model_Supported_Species(trim(modelname), max_species, model_species, num_species, &
                                  ierr)
-  if (ierr.lt.KIM_STATUS_OK) then
+  if (ierr /= 0) then
      call kim_report_error(__LINE__, THIS_FILE_NAME, &
                                  "Get_Model_Supported_Species", ierr)
      stop
@@ -296,7 +294,7 @@ program vc_forces_numer_deriv
   ! Write out KIM descriptor string for Test for current NBC
   call Write_KIM_descriptor(max_species, model_species, &
                             num_species, test_descriptor_string, ierr)
-  if (ierr.lt.KIM_STATUS_OK) then
+  if (ierr /= 0) then
     call kim_report_error(__LINE__, THIS_FILE_NAME, &
                                  "Write_KIM_descriptor", ierr)
      stop
@@ -306,7 +304,7 @@ program vc_forces_numer_deriv
   ! of the Test and Model
   !
   call kim_model_create(trim(test_descriptor_string), trim(modelname), model, ierr)
-  if (ierr.lt.KIM_STATUS_OK) then
+  if (ierr /= 0) then
      call kim_report_error(__LINE__, THIS_FILE_NAME, &
                                  "kim_api_string_init", ierr)
      stop
@@ -322,7 +320,7 @@ program vc_forces_numer_deriv
     kim_compute_argument_name_energy,              1, c_loc(energy),            TRUEFALSE(.true.), &
     kim_compute_argument_name_forces,            3*N, c_loc(forces),            TRUEFALSE(.true.) &
   )
-  if (ierr.lt.KIM_STATUS_OK) then
+  if (ierr /= 0) then
      call kim_report_error(__LINE__, THIS_FILE_NAME, &
                                  "kim_api_setm_data", ierr)
      stop
@@ -334,7 +332,7 @@ program vc_forces_numer_deriv
   allocate(neighObject%neighborList(N+1,N))
   call kim_model_set_data(model, kim_compute_argument_name_neigh_object, &
     1, c_loc(neighobject), ierr)
-  if (ierr.lt.KIM_STATUS_OK) then
+  if (ierr /= 0) then
     call kim_report_error(__LINE__, THIS_FILE_NAME, &
       "kim_api_set_data", ierr)
     stop
@@ -345,7 +343,7 @@ program vc_forces_numer_deriv
   call kim_model_set_method(model, &
     kim_compute_argument_name_get_neigh, 1, &
     kim_compute_language_name_fortran, c_funloc(get_neigh), ierr)
-  if (ierr.lt.KIM_STATUS_OK) then
+  if (ierr /= 0) then
     call kim_report_error(__LINE__, THIS_FILE_NAME, &
                                 "kim_api_set_method", ierr)
     stop
@@ -354,7 +352,7 @@ program vc_forces_numer_deriv
   ! Initialize Model
   !
   call kim_model_init(model, ierr)
-  if (ierr.lt.KIM_STATUS_OK) then
+  if (ierr /= 0) then
      call kim_report_error(__LINE__, THIS_FILE_NAME, &
                                  "kim_api_model_init", ierr)
      stop
@@ -372,7 +370,7 @@ program vc_forces_numer_deriv
     call kim_model_get_species_code(model, cluster_species(i), &
       particleSpecies(i), ierr)
   enddo
-  if (ierr.lt.KIM_STATUS_OK) then
+  if (ierr /= 0) then
      call kim_report_error(__LINE__, THIS_FILE_NAME, &
                                  "kim_api_get_species_code", ierr)
      stop
@@ -388,7 +386,7 @@ program vc_forces_numer_deriv
   call update_neighborlist(DIM,N,coords,cutoff,cutpad, &
                            do_update_list,coordsave, &
                            neighObject,ierr)
-  if (ierr.lt.KIM_STATUS_OK) then
+  if (ierr /= 0) then
     call kim_report_error(__LINE__, THIS_FILE_NAME, &
       "update_neighborlist", ierr)
     stop
@@ -397,7 +395,7 @@ program vc_forces_numer_deriv
   ! Call model compute to get forces (gradient)
   !
   call kim_model_compute(model, ierr)
-  if (ierr.lt.KIM_STATUS_OK) then
+  if (ierr /= 0) then
      call kim_report_error(__LINE__, THIS_FILE_NAME, &
                                  "kim_api_model_compute", ierr)
      stop
@@ -413,8 +411,8 @@ program vc_forces_numer_deriv
   ! Turn off force computation
   !
   call kim_model_set_compute(model, &
-    kim_compute_argument_name_forces, KIM_COMPUTE_FALSE, ierr)
-  if (ierr.lt.KIM_STATUS_OK) then
+    kim_compute_argument_name_forces, 0, ierr)
+  if (ierr /= 0) then
      call kim_report_error(__LINE__, THIS_FILE_NAME, &
                                  "kim_api_set_compute", ierr)
      stop
@@ -428,7 +426,7 @@ program vc_forces_numer_deriv
         call compute_numer_deriv(I,J,model,DIM,N,coords,cutoff,cutpad,   &
                                  do_update_list, &
                                  coordsave,neighObject,deriv,deriv_err,ierr)
-        if (ierr.lt.KIM_STATUS_OK) then
+        if (ierr /= 0) then
            call kim_report_error(__LINE__, THIS_FILE_NAME, &
                                        "compute_numer_deriv", ierr)
            stop
@@ -493,7 +491,7 @@ program vc_forces_numer_deriv
   deallocate(coordsave)
 
   call kim_model_destroy_model(model, ierr)
-  if (ierr.lt.KIM_STATUS_OK) then
+  if (ierr /= 0) then
      call kim_report_error(__LINE__, THIS_FILE_NAME, &
                                  "kim_api_model_destroy", ierr)
      stop
@@ -848,7 +846,7 @@ integer(c_int),                       intent(out)  :: ier
  integer(c_int) :: name_index
 
 ! Initialize error flag
-ier = KIM_STATUS_FAIL
+ier = 1
 
 call kim_model_get_model_kim_string_length(trim(modelname), maxStringLength, ier)
 allocate(character(len=(maxStringLength+20)) :: kim_file)
@@ -869,7 +867,7 @@ do while (newline_index /= 0)
 end do
 deallocate(kim_file)
 
-ier = KIM_STATUS_OK
+ier = 0
 return
 
 end subroutine Get_Model_Supported_Species
@@ -908,7 +906,7 @@ character(len=1024) :: species_line
 character(len=20)   :: species_name
 
 ! Initialize error flag
-ier = KIM_STATUS_OK
+ier = 0
 
 ! Define frequently used variables
 !
@@ -1042,7 +1040,7 @@ integer(c_int) i
 
 ! Initialize error code
 !
-ierr = KIM_STATUS_OK
+ierr = 0
 
 ! Update neighbor lists if necessary
 !
@@ -1286,7 +1284,7 @@ integer(c_int)  i
 real(c_double), pointer :: energy; type(c_ptr) :: penergy
 
 ! Initialize error flag
-ierr = KIM_STATUS_OK
+ierr = 0
 
 deriv_last = 0.0_cd ! initialize
 
@@ -1294,7 +1292,7 @@ deriv_last = 0.0_cd ! initialize
 !
 call kim_model_get_data(model, &
   kim_compute_argument_name_energy, penergy, ierr)
-if (ierr.lt.KIM_STATUS_OK) then
+if (ierr /= 0) then
    call kim_report_error(__LINE__, THIS_FILE_NAME, &
                               "kim_api_get_data", ierr)
    stop
@@ -1307,7 +1305,7 @@ eps = eps_init
 deriv_err_last = huge(1.0_cd)
 do i=1,number_eps_levels
    deriv = dfridr(eps,deriv_err)
-   if (ierr.lt.KIM_STATUS_OK) then
+   if (ierr /= 0) then
       call kim_report_error(__LINE__, THIS_FILE_NAME, &
                                   "compute_numer_deriv",ierr)
       stop
@@ -1363,7 +1361,7 @@ contains
    dfridr = 0.0_cd ! initialize
 
    if (h.eq.0.0_cd) then
-      ierr = KIM_STATUS_FAIL
+      ierr = 1
       return
    endif
 
@@ -1374,7 +1372,7 @@ contains
                             do_update_list,coordsave,       &
                             neighObject,ierr)
    call kim_model_compute(model, ierr)
-   if (ierr.lt.KIM_STATUS_OK) then
+   if (ierr /= 0) then
       call kim_report_error(__LINE__, THIS_FILE_NAME, &
                                   "kim_api_model_compute",ierr)
       stop
@@ -1385,7 +1383,7 @@ contains
                             do_update_list,coordsave,       &
                             neighObject,ierr)
    call kim_model_compute(model, ierr)
-   if (ierr.lt.KIM_STATUS_OK) then
+   if (ierr /= 0) then
       call kim_report_error(__LINE__, THIS_FILE_NAME, &
                                   "kim_api_model_compute",ierr)
       stop
@@ -1407,7 +1405,7 @@ contains
                                do_update_list,coordsave,       &
                                neighObject,ierr)
       call kim_model_compute(model, ierr)
-      if (ierr.lt.KIM_STATUS_OK) then
+      if (ierr /= 0) then
          call kim_report_error(__LINE__, THIS_FILE_NAME, &
                                      "kim_api_model_compute",ierr)
          stop
@@ -1418,7 +1416,7 @@ contains
                                   do_update_list,coordsave,       &
                                   neighObject,ierr)
       call kim_model_compute(model, ierr)
-      if (ierr.lt.KIM_STATUS_OK) then
+      if (ierr /= 0) then
          call kim_report_error(__LINE__, THIS_FILE_NAME, &
                                      "kim_api_model_compute",ierr)
          stop

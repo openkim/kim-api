@@ -52,6 +52,9 @@
 #include "KIM_UTILITY_Compute.h"
 #include "KIM_Logger.h"
 
+#define TRUE 1
+#define FALSE 0
+
 /******************************************************************************/
 /* Below are the definitions and values of all Model parameters               */
 /******************************************************************************/
@@ -217,7 +220,7 @@ static int compute(KIM_Model const * const model) {
       KIM_COMPUTE_ARGUMENT_NAME_process_dEdr,   &comp_process_dEdr,   1,
       KIM_COMPUTE_ARGUMENT_NAME_process_d2Edr2, &comp_process_d2Edr2, 1,
       KIM_COMPUTE_ARGUMENT_NAME_End);
-  if (KIM_STATUS_OK > ier) {
+  if (ier) {
     KIM_report_error(__LINE__, __FILE__, "KIM_getm_compute", ier);
     return ier; }
 
@@ -231,7 +234,7 @@ static int compute(KIM_Model const * const model) {
       KIM_COMPUTE_ARGUMENT_NAME_forces,            &force,          comp_force,
       KIM_COMPUTE_ARGUMENT_NAME_particleEnergy,    &particleEnergy, comp_particleEnergy,
       KIM_COMPUTE_ARGUMENT_NAME_End);
-  if (KIM_STATUS_OK > ier) {
+  if (ier) {
     KIM_report_error(__LINE__, __FILE__, "KIM_getm_data", ier);
     return ier; }
 
@@ -249,13 +252,13 @@ static int compute(KIM_Model const * const model) {
 
   /* Check to be sure that the species are correct */
   /**/
-  ier = KIM_STATUS_FAIL; /* assume an error */
+  ier = TRUE; /* assume an error */
   for (i = 0; i < *nParts; ++i) {
     if ( SPECCODE != particleSpecies[i]) {
       KIM_report_error(__LINE__, __FILE__,
                        "Unexpected species detected", ier);
       return ier; } }
-  ier = KIM_STATUS_OK;  /* everything is ok */
+  ier = FALSE;  /* everything is ok */
 
   /* initialize potential energies, forces, and virial term */
   if (comp_particleEnergy) {
@@ -282,10 +285,10 @@ static int compute(KIM_Model const * const model) {
 
     ier = KIM_Model_get_neigh(model, i, &numOfPartNeigh,
                               &neighListOfCurrentPart);
-    if (KIM_STATUS_OK != ier) {
+    if (ier) {
       /* some sort of problem, exit */
       KIM_report_error(__LINE__, __FILE__, "KIM_get_neigh", ier);
-      ier = KIM_STATUS_FAIL;
+      ier = TRUE;
       return ier; }
 
     /* loop over the neighbors of particle i */
@@ -367,7 +370,7 @@ static int compute(KIM_Model const * const model) {
   }  /* infinite while loop (terminated by break statements above) */
 
   /* everything is great */
-  ier = KIM_STATUS_OK;
+  ier = FALSE;
 
   return ier; }
 
@@ -379,16 +382,16 @@ int model_init(KIM_Model * const model) {
   /* store pointer to function in KIM object */
   ier = KIM_Model_set_method(model, KIM_COMPUTE_ARGUMENT_NAME_compute, 1,
                              KIM_COMPUTE_LANGUAGE_NAME_C, (func *) &compute);
-  if (KIM_STATUS_OK > ier) {
+  if (ier) {
     KIM_report_error(__LINE__, __FILE__, "KIM_set_data", ier);
     return ier; }
   /* store model cutoff in KIM object */
   ier = KIM_Model_get_data(model, KIM_COMPUTE_ARGUMENT_NAME_cutoff,
                            (void **) &model_cutoff);
-  if (KIM_STATUS_OK > ier) {
+  if (ier) {
     KIM_report_error(__LINE__, __FILE__, "KIM_get_data", ier);
     return ier; }
 
   *model_cutoff = CUTOFF;
 
-  return KIM_STATUS_OK; }
+  return FALSE; }

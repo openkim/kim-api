@@ -69,6 +69,6 @@ done # processdE
 
 printf "      default:\n"                                                         >> $flName
 printf "         std::cout << \"Unknown compute function index\" << std::endl;\n" >> $flName
-printf "         ier = KIM_STATUS_FAIL;\n"                                        >> $flName
+printf "         ier = true;\n"                                                   >> $flName
 printf "         break;\n"                                                        >> $flName
 printf "   }\n"                                                                   >> $flName

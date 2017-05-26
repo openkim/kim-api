@@ -65,7 +65,7 @@ done
 printf "\n"
 printf "  if (flag_01 == 1) then\n"
 printf "    call kim_model_get_%s(model, argument_name_01, ${hasLanguage:+language_name_01,} value_01, ierr)\n" $subject
-printf "    if (ierr /= 1) return\n"
+printf "    if (ierr /= 0) return\n"
 printf "  end if\n"
 printf "\n"
 printf "  !process arguments\n"
@@ -73,7 +73,7 @@ for i in 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
 printf "  if (present(argument_name_%02i)) then\n" $i
 printf "    if (flag_%02i .eq. 1) then\n" $i
 printf "      call kim_model_get_%s(model, argument_name_%02i, ${hasLanguage:+language_name_%02i,} value_%02i, ierr)\n" $subject $i ${hasLanguage:+$i} $i
-printf "      if (ierr /= 1) return\n"
+printf "      if (ierr /= 0) return\n"
 printf "    end if\n"
 printf "  end if\n"
 done
@@ -123,7 +123,7 @@ done
 printf "\n"
 printf "  if (flag_01 == 1) then\n"
 printf "    call kim_model_set_%s(model, argument_name_01, ${hasExtent:+extent_01,} ${hasLanguage:+language_name_01,} value_01, ierr)\n" $subject
-printf "    if (ierr /= 1) return\n"
+printf "    if (ierr /= 0) return\n"
 printf "  end if\n"
 printf "\n"
 printf "  !process arguments\n"
@@ -131,7 +131,7 @@ for i in 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
 printf "  if (present(argument_name_%02i)) then\n" $i
 printf "    if (flag_%02i .eq. 1) then\n" $i
 printf "      call kim_model_set_%s(model, argument_name_%02i, ${hasExtent:+extent_%02i,} ${hasLanguage:+language_name_%02i,} value_%02i, ierr)\n" $subject $i ${hasExtent:+$i} ${hasLanguage:+$i} $i
-printf "      if (ierr /= 1) return\n"
+printf "      if (ierr /= 0) return\n"
 printf "    end if\n"
 printf "  end if\n"
 done

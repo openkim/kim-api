@@ -491,7 +491,8 @@ int Model::create(std::string const & simulatorString,
   Model * pModel = new Model();
   pModel->pimpl = (ModelImplementation *) mdl;
   *model = pModel;
-  return mdl->string_init(simulatorString.c_str(), modelName.c_str());
+  int err = mdl->string_init(simulatorString.c_str(), modelName.c_str());
+  return (err < KIM_STATUS_OK);
 }
 
 void Model::destroy(Model ** const model)
@@ -511,7 +512,7 @@ int Model::get_data(COMPUTE::ArgumentName const argumentName,
 
   int err;
   *ptr = pKIM->get_data(argumentString(argumentName), &err);
-  return err;
+  return (err < KIM_STATUS_OK);
 }
 
 
@@ -520,8 +521,9 @@ int Model::set_data(COMPUTE::ArgumentName const argumentName,
 {
   OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
 
-  return pKIM->set_data(argumentString(argumentName), (intptr_t) extent,
-                        (void *) ptr);
+  int err = pKIM->set_data(argumentString(argumentName), (intptr_t) extent,
+                           (void *) ptr);
+  return (err < KIM_STATUS_OK);
 }
 
 
@@ -541,7 +543,7 @@ int Model::get_method(COMPUTE::ArgumentName const argumentName,
     *languageName = KIM::COMPUTE::LANGUAGE_NAME::C;
   else if (langN == 3)
     *languageName = KIM::COMPUTE::LANGUAGE_NAME::Fortran;
-  return err;
+  return (err < KIM_STATUS_OK);
 }
 
 int Model::set_method(COMPUTE::ArgumentName const argumentName,
@@ -558,9 +560,9 @@ int Model::set_method(COMPUTE::ArgumentName const argumentName,
   else  // Fortran
     langN = 3;
 
-  return pKIM->set_method(argumentString(argumentName), (intptr_t) extent,
-                          langN,
-                          (func *) fptr);
+  int err = pKIM->set_method(argumentString(argumentName), (intptr_t) extent,
+                             langN, (func *) fptr);
+  return (err < KIM_STATUS_OK);
 }
 
 // *compute functions
@@ -571,7 +573,7 @@ int Model::get_compute(COMPUTE::ArgumentName const argumentName,
 
   int err;
   *flag = pKIM->get_compute(argumentString(argumentName), &err);
-  return err;
+  return (err < KIM_STATUS_OK);
 }
 
 
@@ -581,7 +583,7 @@ int Model::set_compute(COMPUTE::ArgumentName const argumentName, int flag)
 
   int err;
   pKIM->set_compute(argumentString(argumentName), flag, &err);
-  return err;
+  return (err < KIM_STATUS_OK);
 }
 
 
@@ -593,7 +595,7 @@ int Model::get_size(COMPUTE::ArgumentName const argumentName,
 
   int err;
   *size = pKIM->get_size(argumentString(argumentName), &err);
-  return err;
+  return (err < KIM_STATUS_OK);
 }
 
 
@@ -608,7 +610,8 @@ void Model::print() const
 int Model::compute() const
 {
   OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
-  return pKIM->model_compute();
+  int err = pKIM->model_compute();
+  return err;  // Models should return 2.0 codes
 }
 
 
@@ -617,29 +620,32 @@ int Model::get_neigh(int particleNumber, int * const numberOfNeighbors,
 {
   OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
 
-  return pKIM->get_neigh(particleNumber, numberOfNeighbors,
-                         (int **) neighborsOfParticle);
+  int err = pKIM->get_neigh(particleNumber, numberOfNeighbors,
+                            (int **) neighborsOfParticle);
+  return err;  // Simulators should return 2.0 codes
 }
 
 int Model::init()
 {
   OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
   int err = pKIM->model_init();
-  return err;
+  return err;  // Models should return 2.0 codes
 }
 
 int Model::reinit()
 {
   OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
 
-  return pKIM->model_reinit();
+  int err = pKIM->model_reinit();
+  return err;  // Models should return 2.0 codes
 }
 
 int Model::destroy_model()
 {
   OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
 
-  return pKIM->model_destroy();
+  int err = pKIM->model_destroy();
+  return err;  // Models should return 2.0 codes
 }
 
 void Model::get_num_model_species(int * const numberOfSpecies) const
@@ -658,7 +664,7 @@ int Model::get_model_species(int const index,
   char const * str;
   int err = pKIM->get_model_species(index, &str);
   (*speciesName) = speciesCpp(str);
-  return err;
+  return (err < KIM_STATUS_OK);
 }
 
 
@@ -679,7 +685,7 @@ int Model::get_sim_species(int const index,
   char const * str;
   int err = pKIM->get_sim_species(index, &str);
   (*speciesName) = speciesCpp(str);
-  return err;
+  return (err < KIM_STATUS_OK);
 }
 
 int Model::get_model_kim_string(std::string const & modelName,
@@ -689,7 +695,7 @@ int Model::get_model_kim_string(std::string const & modelName,
   int err = OLD_KIM::KIM_API_model::get_model_kim_str(modelName.c_str(),
                                                       &kimChar);
   *kimString = kimChar;
-  return err;
+  return (err < KIM_STATUS_OK);
 }
 
 int Model::get_species_code(SpeciesName const speciesName,
@@ -699,7 +705,7 @@ int Model::get_species_code(SpeciesName const speciesName,
 
   int err;
   *code = pKIM->get_species_code(speciesString(speciesName), &err);
-  return err;
+  return (err < KIM_STATUS_OK);
 }
 
 
@@ -711,7 +717,7 @@ int Model::set_species_code(SpeciesName const speciesName,
 
   int err;
   pKIM->set_species_code(speciesString(speciesName), code, &err);
-  return err;
+  return (err < KIM_STATUS_OK);
 }
 
 void Model::get_num_params(int * const numberOfParameters) const
@@ -730,10 +736,10 @@ int Model::get_parameter(int const index, int * const extent,
   char const * str;
   int err;
   err = pKIM->get_parameter((intptr_t) index, &str);
-  if (err != KIM_STATUS_OK) return err;
+  if (err != KIM_STATUS_OK) return true;
 
   *ptr = pKIM->get_data(str, &err);
-  return err;
+  return (err < KIM_STATUS_OK);
 }
 
 int Model::get_parameter_data_type(int const index,
@@ -766,7 +772,7 @@ int Model::get_parameter_data_type(int const index,
   }
 
   *dataType = PDT;
-  return err;
+  return (err < KIM_STATUS_OK);
 }
 
 int Model::set_parameter(int const index, int const extent, void * const ptr)
@@ -776,9 +782,10 @@ int Model::set_parameter(int const index, int const extent, void * const ptr)
   int err;
   char const * str;
   err = pKIM->get_parameter(index, &str);
-  if (err != KIM_STATUS_OK) return err;
+  if ((err < KIM_STATUS_OK)) return true;
 
-  return pKIM->set_data(str, (intptr_t) extent, ptr);
+  err = pKIM->set_data(str, (intptr_t) extent, ptr);
+  return (err < KIM_STATUS_OK);
 }
 
 int Model::get_parameter_description(int const index,
@@ -790,7 +797,7 @@ int Model::get_parameter_description(int const index,
   char const * str;
   err = pKIM->get_parameter(index, &str);
   *description = str;
-  return err;
+  return (err < KIM_STATUS_OK);
 }
 
 
@@ -798,7 +805,7 @@ int Model::set_parameter_description(int const index,
                                      std::string const & description)
 {
   // @@@@@@  currently does nothing....
-  return KIM_STATUS_OK;
+  return false;
 }
 
 void Model::set_model_buffer(void const * const ptr)
@@ -839,12 +846,13 @@ int Model::process_dEdr(double const de, double const r,
 {
   OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
 
-  return OLD_KIM::KIM_API_model::process_dEdr(&pKIM,
-                                              (double *) &de,
-                                              (double *) &r,
-                                              (double **) &dx,
-                                              (int *) &i,
-                                              (int *) &j);
+  int err = OLD_KIM::KIM_API_model::process_dEdr(&pKIM,
+                                                 (double *) &de,
+                                                 (double *) &r,
+                                                 (double **) &dx,
+                                                 (int *) &i,
+                                                 (int *) &j);
+  return (err < KIM_STATUS_OK);
 }
 
 int Model::process_d2Edr2(double const de, double const * const r,
@@ -853,12 +861,13 @@ int Model::process_d2Edr2(double const de, double const * const r,
 {
   OLD_KIM::KIM_API_model * pKIM = (OLD_KIM::KIM_API_model *) pimpl;
 
-  return OLD_KIM::KIM_API_model::process_d2Edr2(&pKIM,
-                                                (double *) &de,
-                                                (double **) &r,
-                                                (double **) &dx,
-                                                (int **) &i,
-                                                (int **) &j);
+  int err = OLD_KIM::KIM_API_model::process_d2Edr2(&pKIM,
+                                                   (double *) &de,
+                                                   (double **) &r,
+                                                   (double **) &dx,
+                                                   (int **) &i,
+                                                   (int **) &j);
+  return (err < KIM_STATUS_OK);
 }
 
 
@@ -871,7 +880,7 @@ int Model::get_unit_handling(int * const flag) const
   int err;
   *flag = pKIM->get_unit_handling(&err);
 
-  return err;
+  return (err < KIM_STATUS_OK);
 }
 
 void Model::get_unit_length(LengthUnit * const length) const
@@ -948,7 +957,7 @@ int Model::convert_to_act_unit(
       (double) temperature_exponent,
       (double) time_exponent,
       &err);
-  return err;
+  return (err < KIM_STATUS_OK);
 }
 
 Model::Model() : pimpl(0)

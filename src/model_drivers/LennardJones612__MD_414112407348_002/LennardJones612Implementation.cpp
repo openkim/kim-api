@@ -41,7 +41,6 @@
 #include "KIM_UnitSystem.hpp"
 #include "KIM_Compute.hpp"
 #include "KIM_UTILITY_Compute.hpp"
-#include "old_KIM_API_status.h"
 
 #define MAXLINE 1024
 #define IGNORE_RESULT(fn) if(fn){}
@@ -83,34 +82,34 @@ LennardJones612Implementation::LennardJones612Implementation(
       cachedNumberOfParticles_(0)
 {
   *ier = SetConstantValues(model);
-  if (*ier < KIM_STATUS_OK) return;
+  if (*ier) return;
 
   AllocateFreeParameterMemory();
 
   FILE* parameterFilePointers[MAX_PARAMETER_FILES];
   *ier = OpenParameterFiles(parameterFileNames, parameterFileNameLength,
                             numberParameterFiles, parameterFilePointers);
-  if (*ier < KIM_STATUS_OK) return;
+  if (*ier) return;
 
   *ier = ProcessParameterFiles(model, parameterFilePointers,
                                numberParameterFiles);
   CloseParameterFiles(parameterFilePointers, numberParameterFiles);
-  if (*ier < KIM_STATUS_OK) return;
+  if (*ier) return;
 
   *ier = ConvertUnits(model);
-  if (*ier < KIM_STATUS_OK) return;
+  if (*ier) return;
 
   *ier = SetReinitMutableValues(model);
-  if (*ier < KIM_STATUS_OK) return;
+  if (*ier) return;
 
   *ier = RegisterKIMParameters(model);
-  if (*ier < KIM_STATUS_OK) return;
+  if (*ier) return;
 
   *ier = RegisterKIMFunctions(model);
-  if (*ier < KIM_STATUS_OK) return;
+  if (*ier) return;
 
   // everything is good
-  *ier = KIM_STATUS_OK;
+  *ier = false;
   return;
 }
 
@@ -138,12 +137,12 @@ int LennardJones612Implementation::Reinit(KIM::Model * const model)
   int ier;
 
   ier = SetReinitMutableValues(model);
-  if (ier < KIM_STATUS_OK) return ier;
+  if (ier) return ier;
 
   // nothing else to do for this case
 
   // everything is good
-  ier = KIM_STATUS_OK;
+  ier = false;
   return ier;
 }
 
@@ -174,12 +173,12 @@ int LennardJones612Implementation::Compute(KIM::Model const * const model)
                                 isComputeForces, isComputeParticleEnergy,
                                 particleSpecies,
                                 coordinates, energy, particleEnergy, forces);
-  if (ier < KIM_STATUS_OK) return ier;
+  if (ier) return ier;
 
   // Skip this check for efficiency
   //
   // ier = CheckParticleSpecies(pkim, particleSpecies);
-  // if (ier < KIM_STATUS_OK) return ier;
+  // if (ier) return ier;
 
   bool const isShift = (1 == shift_);
 
@@ -202,7 +201,7 @@ SetConstantValues(KIM::Model const * const model)
   numberUniqueSpeciesPairs_ = ((numberModelSpecies_+1)*numberModelSpecies_)/2;
 
   // everything is good
-  return KIM_STATUS_OK;
+  return false;
 }
 
 //******************************************************************************
@@ -216,7 +215,7 @@ int LennardJones612Implementation::OpenParameterFiles(
 
   if (numberParameterFiles > MAX_PARAMETER_FILES)
   {
-    ier = KIM_STATUS_FAIL;
+    ier = true;
     KIM::report_error(__LINE__, __FILE__, "LennardJones612 given too many"
                        " parameter files", ier);
     return ier;
@@ -232,7 +231,7 @@ int LennardJones612Implementation::OpenParameterFiles(
       sprintf(message,
               "LennardJones612 parameter file number %d cannot be opened",
               i);
-      ier = KIM_STATUS_FAIL;
+      ier = true;
       KIM::report_error(__LINE__, __FILE__, message, ier);
       for (int j = i - 1; i <= 0; --i)
       {
@@ -243,7 +242,7 @@ int LennardJones612Implementation::OpenParameterFiles(
   }
 
   // everything is good
-  ier = KIM_STATUS_OK;
+  ier = false;
   return ier;
 }
 
@@ -267,7 +266,7 @@ int LennardJones612Implementation::ProcessParameterFiles(
   if (ier != 2)
   {
     sprintf(nextLine, "unable to read first line of the parameter file");
-    ier = KIM_STATUS_FAIL;
+    ier = true;
     KIM::report_error(__LINE__, __FILE__, nextLine, ier);
     fclose(parameterFilePointers[0]);
     return ier;
@@ -276,7 +275,7 @@ int LennardJones612Implementation::ProcessParameterFiles(
   {
     sprintf(nextLine, "The value for N from the parameter file is inconsistent "
             "with numberModelSpecies_");
-    ier = KIM_STATUS_FAIL;
+    ier = true;
     KIM::report_error(__LINE__, __FILE__, nextLine, ier);
     fclose(parameterFilePointers[0]);
     return ier;
@@ -288,7 +287,7 @@ int LennardJones612Implementation::ProcessParameterFiles(
   {
     KIM::SpeciesName kimModelParticleSpecies;
     ier = model->get_model_species(i, &kimModelParticleSpecies);
-    if (ier < KIM_STATUS_OK)
+    if (ier)
     {
       KIM::report_error(__LINE__, __FILE__, "get_model_species", ier);
       delete [] particleNames;
@@ -299,9 +298,9 @@ int LennardJones612Implementation::ProcessParameterFiles(
     if (index >= numberModelSpecies_)
     {
       KIM::report_error(__LINE__, __FILE__, "get_species_code",
-                        KIM_STATUS_FAIL);
+                        true);
       delete [] particleNames;
-      return KIM_STATUS_FAIL;
+      return true;
     }
     particleNames[index] = speciesString(kimModelParticleSpecies);
   }
@@ -324,9 +323,9 @@ int LennardJones612Implementation::ProcessParameterFiles(
     if (ier != 5)
     {
       sprintf(nextLine, "error reading lines of the parameter file");
-      KIM::report_error(__LINE__, __FILE__, nextLine, KIM_STATUS_FAIL);
+      KIM::report_error(__LINE__, __FILE__, nextLine, true);
       delete [] particleNames;
-      return KIM_STATUS_FAIL;
+      return true;
     }
     iIndex = jIndex = -1;
     for (int i = 0; i <  N; i++)
@@ -343,9 +342,9 @@ int LennardJones612Implementation::ProcessParameterFiles(
     if ((iIndex == -1) || (jIndex == -1))
     {
       sprintf(nextLine, "Unsupported Species name found in parameter file");
-      KIM::report_error(__LINE__, __FILE__, nextLine, KIM_STATUS_FAIL);
+      KIM::report_error(__LINE__, __FILE__, nextLine, true);
       delete [] particleNames;
-      return KIM_STATUS_FAIL;
+      return true;
     }
     if (iIndex >= jIndex)
     {
@@ -376,9 +375,9 @@ int LennardJones612Implementation::ProcessParameterFiles(
   }
   if (ier == -1)
   {
-    KIM::report_error(__LINE__, __FILE__, nextLine, KIM_STATUS_FAIL);
+    KIM::report_error(__LINE__, __FILE__, nextLine, true);
     delete [] particleNames;
-    return KIM_STATUS_FAIL;
+    return true;
   }
 
   // Perform Mixing if nessisary
@@ -400,7 +399,7 @@ int LennardJones612Implementation::ProcessParameterFiles(
   delete [] particleNames;
 
   // everything is good
-  ier = KIM_STATUS_OK;
+  ier = false;
   return ier;
 }
 
@@ -476,7 +475,7 @@ int LennardJones612Implementation::ConvertUnits(KIM::Model const * const model)
   double convertLength;
   ier = model->convert_to_act_unit(length, energy, charge, temperature, time,
                                    1.0, 0.0, 0.0, 0.0, 0.0, &convertLength);
-  if (ier < KIM_STATUS_OK)
+  if (ier)
   {
     KIM::report_error(__LINE__, __FILE__, "convert_to_act_unit", ier);
     return ier;
@@ -493,7 +492,7 @@ int LennardJones612Implementation::ConvertUnits(KIM::Model const * const model)
   double convertEnergy;
   ier = model->convert_to_act_unit(length, energy, charge, temperature, time,
                                    0.0, 1.0, 0.0, 0.0, 0.0, &convertEnergy);
-  if (ier < KIM_STATUS_OK)
+  if (ier)
   {
     KIM::report_error(__LINE__, __FILE__, "convert_to_act_unit", ier);
     return ier;
@@ -507,7 +506,7 @@ int LennardJones612Implementation::ConvertUnits(KIM::Model const * const model)
   }
 
   // everything is good
-  ier = KIM_STATUS_OK;
+  ier = false;
   return ier;
 }
 
@@ -515,11 +514,11 @@ int LennardJones612Implementation::ConvertUnits(KIM::Model const * const model)
 int LennardJones612Implementation::RegisterKIMParameters(
     KIM::Model * const model) const
 {
-  int ier = KIM_STATUS_OK;
+  int ier = false;
 
   // publish parameters
   ier = model->set_parameter(PARAM_SHIFT_INDEX, 1, (void *) &shift_);
-  if (ier < KIM_STATUS_OK)
+  if (ier)
   {
     KIM::report_error(__LINE__, __FILE__, "set_parameter", ier);
     return ier;
@@ -527,7 +526,7 @@ int LennardJones612Implementation::RegisterKIMParameters(
   ier = model->set_parameter(PARAM_CUTOFFS_INDEX,
                              numberUniqueSpeciesPairs_,
                              (void *) cutoffs_);
-  if (ier < KIM_STATUS_OK)
+  if (ier)
   {
     KIM::report_error(__LINE__, __FILE__, "set_parameter", ier);
     return ier;
@@ -535,7 +534,7 @@ int LennardJones612Implementation::RegisterKIMParameters(
   ier = model->set_parameter(PARAM_EPSILONS_INDEX,
                              numberUniqueSpeciesPairs_,
                              (void *) epsilons_);
-  if (ier < KIM_STATUS_OK)
+  if (ier)
   {
     KIM::report_error(__LINE__, __FILE__, "set_parameter", ier);
     return ier;
@@ -543,14 +542,14 @@ int LennardJones612Implementation::RegisterKIMParameters(
   ier = model->set_parameter(PARAM_SIGMAS_INDEX,
                              numberUniqueSpeciesPairs_,
                              (void *) sigmas_);
-  if (ier < KIM_STATUS_OK)
+  if (ier)
   {
     KIM::report_error(__LINE__, __FILE__, "set_parameter", ier);
     return ier;
   }
 
   // everything is good
-  ier = KIM_STATUS_OK;
+  ier = false;
   return ier;
 }
 
@@ -568,14 +567,14 @@ int LennardJones612Implementation::RegisterKIMFunctions(
       KIM::COMPUTE::ARGUMENT_NAME::reinit,  1, KIM::COMPUTE::LANGUAGE_NAME::Cpp, (KIM::func*) &(LennardJones612::Reinit),  1,
       KIM::COMPUTE::ARGUMENT_NAME::compute, 1, KIM::COMPUTE::LANGUAGE_NAME::Cpp, (KIM::func*) &(LennardJones612::Compute), 1,
       KIM::COMPUTE::ARGUMENT_NAME::End);
-  if (ier < KIM_STATUS_OK)
+  if (ier)
   {
     KIM::report_error(__LINE__, __FILE__, "setm_method", ier);
     return ier;
   }
 
   // everything is good
-  ier = KIM_STATUS_OK;
+  ier = false;
   return ier;
 }
 
@@ -614,7 +613,7 @@ int LennardJones612Implementation::SetReinitMutableValues(
   double * cutoff;
       ier = model->get_data(KIM::COMPUTE::ARGUMENT_NAME::cutoff,
                             reinterpret_cast<void**>(&cutoff));
-  if (ier < KIM_STATUS_OK)
+  if (ier)
   {
     KIM::report_error(__LINE__, __FILE__, "get_data", ier);
     return ier;
@@ -629,35 +628,35 @@ int LennardJones612Implementation::SetReinitMutableValues(
   for (int i = 0; i < numberSpecies; i++)
   {
     ier = model->get_sim_species(i, &simSpeciesI);
-    if (ier < KIM_STATUS_OK)
+    if (ier)
     {
       KIM::report_error(__LINE__, __FILE__, "get_num_sim_species", ier);
       return ier;
     }
     int indexI;
     ier = model->get_species_code(simSpeciesI, &indexI);
-    if (indexI >= numberModelSpecies_ || ier<KIM_STATUS_OK )
+    if (indexI >= numberModelSpecies_ || ier )
     {
       KIM::report_error(__LINE__, __FILE__, "get_species_code",
-                        KIM_STATUS_FAIL);
-      return KIM_STATUS_FAIL;
+                        true);
+      return true;
     }
 
     for (int j = 0; j < numberSpecies; j++)
     {
       ier = model->get_sim_species(i, &simSpeciesJ);
-      if (ier < KIM_STATUS_OK)
+      if (ier)
       {
         KIM::report_error(__LINE__, __FILE__, "get_num_sim_species", ier);
         return ier;
       }
       int indexJ;
       ier = model->get_species_code(simSpeciesJ, &indexJ);
-      if (indexJ >= numberModelSpecies_ || ier<KIM_STATUS_OK )
+      if (indexJ >= numberModelSpecies_ || ier )
       {
         KIM::report_error(__LINE__, __FILE__, "get_species_code",
-                          KIM_STATUS_FAIL);
-        return KIM_STATUS_FAIL;
+                          true);
+        return true;
       }
       if (*cutoff < cutoffsSq2D_[indexI][indexJ])
       {
@@ -690,7 +689,7 @@ int LennardJones612Implementation::SetReinitMutableValues(
   }
 
   // everything is good
-  ier = KIM_STATUS_OK;
+  ier = false;
   return ier;
 }
 
@@ -708,7 +707,7 @@ int LennardJones612Implementation::SetComputeMutableValues(
     double*& particleEnergy,
     VectorOfSizeDIM*& forces)
 {
-  int ier = KIM_STATUS_FAIL;
+  int ier = true;
 
   // get compute flags
   int compEnergy;
@@ -724,17 +723,17 @@ int LennardJones612Implementation::SetComputeMutableValues(
       KIM::COMPUTE::ARGUMENT_NAME::process_dEdr,   &compProcess_dEdr,   1,
       KIM::COMPUTE::ARGUMENT_NAME::process_d2Edr2, &compProcess_d2Edr2, 1,
       KIM::COMPUTE::ARGUMENT_NAME::End);
-  if (ier < KIM_STATUS_OK)
+  if (ier)
   {
     KIM::report_error(__LINE__, __FILE__, "getm_compute", ier);
     return ier;
   }
 
-  isComputeEnergy = (compEnergy == KIM_COMPUTE_TRUE);
-  isComputeForces = (compForces == KIM_COMPUTE_TRUE);
-  isComputeParticleEnergy = (compParticleEnergy == KIM_COMPUTE_TRUE);
-  isComputeProcess_dEdr = (compProcess_dEdr == KIM_COMPUTE_TRUE);
-  isComputeProcess_d2Edr2 = (compProcess_d2Edr2 == KIM_COMPUTE_TRUE);
+  isComputeEnergy = compEnergy;
+  isComputeForces = compForces;
+  isComputeParticleEnergy = compParticleEnergy;
+  isComputeProcess_dEdr = compProcess_dEdr;
+  isComputeProcess_d2Edr2 = compProcess_d2Edr2;
 
   // extract pointers based on compute flags
   //
@@ -752,7 +751,7 @@ int LennardJones612Implementation::SetComputeMutableValues(
       KIM::COMPUTE::ARGUMENT_NAME::particleEnergy, &particleEnergy, compParticleEnergy,
       KIM::COMPUTE::ARGUMENT_NAME::forces, &forces, compForces,
       KIM::COMPUTE::ARGUMENT_NAME::End);
-  if (ier < KIM_STATUS_OK)
+  if (ier)
   {
     KIM::report_error(__LINE__, __FILE__, "getm_data", ier);
     return ier;
@@ -762,7 +761,7 @@ int LennardJones612Implementation::SetComputeMutableValues(
   cachedNumberOfParticles_ = *numberOfParticles;
 
   // everything is good
-  ier = KIM_STATUS_OK;
+  ier = false;
   return ier;
 }
 
@@ -776,7 +775,7 @@ int LennardJones612Implementation::CheckParticleSpecies(
   {
     if ((particleSpecies[i] < 0) || (particleSpecies[i] >= numberModelSpecies_))
     {
-      ier = KIM_STATUS_FAIL;
+      ier = true;
       KIM::report_error(__LINE__, __FILE__,
                         "unsupported particle species detected", ier);
       return ier;
@@ -784,7 +783,7 @@ int LennardJones612Implementation::CheckParticleSpecies(
   }
 
   // everything is good
-  ier = KIM_STATUS_OK;
+  ier = false;
   return ier;
 }
 

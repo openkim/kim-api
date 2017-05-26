@@ -44,7 +44,6 @@
 !****************************************************************************
 
 
-#include "old_KIM_API_status.h"
 #define THIS_FILE_NAME __FILE__
 #define TRUEFALSE(TRUTH) merge(1,0,(TRUTH))
 
@@ -193,7 +192,7 @@ call kim_utility_compute_getm_compute(model, ierr, &
   kim_compute_argument_name_forces, comp_force,  1, &
   kim_compute_argument_name_particle_energy, comp_enepot, 1, &
   kim_compute_argument_name_virial, comp_virial, 1)
-if (ierr.lt.KIM_STATUS_OK) then
+if (ierr /= 0) then
    call kim_report_error(__LINE__, THIS_FILE_NAME, &
                                "kim_api_getm_compute", ierr)
    return
@@ -209,7 +208,7 @@ call kim_utility_compute_getm_data(model, ierr, &
   kim_compute_argument_name_forces, pforce, TRUEFALSE(comp_force.eq.1), &
   kim_compute_argument_name_particle_energy, penepot, TRUEFALSE(comp_enepot.eq.1), &
   kim_compute_argument_name_virial, pvirial, TRUEFALSE(comp_virial.eq.1))
-if (ierr.lt.KIM_STATUS_OK) then
+if (ierr /= 0) then
    call kim_report_error(__LINE__, THIS_FILE_NAME, &
                                "kim_api_getm_data", ierr)
    return
@@ -225,7 +224,7 @@ if (comp_virial.eq.1) call c_f_pointer(pvirial,         virial,         [6])
 
 ! Check to be sure that the species are correct
 !
-ierr = KIM_STATUS_FAIL ! assume an error
+ierr = 1 ! assume an error
 do i = 1,N
    if (particleSpecies(i).ne.speccode) then
       call kim_report_error(__LINE__, THIS_FILE_NAME,      &
@@ -234,7 +233,7 @@ do i = 1,N
       return
    endif
 enddo
-ierr = KIM_STATUS_OK ! everything is ok
+ierr = 0 ! everything is ok
 
 ! Initialize potential energies, forces, virial term
 !
@@ -258,12 +257,12 @@ do
    if (i.gt.N) exit       ! incremented past end of list,
                           ! terminate loop
    call kim_model_get_neigh(model, i, numnei, pnei1part, ierr)
-   if (ierr.ne.KIM_STATUS_OK) then
+   if (ierr /= 0) then
      ! some sort of problem, exit
      call kim_report_error(__LINE__, THIS_FILE_NAME, &
        "kim_api_get_neigh",      &
        ierr)
-     ierr = KIM_STATUS_FAIL
+     ierr = 1
      return
    endif
 
@@ -328,7 +327,7 @@ enddo  ! infinite do loop (terminated by exit statements above)
 
 ! Everything is great
 !
-ierr = KIM_STATUS_OK
+ierr = 0
 return
 
 end subroutine Compute_Energy_Forces
@@ -358,7 +357,7 @@ real(c_double), pointer :: cutoff; type(c_ptr) :: pcutoff
 call kim_model_set_method(model, &
   kim_compute_argument_name_compute, 1, &
   kim_compute_language_name_fortran, c_funloc(Compute_Energy_Forces), ierr)
-if (ierr.lt.KIM_STATUS_OK) then
+if (ierr /= 0) then
    call kim_report_error(__LINE__, THIS_FILE_NAME, &
                                "kim_api_set_method", ierr)
    goto 42
@@ -366,7 +365,7 @@ endif
 
 ! store model cutoff in KIM object
 call kim_model_get_data(model, kim_compute_argument_name_cutoff, pcutoff, ierr)
-if (ierr.lt.KIM_STATUS_OK) then
+if (ierr /= 0) then
    call kim_report_error(__LINE__, THIS_FILE_NAME, &
                                "kim_api_get_data", ierr)
    goto 42
@@ -374,7 +373,7 @@ endif
 call c_f_pointer(pcutoff, cutoff)
 cutoff = model_cutoff
 
-ierr = KIM_STATUS_OK
+ierr = 0
 42 continue
 return
 

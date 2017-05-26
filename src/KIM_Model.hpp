@@ -36,9 +36,10 @@
 
 #include <string>
 
-#include "old_KIM_API.h"
-
-#include "old_KIM_API_status.h"
+namespace OLD_KIM
+{
+class KIM_API_model;
+}
 
 // A macro to disallow the copy constructor and operator= functions.
 // This should be used in the private: declarations for a class
@@ -164,11 +165,8 @@ class Model{
       double * const factor) const;
 
   // @@@ to be removed
-  friend int OLD_KIM::KIM_API_model::model_init();
-  friend int OLD_KIM::KIM_API_model::model_reinit();
-  friend int OLD_KIM::KIM_API_model::model_compute();
-  friend int OLD_KIM::KIM_API_model::model_destroy();
-  friend int OLD_KIM::KIM_API_model::get_neigh(int, int*, int**);
+  friend class OLD_KIM::KIM_API_model;
+
  private:
   // do not allow copy constructor or operator=
   DISALLOW_COPY_AND_ASSIGN(Model);
