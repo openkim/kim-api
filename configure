@@ -238,13 +238,13 @@ do
       execPrefix=`stripOption $1`
       ;;
     --bindir=*)
-      binDir=`stripOption $1`
+      bindir=`stripOption $1`
       ;;
     --libdir=*)
-      libDir=`stripOption $1`
+      libdir=`stripOption $1`
       ;;
     --includedir=*)
-      includeDir=`stripOption $1`
+      includedir=`stripOption $1`
       ;;
     --*dir=*)
       # ignore any other directory arguments silently
