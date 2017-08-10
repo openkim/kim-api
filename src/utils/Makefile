@@ -42,7 +42,8 @@ KIMDEFINES = $(KIM_DEFINE_VALUES)
 
 all: $(full_package_name)-descriptor-file-match \
      $(full_package_name)-build-config \
-     $(full_package_name)-collections-info
+     $(full_package_name)-collections-info \
+     $(full_package_name)-external-model
 
 # Add the local Makefile to KIM_MAKE_FILES
 KIM_MAKE_FILES += Makefile
@@ -101,6 +102,22 @@ else
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ $< ../.lib$(KIM_LIB_BUILD).a $(XLANGLDLIBS) $(LDLIBS)
 endif
 
+external-model.o: KIM_DEFINE_VALUES += -D 'MODELLIBFILE="lib$(MODEL_LIB)"'
+external-model.o: external-model.cpp KIM_API_DIRS.h $(KIM_MAKE_FILES)
+
+$(full_package_name)-external-model: external-model.o \
+                                            $(if $(filter-out static-link,$(KIM_LINK)),\
+                                                 lib$(KIM_LIB_BUILD).so .lib$(KIM_LIB_BUILD).so,\
+                                                 lib$(KIM_LIB_BUILD).a)
+	@printf "Creating... $@.\n"
+ifneq (static-link,$(KIM_LINK))
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).so $(XLANGLDLIBS) $(LDLIBS)
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ $< ../.lib$(KIM_LIB_BUILD).so $(XLANGLDLIBS) $(LDLIBS)
+else
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).a  $(XLANGLDLIBS) $(LDLIBS)
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ $< ../.lib$(KIM_LIB_BUILD).a $(XLANGLDLIBS) $(LDLIBS)
+endif
+
 
 .PHONY: all clean install installdirs uninstall
 
@@ -108,12 +125,13 @@ clean:
 	@printf "Cleaning... src/utils.\n"
 	$(QUELL)rm -f *.o .*.o $(full_package_name)-descriptor-file-match .$(full_package_name)-descriptor-file-match \
                    $(full_package_name)-build-config .$(full_package_name)-build-config \
-                   $(full_package_name)-collections-info .$(full_package_name)-collections-info
+                   $(full_package_name)-collections-info .$(full_package_name)-collections-info \
+                   $(full_package_name)-external-model .$(full_package_name)-external-model
 
 
 install_bindir = $(dest_package_dir)/bin
 install_nodest_bindir = $(package_dir)/bin
-install_bin = $(full_package_name)-descriptor-file-match $(full_package_name)-build-config $(full_package_name)-collections-info
+install_bin = $(full_package_name)-descriptor-file-match $(full_package_name)-build-config $(full_package_name)-collections-info $(full_package_name)-external-model
 
 install-check:
 ifneq (dynamic-load,$(KIM_LINK))

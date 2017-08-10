@@ -1,0 +1,175 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the Common Development
+# and Distribution License Version 1.0 (the "License").
+#
+# You can obtain a copy of the license at
+# http://www.opensource.org/licenses/CDDL-1.0.  See the License for the
+# specific language governing permissions and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each file and
+# include the License file in a prominent location with the name LICENSE.CDDL.
+# If applicable, add the following below this CDDL HEADER, with the fields
+# enclosed by brackets "[]" replaced with your own identifying information:
+#
+# Portions Copyright (c) [yyyy] [name of copyright owner]. All rights reserved.
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2013--2017, Regents of the University of Minnesota.
+# All rights reserved.
+#
+# Contributors:
+#    Ryan S. Elliott
+#
+
+#
+# Release: This file is part of the kim-api.git repository.
+#
+
+
+# sanity checks
+ifndef KIM_DIR
+   $(error Make variable KIM_DIR must be defined)
+endif
+include $(KIM_DIR)/$(builddir)/Makefile.SanityCheck
+
+# Clean up variables
+MODEL_NAME := $(strip $(MODEL_NAME))
+
+# Set SO variables
+%.so: SO_IS_MODEL:=true
+%.so: SO_IS_PARAMETERIZED:=true
+
+# Set defines
+KIMDEFINES = $(KIM_DEFINE_VALUES)
+
+MODEL_BUILD_TARGET := lib$(MODEL_LIB).a
+ifneq ($(KIM_LINK),static-link)
+   MODEL_BUILD_TARGET := $(patsubst %.a,%.so, $(MODEL_BUILD_TARGET))
+else
+   ifneq ("1","$(MAKELEVEL)")
+     MODEL_BUILD_TARGET += STATIC_COMP_WARNING
+   endif
+endif
+
+# Add this file and item makefile to makefiles list
+KIM_MAKE_FILES += $(KIM_DIR)/$(builddir)/Makefile.ExternalModel Makefile
+
+.PHONY: STATIC_COMP_WARNING clean install installdirs uninstall kim-item-type model-name
+STATIC_COMP_WARNING:
+	@printf '\n'; \
+        printf '*******************************************************************************\n'; \
+        printf '*******                  Compiling in static link mode                  *******\n'; \
+        printf '*******            You probably want to execute make from the           *******\n'; \
+        printf '*******                        $$KIM_DIR directory                       *******\n'; \
+        printf '*******************************************************************************\n'; \
+
+all: $(MODEL_BUILD_TARGET)
+
+paramfile_list =  $(sort $(strip $(filter PARAM_FILE_%_NAME,$(.VARIABLES))))
+
+paramfile_num_list = $(strip $(subst _NAME,,$(subst PARAM_FILE_,,$(paramfile_list))))
+paramfile_name_list = $(strip $(foreach paramfl,$(paramfile_list), $($(paramfl))))
+num_paramfiles = $(words $(paramfile_num_list))
+
+EXTERNAL_MODEL_NAME = external-model
+.INTERMEDIATE: $(EXTERNAL_MODEL_NAME).cpp
+$(EXTERNAL_MODEL_NAME).cpp: $(paramfile_name_list) $(KIM_MAKE_FILES)
+	@printf "Creating... intermediate file... $@.\n"
+	$(QUELL)printf "extern \"C\"\n"                                                    > $@
+	$(QUELL)printf "{\n"                                                              >> $@
+	$(QUELL)printf "int number_of_parameter_files = $(num_paramfiles);\n"             >> $@
+	$(QUELL)$(foreach flnum,$(paramfile_num_list),\
+            fl_name=$(PARAM_FILE_$(flnum)_NAME);\
+            varnm=`printf "$${fl_name}" | \
+                       sed -e 's/^\([[:digit:]]\)/__\1/' -e 's/[^[:alnum:]]/_/g'` && \
+                xxd -i $${fl_name} | \
+                sed -e "s/$${varnm}/parameter_file_$(flnum)/g" >> $@; \
+         )
+	$(QUELL)printf "\n\n"                                                             >> $@
+	$(QUELL)printf "char kim_item_type[] = \"external-model\";\n"                     >> $@
+	$(QUELL)printf "char $(strip $(MODEL_NAME))_compiled_with_version[]\n"            >> $@
+	$(QUELL)printf "  = \"$(VERSION_FULL)\";\n"                                       >> $@
+	$(QUELL)printf "}\n"                                                              >> $@
+
+lib$(MODEL_LIB).a: lib$(MODEL_LIB_BUILD).a
+	@printf "Creating... $@.\n"
+	$(QUELL)ln -fs "lib$(MODEL_LIB_BUILD).a" "lib$(MODEL_LIB).a"
+
+lib$(MODEL_LIB).so: lib$(MODEL_LIB_BUILD).so
+	@printf "Creating... $@.\n"
+	$(QUELL)ln -fs "lib$(MODEL_LIB_BUILD).so" "lib$(MODEL_LIB).so"
+
+lib$(MODEL_LIB_BUILD).a: $(EXTERNAL_MODEL_NAME).o
+	@printf "Creating... $@.\n"
+	$(QUELL)ar rcs $@ $(EXTERNAL_MODEL_NAME).o
+
+$(EXPORT_LIST_NAME): $(KIM_MAKE_FILES)
+	@printf "Creating... intermediate file... $@.\n"
+ifeq (darwin, $(KIM_SYSTEMLINKER))
+	$(QUELL)printf "_number_of_parameter_files\n"                        > $@
+	$(QUELL)$(foreach flnum,$(paramfile_num_list),\
+             printf "_parameter_file_$(flnum)\n" >> $@; \
+             printf "_parameter_file_$(flnum)_len\n" >> $@; \
+          )
+	$(QUELL)printf "_kim_item_type\n"                                   >> $@
+	$(QUELL)printf "_$(MODEL_NAME)_compiled_with_version\n"             >> $@
+else # everything else (linux and freebsd)
+	$(QUELL)printf "{\n"                                                 > $@
+	$(QUELL)printf "   global:\n"                                       >> $@
+	$(QUELL)printf "           number_of_parameter_files;\n"            >> $@
+	$(QUELL)$(foreach flnum,$(paramfile_num_list),\
+            printf "parameter_file_$(flnum);\n" >> $@; \
+            printf "parameter_file_$(flnum)_len ;\n" >> $@; \
+         )
+	$(QUELL)printf "           kim_item_type;\n"                        >> $@
+	$(QUELL)printf "           $(MODEL_NAME)_compiled_with_version;\n"  >> $@
+	$(QUELL)printf "\n"                                                 >> $@
+	$(QUELL)printf "   local: *;\n"                                     >> $@
+	$(QUELL)printf "};\n"                                               >> $@
+endif
+
+kim-item-type:
+	@printf "ExternalModel"
+
+model-name:
+	@printf "$(MODEL_NAME)"
+
+clean:
+	@printf "Cleaning... Model.......... $(MODEL_NAME).\n"
+	$(QUELL)rm -f lib$(LIB_ROOT)* .lib$(LIB_ROOT)* \
+                      $(addprefix $(EXTERNAL_MODEL_NAME).,o cpp) \
+                      $(EXPORT_LIST_NAME)
+
+install_extmodeldir = $(dest_package_dir)/$(modelsdir)/$(MODEL_NAME)
+
+installdirs:
+ifneq (static-link,$(KIM_LINK))
+	$(QUELL)fl="$(install_extmodeldir)" && \
+                if test -d "$$fl"; then rm -rf "$$fl"; fi && \
+                $(INSTALL_PROGRAM) -d -m 0755  "$$fl"
+endif
+
+install: DOT:=$(shell if test -f ".lib$(MODEL_LIB_BUILD).so"; then printf "."; fi)
+install: all installdirs
+	@printf "Installing...($(dest_package_dir))................. Model.......... $(MODEL_NAME)"
+ifneq (static-link,$(KIM_LINK))
+	@printf ".\n"
+	$(QUELL)$(INSTALL_PROGRAM) -m 0755 "$(DOT)lib$(MODEL_LIB_BUILD).so" "$(install_extmodeldir)/lib$(MODEL_LIB_BUILD).so"
+	$(QUELL)ln -fs "lib$(MODEL_LIB_BUILD).so" "$(install_extmodeldir)/lib$(MODEL_LIB).so"
+else
+	@printf ": nothing to be done for static-link.\n"
+endif
+
+uninstall:
+	@printf "Uninstalling...($(dest_package_dir))................. Model.......... $(MODEL_NAME)"
+ifneq (static-link,$(KIM_LINK))
+	@printf ".\n"
+	$(QUELL)fl="$(install_extmodeldir)" && if test -d "$$fl"; then rm -rf "$$fl"; fi
+else
+	@printf ": nothing to be done for static-link.\n"
+endif
