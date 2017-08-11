@@ -57,7 +57,7 @@ else
 endif
 
 # Add this file and item makefile to makefiles list
-KIM_MAKE_FILES += $(KIM_DIR)/$(builddir)/Makefile.ExternalModel Makefile
+KIM_MAKE_FILES += $(KIM_DIR)/$(builddir)/Makefile.SimulatorModel Makefile
 
 .PHONY: STATIC_COMP_WARNING clean install installdirs uninstall kim-item-type model-name
 STATIC_COMP_WARNING:
@@ -76,9 +76,9 @@ paramfile_num_list = $(strip $(subst _NAME,,$(subst PARAM_FILE_,,$(paramfile_lis
 paramfile_name_list = $(strip $(foreach paramfl,$(paramfile_list), $($(paramfl))))
 num_paramfiles = $(words $(paramfile_num_list))
 
-EXTERNAL_MODEL_NAME = external-model
-.INTERMEDIATE: $(EXTERNAL_MODEL_NAME).cpp
-$(EXTERNAL_MODEL_NAME).cpp: $(paramfile_name_list) $(KIM_MAKE_FILES)
+SIMULATOR_MODEL_NAME = simulator-model
+.INTERMEDIATE: $(SIMULATOR_MODEL_NAME).cpp
+$(SIMULATOR_MODEL_NAME).cpp: $(paramfile_name_list) $(KIM_MAKE_FILES)
 	@printf "Creating... intermediate file... $@.\n"
 	$(QUELL)printf "extern \"C\"\n"                                                    > $@
 	$(QUELL)printf "{\n"                                                              >> $@
@@ -91,7 +91,7 @@ $(EXTERNAL_MODEL_NAME).cpp: $(paramfile_name_list) $(KIM_MAKE_FILES)
                 sed -e "s/$${varnm}/parameter_file_$(flnum)/g" >> $@; \
          )
 	$(QUELL)printf "\n\n"                                                             >> $@
-	$(QUELL)printf "char kim_item_type[] = \"external-model\";\n"                     >> $@
+	$(QUELL)printf "char kim_item_type[] = \"simulator-model\";\n"                    >> $@
 	$(QUELL)printf "char $(strip $(MODEL_NAME))_compiled_with_version[]\n"            >> $@
 	$(QUELL)printf "  = \"$(VERSION_FULL)\";\n"                                       >> $@
 	$(QUELL)printf "}\n"                                                              >> $@
@@ -104,9 +104,9 @@ lib$(MODEL_LIB).so: lib$(MODEL_LIB_BUILD).so
 	@printf "Creating... $@.\n"
 	$(QUELL)ln -fs "lib$(MODEL_LIB_BUILD).so" "lib$(MODEL_LIB).so"
 
-lib$(MODEL_LIB_BUILD).a: $(EXTERNAL_MODEL_NAME).o
+lib$(MODEL_LIB_BUILD).a: $(SIMULATOR_MODEL_NAME).o
 	@printf "Creating... $@.\n"
-	$(QUELL)ar rcs $@ $(EXTERNAL_MODEL_NAME).o
+	$(QUELL)ar rcs $@ $(SIMULATOR_MODEL_NAME).o
 
 $(EXPORT_LIST_NAME): $(KIM_MAKE_FILES)
 	@printf "Creating... intermediate file... $@.\n"
@@ -134,7 +134,7 @@ else # everything else (linux and freebsd)
 endif
 
 kim-item-type:
-	@printf "ExternalModel"
+	@printf "SimulatorModel"
 
 model-name:
 	@printf "$(MODEL_NAME)"
@@ -142,7 +142,7 @@ model-name:
 clean:
 	@printf "Cleaning... Model.......... $(MODEL_NAME).\n"
 	$(QUELL)rm -f lib$(LIB_ROOT)* .lib$(LIB_ROOT)* \
-                      $(addprefix $(EXTERNAL_MODEL_NAME).,o cpp) \
+                      $(addprefix $(SIMULATOR_MODEL_NAME).,o cpp) \
                       $(EXPORT_LIST_NAME)
 
 install_extmodeldir = $(dest_package_dir)/$(modelsdir)/$(MODEL_NAME)

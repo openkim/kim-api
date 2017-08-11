@@ -42,7 +42,7 @@ void usage(char const* const name)
 {
   std::cerr << "usage: "
             << name
-            << " <external model name> <parameter file index | "
+            << " <simulator model name> <parameter file index | "
             << "\"number_of_parameter_files\">\n";
       // note: this interface is likely to change in future kim-api releases
       }
@@ -101,9 +101,9 @@ int main(int argc, char* argv[])
     return 3;
   }
 
-  if (std::string(itemType) != "external-model")
+  if (std::string(itemType) != "simulator-model")
   {
-    std::cout << "* Error: not an external model" <<std::endl;
+    std::cout << "* Error: not an simulator model" <<std::endl;
     dlclose(model_lib_handle);
     return 4;
   }
