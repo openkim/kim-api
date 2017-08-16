@@ -139,7 +139,7 @@ int ModelLibrary::getModelType(ITEM_TYPE * const modelType) const
   return false;
 }
 
-int ModelLibrary::getModelInitializationFunctionPointer(
+int ModelLibrary::getModelCreateFunctionPointer(
     LanguageName * const languageName, func ** const functionPointer) const
 {
   if (libraryHandle_ == 0) return true;  // not open
@@ -158,10 +158,10 @@ int ModelLibrary::getModelInitializationFunctionPointer(
     *languageName = *pLanguageName;
   }
 
-  std::string initFunctionSymbol(modelName_ + "_init_pointer");
+  std::string createFunctionSymbol(modelName_ + "_create_pointer");
   func ** pointerToFunctionPointer
       = reinterpret_cast<func **>(dlsym(libraryHandle_,
-                                        initFunctionSymbol.c_str()));
+                                        createFunctionSymbol.c_str()));
 
   if (pointerToFunctionPointer == 0)
   {

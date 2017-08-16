@@ -44,7 +44,7 @@ bool LengthUnit::operator==(LengthUnit const & rhs) const
 bool LengthUnit::operator!=(LengthUnit const & rhs) const
 {return lengthUnitID!=rhs.lengthUnitID;}
 
-std::string LengthUnit::string() const
+std::string LengthUnit::String() const
 {
   if (*this == LENGTH_UNIT::unused) return "unused";
   else if (*this == LENGTH_UNIT::A) return "A";

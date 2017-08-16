@@ -319,8 +319,7 @@ program ex_test_ar_fcc_cluster
   use kim_numbering_module
   use kim_model_module
   use kim_argument_name_module
-  use kim_call_back_name_module
-  use kim_attribute_module
+  use kim_callback_name_module
   use kim_unit_system_module
   use mod_neighborlist
   implicit none
@@ -357,11 +356,7 @@ program ex_test_ar_fcc_cluster
   integer(c_int) species_is_supported
   integer(c_int) species_code
   integer(c_int) requested_units_accepted
-  integer(c_int) is_compatible
   real(c_double), pointer :: null_pointer
-
-  type(kim_argument_name_type), target :: list_of_arguments(5)
-  type(kim_call_back_name_type), target :: list_of_callbacks(1)
 
   integer :: middledum
 
@@ -410,51 +405,38 @@ program ex_test_ar_fcc_cluster
     call my_error("Model does not support Ar", __LINE__, __FILE__)
   endif
 
-  ! check that model accepts our list of arguments and callbacks
-  list_of_arguments(1) = kim_argument_name_number_of_particles
-  list_of_arguments(2) = kim_argument_name_particle_species
-  list_of_arguments(3) = kim_argument_name_particle_contributing
-  list_of_arguments(4) = kim_argument_name_coordinates
-  list_of_arguments(5) = kim_argument_name_energy
-  !
-  list_of_callbacks(1) = kim_call_back_name_get_neigh
-  !
-!  call kim_convenience_is_simulator_compatible_with_model(model, &
-!    list_of_arguments, list_of_callbacks, is_compatible, ierr)
-  is_compatible = 1
-  if ((ierr /= 0) .or. (is_compatible /= 1)) then
-    call my_error("Model is not compatible with this test", &
-      __LINE__, __FILE__)
-  endif
+  ! it would be good to check that the model is compatible
+  ! but we will skip it here
 
   ! register memory with the KIM system
   ierr = 0
-  call kim_model_set_data(model, &
+  call kim_model_set_argument_pointer(model, &
     kim_argument_name_number_of_particles, n, ierr2)
   ierr = ierr + ierr2
-  call kim_model_set_data(model, &
+  call kim_model_set_argument_pointer(model, &
     kim_argument_name_particle_species, particle_species, ierr2)
   ierr = ierr + ierr2
-  call kim_model_set_data(model, &
+  call kim_model_set_argument_pointer(model, &
     kim_argument_name_particle_contributing, particle_contributing, ierr2)
   ierr = ierr + ierr2
-  call kim_model_set_data(model, &
+  call kim_model_set_argument_pointer(model, &
     kim_argument_name_coordinates, coords, ierr2)
   ierr = ierr + ierr2
-  call kim_model_set_data(model, &
-    kim_argument_name_energy, energy, ierr2)
+  call kim_model_set_argument_pointer(model, &
+    kim_argument_name_partial_energy, energy, ierr2)
   ierr = ierr + ierr2
   if (ierr /= 0) then
-     call my_error("set_data", __LINE__, __FILE__)
+     call my_error("set_argument_pointer", __LINE__, __FILE__)
   endif
 
   ! Set pointer in KIM object to neighbor list routine and object
   !
-  call kim_model_set_call_back(model, kim_call_back_name_get_neigh, &
-    kim_language_name_fortran, c_funloc(get_neigh), c_loc(neighobject))
+  call kim_model_set_callback_pointer(model, &
+    kim_callback_name_get_neighbor_list, kim_language_name_fortran, &
+    c_funloc(get_neigh), c_loc(neighobject))
 
   call kim_model_get_influence_distance(model, influence_distance)
-  call kim_model_get_cutoffs(model, number_of_cutoffs, cutoffs)
+  call kim_model_get_cutoffs_pointer(model, number_of_cutoffs, cutoffs)
   if (number_of_cutoffs /= 1) then
     call my_error("too many cutoffs", __LINE__, __FILE__)
   endif

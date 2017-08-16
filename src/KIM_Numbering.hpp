@@ -48,7 +48,7 @@ class Numbering
   Numbering(int const id);
   bool operator==(Numbering const & rhs) const;
   bool operator!=(Numbering const & rhs) const;
-  std::string string() const;
+  std::string String() const;
 };
 
 namespace NUMBERING

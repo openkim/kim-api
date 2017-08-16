@@ -44,7 +44,7 @@ bool TemperatureUnit::operator==(TemperatureUnit const & rhs) const
 bool TemperatureUnit::operator!=(TemperatureUnit const & rhs) const
 {return temperatureUnitID!=rhs.temperatureUnitID;}
 
-std::string TemperatureUnit::string() const
+std::string TemperatureUnit::String() const
 {
   if (*this == TEMPERATURE_UNIT::unused) return "unused";
   else if (*this == TEMPERATURE_UNIT::K) return "K";

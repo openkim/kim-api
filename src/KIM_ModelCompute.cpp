@@ -42,8 +42,8 @@
 #include "KIM_ArgumentName.hpp"
 #endif
 
-#ifndef KIM_CALL_BACK_NAME_HPP_
-#include "KIM_CallBackName.hpp"
+#ifndef KIM_CALLBACK_NAME_HPP_
+#include "KIM_CallbackName.hpp"
 #endif
 
 #ifndef KIM_MODEL_COMPUTE_HPP_
@@ -60,81 +60,82 @@
 namespace KIM
 {
 
-int ModelCompute::get_neigh(int const neighborListIndex,
-                           int const particleNumber,
-                           int * const numberOfNeighbors,
-                           int const ** const neighborsOfParticle)
+int ModelCompute::GetNeighborList(int const neighborListIndex,
+                                  int const particleNumber,
+                                  int * const numberOfNeighbors,
+                                  int const ** const neighborsOfParticle)
     const
 {
   CONVERT_POINTER;
 
-  return pImpl->get_neigh(neighborListIndex, particleNumber, numberOfNeighbors,
-                          neighborsOfParticle);
+  return pImpl->GetNeighborList(neighborListIndex, particleNumber,
+                                numberOfNeighbors, neighborsOfParticle);
 }
 
-int ModelCompute::process_dEdr(double const de, double const r,
-                              double const * const dx,
-                              int const i, int const j) const
+int ModelCompute::ProcessDEDrTerm(double const de, double const r,
+                                  double const * const dx,
+                                  int const i, int const j) const
 {
   CONVERT_POINTER;
 
-  return pImpl->process_dEdr(de, r, dx, i, j);
+  return pImpl->ProcessDEDrTerm(de, r, dx, i, j);
 }
 
-int ModelCompute::process_d2Edr2(double const de, double const * const r,
-                                double const * const dx, int const * const i,
-                                int const * const j) const
+int ModelCompute::ProcessD2EDr2Term(double const de, double const * const r,
+                                    double const * const dx,
+                                    int const * const i, int const * const j)
+    const
 {
   CONVERT_POINTER;
 
-  return pImpl->process_d2Edr2(de, r, dx, i, j);
+  return pImpl->ProcessD2EDr2Term(de, r, dx, i, j);
 }
 
-int ModelCompute::get_data(ArgumentName const argumentName,
+int ModelCompute::GetArgumentPointer(ArgumentName const argumentName,
                           int const ** const ptr) const
 {
   CONVERT_POINTER;
 
-  return pImpl->get_data(argumentName, ptr);
+  return pImpl->GetArgumentPointer(argumentName, ptr);
 }
 
-int ModelCompute::get_data(ArgumentName const argumentName,
-                          int ** const ptr) const
+int ModelCompute::GetArgumentPointer(ArgumentName const argumentName,
+                                     int ** const ptr) const
 {
   CONVERT_POINTER;
 
-  return pImpl->get_data(argumentName, ptr);
+  return pImpl->GetArgumentPointer(argumentName, ptr);
 }
 
-int ModelCompute::get_data(ArgumentName const argumentName,
-                          double ** const ptr) const
+int ModelCompute::GetArgumentPointer(ArgumentName const argumentName,
+                                     double ** const ptr) const
 {
   CONVERT_POINTER;
 
-  return pImpl->get_data(argumentName, ptr);
+  return pImpl->GetArgumentPointer(argumentName, ptr);
 }
 
-int ModelCompute::get_data(ArgumentName const argumentName,
-                          double const ** const ptr) const
+int ModelCompute::GetArgumentPointer(ArgumentName const argumentName,
+                                     double const ** const ptr) const
 {
   CONVERT_POINTER;
 
-  return pImpl->get_data(argumentName, ptr);
+  return pImpl->GetArgumentPointer(argumentName, ptr);
 }
 
-int ModelCompute::is_call_back_present(CallBackName const callBackName,
-                                      int * const present) const
+int ModelCompute::IsCallbackPresent(CallbackName const callbackName,
+                                    int * const present) const
 {
   CONVERT_POINTER;
 
-  return pImpl->is_call_back_present(callBackName, present);
+  return pImpl->IsCallbackPresent(callbackName, present);
 }
 
-void ModelCompute::get_model_buffer(void ** const ptr) const
+void ModelCompute::GetModelBufferPointer(void ** const ptr) const
 {
   CONVERT_POINTER;
 
-  pImpl->get_model_buffer(ptr);
+  pImpl->GetModelBufferPointer(ptr);
 }
 
 void ModelCompute::Log(LogVerbosity const logVerbosity,
@@ -147,11 +148,11 @@ void ModelCompute::Log(LogVerbosity const logVerbosity,
   pImpl->Log(logVerbosity, message, lineNumber, fileName);
 }
 
-std::string ModelCompute::string() const
+std::string ModelCompute::String() const
 {
   CONVERT_POINTER;
 
-  return pImpl->string();
+  return pImpl->String();
 }
 
 ModelCompute::ModelCompute() : pimpl(0)

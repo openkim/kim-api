@@ -53,7 +53,7 @@ bool LogVerbosity::operator==(LogVerbosity const & rhs) const
 bool LogVerbosity::operator!=(LogVerbosity const & rhs) const
 {return logVerbosityID != rhs.logVerbosityID;}
 
-std::string LogVerbosity::string() const
+std::string LogVerbosity::String() const
 {
   if (*this == LOG_VERBOSITY::silent)
     return "silent";

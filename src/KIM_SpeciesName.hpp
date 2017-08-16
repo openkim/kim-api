@@ -49,7 +49,7 @@ class SpeciesName
   SpeciesName(std::string const str);
   bool operator==(SpeciesName const & rhs) const;
   bool operator!=(SpeciesName const & rhs) const;
-  std::string string() const;
+  std::string String() const;
 };
 
 namespace SPECIES_NAME

@@ -100,23 +100,23 @@ extern "C"
 #endif
 }  // extern "C"
 
-#ifndef KIM_CALL_BACK_NAME_HPP_
-#include "KIM_CallBackName.hpp"
+#ifndef KIM_CALLBACK_NAME_HPP_
+#include "KIM_CallbackName.hpp"
 #endif
 extern "C"
 {
-#ifndef KIM_CALL_BACK_NAME_H_
-#include "KIM_CallBackName.h"
+#ifndef KIM_CALLBACK_NAME_H_
+#include "KIM_CallbackName.h"
 #endif
 }  // extern "C"
 
-#ifndef KIM_ATTRIBUTE_HPP_
-#include "KIM_Attribute.hpp"
+#ifndef KIM_SUPPORT_STATUS_HPP_
+#include "KIM_SupportStatus.hpp"
 #endif
 extern "C"
 {
-#ifndef KIM_ATTRIBUTE_H_
-#include "KIM_Attribute.h"
+#ifndef KIM_SUPPORT_STATUS_H_
+#include "KIM_SupportStatus.h"
 #endif
 }  // extern "C"
 
@@ -164,20 +164,20 @@ KIM::ArgumentName makeArgumentNameCpp(KIM_ArgumentName const argumentName)
   return KIM::ArgumentName(argumentName.argumentNameID);
 }
 
-KIM::CallBackName makeCallBackNameCpp(KIM_CallBackName const callBackName)
+KIM::CallbackName makeCallbackNameCpp(KIM_CallbackName const callbackName)
 {
-  return KIM::CallBackName(callBackName.callBackNameID);
+  return KIM::CallbackName(callbackName.callbackNameID);
 }
 
-KIM::Attribute makeAttributeCpp(KIM_Attribute const attribute)
+KIM::SupportStatus makeSupportStatusCpp(KIM_SupportStatus const supportStatus)
 {
-  return KIM::Attribute(attribute.attributeID);
+  return KIM::SupportStatus(supportStatus.supportStatusID);
 }
 
-KIM_Attribute const makeAttributeC(KIM::Attribute attribute)
+KIM_SupportStatus const makeSupportStatusC(KIM::SupportStatus supportStatus)
 {
-  KIM_Attribute attributeC = {attribute.attributeID};
-  return attributeC;
+  KIM_SupportStatus supportStatusC = {supportStatus.supportStatusID};
+  return supportStatusC;
 }
 
 KIM::LengthUnit makeLengthUnitCpp(KIM_LengthUnit lengthUnit)
@@ -220,7 +220,7 @@ KIM::LogVerbosity makeLogVerbosityCpp(KIM_LogVerbosity logVerbosity)
 
 extern "C"
 {
-int KIM_Model_create(KIM_Numbering const numbering,
+int KIM_Model_Create(KIM_Numbering const numbering,
                      KIM_LengthUnit const requestedLengthUnit,
                      KIM_EnergyUnit const requestedEnergyUnit,
                      KIM_ChargeUnit const requestedChargeUnit,
@@ -232,7 +232,7 @@ int KIM_Model_create(KIM_Numbering const numbering,
 {
   std::string modelNameC(modelName);
   KIM::Model * pmodel;
-  int err = KIM::Model::create(
+  int err = KIM::Model::Create(
       makeNumberingCpp(numbering),
       makeLengthUnitCpp(requestedLengthUnit),
       makeEnergyUnitCpp(requestedEnergyUnit),
@@ -254,72 +254,74 @@ int KIM_Model_create(KIM_Numbering const numbering,
   }
 }
 
-void KIM_Model_destroy(KIM_Model ** const model)
+void KIM_Model_Destroy(KIM_Model ** const model)
 {
   KIM::Model * pmodel = (KIM::Model *) (*model)->p;
-  KIM::Model::destroy(&pmodel);
+  KIM::Model::Destroy(&pmodel);
   delete (*model);
   *model = 0;
 }
 
-void KIM_Model_get_influence_distance(KIM_Model const * const model,
-                                      double * const influenceDistance)
+void KIM_Model_GetInfluenceDistance(KIM_Model const * const model,
+                                    double * const influenceDistance)
 {
   KIM::Model * pmodel = (KIM::Model *) model->p;
-  pmodel->get_influence_distance(influenceDistance);
+  pmodel->GetInfluenceDistance(influenceDistance);
 }
 
-void KIM_Model_get_cutoffs(KIM_Model const * const model,
-                           int * const numberOfCutoffs,
-                           double const ** const cutoffs)
+void KIM_Model_GetCutoffsPointer(KIM_Model const * const model,
+                                 int * const numberOfCutoffs,
+                                 double const ** const cutoffs)
 {
   KIM::Model * pmodel = (KIM::Model *) model->p;
-  pmodel->get_cutoffs(numberOfCutoffs, cutoffs);
+  pmodel->GetCutoffsPointer(numberOfCutoffs, cutoffs);
 }
 
-int KIM_Model_get_argument_attribute(KIM_Model const * const model,
-                                     KIM_ArgumentName const argumentName,
-                                     KIM_Attribute * const attribute)
+int KIM_Model_GetArgumentSupportStatus(KIM_Model const * const model,
+                                       KIM_ArgumentName const argumentName,
+                                       KIM_SupportStatus * const supportStatus)
 {
-  KIM::Attribute attributeCpp;
+  KIM::SupportStatus supportStatusCpp;
   KIM::Model * pModel = (KIM::Model *) model->p;
-  int error = pModel->get_argument_attribute(makeArgumentNameCpp(argumentName),
-                                             &attributeCpp);
+  int error = pModel->GetArgumentSupportStatus(
+      makeArgumentNameCpp(argumentName),
+      &supportStatusCpp);
   if (error)
     return true;
   else
   {
-    *attribute = makeAttributeC(attributeCpp);
+    *supportStatus = makeSupportStatusC(supportStatusCpp);
     return false;
   }
 }
 
-int KIM_Model_get_call_back_attribute(KIM_Model const * const model,
-                                      KIM_CallBackName const CallBackName,
-                                      KIM_Attribute * const attribute)
+int KIM_Model_GetCallbackSupportStatus(KIM_Model const * const model,
+                                       KIM_CallbackName const callbackName,
+                                       KIM_SupportStatus * const supportStatus)
 {
-  KIM::Attribute attributeCpp;
+  KIM::SupportStatus supportStatusCpp;
   KIM::Model * pModel = (KIM::Model *) model->p;
-  int error = pModel->get_call_back_attribute(makeCallBackNameCpp(CallBackName),
-                                              &attributeCpp);
+  int error = pModel->GetCallbackSupportStatus(
+      makeCallbackNameCpp(callbackName),
+      &supportStatusCpp);
   if (error)
     return true;
   else
   {
-    *attribute = makeAttributeC(attributeCpp);
+    *supportStatus = makeSupportStatusC(supportStatusCpp);
     return false;
   }
 }
 
-void KIM_Model_get_units(KIM_Model const * const model,
-                         KIM_LengthUnit * const lengthUnit,
-                         KIM_EnergyUnit * const energyUnit,
-                         KIM_ChargeUnit * const chargeUnit,
-                         KIM_TemperatureUnit * const temperatureUnit,
-                         KIM_TimeUnit * const timeUnit)
+void KIM_Model_GetUnits(KIM_Model const * const model,
+                        KIM_LengthUnit * const lengthUnit,
+                        KIM_EnergyUnit * const energyUnit,
+                        KIM_ChargeUnit * const chargeUnit,
+                        KIM_TemperatureUnit * const temperatureUnit,
+                        KIM_TimeUnit * const timeUnit)
 {
   KIM::Model * pModel = (KIM::Model *) model->p;
-  pModel->get_units(
+  pModel->GetUnits(
       reinterpret_cast<KIM::LengthUnit *>(lengthUnit),
       reinterpret_cast<KIM::EnergyUnit *>(energyUnit),
       reinterpret_cast<KIM::ChargeUnit *>(chargeUnit),
@@ -329,67 +331,67 @@ void KIM_Model_get_units(KIM_Model const * const model,
 
 
 // *data functions
-int KIM_Model_set_data_int(KIM_Model * const model,
-                           KIM_ArgumentName const argumentName,
-                           int const * const ptr)
+int KIM_Model_SetArgumentPointerInteger(KIM_Model * const model,
+                                        KIM_ArgumentName const argumentName,
+                                        int const * const ptr)
 {
   KIM::Model * pModel = (KIM::Model *) model->p;
   KIM::ArgumentName argN = makeArgumentNameCpp(argumentName);
-  return pModel->set_data(argN, ptr);
+  return pModel->SetArgumentPointer(argN, ptr);
 }
 
-int KIM_Model_set_data_double(KIM_Model * const model,
-                              KIM_ArgumentName const argumentName,
-                              double const * const ptr)
+int KIM_Model_SetArgumentPointerDouble(KIM_Model * const model,
+                                       KIM_ArgumentName const argumentName,
+                                       double const * const ptr)
 {
   KIM::Model * pModel = (KIM::Model *) model->p;
   KIM::ArgumentName argN = makeArgumentNameCpp(argumentName);
-  return pModel->set_data(argN, ptr);
+  return pModel->SetArgumentPointer(argN, ptr);
 }
 
-int KIM_Model_set_call_back(KIM_Model * const model,
-                            KIM_CallBackName const callBackName,
-                            KIM_LanguageName const languageName,
-                            func * const fptr,
-                            void const * const dataObject)
+int KIM_Model_SetCallbackPointer(KIM_Model * const model,
+                                 KIM_CallbackName const callbackName,
+                                 KIM_LanguageName const languageName,
+                                 func * const fptr,
+                                 void const * const dataObject)
 {
   KIM::Model * pModel = (KIM::Model *) model->p;
-  KIM::CallBackName callBackNameCpp = makeCallBackNameCpp(callBackName);
+  KIM::CallbackName callbackNameCpp = makeCallbackNameCpp(callbackName);
   KIM::LanguageName langN = makeLanguageNameCpp(languageName);
-  return pModel->set_call_back(callBackNameCpp, langN, fptr, dataObject);
+  return pModel->SetCallbackPointer(callbackNameCpp, langN, fptr, dataObject);
 }
 
-int KIM_Model_compute(KIM_Model const * const model)
+int KIM_Model_Compute(KIM_Model const * const model)
 {
   KIM::Model * pmodel = (KIM::Model *) model->p;
-  return pmodel->compute();
+  return pmodel->Compute();
 }
 
-int KIM_Model_ClearInfluenceDistanceAndCutofsThenReinitializeModel(
+int KIM_Model_ClearInfluenceDistanceAndCutofsThenRefreshModel(
     KIM_Model * const model)
 {
   KIM::Model * pmodel = (KIM::Model *) model->p;
-  return pmodel->ClearInfluenceDistanceAndCutoffsThenReinitializeModel();
+  return pmodel->ClearInfluenceDistanceAndCutoffsThenRefreshModel();
 }
 
-int KIM_Model_get_species_support_and_code(KIM_Model const * const model,
-                                           KIM_SpeciesName const speciesName,
-                                           int * const speciesIsSupported,
-                                           int * const code)
+int KIM_Model_GetSpeciesSupportAndCode(KIM_Model const * const model,
+                                       KIM_SpeciesName const speciesName,
+                                       int * const speciesIsSupported,
+                                       int * const code)
 {
   KIM::Model * pmodel = (KIM::Model *) model->p;
-  return pmodel->get_species_support_and_code(makeSpecNameCpp(speciesName),
-                                              speciesIsSupported, code);
+  return pmodel->GetSpeciesSupportAndCode(makeSpecNameCpp(speciesName),
+                                          speciesIsSupported, code);
 }
 
-void KIM_Model_get_num_params(KIM_Model const * const model,
-                              int * const numberOfParameters)
+void KIM_Model_GetNumberOfParameters(KIM_Model const * const model,
+                                     int * const numberOfParameters)
 {
   KIM::Model * pmodel = (KIM::Model *) model->p;
-  pmodel->get_num_params(numberOfParameters);
+  pmodel->GetNumberOfParameters(numberOfParameters);
 }
 
-int KIM_Model_get_parameter_data_type_and_description(
+int KIM_Model_GetParameterDataTypeAndDescription(
     KIM_Model const * const model, int const index,
     KIM_DataType * const dataType, char const ** const description)
 {
@@ -410,7 +412,7 @@ int KIM_Model_get_parameter_data_type_and_description(
     pStr = &str;
 
   int error
-      = pmodel->get_parameter_data_type_and_description(index, pTyp, pStr);
+      = pmodel->GetParameterDataTypeAndDescription(index, pTyp, pStr);
 
   if (error)
     return true;
@@ -422,16 +424,16 @@ int KIM_Model_get_parameter_data_type_and_description(
   }
 }
 
-int KIM_Model_get_parameter_int_extent_and_pointer(KIM_Model * const model,
-                                                   int const index,
-                                                   int * const extent,
-                                                   int ** const ptr)
+int KIM_Model_GetParameterExtentAndPointerInteger(KIM_Model * const model,
+                                                  int const index,
+                                                  int * const extent,
+                                                  int ** const ptr)
 {
   KIM::Model * pmodel = (KIM::Model *) model->p;
   KIM::DataType typ;
   static std::string str;
 
-  int error = pmodel->get_parameter_extent_and_pointer(index, extent, ptr);
+  int error = pmodel->GetParameterExtentAndPointer(index, extent, ptr);
 
   if (error)
     return true;
@@ -439,16 +441,16 @@ int KIM_Model_get_parameter_int_extent_and_pointer(KIM_Model * const model,
     return false;
 }
 
-int KIM_Model_get_parameter_double_extent_and_pointer(KIM_Model * const model,
-                                                      int const index,
-                                                      int * const extent,
-                                                      double ** const ptr)
+int KIM_Model_GetParameterExtentAndPointerDouble(KIM_Model * const model,
+                                                 int const index,
+                                                 int * const extent,
+                                                 double ** const ptr)
 {
   KIM::Model * pmodel = (KIM::Model *) model->p;
   KIM::DataType typ;
   static std::string str;
 
-  int error = pmodel->get_parameter_extent_and_pointer(index, extent, ptr);
+  int error = pmodel->GetParameterExtentAndPointer(index, extent, ptr);
 
   if (error)
     return true;
@@ -456,22 +458,24 @@ int KIM_Model_get_parameter_double_extent_and_pointer(KIM_Model * const model,
     return false;
 }
 
-void KIM_Model_set_sim_buffer(KIM_Model * const model, void * const ptr)
+void KIM_Model_SetSimulatorBufferPointer(KIM_Model * const model,
+                                         void * const ptr)
 {
   KIM::Model * pmodel = (KIM::Model *) model->p;
-  pmodel->set_sim_buffer(ptr);
+  pmodel->SetSimulatorBufferPointer(ptr);
 }
 
-void KIM_Model_get_sim_buffer(KIM_Model const * const model, void ** const ptr)
+void KIM_Model_GetSimulatorBufferPointer(KIM_Model const * const model,
+                                         void ** const ptr)
 {
   KIM::Model * pmodel = (KIM::Model *) model->p;
-  pmodel->get_sim_buffer(ptr);
+  pmodel->GetSimulatorBufferPointer(ptr);
 }
 
-char const * const KIM_Model_string(KIM_Model const * const model)
+char const * const KIM_Model_String(KIM_Model const * const model)
 {
   KIM::Model * pmodel = (KIM::Model *) model->p;
-  return (pmodel->string()).c_str();
+  return (pmodel->String()).c_str();
 }
 
 void KIM_Model_SetLogID(KIM_Model * const model, char const * const logID)

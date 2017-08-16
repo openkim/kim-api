@@ -36,20 +36,21 @@ module kim_model_compute_f_module
   private
 
   public &
-    get_neigh, &
-    process_dedr, &
-    process_d2edr2, &
-    get_data_int, &
-    get_data_double, &
-    is_call_back_present, &
-    get_model_buffer, &
+    get_neighbor_list, &
+    process_dedr_term, &
+    process_d2edr2_term, &
+    get_argument_pointer_integer, &
+    get_argument_pointer_double, &
+    is_callback_present, &
+    get_model_buffer_pointer, &
     log, &
     model_compute_string
 
   interface
-    integer(c_int) function get_neigh(model_compute, neighbor_list_index, &
-      particle_number, number_of_neighbors, neighbors_of_particle) &
-      bind(c, name="KIM_ModelCompute_get_neigh")
+    integer(c_int) function get_neighbor_list(model_compute, &
+      neighbor_list_index, particle_number, number_of_neighbors, &
+      neighbors_of_particle) &
+      bind(c, name="KIM_ModelCompute_GetNeighborList")
       use, intrinsic :: iso_c_binding
       use kim_model_compute_module, only : kim_model_compute_type
       implicit none
@@ -58,10 +59,10 @@ module kim_model_compute_f_module
       integer(c_int), intent(in), value :: particle_number
       integer(c_int), intent(out) :: number_of_neighbors
       type(c_ptr), intent(out) :: neighbors_of_particle
-    end function get_neigh
+    end function get_neighbor_list
 
-    integer(c_int) function process_dedr(model_compute, de, r, dx, i, j) &
-      bind(c, name="KIM_ModelCompute_process_dEdr")
+    integer(c_int) function process_dedr_term(model_compute, de, r, dx, i, j) &
+      bind(c, name="KIM_ModelCompute_ProcessDEDrTerm")
       use, intrinsic :: iso_c_binding
       use kim_model_compute_module, only : kim_model_compute_type
       implicit none
@@ -71,10 +72,10 @@ module kim_model_compute_f_module
       real(c_double), intent(in) :: dx
       real(c_double), intent(in), value :: i
       real(c_double), intent(in), value :: j
-    end function process_dedr
+    end function process_dedr_term
 
-    integer(c_int) function process_d2edr2(model_compute, de, r, dx, i, j) &
-      bind(c, name="KIM_ModelCompute_process_d2Edr2")
+    integer(c_int) function process_d2edr2_term(model_compute, &
+      de, r, dx, i, j) bind(c, name="KIM_ModelCompute_ProcessD2EDr2Term")
       use, intrinsic :: iso_c_binding
       use kim_model_compute_module, only : kim_model_compute_type
       implicit none
@@ -84,10 +85,11 @@ module kim_model_compute_f_module
       type(c_ptr), intent(in), value :: dx
       type(c_ptr), intent(in), value :: i
       type(c_ptr), intent(in), value :: j
-    end function process_d2edr2
+    end function process_d2edr2_term
 
-    integer(c_int) function get_data_int(model_compute, argument_name, ptr) &
-      bind(c, name="KIM_ModelCompute_get_data_int")
+    integer(c_int) function get_argument_pointer_integer(model_compute, &
+      argument_name, ptr) &
+      bind(c, name="KIM_ModelCompute_GetArgumentPointerInteger")
       use, intrinsic :: iso_c_binding
       use kim_argument_name_module, only : kim_argument_name_type
       use kim_model_compute_module, only : kim_model_compute_type
@@ -95,10 +97,11 @@ module kim_model_compute_f_module
       type(kim_model_compute_type), intent(in) :: model_compute
       type(kim_argument_name_type), intent(in), value :: argument_name
       type(c_ptr), intent(out) :: ptr
-    end function get_data_int
+    end function get_argument_pointer_integer
 
-    integer(c_int) function get_data_double(model_compute, argument_name, ptr) &
-      bind(c, name="KIM_ModelCompute_get_data_double")
+    integer(c_int) function get_argument_pointer_double(model_compute, &
+      argument_name, ptr) &
+      bind(c, name="KIM_ModelCompute_GetArgumentPointerDouble")
       use, intrinsic :: iso_c_binding
       use kim_argument_name_module, only : kim_argument_name_type
       use kim_model_compute_module, only : kim_model_compute_type
@@ -106,28 +109,28 @@ module kim_model_compute_f_module
       type(kim_model_compute_type), intent(in) :: model_compute
       type(kim_argument_name_type), intent(in), value :: argument_name
       type(c_ptr), intent(out) :: ptr
-    end function get_data_double
+    end function get_argument_pointer_double
 
-    integer(c_int) function is_call_back_present(model_compute, &
-      call_back_name, present) &
-      bind(c, name="KIM_ModelCompute_is_call_back_present")
+    integer(c_int) function is_callback_present(model_compute, &
+      callback_name, present) &
+      bind(c, name="KIM_ModelCompute_IsCallbackPresent")
       use, intrinsic :: iso_c_binding
-      use kim_call_back_name_module, only : kim_call_back_name_type
+      use kim_callback_name_module, only : kim_callback_name_type
       use kim_model_compute_module, only : kim_model_compute_type
       implicit none
       type(kim_model_compute_type), intent(in) :: model_compute
-      type(kim_call_back_name_type), intent(in), value :: call_back_name
+      type(kim_callback_name_type), intent(in), value :: callback_name
       integer(c_int), intent(out) :: present
-    end function is_call_back_present
+    end function is_callback_present
 
-    subroutine get_model_buffer(model_compute, ptr) &
-      bind(c, name="KIM_ModelCompute_get_model_buffer")
+    subroutine get_model_buffer_pointer(model_compute, ptr) &
+      bind(c, name="KIM_ModelCompute_GetModelBufferPointer")
       use, intrinsic :: iso_c_binding
       use kim_model_compute_module, only : kim_model_compute_type
       implicit none
       type(kim_model_compute_type), intent(in) :: model_compute
       type(c_ptr), intent(out) :: ptr
-    end subroutine get_model_buffer
+    end subroutine get_model_buffer_pointer
 
     subroutine log(model_compute, log_verbosity, message, line_number, &
       file_name) bind(c, name="KIM_ModelCompute_Log")
@@ -143,7 +146,7 @@ module kim_model_compute_f_module
     end subroutine log
 
     type(c_ptr) function model_compute_string(model_compute) &
-      bind(c, name="KIM_ModelCompute_string")
+      bind(c, name="KIM_ModelCompute_String")
       use, intrinsic :: iso_c_binding
       use kim_model_compute_module, only : kim_model_compute_type
       implicit none
@@ -155,12 +158,12 @@ end module kim_model_compute_f_module
 
 ! free functions to implement kim_model_compute_module
 
-subroutine kim_model_compute_get_data_int0(model_compute, argument_name, &
-  int0, ierr)
+subroutine kim_model_compute_get_argument_pointer_int0(model_compute, &
+  argument_name, int0, ierr)
   use, intrinsic :: iso_c_binding
   use kim_argument_name_module, only : kim_argument_name_type
   use kim_model_compute_module, only : kim_model_compute_type
-  use kim_model_compute_f_module, only : get_data_int
+  use kim_model_compute_f_module, only : get_argument_pointer_integer
   implicit none
   type(kim_model_compute_type), intent(in) :: model_compute
   type(kim_argument_name_type), intent(in), value :: argument_name
@@ -169,16 +172,16 @@ subroutine kim_model_compute_get_data_int0(model_compute, argument_name, &
 
   type(c_ptr) p
 
-  ierr = get_data_int(model_compute, argument_name, p)
+  ierr = get_argument_pointer_integer(model_compute, argument_name, p)
   call c_f_pointer(p, int0)
-end subroutine kim_model_compute_get_data_int0
+end subroutine kim_model_compute_get_argument_pointer_int0
 
-subroutine kim_model_compute_get_data_int1(model_compute, argument_name, &
-  extent1, int1, ierr)
+subroutine kim_model_compute_get_argument_pointer_int1(model_compute, &
+  argument_name, extent1, int1, ierr)
   use, intrinsic :: iso_c_binding
   use kim_argument_name_module, only : kim_argument_name_type
   use kim_model_compute_module, only : kim_model_compute_type
-  use kim_model_compute_f_module, only : get_data_int
+  use kim_model_compute_f_module, only : get_argument_pointer_integer
   implicit none
   type(kim_model_compute_type), intent(in) :: model_compute
   type(kim_argument_name_type), intent(in), value :: argument_name
@@ -188,16 +191,16 @@ subroutine kim_model_compute_get_data_int1(model_compute, argument_name, &
 
   type(c_ptr) p
 
-  ierr = get_data_int(model_compute, argument_name, p)
+  ierr = get_argument_pointer_integer(model_compute, argument_name, p)
   call c_f_pointer(p, int1, [extent1])
-end subroutine kim_model_compute_get_data_int1
+end subroutine kim_model_compute_get_argument_pointer_int1
 
-subroutine kim_model_compute_get_data_int2(model_compute, argument_name, &
-  extent1, extent2, int2, ierr)
+subroutine kim_model_compute_get_argument_pointer_int2(model_compute, &
+  argument_name, extent1, extent2, int2, ierr)
   use, intrinsic :: iso_c_binding
   use kim_argument_name_module, only : kim_argument_name_type
   use kim_model_compute_module, only : kim_model_compute_type
-  use kim_model_compute_f_module, only : get_data_int
+  use kim_model_compute_f_module, only : get_argument_pointer_integer
   implicit none
   type(kim_model_compute_type), intent(in) :: model_compute
   type(kim_argument_name_type), intent(in), value :: argument_name
@@ -208,16 +211,16 @@ subroutine kim_model_compute_get_data_int2(model_compute, argument_name, &
 
   type(c_ptr) p
 
-  ierr = get_data_int(model_compute, argument_name, p)
+  ierr = get_argument_pointer_integer(model_compute, argument_name, p)
   call c_f_pointer(p, int2, [extent1, extent2])
-end subroutine kim_model_compute_get_data_int2
+end subroutine kim_model_compute_get_argument_pointer_int2
 
-subroutine kim_model_compute_get_data_double0(model_compute, argument_name, &
-  double0, ierr)
+subroutine kim_model_compute_get_argument_pointer_double0(model_compute, &
+  argument_name, double0, ierr)
   use, intrinsic :: iso_c_binding
   use kim_argument_name_module, only : kim_argument_name_type
   use kim_model_compute_module, only : kim_model_compute_type
-  use kim_model_compute_f_module, only : get_data_double
+  use kim_model_compute_f_module, only : get_argument_pointer_double
   implicit none
   type(kim_model_compute_type), intent(in) :: model_compute
   type(kim_argument_name_type), intent(in), value :: argument_name
@@ -226,16 +229,16 @@ subroutine kim_model_compute_get_data_double0(model_compute, argument_name, &
 
   type(c_ptr) p
 
-  ierr = get_data_double(model_compute, argument_name, p)
+  ierr = get_argument_pointer_double(model_compute, argument_name, p)
   call c_f_pointer(p, double0)
-end subroutine kim_model_compute_get_data_double0
+end subroutine kim_model_compute_get_argument_pointer_double0
 
-subroutine kim_model_compute_get_data_double1(model_compute, argument_name, &
-  extent1, double1, ierr)
+subroutine kim_model_compute_get_argument_pointer_double1(model_compute, &
+  argument_name, extent1, double1, ierr)
   use, intrinsic :: iso_c_binding
   use kim_argument_name_module, only : kim_argument_name_type
   use kim_model_compute_module, only : kim_model_compute_type
-  use kim_model_compute_f_module, only : get_data_double
+  use kim_model_compute_f_module, only : get_argument_pointer_double
   implicit none
   type(kim_model_compute_type), intent(in) :: model_compute
   type(kim_argument_name_type), intent(in), value :: argument_name
@@ -245,16 +248,16 @@ subroutine kim_model_compute_get_data_double1(model_compute, argument_name, &
 
   type(c_ptr) p
 
-  ierr = get_data_double(model_compute, argument_name, p)
+  ierr = get_argument_pointer_double(model_compute, argument_name, p)
   call c_f_pointer(p, double1, [extent1])
-end subroutine kim_model_compute_get_data_double1
+end subroutine kim_model_compute_get_argument_pointer_double1
 
-subroutine kim_model_compute_get_data_double2(model_compute, argument_name, &
-  extent1, extent2, double2, ierr)
+subroutine kim_model_compute_get_argument_pointer_double2(model_compute, &
+  argument_name, extent1, extent2, double2, ierr)
   use, intrinsic :: iso_c_binding
   use kim_argument_name_module, only : kim_argument_name_type
   use kim_model_compute_module, only : kim_model_compute_type
-  use kim_model_compute_f_module, only : get_data_double
+  use kim_model_compute_f_module, only : get_argument_pointer_double
   implicit none
   type(kim_model_compute_type), intent(in) :: model_compute
   type(kim_argument_name_type), intent(in), value :: argument_name
@@ -265,30 +268,31 @@ subroutine kim_model_compute_get_data_double2(model_compute, argument_name, &
 
   type(c_ptr) p
 
-  ierr = get_data_double(model_compute, argument_name, p)
+  ierr = get_argument_pointer_double(model_compute, argument_name, p)
   call c_f_pointer(p, double2, [extent1, extent2])
-end subroutine kim_model_compute_get_data_double2
+end subroutine kim_model_compute_get_argument_pointer_double2
 
-subroutine kim_model_compute_is_call_back_present(model_compute, &
-  call_back_name, present, ierr)
+subroutine kim_model_compute_is_callback_present(model_compute, &
+  callback_name, present, ierr)
   use, intrinsic :: iso_c_binding
-  use kim_call_back_name_module, only : kim_call_back_name_type
+  use kim_callback_name_module, only : kim_callback_name_type
   use kim_model_compute_module, only : kim_model_compute_type
-  use kim_model_compute_f_module, only : is_call_back_present
+  use kim_model_compute_f_module, only : is_callback_present
   implicit none
   type(kim_model_compute_type), intent(in) :: model_compute
-  type(kim_call_back_name_type), intent(in), value :: call_back_name
+  type(kim_callback_name_type), intent(in), value :: callback_name
   integer(c_int), intent(out) :: present
   integer(c_int), intent(out) :: ierr
 
-  ierr = is_call_back_present(model_compute, call_back_name, present)
-end subroutine kim_model_compute_is_call_back_present
+  ierr = is_callback_present(model_compute, callback_name, present)
+end subroutine kim_model_compute_is_callback_present
 
-subroutine kim_model_compute_get_neigh(model_compute, neighbor_list_index, &
-  particle_number, number_of_neighbors, neighbors_of_particle, ierr)
+subroutine kim_model_compute_get_neighbor_list(model_compute, &
+  neighbor_list_index, particle_number, number_of_neighbors, &
+  neighbors_of_particle, ierr)
   use, intrinsic :: iso_c_binding
   use kim_model_compute_module, only : kim_model_compute_type
-  use kim_model_compute_f_module, only : get_neigh
+  use kim_model_compute_f_module, only : get_neighbor_list
   implicit none
   type(kim_model_compute_type), intent(in) :: model_compute
   integer(c_int), intent(in), value :: neighbor_list_index
@@ -299,15 +303,16 @@ subroutine kim_model_compute_get_neigh(model_compute, neighbor_list_index, &
 
   type(c_ptr) p
 
-  ierr = get_neigh(model_compute, neighbor_list_index-1, particle_number, &
-    number_of_neighbors, p)
+  ierr = get_neighbor_list(model_compute, neighbor_list_index-1, &
+    particle_number, number_of_neighbors, p)
   call c_f_pointer(p, neighbors_of_particle, [number_of_neighbors])
-end subroutine kim_model_compute_get_neigh
+end subroutine kim_model_compute_get_neighbor_list
 
-subroutine kim_model_compute_process_dedr(model_compute, de, r, dx, i, j, ierr)
+subroutine kim_model_compute_process_dedr_term(model_compute, &
+  de, r, dx, i, j, ierr)
   use, intrinsic :: iso_c_binding
   use kim_model_compute_module, only : kim_model_compute_type
-  use kim_model_compute_f_module, only : process_dedr
+  use kim_model_compute_f_module, only : process_dedr_term
   implicit none
   type(kim_model_compute_type), intent(in) :: model_compute
   real(c_double), intent(in), value :: de
@@ -317,14 +322,14 @@ subroutine kim_model_compute_process_dedr(model_compute, de, r, dx, i, j, ierr)
   real(c_double), intent(in), value :: j
   integer(c_int), intent(out) :: ierr
 
-  ierr = process_dedr(model_compute, de, r, dx, i, j)
-end subroutine kim_model_compute_process_dedr
+  ierr = process_dedr_term(model_compute, de, r, dx, i, j)
+end subroutine kim_model_compute_process_dedr_term
 
-subroutine kim_model_compute_process_d2edr2(model_compute, de, r, dx, i, j, &
-  ierr)
+subroutine kim_model_compute_process_d2edr2_term(model_compute, &
+  de, r, dx, i, j, ierr)
   use, intrinsic :: iso_c_binding
   use kim_model_compute_module, only : kim_model_compute_type
-  use kim_model_compute_f_module, only : process_d2edr2
+  use kim_model_compute_f_module, only : process_d2edr2_term
   implicit none
   type(kim_model_compute_type), intent(in) :: model_compute
   real(c_double), intent(in), value :: de
@@ -334,19 +339,19 @@ subroutine kim_model_compute_process_d2edr2(model_compute, de, r, dx, i, j, &
   type(c_ptr), intent(in), value :: j
   integer(c_int), intent(out) :: ierr
 
-  ierr = process_d2edr2(model_compute, de, r, dx, i, j)
-end subroutine kim_model_compute_process_d2edr2
+  ierr = process_d2edr2_term(model_compute, de, r, dx, i, j)
+end subroutine kim_model_compute_process_d2edr2_term
 
-subroutine kim_model_compute_get_model_buffer(model_compute, ptr)
+subroutine kim_model_compute_get_model_buffer_pointer(model_compute, ptr)
   use, intrinsic :: iso_c_binding
   use kim_model_compute_module, only : kim_model_compute_type
-  use kim_model_compute_f_module, only : get_model_buffer
+  use kim_model_compute_f_module, only : get_model_buffer_pointer
   implicit none
   type(kim_model_compute_type), intent(in) :: model_compute
   type(c_ptr), intent(out) :: ptr
 
-  call get_model_buffer(model_compute, ptr)
-end subroutine kim_model_compute_get_model_buffer
+  call get_model_buffer_pointer(model_compute, ptr)
+end subroutine kim_model_compute_get_model_buffer_pointer
 
 subroutine kim_model_compute_log(model_compute, log_verbosity, message, &
   line_number, file_name)

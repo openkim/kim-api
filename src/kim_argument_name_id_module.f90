@@ -41,21 +41,21 @@ module kim_argument_name_id_module
     particle_species_id, &
     particle_contributing_id, &
     coordinates_id, &
-    energy_id, &
-    forces_id, &
-    particle_energy_id, &
-    virial_id, &
-    particle_virial_id, &
-    hessian_id
+    partial_energy_id, &
+    partial_forces_id, &
+    partial_particle_energy_id, &
+    partial_virial_id, &
+    partial_particle_virial_id, &
+    partial_hessian_id
 
   integer(c_int), parameter :: number_of_particles_id = 0
   integer(c_int), parameter :: particle_species_id = 1
   integer(c_int), parameter :: particle_contributing_id = 2
   integer(c_int), parameter :: coordinates_id = 3
-  integer(c_int), parameter :: energy_id = 4
-  integer(c_int), parameter :: forces_id = 5
-  integer(c_int), parameter :: particle_energy_id = 6
-  integer(c_int), parameter :: virial_id = 7
-  integer(c_int), parameter :: particle_virial_id = 8
-  integer(c_int), parameter :: hessian_id = 9
+  integer(c_int), parameter :: partial_energy_id = 4
+  integer(c_int), parameter :: partial_forces_id = 5
+  integer(c_int), parameter :: partial_particle_energy_id = 6
+  integer(c_int), parameter :: partial_virial_id = 7
+  integer(c_int), parameter :: partial_particle_virial_id = 8
+  integer(c_int), parameter :: partial_hessian_id = 9
 end module kim_argument_name_id_module

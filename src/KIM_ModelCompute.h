@@ -47,9 +47,9 @@ typedef struct KIM_LogVerbosity KIM_LogVerbosity;
 typedef struct KIM_ArgumentName KIM_ArgumentName;
 #endif
 
-#ifndef KIM_CALL_BACK_NAME_DEFINED_
-#define KIM_CALL_BACK_NAME_DEFINED_
-typedef struct KIM_CallBackName KIM_CallBackName;
+#ifndef KIM_CALLBACK_NAME_DEFINED_
+#define KIM_CALLBACK_NAME_DEFINED_
+typedef struct KIM_CallbackName KIM_CallbackName;
 #endif
 
 
@@ -62,37 +62,41 @@ struct KIM_ModelCompute {
 typedef struct KIM_ModelCompute KIM_ModelCompute;
 #endif
 
-int KIM_ModelCompute_get_neigh(KIM_ModelCompute const * const modelCompute,
-                               int const neighborListIndex,
-                               int const particleNumber,
-                               int * const numberOfNeighbors,
-                               int const ** const neighborsOfParticle);
+int KIM_ModelCompute_GetNeighborList(
+    KIM_ModelCompute const * const modelCompute,
+    int const neighborListIndex,
+    int const particleNumber,
+    int * const numberOfNeighbors,
+    int const ** const neighborsOfParticle);
 
-int KIM_ModelCompute_process_dEdr(KIM_ModelCompute const * const modelCompute,
-                                  double const de, double const r,
-                                  double const * const dx, int const i,
-                                  int const j);
+int KIM_ModelCompute_ProcessDEDrTerm(
+    KIM_ModelCompute const * const modelCompute,
+    double const de, double const r,
+    double const * const dx, int const i,
+    int const j);
 
-int KIM_ModelCompute_process_d2Edr2(KIM_ModelCompute const * const modelCompute,
-                                    double const de, double const * const r,
-                                    double const * const dx,
-                                    int const * const i,
-                                    int const * const j);
+int KIM_ModelCompute_ProcessD2EDr2Term(
+    KIM_ModelCompute const * const modelCompute,
+    double const de, double const * const r,
+    double const * const dx,
+    int const * const i,
+    int const * const j);
 
 /* *data functions */
-int KIM_ModelCompute_get_data_int(KIM_ModelCompute const * const modelCompute,
-                                  KIM_ArgumentName const argumentName,
-                                  int ** const ptr);
+int KIM_ModelCompute_GetArgumentPointerInteger(
+    KIM_ModelCompute const * const modelCompute,
+    KIM_ArgumentName const argumentName,
+    int ** const ptr);
 
-int KIM_ModelCompute_get_data_double(
+int KIM_ModelCompute_GetArgumentPointerDouble(
     KIM_ModelCompute const * const modelCompute,
     KIM_ArgumentName const argumentName, double ** const ptr);
 
-int KIM_ModelCompute_is_call_back_present(
+int KIM_ModelCompute_IsCallbackPresent(
     KIM_ModelCompute const * const modelCompute,
-    KIM_CallBackName const callBackName, int * const present);
+    KIM_CallbackName const callbackName, int * const present);
 
-void KIM_ModelCompute_get_model_buffer(
+void KIM_ModelCompute_GetModelBufferPointer(
     KIM_ModelCompute const * const modelCompute, void ** const ptr);
 
 void KIM_ModelCompute_Log(
@@ -100,7 +104,7 @@ void KIM_ModelCompute_Log(
     KIM_LogVerbosity const logVerbosity, char const * const message,
     int const lineNumber, char const * const fileName);
 
-char const * const KIM_ModelCompute_string(
+char const * const KIM_ModelCompute_String(
     KIM_ModelCompute const * const modelCompute);
 
 #endif  /* KIM_MODEL_COMPUTE_H_ */

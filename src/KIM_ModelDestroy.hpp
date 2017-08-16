@@ -41,11 +41,11 @@ class LogVerbosity;
 
 class ModelDestroy{
  public:
-  void get_model_buffer(void ** const ptr) const;
+  void GetModelBufferPointer(void ** const ptr) const;
 
   void Log(LogVerbosity const logVerbosity, std::string const & message,
            int const lineNumber, std::string const & fileName) const;
-  std::string string() const;
+  std::string String() const;
 
  private:
   // do not allow copy constructor or operator=

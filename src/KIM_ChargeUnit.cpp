@@ -44,7 +44,7 @@ bool ChargeUnit::operator==(ChargeUnit const & rhs) const
 bool ChargeUnit::operator!=(ChargeUnit const & rhs) const
 {return chargeUnitID!=rhs.chargeUnitID;}
 
-std::string ChargeUnit::string() const
+std::string ChargeUnit::String() const
 {
   if (*this == CHARGE_UNIT::unused) return "unused";
   else if (*this == CHARGE_UNIT::C) return "C";

@@ -65,7 +65,7 @@ int KIM_TimeUnitNotEqual(KIM_TimeUnit const left, KIM_TimeUnit right)
 
 char const * const KIM_TimeUnitString(KIM_TimeUnit const tiemUnit)
 {
-  return (makeTimeUnitCpp(tiemUnit)).string().c_str();
+  return (makeTimeUnitCpp(tiemUnit)).String().c_str();
 }
 
 KIM_TimeUnit const KIM_TIME_UNIT_any = {0};

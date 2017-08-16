@@ -56,12 +56,12 @@ OBJCPP = KIM_LanguageName.o \
          KIM_TemperatureUnit.o \
          KIM_TimeUnit.o \
          KIM_ArgumentName.o \
-         KIM_CallBackName.o \
-         KIM_Attribute.o \
+         KIM_CallbackName.o \
+         KIM_SupportStatus.o \
          KIM_Model.o \
-         KIM_ModelInitialization.o \
-         KIM_ModelDriverInitialization.o \
-         KIM_ModelReinitialization.o \
+         KIM_ModelCreate.o \
+         KIM_ModelDriverCreate.o \
+         KIM_ModelRefresh.o \
          KIM_ModelDestroy.o \
          KIM_ModelCompute.o \
          KIM_semver.o \
@@ -82,12 +82,12 @@ OBJC = KIM_LanguageName_c.o \
        KIM_TemperatureUnit_c.o \
        KIM_TimeUnit_c.o \
        KIM_ArgumentName_c.o \
-       KIM_CallBackName_c.o \
-       KIM_Attribute_c.o \
+       KIM_CallbackName_c.o \
+       KIM_SupportStatus_c.o \
        KIM_Model_c.o \
-       KIM_ModelInitialization_c.o \
-       KIM_ModelDriverInitialization_c.o \
-       KIM_ModelReinitialization_c.o \
+       KIM_ModelCreate_c.o \
+       KIM_ModelDriverCreate_c.o \
+       KIM_ModelRefresh_c.o \
        KIM_ModelDestroy_c.o \
        KIM_ModelCompute_c.o \
        KIM_semver_c.o
@@ -104,12 +104,12 @@ OBJF03 = kim_language_name_module.o kim_language_name_f.o \
          kim_temperature_unit_module.o \
          kim_time_unit_module.o \
          kim_argument_name_module.o kim_argument_name_f.o \
-         kim_call_back_name_module.o kim_call_back_name_f.o \
-         kim_attribute_module.o kim_attribute_f.o \
+         kim_callback_name_module.o kim_callback_name_f.o \
+         kim_support_status_module.o kim_support_status_f.o \
          kim_model_f.o \
-         kim_model_initialization_f.o \
-         kim_model_driver_initialization_f.o \
-         kim_model_reinitialization_f.o \
+         kim_model_create_f.o \
+         kim_model_driver_create_f.o \
+         kim_model_refresh_f.o \
          kim_model_destroy_f.o \
          kim_model_compute_f.o
 
@@ -183,12 +183,12 @@ KIM_ChargeUnit.o: KIM_ChargeUnit.hpp KIM_ChargeUnit.cpp $(KIM_MAKE_FILES)
 KIM_TemperatureUnit.o: KIM_TemperatureUnit.hpp KIM_TemperatureUnit.cpp $(KIM_MAKE_FILES)
 KIM_TimeUnit.o: KIM_TimeUnit.hpp KIM_TimeUnit.cpp $(KIM_MAKE_FILES)
 KIM_ArgumentName.o: KIM_ArgumentName.hpp KIM_ArgumentName.cpp $(KIM_MAKE_FILES)
-KIM_CallBackName.o: KIM_CallBackName.hpp KIM_CallBackName.cpp $(KIM_MAKE_FILES)
-KIM_Attribute.o: KIM_Attribute.hpp KIM_Attribute.cpp $(KIM_MAKE_FILES)
+KIM_CallbackName.o: KIM_CallbackName.hpp KIM_CallbackName.cpp $(KIM_MAKE_FILES)
+KIM_SupportStatus.o: KIM_SupportStatus.hpp KIM_SupportStatus.cpp $(KIM_MAKE_FILES)
 KIM_Model.o: KIM_Model.hpp KIM_Model.cpp $(KIM_MAKE_FILES)
-KIM_ModelInitialization.o: KIM_ModelInitialization.hpp KIM_ModelInitialization.cpp $(KIM_MAKE_FILES)
-KIM_ModelDriverInitialization.o: KIM_ModelDriverInitialization.hpp KIM_ModelDriverInitialization.cpp $(KIM_MAKE_FILES)
-KIM_ModelReinitialization.o: KIM_ModelReinitialization.hpp KIM_ModelReinitialization.cpp $(KIM_MAKE_FILES)
+KIM_ModelCreate.o: KIM_ModelCreate.hpp KIM_ModelCreate.cpp $(KIM_MAKE_FILES)
+KIM_ModelDriverCreate.o: KIM_ModelDriverCreate.hpp KIM_ModelDriverCreate.cpp $(KIM_MAKE_FILES)
+KIM_ModelRefresh.o: KIM_ModelRefresh.hpp KIM_ModelRefresh.cpp $(KIM_MAKE_FILES)
 KIM_ModelDestroy.o: KIM_ModelDestroy.hpp KIM_ModelDestroy.cpp $(KIM_MAKE_FILES)
 KIM_ModelCompute.o: KIM_ModelCompute.hpp KIM_ModelCompute.cpp $(KIM_MAKE_FILES)
 KIM_semver.o: KIM_semver.hpp KIM_semver.cpp $(KIM_MAKE_FILES)
@@ -205,12 +205,12 @@ KIM_ChargeUnit_c.o: KIM_ChargeUnit.hpp KIM_ChargeUnit_c.cpp $(KIM_MAKE_FILES)
 KIM_TemperatureUnit_c.o: KIM_TemperatureUnit.hpp KIM_TemperatureUnit_c.cpp $(KIM_MAKE_FILES)
 KIM_TimeUnit_c.o: KIM_TimeUnit.hpp KIM_TimeUnit_c.cpp $(KIM_MAKE_FILES)
 KIM_ArgumentName_c.o: KIM_ArgumentName.h KIM_ArgumentName_c.cpp $(KIM_MAKE_FILES)
-KIM_CallBackName_c.o: KIM_CallBackName.h KIM_CallBackName_c.cpp $(KIM_MAKE_FILES)
-KIM_Attribute_c.o: KIM_Attribute.h KIM_Attribute_c.cpp $(KIM_MAKE_FILES)
+KIM_CallbackName_c.o: KIM_CallbackName.h KIM_CallbackName_c.cpp $(KIM_MAKE_FILES)
+KIM_SupportStatus_c.o: KIM_SupportStatus.h KIM_SupportStatus_c.cpp $(KIM_MAKE_FILES)
 KIM_Model_c.o: KIM_Model.h KIM_Model_c.cpp $(KIM_MAKE_FILES)
-KIM_ModelInitialization_c.o: KIM_ModelInitialization.h KIM_ModelInitialization_c.cpp $(KIM_MAKE_FILES)
-KIM_ModelDriverInitialization_c.o: KIM_ModelDriverInitialization.h KIM_ModelDriverInitialization_c.cpp $(KIM_MAKE_FILES)
-KIM_ModelReinitialization_c.o: KIM_ModelReinitialization.h KIM_ModelReinitialization_c.cpp $(KIM_MAKE_FILES)
+KIM_ModelCreate_c.o: KIM_ModelCreate.h KIM_ModelCreate_c.cpp $(KIM_MAKE_FILES)
+KIM_ModelDriverCreate_c.o: KIM_ModelDriverCreate.h KIM_ModelDriverCreate_c.cpp $(KIM_MAKE_FILES)
+KIM_ModelRefresh_c.o: KIM_ModelRefresh.h KIM_ModelRefresh_c.cpp $(KIM_MAKE_FILES)
 KIM_ModelDestroy_c.o: KIM_ModelDestroy.h KIM_ModelDestroy_c.cpp $(KIM_MAKE_FILES)
 KIM_ModelCompute_c.o: KIM_ModelCompute.h KIM_ModelCompute_c.cpp $(KIM_MAKE_FILES)
 KIM_semver_c.o: KIM_semver.h KIM_semver_c.cpp $(KIM_MAKE_FILES)
@@ -235,12 +235,12 @@ kim_data_type_f.o: kim_data_type_module.mod kim_data_type_f.f90 $(KIM_MAKE_FILES
 kim_argument_name_id_module.mod: kim_argument_name_id_module.f90 $(KIM_MAKE_FILES)
 kim_argument_name_module.mod kim_argument_name_module.o: kim_argument_name_id_module.mod kim_argument_name_module.f90 $(KIM_MAKE_FILES)
 kim_argument_name_f.o: kim_argument_name_module.mod kim_argument_name_f.f90 $(KIM_MAKE_FILES)
-kim_call_back_name_id_module.mod: kim_call_back_name_id_module.f90 $(KIM_MAKE_FILES)
-kim_call_back_name_module.mod kim_call_back_name_module.o: kim_call_back_name_id_module.mod kim_call_back_name_module.f90 $(KIM_MAKE_FILES)
-kim_call_back_name_f.o: kim_call_back_name_module.mod kim_call_back_name_f.f90 $(KIM_MAKE_FILES)
-kim_attribute_id_module.mod: kim_attribute_id_module.f90 $(KIM_MAKE_FILES)
-kim_attribute_module.mod kim_attribute_module.o: kim_attribute_id_module.mod kim_attribute_module.f90 $(KIM_MAKE_FILES)
-kim_attribute_f.o: kim_attribute_module.mod kim_attribute_f.f90 $(KIM_MAKE_FILES)
+kim_callback_name_id_module.mod: kim_callback_name_id_module.f90 $(KIM_MAKE_FILES)
+kim_callback_name_module.mod kim_callback_name_module.o: kim_callback_name_id_module.mod kim_callback_name_module.f90 $(KIM_MAKE_FILES)
+kim_callback_name_f.o: kim_callback_name_module.mod kim_callback_name_f.f90 $(KIM_MAKE_FILES)
+kim_support_status_id_module.mod: kim_support_status_id_module.f90 $(KIM_MAKE_FILES)
+kim_support_status_module.mod kim_support_status_module.o: kim_support_status_id_module.mod kim_support_status_module.f90 $(KIM_MAKE_FILES)
+kim_support_status_f.o: kim_support_status_module.mod kim_support_status_f.f90 $(KIM_MAKE_FILES)
 kim_length_unit_id_module.mod: kim_length_unit_id_module.f90 $(KIM_MAKE_FILES)
 kim_length_unit_module.mod kim_length_unit_module.o: kim_length_unit_id_module.mod kim_length_unit_module.f90 $(KIM_MAKE_FILES)
 kim_length_unit_f.o: kim_length_unit_module.mod kim_length_unit_f.f90 $(KIM_MAKE_FILES)
@@ -259,11 +259,11 @@ kim_time_unit_f.o: kim_time_unit_module.mod kim_time_unit_f.f90 $(KIM_MAKE_FILES
 kim_unit_system_module.mod: kim_length_unit_module.mod kim_energy_unit_module.mod kim_charge_unit_module.mod kim_temperature_unit_module.mod kim_time_unit_module.mod kim_unit_system_module.f90 $(KIM_MAKE_FILES)
 kim_model_module.mod: kim_species_name_module.mod kim_data_type_module.mod kim_unit_system_module.mod kim_model_module.f90 $(KIM_MAKE_FILES)
 kim_model_f.o: kim_model_module.mod kim_model_f.f90 $(KIM_MAKE_FILES)
-kim_model_initialization_module.mod: kim_model_initialization_module.f90 $(KIM_MAKE_FILES)
-kim_model_initialization_f.o: kim_model_initialization_module.mod kim_model_initialization_f.f90 $(KIM_MAKE_FILES)
-kim_model_driver_initialization_f.o: kim_model_driver_initialization_module.mod kim_model_driver_initialization_f.f90 $(KIM_MAKE_FILES)
-kim_model_reinitialization_module.mod: kim_model_reinitialization_module.f90 $(KIM_MAKE_FILES)
-kim_model_reinitialization_f.o: kim_model_reinitialization_module.mod kim_model_reinitialization_f.f90 $(KIM_MAKE_FILES)
+kim_model_create_module.mod: kim_model_create_module.f90 $(KIM_MAKE_FILES)
+kim_model_create_f.o: kim_model_create_module.mod kim_model_create_f.f90 $(KIM_MAKE_FILES)
+kim_model_driver_create_f.o: kim_model_driver_create_module.mod kim_model_driver_create_f.f90 $(KIM_MAKE_FILES)
+kim_model_refresh_module.mod: kim_model_refresh_module.f90 $(KIM_MAKE_FILES)
+kim_model_refresh_f.o: kim_model_refresh_module.mod kim_model_refresh_f.f90 $(KIM_MAKE_FILES)
 kim_model_destroy_module.mod: kim_model_destroy_module.f90 $(KIM_MAKE_FILES)
 kim_model_destroy_f.o: kim_model_destroy_module.mod kim_model_destroy_f.f90 $(KIM_MAKE_FILES)
 kim_model_compute_module.mod: kim_model_compute_module.f90 $(KIM_MAKE_FILES)

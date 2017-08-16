@@ -157,8 +157,7 @@ program vc_forces_numer_deriv
   use kim_numbering_module
   use kim_model_module
   use kim_argument_name_module
-  use kim_call_back_name_module
-  use kim_attribute_module
+  use kim_callback_name_module
   use kim_unit_system_module
   use mod_neighborlist
   implicit none
@@ -306,26 +305,26 @@ program vc_forces_numer_deriv
 
   ! register memory with the KIM system
   ierr = 0
-  call kim_model_set_data(model, &
+  call kim_model_set_argument_pointer(model, &
     kim_argument_name_number_of_particles, numberOfParticles, ierr2)
   ierr = ierr + ierr2
-  call kim_model_set_data(model, &
+  call kim_model_set_argument_pointer(model, &
     kim_argument_name_particle_species, particleSpecies, ierr2)
   ierr = ierr + ierr2
-  call kim_model_set_data(model, &
+  call kim_model_set_argument_pointer(model, &
     kim_argument_name_particle_contributing, particleContributing, ierr2)
   ierr = ierr + ierr2
-  call kim_model_set_data(model, &
+  call kim_model_set_argument_pointer(model, &
     kim_argument_name_coordinates, coords, ierr2)
   ierr = ierr + ierr2
-  call kim_model_set_data(model, &
-    kim_argument_name_energy, energy, ierr2)
+  call kim_model_set_argument_pointer(model, &
+    kim_argument_name_partial_energy, energy, ierr2)
   ierr = ierr + ierr2
-  call kim_model_set_data(model, &
-    kim_argument_name_forces, forces, ierr2)
+  call kim_model_set_argument_pointer(model, &
+    kim_argument_name_partial_forces, forces, ierr2)
   ierr = ierr + ierr2
   if (ierr /= 0) then
-     call my_error("set_data", __LINE__, __FILE__)
+     call my_error("set_argument_pointer", __LINE__, __FILE__)
   endif
 
   ! Allocate storage for neighbor lists and
@@ -336,11 +335,12 @@ program vc_forces_numer_deriv
 
   ! Set pointer in KIM object to neighbor list routine and object
   !
-  call kim_model_set_call_back(model, kim_call_back_name_get_neigh, &
-    kim_language_name_fortran, c_funloc(get_neigh), c_loc(neighobject))
+  call kim_model_set_callback_pointer(model, &
+    kim_callback_name_get_neighbor_list, kim_language_name_fortran, &
+    c_funloc(get_neigh), c_loc(neighobject))
 
   call kim_model_get_influence_distance(model, influence_distance)
-  call kim_model_get_cutoffs(model, number_of_cutoffs, cutoffs)
+  call kim_model_get_cutoffs_pointer(model, number_of_cutoffs, cutoffs)
   if (number_of_cutoffs /= 1) then
     call my_error("too many cutoffs", __LINE__, __FILE__)
   endif
@@ -396,9 +396,10 @@ program vc_forces_numer_deriv
   ! Turn off force computation, if possible
   !
   if (forces_optional) then
-    call kim_model_set_data(model, kim_argument_name_forces, null_pointer, ierr)
+    call kim_model_set_argument_pointer(model, &
+      kim_argument_name_partial_forces, null_pointer, ierr)
     if (ierr /= 0) then
-      call my_error("set_data", __LINE__, __FILE__)
+      call my_error("set_argument_pointer", __LINE__, __FILE__)
     endif
   endif
 
@@ -498,9 +499,9 @@ subroutine check_model_compatibility(model, forces_optional, &
   use, intrinsic :: iso_c_binding
   use error
   use kim_model_module
-  use kim_attribute_module
+  use kim_support_status_module
   use kim_argument_name_module
-  use kim_call_back_name_module
+  use kim_callback_name_module
   implicit none
 
   !-- Transferred variables
@@ -512,10 +513,10 @@ subroutine check_model_compatibility(model, forces_optional, &
   !-- Local variables
   integer(c_int) i
   integer(c_int) number_of_arguments
-  integer(c_int) number_of_call_backs
+  integer(c_int) number_of_callbacks
   type(kim_argument_name_type) argument_name
-  type(kim_attribute_type) attribute
-  type(kim_call_back_name_type) call_back_name
+  type(kim_support_status_type) support_status
+  type(kim_callback_name_type) callback_name
 
 
   ! assume fail
@@ -531,17 +532,18 @@ subroutine check_model_compatibility(model, forces_optional, &
         __LINE__, __FILE__)
       return
     end if
-    call kim_model_get_argument_attribute(model, argument_name, attribute, ierr)
+    call kim_model_get_argument_support_status(model, argument_name, &
+      support_status, ierr)
     if (ierr /= 0) then
-      call my_warning("can't get argument attribute", &
+      call my_warning("can't get argument support_status", &
         __LINE__, __FILE__)
       return
     end if
 
     ! can only handle energy and forces as required args
-    if (attribute == kim_attribute_required) then
-      if (.not. ((argument_name == kim_argument_name_energy) .or. &
-                 (argument_name == kim_argument_name_forces))) then
+    if (support_status == kim_support_status_required) then
+      if (.not. ((argument_name == kim_argument_name_partial_energy) .or. &
+                 (argument_name == kim_argument_name_partial_forces))) then
         call my_warning("unsupported required argument", &
           __LINE__, __FILE__)
         ierr = 0
@@ -550,25 +552,25 @@ subroutine check_model_compatibility(model, forces_optional, &
     end if
 
     ! need both energy and forces not "notSupported"
-    if ((argument_name == kim_argument_name_energy) .and. &
-      (attribute == kim_attribute_not_supported)) then
+    if ((argument_name == kim_argument_name_partial_energy) .and. &
+      (support_status == kim_support_status_not_supported)) then
       call my_warning("model does not support energy", &
         __LINE__, __FILE__)
       ierr = 0
       return
     end if
-    if (argument_name == kim_argument_name_forces) then
-      if (attribute == kim_attribute_not_supported) then
+    if (argument_name == kim_argument_name_partial_forces) then
+      if (support_status == kim_support_status_not_supported) then
         call my_warning("model does not support forces", &
           __LINE__, __FILE__)
         ierr = 0
         return
-      else if (attribute == kim_attribute_required) then
+      else if (support_status == kim_support_status_required) then
         forces_optional = .false.
-      else if (attribute == kim_attribute_optional) then
+      else if (support_status == kim_support_status_optional) then
         forces_optional = .true.
       else
-        call my_warning("unknown attribute for forces", &
+        call my_warning("unknown support_status for forces", &
           __LINE__, __FILE__)
         ierr = 0
         return
@@ -577,24 +579,24 @@ subroutine check_model_compatibility(model, forces_optional, &
   end do
 
   ! check call backs
-  call kim_call_back_name_get_number_of_call_backs(number_of_call_backs)
-  do i=1,number_of_call_backs
-    call kim_call_back_name_get_call_back_name(i, call_back_name, ierr)
+  call kim_callback_name_get_number_of_callbacks(number_of_callbacks)
+  do i=1,number_of_callbacks
+    call kim_callback_name_get_callback_name(i, callback_name, ierr)
     if (ierr /= 0) then
       call my_warning("can't get call back name", &
         __LINE__, __FILE__)
       return
     end if
-    call kim_model_get_call_back_attribute(model, call_back_name, attribute, &
-      ierr)
+    call kim_model_get_callback_support_status(model, callback_name, &
+      support_status, ierr)
     if (ierr /= 0) then
-      call my_warning("can't get call back attribute", &
+      call my_warning("can't get call back support_status", &
         __LINE__, __FILE__)
       return
     end if
 
     ! cannot handle any "required" call backs
-    if (attribute == kim_attribute_required) then
+    if (support_status == kim_support_status_required) then
       call my_warning("unsupported required call back", &
         __LINE__, __FILE__)
       ierr = 0

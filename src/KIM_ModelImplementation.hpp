@@ -70,16 +70,16 @@
 #include "KIM_SpeciesName.hpp"
 #endif
 
-#ifndef KIM_ATTRIBUTE_HPP_
-#include "KIM_Attribute.hpp"
+#ifndef KIM_SUPPORT_STATUS_HPP_
+#include "KIM_SupportStatus.hpp"
 #endif
 
 #ifndef KIM_ARGUMENT_NAME_HPP_
 #include "KIM_ArgumentName.hpp"
 #endif
 
-#ifndef KIM_CALL_BACK_NAME_HPP_
-#include "KIM_CallBackName.hpp"
+#ifndef KIM_CALLBACK_NAME_HPP_
+#include "KIM_CallbackName.hpp"
 #endif
 
 #ifndef KIM_MODEL_LIBRARY_HPP_
@@ -95,7 +95,7 @@ namespace KIM
 class ModelImplementation
 {
  public:
-  static int create(Numbering const numbering,
+  static int Create(Numbering const numbering,
                     LengthUnit const requestedLengthUnit,
                     EnergyUnit const requestedEnergyUnit,
                     ChargeUnit const requestedChargeUnit,
@@ -104,120 +104,128 @@ class ModelImplementation
                     std::string const & modelName,
                     int * const requestedUnitsAccepted,
                     ModelImplementation ** const modelImplementation);
-  static void destroy(ModelImplementation ** const modelImplementation);
+  static void Destroy(ModelImplementation ** const modelImplementation);
 
-  void set_influence_distance(double const * const influenceDistance);
-  void get_influence_distance(double * const influenceDistance) const;
+  void SetInfluenceDistancePointer(double const * const influenceDistance);
+  void GetInfluenceDistance(double * const influenceDistance) const;
 
 
-  void set_cutoffs(int const numberOfCutoffs, double const * const cutoffs);
+  void SetCutoffsPointer(int const numberOfCutoffs,
+                         double const * const cutoffs);
   // allows NULL as value of cutoffs (to get just numberOfCutoffs)
-  void get_cutoffs(int * const numberOfCutoffs, double const ** const cutoffs)
-      const;
+  void GetCutoffsPointer(int * const numberOfCutoffs,
+                         double const ** const cutoffs) const;
 
 
-  int set_reinit(LanguageName const languageName, func * const fptr);
-  int set_destroy(LanguageName const languageName, func * const fptr);
-  int set_compute_func(LanguageName const languageName, func * const fptr);
+  int SetRefreshPointer(LanguageName const languageName, func * const fptr);
+  int SetDestroyPointer(LanguageName const languageName, func * const fptr);
+  int SetComputePointer(LanguageName const languageName, func * const fptr);
 
 
-  int set_species_code(SpeciesName const speciesName, int const code);
-  int get_species_support_and_code(KIM::SpeciesName const speciesName,
-                                   int * const speciesIsSupported,
-                                   int * const code) const;
+  int SetSpeciesCode(SpeciesName const speciesName, int const code);
+  int GetSpeciesSupportAndCode(KIM::SpeciesName const speciesName,
+                               int * const speciesIsSupported,
+                               int * const code) const;
 
 
-  int set_argument_attribute(ArgumentName const argumentName,
-                             Attribute const attribute);
-  int get_argument_attribute(ArgumentName const argumentName,
-                             Attribute * const attribute) const;
+  int SetArgumentSupportStatus(ArgumentName const argumentName,
+                               SupportStatus const supportStatus);
+  int GetArgumentSupportStatus(ArgumentName const argumentName,
+                               SupportStatus * const supportStatus) const;
 
 
-  int set_call_back_attribute(CallBackName const callBackName,
-                              Attribute const attribute);
-  int get_call_back_attribute(CallBackName const callBackName,
-                              Attribute * const attribute) const;
+  int SetCallbackSupportStatus(CallbackName const callbackName,
+                               SupportStatus const supportStatus);
+  int GetCallbackSupportStatus(CallbackName const callbackName,
+                               SupportStatus * const supportStatus) const;
 
-  int set_model_numbering(Numbering const numbering);
-  int set_simulator_numbering(Numbering const numbering);
+  int SetModelNumbering(Numbering const numbering);
+ private:
+  int SetSimulatorNumbering(Numbering const numbering);
+ public:
 
-  int set_units(LengthUnit const lengthUnit,
-                EnergyUnit const energyUnit,
-                ChargeUnit const chargeUnit,
-                TemperatureUnit const temperatureUnit,
-                TimeUnit const timeUnit);
-  void get_units(LengthUnit * const lengthUnit,
-                 EnergyUnit * const energyUnit,
-                 ChargeUnit * const chargeUnit,
-                 TemperatureUnit * const temperatureUnit,
-                 TimeUnit * const timeUnit) const;
+  int SetUnits(LengthUnit const lengthUnit,
+               EnergyUnit const energyUnit,
+               ChargeUnit const chargeUnit,
+               TemperatureUnit const temperatureUnit,
+               TimeUnit const timeUnit);
+  void GetUnits(LengthUnit * const lengthUnit,
+                EnergyUnit * const energyUnit,
+                ChargeUnit * const chargeUnit,
+                TemperatureUnit * const temperatureUnit,
+                TimeUnit * const timeUnit) const;
 
 
-  int get_number_of_parameter_files(int * const numberOfParameterFiles) const;
-  int get_parameter_file_name(int const index,
-                              std::string * const parameterFileName) const;
+  int GetNumberOfParameterFiles(int * const numberOfParameterFiles) const;
+  int GetParameterFileName(int const index,
+                           std::string * const parameterFileName) const;
 
-  int set_parameter(int const extent, int * const ptr,
-                    std::string const & description);
-  int set_parameter(int const extent, double * const ptr,
-                    std::string const & description);
-  void get_num_params(int * const numberOfParameters) const;
-  int get_parameter_data_type_and_description(
+  int SetParameterPointer(int const extent, int * const ptr,
+                          std::string const & description);
+  int SetParameterPointer(int const extent, double * const ptr,
+                          std::string const & description);
+  void GetNumberOfParameters(int * const numberOfParameters) const;
+  int GetParameterDataTypeAndDescription(
       int const index, DataType * const dataType,
       std::string * const description) const;
-  int get_parameter_extent_and_pointer(int const index, int * extent,
-                                       int ** const ptr);
-  int get_parameter_extent_and_pointer(int const index, int * extent,
-                                       int const ** const ptr) const;
-  int get_parameter_extent_and_pointer(int const index, int * extent,
-                                       double ** const ptr);
-  int get_parameter_extent_and_pointer(int const index, int * extent,
-                                       double const ** const ptr) const;
+  int GetParameterExtentAndPointer(int const index, int * extent,
+                                   int ** const ptr);
+  int GetParameterExtentAndPointer(int const index, int * extent,
+                                   int const ** const ptr) const;
+  int GetParameterExtentAndPointer(int const index, int * extent,
+                                   double ** const ptr);
+  int GetParameterExtentAndPointer(int const index, int * extent,
+                                   double const ** const ptr) const;
 
 
-  int set_data(ArgumentName const argumentName, int const * const ptr);
-  int set_data(ArgumentName const argumentName, double const * const ptr);
-  int get_data(ArgumentName const argumentName, int const ** const ptr) const;
-  int get_data(ArgumentName const argumentName, int ** const ptr) const;
-  int get_data(ArgumentName const argumentName, double const ** const ptr)
+  int SetArgumentPointer(ArgumentName const argumentName,
+                         int const * const ptr);
+  int SetArgumentPointer(ArgumentName const argumentName,
+                         double const * const ptr);
+  int GetArgumentPointer(ArgumentName const argumentName,
+                         int const ** const ptr) const;
+  int GetArgumentPointer(ArgumentName const argumentName,
+                         int ** const ptr) const;
+  int GetArgumentPointer(ArgumentName const argumentName,
+                         double const ** const ptr) const;
+  int GetArgumentPointer(ArgumentName const argumentName,
+                         double ** const ptr) const;
+
+
+  int SetCallbackPointer(CallbackName const callbackName,
+                         LanguageName const languageName,
+                         func * const fptr,
+                         void const * const dataObject);
+  int IsCallbackPresent(CallbackName const callbackName, int * const present)
       const;
-  int get_data(ArgumentName const argumentName, double ** const ptr) const;
 
 
-  int set_call_back(CallBackName const callBackName,
-                    LanguageName const languageName,
-                    func * const fptr,
-                    void const * const dataObject);
-  int is_call_back_present(CallBackName const callBackName, int * const present)
-      const;
+  int Compute() const;
+  int ClearInfluenceDistanceAndCutoffsThenRefreshModel();
 
 
-  int compute() const;
-  int ClearInfluenceDistanceAndCutoffsThenReinitializeModel();
+  int GetNeighborList(int const neighborListIndex, int const particleNumber,
+                      int * const numberOfNeighbors,
+                      int const ** const neighborsOfParticle) const;
 
+  int ProcessDEDrTerm(double const de, double const r, double const * const dx,
+                      int const i, int const j) const;
 
-  int get_neigh(int const neighborListIndex, int const particleNumber,
-                int * const numberOfNeighbors,
-                int const ** const neighborsOfParticle) const;
-
-  int process_dEdr(double const de, double const r, double const * const dx,
-                   int const i, int const j) const;
-
-  int process_d2Edr2(double const de, double const * const r,
-                     double const * const dx, int const * const i,
-                     int const * const j) const;
+  int ProcessD2EDr2Term(double const de, double const * const r,
+                        double const * const dx, int const * const i,
+                        int const * const j) const;
 
 
 
 
-  void set_model_buffer(void * const ptr);
-  void get_model_buffer(void ** const ptr) const;
+  void SetModelBufferPointer(void * const ptr);
+  void GetModelBufferPointer(void ** const ptr) const;
 
 
-  void set_sim_buffer(void * const ptr);
-  void get_sim_buffer(void ** const ptr) const;
+  void SetSimulatorBufferPointer(void * const ptr);
+  void GetSimulatorBufferPointer(void ** const ptr) const;
 
-  int convert_unit(
+  int ConvertUnit(
       LengthUnit const fromLengthUnit,
       EnergyUnit const fromEnergyUnit,
       ChargeUnit const fromChargeUnit,
@@ -242,7 +250,7 @@ class ModelImplementation
   void PopLogVerbosity();
   void Log(LogVerbosity const logVerbosity, std::string const & message,
            int const lineNumber, std::string const & fileName) const;
-  std::string string() const;
+  std::string String() const;
 
  private:
   // do not allow copy constructor or operator=
@@ -252,13 +260,13 @@ class ModelImplementation
   ModelImplementation(ModelLibrary * const modelLibrary);
   ~ModelImplementation();
 
-  int ModelInitialization(Numbering const numbering,
-                          LengthUnit const requestedLengthUnit,
-                          EnergyUnit const requestedEnergyUnit,
-                          ChargeUnit const requestedChargeUnit,
-                          TemperatureUnit const requestedTemperatureUnit,
-                          TimeUnit const requestedTimeUnit,
-                          std::string const & modelName);
+  int ModelCreate(Numbering const numbering,
+                  LengthUnit const requestedLengthUnit,
+                  EnergyUnit const requestedEnergyUnit,
+                  ChargeUnit const requestedChargeUnit,
+                  TemperatureUnit const requestedTemperatureUnit,
+                  TimeUnit const requestedTimeUnit,
+                  std::string const & modelName);
   int ModelDestroy();
 
 
@@ -305,8 +313,8 @@ class ModelImplementation
   double const * cutoffs_;
 
 
-  LanguageName reinitializationLanguage_;
-  func * reinitializationFunction_;
+  LanguageName refreshLanguage_;
+  func * refreshFunction_;
   LanguageName destroyLanguage_;
   func * destroyFunction_;
   LanguageName computeLanguage_;
@@ -316,15 +324,15 @@ class ModelImplementation
   std::unordered_map<SpeciesName const, int> supportedSpecies_;
 
 
-  std::unordered_map<ArgumentName const, Attribute> argumentAttribute_;
+  std::unordered_map<ArgumentName const, SupportStatus> argumentSupportStatus_;
   std::unordered_map<ArgumentName const, void *> argumentPointer_;
 
 
-  std::unordered_map<CallBackName const, Attribute> callBackAttribute_;
-  std::unordered_map<CallBackName const, LanguageName> callBackLanguage_;
-  std::unordered_map<CallBackName const, func *> callBackFunctionPointer_;
-  std::unordered_map<CallBackName const, void const *>
-  callBackDataObjectPointer_;
+  std::unordered_map<CallbackName const, SupportStatus> callbackSupportStatus_;
+  std::unordered_map<CallbackName const, LanguageName> callbackLanguage_;
+  std::unordered_map<CallbackName const, func *> callbackFunctionPointer_;
+  std::unordered_map<CallbackName const, void const *>
+  callbackDataObjectPointer_;
 
   mutable std::vector<std::vector<int> > getNeighborListStorage_;
 

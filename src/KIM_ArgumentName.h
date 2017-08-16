@@ -61,18 +61,18 @@ extern KIM_ArgumentName const KIM_ARGUMENT_NAME_numberOfParticles;
 extern KIM_ArgumentName const KIM_ARGUMENT_NAME_particleSpecies;
 extern KIM_ArgumentName const KIM_ARGUMENT_NAME_particleContributing;
 extern KIM_ArgumentName const KIM_ARGUMENT_NAME_coordinates;
-extern KIM_ArgumentName const KIM_ARGUMENT_NAME_energy;
-extern KIM_ArgumentName const KIM_ARGUMENT_NAME_forces;
-extern KIM_ArgumentName const KIM_ARGUMENT_NAME_particleEnergy;
-extern KIM_ArgumentName const KIM_ARGUMENT_NAME_virial;
-extern KIM_ArgumentName const KIM_ARGUMENT_NAME_particleVirial;
-extern KIM_ArgumentName const KIM_ARGUMENT_NAME_hessian;
+extern KIM_ArgumentName const KIM_ARGUMENT_NAME_partialEnergy;
+extern KIM_ArgumentName const KIM_ARGUMENT_NAME_partialForces;
+extern KIM_ArgumentName const KIM_ARGUMENT_NAME_partialParticleEnergy;
+extern KIM_ArgumentName const KIM_ARGUMENT_NAME_partialVirial;
+extern KIM_ArgumentName const KIM_ARGUMENT_NAME_partialParticleVirial;
+extern KIM_ArgumentName const KIM_ARGUMENT_NAME_partialHessian;
 
-void KIM_ARGUMENT_NAME_get_number_of_arguments(int * const numberOfArguments);
-int KIM_ARGUMENT_NAME_get_argument_name(
+void KIM_ARGUMENT_NAME_GetNumberOfArguments(int * const numberOfArguments);
+int KIM_ARGUMENT_NAME_GetArgumentName(
     int const index, KIM_ArgumentName * const argumentName);
 
-int KIM_ARGUMENT_NAME_get_argument_data_type(
+int KIM_ARGUMENT_NAME_GetArgumentDataType(
     KIM_ArgumentName const argumentName,
     KIM_DataType * const dataType);
 

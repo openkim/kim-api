@@ -374,7 +374,7 @@ bool SpeciesName::operator==(SpeciesName const & rhs) const
 bool SpeciesName::operator!=(SpeciesName const & rhs) const
 {return speciesNameID!=rhs.speciesNameID;}
 
-std::string SpeciesName::string() const
+std::string SpeciesName::String() const
 {
   std::string result;
   auto iter = SPECIES_NAME::speciesNameToString.find(*this);

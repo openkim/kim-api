@@ -66,7 +66,7 @@ int KIM_NumberingNotEqual(KIM_Numbering const left, KIM_Numbering const right)
 char const * const KIM_NumberingString(
     KIM_Numbering const numbering)
 {
-  return (makeNumberingCpp(numbering)).string().c_str();
+  return (makeNumberingCpp(numbering)).String().c_str();
 }
 
 KIM_Numbering const KIM_NUMBERING_zeroBased = {0};

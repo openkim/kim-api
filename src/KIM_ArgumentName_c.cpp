@@ -82,7 +82,7 @@ int KIM_ArgumentNameNotEqual(KIM_ArgumentName const left,
 
 char const * const KIM_ArgumentNameString(KIM_ArgumentName argumentName)
 {
-  return (makeArgumentNameCpp(argumentName)).string().c_str();
+  return (makeArgumentNameCpp(argumentName)).String().c_str();
 }
 
 // Order doesn't matter as long as all values are unique
@@ -90,23 +90,23 @@ KIM_ArgumentName const KIM_ARGUMENT_NAME_numberOfParticles = {0};
 KIM_ArgumentName const KIM_ARGUMENT_NAME_particleSpecies = {1};
 KIM_ArgumentName const KIM_ARGUMENT_NAME_particleContributing = {2};
 KIM_ArgumentName const KIM_ARGUMENT_NAME_coordinates = {3};
-KIM_ArgumentName const KIM_ARGUMENT_NAME_energy = {4};
-KIM_ArgumentName const KIM_ARGUMENT_NAME_forces = {5};
-KIM_ArgumentName const KIM_ARGUMENT_NAME_particleEnergy = {6};
-KIM_ArgumentName const KIM_ARGUMENT_NAME_virial = {7};
-KIM_ArgumentName const KIM_ARGUMENT_NAME_particleVirial = {8};
-KIM_ArgumentName const KIM_ARGUMENT_NAME_hessian = {9};
+KIM_ArgumentName const KIM_ARGUMENT_NAME_partialEnergy = {4};
+KIM_ArgumentName const KIM_ARGUMENT_NAME_partialForces = {5};
+KIM_ArgumentName const KIM_ARGUMENT_NAME_partialParticleEnergy = {6};
+KIM_ArgumentName const KIM_ARGUMENT_NAME_partialVirial = {7};
+KIM_ArgumentName const KIM_ARGUMENT_NAME_partialParticleVirial = {8};
+KIM_ArgumentName const KIM_ARGUMENT_NAME_partialHessian = {9};
 
-void KIM_ARGUMENT_NAME_get_number_of_arguments(int * const numberOfArguments)
+void KIM_ARGUMENT_NAME_GetNumberOfArguments(int * const numberOfArguments)
 {
-  KIM::ARGUMENT_NAME::get_number_of_arguments(numberOfArguments);
+  KIM::ARGUMENT_NAME::GetNumberOfArguments(numberOfArguments);
 }
 
-int KIM_ARGUMENT_NAME_get_argument_name(int const index,
-                                        KIM_ArgumentName * const argumentName)
+int KIM_ARGUMENT_NAME_GetArgumentName(int const index,
+                                      KIM_ArgumentName * const argumentName)
 {
   KIM::ArgumentName argumentNameCpp;
-  int err = KIM::ARGUMENT_NAME::get_argument_name(index, &argumentNameCpp);
+  int err = KIM::ARGUMENT_NAME::GetArgumentName(index, &argumentNameCpp);
   if (err) return err;
   KIM_ArgumentName * argumentNameC
       = reinterpret_cast<KIM_ArgumentName *>(&argumentNameCpp);
@@ -114,7 +114,7 @@ int KIM_ARGUMENT_NAME_get_argument_name(int const index,
   return false;
 }
 
-int KIM_ARGUMENT_NAME_get_argument_data_type(
+int KIM_ARGUMENT_NAME_GetArgumentDataType(
     KIM_ArgumentName const argumentName,
     KIM_DataType * const dataType)
 {
@@ -122,7 +122,7 @@ int KIM_ARGUMENT_NAME_get_argument_data_type(
       = reinterpret_cast<KIM::ArgumentName const *>(&argumentName);
   KIM::DataType dataTypeCpp;
   int err = KIM::ARGUMENT_NAME::
-      get_argument_data_type(*argumentNameCpp, &dataTypeCpp);
+      GetArgumentDataType(*argumentNameCpp, &dataTypeCpp);
   if (err) return err;
   KIM_DataType * dataTypeC = reinterpret_cast<KIM_DataType *>(&dataTypeCpp);
 

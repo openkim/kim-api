@@ -45,8 +45,8 @@
 #include "KIM_Numbering.hpp"
 #include "KIM_Model.hpp"
 #include "KIM_ArgumentName.hpp"
-#include "KIM_CallBackName.hpp"
-#include "KIM_Attribute.hpp"
+#include "KIM_CallbackName.hpp"
+#include "KIM_SupportStatus.hpp"
 #include "KIM_UnitSystem.hpp"
 
 #define NAMESTRLEN    128
@@ -128,7 +128,7 @@ int main()
   /* initialize the model */
   KIM::Model * kim_cluster_model;
   int requestedUnitsAccepted;
-  error = KIM::Model::create(
+  error = KIM::Model::Create(
       KIM::NUMBERING::zeroBased,
       KIM::LENGTH_UNIT::A,
       KIM::ENERGY_UNIT::eV,
@@ -156,20 +156,20 @@ int main()
   KIM::TemperatureUnit temperatureUnit;
   KIM::TimeUnit timeUnit;
 
-  kim_cluster_model->get_units(&lengthUnit, &energyUnit, &chargeUnit,
-                               &temperatureUnit, &timeUnit);
+  kim_cluster_model->GetUnits(&lengthUnit, &energyUnit, &chargeUnit,
+                              &temperatureUnit, &timeUnit);
 
-  std::cout << "LengthUnit is \"" << lengthUnit.string() << "\"" << std::endl
-            << "EnergyUnit is \"" << energyUnit.string() << "\"" << std::endl
-            << "ChargeUnit is \"" << chargeUnit.string() << "\"" << std::endl
-            << "TemperatureUnit is \"" << temperatureUnit.string()
+  std::cout << "LengthUnit is \"" << lengthUnit.String() << "\"" << std::endl
+            << "EnergyUnit is \"" << energyUnit.String() << "\"" << std::endl
+            << "ChargeUnit is \"" << chargeUnit.String() << "\"" << std::endl
+            << "TemperatureUnit is \"" << temperatureUnit.String()
             << "\"" << std::endl
-            << "TimeUnit is \"" << timeUnit.string() << "\"" << std::endl;
+            << "TimeUnit is \"" << timeUnit.String() << "\"" << std::endl;
 
   // check species
   int speciesIsSupported;
   int modelArCode;
-  error = kim_cluster_model->get_species_support_and_code(
+  error = kim_cluster_model->GetSpeciesSupportAndCode(
       KIM::SPECIES_NAME::Ar, &speciesIsSupported, &modelArCode);
   if ((error) || (!speciesIsSupported))
   {
@@ -178,41 +178,42 @@ int main()
 
   // check arguments
   int numberOfArguments;
-  KIM::ARGUMENT_NAME::get_number_of_arguments(&numberOfArguments);
+  KIM::ARGUMENT_NAME::GetNumberOfArguments(&numberOfArguments);
   for (int i=0; i<numberOfArguments; ++i)
   {
     KIM::ArgumentName argumentName;
-    KIM::Attribute attribute;
-    KIM::ARGUMENT_NAME::get_argument_name(i, &argumentName);
+    KIM::SupportStatus supportStatus;
+    KIM::ARGUMENT_NAME::GetArgumentName(i, &argumentName);
     KIM::DataType dataType;
-    KIM::ARGUMENT_NAME::get_argument_data_type(argumentName, &dataType);
-    error = kim_cluster_model->get_argument_attribute(argumentName, &attribute);
+    KIM::ARGUMENT_NAME::GetArgumentDataType(argumentName, &dataType);
+    error = kim_cluster_model->GetArgumentSupportStatus(argumentName,
+                                                        &supportStatus);
     if (error)
-      MY_ERROR("unable to get argument attribute");
+      MY_ERROR("unable to get argument supportStatus");
 
     std::cout << "Argument Name \""
-              << argumentName.string() << "\""
+              << argumentName.String() << "\""
               << " is of type \""
-              << dataType.string() << "\""
-              << " and has attribute \""
-              << attribute.string() << "\""
+              << dataType.String() << "\""
+              << " and has supportStatus \""
+              << supportStatus.String() << "\""
               << std::endl;
 
     // can only handle energy as a required arg
-    if (attribute == KIM::ATTRIBUTE::required)
+    if (supportStatus == KIM::SUPPORT_STATUS::required)
     {
-      if (argumentName != KIM::ARGUMENT_NAME::energy)
+      if (argumentName != KIM::ARGUMENT_NAME::partialEnergy)
       {
         MY_ERROR("unsupported required argument");
       }
     }
 
     // must have energy
-    if (argumentName == KIM::ARGUMENT_NAME::energy)
+    if (argumentName == KIM::ARGUMENT_NAME::partialEnergy)
     {
-      if (! ((attribute == KIM::ATTRIBUTE::required)
+      if (! ((supportStatus == KIM::SUPPORT_STATUS::required)
              ||
-             (attribute == KIM::ATTRIBUTE::optional)))
+             (supportStatus == KIM::SUPPORT_STATUS::optional)))
       {
         MY_ERROR("energy not available");
       }
@@ -220,23 +221,23 @@ int main()
   }
 
   // check call backs
-  int numberOfCallBacks;
-  KIM::CALL_BACK_NAME::get_number_of_call_backs(&numberOfCallBacks);
-  for (int i=0; i<numberOfCallBacks; ++i)
+  int numberOfCallbacks;
+  KIM::CALLBACK_NAME::GetNumberOfCallbacks(&numberOfCallbacks);
+  for (int i=0; i<numberOfCallbacks; ++i)
   {
-    KIM::CallBackName callBackName;
-    KIM::CALL_BACK_NAME::get_call_back_name(i, &callBackName);
-    KIM::Attribute attribute;
-    kim_cluster_model->get_call_back_attribute(callBackName, &attribute);
+    KIM::CallbackName callbackName;
+    KIM::CALLBACK_NAME::GetCallbackName(i, &callbackName);
+    KIM::SupportStatus supportStatus;
+    kim_cluster_model->GetCallbackSupportStatus(callbackName, &supportStatus);
 
-    std::cout << "CallBack Name \""
-              << callBackName.string() << "\""
-              << " has attribute \""
-              << attribute.string() << "\""
+    std::cout << "Callback Name \""
+              << callbackName.String() << "\""
+              << " has supportStatus \""
+              << supportStatus.String() << "\""
               << std::endl;
 
     // cannot handle any "required" call backs
-    if (attribute == KIM::ATTRIBUTE::required)
+    if (supportStatus == KIM::SUPPORT_STATUS::required)
     {
       MY_ERROR("unsupported required call back");
     }
@@ -245,59 +246,59 @@ int main()
   // We're compatible with the model. Let's do it.
 
   int numberOfParameters;
-  kim_cluster_model->get_num_params(&numberOfParameters);
+  kim_cluster_model->GetNumberOfParameters(&numberOfParameters);
   for (int i=0; i<numberOfParameters; ++i)
   {
     KIM::DataType dataType;
     std::string str;
     int extent;
-    kim_cluster_model->get_parameter_data_type_and_description(
-        i, &dataType, &str);
+    kim_cluster_model->GetParameterDataTypeAndDescription(i, &dataType, &str);
     if (dataType == KIM::DATA_TYPE::Integer)
     {
       int const * intPtr;
-      kim_cluster_model->get_parameter_extent_and_pointer(i, &extent, &intPtr);
+      kim_cluster_model->GetParameterExtentAndPointer(i, &extent, &intPtr);
       std::cout << "Parameter No. " << i
-                << " has data type \"" << dataType.string() << "\""
+                << " has data type \"" << dataType.String() << "\""
                 << " with extent " << extent
                 << " and description : " << str << std::endl;
     }
     else
     {
       double const * doublePtr;
-      kim_cluster_model->get_parameter_extent_and_pointer(i, &extent,
-                                                          &doublePtr);
+      kim_cluster_model->GetParameterExtentAndPointer(i, &extent, &doublePtr);
       std::cout << "Parameter No. " << i
-                << " has data type \"" << dataType.string() << "\""
+                << " has data type \"" << dataType.String() << "\""
                 << " with extent " << extent
                 << " and description : " << str << std::endl;
     }
   }
 
-  error = kim_cluster_model->set_data(
+  error = kim_cluster_model->SetArgumentPointer(
       KIM::ARGUMENT_NAME::numberOfParticles, (int *) &numberOfParticles_cluster)
-      || kim_cluster_model->set_data(
+      || kim_cluster_model->SetArgumentPointer(
           KIM::ARGUMENT_NAME::particleSpecies, particleSpecies_cluster_model)
-      || kim_cluster_model->set_data(
+      || kim_cluster_model->SetArgumentPointer(
           KIM::ARGUMENT_NAME::particleContributing, particleContributing_cluster_model)
-      || kim_cluster_model->set_data(
+      || kim_cluster_model->SetArgumentPointer(
           KIM::ARGUMENT_NAME::coordinates, (double*) coords_cluster)
-      || kim_cluster_model->set_data(
-          KIM::ARGUMENT_NAME::energy, &energy_cluster_model);
+      || kim_cluster_model->SetArgumentPointer(
+          KIM::ARGUMENT_NAME::partialEnergy, &energy_cluster_model);
   if (error) MY_ERROR("KIM_API_set_data");
-  error = kim_cluster_model->set_call_back(KIM::CALL_BACK_NAME::get_neigh,
-                                           KIM::LANGUAGE_NAME::Cpp,
-                                           (KIM::func *) &get_cluster_neigh,
-                                           &nl_cluster_model);
+  error = kim_cluster_model->SetCallbackPointer(
+      KIM::CALLBACK_NAME::GetNeighborList,
+      KIM::LANGUAGE_NAME::cpp,
+      (KIM::func *) &get_cluster_neigh,
+      &nl_cluster_model);
   if (error) MY_ERROR("set_call_back");
 
-  kim_cluster_model->get_influence_distance(&influence_distance_cluster_model);
-  kim_cluster_model->get_cutoffs(&number_of_cutoffs, &cutoff_cluster_model);
+  kim_cluster_model->GetInfluenceDistance(&influence_distance_cluster_model);
+  kim_cluster_model->GetCutoffsPointer(&number_of_cutoffs,
+                                       &cutoff_cluster_model);
   if (number_of_cutoffs != 1) MY_ERROR("too many cutoffs");
 
   /* setup particleSpecies */
   int isSpeciesSupported;
-  error = kim_cluster_model->get_species_support_and_code(
+  error = kim_cluster_model->GetSpeciesSupportAndCode(
       KIM::SPECIES_NAME::Ar,
       &isSpeciesSupported,
       &(particleSpecies_cluster_model[0]));
@@ -332,7 +333,7 @@ int main()
                              (*cutoff_cluster_model + cutpad), &nl_cluster_model);
 
     /* call compute functions */
-    error = kim_cluster_model->compute();
+    error = kim_cluster_model->Compute();
     if (error) MY_ERROR("compute");
 
     /* print the results */
@@ -344,7 +345,7 @@ int main()
 
 
   /* call model destroy */
-  KIM::Model::destroy(&kim_cluster_model);
+  KIM::Model::Destroy(&kim_cluster_model);
 
   /* free memory of neighbor lists */
   delete [] nl_cluster_model.NNeighbors;

@@ -65,7 +65,7 @@ int KIM_LengthUnitNotEqual(KIM_LengthUnit left, KIM_LengthUnit right)
 
 char const * const KIM_LengthUnitString(KIM_LengthUnit const lengthUnit)
 {
-  return (makeLengthUnitCpp(lengthUnit)).string().c_str();
+  return (makeLengthUnitCpp(lengthUnit)).String().c_str();
 }
 
 KIM_LengthUnit const KIM_LENGTH_UNIT_any = {0};

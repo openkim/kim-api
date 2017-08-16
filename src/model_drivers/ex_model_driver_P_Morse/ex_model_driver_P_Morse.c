@@ -54,11 +54,11 @@
 #include "KIM_TimeUnit.h"
 #include "KIM_LanguageName.h"
 #include "KIM_SpeciesName.h"
-#include "KIM_Attribute.h"
+#include "KIM_SupportStatus.h"
 #include "KIM_ArgumentName.h"
 #include "KIM_CallBackName.h"
-#include "KIM_ModelDriverInitialization.h"
-#include "KIM_ModelReinitialization.h"
+#include "KIM_ModelDriverCreate.h"
+#include "KIM_ModelRefresh.h"
 #include "KIM_ModelCompute.h"
 #include "KIM_ModelDestroy.h"
 
@@ -73,8 +73,8 @@
 
 
 /* Define prototype for Model Driver init */
-int model_driver_init(
-    KIM_ModelDriverInitialization * const modelDriverInitialization,
+int model_driver_create(
+    KIM_ModelDriverCreate * const modelDriverCreate,
     KIM_LengthUnit const requestedLengthUnit,
     KIM_EnergyUnit const requestedEnergyUnit,
     KIM_ChargeUnit const requestedChargeUnit,
@@ -88,8 +88,8 @@ static int destroy(KIM_ModelDestroy * const modelDestroy);
 /* Define prototype for compute routine */
 static int compute(KIM_ModelCompute const * const modelCompute);
 
-/* Define prototype for reinitialization routine */
-static int reinit(KIM_ModelReinitialization * const modelReinitialization);
+/* Define prototype for refresh routine */
+static int refresh(KIM_ModelRefresh * const modelRefresh);
 
 /* Define prototypes for pair potential calculations */
 static void calc_phi(double const * epsilon,
@@ -212,7 +212,7 @@ static int compute(KIM_ModelCompute const * const modelCompute)
   int numOfPartNeigh;
 
   /* get buffer from KIM object */
-  KIM_ModelCompute_get_model_buffer(modelCompute, (void **) &buffer);
+  KIM_ModelCompute_GetModelBufferPointer(modelCompute, (void **) &buffer);
 
   /* unpack info from the buffer */
   cutoff = buffer->influenceDistance;
@@ -223,34 +223,43 @@ static int compute(KIM_ModelCompute const * const modelCompute)
   shift = &(buffer->shift);
 
   ier =
-      KIM_ModelCompute_get_data_int(modelCompute,
-                                    KIM_ARGUMENT_NAME_numberOfParticles,
-                                    &nParts)
+      KIM_ModelCompute_GetArgumentPointerInteger(
+          modelCompute,
+          KIM_ARGUMENT_NAME_numberOfParticles,
+          &nParts)
       ||
-      KIM_ModelCompute_get_data_int(modelCompute,
-                                    KIM_ARGUMENT_NAME_particleSpecies,
-                                    &particleSpecies)
+      KIM_ModelCompute_GetArgumentPointerInteger(
+          modelCompute,
+          KIM_ARGUMENT_NAME_particleSpecies,
+          &particleSpecies)
       ||
-      KIM_ModelCompute_get_data_int(modelCompute,
-                                    KIM_ARGUMENT_NAME_particleContributing,
-                                    &particleContributing)
+      KIM_ModelCompute_GetArgumentPointerInteger(
+          modelCompute,
+          KIM_ARGUMENT_NAME_particleContributing,
+          &particleContributing)
       ||
-      KIM_ModelCompute_get_data_double(modelCompute,
-                                       KIM_ARGUMENT_NAME_coordinates,
-                                       &coords)
+      KIM_ModelCompute_GetArgumentPointerDouble(
+          modelCompute,
+          KIM_ARGUMENT_NAME_coordinates,
+          &coords)
       ||
-      KIM_ModelCompute_get_data_double(modelCompute, KIM_ARGUMENT_NAME_energy,
-                                       &energy)
+      KIM_ModelCompute_GetArgumentPointerDouble(
+          modelCompute,
+          KIM_ARGUMENT_NAME_partialEnergy,
+          &energy)
       ||
-      KIM_ModelCompute_get_data_double(modelCompute, KIM_ARGUMENT_NAME_forces,
-                                       &force)
+      KIM_ModelCompute_GetArgumentPointerDouble(
+          modelCompute,
+          KIM_ARGUMENT_NAME_partialForces,
+          &force)
       ||
-      KIM_ModelCompute_get_data_double(modelCompute,
-                                       KIM_ARGUMENT_NAME_particleEnergy,
-                                       &particleEnergy);
+      KIM_ModelCompute_GetArgumentPointerDouble(
+          modelCompute,
+          KIM_ARGUMENT_NAME_partialParticleEnergy,
+          &particleEnergy);
   if (ier)
   {
-    LOG_ERROR("get_data");
+    LOG_ERROR("GetArgumentPointer");
     return ier;
   }
 
@@ -302,8 +311,8 @@ static int compute(KIM_ModelCompute const * const modelCompute)
   {
     if (particleContributing[i])
     {
-      ier = KIM_ModelCompute_get_neigh(modelCompute, 0, i, &numOfPartNeigh,
-                                       &neighListOfCurrentPart);
+      ier = KIM_ModelCompute_GetNeighborList(
+          modelCompute, 0, i, &numOfPartNeigh, &neighListOfCurrentPart);
       if (ier)
       {
         /* some sort of problem, exit */
@@ -383,10 +392,10 @@ static int compute(KIM_ModelCompute const * const modelCompute)
   return ier;
 }
 
-/* Initialization function */
-#include "KIM_ModelDriverInitializationLogMacros.h"
-int model_driver_init(
-    KIM_ModelDriverInitialization * const modelDriverInitialization,
+/* Create function */
+#include "KIM_ModelDriverCreateLogMacros.h"
+int model_driver_create(
+    KIM_ModelDriverCreate * const modelDriverCreate,
     KIM_LengthUnit const requestedLengthUnit,
     KIM_EnergyUnit const requestedEnergyUnit,
     KIM_ChargeUnit const requestedChargeUnit,
@@ -411,12 +420,12 @@ int model_driver_init(
 
 
   /* using fixed units */
-  ier = KIM_ModelDriverInitialization_set_units(modelDriverInitialization,
-      KIM_LENGTH_UNIT_A,
-      KIM_ENERGY_UNIT_eV,
-      KIM_CHARGE_UNIT_e,
-      KIM_TEMPERATURE_UNIT_K,
-      KIM_TIME_UNIT_ps);
+  ier = KIM_ModelDriverCreate_SetUnits(modelDriverCreate,
+                                       KIM_LENGTH_UNIT_A,
+                                       KIM_ENERGY_UNIT_eV,
+                                       KIM_CHARGE_UNIT_e,
+                                       KIM_TEMPERATURE_UNIT_K,
+                                       KIM_TIME_UNIT_ps);
   if (ier == TRUE)
   {
     LOG_ERROR("Problem setting units");
@@ -424,40 +433,39 @@ int model_driver_init(
   }
 
   /* register arguments */
-  ier = KIM_ModelDriverInitialization_set_argument_attribute(
-      modelDriverInitialization,
-      KIM_ARGUMENT_NAME_energy,
-      KIM_ATTRIBUTE_optional)
+  ier = KIM_ModelDriverCreate_SetArgumentSupportStatus(
+      modelDriverCreate,
+      KIM_ARGUMENT_NAME_partialEnergy,
+      KIM_SUPPORT_STATUS_optional)
       ||
-      KIM_ModelDriverInitialization_set_argument_attribute(
-      modelDriverInitialization,
-      KIM_ARGUMENT_NAME_particleEnergy,
-      KIM_ATTRIBUTE_optional)
+      KIM_ModelDriverCreate_SetArgumentSupportStatus(
+          modelDriverCreate,
+          KIM_ARGUMENT_NAME_partialParticleEnergy,
+          KIM_SUPPORT_STATUS_optional)
       ||
-      KIM_ModelDriverInitialization_set_argument_attribute(
-      modelDriverInitialization,
-      KIM_ARGUMENT_NAME_forces,
-      KIM_ATTRIBUTE_optional);
+      KIM_ModelDriverCreate_SetArgumentSupportStatus(
+          modelDriverCreate,
+          KIM_ARGUMENT_NAME_partialForces,
+          KIM_SUPPORT_STATUS_optional);
   if (ier == TRUE)
   {
-    LOG_ERROR("Unable to set argument attributes.");
+    LOG_ERROR("Unable to set argument supportStatus.");
     return ier;
   }
 
   /* store pointer to functions in KIM object */
-  KIM_ModelDriverInitialization_set_destroy(modelDriverInitialization,
-                                            KIM_LANGUAGE_NAME_C,
-                                            (func *) destroy);
-  KIM_ModelDriverInitialization_set_compute_func(modelDriverInitialization,
-                                                 KIM_LANGUAGE_NAME_C,
-                                                 (func *) compute);
-  KIM_ModelDriverInitialization_set_reinit(modelDriverInitialization,
-                                           KIM_LANGUAGE_NAME_C,
-                                           (func *) reinit);
+  KIM_ModelDriverCreate_SetDestroyPointer(modelDriverCreate,
+                                          KIM_LANGUAGE_NAME_c,
+                                          (func *) destroy);
+  KIM_ModelDriverCreate_SetComputePointer(modelDriverCreate,
+                                          KIM_LANGUAGE_NAME_c,
+                                          (func *) compute);
+  KIM_ModelDriverCreate_SetRefreshPointer(
+      modelDriverCreate, KIM_LANGUAGE_NAME_c, (func *) refresh);
 
   /* get number of parameter files */
-  KIM_ModelDriverInitialization_get_number_of_parameter_files(
-      modelDriverInitialization, &numberOfParameterFiles);
+  KIM_ModelDriverCreate_GetNumberOfParameterFiles(
+      modelDriverCreate, &numberOfParameterFiles);
   /* set paramfile1name */
   if (numberOfParameterFiles != 1)
   {
@@ -465,8 +473,8 @@ int model_driver_init(
     LOG_ERROR("Incorrect number of parameter files.");
     return ier;
   }
-  ier = KIM_ModelDriverInitialization_get_parameter_file_name(
-      modelDriverInitialization,
+  ier = KIM_ModelDriverCreate_GetParameterFileName(
+      modelDriverCreate,
       0,
       &paramfile1name);
   if (ier == TRUE)
@@ -503,8 +511,8 @@ int model_driver_init(
 
   /* register species */
   KIM_SpeciesNameFromString(speciesNameString, &speciesName);
-  ier = KIM_ModelDriverInitialization_set_species_code(
-      modelDriverInitialization,
+  ier = KIM_ModelDriverCreate_SetSpeciesCode(
+      modelDriverCreate,
       speciesName,
       SPECCODE);
   if (ier == TRUE)
@@ -544,34 +552,33 @@ int model_driver_init(
   /* end setup buffer */
 
   /* store in model buffer */
-  KIM_ModelDriverInitialization_set_model_buffer(modelDriverInitialization,
-                                                 (void*) buffer);
+  KIM_ModelDriverCreate_SetModelBufferPointer(modelDriverCreate,
+                                              (void*) buffer);
 
   /* store model cutoff in KIM object */
-  KIM_ModelDriverInitialization_set_influence_distance(
-      modelDriverInitialization,
+  KIM_ModelDriverCreate_SetInfluenceDistancePointer(
+      modelDriverCreate,
       &(buffer->influenceDistance));
-  KIM_ModelDriverInitialization_set_cutoffs(
-      modelDriverInitialization, 1,
+  KIM_ModelDriverCreate_SetCutoffsPointer(
+      modelDriverCreate, 1,
       &(buffer->influenceDistance));
 
   return FALSE;
 }
 
-/* reinitialization function */
-static int reinit(KIM_ModelReinitialization * const modelReinitialization)
+/* refresh function */
+static int refresh(KIM_ModelRefresh * const modelRefresh)
 {
   /* Local variables */
   struct model_buffer* buffer;
 
   /* get model buffer from KIM object */
-  KIM_ModelReinitialization_get_model_buffer(modelReinitialization,
-                                             (void **) &buffer);
+  KIM_ModelRefresh_GetModelBufferPointer(modelRefresh, (void **) &buffer);
 
-  KIM_ModelReinitialization_set_influence_distance(
-      modelReinitialization, &(buffer->influenceDistance));
-  KIM_ModelReinitialization_set_cutoffs(
-      modelReinitialization, 1, &(buffer->influenceDistance));
+  KIM_ModelRefresh_SetInfluenceDistancePointer(
+      modelRefresh, &(buffer->influenceDistance));
+  KIM_ModelRefresh_SetCutoffsPointer(
+      modelRefresh, 1, &(buffer->influenceDistance));
 
   return FALSE;
 }
@@ -584,7 +591,7 @@ static int destroy(KIM_ModelDestroy * const modelDestroy)
   int ier;
 
   /* get model buffer from KIM object */
-  KIM_ModelDestroy_get_model_buffer(modelDestroy, (void **) &buffer);
+  KIM_ModelDestroy_GetModelBufferPointer(modelDestroy, (void **) &buffer);
 
   /* free the buffer */
   free(buffer);

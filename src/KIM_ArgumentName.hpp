@@ -51,7 +51,7 @@ class ArgumentName
   ArgumentName(std::string const str);
   bool operator==(ArgumentName const & rhs) const;
   bool operator!=(ArgumentName const & rhs) const;
-  std::string string() const;
+  std::string String() const;
 };
 
 namespace ARGUMENT_NAME
@@ -60,18 +60,18 @@ extern ArgumentName const numberOfParticles;
 extern ArgumentName const particleSpecies;
 extern ArgumentName const particleContributing;
 extern ArgumentName const coordinates;
-extern ArgumentName const energy;
-extern ArgumentName const forces;
-extern ArgumentName const particleEnergy;
-extern ArgumentName const virial;
-extern ArgumentName const particleVirial;
-extern ArgumentName const hessian;
+extern ArgumentName const partialEnergy;
+extern ArgumentName const partialForces;
+extern ArgumentName const partialParticleEnergy;
+extern ArgumentName const partialVirial;
+extern ArgumentName const partialParticleVirial;
+extern ArgumentName const partialHessian;
 
-void get_number_of_arguments(int * const numberOfArguments);
-int get_argument_name(int const index, ArgumentName * const argumentName);
+void GetNumberOfArguments(int * const numberOfArguments);
+int GetArgumentName(int const index, ArgumentName * const argumentName);
 
-int get_argument_data_type(ArgumentName const argumentName,
-                           DataType * const dataType);
+int GetArgumentDataType(ArgumentName const argumentName,
+                        DataType * const dataType);
 }  // namespace ARGUMENT_NAME
 
 }  // namespace KIM

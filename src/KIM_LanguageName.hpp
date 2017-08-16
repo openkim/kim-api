@@ -47,14 +47,14 @@ class LanguageName
   LanguageName(int const id);
   bool operator==(LanguageName const & rhs) const;
   bool operator!=(LanguageName const & rhs) const;
-  std::string string() const;
+  std::string String() const;
 };
 
 namespace LANGUAGE_NAME
 {
-extern LanguageName const Cpp;
-extern LanguageName const C;
-extern LanguageName const Fortran;
+extern LanguageName const cpp;
+extern LanguageName const c;
+extern LanguageName const fortran;
 }  // namespace LANGUAGE_NAME
 
 }  // namespace KIM

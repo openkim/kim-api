@@ -76,7 +76,7 @@ class LennardJones612Implementation
 {
  public:
   LennardJones612Implementation(
-      KIM::ModelDriverInitialization * const modelDriverInitialization,
+      KIM::ModelDriverCreate * const modelDriverCreate,
       KIM::LengthUnit const requestedLengthUnit,
       KIM::EnergyUnit const requestedEnergyUnit,
       KIM::ChargeUnit const requestedChargeUnit,
@@ -85,7 +85,7 @@ class LennardJones612Implementation
       int * const ier);
   ~LennardJones612Implementation();  // no explicit Destroy() needed here
 
-  int Reinit(KIM::ModelReinitialization * const modelReinitialization);
+  int Refresh(KIM::ModelRefresh * const modelRefresh);
   int Compute(KIM::ModelCompute const * const modelCompute);
 
  private:
@@ -154,31 +154,31 @@ class LennardJones612Implementation
   // Related to constructor
   void AllocateFreeParameterMemory();
   static int OpenParameterFiles(
-      KIM::ModelDriverInitialization * const modelDriverInitialization,
+      KIM::ModelDriverCreate * const modelDriverCreate,
       int const numberParameterFiles,
       FILE* parameterFilePointers[MAX_PARAMETER_FILES]);
   static void CloseParameterFiles(
       int const numberParameterFiles,
       FILE* const parameterFilePointers[MAX_PARAMETER_FILES]);
   int ProcessParameterFiles(
-      KIM::ModelDriverInitialization * const modelDriverInitialization,
+      KIM::ModelDriverCreate * const modelDriverCreate,
       int const numberParameterFiles,
       FILE* const parameterFilePointers[MAX_PARAMETER_FILES]);
   void getNextDataLine(FILE* const filePtr, char* const nextLine,
                        int const maxSize, int* endOfFileFlag);
   int ConvertUnits(
-      KIM::ModelDriverInitialization * const modelDriverInitialization,
+      KIM::ModelDriverCreate * const modelDriverCreate,
       KIM::LengthUnit const requestedLengthUnit,
       KIM::EnergyUnit const requestedEnergyUnit,
       KIM::ChargeUnit const requestedChargeUnit,
       KIM::TemperatureUnit const requestedTemperatureUnit,
       KIM::TimeUnit const requestedTimeUnit);
   int RegisterKIMModelSettings(
-      KIM::ModelDriverInitialization * const modelDriverInitialization);
+      KIM::ModelDriverCreate * const modelDriverCreate);
   int RegisterKIMParameters(
-      KIM::ModelDriverInitialization * const modelDriverInitialization);
+      KIM::ModelDriverCreate * const modelDriverCreate);
   int RegisterKIMFunctions(
-      KIM::ModelDriverInitialization * const modelDriverInitialization) const;
+      KIM::ModelDriverCreate * const modelDriverCreate) const;
   //
   // Related to Reinit()
   template<class ModelObj>
@@ -307,7 +307,7 @@ int LennardJones612Implementation::Compute(
   {
     if (particleContributing[ii])
     {
-      modelCompute->get_neigh(0, ii, &numnei, &n1atom);
+      modelCompute->GetNeighborList(0, ii, &numnei, &n1atom);
       int const numNei = numnei;
       int const * const n1Atom = n1atom;
       int const i = ii;
@@ -401,7 +401,7 @@ int LennardJones612Implementation::Compute(
           {
             double const rij = sqrt(rij2);
             double const dEidr = dEidrByR*rij;
-            ier = modelCompute->process_dEdr(dEidr, rij, r_ij_const, i, j);
+            ier = modelCompute->ProcessDEDrTerm(dEidr, rij, r_ij_const, i, j);
             if (ier)
             {
               LOG_ERROR("process_dEdr");
@@ -424,15 +424,15 @@ int LennardJones612Implementation::Compute(
             int const* const pis = &i_pairs[0];
             int const* const pjs = &j_pairs[0];
 
-            ier = modelCompute->process_d2Edr2(d2Eidr2, pRs, pRijConsts, pis,
-                                               pjs);
-          if (ier)
-          {
-            LOG_ERROR("process_d2Edr2");
-            return ier;
+            ier = modelCompute->ProcessD2EDr2Term(d2Eidr2, pRs, pRijConsts, pis,
+                                                  pjs);
+            if (ier)
+            {
+              LOG_ERROR("process_d2Edr2");
+              return ier;
+            }
           }
-        }
-      }  // if particleContributing
+        }  // if particleContributing
       }  // if particles i and j interact
     }  // end of first neighbor loop
   }  // end of loop over contributing particles

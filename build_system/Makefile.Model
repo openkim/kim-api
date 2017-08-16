@@ -39,18 +39,18 @@ include $(KIM_DIR)/$(builddir)/Makefile.SanityCheck
 
 # Clean up variables
 MODEL_NAME := $(strip $(MODEL_NAME))
-MODEL_INIT_FUNCTION_NAME := $(strip $(MODEL_INIT_FUNCTION_NAME))
-MODEL_INIT_FUNCTION_LANG := $(strip $(MODEL_INIT_FUNCTION_LANG))
-ifeq ($(MODEL_INIT_FUNCTION_LANG),C++)
+MODEL_CREATE_FUNCTION_NAME := $(strip $(MODEL_CREATE_FUNCTION_NAME))
+MODEL_CREATE_FUNCTION_LANG := $(strip $(MODEL_CREATE_FUNCTION_LANG))
+ifeq ($(MODEL_CREATE_FUNCTION_LANG),C++)
   MODEL_LANG := 0
 else
-  ifeq ($(MODEL_INIT_FUNCTION_LANG),C)
+  ifeq ($(MODEL_CREATE_FUNCTION_LANG),C)
     MODEL_LANG := 1
   else
-    ifeq ($(MODEL_INIT_FUNCTION_LANG),Fortran)
+    ifeq ($(MODEL_CREATE_FUNCTION_LANG),Fortran)
       MODEL_LANG := 2
     else
-      $(error Unknown MODEL_INIT_FUNCTION_LANG value)
+      $(error Unknown MODEL_CREATE_FUNCTION_LANG value)
     endif
   endif
 endif
@@ -75,9 +75,9 @@ init_wrapper.cpp: $(KIM_MAKE_FILES)
 	$(QUELL)printf "extern \"C\"\n"                                                    > $@
 	$(QUELL)printf "{\n"                                                              >> $@
 	$(QUELL)printf "char kim_item_type[] = \"stand-alone-model\";\n"                  >> $@
-	$(QUELL)printf "int $(strip $(MODEL_INIT_FUNCTION_NAME))();\n"                    >> $@
-	$(QUELL)printf "int (* $(strip $(MODEL_NAME))_init_pointer)()\n"                  >> $@
-	$(QUELL)printf "  = $(strip $(MODEL_INIT_FUNCTION_NAME));\n"                      >> $@
+	$(QUELL)printf "int $(strip $(MODEL_CREATE_FUNCTION_NAME))();\n"                  >> $@
+	$(QUELL)printf "int (* $(strip $(MODEL_NAME))_create_pointer)()\n"                >> $@
+	$(QUELL)printf "  = $(strip $(MODEL_CREATE_FUNCTION_NAME));\n"                    >> $@
 	$(QUELL)printf "char $(strip $(MODEL_NAME))_compiled_with_version[]\n"            >> $@
 	$(QUELL)printf "  = \"$(VERSION_FULL)\";\n"                                       >> $@
 	$(QUELL)printf "int $(strip $(MODEL_NAME))_language = $(MODEL_LANG);\n"           >> $@
@@ -100,7 +100,7 @@ $(EXPORT_LIST_NAME): $(KIM_MAKE_FILES)
 	@printf "Creating... intermediate file... $@.\n"
 ifeq (darwin, $(KIM_SYSTEMLINKER))
 	$(QUELL)printf "_kim_item_type\n"                                    > $@
-	$(QUELL)printf "_$(MODEL_NAME)_init_pointer\n"                      >> $@
+	$(QUELL)printf "_$(MODEL_NAME)_create_pointer\n"                    >> $@
 	$(QUELL)printf "_$(MODEL_NAME)_compiled_with_version\n"             >> $@
 	$(QUELL)printf "_$(MODEL_NAME)_language\n"                          >> $@
 	$(QUELL)printf "_$(MODEL_NAME)_driver_name\n"                       >> $@
@@ -108,7 +108,7 @@ else # everything else (linux and freebsd)
 	$(QUELL)printf "{\n"                                                 > $@
 	$(QUELL)printf "   global:\n"                                       >> $@
 	$(QUELL)printf "           kim_item_type;\n"                        >> $@
-	$(QUELL)printf "           $(MODEL_NAME)_init_pointer;\n"           >> $@
+	$(QUELL)printf "           $(MODEL_NAME)_create_pointer;\n"         >> $@
 	$(QUELL)printf "           $(MODEL_NAME)_compiled_with_version;\n"  >> $@
 	$(QUELL)printf "           $(MODEL_NAME)_language;\n"               >> $@
 	$(QUELL)printf "           $(MODEL_NAME)_driver_name;\n"            >> $@

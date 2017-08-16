@@ -44,7 +44,7 @@ bool EnergyUnit::operator==(EnergyUnit const & rhs) const
 bool EnergyUnit::operator!=(EnergyUnit const & rhs) const
 {return energyUnitID!=rhs.energyUnitID;}
 
-std::string EnergyUnit::string() const
+std::string EnergyUnit::String() const
 {
   if (*this == ENERGY_UNIT::unused) return "unused";
   else if (*this == ENERGY_UNIT::amu_A2_per_ps2) return "amu_A2_per_ps2";

@@ -36,19 +36,19 @@ module kim_model_destroy_f_module
   private
 
   public &
-    get_model_buffer, &
+    get_model_buffer_pointer, &
     log, &
     model_destroy_string
 
   interface
-    subroutine get_model_buffer(model_destroy, ptr) &
-      bind(c, name="KIM_ModelDestroy_get_model_buffer")
+    subroutine get_model_buffer_pointer(model_destroy, ptr) &
+      bind(c, name="KIM_ModelDestroy_GetModelBufferPointer")
       use, intrinsic :: iso_c_binding
       use kim_model_destroy_module, only : kim_model_destroy_type
       implicit none
       type(kim_model_destroy_type), intent(in) :: model_destroy
       type(c_ptr), intent(out) :: ptr
-    end subroutine get_model_buffer
+    end subroutine get_model_buffer_pointer
 
     subroutine log(model_destroy, log_verbosity, message, line_number, &
       file_name) bind(c, name="KIM_ModelDestroy_Log")
@@ -64,7 +64,7 @@ module kim_model_destroy_f_module
     end subroutine log
 
     type(c_ptr) function model_destroy_string(model_destroy) &
-      bind(c, name="KIM_ModelDestroy_string")
+      bind(c, name="KIM_ModelDestroy_String")
       use, intrinsic :: iso_c_binding
       use kim_model_destroy_module, only : kim_model_destroy_type
       implicit none
@@ -76,16 +76,16 @@ end module kim_model_destroy_f_module
 
 ! free functions to implement kim_model_destroy_module
 
-subroutine kim_model_destroy_get_model_buffer(model_destroy, ptr)
+subroutine kim_model_destroy_get_model_buffer_pointer(model_destroy, ptr)
   use, intrinsic :: iso_c_binding
   use kim_model_destroy_module, only : kim_model_destroy_type
-  use kim_model_destroy_f_module, only : get_model_buffer
+  use kim_model_destroy_f_module, only : get_model_buffer_pointer
   implicit none
   type(kim_model_destroy_type), intent(in) :: model_destroy
   type(c_ptr), intent(out) :: ptr
 
-  call get_model_buffer(model_destroy, ptr)
-end subroutine kim_model_destroy_get_model_buffer
+  call get_model_buffer_pointer(model_destroy, ptr)
+end subroutine kim_model_destroy_get_model_buffer_pointer
 
 subroutine kim_model_destroy_log(model_destroy, log_verbosity, message, &
   line_number, file_name)

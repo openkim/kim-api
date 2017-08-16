@@ -47,8 +47,8 @@
 //******************************************************************************
 extern "C"
 {
-int model_driver_init(
-    KIM::ModelDriverInitialization * const modelDriverInitialization,
+int model_driver_create(
+    KIM::ModelDriverCreate * const modelDriverCreate,
     KIM::LengthUnit const requestedLengthUnit,
     KIM::EnergyUnit const requestedEnergyUnit,
     KIM::ChargeUnit const requestedChargeUnit,
@@ -60,7 +60,7 @@ int model_driver_init(
   // read input files, convert units if needed, compute
   // interpolation coefficients, set cutoff, and publish parameters
   LennardJones612* const modelObject
-      = new LennardJones612(modelDriverInitialization,
+      = new LennardJones612(modelDriverCreate,
                             requestedLengthUnit,
                             requestedEnergyUnit,
                             requestedChargeUnit,
@@ -75,7 +75,8 @@ int model_driver_init(
   }
 
   // register pointer to LennardJones612 object in KIM object
-  modelDriverInitialization->set_model_buffer(static_cast<void*>(modelObject));
+  modelDriverCreate->SetModelBufferPointer(
+      static_cast<void*>(modelObject));
 
   // everything is good
   ier = false;
@@ -91,7 +92,7 @@ int model_driver_init(
 
 //******************************************************************************
 LennardJones612::LennardJones612(
-    KIM::ModelDriverInitialization * const modelDriverInitialization,
+    KIM::ModelDriverCreate * const modelDriverCreate,
     KIM::LengthUnit const requestedLengthUnit,
     KIM::EnergyUnit const requestedEnergyUnit,
     KIM::ChargeUnit const requestedChargeUnit,
@@ -100,7 +101,7 @@ LennardJones612::LennardJones612(
     int* const ier)
 {
   implementation_ = new LennardJones612Implementation(
-      modelDriverInitialization,
+      modelDriverCreate,
       requestedLengthUnit,
       requestedEnergyUnit,
       requestedChargeUnit,
@@ -120,7 +121,7 @@ LennardJones612::~LennardJones612()
 int LennardJones612::Destroy(KIM::ModelDestroy * const modelDestroy)
 {
   LennardJones612 * modelObject;
-  modelDestroy->get_model_buffer(reinterpret_cast<void**>(&modelObject));
+  modelDestroy->GetModelBufferPointer(reinterpret_cast<void**>(&modelObject));
 
   if (modelObject != NULL)
   {
@@ -134,14 +135,14 @@ int LennardJones612::Destroy(KIM::ModelDestroy * const modelDestroy)
 
 //******************************************************************************
 // static member function
-int LennardJones612::Reinit(
-    KIM::ModelReinitialization * const modelReinitialization)
+int LennardJones612::Refresh(
+    KIM::ModelRefresh * const modelRefresh)
 {
   LennardJones612 * modelObject;
-  modelReinitialization->get_model_buffer(
+  modelRefresh->GetModelBufferPointer(
       reinterpret_cast<void**>(&modelObject));
 
-  return modelObject->implementation_->Reinit(modelReinitialization);
+  return modelObject->implementation_->Refresh(modelRefresh);
 }
 
 //******************************************************************************
@@ -149,7 +150,7 @@ int LennardJones612::Reinit(
 int LennardJones612::Compute(KIM::ModelCompute const * const modelCompute)
 {
   LennardJones612 * modelObject;
-  modelCompute->get_model_buffer(reinterpret_cast<void**>(&modelObject));
+  modelCompute->GetModelBufferPointer(reinterpret_cast<void**>(&modelObject));
 
   return modelObject->implementation_->Compute(modelCompute);
 }

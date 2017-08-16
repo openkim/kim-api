@@ -53,13 +53,13 @@ module kim_argument_name_f_module
     end function compute_argument_name_string
 
     subroutine get_number_of_arguments(number_of_arguments) &
-      bind(c, name="KIM_ARGUMENT_NAME_get_number_of_arguments")
+      bind(c, name="KIM_ARGUMENT_NAME_GetNumberOfArguments")
       use, intrinsic :: iso_c_binding
       integer(c_int), intent(out) :: number_of_arguments
     end subroutine get_number_of_arguments
 
     integer(c_int) function get_argument_name(index, argument_name) &
-      bind(c, name="KIM_ARGUMENT_NAME_get_argument_name")
+      bind(c, name="KIM_ARGUMENT_NAME_GetArgumentName")
       use, intrinsic :: iso_c_binding
       use kim_argument_name_module, only : &
         kim_argument_name_type
@@ -69,7 +69,7 @@ module kim_argument_name_f_module
     end function get_argument_name
 
     integer(c_int) function get_argument_data_type(argument_name, data_type) &
-      bind(c, name="KIM_ARGUMENT_NAME_get_argument_data_type")
+      bind(c, name="KIM_ARGUMENT_NAME_GetArgumentDataType")
       use, intrinsic :: iso_c_binding
       use kim_argument_name_module, only : &
         kim_argument_name_type

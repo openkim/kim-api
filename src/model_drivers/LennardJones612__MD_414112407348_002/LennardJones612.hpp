@@ -37,15 +37,15 @@
 #include "KIM_TemperatureUnit.hpp"
 #include "KIM_TimeUnit.hpp"
 
-#include "KIM_ModelDriverInitialization.hpp"
-#include "KIM_ModelReinitialization.hpp"
+#include "KIM_ModelDriverCreate.hpp"
+#include "KIM_ModelRefresh.hpp"
 #include "KIM_ModelDestroy.hpp"
 #include "KIM_ModelCompute.hpp"
 
 extern "C"
 {
-int model_driver_init(
-    KIM::ModelDriverInitialization * const modelDriverInitialization,
+int model_driver_create(
+    KIM::ModelDriverCreate * const modelDriverCreate,
     KIM::LengthUnit const requestedLengthUnit,
     KIM::EnergyUnit const requestedEnergyUnit,
     KIM::ChargeUnit const requestedChargeUnit,
@@ -59,7 +59,7 @@ class LennardJones612
 {
  public:
   LennardJones612(
-      KIM::ModelDriverInitialization* const modelDriverInitialization,
+      KIM::ModelDriverCreate* const modelDriverCreate,
       KIM::LengthUnit const requestedLengthUnit,
       KIM::EnergyUnit const requestedEnergyUnit,
       KIM::ChargeUnit const requestedChargeUnit,
@@ -72,7 +72,7 @@ class LennardJones612
   // via function pointers.  "static" is required so that there is not
   // an implicit this pointer added to the prototype by the C++ compiler
   static int Destroy(KIM::ModelDestroy * const modelDestroy);
-  static int Reinit(KIM::ModelReinitialization * const modelReinitialization);
+  static int Refresh(KIM::ModelRefresh * const modelRefresh);
   static int Compute(KIM::ModelCompute const * const modelCompute);
 
  private:

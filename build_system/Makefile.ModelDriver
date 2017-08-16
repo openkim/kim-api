@@ -39,18 +39,18 @@ include $(KIM_DIR)/$(builddir)/Makefile.SanityCheck
 
 # Clean up variables
 MODEL_DRIVER_NAME := $(strip $(MODEL_DRIVER_NAME))
-MODEL_DRIVER_INIT_FUNCTION_NAME := $(strip $(MODEL_DRIVER_INIT_FUNCTION_NAME))
-MODEL_DRIVER_INIT_FUNCTION_LANG := $(strip $(MODEL_DRIVER_INIT_FUNCTION_LANG))
-ifeq ($(MODEL_DRIVER_INIT_FUNCTION_LANG),C++)
+MODEL_DRIVER_CREATE_FUNCTION_NAME := $(strip $(MODEL_DRIVER_CREATE_FUNCTION_NAME))
+MODEL_DRIVER_CREATE_FUNCTION_LANG := $(strip $(MODEL_DRIVER_CREATE_FUNCTION_LANG))
+ifeq ($(MODEL_DRIVER_CREATE_FUNCTION_LANG),C++)
   MODEL_DRIVER_LANG := 0
 else
-  ifeq ($(MODEL_DRIVER_INIT_FUNCTION_LANG),C)
+  ifeq ($(MODEL_DRIVER_CREATE_FUNCTION_LANG),C)
     MODEL_DRIVER_LANG := 1
   else
-    ifeq ($(MODEL_DRIVER_INIT_FUNCTION_LANG),Fortran)
+    ifeq ($(MODEL_DRIVER_CREATE_FUNCTION_LANG),Fortran)
       MODEL_DRIVER_LANG := 2
     else
-      $(error Unknown MODEL_DRIVER_INIT_FUNCTION_LANG value)
+      $(error Unknown MODEL_DRIVER_CREATE_FUNCTION_LANG value)
     endif
   endif
 endif
@@ -75,9 +75,9 @@ init_wrapper.cpp: $(KIM_MAKE_FILES)
 	$(QUELL)printf "extern \"C\"\n"                                                         > $@
 	$(QUELL)printf "{\n"                                                                   >> $@
 	$(QUELL)printf "char kim_item_type[] = \"model-driver\";\n"                            >> $@
-	$(QUELL)printf "int $(strip $(MODEL_DRIVER_INIT_FUNCTION_NAME))();\n"                  >> $@
-	$(QUELL)printf "int (* $(strip $(MODEL_DRIVER_NAME))_init_pointer)()\n"                >> $@
-	$(QUELL)printf "  = $(strip $(MODEL_DRIVER_INIT_FUNCTION_NAME));\n"                    >> $@
+	$(QUELL)printf "int $(strip $(MODEL_DRIVER_CREATE_FUNCTION_NAME))();\n"                >> $@
+	$(QUELL)printf "int (* $(strip $(MODEL_DRIVER_NAME))_create_pointer)()\n"              >> $@
+	$(QUELL)printf "  = $(strip $(MODEL_DRIVER_CREATE_FUNCTION_NAME));\n"                  >> $@
 	$(QUELL)printf "char $(strip $(MODEL_DRIVER_NAME))_compiled_with_version[]\n"          >> $@
 	$(QUELL)printf "  = \"$(VERSION_FULL)\";\n"                                            >> $@
 	$(QUELL)printf "int $(strip $(MODEL_DRIVER_NAME))_language = $(MODEL_DRIVER_LANG);\n"  >> $@
@@ -99,14 +99,14 @@ $(EXPORT_LIST_NAME): $(KIM_MAKE_FILES)
 	@printf "Creating... intermediate file... $@.\n"
 ifeq (darwin, $(KIM_SYSTEMLINKER))
 	$(QUELL)printf "_kim_item_type\n"                                           > $@
-	$(QUELL)printf "_$(MODEL_DRIVER_NAME)_init_pointer\n"                      >> $@
+	$(QUELL)printf "_$(MODEL_DRIVER_NAME)_create_pointer\n"                    >> $@
 	$(QUELL)printf "_$(MODEL_DRIVER_NAME)_compiled_with_version\n"             >> $@
 	$(QUELL)printf "_$(MODEL_DRIVER_NAME)_language\n"                          >> $@
 else # everything else (linux and freebsd)
 	$(QUELL)printf "{\n"                                                        > $@
 	$(QUELL)printf "   global:\n"                                              >> $@
 	$(QUELL)printf "           kim_item_type;\n"                               >> $@
-	$(QUELL)printf "           $(MODEL_DRIVER_NAME)_init_pointer;\n"           >> $@
+	$(QUELL)printf "           $(MODEL_DRIVER_NAME)_create_pointer;\n"         >> $@
 	$(QUELL)printf "           $(MODEL_DRIVER_NAME)_compiled_with_version;\n"  >> $@
 	$(QUELL)printf "           $(MODEL_DRIVER_NAME)_language;\n"               >> $@
 	$(QUELL)printf "\n"                                                        >> $@

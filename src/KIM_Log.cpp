@@ -49,7 +49,7 @@ void Log(LogVerbosity const logVerbosity, std::string const & message,
          int const lineNumber, std::string const & fileName)
 {
   std::cout << "LOG: "
-            << "*" << logVerbosity.string() << "* "
+            << "*" << logVerbosity.String() << "* "
             << message
             << "["
             << lineNumber

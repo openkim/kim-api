@@ -51,8 +51,8 @@ int KIM_LanguageNameNotEqual(KIM_LanguageName const left,
                              KIM_LanguageName const right);
 char const * const KIM_LanguageNameString(KIM_LanguageName const languageName);
 
-extern KIM_LanguageName const KIM_LANGUAGE_NAME_Cpp;
-extern KIM_LanguageName const KIM_LANGUAGE_NAME_C;
-extern KIM_LanguageName const KIM_LANGUAGE_NAME_Fortran;
+extern KIM_LanguageName const KIM_LANGUAGE_NAME_cpp;
+extern KIM_LanguageName const KIM_LANGUAGE_NAME_c;
+extern KIM_LanguageName const KIM_LANGUAGE_NAME_fortran;
 
 #endif  /* KIM_LANGUAGE_NAME_H_ */

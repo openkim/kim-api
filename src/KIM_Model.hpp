@@ -54,15 +54,15 @@ class ChargeUnit;
 class TemperatureUnit;
 class TimeUnit;
 class ArgumentName;
-class CallBackName;
-class Attribute;
+class CallbackName;
+class SupportStatus;
 class ModelImplementation;
 
 
 class Model
 {
  public:
-  static int create(Numbering const numbering,
+  static int Create(Numbering const numbering,
                     LengthUnit const requestedLengthUnit,
                     EnergyUnit const requestedEnergyUnit,
                     ChargeUnit const requestedChargeUnit,
@@ -71,59 +71,61 @@ class Model
                     std::string const & modelName,
                     int * const requestedUnitsAccepted,
                     Model ** const model);
-  static void destroy(Model ** const model);
+  static void Destroy(Model ** const model);
 
-  void get_influence_distance(double * const influenceDistance) const;
+  void GetInfluenceDistance(double * const influenceDistance) const;
 
   // allows NULL as value of cutoffs (to get just numberOfCutoffs)
-  void get_cutoffs(int * const numberOfCutoffs, double const ** const cutoffs)
-      const;
+  void GetCutoffsPointer(int * const numberOfCutoffs,
+                         double const ** const cutoffs) const;
 
-  int get_argument_attribute(ArgumentName const argumentName,
-                             Attribute * const attribute) const;
-  int get_call_back_attribute(CallBackName const callBackName,
-                              Attribute * const attribute) const;
+  int GetArgumentSupportStatus(ArgumentName const argumentName,
+                               SupportStatus * const supportStatus) const;
+  int GetCallbackSupportStatus(CallbackName const callbackName,
+                               SupportStatus * const supportStatus) const;
 
-  void get_units(LengthUnit * const lengthUnit,
-                 EnergyUnit * const energyUnit,
-                 ChargeUnit * const chargeUnit,
-                 TemperatureUnit * const temperatureUnit,
-                 TimeUnit * const timeUnit) const;
+  void GetUnits(LengthUnit * const lengthUnit,
+                EnergyUnit * const energyUnit,
+                ChargeUnit * const chargeUnit,
+                TemperatureUnit * const temperatureUnit,
+                TimeUnit * const timeUnit) const;
 
 
   // data functions
-  int set_data(ArgumentName const argumentName, int const * const ptr);
-  int set_data(ArgumentName const argumentName, double const * const ptr);
+  int SetArgumentPointer(ArgumentName const argumentName,
+                         int const * const ptr);
+  int SetArgumentPointer(ArgumentName const argumentName,
+                         double const * const ptr);
 
-  int set_call_back(CallBackName const callBackName,
-                    LanguageName const languageName,
-                    func * const fptr,
-                    void const * const dataObject);
+  int SetCallbackPointer(CallbackName const callbackName,
+                         LanguageName const languageName,
+                         func * const fptr,
+                         void const * const dataObject);
 
-  int compute() const;
-  int ClearInfluenceDistanceAndCutoffsThenReinitializeModel();
+  int Compute() const;
+  int ClearInfluenceDistanceAndCutoffsThenRefreshModel();
 
-  int get_species_support_and_code(KIM::SpeciesName const speciesName,
-                                   int * const speciesIsSupported,
-                                   int * const code) const;
+  int GetSpeciesSupportAndCode(KIM::SpeciesName const speciesName,
+                               int * const speciesIsSupported,
+                               int * const code) const;
 
-  void get_num_params(int * const numberOfParameters) const;
-  int get_parameter_data_type_and_description(
+  void GetNumberOfParameters(int * const numberOfParameters) const;
+  int GetParameterDataTypeAndDescription(
       int const index, DataType * const dataType,
       std::string * const description) const;
-  int get_parameter_extent_and_pointer(int const index, int * extent,
-                                       int ** const ptr);
-  int get_parameter_extent_and_pointer(int const index, int * extent,
-                                       int const ** const ptr) const;
-  int get_parameter_extent_and_pointer(int const index, int * extent,
-                                       double ** const ptr);
-  int get_parameter_extent_and_pointer(int const index, int * extent,
-                                       double const ** const ptr) const;
+  int GetParameterExtentAndPointer(int const index, int * extent,
+                                   int ** const ptr);
+  int GetParameterExtentAndPointer(int const index, int * extent,
+                                   int const ** const ptr) const;
+  int GetParameterExtentAndPointer(int const index, int * extent,
+                                   double ** const ptr);
+  int GetParameterExtentAndPointer(int const index, int * extent,
+                                   double const ** const ptr) const;
 
-  void set_sim_buffer(void * const ptr);
-  void get_sim_buffer(void ** const ptr) const;
+  void SetSimulatorBufferPointer(void * const ptr);
+  void GetSimulatorBufferPointer(void ** const ptr) const;
 
-  std::string string() const;
+  std::string String() const;
 
   void SetLogID(std::string const & logID);
   void PushLogVerbosity(LogVerbosity const logVerbosity);

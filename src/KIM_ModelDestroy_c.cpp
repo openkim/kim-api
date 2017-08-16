@@ -67,12 +67,12 @@ KIM::LogVerbosity makeLogVerbosityCpp(KIM_LogVerbosity const logVerbosity)
 
 extern "C"
 {
-void KIM_ModelDestroy_get_model_buffer(
+void KIM_ModelDestroy_GetModelBufferPointer(
     KIM_ModelDestroy const * const modelDestroy, void ** const ptr)
 {
   CONVERT_POINTER;
 
-  pModelDestroy->get_model_buffer(ptr);
+  pModelDestroy->GetModelBufferPointer(ptr);
 }
 
 void KIM_ModelDestroy_Log(
@@ -86,12 +86,12 @@ void KIM_ModelDestroy_Log(
                      fileName);
 }
 
-char const * const KIM_ModelDestroy_string(
+char const * const KIM_ModelDestroy_String(
     KIM_ModelDestroy const * const modelDestroy)
 {
   CONVERT_POINTER;
 
-  return (pModelDestroy->string()).c_str();
+  return (pModelDestroy->String()).c_str();
 }
 
 }  // extern "C"

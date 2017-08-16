@@ -37,13 +37,13 @@
 
 #include "LennardJones612.hpp"
 #include "LennardJones612Implementation.hpp"
-#include "KIM_Attribute.hpp"
+#include "KIM_SupportStatus.hpp"
 #include "KIM_Numbering.hpp"
 #include "KIM_LanguageName.hpp"
 #include "KIM_SpeciesName.hpp"
 #include "KIM_UnitSystem.hpp"
 #include "KIM_ArgumentName.hpp"
-#include "KIM_CallBackName.hpp"
+#include "KIM_CallbackName.hpp"
 
 #define MAXLINE 1024
 #define IGNORE_RESULT(fn) if(fn){}
@@ -56,9 +56,9 @@
 //==============================================================================
 
 //******************************************************************************
-#include "KIM_ModelDriverInitializationLogMacros.hpp"
+#include "KIM_ModelDriverCreateLogMacros.hpp"
 LennardJones612Implementation::LennardJones612Implementation(
-    KIM::ModelDriverInitialization * const modelDriverInitialization,
+    KIM::ModelDriverCreate * const modelDriverCreate,
     KIM::LengthUnit const requestedLengthUnit,
     KIM::EnergyUnit const requestedEnergyUnit,
     KIM::ChargeUnit const requestedChargeUnit,
@@ -84,19 +84,19 @@ LennardJones612Implementation::LennardJones612Implementation(
 {
   FILE* parameterFilePointers[MAX_PARAMETER_FILES];
   int numberParameterFiles;
-  modelDriverInitialization->get_number_of_parameter_files(
+  modelDriverCreate->GetNumberOfParameterFiles(
       &numberParameterFiles);
-  *ier = OpenParameterFiles(modelDriverInitialization, numberParameterFiles,
+  *ier = OpenParameterFiles(modelDriverCreate, numberParameterFiles,
                             parameterFilePointers);
   if (*ier) return;
 
-  *ier = ProcessParameterFiles(modelDriverInitialization,
+  *ier = ProcessParameterFiles(modelDriverCreate,
                                numberParameterFiles,
                                parameterFilePointers);
   CloseParameterFiles(numberParameterFiles, parameterFilePointers);
   if (*ier) return;
 
-  *ier = ConvertUnits(modelDriverInitialization,
+  *ier = ConvertUnits(modelDriverCreate,
                       requestedLengthUnit,
                       requestedEnergyUnit,
                       requestedChargeUnit,
@@ -104,16 +104,16 @@ LennardJones612Implementation::LennardJones612Implementation(
                       requestedTimeUnit);
   if (*ier) return;
 
-  *ier = SetReinitMutableValues(modelDriverInitialization);
+  *ier = SetReinitMutableValues(modelDriverCreate);
   if (*ier) return;
 
-  *ier = RegisterKIMModelSettings(modelDriverInitialization);
+  *ier = RegisterKIMModelSettings(modelDriverCreate);
   if (*ier) return;
 
-  *ier = RegisterKIMParameters(modelDriverInitialization);
+  *ier = RegisterKIMParameters(modelDriverCreate);
   if (*ier) return;
 
-  *ier = RegisterKIMFunctions(modelDriverInitialization);
+  *ier = RegisterKIMFunctions(modelDriverCreate);
   if (*ier) return;
 
   // everything is good
@@ -140,12 +140,12 @@ LennardJones612Implementation::~LennardJones612Implementation()
 }
 
 //******************************************************************************
-int LennardJones612Implementation::Reinit(
-    KIM::ModelReinitialization * const modelReinitialization)
+int LennardJones612Implementation::Refresh(
+    KIM::ModelRefresh * const modelRefresh)
 {
   int ier;
 
-  ier = SetReinitMutableValues(modelReinitialization);
+  ier = SetReinitMutableValues(modelRefresh);
   if (ier) return ier;
 
   // nothing else to do for this case
@@ -204,9 +204,9 @@ int LennardJones612Implementation::Compute(
 //==============================================================================
 
 //******************************************************************************
-#include "KIM_ModelDriverInitializationLogMacros.hpp"
+#include "KIM_ModelDriverCreateLogMacros.hpp"
 int LennardJones612Implementation::OpenParameterFiles(
-    KIM::ModelDriverInitialization * const modelDriverInitialization,
+    KIM::ModelDriverCreate * const modelDriverCreate,
     int const numberParameterFiles,
     FILE* parameterFilePointers[MAX_PARAMETER_FILES])
 {
@@ -222,7 +222,7 @@ int LennardJones612Implementation::OpenParameterFiles(
   for (int i = 0; i < numberParameterFiles; ++i)
   {
     std::string paramFileName;
-    ier = modelDriverInitialization->get_parameter_file_name(
+    ier = modelDriverCreate->GetParameterFileName(
         i,
         &paramFileName);
     if (ier)
@@ -254,7 +254,7 @@ int LennardJones612Implementation::OpenParameterFiles(
 
 //******************************************************************************
 int LennardJones612Implementation::ProcessParameterFiles(
-    KIM::ModelDriverInitialization * const modelDriverInitialization,
+    KIM::ModelDriverCreate * const modelDriverCreate,
     int const numberParameterFiles,
     FILE* const parameterFilePointers[MAX_PARAMETER_FILES])
 {
@@ -301,7 +301,7 @@ int LennardJones612Implementation::ProcessParameterFiles(
   while (endOfFileFlag == 0)
   {
     ier = sscanf(nextLine, "%s  %s %lg %lg %lg",
-	         spec1, spec2, &nextCutoff, &nextEpsilon, &nextSigma);
+                 spec1, spec2, &nextCutoff, &nextEpsilon, &nextSigma);
     if (ier != 5)
     {
       sprintf(nextLine, "error reading lines of the parameter file");
@@ -321,7 +321,7 @@ int LennardJones612Implementation::ProcessParameterFiles(
       modelSpeciesCodeList_.push_back(index);
       speciesNameVector.push_back(specName1);
 
-      ier = modelDriverInitialization->set_species_code(specName1, index);
+      ier = modelDriverCreate->SetSpeciesCode(specName1, index);
       if (ier) return ier;
       iIndex = index;
       index++;
@@ -337,7 +337,7 @@ int LennardJones612Implementation::ProcessParameterFiles(
       modelSpeciesCodeList_.push_back(index);
       speciesNameVector.push_back(specName2);
 
-      ier = modelDriverInitialization->set_species_code(specName2, index);
+      ier = modelDriverCreate->SetSpeciesCode(specName2, index);
       if (ier) return ier;
       jIndex = index;
       index++;
@@ -370,7 +370,7 @@ int LennardJones612Implementation::ProcessParameterFiles(
     if (cutoffs_[(i*N + i - (i*i + i)/2)] == -1)
     {
       strcat(nextLine, "  ");
-      strcat(nextLine, (speciesNameVector[i].string()).c_str());
+      strcat(nextLine, (speciesNameVector[i].String()).c_str());
       ier = -1;
     }
   }
@@ -411,8 +411,8 @@ void LennardJones612Implementation::getNextDataLine(
   {
     if(fgets(nextLinePtr, maxSize, filePtr) == NULL)
     {
-       *endOfFileFlag = 1;
-       break;
+      *endOfFileFlag = 1;
+      break;
     }
     while ((nextLinePtr[0] == ' ' || nextLinePtr[0] == '\t') ||
            (nextLinePtr[0] == '\n' || nextLinePtr[0] == '\r' ))
@@ -459,9 +459,9 @@ void LennardJones612Implementation::AllocateFreeParameterMemory()
 }
 
 //******************************************************************************
-#include "KIM_ModelDriverInitializationLogMacros.hpp"
+#include "KIM_ModelDriverCreateLogMacros.hpp"
 int LennardJones612Implementation::ConvertUnits(
-    KIM::ModelDriverInitialization * const modelDriverInitialization,
+    KIM::ModelDriverCreate * const modelDriverCreate,
     KIM::LengthUnit const requestedLengthUnit,
     KIM::EnergyUnit const requestedEnergyUnit,
     KIM::ChargeUnit const requestedChargeUnit,
@@ -479,7 +479,7 @@ int LennardJones612Implementation::ConvertUnits(
 
   // changing units of cutoffs and sigmas
   double convertLength = 1.0;
-  ier = modelDriverInitialization->convert_unit(
+  ier = modelDriverCreate->ConvertUnit(
       fromLength, fromEnergy, fromCharge, fromTemperature, fromTime,
       requestedLengthUnit, requestedEnergyUnit, requestedChargeUnit,
       requestedTemperatureUnit, requestedTimeUnit,
@@ -500,7 +500,7 @@ int LennardJones612Implementation::ConvertUnits(
   }
   // changing units of epsilons
   double convertEnergy = 1.0;
-  ier = modelDriverInitialization->convert_unit(
+  ier = modelDriverCreate->ConvertUnit(
       fromLength, fromEnergy, fromCharge, fromTemperature, fromTime,
       requestedLengthUnit, requestedEnergyUnit, requestedChargeUnit,
       requestedTemperatureUnit, requestedTimeUnit,
@@ -520,7 +520,7 @@ int LennardJones612Implementation::ConvertUnits(
   }
 
   // register units
-  ier = modelDriverInitialization->set_units(
+  ier = modelDriverCreate->SetUnits(
       requestedLengthUnit,
       requestedEnergyUnit,
       requestedChargeUnit,
@@ -539,62 +539,63 @@ int LennardJones612Implementation::ConvertUnits(
 
 //******************************************************************************
 int LennardJones612Implementation::RegisterKIMModelSettings(
-    KIM::ModelDriverInitialization * const modelDriverInitialization)
+    KIM::ModelDriverCreate * const modelDriverCreate)
 {
   // register numbering
-  int error = modelDriverInitialization->set_model_numbering(
+  int error = modelDriverCreate->SetModelNumbering(
       KIM::NUMBERING::zeroBased);
 
   // register arguments
-  LOG_INFORMATION("Register argument attributes");
+  LOG_INFORMATION("Register argument supportStatus");
   error = error
-      || modelDriverInitialization->set_argument_attribute(
-          KIM::ARGUMENT_NAME::energy, KIM::ATTRIBUTE::optional)
-      || modelDriverInitialization->set_argument_attribute(
-          KIM::ARGUMENT_NAME::forces, KIM::ATTRIBUTE::optional)
-      || modelDriverInitialization->set_argument_attribute(
-          KIM::ARGUMENT_NAME::particleEnergy, KIM::ATTRIBUTE::optional);
+      || modelDriverCreate->SetArgumentSupportStatus(
+          KIM::ARGUMENT_NAME::partialEnergy, KIM::SUPPORT_STATUS::optional)
+      || modelDriverCreate->SetArgumentSupportStatus(
+          KIM::ARGUMENT_NAME::partialForces, KIM::SUPPORT_STATUS::optional)
+      || modelDriverCreate->SetArgumentSupportStatus(
+          KIM::ARGUMENT_NAME::partialParticleEnergy,
+          KIM::SUPPORT_STATUS::optional);
 
   // register callbacks
-  LOG_INFORMATION("Register call back attributes");
+  LOG_INFORMATION("Register callback supportStatus");
   error = error
-      || modelDriverInitialization->set_call_back_attribute(
-          KIM::CALL_BACK_NAME::process_dEdr, KIM::ATTRIBUTE::optional)
-      || modelDriverInitialization->set_call_back_attribute(
-          KIM::CALL_BACK_NAME::process_d2Edr2, KIM::ATTRIBUTE::optional);
+      || modelDriverCreate->SetCallbackSupportStatus(
+          KIM::CALLBACK_NAME::ProcessDEDrTerm, KIM::SUPPORT_STATUS::optional)
+      || modelDriverCreate->SetCallbackSupportStatus(
+          KIM::CALLBACK_NAME::ProcessD2EDr2Term, KIM::SUPPORT_STATUS::optional);
 
   return error;
 }
 
 //******************************************************************************
 int LennardJones612Implementation::RegisterKIMParameters(
-    KIM::ModelDriverInitialization * const modelDriverInitialization)
+    KIM::ModelDriverCreate * const modelDriverCreate)
 {
   int ier = false;
 
   // publish parameters (order is important)
-  ier = modelDriverInitialization->set_parameter(1, &shift_, "shift");
+  ier = modelDriverCreate->SetParameterPointer(1, &shift_, "shift");
   if (ier)
   {
     LOG_ERROR("set_parameter shift");
     return ier;
   }
-  ier = modelDriverInitialization->set_parameter(numberUniqueSpeciesPairs_,
-                                                 cutoffs_, "cutoffs");
+  ier = modelDriverCreate->SetParameterPointer(
+      numberUniqueSpeciesPairs_, cutoffs_, "cutoffs");
   if (ier)
   {
     LOG_ERROR("set_parameter cutoffs");
     return ier;
   }
-  ier = modelDriverInitialization->set_parameter(numberUniqueSpeciesPairs_,
-                                                 epsilons_, "epsilons");
+  ier = modelDriverCreate->SetParameterPointer(
+      numberUniqueSpeciesPairs_, epsilons_, "epsilons");
   if (ier)
   {
     LOG_ERROR("set_parameter epsilons");
     return ier;
   }
-  ier = modelDriverInitialization->set_parameter(numberUniqueSpeciesPairs_,
-                                                 sigmas_, "sigmas");
+  ier = modelDriverCreate->SetParameterPointer(
+      numberUniqueSpeciesPairs_, sigmas_, "sigmas");
   if (ier)
   {
     LOG_ERROR("set_parameter sigmas");
@@ -608,18 +609,18 @@ int LennardJones612Implementation::RegisterKIMParameters(
 
 //******************************************************************************
 int LennardJones612Implementation::RegisterKIMFunctions(
-    KIM::ModelDriverInitialization * const modelDriverInitialization)
+    KIM::ModelDriverCreate * const modelDriverCreate)
     const
 {
   int error;
 
   // register the destroy() and reinit() functions
-  error = modelDriverInitialization->set_destroy(
-      KIM::LANGUAGE_NAME::Cpp, (KIM::func*) &(LennardJones612::Destroy))
-      || modelDriverInitialization->set_reinit(
-          KIM::LANGUAGE_NAME::Cpp, (KIM::func*) &(LennardJones612::Reinit))
-      || modelDriverInitialization->set_compute_func(
-          KIM::LANGUAGE_NAME::Cpp, (KIM::func*) &(LennardJones612::Compute));
+  error = modelDriverCreate->SetDestroyPointer(
+      KIM::LANGUAGE_NAME::cpp, (KIM::func*) &(LennardJones612::Destroy))
+      || modelDriverCreate->SetRefreshPointer(
+          KIM::LANGUAGE_NAME::cpp, (KIM::func*) &(LennardJones612::Refresh))
+      || modelDriverCreate->SetComputePointer(
+          KIM::LANGUAGE_NAME::cpp, (KIM::func*) &(LennardJones612::Compute));
 
   return error;
 }
@@ -675,8 +676,8 @@ int LennardJones612Implementation::SetReinitMutableValues(
   }
 
   influenceDistance_ = sqrt(influenceDistance_);
-  modelObj->set_influence_distance(&influenceDistance_);
-  modelObj->set_cutoffs(1, &influenceDistance_);
+  modelObj->SetInfluenceDistancePointer(&influenceDistance_);
+  modelObj->SetCutoffsPointer(1, &influenceDistance_);
 
   // update shifts
   // compute and set shifts2D_ check if minus sign
@@ -690,7 +691,7 @@ int LennardJones612Implementation::SetReinitMutableValues(
       for(int jSpecies = 0; jSpecies <= iSpecies; jSpecies++)
       {
         int const index = jSpecies*numberModelSpecies_ + iSpecies
-                           - (jSpecies*jSpecies + jSpecies)/2;
+            - (jSpecies*jSpecies + jSpecies)/2;
         double const rij2 = cutoffs_[index]*cutoffs_[index];
         double const r2iv = 1.0/rij2;
         double const r6iv = r2iv*r2iv*r2iv;
@@ -727,10 +728,10 @@ int LennardJones612Implementation::SetComputeMutableValues(
   int compProcess_dEdr;
   int compProcess_d2Edr2;
 
-  modelCompute->is_call_back_present(KIM::CALL_BACK_NAME::process_dEdr,
-                                     &compProcess_dEdr);
-  modelCompute->is_call_back_present(KIM::CALL_BACK_NAME::process_d2Edr2,
-                                     &compProcess_d2Edr2);
+  modelCompute->IsCallbackPresent(KIM::CALLBACK_NAME::ProcessDEDrTerm,
+                                  &compProcess_dEdr);
+  modelCompute->IsCallbackPresent(KIM::CALLBACK_NAME::ProcessD2EDr2Term,
+                                  &compProcess_d2Edr2);
 
   isComputeProcess_dEdr = compProcess_dEdr;
   isComputeProcess_d2Edr2 = compProcess_d2Edr2;
@@ -739,22 +740,30 @@ int LennardJones612Implementation::SetComputeMutableValues(
   // int const* numberOfSpecies;  // currently unused
   int const* numberOfParticles;
   ier =
-      modelCompute->get_data(KIM::ARGUMENT_NAME::numberOfParticles,
-                             &numberOfParticles)
-      || modelCompute->get_data(KIM::ARGUMENT_NAME::particleSpecies,
-                                &particleSpecies)
-      || modelCompute->get_data(KIM::ARGUMENT_NAME::particleContributing,
-                                &particleContributing)
-      || modelCompute->get_data(KIM::ARGUMENT_NAME::coordinates,
-                                (double const ** const) &coordinates)
-      || modelCompute->get_data(KIM::ARGUMENT_NAME::energy, &energy)
-      || modelCompute->get_data(KIM::ARGUMENT_NAME::particleEnergy,
-                                &particleEnergy)
-      || modelCompute->get_data(KIM::ARGUMENT_NAME::forces,
-                                (double const ** const) &forces);
+      modelCompute->GetArgumentPointer(
+          KIM::ARGUMENT_NAME::numberOfParticles,
+          &numberOfParticles)
+      || modelCompute->GetArgumentPointer(
+          KIM::ARGUMENT_NAME::particleSpecies,
+          &particleSpecies)
+      || modelCompute->GetArgumentPointer(
+          KIM::ARGUMENT_NAME::particleContributing,
+          &particleContributing)
+      || modelCompute->GetArgumentPointer(
+          KIM::ARGUMENT_NAME::coordinates,
+          (double const ** const) &coordinates)
+      || modelCompute->GetArgumentPointer(
+          KIM::ARGUMENT_NAME::partialEnergy,
+          &energy)
+      || modelCompute->GetArgumentPointer(
+          KIM::ARGUMENT_NAME::partialParticleEnergy,
+          &particleEnergy)
+      || modelCompute->GetArgumentPointer(
+          KIM::ARGUMENT_NAME::partialForces,
+          (double const ** const) &forces);
   if (ier)
   {
-    LOG_ERROR("get_data");
+    LOG_ERROR("GetArgumentPointer");
     return ier;
   }
 

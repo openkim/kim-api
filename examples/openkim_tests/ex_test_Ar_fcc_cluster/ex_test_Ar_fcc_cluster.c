@@ -41,9 +41,9 @@
 #include "KIM_SpeciesName.h"
 #include "KIM_Numbering.h"
 #include "KIM_Model.h"
-#include "KIM_Attribute.h"
+#include "KIM_SupportStatus.h"
 #include "KIM_ArgumentName.h"
-#include "KIM_CallBackName.h"
+#include "KIM_CallbackName.h"
 #include "KIM_UnitSystem.h"
 
 #define TRUE 1
@@ -131,9 +131,9 @@ int main()
   int modelArCode;
   int numberOfAPI_Arguments;
   KIM_ArgumentName argumentName;
-  KIM_Attribute attribute;
-  int numberOfAPI_CallBacks;
-  KIM_CallBackName callBackName;
+  KIM_SupportStatus supportStatus;
+  int numberOfAPI_Callbacks;
+  KIM_CallbackName callbackName;
 
 
 
@@ -146,7 +146,7 @@ int main()
   }
 
   /* initialize the model */
-  error = KIM_Model_create(KIM_NUMBERING_zeroBased,
+  error = KIM_Model_Create(KIM_NUMBERING_zeroBased,
                            KIM_LENGTH_UNIT_A,
                            KIM_ENERGY_UNIT_eV,
                            KIM_CHARGE_UNIT_e,
@@ -161,7 +161,7 @@ int main()
   if (!requestedUnitsAccepted) MY_ERROR("Must adapt to model units");
 
   /* check species */
-  error = KIM_Model_get_species_support_and_code(
+  error = KIM_Model_GetSpeciesSupportAndCode(
       model, KIM_SPECIES_NAME_Ar, &speciesIsSupported, &modelArCode);
   if ((error) || (!speciesIsSupported))
   {
@@ -169,29 +169,33 @@ int main()
   }
 
   /* check arguments */
-  KIM_ARGUMENT_NAME_get_number_of_arguments(&numberOfAPI_Arguments);
+  KIM_ARGUMENT_NAME_GetNumberOfArguments(&numberOfAPI_Arguments);
   for (i=0; i<numberOfAPI_Arguments; ++i)
   {
-    error = KIM_ARGUMENT_NAME_get_argument_name(i, &argumentName);
+    error = KIM_ARGUMENT_NAME_GetArgumentName(i, &argumentName);
     if (error) MY_ERROR("can't get argument name");
-    error = KIM_Model_get_argument_attribute(model, argumentName, &attribute);
-    if (error) MY_ERROR("can't get argument attribute");
+    error = KIM_Model_GetArgumentSupportStatus(model, argumentName,
+                                               &supportStatus);
+    if (error) MY_ERROR("can't get argument supportStatus");
 
     /* can only handle energy as a required arg */
-    if (KIM_AttributeEqual(attribute, KIM_ATTRIBUTE_required))
+    if (KIM_SupportStatusEqual(supportStatus, KIM_SUPPORT_STATUS_required))
     {
-      if (KIM_ArgumentNameNotEqual(argumentName, KIM_ARGUMENT_NAME_energy))
+      if (KIM_ArgumentNameNotEqual(argumentName,
+                                   KIM_ARGUMENT_NAME_partialEnergy))
       {
         MY_ERROR("unsupported required argument");
       }
     }
 
     /* must have energy */
-    if (KIM_ArgumentNameEqual(argumentName, KIM_ARGUMENT_NAME_energy))
+    if (KIM_ArgumentNameEqual(argumentName, KIM_ARGUMENT_NAME_partialEnergy))
     {
-      if (! ((KIM_AttributeEqual(attribute, KIM_ATTRIBUTE_required))
+      if (! ((KIM_SupportStatusEqual(supportStatus,
+                                     KIM_SUPPORT_STATUS_required))
              ||
-             (KIM_AttributeEqual(attribute, KIM_ATTRIBUTE_optional))))
+             (KIM_SupportStatusEqual(supportStatus,
+                                     KIM_SUPPORT_STATUS_optional))))
       {
         MY_ERROR("energy not available");
       }
@@ -199,16 +203,17 @@ int main()
   }
 
   /* check call backs */
-  KIM_CALL_BACK_NAME_get_number_of_call_backs(&numberOfAPI_CallBacks);
-  for (i=0; i<numberOfAPI_CallBacks; ++i)
+  KIM_CALLBACK_NAME_GetNumberOfCallbacks(&numberOfAPI_Callbacks);
+  for (i=0; i<numberOfAPI_Callbacks; ++i)
   {
-    error = KIM_CALL_BACK_NAME_get_call_back_name(i, &callBackName);
+    error = KIM_CALLBACK_NAME_GetCallbackName(i, &callbackName);
     if (error) MY_ERROR("can't get call back name");
-    error = KIM_Model_get_call_back_attribute(model, callBackName, &attribute);
-    if (error) MY_ERROR("can't get call back attribute");
+    error = KIM_Model_GetCallbackSupportStatus(model, callbackName,
+                                               &supportStatus);
+    if (error) MY_ERROR("can't get call back supportStatus");
 
     /* cannot handle any "required" call backs */
-    if (KIM_AttributeEqual(attribute, KIM_ATTRIBUTE_required))
+    if (KIM_SupportStatusEqual(supportStatus, KIM_SUPPORT_STATUS_required))
     {
       MY_ERROR("unsupported required call back");
     }
@@ -217,29 +222,33 @@ int main()
   /* We're compatible with the model.  Let's do it. */
 
   error =
-      KIM_Model_set_data_int(model, KIM_ARGUMENT_NAME_numberOfParticles,
-                             &numberOfParticles_cluster)
+      KIM_Model_SetArgumentPointerInteger(model,
+                                          KIM_ARGUMENT_NAME_numberOfParticles,
+                                          &numberOfParticles_cluster)
       ||
-      KIM_Model_set_data_int(model, KIM_ARGUMENT_NAME_particleSpecies,
-                             particleSpecies_cluster_model)
+      KIM_Model_SetArgumentPointerInteger(model,
+                                          KIM_ARGUMENT_NAME_particleSpecies,
+                                          particleSpecies_cluster_model)
       ||
-      KIM_Model_set_data_double(model, KIM_ARGUMENT_NAME_coordinates,
-                                (double*) &coords_cluster)
+      KIM_Model_SetArgumentPointerDouble(model, KIM_ARGUMENT_NAME_coordinates,
+                                         (double*) &coords_cluster)
       ||
-      KIM_Model_set_data_double(model, KIM_ARGUMENT_NAME_energy, &energy);
+      KIM_Model_SetArgumentPointerDouble(model, KIM_ARGUMENT_NAME_partialEnergy,
+                                         &energy);
   if (error) MY_ERROR("KIM_setm_data");
-  KIM_Model_set_call_back(model,
-                          KIM_CALL_BACK_NAME_get_neigh,
-                          KIM_LANGUAGE_NAME_C,
-                          (func *) &get_cluster_neigh,
-                          &nl_cluster_model);
+  KIM_Model_SetCallbackPointer(model,
+                               KIM_CALLBACK_NAME_GetNeighborList,
+                               KIM_LANGUAGE_NAME_c,
+                               (func *) &get_cluster_neigh,
+                               &nl_cluster_model);
 
-  KIM_Model_get_influence_distance(model, &influence_distance_cluster_model);
-  KIM_Model_get_cutoffs(model, &number_of_cutoffs_cluster_model, &cutoff_cluster_model);
+  KIM_Model_GetInfluenceDistance(model, &influence_distance_cluster_model);
+  KIM_Model_GetCutoffsPointer(model, &number_of_cutoffs_cluster_model,
+                              &cutoff_cluster_model);
   if (number_of_cutoffs_cluster_model != 1) MY_ERROR("too many cutoffs");
 
   /* setup particleSpecies */
-  error = KIM_Model_get_species_support_and_code(
+  error = KIM_Model_GetSpeciesSupportAndCode(
       model,
       KIM_SPECIES_NAME_Ar,
       &speciesIsSupported,
@@ -281,13 +290,13 @@ int main()
                              (*cutoff_cluster_model + cutpad), &nl_cluster_model);
 
     /* call compute functions */
-    error = KIM_Model_set_data_int(model, KIM_ARGUMENT_NAME_particleContributing, particleContributing_cluster_model);
-    error = error || KIM_Model_compute(model);
+    error = KIM_Model_SetArgumentPointerInteger(model, KIM_ARGUMENT_NAME_particleContributing, particleContributing_cluster_model);
+    error = error || KIM_Model_Compute(model);
     if (error) MY_ERROR("KIM_model_compute");
     energy_cluster_model = energy;
 
-    error = KIM_Model_set_data_int(model, KIM_ARGUMENT_NAME_particleContributing, particleContributing_one_atom_model);
-    error = error || KIM_Model_compute(model);
+    error = KIM_Model_SetArgumentPointerInteger(model, KIM_ARGUMENT_NAME_particleContributing, particleContributing_one_atom_model);
+    error = error || KIM_Model_Compute(model);
     if (error) MY_ERROR("KIM_model_compute");
     energy_one_atom_model = energy;
 
@@ -304,7 +313,7 @@ int main()
   free(nl_cluster_model.neighborList);
 
   /* free pkim objects */
-  KIM_Model_destroy(&model);
+  KIM_Model_Destroy(&model);
 
   /* everything is great */
   return 0;

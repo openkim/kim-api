@@ -52,7 +52,7 @@ implicit none
 save
 private
 public Compute_Energy_Forces, &
-       model_reinit_func, &
+       model_refresh_func, &
        model_destroy_func, &
        model_cutoff, &
        speccode, &
@@ -194,29 +194,29 @@ real(c_double), pointer :: virial(:)
 ! Unpack data from KIM object
 !
 ierr = 0
-call kim_model_compute_get_data(model_compute, &
+call kim_model_compute_get_argument_pointer(model_compute, &
   kim_argument_name_number_of_particles, N, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_get_data(model_compute, &
+call kim_model_compute_get_argument_pointer(model_compute, &
   kim_argument_name_particle_species, n, particleSpecies, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_get_data(model_compute, &
+call kim_model_compute_get_argument_pointer(model_compute, &
   kim_argument_name_particle_species, n, particleContributing, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_get_data(model_compute, &
+call kim_model_compute_get_argument_pointer(model_compute, &
   kim_argument_name_coordinates, dim, n, coor, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_get_data(model_compute, kim_argument_name_energy, &
-  energy, ierr2)
+call kim_model_compute_get_argument_pointer(model_compute, &
+  kim_argument_name_partial_energy, energy, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_get_data(model_compute, kim_argument_name_forces, dim, &
-  n, force, ierr2)
+call kim_model_compute_get_argument_pointer(model_compute, &
+  kim_argument_name_partial_forces, dim, n, force, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_get_data(model_compute, &
-  kim_argument_name_particle_energy, n, enepot, ierr2)
+call kim_model_compute_get_argument_pointer(model_compute, &
+  kim_argument_name_partial_particle_energy, n, enepot, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_get_data(model_compute, kim_argument_name_virial, 6, &
-  virial, ierr2)
+call kim_model_compute_get_argument_pointer(model_compute, &
+  kim_argument_name_partial_virial, 6, virial, ierr2)
   ierr = ierr + ierr2
 if (ierr /= 0) then
   LOG_ERROR("get data")
@@ -276,7 +276,7 @@ if (comp_virial.eq.1) virial = 0.0_cd
 do i = 1, N
   if (particleContributing(i) == 1) then
     ! Set up neighbor list for next particle
-    call kim_model_compute_get_neigh( &
+    call kim_model_compute_get_neighbor_list( &
       model_compute, 1, i, numnei, nei1part, ierr)
     if (ierr /= 0) then
       ! some sort of problem, exit
@@ -369,7 +369,7 @@ subroutine model_destroy_func(model_destroy, ierr) bind(c)
 
   type(buffer_type), pointer :: buf; type(c_ptr) :: pbuf
 
-  call kim_model_destroy_get_model_buffer(model_destroy, pbuf)
+  call kim_model_destroy_get_model_buffer_pointer(model_destroy, pbuf)
   call c_f_pointer(pbuf, buf)
   LOG_INFORMATION("deallocating model buffer")
   deallocate(buf)
@@ -378,43 +378,42 @@ end subroutine model_destroy_func
 
 !-------------------------------------------------------------------------------
 !
-! Model reinit routine (REQUIRED)
+! Model refresh routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-#include "kim_model_reinitialization_log_macros.fd"
-subroutine model_reinit_func(model_reinitialization, ierr) bind(c)
+#include "kim_model_refresh_log_macros.fd"
+subroutine model_refresh_func(model_refresh, ierr) bind(c)
   use, intrinsic :: iso_c_binding
   use kim_log_verbosity_module
-  use kim_model_reinitialization_module
+  use kim_model_refresh_module
   implicit none
 
   !-- Transferred variables
-  type(kim_model_reinitialization_type), intent(inout) :: model_reinitialization
+  type(kim_model_refresh_type), intent(inout) :: model_refresh
   integer(c_int), intent(out) :: ierr
 
   type(buffer_type), pointer :: buf; type(c_ptr) :: pbuf
 
-  call kim_model_reinitialization_get_model_buffer(model_reinitialization, pbuf)
+  call kim_model_refresh_get_model_buffer_pointer(model_refresh, pbuf)
   call c_f_pointer(pbuf, buf)
 
   LOG_INFORMATION("Resettings influence distance and cutoffs")
-  call kim_model_reinitialization_set_influence_distance(&
-    model_reinitialization, buf%cutoff(1))
-  call kim_model_reinitialization_set_cutoffs(model_reinitialization, 1, &
-    buf%cutoff)
+  call kim_model_refresh_set_influence_distance_pointer( &
+    model_refresh, buf%cutoff(1))
+  call kim_model_refresh_set_cutoffs_pointer(model_refresh, 1, buf%cutoff)
 
   ierr = 0  ! everything is good
-end subroutine model_reinit_func
+end subroutine model_refresh_func
 
 end module ex_model_Ar_P_MLJ_F03
 
 !-------------------------------------------------------------------------------
 !
-! Model initialization routine (REQUIRED)
+! Model create routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-#include "kim_model_initialization_log_macros.fd"
-subroutine model_init(model_initialization, requested_length_unit, &
+#include "kim_model_create_log_macros.fd"
+subroutine model_create_routine(model_create, requested_length_unit, &
   requested_energy_unit, requested_charge_unit, requested_temperature_unit, &
   requested_time_unit, ierr) bind(c)
 use, intrinsic :: iso_c_binding
@@ -423,14 +422,14 @@ use kim_log_verbosity_module
 use kim_numbering_module
 use kim_species_name_module
 use kim_argument_name_module
-use kim_attribute_module
+use kim_support_status_module
 use kim_unit_system_module
-use kim_model_initialization_module
+use kim_model_create_module
 use kim_language_name_module
 implicit none
 
 !-- Transferred variables
-type(kim_model_initialization_type), intent(inout) :: model_initialization
+type(kim_model_create_type), intent(inout) :: model_create
 type(kim_length_unit_type), intent(in) :: requested_length_unit
 type(kim_energy_unit_type), intent(in) :: requested_energy_unit
 type(kim_charge_unit_type), intent(in) :: requested_charge_unit
@@ -445,45 +444,50 @@ type(buffer_type), pointer :: buf
 ierr2 = 0
 
 ! register numbering
-call kim_model_initialization_set_model_numbering(model_initialization, &
+call kim_model_create_set_model_numbering(model_create, &
   kim_numbering_one_based, ierr2);
 ierr = ierr + ierr2
 
 ! register species
-call kim_model_initialization_set_species_code(model_initialization, &
+call kim_model_create_set_species_code(model_create, &
   kim_species_name_ar, speccode, ierr2)
 ierr = ierr + ierr2
 
 ! register arguments
-call kim_model_initialization_set_argument_attribute(model_initialization, &
-  kim_argument_name_energy, kim_attribute_optional, ierr2)
+call kim_model_create_set_argument_support_status( &
+  model_create, kim_argument_name_partial_energy, &
+  kim_support_status_optional, ierr2)
 ierr = ierr + ierr2
-call kim_model_initialization_set_argument_attribute(model_initialization, &
-  kim_argument_name_forces, kim_attribute_optional, ierr2)
+call kim_model_create_set_argument_support_status( &
+  model_create, kim_argument_name_partial_forces, &
+  kim_support_status_optional, ierr2)
 ierr = ierr + ierr2
-call kim_model_initialization_set_argument_attribute(model_initialization, &
-  kim_argument_name_particle_energy, kim_attribute_optional, ierr2)
+call kim_model_create_set_argument_support_status( &
+  model_create, kim_argument_name_partial_particle_energy, &
+  kim_support_status_optional, ierr2)
 ierr = ierr + ierr2
-call kim_model_initialization_set_argument_attribute(model_initialization, &
-  kim_argument_name_virial, kim_attribute_optional, ierr2)
+call kim_model_create_set_argument_support_status( &
+  model_create, kim_argument_name_partial_virial, &
+  kim_support_status_optional, ierr2)
 ierr = ierr + ierr2
 
 ! register call backs
 ! NONE
 
 ! register function pointers
-call kim_model_initialization_set_compute_func(model_initialization, &
+call kim_model_create_set_compute_pointer(model_create, &
   kim_language_name_fortran, c_funloc(Compute_Energy_Forces), ierr2)
 ierr = ierr + ierr2
-call kim_model_initialization_set_destroy(model_initialization, &
+call kim_model_create_set_destroy_pointer(model_create, &
   kim_language_name_fortran, c_funloc(model_destroy_func), ierr2)
 ierr = ierr + ierr2
-call kim_model_initialization_set_reinit(model_initialization, &
-  kim_language_name_fortran, c_funloc(model_reinit_func), ierr2)
+call kim_model_create_set_refresh_pointer( &
+  model_create, kim_language_name_fortran, &
+  c_funloc(model_refresh_func), ierr2)
 ierr = ierr + ierr2
 
 ! set units
-call kim_model_initialization_set_units(model_initialization, &
+call kim_model_create_set_units(model_create, &
   kim_length_unit_a, &
   kim_energy_unit_ev, &
   kim_charge_unit_unused, &
@@ -495,22 +499,24 @@ ierr = ierr + ierr2
 ! store model cutoff in KIM object
 allocate( buf )
 buf%cutoff = model_cutoff
-call kim_model_initialization_set_model_buffer(model_initialization, c_loc(buf))
+call kim_model_create_set_model_buffer_pointer(model_create, &
+  c_loc(buf))
 
 ! register influence distance and cutoffs
-call kim_model_initialization_set_influence_distance(model_initialization, &
-  buf%cutoff(1))
+call kim_model_create_set_influence_distance_pointer( &
+  model_create, buf%cutoff(1))
 
-call kim_model_initialization_set_cutoffs(model_initialization, 1, buf%cutoff)
+call kim_model_create_set_cutoffs_pointer(model_create, 1, &
+  buf%cutoff)
 
 if (ierr /= 0) then
   ierr = 1
   ! LOG_ERROR("Unable to successfully initialize model")
-  call kim_model_initialization_log(model_initialization, &
+  call kim_model_create_log(model_create, &
     kim_log_verbosity_error, "Unable to successfully initialize model", &
     __LINE__, __FILE__)
 endif
 
 return
 
-end subroutine model_init
+end subroutine model_create_routine

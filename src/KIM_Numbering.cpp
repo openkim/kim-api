@@ -44,7 +44,7 @@ bool Numbering::operator==(Numbering const & rhs) const
 bool Numbering::operator!=(Numbering const & rhs) const
 {return numberingID!=rhs.numberingID;}
 
-std::string Numbering::string() const
+std::string Numbering::String() const
 {
   if (*this == NUMBERING::zeroBased) return "zeroBased";
   else if (*this == NUMBERING::oneBased) return "oneBased";

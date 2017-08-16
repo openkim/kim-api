@@ -51,12 +51,12 @@ ArgumentName const numberOfParticles(0);
 ArgumentName const particleSpecies(1);
 ArgumentName const particleContributing(2);
 ArgumentName const coordinates(3);
-ArgumentName const energy(4);
-ArgumentName const forces(5);
-ArgumentName const particleEnergy(6);
-ArgumentName const virial(7);
-ArgumentName const particleVirial(8);
-ArgumentName const hessian(9);
+ArgumentName const partialEnergy(4);
+ArgumentName const partialForces(5);
+ArgumentName const partialParticleEnergy(6);
+ArgumentName const partialVirial(7);
+ArgumentName const partialParticleVirial(8);
+ArgumentName const partialHessian(9);
 
 extern std::unordered_map<ArgumentName const, std::string> const
 argumentNameToString = {
@@ -67,12 +67,14 @@ argumentNameToString = {
   std::pair<ArgumentName const, std::string>(particleContributing,
                                              "particleContributing"),
   std::pair<ArgumentName const, std::string>(coordinates, "coordinates"),
-  std::pair<ArgumentName const, std::string>(energy, "energy"),
-  std::pair<ArgumentName const, std::string>(forces, "forces"),
-  std::pair<ArgumentName const, std::string>(particleEnergy, "particleEnergy"),
-  std::pair<ArgumentName const, std::string>(virial, "virial"),
-  std::pair<ArgumentName const, std::string>(particleVirial, "particleVirial"),
-  std::pair<ArgumentName const, std::string>(hessian, "hessian")
+  std::pair<ArgumentName const, std::string>(partialEnergy, "partialEnergy"),
+  std::pair<ArgumentName const, std::string>(partialForces, "partialForces"),
+  std::pair<ArgumentName const, std::string>(partialParticleEnergy,
+                                             "partialParticleEnergy"),
+  std::pair<ArgumentName const, std::string>(partialVirial, "partialVirial"),
+  std::pair<ArgumentName const, std::string>(partialParticleVirial,
+                                             "partialParticleVirial"),
+  std::pair<ArgumentName const, std::string>(partialHessian, "partialHessian")
 };
 
 extern std::unordered_map<ArgumentName const, DataType> const
@@ -84,30 +86,31 @@ argumentNameToDataType = {
                                           DATA_TYPE::Integer),
   std::pair<ArgumentName const, DataType>(coordinates,
                                           DATA_TYPE::Double),
-  std::pair<ArgumentName const, DataType>(energy,
+  std::pair<ArgumentName const, DataType>(partialEnergy,
                                           DATA_TYPE::Double),
-  std::pair<ArgumentName const, DataType>(forces, DATA_TYPE::Double),
-  std::pair<ArgumentName const, DataType>(particleEnergy, DATA_TYPE::Double),
-  std::pair<ArgumentName const, DataType>(virial, DATA_TYPE::Double),
-  std::pair<ArgumentName const, DataType>(particleVirial, DATA_TYPE::Double),
-  std::pair<ArgumentName const, DataType>(hessian, DATA_TYPE::Double)};
+  std::pair<ArgumentName const, DataType>(partialForces, DATA_TYPE::Double),
+  std::pair<ArgumentName const, DataType>(partialParticleEnergy,
+                                          DATA_TYPE::Double),
+  std::pair<ArgumentName const, DataType>(partialVirial, DATA_TYPE::Double),
+  std::pair<ArgumentName const, DataType>(partialParticleVirial,
+                                          DATA_TYPE::Double),
+  std::pair<ArgumentName const, DataType>(partialHessian, DATA_TYPE::Double)};
 
-extern std::vector<ArgumentName> const mandatoryArguments = {
+extern std::vector<ArgumentName> const requiredByAPI_Arguments = {
   numberOfParticles,
   particleSpecies,
   particleContributing,
   coordinates};
 
-void get_number_of_arguments(int * const numberOfArguments)
+void GetNumberOfArguments(int * const numberOfArguments)
 {
   *numberOfArguments = argumentNameToString.size();
 }
 
-int get_argument_name(int const index, ArgumentName * const argumentName)
+int GetArgumentName(int const index, ArgumentName * const argumentName)
 {
-  // @@@ is this OK?  Does iterator over a const object always give same order?
   int numberOfArguments;
-  get_number_of_arguments(&numberOfArguments);
+  GetNumberOfArguments(&numberOfArguments);
   if ((index < 0) || (index >= numberOfArguments)) return true;
 
   auto iter = argumentNameToString.begin();
@@ -117,8 +120,8 @@ int get_argument_name(int const index, ArgumentName * const argumentName)
   return false;  // no error
 }
 
-int get_argument_data_type(ArgumentName const argumentName,
-                           DataType * const dataType)
+int GetArgumentDataType(ArgumentName const argumentName,
+                        DataType * const dataType)
 {
   auto iter = argumentNameToDataType.find(argumentName);
 
@@ -158,7 +161,7 @@ bool ArgumentName::operator==(ArgumentName const & rhs) const
 bool ArgumentName::operator!=(ArgumentName const & rhs) const
 {return argumentNameID != rhs.argumentNameID;}
 
-std::string ArgumentName::string() const
+std::string ArgumentName::String() const
 {
   std::string result;
   auto iter = ARGUMENT_NAME::argumentNameToString.find(*this);

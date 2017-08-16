@@ -58,8 +58,8 @@ class ModelLibrary
   int open(bool const typeIsModel, std::string const & modelName);
   int close();
   int getModelType(ITEM_TYPE * const modelType) const;
-  int getModelInitializationFunctionPointer(LanguageName * const languageName,
-                                            func ** const functionPointer)
+  int getModelCreateFunctionPointer(LanguageName * const languageName,
+                                    func ** const functionPointer)
       const;
   int getNumberOfParameterFiles(int * const numberOfParameterFiles) const;
   int getParameterFileString(

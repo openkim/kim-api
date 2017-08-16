@@ -51,12 +51,12 @@
 #include "KIM_ArgumentName.hpp"
 #endif
 
-#ifndef KIM_CALL_BACK_NAME_HPP_
-#include "KIM_CallBackName.hpp"
+#ifndef KIM_CALLBACK_NAME_HPP_
+#include "KIM_CallbackName.hpp"
 #endif
 
-#ifndef KIM_ATTRIBUTE_HPP_
-#include "KIM_Attribute.hpp"
+#ifndef KIM_SUPPORT_STATUS_HPP_
+#include "KIM_SupportStatus.hpp"
 #endif
 
 #ifndef KIM_UNIT_SYSTEM_HPP_
@@ -73,7 +73,7 @@
 
 namespace KIM
 {
-int Model::create(Numbering const numbering,
+int Model::Create(Numbering const numbering,
                   LengthUnit const requestedLengthUnit,
                   EnergyUnit const requestedEnergyUnit,
                   ChargeUnit const requestedChargeUnit,
@@ -85,7 +85,7 @@ int Model::create(Numbering const numbering,
 {
   *model = new Model();
 
-  return ModelImplementation::create(numbering,
+  return ModelImplementation::Create(numbering,
                                      requestedLengthUnit,
                                      requestedEnergyUnit,
                                      requestedChargeUnit,
@@ -96,134 +96,136 @@ int Model::create(Numbering const numbering,
                                      &((*model)->pimpl));
 }
 
-void Model::destroy(Model ** const model)
+void Model::Destroy(Model ** const model)
 {
-  ModelImplementation::destroy(&((*model)->pimpl));
+  ModelImplementation::Destroy(&((*model)->pimpl));
   delete *model;
   *model = 0;
 }
 
-void Model::get_influence_distance(double * const influenceDistance) const
+void Model::GetInfluenceDistance(double * const influenceDistance) const
 {
-  pimpl->get_influence_distance(influenceDistance);
+  pimpl->GetInfluenceDistance(influenceDistance);
 }
 
-void Model::get_cutoffs(int * const numberOfCutoffs, double const ** cutoffs)
-    const
+void Model::GetCutoffsPointer(int * const numberOfCutoffs,
+                              double const ** cutoffs) const
 {
-  pimpl->get_cutoffs(numberOfCutoffs, cutoffs);
+  pimpl->GetCutoffsPointer(numberOfCutoffs, cutoffs);
 }
 
-int Model::get_argument_attribute(ArgumentName const argumentName,
-                                  Attribute * const attribute) const
+int Model::GetArgumentSupportStatus(ArgumentName const argumentName,
+                                    SupportStatus * const supportStatus) const
 {
-  return pimpl->get_argument_attribute(argumentName, attribute);
+  return pimpl->GetArgumentSupportStatus(argumentName, supportStatus);
 }
 
-int Model::get_call_back_attribute(CallBackName const callBackName,
-                                   Attribute * const attribute) const
+int Model::GetCallbackSupportStatus(CallbackName const callbackName,
+                                    SupportStatus * const supportStatus) const
 {
-  return pimpl->get_call_back_attribute(callBackName, attribute);
+  return pimpl->GetCallbackSupportStatus(callbackName, supportStatus);
 }
 
-void Model::get_units(LengthUnit * const lengthUnit,
-                      EnergyUnit * const energyUnit,
-                      ChargeUnit * const chargeUnit,
-                      TemperatureUnit * const temperatureUnit,
-                      TimeUnit * const timeUnit) const
+void Model::GetUnits(LengthUnit * const lengthUnit,
+                     EnergyUnit * const energyUnit,
+                     ChargeUnit * const chargeUnit,
+                     TemperatureUnit * const temperatureUnit,
+                     TimeUnit * const timeUnit) const
 {
-  pimpl->get_units(lengthUnit, energyUnit, chargeUnit,temperatureUnit,
-                   timeUnit);
-}
-
-
-int Model::set_data(ArgumentName const argumentName, int const * const ptr)
-{
-  return pimpl->set_data(argumentName, ptr);
-}
-
-int Model::set_data(ArgumentName const argumentName, double const * const ptr)
-{
-  return pimpl->set_data(argumentName, ptr);
-}
-
-int Model::set_call_back(CallBackName const callBackName,
-                         LanguageName const languageName,
-                         func * const fptr,
-                         void const * const dataObject)
-{
-  return pimpl->set_call_back(callBackName, languageName, fptr, dataObject);
-}
-
-int Model::compute() const
-{
-  return pimpl->compute();
-}
-
-int Model::ClearInfluenceDistanceAndCutoffsThenReinitializeModel()
-{
-  return pimpl->ClearInfluenceDistanceAndCutoffsThenReinitializeModel();
-}
-
-int Model::get_species_support_and_code(SpeciesName const speciesName,
-                                        int * const speciesIsSupported,
-                                        int * const code) const
-{
-  return pimpl->get_species_support_and_code(speciesName, speciesIsSupported,
-                                             code);
+  pimpl->GetUnits(lengthUnit, energyUnit, chargeUnit,temperatureUnit,
+                  timeUnit);
 }
 
 
-void Model::get_num_params(int * const numberOfParameters) const
+int Model::SetArgumentPointer(ArgumentName const argumentName,
+                              int const * const ptr)
 {
-  pimpl->get_num_params(numberOfParameters);
+  return pimpl->SetArgumentPointer(argumentName, ptr);
 }
 
-int Model::get_parameter_data_type_and_description(
+int Model::SetArgumentPointer(ArgumentName const argumentName,
+                              double const * const ptr)
+{
+  return pimpl->SetArgumentPointer(argumentName, ptr);
+}
+
+int Model::SetCallbackPointer(CallbackName const callbackName,
+                              LanguageName const languageName,
+                              func * const fptr,
+                              void const * const dataObject)
+{
+  return pimpl->SetCallbackPointer(callbackName, languageName, fptr,
+                                   dataObject);
+}
+
+int Model::Compute() const
+{
+  return pimpl->Compute();
+}
+
+int Model::ClearInfluenceDistanceAndCutoffsThenRefreshModel()
+{
+  return pimpl->ClearInfluenceDistanceAndCutoffsThenRefreshModel();
+}
+
+int Model::GetSpeciesSupportAndCode(SpeciesName const speciesName,
+                                    int * const speciesIsSupported,
+                                    int * const code) const
+{
+  return pimpl->GetSpeciesSupportAndCode(speciesName, speciesIsSupported, code);
+}
+
+
+void Model::GetNumberOfParameters(int * const numberOfParameters) const
+{
+  pimpl->GetNumberOfParameters(numberOfParameters);
+}
+
+int Model::GetParameterDataTypeAndDescription(
     int const index, DataType * const dataType,
     std::string * const description) const
 {
-  return pimpl->get_parameter_data_type_and_description(index, dataType,
-                                                        description);
+  return pimpl->GetParameterDataTypeAndDescription(index, dataType,
+                                                   description);
 }
 
-int Model::get_parameter_extent_and_pointer(
+int Model::GetParameterExtentAndPointer(
     int const index, int * const extent, int const ** const ptr) const
 {
-  return pimpl->get_parameter_extent_and_pointer(index, extent, ptr);
+  return pimpl->GetParameterExtentAndPointer(index, extent, ptr);
 }
 
-int Model::get_parameter_extent_and_pointer(
+int Model::GetParameterExtentAndPointer(
     int const index, int * const extent, int ** const ptr)
 {
-  return pimpl->get_parameter_extent_and_pointer(index, extent, ptr);
+  return pimpl->GetParameterExtentAndPointer(index, extent, ptr);
 }
 
-int Model::get_parameter_extent_and_pointer(
+int Model::GetParameterExtentAndPointer(
     int const index, int * const extent, double const ** const ptr) const
 {
-  return pimpl->get_parameter_extent_and_pointer(index, extent, ptr);
+  return pimpl->GetParameterExtentAndPointer(index, extent, ptr);
 }
 
-int Model::get_parameter_extent_and_pointer(
+int Model::GetParameterExtentAndPointer(
     int const index, int * const extent, double ** const ptr)
 {
-  return pimpl->get_parameter_extent_and_pointer(index, extent, ptr);
+  return pimpl->GetParameterExtentAndPointer(index, extent, ptr);
 }
 
-void Model::set_sim_buffer(void * const ptr)
+void Model::SetSimulatorBufferPointer(void * const ptr)
 {
-  pimpl->set_sim_buffer(ptr);
+  pimpl->SetSimulatorBufferPointer(ptr);
 }
 
-void Model::get_sim_buffer(void ** const ptr) const
+void Model::GetSimulatorBufferPointer(void ** const ptr) const
 {
-  pimpl->get_sim_buffer(ptr);
+  pimpl->GetSimulatorBufferPointer(ptr);
 }
 
-std::string Model::string() const
+std::string Model::String() const
 {
-  return pimpl->string();
+  return pimpl->String();
 }
 
 void Model::SetLogID(std::string const & logID)

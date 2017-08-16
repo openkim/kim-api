@@ -38,7 +38,7 @@ module kim_model_destroy_module
 
   public &
     kim_model_destroy_type, &
-    kim_model_destroy_get_model_buffer, &
+    kim_model_destroy_get_model_buffer_pointer, &
     kim_model_destroy_log, &
     kim_model_destroy_string
 
@@ -48,13 +48,13 @@ module kim_model_destroy_module
   end type kim_model_destroy_type
 
   interface
-    subroutine kim_model_destroy_get_model_buffer(model_destroy, ptr)
+    subroutine kim_model_destroy_get_model_buffer_pointer(model_destroy, ptr)
       use, intrinsic :: iso_c_binding
       import kim_model_destroy_type
       implicit none
       type(kim_model_destroy_type), intent(in) :: model_destroy
       type(c_ptr), intent(out) :: ptr
-    end subroutine kim_model_destroy_get_model_buffer
+    end subroutine kim_model_destroy_get_model_buffer_pointer
 
     subroutine kim_model_destroy_log(model_destroy, log_verbosity, message, &
       line_number, file_name)

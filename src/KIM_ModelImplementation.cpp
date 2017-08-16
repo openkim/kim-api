@@ -55,24 +55,24 @@ extern "C"
 }  // extern "C"
 #endif
 
-#ifndef KIM_MODEL_INITIALIZATION_H_
+#ifndef KIM_MODEL_CREATE_H_
 extern "C"
 {
-#include "KIM_ModelInitialization.h"
+#include "KIM_ModelCreate.h"
 }  // extern "C"
 #endif
 
-#ifndef KIM_MODEL_DRIVER_INITIALIZATION_H_
+#ifndef KIM_MODEL_DRIVER_CREATE_H_
 extern "C"
 {
-#include "KIM_ModelDriverInitialization.h"
+#include "KIM_ModelDriverCreate.h"
 }  // extern "C"
 #endif
 
-#ifndef KIM_MODEL_REINITIALIZATION_H_
+#ifndef KIM_MODEL_REFRESH_H_
 extern "C"
 {
-#include "KIM_ModelReinitialization.h"
+#include "KIM_ModelRefresh.h"
 }  // extern "C"
 #endif
 
@@ -95,13 +95,13 @@ namespace KIM
 {
 namespace ARGUMENT_NAME
 {
-extern std::vector<ArgumentName> const mandatoryArguments;
+extern std::vector<ArgumentName> const requiredByAPI_Arguments;
 }  // namespace ARGUMENT_NAME
 
-namespace CALL_BACK_NAME
+namespace CALLBACK_NAME
 {
-extern std::vector<CallBackName> const mandatoryCallBacks;
-}  // namespace CALL_BACK_NAME
+extern std::vector<CallbackName> const requiredByAPI_Callbacks;
+}  // namespace CALLBACK_NAME
 }  // namespace KIM
 
 namespace
@@ -141,13 +141,13 @@ KIM_TimeUnit makeTimeUnitC(KIM::TimeUnit const timeUnit)
 namespace KIM
 {
 // Forward declarations
-class ModelInitialization;
-class ModelDriverInitialization;
-class ModelReinitialization;
+class ModelCreate;
+class ModelDriverCreate;
+class ModelRefresh;
 class ModelCompute;
 class ModelDestroy;
 
-int ModelImplementation::create(
+int ModelImplementation::Create(
     Numbering const numbering,
     LengthUnit const requestedLengthUnit,
     EnergyUnit const requestedEnergyUnit,
@@ -161,7 +161,7 @@ int ModelImplementation::create(
   ModelImplementation * pModelImplementation;
   pModelImplementation = new ModelImplementation(new ModelLibrary());
 
-  int error = pModelImplementation->ModelInitialization(
+  int error = pModelImplementation->ModelCreate(
       numbering, requestedLengthUnit, requestedEnergyUnit, requestedChargeUnit,
       requestedTemperatureUnit, requestedTimeUnit, modelName);
   if (error)
@@ -175,9 +175,9 @@ int ModelImplementation::create(
   ChargeUnit finalChargeUnit;
   TemperatureUnit finalTemperatureUnit;
   TimeUnit finalTimeUnit;
-  pModelImplementation->get_units(&finalLengthUnit, &finalEnergyUnit,
-                                  &finalChargeUnit, &finalTemperatureUnit,
-                                  &finalTimeUnit);
+  pModelImplementation->GetUnits(&finalLengthUnit, &finalEnergyUnit,
+                                 &finalChargeUnit, &finalTemperatureUnit,
+                                 &finalTimeUnit);
 
   if (((finalLengthUnit == LENGTH_UNIT::unused) ||
        (finalLengthUnit == requestedLengthUnit))
@@ -207,7 +207,7 @@ int ModelImplementation::create(
 }
 
 
-void ModelImplementation::destroy(
+void ModelImplementation::Destroy(
     ModelImplementation ** const modelImplementation)
 {
 
@@ -219,19 +219,19 @@ void ModelImplementation::destroy(
   *modelImplementation = 0;
 }
 
-void ModelImplementation::set_influence_distance(
+void ModelImplementation::SetInfluenceDistancePointer(
     double const * const influenceDistance)
 {
   influenceDistance_ = influenceDistance;
 }
-void ModelImplementation::get_influence_distance(
+void ModelImplementation::GetInfluenceDistance(
     double * const influenceDistance) const
 {
   *influenceDistance = *influenceDistance_;
 }
 
 
-void ModelImplementation::set_cutoffs(
+void ModelImplementation::SetCutoffsPointer(
     int const numberOfCutoffs, double const * const cutoffs)
 {
   numberOfCutoffs_ = numberOfCutoffs;
@@ -239,25 +239,25 @@ void ModelImplementation::set_cutoffs(
 }
 
 // allows NULL as value of cutoffs (to get just numberOfCutoffs)
-void ModelImplementation::get_cutoffs(int * const numberOfCutoffs,
-                                      double const ** const cutoffs) const
+void ModelImplementation::GetCutoffsPointer(int * const numberOfCutoffs,
+                                            double const ** const cutoffs) const
 {
   *numberOfCutoffs = numberOfCutoffs_;
   *cutoffs = cutoffs_;
 }
 
 
-int ModelImplementation::set_reinit(LanguageName const languageName,
-                                    func * const fptr)
+int ModelImplementation::SetRefreshPointer(LanguageName const languageName,
+                                           func * const fptr)
 {
-  reinitializationLanguage_ = languageName;
-  reinitializationFunction_ = fptr;
+  refreshLanguage_ = languageName;
+  refreshFunction_ = fptr;
 
   return false;
 }
 
-int ModelImplementation::set_destroy(LanguageName const languageName,
-                                     func * const fptr)
+int ModelImplementation::SetDestroyPointer(LanguageName const languageName,
+                                           func * const fptr)
 {
   destroyLanguage_ = languageName;
   destroyFunction_ = fptr;
@@ -265,8 +265,8 @@ int ModelImplementation::set_destroy(LanguageName const languageName,
   return false;
 }
 
-int ModelImplementation::set_compute_func(LanguageName const languageName,
-                                          func * const fptr)
+int ModelImplementation::SetComputePointer(LanguageName const languageName,
+                                           func * const fptr)
 {
   computeLanguage_ = languageName;
   computeFunction_ = fptr;
@@ -275,15 +275,15 @@ int ModelImplementation::set_compute_func(LanguageName const languageName,
 }
 
 
-int ModelImplementation::set_species_code(SpeciesName const speciesName,
-                                          int const code)
+int ModelImplementation::SetSpeciesCode(SpeciesName const speciesName,
+                                        int const code)
 {
   supportedSpecies_[speciesName] = code;
 
   return false;
 }
 
-int ModelImplementation::get_species_support_and_code(
+int ModelImplementation::GetSpeciesSupportAndCode(
     KIM::SpeciesName const speciesName,
     int * const speciesIsSupported,
     int * const code) const
@@ -304,78 +304,76 @@ int ModelImplementation::get_species_support_and_code(
 }
 
 
-int ModelImplementation::set_argument_attribute(ArgumentName const argumentName,
-                                                Attribute const attribute)
+int ModelImplementation::SetArgumentSupportStatus(
+    ArgumentName const argumentName, SupportStatus const supportStatus)
 {
-  argumentAttribute_[argumentName] = attribute;
+  argumentSupportStatus_[argumentName] = supportStatus;
 
   return false;
 }
 
-int ModelImplementation::get_argument_attribute(ArgumentName const argumentName,
-                                                Attribute * const attribute)
+int ModelImplementation::GetArgumentSupportStatus(
+    ArgumentName const argumentName, SupportStatus * const supportStatus)
     const
 {
-  auto result = argumentAttribute_.find(argumentName);
+  auto result = argumentSupportStatus_.find(argumentName);
 
-  if (result == argumentAttribute_.end())
+  if (result == argumentSupportStatus_.end())
   {
     return true;
   }
   else
   {
-    *attribute = result->second;
+    *supportStatus = result->second;
     return false;
   }
 }
 
 
-int ModelImplementation::set_call_back_attribute(
-    CallBackName const callBackName,
-    Attribute const attribute)
+int ModelImplementation::SetCallbackSupportStatus(
+    CallbackName const callbackName, SupportStatus const supportStatus)
 {
-  callBackAttribute_[callBackName] = attribute;
+  callbackSupportStatus_[callbackName] = supportStatus;
 
   return false;
 }
 
-int ModelImplementation::get_call_back_attribute(
-    CallBackName const callBackName,
-    Attribute * const attribute) const
+int ModelImplementation::GetCallbackSupportStatus(
+    CallbackName const callbackName, SupportStatus * const supportStatus) const
 {
-  auto result = callBackAttribute_.find(callBackName);
+  auto result = callbackSupportStatus_.find(callbackName);
 
-  if (result == callBackAttribute_.end())
+  if (result == callbackSupportStatus_.end())
   {
     return true;
   }
   else
   {
-    *attribute = result->second;
+    *supportStatus = result->second;
     return false;
   }
 }
 
 
-int ModelImplementation::set_model_numbering(Numbering const numbering)
+int ModelImplementation::SetModelNumbering(Numbering const numbering)
 {
   modelNumbering_ = numbering;
 
   return false;
 }
 
-int ModelImplementation::set_simulator_numbering(Numbering const numbering)
+int ModelImplementation::SetSimulatorNumbering(Numbering const numbering)
 {
   simulatorNumbering_ = numbering;
   return false;
 }
 
 
-int ModelImplementation::set_units(LengthUnit const lengthUnit,
-                                   EnergyUnit const energyUnit,
-                                   ChargeUnit const chargeUnit,
-                                   TemperatureUnit const temperatureUnit,
-                                   TimeUnit const timeUnit)
+int ModelImplementation::SetUnits(LengthUnit const lengthUnit,
+                                  EnergyUnit const energyUnit,
+                                  ChargeUnit const chargeUnit,
+                                  TemperatureUnit const temperatureUnit,
+                                  TimeUnit const timeUnit)
 {
   lengthUnit_ = lengthUnit;
   energyUnit_ = energyUnit;
@@ -386,11 +384,11 @@ int ModelImplementation::set_units(LengthUnit const lengthUnit,
   return false;
 }
 
-void ModelImplementation::get_units(LengthUnit * const lengthUnit,
-                                    EnergyUnit * const energyUnit,
-                                    ChargeUnit * const chargeUnit,
-                                    TemperatureUnit * const temperatureUnit,
-                                    TimeUnit * const timeUnit) const
+void ModelImplementation::GetUnits(LengthUnit * const lengthUnit,
+                                   EnergyUnit * const energyUnit,
+                                   ChargeUnit * const chargeUnit,
+                                   TemperatureUnit * const temperatureUnit,
+                                   TimeUnit * const timeUnit) const
 {
   *lengthUnit = lengthUnit_;
   *energyUnit = energyUnit_;
@@ -400,7 +398,7 @@ void ModelImplementation::get_units(LengthUnit * const lengthUnit,
 }
 
 
-int ModelImplementation::get_number_of_parameter_files(
+int ModelImplementation::GetNumberOfParameterFiles(
     int * const numberOfParameterFiles) const
 {
   if (modelType_ != ModelLibrary::ITEM_TYPE::PARAMETERIZED_MODEL) return true;
@@ -409,7 +407,7 @@ int ModelImplementation::get_number_of_parameter_files(
   return false;
 }
 
-int ModelImplementation::get_parameter_file_name(
+int ModelImplementation::GetParameterFileName(
     int const index, std::string * const parameterFileName) const
 {
   if (modelType_ != ModelLibrary::ITEM_TYPE::PARAMETERIZED_MODEL) return true;
@@ -424,8 +422,8 @@ int ModelImplementation::get_parameter_file_name(
   return false;
 }
 
-int ModelImplementation::set_parameter(int const extent, int * const ptr,
-                                       std::string const & description)
+int ModelImplementation::SetParameterPointer(int const extent, int * const ptr,
+                                             std::string const & description)
 {
   parameterDescription_.push_back(description);
   parameterDataType_.push_back(DATA_TYPE::Integer);
@@ -435,8 +433,9 @@ int ModelImplementation::set_parameter(int const extent, int * const ptr,
   return false;
 }
 
-int ModelImplementation::set_parameter(int const extent, double * const ptr,
-                                       std::string const & description)
+int ModelImplementation::SetParameterPointer(int const extent,
+                                             double * const ptr,
+                                             std::string const & description)
 {
   parameterDescription_.push_back(description);
   parameterDataType_.push_back(DATA_TYPE::Double);
@@ -446,12 +445,13 @@ int ModelImplementation::set_parameter(int const extent, double * const ptr,
   return false;
 }
 
-void ModelImplementation::get_num_params(int * const numberOfParameters) const
+void ModelImplementation::GetNumberOfParameters(int * const numberOfParameters)
+    const
 {
   *numberOfParameters = parameterPointer_.size();
 }
 
-int ModelImplementation::get_parameter_data_type_and_description(
+int ModelImplementation::GetParameterDataTypeAndDescription(
     int const index, DataType * const dataType,
     std::string * const description) const
 {
@@ -461,7 +461,7 @@ int ModelImplementation::get_parameter_data_type_and_description(
   return false;
 }
 
-int ModelImplementation::get_parameter_extent_and_pointer(
+int ModelImplementation::GetParameterExtentAndPointer(
     int const index, int * extent, int ** const ptr)
 {
   *extent = parameterExtent_[index];
@@ -470,7 +470,7 @@ int ModelImplementation::get_parameter_extent_and_pointer(
   return false;
 }
 
-int ModelImplementation::get_parameter_extent_and_pointer(
+int ModelImplementation::GetParameterExtentAndPointer(
     int const index, int * extent, int const ** const ptr) const
 {
   *extent = parameterExtent_[index];
@@ -479,7 +479,7 @@ int ModelImplementation::get_parameter_extent_and_pointer(
   return false;
 }
 
-int ModelImplementation::get_parameter_extent_and_pointer(
+int ModelImplementation::GetParameterExtentAndPointer(
     int const index, int * extent, double ** const ptr)
 {
   *extent = parameterExtent_[index];
@@ -488,7 +488,7 @@ int ModelImplementation::get_parameter_extent_and_pointer(
   return false;
 }
 
-int ModelImplementation::get_parameter_extent_and_pointer(
+int ModelImplementation::GetParameterExtentAndPointer(
     int const index, int * extent, double const ** const ptr) const
 {
   *extent = parameterExtent_[index];
@@ -498,8 +498,8 @@ int ModelImplementation::get_parameter_extent_and_pointer(
 }
 
 
-int ModelImplementation::set_data(ArgumentName const argumentName,
-                                  int const * const ptr)
+int ModelImplementation::SetArgumentPointer(ArgumentName const argumentName,
+                                            int const * const ptr)
 {
   argumentPointer_[argumentName]
       = reinterpret_cast<void *>(const_cast<int *>(ptr));
@@ -507,8 +507,8 @@ int ModelImplementation::set_data(ArgumentName const argumentName,
   return false;
 }
 
-int ModelImplementation::set_data(ArgumentName const argumentName,
-                                  double const * const ptr)
+int ModelImplementation::SetArgumentPointer(ArgumentName const argumentName,
+                                            double const * const ptr)
 {
   argumentPointer_[argumentName]
       = reinterpret_cast<void *>(const_cast<double *>(ptr));
@@ -516,8 +516,8 @@ int ModelImplementation::set_data(ArgumentName const argumentName,
   return false;
 }
 
-int ModelImplementation::get_data(ArgumentName const argumentName,
-                                  int const ** const ptr) const
+int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
+                                            int const ** const ptr) const
 {
   auto result = argumentPointer_.find(argumentName);
 
@@ -533,8 +533,8 @@ int ModelImplementation::get_data(ArgumentName const argumentName,
   }
 }
 
-int ModelImplementation::get_data(ArgumentName const argumentName,
-                                  int ** const ptr) const
+int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
+                                            int ** const ptr) const
 {
   auto result = argumentPointer_.find(argumentName);
 
@@ -550,8 +550,8 @@ int ModelImplementation::get_data(ArgumentName const argumentName,
   }
 }
 
-int ModelImplementation::get_data(ArgumentName const argumentName,
-                                  double const ** const ptr) const
+int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
+                                            double const ** const ptr) const
 {
   auto result = argumentPointer_.find(argumentName);
 
@@ -567,8 +567,8 @@ int ModelImplementation::get_data(ArgumentName const argumentName,
   }
 }
 
-int ModelImplementation::get_data(ArgumentName const argumentName,
-                                  double ** const ptr) const
+int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
+                                            double ** const ptr) const
 {
   auto result = argumentPointer_.find(argumentName);
 
@@ -586,34 +586,34 @@ int ModelImplementation::get_data(ArgumentName const argumentName,
 
 
 
-int ModelImplementation::set_call_back(CallBackName const callBackName,
-                                       LanguageName const languageName,
-                                       func * const fptr,
-                                       void const * const dataObject)
+int ModelImplementation::SetCallbackPointer(CallbackName const callbackName,
+                                            LanguageName const languageName,
+                                            func * const fptr,
+                                            void const * const dataObject)
 {
-  auto result = callBackAttribute_.find(callBackName);
+  auto result = callbackSupportStatus_.find(callbackName);
 
-  if ((result == callBackAttribute_.end())
+  if ((result == callbackSupportStatus_.end())
       ||
-      (result->second == ATTRIBUTE::notSupported))
+      (result->second == SUPPORT_STATUS::notSupported))
   {
     return true;
   }
   else
   {
-    callBackLanguage_[callBackName] = languageName;
-    callBackFunctionPointer_[callBackName] = fptr;
-    callBackDataObjectPointer_[callBackName] = dataObject;
+    callbackLanguage_[callbackName] = languageName;
+    callbackFunctionPointer_[callbackName] = fptr;
+    callbackDataObjectPointer_[callbackName] = dataObject;
     return false;
   }
 }
 
-int ModelImplementation::is_call_back_present(
-    CallBackName const callBackName, int * const present) const
+int ModelImplementation::IsCallbackPresent(
+    CallbackName const callbackName, int * const present) const
 {
-  auto result = callBackFunctionPointer_.find(callBackName);
+  auto result = callbackFunctionPointer_.find(callbackName);
 
-  if ((result == callBackFunctionPointer_.end())
+  if ((result == callbackFunctionPointer_.end())
       ||
       (result->second == 0))
   {
@@ -628,7 +628,7 @@ int ModelImplementation::is_call_back_present(
 }
 
 
-int ModelImplementation::compute() const
+int ModelImplementation::Compute() const
 {
   typedef int ModelComputeCpp(KIM::ModelCompute * const);
   ModelComputeCpp * CppCompute
@@ -644,17 +644,17 @@ int ModelImplementation::compute() const
   struct Mdl {void const * p;};
   Mdl M;
   M.p = this;
-  if (computeLanguage_ == LANGUAGE_NAME::Cpp)
+  if (computeLanguage_ == LANGUAGE_NAME::cpp)
   {
     error = CppCompute(reinterpret_cast<KIM::ModelCompute *>(&M));
   }
-  else if (computeLanguage_ == LANGUAGE_NAME::C)
+  else if (computeLanguage_ == LANGUAGE_NAME::c)
   {
     KIM_ModelCompute cM;
     cM.p = &M;
     error = CCompute(&cM);
   }
-  else if (computeLanguage_ == LANGUAGE_NAME::Fortran)
+  else if (computeLanguage_ == LANGUAGE_NAME::fortran)
   {
     KIM_ModelCompute cM;
     cM.p = &M;
@@ -671,43 +671,42 @@ int ModelImplementation::compute() const
     return false;
 }
 
-int ModelImplementation::ClearInfluenceDistanceAndCutoffsThenReinitializeModel()
+int ModelImplementation::ClearInfluenceDistanceAndCutoffsThenRefreshModel()
 {
   influenceDistance_ = 0;
   numberOfCutoffs_ = 0;
   cutoffs_ = 0;
 
-  typedef int ModelReinitializationCpp(KIM::ModelReinitialization * const);
-  ModelReinitializationCpp * CppReinitialization
-      = reinterpret_cast<ModelReinitializationCpp *>(reinitializationFunction_);
-  typedef int ModelReinitializationC(KIM_ModelReinitialization * const);
-  ModelReinitializationC * CReinitialization
-      = reinterpret_cast<ModelReinitializationC *>(reinitializationFunction_);
-  typedef void ModelReinitializationF(KIM_ModelReinitialization * const,
-                                      int * const);
-  ModelReinitializationF * FReinitialization
-      = reinterpret_cast<ModelReinitializationF *>(reinitializationFunction_);
+  typedef int ModelRefreshCpp(KIM::ModelRefresh * const);
+  ModelRefreshCpp * CppRefresh
+      = reinterpret_cast<ModelRefreshCpp *>(refreshFunction_);
+  typedef int ModelRefreshC(KIM_ModelRefresh * const);
+  ModelRefreshC * CRefresh
+      = reinterpret_cast<ModelRefreshC *>(refreshFunction_);
+  typedef void ModelRefreshF(KIM_ModelRefresh * const, int * const);
+  ModelRefreshF * FRefresh
+      = reinterpret_cast<ModelRefreshF *>(refreshFunction_);
 
   int error;
   struct Mdl {void * p;};
   Mdl M;
   M.p = this;
-  if (reinitializationLanguage_ == LANGUAGE_NAME::Cpp)
+  if (refreshLanguage_ == LANGUAGE_NAME::cpp)
   {
-    error = CppReinitialization(
-        reinterpret_cast<KIM::ModelReinitialization *>(&M));
+    error = CppRefresh(
+        reinterpret_cast<KIM::ModelRefresh *>(&M));
   }
-  else if (reinitializationLanguage_ == LANGUAGE_NAME::C)
+  else if (refreshLanguage_ == LANGUAGE_NAME::c)
   {
-    KIM_ModelReinitialization cM;
+    KIM_ModelRefresh cM;
     cM.p = &M;
-    error = CReinitialization(&cM);
+    error = CRefresh(&cM);
   }
-  else if (reinitializationLanguage_ == LANGUAGE_NAME::Fortran)
+  else if (refreshLanguage_ == LANGUAGE_NAME::fortran)
   {
-    KIM_ModelReinitialization cM;
+    KIM_ModelRefresh cM;
     cM.p = &M;
-    FReinitialization(&cM, &error);
+    FRefresh(&cM, &error);
   }
   else
   {
@@ -720,65 +719,69 @@ int ModelImplementation::ClearInfluenceDistanceAndCutoffsThenReinitializeModel()
     return false;
 }
 
-int ModelImplementation::get_neigh(int const neighborListIndex,
-                                   int const particleNumber,
-                                   int * const numberOfNeighbors,
-                                   int const ** const neighborsOfParticle)
+int ModelImplementation::GetNeighborList(int const neighborListIndex,
+                                         int const particleNumber,
+                                         int * const numberOfNeighbors,
+                                         int const ** const neighborsOfParticle)
     const
 {
-  auto languageResult = callBackLanguage_.find(CALL_BACK_NAME::get_neigh);
-  if (languageResult == callBackLanguage_.end())
+  auto languageResult = callbackLanguage_.find(CALLBACK_NAME::GetNeighborList);
+  if (languageResult == callbackLanguage_.end())
   {
     // @@@@ log message
     return true;
   }
   LanguageName languageName = languageResult->second;
   void const * dataObject
-      = (callBackDataObjectPointer_.find(CALL_BACK_NAME::get_neigh))->second;
+      = (callbackDataObjectPointer_.find(CALLBACK_NAME::GetNeighborList))
+      ->second;
 
   func * functionPointer
-      = (callBackFunctionPointer_.find(CALL_BACK_NAME::get_neigh))->second;
-  typedef int get_NeighCpp(void const * const dataObject,
-                           int const neighborListIndex,
-                           int const particleNumber,
-                           int * const numberOfNeighbors,
-                           int const ** const neighborsOfParticle);
-  get_NeighCpp * CppGet_Neigh
-      = reinterpret_cast<get_NeighCpp *>(functionPointer);
-  typedef int get_NeighC(void const * const dataObject,
-                         int const neighborListIndex,
-                         int const particleNumber,
-                         int * const numberOfNeighbors,
-                         int const ** const neighborsOfParticle);
-  get_NeighC * CGet_Neigh = reinterpret_cast<get_NeighC *>(functionPointer);
-  typedef void get_NeighF(void const * const dataObject,
-                          int const neighborListIndex,
-                          int const particleNumber,
-                          int * const numberOfNeighbors,
-                          int const ** const neighborsOfParticle,
-                          int * const ierr);
-  get_NeighF * FGet_Neigh = reinterpret_cast<get_NeighF *>(functionPointer);
+      = (callbackFunctionPointer_.find(CALLBACK_NAME::GetNeighborList))->second;
+  typedef int GetNeighborListCpp(void const * const dataObject,
+                                 int const neighborListIndex,
+                                 int const particleNumber,
+                                 int * const numberOfNeighbors,
+                                 int const ** const neighborsOfParticle);
+  GetNeighborListCpp * CppGetNeighborList
+      = reinterpret_cast<GetNeighborListCpp *>(functionPointer);
+  typedef int GetNeighborListC(void const * const dataObject,
+                               int const neighborListIndex,
+                               int const particleNumber,
+                               int * const numberOfNeighbors,
+                               int const ** const neighborsOfParticle);
+  GetNeighborListC * CGetNeighborList
+      = reinterpret_cast<GetNeighborListC *>(functionPointer);
+  typedef void GetNeighborListF(void const * const dataObject,
+                                int const neighborListIndex,
+                                int const particleNumber,
+                                int * const numberOfNeighbors,
+                                int const ** const neighborsOfParticle,
+                                int * const ierr);
+  GetNeighborListF * FGetNeighborList
+      = reinterpret_cast<GetNeighborListF *>(functionPointer);
 
 
   int simulatorParticleNumber = particleNumber +
       ((simulatorNumbering_ == modelNumbering_) ? 0 : -numberingOffset_);
   int const * simulatorNeighborsOfParticle;
   int error;
-  if (languageName == LANGUAGE_NAME::Cpp)
+  if (languageName == LANGUAGE_NAME::cpp)
   {
-    error = CppGet_Neigh(dataObject, neighborListIndex,
-                         simulatorParticleNumber, numberOfNeighbors,
-                         &simulatorNeighborsOfParticle);
+    error = CppGetNeighborList(dataObject, neighborListIndex,
+                               simulatorParticleNumber, numberOfNeighbors,
+                               &simulatorNeighborsOfParticle);
   }
-  else if (languageName == LANGUAGE_NAME::C)
+  else if (languageName == LANGUAGE_NAME::c)
   {
-    error = CGet_Neigh(dataObject, neighborListIndex, simulatorParticleNumber,
-                       numberOfNeighbors, &simulatorNeighborsOfParticle);
+    error = CGetNeighborList(dataObject, neighborListIndex,
+                             simulatorParticleNumber,
+                             numberOfNeighbors, &simulatorNeighborsOfParticle);
   }
-  else if (languageName == LANGUAGE_NAME::Fortran)
+  else if (languageName == LANGUAGE_NAME::fortran)
   {
-    FGet_Neigh(dataObject, neighborListIndex+1, simulatorParticleNumber,
-               numberOfNeighbors, &simulatorNeighborsOfParticle, &error);
+    FGetNeighborList(dataObject, neighborListIndex+1, simulatorParticleNumber,
+                     numberOfNeighbors, &simulatorNeighborsOfParticle, &error);
   }
   else
   {
@@ -805,48 +808,49 @@ int ModelImplementation::get_neigh(int const neighborListIndex,
   return false;
 }
 
-int ModelImplementation::process_dEdr(double const de, double const r,
-                                      double const * const dx,
-                                      int const i, int const j) const
+int ModelImplementation::ProcessDEDrTerm(double const de, double const r,
+                                         double const * const dx,
+                                         int const i, int const j) const
 {
-  auto languageResult = callBackLanguage_.find(CALL_BACK_NAME::process_dEdr);
-  if (languageResult == callBackLanguage_.end())
+  auto languageResult = callbackLanguage_.find(CALLBACK_NAME::ProcessDEDrTerm);
+  if (languageResult == callbackLanguage_.end())
   {
     // @@@@ log message
     return true;
   }
   LanguageName languageName = languageResult->second;
   void const * dataObject
-      = (callBackDataObjectPointer_.find(CALL_BACK_NAME::process_dEdr))->second;
+      = (callbackDataObjectPointer_.find(CALLBACK_NAME::ProcessDEDrTerm))
+      ->second;
 
   func * functionPointer
-      = (callBackFunctionPointer_.find(CALL_BACK_NAME::process_dEdr))->second;
-  typedef int process_dEdrCpp(void const * const dataObject, double const de,
-                              double const r, double const * const dx,
-                              int const i, int const j);
-  process_dEdrCpp * CppProcess_dEdr
-      = reinterpret_cast<process_dEdrCpp *>(functionPointer);
-  typedef int process_dEdrC(void const * const dataObject, double const de,
-                            double const r, double const * const dx,
-                            int const i, int const j);
-  process_dEdrC * CProcess_dEdr
-      = reinterpret_cast<process_dEdrC *>(functionPointer);
-  typedef void process_dEdrF(void const * const dataObject, double const de,
-                             double const r, double const * const dx,
-                             int const i, int const j, int * const ierr);
-  process_dEdrF * FProcess_dEdr
-      = reinterpret_cast<process_dEdrF *>(functionPointer);
+      = (callbackFunctionPointer_.find(CALLBACK_NAME::ProcessDEDrTerm))->second;
+  typedef int ProcessDEDrTermCpp(void const * const dataObject, double const de,
+                                 double const r, double const * const dx,
+                                 int const i, int const j);
+  ProcessDEDrTermCpp * CppProcess_dEdr
+      = reinterpret_cast<ProcessDEDrTermCpp *>(functionPointer);
+  typedef int ProcessDEDrTermC(void const * const dataObject, double const de,
+                               double const r, double const * const dx,
+                               int const i, int const j);
+  ProcessDEDrTermC * CProcess_dEdr
+      = reinterpret_cast<ProcessDEDrTermC *>(functionPointer);
+  typedef void ProcessDEDrTermF(void const * const dataObject, double const de,
+                                double const r, double const * const dx,
+                                int const i, int const j, int * const ierr);
+  ProcessDEDrTermF * FProcess_dEdr
+      = reinterpret_cast<ProcessDEDrTermF *>(functionPointer);
 
   int error;
-  if (languageName == LANGUAGE_NAME::Cpp)
+  if (languageName == LANGUAGE_NAME::cpp)
   {
     error = CppProcess_dEdr(dataObject, de, r, dx, i, j);
   }
-  else if (languageName == LANGUAGE_NAME::C)
+  else if (languageName == LANGUAGE_NAME::c)
   {
     error = CProcess_dEdr(dataObject, de, r, dx, i, j);
   }
-  else if (languageName == LANGUAGE_NAME::Fortran)
+  else if (languageName == LANGUAGE_NAME::fortran)
   {
     FProcess_dEdr(dataObject, de, r, dx, i, j, &error);
   }
@@ -861,50 +865,55 @@ int ModelImplementation::process_dEdr(double const de, double const r,
     return false;
 }
 
-int ModelImplementation::process_d2Edr2(double const de, double const * const r,
-                                        double const * const dx,
-                                        int const * const i,
-                                        int const * const j) const
+int ModelImplementation::ProcessD2EDr2Term(double const de, double const * const r,
+                                           double const * const dx,
+                                           int const * const i,
+                                           int const * const j) const
 {
-  auto languageResult = callBackLanguage_.find(CALL_BACK_NAME::process_d2Edr2);
-  if (languageResult == callBackLanguage_.end())
+  auto languageResult = callbackLanguage_
+      .find(CALLBACK_NAME::ProcessD2EDr2Term);
+  if (languageResult == callbackLanguage_.end())
   {
     // @@@@ log message
     return true;
   }
   LanguageName languageName = languageResult->second;
-  void const * dataObject = (callBackDataObjectPointer_
-                             .find(CALL_BACK_NAME::process_d2Edr2))->second;
+  void const * dataObject = (callbackDataObjectPointer_
+                             .find(CALLBACK_NAME::ProcessD2EDr2Term))->second;
 
   func * functionPointer
-      = (callBackFunctionPointer_.find(CALL_BACK_NAME::process_d2Edr2))->second;
-  typedef int process_d2Edr2Cpp(void const * const dataObject, double const de,
-                                double const * const r, double const * const dx,
-                                int const * const i, int const * const j);
-  process_d2Edr2Cpp * CppProcess_d2Edr2
-      = reinterpret_cast<process_d2Edr2Cpp *>(functionPointer);
-  typedef int process_d2Edr2C(void const * const dataObject, double const de,
-                              double const * const r, double const * const dx,
-                              int const * const i, int const * const j);
-  process_d2Edr2C * CProcess_d2Edr2
-      = reinterpret_cast<process_d2Edr2C *>(functionPointer);
-  typedef void process_d2Edr2F(void const * const dataObject, double const de,
-                               double const * const r, double const * const dx,
-                               int const * const i, int const * const j,
-                               int * const ierr);
-  process_d2Edr2F * FProcess_d2Edr2
-      = reinterpret_cast<process_d2Edr2F *>(functionPointer);
+      = (callbackFunctionPointer_.find(CALLBACK_NAME::ProcessD2EDr2Term))
+      ->second;
+  typedef int ProcessD2EDr2TermCpp(void const * const dataObject,
+                                   double const de, double const * const r,
+                                   double const * const dx,
+                                   int const * const i, int const * const j);
+  ProcessD2EDr2TermCpp * CppProcess_d2Edr2
+      = reinterpret_cast<ProcessD2EDr2TermCpp *>(functionPointer);
+  typedef int ProcessD2EDr2TermC(void const * const dataObject, double const de,
+                                 double const * const r,
+                                 double const * const dx,
+                                 int const * const i, int const * const j);
+  ProcessD2EDr2TermC * CProcess_d2Edr2
+      = reinterpret_cast<ProcessD2EDr2TermC *>(functionPointer);
+  typedef void ProcessD2EDr2TermF(void const * const dataObject,
+                                  double const de, double const * const r,
+                                  double const * const dx,
+                                  int const * const i, int const * const j,
+                                  int * const ierr);
+  ProcessD2EDr2TermF * FProcess_d2Edr2
+      = reinterpret_cast<ProcessD2EDr2TermF *>(functionPointer);
 
   int error;
-  if (languageName == LANGUAGE_NAME::Cpp)
+  if (languageName == LANGUAGE_NAME::cpp)
   {
     error = CppProcess_d2Edr2(dataObject, de, r, dx, i, j);
   }
-  else if (languageName == LANGUAGE_NAME::C)
+  else if (languageName == LANGUAGE_NAME::c)
   {
     error = CProcess_d2Edr2(dataObject, de, r, dx, i, j);
   }
-  else if (languageName == LANGUAGE_NAME::Fortran)
+  else if (languageName == LANGUAGE_NAME::fortran)
   {
     FProcess_d2Edr2(dataObject, de, r, dx, i, j, &error);
   }
@@ -919,29 +928,29 @@ int ModelImplementation::process_d2Edr2(double const de, double const * const r,
     return false;
 }
 
-void ModelImplementation::set_model_buffer(void * const ptr)
+void ModelImplementation::SetModelBufferPointer(void * const ptr)
 {
   modelBuffer_ = ptr;
 }
 
-void ModelImplementation::get_model_buffer(void ** const ptr) const
+void ModelImplementation::GetModelBufferPointer(void ** const ptr) const
 {
   *ptr = modelBuffer_;
 }
 
 
-void ModelImplementation::set_sim_buffer(void * const ptr)
+void ModelImplementation::SetSimulatorBufferPointer(void * const ptr)
 {
   simulatorBuffer_ = ptr;
 }
 
-void ModelImplementation::get_sim_buffer(void ** const ptr) const
+void ModelImplementation::GetSimulatorBufferPointer(void ** const ptr) const
 {
   *ptr = simulatorBuffer_;
 }
 
 
-int ModelImplementation::convert_unit(
+int ModelImplementation::ConvertUnit(
     LengthUnit const fromLengthUnit,
     EnergyUnit const fromEnergyUnit,
     ChargeUnit const fromChargeUnit,
@@ -1064,7 +1073,7 @@ void ModelImplementation::Log(LogVerbosity const logVerbosity,
   KIM::Log(logVerbosity, message, lineNumber, fileName);
 }
 
-std::string ModelImplementation::string() const
+std::string ModelImplementation::String() const
 {
   std::stringstream ss;
   ss << std::setprecision(10) << std::scientific << std::left;
@@ -1089,29 +1098,29 @@ std::string ModelImplementation::string() const
      << std::setw(15) << "---------------"
      << "\n\n"
      << "\t"
-     << std::setw(25) << "Reinitialization"
-     << std::setw(10) << reinitializationLanguage_.string()
-     << std::setw(15) << (void *) reinitializationFunction_
+     << std::setw(25) << "Refresh"
+     << std::setw(10) << refreshLanguage_.String()
+     << std::setw(15) << (void *) refreshFunction_
      << "\n"
      << "\t"
      << std::setw(25) << "Destroy"
-     << std::setw(10) << destroyLanguage_.string()
+     << std::setw(10) << destroyLanguage_.String()
      << std::setw(15) << (void *) destroyFunction_
      << "\n"
      << "\t"
      << std::setw(25) << "Compute"
-     << std::setw(10) << computeLanguage_.string()
+     << std::setw(10) << computeLanguage_.String()
      << std::setw(15) << (void *) computeFunction_
      << "\n\n";
 
-  ss << "Numbering : " << modelNumbering_.string() << "\n\n";
+  ss << "Numbering : " << modelNumbering_.String() << "\n\n";
 
   ss << "Units : \n"
-      "\tLength Unit      : " << lengthUnit_.string() << "\n"
-      "\tEnergy Unit      : " << energyUnit_.string() << "\n"
-      "\tCharge Unit      : " << chargeUnit_.string() << "\n"
-      "\tTemperature Unit : " << temperatureUnit_.string() << "\n"
-      "\tTime Unit        : " << timeUnit_.string() << "\n\n";
+      "\tLength Unit      : " << lengthUnit_.String() << "\n"
+      "\tEnergy Unit      : " << energyUnit_.String() << "\n"
+      "\tCharge Unit      : " << chargeUnit_.String() << "\n"
+      "\tTemperature Unit : " << temperatureUnit_.String() << "\n"
+      "\tTime Unit        : " << timeUnit_.String() << "\n\n";
 
   ss << "Influence Distance : " << *influenceDistance_ << "\n\n";
 
@@ -1133,7 +1142,7 @@ std::string ModelImplementation::string() const
        spec != supportedSpecies_.end();
        ++spec)
   {
-    ss << "\t" << std::setw(specWidth) << (spec->first).string()
+    ss << "\t" << std::setw(specWidth) << (spec->first).String()
        << std::setw(specWidth) << spec->second << "\n";
   }
   ss << "\n";
@@ -1141,21 +1150,21 @@ std::string ModelImplementation::string() const
   ss << "Compute Arguments :\n";
   int const argW = 25;
   ss << "\t" << std::setw(argW) << "Argument Name"
-     << std::setw(argW) << "Attribute"
+     << std::setw(argW) << "SupportStatus"
      << std::setw(argW) << "Pointer"
      << "\n";
   ss << "\t" << std::setw(argW) << "-------------------------"
      << std::setw(argW) << "-------------------------"
      << std::setw(argW) << "-------------------------"
      << "\n\n";
-  for (auto argName = argumentAttribute_.begin();
-       argName != argumentAttribute_.end();
+  for (auto argName = argumentSupportStatus_.begin();
+       argName != argumentSupportStatus_.end();
        ++argName)
   {
-    ss << "\t" << std::setw(argW) << (argName->first).string()
-       << std::setw(argW) << (argName->second).string();
+    ss << "\t" << std::setw(argW) << (argName->first).String()
+       << std::setw(argW) << (argName->second).String();
 
-    if ((argName->second) != ATTRIBUTE::notSupported)
+    if ((argName->second) != SUPPORT_STATUS::notSupported)
     {
       auto ptr = argumentPointer_.find(argName->first);
       if (ptr != argumentPointer_.end())
@@ -1179,7 +1188,7 @@ std::string ModelImplementation::string() const
   ss << "Compute Callbacks :\n";
   int const cbW = 25;
   ss << "\t" << std::setw(cbW) << "Callback Name"
-     << std::setw(cbW) << "Attribute"
+     << std::setw(cbW) << "SupportStatus"
      << std::setw(cbW) << "Language"
      << std::setw(cbW) << "Function Pointer"
      << std::setw(cbW) << "Data Pointer"
@@ -1190,22 +1199,22 @@ std::string ModelImplementation::string() const
      << std::setw(cbW) << "-------------------------"
      << std::setw(cbW) << "-------------------------"
      << "\n\n";
-  for (auto cbName = callBackAttribute_.begin();
-       cbName != callBackAttribute_.end();
+  for (auto cbName = callbackSupportStatus_.begin();
+       cbName != callbackSupportStatus_.end();
        ++cbName)
   {
-    ss << "\t" << std::setw(cbW) << (cbName->first).string()
-       << std::setw(cbW) << (cbName->second).string();
+    ss << "\t" << std::setw(cbW) << (cbName->first).String()
+       << std::setw(cbW) << (cbName->second).String();
 
-    if ((cbName->second) != ATTRIBUTE::notSupported)
+    if ((cbName->second) != SUPPORT_STATUS::notSupported)
     {
-      auto ptr = callBackLanguage_.find(cbName->first);
-      if (ptr != callBackLanguage_.end())
+      auto ptr = callbackLanguage_.find(cbName->first);
+      if (ptr != callbackLanguage_.end())
       {
-        ss << std::setw(cbW) << (ptr->second).string();
-        auto ptr2 = callBackFunctionPointer_.find(cbName->first);
+        ss << std::setw(cbW) << (ptr->second).String();
+        auto ptr2 = callbackFunctionPointer_.find(cbName->first);
         ss << std::setw(cbW) << (void *) ptr2->second;
-        auto ptr3 = callBackDataObjectPointer_.find(cbName->first);
+        auto ptr3 = callbackDataObjectPointer_.find(cbName->first);
         ss << std::setw(cbW) << (void *) ptr3->second;
       }
       else
@@ -1239,7 +1248,7 @@ std::string ModelImplementation::string() const
   for (int i=0; i<numberOfParameters; ++i)
   {
     ss << "\t" << std::setw(8) << i
-       << std::setw(10) << parameterDataType_[i].string()
+       << std::setw(10) << parameterDataType_[i].String()
        << std::setw(10) << parameterExtent_[i]
        << std::setw(15) << (void *) parameterPointer_[i]
        << parameterDescription_[i]
@@ -1260,7 +1269,7 @@ ModelImplementation::ModelImplementation(ModelLibrary * const modelLibrary) :
     influenceDistance_(0),
     numberOfCutoffs_(0),
     cutoffs_(0),
-    reinitializationFunction_(0),
+    refreshFunction_(0),
     destroyFunction_(0),
     computeFunction_(0),
     modelBuffer_(0),
@@ -1268,36 +1277,40 @@ ModelImplementation::ModelImplementation(ModelLibrary * const modelLibrary) :
 {
   // populate Arguments
   int numberOfArguments;
-  ARGUMENT_NAME::get_number_of_arguments(&numberOfArguments);
+  ARGUMENT_NAME::GetNumberOfArguments(&numberOfArguments);
   for (int i=0; i<numberOfArguments; ++i)
   {
     ArgumentName argumentName;
-    ARGUMENT_NAME::get_argument_name(i, &argumentName);
-    argumentAttribute_[argumentName] = ATTRIBUTE::notSupported;
+    ARGUMENT_NAME::GetArgumentName(i, &argumentName);
+    argumentSupportStatus_[argumentName] = SUPPORT_STATUS::notSupported;
   }
-  // populate mandatory Arguments
-  for (auto mandatoryArgument = ARGUMENT_NAME::mandatoryArguments.begin();
-       mandatoryArgument != ARGUMENT_NAME::mandatoryArguments.end();
-       ++mandatoryArgument)
+  // populate requiredByAPI Arguments
+  for (auto requiredByAPI_Argument
+           = ARGUMENT_NAME::requiredByAPI_Arguments.begin();
+       requiredByAPI_Argument != ARGUMENT_NAME::requiredByAPI_Arguments.end();
+       ++requiredByAPI_Argument)
   {
-    argumentAttribute_[*mandatoryArgument] = ATTRIBUTE::mandatory;
+    argumentSupportStatus_[*requiredByAPI_Argument]
+        = SUPPORT_STATUS::requiredByAPI;
   }
 
-  // populate CallBacks
-  int numberOfCallBacks;
-  CALL_BACK_NAME::get_number_of_call_backs(&numberOfCallBacks);
-  for (int i=0; i<numberOfCallBacks; ++i)
+  // populate Callbacks
+  int numberOfCallbacks;
+  CALLBACK_NAME::GetNumberOfCallbacks(&numberOfCallbacks);
+  for (int i=0; i<numberOfCallbacks; ++i)
   {
-    CallBackName callBackName;
-    CALL_BACK_NAME::get_call_back_name(i, &callBackName);
-    callBackAttribute_[callBackName] = ATTRIBUTE::notSupported;
+    CallbackName callbackName;
+    CALLBACK_NAME::GetCallbackName(i, &callbackName);
+    callbackSupportStatus_[callbackName] = SUPPORT_STATUS::notSupported;
   }
-  // populate mandatory CallBacks
-  for (auto mandatoryCallBack = CALL_BACK_NAME::mandatoryCallBacks.begin();
-       mandatoryCallBack != CALL_BACK_NAME::mandatoryCallBacks.end();
-       ++mandatoryCallBack)
+  // populate Callbacks
+  for (auto requiredByAPI_Callback
+           = CALLBACK_NAME::requiredByAPI_Callbacks.begin();
+       requiredByAPI_Callback != CALLBACK_NAME::requiredByAPI_Callbacks.end();
+       ++requiredByAPI_Callback)
   {
-    callBackAttribute_[*mandatoryCallBack] = ATTRIBUTE::mandatory;
+    callbackSupportStatus_[*requiredByAPI_Callback]
+        = SUPPORT_STATUS::requiredByAPI;
   }
 }
 
@@ -1306,7 +1319,7 @@ ModelImplementation::~ModelImplementation()
   delete modelLibrary_;
 }
 
-int ModelImplementation::ModelInitialization(
+int ModelImplementation::ModelCreate(
     Numbering const numbering,
     LengthUnit const requestedLengthUnit,
     EnergyUnit const requestedEnergyUnit,
@@ -1317,7 +1330,7 @@ int ModelImplementation::ModelInitialization(
 {
   modelName_ = modelName;
 
-  int error = set_simulator_numbering(numbering);
+  int error = SetSimulatorNumbering(numbering);
   if (error) return true;
 
   error = modelLibrary_->open(true, modelName);
@@ -1394,17 +1407,17 @@ int ModelImplementation::ModelDestroy()
   struct Mdl {void * p;};
   Mdl M;
   M.p = this;
-  if (destroyLanguage_ == LANGUAGE_NAME::Cpp)
+  if (destroyLanguage_ == LANGUAGE_NAME::cpp)
   {
     error = CppDestroy(reinterpret_cast<KIM::ModelDestroy *>(&M));
   }
-  else if (destroyLanguage_ == LANGUAGE_NAME::C)
+  else if (destroyLanguage_ == LANGUAGE_NAME::c)
   {
     KIM_ModelDestroy cM;
     cM.p = &M;
     error = CDestroy(&cM);
   }
-  else if (destroyLanguage_ == LANGUAGE_NAME::Fortran)
+  else if (destroyLanguage_ == LANGUAGE_NAME::fortran)
   {
     KIM_ModelDestroy cM;
     cM.p = &M;
@@ -1430,38 +1443,38 @@ int ModelImplementation::InitializeStandAloneModel(
 {
   LanguageName languageName;
   func * functionPointer = 0;
-  int error = modelLibrary_->getModelInitializationFunctionPointer(
+  int error = modelLibrary_->getModelCreateFunctionPointer(
       &languageName, &functionPointer);
   if (error) return true;
 
-  typedef int ModelInitializationCpp(
-      KIM::ModelInitialization * const modelInitialization,
+  typedef int ModelCreateCpp(
+      KIM::ModelCreate * const modelCreate,
       LengthUnit const requestedLengthUnit,
       EnergyUnit const requestedEnergyUnit,
       ChargeUnit const requestedChargeUnit,
       TemperatureUnit const requestedTemperatureUnit,
       TimeUnit const requestedTimeUnit);
-  ModelInitializationCpp * CppInitialization
-      = reinterpret_cast<ModelInitializationCpp *>(functionPointer);
-  typedef int ModelInitializationC(
-      KIM_ModelInitialization * const modelInitialization,
+  ModelCreateCpp * CppCreate
+      = reinterpret_cast<ModelCreateCpp *>(functionPointer);
+  typedef int ModelCreateC(
+      KIM_ModelCreate * const modelCreate,
       KIM_LengthUnit const requestedLengthUnit,
       KIM_EnergyUnit const requestedEnergyUnit,
       KIM_ChargeUnit const requestedChargeUnit,
       KIM_TemperatureUnit const requestedTemperatureUnit,
       KIM_TimeUnit const requestedTimeUnit);
-  ModelInitializationC * CInitialization
-      = reinterpret_cast<ModelInitializationC *>(functionPointer);
-  typedef void ModelInitializationF(
-      KIM_ModelInitialization * const modelInitialization,
+  ModelCreateC * CCreate
+      = reinterpret_cast<ModelCreateC *>(functionPointer);
+  typedef void ModelCreateF(
+      KIM_ModelCreate * const modelCreate,
       KIM_LengthUnit const requestedLengthUnit,
       KIM_EnergyUnit const requestedEnergyUnit,
       KIM_ChargeUnit const requestedChargeUnit,
       KIM_TemperatureUnit const requestedTemperatureUnit,
       KIM_TimeUnit const requestedTimeUnit,
       int * const);
-  ModelInitializationF * FInitialization
-      = reinterpret_cast<ModelInitializationF *>(functionPointer);
+  ModelCreateF * FCreate
+      = reinterpret_cast<ModelCreateF *>(functionPointer);
 
   struct Mdl {void * p;};
   Mdl M;
@@ -1475,29 +1488,29 @@ int ModelImplementation::InitializeStandAloneModel(
   KIM_TemperatureUnit requestedTemperatureUnitC
       = makeTemperatureUnitC(requestedTemperatureUnit);
   KIM_TimeUnit requestedTimeUnitC = makeTimeUnitC(requestedTimeUnit);
-  if (languageName == LANGUAGE_NAME::Cpp)
+  if (languageName == LANGUAGE_NAME::cpp)
   {
-    error = CppInitialization(
-        reinterpret_cast<KIM::ModelInitialization *>(&M),
+    error = CppCreate(
+        reinterpret_cast<KIM::ModelCreate *>(&M),
         requestedLengthUnit, requestedEnergyUnit,
         requestedChargeUnit, requestedTemperatureUnit,
         requestedTimeUnit);
   }
-  else if (languageName == LANGUAGE_NAME::C)
+  else if (languageName == LANGUAGE_NAME::c)
   {
-    KIM_ModelInitialization cM;
+    KIM_ModelCreate cM;
     cM.p = &M;
-    error = CInitialization(&cM, requestedLengthUnitC, requestedEnergyUnitC,
-                            requestedChargeUnitC, requestedTemperatureUnitC,
-                            requestedTimeUnitC);
-  }
-  else if (languageName == LANGUAGE_NAME::Fortran)
-  {
-    KIM_ModelInitialization cM;
-    cM.p = &M;
-    FInitialization(&cM, requestedLengthUnitC, requestedEnergyUnitC,
+    error = CCreate(&cM, requestedLengthUnitC, requestedEnergyUnitC,
                     requestedChargeUnitC, requestedTemperatureUnitC,
-                    requestedTimeUnitC, &error);
+                    requestedTimeUnitC);
+  }
+  else if (languageName == LANGUAGE_NAME::fortran)
+  {
+    KIM_ModelCreate cM;
+    cM.p = &M;
+    FCreate(&cM, requestedLengthUnitC, requestedEnergyUnitC,
+            requestedChargeUnitC, requestedTemperatureUnitC,
+            requestedTimeUnitC, &error);
   }
   else
   {
@@ -1561,7 +1574,7 @@ int ModelImplementation::InitializeParameterizedModel(
 
   LanguageName languageName;
   func * functionPointer = 0;
-  error = modelLibrary_->getModelInitializationFunctionPointer(
+  error = modelLibrary_->getModelCreateFunctionPointer(
       &languageName, &functionPointer);
   if (error)
   {
@@ -1569,34 +1582,34 @@ int ModelImplementation::InitializeParameterizedModel(
     return true;
   }
 
-  typedef int ModelDriverInitializationCpp(
-      KIM::ModelDriverInitialization * const modelDriverInitialization,
+  typedef int ModelDriverCreateCpp(
+      KIM::ModelDriverCreate * const modelDriverCreate,
       LengthUnit const requestedLengthUnit,
       EnergyUnit const requestedEnergyUnit,
       ChargeUnit const requestedChargeUnit,
       TemperatureUnit const requestedTemperatureUnit,
       TimeUnit const requestedTimeUnit);
-  ModelDriverInitializationCpp * CppInitialization
-      = reinterpret_cast<ModelDriverInitializationCpp *>(functionPointer);
-  typedef int ModelDriverInitializationC(
-      KIM_ModelDriverInitialization * const modelDriverInitialization,
+  ModelDriverCreateCpp * CppCreate
+      = reinterpret_cast<ModelDriverCreateCpp *>(functionPointer);
+  typedef int ModelDriverCreateC(
+      KIM_ModelDriverCreate * const modelDriverCreate,
       KIM_LengthUnit const requestedLengthUnit,
       KIM_EnergyUnit const requestedEnergyUnit,
       KIM_ChargeUnit const requestedChargeUnit,
       KIM_TemperatureUnit const requestedTemperatureUnit,
       KIM_TimeUnit const requestedTimeUnit);
-  ModelDriverInitializationC * CInitialization
-      = reinterpret_cast<ModelDriverInitializationC *>(functionPointer);
-  typedef void ModelDriverInitializationF(
-      KIM_ModelDriverInitialization * const modelDriverInitialization,
+  ModelDriverCreateC * CCreate
+      = reinterpret_cast<ModelDriverCreateC *>(functionPointer);
+  typedef void ModelDriverCreateF(
+      KIM_ModelDriverCreate * const modelDriverCreate,
       KIM_LengthUnit const requestedLengthUnit,
       KIM_EnergyUnit const requestedEnergyUnit,
       KIM_ChargeUnit const requestedChargeUnit,
       KIM_TemperatureUnit const requestedTemperatureUnit,
       KIM_TimeUnit const requestedTimeUnit,
       int * const);
-  ModelDriverInitializationF * FInitialization
-      = reinterpret_cast<ModelDriverInitializationF *>(functionPointer);
+  ModelDriverCreateF * FCreate
+      = reinterpret_cast<ModelDriverCreateF *>(functionPointer);
 
 
   struct Mdl {void * p;};
@@ -1611,29 +1624,29 @@ int ModelImplementation::InitializeParameterizedModel(
   KIM_TemperatureUnit requestedTemperatureUnitC
       = makeTemperatureUnitC(requestedTemperatureUnit);
   KIM_TimeUnit requestedTimeUnitC = makeTimeUnitC(requestedTimeUnit);
-  if (languageName == LANGUAGE_NAME::Cpp)
+  if (languageName == LANGUAGE_NAME::cpp)
   {
-    error = CppInitialization(
-        reinterpret_cast<KIM::ModelDriverInitialization *>(&M),
+    error = CppCreate(
+        reinterpret_cast<KIM::ModelDriverCreate *>(&M),
         requestedLengthUnit, requestedEnergyUnit,
         requestedChargeUnit, requestedTemperatureUnit,
         requestedTimeUnit);
   }
-  else if (languageName == LANGUAGE_NAME::C)
+  else if (languageName == LANGUAGE_NAME::c)
   {
-    KIM_ModelDriverInitialization cM;
+    KIM_ModelDriverCreate cM;
     cM.p = &M;
-    error = CInitialization(&cM, requestedLengthUnitC, requestedEnergyUnitC,
-                            requestedChargeUnitC, requestedTemperatureUnitC,
-                            requestedTimeUnitC);
-  }
-  else if (languageName == LANGUAGE_NAME::Fortran)
-  {
-    KIM_ModelDriverInitialization cM;
-    cM.p = &M;
-    FInitialization(&cM, requestedLengthUnitC, requestedEnergyUnitC,
+    error = CCreate(&cM, requestedLengthUnitC, requestedEnergyUnitC,
                     requestedChargeUnitC, requestedTemperatureUnitC,
-                    requestedTimeUnitC, &error);
+                    requestedTimeUnitC);
+  }
+  else if (languageName == LANGUAGE_NAME::fortran)
+  {
+    KIM_ModelDriverCreate cM;
+    cM.p = &M;
+    FCreate(&cM, requestedLengthUnitC, requestedEnergyUnitC,
+            requestedChargeUnitC, requestedTemperatureUnitC,
+            requestedTimeUnitC, &error);
   }
   else
   {

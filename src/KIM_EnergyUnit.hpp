@@ -48,7 +48,7 @@ class EnergyUnit
   EnergyUnit(int const id);
   bool operator==(EnergyUnit const & rhs) const;
   bool operator!=(EnergyUnit const & rhs) const;
-  std::string string() const;
+  std::string String() const;
 };
 
 namespace ENERGY_UNIT

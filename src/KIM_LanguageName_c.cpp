@@ -67,12 +67,12 @@ int KIM_LanguageNameNotEqual(KIM_LanguageName const left,
 
 char const * const KIM_LanguageNameString(KIM_LanguageName languageName)
 {
-  return (makeLanguageNameCpp(languageName)).string().c_str();
+  return (makeLanguageNameCpp(languageName)).String().c_str();
 }
 
 // Order doesn't matter as long as all values are unique
-KIM_LanguageName const KIM_LANGUAGE_NAME_Cpp = {0};
-KIM_LanguageName const KIM_LANGUAGE_NAME_C = {1};
-KIM_LanguageName const KIM_LANGUAGE_NAME_Fortran = {2};
+KIM_LanguageName const KIM_LANGUAGE_NAME_cpp = {0};
+KIM_LanguageName const KIM_LANGUAGE_NAME_c = {1};
+KIM_LanguageName const KIM_LANGUAGE_NAME_fortran = {2};
 
 }  // extern "C"

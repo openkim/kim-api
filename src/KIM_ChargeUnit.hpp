@@ -48,7 +48,7 @@ class ChargeUnit
   ChargeUnit(int const id);
   bool operator==(ChargeUnit const & rhs) const;
   bool operator!=(ChargeUnit const & rhs) const;
-  std::string string() const;
+  std::string String() const;
 };
 
 namespace CHARGE_UNIT

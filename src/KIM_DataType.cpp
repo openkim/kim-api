@@ -44,7 +44,7 @@ bool DataType::operator==(DataType const & rhs) const
 bool DataType::operator!=(DataType const & rhs) const
 {return dataTypeID!=rhs.dataTypeID;}
 
-std::string DataType::string() const
+std::string DataType::String() const
 {
   if (*this == DATA_TYPE::Integer) return "Integer";
   else if (*this == DATA_TYPE::Double) return "Double";

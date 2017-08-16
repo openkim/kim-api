@@ -77,7 +77,7 @@ init_wrapper.cpp: $(paramfile_name_list) $(KIM_MAKE_FILES)
          )
 	$(QUELL)printf "\n\n"                                                             >> $@
 	$(QUELL)printf "char kim_item_type[] = \"parameterized-model\";\n"                >> $@
-	$(QUELL)printf "int (* $(strip $(MODEL_NAME))_init_pointer)() = 0;\n"             >> $@
+	$(QUELL)printf "int (* $(strip $(MODEL_NAME))_create_pointer)() = 0;\n"           >> $@
 	$(QUELL)printf "char $(strip $(MODEL_NAME))_compiled_with_version[]\n"            >> $@
 	$(QUELL)printf "  = \"$(VERSION_FULL)\";\n"                                       >> $@
 	$(QUELL)printf "int $(strip $(MODEL_NAME))_language = 1;\n"                       >> $@
@@ -107,7 +107,7 @@ ifeq (darwin, $(KIM_SYSTEMLINKER))
             printf "_parameter_file_$${fl_num}_len\n" >> $@; \
          )
 	$(QUELL)printf "_kim_item_type\n"                                   >> $@
-	$(QUELL)printf "_$(MODEL_NAME)_init_pointer\n"                      >> $@
+	$(QUELL)printf "_$(MODEL_NAME)_create_pointer\n"                    >> $@
 	$(QUELL)printf "_$(MODEL_NAME)_compiled_with_version\n"             >> $@
 	$(QUELL)printf "_$(MODEL_NAME)_language\n"                          >> $@
 	$(QUELL)printf "_$(MODEL_NAME)_driver_name\n"                       >> $@
@@ -121,7 +121,7 @@ else # everything else (linux and freebsd)
             printf "parameter_file_$${fl_num}_len ;\n" >> $@; \
          )
 	$(QUELL)printf "           kim_item_type;\n"                        >> $@
-	$(QUELL)printf "           $(MODEL_NAME)_init_pointer;\n"           >> $@
+	$(QUELL)printf "           $(MODEL_NAME)_create_pointer;\n"         >> $@
 	$(QUELL)printf "           $(MODEL_NAME)_compiled_with_version;\n"  >> $@
 	$(QUELL)printf "           $(MODEL_NAME)_language;\n"               >> $@
 	$(QUELL)printf "           $(MODEL_NAME)_driver_name;\n"            >> $@

@@ -47,12 +47,12 @@ module kim_argument_name_module
     kim_argument_name_particle_species, &
     kim_argument_name_particle_contributing, &
     kim_argument_name_coordinates, &
-    kim_argument_name_energy, &
-    kim_argument_name_forces, &
-    kim_argument_name_particle_energy, &
-    kim_argument_name_virial, &
-    kim_argument_name_particle_virial, &
-    kim_argument_name_hessian, &
+    kim_argument_name_partial_energy, &
+    kim_argument_name_partial_forces, &
+    kim_argument_name_partial_particle_energy, &
+    kim_argument_name_partial_virial, &
+    kim_argument_name_partial_particle_virial, &
+    kim_argument_name_partial_hessian, &
 
     kim_argument_name_get_number_of_arguments, &
     kim_argument_name_get_argument_name, &
@@ -75,23 +75,23 @@ module kim_argument_name_module
     kim_argument_name_coordinates = &
     kim_argument_name_type(coordinates_id)
   type(kim_argument_name_type), parameter :: &
-    kim_argument_name_energy = &
-    kim_argument_name_type(energy_id)
+    kim_argument_name_partial_energy = &
+    kim_argument_name_type(partial_energy_id)
   type(kim_argument_name_type), parameter :: &
-    kim_argument_name_forces = &
-    kim_argument_name_type(forces_id)
+    kim_argument_name_partial_forces = &
+    kim_argument_name_type(partial_forces_id)
   type(kim_argument_name_type), parameter :: &
-    kim_argument_name_particle_energy = &
-    kim_argument_name_type(particle_energy_id)
+    kim_argument_name_partial_particle_energy = &
+    kim_argument_name_type(partial_particle_energy_id)
   type(kim_argument_name_type), parameter :: &
-    kim_argument_name_virial = &
-    kim_argument_name_type(virial_id)
+    kim_argument_name_partial_virial = &
+    kim_argument_name_type(partial_virial_id)
   type(kim_argument_name_type), parameter :: &
-    kim_argument_name_particle_virial = &
-    kim_argument_name_type(particle_virial_id)
+    kim_argument_name_partial_particle_virial = &
+    kim_argument_name_type(partial_particle_virial_id)
   type(kim_argument_name_type), parameter :: &
-    kim_argument_name_hessian = &
-    kim_argument_name_type(hessian_id)
+    kim_argument_name_partial_hessian = &
+    kim_argument_name_type(partial_hessian_id)
 
   interface operator (.eq.)
     module procedure kim_argument_name_equality

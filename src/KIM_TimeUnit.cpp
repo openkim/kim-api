@@ -44,7 +44,7 @@ bool TimeUnit::operator==(TimeUnit const & rhs) const
 bool TimeUnit::operator!=(TimeUnit const & rhs) const
 {return timeUnitID!=rhs.timeUnitID;}
 
-std::string TimeUnit::string() const
+std::string TimeUnit::String() const
 {
   if (*this == TIME_UNIT::unused) return "unused";
   else if (*this == TIME_UNIT::fs) return "fs";

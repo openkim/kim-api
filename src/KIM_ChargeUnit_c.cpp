@@ -65,7 +65,7 @@ int KIM_ChargeUnitNotEqual(KIM_ChargeUnit const left, KIM_ChargeUnit right)
 
 char const * const KIM_ChargeUnitString(KIM_ChargeUnit const chargeUnit)
 {
-  return (makeChargeUnitCpp(chargeUnit)).string().c_str();
+  return (makeChargeUnitCpp(chargeUnit)).String().c_str();
 }
 
 KIM_ChargeUnit const KIM_CHARGE_UNIT_any = {0};

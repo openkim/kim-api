@@ -62,11 +62,11 @@ namespace KIM
 {
 
 
-void ModelDestroy::get_model_buffer(void ** const ptr) const
+void ModelDestroy::GetModelBufferPointer(void ** const ptr) const
 {
   CONVERT_POINTER;
 
-  pImpl->get_model_buffer(ptr);
+  pImpl->GetModelBufferPointer(ptr);
 }
 
 void ModelDestroy::Log(LogVerbosity const logVerbosity,
@@ -79,11 +79,11 @@ void ModelDestroy::Log(LogVerbosity const logVerbosity,
   pImpl->Log(logVerbosity, message, lineNumber, fileName);
 }
 
-std::string ModelDestroy::string() const
+std::string ModelDestroy::String() const
 {
   CONVERT_POINTER;
 
-  return pImpl->string();
+  return pImpl->String();
 }
 
 ModelDestroy::ModelDestroy() : pimpl(0)
