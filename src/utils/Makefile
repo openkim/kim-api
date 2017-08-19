@@ -95,8 +95,8 @@ $(full_package_name)-collections-info: collections-info.o \
                                                  lib$(KIM_LIB_BUILD).a)
 	@printf "Creating... $@.\n"
 ifneq (static-link,$(KIM_LINK))
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).so $(XLANGLDLIBS) $(LDLIBS)
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ $< ../.lib$(KIM_LIB_BUILD).so $(XLANGLDLIBS) $(LDLIBS)
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).so $(LDDYNAMICLIB) $(XLANGLDLIBS) $(LDLIBS)
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ $< ../.lib$(KIM_LIB_BUILD).so $(LDDYNAMICLIB) $(XLANGLDLIBS) $(LDLIBS)
 else
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).a  $(XLANGLDLIBS) $(LDLIBS)
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ $< ../.lib$(KIM_LIB_BUILD).a $(XLANGLDLIBS) $(LDLIBS)
@@ -111,8 +111,8 @@ $(full_package_name)-simulator-model: simulator-model.o \
                                                  lib$(KIM_LIB_BUILD).a)
 	@printf "Creating... $@.\n"
 ifneq (static-link,$(KIM_LINK))
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).so $(XLANGLDLIBS) $(LDLIBS)
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ $< ../.lib$(KIM_LIB_BUILD).so $(XLANGLDLIBS) $(LDLIBS)
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).so $(LDDYNAMICLIB) $(XLANGLDLIBS) $(LDLIBS)
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ $< ../.lib$(KIM_LIB_BUILD).so $(LDDYNAMICLIB) $(XLANGLDLIBS) $(LDLIBS)
 else
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).a  $(XLANGLDLIBS) $(LDLIBS)
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ $< ../.lib$(KIM_LIB_BUILD).a $(XLANGLDLIBS) $(LDLIBS)
