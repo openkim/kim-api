@@ -384,7 +384,7 @@ endif
 
 # build targets involved in "make install"
 install_builddir = $(dest_package_dir)/$(builddir)
-install_make = Makefile.LoadDefaults Makefile.Model Makefile.ModelDriver Makefile.ParameterizedModel Makefile.SanityCheck parameterized_model.cpp
+install_make = Makefile.LoadDefaults Makefile.Model Makefile.ModelDriver Makefile.ParameterizedModel Makefile.SimulatorModel Makefile.SanityCheck parameterized_model.cpp
 install_compilerdir = $(dest_package_dir)/$(buildcompilerdir)
 install_compiler = Makefile.GCC Makefile.INTEL
 install_linkerdir = $(dest_package_dir)/$(buildlinkerdir)
