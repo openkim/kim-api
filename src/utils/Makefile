@@ -42,7 +42,8 @@ KIMDEFINES = $(KIM_DEFINE_VALUES)
 
 all: $(full_package_name)-descriptor-file-match \
      $(full_package_name)-build-config \
-     $(full_package_name)-collections-info
+     $(full_package_name)-collections-info \
+     $(full_package_name)-model-info
 
 # Add the local Makefile to KIM_MAKE_FILES
 KIM_MAKE_FILES += Makefile
@@ -101,6 +102,15 @@ else
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ $< ../.lib$(KIM_LIB_BUILD).a $(XLANGLDLIBS) $(LDLIBS)
 endif
 
+$(full_package_name)-model-info: model-info.sh $(KIM_MAKE_FILES)
+	@printf "Creating... $@.\n"
+	$(QUELL)sed -e 's|###COLLECTIONS#INFO#UTILITY###|$(KIM_DIR)/src/utils/$(full_package_name)-collections-info|g' \
+                    -e 's|###BUILD#CONFIG###|$(KIM_DIR)/src/utils/$(full_package_name)-build-config|g' model-info.sh > $@
+	$(QUELL)chmod 0755 $@
+	$(QUELL)sed -e 's|###COLLECTIONS#INFO#UTILITY###|$(package_dir)/bin/$(full_package_name)-collections-info|g' \
+                    -e 's|###BUILD#CONFIG###|$(package_dir)/bin/$(full_package_name)-build-config|g' model-info.sh > .$@
+	$(QUELL)chmod 0755 .$@
+
 
 .PHONY: all clean install installdirs uninstall
 
@@ -108,12 +118,13 @@ clean:
 	@printf "Cleaning... src/utils.\n"
 	$(QUELL)rm -f *.o .*.o $(full_package_name)-descriptor-file-match .$(full_package_name)-descriptor-file-match \
                    $(full_package_name)-build-config .$(full_package_name)-build-config \
-                   $(full_package_name)-collections-info .$(full_package_name)-collections-info
+                   $(full_package_name)-collections-info .$(full_package_name)-collections-info \
+                   $(full_package_name)-model-info .$(full_package_name)-model-info
 
 
 install_bindir = $(dest_package_dir)/bin
 install_nodest_bindir = $(package_dir)/bin
-install_bin = $(full_package_name)-descriptor-file-match $(full_package_name)-build-config $(full_package_name)-collections-info
+install_bin = $(full_package_name)-descriptor-file-match $(full_package_name)-build-config $(full_package_name)-collections-info $(full_package_name)-model-info
 
 install-check:
 ifneq (dynamic-load,$(KIM_LINK))

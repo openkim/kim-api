@@ -61,43 +61,63 @@ void sanitizeString(std::string &str)
   }
 }
 
-std::string getConfigFileName()
+std::vector<std::string> getConfigFileName()
 {
-  std::string configFileName;
+  std::vector<std::string> configFileName(3);
 
   if (INPLACE)
   {
-    configFileName = KIMDIR;
+    configFileName[0] = KIMDIR;
   }
   else if (USERROOT)
   {
-    configFileName = USERCONFIGFILEROOTNAME;
+    configFileName[0] = USERCONFIGFILEROOTNAME;
   }
   else
   {
-    configFileName = getenv("HOME");
+    configFileName[0] = getenv("HOME");
   }
-  configFileName.append("/").append(USERCONFIGFILEDIRNAME);
-  configFileName.append("/config-v").append(VERSION_MAJOR);
+  configFileName[0].append("/").append(USERCONFIGFILEDIRNAME);
+  configFileName[0].append("/config-v").append(VERSION_MAJOR);
 
   std::string varName(PACKAGENAME);
   sanitizeString(varName);
   varName.append("_USER_CONFIG_FILE");
+  configFileName[1] = varName;
   char const* const varVal = getenv(varName.c_str());
   if (NULL != varVal)
   {
-    configFileName = varVal;
+    configFileName[2]=std::string(varVal);
+    configFileName[0] = varVal;
+  }
+  else
+  {
+    configFileName[2]=std::string("");
   }
 
   return configFileName;
 }
 
+std::string getSystemLibraryFileName()
+{
+  return std::string(PACKAGEDIR).append("/").append("lib" KIMLIBBUILD);
+}
+
+std::vector<std::string> getSystemDirs()
+{
+  std::vector<std::string> systemDirs(2);
+  systemDirs[0] = std::string(PACKAGEDIR).append("/").append(MODELDRIVERSDIR);
+  systemDirs[1] = std::string(PACKAGEDIR).append("/").append(MODELSDIR);
+
+  return systemDirs;
+}
+
 std::vector<std::string> getUserDirs()
 {
   std::vector<std::string> userDirs(2);
-  std::string configFile(getConfigFileName());
+  std::vector<std::string> configFile(getConfigFileName());
   std::ifstream cfl;
-  cfl.open(configFile.c_str(), std::ifstream::in);
+  cfl.open(configFile[0].c_str(), std::ifstream::in);
   if (!cfl)
   {
     // unable to open file.
@@ -116,7 +136,7 @@ std::vector<std::string> getUserDirs()
       if (strcmp("model_drivers_dir", word))
       {
         // error so exit
-        std::cerr << "Unknown line in " << configFile << " file: "
+        std::cerr << "Unknown line in " << configFile[0] << " file: "
                   << word << std::endl;
         userDirs[0] = "";
         goto cleanUp;
@@ -132,7 +152,7 @@ std::vector<std::string> getUserDirs()
       else if (found_root != 0)
       {
         // error so exit
-        std::cerr << "Invalid value in " << configFile << " file: "
+        std::cerr << "Invalid value in " << configFile[0] << " file: "
                   << word << std::endl;
         userDirs[0] = "";
         goto cleanUp;
@@ -152,7 +172,7 @@ std::vector<std::string> getUserDirs()
       if (strcmp("models_dir", word))
       {
         // error so exit
-        std::cerr << "Unknown line in " << configFile << " file: "
+        std::cerr << "Unknown line in " << configFile[0] << " file: "
                   << word << std::endl;
         userDirs[1] = "";
         goto cleanUp;
@@ -168,7 +188,7 @@ std::vector<std::string> getUserDirs()
       else if (found_root != 0)
       {
         // error so exit
-        std::cerr << "Invalid value in " << configFile << " file: "
+        std::cerr << "Invalid value in " << configFile[0] << " file: "
                   << word << std::endl;
         userDirs[1] = "";
         goto cleanUp;
@@ -186,8 +206,9 @@ std::vector<std::string> getUserDirs()
   return userDirs;
 }
 
-void pushEnvDirs(DirectoryPathType type,
-                 std::list<std::pair<std::string,std::string> >* const lst)
+std::string pushEnvDirs(
+    DirectoryPathType type,
+    std::list<std::pair<std::string,std::string> >* const lst)
 {
 
   std::string varName = PACKAGENAME;
@@ -214,6 +235,8 @@ void pushEnvDirs(DirectoryPathType type,
       lst->push_back(std::make_pair(std::string("environment"),token));
     }
   }
+
+  return varName;
 }
 
 void searchPaths(DirectoryPathType type,

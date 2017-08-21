@@ -177,6 +177,7 @@ KIM_API_DIRS.o: KIM_API_DIRS.h $(KIM_MAKE_FILES)
 %IM_API_DIRS.o: KIM_DEFINE_VALUES +=  -D INPLACE=$(if $(filter-out .KIM_API_DIRS.o,$@),1,0) \
                                       -D PACKAGEDIR=\"$(if $(filter-out .KIM_API_DIRS.o,$@),$(srcdir),$(package_dir))\" \
                                       -D KIMDIR=\"$(KIM_DIR)\" \
+                                      -D KIMLIBBUILD=\"$(KIM_LIB_BUILD).so\" \
                                       -D MODELDRIVERSDIR=\"$(modeldriversdir)\" \
                                       -D MODELSDIR=\"$(modelsdir)\" \
                                       -D PACKAGENAME=\"$(package_name)\" \

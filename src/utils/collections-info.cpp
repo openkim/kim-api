@@ -43,8 +43,9 @@ void usage(char const* const name)
             << name
             << " <command> [<args>]\n"
             << "Where <command> is one of the below.\n"
-            << "   env <models | model_drivers>\n"
-            << "   config_file <name | models | model_drivers>\n"
+            << "   env <env | models | model_drivers>\n"
+            << "   config_file <env | name | models | model_drivers>\n"
+            << "   system <library | models | model_drivers>\n"
             << "   models [find <name>]\n"
             << "   model_drivers [find <name>]\n";
   // note: this interface is likely to change in future kim-api releases
@@ -56,10 +57,10 @@ class collectionsInfo
   collectionsInfo() {};
   ~collectionsInfo() {};
 
-  enum ENV_OPTIONS {E_MODELS, E_MODEL_DRIVERS};
+  enum ENV_OPTIONS {E_ENV, E_MODELS, E_MODEL_DRIVERS};
   void env(ENV_OPTIONS const opt);
 
-  enum CONFIG_FILE_OPTIONS {CF_NAME, CF_MODELS, CF_MODEL_DRIVERS};
+  enum CONFIG_FILE_OPTIONS {CF_ENV, CF_NAME, CF_MODELS, CF_MODEL_DRIVERS};
   void configFile(CONFIG_FILE_OPTIONS const opt);
 
   void models(bool const list_all, std::string const& name);
@@ -76,6 +77,14 @@ void collectionsInfo::env(ENV_OPTIONS const opt)
   std::list<std::pair<std::string, std::string> > lst;
   switch (opt)
   {
+    case E_ENV:
+    {
+      std::string models_env = pushEnvDirs(KIM_MODELS_DIR, &lst);
+      std::string drivers_env = pushEnvDirs(KIM_MODEL_DRIVERS_DIR, &lst);
+
+      std::cout << models_env << " " << drivers_env << std::endl;
+      break;
+    }
     case E_MODELS:
       pushEnvDirs(KIM_MODELS_DIR, &lst);
 
@@ -101,15 +110,27 @@ void collectionsInfo::configFile(CONFIG_FILE_OPTIONS const opt)
   std::vector<std::string> userDirs = getUserDirs();
   switch (opt)
   {
-    case CF_NAME:
-      std::cout << getConfigFileName() << std::endl;
+    case CF_ENV:
+    {
+      std::vector<std::string> configFileName = getConfigFileName();
+      std::cout << configFileName[1] << " " << configFileName[2] << std::endl;
       break;
+    }
+    case CF_NAME:
+    {
+      std::cout << getConfigFileName()[0] << std::endl;
+      break;
+    }
     case CF_MODELS:
+    {
       std::cout << userDirs[1] << std::endl;
       break;
+    }
     case CF_MODEL_DRIVERS:
+    {
       std::cout << userDirs[0] << std::endl;
       break;
+    }
   }
 }
 
@@ -158,6 +179,7 @@ void collectionsInfo::listItems(
 
 int processEnv(int argc, char* argv[]);
 int processConfigFile(int argc, char* argv[]);
+int processSystem(int argc, char* argv[]);
 int processItems(int argc, char* argv[]);
 
 int main(int argc, char* argv[])
@@ -177,6 +199,10 @@ int main(int argc, char* argv[])
     else if (0 == strcmp("config_file", argv[1]))
     {
       returnVal = processConfigFile(argc, argv);
+    }
+    else if (0 == strcmp("system", argv[1]))
+    {
+      returnVal = processSystem(argc, argv);
     }
     else if ((0 == strcmp("models", argv[1])) ||
              (0 == strcmp("model_drivers", argv[1])))
@@ -204,7 +230,11 @@ int processEnv(int argc, char* argv[])
   }
   else
   {
-    if (0 == strcmp("models", argv[2]))
+    if (0 == strcmp("env", argv[2]))
+    {
+      opt = collectionsInfo::E_ENV;
+    }
+    else if (0 == strcmp("models", argv[2]))
     {
       opt = collectionsInfo::E_MODELS;
     }
@@ -237,7 +267,11 @@ int processConfigFile(int argc, char* argv[])
   }
   else
   {
-    if (0 == strcmp("name", argv[2]))
+    if (0 == strcmp("env", argv[2]))
+    {
+      opt = collectionsInfo::CF_ENV;
+    }
+    else if (0 == strcmp("name", argv[2]))
     {
       opt = collectionsInfo::CF_NAME;
     }
@@ -259,6 +293,38 @@ int processConfigFile(int argc, char* argv[])
   {
     collectionsInfo col;
     col.configFile(opt);
+  }
+
+  return returnVal;
+}
+
+int processSystem(int argc, char* argv[])
+{
+  int returnVal = 0;
+  if (argc != 3)
+  {
+    returnVal = 1;
+  }
+  else
+  {
+    std::vector<std::string> systemDirs = getSystemDirs();
+
+    if (0 == strcmp("library", argv[2]))
+    {
+      std::cout << getSystemLibraryFileName() << std::endl;
+    }
+    else if (0 == strcmp("models", argv[2]))
+    {
+      std::cout << systemDirs[1] << std::endl;
+    }
+    else if (0 == strcmp("model_drivers", argv[2]))
+    {
+      std::cout << systemDirs[0] << std::endl;
+    }
+    else
+    {
+      returnVal = 1;
+    }
   }
 
   return returnVal;
