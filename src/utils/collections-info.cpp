@@ -73,24 +73,24 @@ class collectionsInfo
 
 void collectionsInfo::env(ENV_OPTIONS const opt)
 {
-  std::list<std::string> lst;
+  std::list<std::pair<std::string, std::string> > lst;
   switch (opt)
   {
     case E_MODELS:
       pushEnvDirs(KIM_MODELS_DIR, &lst);
 
-      for (std::list<std::string>::const_iterator itr = lst.begin();
+      for (std::list<std::pair<std::string, std::string> >::const_iterator itr = lst.begin();
            itr != lst.end(); ++itr)
       {
-        std::cout << *itr << std::endl;
+        std::cout << itr->second << std::endl;
       }
       break;
     case E_MODEL_DRIVERS:
       pushEnvDirs(KIM_MODEL_DRIVERS_DIR, &lst);
-      for (std::list<std::string>::const_iterator itr = lst.begin();
+           for (std::list<std::pair<std::string, std::string> >::const_iterator itr = lst.begin();
            itr != lst.end(); ++itr)
       {
-        std::cout << *itr << std::endl;
+        std::cout << itr->second << std::endl;
       }
       break;
   }
@@ -138,15 +138,17 @@ void collectionsInfo::listItems(
     {
       std::cout << (*itr)[0] << " "
                 << (*itr)[1] << " "
-                << (*itr)[2] << std::endl;
+                << (*itr)[2] << " "
+                << (*itr)[3] << std::endl;
     }
     else
     {
-      if (name == (*itr)[0])
+      if (name == (*itr)[1])
       {
         std::cout << (*itr)[0] << " "
                   << (*itr)[1] << " "
-                  << (*itr)[2] << std::endl;
+                  << (*itr)[2] << " "
+                  << (*itr)[3] << std::endl;
         break;
       }
     }

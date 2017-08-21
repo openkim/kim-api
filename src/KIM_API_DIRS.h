@@ -49,7 +49,7 @@ bool findItem(DirectoryPathType type, std::string const& name,
 
 // needed by collection-info
 std::string getConfigFileName();
-void pushEnvDirs(DirectoryPathType type, std::list<std::string>* const lst);
+void pushEnvDirs(DirectoryPathType type, std::list<std::pair<std::string, std::string> >* const lst);
 std::vector<std::string> getUserDirs();
 void getAvailableItems(DirectoryPathType type,
                        std::list<std::vector<std::string> > &list);

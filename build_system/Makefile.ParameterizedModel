@@ -81,7 +81,7 @@ else
    COLLECTIONS_INFO = $(srcdir)/utils/$(full_package_name)-collections-info
 endif
 #
-driver_location = $(shell $(COLLECTIONS_INFO) model_drivers find $(MODEL_DRIVER_NAME) 2> /dev/null| sed -e 's/[^ ]* \([^ ]*\).*/\1/')
+driver_location = $(shell $(COLLECTIONS_INFO) model_drivers find $(MODEL_DRIVER_NAME) 2> /dev/null| sed -e 's/[^ ]* [^ ]* \([^ ]*\).*/\1/')
 ifeq (,$(driver_location))
    ifeq (,$(MAKECMDGOALS))  # empty goal, in this case, means stop here
       MAKECMDGOALS=empty-so-stop
@@ -90,7 +90,7 @@ ifeq (,$(driver_location))
       # all good
    else
      # check for driver in CWD-collection of parent directory
-     driver_location = $(shell cd ..; $(COLLECTIONS_INFO) model_drivers find $(MODEL_DRIVER_NAME) 2> /dev/null| sed -e 's/[^ ]* \([^ ]*\).*/\1/')
+     driver_location = $(shell cd ..; $(COLLECTIONS_INFO) model_drivers find $(MODEL_DRIVER_NAME) 2> /dev/null| sed -e 's/[^ ]* [^ ]* \([^ ]*\).*/\1/')
      ifeq (,$(driver_location))
        $(error Model Driver, $(MODEL_DRIVER_NAME), not found)
      else

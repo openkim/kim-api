@@ -119,6 +119,7 @@ std::vector<std::string> getUserDirs()
         std::cerr << "Unknown line in " << configFile << " file: "
                   << word << std::endl;
         userDirs[0] = "";
+        goto cleanUp;
       }
       word = strtok(NULL, sep);
       userDirs[0] = word;
@@ -134,6 +135,7 @@ std::vector<std::string> getUserDirs()
         std::cerr << "Invalid value in " << configFile << " file: "
                   << word << std::endl;
         userDirs[0] = "";
+        goto cleanUp;
       }
       else
       {
@@ -153,6 +155,7 @@ std::vector<std::string> getUserDirs()
         std::cerr << "Unknown line in " << configFile << " file: "
                   << word << std::endl;
         userDirs[1] = "";
+        goto cleanUp;
       }
       word = strtok(NULL, sep);
       userDirs[1] = word;
@@ -168,6 +171,7 @@ std::vector<std::string> getUserDirs()
         std::cerr << "Invalid value in " << configFile << " file: "
                   << word << std::endl;
         userDirs[1] = "";
+        goto cleanUp;
       }
       else
       {
@@ -175,6 +179,7 @@ std::vector<std::string> getUserDirs()
       }
     }
 
+ cleanUp:
     cfl.close();
   }
 
@@ -182,7 +187,7 @@ std::vector<std::string> getUserDirs()
 }
 
 void pushEnvDirs(DirectoryPathType type,
-                 std::list<std::string>* const lst)
+                 std::list<std::pair<std::string,std::string> >* const lst)
 {
 
   std::string varName = PACKAGENAME;
@@ -206,36 +211,41 @@ void pushEnvDirs(DirectoryPathType type,
     std::string token;
     while (std::getline(iss, token, ':'))
     {
-      lst->push_back(token);
+      lst->push_back(std::make_pair(std::string("environment"),token));
     }
   }
 }
 
-void searchPaths(DirectoryPathType type, std::list<std::string>* const lst)
+void searchPaths(DirectoryPathType type,
+                 std::list<std::pair<std::string,std::string> >* const lst)
 {
   std::vector<std::string> userDirs = getUserDirs();
 
   switch (type)
   {
     case KIM_MODEL_DRIVERS_DIR:
-      lst->push_back(std::string("."));
+      lst->push_back(std::make_pair(std::string("CWD"), std::string(".")));
       pushEnvDirs(type,lst);
       if (0 != userDirs[0].compare(""))
       {
-        lst->push_back(userDirs[0]);
+        lst->push_back(std::make_pair(std::string("user"), userDirs[0]));
       }
       lst->push_back(
-          std::string(PACKAGEDIR).append("/").append(MODELDRIVERSDIR));
+          std::make_pair(
+              std::string("system"),
+              std::string(PACKAGEDIR).append("/").append(MODELDRIVERSDIR)));
       break;
     case KIM_MODELS_DIR:
-      lst->push_back(std::string("."));
+      lst->push_back(std::make_pair(std::string("CWD"), std::string(".")));
       pushEnvDirs(type,lst);
       if (0 != userDirs[1].compare(""))
       {
-        lst->push_back(userDirs[1]);
+        lst->push_back(std::make_pair(std::string("user"), userDirs[1]));
       }
       lst->push_back(
-          std::string(PACKAGEDIR).append("/").append(MODELSDIR));
+          std::make_pair(
+              std::string("system"),
+              std::string(PACKAGEDIR).append("/").append(MODELSDIR)));
       break;
     default:
       break;
@@ -272,24 +282,26 @@ void getSubDirectories(std::string const &dir, std::list<std::string> &list)
   }
 }
 
-enum ITEMS_ENTREIS {IE_NAME, IE_DIR, IE_VER};
+enum ITEMS_ENTREIS {IE_COLLECTION, IE_NAME, IE_DIR, IE_VER};
 void getAvailableItems(DirectoryPathType type,
                        std::list<std::vector<std::string> > &list)
 {
-  std::list<std::string> paths;
+  std::list<std::pair<std::string,std::string> > paths;
   searchPaths(type, &paths);
 
-  std::list<std::string>::const_iterator itr;
+  std::list<std::pair<std::string,std::string> >::const_iterator itr;
   for (itr = paths.begin(); itr != paths.end(); ++itr)
   {
     std::list<std::string> items;
-    getSubDirectories(*itr, items);
+    getSubDirectories(itr->second, items);
 
+    std::string collection = itr->first;
     std::list<std::string>::const_iterator itemItr;
     for (itemItr = items.begin(); itemItr != items.end(); ++itemItr)
     {
+      std::vector<std::string> entry(4);
+      entry[IE_COLLECTION] = collection;
       std::size_t split = itemItr->find_last_of("/");
-      std::vector<std::string> entry(3);
       entry[IE_NAME] = itemItr->substr(split+1);
       entry[IE_DIR] = itemItr->substr(0,split);
 
@@ -339,11 +351,10 @@ bool findItem(DirectoryPathType type, std::string const& name,
   std::list<std::vector<std::string> > list;
   getAvailableItems(type, list);
 
-
   for (std::list<std::vector<std::string> >::const_iterator
            itr = list.begin(); itr != list.end(); ++itr)
   {
-    if ((*itr)[0] == name)
+    if ((*itr)[IE_NAME] == name)
     {
       *Item = *itr;
       success = true;
