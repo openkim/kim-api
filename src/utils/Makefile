@@ -43,7 +43,7 @@ KIMDEFINES = $(KIM_DEFINE_VALUES)
 all: $(full_package_name)-descriptor-file-match \
      $(full_package_name)-build-config \
      $(full_package_name)-collections-info \
-     $(full_package_name)-model-info \
+     $(full_package_name)-collections-management \
      $(full_package_name)-simulator-model
 
 # Add the local Makefile to KIM_MAKE_FILES
@@ -119,13 +119,13 @@ else
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ $< ../.lib$(KIM_LIB_BUILD).a $(XLANGLDLIBS) $(LDLIBS)
 endif
 
-$(full_package_name)-model-info: model-info.sh $(KIM_MAKE_FILES)
+$(full_package_name)-collections-management: collections-management.sh $(KIM_MAKE_FILES)
 	@printf "Creating... $@.\n"
 	$(QUELL)sed -e 's|###COLLECTIONS#INFO#UTILITY###|$(KIM_DIR)/src/utils/$(full_package_name)-collections-info|g' \
-                    -e 's|###BUILD#CONFIG###|$(KIM_DIR)/src/utils/$(full_package_name)-build-config|g' model-info.sh > $@
+                    -e 's|###BUILD#CONFIG###|$(KIM_DIR)/src/utils/$(full_package_name)-build-config|g' collections-management.sh > $@
 	$(QUELL)chmod 0755 $@
 	$(QUELL)sed -e 's|###COLLECTIONS#INFO#UTILITY###|$(package_dir)/bin/$(full_package_name)-collections-info|g' \
-                    -e 's|###BUILD#CONFIG###|$(package_dir)/bin/$(full_package_name)-build-config|g' model-info.sh > .$@
+                    -e 's|###BUILD#CONFIG###|$(package_dir)/bin/$(full_package_name)-build-config|g' collections-management.sh > .$@
 	$(QUELL)chmod 0755 .$@
 
 
@@ -136,13 +136,13 @@ clean:
 	$(QUELL)rm -f *.o .*.o $(full_package_name)-descriptor-file-match .$(full_package_name)-descriptor-file-match \
                    $(full_package_name)-build-config .$(full_package_name)-build-config \
                    $(full_package_name)-collections-info .$(full_package_name)-collections-info \
-                   $(full_package_name)-model-info .$(full_package_name)-model-info \
+                   $(full_package_name)-collections-management .$(full_package_name)-collections-management \
                    $(full_package_name)-simulator-model .$(full_package_name)-simulator-model
 
 
 install_bindir = $(dest_package_dir)/bin
 install_nodest_bindir = $(package_dir)/bin
-install_bin = $(full_package_name)-descriptor-file-match $(full_package_name)-build-config $(full_package_name)-model-info $(full_package_name)-simulator-model
+install_bin = $(full_package_name)-descriptor-file-match $(full_package_name)-build-config $(full_package_name)-collections-management $(full_package_name)-simulator-model
 install_lib_bin = $(install_bin) $(full_package_name)-collections-info
 
 install-check:

@@ -467,10 +467,10 @@ endif
 install-set-default-to-v%: EXT:=$(if $(filter-out static-link,$(KIM_LINK)),so,a)
 install-set-default-to-v%:
 	@printf "Setting default $(package_name) to $(package_name)-v$*\n"
-	$(QUELL)fl="$(DESTDIR)$(bindir)/$(package_name)-descriptor-file-match" && if test -L "$$fl"; then rm -f "$$fl"; fi && ln -fs "$(package_name)-v$*-descriptor-file-match" "$$fl"
-	$(QUELL)fl="$(DESTDIR)$(bindir)/$(package_name)-build-config"          && if test -L "$$fl"; then rm -f "$$fl"; fi && ln -fs "$(package_name)-v$*-build-config" "$$fl"
-	$(QUELL)fl="$(DESTDIR)$(bindir)/$(package_name)-model-info"            && if test -L "$$fl"; then rm -f "$$fl"; fi && ln -fs "$(package_name)-v$*-model-info" "$$fl"
-	$(QUELL)fl="$(DESTDIR)$(bindir)/$(package_name)-simulator-model"       && if test -L "$$fl"; then rm -f "$$fl"; fi && ln -fs "$(package_name)-v$*-simulator-model" "$$fl"
+	$(QUELL)fl="$(DESTDIR)$(bindir)/$(package_name)-descriptor-file-match"  && if test -L "$$fl"; then rm -f "$$fl"; fi && ln -fs "$(package_name)-v$*-descriptor-file-match" "$$fl"
+	$(QUELL)fl="$(DESTDIR)$(bindir)/$(package_name)-build-config"           && if test -L "$$fl"; then rm -f "$$fl"; fi && ln -fs "$(package_name)-v$*-build-config" "$$fl"
+	$(QUELL)fl="$(DESTDIR)$(bindir)/$(package_name)-collections-management" && if test -L "$$fl"; then rm -f "$$fl"; fi && ln -fs "$(package_name)-v$*-collections-management" "$$fl"
+	$(QUELL)fl="$(DESTDIR)$(bindir)/$(package_name)-simulator-model"        && if test -L "$$fl"; then rm -f "$$fl"; fi && ln -fs "$(package_name)-v$*-simulator-model" "$$fl"
 	$(QUELL)fl="$(DESTDIR)$(includedir)/$(package_name)"       && if test -L "$$fl"; then rm -f "$$fl"; fi && ln -fs "$(package_name)-v$*" "$$fl"
 	$(QUELL)fl="$(DESTDIR)$(libdir)/$(package_name)"           && if test -L "$$fl"; then rm -f "$$fl"; fi && ln -fs "$(package_name)-v$*" "$$fl"
 	$(QUELL)fl="$(DESTDIR)$(libdir)/lib$(package_name).$(EXT)" && if test -L "$$fl"; then rm -f "$$fl"; fi && ln -fs "lib$(package_name)-v$*.$(EXT)" "$$fl"
@@ -508,10 +508,10 @@ config-uninstall:
 uninstall-set-default: EXT:=$(if $(filter-out static-link,$(KIM_LINK)),so,a)
 uninstall-set-default:
 	@printf "Removing default $(package_name) settings.\n"
-	$(QUELL)fl="$(DESTDIR)$(bindir)/$(package_name)-descriptor-file-match" && if test -L "$$fl"; then rm -f "$$fl"; fi
-	$(QUELL)fl="$(DESTDIR)$(bindir)/$(package_name)-build-config"          && if test -L "$$fl"; then rm -f "$$fl"; fi
-	$(QUELL)fl="$(DESTDIR)$(bindir)/$(package_name)-simulator-model"       && if test -L "$$fl"; then rm -f "$$fl"; fi
-	$(QUELL)fl="$(DESTDIR)$(bindir)/$(package_name)-model-info"            && if test -L "$$fl"; then rm -f "$$fl"; fi
+	$(QUELL)fl="$(DESTDIR)$(bindir)/$(package_name)-descriptor-file-match"  && if test -L "$$fl"; then rm -f "$$fl"; fi
+	$(QUELL)fl="$(DESTDIR)$(bindir)/$(package_name)-build-config"           && if test -L "$$fl"; then rm -f "$$fl"; fi
+	$(QUELL)fl="$(DESTDIR)$(bindir)/$(package_name)-simulator-model"        && if test -L "$$fl"; then rm -f "$$fl"; fi
+	$(QUELL)fl="$(DESTDIR)$(bindir)/$(package_name)-collections-management" && if test -L "$$fl"; then rm -f "$$fl"; fi
 	$(QUELL)fl="$(DESTDIR)$(includedir)/$(package_name)"       && if test -L "$$fl"; then rm -f "$$fl"; fi
 	$(QUELL)fl="$(DESTDIR)$(libdir)/$(package_name)"           && if test -L "$$fl"; then rm -f "$$fl"; fi
 	$(QUELL)fl="$(DESTDIR)$(libdir)/lib$(package_name).$(EXT)" && if test -L "$$fl"; then rm -f "$$fl"; fi
