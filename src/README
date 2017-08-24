@@ -90,18 +90,6 @@ Unit_Handling.cpp
 Unit_Handling.h
      Header file declaring the unit handling functions.
 
-model_drivers/
-     Each Model Driver is stored in its own directory.  This is where you
-     should place Model Driver directories downloaded from https://openkim.org
-     for use as "system-wide" drivers.  (Or use `make add-examples' to copy the
-     example Model Drivers to this directory.)
-
-models/
-     Each Model is stored in its own directory.  This is where you should place
-     Model directories downloaded from https://openkim.org for use as
-     "system-wide" models.  (Or use `make add-examples' to copy the example
-     Models to this directory.)
-
 scripts/
      Directory containing helper scripts for building the KIM API.
 

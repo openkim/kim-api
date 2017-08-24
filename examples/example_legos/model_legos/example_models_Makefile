@@ -37,12 +37,7 @@ include Makefile.KIM_Config
 
 export MODELS_LIST := $(wildcard ex_model*)
 
-ifeq (dynamic-load,$(KIM_LINK))
-  all: $(patsubst %,%-all,$(MODELS_LIST))
-else
-  all:
-	@printf "Nothing to be done for static-link.\n"
-endif
+all: $(patsubst %,%-all,$(MODELS_LIST))
 
 clean: $(patsubst %,%-clean,$(MODELS_LIST))
 

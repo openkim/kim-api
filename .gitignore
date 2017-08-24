@@ -8,9 +8,7 @@
 *.mod
 .DS_Store
 old-*
-.kimignore
 Makefile.KIM_Config
 export-list.txt
 kim_str.cpp
-/.kim-api
 /config.status

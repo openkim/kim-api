@@ -37,12 +37,7 @@ include Makefile.KIM_Config
 
 export MODEL_DRIVERS_LIST := $(wildcard ex_model*)
 
-ifeq (dynamic-load,$(KIM_LINK))
-  all: $(patsubst %,%-all,$(MODEL_DRIVERS_LIST))
-else
-  all:
-	@printf "Nothing to be done for static-link.\n"
-endif
+all: $(patsubst %,%-all,$(MODEL_DRIVERS_LIST))
 
 clean: $(patsubst %,%-clean,$(MODEL_DRIVERS_LIST))
 

@@ -65,11 +65,7 @@ std::vector<std::string> getConfigFileName()
 {
   std::vector<std::string> configFileName(3);
 
-  if (INPLACE)
-  {
-    configFileName[0] = KIMDIR;
-  }
-  else if (USERROOT)
+  if (USERROOT)
   {
     configFileName[0] = USERCONFIGFILEROOTNAME;
   }
