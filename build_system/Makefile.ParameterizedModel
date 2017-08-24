@@ -76,7 +76,7 @@ all: descriptor.kim $(MODEL_BUILD_TARGET)
 
 # Find the driver files
 ifeq ($(srcdir),$(KIM_DIR)) # INSTALLED
-   COLLECTIONS_INFO = $(srcdir)/bin/$(full_package_name)-collections-info
+   COLLECTIONS_INFO = $(srcdir)/libexec/$(full_package_name)-collections-info
 else
    COLLECTIONS_INFO = $(srcdir)/utils/$(full_package_name)-collections-info
 endif

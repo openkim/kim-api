@@ -78,6 +78,7 @@ endif
                                      -D 'OBJONLYFLAG_STRING="$(OBJONLYFLAG)"' \
                                      -D 'OUTPUTINFLAG_STRING="$(OUTPUTINFLAG)"' \
                                      -D 'MAKEFILEKIMCONFIG_STRING="$(if $(filter-out .build-config.o,$@),$(KIM_DIR),$(package_dir))/Makefile.KIM_Config"' \
+                                     -D 'LIBEXECPATH_STRING="$(libexecdir)/$(full_package_name)"' \
                                      -D 'VERSION_STRING="$(VERSION_FULL)"'
 %build-config.o: build-config.cpp $(KIM_MAKE_FILES)
 	@printf "Creating... $@.\n"
@@ -142,8 +143,10 @@ clean:
 
 install_bindir = $(dest_package_dir)/bin
 install_nodest_bindir = $(package_dir)/bin
-install_bin = $(full_package_name)-descriptor-file-match $(full_package_name)-build-config $(full_package_name)-collections-management $(full_package_name)-simulator-model
-install_lib_bin = $(install_bin) $(full_package_name)-collections-info
+install_libexecdir = $(dest_package_dir)/libexec
+install_nodest_libexecdir = $(package_dir)/libexec
+install_bin = $(full_package_name)-build-config $(full_package_name)-collections-management $(full_package_name)-simulator-model
+install_libexec = $(full_package_name)-descriptor-file-match $(full_package_name)-collections-info
 
 install-check:
 ifneq (dynamic-load,$(KIM_LINK))
@@ -157,23 +160,37 @@ else
         # should we check that the installed stuff is actually dynamic-load and the right settings (32bit, etc.)?
 	$(QUELL)if test -d "$(dest_package_dir)"; then \
                   rm -rf "$(install_bindir)"; \
+                  rm -rf "$(install_libexecdir)"; \
                   for fl in $(install_bin); do rm -f "$(DESTDIR)$(bindir)/$$fl"; done; \
+                  rm -rf "$(DESTDIR)$(libexecdir)/$(full_package_name)"; \
                 fi
 endif
 
 installdirs:
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(DESTDIR)$(bindir)"
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(install_bindir)"
+	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(DESTDIR)$(libexecdir)/$(full_package_name)"
+	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(install_libexecdir)/$(full_package_name)"
 
 install: all installdirs
 	@printf "Installing...($(dest_package_dir))................................. bin"
         # Install bin files
-	$(QUELL)for fl in $(install_lib_bin); do $(INSTALL_PROGRAM) -m 0755 ".$$fl" "$(install_bindir)/$$fl"; done
+	$(QUELL)for fl in $(install_bin); do $(INSTALL_PROGRAM) -m 0755 ".$$fl" "$(install_bindir)/$$fl"; done
 	$(QUELL)for fl in $(install_bin); do ln -fs "$(install_nodest_bindir)/$$fl" "$(DESTDIR)$(bindir)/$$fl"; done
+	$(QUELL)for fl in $(install_libexec); do $(INSTALL_PROGRAM) -m 0755 ".$$fl" "$(install_libexecdir)/$(full_package_name)/$$fl"; done
+	$(QUELL)for fl in $(install_libexec); do ln -fs "$(install_nodest_libexecdir)/$(full_package_name)/$$fl" "$(DESTDIR)$(libexecdir)/$(full_package_name)/$$fl"; done
 	@printf ".\n"
 
 uninstall:
 	@printf "Uninstalling...($(dest_package_dir))................................. bin.\n"
         # Uninstall bin files
-	$(QUELL)for fl in $(install_lib_bin); do if test -f "$(DESTDIR)$(install_bindir)/$$fl"; then rm -f "$(DESTDIR)$(install_bindir)/$$fl"; fi; done
+	$(QUELL)for fl in $(install_bin); do if test -f "$(DESTDIR)$(install_bindir)/$$fl"; then rm -f "$(DESTDIR)$(install_bindir)/$$fl"; fi; done
 	$(QUELL)for fl in $(install_bin); do if test -L "$(DESTDIR)$(bindir)/$$fl"; then rm -f "$(DESTDIR)$(bindir)/$$fl"; fi; done
+	$(QUELL)for fl in $(install_libexec); do if test -f "$(DESTDIR)$(install_libexecdir)/$(full_package_name)/$$fl"; then rm -f "$(DESTDIR)$(install_libexecdir)/$(full_package_name)/$$fl"; fi; done
+	$(QUELL)for fl in $(install_libexec); do if test -L "$(DESTDIR)$(libexecdir)/$(full_package_name)/$$fl"; then rm -f "$(DESTDIR)$(libexecdir)/$(full_package_name)/$$fl"; fi; done
+	$(QUELL) rmdir "$(DESTDIR)$(bindir)" > /dev/null 2>&1 || true
+	$(QUELL) rmdir "$(install_bindir)" > /dev/null 2>&1 || true
+	$(QUELL) rmdir "$(DESTDIR)$(libexecdir)/$(full_package_name)" > /dev/null 2>&1 || true
+	$(QUELL) rmdir "$(DESTDIR)$(libexecdir)" > /dev/null 2>&1 || true
+	$(QUELL) rmdir "$(install_libexecdir)/$(full_package_name)" > /dev/null 2>&1 || true
+	$(QUELL) rmdir "$(install_libexecdir)" > /dev/null 2>&1 || true
