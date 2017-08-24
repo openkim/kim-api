@@ -469,7 +469,6 @@ install-set-default-to-v%:
 	@printf "Setting default $(package_name) to $(package_name)-v$*\n"
 	$(QUELL)fl="$(DESTDIR)$(bindir)/$(package_name)-descriptor-file-match" && if test -L "$$fl"; then rm -f "$$fl"; fi && ln -fs "$(package_name)-v$*-descriptor-file-match" "$$fl"
 	$(QUELL)fl="$(DESTDIR)$(bindir)/$(package_name)-build-config"          && if test -L "$$fl"; then rm -f "$$fl"; fi && ln -fs "$(package_name)-v$*-build-config" "$$fl"
-	$(QUELL)fl="$(DESTDIR)$(bindir)/$(package_name)-collections-info"      && if test -L "$$fl"; then rm -f "$$fl"; fi && ln -fs "$(package_name)-v$*-collections-info" "$$fl"
 	$(QUELL)fl="$(DESTDIR)$(bindir)/$(package_name)-model-info"            && if test -L "$$fl"; then rm -f "$$fl"; fi && ln -fs "$(package_name)-v$*-model-info" "$$fl"
 	$(QUELL)fl="$(DESTDIR)$(bindir)/$(package_name)-simulator-model"       && if test -L "$$fl"; then rm -f "$$fl"; fi && ln -fs "$(package_name)-v$*-simulator-model" "$$fl"
 	$(QUELL)fl="$(DESTDIR)$(includedir)/$(package_name)"       && if test -L "$$fl"; then rm -f "$$fl"; fi && ln -fs "$(package_name)-v$*" "$$fl"
@@ -511,7 +510,6 @@ uninstall-set-default:
 	@printf "Removing default $(package_name) settings.\n"
 	$(QUELL)fl="$(DESTDIR)$(bindir)/$(package_name)-descriptor-file-match" && if test -L "$$fl"; then rm -f "$$fl"; fi
 	$(QUELL)fl="$(DESTDIR)$(bindir)/$(package_name)-build-config"          && if test -L "$$fl"; then rm -f "$$fl"; fi
-	$(QUELL)fl="$(DESTDIR)$(bindir)/$(package_name)-collections-info"      && if test -L "$$fl"; then rm -f "$$fl"; fi
 	$(QUELL)fl="$(DESTDIR)$(bindir)/$(package_name)-simulator-model"       && if test -L "$$fl"; then rm -f "$$fl"; fi
 	$(QUELL)fl="$(DESTDIR)$(bindir)/$(package_name)-model-info"            && if test -L "$$fl"; then rm -f "$$fl"; fi
 	$(QUELL)fl="$(DESTDIR)$(includedir)/$(package_name)"       && if test -L "$$fl"; then rm -f "$$fl"; fi
