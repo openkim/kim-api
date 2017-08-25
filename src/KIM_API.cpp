@@ -1953,7 +1953,7 @@ int KIM_API_model::get_model_kim_str_len(const char* const modelname,
     if (accessible)
     {
       std::string libFileName
-          = item[1] + "/" + item[0] + "/" + MODELLIBFILE + ".so";
+          = item[IE_DIR] + "/" + item[IE_NAME] + "/" + MODELLIBFILE + ".so";
       tmp_model_lib_handle = dlopen(libFileName.c_str(), RTLD_NOW);
     }
     if (!accessible)
@@ -2022,7 +2022,7 @@ int KIM_API_model::get_model_kim_str(const char* const modelname,
     if (accessible)
     {
       std::string libFileName
-          = item[1] + "/" + item[0] + "/" + MODELLIBFILE + ".so";
+          = item[IE_DIR] + "/" + item[IE_NAME] + "/" + MODELLIBFILE + ".so";
       tmp_model_lib_handle = dlopen(libFileName.c_str(), RTLD_NOW);
     }
     if(!accessible)
@@ -2417,7 +2417,7 @@ int KIM_API_model::model_init(){
     if (accessible)
     {
       std::string libFileName
-          = item[1] + "/" + item[0] + "/" + MODELLIBFILE + ".so";
+          = item[IE_DIR] + "/" + item[IE_NAME] + "/" + MODELLIBFILE + ".so";
       model_lib_handle = dlopen(libFileName.c_str(), RTLD_NOW);
     }
     if(!accessible)

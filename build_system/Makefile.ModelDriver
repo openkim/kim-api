@@ -42,17 +42,18 @@ MODEL_DRIVER_NAME := $(strip $(MODEL_DRIVER_NAME))
 MODEL_DRIVER_KIM_FILE_TEMPLATE := $(strip $(MODEL_DRIVER_KIM_FILE_TEMPLATE))
 MODEL_DRIVER_INIT_FUNCTION_NAME := $(strip $(MODEL_DRIVER_INIT_FUNCTION_NAME))
 
-# Set SO variables
-%.so: SO_IS_MODEL:=
-%.so: SO_IS_PARAMETERIZED:=
-
-#build target .a or .so for models
 MODEL_DRIVER_BUILD_TARGET := lib$(MODEL_DRIVER_LIB).so
+
+#full lib name
+MODEL_DRIVER_LIB_BUILD = $(LIB_ROOT)-model-driver-v$(VERSION_FULL)
 
 # Add this file and item makefile to makefiles list
 KIM_MAKE_FILES += $(KIM_DIR)/$(builddir)/Makefile.ModelDriver Makefile
 
-.PHONY: clean install installdirs uninstall kim-item-type model-driver-name model-driver-kim-file-template
+# define includes
+KIMINCLUDEFLAGS = -I$(includedir)/$(full_package_name)
+
+.PHONY: clean install-system install-user installdirs uninstall-system uninstall-user kim-item-type model-driver-name model-driver-kim-file-template
 
 all: $(MODEL_DRIVER_BUILD_TARGET)
 
@@ -80,6 +81,12 @@ lib$(MODEL_DRIVER_LIB).so: lib$(MODEL_DRIVER_LIB_BUILD).so
 lib$(MODEL_DRIVER_LIB_BUILD).a: $(LOCALOBJ) driver_init_wrapper.o
 	@printf "Creating... $@.\n"
 	$(QUELL)ar rcs $@ $(LOCALOBJ) driver_init_wrapper.o
+
+lib$(MODEL_DRIVER_LIB_BUILD).so: lib$(MODEL_DRIVER_LIB_BUILD).a $(EXPORT_LIST_NAME)
+	@printf "Creating... $@.\n"
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDSHAREDFLAG) \
+                      $(LDEXPORTLISTFLAG) $(LDFLAGS) $(OUTPUTINFLAG) lib$(MODEL_DRIVER_LIB_BUILD).so \
+                      $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) $(LDLIBS)
 
 $(EXPORT_LIST_NAME): $(KIM_MAKE_FILES)
 	@printf "Creating... intermediate file... $@.\n"
@@ -110,23 +117,22 @@ $(LOCALOBJ): $(KIM_MAKE_FILES)
 clean:
 	@printf "Cleaning... Model Driver... $(MODEL_DRIVER_NAME).\n"
 	$(QUELL)rm -f $(LOCALOBJ) *.mod \
-                      lib$(LIB_ROOT)* .lib$(LIB_ROOT)* \
+                      lib$(LIB_ROOT)* \
                       $(addprefix driver_init_wrapper.,o cpp) \
                       $(EXPORT_LIST_NAME) $(LOCALCLEAN)
-
-install_modeldriverdir = $(dest_package_dir)/$(modeldriversdir)/$(MODEL_DRIVER_NAME)
 
 installdirs:
 	$(QUELL)fl="$(install_modeldriverdir)" && \
                 if test -d "$$fl"; then rm -rf "$$fl"; fi && \
                 $(INSTALL_PROGRAM) -d -m 0755 "$$fl"
 
-install: DOT:=$(shell if test -f ".lib$(MODEL_DRIVER_LIB_BUILD).so"; then printf "."; fi)
-install: all installdirs
-	@printf "Installing...($(dest_package_dir))................. Model Driver... $(MODEL_DRIVER_NAME)"
-	@printf ".\n"
+COLLECTIONS_INFO = $(libexecdir)/$(full_package_name)/$(full_package_name)-collections-info
+install-system: install_modeldriverdir = $(shell $(COLLECTIONS_INFO) system model_drivers)/$(MODEL_DRIVER_NAME)
+install-user:   install_modeldriverdir = $(shell $(COLLECTIONS_INFO) config_file model_drivers)/$(MODEL_DRIVER_NAME)
+install-system install-user: install-%: all installdirs
+	@printf "Installing...($*)................. Model Driver... $(MODEL_DRIVER_NAME).\n"
         # Install lib files
-	$(QUELL)$(INSTALL_PROGRAM) -m 0755 "$(DOT)lib$(MODEL_DRIVER_LIB_BUILD).so" "$(install_modeldriverdir)/lib$(MODEL_DRIVER_LIB_BUILD).so"
+	$(QUELL)$(INSTALL_PROGRAM) -m 0755 "lib$(MODEL_DRIVER_LIB_BUILD).so" "$(install_modeldriverdir)/lib$(MODEL_DRIVER_LIB_BUILD).so"
 	$(QUELL)ln -fs "lib$(MODEL_DRIVER_LIB_BUILD).so" "$(install_modeldriverdir)/lib$(MODEL_DRIVER_LIB).so"
         # Install kim files
 	$(QUELL)$(INSTALL_PROGRAM) -m 0644 "$(MODEL_DRIVER_KIM_FILE_TEMPLATE)" "$(install_modeldriverdir)/$(MODEL_DRIVER_KIM_FILE_TEMPLATE)"
@@ -139,7 +145,8 @@ install: all installdirs
                 printf "model-driver-kim-file-template:\n"                                       >> $(install_modeldriverdir)/Makefile; \
                 printf "	@printf '\$$(MODEL_DRIVER_KIM_FILE_TEMPLATE)'\n"                 >> $(install_modeldriverdir)/Makefile;
 
-uninstall:
-	@printf "Uninstalling...($(dest_package_dir))................. Model Driver... $(MODEL_DRIVER_NAME)"
-	@printf ".\n"
-	$(QUELL)fl="$(install_modeldriversdir)" && if test -d "$$fl"; then rm -rf "$$fl"; fi
+uninstall-system: uninstall_modeldriverdir = $(shell $(COLLECTIONS_INFO) system model_drivers)/$(MODEL_DRIVER_NAME)
+uninstall-user:   uninstall_modeldriverdir = $(shell $(COLLECTIONS_INFO) config_file model_drivers)/$(MODEL_DRIVER_NAME)
+uninstall-system uninstall-user: uninstall-%:
+	@printf "Uninstalling...($*)................. Model Driver... $(MODEL_DRIVER_NAME).\n"
+	$(QUELL)fl="$(uninstall_modeldriverdir)" && if test -d "$$fl"; then rm -rf "$$fl"; fi

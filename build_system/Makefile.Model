@@ -37,24 +37,33 @@ ifndef KIM_DIR
 endif
 include $(KIM_DIR)/$(builddir)/Makefile.SanityCheck
 
+# Set include flags
+KIMINCLUDEFLAGS = -I$(includedir)/$(full_package_name)
+
 # Clean up variables
 MODEL_NAME := $(strip $(MODEL_NAME))
 MODEL_KIM_FILE := $(strip $(MODEL_KIM_FILE))
 MODEL_INIT_FUNCTION_NAME := $(strip $(MODEL_INIT_FUNCTION_NAME))
 
-# Set SO variables
-%.so: SO_IS_MODEL:=true
-%.so: SO_IS_PARAMETERIZED:=
-
-#build target .a or .so for models
 MODEL_BUILD_TARGET := lib$(MODEL_LIB).so
+
+#full lib name
+MODEL_LIB_BUILD = $(LIB_ROOT)-model-v$(VERSION_FULL)
 
 # Add this file and item makefile to makefiles list
 KIM_MAKE_FILES += $(KIM_DIR)/$(builddir)/Makefile.Model Makefile
 
-.PHONY: clean install installdirs uninstall kim-item-type model-name model-kim-file
+.PHONY: clean install-system install-user installdirs uninstall-system uninstall-user kim-item-type model-name model-kim-file
 
-$(KIM_STR_NAME).c: $(MODEL_KIM_FILE)
+# descriptor file make rule
+.INTERMEDIATE: kim_str.c
+kim_str.c: $(MODEL_KIM_FILE) $(KIM_MAKE_FILES)
+	@printf "Creating... intermediate file... $@.\n"
+	$(QUELL)varnm=`printf "$(MODEL_KIM_FILE)" | \
+                       sed -e 's/^\([[:digit:]]\)/__\1/' -e 's/[^[:alnum:]]/_/g'` && \
+                xxd -i $(MODEL_KIM_FILE) | \
+                sed -e "s/$${varnm}/$(MODEL_NAME)_kim_str/g" > $@
+
 
 all: $(MODEL_BUILD_TARGET)
 
@@ -78,24 +87,30 @@ lib$(MODEL_LIB).so: lib$(MODEL_LIB_BUILD).so
 	@printf "Creating... $@.\n"
 	$(QUELL)ln -fs "lib$(MODEL_LIB_BUILD).so" "lib$(MODEL_LIB).so"
 
-lib$(MODEL_LIB_BUILD).a: $(LOCALOBJ) init_wrapper.o $(KIM_STR_NAME).o
+lib$(MODEL_LIB_BUILD).a: $(LOCALOBJ) init_wrapper.o kim_str.o
 	@printf "Creating... $@.\n"
-	$(QUELL)ar rcs $@ $(LOCALOBJ) init_wrapper.o $(KIM_STR_NAME).o
+	$(QUELL)ar rcs $@ $(LOCALOBJ) init_wrapper.o kim_str.o
+
+lib$(MODEL_LIB_BUILD).so: lib$(MODEL_LIB_BUILD).a $(EXPORT_LIST_NAME)
+	@printf "Creating... $@.\n"
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDSHAREDFLAG) \
+                      $(LDEXPORTLISTFLAG) $(LDFLAGS) $(OUTPUTINFLAG) lib$(MODEL_LIB_BUILD).so \
+                      $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) $(LDLIBS)
 
 $(EXPORT_LIST_NAME): $(KIM_MAKE_FILES)
 	@printf "Creating... intermediate file... $@.\n"
 ifeq (darwin, $(KIM_SYSTEMLINKER))
 	$(QUELL)printf "_$(MODEL_NAME)_init_pointer\n"                       > $@
-	$(QUELL)printf "_$(MODEL_NAME)_$(KIM_STR_NAME)\n"                   >> $@
-	$(QUELL)printf "_$(MODEL_NAME)_$(KIM_STR_NAME)_len\n"               >> $@
-	$(QUELL)printf "_$(MODEL_NAME)_$(KIM_STR_NAME)_len\n"               >> $@
+	$(QUELL)printf "_$(MODEL_NAME)_kim_str\n"                           >> $@
+	$(QUELL)printf "_$(MODEL_NAME)_kim_str_len\n"                       >> $@
+	$(QUELL)printf "_$(MODEL_NAME)_kim_str_len\n"                       >> $@
 	$(QUELL)printf "_$(MODEL_NAME)_compiled_with_version\n"             >> $@
 else # everything else (linux and freebsd)
 	$(QUELL)printf "{\n"                                                 > $@
 	$(QUELL)printf "   global:\n"                                       >> $@
 	$(QUELL)printf "           $(MODEL_NAME)_init_pointer;\n"           >> $@
-	$(QUELL)printf "           $(MODEL_NAME)_$(KIM_STR_NAME);\n"        >> $@
-	$(QUELL)printf "           $(MODEL_NAME)_$(KIM_STR_NAME)_len;\n"    >> $@
+	$(QUELL)printf "           $(MODEL_NAME)_kim_str;\n"                >> $@
+	$(QUELL)printf "           $(MODEL_NAME)_kim_str_len;\n"            >> $@
 	$(QUELL)printf "           $(MODEL_NAME)_compiled_with_version;\n"  >> $@
 	$(QUELL)printf "\n"                                                 >> $@
 	$(QUELL)printf "   local: *;\n"                                     >> $@
@@ -115,26 +130,26 @@ $(LOCALOBJ): $(KIM_MAKE_FILES)
 
 clean:
 	@printf "Cleaning... Model.......... $(MODEL_NAME).\n"
-	$(QUELL)rm -f $(LOCALOBJ) *.mod lib$(LIB_ROOT)* .lib$(LIB_ROOT)* \
-                      $(addprefix $(KIM_STR_NAME).,o c) \
+	$(QUELL)rm -f $(LOCALOBJ) *.mod lib$(LIB_ROOT)* \
+                      $(addprefix kim_str.,o c) \
                       $(addprefix init_wrapper.,o cpp) $(LOCALCLEAN) \
                       $(EXPORT_LIST_NAME)
-
-install_modeldir = $(dest_package_dir)/$(modelsdir)/$(MODEL_NAME)
 
 installdirs:
 	$(QUELL)fl="$(install_modeldir)" && \
                 if test -d "$$fl"; then rm -rf "$$fl"; fi && \
                 $(INSTALL_PROGRAM) -d -m 0755 "$$fl"
 
-install: DOT:=$(shell if test -f ".lib$(MODEL_LIB_BUILD).so"; then printf "."; fi)
-install: all installdirs
-	@printf "Installing...($(dest_package_dir))................. Model.......... $(MODEL_NAME)"
-	@printf ".\n"
-	$(QUELL)$(INSTALL_PROGRAM) -m 0755 "$(DOT)lib$(MODEL_LIB_BUILD).so" "$(install_modeldir)/lib$(MODEL_LIB_BUILD).so"
+COLLECTIONS_INFO = $(libexecdir)/$(full_package_name)/$(full_package_name)-collections-info
+install-system: install_modeldir = $(shell $(COLLECTIONS_INFO) system models)/$(MODEL_NAME)
+install-user:   install_modeldir = $(shell $(COLLECTIONS_INFO) config_file models)/$(MODEL_NAME)
+install-system install-user: install-%: all installdirs
+	@printf "Installing...($*)................. Model.......... $(MODEL_NAME).\n"
+	$(QUELL)$(INSTALL_PROGRAM) -m 0755 "lib$(MODEL_LIB_BUILD).so" "$(install_modeldir)/lib$(MODEL_LIB_BUILD).so"
 	$(QUELL)ln -fs "lib$(MODEL_LIB_BUILD).so" "$(install_modeldir)/lib$(MODEL_LIB).so"
 
-uninstall:
-	@printf "Uninstalling...($(dest_package_dir))................. Model.......... $(MODEL_NAME)"
-	@printf ".\n"
-	$(QUELL)fl="$(install_modeldir)" && if test -d "$$fl"; then rm -rf "$$fl"; fi
+uninstall-system: uninstall_modeldir = $(shell $(COLLECTIONS_INFO) system models)/$(MODEL_NAME)
+uninstall-user:   uninstall_modeldir = $(shell $(COLLECTIONS_INFO) config_file models)/$(MODEL_NAME)
+uninstall-system uninstall-user: uninstall-%:
+	@printf "Uninstalling...($*)................. Model.......... $(MODEL_NAME).\n"
+	$(QUELL)fl="$(uninstall_modeldir)" && if test -d "$$fl"; then rm -rf "$$fl"; fi

@@ -45,9 +45,11 @@ all: model-drivers-all models-all openkim-tests-all simulators-all
 
 model-drivers-all: Example\ Model\ Drivers-making-echo
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modeldriversdir) all
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modeldriversdir) install-system-all
 
 models-all: Example\ Model-making-echo
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modelsdir) all
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modelsdir) install-system-all
 
 openkim-tests-all: Example\ OpenKIM\ Tests-making-echo
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C openkim_tests all
@@ -64,9 +66,11 @@ simulators-all: Example\ Simulators-making-echo
 clean: model-drivers-clean models-clean openkim-tests-clean simulators-clean
 
 model-drivers-clean: Example\ Model\ Drivers-making-echo
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modeldriversdir) uninstall-system-all
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modeldriversdir) clean
 
 models-clean: Example\ Model-making-echo
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modelsdir) uninstall-system-all
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modelsdir) clean
 
 openkim-tests-clean: Example\ OpenKIM\ Tests-making-echo

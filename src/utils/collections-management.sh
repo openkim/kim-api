@@ -249,6 +249,9 @@ split_drivers_list_into_collections () {
       collection=`printf "$line" | sed -e 's/\([^ ]*\) .*/\1/'`
       name=`printf "$line" | sed -e 's/[^ ]* \([^ ]*\) .*/\1/'`
       case $collection in
+        "")
+        # empty do nothing
+        ;;
         CWD)
           number_drivers_cwd=`expr $number_drivers_cwd \+ 1`
           drivers_cwd_collection="${drivers_cwd_collection}\t${name}\n"
@@ -284,6 +287,9 @@ split_models_list_into_collections () {
       collection=`printf "$line" | sed -e 's/\([^ ]*\) .*/\1/'`
       name=`printf "$line" | sed -e 's/[^ ]* \([^ ]*\) .*/\1/'`
       case $collection in
+        "")
+        # empty do nothing
+        ;;
         CWD)
           number_models_cwd=`expr $number_models_cwd \+ 1`
           models_cwd_collection="${models_cwd_collection}\t${name}\n"

@@ -301,7 +301,6 @@ void getSubDirectories(std::string const &dir, std::list<std::string> &list)
   }
 }
 
-enum ITEMS_ENTREIS {IE_COLLECTION, IE_NAME, IE_DIR, IE_VER};
 void getAvailableItems(DirectoryPathType type,
                        std::list<std::vector<std::string> > &list)
 {

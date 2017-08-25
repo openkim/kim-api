@@ -108,7 +108,8 @@ extern "C" {
     if (accessible)
     {
       std::string libFileName
-          = item[1] + "/" + item[0] + "/" + "MODEL_DRIVER_LIBNAME_STR" + ".so";
+          = item[IE_DIR] + "/" + item[IE_NAME] + "/"
+          + "MODEL_DRIVER_LIBNAME_STR" + ".so";
       tmp_driver_lib_handle = dlopen(libFileName.c_str(), RTLD_NOW);
     }
     if(tmp_driver_lib_handle == NULL) {

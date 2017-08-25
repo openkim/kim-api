@@ -81,9 +81,9 @@ else ifeq ($(KIM_COMPILERSUITE),INTEL)
    include $(KIM_DIR)/$(buildcompilerdir)/Makefile.INTEL
 endif
 
-#%% # export list name
-#%% EXPORT_LIST_NAME = export-list.txt
-#%% .INTERMEDIATE: $(EXPORT_LIST_NAME)
+# export list name
+EXPORT_LIST_NAME = export-list.txt
+.INTERMEDIATE: $(EXPORT_LIST_NAME)
 
 # load linker options
 ifeq      ($(KIM_SYSTEMLINKER),linux)

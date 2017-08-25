@@ -39,9 +39,18 @@ export MODEL_DRIVERS_LIST := $(wildcard ex_model*)
 
 all: $(patsubst %,%-all,$(MODEL_DRIVERS_LIST))
 
+install-system-all: $(patsubst %,%-install-system,$(MODEL_DRIVERS_LIST))
+install-user-all: $(patsubst %,%-install-user,$(MODEL_DRIVERS_LIST))
+
+uninstall-system-all: $(patsubst %,%-uninstall-system,$(MODEL_DRIVERS_LIST))
+uninstall-user-all: $(patsubst %,%-uninstall-user,$(MODEL_DRIVERS_LIST))
+
 clean: $(patsubst %,%-clean,$(MODEL_DRIVERS_LIST))
 
-.PHONY: all clean $(patsubst %,%-all,$(MODEL_DRIVERS_LIST)) $(patsubst %,%-clean,$(MODEL_DRIVERS_LIST))
+.PHONY: all clean $(patsubst %,%-all,$(MODEL_DRIVERS_LIST))              $(patsubst %,%-clean,$(MODEL_DRIVERS_LIST))          \
+                  $(patsubst %,%-install-system,$(MODEL_DRIVERS_LIST))   $(patsubst %,%-install-user,$(MODEL_DRIVERS_LIST))   \
+                  $(patsubst %,%-uninstall-system,$(MODEL_DRIVERS_LIST)) $(patsubst %,%-uninstall-user,$(MODEL_DRIVERS_LIST))
+
 
 ########### for internal use ###########
 %-making-echo:
@@ -54,3 +63,15 @@ $(patsubst %,%-all,$(MODEL_DRIVERS_LIST)): %: Makefile Model.Driver...@%-making-
 
 $(patsubst %,%-clean,$(MODEL_DRIVERS_LIST)):
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(patsubst %-clean,%,$@) clean
+
+$(patsubst %,%-install-system,$(MODEL_DRIVERS_LIST)):
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(patsubst %-install-system,%,$@) install-system
+
+$(patsubst %,%-install-user,$(MODEL_DRIVERS_LIST)):
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(patsubst %-install-user,%,$@) install-user
+
+$(patsubst %,%-uninstall-system,$(MODEL_DRIVERS_LIST)):
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(patsubst %-uninstall-system,%,$@) uninstall-system
+
+$(patsubst %,%-uninstall-user,$(MODEL_DRIVERS_LIST)):
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(patsubst %-uninstall-user,%,$@) uninstall-user

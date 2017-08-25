@@ -48,36 +48,15 @@ VERSION_FULL := $(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_PATCH)$(if $(VERSION
 
 
 # The KIM API subdirectories:
-#%% examplesdir = examples
 modelsdir = models
 modeldriversdir = model_drivers
-#%% srcdir = $(KIM_DIR)/src
 
 # Set correct lib file name
 LIB_ROOT = $(package_name)
 KIM_LIB = $(LIB_ROOT)-v$(VERSION_MAJOR)
 KIM_LIB_BUILD = $(LIB_ROOT)-v$(VERSION_FULL)
-#%% KIM_LIB_for_dependencies = $(srcdir)/lib$(KIM_LIB).so
 MODEL_LIB = $(LIB_ROOT)-model-v$(VERSION_MAJOR)
-#%% MODEL_LIB_BUILD = $(LIB_ROOT)-model-v$(VERSION_FULL)
 MODEL_DRIVER_LIB = $(LIB_ROOT)-model-driver-v$(VERSION_MAJOR)
-#%% MODEL_DRIVER_LIB_BUILD = $(LIB_ROOT)-model-driver-v$(VERSION_FULL)
-
-# Update LINKSOPATH, if prefix is non-standard
-ifeq ($(filter / /usr /usr/local,$(prefix)),)
-   LINKSOPATH = $(package_dir)/
-endif
-
-
-#%% # Set include flag
-#%% #@@@
-#%% KIMINCLUDEFLAGS = -I$(srcdir)
-#%%
-#%% # Set link flags
-#%% #@@@
-#%% KIMLDFLAGS = -L$(srcdir)
-#%% KIMLDLIBS  = -l$(KIM_LIB)
-
 
 # define list of Makefiles in the KIM build system to be used for dependencies
 KIM_MAKE_FILES = $(KIM_DIR)/Makefile.KIM_Config                \
@@ -100,10 +79,8 @@ else ifeq ($(KIM_BUILD_VERBOSITY),full)
 endif
 
 ifeq ($(KIM_SYSTEMARCH),32bit)
-   KIM_ARCHTYPE = 0
    ARCHFLAG = $(ARCH32FLAG)
 else ifeq ($(KIM_SYSTEMARCH),64bit)
-   KIM_ARCHTYPE = 1
    ARCHFLAG = $(ARCH64FLAG)
 endif
 
@@ -113,11 +90,6 @@ else ifeq ($(KIM_LINK),dynamic-load)
    KIM_LINK_VALUE = 1
 endif
 
-
-# Set KIM define values to be used with KIMDEFINES when needed
-KIM_DEFINE_VALUES =                    \
-   -D KIM_ARCHTYPE=$(KIM_ARCHTYPE)     \
-   -D KIM_LINK_VALUE=$(KIM_LINK_VALUE)
 
 # Set common compiler flags for dynamic linking
 ifeq ($(KIM_LINK),static-link)
@@ -210,27 +182,3 @@ KIM_FTYPE_STANDARD_COMPILE_LIST = $(ARCHFLAG) $(PICFLAG) $(KIMINCLUDEFLAGS) $(KI
 %.o:%.F08 Makefile  # Fortran 2008 with preprocessing
 	@printf "Creating... $@.\n"
 	$(QUELL)$(FC) $(FFREEFLAG) $(FCPPFLAG)    $(KIM_FTYPE_STANDARD_COMPILE_LIST) $<
-
-
-#%% #@@@@ put in respective makefiles?
-#%% # Model Driver and Model Library pattern rule
-#%% # SO_IS_MODEL is set in anoter Makefile
-#%% # SO_IS_PARAMETERIZED is set in another Makefile
-#%% %.so: %.a $(EXPORT_LIST_NAME)
-#%% 	@printf "Creating... $@.\n"
-#%% 	$(QUELL)$(LD) $(ARCHFLAG) $(LDSHAREDFLAG) \
-#%%                 $(LINKSONAME)$(package_dir)/$(if $(SO_IS_MODEL),$(modelsdir)/$(MODEL_NAME)/lib$(MODEL_LIB),$(modeldriversdir)/$(MODEL_DRIVER_NAME)/lib$(MODEL_DRIVER_LIB)).so \
-#%%                 $(LDEXPORTLISTFLAG) $(LDFLAGS) $(OUTPUTINFLAG) lib$(if $(SO_IS_MODEL),$(MODEL_LIB_BUILD),$(MODEL_DRIVER_LIB_BUILD)).so \
-#%%                 $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
-#%%                 $(srcdir)/lib$(KIM_LIB_BUILD).so) \
-#%%                 $(LDDYNAMICLIB) $(XLANGLDLIBS) $(LDLIBS)
-#%%
-#%% # KIM descriptor file make rule
-#%% KIM_STR_NAME = kim_str
-#%% .INTERMEDIATE: $(KIM_STR_NAME).c
-#%% $(KIM_STR_NAME).c: Makefile $(KIM_MAKE_FILES) # ".kim" dependency added in another Makefile
-#%% 	@printf "Creating... intermediate file... $@.\n"
-#%% 	$(QUELL)varnm=`printf "$(MODEL_KIM_FILE)" | \
-#%%                        sed -e 's/^\([[:digit:]]\)/__\1/' -e 's/[^[:alnum:]]/_/g'` && \
-#%%                 xxd -i $(MODEL_KIM_FILE) | \
-#%%                 sed -e "s/$${varnm}/$(MODEL_NAME)_$(KIM_STR_NAME)/g" > $@

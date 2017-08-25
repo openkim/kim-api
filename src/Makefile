@@ -49,9 +49,6 @@ else
    ALLOBJ = $(OBJC) $(OBJF03)
 endif
 
-# Set defines
-KIMDEFINES = $(KIM_DEFINE_VALUES)
-
 # add local Makefile to KIM_MAKE_FILES
 KIM_MAKE_FILES += Makefile
 
@@ -67,6 +64,11 @@ lib$(KIM_LIB).so: lib$(KIM_LIB_BUILD).so
 lib$(KIM_LIB_BUILD).a: $(ALLOBJ) KIM_API_DIRS.o
 	@printf "Creating... KIM API library....... $@.\n";
 	$(QUELL)ar rcs $@ $(ALLOBJ) KIM_API_DIRS.o
+
+# Update LINKSOPATH, if prefix is non-standard
+ifeq ($(filter / /usr /usr/local,$(prefix)),)
+   LINKSOPATH = $(package_dir)/
+endif
 
 lib$(KIM_LIB_BUILD).so: lib$(KIM_LIB_BUILD).a
 	@printf "Creating... KIM API library....... $@.\n";
@@ -91,10 +93,11 @@ KIM_API_C.h: KIM_API_Version.h $(KIM_MAKE_FILES)
 
 KIM_API_status.h: KIM_API_Version.h $(KIM_MAKE_FILES)
 
-KIM_API.o: KIM_DEFINE_VALUES += -D STANDARD_KIM_STR_NAME=standard_kim_str          \
-                                -D STANDARD_KIM_STR_LEN_NAME=standard_kim_str_len  \
-                                -D KIM_STR_NAME=\"kim_str\"                        \
-                                -D MODELLIBFILE=\"lib$(MODEL_LIB)\"
+KIM_API.o: KIMDEFINES = -D KIM_LINK_VALUE=$(KIM_LINK_VALUE)                \
+                        -D STANDARD_KIM_STR_NAME=standard_kim_str          \
+                        -D STANDARD_KIM_STR_LEN_NAME=standard_kim_str_len  \
+                        -D KIM_STR_NAME=\"kim_str\"                        \
+                        -D MODELLIBFILE=\"lib$(MODEL_LIB)\"
 KIM_API.o: KIM_API.h KIM_API_status.h KIM_API_DIRS.h KIM_API.cpp $(KIM_MAKE_FILES)
 
 KIM_API_C.o: KIM_API.h KIM_API_C.h KIM_API_status.h KIM_API_C.cpp $(KIM_MAKE_FILES)
@@ -111,18 +114,18 @@ KIM_AUX.o: KIM_AUX.h KIM_API.h KIM_API_status.h $(KIM_MAKE_FILES)
 
 KIM_API_DIRS.o: KIM_API_DIRS.h $(KIM_MAKE_FILES)
 
-KIM_API_DIRS.o: KIM_DEFINE_VALUES +=  -D PACKAGEDIR=\"$(package_dir)\" \
-                                      -D KIMDIR=\"$(KIM_DIR)\" \
-                                      -D KIMLIBBUILD=\"$(KIM_LIB_BUILD).so\" \
-                                      -D MODELDRIVERSDIR=\"$(modeldriversdir)\" \
-                                      -D MODELSDIR=\"$(modelsdir)\" \
-                                      -D PACKAGENAME=\"$(package_name)\" \
-                                      -D USERROOT=$(if $(filter-out $(HOME),$(user_config_file_root_name)),1,0) \
-                                      -D USERCONFIGFILEROOTNAME=\"$(user_config_file_root_name)\" \
-                                      -D USERCONFIGFILEDIRNAME=\"$(user_config_file_dir_name)\" \
-                                      -D VERSION_MAJOR=\"$(VERSION_MAJOR)\" \
-                                      -D MODELLIBFILE=\"lib$(MODEL_LIB)\" \
-                                      -D MODELDRIVERLIBFILE=\"lib$(MODEL_DRIVER_LIB)\"
+KIM_API_DIRS.o: KIMDEFINES = -D PACKAGEDIR=\"$(package_dir)\" \
+                             -D KIMDIR=\"$(KIM_DIR)\" \
+                             -D KIMLIBBUILD=\"$(KIM_LIB_BUILD).so\" \
+                             -D MODELDRIVERSDIR=\"$(modeldriversdir)\" \
+                             -D MODELSDIR=\"$(modelsdir)\" \
+                             -D PACKAGENAME=\"$(package_name)\" \
+                             -D USERROOT=$(if $(filter-out $(HOME),$(user_config_file_root_name)),1,0) \
+                             -D USERCONFIGFILEROOTNAME=\"$(user_config_file_root_name)\" \
+                             -D USERCONFIGFILEDIRNAME=\"$(user_config_file_dir_name)\" \
+                             -D VERSION_MAJOR=\"$(VERSION_MAJOR)\" \
+                             -D MODELLIBFILE=\"lib$(MODEL_LIB)\" \
+                             -D MODELDRIVERLIBFILE=\"lib$(MODEL_DRIVER_LIB)\"
 
 Unit_Handling.o: Unit_Handling.h KIM_API.h KIM_API_status.h $(KIM_MAKE_FILES)
 

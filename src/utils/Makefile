@@ -40,9 +40,6 @@ VPATH = ../
 # Set include flags
 KIMINCLUDEFLAGS = -I../
 
-# Set defines
-KIMDEFINES = $(KIM_DEFINE_VALUES)
-
 all: $(full_package_name)-descriptor-file-match \
      $(full_package_name)-build-config \
      $(full_package_name)-collections-info \
@@ -58,21 +55,21 @@ $(full_package_name)-descriptor-file-match: descriptor-file-match.o lib$(KIM_LIB
 	@printf "Creating... $@.\n"
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).so $(XLANGLDLIBS) $(LDLIBS)
 
-build-config.o: KIM_DEFINE_VALUES += -D 'CC_STRING="$(CC)"' \
-                                     -D 'CXX_STRING="$(CXX)"' \
-                                     -D 'FC_STRING="$(FC)"' \
-                                     -D 'LD_STRING="$(LD)"' \
-                                     -D 'INCLUDES_STRING="-I$(package_dir)/include"' \
-                                     -D 'CFLAGS_STRING="$(ARCHFLAG) $(PICFLAG) $(CFLAGS)"' \
-                                     -D 'CXXFLAGS_STRING="$(ARCHFLAG) $(PICFLAG) $(CXXFLAGS)"' \
-                                     -D 'FFLAGS_STRING="$(ARCHFLAG) $(PICFLAG) $(FFLAGS)"' \
-                                     -D 'LDFLAGS_STRING="$(ARCHFLAG) -L$(package_dir) $(LDFLAGS)"' \
-                                     -D 'LDLIBS_STRING="$(KIMLDLIBS) $(XLANGLDLIBS) $(LDLIBS)"' \
-                                     -D 'OBJONLYFLAG_STRING="$(OBJONLYFLAG)"' \
-                                     -D 'OUTPUTINFLAG_STRING="$(OUTPUTINFLAG)"' \
-                                     -D 'MAKEFILEKIMCONFIG_STRING="$(package_dir)/Makefile.KIM_Config"' \
-                                     -D 'LIBEXECPATH_STRING="$(libexecdir)/$(full_package_name)"' \
-                                     -D 'VERSION_STRING="$(VERSION_FULL)"'
+build-config.o: KIMDEFINES = -D 'CC_STRING="$(CC)"' \
+                             -D 'CXX_STRING="$(CXX)"' \
+                             -D 'FC_STRING="$(FC)"' \
+                             -D 'LD_STRING="$(LD)"' \
+                             -D 'INCLUDES_STRING="-I$(package_dir)/include"' \
+                             -D 'CFLAGS_STRING="$(ARCHFLAG) $(PICFLAG) $(CFLAGS)"' \
+                             -D 'CXXFLAGS_STRING="$(ARCHFLAG) $(PICFLAG) $(CXXFLAGS)"' \
+                             -D 'FFLAGS_STRING="$(ARCHFLAG) $(PICFLAG) $(FFLAGS)"' \
+                             -D 'LDFLAGS_STRING="$(ARCHFLAG) -L$(package_dir) $(LDFLAGS)"' \
+                             -D 'LDLIBS_STRING="-l$(KIM_LIB) $(XLANGLDLIBS) $(LDLIBS)"' \
+                             -D 'OBJONLYFLAG_STRING="$(OBJONLYFLAG)"' \
+                             -D 'OUTPUTINFLAG_STRING="$(OUTPUTINFLAG)"' \
+                             -D 'MAKEFILEKIMCONFIG_STRING="$(package_dir)/Makefile.KIM_Config"' \
+                             -D 'LIBEXECPATH_STRING="$(libexecdir)/$(full_package_name)"' \
+                             -D 'VERSION_STRING="$(VERSION_FULL)"'
 
 build-config.o: build-config.cpp $(KIM_MAKE_FILES)
 
@@ -86,7 +83,7 @@ $(full_package_name)-collections-info: collections-info.o lib$(KIM_LIB_BUILD).so
 	@printf "Creating... $@.\n"
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).so $(LDDYNAMICLIB) $(XLANGLDLIBS) $(LDLIBS)
 
-simulator-model.o: KIM_DEFINE_VALUES += -D 'MODELLIBFILE="lib$(MODEL_LIB)"'
+simulator-model.o: KIMDEFINES = -D 'MODELLIBFILE="lib$(MODEL_LIB)"'
 simulator-model.o: simulator-model.cpp KIM_API_DIRS.h $(KIM_MAKE_FILES)
 
 $(full_package_name)-simulator-model: simulator-model.o lib$(KIM_LIB_BUILD).so
@@ -95,7 +92,7 @@ $(full_package_name)-simulator-model: simulator-model.o lib$(KIM_LIB_BUILD).so
 
 $(full_package_name)-collections-management: collections-management.sh $(KIM_MAKE_FILES)
 	@printf "Creating... $@.\n"
-	$(QUELL)sed -e 's|###COLLECTIONS#INFO#UTILITY###|$(package_dir)/libexec/$(full_package_name)-collections-info|g' \
+	$(QUELL)sed -e 's|###COLLECTIONS#INFO#UTILITY###|$(package_dir)/libexec/$(full_package_name)/$(full_package_name)-collections-info|g' \
                     -e 's|###BUILD#CONFIG###|$(package_dir)/bin/$(full_package_name)-build-config|g' collections-management.sh > $@
 	$(QUELL)chmod 0755 $@
 

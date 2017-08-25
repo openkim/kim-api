@@ -53,6 +53,7 @@ std::string pushEnvDirs(DirectoryPathType type, std::list<std::pair<std::string,
 std::string getSystemLibraryFileName();
 std::vector<std::string> getSystemDirs();
 std::vector<std::string> getUserDirs();
+enum GET_ITEMS_ENTRIES {IE_COLLECTION, IE_NAME, IE_DIR, IE_VER};
 void getAvailableItems(DirectoryPathType type,
                        std::list<std::vector<std::string> > &list);
 
