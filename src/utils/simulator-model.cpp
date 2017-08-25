@@ -120,7 +120,20 @@ int main(int argc, char* argv[])
     }
     else
     {
-      std::cout << filePointer;
+      symbol += "_len";
+      unsigned int const * fileLength
+          = (unsigned int const *) dlsym(model_lib_handle, symbol.c_str());
+      dlsym_error = dlerror();
+      if (dlsym_error) {
+        std::cout << "* Error: Cannot load symbol: " << dlsym_error <<std::endl;
+        dlclose(model_lib_handle);
+        return 6;
+      }
+      else
+      {
+        for (unsigned int i=0; i < *fileLength; ++i)
+          std::cout << filePointer[i];
+      }
     }
   }
   else
