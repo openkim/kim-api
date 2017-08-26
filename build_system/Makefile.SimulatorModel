@@ -70,6 +70,11 @@ STATIC_COMP_WARNING:
 
 all: $(MODEL_BUILD_TARGET)
 
+ifndef METADATA_FILE_NAME
+   $(error Make variable METADATA_FILE_NAME must be defined)
+endif
+METADATA_FILE_NAME := $(strip $(METADATA_FILE_NAME))
+
 paramfile_list =  $(sort $(strip $(filter PARAM_FILE_%_NAME,$(.VARIABLES))))
 
 paramfile_num_list = $(strip $(subst _NAME,,$(subst PARAM_FILE_,,$(paramfile_list))))
@@ -90,6 +95,13 @@ $(SIMULATOR_MODEL_NAME).cpp: $(paramfile_name_list) $(KIM_MAKE_FILES)
                 xxd -i $${fl_name} | \
                 sed -e "s/$${varnm}/parameter_file_$(flnum)/g" >> $@; \
          )
+	$(QUELL)printf "\n\n"                                                             >> $@
+	$(QUELL)\
+            fl_name=$(METADATA_FILE_NAME);\
+            varnm=`printf "$${fl_name}" | \
+                       sed -e 's/^\([[:digit:]]\)/__\1/' -e 's/[^[:alnum:]]/_/g'` && \
+                xxd -i $${fl_name} | \
+                sed -e "s/$${varnm}/metadata_file/g" >> $@
 	$(QUELL)printf "\n\n"                                                             >> $@
 	$(QUELL)printf "char kim_item_type[] = \"simulator-model\";\n"                    >> $@
 	$(QUELL)printf "char $(strip $(MODEL_NAME))_compiled_with_version[]\n"            >> $@
@@ -116,6 +128,8 @@ ifeq (darwin, $(KIM_SYSTEMLINKER))
              printf "_parameter_file_$(flnum)\n" >> $@; \
              printf "_parameter_file_$(flnum)_len\n" >> $@; \
           )
+	$(QUELL)printf "_metadata_file\n"                                   >> $@
+	$(QUELL)printf "_metadata_file_len\n"                               >> $@
 	$(QUELL)printf "_kim_item_type\n"                                   >> $@
 	$(QUELL)printf "_$(MODEL_NAME)_compiled_with_version\n"             >> $@
 else # everything else (linux and freebsd)
@@ -126,6 +140,8 @@ else # everything else (linux and freebsd)
             printf "parameter_file_$(flnum);\n" >> $@; \
             printf "parameter_file_$(flnum)_len ;\n" >> $@; \
          )
+	$(QUELL)printf "           metadata_file;\n"                        >> $@
+	$(QUELL)printf "           metadata_file_len;\n"                    >> $@
 	$(QUELL)printf "           kim_item_type;\n"                        >> $@
 	$(QUELL)printf "           $(MODEL_NAME)_compiled_with_version;\n"  >> $@
 	$(QUELL)printf "\n"                                                 >> $@
