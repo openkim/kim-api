@@ -261,9 +261,9 @@ $ make install-set-default-to-vX  # replace X with the major version of this pac
 $ cp -r ./examples/openkim_tests/vc_forces_numer_deriv "${HOME}/"
 $ cd "${HOME}"
 $ rm -r kim-api-vX.Y.Z kim-api-vX.Y.Z.tgz  # replace X.Y.Z with the current version number
-$ kim-api-collections-management install system EAM_Dynamo_Angelo_Moody_NiAlH__MO_418978237058_001
 $ printf "PATH=${PATH}:${HOME}/local/bin\n" >> "${HOME}/.bashrc"
 $ source "${HOME}/.bashrc"
+$ kim-api-collections-management install system EAM_Dynamo_Angelo_Moody_NiAlH__MO_418978237058_001
 $ cd vc_forces_numer_deriv
 $ make
 $ printf "EAM_Dynamo_Angelo_Moody_NiAlH__MO_418978237058_001" | ./vc_forces_numer_deriv
@@ -287,12 +287,13 @@ Once you have an installed-build, it is easy to add additional Models and/or
 Model Drivers to the system-collection.  We'll assume an
 installed-(standard)-build.
 
-$ kim-api-collections-management install --sudo Pair_Morse_Shifted_Jelinek_Ar__MO_831902330215_001
+$ kim-api-collections-management install system --sudo Pair_Morse_Shifted_Jelinek_Ar__MO_831902330215_001
 
 The kim-api-collections-management utility automatically installs the necessary
 Model Driver.  You can see the items in the various collections by executing
 the following command.
 
+$ cd "${HOME}"
 $ kim-api-collections-management list
 
 Now we can test the newly installed Model.
@@ -317,8 +318,9 @@ items.  Here, we'll illustrate the process with an example.
 
 $ mkdir -p "${HOME}/my-env-collection/model_drivers"
 $ export KIM_API_MODEL_DRIVERS_DIR="${HOME}/my-env-collection/model_drivers"
-$ md=Pair_Morse_Shifted__MD_552566534109_001
 $ cd "${KIM_API_MODEL_DRIVERS_DIR}"
+$ kim-api-build-config --makefile-kim-config > ./Makefile.KIM_Config
+$ md=Pair_Morse_Shifted__MD_552566534109_001
 $ wget --content-disposition "https://openkim.org/download/${md}.tgz"
 $ tar zxvf "${md}.tgz"
 $ cd "${md}"
@@ -328,8 +330,9 @@ $ rm "${md}.tgz"
 
 $ mkdir -p "${HOME}/my-env-collection/models"
 $ export KIM_API_MODELS_DIR="${HOME}/my-env-collection/models"
-$ mo=Pair_Morse_Shifted_GirifalcoWeizer_HighCutoff_Cu__MO_151002396060_001
 $ cd "${KIM_API_MODELS_DIR}"
+$ kim-api-build-config --makefile-kim-config > ./Makefile.KIM_Config
+$ mo=Pair_Morse_Shifted_GirifalcoWeizer_HighCutoff_Cu__MO_151002396060_001
 $ wget --content-disposition "https://openkim.org/download/${mo}.tgz"
 $ tar zxvf "${mo}.tgz"
 $ cd "${mo}"
@@ -339,6 +342,7 @@ $ rm "${mo}.tgz"
 
 We can check to see that these are recognized by the KIM API.
 
+$ cd "${HOME}"
 $ kim-api-collections-management list
 
 Now we can test the newly available Model.
