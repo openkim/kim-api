@@ -343,7 +343,7 @@ EOF
 }
 
 print_separator_line () {
-  printf "%79s\n" " " | sed -e 's/ /$1/g'
+  printf "%79s\n" " " | sed -e "s/ /$1/g"
 }
 
 print_list_of_drivers_and_models () {
