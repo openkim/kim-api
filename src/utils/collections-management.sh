@@ -36,6 +36,9 @@
 collections_info=###COLLECTIONS#INFO#UTILITY###
 build_config=###BUILD#CONFIG###
 
+make_command="make --no-print-directory"
+
+
 # define usage function
 usage () {
   printf "usage: $0 <command> [<args>]\n"
@@ -110,7 +113,8 @@ rewrite_config_file_drivers_dir () {
 get_build_install_item () {
   local install_collection="$1"
   local item_name="$2"
-  local PASSWORD="$3"
+  local use_sudo="$3"
+  local PASSWORD="$4"
   local found_item=""
   local item_type=""
 
@@ -143,7 +147,7 @@ get_build_install_item () {
   fi
 
   # create private temporary directory
-  if test x"" == x"${TMPDIR}"; then TMPDIR="/tmp"; fi
+  if test x"" = x"${TMPDIR}"; then TMPDIR="/tmp"; fi
   local build_dir=`mktemp -d "${TMPDIR}/kim-api-build-XXXXXXXXXX"`
   if test $? -ne 0; then
     printf "Unable to create temporary directory. Aborting!\n"
@@ -169,7 +173,7 @@ get_build_install_item () {
         local minor=`printf "${model}" | sed -e 's/1\.\([^.:]*\).*/\1/'`
         local modname=`printf "${model}" | sed -e 's/.*://'`
         if test ${minor} -ge 6; then
-          get_build_install_item "$install_collection" "${modname}" "${PASSWORD}"
+          get_build_install_item "$install_collection" "${modname}" "${use_sudo}" "${PASSWORD}"
         fi
       done
     elif test x"MD" = x"${item_type}"; then
@@ -182,10 +186,10 @@ get_build_install_item () {
             exit 1
           fi
         cd ${item_name}
-        make && if test x"" = x"${PASSWORD}"; then
-          make "install-${install_collection}"
+        ${make_command} && if test x"sudo-yes" = x"${use_sudo}"; then
+          printf "${PASSWORD}\n" | sudo -k -S ${make_command} "install-${install_collection}" 2> /dev/null
         else
-          printf "${PASSWORD}\n" | sudo -k -S make "install-${install_collection}" 2> /dev/null
+          ${make_command} "install-${install_collection}"
         fi
         cd ..
       else
@@ -200,20 +204,20 @@ get_build_install_item () {
           if test 0 -lt `grep -c MAKE_SYSTEM ${item_name}/Makefile`; then
             printf "*** ERROR *** ${item_name} appears to be written for an older, incompatible, version of the KIM API.\n";
             exit
-          elif test x"ParameterizedModel" = x"`make -C \"${item_name}\" kim-item-type`"; then
-            dvr="`make -C \"${item_name}\" model-driver-name`"
+          elif test x"ParameterizedModel" = x"`${make_command} -C \"${item_name}\" kim-item-type`"; then
+            dvr="`${make_command} -C \"${item_name}\" model-driver-name`"
             if test x"" != x`${collections_info} model_drivers find "${dvr}"`; then
               printf "*@using installed driver.......@%-50s\n" "${dvr}" | sed -e 's/ /./g' -e 's/@/ /g'
               true
             else
-              get_build_install_item "${install_collection}" "${dvr}" "${PASSWORD}"
+              get_build_install_item "${install_collection}" "${dvr}" "${use_sudo}" "${PASSWORD}"
             fi
           fi
         cd ${item_name}
-        make && if test x"" = x"${PASSWORD}"; then
-          make "install-${install_collection}"
+        ${make_command} && if test x"sudo-yes" = x"${use_sudo}"; then
+          printf "${PASSWORD}\n" | sudo -k -S ${make_command} "install-${install_collection}" 2> /dev/null
         else
-          printf "${PASSWORD}\n" | sudo -k -S make "install-${install_collection}" 2> /dev/null
+          ${make_command} "install-${install_collection}"
         fi
         cd ..
       else
@@ -228,7 +232,8 @@ get_build_install_item () {
 
 remove_item () {
   local item_name="$1"
-  local PASSWORD="$2"
+  local use_sudo="$2"
+  local PASSWORD="$3"
   local found_item=""
   local item_type=""
 
@@ -254,10 +259,10 @@ remove_item () {
 
   local item_dir=`${collections_info} "${item_type}" find "${item_name}" | sed -e 's/^[^ ]* [^ ]* \([^ ]*\).*/\1/'`"/${item_name}"
   printf "Removing '%s'.\n" "${item_dir}"
-  if test x"" = x"${PASSWORD}"; then
-    rm -rf "${item_dir}"
-  else
+  if test x"sudo-yes" = x"${use_sudo}"; then
     printf "${PASSWORD}\n" | sudo -k -S rm -rf "${item_dir}" 2> /dev/null
+  else
+    rm -rf "${item_dir}"
   fi
 }
 
@@ -337,6 +342,10 @@ $1
 EOF
 }
 
+print_separator_line () {
+  printf "%79s\n" " " | sed -e 's/ /$1/g'
+}
+
 print_list_of_drivers_and_models () {
   config_env_name=`${collections_info} config_file env | sed -e 's/ .*//'`
   config_env=`${collections_info} config_file env | sed -e 's/^[^ ]* //'`
@@ -351,7 +360,7 @@ print_list_of_drivers_and_models () {
   printf "\n\n"
   printf "Knowledgebase of Interatomic Models (KIM)"
   printf -- "  ---  Model Collections Listing\n"
-  printf -- "=%.0s" {1..79}; printf "\n"
+  print_separator_line "="
   printf "\n"
   printf "kim-api library: \n\t%s\n" `${collections_info} system library`
   printf "\n"
@@ -359,7 +368,7 @@ print_list_of_drivers_and_models () {
          `${collections_info} config_file name`
   printf "\n\n"
   printf "Environment Variables:\n"
-  printf -- "-%.0s" {1..79}; printf "\n"
+  print_separator_line "-"
   printf -- "${config_env_name}:\n"
   printf -- "\t${config_env}\n"
   printf "\n"
@@ -369,7 +378,7 @@ print_list_of_drivers_and_models () {
   printf -- "${models_env_name}:\n"
   printf -- "%s\n" "`printf -- "${models_env}" | sed -e 's/^/	/g'`"
   printf "\n"
-  printf -- "=%.0s" {1..79}; printf "\n"
+  print_separator_line "="
 
 
   model_drivers_list=`${collections_info} model_drivers`
@@ -379,7 +388,7 @@ print_list_of_drivers_and_models () {
 
   printf "\n\n\n"
   printf "Current Working Directory Collection\n"
-  printf -- "-%.0s" {1..79}; printf "\n"
+  print_separator_line "-"
   printf "Drivers: %s\n" "${PWD}"
   if test $number_drivers_cwd -gt 0; then
     printf "${drivers_cwd_collection}"
@@ -396,8 +405,8 @@ print_list_of_drivers_and_models () {
   fi
   printf "\n\n"
 
-  printf "%-79s\n" "Environment Variable Collection"
-  printf -- "-%.0s" {1..79}; printf "\n"
+  printf "Environment Variable Collection\n"
+  print_separator_line "-"
   printf "Drivers: "
   if test x"--empty--" = x"${drivers_env}"; then
     printf "%s" ${drivers_env}
@@ -419,7 +428,7 @@ print_list_of_drivers_and_models () {
   fi
   printf "\n"
   if test $number_models_env -gt 0; then
-    printf "${modelss_env_collection}"
+    printf "${models_env_collection}"
   else
     printf "\t--empty--\n"
   fi
@@ -429,8 +438,8 @@ print_list_of_drivers_and_models () {
   if test x"" = x"${drivers_usr}"; then drivers_usr="--empty--"; fi
   models_usr=`${collections_info} config_file models`
   if test x"" = x"${models_usr}"; then models_usr="--empty--"; fi
-  printf "%-79s\n" "User Collection"
-  printf -- "-%.0s" {1..79}; printf "\n"
+  printf "User Collection\n"
+  print_separator_line "-"
   printf "Drivers: %s\n" "${drivers_usr}"
   if test $number_drivers_usr -gt 0; then
     printf "${drivers_usr_collection}"
@@ -446,8 +455,8 @@ print_list_of_drivers_and_models () {
   fi
   printf "\n\n"
 
-  printf "%-79s\n" "System Collection"
-  printf -- "-%.0s" {1..79}; printf "\n"
+  printf "System Collection\n"
+  print_separator_line "-"
   printf "Drivers: %s\n" `${collections_info} system model_drivers`
   if test $number_drivers_sys -gt 0; then
     printf "${drivers_sys_collection}"
@@ -466,7 +475,12 @@ print_list_of_drivers_and_models () {
 
 
 get_password () {
-  read -s -p"Enter Password : " PASSWORD
+  printf "Enter Password : "
+  stty -echo
+  trap 'stty echo' EXIT
+  read PASSWORD
+  stty echo
+  trap - EXIT
   printf "\n"
   if ! (printf "${PASSWORD}\n" | \
           sudo -k -S printf "" > /dev/null 2>&1); then
@@ -527,7 +541,7 @@ case $command in
       case $subcommand in
         user)
           item_name=$3
-          get_build_install_item "user" "${item_name}" ""
+          get_build_install_item "user" "${item_name}" "sudo-no" ""
           ;;
         system)
           PASSWORD=""
@@ -537,7 +551,7 @@ case $command in
           else
             item_name=$3
           fi
-          get_build_install_item "system" "${item_name}" "${PASSWORD}"
+          get_build_install_item "system" "${item_name}" "sudo-yes" "${PASSWORD}"
           ;;
         *)
           printf "unknown subcommand: %s\n\n" $subcommand
@@ -552,12 +566,14 @@ case $command in
       exit 1
     else
       if test x"--sudo" = x"$2"; then
+        use_sudo="sudo-yes"
         get_password
         item_name=$3
       else
+        use_sudo="sudo-no"
         item_name=$2
       fi
-      remove_item "${item_name}" "${PASSWORD}"
+      remove_item "${item_name}" "${use_sudo}" "${PASSWORD}"
     fi
     ;;
 esac
