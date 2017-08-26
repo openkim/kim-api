@@ -41,22 +41,22 @@ usage () {
   printf "usage: model-info <command> [<args>]\n"
   printf "\n"
   printf "command is one of the following:\n"
-  printf "  list                                 "
+  printf "  list                                          "
   printf "List installed kim-api models and/or model drivers\n"
-  printf "  set-user-models-dir  <dir>           "
+  printf "  set-user-models-dir  <dir>                    "
   printf "Rewrite configuration file with provided directory\n"
-  printf "  set-user-drivers-dir <dir>           "
+  printf "  set-user-drivers-dir <dir>                    "
   printf "Rewrite configuration file with provided directory\n"
-  printf "  install  <user | system> <item ID>   "
+  printf "  install  <user | system> <item ID | OpenKIM>  "
   printf "Install model(s) and/or model driver(s) from openkim.org\n"
-  printf "  remove   <item ID>                   "
+  printf "  remove   <item ID>                            "
   printf "Remove model(s) and/or model driver(s)\n"
 }
 
 check_config_file_and_create_if_empty () {
-  config_file_name=`${collections_info} config_file name`
-  drivers_dir=`${collections_info} config_file model_drivers`
-  models_dir=`${collections_info} config_file models`
+  local config_file_name=`${collections_info} config_file name`
+  local drivers_dir=`${collections_info} config_file model_drivers`
+  local models_dir=`${collections_info} config_file models`
 
   if test \! -f "${config_file_name}" -o x"" = x"${drivers_dir}" -o x"" = x"${models_dir}"; then
     printf "Missing or invalid kim-api configuration file.  Recreating file with default values!\n"
@@ -71,9 +71,9 @@ check_config_file_and_create_if_empty () {
 
 rewrite_config_file_models_dir () {
   if test -d "$1"; then
-     config_file_name=`${collections_info} config_file name`
-     drivers_dir=`${collections_info} config_file model_drivers`
-     models_dir=`cd "$1" && pwd`
+     local config_file_name=`${collections_info} config_file name`
+     local drivers_dir=`${collections_info} config_file model_drivers`
+     local models_dir=`cd "$1" && pwd`
 
      printf "model_drivers_dir = %s\n" "${drivers_dir}" >  "${config_file_name}"
      printf "models_dir = %s\n" "${models_dir}"         >> "${config_file_name}"
@@ -85,9 +85,9 @@ rewrite_config_file_models_dir () {
 
 rewrite_config_file_drivers_dir () {
   if test -d "$1"; then
-    config_file_name=`${collections_info} config_file name`
-    drivers_dir=`cd "$1" && pwd`
-    models_dir=`${collections_info} config_file models`
+    local config_file_name=`${collections_info} config_file name`
+    local drivers_dir=`cd "$1" && pwd`
+    local models_dir=`${collections_info} config_file models`
 
     printf "model_drivers_dir = %s\n" "${drivers_dir}" >  "${config_file_name}"
     printf "models_dir = %s\n" "${models_dir}"         >> "${config_file_name}"
@@ -97,8 +97,10 @@ rewrite_config_file_drivers_dir () {
 }
 
 get_build_install_item () {
-  install_collection="$1"
-  item_name="$2"
+  local install_collection="$1"
+  local item_name="$2"
+  local found_item=""
+  local item_type=""
 
   # check for existing item
   if test x"__MD_" = x`printf "${item_name}" | sed 's/.*\(__MD_\).*/\1/'`; then
@@ -110,21 +112,29 @@ get_build_install_item () {
   elif test x"__SM_" = x`printf "${item_name}" | sed 's/.*\(__SM_\).*/\1/'`; then
     found_item=`${collections_info} models find "${item_name}"`
     item_type="SM"
+  elif test x"OpenKIM" = x"${item_name}"; then
+    found_item=""
+    item_type="OpenKIM"
   else
     found_item="UnknownItemType"
     item_type="Unknown"
   fi
   if test x"" != x"${found_item}"; then
-    printf "Item already installed or of unknown type. Aborting!\n"
-    exit
+    if test x"Unknown" = x"${item_type}"; then
+      printf "Item '${item_name} of unknown type.  Aborting!\n"
+      exit 1
+    else
+      printf "Item '${item_name}' already installed.\n"
+      return 0
+    fi
   fi
 
   # create private temporary directory
   if test x"" == x"${TMPDIR}"; then TMPDIR="/tmp"; fi
-  build_dir=`mktemp -d "${TMPDIR}/kim-api-build-XXXXXXXXXX"`
+  local build_dir=`mktemp -d "${TMPDIR}/kim-api-build-XXXXXXXXXX"`
   if test $? -ne 0; then
     printf "Unable to create temporary directory. Aborting!\n"
-    exit
+    exit 1
   fi
 
   (  # subshell
@@ -134,18 +144,36 @@ get_build_install_item () {
     ${build_config} --makefile-kim-config > Makefile.KIM_Config
 
     # download item (and possibly its driver)
-    if test x"MD" = x"${item_type}"; then
+    if test x"OpenKIM" = x"${item_type}"; then
+      local query='query={"type":"mo","kim-api-version":{"$regex":"^1\\."}}'
+      query="${query}"'&fields={"kimcode":1, "kim-api-version":1}'
+      query="${query}"'&database=obj'
+      local list=`wget -q -O - --post-data="${query}" https://query.openkim.org/api \
+                     | \
+                     sed -e 's/\[//g' -e 's/\]//g' \
+                     -e 's/{"kim-api-version": "\([0-9.]*\)", "kimcode": "\([^"]*\)"},*/\1:\2/g'`
+      for model in ${list}; do \
+        local minor=`printf "${model}" | sed -e 's/1\.\([^.:]*\).*/\1/'`
+        local modname=`printf "${model}" | sed -e 's/.*://'`
+        if test ${minor} -ge 6; then
+          get_build_install_item "$install_collection" "${modname}"
+        fi
+      done
+    elif test x"MD" = x"${item_type}"; then
       printf "*@downloading.......@%-50s\n" "${item_name}" | sed -e 's/ /./g' -e 's/@/ /g'
       if wget -q --content-disposition "https://openkim.org/download/${item_name}.tgz"; then
         tar zxvf "${item_name}.tgz" 2>&1 | sed -e 's/^/                /' &&
           rm -f "${item_name}.tgz" &&
           if test 0 -lt `grep -c MAKE_SYSTEM ${item_name}/Makefile`; then \
             printf "*** ERROR *** ${item_name} appears to be written for an older, incompatible, version of the KIM API.\n"
-            exit
+            exit 1
           fi
+        cd ${item_name}
+        make && make "install-${install_collection}"
+        cd ..
       else
         printf "                Unable to download ${item_name} from https://openkim.org.  Check the KIM Item ID for errors.\n"
-        exit
+        exit 1
       fi
     elif test x"MO" = x"${item_type}"; then
       printf "*@downloading.......@%-50s\n" "${item_name}" | sed -e 's/ /./g' -e 's/@/ /g'
@@ -157,63 +185,30 @@ get_build_install_item () {
             exit
           elif test x"ParameterizedModel" = x"`make -C \"${item_name}\" kim-item-type`"; then
             dvr="`make -C \"${item_name}\" model-driver-name`"
-            found_dvr=`${collections_info} model_drivers find "${dvr}"`
-            if test x"" != x"${found_dvr}"; then
-              install_dvr="No"
+            if test x"" != x`${collections_info} model_drivers find "${dvr}"`; then
               printf "*@using installed driver.......@%-50s\n" "${dvr}" | sed -e 's/ /./g' -e 's/@/ /g'
               true
             else
-              install_dvr="Yes"
-              printf "*@downloading.......@%-50s\n" "${dvr}" | sed -e 's/ /./g' -e 's/@/ /g'
-              if wget -q --content-disposition "https://openkim.org/download/${dvr}.tgz"; then
-                tar zxvf "${dvr}.tgz" 2>&1 | sed -e 's/^/                /' &&
-                  rm -f "${dvr}.tgz" &&
-                  if test 0 -lt `grep -c MAKE_SYSTEM ${dvr}/Makefile`; then \
-                    printf "*** ERROR *** ${dvr} appears to be written for an older, incompatible, version of the KIM API.\n"
-                    exit
-                  fi
-              else
-                printf "                Unable to download ${dvr} from https://openkim.org.  Check the KIM Item ID for errors.\n"
-                exit
-              fi
+              get_build_install_item "${install_collection}" "${dvr}"
             fi
-          else
-            install_dvr="No"
           fi
+        cd ${item_name}
+        make && make "install-${install_collection}"
+        cd ..
       else
         printf "                Unable to download ${item_name} from https://openkim.org.  Check the KIM Item ID for errors.\n"
-        exit
+        exit 1
       fi
     fi
-
-    # build item (and possibly its driver)
-    if test x"MO" = x"${item_type}"; then
-      if test x"Yes" = x"${install_dvr}"; then
-        cd ${dvr}
-        make && make install
-        # move to correct collection
-        if test x"user" = x"${install_collection}"; then
-          printf "Moving item to 'user' collection.\n";
-          mv "`${collections_info} system model_drivers`/${dvr}" "`${collections_info} config_file model_drivers`/${dvr}"
-        fi
-        cd ".."
-      fi
-    fi
-    cd "${item_name}"
-    make && make install
-    # move to correct collection
-    if test x"user" = x"${install_collection}"; then
-      printf "Moving item to 'user' collection.\n";
-      mv "`${collections_info} system models`/${item_name}" "`${collections_info} config_file models`/${item_name}"
-    fi
-
   )  # exit subshell
 
   rm -rf "${build_dir}"
 }
 
 remove_item () {
-  item_name="$1"
+  local item_name="$1"
+  local found_item=""
+  local item_type=""
 
   # check for existing item
   if test x"__MD_" = x`printf "${item_name}" | sed 's/.*\(__MD_\).*/\1/'`; then
@@ -226,16 +221,16 @@ remove_item () {
     found_item=`${collections_info} models find "${item_name}"`
     item_type="models"
   else
-    found_item="UnknownItemType"
+    found_item=""
     item_type="Unknown"
   fi
   if test x"" = x"${found_item}"; then
     printf "Item not installed or of unknown type. Aborting!\n"
-    exit
+    exit 1
   fi
 
 
-  item_dir=`${collections_info} "${item_type}" find "${item_name}" | sed -e 's/^[^ ]* [^ ]* \([^ ]*\).*/\1/'`"/${item_name}"
+  local item_dir=`${collections_info} "${item_type}" find "${item_name}" | sed -e 's/^[^ ]* [^ ]* \([^ ]*\).*/\1/'`"/${item_name}"
   printf "Removing '%s'.\n" "${item_dir}"
   rm -rf "${item_dir}"
 }
@@ -246,8 +241,8 @@ split_drivers_list_into_collections () {
   drivers_usr_collection=""; number_drivers_usr=0
   drivers_sys_collection=""; number_drivers_sys=0
     while read line; do
-      collection=`printf "$line" | sed -e 's/\([^ ]*\) .*/\1/'`
-      name=`printf "$line" | sed -e 's/[^ ]* \([^ ]*\) .*/\1/'`
+      local collection=`printf "$line" | sed -e 's/\([^ ]*\) .*/\1/'`
+      local name=`printf "$line" | sed -e 's/[^ ]* \([^ ]*\) .*/\1/'`
       case $collection in
         "")
         # empty do nothing
@@ -284,8 +279,8 @@ split_models_list_into_collections () {
   models_usr_collection=""; number_models_usr=0
   models_sys_collection=""; number_models_sys=0
     while read line; do
-      collection=`printf "$line" | sed -e 's/\([^ ]*\) .*/\1/'`
-      name=`printf "$line" | sed -e 's/[^ ]* \([^ ]*\) .*/\1/'`
+      local collection=`printf "$line" | sed -e 's/\([^ ]*\) .*/\1/'`
+      local name=`printf "$line" | sed -e 's/[^ ]* \([^ ]*\) .*/\1/'`
       case $collection in
         "")
         # empty do nothing
@@ -449,7 +444,7 @@ print_list_of_drivers_and_models () {
 # check that command is given
 if test $# -lt 1; then
   usage
-  exit
+  exit 1
 else
   command=$1
   case $command in
@@ -458,7 +453,7 @@ else
     *)
       printf "unknown command: %s\n\n" $command
       usage
-      exit
+      exit 1
   esac
 fi
 
@@ -471,7 +466,7 @@ case $command in
   set-user-models-dir)
     if test $# -lt 2; then
       usage
-      exit
+      exit 1
     else
       subcommand=$2
       rewrite_config_file_models_dir "$subcommand"
@@ -480,7 +475,7 @@ case $command in
   set-user-drivers-dir)
     if test $# -lt 3; then
       usage
-      exit
+      exit 1
     else
       subcommand=$2
       rewrite_config_file_drivers_dir "$subcommand"
@@ -489,7 +484,7 @@ case $command in
   install)
     if test $# -ne 3; then
       usage
-      exit
+      exit 1
     else
       subcommand=$2
       itemName=$3
@@ -507,7 +502,7 @@ case $command in
   remove)
     if test $# -lt 2; then
       usage
-      exit
+      exit 1
     else
       item_name=$2
       remove_item "${item_name}"
