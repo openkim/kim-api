@@ -39,17 +39,24 @@ include Makefile.KIM_Config
 #
 # Main build settings and rules
 #
-.PHONY: all model-drivers-all models-all openkim-tests-all simulators-all
+.PHONY: all-system all-user model-drivers-all-system model-drivers-all-user models-all-system models-all-user openkim-tests-all simulators-all
 
-all: model-drivers-all models-all openkim-tests-all simulators-all
+all-system: model-drivers-all-system models-all-system openkim-tests-all simulators-all
+all-user: model-drivers-all-user models-all-user openkim-tests-all simulators-all
 
-model-drivers-all: Example\ Model\ Drivers-making-echo
+model-drivers-all-system: Example\ Model\ Drivers-making-echo
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modeldriversdir) all
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modeldriversdir) install-system-all
+model-drivers-all-user: Example\ Model\ Drivers-making-echo
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modeldriversdir) all
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modeldriversdir) install-user-all
 
-models-all: Example\ Model-making-echo
+models-all-system: Example\ Model-making-echo
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modelsdir) all
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modelsdir) install-system-all
+models-all-user: Example\ Model-making-echo
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modelsdir) all
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modelsdir) install-user-all
 
 openkim-tests-all: Example\ OpenKIM\ Tests-making-echo
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C openkim_tests all
@@ -67,10 +74,12 @@ clean: model-drivers-clean models-clean openkim-tests-clean simulators-clean
 
 model-drivers-clean: Example\ Model\ Drivers-making-echo
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modeldriversdir) uninstall-system-all
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modeldriversdir) uninstall-user-all
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modeldriversdir) clean
 
 models-clean: Example\ Model-making-echo
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modelsdir) uninstall-system-all
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modelsdir) uninstall-user-all
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modelsdir) clean
 
 openkim-tests-clean: Example\ OpenKIM\ Tests-making-echo

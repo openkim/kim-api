@@ -40,3 +40,32 @@ This directory is populated with the provided examples as part of the KIM API
 distribution.  Please see the README files within each directory for
 information about the examples.
 
+To build and install these examples:
+
+First you must create the file Makefile.KIM_Config in this directory which
+points to the installed KIM API library.  When the KIM API is built, this file
+is created automatically.  If the file already exists, you can probably skip
+this step.
+
+Assuming an installed-(nonstandard)-build and that the KIM API bin directory
+has been added to the path.
+
+$ kim-api-build-config --makefile-kim-config > Makefile.KIM_Config
+
+Next, you can execute:
+
+$ make all-system
+
+or
+
+$ make all-user
+
+These will build and install (to the system or user collection, respectively)
+all example Model Drivers, then Models.  It will also build the example
+Simulators and Tests.
+
+Once this is complete, you can use the example Simulator and Tests, inplace.
+For example,
+
+$ cd openkim_tests/vc_forces_numer_deriv
+$ printf "ex_model_Ar_P_Morse" | ./vc_forces_numer_deriv

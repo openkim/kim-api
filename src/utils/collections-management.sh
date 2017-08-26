@@ -38,19 +38,30 @@ build_config=###BUILD#CONFIG###
 
 # define usage function
 usage () {
-  printf "usage: model-info <command> [<args>]\n"
+  printf "usage: $0 <command> [<args>]\n"
   printf "\n"
   printf "command is one of the following:\n"
-  printf "  list                                          "
-  printf "List installed kim-api models and/or model drivers\n"
-  printf "  set-user-models-dir  <dir>                    "
-  printf "Rewrite configuration file with provided directory\n"
-  printf "  set-user-drivers-dir <dir>                    "
-  printf "Rewrite configuration file with provided directory\n"
-  printf "  install  <user | system> <item ID | OpenKIM>  "
-  printf "Install model(s) and/or model driver(s) from openkim.org\n"
-  printf "  remove   <item ID>                            "
-  printf "Remove model(s) and/or model driver(s)\n"
+  printf "  list\n"
+  printf "  set-user-models-dir <dir>\n"
+  printf "  set-user-drivers-dir <dir>\n"
+  printf "  install <user | system [--sudo]> <item ID | OpenKIM>\n"
+  printf "  remove [--sudo] <item ID>\n"
+  printf "\n\n"
+
+  printf "list:\n"
+  printf "  List installed kim-api models and model drivers\n"
+  printf "\n"
+  printf "set-user-models-dir:\n"
+  printf "  Rewrite configuration file with provided directory\n"
+  printf "\n"
+  printf "set-user-drivers-dir:\n"
+  printf "  Rewrite configuration file with provided directory\n"
+  printf "\n"
+  printf "install:\n"
+  printf "  Install model and/or model driver from openkim.org\n"
+  printf "\n"
+  printf "remove:\n"
+  printf "  Remove model or model driver\n"
 }
 
 check_config_file_and_create_if_empty () {
@@ -99,8 +110,10 @@ rewrite_config_file_drivers_dir () {
 get_build_install_item () {
   local install_collection="$1"
   local item_name="$2"
+  local PASSWORD="$3"
   local found_item=""
   local item_type=""
+
 
   # check for existing item
   if test x"__MD_" = x`printf "${item_name}" | sed 's/.*\(__MD_\).*/\1/'`; then
@@ -156,7 +169,7 @@ get_build_install_item () {
         local minor=`printf "${model}" | sed -e 's/1\.\([^.:]*\).*/\1/'`
         local modname=`printf "${model}" | sed -e 's/.*://'`
         if test ${minor} -ge 6; then
-          get_build_install_item "$install_collection" "${modname}"
+          get_build_install_item "$install_collection" "${modname}" "${PASSWORD}"
         fi
       done
     elif test x"MD" = x"${item_type}"; then
@@ -169,7 +182,11 @@ get_build_install_item () {
             exit 1
           fi
         cd ${item_name}
-        make && make "install-${install_collection}"
+        make && if test x"" = x"${PASSWORD}"; then
+          make "install-${install_collection}"
+        else
+          printf "${PASSWORD}\n" | sudo -k -S make "install-${install_collection}" 2> /dev/null
+        fi
         cd ..
       else
         printf "                Unable to download ${item_name} from https://openkim.org.  Check the KIM Item ID for errors.\n"
@@ -189,11 +206,15 @@ get_build_install_item () {
               printf "*@using installed driver.......@%-50s\n" "${dvr}" | sed -e 's/ /./g' -e 's/@/ /g'
               true
             else
-              get_build_install_item "${install_collection}" "${dvr}"
+              get_build_install_item "${install_collection}" "${dvr}" "${PASSWORD}"
             fi
           fi
         cd ${item_name}
-        make && make "install-${install_collection}"
+        make && if test x"" = x"${PASSWORD}"; then
+          make "install-${install_collection}"
+        else
+          printf "${PASSWORD}\n" | sudo -k -S make "install-${install_collection}" 2> /dev/null
+        fi
         cd ..
       else
         printf "                Unable to download ${item_name} from https://openkim.org.  Check the KIM Item ID for errors.\n"
@@ -207,6 +228,7 @@ get_build_install_item () {
 
 remove_item () {
   local item_name="$1"
+  local PASSWORD="$2"
   local found_item=""
   local item_type=""
 
@@ -232,7 +254,11 @@ remove_item () {
 
   local item_dir=`${collections_info} "${item_type}" find "${item_name}" | sed -e 's/^[^ ]* [^ ]* \([^ ]*\).*/\1/'`"/${item_name}"
   printf "Removing '%s'.\n" "${item_dir}"
-  rm -rf "${item_dir}"
+  if test x"" = x"${PASSWORD}"; then
+    rm -rf "${item_dir}"
+  else
+    printf "${PASSWORD}\n" | sudo -k -S rm -rf "${item_dir}" 2> /dev/null
+  fi
 }
 
 split_drivers_list_into_collections () {
@@ -439,6 +465,17 @@ print_list_of_drivers_and_models () {
 }
 
 
+get_password () {
+  read -s -p"Enter Password : " PASSWORD
+  printf "\n"
+  if ! (printf "${PASSWORD}\n" | \
+          sudo -k -S printf "" > /dev/null 2>&1); then
+    printf "Bad password. Exiting.\n"
+    exit 1
+  fi
+}
+
+
 ######## main script ########
 
 # check that command is given
@@ -482,16 +519,26 @@ case $command in
     fi
     ;;
   install)
-    if test $# -ne 3; then
+    if test $# -lt 3; then
       usage
       exit 1
     else
       subcommand=$2
-      itemName=$3
       case $subcommand in
-        user|system)
-          get_build_install_item "${subcommand}" "${itemName}"
-        ;;
+        user)
+          item_name=$3
+          get_build_install_item "user" "${item_name}" ""
+          ;;
+        system)
+          PASSWORD=""
+          if test x"--sudo" = x"$3"; then
+            get_password
+            item_name=$4
+          else
+            item_name=$3
+          fi
+          get_build_install_item "system" "${item_name}" "${PASSWORD}"
+          ;;
         *)
           printf "unknown subcommand: %s\n\n" $subcommand
           usage
@@ -504,8 +551,13 @@ case $command in
       usage
       exit 1
     else
-      item_name=$2
-      remove_item "${item_name}"
+      if test x"--sudo" = x"$2"; then
+        get_password
+        item_name=$3
+      else
+        item_name=$2
+      fi
+      remove_item "${item_name}" "${PASSWORD}"
     fi
     ;;
 esac
