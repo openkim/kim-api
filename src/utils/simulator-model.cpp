@@ -41,9 +41,10 @@
 void usage(char const* const name)
 {
   std::cerr << "usage: "
-            << name
-            << " <simulator model name> <parameter file index | "
-            << "\"number_of_parameter_files\">\n";
+            << name << " "
+            << "<simulator model name> "
+            << "<metadata_file | number_of_parameter_files "
+            << "| parameter file index>\n";
       // note: this interface is likely to change in future kim-api releases
       }
 
@@ -64,6 +65,11 @@ int main(int argc, char* argv[])
   {
     argFlag = 0;
     symbol = "number_of_parameter_files";
+  }
+  else if (std::string(argv[2]) == "metadata_file")
+  {
+    argFlag = 1;
+    symbol = "metadata_file";
   }
   else
   {
@@ -120,7 +126,20 @@ int main(int argc, char* argv[])
     }
     else
     {
-      std::cout << filePointer;
+      symbol += "_len";
+      unsigned int const * fileLength
+          = (unsigned int const *) dlsym(model_lib_handle, symbol.c_str());
+      dlsym_error = dlerror();
+      if (dlsym_error) {
+        std::cout << "* Error: Cannot load symbol: " << dlsym_error <<std::endl;
+        dlclose(model_lib_handle);
+        return 6;
+      }
+      else
+      {
+        for (unsigned int i=0; i < *fileLength; ++i)
+          std::cout << filePointer[i];
+      }
     }
   }
   else
