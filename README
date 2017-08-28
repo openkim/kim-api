@@ -35,7 +35,8 @@
 ============================= The KIM API package =============================
 
 This file provides an introduction to the KIM API package.  This is the first
-file that you should read after unpacking the package.
+file that you should read after unpacking the package.  See the INSTALL file
+for instructions on how to build and install the package
 
 OVERVIEW:
 

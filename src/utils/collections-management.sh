@@ -73,7 +73,10 @@ check_config_file_and_create_if_empty () {
   local models_dir=`${collections_info} config_file models`
 
   if test \! -f "${config_file_name}" -o x"" = x"${drivers_dir}" -o x"" = x"${models_dir}"; then
-    printf "Missing or invalid kim-api configuration file.  Recreating file with default values!\n"
+    printf "Missing or invalid kim-api configuration file.\n"
+    printf "   Recreating the file with default values!\n"
+    printf "   This is normal for the first time a user executes\n"
+    printf "   the collections-management utility.\n"
     drivers_dir="`printf "${config_file_name}" | sed -e 's|\(.*\)/[^/]*$|\1|'`/model_drivers"
     mkdir -p "${drivers_dir}"
     printf "model_drivers_dir = %s\n" "${drivers_dir}" >  "${config_file_name}"
@@ -91,6 +94,9 @@ rewrite_config_file_models_dir () {
 
      printf "model_drivers_dir = %s\n" "${drivers_dir}" >  "${config_file_name}"
      printf "models_dir = %s\n" "${models_dir}"         >> "${config_file_name}"
+
+     printf "\n"
+     printf "Success!\n"
   else
     printf "Directory '%s' does not exist. Aborting!\n" "$1"
     exit 1
@@ -105,6 +111,9 @@ rewrite_config_file_drivers_dir () {
 
     printf "model_drivers_dir = %s\n" "${drivers_dir}" >  "${config_file_name}"
     printf "models_dir = %s\n" "${models_dir}"         >> "${config_file_name}"
+
+    printf "\n"
+    printf "Success\n"
   else
     printf "Directory '%s' does not exist. Aborting!\n" "$1"
   fi
@@ -228,6 +237,9 @@ get_build_install_item () {
   )  # exit subshell
 
   rm -rf "${build_dir}"
+
+  printf "\n"
+  printf "Success!\n"
 }
 
 remove_item () {
@@ -264,6 +276,9 @@ remove_item () {
   else
     rm -rf "${item_dir}"
   fi
+
+  printf "\n"
+  printf "Success!\n"
 }
 
 split_drivers_list_into_collections () {

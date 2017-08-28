@@ -235,10 +235,10 @@ $ sudo ldconfig  # on Redhat-like systems you may need to first add /usr/local/l
 $ cp -r ./examples/openkim_tests/vc_forces_numer_deriv "${HOME}/"
 $ cd "${HOME}"
 $ rm -r kim-api-vX.Y.Z  kim-api-vX.Y.Z.tgz # replace X.Y.Z with the current version number
-$ kim-api-collections-management install system --sudo EAM_Dynamo_Angelo_Moody_NiAlH__MO_418978237058_001
+$ kim-api-collections-management install system --sudo EDIP_BOP_Bazant_Kaxiras_Si__MO_958932894036_001
 $ cd vc_forces_numer_deriv
 $ make
-$ printf "EAM_Dynamo_Angelo_Moody_NiAlH__MO_418978237058_001" | ./vc_forces_numer_deriv
+$ printf "EDIP_BOP_Bazant_Kaxiras_Si__MO_958932894036_001" | ./vc_forces_numer_deriv
 
 Congratulations, you have now successfully installed the KIM API.  If you would
 like to learn more about the KIM API, read the README file in the docs
@@ -263,10 +263,10 @@ $ cd "${HOME}"
 $ rm -r kim-api-vX.Y.Z kim-api-vX.Y.Z.tgz  # replace X.Y.Z with the current version number
 $ printf "PATH=${PATH}:${HOME}/local/bin\n" >> "${HOME}/.bashrc"
 $ source "${HOME}/.bashrc"
-$ kim-api-collections-management install system EAM_Dynamo_Angelo_Moody_NiAlH__MO_418978237058_001
+$ kim-api-collections-management install system EDIP_BOP_Belko_Gusakov_Dorozhkin_Ge__MO_129433059219_000
 $ cd vc_forces_numer_deriv
 $ make
-$ printf "EAM_Dynamo_Angelo_Moody_NiAlH__MO_418978237058_001" | ./vc_forces_numer_deriv
+$ printf "EDIP_BOP_Belko_Gusakov_Dorozhkin_Ge__MO_129433059219_000" | ./vc_forces_numer_deriv
 
 Congratulations, you have now successfully installed the KIM API.  If you would
 like to learn more about the KIM API, read the README file in the docs
@@ -516,7 +516,7 @@ if necessary.
     * NOTE: The KIM API library will look for the user-collection configuration
             file in the directory '${HOME}/${user_config_file_dir_name}'
 
-(i) Override default install options, if necessary, by adding the desired
+(j) Override default install options, if necessary, by adding the desired
     variable name (after the "# override default install options" line) and
     filling in appropriate values.
 
