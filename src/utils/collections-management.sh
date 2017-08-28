@@ -546,12 +546,14 @@ case $command in
         system)
           PASSWORD=""
           if test x"--sudo" = x"$3"; then
+            use_sudo="sudo-yes"
             get_password
             item_name=$4
           else
+            use_sudo="sudo-no"
             item_name=$3
           fi
-          get_build_install_item "system" "${item_name}" "sudo-yes" "${PASSWORD}"
+          get_build_install_item "system" "${item_name}" "${use_sudo}" "${PASSWORD}"
           ;;
         *)
           printf "unknown subcommand: %s\n\n" $subcommand
