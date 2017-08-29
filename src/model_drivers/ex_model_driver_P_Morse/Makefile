@@ -48,7 +48,7 @@ include $(MASTER_CONFIG)
 # set model driver specific details
 MODEL_DRIVER_NAME := ex_model_driver_P_Morse
 MODEL_DRIVER_CREATE_FUNCTION_NAME := model_driver_create
-MODEL_DRIVER_CREATE_FUNCTION_LANG := C
+MODEL_DRIVER_CREATE_FUNCTION_LANG := c
 
 LOCALOBJ = ex_model_driver_P_Morse.o
 

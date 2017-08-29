@@ -80,7 +80,7 @@ init_wrapper.cpp: $(paramfile_name_list) $(KIM_MAKE_FILES)
 	$(QUELL)printf "int (* $(strip $(MODEL_NAME))_create_pointer)() = 0;\n"           >> $@
 	$(QUELL)printf "char $(strip $(MODEL_NAME))_compiled_with_version[]\n"            >> $@
 	$(QUELL)printf "  = \"$(VERSION_FULL)\";\n"                                       >> $@
-	$(QUELL)printf "int $(strip $(MODEL_NAME))_language = 1;\n"                       >> $@
+	$(QUELL)printf "char $(strip $(MODEL_NAME))_language[] = \"cpp\";\n"              >> $@
 	$(QUELL)printf "char $(strip $(MODEL_NAME))_driver_name[]\n"                      >> $@
 	$(QUELL)printf "  = \"$(MODEL_DRIVER_NAME)\";\n"                                  >> $@
 	$(QUELL)printf "}\n"                                                              >> $@

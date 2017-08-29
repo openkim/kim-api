@@ -335,7 +335,6 @@ void get_number_of_species(int * const numberOfSpecies)
 
 int get_species_name(int const index, SpeciesName * const speciesName)
 {
-  // @@@ is this OK?  Does iterator over a const object give same order?
   int numberOfSpecies;
   get_number_of_species(&numberOfSpecies);
   if ((index < 0) || (index >= numberOfSpecies)) return true;

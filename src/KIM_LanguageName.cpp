@@ -30,14 +30,51 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
+#include <unordered_map>
+
 #ifndef KIM_LANGUAGE_NAME_HPP_
 #include "KIM_LanguageName.hpp"
 #endif
 
 namespace KIM
 {
+
+// Order doesn't matter as long as all values are unique
+namespace LANGUAGE_NAME
+{
+LanguageName const cpp(0);
+LanguageName const c(1);
+LanguageName const fortran(2);
+
+
+extern std::unordered_map<LanguageName const, std::string> const
+languageNameToString = {
+  std::pair<LanguageName const, std::string>(cpp, "cpp"),
+  std::pair<LanguageName const, std::string>(c, "c"),
+  std::pair<LanguageName const, std::string>(fortran, "fortran")
+};
+
+}  // namespace LANGUAGE_NAME
+
+
+// implementation of LanguageName
 LanguageName::LanguageName(): languageNameID(0){}
 LanguageName::LanguageName(int const id): languageNameID(id){}
+LanguageName::LanguageName(std::string const str)
+{
+  languageNameID = -1;
+  std::unordered_map<std::string, LanguageName> reverseMap;
+  for (auto iter = LANGUAGE_NAME::languageNameToString.begin();
+       iter != LANGUAGE_NAME::languageNameToString.end();
+       ++iter)
+  {
+    if (iter->second == str)
+    {
+      languageNameID = (iter->first).languageNameID;
+      break;
+    }
+  }
+}
 
 bool LanguageName::operator==(LanguageName const & rhs) const
 {return languageNameID == rhs.languageNameID;}
@@ -46,17 +83,14 @@ bool LanguageName::operator!=(LanguageName const & rhs) const
 
 std::string LanguageName::String() const
 {
-  if (*this == LANGUAGE_NAME::cpp) return "cpp";
-  else if (*this == LANGUAGE_NAME::c) return "c";
-  else if (*this == LANGUAGE_NAME::fortran) return "fortran";
-  else return "unknown";
-}
+  std::string result;
+  auto iter = LANGUAGE_NAME::languageNameToString.find(*this);
+  if (iter == LANGUAGE_NAME::languageNameToString.end())
+    result = "unknown";
+  else
+    result = iter->second;
 
-namespace LANGUAGE_NAME
-{
-LanguageName const cpp(0);
-LanguageName const c(1);
-LanguageName const fortran(2);
-}  // namespace LANGUAGE_NAME
+  return result;
+}
 
 }  // namespace KIM

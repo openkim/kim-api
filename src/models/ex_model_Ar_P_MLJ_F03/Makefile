@@ -42,7 +42,7 @@ include ../Makefile.KIM_Config
 # set model specific details
 MODEL_NAME := ex_model_Ar_P_MLJ_F03
 MODEL_CREATE_FUNCTION_NAME := model_create_routine
-MODEL_CREATE_FUNCTION_LANG := Fortran
+MODEL_CREATE_FUNCTION_LANG := fortran
 
 LOCALOBJ = ex_model_Ar_P_MLJ_F03.o
 

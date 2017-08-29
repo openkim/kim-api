@@ -53,7 +53,7 @@ include $(MASTER_CONFIG)
 # set model specific details
 MODEL_NAME := ex_model_Ar_P_Morse_07C
 MODEL_CREATE_FUNCTION_NAME := model_create
-MODEL_CREATE_FUNCTION_LANG := C
+MODEL_CREATE_FUNCTION_LANG := c
 
 LOCALOBJ = ex_model_Ar_P_Morse_07C.o
 

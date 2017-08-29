@@ -145,17 +145,17 @@ int ModelLibrary::getModelCreateFunctionPointer(
   if (libraryHandle_ == 0) return true;  // not open
 
   std::string languageSymbol(modelName_ + "_language");
-  LanguageName * pLanguageName
-      = reinterpret_cast<LanguageName *>(dlsym(libraryHandle_,
-                                               languageSymbol.c_str()));
-  if (pLanguageName == 0)
+  char const * const languageNameString
+      = reinterpret_cast<char const *>(dlsym(libraryHandle_,
+                                             languageSymbol.c_str()));
+  if (languageNameString == 0)
   {
     std::cout << dlerror() << std::endl;
     return true;
   }
   else
   {
-    *languageName = *pLanguageName;
+    *languageName = LanguageName(std::string(languageNameString));
   }
 
   std::string createFunctionSymbol(modelName_ + "_create_pointer");

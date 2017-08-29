@@ -41,18 +41,8 @@ include $(KIM_DIR)/$(builddir)/Makefile.SanityCheck
 MODEL_DRIVER_NAME := $(strip $(MODEL_DRIVER_NAME))
 MODEL_DRIVER_CREATE_FUNCTION_NAME := $(strip $(MODEL_DRIVER_CREATE_FUNCTION_NAME))
 MODEL_DRIVER_CREATE_FUNCTION_LANG := $(strip $(MODEL_DRIVER_CREATE_FUNCTION_LANG))
-ifeq ($(MODEL_DRIVER_CREATE_FUNCTION_LANG),C++)
-  MODEL_DRIVER_LANG := 0
-else
-  ifeq ($(MODEL_DRIVER_CREATE_FUNCTION_LANG),C)
-    MODEL_DRIVER_LANG := 1
-  else
-    ifeq ($(MODEL_DRIVER_CREATE_FUNCTION_LANG),Fortran)
-      MODEL_DRIVER_LANG := 2
-    else
-      $(error Unknown MODEL_DRIVER_CREATE_FUNCTION_LANG value)
-    endif
-  endif
+ifneq (,$(filter-out cpp c fortran,$(MODEL_DRIVER_CREATE_FUNCTION_LANG)))
+   $(error Unknown MODEL_DRIVER_CREATE_FUNCTION_LANG value: $(MODEL_DRIVER_CREATE_FUNCTION_LANG))
 endif
 
 # Set SO variables
@@ -72,16 +62,16 @@ all: $(MODEL_DRIVER_BUILD_TARGET)
 .INTERMEDIATE: init_wrapper.cpp
 init_wrapper.cpp: $(KIM_MAKE_FILES)
 	@printf "Creating... intermediate file... $@.\n"
-	$(QUELL)printf "extern \"C\"\n"                                                         > $@
-	$(QUELL)printf "{\n"                                                                   >> $@
-	$(QUELL)printf "char kim_item_type[] = \"model-driver\";\n"                            >> $@
-	$(QUELL)printf "int $(strip $(MODEL_DRIVER_CREATE_FUNCTION_NAME))();\n"                >> $@
-	$(QUELL)printf "int (* $(strip $(MODEL_DRIVER_NAME))_create_pointer)()\n"              >> $@
-	$(QUELL)printf "  = $(strip $(MODEL_DRIVER_CREATE_FUNCTION_NAME));\n"                  >> $@
-	$(QUELL)printf "char $(strip $(MODEL_DRIVER_NAME))_compiled_with_version[]\n"          >> $@
-	$(QUELL)printf "  = \"$(VERSION_FULL)\";\n"                                            >> $@
-	$(QUELL)printf "int $(strip $(MODEL_DRIVER_NAME))_language = $(MODEL_DRIVER_LANG);\n"  >> $@
-	$(QUELL)printf "}\n"                                                                   >> $@
+	$(QUELL)printf "extern \"C\"\n"                                                                                > $@
+	$(QUELL)printf "{\n"                                                                                          >> $@
+	$(QUELL)printf "char kim_item_type[] = \"model-driver\";\n"                                                   >> $@
+	$(QUELL)printf "int $(strip $(MODEL_DRIVER_CREATE_FUNCTION_NAME))();\n"                                       >> $@
+	$(QUELL)printf "int (* $(strip $(MODEL_DRIVER_NAME))_create_pointer)()\n"                                     >> $@
+	$(QUELL)printf "  = $(strip $(MODEL_DRIVER_CREATE_FUNCTION_NAME));\n"                                         >> $@
+	$(QUELL)printf "char $(strip $(MODEL_DRIVER_NAME))_compiled_with_version[]\n"                                 >> $@
+	$(QUELL)printf "  = \"$(VERSION_FULL)\";\n"                                                                   >> $@
+	$(QUELL)printf "char $(strip $(MODEL_DRIVER_NAME))_language[] = \"$(MODEL_DRIVER_CREATE_FUNCTION_LANG)\";\n"  >> $@
+	$(QUELL)printf "}\n"                                                                                          >> $@
 
 lib$(MODEL_DRIVER_LIB).a: lib$(MODEL_DRIVER_LIB_BUILD).a
 	@printf "Creating... $@.\n"

@@ -41,18 +41,8 @@ include $(KIM_DIR)/$(builddir)/Makefile.SanityCheck
 MODEL_NAME := $(strip $(MODEL_NAME))
 MODEL_CREATE_FUNCTION_NAME := $(strip $(MODEL_CREATE_FUNCTION_NAME))
 MODEL_CREATE_FUNCTION_LANG := $(strip $(MODEL_CREATE_FUNCTION_LANG))
-ifeq ($(MODEL_CREATE_FUNCTION_LANG),C++)
-  MODEL_LANG := 0
-else
-  ifeq ($(MODEL_CREATE_FUNCTION_LANG),C)
-    MODEL_LANG := 1
-  else
-    ifeq ($(MODEL_CREATE_FUNCTION_LANG),Fortran)
-      MODEL_LANG := 2
-    else
-      $(error Unknown MODEL_CREATE_FUNCTION_LANG value)
-    endif
-  endif
+ifneq (,$(filter-out cpp c fortran,$(MODEL_CREATE_FUNCTION_LANG)))
+   $(error Unknown MODEL_CREATE_FUNCTION_LANG value: $(MODEL_CREATE_FUNCTION_LANG))
 endif
 
 # Set SO variables
@@ -72,17 +62,17 @@ all: $(MODEL_BUILD_TARGET)
 .INTERMEDIATE: init_wrapper.cpp
 init_wrapper.cpp: $(KIM_MAKE_FILES)
 	@printf "Creating... intermediate file... $@.\n"
-	$(QUELL)printf "extern \"C\"\n"                                                    > $@
-	$(QUELL)printf "{\n"                                                              >> $@
-	$(QUELL)printf "char kim_item_type[] = \"stand-alone-model\";\n"                  >> $@
-	$(QUELL)printf "int $(strip $(MODEL_CREATE_FUNCTION_NAME))();\n"                  >> $@
-	$(QUELL)printf "int (* $(strip $(MODEL_NAME))_create_pointer)()\n"                >> $@
-	$(QUELL)printf "  = $(strip $(MODEL_CREATE_FUNCTION_NAME));\n"                    >> $@
-	$(QUELL)printf "char $(strip $(MODEL_NAME))_compiled_with_version[]\n"            >> $@
-	$(QUELL)printf "  = \"$(VERSION_FULL)\";\n"                                       >> $@
-	$(QUELL)printf "int $(strip $(MODEL_NAME))_language = $(MODEL_LANG);\n"           >> $@
-	$(QUELL)printf "char const * const $(strip $(MODEL_NAME))_driver_name = 0;\n"     >> $@
-	$(QUELL)printf "}\n"                                                              >> $@
+	$(QUELL)printf "extern \"C\"\n"                                                                 > $@
+	$(QUELL)printf "{\n"                                                                           >> $@
+	$(QUELL)printf "char kim_item_type[] = \"stand-alone-model\";\n"                               >> $@
+	$(QUELL)printf "int $(strip $(MODEL_CREATE_FUNCTION_NAME))();\n"                               >> $@
+	$(QUELL)printf "int (* $(strip $(MODEL_NAME))_create_pointer)()\n"                             >> $@
+	$(QUELL)printf "  = $(strip $(MODEL_CREATE_FUNCTION_NAME));\n"                                 >> $@
+	$(QUELL)printf "char $(strip $(MODEL_NAME))_compiled_with_version[]\n"                         >> $@
+	$(QUELL)printf "  = \"$(VERSION_FULL)\";\n"                                                    >> $@
+	$(QUELL)printf "char $(strip $(MODEL_NAME))_language[] = \"$(MODEL_CREATE_FUNCTION_LANG)\";\n" >> $@
+	$(QUELL)printf "char const * const $(strip $(MODEL_NAME))_driver_name = 0;\n"                  >> $@
+	$(QUELL)printf "}\n"                                                                           >> $@
 
 lib$(MODEL_LIB).a: lib$(MODEL_LIB_BUILD).a
 	@printf "Creating... $@.\n"
