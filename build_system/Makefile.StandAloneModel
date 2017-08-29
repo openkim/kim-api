@@ -53,7 +53,7 @@ MODEL_BUILD_TARGET := lib$(MODEL_LIB).a
 MODEL_BUILD_TARGET := $(patsubst %.a,%.so, $(MODEL_BUILD_TARGET))
 
 # Add this file and item makefile to makefiles list
-KIM_MAKE_FILES += $(KIM_DIR)/$(builddir)/Makefile.Model Makefile
+KIM_MAKE_FILES += $(KIM_DIR)/$(builddir)/Makefile.StandAloneModel Makefile
 
 .PHONY: clean install installdirs uninstall kim-item-type model-name
 

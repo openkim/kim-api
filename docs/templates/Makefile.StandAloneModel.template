@@ -69,4 +69,4 @@ LOCALOBJ = <FILL .o files required by the model>
 LOCALCLEAN = <FILL additional files to be deleted on clean, or leave blank>
 
 # load remaining KIM make configuration
-include $(KIM_DIR)/$(builddir)/Makefile.Model
+include $(KIM_DIR)/$(builddir)/Makefile.StandAloneModel

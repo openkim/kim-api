@@ -45,7 +45,7 @@ STEP 1
 Start by reviewing the contents of this directory.  It contains the following
 files:
 
-Makefile.Model.template
+Makefile.StandAloneModel.template
      A template for the Makefile that needs to be placed in a new Model
      directory.
 
@@ -163,7 +163,7 @@ essentially identical. See comments below.)
     % cd ${KD}/src/models/model_Ar_P_Buckingham
     % cp ${KD}/docs/templates/model_El_P_Template.F03 model_Ar_P_Buckingham.F03
     % cp ${KD}/docs/templates/model_El_P_Template.f.kim model_Ar_P_Buckingham.kim
-    % cp ${KD}/docs/templates/Makefile.Model.template Makefile
+    % cp ${KD}/docs/templates/Makefile.StandAloneModel.template Makefile
 
     Note: For a Model written in C, copy the .c and .c.kim templates.
 

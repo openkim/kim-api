@@ -42,8 +42,9 @@ Makefile.Generic
 Makefile.LoadDefaults
      Makefile for loading and setting default values the KIM API build system
 
-Makefile.Model
-     Makefile containing the KIM API build system's definitions for Models
+Makefile.StandAloneModel
+     Makefile containing the KIM API build system's definitions for
+     Stand Alone Models
 
 Makefile.ModelDriver
      Makefile containing the KIM API build system's definitions for Model

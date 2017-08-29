@@ -56,4 +56,4 @@ LOCALCLEAN =
 #LDLIBS   +=
 
 # load remaining KIM make configuration
-include $(KIM_DIR)/$(builddir)/Makefile.Model
+include $(KIM_DIR)/$(builddir)/Makefile.StandAloneModel
