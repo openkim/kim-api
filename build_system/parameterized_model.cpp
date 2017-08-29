@@ -207,7 +207,8 @@ static int process_paramfiles(char* param_file_names, int* nmstrlen)
     }
 
     FILE* fl = fdopen(fileid,"w");
-    fwrite(paramfile_strings[i], paramfile_strings_len[i], 1, fl);
+    fwrite(paramfile_strings[i], sizeof(unsigned char),
+           paramfile_strings_len[i], fl);
     fclose(fl);  // also closed the fileid
   }
 

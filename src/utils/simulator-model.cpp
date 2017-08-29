@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
   if (accessible)
   {
     std::string libFileName
-        = item[1] + "/" + item[0] + "/" + MODELLIBFILE + ".so";
+        = item[IE_DIR] + "/" + item[IE_NAME] + "/" + MODELLIBFILE + ".so";
     model_lib_handle = dlopen(libFileName.c_str(), RTLD_NOW);
   }
   if(!accessible)
@@ -137,8 +137,7 @@ int main(int argc, char* argv[])
       }
       else
       {
-        for (unsigned int i=0; i < *fileLength; ++i)
-          std::cout << filePointer[i];
+        fwrite(filePointer, sizeof(unsigned char), *fileLength, stdout);
       }
     }
   }
