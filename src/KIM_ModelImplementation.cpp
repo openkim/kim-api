@@ -1704,7 +1704,8 @@ int ModelImplementation::WriteParameterFiles()
     free(cstr);
 
     FILE* fl = fdopen(fileid,"w");
-    fwrite(parameterFileStrings[i], parameterFileStringLengths[i], 1, fl);
+    fwrite(parameterFileStrings[i], sizeof(unsigned char),
+           parameterFileStringLengths[i], fl);
     fclose(fl);  // also closed the fileid
   }
 
