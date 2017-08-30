@@ -36,6 +36,7 @@
 #include <vector>
 #include <cstring>
 #include <dlfcn.h>
+#include <cstdio>
 #include "KIM_API_DIRS.h"
 
 void usage(char const* const name)
