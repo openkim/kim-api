@@ -40,7 +40,7 @@ module kim_support_status_f_module
 
   interface
     type(c_ptr) function support_status_str(support_status) &
-      bind(c, name="KIM_Support_StatusString")
+      bind(c, name="KIM_SupportStatusString")
       use, intrinsic :: iso_c_binding
       use kim_support_status_module, only : kim_support_status_type
       implicit none

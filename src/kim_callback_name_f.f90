@@ -42,7 +42,7 @@ module kim_callback_name_f_module
 
   interface
     type(c_ptr) function callback_name_string(callback_name) &
-      bind(c, name="KIM_CallBackNameString")
+      bind(c, name="KIM_CallbackNameString")
       use, intrinsic :: iso_c_binding
       use kim_callback_name_module, only : kim_callback_name_type
       implicit none

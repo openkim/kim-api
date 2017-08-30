@@ -367,7 +367,7 @@ int KIM_Model_Compute(KIM_Model const * const model)
   return pmodel->Compute();
 }
 
-int KIM_Model_ClearInfluenceDistanceAndCutofsThenRefreshModel(
+int KIM_Model_ClearInfluenceDistanceAndCutoffsThenRefreshModel(
     KIM_Model * const model)
 {
   KIM::Model * pmodel = (KIM::Model *) model->p;
@@ -484,14 +484,14 @@ void KIM_Model_SetLogID(KIM_Model * const model, char const * const logID)
   pmodel->SetLogID(logID);
 }
 
-void KIM_Model_PushLogId(KIM_Model * const model,
-                         KIM_LogVerbosity const logVerbosity)
+void KIM_Model_PushLogVerbosity(KIM_Model * const model,
+                                KIM_LogVerbosity const logVerbosity)
 {
   KIM::Model * pmodel = (KIM::Model *) model->p;
   pmodel->PushLogVerbosity(makeLogVerbosityCpp(logVerbosity));
 }
 
-void KIM_Model_PopLogId(KIM_Model * const model)
+void KIM_Model_PopLogVerbosity(KIM_Model * const model)
 {
   KIM::Model * pmodel = (KIM::Model *) model->p;
   pmodel->PopLogVerbosity();
