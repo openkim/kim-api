@@ -56,7 +56,7 @@
 #include "KIM_SpeciesName.h"
 #include "KIM_SupportStatus.h"
 #include "KIM_ArgumentName.h"
-#include "KIM_CallBackName.h"
+#include "KIM_CallbackName.h"
 #include "KIM_ModelDriverCreate.h"
 #include "KIM_ModelRefresh.h"
 #include "KIM_ModelCompute.h"
