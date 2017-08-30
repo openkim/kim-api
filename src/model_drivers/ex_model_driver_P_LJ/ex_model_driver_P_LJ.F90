@@ -236,6 +236,7 @@ integer(c_int), pointer :: nei1part(:)
 integer(c_int), pointer :: particleSpecies(:)
 integer(c_int), pointer :: particleContributing(:)
 
+kim_log_file = __FILE__
 
 ! get model buffer from KIM object
 call kim_model_compute_get_model_buffer_pointer(model_compute, pbuf)
@@ -254,7 +255,8 @@ call kim_model_compute_is_callback_present(model_compute, &
   kim_callback_name_process_d2edr2_term, comp_process_d2edr2, ierr2)
 ierr = ierr + ierr2
 if (ierr /= 0) then
-   LOG_ERROR("get_compute")
+   kim_log_message = "get_compute"
+   LOG_ERROR()
    return
 endif
 
@@ -287,7 +289,8 @@ call kim_model_compute_get_argument_pointer(model_compute, &
   kim_argument_name_partial_particle_energy, n, enepot, ierr2)
 ierr = ierr + ierr2
 if (ierr /= 0) then
-  LOG_ERROR("get_argument_pointer")
+  kim_log_message = "get_argument_pointer"
+  LOG_ERROR()
   return
 endif
 
@@ -321,9 +324,8 @@ endif
 ierr = 1 ! assume an error
 do i = 1,N
    if (particleSpecies(i).ne.speccode) then
-     call kim_model_compute_log(model_compute, &
-       kim_log_verbosity_error, "Unexpected species detected", &
-       __LINE__, __FILE__)
+     kim_log_message = "Unexpected species detected"
+     LOG_ERROR()
      return
    endif
 enddo
@@ -350,7 +352,8 @@ do i = 1, N
       model_compute, 1, i, numnei, nei1part, ierr)
     if (ierr /= 0) then
       ! some sort of problem, exit
-      LOG_ERROR("kim_api_get_neigh")
+      kim_log_message = "kim_api_get_neigh"
+      LOG_ERROR()
       ierr = 1
       return
     endif
@@ -584,14 +587,14 @@ real(c_double) in_epsilon
 real(c_double) in_sigma
 real(c_double) energy_at_cutoff
 
+kim_log_file = __FILE__
 
 ! register numbering
 call kim_model_driver_create_set_model_numbering( &
   model_driver_create, kim_numbering_one_based, ierr)
 if (ierr /= 0) then
-  call kim_model_driver_create_log(model_driver_create, &
-    kim_log_verbosity_error, "Unable to set numbering", &
-    __LINE__, __FILE__)
+  kim_log_message = "Unable to set numbering"
+  LOG_ERROR()
   goto 42
 end if
 
@@ -608,9 +611,8 @@ call kim_model_driver_create_set_argument_support_status( &
   kim_support_status_optional, ierr2)
 ierr = ierr + ierr2
 if (ierr /= 0) then
-  call kim_model_driver_create_log(model_driver_create, &
-    kim_log_verbosity_error, "Unable to register arguments support_statuss", &
-    __LINE__, __FILE__)
+  kim_log_message = "Unable to register arguments support_statuss"
+  LOG_ERROR()
   goto 42
 end if
 
@@ -623,9 +625,8 @@ call kim_model_driver_create_set_callback_support_status( &
   kim_support_status_optional, ierr2)
 ierr = ierr + ierr2
 if (ierr /= 0) then
-  call kim_model_driver_create_log(model_driver_create, &
-    kim_log_verbosity_error, "Unable to register callbacks support_statuss", &
-    __LINE__, __FILE__)
+  kim_log_message = "Unable to register callbacks support_statuss"
+  LOG_ERROR()
   goto 42
 end if
 
@@ -642,9 +643,8 @@ call kim_model_driver_create_set_destroy_pointer( &
   c_funloc(destroy), ierr2)
 ierr = ierr + ierr2
 if (ierr /= 0) then
-  call kim_model_driver_create_log(model_driver_create, &
-    kim_log_verbosity_error, "Unable to store callback pointers", &
-    __LINE__, __FILE__)
+  kim_log_message = "Unable to store callback pointers"
+  LOG_ERROR()
   goto 42
 end if
 
@@ -653,9 +653,8 @@ end if
 call kim_model_driver_create_get_number_of_parameter_files( &
   model_driver_create, number_of_parameter_files)
 if (number_of_parameter_files .ne. 1) then
-  call kim_model_driver_create_log(model_driver_create, &
-    kim_log_verbosity_error, "Wrong number of parameter files", &
-    __LINE__, __FILE__)
+  kim_log_message = "Wrong number of parameter files"
+  LOG_ERROR()
   ierr = 1
   goto 42
 end if
@@ -665,9 +664,8 @@ end if
 call kim_model_driver_create_get_parameter_file_name( &
   model_driver_create, 1, parameter_file_name, ierr)
 if (ierr /= 0) then
-  call kim_model_driver_create_log(model_driver_create, &
-    kim_log_verbosity_error, "Unable to get parameter file name", &
-    __LINE__, __FILE__)
+  kim_log_message = "Unable to get parameter file name"
+  LOG_ERROR()
   ierr = 1
   goto 42
 end if
@@ -682,9 +680,8 @@ goto 200
 100 continue
 ! reading parameters failed
 ierr = 1
-call kim_model_driver_create_log(model_driver_create, &
-  kim_log_verbosity_error, "Unable to read LJ parameters", &
-  __LINE__, __FILE__)
+kim_log_message = "Unable to read LJ parameters"
+LOG_ERROR()
 goto 42
 
 200 continue
@@ -693,18 +690,16 @@ goto 42
 ! register species
 call kim_species_name_from_string(in_species, species_name)
 if (ierr /= 0) then
-  call kim_model_driver_create_log(model_driver_create, &
-    kim_log_verbosity_error, "Unable to set species_name", &
-    __LINE__, __FILE__)
+  kim_log_message = "Unable to set species_name"
+  LOG_ERROR()
   goto 42
 end if
 
 call kim_model_driver_create_set_species_code( &
   model_driver_create, species_name, speccode, ierr)
 if (ierr /= 0) then
-  call kim_model_driver_create_log(model_driver_create, &
-    kim_log_verbosity_error, "Unable to set species code", &
-    __LINE__, __FILE__)
+  kim_log_message = "Unable to set species code"
+  LOG_ERROR()
   goto 42
 end if
 
@@ -723,9 +718,8 @@ call kim_model_driver_create_convert_unit( &
   requested_time_unit, &
   1.0_cd, 0.0_cd, 0.0_cd, 0.0_cd, 0.0_cd, factor, ierr)
 if (ierr /= 0) then
-call kim_model_driver_create_log(model_driver_create, &
-  kim_log_verbosity_error, "kim_api_convert_to_act_unit", &
-  __LINE__, __FILE__)
+  kim_log_message = "kim_api_convert_to_act_unit"
+  LOG_ERROR()
   goto 42
 endif
 in_cutoff = in_cutoff * factor
@@ -744,9 +738,8 @@ call kim_model_driver_create_convert_unit( &
   requested_time_unit, &
   0.0_cd, 1.0_cd, 0.0_cd, 0.0_cd, 0.0_cd, factor, ierr)
 if (ierr /= 0) then
-call kim_model_driver_create_log(model_driver_create, &
-  kim_log_verbosity_error, "kim_api_convert_to_act_unit", &
-  __LINE__, __FILE__)
+  kim_log_message = "kim_api_convert_to_act_unit"
+  LOG_ERROR()
   goto 42
 endif
 in_epsilon = in_epsilon * factor
@@ -765,9 +758,8 @@ call kim_model_driver_create_convert_unit( &
   requested_time_unit, &
   1.0_cd, 0.0_cd, 0.0_cd, 0.0_cd, 0.0_cd, factor, ierr)
 if (ierr /= 0) then
-call kim_model_driver_create_log(model_driver_create, &
-  kim_log_verbosity_error, "kim_api_convert_to_act_unit", &
-  __LINE__, __FILE__)
+  kim_log_message = "kim_api_convert_to_act_unit"
+  LOG_ERROR()
   goto 42
 endif
 in_sigma = in_sigma * factor
@@ -804,28 +796,24 @@ call kim_model_driver_create_set_model_buffer_pointer( &
 call kim_model_driver_create_set_parameter_pointer( &
   model_driver_create, buf%pcutoff, "cutoff", ierr)
 if (ierr /= 0) then
-  call kim_model_driver_create_log(model_driver_create, &
-  kim_log_verbosity_error, "set_parameter", &
-  __LINE__, __FILE__)
+  kim_log_message = "set_parameter"
+  LOG_ERROR()
    goto 42
 endif
 
 call kim_model_driver_create_set_parameter_pointer( &
   model_driver_create, buf%epsilon, "epsilon", ierr)
 if (ierr /= 0) then
-  call kim_model_driver_create_log(model_driver_create, &
-  kim_log_verbosity_error, "set_parameter", &
-  __LINE__, __FILE__)
-
+  kim_log_message = "set_parameter"
+  LOG_ERROR()
    goto 42
 endif
 
 call kim_model_driver_create_set_parameter_pointer( &
   model_driver_create, buf%sigma, "sigma", ierr)
 if (ierr /= 0) then
-  call kim_model_driver_create_log(model_driver_create, &
-  kim_log_verbosity_error, "set_parameter", &
-  __LINE__, __FILE__)
+  kim_log_message = "set_parameter"
+  LOG_ERROR()
    goto 42
 endif
 

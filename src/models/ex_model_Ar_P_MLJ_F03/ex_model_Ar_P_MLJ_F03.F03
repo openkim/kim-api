@@ -191,6 +191,8 @@ integer(c_int), pointer :: particleSpecies(:)
 integer(c_int), pointer :: particleContributing(:)
 real(c_double), pointer :: virial(:)
 
+kim_log_file = __FILE__
+
 ! Unpack data from KIM object
 !
 ierr = 0
@@ -217,9 +219,10 @@ call kim_model_compute_get_argument_pointer(model_compute, &
 ierr = ierr + ierr2
 call kim_model_compute_get_argument_pointer(model_compute, &
   kim_argument_name_partial_virial, 6, virial, ierr2)
-  ierr = ierr + ierr2
+ierr = ierr + ierr2
 if (ierr /= 0) then
-  LOG_ERROR("get data")
+  kim_log_message = "get data"
+  LOG_ERROR()
   return
 endif
 
@@ -251,12 +254,11 @@ end if
 !
 ierr = 1 ! assume an error
 do i = 1,N
-   if (particleSpecies(i).ne.speccode) then
-     call kim_model_compute_log(model_compute, &
-       kim_log_verbosity_error, "Unexpected species detected", &
-       __LINE__, __FILE__)
-     return
-   endif
+  if (particleSpecies(i).ne.speccode) then
+    kim_log_message = "Unexpected species detected"
+    LOG_ERROR()
+    return
+  endif
 enddo
 ierr = 0 ! everything is ok
 
@@ -280,7 +282,8 @@ do i = 1, N
       model_compute, 1, i, numnei, nei1part, ierr)
     if (ierr /= 0) then
       ! some sort of problem, exit
-      LOG_ERROR("GetNeighborList failed")
+      kim_log_message = "GetNeighborList failed"
+      LOG_ERROR()
       ierr = 1
       return
     endif
@@ -369,9 +372,12 @@ subroutine model_destroy_func(model_destroy, ierr) bind(c)
 
   type(buffer_type), pointer :: buf; type(c_ptr) :: pbuf
 
+  kim_log_file = __FILE__
+
   call kim_model_destroy_get_model_buffer_pointer(model_destroy, pbuf)
   call c_f_pointer(pbuf, buf)
-  LOG_INFORMATION("deallocating model buffer")
+  kim_log_message = "deallocating model buffer"
+  LOG_INFORMATION()
   deallocate(buf)
   ierr = 0  ! everything is good
 end subroutine model_destroy_func
@@ -394,10 +400,13 @@ subroutine model_refresh_func(model_refresh, ierr) bind(c)
 
   type(buffer_type), pointer :: buf; type(c_ptr) :: pbuf
 
+  kim_log_file = __FILE__
+
   call kim_model_refresh_get_model_buffer_pointer(model_refresh, pbuf)
   call c_f_pointer(pbuf, buf)
 
-  LOG_INFORMATION("Resettings influence distance and cutoffs")
+  kim_log_message = "Resettings influence distance and cutoffs"
+  LOG_INFORMATION()
   call kim_model_refresh_set_influence_distance_pointer( &
     model_refresh, buf%cutoff(1))
   call kim_model_refresh_set_cutoffs_pointer(model_refresh, 1, buf%cutoff)
@@ -440,6 +449,8 @@ integer(c_int), intent(out) :: ierr
 !-- KIM variables
 integer(c_int) :: ierr2
 type(buffer_type), pointer :: buf
+
+kim_log_file = __FILE__
 
 ierr2 = 0
 
@@ -511,10 +522,8 @@ call kim_model_create_set_cutoffs_pointer(model_create, 1, &
 
 if (ierr /= 0) then
   ierr = 1
-  ! LOG_ERROR("Unable to successfully initialize model")
-  call kim_model_create_log(model_create, &
-    kim_log_verbosity_error, "Unable to successfully initialize model", &
-    __LINE__, __FILE__)
+  kim_log_message = "Unable to successfully initialize model"
+  LOG_ERROR()
 endif
 
 return

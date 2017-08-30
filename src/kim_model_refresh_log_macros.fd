@@ -32,66 +32,62 @@
 
 #include "KIM_LOG_DEFINES.inc"
 
-#ifndef THIS_FILE_NAME
-#define THIS_FILE_NAME __FILE__
-#endif
-
 #ifdef LOG_SILENT
 #undef LOG_SILENT
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_SILENT_)
-#define LOG_SILENT(message)\
-call kim_model_refresh_log(model_refresh, kim_log_verbosity_Silent, message, __LINE__, THIS_FILE_NAME)
+#define LOG_SILENT()\
+call kim_model_refresh_log(model_refresh, kim_log_verbosity_silent, kim_log_message, __LINE__, kim_log_file)
 #else
-#define LOG_SILENT(message)
+#define LOG_SILENT()
 #endif
 
 #ifdef LOG_FATAL
 #undef LOG_FATAL
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_FATAL_)
-#define LOG_FATAL(message)\
-call kim_model_refresh_log(model_refresh, kim_log_verbosity_fatal, message, __LINE__, THIS_FILE_NAME)
+#define LOG_FATAL()\
+call kim_model_refresh_log(model_refresh, kim_log_verbosity_fatal, kim_log_message, __LINE__, kim_log_file)
 #else
-#define LOG_FATAL(message)
+#define LOG_FATAL()
 #endif
 
 #ifdef LOG_ERROR
 #undef LOG_ERROR
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_ERROR_)
-#define LOG_ERROR(message)\
-call kim_model_refresh_log(model_refresh, kim_log_verbosity_error, message, __LINE__, THIS_FILE_NAME)
+#define LOG_ERROR()\
+call kim_model_refresh_log(model_refresh, kim_log_verbosity_error, kim_log_message, __LINE__, kim_log_file)
 #else
-#define LOG_ERROR(message)
+#define LOG_ERROR()
 #endif
 
 #ifdef LOG_WARNING
 #undef LOG_WARNING
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_WARNING_)
-#define LOG_WARNING(message)\
-call kim_model_refresh_log(model_refresh, kim_log_verbosity_warning, message, __LINE__, THIS_FILE_NAME)
+#define LOG_WARNING()\
+call kim_model_refresh_log(model_refresh, kim_log_verbosity_warning, kim_log_message, __LINE__, kim_log_file)
 #else
-#define LOG_WARNING(message)
+#define LOG_WARNING()
 #endif
 
 #ifdef LOG_INFORMATION
 #undef LOG_INFORMATION
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_INFORMATION_)
-#define LOG_INFORMATION(message)\
-call kim_model_refresh_log(model_refresh, kim_log_verbosity_information, message, __LINE__, THIS_FILE_NAME)
+#define LOG_INFORMATION()\
+call kim_model_refresh_log(model_refresh, kim_log_verbosity_information, kim_log_message, __LINE__, kim_log_file)
 #else
-#define LOG_INFORMATION(message)
+#define LOG_INFORMATION()
 #endif
 
 #ifdef LOG_DEBUG
 #undef LOG_DEBUG
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_DEBUG_)
-#define LOG_DEBUG(message)\
-call kim_model_refresh_log(model_refresh, kim_log_verbosity_debug, message, __LINE__, THIS_FILE_NAME)
+#define LOG_DEBUG()\
+call kim_model_refresh_log(model_refresh, kim_log_verbosity_debug, kim_log_message, __LINE__, kim_log_file)
 #else
-#define LOG_DEBUG(message)
+#define LOG_DEBUG()
 #endif

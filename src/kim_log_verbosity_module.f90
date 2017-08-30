@@ -52,7 +52,10 @@ module kim_log_verbosity_module
     kim_log_verbosity_error, &
     kim_log_verbosity_warning, &
     kim_log_verbosity_information, &
-    kim_log_verbosity_debug
+    kim_log_verbosity_debug,&
+
+    kim_log_file, &
+    kim_log_message
 
   type, bind(c) :: kim_log_verbosity_type
     integer(c_int) :: log_verbosity_id
@@ -103,6 +106,9 @@ module kim_log_verbosity_module
       character(len=*), intent(out) :: type_string
     end subroutine kim_log_verbosity_string
   end interface
+
+  character(len=4096) :: kim_log_file
+  character(len=65536) :: kim_log_message
 
 contains
   logical function kim_log_verbosity_less_than(left, right)
