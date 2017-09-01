@@ -539,7 +539,7 @@ case $command in
     fi
     ;;
   set-user-drivers-dir)
-    if test $# -lt 3; then
+    if test $# -lt 2; then
       usage
       exit 1
     else
