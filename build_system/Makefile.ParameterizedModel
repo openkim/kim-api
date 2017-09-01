@@ -159,8 +159,8 @@ lib$(MODEL_LIB_BUILD).a: $(PARAM_MODEL_NAME).o kim_str.o
 lib$(MODEL_LIB_BUILD).so: lib$(MODEL_LIB_BUILD).a $(EXPORT_LIST_NAME)
 	@printf "Creating... $@.\n"
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDSHAREDFLAG) \
-                      $(LDEXPORTLISTFLAG) $(LDFLAGS) $(OUTPUTINFLAG) lib$(MODEL_LIB_BUILD).so \
-                      $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) $(LDLIBS)
+                      $(LDEXPORTLISTFLAG) $(LDFLAGS) -L$(libdir) $(OUTPUTINFLAG) lib$(MODEL_LIB_BUILD).so \
+                      $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) $(LDLIBS) -l$(KIM_LIB)
 
 $(EXPORT_LIST_NAME): $(KIM_MAKE_FILES)
 	@printf "Creating... intermediate file... $@.\n"
