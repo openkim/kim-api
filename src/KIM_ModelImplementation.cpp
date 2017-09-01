@@ -138,6 +138,8 @@ KIM_TimeUnit makeTimeUnitC(KIM::TimeUnit const timeUnit)
 }
 }  // namespace
 
+
+#include "KIM_ModelImplementationLogMacros.hpp"
 namespace KIM
 {
 // Forward declarations
@@ -167,6 +169,7 @@ int ModelImplementation::Create(
   if (error)
   {
     delete pModelImplementation;
+    // LOG_ERROR("");  @@@@ need access to a log object
     return true;
   }
 
@@ -213,7 +216,9 @@ void ModelImplementation::Destroy(
 
   int error = (*modelImplementation)->ModelDestroy();
   if (error)
-    ;// @@@@@ log message
+  {
+    // LOG_ERROR(""); @@@ need access to a log object
+  }
 
   delete *modelImplementation;
   *modelImplementation = 0;
@@ -309,6 +314,18 @@ int ModelImplementation::SetArgumentSupportStatus(
 {
   argumentSupportStatus_[argumentName] = supportStatus;
 
+  // @@@ do lots of error checking
+
+  if (supportStatus != SUPPORT_STATUS::notSupported)
+  {
+    auto result = argumentPointer_.find(argumentName);
+
+    if (result == argumentPointer_.end())
+    {
+      argumentPointer_[argumentName] = 0;
+    }
+  }
+
   return false;
 }
 
@@ -320,6 +337,7 @@ int ModelImplementation::GetArgumentSupportStatus(
 
   if (result == argumentSupportStatus_.end())
   {
+    LOG_ERROR("");
     return true;
   }
   else
@@ -345,6 +363,7 @@ int ModelImplementation::GetCallbackSupportStatus(
 
   if (result == callbackSupportStatus_.end())
   {
+    LOG_ERROR("");
     return true;
   }
   else
@@ -401,7 +420,11 @@ void ModelImplementation::GetUnits(LengthUnit * const lengthUnit,
 int ModelImplementation::GetNumberOfParameterFiles(
     int * const numberOfParameterFiles) const
 {
-  if (modelType_ != ModelLibrary::ITEM_TYPE::PARAMETERIZED_MODEL) return true;
+  if (modelType_ != ModelLibrary::ITEM_TYPE::PARAMETERIZED_MODEL)
+  {
+    LOG_ERROR("");
+    return true;
+  }
 
   *numberOfParameterFiles = numberOfParameterFiles_;
   return false;
@@ -410,11 +433,15 @@ int ModelImplementation::GetNumberOfParameterFiles(
 int ModelImplementation::GetParameterFileName(
     int const index, std::string * const parameterFileName) const
 {
-  if (modelType_ != ModelLibrary::ITEM_TYPE::PARAMETERIZED_MODEL) return true;
+  if (modelType_ != ModelLibrary::ITEM_TYPE::PARAMETERIZED_MODEL)
+  {
+    LOG_ERROR("");
+    return true;
+  }
 
   if ((index < 0) || (index >= numberOfParameterFiles_))
   {
-    //@@@@ log bad index
+    LOG_ERROR("");
     return true;
   }
 
@@ -501,6 +528,7 @@ int ModelImplementation::GetParameterExtentAndPointer(
 int ModelImplementation::SetArgumentPointer(ArgumentName const argumentName,
                                             int const * const ptr)
 {
+  //@@@ check for existence
   argumentPointer_[argumentName]
       = reinterpret_cast<void *>(const_cast<int *>(ptr));
 
@@ -510,6 +538,7 @@ int ModelImplementation::SetArgumentPointer(ArgumentName const argumentName,
 int ModelImplementation::SetArgumentPointer(ArgumentName const argumentName,
                                             double const * const ptr)
 {
+  //@@@ check for existence
   argumentPointer_[argumentName]
       = reinterpret_cast<void *>(const_cast<double *>(ptr));
 
@@ -524,7 +553,8 @@ int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
   if (result == argumentPointer_.end())
   {
     *ptr = 0;
-    return false;
+    LOG_ERROR(argumentName.String());
+    return true;
   }
   else
   {
@@ -541,7 +571,8 @@ int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
   if (result == argumentPointer_.end())
   {
     *ptr = 0;
-    return false;
+    LOG_ERROR("");
+    return true;
   }
   else
   {
@@ -558,7 +589,8 @@ int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
   if (result == argumentPointer_.end())
   {
     *ptr = 0;
-    return false;
+    LOG_ERROR(argumentName.String());
+    return true;
   }
   else
   {
@@ -575,7 +607,8 @@ int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
   if (result == argumentPointer_.end())
   {
     *ptr = 0;
-    return false;
+    LOG_ERROR(argumentName.String());
+    return true;
   }
   else
   {
@@ -597,6 +630,7 @@ int ModelImplementation::SetCallbackPointer(CallbackName const callbackName,
       ||
       (result->second == SUPPORT_STATUS::notSupported))
   {
+    LOG_ERROR("");
     return true;
   }
   else
@@ -662,11 +696,15 @@ int ModelImplementation::Compute() const
   }
   else
   {
+    LOG_ERROR("");
     return true;
   }
 
   if (error)
+  {
+    LOG_ERROR("");
     return true;
+  }
   else
     return false;
 }
@@ -710,11 +748,15 @@ int ModelImplementation::ClearInfluenceDistanceAndCutoffsThenRefreshModel()
   }
   else
   {
+    LOG_ERROR("");
     return true;
   }
 
   if (error)
+  {
+    LOG_ERROR("");
     return true;
+  }
   else
     return false;
 }
@@ -728,7 +770,7 @@ int ModelImplementation::GetNeighborList(int const neighborListIndex,
   auto languageResult = callbackLanguage_.find(CALLBACK_NAME::GetNeighborList);
   if (languageResult == callbackLanguage_.end())
   {
-    // @@@@ log message
+    LOG_ERROR("");
     return true;
   }
   LanguageName languageName = languageResult->second;
@@ -785,10 +827,15 @@ int ModelImplementation::GetNeighborList(int const neighborListIndex,
   }
   else
   {
+    LOG_ERROR("");
     return true;
   }
 
-  if (error) return true;
+  if (error)
+  {
+    LOG_ERROR("");
+    return true;
+  }
 
   // account for numbering differences if needed
   if (simulatorNumbering_ != modelNumbering_)
@@ -815,7 +862,7 @@ int ModelImplementation::ProcessDEDrTerm(double const de, double const r,
   auto languageResult = callbackLanguage_.find(CALLBACK_NAME::ProcessDEDrTerm);
   if (languageResult == callbackLanguage_.end())
   {
-    // @@@@ log message
+    LOG_ERROR("");
     return true;
   }
   LanguageName languageName = languageResult->second;
@@ -856,16 +903,21 @@ int ModelImplementation::ProcessDEDrTerm(double const de, double const r,
   }
   else
   {
+    LOG_ERROR("");
     return true;
   }
 
   if (error)
+  {
+    LOG_ERROR("");
     return true;
+  }
   else
     return false;
 }
 
-int ModelImplementation::ProcessD2EDr2Term(double const de, double const * const r,
+int ModelImplementation::ProcessD2EDr2Term(double const de,
+                                           double const * const r,
                                            double const * const dx,
                                            int const * const i,
                                            int const * const j) const
@@ -874,7 +926,7 @@ int ModelImplementation::ProcessD2EDr2Term(double const de, double const * const
       .find(CALLBACK_NAME::ProcessD2EDr2Term);
   if (languageResult == callbackLanguage_.end())
   {
-    // @@@@ log message
+    LOG_ERROR("");
     return true;
   }
   LanguageName languageName = languageResult->second;
@@ -919,11 +971,15 @@ int ModelImplementation::ProcessD2EDr2Term(double const de, double const * const
   }
   else
   {
+    LOG_ERROR("");
     return true;
   }
 
   if (error)
+  {
+    LOG_ERROR("");
     return true;
+  }
   else
     return false;
 }
@@ -1331,10 +1387,18 @@ int ModelImplementation::ModelCreate(
   modelName_ = modelName;
 
   int error = SetSimulatorNumbering(numbering);
-  if (error) return true;
+  if (error)
+  {
+    LOG_ERROR("");
+    return true;
+  }
 
   error = modelLibrary_->open(true, modelName);
-  if (error) return true;
+  if (error)
+  {
+    LOG_ERROR("");
+    return true;
+  }
 
   error = modelLibrary_->getModelType(&modelType_);
   switch (modelType_)
@@ -1347,7 +1411,7 @@ int ModelImplementation::ModelCreate(
                                         requestedTimeUnit);
       if (error)
       {
-        //@@@@ log error
+        LOG_ERROR("");
         return true;
       }
       break;
@@ -1359,21 +1423,22 @@ int ModelImplementation::ModelCreate(
                                            requestedTimeUnit);
       if (error)
       {
-        //@@@@ log error
+        LOG_ERROR("");
         return true;
       }
       break;
     case ModelLibrary::ITEM_TYPE::MODEL_DRIVER:
-      // @@@@@ log error
+      LOG_ERROR("");
       return true;
       break;
     case ModelLibrary::ITEM_TYPE::SIMULATOR_MODEL:
-      // @@@@@ log error
+      LOG_ERROR("");
       return true;
       break;
     default:
-      // @@@@ log error
+      LOG_ERROR("");
       return true;
+      break;
   }
 
   // set numberingOffset_
@@ -1425,11 +1490,15 @@ int ModelImplementation::ModelDestroy()
   }
   else
   {
+    LOG_ERROR("");
     return true;
   }
 
   if (error)
+  {
+    LOG_ERROR("");
     return true;
+  }
   else
     return false;
 }
@@ -1445,7 +1514,11 @@ int ModelImplementation::InitializeStandAloneModel(
   func * functionPointer = 0;
   int error = modelLibrary_->getModelCreateFunctionPointer(
       &languageName, &functionPointer);
-  if (error) return true;
+  if (error)
+  {
+    LOG_ERROR("");
+    return true;
+  }
 
   typedef int ModelCreateCpp(
       KIM::ModelCreate * const modelCreate,
@@ -1514,11 +1587,12 @@ int ModelImplementation::InitializeStandAloneModel(
   }
   else
   {
+    LOG_ERROR("");
     return true;
   }
   if (error)
   {
-    //@@@@@ log error
+    LOG_ERROR("");
     return true;
   }
   else
@@ -1538,7 +1612,7 @@ int ModelImplementation::InitializeParameterizedModel(
   int error = modelLibrary_->getModelDriverName(&modelDriverName_);
   if (error)
   {
-    //@@@@ log error
+    LOG_ERROR("");
     return true;
   }
 
@@ -1546,7 +1620,7 @@ int ModelImplementation::InitializeParameterizedModel(
   error = WriteParameterFiles();
   if (error)
   {
-    //@@@ log error
+    LOG_ERROR("");
     return true;
   }
 
@@ -1554,13 +1628,13 @@ int ModelImplementation::InitializeParameterizedModel(
   error = modelLibrary_->close();
   if (error)
   {
-    //@@@@ log error
+    LOG_ERROR("");
     return true;
   }
   error = modelLibrary_->open(false, modelDriverName_);
   if (error)
   {
-    //@@@@ log error
+    LOG_ERROR("");
     return true;
   }
   // check that it is a driver
@@ -1568,7 +1642,7 @@ int ModelImplementation::InitializeParameterizedModel(
   error = modelLibrary_->getModelType(&itemType);
   if ((error) || (itemType != ModelLibrary::ITEM_TYPE::MODEL_DRIVER))
   {
-    //@@@@@ log error
+    LOG_ERROR("");
     return true;
   }
 
@@ -1578,7 +1652,7 @@ int ModelImplementation::InitializeParameterizedModel(
       &languageName, &functionPointer);
   if (error)
   {
-    //@@@@ log error
+    LOG_ERROR("");
     return true;
   }
 
@@ -1650,11 +1724,12 @@ int ModelImplementation::InitializeParameterizedModel(
   }
   else
   {
+    LOG_ERROR("");
     return true;
   }
   if (error)
   {
-    //@@@@@ log error
+    LOG_ERROR("");
     return true;
   }
 
@@ -1682,7 +1757,11 @@ int ModelImplementation::WriteParameterFiles()
     unsigned char const * strPtr;
     unsigned int length;
     int error = modelLibrary_->getParameterFileString(i, &length , &strPtr);
-    if (error) return true;
+    if (error)
+    {
+      LOG_ERROR("");
+      return true;
+    }
     parameterFileStrings.push_back(strPtr);
     parameterFileStringLengths.push_back(length);
   }
@@ -1696,8 +1775,8 @@ int ModelImplementation::WriteParameterFiles()
     int fileid = mkstemp(cstr);
     if (fileid == -1)
     {
-      // @@@@@ log error
       free(cstr);
+      LOG_ERROR("");
       return true;
     }
     parameterFileNames_.push_back(cstr);
