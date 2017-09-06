@@ -1981,8 +1981,34 @@ int KIM_API_model::get_model_kim_str_len(const char* const modelname,
       std::cout<< "* Info (KIM_API_model::get_model_kim_str_len): Found Model shared library file for Model name: '" << modelname << "'" << std::endl;
     }
 
+    char const * const model_kim_item_type = (char const * const) dlsym(tmp_model_lib_handle, "kim_item_type");
+    char * dlsym_error = dlerror();
+    if (dlsym_error) {
+      std::cout << "* Error (KIM_API_model::get_model_kim_str): Cannont load symbol: " << dlsym_error << std::endl;
+      dlclose(tmp_model_lib_handle);
+
+      //redirecting back to > std::cout
+      std::cout.rdbuf(backup); filekimlog.close();
+
+      *kimStringLen = 0;
+      return KIM_STATUS_FAIL;
+    }
+    else if (0 == strcmp("simulator-model", model_kim_item_type)) {
+      std::cout << "* Error (KIM_API_model::get_model_kim_str): Simulator Models cannot be used with get_model_kim_str." << std::endl;
+      dlclose(tmp_model_lib_handle);
+
+      //redirecting back to > std::cout
+      std::cout.rdbuf(backup); filekimlog.close();
+
+      *kimStringLen = 0;
+      return KIM_STATUS_FAIL;
+    }
+    else {
+      // OK!
+    }
+
     const unsigned int* const model_str_len = (const unsigned int* const) dlsym(tmp_model_lib_handle, model_kim_str_len_name);
-    char* dlsym_error = dlerror();
+    dlsym_error = dlerror();
     if (dlsym_error) {
       std::cout << "* Error (KIM_API_model::get_model_kim_str): Cannot load symbol: " << dlsym_error <<std::endl;
       dlclose(tmp_model_lib_handle);
@@ -2049,9 +2075,34 @@ int KIM_API_model::get_model_kim_str(const char* const modelname,
       std::cout<< "* Info (KIM_API_model::get_model_kim_str): Found Model shared library file for Model name: '" << modelname << "'" <<std::endl;
     }
 
+    char const * const model_kim_item_type = (char const * const) dlsym(tmp_model_lib_handle, "kim_item_type");
+    char * dlsym_error = dlerror();
+    if (dlsym_error) {
+      std::cout << "* Error (KIM_API_model::get_model_kim_str): Cannont load symbol: " << dlsym_error << std::endl;
+      dlclose(tmp_model_lib_handle);
+
+      //redirecting back to > std::cout
+      std::cout.rdbuf(backup); filekimlog.close();
+
+      *kimString = NULL;
+      return KIM_STATUS_FAIL;
+    }
+    else if (0 == strcmp("simulator-model", model_kim_item_type)) {
+      std::cout << "* Error (KIM_API_model::get_model_kim_str): Simulator Models cannot be used with get_model_kim_str." << std::endl;
+      dlclose(tmp_model_lib_handle);
+
+      //redirecting back to > std::cout
+      std::cout.rdbuf(backup); filekimlog.close();
+
+      *kimString = NULL;
+      return KIM_STATUS_FAIL;
+    }
+    else {
+      // OK!
+    }
 
     const unsigned int* const model_str_len = (const unsigned int* const) dlsym(tmp_model_lib_handle, model_kim_str_len_name);
-    char* dlsym_error = dlerror();
+    dlsym_error = dlerror();
     if (dlsym_error) {
         std::cout << "* Error (KIM_API_model::get_model_kim_str): Cannot load symbol: " << dlsym_error <<std::endl;
         dlclose(tmp_model_lib_handle);
@@ -2438,13 +2489,37 @@ int KIM_API_model::model_init(){
       return KIM_STATUS_FAIL;
     }
 
+    char const * const model_kim_item_type = (char const * const) dlsym(model_lib_handle, "kim_item_type");
+    char const * dlsym_error = dlerror();
+    if (dlsym_error) {
+      std::cout << "* Error (KIM_API_model::model_init): Cannont load symbol: " << dlsym_error << std::endl;
+      dlclose(model_lib_handle);
+
+      //redirecting back to > std::cout
+      std::cout.rdbuf(backup); filekimlog.close();
+
+      return KIM_STATUS_FAIL;
+    }
+    else if (0 == strcmp("simulator-model", model_kim_item_type)) {
+      std::cout << "* Error (KIM_API_model::model_init): Simulator Models cannot be used with model_init." << std::endl;
+      dlclose(model_lib_handle);
+
+      //redirecting back to > std::cout
+      std::cout.rdbuf(backup); filekimlog.close();
+
+      return KIM_STATUS_FAIL;
+    }
+    else {
+      // OK!
+    }
+
     std::cout<<"* Info: (KIM_API_model::model_init): call dynamically linked initialize routine for:"<<modelname<<std::endl;
     std::cout<<"               from the shared library in:"<< item[1] << "/" << item[0] <<std::endl;
     sprintf(model_init_routine_name,"%s_init_pointer",modelname);
 
     typedef int (*Model_Init)(void **);//prototype for model_init
     Model_Init mdl_init = *((Model_Init*)dlsym(model_lib_handle,model_init_routine_name));
-    const char *dlsym_error = dlerror();
+    dlsym_error = dlerror();
     if (dlsym_error) {
         std::cout << "* Error (KIM_API_model::model_init): Cannot load symbol: " << dlsym_error <<std::endl;
         dlclose(model_lib_handle);

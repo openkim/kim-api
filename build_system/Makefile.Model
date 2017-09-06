@@ -72,6 +72,7 @@ init_wrapper.cpp: $(KIM_MAKE_FILES)
 	@printf "Creating... intermediate file... $@.\n"
 	$(QUELL)printf "extern \"C\"\n"                                                    > $@
 	$(QUELL)printf "{\n"                                                              >> $@
+	$(QUELL)printf "   char kim_item_type[] = \"stand-alone-model\";\n"               >> $@
 	$(QUELL)printf "   int $(strip $(MODEL_INIT_FUNCTION_NAME))(void *kimmdl);\n"     >> $@
 	$(QUELL)printf "   int (* $(strip $(MODEL_NAME))_init_pointer)(void*) =\n"        >> $@
 	$(QUELL)printf "      $(strip $(MODEL_INIT_FUNCTION_NAME));\n"                    >> $@
@@ -100,7 +101,8 @@ lib$(MODEL_LIB_BUILD).so: lib$(MODEL_LIB_BUILD).a $(EXPORT_LIST_NAME)
 $(EXPORT_LIST_NAME): $(KIM_MAKE_FILES)
 	@printf "Creating... intermediate file... $@.\n"
 ifeq (darwin, $(KIM_SYSTEMLINKER))
-	$(QUELL)printf "_$(MODEL_NAME)_init_pointer\n"                       > $@
+	$(QUELL)printf "_kim_item_type\n"                                    > $@
+	$(QUELL)printf "_$(MODEL_NAME)_init_pointer\n"                      >> $@
 	$(QUELL)printf "_$(MODEL_NAME)_kim_str\n"                           >> $@
 	$(QUELL)printf "_$(MODEL_NAME)_kim_str_len\n"                       >> $@
 	$(QUELL)printf "_$(MODEL_NAME)_kim_str_len\n"                       >> $@
@@ -108,6 +110,7 @@ ifeq (darwin, $(KIM_SYSTEMLINKER))
 else # everything else (linux and freebsd)
 	$(QUELL)printf "{\n"                                                 > $@
 	$(QUELL)printf "   global:\n"                                       >> $@
+	$(QUELL)printf "           kim_item_type;\n"                        >> $@
 	$(QUELL)printf "           $(MODEL_NAME)_init_pointer;\n"           >> $@
 	$(QUELL)printf "           $(MODEL_NAME)_kim_str;\n"                >> $@
 	$(QUELL)printf "           $(MODEL_NAME)_kim_str_len;\n"            >> $@

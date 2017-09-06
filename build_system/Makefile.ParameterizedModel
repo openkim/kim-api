@@ -165,13 +165,15 @@ lib$(MODEL_LIB_BUILD).so: lib$(MODEL_LIB_BUILD).a $(EXPORT_LIST_NAME)
 $(EXPORT_LIST_NAME): $(KIM_MAKE_FILES)
 	@printf "Creating... intermediate file... $@.\n"
 ifeq (darwin, $(KIM_SYSTEMLINKER))
-	$(QUELL)printf "_$(MODEL_NAME)_init_pointer\n"             > $@
+	$(QUELL)printf "_kim_item_type\n"                          > $@
+	$(QUELL)printf "_$(MODEL_NAME)_init_pointer\n"            >> $@
 	$(QUELL)printf "_$(MODEL_NAME)_kim_str\n"                 >> $@
 	$(QUELL)printf "_$(MODEL_NAME)_kim_str_len\n"             >> $@
 	$(QUELL)printf "_$(MODEL_NAME)_compiled_with_version\n"   >> $@
 else # everything else (linux and freebsd)
 	$(QUELL)printf "{\n"                                                > $@
 	$(QUELL)printf "   global:\n"                                       >> $@
+	$(QUELL)printf "           kim_item_type;\n"                        >> $@
 	$(QUELL)printf "           $(MODEL_NAME)_init_pointer;\n"           >> $@
 	$(QUELL)printf "           $(MODEL_NAME)_kim_str;\n"                >> $@
 	$(QUELL)printf "           $(MODEL_NAME)_kim_str_len;\n"            >> $@

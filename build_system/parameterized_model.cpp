@@ -54,6 +54,8 @@ static func_ptr driver_destroy;
 
 extern "C" {
 
+char kim_item_type[] = "parameterized-model";
+
   char MODEL_NAME_STR_compiled_with_version[] =
       "VERSION_FULL_STR";
 

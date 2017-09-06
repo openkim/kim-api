@@ -62,6 +62,7 @@ driver_init_wrapper.cpp: $(KIM_MAKE_FILES)
 	@printf "Creating... intermediate file... $@.\n"
 	$(QUELL)printf "extern \"C\"\n"                                                                                                                 > $@
 	$(QUELL)printf "{\n"                                                                                                                           >> $@
+	$(QUELL)printf "   char kim_item_type[] = \"model-driver\";\n"                                                                                 >> $@
 	$(QUELL)printf "   int $(strip $(MODEL_DRIVER_INIT_FUNCTION_NAME))(void *kimmdl, char *paramfile_names, int *nmstrlen, int *numparamfiles);\n" >> $@
 	$(QUELL)printf "   int (* $(strip $(MODEL_DRIVER_NAME))_init_pointer)(void*,\n"                                                                >> $@
 	$(QUELL)printf "      char*, int*, int*) =\n"                                                                                                  >> $@
@@ -91,11 +92,13 @@ lib$(MODEL_DRIVER_LIB_BUILD).so: lib$(MODEL_DRIVER_LIB_BUILD).a $(EXPORT_LIST_NA
 $(EXPORT_LIST_NAME): $(KIM_MAKE_FILES)
 	@printf "Creating... intermediate file... $@.\n"
 ifeq (darwin, $(KIM_SYSTEMLINKER))
+	$(QUELL)printf "_kim_item_type\n"                                           > $@
 	$(QUELL)printf "_$(MODEL_DRIVER_NAME)_init_pointer\n"                       > $@
 	$(QUELL)printf "_$(MODEL_DRIVER_NAME)_compiled_with_version\n"             >> $@
 else # everything else (linux and freebsd)
 	$(QUELL)printf "{\n"                                                        > $@
 	$(QUELL)printf "   global:\n"                                              >> $@
+	$(QUELL)printf "           kim_item_type\n"                                >> $@
 	$(QUELL)printf "           $(MODEL_DRIVER_NAME)_init_pointer;\n"           >> $@
 	$(QUELL)printf "           $(MODEL_DRIVER_NAME)_compiled_with_version;\n"  >> $@
 	$(QUELL)printf "\n"                                                        >> $@
