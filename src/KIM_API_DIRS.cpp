@@ -301,6 +301,12 @@ void getSubDirectories(std::string const &dir, std::list<std::string> &list)
   }
 }
 
+// For sorting entries at the end of getAvailableItems
+bool lessThan(std::vector<std::string> lhs, std::vector<std::string> rhs)
+{
+  return lhs[IE_NAME] < rhs[IE_NAME];
+}
+
 void getAvailableItems(DirectoryPathType type,
                        std::list<std::vector<std::string> > &list)
 {
@@ -360,6 +366,8 @@ void getAvailableItems(DirectoryPathType type,
       }
     }
   }
+
+  list.sort(lessThan);
 }
 
 bool findItem(DirectoryPathType type, std::string const& name,

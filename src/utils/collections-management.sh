@@ -77,11 +77,11 @@ check_config_file_and_create_if_empty () {
     printf "   Recreating the file with default values!\n"
     printf "   This is normal for the first time a user executes\n"
     printf "   the collections-management utility.\n"
-    drivers_dir="`printf "${config_file_name}" | sed -e 's|\(.*\)/[^/]*$|\1|'`/model_drivers"
-    mkdir -p "${drivers_dir}"
-    printf "model_drivers_dir = %s\n" "${drivers_dir}" >  "${config_file_name}"
-    models_dir="`printf "${config_file_name}" | sed -e 's|\(.*\)/[^/]*$|\1|'`/models"
-    mkdir -p "${models_dir}"
+    drivers_dir="`printf -- "${config_file_name}" | sed -e 's|\(.*\)/[^/]*$|\1|'`/model_drivers"
+    mkdir -p "${drivers_dir}" || return 1
+    printf "model_drivers_dir = %s\n" "${drivers_dir}" >  "${config_file_name}" || return 1
+    models_dir="`printf -- "${config_file_name}" | sed -e 's|\(.*\)/[^/]*$|\1|'`/models"
+    mkdir -p "${models_dir}" || return 1
     printf "models_dir = %s\n" "${models_dir}"         >> "${config_file_name}"
   fi
 }
@@ -92,14 +92,11 @@ rewrite_config_file_models_dir () {
      local drivers_dir=`${collections_info} config_file model_drivers`
      local models_dir=`cd "$1" && pwd`
 
-     printf "model_drivers_dir = %s\n" "${drivers_dir}" >  "${config_file_name}"
+     printf "model_drivers_dir = %s\n" "${drivers_dir}" >  "${config_file_name}" || return 1
      printf "models_dir = %s\n" "${models_dir}"         >> "${config_file_name}"
-
-     printf "\n"
-     printf "Success!\n"
   else
-    printf "Directory '%s' does not exist. Aborting!\n" "$1"
-    exit 1
+    printf "Directory '%s' does not exist.\n" "$1"
+    return 1
   fi
 }
 
@@ -109,13 +106,11 @@ rewrite_config_file_drivers_dir () {
     local drivers_dir=`cd "$1" && pwd`
     local models_dir=`${collections_info} config_file models`
 
-    printf "model_drivers_dir = %s\n" "${drivers_dir}" >  "${config_file_name}"
+    printf "model_drivers_dir = %s\n" "${drivers_dir}" >  "${config_file_name}" || return 1
     printf "models_dir = %s\n" "${models_dir}"         >> "${config_file_name}"
-
-    printf "\n"
-    printf "Success\n"
   else
-    printf "Directory '%s' does not exist. Aborting!\n" "$1"
+    printf "Directory '%s' does not exist." "$1"
+    return 1
   fi
 }
 
@@ -129,13 +124,13 @@ get_build_install_item () {
 
 
   # check for existing item
-  if test x"__MD_" = x`printf "${item_name}" | sed 's/.*\(__MD_\).*/\1/'`; then
+  if test x"__MD_" = x`printf -- "${item_name}" | sed 's/.*\(__MD_\).*/\1/'`; then
     found_item=`${collections_info} model_drivers find "${item_name}"`
     item_type="MD"
-  elif test x"__MO_" = x`printf "${item_name}" | sed 's/.*\(__MO_\).*/\1/'`; then
+  elif test x"__MO_" = x`printf -- "${item_name}" | sed 's/.*\(__MO_\).*/\1/'`; then
     found_item=`${collections_info} models find "${item_name}"`
     item_type="MO"
-  elif test x"__SM_" = x`printf "${item_name}" | sed 's/.*\(__SM_\).*/\1/'`; then
+  elif test x"__SM_" = x`printf -- "${item_name}" | sed 's/.*\(__SM_\).*/\1/'`; then
     found_item=`${collections_info} models find "${item_name}"`
     item_type="SM"
   elif test x"OpenKIM" = x"${item_name}"; then
@@ -147,11 +142,16 @@ get_build_install_item () {
   fi
   if test x"" != x"${found_item}"; then
     if test x"Unknown" = x"${item_type}"; then
-      printf "Item '${item_name} of unknown type.  Aborting!\n"
-      exit 1
+      printf "Item '${item_name}' of unknown type.\n"
+      return 1
     else
-      printf "Item '${item_name}' already installed.\n"
-      return 0
+      local item_collection=`printf -- "${found_item}" | sed -e 's/ .*//'`
+      printf "Item '${item_name}' already installed in collection '${item_collection}'.\n"
+      if test x"${item_collection}" = x"${install_collection}"; then
+        return 0
+      else
+        return 1
+      fi
     fi
   fi
 
@@ -159,15 +159,15 @@ get_build_install_item () {
   if test x"" = x"${TMPDIR}"; then TMPDIR="/tmp"; fi
   local build_dir=`mktemp -d "${TMPDIR}/kim-api-build-XXXXXXXXXX"`
   if test $? -ne 0; then
-    printf "Unable to create temporary directory. Aborting!\n"
-    exit 1
+    printf "Unable to create temporary directory.\n"
+    return 1;
   fi
 
   (  # subshell
-    cd "${build_dir}"
+    cd "${build_dir}" || return 1
 
     # setup kim-api config
-    ${build_config} --makefile-kim-config > Makefile.KIM_Config
+    ${build_config} --makefile-kim-config > Makefile.KIM_Config || return 1
 
     # download item (and possibly its driver)
     if test x"OpenKIM" = x"${item_type}"; then
@@ -179,10 +179,10 @@ get_build_install_item () {
                      sed -e 's/\[//g' -e 's/\]//g' \
                      -e 's/{"kim-api-version": "\([0-9.]*\)", "kimcode": "\([^"]*\)"},*/\1:\2/g'`
       for model in ${list}; do \
-        local minor=`printf "${model}" | sed -e 's/1\.\([^.:]*\).*/\1/'`
-        local modname=`printf "${model}" | sed -e 's/.*://'`
+        local minor=`printf -- "${model}" | sed -e 's/1\.\([^.:]*\).*/\1/'`
+        local modname=`printf -- "${model}" | sed -e 's/.*://'`
         if test ${minor} -ge 6; then
-          get_build_install_item "$install_collection" "${modname}" "${use_sudo}" "${PASSWORD}"
+          get_build_install_item "$install_collection" "${modname}" "${use_sudo}" "${PASSWORD}" || return 1
         fi
       done
     elif test x"MD" = x"${item_type}"; then
@@ -192,18 +192,18 @@ get_build_install_item () {
           rm -f "${item_name}.tgz" &&
           if test 0 -lt `grep -c MAKE_SYSTEM ${item_name}/Makefile`; then \
             printf "*** ERROR *** ${item_name} appears to be written for an older, incompatible, version of the KIM API.\n"
-            exit 1
+            return 1
           fi
         cd ${item_name}
         ${make_command} && if test x"sudo-yes" = x"${use_sudo}"; then
-          printf "${PASSWORD}\n" | sudo -k -S ${make_command} "install-${install_collection}" 2> /dev/null
+          printf -- "${PASSWORD}\n" | sudo -k -S ${make_command} "install-${install_collection}" 2> /dev/null || return 1
         else
-          ${make_command} "install-${install_collection}"
+          ${make_command} "install-${install_collection}" || return 1
         fi
         cd ..
       else
         printf "                Unable to download ${item_name} from https://openkim.org.  Check the KIM Item ID for errors.\n"
-        exit 1
+        return 1
       fi
     elif test x"MO" = x"${item_type}"; then
       printf "*@downloading.......@%-50s\n" "${item_name}" | sed -e 's/ /./g' -e 's/@/ /g'
@@ -212,34 +212,30 @@ get_build_install_item () {
           rm -f "${item_name}.tgz" &&
           if test 0 -lt `grep -c MAKE_SYSTEM ${item_name}/Makefile`; then
             printf "*** ERROR *** ${item_name} appears to be written for an older, incompatible, version of the KIM API.\n";
-            exit
+            return 1
           elif test x"ParameterizedModel" = x"`${make_command} -C \"${item_name}\" kim-item-type`"; then
             dvr="`${make_command} -C \"${item_name}\" model-driver-name`"
             if test x"" != x`${collections_info} model_drivers find "${dvr}"`; then
-              printf "*@using installed driver.......@%-50s\n" "${dvr}" | sed -e 's/ /./g' -e 's/@/ /g'
-              true
+              printf "*@using installed driver.......@%-50s\n" "${dvr}" | sed -e 's/ /./g' -e 's/@/ /g' || return 1
             else
-              get_build_install_item "${install_collection}" "${dvr}" "${use_sudo}" "${PASSWORD}"
+              get_build_install_item "${install_collection}" "${dvr}" "${use_sudo}" "${PASSWORD}" || return 1
             fi
           fi
         cd ${item_name}
         ${make_command} && if test x"sudo-yes" = x"${use_sudo}"; then
-          printf "${PASSWORD}\n" | sudo -k -S ${make_command} "install-${install_collection}" 2> /dev/null
+          printf -- "${PASSWORD}\n" | sudo -k -S ${make_command} "install-${install_collection}" 2> /dev/null || return 1
         else
-          ${make_command} "install-${install_collection}"
+          ${make_command} "install-${install_collection}" || return 1
         fi
         cd ..
       else
         printf "                Unable to download ${item_name} from https://openkim.org.  Check the KIM Item ID for errors.\n"
-        exit 1
+        return 1
       fi
     fi
-  )  # exit subshell
+  )  || return 1  # exit subshell
 
-  rm -rf "${build_dir}"
-
-  printf "\n"
-  printf "Success!\n"
+  rm -rf "${build_dir}" || return 1
 }
 
 remove_item () {
@@ -250,35 +246,26 @@ remove_item () {
   local item_type=""
 
   # check for existing item
-  if test x"__MD_" = x`printf "${item_name}" | sed 's/.*\(__MD_\).*/\1/'`; then
-    found_item=`${collections_info} model_drivers find "${item_name}"`
-    item_type="model_drivers"
-  elif test x"__MO_" = x`printf "${item_name}" | sed 's/.*\(__MO_\).*/\1/'`; then
+  found_item=`${collections_info} model_drivers find "${item_name}"`
+  if test x"" = x"${found_itme}"; then
     found_item=`${collections_info} models find "${item_name}"`
-    item_type="models"
-  elif test x"__SM_" = x`printf "${item_name}" | sed 's/.*\(__SM_\).*/\1/'`; then
-    found_item=`${collections_info} models find "${item_name}"`
-    item_type="models"
+    if test x"" = x"${found_item}"; then
+      printf "Item not installed.\n"
+      return 1
+    else
+      item_type="models"
+    fi
   else
-    found_item=""
-    item_type="Unknown"
+    item_type="model_drivers"
   fi
-  if test x"" = x"${found_item}"; then
-    printf "Item not installed or of unknown type. Aborting!\n"
-    exit 1
-  fi
-
 
   local item_dir=`${collections_info} "${item_type}" find "${item_name}" | sed -e 's/^[^ ]* [^ ]* \([^ ]*\).*/\1/'`"/${item_name}"
   printf "Removing '%s'.\n" "${item_dir}"
   if test x"sudo-yes" = x"${use_sudo}"; then
-    printf "${PASSWORD}\n" | sudo -k -S rm -rf "${item_dir}" 2> /dev/null
+    printf -- "${PASSWORD}\n" | sudo -k -S rm -rf "${item_dir}" 2> /dev/null || return 1
   else
-    rm -rf "${item_dir}"
+    rm -rf "${item_dir}" || return 1
   fi
-
-  printf "\n"
-  printf "Success!\n"
 }
 
 split_drivers_list_into_collections () {
@@ -287,8 +274,8 @@ split_drivers_list_into_collections () {
   drivers_usr_collection=""; number_drivers_usr=0
   drivers_sys_collection=""; number_drivers_sys=0
     while read line; do
-      local collection=`printf "$line" | sed -e 's/\([^ ]*\) .*/\1/'`
-      local name=`printf "$line" | sed -e 's/[^ ]* \([^ ]*\) .*/\1/'`
+      local collection=`printf -- "$line" | sed -e 's/\([^ ]*\) .*/\1/'`
+      local name=`printf -- "$line" | sed -e 's/[^ ]* \([^ ]*\) .*/\1/'`
       case $collection in
         "")
         # empty do nothing
@@ -325,8 +312,8 @@ split_models_list_into_collections () {
   models_usr_collection=""; number_models_usr=0
   models_sys_collection=""; number_models_sys=0
     while read line; do
-      local collection=`printf "$line" | sed -e 's/\([^ ]*\) .*/\1/'`
-      local name=`printf "$line" | sed -e 's/[^ ]* \([^ ]*\) .*/\1/'`
+      local collection=`printf -- "$line" | sed -e 's/\([^ ]*\) .*/\1/'`
+      local name=`printf -- "$line" | sed -e 's/[^ ]* \([^ ]*\) .*/\1/'`
       case $collection in
         "")
         # empty do nothing
@@ -414,7 +401,7 @@ print_list_of_drivers_and_models () {
 
     printf "Models: %s\n" "${PWD}"
   if test $number_models_cwd -gt 0; then
-    printf "${models_cwd_collection}"
+    printf -- "${models_cwd_collection}"
   else
     printf "\t--empty--\n"
   fi
@@ -430,7 +417,7 @@ print_list_of_drivers_and_models () {
   fi
   printf "\n"
   if test $number_drivers_env -gt 0; then
-    printf "${drivers_env_collection}"
+    printf -- "${drivers_env_collection}"
   else
     printf "\t--empty--\n"
   fi
@@ -443,7 +430,7 @@ print_list_of_drivers_and_models () {
   fi
   printf "\n"
   if test $number_models_env -gt 0; then
-    printf "${models_env_collection}"
+    printf -- "${models_env_collection}"
   else
     printf "\t--empty--\n"
   fi
@@ -457,14 +444,14 @@ print_list_of_drivers_and_models () {
   print_separator_line "-"
   printf "Drivers: %s\n" "${drivers_usr}"
   if test $number_drivers_usr -gt 0; then
-    printf "${drivers_usr_collection}"
+    printf -- "${drivers_usr_collection}"
   else
     printf "\t--empty--\n"
   fi
   printf "\n"
   printf "Models: %s\n" "${models_usr}"
   if test $number_models_usr -gt 0; then
-    printf "${models_usr_collection}"
+    printf -- "${models_usr_collection}"
   else
     printf "\t--empty--\n"
   fi
@@ -474,14 +461,14 @@ print_list_of_drivers_and_models () {
   print_separator_line "-"
   printf "Drivers: %s\n" `${collections_info} system model_drivers`
   if test $number_drivers_sys -gt 0; then
-    printf "${drivers_sys_collection}"
+    printf -- "${drivers_sys_collection}"
   else
     printf "\t--empty--\n"
   fi
   printf "\n\n"
   printf "Models: %s\n" `${collections_info} system models`
   if test $number_models_sys -gt 0; then
-    printf "${models_sys_collection}"
+    printf -- "${models_sys_collection}"
   else
     printf "\t--empty--\n"
   fi
@@ -497,10 +484,10 @@ get_password () {
   stty echo
   trap - EXIT
   printf "\n"
-  if ! (printf "${PASSWORD}\n" | \
+  if ! (printf -- "${PASSWORD}\n" | \
           sudo -k -S printf "" > /dev/null 2>&1); then
-    printf "Bad password. Exiting.\n"
-    exit 1
+    printf "Bad password.\n"
+    return 1
   fi
 }
 
@@ -523,7 +510,10 @@ else
   esac
 fi
 
-check_config_file_and_create_if_empty
+if ! check_config_file_and_create_if_empty; then
+  printf "Aborting!\n"
+  exit 1
+fi
 
 case $command in
   list)
@@ -535,7 +525,12 @@ case $command in
       exit 1
     else
       subcommand=$2
-      rewrite_config_file_models_dir "$subcommand"
+      if ! rewrite_config_file_models_dir "$subcommand"; then
+        printf "\nAborting!\n"
+        exit 1
+      else
+        printf "\nSuccess!\n."
+      fi
     fi
     ;;
   set-user-drivers-dir)
@@ -544,7 +539,12 @@ case $command in
       exit 1
     else
       subcommand=$2
-      rewrite_config_file_drivers_dir "$subcommand"
+      if ! rewrite_config_file_drivers_dir "$subcommand"; then
+        printf "\nAborting!\n"
+        exit 1
+      else
+        printf "\nSuccess!\n"
+      fi
     fi
     ;;
   install)
@@ -556,23 +556,37 @@ case $command in
       case $subcommand in
         user)
           item_name=$3
-          get_build_install_item "user" "${item_name}" "sudo-no" ""
+          if ! get_build_install_item "user" "${item_name}" "sudo-no" ""; then
+            printf "\nAborting!\n"
+            exit 1
+          else
+            printf "\nSuccess!\n"
+          fi
           ;;
         system)
           PASSWORD=""
           if test x"--sudo" = x"$3"; then
             use_sudo="sudo-yes"
-            get_password
+            if ! get_password; then
+              printf "\nAborting!\n"
+              exit 1
+            fi
             item_name=$4
           else
             use_sudo="sudo-no"
             item_name=$3
           fi
-          get_build_install_item "system" "${item_name}" "${use_sudo}" "${PASSWORD}"
+          if ! get_build_install_item "system" "${item_name}" "${use_sudo}" "${PASSWORD}"; then
+            printf "\nAborting!\n"
+            exit 1
+          else
+            printf "\nSuccess!\n"
+          fi
           ;;
         *)
           printf "unknown subcommand: %s\n\n" $subcommand
           usage
+          exit 1
           ;;
       esac
     fi
@@ -584,13 +598,21 @@ case $command in
     else
       if test x"--sudo" = x"$2"; then
         use_sudo="sudo-yes"
-        get_password
+        if ! get_password; then
+          printf "\nAborting!\n"
+          exit 1
+        fi
         item_name=$3
       else
         use_sudo="sudo-no"
         item_name=$2
       fi
-      remove_item "${item_name}" "${use_sudo}" "${PASSWORD}"
+      if ! remove_item "${item_name}" "${use_sudo}" "${PASSWORD}"; then
+        printf "\nAborting!\n"
+        exit 1
+      else
+        printf "\nSuccess!\n"
+      fi
     fi
     ;;
 esac
