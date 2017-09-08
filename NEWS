@@ -32,6 +32,24 @@
 #
 
 
+=== kim-api-v1.9.0 ============== 09Sep2017 ====================================
+
+* Added collections-management user utility to manage build and install
+  of OpenKIM Models and Model Drivers
+
+* Added support for "Simulator Models"
+
+* Dramatically simplify build system by removing supported scenarios.
+  + Removed static-link build option
+  + Removed "in-place" build scenario
+  + Added support and use of the libexec directory to distinguish between
+    user executable utilities and program executable utilities
+
+* Incorporate fix to configure script contributed by Christoph Junghans
+
+* Fix minor bugs in KIM_API_DIRS
+
+
 === kim-api-v1.8.2 ============== 17Apr2017 ====================================
 
 * Fixed issues reaised by Tobias Brink (this==NULL; and `find` portability)
