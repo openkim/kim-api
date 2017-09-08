@@ -37,6 +37,9 @@ ifndef KIM_DIR
 endif
 include $(KIM_DIR)/$(builddir)/Makefile.SanityCheck
 
+# Set include flags
+KIMINCLUDEFLAGS = -I$(includedir)/$(full_package_name)
+
 # Clean up variables
 MODEL_NAME := $(strip $(MODEL_NAME))
 MODEL_CREATE_FUNCTION_NAME := $(strip $(MODEL_CREATE_FUNCTION_NAME))
@@ -45,17 +48,25 @@ ifneq (,$(filter-out cpp c fortran,$(MODEL_CREATE_FUNCTION_LANG)))
    $(error Unknown MODEL_CREATE_FUNCTION_LANG value: $(MODEL_CREATE_FUNCTION_LANG))
 endif
 
-# Set SO variables
-%.so: SO_IS_MODEL:=true
+MODEL_BUILD_TARGET := lib$(MODEL_LIB).so
 
-#build target .a or .so for models
-MODEL_BUILD_TARGET := lib$(MODEL_LIB).a
-MODEL_BUILD_TARGET := $(patsubst %.a,%.so, $(MODEL_BUILD_TARGET))
+#full lib name
+MODEL_LIB_BUILD = $(LIB_ROOT)-model-v$(VERSION_FULL)
 
 # Add this file and item makefile to makefiles list
 KIM_MAKE_FILES += $(KIM_DIR)/$(builddir)/Makefile.StandAloneModel Makefile
 
-.PHONY: clean install installdirs uninstall kim-item-type model-name
+.PHONY: clean install-system install-user installdirs uninstall-system uninstall-user kim-item-type model-name model-kim-file
+
+# descriptor file make rule
+.INTERMEDIATE: kim_str.c
+kim_str.c: $(MODEL_KIM_FILE) $(KIM_MAKE_FILES)
+	@printf "Creating... intermediate file... $@.\n"
+	$(QUELL)varnm=`printf "$(MODEL_KIM_FILE)" | \
+                       sed -e 's/^\([[:digit:]]\)/__\1/' -e 's/[^[:alnum:]]/_/g'` && \
+                xxd -i $(MODEL_KIM_FILE) | \
+                sed -e "s/$${varnm}/$(MODEL_NAME)_kim_str/g" > $@
+
 
 all: $(MODEL_BUILD_TARGET)
 
@@ -85,6 +96,12 @@ lib$(MODEL_LIB).so: lib$(MODEL_LIB_BUILD).so
 lib$(MODEL_LIB_BUILD).a: $(LOCALOBJ) init_wrapper.o
 	@printf "Creating... $@.\n"
 	$(QUELL)ar rcs $@ $(LOCALOBJ) init_wrapper.o
+
+lib$(MODEL_LIB_BUILD).so: lib$(MODEL_LIB_BUILD).a $(EXPORT_LIST_NAME)
+	@printf "Creating... $@.\n"
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDSHAREDFLAG) \
+                      $(LDEXPORTLISTFLAG) $(LDFLAGS) -L$(libdir) $(OUTPUTINFLAG) lib$(MODEL_LIB_BUILD).so \
+                      $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) $(LDLIBS) -l$(KIM_LIB)
 
 $(EXPORT_LIST_NAME): $(KIM_MAKE_FILES)
 	@printf "Creating... intermediate file... $@.\n"
@@ -121,21 +138,21 @@ clean:
                       $(addprefix init_wrapper.,o cpp) $(LOCALCLEAN) \
                       $(EXPORT_LIST_NAME)
 
-install_modeldir = $(dest_package_dir)/$(modelsdir)/$(MODEL_NAME)
-
 installdirs:
 	$(QUELL)fl="$(install_modeldir)" && \
                 if test -d "$$fl"; then rm -rf "$$fl"; fi && \
                 $(INSTALL_PROGRAM) -d -m 0755 "$$fl"
 
-install: DOT:=$(shell if test -f ".lib$(MODEL_LIB_BUILD).so"; then printf "."; fi)
-install: all installdirs
-	@printf "Installing...($(dest_package_dir))................. Model.......... $(MODEL_NAME)"
-	@printf ".\n"
-	$(QUELL)$(INSTALL_PROGRAM) -m 0755 "$(DOT)lib$(MODEL_LIB_BUILD).so" "$(install_modeldir)/lib$(MODEL_LIB_BUILD).so"
+COLLECTIONS_INFO = $(libexecdir)/$(full_package_name)/$(full_package_name)-collections-info
+install-system: install_modeldir = $(shell $(COLLECTIONS_INFO) system models)/$(MODEL_NAME)
+install-user:   install_modeldir = $(shell $(COLLECTIONS_INFO) config_file models)/$(MODEL_NAME)
+install-system install-user: install-%: all installdirs
+	@printf "Installing...($*)................. Model.......... $(MODEL_NAME).\n"
+	$(QUELL)$(INSTALL_PROGRAM) -m 0755 "lib$(MODEL_LIB_BUILD).so" "$(install_modeldir)/lib$(MODEL_LIB_BUILD).so"
 	$(QUELL)ln -fs "lib$(MODEL_LIB_BUILD).so" "$(install_modeldir)/lib$(MODEL_LIB).so"
 
-uninstall:
-	@printf "Uninstalling...($(dest_package_dir))................. Model.......... $(MODEL_NAME)"
-	@printf ".\n"
-	$(QUELL)fl="$(install_modeldir)" && if test -d "$$fl"; then rm -rf "$$fl"; fi
+uninstall-system: uninstall_modeldir = $(shell $(COLLECTIONS_INFO) system models)/$(MODEL_NAME)
+uninstall-user:   uninstall_modeldir = $(shell $(COLLECTIONS_INFO) config_file models)/$(MODEL_NAME)
+uninstall-system uninstall-user: uninstall-%:
+	@printf "Uninstalling...($*)................. Model.......... $(MODEL_NAME).\n"
+	$(QUELL)fl="$(uninstall_modeldir)" && if test -d "$$fl"; then rm -rf "$$fl"; fi

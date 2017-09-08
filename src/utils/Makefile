@@ -37,78 +37,119 @@ include Makefile.KIM_Config
 
 VPATH = ../
 
-# Set defines
-KIMDEFINES = $(KIM_DEFINE_VALUES)
+# Set include flags
+KIMINCLUDEFLAGS = -I../
 
-all: $(full_package_name)-build-config \
-     $(full_package_name)-collections-info
+all: $(full_package_name)-descriptor-file-match \
+     $(full_package_name)-build-config \
+     $(full_package_name)-collections-info \
+     $(full_package_name)-collections-management \
+     $(full_package_name)-simulator-model
 
 # Add the local Makefile to KIM_MAKE_FILES
 KIM_MAKE_FILES += Makefile
 
-%uild-config.o: KIM_DEFINE_VALUES += -D 'CC_STRING="$(CC)"' \
-                                     -D 'CXX_STRING="$(CXX)"' \
-                                     -D 'FC_STRING="$(FC)"' \
-                                     -D 'LD_STRING="$(LD)"' \
-                                     -D 'INCLUDES_STRING="$(if $(filter-out .build-config.o,$@),$(KIMINCLUDEFLAGS),-I$(package_dir)/include)"' \
-                                     -D 'CFLAGS_STRING="$(ARCHFLAG) $(PICFLAG) $(CFLAGS)"' \
-                                     -D 'CXXFLAGS_STRING="$(ARCHFLAG) $(PICFLAG) $(CXXFLAGS)"' \
-                                     -D 'FFLAGS_STRING="$(ARCHFLAG) $(PICFLAG) $(FFLAGS)"' \
-                                     -D 'LDFLAGS_STRING="$(ARCHFLAG) $(if $(filter-out .build-config.o,$@),$(KIMLDFLAGS),-L$(package_dir)) $(LDFLAGS)"' \
-                                     -D 'LDLIBS_STRING="$(KIMLDLIBS) $(XLANGLDLIBS) $(LDLIBS)"' \
-                                     -D 'OBJONLYFLAG_STRING="$(OBJONLYFLAG)"' \
-                                     -D 'OUTPUTINFLAG_STRING="$(OUTPUTINFLAG)"' \
-                                     -D 'MAKEFILEKIMCONFIG_STRING="$(if $(filter-out .build-config.o,$@),$(KIM_DIR),$(package_dir))/Makefile.KIM_Config"' \
-                                     -D 'VERSION_STRING="$(VERSION_FULL)"'
-%build-config.o: build-config.cpp $(KIM_MAKE_FILES)
-	@printf "Creating... $@.\n"
-	$(QUELL)$(CXX) $(KIM_CXXTYPE_STANDARD_COMPILE_LIST) $< $(OUTPUTINFLAG) $@
+descriptor-file-match.o: descriptor-file-match.cpp KIM_API.h KIM_API_status.h $(KIM_MAKE_FILES)
 
-$(full_package_name)-build-config: build-config.o .build-config.o
+$(full_package_name)-descriptor-file-match: descriptor-file-match.o lib$(KIM_LIB_BUILD).so
+	@printf "Creating... $@.\n"
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).so $(XLANGLDLIBS) $(LDLIBS)
+
+build-config.o: KIMDEFINES = -D 'CC_STRING="$(CC)"' \
+                             -D 'CXX_STRING="$(CXX)"' \
+                             -D 'FC_STRING="$(FC)"' \
+                             -D 'LD_STRING="$(LD)"' \
+                             -D 'INCLUDES_STRING="-I$(package_dir)/include"' \
+                             -D 'CFLAGS_STRING="$(ARCHFLAG) $(PICFLAG) $(CFLAGS)"' \
+                             -D 'CXXFLAGS_STRING="$(ARCHFLAG) $(PICFLAG) $(CXXFLAGS)"' \
+                             -D 'FFLAGS_STRING="$(ARCHFLAG) $(PICFLAG) $(FFLAGS)"' \
+                             -D 'LDFLAGS_STRING="$(ARCHFLAG) -L$(package_dir) $(LDFLAGS)"' \
+                             -D 'LDLIBS_STRING="-l$(KIM_LIB) $(XLANGLDLIBS) $(LDLIBS)"' \
+                             -D 'OBJONLYFLAG_STRING="$(OBJONLYFLAG)"' \
+                             -D 'OUTPUTINFLAG_STRING="$(OUTPUTINFLAG)"' \
+                             -D 'MAKEFILEKIMCONFIG_STRING="$(package_dir)/Makefile.KIM_Config"' \
+                             -D 'LIBEXECPATH_STRING="$(libexecdir)/$(full_package_name)"' \
+                             -D 'VERSION_STRING="$(VERSION_FULL)"'
+
+build-config.o: build-config.cpp $(KIM_MAKE_FILES)
+
+$(full_package_name)-build-config: build-config.o
 	@printf "Creating... $@.\n"
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< $(XLANGLDLIBS)
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ .$< $(XLANGLDLIBS)
 
 collections-info.o: collections-info.cpp old_KIM_API_DIRS.h $(KIM_MAKE_FILES)
 
 $(full_package_name)-collections-info: collections-info.o lib$(KIM_LIB_BUILD).so .lib$(KIM_LIB_BUILD).so
 
+$(full_package_name)-collections-info: collections-info.o lib$(KIM_LIB_BUILD).so
 	@printf "Creating... $@.\n"
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).so $(XLANGLDLIBS) $(LDLIBS)
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) .$@ $< ../.lib$(KIM_LIB_BUILD).so $(XLANGLDLIBS) $(LDLIBS)
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).so $(LDDYNAMICLIB) $(XLANGLDLIBS) $(LDLIBS)
+
+simulator-model.o: KIMDEFINES = -D 'MODELLIBFILE="lib$(MODEL_LIB)"'
+simulator-model.o: simulator-model.cpp KIM_API_DIRS.h $(KIM_MAKE_FILES)
+
+$(full_package_name)-simulator-model: simulator-model.o lib$(KIM_LIB_BUILD).so
+	@printf "Creating... $@.\n"
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).so $(LDDYNAMICLIB) $(XLANGLDLIBS) $(LDLIBS)
+
+$(full_package_name)-collections-management: collections-management.sh $(KIM_MAKE_FILES)
+	@printf "Creating... $@.\n"
+	$(QUELL)sed -e 's|###COLLECTIONS#INFO#UTILITY###|$(package_dir)/libexec/$(full_package_name)/$(full_package_name)-collections-info|g' \
+                    -e 's|###BUILD#CONFIG###|$(package_dir)/bin/$(full_package_name)-build-config|g' collections-management.sh > $@
+	$(QUELL)chmod 0755 $@
 
 
 .PHONY: all clean install installdirs uninstall
 
 clean:
 	@printf "Cleaning... src/utils.\n"
-	$(QUELL)rm -f *.o .*.o $(full_package_name)-build-config .$(full_package_name)-build-config \
-                   $(full_package_name)-collections-info .$(full_package_name)-collections-info
+	$(QUELL)rm -f *.o .*.o $(full_package_name)-descriptor-file-match \
+                   $(full_package_name)-build-config \
+                   $(full_package_name)-collections-info \
+                   $(full_package_name)-collections-management \
+                   $(full_package_name)-simulator-model
 
 
 install_bindir = $(dest_package_dir)/bin
 install_nodest_bindir = $(package_dir)/bin
-install_bin = $(full_package_name)-build-config $(full_package_name)-collections-info
+install_libexecdir = $(dest_package_dir)/libexec
+install_nodest_libexecdir = $(package_dir)/libexec
+install_bin = $(full_package_name)-build-config $(full_package_name)-collections-management $(full_package_name)-simulator-model
+install_libexec = $(full_package_name)-descriptor-file-match $(full_package_name)-collections-info
 
 install-check:
-        # should we check that the installed stuff is actually dynamic-load and the right settings (32bit, etc.)?
 	$(QUELL)if test -d "$(dest_package_dir)"; then \
                   rm -rf "$(install_bindir)"; \
+                  rm -rf "$(install_libexecdir)"; \
                   for fl in $(install_bin); do rm -f "$(DESTDIR)$(bindir)/$$fl"; done; \
+                  rm -rf "$(DESTDIR)$(libexecdir)/$(full_package_name)"; \
                 fi
 
 installdirs:
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(DESTDIR)$(bindir)"
+	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(DESTDIR)$(libexecdir)"
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(install_bindir)"
+	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(install_libexecdir)/$(full_package_name)"
 
 install: all installdirs
-	@printf "Installing...($(dest_package_dir))................................. bin"
+	@printf "Installing...($(dest_package_dir))................................. bin.\n"
+	@printf "Installing...($(dest_package_dir))................................. libexec.\n"
         # Install bin files
-	$(QUELL)for fl in $(install_bin); do $(INSTALL_PROGRAM) -m 0755 ".$$fl" "$(install_bindir)/$$fl"; done
+	$(QUELL)for fl in $(install_bin); do $(INSTALL_PROGRAM) -m 0755 "$$fl" "$(install_bindir)/$$fl"; done
 	$(QUELL)for fl in $(install_bin); do ln -fs "$(install_nodest_bindir)/$$fl" "$(DESTDIR)$(bindir)/$$fl"; done
-	@printf ".\n"
+	$(QUELL)for fl in $(install_libexec); do $(INSTALL_PROGRAM) -m 0755 "$$fl" "$(install_libexecdir)/$(full_package_name)/$$fl"; done
+	$(QUELL)ln -fs "$(install_nodest_libexecdir)/$(full_package_name)" "$(DESTDIR)$(libexecdir)/$(full_package_name)"
 
 uninstall:
 	@printf "Uninstalling...($(dest_package_dir))................................. bin.\n"
+	@printf "Uninstalling...($(dest_package_dir))................................. libexec.\n"
         # Uninstall bin files
 	$(QUELL)for fl in $(install_bin); do if test -L "$(DESTDIR)$(bindir)/$$fl"; then rm -f "$(DESTDIR)$(bindir)/$$fl"; fi; done
+	$(QUELL) rmdir "$(DESTDIR)$(bindir)" > /dev/null 2>&1 || true
+	$(QUELL)for fl in $(install_bin); do if test -f "$(DESTDIR)$(install_bindir)/$$fl"; then rm -f "$(DESTDIR)$(install_bindir)/$$fl"; fi; done
+	$(QUELL) rmdir "$(install_bindir)" > /dev/null 2>&1 || true
+	$(QUELL)for fl in $(install_libexec); do if test -f "$(DESTDIR)$(install_libexecdir)/$(full_package_name)/$$fl"; then rm -f "$(DESTDIR)$(install_libexecdir)/$(full_package_name)/$$fl"; fi; done
+	$(QUELL) rmdir "$(install_libexecdir)/$(full_package_name)" > /dev/null 2>&1 || true
+	$(QUELL) rmdir "$(install_libexecdir)" > /dev/null 2>&1 || true
+	$(QUELL) if test -L "$(DESTDIR)$(libexecdir)/$(full_package_name)"; then rm -f "$(DESTDIR)$(libexecdir)/$(full_package_name)"; fi
+	$(QUELL) rmdir "$(DESTDIR)$(libexecdir)" > /dev/null 2>&1 || true

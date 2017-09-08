@@ -52,6 +52,7 @@ includedir = $(prefix)/include
 exec_prefix = $(prefix)
 libdir = $(exec_prefix)/lib
 bindir = $(exec_prefix)/bin
+libexecdir = $(exec_prefix)/libexec
 
 # INSTALL short cut values for internal use
 INSTALL_PROGRAM = install

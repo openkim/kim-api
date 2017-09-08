@@ -95,7 +95,9 @@ else
 endif
 
 ifeq      ($(KIM_LINK),dynamic-load)
+#else ifeq ($(KIM_LINK),static-link)
 else
+#   $(error Make variable KIM_LINK must be 'static-link' or 'dynamic-load'.  Current value is: '$(KIM_LINK)')
    $(error Make variable KIM_LINK must be 'dynamic-load'.  Current value is: '$(KIM_LINK)')
 endif
 

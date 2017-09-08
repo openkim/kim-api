@@ -51,9 +51,12 @@ bool findItem(DirectoryPathType type, std::string const& name,
               std::vector<std::string>* const Item);
 
 // needed by collection-info
-std::string getConfigFileName();
-void pushEnvDirs(DirectoryPathType type, std::list<std::string>* const lst);
+std::vector<std::string> getConfigFileName();
+std::string pushEnvDirs(DirectoryPathType type, std::list<std::pair<std::string, std::string> >* const lst);
+std::string getSystemLibraryFileName();
+std::vector<std::string> getSystemDirs();
 std::vector<std::string> getUserDirs();
+enum GET_ITEMS_ENTRIES {IE_COLLECTION, IE_NAME, IE_DIR, IE_VER};
 void getAvailableItems(DirectoryPathType type,
                        std::list<std::vector<std::string> > &list);
 

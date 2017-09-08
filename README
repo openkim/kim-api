@@ -35,7 +35,8 @@
 ============================= The KIM API package =============================
 
 This file provides an introduction to the KIM API package.  This is the first
-file that you should read after unpacking the package.
+file that you should read after unpacking the package.  See the INSTALL file
+for instructions on how to build and install the package
 
 OVERVIEW:
 
@@ -99,8 +100,6 @@ The current version of the KIM API package supports the following features:
 
 * Currently supported programming languages:
   C, C++, FORTRAN 77, Fortran 90/95, Fortran 2003.
-
-* Support for static and dynamic linking of programs using the KIM API
 
 * Support for automatic translation between zero-based lists (C-style numbering
   beginning with 0) and one-based lists (Fortran-style numbering beginning

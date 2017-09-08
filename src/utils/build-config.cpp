@@ -137,6 +137,11 @@ int main(int argc, char* argv[])
       printf(MAKEFILEKIMCONFIG_STRING "\n");
       return result;
     }
+    else if (!strcmp(argv[1], "--libexec-path"))
+    {
+      printf(LIBEXECPATH_STRING "\n");
+      return result;
+    }
     else if (!strcmp(argv[1], "--cc"))
     {
       printf(CC_STRING "\n");
@@ -198,6 +203,7 @@ int main(int argc, char* argv[])
   fprintf(stderr, "  Stand-alone Options:\n");
   fprintf(stderr, "    --makefile-kim-config\n");
   fprintf(stderr, "    --master-config\n");
+  fprintf(stderr, "    --libexec-path\n");
   fprintf(stderr, "    --cc\n");
   fprintf(stderr, "    --cxx\n");
   fprintf(stderr, "    --fc\n");

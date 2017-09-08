@@ -37,12 +37,6 @@ ifeq ($(wildcard Makefile.KIM_Config),)
 endif
 include Makefile.KIM_Config
 
-ifndef MODELS_LIST
-  MODEL_DRIVERS_LIST := $(filter-out $(if $(wildcard $(modeldriversdir)/.kimignore),$(shell cat $(modeldriversdir)/.kimignore),),$(patsubst $(modeldriversdir)/%/,%,$(filter-out $(modeldriversdir)/,$(sort $(dir $(wildcard $(modeldriversdir)/*/))))))
-  MODELS_LIST        := $(filter-out $(if $(wildcard $(modelsdir)/.kimignore),$(shell cat $(modelsdir)/.kimignore),),$(patsubst $(modelsdir)/%/,%,$(filter-out $(modelsdir)/,$(sort $(dir $(wildcard $(modelsdir)/*/))))))
-endif
-
-
 # Definition of c and fortran .o file list
 OBJCPP = KIM_LanguageName.o \
          KIM_LogVerbosity.o \
@@ -120,12 +114,6 @@ else
    ALLOBJ = $(OBJCPP) $(OBJC) $(OBJF03)
 endif
 
-# Set defines
-KIMDEFINES = $(KIM_DEFINE_VALUES)
-
-# load lists
-MODELS_TARGETS := $(addprefix ., $(addsuffix .make-temp, $(MODELS_LIST)))
-
 # add local Makefile to KIM_MAKE_FILES
 KIM_MAKE_FILES += Makefile
 
@@ -136,7 +124,7 @@ libs: lib$(KIM_LIB).so
 
 lib$(KIM_LIB).%: lib$(KIM_LIB_BUILD).%
 	@printf "Creating... KIM API library....... $@.\n";
-	$(QUELL)ln -fs "lib$(KIM_LIB_BUILD).$*" "lib$(KIM_LIB).$*"
+	$(QUELL)ln -fs "lib$(KIM_LIB_BUILD).so" "lib$(KIM_LIB).so"
 
 lib$(KIM_LIB_BUILD).a: $(ALLOBJ)
 	@printf "Creating... KIM API library....... $@.\n";
@@ -144,12 +132,8 @@ lib$(KIM_LIB_BUILD).a: $(ALLOBJ)
 	$(QUELL)ar rcs .$@ $(ALLOBJ)
 lib$(KIM_LIB_BUILD).so: lib$(KIM_LIB_BUILD).a .lib$(KIM_LIB_BUILD).a
 	@printf "Creating... KIM API library....... $@.\n";
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDSHAREDFLAG) $(LINKSONAME)$(srcdir)/lib$(KIM_LIB).so $(LDFLAGS) $(OUTPUTINFLAG) $@ \
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDSHAREDFLAG) $(LINKSONAME)$(LINKSOPATH)lib$(KIM_LIB).so $(LDFLAGS) $(OUTPUTINFLAG) $@ \
                       $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
-                      $(LDDYNAMICLIB) $(XLANGLDLIBS) \
-                      $(LDLIBS)
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDSHAREDFLAG) $(LINKSONAME)$(LINKSOPATH)lib$(KIM_LIB).so $(LDFLAGS) $(OUTPUTINFLAG) .$@ \
-                      $(LDWHOLEARCHIVESTARTFLAG) .$< $(LDWHOLEARCHIVEENDFLAG) \
                       $(LDDYNAMICLIB) $(XLANGLDLIBS) \
                       $(LDLIBS)
 
@@ -277,18 +261,19 @@ kim_semver_module.mod kim_semver_module.o: kim_semver_module.f90 $(KIM_MAKE_FILE
 	@printf "Creating... Intermediate file..... $@.\n"
 	$(QUELL)cp $< $@
 
-%IM_API_DIRS.o: KIM_DEFINE_VALUES +=  -D INPLACE=$(if $(filter-out .old_KIM_API_DIRS.o,$@),1,0) \
-                                      -D PACKAGEDIR=\"$(if $(filter-out .old_KIM_API_DIRS.o,$@),$(srcdir),$(package_dir))\" \
-                                      -D KIMDIR=\"$(KIM_DIR)\" \
-                                      -D MODELDRIVERSDIR=\"$(modeldriversdir)\" \
-                                      -D MODELSDIR=\"$(modelsdir)\" \
-                                      -D PACKAGENAME=\"$(package_name)\" \
-                                      -D USERROOT=$(if $(filter-out $(HOME),$(user_config_file_root_name)),1,0) \
-                                      -D USERCONFIGFILEROOTNAME=\"$(user_config_file_root_name)\" \
-                                      -D USERCONFIGFILEDIRNAME=\"$(user_config_file_dir_name)\" \
-                                      -D VERSION_MAJOR=\"$(VERSION_MAJOR)\" \
-                                      -D MODELLIBFILE=\"lib$(MODEL_LIB)\" \
-                                      -D MODELDRIVERLIBFILE=\"lib$(MODEL_DRIVER_LIB)\"
+old_KIM_API_DIRS.o: old_KIM_API_DIRS.h $(KIM_MAKE_FILES)
+old_KIM_API_DIRS.o: KIMDEFINES = -D PACKAGEDIR=\"$(package_dir)\" \
+                                 -D KIMDIR=\"$(KIM_DIR)\" \
+                                 -D KIMLIBBUILD=\"$(KIM_LIB_BUILD).so\" \
+                                 -D MODELDRIVERSDIR=\"$(modeldriversdir)\" \
+                                 -D MODELSDIR=\"$(modelsdir)\" \
+                                 -D PACKAGENAME=\"$(package_name)\" \
+                                 -D USERROOT=$(if $(filter-out $(HOME),$(user_config_file_root_name)),1,0) \
+                                 -D USERCONFIGFILEROOTNAME=\"$(user_config_file_root_name)\" \
+                                 -D USERCONFIGFILEDIRNAME=\"$(user_config_file_dir_name)\" \
+                                 -D VERSION_MAJOR=\"$(VERSION_MAJOR)\" \
+                                 -D MODELLIBFILE=\"lib$(MODEL_LIB)\" \
+                                 -D MODELDRIVERLIBFILE=\"lib$(MODEL_DRIVER_LIB)\"
 
 .PHONY: all objects libs clean install objects-install libs-install installdirs uninstall objects-uninstall install-check libs-uninstall
 
@@ -303,7 +288,6 @@ install_nodest_includedir = $(package_dir)/include
 install_include = # @@@@ needs updating
 
 install-check:
-        # should we check that the installed stuff is actually dynamic-load and the right settings (32bit, etc.)?
 	$(QUELL)if test -d "$(dest_package_dir)"; then \
                   rm -rf "$(install_includedir)"; \
                   rm -f  "$(DESTDIR)$(includedir)/$(full_package_name)"; \
@@ -314,10 +298,8 @@ install-check:
 installdirs:
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(DESTDIR)$(includedir)"
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(install_includedir)"
-ifneq (static-link,$(KIM_LINK))
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(install_modelsdir)"
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(install_modeldriversdir)"
-endif
 
 install: objects-install libs-install
 
@@ -330,9 +312,9 @@ libs-install: libs installdirs
 	$(QUELL)for fl in $(install_include); do $(INSTALL_PROGRAM) -m 0644 "$$fl" "$(install_includedir)/$$fl"; done
 	$(QUELL)ln -fs "$(install_nodest_includedir)" "$(DESTDIR)$(includedir)/$(full_package_name)"
         # Install lib files
-	$(QUELL)$(INSTALL_PROGRAM) -m 0644 "lib$(KIM_LIB_BUILD).a" "$(dest_package_dir)/lib$(KIM_LIB_BUILD).a"
-	$(QUELL)ln -fs "lib$(KIM_LIB_BUILD).a" "$(dest_package_dir)/lib$(KIM_LIB).a"
-	$(QUELL)ln -fs "$(full_package_name)/lib$(KIM_LIB).a" "$(DESTDIR)$(libdir)/lib$(KIM_LIB).a"
+	$(QUELL)$(INSTALL_PROGRAM) -m 0755 "lib$(KIM_LIB_BUILD).so" "$(dest_package_dir)/lib$(KIM_LIB_BUILD).so"
+	$(QUELL)ln -fs "lib$(KIM_LIB_BUILD).so" "$(dest_package_dir)/lib$(KIM_LIB).so"
+	$(QUELL)ln -fs "$(full_package_name)/lib$(KIM_LIB).so" "$(DESTDIR)$(libdir)/lib$(KIM_LIB).so"
 	@printf ".\n"
 
 uninstall: objects-uninstall libs-uninstall

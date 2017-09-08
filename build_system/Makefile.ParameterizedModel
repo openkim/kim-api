@@ -37,23 +37,58 @@ ifndef KIM_DIR
 endif
 include $(KIM_DIR)/$(builddir)/Makefile.SanityCheck
 
+# Set include flags
+KIMINCLUDEFLAGS = -I$(includedir)/$(full_package_name)
+
 # Clean up variables
 MODEL_NAME := $(strip $(MODEL_NAME))
 MODEL_DRIVER_NAME := $(strip $(MODEL_DRIVER_NAME))
 
-# Set SO variables
-%.so: SO_IS_MODEL:=true
+MODEL_BUILD_TARGET := lib$(MODEL_LIB).so
 
-#build target .a or .so for models
-MODEL_BUILD_TARGET := lib$(MODEL_LIB).a
-MODEL_BUILD_TARGET := $(patsubst %.a,%.so, $(MODEL_BUILD_TARGET))
+#full lib name
+MODEL_LIB_BUILD = $(LIB_ROOT)-model-v$(VERSION_FULL)
 
 # Add this file and item makefile to makefiles list
 KIM_MAKE_FILES += $(KIM_DIR)/$(builddir)/Makefile.ParameterizedModel Makefile
 
-.PHONY: clean install installdirs uninstall kim-item-type model-name model-driver-name
+.PHONY: clean install-system install-user installdirs uninstall-system uninstall-user kim-item-type model-name model-driver-name
 
-all: $(MODEL_BUILD_TARGET)
+# descriptor file make rule
+.INTERMEDIATE: kim_str.c
+kim_str.c: descriptor.kim $(KIM_MAKE_FILES)
+	@printf "Creating... intermediate file... $@.\n"
+	$(QUELL)varnm=`printf "descriptor.kim" | \
+                       sed -e 's/^\([[:digit:]]\)/__\1/' -e 's/[^[:alnum:]]/_/g'` && \
+                xxd -i descriptor.kim | \
+                sed -e "s/$${varnm}/$(MODEL_NAME)_kim_str/g" > $@
+
+
+all: descriptor.kim $(MODEL_BUILD_TARGET)
+
+# Find the driver files
+COLLECTIONS_INFO = $(libexecdir)/$(full_package_name)/$(full_package_name)-collections-info
+#
+driver_location = $(shell $(COLLECTIONS_INFO) model_drivers find $(MODEL_DRIVER_NAME) 2> /dev/null| sed -e 's/[^ ]* [^ ]* \([^ ]*\).*/\1/')
+ifeq (,$(driver_location))
+   ifeq (,$(MAKECMDGOALS))  # empty goal, in this case, means stop here
+      MAKECMDGOALS=empty-so-stop
+   endif
+   ifeq (,$(filter-out clean kim-item-type model-name model-driver-name,$(MAKECMDGOALS)))
+      # all good
+   else
+     # check for driver in CWD-collection of parent directory
+     driver_location = $(shell cd ..; $(COLLECTIONS_INFO) model_drivers find $(MODEL_DRIVER_NAME) 2> /dev/null| sed -e 's/[^ ]* [^ ]* \([^ ]*\).*/\1/')
+     ifeq (,$(driver_location))
+       $(error Model Driver, $(MODEL_DRIVER_NAME), not found. Please build and install the driver)
+     else
+       # driver_location will have ./ at beginning, change it to ../
+       driver_location:=.$(driver_location)
+     endif
+  endif
+else
+  driver_collection = $(shell $(COLLECTIONS_INFO) model_drivers find $(MODEL_DRIVER_NAME) 2> /dev/null| sed -e 's/\([^ ]*\).*/\1/')
+endif
 
 paramfile_list =  $(sort $(strip $(filter PARAM_FILE_%_NAME,$(.VARIABLES))))
 
@@ -61,8 +96,24 @@ paramfile_num_list = $(strip $(subst _NAME,,$(subst PARAM_FILE_,,$(paramfile_lis
 paramfile_name_list = $(strip $(foreach paramfl,$(paramfile_list), $($(paramfl))))
 num_paramfiles = $(words $(paramfile_num_list))
 
-.INTERMEDIATE: init_wrapper.cpp
-init_wrapper.cpp: $(paramfile_name_list) $(KIM_MAKE_FILES)
+# descriptor.kim should not be INTERMEDIATE, so that the openkim.org pipeline can use it.
+drv_kim_name=$(driver_location)/$(MODEL_DRIVER_NAME)/$(shell $(MAKE) $(MAKE_FLAGS) -C $(driver_location)/$(MODEL_DRIVER_NAME) model-driver-kim-file-template 2> /dev/null)
+descriptor.kim: $(drv_kim_name) $(KIM_MAKE_FILES)
+	@printf "Creating... $@.\n"
+	@printf "  Using ModelDriver in... $(driver_location)/$(MODEL_DRIVER_NAME).\n"
+	$(QUELL)$(foreach spec,$(filter-out $(shell cat $(drv_kim_name) | \
+                                                    sed -e '/^SPECIES_\([0-9]\{3\}\)_NAME_STR.*$$/!d' -e 's/^\(SPECIES_[0-9]\{3\}_NAME\)_STR.*$$/\1/'), \
+                                            $(species_list)),\
+                    printf "*** $(spec) is defined in Makefile, but $(spec)_STR is not in $(drv_kim_name). ***\n\n" && false;)
+	$(QUELL)cat $(drv_kim_name) | \
+                sed $(foreach spec,$(species_list),-e 's,$(spec)_STR,$($(spec)),g')    \
+                    -e '/SPECIES_[0-9]\{3\}_NAME_STR/d'                                \
+                > descriptor.kim
+
+PARAM_MODEL_NAME = parameterized-model
+$(PARAM_MODEL_NAME).o: KIMDEFINES = -D KIM_LINK_VALUE=$(KIM_LINK_VALUE)
+.INTERMEDIATE: $(PARAM_MODEL_NAME).cpp
+$(PARAM_MODEL_NAME).cpp: $(KIM_DIR)/$(builddir)/parameterized_model.cpp $(paramfile_name_list) $(KIM_MAKE_FILES)
 	@printf "Creating... intermediate file... $@.\n"
 	$(QUELL)printf "extern \"C\"\n"                                                    > $@
 	$(QUELL)printf "{\n"                                                              >> $@
@@ -95,7 +146,9 @@ lib$(MODEL_LIB).so: lib$(MODEL_LIB_BUILD).so
 
 lib$(MODEL_LIB_BUILD).a: init_wrapper.o
 	@printf "Creating... $@.\n"
-	$(QUELL)ar rcs $@ init_wrapper.o
+	$(QUELL)$(LD) $(ARCHFLAG) $(LDSHAREDFLAG) \
+                      $(LDEXPORTLISTFLAG) $(LDFLAGS) -L$(libdir) $(OUTPUTINFLAG) lib$(MODEL_LIB_BUILD).so \
+                      $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) $(LDLIBS) -l$(KIM_LIB)
 
 $(EXPORT_LIST_NAME): $(KIM_MAKE_FILES)
 	@printf "Creating... intermediate file... $@.\n"
@@ -141,25 +194,33 @@ model-driver-name:
 
 clean:
 	@printf "Cleaning... Model.......... $(MODEL_NAME).\n"
-	$(QUELL)rm -f lib$(LIB_ROOT)* .lib$(LIB_ROOT)* \
-                      $(addprefix init_wrapper.,o cpp) \
-                      $(EXPORT_LIST_NAME)
-
-install_modeldir = $(dest_package_dir)/$(modelsdir)/$(MODEL_NAME)
+	$(QUELL)rm -f lib$(LIB_ROOT)* \
+                      $(addprefix $(PARAM_MODEL_NAME).,o cpp) \
+                      $(addprefix kim_str.,o c) \
+                      $(EXPORT_LIST_NAME) descriptor.kim
 
 installdirs:
-	$(QUELL)fl="$(install_modeldir)" && \
+	$(QUELL)fl="$(install_parammodeldir)" && \
                 if test -d "$$fl"; then rm -rf "$$fl"; fi && \
-                $(INSTALL_PROGRAM) -d -m 0755 "$$fl"
+                $(INSTALL_PROGRAM) -d -m 0755  "$$fl"
 
-install: DOT:=$(shell if test -f ".lib$(MODEL_LIB_BUILD).so"; then printf "."; fi)
-install: all installdirs
-	@printf "Installing...($(dest_package_dir))................. Model.......... $(MODEL_NAME)"
-	@printf ".\n"
-	$(QUELL)$(INSTALL_PROGRAM) -m 0755 "$(DOT)lib$(MODEL_LIB_BUILD).so" "$(install_modeldir)/lib$(MODEL_LIB_BUILD).so"
-	$(QUELL)ln -fs "lib$(MODEL_LIB_BUILD).so" "$(install_modeldir)/lib$(MODEL_LIB).so"
+install-system: install_parammodeldir = $(shell $(COLLECTIONS_INFO) system models)/$(MODEL_NAME)
+install-user:   install_parammodeldir = $(shell $(COLLECTIONS_INFO) config_file models)/$(MODEL_NAME)
+install-system install-user: install-%: all installdirs
+	@printf "Installing...($*)................. Model.......... $(MODEL_NAME).\n"
+	$(QUELL)if test \( x"$*" = x"system" -a x"$(driver_collection)" = x"user" \); then                    \
+                  printf "*******************************************************************************\n"; \
+                  printf "*******   Model Driver found in user collection.  Cannot install this   *******\n"; \
+                  printf "*******             Parameterized Model in system collection.           *******\n"; \
+                  printf "*******                  Please try 'make install-user'.                *******\n"; \
+                  printf "*******************************************************************************\n"; \
+                  false; else true;                                                                           \
+                fi
+	$(QUELL)$(INSTALL_PROGRAM) -m 0755 "lib$(MODEL_LIB_BUILD).so" "$(install_parammodeldir)/lib$(MODEL_LIB_BUILD).so"
+	$(QUELL)ln -fs "lib$(MODEL_LIB_BUILD).so" "$(install_parammodeldir)/lib$(MODEL_LIB).so"
 
-uninstall:
-	@printf "Uninstalling...($(dest_package_dir))................. Model.......... $(MODEL_NAME)"
-	@printf ".\n"
-	$(QUELL)fl="$(install_modeldir)" && if test -d "$$fl"; then rm -rf "$$fl"; fi
+uninstall-system: uninstall_parammodeldir = $(shell $(COLLECTIONS_INFO) system models)/$(MODEL_NAME)
+uninstall-user:   uninstall_parammodeldir = $(shell $(COLLECTIONS_INFO) config_file models)/$(MODEL_NAME)
+uninstall-system uninstall-user: uninstall-%:
+	@printf "Uninstalling...($*)................. Model.......... $(MODEL_NAME).\n"
+	$(QUELL)fl="$(uninstall_parammodeldir)" && if test -d "$$fl"; then rm -rf "$$fl"; fi

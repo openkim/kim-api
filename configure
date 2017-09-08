@@ -62,7 +62,7 @@ usage () {
          "or \`darwin'"
   printf "  --system-arch=ARG       System architecture: \`32bit' or %s\n" \
          "\`64bit'"
-  printf "  --link-type=ARG         linking type: [\`dynamic-load']\n"
+  #printf "  --link-type=ARG         linking type: [\`dynamic-load']\n"
   printf "  --build-verbosity=ARG   Build verbosity: [\`quiet'] or \`full'\n"
   printf "\n"
   printf "Installation directories:\n"
@@ -74,14 +74,15 @@ usage () {
   printf "                          [PREFIX]\n"
   printf "\n"
   printf "By default, \`make install' will install all the files in\n"
-  printf "\`/usr/local/bin', \`/usr/local/lib' etc.  You can specify\n"
-  printf "an installation prefix other than \`/usr/local' using \`--prefix',\n"
+  printf "\`/usr/local/bin' etc.  You can specify an installation\n"
+  printf "prefix other than \`/usr/local' using \`--prefix',\n"
   printf "for instance \`--prefix=\${HOME}/local'.\n"
   printf "\n"
   printf "For better control, use the options below.\n"
   printf "\n"
   printf "Fine tuning of the installation directories:\n"
   printf "  --bindir=DIR            user executables [EPREFIX/bin]\n"
+  printf "  --libexecdir=DIR        program executables [EPREFIX/libexec]\n"
   printf "  --libdir=DIR            object code libraries [EPREFIX/lib]\n"
   printf "  --includedir=DIR        C and Fortran header files %s\n" \
          "[PREFIX/include]"
@@ -132,6 +133,7 @@ userConfigFileDirName=''
 prefix=''
 execPrefix=''
 bindir=''
+libexecdir=''
 libdir=''
 includedir=''
 makeVariables=''
@@ -202,17 +204,20 @@ do
           exit 3
       esac
       ;;
-    --link-type=*)
-      case `stripOption $1` in
-        dynamic-load)
-          linkType='dynamic-load'
-          ;;
-        *)
-          printf "Unknown value for \`--link-type=' argument.\n"
-          usage
-          exit 4
-      esac
-      ;;
+#    --link-type=*)
+#      case `stripOption $1` in
+#        dynamic-load)
+#          linkType='dynamic-load'
+#          ;;
+#        static-link)
+#          linkType='static-link'
+#          ;;
+#        *)
+#          printf "Unknown value for \`--link-type=' argument.\n"
+#          usage
+#          exit 4
+#      esac
+#      ;;
     --build-verbosity=*)
       case `stripOption $1` in
         quiet)
@@ -235,6 +240,9 @@ do
       ;;
     --bindir=*)
       bindir=`stripOption $1`
+      ;;
+    --libexecdir=*)
+      libexecdir=`stripOption $1`
       ;;
     --libdir=*)
       libdir=`stripOption $1`
@@ -379,10 +387,10 @@ else
   fi
 fi
 
-# report link type being used
-if test "no" = "${quiet}"; then
-  printf "using link type of... ${linkType}\n"
-fi
+# # report link type being used
+# if test "no" = "${quiet}"; then
+#   printf "using link type of... ${linkType}\n"
+# fi
 
 # create config.status
 flnm=./config.status
@@ -427,6 +435,9 @@ if test "x" != "x${execPrefix}"; then
 fi
 if test "x" != "x${bindir}"; then
   printf 'printf "bindir = '${bindir}'\\n" >> $flnm\n' >> $flnm
+fi
+if test "x" != "x${libexecdir}"; then
+  printf 'printf "libexecdir = '${libexecdir}'\\n" >> $flnm\n' >> $flnm
 fi
 if test "x" != "x${libdir}"; then
   printf 'printf "libdir = '${libdir}'\\n" >> $flnm\n' >> $flnm
