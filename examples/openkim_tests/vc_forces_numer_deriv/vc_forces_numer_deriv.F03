@@ -55,7 +55,7 @@ contains
     integer, intent(in) :: line
     character(len=*), intent(in) :: file
 
-    print *,"* Error : '", trim(message), "' ", line, ":", &
+    print *,"* Warning : '", trim(message), "' ", line, ":", &
       trim(file)
   end subroutine my_warning
 end module error
