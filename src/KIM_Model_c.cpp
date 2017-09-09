@@ -153,12 +153,6 @@ KIM::SpeciesName makeSpecNameCpp(KIM_SpeciesName const speciesName)
   return KIM::SpeciesName(speciesName.speciesNameID);
 }
 
-KIM_SpeciesName makeSpecNameC(KIM::SpeciesName const speciesName)
-{
-  KIM_SpeciesName speciesN = {speciesName.speciesNameID};
-  return speciesN;
-}
-
 KIM::ArgumentName makeArgumentNameCpp(KIM_ArgumentName const argumentName)
 {
   return KIM::ArgumentName(argumentName.argumentNameID);
@@ -167,11 +161,6 @@ KIM::ArgumentName makeArgumentNameCpp(KIM_ArgumentName const argumentName)
 KIM::CallbackName makeCallbackNameCpp(KIM_CallbackName const callbackName)
 {
   return KIM::CallbackName(callbackName.callbackNameID);
-}
-
-KIM::SupportStatus makeSupportStatusCpp(KIM_SupportStatus const supportStatus)
-{
-  return KIM::SupportStatus(supportStatus.supportStatusID);
 }
 
 KIM_SupportStatus const makeSupportStatusC(KIM::SupportStatus supportStatus)

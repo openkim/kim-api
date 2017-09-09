@@ -157,30 +157,15 @@ extern "C"
     {
       return KIM::LengthUnit(lengthUnit.lengthUnitID);
     }
-    KIM_LengthUnit makeLengthUnitC(KIM::LengthUnit const lengthUnit)
-    {
-      KIM_LengthUnit lengthU = {lengthU.lengthUnitID};
-      return lengthU;
-    }
 
     KIM::EnergyUnit makeEnergyUnitCpp(KIM_EnergyUnit const energyUnit)
     {
       return KIM::EnergyUnit(energyUnit.energyUnitID);
     }
-    KIM_EnergyUnit makeEnergyUnitC(KIM::EnergyUnit const energyUnit)
-    {
-      KIM_EnergyUnit energyU = {energyUnit.energyUnitID};
-      return energyU;
-    }
 
     KIM::ChargeUnit makeChargeUnitCpp(KIM_ChargeUnit const chargeUnit)
     {
       return KIM::ChargeUnit(chargeUnit.chargeUnitID);
-    }
-    KIM_ChargeUnit makeChargeUnitC(KIM::ChargeUnit const chargeUnit)
-    {
-      KIM_ChargeUnit chargeU = {chargeUnit.chargeUnitID};
-      return chargeU;
     }
 
     KIM::TemperatureUnit makeTemperatureUnitCpp(
@@ -188,21 +173,10 @@ extern "C"
     {
       return KIM::TemperatureUnit(temperatureUnit.temperatureUnitID);
     }
-    KIM_TemperatureUnit makeTemperatureUnitC(
-        KIM::TemperatureUnit const temperatureUnit)
-    {
-      KIM_TemperatureUnit temperatureU = {temperatureUnit.temperatureUnitID};
-      return temperatureU;
-    }
 
     KIM::TimeUnit makeTimeUnitCpp(KIM_TimeUnit const timeUnit)
     {
       return KIM::TimeUnit(timeUnit.timeUnitID);
-    }
-    KIM_TimeUnit makeTimeUnitC(KIM::TimeUnit const timeUnit)
-    {
-      KIM_TimeUnit timeU = {timeUnit.timeUnitID};
-      return timeU;
     }
 
     KIM::LanguageName
@@ -214,12 +188,6 @@ extern "C"
     KIM::SpeciesName makeSpecNameCpp(KIM_SpeciesName const speciesName)
     {
       return KIM::SpeciesName(speciesName.speciesNameID);
-    }
-
-    KIM_SpeciesName makeSpecNameC(KIM::SpeciesName const speciesName)
-    {
-      KIM_SpeciesName speciesN = {speciesName.speciesNameID};
-      return speciesN;
     }
     }  // namespace
 
