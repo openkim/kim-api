@@ -34,6 +34,54 @@
 #include <cstring>
 #include <sstream>
 
+
+#ifndef CC_STRING
+#error
+#endif
+#ifndef CXX_STRING
+#error
+#endif
+#ifndef FC_STRING
+#error
+#endif
+#ifndef LD_STRING
+#error
+#endif
+#ifndef INCLUDES_STRING
+#error
+#endif
+#ifndef CFLAGS_STRING
+#error
+#endif
+#ifndef CXXFLAGS_STRING
+#error
+#endif
+#ifndef FFLAGS_STRING
+#error
+#endif
+#ifndef LDFLAGS_STRING
+#error
+#endif
+#ifndef LDLIBS_STRING
+#error
+#endif
+#ifndef OBJONLYFLAG_STRING
+#error
+#endif
+#ifndef OUTPUTINFLAG_STRING
+#error
+#endif
+#ifndef MAKEFILEKIMCONFIG_STRING
+#error
+#endif
+#ifndef LIBEXECPATH_STRING
+#error
+#endif
+#ifndef VERSION_STRING
+#error
+#endif
+
+
 #define SUCCESS                     0
 #define INVALID_NUMBER_OF_ARGUMENTS 1
 #define UNKNOWN_OPTION              3

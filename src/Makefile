@@ -122,15 +122,20 @@ all: objects libs
 objects: $(ALLOBJ)
 libs: lib$(KIM_LIB).so
 
-lib$(KIM_LIB).%: lib$(KIM_LIB_BUILD).%
+lib$(KIM_LIB).so: lib$(KIM_LIB_BUILD).so
 	@printf "Creating... KIM API library....... $@.\n";
 	$(QUELL)ln -fs "lib$(KIM_LIB_BUILD).so" "lib$(KIM_LIB).so"
 
 lib$(KIM_LIB_BUILD).a: $(ALLOBJ)
 	@printf "Creating... KIM API library....... $@.\n";
 	$(QUELL)ar rcs $@ $(ALLOBJ)
-	$(QUELL)ar rcs .$@ $(ALLOBJ)
-lib$(KIM_LIB_BUILD).so: lib$(KIM_LIB_BUILD).a .lib$(KIM_LIB_BUILD).a
+
+# Update LINKSOPATH, if prefix is non-standard
+ifeq ($(filter / /usr /usr/local,$(prefix)),)
+   LINKSOPATH = $(package_dir)/
+endif
+
+lib$(KIM_LIB_BUILD).so: lib$(KIM_LIB_BUILD).a
 	@printf "Creating... KIM API library....... $@.\n";
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDSHAREDFLAG) $(LINKSONAME)$(LINKSOPATH)lib$(KIM_LIB).so $(LDFLAGS) $(OUTPUTINFLAG) $@ \
                       $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
@@ -152,7 +157,7 @@ lib$(KIM_LIB_BUILD).so: lib$(KIM_LIB_BUILD).a .lib$(KIM_LIB_BUILD).a
 # 	@touch $@
 
 KIM_ModelImplementation.o: KIM_ModelImplementation.hpp KIM_ModelImplementation.cpp KIM_ModelLibrary.hpp $(KIM_MAKE_FILES)
-KIM_ModelLibrary.o: KIM_DEFINE_VALUES +=  -D MODELLIBFILE=\"lib$(MODEL_LIB)\" -D MODELDRIVERLIBFILE=\"lib$(MODEL_DRIVER_LIB)\"
+KIM_ModelLibrary.o: KIMDEFINES = -D MODELLIBFILE=\"lib$(MODEL_LIB)\" -D MODELDRIVERLIBFILE=\"lib$(MODEL_DRIVER_LIB)\"
 KIM_ModelLibrary.o: KIM_ModelLibrary.hpp KIM_ModelLibrary.cpp old_KIM_API_DIRS.h $(KIM_MAKE_FILES)
 
 KIM_LanguageName.o: KIM_LanguageName.hpp KIM_LanguageName.cpp $(KIM_MAKE_FILES)
@@ -285,7 +290,76 @@ install_modelsdir = $(dest_package_dir)/$(modelsdir)
 install_modeldriversdir = $(dest_package_dir)/$(modeldriversdir)
 install_includedir = $(dest_package_dir)/include
 install_nodest_includedir = $(package_dir)/include
-install_include = # @@@@ needs updating
+install_include_cpp = KIM_ArgumentName.hpp \
+                      KIM_CallbackName.hpp \
+                      KIM_ChargeUnit.hpp \
+                      KIM_DataType.hpp \
+                      KIM_EnergyUnit.hpp \
+                      KIM_LanguageName.hpp \
+                      KIM_LengthUnit.hpp \
+                      KIM_Log.hpp \
+                      KIM_LogVerbosity.hpp \
+                      KIM_Model.hpp \
+                      KIM_ModelCompute.hpp KIM_ModelComputeLogMacros.hpp \
+                      KIM_ModelCreate.hpp KIM_ModelCreateLogMacros.hpp \
+                      KIM_ModelDestroy.hpp KIM_ModelDestroyLogMacros.hpp \
+                      KIM_ModelDriverCreate.hpp KIM_ModelDriverCreateLogMacros.hpp \
+                      KIM_ModelRefresh.hpp KIM_ModelRefreshLogMacros.hpp \
+                      KIM_Numbering.hpp \
+                      KIM_SpeciesName.hpp \
+                      KIM_SupportStatus.hpp \
+                      KIM_TemperatureUnit.hpp \
+                      KIM_TimeUnit.hpp \
+                      KIM_UnitSystem.hpp \
+                      KIM_func.hpp \
+                      KIM_semver.hpp
+install_include_c = KIM_ArgumentName.h \
+                    KIM_CallbackName.h \
+                    KIM_ChargeUnit.h \
+                    KIM_DataType.h \
+                    KIM_EnergyUnit.h \
+                    KIM_LanguageName.h \
+                    KIM_LengthUnit.h \
+                    KIM_Log.h \
+                    KIM_LogVerbosity.h \
+                    KIM_Model.h \
+                    KIM_ModelCompute.h KIM_ModelComputeLogMacros.h \
+                    KIM_ModelCreate.h KIM_ModelCreateLogMacros.h \
+                    KIM_ModelDestroy.h KIM_ModelDestroyLogMacros.h \
+                    KIM_ModelDriverCreate.h KIM_ModelDriverCreateLogMacros.h \
+                    KIM_ModelRefresh.h \
+                    KIM_ModelRefreshLogMacros.h \
+                    KIM_Numbering.h \
+                    KIM_SpeciesName.h \
+                    KIM_SupportStatus.h \
+                    KIM_TemperatureUnit.h \
+                    KIM_TimeUnit.h \
+                    KIM_UnitSystem.h \
+                    KIM_func.h \
+                    KIM_semver.h
+install_include_fortran = kim_argument_name_module.mod \
+                          kim_callback_name_module.mod \
+                          kim_charge_unit_module.mod \
+                          kim_data_type_module.mod \
+                          kim_energy_unit_module.mod \
+                          kim_language_name_module.mod \
+                          kim_length_unit_module.mod \
+                          kim_log_module.mod \
+                          kim_log_verbosity_module.mod \
+                          kim_model_compute_module.mod kim_model_compute_log_macros.fd \
+                          kim_model_create_module.mod kim_model_create_log_macros.fd \
+                          kim_model_destroy_module.mod kim_model_destroy_log_macros.fd \
+                          kim_model_driver_create_module.mod kim_model_driver_create_log_macros.fd \
+                          kim_model_module.mod \
+                          kim_model_refresh_module.mod kim_model_refresh_log_macros.fd \
+                          kim_numbering_module.mod \
+                          kim_semver_module.mod \
+                          kim_species_name_module.mod \
+                          kim_support_status_module.mod \
+                          kim_temperature_unit_module.mod \
+                          kim_time_unit_module.mod \
+                          kim_unit_system_module.mod
+install_include = KIM_LOG_DEFINES.inc $(install_include_cpp) $(install_include_c) $(install_include_fortran)
 
 install-check:
 	$(QUELL)if test -d "$(dest_package_dir)"; then \

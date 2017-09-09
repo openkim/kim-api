@@ -47,6 +47,13 @@
 #include "KIM_LanguageName.hpp"
 #endif
 
+#ifndef MODELLIBFILE
+#error
+#endif
+#ifndef MODELDRIVERLIBFILE
+#error
+#endif
+
 namespace KIM
 {
 
@@ -78,7 +85,7 @@ int ModelLibrary::open(bool const typeIsModel, std::string const & modelName)
       (typeIsModel ? OLD_KIM::KIM_MODELS_DIR : OLD_KIM::KIM_MODEL_DRIVERS_DIR),
       modelName_, &item);
   if (!accessible) return true;  // cannot find modelName
-  libraryPath_ = item[1] + "/" + item[0] + "/"
+  libraryPath_ = item[OLD_KIM::IE_DIR] + "/" + item[OLD_KIM::IE_NAME] + "/"
       + (typeIsModel ? MODELLIBFILE : MODELDRIVERLIBFILE) + ".so";
 
   libraryHandle_ = dlopen(libraryPath_.c_str(), RTLD_NOW);

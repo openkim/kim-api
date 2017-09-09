@@ -40,20 +40,13 @@ VPATH = ../
 # Set include flags
 KIMINCLUDEFLAGS = -I../
 
-all: $(full_package_name)-descriptor-file-match \
-     $(full_package_name)-build-config \
+all: $(full_package_name)-build-config \
      $(full_package_name)-collections-info \
      $(full_package_name)-collections-management \
      $(full_package_name)-simulator-model
 
 # Add the local Makefile to KIM_MAKE_FILES
 KIM_MAKE_FILES += Makefile
-
-descriptor-file-match.o: descriptor-file-match.cpp KIM_API.h KIM_API_status.h $(KIM_MAKE_FILES)
-
-$(full_package_name)-descriptor-file-match: descriptor-file-match.o lib$(KIM_LIB_BUILD).so
-	@printf "Creating... $@.\n"
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).so $(XLANGLDLIBS) $(LDLIBS)
 
 build-config.o: KIMDEFINES = -D 'CC_STRING="$(CC)"' \
                              -D 'CXX_STRING="$(CXX)"' \
@@ -79,14 +72,14 @@ $(full_package_name)-build-config: build-config.o
 
 collections-info.o: collections-info.cpp old_KIM_API_DIRS.h $(KIM_MAKE_FILES)
 
-$(full_package_name)-collections-info: collections-info.o lib$(KIM_LIB_BUILD).so .lib$(KIM_LIB_BUILD).so
+$(full_package_name)-collections-info: collections-info.o lib$(KIM_LIB_BUILD).so
 
 $(full_package_name)-collections-info: collections-info.o lib$(KIM_LIB_BUILD).so
 	@printf "Creating... $@.\n"
 	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).so $(LDDYNAMICLIB) $(XLANGLDLIBS) $(LDLIBS)
 
 simulator-model.o: KIMDEFINES = -D 'MODELLIBFILE="lib$(MODEL_LIB)"'
-simulator-model.o: simulator-model.cpp KIM_API_DIRS.h $(KIM_MAKE_FILES)
+simulator-model.o: simulator-model.cpp old_KIM_API_DIRS.h $(KIM_MAKE_FILES)
 
 $(full_package_name)-simulator-model: simulator-model.o lib$(KIM_LIB_BUILD).so
 	@printf "Creating... $@.\n"
@@ -103,7 +96,7 @@ $(full_package_name)-collections-management: collections-management.sh $(KIM_MAK
 
 clean:
 	@printf "Cleaning... src/utils.\n"
-	$(QUELL)rm -f *.o .*.o $(full_package_name)-descriptor-file-match \
+	$(QUELL)rm -f *.o .*.o \
                    $(full_package_name)-build-config \
                    $(full_package_name)-collections-info \
                    $(full_package_name)-collections-management \
@@ -115,7 +108,7 @@ install_nodest_bindir = $(package_dir)/bin
 install_libexecdir = $(dest_package_dir)/libexec
 install_nodest_libexecdir = $(package_dir)/libexec
 install_bin = $(full_package_name)-build-config $(full_package_name)-collections-management $(full_package_name)-simulator-model
-install_libexec = $(full_package_name)-descriptor-file-match $(full_package_name)-collections-info
+install_libexec = $(full_package_name)-collections-info
 
 install-check:
 	$(QUELL)if test -d "$(dest_package_dir)"; then \

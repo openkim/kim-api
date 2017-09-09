@@ -45,6 +45,44 @@
 
 #define LINELEN 256
 
+#ifndef PACKAGEDIR
+#error
+#endif
+#ifndef KIMDIR
+#error
+#endif
+#ifndef KIMLIBBUILD
+#error
+#endif
+#ifndef MODELDRIVERSDIR
+#error
+#endif
+#ifndef MODELSDIR
+#error
+#endif
+#ifndef PACKAGENAME
+#error
+#endif
+#ifndef USERROOT
+#error
+#endif
+#ifndef USERCONFIGFILEROOTNAME
+#error
+#endif
+#ifndef USERCONFIGFILEDIRNAME
+#error
+#endif
+#ifndef VERSION_MAJOR
+#error
+#endif
+#ifndef MODELLIBFILE
+#error
+#endif
+#ifndef MODELDRIVERLIBFILE
+#error
+#endif
+
+
 namespace OLD_KIM
 {
 
@@ -369,7 +407,7 @@ void getAvailableItems(DirectoryPathType type,
       }
       else
       {
-        std::cerr << dlerror() << std::endl;
+        //std::cerr << dlerror() << std::endl;
       }
     }
   }

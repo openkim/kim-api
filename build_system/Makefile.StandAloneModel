@@ -58,16 +58,6 @@ KIM_MAKE_FILES += $(KIM_DIR)/$(builddir)/Makefile.StandAloneModel Makefile
 
 .PHONY: clean install-system install-user installdirs uninstall-system uninstall-user kim-item-type model-name model-kim-file
 
-# descriptor file make rule
-.INTERMEDIATE: kim_str.c
-kim_str.c: $(MODEL_KIM_FILE) $(KIM_MAKE_FILES)
-	@printf "Creating... intermediate file... $@.\n"
-	$(QUELL)varnm=`printf "$(MODEL_KIM_FILE)" | \
-                       sed -e 's/^\([[:digit:]]\)/__\1/' -e 's/[^[:alnum:]]/_/g'` && \
-                xxd -i $(MODEL_KIM_FILE) | \
-                sed -e "s/$${varnm}/$(MODEL_NAME)_kim_str/g" > $@
-
-
 all: $(MODEL_BUILD_TARGET)
 
 .INTERMEDIATE: init_wrapper.cpp
@@ -134,7 +124,7 @@ $(LOCALOBJ): $(KIM_MAKE_FILES)
 
 clean:
 	@printf "Cleaning... Model.......... $(MODEL_NAME).\n"
-	$(QUELL)rm -f $(LOCALOBJ) *.mod lib$(LIB_ROOT)* .lib$(LIB_ROOT)* \
+	$(QUELL)rm -f $(LOCALOBJ) *.mod lib$(LIB_ROOT)* \
                       $(addprefix init_wrapper.,o cpp) $(LOCALCLEAN) \
                       $(EXPORT_LIST_NAME)
 

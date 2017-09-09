@@ -37,7 +37,13 @@
 #include <cstring>
 #include <dlfcn.h>
 #include <cstdio>
-#include "KIM_API_DIRS.h"
+#include "old_KIM_API_DIRS.h"
+using namespace OLD_KIM;
+
+#ifndef MODELLIBFILE
+#error
+#endif
+
 
 void usage(char const* const name)
 {
