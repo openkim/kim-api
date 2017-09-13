@@ -126,7 +126,7 @@ else # everything else (linux and freebsd)
 	$(QUELL)printf "           number_of_parameter_files;\n"            >> $@
 	$(QUELL)$(foreach flnum,$(paramfile_num_list),\
             printf "parameter_file_$(flnum);\n" >> $@; \
-            printf "parameter_file_$(flnum)_len ;\n" >> $@; \
+            printf "parameter_file_$(flnum)_len;\n" >> $@; \
          )
 	$(QUELL)printf "           metadata_file;\n"                        >> $@
 	$(QUELL)printf "           metadata_file_len;\n"                    >> $@
