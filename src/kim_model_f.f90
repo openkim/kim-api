@@ -50,9 +50,11 @@ module kim_model_f_module
     clear_and_refresh_model, &
     get_species_support_and_code, &
     get_number_of_parameters, &
-    get_parameter_data_type_and_description, &
-    get_parameter_extent_and_pointer_integer, &
-    get_parameter_extent_and_pointer_double, &
+    get_parameter_data_type_extent_and_description, &
+    get_parameter_integer, &
+    get_parameter_double, &
+    set_parameter_integer, &
+    set_parameter_double, &
     set_simulator_buffer_pointer, &
     get_simulator_buffer_pointer, &
     model_string, &
@@ -222,42 +224,67 @@ module kim_model_f_module
       integer(c_int), intent(out) :: number_of_parameters
     end subroutine get_number_of_parameters
 
-    integer(c_int) function get_parameter_data_type_and_description(model, &
-      index, data_type, description) &
-      bind(c, name="KIM_Model_GetParameterDataTypeAndDescription")
+    integer(c_int) function get_parameter_data_type_extent_and_description( &
+      model, parameter_index, data_type, extent, description) &
+      bind(c, name="KIM_Model_GetParameterDataTypeExtentAndDescription")
       use, intrinsic :: iso_c_binding
       use kim_model_module, only : kim_model_type
       use kim_data_type_module, only : kim_data_type_type
       implicit none
       type(kim_model_type), intent(in) :: model
-      integer(c_int), intent(in), value :: index
+      integer(c_int), intent(in), value :: parameter_index
       type(kim_data_type_type), intent(out) :: data_type
+      integer(c_int), intent(out) :: extent
       type(c_ptr), intent(out) :: description
-    end function get_parameter_data_type_and_description
+    end function get_parameter_data_type_extent_and_description
 
-    integer(c_int) function get_parameter_extent_and_pointer_integer(model, &
-      index, extent, ptr) &
-      bind(c, name="KIM_Model_GetParameterExtentAndPointerInteger")
+    integer(c_int) function get_parameter_integer(model, &
+      parameter_index, array_index, parameter_value) &
+      bind(c, name="KIM_Model_GetParameterInteger")
       use, intrinsic :: iso_c_binding
       use kim_model_module, only : kim_model_type
       implicit none
       type(kim_model_type), intent(in) :: model
-      integer(c_int), intent(in), value :: index
-      integer(c_int), intent(out) :: extent
-      type(c_ptr), intent(out) :: ptr
-    end function get_parameter_extent_and_pointer_integer
+      integer(c_int), intent(in), value :: parameter_index
+      integer(c_int), intent(in), value :: array_index
+      integer(c_int), intent(out) :: parameter_value
+    end function get_parameter_integer
 
-    integer(c_int) function get_parameter_extent_and_pointer_double(model, &
-      index, extent, ptr) &
-      bind(c, name="KIM_Model_GetParameterExtentAndPointerDouble")
+    integer(c_int) function get_parameter_double(model, &
+      parameter_index, array_index, parameter_value) &
+      bind(c, name="KIM_Model_GetParameterDouble")
       use, intrinsic :: iso_c_binding
       use kim_model_module, only : kim_model_type
       implicit none
       type(kim_model_type), intent(in) :: model
-      integer(c_int), intent(in), value :: index
-      integer(c_int), intent(out) :: extent
-      type(c_ptr), intent(out) :: ptr
-    end function get_parameter_extent_and_pointer_double
+      integer(c_int), intent(in), value :: parameter_index
+      integer(c_int), intent(in), value :: array_index
+      real(c_double), intent(out) :: parameter_value
+    end function get_parameter_double
+
+    integer(c_int) function set_parameter_integer(model, &
+      parameter_index, array_index, parameter_value) &
+      bind(c, name="KIM_Model_SetParameterInteger")
+      use, intrinsic :: iso_c_binding
+      use kim_model_module, only : kim_model_type
+      implicit none
+      type(kim_model_type), intent(inout) :: model
+      integer(c_int), intent(in), value :: parameter_index
+      integer(c_int), intent(in), value :: array_index
+      integer(c_int), intent(in), value :: parameter_value
+    end function set_parameter_integer
+
+    integer(c_int) function set_parameter_double(model, &
+      parameter_index, array_index, parameter_value) &
+      bind(c, name="KIM_Model_SetParameterDouble")
+      use, intrinsic :: iso_c_binding
+      use kim_model_module, only : kim_model_type
+      implicit none
+      type(kim_model_type), intent(inout) :: model
+      integer(c_int), intent(in), value :: parameter_index
+      integer(c_int), intent(in), value :: array_index
+      real(c_double), intent(in), value :: parameter_value
+    end function set_parameter_double
 
     subroutine set_simulator_buffer_pointer(model, ptr) &
       bind(c, name="KIM_Model_SetSimulatorBufferPointer")
@@ -664,16 +691,17 @@ subroutine kim_model_get_number_of_parameters(model, number_of_parameters)
   call get_number_of_parameters(model, number_of_parameters)
 end subroutine kim_model_get_number_of_parameters
 
-subroutine kim_model_get_parameter_data_type_and_description(model, index, &
-  data_type, description, ierr)
+subroutine kim_model_get_parameter_data_type_extent_and_description(model, &
+  parameter_index, data_type, extent, description, ierr)
   use, intrinsic :: iso_c_binding
   use kim_model_module, only : kim_model_type
   use kim_data_type_module, only : kim_data_type_type
-  use kim_model_f_module, only : get_parameter_data_type_and_description
+  use kim_model_f_module, only : get_parameter_data_type_extent_and_description
   implicit none
   type(kim_model_type), intent(in) :: model
-  integer(c_int), intent(in), value :: index
+  integer(c_int), intent(in), value :: parameter_index
   type(kim_data_type_type), intent(out) :: data_type
+  integer(c_int), intent(out) :: extent
   character(len=*), intent(out) :: description
   integer(c_int), intent(out) :: ierr
 
@@ -681,47 +709,76 @@ subroutine kim_model_get_parameter_data_type_and_description(model, index, &
   character(len=len(description)), pointer :: fp
   integer(c_int) :: null_index
 
-  ierr = get_parameter_data_type_and_description(model, index-1, data_type, p)
+  ierr = get_parameter_data_type_extent_and_description(model, &
+    parameter_index-1, data_type, extent, p)
   call c_f_pointer(p, fp)
   null_index = scan(fp, char(0))-1
   description = fp(1:null_index)
-end subroutine kim_model_get_parameter_data_type_and_description
+end subroutine kim_model_get_parameter_data_type_extent_and_description
 
-subroutine kim_model_get_parameter_extent_and_pointer_integer(model, index, &
-  extent, int1, ierr)
+subroutine kim_model_get_parameter_integer(model, parameter_index, &
+  array_index, parameter_value, ierr)
   use, intrinsic :: iso_c_binding
   use kim_model_module, only : kim_model_type
-  use kim_model_f_module, only : get_parameter_extent_and_pointer_integer
+  use kim_model_f_module, only : get_parameter_integer
   implicit none
   type(kim_model_type), intent(in) :: model
-  integer(c_int), intent(in), value :: index
-  integer(c_int), intent(out) :: extent
-  integer(c_int), intent(out), pointer :: int1(:)
+  integer(c_int), intent(in), value :: parameter_index
+  integer(c_int), intent(in), value :: array_index
+  integer(c_int), intent(out) :: parameter_value
   integer(c_int), intent(out) :: ierr
 
-  type(c_ptr) p
+  ierr = get_parameter_integer(model, parameter_index-1, array_index-1, &
+    parameter_value)
+end subroutine kim_model_get_parameter_integer
 
-  ierr = get_parameter_extent_and_pointer_integer(model, index-1, extent, p)
-  call c_f_pointer(p, int1, [extent])
-end subroutine kim_model_get_parameter_extent_and_pointer_integer
-
-subroutine kim_model_get_parameter_extent_and_pointer_double(model, index, &
-  extent, double1, ierr)
+subroutine kim_model_get_parameter_double(model, parameter_index, &
+  array_index, parameter_value, ierr)
   use, intrinsic :: iso_c_binding
   use kim_model_module, only : kim_model_type
-  use kim_model_f_module, only : get_parameter_extent_and_pointer_double
+  use kim_model_f_module, only : get_parameter_double
   implicit none
   type(kim_model_type), intent(in) :: model
-  integer(c_int), intent(in), value :: index
-  integer(c_int), intent(out) :: extent
-  real(c_double), intent(out), pointer :: double1(:)
+  integer(c_int), intent(in), value :: parameter_index
+  integer(c_int), intent(in), value :: array_index
+  real(c_double), intent(out) :: parameter_value
   integer(c_int), intent(out) :: ierr
 
-  type(c_ptr) p
+  ierr = get_parameter_double(model, parameter_index-1, array_index-1, &
+    parameter_value)
+end subroutine kim_model_get_parameter_double
 
-  ierr = get_parameter_extent_and_pointer_double(model, index-1, extent, p)
-  call c_f_pointer(p, double1, [extent])
-end subroutine kim_model_get_parameter_extent_and_pointer_double
+subroutine kim_model_set_parameter_integer(model, parameter_index, &
+  array_index, parameter_value, ierr)
+  use, intrinsic :: iso_c_binding
+  use kim_model_module, only : kim_model_type
+  use kim_model_f_module, only : set_parameter_integer
+  implicit none
+  type(kim_model_type), intent(inout) :: model
+  integer(c_int), intent(in), value :: parameter_index
+  integer(c_int), intent(in), value :: array_index
+  integer(c_int), intent(in), value :: parameter_value
+  integer(c_int), intent(out) :: ierr
+
+  ierr = set_parameter_integer(model, parameter_index-1, array_index-1, &
+    parameter_value)
+end subroutine kim_model_set_parameter_integer
+
+subroutine kim_model_set_parameter_double(model, parameter_index, &
+  array_index, parameter_value, ierr)
+  use, intrinsic :: iso_c_binding
+  use kim_model_module, only : kim_model_type
+  use kim_model_f_module, only : set_parameter_double
+  implicit none
+  type(kim_model_type), intent(inout) :: model
+  integer(c_int), intent(in), value :: parameter_index
+  integer(c_int), intent(in), value :: array_index
+  real(c_double), intent(in), value :: parameter_value
+  integer(c_int), intent(out) :: ierr
+
+  ierr = set_parameter_double(model, parameter_index-1, array_index-1, &
+    parameter_value)
+end subroutine kim_model_set_parameter_double
 
 subroutine kim_model_set_simulator_buffer_pointer(model, ptr)
   use, intrinsic :: iso_c_binding

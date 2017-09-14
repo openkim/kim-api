@@ -35,7 +35,7 @@ ifeq ($(wildcard Makefile.KIM_Config),)
 endif
 include Makefile.KIM_Config
 
-export MODEL_DRIVERS_LIST := $(wildcard ex_model*)
+MODEL_DRIVERS_LIST = $(filter-out .,$(shell find . -type d | sed -e's|^\./||'))
 
 all: $(patsubst %,%-all,$(MODEL_DRIVERS_LIST))
 

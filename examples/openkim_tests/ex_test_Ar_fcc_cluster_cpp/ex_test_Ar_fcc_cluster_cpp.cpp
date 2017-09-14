@@ -252,25 +252,12 @@ int main()
     KIM::DataType dataType;
     std::string str;
     int extent;
-    kim_cluster_model->GetParameterDataTypeAndDescription(i, &dataType, &str);
-    if (dataType == KIM::DATA_TYPE::Integer)
-    {
-      int const * intPtr;
-      kim_cluster_model->GetParameterExtentAndPointer(i, &extent, &intPtr);
-      std::cout << "Parameter No. " << i
-                << " has data type \"" << dataType.String() << "\""
-                << " with extent " << extent
-                << " and description : " << str << std::endl;
-    }
-    else
-    {
-      double const * doublePtr;
-      kim_cluster_model->GetParameterExtentAndPointer(i, &extent, &doublePtr);
-      std::cout << "Parameter No. " << i
-                << " has data type \"" << dataType.String() << "\""
-                << " with extent " << extent
-                << " and description : " << str << std::endl;
-    }
+    kim_cluster_model->GetParameterDataTypeExtentAndDescription(
+        i, &dataType, &extent, &str);
+    std::cout << "Parameter No. " << i
+              << " has data type \"" << dataType.String() << "\""
+              << " with extent " << extent
+              << " and description : " << str << std::endl;
   }
 
   error = kim_cluster_model->SetArgumentPointer(

@@ -35,7 +35,7 @@ ifeq ($(wildcard Makefile.KIM_Config),)
 endif
 include Makefile.KIM_Config
 
-export MODELS_LIST := $(wildcard ex_model*)
+export MODELS_LIST := $(filter-out .,$(shell find . -type d | sed -e's|^\./||'))
 
 all: $(patsubst %,%-all,$(MODELS_LIST))
 

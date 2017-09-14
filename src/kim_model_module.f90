@@ -52,8 +52,9 @@ module kim_model_module
     kim_model_clear_influence_dist_and_cutoffs_then_refresh_model, &
     kim_model_get_species_support_and_code, &
     kim_model_get_number_of_parameters, &
-    kim_model_get_parameter_data_type_and_description, &
-    kim_model_get_parameter_extent_and_pointer, &
+    kim_model_get_parameter_data_type_extent_and_description, &
+    kim_model_get_parameter, &
+    kim_model_set_parameter, &
     kim_model_set_simulator_buffer_pointer, &
     kim_model_get_simulator_buffer_pointer, &
     kim_model_string, &
@@ -66,31 +67,57 @@ module kim_model_module
     type(c_ptr) :: p
   end type kim_model_type
 
-  interface kim_model_get_parameter_extent_and_pointer
-    subroutine kim_model_get_parameter_int_extent_and_pointer(model, index, &
-      extent, int1, ierr)
+  interface kim_model_get_parameter
+    subroutine kim_model_get_parameter_integer(model, parameter_index, &
+      array_index, parameter_value, ierr)
       use, intrinsic :: iso_c_binding
       import kim_model_type
       implicit none
       type(kim_model_type), intent(in) :: model
-      integer(c_int), intent(in), value :: index
-      integer(c_int), intent(out) :: extent
-      integer(c_int), intent(out), pointer :: int1(:)
+      integer(c_int), intent(in), value :: parameter_index
+      integer(c_int), intent(in), value :: array_index
+      integer(c_int), intent(out) :: parameter_value
       integer(c_int), intent(out) :: ierr
-    end subroutine kim_model_get_parameter_int_extent_and_pointer
+    end subroutine kim_model_get_parameter_integer
 
-    subroutine kim_model_get_parameter_double_extent_and_pointer(model, index, &
-      extent, double1, ierr)
+    subroutine kim_model_get_parameter_double(model, parameter_index, &
+      array_index, parameter_value, ierr)
       use, intrinsic :: iso_c_binding
       import kim_model_type
       implicit none
       type(kim_model_type), intent(in) :: model
-      integer(c_int), intent(in), value :: index
-      integer(c_int), intent(out) :: extent
-      real(c_double), intent(out), pointer :: double1(:)
+      integer(c_int), intent(in), value :: parameter_index
+      integer(c_int), intent(in), value :: array_index
+      real(c_double), intent(out) :: parameter_value
       integer(c_int), intent(out) :: ierr
-    end subroutine kim_model_get_parameter_double_extent_and_pointer
-  end interface kim_model_get_parameter_extent_and_pointer
+    end subroutine kim_model_get_parameter_double
+  end interface kim_model_get_parameter
+
+  interface kim_model_set_parameter
+    subroutine kim_model_set_parameter_integer(model, parameter_index, &
+      array_index, parameter_value, ierr)
+      use, intrinsic :: iso_c_binding
+      import kim_model_type
+      implicit none
+      type(kim_model_type), intent(inout) :: model
+      integer(c_int), intent(in), value :: parameter_index
+      integer(c_int), intent(in), value :: array_index
+      integer(c_int), intent(in), value :: parameter_value
+      integer(c_int), intent(out) :: ierr
+    end subroutine kim_model_set_parameter_integer
+
+    subroutine kim_model_set_parameter_double(model, parameter_index, &
+      array_index, parameter_value, ierr)
+      use, intrinsic :: iso_c_binding
+      import kim_model_type
+      implicit none
+      type(kim_model_type), intent(inout) :: model
+      integer(c_int), intent(in), value :: parameter_index
+      integer(c_int), intent(in), value :: array_index
+      real(c_double), intent(in), value :: parameter_value
+      integer(c_int), intent(out) :: ierr
+    end subroutine kim_model_set_parameter_double
+  end interface kim_model_set_parameter
 
   interface kim_model_set_argument_pointer
     subroutine kim_model_set_argument_pointer_int0(model, argument_name, int0, &
@@ -308,8 +335,8 @@ module kim_model_module
       integer(c_int), intent(out) :: number_of_parameters
     end subroutine kim_model_get_number_of_parameters
 
-    subroutine kim_model_get_parameter_data_type_and_description(model, index, &
-      data_type, description, ierr)
+    subroutine kim_model_get_parameter_data_type_extent_and_description(model, &
+      index, data_type, description, ierr)
       use, intrinsic :: iso_c_binding
       use :: kim_data_type_module, only : kim_data_type_type
       import kim_model_type
@@ -319,7 +346,7 @@ module kim_model_module
       type(kim_data_type_type), intent(out) :: data_type
       character(len=*), intent(out) :: description
       integer(c_int), intent(out) :: ierr
-    end subroutine kim_model_get_parameter_data_type_and_description
+    end subroutine kim_model_get_parameter_data_type_extent_and_description
 
     subroutine kim_model_set_simulator_buffer_pointer(model, ptr)
       use, intrinsic :: iso_c_binding

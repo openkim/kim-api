@@ -181,36 +181,40 @@ void Model::GetNumberOfParameters(int * const numberOfParameters) const
   pimpl->GetNumberOfParameters(numberOfParameters);
 }
 
-int Model::GetParameterDataTypeAndDescription(
-    int const index, DataType * const dataType,
+int Model::GetParameterDataTypeExtentAndDescription(
+    int const parameterIndex, DataType * const dataType, int * const extent,
     std::string * const description) const
 {
-  return pimpl->GetParameterDataTypeAndDescription(index, dataType,
-                                                   description);
+  return pimpl->GetParameterDataTypeExtentAndDescription(
+      parameterIndex, dataType, extent, description);
 }
 
-int Model::GetParameterExtentAndPointer(
-    int const index, int * const extent, int const ** const ptr) const
+int Model::GetParameter(
+    int const parameterIndex, int const arrayIndex,
+    int * const parameterValue) const
 {
-  return pimpl->GetParameterExtentAndPointer(index, extent, ptr);
+  return pimpl->GetParameter(parameterIndex, arrayIndex, parameterValue);
 }
 
-int Model::GetParameterExtentAndPointer(
-    int const index, int * const extent, int ** const ptr)
+int Model::GetParameter(
+    int const parameterIndex, int const arrayIndex,
+    double * const parameterValue) const
 {
-  return pimpl->GetParameterExtentAndPointer(index, extent, ptr);
+  return pimpl->GetParameter(parameterIndex, arrayIndex, parameterValue);
 }
 
-int Model::GetParameterExtentAndPointer(
-    int const index, int * const extent, double const ** const ptr) const
+int Model::SetParameter(
+    int const parameterIndex, int const arrayIndex,
+    int const parameterValue)
 {
-  return pimpl->GetParameterExtentAndPointer(index, extent, ptr);
+  return pimpl->SetParameter(parameterIndex, arrayIndex, parameterValue);
 }
 
-int Model::GetParameterExtentAndPointer(
-    int const index, int * const extent, double ** const ptr)
+int Model::SetParameter(
+    int const parameterIndex, int const arrayIndex,
+    double const parameterValue)
 {
-  return pimpl->GetParameterExtentAndPointer(index, extent, ptr);
+  return pimpl->SetParameter(parameterIndex, arrayIndex, parameterValue);
 }
 
 void Model::SetSimulatorBufferPointer(void * const ptr)

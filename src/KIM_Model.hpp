@@ -110,17 +110,17 @@ class Model
                                int * const code) const;
 
   void GetNumberOfParameters(int * const numberOfParameters) const;
-  int GetParameterDataTypeAndDescription(
-      int const index, DataType * const dataType,
+  int GetParameterDataTypeExtentAndDescription(
+      int const index, DataType * const dataType, int * extent,
       std::string * const description) const;
-  int GetParameterExtentAndPointer(int const index, int * extent,
-                                   int ** const ptr);
-  int GetParameterExtentAndPointer(int const index, int * extent,
-                                   int const ** const ptr) const;
-  int GetParameterExtentAndPointer(int const index, int * extent,
-                                   double ** const ptr);
-  int GetParameterExtentAndPointer(int const index, int * extent,
-                                   double const ** const ptr) const;
+  int GetParameter(int const parameterIndex, int const arrayIndex,
+                   int * const parameterValue) const;
+  int GetParameter(int const parameterIndex, int const arrayIndex,
+                   double * const parameterValue) const;
+  int SetParameter(int const parameterIndex, int const arrayIndex,
+                   int const parameterValue);
+  int SetParameter(int const parameterIndex, int const arrayIndex,
+                   double const parameterValue);
 
   void SetSimulatorBufferPointer(void * const ptr);
   void GetSimulatorBufferPointer(void ** const ptr) const;

@@ -165,17 +165,17 @@ class ModelImplementation
   int SetParameterPointer(int const extent, double * const ptr,
                           std::string const & description);
   void GetNumberOfParameters(int * const numberOfParameters) const;
-  int GetParameterDataTypeAndDescription(
-      int const index, DataType * const dataType,
+  int GetParameterDataTypeExtentAndDescription(
+      int const parameterIndex, DataType * const dataType, int * const extent,
       std::string * const description) const;
-  int GetParameterExtentAndPointer(int const index, int * extent,
-                                   int ** const ptr);
-  int GetParameterExtentAndPointer(int const index, int * extent,
-                                   int const ** const ptr) const;
-  int GetParameterExtentAndPointer(int const index, int * extent,
-                                   double ** const ptr);
-  int GetParameterExtentAndPointer(int const index, int * extent,
-                                   double const ** const ptr) const;
+  int GetParameter(int const parameterIndex, int const arrayIndex,
+                   int * const parameterValue) const;
+  int GetParameter(int const parameterIndex, int const arrayIndex,
+                   double * const parameterValue) const;
+  int SetParameter(int const parameterIndex, int const arrayIndex,
+                   int const parameterValue);
+  int SetParameter(int const parameterIndex, int const arrayIndex,
+                   double const parameterValue);
 
 
   int SetArgumentPointer(ArgumentName const argumentName,

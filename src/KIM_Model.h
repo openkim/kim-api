@@ -177,15 +177,26 @@ int KIM_Model_GetSpeciesSupportAndCode(KIM_Model const * const model,
 
 void KIM_Model_GetNumberOfParameters(KIM_Model const * const model,
                                      int * const numberOfParameters);
-int KIM_Model_GetParameterDataTypeAndDescription(
-    KIM_Model const * const model, int const index,
-    KIM_DataType * const dataType, char const ** const description);
-int KIM_Model_GetParameterExtentAndPointerInteger(
-    KIM_Model * const model, int const index,
-    int * const extent, int ** const ptr);
-int KIM_Model_GetParameterExtentAndPointerDouble(
-    KIM_Model * const model, int const index,
-    int * const extent, double ** const ptr);
+int KIM_Model_GetParameterDataTypeExtentAndDescription(
+    KIM_Model const * const model, int const parameterIndex,
+    KIM_DataType * const dataType, int * const extent,
+    char const ** const description);
+int KIM_Model_GetParameterInteger(KIM_Model const * const model,
+                                  int const parameterIndex,
+                                  int const arrayIndex,
+                                  int * const parameterValue);
+int KIM_Model_GetParameterDouble(KIM_Model const * const model,
+                                 int const parameterIndex,
+                                 int const arrayIndex,
+                                 double * const parameterValue);
+int KIM_Model_SetParameterInteger(KIM_Model * const model,
+                                  int const parameterIndex,
+                                  int const arrayIndex,
+                                  int const parameterValue);
+int KIM_Model_SetParameterDouble(KIM_Model * const model,
+                                 int const parameterIndex,
+                                 int const arrayIndex,
+                                 double const parameterValue);
 
 void KIM_Model_SetSimulatorBufferPointer(KIM_Model * const model,
                                          void * const ptr);

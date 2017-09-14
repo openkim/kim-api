@@ -478,52 +478,80 @@ void ModelImplementation::GetNumberOfParameters(int * const numberOfParameters)
   *numberOfParameters = parameterPointer_.size();
 }
 
-int ModelImplementation::GetParameterDataTypeAndDescription(
-    int const index, DataType * const dataType,
+int ModelImplementation::GetParameterDataTypeExtentAndDescription(
+    int const parameterIndex, DataType * const dataType, int * const extent,
     std::string * const description) const
 {
-  *dataType = parameterDataType_[index];
-  *description = parameterDescription_[index];
+  *dataType = parameterDataType_[parameterIndex];
+  *extent = parameterExtent_[parameterIndex];
+  *description = parameterDescription_[parameterIndex];
 
   return false;
 }
 
-int ModelImplementation::GetParameterExtentAndPointer(
-    int const index, int * extent, int ** const ptr)
+int ModelImplementation::GetParameter(int const parameterIndex,
+                                      int const arrayIndex,
+                                      int * const parameterValue) const
 {
-  *extent = parameterExtent_[index];
-  *ptr = reinterpret_cast<int *>(parameterPointer_[index]);
-
-  return false;
+  if ((arrayIndex < 0) || (arrayIndex >= parameterExtent_[parameterIndex]))
+  {
+    return true;
+  }
+  else
+  {
+    *parameterValue = reinterpret_cast<int const *>
+        (parameterPointer_[parameterIndex])[arrayIndex];
+    return false;
+  }
 }
 
-int ModelImplementation::GetParameterExtentAndPointer(
-    int const index, int * extent, int const ** const ptr) const
+int ModelImplementation::GetParameter(int const parameterIndex,
+                                      int const arrayIndex,
+                                      double * const parameterValue) const
 {
-  *extent = parameterExtent_[index];
-  *ptr = reinterpret_cast<int const *>(parameterPointer_[index]);
-
-  return false;
+  if ((arrayIndex < 0) || (arrayIndex >= parameterExtent_[parameterIndex]))
+  {
+    return true;
+  }
+  else
+  {
+    *parameterValue = reinterpret_cast<double const *>
+        (parameterPointer_[parameterIndex])[arrayIndex];
+    return false;
+  }
 }
 
-int ModelImplementation::GetParameterExtentAndPointer(
-    int const index, int * extent, double ** const ptr)
+int ModelImplementation::SetParameter(int const parameterIndex,
+                                      int const arrayIndex,
+                                      int const parameterValue)
 {
-  *extent = parameterExtent_[index];
-  *ptr = reinterpret_cast<double *>(parameterPointer_[index]);
-
-  return false;
+  if ((arrayIndex < 0) || (arrayIndex >= parameterExtent_[parameterIndex]))
+  {
+    return true;
+  }
+  else
+  {
+    reinterpret_cast<int *>(parameterPointer_[parameterIndex])[arrayIndex]
+        = parameterValue;
+    return false;
+  }
 }
 
-int ModelImplementation::GetParameterExtentAndPointer(
-    int const index, int * extent, double const ** const ptr) const
+int ModelImplementation::SetParameter(int const parameterIndex,
+                                      int const arrayIndex,
+                                      double const parameterValue)
 {
-  *extent = parameterExtent_[index];
-  *ptr = reinterpret_cast<double const *>(parameterPointer_[index]);
-
-  return false;
+  if ((arrayIndex < 0) || (arrayIndex >= parameterExtent_[parameterIndex]))
+  {
+    return true;
+  }
+  else
+  {
+    reinterpret_cast<double *>(parameterPointer_[parameterIndex])[arrayIndex]
+        = parameterValue;
+    return false;
+  }
 }
-
 
 int ModelImplementation::SetArgumentPointer(ArgumentName const argumentName,
                                             int const * const ptr)

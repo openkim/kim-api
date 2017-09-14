@@ -380,9 +380,10 @@ void KIM_Model_GetNumberOfParameters(KIM_Model const * const model,
   pmodel->GetNumberOfParameters(numberOfParameters);
 }
 
-int KIM_Model_GetParameterDataTypeAndDescription(
-    KIM_Model const * const model, int const index,
-    KIM_DataType * const dataType, char const ** const description)
+int KIM_Model_GetParameterDataTypeExtentAndDescription(
+    KIM_Model const * const model, int const parameterIndex,
+    KIM_DataType * const dataType, int * const extent,
+    char const ** const description)
 {
   KIM::Model * pmodel = (KIM::Model *) model->p;
   KIM::DataType typ;
@@ -401,7 +402,8 @@ int KIM_Model_GetParameterDataTypeAndDescription(
     pStr = &str;
 
   int error
-      = pmodel->GetParameterDataTypeAndDescription(index, pTyp, pStr);
+      = pmodel->GetParameterDataTypeExtentAndDescription(
+          parameterIndex, pTyp, extent, pStr);
 
   if (error)
     return true;
@@ -413,38 +415,44 @@ int KIM_Model_GetParameterDataTypeAndDescription(
   }
 }
 
-int KIM_Model_GetParameterExtentAndPointerInteger(KIM_Model * const model,
-                                                  int const index,
-                                                  int * const extent,
-                                                  int ** const ptr)
+int KIM_Model_GetParameterInteger(KIM_Model const * const model,
+                                  int const parameterIndex,
+                                  int const arrayIndex,
+                                  int * const parameterValue)
 {
   KIM::Model * pmodel = (KIM::Model *) model->p;
-  KIM::DataType typ;
-  static std::string str;
 
-  int error = pmodel->GetParameterExtentAndPointer(index, extent, ptr);
-
-  if (error)
-    return true;
-  else
-    return false;
+  return pmodel->GetParameter(parameterIndex, arrayIndex, parameterValue);
 }
 
-int KIM_Model_GetParameterExtentAndPointerDouble(KIM_Model * const model,
-                                                 int const index,
-                                                 int * const extent,
-                                                 double ** const ptr)
+int KIM_Model_GetParameterDouble(KIM_Model const * const model,
+                                 int const parameterIndex,
+                                 int const arrayIndex,
+                                 double * const parameterValue)
 {
   KIM::Model * pmodel = (KIM::Model *) model->p;
-  KIM::DataType typ;
-  static std::string str;
 
-  int error = pmodel->GetParameterExtentAndPointer(index, extent, ptr);
+  return pmodel->GetParameter(parameterIndex, arrayIndex, parameterValue);
+}
 
-  if (error)
-    return true;
-  else
-    return false;
+int KIM_Model_SetParameterInteger(KIM_Model * const model,
+                                  int const parameterIndex,
+                                  int const arrayIndex,
+                                  int const parameterValue)
+{
+  KIM::Model * pmodel = (KIM::Model *) model->p;
+
+  return pmodel->SetParameter(parameterIndex, arrayIndex, parameterValue);
+}
+
+int KIM_Model_SetParameterDouble(KIM_Model * const model,
+                                 int const parameterIndex,
+                                 int const arrayIndex,
+                                 double const parameterValue)
+{
+  KIM::Model * pmodel = (KIM::Model *) model->p;
+
+  return pmodel->SetParameter(parameterIndex, arrayIndex, parameterValue);
 }
 
 void KIM_Model_SetSimulatorBufferPointer(KIM_Model * const model,
