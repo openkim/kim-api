@@ -346,7 +346,7 @@ program ex_test_ar_fcc_cluster
   real(c_double) :: influence_distance
   integer(c_int) :: number_of_cutoffs
   real(c_double) :: cutoff
-  real(c_double), pointer :: cutoffs(:)
+  real(c_double) :: cutoffs(1)
   integer(c_int), target          :: particle_species(N)
   integer(c_int), target          :: particle_contributing(N)
   real(c_double), target :: energy
@@ -436,10 +436,14 @@ program ex_test_ar_fcc_cluster
     c_funloc(get_neigh), c_loc(neighobject))
 
   call kim_model_get_influence_distance(model, influence_distance)
-  call kim_model_get_cutoffs_pointer(model, number_of_cutoffs, cutoffs)
+  call kim_model_get_number_of_cutoffs(model, number_of_cutoffs)
   if (number_of_cutoffs /= 1) then
     call my_error("too many cutoffs", __LINE__, __FILE__)
   endif
+  call kim_model_get_cutoffs(model, cutoffs, ierr)
+  if (ierr /= 0) then
+    call my_error("get_cutoffs", __LINE__, __FILE__)
+  end if
   cutoff = cutoffs(1)
 
   ! Setup cluster

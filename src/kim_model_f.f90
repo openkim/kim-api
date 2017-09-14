@@ -401,20 +401,42 @@ subroutine kim_model_get_influence_distance(model, influence_distance)
   call get_influence_distance(model, influence_distance)
 end subroutine kim_model_get_influence_distance
 
-subroutine kim_model_get_cutoffs_pointer(model, number_of_cutoffs, cutoffs)
+subroutine kim_model_get_number_of_cutoffs(model, number_of_cutoffs)
   use, intrinsic :: iso_c_binding
   use kim_model_module, only : kim_model_type
   use kim_model_f_module, only : get_cutoffs_pointer
   implicit none
   type(kim_model_type), intent(in) :: model
   integer(c_int), intent(out) :: number_of_cutoffs
-  real(c_double), intent(out), pointer :: cutoffs(:)
 
   type(c_ptr) cutoffs_ptr
 
   call get_cutoffs_pointer(model, number_of_cutoffs, cutoffs_ptr)
-  call c_f_pointer(cutoffs_ptr, cutoffs, [number_of_cutoffs])
-end subroutine kim_model_get_cutoffs_pointer
+end subroutine kim_model_get_number_of_cutoffs
+
+subroutine kim_model_get_cutoffs(model, cutoffs, ierr)
+  use, intrinsic :: iso_c_binding
+  use kim_model_module, only : kim_model_type
+  use kim_model_f_module, only : get_cutoffs_pointer
+  implicit none
+  type(kim_model_type), intent(in) :: model
+  real(c_double), intent(out) :: cutoffs(:)
+  integer(c_int), intent(out) :: ierr
+
+  integer(c_int) number_of_cutoffs
+  real(c_double), pointer :: cutoffs_fpointer(:)
+  type(c_ptr) cutoffs_ptr
+
+  call get_cutoffs_pointer(model, number_of_cutoffs, cutoffs_ptr)
+  call c_f_pointer(cutoffs_ptr, cutoffs_fpointer, [number_of_cutoffs])
+
+  if (size(cutoffs) < number_of_cutoffs) then
+    ierr = 1
+  else
+    ierr = 0
+    cutoffs = cutoffs_fpointer(1:number_of_cutoffs)
+  end if
+end subroutine kim_model_get_cutoffs
 
 subroutine kim_model_get_argument_support_status(model, argument_name, &
   support_status, ierr)
