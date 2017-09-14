@@ -227,6 +227,7 @@ install-set-default-to-v%:
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(DESTDIR)$(libexecdir)/$(package_name)"
 	$(QUELL)fl="$(DESTDIR)$(libexecdir)/$(package_name)/$(package_name)-descriptor-file-match"  && if test -L "$$fl"; then rm -f "$$fl"; fi && ln -fs "$(libexecdir)/$(full_package_name)/$(package_name)-v$*-descriptor-file-match" "$$fl"
 	$(QUELL)fl="$(DESTDIR)$(libexecdir)/$(package_name)/$(package_name)-simulator-model"        && if test -L "$$fl"; then rm -f "$$fl"; fi && ln -fs "$(libexecdir)/$(full_package_name)/$(package_name)-v$*-simulator-model" "$$fl"
+	$(QUELL)fl="$(DESTDIR)$(libexecdir)/$(package_name)/$(package_name)-collections-info"       && if test -L "$$fl"; then rm -f "$$fl"; fi && ln -fs "$(libexecdir)/$(full_package_name)/$(package_name)-v$*-collections-info" "$$fl"
 	$(QUELL)fl="$(DESTDIR)$(includedir)/$(package_name)"       && if test -L "$$fl"; then rm -f "$$fl"; fi && ln -fs "$(package_name)-v$*" "$$fl"
 	$(QUELL)fl="$(DESTDIR)$(libdir)/$(package_name)"           && if test -L "$$fl"; then rm -f "$$fl"; fi && ln -fs "$(package_name)-v$*" "$$fl"
 	$(QUELL)fl="$(DESTDIR)$(libdir)/lib$(package_name).so" && if test -L "$$fl"; then rm -f "$$fl"; fi && ln -fs "lib$(package_name)-v$*.so" "$$fl"
@@ -269,6 +270,7 @@ uninstall-set-default:
 	$(QUELL)fl="$(DESTDIR)$(bindir)/$(package_name)-collections-management"                     && if test -L "$$fl"; then rm -f "$$fl"; fi
 	$(QUELL)fl="$(DESTDIR)$(libexecdir)/$(package_name)/$(package_name)-descriptor-file-match"  && if test -L "$$fl"; then rm -f "$$fl"; fi
 	$(QUELL)fl="$(DESTDIR)$(libexecdir)/$(package_name)/$(package_name)-simulator-model"        && if test -L "$$fl"; then rm -f "$$fl"; fi
+	$(QUELL)fl="$(DESTDIR)$(libexecdir)/$(package_name)/$(package_name)-collections-info"       && if test -L "$$fl"; then rm -f "$$fl"; fi
 	$(QUELL)rmdir "$(DESTDIR)$(libexecdir)/$(package_name)" > /dev/null 2>&1 || true
 	$(QUELL)fl="$(DESTDIR)$(includedir)/$(package_name)"       && if test -L "$$fl"; then rm -f "$$fl"; fi
 	$(QUELL)fl="$(DESTDIR)$(libdir)/$(package_name)"           && if test -L "$$fl"; then rm -f "$$fl"; fi
