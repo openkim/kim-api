@@ -30,10 +30,10 @@
 # Release: This file is part of the kim-api.git repository.
 #
 
-ifeq ($(wildcard Makefile.KIM_Config),)
+ifeq ($(wildcard ../../Makefile.KIM_Config),)
   $(error Makefile.KIM_Config does not exist.  Something is wrong with your KIM API package setup)
 endif
-include Makefile.KIM_Config
+include ../../Makefile.KIM_Config
 
 VPATH = ../
 

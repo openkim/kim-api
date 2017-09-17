@@ -30,10 +30,12 @@
 # Release: This file is part of the kim-api.git repository.
 #
 
-ifeq ($(wildcard ../Makefile.KIM_Config),)
-  $(error Makefile.KIM_Config does not exist.  Something is wrong with your KIM API package setup)
+ifeq ($(wildcard ../Makefile.KIM_InstalledConfig),)
+  $(error Makefile.KIM_InstalledConfig does not exist.  Something is wrong with your KIM API package setup)
 endif
-include ../Makefile.KIM_Config
+include ../Makefile.KIM_InstalledConfig
+
+KIM_API_BUILD_CONFIG := $(prefix)/bin/kim-api-v1-build_config
 
 export SIMULATORS_LIST := $(wildcard zz)
 
@@ -50,7 +52,7 @@ clean: $(patsubst %,%-clean,$(SIMULATORS_LIST))
 	@printf "%79s\n" " " | sed -e 's/ /*/g'
 
 $(patsubst %,%-all,$(SIMULATORS_LIST)): %: Makefile Simulator......@%-making-echo
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(patsubst %-all,%,$@) all
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) "KIM_API_BUILD_CONFIG=$(KIM_API_BUILD_CONFIG)" -C $(patsubst %-all,%,$@) all
 
 $(patsubst %,%-clean,$(SIMULATORS_LIST)):
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(patsubst %-clean,%,$@) clean
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) "KIM_API_BUILD_CONFIG=$(KIM_API_BUILD_CONFIG)" -C $(patsubst %-clean,%,$@) clean

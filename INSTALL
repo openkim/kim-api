@@ -89,7 +89,7 @@ To install and run the KIM API package you need the following:
 4. Standard utilities: xxd, ar, printf, sed, grep, find, cat, test, cp, touch,
    rm, rmdir, ln, chmod, install (needed for use in the build system).
 
-5. wget and tar (needed for by the kim-api-collections-management utility).
+5. wget and tar (needed for by the kim-api-vX-collections-management utility).
 
 -------------------------------------------------------------------------------
 
@@ -230,12 +230,11 @@ $ cd kim-api-vX.Y.Z
 $ ./configure
 $ make
 $ sudo make install
-$ sudo make install-set-default-to-vX  # replace X with the major version of this package
 $ sudo ldconfig  # on Redhat-like systems you may need to first add /usr/local/lib to /etc/ld.so.conf
 $ cp -r ./examples/openkim_tests/vc_forces_numer_deriv "${HOME}/"
 $ cd "${HOME}"
 $ rm -r kim-api-vX.Y.Z  kim-api-vX.Y.Z.tgz # replace X.Y.Z with the current version number
-$ kim-api-collections-management install system --sudo EDIP_BOP_Bazant_Kaxiras_Si__MO_958932894036_001
+$ kim-api-vX-collections-management install system --sudo EDIP_BOP_Bazant_Kaxiras_Si__MO_958932894036_001
 $ cd vc_forces_numer_deriv
 $ make
 $ printf "EDIP_BOP_Bazant_Kaxiras_Si__MO_958932894036_001" | ./vc_forces_numer_deriv
@@ -257,13 +256,12 @@ $ cd kim-api-vX.Y.Z
 $ ./configure --prefix=${HOME}/local
 $ make
 $ make install
-$ make install-set-default-to-vX  # replace X with the major version of this package
 $ cp -r ./examples/openkim_tests/vc_forces_numer_deriv "${HOME}/"
 $ cd "${HOME}"
 $ rm -r kim-api-vX.Y.Z kim-api-vX.Y.Z.tgz  # replace X.Y.Z with the current version number
 $ printf "PATH=${PATH}:${HOME}/local/bin\n" >> "${HOME}/.bashrc"
 $ source "${HOME}/.bashrc"
-$ kim-api-collections-management install system EDIP_BOP_Belko_Gusakov_Dorozhkin_Ge__MO_129433059219_000
+$ kim-api-vX-collections-management install system EDIP_BOP_Belko_Gusakov_Dorozhkin_Ge__MO_129433059219_000
 $ cd vc_forces_numer_deriv
 $ make
 $ printf "EDIP_BOP_Belko_Gusakov_Dorozhkin_Ge__MO_129433059219_000" | ./vc_forces_numer_deriv
@@ -287,14 +285,14 @@ Once you have an installed-build, it is easy to add additional Models and/or
 Model Drivers to the system-collection.  We'll assume an
 installed-(standard)-build.
 
-$ kim-api-collections-management install system --sudo Pair_Morse_Shifted_Jelinek_Ar__MO_831902330215_001
+$ kim-api-vX-collections-management install system --sudo Pair_Morse_Shifted_Jelinek_Ar__MO_831902330215_001
 
-The kim-api-collections-management utility automatically installs the necessary
-Model Driver.  You can see the items in the various collections by executing
-the following command.
+The kim-api-vX-collections-management utility automatically installs the
+necessary Model Driver.  You can see the items in the various collections by
+executing the following command.
 
 $ cd "${HOME}"
-$ kim-api-collections-management list
+$ kim-api-vX-collections-management list
 
 Now we can test the newly installed Model.
 
@@ -305,8 +303,8 @@ E.2 ADDING MODELS AND/OR MODEL DRIVERS TO THE USER-COLLECTION
 
 Adding Models and/or Model Drivers to the user-collection is similar.
 
-$ kim-api-collections-management install user Pair_Lennard_Jones_Shifted_Bernardes_HighCutoff_Ar__MO_242741380554_001
-$ kim-api-collections-management list
+$ kim-api-vX-collections-management install user Pair_Lennard_Jones_Shifted_Bernardes_HighCutoff_Ar__MO_242741380554_001
+$ kim-api-vX-collections-management list
 $ cd "${HOME}/vc_forces_numer_deriv"  # we'll assume this is already built
 $ printf "Pair_Lennard_Jones_Shifted_Bernardes_HighCutoff_Ar__MO_242741380554_001" | ./vc_forces_numer_deriv
 
@@ -319,7 +317,7 @@ items.  Here, we'll illustrate the process with an example.
 $ mkdir -p "${HOME}/my-env-collection/model_drivers"
 $ export KIM_API_MODEL_DRIVERS_DIR="${HOME}/my-env-collection/model_drivers"
 $ cd "${KIM_API_MODEL_DRIVERS_DIR}"
-$ kim-api-build-config --makefile-kim-config > ./Makefile.KIM_Config
+$ kim-api-vX-build-config --makefile-kim-config > ./Makefile.KIM_Config
 $ md=Pair_Morse_Shifted__MD_552566534109_001
 $ wget --content-disposition "https://openkim.org/download/${md}.tgz"
 $ tar zxvf "${md}.tgz"
@@ -331,7 +329,7 @@ $ rm "${md}.tgz"
 $ mkdir -p "${HOME}/my-env-collection/models"
 $ export KIM_API_MODELS_DIR="${HOME}/my-env-collection/models"
 $ cd "${KIM_API_MODELS_DIR}"
-$ kim-api-build-config --makefile-kim-config > ./Makefile.KIM_Config
+$ kim-api-vX-build-config --makefile-kim-config > ./Makefile.KIM_Config
 $ mo=Pair_Morse_Shifted_GirifalcoWeizer_HighCutoff_Cu__MO_151002396060_001
 $ wget --content-disposition "https://openkim.org/download/${mo}.tgz"
 $ tar zxvf "${mo}.tgz"
@@ -343,7 +341,7 @@ $ rm "${mo}.tgz"
 We can check to see that these are recognized by the KIM API.
 
 $ cd "${HOME}"
-$ kim-api-collections-management list
+$ kim-api-vX-collections-management list
 
 Now we can test the newly available Model.
 
@@ -357,7 +355,7 @@ just downloading and building the items.  Here, we'll illustrate the process
 with an example.
 
 $ cd "${HOME}/vc_forces_numer_deriv"  # we'll assume this is already built
-$ kim-api-build-config --makefile-kim-config > ./Makefile.KIM_Config
+$ kim-api-vX-build-config --makefile-kim-config > ./Makefile.KIM_Config
 $ mo=Pair_Exp6_Hogervorst_Mixing_Kong_Chakrabarty_ArNe__MO_946046425752_001
 $ wget --content-disposition "https://openkim.org/download/${mo}.tgz"
 $ tar zxvf "${mo}.tgz"
@@ -368,7 +366,7 @@ $ rm "${mo}.tgz"
 
 We can check to see that this model is recognized by the KIM API.
 
-$ kim-api-collections-management list
+$ kim-api-vX-collections-management list
 
 Now we can test the newly available Model.
 
@@ -554,18 +552,10 @@ TARGETS FOR INSTALLING THE KIM API PACKAGE
                                 executable utilities, and "added" Model
                                 Drivers and Models to system-wide location
                                 as described in item 7 below.
-`install-set-default-to-vX'  -- create generic
-                                $(includedir)/$(package_name) and
-                                ${libdir}/${package_name} symlinks to the
-                                corresponding $(package_name)-vX versions.
-                                This effectively sets the "default"
-                                library available for users on the system.
 
 TARGETS FOR UNINSTALLING THE KIM API PACKAGE
 `uninstall'                  -- delete files installed by `make install'
-`uninstall-set-default'      -- remove the generic
-                                $(includedir)/$(package_name) and
-                                $(libdir)/$(package_name) symlinks.
+
 
 F.3 ADVANCED DETAILS OF THE INSTALLATION PROCESS
 

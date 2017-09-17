@@ -1,4 +1,5 @@
 /Makefile
+/Makefile.KIM_InstalledConfig
 /model_drivers
 /models
 /openkim_tests

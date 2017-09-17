@@ -157,7 +157,7 @@ get_build_install_item () {
 
   # create private temporary directory
   if test x"" = x"${TMPDIR}"; then TMPDIR="/tmp"; fi
-  local build_dir=`mktemp -d "${TMPDIR}/kim-api-build-XXXXXXXXXX"`
+  local build_dir=`mktemp -d "${TMPDIR}/kim-api-v1-build-XXXXXXXXXX"`
   if test $? -ne 0; then
     printf "Unable to create temporary directory.\n"
     return 1;
