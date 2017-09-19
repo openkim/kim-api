@@ -129,5 +129,5 @@ subroutine kim_species_name_get_species_name(index, species_name, ierr)
   type(kim_species_name_type), intent(out) :: species_name
   integer(c_int), intent(out) :: ierr
 
-  ierr = get_species_name(index, species_name)
+  ierr = get_species_name(index-1, species_name)
 end subroutine kim_species_name_get_species_name
