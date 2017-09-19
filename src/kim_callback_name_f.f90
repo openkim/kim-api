@@ -77,7 +77,7 @@ subroutine kim_callback_name_string(callback_name, name_string)
   character(len=*), intent(out) :: name_string
 
   type(c_ptr) :: p
-  character(len=len(name_string)), pointer :: fp
+  character(len=len(name_string)+1), pointer :: fp
   integer(c_int) :: null_index
 
   p = callback_name_string(callback_name)

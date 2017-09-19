@@ -92,7 +92,7 @@ subroutine kim_argument_name_string(argument_name, name_string)
   character(len=*), intent(out) :: name_string
 
   type(c_ptr) :: p
-  character(len=len(name_string)), pointer :: fp
+  character(len=len(name_string)+1), pointer :: fp
   integer(c_int) :: null_index
 
   p = compute_argument_name_string(argument_name)
