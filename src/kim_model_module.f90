@@ -279,7 +279,7 @@ module kim_model_module
     end subroutine kim_model_get_callback_support_status
 
     subroutine kim_model_set_callback_pointer(model, callback_name, &
-      language_name, fptr, data_object)
+      language_name, fptr, data_object, ierr)
       use, intrinsic :: iso_c_binding
       use kim_callback_name_module, only : kim_callback_name_type
       use kim_language_name_module, only : kim_language_name_type
@@ -290,6 +290,7 @@ module kim_model_module
       type(kim_language_name_type), intent(in), value :: language_name
       type(c_funptr), intent(in), value :: fptr
       type(c_ptr), intent(in), value :: data_object
+      integer(c_int), intent(out) :: ierr
     end subroutine kim_model_set_callback_pointer
 
     subroutine kim_model_get_units(model, length_unit, energy_unit, &

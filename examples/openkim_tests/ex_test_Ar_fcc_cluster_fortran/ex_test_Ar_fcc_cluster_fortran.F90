@@ -433,7 +433,10 @@ program ex_test_ar_fcc_cluster
   !
   call kim_model_set_callback_pointer(model, &
     kim_callback_name_get_neighbor_list, kim_language_name_fortran, &
-    c_funloc(get_neigh), c_loc(neighobject))
+    c_funloc(get_neigh), c_loc(neighobject), ierr)
+  if (ierr /= 0) then
+    call my_error("set_callback_pointer", __LINE__, __FILE__)
+  end if
 
   call kim_model_get_influence_distance(model, influence_distance)
   call kim_model_get_number_of_cutoffs(model, number_of_cutoffs)

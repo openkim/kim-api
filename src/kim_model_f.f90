@@ -171,8 +171,9 @@ module kim_model_f_module
       type(c_ptr), intent(in), value :: ptr
     end function set_argument_pointer_double
 
-    subroutine set_callback_pointer(model, callback_name, language_name, &
-      fptr, data_object) bind(c, name="KIM_Model_SetCallbackPointer")
+    integer(c_int) function set_callback_pointer(model, callback_name, &
+      language_name, fptr, data_object) &
+      bind(c, name="KIM_Model_SetCallbackPointer")
       use, intrinsic :: iso_c_binding
       use kim_language_name_module, only : kim_language_name_type
       use kim_callback_name_module, only : kim_callback_name_type
@@ -183,7 +184,7 @@ module kim_model_f_module
       type(kim_callback_name_type), intent(in), value :: callback_name
       type(c_funptr), intent(in), value :: fptr
       type(c_ptr), intent(in), value :: data_object
-    end subroutine set_callback_pointer
+    end function set_callback_pointer
 
     integer(c_int) function compute(model) bind(c, name="KIM_Model_Compute")
       use, intrinsic :: iso_c_binding
@@ -645,7 +646,7 @@ contains
 end subroutine kim_model_set_argument_pointer_double2
 
 subroutine kim_model_set_callback_pointer(model, callback_name, language_name, &
-  fptr, data_object)
+  fptr, data_object, ierr)
   use, intrinsic :: iso_c_binding
   use kim_callback_name_module, only : kim_callback_name_type
   use kim_language_name_module, only : kim_language_name_type
@@ -657,8 +658,9 @@ subroutine kim_model_set_callback_pointer(model, callback_name, language_name, &
   type(kim_language_name_type), intent(in), value :: language_name
   type(c_funptr), intent(in), value :: fptr
   type(c_ptr), intent(in), value :: data_object
+  integer(c_int), intent(out) :: ierr
 
-  call set_callback_pointer(model, callback_name, language_name, fptr, &
+  ierr = set_callback_pointer(model, callback_name, language_name, fptr, &
     data_object)
 end subroutine kim_model_set_callback_pointer
 
