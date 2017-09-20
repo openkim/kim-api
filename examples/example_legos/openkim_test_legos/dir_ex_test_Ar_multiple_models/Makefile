@@ -36,7 +36,7 @@ ifneq (clean,$(MAKECMDGOALS))
   ifeq ($(shell $(KIM_API_BUILD_CONFIG) --version 2> /dev/null),)
     $(error $(KIM_API_BUILD_CONFIG) utility is not available.  Something is wrong with your KIM API package setup)
   else
-    $(info Using build-config utility at: $(shell command -v $(KIM_API_BUILD_CONFIG)))
+    $(info Using build-config utility at: $(shell command -v "$(KIM_API_BUILD_CONFIG)"))
   endif
 endif
 
