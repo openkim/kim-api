@@ -226,9 +226,10 @@ int main()
                                           KIM_ARGUMENT_NAME_numberOfParticles,
                                           &numberOfParticles_cluster)
       ||
-      KIM_Model_SetArgumentPointerInteger(model,
-                                          KIM_ARGUMENT_NAME_particleSpecies,
-                                          particleSpecies_cluster_model)
+      KIM_Model_SetArgumentPointerInteger(
+          model,
+          KIM_ARGUMENT_NAME_particleSpeciesCodes,
+          particleSpecies_cluster_model)
       ||
       KIM_Model_SetArgumentPointerDouble(model, KIM_ARGUMENT_NAME_coordinates,
                                          (double*) &coords_cluster)

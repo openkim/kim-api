@@ -263,9 +263,11 @@ int main()
   error = kim_cluster_model->SetArgumentPointer(
       KIM::ARGUMENT_NAME::numberOfParticles, (int *) &numberOfParticles_cluster)
       || kim_cluster_model->SetArgumentPointer(
-          KIM::ARGUMENT_NAME::particleSpecies, particleSpecies_cluster_model)
+          KIM::ARGUMENT_NAME::particleSpeciesCodes,
+          particleSpecies_cluster_model)
       || kim_cluster_model->SetArgumentPointer(
-          KIM::ARGUMENT_NAME::particleContributing, particleContributing_cluster_model)
+          KIM::ARGUMENT_NAME::particleContributing,
+          particleContributing_cluster_model)
       || kim_cluster_model->SetArgumentPointer(
           KIM::ARGUMENT_NAME::coordinates, (double*) coords_cluster)
       || kim_cluster_model->SetArgumentPointer(

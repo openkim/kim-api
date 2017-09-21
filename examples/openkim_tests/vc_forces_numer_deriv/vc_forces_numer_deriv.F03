@@ -187,7 +187,7 @@ program vc_forces_numer_deriv
   real(c_double), allocatable          :: cluster_coords(:,:)
   real(c_double), allocatable          :: cluster_disps(:,:)
   type(kim_species_name_type), allocatable :: cluster_species(:)
-  integer(c_int) I,J,Imax,Jmax,species
+  integer(c_int) I,J,Imax,Jmax,species_code
 
   !
   ! neighbor list
@@ -206,7 +206,7 @@ program vc_forces_numer_deriv
   integer(c_int) ierr, ierr2
   integer(c_int) species_is_supported
   integer(c_int), target :: numberOfParticles
-  integer(c_int), target :: particleSpecies(N)
+  integer(c_int), target :: particleSpeciesCodes(N)
   integer(c_int), target :: particleContributing(N)
   real(c_double) :: influence_distance
   integer(c_int) :: number_of_cutoffs
@@ -286,8 +286,8 @@ program vc_forces_numer_deriv
   allocate(cluster_coords(3,N),cluster_disps(3,N),cluster_species(N))
   do i=1,N
      call random_number(rnd)  ! return random number between 0 and 1
-     species = 1 + int(rnd*num_species)
-     cluster_species(i) = model_species(species)
+     species_code = 1 + int(rnd*num_species)
+     cluster_species(i) = model_species(species_code)
   enddo
   FCCspacing = 1.0_cd  ! initially generate an FCC cluster with lattice
                      ! spacing equal to one. This is scaled below based
@@ -309,7 +309,7 @@ program vc_forces_numer_deriv
     kim_argument_name_number_of_particles, numberOfParticles, ierr2)
   ierr = ierr + ierr2
   call kim_model_set_argument_pointer(model, &
-    kim_argument_name_particle_species, particleSpecies, ierr2)
+    kim_argument_name_particle_species_codes, particleSpeciesCodes, ierr2)
   ierr = ierr + ierr2
   call kim_model_set_argument_pointer(model, &
     kim_argument_name_particle_contributing, particleContributing, ierr2)
@@ -363,7 +363,7 @@ program vc_forces_numer_deriv
 
   do i=1,N
     call kim_model_get_species_support_and_code(model, cluster_species(i), &
-      species_is_supported, particleSpecies(i), ierr)
+      species_is_supported, particleSpeciesCodes(i), ierr)
   enddo
   if (ierr /= 0) then
     call my_error("kim_api_get_species_code", __LINE__, __FILE__)
@@ -453,7 +453,7 @@ program vc_forces_numer_deriv
         weight_sum = weight_sum + weight
         if (J.eq.1) then
            print '(I6,2X,I4,2X,I3,2X,2ES25.15,3ES15.5,2X,A5)', &
-                  I,particleSpecies(I),J,forces(J,I),forces_num(J,I), &
+                  I,particleSpeciesCodes(I),J,forces(J,I),forces_num(J,I), &
                   forcediff,forces_num_err(J,I),weight,passfail
         else
            print '(14X,I3,2X,2ES25.15,3ES15.5,2X,A5)', &

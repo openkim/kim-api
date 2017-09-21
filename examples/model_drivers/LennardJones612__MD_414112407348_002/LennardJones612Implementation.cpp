@@ -171,7 +171,7 @@ int LennardJones612Implementation::Compute(
   bool isComputeParticleEnergy = false;
   //
   // KIM API Model Input
-  int const* particleSpecies = 0;
+  int const* particleSpeciesCodes = 0;
   int const* particleContributing = 0;
   VectorOfSizeDIM const* coordinates = 0;
   //
@@ -182,13 +182,13 @@ int LennardJones612Implementation::Compute(
   ier = SetComputeMutableValues(modelCompute, isComputeProcess_dEdr,
                                 isComputeProcess_d2Edr2, isComputeEnergy,
                                 isComputeForces, isComputeParticleEnergy,
-                                particleSpecies, particleContributing,
+                                particleSpeciesCodes, particleContributing,
                                 coordinates, energy, particleEnergy, forces);
   if (ier) return ier;
 
   // Skip this check for efficiency
   //
-  // ier = CheckParticleSpecies(pkim, particleSpecies);
+  // ier = CheckParticleSpecies(pkim, particleSpeciesCodes);
   // if (ier) return ier;
 
   bool const isShift = (1 == shift_);
@@ -715,7 +715,7 @@ int LennardJones612Implementation::SetComputeMutableValues(
     bool& isComputeEnergy,
     bool& isComputeForces,
     bool& isComputeParticleEnergy,
-    int const*& particleSpecies,
+    int const*& particleSpeciesCodes,
     int const*& particleContributing,
     VectorOfSizeDIM const*& coordinates,
     double*& energy,
@@ -737,15 +737,15 @@ int LennardJones612Implementation::SetComputeMutableValues(
   isComputeProcess_d2Edr2 = compProcess_d2Edr2;
 
   // double const* cutoff;            // currently unused
-  // int const* numberOfSpecies;  // currently unused
+  // int const* numberOfSpeciesCodes;  // currently unused
   int const* numberOfParticles;
   ier =
       modelCompute->GetArgumentPointer(
           KIM::ARGUMENT_NAME::numberOfParticles,
           &numberOfParticles)
       || modelCompute->GetArgumentPointer(
-          KIM::ARGUMENT_NAME::particleSpecies,
-          &particleSpecies)
+          KIM::ARGUMENT_NAME::particleSpeciesCodes,
+          &particleSpeciesCodes)
       || modelCompute->GetArgumentPointer(
           KIM::ARGUMENT_NAME::particleContributing,
           &particleContributing)
@@ -780,18 +780,19 @@ int LennardJones612Implementation::SetComputeMutableValues(
 }
 
 //******************************************************************************
-int LennardJones612Implementation::CheckParticleSpecies(
+int LennardJones612Implementation::CheckParticleSpeciesCodes(
     KIM::ModelCompute const * const modelCompute,
-    int const* const particleSpecies)
+    int const* const particleSpeciesCodes)
     const
 {
   int ier;
   for (int i = 0; i < cachedNumberOfParticles_; ++i)
   {
-    if ((particleSpecies[i] < 0) || (particleSpecies[i] >= numberModelSpecies_))
+    if ((particleSpeciesCodes[i] < 0) ||
+        (particleSpeciesCodes[i] >= numberModelSpecies_))
     {
       ier = true;
-      LOG_ERROR("unsupported particle species detected");
+      LOG_ERROR("unsupported particle species codes detected");
       return ier;
     }
   }

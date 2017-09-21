@@ -87,7 +87,7 @@ char const * const KIM_ArgumentNameString(KIM_ArgumentName argumentName)
 
 // Order doesn't matter as long as all values are unique
 KIM_ArgumentName const KIM_ARGUMENT_NAME_numberOfParticles = {0};
-KIM_ArgumentName const KIM_ARGUMENT_NAME_particleSpecies = {1};
+KIM_ArgumentName const KIM_ARGUMENT_NAME_particleSpeciesCodes = {1};
 KIM_ArgumentName const KIM_ARGUMENT_NAME_particleContributing = {2};
 KIM_ArgumentName const KIM_ARGUMENT_NAME_coordinates = {3};
 KIM_ArgumentName const KIM_ARGUMENT_NAME_partialEnergy = {4};

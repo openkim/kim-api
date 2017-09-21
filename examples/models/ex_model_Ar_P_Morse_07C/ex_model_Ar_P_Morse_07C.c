@@ -212,7 +212,7 @@ static int compute(KIM_ModelCompute const * const modelCompute)
   int comp_process_d2Edr2;
 
   int* nParts;
-  int* particleSpecies;
+  int* particleSpeciesCodes;
   int* particleContributing;
   double* cutoff;
   double cutsq;
@@ -246,8 +246,8 @@ static int compute(KIM_ModelCompute const * const modelCompute)
       ||
       KIM_ModelCompute_GetArgumentPointerInteger(
           modelCompute,
-          KIM_ARGUMENT_NAME_particleSpecies,
-          &particleSpecies)
+          KIM_ARGUMENT_NAME_particleSpeciesCodes,
+          &particleSpeciesCodes)
       ||
       KIM_ModelCompute_GetArgumentPointerInteger(
           modelCompute,
@@ -298,8 +298,8 @@ static int compute(KIM_ModelCompute const * const modelCompute)
   /**/
   ier = TRUE; /* assume an error */
   for (i = 0; i < *nParts; ++i) {
-    if ( SPECCODE != particleSpecies[i]) {
-      LOG_ERROR("Unexpected species detected");
+    if ( SPECCODE != particleSpeciesCodes[i]) {
+      LOG_ERROR("Unexpected species code detected");
       return ier; } }
   ier = FALSE;  /* everything is ok */
 

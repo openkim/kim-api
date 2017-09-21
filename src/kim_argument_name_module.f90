@@ -44,7 +44,7 @@ module kim_argument_name_module
 
 
     kim_argument_name_number_of_particles, &
-    kim_argument_name_particle_species, &
+    kim_argument_name_particle_species_codes, &
     kim_argument_name_particle_contributing, &
     kim_argument_name_coordinates, &
     kim_argument_name_partial_energy, &
@@ -66,8 +66,8 @@ module kim_argument_name_module
     kim_argument_name_number_of_particles = &
     kim_argument_name_type(number_of_particles_id)
   type(kim_argument_name_type), parameter :: &
-    kim_argument_name_particle_species = &
-    kim_argument_name_type(particle_species_id)
+    kim_argument_name_particle_species_codes = &
+    kim_argument_name_type(particle_species_codes_id)
   type(kim_argument_name_type), parameter :: &
     kim_argument_name_particle_contributing = &
     kim_argument_name_type(particle_contributing_id)

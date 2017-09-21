@@ -38,7 +38,7 @@ module kim_argument_name_id_module
 
   public &
     number_of_particles_id, &
-    particle_species_id, &
+    particle_species_codes_id, &
     particle_contributing_id, &
     coordinates_id, &
     partial_energy_id, &
@@ -49,7 +49,7 @@ module kim_argument_name_id_module
     partial_hessian_id
 
   integer(c_int), parameter :: number_of_particles_id = 0
-  integer(c_int), parameter :: particle_species_id = 1
+  integer(c_int), parameter :: particle_species_codes_id = 1
   integer(c_int), parameter :: particle_contributing_id = 2
   integer(c_int), parameter :: coordinates_id = 3
   integer(c_int), parameter :: partial_energy_id = 4

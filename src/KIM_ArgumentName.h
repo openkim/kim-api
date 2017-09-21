@@ -58,7 +58,7 @@ int KIM_ArgumentNameNotEqual(KIM_ArgumentName const left,
 char const * const KIM_ArgumentNameString(KIM_ArgumentName const argumentName);
 
 extern KIM_ArgumentName const KIM_ARGUMENT_NAME_numberOfParticles;
-extern KIM_ArgumentName const KIM_ARGUMENT_NAME_particleSpecies;
+extern KIM_ArgumentName const KIM_ARGUMENT_NAME_particleSpeciesCodes;
 extern KIM_ArgumentName const KIM_ARGUMENT_NAME_particleContributing;
 extern KIM_ArgumentName const KIM_ARGUMENT_NAME_coordinates;
 extern KIM_ArgumentName const KIM_ARGUMENT_NAME_partialEnergy;

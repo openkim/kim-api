@@ -192,14 +192,14 @@ class LennardJones612Implementation
                               bool& isComputeEnergy,
                               bool& isComputeForces,
                               bool& isComputeParticleEnergy,
-                              int const*& particleSpecies,
+                              int const*& particleSpeciesCodes,
                               int const*& particleContributing,
                               VectorOfSizeDIM const*& coordinates,
                               double*& energy,
                               double*& particleEnergy,
                               VectorOfSizeDIM*& forces);
-  int CheckParticleSpecies(KIM::ModelCompute const * const modelCompute,
-                           int const* const particleSpecies) const;
+  int CheckParticleSpeciesCodes(KIM::ModelCompute const * const modelCompute,
+                                int const* const particleSpeciesCodes) const;
   int GetComputeIndex(const bool& isComputeProcess_dEdr,
                       const bool& isComputeProcess_d2Edr2,
                       const bool& isComputeEnergy,
@@ -212,7 +212,7 @@ class LennardJones612Implementation
             bool isComputeEnergy, bool isComputeForces,
             bool isComputeParticleEnergy, bool isShift >
   int Compute(KIM::ModelCompute const * const modelCompute,
-              const int* const particleSpecies,
+              const int* const particleSpeciesCodes,
               const int* const particleContributing,
               const VectorOfSizeDIM* const coordinates,
               double* const energy,
@@ -246,7 +246,7 @@ template< bool isComputeProcess_dEdr, bool isComputeProcess_d2Edr2,
           bool isComputeParticleEnergy, bool isShift >
 int LennardJones612Implementation::Compute(
     KIM::ModelCompute const * const modelCompute,
-    const int* const particleSpecies,
+    const int* const particleSpeciesCodes,
     const int* const particleContributing,
     const VectorOfSizeDIM* const coordinates,
     double* const energy,
@@ -311,13 +311,13 @@ int LennardJones612Implementation::Compute(
       int const numNei = numnei;
       int const * const n1Atom = n1atom;
       int const i = ii;
-      int const iSpecies = particleSpecies[i];
+      int const iSpecies = particleSpeciesCodes[i];
 
       // Setup loop over neighbors of current particle
       for (int jj = 0; jj < numNei; ++jj)
       {
         int const j = n1Atom[jj];
-        int const jSpecies = particleSpecies[j];
+        int const jSpecies = particleSpeciesCodes[j];
         double* r_ij;
         double r_ijValue[DIMENSION];
         // Compute r_ij

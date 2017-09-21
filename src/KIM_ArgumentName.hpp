@@ -57,7 +57,7 @@ class ArgumentName
 namespace ARGUMENT_NAME
 {
 extern ArgumentName const numberOfParticles;
-extern ArgumentName const particleSpecies;
+extern ArgumentName const particleSpeciesCodes;
 extern ArgumentName const particleContributing;
 extern ArgumentName const coordinates;
 extern ArgumentName const partialEnergy;

@@ -233,7 +233,7 @@ real(c_double), pointer :: coor(:,:)
 real(c_double), pointer :: force(:,:)
 real(c_double), pointer :: enepot(:)
 integer(c_int), pointer :: nei1part(:)
-integer(c_int), pointer :: particleSpecies(:)
+integer(c_int), pointer :: particleSpeciesCodes(:)
 integer(c_int), pointer :: particleContributing(:)
 
 kim_log_file = __FILE__
@@ -269,8 +269,8 @@ call kim_model_compute_get_argument_pointer(model_compute, &
 ierr = ierr + ierr2
 
 call kim_model_compute_get_argument_pointer(model_compute, &
-  kim_argument_name_particle_species, &
-  n, particlespecies, ierr2)
+  kim_argument_name_particle_species_codes, &
+  n, particlespeciesCodes, ierr2)
 ierr = ierr + ierr2
 call kim_model_compute_get_argument_pointer(model_compute, &
   kim_argument_name_particle_contributing, n, particlecontributing, &
@@ -323,8 +323,8 @@ endif
 
 ierr = 1 ! assume an error
 do i = 1,N
-   if (particleSpecies(i).ne.speccode) then
-     kim_log_message = "Unexpected species detected"
+   if (particleSpeciesCodes(i).ne.speccode) then
+     kim_log_message = "Unexpected species code detected"
      LOG_ERROR()
      return
    endif

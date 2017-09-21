@@ -347,7 +347,7 @@ program ex_test_ar_fcc_cluster
   integer(c_int) :: number_of_cutoffs
   real(c_double) :: cutoff
   real(c_double) :: cutoffs(1)
-  integer(c_int), target          :: particle_species(N)
+  integer(c_int), target          :: particle_species_codes(N)
   integer(c_int), target          :: particle_contributing(N)
   real(c_double), target :: energy
   real(c_double), target :: coords(DIM, N)
@@ -414,7 +414,7 @@ program ex_test_ar_fcc_cluster
     kim_argument_name_number_of_particles, n, ierr2)
   ierr = ierr + ierr2
   call kim_model_set_argument_pointer(model, &
-    kim_argument_name_particle_species, particle_species, ierr2)
+    kim_argument_name_particle_species_codes, particle_species_codes, ierr2)
   ierr = ierr + ierr2
   call kim_model_set_argument_pointer(model, &
     kim_argument_name_particle_contributing, particle_contributing, ierr2)
@@ -452,7 +452,7 @@ program ex_test_ar_fcc_cluster
   ! Setup cluster
   !
   do i=1,N
-    particle_species(i) = species_code
+    particle_species_codes(i) = species_code
   enddo
 
   ! setup contributing particles

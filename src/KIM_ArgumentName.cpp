@@ -48,7 +48,7 @@ namespace KIM
 namespace ARGUMENT_NAME
 {
 ArgumentName const numberOfParticles(0);
-ArgumentName const particleSpecies(1);
+ArgumentName const particleSpeciesCodes(1);
 ArgumentName const particleContributing(2);
 ArgumentName const coordinates(3);
 ArgumentName const partialEnergy(4);
@@ -62,8 +62,8 @@ extern std::unordered_map<ArgumentName const, std::string> const
 argumentNameToString = {
   std::pair<ArgumentName const, std::string>(numberOfParticles,
                                              "numberOfParticles"),
-  std::pair<ArgumentName const, std::string>(particleSpecies,
-                                             "particleSpecies"),
+  std::pair<ArgumentName const, std::string>(particleSpeciesCodes,
+                                             "particleSpeciesCodes"),
   std::pair<ArgumentName const, std::string>(particleContributing,
                                              "particleContributing"),
   std::pair<ArgumentName const, std::string>(coordinates, "coordinates"),
@@ -81,7 +81,8 @@ extern std::unordered_map<ArgumentName const, DataType> const
 argumentNameToDataType = {
   std::pair<ArgumentName const, DataType>(numberOfParticles,
                                           DATA_TYPE::Integer),
-  std::pair<ArgumentName const, DataType>(particleSpecies, DATA_TYPE::Integer),
+  std::pair<ArgumentName const, DataType>(particleSpeciesCodes,
+                                          DATA_TYPE::Integer),
   std::pair<ArgumentName const, DataType>(particleContributing,
                                           DATA_TYPE::Integer),
   std::pair<ArgumentName const, DataType>(coordinates,
@@ -98,7 +99,7 @@ argumentNameToDataType = {
 
 extern std::vector<ArgumentName> const requiredByAPI_Arguments = {
   numberOfParticles,
-  particleSpecies,
+  particleSpeciesCodes,
   particleContributing,
   coordinates};
 
