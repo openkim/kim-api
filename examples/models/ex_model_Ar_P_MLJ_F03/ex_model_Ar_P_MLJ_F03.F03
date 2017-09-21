@@ -409,7 +409,8 @@ subroutine model_refresh_func(model_refresh, ierr) bind(c)
   LOG_INFORMATION()
   call kim_model_refresh_set_influence_distance_pointer( &
     model_refresh, buf%cutoff(1))
-  call kim_model_refresh_set_cutoffs_pointer(model_refresh, 1, buf%cutoff)
+  call kim_model_refresh_set_neighbor_list_cutoffs_pointer( &
+    model_refresh, 1, buf%cutoff)
 
   ierr = 0  ! everything is good
 end subroutine model_refresh_func
@@ -517,7 +518,7 @@ call kim_model_create_set_model_buffer_pointer(model_create, &
 call kim_model_create_set_influence_distance_pointer( &
   model_create, buf%cutoff(1))
 
-call kim_model_create_set_cutoffs_pointer(model_create, 1, &
+call kim_model_create_set_neighbor_list_cutoffs_pointer(model_create, 1, &
   buf%cutoff)
 
 if (ierr /= 0) then

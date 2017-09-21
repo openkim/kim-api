@@ -502,8 +502,8 @@ int model_create(KIM_ModelCreate * const modelCreate,
   /* register influence distance and cutoffs */
   KIM_ModelCreate_SetInfluenceDistancePointer(modelCreate,
                                               model_cutoff);
-  KIM_ModelCreate_SetCutoffsPointer(modelCreate, 1,
-                                    model_cutoff);
+  KIM_ModelCreate_SetNeighborListCutoffsPointer(modelCreate, 1,
+                                                model_cutoff);
 
   if (error)
   {
@@ -529,8 +529,8 @@ static int model_refresh(KIM_ModelRefresh * const modelRefresh)
   LOG_INFORMATION("Resetting influence distance and cutoffs");
   KIM_ModelRefresh_SetInfluenceDistancePointer(
       modelRefresh, model_cutoff);
-  KIM_ModelRefresh_SetCutoffsPointer(modelRefresh, 1,
-                                     model_cutoff);
+  KIM_ModelRefresh_SetNeighborListCutoffsPointer(modelRefresh, 1,
+                                                 model_cutoff);
 
   return FALSE;
 }
