@@ -109,12 +109,12 @@ void ModelDriverCreate::SetInfluenceDistancePointer(
   pImpl->SetInfluenceDistancePointer(influenceDistance);
 }
 
-void ModelDriverCreate::SetCutoffsPointer(int const numberOfCutoffs,
-                                          double const * const cutoffs)
+void ModelDriverCreate::SetNeighborListCutoffsPointer(
+    int const numberOfCutoffs, double const * const cutoffs)
 {
   CONVERT_POINTER;
 
-  pImpl->SetCutoffsPointer(numberOfCutoffs, cutoffs);
+  pImpl->SetNeighborListCutoffsPointer(numberOfCutoffs, cutoffs);
 }
 
 int ModelDriverCreate::SetRefreshPointer(

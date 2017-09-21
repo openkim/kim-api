@@ -677,7 +677,7 @@ int LennardJones612Implementation::SetReinitMutableValues(
 
   influenceDistance_ = sqrt(influenceDistance_);
   modelObj->SetInfluenceDistancePointer(&influenceDistance_);
-  modelObj->SetCutoffsPointer(1, &influenceDistance_);
+  modelObj->SetNeighborListCutoffsPointer(1, &influenceDistance_);
 
   // update shifts
   // compute and set shifts2D_ check if minus sign

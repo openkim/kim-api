@@ -42,8 +42,8 @@ module kim_model_module
     kim_model_create, &
     kim_model_destroy, &
     kim_model_get_influence_distance, &
-    kim_model_get_number_of_cutoffs, &
-    kim_model_get_cutoffs, &
+    kim_model_get_number_of_neighbor_list_cutoffs, &
+    kim_model_get_neighbor_list_cutoffs, &
     kim_model_get_argument_support_status, &
     kim_model_get_callback_support_status, &
     kim_model_get_units, &
@@ -235,22 +235,23 @@ module kim_model_module
       real(c_double), intent(out) :: influence_distance
     end subroutine kim_model_get_influence_distance
 
-    subroutine kim_model_get_number_of_cutoffs(model, number_of_cutoffs)
+    subroutine kim_model_get_number_of_neighbor_list_cutoffs(model, &
+      number_of_cutoffs)
       use, intrinsic :: iso_c_binding
       import kim_model_type
       implicit none
       type(kim_model_type), intent(in) :: model
       integer(c_int), intent(out) :: number_of_cutoffs
-    end subroutine kim_model_get_number_of_cutoffs
+    end subroutine kim_model_get_number_of_neighbor_list_cutoffs
 
-    subroutine kim_model_get_cutoffs(model, cutoffs, ierr)
+    subroutine kim_model_get_neighbor_list_cutoffs(model, cutoffs, ierr)
       use, intrinsic :: iso_c_binding
       import kim_model_type
       implicit none
       type(kim_model_type), intent(in) :: model
       real(c_double), intent(out) :: cutoffs(:)
       integer(c_int), intent(out) :: ierr
-    end subroutine kim_model_get_cutoffs
+    end subroutine kim_model_get_neighbor_list_cutoffs
 
     subroutine kim_model_get_argument_support_status(model, argument_name, &
       support_status, ierr)

@@ -76,8 +76,8 @@ class Model
   void GetInfluenceDistance(double * const influenceDistance) const;
 
   // allows NULL as value of cutoffs (to get just numberOfCutoffs)
-  void GetCutoffsPointer(int * const numberOfCutoffs,
-                         double const ** const cutoffs) const;
+  void GetNeighborListCutoffsPointer(int * const numberOfCutoffs,
+                                     double const ** const cutoffs) const;
 
   int GetArgumentSupportStatus(ArgumentName const argumentName,
                                SupportStatus * const supportStatus) const;

@@ -39,7 +39,7 @@ module kim_model_f_module
     create, &
     destroy, &
     get_influence_distance, &
-    get_cutoffs_pointer, &
+    get_neighbor_list_cutoffs_pointer, &
     get_argument_support_status, &
     get_callback_support_status, &
     get_units, &
@@ -100,15 +100,15 @@ module kim_model_f_module
       real(c_double), intent(out) :: influence_distance
     end subroutine get_influence_distance
 
-    subroutine get_cutoffs_pointer(model, number_of_cutoffs, cutoffs_ptr) &
-      bind(c, name="KIM_Model_GetCutoffsPointer")
+    subroutine get_neighbor_list_cutoffs_pointer(model, number_of_cutoffs, &
+      cutoffs_ptr) bind(c, name="KIM_Model_GetNeighborListCutoffsPointer")
       use, intrinsic :: iso_c_binding
       use kim_model_module, only : kim_model_type
       implicit none
       type(kim_model_type), intent(in) :: model
       integer(c_int), intent(out) :: number_of_cutoffs
       type(c_ptr), intent(out) :: cutoffs_ptr
-    end subroutine get_cutoffs_pointer
+    end subroutine get_neighbor_list_cutoffs_pointer
 
     integer(c_int) function get_argument_support_status(model, argument_name, &
       support_status) bind(c, name="KIM_Model_GetArgumentSupportStatus")
@@ -402,23 +402,24 @@ subroutine kim_model_get_influence_distance(model, influence_distance)
   call get_influence_distance(model, influence_distance)
 end subroutine kim_model_get_influence_distance
 
-subroutine kim_model_get_number_of_cutoffs(model, number_of_cutoffs)
+subroutine kim_model_get_number_of_neighbor_list_cutoffs(model, &
+  number_of_cutoffs)
   use, intrinsic :: iso_c_binding
   use kim_model_module, only : kim_model_type
-  use kim_model_f_module, only : get_cutoffs_pointer
+  use kim_model_f_module, only : get_neighbor_list_cutoffs_pointer
   implicit none
   type(kim_model_type), intent(in) :: model
   integer(c_int), intent(out) :: number_of_cutoffs
 
   type(c_ptr) cutoffs_ptr
 
-  call get_cutoffs_pointer(model, number_of_cutoffs, cutoffs_ptr)
-end subroutine kim_model_get_number_of_cutoffs
+  call get_neighbor_list_cutoffs_pointer(model, number_of_cutoffs, cutoffs_ptr)
+end subroutine kim_model_get_number_of_neighbor_list_cutoffs
 
-subroutine kim_model_get_cutoffs(model, cutoffs, ierr)
+subroutine kim_model_get_neighbor_list_cutoffs(model, cutoffs, ierr)
   use, intrinsic :: iso_c_binding
   use kim_model_module, only : kim_model_type
-  use kim_model_f_module, only : get_cutoffs_pointer
+  use kim_model_f_module, only : get_neighbor_list_cutoffs_pointer
   implicit none
   type(kim_model_type), intent(in) :: model
   real(c_double), intent(out) :: cutoffs(:)
@@ -428,7 +429,7 @@ subroutine kim_model_get_cutoffs(model, cutoffs, ierr)
   real(c_double), pointer :: cutoffs_fpointer(:)
   type(c_ptr) cutoffs_ptr
 
-  call get_cutoffs_pointer(model, number_of_cutoffs, cutoffs_ptr)
+  call get_neighbor_list_cutoffs_pointer(model, number_of_cutoffs, cutoffs_ptr)
   call c_f_pointer(cutoffs_ptr, cutoffs_fpointer, [number_of_cutoffs])
 
   if (size(cutoffs) < number_of_cutoffs) then
@@ -437,7 +438,7 @@ subroutine kim_model_get_cutoffs(model, cutoffs, ierr)
     ierr = 0
     cutoffs = cutoffs_fpointer(1:number_of_cutoffs)
   end if
-end subroutine kim_model_get_cutoffs
+end subroutine kim_model_get_neighbor_list_cutoffs
 
 subroutine kim_model_get_argument_support_status(model, argument_name, &
   support_status, ierr)

@@ -62,12 +62,12 @@ void ModelRefresh::SetInfluenceDistancePointer(
   pImpl->SetInfluenceDistancePointer(influenceDistance);
 }
 
-void ModelRefresh::SetCutoffsPointer(int const numberOfCutoffs,
-                                     double const * const cutoffs)
+void ModelRefresh::SetNeighborListCutoffsPointer(int const numberOfCutoffs,
+                                                 double const * const cutoffs)
 {
   CONVERT_POINTER;
 
-  pImpl->SetCutoffsPointer(numberOfCutoffs, cutoffs);
+  pImpl->SetNeighborListCutoffsPointer(numberOfCutoffs, cutoffs);
 }
 
 void ModelRefresh::GetModelBufferPointer(void ** const ptr) const

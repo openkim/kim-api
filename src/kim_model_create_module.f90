@@ -40,7 +40,7 @@ module kim_model_create_module
     kim_model_create_type, &
     kim_model_create_set_model_numbering, &
     kim_model_create_set_influence_distance_pointer, &
-    kim_model_create_set_cutoffs_pointer, &
+    kim_model_create_set_neighbor_list_cutoffs_pointer, &
     kim_model_create_set_refresh_pointer, &
     kim_model_create_set_destroy_pointer, &
     kim_model_create_set_compute_pointer, &
@@ -104,7 +104,7 @@ module kim_model_create_module
       real(c_double), intent(in), target :: influence_distance
     end subroutine kim_model_create_set_influence_distance_pointer
 
-    subroutine kim_model_create_set_cutoffs_pointer( &
+    subroutine kim_model_create_set_neighbor_list_cutoffs_pointer( &
       model_create, number_of_cutoffs, cutoffs)
       use, intrinsic :: iso_c_binding
       import kim_model_create_type
@@ -112,7 +112,7 @@ module kim_model_create_module
       type(kim_model_create_type), intent(inout) :: model_create
       integer(c_int), intent(in), value :: number_of_cutoffs
       real(c_double), intent(in), target :: cutoffs(number_of_cutoffs)
-    end subroutine kim_model_create_set_cutoffs_pointer
+    end subroutine kim_model_create_set_neighbor_list_cutoffs_pointer
 
     subroutine kim_model_create_set_refresh_pointer( &
       model_create, language_name, fptr, ierr)

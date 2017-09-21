@@ -439,11 +439,11 @@ program ex_test_ar_fcc_cluster
   end if
 
   call kim_model_get_influence_distance(model, influence_distance)
-  call kim_model_get_number_of_cutoffs(model, number_of_cutoffs)
+  call kim_model_get_number_of_neighbor_list_cutoffs(model, number_of_cutoffs)
   if (number_of_cutoffs /= 1) then
     call my_error("too many cutoffs", __LINE__, __FILE__)
   endif
-  call kim_model_get_cutoffs(model, cutoffs, ierr)
+  call kim_model_get_neighbor_list_cutoffs(model, cutoffs, ierr)
   if (ierr /= 0) then
     call my_error("get_cutoffs", __LINE__, __FILE__)
   end if

@@ -211,13 +211,13 @@ void KIM_ModelCreate_SetInfluenceDistancePointer(
   pModelCreate->SetInfluenceDistancePointer(influenceDistance);
 }
 
-void KIM_ModelCreate_SetCutoffsPointer(
+void KIM_ModelCreate_SetNeighborListCutoffsPointer(
     KIM_ModelCreate * const modelCreate,
     int const numberOfCutoffs, double const * const cutoffs)
 {
   CONVERT_POINTER;
 
-  pModelCreate->SetCutoffsPointer(numberOfCutoffs, cutoffs);
+  pModelCreate->SetNeighborListCutoffsPointer(numberOfCutoffs, cutoffs);
 }
 
 int KIM_ModelCreate_SetRefreshPointer(

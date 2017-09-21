@@ -52,8 +52,8 @@ class ModelRefresh{
   void SetInfluenceDistancePointer(double const * const influenceDistance);
 
   // stores pointer value
-  void SetCutoffsPointer(int const numberOfCutoffs,
-                         double const * const cutoffs);
+  void SetNeighborListCutoffsPointer(int const numberOfCutoffs,
+                                     double const * const cutoffs);
 
   void GetModelBufferPointer(void ** const ptr) const;
 

@@ -39,7 +39,7 @@ module kim_model_refresh_module
   public &
     kim_model_refresh_type, &
     kim_model_refresh_set_influence_distance_pointer, &
-    kim_model_refresh_set_cutoffs_pointer, &
+    kim_model_refresh_set_neighbor_list_cutoffs_pointer, &
     kim_model_refresh_get_model_buffer_pointer, &
     kim_model_refresh_log, &
     kim_model_refresh_string
@@ -61,7 +61,7 @@ module kim_model_refresh_module
       real(c_double), intent(in), target :: influence_distance
     end subroutine kim_model_refresh_set_influence_distance_pointer
 
-    subroutine kim_model_refresh_set_cutoffs_pointer( &
+    subroutine kim_model_refresh_set_neighbor_list_cutoffs_pointer( &
       model_refresh, number_of_cutoffs, cutoffs)
       use, intrinsic :: iso_c_binding
       import kim_model_refresh_type
@@ -70,7 +70,7 @@ module kim_model_refresh_module
         model_refresh
       integer(c_int), intent(in), value :: number_of_cutoffs
       real(c_double), intent(in), target :: cutoffs(number_of_cutoffs)
-    end subroutine kim_model_refresh_set_cutoffs_pointer
+    end subroutine kim_model_refresh_set_neighbor_list_cutoffs_pointer
 
     subroutine kim_model_refresh_get_model_buffer_pointer( &
       model_refresh, ptr)

@@ -108,10 +108,10 @@ void Model::GetInfluenceDistance(double * const influenceDistance) const
   pimpl->GetInfluenceDistance(influenceDistance);
 }
 
-void Model::GetCutoffsPointer(int * const numberOfCutoffs,
-                              double const ** cutoffs) const
+void Model::GetNeighborListCutoffsPointer(int * const numberOfCutoffs,
+                                          double const ** cutoffs) const
 {
-  pimpl->GetCutoffsPointer(numberOfCutoffs, cutoffs);
+  pimpl->GetNeighborListCutoffsPointer(numberOfCutoffs, cutoffs);
 }
 
 int Model::GetArgumentSupportStatus(ArgumentName const argumentName,

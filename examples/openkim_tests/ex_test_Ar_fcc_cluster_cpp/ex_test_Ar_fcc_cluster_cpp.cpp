@@ -281,8 +281,8 @@ int main()
   if (error) MY_ERROR("set_call_back");
 
   kim_cluster_model->GetInfluenceDistance(&influence_distance_cluster_model);
-  kim_cluster_model->GetCutoffsPointer(&number_of_cutoffs,
-                                       &cutoff_cluster_model);
+  kim_cluster_model->GetNeighborListCutoffsPointer(&number_of_cutoffs,
+                                                   &cutoff_cluster_model);
   if (number_of_cutoffs != 1) MY_ERROR("too many cutoffs");
 
   /* setup particleSpecies */

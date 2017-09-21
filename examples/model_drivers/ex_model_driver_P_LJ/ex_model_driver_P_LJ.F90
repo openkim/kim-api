@@ -490,7 +490,7 @@ call c_f_pointer(pbuf, buf)
 
 call kim_model_refresh_set_influence_distance_pointer(model_refresh, &
   buf%influence_distance(1))
-call kim_model_refresh_set_cutoffs_pointer(model_refresh, 1, &
+call kim_model_refresh_set_neighbor_list_cutoffs_pointer(model_refresh, 1, &
   buf%influence_distance(1))
 
 ! Set new values in KIM object and buffer
@@ -783,7 +783,7 @@ buf%shift(1)   = -energy_at_cutoff
 ! store model cutoff in KIM object
 call kim_model_driver_create_set_influence_distance_pointer( &
   model_driver_create, buf%influence_distance(1))
-call kim_model_driver_create_set_cutoffs_pointer( &
+call kim_model_driver_create_set_neighbor_list_cutoffs_pointer( &
   model_driver_create, 1, buf%influence_distance(1))
 
 ! end setup buffer

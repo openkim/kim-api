@@ -66,8 +66,8 @@ class ModelCreate
   void SetInfluenceDistancePointer(double const * const influenceDistance);
 
   // stores pointer value
-  void SetCutoffsPointer(int const numberOfCutoffs,
-                         double const * const cutoffs);
+  void SetNeighborListCutoffsPointer(int const numberOfCutoffs,
+                                     double const * const cutoffs);
 
   // method functions
   int SetRefreshPointer(LanguageName const languageName, func * const fptr);

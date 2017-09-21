@@ -37,7 +37,7 @@ module kim_model_refresh_f_module
 
   public &
     set_influence_distance_pointer, &
-    set_cutoffs_pointer, &
+    set_neighbor_list_cutoffs_pointer, &
     get_model_buffer_pointer, &
     log, &
     model_refresh_string
@@ -55,8 +55,9 @@ module kim_model_refresh_f_module
       type(c_ptr), intent(in), value :: influence_distance
     end subroutine set_influence_distance_pointer
 
-    subroutine set_cutoffs_pointer(model_refresh, number_of_cutoffs, &
-      cutoffs_ptr) bind(c, name="KIM_ModelRefresh_SetCutoffsPointer")
+    subroutine set_neighbor_list_cutoffs_pointer(model_refresh, &
+      number_of_cutoffs, cutoffs_ptr) &
+      bind(c, name="KIM_ModelRefresh_SetNeighborListCutoffsPointer")
       use, intrinsic :: iso_c_binding
       use kim_model_refresh_module, only : &
         kim_model_refresh_type
@@ -65,7 +66,7 @@ module kim_model_refresh_f_module
         model_refresh
       integer(c_int), intent(in), value :: number_of_cutoffs
       type(c_ptr), intent(in), value :: cutoffs_ptr
-    end subroutine set_cutoffs_pointer
+    end subroutine set_neighbor_list_cutoffs_pointer
 
     subroutine get_model_buffer_pointer(model_refresh, ptr) &
       bind(c, name="KIM_ModelRefresh_GetModelBufferPointer")
@@ -121,19 +122,19 @@ subroutine kim_model_refresh_set_influence_distance_pointer( &
     c_loc(influence_distance))
 end subroutine kim_model_refresh_set_influence_distance_pointer
 
-subroutine kim_model_refresh_set_cutoffs_pointer( &
+subroutine kim_model_refresh_set_neighbor_list_cutoffs_pointer( &
   model_refresh, number_of_cutoffs, cutoffs)
   use, intrinsic :: iso_c_binding
   use kim_model_refresh_module, only : kim_model_refresh_type
-  use kim_model_refresh_f_module, only : set_cutoffs_pointer
+  use kim_model_refresh_f_module, only : set_neighbor_list_cutoffs_pointer
   implicit none
   type(kim_model_refresh_type), intent(inout) :: model_refresh
   integer(c_int), intent(in), value :: number_of_cutoffs
   real(c_double), intent(in), target :: cutoffs(number_of_cutoffs)
 
-  call set_cutoffs_pointer(model_refresh, number_of_cutoffs, &
+  call set_neighbor_list_cutoffs_pointer(model_refresh, number_of_cutoffs, &
     c_loc(cutoffs))
-end subroutine kim_model_refresh_set_cutoffs_pointer
+end subroutine kim_model_refresh_set_neighbor_list_cutoffs_pointer
 
 subroutine kim_model_refresh_get_model_buffer_pointer( &
   model_refresh, ptr)

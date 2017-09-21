@@ -49,7 +49,7 @@ void KIM_ModelRefresh_SetInfluenceDistancePointer(
     KIM_ModelRefresh * const modelRefresh,
     double * const influenceDistance);
 
-void KIM_ModelRefresh_SetCutoffsPointer(
+void KIM_ModelRefresh_SetNeighborListCutoffsPointer(
     KIM_ModelRefresh * const modelRefresh,
     int const numberOfCutoffs, double const * const cutoffs);
 

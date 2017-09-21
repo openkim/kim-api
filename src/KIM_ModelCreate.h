@@ -120,7 +120,7 @@ void KIM_ModelCreate_SetInfluenceDistancePointer(
     KIM_ModelCreate * const modelCreate,
     double * const influenceDistance);
 
-void KIM_ModelCreate_SetCutoffsPointer(
+void KIM_ModelCreate_SetNeighborListCutoffsPointer(
     KIM_ModelCreate * const modelCreate,
     int const numberOfCutoffs, double const * const cutoffs);
 

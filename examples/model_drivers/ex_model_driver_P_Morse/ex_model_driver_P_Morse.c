@@ -559,7 +559,7 @@ int model_driver_create(
   KIM_ModelDriverCreate_SetInfluenceDistancePointer(
       modelDriverCreate,
       &(buffer->influenceDistance));
-  KIM_ModelDriverCreate_SetCutoffsPointer(
+  KIM_ModelDriverCreate_SetNeighborListCutoffsPointer(
       modelDriverCreate, 1,
       &(buffer->influenceDistance));
 
@@ -577,7 +577,7 @@ static int refresh(KIM_ModelRefresh * const modelRefresh)
 
   KIM_ModelRefresh_SetInfluenceDistancePointer(
       modelRefresh, &(buffer->influenceDistance));
-  KIM_ModelRefresh_SetCutoffsPointer(
+  KIM_ModelRefresh_SetNeighborListCutoffsPointer(
       modelRefresh, 1, &(buffer->influenceDistance));
 
   return FALSE;

@@ -110,11 +110,11 @@ class ModelImplementation
   void GetInfluenceDistance(double * const influenceDistance) const;
 
 
-  void SetCutoffsPointer(int const numberOfCutoffs,
-                         double const * const cutoffs);
+  void SetNeighborListCutoffsPointer(int const numberOfCutoffs,
+                                     double const * const cutoffs);
   // allows NULL as value of cutoffs (to get just numberOfCutoffs)
-  void GetCutoffsPointer(int * const numberOfCutoffs,
-                         double const ** const cutoffs) const;
+  void GetNeighborListCutoffsPointer(int * const numberOfCutoffs,
+                                     double const ** const cutoffs) const;
 
 
   int SetRefreshPointer(LanguageName const languageName, func * const fptr);

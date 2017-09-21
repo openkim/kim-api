@@ -258,12 +258,12 @@ void KIM_Model_GetInfluenceDistance(KIM_Model const * const model,
   pmodel->GetInfluenceDistance(influenceDistance);
 }
 
-void KIM_Model_GetCutoffsPointer(KIM_Model const * const model,
-                                 int * const numberOfCutoffs,
-                                 double const ** const cutoffs)
+void KIM_Model_GetNeighborListCutoffsPointer(KIM_Model const * const model,
+                                             int * const numberOfCutoffs,
+                                             double const ** const cutoffs)
 {
   KIM::Model * pmodel = (KIM::Model *) model->p;
-  pmodel->GetCutoffsPointer(numberOfCutoffs, cutoffs);
+  pmodel->GetNeighborListCutoffsPointer(numberOfCutoffs, cutoffs);
 }
 
 int KIM_Model_GetArgumentSupportStatus(KIM_Model const * const model,

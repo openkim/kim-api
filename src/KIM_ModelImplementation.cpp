@@ -236,7 +236,7 @@ void ModelImplementation::GetInfluenceDistance(
 }
 
 
-void ModelImplementation::SetCutoffsPointer(
+void ModelImplementation::SetNeighborListCutoffsPointer(
     int const numberOfCutoffs, double const * const cutoffs)
 {
   numberOfCutoffs_ = numberOfCutoffs;
@@ -244,8 +244,8 @@ void ModelImplementation::SetCutoffsPointer(
 }
 
 // allows NULL as value of cutoffs (to get just numberOfCutoffs)
-void ModelImplementation::GetCutoffsPointer(int * const numberOfCutoffs,
-                                            double const ** const cutoffs) const
+void ModelImplementation::GetNeighborListCutoffsPointer(
+    int * const numberOfCutoffs, double const ** const cutoffs) const
 {
   *numberOfCutoffs = numberOfCutoffs_;
   *cutoffs = cutoffs_;
@@ -1208,8 +1208,8 @@ std::string ModelImplementation::String() const
 
   ss << "Influence Distance : " << *influenceDistance_ << "\n\n";
 
-  ss << "Number Of Cutoffs : " << numberOfCutoffs_ << "\n";
-  ss << "Cutoffs :\n";
+  ss << "Number Of Neighbor List Cutoffs : " << numberOfCutoffs_ << "\n";
+  ss << "Neighbor List Cutoffs :\n";
   for (int i=0; i<numberOfCutoffs_; ++i)
   {
     ss << "\t" << i << " : " << cutoffs_[i] << "\n";

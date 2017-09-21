@@ -74,13 +74,13 @@ void KIM_ModelRefresh_SetInfluenceDistancePointer(
   pModelRefresh->SetInfluenceDistancePointer(influenceDistance);
 }
 
-void KIM_ModelRefresh_SetCutoffsPointer(
+void KIM_ModelRefresh_SetNeighborListCutoffsPointer(
     KIM_ModelRefresh * const modelRefresh,
     int const numberOfCutoffs, double const * const cutoffs)
 {
   CONVERT_POINTER;
 
-  pModelRefresh->SetCutoffsPointer(numberOfCutoffs, cutoffs);
+  pModelRefresh->SetNeighborListCutoffsPointer(numberOfCutoffs, cutoffs);
 }
 
 void KIM_ModelRefresh_GetModelBufferPointer(

@@ -38,7 +38,7 @@ module kim_model_create_f_module
   public &
     set_model_numbering, &
     set_influence_distance_pointer, &
-    set_cutoffs_pointer, &
+    set_neighbor_list_cutoffs_pointer, &
     set_refresh_pointer, &
     set_destroy_pointer, &
     set_compute_pointer, &
@@ -74,15 +74,16 @@ module kim_model_create_f_module
       type(c_ptr), intent(in), value :: influence_distance
     end subroutine set_influence_distance_pointer
 
-    subroutine set_cutoffs_pointer(model_create, number_of_cutoffs, &
-      cutoffs_ptr) bind(c, name="KIM_ModelCreate_SetCutoffsPointer")
+    subroutine set_neighbor_list_cutoffs_pointer(model_create, &
+      number_of_cutoffs, cutoffs_ptr) &
+      bind(c, name="KIM_ModelCreate_SetNeighborListCutoffsPointer")
       use, intrinsic :: iso_c_binding
       use kim_model_create_module, only : kim_model_create_type
       implicit none
       type(kim_model_create_type), intent(inout) :: model_create
       integer(c_int), intent(in), value :: number_of_cutoffs
       type(c_ptr), intent(in), value :: cutoffs_ptr
-    end subroutine set_cutoffs_pointer
+    end subroutine set_neighbor_list_cutoffs_pointer
 
     integer(c_int) function set_refresh_pointer(model_create, &
       language_name, fptr) &
@@ -300,19 +301,19 @@ subroutine kim_model_create_set_influence_distance_pointer( &
     c_loc(influence_distance))
 end subroutine kim_model_create_set_influence_distance_pointer
 
-subroutine kim_model_create_set_cutoffs_pointer(model_create, &
+subroutine kim_model_create_set_neighbor_list_cutoffs_pointer(model_create, &
   number_of_cutoffs, cutoffs)
   use, intrinsic :: iso_c_binding
   use kim_model_create_module, only : kim_model_create_type
-  use kim_model_create_f_module, only : set_cutoffs_pointer
+  use kim_model_create_f_module, only : set_neighbor_list_cutoffs_pointer
   implicit none
   type(kim_model_create_type), intent(inout) :: model_create
   integer(c_int), intent(in), value :: number_of_cutoffs
   real(c_double), intent(in), target :: cutoffs(number_of_cutoffs)
 
-  call set_cutoffs_pointer(model_create, number_of_cutoffs, &
+  call set_neighbor_list_cutoffs_pointer(model_create, number_of_cutoffs, &
     c_loc(cutoffs))
-end subroutine kim_model_create_set_cutoffs_pointer
+end subroutine kim_model_create_set_neighbor_list_cutoffs_pointer
 
 subroutine kim_model_create_set_refresh_pointer( &
   model_create, language_name, fptr, ierr)

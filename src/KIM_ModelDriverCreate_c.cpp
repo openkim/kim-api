@@ -249,13 +249,13 @@ void KIM_ModelDriverCreate_SetInfluenceDistancePointer(
   pModelDriverCreate->SetInfluenceDistancePointer(influenceDistance);
 }
 
-void KIM_ModelDriverCreate_SetCutoffsPointer(
+void KIM_ModelDriverCreate_SetNeighborListCutoffsPointer(
     KIM_ModelDriverCreate * const modelCreate,
     int const numberOfCutoffs, double const * const cutoffs)
 {
   CONVERT_POINTER;
 
-  pModelDriverCreate->SetCutoffsPointer(numberOfCutoffs, cutoffs);
+  pModelDriverCreate->SetNeighborListCutoffsPointer(numberOfCutoffs, cutoffs);
 }
 
 int KIM_ModelDriverCreate_SetRefreshPointer(
