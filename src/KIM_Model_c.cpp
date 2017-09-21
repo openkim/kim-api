@@ -472,7 +472,10 @@ void KIM_Model_GetSimulatorBufferPointer(KIM_Model const * const model,
 char const * const KIM_Model_String(KIM_Model const * const model)
 {
   KIM::Model * pmodel = (KIM::Model *) model->p;
-  return (pmodel->String()).c_str();
+
+  static std::string modelString;
+  modelString = pmodel->String();
+  return modelString.c_str();
 }
 
 void KIM_Model_SetLogID(KIM_Model * const model, char const * const logID)
