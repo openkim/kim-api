@@ -60,7 +60,7 @@ subroutine kim_support_status_string(support_status, support_status_string)
   character(len=*), intent(out) :: support_status_string
 
   type(c_ptr) :: p
-  character(len=len(support_status_string)), pointer :: fp
+  character(len=len(support_status_string)+1), pointer :: fp
   integer(c_int) :: null_index
 
   p = support_status_str(support_status)

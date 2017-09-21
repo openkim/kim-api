@@ -575,7 +575,7 @@ subroutine kim_model_create_string(model_create, string)
   character(len=*), intent(out) :: string
 
   type(c_ptr) :: p
-  character(len=len(string)), pointer :: fp
+  character(len=len(string)+1), pointer :: fp
   integer(c_int) :: null_index
 
   p = model_create_string(model_create)

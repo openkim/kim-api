@@ -113,7 +113,7 @@ subroutine kim_model_destroy_string(model_destroy, string)
   character(len=*), intent(out) :: string
 
   type(c_ptr) :: p
-  character(len=len(string)), pointer :: fp
+  character(len=len(string)+1), pointer :: fp
   integer(c_int) :: null_index
 
   p = model_destroy_string(model_destroy)

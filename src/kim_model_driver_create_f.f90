@@ -367,7 +367,7 @@ subroutine kim_model_driver_create_get_parameter_file_name( &
   integer(c_int), intent(out) :: ierr
 
   type(c_ptr) :: p
-  character(len=len(parameter_file_name)), pointer :: fp
+  character(len=len(parameter_file_name)+1), pointer :: fp
   integer(c_int) :: null_index
 
   ierr = get_parameter_file_name(model_driver_create, &
@@ -725,7 +725,7 @@ subroutine kim_model_driver_create_string(model_driver_create, &
   character(len=*), intent(out) :: string
 
   type(c_ptr) :: p
-  character(len=len(string)), pointer :: fp
+  character(len=len(string)+1), pointer :: fp
   integer(c_int) :: null_index
 
   p = model_driver_create_string(model_driver_create)

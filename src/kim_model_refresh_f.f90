@@ -173,7 +173,7 @@ subroutine kim_model_refresh_string(model_refresh, string)
   character(len=*), intent(out) :: string
 
   type(c_ptr) :: p
-  character(len=len(string)), pointer :: fp
+  character(len=len(string)+1), pointer :: fp
   integer(c_int) :: null_index
 
   p = model_refresh_string(model_refresh)

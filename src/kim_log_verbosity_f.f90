@@ -60,7 +60,7 @@ subroutine kim_log_verbosity_string(log_verbosity, type_string)
   character(len=*), intent(out) :: type_string
 
   type(c_ptr) :: p
-  character(len=len(type_string)), pointer :: fp
+  character(len=len(type_string)+1), pointer :: fp
   integer(c_int) :: null_index
 
   p = log_verbosity_string(log_verbosity)

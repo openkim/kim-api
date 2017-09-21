@@ -730,7 +730,7 @@ subroutine kim_model_get_parameter_data_type_extent_and_description(model, &
   integer(c_int), intent(out) :: ierr
 
   type(c_ptr) :: p
-  character(len=len(description)), pointer :: fp
+  character(len=len(description)+1), pointer :: fp
   integer(c_int) :: null_index
 
   ierr = get_parameter_data_type_extent_and_description(model, &
@@ -835,7 +835,7 @@ subroutine kim_model_string(model, string)
   character(len=*), intent(out) :: string
 
   type(c_ptr) :: p
-  character(len=len(string)), pointer :: fp
+  character(len=len(string)+1), pointer :: fp
   integer(c_int) :: null_index
 
   p = model_string(model)

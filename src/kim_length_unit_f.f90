@@ -60,7 +60,7 @@ subroutine kim_length_unit_string(length_unit, unit_string)
   character(len=*), intent(out) :: unit_string
 
   type(c_ptr) :: p
-  character(len=len(unit_string)), pointer :: fp
+  character(len=len(unit_string)+1), pointer :: fp
   integer(c_int) :: null_index
 
   p = length_unit_string(length_unit)

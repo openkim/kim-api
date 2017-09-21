@@ -60,7 +60,7 @@ subroutine kim_temperature_unit_string(temperature_unit, unit_string)
   character(len=*), intent(out) :: unit_string
 
   type(c_ptr) :: p
-  character(len=len(unit_string)), pointer :: fp
+  character(len=len(unit_string)+1), pointer :: fp
   integer(c_int) :: null_index
 
   p = temperature_unit_string(temperature_unit)
