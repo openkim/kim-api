@@ -919,7 +919,7 @@ int ModelImplementation::ProcessDEDrTerm(double const de, double const r,
   int offset
       = ((simulatorNumbering_ == modelNumbering_) ? 0 : -numberingOffset_);
   int simulatorI = i + offset;
-  int simulatorJ = i + offset;
+  int simulatorJ = j + offset;
 
   int error;
   if (languageName == LANGUAGE_NAME::cpp)
