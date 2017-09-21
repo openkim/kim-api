@@ -916,18 +916,23 @@ int ModelImplementation::ProcessDEDrTerm(double const de, double const r,
   ProcessDEDrTermF * FProcess_dEdr
       = reinterpret_cast<ProcessDEDrTermF *>(functionPointer);
 
+  int offset
+      = ((simulatorNumbering_ == modelNumbering_) ? 0 : -numberingOffset_);
+  int simulatorI = i + offset;
+  int simulatorJ = i + offset;
+
   int error;
   if (languageName == LANGUAGE_NAME::cpp)
   {
-    error = CppProcess_dEdr(dataObject, de, r, dx, i, j);
+    error = CppProcess_dEdr(dataObject, de, r, dx, simulatorI, simulatorJ);
   }
   else if (languageName == LANGUAGE_NAME::c)
   {
-    error = CProcess_dEdr(dataObject, de, r, dx, i, j);
+    error = CProcess_dEdr(dataObject, de, r, dx, simulatorI, simulatorJ);
   }
   else if (languageName == LANGUAGE_NAME::fortran)
   {
-    FProcess_dEdr(dataObject, de, r, dx, i, j, &error);
+    FProcess_dEdr(dataObject, de, r, dx, simulatorI, simulatorJ, &error);
   }
   else
   {
@@ -984,18 +989,28 @@ int ModelImplementation::ProcessD2EDr2Term(double const de,
   ProcessD2EDr2TermF * FProcess_d2Edr2
       = reinterpret_cast<ProcessD2EDr2TermF *>(functionPointer);
 
+  int offset
+      = ((simulatorNumbering_ == modelNumbering_) ? 0 : -numberingOffset_);
+  int simulatorI[2];
+  simulatorI[0] = i[0] + offset;
+  simulatorI[1] = i[1] + offset;
+
+  int simulatorJ[2];
+  simulatorJ[0] = j[0] + offset;
+  simulatorJ[1] = j[1] + offset;
+
   int error;
   if (languageName == LANGUAGE_NAME::cpp)
   {
-    error = CppProcess_d2Edr2(dataObject, de, r, dx, i, j);
+    error = CppProcess_d2Edr2(dataObject, de, r, dx, simulatorI, simulatorJ);
   }
   else if (languageName == LANGUAGE_NAME::c)
   {
-    error = CProcess_d2Edr2(dataObject, de, r, dx, i, j);
+    error = CProcess_d2Edr2(dataObject, de, r, dx, simulatorI, simulatorJ);
   }
   else if (languageName == LANGUAGE_NAME::fortran)
   {
-    FProcess_d2Edr2(dataObject, de, r, dx, i, j, &error);
+    FProcess_d2Edr2(dataObject, de, r, dx, simulatorI, simulatorJ, &error);
   }
   else
   {
