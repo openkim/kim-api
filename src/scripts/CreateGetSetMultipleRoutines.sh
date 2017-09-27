@@ -81,23 +81,29 @@ done
 printf "  end if\n"
 printf "\n"
 printf "  error = KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY\n"
-printf "  if (present(k2) .and. ((k2 .ne. 0) .and. (k2 .ne. 1))) then\n"
-printf "    if (errcheck_mltpl_%s(error, msg, 2, id2) .lt. KIM_STATUS_OK) return\n" $idtype
+printf "  if (present(k2)) then\n"
+printf "    if ((k2 .ne. 0) .and. (k2 .ne. 1)) then\n"
+printf "       if (errcheck_mltpl_%s(error, msg, 2, id2) .lt. KIM_STATUS_OK) return\n" $idtype
 for i in 3 4 5 6 7 8 9 10 11 12 13 14 15; do
-printf "  else if (present(k$i) .and. ((k$i .ne. 0) .and. (k$i .ne. 1))) then\n"
-printf "    if (errcheck_mltpl_%s(error, msg, $i, id$i) .lt. KIM_STATUS_OK) return\n" $idtype
+printf "    end if\n"
+printf "  else if (present(k$i)) then\n"
+printf "    if ((k$i .ne. 0) .and. (k$i .ne. 1)) then\n"
+printf "      if (errcheck_mltpl_%s(error, msg, $i, id$i) .lt. KIM_STATUS_OK) return\n" $idtype
 done
+printf "    end if\n"
 printf "  end if\n"
 printf "\n"
 printf "  !process arguments\n"
 printf "  error=KIM_STATUS_OK\n"
 for i in 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
-printf "  if (present(id$i) .and. (k$i .eq. 1)) then\n"
+printf "  if (present(id$i)) then\n"
+printf "    if (k$i .eq. 1) then\n"
 if test "x$subroutine" = "xtrue"; then
-printf "    call kim_api_get_%s(kimmdl, id$i, dt$i, error)\n" $subject
+printf "      call kim_api_get_%s(kimmdl, id$i, dt$i, error)\n" $subject
 else
-printf "    dt$i = kim_api_get_%s(kimmdl, id$i, error);\n" $subject
+printf "      dt$i = kim_api_get_%s(kimmdl, id$i, error);\n" $subject
 fi
+printf "    end if\n"
 printf "  end if\n"
 printf "  if (errcheck_mltpl_%s(error, msg, $i, id$i) .lt. KIM_STATUS_OK) return\n" $idtype
 done
@@ -154,34 +160,42 @@ printf "  end if\n"
 printf "\n"
 printf "  !check rest of the arguments\n"
 printf "  error = KIM_STATUS_WRONG_MULTIPLE_ARGS\n"
-printf "  if (present(id2) .and. &\n"
-printf "    (${hasSize:+.not.present(sz2) .or.} .not. present(dt2) .or. .not.present(k2))) then\n"
-printf "    if (errcheck_mltpl_%s(error, msg, 2, id2) .lt. KIM_STATUS_OK) return\n" $idtype
+printf "  if (present(id2)) then\n"
+printf "    if (${hasSize:+.not.present(sz2) .or.} .not. present(dt2) .or. .not.present(k2)) then\n"
+printf "      if (errcheck_mltpl_%s(error, msg, 2, id2) .lt. KIM_STATUS_OK) return\n" $idtype
 for i in 3 4 5 6 7 8 9 10 11 12 13 14 15; do
-printf "  else if (present(id$i) .and. &\n"
-printf "    (${hasSize:+.not.present(sz$i) .or.} .not.present(dt$i) .or. .not.present(k$i))) then\n"
-printf "    if (errcheck_mltpl_%s(error, msg, $i, id$i) .lt. KIM_STATUS_OK) return\n" $idtype
+printf "    end if\n"
+printf "  else if (present(id$i)) then\n"
+printf "    if (${hasSize:+.not.present(sz$i) .or.} .not.present(dt$i) .or. .not.present(k$i)) then\n"
+printf "      if (errcheck_mltpl_%s(error, msg, $i, id$i) .lt. KIM_STATUS_OK) return\n" $idtype
 done
+printf "    end if\n"
 printf "  end if\n"
 printf "\n"
 printf "  error = KIM_STATUS_WRONG_GROUP_ARGUMENT_KEY\n"
-printf "  if (present(k2) .and. ((k2 .ne. 0) .and. (k2 .ne. 1)))then\n"
-printf "    if (errcheck_mltpl_%s(error, msg, 2,  id2) .lt. KIM_STATUS_OK) return\n" $idtype
+printf "  if (present(k2)) then\n"
+printf "    if ((k2 .ne. 0) .and. (k2 .ne. 1)) then\n"
+printf "      if (errcheck_mltpl_%s(error, msg, 2,  id2) .lt. KIM_STATUS_OK) return\n" $idtype
 for i in 3 4 5 6 7 8 9 10 11 12 13 14 15; do
-printf "  else if(present(k$i) .and. ((k$i .ne. 0) .and. (k$i .ne. 1)))then\n"
-printf "    if  (errcheck_mltpl_%s(error, msg, $i,  id$i) .lt. KIM_STATUS_OK) return\n" $idtype
+printf "    end if\n"
+printf "  else if (present(k$i)) then\n"
+printf "    if ((k$i .ne. 0) .and. (k$i .ne. 1)) then\n"
+printf "      if  (errcheck_mltpl_%s(error, msg, $i,  id$i) .lt. KIM_STATUS_OK) return\n" $idtype
 done
+printf "    end if\n"
 printf "  end if\n"
 printf "\n"
 printf "  !process arguments\n"
 printf "  error = KIM_STATUS_OK\n"
 for i in 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
-printf "  if (present(id$i) .and. (k$i .eq. 1)) then\n"
+printf "  if (present(id$i)) then\n"
+printf "     if (k$i .eq. 1) then\n"
 if test "x$subroutine" = "xtrue"; then
-printf "    call kim_api_set_%s(kimmdl, id$i, dt$i, error)\n" $subject
+printf "      call kim_api_set_%s(kimmdl, id$i, dt$i, error)\n" $subject
 else
-printf "    error = kim_api_set_%s(kimmdl, id$i, sz$i, dt$i);\n" $subject
+printf "      error = kim_api_set_%s(kimmdl, id$i, sz$i, dt$i);\n" $subject
 fi
+printf "    end if\n"
 printf "  end if\n"
 printf "  if (errcheck_mltpl_%s(error, msg, $i, id$i) .lt. KIM_STATUS_OK) return\n" $idtype
 done
