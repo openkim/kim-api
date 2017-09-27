@@ -50,6 +50,8 @@ CXXFLAGS     = $(shell $(KIM_API_BUILD_CONFIG) --cxxflags)
 FFLAGS       = $(shell $(KIM_API_BUILD_CONFIG) --fflags)
 LDFLAGS      = $(shell $(KIM_API_BUILD_CONFIG) --ldflags)
 LDLIBS       = $(shell $(KIM_API_BUILD_CONFIG) --ldlibs)
+XLANGLDLIBS  = $(shell $(KIM_API_BUILD_CONFIG) --xlangldlibs)
+FNOMAINFLAG  = $(shell $(KIM_API_BUILD_CONFIG) --fnomainflag)
 OBJONLYFLAG  = $(shell $(KIM_API_BUILD_CONFIG) --objonlyflag)
 OUTPUTINFLAG = $(shell $(KIM_API_BUILD_CONFIG) --outputinflag)
 
@@ -63,7 +65,7 @@ $(TEST_NAME).o: $(TEST_NAME).c Makefile
 	$(CC) $(INCLUDES) $(CFLAGS) $(OBJONLYFLAG) $<
 
 $(TEST_NAME): $(TEST_NAME).o
-	$(LD) $(LDFLAGS) $< $(LDLIBS) $(OUTPUTINFLAG) $@
+	$(LD) $(FNOMAINFLAG) $(LDFLAGS) $< $(LDLIBS) $(XLANGLDLIBS) $(OUTPUTINFLAG) $@
 
 clean:
 	rm -f $(TEST_NAME) $(TEST_NAME).o kim.log

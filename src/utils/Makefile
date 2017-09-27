@@ -53,7 +53,7 @@ descriptor-file-match.o: descriptor-file-match.cpp KIM_API.h KIM_API_status.h $(
 
 $(full_package_name)-descriptor-file-match: descriptor-file-match.o lib$(KIM_LIB_BUILD).so
 	@printf "Creating... $@.\n"
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).so $(XLANGLDLIBS) $(LDLIBS)
+	$(QUELL)$(LD) $(ARCHFLAG) $(FNOMAINFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).so $(XLANGLDLIBS) $(LDLIBS)
 
 build-config.o: KIMDEFINES = -D 'CC_STRING="$(CC)"' \
                              -D 'CXX_STRING="$(CXX)"' \
@@ -64,7 +64,9 @@ build-config.o: KIMDEFINES = -D 'CC_STRING="$(CC)"' \
                              -D 'CXXFLAGS_STRING="$(ARCHFLAG) $(PICFLAG) $(CXXFLAGS)"' \
                              -D 'FFLAGS_STRING="$(ARCHFLAG) $(PICFLAG) $(FFLAGS)"' \
                              -D 'LDFLAGS_STRING="$(ARCHFLAG) -L$(package_dir) $(LDFLAGS)"' \
-                             -D 'LDLIBS_STRING="-l$(KIM_LIB) $(XLANGLDLIBS) $(LDLIBS)"' \
+                             -D 'LDLIBS_STRING="-l$(KIM_LIB) $(LDLIBS)"' \
+                             -D 'XLANGLDLIBS_STRING="$(XLANGLDLIBS)"' \
+                             -D 'FNOMAINFLAG_STRING="$(FNOMAINFLAG)"' \
                              -D 'OBJONLYFLAG_STRING="$(OBJONLYFLAG)"' \
                              -D 'OUTPUTINFLAG_STRING="$(OUTPUTINFLAG)"' \
                              -D 'MAKEFILEKIMCONFIG_STRING="$(package_dir)/Makefile.KIM_Config"' \
@@ -75,20 +77,20 @@ build-config.o: build-config.cpp $(KIM_MAKE_FILES)
 
 $(full_package_name)-build-config: build-config.o
 	@printf "Creating... $@.\n"
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< $(XLANGLDLIBS)
+	$(QUELL)$(LD) $(ARCHFLAG) $(FNOMAINFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< $(XLANGLDLIBS)
 
 collections-info.o: collections-info.cpp KIM_API_DIRS.h $(KIM_MAKE_FILES)
 
 $(full_package_name)-collections-info: collections-info.o lib$(KIM_LIB_BUILD).so
 	@printf "Creating... $@.\n"
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).so $(LDDYNAMICLIB) $(XLANGLDLIBS) $(LDLIBS)
+	$(QUELL)$(LD) $(ARCHFLAG) $(FNOMAINFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).so $(LDDYNAMICLIB) $(XLANGLDLIBS) $(LDLIBS)
 
 simulator-model.o: KIMDEFINES = -D 'MODELLIBFILE="lib$(MODEL_LIB)"'
 simulator-model.o: simulator-model.cpp KIM_API_DIRS.h $(KIM_MAKE_FILES)
 
 $(full_package_name)-simulator-model: simulator-model.o lib$(KIM_LIB_BUILD).so
 	@printf "Creating... $@.\n"
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).so $(LDDYNAMICLIB) $(XLANGLDLIBS) $(LDLIBS)
+	$(QUELL)$(LD) $(ARCHFLAG) $(FNOMAINFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).so $(LDDYNAMICLIB) $(XLANGLDLIBS) $(LDLIBS)
 
 $(full_package_name)-collections-management: collections-management.sh $(KIM_MAKE_FILES)
 	@printf "Creating... $@.\n"

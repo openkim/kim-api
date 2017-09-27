@@ -50,6 +50,7 @@ FFREEFLAG        = -ffree-form
 FNOCPPFLAG       = -nocpp
 FCPPFLAG         = -cpp
 FFORTRANFILEFLAG =
+FNOMAINFLAG      =
 PICFLAG          = -fPIC
 LDDYNAMICLIB     = -ldl
 # Define linking options for using $(LD) to link other language objects

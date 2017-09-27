@@ -72,7 +72,7 @@ endif
 
 lib$(KIM_LIB_BUILD).so: lib$(KIM_LIB_BUILD).a
 	@printf "Creating... KIM API library....... $@.\n";
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDSHAREDFLAG) $(LINKSONAME)$(LINKSOPATH)lib$(KIM_LIB).so $(LDFLAGS) $(OUTPUTINFLAG) $@ \
+	$(QUELL)$(LD) $(ARCHFLAG) $(FNOMAINFLAG) $(LDSHAREDFLAG) $(LINKSONAME)$(LINKSOPATH)lib$(KIM_LIB).so $(LDFLAGS) $(OUTPUTINFLAG) $@ \
                       $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
                       $(LDDYNAMICLIB) $(XLANGLDLIBS) \
                       $(LDLIBS)

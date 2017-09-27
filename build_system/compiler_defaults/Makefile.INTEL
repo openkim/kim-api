@@ -50,10 +50,11 @@ FFREEFLAG        = -free
 FNOCPPFLAG       = -nocpp
 FCPPFLAG         = -cpp
 FFORTRANFILEFLAG = -Tf
+FNOMAINFLAG      = -nofor_main
 PICFLAG          = -fPIC
 LDDYNAMICLIB     =
 # Define linking options for using $(LD) to link other language objects
-XLANGLDLIBS      = -nofor_main -cxxlib
+XLANGLDLIBS      = -cxxlib
 
 # Define optional compiler option flag lists
 FFLAGS   = -O3 -g -warn all

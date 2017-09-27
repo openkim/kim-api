@@ -71,6 +71,16 @@ int processFlag(char const* const opt, std::stringstream * const outString)
     *outString << LDLIBS_STRING << " ";
     return result;
   }
+  else if (!strcmp(opt, "--xlangldlibs"))
+  {
+    *outString << XLANGLDLIBS_STRING << " ";
+    return result;
+  }
+  else if (!strcmp(opt, "--fnomainflag"))
+  {
+    *outString << FNOMAINFLAG_STRING << " ";
+    return result;
+  }
   else
   {
     result = UNKNOWN_OPTION;
@@ -220,5 +230,7 @@ int main(int argc, char* argv[])
   fprintf(stderr, "    --fflags\n");
   fprintf(stderr, "    --ldflags\n");
   fprintf(stderr, "    --ldlibs\n");
+  fprintf(stderr, "    --xlangldlibs\n");
+  fprintf(stderr, "    --fnomainflag\n");
   return result;
 }
