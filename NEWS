@@ -32,6 +32,25 @@
 #
 
 
+=== kim-api-v1.9.1 ============== 27Sep2017 ====================================
+
+* Adjustment to build config flags to make cross-language compiling a bit more
+  flexible
+
+* Fix subtle Fortran implementation bug associated with non-short-circuit
+  conditional fortran behavior
+
+* Remove 'make install-set-default-to-v1' target and update INSTALL instructions
+  No longer have kim-api-build-config, etc.  Now they explicitly include the
+  major version number. For example, kim-api-v1-build-config
+
+* Make some shell code more portable
+
+* Fixed some other installation details
+
+* Fixed missing semi-colon in makefile
+
+
 === kim-api-v1.9.0 ============== 09Sep2017 ====================================
 
 * Added collections-management user utility to manage build and install
