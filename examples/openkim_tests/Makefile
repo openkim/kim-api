@@ -30,10 +30,12 @@
 # Release: This file is part of the kim-api.git repository.
 #
 
-ifeq ($(wildcard ../Makefile.KIM_Config),)
-  $(error Makefile.KIM_Config does not exist.  Something is wrong with your KIM API package setup)
+ifeq ($(wildcard ../Makefile.KIM_InstalledConfig),)
+  $(error Makefile.KIM_InstalledConfig does not exist.  Something is wrong with your KIM API package setup)
 endif
-include ../Makefile.KIM_Config
+include ../Makefile.KIM_InstalledConfig
+
+KIM_API_BUILD_CONFIG := $(prefix)/bin/kim-api-v2-build-config
 
 export OPENKIM_TESTS_LIST := $(wildcard ex_test* vc_*)
 
@@ -50,7 +52,7 @@ clean: $(patsubst %,%-clean,$(OPENKIM_TESTS_LIST))
 	@printf "%79s\n" " " | sed -e 's/ /*/g'
 
 $(patsubst %,%-all,$(OPENKIM_TESTS_LIST)): %: Makefile Test...........@%-making-echo
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(patsubst %-all,%,$@) all
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) "KIM_API_BUILD_CONFIG=$(KIM_API_BUILD_CONFIG)" -C $(patsubst %-all,%,$@) all
 
 $(patsubst %,%-clean,$(OPENKIM_TESTS_LIST)):
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(patsubst %-clean,%,$@) clean
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) "KIM_API_BUILD_CONFIG=$(KIM_API_BUILD_CONFIG)" -C $(patsubst %-clean,%,$@) clean

@@ -32,10 +32,10 @@
 # Release: This file is part of the kim-api.git repository.
 #
 
-ifeq ($(wildcard Makefile.KIM_Config),)
+ifeq ($(wildcard ../Makefile.KIM_Config),)
   $(error Makefile.KIM_Config does not exist.  Something is wrong with your KIM API package setup)
 endif
-include Makefile.KIM_Config
+include ../Makefile.KIM_Config
 
 # Definition of c and fortran .o file list
 OBJCPP = KIM_LanguageName.o \
@@ -137,7 +137,7 @@ endif
 
 lib$(KIM_LIB_BUILD).so: lib$(KIM_LIB_BUILD).a
 	@printf "Creating... KIM API library....... $@.\n";
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDSHAREDFLAG) $(LINKSONAME)$(LINKSOPATH)lib$(KIM_LIB).so $(LDFLAGS) $(OUTPUTINFLAG) $@ \
+	$(QUELL)$(LD) $(ARCHFLAG) $(FNOMAINFLAG) $(LDSHAREDFLAG) $(LINKSONAME)$(LINKSOPATH)lib$(KIM_LIB).so $(LDFLAGS) $(OUTPUTINFLAG) $@ \
                       $(LDWHOLEARCHIVESTARTFLAG) $< $(LDWHOLEARCHIVEENDFLAG) \
                       $(LDDYNAMICLIB) $(XLANGLDLIBS) \
                       $(LDLIBS)

@@ -32,28 +32,29 @@
 
 
 ifneq (clean,$(MAKECMDGOALS))
-  ifeq ($(wildcard ../Makefile.KIM_Config_Helper),)
-    KIM_CONFIG_HELPER = kim-api-build-config
+  KIM_API_BUILD_CONFIG = kim-api-v2-build-config
+  ifeq ($(shell $(KIM_API_BUILD_CONFIG) --version 2> /dev/null),)
+    $(error $(KIM_API_BUILD_CONFIG) utility is not available.  Something is wrong with your KIM API package setup)
   else
-    include ../Makefile.KIM_Config_Helper
-  endif
-  ifeq ($(shell $(KIM_CONFIG_HELPER) --version 2> /dev/null),)
-    $(error $(KIM_CONFIG_HELPER) utility is not available.  Something is wrong with your KIM API package setup)
+    $(info Using build-config utility at: $(shell command -v "$(KIM_API_BUILD_CONFIG)"))
   endif
 endif
 
-CC           = $(shell $(KIM_CONFIG_HELPER) --cc)
-CXX          = $(shell $(KIM_CONFIG_HELPER) --cxx)
-FC           = $(shell $(KIM_CONFIG_HELPER) --fc)
-LD           = $(shell $(KIM_CONFIG_HELPER) --ld)
-INCLUDES     = $(shell $(KIM_CONFIG_HELPER) --includes)
-CFLAGS       = $(shell $(KIM_CONFIG_HELPER) --cflags)
-CXXFLAGS     = $(shell $(KIM_CONFIG_HELPER) --cxxflags)
-FFLAGS       = $(shell $(KIM_CONFIG_HELPER) --fflags)
-LDFLAGS      = $(shell $(KIM_CONFIG_HELPER) --ldflags)
-LDLIBS       = $(shell $(KIM_CONFIG_HELPER) --ldlibs)
-OBJONLYFLAG  = $(shell $(KIM_CONFIG_HELPER) --objonlyflag)
-OUTPUTINFLAG = $(shell $(KIM_CONFIG_HELPER) --outputinflag)
+CC           = $(shell $(KIM_API_BUILD_CONFIG) --cc)
+CXX          = $(shell $(KIM_API_BUILD_CONFIG) --cxx)
+FC           = $(shell $(KIM_API_BUILD_CONFIG) --fc)
+LD           = $(shell $(KIM_API_BUILD_CONFIG) --ld)
+INCLUDES     = $(shell $(KIM_API_BUILD_CONFIG) --includes)
+CFLAGS       = $(shell $(KIM_API_BUILD_CONFIG) --cflags)
+CXXFLAGS     = $(shell $(KIM_API_BUILD_CONFIG) --cxxflags)
+FFLAGS       = $(shell $(KIM_API_BUILD_CONFIG) --fflags)
+LDFLAGS      = $(shell $(KIM_API_BUILD_CONFIG) --ldflags)
+LDLIBS       = $(shell $(KIM_API_BUILD_CONFIG) --ldlibs)
+XLANGLDLIBS  = $(shell $(KIM_API_BUILD_CONFIG) --xlangldlibs)
+FNOMAINFLAG  = $(shell $(KIM_API_BUILD_CONFIG) --fnomainflag)
+OBJONLYFLAG  = $(shell $(KIM_API_BUILD_CONFIG) --objonlyflag)
+OUTPUTINFLAG = $(shell $(KIM_API_BUILD_CONFIG) --outputinflag)
+
 
 .PHONY: all clean
 
@@ -65,7 +66,7 @@ $(TEST_NAME).o: $(TEST_NAME).F90 Makefile
 	$(FC) $(INCLUDES) $(FFLAGS) $(OBJONLYFLAG) $<
 
 $(TEST_NAME): $(TEST_NAME).o
-	$(LD) $(LDFLAGS) $< $(LDLIBS) $(OUTPUTINFLAG) $@
+	$(LD) $(if $(filter-out FC, LANGUAGE_COMPILER_VAR_STR),$(FNOMAINFLAG),) $(LDFLAGS) $< $(LDLIBS) $(XLANGLDLIBS) $(OUTPUTINFLAG) $@
 
 clean:
 	rm -f $(TEST_NAME) $(TEST_NAME).o kim.log *.mod

@@ -158,19 +158,19 @@ void collectionsInfo::listItems(
   {
     if (list_all)
     {
-      std::cout << (*itr)[0] << " "
-                << (*itr)[1] << " "
-                << (*itr)[2] << " "
-                << (*itr)[3] << std::endl;
+      std::cout << (*itr)[IE_COLLECTION] << " "
+                << (*itr)[IE_NAME] << " "
+                << (*itr)[IE_DIR] << " "
+                << (*itr)[IE_VER] << std::endl;
     }
     else
     {
       if (name == (*itr)[1])
       {
-        std::cout << (*itr)[0] << " "
-                  << (*itr)[1] << " "
-                  << (*itr)[2] << " "
-                  << (*itr)[3] << std::endl;
+        std::cout << (*itr)[IE_COLLECTION] << " "
+                  << (*itr)[IE_NAME] << " "
+                  << (*itr)[IE_DIR] << " "
+                  << (*itr)[IE_VER] << std::endl;
         break;
       }
     }

@@ -125,13 +125,13 @@ get_build_install_item () {
 
   # check for existing item
   if test x"__MD_" = x`printf -- "${item_name}" | sed 's/.*\(__MD_\).*/\1/'`; then
-    found_item=`${collections_info} model_drivers find "${item_name}"`
+    found_item="`${collections_info} model_drivers find "${item_name}"`"
     item_type="MD"
   elif test x"__MO_" = x`printf -- "${item_name}" | sed 's/.*\(__MO_\).*/\1/'`; then
-    found_item=`${collections_info} models find "${item_name}"`
+    found_item="`${collections_info} models find "${item_name}"`"
     item_type="MO"
   elif test x"__SM_" = x`printf -- "${item_name}" | sed 's/.*\(__SM_\).*/\1/'`; then
-    found_item=`${collections_info} models find "${item_name}"`
+    found_item="`${collections_info} models find "${item_name}"`"
     item_type="SM"
   elif test x"OpenKIM" = x"${item_name}"; then
     found_item=""
@@ -157,7 +157,7 @@ get_build_install_item () {
 
   # create private temporary directory
   if test x"" = x"${TMPDIR}"; then TMPDIR="/tmp"; fi
-  local build_dir=`mktemp -d "${TMPDIR}/kim-api-build-XXXXXXXXXX"`
+  local build_dir=`mktemp -d "${TMPDIR}/###FULL#PACKAGE#NAME###-build-XXXXXXXXXX"`
   if test $? -ne 0; then
     printf "Unable to create temporary directory.\n"
     return 1;
@@ -215,7 +215,7 @@ get_build_install_item () {
             return 1
           elif test x"ParameterizedModel" = x"`${make_command} -C \"${item_name}\" kim-item-type`"; then
             dvr="`${make_command} -C \"${item_name}\" model-driver-name`"
-            if test x"" != x`${collections_info} model_drivers find "${dvr}"`; then
+            if test x"" != x"`${collections_info} model_drivers find "${dvr}"`"; then
               printf "*@using installed driver.......@%-50s\n" "${dvr}" | sed -e 's/ /./g' -e 's/@/ /g' || return 1
             else
               get_build_install_item "${install_collection}" "${dvr}" "${use_sudo}" "${PASSWORD}" || return 1
@@ -246,9 +246,9 @@ remove_item () {
   local item_type=""
 
   # check for existing item
-  found_item=`${collections_info} model_drivers find "${item_name}"`
+  found_item="`${collections_info} model_drivers find "${item_name}"`"
   if test x"" = x"${found_itme}"; then
-    found_item=`${collections_info} models find "${item_name}"`
+    found_item="`${collections_info} models find "${item_name}"`"
     if test x"" = x"${found_item}"; then
       printf "Item not installed.\n"
       return 1

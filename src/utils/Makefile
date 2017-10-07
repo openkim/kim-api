@@ -30,10 +30,10 @@
 # Release: This file is part of the kim-api.git repository.
 #
 
-ifeq ($(wildcard Makefile.KIM_Config),)
+ifeq ($(wildcard ../../Makefile.KIM_Config),)
   $(error Makefile.KIM_Config does not exist.  Something is wrong with your KIM API package setup)
 endif
-include Makefile.KIM_Config
+include ../../Makefile.KIM_Config
 
 VPATH = ../
 
@@ -57,7 +57,9 @@ build-config.o: KIMDEFINES = -D 'CC_STRING="$(CC)"' \
                              -D 'CXXFLAGS_STRING="$(ARCHFLAG) $(PICFLAG) $(CXXFLAGS)"' \
                              -D 'FFLAGS_STRING="$(ARCHFLAG) $(PICFLAG) $(FFLAGS)"' \
                              -D 'LDFLAGS_STRING="$(ARCHFLAG) -L$(package_dir) $(LDFLAGS)"' \
-                             -D 'LDLIBS_STRING="-l$(KIM_LIB) $(XLANGLDLIBS) $(LDLIBS)"' \
+                             -D 'LDLIBS_STRING="-l$(KIM_LIB) $(LDLIBS)"' \
+                             -D 'XLANGLDLIBS_STRING="$(XLANGLDLIBS)"' \
+                             -D 'FNOMAINFLAG_STRING="$(FNOMAINFLAG)"' \
                              -D 'OBJONLYFLAG_STRING="$(OBJONLYFLAG)"' \
                              -D 'OUTPUTINFLAG_STRING="$(OUTPUTINFLAG)"' \
                              -D 'MAKEFILEKIMCONFIG_STRING="$(package_dir)/Makefile.KIM_Config"' \
@@ -68,7 +70,7 @@ build-config.o: build-config.cpp $(KIM_MAKE_FILES)
 
 $(full_package_name)-build-config: build-config.o
 	@printf "Creating... $@.\n"
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< $(XLANGLDLIBS)
+	$(QUELL)$(LD) $(ARCHFLAG) $(FNOMAINFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< $(XLANGLDLIBS)
 
 collections-info.o: collections-info.cpp old_KIM_API_DIRS.h $(KIM_MAKE_FILES)
 
@@ -76,19 +78,21 @@ $(full_package_name)-collections-info: collections-info.o lib$(KIM_LIB_BUILD).so
 
 $(full_package_name)-collections-info: collections-info.o lib$(KIM_LIB_BUILD).so
 	@printf "Creating... $@.\n"
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).so $(LDDYNAMICLIB) $(XLANGLDLIBS) $(LDLIBS)
+	$(QUELL)$(LD) $(ARCHFLAG) $(FNOMAINFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).so $(LDDYNAMICLIB) $(XLANGLDLIBS) $(LDLIBS)
 
 simulator-model.o: KIMDEFINES = -D 'MODELLIBFILE="lib$(MODEL_LIB)"'
 simulator-model.o: simulator-model.cpp old_KIM_API_DIRS.h $(KIM_MAKE_FILES)
 
 $(full_package_name)-simulator-model: simulator-model.o lib$(KIM_LIB_BUILD).so
 	@printf "Creating... $@.\n"
-	$(QUELL)$(LD) $(ARCHFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).so $(LDDYNAMICLIB) $(XLANGLDLIBS) $(LDLIBS)
+	$(QUELL)$(LD) $(ARCHFLAG) $(FNOMAINFLAG) $(LDFLAGS) $(OUTPUTINFLAG) $@ $< ../lib$(KIM_LIB_BUILD).so $(LDDYNAMICLIB) $(XLANGLDLIBS) $(LDLIBS)
 
 $(full_package_name)-collections-management: collections-management.sh $(KIM_MAKE_FILES)
 	@printf "Creating... $@.\n"
 	$(QUELL)sed -e 's|###COLLECTIONS#INFO#UTILITY###|$(package_dir)/libexec/$(full_package_name)/$(full_package_name)-collections-info|g' \
-                    -e 's|###BUILD#CONFIG###|$(package_dir)/bin/$(full_package_name)-build-config|g' collections-management.sh > $@
+                    -e 's|###BUILD#CONFIG###|$(package_dir)/bin/$(full_package_name)-build-config|g' \
+                    -e 's|###FULL#PACKAGE#NAME###|$(full_package_name)|g' \
+                    collections-management.sh > $@
 	$(QUELL)chmod 0755 $@
 
 
