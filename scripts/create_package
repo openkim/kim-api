@@ -97,19 +97,6 @@ ed Makefile.Version <<EOF
 w
 EOF
 
-cd examples/example_legos
-
-make
-
-cd ../..
-
-rm -rf 'examples/example_legos'
-rm -rf examples/models/ex_model_Ar_P_Morse_*C
-rm -rf 'examples/model_drivers/ex_model_driver_P_Morse_13C'
-rm -rf examples/openkim_tests/ex_test_Ar_*CPP
-rm -f  'examples/openkim_tests/run_all_training_tests'
-rm -rf 'examples/openkim_tests/ex_test_Ar_free_cluster_energy'
-
 rm -f README_GIT
 rm -rf scripts
 rm -f `find . -name ".gitignore"`
