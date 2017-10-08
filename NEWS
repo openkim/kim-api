@@ -32,6 +32,12 @@
 #
 
 
+=== kim-api-v1.9.2 ============== 08Oct2017 ====================================
+
+* Update scripts to use xz compressed tarballs (txz) instead of gz (tgz).  This
+  is for compatibility with the recent removal of tgz support on openkim.org.
+
+
 === kim-api-v1.9.1 ============== 27Sep2017 ====================================
 
 * Adjustment to build config flags to make cross-language compiling a bit more
