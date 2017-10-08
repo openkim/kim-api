@@ -40,6 +40,16 @@ extern "C"
 #endif
 }  // extern "C"
 
+#ifndef KIM_DATA_TYPE_HPP_
+#include "KIM_DataType.hpp"
+#endif
+extern "C"
+{
+#ifndef KIM_DATA_TYPE_H_
+#include "KIM_DataType.h"
+#endif
+}  // extern "C"
+
 #ifndef KIM_SPECIES_NAME_HPP_
 #include "KIM_SpeciesName.hpp"
 #endif
@@ -60,16 +70,6 @@ extern "C"
 #endif
 }  // extern "C"
 
-#ifndef KIM_DATA_TYPE_HPP_
-#include "KIM_DataType.hpp"
-#endif
-extern "C"
-{
-#ifndef KIM_DATA_TYPE_H_
-#include "KIM_DataType.h"
-#endif
-}  // extern "C"
-
 #ifndef KIM_NUMBERING_HPP_
 #include "KIM_Numbering.hpp"
 #endif
@@ -80,13 +80,23 @@ extern "C"
 #endif
 }  // extern "C"
 
-#ifndef KIM_MODEL_HPP_
-#include "KIM_Model.hpp"
+#ifndef KIM_UNIT_SYSTEM_HPP_
+#include "KIM_UnitSystem.hpp"
 #endif
 extern "C"
 {
-#ifndef KIM_MODEL_H_
-#include "KIM_Model.h"
+#ifndef KIM_UNIT_SYSTEM_H_
+#include "KIM_UnitSystem.h"
+#endif
+}  // extern "C"
+
+#ifndef KIM_SUPPORT_STATUS_HPP_
+#include "KIM_SupportStatus.hpp"
+#endif
+extern "C"
+{
+#ifndef KIM_SUPPORT_STATUS_H_
+#include "KIM_SupportStatus.h"
 #endif
 }  // extern "C"
 
@@ -110,23 +120,13 @@ extern "C"
 #endif
 }  // extern "C"
 
-#ifndef KIM_SUPPORT_STATUS_HPP_
-#include "KIM_SupportStatus.hpp"
+#ifndef KIM_MODEL_HPP_
+#include "KIM_Model.hpp"
 #endif
 extern "C"
 {
-#ifndef KIM_SUPPORT_STATUS_H_
-#include "KIM_SupportStatus.h"
-#endif
-}  // extern "C"
-
-#ifndef KIM_UNIT_SYSTEM_HPP_
-#include "KIM_UnitSystem.hpp"
-#endif
-extern "C"
-{
-#ifndef KIM_UNIT_SYSTEM_H_
-#include "KIM_UnitSystem.h"
+#ifndef KIM_MODEL_H_
+#include "KIM_Model.h"
 #endif
 }  // extern "C"
 

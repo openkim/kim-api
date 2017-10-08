@@ -30,23 +30,26 @@
 # Release: This file is part of the kim-api.git repository.
 #
 
-ifeq ($(wildcard ../../Makefile.KIM_Config),)
+ifeq ($(wildcard ../../../Makefile.KIM_Config),)
   $(error Makefile.KIM_Config does not exist.  Something is wrong with your KIM API package setup)
 endif
-include ../../Makefile.KIM_Config
+include ../../../Makefile.KIM_Config
 
 VPATH = ../
-
-# Set include flags
 KIMINCLUDEFLAGS = -I../
+
+#
+# Main build settings and rules
+#
+.PHONY: all
 
 all: $(full_package_name)-build-config \
      $(full_package_name)-collections-info \
      $(full_package_name)-collections-management \
      $(full_package_name)-simulator-model
 
-# Add the local Makefile to KIM_MAKE_FILES
-KIM_MAKE_FILES += Makefile
+# add local Makefile to KIM_MAKE_FILES
+KIM_MAKE_FILES += $(KIM_DIR)/cpp/src/utils/Makefile
 
 build-config.o: KIMDEFINES = -D 'CC_STRING="$(CC)"' \
                              -D 'CXX_STRING="$(CXX)"' \
@@ -65,7 +68,6 @@ build-config.o: KIMDEFINES = -D 'CC_STRING="$(CC)"' \
                              -D 'MAKEFILEKIMCONFIG_STRING="$(package_dir)/Makefile.KIM_Config"' \
                              -D 'LIBEXECPATH_STRING="$(libexecdir)/$(full_package_name)"' \
                              -D 'VERSION_STRING="$(VERSION_FULL)"'
-
 build-config.o: build-config.cpp $(KIM_MAKE_FILES)
 
 $(full_package_name)-build-config: build-config.o
@@ -96,16 +98,24 @@ $(full_package_name)-collections-management: collections-management.sh $(KIM_MAK
 	$(QUELL)chmod 0755 $@
 
 
-.PHONY: all clean install installdirs uninstall
+#
+# Main clean settings and rules
+#
+.PHONY: clean
 
 clean:
-	@printf "Cleaning... src/utils.\n"
-	$(QUELL)rm -f *.o .*.o \
+	@printf "Cleaning... cpp/src/utils.\n"
+	$(QUELL)rm -f *.o \
                    $(full_package_name)-build-config \
                    $(full_package_name)-collections-info \
                    $(full_package_name)-collections-management \
                    $(full_package_name)-simulator-model
 
+
+#
+# Main install settings and rules
+#
+.PHONY: install dirs-install programs-install
 
 install_bindir = $(dest_package_dir)/bin
 install_nodest_bindir = $(package_dir)/bin
@@ -114,21 +124,15 @@ install_nodest_libexecdir = $(package_dir)/libexec
 install_bin = $(full_package_name)-build-config $(full_package_name)-collections-management $(full_package_name)-simulator-model
 install_libexec = $(full_package_name)-collections-info
 
-install-check:
-	$(QUELL)if test -d "$(dest_package_dir)"; then \
-                  rm -rf "$(install_bindir)"; \
-                  rm -rf "$(install_libexecdir)"; \
-                  for fl in $(install_bin); do rm -f "$(DESTDIR)$(bindir)/$$fl"; done; \
-                  rm -rf "$(DESTDIR)$(libexecdir)/$(full_package_name)"; \
-                fi
+install: dirs-install programs-install
 
-installdirs:
+dirs-install:
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(DESTDIR)$(bindir)"
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(DESTDIR)$(libexecdir)"
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(install_bindir)"
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(install_libexecdir)/$(full_package_name)"
 
-install: all installdirs
+programs-install: all
 	@printf "Installing...($(dest_package_dir))................................. bin.\n"
 	@printf "Installing...($(dest_package_dir))................................. libexec.\n"
         # Install bin files
@@ -137,16 +141,27 @@ install: all installdirs
 	$(QUELL)for fl in $(install_libexec); do $(INSTALL_PROGRAM) -m 0755 "$$fl" "$(install_libexecdir)/$(full_package_name)/$$fl"; done
 	$(QUELL)ln -fs "$(install_nodest_libexecdir)/$(full_package_name)" "$(DESTDIR)$(libexecdir)/$(full_package_name)"
 
-uninstall:
+
+#
+# Main uninstall settings and rules
+#
+.PHONY: uninstall programs-uninstall dirs-uninstall
+
+uninstall: programs-uninstall dirs-uninstall
+
+programs-uninstall:
 	@printf "Uninstalling...($(dest_package_dir))................................. bin.\n"
 	@printf "Uninstalling...($(dest_package_dir))................................. libexec.\n"
         # Uninstall bin files
 	$(QUELL)for fl in $(install_bin); do if test -L "$(DESTDIR)$(bindir)/$$fl"; then rm -f "$(DESTDIR)$(bindir)/$$fl"; fi; done
-	$(QUELL) rmdir "$(DESTDIR)$(bindir)" > /dev/null 2>&1 || true
 	$(QUELL)for fl in $(install_bin); do if test -f "$(DESTDIR)$(install_bindir)/$$fl"; then rm -f "$(DESTDIR)$(install_bindir)/$$fl"; fi; done
-	$(QUELL) rmdir "$(install_bindir)" > /dev/null 2>&1 || true
 	$(QUELL)for fl in $(install_libexec); do if test -f "$(DESTDIR)$(install_libexecdir)/$(full_package_name)/$$fl"; then rm -f "$(DESTDIR)$(install_libexecdir)/$(full_package_name)/$$fl"; fi; done
-	$(QUELL) rmdir "$(install_libexecdir)/$(full_package_name)" > /dev/null 2>&1 || true
-	$(QUELL) rmdir "$(install_libexecdir)" > /dev/null 2>&1 || true
 	$(QUELL) if test -L "$(DESTDIR)$(libexecdir)/$(full_package_name)"; then rm -f "$(DESTDIR)$(libexecdir)/$(full_package_name)"; fi
-	$(QUELL) rmdir "$(DESTDIR)$(libexecdir)" > /dev/null 2>&1 || true
+
+dirs-uninstall:
+	$(QUELL)if test -d "$(install_libexecdir)/$(full_package_name)"; then rmdir "$(install_libexecdir)/$(full_package_name)" > /dev/null 2>&1 || true; fi
+	$(QUELL)if test -d "$(install_libexecdir)"; then rmdir "$(install_libexecdir)" > /dev/null 2>&1 || true; fi
+	$(QUELL)if test -d "$(install_bindir)"; then rmdir "$(install_bindir)" > /dev/null 2>&1 || true; fi
+	$(QUELL)if test -d "$(DESTDIR)$(bindir)"; then rmdir "$(DESTDIR)$(bindir)" > /dev/null 2>&1 || true; fi
+	$(QUELL)if test -d "$(DESTDIR)$(libexecdir)"; then rmdir "$(DESTDIR)$(libexecdir)" > /dev/null 2>&1 || true; fi
+	$(QUELL)if test -d "$(DESTDIR)"; then rmdir "$(DESTDIR)" > /dev/null 2>&1 || true; fi

@@ -64,87 +64,64 @@ help:
 #
 # Main build settings and rules
 #
-.PHONY: all utils-all kim-api-objects kim-api-libs
+.PHONY: all utils-all kim-api-fortran-all kim-api-c-all kim-api-cpp-all
 
-all: kim-api-objects kim-api-libs utils-all
+all: kim-api-fortran-all kim-api-c-all kim-api-cpp-all utils-all
 
 # Add local Makefile to KIM_MAKE_FILES
-KIM_MAKE_FILES += Makefile
+KIM_MAKE_FILES += $(KIM_DIR)/Makefile
 
-
-#%% added srcdir and examplesdir
-srcdir = $(KIM_DIR)/src
-examplesdir = examples
 
 # build targets involved in "make all"
 
-kim-api-objects: $(KIM_MAKE_FILES) kim-api-objects-making-echo
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(srcdir) objects
+kim-api-fortran-all: $(KIM_MAKE_FILES) kim-api-fortran-making-echo
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C fortran/src all
 
-kim-api-libs: $(KIM_MAKE_FILES) kim-api-libs-making-echo
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(srcdir) libs
+kim-api-c-all: $(KIM_MAKE_FILES) kim-api-c-making-echo
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C c/src all
 
-utils-all: $(KIM_MAKE_FILES) src/utils-making-echo
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(srcdir)/utils all
+kim-api-cpp-all: $(KIM_MAKE_FILES) kim-api-cpp-making-echo
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C cpp/src all
+
+utils-all: $(KIM_MAKE_FILES) cpp/src/utils-making-echo
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C cpp/src/utils all
 
 
 #
 # Main clean rules and targets
 #
-.PHONY: clean kim-api-clean utils-clean
+.PHONY: clean kim-api-fortran-clean kim-api-c-clean kim-api-cpp-clean utils-clean
 
-clean: kim-api-clean utils-clean
+clean: kim-api-fortran-clean kim-api-c-clean kim-api-cpp-clean utils-clean
 
 # build targets involved in "make clean"
-kim-api-clean:
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(srcdir) clean
-	$(QUELL)rm -f kim.log
+kim-api-fortran-clean:
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C fortran/src clean
+kim-api-c-clean:
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C c/src clean
+kim-api-cpp-clean:
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C cpp/src clean
 
 utils-clean:
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(srcdir)/utils clean
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C cpp/src/utils clean
 
 
 #
 # Main install settings and rules
 #
-.PHONY: install install-check installdirs kim-api-objects-install kim-api-libs-install config-install utils-install
+.PHONY: install dirs-install config-install build-system-install kim-api-fortran-install kim-api-c-install kim-api-cpp-install utils-install
 
-install: install-check kim-api-objects-install kim-api-libs-install utils-install config-install
+install: dirs-install config-install build-system-install kim-api-fortran-install kim-api-c-install kim-api-cpp-install utils-install
 
-# build targets involved in "make install"
-install_builddir = $(dest_package_dir)/$(builddir)
-install_make = Makefile.Generic Makefile.LoadDefaults Makefile.StandAloneModel Makefile.ModelDriver Makefile.ParameterizedModel Makefile.SimulatorModel Makefile.SanityCheck
-install_compilerdir = $(dest_package_dir)/$(buildcompilerdir)
-install_compiler = Makefile.GCC Makefile.INTEL
-install_linkerdir = $(dest_package_dir)/$(buildlinkerdir)
-install_linker = Makefile.DARWIN Makefile.FREEBSD Makefile.LINUX
+dirs-install:
+	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(DESTDIR)$(includedir)"
+	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(DESTDIR)$(libdir)"
+	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(DESTDIR)$(bindir)"
+	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(DESTDIR)$(libexecdir)"
 
-install-check:
-	$(QUELL)if test -d "$(dest_package_dir)"; then \
-                  rm -rf "$(install_linkerdir)"; \
-                  rm -rf "$(install_compilerdir)"; \
-                  rm -rf "$(install_builddir)"; \
-                  rm -f  "$(dest_package_dir)/Makefile.KIM_Config"; \
-                  rm -f  "$(dest_package_dir)/Makefile.Version"; \
-                fi
-
-kim-api-objects-install:
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(srcdir) objects-install
-
-kim-api-libs-install:
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(srcdir) libs-install
-
-utils-install:
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(srcdir)/utils install
-
-config-install: installdirs
-	@printf "Installing...($(dest_package_dir))................................. $(builddir)"
-        # Install make directory
-	$(QUELL)for fl in $(install_make); do $(INSTALL_PROGRAM) -m 0644 "$(builddir)/$$fl" "$(install_builddir)/$$fl"; done
-        # Install compiler defaults directory
-	$(QUELL)for fl in $(install_compiler); do $(INSTALL_PROGRAM) -m 0644 "$(buildcompilerdir)/$$fl" "$(install_compilerdir)/$$fl"; done
-        # Install linker defaults directory
-	$(QUELL)for fl in $(install_linker); do $(INSTALL_PROGRAM) -m 0644 "$(buildlinkerdir)/$$fl" "$(install_linkerdir)/$$fl"; done
+config-install:
+	@printf "Installing...($(dest_package_dir))................................. config.\n"
+	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(dest_package_dir)"
         # Install KIM_Config file
 	$(QUELL)fl="Makefile.KIM_Config" && \
                 sed -e 's|^[[:space:]]*KIM_DIR[[:space:]]*:*=.*$$|KIM_DIR = $(package_dir)|' \
@@ -158,43 +135,65 @@ ifeq (true,$(shell git rev-parse --is-inside-work-tree 2> /dev/null))
 else
 	$(QUELL)$(INSTALL_PROGRAM) -m 0644 Makefile.Version "$(dest_package_dir)/Makefile.Version"
 endif
-	@printf ".\n"
+        # create links
+	$(QUELL)if test -e "$(DESTDIR)$(includedir)/$(full_package_name)"; then \
+                  rm -rf "$(DESTDIR)$(includedir)/$(full_package_name)"; fi && \
+                ln -s "$(package_dir)/include" "$(DESTDIR)$(includedir)/$(full_package_name)"
 
-installdirs:
-	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(install_builddir)"
-	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(install_compilerdir)"
-	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(install_linkerdir)"
+build-system-install:
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C build_system install
+
+kim-api-fortran-install:
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C fortran/src install
+
+kim-api-c-install:
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C c/src install
+
+kim-api-cpp-install:
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C cpp/src install
+
+utils-install:
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C cpp/src/utils install
 
 
 #
 # Main uninstall settings and rules
 #
-.PHONY: uninstall kim-api-objects-uninstall kim-api-libs-uninstall utils-uninstall config-uninstall
+.PHONY: uninstall utils-uninstall kim-api-cpp-uninstall kim-api-c-uninstall kim-api-fortran-uninstall build-system-uninstall config-uninstall dirs-uninstall
 
-uninstall: kim-api-objects-uninstall utils-uninstall kim-api-libs-uninstall config-uninstall
+uninstall: utils-uninstall kim-api-cpp-uninstall kim-api-c-uninstall kim-api-fortran-uninstall build-system-uninstall config-uninstall dirs-uninstall
 
 # targets involved in "make uninstall"
-kim-api-objects-uninstall:
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(srcdir) objects-uninstall
-
 utils-uninstall:
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(srcdir)/utils uninstall
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C cpp/src/utils uninstall
 
-kim-api-libs-uninstall:
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(srcdir) libs-uninstall
+kim-api-cpp-uninstall:
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C cpp/src uninstall
+
+kim-api-c-uninstall:
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C c/src uninstall
+
+kim-api-fortran-uninstall:
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C fortran/src uninstall
+
+build-system-uninstall:
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C build_system uninstall
 
 config-uninstall:
-	@printf "Uninstalling...($(dest_package_dir))................................. KIM_Config files.\n"
-        # Make sure the package directory is gone
-	$(QUELL)if test -d "$(dest_package_dir)"; then rm -rf "$(dest_package_dir)"; fi
-        # Uninstall the rest
-	$(QUELL)if test -d "$(DESTDIR)$(includedir)"; then rmdir "$(DESTDIR)$(includedir)" > /dev/null 2>&1 || true; fi
+	@printf "Uninstalling...($(dest_package_dir))................................. config.\n"
+	$(QUELL)fl="$(DESTDIR)$(includedir)/$(full_package_name)" && if test -L "$$fl"; then rm -f "$$fl"; fi
+	$(QUELL)fl="$(dest_package_dir)/Makefile.KIM_Config" && if test -f "$$fl"; then rm -f "$$fl"; fi
+	$(QUELL)fl="$(dest_package_dir)/Makefile.Version" && if test -f "$$fl"; then rm -f "$$fl"; fi
+	$(QUELL)if test -d "$(dest_package_dir)"; then rmdir "$(dest_package_dir)" > /dev/null 2>&1 || true; fi
+
+dirs-uninstall:
+	$(QUELL)if test -d "$(DESTDIR)$(libexecdir)"; then rmdir "$(DESTDIR)$(libexecdir)" > /dev/null 2>&1 || true; fi
 	$(QUELL)if test -d "$(DESTDIR)$(bindir)"; then rmdir "$(DESTDIR)$(bindir)" > /dev/null 2>&1 || true; fi
-	$(QUELL)if test -d "$(DESTDIR)$(libexecdir)/$(full_package_name)"; then rmdir "$(DESTDIR)$(bindir)/$(full_package_name)" > /dev/null 2>&1 || true; fi
-	$(QUELL)if test -d "$(DESTDIR)$(libexecdir)"; then rmdir "$(DESTDIR)$(bindir)" > /dev/null 2>&1 || true; fi
 	$(QUELL)if test -d "$(DESTDIR)$(libdir)"; then rmdir "$(DESTDIR)$(libdir)" > /dev/null 2>&1 || true; fi
-	$(QUELL)if test -d "$(DESTDIR)$(exec_prefix)"; then rmdir "$(DESTDIR)$(exec_prefix)" > /dev/null 2>&1 || true; fi
+	$(QUELL)if test -d "$(DESTDIR)$(includedir)"; then rmdir "$(DESTDIR)$(includedir)" > /dev/null 2>&1 || true; fi
 	$(QUELL)if test -d "$(DESTDIR)$(prefix)"; then rmdir "$(DESTDIR)$(prefix)" > /dev/null 2>&1 || true; fi
+	$(QUELL)if test -d "$(DESTDIR)"; then rmdir "$(DESTDIR)" > /dev/null 2>&1 || true; fi
+
 
 ########### for internal use ###########
 %-making-echo:

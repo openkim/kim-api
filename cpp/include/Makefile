@@ -1,0 +1,63 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the Common Development
+# and Distribution License Version 1.0 (the "License").
+#
+# You can obtain a copy of the license at
+# http://www.opensource.org/licenses/CDDL-1.0.  See the License for the
+# specific language governing permissions and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each file and
+# include the License file in a prominent location with the name LICENSE.CDDL.
+# If applicable, add the following below this CDDL HEADER, with the fields
+# enclosed by brackets "[]" replaced with your own identifying information:
+#
+# Portions Copyright (c) [yyyy] [name of copyright owner]. All rights reserved.
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2013--2017, Regents of the University of Minnesota.
+# All rights reserved.
+#
+# Contributors:
+#    Ryan S. Elliott
+#
+
+#
+# Release: This file is part of the kim-api.git repository.
+#
+
+
+# Include files and their dependencies
+KIM_ARGUMENT_NAME_CPP = KIM_ArgumentName.hpp
+KIM_CALLBACK_NAME_CPP = KIM_CallbackName.hpp
+KIM_CHARGE_UNIT_CPP = KIM_ChargeUnit.hpp
+KIM_DATA_TYPE_CPP = KIM_DataType.hpp
+KIM_ENERGY_UNIT_CPP = KIM_EnergyUnit.hpp
+KIM_LANGUAGE_NAME_CPP = KIM_LanguageName.hpp
+KIM_LENGTH_UNIT_CPP = KIM_LengthUnit.hpp
+KIM_LOG_CPP = KIM_Log.hpp $(KIM_LOG_VERBOSITY_CPP)
+KIM_LOG_VERBOSITY_CPP = KIM_LogVerbosity.hpp KIM_LOG_DEFINES.inc
+KIM_MODEL_CPP = KIM_Model.hpp KIM_func.hpp
+KIM_MODEL_COMPUTE_CPP = KIM_ModelCompute.hpp
+KIM_MODEL_CREATE_CPP = KIM_ModelCreate.hpp KIM_func.hpp
+KIM_MODEL_DESTROY_CPP = KIM_ModelDestroy.hpp
+KIM_MODEL_DRIVER_CREATE_CPP = KIM_ModelDriverCreate.hpp KIM_func.hpp
+KIM_MODEL_REFRESH_CPP = KIM_ModelRefresh.hpp
+KIM_NUMBERING_CPP = KIM_Numbering.hpp
+KIM_SPECIES_NAME_CPP = KIM_SpeciesName.hpp
+KIM_SUPPORT_STATUS_CPP = KIM_SupportStatus.hpp
+KIM_TEMPERATURE_UNIT_CPP = KIM_TemperatureUnit.hpp
+KIM_TIME_UNIT_CPP = KIM_TimeUnit.hpp
+KIM_UNIT_SYSTEM_CPP = KIM_UnitSystem.hpp $(KIM_LENGTH_UNIT_CPP) $(KIM_ENERGY_UNIT_CPP) $(KIM_CHARGE_UNIT_CPP) $(KIM_TEMPERATURE_UNIT_CPP) $(KIM_TIME_UNIT_CPP)
+KIM_SEMVER_CPP = KIM_semver.hpp
+
+KIM_MODEL_IMPLEMENTATION_CPP = KIM_ModelImplementation.hpp $(KIM_MODEL_LIBRARY_CPP) $(KIM_CALLBACK_NAME_CPP) \
+                               $(KIM_ARGUMENT_NAME_CPP) $(KIM_SUPPORT_STATUS_CPP) $(KIM_SPECIES_NAME_CPP) \
+                               $(KIM_UNIT_SYSTEM_CPP) $(KIM_NUMBERING_CPP) $(KIM_LANGUAGE_NAME_CPP) \
+                               $(KIM_DATA_NAME_CPP) $(KIM_LOG_CPP) $(KIM_LOG_VERBOSITY_CPP) $(KIM_FUNC_CPP)
+KIM_MODEL_LIBRARY_CPP = KIM_ModelLibrary.hpp $(KIM_FUNC_CPP)
+KIM_API_DIRS_CPP = old_KIM_API_DIRS.h

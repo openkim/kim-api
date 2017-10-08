@@ -1,0 +1,56 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the Common Development
+# and Distribution License Version 1.0 (the "License").
+#
+# You can obtain a copy of the license at
+# http://www.opensource.org/licenses/CDDL-1.0.  See the License for the
+# specific language governing permissions and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each file and
+# include the License file in a prominent location with the name LICENSE.CDDL.
+# If applicable, add the following below this CDDL HEADER, with the fields
+# enclosed by brackets "[]" replaced with your own identifying information:
+#
+# Portions Copyright (c) [yyyy] [name of copyright owner]. All rights reserved.
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2013--2017, Regents of the University of Minnesota.
+# All rights reserved.
+#
+# Contributors:
+#    Ryan S. Elliott
+#
+
+#
+# Release: This file is part of the kim-api.git repository.
+#
+
+
+# Include files and their dependencies
+KIM_ARGUMENT_NAME_C = KIM_ArgumentName.h
+KIM_CALLBACK_NAME_C = KIM_CallbackName.h
+KIM_CHARGE_UNIT_C = KIM_ChargeUnit.h
+KIM_DATA_TYPE_C = KIM_DataType.h
+KIM_ENERGY_UNIT_C = KIM_EnergyUnit.h
+KIM_LANGUAGE_NAME_C = KIM_LanguageName.h
+KIM_LENGTH_UNIT_C = KIM_LengthUnit.h
+KIM_LOG_C = KIM_Log.h
+KIM_LOG_VERBOSITY_C = KIM_LogVerbosity.h KIM_LOG_DEFINES.inc
+KIM_MODEL_C = KIM_Model.h KIM_func.h
+KIM_MODEL_COMPUTE_C = KIM_ModelCompute.h
+KIM_MODEL_CREATE_C = KIM_ModelCreate.h KIM_func.h
+KIM_MODEL_DESTROY_C = KIM_ModelDestroy.h
+KIM_MODEL_DRIVER_CREATE_C = KIM_ModelDriverCreate.h KIM_func.h
+KIM_MODEL_REFRESH_C = KIM_ModelRefresh.h
+KIM_NUMBERING_C = KIM_Numbering.h
+KIM_SPECIES_NAME_C = KIM_SpeciesName.h
+KIM_SUPPORT_STATUS_C = KIM_SupportStatus.h
+KIM_TEMPERATURE_UNIT_C = KIM_TemperatureUnit.h
+KIM_TIME_UNIT_C = KIM_TimeUnit.h
+KIM_UNIT_SYSTEM_C = KIM_UnitSystem.h $(KIM_LENGTH_UNIT_C) $(KIM_ENERGY_UNIT_C) $(KIM_CHARGE_UNIT_C) $(KIM_TEMPERATURE_UNIT_C) $(KIM_TIME_UNIT_C)
+KIM_SEMVER_C = KIM_semver.h

@@ -1,0 +1,55 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the Common Development
+# and Distribution License Version 1.0 (the "License").
+#
+# You can obtain a copy of the license at
+# http://www.opensource.org/licenses/CDDL-1.0.  See the License for the
+# specific language governing permissions and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each file and
+# include the License file in a prominent location with the name LICENSE.CDDL.
+# If applicable, add the following below this CDDL HEADER, with the fields
+# enclosed by brackets "[]" replaced with your own identifying information:
+#
+# Portions Copyright (c) [yyyy] [name of copyright owner]. All rights reserved.
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2013--2017, Regents of the University of Minnesota.
+# All rights reserved.
+#
+# Contributors:
+#    Ryan S. Elliott
+#
+
+#
+# Release: This file is part of the kim-api.git repository.
+#
+
+
+# Include files and their dependencies
+kim_argument_name_module.mod: kim_argument_name_module.f90 kim_argument_name_id_module.mod kim_data_type_module.mod
+kim_callback_name_module.mod: kim_callback_name_module.f90 kim_callback_name_id_module.mod
+kim_charge_unit_module.mod: kim_charge_unit_module.f90 kim_charge_unit_id_module.mod
+kim_data_type_module.mod: kim_data_type_module.f90 kim_data_type_id_module.mod
+kim_energy_unit_module.mod: kim_energy_unit_module.f90 kim_energy_unit_id_module.mod
+kim_language_name_module.mod: kim_language_name_module.f90 kim_language_name_id_module.mod
+kim_length_unit_module.mod: kim_length_unit_module.f90 kim_length_unit_id_module.mod
+kim_log_module.mod: kim_log_module.f90 kim_log_verbosity_module.mod
+kim_log_verbosity_module.mod: kim_log_verbosity_module.f90 kim_log_verbosity_id_module.mod
+kim_model_compute_module.mod: kim_model_compute_module.f90 kim_argument_name_module.mod kim_callback_name_module.mod kim_log_verbosity_module.mod
+kim_model_create_module.mod: kim_model_create_module.f90 kim_numbering_module.mod kim_language_name_module.mod kim_species_name_module.mod kim_argument_name_module.mod kim_support_status_module.mod kim_callback_name_module.mod kim_unit_system_module.mod kim_log_verbosity_module.mod
+kim_model_destroy_module.mod: kim_model_destroy_module.f90 kim_log_verbosity_module.mod
+kim_model_driver_create_module.mod: kim_model_driver_create_module.f90 kim_numbering_module.mod kim_language_name_module.mod kim_species_name_module.mod kim_argument_name_module.mod kim_support_status_module.mod kim_callback_name_module.mod kim_unit_system_module.mod kim_log_verbosity_module.mod
+kim_model_module.mod: kim_model_module.f90 kim_argument_name_module.mod kim_numbering_module.mod kim_unit_system_module.mod kim_support_status_module.mod kim_callback_name_module.mod kim_language_name_module.mod kim_species_name_module.mod kim_data_type_module.mod kim_log_verbosity_module.mod
+kim_model_refresh_module.mod: kim_model_refresh_module.f90 kim_log_verbosity_module.mod
+kim_numbering_module.mod: kim_numbering_module.f90 kim_numbering_id_module.mod
+kim_species_name_module.mod: kim_species_name_module.f90 kim_species_name_id_module.mod
+kim_support_status_module.mod: kim_support_status_module.f90 kim_support_status_id_module.mod
+kim_temperature_unit_module.mod: kim_temperature_unit_module.f90 kim_temperature_unit_id_module.mod
+kim_time_unit_module.mod: kim_time_unit_module.f90 kim_time_unit_id_module.mod
+kim_unit_system_module.mod: kim_unit_system_module.f90 kim_length_unit_module.mod kim_energy_unit_module.mod kim_charge_unit_module.mod kim_temperature_unit_module.mod kim_time_unit_module.mod
