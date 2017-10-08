@@ -30,16 +30,16 @@
 # Release: This file is part of the kim-api.git repository.
 #
 
+
 ifneq (clean,$(MAKECMDGOALS))
-  ifeq ($(wildcard ../Makefile.KIM_Config_Helper),)
-    KIM_API_BUILD_CONFIG = kim-api-v2-build-config
-  else
-    include ../Makefile.KIM_Config_Helper
-  endif
+  KIM_API_BUILD_CONFIG = kim-api-v2-build-config
   ifeq ($(shell $(KIM_API_BUILD_CONFIG) --version 2> /dev/null),)
     $(error $(KIM_API_BUILD_CONFIG) utility is not available.  Something is wrong with your KIM API package setup)
+  else
+    $(info Using build-config utility at: $(shell command -v "$(KIM_API_BUILD_CONFIG)"))
   endif
 endif
+
 
 CC           = $(shell $(KIM_API_BUILD_CONFIG) --cc)
 CXX          = $(shell $(KIM_API_BUILD_CONFIG) --cxx)

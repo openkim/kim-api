@@ -30,10 +30,17 @@
 # Release: This file is part of the kim-api.git repository.
 #
 
-ifeq ($(wildcard Makefile.KIM_Config),)
-  $(error Makefile.KIM_Config does not exist.  Something is wrong with your KIM API package setup)
+
+ifneq (clean,$(MAKECMDGOALS))
+  KIM_API_BUILD_CONFIG = kim-api-v2-build-config
+  ifeq ($(shell $(KIM_API_BUILD_CONFIG) --version 2> /dev/null),)
+    $(error $(KIM_API_BUILD_CONFIG) utility is not available.  Something is wrong with your KIM API package setup)
+  else
+    $(info Using build-config utility at: $(shell command -v "$(KIM_API_BUILD_CONFIG)"))
+  endif
 endif
-include Makefile.KIM_Config
+include $(shell $(KIM_API_BUILD_CONFIG) --master-config)
+
 
 MODEL_DRIVERS_LIST = $(filter-out .,$(shell find . -type d | sed -e's|^\./||'))
 

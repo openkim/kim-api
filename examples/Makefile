@@ -34,6 +34,7 @@ ifeq ($(wildcard ../Makefile.KIM_Config),)
   $(error Makefile.KIM_Config does not exist.  Something is wrong with your KIM API package setup)
 endif
 include ../Makefile.KIM_Config
+KIM_API_BUILD_CONFIG=$(bindir)/$(full_package_name)-build-config
 
 
 #
@@ -45,21 +46,21 @@ all-system: model-drivers-all-system models-all-system openkim-tests-all
 all-user: model-drivers-all-user models-all-user openkim-tests-all
 
 model-drivers-all-system: Example\ Model\ Drivers-making-echo
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modeldriversdir) all
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modeldriversdir) install-system-all
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modeldriversdir) KIM_API_BUILD_CONFIG=$(KIM_API_BUILD_CONFIG) all
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modeldriversdir) KIM_API_BUILD_CONFIG=$(KIM_API_BUILD_CONFIG) install-system-all
 model-drivers-all-user: Example\ Model\ Drivers-making-echo
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modeldriversdir) all
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modeldriversdir) install-user-all
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modeldriversdir) KIM_API_BUILD_CONFIG=$(KIM_API_BUILD_CONFIG) all
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modeldriversdir) KIM_API_BUILD_CONFIG=$(KIM_API_BUILD_CONFIG) install-user-all
 
 models-all-system: Example\ Model-making-echo
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modelsdir) all
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modelsdir) install-system-all
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modelsdir) KIM_API_BUILD_CONFIG=$(KIM_API_BUILD_CONFIG) all
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modelsdir) KIM_API_BUILD_CONFIG=$(KIM_API_BUILD_CONFIG) install-system-all
 models-all-user: Example\ Model-making-echo
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modelsdir) all
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modelsdir) install-user-all
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modelsdir) KIM_API_BUILD_CONFIG=$(KIM_API_BUILD_CONFIG) all
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modelsdir) KIM_API_BUILD_CONFIG=$(KIM_API_BUILD_CONFIG) install-user-all
 
 openkim-tests-all: Example\ OpenKIM\ Tests-making-echo
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C openkim_tests all
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C openkim_tests KIM_API_BUILD_CONFIG=$(KIM_API_BUILD_CONFIG) all
 
 
 #
@@ -70,17 +71,17 @@ openkim-tests-all: Example\ OpenKIM\ Tests-making-echo
 clean: model-drivers-clean models-clean openkim-tests-clean
 
 model-drivers-clean: Example\ Model\ Drivers-making-echo
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modeldriversdir) uninstall-system-all
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modeldriversdir) uninstall-user-all
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modeldriversdir) clean
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modeldriversdir) KIM_API_BUILD_CONFIG=$(KIM_API_BUILD_CONFIG) uninstall-system-all
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modeldriversdir) KIM_API_BUILD_CONFIG=$(KIM_API_BUILD_CONFIG) uninstall-user-all
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modeldriversdir) KIM_API_BUILD_CONFIG=$(KIM_API_BUILD_CONFIG) clean
 
 models-clean: Example\ Model-making-echo
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modelsdir) uninstall-system-all
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modelsdir) uninstall-user-all
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modelsdir) clean
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modelsdir) KIM_API_BUILD_CONFIG=$(KIM_API_BUILD_CONFIG) uninstall-system-all
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modelsdir) KIM_API_BUILD_CONFIG=$(KIM_API_BUILD_CONFIG) uninstall-user-all
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modelsdir) KIM_API_BUILD_CONFIG=$(KIM_API_BUILD_CONFIG) clean
 
 openkim-tests-clean: Example\ OpenKIM\ Tests-making-echo
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C openkim_tests clean
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C openkim_tests KIM_API_BUILD_CONFIG=$(KIM_API_BUILD_CONFIG) clean
 
 
 ########### for internal use ###########

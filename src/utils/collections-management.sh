@@ -166,9 +166,6 @@ get_build_install_item () {
   (  # subshell
     cd "${build_dir}" || return 1
 
-    # setup kim-api config
-    ${build_config} --makefile-kim-config > Makefile.KIM_Config || return 1
-
     # download item (and possibly its driver)
     if test x"OpenKIM" = x"${item_type}"; then
       local query='query={"type":"mo","kim-api-version":{"$regex":"^1\\."}}'

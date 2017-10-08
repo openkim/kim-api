@@ -317,7 +317,6 @@ items.  Here, we'll illustrate the process with an example.
 $ mkdir -p "${HOME}/my-env-collection/model_drivers"
 $ export KIM_API_MODEL_DRIVERS_DIR="${HOME}/my-env-collection/model_drivers"
 $ cd "${KIM_API_MODEL_DRIVERS_DIR}"
-$ kim-api-vX-build-config --makefile-kim-config > ./Makefile.KIM_Config
 $ md=Pair_Morse_Shifted__MD_552566534109_001
 $ wget --content-disposition "https://openkim.org/download/${md}.tgz"
 $ tar zxvf "${md}.tgz"
@@ -329,7 +328,6 @@ $ rm "${md}.tgz"
 $ mkdir -p "${HOME}/my-env-collection/models"
 $ export KIM_API_MODELS_DIR="${HOME}/my-env-collection/models"
 $ cd "${KIM_API_MODELS_DIR}"
-$ kim-api-vX-build-config --makefile-kim-config > ./Makefile.KIM_Config
 $ mo=Pair_Morse_Shifted_GirifalcoWeizer_HighCutoff_Cu__MO_151002396060_001
 $ wget --content-disposition "https://openkim.org/download/${mo}.tgz"
 $ tar zxvf "${mo}.tgz"
@@ -355,7 +353,6 @@ just downloading and building the items.  Here, we'll illustrate the process
 with an example.
 
 $ cd "${HOME}/vc_forces_numer_deriv"  # we'll assume this is already built
-$ kim-api-vX-build-config --makefile-kim-config > ./Makefile.KIM_Config
 $ mo=Pair_Exp6_Hogervorst_Mixing_Kong_Chakrabarty_ArNe__MO_946046425752_001
 $ wget --content-disposition "https://openkim.org/download/${mo}.tgz"
 $ tar zxvf "${mo}.tgz"

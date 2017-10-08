@@ -40,6 +40,7 @@ ifneq (clean,$(MAKECMDGOALS))
   endif
 endif
 
+
 CC           = $(shell $(KIM_API_BUILD_CONFIG) --cc)
 CXX          = $(shell $(KIM_API_BUILD_CONFIG) --cxx)
 FC           = $(shell $(KIM_API_BUILD_CONFIG) --fc)

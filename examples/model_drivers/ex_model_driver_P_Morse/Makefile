@@ -28,22 +28,18 @@
 #    Valeriu Smirichinski
 #
 
+
 # load all basic KIM make configuration
-ifeq ($(wildcard ../Makefile.KIM_Config),)
-  ifeq ($(wildcard ../Makefile.KIM_Config_Helper),)
-    KIM_API_BUILD_CONFIG = kim-api-v2-build-config
-  else
-    include ../Makefile.KIM_Config_Helper
-  endif
+ifneq (clean,$(MAKECMDGOALS))
+  KIM_API_BUILD_CONFIG = kim-api-v2-build-config
   ifeq ($(shell $(KIM_API_BUILD_CONFIG) --version 2> /dev/null),)
-    $(error ../Makefile.KIM_Config does not exist and $(KIM_API_BUILD_CONFIG) utility is not available.  Something is wrong with your KIM API package setup)
+    $(error $(KIM_API_BUILD_CONFIG) utility is not available.  Something is wrong with your KIM API package setup)
   else
-    MASTER_CONFIG = $(shell $(KIM_API_BUILD_CONFIG) --master-config)
+    $(info Using build-config utility at: $(shell command -v "$(KIM_API_BUILD_CONFIG)"))
   endif
-else
-  MASTER_CONFIG = ../Makefile.KIM_Config
 endif
-include $(MASTER_CONFIG)
+include $(shell $(KIM_API_BUILD_CONFIG) --master-config)
+
 
 # set model driver specific details
 MODEL_DRIVER_NAME := ex_model_driver_P_Morse

@@ -50,10 +50,6 @@ this step.
 Assuming an installed-(nonstandard)-build and that the KIM API bin directory
 has been added to the path.
 
-$ kim-api-v1-build-config --makefile-kim-config > Makefile.KIM_Config
-
-Next, you can execute:
-
 $ make all-system
 
 or

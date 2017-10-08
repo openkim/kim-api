@@ -30,12 +30,17 @@
 # Release: This file is part of the kim-api.git repository.
 #
 
-ifeq ($(wildcard ../Makefile.KIM_InstalledConfig),)
-  $(error Makefile.KIM_InstalledConfig does not exist.  Something is wrong with your KIM API package setup)
-endif
-include ../Makefile.KIM_InstalledConfig
 
-KIM_API_BUILD_CONFIG := $(prefix)/bin/kim-api-v2-build-config
+ifneq (clean,$(MAKECMDGOALS))
+  KIM_API_BUILD_CONFIG = kim-api-v2-build-config
+  ifeq ($(shell $(KIM_API_BUILD_CONFIG) --version 2> /dev/null),)
+    $(error $(KIM_API_BUILD_CONFIG) utility is not available.  Something is wrong with your KIM API package setup)
+  else
+    $(info Using build-config utility at: $(shell command -v "$(KIM_API_BUILD_CONFIG)"))
+  endif
+endif
+include $(shell $(KIM_API_BUILD_CONFIG) --master-config)
+
 
 export OPENKIM_TESTS_LIST := $(wildcard ex_test* vc_*)
 
