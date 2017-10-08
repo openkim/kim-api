@@ -224,8 +224,8 @@ To create an installed-(standard)-build and install to the default directory
 part of the system's standard PATH setting.
 
 $ cd "${HOME}"
-$ wget https://s3.openkim.org/kim-api/kim-api-vX.Y.Z.tgz  # replace X.Y.Z with the current version number
-$ tar zxvf kim-api-vX.Y.Z.tgz
+$ wget https://s3.openkim.org/kim-api/kim-api-vX.Y.Z.txz  # replace X.Y.Z with the current version number
+$ tar Jxvf kim-api-vX.Y.Z.txz
 $ cd kim-api-vX.Y.Z
 $ ./configure
 $ make
@@ -233,7 +233,7 @@ $ sudo make install
 $ sudo ldconfig  # on Redhat-like systems you may need to first add /usr/local/lib to /etc/ld.so.conf
 $ cp -r ./examples/openkim_tests/vc_forces_numer_deriv "${HOME}/"
 $ cd "${HOME}"
-$ rm -r kim-api-vX.Y.Z  kim-api-vX.Y.Z.tgz # replace X.Y.Z with the current version number
+$ rm -r kim-api-vX.Y.Z  kim-api-vX.Y.Z.txz # replace X.Y.Z with the current version number
 $ kim-api-vX-collections-management install system --sudo EDIP_BOP_Bazant_Kaxiras_Si__MO_958932894036_001
 $ cd vc_forces_numer_deriv
 $ make
@@ -250,15 +250,15 @@ directory "${HOME}/local" do the below.  Here we will add a line to the user's
 .bashrc file that puts "${HOME}/local/bin" on the user's PATH setting.
 
 $ cd "${HOME}"
-$ wget https://s3.openkim.org/kim-api/kim-api-vX.Y.Z.tgz  # replace X.Y.Z with the current version number
-$ tar zxvf kim-api-vX.Y.Z.tgz
+$ wget https://s3.openkim.org/kim-api/kim-api-vX.Y.Z.txz  # replace X.Y.Z with the current version number
+$ tar Jxvf kim-api-vX.Y.Z.txz
 $ cd kim-api-vX.Y.Z
 $ ./configure --prefix=${HOME}/local
 $ make
 $ make install
 $ cp -r ./examples/openkim_tests/vc_forces_numer_deriv "${HOME}/"
 $ cd "${HOME}"
-$ rm -r kim-api-vX.Y.Z kim-api-vX.Y.Z.tgz  # replace X.Y.Z with the current version number
+$ rm -r kim-api-vX.Y.Z kim-api-vX.Y.Z.txz  # replace X.Y.Z with the current version number
 $ printf "PATH=${PATH}:${HOME}/local/bin\n" >> "${HOME}/.bashrc"
 $ source "${HOME}/.bashrc"
 $ kim-api-vX-collections-management install system EDIP_BOP_Belko_Gusakov_Dorozhkin_Ge__MO_129433059219_000
@@ -319,24 +319,24 @@ $ export KIM_API_MODEL_DRIVERS_DIR="${HOME}/my-env-collection/model_drivers"
 $ cd "${KIM_API_MODEL_DRIVERS_DIR}"
 $ kim-api-vX-build-config --makefile-kim-config > ./Makefile.KIM_Config
 $ md=Pair_Morse_Shifted__MD_552566534109_001
-$ wget --content-disposition "https://openkim.org/download/${md}.tgz"
-$ tar zxvf "${md}.tgz"
+$ wget --content-disposition "https://openkim.org/download/${md}.txz"
+$ tar Jxvf "${md}.txz"
 $ cd "${md}"
 $ make
 $ cd ../
-$ rm "${md}.tgz"
+$ rm "${md}.txz"
 
 $ mkdir -p "${HOME}/my-env-collection/models"
 $ export KIM_API_MODELS_DIR="${HOME}/my-env-collection/models"
 $ cd "${KIM_API_MODELS_DIR}"
 $ kim-api-vX-build-config --makefile-kim-config > ./Makefile.KIM_Config
 $ mo=Pair_Morse_Shifted_GirifalcoWeizer_HighCutoff_Cu__MO_151002396060_001
-$ wget --content-disposition "https://openkim.org/download/${mo}.tgz"
-$ tar zxvf "${mo}.tgz"
+$ wget --content-disposition "https://openkim.org/download/${mo}.txz"
+$ tar Jxvf "${mo}.txz"
 $ cd "${mo}"
 $ make
 $ cd ../
-$ rm "${mo}.tgz"
+$ rm "${mo}.txz"
 
 We can check to see that these are recognized by the KIM API.
 
@@ -357,12 +357,12 @@ with an example.
 $ cd "${HOME}/vc_forces_numer_deriv"  # we'll assume this is already built
 $ kim-api-vX-build-config --makefile-kim-config > ./Makefile.KIM_Config
 $ mo=Pair_Exp6_Hogervorst_Mixing_Kong_Chakrabarty_ArNe__MO_946046425752_001
-$ wget --content-disposition "https://openkim.org/download/${mo}.tgz"
-$ tar zxvf "${mo}.tgz"
+$ wget --content-disposition "https://openkim.org/download/${mo}.txz"
+$ tar Jxvf "${mo}.txz"
 $ cd "${mo}"
 $ make
 $ cd ../
-$ rm "${mo}.tgz"
+$ rm "${mo}.txz"
 
 We can check to see that this model is recognized by the KIM API.
 
@@ -385,7 +385,7 @@ usually done by the `configure' script.  However, it may also be done by hand
 if necessary.
 
 (a) Copy the file `Makefile.KIM_Config.example' to `Makefile.KIM_Config'.
-    For example, if you untarred the `kim-api-vX.Y.Z.tgz' tarball in your
+    For example, if you untarred the `kim-api-vX.Y.Z.txz' tarball in your
     home directory, you would do:
 
     $ cd ${HOME}/kim-api-vX.Y.Z

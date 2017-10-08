@@ -131,6 +131,6 @@ EOF
 
 cd ..
 
-tar czvf $fullpackagename.tgz $fullpackagename
+tar cJvf $fullpackagename.txz $fullpackagename
 
 rm -rf "$fullpackagename"
