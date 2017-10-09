@@ -184,9 +184,9 @@ get_build_install_item () {
       done
     elif test x"MD" = x"${item_type}"; then
       printf "*@downloading.......@%-50s\n" "${item_name}" | sed -e 's/ /./g' -e 's/@/ /g'
-      if wget -q --content-disposition "https://openkim.org/download/${item_name}.tgz"; then
-        tar zxvf "${item_name}.tgz" 2>&1 | sed -e 's/^/                /' &&
-          rm -f "${item_name}.tgz" &&
+      if wget -q --content-disposition "https://openkim.org/download/${item_name}.txz"; then
+        tar Jxvf "${item_name}.txz" 2>&1 | sed -e 's/^/                /' &&
+          rm -f "${item_name}.txz" &&
           if test 0 -lt `grep -c MAKE_SYSTEM ${item_name}/Makefile`; then \
             printf "*** ERROR *** ${item_name} appears to be written for an older, incompatible, version of the KIM API.\n"
             return 1
@@ -204,9 +204,9 @@ get_build_install_item () {
       fi
     elif test x"MO" = x"${item_type}"; then
       printf "*@downloading.......@%-50s\n" "${item_name}" | sed -e 's/ /./g' -e 's/@/ /g'
-      if wget -q --content-disposition "https://openkim.org/download/${item_name}.tgz"; then
-        tar zxvf "${item_name}.tgz" 2>&1 | sed -e 's/^/                /' &&
-          rm -f "${item_name}.tgz" &&
+      if wget -q --content-disposition "https://openkim.org/download/${item_name}.txz"; then
+        tar Jxvf "${item_name}.txz" 2>&1 | sed -e 's/^/                /' &&
+          rm -f "${item_name}.txz" &&
           if test 0 -lt `grep -c MAKE_SYSTEM ${item_name}/Makefile`; then
             printf "*** ERROR *** ${item_name} appears to be written for an older, incompatible, version of the KIM API.\n";
             return 1
