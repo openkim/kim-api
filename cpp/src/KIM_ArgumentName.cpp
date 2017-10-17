@@ -31,7 +31,7 @@
 //
 
 #include <vector>
-#include <unordered_map>
+#include <map>
 
 #ifndef KIM_DATA_TYPE_HPP_
 #include "KIM_DataType.hpp"
@@ -58,50 +58,66 @@ ArgumentName const partialVirial(7);
 ArgumentName const partialParticleVirial(8);
 ArgumentName const partialHessian(9);
 
-extern std::unordered_map<ArgumentName const, std::string> const
-argumentNameToString = {
-  std::pair<ArgumentName const, std::string>(numberOfParticles,
-                                             "numberOfParticles"),
-  std::pair<ArgumentName const, std::string>(particleSpeciesCodes,
-                                             "particleSpeciesCodes"),
-  std::pair<ArgumentName const, std::string>(particleContributing,
-                                             "particleContributing"),
-  std::pair<ArgumentName const, std::string>(coordinates, "coordinates"),
-  std::pair<ArgumentName const, std::string>(partialEnergy, "partialEnergy"),
-  std::pair<ArgumentName const, std::string>(partialForces, "partialForces"),
-  std::pair<ArgumentName const, std::string>(partialParticleEnergy,
-                                             "partialParticleEnergy"),
-  std::pair<ArgumentName const, std::string>(partialVirial, "partialVirial"),
-  std::pair<ArgumentName const, std::string>(partialParticleVirial,
-                                             "partialParticleVirial"),
-  std::pair<ArgumentName const, std::string>(partialHessian, "partialHessian")
-};
+namespace
+{
+typedef std::map<ArgumentName const, std::string, ARGUMENT_NAME::Comparator>
+StringMap;
 
-extern std::unordered_map<ArgumentName const, DataType> const
-argumentNameToDataType = {
-  std::pair<ArgumentName const, DataType>(numberOfParticles,
-                                          DATA_TYPE::Integer),
-  std::pair<ArgumentName const, DataType>(particleSpeciesCodes,
-                                          DATA_TYPE::Integer),
-  std::pair<ArgumentName const, DataType>(particleContributing,
-                                          DATA_TYPE::Integer),
-  std::pair<ArgumentName const, DataType>(coordinates,
-                                          DATA_TYPE::Double),
-  std::pair<ArgumentName const, DataType>(partialEnergy,
-                                          DATA_TYPE::Double),
-  std::pair<ArgumentName const, DataType>(partialForces, DATA_TYPE::Double),
-  std::pair<ArgumentName const, DataType>(partialParticleEnergy,
-                                          DATA_TYPE::Double),
-  std::pair<ArgumentName const, DataType>(partialVirial, DATA_TYPE::Double),
-  std::pair<ArgumentName const, DataType>(partialParticleVirial,
-                                          DATA_TYPE::Double),
-  std::pair<ArgumentName const, DataType>(partialHessian, DATA_TYPE::Double)};
+StringMap const GetStringMap()
+{
+  StringMap m;
+  m[numberOfParticles] = "numberOfParticles";
+  m[particleSpeciesCodes] = "particleSpeciesCodes";
+  m[particleContributing] = "particleContributing";
+  m[coordinates] = "coordinates";
+  m[partialEnergy] = "partialEnergy";
+  m[partialForces] = "partialForces";
+  m[partialParticleEnergy] = "partialParticleEnergy";
+  m[partialVirial] = "partialVirial";
+  m[partialParticleVirial] = "partialParticleVirial";
+  m[partialHessian] = "partialHessian";
+  return m;
+}
+}  // namespace
+extern StringMap const argumentNameToString = GetStringMap();
 
-extern std::vector<ArgumentName> const requiredByAPI_Arguments = {
-  numberOfParticles,
-  particleSpeciesCodes,
-  particleContributing,
-  coordinates};
+namespace
+{
+typedef std::map<ArgumentName const, DataType, ARGUMENT_NAME::Comparator>
+DataTypeMap;
+
+DataTypeMap const GetDataTypeMap()
+{
+  DataTypeMap m;
+  m[numberOfParticles] = DATA_TYPE::Integer;
+  m[particleSpeciesCodes] = DATA_TYPE::Integer;
+  m[particleContributing] = DATA_TYPE::Integer;
+  m[coordinates] = DATA_TYPE::Double;
+  m[partialEnergy] = DATA_TYPE::Double;
+  m[partialForces] = DATA_TYPE::Double;
+  m[partialParticleEnergy] = DATA_TYPE::Double;
+  m[partialVirial] = DATA_TYPE::Double;
+  m[partialParticleVirial] = DATA_TYPE::Double;
+  m[partialHessian] = DATA_TYPE::Double;
+  return m;
+}
+}  // namespace
+extern DataTypeMap const argumentNameToDataType = GetDataTypeMap();
+
+namespace
+{
+typedef std::vector<ArgumentName> ArgumentVector;
+ArgumentVector const GetArgumentVector()
+{
+  ArgumentVector v;
+  v.push_back(numberOfParticles);
+  v.push_back(particleSpeciesCodes);
+  v.push_back(particleContributing);
+  v.push_back(coordinates);
+  return v;
+}
+}  // namespace
+extern ArgumentVector const requiredByAPI_Arguments = GetArgumentVector();
 
 void GetNumberOfArguments(int * const numberOfArguments)
 {
@@ -114,9 +130,8 @@ int GetArgumentName(int const index, ArgumentName * const argumentName)
   GetNumberOfArguments(&numberOfArguments);
   if ((index < 0) || (index >= numberOfArguments)) return true;
 
-  auto iter = argumentNameToString.begin();
-  int i = 0;
-  for (; i<index; ++i) iter++;
+  StringMap::const_iterator iter = argumentNameToString.begin();
+  for (int i=0; i<index; ++i) ++iter;
   *argumentName = iter->first;
   return false;  // no error
 }
@@ -124,7 +139,7 @@ int GetArgumentName(int const index, ArgumentName * const argumentName)
 int GetArgumentDataType(ArgumentName const argumentName,
                         DataType * const dataType)
 {
-  auto iter = argumentNameToDataType.find(argumentName);
+  DataTypeMap::const_iterator iter = argumentNameToDataType.find(argumentName);
 
   if (iter == argumentNameToDataType.end())
     return true;
@@ -134,18 +149,17 @@ int GetArgumentDataType(ArgumentName const argumentName,
     return false;
   }
 }
-
 }  // namespace ARGUMENT_NAME
 
 
 // implementation of ArgumentName
 ArgumentName::ArgumentName() : argumentNameID(0){}
 ArgumentName::ArgumentName(int const id) : argumentNameID(id){}
-ArgumentName::ArgumentName(std::string const str)
+ArgumentName::ArgumentName(std::string const & str)
 {
   argumentNameID = -1;
-  std::unordered_map<std::string, ArgumentName> reverseMap;
-  for (auto iter = ARGUMENT_NAME::argumentNameToString.begin();
+  for (ARGUMENT_NAME::StringMap::const_iterator iter
+           = ARGUMENT_NAME::argumentNameToString.begin();
        iter != ARGUMENT_NAME::argumentNameToString.end();
        ++iter)
   {
@@ -165,7 +179,8 @@ bool ArgumentName::operator!=(ArgumentName const & rhs) const
 std::string ArgumentName::String() const
 {
   std::string result;
-  auto iter = ARGUMENT_NAME::argumentNameToString.find(*this);
+  ARGUMENT_NAME::StringMap::const_iterator iter
+      = ARGUMENT_NAME::argumentNameToString.find(*this);
   if (iter == ARGUMENT_NAME::argumentNameToString.end())
     result = "unknown";
   else
@@ -173,5 +188,4 @@ std::string ArgumentName::String() const
 
   return result;
 }
-
 }  // namespace KIM

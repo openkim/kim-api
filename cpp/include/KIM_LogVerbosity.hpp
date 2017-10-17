@@ -48,6 +48,7 @@ class LogVerbosity
 
   LogVerbosity();
   LogVerbosity(int const id);
+  LogVerbosity(std::string const & str);
   bool operator<(LogVerbosity const & rhs) const;
   bool operator>(LogVerbosity const & rhs) const;
   bool operator<=(LogVerbosity const & rhs) const;
@@ -65,19 +66,17 @@ extern LogVerbosity const error;
 extern LogVerbosity const warning;
 extern LogVerbosity const information;
 extern LogVerbosity const debug;
-}  // namespace LOG_VERBOSITY
 
-}  // namespace KIM
+void GetNumberOfLogVerbosities(int * const numberOfLogVerbosities);
+int GetLogVerbosity(int const index, LogVerbosity * const logVerbosity);
 
-namespace std
+struct Comparator
 {
-template<>
-struct hash<KIM::LogVerbosity const>
-{
-  size_t operator()(KIM::LogVerbosity const & logVerbosity) const
+  bool operator()(LogVerbosity const & a, LogVerbosity const & b) const
   {
-    return logVerbosity.logVerbosityID;
+    return a.logVerbosityID < b.logVerbosityID;
   }
 };
-}  // namespace std
+}  // namespace LOG_VERBOSITY
+}  // namespace KIM
 #endif  // KIM_LOG_VERBOSITY_HPP_

@@ -30,6 +30,8 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
+#include <map>
+
 #ifndef KIM_LOG_VERBOSITY_HPP_
 #include "KIM_LogVerbosity.hpp"
 #endif
@@ -37,8 +39,71 @@
 namespace KIM
 {
 
+// Order is important
+namespace LOG_VERBOSITY
+{
+LogVerbosity const silent(0);
+LogVerbosity const fatal(1);
+LogVerbosity const error(2);
+LogVerbosity const warning(3);
+LogVerbosity const information(4);
+LogVerbosity const debug(5);
+
+namespace
+{
+typedef std::map<LogVerbosity const, std::string, LOG_VERBOSITY::Comparator>
+StringMap;
+
+StringMap const GetStringMap()
+{
+  StringMap m;
+  m[silent] = "silent";
+  m[fatal] = "fatal";
+  m[error] = "error";
+  m[warning] = "warning";
+  m[information] = "information";
+  m[debug] = "debug";
+  return m;
+}
+}  // namespace
+extern StringMap const logVerbosityToString = GetStringMap();
+
+void GetNumberOfLogVerbosities(int * const numberOfLogVerbosities)
+{
+  *numberOfLogVerbosities = logVerbosityToString.size();
+}
+
+int GetLogVerbosity(int const index, LogVerbosity * const logVerbosity)
+{
+  int numberOfLogVerbosities;
+  GetNumberOfLogVerbosities(&numberOfLogVerbosities);
+  if ((index < 0) || (index >= numberOfLogVerbosities)) return true;
+
+  StringMap::const_iterator iter = logVerbosityToString.begin();
+  for (int i=0; i<index; ++i) ++iter;
+  *logVerbosity = iter->first;
+  return false;  // no error
+}
+}  // namespace LOG_VERBOSITY
+
+// implementation of LogVerbosity
 LogVerbosity::LogVerbosity() : logVerbosityID(0){}
 LogVerbosity::LogVerbosity(int const id) : logVerbosityID(id){}
+LogVerbosity::LogVerbosity(std::string const & str)
+{
+  logVerbosityID = -1;
+  for (LOG_VERBOSITY::StringMap::const_iterator iter
+           = LOG_VERBOSITY::logVerbosityToString.begin();
+       iter != LOG_VERBOSITY::logVerbosityToString.end();
+       ++iter)
+  {
+    if (iter->second == str)
+    {
+      logVerbosityID = (iter->first).logVerbosityID;
+      break;
+    }
+  }
+}
 
 bool LogVerbosity::operator<(LogVerbosity const & rhs) const
 {return logVerbosityID < rhs.logVerbosityID;}
@@ -55,31 +120,14 @@ bool LogVerbosity::operator!=(LogVerbosity const & rhs) const
 
 std::string LogVerbosity::String() const
 {
-  if (*this == LOG_VERBOSITY::silent)
-    return "silent";
-  else if (*this == LOG_VERBOSITY::fatal)
-    return "fatal";
-  else if (*this == LOG_VERBOSITY::error)
-    return "error";
-  else if (*this == LOG_VERBOSITY::warning)
-    return "warning";
-  else if (*this == LOG_VERBOSITY::information)
-    return "information";
-  else if (*this == LOG_VERBOSITY::debug)
-    return "debug";
+  std::string result;
+  LOG_VERBOSITY::StringMap::const_iterator iter
+      = LOG_VERBOSITY::logVerbosityToString.find(*this);
+  if (iter == LOG_VERBOSITY::logVerbosityToString.end())
+    result = "unknown";
   else
-    return "unknown";
+    result = iter->second;
+
+  return result;
 }
-
-// Order is important
-namespace LOG_VERBOSITY
-{
-LogVerbosity const silent(0);
-LogVerbosity const fatal(1);
-LogVerbosity const error(2);
-LogVerbosity const warning(3);
-LogVerbosity const information(4);
-LogVerbosity const debug(5);
-}  // namespace LOG_VERBOSITY
-
 }  // namespace KIM

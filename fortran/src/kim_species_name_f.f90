@@ -61,14 +61,14 @@ module kim_species_name_f_module
     end function string
 
     subroutine get_number_of_species(number_of_species) &
-      bind(c, name="KIM_SPECIES_NAME_get_number_of_species")
+      bind(c, name="KIM_SPECIES_NAME_GetNumberOfSpeciesNames")
       use, intrinsic :: iso_c_binding
       implicit none
       integer(c_int), intent(out) :: number_of_species
     end subroutine get_number_of_species
 
     integer(c_int) function get_species_name(index, species_name) &
-      bind(c, name="KIM_SPECIES_NAME_get_species_name")
+      bind(c, name="KIM_SPECIES_NAME_GetSpeciesName")
       use, intrinsic :: iso_c_binding
       use kim_species_name_module, only : kim_species_name_type
       implicit none
@@ -81,6 +81,29 @@ end module kim_species_name_f_module
 
 
 ! free functions to implement kim_species_name_module
+
+logical function kim_species_name_equal(left, right)
+  use, intrinsic :: iso_c_binding
+  use kim_species_name_module, only : kim_species_name_type
+  implicit none
+  type(kim_species_name_type), intent(in) :: left
+  type(kim_species_name_type), intent(in) :: right
+
+  kim_species_name_equal &
+    = (left%species_name_id .eq. right%species_name_id)
+end function kim_species_name_equal
+
+logical function kim_species_name_not_equal(left, right)
+  use, intrinsic :: iso_c_binding
+  use kim_species_name_module, only : kim_species_name_type
+  use kim_species_name_module, only : operator(.eq.)
+  implicit none
+  type(kim_species_name_type), intent(in) :: left
+  type(kim_species_name_type), intent(in) :: right
+
+  kim_species_name_not_equal = .not. (left .eq. right)
+end function kim_species_name_not_equal
+
 
 subroutine kim_species_name_from_string(species_name_string, species_name)
   use, intrinsic :: iso_c_binding

@@ -195,8 +195,8 @@ extern KIM_SpeciesName const KIM_SPECIES_NAME_user18;
 extern KIM_SpeciesName const KIM_SPECIES_NAME_user19;
 extern KIM_SpeciesName const KIM_SPECIES_NAME_user20;
 
-void KIM_SPECIES_NAME_get_number_of_species(int * const numberOfSpecies);
-int KIM_SPECIES_NAME_get_species_name(int const index,
-                                      KIM_SpeciesName * const speciesName);
+void KIM_SPECIES_NAME_GetNumberOfSpeciesNames(int * const numberOfSpeciesNames);
+int KIM_SPECIES_NAME_GetSpeciesName(int const index,
+                                    KIM_SpeciesName * const speciesName);
 
 #endif  /* KIM_SPECIES_NAME_H_ */

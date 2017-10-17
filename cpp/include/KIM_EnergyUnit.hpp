@@ -46,6 +46,7 @@ class EnergyUnit
 
   EnergyUnit();
   EnergyUnit(int const id);
+  EnergyUnit(std::string const & str);
   bool operator==(EnergyUnit const & rhs) const;
   bool operator!=(EnergyUnit const & rhs) const;
   std::string String() const;
@@ -60,20 +61,17 @@ extern EnergyUnit const eV;
 extern EnergyUnit const Hartree;
 extern EnergyUnit const J;
 extern EnergyUnit const kcal_mol;
-}  // namespace ENERGY_UNIT
 
-}  // namespace KIM
+void GetNumberOfEnergyUnits(int * const numberOfEnergyUnits);
+int GetEnergyUnit(int const index, EnergyUnit * const energyUnit);
 
-
-namespace std
+struct Comparator
 {
-template<>
-struct hash<KIM::EnergyUnit const>
-{
-  size_t operator()(KIM::EnergyUnit const & energyUnit) const
+  bool operator()(EnergyUnit const & a, EnergyUnit const & b) const
   {
-    return energyUnit.energyUnitID;
+    return a.energyUnitID < b.energyUnitID;
   }
 };
-}  // namespace std
+}  // namespace ENERGY_UNIT
+}  // namespace KIM
 #endif  // KIM_ENERGY_UNIT_HPP_

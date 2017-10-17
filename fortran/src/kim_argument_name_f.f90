@@ -83,6 +83,28 @@ end module kim_argument_name_f_module
 
 ! free functions to implement kim_argument_name_module
 
+logical function kim_argument_name_equal(left, right)
+  use, intrinsic :: iso_c_binding
+  use kim_argument_name_module, only : kim_argument_name_type
+  implicit none
+  type(kim_argument_name_type), intent(in) :: left
+  type(kim_argument_name_type), intent(in) :: right
+
+  kim_argument_name_equal &
+    = (left%argument_name_id .eq. right%argument_name_id)
+end function kim_argument_name_equal
+
+logical function kim_argument_name_not_equal(left, right)
+  use, intrinsic :: iso_c_binding
+  use kim_argument_name_module, only : kim_argument_name_type
+  use kim_argument_name_module, only : operator(.eq.)
+  implicit none
+  type(kim_argument_name_type), intent(in) :: left
+  type(kim_argument_name_type), intent(in) :: right
+
+  kim_argument_name_not_equal = .not. (left .eq. right)
+end function kim_argument_name_not_equal
+
 subroutine kim_argument_name_string(argument_name, name_string)
   use, intrinsic :: iso_c_binding
   use kim_argument_name_module, only : kim_argument_name_type

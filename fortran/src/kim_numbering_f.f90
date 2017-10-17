@@ -51,6 +51,28 @@ end module kim_numbering_f_module
 
 ! free functions to implement kim_numbering_module
 
+logical function kim_numbering_equal(left, right)
+  use, intrinsic :: iso_c_binding
+  use kim_numbering_module, only : kim_numbering_type
+  implicit none
+  type(kim_numbering_type), intent(in) :: left
+  type(kim_numbering_type), intent(in) :: right
+
+  kim_numbering_equal &
+    = (left%numbering_id .eq. right%numbering_id)
+end function kim_numbering_equal
+
+logical function kim_numbering_not_equal(left, right)
+  use, intrinsic :: iso_c_binding
+  use kim_numbering_module, only : kim_numbering_type
+  use kim_numbering_module, only : operator(.eq.)
+  implicit none
+  type(kim_numbering_type), intent(in) :: left
+  type(kim_numbering_type), intent(in) :: right
+
+  kim_numbering_not_equal = .not. (left .eq. right)
+end function kim_numbering_not_equal
+
 subroutine kim_numbering_string(numbering, name_string)
   use, intrinsic :: iso_c_binding
   use kim_numbering_module, only : kim_numbering_type

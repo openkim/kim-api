@@ -46,6 +46,7 @@ class TimeUnit
 
   TimeUnit();
   TimeUnit(int const id);
+  TimeUnit(std::string const & str);
   bool operator==(TimeUnit const & rhs) const;
   bool operator!=(TimeUnit const & rhs) const;
   std::string String() const;
@@ -58,20 +59,17 @@ extern TimeUnit const fs;
 extern TimeUnit const ps;
 extern TimeUnit const ns;
 extern TimeUnit const s;
-}  // namespace TIME_UNIT
 
-}  // namespace KIM
+void GetNumberOfTimeUnits(int * const numberOfTimeUnits);
+int GetTimeUnit(int const index, TimeUnit * const timeUnit);
 
-
-namespace std
+struct Comparator
 {
-template<>
-struct hash<KIM::TimeUnit const>
-{
-  size_t operator()(KIM::TimeUnit const & timeUnit) const
+  bool operator()(TimeUnit const & a, TimeUnit const & b) const
   {
-    return timeUnit.timeUnitID;
+    return a.timeUnitID < b.timeUnitID;
   }
 };
-}  // namespace std
+}  // namespace TIME_UNIT
+}  // namespace KIM
 #endif  // KIM_TIME_UNIT_HPP_

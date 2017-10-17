@@ -39,9 +39,9 @@ module kim_data_type_module
 
   public &
     kim_data_type_type, &
-    kim_data_type_string, &
     operator (.eq.), &
     operator (.ne.), &
+    kim_data_type_string, &
 
     kim_data_type_integer, &
     kim_data_type_double
@@ -58,11 +58,23 @@ module kim_data_type_module
     kim_data_type_type(double_id)
 
   interface operator (.eq.)
-    module procedure kim_data_type_equal
+    logical function kim_data_type_equal(left, right)
+      use, intrinsic :: iso_c_binding
+      import kim_data_type_type
+      implicit none
+      type(kim_data_type_type), intent(in) :: left
+      type(kim_data_type_type), intent(in) :: right
+    end function kim_data_type_equal
   end interface operator (.eq.)
 
   interface operator (.ne.)
-    module procedure kim_data_type_not_equal
+    logical function kim_data_type_not_equal(left, right)
+      use, intrinsic :: iso_c_binding
+      import kim_data_type_type
+      implicit none
+      type(kim_data_type_type), intent(in) :: left
+      type(kim_data_type_type), intent(in) :: right
+    end function kim_data_type_not_equal
   end interface operator (.ne.)
 
   interface
@@ -73,24 +85,4 @@ module kim_data_type_module
       character(len=*), intent(out) :: type_string
     end subroutine kim_data_type_string
   end interface
-
-contains
-  logical function kim_data_type_equal(left, right)
-    use, intrinsic :: iso_c_binding
-    implicit none
-    type(kim_data_type_type), intent(in) :: left
-    type(kim_data_type_type), intent(in) :: right
-
-    kim_data_type_equal &
-      = (left%data_type_id .eq. right%data_type_id)
-  end function kim_data_type_equal
-
-  logical function kim_data_type_not_equal(left, right)
-    use, intrinsic :: iso_c_binding
-    implicit none
-    type(kim_data_type_type), intent(in) :: left
-    type(kim_data_type_type), intent(in) :: right
-
-    kim_data_type_not_equal = .not. (left .eq. right)
-  end function kim_data_type_not_equal
 end module kim_data_type_module

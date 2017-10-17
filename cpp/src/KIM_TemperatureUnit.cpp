@@ -30,6 +30,8 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
+#include <map>
+
 #ifndef KIM_TEMPERATURE_UNIT_HPP_
 #include "KIM_TemperatureUnit.hpp"
 #endif
@@ -37,8 +39,65 @@
 namespace KIM
 {
 
+// Order doesn't matter as long as all values are unique
+namespace TEMPERATURE_UNIT
+{
+TemperatureUnit const unused(0);
+TemperatureUnit const K(1);
+
+namespace
+{
+typedef std::map<TemperatureUnit const, std::string,
+                 TEMPERATURE_UNIT::Comparator>
+StringMap;
+
+StringMap const GetStringMap()
+{
+  StringMap m;
+  m[unused] = "unused";
+  m[K] = "K";
+  return m;
+}
+}  // namespace
+extern StringMap const temperatureUnitToString = GetStringMap();
+
+void GetNumberOfTemperatureUnits(int * const numberOfTemperatureUnits)
+{
+  *numberOfTemperatureUnits = temperatureUnitToString.size();
+}
+
+int GetTemperatureUnit(int const index, TemperatureUnit * const temperatureUnit)
+{
+  int numberOfTemperatureUnits;
+  GetNumberOfTemperatureUnits(&numberOfTemperatureUnits);
+  if ((index < 0) || (index >= numberOfTemperatureUnits)) return true;
+
+  StringMap::const_iterator iter = temperatureUnitToString.begin();
+  for (int i=0; i<index; ++i) ++iter;
+  *temperatureUnit = iter->first;
+  return false;  // no error
+}
+}  // namespace TEMPERATURE_UNIT
+
+// implementation of TemperatureUnit
 TemperatureUnit::TemperatureUnit() : temperatureUnitID(0){}
 TemperatureUnit::TemperatureUnit(int const id) : temperatureUnitID(id){}
+TemperatureUnit::TemperatureUnit(std::string const & str)
+{
+  temperatureUnitID = -1;
+  for (TEMPERATURE_UNIT::StringMap::const_iterator iter =
+           TEMPERATURE_UNIT::temperatureUnitToString.begin();
+       iter != TEMPERATURE_UNIT::temperatureUnitToString.end();
+       ++iter)
+  {
+    if (iter->second == str)
+    {
+      temperatureUnitID = (iter->first).temperatureUnitID;
+      break;
+    }
+  }
+}
+
 bool TemperatureUnit::operator==(TemperatureUnit const & rhs) const
 {return temperatureUnitID==rhs.temperatureUnitID;}
 bool TemperatureUnit::operator!=(TemperatureUnit const & rhs) const
@@ -46,15 +105,14 @@ bool TemperatureUnit::operator!=(TemperatureUnit const & rhs) const
 
 std::string TemperatureUnit::String() const
 {
-  if (*this == TEMPERATURE_UNIT::unused) return "unused";
-  else if (*this == TEMPERATURE_UNIT::K) return "K";
-  else return "unknown";
+  std::string result;
+  TEMPERATURE_UNIT::StringMap::const_iterator iter
+      = TEMPERATURE_UNIT::temperatureUnitToString.find(*this);
+  if (iter == TEMPERATURE_UNIT::temperatureUnitToString.end())
+    result = "unknown";
+  else
+    result = iter->second;
+
+  return result;
 }
-
-namespace TEMPERATURE_UNIT
-{
-TemperatureUnit const unused(0);
-TemperatureUnit const K(1);
-}  // namespace TEMPERATURE_UNIT
-
 }  // namespace KIM

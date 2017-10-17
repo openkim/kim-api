@@ -68,11 +68,23 @@ module kim_length_unit_module
     kim_length_unit_type(length_unit_nm_id)
 
   interface operator (.eq.)
-    module procedure kim_length_unit_equal
+    logical function kim_length_unit_equal(left, right)
+      use, intrinsic :: iso_c_binding
+      import kim_length_unit_type
+      implicit none
+      type(kim_length_unit_type), intent(in) :: left
+      type(kim_length_unit_type), intent(in) :: right
+    end function kim_length_unit_equal
   end interface operator (.eq.)
 
   interface operator (.ne.)
-    module procedure kim_length_unit_not_equal
+  logical function kim_length_unit_not_equal(left, right)
+    use, intrinsic :: iso_c_binding
+    import kim_length_unit_type
+    implicit none
+    type(kim_length_unit_type), intent(in) :: left
+    type(kim_length_unit_type), intent(in) :: right
+  end function kim_length_unit_not_equal
   end interface operator (.ne.)
 
   interface
@@ -83,24 +95,4 @@ module kim_length_unit_module
       character(len=*), intent(out) :: unit_string
     end subroutine kim_length_unit_string
   end interface
-
-contains
-  logical function kim_length_unit_equal(left, right)
-    use, intrinsic :: iso_c_binding
-    implicit none
-    type(kim_length_unit_type), intent(in) :: left
-    type(kim_length_unit_type), intent(in) :: right
-
-    kim_length_unit_equal &
-      = (left%length_unit_id .eq. right%length_unit_id)
-  end function kim_length_unit_equal
-
-  logical function kim_length_unit_not_equal(left, right)
-    use, intrinsic :: iso_c_binding
-    implicit none
-    type(kim_length_unit_type), intent(in) :: left
-    type(kim_length_unit_type), intent(in) :: right
-
-    kim_length_unit_not_equal = .not. (left .eq. right)
-  end function kim_length_unit_not_equal
 end module kim_length_unit_module

@@ -30,6 +30,8 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
+#include <map>
+
 #ifndef KIM_ENERGY_UNIT_HPP_
 #include "KIM_EnergyUnit.hpp"
 #endif
@@ -37,25 +39,7 @@
 namespace KIM
 {
 
-EnergyUnit::EnergyUnit() : energyUnitID(0){}
-EnergyUnit::EnergyUnit(int const id) : energyUnitID(id){}
-bool EnergyUnit::operator==(EnergyUnit const & rhs) const
-{return energyUnitID==rhs.energyUnitID;}
-bool EnergyUnit::operator!=(EnergyUnit const & rhs) const
-{return energyUnitID!=rhs.energyUnitID;}
-
-std::string EnergyUnit::String() const
-{
-  if (*this == ENERGY_UNIT::unused) return "unused";
-  else if (*this == ENERGY_UNIT::amu_A2_per_ps2) return "amu_A2_per_ps2";
-  else if (*this == ENERGY_UNIT::erg) return "erg";
-  else if (*this == ENERGY_UNIT::eV) return "eV";
-  else if (*this == ENERGY_UNIT::Hartree) return "Hartree";
-  else if (*this == ENERGY_UNIT::J) return "J";
-  else if (*this == ENERGY_UNIT::kcal_mol) return "kcal_mol";
-  else return "unknown";
-}
-
+// Order doesn't matter as long as all values are unique
 namespace ENERGY_UNIT
 {
 EnergyUnit const unused(0);
@@ -65,6 +49,80 @@ EnergyUnit const eV(3);
 EnergyUnit const Hartree(4);
 EnergyUnit const J(5);
 EnergyUnit const kcal_mol(6);
+
+namespace
+{
+typedef std::map<EnergyUnit const, std::string, ENERGY_UNIT::Comparator>
+StringMap;
+
+StringMap const GetStringMap()
+{
+  StringMap m;
+  m[unused] = "unused";
+  m[amu_A2_per_ps2] = "amu_A2_per_ps2";
+  m[erg] = "erg";
+  m[eV] = "eV";
+  m[Hartree] = "Hartree";
+  m[J] = "J";
+  m[kcal_mol] = "kcal_mol";
+  return m;
+}
+}  // namespace
+extern StringMap const energyUnitToString = GetStringMap();
+
+void GetNumberOfEnergyUnits(int * const numberOfEnergyUnits)
+{
+  *numberOfEnergyUnits = energyUnitToString.size();
+}
+
+int GetEnergyUnit(int const index, EnergyUnit * const energyUnit)
+{
+  int numberOfEnergyUnits;
+  GetNumberOfEnergyUnits(&numberOfEnergyUnits);
+  if ((index < 0) || (index >= numberOfEnergyUnits)) return true;
+
+  StringMap::const_iterator iter = energyUnitToString.begin();
+  int i = 0;
+  for  (; i<index; ++i) ++iter;
+  *energyUnit = iter->first;
+  return false;  // no error
+}
 }  // namespace ENERGY_UNIT
 
+// implementation of EnergyUnit
+EnergyUnit::EnergyUnit() : energyUnitID(0){}
+EnergyUnit::EnergyUnit(int const id) : energyUnitID(id){}
+EnergyUnit::EnergyUnit(std::string const & str)
+{
+  energyUnitID = -1;
+  for (ENERGY_UNIT::StringMap::const_iterator iter
+           = ENERGY_UNIT::energyUnitToString.begin();
+       iter != ENERGY_UNIT::energyUnitToString.end();
+       ++iter)
+  {
+    if (iter->second == str)
+    {
+      energyUnitID = (iter->first).energyUnitID;
+      break;
+    }
+  }
+}
+
+bool EnergyUnit::operator==(EnergyUnit const & rhs) const
+{return energyUnitID==rhs.energyUnitID;}
+bool EnergyUnit::operator!=(EnergyUnit const & rhs) const
+{return energyUnitID!=rhs.energyUnitID;}
+
+std::string EnergyUnit::String() const
+{
+  std::string result;
+  ENERGY_UNIT::StringMap::const_iterator iter
+      = ENERGY_UNIT::energyUnitToString.find(*this);
+  if (iter == ENERGY_UNIT::energyUnitToString.end())
+    result = "unknown";
+  else
+    result = iter->second;
+
+  return result;
+}
 }  // namespace KIM

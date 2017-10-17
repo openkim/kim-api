@@ -50,6 +50,27 @@ module kim_language_name_f_module
 end module kim_language_name_f_module
 
 ! free functions to implement kim_language_name_module
+logical function kim_language_name_equal(left, right)
+  use, intrinsic :: iso_c_binding
+  use kim_language_name_module, only : kim_language_name_type
+  implicit none
+  type(kim_language_name_type), intent(in) :: left
+  type(kim_language_name_type), intent(in) :: right
+
+  kim_language_name_equal &
+    = (left%language_name_id .eq. right%language_name_id)
+end function kim_language_name_equal
+
+logical function kim_language_name_not_equal(left, right)
+  use, intrinsic :: iso_c_binding
+  use kim_language_name_module, only : kim_language_name_type
+  use kim_language_name_module, only : operator(.eq.)
+  implicit none
+  type(kim_language_name_type), intent(in) :: left
+  type(kim_language_name_type), intent(in) :: right
+
+  kim_language_name_not_equal = .not. (left .eq. right)
+end function kim_language_name_not_equal
 
 subroutine kim_language_name_string(language_name, name_string)
   use, intrinsic :: iso_c_binding

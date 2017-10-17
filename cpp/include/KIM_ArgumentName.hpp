@@ -48,7 +48,7 @@ class ArgumentName
 
   ArgumentName();
   ArgumentName(int const id);
-  ArgumentName(std::string const str);
+  ArgumentName(std::string const & str);
   bool operator==(ArgumentName const & rhs) const;
   bool operator!=(ArgumentName const & rhs) const;
   std::string String() const;
@@ -72,19 +72,14 @@ int GetArgumentName(int const index, ArgumentName * const argumentName);
 
 int GetArgumentDataType(ArgumentName const argumentName,
                         DataType * const dataType);
-}  // namespace ARGUMENT_NAME
 
-}  // namespace KIM
-
-namespace std
+struct Comparator
 {
-template<>
-struct hash<KIM::ArgumentName const>
-{
-  size_t operator()(KIM::ArgumentName const & argumentName) const
+  bool operator()(ArgumentName const & a, ArgumentName const & b) const
   {
-    return argumentName.argumentNameID;
+    return a.argumentNameID < b.argumentNameID;
   }
 };
-}  // namespace std
+}  // namespace ARGUMENT_NAME
+}  // namespace KIM
 #endif  // KIM_ARGUMENT_NAME_HPP_

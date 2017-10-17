@@ -46,6 +46,7 @@ class SupportStatus
 
   SupportStatus();
   SupportStatus(int const id);
+  SupportStatus(std::string const & str);
   bool operator==(SupportStatus const & rhs) const;
   bool operator!=(SupportStatus const & rhs) const;
   std::string String() const;
@@ -57,20 +58,17 @@ extern SupportStatus const requiredByAPI;
 extern SupportStatus const notSupported;
 extern SupportStatus const required;
 extern SupportStatus const optional;
-}  // namespace SUPPORT_STATUS
 
-}  // namespace KIM
+void GetNumberOfSupportStatuses(int * const numberOfSupportStatuses);
+int GetSupportStatus(int const index, SupportStatus * const supportStatus);
 
-
-namespace std
+struct Comparator
 {
-template<>
-struct hash<KIM::SupportStatus const>
-{
-  size_t operator()(KIM::SupportStatus const & supportStatus) const
+  bool operator()(SupportStatus const & a, SupportStatus const & b) const
   {
-    return supportStatus.supportStatusID;
+    return a.supportStatusID < b.supportStatusID;
   }
 };
-}  // namespace std
+}  // namespace SUPPORT_STATUS
+}  // namespace KIM
 #endif  // KIM_SUPPORT_STATUS_HPP_

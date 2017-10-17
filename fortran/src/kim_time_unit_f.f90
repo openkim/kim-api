@@ -51,6 +51,28 @@ end module kim_time_unit_f_module
 
 ! free functions to implement kim_time_unit_module
 
+logical function kim_time_unit_equal(left, right)
+  use, intrinsic :: iso_c_binding
+  use kim_time_unit_module, only : kim_time_unit_type
+  implicit none
+  type(kim_time_unit_type), intent(in) :: left
+  type(kim_time_unit_type), intent(in) :: right
+
+  kim_time_unit_equal &
+    = (left%time_unit_id .eq. right%time_unit_id)
+end function kim_time_unit_equal
+
+logical function kim_time_unit_not_equal(left, right)
+  use, intrinsic :: iso_c_binding
+  use kim_time_unit_module, only : kim_time_unit_type
+  use kim_time_unit_module, only : operator(.eq.)
+  implicit none
+  type(kim_time_unit_type), intent(in) :: left
+  type(kim_time_unit_type), intent(in) :: right
+
+  kim_time_unit_not_equal = .not. (left .eq. right)
+end function kim_time_unit_not_equal
+
 subroutine kim_time_unit_string(time_unit, unit_string)
   use, intrinsic :: iso_c_binding
   use kim_time_unit_module, only : kim_time_unit_type

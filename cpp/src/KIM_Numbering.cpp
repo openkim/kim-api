@@ -30,6 +30,8 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
+#include <map>
+
 #ifndef KIM_NUMBERING_HPP_
 #include "KIM_Numbering.hpp"
 #endif
@@ -37,8 +39,64 @@
 namespace KIM
 {
 
+// Order doesn't matter as long as all values are unique
+namespace NUMBERING
+{
+Numbering const zeroBased(0);
+Numbering const oneBased(1);
+
+namespace
+{
+typedef std::map<Numbering const, std::string, NUMBERING::Comparator>
+StringMap;
+
+StringMap const GetStringMap()
+{
+  StringMap m;
+  m[zeroBased] = "zeroBased";
+  m[oneBased] = "oneBased";
+  return m;
+}
+}  // namespace
+extern StringMap const numberingToString = GetStringMap();
+
+void GetNumberOfNumberings(int * const numberOfNumberings)
+{
+  *numberOfNumberings = numberingToString.size();
+}
+
+int GetNumbering(int const index, Numbering * const numbering)
+{
+  int numberOfNumberings;
+  GetNumberOfNumberings(&numberOfNumberings);
+  if ((index < 0) || (index >= numberOfNumberings)) return true;
+
+  StringMap::const_iterator iter = numberingToString.begin();
+  for (int i=0; i<index; ++i) ++iter;
+  *numbering = iter->first;
+  return false;  // no error
+}
+}  // namespace NUMBERING
+
+// implementation of Numbering
 Numbering::Numbering() : numberingID(0) {}
 Numbering::Numbering(int const id) : numberingID(id) {}
+Numbering::Numbering(std::string const & str)
+{
+  numberingID = -1;
+  for (NUMBERING::StringMap::const_iterator iter
+           = NUMBERING::numberingToString.begin();
+       iter != NUMBERING::numberingToString.end();
+       ++iter)
+  {
+    if (iter->second == str)
+    {
+      numberingID = (iter->first).numberingID;
+      break;
+    }
+  }
+}
+
 bool Numbering::operator==(Numbering const & rhs) const
 {return numberingID==rhs.numberingID;}
 bool Numbering::operator!=(Numbering const & rhs) const
@@ -46,14 +104,14 @@ bool Numbering::operator!=(Numbering const & rhs) const
 
 std::string Numbering::String() const
 {
-  if (*this == NUMBERING::zeroBased) return "zeroBased";
-  else if (*this == NUMBERING::oneBased) return "oneBased";
-  else return "unknown";
-}
+  std::string result;
+  NUMBERING::StringMap::const_iterator iter
+      = NUMBERING::numberingToString.find(*this);
+  if (iter == NUMBERING::numberingToString.end())
+    result = "unknown";
+  else
+    result = iter->second;
 
-namespace NUMBERING
-{
-Numbering const zeroBased(0);
-Numbering const oneBased(1);
-}  // namespace NUMBERING
+  return result;
+}
 }  // namespace KIM

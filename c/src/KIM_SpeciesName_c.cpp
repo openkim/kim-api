@@ -227,16 +227,17 @@ KIM_SpeciesName const KIM_SPECIES_NAME_user19 = {219};  // user defined
 KIM_SpeciesName const KIM_SPECIES_NAME_user20 = {220};  // user defined
 
 
-void KIM_SPECIES_NAME_get_number_of_species(int * const numberOfSpecies)
+void KIM_SPECIES_NAME_GetNumberOfSpeciesNames(
+    int * const numberOfSpeciesNames)
 {
-  KIM::SPECIES_NAME::get_number_of_species(numberOfSpecies);
+  KIM::SPECIES_NAME::GetNumberOfSpeciesNames(numberOfSpeciesNames);
 }
 
-int KIM_SPECIES_NAME_get_species_name(int const index,
-                                      KIM_SpeciesName * const speciesName)
+int KIM_SPECIES_NAME_GetSpeciesName(int const index,
+                                    KIM_SpeciesName * const speciesName)
 {
   KIM::SpeciesName speciesNameCpp;
-  int err = KIM::SPECIES_NAME::get_species_name(index, &speciesNameCpp);
+  int err = KIM::SPECIES_NAME::GetSpeciesName(index, &speciesNameCpp);
   if (err) return err;
   *speciesName = makeSpeciesNameC(speciesNameCpp);
   return false;

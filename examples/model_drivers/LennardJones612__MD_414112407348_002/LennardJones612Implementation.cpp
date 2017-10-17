@@ -291,7 +291,8 @@ int LennardJones612Implementation::ProcessParameterFiles(
 
 
   // keep track of known species
-  std::unordered_map<KIM::SpeciesName const, int> modelSpeciesMap;
+  std::map<KIM::SpeciesName const, int, KIM::SPECIES_NAME::Comparator>
+      modelSpeciesMap;
   std::vector<KIM::SpeciesName> speciesNameVector;
   int index = 0;
 
@@ -314,7 +315,8 @@ int LennardJones612Implementation::ProcessParameterFiles(
     KIM::SpeciesName const specName2(spec2);
 
     // check for new species
-    auto iIter = modelSpeciesMap.find(specName1);
+    std::map<KIM::SpeciesName const, int, KIM::SPECIES_NAME::Comparator>::
+        const_iterator iIter = modelSpeciesMap.find(specName1);
     if (iIter == modelSpeciesMap.end())
     {
       modelSpeciesMap[specName1] = index;
@@ -330,7 +332,8 @@ int LennardJones612Implementation::ProcessParameterFiles(
     {
       iIndex = modelSpeciesMap[specName1];
     }
-    auto jIter = modelSpeciesMap.find(specName2);
+    std::map<KIM::SpeciesName const, int, KIM::SPECIES_NAME::Comparator>::
+        const_iterator jIter = modelSpeciesMap.find(specName2);
     if (jIter == modelSpeciesMap.end())
     {
       modelSpeciesMap[specName2] = index;

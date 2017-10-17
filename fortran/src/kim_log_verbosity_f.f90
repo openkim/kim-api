@@ -51,6 +51,72 @@ end module kim_log_verbosity_f_module
 
 ! free functions to implement kim_log_verbosity_module
 
+logical function kim_log_verbosity_less_than(left, right)
+  use, intrinsic :: iso_c_binding
+  use kim_log_verbosity_module, only : kim_log_verbosity_type
+  implicit none
+  type(kim_log_verbosity_type), intent(in) :: left
+  type(kim_log_verbosity_type), intent(in) :: right
+
+  kim_log_verbosity_less_than &
+    = (left%log_verbosity_id .lt. right%log_verbosity_id)
+end function kim_log_verbosity_less_than
+
+logical function kim_log_verbosity_greater_than(left, right)
+  use, intrinsic :: iso_c_binding
+  use kim_log_verbosity_module, only : kim_log_verbosity_type
+  implicit none
+  type(kim_log_verbosity_type), intent(in) :: left
+  type(kim_log_verbosity_type), intent(in) :: right
+
+  kim_log_verbosity_greater_than &
+    = (left%log_verbosity_id .ge. right%log_verbosity_id)
+end function kim_log_verbosity_greater_than
+
+logical function kim_log_verbosity_less_than_equal(left, right)
+  use, intrinsic :: iso_c_binding
+  use kim_log_verbosity_module, only : kim_log_verbosity_type
+  implicit none
+  type(kim_log_verbosity_type), intent(in) :: left
+  type(kim_log_verbosity_type), intent(in) :: right
+
+  kim_log_verbosity_less_than_equal &
+    = (left%log_verbosity_id .le. right%log_verbosity_id)
+end function kim_log_verbosity_less_than_equal
+
+logical function kim_log_verbosity_greater_than_equal(left, right)
+  use, intrinsic :: iso_c_binding
+  use kim_log_verbosity_module, only : kim_log_verbosity_type
+  implicit none
+  type(kim_log_verbosity_type), intent(in) :: left
+  type(kim_log_verbosity_type), intent(in) :: right
+
+  kim_log_verbosity_greater_than_equal &
+    = (left%log_verbosity_id .ge. right%log_verbosity_id)
+end function kim_log_verbosity_greater_than_equal
+
+logical function kim_log_verbosity_equal(left, right)
+  use, intrinsic :: iso_c_binding
+  use kim_log_verbosity_module, only : kim_log_verbosity_type
+  implicit none
+  type(kim_log_verbosity_type), intent(in) :: left
+  type(kim_log_verbosity_type), intent(in) :: right
+
+  kim_log_verbosity_equal &
+    = (left%log_verbosity_id .eq. right%log_verbosity_id)
+end function kim_log_verbosity_equal
+
+logical function kim_log_verbosity_not_equal(left, right)
+  use, intrinsic :: iso_c_binding
+  use kim_log_verbosity_module, only : kim_log_verbosity_type
+  use kim_log_verbosity_module, only : operator(.eq.)
+  implicit none
+  type(kim_log_verbosity_type), intent(in) :: left
+  type(kim_log_verbosity_type), intent(in) :: right
+
+  kim_log_verbosity_not_equal = .not. (left .eq. right)
+end function kim_log_verbosity_not_equal
+
 subroutine kim_log_verbosity_string(log_verbosity, type_string)
   use, intrinsic :: iso_c_binding
   use kim_log_verbosity_module, only : kim_log_verbosity_type

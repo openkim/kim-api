@@ -30,7 +30,7 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
-#include <unordered_map>
+#include <map>
 
 #ifndef KIM_LANGUAGE_NAME_HPP_
 #include "KIM_LanguageName.hpp"
@@ -46,16 +46,39 @@ LanguageName const cpp(0);
 LanguageName const c(1);
 LanguageName const fortran(2);
 
+namespace
+{
+typedef std::map<LanguageName const, std::string, LANGUAGE_NAME::Comparator>
+StringMap;
 
-extern std::unordered_map<LanguageName const, std::string> const
-languageNameToString = {
-  std::pair<LanguageName const, std::string>(cpp, "cpp"),
-  std::pair<LanguageName const, std::string>(c, "c"),
-  std::pair<LanguageName const, std::string>(fortran, "fortran")
-};
+StringMap const GetStringMap()
+{
+  StringMap m;
+  m[cpp] = "cpp";
+  m[c] = "c";
+  m[fortran] = "fortran";
+  return m;
+}
+}  // namespace
+extern StringMap const languageNameToString = GetStringMap();
 
+void GetNumberOfLanguageNames(int * const numberOfLanguageNames)
+{
+  *numberOfLanguageNames = languageNameToString.size();
+}
+
+int GetLanguageName(int const index, LanguageName * const languageName)
+{
+  int numberOfLanguageNames;
+  GetNumberOfLanguageNames(&numberOfLanguageNames);
+  if ((index < 0) || (index >= numberOfLanguageNames)) return true;
+
+  StringMap::const_iterator iter = languageNameToString.begin();
+  for (int i=0; i<index; ++i) ++iter;
+  *languageName = iter->first;
+  return true;  // no error
+}
 }  // namespace LANGUAGE_NAME
-
 
 // implementation of LanguageName
 LanguageName::LanguageName(): languageNameID(0){}
@@ -63,8 +86,8 @@ LanguageName::LanguageName(int const id): languageNameID(id){}
 LanguageName::LanguageName(std::string const str)
 {
   languageNameID = -1;
-  std::unordered_map<std::string, LanguageName> reverseMap;
-  for (auto iter = LANGUAGE_NAME::languageNameToString.begin();
+  for (LANGUAGE_NAME::StringMap::const_iterator iter
+           = LANGUAGE_NAME::languageNameToString.begin();
        iter != LANGUAGE_NAME::languageNameToString.end();
        ++iter)
   {
@@ -84,7 +107,8 @@ bool LanguageName::operator!=(LanguageName const & rhs) const
 std::string LanguageName::String() const
 {
   std::string result;
-  auto iter = LANGUAGE_NAME::languageNameToString.find(*this);
+  LANGUAGE_NAME::StringMap::const_iterator iter
+      = LANGUAGE_NAME::languageNameToString.find(*this);
   if (iter == LANGUAGE_NAME::languageNameToString.end())
     result = "unknown";
   else
@@ -92,5 +116,4 @@ std::string LanguageName::String() const
 
   return result;
 }
-
 }  // namespace KIM

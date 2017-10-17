@@ -39,9 +39,9 @@ module kim_argument_name_module
 
   public &
     kim_argument_name_type, &
-    kim_argument_name_string, &
     operator (.eq.), &
-
+    operator (.ne.), &
+    kim_argument_name_string, &
 
     kim_argument_name_number_of_particles, &
     kim_argument_name_particle_species_codes, &
@@ -94,8 +94,24 @@ module kim_argument_name_module
     kim_argument_name_type(partial_hessian_id)
 
   interface operator (.eq.)
-    module procedure kim_argument_name_equality
+    logical function kim_argument_name_equal(left, right)
+      use, intrinsic :: iso_c_binding
+      import kim_argument_name_type
+      implicit none
+      type(kim_argument_name_type), intent(in) :: left
+      type(kim_argument_name_type), intent(in) :: right
+    end function kim_argument_name_equal
   end interface operator (.eq.)
+
+  interface operator (.ne.)
+    logical function kim_argument_name_not_equal(left, right)
+      use, intrinsic :: iso_c_binding
+      import kim_argument_name_type
+      implicit none
+      type(kim_argument_name_type), intent(in) :: left
+      type(kim_argument_name_type), intent(in) :: right
+    end function kim_argument_name_not_equal
+  end interface operator (.ne.)
 
   interface
     subroutine kim_argument_name_string(argument_name, name_string)
@@ -133,15 +149,4 @@ module kim_argument_name_module
       integer(c_int), intent(out) :: ierr
     end subroutine kim_argument_name_get_argument_data_type
   end interface
-
-contains
-  logical function kim_argument_name_equality(left, right)
-    use, intrinsic :: iso_c_binding
-    implicit none
-    type(kim_argument_name_type), intent(in) :: left
-    type(kim_argument_name_type), intent(in) :: right
-
-    kim_argument_name_equality &
-      = (left%argument_name_id .eq. right%argument_name_id)
-  end function kim_argument_name_equality
 end module kim_argument_name_module

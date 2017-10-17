@@ -46,6 +46,7 @@ class DataType
 
   DataType();
   DataType(int const id);
+  DataType(std::string const & str);
   bool operator==(DataType const & rhs) const;
   bool operator!=(DataType const & rhs) const;
   std::string String() const;
@@ -55,18 +56,17 @@ namespace DATA_TYPE
 {
 extern DataType const Integer;
 extern DataType const Double;
-}  // namespace DATA_TYPE
-}  // namespace KIM
 
-namespace std
+void GetNumberOfDataTypes(int * const numberOfDataTypes);
+int GetDataType(int const index, DataType * const dataType);
+
+struct Comparator
 {
-template<>
-struct hash<KIM::DataType const>
-{
-  size_t operator()(KIM::DataType const & dataType) const
+  bool operator()(DataType const & a, DataType const & b) const
   {
-    return dataType.dataTypeID;
+    return a.dataTypeID < b.dataTypeID;
   }
 };
-}  // namespace std
+}  // namespace DATA_TYPE
+}  // namespace KIM
 #endif  // KIM_DATA_TYPE_HPP_

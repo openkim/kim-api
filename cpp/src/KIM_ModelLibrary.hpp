@@ -52,8 +52,8 @@ class ModelLibrary
   ModelLibrary();
   ~ModelLibrary();
 
-  enum class ITEM_TYPE {STAND_ALONE_MODEL, PARAMETERIZED_MODEL, SIMULATOR_MODEL,
-                        MODEL_DRIVER};
+  enum ITEM_TYPE {STAND_ALONE_MODEL, PARAMETERIZED_MODEL, SIMULATOR_MODEL,
+                  MODEL_DRIVER};
 
   int open(bool const typeIsModel, std::string const & modelName);
   int close();

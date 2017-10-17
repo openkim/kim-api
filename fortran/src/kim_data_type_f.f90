@@ -51,6 +51,29 @@ end module kim_data_type_f_module
 
 ! free functions to implement kim_data_type_module
 
+logical function kim_data_type_equal(left, right)
+  use, intrinsic :: iso_c_binding
+  use kim_data_type_module, only : kim_data_type_type
+  implicit none
+  type(kim_data_type_type), intent(in) :: left
+  type(kim_data_type_type), intent(in) :: right
+
+  kim_data_type_equal &
+    = (left%data_type_id .eq. right%data_type_id)
+end function kim_data_type_equal
+
+logical function kim_data_type_not_equal(left, right)
+  use, intrinsic :: iso_c_binding
+  use kim_data_type_module, only : kim_data_type_type
+  use kim_data_type_module, only : operator(.eq.)
+  implicit none
+  type(kim_data_type_type), intent(in) :: left
+  type(kim_data_type_type), intent(in) :: right
+
+  kim_data_type_not_equal = .not. (left .eq. right)
+end function kim_data_type_not_equal
+
+
 subroutine kim_data_type_string(data_type, type_string)
   use, intrinsic :: iso_c_binding
   use kim_data_type_module, only : kim_data_type_type

@@ -30,6 +30,8 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
+#include <map>
+
 #ifndef KIM_TIME_UNIT_HPP_
 #include "KIM_TimeUnit.hpp"
 #endif
@@ -37,24 +39,7 @@
 namespace KIM
 {
 
-TimeUnit::TimeUnit() : timeUnitID(0){}
-TimeUnit::TimeUnit(int const id) : timeUnitID(id){}
-bool TimeUnit::operator==(TimeUnit const & rhs) const
-{return timeUnitID==rhs.timeUnitID;}
-bool TimeUnit::operator!=(TimeUnit const & rhs) const
-{return timeUnitID!=rhs.timeUnitID;}
-
-std::string TimeUnit::String() const
-{
-  if (*this == TIME_UNIT::unused) return "unused";
-  else if (*this == TIME_UNIT::fs) return "fs";
-  else if (*this == TIME_UNIT::ps) return "ps";
-  else if (*this == TIME_UNIT::ns) return "ns";
-  else if (*this == TIME_UNIT::s) return "s";
-  else return "unknown";
-}
-
-
+// Order doesn't matter as long as all values are unique
 namespace TIME_UNIT
 {
 TimeUnit const unused(0);
@@ -62,6 +47,77 @@ TimeUnit const fs(1);
 TimeUnit const ps(2);
 TimeUnit const ns(3);
 TimeUnit const s(4);
+
+namespace
+{
+typedef std::map<TimeUnit const, std::string, TIME_UNIT::Comparator>
+StringMap;
+
+StringMap const GetStringMap()
+{
+  StringMap m;
+  m[unused] = "unused";
+  m[fs] = "fs";
+  m[ps] = "ps";
+  m[ns] = "ns";
+  m[s] = "s";
+  return m;
+}
+}  // namespace
+extern StringMap const timeUnitToString = GetStringMap();
+
+void GetNumberOfTimeUnits(int * const numberOfTimeUnits)
+{
+  *numberOfTimeUnits = timeUnitToString.size();
+}
+
+int GetTimeUnit(int const index, TimeUnit * const timeUnit)
+{
+  int numberOfTimeUnits;
+  GetNumberOfTimeUnits(&numberOfTimeUnits);
+  if ((index < 0) || (index >= numberOfTimeUnits)) return true;
+
+  StringMap::const_iterator iter = timeUnitToString.begin();
+  for (int i=0; i<index; ++i) ++iter;
+  *timeUnit = iter->first;
+  return false;  // no error
+}
 }  // namespace TIME_UNIT
 
+// implementation of TimeUnit
+TimeUnit::TimeUnit() : timeUnitID(0){}
+TimeUnit::TimeUnit(int const id) : timeUnitID(id){}
+TimeUnit::TimeUnit(std::string const & str)
+{
+  timeUnitID = -1;
+  for (TIME_UNIT::StringMap::const_iterator iter
+           = TIME_UNIT::timeUnitToString.begin();
+       iter != TIME_UNIT::timeUnitToString.end();
+       ++iter)
+  {
+    if (iter->second == str)
+    {
+      timeUnitID = (iter->first).timeUnitID;
+      break;
+    }
+  }
+}
+
+bool TimeUnit::operator==(TimeUnit const & rhs) const
+{return timeUnitID==rhs.timeUnitID;}
+bool TimeUnit::operator!=(TimeUnit const & rhs) const
+{return timeUnitID!=rhs.timeUnitID;}
+
+std::string TimeUnit::String() const
+{
+  std::string result;
+  TIME_UNIT::StringMap::const_iterator iter
+      = TIME_UNIT::timeUnitToString.find(*this);
+  if (iter == TIME_UNIT::timeUnitToString.end())
+    result = "unknown";
+  else
+    result = iter->second;
+
+  return result;
+}
 }  // namespace KIM

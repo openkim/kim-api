@@ -30,6 +30,8 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
+#include <map>
+
 #ifndef KIM_LENGTH_UNIT_HPP_
 #include "KIM_LengthUnit.hpp"
 #endif
@@ -37,25 +39,7 @@
 namespace KIM
 {
 
-LengthUnit::LengthUnit() : lengthUnitID(0){}
-LengthUnit::LengthUnit(int const id) : lengthUnitID(id){}
-bool LengthUnit::operator==(LengthUnit const & rhs) const
-{return lengthUnitID==rhs.lengthUnitID;}
-bool LengthUnit::operator!=(LengthUnit const & rhs) const
-{return lengthUnitID!=rhs.lengthUnitID;}
-
-std::string LengthUnit::String() const
-{
-  if (*this == LENGTH_UNIT::unused) return "unused";
-  else if (*this == LENGTH_UNIT::A) return "A";
-  else if (*this == LENGTH_UNIT::Bohr) return "Bohr";
-  else if (*this == LENGTH_UNIT::cm) return "cm";
-  else if (*this == LENGTH_UNIT::m) return "m";
-  else if (*this == LENGTH_UNIT::nm) return "nm";
-  else return "unknown";
-}
-
-
+// Order doesn't matter as long as all values are unique
 namespace LENGTH_UNIT
 {
 LengthUnit const unused(0);
@@ -64,6 +48,78 @@ LengthUnit const Bohr(2);
 LengthUnit const cm(3);
 LengthUnit const m(4);
 LengthUnit const nm(5);
+
+namespace
+{
+typedef std::map<LengthUnit const, std::string, LENGTH_UNIT::Comparator>
+StringMap;
+
+StringMap const GetStringMap()
+{
+  StringMap mm;
+  mm[unused] = "unused";
+  mm[A] = "A";
+  mm[Bohr] = "Bohr";
+  mm[cm] = "cm";
+  mm[m] = "m";
+  mm[nm] = "nm";
+  return mm;
+}
+}  // namespace
+extern StringMap const lengthUnitToString = GetStringMap();
+
+void GetNumberOfLengthUnits(int * const numberOfLengthUnits)
+{
+  *numberOfLengthUnits = lengthUnitToString.size();
+}
+
+int GetLengthUnit(int const index, LengthUnit * const lengthUnit)
+{
+  int numberOfLengthUnits;
+  GetNumberOfLengthUnits(&numberOfLengthUnits);
+  if ((index < 0) || (index >= numberOfLengthUnits)) return true;
+
+  StringMap::const_iterator iter = lengthUnitToString.begin();
+  for (int i=0; i<index; ++i) ++iter;
+  *lengthUnit = iter->first;
+  return false;  // no error
+}
 }  // namespace LENGTH_UNIT
 
+// implementation of LengthUnit
+LengthUnit::LengthUnit() : lengthUnitID(0){}
+LengthUnit::LengthUnit(int const id) : lengthUnitID(id){}
+LengthUnit::LengthUnit(std::string const & str)
+{
+  lengthUnitID = -1;
+  for (LENGTH_UNIT::StringMap::const_iterator iter
+           = LENGTH_UNIT::lengthUnitToString.begin();
+       iter != LENGTH_UNIT::lengthUnitToString.end();
+       ++iter)
+  {
+    if (iter->second == str)
+    {
+      lengthUnitID = (iter->first).lengthUnitID;
+      break;
+    }
+  }
+}
+
+bool LengthUnit::operator==(LengthUnit const & rhs) const
+{return lengthUnitID==rhs.lengthUnitID;}
+bool LengthUnit::operator!=(LengthUnit const & rhs) const
+{return lengthUnitID!=rhs.lengthUnitID;}
+
+std::string LengthUnit::String() const
+{
+  std::string result;
+  LENGTH_UNIT::StringMap::const_iterator iter
+      = LENGTH_UNIT::lengthUnitToString.find(*this);
+  if (iter == LENGTH_UNIT::lengthUnitToString.end())
+    result = "unknown";
+  else
+    result = iter->second;
+
+  return result;
+}
 }  // namespace KIM

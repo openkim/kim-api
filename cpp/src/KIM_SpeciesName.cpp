@@ -31,7 +31,7 @@
 //
 
 #include <vector>
-#include <unordered_map>
+#include <map>
 
 #ifndef KIM_SPECIES_NAME_HPP_
 #include "KIM_SpeciesName.hpp"
@@ -183,180 +183,184 @@ SpeciesName const user18(218);  // user defined
 SpeciesName const user19(219);  // user defined
 SpeciesName const user20(220);  // user defined
 
-
-extern std::unordered_map<SpeciesName const, std::string> const
-speciesNameToString = {
-  std::pair<SpeciesName const, std::string>(electron, "electron"),
-  std::pair<SpeciesName const, std::string>(H, "H"),
-  std::pair<SpeciesName const, std::string>(He, "He"),
-  std::pair<SpeciesName const, std::string>(Li, "Li"),
-  std::pair<SpeciesName const, std::string>(Be, "Be"),
-  std::pair<SpeciesName const, std::string>(B, "B"),
-  std::pair<SpeciesName const, std::string>(C, "C"),
-  std::pair<SpeciesName const, std::string>(N, "N"),
-  std::pair<SpeciesName const, std::string>(O, "O"),
-  std::pair<SpeciesName const, std::string>(F, "F"),
-  std::pair<SpeciesName const, std::string>(Ne, "Ne"),
-  std::pair<SpeciesName const, std::string>(Na, "Na"),
-  std::pair<SpeciesName const, std::string>(Mg, "Mg"),
-  std::pair<SpeciesName const, std::string>(Al, "Al"),
-  std::pair<SpeciesName const, std::string>(Si, "Si"),
-  std::pair<SpeciesName const, std::string>(P, "P"),
-  std::pair<SpeciesName const, std::string>(S, "S"),
-  std::pair<SpeciesName const, std::string>(Cl, "Cl"),
-  std::pair<SpeciesName const, std::string>(Ar, "Ar"),
-  std::pair<SpeciesName const, std::string>(K, "K"),
-  std::pair<SpeciesName const, std::string>(Ca, "Ca"),
-  std::pair<SpeciesName const, std::string>(Sc, "Sc"),
-  std::pair<SpeciesName const, std::string>(Ti, "Ti"),
-  std::pair<SpeciesName const, std::string>(V, "V"),
-  std::pair<SpeciesName const, std::string>(Cr, "Cr"),
-  std::pair<SpeciesName const, std::string>(Mn, "Mn"),
-  std::pair<SpeciesName const, std::string>(Fe, "Fe"),
-  std::pair<SpeciesName const, std::string>(Co, "Co"),
-  std::pair<SpeciesName const, std::string>(Ni, "Ni"),
-  std::pair<SpeciesName const, std::string>(Cu, "Cu"),
-  std::pair<SpeciesName const, std::string>(Zn, "Zn"),
-  std::pair<SpeciesName const, std::string>(Ga, "Ga"),
-  std::pair<SpeciesName const, std::string>(Ge, "Ge"),
-  std::pair<SpeciesName const, std::string>(As, "As"),
-  std::pair<SpeciesName const, std::string>(Se, "Se"),
-  std::pair<SpeciesName const, std::string>(Br, "Br"),
-  std::pair<SpeciesName const, std::string>(Kr, "Kr"),
-  std::pair<SpeciesName const, std::string>(Rb, "Rb"),
-  std::pair<SpeciesName const, std::string>(Sr, "Sr"),
-  std::pair<SpeciesName const, std::string>(Y, "Y"),
-  std::pair<SpeciesName const, std::string>(Zr, "Zr"),
-  std::pair<SpeciesName const, std::string>(Nb, "Nb"),
-  std::pair<SpeciesName const, std::string>(Mo, "Mo"),
-  std::pair<SpeciesName const, std::string>(Tc, "Tc"),
-  std::pair<SpeciesName const, std::string>(Ru, "Ru"),
-  std::pair<SpeciesName const, std::string>(Rh, "Rh"),
-  std::pair<SpeciesName const, std::string>(Pd, "Pd"),
-  std::pair<SpeciesName const, std::string>(Ag, "Ag"),
-  std::pair<SpeciesName const, std::string>(Cd, "Cd"),
-  std::pair<SpeciesName const, std::string>(In, "In"),
-  std::pair<SpeciesName const, std::string>(Sn, "Sn"),
-  std::pair<SpeciesName const, std::string>(Sb, "Sb"),
-  std::pair<SpeciesName const, std::string>(Te, "Te"),
-  std::pair<SpeciesName const, std::string>(I, "I"),
-  std::pair<SpeciesName const, std::string>(Xe, "Xe"),
-  std::pair<SpeciesName const, std::string>(Cs, "Cs"),
-  std::pair<SpeciesName const, std::string>(Ba, "Ba"),
-  std::pair<SpeciesName const, std::string>(La, "La"),
-  std::pair<SpeciesName const, std::string>(Ce, "Ce"),
-  std::pair<SpeciesName const, std::string>(Pr, "Pr"),
-  std::pair<SpeciesName const, std::string>(Nd, "Nd"),
-  std::pair<SpeciesName const, std::string>(Pm, "Pm"),
-  std::pair<SpeciesName const, std::string>(Sm, "Sm"),
-  std::pair<SpeciesName const, std::string>(Eu, "Eu"),
-  std::pair<SpeciesName const, std::string>(Gd, "Gd"),
-  std::pair<SpeciesName const, std::string>(Tb, "Tb"),
-  std::pair<SpeciesName const, std::string>(Dy, "Dy"),
-  std::pair<SpeciesName const, std::string>(Ho, "Ho"),
-  std::pair<SpeciesName const, std::string>(Er, "Er"),
-  std::pair<SpeciesName const, std::string>(Tm, "Tm"),
-  std::pair<SpeciesName const, std::string>(Yb, "Yb"),
-  std::pair<SpeciesName const, std::string>(Lu, "Lu"),
-  std::pair<SpeciesName const, std::string>(Hf, "Hf"),
-  std::pair<SpeciesName const, std::string>(Ta, "Ta"),
-  std::pair<SpeciesName const, std::string>(W, "W"),
-  std::pair<SpeciesName const, std::string>(Re, "Re"),
-  std::pair<SpeciesName const, std::string>(Os, "Os"),
-  std::pair<SpeciesName const, std::string>(Ir, "Ir"),
-  std::pair<SpeciesName const, std::string>(Pt, "Pt"),
-  std::pair<SpeciesName const, std::string>(Au, "Au"),
-  std::pair<SpeciesName const, std::string>(Hg, "Hg"),
-  std::pair<SpeciesName const, std::string>(Tl, "Tl"),
-  std::pair<SpeciesName const, std::string>(Pb, "Pb"),
-  std::pair<SpeciesName const, std::string>(Bi, "Bi"),
-  std::pair<SpeciesName const, std::string>(Po, "Po"),
-  std::pair<SpeciesName const, std::string>(At, "At"),
-  std::pair<SpeciesName const, std::string>(Rn, "Rn"),
-  std::pair<SpeciesName const, std::string>(Fr, "Fr"),
-  std::pair<SpeciesName const, std::string>(Ra, "Ra"),
-  std::pair<SpeciesName const, std::string>(Ac, "Ac"),
-  std::pair<SpeciesName const, std::string>(Th, "Th"),
-  std::pair<SpeciesName const, std::string>(Pa, "Pa"),
-  std::pair<SpeciesName const, std::string>(U, "U"),
-  std::pair<SpeciesName const, std::string>(Np, "Np"),
-  std::pair<SpeciesName const, std::string>(Pu, "Pu"),
-  std::pair<SpeciesName const, std::string>(Am, "Am"),
-  std::pair<SpeciesName const, std::string>(Cm, "Cm"),
-  std::pair<SpeciesName const, std::string>(Bk, "Bk"),
-  std::pair<SpeciesName const, std::string>(Cf, "Cf"),
-  std::pair<SpeciesName const, std::string>(Es, "Es"),
-  std::pair<SpeciesName const, std::string>(Fm, "Fm"),
-  std::pair<SpeciesName const, std::string>(Md, "Md"),
-  std::pair<SpeciesName const, std::string>(No, "No"),
-  std::pair<SpeciesName const, std::string>(Lr, "Lr"),
-  std::pair<SpeciesName const, std::string>(Rf, "Rf"),
-  std::pair<SpeciesName const, std::string>(Db, "Db"),
-  std::pair<SpeciesName const, std::string>(Sg, "Sg"),
-  std::pair<SpeciesName const, std::string>(Bh, "Bh"),
-  std::pair<SpeciesName const, std::string>(Hs, "Hs"),
-  std::pair<SpeciesName const, std::string>(Mt, "Mt"),
-  std::pair<SpeciesName const, std::string>(Ds, "Ds"),
-  std::pair<SpeciesName const, std::string>(Rg, "Rg"),
-  std::pair<SpeciesName const, std::string>(Cn, "Cn"),
-  std::pair<SpeciesName const, std::string>(Uut, "Uut"),
-  std::pair<SpeciesName const, std::string>(Fl, "Fl"),
-  std::pair<SpeciesName const, std::string>(Uup, "Uup"),
-  std::pair<SpeciesName const, std::string>(Lv, "Lv"),
-  std::pair<SpeciesName const, std::string>(Uus, "Uus"),
-  std::pair<SpeciesName const, std::string>(Uuo, "Uuo"),
-  std::pair<SpeciesName const, std::string>(user01, "user01"),
-  std::pair<SpeciesName const, std::string>(user02, "user02"),
-  std::pair<SpeciesName const, std::string>(user03, "user03"),
-  std::pair<SpeciesName const, std::string>(user04, "user04"),
-  std::pair<SpeciesName const, std::string>(user05, "user05"),
-  std::pair<SpeciesName const, std::string>(user06, "user06"),
-  std::pair<SpeciesName const, std::string>(user07, "user07"),
-  std::pair<SpeciesName const, std::string>(user08, "user08"),
-  std::pair<SpeciesName const, std::string>(user09, "user09"),
-  std::pair<SpeciesName const, std::string>(user10, "user10"),
-  std::pair<SpeciesName const, std::string>(user11, "user11"),
-  std::pair<SpeciesName const, std::string>(user12, "user12"),
-  std::pair<SpeciesName const, std::string>(user13, "user13"),
-  std::pair<SpeciesName const, std::string>(user14, "user14"),
-  std::pair<SpeciesName const, std::string>(user15, "user15"),
-  std::pair<SpeciesName const, std::string>(user16, "user16"),
-  std::pair<SpeciesName const, std::string>(user17, "user17"),
-  std::pair<SpeciesName const, std::string>(user18, "user18"),
-  std::pair<SpeciesName const, std::string>(user19, "user19"),
-  std::pair<SpeciesName const, std::string>(user20, "user20")
-};
-
-
-void get_number_of_species(int * const numberOfSpecies)
+namespace
 {
-  *numberOfSpecies = speciesNameToString.size();
+typedef std::map<SpeciesName const, std::string, SPECIES_NAME::Comparator>
+StringMap;
+
+StringMap const GetStringMap()
+{
+  StringMap m;
+  m[electron] = "electron";
+  m[H] = "H";
+  m[He] = "He";
+  m[Li] = "Li";
+  m[Be] = "Be";
+  m[B] = "B";
+  m[C] = "C";
+  m[N] = "N";
+  m[O] = "O";
+  m[F] = "F";
+  m[Ne] = "Ne";
+  m[Na] = "Na";
+  m[Mg] = "Mg";
+  m[Al] = "Al";
+  m[Si] = "Si";
+  m[P] = "P";
+  m[S] = "S";
+  m[Cl] = "Cl";
+  m[Ar] = "Ar";
+  m[K] = "K";
+  m[Ca] = "Ca";
+  m[Sc] = "Sc";
+  m[Ti] = "Ti";
+  m[V] = "V";
+  m[Cr] = "Cr";
+  m[Mn] = "Mn";
+  m[Fe] = "Fe";
+  m[Co] = "Co";
+  m[Ni] = "Ni";
+  m[Cu] = "Cu";
+  m[Zn] = "Zn";
+  m[Ga] = "Ga";
+  m[Ge] = "Ge";
+  m[As] = "As";
+  m[Se] = "Se";
+  m[Br] = "Br";
+  m[Kr] = "Kr";
+  m[Rb] = "Rb";
+  m[Sr] = "Sr";
+  m[Y] = "Y";
+  m[Zr] = "Zr";
+  m[Nb] = "Nb";
+  m[Mo] = "Mo";
+  m[Tc] = "Tc";
+  m[Ru] = "Ru";
+  m[Rh] = "Rh";
+  m[Pd] = "Pd";
+  m[Ag] = "Ag";
+  m[Cd] = "Cd";
+  m[In] = "In";
+  m[Sn] = "Sn";
+  m[Sb] = "Sb";
+  m[Te] = "Te";
+  m[I] = "I";
+  m[Xe] = "Xe";
+  m[Cs] = "Cs";
+  m[Ba] = "Ba";
+  m[La] = "La";
+  m[Ce] = "Ce";
+  m[Pr] = "Pr";
+  m[Nd] = "Nd";
+  m[Pm] = "Pm";
+  m[Sm] = "Sm";
+  m[Eu] = "Eu";
+  m[Gd] = "Gd";
+  m[Tb] = "Tb";
+  m[Dy] = "Dy";
+  m[Ho] = "Ho";
+  m[Er] = "Er";
+  m[Tm] = "Tm";
+  m[Yb] = "Yb";
+  m[Lu] = "Lu";
+  m[Hf] = "Hf";
+  m[Ta] = "Ta";
+  m[W] = "W";
+  m[Re] = "Re";
+  m[Os] = "Os";
+  m[Ir] = "Ir";
+  m[Pt] = "Pt";
+  m[Au] = "Au";
+  m[Hg] = "Hg";
+  m[Tl] = "Tl";
+  m[Pb] = "Pb";
+  m[Bi] = "Bi";
+  m[Po] = "Po";
+  m[At] = "At";
+  m[Rn] = "Rn";
+  m[Fr] = "Fr";
+  m[Ra] = "Ra";
+  m[Ac] = "Ac";
+  m[Th] = "Th";
+  m[Pa] = "Pa";
+  m[U] = "U";
+  m[Np] = "Np";
+  m[Pu] = "Pu";
+  m[Am] = "Am";
+  m[Cm] = "Cm";
+  m[Bk] = "Bk";
+  m[Cf] = "Cf";
+  m[Es] = "Es";
+  m[Fm] = "Fm";
+  m[Md] = "Md";
+  m[No] = "No";
+  m[Lr] = "Lr";
+  m[Rf] = "Rf";
+  m[Db] = "Db";
+  m[Sg] = "Sg";
+  m[Bh] = "Bh";
+  m[Hs] = "Hs";
+  m[Mt] = "Mt";
+  m[Ds] = "Ds";
+  m[Rg] = "Rg";
+  m[Cn] = "Cn";
+  m[Uut] = "Uut";
+  m[Fl] = "Fl";
+  m[Uup] = "Uup";
+  m[Lv] = "Lv";
+  m[Uus] = "Uus";
+  m[Uuo] = "Uuo";
+  m[user01] = "user01";
+  m[user02] = "user02";
+  m[user03] = "user03";
+  m[user04] = "user04";
+  m[user05] = "user05";
+  m[user06] = "user06";
+  m[user07] = "user07";
+  m[user08] = "user08";
+  m[user09] = "user09";
+  m[user10] = "user10";
+  m[user11] = "user11";
+  m[user12] = "user12";
+  m[user13] = "user13";
+  m[user14] = "user14";
+  m[user15] = "user15";
+  m[user16] = "user16";
+  m[user17] = "user17";
+  m[user18] = "user18";
+  m[user19] = "user19";
+  m[user20] = "user20";
+  return m;
+}
+}  // namespace
+extern StringMap const speciesNameToString = GetStringMap();
+
+void GetNumberOfSpeciesNames(int * const numberOfSpeciesNames)
+{
+  *numberOfSpeciesNames = speciesNameToString.size();
 }
 
-int get_species_name(int const index, SpeciesName * const speciesName)
+int GetSpeciesName(int const index, SpeciesName * const speciesName)
 {
-  int numberOfSpecies;
-  get_number_of_species(&numberOfSpecies);
-  if ((index < 0) || (index >= numberOfSpecies)) return true;
+  int numberOfSpeciesNames;
+  GetNumberOfSpeciesNames(&numberOfSpeciesNames);
+  if ((index < 0) || (index >= numberOfSpeciesNames)) return true;
 
-  auto iter = speciesNameToString.begin();
-  int i = 0;
-  for (; i<index; ++i) iter++;
+  SPECIES_NAME::StringMap::const_iterator iter = speciesNameToString.begin();
+  for (int i=0; i<index; ++i) ++iter;
   *speciesName = iter->first;
   return false;  // no error
 }
-
 }  // namespace SPECIES_NAME
-
 
 // implementation of SpeciesName
 SpeciesName::SpeciesName() : speciesNameID(0){}
 SpeciesName::SpeciesName(int const id) : speciesNameID(id){}
-SpeciesName::SpeciesName(std::string const str)
+SpeciesName::SpeciesName(std::string const & str)
 {
   speciesNameID = -1;
-  std::unordered_map<std::string, SpeciesName> reverseMap;
-  for (auto iter = SPECIES_NAME::speciesNameToString.begin();
+  for (SPECIES_NAME::StringMap::const_iterator iter
+           = SPECIES_NAME::speciesNameToString.begin();
        iter != SPECIES_NAME::speciesNameToString.end();
        ++iter)
   {
@@ -376,7 +380,8 @@ bool SpeciesName::operator!=(SpeciesName const & rhs) const
 std::string SpeciesName::String() const
 {
   std::string result;
-  auto iter = SPECIES_NAME::speciesNameToString.find(*this);
+  SPECIES_NAME::StringMap::const_iterator iter
+      = SPECIES_NAME::speciesNameToString.find(*this);
   if (iter == SPECIES_NAME::speciesNameToString.end())
     result = "unknown";
   else
@@ -384,5 +389,4 @@ std::string SpeciesName::String() const
 
   return result;
 }
-
 }  // namespace KIM

@@ -51,6 +51,28 @@ end module kim_temperature_unit_f_module
 
 ! free functions to implement kim_temperature_unit_module
 
+logical function kim_temperature_unit_equal(left, right)
+  use, intrinsic :: iso_c_binding
+  use kim_temperature_unit_module, only : kim_temperature_unit_type
+  implicit none
+  type(kim_temperature_unit_type), intent(in) :: left
+  type(kim_temperature_unit_type), intent(in) :: right
+
+  kim_temperature_unit_equal &
+    = (left%temperature_unit_id .eq. right%temperature_unit_id)
+end function kim_temperature_unit_equal
+
+logical function kim_temperature_unit_not_equal(left, right)
+  use, intrinsic :: iso_c_binding
+  use kim_temperature_unit_module, only : kim_temperature_unit_type
+  use kim_temperature_unit_module, only : operator(.eq.)
+  implicit none
+  type(kim_temperature_unit_type), intent(in) :: left
+  type(kim_temperature_unit_type), intent(in) :: right
+
+  kim_temperature_unit_not_equal = .not. (left .eq. right)
+end function kim_temperature_unit_not_equal
+
 subroutine kim_temperature_unit_string(temperature_unit, unit_string)
   use, intrinsic :: iso_c_binding
   use kim_temperature_unit_module, only : kim_temperature_unit_type

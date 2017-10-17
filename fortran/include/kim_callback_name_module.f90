@@ -39,8 +39,9 @@ module kim_callback_name_module
 
   public &
     kim_callback_name_type, &
-    kim_callback_name_string, &
     operator (.eq.), &
+    operator (.ne.), &
+    kim_callback_name_string, &
 
     kim_callback_name_get_neighbor_list, &
     kim_callback_name_process_dedr_term, &
@@ -64,7 +65,13 @@ module kim_callback_name_module
     kim_callback_name_type(process_d2edr2_term_id)
 
   interface operator (.eq.)
-    module procedure kim_callback_name_equality
+    logical function kim_callback_name_equal(left, right)
+      use, intrinsic :: iso_c_binding
+      import kim_callback_name_type
+      implicit none
+      type(kim_callback_name_type), intent(in) :: left
+      type(kim_callback_name_type), intent(in) :: right
+    end function kim_callback_name_equal
   end interface operator (.eq.)
 
   interface
@@ -91,15 +98,4 @@ module kim_callback_name_module
       integer(c_int), intent(out) :: ierr
     end subroutine kim_callback_name_get_callback_name
   end interface
-
-contains
-  logical function kim_callback_name_equality(left, right)
-    use, intrinsic :: iso_c_binding
-    implicit none
-    type(kim_callback_name_type), intent(in) :: left
-    type(kim_callback_name_type), intent(in) :: right
-
-    kim_callback_name_equality &
-      = (left%callback_name_id .eq. right%callback_name_id)
-  end function kim_callback_name_equality
 end module kim_callback_name_module

@@ -30,6 +30,8 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
+#include <map>
+
 #ifndef KIM_DATA_TYPE_HPP_
 #include "KIM_DataType.hpp"
 #endif
@@ -37,8 +39,64 @@
 namespace KIM
 {
 
+// Order doesn't matter as long as all values are unique
+namespace DATA_TYPE
+{
+DataType const Integer(0);
+DataType const Double(1);
+
+namespace
+{
+typedef std::map<DataType const, std::string, DATA_TYPE::Comparator>
+StringMap;
+
+StringMap const GetStringMap()
+{
+  StringMap m;
+  m[Integer] = "Integer";
+  m[Double] = "Double";
+  return m;
+}
+}  // namespace
+extern StringMap const dataTypeToString = GetStringMap();
+
+void GetNumberOfDataTypes(int * const numberOfDataTypes)
+{
+  *numberOfDataTypes = dataTypeToString.size();
+}
+
+int GetDataType(int const index, DataType * const dataType)
+{
+  int numberOfDataTypes;
+  GetNumberOfDataTypes(&numberOfDataTypes);
+  if ((index < 0) || (index >= numberOfDataTypes)) return true;
+
+  StringMap::const_iterator iter = dataTypeToString.begin();
+  for (int i=0; i<index; ++i) ++iter;
+  *dataType = iter->first;
+  return false;  // no error
+}
+}  // namespace DATA_TYPE
+
+// implementation of DataType
 DataType::DataType() : dataTypeID(0) {}
 DataType::DataType(int const id) : dataTypeID(id) {}
+DataType::DataType(std::string const & str)
+{
+  dataTypeID = -1;
+  for (DATA_TYPE::StringMap::const_iterator iter
+           = DATA_TYPE::dataTypeToString.begin();
+       iter != DATA_TYPE::dataTypeToString.end();
+       ++iter)
+  {
+    if (iter->second == str)
+    {
+      dataTypeID = (iter->first).dataTypeID;
+      break;
+    }
+  }
+}
+
 bool DataType::operator==(DataType const & rhs) const
 {return dataTypeID==rhs.dataTypeID;}
 bool DataType::operator!=(DataType const & rhs) const
@@ -46,14 +104,14 @@ bool DataType::operator!=(DataType const & rhs) const
 
 std::string DataType::String() const
 {
-  if (*this == DATA_TYPE::Integer) return "Integer";
-  else if (*this == DATA_TYPE::Double) return "Double";
-  else return "unknown";
-}
+  std::string result;
+  DATA_TYPE::StringMap::const_iterator iter
+      = DATA_TYPE::dataTypeToString.find(*this);
+  if (iter == DATA_TYPE::dataTypeToString.end())
+    result = "unknown";
+  else
+    result = iter->second;
 
-namespace DATA_TYPE
-{
-DataType const Integer(0);
-DataType const Double(1);
-}  // namespace DATA_TYPE
+  return result;
+}
 }  // namespace KIM

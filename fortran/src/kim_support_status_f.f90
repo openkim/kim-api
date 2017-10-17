@@ -51,6 +51,28 @@ end module kim_support_status_f_module
 
 ! free functions to implement kim_support_status_module
 
+logical function kim_support_status_equal(left, right)
+  use, intrinsic :: iso_c_binding
+  use kim_support_status_module, only : kim_support_status_type
+  implicit none
+  type(kim_support_status_type), intent(in) :: left
+  type(kim_support_status_type), intent(in) :: right
+
+  kim_support_status_equal &
+    = (left%support_status_id .eq. right%support_status_id)
+end function kim_support_status_equal
+
+logical function kim_support_status_not_equal(left, right)
+  use, intrinsic :: iso_c_binding
+  use kim_support_status_module, only : kim_support_status_type
+  use kim_support_status_module, only : operator(.eq.)
+  implicit none
+  type(kim_support_status_type), intent(in) :: left
+  type(kim_support_status_type), intent(in) :: right
+
+  kim_support_status_not_equal = .not. (left .eq. right)
+end function kim_support_status_not_equal
+
 subroutine kim_support_status_string(support_status, support_status_string)
   use, intrinsic :: iso_c_binding
   use kim_support_status_module, only : kim_support_status_type

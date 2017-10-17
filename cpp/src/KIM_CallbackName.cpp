@@ -31,6 +31,7 @@
 //
 
 #include <vector>
+#include <map>
 
 #ifndef KIM_CALLBACK_NAME_HPP_
 #include "KIM_CallbackName.hpp"
@@ -39,8 +40,78 @@
 namespace KIM
 {
 
+// Order doesn't matter as long as all values are unique
+namespace CALLBACK_NAME
+{
+CallbackName const GetNeighborList(0);
+CallbackName const ProcessDEDrTerm(1);
+CallbackName const ProcessD2EDr2Term(2);
+
+namespace
+{
+typedef std::map<CallbackName const, std::string, CALLBACK_NAME::Comparator>
+StringMap;
+
+StringMap const GetStringMap()
+{
+  StringMap m;
+  m[GetNeighborList] = "GetNeighborList";
+  m[ProcessDEDrTerm] = "ProcessDEDrTerm";
+  m[ProcessD2EDr2Term] = "ProcessD2EDr2Term";
+  return m;
+}
+}  // namespace
+extern StringMap const callbackNameToString = GetStringMap();
+
+namespace
+{
+typedef std::vector<CallbackName> CallbackVector;
+
+CallbackVector const GetCallbackVector()
+{
+  CallbackVector v;
+  v.push_back(GetNeighborList);
+  return v;
+}
+}  // namespace
+extern CallbackVector const requiredByAPI_Callbacks = GetCallbackVector();
+
+void GetNumberOfCallbacks(int * const numberOfCallbacks)
+{
+  *numberOfCallbacks = callbackNameToString.size();
+}
+
+int GetCallbackName(int const index, CallbackName * const callbackName)
+{
+  int numberOfCallbacks;
+  GetNumberOfCallbacks(&numberOfCallbacks);
+  if ((index < 0) || (index >= numberOfCallbacks)) return true;
+
+  StringMap::const_iterator iter = callbackNameToString.begin();
+  for (int i=0; i<index; ++i) ++iter;
+  *callbackName = iter->first;
+  return false;  // no error
+}
+}  // namespace CALLBACK_NAME
+
+// implementation of CallbackName
 CallbackName::CallbackName() : callbackNameID(0){}
 CallbackName::CallbackName(int const id) : callbackNameID(id){}
+CallbackName::CallbackName(std::string const & str)
+{
+  callbackNameID = -1;
+  for (CALLBACK_NAME::StringMap::const_iterator iter
+           = CALLBACK_NAME::callbackNameToString.begin();
+       iter != CALLBACK_NAME::callbackNameToString.end();
+       ++iter)
+  {
+    if (iter->second == str)
+    {
+      callbackNameID = (iter->first).callbackNameID;
+      break;
+    }
+  }
+}
 
 bool CallbackName::operator==(CallbackName const & rhs) const
 {return callbackNameID == rhs.callbackNameID;}
@@ -49,50 +120,14 @@ bool CallbackName::operator!=(CallbackName const & rhs) const
 
 std::string CallbackName::String() const
 {
-  if (*this == CALLBACK_NAME::GetNeighborList) return "GetNeighborList";
-  else if (*this == CALLBACK_NAME::ProcessDEDrTerm) return "ProcessDEDrTerm";
-  else if (*this == CALLBACK_NAME::ProcessD2EDr2Term)
-    return "ProcessD2EDr2Term";
+  std::string result;
+  CALLBACK_NAME::StringMap::const_iterator iter
+      = CALLBACK_NAME::callbackNameToString.find(*this);
+  if (iter == CALLBACK_NAME::callbackNameToString.end())
+    result = "unknown";
+  else
+    result = iter->second;
 
-  return "unknown";
+  return result;
 }
-
-// Order doesn't matter as long as all values are unique
-namespace CALLBACK_NAME
-{
-CallbackName const GetNeighborList(0);
-CallbackName const ProcessDEDrTerm(1);
-CallbackName const ProcessD2EDr2Term(2);
-
-extern std::vector<CallbackName> const requiredByAPI_Callbacks = {
-  GetNeighborList};
-
-void GetNumberOfCallbacks(int * const numberOfCallbacks)
-{
-  *numberOfCallbacks = 3;
-}
-
-int GetCallbackName(int const index, CallbackName * const callbackName)
-{
-  switch (index)
-  {
-    case 0:
-      *callbackName = CALLBACK_NAME::GetNeighborList;
-      break;
-    case 1:
-      *callbackName = CALLBACK_NAME::ProcessDEDrTerm;
-      break;
-    case 2:
-      *callbackName = CALLBACK_NAME::ProcessD2EDr2Term;
-      break;
-    default:
-      return true;  // invalid index
-      break;
-  }
-
-  return false;  // no error
-}
-
-}  // namespace CALLBACK_NAME
-
 }  // namespace KIM

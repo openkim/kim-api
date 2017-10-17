@@ -46,6 +46,7 @@ class Numbering
 
   Numbering();
   Numbering(int const id);
+  Numbering(std::string const & str);
   bool operator==(Numbering const & rhs) const;
   bool operator!=(Numbering const & rhs) const;
   std::string String() const;
@@ -55,18 +56,17 @@ namespace NUMBERING
 {
 extern Numbering const zeroBased;
 extern Numbering const oneBased;
-}  // namespace NUMBERING
-}  // namespace KIM
 
-namespace std
+void GetNumberOfNumberings(int * const numberOfNumberings);
+int GetNumbering(int const index, Numbering * const numbering);
+
+struct Comparator
 {
-template<>
-struct hash<KIM::Numbering const>
-{
-  size_t operator()(KIM::Numbering const & numbering) const
+  bool operator()(Numbering const & a, Numbering const & b) const
   {
-    return numbering.numberingID;
+    return a.numberingID < b.numberingID;
   }
 };
-}  // namespace std
+}  // namespace NUMBERING
+}  // namespace KIM
 #endif  // KIM_NUMBERING_HPP_

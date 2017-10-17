@@ -46,6 +46,7 @@ class TemperatureUnit
 
   TemperatureUnit();
   TemperatureUnit(int const id);
+  TemperatureUnit(std::string const & str);
   bool operator==(TemperatureUnit const & rhs) const;
   bool operator!=(TemperatureUnit const & rhs) const;
   std::string String() const;
@@ -55,20 +56,18 @@ namespace TEMPERATURE_UNIT
 {
 extern TemperatureUnit const unused;
 extern TemperatureUnit const K;
-}  // namespace TEMPERATURE_UNIT
 
-}  // namespace KIM
+void GetNumberOfTemperatureUnits(int * const numberOfTemperatureUnits);
+int GetTemperatureUnit(int const index,
+                       TemperatureUnit * const temperatureUnit);
 
-
-namespace std
+struct Comparator
 {
-template<>
-struct hash<KIM::TemperatureUnit const>
-{
-  size_t operator()(KIM::TemperatureUnit const & temperatureUnit) const
+  bool operator()(TemperatureUnit const & a, TemperatureUnit const & b) const
   {
-    return temperatureUnit.temperatureUnitID;
+    return a.temperatureUnitID < b.temperatureUnitID;
   }
 };
-}  // namespace std
+}  // namespace TEMPERATURE_UNIT
+}  // namespace KIM
 #endif  // KIM_TEMPERATURE_UNIT_HPP_

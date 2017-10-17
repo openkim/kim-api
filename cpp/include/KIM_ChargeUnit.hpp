@@ -46,6 +46,7 @@ class ChargeUnit
 
   ChargeUnit();
   ChargeUnit(int const id);
+  ChargeUnit(std::string const & str);
   bool operator==(ChargeUnit const & rhs) const;
   bool operator!=(ChargeUnit const & rhs) const;
   std::string String() const;
@@ -57,20 +58,17 @@ extern ChargeUnit const unused;
 extern ChargeUnit const C;
 extern ChargeUnit const e;
 extern ChargeUnit const statC;
-}  // namespace CHARGE_UNIT
 
-}  // namespace KIM
+void GetNumberOfChargeUnits(int * const numberOfChargeUnits);
+int GetChargeUnit(int const index, ChargeUnit * const chargeUnit);
 
-
-namespace std
+struct Comparator
 {
-template<>
-struct hash<KIM::ChargeUnit const>
-{
-  size_t operator()(KIM::ChargeUnit const & chargeUnit) const
+  bool operator()(ChargeUnit const & a, ChargeUnit const & b) const
   {
-    return chargeUnit.chargeUnitID;
+    return a.chargeUnitID < b.chargeUnitID;
   }
 };
-}  // namespace std
+}  // namespace CHARGE_UNIT
+}  // namespace KIM
 #endif  // KIM_CHARGE_UNIT_HPP_

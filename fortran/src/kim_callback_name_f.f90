@@ -68,6 +68,28 @@ end module kim_callback_name_f_module
 
 ! free functions to implement kim_callback_name_module
 
+logical function kim_callback_name_equal(left, right)
+  use, intrinsic :: iso_c_binding
+  use kim_callback_name_module, only : kim_callback_name_type
+  implicit none
+  type(kim_callback_name_type), intent(in) :: left
+  type(kim_callback_name_type), intent(in) :: right
+
+  kim_callback_name_equal &
+    = (left%callback_name_id .eq. right%callback_name_id)
+end function kim_callback_name_equal
+
+logical function kim_callback_name_not_equal(left, right)
+  use, intrinsic :: iso_c_binding
+  use kim_callback_name_module, only : kim_callback_name_type
+  use kim_callback_name_module, only : operator(.eq.)
+  implicit none
+  type(kim_callback_name_type), intent(in) :: left
+  type(kim_callback_name_type), intent(in) :: right
+
+  kim_callback_name_not_equal = .not. (left .eq. right)
+end function kim_callback_name_not_equal
+
 subroutine kim_callback_name_string(callback_name, name_string)
   use, intrinsic :: iso_c_binding
   use kim_callback_name_module, only : kim_callback_name_type

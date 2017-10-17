@@ -118,7 +118,7 @@ int ModelLibrary::close()
 
 int ModelLibrary::getModelType(ITEM_TYPE * const modelType) const
 {
-  *modelType = ITEM_TYPE::SIMULATOR_MODEL;  // dummy value
+  *modelType = SIMULATOR_MODEL;  // dummy value
   if (libraryHandle_ == 0) return true;  // not open
 
   char const * const KIM_ItemType
@@ -130,13 +130,13 @@ int ModelLibrary::getModelType(ITEM_TYPE * const modelType) const
   }
 
   if (std::string(KIM_ItemType) == "stand-alone-model")
-    *modelType = ITEM_TYPE::STAND_ALONE_MODEL;
+    *modelType = STAND_ALONE_MODEL;
   else if (std::string(KIM_ItemType) == "parameterized-model")
-    *modelType = ITEM_TYPE::PARAMETERIZED_MODEL;
+    *modelType = PARAMETERIZED_MODEL;
   else if (std::string(KIM_ItemType) == "simulator-model")
-    *modelType = ITEM_TYPE::SIMULATOR_MODEL;
+    *modelType = SIMULATOR_MODEL;
   else if (std::string(KIM_ItemType) == "model-driver")
-    *modelType = ITEM_TYPE::MODEL_DRIVER;
+    *modelType = MODEL_DRIVER;
   else
   {
     std::cout << "unknown kim_item_type" << std::endl;
@@ -186,7 +186,7 @@ int ModelLibrary::getNumberOfParameterFiles(int * const numberOfParameterFiles)
   *numberOfParameterFiles = 0;  // default value
   ITEM_TYPE itemType;
   getModelType(&itemType);
-  if (itemType != ITEM_TYPE::PARAMETERIZED_MODEL) return true;
+  if (itemType != PARAMETERIZED_MODEL) return true;
 
   int const * const numParamFiles = static_cast<int const * const>(
       dlsym(libraryHandle_, "number_of_parameter_files"));
@@ -207,7 +207,7 @@ int ModelLibrary::getParameterFileString(
 {
   ITEM_TYPE itemType;
   getModelType(&itemType);
-  if (itemType != ITEM_TYPE::PARAMETERIZED_MODEL) return true;
+  if (itemType != PARAMETERIZED_MODEL) return true;
 
   int numberOfParameterFiles;
   getNumberOfParameterFiles(&numberOfParameterFiles);
@@ -246,7 +246,7 @@ int ModelLibrary::getModelDriverName(std::string * const modelDriverName) const
   if (libraryHandle_ == 0) return true;  // not open
   ITEM_TYPE itemType;
   getModelType(&itemType);
-  if (itemType != ITEM_TYPE::PARAMETERIZED_MODEL) return true;
+  if (itemType != PARAMETERIZED_MODEL) return true;
 
   std::string modelDriverNameSymbol(modelName_ + "_driver_name");
   char const * const modelDriverNameString

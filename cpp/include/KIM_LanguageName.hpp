@@ -56,19 +56,17 @@ namespace LANGUAGE_NAME
 extern LanguageName const cpp;
 extern LanguageName const c;
 extern LanguageName const fortran;
-}  // namespace LANGUAGE_NAME
 
-}  // namespace KIM
+void GetNumberOfLanguageNames(int * const numberOfLanguageNames);
+int GetLanguageName(int const index, LanguageName * const languageName);
 
-namespace std
+struct Comparator
 {
-template<>
-struct hash<KIM::LanguageName const>
-{
-  size_t operator()(KIM::LanguageName const & languageName) const
+  bool operator()(LanguageName const & a, LanguageName const & b) const
   {
-    return languageName.languageNameID;
+    return a.languageNameID < b.languageNameID;
   }
 };
-}  // namespace std
+}  // namespace LANGUAGE_NAME
+}  // namespace KIM
 #endif  // KIM_LANGUAGE_NAME_HPP_

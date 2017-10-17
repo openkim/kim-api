@@ -39,9 +39,9 @@ module kim_numbering_module
 
   public &
     kim_numbering_type, &
-    kim_numbering_string, &
     operator (.eq.), &
     operator (.ne.), &
+    kim_numbering_string, &
 
     kim_numbering_zero_based, &
     kim_numbering_one_based
@@ -58,11 +58,23 @@ module kim_numbering_module
     kim_numbering_type(one_based_id)
 
   interface operator (.eq.)
-    module procedure kim_numbering_equal
+    logical function kim_numbering_equal(left, right)
+      use, intrinsic :: iso_c_binding
+      import kim_numbering_type
+      implicit none
+      type(kim_numbering_type), intent(in) :: left
+      type(kim_numbering_type), intent(in) :: right
+    end function kim_numbering_equal
   end interface operator (.eq.)
 
   interface operator (.ne.)
-    module procedure kim_numbering_not_equal
+    logical function kim_numbering_not_equal(left, right)
+      use, intrinsic :: iso_c_binding
+      import kim_numbering_type
+      implicit none
+      type(kim_numbering_type), intent(in) :: left
+      type(kim_numbering_type), intent(in) :: right
+    end function kim_numbering_not_equal
   end interface operator (.ne.)
 
   interface
@@ -73,24 +85,4 @@ module kim_numbering_module
       character(len=*), intent(out) :: name_string
     end subroutine kim_numbering_string
   end interface
-
-contains
-  logical function kim_numbering_equal(left, right)
-    use, intrinsic :: iso_c_binding
-    implicit none
-    type(kim_numbering_type), intent(in) :: left
-    type(kim_numbering_type), intent(in) :: right
-
-    kim_numbering_equal &
-      = (left%numbering_id .eq. right%numbering_id)
-  end function kim_numbering_equal
-
-  logical function kim_numbering_not_equal(left, right)
-    use, intrinsic :: iso_c_binding
-    implicit none
-    type(kim_numbering_type), intent(in) :: left
-    type(kim_numbering_type), intent(in) :: right
-
-    kim_numbering_not_equal = .not. (left .eq. right)
-  end function kim_numbering_not_equal
 end module kim_numbering_module

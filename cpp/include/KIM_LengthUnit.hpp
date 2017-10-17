@@ -46,6 +46,7 @@ class LengthUnit
 
   LengthUnit();
   LengthUnit(int const id);
+  LengthUnit(std::string const & str);
   bool operator==(LengthUnit const & rhs) const;
   bool operator!=(LengthUnit const & rhs) const;
   std::string String() const;
@@ -59,20 +60,17 @@ extern LengthUnit const Bohr;
 extern LengthUnit const cm;
 extern LengthUnit const m;
 extern LengthUnit const nm;
-}  // namespace LENGTH_UNIT
 
-}  // namespace KIM
+void GetNumberOfLengthUnits(int * const numberOfLengthUnits);
+int GetLengthUnit(int const index, LengthUnit * const lengthUnit);
 
-
-namespace std
+struct Comparator
 {
-template<>
-struct hash<KIM::LengthUnit const>
-{
-  size_t operator()(KIM::LengthUnit const & lengthUnit) const
+  bool operator()(LengthUnit const & a, LengthUnit const & b) const
   {
-    return lengthUnit.lengthUnitID;
+    return a.lengthUnitID < b.lengthUnitID;
   }
 };
-}  // namespace std
+}  // namespace LENGTH_UNIT
+}  // namespace KIM
 #endif  // KIM_LENGTH_UNIT_HPP_

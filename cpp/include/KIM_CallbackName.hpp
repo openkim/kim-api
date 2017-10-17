@@ -46,6 +46,7 @@ class CallbackName
 
   CallbackName();
   CallbackName(int const id);
+  CallbackName(std::string const & str);
   bool operator==(CallbackName const & rhs) const;
   bool operator!=(CallbackName const & rhs) const;
   std::string String() const;
@@ -60,19 +61,13 @@ extern CallbackName const ProcessD2EDr2Term;
 void GetNumberOfCallbacks(int * const numberOfCallbacks);
 int GetCallbackName(int const index, CallbackName * const callbackName);
 
-}  // namespace CALLBACK_NAME
-
-}  // namespace KIM
-
-namespace std
+struct Comparator
 {
-template<>
-struct hash<KIM::CallbackName const>
-{
-  size_t operator()(KIM::CallbackName const & callbackName) const
+  bool operator()(CallbackName const & a, CallbackName const & b) const
   {
-    return callbackName.callbackNameID;
+    return a.callbackNameID < b.callbackNameID;
   }
 };
-}  // namespace std
+}  // namespace CALLBACK_NAME
+}  // namespace KIM
 #endif  // KIM_CALLBACK_NAME_HPP_

@@ -65,11 +65,23 @@ module kim_time_unit_module
     kim_time_unit_type(time_unit_s_id)
 
   interface operator (.eq.)
-    module procedure kim_time_unit_equal
+    logical function kim_time_unit_equal(left, right)
+      use, intrinsic :: iso_c_binding
+      import kim_time_unit_type
+      implicit none
+      type(kim_time_unit_type), intent(in) :: left
+      type(kim_time_unit_type), intent(in) :: right
+    end function kim_time_unit_equal
   end interface operator (.eq.)
 
   interface operator (.ne.)
-    module procedure kim_time_unit_not_equal
+    logical function kim_time_unit_not_equal(left, right)
+      use, intrinsic :: iso_c_binding
+      import kim_time_unit_type
+      implicit none
+      type(kim_time_unit_type), intent(in) :: left
+      type(kim_time_unit_type), intent(in) :: right
+    end function kim_time_unit_not_equal
   end interface operator (.ne.)
 
   interface
@@ -80,24 +92,4 @@ module kim_time_unit_module
       character(len=*), intent(out) :: unit_string
     end subroutine kim_time_unit_string
   end interface
-
-contains
-  logical function kim_time_unit_equal(left, right)
-    use, intrinsic :: iso_c_binding
-    implicit none
-    type(kim_time_unit_type), intent(in) :: left
-    type(kim_time_unit_type), intent(in) :: right
-
-    kim_time_unit_equal &
-      = (left%time_unit_id .eq. right%time_unit_id)
-  end function kim_time_unit_equal
-
-  logical function kim_time_unit_not_equal(left, right)
-    use, intrinsic :: iso_c_binding
-    implicit none
-    type(kim_time_unit_type), intent(in) :: left
-    type(kim_time_unit_type), intent(in) :: right
-
-    kim_time_unit_not_equal = .not. (left .eq. right)
-  end function kim_time_unit_not_equal
 end module kim_time_unit_module

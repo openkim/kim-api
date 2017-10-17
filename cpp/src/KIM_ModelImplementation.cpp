@@ -293,7 +293,8 @@ int ModelImplementation::GetSpeciesSupportAndCode(
     int * const speciesIsSupported,
     int * const code) const
 {
-  auto result = supportedSpecies_.find(speciesName);
+  std::map<SpeciesName const, int, CALLBACK_NAME::Comparator>::const_iterator
+      result = supportedSpecies_.find(speciesName);
 
   if (result == supportedSpecies_.end())
   {
@@ -318,7 +319,8 @@ int ModelImplementation::SetArgumentSupportStatus(
 
   if (supportStatus != SUPPORT_STATUS::notSupported)
   {
-    auto result = argumentPointer_.find(argumentName);
+    std::map<ArgumentName const, void *, ARGUMENT_NAME::Comparator>::
+        const_iterator result = argumentPointer_.find(argumentName);
 
     if (result == argumentPointer_.end())
     {
@@ -333,7 +335,8 @@ int ModelImplementation::GetArgumentSupportStatus(
     ArgumentName const argumentName, SupportStatus * const supportStatus)
     const
 {
-  auto result = argumentSupportStatus_.find(argumentName);
+  std::map<ArgumentName const, SupportStatus, ARGUMENT_NAME::Comparator>::
+      const_iterator result = argumentSupportStatus_.find(argumentName);
 
   if (result == argumentSupportStatus_.end())
   {
@@ -359,7 +362,8 @@ int ModelImplementation::SetCallbackSupportStatus(
 int ModelImplementation::GetCallbackSupportStatus(
     CallbackName const callbackName, SupportStatus * const supportStatus) const
 {
-  auto result = callbackSupportStatus_.find(callbackName);
+  std::map<CallbackName const, SupportStatus, CALLBACK_NAME::Comparator>::
+      const_iterator result = callbackSupportStatus_.find(callbackName);
 
   if (result == callbackSupportStatus_.end())
   {
@@ -420,7 +424,7 @@ void ModelImplementation::GetUnits(LengthUnit * const lengthUnit,
 int ModelImplementation::GetNumberOfParameterFiles(
     int * const numberOfParameterFiles) const
 {
-  if (modelType_ != ModelLibrary::ITEM_TYPE::PARAMETERIZED_MODEL)
+  if (modelType_ != ModelLibrary::PARAMETERIZED_MODEL)
   {
     LOG_ERROR("");
     return true;
@@ -433,7 +437,7 @@ int ModelImplementation::GetNumberOfParameterFiles(
 int ModelImplementation::GetParameterFileName(
     int const index, std::string * const parameterFileName) const
 {
-  if (modelType_ != ModelLibrary::ITEM_TYPE::PARAMETERIZED_MODEL)
+  if (modelType_ != ModelLibrary::PARAMETERIZED_MODEL)
   {
     LOG_ERROR("");
     return true;
@@ -576,7 +580,8 @@ int ModelImplementation::SetArgumentPointer(ArgumentName const argumentName,
 int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
                                             int const ** const ptr) const
 {
-  auto result = argumentPointer_.find(argumentName);
+  std::map<ArgumentName const, void *, ARGUMENT_NAME::Comparator>::
+      const_iterator result = argumentPointer_.find(argumentName);
 
   if (result == argumentPointer_.end())
   {
@@ -594,7 +599,8 @@ int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
 int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
                                             int ** const ptr) const
 {
-  auto result = argumentPointer_.find(argumentName);
+  std::map<ArgumentName const, void *, ARGUMENT_NAME::Comparator>::
+      const_iterator result = argumentPointer_.find(argumentName);
 
   if (result == argumentPointer_.end())
   {
@@ -612,7 +618,8 @@ int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
 int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
                                             double const ** const ptr) const
 {
-  auto result = argumentPointer_.find(argumentName);
+  std::map<ArgumentName const, void *, ARGUMENT_NAME::Comparator>::
+      const_iterator result = argumentPointer_.find(argumentName);
 
   if (result == argumentPointer_.end())
   {
@@ -630,7 +637,8 @@ int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
 int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
                                             double ** const ptr) const
 {
-  auto result = argumentPointer_.find(argumentName);
+  std::map<ArgumentName const, void *, ARGUMENT_NAME::Comparator>::
+      const_iterator result = argumentPointer_.find(argumentName);
 
   if (result == argumentPointer_.end())
   {
@@ -652,7 +660,8 @@ int ModelImplementation::SetCallbackPointer(CallbackName const callbackName,
                                             func * const fptr,
                                             void const * const dataObject)
 {
-  auto result = callbackSupportStatus_.find(callbackName);
+  std::map<CallbackName const, SupportStatus, CALLBACK_NAME::Comparator>::
+      const_iterator result = callbackSupportStatus_.find(callbackName);
 
   if ((result == callbackSupportStatus_.end())
       ||
@@ -673,7 +682,8 @@ int ModelImplementation::SetCallbackPointer(CallbackName const callbackName,
 int ModelImplementation::IsCallbackPresent(
     CallbackName const callbackName, int * const present) const
 {
-  auto result = callbackFunctionPointer_.find(callbackName);
+  std::map<CallbackName const, func *, CALLBACK_NAME::Comparator>::
+      const_iterator result = callbackFunctionPointer_.find(callbackName);
 
   if ((result == callbackFunctionPointer_.end())
       ||
@@ -795,7 +805,9 @@ int ModelImplementation::GetNeighborList(int const neighborListIndex,
                                          int const ** const neighborsOfParticle)
     const
 {
-  auto languageResult = callbackLanguage_.find(CALLBACK_NAME::GetNeighborList);
+  std::map<CallbackName const, LanguageName, CALLBACK_NAME::Comparator>::
+      const_iterator languageResult
+      = callbackLanguage_.find(CALLBACK_NAME::GetNeighborList);
   if (languageResult == callbackLanguage_.end())
   {
     LOG_ERROR("");
@@ -887,7 +899,9 @@ int ModelImplementation::ProcessDEDrTerm(double const de, double const r,
                                          double const * const dx,
                                          int const i, int const j) const
 {
-  auto languageResult = callbackLanguage_.find(CALLBACK_NAME::ProcessDEDrTerm);
+  std::map<CallbackName const, LanguageName, CALLBACK_NAME::Comparator>::
+      const_iterator languageResult
+      = callbackLanguage_.find(CALLBACK_NAME::ProcessDEDrTerm);
   if (languageResult == callbackLanguage_.end())
   {
     LOG_ERROR("");
@@ -955,8 +969,9 @@ int ModelImplementation::ProcessD2EDr2Term(double const de,
                                            int const * const i,
                                            int const * const j) const
 {
-  auto languageResult = callbackLanguage_
-      .find(CALLBACK_NAME::ProcessD2EDr2Term);
+  std::map<CallbackName const, LanguageName, CALLBACK_NAME::Comparator>::
+      const_iterator languageResult
+      = callbackLanguage_.find(CALLBACK_NAME::ProcessD2EDr2Term);
   if (languageResult == callbackLanguage_.end())
   {
     LOG_ERROR("");
@@ -1048,6 +1063,73 @@ void ModelImplementation::GetSimulatorBufferPointer(void ** const ptr) const
   *ptr = simulatorBuffer_;
 }
 
+namespace
+{
+typedef std::map<LengthUnit const, double, LENGTH_UNIT::Comparator>
+LengthMap;
+
+LengthMap const GetLengthMap()
+{
+  LengthMap mm;
+  mm[LENGTH_UNIT::A] = 1.0e-10;
+  mm[LENGTH_UNIT::Bohr] = 5.291772109217171e-11;
+  mm[LENGTH_UNIT::cm] = 1.0e-2;
+  mm[LENGTH_UNIT::m] = 1.0;
+  mm[LENGTH_UNIT::nm] = 1.0e-9;
+  return mm;
+}
+
+typedef std::map<EnergyUnit const, double, ENERGY_UNIT::Comparator>
+EnergyMap;
+
+EnergyMap const GetEnergyMap()
+{
+  EnergyMap m;
+  m[ENERGY_UNIT::amu_A2_per_ps2] = 1.66053886e-23;
+  m[ENERGY_UNIT::erg] = 1.0e7;
+  m[ENERGY_UNIT::eV] = 1.60217646e-19;
+  m[ENERGY_UNIT::Hartree] = 4.3597439422e-18;
+  m[ENERGY_UNIT::J] = 1.0;
+  m[ENERGY_UNIT::kcal_mol] = 6.9477e-21;
+  return m;
+}
+
+typedef std::map<ChargeUnit const, double, CHARGE_UNIT::Comparator>
+ChargeMap;
+
+ChargeMap const GetChargeMap()
+{
+  ChargeMap m;
+  m[CHARGE_UNIT::C] = 1.0;
+  m[CHARGE_UNIT::e] = 1.602e-19;
+  m[CHARGE_UNIT::statC] = 2.99792458e-9;
+  return m;
+}
+
+typedef std::map<TemperatureUnit const, double, TEMPERATURE_UNIT::Comparator>
+TemperatureMap;
+
+TemperatureMap const GetTemperatureMap()
+{
+  TemperatureMap m;
+  m[TEMPERATURE_UNIT::K] = 1.0;
+  return m;
+}
+
+typedef std::map<TimeUnit const, double, TIME_UNIT::Comparator>
+TimeMap;
+
+TimeMap const GetTimeMap()
+{
+  TimeMap m;
+  m[TIME_UNIT::fs] = 1.0e-15;
+  m[TIME_UNIT::ps] = 1.0e-12;
+  m[TIME_UNIT::ns] = 1.0e-9;
+  m[TIME_UNIT::s] = 1.0;
+  return m;
+}
+}  // namespace
+
 
 int ModelImplementation::ConvertUnit(
     LengthUnit const fromLengthUnit,
@@ -1067,65 +1149,11 @@ int ModelImplementation::ConvertUnit(
     double const timeExponent,
     double * const conversionFactor) const
 {
-  static std::unordered_map<LengthUnit const, double>
-      lengthConvertToSI =
-      {
-        std::pair<LengthUnit const, double>(LENGTH_UNIT::A,
-                                            1.0e-10),
-        std::pair<LengthUnit const, double>(LENGTH_UNIT::Bohr,
-                                            5.291772109217171e-11),
-        std::pair<LengthUnit const, double>(LENGTH_UNIT::cm,
-                                            1.0e-2),
-        std::pair<LengthUnit const, double>(LENGTH_UNIT::m,
-                                            1.0),
-        std::pair<LengthUnit const, double>(LENGTH_UNIT::nm,
-                                            1.0e-9)
-      };
-
-  static std::unordered_map<EnergyUnit const, double>
-      energyConvertToSI =
-      {
-        std::pair<EnergyUnit const, double>(ENERGY_UNIT::amu_A2_per_ps2,
-                                            1.66053886e-23),
-        std::pair<EnergyUnit const, double>(ENERGY_UNIT::erg,
-                                            1.0e7),
-        std::pair<EnergyUnit const, double>(ENERGY_UNIT::eV,
-                                            1.60217646e-19),
-        std::pair<EnergyUnit const, double>(ENERGY_UNIT::Hartree,
-                                            4.3597439422e-18),
-        std::pair<EnergyUnit const, double>(ENERGY_UNIT::J,
-                                            1.0),
-        std::pair<EnergyUnit const, double>(ENERGY_UNIT::kcal_mol,
-                                            6.9477e-21)
-      };
-
-  static std::unordered_map<ChargeUnit const, double>
-      chargeConvertToSI =
-      {
-        std::pair<ChargeUnit const, double>(CHARGE_UNIT::C,
-                                            1.0),
-        std::pair<ChargeUnit const, double>(CHARGE_UNIT::e,
-                                            1.602e-19),
-        std::pair<ChargeUnit const, double>(CHARGE_UNIT::statC,
-                                            2.99792458e-9)
-      };
-
-  static std::unordered_map<TemperatureUnit const, double>
-      temperatureConvertToSI =
-      {
-        std::pair<TemperatureUnit const, double>(TEMPERATURE_UNIT::K,
-                                                 1.0)
-      };
-
-  static std::unordered_map<TimeUnit const, double>
-      timeConvertToSI =
-      {
-        std::pair<TimeUnit const, double>(TIME_UNIT::fs, 1.0e-15),
-        std::pair<TimeUnit const, double>(TIME_UNIT::ps, 1.0e-12),
-        std::pair<TimeUnit const, double>(TIME_UNIT::ns, 1.0e-9),
-        std::pair<TimeUnit const, double>(TIME_UNIT::s, 1.0)
-      };
-
+  static LengthMap lengthConvertToSI = GetLengthMap();
+  static EnergyMap energyConvertToSI = GetEnergyMap();
+  static ChargeMap chargeConvertToSI = GetChargeMap();
+  static TemperatureMap temperatureConvertToSI = GetTemperatureMap();
+  static TimeMap timeConvertToSI = GetTimeMap();
 
   double const lengthConversion
       = lengthConvertToSI[toLengthUnit]/lengthConvertToSI[fromLengthUnit];
@@ -1181,7 +1209,7 @@ std::string ModelImplementation::String() const
       "===========\n\n";
 
   ss << "Model Name : " << modelName_ << "\n";
-  if (modelType_ == ModelLibrary::ITEM_TYPE::PARAMETERIZED_MODEL)
+  if (modelType_ == ModelLibrary::PARAMETERIZED_MODEL)
   {
     ss << "Model Driver Name : " << modelDriverName_ << "\n";
   }
@@ -1199,17 +1227,17 @@ std::string ModelImplementation::String() const
      << "\t"
      << std::setw(25) << "Refresh"
      << std::setw(10) << refreshLanguage_.String()
-     << std::setw(15) << (void *) refreshFunction_
+     << std::setw(15) << refreshFunction_
      << "\n"
      << "\t"
      << std::setw(25) << "Destroy"
      << std::setw(10) << destroyLanguage_.String()
-     << std::setw(15) << (void *) destroyFunction_
+     << std::setw(15) << destroyFunction_
      << "\n"
      << "\t"
      << std::setw(25) << "Compute"
      << std::setw(10) << computeLanguage_.String()
-     << std::setw(15) << (void *) computeFunction_
+     << std::setw(15) << computeFunction_
      << "\n\n";
 
   ss << "Numbering : " << modelNumbering_.String() << "\n\n";
@@ -1237,7 +1265,8 @@ std::string ModelImplementation::String() const
      << "Code" << "\n";
   ss << "\t" << std::setw(specWidth) << "----------" << std::setw(specWidth)
      << "----------" << "\n\n";
-  for (auto spec = supportedSpecies_.begin();
+  for (std::map<SpeciesName const, int, SPECIES_NAME::Comparator>::
+           const_iterator spec = supportedSpecies_.begin();
        spec != supportedSpecies_.end();
        ++spec)
   {
@@ -1256,7 +1285,8 @@ std::string ModelImplementation::String() const
      << std::setw(argW) << "-------------------------"
      << std::setw(argW) << "-------------------------"
      << "\n\n";
-  for (auto argName = argumentSupportStatus_.begin();
+  for (std::map<ArgumentName const, SupportStatus, ARGUMENT_NAME::Comparator>::
+           const_iterator argName = argumentSupportStatus_.begin();
        argName != argumentSupportStatus_.end();
        ++argName)
   {
@@ -1265,7 +1295,8 @@ std::string ModelImplementation::String() const
 
     if ((argName->second) != SUPPORT_STATUS::notSupported)
     {
-      auto ptr = argumentPointer_.find(argName->first);
+      std::map<ArgumentName const, void *, ARGUMENT_NAME::Comparator>::
+          const_iterator ptr = argumentPointer_.find(argName->first);
       if (ptr != argumentPointer_.end())
       {
         ss << std::setw(argW) << (void *) ptr->second;
@@ -1298,7 +1329,8 @@ std::string ModelImplementation::String() const
      << std::setw(cbW) << "-------------------------"
      << std::setw(cbW) << "-------------------------"
      << "\n\n";
-  for (auto cbName = callbackSupportStatus_.begin();
+  for (std::map<CallbackName const, SupportStatus, CALLBACK_NAME::Comparator>::
+           const_iterator cbName = callbackSupportStatus_.begin();
        cbName != callbackSupportStatus_.end();
        ++cbName)
   {
@@ -1307,14 +1339,18 @@ std::string ModelImplementation::String() const
 
     if ((cbName->second) != SUPPORT_STATUS::notSupported)
     {
-      auto ptr = callbackLanguage_.find(cbName->first);
+      std::map<CallbackName const, LanguageName, CALLBACK_NAME::Comparator>::
+          const_iterator ptr = callbackLanguage_.find(cbName->first);
       if (ptr != callbackLanguage_.end())
       {
         ss << std::setw(cbW) << (ptr->second).String();
-        auto ptr2 = callbackFunctionPointer_.find(cbName->first);
-        ss << std::setw(cbW) << (void *) ptr2->second;
-        auto ptr3 = callbackDataObjectPointer_.find(cbName->first);
-        ss << std::setw(cbW) << (void *) ptr3->second;
+        std::map<CallbackName const, func *, CALLBACK_NAME::Comparator>::
+            const_iterator ptr2 = callbackFunctionPointer_.find(cbName->first);
+        ss << std::setw(cbW) << ptr2->second;
+        std::map<CallbackName const, void const *, CALLBACK_NAME::Comparator>::
+            const_iterator ptr3
+            = callbackDataObjectPointer_.find(cbName->first);
+        ss << std::setw(cbW) << ptr3->second;
       }
       else
       {
@@ -1384,7 +1420,7 @@ ModelImplementation::ModelImplementation(ModelLibrary * const modelLibrary) :
     argumentSupportStatus_[argumentName] = SUPPORT_STATUS::notSupported;
   }
   // populate requiredByAPI Arguments
-  for (auto requiredByAPI_Argument
+  for (std::vector<ArgumentName>::const_iterator requiredByAPI_Argument
            = ARGUMENT_NAME::requiredByAPI_Arguments.begin();
        requiredByAPI_Argument != ARGUMENT_NAME::requiredByAPI_Arguments.end();
        ++requiredByAPI_Argument)
@@ -1403,7 +1439,7 @@ ModelImplementation::ModelImplementation(ModelLibrary * const modelLibrary) :
     callbackSupportStatus_[callbackName] = SUPPORT_STATUS::notSupported;
   }
   // populate Callbacks
-  for (auto requiredByAPI_Callback
+  for (std::vector<CallbackName>::const_iterator requiredByAPI_Callback
            = CALLBACK_NAME::requiredByAPI_Callbacks.begin();
        requiredByAPI_Callback != CALLBACK_NAME::requiredByAPI_Callbacks.end();
        ++requiredByAPI_Callback)
@@ -1446,7 +1482,7 @@ int ModelImplementation::ModelCreate(
   error = modelLibrary_->getModelType(&modelType_);
   switch (modelType_)
   {
-    case ModelLibrary::ITEM_TYPE::STAND_ALONE_MODEL:
+    case ModelLibrary::STAND_ALONE_MODEL:
       error = InitializeStandAloneModel(requestedLengthUnit,
                                         requestedEnergyUnit,
                                         requestedChargeUnit,
@@ -1458,7 +1494,7 @@ int ModelImplementation::ModelCreate(
         return true;
       }
       break;
-    case ModelLibrary::ITEM_TYPE::PARAMETERIZED_MODEL:
+    case ModelLibrary::PARAMETERIZED_MODEL:
       error = InitializeParameterizedModel(requestedLengthUnit,
                                            requestedEnergyUnit,
                                            requestedChargeUnit,
@@ -1470,11 +1506,11 @@ int ModelImplementation::ModelCreate(
         return true;
       }
       break;
-    case ModelLibrary::ITEM_TYPE::MODEL_DRIVER:
+    case ModelLibrary::MODEL_DRIVER:
       LOG_ERROR("");
       return true;
       break;
-    case ModelLibrary::ITEM_TYPE::SIMULATOR_MODEL:
+    case ModelLibrary::SIMULATOR_MODEL:
       LOG_ERROR("");
       return true;
       break;
@@ -1683,7 +1719,7 @@ int ModelImplementation::InitializeParameterizedModel(
   // check that it is a driver
   ModelLibrary::ITEM_TYPE itemType;
   error = modelLibrary_->getModelType(&itemType);
-  if ((error) || (itemType != ModelLibrary::ITEM_TYPE::MODEL_DRIVER))
+  if ((error) || (itemType != ModelLibrary::MODEL_DRIVER))
   {
     LOG_ERROR("");
     return true;

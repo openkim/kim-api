@@ -42,7 +42,10 @@ module kim_log_verbosity_id_module
     error_id, &
     warning_id, &
     information_id, &
-    debug_id
+    debug_id, &
+
+    kim_log_file, &
+    kim_log_message
 
   integer(c_int), parameter :: silent_id = 0
   integer(c_int), parameter :: fatal_id = 1
@@ -50,4 +53,7 @@ module kim_log_verbosity_id_module
   integer(c_int), parameter :: warning_id = 3
   integer(c_int), parameter :: information_id = 4
   integer(c_int), parameter :: debug_id = 5
+
+  character(len=4096) :: kim_log_file
+  character(len=65536) :: kim_log_message
 end module kim_log_verbosity_id_module

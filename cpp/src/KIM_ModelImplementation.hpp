@@ -35,7 +35,7 @@
 #define KIM_MODEL_IMPLEMENTATION_HPP_
 
 #include <string>
-#include <unordered_map>
+#include <map>
 #include <vector>
 
 #ifndef KIM_FUNC_HPP_
@@ -321,17 +321,22 @@ class ModelImplementation
   func * computeFunction_;
 
 
-  std::unordered_map<SpeciesName const, int> supportedSpecies_;
+  std::map<SpeciesName const, int, SPECIES_NAME::Comparator> supportedSpecies_;
 
 
-  std::unordered_map<ArgumentName const, SupportStatus> argumentSupportStatus_;
-  std::unordered_map<ArgumentName const, void *> argumentPointer_;
+  std::map<ArgumentName const, SupportStatus, ARGUMENT_NAME::Comparator>
+  argumentSupportStatus_;
+  std::map<ArgumentName const, void *, ARGUMENT_NAME::Comparator>
+  argumentPointer_;
 
 
-  std::unordered_map<CallbackName const, SupportStatus> callbackSupportStatus_;
-  std::unordered_map<CallbackName const, LanguageName> callbackLanguage_;
-  std::unordered_map<CallbackName const, func *> callbackFunctionPointer_;
-  std::unordered_map<CallbackName const, void const *>
+  std::map<CallbackName const, SupportStatus, CALLBACK_NAME::Comparator>
+  callbackSupportStatus_;
+  std::map<CallbackName const, LanguageName, CALLBACK_NAME::Comparator>
+  callbackLanguage_;
+  std::map<CallbackName const, func *, CALLBACK_NAME::Comparator>
+  callbackFunctionPointer_;
+  std::map<CallbackName const, void const *, CALLBACK_NAME::Comparator>
   callbackDataObjectPointer_;
 
   mutable std::vector<std::vector<int> > getNeighborListStorage_;
