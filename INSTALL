@@ -426,7 +426,16 @@ if necessary.
 
       $ make KIM_BUILD_VERBOSITY=full
 
-(h) Override default compiler options and other variables, if necessary, by
+(h) Set the value of KIM_LOG_MAXIMUM_LEVEL, if a value other than the default
+    (`KIM_LOG_VERBOSITY_ERROR_') is desired.
+    Possible values are `KIM_LOG_VERBOSITY_SILENT_',
+    `KIM_LOG_VERBOSITY_FATAL_', `KIM_LOG_VERBOSITY_ERROR_',
+    `KIM_LOG_VERBOSITY_WARNING_', `KIM_LOG_VERBOSITY_INFORMATION_',
+    `KIM_LOG_VERBOSITY_DEBUG_'.
+
+    KIM_LOG_MAXIMUM_LEVEL = KIM_LOG_VERBOSITY_DEBUG_
+
+(i) Override default compiler options and other variables, if necessary, by
     adding the desired variable name (after the "# override default compiler
     options and other variables here" line) and filling in appropriate
     values.
@@ -496,7 +505,7 @@ if necessary.
     * NOTE: For Cygwin systems add the following line `PICFLAG =' to avoid
             warnings about the -fPIC option.
 
-(i) Override default name options, if necessary, by adding the desired variable
+(j) Override default name options, if necessary, by adding the desired variable
     name (after the "# override default name options" line) and filling in
     appropriate values.
 
@@ -511,7 +520,7 @@ if necessary.
     * NOTE: The KIM API library will look for the user-collection configuration
             file in the directory '${HOME}/${user_config_file_dir_name}'
 
-(j) Override default install options, if necessary, by adding the desired
+(k) Override default install options, if necessary, by adding the desired
     variable name (after the "# override default install options" line) and
     filling in appropriate values.
 

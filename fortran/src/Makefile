@@ -76,7 +76,7 @@ OBJF = kim_argument_name_f.o \
 all: objects lib
 
 # add local Makefile to KIM_MAKE_FILES
-KIM_MAKE_FILES += $(KIM_DIR)/fortran/include/Makefile $(KIM_DIR)/fortran/src/Makefile
+KIM_MAKE_FILES += $(KIM_DIR)/fortran/include/Makefile.dependencies $(KIM_DIR)/fortran/src/Makefile
 
 all: objects lib
 
@@ -88,7 +88,7 @@ lib-fortran-$(KIM_LIB_BUILD).a: $(OBJF)
 	$(QUELL)ar rcs $@ $(OBJF)
 
 # Include file dependency lists
-include ../include/Makefile
+include ../include/Makefile.dependencies
 
 # Source file dependencies
 kim_argument_name_f.o: kim_argument_name_f.f90 kim_argument_name_module.mod kim_data_type_module.mod

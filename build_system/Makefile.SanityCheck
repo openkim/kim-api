@@ -77,6 +77,16 @@ else
    $(error Make variable KIM_BUILD_VERBOSITY must be 'quiet' or 'full'.  Current value is: '$(KIM_BUILD_VERBOSITY)')
 endif
 
+ifeq      ($(KIM_LOG_MAXIMUM_LEVEL),KIM_LOG_VERBOSITY_SILENT_)
+else ifeq ($(KIM_LOG_MAXIMUM_LEVEL),KIM_LOG_VERBOSITY_FATAL_)
+else ifeq ($(KIM_LOG_MAXIMUM_LEVEL),KIM_LOG_VERBOSITY_ERROR_)
+else ifeq ($(KIM_LOG_MAXIMUM_LEVEL),KIM_LOG_VERBOSITY_WARNING_)
+else ifeq ($(KIM_LOG_MAXIMUM_LEVEL),KIM_LOG_VERBOSITY_INFORMATION_)
+else ifeq ($(KIM_LOG_MAXIMUM_LEVEL),KIM_LOG_VERBOSITY_DEBUG_)
+else
+   $(error Make variable KIM_LOG_MAXIMUM_LEVEL has invalid value '$(KIM_LOG_MAXIMUM_LEVEL)')
+endif
+
 ifndef KIM_DIR
    $(error Make variable KIM_DIR must be defined)
 endif

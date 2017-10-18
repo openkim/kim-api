@@ -69,7 +69,9 @@ OBJC = KIM_ArgumentName_c.o \
 all: objects lib
 
 # add local Makefile to KIM_MAKE_FILES
-KIM_MAKE_FILES += $(KIM_DIR)/c/include/Makefile $(KIM_DIR)/c/src/Makefile
+KIM_MAKE_FILES += $(KIM_DIR)/c/include/Makefile.dependencies \
+                  $(KIM_DIR)/cpp/include/Makefile.dependencies \
+                  $(KIM_DIR)/c/src/Makefile
 
 all: objects lib
 
@@ -81,8 +83,8 @@ lib-c-$(KIM_LIB_BUILD).a: $(OBJC)
 	$(QUELL)ar rcs $@ $(OBJC)
 
 # Include file dependency lists
-include ../include/Makefile
-include ../../cpp/include/Makefile
+include ../include/Makefile.dependencies
+include ../../cpp/include/Makefile.dependencies
 
 # Source file dependencies
 KIM_ArgumentName_c.o: KIM_ArgumentName_c.cpp $(KIM_DATA_TYPE_C) $(KIM_DATA_TYPE_CPP) $(KIM_ARGUMENT_NAME_C) $(KIM_ARGUMENT_NAME_CPP) $(KIM_MAKE_FILES)

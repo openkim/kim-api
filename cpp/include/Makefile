@@ -30,34 +30,35 @@
 # Release: This file is part of the kim-api.git repository.
 #
 
+ifeq ($(wildcard ../../Makefile.KIM_Config),)
+  $(error Makefile.KIM_Config does not exist.  Something is wrong with your KIM API package setup)
+endif
+include ../../Makefile.KIM_Config
 
-# Include files and their dependencies
-KIM_ARGUMENT_NAME_CPP = KIM_ArgumentName.hpp
-KIM_CALLBACK_NAME_CPP = KIM_CallbackName.hpp
-KIM_CHARGE_UNIT_CPP = KIM_ChargeUnit.hpp
-KIM_DATA_TYPE_CPP = KIM_DataType.hpp
-KIM_ENERGY_UNIT_CPP = KIM_EnergyUnit.hpp
-KIM_LANGUAGE_NAME_CPP = KIM_LanguageName.hpp
-KIM_LENGTH_UNIT_CPP = KIM_LengthUnit.hpp
-KIM_LOG_CPP = KIM_Log.hpp $(KIM_LOG_VERBOSITY_CPP)
-KIM_LOG_VERBOSITY_CPP = KIM_LogVerbosity.hpp KIM_LOG_DEFINES.inc
-KIM_MODEL_CPP = KIM_Model.hpp KIM_func.hpp
-KIM_MODEL_COMPUTE_CPP = KIM_ModelCompute.hpp
-KIM_MODEL_CREATE_CPP = KIM_ModelCreate.hpp KIM_func.hpp
-KIM_MODEL_DESTROY_CPP = KIM_ModelDestroy.hpp
-KIM_MODEL_DRIVER_CREATE_CPP = KIM_ModelDriverCreate.hpp KIM_func.hpp
-KIM_MODEL_REFRESH_CPP = KIM_ModelRefresh.hpp
-KIM_NUMBERING_CPP = KIM_Numbering.hpp
-KIM_SPECIES_NAME_CPP = KIM_SpeciesName.hpp
-KIM_SUPPORT_STATUS_CPP = KIM_SupportStatus.hpp
-KIM_TEMPERATURE_UNIT_CPP = KIM_TemperatureUnit.hpp
-KIM_TIME_UNIT_CPP = KIM_TimeUnit.hpp
-KIM_UNIT_SYSTEM_CPP = KIM_UnitSystem.hpp $(KIM_LENGTH_UNIT_CPP) $(KIM_ENERGY_UNIT_CPP) $(KIM_CHARGE_UNIT_CPP) $(KIM_TEMPERATURE_UNIT_CPP) $(KIM_TIME_UNIT_CPP)
-KIM_SEMVER_CPP = KIM_semver.hpp
+INCLDS = KIM_LOG_MAXIMUM_LEVEL.inc
 
-KIM_MODEL_IMPLEMENTATION_CPP = KIM_ModelImplementation.hpp $(KIM_MODEL_LIBRARY_CPP) $(KIM_CALLBACK_NAME_CPP) \
-                               $(KIM_ARGUMENT_NAME_CPP) $(KIM_SUPPORT_STATUS_CPP) $(KIM_SPECIES_NAME_CPP) \
-                               $(KIM_UNIT_SYSTEM_CPP) $(KIM_NUMBERING_CPP) $(KIM_LANGUAGE_NAME_CPP) \
-                               $(KIM_DATA_NAME_CPP) $(KIM_LOG_CPP) $(KIM_LOG_VERBOSITY_CPP) $(KIM_FUNC_CPP)
-KIM_MODEL_LIBRARY_CPP = KIM_ModelLibrary.hpp $(KIM_FUNC_CPP)
-KIM_API_DIRS_CPP = old_KIM_API_DIRS.h
+#
+# Main build settings and rules
+#
+.PHONY: all includes
+
+# add local Makefile to KIM_MAKE_FILES
+KIM_MAKE_FILES += $(KIM_DIR)/cpp/include/Makefile
+
+all: includes
+
+includes: $(INCLDS)
+
+KIM_LOG_MAXIMUM_LEVEL.inc: $(KIM_MAKE_FILES)
+	@printf "Creating... include file....... $@.\n";
+	$(QUELL)printf "#define KIM_LOG_MAXIMUM_LEVEL $(KIM_LOG_MAXIMUM_LEVEL)\n" > $@
+
+
+#
+# Main clean settings and rules
+#
+.PHONY: clean
+
+clean:
+	@printf "Cleaning... cpp/include.\n"
+	$(QUELL)rm -f $(INCLDS)

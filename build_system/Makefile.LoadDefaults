@@ -41,6 +41,11 @@ ifndef KIM_BUILD_VERBOSITY
    KIM_BUILD_VERBOSITY := quiet
 endif
 
+# KIM-API Log Verbosity
+ifndef KIM_LOG_MAXIMUM_LEVEL
+   KIM_LOG_MAXIMUM_LEVEL := KIM_LOG_VERBOSITY_ERROR_
+endif
+
 # Names
 package_name = kim-api
 user_config_file_dir_name  = .$(package_name)

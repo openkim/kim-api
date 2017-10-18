@@ -42,12 +42,12 @@ namespace KIM
 // Order is important
 namespace LOG_VERBOSITY
 {
-LogVerbosity const silent(0);
-LogVerbosity const fatal(1);
-LogVerbosity const error(2);
-LogVerbosity const warning(3);
-LogVerbosity const information(4);
-LogVerbosity const debug(5);
+LogVerbosity const silent(KIM_LOG_VERBOSITY_SILENT_);
+LogVerbosity const fatal(KIM_LOG_VERBOSITY_FATAL_);
+LogVerbosity const error(KIM_LOG_VERBOSITY_ERROR_);
+LogVerbosity const warning(KIM_LOG_VERBOSITY_WARNING_);
+LogVerbosity const information(KIM_LOG_VERBOSITY_INFORMATION_);
+LogVerbosity const debug(KIM_LOG_VERBOSITY_DEBUG_);
 
 namespace
 {

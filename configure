@@ -63,6 +63,15 @@ usage () {
   printf "  --system-arch=ARG       System architecture: \`32bit' or %s\n" \
          "\`64bit'"
   #printf "  --link-type=ARG         linking type: [\`dynamic-load']\n"
+  printf "\n"
+  printf "Verbosity settings:\n"
+  printf "  --log-maximum-level=ARG KIM API log verbosity maximum level:\n"
+  printf "                            \`KIM_LOG_VERBOSITY_SILENT_'\n"
+  printf "                            \`KIM_LOG_VERBOSITY_FATAL_'\n"
+  printf "                            [\`KIM_LOG_VERBOSITY_ERROR_']\n"
+  printf "                            \`KIM_LOG_VERBOSITY_WARNING_'\n"
+  printf "                            \`KIM_LOG_VERBOSITY_INFORMATION_'\n"
+  printf "                            \`KIM_LOG_VERBOSITY_DEBUG_'\n"
   printf "  --build-verbosity=ARG   Build verbosity: [\`quiet'] or \`full'\n"
   printf "\n"
   printf "Installation directories:\n"
@@ -127,6 +136,7 @@ compilerSuite=''
 systemLinker=''
 systemArch=''
 linkType='dynamic-load'
+logMax='KIM_LOG_VERBOSITY_ERROR_'
 buildVerbosity='quiet'
 packageName=''
 userConfigFileDirName=''
@@ -218,6 +228,32 @@ do
 #          exit 4
 #      esac
 #      ;;
+    --log-max-level=*)
+      case `stripOption $1` in
+        KIM_LOG_VERBOSITY_SILENT_)
+          logMax=KIM_LOG_VERBOSITY_SILENT_
+          ;;
+        KIM_LOG_VERBOSITY_FATAL_)
+          logMax=KIM_LOG_VERBOSITY_FATAL_
+          ;;
+        KIM_LOG_VERBOSITY_ERROR_)
+          logMax=KIM_LOG_VERBOSITY_ERROR_
+          ;;
+        KIM_LOG_VERBOSITY_WARNING_)
+          logMax=KIM_LOG_VERBOSITY_WARNING_
+          ;;
+        KIM_LOG_VERBOSITY_INFORMATION_)
+          logMax=KIM_LOG_VERBOSITY_INFORMATION_
+          ;;
+        KIM_LOG_VERBOSITY_DEBUG_)
+          logMax=KIM_LOG_VERBOSITY_DEBUG_
+          ;;
+        *)
+          printf "Unknown value for \`--log-max-level=' argument.\n"
+          usage
+          exit 5
+      esac
+      ;;
     --build-verbosity=*)
       case `stripOption $1` in
         quiet)
@@ -229,7 +265,7 @@ do
         *)
           printf "Unknown value for \`--build-verbosity=' argumnet.\n"
           usage
-          exit 5
+          exit 6
       esac
       ;;
     --prefix=*)
@@ -418,6 +454,8 @@ printf 'printf %s\n' \
        '"include \$(KIM_DIR)/build_system/Makefile.LoadDefaults\\n" >> $flnm'\
        >> $flnm
 printf 'printf "KIM_BUILD_VERBOSITY = '${buildVerbosity}'\\n" >> $flnm\n' \
+       >> $flnm
+printf 'printf "KIM_LOG_MAXIMUM_LEVEL = '${logMax}'\\n" >> $flnm\n' \
        >> $flnm
 printf 'printf "\\n" >> $flnm\n' >> $flnm
 if test "x" != "x${packageName}"; then

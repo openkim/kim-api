@@ -1,1 +1,0 @@
-../../cpp/include/KIM_LOG_DEFINES.inc

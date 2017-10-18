@@ -71,7 +71,9 @@ OBJCPP = KIM_ArgumentName.o \
 .PHONY: all objects lib
 
 # add local Makefile to KIM_MAKE_FILES
-KIM_MAKE_FILES += $(KIM_DIR)/cpp/include/Makefile $(KIM_DIR)/cpp/src/Makefile
+KIM_MAKE_FILES += $(KIM_DIR)/cpp/include/Makefile.dependencies \
+                  $(KIM_DIR)/c/include/Makefile.dependencies \
+                  $(KIM_DIR)/cpp/src/Makefile
 
 all: objects lib
 
@@ -110,8 +112,8 @@ lib$(KIM_LIB_BUILD).so: lib-cpp-$(KIM_LIB_BUILD).a ../../c/src/lib-c-$(KIM_LIB_B
 
 
 # Include file dependency lists
-include ../include/Makefile
-include ../../c/include/Makefile
+include ../include/Makefile.dependencies
+include ../../c/include/Makefile.dependencies
 
 KIM_ArgumentName.o: KIM_ArgumentName.cpp $(KIM_ARGUMENT_NAME_CPP) $(KIM_DATA_TYPE_CPP) $(KIM_MAKE_FILES)
 KIM_CallbackName.o: KIM_CallbackName.cpp $(KIM_CALLBACK_NAME_CPP) $(KIM_MAKE_FILES)
@@ -198,6 +200,7 @@ install_include_cpp = KIM_ArgumentName.hpp \
                       KIM_DataType.hpp \
                       KIM_EnergyUnit.hpp \
                       KIM_LOG_DEFINES.inc \
+                      KIM_LOG_MAXIMUM_LEVEL.inc \
                       KIM_LanguageName.hpp \
                       KIM_LengthUnit.hpp \
                       KIM_Log.hpp \
