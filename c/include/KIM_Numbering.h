@@ -45,6 +45,8 @@ struct KIM_Numbering
 typedef struct KIM_Numbering KIM_Numbering;
 #endif
 
+KIM_Numbering KIM_NumberingFromString(char const * const str);
+
 int KIM_NumberingEqual(KIM_Numbering const left, KIM_Numbering const right);
 int KIM_NumberingNotEqual(KIM_Numbering const left, KIM_Numbering const right);
 char const * const KIM_NumberingString(KIM_Numbering const numbering);

@@ -47,12 +47,26 @@ namespace
 {
 KIM::LengthUnit const makeLengthUnitCpp(KIM_LengthUnit const lengthUnit)
 {
-  return KIM::LengthUnit(lengthUnit.lengthUnitID);
+  KIM::LengthUnit const * const lengthUnitCpp
+      = reinterpret_cast <KIM::LengthUnit const * const>(&lengthUnit);
+  return *lengthUnitCpp;
+}
+
+KIM_LengthUnit const makeLengthUnitC(KIM::LengthUnit const lengthUnit)
+{
+  KIM_LengthUnit const * const lengthUnitC
+      = reinterpret_cast <KIM_LengthUnit const * const>(&lengthUnit);
+  return *lengthUnitC;
 }
 }  // namespace
 
 extern "C"
 {
+KIM_LengthUnit KIM_LengthUnitFromString(char const * const str)
+{
+  return makeLengthUnitC(KIM::LengthUnit(std::string(str)));
+}
+
 int KIM_LengthUnitEqual(KIM_LengthUnit left, KIM_LengthUnit right)
 {
   return (left.lengthUnitID == right.lengthUnitID);

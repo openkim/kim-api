@@ -45,14 +45,29 @@ extern "C"
 namespace
 {
 KIM::SupportStatus const makeSupportStatusCpp(
-    KIM_SupportStatus const argumentSupportStatus)
+    KIM_SupportStatus const supportStatus)
 {
-  return KIM::SupportStatus(argumentSupportStatus.supportStatusID);
+  KIM::SupportStatus const * const supportStatusCpp
+      = reinterpret_cast <KIM::SupportStatus const * const>(&supportStatus);
+  return *supportStatusCpp;
+}
+
+KIM_SupportStatus const makeSupportStatusC(
+    KIM::SupportStatus const supportStatus)
+{
+  KIM_SupportStatus const * const supportStatusC
+      = reinterpret_cast <KIM_SupportStatus const * const>(&supportStatus);
+  return *supportStatusC;
 }
 }  // namespace
 
 extern "C"
 {
+KIM_SupportStatus KIM_SupportStatusFromString(char const * const str)
+{
+  return makeSupportStatusC(KIM::SupportStatus(std::string(str)));
+}
+
 int KIM_SupportStatusEqual(KIM_SupportStatus const left,
                            KIM_SupportStatus const right)
 {

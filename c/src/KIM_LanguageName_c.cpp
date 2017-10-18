@@ -47,12 +47,26 @@ namespace
 {
 KIM::LanguageName const makeLanguageNameCpp(KIM_LanguageName languageName)
 {
-  return KIM::LanguageName(languageName.languageNameID);
+  KIM::LanguageName const * const languageNameCpp
+      = reinterpret_cast <KIM::LanguageName const * const>(&languageName);
+  return *languageNameCpp;
 }
+
+KIM_LanguageName const makeLanguageNameC(KIM::LanguageName languageName)
+{
+  KIM_LanguageName const * const languageNameC
+      = reinterpret_cast <KIM_LanguageName const * const>(&languageName);
+  return *languageNameC;
 }
+}  // namespace
 
 extern "C"
 {
+KIM_LanguageName KIM_LanguageNameFromString(char const * const str)
+{
+  return makeLanguageNameC(KIM::LanguageName(std::string(str)));
+}
+
 int KIM_LanguageNameEqual(KIM_LanguageName const left,
                           KIM_LanguageName const right)
 {

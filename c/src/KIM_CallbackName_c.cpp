@@ -52,10 +52,33 @@ KIM::CallbackName makeCallbackNameCpp(KIM_CallbackName const callbackName)
   return *callbackNameCpp;
 }
 
+KIM_CallbackName makeCallbackNameC(KIM::CallbackName const callbackName)
+{
+  KIM_CallbackName const * const callbackNameC
+      = reinterpret_cast<KIM_CallbackName const * const>(&callbackName);
+  return *callbackNameC;
+}
 }  // namespace
 
 extern "C"
 {
+KIM_CallbackName KIM_CallbackNameFromString(char const * const str)
+{
+  return makeCallbackNameC(KIM::CallbackName(std::string(str)));
+}
+
+int KIM_CallbackNameEqual(KIM_CallbackName const left,
+                          KIM_CallbackName const right)
+{
+  return (left.callbackNameID == right.callbackNameID);
+}
+
+int KIM_CallbackNameNotEqual(KIM_CallbackName const left,
+                             KIM_CallbackName const right)
+{
+  return (!KIM_CallbackNameEqual(left, right));
+}
+
 char const * const KIM_CallbackNameString(KIM_CallbackName callbackName)
 {
   return (makeCallbackNameCpp(callbackName)).String().c_str();

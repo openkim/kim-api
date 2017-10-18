@@ -51,6 +51,8 @@ struct KIM_ArgumentName
 typedef struct KIM_ArgumentName KIM_ArgumentName;
 #endif
 
+KIM_ArgumentName KIM_ArgumentNameFromString(char const * const str);
+
 int KIM_ArgumentNameEqual(KIM_ArgumentName const left,
                           KIM_ArgumentName const right);
 int KIM_ArgumentNameNotEqual(KIM_ArgumentName const left,

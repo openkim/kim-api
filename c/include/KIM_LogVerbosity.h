@@ -48,6 +48,8 @@ struct KIM_LogVerbosity
 typedef struct KIM_LogVerbosity KIM_LogVerbosity;
 #endif
 
+KIM_LogVerbosity KIM_LogVerbosityFromString(char const * const str);
+
 int KIM_LogVerbosityLessThan(KIM_LogVerbosity const left,
                              KIM_LogVerbosity const right);
 int KIM_LogVerbosityGreaterThan(KIM_LogVerbosity const left,

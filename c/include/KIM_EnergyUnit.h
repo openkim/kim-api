@@ -45,6 +45,8 @@ struct KIM_EnergyUnit
 typedef struct KIM_EnergyUnit KIM_EnergyUnit;
 #endif
 
+KIM_EnergyUnit KIM_EnergyUnitFromString(char const * const str);
+
 int KIM_EnergyUnitEqual(KIM_EnergyUnit const left, KIM_EnergyUnit const right);
 int KIM_EnergyUnitNotEqual(KIM_EnergyUnit const left,
                            KIM_EnergyUnit const right);

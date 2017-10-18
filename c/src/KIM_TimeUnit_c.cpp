@@ -47,12 +47,26 @@ namespace
 {
 KIM::TimeUnit const makeTimeUnitCpp(KIM_TimeUnit const timeUnit)
 {
-  return KIM::TimeUnit(timeUnit.timeUnitID);
+  KIM::TimeUnit const * const timeUnitCpp
+      = reinterpret_cast <KIM::TimeUnit const * const>(&timeUnit);
+  return *timeUnitCpp;
+}
+
+KIM_TimeUnit const makeTimeUnitC(KIM::TimeUnit const timeUnit)
+{
+  KIM_TimeUnit const * const timeUnitC
+      = reinterpret_cast <KIM_TimeUnit const * const>(&timeUnit);
+  return *timeUnitC;
 }
 }  // namespace
 
 extern "C"
 {
+KIM_TimeUnit KIM_TimeUnitFromString(char const * const str)
+{
+  return makeTimeUnitC(KIM::TimeUnit(std::string(str)));
+}
+
 int KIM_TimeUnitEqual(KIM_TimeUnit const left, KIM_TimeUnit right)
 {
   return (left.timeUnitID == right.timeUnitID);

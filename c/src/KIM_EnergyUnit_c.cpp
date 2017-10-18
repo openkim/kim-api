@@ -47,12 +47,26 @@ namespace
 {
 KIM::EnergyUnit const makeEnergyUnitCpp(KIM_EnergyUnit const energyUnit)
 {
-  return KIM::EnergyUnit(energyUnit.energyUnitID);
+  KIM::EnergyUnit const * const energyUnitCpp
+      = reinterpret_cast <KIM::EnergyUnit const * const>(&energyUnit);
+  return *energyUnitCpp;
+}
+
+KIM_EnergyUnit const makeEnergyUnitC(KIM::EnergyUnit const energyUnit)
+{
+  KIM_EnergyUnit const * const energyUnitC
+      = reinterpret_cast <KIM_EnergyUnit const * const>(&energyUnit);
+  return *energyUnitC;
 }
 }  // namespace
 
 extern "C"
 {
+KIM_EnergyUnit KIM_EnergyUnitFromString(char const * const str)
+{
+  return makeEnergyUnitC(KIM::EnergyUnit(std::string(str)));
+}
+
 int KIM_EnergyUnitEqual(KIM_EnergyUnit const left, KIM_EnergyUnit const right)
 {
   return (left.energyUnitID == right.energyUnitID);

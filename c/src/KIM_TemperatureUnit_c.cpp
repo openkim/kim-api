@@ -48,12 +48,27 @@ namespace
 KIM::TemperatureUnit const makeTemperatureUnitCpp(
     KIM_TemperatureUnit const temperatureUnit)
 {
-  return KIM::TemperatureUnit(temperatureUnit.temperatureUnitID);
+  KIM::TemperatureUnit const * const temperatureUnitCpp
+      = reinterpret_cast <KIM::TemperatureUnit const * const>(&temperatureUnit);
+  return *temperatureUnitCpp;
+}
+
+KIM_TemperatureUnit const makeTemperatureUnitC(
+    KIM::TemperatureUnit const temperatureUnit)
+{
+  KIM_TemperatureUnit const * const temperatureUnitC
+      = reinterpret_cast <KIM_TemperatureUnit const * const>(&temperatureUnit);
+  return *temperatureUnitC;
 }
 }  // namespace
 
 extern "C"
 {
+KIM_TemperatureUnit KIM_TemperatureUnitFromString(char const * const str)
+{
+  return makeTemperatureUnitC(KIM::TemperatureUnit(std::string(str)));
+}
+
 int KIM_TemperatureUnitEqual(KIM_TemperatureUnit const left,
                              KIM_TemperatureUnit const right)
 {

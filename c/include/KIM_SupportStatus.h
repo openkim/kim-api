@@ -45,6 +45,8 @@ struct KIM_SupportStatus
 typedef struct KIM_SupportStatus KIM_SupportStatus;
 #endif
 
+KIM_SupportStatus KIM_SupportStatusFromString(char const * const str);
+
 int KIM_SupportStatusEqual(KIM_SupportStatus const left,
                            KIM_SupportStatus const right);
 int KIM_SupportStatusNotEqual(KIM_SupportStatus const left,

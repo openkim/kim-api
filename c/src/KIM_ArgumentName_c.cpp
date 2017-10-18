@@ -55,19 +55,28 @@ extern "C"
 
 namespace
 {
-KIM::ArgumentName makeArgumentNameCpp(
-    KIM_ArgumentName const argumentName)
+KIM::ArgumentName makeArgumentNameCpp(KIM_ArgumentName const argumentName)
 {
   KIM::ArgumentName const * const argumentNameCpp
-      = reinterpret_cast
-      <KIM::ArgumentName const * const>(&argumentName);
+      = reinterpret_cast <KIM::ArgumentName const * const>(&argumentName);
   return *argumentNameCpp;
 }
 
+KIM_ArgumentName makeArgumentNameC(KIM::ArgumentName const argumentName)
+{
+  KIM_ArgumentName const * const argumentNameC
+      = reinterpret_cast <KIM_ArgumentName const * const>(&argumentName);
+  return *argumentNameC;
+}
 }  // namespace
 
 extern "C"
 {
+KIM_ArgumentName KIM_ArgumentNameFromString(char const * const str)
+{
+  return makeArgumentNameC(KIM::ArgumentName(std::string(str)));
+}
+
 int KIM_ArgumentNameEqual(KIM_ArgumentName const left,
                           KIM_ArgumentName const right)
 {

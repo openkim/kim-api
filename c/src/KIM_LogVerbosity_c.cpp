@@ -47,12 +47,26 @@ namespace
 {
 KIM::LogVerbosity const makeLogVerbosityCpp(KIM_LogVerbosity const logVerbosity)
 {
-  return KIM::LogVerbosity(logVerbosity.logVerbosityID);
+  KIM::LogVerbosity const * const logVerbosityCpp
+      = reinterpret_cast <KIM::LogVerbosity const * const>(&logVerbosity);
+  return *logVerbosityCpp;
+}
+
+KIM_LogVerbosity const makeLogVerbosityC(KIM::LogVerbosity const logVerbosity)
+{
+  KIM_LogVerbosity const * const logVerbosityC
+      = reinterpret_cast <KIM_LogVerbosity const * const>(&logVerbosity);
+  return *logVerbosityC;
 }
 }  // namespace
 
 extern "C"
 {
+KIM_LogVerbosity KIM_LogVerbosityFromString(char const * const str)
+{
+  return makeLogVerbosityC(KIM::LogVerbosity(std::string(str)));
+}
+
 int KIM_LogVerbosityEqual(KIM_LogVerbosity const left,
                           KIM_LogVerbosity const right)
 {

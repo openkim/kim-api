@@ -47,12 +47,26 @@ namespace
 {
 KIM::DataType const makeDataTypeCpp(KIM_DataType const dataType)
 {
-  return KIM::DataType(dataType.dataTypeID);
+  KIM::DataType const * const dataTypeCpp
+      = reinterpret_cast <KIM::DataType const * const>(&dataType);
+  return *dataTypeCpp;
+}
+
+KIM_DataType const makeDataTypeC(KIM::DataType const dataType)
+{
+  KIM_DataType const * const dataTypeC
+      = reinterpret_cast <KIM_DataType const * const>(&dataType);
+  return *dataTypeC;
 }
 }  // namespace
 
 extern "C"
 {
+KIM_DataType KIM_DataTypeFromString(char const * const str)
+{
+  return makeDataTypeC(KIM::DataType(std::string(str)));
+}
+
 int KIM_DataTypeEqual(KIM_DataType const left, KIM_DataType const right)
 {
   return (left.dataTypeID == right.dataTypeID);

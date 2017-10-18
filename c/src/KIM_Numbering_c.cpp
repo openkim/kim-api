@@ -44,15 +44,28 @@ extern "C"
 
 namespace
 {
-KIM::Numbering makeNumberingCpp(
-    KIM_Numbering const numbering)
+KIM::Numbering makeNumberingCpp(KIM_Numbering const numbering)
 {
-  return KIM::Numbering(numbering.numberingID);
+  KIM::Numbering const * const numberingCpp
+      = reinterpret_cast <KIM::Numbering const * const>(&numbering);
+  return *numberingCpp;
+}
+
+KIM_Numbering makeNumberingC(KIM::Numbering const numbering)
+{
+  KIM_Numbering const * const numberingC
+      = reinterpret_cast <KIM_Numbering const * const>(&numbering);
+  return *numberingC;
 }
 }  // namespace
 
 extern "C"
 {
+KIM_Numbering KIM_NumberingFromString(char const * const str)
+{
+  return makeNumberingC(KIM::Numbering(std::string(str)));
+}
+
 int KIM_NumberingEqual(KIM_Numbering const left, KIM_Numbering const right)
 {
   return (left.numberingID == right.numberingID);

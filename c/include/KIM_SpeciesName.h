@@ -46,8 +46,7 @@ struct KIM_SpeciesName
 typedef struct KIM_SpeciesName KIM_SpeciesName;
 #endif
 
-void KIM_SpeciesNameFromString(char const * const speciesNameString,
-                               KIM_SpeciesName * const speciesName);
+KIM_SpeciesName KIM_SpeciesNameFromString(char const * const str);
 
 int KIM_SpeciesNameEqual(KIM_SpeciesName const left,
                          KIM_SpeciesName const right);

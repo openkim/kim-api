@@ -45,6 +45,8 @@ struct KIM_TimeUnit
 typedef struct KIM_TimeUnit KIM_TimeUnit;
 #endif
 
+KIM_TimeUnit KIM_TimeUnitFromString(char const * const str);
+
 int KIM_TimeUnitEqual(KIM_TimeUnit const left, KIM_TimeUnit right);
 int KIM_TimeUnitNotEqual(KIM_TimeUnit const left, KIM_TimeUnit right);
 char const * const KIM_TimeUnitString(KIM_TimeUnit const timeUnit);

@@ -45,6 +45,8 @@ struct KIM_TemperatureUnit
 typedef struct KIM_TemperatureUnit KIM_TemperatureUnit;
 #endif
 
+KIM_TemperatureUnit KIM_TemperatureUnitFromString(char const * const str);
+
 int KIM_TemperatureUnitEqual(KIM_TemperatureUnit const left,
                              KIM_TemperatureUnit const right);
 int KIM_TemperatureUnitNotEqual(KIM_TemperatureUnit const left,

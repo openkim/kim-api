@@ -45,6 +45,13 @@ struct KIM_CallbackName
 typedef struct KIM_CallbackName KIM_CallbackName;
 #endif
 
+KIM_CallbackName KIM_CallbackNameFromString(char const * const str);
+
+int KIM_CallbackNameEqual(KIM_CallbackName const left,
+                          KIM_CallbackName const right);
+int KIM_CallbackNameNotEqual(KIM_CallbackName const left,
+                             KIM_CallbackName const right);
+
 char const * const KIM_CallbackNameString(KIM_CallbackName const callbackName);
 
 extern KIM_CallbackName const KIM_CALLBACK_NAME_GetNeighborList;

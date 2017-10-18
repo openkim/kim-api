@@ -45,6 +45,8 @@ struct KIM_LanguageName
 typedef struct KIM_LanguageName KIM_LanguageName;
 #endif
 
+KIM_LanguageName KIM_LanguageNameFromString(char const * const str);
+
 int KIM_LanguageNameEqual(KIM_LanguageName const left,
                           KIM_LanguageName const right);
 int KIM_LanguageNameNotEqual(KIM_LanguageName const left,

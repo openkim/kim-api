@@ -46,27 +46,25 @@ namespace
 {
 KIM::SpeciesName const makeSpeciesNameCpp(KIM_SpeciesName const speciesName)
 {
-  return KIM::SpeciesName(speciesName.speciesNameID);
+  KIM::SpeciesName const * const speciesNameCpp
+      = reinterpret_cast<KIM::SpeciesName const * const>(&speciesName);
+  return *speciesNameCpp;
 }
 
 KIM_SpeciesName const makeSpeciesNameC(KIM::SpeciesName speciesName)
 {
-  KIM_SpeciesName * speciesNameC
-      = reinterpret_cast<KIM_SpeciesName *>(&speciesName);
+  KIM_SpeciesName const * const speciesNameC
+      = reinterpret_cast<KIM_SpeciesName const * const>(&speciesName);
   return *speciesNameC;
 }
 }  // namespace
 
 extern "C"
 {
-
-void KIM_SpeciesNameFromString(char const * const speciesNameString,
-                               KIM_SpeciesName * const speciesName)
+KIM_SpeciesName KIM_SpeciesNameFromString(char const * const str)
 {
-  KIM::SpeciesName CppSpeciesName(speciesNameString);
-  *speciesName = makeSpeciesNameC(CppSpeciesName);
+  return makeSpeciesNameC(KIM::SpeciesName(std::string(str)));
 }
-
 
 int KIM_SpeciesNameEqual(KIM_SpeciesName const left,
                          KIM_SpeciesName const right)
