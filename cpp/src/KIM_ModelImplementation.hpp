@@ -46,10 +46,6 @@
 #include "KIM_LogVerbosity.hpp"
 #endif
 
-#ifndef KIM_LOG_HPP_
-#include "KIM_Log.hpp"
-#endif
-
 #ifndef KIM_DATA_TYPE_HPP_
 #include "KIM_DataType.hpp"
 #endif

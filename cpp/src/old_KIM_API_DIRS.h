@@ -34,7 +34,6 @@
 #ifndef KIMHDR_OLD_KIM_API_DIRS_H
 #define KIMHDR_OLD_KIM_API_DIRS_H
 
-#include <string>
 #include <list>
 #include <vector>
 

@@ -31,16 +31,8 @@
 //
 
 
-#ifndef KIM_LOG_HPP_
-#include "KIM_Log.hpp"
-#endif
-
 #ifndef KIM_MODEL_REFRESH_HPP_
 #include "KIM_ModelRefresh.hpp"
-#endif
-
-#ifndef KIM_UNIT_SYSTEM_HPP_
-#include "KIM_UnitSystem.hpp"
 #endif
 
 #ifndef KIM_MODEL_IMPLEMENTATION_HPP_

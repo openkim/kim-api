@@ -33,11 +33,9 @@
 
 #include <cstdlib>
 #include <cstring>
-#include <cctype>
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <vector>
 #include <dirent.h>
 #include <sys/stat.h>
 #include <dlfcn.h>

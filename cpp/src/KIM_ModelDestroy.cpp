@@ -30,22 +30,6 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
-#ifndef KIM_FUNC_HPP_
-#include "KIM_func.hpp"
-#endif
-
-#ifndef KIM_LOG_VERBOSITY_HPP_
-#include "KIM_LogVerbosity.hpp"
-#endif
-
-#ifndef KIM_LOG_HPP_
-#include "KIM_Log.hpp"
-#endif
-
-#ifndef KIM_LANGUAGE_NAME_HPP_
-#include "KIM_LanguageName.hpp"
-#endif
-
 #ifndef KIM_MODEL_DESTROY_HPP_
 #include "KIM_ModelDestroy.hpp"
 #endif

@@ -34,9 +34,11 @@
 #ifndef KIM_LOG_VERBOSITY_HPP_
 #define KIM_LOG_VERBOSITY_HPP_
 
-#include "KIM_LOG_DEFINES.inc"
-
 #include <string>
+
+#ifndef KIM_LOG_DEFINES_INC_
+#include "KIM_LOG_DEFINES.inc"
+#endif
 
 namespace KIM
 {

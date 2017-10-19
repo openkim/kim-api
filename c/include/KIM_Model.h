@@ -36,8 +36,6 @@
 #ifndef KIM_MODEL_H_
 #define KIM_MODEL_H_
 
-#include <stdarg.h>
-
 #ifndef KIM_FUNC_H_
 #include "KIM_func.h"
 #endif

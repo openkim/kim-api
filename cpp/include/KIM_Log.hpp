@@ -36,10 +36,6 @@
 
 #include <string>
 
-#ifndef KIM_LOG_VERBOSITY_HPP_
-#include "KIM_LogVerbosity.hpp"
-#endif
-
 namespace KIM
 {
 // Forward declarations

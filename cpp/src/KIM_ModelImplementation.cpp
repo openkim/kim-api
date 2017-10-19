@@ -36,16 +36,12 @@
 #include <cstdlib>
 #include <cmath>
 
+#ifndef KIM_LOG_HPP_
+#include "KIM_Log.hpp"
+#endif
+
 #ifndef KIM_MODEL_IMPLEMENTATION_HPP_
 #include "KIM_ModelImplementation.hpp"
-#endif
-
-#ifndef KIM_MODEL_LIBRARY_HPP_
-#include "KIM_ModelLibrary.hpp"
-#endif
-
-#ifndef KIM_LANGUAGE_NAME_HPP_
-#include "KIM_LanguageName.hpp"
 #endif
 
 #ifndef KIM_UNIT_SYSTEM_H_

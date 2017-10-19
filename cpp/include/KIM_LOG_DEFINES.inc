@@ -1,5 +1,5 @@
-#ifndef KIM_LOG_VERBOSITY_DEFINES_
-#define KIM_LOG_VERBOSITY_DEFINES_
+#ifndef KIM_LOG_DEFINES_INC_
+#define KIM_LOG_DEFINES_INC_
 
 #define KIM_LOG_VERBOSITY_SILENT_      0
 #define KIM_LOG_VERBOSITY_FATAL_       1
@@ -9,4 +9,4 @@
 #define KIM_LOG_VERBOSITY_DEBUG_       5
 
 #include "KIM_LOG_MAXIMUM_LEVEL.inc"
-#endif
+#endif  // KIM_LOG_DEFINES_INC_

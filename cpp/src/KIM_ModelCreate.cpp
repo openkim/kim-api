@@ -31,38 +31,6 @@
 //
 
 
-#ifndef KIM_LOG_VERBOSITY_HPP_
-#include "KIM_LogVerbosity.hpp"
-#endif
-
-#ifndef KIM_LOG_HPP_
-#include "KIM_Log.hpp"
-#endif
-
-#ifndef KIM_LANGUAGE_NAME_HPP_
-#include "KIM_LanguageName.hpp"
-#endif
-
-#ifndef KIM_SPECIES_NAME_HPP_
-#include "KIM_SpeciesName.hpp"
-#endif
-
-#ifndef KIM_UNIT_SYSTEM_HPP_
-#include "KIM_UnitSystem.hpp"
-#endif
-
-#ifndef KIM_SUPPORT_STATUS_HPP_
-#include "KIM_SupportStatus.hpp"
-#endif
-
-#ifndef KIM_ARGUMENT_NAME_HPP_
-#include "KIM_ArgumentName.hpp"
-#endif
-
-#ifndef KIM_CALLBACK_NAME_HPP_
-#include "KIM_CallbackName.hpp"
-#endif
-
 #ifndef KIM_MODEL_CREATE_HPP_
 #include "KIM_ModelCreate.hpp"
 #endif
