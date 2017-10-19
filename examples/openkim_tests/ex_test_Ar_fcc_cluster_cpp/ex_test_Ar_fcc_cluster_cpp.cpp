@@ -36,9 +36,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <iomanip>
-#include <string>
 #include "KIM_LogVerbosity.hpp"
-#include "KIM_Log.hpp"
 #include "KIM_LanguageName.hpp"
 #include "KIM_DataType.hpp"
 #include "KIM_SpeciesName.hpp"

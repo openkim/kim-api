@@ -31,12 +31,7 @@
 #ifndef LENNARD_JONES_612_HPP_
 #define LENNARD_JONES_612_HPP_
 
-#include "KIM_LengthUnit.hpp"
-#include "KIM_EnergyUnit.hpp"
-#include "KIM_ChargeUnit.hpp"
-#include "KIM_TemperatureUnit.hpp"
-#include "KIM_TimeUnit.hpp"
-
+#include "KIM_UnitSystem.hpp"
 #include "KIM_ModelDriverCreate.hpp"
 #include "KIM_ModelRefresh.hpp"
 #include "KIM_ModelDestroy.hpp"

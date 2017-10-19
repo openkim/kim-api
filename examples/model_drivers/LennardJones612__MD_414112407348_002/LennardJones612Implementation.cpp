@@ -34,14 +34,13 @@
 #include <cstring>
 #include <fstream>
 #include <iostream>
+#include <map>
 
-#include "LennardJones612.hpp"
 #include "LennardJones612Implementation.hpp"
-#include "KIM_SupportStatus.hpp"
 #include "KIM_Numbering.hpp"
 #include "KIM_LanguageName.hpp"
 #include "KIM_SpeciesName.hpp"
-#include "KIM_UnitSystem.hpp"
+#include "KIM_SupportStatus.hpp"
 #include "KIM_ArgumentName.hpp"
 #include "KIM_CallbackName.hpp"
 

@@ -32,7 +32,6 @@
 #define LENNARD_JONES_612_IMPLEMENTATION_HPP_
 
 #include <vector>
-#include <map>
 #include "KIM_LogVerbosity.hpp"
 #include "LennardJones612.hpp"
 

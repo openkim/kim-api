@@ -26,27 +26,21 @@
 #    Ryan S. Elliott
 #
 
-#
-# Release: This file is part of the kim-api.git repository.
-#
-
 
 # load all basic KIM make configuration
-ifneq (clean,$(MAKECMDGOALS))
-  KIM_API_BUILD_CONFIG = kim-api-v2-build-config
-  ifeq ($(shell $(KIM_API_BUILD_CONFIG) --version 2> /dev/null),)
-    $(error $(KIM_API_BUILD_CONFIG) utility is not available.  Something is wrong with your KIM API package setup)
-  else
-    $(info Using build-config utility at: $(shell command -v "$(KIM_API_BUILD_CONFIG)"))
-  endif
+KIM_API_BUILD_CONFIG = kim-api-v2-build-config
+ifeq ($(shell $(KIM_API_BUILD_CONFIG) --version 2> /dev/null),)
+  $(error $(KIM_API_BUILD_CONFIG) utility is not available.  Something is wrong with your KIM API package setup)
+else
+  $(info Using build-config utility at: $(shell command -v "$(KIM_API_BUILD_CONFIG)"))
 endif
 include $(shell $(KIM_API_BUILD_CONFIG) --master-config)
 
 
 # set model driver specific details
-MODEL_DRIVER_NAME   := ex_model_driver_P_Morse
-MODEL_NAME          := ex_model_Ar_P_Morse
-PARAM_FILE_001_NAME := ex_model_Ar_P_Morse.params
+MODEL_DRIVER_NAME := ex_model_driver_P_Morse
+MODEL_NAME        := ex_model_Ar_P_Morse
+PARAM_FILE_1_NAME := ex_model_Ar_P_Morse.params
 
 # APPEND to compiler option flag lists
 #FFLAGS   +=

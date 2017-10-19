@@ -29,21 +29,19 @@
 
 
 # load all basic KIM make configuration
-ifneq (clean,$(MAKECMDGOALS))
-  KIM_API_BUILD_CONFIG = kim-api-v2-build-config
-  ifeq ($(shell $(KIM_API_BUILD_CONFIG) --version 2> /dev/null),)
-    $(error $(KIM_API_BUILD_CONFIG) utility is not available.  Something is wrong with your KIM API package setup)
-  else
-    $(info Using build-config utility at: $(shell command -v "$(KIM_API_BUILD_CONFIG)"))
-  endif
+KIM_API_BUILD_CONFIG = kim-api-v2-build-config
+ifeq ($(shell $(KIM_API_BUILD_CONFIG) --version 2> /dev/null),)
+  $(error $(KIM_API_BUILD_CONFIG) utility is not available.  Something is wrong with your KIM API package setup)
+else
+  $(info Using build-config utility at: $(shell command -v "$(KIM_API_BUILD_CONFIG)"))
 endif
 include $(shell $(KIM_API_BUILD_CONFIG) --master-config)
 
 
 # set model driver specific details
-MODEL_DRIVER_NAME   := LennardJones612__MD_414112407348_002
-MODEL_NAME          := LennardJones612_Universal__MO_826355984548_002
-PARAM_FILE_001_NAME := LennardJones612_Universal.params
+MODEL_DRIVER_NAME := LennardJones612__MD_414112407348_002
+MODEL_NAME        := LennardJones612_Universal__MO_826355984548_002
+PARAM_FILE_1_NAME := LennardJones612_Universal.params
 
 # APPEND to compiler option flag lists
 #FFLAGS   +=
