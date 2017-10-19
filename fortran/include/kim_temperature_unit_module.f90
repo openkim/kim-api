@@ -76,11 +76,11 @@ module kim_temperature_unit_module
   end interface operator (.ne.)
 
   interface
-    subroutine kim_temperature_unit_string(temperature_unit, unit_string)
+    subroutine kim_temperature_unit_string(temperature_unit, string)
       import kim_temperature_unit_type
       implicit none
       type(kim_temperature_unit_type), intent(in), value :: temperature_unit
-      character(len=*), intent(out) :: unit_string
+      character(len=*), intent(out) :: string
     end subroutine kim_temperature_unit_string
   end interface
 end module kim_temperature_unit_module

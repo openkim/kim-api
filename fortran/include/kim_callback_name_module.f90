@@ -75,11 +75,11 @@ module kim_callback_name_module
   end interface operator (.eq.)
 
   interface
-    subroutine kim_callback_name_string(callback_name, name_string)
+    subroutine kim_callback_name_string(callback_name, string)
       import kim_callback_name_type
       implicit none
       type(kim_callback_name_type), intent(in), value :: callback_name
-      character(len=*), intent(out) :: name_string
+      character(len=*), intent(out) :: string
     end subroutine kim_callback_name_string
 
     subroutine kim_callback_name_get_number_of_callbacks(number_of_callbacks)

@@ -73,20 +73,20 @@ logical function kim_numbering_not_equal(left, right)
   kim_numbering_not_equal = .not. (left .eq. right)
 end function kim_numbering_not_equal
 
-subroutine kim_numbering_string(numbering, name_string)
+subroutine kim_numbering_string(numbering, string)
   use, intrinsic :: iso_c_binding
   use kim_numbering_module, only : kim_numbering_type
   use kim_numbering_f_module, only : numbering_string
   implicit none
   type(kim_numbering_type), intent(in), value :: numbering
-  character(len=*), intent(out) :: name_string
+  character(len=*), intent(out) :: string
 
   type(c_ptr) :: p
-  character(len=len(name_string)+1), pointer :: fp
+  character(len=len(string)+1), pointer :: fp
   integer(c_int) :: null_index
 
   p = numbering_string(numbering)
   call c_f_pointer(p, fp)
   null_index = scan(fp, char(0))-1
-  name_string = fp(1:null_index)
+  string = fp(1:null_index)
 end subroutine kim_numbering_string

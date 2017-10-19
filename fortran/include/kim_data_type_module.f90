@@ -78,11 +78,11 @@ module kim_data_type_module
   end interface operator (.ne.)
 
   interface
-    subroutine kim_data_type_string(data_type, type_string)
+    subroutine kim_data_type_string(data_type, string)
       import kim_data_type_type
       implicit none
       type(kim_data_type_type), intent(in), value :: data_type
-      character(len=*), intent(out) :: type_string
+      character(len=*), intent(out) :: string
     end subroutine kim_data_type_string
   end interface
 end module kim_data_type_module

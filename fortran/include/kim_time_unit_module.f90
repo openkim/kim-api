@@ -85,11 +85,11 @@ module kim_time_unit_module
   end interface operator (.ne.)
 
   interface
-    subroutine kim_time_unit_string(time_unit, unit_string)
+    subroutine kim_time_unit_string(time_unit, string)
       import kim_time_unit_type
       implicit none
       type(kim_time_unit_type), intent(in), value :: time_unit
-      character(len=*), intent(out) :: unit_string
+      character(len=*), intent(out) :: string
     end subroutine kim_time_unit_string
   end interface
 end module kim_time_unit_module

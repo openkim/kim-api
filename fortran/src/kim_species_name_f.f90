@@ -38,7 +38,7 @@ module kim_species_name_f_module
 
   public &
     from_string, &
-    string, &
+    get_string, &
     get_number_of_species, &
     get_species_name
 
@@ -52,13 +52,13 @@ module kim_species_name_f_module
       type(kim_species_name_type), intent(out) :: species_name
     end subroutine from_string
 
-    type(c_ptr) function string(species_name) &
+    type(c_ptr) function get_string(species_name) &
       bind(c, name="KIM_SpeciesNameString")
       use, intrinsic :: iso_c_binding
       use kim_species_name_module, only : kim_species_name_type
       implicit none
       type(kim_species_name_type), intent(in), value :: species_name
-    end function string
+    end function get_string
 
     subroutine get_number_of_species(number_of_species) &
       bind(c, name="KIM_SPECIES_NAME_GetNumberOfSpeciesNames")
@@ -116,22 +116,22 @@ subroutine kim_species_name_from_string(species_name_string, species_name)
   call from_string(trim(species_name_string)//c_null_char, species_name)
 end subroutine kim_species_name_from_string
 
-subroutine kim_species_name_string(species_name, name_string)
+subroutine kim_species_name_string(species_name, string)
   use, intrinsic :: iso_c_binding
   use kim_species_name_module, only : kim_species_name_type
-  use kim_species_name_f_module, only : string
+  use kim_species_name_f_module, only : get_string
   implicit none
   type(kim_species_name_type), intent(in), value :: species_name
-  character(len=*), intent(out) :: name_string
+  character(len=*), intent(out) :: string
 
   type(c_ptr) :: p
-  character(len=len(name_string)+1), pointer :: fp
+  character(len=len(string)+1), pointer :: fp
   integer(c_int) :: null_index
 
-  p = string(species_name)
+  p = get_string(species_name)
   call c_f_pointer(p, fp)
   null_index = scan(fp, char(0))-1
-  name_string = fp(1:null_index)
+  string = fp(1:null_index)
 end subroutine kim_species_name_string
 
 subroutine kim_species_name_get_number_of_species(number_of_species)

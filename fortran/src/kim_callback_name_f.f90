@@ -90,22 +90,22 @@ logical function kim_callback_name_not_equal(left, right)
   kim_callback_name_not_equal = .not. (left .eq. right)
 end function kim_callback_name_not_equal
 
-subroutine kim_callback_name_string(callback_name, name_string)
+subroutine kim_callback_name_string(callback_name, string)
   use, intrinsic :: iso_c_binding
   use kim_callback_name_module, only : kim_callback_name_type
   use kim_callback_name_f_module, only : callback_name_string
   implicit none
   type(kim_callback_name_type), intent(in), value :: callback_name
-  character(len=*), intent(out) :: name_string
+  character(len=*), intent(out) :: string
 
   type(c_ptr) :: p
-  character(len=len(name_string)+1), pointer :: fp
+  character(len=len(string)+1), pointer :: fp
   integer(c_int) :: null_index
 
   p = callback_name_string(callback_name)
   call c_f_pointer(p, fp)
   null_index = scan(fp, char(0))-1
-  name_string = fp(1:null_index)
+  string = fp(1:null_index)
 end subroutine kim_callback_name_string
 
 subroutine kim_callback_name_get_number_of_callbacks(number_of_callbacks)

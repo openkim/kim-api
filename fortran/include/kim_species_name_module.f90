@@ -498,11 +498,11 @@ module kim_species_name_module
       type(kim_species_name_type), intent(out) :: species_name
     end subroutine kim_species_name_from_string
 
-    subroutine kim_species_name_string(species_name, name_string)
+    subroutine kim_species_name_string(species_name, string)
       import kim_species_name_type
       implicit none
       type(kim_species_name_type), intent(in), value :: species_name
-      character(len=*), intent(out) :: name_string
+      character(len=*), intent(out) :: string
     end subroutine kim_species_name_string
 
     subroutine kim_species_name_get_number_of_species(&

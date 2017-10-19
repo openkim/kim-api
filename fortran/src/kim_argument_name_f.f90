@@ -105,22 +105,22 @@ logical function kim_argument_name_not_equal(left, right)
   kim_argument_name_not_equal = .not. (left .eq. right)
 end function kim_argument_name_not_equal
 
-subroutine kim_argument_name_string(argument_name, name_string)
+subroutine kim_argument_name_string(argument_name, string)
   use, intrinsic :: iso_c_binding
   use kim_argument_name_module, only : kim_argument_name_type
   use kim_argument_name_f_module, only : compute_argument_name_string
   implicit none
   type(kim_argument_name_type), intent(in), value :: argument_name
-  character(len=*), intent(out) :: name_string
+  character(len=*), intent(out) :: string
 
   type(c_ptr) :: p
-  character(len=len(name_string)+1), pointer :: fp
+  character(len=len(string)+1), pointer :: fp
   integer(c_int) :: null_index
 
   p = compute_argument_name_string(argument_name)
   call c_f_pointer(p, fp)
   null_index = scan(fp, char(0))-1
-  name_string = fp(1:null_index)
+  string = fp(1:null_index)
 end subroutine kim_argument_name_string
 
 subroutine kim_argument_name_get_number_of_arguments( &

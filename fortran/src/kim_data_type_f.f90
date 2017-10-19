@@ -74,20 +74,20 @@ logical function kim_data_type_not_equal(left, right)
 end function kim_data_type_not_equal
 
 
-subroutine kim_data_type_string(data_type, type_string)
+subroutine kim_data_type_string(data_type, string)
   use, intrinsic :: iso_c_binding
   use kim_data_type_module, only : kim_data_type_type
   use kim_data_type_f_module, only : data_type_string
   implicit none
   type(kim_data_type_type), intent(in), value :: data_type
-  character(len=*), intent(out) :: type_string
+  character(len=*), intent(out) :: string
 
   type(c_ptr) :: p
-  character(len=len(type_string)+1), pointer :: fp
+  character(len=len(string)+1), pointer :: fp
   integer(c_int) :: null_index
 
   p = data_type_string(data_type)
   call c_f_pointer(p, fp)
   null_index = scan(fp, char(0))-1
-  type_string = fp(1:null_index)
+  string = fp(1:null_index)
 end subroutine kim_data_type_string

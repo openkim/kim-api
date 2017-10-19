@@ -73,20 +73,20 @@ logical function kim_charge_unit_not_equal(left, right)
   kim_charge_unit_not_equal = .not. (left .eq. right)
 end function kim_charge_unit_not_equal
 
-subroutine kim_charge_unit_string(charge_unit, unit_string)
+subroutine kim_charge_unit_string(charge_unit, string)
   use, intrinsic :: iso_c_binding
   use kim_charge_unit_module, only : kim_charge_unit_type
   use kim_charge_unit_f_module, only : charge_unit_string
   implicit none
   type(kim_charge_unit_type), intent(in), value :: charge_unit
-  character(len=*), intent(out) :: unit_string
+  character(len=*), intent(out) :: string
 
   type(c_ptr) :: p
-  character(len=len(unit_string)+1), pointer :: fp
+  character(len=len(string)+1), pointer :: fp
   integer(c_int) :: null_index
 
   p = charge_unit_string(charge_unit)
   call c_f_pointer(p, fp)
   null_index = scan(fp, char(0))-1
-  unit_string = fp(1:null_index)
+  string = fp(1:null_index)
 end subroutine kim_charge_unit_string

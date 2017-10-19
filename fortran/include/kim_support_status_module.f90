@@ -83,11 +83,11 @@ module kim_support_status_module
   end interface operator (.ne.)
 
   interface
-    subroutine kim_support_status_string(support_status, support_status_string)
+    subroutine kim_support_status_string(support_status, string)
       import kim_support_status_type
       implicit none
       type(kim_support_status_type), intent(in), value :: support_status
-      character(len=*), intent(out) :: support_status_string
+      character(len=*), intent(out) :: string
     end subroutine kim_support_status_string
   end interface
 end module kim_support_status_module

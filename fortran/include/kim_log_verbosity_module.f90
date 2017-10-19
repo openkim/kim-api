@@ -135,11 +135,11 @@ module kim_log_verbosity_module
   end interface operator (.ne.)
 
   interface
-    subroutine kim_log_verbosity_string(log_verbosity, type_string)
+    subroutine kim_log_verbosity_string(log_verbosity, string)
       import kim_log_verbosity_type
       implicit none
       type(kim_log_verbosity_type), intent(in), value :: log_verbosity
-      character(len=*), intent(out) :: type_string
+      character(len=*), intent(out) :: string
     end subroutine kim_log_verbosity_string
   end interface
 end module kim_log_verbosity_module

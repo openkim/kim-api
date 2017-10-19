@@ -78,11 +78,11 @@ module kim_numbering_module
   end interface operator (.ne.)
 
   interface
-    subroutine kim_numbering_string(numbering, name_string)
+    subroutine kim_numbering_string(numbering, string)
       import kim_numbering_type
       implicit none
       type(kim_numbering_type), intent(in), value :: numbering
-      character(len=*), intent(out) :: name_string
+      character(len=*), intent(out) :: string
     end subroutine kim_numbering_string
   end interface
 end module kim_numbering_module

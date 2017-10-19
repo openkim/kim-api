@@ -117,20 +117,20 @@ logical function kim_log_verbosity_not_equal(left, right)
   kim_log_verbosity_not_equal = .not. (left .eq. right)
 end function kim_log_verbosity_not_equal
 
-subroutine kim_log_verbosity_string(log_verbosity, type_string)
+subroutine kim_log_verbosity_string(log_verbosity, string)
   use, intrinsic :: iso_c_binding
   use kim_log_verbosity_module, only : kim_log_verbosity_type
   use kim_log_verbosity_f_module, only : log_verbosity_string
   implicit none
   type(kim_log_verbosity_type), intent(in), value :: log_verbosity
-  character(len=*), intent(out) :: type_string
+  character(len=*), intent(out) :: string
 
   type(c_ptr) :: p
-  character(len=len(type_string)+1), pointer :: fp
+  character(len=len(string)+1), pointer :: fp
   integer(c_int) :: null_index
 
   p = log_verbosity_string(log_verbosity)
   call c_f_pointer(p, fp)
   null_index = scan(fp, char(0))-1
-  type_string = fp(1:null_index)
+  string = fp(1:null_index)
 end subroutine kim_log_verbosity_string

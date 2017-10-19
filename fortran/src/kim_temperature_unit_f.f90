@@ -73,20 +73,20 @@ logical function kim_temperature_unit_not_equal(left, right)
   kim_temperature_unit_not_equal = .not. (left .eq. right)
 end function kim_temperature_unit_not_equal
 
-subroutine kim_temperature_unit_string(temperature_unit, unit_string)
+subroutine kim_temperature_unit_string(temperature_unit, string)
   use, intrinsic :: iso_c_binding
   use kim_temperature_unit_module, only : kim_temperature_unit_type
   use kim_temperature_unit_f_module, only : temperature_unit_string
   implicit none
   type(kim_temperature_unit_type), intent(in), value :: temperature_unit
-  character(len=*), intent(out) :: unit_string
+  character(len=*), intent(out) :: string
 
   type(c_ptr) :: p
-  character(len=len(unit_string)+1), pointer :: fp
+  character(len=len(string)+1), pointer :: fp
   integer(c_int) :: null_index
 
   p = temperature_unit_string(temperature_unit)
   call c_f_pointer(p, fp)
   null_index = scan(fp, char(0))-1
-  unit_string = fp(1:null_index)
+  string = fp(1:null_index)
 end subroutine kim_temperature_unit_string

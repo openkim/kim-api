@@ -82,11 +82,11 @@ module kim_language_name_module
   end interface operator (.ne.)
 
   interface
-    subroutine kim_language_name_string(language_name, name_string)
+    subroutine kim_language_name_string(language_name, string)
       import kim_language_name_type
       implicit none
       type(kim_language_name_type), intent(in), value :: language_name
-      character(len=*), intent(out) :: name_string
+      character(len=*), intent(out) :: string
     end subroutine kim_language_name_string
   end interface
 end module kim_language_name_module

@@ -73,20 +73,20 @@ logical function kim_support_status_not_equal(left, right)
   kim_support_status_not_equal = .not. (left .eq. right)
 end function kim_support_status_not_equal
 
-subroutine kim_support_status_string(support_status, support_status_string)
+subroutine kim_support_status_string(support_status, string)
   use, intrinsic :: iso_c_binding
   use kim_support_status_module, only : kim_support_status_type
   use kim_support_status_f_module, only : support_status_str
   implicit none
   type(kim_support_status_type), intent(in), value :: support_status
-  character(len=*), intent(out) :: support_status_string
+  character(len=*), intent(out) :: string
 
   type(c_ptr) :: p
-  character(len=len(support_status_string)+1), pointer :: fp
+  character(len=len(string)+1), pointer :: fp
   integer(c_int) :: null_index
 
   p = support_status_str(support_status)
   call c_f_pointer(p, fp)
   null_index = scan(fp, char(0))-1
-  support_status_string = fp(1:null_index)
+  string = fp(1:null_index)
 end subroutine kim_support_status_string

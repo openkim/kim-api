@@ -114,11 +114,11 @@ module kim_argument_name_module
   end interface operator (.ne.)
 
   interface
-    subroutine kim_argument_name_string(argument_name, name_string)
+    subroutine kim_argument_name_string(argument_name, string)
       import kim_argument_name_type
       implicit none
       type(kim_argument_name_type), intent(in), value :: argument_name
-      character(len=*), intent(out) :: name_string
+      character(len=*), intent(out) :: string
     end subroutine kim_argument_name_string
 
     subroutine kim_argument_name_get_number_of_arguments( &

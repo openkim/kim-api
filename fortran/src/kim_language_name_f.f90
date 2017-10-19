@@ -72,20 +72,20 @@ logical function kim_language_name_not_equal(left, right)
   kim_language_name_not_equal = .not. (left .eq. right)
 end function kim_language_name_not_equal
 
-subroutine kim_language_name_string(language_name, name_string)
+subroutine kim_language_name_string(language_name, string)
   use, intrinsic :: iso_c_binding
   use kim_language_name_module, only : kim_language_name_type
   use kim_language_name_f_module, only : language_name_string
   implicit none
   type(kim_language_name_type), intent(in), value :: language_name
-  character(len=*), intent(out) :: name_string
+  character(len=*), intent(out) :: string
 
   type(c_ptr) :: p
-  character(len=len(name_string)+1), pointer :: fp
+  character(len=len(string)+1), pointer :: fp
   integer(c_int) :: null_index
 
   p = language_name_string(language_name)
   call c_f_pointer(p, fp)
   null_index = scan(fp, char(0))-1
-  name_string = fp(1:null_index)
+  string = fp(1:null_index)
 end subroutine kim_language_name_string
