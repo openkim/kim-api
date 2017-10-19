@@ -108,7 +108,6 @@ class ModelImplementation
 
   void SetNeighborListCutoffsPointer(int const numberOfCutoffs,
                                      double const * const cutoffs);
-  // allows NULL as value of cutoffs (to get just numberOfCutoffs)
   void GetNeighborListCutoffsPointer(int * const numberOfCutoffs,
                                      double const ** const cutoffs) const;
 

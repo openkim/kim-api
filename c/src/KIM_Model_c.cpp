@@ -203,7 +203,6 @@ KIM::LogVerbosity makeLogVerbosityCpp(KIM_LogVerbosity logVerbosity)
 {
   return KIM::LogVerbosity(logVerbosity.logVerbosityID);
 }
-
 }  // namespace
 
 
@@ -318,8 +317,6 @@ void KIM_Model_GetUnits(KIM_Model const * const model,
       reinterpret_cast<KIM::TimeUnit *>(timeUnit));
 }
 
-
-// *data functions
 int KIM_Model_SetArgumentPointerInteger(KIM_Model * const model,
                                         KIM_ArgumentName const argumentName,
                                         int const * const ptr)
@@ -390,14 +387,14 @@ int KIM_Model_GetParameterDataTypeExtentAndDescription(
   static std::string str;
 
   KIM::DataType *pTyp;
-  if (dataType == 0)
-    pTyp = 0;
+  if (dataType == NULL)
+    pTyp = NULL;
   else
     pTyp = &typ;
 
   std::string * pStr;
-  if (description == 0)
-    pStr = 0;
+  if (description == NULL)
+    pStr = NULL;
   else
     pStr = &str;
 
@@ -409,8 +406,8 @@ int KIM_Model_GetParameterDataTypeExtentAndDescription(
     return true;
   else
   {
-    if (dataType != 0) *dataType = makeDataTypeC(typ);
-    if (description != 0) *description = str.c_str();
+    if (dataType != NULL) *dataType = makeDataTypeC(typ);
+    if (description != NULL) *description = str.c_str();
     return false;
   }
 }

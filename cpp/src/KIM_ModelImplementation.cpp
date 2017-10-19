@@ -239,12 +239,13 @@ void ModelImplementation::SetNeighborListCutoffsPointer(
   cutoffs_ = cutoffs;
 }
 
-// allows NULL as value of cutoffs (to get just numberOfCutoffs)
 void ModelImplementation::GetNeighborListCutoffsPointer(
     int * const numberOfCutoffs, double const ** const cutoffs) const
 {
-  *numberOfCutoffs = numberOfCutoffs_;
-  *cutoffs = cutoffs_;
+  if (numberOfCutoffs != NULL)
+    *numberOfCutoffs = numberOfCutoffs_;
+  if (cutoffs != NULL)
+    *cutoffs = cutoffs_;
 }
 
 
@@ -299,7 +300,8 @@ int ModelImplementation::GetSpeciesSupportAndCode(
   else
   {
     *speciesIsSupported = true;
-    *code = result->second;
+    if (code != NULL)
+      *code = result->second;
   }
 
   return false;
@@ -409,11 +411,16 @@ void ModelImplementation::GetUnits(LengthUnit * const lengthUnit,
                                    TemperatureUnit * const temperatureUnit,
                                    TimeUnit * const timeUnit) const
 {
-  *lengthUnit = lengthUnit_;
-  *energyUnit = energyUnit_;
-  *chargeUnit = chargeUnit_;
-  *temperatureUnit = temperatureUnit_;
-  *timeUnit = timeUnit_;
+  if (lengthUnit != NULL)
+    *lengthUnit = lengthUnit_;
+  if (energyUnit != NULL)
+    *energyUnit = energyUnit_;
+  if (chargeUnit != NULL)
+    *chargeUnit = chargeUnit_;
+  if (temperatureUnit != NULL)
+    *temperatureUnit = temperatureUnit_;
+  if (timeUnit != NULL)
+    *timeUnit = timeUnit_;
 }
 
 
@@ -482,9 +489,12 @@ int ModelImplementation::GetParameterDataTypeExtentAndDescription(
     int const parameterIndex, DataType * const dataType, int * const extent,
     std::string * const description) const
 {
-  *dataType = parameterDataType_[parameterIndex];
-  *extent = parameterExtent_[parameterIndex];
-  *description = parameterDescription_[parameterIndex];
+  if (dataType != NULL)
+    *dataType = parameterDataType_[parameterIndex];
+  if (extent != NULL)
+    *extent = parameterExtent_[parameterIndex];
+  if (description != NULL)
+    *description = parameterDescription_[parameterIndex];
 
   return false;
 }
@@ -649,8 +659,6 @@ int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
   }
 }
 
-
-
 int ModelImplementation::SetCallbackPointer(CallbackName const callbackName,
                                             LanguageName const languageName,
                                             func * const fptr,
@@ -694,7 +702,6 @@ int ModelImplementation::IsCallbackPresent(
     return false;
   }
 }
-
 
 int ModelImplementation::Compute() const
 {
@@ -1125,7 +1132,6 @@ TimeMap const GetTimeMap()
   return m;
 }
 }  // namespace
-
 
 int ModelImplementation::ConvertUnit(
     LengthUnit const fromLengthUnit,
@@ -1820,8 +1826,6 @@ int ModelImplementation::InitializeParameterizedModel(
   return false;
 }
 
-
-
 int ModelImplementation::WriteParameterFiles()
 {
   modelLibrary_->getNumberOfParameterFiles(&numberOfParameterFiles_);
@@ -1865,5 +1869,4 @@ int ModelImplementation::WriteParameterFiles()
 
   return false;
 }
-
 }  // namespace KIM
