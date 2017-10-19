@@ -55,11 +55,11 @@ OBJC = KIM_ArgumentName_c.o \
        KIM_ModelRefresh_c.o \
        KIM_Model_c.o \
        KIM_Numbering_c.o \
+       KIM_SemVer_c.o \
        KIM_SpeciesName_c.o \
        KIM_SupportStatus_c.o \
        KIM_TemperatureUnit_c.o \
-       KIM_TimeUnit_c.o \
-       KIM_semver_c.o
+       KIM_TimeUnit_c.o
 
 #
 # Main build settings and rules
@@ -120,11 +120,11 @@ KIM_Model_c.o: KIM_Model_c.cpp $(KIM_MODEL_C) $(KIM_MODEL_CPP) \
                      $(KIM_SPECIES_NAME_C) $(KIM_SPECIES_NAME_CPP) $(KIM_DATA_TYPE_C) $(KIM_DATA_TYPE_CPP) \
                      $(KIM_LOG_VERBOSITY_C) $(KIM_LOG_VERBOSITY_CPP) $(KIM_MAKE_FILES)
 KIM_Numbering_c.o: KIM_Numbering_c.cpp $(KIM_NUMBERING_C) $(KIM_NUMBERING_CPP) $(KIM_MAKE_FILES)
+KIM_SemVer_c.o: KIM_SemVer_c.cpp $(KIM_SEM_VER_C) $(KIM_SEM_VER_CPP) $(KIM_MAKE_FILES)
 KIM_SpeciesName_c.o: KIM_SpeciesName_c.cpp $(KIM_SPECIES_NAME_C) $(KIM_SPECIES_NAME_CPP) $(KIM_MAKE_FILES)
 KIM_SupportStatus_c.o: KIM_SupportStatus_c.cpp $(KIM_SUPPORT_STATUS_C) $(KIM_SUPPORT_STATUS_CPP) $(KIM_MAKE_FILES)
 KIM_TemperatureUnit_c.o: KIM_TemperatureUnit_c.cpp $(KIM_TEMPERATURE_UNIT_C) $(KIM_TEMPERATURE_UNIT_CPP) $(KIM_MAKE_FILES)
 KIM_TimeUnit_c.o: KIM_TimeUnit_c.cpp $(KIM_TIME_UNIT_C) $(KIM_TIME_UNIT_CPP) $(KIM_MAKE_FILES)
-KIM_semver_c.o: KIM_semver_c.cpp $(KIM_SEMVER_C) $(KIM_SEMBER_CPP) $(KIM_MAKE_FILES)
 
 
 #
@@ -160,13 +160,14 @@ install_include_c = KIM_ArgumentName.h \
                     KIM_ModelRefresh.h \
                     KIM_ModelRefreshLogMacros.h \
                     KIM_Numbering.h \
+                    KIM_SemVer.h \
                     KIM_SpeciesName.h \
                     KIM_SupportStatus.h \
                     KIM_TemperatureUnit.h \
                     KIM_TimeUnit.h \
                     KIM_UnitSystem.h \
-                    KIM_func.h \
-                    KIM_semver.h
+                    KIM_Version.h \
+                    KIM_func.h
 
 install: dirs-install headers-install
 

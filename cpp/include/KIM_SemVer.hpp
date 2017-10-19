@@ -30,22 +30,23 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
-#ifndef KIM_SEMVER_HPP_
-#include "KIM_semver.hpp"
-#endif
-extern "C"
-{
-#ifndef KIM_SEMVER_H_
-#include "KIM_semver.h"
-#endif
-}  // extern "C"
 
-extern "C"
-{
-// break return convention: for compatibility with sorting routines
-int KIM_version_newer(char const * const versionA, char const * const versionB)
-{
-  return KIM::version_newer(versionA, versionB);
-}
+#ifndef KIM_SEM_VER_HPP_
+#define KIM_SEM_VER_HPP_
 
-}  // extern "C"
+#include <string>
+
+namespace KIM
+{
+namespace SEM_VER
+{
+void GetSemVer(std::string * const version);
+int IsLessThan(std::string const & versionA, std::string const & versionB,
+               int * const isLessThan);
+int ParseSemVer(std::string const & version, int * const major,
+                int * const minor, int * const patch,
+                std::string * const prerelease,
+                std::string * const buildMetadata);
+}  // namespace SEM_VER
+}  // namespace KIM
+#endif  // KIM_SEM_VER_HPP_

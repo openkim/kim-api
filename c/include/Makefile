@@ -35,7 +35,7 @@ ifeq ($(wildcard ../../Makefile.KIM_Config),)
 endif
 include ../../Makefile.KIM_Config
 
-INCLDS = KIM_LOG_MAXIMUM_LEVEL.inc KIM_Version.hpp
+INCLDS = KIM_Version.h
 
 #
 # Main build settings and rules
@@ -43,24 +43,20 @@ INCLDS = KIM_LOG_MAXIMUM_LEVEL.inc KIM_Version.hpp
 .PHONY: all includes
 
 # add local Makefile to KIM_MAKE_FILES
-KIM_MAKE_FILES += $(KIM_DIR)/cpp/include/Makefile
+KIM_MAKE_FILES += $(KIM_DIR)/c/include/Makefile
 
 all: includes
 
 includes: $(INCLDS)
 
-KIM_LOG_MAXIMUM_LEVEL.inc: $(KIM_MAKE_FILES)
+KIM_Version.h: KIM_Version.h.tpl $(KIM_MAKE_FILES)
 	@printf "Creating... include file....... $@.\n"
-	$(QUELL)printf "#define KIM_LOG_MAXIMUM_LEVEL $(KIM_LOG_MAXIMUM_LEVEL)\n" > $@
-
-KIM_Version.hpp: KIM_Version.hpp.tpl $(KIM_MAKE_FILES)
-	@printf "Creating... include file....... $@.\n"
-	$(QUELL)cat KIM_Version.hpp.tpl | sed -e 's/versionMajor/$(VERSION_MAJOR)/g' \
-                                              -e 's/versionMinor/$(VERSION_MINOR)/g' \
-                                              -e 's/versionPatch/$(VERSION_PATCH)/g' \
-                                              -e 's/versionPrerelease/"$(VERSION_PRERELEASE)"/g' \
-                                              -e 's/versionBuildMetadata/"$(VERSION_BUILD_METADATA)"/g' \
-                                              -e 's/versionString/"$(VERSION_FULL)"/g' \
+	$(QUELL)cat KIM_Version.h.tpl | sed -e 's/versionMajor/$(VERSION_MAJOR)/g' \
+                                            -e 's/versionMinor/$(VERSION_MINOR)/g' \
+                                            -e 's/versionPatch/$(VERSION_PATCH)/g' \
+                                            -e 's/versionPrerelease/"$(VERSION_PRERELEASE)"/g' \
+                                            -e 's/versionBuildMetadata/"$(VERSION_BUILD_METADATA)"/g' \
+                                            -e 's/versionString/"$(VERSION_FULL)"/g' \
                 > $@
 
 
@@ -70,5 +66,5 @@ KIM_Version.hpp: KIM_Version.hpp.tpl $(KIM_MAKE_FILES)
 .PHONY: clean
 
 clean:
-	@printf "Cleaning... cpp/include.\n"
+	@printf "Cleaning... c/include.\n"
 	$(QUELL)rm -f $(INCLDS)

@@ -1,4 +1,5 @@
 !
+!
 ! CDDL HEADER START
 !
 ! The contents of this file are subject to the terms of the Common Development
@@ -17,34 +18,28 @@
 !
 ! CDDL HEADER END
 !
-
 !
-! Copyright (c) 2016--2017, Regents of the University of Minnesota.
+!
+! Copyright (c) 2013--2017, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
 !    Ryan S. Elliott
+!
 !
 
 !
 ! Release: This file is part of the kim-api.git repository.
 !
 
+#ifndef KIM_VERSION_FD_
+#define KIM_VERSION_FD_
 
-module kim_semver_module
-  use, intrinsic :: iso_c_binding
-  implicit none
-  private
+#define KIM_VERSION_MAJOR versionMajor
+#define KIM_VERSION_MINOR versionMinor
+#define KIM_VERSION_PATCH versionPatch
+#define KIM_VERSION_PRERELEASE versionPrerelease
+#define KIM_VERSION_BUILD_METADATA versionBuildMetadata
+#define KIM_VERSION_STRING versionString
 
-  public &
-    kim_version_newer
-
-  interface
-    subroutine kim_version_newer(version_a, version_b)
-      use, intrinsic :: iso_c_binding
-      implicit none
-      character(len=*), intent(in) :: version_a
-      character(len=*), intent(in) :: version_b
-    end subroutine kim_version_newer
-  end interface
-end module kim_semver_module
+#endif  ! KIM_VERSION_FD_

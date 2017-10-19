@@ -31,15 +31,14 @@
 //
 
 
-#ifndef KIM_SEMVER_HPP_
-#define KIM_SEMVER_HPP_
+#ifndef KIM_VERSION_HPP_
+#define KIM_VERSION_HPP_
 
-#include <string>
+#define KIM_VERSION_MAJOR versionMajor
+#define KIM_VERSION_MINOR versionMinor
+#define KIM_VERSION_PATCH versionPatch
+#define KIM_VERSION_PRERELEASE versionPrerelease
+#define KIM_VERSION_BUILD_METADATA versionBuildMetadata
+#define KIM_VERSION_STRING versionString
 
-namespace KIM
-{
-// break return convention: for compatibility with sorting routines
-int version_newer(std::string const & versionA,
-                  std::string const & versionB);
-}  // namespace KIM
-#endif  // KIM_SEMVER_HPP_
+#endif  // KIM_VERSION_HPP_

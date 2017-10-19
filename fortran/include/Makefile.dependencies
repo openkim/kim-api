@@ -48,6 +48,7 @@ kim_model_driver_create_module.mod: kim_model_driver_create_module.f90 kim_numbe
 kim_model_module.mod: kim_model_module.f90 kim_argument_name_module.mod kim_numbering_module.mod kim_unit_system_module.mod kim_support_status_module.mod kim_callback_name_module.mod kim_language_name_module.mod kim_species_name_module.mod kim_data_type_module.mod kim_log_verbosity_module.mod
 kim_model_refresh_module.mod: kim_model_refresh_module.f90 kim_log_verbosity_module.mod
 kim_numbering_module.mod: kim_numbering_module.f90
+kim_sem_ver_module.mod: kim_sem_ver_module.f90
 kim_species_name_module.mod: kim_species_name_module.f90
 kim_support_status_module.mod: kim_support_status_module.f90
 kim_temperature_unit_module.mod: kim_temperature_unit_module.f90

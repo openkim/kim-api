@@ -32,15 +32,14 @@
 * Release: This file is part of the kim-api.git repository.
 */
 
+#ifndef KIM_VERSION_H_
+#define KIM_VERSION_H_
 
-#ifndef KIMHDR_OLD_KIM_API_VERSION_H
-#define KIMHDR_OLD_KIM_API_VERSION_H
+#define KIM_VERSION_MAJOR versionMajor
+#define KIM_VERSION_MINOR versionMinor
+#define KIM_VERSION_PATCH versionPatch
+#define KIM_VERSION_PRERELEASE versionPrerelease
+#define KIM_VERSION_BUILD_METADATA versionBuildMetadata
+#define KIM_VERSION_STRING versionString
 
-#define KIM_API_VERSION_MAJOR versionMajor
-#define KIM_API_VERSION_MINOR versionMinor
-#define KIM_API_VERSION_PATCH versionPatch
-#define KIM_API_VERSION_PRERELEASE versionPrerelease
-#define KIM_API_VERSION_BUILD_METADATA versionBuildMetadata
-#define KIM_API_VERSION versionString
-
-#endif  /* KIMHDR_OLD_KIM_API_VERSION_H */
+#endif  /* KIM_VERSION_H_ */

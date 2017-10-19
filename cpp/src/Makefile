@@ -55,11 +55,11 @@ OBJCPP = KIM_ArgumentName.o \
          KIM_ModelDriverCreate.o \
          KIM_ModelRefresh.o \
          KIM_Numbering.o \
+         KIM_SemVer.o \
          KIM_SpeciesName.o \
          KIM_SupportStatus.o \
          KIM_TemperatureUnit.o \
          KIM_TimeUnit.o \
-         KIM_semver.o \
          \
          KIM_ModelImplementation.o \
          KIM_ModelLibrary.o \
@@ -99,16 +99,6 @@ lib$(KIM_LIB_BUILD).so: lib-cpp-$(KIM_LIB_BUILD).a ../../c/src/lib-c-$(KIM_LIB_B
                       $(LDWHOLEARCHIVESTARTFLAG) $^ $(LDWHOLEARCHIVEENDFLAG) \
                       $(LDDYNAMICLIB) $(XLANGLDLIBS) \
                       $(LDLIBS)
-
-# old_KIM_API_Version.h: old_KIM_API_Version.h.tpl $(KIM_MAKE_FILES)
-# 	@printf "Creating... old_KIM_API_Version.h.\n"
-# 	$(QUELL)cat old_KIM_API_Version.h.tpl | sed -e 's/versionMajor/$(VERSION_MAJOR)/g' \
-#                                                 -e 's/versionMinor/$(VERSION_MINOR)/g' \
-#                                                 -e 's/versionPatch/$(VERSION_PATCH)/g' \
-#                                                 -e 's/versionPrerelease/"$(VERSION_PRERELEASE)"/g' \
-#                                                 -e 's/versionBuildMetadata/"$(VERSION_BUILD_METADATA)"/g' \
-#                                                 -e 's/versionString/"$(VERSION_FULL)"/g' \
-#                 > $@
 
 
 # Include file dependency lists
@@ -150,7 +140,7 @@ KIM_SpeciesName.o: KIM_SpeciesName.cpp $(KIM_SPECIES_NAME_CPP) $(KIM_MAKE_FILES)
 KIM_SupportStatus.o: KIM_SupportStatus.cpp $(KIM_SUPPORT_STATUS_CPP) $(KIM_MAKE_FILES)
 KIM_TemperatureUnit.o: KIM_TemperatureUnit.cpp $(KIM_TEMPERATURE_UNIT_CPP) $(KIM_MAKE_FILES)
 KIM_TimeUnit.o: KIM_TimeUnit.cpp $(KIM_TIME_UNIT_CPP) $(KIM_MAKE_FILES)
-KIM_semver.o: KIM_semver.cpp $(KIM_SEMVER_CPP) $(KIM_MAKE_FILES)
+KIM_SemVer.o: KIM_SemVer.cpp $(KIM_SEM_VER_CPP) $(KIM_MAKE_FILES)
 
 
 KIM_ModelLibrary.o: KIM_ModelLibrary.cpp $(KIM_MODEL_LIBRARY_CPP) $(KIM_LANGUAGE_NAME_CPP) \
@@ -212,13 +202,14 @@ install_include_cpp = KIM_ArgumentName.hpp \
                       KIM_ModelDriverCreate.hpp KIM_ModelDriverCreateLogMacros.hpp \
                       KIM_ModelRefresh.hpp KIM_ModelRefreshLogMacros.hpp \
                       KIM_Numbering.hpp \
+                      KIM_SemVer.hpp \
                       KIM_SpeciesName.hpp \
                       KIM_SupportStatus.hpp \
                       KIM_TemperatureUnit.hpp \
                       KIM_TimeUnit.hpp \
                       KIM_UnitSystem.hpp \
-                      KIM_func.hpp \
-                      KIM_semver.hpp
+                      KIM_Version.hpp \
+                      KIM_func.hpp
 
 install: dirs-install headers-install lib-install
 

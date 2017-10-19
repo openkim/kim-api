@@ -66,13 +66,19 @@ help:
 #
 .PHONY: all utils-all kim-api-fortran-all kim-api-c-all kim-api-cpp-all
 
-all: kim-api-cpp-includes-all kim-api-fortran-all kim-api-c-all kim-api-cpp-all utils-all
+all: kim-api-fortran-includes-all kim-api-c-includes-all kim-api-cpp-includes-all kim-api-fortran-all kim-api-c-all kim-api-cpp-all utils-all
 
 # Add local Makefile to KIM_MAKE_FILES
 KIM_MAKE_FILES += $(KIM_DIR)/Makefile
 
 
 # build targets involved in "make all"
+
+kim-api-fortran-includes-all: $(KIM_MAKE_FILES) kim-api-fortran-includes-making-echo
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C fortran/include all
+
+kim-api-c-includes-all: $(KIM_MAKE_FILES) kim-api-c-includes-making-echo
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C c/include all
 
 kim-api-cpp-includes-all: $(KIM_MAKE_FILES) kim-api-cpp-includes-making-echo
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C cpp/include all
@@ -95,9 +101,13 @@ utils-all: $(KIM_MAKE_FILES) cpp/src/utils-making-echo
 #
 .PHONY: clean kim-api-cpp-includes-clean kim-api-fortran-clean kim-api-c-clean kim-api-cpp-clean utils-clean
 
-clean: kim-api-cpp-includes-clean kim-api-fortran-clean kim-api-c-clean kim-api-cpp-clean utils-clean
+clean: kim-api-fortran-includes-clean kim-api-c-includes-clean kim-api-cpp-includes-clean kim-api-fortran-clean kim-api-c-clean kim-api-cpp-clean utils-clean
 
 # build targets involved in "make clean"
+kim-api-fortran-includes-clean:
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C fortran/include clean
+kim-api-c-includes-clean:
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C c/include clean
 kim-api-cpp-includes-clean:
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C cpp/include clean
 kim-api-fortran-clean:
