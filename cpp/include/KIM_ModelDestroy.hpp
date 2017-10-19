@@ -34,6 +34,8 @@
 #ifndef KIM_MODEL_DESTROY_HPP_
 #define KIM_MODEL_DESTROY_HPP_
 
+#include <string>
+
 namespace KIM
 {
 // Forward declarations

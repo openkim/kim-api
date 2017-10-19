@@ -39,6 +39,7 @@
 namespace KIM
 {
 // Forward declarations
+class LogVerbosity;
 class LengthUnit;
 class EnergyUnit;
 class ChargeUnit;

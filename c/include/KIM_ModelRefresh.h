@@ -40,6 +40,11 @@ struct KIM_ModelRefresh {
   void * p;
 };
 
+#ifndef KIM_LOG_VERBOSITY_DEFINED_
+#define KIM_LOG_VERBOSITY_DEFINED_
+typedef struct KIM_LogVerbosity KIM_LogVerbosity;
+#endif
+
 #ifndef KIM_MODEL_REFRESH_DEFINED_
 #define KIM_MODEL_REFRESH_DEFINED_
 typedef struct KIM_ModelRefresh KIM_ModelRefresh;

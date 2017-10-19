@@ -34,6 +34,7 @@
 #ifndef KIM_MODEL_CREATE_HPP_
 #define KIM_MODEL_CREATE_HPP_
 
+#include <string>
 
 #ifndef KIM_FUNC_HPP_
 #include "KIM_func.hpp"
