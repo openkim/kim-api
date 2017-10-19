@@ -347,7 +347,7 @@ module kim_model_module
     end subroutine kim_model_get_number_of_parameters
 
     subroutine kim_model_get_parameter_data_type_extent_and_description(model, &
-      index, data_type, description, ierr)
+      index, data_type, extent, description, ierr)
       use, intrinsic :: iso_c_binding
       use :: kim_data_type_module, only : kim_data_type_type
       import kim_model_type
@@ -355,6 +355,7 @@ module kim_model_module
       type(kim_model_type), intent(in) :: model
       integer(c_int), intent(in), value :: index
       type(kim_data_type_type), intent(out) :: data_type
+      integer(c_int), intent(out) :: extent
       character(len=*), intent(out) :: description
       integer(c_int), intent(out) :: ierr
     end subroutine kim_model_get_parameter_data_type_extent_and_description
