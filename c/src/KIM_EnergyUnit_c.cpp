@@ -83,12 +83,19 @@ char const * const KIM_EnergyUnitString(KIM_EnergyUnit const energyUnit)
   return (makeEnergyUnitCpp(energyUnit)).String().c_str();
 }
 
-KIM_EnergyUnit const KIM_ENERGY_UNIT_any = {0};
-KIM_EnergyUnit const KIM_ENERGY_UNIT_amu_A2_per_ps2 = {1};
-KIM_EnergyUnit const KIM_ENERGY_UNIT_erg = {2};
-KIM_EnergyUnit const KIM_ENERGY_UNIT_eV = {3};
-KIM_EnergyUnit const KIM_ENERGY_UNIT_Hartree = {4};
-KIM_EnergyUnit const KIM_ENERGY_UNIT_J = {5};
-KIM_EnergyUnit const KIM_ENERGY_UNIT_kcal_mol = {6};
+KIM_EnergyUnit const KIM_ENERGY_UNIT_unused
+= {KIM::ENERGY_UNIT::unused.energyUnitID};
+KIM_EnergyUnit const KIM_ENERGY_UNIT_amu_A2_per_ps2
+= {KIM::ENERGY_UNIT::amu_A2_per_ps2.energyUnitID};
+KIM_EnergyUnit const KIM_ENERGY_UNIT_erg
+= {KIM::ENERGY_UNIT::erg.energyUnitID};
+KIM_EnergyUnit const KIM_ENERGY_UNIT_eV
+= {KIM::ENERGY_UNIT::eV.energyUnitID};
+KIM_EnergyUnit const KIM_ENERGY_UNIT_Hartree
+= {KIM::ENERGY_UNIT::Hartree.energyUnitID};
+KIM_EnergyUnit const KIM_ENERGY_UNIT_J
+= {KIM::ENERGY_UNIT::J.energyUnitID};
+KIM_EnergyUnit const KIM_ENERGY_UNIT_kcal_mol
+= {KIM::ENERGY_UNIT::kcal_mol.energyUnitID};
 
 }  // extern "C"

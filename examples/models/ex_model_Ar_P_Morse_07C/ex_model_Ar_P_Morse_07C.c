@@ -488,9 +488,9 @@ int model_create(KIM_ModelCreate * const modelCreate,
       modelCreate, /* ignoring requested units */
       KIM_LENGTH_UNIT_A,
       KIM_ENERGY_UNIT_eV,
-      KIM_CHARGE_UNIT_any,
-      KIM_TEMPERATURE_UNIT_any,
-      KIM_TIME_UNIT_any);
+      KIM_CHARGE_UNIT_unused,
+      KIM_TEMPERATURE_UNIT_unused,
+      KIM_TIME_UNIT_unused);
 
   /* store model cutoff in KIM object */
   LOG_INFORMATION("Set influence distance and cutoffs");

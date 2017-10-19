@@ -51,7 +51,7 @@ int KIM_LengthUnitEqual(KIM_LengthUnit left, KIM_LengthUnit right);
 int KIM_LengthUnitNotEqual(KIM_LengthUnit left, KIM_LengthUnit right);
 char const* const KIM_LengthUnitString(KIM_LengthUnit const lengthUnit);
 
-extern KIM_LengthUnit const KIM_LENGTH_UNIT_any;
+extern KIM_LengthUnit const KIM_LENGTH_UNIT_unused;
 extern KIM_LengthUnit const KIM_LENGTH_UNIT_A;
 extern KIM_LengthUnit const KIM_LENGTH_UNIT_Bohr;
 extern KIM_LengthUnit const KIM_LENGTH_UNIT_cm;

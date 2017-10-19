@@ -86,9 +86,13 @@ char const * const KIM_SupportStatusString(
   return (makeSupportStatusCpp(supportStatus)).String().c_str();
 }
 
-KIM_SupportStatus const KIM_SUPPORT_STATUS_requiredByAPI = {0};
-KIM_SupportStatus const KIM_SUPPORT_STATUS_notSupported = {1};
-KIM_SupportStatus const KIM_SUPPORT_STATUS_required = {2};
-KIM_SupportStatus const KIM_SUPPORT_STATUS_optional = {3};
+KIM_SupportStatus const KIM_SUPPORT_STATUS_requiredByAPI
+= {KIM::SUPPORT_STATUS::requiredByAPI.supportStatusID};
+KIM_SupportStatus const KIM_SUPPORT_STATUS_notSupported
+= {KIM::SUPPORT_STATUS::notSupported.supportStatusID};
+KIM_SupportStatus const KIM_SUPPORT_STATUS_required
+= {KIM::SUPPORT_STATUS::required.supportStatusID};
+KIM_SupportStatus const KIM_SUPPORT_STATUS_optional
+= {KIM::SUPPORT_STATUS::optional.supportStatusID};
 
 }  // extern "C"

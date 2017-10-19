@@ -87,7 +87,9 @@ char const * const KIM_TemperatureUnitString(
   return (makeTemperatureUnitCpp(temperatureUnit)).String().c_str();
 }
 
-KIM_TemperatureUnit const KIM_TEMPERATURE_UNIT_any = {0};
-KIM_TemperatureUnit const KIM_TEMPERATURE_UNIT_K = {1};
+KIM_TemperatureUnit const KIM_TEMPERATURE_UNIT_unused
+= {KIM::TEMPERATURE_UNIT::unused.temperatureUnitID};
+KIM_TemperatureUnit const KIM_TEMPERATURE_UNIT_K
+= {KIM::TEMPERATURE_UNIT::K.temperatureUnitID};
 
 }  // extern "C"

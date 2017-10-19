@@ -52,7 +52,7 @@ int KIM_EnergyUnitNotEqual(KIM_EnergyUnit const left,
                            KIM_EnergyUnit const right);
 char const* const KIM_EnergyUnitString(KIM_EnergyUnit const energyUnit);
 
-extern KIM_EnergyUnit const KIM_ENERGY_UNIT_any;
+extern KIM_EnergyUnit const KIM_ENERGY_UNIT_unused;
 extern KIM_EnergyUnit const KIM_ENERGY_UNIT_amu_A2_per_ps2;
 extern KIM_EnergyUnit const KIM_ENERGY_UNIT_erg;
 extern KIM_EnergyUnit const KIM_ENERGY_UNIT_eV;

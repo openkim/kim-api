@@ -85,9 +85,12 @@ char const * const KIM_CallbackNameString(KIM_CallbackName callbackName)
 }
 
 // Order doesn't matter as long as all values are unique
-KIM_CallbackName const KIM_CALLBACK_NAME_GetNeighborList = {0};
-KIM_CallbackName const KIM_CALLBACK_NAME_ProcessDEDrTerm = {1};
-KIM_CallbackName const KIM_CALLBACK_NAME_ProcessD2EDr2Term = {2};
+KIM_CallbackName const KIM_CALLBACK_NAME_GetNeighborList
+= {KIM::CALLBACK_NAME::GetNeighborList.callbackNameID};
+KIM_CallbackName const KIM_CALLBACK_NAME_ProcessDEDrTerm
+= {KIM::CALLBACK_NAME::ProcessDEDrTerm.callbackNameID};
+KIM_CallbackName const KIM_CALLBACK_NAME_ProcessD2EDr2Term
+= {KIM::CALLBACK_NAME::ProcessD2EDr2Term.callbackNameID};
 
 void KIM_CALLBACK_NAME_GetNumberOfCallbacks(int * const numberOfCallbacks)
 {

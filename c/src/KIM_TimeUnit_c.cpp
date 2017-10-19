@@ -82,10 +82,10 @@ char const * const KIM_TimeUnitString(KIM_TimeUnit const tiemUnit)
   return (makeTimeUnitCpp(tiemUnit)).String().c_str();
 }
 
-KIM_TimeUnit const KIM_TIME_UNIT_any = {0};
-KIM_TimeUnit const KIM_TIME_UNIT_fs = {1};
-KIM_TimeUnit const KIM_TIME_UNIT_ps = {2};
-KIM_TimeUnit const KIM_TIME_UNIT_ns = {3};
-KIM_TimeUnit const KIM_TIME_UNIT_s = {4};
+KIM_TimeUnit const KIM_TIME_UNIT_unused = {KIM::TIME_UNIT::unused.timeUnitID};
+KIM_TimeUnit const KIM_TIME_UNIT_fs = {KIM::TIME_UNIT::fs.timeUnitID};
+KIM_TimeUnit const KIM_TIME_UNIT_ps = {KIM::TIME_UNIT::ps.timeUnitID};
+KIM_TimeUnit const KIM_TIME_UNIT_ns = {KIM::TIME_UNIT::ns.timeUnitID};
+KIM_TimeUnit const KIM_TIME_UNIT_s = {KIM::TIME_UNIT::s.timeUnitID};
 
 }  // extern "C"

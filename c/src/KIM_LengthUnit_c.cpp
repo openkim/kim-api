@@ -82,11 +82,17 @@ char const * const KIM_LengthUnitString(KIM_LengthUnit const lengthUnit)
   return (makeLengthUnitCpp(lengthUnit)).String().c_str();
 }
 
-KIM_LengthUnit const KIM_LENGTH_UNIT_any = {0};
-KIM_LengthUnit const KIM_LENGTH_UNIT_A = {1};
-KIM_LengthUnit const KIM_LENGTH_UNIT_Bohr = {2};
-KIM_LengthUnit const KIM_LENGTH_UNIT_cm = {3};
-KIM_LengthUnit const KIM_LENGTH_UNIT_m = {4};
-KIM_LengthUnit const KIM_LENGTH_UNIT_nm = {5};
+KIM_LengthUnit const KIM_LENGTH_UNIT_unused
+= {KIM::LENGTH_UNIT::unused.lengthUnitID};
+KIM_LengthUnit const KIM_LENGTH_UNIT_A
+= {KIM::LENGTH_UNIT::A.lengthUnitID};
+KIM_LengthUnit const KIM_LENGTH_UNIT_Bohr
+= {KIM::LENGTH_UNIT::Bohr.lengthUnitID};
+KIM_LengthUnit const KIM_LENGTH_UNIT_cm
+= {KIM::LENGTH_UNIT::cm.lengthUnitID};
+KIM_LengthUnit const KIM_LENGTH_UNIT_m
+= {KIM::LENGTH_UNIT::m.lengthUnitID};
+KIM_LengthUnit const KIM_LENGTH_UNIT_nm
+= {KIM::LENGTH_UNIT::nm.lengthUnitID};
 
 }  // extern "C"

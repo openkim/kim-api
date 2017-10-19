@@ -51,7 +51,7 @@ int KIM_ChargeUnitEqual(KIM_ChargeUnit const left, KIM_ChargeUnit right);
 int KIM_ChargeUnitNotEqual(KIM_ChargeUnit const left, KIM_ChargeUnit right);
 char const * const KIM_ChargeUnitString(KIM_ChargeUnit const chargeUnit);
 
-extern KIM_ChargeUnit const KIM_CHARGE_UNIT_any;
+extern KIM_ChargeUnit const KIM_CHARGE_UNIT_unused;
 extern KIM_ChargeUnit const KIM_CHARGE_UNIT_C;
 extern KIM_ChargeUnit const KIM_CHARGE_UNIT_e;
 extern KIM_ChargeUnit const KIM_CHARGE_UNIT_statC;

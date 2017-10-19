@@ -51,7 +51,7 @@ int KIM_TimeUnitEqual(KIM_TimeUnit const left, KIM_TimeUnit right);
 int KIM_TimeUnitNotEqual(KIM_TimeUnit const left, KIM_TimeUnit right);
 char const * const KIM_TimeUnitString(KIM_TimeUnit const timeUnit);
 
-extern KIM_TimeUnit const KIM_TIME_UNIT_any;
+extern KIM_TimeUnit const KIM_TIME_UNIT_unused;
 extern KIM_TimeUnit const KIM_TIME_UNIT_fs;
 extern KIM_TimeUnit const KIM_TIME_UNIT_ps;
 extern KIM_TimeUnit const KIM_TIME_UNIT_ns;

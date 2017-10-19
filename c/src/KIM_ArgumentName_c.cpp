@@ -95,16 +95,26 @@ char const * const KIM_ArgumentNameString(KIM_ArgumentName argumentName)
 }
 
 // Order doesn't matter as long as all values are unique
-KIM_ArgumentName const KIM_ARGUMENT_NAME_numberOfParticles = {0};
-KIM_ArgumentName const KIM_ARGUMENT_NAME_particleSpeciesCodes = {1};
-KIM_ArgumentName const KIM_ARGUMENT_NAME_particleContributing = {2};
-KIM_ArgumentName const KIM_ARGUMENT_NAME_coordinates = {3};
-KIM_ArgumentName const KIM_ARGUMENT_NAME_partialEnergy = {4};
-KIM_ArgumentName const KIM_ARGUMENT_NAME_partialForces = {5};
-KIM_ArgumentName const KIM_ARGUMENT_NAME_partialParticleEnergy = {6};
-KIM_ArgumentName const KIM_ARGUMENT_NAME_partialVirial = {7};
-KIM_ArgumentName const KIM_ARGUMENT_NAME_partialParticleVirial = {8};
-KIM_ArgumentName const KIM_ARGUMENT_NAME_partialHessian = {9};
+KIM_ArgumentName const KIM_ARGUMENT_NAME_numberOfParticles
+= {KIM::ARGUMENT_NAME::numberOfParticles.argumentNameID};
+KIM_ArgumentName const KIM_ARGUMENT_NAME_particleSpeciesCodes
+= {KIM::ARGUMENT_NAME::particleSpeciesCodes.argumentNameID};
+KIM_ArgumentName const KIM_ARGUMENT_NAME_particleContributing
+= {KIM::ARGUMENT_NAME::particleContributing.argumentNameID};
+KIM_ArgumentName const KIM_ARGUMENT_NAME_coordinates
+= {KIM::ARGUMENT_NAME::coordinates.argumentNameID};
+KIM_ArgumentName const KIM_ARGUMENT_NAME_partialEnergy
+= {KIM::ARGUMENT_NAME::partialEnergy.argumentNameID};
+KIM_ArgumentName const KIM_ARGUMENT_NAME_partialForces
+= {KIM::ARGUMENT_NAME::partialForces.argumentNameID};
+KIM_ArgumentName const KIM_ARGUMENT_NAME_partialParticleEnergy
+= {KIM::ARGUMENT_NAME::partialParticleEnergy.argumentNameID};
+KIM_ArgumentName const KIM_ARGUMENT_NAME_partialVirial
+= {KIM::ARGUMENT_NAME::partialVirial.argumentNameID};
+KIM_ArgumentName const KIM_ARGUMENT_NAME_partialParticleVirial
+= {KIM::ARGUMENT_NAME::partialParticleVirial.argumentNameID};
+KIM_ArgumentName const KIM_ARGUMENT_NAME_partialHessian
+= {KIM::ARGUMENT_NAME::partialHessian.argumentNameID};
 
 void KIM_ARGUMENT_NAME_GetNumberOfArguments(int * const numberOfArguments)
 {

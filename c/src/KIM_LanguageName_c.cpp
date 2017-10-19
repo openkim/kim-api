@@ -85,8 +85,11 @@ char const * const KIM_LanguageNameString(KIM_LanguageName languageName)
 }
 
 // Order doesn't matter as long as all values are unique
-KIM_LanguageName const KIM_LANGUAGE_NAME_cpp = {0};
-KIM_LanguageName const KIM_LANGUAGE_NAME_c = {1};
-KIM_LanguageName const KIM_LANGUAGE_NAME_fortran = {2};
+KIM_LanguageName const KIM_LANGUAGE_NAME_cpp
+= {KIM::LANGUAGE_NAME::cpp.languageNameID};
+KIM_LanguageName const KIM_LANGUAGE_NAME_c
+= {KIM::LANGUAGE_NAME::c.languageNameID};
+KIM_LanguageName const KIM_LANGUAGE_NAME_fortran
+= {KIM::LANGUAGE_NAME::fortran.languageNameID};
 
 }  // extern "C"
