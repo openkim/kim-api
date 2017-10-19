@@ -65,6 +65,12 @@
 #ifndef LDLIBS_STRING
 #error
 #endif
+#ifndef XLANGLDLIBS_STRING
+#error
+#endif
+#ifndef FNOMAINFLAG_STRING
+#error
+#endif
 #ifndef OBJONLYFLAG_STRING
 #error
 #endif
