@@ -36,20 +36,41 @@ module kim_data_type_f_module
   private
 
   public &
-    data_type_string
+    from_string, &
+    get_string
 
   interface
-    type(c_ptr) function data_type_string(data_type) &
+    type(kim_data_type_type) function from_string(string) &
+      bind(c, name="KIM_DataTypeFromString")
+      use, intrinsic :: iso_c_binding
+      use kim_data_type_module, only : &
+        kim_data_type_type
+      implicit none
+      character(c_char), intent(in) :: string(*)
+    end function from_string
+
+    type(c_ptr) function get_string(data_type) &
       bind(c, name="KIM_DataTypeString")
       use, intrinsic :: iso_c_binding
       use kim_data_type_module, only : kim_data_type_type
       implicit none
       type(kim_data_type_type), intent(in), value :: data_type
-    end function data_type_string
+    end function get_string
   end interface
 end module kim_data_type_f_module
 
 ! free functions to implement kim_data_type_module
+
+subroutine kim_data_type_from_string(string, data_type)
+  use, intrinsic :: iso_c_binding
+  use kim_data_type_module, only : kim_data_type_type
+  use kim_data_type_f_module, only : from_string
+  implicit none
+  character(len=*), intent(in) :: string
+  type(kim_data_type_type), intent(out) :: data_type
+
+  data_type = from_string(trim(string)//c_null_char)
+end subroutine kim_data_type_from_string
 
 logical function kim_data_type_equal(left, right)
   use, intrinsic :: iso_c_binding
@@ -77,7 +98,7 @@ end function kim_data_type_not_equal
 subroutine kim_data_type_string(data_type, string)
   use, intrinsic :: iso_c_binding
   use kim_data_type_module, only : kim_data_type_type
-  use kim_data_type_f_module, only : data_type_string
+  use kim_data_type_f_module, only : get_string
   implicit none
   type(kim_data_type_type), intent(in), value :: data_type
   character(len=*), intent(out) :: string
@@ -86,7 +107,7 @@ subroutine kim_data_type_string(data_type, string)
   character(len=len(string)+1), pointer :: fp
   integer(c_int) :: null_index
 
-  p = data_type_string(data_type)
+  p = get_string(data_type)
   call c_f_pointer(p, fp)
   null_index = scan(fp, char(0))-1
   string = fp(1:null_index)

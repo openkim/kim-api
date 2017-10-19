@@ -39,6 +39,7 @@ module kim_charge_unit_module
 
   public &
     kim_charge_unit_type, &
+    kim_charge_unit_from_string, &
     operator (.eq.), &
     operator (.ne.), &
     kim_charge_unit_string, &
@@ -82,6 +83,13 @@ module kim_charge_unit_module
   end interface operator (.ne.)
 
   interface
+    subroutine kim_charge_unit_from_string(string, charge_unit)
+      import kim_charge_unit_type
+      implicit none
+      character(len=*), intent(in) :: string
+      type(kim_charge_unit_type), intent(out) :: charge_unit
+    end subroutine kim_charge_unit_from_string
+
     subroutine kim_charge_unit_string(charge_unit, string)
       import kim_charge_unit_type
       implicit none

@@ -36,20 +36,41 @@ module kim_numbering_f_module
   private
 
   public &
-    numbering_string
+    from_string, &
+    get_string
 
   interface
-    type(c_ptr) function numbering_string(numbering) &
+    type(kim_numbering_type) function from_string(string) &
+      bind(c, name="KIM_NumberingFromString")
+      use, intrinsic :: iso_c_binding
+      use kim_numbering_module, only : &
+        kim_numbering_type
+      implicit none
+      character(c_char), intent(in) :: string(*)
+    end function from_string
+
+    type(c_ptr) function get_string(numbering) &
       bind(c, name="KIM_NumberingString")
       use, intrinsic :: iso_c_binding
       use kim_numbering_module, only : kim_numbering_type
       implicit none
       type(kim_numbering_type), intent(in), value :: numbering
-    end function numbering_string
+    end function get_string
   end interface
 end module kim_numbering_f_module
 
 ! free functions to implement kim_numbering_module
+
+subroutine kim_numbering_from_string(string, numbering)
+  use, intrinsic :: iso_c_binding
+  use kim_numbering_module, only : kim_numbering_type
+  use kim_numbering_f_module, only : from_string
+  implicit none
+  character(len=*), intent(in) :: string
+  type(kim_numbering_type), intent(out) :: numbering
+
+  numbering = from_string(trim(string)//c_null_char)
+end subroutine kim_numbering_from_string
 
 logical function kim_numbering_equal(left, right)
   use, intrinsic :: iso_c_binding
@@ -76,7 +97,7 @@ end function kim_numbering_not_equal
 subroutine kim_numbering_string(numbering, string)
   use, intrinsic :: iso_c_binding
   use kim_numbering_module, only : kim_numbering_type
-  use kim_numbering_f_module, only : numbering_string
+  use kim_numbering_f_module, only : get_string
   implicit none
   type(kim_numbering_type), intent(in), value :: numbering
   character(len=*), intent(out) :: string
@@ -85,7 +106,7 @@ subroutine kim_numbering_string(numbering, string)
   character(len=len(string)+1), pointer :: fp
   integer(c_int) :: null_index
 
-  p = numbering_string(numbering)
+  p = get_string(numbering)
   call c_f_pointer(p, fp)
   null_index = scan(fp, char(0))-1
   string = fp(1:null_index)

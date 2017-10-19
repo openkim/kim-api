@@ -36,18 +36,28 @@ module kim_callback_name_f_module
   private
 
   public &
-    callback_name_string, &
+    from_string, &
+    get_string, &
     get_number_of_callbacks, &
     get_callback_name
 
   interface
-    type(c_ptr) function callback_name_string(callback_name) &
+    type(kim_callback_name_type) function from_string(string) &
+      bind(c, name="KIM_CallbackNameFromString")
+      use, intrinsic :: iso_c_binding
+      use kim_callback_name_module, only : &
+        kim_callback_name_type
+      implicit none
+      character(c_char), intent(in) :: string(*)
+    end function from_string
+
+    type(c_ptr) function get_string(callback_name) &
       bind(c, name="KIM_CallbackNameString")
       use, intrinsic :: iso_c_binding
       use kim_callback_name_module, only : kim_callback_name_type
       implicit none
       type(kim_callback_name_type), intent(in), value :: callback_name
-    end function callback_name_string
+    end function get_string
 
     subroutine get_number_of_callbacks(number_of_callbacks) &
       bind(c, name="KIM_CALLBACK_NAME_GetNumberOfCallbacks")
@@ -67,6 +77,17 @@ module kim_callback_name_f_module
 end module kim_callback_name_f_module
 
 ! free functions to implement kim_callback_name_module
+
+subroutine kim_callback_name_from_string(string, callback_name)
+  use, intrinsic :: iso_c_binding
+  use kim_callback_name_module, only : kim_callback_name_type
+  use kim_callback_name_f_module, only : from_string
+  implicit none
+  character(len=*), intent(in) :: string
+  type(kim_callback_name_type), intent(out) :: callback_name
+
+  callback_name = from_string(trim(string)//c_null_char)
+end subroutine kim_callback_name_from_string
 
 logical function kim_callback_name_equal(left, right)
   use, intrinsic :: iso_c_binding
@@ -93,7 +114,7 @@ end function kim_callback_name_not_equal
 subroutine kim_callback_name_string(callback_name, string)
   use, intrinsic :: iso_c_binding
   use kim_callback_name_module, only : kim_callback_name_type
-  use kim_callback_name_f_module, only : callback_name_string
+  use kim_callback_name_f_module, only : get_string
   implicit none
   type(kim_callback_name_type), intent(in), value :: callback_name
   character(len=*), intent(out) :: string
@@ -102,7 +123,7 @@ subroutine kim_callback_name_string(callback_name, string)
   character(len=len(string)+1), pointer :: fp
   integer(c_int) :: null_index
 
-  p = callback_name_string(callback_name)
+  p = get_string(callback_name)
   call c_f_pointer(p, fp)
   null_index = scan(fp, char(0))-1
   string = fp(1:null_index)

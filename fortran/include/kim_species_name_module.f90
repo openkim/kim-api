@@ -39,6 +39,7 @@ module kim_species_name_module
 
   public &
     kim_species_name_type, &
+    kim_species_name_from_string, &
     operator (.eq.), &
     operator (.ne.), &
     kim_species_name_string, &
@@ -490,11 +491,11 @@ module kim_species_name_module
   end interface operator (.ne.)
 
   interface
-    subroutine kim_species_name_from_string(species_name_string, species_name)
+    subroutine kim_species_name_from_string(string, species_name)
       use, intrinsic :: iso_c_binding
       import kim_species_name_type
       implicit none
-      character(len=*), intent(in) :: species_name_string
+      character(len=*), intent(in) :: string
       type(kim_species_name_type), intent(out) :: species_name
     end subroutine kim_species_name_from_string
 

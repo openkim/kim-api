@@ -39,6 +39,7 @@ module kim_length_unit_module
 
   public &
     kim_length_unit_type, &
+    kim_length_unit_from_string, &
     operator (.eq.), &
     operator (.ne.), &
     kim_length_unit_string, &
@@ -88,6 +89,13 @@ module kim_length_unit_module
   end interface operator (.ne.)
 
   interface
+    subroutine kim_length_unit_from_string(string, length_unit)
+      import kim_length_unit_type
+      implicit none
+      character(len=*), intent(in) :: string
+      type(kim_length_unit_type), intent(out) :: length_unit
+    end subroutine kim_length_unit_from_string
+
     subroutine kim_length_unit_string(length_unit, string)
       import kim_length_unit_type
       implicit none

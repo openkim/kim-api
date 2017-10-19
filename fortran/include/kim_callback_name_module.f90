@@ -39,6 +39,7 @@ module kim_callback_name_module
 
   public &
     kim_callback_name_type, &
+    kim_callback_name_from_string, &
     operator (.eq.), &
     operator (.ne.), &
     kim_callback_name_string, &
@@ -75,6 +76,13 @@ module kim_callback_name_module
   end interface operator (.eq.)
 
   interface
+    subroutine kim_callback_name_from_string(string, callback_name)
+      import kim_callback_name_type
+      implicit none
+      character(len=*), intent(in) :: string
+      type(kim_callback_name_type), intent(out) :: callback_name
+    end subroutine kim_callback_name_from_string
+
     subroutine kim_callback_name_string(callback_name, string)
       import kim_callback_name_type
       implicit none

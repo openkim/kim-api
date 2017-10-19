@@ -39,6 +39,7 @@ module kim_log_verbosity_module
 
   public &
     kim_log_verbosity_type, &
+    kim_log_verbosity_from_string, &
     operator (.lt.), &
     operator (.gt.), &
     operator (.le.), &
@@ -135,6 +136,13 @@ module kim_log_verbosity_module
   end interface operator (.ne.)
 
   interface
+    subroutine kim_log_verbosity_from_string(string, log_verbosity)
+      import kim_log_verbosity_type
+      implicit none
+      character(len=*), intent(in) :: string
+      type(kim_log_verbosity_type), intent(out) :: log_verbosity
+    end subroutine kim_log_verbosity_from_string
+
     subroutine kim_log_verbosity_string(log_verbosity, string)
       import kim_log_verbosity_type
       implicit none

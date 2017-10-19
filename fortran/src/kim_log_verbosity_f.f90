@@ -36,20 +36,41 @@ module kim_log_verbosity_f_module
   private
 
   public &
-    log_verbosity_string
+    from_string, &
+    get_string
 
   interface
-    type(c_ptr) function log_verbosity_string(log_verbosity) &
+    type(kim_log_verbosity_type) function from_string(string) &
+      bind(c, name="KIM_LogVerbosityFromString")
+      use, intrinsic :: iso_c_binding
+      use kim_log_verbosity_module, only : &
+        kim_log_verbosity_type
+      implicit none
+      character(c_char), intent(in) :: string(*)
+    end function from_string
+
+    type(c_ptr) function get_string(log_verbosity) &
       bind(c, name="KIM_LogVerbosityString")
       use, intrinsic :: iso_c_binding
       use kim_log_verbosity_module, only : kim_log_verbosity_type
       implicit none
       type(kim_log_verbosity_type), intent(in), value :: log_verbosity
-    end function log_verbosity_string
+    end function get_string
   end interface
 end module kim_log_verbosity_f_module
 
 ! free functions to implement kim_log_verbosity_module
+
+subroutine kim_log_verbosity_from_string(string, log_verbosity)
+  use, intrinsic :: iso_c_binding
+  use kim_log_verbosity_module, only : kim_log_verbosity_type
+  use kim_log_verbosity_f_module, only : from_string
+  implicit none
+  character(len=*), intent(in) :: string
+  type(kim_log_verbosity_type), intent(out) :: log_verbosity
+
+  log_verbosity = from_string(trim(string)//c_null_char)
+end subroutine kim_log_verbosity_from_string
 
 logical function kim_log_verbosity_less_than(left, right)
   use, intrinsic :: iso_c_binding
@@ -120,7 +141,7 @@ end function kim_log_verbosity_not_equal
 subroutine kim_log_verbosity_string(log_verbosity, string)
   use, intrinsic :: iso_c_binding
   use kim_log_verbosity_module, only : kim_log_verbosity_type
-  use kim_log_verbosity_f_module, only : log_verbosity_string
+  use kim_log_verbosity_f_module, only : get_string
   implicit none
   type(kim_log_verbosity_type), intent(in), value :: log_verbosity
   character(len=*), intent(out) :: string
@@ -129,7 +150,7 @@ subroutine kim_log_verbosity_string(log_verbosity, string)
   character(len=len(string)+1), pointer :: fp
   integer(c_int) :: null_index
 
-  p = log_verbosity_string(log_verbosity)
+  p = get_string(log_verbosity)
   call c_f_pointer(p, fp)
   null_index = scan(fp, char(0))-1
   string = fp(1:null_index)

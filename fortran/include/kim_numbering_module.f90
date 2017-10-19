@@ -39,6 +39,7 @@ module kim_numbering_module
 
   public &
     kim_numbering_type, &
+    kim_numbering_from_string, &
     operator (.eq.), &
     operator (.ne.), &
     kim_numbering_string, &
@@ -78,6 +79,13 @@ module kim_numbering_module
   end interface operator (.ne.)
 
   interface
+    subroutine kim_numbering_from_string(string, numbering)
+      import kim_numbering_type
+      implicit none
+      character(len=*), intent(in) :: string
+      type(kim_numbering_type), intent(out) :: numbering
+    end subroutine kim_numbering_from_string
+
     subroutine kim_numbering_string(numbering, string)
       import kim_numbering_type
       implicit none

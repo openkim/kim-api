@@ -39,6 +39,7 @@ module kim_temperature_unit_module
 
   public &
     kim_temperature_unit_type, &
+    kim_temperature_unit_from_string, &
     operator (.eq.), &
     operator (.ne.), &
     kim_temperature_unit_string, &
@@ -76,6 +77,13 @@ module kim_temperature_unit_module
   end interface operator (.ne.)
 
   interface
+    subroutine kim_temperature_unit_from_string(string, temperature_unit)
+      import kim_temperature_unit_type
+      implicit none
+      character(len=*), intent(in) :: string
+      type(kim_temperature_unit_type), intent(out) :: temperature_unit
+    end subroutine kim_temperature_unit_from_string
+
     subroutine kim_temperature_unit_string(temperature_unit, string)
       import kim_temperature_unit_type
       implicit none

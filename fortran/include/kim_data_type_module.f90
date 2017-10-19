@@ -39,6 +39,7 @@ module kim_data_type_module
 
   public &
     kim_data_type_type, &
+    kim_data_type_from_string, &
     operator (.eq.), &
     operator (.ne.), &
     kim_data_type_string, &
@@ -78,6 +79,13 @@ module kim_data_type_module
   end interface operator (.ne.)
 
   interface
+    subroutine kim_data_type_from_string(string, data_type)
+      import kim_data_type_type
+      implicit none
+      character(len=*), intent(in) :: string
+      type(kim_data_type_type), intent(out) :: data_type
+    end subroutine kim_data_type_from_string
+
     subroutine kim_data_type_string(data_type, string)
       import kim_data_type_type
       implicit none

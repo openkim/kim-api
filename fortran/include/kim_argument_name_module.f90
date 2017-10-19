@@ -39,6 +39,7 @@ module kim_argument_name_module
 
   public &
     kim_argument_name_type, &
+    kim_argument_name_from_string, &
     operator (.eq.), &
     operator (.ne.), &
     kim_argument_name_string, &
@@ -114,6 +115,13 @@ module kim_argument_name_module
   end interface operator (.ne.)
 
   interface
+    subroutine kim_argument_name_from_string(string, argument_name)
+      import kim_argument_name_type
+      implicit none
+      character(len=*), intent(in) :: string
+      type(kim_argument_name_type), intent(out) :: argument_name
+    end subroutine kim_argument_name_from_string
+
     subroutine kim_argument_name_string(argument_name, string)
       import kim_argument_name_type
       implicit none

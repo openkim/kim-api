@@ -39,6 +39,7 @@ module kim_time_unit_module
 
   public &
     kim_time_unit_type, &
+    kim_time_unit_from_string, &
     operator (.eq.), &
     operator (.ne.), &
     kim_time_unit_string, &
@@ -85,6 +86,13 @@ module kim_time_unit_module
   end interface operator (.ne.)
 
   interface
+    subroutine kim_time_unit_from_string(string, time_unit)
+      import kim_time_unit_type
+      implicit none
+      character(len=*), intent(in) :: string
+      type(kim_time_unit_type), intent(out) :: time_unit
+    end subroutine kim_time_unit_from_string
+
     subroutine kim_time_unit_string(time_unit, string)
       import kim_time_unit_type
       implicit none

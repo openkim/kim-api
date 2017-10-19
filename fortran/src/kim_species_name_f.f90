@@ -43,14 +43,13 @@ module kim_species_name_f_module
     get_species_name
 
   interface
-    subroutine from_string(species_name_string, species_name) &
+    type(kim_species_name_type) function from_string(string) &
       bind(c, name="KIM_SpeciesNameFromString")
       use, intrinsic :: iso_c_binding
       use kim_species_name_module, only : kim_species_name_type
       implicit none
-      character(c_char), intent(in) :: species_name_string(*)
-      type(kim_species_name_type), intent(out) :: species_name
-    end subroutine from_string
+      character(c_char), intent(in) :: string(*)
+    end function from_string
 
     type(c_ptr) function get_string(species_name) &
       bind(c, name="KIM_SpeciesNameString")
@@ -82,6 +81,17 @@ end module kim_species_name_f_module
 
 ! free functions to implement kim_species_name_module
 
+subroutine kim_species_name_from_string(string, species_name)
+  use, intrinsic :: iso_c_binding
+  use kim_species_name_module, only : kim_species_name_type
+  use kim_species_name_f_module, only : from_string
+  implicit none
+  character(len=*), intent(in) :: string
+  type(kim_species_name_type), intent(out) :: species_name
+
+  species_name = from_string(trim(string)//c_null_char)
+end subroutine kim_species_name_from_string
+
 logical function kim_species_name_equal(left, right)
   use, intrinsic :: iso_c_binding
   use kim_species_name_module, only : kim_species_name_type
@@ -103,18 +113,6 @@ logical function kim_species_name_not_equal(left, right)
 
   kim_species_name_not_equal = .not. (left .eq. right)
 end function kim_species_name_not_equal
-
-
-subroutine kim_species_name_from_string(species_name_string, species_name)
-  use, intrinsic :: iso_c_binding
-  use kim_species_name_module, only : kim_species_name_type
-  use kim_species_name_f_module, only : from_string
-  implicit none
-  character(len=*), intent(in) :: species_name_string
-  type(kim_species_name_type), intent(out) :: species_name
-
-  call from_string(trim(species_name_string)//c_null_char, species_name)
-end subroutine kim_species_name_from_string
 
 subroutine kim_species_name_string(species_name, string)
   use, intrinsic :: iso_c_binding

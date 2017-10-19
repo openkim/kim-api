@@ -510,7 +510,7 @@ int model_driver_create(
   }
 
   /* register species */
-  KIM_SpeciesNameFromString(speciesNameString, &speciesName);
+  speciesName = KIM_SpeciesNameFromString(speciesNameString);
   ier = KIM_ModelDriverCreate_SetSpeciesCode(
       modelDriverCreate,
       speciesName,

@@ -36,20 +36,41 @@ module kim_support_status_f_module
   private
 
   public &
-    support_status_str
+    from_string, &
+    get_string
 
   interface
-    type(c_ptr) function support_status_str(support_status) &
+    type(kim_support_status_type) function from_string(string) &
+      bind(c, name="KIM_SupportStatusFromString")
+      use, intrinsic :: iso_c_binding
+      use kim_support_status_module, only : &
+        kim_support_status_type
+      implicit none
+      character(c_char), intent(in) :: string(*)
+    end function from_string
+
+    type(c_ptr) function get_string(support_status) &
       bind(c, name="KIM_SupportStatusString")
       use, intrinsic :: iso_c_binding
       use kim_support_status_module, only : kim_support_status_type
       implicit none
       type(kim_support_status_type), intent(in), value :: support_status
-    end function support_status_str
+    end function get_string
   end interface
 end module kim_support_status_f_module
 
 ! free functions to implement kim_support_status_module
+
+subroutine kim_support_status_from_string(string, support_status)
+  use, intrinsic :: iso_c_binding
+  use kim_support_status_module, only : kim_support_status_type
+  use kim_support_status_f_module, only : from_string
+  implicit none
+  character(len=*), intent(in) :: string
+  type(kim_support_status_type), intent(out) :: support_status
+
+  support_status = from_string(trim(string)//c_null_char)
+end subroutine kim_support_status_from_string
 
 logical function kim_support_status_equal(left, right)
   use, intrinsic :: iso_c_binding
@@ -76,7 +97,7 @@ end function kim_support_status_not_equal
 subroutine kim_support_status_string(support_status, string)
   use, intrinsic :: iso_c_binding
   use kim_support_status_module, only : kim_support_status_type
-  use kim_support_status_f_module, only : support_status_str
+  use kim_support_status_f_module, only : get_string
   implicit none
   type(kim_support_status_type), intent(in), value :: support_status
   character(len=*), intent(out) :: string
@@ -85,7 +106,7 @@ subroutine kim_support_status_string(support_status, string)
   character(len=len(string)+1), pointer :: fp
   integer(c_int) :: null_index
 
-  p = support_status_str(support_status)
+  p = get_string(support_status)
   call c_f_pointer(p, fp)
   null_index = scan(fp, char(0))-1
   string = fp(1:null_index)

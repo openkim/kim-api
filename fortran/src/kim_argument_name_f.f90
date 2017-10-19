@@ -36,13 +36,23 @@ module kim_argument_name_f_module
   private
 
   public &
-    compute_argument_name_string, &
+    from_string, &
+    get_string, &
     get_number_of_arguments, &
     get_argument_name, &
     get_argument_data_type
 
   interface
-    type(c_ptr) function compute_argument_name_string(compute_argument_name) &
+    type(kim_argument_name_type) function from_string(string) &
+      bind(c, name="KIM_ArgumentNameFromString")
+      use, intrinsic :: iso_c_binding
+      use kim_argument_name_module, only : &
+        kim_argument_name_type
+      implicit none
+      character(c_char), intent(in) :: string(*)
+    end function from_string
+
+    type(c_ptr) function get_string(compute_argument_name) &
       bind(c, name="KIM_ArgumentNameString")
       use, intrinsic :: iso_c_binding
       use kim_argument_name_module, only : &
@@ -50,7 +60,7 @@ module kim_argument_name_f_module
       implicit none
       type(kim_argument_name_type), intent(in), value :: &
         compute_argument_name
-    end function compute_argument_name_string
+    end function get_string
 
     subroutine get_number_of_arguments(number_of_arguments) &
       bind(c, name="KIM_ARGUMENT_NAME_GetNumberOfArguments")
@@ -83,6 +93,17 @@ end module kim_argument_name_f_module
 
 ! free functions to implement kim_argument_name_module
 
+subroutine kim_argument_name_from_string(string, argument_name)
+  use, intrinsic :: iso_c_binding
+  use kim_argument_name_module, only : kim_argument_name_type
+  use kim_argument_name_f_module, only : from_string
+  implicit none
+  character(len=*), intent(in) :: string
+  type(kim_argument_name_type), intent(out) :: argument_name
+
+  argument_name = from_string(trim(string)//c_null_char)
+end subroutine kim_argument_name_from_string
+
 logical function kim_argument_name_equal(left, right)
   use, intrinsic :: iso_c_binding
   use kim_argument_name_module, only : kim_argument_name_type
@@ -108,7 +129,7 @@ end function kim_argument_name_not_equal
 subroutine kim_argument_name_string(argument_name, string)
   use, intrinsic :: iso_c_binding
   use kim_argument_name_module, only : kim_argument_name_type
-  use kim_argument_name_f_module, only : compute_argument_name_string
+  use kim_argument_name_f_module, only : get_string
   implicit none
   type(kim_argument_name_type), intent(in), value :: argument_name
   character(len=*), intent(out) :: string
@@ -117,7 +138,7 @@ subroutine kim_argument_name_string(argument_name, string)
   character(len=len(string)+1), pointer :: fp
   integer(c_int) :: null_index
 
-  p = compute_argument_name_string(argument_name)
+  p = get_string(argument_name)
   call c_f_pointer(p, fp)
   null_index = scan(fp, char(0))-1
   string = fp(1:null_index)

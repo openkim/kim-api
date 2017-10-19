@@ -36,20 +36,41 @@ module kim_temperature_unit_f_module
   private
 
   public &
-    temperature_unit_string
+    from_string, &
+    get_string
 
   interface
-    type(c_ptr) function temperature_unit_string(temperature_unit) &
+    type(kim_temperature_unit_type) function from_string(string) &
+      bind(c, name="KIM_TemperatureUnitFromString")
+      use, intrinsic :: iso_c_binding
+      use kim_temperature_unit_module, only : &
+        kim_temperature_unit_type
+      implicit none
+      character(c_char), intent(in) :: string(*)
+    end function from_string
+
+    type(c_ptr) function get_string(temperature_unit) &
       bind(c, name="KIM_TemperatureUnitString")
       use, intrinsic :: iso_c_binding
       use kim_temperature_unit_module, only : kim_temperature_unit_type
       implicit none
       type(kim_temperature_unit_type), intent(in), value :: temperature_unit
-    end function temperature_unit_string
+    end function get_string
   end interface
 end module kim_temperature_unit_f_module
 
 ! free functions to implement kim_temperature_unit_module
+
+subroutine kim_temperature_unit_from_string(string, temperature_unit)
+  use, intrinsic :: iso_c_binding
+  use kim_temperature_unit_module, only : kim_temperature_unit_type
+  use kim_temperature_unit_f_module, only : from_string
+  implicit none
+  character(len=*), intent(in) :: string
+  type(kim_temperature_unit_type), intent(out) :: temperature_unit
+
+  temperature_unit = from_string(trim(string)//c_null_char)
+end subroutine kim_temperature_unit_from_string
 
 logical function kim_temperature_unit_equal(left, right)
   use, intrinsic :: iso_c_binding
@@ -76,7 +97,7 @@ end function kim_temperature_unit_not_equal
 subroutine kim_temperature_unit_string(temperature_unit, string)
   use, intrinsic :: iso_c_binding
   use kim_temperature_unit_module, only : kim_temperature_unit_type
-  use kim_temperature_unit_f_module, only : temperature_unit_string
+  use kim_temperature_unit_f_module, only : get_string
   implicit none
   type(kim_temperature_unit_type), intent(in), value :: temperature_unit
   character(len=*), intent(out) :: string
@@ -85,7 +106,7 @@ subroutine kim_temperature_unit_string(temperature_unit, string)
   character(len=len(string)+1), pointer :: fp
   integer(c_int) :: null_index
 
-  p = temperature_unit_string(temperature_unit)
+  p = get_string(temperature_unit)
   call c_f_pointer(p, fp)
   null_index = scan(fp, char(0))-1
   string = fp(1:null_index)

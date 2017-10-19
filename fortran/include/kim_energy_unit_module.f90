@@ -39,6 +39,7 @@ module kim_energy_unit_module
 
   public &
     kim_energy_unit_type, &
+    kim_energy_unit_from_string, &
     operator (.eq.), &
     operator (.ne.), &
     kim_energy_unit_string, &
@@ -91,6 +92,13 @@ module kim_energy_unit_module
   end interface operator (.ne.)
 
   interface
+    subroutine kim_energy_unit_from_string(string, energy_unit)
+      import kim_energy_unit_type
+      implicit none
+      character(len=*), intent(in) :: string
+      type(kim_energy_unit_type), intent(out) :: energy_unit
+    end subroutine kim_energy_unit_from_string
+
     subroutine kim_energy_unit_string(energy_unit, string)
       import kim_energy_unit_type
       implicit none

@@ -39,6 +39,7 @@ module kim_support_status_module
 
   public &
     kim_support_status_type, &
+    kim_support_status_from_string, &
     operator (.eq.), &
     operator (.ne.), &
     kim_support_status_string, &
@@ -83,6 +84,13 @@ module kim_support_status_module
   end interface operator (.ne.)
 
   interface
+    subroutine kim_support_status_from_string(string, support_status)
+      import kim_support_status_type
+      implicit none
+      character(len=*), intent(in) :: string
+      type(kim_support_status_type), intent(out) :: support_status
+    end subroutine kim_support_status_from_string
+
     subroutine kim_support_status_string(support_status, string)
       import kim_support_status_type
       implicit none

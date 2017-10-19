@@ -39,6 +39,7 @@ module kim_language_name_module
 
   public &
     kim_language_name_type, &
+    kim_language_name_from_string, &
     operator (.eq.), &
     operator (.ne.), &
     kim_language_name_string, &
@@ -82,6 +83,13 @@ module kim_language_name_module
   end interface operator (.ne.)
 
   interface
+    subroutine kim_language_name_from_string(string, language_name)
+      import kim_language_name_type
+      implicit none
+      character(len=*), intent(in) :: string
+      type(kim_language_name_type), intent(out) :: language_name
+    end subroutine kim_language_name_from_string
+
     subroutine kim_language_name_string(language_name, string)
       import kim_language_name_type
       implicit none

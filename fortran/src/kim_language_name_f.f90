@@ -36,20 +36,42 @@ module kim_language_name_f_module
   private
 
   public &
-    language_name_string
+    from_string, &
+    get_string
 
   interface
-    type(c_ptr) function language_name_string(language_name) &
+    type(kim_language_name_type) function from_string(string) &
+      bind(c, name="KIM_LanguageNameFromString")
+      use, intrinsic :: iso_c_binding
+      use kim_language_name_module, only : &
+        kim_language_name_type
+      implicit none
+      character(c_char), intent(in) :: string(*)
+    end function from_string
+
+    type(c_ptr) function get_string(language_name) &
       bind(c, name="KIM_LanguageNameString")
       use, intrinsic :: iso_c_binding
       use kim_language_name_module, only : kim_language_name_type
       implicit none
       type(kim_language_name_type), intent(in), value :: language_name
-    end function language_name_string
+    end function get_string
   end interface
 end module kim_language_name_f_module
 
 ! free functions to implement kim_language_name_module
+
+subroutine kim_language_name_from_string(string, language_name)
+  use, intrinsic :: iso_c_binding
+  use kim_language_name_module, only : kim_language_name_type
+  use kim_language_name_f_module, only : from_string
+  implicit none
+  character(len=*), intent(in) :: string
+  type(kim_language_name_type), intent(out) :: language_name
+
+  language_name = from_string(trim(string)//c_null_char)
+end subroutine kim_language_name_from_string
+
 logical function kim_language_name_equal(left, right)
   use, intrinsic :: iso_c_binding
   use kim_language_name_module, only : kim_language_name_type
@@ -75,7 +97,7 @@ end function kim_language_name_not_equal
 subroutine kim_language_name_string(language_name, string)
   use, intrinsic :: iso_c_binding
   use kim_language_name_module, only : kim_language_name_type
-  use kim_language_name_f_module, only : language_name_string
+  use kim_language_name_f_module, only : get_string
   implicit none
   type(kim_language_name_type), intent(in), value :: language_name
   character(len=*), intent(out) :: string
@@ -84,7 +106,7 @@ subroutine kim_language_name_string(language_name, string)
   character(len=len(string)+1), pointer :: fp
   integer(c_int) :: null_index
 
-  p = language_name_string(language_name)
+  p = get_string(language_name)
   call c_f_pointer(p, fp)
   null_index = scan(fp, char(0))-1
   string = fp(1:null_index)
