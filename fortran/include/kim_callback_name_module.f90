@@ -33,7 +33,6 @@
 
 module kim_callback_name_module
   use, intrinsic :: iso_c_binding
-  use kim_callback_name_id_module
   implicit none
   private
 
@@ -55,15 +54,15 @@ module kim_callback_name_module
     integer(c_int) callback_name_id
   end type kim_callback_name_type
 
-  type(kim_callback_name_type), parameter :: &
-    kim_callback_name_get_neighbor_list &
-    = kim_callback_name_type(get_neighbor_list_id)
-  type(kim_callback_name_type), parameter :: &
-    kim_callback_name_process_dedr_term &
-    = kim_callback_name_type(process_dedr_term_id)
-  type(kim_callback_name_type), parameter :: &
-    kim_callback_name_process_d2edr2_term = &
-    kim_callback_name_type(process_d2edr2_term_id)
+  type(kim_callback_name_type), protected, &
+    bind(c, name="KIM_CALLBACK_NAME_GetNeighborList") &
+    :: kim_callback_name_get_neighbor_list
+  type(kim_callback_name_type), protected, &
+    bind(c, name="KIM_CALLBACK_NAME_ProcessDEDrTerm") &
+    :: kim_callback_name_process_dedr_term
+  type(kim_callback_name_type), protected, &
+    bind(c, name="KIM_CALLBACK_NAME_ProcessD2EDr2Term") &
+    :: kim_callback_name_process_d2edr2_term
 
   interface operator (.eq.)
     logical function kim_callback_name_equal(left, right)

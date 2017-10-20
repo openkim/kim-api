@@ -33,7 +33,6 @@
 
 module kim_energy_unit_module
   use, intrinsic :: iso_c_binding
-  use kim_energy_unit_id_module
   implicit none
   private
 
@@ -56,20 +55,27 @@ module kim_energy_unit_module
     integer(c_int) energy_unit_id
   end type kim_energy_unit_type
 
-  type(kim_energy_unit_type), parameter :: kim_energy_unit_unused = &
-    kim_energy_unit_type(energy_unit_unused_id)
-  type(kim_energy_unit_type), parameter :: kim_energy_unit_amu_a2_per_ps2 = &
-    kim_energy_unit_type(energy_unit_amu_a2_per_ps2_id)
-  type(kim_energy_unit_type), parameter :: kim_energy_unit_erg = &
-    kim_energy_unit_type(energy_unit_erg_id)
-  type(kim_energy_unit_type), parameter :: kim_energy_unit_ev = &
-    kim_energy_unit_type(energy_unit_ev_id)
-  type(kim_energy_unit_type), parameter :: kim_energy_unit_hartree = &
-    kim_energy_unit_type(energy_unit_hartree_id)
-  type(kim_energy_unit_type), parameter :: kim_energy_unit_j = &
-    kim_energy_unit_type(energy_unit_j_id)
-  type(kim_energy_unit_type), parameter :: kim_energy_unit_kcal_mol = &
-    kim_energy_unit_type(energy_unit_kcal_mol_id)
+  type(kim_energy_unit_type), protected, &
+    bind(c, name="KIM_ENERGY_UNIT_unsued") &
+    :: kim_energy_unit_unused
+  type(kim_energy_unit_type), protected, &
+    bind(c, name="KIM_ENERGY_UNIT_amu_A2_per_ps2") &
+    :: kim_energy_unit_amu_a2_per_ps2
+  type(kim_energy_unit_type), protected, &
+    bind(c, name="KIM_ENERGY_UNIT_erg") &
+    :: kim_energy_unit_erg
+  type(kim_energy_unit_type), protected, &
+    bind(c, name="KIM_ENERGY_UNIT_eV") &
+    :: kim_energy_unit_ev
+  type(kim_energy_unit_type), protected, &
+    bind(c, name="KIM_ENERGY_UNIT_Hartree") &
+    :: kim_energy_unit_hartree
+  type(kim_energy_unit_type), protected, &
+    bind(c, name="KIM_ENERGY_UNIT_J") &
+    :: kim_energy_unit_j
+  type(kim_energy_unit_type), protected, &
+    bind(c, name="KIM_ENERGY_UNIT_kcal_mol") &
+    :: kim_energy_unit_kcal_mol
 
   interface operator (.eq.)
     logical function kim_energy_unit_equal(left, right)

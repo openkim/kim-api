@@ -33,7 +33,6 @@
 
 module kim_time_unit_module
   use, intrinsic :: iso_c_binding
-  use kim_time_unit_id_module
   implicit none
   private
 
@@ -54,16 +53,16 @@ module kim_time_unit_module
     integer(c_int) time_unit_id
   end type kim_time_unit_type
 
-  type(kim_time_unit_type), parameter :: kim_time_unit_unused = &
-    kim_time_unit_type(time_unit_unused_id)
-  type(kim_time_unit_type), parameter :: kim_time_unit_fs = &
-    kim_time_unit_type(time_unit_fs_id)
-  type(kim_time_unit_type), parameter :: kim_time_unit_ps = &
-    kim_time_unit_type(time_unit_ps_id)
-  type(kim_time_unit_type), parameter :: kim_time_unit_ns = &
-    kim_time_unit_type(time_unit_ns_id)
-  type(kim_time_unit_type), parameter :: kim_time_unit_s = &
-    kim_time_unit_type(time_unit_s_id)
+  type(kim_time_unit_type), protected, bind(c, name="KIM_TIME_UNIT_unused") &
+    :: kim_time_unit_unused
+  type(kim_time_unit_type), protected, bind(c, name="KIM_TIME_UNIT_fs") &
+    :: kim_time_unit_fs
+  type(kim_time_unit_type), protected, bind(c, name="KIM_TIME_UNIT_ps") &
+    :: kim_time_unit_ps
+  type(kim_time_unit_type), protected, bind(c, name="KIM_TIME_UNIT_ns") &
+    :: kim_time_unit_ns
+  type(kim_time_unit_type), protected, bind(c, name="KIM_TIME_UNIT_s") &
+    :: kim_time_unit_s
 
   interface operator (.eq.)
     logical function kim_time_unit_equal(left, right)

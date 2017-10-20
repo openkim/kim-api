@@ -33,7 +33,6 @@
 
 module kim_length_unit_module
   use, intrinsic :: iso_c_binding
-  use kim_length_unit_id_module
   implicit none
   private
 
@@ -55,18 +54,24 @@ module kim_length_unit_module
     integer(c_int) length_unit_id
   end type kim_length_unit_type
 
-  type(kim_length_unit_type), parameter :: kim_length_unit_unused = &
-    kim_length_unit_type(length_unit_unused_id)
-  type(kim_length_unit_type), parameter :: kim_length_unit_a = &
-    kim_length_unit_type(length_unit_a_id)
-  type(kim_length_unit_type), parameter :: kim_length_unit_bohr = &
-    kim_length_unit_type(length_unit_bohr_id)
-  type(kim_length_unit_type), parameter :: kim_length_unit_cm = &
-    kim_length_unit_type(length_unit_cm_id)
-  type(kim_length_unit_type), parameter :: kim_length_unit_m = &
-    kim_length_unit_type(length_unit_m_id)
-  type(kim_length_unit_type), parameter :: kim_length_unit_nm = &
-    kim_length_unit_type(length_unit_nm_id)
+  type(kim_length_unit_type), protected, &
+    bind(c, name="KIM_LENGTH_UNIT_unused") &
+    :: kim_length_unit_unused
+  type(kim_length_unit_type), protected, &
+    bind(c, name="KIM_LENGTH_UNIT_A") &
+    :: kim_length_unit_a
+  type(kim_length_unit_type), protected, &
+    bind(c, name="KIM_LENGTH_UNIT_Bhor") &
+    :: kim_length_unit_bohr
+  type(kim_length_unit_type), protected, &
+    bind(c, name="KIM_LENGTH_UNIT_cm") &
+    :: kim_length_unit_cm
+  type(kim_length_unit_type), protected, &
+    bind(c, name="KIM_LENGTH_UNIT_m") &
+    :: kim_length_unit_m
+  type(kim_length_unit_type), protected, &
+    bind(c, name="KIM_LENGTH_UNIT_nm") &
+    :: kim_length_unit_nm
 
   interface operator (.eq.)
     logical function kim_length_unit_equal(left, right)

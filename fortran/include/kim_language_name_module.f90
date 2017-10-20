@@ -33,7 +33,6 @@
 
 module kim_language_name_module
   use, intrinsic :: iso_c_binding
-  use kim_language_name_id_module
   implicit none
   private
 
@@ -52,15 +51,15 @@ module kim_language_name_module
     integer(c_int) :: language_name_id
   end type kim_language_name_type
 
-  type(kim_language_name_type), parameter :: &
-    kim_language_name_cpp = &
-    kim_language_name_type(cpp_id)
-  type(kim_language_name_type), parameter :: &
-    kim_language_name_c = &
-    kim_language_name_type(c_id)
-  type(kim_language_name_type), parameter :: &
-    kim_language_name_fortran = &
-    kim_language_name_type(fortran_id)
+  type(kim_language_name_type), protected, &
+    bind(c, name="KIM_LANGUAGE_NAME_cpp") &
+    :: kim_language_name_cpp
+  type(kim_language_name_type), protected, &
+    bind(c, name="KIM_LANGUAGE_NAME_c") &
+    :: kim_language_name_c
+  type(kim_language_name_type), protected, &
+    bind(c, name="KIM_LANGUAGE_NAME_fortran") &
+    :: kim_language_name_fortran
 
   interface operator (.eq.)
     logical function kim_language_name_equal(left, right)

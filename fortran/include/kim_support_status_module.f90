@@ -33,7 +33,6 @@
 
 module kim_support_status_module
   use, intrinsic :: iso_c_binding
-  use kim_support_status_id_module
   implicit none
   private
 
@@ -53,15 +52,18 @@ module kim_support_status_module
     integer(c_int) :: support_status_id
   end type kim_support_status_type
 
-  type(kim_support_status_type), parameter :: &
-    kim_support_status_required_by_api &
-    = kim_support_status_type(required_by_api_id)
-  type(kim_support_status_type), parameter :: &
-    kim_support_status_not_supported = kim_support_status_type(not_supported_id)
-  type(kim_support_status_type), parameter :: &
-    kim_support_status_required = kim_support_status_type(required_id)
-  type(kim_support_status_type), parameter :: &
-    kim_support_status_optional = kim_support_status_type(optional_id)
+  type(kim_support_status_type), protected, &
+    bind(c, name="KIM_SUPPORT_STATUS_requiredByAPI") &
+    :: kim_support_status_required_by_api
+  type(kim_support_status_type), protected, &
+    bind(c, name="KIM_SUPPORT_STATUS_notSupported") &
+    :: kim_support_status_not_supported
+  type(kim_support_status_type), protected, &
+    bind(c, name="KIM_SUPPORT_STATUS_required") &
+    :: kim_support_status_required
+  type(kim_support_status_type), protected, &
+    bind(c, name="KIM_SUPPORT_STATUS_optional") &
+    :: kim_support_status_optional
 
   interface operator (.eq.)
     logical function kim_support_status_equal(left, right)

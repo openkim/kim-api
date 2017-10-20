@@ -33,7 +33,6 @@
 
 module kim_data_type_module
   use, intrinsic :: iso_c_binding
-  use kim_data_type_id_module
   implicit none
   private
 
@@ -51,12 +50,12 @@ module kim_data_type_module
     integer(c_int) :: data_type_id
   end type kim_data_type_type
 
-  type(kim_data_type_type), parameter :: &
-    kim_data_type_integer = &
-    kim_data_type_type(integer_id)
-  type(kim_data_type_type), parameter :: &
-    kim_data_type_double = &
-    kim_data_type_type(double_id)
+  type(kim_data_type_type), protected, &
+    bind(c, name="KIM_DATA_TYPE_Integer") &
+    :: kim_data_type_integer
+  type(kim_data_type_type), protected, &
+    bind(c, name="KIM_DATA_TYPE_Double") &
+    :: kim_data_type_double
 
   interface operator (.eq.)
     logical function kim_data_type_equal(left, right)

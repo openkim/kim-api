@@ -33,7 +33,6 @@
 
 module kim_charge_unit_module
   use, intrinsic :: iso_c_binding
-  use kim_charge_unit_id_module
   implicit none
   private
 
@@ -53,14 +52,18 @@ module kim_charge_unit_module
     integer(c_int) charge_unit_id
   end type kim_charge_unit_type
 
-  type(kim_charge_unit_type), parameter :: kim_charge_unit_unused = &
-    kim_charge_unit_type(charge_unit_unused_id)
-  type(kim_charge_unit_type), parameter :: kim_charge_unit_c = &
-    kim_charge_unit_type(charge_unit_c_id)
-  type(kim_charge_unit_type), parameter :: kim_charge_unit_e = &
-    kim_charge_unit_type(charge_unit_e_id)
-  type(kim_charge_unit_type), parameter :: kim_charge_unit_statc = &
-    kim_charge_unit_type(charge_unit_statc_id)
+  type(kim_charge_unit_type), protected, &
+    bind(c, name="KIM_CHARGE_UNIT_unused") &
+    :: kim_charge_unit_unused
+  type(kim_charge_unit_type), protected, &
+    bind(c, name="KIM_CHARGE_UNIT_c") &
+    :: kim_charge_unit_c
+  type(kim_charge_unit_type), protected, &
+    bind(c, name="KIM_CHARGE_UNIT_e") &
+    :: kim_charge_unit_e
+  type(kim_charge_unit_type), protected, &
+    bind(c, name="KIM_CHARGE_UNIT_statC") &
+    :: kim_charge_unit_statc
 
   interface operator (.eq.)
     logical function kim_charge_unit_equal(left, right)

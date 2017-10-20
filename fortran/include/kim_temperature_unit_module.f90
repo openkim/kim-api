@@ -33,7 +33,6 @@
 
 module kim_temperature_unit_module
   use, intrinsic :: iso_c_binding
-  use kim_temperature_unit_id_module
   implicit none
   private
 
@@ -51,10 +50,12 @@ module kim_temperature_unit_module
     integer(c_int) temperature_unit_id
   end type kim_temperature_unit_type
 
-  type(kim_temperature_unit_type), parameter :: kim_temperature_unit_unused = &
-    kim_temperature_unit_type(temperature_unit_unused_id)
-  type(kim_temperature_unit_type), parameter :: kim_temperature_unit_k = &
-    kim_temperature_unit_type(temperature_unit_k_id)
+  type(kim_temperature_unit_type), protected, &
+    bind(c, name="KIM_TEMPERATURE_UNIT_unused") &
+    :: kim_temperature_unit_unused
+  type(kim_temperature_unit_type), protected, &
+    bind(c, name="KIM_TEMPERATURE_UNIT_K") &
+    :: kim_temperature_unit_k
 
   interface operator (.eq.)
     logical function kim_temperature_unit_equal(left, right)

@@ -33,7 +33,6 @@
 
 module kim_argument_name_module
   use, intrinsic :: iso_c_binding
-  use kim_argument_name_id_module
   implicit none
   private
 
@@ -63,36 +62,36 @@ module kim_argument_name_module
     integer(c_int) argument_name_id
   end type kim_argument_name_type
 
-  type(kim_argument_name_type), parameter :: &
-    kim_argument_name_number_of_particles = &
-    kim_argument_name_type(number_of_particles_id)
-  type(kim_argument_name_type), parameter :: &
-    kim_argument_name_particle_species_codes = &
-    kim_argument_name_type(particle_species_codes_id)
-  type(kim_argument_name_type), parameter :: &
-    kim_argument_name_particle_contributing = &
-    kim_argument_name_type(particle_contributing_id)
-  type(kim_argument_name_type), parameter :: &
-    kim_argument_name_coordinates = &
-    kim_argument_name_type(coordinates_id)
-  type(kim_argument_name_type), parameter :: &
-    kim_argument_name_partial_energy = &
-    kim_argument_name_type(partial_energy_id)
-  type(kim_argument_name_type), parameter :: &
-    kim_argument_name_partial_forces = &
-    kim_argument_name_type(partial_forces_id)
-  type(kim_argument_name_type), parameter :: &
-    kim_argument_name_partial_particle_energy = &
-    kim_argument_name_type(partial_particle_energy_id)
-  type(kim_argument_name_type), parameter :: &
-    kim_argument_name_partial_virial = &
-    kim_argument_name_type(partial_virial_id)
-  type(kim_argument_name_type), parameter :: &
-    kim_argument_name_partial_particle_virial = &
-    kim_argument_name_type(partial_particle_virial_id)
-  type(kim_argument_name_type), parameter :: &
-    kim_argument_name_partial_hessian = &
-    kim_argument_name_type(partial_hessian_id)
+  type(kim_argument_name_type), protected, &
+    bind(c, name="KIM_ARGUMENT_NAME_numberOfParticles") &
+    :: kim_argument_name_number_of_particles
+  type(kim_argument_name_type), protected, &
+    bind(c, name="KIM_ARGUMENT_NAME_particleSpeciesCodes") &
+    :: kim_argument_name_particle_species_codes
+  type(kim_argument_name_type), protected, &
+    bind(c, name="KIM_ARGUMENT_NAME_particleContributing") &
+    :: kim_argument_name_particle_contributing
+  type(kim_argument_name_type), protected, &
+    bind(c, name="KIM_ARGUMENT_NAME_coordinates") &
+    :: kim_argument_name_coordinates
+  type(kim_argument_name_type), protected, &
+    bind(c, name="KIM_ARGUMENT_NAME_partialEnergy") &
+    :: kim_argument_name_partial_energy
+  type(kim_argument_name_type), protected, &
+    bind(c, name="KIM_ARGUMENT_NAME_partialForces") &
+    :: kim_argument_name_partial_forces
+  type(kim_argument_name_type), protected, &
+    bind(c, name="KIM_ARGUMENT_NAME_partialParticleEnergy") &
+    :: kim_argument_name_partial_particle_energy
+  type(kim_argument_name_type), protected, &
+    bind(c, name="KIM_ARGUMENT_NAME_partialVirial") &
+    :: kim_argument_name_partial_virial
+  type(kim_argument_name_type), protected, &
+    bind(c, name="KIM_ARGUMENT_NAME_partialParticleVirial") &
+    :: kim_argument_name_partial_particle_virial
+  type(kim_argument_name_type), protected, &
+    bind(c, name="KIM_ARGUMENT_NAME_partialHessian") &
+    :: kim_argument_name_partial_hessian
 
   interface operator (.eq.)
     logical function kim_argument_name_equal(left, right)

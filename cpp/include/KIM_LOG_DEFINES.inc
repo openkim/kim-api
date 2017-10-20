@@ -9,4 +9,4 @@
 #define KIM_LOG_VERBOSITY_DEBUG_       5
 
 #include "KIM_LOG_MAXIMUM_LEVEL.inc"
-#endif  // KIM_LOG_DEFINES_INC_
+#endif

@@ -33,7 +33,6 @@
 
 module kim_log_verbosity_module
   use, intrinsic :: iso_c_binding
-  use kim_log_verbosity_id_module
   implicit none
   private
 
@@ -62,18 +61,24 @@ module kim_log_verbosity_module
     integer(c_int) :: log_verbosity_id
   end type kim_log_verbosity_type
 
-  type(kim_log_verbosity_type), parameter :: &
-    kim_log_verbosity_silent = kim_log_verbosity_type(silent_id)
-  type(kim_log_verbosity_type), parameter :: &
-    kim_log_verbosity_fatal = kim_log_verbosity_type(fatal_id)
-  type(kim_log_verbosity_type), parameter :: &
-    kim_log_verbosity_error = kim_log_verbosity_type(error_id)
-  type(kim_log_verbosity_type), parameter :: &
-    kim_log_verbosity_warning = kim_log_verbosity_type(warning_id)
-  type(kim_log_verbosity_type), parameter :: &
-    kim_log_verbosity_information = kim_log_verbosity_type(information_id)
-  type(kim_log_verbosity_type), parameter :: &
-    kim_log_verbosity_debug = kim_log_verbosity_type(debug_id)
+  type(kim_log_verbosity_type), protected, &
+    bind(c, name="KIM_LOG_VERBOSITY_silent") &
+    :: kim_log_verbosity_silent
+  type(kim_log_verbosity_type), protected, &
+    bind(c, name="KIM_LOG_VERBOSITY_fatal") &
+    :: kim_log_verbosity_fatal
+  type(kim_log_verbosity_type), protected, &
+    bind(c, name="KIM_LOG_VERBOSITY_error") &
+    :: kim_log_verbosity_error
+  type(kim_log_verbosity_type), protected, &
+    bind(c, name="KIM_LOG_VERBOSITY_warning") &
+    :: kim_log_verbosity_warning
+  type(kim_log_verbosity_type), protected, &
+    bind(c, name="KIM_LOG_VERBOSITY_information") &
+    :: kim_log_verbosity_information
+  type(kim_log_verbosity_type), protected, &
+    bind(c, name="KIM_LOG_VERBOSITY_debug") &
+    :: kim_log_verbosity_debug
 
   interface operator (.lt.)
     logical function kim_log_verbosity_less_than(left, right)
@@ -150,4 +155,7 @@ module kim_log_verbosity_module
       character(len=*), intent(out) :: string
     end subroutine kim_log_verbosity_string
   end interface
+
+  character(len=4096) :: kim_log_file
+  character(len=65536) :: kim_log_message
 end module kim_log_verbosity_module

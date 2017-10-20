@@ -33,7 +33,6 @@
 
 module kim_numbering_module
   use, intrinsic :: iso_c_binding
-  use kim_numbering_id_module
   implicit none
   private
 
@@ -51,12 +50,12 @@ module kim_numbering_module
     integer(c_int) :: numbering_id
   end type kim_numbering_type
 
-  type(kim_numbering_type), parameter :: &
-    kim_numbering_zero_based = &
-    kim_numbering_type(zero_based_id)
-  type(kim_numbering_type), parameter :: &
-    kim_numbering_one_based = &
-    kim_numbering_type(one_based_id)
+  type(kim_numbering_type), protected, &
+    bind(c, name="KIM_NUMBERING_zeroBased") &
+    :: kim_numbering_zero_based
+  type(kim_numbering_type), protected, &
+    bind(c, name="KIM_NUMBERING_oneBased") &
+    :: kim_numbering_one_based
 
   interface operator (.eq.)
     logical function kim_numbering_equal(left, right)
