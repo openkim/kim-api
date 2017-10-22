@@ -102,9 +102,7 @@ typedef struct KIM_CallbackName KIM_CallbackName;
 #endif
 
 
-struct KIM_ModelDriverCreate {
-  void * p;
-};
+struct KIM_ModelDriverCreate;
 
 #ifndef KIM_MODEL_DRIVER_CREATE_DEFINED_
 #define KIM_MODEL_DRIVER_CREATE_DEFINED_

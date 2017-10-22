@@ -131,6 +131,11 @@ extern "C"
 }  // extern "C"
 
 
+struct KIM_Model
+{
+  void * p;
+};
+
 namespace
 {
 KIM_DataType

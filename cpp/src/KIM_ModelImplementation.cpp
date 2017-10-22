@@ -703,6 +703,11 @@ int ModelImplementation::IsCallbackPresent(
   }
 }
 
+struct KIM_ModelCompute
+{
+  void * p;
+};
+
 int ModelImplementation::Compute() const
 {
   typedef int ModelComputeCpp(KIM::ModelCompute * const);
@@ -749,6 +754,11 @@ int ModelImplementation::Compute() const
   else
     return false;
 }
+
+struct KIM_ModelRefresh
+{
+  void * p;
+};
 
 int ModelImplementation::ClearInfluenceDistanceAndCutoffsThenRefreshModel()
 {
@@ -1537,6 +1547,11 @@ int ModelImplementation::ModelCreate(
   return false;
 }
 
+struct KIM_ModelDestroy
+{
+  void * p;
+};
+
 int ModelImplementation::ModelDestroy()
 {
   typedef int ModelDestroyCpp(KIM::ModelDestroy * const);
@@ -1583,6 +1598,11 @@ int ModelImplementation::ModelDestroy()
   else
     return false;
 }
+
+struct KIM_ModelCreate
+{
+  void * p;
+};
 
 int ModelImplementation::InitializeStandAloneModel(
     LengthUnit const requestedLengthUnit,
@@ -1681,6 +1701,11 @@ int ModelImplementation::InitializeStandAloneModel(
     return false;
   }
 }
+
+struct KIM_ModelDriverCreate
+{
+  void * p;
+};
 
 int ModelImplementation::InitializeParameterizedModel(
     LengthUnit const requestedLengthUnit,

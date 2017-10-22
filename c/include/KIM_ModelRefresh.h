@@ -36,9 +36,7 @@
 #ifndef KIM_MODEL_REFRESH_H_
 #define KIM_MODEL_REFRESH_H_
 
-struct KIM_ModelRefresh {
-  void * p;
-};
+struct KIM_ModelRefresh;
 
 #ifndef KIM_LOG_VERBOSITY_DEFINED_
 #define KIM_LOG_VERBOSITY_DEFINED_

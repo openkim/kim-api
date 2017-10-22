@@ -49,19 +49,24 @@ extern "C"
 #ifndef KIM_MODEL_REFRESH_H_
 #include "KIM_ModelRefresh.h"
 #endif
-}
+}  // extern "C"
+
+
+struct KIM_ModelRefresh
+{
+  void * p;
+};
 
 #define CONVERT_POINTER KIM::ModelRefresh *pModelRefresh        \
   = reinterpret_cast<KIM::ModelRefresh *>(modelRefresh->p)
 
-
-    namespace
-    {
-    KIM::LogVerbosity makeLogVerbosityCpp(KIM_LogVerbosity const logVerbosity)
-    {
-      return KIM::LogVerbosity(logVerbosity.logVerbosityID);
-    }
-    }  // namespace
+namespace
+{
+KIM::LogVerbosity makeLogVerbosityCpp(KIM_LogVerbosity const logVerbosity)
+{
+  return KIM::LogVerbosity(logVerbosity.logVerbosityID);
+}
+}  // namespace
 
 extern "C"
 {

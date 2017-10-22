@@ -102,9 +102,7 @@ typedef struct KIM_CallbackName KIM_CallbackName;
 #endif
 
 
-struct KIM_ModelCreate {
-  void * p;
-};
+struct KIM_ModelCreate;
 
 #ifndef KIM_MODEL_CREATE_DEFINED_
 #define KIM_MODEL_CREATE_DEFINED_

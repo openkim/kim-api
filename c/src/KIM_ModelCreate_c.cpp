@@ -122,74 +122,78 @@ extern "C"
 }  // extern "C"
 
 
+struct KIM_ModelCreate
+{
+  void * p;
+};
+
 #define CONVERT_POINTER KIM::ModelCreate *pModelCreate          \
   = reinterpret_cast<KIM::ModelCreate *>(modelCreate->p)
 
+namespace
+{
+KIM::LogVerbosity makeLogVerbosityCpp(KIM_LogVerbosity const logVerbosity)
+{
+  return KIM::LogVerbosity(logVerbosity.logVerbosityID);
+}
 
-    namespace
-    {
-    KIM::LogVerbosity makeLogVerbosityCpp(KIM_LogVerbosity const logVerbosity)
-    {
-      return KIM::LogVerbosity(logVerbosity.logVerbosityID);
-    }
+KIM::Numbering makeNumberingCpp(KIM_Numbering const numbering)
+{
+  return KIM::Numbering(numbering.numberingID);
+}
 
-    KIM::Numbering makeNumberingCpp(KIM_Numbering const numbering)
-    {
-      return KIM::Numbering(numbering.numberingID);
-    }
+KIM::SupportStatus makeSupportStatusCpp(KIM_SupportStatus const supportStatus)
+{
+  return KIM::SupportStatus(supportStatus.supportStatusID);
+}
 
-    KIM::SupportStatus makeSupportStatusCpp(KIM_SupportStatus const supportStatus)
-    {
-      return KIM::SupportStatus(supportStatus.supportStatusID);
-    }
+KIM::ArgumentName makeArgumentNameCpp(KIM_ArgumentName const argumentName)
+{
+  return KIM::ArgumentName(argumentName.argumentNameID);
+}
 
-    KIM::ArgumentName makeArgumentNameCpp(KIM_ArgumentName const argumentName)
-    {
-      return KIM::ArgumentName(argumentName.argumentNameID);
-    }
+KIM::CallbackName makeCallbackNameCpp(KIM_CallbackName const callbackName)
+{
+  return KIM::CallbackName(callbackName.callbackNameID);
+}
 
-    KIM::CallbackName makeCallbackNameCpp(KIM_CallbackName const callbackName)
-    {
-      return KIM::CallbackName(callbackName.callbackNameID);
-    }
+KIM::LengthUnit makeLengthUnitCpp(KIM_LengthUnit const lengthUnit)
+{
+  return KIM::LengthUnit(lengthUnit.lengthUnitID);
+}
 
-    KIM::LengthUnit makeLengthUnitCpp(KIM_LengthUnit const lengthUnit)
-    {
-      return KIM::LengthUnit(lengthUnit.lengthUnitID);
-    }
+KIM::EnergyUnit makeEnergyUnitCpp(KIM_EnergyUnit const energyUnit)
+{
+  return KIM::EnergyUnit(energyUnit.energyUnitID);
+}
 
-    KIM::EnergyUnit makeEnergyUnitCpp(KIM_EnergyUnit const energyUnit)
-    {
-      return KIM::EnergyUnit(energyUnit.energyUnitID);
-    }
+KIM::ChargeUnit makeChargeUnitCpp(KIM_ChargeUnit const chargeUnit)
+{
+  return KIM::ChargeUnit(chargeUnit.chargeUnitID);
+}
 
-    KIM::ChargeUnit makeChargeUnitCpp(KIM_ChargeUnit const chargeUnit)
-    {
-      return KIM::ChargeUnit(chargeUnit.chargeUnitID);
-    }
+KIM::TemperatureUnit makeTemperatureUnitCpp(
+    KIM_TemperatureUnit const temperatureUnit)
+{
+  return KIM::TemperatureUnit(temperatureUnit.temperatureUnitID);
+}
 
-    KIM::TemperatureUnit makeTemperatureUnitCpp(
-        KIM_TemperatureUnit const temperatureUnit)
-    {
-      return KIM::TemperatureUnit(temperatureUnit.temperatureUnitID);
-    }
+KIM::TimeUnit makeTimeUnitCpp(KIM_TimeUnit const timeUnit)
+{
+  return KIM::TimeUnit(timeUnit.timeUnitID);
+}
 
-    KIM::TimeUnit makeTimeUnitCpp(KIM_TimeUnit const timeUnit)
-    {
-      return KIM::TimeUnit(timeUnit.timeUnitID);
-    }
+KIM::LanguageName
+makeLanguageNameCpp(KIM_LanguageName const languageName)
+{
+  return KIM::LanguageName(languageName.languageNameID);
+}
 
-    KIM::LanguageName
-    makeLanguageNameCpp(KIM_LanguageName const languageName)
-    {
-      return KIM::LanguageName(languageName.languageNameID);
-    }
-
-    KIM::SpeciesName makeSpecNameCpp(KIM_SpeciesName const speciesName)
-    {
-      return KIM::SpeciesName(speciesName.speciesNameID);
-    }
-    }  // namespace
+KIM::SpeciesName makeSpecNameCpp(KIM_SpeciesName const speciesName)
+{
+  return KIM::SpeciesName(speciesName.speciesNameID);
+}
+}  // namespace
 
 extern "C"
 {

@@ -53,9 +53,7 @@ typedef struct KIM_CallbackName KIM_CallbackName;
 #endif
 
 
-struct KIM_ModelCompute {
-  void * p;
-};
+struct KIM_ModelCompute;
 
 #ifndef KIM_MODEL_COMPUTE_DEFINED_
 #define KIM_MODEL_COMPUTE_DEFINED_

@@ -53,9 +53,13 @@ extern "C"
 }  // extern "C"
 
 
-#define CONVERT_POINTER KIM::ModelDestroy *pModelDestroy  \
-  = reinterpret_cast<KIM::ModelDestroy *>(modelDestroy->p)
+struct KIM_ModelDestroy
+{
+  void * p;
+};
 
+#define CONVERT_POINTER KIM::ModelDestroy *pModelDestroy        \
+  = reinterpret_cast<KIM::ModelDestroy *>(modelDestroy->p)
 
 namespace
 {

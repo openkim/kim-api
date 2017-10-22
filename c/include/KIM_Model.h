@@ -107,10 +107,7 @@ typedef struct KIM_SupportStatus KIM_SupportStatus;
 #endif
 
 
-struct KIM_Model
-{
-  void * p;
-};
+struct KIM_Model;
 
 #ifndef KIM_MODEL_DEFINED_
 #define KIM_MODEL_DEFINED_

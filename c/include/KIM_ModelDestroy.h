@@ -43,9 +43,7 @@ typedef struct KIM_LogVerbosity KIM_LogVerbosity;
 #endif
 
 
-struct KIM_ModelDestroy {
-  void * p;
-};
+struct KIM_ModelDestroy;
 
 #ifndef KIM_MODEL_DESTROY_DEFINED_
 #define KIM_MODEL_DESTROY_DEFINED_

@@ -68,11 +68,16 @@ extern "C"
 #ifndef KIM_MODEL_COMPUTE_H_
 #include "KIM_ModelCompute.h"
 #endif
-}
+}  // extern "C"
+
+
+struct KIM_ModelCompute
+{
+  void * p;
+};
 
 #define CONVERT_POINTER KIM::ModelCompute *pModelCompute        \
   = reinterpret_cast<KIM::ModelCompute *>(modelCompute->p)
-
 
 namespace
 {
