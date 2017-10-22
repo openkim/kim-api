@@ -83,7 +83,17 @@ std::vector<std::string> getConfigFileName()
   char const* const varVal = getenv(varName.c_str());
   if (NULL != varVal)
   {
-    configFileName[2]=std::string(varVal);
+    // ensure we have an absolute path
+    if (varVal[0] != '/')
+    {
+      configFileName[2] = std::string(getenv("PWD"));
+      configFileName[2].append("/");
+      configFileName[2].append(varVal);
+    }
+    else
+    {
+      configFileName[2] = std::string(varVal);
+    }
     configFileName[0] = varVal;
   }
   else
@@ -116,9 +126,19 @@ std::vector<std::string> getUserDirs()
   cfl.open(configFile[0].c_str(), std::ifstream::in);
   if (!cfl)
   {
-    // unable to open file.
-    userDirs[0] = "";
-    userDirs[1] = "";
+    // unable to open file; create with default locations
+    size_t const pos = configFile[0].find_last_of('/');
+    std::string const path = configFile[0].substr(0,pos);
+    std::string const name = configFile[0].substr(pos+1);
+    std::ofstream fl;
+
+    mkdir(path.c_str(), 0755);
+    fl.open(configFile[0].c_str(), std::ofstream::out);
+    fl << "model_drivers_dir = " << path << "/" << "model_drivers\n";
+    fl << "models_dir = " << path << "/" << "models\n";
+    fl.close();
+    userDirs[0] = path + "/" + "model_drivers";
+    userDirs[1] = path + "/" + "models";
   }
   else
   {

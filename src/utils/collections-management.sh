@@ -67,22 +67,14 @@ usage () {
   printf "  Remove model or model driver\n"
 }
 
-check_config_file_and_create_if_empty () {
+check_config_file () {
   local config_file_name=`${collections_info} config_file name`
   local drivers_dir=`${collections_info} config_file model_drivers`
   local models_dir=`${collections_info} config_file models`
 
   if test \! -f "${config_file_name}" -o x"" = x"${drivers_dir}" -o x"" = x"${models_dir}"; then
-    printf "Missing or invalid kim-api configuration file.\n"
-    printf "   Recreating the file with default values!\n"
-    printf "   This is normal for the first time a user executes\n"
-    printf "   the collections-management utility.\n"
-    drivers_dir="`printf -- "${config_file_name}" | sed -e 's|\(.*\)/[^/]*$|\1|'`/model_drivers"
-    mkdir -p "${drivers_dir}" || return 1
-    printf "model_drivers_dir = %s\n" "${drivers_dir}" >  "${config_file_name}" || return 1
-    models_dir="`printf -- "${config_file_name}" | sed -e 's|\(.*\)/[^/]*$|\1|'`/models"
-    mkdir -p "${models_dir}" || return 1
-    printf "models_dir = %s\n" "${models_dir}"         >> "${config_file_name}"
+    printf "Invalid kim-api configuration file.\n"
+    return 1
   fi
 }
 
@@ -510,7 +502,7 @@ else
   esac
 fi
 
-if ! check_config_file_and_create_if_empty; then
+if ! check_config_file; then
   printf "Aborting!\n"
   exit 1
 fi
