@@ -6,5 +6,4 @@
 .DS_Store
 /Makefile.KIM_Config
 export-list.txt
-kim_str.cpp
 /config.status
