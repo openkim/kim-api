@@ -67,6 +67,39 @@ usage () {
   printf "  Remove model or model driver\n"
 }
 
+check_version_compatibility () {
+  local version="$1"
+  local major=`printf -- "${version}" | sed -e 's/\([^.}]*\).*/\1/'`
+  local minor=`printf -- "${version}" | sed -e 's/[^.]*\.\([^.}]*\).*/\1/'`
+  if test \! \( \( ${major} -eq 1 \) -a \( ${minor} -ge 6 \) \) ; then
+    return 1
+  else
+    return 0
+  fi
+}
+
+check_item_compatibility () {
+  local item_name="$1"
+  local query="query={\"kimcode\":\"${item_name}\"}"
+  query="${query}"'&fields={"kim-api-version":1}'
+  query="${query}"'&database=obj&history=on'
+  local version=`wget -q -O - --post-data="${query}" https://query.openkim.org/api \
+                 | \
+                 sed -e 's/\[//g' -e 's/\]//g' \
+                 -e 's/{"kim-api-version": "\([0-9.]*\)"/\1/g'`
+  if test x"" = x"${version}"; then
+    printf "*** ERROR *** ${item_name} not found.\n"
+    return 1
+  else
+    if check_version_compatibility "${version}"; then
+      return 0
+    else
+      printf "*** ERROR *** ${item_name} is not compatible with this version of the KIM API.\n"
+      return 1
+    fi
+  fi
+}
+
 check_config_file () {
   local config_file_name=`${collections_info} config_file name`
   local drivers_dir=`${collections_info} config_file model_drivers`
@@ -170,58 +203,64 @@ get_build_install_item () {
                      | \
                      sed -e 's/\[//g' -e 's/\]//g' \
                      -e 's/{"kim-api-version": "\([0-9.]*\)", "kimcode": "\([^"]*\)"},*/\1:\2/g'`
-      for model in ${list}; do \
-        local minor=`printf -- "${model}" | sed -e 's/1\.\([^.:]*\).*/\1/'`
-        local modname=`printf -- "${model}" | sed -e 's/.*://'`
-        if test ${minor} -ge 6; then
+      for version in ${list}; do \
+        if check_version_compatibility "${version}"; then
           get_build_install_item "$install_collection" "${modname}" "${use_sudo}" "${PASSWORD}" || return 1
         fi
       done
     elif test x"MD" = x"${item_type}"; then
-      printf "*@downloading.......@%-50s\n" "${item_name}" | sed -e 's/ /./g' -e 's/@/ /g'
-      if wget -q --content-disposition "https://openkim.org/download/${item_name}.txz"; then
-        tar Jxvf "${item_name}.txz" 2>&1 | sed -e 's/^/                /' &&
-          rm -f "${item_name}.txz" &&
-          if test 0 -lt `grep -c MAKE_SYSTEM ${item_name}/Makefile`; then \
-            printf "*** ERROR *** ${item_name} appears to be written for an older, incompatible, version of the KIM API.\n"
-            return 1
+      if check_item_compatibility "${item_name}"; then
+        printf "*@downloading.......@%-50s\n" "${item_name}" | sed -e 's/ /./g' -e 's/@/ /g'
+        if wget -q --content-disposition "https://openkim.org/download/${item_name}.txz"; then
+          tar Jxvf "${item_name}.txz" 2>&1 | sed -e 's/^/                /' &&
+            rm -f "${item_name}.txz" &&
+            if test 0 -lt `grep -c MAKE_SYSTEM ${item_name}/Makefile`; then \
+              printf "*** ERROR *** ${item_name} appears to be written for an older, incompatible, version of the KIM API.\n"
+              return 1
+            fi
+          cd ${item_name}
+          ${make_command} && if test x"sudo-yes" = x"${use_sudo}"; then
+            printf -- "${PASSWORD}\n" | sudo -k -S ${make_command} "install-${install_collection}" 2> /dev/null || return 1
+          else
+            ${make_command} "install-${install_collection}" || return 1
           fi
-        cd ${item_name}
-        ${make_command} && if test x"sudo-yes" = x"${use_sudo}"; then
-          printf -- "${PASSWORD}\n" | sudo -k -S ${make_command} "install-${install_collection}" 2> /dev/null || return 1
+          cd ..
         else
-          ${make_command} "install-${install_collection}" || return 1
+          printf "                Unable to download ${item_name} from https://openkim.org.  Check the KIM Item ID for errors.\n"
+          return 1
         fi
-        cd ..
       else
-        printf "                Unable to download ${item_name} from https://openkim.org.  Check the KIM Item ID for errors.\n"
         return 1
       fi
     elif test x"MO" = x"${item_type}"; then
-      printf "*@downloading.......@%-50s\n" "${item_name}" | sed -e 's/ /./g' -e 's/@/ /g'
-      if wget -q --content-disposition "https://openkim.org/download/${item_name}.txz"; then
-        tar Jxvf "${item_name}.txz" 2>&1 | sed -e 's/^/                /' &&
-          rm -f "${item_name}.txz" &&
-          if test 0 -lt `grep -c MAKE_SYSTEM ${item_name}/Makefile`; then
-            printf "*** ERROR *** ${item_name} appears to be written for an older, incompatible, version of the KIM API.\n";
-            return 1
-          elif test x"ParameterizedModel" = x"`${make_command} -C \"${item_name}\" kim-item-type`"; then
-            dvr="`${make_command} -C \"${item_name}\" model-driver-name`"
-            if test x"" != x"`${collections_info} model_drivers find "${dvr}"`"; then
-              printf "*@using installed driver.......@%-50s\n" "${dvr}" | sed -e 's/ /./g' -e 's/@/ /g' || return 1
-            else
-              get_build_install_item "${install_collection}" "${dvr}" "${use_sudo}" "${PASSWORD}" || return 1
+      if check_item_compatibility "${item_name}"; then
+        printf "*@downloading.......@%-50s\n" "${item_name}" | sed -e 's/ /./g' -e 's/@/ /g'
+        if wget -q --content-disposition "https://openkim.org/download/${item_name}.txz"; then
+          tar Jxvf "${item_name}.txz" 2>&1 | sed -e 's/^/                /' &&
+            rm -f "${item_name}.txz" &&
+            if test 0 -lt `grep -c MAKE_SYSTEM ${item_name}/Makefile`; then
+              printf "*** ERROR *** ${item_name} appears to be written for an older, incompatible, version of the KIM API.\n";
+              return 1
+            elif test x"ParameterizedModel" = x"`${make_command} -C \"${item_name}\" kim-item-type`"; then
+              dvr="`${make_command} -C \"${item_name}\" model-driver-name`"
+              if test x"" != x"`${collections_info} model_drivers find "${dvr}"`"; then
+                printf "*@using installed driver.......@%-50s\n" "${dvr}" | sed -e 's/ /./g' -e 's/@/ /g' || return 1
+              else
+                get_build_install_item "${install_collection}" "${dvr}" "${use_sudo}" "${PASSWORD}" || return 1
+              fi
             fi
+          cd ${item_name}
+          ${make_command} && if test x"sudo-yes" = x"${use_sudo}"; then
+            printf -- "${PASSWORD}\n" | sudo -k -S ${make_command} "install-${install_collection}" 2> /dev/null || return 1
+          else
+            ${make_command} "install-${install_collection}" || return 1
           fi
-        cd ${item_name}
-        ${make_command} && if test x"sudo-yes" = x"${use_sudo}"; then
-          printf -- "${PASSWORD}\n" | sudo -k -S ${make_command} "install-${install_collection}" 2> /dev/null || return 1
+          cd ..
         else
-          ${make_command} "install-${install_collection}" || return 1
+          printf "                Unable to download ${item_name} from https://openkim.org.  Check the KIM Item ID for errors.\n"
+          return 1
         fi
-        cd ..
       else
-        printf "                Unable to download ${item_name} from https://openkim.org.  Check the KIM Item ID for errors.\n"
         return 1
       fi
     fi
