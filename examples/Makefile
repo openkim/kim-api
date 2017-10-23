@@ -40,10 +40,10 @@ KIM_API_BUILD_CONFIG=$(bindir)/$(full_package_name)-build-config
 #
 # Main build settings and rules
 #
-.PHONY: all-system all-user model-drivers-all-system model-drivers-all-user models-all-system models-all-user openkim-tests-all
+.PHONY: all-system all-user model-drivers-all-system model-drivers-all-user models-all-system models-all-user simulators-all
 
-all-system: model-drivers-all-system models-all-system openkim-tests-all
-all-user: model-drivers-all-user models-all-user openkim-tests-all
+all-system: model-drivers-all-system models-all-system simulators-all
+all-user: model-drivers-all-user models-all-user simulators-all
 
 model-drivers-all-system: Example\ Model\ Drivers-making-echo
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modeldriversdir) KIM_API_BUILD_CONFIG=$(KIM_API_BUILD_CONFIG) all
@@ -59,16 +59,16 @@ models-all-user: Example\ Model-making-echo
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modelsdir) KIM_API_BUILD_CONFIG=$(KIM_API_BUILD_CONFIG) all
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modelsdir) KIM_API_BUILD_CONFIG=$(KIM_API_BUILD_CONFIG) install-user-all
 
-openkim-tests-all: Example\ OpenKIM\ Tests-making-echo
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C openkim_tests KIM_API_BUILD_CONFIG=$(KIM_API_BUILD_CONFIG) all
+simulators-all: Example\ Simulators-making-echo
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C simulators KIM_API_BUILD_CONFIG=$(KIM_API_BUILD_CONFIG) all
 
 
 #
 # Main clean settings and rules
 #
-.PHONY: clean model-drivers-clean models-clean openkim-tests-clean
+.PHONY: clean model-drivers-clean models-clean simulators-clean
 
-clean: model-drivers-clean models-clean openkim-tests-clean
+clean: model-drivers-clean models-clean simulators-clean
 
 model-drivers-clean: Example\ Model\ Drivers-making-echo
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modeldriversdir) KIM_API_BUILD_CONFIG=$(KIM_API_BUILD_CONFIG) uninstall-system-all
@@ -80,8 +80,8 @@ models-clean: Example\ Model-making-echo
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modelsdir) KIM_API_BUILD_CONFIG=$(KIM_API_BUILD_CONFIG) uninstall-user-all
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(modelsdir) KIM_API_BUILD_CONFIG=$(KIM_API_BUILD_CONFIG) clean
 
-openkim-tests-clean: Example\ OpenKIM\ Tests-making-echo
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C openkim_tests KIM_API_BUILD_CONFIG=$(KIM_API_BUILD_CONFIG) clean
+simulators-clean: Example\ Simulators-making-echo
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C simulators KIM_API_BUILD_CONFIG=$(KIM_API_BUILD_CONFIG) clean
 
 
 ########### for internal use ###########

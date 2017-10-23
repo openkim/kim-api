@@ -24,31 +24,8 @@
 #
 # Contributors:
 #    Ryan S. Elliott
-#    Ellad B. Tadmor
-#    Valeriu Smirichinski
 #
 
-#
-# Release: This file is part of the kim-api-v1.8.0 package.
-#
-
-
-This directory (ex_model_Ar_P_LJ) contains a shifted Lennard-Jones pair potential
-Model based on the KIM Model Driver ex_model_driver_P_LJ.  This Model
+This directory (ex_model_Ar_P_LJ) contains a shifted Lennard-Jones pair
+potential Model based on the KIM Model Driver ex_model_driver_P_LJ.  This Model
 implements the Lennard-Jones potential for Ar.
-
-
-The following files are in this directory (before any compilation is performed):
-
-LICENSE.CDDL
-     The Common Development and Distribution License (CDDL) Version 1.0 file
-
-Makefile
-    Makefile to build the Model based on the specified KIM Model
-    Driver
-
-README
-    This file
-
-ex_model_Ar_P_LJ.params
-    Parameters file providing the Lennard-Jones Model parameters for Ar

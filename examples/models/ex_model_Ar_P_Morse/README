@@ -26,27 +26,7 @@
 #    Ryan S. Elliott
 #
 
-#
-# Release: This file is part of the kim-api.git repository.
-#
-
 
 This directory (ex_model_Ar_P_Morse) contains a shifted Morse pair potential
 Model based on the KIM Model Driver ex_model_driver_P_Morse.  This Model
 implements the Morse potential for Ar.
-
-
-The following files are in this directory (before any compilation is performed):
-
-LICENSE.CDDL
-     The Common Development and Distribution License (CDDL) Version 1.0 file
-
-Makefile
-    Makefile to build the Model based on the specified KIM Model
-    Driver
-
-README
-    This file
-
-ex_model_Ar_P_Morse.params
-    Parameters file providing the Morse Model parameters for Ar

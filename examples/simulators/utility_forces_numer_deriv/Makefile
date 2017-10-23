@@ -53,7 +53,7 @@ OUTPUTINFLAG = $(shell $(KIM_API_BUILD_CONFIG) --outputinflag)
 
 .PHONY: all clean
 
-TEST_NAME := vc_forces_numer_deriv
+TEST_NAME := utility_forces_numer_deriv
 
 all: $(TEST_NAME)
 

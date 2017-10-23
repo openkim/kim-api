@@ -97,7 +97,6 @@ ed Makefile.Version <<EOF
 w
 EOF
 
-rm -f README_GIT
 rm -rf scripts
 rm -f `find . -name ".gitignore"`
 

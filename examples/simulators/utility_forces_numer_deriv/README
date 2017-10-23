@@ -27,45 +27,22 @@
 #    Ryan S. Elliott
 #
 
-#
-# Release: This file is part of the kim-api.git repository.
-#
 
-
-This directory (vc_forces_numer_deriv) contains a Verification Check that compares the
-forces computed by a KIM-compliant Model with those obtained using numerical
-differentiation of the Model energies.
+This directory (utility_forces_numer_deriv) contains a Verification Check that
+compares the forces computed by a KIM-compliant Model with those obtained using
+numerical differentiation of the Model energies.
 
 Calling format:
 
-   printf "model_name" | ./vc_forces_numer_deriv
+   printf "model_name" | ./utility_forces_numer_deriv
 
 Notes:
 
-1. It generates its own KIM descriptor file in a string and uses
-   kim_api_string_init to set up the KIM object.
-
-2. It figures out which species a Model supports using
-   KIM_API_get_model_species.
-
-3. It checks a single configuration: a perturbed fcc cluster made of a random
+1. It checks a single configuration: a perturbed fcc cluster made of a random
    arrangement of the supported species with spacing scaled by a factor based
    on the Model's cutoff value.
 
-4. The code supports the following NBCs:
-
-        NEIGH_RVEC_H
-        NEIGH_PURE_H
-        NEIGH_RVEC_F
-        NEIGH_PURE_F
-        MI_OPBC_H
-        MI_OPBC_F
-        CLUSTER
-
-   The code runs in sequence over all NBCs supported by the Model (from the
-   above list).
-
-5. The code computes the DIM*N components of the force vector in two ways:
+2. The code computes the DIM*N components of the force vector in two ways:
    directly using the Model's force calculation (`force_model') and by
    numerical differentiation using Ridders' method (`force_numer').  The
    difference between these values in absolute value is also printed (`Force
@@ -115,18 +92,3 @@ Notes:
    \epsilon^{numer}_i, may be large for the component.  Instead the maximum of
    w_i*forcediff_i is a compromise that in some sense seeks the largest error
    for components where the numerical derivative are also as accurate possible.
-
-
-The following files are in the directory (before any compilation is performed):
-
-LICENSE.CDDL
-     The Common Development and Distribution License (CDDL) Version 1.0 file
-
-Makefile
-     Makefile to build executables with GNU or Intel compilers.
-
-README
-     This file.
-
-vc_forces_numer_deriv.F03
-     Fortran 2003 program that implements the Verification Check.

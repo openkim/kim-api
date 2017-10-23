@@ -26,10 +26,6 @@
 #    Ryan S. Elliott
 #
 
-#
-# Release: This file is part of the kim-api.git repository.
-#
-
 
 This directory (ex_model_Ar_P_Morse_07C) contains a shifted Morse pair potential
 Model written in C.
@@ -38,33 +34,3 @@ Model written in C.
             + shift
 
 where shift is computed so that phi(rcut) = 0.0
-
-It complies with the KIM API interface standard, using these NBCs:
-  CLUSTER
-  NEIGH_PURE_H
-  NEIGH_PURE_F
-It supports:
-  iterator mode
-  locator mode
-It supports the arguments:
-  optional computation of `energy', `forces', `particleEnergy'
-  `process_dEdr' and `process_dE2dr2' (-> also: virial, particleVirial, hessian)
-
-
-The following files are in this directory:
-
-LICENSE.CDDL
-     The Common Development and Distribution License (CDDL) Version 1.0 file
-
-Makefile
-     Makefile to build executables with GNU or Intel compilers
-
-README
-     This file
-
-ex_model_Ar_P_Morse_07C.c
-     C file that contains the implementation of the Morse potential Model
-
-model_Ar_P_Morse_07C.kim
-     The KIM descriptor file containing all variables and methods that are
-     exposed by the Model through the KIM API interface.

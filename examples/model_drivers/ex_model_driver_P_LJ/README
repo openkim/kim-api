@@ -24,56 +24,18 @@
 #
 # Contributors:
 #    Ryan S. Elliott
-#    Ellad B. Tadmor
-#    Valeriu Smirichinski
 #
-
-#
-# Release: This file is part of the kim-api-v1.8.0 package.
-#
-
 
 This directory (ex_model_driver_P_LJ) contains a shifted Lennard-Jones
-pair potential Model driver written in Fortran 2003.
+pair potential Model driver written in Fortran 90.
 
    phi(r) = 4 * epsilon * ( (sigma/r)^12 - (sigma/r)^6 ) + shift
 
 where shift is computed so that phi(rcut) = 0.0
 
-It complies with the KIM API interface standard, using any NBC and iterator or
-locator mode, publishes its parameters, and supports optional computation of
-`energy', `forces', `particleEnergy', `process_dEdr', and `process_dE2dr2'.
-Its initialization routine takes a KIM API object pointer, a pointer to a
-two-dimensional character array (each row of which contains the full path to a
-parameter file) of the form a[b][c], a pointer to the value of c, and a pointer
-to the value of b.  This Model Driver expects that only b=1 and that the
-associated parameter file contains the cutoff and Lennard-Jones parameters
-which define a KIM Model based on this KIM Model Driver.
-
-To create a KIM Model from this Model Driver, a parameter file is required.
+To create a KIM Model from this Model Driver, one parameter file is required.
 This file must have the following format:
    Line 1: `SpeciesName' string with element symbol
    Line 1: `cutoff' value in angstroms
    Line 2: Lennard-Jones `epsilon' value in eV
    Line 3: Lennard-Jones `sigma' value in Angstroms
-
-The following files are in this directory (before any compilation is performed):
-
-LICENSE.CDDL
-     The Common Development and Distribution License (CDDL) Version 1.0 file
-
-Makefile
-    Makefile to build executables with GNU or Intel compilers
-
-README
-    This file
-
-ex_model_driver_P_LJ.F03
-    Fortran 2003 file that contains the implementation of the Lennard-Jones
-    potential Model Driver
-
-model_driver_P_LJ.kim.tpl
-    Template KIM descriptor file containing all variables and methods that are
-    exposed by the driver through the KIM API interface.  This file will be
-    used (by the build system) to generate a KIM descriptor file for each KIM
-    Model based on this Model Driver.

@@ -101,41 +101,43 @@ The current version of the KIM API package supports the following features:
 * Currently supported programming languages:
   C, C++, FORTRAN 77, Fortran 90/95, Fortran 2003.
 
-* Support for automatic translation between zero-based lists (C-style numbering
-  beginning with 0) and one-based lists (Fortran-style numbering beginning
-  with 1)
+* Support for automatic translation between zero-based numbering (C-style
+  numbering beginning with 0) and one-based numbering (Fortran-style numbering
+  beginning with 1) of particles.
 
 * Communication of an arbitrary number of `arguments' between a `Model'
   (interatomic potential) and a `Simulator' (simulation code that uses a
-  Model).  This is facilitated by the use of `KIM descriptor files' (whose
-  names end with a `.kim' extension) and a single KIM API object data structure
-  that stores all information to be communicated between a Model and a
-  Simulator.
+  Model).
 
-* Data types: integer, float, double, method (for exchanging pointers to
-              functions), pointer (for exchanging "everything else").  Each of
-              these data types can be use to create multi-dimensional array
-              `arguments' that are exchanged between Models and Simulators.
+* Data types: integer and double.
 
-     Currently, the KIM API does not define any (more complex) data structures.
-     However, in the future (as the need arises, and in consultation with the
-     atomistic and molecular simulation community) additional data types and
-     data structures may be introduced.
+  Each of the data types can be used to create multi-dimensional array
+  `arguments' that are exchanged between Models and Simulators.  The KIM API
+  standard defines the dimension and extent of these arrays for each argument.
+  However, this information is not discoverable at run-time.  Thus, it is left
+  to the programmer to ensure that the correct values are used.
 
-* Physical Units: The KIM API supports the specification of physical units for
-  each `argument' exchanged between a Model and Simulator.  A Model is either
-  `fixed' or `flexible' with regard to units.  `fixed' means it is unable to
-  convert to a different set of units.  `flexible' means it can convert its
-  values to the Simulator's units.
+  Currently, the KIM API does not define any (more complex) data structures.
+  However, in the future (as the need arises, and in consultation with the
+  atomistic and molecular simulation community) additional data types and data
+  structures may be introduced.
+
+* Physical Units: The KIM API standard defines the physical units for each
+  `argument' exchanged between a Model and Simulator.  A simulator provides a
+  set of `requested units' to define a unit system and a model either accepts
+  this unit system (and makes appropriate unit converstions for its
+  parameters), or it rejects the request and reports the unit system it uses.
 
 * Neighbor list routines are expected to be provided by the calling Simulator.
-  The API provides support for `Locator' neighbor list modes.  A `Locator'
-  returns the list of neighbors of a specified particle.
+  All neighbor lists are full, unsorted lists that must contain all particles
+  within the specified cutoff distance (but may contain additional particles).
+  A model may request any number of such lists, each with a different cutoff
+  distance.  A simulator must provide all such requested lists.
 
 * Particle Species: The KIM API provides the ability to designate the physical
   species of each particle in a simulation.  Currently, only one identifier is
   provided for each element in the periodic table.  In the future support for
-  Models that require multiple types of each element will be added.
+  Models that require multiple types of each element may be added.
 
 * Model Parameters: The OpenKIM philosophy views a `Model' as a well-defined
   computational code that includes fixed specific values for all parameters
@@ -150,65 +152,12 @@ The current version of the KIM API package supports the following features:
   Driver by providing a file or files with the appropriate parameter values for
   the material of interest.
 
-For more information on all of the above, see the files in the docs directory
-described below.  Features planned for future releases are described in the
-TODO file in this directory.  (See list of directory contents below.)
+For more details on the difference between version 1 and version 2 of the
+kim-api package, see the file `docs/README-V2'.
 
 Your next step after reading this file is to install the KIM API package.  See
 the detailed instructions in the INSTALL file in this directory.
 
--------------------------------------------------------------------------------
-
-This directory (by default, kim-api-vX.Y.Z) contains the following files and
-directories:
-
-INSTALL
-     A set of detailed instructions on how to install the KIM API package.
-
-LICENSE.CDDL
-     The Common Development and Distribution License (CDDL) Version 1.0 file.
-
-Makefile
-     Makefile for compiling the KIM API library and examples.
-
-Makefile.KIM_Config.example
-     Example Makefile.KIM_Config file.  This file provides the basic settings
-     needed to build the KIM API system and associated Model Drivers, Models,
-     and the provided examples.
-
-Makefile.Version
-     Makefile containing variable definitions for the complete SemVer version
-     of the KIM API package.
-
-NEWS
-     A list of main changes made for each KIM API release.
-
-README
-     This file.
-
-TODO
-     A file listing features planed for future releases of the KIM API package.
-
-build_system/
-     A directory containing the common Makefiles and default settings used by
-     the KIM API package build system.
-
-configure
-     A shell script to configure the KIM API and create a Makefile.KIM_Config
-     file.
-
-docs/
-     Documentation directory.  This directory contains the file
-     KIM_API_Descriptions.txt, a link to the file standard.kim, and a templates
-     directory containing template files for creating your own KIM Models.
-     (See the README file in that directory.)
-
-examples/
-     A directory containing examples of interatomic Model Drivers, Models,
-     Simulators, and OpenKIM Tests.
-
-src/
-     A directory containing the KIM API source code.
 
 *******************************************************************************
 
