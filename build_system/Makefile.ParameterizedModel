@@ -159,8 +159,13 @@ installdirs:
                 $(INSTALL_PROGRAM) -d -m 0755 "$$fl"
 
 COLLECTIONS_INFO = $(libexecdir)/$(full_package_name)/$(full_package_name)-collections-info
-install-system: install_parammodeldir = $(shell $(COLLECTIONS_INFO) system models)/$(MODEL_NAME)
-install-user:   install_parammodeldir = $(shell $(COLLECTIONS_INFO) config_file models)/$(MODEL_NAME)
+SYSTEM_MODELS_DIR = $(shell $(COLLECTIONS_INFO) system models)
+USER_MODELS_DIR = $(shell $(COLLECTIONS_INFO) config_file models)
+ifeq ($(USER_MODELS_DIR),)
+  $(error Invalid config file)
+endif
+install-system: install_parammodeldir = $(SYSTEM_MODELS_DIR)/$(MODEL_NAME)
+install-user:   install_parammodeldir = $(USER_MODELS_DIR)/$(MODEL_NAME)
 install-system install-user: install-%: all installdirs
 	@printf "Installing...($*)................. Model.......... $(MODEL_NAME).\n"
 	$(QUELL)if test \( x"$*" = x"system" -a x"$(driver_collection)" = x"user" \); then                    \
@@ -174,8 +179,8 @@ install-system install-user: install-%: all installdirs
 	$(QUELL)$(INSTALL_PROGRAM) -m 0755 "lib$(MODEL_LIB_BUILD).so" "$(install_parammodeldir)/lib$(MODEL_LIB_BUILD).so"
 	$(QUELL)ln -fs "lib$(MODEL_LIB_BUILD).so" "$(install_parammodeldir)/lib$(MODEL_LIB).so"
 
-uninstall-system: uninstall_parammodeldir = $(shell $(COLLECTIONS_INFO) system models)/$(MODEL_NAME)
-uninstall-user:   uninstall_parammodeldir = $(shell $(COLLECTIONS_INFO) config_file models)/$(MODEL_NAME)
+uninstall-system: uninstall_parammodeldir = $(SYSTEM_MODELS_DIR)/$(MODEL_NAME)
+uninstall-user:   uninstall_parammodeldir = $(USER_MODELS_DIR)/$(MODEL_NAME)
 uninstall-system uninstall-user: uninstall-%:
 	@printf "Uninstalling...($*)................. Model.......... $(MODEL_NAME).\n"
 	$(QUELL)fl="$(uninstall_parammodeldir)" && if test -d "$$fl"; then rm -rf "$$fl"; fi

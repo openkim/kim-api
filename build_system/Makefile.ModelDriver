@@ -132,16 +132,21 @@ installdirs:
                 $(INSTALL_PROGRAM) -d -m 0755 "$$fl"
 
 COLLECTIONS_INFO = $(libexecdir)/$(full_package_name)/$(full_package_name)-collections-info
-install-system: install_modeldriverdir = $(shell $(COLLECTIONS_INFO) system model_drivers)/$(MODEL_DRIVER_NAME)
-install-user:   install_modeldriverdir = $(shell $(COLLECTIONS_INFO) config_file model_drivers)/$(MODEL_DRIVER_NAME)
+SYSTEM_DRIVERS_DIR = $(shell $(COLLECTIONS_INFO) system model_drivers)
+USER_DRIVERS_DIR = $(shell $(COLLECTIONS_INFO) config_file model_drivers)
+ifeq ($(USER_DRIVERS_DIR),)
+  $(error Invalid config file)
+endif
+install-system: install_modeldriverdir = $(SYSTEM_DRIVERS_DIR)/$(MODEL_DRIVER_NAME)
+install-user:   install_modeldriverdir = $(USER_DRIVERS_DIR)/$(MODEL_DRIVER_NAME)
 install-system install-user: install-%: all installdirs
 	@printf "Installing...($*)................. Model Driver... $(MODEL_DRIVER_NAME).\n"
         # Install lib files
 	$(QUELL)$(INSTALL_PROGRAM) -m 0755 "lib$(MODEL_DRIVER_LIB_BUILD).so" "$(install_modeldriverdir)/lib$(MODEL_DRIVER_LIB_BUILD).so"
 	$(QUELL)ln -fs "lib$(MODEL_DRIVER_LIB_BUILD).so" "$(install_modeldriverdir)/lib$(MODEL_DRIVER_LIB).so"
 
-uninstall-system: uninstall_modeldriverdir = $(shell $(COLLECTIONS_INFO) system model_drivers)/$(MODEL_DRIVER_NAME)
-uninstall-user:   uninstall_modeldriverdir = $(shell $(COLLECTIONS_INFO) config_file model_drivers)/$(MODEL_DRIVER_NAME)
+uninstall-system: uninstall_modeldriverdir = $(SYSTEM_DRIVERS_DIR)/$(MODEL_DRIVER_NAME)
+uninstall-user:   uninstall_modeldriverdir = $(USER_DRIVERS_DIR)/$(MODEL_DRIVER_NAME)
 uninstall-system uninstall-user: uninstall-%:
 	@printf "Uninstalling...($*)................. Model Driver... $(MODEL_DRIVER_NAME).\n"
 	$(QUELL)fl="$(uninstall_modeldriverdir)" && if test -d "$$fl"; then rm -rf "$$fl"; fi

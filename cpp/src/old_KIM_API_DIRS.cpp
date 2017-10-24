@@ -177,7 +177,9 @@ std::vector<std::string> getUserDirs()
     fl << "models_dir = " << path << "/" << "models\n";
     fl.close();
     userDirs[0] = path + "/" + "model_drivers";
+    mkdir(userDirs[0].c_str(), 0755);
     userDirs[1] = path + "/" + "models";
+    mkdir(userDirs[1].c_str(), 0755);
   }
   else
   {
