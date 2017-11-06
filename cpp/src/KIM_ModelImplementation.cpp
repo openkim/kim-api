@@ -32,8 +32,9 @@
 
 #include <sstream>
 #include <iomanip>
-#include <cstring>
 #include <cstdlib>
+#include <cstdio>
+#include <cstring>
 #include <cmath>
 
 #ifndef KIM_LOG_HPP_

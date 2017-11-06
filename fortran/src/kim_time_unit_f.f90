@@ -41,7 +41,7 @@ module kim_time_unit_f_module
 
   interface
     type(kim_time_unit_type) function from_string(string) &
-      bind(c, name="KIM_TimeFromString")
+      bind(c, name="KIM_TimeUnitFromString")
       use, intrinsic :: iso_c_binding
       use kim_time_unit_module, only : &
         kim_time_unit_type
