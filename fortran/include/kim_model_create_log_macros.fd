@@ -37,7 +37,7 @@
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_SILENT_)
 #define LOG_SILENT()\
-call kim_model_create_log(model_create, kim_log_verbosity_silent, kim_log_message, __LINE__, kim_log_file)
+call kim_model_create_log(model_create_handle, kim_log_verbosity_silent, kim_log_message, __LINE__, kim_log_file)
 #else
 #define LOG_SILENT()
 #endif
@@ -47,7 +47,7 @@ call kim_model_create_log(model_create, kim_log_verbosity_silent, kim_log_messag
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_FATAL_)
 #define LOG_FATAL()\
-call kim_model_create_log(model_create, kim_log_verbosity_fatal, kim_log_message, __LINE__, kim_log_file)
+call kim_model_create_log(model_create_handle, kim_log_verbosity_fatal, kim_log_message, __LINE__, kim_log_file)
 #else
 #define LOG_FATAL()
 #endif
@@ -57,7 +57,7 @@ call kim_model_create_log(model_create, kim_log_verbosity_fatal, kim_log_message
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_ERROR_)
 #define LOG_ERROR()\
-call kim_model_create_log(model_create, kim_log_verbosity_error, kim_log_message, __LINE__, kim_log_file)
+call kim_model_create_log(model_create_handle, kim_log_verbosity_error, kim_log_message, __LINE__, kim_log_file)
 #else
 #define LOG_ERROR()
 #endif
@@ -67,7 +67,7 @@ call kim_model_create_log(model_create, kim_log_verbosity_error, kim_log_message
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_WARNING_)
 #define LOG_WARNING()\
-call kim_model_create_log(model_create, kim_log_verbosity_warning, kim_log_message, __LINE__, kim_log_file)
+call kim_model_create_log(model_create_handle, kim_log_verbosity_warning, kim_log_message, __LINE__, kim_log_file)
 #else
 #define LOG_WARNING()
 #endif
@@ -77,7 +77,7 @@ call kim_model_create_log(model_create, kim_log_verbosity_warning, kim_log_messa
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_INFORMATION_)
 #define LOG_INFORMATION()\
-call kim_model_create_log(model_create, kim_log_verbosity_information, kim_log_message, __LINE__, kim_log_file)
+call kim_model_create_log(model_create_handle, kim_log_verbosity_information, kim_log_message, __LINE__, kim_log_file)
 #else
 #define LOG_INFORMATION()
 #endif
@@ -87,7 +87,7 @@ call kim_model_create_log(model_create, kim_log_verbosity_information, kim_log_m
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_DEBUG_)
 #define LOG_DEBUG()\
-call kim_model_create_log(model_create, kim_log_verbosity_debug, kim_log_message, __LINE__, kim_log_file)
+call kim_model_create_log(model_create_handle, kim_log_verbosity_debug, kim_log_message, __LINE__, kim_log_file)
 #else
 #define LOG_DEBUG()
 #endif

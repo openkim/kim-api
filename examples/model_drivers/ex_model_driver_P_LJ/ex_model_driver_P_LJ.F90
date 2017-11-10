@@ -201,7 +201,7 @@ end subroutine calc_phi_dphi_d2phi
 !
 !-------------------------------------------------------------------------------
 #include "kim_model_compute_log_macros.fd"
-subroutine Compute_Energy_Forces(model_compute, ierr) bind(c)
+subroutine Compute_Energy_Forces(model_compute_handle, ierr) bind(c)
 use kim_log_verbosity_module
 use kim_model_compute_module
 use kim_argument_name_module
@@ -209,7 +209,7 @@ use kim_callback_name_module
 implicit none
 
 !-- Transferred variables
-type(kim_model_compute_type), intent(in) :: model_compute
+type(kim_model_compute_handle_type), intent(in) :: model_compute_handle
 integer(c_int), intent(out) :: ierr
 
 !-- Local variables
@@ -239,7 +239,7 @@ integer(c_int), pointer :: particleContributing(:)
 kim_log_file = __FILE__
 
 ! get model buffer from KIM object
-call kim_model_compute_get_model_buffer_pointer(model_compute, pbuf)
+call kim_model_compute_get_model_buffer_pointer(model_compute_handle, pbuf)
 call c_f_pointer(pbuf, buf)
 
 model_cutoff = buf%influence_distance(1)
@@ -248,10 +248,10 @@ model_cutoff = buf%influence_distance(1)
 ! energy and d1Edr
 !
 ierr = 0
-call kim_model_compute_is_callback_present(model_compute, &
+call kim_model_compute_is_callback_present(model_compute_handle, &
   kim_callback_name_process_dedr_term, comp_process_dedr, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_is_callback_present(model_compute, &
+call kim_model_compute_is_callback_present(model_compute_handle, &
   kim_callback_name_process_d2edr2_term, comp_process_d2edr2, ierr2)
 ierr = ierr + ierr2
 if (ierr /= 0) then
@@ -263,29 +263,29 @@ endif
 ! Unpack data from KIM object
 !
 ierr = 0
-call kim_model_compute_get_argument_pointer(model_compute, &
+call kim_model_compute_get_argument_pointer(model_compute_handle, &
   kim_argument_name_number_of_particles, &
   n, ierr2)
 ierr = ierr + ierr2
 
-call kim_model_compute_get_argument_pointer(model_compute, &
+call kim_model_compute_get_argument_pointer(model_compute_handle, &
   kim_argument_name_particle_species_codes, &
   n, particlespeciesCodes, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_get_argument_pointer(model_compute, &
+call kim_model_compute_get_argument_pointer(model_compute_handle, &
   kim_argument_name_particle_contributing, n, particlecontributing, &
   ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_get_argument_pointer(model_compute, &
+call kim_model_compute_get_argument_pointer(model_compute_handle, &
   kim_argument_name_coordinates, dim, n, coor, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_get_argument_pointer(model_compute, &
+call kim_model_compute_get_argument_pointer(model_compute_handle, &
   kim_argument_name_partial_energy, energy, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_get_argument_pointer(model_compute, &
+call kim_model_compute_get_argument_pointer(model_compute_handle, &
   kim_argument_name_partial_forces, dim, n, force, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_get_argument_pointer(model_compute, &
+call kim_model_compute_get_argument_pointer(model_compute_handle, &
   kim_argument_name_partial_particle_energy, n, enepot, ierr2)
 ierr = ierr + ierr2
 if (ierr /= 0) then
@@ -349,7 +349,7 @@ do i = 1, N
     ! Set up neighbor list for next particle
     !
     call kim_model_compute_get_neighbor_list( &
-      model_compute, 1, i, numnei, nei1part, ierr)
+      model_compute_handle, 1, i, numnei, nei1part, ierr)
     if (ierr /= 0) then
       ! some sort of problem, exit
       kim_log_message = "kim_api_get_neigh"
@@ -413,7 +413,7 @@ do i = 1, N
         !
         if (comp_process_dEdr.eq.1) then
           call kim_model_compute_process_dedr_term( &
-            model_compute, deidr, r, c_loc(rij(1)), i, j, ierr)
+            model_compute_handle, deidr, r, c_loc(rij(1)), i, j, ierr)
         endif
 
         ! contribution to process_d2Edr2
@@ -428,7 +428,7 @@ do i = 1, N
           j_pairs(2) = j
 
           call kim_model_compute_process_d2edr2_term( &
-            model_compute, d2eidr, &
+            model_compute_handle, d2eidr, &
             c_loc(r_pairs(1)),     &
             c_loc(Rij_pairs(1,1)), &
             c_loc(i_pairs(1)),     &
@@ -472,12 +472,12 @@ end subroutine Compute_Energy_Forces
 ! Model driver refresh routine
 !
 !-------------------------------------------------------------------------------
-subroutine refresh(model_refresh, ierr) bind(c)
+subroutine refresh(model_refresh_handle, ierr) bind(c)
 use kim_model_refresh_module
 implicit none
 
 !-- Transferred variables
-type(kim_model_refresh_type), intent(inout) :: model_refresh
+type(kim_model_refresh_handle_type), intent(inout) :: model_refresh_handle
 integer(c_int), intent(out) :: ierr
 
 !-- Local variables
@@ -485,13 +485,13 @@ real(c_double) energy_at_cutoff
 type(BUFFER_TYPE), pointer :: buf; type(c_ptr) :: pbuf
 
 ! get model buffer from KIM object
-call kim_model_refresh_get_model_buffer_pointer(model_refresh, pbuf)
+call kim_model_refresh_get_model_buffer_pointer(model_refresh_handle, pbuf)
 call c_f_pointer(pbuf, buf)
 
-call kim_model_refresh_set_influence_distance_pointer(model_refresh, &
+call kim_model_refresh_set_influence_distance_pointer(model_refresh_handle, &
   buf%influence_distance(1))
-call kim_model_refresh_set_neighbor_list_cutoffs_pointer(model_refresh, 1, &
-  buf%influence_distance(1))
+call kim_model_refresh_set_neighbor_list_cutoffs_pointer(model_refresh_handle, &
+  1, buf%influence_distance(1))
 
 ! Set new values in KIM object and buffer
 !
@@ -515,19 +515,19 @@ end subroutine refresh
 ! Model driver destroy routine
 !
 !-------------------------------------------------------------------------------
-subroutine destroy(model_destroy, ierr) bind(c)
+subroutine destroy(model_destroy_handle, ierr) bind(c)
 use kim_model_destroy_module
 implicit none
 
 !-- Transferred variables
-type(kim_model_destroy_type), intent(inout) :: model_destroy
+type(kim_model_destroy_handle_type), intent(inout) :: model_destroy_handle
 integer(c_int), intent(out) :: ierr
 
 !-- Local variables
 type(BUFFER_TYPE), pointer :: buf; type(c_ptr) :: pbuf
 
 ! get model buffer from KIM object
-call kim_model_destroy_get_model_buffer_pointer(model_destroy, pbuf)
+call kim_model_destroy_get_model_buffer_pointer(model_destroy_handle, pbuf)
 call c_f_pointer(pbuf, buf)
 
 deallocate( buf )
@@ -545,7 +545,7 @@ end module ex_model_driver_p_lj
 !
 !-------------------------------------------------------------------------------
 #include "kim_model_driver_create_log_macros.fd"
-subroutine model_driver_create_routine(model_driver_create, &
+subroutine model_driver_create_routine(model_driver_create_handle, &
   requested_length_unit, requested_energy_unit, requested_charge_unit, &
   requested_temperature_unit, requested_time_unit, ierr) bind(c)
 use, intrinsic :: iso_c_binding
@@ -563,8 +563,8 @@ implicit none
 integer(c_int), parameter :: cd = c_double ! used for literal constants
 
 !-- Transferred variables
-type(kim_model_driver_create_type), intent(inout) &
-  :: model_driver_create
+type(kim_model_driver_create_handle_type), intent(inout) &
+  :: model_driver_create_handle
 type(kim_length_unit_type), intent(in), value :: requested_length_unit
 type(kim_energy_unit_type), intent(in), value :: requested_energy_unit
 type(kim_charge_unit_type), intent(in), value :: requested_charge_unit
@@ -591,7 +591,7 @@ kim_log_file = __FILE__
 
 ! register numbering
 call kim_model_driver_create_set_model_numbering( &
-  model_driver_create, kim_numbering_one_based, ierr)
+  model_driver_create_handle, kim_numbering_one_based, ierr)
 if (ierr /= 0) then
   kim_log_message = "Unable to set numbering"
   LOG_ERROR()
@@ -600,14 +600,14 @@ end if
 
 ! register arguments
 call kim_model_driver_create_set_argument_support_status( &
-  model_driver_create, kim_argument_name_partial_energy, &
+  model_driver_create_handle, kim_argument_name_partial_energy, &
   kim_support_status_optional, ierr)
 call kim_model_driver_create_set_argument_support_status( &
-  model_driver_create, kim_argument_name_partial_forces, &
+  model_driver_create_handle, kim_argument_name_partial_forces, &
   kim_support_status_optional, ierr2)
 ierr = ierr + ierr2
 call kim_model_driver_create_set_argument_support_status( &
-  model_driver_create, kim_argument_name_partial_particle_energy, &
+  model_driver_create_handle, kim_argument_name_partial_particle_energy, &
   kim_support_status_optional, ierr2)
 ierr = ierr + ierr2
 if (ierr /= 0) then
@@ -618,10 +618,10 @@ end if
 
 ! register callbacks
 call kim_model_driver_create_set_callback_support_status( &
-  model_driver_create, kim_callback_name_process_dedr_term, &
+  model_driver_create_handle, kim_callback_name_process_dedr_term, &
   kim_support_status_optional, ierr)
 call kim_model_driver_create_set_callback_support_status( &
-  model_driver_create, kim_callback_name_process_d2edr2_term, &
+  model_driver_create_handle, kim_callback_name_process_d2edr2_term, &
   kim_support_status_optional, ierr2)
 ierr = ierr + ierr2
 if (ierr /= 0) then
@@ -632,14 +632,14 @@ end if
 
 ! store callback pointers in KIM object
 call kim_model_driver_create_set_compute_pointer( &
-  model_driver_create, kim_language_name_fortran, &
+  model_driver_create_handle, kim_language_name_fortran, &
   c_funloc(Compute_Energy_Forces), ierr)
 call kim_model_driver_create_set_refresh_pointer( &
-  model_driver_create, kim_language_name_fortran, &
+  model_driver_create_handle, kim_language_name_fortran, &
   c_funloc(refresh), ierr2)
 ierr = ierr + ierr2
 call kim_model_driver_create_set_destroy_pointer( &
-  model_driver_create, kim_language_name_fortran, &
+  model_driver_create_handle, kim_language_name_fortran, &
   c_funloc(destroy), ierr2)
 ierr = ierr + ierr2
 if (ierr /= 0) then
@@ -651,7 +651,7 @@ end if
 
 ! process parameter files
 call kim_model_driver_create_get_number_of_parameter_files( &
-  model_driver_create, number_of_parameter_files)
+  model_driver_create_handle, number_of_parameter_files)
 if (number_of_parameter_files .ne. 1) then
   kim_log_message = "Wrong number of parameter files"
   LOG_ERROR()
@@ -662,7 +662,7 @@ end if
 ! Read in model parameters from parameter file
 !
 call kim_model_driver_create_get_parameter_file_name( &
-  model_driver_create, 1, parameter_file_name, ierr)
+  model_driver_create_handle, 1, parameter_file_name, ierr)
 if (ierr /= 0) then
   kim_log_message = "Unable to get parameter file name"
   LOG_ERROR()
@@ -696,7 +696,7 @@ if (ierr /= 0) then
 end if
 
 call kim_model_driver_create_set_species_code( &
-  model_driver_create, species_name, speccode, ierr)
+  model_driver_create_handle, species_name, speccode, ierr)
 if (ierr /= 0) then
   kim_log_message = "Unable to set species code"
   LOG_ERROR()
@@ -705,7 +705,7 @@ end if
 
 ! convert to appropriate units
 call kim_model_driver_create_convert_unit( &
-  model_driver_create, &
+  model_driver_create_handle, &
   kim_length_unit_a, &
   kim_energy_unit_ev, &
   kim_charge_unit_e, &
@@ -725,7 +725,7 @@ endif
 in_cutoff = in_cutoff * factor
 
 call kim_model_driver_create_convert_unit( &
-  model_driver_create, &
+  model_driver_create_handle, &
   kim_length_unit_a, &
   kim_energy_unit_ev, &
   kim_charge_unit_e, &
@@ -745,7 +745,7 @@ endif
 in_epsilon = in_epsilon * factor
 
 call kim_model_driver_create_convert_unit( &
-  model_driver_create, &
+  model_driver_create_handle, &
   kim_length_unit_a, &
   kim_energy_unit_ev, &
   kim_charge_unit_e, &
@@ -782,19 +782,19 @@ buf%shift(1)   = -energy_at_cutoff
 
 ! store model cutoff in KIM object
 call kim_model_driver_create_set_influence_distance_pointer( &
-  model_driver_create, buf%influence_distance(1))
+  model_driver_create_handle, buf%influence_distance(1))
 call kim_model_driver_create_set_neighbor_list_cutoffs_pointer( &
-  model_driver_create, 1, buf%influence_distance(1))
+  model_driver_create_handle, 1, buf%influence_distance(1))
 
 ! end setup buffer
 
 ! store in model buffer
 call kim_model_driver_create_set_model_buffer_pointer( &
-  model_driver_create, c_loc(buf))
+  model_driver_create_handle, c_loc(buf))
 
 ! set pointers to parameters in KIM object
 call kim_model_driver_create_set_parameter_pointer( &
-  model_driver_create, buf%pcutoff, "cutoff", ierr)
+  model_driver_create_handle, buf%pcutoff, "cutoff", ierr)
 if (ierr /= 0) then
   kim_log_message = "set_parameter"
   LOG_ERROR()
@@ -802,7 +802,7 @@ if (ierr /= 0) then
 endif
 
 call kim_model_driver_create_set_parameter_pointer( &
-  model_driver_create, buf%epsilon, "epsilon", ierr)
+  model_driver_create_handle, buf%epsilon, "epsilon", ierr)
 if (ierr /= 0) then
   kim_log_message = "set_parameter"
   LOG_ERROR()
@@ -810,7 +810,7 @@ if (ierr /= 0) then
 endif
 
 call kim_model_driver_create_set_parameter_pointer( &
-  model_driver_create, buf%sigma, "sigma", ierr)
+  model_driver_create_handle, buf%sigma, "sigma", ierr)
 if (ierr /= 0) then
   kim_log_message = "set_parameter"
   LOG_ERROR()

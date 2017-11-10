@@ -739,7 +739,9 @@ int ModelImplementation::Compute() const
   {
     KIM_ModelCompute cM;
     cM.p = &M;
-    FCompute(&cM, &error);
+    KIM_ModelCompute cM_Handle;
+    cM_Handle.p = &cM;
+    FCompute(&cM_Handle, &error);
   }
   else
   {
@@ -796,7 +798,9 @@ int ModelImplementation::ClearInfluenceDistanceAndCutoffsThenRefreshModel()
   {
     KIM_ModelRefresh cM;
     cM.p = &M;
-    FRefresh(&cM, &error);
+    KIM_ModelRefresh cM_Handle;
+    cM_Handle.p = &cM;
+    FRefresh(&cM_Handle, &error);
   }
   else
   {
@@ -1583,7 +1587,9 @@ int ModelImplementation::ModelDestroy()
   {
     KIM_ModelDestroy cM;
     cM.p = &M;
-    FDestroy(&cM, &error);
+    KIM_ModelDestroy cM_Handle;
+    cM_Handle.p = &cM;
+    FDestroy(&cM_Handle, &error);
   }
   else
   {
@@ -1683,7 +1689,9 @@ int ModelImplementation::InitializeStandAloneModel(
   {
     KIM_ModelCreate cM;
     cM.p = &M;
-    FCreate(&cM, requestedLengthUnitC, requestedEnergyUnitC,
+    KIM_ModelCreate cM_Handle;
+    cM_Handle.p = &cM;
+    FCreate(&cM_Handle, requestedLengthUnitC, requestedEnergyUnitC,
             requestedChargeUnitC, requestedTemperatureUnitC,
             requestedTimeUnitC, &error);
   }
@@ -1825,7 +1833,9 @@ int ModelImplementation::InitializeParameterizedModel(
   {
     KIM_ModelDriverCreate cM;
     cM.p = &M;
-    FCreate(&cM, requestedLengthUnitC, requestedEnergyUnitC,
+    KIM_ModelDriverCreate cM_Handle;
+    cM_Handle.p = &cM;
+    FCreate(&cM_Handle, requestedLengthUnitC, requestedEnergyUnitC,
             requestedChargeUnitC, requestedTemperatureUnitC,
             requestedTimeUnitC, &error);
   }

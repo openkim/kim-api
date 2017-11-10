@@ -32,19 +32,26 @@
 
 
 module kim_model_destroy_f_module
+  use, intrinsic :: iso_c_binding
   implicit none
   private
 
   public &
+    kim_model_destroy_type, &
     get_model_buffer_pointer, &
     log, &
     model_destroy_string
+
+  type, bind(c) :: kim_model_destroy_type
+    private
+    type(c_ptr) :: p
+  end type kim_model_destroy_type
 
   interface
     subroutine get_model_buffer_pointer(model_destroy, ptr) &
       bind(c, name="KIM_ModelDestroy_GetModelBufferPointer")
       use, intrinsic :: iso_c_binding
-      use kim_model_destroy_module, only : kim_model_destroy_type
+      import kim_model_destroy_type
       implicit none
       type(kim_model_destroy_type), intent(in) :: model_destroy
       type(c_ptr), intent(out) :: ptr
@@ -53,8 +60,8 @@ module kim_model_destroy_f_module
     subroutine log(model_destroy, log_verbosity, message, line_number, &
       file_name) bind(c, name="KIM_ModelDestroy_Log")
       use, intrinsic :: iso_c_binding
-      use kim_model_destroy_module, only : kim_model_destroy_type
       use kim_log_verbosity_module, only : kim_log_verbosity_type
+      import kim_model_destroy_type
       implicit none
       type(kim_model_destroy_type), intent(in) :: model_destroy
       type(kim_log_verbosity_type), intent(in), value :: log_verbosity
@@ -66,7 +73,7 @@ module kim_model_destroy_f_module
     type(c_ptr) function model_destroy_string(model_destroy) &
       bind(c, name="KIM_ModelDestroy_String")
       use, intrinsic :: iso_c_binding
-      use kim_model_destroy_module, only : kim_model_destroy_type
+      import kim_model_destroy_type
       implicit none
       type(kim_model_destroy_type), intent(in) :: model_destroy
     end function model_destroy_string
@@ -76,46 +83,75 @@ end module kim_model_destroy_f_module
 
 ! free functions to implement kim_model_destroy_module
 
-subroutine kim_model_destroy_get_model_buffer_pointer(model_destroy, ptr)
+logical function kim_model_destroy_handle_equal(left, right)
   use, intrinsic :: iso_c_binding
-  use kim_model_destroy_module, only : kim_model_destroy_type
-  use kim_model_destroy_f_module, only : get_model_buffer_pointer
+  use kim_model_destroy_module, only : kim_model_destroy_handle_type
   implicit none
-  type(kim_model_destroy_type), intent(in) :: model_destroy
-  type(c_ptr), intent(out) :: ptr
+  type(kim_model_destroy_handle_type), intent(in) :: left
+  type(kim_model_destroy_handle_type), intent(in) :: right
 
+  kim_model_destroy_handle_equal = c_associated(left%p, right%p)
+end function kim_model_destroy_handle_equal
+
+logical function kim_model_destroy_handle_not_equal(left, right)
+  use, intrinsic :: iso_c_binding
+  use kim_model_destroy_module, only : kim_model_destroy_handle_type
+  use kim_model_destroy_module, only : operator (.eq.)
+  implicit none
+  type(kim_model_destroy_handle_type), intent(in) :: left
+  type(kim_model_destroy_handle_type), intent(in) :: right
+
+  kim_model_destroy_handle_not_equal = .not. (left .eq. right)
+end function kim_model_destroy_handle_not_equal
+
+subroutine kim_model_destroy_get_model_buffer_pointer(model_destroy_handle, ptr)
+  use, intrinsic :: iso_c_binding
+  use kim_model_destroy_module, only : kim_model_destroy_handle_type
+  use kim_model_destroy_f_module, only : kim_model_destroy_type, &
+    get_model_buffer_pointer
+  implicit none
+  type(kim_model_destroy_handle_type), intent(in) :: model_destroy_handle
+  type(c_ptr), intent(out) :: ptr
+  type(kim_model_destroy_type), pointer :: model_destroy
+
+  call c_f_pointer(model_destroy_handle%p, model_destroy)
   call get_model_buffer_pointer(model_destroy, ptr)
 end subroutine kim_model_destroy_get_model_buffer_pointer
 
-subroutine kim_model_destroy_log(model_destroy, log_verbosity, message, &
+subroutine kim_model_destroy_log(model_destroy_handle, log_verbosity, message, &
   line_number, file_name)
   use, intrinsic :: iso_c_binding
-  use kim_model_destroy_module, only : kim_model_destroy_type
+  use kim_model_destroy_module, only : kim_model_destroy_handle_type
   use kim_log_verbosity_module, only : kim_log_verbosity_type
-  use kim_model_destroy_f_module, only : log
+  use kim_model_destroy_f_module, only : kim_model_destroy_type, log
   implicit none
-  type(kim_model_destroy_type), intent(in) :: model_destroy
+  type(kim_model_destroy_handle_type), intent(in) :: model_destroy_handle
   type(kim_log_verbosity_type), intent(in), value :: log_verbosity
   character(len=*), intent(in) :: message
   integer(c_int), intent(in), value :: line_number
   character(len=*), intent(in) :: file_name
+  type(kim_model_destroy_type), pointer :: model_destroy
 
+  call c_f_pointer(model_destroy_handle%p, model_destroy)
   call log(model_destroy, log_verbosity, trim(message)//c_null_char, &
     line_number, trim(file_name)//c_null_char)
 end subroutine kim_model_destroy_log
 
-subroutine kim_model_destroy_string(model_destroy, string)
+subroutine kim_model_destroy_string(model_destroy_handle, string)
   use, intrinsic :: iso_c_binding
-  use kim_model_destroy_module, only : kim_model_destroy_type
-  use kim_model_destroy_f_module, only : model_destroy_string
+  use kim_model_destroy_module, only : kim_model_destroy_handle_type
+  use kim_model_destroy_f_module, only : kim_model_destroy_type, &
+    model_destroy_string
   implicit none
-  type(kim_model_destroy_type), intent(in) :: model_destroy
+  type(kim_model_destroy_handle_type), intent(in) :: model_destroy_handle
   character(len=*), intent(out) :: string
+  type(kim_model_destroy_type), pointer :: model_destroy
 
   type(c_ptr) :: p
   character(len=len(string)+1), pointer :: fp
   integer(c_int) :: null_index
 
+  call c_f_pointer(model_destroy_handle%p, model_destroy)
   p = model_destroy_string(model_destroy)
   call c_f_pointer(p, fp)
   null_index = scan(fp, char(0))-1

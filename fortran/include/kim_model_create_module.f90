@@ -37,7 +37,9 @@ module kim_model_create_module
   private
 
   public &
-    kim_model_create_type, &
+    kim_model_create_handle_type, &
+    operator (.eq.), &
+    operator (.ne.), &
     kim_model_create_set_model_numbering, &
     kim_model_create_set_influence_distance_pointer, &
     kim_model_create_set_neighbor_list_cutoffs_pointer, &
@@ -54,29 +56,48 @@ module kim_model_create_module
     kim_model_create_log, &
     kim_model_create_string
 
-  type, bind(c) :: kim_model_create_type
-    private
+  type, bind(c) :: kim_model_create_handle_type
     type(c_ptr) :: p
-  end type kim_model_create_type
+  end type kim_model_create_handle_type
+
+  interface operator (.eq.)
+    logical function kim_model_create_handle_equal(left, right)
+      use, intrinsic :: iso_c_binding
+      import kim_model_create_handle_type
+      implicit none
+      type(kim_model_create_handle_type), intent(in) :: left
+      type(kim_model_create_handle_type), intent(in) :: right
+    end function kim_model_create_handle_equal
+  end interface operator (.eq.)
+
+  interface operator (.ne.)
+    logical function kim_model_create_handle_not_equal(left, right)
+      use, intrinsic :: iso_c_binding
+      import kim_model_create_handle_type
+      implicit none
+      type(kim_model_create_handle_type), intent(in) :: left
+      type(kim_model_create_handle_type), intent(in) :: right
+    end function kim_model_create_handle_not_equal
+  end interface operator (.ne.)
 
   interface kim_model_create_set_parameter_pointer
     subroutine kim_model_create_set_parameter_pointer_integer( &
-      model_create, int1, description, ierr)
+      model_create_handle, int1, description, ierr)
       use, intrinsic :: iso_c_binding
-      import kim_model_create_type
+      import kim_model_create_handle_type
       implicit none
-      type(kim_model_create_type), intent(inout) :: model_create
+      type(kim_model_create_handle_type), intent(in) :: model_create_handle
       integer(c_int), intent(in), target :: int1(:)
       character(len=*), intent(in) :: description
       integer(c_int), intent(out) :: ierr
     end subroutine kim_model_create_set_parameter_pointer_integer
 
     subroutine kim_model_create_set_parameter_pointer_double( &
-      model_create, double1, description, ierr)
+      model_create_handle, double1, description, ierr)
       use, intrinsic :: iso_c_binding
-      import kim_model_create_type
+      import kim_model_create_handle_type
       implicit none
-      type(kim_model_create_type), intent(inout) :: model_create
+      type(kim_model_create_handle_type), intent(in) :: model_create_handle
       real(c_double), intent(in), target :: double1(:)
       character(len=*), intent(in) :: description
       integer(c_int), intent(out) :: ierr
@@ -85,119 +106,119 @@ module kim_model_create_module
 
   interface
     subroutine kim_model_create_set_model_numbering( &
-      model_create, numbering, ierr)
+      model_create_handle, numbering, ierr)
       use, intrinsic :: iso_c_binding
       use kim_numbering_module, only : kim_numbering_type
-      import kim_model_create_type
+      import kim_model_create_handle_type
       implicit none
-      type(kim_model_create_type), intent(inout) :: model_create
+      type(kim_model_create_handle_type), intent(in) :: model_create_handle
       type(kim_numbering_type), intent(in), value :: numbering
       integer(c_int), intent(out) :: ierr
     end subroutine kim_model_create_set_model_numbering
 
     subroutine kim_model_create_set_influence_distance_pointer( &
-      model_create, influence_distance)
+      model_create_handle, influence_distance)
       use, intrinsic :: iso_c_binding
-      import kim_model_create_type
+      import kim_model_create_handle_type
       implicit none
-      type(kim_model_create_type), intent(inout) :: model_create
+      type(kim_model_create_handle_type), intent(in) :: model_create_handle
       real(c_double), intent(in), target :: influence_distance
     end subroutine kim_model_create_set_influence_distance_pointer
 
     subroutine kim_model_create_set_neighbor_list_cutoffs_pointer( &
-      model_create, number_of_cutoffs, cutoffs)
+      model_create_handle, number_of_cutoffs, cutoffs)
       use, intrinsic :: iso_c_binding
-      import kim_model_create_type
+      import kim_model_create_handle_type
       implicit none
-      type(kim_model_create_type), intent(inout) :: model_create
+      type(kim_model_create_handle_type), intent(in) :: model_create_handle
       integer(c_int), intent(in), value :: number_of_cutoffs
       real(c_double), intent(in), target :: cutoffs(number_of_cutoffs)
     end subroutine kim_model_create_set_neighbor_list_cutoffs_pointer
 
     subroutine kim_model_create_set_refresh_pointer( &
-      model_create, language_name, fptr, ierr)
+      model_create_handle, language_name, fptr, ierr)
       use, intrinsic :: iso_c_binding
       use kim_language_name_module, only : kim_language_name_type
-      import kim_model_create_type
+      import kim_model_create_handle_type
       implicit none
-      type(kim_model_create_type), intent(inout) :: model_create
+      type(kim_model_create_handle_type), intent(in) :: model_create_handle
       type(kim_language_name_type), intent(in), value :: language_name
       type(c_funptr), intent(in), value :: fptr
       integer(c_int), intent(out) :: ierr
     end subroutine kim_model_create_set_refresh_pointer
 
     subroutine kim_model_create_set_destroy_pointer( &
-      model_create, language_name, fptr, ierr)
+      model_create_handle, language_name, fptr, ierr)
       use, intrinsic :: iso_c_binding
       use kim_language_name_module, only : kim_language_name_type
-      import kim_model_create_type
+      import kim_model_create_handle_type
       implicit none
-      type(kim_model_create_type), intent(inout) :: model_create
+      type(kim_model_create_handle_type), intent(in) :: model_create_handle
       type(kim_language_name_type), intent(in), value :: language_name
       type(c_funptr), intent(in), value :: fptr
       integer(c_int), intent(out) :: ierr
     end subroutine kim_model_create_set_destroy_pointer
 
     subroutine kim_model_create_set_compute_pointer( &
-      model_create, language_name, fptr, ierr)
+      model_create_handle, language_name, fptr, ierr)
       use, intrinsic :: iso_c_binding
       use kim_language_name_module, only : kim_language_name_type
-      import kim_model_create_type
+      import kim_model_create_handle_type
       implicit none
-      type(kim_model_create_type), intent(inout) :: model_create
+      type(kim_model_create_handle_type), intent(in) :: model_create_handle
       type(kim_language_name_type), intent(in), value :: language_name
       type(c_funptr), intent(in), value :: fptr
       integer(c_int), intent(out) :: ierr
     end subroutine kim_model_create_set_compute_pointer
 
-    subroutine kim_model_create_set_species_code(model_create, &
+    subroutine kim_model_create_set_species_code(model_create_handle, &
       species_name, code, ierr)
       use, intrinsic :: iso_c_binding
       use kim_species_name_module, only : kim_species_name_type
-      import kim_model_create_type
+      import kim_model_create_handle_type
       implicit none
-      type(kim_model_create_type), intent(inout) :: model_create
+      type(kim_model_create_handle_type), intent(in) :: model_create_handle
       type(kim_species_name_type), intent(in), value :: species_name
       integer(c_int), intent(in), value :: code
       integer(c_int), intent(out) :: ierr
     end subroutine kim_model_create_set_species_code
 
     subroutine kim_model_create_set_argument_support_status( &
-      model_create, argument_name, support_status, ierr)
+      model_create_handle, argument_name, support_status, ierr)
       use, intrinsic :: iso_c_binding
       use kim_argument_name_module, only : kim_argument_name_type
       use kim_support_status_module, only : kim_support_status_type
-      import kim_model_create_type
+      import kim_model_create_handle_type
       implicit none
-      type(kim_model_create_type), intent(inout) :: model_create
+      type(kim_model_create_handle_type), intent(in) :: model_create_handle
       type(kim_argument_name_type), intent(in), value :: argument_name
       type(kim_support_status_type), intent(in), value :: support_status
       integer(c_int), intent(out) :: ierr
     end subroutine kim_model_create_set_argument_support_status
 
     subroutine kim_model_create_set_callback_support_status( &
-      model_create, callback_name, support_status, ierr)
+      model_create_handle, callback_name, support_status, ierr)
       use, intrinsic :: iso_c_binding
       use kim_callback_name_module, only : kim_callback_name_type
       use kim_support_status_module, only : kim_support_status_type
-      import kim_model_create_type
+      import kim_model_create_handle_type
       implicit none
-      type(kim_model_create_type), intent(inout) :: model_create
+      type(kim_model_create_handle_type), intent(in) :: model_create_handle
       type(kim_callback_name_type), intent(in), value :: callback_name
       type(kim_support_status_type), intent(in), value :: support_status
       integer(c_int), intent(out) :: ierr
     end subroutine kim_model_create_set_callback_support_status
 
     subroutine kim_model_create_set_model_buffer_pointer( &
-      model_create, ptr)
+      model_create_handle, ptr)
       use, intrinsic :: iso_c_binding
-      import kim_model_create_type
+      import kim_model_create_handle_type
       implicit none
-      type(kim_model_create_type), intent(inout) :: model_create
+      type(kim_model_create_handle_type), intent(in) :: model_create_handle
       type(c_ptr), intent(in), value :: ptr
     end subroutine kim_model_create_set_model_buffer_pointer
 
-    subroutine kim_model_create_set_units(model_create, &
+    subroutine kim_model_create_set_units(model_create_handle, &
       length_unit, energy_unit, charge_unit, temperature_unit, time_unit, ierr)
       use, intrinsic :: iso_c_binding
       use kim_unit_system_module, only : &
@@ -206,9 +227,9 @@ module kim_model_create_module
         kim_charge_unit_type, &
         kim_temperature_unit_type, &
         kim_time_unit_type
-      import kim_model_create_type
+      import kim_model_create_handle_type
       implicit none
-      type(kim_model_create_type), intent(in) :: model_create
+      type(kim_model_create_handle_type), intent(in) :: model_create_handle
       type(kim_length_unit_type), intent(in), value :: length_unit
       type(kim_energy_unit_type), intent(in), value :: energy_unit
       type(kim_charge_unit_type), intent(in), value :: charge_unit
@@ -218,7 +239,7 @@ module kim_model_create_module
     end subroutine kim_model_create_set_units
 
     subroutine kim_model_create_convert_unit( &
-      model_create, from_length_unit, from_energy_unit, &
+      model_create_handle, from_length_unit, from_energy_unit, &
       from_charge_unit, from_temperature_unit, from_time_unit, &
       to_length_unit, to_energy_unit, to_charge_unit, to_temperature_unit, &
       to_time_unit, length_exponent, energy_exponent, charge_exponent, &
@@ -229,9 +250,9 @@ module kim_model_create_module
       use kim_unit_system_module, only : kim_charge_unit_type
       use kim_unit_system_module, only : kim_temperature_unit_type
       use kim_unit_system_module, only : kim_time_unit_type
-      import kim_model_create_type
+      import kim_model_create_handle_type
       implicit none
-      type(kim_model_create_type), intent(in) :: model_create
+      type(kim_model_create_handle_type), intent(in) :: model_create_handle
       type(kim_length_unit_type), intent(in), value :: from_length_unit
       type(kim_energy_unit_type), intent(in), value :: from_energy_unit
       type(kim_charge_unit_type), intent(in), value :: from_charge_unit
@@ -253,24 +274,24 @@ module kim_model_create_module
       integer(c_int), intent(out) :: ierr
     end subroutine kim_model_create_convert_unit
 
-    subroutine kim_model_create_log(model_create, &
+    subroutine kim_model_create_log(model_create_handle, &
       log_verbosity, message, line_number, file_name)
       use, intrinsic :: iso_c_binding
       use kim_log_verbosity_module, only : kim_log_verbosity_type
-      import kim_model_create_type
+      import kim_model_create_handle_type
       implicit none
-      type(kim_model_create_type), intent(in) :: model_create
+      type(kim_model_create_handle_type), intent(in) :: model_create_handle
       type(kim_log_verbosity_type), intent(in), value :: log_verbosity
       character(len=*), intent(in) :: message
       integer(c_int), intent(in), value :: line_number
       character(len=*), intent(in) :: file_name
     end subroutine kim_model_create_log
 
-    subroutine kim_model_create_string(model_create, string)
+    subroutine kim_model_create_string(model_create_handle, string)
       use, intrinsic :: iso_c_binding
-      import kim_model_create_type
+      import kim_model_create_handle_type
       implicit none
-      type(kim_model_create_type), intent(in) :: model_create
+      type(kim_model_create_handle_type), intent(in) :: model_create_handle
       character(len=*), intent(out) :: string
     end subroutine kim_model_create_string
   end interface

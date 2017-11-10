@@ -162,14 +162,14 @@ end subroutine calc_phi_dphi
 !
 !-------------------------------------------------------------------------------
 #include "kim_model_compute_log_macros.fd"
-subroutine Compute_Energy_Forces(model_compute, ierr) bind(c)
+subroutine Compute_Energy_Forces(model_compute_handle, ierr) bind(c)
 use kim_log_verbosity_module
 use kim_model_compute_module
 use kim_argument_name_module
 implicit none
 
 !-- Transferred variables
-type(kim_model_compute_type), intent(in) :: model_compute
+type(kim_model_compute_handle_type), intent(in) :: model_compute_handle
 integer(c_int), intent(out) :: ierr
 
 !-- Local variables
@@ -194,28 +194,28 @@ kim_log_file = __FILE__
 ! Unpack data from KIM object
 !
 ierr = 0
-call kim_model_compute_get_argument_pointer(model_compute, &
+call kim_model_compute_get_argument_pointer(model_compute_handle, &
   kim_argument_name_number_of_particles, N, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_get_argument_pointer(model_compute, &
+call kim_model_compute_get_argument_pointer(model_compute_handle, &
   kim_argument_name_particle_species_codes, n, particleSpeciesCodes, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_get_argument_pointer(model_compute, &
+call kim_model_compute_get_argument_pointer(model_compute_handle, &
   kim_argument_name_particle_contributing, n, particleContributing, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_get_argument_pointer(model_compute, &
+call kim_model_compute_get_argument_pointer(model_compute_handle, &
   kim_argument_name_coordinates, dim, n, coor, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_get_argument_pointer(model_compute, &
+call kim_model_compute_get_argument_pointer(model_compute_handle, &
   kim_argument_name_partial_energy, energy, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_get_argument_pointer(model_compute, &
+call kim_model_compute_get_argument_pointer(model_compute_handle, &
   kim_argument_name_partial_forces, dim, n, force, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_get_argument_pointer(model_compute, &
+call kim_model_compute_get_argument_pointer(model_compute_handle, &
   kim_argument_name_partial_particle_energy, n, enepot, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_get_argument_pointer(model_compute, &
+call kim_model_compute_get_argument_pointer(model_compute_handle, &
   kim_argument_name_partial_virial, 6, virial, ierr2)
 ierr = ierr + ierr2
 if (ierr /= 0) then
@@ -277,7 +277,7 @@ do i = 1, N
   if (particleContributing(i) == 1) then
     ! Set up neighbor list for next particle
     call kim_model_compute_get_neighbor_list( &
-      model_compute, 1, i, numnei, nei1part, ierr)
+      model_compute_handle, 1, i, numnei, nei1part, ierr)
     if (ierr /= 0) then
       ! some sort of problem, exit
       kim_log_message = "GetNeighborList failed"
@@ -358,21 +358,21 @@ end subroutine Compute_Energy_Forces
 !
 !-------------------------------------------------------------------------------
 #include "kim_model_destroy_log_macros.fd"
-subroutine model_destroy_func(model_destroy, ierr) bind(c)
+subroutine model_destroy_func(model_destroy_handle, ierr) bind(c)
   use, intrinsic :: iso_c_binding
   use kim_log_verbosity_module
   use kim_model_destroy_module
   implicit none
 
   !-- Transferred variables
-  type(kim_model_destroy_type), intent(inout) :: model_destroy
+  type(kim_model_destroy_handle_type), intent(inout) :: model_destroy_handle
   integer(c_int), intent(out) :: ierr
 
   type(buffer_type), pointer :: buf; type(c_ptr) :: pbuf
 
   kim_log_file = __FILE__
 
-  call kim_model_destroy_get_model_buffer_pointer(model_destroy, pbuf)
+  call kim_model_destroy_get_model_buffer_pointer(model_destroy_handle, pbuf)
   call c_f_pointer(pbuf, buf)
   kim_log_message = "deallocating model buffer"
   LOG_INFORMATION()
@@ -386,29 +386,29 @@ end subroutine model_destroy_func
 !
 !-------------------------------------------------------------------------------
 #include "kim_model_refresh_log_macros.fd"
-subroutine model_refresh_func(model_refresh, ierr) bind(c)
+subroutine model_refresh_func(model_refresh_handle, ierr) bind(c)
   use, intrinsic :: iso_c_binding
   use kim_log_verbosity_module
   use kim_model_refresh_module
   implicit none
 
   !-- Transferred variables
-  type(kim_model_refresh_type), intent(inout) :: model_refresh
+  type(kim_model_refresh_handle_type), intent(inout) :: model_refresh_handle
   integer(c_int), intent(out) :: ierr
 
   type(buffer_type), pointer :: buf; type(c_ptr) :: pbuf
 
   kim_log_file = __FILE__
 
-  call kim_model_refresh_get_model_buffer_pointer(model_refresh, pbuf)
+  call kim_model_refresh_get_model_buffer_pointer(model_refresh_handle, pbuf)
   call c_f_pointer(pbuf, buf)
 
   kim_log_message = "Resettings influence distance and cutoffs"
   LOG_INFORMATION()
   call kim_model_refresh_set_influence_distance_pointer( &
-    model_refresh, buf%cutoff(1))
+    model_refresh_handle, buf%cutoff(1))
   call kim_model_refresh_set_neighbor_list_cutoffs_pointer( &
-    model_refresh, 1, buf%cutoff)
+    model_refresh_handle, 1, buf%cutoff)
 
   ierr = 0  ! everything is good
 end subroutine model_refresh_func
@@ -421,7 +421,7 @@ end module ex_model_Ar_P_MLJ_F03
 !
 !-------------------------------------------------------------------------------
 #include "kim_model_create_log_macros.fd"
-subroutine model_create_routine(model_create, requested_length_unit, &
+subroutine model_create_routine(model_create_handle, requested_length_unit, &
   requested_energy_unit, requested_charge_unit, requested_temperature_unit, &
   requested_time_unit, ierr) bind(c)
 use, intrinsic :: iso_c_binding
@@ -437,7 +437,7 @@ use kim_language_name_module
 implicit none
 
 !-- Transferred variables
-type(kim_model_create_type), intent(inout) :: model_create
+type(kim_model_create_handle_type), intent(inout) :: model_create_handle
 type(kim_length_unit_type), intent(in) :: requested_length_unit
 type(kim_energy_unit_type), intent(in) :: requested_energy_unit
 type(kim_charge_unit_type), intent(in) :: requested_charge_unit
@@ -454,30 +454,30 @@ kim_log_file = __FILE__
 ierr2 = 0
 
 ! register numbering
-call kim_model_create_set_model_numbering(model_create, &
+call kim_model_create_set_model_numbering(model_create_handle, &
   kim_numbering_one_based, ierr2);
 ierr = ierr + ierr2
 
 ! register species
-call kim_model_create_set_species_code(model_create, &
+call kim_model_create_set_species_code(model_create_handle, &
   kim_species_name_ar, speccode, ierr2)
 ierr = ierr + ierr2
 
 ! register arguments
 call kim_model_create_set_argument_support_status( &
-  model_create, kim_argument_name_partial_energy, &
+  model_create_handle, kim_argument_name_partial_energy, &
   kim_support_status_optional, ierr2)
 ierr = ierr + ierr2
 call kim_model_create_set_argument_support_status( &
-  model_create, kim_argument_name_partial_forces, &
+  model_create_handle, kim_argument_name_partial_forces, &
   kim_support_status_optional, ierr2)
 ierr = ierr + ierr2
 call kim_model_create_set_argument_support_status( &
-  model_create, kim_argument_name_partial_particle_energy, &
+  model_create_handle, kim_argument_name_partial_particle_energy, &
   kim_support_status_optional, ierr2)
 ierr = ierr + ierr2
 call kim_model_create_set_argument_support_status( &
-  model_create, kim_argument_name_partial_virial, &
+  model_create_handle, kim_argument_name_partial_virial, &
   kim_support_status_optional, ierr2)
 ierr = ierr + ierr2
 
@@ -485,19 +485,19 @@ ierr = ierr + ierr2
 ! NONE
 
 ! register function pointers
-call kim_model_create_set_compute_pointer(model_create, &
+call kim_model_create_set_compute_pointer(model_create_handle, &
   kim_language_name_fortran, c_funloc(Compute_Energy_Forces), ierr2)
 ierr = ierr + ierr2
-call kim_model_create_set_destroy_pointer(model_create, &
+call kim_model_create_set_destroy_pointer(model_create_handle, &
   kim_language_name_fortran, c_funloc(model_destroy_func), ierr2)
 ierr = ierr + ierr2
 call kim_model_create_set_refresh_pointer( &
-  model_create, kim_language_name_fortran, &
+  model_create_handle, kim_language_name_fortran, &
   c_funloc(model_refresh_func), ierr2)
 ierr = ierr + ierr2
 
 ! set units
-call kim_model_create_set_units(model_create, &
+call kim_model_create_set_units(model_create_handle, &
   kim_length_unit_a, &
   kim_energy_unit_ev, &
   kim_charge_unit_unused, &
@@ -509,15 +509,15 @@ ierr = ierr + ierr2
 ! store model cutoff in KIM object
 allocate( buf )
 buf%cutoff = model_cutoff
-call kim_model_create_set_model_buffer_pointer(model_create, &
+call kim_model_create_set_model_buffer_pointer(model_create_handle, &
   c_loc(buf))
 
 ! register influence distance and cutoffs
 call kim_model_create_set_influence_distance_pointer( &
-  model_create, buf%cutoff(1))
+  model_create_handle, buf%cutoff(1))
 
-call kim_model_create_set_neighbor_list_cutoffs_pointer(model_create, 1, &
-  buf%cutoff)
+call kim_model_create_set_neighbor_list_cutoffs_pointer(model_create_handle, &
+  1, buf%cutoff)
 
 if (ierr /= 0) then
   ierr = 1

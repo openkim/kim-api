@@ -32,23 +32,29 @@
 
 
 module kim_model_refresh_f_module
+  use, intrinsic :: iso_c_binding
   implicit none
   private
 
   public &
+    kim_model_refresh_type, &
     set_influence_distance_pointer, &
     set_neighbor_list_cutoffs_pointer, &
     get_model_buffer_pointer, &
     log, &
     model_refresh_string
 
+  type, bind(c) :: kim_model_refresh_type
+    private
+    type(c_ptr) :: p
+  end type kim_model_refresh_type
+
   interface
     subroutine set_influence_distance_pointer(model_refresh, &
       influence_distance) &
       bind(c, name="KIM_ModelRefresh_SetInfluenceDistancePointer")
       use, intrinsic :: iso_c_binding
-      use kim_model_refresh_module, only : &
-        kim_model_refresh_type
+      import kim_model_refresh_type
       implicit none
       type(kim_model_refresh_type), intent(inout) :: &
         model_refresh
@@ -59,8 +65,7 @@ module kim_model_refresh_f_module
       number_of_cutoffs, cutoffs_ptr) &
       bind(c, name="KIM_ModelRefresh_SetNeighborListCutoffsPointer")
       use, intrinsic :: iso_c_binding
-      use kim_model_refresh_module, only : &
-        kim_model_refresh_type
+      import kim_model_refresh_type
       implicit none
       type(kim_model_refresh_type), intent(inout) :: &
         model_refresh
@@ -71,8 +76,7 @@ module kim_model_refresh_f_module
     subroutine get_model_buffer_pointer(model_refresh, ptr) &
       bind(c, name="KIM_ModelRefresh_GetModelBufferPointer")
       use, intrinsic :: iso_c_binding
-      use kim_model_refresh_module, only : &
-        kim_model_refresh_type
+      import kim_model_refresh_type
       implicit none
       type(kim_model_refresh_type), intent(in) :: &
         model_refresh
@@ -82,9 +86,8 @@ module kim_model_refresh_f_module
     subroutine log(model_refresh, log_verbosity, message, &
       line_number, file_name) bind(c, name="KIM_ModelRefresh_Log")
       use, intrinsic :: iso_c_binding
-      use kim_model_refresh_module, only : &
-        kim_model_refresh_type
       use kim_log_verbosity_module, only : kim_log_verbosity_type
+      import kim_model_refresh_type
       implicit none
       type(kim_model_refresh_type), intent(in) :: &
         model_refresh
@@ -97,8 +100,7 @@ module kim_model_refresh_f_module
     type(c_ptr) function model_refresh_string(model_refresh) &
       bind(c, name="KIM_ModelRefresh_String")
       use, intrinsic :: iso_c_binding
-      use kim_model_refresh_module, only : &
-        kim_model_refresh_type
+      import kim_model_refresh_type
       implicit none
       type(kim_model_refresh_type), intent(in) :: &
         model_refresh
@@ -109,74 +111,109 @@ end module kim_model_refresh_f_module
 
 ! free functions to implement kim_model_refresh_module
 
-subroutine kim_model_refresh_set_influence_distance_pointer( &
-  model_refresh, influence_distance)
+logical function kim_model_refresh_handle_equal(left, right)
   use, intrinsic :: iso_c_binding
-  use kim_model_refresh_module, only : kim_model_refresh_type
-  use kim_model_refresh_f_module, only : set_influence_distance_pointer
+  use kim_model_refresh_module, only : kim_model_refresh_handle_type
   implicit none
-  type(kim_model_refresh_type), intent(inout) :: model_refresh
-  real(c_double), intent(in), target :: influence_distance
+  type(kim_model_refresh_handle_type), intent(in) :: left
+  type(kim_model_refresh_handle_type), intent(in) :: right
 
+  kim_model_refresh_handle_equal = c_associated(left%p, right%p)
+end function kim_model_refresh_handle_equal
+
+logical function kim_model_refresh_handle_not_equal(left, right)
+  use, intrinsic :: iso_c_binding
+  use kim_model_refresh_module, only : kim_model_refresh_handle_type
+  use kim_model_refresh_module, only : operator (.eq.)
+  implicit none
+  type(kim_model_refresh_handle_type), intent(in) :: left
+  type(kim_model_refresh_handle_type), intent(in) :: right
+
+  kim_model_refresh_handle_not_equal = .not. (left .eq. right)
+end function kim_model_refresh_handle_not_equal
+
+subroutine kim_model_refresh_set_influence_distance_pointer( &
+  model_refresh_handle, influence_distance)
+  use, intrinsic :: iso_c_binding
+  use kim_model_refresh_module, only : kim_model_refresh_handle_type
+  use kim_model_refresh_f_module, only : kim_model_refresh_type, &
+    set_influence_distance_pointer
+  implicit none
+  type(kim_model_refresh_handle_type), intent(inout) :: model_refresh_handle
+  real(c_double), intent(in), target :: influence_distance
+  type(kim_model_refresh_type), pointer :: model_refresh
+
+  call c_f_pointer(model_refresh_handle%p, model_refresh)
   call set_influence_distance_pointer(model_refresh, &
     c_loc(influence_distance))
 end subroutine kim_model_refresh_set_influence_distance_pointer
 
 subroutine kim_model_refresh_set_neighbor_list_cutoffs_pointer( &
-  model_refresh, number_of_cutoffs, cutoffs)
+  model_refresh_handle, number_of_cutoffs, cutoffs)
   use, intrinsic :: iso_c_binding
-  use kim_model_refresh_module, only : kim_model_refresh_type
-  use kim_model_refresh_f_module, only : set_neighbor_list_cutoffs_pointer
+  use kim_model_refresh_module, only : kim_model_refresh_handle_type
+  use kim_model_refresh_f_module, only : kim_model_refresh_type, &
+    set_neighbor_list_cutoffs_pointer
   implicit none
-  type(kim_model_refresh_type), intent(inout) :: model_refresh
+  type(kim_model_refresh_handle_type), intent(inout) :: model_refresh_handle
   integer(c_int), intent(in), value :: number_of_cutoffs
   real(c_double), intent(in), target :: cutoffs(number_of_cutoffs)
+  type(kim_model_refresh_type), pointer :: model_refresh
 
+  call c_f_pointer(model_refresh_handle%p, model_refresh)
   call set_neighbor_list_cutoffs_pointer(model_refresh, number_of_cutoffs, &
     c_loc(cutoffs))
 end subroutine kim_model_refresh_set_neighbor_list_cutoffs_pointer
 
 subroutine kim_model_refresh_get_model_buffer_pointer( &
-  model_refresh, ptr)
+  model_refresh_handle, ptr)
   use, intrinsic :: iso_c_binding
-  use kim_model_refresh_module, only : kim_model_refresh_type
-  use kim_model_refresh_f_module, only : get_model_buffer_pointer
+  use kim_model_refresh_module, only : kim_model_refresh_handle_type
+  use kim_model_refresh_f_module, only : kim_model_refresh_type, &
+    get_model_buffer_pointer
   implicit none
-  type(kim_model_refresh_type), intent(in) :: model_refresh
+  type(kim_model_refresh_handle_type), intent(in) :: model_refresh_handle
   type(c_ptr), intent(out) :: ptr
+  type(kim_model_refresh_type), pointer :: model_refresh
 
+  call c_f_pointer(model_refresh_handle%p, model_refresh)
   call get_model_buffer_pointer(model_refresh, ptr)
 end subroutine kim_model_refresh_get_model_buffer_pointer
 
-subroutine kim_model_refresh_log(model_refresh, &
+subroutine kim_model_refresh_log(model_refresh_handle, &
   log_verbosity, message, line_number, file_name)
   use, intrinsic :: iso_c_binding
-  use kim_model_refresh_module, only : kim_model_refresh_type
+  use kim_model_refresh_module, only : kim_model_refresh_handle_type
   use kim_log_verbosity_module, only : kim_log_verbosity_type
-  use kim_model_refresh_f_module, only : log
+  use kim_model_refresh_f_module, only : kim_model_refresh_type, log
   implicit none
-  type(kim_model_refresh_type), intent(in) :: model_refresh
+  type(kim_model_refresh_handle_type), intent(in) :: model_refresh_handle
   type(kim_log_verbosity_type), intent(in), value :: log_verbosity
   character(len=*), intent(in) :: message
   integer(c_int), intent(in), value :: line_number
   character(len=*), intent(in) :: file_name
+  type(kim_model_refresh_type), pointer :: model_refresh
 
+  call c_f_pointer(model_refresh_handle%p, model_refresh)
   call log(model_refresh, log_verbosity, trim(message)//c_null_char, &
     line_number, trim(file_name)//c_null_char)
 end subroutine kim_model_refresh_log
 
-subroutine kim_model_refresh_string(model_refresh, string)
+subroutine kim_model_refresh_string(model_refresh_handle, string)
   use, intrinsic :: iso_c_binding
-  use kim_model_refresh_module, only : kim_model_refresh_type
-  use kim_model_refresh_f_module, only : model_refresh_string
+  use kim_model_refresh_module, only : kim_model_refresh_handle_type
+  use kim_model_refresh_f_module, only : kim_model_refresh_type, &
+    model_refresh_string
   implicit none
-  type(kim_model_refresh_type), intent(in) :: model_refresh
+  type(kim_model_refresh_handle_type), intent(in) :: model_refresh_handle
   character(len=*), intent(out) :: string
+  type(kim_model_refresh_type), pointer :: model_refresh
 
   type(c_ptr) :: p
   character(len=len(string)+1), pointer :: fp
   integer(c_int) :: null_index
 
+  call c_f_pointer(model_refresh_handle%p, model_refresh)
   p = model_refresh_string(model_refresh)
   call c_f_pointer(p, fp)
   null_index = scan(fp, char(0))-1

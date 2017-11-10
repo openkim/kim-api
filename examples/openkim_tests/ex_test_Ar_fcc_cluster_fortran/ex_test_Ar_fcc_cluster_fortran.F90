@@ -342,7 +342,7 @@ program ex_test_ar_fcc_cluster
 
   type(neighObject_type), target :: neighObject
 
-  type(kim_model_type), pointer :: model
+  type(kim_model_handle_type) :: model_handle
   real(c_double) :: influence_distance
   integer(c_int) :: number_of_cutoffs
   real(c_double) :: cutoff
@@ -387,7 +387,7 @@ program ex_test_ar_fcc_cluster
     kim_time_unit_ps, &
     trim(modelname), &
     requested_units_accepted, &
-    model, ierr)
+    model_handle, ierr)
   if (ierr /= 0) then
     call my_error("kim_api_create", __LINE__, __FILE__)
   endif
@@ -399,8 +399,8 @@ program ex_test_ar_fcc_cluster
 
   ! check that model supports Ar
   !
-  call kim_model_get_species_support_and_code(model, kim_species_name_ar, &
-    species_is_supported, species_code, ierr)
+  call kim_model_get_species_support_and_code(model_handle, &
+    kim_species_name_ar, species_is_supported, species_code, ierr)
   if ((ierr /= 0) .or. (species_is_supported /= 1)) then
     call my_error("Model does not support Ar", __LINE__, __FILE__)
   endif
@@ -410,19 +410,19 @@ program ex_test_ar_fcc_cluster
 
   ! register memory with the KIM system
   ierr = 0
-  call kim_model_set_argument_pointer(model, &
+  call kim_model_set_argument_pointer(model_handle, &
     kim_argument_name_number_of_particles, n, ierr2)
   ierr = ierr + ierr2
-  call kim_model_set_argument_pointer(model, &
+  call kim_model_set_argument_pointer(model_handle, &
     kim_argument_name_particle_species_codes, particle_species_codes, ierr2)
   ierr = ierr + ierr2
-  call kim_model_set_argument_pointer(model, &
+  call kim_model_set_argument_pointer(model_handle, &
     kim_argument_name_particle_contributing, particle_contributing, ierr2)
   ierr = ierr + ierr2
-  call kim_model_set_argument_pointer(model, &
+  call kim_model_set_argument_pointer(model_handle, &
     kim_argument_name_coordinates, coords, ierr2)
   ierr = ierr + ierr2
-  call kim_model_set_argument_pointer(model, &
+  call kim_model_set_argument_pointer(model_handle, &
     kim_argument_name_partial_energy, energy, ierr2)
   ierr = ierr + ierr2
   if (ierr /= 0) then
@@ -431,19 +431,20 @@ program ex_test_ar_fcc_cluster
 
   ! Set pointer in KIM object to neighbor list routine and object
   !
-  call kim_model_set_callback_pointer(model, &
+  call kim_model_set_callback_pointer(model_handle, &
     kim_callback_name_get_neighbor_list, kim_language_name_fortran, &
     c_funloc(get_neigh), c_loc(neighobject), ierr)
   if (ierr /= 0) then
     call my_error("set_callback_pointer", __LINE__, __FILE__)
   end if
 
-  call kim_model_get_influence_distance(model, influence_distance)
-  call kim_model_get_number_of_neighbor_list_cutoffs(model, number_of_cutoffs)
+  call kim_model_get_influence_distance(model_handle, influence_distance)
+  call kim_model_get_number_of_neighbor_list_cutoffs(model_handle, &
+    number_of_cutoffs)
   if (number_of_cutoffs /= 1) then
     call my_error("too many cutoffs", __LINE__, __FILE__)
   endif
-  call kim_model_get_neighbor_list_cutoffs(model, cutoffs, ierr)
+  call kim_model_get_neighbor_list_cutoffs(model_handle, cutoffs, ierr)
   if (ierr /= 0) then
     call my_error("get_cutoffs", __LINE__, __FILE__)
   end if
@@ -482,7 +483,7 @@ program ex_test_ar_fcc_cluster
 
     ! Call model compute to get forces (gradient)
     !
-    call kim_model_compute(model, ierr)
+    call kim_model_compute(model_handle, ierr)
     if (ierr /= 0) then
       call my_error("kim_api_model_compute", __LINE__, __FILE__)
     endif
