@@ -425,8 +425,10 @@ char const * const KIM_ModelDriverCreate_String(
     KIM_ModelDriverCreate const * const modelCreate)
 {
   CONVERT_POINTER;
+  static std::string result;
+  result = pModelDriverCreate->String();
 
-  return (pModelDriverCreate->String()).c_str();
+  return result.c_str();
 }
 
 }  // extern "C"

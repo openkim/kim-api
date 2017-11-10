@@ -84,7 +84,9 @@ int KIM_TemperatureUnitNotEqual(KIM_TemperatureUnit const left,
 char const * const KIM_TemperatureUnitString(
     KIM_TemperatureUnit const temperatureUnit)
 {
-  return (makeTemperatureUnitCpp(temperatureUnit)).String().c_str();
+  static std::string result;
+  result = makeTemperatureUnitCpp(temperatureUnit).String();
+  return result.c_str();
 }
 
 KIM_TemperatureUnit const KIM_TEMPERATURE_UNIT_unused

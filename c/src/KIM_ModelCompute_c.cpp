@@ -192,8 +192,10 @@ char const * const KIM_ModelCompute_String(
     KIM_ModelCompute const * const modelCompute)
 {
   CONVERT_POINTER;
+  static std::string result;
+  result = pModelCompute->String();
 
-  return (pModelCompute->String()).c_str();
+  return result.c_str();
 }
 
 }  // extern "C"

@@ -81,7 +81,9 @@ int KIM_LanguageNameNotEqual(KIM_LanguageName const left,
 
 char const * const KIM_LanguageNameString(KIM_LanguageName languageName)
 {
-  return (makeLanguageNameCpp(languageName)).String().c_str();
+  static std::string result;
+  result = makeLanguageNameCpp(languageName).String();
+  return result.c_str();
 }
 
 // Order doesn't matter as long as all values are unique

@@ -112,8 +112,10 @@ char const * const KIM_ModelRefresh_String(
     KIM_ModelRefresh const * const modelRefresh)
 {
   CONVERT_POINTER;
+  static std::string result;
+  result = pModelRefresh->String();
 
-  return (pModelRefresh->String()).c_str();
+  return result.c_str();
 }
 
 }  // extern "C"

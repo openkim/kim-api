@@ -81,7 +81,9 @@ int KIM_LogVerbosityNotEqual(KIM_LogVerbosity const left,
 
 char const * const KIM_LogVerbosityString(KIM_LogVerbosity const logVerbosity)
 {
-  return (makeLogVerbosityCpp(logVerbosity)).String().c_str();
+  static std::string result;
+  result = makeLogVerbosityCpp(logVerbosity).String();
+  return result.c_str();
 }
 
 KIM_LogVerbosity const KIM_LOG_VERBOSITY_silent

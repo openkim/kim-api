@@ -385,8 +385,10 @@ char const * const KIM_ModelCreate_String(
     KIM_ModelCreate const * const modelCreate)
 {
   CONVERT_POINTER;
+  static std::string result;
+  result = pModelCreate->String();
 
-  return (pModelCreate->String()).c_str();
+  return result.c_str();
 }
 
 }  // extern "C"

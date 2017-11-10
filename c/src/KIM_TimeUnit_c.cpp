@@ -79,7 +79,9 @@ int KIM_TimeUnitNotEqual(KIM_TimeUnit const left, KIM_TimeUnit right)
 
 char const * const KIM_TimeUnitString(KIM_TimeUnit const tiemUnit)
 {
-  return (makeTimeUnitCpp(tiemUnit)).String().c_str();
+  static std::string result;
+  result = makeTimeUnitCpp(tiemUnit).String();
+  return result.c_str();
 }
 
 KIM_TimeUnit const KIM_TIME_UNIT_unused = {KIM::TIME_UNIT::unused.timeUnitID};
