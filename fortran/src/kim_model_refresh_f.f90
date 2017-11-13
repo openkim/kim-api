@@ -118,7 +118,11 @@ logical function kim_model_refresh_handle_equal(left, right)
   type(kim_model_refresh_handle_type), intent(in) :: left
   type(kim_model_refresh_handle_type), intent(in) :: right
 
-  kim_model_refresh_handle_equal = c_associated(left%p, right%p)
+  if ((.not. c_associated(left%p) .and. c_associated(right%p))) then
+    kim_model_refresh_handle_equal = .true.
+  else
+    kim_model_refresh_handle_equal = c_associated(left%p, right%p)
+  end if
 end function kim_model_refresh_handle_equal
 
 logical function kim_model_refresh_handle_not_equal(left, right)

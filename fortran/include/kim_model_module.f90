@@ -39,6 +39,7 @@ module kim_model_module
 
   public &
     kim_model_handle_type, &
+    kim_model_null_handle, &
     operator (.eq.), &
     operator (.ne.), &
     kim_model_create, &
@@ -66,8 +67,12 @@ module kim_model_module
     kim_model_pop_log_verbosity
 
   type, bind(c) :: kim_model_handle_type
-    type(c_ptr) :: p
+    type(c_ptr) :: p = c_null_ptr
   end type kim_model_handle_type
+
+  type(kim_model_handle_type), protected, &
+    bind(c,name="KIM_MODEL_null_handle") &
+    :: kim_model_null_handle
 
   interface operator (.eq.)
     logical function kim_model_handle_equal(left, right)

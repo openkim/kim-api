@@ -38,6 +38,7 @@ module kim_model_refresh_module
 
   public &
     kim_model_refresh_handle_type, &
+    kim_model_refresh_null_handle, &
     operator (.eq.), &
     operator (.ne.), &
     kim_model_refresh_set_influence_distance_pointer, &
@@ -47,10 +48,14 @@ module kim_model_refresh_module
     kim_model_refresh_string
 
   type, bind(c) :: kim_model_refresh_handle_type
-    type(c_ptr) :: p
+    type(c_ptr) :: p = c_null_ptr
   end type kim_model_refresh_handle_type
 
-  interface operator (.eq.)
+  type(kim_model_refresh_handle_type), protected, &
+    bind(c,name="KIM_MODEL_REFRESH_null_handle") &
+    :: kim_model_refresh_null_handle
+
+  Interface operator (.eq.)
     logical function kim_model_refresh_handle_equal(left, right)
       use, intrinsic :: iso_c_binding
       import kim_model_refresh_handle_type

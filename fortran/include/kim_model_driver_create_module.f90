@@ -38,6 +38,7 @@ module kim_model_driver_create_module
 
   public &
     kim_model_driver_create_handle_type, &
+    kim_model_driver_create_null_handle, &
     operator (.eq.), &
     operator (.ne.), &
     kim_model_driver_create_get_number_of_parameter_files, &
@@ -59,8 +60,12 @@ module kim_model_driver_create_module
     kim_model_driver_create_string
 
   type, bind(c) :: kim_model_driver_create_handle_type
-    type(c_ptr) :: p
+    type(c_ptr) :: p = c_null_ptr
   end type kim_model_driver_create_handle_type
+
+  type(kim_model_driver_create_handle_type), protected, &
+    bind(c,name="KIM_MODEL_DRIVER_CREATE_null_handle") &
+    :: kim_model_driver_create_null_handle
 
   interface operator (.eq.)
     logical function kim_model_driver_create_handle_equal(left, right)

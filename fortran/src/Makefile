@@ -54,6 +54,7 @@ OBJF = kim_argument_name_f.o \
        kim_model_destroy_f.o \
        kim_model_driver_create_f.o \
        kim_model_f.o \
+       kim_model_null_handles.o \
        kim_model_refresh_f.o \
        kim_numbering_f.o \
        kim_sem_ver_f.o \
@@ -106,6 +107,7 @@ kim_model_create_f.o: kim_model_create_f.f90 kim_model_create_module.mod kim_num
 kim_model_destroy_f.o: kim_model_destroy_f.f90 kim_model_destroy_module.mod kim_log_verbosity_module.mod
 kim_model_driver_create_f.o: kim_model_driver_create_f.f90 kim_model_driver_create_module.mod kim_numbering_module.mod kim_language_name_module.mod kim_species_name_module.mod kim_argument_name_module.mod kim_support_status_module.mod kim_callback_name_module.mod kim_unit_system_module.mod kim_log_verbosity_module.mod
 kim_model_f.o: kim_model_f.f90 kim_model_module.mod kim_numbering_module.mod kim_unit_system_module.mod kim_argument_name_module.mod kim_support_status_module.mod kim_callback_name_module.mod kim_language_name_module.mod kim_species_name_module.mod kim_data_type_module.mod kim_log_verbosity_module.mod
+kim_model_null_handles.o: kim_model_null_handles.cpp
 kim_model_refresh_f.o: kim_model_refresh_f.f90 kim_model_refresh_module.mod kim_log_verbosity_module.mod
 kim_numbering_f.o: kim_numbering_f.f90 kim_numbering_module.mod
 kim_sem_ver_f.o: kim_sem_ver_f.f90 kim_sem_ver_module.mod
