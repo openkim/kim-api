@@ -250,7 +250,7 @@ module kim_model_module
       use, intrinsic :: iso_c_binding
       import kim_model_handle_type
       implicit none
-      type(kim_model_handle_type), intent(in) :: model_handle
+      type(kim_model_handle_type), intent(inout) :: model_handle
     end subroutine kim_model_destroy
 
     subroutine kim_model_get_influence_distance(model_handle, &

@@ -495,4 +495,6 @@ program ex_test_ar_fcc_cluster
     current_spacing = current_spacing + spacing_incr
   enddo
 
+  call kim_model_destroy(model_handle)
+
 end program ex_test_ar_fcc_cluster
