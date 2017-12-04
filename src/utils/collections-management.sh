@@ -300,7 +300,7 @@ remove_item () {
 
   # check for existing item
   found_item="`${collections_info} model_drivers find "${item_name}"`"
-  if test x"" = x"${found_itme}"; then
+  if test x"" = x"${found_item}"; then
     found_item="`${collections_info} models find "${item_name}"`"
     if test x"" = x"${found_item}"; then
       printf "Item not installed.\n"
