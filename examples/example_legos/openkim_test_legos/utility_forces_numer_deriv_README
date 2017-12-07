@@ -38,7 +38,7 @@ differentiation of the Model energies.
 
 Calling format:
 
-   printf "model_name" | ./vc_forces_numer_deriv
+   printf "model_name" | ./utility_forces_numer_deriv
 
 Notes:
 

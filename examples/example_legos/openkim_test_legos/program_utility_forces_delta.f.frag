@@ -1,6 +1,6 @@
 !*******************************************************************************
 !**
-!**  PROGRAM vc_forces_delta
+!**  PROGRAM utility_forces_delta
 !**
 !**  KIM compliant program to perform numerical derivative check on a model
 !**
@@ -20,7 +20,7 @@
 ! Main program
 !
 !-------------------------------------------------------------------------------
-program vc_forces_delta
+program utility_forces_delta
   use, intrinsic :: iso_c_binding
   use KIM_API_F03
   use mod_neighborlist
@@ -67,7 +67,7 @@ program vc_forces_delta
   !
   ! KIM variables
   !
-  character(len=KIM_KEY_STRING_LENGTH) :: testname     = "vc_forces_delta"
+  character(len=KIM_KEY_STRING_LENGTH) :: testname     = "utility_forces_delta"
   character(len=KIM_KEY_STRING_LENGTH) :: modelname
   character(len=KIM_KEY_STRING_LENGTH) :: NBC_Method
   ! 0- NEIGH_RVEC_H, 1- NEIGH_PURE_H, 2- NEIGH_RVEC_F, 3- NEIGH_PURE_F,
@@ -461,4 +461,4 @@ program vc_forces_delta
 
   stop
 
-end program vc_forces_delta
+end program utility_forces_delta

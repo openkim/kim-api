@@ -33,15 +33,15 @@
 #
 
 
-This directory (vc_forces_delta) contains a Verification Check that tests the
-forces by computing the energy difference between two distorted structures and
+This directory (utility_forces_delta) contains a utility that tests the forces
+by computing the energy difference between two distorted structures and
 comparing this to a clever first-order estimate of the difference.  The
 first-order estimate is constructed such that second order terms nearly vanish.
-This verification check is derived from vc_forces_numer_deriv.
+This utility is derived from utility_forces_numer_deriv.
 
 Calling format:
 
-   printf "model_name" | ./vc_forces_delta
+   printf "model_name" | ./utility_forces_delta
 
 Notes:
 
@@ -98,5 +98,5 @@ Makefile
 README
      This file.
 
-vc_forces_delta.F03
-     Fortran 2003 program that implements the Verification Check.
+utility_forces_delta.F03
+     Fortran 2003 program that implements the utility.

@@ -105,9 +105,9 @@ AUTO_GEN_TESTS = ex_test_Al_free_cluster                        \
                  ex_test_Ar_01CPP                               \
                  ex_test_Ar_02CPP                               \
                  ex_test_Ar_03CPP                               \
-                 vc_config_ener_forces                          \
-                 vc_forces_delta                                \
-                 vc_forces_numer_deriv
+                 utility_config_ener_forces                     \
+                 utility_forces_delta                           \
+                 utility_forces_numer_deriv
 
 
 all: $(AUTO_GEN_TESTS) EXAMPLES.README $(KIM_EX_TESTS_DIR)/Makefile run_all_ex_tests run_all_training_tests run_forces_numer_deriv_for_all_models
@@ -1251,27 +1251,27 @@ ex_test_demo_F03: dir_ex_test_demo_F03               \
 	cp $(KIM_DIR)/LICENSE.CDDL $(KIM_EX_TESTS_DIR)/$@
 	cp -rf dir_$@/* $(KIM_EX_TESTS_DIR)/$@/
 
-vc_forces_delta: Makefile                               \
-                 test_Makefile                          \
-                 vc_forces_delta_README                 \
-                 program_CDDL_header.f.frag             \
-                 mod_neighborlist.f.frag                \
-                 program_vc_forces_delta.f.frag         \
-                 get_model_supported_species.f.frag     \
-                 get_model_NBC_methods.f.frag           \
-                 write_KIM_descriptor.f.frag            \
-                 update_neighborlist.f.frag             \
-                 MI_OPBC_cluster_neighborlist.f.frag    \
-                 NEIGH_PURE_cluster_neighborlist.f.frag \
-                 NEIGH_RVEC_cluster_neighborlist.f.frag \
-                 NEIGH_RVEC_update_Rij_vectors.f.frag   \
-                 create_FCC_configuration.f.frag
+utility_forces_delta: Makefile                               \
+                      test_Makefile                          \
+                      utility_forces_delta_README            \
+                      program_CDDL_header.f.frag             \
+                      mod_neighborlist.f.frag                \
+                      program_utility_forces_delta.f.frag    \
+                      get_model_supported_species.f.frag     \
+                      get_model_NBC_methods.f.frag           \
+                      write_KIM_descriptor.f.frag            \
+                      update_neighborlist.f.frag             \
+                      MI_OPBC_cluster_neighborlist.f.frag    \
+                      NEIGH_PURE_cluster_neighborlist.f.frag \
+                      NEIGH_RVEC_cluster_neighborlist.f.frag \
+                      NEIGH_RVEC_update_Rij_vectors.f.frag   \
+                      create_FCC_configuration.f.frag
         # make directory
 	mkdir -p $(KIM_EX_TESTS_DIR)/$@
 	@touch $(KIM_EX_TESTS_DIR)/$@
 	cp $(KIM_DIR)/LICENSE.CDDL $(KIM_EX_TESTS_DIR)/$@
         # make README file in the directory
-	$(D_CAT) vc_forces_delta_README | $(SED_CMD)                                                          >  $(KIM_EX_TESTS_DIR)/$@/README
+	$(D_CAT) utility_forces_delta_README | $(SED_CMD)                                                     >  $(KIM_EX_TESTS_DIR)/$@/README
         # make Makefile in the directory
 	$(D_CAT) test_Makefile | $(SED_CMD) \
                                  -e 's/LANGUAGE_EXTENSION_STR/F03/g' \
@@ -1283,7 +1283,7 @@ vc_forces_delta: Makefile                               \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) mod_neighborlist.f.frag                                                                      >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	$(F_CAT) program_vc_forces_delta.f.frag  | $(SED_CMD)                                                 >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) program_utility_forces_delta.f.frag  | $(SED_CMD)                                            >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) get_model_supported_species.f.frag                                                           >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
@@ -1303,28 +1303,28 @@ vc_forces_delta: Makefile                               \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) create_FCC_configuration.f.frag                                                              >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 
-vc_forces_numer_deriv: Makefile                               \
-                       test_Makefile                          \
-                       vc_forces_numer_deriv_README           \
-                       program_CDDL_header.f.frag             \
-                       mod_neighborlist.f.frag                \
-                       program_vc_forces_numer_deriv.f.frag   \
-                       get_model_supported_species.f.frag     \
-                       get_model_NBC_methods.f.frag           \
-                       write_KIM_descriptor.f.frag            \
-                       update_neighborlist.f.frag             \
-                       MI_OPBC_cluster_neighborlist.f.frag    \
-                       NEIGH_PURE_cluster_neighborlist.f.frag \
-                       NEIGH_RVEC_cluster_neighborlist.f.frag \
-                       NEIGH_RVEC_update_Rij_vectors.f.frag   \
-                       create_FCC_configuration.f.frag        \
-                       compute_numer_deriv.f.frag
+utility_forces_numer_deriv: Makefile                                  \
+                            test_Makefile                             \
+                            utility_forces_numer_deriv_README         \
+                            program_CDDL_header.f.frag                \
+                            mod_neighborlist.f.frag                   \
+                            program_utility_forces_numer_deriv.f.frag \
+                            get_model_supported_species.f.frag        \
+                            get_model_NBC_methods.f.frag              \
+                            write_KIM_descriptor.f.frag               \
+                            update_neighborlist.f.frag                \
+                            MI_OPBC_cluster_neighborlist.f.frag       \
+                            NEIGH_PURE_cluster_neighborlist.f.frag    \
+                            NEIGH_RVEC_cluster_neighborlist.f.frag    \
+                            NEIGH_RVEC_update_Rij_vectors.f.frag      \
+                            create_FCC_configuration.f.frag           \
+                            compute_numer_deriv.f.frag
         # make directory
 	mkdir -p $(KIM_EX_TESTS_DIR)/$@
 	@touch $(KIM_EX_TESTS_DIR)/$@
 	cp $(KIM_DIR)/LICENSE.CDDL $(KIM_EX_TESTS_DIR)/$@
         # make README file in the directory
-	$(D_CAT) vc_forces_numer_deriv_README | $(SED_CMD)                                                    >  $(KIM_EX_TESTS_DIR)/$@/README
+	$(D_CAT) utility_forces_numer_deriv_README | $(SED_CMD)                                               >  $(KIM_EX_TESTS_DIR)/$@/README
         # make Makefile in the directory
 	$(D_CAT) test_Makefile | $(SED_CMD) \
                                  -e 's/LANGUAGE_EXTENSION_STR/F03/g' \
@@ -1336,7 +1336,7 @@ vc_forces_numer_deriv: Makefile                               \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) mod_neighborlist.f.frag                                                                      >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	$(F_CAT) program_vc_forces_numer_deriv.f.frag  | $(SED_CMD)                                           >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) program_utility_forces_numer_deriv.f.frag  | $(SED_CMD)                                      >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) get_model_supported_species.f.frag                                                           >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
@@ -1358,25 +1358,25 @@ vc_forces_numer_deriv: Makefile                               \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) compute_numer_deriv.f.frag                                                                   >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 
-vc_config_ener_forces: Makefile                                 \
-                       test_Makefile                            \
-                       vc_config_ener_forces_README             \
-                       program_CDDL_header.f.frag               \
-                       mod_neighborlist.f.frag                  \
-                       program_vc_config_ener_forces.f.frag     \
-                       get_model_NBC_methods.f.frag             \
-                       write_KIM_descriptor.f.frag              \
-                       update_neighborlist.f.frag               \
-                       MI_OPBC_cluster_neighborlist.f.frag      \
-                       NEIGH_PURE_cluster_neighborlist.f.frag   \
-                       NEIGH_RVEC_cluster_neighborlist.f.frag   \
+utility_config_ener_forces: Makefile                              \
+                       test_Makefile                              \
+                       utility_config_ener_forces_README          \
+                       program_CDDL_header.f.frag                 \
+                       mod_neighborlist.f.frag                    \
+                       program_utility_config_ener_forces.f.frag  \
+                       get_model_NBC_methods.f.frag               \
+                       write_KIM_descriptor.f.frag                \
+                       update_neighborlist.f.frag                 \
+                       MI_OPBC_cluster_neighborlist.f.frag        \
+                       NEIGH_PURE_cluster_neighborlist.f.frag     \
+                       NEIGH_RVEC_cluster_neighborlist.f.frag     \
                        NEIGH_RVEC_update_Rij_vectors.f.frag
         # make directory
 	mkdir -p $(KIM_EX_TESTS_DIR)/$@
 	@touch $(KIM_EX_TESTS_DIR)/$@
 	cp $(KIM_DIR)/LICENSE.CDDL $(KIM_EX_TESTS_DIR)/$@
         # make README file in the directory
-	$(D_CAT) vc_config_ener_forces_README | $(SED_CMD)                                                    >  $(KIM_EX_TESTS_DIR)/$@/README
+	$(D_CAT) utility_config_ener_forces_README | $(SED_CMD)                                               >  $(KIM_EX_TESTS_DIR)/$@/README
         # make Makefile in the directory
 	$(D_CAT) test_Makefile | $(SED_CMD) \
                                  -e 's/LANGUAGE_EXTENSION_STR/F03/g' \
@@ -1388,7 +1388,7 @@ vc_config_ener_forces: Makefile                                 \
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) mod_neighborlist.f.frag                                                                      >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
-	$(F_CAT) program_vc_config_ener_forces.f.frag  | $(SED_CMD)                                           >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
+	$(F_CAT) program_utility_config_ener_forces.f.frag  | $(SED_CMD)                                      >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	$(F_CAT) get_model_NBC_methods.f.frag                                                                 >> $(KIM_EX_TESTS_DIR)/$@/$@.F03
 	echo                                                                                                  >> $(KIM_EX_TESTS_DIR)/$@/$@.F03

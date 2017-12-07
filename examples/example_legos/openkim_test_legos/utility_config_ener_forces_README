@@ -32,13 +32,13 @@
 #
 
 
-This directory (vc_config_ener_forces) contains a Verification Check that
+This directory (utility_config_ener_forces) contains a Verification Check that
 computes the energy and forces for a read-in isolated uster and compares them
 with the expected results in the input file.
 
 Calling format:
 
-   ./vc_config_ener_forces
+   ./utility_config_ener_forces
 
 and enter model name and then data file (see format below).
 
@@ -72,19 +72,6 @@ following format:
 
 N                                   Number of particles
 
-BoxSize_x BoxSize_y BoxSize_z       The x, y and z lengths of the orthogonal
-                                    periodic simulation box.  Since minimum
-                                    image conventions are used when applying
-                                    PBCs, the simulation box length along each
-                                    direction must be at least twice the cutoff
-                                    radius of the interatomic model.  For non-
-                                    periodic boundary conditions in a given
-                                    direction, increase the periodic length
-                                    such that it is at least greater than the
-                                    maximum distance between particles along
-                                    that direction plus the cutoff radius of
-                                    the potential.
-
 spec1  x-coor1  y-coor1  z-coor1    Space delimited species and positions (three
   .        .        .        .      coordinates per line) where "spec" is an
   .        .        .        .      element name (e.g. "Al", "Ar", etc.).
@@ -112,5 +99,5 @@ Makefile
 README
      This file.
 
-vc_config_ener_forces.F03
+utility_config_ener_forces.F03
      Fortran 2003 program that implements the Verification Check.
