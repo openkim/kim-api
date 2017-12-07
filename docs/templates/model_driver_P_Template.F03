@@ -456,6 +456,7 @@ do
             call calc_phi_dphi_d2phi(buf%<FILL parameter 1>, &
                                      buf%<FILL parameter 2>, &
                                      ! FILL as many parameters as needed
+                                     model_cutoff,           &
                                      r,phi,dphi,d2phi) ! compute pair potential
                                                        !   and it derivatives
             if ((buf%HalfOrFull.eq.1) .and. &
@@ -727,16 +728,16 @@ if (ier.lt.KIM_STATUS_OK) then
    goto 42
 endif
 
-<FILL parameter 1> = <FILL parameter 1> * kim_api_convert_to_act_unit(pkim, "A", "eV", "e", "K", "ps", &
-                                                                      <FILL exponents (5) for parameter 1>, ier)
+in_<FILL parameter 1> = in_<FILL parameter 1> * kim_api_convert_to_act_unit(pkim, "A", "eV", "e", "K", "ps", &
+                                                                            <FILL exponents (5) for parameter 1>, ier)
 if (ier.lt.KIM_STATUS_OK) then
    idum=kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                              "kim_api_convert_to_act_unit", ier)
    goto 42
 endif
 
-<FILL parameter 2> = <FILL parameter 2> * kim_api_convert_to_act_unit(pkim, "A", "eV", "e", "K", "ps", &
-                                                                      <FILL exponents (5) for parameter 2>, ier)
+in_<FILL parameter 2> = in_<FILL parameter 2> * kim_api_convert_to_act_unit(pkim, "A", "eV", "e", "K", "ps", &
+                                                                            <FILL exponents (5) for parameter 2>, ier)
 if (ier.lt.KIM_STATUS_OK) then
    idum=kim_api_report_error(__LINE__, THIS_FILE_NAME, &
                              "kim_api_convert_to_act_unit", ier)
