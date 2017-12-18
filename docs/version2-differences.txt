@@ -1,0 +1,297 @@
+/*                                                                            */
+/* CDDL HEADER START                                                          */
+/*                                                                            */
+/* The contents of this file are subject to the terms of the Common           */
+/* Development and Distribution License Version 1.0 (the "License").          */
+/*                                                                            */
+/* You can obtain a copy of the license at                                    */
+/* http://www.opensource.org/licenses/CDDL-1.0.  See the License for the      */
+/* specific language governing permissions and limitations under the License. */
+/*                                                                            */
+/* When distributing Covered Code, include this CDDL HEADER in each file and  */
+/* include the License file in a prominent location with the name             */
+/* LICENSE.CDDL.                                                              */
+/* If applicable, add the following below this CDDL HEADER, with the fields   */
+/* enclosed by brackets "[]" replaced with your own identifying information:  */
+/*                                                                            */
+/* Portions Copyright (c) [yyyy] [name of copyright owner].                   */
+/* All rights reserved.                                                       */
+/*                                                                            */
+/* CDDL HEADER END                                                            */
+/*                                                                            */
+
+/*                                                                            */
+/* Copyright (c) 2017, Regents of the University of Minnesota.                */
+/* All rights reserved.                                                       */
+/*                                                                            */
+/* Contributors:                                                              */
+/*    Ryan S. Elliott                                                         */
+/*    Ellad B. Tadmor                                                         */
+/*                                                                            */
+
+/*                                                                            */
+/* Release: This file is part of the kim-api.git repository.                  */
+/*                                                                            */
+
+/**
+\page version2_differences Summary of Differences Between kim-api-v1 and kim-api-v2
+
+Experience with using and supporting the kim-api-v1 package has shown that the
+package's complexity (in terms of the number of different "modes of operation";
+e.g., neighbor lists: half, full, iterator, locator; NBCs: cluster, miopbc,
+neigh_pure, neigh_rvec; etc.) makes it difficult for new users to become
+competent kim-api-v1 code developers.  This also means that KIM Models will
+only work with KIM-compliant codes that support the same modes of operation,
+thereby limiting the utility of the kim-api as a standard.  Further, the
+kim-api's complexity results in Model implementations that are convoluted due
+to developers' desire to support *all* modes of operation.  This experience has
+led us to an approach that gives kim-api-v2 a dramatically simplified form,
+while still retaining a high degree of flexibility.  Thus, in regard to feature
+design and selection for the kim-api-v2 package, we have taken "simplicity" as
+a guiding principle.
+
+## High-level changes between kim-api-v1 and kim-api-v2
+
+- **NBCs Have Been Eliminated**: kim-api-v2 supports only one type of
+  configuration (as described in Section \ref theory).  This corresponds,
+  roughly to the kim-api-v1 NEIGH_PURE_F NBC.
+
+  Additionally:
+
+  - All neighbor lists in kim-api-v2 are full, unordered, and random-access.
+
+  - Particle Contributing (a.k.a., padding or ghost-atom) status (contributing
+    or non-contributing) is explicitly specified in the *particleContributing*
+    argument.  A particle with zero neighbors in (one of) its neighbor lists
+    has no special meaning in kim-api-v2, as opposed to in kim-api-v1 where
+    this indicates the particle is non-contributing.
+
+- **%KIM Descriptor Files Have Been Eliminated**: kim-api-v2 does not use *%KIM
+  descriptor files*.  Instead, kim-api-v2 models register their units,
+  conventions, species, arguments, and parameters in their *ModelCreate*
+  initialization routine.  Simulator--Model matching is now the responsibility
+  of the simulator.  This is facilitated by kim-api-v2 through the availability
+  of routines for obtaining the model's registered values of all necessary
+  quantities at run-time.
+
+  Best practice for kim-api-v2 simulators is to, first create a model object
+  (which also executes the model initialization), second interrogate the
+  model's capabilities to determine if the desired computation can be
+  successfully performed with the model, and third, if possible, perform the
+  desired computation.
+
+  This scheme for Simulator--Model matching places a bigger burden (as compared
+  to kim-api-v1) on the simulator.  However, it has been determined that a
+  full-featured "%KIM descriptor file"--based matching specification (covering
+  all possibilities) is too complex.  Thus, it is best to perform this matching
+  processing the simulator's code at run-time.  In the worst-case, a simulator
+  can simply *assume* that it matches with the model and attempt to perform the
+  desired computation.  As long as the simulator carefully checks for any and
+  all errors reported by the %KIM API, it should detect an error at some point
+  during its processing if the simulator, in fact, does not match with the
+  model.
+
+- **A New Memory Manage Scheme**: kim-api-v2 requires the simulator to be
+  responsible for storage memory associated with all input and output arguments
+  communicated between the simulator and the model.  Similarly, kim-api-v2
+  requires the model to be responsible for storage memory associated with its
+  influence distance, its neighbor list cutoff values, and its published
+  parameters.
+
+  kim-api-v2 does not provide a routine analogous to the KIM_API_Allocate() of
+  kim-api-v1.  This routine is now seen as a source of much confusion regarding
+  the memory management model employed in kim-api-v1.  Thus, it is best not to
+  provide such a capability as part of kim-api-v2.
+
+- **Language Consistency**: kim-api-v2 aims to conform to standard practice and
+  idioms of the native code language, as opposed to kim-api-v1 which aimed to
+  maintain consistency of the api across languages.
+
+  This means that using the kim-api-v2 in your preferred language feels more
+  natural.  For example, the C++ api binding extensively use namespaces,
+  objects, std::string, and error codes as function return values.  The Fortran
+  api binding provides error codes as arguments to SUBROUTINES, uses handles to
+  objects, and hides (as much as possible) the effort of making Fortran
+  interoperable with C and other languages.  In particular, the need for
+  explicit use of the intrinsic C_F_POINTER() subroutine has been minimized.
+
+  Consistent identifier naming schemes have been established within each
+  language binding.  Abbreviations have been avoided to make names easier to
+  remember.
+
+- **Explicit Definitions**: Clear definitions for all concepts used by the
+  kim-api-v2 package are provided in Section \ref theory.
+
+  In many cases, these are the same concepts and definitions employed by
+  kim-api-v1.  However, they were not explicitly stated in the kim-api-v1
+  documentation.
+
+- **Improved Logging Facilities and Error Messages**: kim-api-v2 has been
+  redesigned and rewritten from the ground up.  Significantly improved
+  facilities for logging events and execution progress have been included.
+  Along with these general enhancements, all error messages have been (or are
+  currently being) rewritten with an eye toward improved clarity.
+
+
+## Lower-level changes between kim-api-v2 and kim-api-v1
+
+- **FIXED Parameters Have Been Eliminated**: kim-api-v2 defines only one type
+  of "published" parameters for a model.  These are all changeable, and thus,
+  would correspond to the "FREE" parameters of kim-api-v1.
+
+  The FIXED parameters of kim-api-v1 must now be stored in the model buffer and
+  are inaccessible to the simulator.
+
+- **Argument Shape and Extent**: For simplicity, explicit api tracking of
+  argument shape and extent has been eliminated from kim-api-v2.  These values
+  are defined as part of the api documentation.  All arguments must have fixed
+  shape and extent values that are either given numbers or defined in terms of
+  *numberOfParticles*.
+
+  Published model parameters are always taken to be one-dimensional arrays with
+  a specified extent that must be defined by the model and communicated to the
+  API through the get/set routines for parameters.  Thus, scalar parameters
+  have extent 1.  Multidimensional array parameters are treated by the API as
+  one-dimensional arrays with extent equal to the total number of values in the
+  multidimensional array.
+
+- **Extensible Strongly-Typed Enumerations**: kim-api-v2 uses "extensible
+  strongly-typed enumerations" as identifiers for quantities as opposed to
+  kim-api-v1 which uses character arrays (strings) or "index" values.  Thus,
+  all "index" values and the associated routines (such as KIM_API_get_index())
+  have been eliminated.
+
+- **Consistent and Descriptive Identifier Names**: The entire set of kim-api-v2
+  identifier names (namespace, module, object, subroutine, function,
+  enumerations) have been reviewed and selected for clarity and consistency.
+  As a result many of the identifier names from kim-api-v1 have changed in
+  kim-api-v2.  Here we provide a complete translation table.  The C and Fortran
+  bindings are obtained from the C++ binding by the following transformations
+  (Note: some exceptions to these rules exist):
+
+  - C++ \f$\rightarrow\f$ C: Replace "::" with "_".  For example,
+    KIM::Model::SetCallbackPointer becomes ::KIM_Model_SetCallbackPointer.
+
+  - C++ \f$\rightarrow\f$ Fortran: Replace "::" with "_".  Where camel-case is
+    used in C++, convert to snake-case.  Convert to all lower-case.  For example,
+    KIM::Model::SetCallbackPointer becomes kim_model_set_callback_pointer.
+
+Identifier Name translation table:
+
+kim-api-v1                             | kim-api-v2 C++ Binding               |
+-------------------------------------- | ------------------------------------ |
+KIM_API_file_init                      | N/A                                  |
+KIM_API_string_init                    | KIM::Model::Create                   |
+KIM_API_get_version                    | KIM::SEM_VER::GetSemVer              |
+KIM_API_get_version_major              | N/A                                  |
+KIM_API_get_version_minor              | N/A                                  |
+KIM_API_get_version_prerelease         | N/A                                  |
+KIM_API_get_version_build_metadata     | N/A                                  |
+N/A                                    | KIM::SEM_VER::ParseSemVer            |
+KIM_API_version_newer                  | KIM::SEM_VER::IsLessThan             |
+KIM_API_model_info                     | N/A                                  |
+KIM_API_allocate                       | N/A                                  |
+KIM_API_c_free                         | N/A                                  |
+KIM_API_free                           | KIM::Model::Destroy                  |
+KIM_API_print                          | KIM::Model::String, KIM::ModelCreate::String, KIM::ModelCompute::String, KIM::ModelRefresh::String, KIM::ModelDestroy::String |
+KIM_API_model_compute                  | KIM::Model::Compute                  |
+KIM_API_model_destroy                  | N/A                                  |
+KIM_API_get_model_index_shift          | N/A                                  |
+N/A                                    | KIM::ModelCreate::SetModelNumbering, KIM::ModelDriverCreate::SetModelNumbering |
+KIM_API_set_model_buffer               | KIM::ModelCreate::SetModelBufferPointer, KIM::ModelDriverCreate::SetModelBufferPointer |
+KIM_API_set_sim_buffer                 | KIM::Model::SetSimulatorBufferPointer |
+KIM_API_get_model_buffer               | KIM::ModelCompute::GetModelBufferPointer, KIM::ModelDestroy::GetModelBufferPointer, KIM::ModelRefresh::GetModelBufferPointer |
+KIM_API_get_sim_buffer                 | KIM::Model::GetSimulatorBufferPointer |
+KIM_API_is_half_neighbors              | N/A                                  |
+KIM_API_set_data                       | KIM::Model::SetArgumentPointer       |
+N/A                                    | KIM::ModelCreate::SetArgumentSupportStatus, KIM::ModelDriverCreate::SetArgumentSupportStatus |
+N/A                                    | KIM::ModelCreate::SetCallbackSupportStatus, KIM::ModelDriverCreate::SetCallbackSupportStatus |
+KIM_API_set_method                     | KIM::Model::SetCallbackPointer       |
+KIM_API_get_data                       | KIM::ModelCompute::GetArgumentPointer |
+KIM_API_get_method                     | N/A                                  |
+N/A                                    | KIM::ModelCompute::IsCallbackPresent |
+KIM_API_get_size                       | N/A                                  |
+KIM_API_get_rank                       | N/A                                  |
+KIM_API_get_shape                      | N/A                                  |
+KIM_API_set_shape                      | N/A                                  |
+KIM_API_set_compute                    | N/A                                  |
+KIM_API_get_compute                    | N/A                                  |
+N/A                                    | KIM::ModelCreate::SetInfluenceDistancePointer, KIM::ModelDriverCreate::SetInfluenceDistancePointer, KIM::ModelRefresh::SetInfluenceDistancePointer |
+N/A                                    | KIM::Model::GetInfluenceDistance     |
+N/A                                    | KIM::Model::GetNeighborListCutoffsPointer |
+N/A                                    | KIM::ModelCreate::SetNeighborListCutoffsPointer, KIM::ModelDriverCreate::SetNeighborListCutoffsPointer, KIM::ModelRefresh::SetNeighborListCutoffsPointer |
+N/A                                    | KIM::Model::GetArgumentSupportStatus |
+N/A                                    | KIM::Model::GetCallbackSupportStatus |
+N/A                                    | KIM::ModelCreate::SetRefreshPointer, KIM::ModelDriverCreate::SetRefreshPointer |
+N/A                                    | KIM::ModelCreate::SetDestroyPointer, KIM::ModelDriverCreate::SetDestroyPointer |
+N/A                                    | KIM::ModelCreate::SetComputePointer, KIM::ModelDriverCreate::SetComputePointer |
+KIM_API_get_index                      | N/A                                  |
+KIM_API_model_init                     | N/A                                  |
+KIM_API_model_reinit                   | KIM::Model::ClearInfluenceDistanceAndCutoffsThenRefreshModel |
+KIM_API_get_num_model_species          | N/A                                  |
+KIM_API_get_model_species              | KIM::Model::GetSpeciesSupportAndCode |
+KIM_API_get_num_sim_species            | N/A                                  |
+KIM_API_get_sim_species                | N/A                                  |
+N/A                                    | KIM::ModelDriverCreate::GetNumberOfParameterFiles |
+N/A                                    | KIM::ModelDriverCreate::GetParameterFileName |
+KIM_API_get_num_params                 | KIM::Model::GetNumberOfParameters    |
+KIM_API_get_parameter                  | KIM::Model::GetParameter             |
+N/A                                    | KIM::Model::SetParameter             |
+N/A                                    | KIM::Model::GetParameterDataTypeExtentAndDescription |
+N/A                                    | KIM::ModelCreate::SetParameterPointer, KIM::ModelDriverCreate::SetParameterPointer |
+KIM_API_get_num_free_params            | N/A                                  |
+KIM_API_get_free_parameter             | N/A                                  |
+KIM_API_get_num_fixed_params           | N/A                                  |
+KIM_API_get_fixed_parameter            | N/A                                  |
+KIM_API_get_NBC_method                 | N/A                                  |
+KIM_API_get_species_code               | KIM::Model::GetSpeciesSupportAndCode |
+KIM_API_set_species_code               | KIM::ModelCreate::SetSpeciesCode, KIM::ModelDriverCreate::SetSpeciesCode |
+KIM_API_get_model_kim_str_len          | N/A                                  |
+KIM_API_get_model_kim_str              | N/A                                  |
+KIM_API_get_neigh_mode                 | N/A                                  |
+KIM_API_get_neigh                      | KIM::ModelCompute::GetNeighborList   |
+KIM_API_process_dEdr                   | KIM::ModelCompute::ProcessDEDrTerm   |
+KIM_API_process_d2Edr2                 | KIM::ModelCompute::ProcessD2EDr2Term |
+KIM_API_get_status_msg                 | N/A                                  |
+KIM_API_report_error                   | KIM::Log::LogEntry, KIM::ModelCreate::LogEntry, KIM::ModelCompute::LogEntry, KIM::ModelRefresh::LogEntry, KIM::ModelDestroy::LogEntry |
+N/A                                    | KIM::Model::SetLogID                 |
+N/A                                    | KIM::Model::PushLogVerbosity         |
+N/A                                    | KIM::Model::PopLogVerbosity          |
+KIM_API_get_scale_conversion           | KIM::ModelCreate::ConvertUnit, KIM::ModelDriverCreate::ConvertUnit |
+KIM_API_get_unit_handling              | N/A                                  |
+KIM_API_get_unit_length                | KIM::Model::GetUnits                 |
+KIM_API_get_unit_energy                | KIM::Model::GetUnits                 |
+KIM_API_get_unit_charge                | KIM::Model::GetUnits                 |
+KIM_API_get_unit_temperature           | KIM::Model::GetUnits                 |
+KIM_API_get_unit_time                  | KIM::Model::GetUnits                 |
+N/A                                    | KIM::ModelCreate::SetUnits, KIM::ModelDriverCreate::SetUnits |
+KIM_API_convert_to_act_unit            | N/A                                  |
+KIM_API_set_data_by_index              | N/A                                  |
+KIM_API_set_method_by_index            | N/A                                  |
+KIM_API_get_data_by_index              | N/A                                  |
+KIM_API_get_method_by_index            | N/A                                  |
+KIM_API_get_size_by_index              | N/A                                  |
+KIM_API_get_rank_by_index              | N/A                                  |
+KIM_API_get_shape_by_index             | N/A                                  |
+KIM_API_set_compute_by_index           | N/A                                  |
+KIM_API_get_compute_by_index           | N/A                                  |
+KIM_API_getm_compute                   | N/A                                  |
+KIM_API_setm_compute                   | N/A                                  |
+KIM_API_getm_compute_by_index          | N/A                                  |
+KIM_API_setm_compute_by_index          | N/A                                  |
+KIM_API_getm_data                      | N/A                                  |
+KIM_API_getm_method                    | N/A                                  |
+KIM_API_setm_data                      | N/A                                  |
+KIM_API_setm_method                    | N/A                                  |
+KIM_API_getm_data_by_index             | N/A                                  |
+KIM_API_getm_method_by_index           | N/A                                  |
+KIM_API_setm_data_by_index             | N/A                                  |
+KIM_API_setm_method_by_index           | N/A                                  |
+KIM_API_getm_index                     | N/A                                  |
+
+*/
+
+LocalWords:  CDDL yyyy Ellad Tadmor kim api NBCs miopbc rvec api's ref init
+LocalWords:  particleContributing ModelCreate rightarrow SetCallbackPointer
+LocalWords:  prerelease metadata sim reinit num params str len dEdr Edr msg
+LocalWords:  getm setm numberOfParticles
