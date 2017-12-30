@@ -100,7 +100,7 @@ kim_data_type_f.o: kim_data_type_f.f90 kim_data_type_module.mod
 kim_energy_unit_f.o: kim_energy_unit_f.f90 kim_energy_unit_module.mod
 kim_language_name_f.o: kim_language_name_f.f90 kim_language_name_module.mod
 kim_length_unit_f.o: kim_length_unit_f.f90 kim_length_unit_module.mod
-kim_log_f.o: kim_log_f.f90 kim_log_verbosity_module.mod
+kim_log_f.o: kim_log_f.f90 kim_log_module.mod kim_log_verbosity_module.mod
 kim_log_verbosity_f.o: kim_log_verbosity_f.f90 kim_log_verbosity_module.mod
 kim_model_compute_f.o: kim_model_compute_f.f90 kim_model_compute_module.mod kim_argument_name_module.mod kim_callback_name_module.mod kim_log_verbosity_module.mod
 kim_model_create_f.o: kim_model_create_f.f90 kim_model_create_module.mod kim_numbering_module.mod kim_language_name_module.mod kim_species_name_module.mod kim_argument_name_module.mod kim_support_status_module.mod kim_callback_name_module.mod kim_unit_system_module.mod kim_log_verbosity_module.mod

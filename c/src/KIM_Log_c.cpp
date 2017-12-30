@@ -53,6 +53,14 @@ extern "C"
 }  // extern "C"
 
 
+struct KIM_Log
+{
+  void * p;
+};
+
+#define CONVERT_POINTER KIM::Log * pLog         \
+  = reinterpret_cast<KIM::Log *>(log->p)
+
 namespace
 {
 KIM::LogVerbosity const makeLogVerbosityCpp(KIM_LogVerbosity const logVerbosity)
@@ -61,12 +69,76 @@ KIM::LogVerbosity const makeLogVerbosityCpp(KIM_LogVerbosity const logVerbosity)
 }
 }  // namespace
 
+
 extern "C"
 {
-
-void KIM_Log(KIM_LogVerbosity const logVerbosity, char const * const message,
-             int const lineNumber, char const * const fileName)
+int KIM_Log_Create(KIM_Log ** const log)
 {
-  KIM::Log(makeLogVerbosityCpp(logVerbosity), message, lineNumber, fileName);
+  KIM::Log * pLog;
+  int error = KIM::Log::Create(&pLog);
+  if (error)
+  {
+    return true;
+  }
+  else
+  {
+    (*log) = new KIM_Log;
+    (*log)->p = (void *) pLog;
+    return false;
+  }
 }
+
+void KIM_Log_Destroy(KIM_Log ** const log)
+{
+  KIM::Log * pLog = reinterpret_cast<KIM::Log *>((*log)->p);
+
+  KIM::Log::Destroy(&pLog);
+  delete (*log);
+  *log = 0;
+}
+
+char const * const KIM_Log_GetID(KIM_Log const * const log)
+{
+  CONVERT_POINTER;
+  static std::string logID_String;
+  logID_String = pLog->GetID();
+
+  return logID_String.c_str();
+}
+
+void KIM_Log_SetID(KIM_Log * const log, char const * const id)
+{
+  CONVERT_POINTER;
+
+  pLog->SetID(id);
+}
+
+void KIM_Log_PushVerbosity(KIM_Log * const log,
+                           KIM_LogVerbosity const logVerbosity)
+{
+  CONVERT_POINTER;
+
+  pLog->PushVerbosity(makeLogVerbosityCpp(logVerbosity));
+}
+
+void KIM_Log_PopVerbosity(KIM_Log * const log)
+{
+  CONVERT_POINTER;
+
+  pLog->PopVerbosity();
+}
+
+void KIM_Log_LogEntry(KIM_Log const * const log,
+                      KIM_LogVerbosity const logVerbosity,
+                      char const * const message,
+                      int const lineNumber, char const * const fileName)
+{
+  CONVERT_POINTER;
+
+  pLog->LogEntry(makeLogVerbosityCpp(logVerbosity),
+                 message,
+                 lineNumber,
+                 fileName);
+}
+
 }  // extern "C"

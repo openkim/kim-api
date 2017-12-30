@@ -200,7 +200,7 @@ void ModelCreate::Log(LogVerbosity const logVerbosity,
 {
   CONVERT_POINTER;
 
-  pImpl->Log(logVerbosity, message, lineNumber, fileName);
+  pImpl->LogEntry(logVerbosity, message, lineNumber, fileName);
 }
 
 std::string ModelCreate::String() const

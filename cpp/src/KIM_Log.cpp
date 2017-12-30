@@ -30,31 +30,73 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
-#include <iostream>
-#include <iomanip>
+#ifndef KIM_LOG_HPP_
+#include "KIM_Log.hpp"
+#endif
 
 #ifndef KIM_LOG_VERBOSITY_HPP_
 #include "KIM_LogVerbosity.hpp"
 #endif
 
-#ifndef KIM_LOG_HPP_
-#include "KIM_Log.hpp"
+#ifndef KIM_LOG_IMPLEMENTATION_HPP_
+#include "KIM_LogImplementation.hpp"
 #endif
-
 
 namespace KIM
 {
-
-void Log(LogVerbosity const logVerbosity, std::string const & message,
-         int const lineNumber, std::string const & fileName)
+int Log::Create(Log ** const log)
 {
-  std::cout << "LOG: "
-            << "*" << logVerbosity.String() << "* "
-            << message
-            << "["
-            << lineNumber
-            << ": "
-            << fileName
-            << "]\n";
+  *log = new Log();
+
+  return LogImplementation::Create(&((*log)->pimpl));
 }
+
+void Log::Destroy(Log ** const log)
+{
+  LogImplementation::Destroy(&((*log)->pimpl));
+  delete *log;
+  *log = 0;
+}
+
+std::string Log::GetID() const
+{
+  return pimpl->GetID();
+}
+
+void Log::SetID(std::string const & id)
+{
+  pimpl->SetID(id);
+}
+
+void Log::PushVerbosity(LogVerbosity const logVerbosity)
+{
+  pimpl->PushVerbosity(logVerbosity);
+}
+
+void Log::PopVerbosity()
+{
+  pimpl->PopVerbosity();
+}
+
+void Log::LogEntry(LogVerbosity const logVerbosity, std::string const & message,
+                   int const lineNumber, std::string const & fileName) const
+{
+  pimpl->LogEntry(logVerbosity, message, lineNumber, fileName);
+}
+
+void Log::LogEntry(LogVerbosity const logVerbosity,
+                   std::stringstream const & message,
+                   int const lineNumber, std::string const & fileName) const
+{
+  pimpl->LogEntry(logVerbosity, message.str(), lineNumber, fileName);
+}
+
+Log::Log() : pimpl(0)
+{
+}
+
+Log::~Log()
+{
+}
+
 }  // namespace KIM

@@ -157,16 +157,24 @@ int ModelImplementation::Create(
     int * const requestedUnitsAccepted,
     ModelImplementation ** const modelImplementation)
 {
-  ModelImplementation * pModelImplementation;
-  pModelImplementation = new ModelImplementation(new ModelLibrary());
+  Log * pLog;
+  int error = Log::Create(&pLog);
+  if (error)
+  {
+    return true;
+  }
 
-  int error = pModelImplementation->ModelCreate(
+  ModelImplementation * pModelImplementation;
+  pModelImplementation = new ModelImplementation(new ModelLibrary(), pLog);
+
+  error = pModelImplementation->ModelCreate(
       numbering, requestedLengthUnit, requestedEnergyUnit, requestedChargeUnit,
       requestedTemperatureUnit, requestedTimeUnit, modelName);
   if (error)
   {
-    delete pModelImplementation;
-    // LOG_ERROR("");  @@@@ need access to a log object
+    pModelImplementation->LogEntry(KIM::LOG_VERBOSITY::error, "",
+                                   __LINE__, __FILE__);
+    delete pModelImplementation;  // also deletes pLog
     return true;
   }
 
@@ -214,7 +222,8 @@ void ModelImplementation::Destroy(
   int error = (*modelImplementation)->ModelDestroy();
   if (error)
   {
-    // LOG_ERROR(""); @@@ need access to a log object
+    (*modelImplementation)->LogEntry(KIM::LOG_VERBOSITY::error,"",
+                                     __LINE__, __FILE__);
   }
 
   delete *modelImplementation;
@@ -1196,25 +1205,25 @@ int ModelImplementation::ConvertUnit(
 
 void ModelImplementation::SetLogID(std::string const & logID)
 {
-  //@@@@@ do nothing for now
+  log_->SetID(logID);
 }
 
 void ModelImplementation::PushLogVerbosity(LogVerbosity const logVerbosity)
 {
-  //@@@@@ do nothing for now
+  log_->PushVerbosity(logVerbosity);
 }
 
 void ModelImplementation::PopLogVerbosity()
 {
-  //@@@@@ do nothing for now
+  log_->PopVerbosity();
 }
 
-void ModelImplementation::Log(LogVerbosity const logVerbosity,
-                              std::string const & message,
-                              int const lineNumber,
-                              std::string const & fileName) const
+void ModelImplementation::LogEntry(LogVerbosity const logVerbosity,
+                                   std::string const & message,
+                                   int const lineNumber,
+                                   std::string const & fileName) const
 {
-  KIM::Log(logVerbosity, message, lineNumber, fileName);
+  log_->LogEntry(logVerbosity, message, lineNumber, fileName);
 }
 
 std::string ModelImplementation::String() const
@@ -1416,8 +1425,10 @@ std::string ModelImplementation::String() const
 }
 
 
-ModelImplementation::ModelImplementation(ModelLibrary * const modelLibrary) :
+ModelImplementation::ModelImplementation(ModelLibrary * const modelLibrary,
+                                         Log * const log) :
     modelLibrary_(modelLibrary),
+    log_(log),
     influenceDistance_(0),
     numberOfCutoffs_(0),
     cutoffs_(0),
@@ -1469,6 +1480,7 @@ ModelImplementation::ModelImplementation(ModelLibrary * const modelLibrary) :
 ModelImplementation::~ModelImplementation()
 {
   delete modelLibrary_;
+  Log::Destroy(&log_);
 }
 
 int ModelImplementation::ModelCreate(

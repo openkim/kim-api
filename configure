@@ -228,7 +228,7 @@ do
 #          exit 4
 #      esac
 #      ;;
-    --log-max-level=*)
+    --log-maximum-level=*)
       case `stripOption $1` in
         KIM_LOG_VERBOSITY_SILENT_)
           logMax=KIM_LOG_VERBOSITY_SILENT_
@@ -249,7 +249,7 @@ do
           logMax=KIM_LOG_VERBOSITY_DEBUG_
           ;;
         *)
-          printf "Unknown value for \`--log-max-level=' argument.\n"
+          printf "Unknown value for \`--log-maximum-level=' argument.\n"
           usage
           exit 5
       esac
@@ -306,6 +306,7 @@ do
       # ignore any such arguments silently
       ;;
     *)
+      printf "Unknown argument.\n"
       usage
       exit 0
   esac

@@ -61,6 +61,7 @@ OBJCPP = KIM_ArgumentName.o \
          KIM_TemperatureUnit.o \
          KIM_TimeUnit.o \
          \
+         KIM_LogImplementation.o \
          KIM_ModelImplementation.o \
          KIM_ModelLibrary.o \
          old_KIM_API_DIRS.o
@@ -112,7 +113,7 @@ KIM_DataType.o: KIM_DataType.cpp $(KIM_DATA_TYPE_CPP) $(KIM_MAKE_FILES)
 KIM_EnergyUnit.o: KIM_EnergyUnit.cpp $(KIM_ENERGY_UNIT_CPP) $(KIM_MAKE_FILES)
 KIM_LanguageName.o: KIM_LanguageName.cpp $(KIM_LANGUAGE_NAME_CPP) $(KIM_MAKE_FILES)
 KIM_LengthUnit.o: KIM_LengthUnit.cpp $(KIM_LENGTH_UNIT_CPP) $(KIM_MAKE_FILES)
-KIM_Log.o: KIM_Log.cpp $(KIM_LOG_CPP) $(KIM_LOG_VERBOSITY_CPP) $(KIM_MAKE_FILES)
+KIM_Log.o: KIM_Log.cpp $(KIM_LOG_CPP) $(KIM_LOG_VERBOSITY_CPP) $(KIM_LOG_IMPLEMENTATION_CPP) $(KIM_MAKE_FILES)
 KIM_LogVerbosity.o: KIM_LogVerbosity.cpp $(KIM_LOG_VERBOSITY_CPP) $(KIM_MAKE_FILES)
 KIM_Model.o: KIM_Model.cpp $(KIM_MODEL_IMPLEMENTATION_CPP) $(KIM_MODEL_CPP) $(KIM_UNIT_SYSTEM_CPP) \
              $(KIM_SUPPORT_STATUS_CPP) $(KIM_CALLBACK_NAME_CPP) $(KIM_ARGUMENT_NAME_CPP) \
@@ -146,6 +147,8 @@ KIM_SemVer.o: KIM_SemVer.cpp $(KIM_SEM_VER_CPP) $(KIM_MAKE_FILES)
 KIM_ModelLibrary.o: KIM_ModelLibrary.cpp $(KIM_MODEL_LIBRARY_CPP) $(KIM_LANGUAGE_NAME_CPP) \
                     $(KIM_API_DIRS_CPP) $(KIM_MAKE_FILES)
 KIM_ModelLibrary.o: KIMDEFINES = -D MODELLIBFILE=\"lib$(MODEL_LIB)\" -D MODELDRIVERLIBFILE=\"lib$(MODEL_DRIVER_LIB)\"
+
+KIM_LogImplementation.o: KIM_LogImplementation.cpp $(KIM_LOG_IMPLEMENTATION_CPP) $(KIM_LOG_VERBOSITY_CPP) $(KIM_MAKE_FILES)
 
 KIM_ModelImplementation.o: KIM_ModelImplementation.cpp $(KIM_MODEL_DESTROY_C) $(KIM_MODEL_COMPUTE_C) \
                            $(KIM_MODEL_REFRESH_C) $(KIM_MODEL_DRIVER_CREATE_C) $(KIM_MODEL_CREATE_C) \

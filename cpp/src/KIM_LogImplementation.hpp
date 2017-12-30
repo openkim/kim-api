@@ -31,23 +31,26 @@
 //
 
 
-#ifndef KIM_LOG_HPP_
-#define KIM_LOG_HPP_
+#ifndef KIM_LOG_IMPLEMENTATION_HPP_
+#define KIM_LOG_IMPLEMENTATION_HPP_
 
 #include <string>
-#include <sstream>
+#include <stack>
+#include <fstream>
+
+#ifndef KIM_LOG_VERBOSITY_HPP_
+#include "KIM_LogVerbosity.hpp"
+#endif
 
 namespace KIM
 {
 // Forward declarations
-class LogVerbosity;
-class LogImplementation;
 
-class Log
+class LogImplementation
 {
  public:
-  static int Create(Log ** const log);
-  static void Destroy(Log ** const log);
+  static int Create(LogImplementation ** const logImplementation);
+  static void Destroy(LogImplementation ** const logImplementation);
 
   std::string GetID() const;
   void SetID(std::string const & id);
@@ -57,19 +60,32 @@ class Log
 
   void LogEntry(LogVerbosity const logVerbosity, std::string const & message,
                 int const lineNumber, std::string const & fileName) const;
-  void LogEntry(LogVerbosity const logVerbosity,
-                std::stringstream const & message,
-                int const lineNumber, std::string const & fileName) const;
 
  private:
   // do not allow copy constructor or operator=
-  Log(Log const &);
-  void operator=(Log const &);
+  LogImplementation(LogImplementation const &);
+  void operator=(LogImplementation const &);
 
-  Log();
-  ~Log();
+  LogImplementation();
+  ~LogImplementation();
 
-  LogImplementation * pimpl;
-};  // class Log
+  static std::string EntryString(std::string const & logVerbosity,
+                                 std::string const & date,
+                                 std::string const & idString,
+                                 std::string const & message,
+                                 int const lineNumberString,
+                                 std::string const & fileName);
+
+  static std::string GetTimeStamp();
+
+  const int idNumber_;
+  std::string idString_;
+  std::stack<LogVerbosity> verbosity_;
+
+  static int numberOfObjectsCreated_;
+  static int numberOfObjectsDestroyed_;
+  static std::ofstream logStream_;
+
+};  // class LogImplementation
 }  // namespace KIM
-#endif  // KIM_LOG_HPP_
+#endif  // KIM_LOG_IMPLEMENTATION_HPP_

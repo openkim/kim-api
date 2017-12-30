@@ -35,9 +35,9 @@
 #undef LOG_SILENT
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_SILENT_)
-#define LOG_SILENT(message)                        \
-  Log(KIM::LOG_VERBOSITY::silent, message,         \
-      __LINE__, __FILE__)
+#define LOG_SILENT(message)                             \
+  this->LogEntry(KIM::LOG_VERBOSITY::silent, message,   \
+                 __LINE__, __FILE__)
 #else
 #define LOG_SILENT(message)
 #endif
@@ -46,9 +46,9 @@
 #undef LOG_FATAL
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_FATAL_)
-#define LOG_FATAL(message)                         \
-  Log(KIM::LOG_VERBOSITY::fatal, message,          \
-      __LINE__, __FILE__)
+#define LOG_FATAL(message)                                    \
+  this->LogEntry(KIM::LOG_VERBOSITY::fatal, message,          \
+                 __LINE__, __FILE__)
 #else
 #define LOG_FATAL(message)
 #endif
@@ -57,9 +57,9 @@
 #undef LOG_ERROR
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_ERROR_)
-#define LOG_ERROR(message)                         \
-  Log(KIM::LOG_VERBOSITY::error, message,          \
-      __LINE__, __FILE__)
+#define LOG_ERROR(message)                                    \
+  this->LogEntry(KIM::LOG_VERBOSITY::error, message,          \
+                 __LINE__, __FILE__)
 #else
 #define LOG_ERROR(message)
 #endif
@@ -68,9 +68,9 @@
 #undef LOG_WARNING
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_WARNING_)
-#define LOG_WARNING(message)                       \
-  Log(KIM::LOG_VERBOSITY::warning, message,        \
-      __LINE__, __FILE__)
+#define LOG_WARNING(message)                                  \
+  this->LogEntry(KIM::LOG_VERBOSITY::warning, message,        \
+                 __LINE__, __FILE__)
 #else
 #define LOG_WARNING(message)
 #endif
@@ -79,9 +79,9 @@
 #undef LOG_INFORMATION
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_INFORMATION_)
-#define LOG_INFORMATION(message)                   \
-  Log(KIM::LOG_VERBOSITY::information, message,    \
-      __LINE__, __FILE__)
+#define LOG_INFORMATION(message)                              \
+  this->LogEntry(KIM::LOG_VERBOSITY::information, message,    \
+                 __LINE__, __FILE__)
 #else
 #define LOG_INFORMATION(message)
 #endif
@@ -90,9 +90,9 @@
 #undef LOG_DEBUG
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_DEBUG_)
-#define LOG_DEBUG(message)                         \
-  Log(KIM::LOG_VERBOSITY::debug, message,          \
-      __LINE__, __FILE__)
+#define LOG_DEBUG(message)                                    \
+  this->LogEntry(KIM::LOG_VERBOSITY::debug, message,          \
+                 __LINE__, __FILE__)
 #else
 #define LOG_DEBUG(message)
 #endif

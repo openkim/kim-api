@@ -86,7 +86,7 @@
 namespace KIM
 {
 // Forward declaration
-
+class Log;
 
 class ModelImplementation
 {
@@ -243,8 +243,8 @@ class ModelImplementation
   void SetLogID(std::string const & logID);
   void PushLogVerbosity(LogVerbosity const logVerbosity);
   void PopLogVerbosity();
-  void Log(LogVerbosity const logVerbosity, std::string const & message,
-           int const lineNumber, std::string const & fileName) const;
+  void LogEntry(LogVerbosity const logVerbosity, std::string const & message,
+                int const lineNumber, std::string const & fileName) const;
   std::string String() const;
 
  private:
@@ -252,7 +252,7 @@ class ModelImplementation
   ModelImplementation(ModelImplementation const &);
   void operator=(ModelImplementation const &);
 
-  ModelImplementation(ModelLibrary * const modelLibrary);
+  ModelImplementation(ModelLibrary * const modelLibrary, Log * const log);
   ~ModelImplementation();
 
   int ModelCreate(Numbering const numbering,
@@ -272,6 +272,8 @@ class ModelImplementation
   ModelLibrary * modelLibrary_;
   int numberOfParameterFiles_;
   std::vector<std::string> parameterFileNames_;
+
+  Log * log_;
 
   int InitializeStandAloneModel(
       LengthUnit const requestedLengthUnit,
