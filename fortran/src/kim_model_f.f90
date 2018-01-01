@@ -945,7 +945,7 @@ subroutine kim_model_set_log_id(model_handle, log_id)
   type(kim_model_type), pointer :: model
 
   call c_f_pointer(model_handle%p, model)
-  call set_log_id(model, log_id)
+  call set_log_id(model, trim(log_id)//c_null_char)
 end subroutine kim_model_set_log_id
 
 subroutine kim_model_push_log_verbosity(model_handle, log_verbosity)

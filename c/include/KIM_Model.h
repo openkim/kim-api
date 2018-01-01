@@ -41,8 +41,8 @@
 #endif
 
 /* Forward declarations */
-#ifndef KIM_LOG_VERBOSITY_NAME_DEFINED_
-#define KIM_LOG_VERBOSITY_NAME_DEFINED_
+#ifndef KIM_LOG_VERBOSITY_DEFINED_
+#define KIM_LOG_VERBOSITY_DEFINED_
 typedef struct KIM_LogVerbosity KIM_LogVerbosity;
 #endif
 
