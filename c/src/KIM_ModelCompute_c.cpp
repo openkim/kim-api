@@ -76,7 +76,7 @@ struct KIM_ModelCompute
   void * p;
 };
 
-#define CONVERT_POINTER KIM::ModelCompute *pModelCompute        \
+#define CONVERT_POINTER KIM::ModelCompute * pModelCompute       \
   = reinterpret_cast<KIM::ModelCompute *>(modelCompute->p)
 
 namespace

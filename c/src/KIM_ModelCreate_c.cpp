@@ -127,7 +127,7 @@ struct KIM_ModelCreate
   void * p;
 };
 
-#define CONVERT_POINTER KIM::ModelCreate *pModelCreate          \
+#define CONVERT_POINTER KIM::ModelCreate * pModelCreate         \
   = reinterpret_cast<KIM::ModelCreate *>(modelCreate->p)
 
 namespace

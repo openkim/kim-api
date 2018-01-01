@@ -57,7 +57,7 @@ struct KIM_ModelRefresh
   void * p;
 };
 
-#define CONVERT_POINTER KIM::ModelRefresh *pModelRefresh        \
+#define CONVERT_POINTER KIM::ModelRefresh * pModelRefresh       \
   = reinterpret_cast<KIM::ModelRefresh *>(modelRefresh->p)
 
 namespace

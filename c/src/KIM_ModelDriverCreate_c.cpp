@@ -128,7 +128,7 @@ struct KIM_ModelDriverCreate
 };
 
 #define CONVERT_POINTER                                         \
-  KIM::ModelDriverCreate *pModelDriverCreate                    \
+  KIM::ModelDriverCreate * pModelDriverCreate                   \
   = reinterpret_cast<KIM::ModelDriverCreate *>(modelCreate->p)
 
 namespace

@@ -136,7 +136,7 @@ struct KIM_Model
   void * p;
 };
 
-#define CONVERT_POINTER KIM::Model *pModel      \
+#define CONVERT_POINTER KIM::Model * pModel     \
   = reinterpret_cast<KIM::Model *>(model->p)
 
 namespace
@@ -407,7 +407,7 @@ int KIM_Model_GetParameterDataTypeExtentAndDescription(
   KIM::DataType typ;
   static std::string str;
 
-  KIM::DataType *pTyp;
+  KIM::DataType * pTyp;
   if (dataType == NULL)
     pTyp = NULL;
   else

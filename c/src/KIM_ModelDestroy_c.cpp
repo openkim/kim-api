@@ -58,7 +58,7 @@ struct KIM_ModelDestroy
   void * p;
 };
 
-#define CONVERT_POINTER KIM::ModelDestroy *pModelDestroy        \
+#define CONVERT_POINTER KIM::ModelDestroy * pModelDestroy       \
   = reinterpret_cast<KIM::ModelDestroy *>(modelDestroy->p)
 
 namespace
