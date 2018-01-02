@@ -85,7 +85,7 @@ int main(int argc, char* argv[])
   }
 
   std::vector<std::string> item;
-  bool accessible = findItem(KIM_MODELS_DIR, modelname, &item);
+  bool accessible = findItem(KIM_MODELS_DIR, modelname, &item, NULL);
   void * model_lib_handle;
   if (accessible)
   {

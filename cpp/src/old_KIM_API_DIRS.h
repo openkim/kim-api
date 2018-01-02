@@ -37,6 +37,8 @@
 #include <list>
 #include <vector>
 
+#include "KIM_Log.hpp"
+
 namespace OLD_KIM
 {
 
@@ -47,17 +49,18 @@ enum DirectoryPathType
 };
 
 bool findItem(DirectoryPathType type, std::string const& name,
-              std::vector<std::string>* const Item);
+              std::vector<std::string>* const Item, KIM::Log * const log);
 
 // needed by collection-info
 std::vector<std::string> getConfigFileName();
 std::string pushEnvDirs(DirectoryPathType type, std::list<std::pair<std::string, std::string> >* const lst);
 std::string getSystemLibraryFileName();
 std::vector<std::string> getSystemDirs();
-std::vector<std::string> getUserDirs();
+std::vector<std::string> getUserDirs(KIM::Log * const log);
 enum GET_ITEMS_ENTRIES {IE_COLLECTION, IE_NAME, IE_DIR, IE_VER};
 void getAvailableItems(DirectoryPathType type,
-                       std::list<std::vector<std::string> > &list);
+                       std::list<std::vector<std::string> > &list,
+                       KIM::Log * const log);
 
 }
 

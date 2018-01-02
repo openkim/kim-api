@@ -144,18 +144,20 @@ KIM_TimeUnit.o: KIM_TimeUnit.cpp $(KIM_TIME_UNIT_CPP) $(KIM_MAKE_FILES)
 KIM_SemVer.o: KIM_SemVer.cpp $(KIM_SEM_VER_CPP) $(KIM_MAKE_FILES)
 
 
-KIM_ModelLibrary.o: KIM_ModelLibrary.cpp $(KIM_MODEL_LIBRARY_CPP) $(KIM_LANGUAGE_NAME_CPP) \
+KIM_ModelLibrary.o: KIM_ModelLibrary.cpp KIM_ModelLibraryLogMacros.hpp \
+                    $(KIM_MODEL_LIBRARY_CPP) $(KIM_LOG_VERBOSITY_CPP) $(KIM_LANGUAGE_NAME_CPP) \
                     $(KIM_API_DIRS_CPP) $(KIM_MAKE_FILES)
 KIM_ModelLibrary.o: KIMDEFINES = -D MODELLIBFILE=\"lib$(MODEL_LIB)\" -D MODELDRIVERLIBFILE=\"lib$(MODEL_DRIVER_LIB)\"
 
 KIM_LogImplementation.o: KIM_LogImplementation.cpp $(KIM_LOG_IMPLEMENTATION_CPP) $(KIM_LOG_VERBOSITY_CPP) $(KIM_MAKE_FILES)
 
-KIM_ModelImplementation.o: KIM_ModelImplementation.cpp $(KIM_MODEL_DESTROY_C) $(KIM_MODEL_COMPUTE_C) \
+KIM_ModelImplementation.o: KIM_ModelImplementation.cpp KIM_ModelImplementationLogMacros.hpp \
+                           $(KIM_MODEL_DESTROY_C) $(KIM_MODEL_COMPUTE_C) \
                            $(KIM_MODEL_REFRESH_C) $(KIM_MODEL_DRIVER_CREATE_C) $(KIM_MODEL_CREATE_C) \
                            $(KIM_UNIT_SYSTEM_C) $(KI_LANGUAGE_NAME_CPP) $(KIM_MODEL_LIBRARY_CPP) \
                            $(KIM_MODEL_IMPLEMENTATION_CPP) $(KIM_MAKE_FILES)
 
-old_KIM_API_DIRS.o: $(KIM_API_DIRS_CPP) $(KIM_MAKE_FILES)
+old_KIM_API_DIRS.o: $(KIM_API_DIRS_CPP) $(KIM_LOG_VERBOSITY_CPP) $(KIM_MAKE_FILES)
 old_KIM_API_DIRS.o: KIMDEFINES = -D PACKAGEDIR=\"$(package_dir)\" \
                                  -D KIMDIR=\"$(KIM_DIR)\" \
                                  -D KIMLIBBUILD=\"$(KIM_LIB_BUILD).so\" \

@@ -108,7 +108,7 @@ void collectionsInfo::env(ENV_OPTIONS const opt)
 
 void collectionsInfo::configFile(CONFIG_FILE_OPTIONS const opt)
 {
-  std::vector<std::string> userDirs = getUserDirs();
+  std::vector<std::string> userDirs = getUserDirs(NULL);
   switch (opt)
   {
     case CF_ENV:
@@ -138,14 +138,14 @@ void collectionsInfo::configFile(CONFIG_FILE_OPTIONS const opt)
 void collectionsInfo::models(bool const list_all, std::string const& name)
 {
   std::list<std::vector<std::string> > items;
-  getAvailableItems(KIM_MODELS_DIR, items);
+  getAvailableItems(KIM_MODELS_DIR, items, NULL);
   listItems(items, list_all, name);
 }
 
 void collectionsInfo::drivers(bool list_all, std::string const& name)
 {
   std::list<std::vector<std::string> > items;
-  getAvailableItems(KIM_MODEL_DRIVERS_DIR, items);
+  getAvailableItems(KIM_MODEL_DRIVERS_DIR, items, NULL);
   listItems(items, list_all, name);
 }
 

@@ -165,15 +165,21 @@ int ModelImplementation::Create(
   }
 
   ModelImplementation * pModelImplementation;
-  pModelImplementation = new ModelImplementation(new ModelLibrary(), pLog);
+  pModelImplementation = new ModelImplementation(new ModelLibrary(pLog), pLog);
+  pModelImplementation->LogEntry(
+      LOG_VERBOSITY::debug,
+      "Created Log and ModelImplementation objects after enter Create().",
+      __LINE__, __FILE__);
 
   error = pModelImplementation->ModelCreate(
       numbering, requestedLengthUnit, requestedEnergyUnit, requestedChargeUnit,
       requestedTemperatureUnit, requestedTimeUnit, modelName);
   if (error)
   {
-    pModelImplementation->LogEntry(KIM::LOG_VERBOSITY::error, "",
-                                   __LINE__, __FILE__);
+    pModelImplementation->LogEntry(
+        LOG_VERBOSITY::error,
+        "ModelCreate routine returned with an error.",
+        __LINE__, __FILE__);
     delete pModelImplementation;  // also deletes pLog
     return true;
   }
@@ -202,15 +208,23 @@ int ModelImplementation::Create(
       ((finalTimeUnit == TIME_UNIT::unused) ||
        (finalTimeUnit == requestedTimeUnit)))
   {
+    pModelImplementation->LogEntry(LOG_VERBOSITY::debug,
+                                   "Accepted requested units.",
+                                   __LINE__, __FILE__);
     *requestedUnitsAccepted = true;
   }
   else
   {
+    pModelImplementation->LogEntry(LOG_VERBOSITY::debug,
+                                   "Rejected requested units.",
+                                   __LINE__, __FILE__);
     *requestedUnitsAccepted = false;
   }
 
   *modelImplementation = pModelImplementation;
-
+  pModelImplementation->LogEntry(LOG_VERBOSITY::debug,
+                                 "Exit Create().",
+                                 __LINE__, __FILE__);
   return false;
 }
 
@@ -218,14 +232,23 @@ int ModelImplementation::Create(
 void ModelImplementation::Destroy(
     ModelImplementation ** const modelImplementation)
 {
+  (*modelImplementation)->LogEntry(LOG_VERBOSITY::debug,
+                                "Enter Destroy().",
+                                __LINE__, __FILE__);
 
   int error = (*modelImplementation)->ModelDestroy();
   if (error)
   {
-    (*modelImplementation)->LogEntry(KIM::LOG_VERBOSITY::error,"",
-                                     __LINE__, __FILE__);
+    (*modelImplementation)->LogEntry(
+        KIM::LOG_VERBOSITY::error,
+        "ModelDestroy routine returned with an error.",
+        __LINE__, __FILE__);
   }
 
+  (*modelImplementation)->LogEntry(
+      LOG_VERBOSITY::debug,
+      "Destroying ModelImplementation object and exit Destroy().",
+      __LINE__, __FILE__);
   delete *modelImplementation;
   *modelImplementation = 0;
 }
@@ -233,56 +256,82 @@ void ModelImplementation::Destroy(
 void ModelImplementation::SetInfluenceDistancePointer(
     double const * const influenceDistance)
 {
+  LOG_DEBUG("Enter SetInfluenceDistancePointer().");
+
   influenceDistance_ = influenceDistance;
+
+  LOG_DEBUG("Exit SetInfluenceDistancePointer().");
 }
+
 void ModelImplementation::GetInfluenceDistance(
     double * const influenceDistance) const
 {
+  LOG_DEBUG("Enter GetInfluenceDistance().");
+
   *influenceDistance = *influenceDistance_;
+
+  LOG_DEBUG("Exit GetInfluenceDistance().");
 }
 
 
 void ModelImplementation::SetNeighborListCutoffsPointer(
     int const numberOfCutoffs, double const * const cutoffs)
 {
+  LOG_DEBUG("Enter SetNeighborListCutoffsPointer().");
+
   numberOfCutoffs_ = numberOfCutoffs;
   cutoffs_ = cutoffs;
+
+  LOG_DEBUG("Exit SetNeightborListCutoffsPointer().");
 }
 
 void ModelImplementation::GetNeighborListCutoffsPointer(
     int * const numberOfCutoffs, double const ** const cutoffs) const
 {
+  LOG_DEBUG("Enter GetNeighborListCutoffsPointer().");
+
   if (numberOfCutoffs != NULL)
     *numberOfCutoffs = numberOfCutoffs_;
   if (cutoffs != NULL)
     *cutoffs = cutoffs_;
+
+  LOG_DEBUG("Exit GetNeighborListCutoffsPointer().");
 }
 
 
 int ModelImplementation::SetRefreshPointer(LanguageName const languageName,
                                            func * const fptr)
 {
+  LOG_DEBUG("Enter SetRefreshPointer().");
+
   refreshLanguage_ = languageName;
   refreshFunction_ = fptr;
 
+  LOG_DEBUG("Exit SetRefreshPointer().");
   return false;
 }
 
 int ModelImplementation::SetDestroyPointer(LanguageName const languageName,
                                            func * const fptr)
 {
+  LOG_DEBUG("Enter SetDestroyPointer().");
+
   destroyLanguage_ = languageName;
   destroyFunction_ = fptr;
 
+  LOG_DEBUG("Exit SetDestroyPointer().");
   return false;
 }
 
 int ModelImplementation::SetComputePointer(LanguageName const languageName,
                                            func * const fptr)
 {
+  LOG_DEBUG("Enter SetComputePointer().");
+
   computeLanguage_ = languageName;
   computeFunction_ = fptr;
 
+  LOG_DEBUG("Exit SetComputePointer().");
   return false;
 }
 
@@ -290,8 +339,11 @@ int ModelImplementation::SetComputePointer(LanguageName const languageName,
 int ModelImplementation::SetSpeciesCode(SpeciesName const speciesName,
                                         int const code)
 {
+  LOG_DEBUG("Enter SetSpeciesCode().");
+
   supportedSpecies_[speciesName] = code;
 
+  LOG_DEBUG("Exit SetSpeciesCode().");
   return false;
 }
 
@@ -300,20 +352,25 @@ int ModelImplementation::GetSpeciesSupportAndCode(
     int * const speciesIsSupported,
     int * const code) const
 {
+  LOG_DEBUG("Enter GetSpeciesSupportAndCode().");
+
   std::map<SpeciesName const, int, CALLBACK_NAME::Comparator>::const_iterator
       result = supportedSpecies_.find(speciesName);
 
   if (result == supportedSpecies_.end())
   {
+    LOG_DEBUG("Species is not supported.");
     *speciesIsSupported = false;
   }
   else
   {
+    LOG_DEBUG("Species is supported.");
     *speciesIsSupported = true;
     if (code != NULL)
       *code = result->second;
   }
 
+  LOG_DEBUG("Exit GetSpeciesSupportAndCode().");
   return false;
 }
 
@@ -321,6 +378,8 @@ int ModelImplementation::GetSpeciesSupportAndCode(
 int ModelImplementation::SetArgumentSupportStatus(
     ArgumentName const argumentName, SupportStatus const supportStatus)
 {
+  LOG_DEBUG("Enter SetArgumentSupportStatus().");
+
   argumentSupportStatus_[argumentName] = supportStatus;
 
   // @@@ do lots of error checking
@@ -332,10 +391,12 @@ int ModelImplementation::SetArgumentSupportStatus(
 
     if (result == argumentPointer_.end())
     {
+      LOG_DEBUG("Initialize argument pointer.");
       argumentPointer_[argumentName] = 0;
     }
   }
 
+  LOG_DEBUG("Exit SetArgumentSupportStatus().");
   return false;
 }
 
@@ -343,17 +404,21 @@ int ModelImplementation::GetArgumentSupportStatus(
     ArgumentName const argumentName, SupportStatus * const supportStatus)
     const
 {
+  LOG_DEBUG("Enter GetArgumentSupportStatus().");
+
   std::map<ArgumentName const, SupportStatus, ARGUMENT_NAME::Comparator>::
       const_iterator result = argumentSupportStatus_.find(argumentName);
 
   if (result == argumentSupportStatus_.end())
   {
     LOG_ERROR("");
+    LOG_DEBUG("Exit GetArgumentSupportStatus().");
     return true;
   }
   else
   {
     *supportStatus = result->second;
+    LOG_DEBUG("Exit GetArgumentSupportStatus().");
     return false;
   }
 }
@@ -362,25 +427,32 @@ int ModelImplementation::GetArgumentSupportStatus(
 int ModelImplementation::SetCallbackSupportStatus(
     CallbackName const callbackName, SupportStatus const supportStatus)
 {
+  LOG_DEBUG("Enter SetCallbackSupportStatus().");
+
   callbackSupportStatus_[callbackName] = supportStatus;
 
+  LOG_DEBUG("Exit SetCallbackSupportStatus().");
   return false;
 }
 
 int ModelImplementation::GetCallbackSupportStatus(
     CallbackName const callbackName, SupportStatus * const supportStatus) const
 {
+  LOG_DEBUG("Enter GetCallbackSupportStatus().");
+
   std::map<CallbackName const, SupportStatus, CALLBACK_NAME::Comparator>::
       const_iterator result = callbackSupportStatus_.find(callbackName);
 
   if (result == callbackSupportStatus_.end())
   {
     LOG_ERROR("");
+    LOG_DEBUG("Exit GetCallbackSupportStatus().");
     return true;
   }
   else
   {
     *supportStatus = result->second;
+    LOG_DEBUG("Exit GetCallbackSupportStatus().");
     return false;
   }
 }
@@ -388,14 +460,21 @@ int ModelImplementation::GetCallbackSupportStatus(
 
 int ModelImplementation::SetModelNumbering(Numbering const numbering)
 {
+  LOG_DEBUG("Enter SetModelNumbering().");
+
   modelNumbering_ = numbering;
 
+  LOG_DEBUG("Exit SetModelNumbering().");
   return false;
 }
 
 int ModelImplementation::SetSimulatorNumbering(Numbering const numbering)
 {
+  LOG_DEBUG("Enter SetModelNumbering().");
+
   simulatorNumbering_ = numbering;
+
+  LOG_DEBUG("Exit SetModelNumbering().");
   return false;
 }
 
@@ -406,12 +485,15 @@ int ModelImplementation::SetUnits(LengthUnit const lengthUnit,
                                   TemperatureUnit const temperatureUnit,
                                   TimeUnit const timeUnit)
 {
+  LOG_DEBUG("Enter SetUnits().");
+
   lengthUnit_ = lengthUnit;
   energyUnit_ = energyUnit;
   chargeUnit_ = chargeUnit;
   temperatureUnit_ = temperatureUnit;
   timeUnit_ = timeUnit;
 
+  LOG_DEBUG("Exit SetUnits().");
   return false;
 }
 
@@ -421,6 +503,8 @@ void ModelImplementation::GetUnits(LengthUnit * const lengthUnit,
                                    TemperatureUnit * const temperatureUnit,
                                    TimeUnit * const timeUnit) const
 {
+  LOG_DEBUG("Enter GetUnits().");
+
   if (lengthUnit != NULL)
     *lengthUnit = lengthUnit_;
   if (energyUnit != NULL)
@@ -431,49 +515,63 @@ void ModelImplementation::GetUnits(LengthUnit * const lengthUnit,
     *temperatureUnit = temperatureUnit_;
   if (timeUnit != NULL)
     *timeUnit = timeUnit_;
+
+  LOG_DEBUG("Exit GetUnits().");
 }
 
 
 int ModelImplementation::GetNumberOfParameterFiles(
     int * const numberOfParameterFiles) const
 {
+  LOG_DEBUG("Enter GetNumberOfParameterFiles().");
+
   if (modelType_ != ModelLibrary::PARAMETERIZED_MODEL)
   {
     LOG_ERROR("");
+    LOG_DEBUG("Exit GetNumberOfParameterFiles().");
     return true;
   }
 
   *numberOfParameterFiles = numberOfParameterFiles_;
+  LOG_DEBUG("Exit GetNumberOfParameterFiles().");
   return false;
 }
 
 int ModelImplementation::GetParameterFileName(
     int const index, std::string * const parameterFileName) const
 {
+  LOG_DEBUG("Enter GetParameterFileName().");
+
   if (modelType_ != ModelLibrary::PARAMETERIZED_MODEL)
   {
     LOG_ERROR("");
+    LOG_DEBUG("Exit GetParameterFileName().");
     return true;
   }
 
   if ((index < 0) || (index >= numberOfParameterFiles_))
   {
     LOG_ERROR("");
+    LOG_DEBUG("Exit GetParameterFileName().");
     return true;
   }
 
   *parameterFileName = parameterFileNames_[index];
+  LOG_DEBUG("Exit GetParameterFileName().");
   return false;
 }
 
 int ModelImplementation::SetParameterPointer(int const extent, int * const ptr,
                                              std::string const & description)
 {
+  LOG_DEBUG("Enter SetParameterPointer().");
+
   parameterDescription_.push_back(description);
   parameterDataType_.push_back(DATA_TYPE::Integer);
   parameterExtent_.push_back(extent);
   parameterPointer_.push_back(ptr);
 
+  LOG_DEBUG("Exit SetParameterPointer().");
   return false;
 }
 
@@ -481,24 +579,33 @@ int ModelImplementation::SetParameterPointer(int const extent,
                                              double * const ptr,
                                              std::string const & description)
 {
+  LOG_DEBUG("Enter SetParameterPointer().");
+
   parameterDescription_.push_back(description);
   parameterDataType_.push_back(DATA_TYPE::Double);
   parameterExtent_.push_back(extent);
   parameterPointer_.push_back(ptr);
 
+  LOG_DEBUG("Exit SetParameterPointer().");
   return false;
 }
 
 void ModelImplementation::GetNumberOfParameters(int * const numberOfParameters)
     const
 {
+  LOG_DEBUG("Enter GetNumberOfParameters().");
+
   *numberOfParameters = parameterPointer_.size();
+
+  LOG_DEBUG("Exit GetNumberOfParameters().");
 }
 
 int ModelImplementation::GetParameterDataTypeExtentAndDescription(
     int const parameterIndex, DataType * const dataType, int * const extent,
     std::string * const description) const
 {
+  LOG_DEBUG("Enter GetParameterDataTypeExtentAndDescription().");
+
   if (dataType != NULL)
     *dataType = parameterDataType_[parameterIndex];
   if (extent != NULL)
@@ -506,6 +613,7 @@ int ModelImplementation::GetParameterDataTypeExtentAndDescription(
   if (description != NULL)
     *description = parameterDescription_[parameterIndex];
 
+  LOG_DEBUG("Exit GetParameterDataTypeExtentAndDescription().");
   return false;
 }
 
@@ -513,14 +621,19 @@ int ModelImplementation::GetParameter(int const parameterIndex,
                                       int const arrayIndex,
                                       int * const parameterValue) const
 {
+  LOG_DEBUG("Enter GetParameter().");
+
   if ((arrayIndex < 0) || (arrayIndex >= parameterExtent_[parameterIndex]))
   {
+    LOG_ERROR("");
+    LOG_DEBUG("Exit GetParameter().");
     return true;
   }
   else
   {
     *parameterValue = reinterpret_cast<int const *>
         (parameterPointer_[parameterIndex])[arrayIndex];
+    LOG_DEBUG("Exit GetParameter().");
     return false;
   }
 }
@@ -529,14 +642,19 @@ int ModelImplementation::GetParameter(int const parameterIndex,
                                       int const arrayIndex,
                                       double * const parameterValue) const
 {
+  LOG_DEBUG("Enter GetParameter().");
+
   if ((arrayIndex < 0) || (arrayIndex >= parameterExtent_[parameterIndex]))
   {
+    LOG_ERROR("");
+    LOG_DEBUG("Exit GetParameter().");
     return true;
   }
   else
   {
     *parameterValue = reinterpret_cast<double const *>
         (parameterPointer_[parameterIndex])[arrayIndex];
+    LOG_DEBUG("Exit GetParameter().");
     return false;
   }
 }
@@ -545,14 +663,18 @@ int ModelImplementation::SetParameter(int const parameterIndex,
                                       int const arrayIndex,
                                       int const parameterValue)
 {
+  LOG_DEBUG("Enter SetParameter().");
   if ((arrayIndex < 0) || (arrayIndex >= parameterExtent_[parameterIndex]))
   {
+    LOG_ERROR("");
+    LOG_DEBUG("Exit SetParameter().");
     return true;
   }
   else
   {
     reinterpret_cast<int *>(parameterPointer_[parameterIndex])[arrayIndex]
         = parameterValue;
+    LOG_DEBUG("Exit SetParameter().");
     return false;
   }
 }
@@ -561,14 +683,18 @@ int ModelImplementation::SetParameter(int const parameterIndex,
                                       int const arrayIndex,
                                       double const parameterValue)
 {
+  LOG_DEBUG("Enter SetParameter().");
   if ((arrayIndex < 0) || (arrayIndex >= parameterExtent_[parameterIndex]))
   {
+    LOG_ERROR("");
+    LOG_DEBUG("Exit SetParameter().");
     return true;
   }
   else
   {
     reinterpret_cast<double *>(parameterPointer_[parameterIndex])[arrayIndex]
         = parameterValue;
+    LOG_DEBUG("Exit SetParameter().");
     return false;
   }
 }
@@ -576,26 +702,34 @@ int ModelImplementation::SetParameter(int const parameterIndex,
 int ModelImplementation::SetArgumentPointer(ArgumentName const argumentName,
                                             int const * const ptr)
 {
+  LOG_DEBUG("Enter SetArgumentPointer().");
+
   //@@@ check for existence
   argumentPointer_[argumentName]
       = reinterpret_cast<void *>(const_cast<int *>(ptr));
 
+  LOG_DEBUG("Exit SetArgumentPointer().");
   return false;
 }
 
 int ModelImplementation::SetArgumentPointer(ArgumentName const argumentName,
                                             double const * const ptr)
 {
+  LOG_DEBUG("Enter SetArgumentPointer().");
+
   //@@@ check for existence
   argumentPointer_[argumentName]
       = reinterpret_cast<void *>(const_cast<double *>(ptr));
 
+  LOG_DEBUG("Exit SetArgumentPointer().");
   return false;
 }
 
 int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
                                             int const ** const ptr) const
 {
+  LOG_DEBUG("Enter GetArgumentPointer().");
+
   std::map<ArgumentName const, void *, ARGUMENT_NAME::Comparator>::
       const_iterator result = argumentPointer_.find(argumentName);
 
@@ -603,11 +737,13 @@ int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
   {
     *ptr = 0;
     LOG_ERROR(argumentName.String());
+    LOG_DEBUG("Exit GetArgumentPointer().");
     return true;
   }
   else
   {
     *ptr = reinterpret_cast<int const *>(result->second);
+    LOG_DEBUG("Exit GetArgumentPointer().");
     return false;
   }
 }
@@ -615,6 +751,8 @@ int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
 int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
                                             int ** const ptr) const
 {
+  LOG_DEBUG("Enter GetArgumentPointer().");
+
   std::map<ArgumentName const, void *, ARGUMENT_NAME::Comparator>::
       const_iterator result = argumentPointer_.find(argumentName);
 
@@ -622,11 +760,13 @@ int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
   {
     *ptr = 0;
     LOG_ERROR("");
+    LOG_DEBUG("Exit GetArgumentPointer().");
     return true;
   }
   else
   {
     *ptr = reinterpret_cast<int *>(result->second);
+    LOG_DEBUG("Exit GetArgumentPointer().");
     return false;
   }
 }
@@ -634,18 +774,22 @@ int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
 int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
                                             double const ** const ptr) const
 {
+  LOG_DEBUG("Enter GetArgumentPointer().");
+
   std::map<ArgumentName const, void *, ARGUMENT_NAME::Comparator>::
       const_iterator result = argumentPointer_.find(argumentName);
 
   if (result == argumentPointer_.end())
   {
     *ptr = 0;
-    LOG_ERROR(argumentName.String());
+    LOG_ERROR("");
+    LOG_DEBUG("Exit GetArgumentPointer().");
     return true;
   }
   else
   {
     *ptr = reinterpret_cast<double const *>(result->second);
+    LOG_DEBUG("Exit GetArgumentPointer().");
     return false;
   }
 }
@@ -653,18 +797,22 @@ int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
 int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
                                             double ** const ptr) const
 {
+  LOG_DEBUG("Enter GetArgumentPointer().");
+
   std::map<ArgumentName const, void *, ARGUMENT_NAME::Comparator>::
       const_iterator result = argumentPointer_.find(argumentName);
 
   if (result == argumentPointer_.end())
   {
     *ptr = 0;
-    LOG_ERROR(argumentName.String());
+    LOG_ERROR("");
+    LOG_DEBUG("Exit GetArgumentPointer().");
     return true;
   }
   else
   {
     *ptr = reinterpret_cast<double *>(result->second);
+    LOG_DEBUG("Exit GetArgumentPointer().");
     return false;
   }
 }
@@ -674,6 +822,8 @@ int ModelImplementation::SetCallbackPointer(CallbackName const callbackName,
                                             func * const fptr,
                                             void const * const dataObject)
 {
+  LOG_DEBUG("Enter SetCallbackPointer().");
+
   std::map<CallbackName const, SupportStatus, CALLBACK_NAME::Comparator>::
       const_iterator result = callbackSupportStatus_.find(callbackName);
 
@@ -682,6 +832,7 @@ int ModelImplementation::SetCallbackPointer(CallbackName const callbackName,
       (result->second == SUPPORT_STATUS::notSupported))
   {
     LOG_ERROR("");
+    LOG_DEBUG("Exit SetCallbackPointer().");
     return true;
   }
   else
@@ -689,6 +840,7 @@ int ModelImplementation::SetCallbackPointer(CallbackName const callbackName,
     callbackLanguage_[callbackName] = languageName;
     callbackFunctionPointer_[callbackName] = fptr;
     callbackDataObjectPointer_[callbackName] = dataObject;
+    LOG_DEBUG("Exit SetCallbackPointer().");
     return false;
   }
 }
@@ -696,6 +848,8 @@ int ModelImplementation::SetCallbackPointer(CallbackName const callbackName,
 int ModelImplementation::IsCallbackPresent(
     CallbackName const callbackName, int * const present) const
 {
+  LOG_DEBUG("Enter IsCallbackPresent().");
+
   std::map<CallbackName const, func *, CALLBACK_NAME::Comparator>::
       const_iterator result = callbackFunctionPointer_.find(callbackName);
 
@@ -704,11 +858,13 @@ int ModelImplementation::IsCallbackPresent(
       (result->second == 0))
   {
     *present = false;
+    LOG_DEBUG("Exit IsCallbackPresent().");
     return false;
   }
   else
   {
     *present = true;
+    LOG_DEBUG("Exit IsCallbackPresent().");
     return false;
   }
 }
@@ -720,6 +876,8 @@ struct KIM_ModelCompute
 
 int ModelImplementation::Compute() const
 {
+  LOG_DEBUG("Enter Compute().");
+
   typedef int ModelComputeCpp(KIM::ModelCompute * const);
   ModelComputeCpp * CppCompute
       = reinterpret_cast<ModelComputeCpp *>(computeFunction_);
@@ -755,16 +913,21 @@ int ModelImplementation::Compute() const
   else
   {
     LOG_ERROR("");
+    LOG_DEBUG("Exit Compute().");
     return true;
   }
 
   if (error)
   {
     LOG_ERROR("");
+    LOG_DEBUG("Exit Compute().");
     return true;
   }
   else
+  {
+    LOG_DEBUG("Exit Compute().");
     return false;
+  }
 }
 
 struct KIM_ModelRefresh
@@ -774,6 +937,8 @@ struct KIM_ModelRefresh
 
 int ModelImplementation::ClearInfluenceDistanceAndCutoffsThenRefreshModel()
 {
+  LOG_DEBUG("Enter ClearInfluenceDistanceAndCutoffsThenRefreshModel().");
+
   influenceDistance_ = 0;
   numberOfCutoffs_ = 0;
   cutoffs_ = 0;
@@ -814,16 +979,21 @@ int ModelImplementation::ClearInfluenceDistanceAndCutoffsThenRefreshModel()
   else
   {
     LOG_ERROR("");
+    LOG_DEBUG("Exit ClearInfluenceDistanceAndCutoffsThenRefreshModel().");
     return true;
   }
 
   if (error)
   {
     LOG_ERROR("");
+    LOG_DEBUG("Exit ClearInfluenceDistanceAndCutoffsThenRefreshModel().");
     return true;
   }
   else
+  {
+    LOG_DEBUG("Exit ClearInfluenceDistanceAndCutoffsThenRefreshModel().");
     return false;
+  }
 }
 
 int ModelImplementation::GetNeighborList(int const neighborListIndex,
@@ -832,12 +1002,15 @@ int ModelImplementation::GetNeighborList(int const neighborListIndex,
                                          int const ** const neighborsOfParticle)
     const
 {
+  LOG_DEBUG("Enter GetNeighborList().");
+
   std::map<CallbackName const, LanguageName, CALLBACK_NAME::Comparator>::
       const_iterator languageResult
       = callbackLanguage_.find(CALLBACK_NAME::GetNeighborList);
   if (languageResult == callbackLanguage_.end())
   {
     LOG_ERROR("");
+    LOG_DEBUG("Exit GetNeighborList().");
     return true;
   }
   LanguageName languageName = languageResult->second;
@@ -895,18 +1068,22 @@ int ModelImplementation::GetNeighborList(int const neighborListIndex,
   else
   {
     LOG_ERROR("");
+    LOG_DEBUG("Exit GetNeighborList().");
     return true;
   }
 
   if (error)
   {
     LOG_ERROR("");
+    LOG_DEBUG("Exit GetNeighborList().");
     return true;
   }
 
   // account for numbering differences if needed
   if (simulatorNumbering_ != modelNumbering_)
   {
+    LOG_DEBUG("Numbering conversion is required.");
+
     std::vector<int> & list = getNeighborListStorage_[neighborListIndex];
     list.resize(*numberOfNeighbors);
     for (int i=0; i<*numberOfNeighbors; ++i)
@@ -916,9 +1093,12 @@ int ModelImplementation::GetNeighborList(int const neighborListIndex,
   }
   else
   {
+    LOG_DEBUG("Numbering conversion is not required.");
+
     *neighborsOfParticle = simulatorNeighborsOfParticle;
   }
 
+  LOG_DEBUG("Exit GetNeighborList().");
   return false;
 }
 
@@ -926,12 +1106,15 @@ int ModelImplementation::ProcessDEDrTerm(double const de, double const r,
                                          double const * const dx,
                                          int const i, int const j) const
 {
+  LOG_DEBUG("Enter ProcessDEDrTerm().");
+
   std::map<CallbackName const, LanguageName, CALLBACK_NAME::Comparator>::
       const_iterator languageResult
       = callbackLanguage_.find(CALLBACK_NAME::ProcessDEDrTerm);
   if (languageResult == callbackLanguage_.end())
   {
     LOG_ERROR("");
+    LOG_DEBUG("Exit ProcessDEDrTerm().");
     return true;
   }
   LanguageName languageName = languageResult->second;
@@ -978,16 +1161,21 @@ int ModelImplementation::ProcessDEDrTerm(double const de, double const r,
   else
   {
     LOG_ERROR("");
+    LOG_DEBUG("Exit ProcessDEDrTerm().");
     return true;
   }
 
   if (error)
   {
     LOG_ERROR("");
+    LOG_DEBUG("Exit ProcessDEDrTerm().");
     return true;
   }
   else
+  {
+    LOG_DEBUG("Exit ProcessDEDrTerm().");
     return false;
+  }
 }
 
 int ModelImplementation::ProcessD2EDr2Term(double const de,
@@ -996,12 +1184,14 @@ int ModelImplementation::ProcessD2EDr2Term(double const de,
                                            int const * const i,
                                            int const * const j) const
 {
+  LOG_DEBUG("Enter ProcessD2EDr2Term().");
   std::map<CallbackName const, LanguageName, CALLBACK_NAME::Comparator>::
       const_iterator languageResult
       = callbackLanguage_.find(CALLBACK_NAME::ProcessD2EDr2Term);
   if (languageResult == callbackLanguage_.end())
   {
     LOG_ERROR("");
+    LOG_DEBUG("Exit ProcessD2EDr2Term().");
     return true;
   }
   LanguageName languageName = languageResult->second;
@@ -1057,37 +1247,58 @@ int ModelImplementation::ProcessD2EDr2Term(double const de,
   else
   {
     LOG_ERROR("");
+    LOG_DEBUG("Exit ProcessD2EDr2Term().");
     return true;
   }
 
   if (error)
   {
     LOG_ERROR("");
+    LOG_DEBUG("Exit ProcessD2EDr2Term().");
     return true;
   }
   else
+  {
+    LOG_DEBUG("Exit ProcessD2EDr2Term().");
     return false;
+  }
 }
 
 void ModelImplementation::SetModelBufferPointer(void * const ptr)
 {
+  LOG_DEBUG("Enter SetModelBufferPointer().");
+
   modelBuffer_ = ptr;
+
+  LOG_DEBUG("Exit SetModelBufferPointer().");
 }
 
 void ModelImplementation::GetModelBufferPointer(void ** const ptr) const
 {
+  LOG_DEBUG("Enter GetModelBufferPointer().");
+
   *ptr = modelBuffer_;
+
+  LOG_DEBUG("Exit GetModelBufferPointer().");
 }
 
 
 void ModelImplementation::SetSimulatorBufferPointer(void * const ptr)
 {
+  LOG_DEBUG("Enter SetSimulatorBufferPointer().");
+
   simulatorBuffer_ = ptr;
+
+  LOG_DEBUG("Exit SetSimulatorBufferPointer().");
 }
 
 void ModelImplementation::GetSimulatorBufferPointer(void ** const ptr) const
 {
+  LOG_DEBUG("Enter GetSimulatorBufferPointer().");
+
   *ptr = simulatorBuffer_;
+
+  LOG_DEBUG("Exit GetSimulatorBufferPointer().");
 }
 
 namespace
@@ -1175,6 +1386,8 @@ int ModelImplementation::ConvertUnit(
     double const timeExponent,
     double * const conversionFactor) const
 {
+  LOG_DEBUG("Enter ConvertUnit().");
+
   static LengthMap lengthConvertToSI = GetLengthMap();
   static EnergyMap energyConvertToSI = GetEnergyMap();
   static ChargeMap chargeConvertToSI = GetChargeMap();
@@ -1200,22 +1413,35 @@ int ModelImplementation::ConvertUnit(
       * pow(temperatureConversion, temperatureExponent)
       * pow(timeConversion, timeExponent);
 
+  LOG_DEBUG("Exit ConvertUnit().");
   return false;
 }
 
 void ModelImplementation::SetLogID(std::string const & logID)
 {
+  LOG_DEBUG("Enter SetLogID().");
+
   log_->SetID(logID);
+
+  LOG_DEBUG("Exit SetLogID().");
 }
 
 void ModelImplementation::PushLogVerbosity(LogVerbosity const logVerbosity)
 {
+  LOG_DEBUG("Enter PushLogVerbosity().");
+
   log_->PushVerbosity(logVerbosity);
+
+  LOG_DEBUG("Exit PushLogVerbosity().");
 }
 
 void ModelImplementation::PopLogVerbosity()
 {
+  LOG_DEBUG("Enter PopLogVerbosity().");
+
   log_->PopVerbosity();
+
+  LOG_DEBUG("Exit PopLogVerbosity().");
 }
 
 void ModelImplementation::LogEntry(LogVerbosity const logVerbosity,
@@ -1223,11 +1449,14 @@ void ModelImplementation::LogEntry(LogVerbosity const logVerbosity,
                                    int const lineNumber,
                                    std::string const & fileName) const
 {
+  // No debug logs to avoid infinite loop
   log_->LogEntry(logVerbosity, message, lineNumber, fileName);
 }
 
 std::string ModelImplementation::String() const
 {
+  LOG_DEBUG("Enter String().");
+
   std::stringstream ss;
   ss << std::setprecision(10) << std::scientific << std::left;
   ss <<
@@ -1421,6 +1650,8 @@ std::string ModelImplementation::String() const
   ss <<
       "====================================================================="
       "===========\n";
+
+  LOG_DEBUG("Exit String().");
   return ss.str();
 }
 
@@ -1438,6 +1669,8 @@ ModelImplementation::ModelImplementation(ModelLibrary * const modelLibrary,
     modelBuffer_(0),
     simulatorBuffer_(0)
 {
+  LOG_DEBUG("Enter ModelImplementation().");
+
   // populate Arguments
   int numberOfArguments;
   ARGUMENT_NAME::GetNumberOfArguments(&numberOfArguments);
@@ -1475,11 +1708,17 @@ ModelImplementation::ModelImplementation(ModelLibrary * const modelLibrary,
     callbackSupportStatus_[*requiredByAPI_Callback]
         = SUPPORT_STATUS::requiredByAPI;
   }
+
+  LOG_DEBUG("Exit ModelImplementation().");
 }
 
 ModelImplementation::~ModelImplementation()
 {
+  LOG_DEBUG("Enter ~ModelImplementation().");
+
   delete modelLibrary_;
+
+  LOG_DEBUG("Destroying Log object and exit ~ModelImplementation().");
   Log::Destroy(&log_);
 }
 
@@ -1492,12 +1731,15 @@ int ModelImplementation::ModelCreate(
     TimeUnit const requestedTimeUnit,
     std::string const & modelName)
 {
+  LOG_DEBUG("Enter ModelCreate().");
+
   modelName_ = modelName;
 
   int error = SetSimulatorNumbering(numbering);
   if (error)
   {
     LOG_ERROR("");
+    LOG_DEBUG("Exit ModelCreate().");
     return true;
   }
 
@@ -1505,6 +1747,7 @@ int ModelImplementation::ModelCreate(
   if (error)
   {
     LOG_ERROR("");
+    LOG_DEBUG("Exit ModelCreate().");
     return true;
   }
 
@@ -1512,6 +1755,7 @@ int ModelImplementation::ModelCreate(
   switch (modelType_)
   {
     case ModelLibrary::STAND_ALONE_MODEL:
+      LOG_DEBUG("Initializing a stand alone model.");
       error = InitializeStandAloneModel(requestedLengthUnit,
                                         requestedEnergyUnit,
                                         requestedChargeUnit,
@@ -1520,10 +1764,12 @@ int ModelImplementation::ModelCreate(
       if (error)
       {
         LOG_ERROR("");
+        LOG_DEBUG("Exit ModelCreate().");
         return true;
       }
       break;
     case ModelLibrary::PARAMETERIZED_MODEL:
+      LOG_DEBUG("Initializing a parameterized model.");
       error = InitializeParameterizedModel(requestedLengthUnit,
                                            requestedEnergyUnit,
                                            requestedChargeUnit,
@@ -1532,19 +1778,23 @@ int ModelImplementation::ModelCreate(
       if (error)
       {
         LOG_ERROR("");
+        LOG_DEBUG("Exit ModelCreate().");
         return true;
       }
       break;
     case ModelLibrary::MODEL_DRIVER:
-      LOG_ERROR("");
+      LOG_ERROR("Creation of a model driver is not allowed.");
+      LOG_DEBUG("Exit ModelCreate().");
       return true;
       break;
     case ModelLibrary::SIMULATOR_MODEL:
-      LOG_ERROR("");
+      LOG_ERROR("Creation of a simulator model is not allowed.");
+      LOG_DEBUG("Exit ModelCreate().");
       return true;
       break;
     default:
-      LOG_ERROR("");
+      LOG_ERROR("Creation of an unknown model type is not allowed.");
+      LOG_DEBUG("Exit ModelCreate().");
       return true;
       break;
   }
@@ -1561,6 +1811,7 @@ int ModelImplementation::ModelCreate(
   if (simulatorNumbering_ != modelNumbering_)
     getNeighborListStorage_.resize(numberOfCutoffs_);
 
+  LOG_DEBUG("Exit ModelCreate().");
   return false;
 }
 
@@ -1571,6 +1822,8 @@ struct KIM_ModelDestroy
 
 int ModelImplementation::ModelDestroy()
 {
+  LOG_DEBUG("Enter ModelDestroy().");
+
   typedef int ModelDestroyCpp(KIM::ModelDestroy * const);
   ModelDestroyCpp * CppDestroy
       = reinterpret_cast<ModelDestroyCpp *>(destroyFunction_);
@@ -1606,16 +1859,21 @@ int ModelImplementation::ModelDestroy()
   else
   {
     LOG_ERROR("");
+    LOG_DEBUG("Exit ModelDestroy().");
     return true;
   }
 
   if (error)
   {
     LOG_ERROR("");
+    LOG_DEBUG("Exit ModelDestroy().");
     return true;
   }
   else
+  {
+    LOG_DEBUG("Exit ModelDestroy().");
     return false;
+  }
 }
 
 struct KIM_ModelCreate
@@ -1630,6 +1888,8 @@ int ModelImplementation::InitializeStandAloneModel(
     TemperatureUnit const requestedTemperatureUnit,
     TimeUnit const requestedTimeUnit)
 {
+  LOG_DEBUG("Enter InitializeStandAloneModel().");
+
   LanguageName languageName;
   func * functionPointer = 0;
   int error = modelLibrary_->GetModelCreateFunctionPointer(
@@ -1637,6 +1897,7 @@ int ModelImplementation::InitializeStandAloneModel(
   if (error)
   {
     LOG_ERROR("");
+    LOG_DEBUG("Exit InitializeStandAloneModel().");
     return true;
   }
 
@@ -1710,15 +1971,18 @@ int ModelImplementation::InitializeStandAloneModel(
   else
   {
     LOG_ERROR("");
+    LOG_DEBUG("Exit InitializeStandAloneModel().");
     return true;
   }
   if (error)
   {
     LOG_ERROR("");
+    LOG_DEBUG("Exit InitializeStandAloneModel().");
     return true;
   }
   else
   {
+    LOG_DEBUG("Exit InitializeStandAloneModel().");
     return false;
   }
 }
@@ -1735,11 +1999,14 @@ int ModelImplementation::InitializeParameterizedModel(
     TemperatureUnit const requestedTemperatureUnit,
     TimeUnit const requestedTimeUnit)
 {
+  LOG_DEBUG("Enter InitializeParameterizedModel().");
+
   // get driver name
   int error = modelLibrary_->GetModelDriverName(&modelDriverName_);
   if (error)
   {
     LOG_ERROR("");
+    LOG_DEBUG("Exit InitializeParameterizedModel().");
     return true;
   }
 
@@ -1748,6 +2015,7 @@ int ModelImplementation::InitializeParameterizedModel(
   if (error)
   {
     LOG_ERROR("");
+    LOG_DEBUG("Exit InitializeParameterizedModel().");
     return true;
   }
 
@@ -1756,12 +2024,14 @@ int ModelImplementation::InitializeParameterizedModel(
   if (error)
   {
     LOG_ERROR("");
+    LOG_DEBUG("Exit InitializeParameterizedModel().");
     return true;
   }
   error = modelLibrary_->Open(false, modelDriverName_);
   if (error)
   {
     LOG_ERROR("");
+    LOG_DEBUG("Exit InitializeParameterizedModel().");
     return true;
   }
   // check that it is a driver
@@ -1770,6 +2040,7 @@ int ModelImplementation::InitializeParameterizedModel(
   if ((error) || (itemType != ModelLibrary::MODEL_DRIVER))
   {
     LOG_ERROR("");
+    LOG_DEBUG("Exit InitializeParameterizedModel().");
     return true;
   }
 
@@ -1780,6 +2051,7 @@ int ModelImplementation::InitializeParameterizedModel(
   if (error)
   {
     LOG_ERROR("");
+    LOG_DEBUG("Exit InitializeParameterizedModel().");
     return true;
   }
 
@@ -1854,11 +2126,13 @@ int ModelImplementation::InitializeParameterizedModel(
   else
   {
     LOG_ERROR("");
+    LOG_DEBUG("Exit InitializeParameterizedModel().");
     return true;
   }
   if (error)
   {
     LOG_ERROR("");
+    LOG_DEBUG("Exit InitializeParameterizedModel().");
     return true;
   }
 
@@ -1871,11 +2145,14 @@ int ModelImplementation::InitializeParameterizedModel(
   numberOfParameterFiles_ = -1;
   parameterFileNames_.clear();
 
+  LOG_DEBUG("Exit InitializeParameterizedModel().");
   return false;
 }
 
 int ModelImplementation::WriteParameterFiles()
 {
+  LOG_DEBUG("Enter WriteParameterFiles().");
+
   modelLibrary_->GetNumberOfParameterFiles(&numberOfParameterFiles_);
   std::vector<unsigned char const *> parameterFileStrings;
   std::vector<unsigned int> parameterFileStringLengths;
@@ -1887,6 +2164,7 @@ int ModelImplementation::WriteParameterFiles()
     if (error)
     {
       LOG_ERROR("");
+      LOG_DEBUG("Exit WriteParameterFiles().");
       return true;
     }
     parameterFileStrings.push_back(strPtr);
@@ -1904,6 +2182,7 @@ int ModelImplementation::WriteParameterFiles()
     {
       free(cstr);
       LOG_ERROR("");
+      LOG_DEBUG("Exit WriteParameterFiles().");
       return true;
     }
     parameterFileNames_.push_back(cstr);
@@ -1915,6 +2194,7 @@ int ModelImplementation::WriteParameterFiles()
     fclose(fl);  // also closed the fileid
   }
 
+  LOG_DEBUG("Exit WriteParameterFiles().");
   return false;
 }
 }  // namespace KIM

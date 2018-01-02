@@ -40,6 +40,10 @@
 #include "KIM_func.hpp"
 #endif
 
+#ifndef KIM_LOG_HPP_
+#include "KIM_Log.hpp"
+#endif
+
 namespace KIM
 {
 // Forward declarations
@@ -49,7 +53,7 @@ class LanguageName;
 class ModelLibrary
 {
  public:
-  ModelLibrary();
+  ModelLibrary(Log * const log);
   ~ModelLibrary();
 
   enum ITEM_TYPE {STAND_ALONE_MODEL, PARAMETERIZED_MODEL, SIMULATOR_MODEL,
@@ -69,10 +73,14 @@ class ModelLibrary
   int GetModelDriverName(std::string * const modelDriverName) const;
   int GetModelCompiledWithVersion(std::string * const versionString) const;
 
+  void LogEntry(LogVerbosity const logVerbosity, std::string const & message,
+                int const lineNumber, std::string const & fileName) const;
+
  private:
   std::string modelName_;
   std::string libraryPath_;
   void * libraryHandle_;
+  Log * log_;
 };
 }  // namespace KIM
 #endif  // KIM_MODEL_LIBRARY_HPP_

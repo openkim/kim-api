@@ -36,7 +36,7 @@ endif
 include ../../../Makefile.KIM_Config
 
 VPATH = ../
-KIMINCLUDEFLAGS = -I../
+KIMINCLUDEFLAGS = -I../../include/ -I../
 
 #
 # Main build settings and rules

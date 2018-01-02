@@ -40,6 +40,7 @@
 #include <sys/stat.h>
 #include <dlfcn.h>
 #include "old_KIM_API_DIRS.h"
+#include "KIM_LogVerbosity.hpp"
 
 #define LINELEN 256
 
@@ -157,7 +158,7 @@ std::vector<std::string> getSystemDirs()
   return systemDirs;
 }
 
-std::vector<std::string> getUserDirs()
+std::vector<std::string> getUserDirs(KIM::Log * const log)
 {
   std::vector<std::string> userDirs(2);
   std::vector<std::string> configFile(getConfigFileName());
@@ -192,9 +193,14 @@ std::vector<std::string> getUserDirs()
       word = strtok(line, sep);
       if (strcmp("model_drivers_dir", word))
       {
-        // error so exit
-        std::cerr << "Unknown line in " << configFile[0] << " file: "
-                  << word << std::endl;
+        if (log)
+        {
+          std::stringstream ss;
+          ss << "Unknown line in " << configFile[0] << " file: "
+             << word << std::endl;
+          log->LogEntry(KIM::LOG_VERBOSITY::error, ss,
+                        __LINE__, __FILE__);
+        }
         userDirs[0] = "";
         goto cleanUp;
       }
@@ -208,9 +214,14 @@ std::vector<std::string> getUserDirs()
       }
       else if (found_root != 0)
       {
-        // error so exit
-        std::cerr << "Invalid value in " << configFile[0] << " file: "
-                  << word << std::endl;
+        if (log)
+        {
+          std::stringstream ss;
+          ss << "Invalid value in " << configFile[0] << " file: "
+             << word << std::endl;
+          log->LogEntry(KIM::LOG_VERBOSITY::error, ss,
+                        __LINE__, __FILE__);
+        }
         userDirs[0] = "";
         goto cleanUp;
       }
@@ -228,9 +239,14 @@ std::vector<std::string> getUserDirs()
       word = strtok(line, sep);
       if (strcmp("models_dir", word))
       {
-        // error so exit
-        std::cerr << "Unknown line in " << configFile[0] << " file: "
-                  << word << std::endl;
+        if (log)
+        {
+          std::stringstream ss;
+          ss << "Unknown line in " << configFile[0] << " file: "
+             << word << std::endl;
+          log->LogEntry(KIM::LOG_VERBOSITY::error, ss,
+                        __LINE__, __FILE__);
+        }
         userDirs[1] = "";
         goto cleanUp;
       }
@@ -244,9 +260,14 @@ std::vector<std::string> getUserDirs()
       }
       else if (found_root != 0)
       {
-        // error so exit
-        std::cerr << "Invalid value in " << configFile[0] << " file: "
-                  << word << std::endl;
+        if (log)
+        {
+          std::stringstream ss;
+          ss << "Invalid value in " << configFile[0] << " file: "
+             << word << std::endl;
+          log->LogEntry(KIM::LOG_VERBOSITY::error, ss,
+                        __LINE__, __FILE__);
+        }
         userDirs[1] = "";
         goto cleanUp;
       }
@@ -267,7 +288,6 @@ std::string pushEnvDirs(
     DirectoryPathType type,
     std::list<std::pair<std::string,std::string> >* const lst)
 {
-
   std::string varName = PACKAGENAME;
   sanitizeString(varName);
   switch (type)
@@ -297,9 +317,10 @@ std::string pushEnvDirs(
 }
 
 void searchPaths(DirectoryPathType type,
-                 std::list<std::pair<std::string,std::string> >* const lst)
+                 std::list<std::pair<std::string,std::string> >* const lst,
+                 KIM::Log * const log)
 {
-  std::vector<std::string> userDirs = getUserDirs();
+  std::vector<std::string> userDirs = getUserDirs(log);
 
   switch (type)
   {
@@ -369,10 +390,11 @@ bool lessThan(std::vector<std::string> lhs, std::vector<std::string> rhs)
 }
 
 void getAvailableItems(DirectoryPathType type,
-                       std::list<std::vector<std::string> > &list)
+                       std::list<std::vector<std::string> > &list,
+                       KIM::Log * const log)
 {
   std::list<std::pair<std::string,std::string> > paths;
-  searchPaths(type, &paths);
+  searchPaths(type, &paths, log);
 
   std::list<std::pair<std::string,std::string> >::const_iterator itr;
   for (itr = paths.begin(); itr != paths.end(); ++itr)
@@ -413,8 +435,13 @@ void getAvailableItems(DirectoryPathType type,
         char* dlsym_error = dlerror();
         if (dlsym_error)
         {
-          std::cerr << "* Error (getAvailableItems): Cannot load symbol: "
-                    << dlsym_error <<std::endl;
+          if (log)
+          {
+            std::stringstream ss;
+            ss << " Cannot load symbol: " << dlsym_error <<std::endl;
+            log->LogEntry(KIM::LOG_VERBOSITY::error, ss,
+                          __LINE__, __FILE__);
+          }
           entry[IE_VER] = "unknown";
         }
         else
@@ -427,7 +454,13 @@ void getAvailableItems(DirectoryPathType type,
       }
       else
       {
-        //std::cerr << dlerror() << std::endl;
+        if (log)
+        {
+          std::stringstream ss;
+          ss << dlerror() <<std::endl;
+          log->LogEntry(KIM::LOG_VERBOSITY::debug, ss,
+                        __LINE__, __FILE__);
+        }
       }
     }
   }
@@ -436,11 +469,11 @@ void getAvailableItems(DirectoryPathType type,
 }
 
 bool findItem(DirectoryPathType type, std::string const& name,
-             std::vector<std::string>* const Item)
+              std::vector<std::string>* const Item, KIM::Log * const log)
 {
   bool success = false;
   std::list<std::vector<std::string> > list;
-  getAvailableItems(type, list);
+  getAvailableItems(type, list, log);
 
   for (std::list<std::vector<std::string> >::const_iterator
            itr = list.begin(); itr != list.end(); ++itr)
