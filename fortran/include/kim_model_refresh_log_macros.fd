@@ -32,16 +32,6 @@
 
 #include "KIM_LOG_DEFINES.inc"
 
-#ifdef LOG_SILENT
-#undef LOG_SILENT
-#endif
-#if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_SILENT_)
-#define LOG_SILENT()\
-call kim_model_refresh_log(model_refresh_handle, kim_log_verbosity_silent, kim_log_message, __LINE__, kim_log_file)
-#else
-#define LOG_SILENT()
-#endif
-
 #ifdef LOG_FATAL
 #undef LOG_FATAL
 #endif

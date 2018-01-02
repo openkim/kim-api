@@ -170,7 +170,8 @@ void LogImplementation::LogEntry(LogVerbosity const logVerbosity,
                                  int const lineNumber,
                                  std::string const & fileName) const
 {
-  if (logVerbosity <= verbosity_.top())
+  if ((logVerbosity != LOG_VERBOSITY::silent) &&
+      (logVerbosity <= verbosity_.top()))
     logStream_ << EntryString(logVerbosity.String(),
                               GetTimeStamp(),
                               idString_,

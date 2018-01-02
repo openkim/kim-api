@@ -31,17 +31,6 @@
 //
 
 
-#ifdef LOG_SILENT
-#undef LOG_SILENT
-#endif
-#if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_SILENT_)
-#define LOG_SILENT(message)                                    \
-  modelRefresh->Log(KIM_LOG_VERBOSITY_silent, message,         \
-                    __LINE__, __FILE__)
-#else
-#define LOG_SILENT(message)
-#endif
-
 #ifdef LOG_FATAL
 #undef LOG_FATAL
 #endif
