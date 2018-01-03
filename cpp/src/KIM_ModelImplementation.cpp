@@ -1501,14 +1501,14 @@ int ModelImplementation::ModelCreate(
     return true;
   }
 
-  error = modelLibrary_->open(true, modelName);
+  error = modelLibrary_->Open(true, modelName);
   if (error)
   {
     LOG_ERROR("");
     return true;
   }
 
-  error = modelLibrary_->getModelType(&modelType_);
+  error = modelLibrary_->GetModelType(&modelType_);
   switch (modelType_)
   {
     case ModelLibrary::STAND_ALONE_MODEL:
@@ -1632,7 +1632,7 @@ int ModelImplementation::InitializeStandAloneModel(
 {
   LanguageName languageName;
   func * functionPointer = 0;
-  int error = modelLibrary_->getModelCreateFunctionPointer(
+  int error = modelLibrary_->GetModelCreateFunctionPointer(
       &languageName, &functionPointer);
   if (error)
   {
@@ -1736,7 +1736,7 @@ int ModelImplementation::InitializeParameterizedModel(
     TimeUnit const requestedTimeUnit)
 {
   // get driver name
-  int error = modelLibrary_->getModelDriverName(&modelDriverName_);
+  int error = modelLibrary_->GetModelDriverName(&modelDriverName_);
   if (error)
   {
     LOG_ERROR("");
@@ -1752,13 +1752,13 @@ int ModelImplementation::InitializeParameterizedModel(
   }
 
   // close model and open driver
-  error = modelLibrary_->close();
+  error = modelLibrary_->Close();
   if (error)
   {
     LOG_ERROR("");
     return true;
   }
-  error = modelLibrary_->open(false, modelDriverName_);
+  error = modelLibrary_->Open(false, modelDriverName_);
   if (error)
   {
     LOG_ERROR("");
@@ -1766,7 +1766,7 @@ int ModelImplementation::InitializeParameterizedModel(
   }
   // check that it is a driver
   ModelLibrary::ITEM_TYPE itemType;
-  error = modelLibrary_->getModelType(&itemType);
+  error = modelLibrary_->GetModelType(&itemType);
   if ((error) || (itemType != ModelLibrary::MODEL_DRIVER))
   {
     LOG_ERROR("");
@@ -1775,7 +1775,7 @@ int ModelImplementation::InitializeParameterizedModel(
 
   LanguageName languageName;
   func * functionPointer = 0;
-  error = modelLibrary_->getModelCreateFunctionPointer(
+  error = modelLibrary_->GetModelCreateFunctionPointer(
       &languageName, &functionPointer);
   if (error)
   {
@@ -1876,14 +1876,14 @@ int ModelImplementation::InitializeParameterizedModel(
 
 int ModelImplementation::WriteParameterFiles()
 {
-  modelLibrary_->getNumberOfParameterFiles(&numberOfParameterFiles_);
+  modelLibrary_->GetNumberOfParameterFiles(&numberOfParameterFiles_);
   std::vector<unsigned char const *> parameterFileStrings;
   std::vector<unsigned int> parameterFileStringLengths;
   for (int i=0; i<numberOfParameterFiles_; ++i)
   {
     unsigned char const * strPtr;
     unsigned int length;
-    int error = modelLibrary_->getParameterFileString(i, &length , &strPtr);
+    int error = modelLibrary_->GetParameterFileString(i, &length , &strPtr);
     if (error)
     {
       LOG_ERROR("");

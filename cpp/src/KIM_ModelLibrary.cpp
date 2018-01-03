@@ -72,7 +72,7 @@ ModelLibrary::~ModelLibrary()
   }
 }
 
-int ModelLibrary::open(bool const typeIsModel, std::string const & modelName)
+int ModelLibrary::Open(bool const typeIsModel, std::string const & modelName)
 {
   if (libraryHandle_ != 0) return true;  // already open
 
@@ -97,7 +97,7 @@ int ModelLibrary::open(bool const typeIsModel, std::string const & modelName)
   return false;
 }
 
-int ModelLibrary::close()
+int ModelLibrary::Close()
 {
   if (libraryHandle_ == 0) return true;  // not open
 
@@ -115,7 +115,7 @@ int ModelLibrary::close()
   return false;
 }
 
-int ModelLibrary::getModelType(ITEM_TYPE * const modelType) const
+int ModelLibrary::GetModelType(ITEM_TYPE * const modelType) const
 {
   *modelType = SIMULATOR_MODEL;  // dummy value
   if (libraryHandle_ == 0) return true;  // not open
@@ -145,7 +145,7 @@ int ModelLibrary::getModelType(ITEM_TYPE * const modelType) const
   return false;
 }
 
-int ModelLibrary::getModelCreateFunctionPointer(
+int ModelLibrary::GetModelCreateFunctionPointer(
     LanguageName * const languageName, func ** const functionPointer) const
 {
   if (libraryHandle_ == 0) return true;  // not open
@@ -179,12 +179,12 @@ int ModelLibrary::getModelCreateFunctionPointer(
   return false;
 }
 
-int ModelLibrary::getNumberOfParameterFiles(int * const numberOfParameterFiles)
+int ModelLibrary::GetNumberOfParameterFiles(int * const numberOfParameterFiles)
     const
 {
   *numberOfParameterFiles = 0;  // default value
   ITEM_TYPE itemType;
-  getModelType(&itemType);
+  GetModelType(&itemType);
   if (itemType != PARAMETERIZED_MODEL) return true;
 
   int const * const numParamFiles = static_cast<int const * const>(
@@ -199,17 +199,17 @@ int ModelLibrary::getNumberOfParameterFiles(int * const numberOfParameterFiles)
   return false;
 }
 
-int ModelLibrary::getParameterFileString(
+int ModelLibrary::GetParameterFileString(
     int const index,
     unsigned int * const parameterFileStringLength,
     unsigned char const ** const parameterFileString) const
 {
   ITEM_TYPE itemType;
-  getModelType(&itemType);
+  GetModelType(&itemType);
   if (itemType != PARAMETERIZED_MODEL) return true;
 
   int numberOfParameterFiles;
-  getNumberOfParameterFiles(&numberOfParameterFiles);
+  GetNumberOfParameterFiles(&numberOfParameterFiles);
   if ((index < 0) || index >= numberOfParameterFiles) return true;
 
   std::stringstream paramFileStringSymbol;
@@ -240,11 +240,11 @@ int ModelLibrary::getParameterFileString(
   return false;
 }
 
-int ModelLibrary::getModelDriverName(std::string * const modelDriverName) const
+int ModelLibrary::GetModelDriverName(std::string * const modelDriverName) const
 {
   if (libraryHandle_ == 0) return true;  // not open
   ITEM_TYPE itemType;
-  getModelType(&itemType);
+  GetModelType(&itemType);
   if (itemType != PARAMETERIZED_MODEL) return true;
 
   std::string modelDriverNameSymbol(modelName_ + "_driver_name");
@@ -261,7 +261,7 @@ int ModelLibrary::getModelDriverName(std::string * const modelDriverName) const
   return false;
 }
 
-int ModelLibrary::getModelCompiledWithVersion(
+int ModelLibrary::GetModelCompiledWithVersion(
     std::string * const versionString) const
 {
   if (libraryHandle_ == 0) return true;  // not open

@@ -55,19 +55,19 @@ class ModelLibrary
   enum ITEM_TYPE {STAND_ALONE_MODEL, PARAMETERIZED_MODEL, SIMULATOR_MODEL,
                   MODEL_DRIVER};
 
-  int open(bool const typeIsModel, std::string const & modelName);
-  int close();
-  int getModelType(ITEM_TYPE * const modelType) const;
-  int getModelCreateFunctionPointer(LanguageName * const languageName,
+  int Open(bool const typeIsModel, std::string const & modelName);
+  int Close();
+  int GetModelType(ITEM_TYPE * const modelType) const;
+  int GetModelCreateFunctionPointer(LanguageName * const languageName,
                                     func ** const functionPointer)
       const;
-  int getNumberOfParameterFiles(int * const numberOfParameterFiles) const;
-  int getParameterFileString(
+  int GetNumberOfParameterFiles(int * const numberOfParameterFiles) const;
+  int GetParameterFileString(
       int const index,
       unsigned int * const parameterFileStringLength,
       unsigned char const ** const parameterFileString) const;
-  int getModelDriverName(std::string * const modelDriverName) const;
-  int getModelCompiledWithVersion(std::string * const versionString) const;
+  int GetModelDriverName(std::string * const modelDriverName) const;
+  int GetModelCompiledWithVersion(std::string * const versionString) const;
 
  private:
   std::string modelName_;
