@@ -231,13 +231,13 @@ $ ./configure
 $ make
 $ sudo make install
 $ sudo ldconfig  # on Redhat-like systems you may need to first add /usr/local/lib to /etc/ld.so.conf
-$ cp -r ./examples/openkim_tests/vc_forces_numer_deriv "${HOME}/"
+$ cp -r ./examples/openkim_tests/utility_forces_numer_deriv "${HOME}/"
 $ cd "${HOME}"
 $ rm -r kim-api-vX.Y.Z  kim-api-vX.Y.Z.txz # replace X.Y.Z with the current version number
 $ kim-api-vX-collections-management install system --sudo EDIP_BOP_Bazant_Kaxiras_Si__MO_958932894036_001
-$ cd vc_forces_numer_deriv
+$ cd utility_forces_numer_deriv
 $ make
-$ printf "EDIP_BOP_Bazant_Kaxiras_Si__MO_958932894036_001" | ./vc_forces_numer_deriv
+$ printf "EDIP_BOP_Bazant_Kaxiras_Si__MO_958932894036_001" | ./utility_forces_numer_deriv
 
 Congratulations, you have now successfully installed the KIM API.  If you would
 like to learn more about the KIM API, read the README file in the docs
@@ -256,15 +256,15 @@ $ cd kim-api-vX.Y.Z
 $ ./configure --prefix=${HOME}/local
 $ make
 $ make install
-$ cp -r ./examples/openkim_tests/vc_forces_numer_deriv "${HOME}/"
+$ cp -r ./examples/openkim_tests/utility_forces_numer_deriv "${HOME}/"
 $ cd "${HOME}"
 $ rm -r kim-api-vX.Y.Z kim-api-vX.Y.Z.txz  # replace X.Y.Z with the current version number
 $ printf "PATH=${PATH}:${HOME}/local/bin\n" >> "${HOME}/.bashrc"
 $ source "${HOME}/.bashrc"
 $ kim-api-vX-collections-management install system EDIP_BOP_Belko_Gusakov_Dorozhkin_Ge__MO_129433059219_000
-$ cd vc_forces_numer_deriv
+$ cd utility_forces_numer_deriv
 $ make
-$ printf "EDIP_BOP_Belko_Gusakov_Dorozhkin_Ge__MO_129433059219_000" | ./vc_forces_numer_deriv
+$ printf "EDIP_BOP_Belko_Gusakov_Dorozhkin_Ge__MO_129433059219_000" | ./utility_forces_numer_deriv
 
 Congratulations, you have now successfully installed the KIM API.  If you would
 like to learn more about the KIM API, read the README file in the docs
@@ -296,8 +296,8 @@ $ kim-api-vX-collections-management list
 
 Now we can test the newly installed Model.
 
-$ cd "${HOME}/vc_forces_numer_deriv"  # we'll assume this is already built
-$ printf "Pair_Morse_Shifted_Jelinek_Ar__MO_831902330215_001" | ./vc_forces_numer_deriv
+$ cd "${HOME}/utility_forces_numer_deriv"  # we'll assume this is already built
+$ printf "Pair_Morse_Shifted_Jelinek_Ar__MO_831902330215_001" | ./utility_forces_numer_deriv
 
 E.2 ADDING MODELS AND/OR MODEL DRIVERS TO THE USER-COLLECTION
 
@@ -305,8 +305,8 @@ Adding Models and/or Model Drivers to the user-collection is similar.
 
 $ kim-api-vX-collections-management install user Pair_Lennard_Jones_Shifted_Bernardes_HighCutoff_Ar__MO_242741380554_001
 $ kim-api-vX-collections-management list
-$ cd "${HOME}/vc_forces_numer_deriv"  # we'll assume this is already built
-$ printf "Pair_Lennard_Jones_Shifted_Bernardes_HighCutoff_Ar__MO_242741380554_001" | ./vc_forces_numer_deriv
+$ cd "${HOME}/utility_forces_numer_deriv"  # we'll assume this is already built
+$ printf "Pair_Lennard_Jones_Shifted_Bernardes_HighCutoff_Ar__MO_242741380554_001" | ./utility_forces_numer_deriv
 
 E.3 ADDING MODELS AND/OR MODEL DRIVERS TO THE ENVIRONMENT-VARIABLE-COLLECTION
 
@@ -343,8 +343,8 @@ $ kim-api-vX-collections-management list
 
 Now we can test the newly available Model.
 
-$ cd "${HOME}/vc_forces_numer_deriv"  # we'll assume this is already built
-$ printf "Pair_Morse_Shifted_GirifalcoWeizer_HighCutoff_Cu__MO_151002396060_001" | ./vc_forces_numer_deriv
+$ cd "${HOME}/utility_forces_numer_deriv"  # we'll assume this is already built
+$ printf "Pair_Morse_Shifted_GirifalcoWeizer_HighCutoff_Cu__MO_151002396060_001" | ./utility_forces_numer_deriv
 
 E.4 ADDING MODELS AND/OR MODEL DRIVERS TO THE CWD-COLLECTION
 
@@ -352,7 +352,7 @@ The process for adding Models and Model Drivers to the CWD-collection involves
 just downloading and building the items.  Here, we'll illustrate the process
 with an example.
 
-$ cd "${HOME}/vc_forces_numer_deriv"  # we'll assume this is already built
+$ cd "${HOME}/utility_forces_numer_deriv"  # we'll assume this is already built
 $ mo=Pair_Exp6_Hogervorst_Mixing_Kong_Chakrabarty_ArNe__MO_946046425752_001
 $ wget --content-disposition "https://openkim.org/download/${mo}.txz"
 $ tar Jxvf "${mo}.txz"
@@ -367,7 +367,7 @@ $ kim-api-vX-collections-management list
 
 Now we can test the newly available Model.
 
-$ printf "Pair_Exp6_Hogervorst_Mixing_Kong_Chakrabarty_ArNe__MO_946046425752_001" | ./vc_forces_numer_deriv
+$ printf "Pair_Exp6_Hogervorst_Mixing_Kong_Chakrabarty_ArNe__MO_946046425752_001" | ./utility_forces_numer_deriv
 
 -------------------------------------------------------------------------------
 

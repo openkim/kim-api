@@ -42,7 +42,7 @@ endif
 include $(shell $(KIM_API_BUILD_CONFIG) --master-config)
 
 
-export OPENKIM_TESTS_LIST := $(wildcard ex_test* vc_*)
+export OPENKIM_TESTS_LIST := $(wildcard ex_test* utility_*)
 
 all: $(patsubst %,%-all,$(OPENKIM_TESTS_LIST))
 

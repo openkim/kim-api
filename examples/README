@@ -63,5 +63,5 @@ Simulators and Tests.
 Once this is complete, you can use the example Simulator and Tests, inplace.
 For example,
 
-$ cd openkim_tests/vc_forces_numer_deriv
-$ printf "ex_model_Ar_P_Morse" | ./vc_forces_numer_deriv
+$ cd openkim_tests/utility_forces_numer_deriv
+$ printf "ex_model_Ar_P_Morse" | ./utility_forces_numer_deriv
