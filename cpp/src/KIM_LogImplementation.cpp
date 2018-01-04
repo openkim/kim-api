@@ -75,10 +75,13 @@ int LogImplementation::Create(LogImplementation ** const logImplementation)
     }
     if (defaultLogVerbosity > LOG_VERBOSITY::silent)
     {
+      std::stringstream ss;
+      ss << "Log file opened.  Default verbosity level is '"
+         << defaultLogVerbosity.String() << "'.";
       logStream_ << EntryString("system",
                                 GetTimeStamp(),
                                 "system",
-                                "Log file opened.",
+                                ss.str(),
                                 __LINE__,
                                 __FILE__);
     }
@@ -121,17 +124,40 @@ std::string LogImplementation::GetID() const
   return idString_;
 }
 
+namespace
+{
+std::string SanitizeID(std::string const & id)
+{
+  std::string idCopy = id;
+  std::string::iterator itr;
+  for (itr=idCopy.begin(); itr != idCopy.end(); ++itr)
+  {
+    if (isspace(*itr))
+    {
+      *itr = '_';
+    }
+    else if ('*' == *itr)
+    {
+      *itr = '_';
+    }
+  }
+
+  return idCopy;
+}
+}  // namespace
+
 void LogImplementation::SetID(std::string const & id)
 {
+  std::string const sanitizedID = SanitizeID(id);
   std::stringstream ss;
-  ss << "Log object renamed.  ID changed to '" << id << "'.";
+  ss << "Log object renamed.  ID changed to '" << sanitizedID << "'.";
   std::stringstream tt;
   tt << "Log object renamed.  ID changed from '" << idString_ << "'.";
 
   LogEntry(LOG_VERBOSITY::information, ss.str(),
            __LINE__, __FILE__);
 
-  idString_ = id;
+  idString_ = sanitizedID;
 
   LogEntry(LOG_VERBOSITY::information, tt.str(),
            __LINE__, __FILE__);
@@ -207,9 +233,8 @@ std::string LogImplementation::EntryString(std::string const & logVerbosity,
            << " * "
            << idString
            << " * "
-           << "["
            << fileName << ":" << lineNumberString
-           << "]";
+           << " * ";
   std::string const prefix(ssPrefix.str());
 
   std::string line;
@@ -218,9 +243,7 @@ std::string LogImplementation::EntryString(std::string const & logVerbosity,
 
   while (std::getline(ssMessage, line, '\n'))
   {
-    ss << prefix
-       << " " << line
-       << "\n";
+    ss << prefix << line << "\n";
   }
 
   return ss.str();
