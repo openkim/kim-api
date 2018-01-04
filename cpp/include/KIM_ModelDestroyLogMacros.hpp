@@ -36,8 +36,8 @@
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_FATAL_)
 #define LOG_FATAL(message)                                              \
-  modelDestroy->Log(KIM_LOG_VERBOSITY_fatal, message,                   \
-                    __LINE__, __FILE__)
+  modelDestroy->LogEntry(KIM_LOG_VERBOSITY_fatal, message,              \
+                         __LINE__, __FILE__)
 #else
 #define LOG_FATAL(message)
 #endif
@@ -47,8 +47,8 @@
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_ERROR_)
 #define LOG_ERROR(message)                                              \
-  modelDestroy->Log(KIM_LOG_VERBOSITY_error, message,                   \
-                    __LINE__, __FILE__)
+  modelDestroy->LogEntry(KIM_LOG_VERBOSITY_error, message,              \
+                         __LINE__, __FILE__)
 #else
 #define LOG_ERROR(message)
 #endif
@@ -58,8 +58,8 @@
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_WARNING_)
 #define LOG_WARNING(message)                                            \
-  modelDestroy->Log(KIM_LOG_VERBOSITY_warning, message,                 \
-                    __LINE__, __FILE__)
+  modelDestroy->LogEntry(KIM_LOG_VERBOSITY_warning, message,            \
+                         __LINE__, __FILE__)
 #else
 #define LOG_WARNING(message)
 #endif
@@ -69,8 +69,8 @@
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_INFORMATION_)
 #define LOG_INFORMATION(message)                                        \
-  modelDestroy->Log(KIM_LOG_VERBOSITY_information, message,             \
-                    __LINE__, __FILE__)
+  modelDestroy->LogEntry(KIM_LOG_VERBOSITY_information, message,        \
+                         __LINE__, __FILE__)
 #else
 #define LOG_INFORMATION(message)
 #endif
@@ -79,9 +79,9 @@
 #undef LOG_DEBUG
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_DEBUG_)
-#define LOG_DEBUG(message)                                          \
-  modelDestroy->Log(KIM_LOG_VERBOSITY_debug, message,               \
-                    __LINE__, __FILE__)
+#define LOG_DEBUG(message)                                              \
+  modelDestroy->LogEntry(KIM_LOG_VERBOSITY_debug, message,              \
+                         __LINE__, __FILE__)
 #else
 #define LOG_DEBUG(message)
 #endif

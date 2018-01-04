@@ -37,7 +37,7 @@
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_FATAL_)
 #define LOG_FATAL()\
-call kim_model_driver_create_log(model_driver_create_handle, kim_log_verbosity_fatal, kim_log_message, __LINE__, kim_log_file)
+call kim_model_driver_create_log_entry(model_driver_create_handle, kim_log_verbosity_fatal, kim_log_message, __LINE__, kim_log_file)
 #else
 #define LOG_FATAL()
 #endif
@@ -47,7 +47,7 @@ call kim_model_driver_create_log(model_driver_create_handle, kim_log_verbosity_f
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_ERROR_)
 #define LOG_ERROR()\
-call kim_model_driver_create_log(model_driver_create_handle, kim_log_verbosity_error, kim_log_message, __LINE__, kim_log_file)
+call kim_model_driver_create_log_entry(model_driver_create_handle, kim_log_verbosity_error, kim_log_message, __LINE__, kim_log_file)
 #else
 #define LOG_ERROR()
 #endif
@@ -57,7 +57,7 @@ call kim_model_driver_create_log(model_driver_create_handle, kim_log_verbosity_e
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_WARNING_)
 #define LOG_WARNING()\
-call kim_model_driver_create_log(model_driver_create_handle, kim_log_verbosity_warning, kim_log_message, __LINE__, kim_log_file)
+call kim_model_driver_create_log_entry(model_driver_create_handle, kim_log_verbosity_warning, kim_log_message, __LINE__, kim_log_file)
 #else
 #define LOG_WARNING()
 #endif
@@ -67,7 +67,7 @@ call kim_model_driver_create_log(model_driver_create_handle, kim_log_verbosity_w
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_INFORMATION_)
 #define LOG_INFORMATION()\
-call kim_model_driver_create_log(model_driver_create_handle, kim_log_verbosity_information, kim_log_message, __LINE__, kim_log_file)
+call kim_model_driver_create_log_entry(model_driver_create_handle, kim_log_verbosity_information, kim_log_message, __LINE__, kim_log_file)
 #else
 #define LOG_INFORMATION()
 #endif
@@ -77,7 +77,7 @@ call kim_model_driver_create_log(model_driver_create_handle, kim_log_verbosity_i
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_DEBUG_)
 #define LOG_DEBUG()\
-call kim_model_driver_create_log(model_driver_create_handle, kim_log_verbosity_debug, kim_log_message, __LINE__, kim_log_file)
+call kim_model_driver_create_log_entry(model_driver_create_handle, kim_log_verbosity_debug, kim_log_message, __LINE__, kim_log_file)
 #else
 #define LOG_DEBUG()
 #endif

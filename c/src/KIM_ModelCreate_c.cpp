@@ -370,15 +370,15 @@ int KIM_ModelCreate_ConvertUnit(
       conversionFactor);
 }
 
-void KIM_ModelCreate_Log(
+void KIM_ModelCreate_LogEntry(
     KIM_ModelCreate const * const modelCreate,
     KIM_LogVerbosity const logVerbosity, char const * const message,
     int const lineNumber, char const * const fileName)
 {
   CONVERT_POINTER;
 
-  pModelCreate->Log(makeLogVerbosityCpp(logVerbosity), message,
-                    lineNumber, fileName);
+  pModelCreate->LogEntry(makeLogVerbosityCpp(logVerbosity), message,
+                         lineNumber, fileName);
 }
 
 char const * const KIM_ModelCreate_String(

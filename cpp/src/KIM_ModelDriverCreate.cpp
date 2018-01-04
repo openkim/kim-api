@@ -209,10 +209,10 @@ int ModelDriverCreate::ConvertUnit(
       conversionFactor);
 }
 
-void ModelDriverCreate::Log(LogVerbosity const logVerbosity,
-                            std::string const & message,
-                            int const lineNumber,
-                            std::string const & fileName) const
+void ModelDriverCreate::LogEntry(LogVerbosity const logVerbosity,
+                                 std::string const & message,
+                                 int const lineNumber,
+                                 std::string const & fileName) const
 {
   CONVERT_POINTER;
 

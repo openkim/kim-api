@@ -184,7 +184,7 @@ int KIM_ModelCreate_ConvertUnit(
     double const timeExponent,
     double * const conversionFactor);
 
-void KIM_ModelCreate_Log(
+void KIM_ModelCreate_LogEntry(
     KIM_ModelCreate const * const modelCreate,
     KIM_LogVerbosity const logVerbosity, char const * const message,
     int const lineNumber, char const * const fileName);

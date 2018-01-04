@@ -118,8 +118,8 @@ class ModelDriverCreate
       double const timeExponent,
       double * const conversionFactor) const;
 
-  void Log(LogVerbosity const logVerbosity, std::string const & message,
-           int const lineNumber, std::string const & fileName) const;
+  void LogEntry(LogVerbosity const logVerbosity, std::string const & message,
+                int const lineNumber, std::string const & fileName) const;
   std::string String() const;
 
  private:

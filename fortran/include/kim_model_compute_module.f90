@@ -47,7 +47,7 @@ module kim_model_compute_module
     kim_model_compute_get_argument_pointer, &
     kim_model_compute_is_callback_present, &
     kim_model_compute_get_model_buffer_pointer, &
-    kim_model_compute_log, &
+    kim_model_compute_log_entry, &
     kim_model_compute_string
 
   type, bind(c) :: kim_model_compute_handle_type
@@ -222,7 +222,7 @@ module kim_model_compute_module
       type(c_ptr), intent(out) :: ptr
     end subroutine kim_model_compute_get_model_buffer_pointer
 
-    subroutine kim_model_compute_log(model_compute_handle, log_verbosity, &
+    subroutine kim_model_compute_log_entry(model_compute_handle, log_verbosity, &
       message, line_number, file_name)
       use, intrinsic :: iso_c_binding
       use kim_log_verbosity_module, only : kim_log_verbosity_type
@@ -233,7 +233,7 @@ module kim_model_compute_module
       character(len=*), intent(in) :: message
       integer(c_int), intent(in), value :: line_number
       character(len=*), intent(in) :: file_name
-    end subroutine kim_model_compute_log
+    end subroutine kim_model_compute_log_entry
 
     subroutine kim_model_compute_string(model_compute_handle, string)
       use, intrinsic :: iso_c_binding

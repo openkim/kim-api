@@ -53,10 +53,10 @@ void ModelDestroy::GetModelBufferPointer(void ** const ptr) const
   pImpl->GetModelBufferPointer(ptr);
 }
 
-void ModelDestroy::Log(LogVerbosity const logVerbosity,
-                       std::string const & message,
-                       int const lineNumber,
-                       std::string const & fileName) const
+void ModelDestroy::LogEntry(LogVerbosity const logVerbosity,
+                            std::string const & message,
+                            int const lineNumber,
+                            std::string const & fileName) const
 {
   CONVERT_POINTER;
 

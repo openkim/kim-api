@@ -39,7 +39,7 @@ module kim_model_destroy_f_module
   public &
     kim_model_destroy_type, &
     get_model_buffer_pointer, &
-    log, &
+    log_entry, &
     model_destroy_string
 
   type, bind(c) :: kim_model_destroy_type
@@ -57,8 +57,8 @@ module kim_model_destroy_f_module
       type(c_ptr), intent(out) :: ptr
     end subroutine get_model_buffer_pointer
 
-    subroutine log(model_destroy, log_verbosity, message, line_number, &
-      file_name) bind(c, name="KIM_ModelDestroy_Log")
+    subroutine log_entry(model_destroy, log_verbosity, message, line_number, &
+      file_name) bind(c, name="KIM_ModelDestroy_LogEntry")
       use, intrinsic :: iso_c_binding
       use kim_log_verbosity_module, only : kim_log_verbosity_type
       import kim_model_destroy_type
@@ -68,7 +68,7 @@ module kim_model_destroy_f_module
       character(c_char), intent(in) :: message(*)
       integer(c_int), intent(in), value :: line_number
       character(c_char), intent(in) :: file_name(*)
-    end subroutine log
+    end subroutine log_entry
 
     type(c_ptr) function model_destroy_string(model_destroy) &
       bind(c, name="KIM_ModelDestroy_String")
@@ -122,12 +122,12 @@ subroutine kim_model_destroy_get_model_buffer_pointer(model_destroy_handle, ptr)
   call get_model_buffer_pointer(model_destroy, ptr)
 end subroutine kim_model_destroy_get_model_buffer_pointer
 
-subroutine kim_model_destroy_log(model_destroy_handle, log_verbosity, message, &
-  line_number, file_name)
+subroutine kim_model_destroy_log_entry(model_destroy_handle, log_verbosity, &
+  message, line_number, file_name)
   use, intrinsic :: iso_c_binding
   use kim_model_destroy_module, only : kim_model_destroy_handle_type
   use kim_log_verbosity_module, only : kim_log_verbosity_type
-  use kim_model_destroy_f_module, only : kim_model_destroy_type, log
+  use kim_model_destroy_f_module, only : kim_model_destroy_type, log_entry
   implicit none
   type(kim_model_destroy_handle_type), intent(in) :: model_destroy_handle
   type(kim_log_verbosity_type), intent(in), value :: log_verbosity
@@ -137,9 +137,9 @@ subroutine kim_model_destroy_log(model_destroy_handle, log_verbosity, message, &
   type(kim_model_destroy_type), pointer :: model_destroy
 
   call c_f_pointer(model_destroy_handle%p, model_destroy)
-  call log(model_destroy, log_verbosity, trim(message)//c_null_char, &
+  call log_entry(model_destroy, log_verbosity, trim(message)//c_null_char, &
     line_number, trim(file_name)//c_null_char)
-end subroutine kim_model_destroy_log
+end subroutine kim_model_destroy_log_entry
 
 subroutine kim_model_destroy_string(model_destroy_handle, string)
   use, intrinsic :: iso_c_binding

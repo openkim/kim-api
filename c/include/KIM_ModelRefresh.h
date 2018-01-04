@@ -56,7 +56,7 @@ void KIM_ModelRefresh_SetNeighborListCutoffsPointer(
     KIM_ModelRefresh * const modelRefresh,
     int const numberOfCutoffs, double const * const cutoffs);
 
-void KIM_ModelRefresh_Log(
+void KIM_ModelRefresh_LogEntry(
     KIM_ModelRefresh const * const modelRefresh,
     KIM_LogVerbosity const logVerbosity, char const * const message,
     int const lineNumber, char const * const fileName);

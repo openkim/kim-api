@@ -45,7 +45,7 @@ module kim_model_compute_f_module
     get_argument_pointer_double, &
     is_callback_present, &
     get_model_buffer_pointer, &
-    log, &
+    log_entry, &
     model_compute_string
 
   type, bind(c) :: kim_model_compute_type
@@ -139,8 +139,8 @@ module kim_model_compute_f_module
       type(c_ptr), intent(out) :: ptr
     end subroutine get_model_buffer_pointer
 
-    subroutine log(model_compute, log_verbosity, message, line_number, &
-      file_name) bind(c, name="KIM_ModelCompute_Log")
+    subroutine log_entry(model_compute, log_verbosity, message, line_number, &
+      file_name) bind(c, name="KIM_ModelCompute_LogEntry")
       use, intrinsic :: iso_c_binding
       use kim_log_verbosity_module, only : kim_log_verbosity_type
       import kim_model_compute_type
@@ -150,7 +150,7 @@ module kim_model_compute_f_module
       character(c_char), intent(in) :: message(*)
       integer(c_int), intent(in), value :: line_number
       character(c_char), intent(in) :: file_name(*)
-    end subroutine log
+    end subroutine log_entry
 
     type(c_ptr) function model_compute_string(model_compute) &
       bind(c, name="KIM_ModelCompute_String")
@@ -418,12 +418,12 @@ subroutine kim_model_compute_get_model_buffer_pointer(model_compute_handle, ptr)
   call get_model_buffer_pointer(model_compute, ptr)
 end subroutine kim_model_compute_get_model_buffer_pointer
 
-subroutine kim_model_compute_log(model_compute_handle, log_verbosity, message, &
-  line_number, file_name)
+subroutine kim_model_compute_log_entry(model_compute_handle, log_verbosity, &
+  message, line_number, file_name)
   use, intrinsic :: iso_c_binding
   use kim_model_compute_module, only : kim_model_compute_handle_type
   use kim_log_verbosity_module, only : kim_log_verbosity_type
-  use kim_model_compute_f_module, only : kim_model_compute_type, log
+  use kim_model_compute_f_module, only : kim_model_compute_type, log_entry
   implicit none
   type(kim_model_compute_handle_type), intent(in) :: model_compute_handle
   type(kim_log_verbosity_type), intent(in), value :: log_verbosity
@@ -433,9 +433,9 @@ subroutine kim_model_compute_log(model_compute_handle, log_verbosity, message, &
   type(kim_model_compute_type), pointer :: model_compute
 
   call c_f_pointer(model_compute_handle%p, model_compute)
-  call log(model_compute, log_verbosity, trim(message)//c_null_char, &
+  call log_entry(model_compute, log_verbosity, trim(message)//c_null_char, &
     line_number, trim(file_name)//c_null_char)
-end subroutine kim_model_compute_log
+end subroutine kim_model_compute_log_entry
 
 subroutine kim_model_compute_string(model_compute_handle, string)
   use, intrinsic :: iso_c_binding

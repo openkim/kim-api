@@ -97,7 +97,7 @@ int KIM_ModelCompute_IsCallbackPresent(
 void KIM_ModelCompute_GetModelBufferPointer(
     KIM_ModelCompute const * const modelCompute, void ** const ptr);
 
-void KIM_ModelCompute_Log(
+void KIM_ModelCompute_LogEntry(
     KIM_ModelCompute const * const modelCompute,
     KIM_LogVerbosity const logVerbosity, char const * const message,
     int const lineNumber, char const * const fileName);

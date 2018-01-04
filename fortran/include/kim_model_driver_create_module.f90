@@ -56,7 +56,7 @@ module kim_model_driver_create_module
     kim_model_driver_create_set_model_buffer_pointer, &
     kim_model_driver_create_set_units, &
     kim_model_driver_create_convert_unit, &
-    kim_model_driver_create_log, &
+    kim_model_driver_create_log_entry, &
     kim_model_driver_create_string
 
   type, bind(c) :: kim_model_driver_create_handle_type
@@ -318,7 +318,7 @@ module kim_model_driver_create_module
       integer(c_int), intent(out) :: ierr
     end subroutine kim_model_driver_create_convert_unit
 
-    subroutine kim_model_driver_create_log( &
+    subroutine kim_model_driver_create_log_entry( &
       model_driver_create_handle, log_verbosity, message, line_number, &
       file_name)
       use, intrinsic :: iso_c_binding
@@ -331,7 +331,7 @@ module kim_model_driver_create_module
       character(len=*), intent(in) :: message
       integer(c_int), intent(in), value :: line_number
       character(len=*), intent(in) :: file_name
-    end subroutine kim_model_driver_create_log
+    end subroutine kim_model_driver_create_log_entry
 
     subroutine kim_model_driver_create_string( &
       model_driver_create_handle, string)

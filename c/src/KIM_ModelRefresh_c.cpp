@@ -97,15 +97,15 @@ void KIM_ModelRefresh_GetModelBufferPointer(
   pModelRefresh->GetModelBufferPointer(ptr);
 }
 
-void KIM_ModelRefresh_Log(
+void KIM_ModelRefresh_LogEntry(
     KIM_ModelRefresh const * const modelRefresh,
     KIM_LogVerbosity const logVerbosity, char const * const message,
     int const lineNumber, char const * const fileName)
 {
   CONVERT_POINTER;
 
-  pModelRefresh->Log(makeLogVerbosityCpp(logVerbosity), message,
-                     lineNumber, fileName);
+  pModelRefresh->LogEntry(makeLogVerbosityCpp(logVerbosity), message,
+                          lineNumber, fileName);
 }
 
 char const * const KIM_ModelRefresh_String(

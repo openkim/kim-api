@@ -193,10 +193,10 @@ int ModelCreate::ConvertUnit(
       conversionFactor);
 }
 
-void ModelCreate::Log(LogVerbosity const logVerbosity,
-                      std::string const & message,
-                      int const lineNumber,
-                      std::string const & fileName) const
+void ModelCreate::LogEntry(LogVerbosity const logVerbosity,
+                           std::string const & message,
+                           int const lineNumber,
+                           std::string const & fileName) const
 {
   CONVERT_POINTER;
 

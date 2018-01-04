@@ -69,10 +69,10 @@ void ModelRefresh::GetModelBufferPointer(void ** const ptr) const
   pImpl->GetModelBufferPointer(ptr);
 }
 
-void ModelRefresh::Log(LogVerbosity const logVerbosity,
-                       std::string const & message,
-                       int const lineNumber,
-                       std::string const & fileName) const
+void ModelRefresh::LogEntry(LogVerbosity const logVerbosity,
+                            std::string const & message,
+                            int const lineNumber,
+                            std::string const & fileName) const
 {
   CONVERT_POINTER;
 

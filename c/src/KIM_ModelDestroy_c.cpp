@@ -79,15 +79,15 @@ void KIM_ModelDestroy_GetModelBufferPointer(
   pModelDestroy->GetModelBufferPointer(ptr);
 }
 
-void KIM_ModelDestroy_Log(
+void KIM_ModelDestroy_LogEntry(
     KIM_ModelDestroy const * const modelDestroy,
     KIM_LogVerbosity const logVerbosity, char const * const message,
     int const lineNumber, char const * const fileName)
 {
   CONVERT_POINTER;
 
-  pModelDestroy->Log(makeLogVerbosityCpp(logVerbosity), message, lineNumber,
-                     fileName);
+  pModelDestroy->LogEntry(makeLogVerbosityCpp(logVerbosity), message,
+                          lineNumber, fileName);
 }
 
 char const * const KIM_ModelDestroy_String(

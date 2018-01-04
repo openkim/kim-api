@@ -122,10 +122,10 @@ void ModelCompute::GetModelBufferPointer(void ** const ptr) const
   pImpl->GetModelBufferPointer(ptr);
 }
 
-void ModelCompute::Log(LogVerbosity const logVerbosity,
-                       std::string const & message,
-                       int const lineNumber,
-                       std::string const & fileName) const
+void ModelCompute::LogEntry(LogVerbosity const logVerbosity,
+                            std::string const & message,
+                            int const lineNumber,
+                            std::string const & fileName) const
 {
   CONVERT_POINTER;
 

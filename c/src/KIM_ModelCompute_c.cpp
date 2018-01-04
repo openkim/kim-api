@@ -177,15 +177,15 @@ void KIM_ModelCompute_GetModelBufferPointer(
   pModelCompute->GetModelBufferPointer(ptr);
 }
 
-void KIM_ModelCompute_Log(
+void KIM_ModelCompute_LogEntry(
     KIM_ModelCompute const * const modelCompute,
     KIM_LogVerbosity const logVerbosity, char const * const message,
     int const lineNumber, char const * const fileName)
 {
   CONVERT_POINTER;
 
-  pModelCompute->Log(makeLogVerbosityCpp(logVerbosity), message, lineNumber,
-                     fileName);
+  pModelCompute->LogEntry(makeLogVerbosityCpp(logVerbosity), message,
+                          lineNumber, fileName);
 }
 
 char const * const KIM_ModelCompute_String(

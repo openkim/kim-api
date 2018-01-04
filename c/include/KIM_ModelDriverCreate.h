@@ -193,7 +193,7 @@ int KIM_ModelDriverCreate_ConvertUnit(
     double const timeExponent,
     double * const conversionFactor);
 
-void KIM_ModelDriverCreate_Log(
+void KIM_ModelDriverCreate_LogEntry(
     KIM_ModelDriverCreate const * const modelDriverCreate,
     KIM_LogVerbosity const logVerbosity, char const * const message,
     int const lineNumber, char const * const fileName);

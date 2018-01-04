@@ -410,15 +410,15 @@ int KIM_ModelDriverCreate_ConvertUnit(
       conversionFactor);
 }
 
-void KIM_ModelDriverCreate_Log(
+void KIM_ModelDriverCreate_LogEntry(
     KIM_ModelDriverCreate const * const modelCreate,
     KIM_LogVerbosity const logVerbosity, char const * const message,
     int const lineNumber, char const * const fileName)
 {
   CONVERT_POINTER;
 
-  pModelDriverCreate->Log(makeLogVerbosityCpp(logVerbosity), message,
-                          lineNumber, fileName);
+  pModelDriverCreate->LogEntry(makeLogVerbosityCpp(logVerbosity), message,
+                               lineNumber, fileName);
 }
 
 char const * const KIM_ModelDriverCreate_String(

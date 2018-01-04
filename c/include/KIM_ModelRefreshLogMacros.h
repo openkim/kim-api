@@ -38,9 +38,9 @@
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_FATAL_)
 #define LOG_FATAL(message)                                              \
-  KIM_ModelRefresh_Log(modelRefresh,                                    \
-                       KIM_LOG_VERBOSITY_fatal, message,                \
-                       __LINE__, __FILE__)
+  KIM_ModelRefresh_LogEntry(modelRefresh,                               \
+                            KIM_LOG_VERBOSITY_fatal, message,           \
+                            __LINE__, __FILE__)
 #else
 #define LOG_FATAL(message)
 #endif
@@ -50,9 +50,9 @@
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_ERROR_)
 #define LOG_ERROR(message)                                              \
-  KIM_ModelRefresh_Log(modelRefresh,                                    \
-                       KIM_LOG_VERBOSITY_error, message,                \
-                       __LINE__, __FILE__)
+  KIM_ModelRefresh_LogEntry(modelRefresh,                               \
+                            KIM_LOG_VERBOSITY_error, message,           \
+                            __LINE__, __FILE__)
 #else
 #define LOG_ERROR(message)
 #endif
@@ -62,9 +62,9 @@
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_WARNING_)
 #define LOG_WARNING(message)                                            \
-  KIM_ModelRefresh_Log(modelRefresh,                                    \
-                       KIM_LOG_VERBOSITY_warning, message,              \
-                       __LINE__, __FILE__)
+  KIM_ModelRefresh_LogEntry(modelRefresh,                               \
+                            KIM_LOG_VERBOSITY_warning, message,         \
+                            __LINE__, __FILE__)
 #else
 #define LOG_WARNING(message)
 #endif
@@ -74,9 +74,9 @@
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_INFORMATION_)
 #define LOG_INFORMATION(message)                                        \
-  KIM_ModelRefresh_Log(modelRefresh,                                    \
-                       KIM_LOG_VERBOSITY_information, message,          \
-                       __LINE__, __FILE__)
+  KIM_ModelRefresh_LogEntry(modelRefresh,                               \
+                            KIM_LOG_VERBOSITY_information, message,     \
+                            __LINE__, __FILE__)
 #else
 #define LOG_INFORMATION(message)
 #endif
@@ -86,9 +86,9 @@
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_DEBUG_)
 #define LOG_DEBUG(message)                                              \
-  KIM_ModelRefresh_Log(modelRefresh,                                    \
-                       KIM_LOG_VERBOSITY_debug, message,                \
-                       __LINE__, __FILE__)
+  KIM_ModelRefresh_LogEntry(modelRefresh,                               \
+                            KIM_LOG_VERBOSITY_debug, message,           \
+                            __LINE__, __FILE__)
 #else
 #define LOG_DEBUG(message)
 #endif

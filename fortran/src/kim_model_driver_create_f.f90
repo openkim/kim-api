@@ -54,7 +54,7 @@ module kim_model_driver_create_f_module
     set_model_buffer_pointer, &
     set_units, &
     convert_unit, &
-    log, &
+    log_entry, &
     model_driver_create_string
 
   type, bind(c) :: kim_model_driver_create_type
@@ -296,8 +296,8 @@ module kim_model_driver_create_f_module
       real(c_double), intent(out) :: conversion_factor
     end function convert_unit
 
-    subroutine log(model_driver_create, log_verbosity, message, &
-      line_number, file_name) bind(c, name="KIM_ModelDriverCreate_Log")
+    subroutine log_entry(model_driver_create, log_verbosity, message, &
+      line_number, file_name) bind(c, name="KIM_ModelDriverCreate_LogEntry")
       use, intrinsic :: iso_c_binding
       use kim_log_verbosity_module, only : kim_log_verbosity_type
       import kim_model_driver_create_type
@@ -308,7 +308,7 @@ module kim_model_driver_create_f_module
       character(c_char), intent(in) :: message(*)
       integer(c_int), intent(in), value :: line_number
       character(c_char), intent(in) :: file_name(*)
-    end subroutine log
+    end subroutine log_entry
 
     type(c_ptr) function model_driver_create_string( &
       model_driver_create) &
@@ -749,13 +749,14 @@ subroutine kim_model_driver_create_convert_unit( &
     charge_exponent, temperature_exponent, time_exponent, conversion_factor)
 end subroutine kim_model_driver_create_convert_unit
 
-subroutine kim_model_driver_create_log(model_driver_create_handle, &
+subroutine kim_model_driver_create_log_entry(model_driver_create_handle, &
   log_verbosity, message, line_number, file_name)
   use, intrinsic :: iso_c_binding
   use kim_model_driver_create_module, only &
     : kim_model_driver_create_handle_type
   use kim_log_verbosity_module, only : kim_log_verbosity_type
-  use kim_model_driver_create_f_module, only : kim_model_driver_create_type, log
+  use kim_model_driver_create_f_module, only : kim_model_driver_create_type, &
+    log_entry
   implicit none
   type(kim_model_driver_create_handle_type), intent(in) &
     :: model_driver_create_handle
@@ -766,9 +767,9 @@ subroutine kim_model_driver_create_log(model_driver_create_handle, &
   type(kim_model_driver_create_type), pointer :: model_driver_create
 
   call c_f_pointer(model_driver_create_handle%p, model_driver_create)
-  call log(model_driver_create, log_verbosity, &
+  call log_entry(model_driver_create, log_verbosity, &
     trim(message)//c_null_char, line_number, trim(file_name)//c_null_char)
-end subroutine kim_model_driver_create_log
+end subroutine kim_model_driver_create_log_entry
 
 subroutine kim_model_driver_create_string(model_driver_create_handle, &
   string)

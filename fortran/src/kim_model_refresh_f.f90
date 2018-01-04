@@ -41,7 +41,7 @@ module kim_model_refresh_f_module
     set_influence_distance_pointer, &
     set_neighbor_list_cutoffs_pointer, &
     get_model_buffer_pointer, &
-    log, &
+    log_entry, &
     model_refresh_string
 
   type, bind(c) :: kim_model_refresh_type
@@ -83,8 +83,8 @@ module kim_model_refresh_f_module
       type(c_ptr), intent(out) :: ptr
     end subroutine get_model_buffer_pointer
 
-    subroutine log(model_refresh, log_verbosity, message, &
-      line_number, file_name) bind(c, name="KIM_ModelRefresh_Log")
+    subroutine log_entry(model_refresh, log_verbosity, message, &
+      line_number, file_name) bind(c, name="KIM_ModelRefresh_LogEntry")
       use, intrinsic :: iso_c_binding
       use kim_log_verbosity_module, only : kim_log_verbosity_type
       import kim_model_refresh_type
@@ -95,7 +95,7 @@ module kim_model_refresh_f_module
       character(c_char), intent(in) :: message(*)
       integer(c_int), intent(in), value :: line_number
       character(c_char), intent(in) :: file_name(*)
-    end subroutine log
+    end subroutine log_entry
 
     type(c_ptr) function model_refresh_string(model_refresh) &
       bind(c, name="KIM_ModelRefresh_String")
@@ -184,12 +184,12 @@ subroutine kim_model_refresh_get_model_buffer_pointer( &
   call get_model_buffer_pointer(model_refresh, ptr)
 end subroutine kim_model_refresh_get_model_buffer_pointer
 
-subroutine kim_model_refresh_log(model_refresh_handle, &
+subroutine kim_model_refresh_log_entry(model_refresh_handle, &
   log_verbosity, message, line_number, file_name)
   use, intrinsic :: iso_c_binding
   use kim_model_refresh_module, only : kim_model_refresh_handle_type
   use kim_log_verbosity_module, only : kim_log_verbosity_type
-  use kim_model_refresh_f_module, only : kim_model_refresh_type, log
+  use kim_model_refresh_f_module, only : kim_model_refresh_type, log_entry
   implicit none
   type(kim_model_refresh_handle_type), intent(in) :: model_refresh_handle
   type(kim_log_verbosity_type), intent(in), value :: log_verbosity
@@ -199,9 +199,9 @@ subroutine kim_model_refresh_log(model_refresh_handle, &
   type(kim_model_refresh_type), pointer :: model_refresh
 
   call c_f_pointer(model_refresh_handle%p, model_refresh)
-  call log(model_refresh, log_verbosity, trim(message)//c_null_char, &
+  call log_entry(model_refresh, log_verbosity, trim(message)//c_null_char, &
     line_number, trim(file_name)//c_null_char)
-end subroutine kim_model_refresh_log
+end subroutine kim_model_refresh_log_entry
 
 subroutine kim_model_refresh_string(model_refresh_handle, string)
   use, intrinsic :: iso_c_binding
