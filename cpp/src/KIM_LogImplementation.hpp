@@ -71,6 +71,7 @@ class LogImplementation
 
   static std::string EntryString(std::string const & logVerbosity,
                                  std::string const & date,
+                                 int const sequence,
                                  std::string const & idString,
                                  std::string const & message,
                                  int const lineNumberString,
@@ -85,6 +86,8 @@ class LogImplementation
   static int numberOfObjectsCreated_;
   static int numberOfObjectsDestroyed_;
   static std::ofstream logStream_;
+  static std::string latestTimeStamp_;
+  static unsigned sequence_;
 
 };  // class LogImplementation
 }  // namespace KIM

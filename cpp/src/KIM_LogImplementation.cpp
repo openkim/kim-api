@@ -52,6 +52,8 @@ namespace KIM
 std::ofstream LogImplementation::logStream_;
 int LogImplementation::numberOfObjectsCreated_ = 0;
 int LogImplementation::numberOfObjectsDestroyed_ = 0;
+std::string LogImplementation::latestTimeStamp_;
+unsigned LogImplementation::sequence_ = 0;
 
 namespace
 {
@@ -78,8 +80,10 @@ int LogImplementation::Create(LogImplementation ** const logImplementation)
       std::stringstream ss;
       ss << "Log file opened.  Default verbosity level is '"
          << defaultLogVerbosity.String() << "'.";
+      std::string const tm(GetTimeStamp());
       logStream_ << EntryString("system",
-                                GetTimeStamp(),
+                                tm,
+                                sequence_,
                                 "system",
                                 ss.str(),
                                 __LINE__,
@@ -108,8 +112,10 @@ void LogImplementation::Destroy(LogImplementation ** const logImplementation)
   {
     if (defaultLogVerbosity > LOG_VERBOSITY::silent)
     {
+      std::string const tm(GetTimeStamp());
       logStream_ << EntryString("system",
-                                GetTimeStamp(),
+                                tm,
+                                sequence_,
                                 "system",
                                 "Log file closed.",
                                 __LINE__,
@@ -198,12 +204,16 @@ void LogImplementation::LogEntry(LogVerbosity const logVerbosity,
 {
   if ((logVerbosity != LOG_VERBOSITY::silent) &&
       (logVerbosity <= verbosity_.top()))
+  {
+    std::string tm(GetTimeStamp());
     logStream_ << EntryString(logVerbosity.String(),
-                              GetTimeStamp(),
+                              tm,
+                              sequence_,
                               idString_,
                               message,
                               lineNumber,
                               fileName);
+  }
 }
 
 LogImplementation::LogImplementation() :
@@ -221,13 +231,14 @@ LogImplementation::~LogImplementation()
 
 std::string LogImplementation::EntryString(std::string const & logVerbosity,
                                            std::string const & date,
+                                           int const sequence,
                                            std::string const & idString,
                                            std::string const & message,
                                            int const lineNumberString,
                                            std::string const & fileName)
 {
   std::stringstream ssPrefix;
-  ssPrefix << date
+  ssPrefix << date << " * " << sequence
            << " * "
            << logVerbosity
            << " * "
@@ -258,7 +269,18 @@ std::string LogImplementation::GetTimeStamp()
   char date[1024];
   strftime(date, 1023, "%F:%T%z", timeInfo);
 
-  return std::string(date);
+  std::string dateString(date);
+  if (dateString == latestTimeStamp_)
+  {
+    ++sequence_;
+  }
+  else
+  {
+    sequence_ = 0;
+    latestTimeStamp_ = dateString;
+  }
+
+  return dateString;
 }
 
 }  // namespace KIM
