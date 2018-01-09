@@ -19,7 +19,7 @@ C CDDL HEADER END
 C
 
 C
-C Copyright (c) 2013--2017, Regents of the University of Minnesota.
+C Copyright (c) 2013--2018, Regents of the University of Minnesota.
 C All rights reserved.
 C
 C Contributors:

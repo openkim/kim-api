@@ -19,7 +19,7 @@
 //                                                                              //123
 //                                                                              //123
 //                                                                              //123
-// Copyright (c) 2012--2017, Regents of the University of Minnesota.            //123
+// Copyright (c) 2012--2018, Regents of the University of Minnesota.            //123
 // All rights reserved.                                                         //123
 //                                                                              //123
 // Contributors:                                                                //123
