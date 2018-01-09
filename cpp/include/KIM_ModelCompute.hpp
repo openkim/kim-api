@@ -46,7 +46,6 @@ class CallbackName;
 
 class ModelCompute{
  public:
-  // call back functions
   int GetNeighborList(int const neighborListIndex, int const particleNumber,
                       int * const numberOfNeighbors,
                       int const ** const neighborsOfParticle) const;
@@ -58,7 +57,6 @@ class ModelCompute{
                         double const * const dx, int const * const i,
                         int const * const j) const;
 
-  // data functions
   int GetArgumentPointer(ArgumentName const argumentName,
                          int const ** const ptr) const;
   int GetArgumentPointer(ArgumentName const argumentName,

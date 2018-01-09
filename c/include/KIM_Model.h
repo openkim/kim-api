@@ -149,7 +149,6 @@ void KIM_Model_GetUnits(KIM_Model const * const model,
                         KIM_TimeUnit * const timeUnit);
 
 
-/* *data functions */
 int KIM_Model_SetArgumentPointerInteger(KIM_Model * const model,
                                         KIM_ArgumentName const argumentName,
                                         int const * const ptr);

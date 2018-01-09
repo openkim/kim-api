@@ -49,10 +49,8 @@ class TimeUnit;
 
 class ModelRefresh{
  public:
-  // stores pointer value
   void SetInfluenceDistancePointer(double const * const influenceDistance);
 
-  // stores pointer value
   void SetNeighborListCutoffsPointer(int const numberOfCutoffs,
                                      double const * const cutoffs);
 

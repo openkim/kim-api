@@ -222,8 +222,8 @@ module kim_model_compute_module
       type(c_ptr), intent(out) :: ptr
     end subroutine kim_model_compute_get_model_buffer_pointer
 
-    subroutine kim_model_compute_log_entry(model_compute_handle, log_verbosity, &
-      message, line_number, file_name)
+    subroutine kim_model_compute_log_entry(model_compute_handle, &
+      log_verbosity, message, line_number, file_name)
       use, intrinsic :: iso_c_binding
       use kim_log_verbosity_module, only : kim_log_verbosity_type
       import kim_model_compute_handle_type

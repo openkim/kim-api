@@ -80,7 +80,6 @@ int KIM_ModelCompute_ProcessD2EDr2Term(
     int const * const i,
     int const * const j);
 
-/* *data functions */
 int KIM_ModelCompute_GetArgumentPointerInteger(
     KIM_ModelCompute const * const modelCompute,
     KIM_ArgumentName const argumentName,

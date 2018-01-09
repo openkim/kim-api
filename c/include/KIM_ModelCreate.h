@@ -122,7 +122,6 @@ void KIM_ModelCreate_SetNeighborListCutoffsPointer(
     KIM_ModelCreate * const modelCreate,
     int const numberOfCutoffs, double const * const cutoffs);
 
-/* *method functions */
 int KIM_ModelCreate_SetRefreshPointer(
     KIM_ModelCreate * const modelCreate,
     KIM_LanguageName const languageName, func * const fptr);
@@ -156,7 +155,6 @@ int KIM_ModelCreate_SetParameterPointerDouble(
 void KIM_ModelCreate_SetModelBufferPointer(
     KIM_ModelCreate * const modelCreate, void * const ptr);
 
-/* Unit_Handling related routines */
 int KIM_ModelCreate_SetUnits(
     KIM_ModelCreate * const modelCreate,
     KIM_LengthUnit const lengthUnit,

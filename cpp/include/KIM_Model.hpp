@@ -75,7 +75,6 @@ class Model
 
   void GetInfluenceDistance(double * const influenceDistance) const;
 
-  // allows NULL as value of cutoffs (to get just numberOfCutoffs)
   void GetNeighborListCutoffsPointer(int * const numberOfCutoffs,
                                      double const ** const cutoffs) const;
 
@@ -91,7 +90,6 @@ class Model
                 TimeUnit * const timeUnit) const;
 
 
-  // data functions
   int SetArgumentPointer(ArgumentName const argumentName,
                          int const * const ptr);
   int SetArgumentPointer(ArgumentName const argumentName,

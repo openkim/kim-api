@@ -67,14 +67,11 @@ class ModelDriverCreate
 
   int SetModelNumbering(Numbering const numbering);
 
-  // stores pointer value
   void SetInfluenceDistancePointer(double const * const influenceDistance);
 
-  // stores pointer value
   void SetNeighborListCutoffsPointer(int const numberOfCutoffs,
                                      double const * const cutoffs);
 
-  // method functions
   int SetRefreshPointer(LanguageName const languageName, func * const fptr);
   int SetDestroyPointer(LanguageName const languageName, func * const fptr);
   int SetComputePointer(LanguageName const languageName, func * const fptr);

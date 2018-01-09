@@ -130,7 +130,6 @@ void KIM_ModelDriverCreate_SetNeighborListCutoffsPointer(
     KIM_ModelDriverCreate * const modelDriverCreate,
     int const numberOfCutoffs, double const * const cutoffs);
 
-/* *method functions */
 int KIM_ModelDriverCreate_SetRefreshPointer(
     KIM_ModelDriverCreate * const modelDriverCreate,
     KIM_LanguageName const languageName, func * const fptr);
@@ -165,7 +164,6 @@ void KIM_ModelDriverCreate_SetModelBufferPointer(
     KIM_ModelDriverCreate * const modelDriverCreate,
     void * const ptr);
 
-/* Unit_Handling related routines */
 int KIM_ModelDriverCreate_SetUnits(
     KIM_ModelDriverCreate * const modelDriverCreate,
     KIM_LengthUnit const lengthUnit,
