@@ -72,7 +72,6 @@ init_wrapper.cpp: $(KIM_MAKE_FILES)
 	$(QUELL)printf "char $(strip $(MODEL_NAME))_compiled_with_version[]\n"                         >> $@
 	$(QUELL)printf "  = \"$(VERSION_FULL)\";\n"                                                    >> $@
 	$(QUELL)printf "char $(strip $(MODEL_NAME))_language[] = \"$(MODEL_CREATE_FUNCTION_LANG)\";\n" >> $@
-	$(QUELL)printf "char const * const $(strip $(MODEL_NAME))_driver_name = 0;\n"                  >> $@
 	$(QUELL)printf "}\n"                                                                           >> $@
 
 lib$(MODEL_LIB).a: lib$(MODEL_LIB_BUILD).a
@@ -100,7 +99,6 @@ ifeq (darwin, $(KIM_SYSTEMLINKER))
 	$(QUELL)printf "_$(MODEL_NAME)_create_pointer\n"                    >> $@
 	$(QUELL)printf "_$(MODEL_NAME)_compiled_with_version\n"             >> $@
 	$(QUELL)printf "_$(MODEL_NAME)_language\n"                          >> $@
-	$(QUELL)printf "_$(MODEL_NAME)_driver_name\n"                       >> $@
 else # everything else (linux and freebsd)
 	$(QUELL)printf "{\n"                                                 > $@
 	$(QUELL)printf "   global:\n"                                       >> $@
@@ -108,7 +106,6 @@ else # everything else (linux and freebsd)
 	$(QUELL)printf "           $(MODEL_NAME)_create_pointer;\n"         >> $@
 	$(QUELL)printf "           $(MODEL_NAME)_compiled_with_version;\n"  >> $@
 	$(QUELL)printf "           $(MODEL_NAME)_language;\n"               >> $@
-	$(QUELL)printf "           $(MODEL_NAME)_driver_name;\n"            >> $@
 	$(QUELL)printf "\n"                                                 >> $@
 	$(QUELL)printf "   local: *;\n"                                     >> $@
 	$(QUELL)printf "};\n"                                               >> $@
