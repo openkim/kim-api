@@ -33,8 +33,6 @@
 /*                                                                            */
 
 
-/** \file */
-
 #ifndef KIM_MODEL_H_
 #define KIM_MODEL_H_
 
