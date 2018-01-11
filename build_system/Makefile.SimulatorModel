@@ -75,7 +75,8 @@ $(SIMULATOR_MODEL_NAME).cpp: $(paramfile_name_list) $(KIM_MAKE_FILES)
             varnm=`printf "$${fl_name}" | \
                        sed -e 's/^\([[:digit:]]\)/__\1/' -e 's/[^[:alnum:]]/_/g'` && \
                 xxd -i $${fl_name} | \
-                sed -e "s/$${varnm}/parameter_file_$(flnum)/g" >> $@; \
+                sed -e "s/$${varnm}/parameter_file_$(flnum)/g" >> $@ && \
+                printf "char parameter_file_$(flnum)_name[] = \"$${fl_name}\";\n" >> $@; \
          )
 	$(QUELL)printf "\n\n"                                                             >> $@
 	$(QUELL)\
@@ -83,7 +84,8 @@ $(SIMULATOR_MODEL_NAME).cpp: $(paramfile_name_list) $(KIM_MAKE_FILES)
             varnm=`printf "$${fl_name}" | \
                        sed -e 's/^\([[:digit:]]\)/__\1/' -e 's/[^[:alnum:]]/_/g'` && \
                 xxd -i $${fl_name} | \
-                sed -e "s/$${varnm}/metadata_file/g" >> $@
+                sed -e "s/$${varnm}/metadata_file/g" >> $@ && \
+                printf "char metadata_file_name[] = \"$${fl_name}\";\n" >> $@;
 	$(QUELL)printf "\n\n"                                                             >> $@
 	$(QUELL)printf "char kim_item_type[] = \"simulator-model\";\n"                    >> $@
 	$(QUELL)printf "char $(strip $(MODEL_NAME))_compiled_with_version[]\n"            >> $@
@@ -115,8 +117,10 @@ ifeq (darwin, $(KIM_SYSTEMLINKER))
 	$(QUELL)$(foreach flnum,$(paramfile_num_list),\
              printf "_parameter_file_$(flnum)\n" >> $@; \
              printf "_parameter_file_$(flnum)_len\n" >> $@; \
+             printf "_parameter_file_$(flnum)_name\n" >> $@; \
           )
 	$(QUELL)printf "_metadata_file\n"                                   >> $@
+	$(QUELL)printf "_metadata_file_name\n"                              >> $@
 	$(QUELL)printf "_metadata_file_len\n"                               >> $@
 	$(QUELL)printf "_kim_item_type\n"                                   >> $@
 	$(QUELL)printf "_$(MODEL_NAME)_compiled_with_version\n"             >> $@
@@ -127,9 +131,11 @@ else # everything else (linux and freebsd)
 	$(QUELL)$(foreach flnum,$(paramfile_num_list),\
             printf "parameter_file_$(flnum);\n" >> $@; \
             printf "parameter_file_$(flnum)_len;\n" >> $@; \
+            printf "parameter_file_$(flnum)_name;\n" >> $@; \
          )
 	$(QUELL)printf "           metadata_file;\n"                        >> $@
 	$(QUELL)printf "           metadata_file_len;\n"                    >> $@
+	$(QUELL)printf "           metadata_file_name;\n"                   >> $@
 	$(QUELL)printf "           kim_item_type;\n"                        >> $@
 	$(QUELL)printf "           $(MODEL_NAME)_compiled_with_version;\n"  >> $@
 	$(QUELL)printf "\n"                                                 >> $@

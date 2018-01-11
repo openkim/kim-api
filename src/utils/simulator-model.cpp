@@ -41,18 +41,22 @@
 
 void usage(char const* const name)
 {
-  std::cerr << "usage: "
-            << name << " "
+  // Follows docopt.org format
+  std::cerr << "Usage:\n"
+            << "  " << name << " "
             << "<simulator model name> "
-            << "<metadata_file | number_of_parameter_files "
-            << "| parameter file index>\n";
+            << "number-of-parameter-files\n"
+            << "  " << name << " "
+            << "<simulator model name> "
+            << "(metadata-file | <parameter-file-index>) "
+            << "(data | name>)\n";
       // note: this interface is likely to change in future kim-api releases
       }
 
 
 int main(int argc, char* argv[])
 {
-  if ((argc < 3) || (argc >= 4))
+  if ((argc < 3) || (argc >= 5))
   {
     usage(argv[0]);
     return -1;
@@ -62,21 +66,47 @@ int main(int argc, char* argv[])
 
   std::string symbol;
   int argFlag;
-  if (std::string(argv[2]) == "number_of_parameter_files")
+  int nameFlag;
+  if (std::string(argv[2]) == "number-of-parameter-files")
   {
     argFlag = 0;
+    nameFlag = 0;
     symbol = "number_of_parameter_files";
   }
-  else if (std::string(argv[2]) == "metadata_file")
+  else if (argc < 4)
   {
-    argFlag = 1;
-    symbol = "metadata_file";
+    usage(argv[0]);
+    return -2;
   }
   else
   {
-    argFlag = 1;
-    symbol = "parameter_file_" + std::string(argv[2]);
+    if (std::string(argv[2]) == "metadata-file")
+    {
+      argFlag = 1;
+      symbol = "metadata_file";
+    }
+    else
+    {
+      argFlag = 1;
+      symbol = "parameter_file_" + std::string(argv[2]);
+    }
+
+    if (std::string(argv[3]) == "name")
+    {
+      nameFlag = 1;
+      symbol.append("_name");
+    }
+    else if (std::string(argv[3]) == "data")
+    {
+      nameFlag = 0;
+    }
+    else
+    {
+      usage(argv[0]);
+      return -3;
+    }
   }
+
 
   std::vector<std::string> item;
   bool accessible = findItem(KIM_MODELS_DIR, modelname, &item);
@@ -117,19 +147,26 @@ int main(int argc, char* argv[])
 
   if (argFlag)
   {
-    unsigned char const * filePointer
-        = (unsigned char const *) dlsym(model_lib_handle, symbol.c_str());
-    dlsym_error = dlerror();
-    if (dlsym_error) {
-      std::cout << "* Error: Cannot load symbol: " << dlsym_error <<std::endl;
-      dlclose(model_lib_handle);
-      return 5;
+    if (nameFlag)
+    {
+      char const * const namePointer
+          = (char const * const) dlsym(model_lib_handle, symbol.c_str());
+      dlsym_error = dlerror();
+      if (dlsym_error) {
+        std::cout << "* Error: Cannot load symbol: " << dlsym_error <<std::endl;
+        dlclose(model_lib_handle);
+        return 5;
+      }
+      else
+      {
+        std::cout << namePointer << std::endl;
+      }
     }
     else
     {
-      symbol += "_len";
-      unsigned int const * fileLength
-          = (unsigned int const *) dlsym(model_lib_handle, symbol.c_str());
+      unsigned char const * const filePointer
+          = (unsigned char const * const) dlsym(model_lib_handle,
+                                                symbol.c_str());
       dlsym_error = dlerror();
       if (dlsym_error) {
         std::cout << "* Error: Cannot load symbol: " << dlsym_error <<std::endl;
@@ -138,7 +175,19 @@ int main(int argc, char* argv[])
       }
       else
       {
-        fwrite(filePointer, sizeof(unsigned char), *fileLength, stdout);
+        symbol.append("_len");
+        unsigned int const * fileLength
+            = (unsigned int const *) dlsym(model_lib_handle, symbol.c_str());
+        dlsym_error = dlerror();
+        if (dlsym_error) {
+          std::cout << "* Error: Cannot load symbol: " << dlsym_error <<std::endl;
+          dlclose(model_lib_handle);
+          return 7;
+        }
+        else
+        {
+          fwrite(filePointer, sizeof(unsigned char), *fileLength, stdout);
+        }
       }
     }
   }
@@ -150,7 +199,7 @@ int main(int argc, char* argv[])
     if (dlsym_error) {
       std::cout << "* Error: Cannot load symbol: " << dlsym_error <<std::endl;
       dlclose(model_lib_handle);
-      return 6;
+      return 8;
     }
     else
       std::cout << *number << std::endl;
