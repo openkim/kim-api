@@ -44,19 +44,21 @@ void usage(char const* const name)
   // Follows docopt.org format
   std::cerr << "Usage:\n"
             << "  " << name << " "
+            << "<simulator model name>\n"
+            << "  " << name << " "
             << "<simulator model name> "
             << "number-of-parameter-files\n"
             << "  " << name << " "
             << "<simulator model name> "
             << "(metadata-file | <parameter-file-index>) "
-            << "(data | name>)\n";
+            << "(data | name)\n";
       // note: this interface is likely to change in future kim-api releases
       }
 
 
 int main(int argc, char* argv[])
 {
-  if ((argc < 3) || (argc >= 5))
+  if ((argc < 2) || (argc >= 5))
   {
     usage(argv[0]);
     return -1;
@@ -67,7 +69,14 @@ int main(int argc, char* argv[])
   std::string symbol;
   int argFlag;
   int nameFlag;
-  if (std::string(argv[2]) == "number-of-parameter-files")
+
+  if (2 == argc)
+  {
+    argFlag = 0;
+    nameFlag = 0;
+    symbol = "";
+  }
+  else if (std::string(argv[2]) == "number-of-parameter-files")
   {
     argFlag = 0;
     nameFlag = 0;
@@ -136,6 +145,20 @@ int main(int argc, char* argv[])
     std::cout << "* Error: Cannot load symbol: " << dlsym_error <<std::endl;
     dlclose(model_lib_handle);
     return 3;
+  }
+
+  if (2 == argc)
+  {
+    std::cout << "Item is a " << itemType << std::endl;
+
+    int returnCode;
+    if (std::string(itemType) != "simulator-model")
+      returnCode = 4;
+    else
+      returnCode = 0;
+
+    dlclose(model_lib_handle);
+    return returnCode;
   }
 
   if (std::string(itemType) != "simulator-model")
