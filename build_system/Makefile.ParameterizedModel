@@ -204,8 +204,8 @@ installdirs:
                 if test -d "$$fl"; then rm -rf "$$fl"; fi && \
                 $(INSTALL_PROGRAM) -d -m 0755  "$$fl"
 
-SYSTEM_MODELS_DIR = $(shell $(COLLECTIONS_INFO) system models)
-USER_MODELS_DIR = $(shell $(COLLECTIONS_INFO) config_file models)
+SYSTEM_MODELS_DIR = $(DESTDIR)$(shell $(COLLECTIONS_INFO) system models)
+USER_MODELS_DIR = $(DESTDIR)$(shell $(COLLECTIONS_INFO) config_file models)
 ifeq ($(USER_MODELS_DIR),)
   $(error Invalid config file)
 endif
