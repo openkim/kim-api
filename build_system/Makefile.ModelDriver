@@ -132,8 +132,8 @@ installdirs:
                 $(INSTALL_PROGRAM) -d -m 0755 "$$fl"
 
 COLLECTIONS_INFO = $(libexecdir)/$(full_package_name)/$(full_package_name)-collections-info
-SYSTEM_DRIVERS_DIR = $(shell $(COLLECTIONS_INFO) system model_drivers)
-USER_DRIVERS_DIR = $(shell $(COLLECTIONS_INFO) config_file model_drivers)
+SYSTEM_DRIVERS_DIR = $(DESTDIR)$(shell $(COLLECTIONS_INFO) system model_drivers)
+USER_DRIVERS_DIR = $(DESTDIR)$(shell $(COLLECTIONS_INFO) config_file model_drivers)
 ifeq ($(USER_DRIVERS_DIR),)
   $(error Invalid config file)
 endif
