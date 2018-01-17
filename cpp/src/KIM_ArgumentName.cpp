@@ -56,7 +56,6 @@ ArgumentName const partialForces(5);
 ArgumentName const partialParticleEnergy(6);
 ArgumentName const partialVirial(7);
 ArgumentName const partialParticleVirial(8);
-ArgumentName const partialHessian(9);
 
 namespace
 {
@@ -75,7 +74,6 @@ StringMap const GetStringMap()
   m[partialParticleEnergy] = "partialParticleEnergy";
   m[partialVirial] = "partialVirial";
   m[partialParticleVirial] = "partialParticleVirial";
-  m[partialHessian] = "partialHessian";
   return m;
 }
 }  // namespace
@@ -98,7 +96,6 @@ DataTypeMap const GetDataTypeMap()
   m[partialParticleEnergy] = DATA_TYPE::Double;
   m[partialVirial] = DATA_TYPE::Double;
   m[partialParticleVirial] = DATA_TYPE::Double;
-  m[partialHessian] = DATA_TYPE::Double;
   return m;
 }
 }  // namespace

@@ -115,8 +115,6 @@ KIM_ArgumentName const KIM_ARGUMENT_NAME_partialVirial
 = {KIM::ARGUMENT_NAME::partialVirial.argumentNameID};
 KIM_ArgumentName const KIM_ARGUMENT_NAME_partialParticleVirial
 = {KIM::ARGUMENT_NAME::partialParticleVirial.argumentNameID};
-KIM_ArgumentName const KIM_ARGUMENT_NAME_partialHessian
-= {KIM::ARGUMENT_NAME::partialHessian.argumentNameID};
 
 void KIM_ARGUMENT_NAME_GetNumberOfArguments(int * const numberOfArguments)
 {

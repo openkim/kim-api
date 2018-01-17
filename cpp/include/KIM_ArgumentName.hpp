@@ -65,7 +65,6 @@ extern ArgumentName const partialForces;
 extern ArgumentName const partialParticleEnergy;
 extern ArgumentName const partialVirial;
 extern ArgumentName const partialParticleVirial;
-extern ArgumentName const partialHessian;
 
 void GetNumberOfArguments(int * const numberOfArguments);
 int GetArgumentName(int const index, ArgumentName * const argumentName);

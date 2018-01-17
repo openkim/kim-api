@@ -350,7 +350,7 @@ terms of the derivative of its per-particle-energy function:
 The partial particle virial is zero for non-contributing particles.  That is,
 \f$\mathbf{V}^{\mathcal{C}(i)} = \mathbf{0}\f$ for \f$i \in C_{ncp}\f$.
 
-Fourth, the configuration's "Partial Virial" tensor,
+Fourth and finally, the configuration's "Partial Virial" tensor,
 \f$\mathbf{V}^{\mathcal{C}}\f$, is the sum of its partial particle virial
 tensors.
 
@@ -368,44 +368,12 @@ Note that an equivalent expression for the partial virial tensor is given by
 \mathbf{r}^{(i)}.
 \f]
 
-Fifth and finally, the configuration's "Partial Hessian",
-\f$\mathbf{H}^{\mathcal{C}}\f$, is defined by
-
-\f[
-\mathbf{H}^{\mathcal{C}} \equiv
-\begin{bmatrix}
-H^{\mathcal{C}(0,0)}_{1,1} & H^{\mathcal{C}(0,0)}_{1,2} &
-H^{\mathcal{C}(0,0)}_{1,3} & H^{\mathcal{C}(0,1)}_{1,1} &
-H^{\mathcal{C}(0,1)}_{1,2} & H^{\mathcal{C}(0,1)}_{1,3} & \cdots \\
-H^{\mathcal{C}(0,0)}_{2,1} & H^{\mathcal{C}(0,0)}_{2,2} &
-H^{\mathcal{C}(0,0)}_{2,3} & H^{\mathcal{C}(0,1)}_{2,1} &
-H^{\mathcal{C}(0,1)}_{2,2} & H^{\mathcal{C}(0,1)}_{2,3} & \cdots \\
-H^{\mathcal{C}(0,0)}_{3,1} & H^{\mathcal{C}(0,0)}_{3,2} &
-H^{\mathcal{C}(0,0)}_{3,3} & H^{\mathcal{C}(0,1)}_{3,1} &
-H^{\mathcal{C}(0,1)}_{3,2} & H^{\mathcal{C}(0,1)}_{3,3} & \cdots \\
-H^{\mathcal{C}(1,0)}_{1,1} & H^{\mathcal{C}(1,0)}_{1,2} &
-H^{\mathcal{C}(1,0)}_{1,3} & H^{\mathcal{C}(1,1)}_{1,1} &
-H^{\mathcal{C}(1,1)}_{1,2} & H^{\mathcal{C}(1,1)}_{1,3} & \cdots \\
-H^{\mathcal{C}(1,0)}_{2,1} & H^{\mathcal{C}(1,0)}_{2,2} &
-H^{\mathcal{C}(1,0)}_{2,3} & H^{\mathcal{C}(1,1)}_{2,1} &
-H^{\mathcal{C}(1,1)}_{2,2} & H^{\mathcal{C}(1,1)}_{2,3} & \cdots \\
-H^{\mathcal{C}(1,0)}_{3,1} & H^{\mathcal{C}(1,0)}_{3,2} &
-H^{\mathcal{C}(1,0)}_{3,3} & H^{\mathcal{C}(1,1)}_{3,1} &
-H^{\mathcal{C}(1,1)}_{3,2} & H^{\mathcal{C}(1,1)}_{3,3} & \cdots \\
-\vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \ddots
-\end{bmatrix},
-\f]
-
-where \f$H^{\mathcal{C}(i,j)}_{m,n} \equiv \frac{\partial^2
-E^{\mathcal{C}}}{\partial r^{(i)}_m \partial r^{(j)}_n}\f$ and, to be explicit,
-zero-based particle numbering has been used.
-
 ## Domain Decomposition
 
-The definitions of a configuration's partial energy, forces, virial, and
-hessian are designed to allow for easy (and low communication) parallel
-computation via domain decomposition.  This section presents a simple example
-that illustrates how this works.
+The definitions of a configuration's partial energy, forces, and virial are
+designed to allow for easy (and low communication) parallel computation via
+domain decomposition.  This section presents a simple example that illustrates
+how this works.
 
 Start with a configuration of particles corresponding to a finite strip of a
 centered square lattice.
@@ -518,7 +486,6 @@ partialForces         | force                      | double    | numberOfParticl
 partialParticleEnergy | energy                     | double    | numberOfParticles     | \f$E^{\mathcal{C}(0)}, E^{\mathcal{C}(1)}, E^{\mathcal{C}(2)}, \dots\f$ | required, optional, **notSupported**     |
 partialVirial         | energy                     | double    | 6                     | \f$V^{\mathcal{C}}_{11}, V^{\mathcal{C}}_{22}, V^{\mathcal{C}}_{33}, V^{\mathcal{C}}_{23}, V^{\mathcal{C}}_{32}, V^{\mathcal{C}}_{13}\f$ | required, optional, **notSupported**     |
 partialParticleVirial | energy                     | double    | numberOfParticles * 6 | \f$\mathbf{V}^{\mathcal{C}(0)}, \mathbf{V}^{\mathcal{C}(1)}, \mathbf{V}^{\mathcal{C}(2)}, \dots\f$ | required, optional, **notSupported**     |
-partialHessian        | energy * length\f$^{-2}\f$ | double    | numberOfParticles * (numberOfParticles + 1)/ 2 | "upper-triangular column packed storage" | required, optional, **notSupported**     |
 
 - partialEnergy is the configuration's partial energy \f$E^{\mathcal{C}}\f$.
 
@@ -534,10 +501,6 @@ partialHessian        | energy * length\f$^{-2}\f$ | double    | numberOfParticl
 
 - partialParticleVirial contains the partial particle virial tensor for each
   particle, \f$\mathbf{V}^{\mathcal{C}(i)}\f$.
-
-- partialHessian contains the partial Hessian tensor
-  \f$\mathbf{H}^{\mathcal{C}}\f$ in [upper-triangular column packed
-  storage](http://www.netlib.org/lapack/lug/node123.html) format.
 
 
 
@@ -598,9 +561,9 @@ LocalWords:  discoverable const DataType LanguageName SpeciesName LengthUnit
 LocalWords:  EnergyUnit ChargeUnit TemperatureUnit TimeUnit ArgumentName ref
 LocalWords:  CallbackName SupportStatus Versioning infl Ni Cu virial monte Li
 LocalWords:  carlo mathcal mathbf equiv ac cp ncp emptyset le unaccented cdots
-LocalWords:  otimes bmatrix vdots ddots hessian html jpg pdf np ModelCreate sc
+LocalWords:  otimes bmatrix vdots ddots html jpg pdf np ModelCreate sc
 LocalWords:  ModelDriverCreate ModelCompute ModelRefresh ModelDestroy ProcessD
 LocalWords:  requiredByAPI notSupported numberOfParticles particleSpeciesCodes
 LocalWords:  particleContributing leftrightarrow partialEnergy partialForces
 LocalWords:  partialParticleEnergy partialVirial partialParticleVirial EDr
-LocalWords:  partialHessian GetNeighborList ProcessDEDrTerm
+LocalWords:  GetNeighborList ProcessDEDrTerm

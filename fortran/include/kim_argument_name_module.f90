@@ -52,7 +52,6 @@ module kim_argument_name_module
     kim_argument_name_partial_particle_energy, &
     kim_argument_name_partial_virial, &
     kim_argument_name_partial_particle_virial, &
-    kim_argument_name_partial_hessian, &
 
     kim_argument_name_get_number_of_arguments, &
     kim_argument_name_get_argument_name, &
@@ -89,9 +88,6 @@ module kim_argument_name_module
   type(kim_argument_name_type), protected, &
     bind(c, name="KIM_ARGUMENT_NAME_partialParticleVirial") &
     :: kim_argument_name_partial_particle_virial
-  type(kim_argument_name_type), protected, &
-    bind(c, name="KIM_ARGUMENT_NAME_partialHessian") &
-    :: kim_argument_name_partial_hessian
 
   interface operator (.eq.)
     logical function kim_argument_name_equal(left, right)

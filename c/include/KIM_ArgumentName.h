@@ -68,7 +68,6 @@ extern KIM_ArgumentName const KIM_ARGUMENT_NAME_partialForces;
 extern KIM_ArgumentName const KIM_ARGUMENT_NAME_partialParticleEnergy;
 extern KIM_ArgumentName const KIM_ARGUMENT_NAME_partialVirial;
 extern KIM_ArgumentName const KIM_ARGUMENT_NAME_partialParticleVirial;
-extern KIM_ArgumentName const KIM_ARGUMENT_NAME_partialHessian;
 
 void KIM_ARGUMENT_NAME_GetNumberOfArguments(int * const numberOfArguments);
 int KIM_ARGUMENT_NAME_GetArgumentName(
