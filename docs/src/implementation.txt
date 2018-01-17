@@ -1,0 +1,183 @@
+/*                                                                            */
+/* CDDL HEADER START                                                          */
+/*                                                                            */
+/* The contents of this file are subject to the terms of the Common           */
+/* Development and Distribution License Version 1.0 (the "License").          */
+/*                                                                            */
+/* You can obtain a copy of the license at                                    */
+/* http://www.opensource.org/licenses/CDDL-1.0.  See the License for the      */
+/* specific language governing permissions and limitations under the License. */
+/*                                                                            */
+/* When distributing Covered Code, include this CDDL HEADER in each file and  */
+/* include the License file in a prominent location with the name             */
+/* LICENSE.CDDL.                                                              */
+/* If applicable, add the following below this CDDL HEADER, with the fields   */
+/* enclosed by brackets "[]" replaced with your own identifying information:  */
+/*                                                                            */
+/* Portions Copyright (c) [yyyy] [name of copyright owner].                   */
+/* All rights reserved.                                                       */
+/*                                                                            */
+/* CDDL HEADER END                                                            */
+/*                                                                            */
+
+/*                                                                            */
+/* Copyright (c) 2017--2018, Regents of the University of Minnesota.          */
+/* All rights reserved.                                                       */
+/*                                                                            */
+/* Contributors:                                                              */
+/*    Ryan S. Elliott                                                         */
+/*    Ellad B. Tadmor                                                         */
+/*    Daniel Karls                                                            */
+/*                                                                            */
+
+/*                                                                            */
+/* Release: This file is part of the kim-api.git repository.                  */
+/*                                                                            */
+
+/**
+\page implementation Implementation
+
+Previous Section: \ref theory.
+
+In code, a model (or model driver) consists of four routines which perform
+specific tasks.  The first is the *ModelCreate* (or *ModelDriverCreate*)
+routine, which performs all necessary initialization tasks.  The second is the
+*ModelCompute* routine, which performs the core computational tasks.  The third
+is the *ModelRefresh* routine, which performs any necessary updates after a
+simulator makes changes to the model's parameters (if this is supported).  The
+fourth is the *ModelDestroy* routine, which performs all necessary finalization
+tasks.
+
+To interact with a model, a simulator creates a model object (which, in part,
+includes execution of the model's *ModelCreate* routine).  Using this object,
+the simulator provides a set of "Arguments" to the model's *ModelCompute*
+function.  There are input arguments that include the various components that
+make up a configuration (number of particles, particle position vectors, etc.).
+And, there are output arguments that include the quantities (like partial
+energy and partial forces), defined in Section \ref theory, associated with the
+configuration.  There are also "Callback" functions (such as a function to get
+a particle's neighbor list) that the simulator provides for use by the model.
+
+The %KIM API provides a list of all arguments and callbacks defined as part of
+the official API.  Each argument and callback has a "Support Status" which can
+be one of four values: *requiredByAPI*, *notSupported*, *required*, or *optional*.
+A model specifies a support status value for every argument defined by the %KIM
+API.  It is the responsibility of the simulator to use the model object
+interface to determine the support status of each argument and to use this
+information to determine if the model is capable of performing the desired
+computation.
+
+Here lists of each input argument, output argument, and callback are provided.
+To be explicit, below zero-based particle numbering is used where necessary.
+
+Input argument table:
+Argument Name         | Unit   | Data Type | Extent                | Memory Layout                                                      | Valid Support Statuses (bold -- default) |
+--------------------- | ------ | --------- | --------------------- | ------------------------------------------------------------------ | ---------------------------------------- |
+numberOfParticles     | N/A    | double    | 1                     |                                                                    | **requiredByAPI**                        |
+particleSpeciesCodes  | N/A    | integer   | numberOfParticles     | \f$sc^{(0)}, sc^{(1)}, \dots\f$                                    | **requiredByAPI**                        |
+particleContributing  | N/A    | integer   | numberOfParticles     | \f$c^{(0)}, c^{(1)}, \dots\f$                                      | **requiredByAPI**                        |
+coordinates           | length | double    | numberOfParticles * 3 | \f$r^{(0)}_1, r^{(0)}_2, r^{(0)}_3, r^{(1)}_1, r^{(1)}_2, \dots\f$ | **requiredByAPI**                        |
+
+- numberOfParticles is the number of particles (contributing and
+non-contributing) in the configuration.
+
+- particleSpeciesCodes contains integer codes (as defined by the model)
+specifying the species of each particle.  For example, if the model defines the
+mapping Cu \f$\leftrightarrow 1\f$, Al \f$\leftrightarrow 2\f$, and Ni
+\f$\leftrightarrow 3\f$, then \f$sc^{(0)} = 3, sc^{(1)} = 1, sc^{(2)} = 2, \dots\f$
+means that particle 0 is a nickel atom, particle 1 is a copper atom, particle 2
+is an aluminum atom, etc.
+
+- particleContributing contains the contributing/non-contributing status
+of each particle.  Particle \f$i\f$ is contributing if \f$c^{(i)} = 1\f$ and
+non-contributing if \f$c^{(i)} = 0\f$.
+
+- coordinates contains the Cartesian components of the particles' position
+  vectors, \f$\mathbf{r}^{(i)} = r^{(i)}_1 \mathbf{e}_1 + r^{(i)}_2
+  \mathbf{e}_2 + r^{(i)}_3 \mathbf{e}_3\f$.
+
+Output argument table:
+Argument Name         | Unit                       | Data Type | Extent                | Memory Layout                                                           | Valid Support Statuses (bold -- default) |
+--------------------- | -------------------------- | --------- | --------------------- | ----------------------------------------------------------------------- | ---------------------------------------- |
+partialEnergy         | energy                     | double    | 1                     |                                                                         | required, optional, **notSupported**     |
+partialForces         | force                      | double    | numberOfParticles * 3 | \f$f^{\mathcal{C}(0)}_1, f^{\mathcal{C}(0)}_2, f^{\mathcal{C}(0)}_3, f^{\mathcal{C}(1)}_1, f^{\mathcal{C}(1)}_2\dots\f$ | required, optional, **notSupported**     |
+partialParticleEnergy | energy                     | double    | numberOfParticles     | \f$E^{\mathcal{C}(0)}, E^{\mathcal{C}(1)}, E^{\mathcal{C}(2)}, \dots\f$ | required, optional, **notSupported**     |
+partialVirial         | energy                     | double    | 6                     | \f$V^{\mathcal{C}}_{11}, V^{\mathcal{C}}_{22}, V^{\mathcal{C}}_{33}, V^{\mathcal{C}}_{23}, V^{\mathcal{C}}_{32}, V^{\mathcal{C}}_{13}\f$ | required, optional, **notSupported**     |
+partialParticleVirial | energy                     | double    | numberOfParticles * 6 | \f$\mathbf{V}^{\mathcal{C}(0)}, \mathbf{V}^{\mathcal{C}(1)}, \mathbf{V}^{\mathcal{C}(2)}, \dots\f$ | required, optional, **notSupported**     |
+
+- partialEnergy is the configuration's partial energy \f$E^{\mathcal{C}}\f$.
+
+- partialForces contains the partial force vector for each particle,
+  \f$\mathbf{f}^{\mathcal{C}(i)} = f^{\mathcal{C}(i)}_1 \mathbf{e}_1 +
+  f^{\mathcal{C}(i)}_2 \mathbf{e}_2 + f^{\mathcal{C}(i)}_3 \mathbf{e}_3\f$.
+
+- partialParticleEnergy contains the partial particle energy for each particle,
+  \f$E^{\mathcal{C}(i)}\f$.
+
+- partialVirial is the configuration's partial virial tensor,
+  \f$\mathbf{V}^{\mathcal{C}}\f$.
+
+- partialParticleVirial contains the partial particle virial tensor for each
+  particle, \f$\mathbf{V}^{\mathcal{C}(i)}\f$.
+
+
+
+Callback table:
+Callback Name         | Valid Support Statuses (bold -- default) |
+--------------------- | ---------------------------------------- |
+GetNeighborList       | **requiredByAPI**                        |
+ProcessDEDrTerm       | required, optional, **notSupported**     |
+ProcessD2EDr2Term     | required, optional, **notSupported**     |
+
+- GetNeighborList is a callback function that allows a model to obtain the
+  list of neighbors of a particle.  The model may request any number of
+  neighbor lists with different (or equal) cutoff distances.  The
+  GetNeighborList callback function must support the return of the appropriate
+  list of neighbors.  The returned list of neighbors consists of a
+  contiguous-in-memory list of integers corresponding to an unordered full list
+  of a particle's neighbors.  Each such neighbor list must contain at least all
+  particles within the corresponding cutoff distance of the specified
+  particle.  (However, the returned list may contain particles beyond the
+  cutoff distance.)  Neighbor lists provided by the simulator must be
+  consistent with the configuration coordinates.  In particular, the model
+  must, in principle, be able to independently construct its own equivalent
+  neighbor list using just the particle coordinates.
+
+- ProcessDEDrTerm is a callback function that allows for access to the
+  derivatives of the configuration's partial energy, \f$E^{\mathcal{C}}\f$,
+  with respect to all pair-distances, \f$r^{(i,j)}, i,j \in C_{p}\f$.  That is,
+  it allows the model to communicate the values of \f$\frac{\partial
+  E^{\mathcal{C}}}{partial r^{(i,j)}}\f$ to the simulator.
+
+  These quantities can be used to compute many quantities of interest
+  associated with the configuration.  For example, it is possible to
+  independently compute the partial virial from this information using the
+  formula
+
+  \f[
+  \mathbf{V}^{\mathcal{C}} = \sum_{i \in C_p} \mathbf{V}^{\mathcal{C}(i)}
+  = \sum_{i \in C_p} \sum_{j \in \mathcal{N}^{(i)}_{r_{\text{infl}}}}
+  \frac{\bar{E}_i}{\partial \mathbf{r}^{(j)}} \otimes \mathbf{r}^{(j)}
+  = \sum_{i \in C_p} \sum_{j \in \mathcal{N}^{(i)}_{r_{\text{infl}}}} \;\;
+  \sum_{k \not= j; \; k \in \bar{\mathcal{N}}^{(i)}_{r_{\text{infl}}}}
+  \frac{\partial \tilde{E}_i}{\partial r^{(j,k)}}
+  \frac{\partial \bar{r}^{(j,k)}}{\partial \mathbf{r}^{(j)}}
+  \otimes \mathbf{r}^{(j)}.
+  \f]
+
+- ProcessD2EDr2Term is a callback function that allows for access to the second
+  derivatives of the configuration's partial energy, \f$E^{\mathcal{C}}\f$,
+  with respect to all pair-distances, \f$r^{(i,j)}, i,j \in C^{p}\f$.  That is,
+  it allows the model to communicate the values of \f$\frac{\partial^2
+  E^{\mathcal{C}}}{\partial r^{(i,j)} \partial r^{(m,n)}}\f$ to the simulator.
+
+Next Section: \ref version2_differences.
+
+*/
+
+LocalWords:  CDDL yyyy Ellad Tadmor Karls kim api ref ModelCreate ModelCompute
+LocalWords:  ModelDriverCreate ModelRefresh ModelDestroy requiredByAPI sc Cu
+LocalWords:  notSupported numberOfParticles particleSpeciesCodes Ni mathbf EDr
+LocalWords:  particleContributing leftrightarrow partialEnergy partialForces
+LocalWords:  mathcal partialParticleEnergy partialVirial partialParticleVirial
+LocalWords:  virial GetNeighborList ProcessDEDrTerm ProcessD ac infl otimes

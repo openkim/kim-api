@@ -1,0 +1,315 @@
+/*                                                                            */
+/* CDDL HEADER START                                                          */
+/*                                                                            */
+/* The contents of this file are subject to the terms of the Common           */
+/* Development and Distribution License Version 1.0 (the "License").          */
+/*                                                                            */
+/* You can obtain a copy of the license at                                    */
+/* http://www.opensource.org/licenses/CDDL-1.0.  See the License for the      */
+/* specific language governing permissions and limitations under the License. */
+/*                                                                            */
+/* When distributing Covered Code, include this CDDL HEADER in each file and  */
+/* include the License file in a prominent location with the name             */
+/* LICENSE.CDDL.                                                              */
+/* If applicable, add the following below this CDDL HEADER, with the fields   */
+/* enclosed by brackets "[]" replaced with your own identifying information:  */
+/*                                                                            */
+/* Portions Copyright (c) [yyyy] [name of copyright owner].                   */
+/* All rights reserved.                                                       */
+/*                                                                            */
+/* CDDL HEADER END                                                            */
+/*                                                                            */
+
+/*                                                                            */
+/* Copyright (c) 2017--2018, Regents of the University of Minnesota.          */
+/* All rights reserved.                                                       */
+/*                                                                            */
+/* Contributors:                                                              */
+/*    Ryan S. Elliott                                                         */
+/*    Ellad B. Tadmor                                                         */
+/*    Daniel Karls                                                            */
+/*                                                                            */
+
+/*                                                                            */
+/* Release: This file is part of the kim-api.git repository.                  */
+/*                                                                            */
+
+/**
+\page theory Theory
+
+Previous Section: \ref features.
+
+At the highest level there are "Simulators" and "Models".  At the conceptual
+level, a %KIM Model is something that defines an energy-per-particle function,
+\f$E_i\f$, and an "influence distance", \f$r_{\text{infl}}\f$, that identifies
+the particle separation range over which \f$E_i\f$ depends on the position of
+its neighboring particles.  (Note, this is not necessarily equal to the
+neighbor list cutoff radius used by a model.)  A %KIM Model is defined for a
+specific material system (a specific set of particle species: e.g., Al, Ni, and
+Cu) and contains all parameter values necessary for evaluating \f$E_i\f$ for
+any configuration containing particles of the supported species.  A %KIM Model
+will, typically, also have the ability to compute other quantities related to
+the energy-per-particle, such as the force on a particle or the particle's
+virial.
+
+At the conceptual level, a %KIM Simulator is something that performs a numerical
+simulation based on the energy, forces, etc. of a set of particles.  This could
+be a molecular dynamics simulation, a monte carlo simulation, or other similar
+simulation technique.  A %KIM Simulator treats a %KIM Model as a black box.  It
+constructs an atomistic "Configuration" of interest and passes this
+configuration to a %KIM Model along with a list of quantities (energy, force,
+virial, etc.) to be computed.  The model then performs the requested
+computation and passes the results back to the simulator.  Once the simulator
+has received the model's results it may use these values to advance its
+simulation and update the atomistic configuration.  Typically, this sequence of
+events is repeated in an iterative process until the simulator determines it
+has reached convergence or a predetermined stopping condition is achieved.
+
+The purpose of the %KIM API is to coordinate the information exchange between
+%KIM Simulators and %KIM Models.  It does this through the definition of various
+concepts and quantities, and by providing a set of subroutines that facilitate
+the necessary communication between simulators and models.
+
+Of central importance to this process is the definition of an atomistic
+"Configuration", \f$\mathcal{C}\f$.  Abstractly, a configuration consists of a
+set of particles \f$C_p\f$ and their associated data.  For each particle \f$i
+\in C_p\f$, the following additional data must be defined.
+
+  -# The particle's species (H, He, Li, etc.).
+
+  -# The particle's position vector \f$\mathbf{r}^{(i)} = r^{(i)}_j
+     \mathbf{e}_j = r^{(i)}_1 \mathbf{e}_1 + r^{(i)}_2 \mathbf{e}_2 + r^{(i)}_3
+     \mathbf{e}_3,\f$ where \f$\mathbf{e}_j, \; j=1,2,3\f$ are unit vectors
+     along the global fixed Cartesian coordinate system \f$x\f$, \f$y\f$, and
+     \f$z\f$ directions, respectively.
+
+  -# The particle's "Contributing Status", which is either "contributing" or
+     "non-contributing".  Non-contributing particles exist as part of the
+     configuration only to provide the proper environment for the contributing
+     particles.  Thus, non-contributing particles (sometimes called "ghost" or
+     "padding" particles) can be thought of as providing the appropriate
+     boundary conditions for the configuration.
+
+Before proceeding further, introduce the notation \f$\mathbf{r}^{(j,i)} \equiv
+\mathbf{r}^{(j)} - \mathbf{r}^{(i)}\f$ for the relative position vector from
+particle \f$i\f$ to particle \f$j\f$, and the notation \f$r^{(j,i)}\f$ for the
+magnitude of the vector \f$\mathbf{r}^{(j,i)}\f$.  Note that \f$r^{(j,i)} =
+r^{(i,j)}\f$ and these are simply two different notations for the same
+quantity.  However, when taken as a function of particle position vectors,
+\f$r^{(j,i)} = \bar{r}^{(j,i)}(\mathbf{r}^{(j)}, \mathbf{r}^{(i)}) \equiv \|
+\mathbf{r}^{(j)} - \mathbf{r}^{(i)}\|\f$, there is a difference.  In
+particular,
+
+\f[
+\frac{\partial \bar{r}^{(j,i)}}{\partial \mathbf{r}^{(j)}} = -
+\frac{\partial \bar{r}^{(i,j)}}{\partial \mathbf{r}^{(j)}}.
+\f]
+
+Returning to the definition and description of a configuration, a
+configuration's set of particles may be partitioned into two disjoint sets: The
+set of contributing particles \f$C_{cp}\f$, and the set of non-contributing
+particles \f$C_{ncp}\f$.  So that
+
+\f[
+C_{p} = C_{cp} \cup C_{ncp} \quad \text{and} \quad C_{cp} \cap C_{ncp}
+= \emptyset.
+\f]
+
+For a particle \f$i \in C_p\f$, define the particle's ("punctured") influence
+neighborhood, \f$\mathcal{N}^{(i)}_{r_\text{infl}}\f$, as the subset of
+particles (not including the particle, itself) in the configuration that are
+located no more than \f$r_{\text{infl}}\f$ away from particle \f$i\f$.  That
+is,
+
+\f[
+\mathcal{N}^{(i)}_{r_\text{infl}} \equiv \{ j \in C_p \;|\;
+0 < r^{(j,i)} \le r_{\text{infl}} \}.
+\f]
+
+Finally, define the closure of the particle's influence neighborhood,
+\f$\bar{\mathcal{N}}^{(i)}_{r_{\text{infl}}}\f$:
+
+\f[
+\bar{\mathcal{N}}^{(i)}_{r_{\text{infl}}} \equiv
+\mathcal{N}^{(i)}_{r_{\text{infl}}} \cup
+\{i\}.
+\f]
+
+With the above definitions, it is possible to more specifically identify the
+functional dependence for a %KIM Model's energy-per-particle function,
+\f$E_i\f$:
+
+\f[
+E_i = \bar{E}_i(\mathbf{r}^{(j)} \;|\; j \in
+\bar{\mathcal{N}}^{(i)}_{r_{\text{infl}}}).
+\f]
+
+In fact, due to the principle of material frame indifference, this function can
+only be a function of the *distances* between these particles:
+
+\f[
+E_i = \tilde{E}_i( r^{(j,k)} \;|\; j,k \in
+\bar{\mathcal{N}}^{(i)}_{r_{\text{infl}}})
+.
+\f]
+
+It is usually most convenient to work with the function of position vectors,
+\f$\bar{E}_i(\mathbf{r}^{(j)})\f$.  However, in some cases it is advantageous
+to work with the function of distances, \f$\tilde{E}_i(r^{(j,k)})\f$.  When the
+distinction is unimportant, use the unaccented notation, \f$E_i\f$, will be
+used.
+
+Now a configuration's "Partial Energy" may be defined as the sum of its
+contributing particles' energies:
+
+\f[
+E^\mathcal{C} = \sum_{i \in C_{cp}} E_i.
+\f]
+
+From this definition of the configuration's partial energy, a set of additional
+quantities may be derived that are often of interest in simulations.
+
+First, define formally, the configuration's "Partial Particle Energy" for
+particle \f$i\f$, \f$E^{\mathcal{C}}_i\f$, as simply the model's
+energy-per-particle value for contributing particles and zero for
+non-contributing particles,
+
+\f[
+E^{\mathcal{C}}_i \equiv
+\begin{cases}
+E_i, & i \in C_{cp},\\
+0,   & i \in C_{ncp}.
+\end{cases}
+\f]
+
+Second, the configuration's "Partial Force" on particle \f$j\f$,
+\f$\mathbf{f}^{\mathcal{C}(j)}\f$, is defined as the negative of the derivative
+of the configuration's partial energy with respect to the particle's position
+vector:
+
+\f[
+\mathbf{f}^{\mathcal{C}(j)} \equiv - \frac{\partial E^{\mathcal{C}}}{\partial
+\mathbf{r}^{(j)}}, \quad j \in C_{p}.
+\f]
+
+Note that, in general, *every* particle (both contributing and
+non-contributing) has a partial force.  As a special case, consider a
+configuration, \f$\mathcal{C}^i\f$, equivalent to \f$\mathcal{C}\f$ except that
+only particle \f$i\f$ is contributing.  In this case, the partial forces are
+
+\f[
+\mathbf{f}^{\mathcal{C}^i(j)} =
+\begin{cases}
+-\frac{\partial \bar{E}_i}{\partial \mathbf{r}^{(j)}} & j \in
+\mathcal{N}^{(i)}_{r_{\text{infl}}}, \\
+0, & \text{otherwise}.
+\end{cases}
+\f]
+
+This can be thought of as the force on particle \f$j\f$ due to particle
+\f$i\f$.  With this notation, it is possible to obtain the identity
+
+\f[
+\mathbf{f}^{\mathcal{C}(j)} = \sum_{i \in C_{cp}}
+\mathbf{f}^{\mathcal{C}^i(j)}.
+\f]
+
+Third, the configuration's "Partial Particle Virial" tensor for contributing
+particle \f$i \in C_{cp}\f$, \f$\mathbf{V}^{\mathcal{C}(i)}\f$, is defined in
+terms of the derivative of its per-particle-energy function:
+
+\f[
+\mathbf{V}^{\mathcal{C}(i)} \equiv \sum_{j \in
+\mathcal{N}^{(i)}_{r_{\text{infl}}}}
+\frac{\partial \bar{E}_i}{\partial \mathbf{r}^{(j)}}
+\otimes
+\mathbf{r}^{(j)}
+=
+\sum_{j \in \mathcal{N}^{(i)}_{r_{\text{infl}}}}
+-\mathbf{f}^{\mathcal{C}^i(j)}
+\otimes
+\mathbf{r}^{(j)}
+=
+-\sum_{j \in \mathcal{N}^{(i)}_{r_{\text{infl}}}}
+\mathbf{f}^{\mathcal{C}^i(j)}
+\otimes
+\mathbf{r}^{(j)}
+.
+\f]
+
+The partial particle virial is zero for non-contributing particles.  That is,
+\f$\mathbf{V}^{\mathcal{C}(i)} = \mathbf{0}\f$ for \f$i \in C_{ncp}\f$.
+
+Fourth and finally, the configuration's "Partial Virial" tensor,
+\f$\mathbf{V}^{\mathcal{C}}\f$, is the sum of its partial particle virial
+tensors.
+
+\f[
+\mathbf{V}^{\mathcal{C}} \equiv \sum_{i \in C_{p}}
+\mathbf{V}^{\mathcal{C}(i)}.
+\f]
+
+Note that an equivalent expression for the partial virial tensor is given by
+
+\f[
+\mathbf{V}^{\mathcal{C}} = - \sum_{i \in C_{p}}
+\mathbf{f}^{\mathcal{C}(i)}
+\otimes
+\mathbf{r}^{(i)}.
+\f]
+
+## Domain Decomposition
+
+The definitions of a configuration's partial energy, forces, and virial are
+designed to allow for easy (and low communication) parallel computation via
+domain decomposition.  This section presents a simple example that illustrates
+how this works.
+
+Start with a configuration of particles corresponding to a finite strip of a
+centered square lattice.
+
+\image html  square-lattice-configuration-1.jpg
+\image latex square-lattice-configuration-1.pdf
+
+The total energy of the system and the total force on each particle can be
+computed using a single configuration.  In this case, the configuration is
+\f$\mathcal{T}\f$, the set of particles is \f$T_p\f$, the set of contributing
+particles is \f$T_{cp} = T_p\f$, and the set of non-contributing particles is
+\f$T_{np}=\emptyset\f$.  Then, the total energy is \f$E=E^\mathcal{T}\f$, and
+the total force on particle \f$i \in T_p\f$ is
+\f$\mathbf{f}^{(i)}=\mathbf{f}^{\mathcal{T}(i)}\f$.  Next, it is shown how to
+compute \f$E\f$ and \f$\mathbf{f}^{(i)}\f$ using a two-domain decomposition.
+
+Partition \f$T_p\f$ into two disjoint subsets, \f$A_p\f$ and \f$B_p\f$. That
+is, \f$A_p \cap B_p = \emptyset\f$ and \f$A_p \cup B_p = T_p\f$.
+
+\image html square-lattice-configuration-2.jpg
+\image latex square-lattice-configuration-2.pdf
+
+
+Then define configuration \f$\mathcal{C}\f$ to have particles \f$C_p=T_p\f$
+with \f$C_{cp}=A_p\f$ and \f$C_{ncp}=B_p\f$, and configuration
+\f$\mathcal{D}\f$ to have particles \f$D_p=T_p\f$ with \f$D_{cp}=B_p\f$ and
+\f$D_{ncp}=A_p\f$.  Then,
+
+\f[
+E = E^\mathcal{C} + E^\mathcal{D},
+\f]
+and
+\f[
+\mathbf{f}^{(i)} = \mathbf{f}^{\mathcal{C}(i)} +
+\mathbf{f}^{\mathcal{D}(i)}.
+\f]
+
+In practice, one can get away with including only those non-contributing
+particles that fall within the "influence distance" of at least one
+contributing particle.
+
+
+Next Section: \ref implementation.
+
+*/
+
+LocalWords:  CDDL yyyy Ellad Tadmor Karls kim api infl Ni Cu virial monte Li
+LocalWords:  carlo atomistic mathcal mathbf equiv ac cp ncp emptyset le otimes
+LocalWords:  unaccented html jpg pdf np

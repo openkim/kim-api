@@ -790,12 +790,26 @@ WARN_LOGFILE           =
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = introduction.txt
-INPUT                 += the_kim_api_package.txt
-INPUT                 += version2-differences.txt
+INPUT                  = src/introduction.txt
+INPUT                 += src/features.txt
+INPUT                 += src/theory.txt
+INPUT                 += src/implementation.txt
+INPUT                 += src/version2-differences.txt
 INPUT                 += ../cpp/include/
 INPUT                 += ../c/include/
 INPUT                 += ../fortran/include/
+INPUT                 += ../examples/model_drivers/LennardJones612__MD_414112407348_002
+INPUT                 += ../examples/model_drivers/ex_model_driver_P_LJ
+INPUT                 += ../examples/model_drivers/ex_model_driver_P_Morse
+INPUT                 += ../examples/models/LennardJones612_Universal__MO_826355984548_002/LennardJones612_Universal.params
+INPUT                 += ../examples/models/ex_model_Ar_P_LJ/ex_model_Ar_P_LJ.params
+INPUT                 += ../examples/models/ex_model_Ar_P_MLJ_F03/
+INPUT                 += ../examples/models/ex_model_Ar_P_Morse/ex_model_Ar_P_Morse.params
+INPUT                 += ../examples/models/ex_model_Ar_P_Morse_07C
+INPUT                 += ../examples/simulators/ex_test_Ar_fcc_cluster
+INPUT                 += ../examples/simulators/ex_test_Ar_fcc_cluster_cpp
+INPUT                 += ../examples/simulators/ex_test_Ar_fcc_cluster_fortran
+INPUT                 += ../examples/simulators/utility_forces_numer_deriv
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -931,7 +945,7 @@ EXAMPLE_RECURSIVE      = NO
 # that contain images that are to be included in the documentation (see the
 # \image command).
 
-IMAGE_PATH             = asymptote-figures
+IMAGE_PATH             = src/asymptote-figures
 
 # The INPUT_FILTER tag can be used to specify a program that doxygen should
 # invoke to filter for each input file. Doxygen will invoke the filter program

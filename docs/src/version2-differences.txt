@@ -36,11 +36,13 @@
 /**
 \page version2_differences Summary of Differences Between kim-api-v1 and kim-api-v2
 
+Previous Section: \ref implementation.
+
 Experience with using and supporting the kim-api-v1 package has shown that the
 package's complexity (in terms of the number of different "modes of operation";
 e.g., neighbor lists: half, full, iterator, locator; NBCs: cluster, miopbc,
 neigh_pure, neigh_rvec; etc.) makes it difficult for new users to become
-competent kim-api-v1 code developers.  This also means that KIM Models will
+competent kim-api-v1 code developers.  This also means that %KIM Models will
 only work with KIM-compliant codes that support the same modes of operation,
 thereby limiting the utility of the kim-api as a standard.  Further, the
 kim-api's complexity results in Model implementations that are convoluted due
@@ -54,9 +56,7 @@ a guiding principle.
 
 - **NBCs Have Been Eliminated**: kim-api-v2 supports only one type of
   configuration (as described in Section \ref theory).  This corresponds,
-  roughly to the kim-api-v1 NEIGH_PURE_F NBC.
-
-  Additionally:
+  roughly to the kim-api-v1 NEIGH_PURE_F NBC.  Additionally:
 
   - All neighbor lists in kim-api-v2 are full, unordered, and random-access.
 
@@ -82,7 +82,7 @@ a guiding principle.
 
   This scheme for Simulator--Model matching places a bigger burden (as compared
   to kim-api-v1) on the simulator.  However, it has been determined that a
-  full-featured "%KIM descriptor file"--based matching specification (covering
+  full-featured "KIM descriptor file"--based matching specification (covering
   all possibilities) is too complex.  Thus, it is best to perform this matching
   processing the simulator's code at run-time.  In the worst-case, a simulator
   can simply *assume* that it matches with the model and attempt to perform the
@@ -91,7 +91,7 @@ a guiding principle.
   during its processing if the simulator, in fact, does not match with the
   model.
 
-- **A New Memory Manage Scheme**: kim-api-v2 requires the simulator to be
+- **A New Memory Management Scheme**: kim-api-v2 requires the simulator to be
   responsible for storage memory associated with all input and output arguments
   communicated between the simulator and the model.  Similarly, kim-api-v2
   requires the model to be responsible for storage memory associated with its
@@ -288,6 +288,9 @@ KIM_API_getm_method_by_index           | N/A                                  |
 KIM_API_setm_data_by_index             | N/A                                  |
 KIM_API_setm_method_by_index           | N/A                                  |
 KIM_API_getm_index                     | N/A                                  |
+
+
+Next Section: [Browse files](files.html).
 
 */
 

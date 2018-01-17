@@ -38,10 +38,12 @@ The KIM API package is a system-level library that aims to give computer
 programmers the ability to write atomistic or molecular simulation programs
 that can seamlessly interface with implementations of interatomic models,
 regardless of the programming language (C, C++, FORTRAN 77, Fortran 90/95/2003,
-Python, etc.) in which the codes are written.  It is part of the larger OpenKIM
+Python, etc.) in which the codes are written.  It is part of the larger KIM
 project (https://openkim.org).
 
-See the docs/README.txt file for more introductory information.
+
+See the docs/README.txt file for instructions on generating html documentation
+for the kim-api package.
 
 See the INSTALL file for instructions on how to build and install the package.
 
