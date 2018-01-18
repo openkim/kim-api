@@ -42,11 +42,11 @@ Previous Section: \ref theory.
 In code, a model (or model driver) consists of four routines which perform
 specific tasks.  The first is the *ModelCreate* (or *ModelDriverCreate*)
 routine, which performs all necessary initialization tasks.  The second is the
-*ModelCompute* routine, which performs the core computational tasks.  The third
-is the *ModelRefresh* routine, which performs any necessary updates after a
-simulator makes changes to the model's parameters (if this is supported).  The
-fourth is the *ModelDestroy* routine, which performs all necessary finalization
-tasks.
+* *ModelCompute* routine, which performs the core computational tasks.  The
+third is the *ModelRefresh* routine, which performs any necessary updates after
+a simulator makes changes to the model's parameters (if this is supported).
+The fourth is the *ModelDestroy* routine, which performs all necessary
+finalization tasks.
 
 To interact with a model, a simulator creates a model object (which, in part,
 includes execution of the model's *ModelCreate* routine).  Using this object,

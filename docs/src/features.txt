@@ -50,9 +50,9 @@ The current version of the %KIM API package supports the following features:
 - **Best Practice API Design**: The guiding design principle for the %KIM API
     has been *simplicity*.  In addition to this, general API design *best
     practices* have been used.  These include: implementation hiding (pimpl
-    idiom), loose coupling, minimal-completeness, easy to use (discoverable,
+    idiom), loose coupling, minimal-completeness, ease of use (discoverable,
     difficult to misuse, consistent, orthogonal), static factory methods, use
-    of namespaces, const-correctness, avoid the use of abbreviations, etc..
+    of namespaces, const-correctness, avoiding the use of abbreviations, etc.
 
 - **Language Idiom Support**: Wherever it makes sense and is possible the %KIM
     API supports common idioms of the native language.  For example, all C

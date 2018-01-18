@@ -56,7 +56,7 @@ a guiding principle.
 
 - **NBCs Have Been Eliminated**: kim-api-v2 supports only one type of
   configuration (as described in Section \ref theory).  This corresponds,
-  roughly to the kim-api-v1 NEIGH_PURE_F NBC.  Additionally:
+  roughly, to the kim-api-v1 NEIGH_PURE_F NBC.  Additionally:
 
   - All neighbor lists in kim-api-v2 are full, unordered, and random-access.
 
