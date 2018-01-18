@@ -84,7 +84,7 @@ a guiding principle.
   to kim-api-v1) on the simulator.  However, it has been determined that a
   full-featured "KIM descriptor file"--based matching specification (covering
   all possibilities) is too complex.  Thus, it is best to perform this matching
-  processing the simulator's code at run-time.  In the worst-case, a simulator
+  process in the simulator's code at run-time.  In the worst-case, a simulator
   can simply *assume* that it matches with the model and attempt to perform the
   desired computation.  As long as the simulator carefully checks for any and
   all errors reported by the %KIM API, it should detect an error at some point
@@ -146,7 +146,7 @@ a guiding principle.
   argument shape and extent has been eliminated from kim-api-v2.  These values
   are defined as part of the api documentation.  All arguments must have fixed
   shape and extent values that are either given numbers or defined in terms of
-  *numberOfParticles*.
+  * *numberOfParticles*.
 
   Published model parameters are always taken to be one-dimensional arrays with
   a specified extent that must be defined by the model and communicated to the

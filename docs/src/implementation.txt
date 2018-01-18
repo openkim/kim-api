@@ -147,7 +147,7 @@ ProcessD2EDr2Term     | required, optional, **notSupported**     |
   derivatives of the configuration's partial energy, \f$E^{\mathcal{C}}\f$,
   with respect to all pair-distances, \f$r^{(i,j)}, i,j \in C_{p}\f$.  That is,
   it allows the model to communicate the values of \f$\frac{\partial
-  E^{\mathcal{C}}}{partial r^{(i,j)}}\f$ to the simulator.
+  E^{\mathcal{C}}}{\partial r^{(i,j)}}\f$ to the simulator.
 
   These quantities can be used to compute many quantities of interest
   associated with the configuration.  For example, it is possible to
@@ -167,7 +167,7 @@ ProcessD2EDr2Term     | required, optional, **notSupported**     |
 
 - ProcessD2EDr2Term is a callback function that allows for access to the second
   derivatives of the configuration's partial energy, \f$E^{\mathcal{C}}\f$,
-  with respect to all pair-distances, \f$r^{(i,j)}, i,j \in C^{p}\f$.  That is,
+  with respect to all pair-distances, \f$r^{(i,j)}, i,j \in C_{p}\f$.  That is,
   it allows the model to communicate the values of \f$\frac{\partial^2
   E^{\mathcal{C}}}{\partial r^{(i,j)} \partial r^{(m,n)}}\f$ to the simulator.
 

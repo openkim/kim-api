@@ -156,7 +156,7 @@ E_i = \tilde{E}_i( r^{(j,k)} \;|\; j,k \in
 It is usually most convenient to work with the function of position vectors,
 \f$\bar{E}_i(\mathbf{r}^{(j)})\f$.  However, in some cases it is advantageous
 to work with the function of distances, \f$\tilde{E}_i(r^{(j,k)})\f$.  When the
-distinction is unimportant, use the unaccented notation, \f$E_i\f$, will be
+distinction is unimportant the unaccented notation, \f$E_i\f$, will be
 used.
 
 Now a configuration's "Partial Energy" may be defined as the sum of its
@@ -242,7 +242,7 @@ The partial particle virial is zero for non-contributing particles.  That is,
 
 Fourth and finally, the configuration's "Partial Virial" tensor,
 \f$\mathbf{V}^{\mathcal{C}}\f$, is the sum of its partial particle virial
-tensors.
+tensors:
 
 \f[
 \mathbf{V}^{\mathcal{C}} \equiv \sum_{i \in C_{p}}
@@ -275,7 +275,7 @@ The total energy of the system and the total force on each particle can be
 computed using a single configuration.  In this case, the configuration is
 \f$\mathcal{T}\f$, the set of particles is \f$T_p\f$, the set of contributing
 particles is \f$T_{cp} = T_p\f$, and the set of non-contributing particles is
-\f$T_{np}=\emptyset\f$.  Then, the total energy is \f$E=E^\mathcal{T}\f$, and
+\f$T_{ncp}=\emptyset\f$.  Then, the total energy is \f$E=E^\mathcal{T}\f$, and
 the total force on particle \f$i \in T_p\f$ is
 \f$\mathbf{f}^{(i)}=\mathbf{f}^{\mathcal{T}(i)}\f$.  Next, it is shown how to
 compute \f$E\f$ and \f$\mathbf{f}^{(i)}\f$ using a two-domain decomposition.
