@@ -112,12 +112,12 @@ ed build_system/Makefile.LoadDefaults <<EOF
 w
 EOF
 
-cd ../docs
+cd ./docs
 
 make pdf
 rm -rf "./latex"
 
-cd ..
+cd ../..
 
 tar cJvf $fullpackagename.txz $fullpackagename
 
