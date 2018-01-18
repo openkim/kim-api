@@ -32,6 +32,29 @@
 #
 
 
+=== kim-api-v2.0.0-alpha.0 ====== 18Jan2018 ====================================
+
+* Complete rewrite of the kim-api package.  Released as "alpha" to solicit
+  feedback from the user community.  Changes (possibly incompatible) will be
+  made based on user experience.
+
+* Major changes are summarized below.
+
+* NBCs have been eliminated.
+
+* KIM descriptor files have been eliminated.
+
+* A new memory management scheme has been adopted.
+
+* The api is now much more consistent within each language (C++, C, Fortran)
+  binding.
+
+* Improved logging facilities and error messages.
+
+* Added Doxygen generated documentation.  (See the docs for more details on
+  this version of the kim-api and on the differences between v1 and v2.)
+
+
 === kim-api-v1.9.2 ============== 08Oct2017 ====================================
 
 * Update scripts to use xz compressed tarballs (txz) instead of gz (tgz).  This
