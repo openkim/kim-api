@@ -26,10 +26,6 @@
 #    Ryan S. Elliott
 #
 
-#
-# Release: This file is part of the kim-api.git repository.
-#
-
 
 ifneq (clean,$(MAKECMDGOALS))
   KIM_API_BUILD_CONFIG = kim-api-v2-build-config

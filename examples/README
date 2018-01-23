@@ -26,10 +26,6 @@
 #    Ryan S. Elliott
 #
 
-#
-# Release: This file is part of the kim-api.git repository.
-#
-
 
 This directory (examples) contains directories with example Model Drivers,
 Models, and Simulators.  Please see the README files within each directory for

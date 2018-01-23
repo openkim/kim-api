@@ -28,10 +28,6 @@
 !    Stephen M. Whalen
 !
 
-!
-! Release: This file is part of the kim-api.git package.
-!
-
 
 module error
   implicit none

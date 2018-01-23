@@ -29,10 +29,6 @@
  *
  */
 
-/*                                                                      */
-/* Release: This file is part of the kim-api.git repository.            */
-/*                                                                      */
-
 
 #include <stdlib.h>
 #include <stdio.h>

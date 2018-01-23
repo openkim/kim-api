@@ -37,8 +37,6 @@
 /*                                                                            */
 /* Language: C                                                                */
 /*                                                                            */
-/* Release: This file is part of the kim-api.git repository.                  */
-/*                                                                            */
 /******************************************************************************/
 
 
