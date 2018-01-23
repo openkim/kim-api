@@ -26,6 +26,8 @@
 #    Ryan S. Elliott
 #
 
+
+# load all basic KIM make configuration
 KIM_API_BUILD_CONFIG = kim-api-v2-build-config
 ifeq ($(shell $(KIM_API_BUILD_CONFIG) --version 2> /dev/null),)
   $(error $(KIM_API_BUILD_CONFIG) utility is not available.  Something is wrong with your KIM API package setup)
@@ -60,7 +62,7 @@ $(TEST_NAME).o: $(TEST_NAME).cpp Makefile
 	$(CXX) $(INCLUDES) $(CXXFLAGS) $(OBJONLYFLAG) $<
 
 $(TEST_NAME): $(TEST_NAME).o
-	$(LD) $(LDFLAGS) $< $(LDLIBS) $(OUTPUTINFLAG) $@
+	$(LD) $(LDFLAGS) $< $(LDLIBS) $(XLANGLDLIBS) $(OUTPUTINFLAG) $@
 
 clean:
 	rm -f $(TEST_NAME) $(TEST_NAME).o kim.log
