@@ -70,6 +70,13 @@
 #define PARAM_C 1.545  /* 1/Angstroms */
 #define RZERO   3.786  /* Angstroms */
 
+/* Model buffer definition */
+struct buffer
+{
+  double influenceDistance;
+  double cutoff;
+};
+typedef struct buffer buffer;
 
 /* Define prototype for Model init */
 int model_create(KIM_ModelCreate * const modelCreate,
@@ -425,19 +432,29 @@ int model_create(KIM_ModelCreate * const modelCreate,
                  KIM_TemperatureUnit const requestedTemperatureUnit,
                  KIM_TimeUnit const requestedTimeUnit)
 {
-  double* model_cutoff;
+  buffer * bufferPointer;
   int error;
 
-  /* register numbering */
-  LOG_INFORMATION("Setting model numbering");
-  error = KIM_ModelCreate_SetModelNumbering(modelCreate,
-                                            KIM_NUMBERING_zeroBased);
+  /* set units */
+  LOG_INFORMATION("Set model units");
+  error = KIM_ModelCreate_SetUnits(
+      modelCreate, /* ignoring requested units */
+      KIM_LENGTH_UNIT_A,
+      KIM_ENERGY_UNIT_eV,
+      KIM_CHARGE_UNIT_unused,
+      KIM_TEMPERATURE_UNIT_unused,
+      KIM_TIME_UNIT_unused);
 
   /* register species */
   LOG_INFORMATION("Setting species code");
   error = error ||
       KIM_ModelCreate_SetSpeciesCode(modelCreate,
                                      KIM_SPECIES_NAME_Ar, SPECCODE);
+
+  /* register numbering */
+  LOG_INFORMATION("Setting model numbering");
+  error = error || KIM_ModelCreate_SetModelNumbering(modelCreate,
+                                                     KIM_NUMBERING_zeroBased);
 
   /* register arguments */
   LOG_INFORMATION("Register argument supportStatus");
@@ -480,31 +497,30 @@ int model_create(KIM_ModelCreate * const modelCreate,
                                         KIM_LANGUAGE_NAME_c,
                                         (func *) &model_refresh);
 
-  /* set units */
-  LOG_INFORMATION("Set model units");
-  error = error || KIM_ModelCreate_SetUnits(
-      modelCreate, /* ignoring requested units */
-      KIM_LENGTH_UNIT_A,
-      KIM_ENERGY_UNIT_eV,
-      KIM_CHARGE_UNIT_unused,
-      KIM_TEMPERATURE_UNIT_unused,
-      KIM_TIME_UNIT_unused);
+  /* allocate buffer */
+  bufferPointer = (buffer *) malloc(sizeof(buffer));
 
-  /* store model cutoff in KIM object */
+  /* store model buffer in KIM object */
   LOG_INFORMATION("Set influence distance and cutoffs");
-  model_cutoff = (double*) malloc(sizeof(double));
-  *model_cutoff = CUTOFF;
   KIM_ModelCreate_SetModelBufferPointer(modelCreate,
-                                        model_cutoff);
+                                        bufferPointer);
 
-  /* register influence distance and cutoffs */
-  KIM_ModelCreate_SetInfluenceDistancePointer(modelCreate,
-                                              model_cutoff);
+  /* set buffer values */
+  bufferPointer->influenceDistance = CUTOFF;
+  bufferPointer->cutoff = CUTOFF;
+
+  /* register influence distance */
+  KIM_ModelCreate_SetInfluenceDistancePointer(
+      modelCreate,
+      &(bufferPointer->influenceDistance));
+
+  /* register cutoff */
   KIM_ModelCreate_SetNeighborListCutoffsPointer(modelCreate, 1,
-                                                model_cutoff);
+                                                &(bufferPointer->cutoff));
 
   if (error)
   {
+    free(bufferPointer);
     LOG_ERROR("Unable to successfully initialize model");
     return TRUE;
   }
@@ -517,18 +533,18 @@ int model_create(KIM_ModelCreate * const modelCreate,
 static int model_refresh(KIM_ModelRefresh * const modelRefresh)
 {
   /* Local variables */
-  double * model_cutoff;
+  buffer * bufferPointer;
 
   /* get model buffer from KIM object */
   LOG_INFORMATION("Getting model buffer");
   KIM_ModelRefresh_GetModelBufferPointer(modelRefresh,
-                                         (void **) &model_cutoff);
+                                         (void **) &bufferPointer);
 
   LOG_INFORMATION("Resetting influence distance and cutoffs");
   KIM_ModelRefresh_SetInfluenceDistancePointer(
-      modelRefresh, model_cutoff);
+      modelRefresh, &(bufferPointer->influenceDistance));
   KIM_ModelRefresh_SetNeighborListCutoffsPointer(modelRefresh, 1,
-                                                 model_cutoff);
+                                                 &(bufferPointer->cutoff));
 
   return FALSE;
 }
@@ -536,11 +552,12 @@ static int model_refresh(KIM_ModelRefresh * const modelRefresh)
 /* Initialization function */
 #include "KIM_ModelDestroyLogMacros.h"
 int model_destroy(KIM_ModelDestroy * const modelDestroy) {
-  double* model_cutoff;
+  buffer * bufferPointer;
 
   LOG_INFORMATION("Getting buffer");
-  KIM_ModelDestroy_GetModelBufferPointer(modelDestroy, (void **) &model_cutoff);
+  KIM_ModelDestroy_GetModelBufferPointer(modelDestroy,
+                                         (void **) &bufferPointer);
   LOG_INFORMATION("Freeing model memory");
-  free(model_cutoff);
+  free(bufferPointer);
 
   return FALSE; }

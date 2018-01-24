@@ -91,6 +91,7 @@ real(c_double), parameter :: lj_C = 28.0_cd*lj_epsilon*(-13.0_cd &
                               + 4.0_cd*lj_cutnorm**6)/(lj_cutnorm**12)
 
 type, bind(c) :: buffer_type
+  real(c_double) :: influence_distance
   real(c_double) :: cutoff(1)
 end type buffer_type
 
@@ -453,14 +454,24 @@ kim_log_file = __FILE__
 
 ierr2 = 0
 
-! register numbering
-call kim_model_create_set_model_numbering(model_create_handle, &
-  kim_numbering_one_based, ierr2);
+! set units
+call kim_model_create_set_units(model_create_handle, &
+  kim_length_unit_a, &
+  kim_energy_unit_ev, &
+  kim_charge_unit_unused, &
+  kim_temperature_unit_unused, &
+  kim_time_unit_unused, &
+  ierr2)
 ierr = ierr + ierr2
 
 ! register species
 call kim_model_create_set_species_code(model_create_handle, &
   kim_species_name_ar, speccode, ierr2)
+ierr = ierr + ierr2
+
+! register numbering
+call kim_model_create_set_model_numbering(model_create_handle, &
+  kim_numbering_one_based, ierr2);
 ierr = ierr + ierr2
 
 ! register arguments
@@ -496,31 +507,28 @@ call kim_model_create_set_refresh_pointer( &
   c_funloc(model_refresh_func), ierr2)
 ierr = ierr + ierr2
 
-! set units
-call kim_model_create_set_units(model_create_handle, &
-  kim_length_unit_a, &
-  kim_energy_unit_ev, &
-  kim_charge_unit_unused, &
-  kim_temperature_unit_unused, &
-  kim_time_unit_unused, &
-  ierr2)
-ierr = ierr + ierr2
-
-! store model cutoff in KIM object
+! allocate buffer
 allocate( buf )
-buf%cutoff = model_cutoff
+
+! store model buffer in KIM object
 call kim_model_create_set_model_buffer_pointer(model_create_handle, &
   c_loc(buf))
 
-! register influence distance and cutoffs
-call kim_model_create_set_influence_distance_pointer( &
-  model_create_handle, buf%cutoff(1))
+! set buffer values
+buf%influence_distance = model_cutoff
+buf%cutoff = model_cutoff
 
+! register influence distance
+call kim_model_create_set_influence_distance_pointer( &
+  model_create_handle, buf%influence_distance)
+
+! register cutoff
 call kim_model_create_set_neighbor_list_cutoffs_pointer(model_create_handle, &
   1, buf%cutoff)
 
 if (ierr /= 0) then
   ierr = 1
+  deallocate( buf )
   kim_log_message = "Unable to successfully initialize model"
   LOG_ERROR()
 endif
