@@ -176,7 +176,7 @@ a guiding principle.
     used in C++, convert to snake-case.  Convert to all lower-case.  For example,
     KIM::Model::SetCallbackPointer becomes kim_model_set_callback_pointer.
 
-Identifier Name translation table:
+Routine Identifier Name translation table:
 
 kim-api-v1                             | kim-api-v2 C++ Binding               |
 -------------------------------------- | ------------------------------------ |
@@ -288,6 +288,80 @@ KIM_API_getm_method_by_index           | N/A                                  |
 KIM_API_setm_data_by_index             | N/A                                  |
 KIM_API_setm_method_by_index           | N/A                                  |
 KIM_API_getm_index                     | N/A                                  |
+
+
+Enumeration Identifier Name translation table:
+
+kim-api-v1                             | kim-api-v2 C++ Binding                      |
+-------------------------------------- | ------------------------------------------- |
+"numberOfParticles"                    | KIM::ARGUMENT_NAME::numberOfParticles       |
+"particleSpecies"                      | KIM::ARGUMENT_NAME::particleSpeciesCodes    |
+N/A                                    | KIM::ARGUMENT_NAME::particleContributing    |
+"coordinates"                          | KIM::ARGUMENT_NAME::coordinates             |
+"energy"                               | KIM::ARGUMENT_NAME::partialEnergy           |
+"forces"                               | KIM::ARGUMENT_NAME::partialForces           |
+"particleEnergy"                       | KIM::ARGUMENT_NAME::partialParticleEnergy   |
+"virial"                               | KIM::ARGUMENT_NAME::partialVirial           |
+"particleVirial"                       | KIM::ARGUMENT_NAME::partialParticleVirial   |
+"cutoff"                               | N/A                                         |
+"numberContributingParticles"          | N/A                                         |
+"numberOfSpecies"                      | N/A                                         |
+"particleCharge"                       | N/A                                         |
+"particleSize"                         | N/A                                         |
+"neighObject"                          | N/A                                         |
+"boxSideLengths"                       | N/A                                         |
+"temperature"                          | N/A                                         |
+"hessian"                              | N/A                                         |
+"PARAM_FREE_cutoff"                    | N/A                                         |
+"get_neigh"                            | KIM::CALLBACK_NAME::GetNeighborList         |
+"process_dEdr"                         | KIM::CALLBACK_NAME::ProcessDEDrTerm         |
+"process_d2Edr2"                       | KIM::CALLBACK_NAME::ProcessD2EDr2Term       |
+"ZeroBasedLists"                       | KIM::NUMBERING::zeroBased                   |
+"OneBasedLists"                        | KIM::NUMBERING::oneBased                    |
+"Neigh_IterAccess"                     | N/A                                         |
+"Neigh_LocaAccess"                     | N/A                                         |
+"Neigh_BothAccess"                     | N/A                                         |
+"CLUSTER"                              | N/A                                         |
+"NEIGH_PURE_H"                         | N/A                                         |
+"NEIGH_PURE_F"                         | N/A                                         |
+"NEIGH_RVEC_H"                         | N/A                                         |
+"NEIGH_RVEC_F"                         | N/A                                         |
+"MI_OPBC_H"                            | N/A                                         |
+"MI_OPBC_F"                            | N/A                                         |
+|                                      |                                             |
+"electron"                             | KIM::SPECIES_NAME::electron                 |
+"H"                                    | KIM::SPECIES_NAME::H                        |
+"He"                                   | KIM::SPECIES_NAME::He                       |
+etc.                                   | etc.                                        |
+"user20"                               | KIM::SPECIES_NAME::user20                   |
+|                                      |                                             |
+"C"                                    | KIM::CHARGE_UNIT::C                         |
+"e"                                    | KIM::CHARGE_UNIT::e                         |
+"statC"                                | KIM::CHARGE_UNIT::statC                     |
+N/A                                    | KIM::CHARGE_UNIT::unused                    |
+"amu_A2_per_ps2"                       | KIM::ENERGY_UNIT::amu_A2_per_ps2            |
+"erg"                                  | KIM::ENERGY_UNIT::erg                       |
+"eV"                                   | KIM::ENERGY_UNIT::eV                        |
+"Hartree"                              | KIM::ENERGY_UNIT::Hartree                   |
+"J"                                    | KIM::ENERGY_UNIT::J                         |
+"kcal_mol"                             | KIM::ENERGY_UNIT::kcal_mol                  |
+N/A                                    | KIM::ENERGY_UNIT::unused                    |
+"A"                                    | KIM::LENGTH_UNIT::A                         |
+"Bohr"                                 | KIM::LENGTH_UNIT::Bohr                      |
+"cm"                                   | KIM::LENGTH_UNIT::cm                        |
+"m"                                    | KIM::LENGTH_UNIT::m                         |
+"nm"                                   | KIM::LENGTH_UNIT::nm                        |
+N/A                                    | KIM::LENGTH_UNIT::unused                    |
+"K"                                    | KIM::TEMPERATURE_UNIT::K                    |
+N/A                                    | KIM::TEMPERATURE_UNIT::unused               |
+"fs"                                   | KIM::TIME_UNIT::fs                          |
+"ps"                                   | KIM::TIME_UNIT::ps                          |
+"ns"                                   | KIM::TIME_UNIT::ns                          |
+"s"                                    | KIM::TIME_UNIT::s                           |
+N/A                                    | KIM::TIME_UNIT::unused                      |
+
+
+
 
 
 Next Section: [Browse files](files.html).
