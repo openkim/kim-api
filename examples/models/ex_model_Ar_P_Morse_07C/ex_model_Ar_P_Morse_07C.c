@@ -361,7 +361,6 @@ static int compute(KIM_ModelCompute const * const modelCompute)
                            cutoff, R, &phi, &dphi, &d2phi);
 
             /* compute dEidr */
-            /* Full mode -- regular contribution */
             dEidr = 0.5*dphi;
             d2Eidr = 0.5*d2phi; }
           else if (comp_force || comp_process_dEdr) {
@@ -373,7 +372,6 @@ static int compute(KIM_ModelCompute const * const modelCompute)
                           cutoff, R, &phi, &dphi);
 
             /* compute dEidr */
-            /* Full mode -- regular contribution */
             dEidr = 0.5*dphi; }
           else {
             /* compute just pair potential */
@@ -387,7 +385,6 @@ static int compute(KIM_ModelCompute const * const modelCompute)
           if (comp_particleEnergy) {
             particleEnergy[i] += 0.5*phi; }
           if (comp_energy) {
-            /* Full mode -- add half v to total energy */
             *energy += 0.5*phi; }
 
           /* contribution to process_dEdr */

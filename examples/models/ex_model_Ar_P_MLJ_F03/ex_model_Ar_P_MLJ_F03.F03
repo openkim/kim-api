@@ -306,7 +306,7 @@ do i = 1, N
         if (comp_force.eq.1.or.comp_virial.eq.1) then
           call calc_phi_dphi(r,phi,dphi)       ! compute pair potential
           !   and it derivative
-          dEidr = 0.5_cd*dphi               !      regular contribution
+          dEidr = 0.5_cd*dphi
         else
           call calc_phi(r,phi)                 ! compute just pair potential
         endif
@@ -317,7 +317,7 @@ do i = 1, N
           enepot(i) = enepot(i) + 0.5_cd*phi   ! accumulate energy
         endif
         if (comp_energy.eq.1) then
-          energy = energy + 0.5_cd*phi      !    add half v to total energy
+          energy = energy + 0.5_cd*phi
         endif
 
         ! contribution to virial tensor, virial(i,j)=r(i)*r(j)*(dV/dr)/r
