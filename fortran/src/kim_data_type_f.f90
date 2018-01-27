@@ -108,7 +108,12 @@ subroutine kim_data_type_string(data_type, string)
   integer(c_int) :: null_index
 
   p = get_string(data_type)
-  call c_f_pointer(p, fp)
-  null_index = scan(fp, char(0))-1
-  string = fp(1:null_index)
+  if (c_associated(p)) then
+    call c_f_pointer(p, fp)
+    null_index = scan(fp, char(0))-1
+    string = fp(1:null_index)
+  else
+    nullify(fp)
+    string = ""
+  end if
 end subroutine kim_data_type_string

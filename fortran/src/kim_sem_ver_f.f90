@@ -127,7 +127,12 @@ subroutine kim_sem_ver_parse_sem_ver(version, major, minor, patch, &
   call c_f_pointer(p_prerelease, fp_prerelease)
   null_index = scan(fp_prerelease, char(0))-1
   prerelease = fp_prerelease(1:null_index)
-  call c_f_pointer(p_build, fp_build)
-  null_index = scan(fp_build, char(0))-1
-  build_metadata = fp_build(1:null_index)
+  if (c_associated(p_build)) then
+    call c_f_pointer(p_build, fp_build)
+    null_index = scan(fp_build, char(0))-1
+    build_metadata = fp_build(1:null_index)
+  else
+    nullify(fp_build)
+    build_metadata = ""
+  end if
 end subroutine kim_sem_ver_parse_sem_ver

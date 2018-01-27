@@ -124,9 +124,14 @@ subroutine kim_callback_name_string(callback_name, string)
   integer(c_int) :: null_index
 
   p = get_string(callback_name)
-  call c_f_pointer(p, fp)
-  null_index = scan(fp, char(0))-1
-  string = fp(1:null_index)
+  if (c_associated(p)) then
+    call c_f_pointer(p, fp)
+    null_index = scan(fp, char(0))-1
+    string = fp(1:null_index)
+  else
+    nullify(fp)
+    string = ""
+  end if
 end subroutine kim_callback_name_string
 
 subroutine kim_callback_name_get_number_of_callbacks(number_of_callbacks)

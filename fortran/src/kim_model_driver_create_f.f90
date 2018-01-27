@@ -390,9 +390,14 @@ subroutine kim_model_driver_create_get_parameter_file_name( &
   call c_f_pointer(model_driver_create_handle%p, model_driver_create)
   ierr = get_parameter_file_name(model_driver_create, &
     index-1, p)
-  call c_f_pointer(p, fp)
-  null_index = scan(fp, char(0))-1
-  parameter_file_name = fp(1:null_index)
+  if (c_associated(p)) then
+    call c_f_pointer(p, fp)
+    null_index = scan(fp, char(0))-1
+    parameter_file_name = fp(1:null_index)
+  else
+    nullify(fp)
+    parameter_file_name = ""
+  end if
 end subroutine kim_model_driver_create_get_parameter_file_name
 
 subroutine kim_model_driver_create_set_model_numbering( &
@@ -790,7 +795,12 @@ subroutine kim_model_driver_create_string(model_driver_create_handle, &
 
   call c_f_pointer(model_driver_create_handle%p, model_driver_create)
   p = model_driver_create_string(model_driver_create)
-  call c_f_pointer(p, fp)
-  null_index = scan(fp, char(0))-1
-  string = fp(1:null_index)
+  if (c_associated(p)) then
+    call c_f_pointer(p, fp)
+    null_index = scan(fp, char(0))-1
+    string = fp(1:null_index)
+  else
+    nullify(fp)
+    string = ""
+  end if
 end subroutine kim_model_driver_create_string

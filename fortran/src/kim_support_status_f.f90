@@ -107,7 +107,12 @@ subroutine kim_support_status_string(support_status, string)
   integer(c_int) :: null_index
 
   p = get_string(support_status)
-  call c_f_pointer(p, fp)
-  null_index = scan(fp, char(0))-1
-  string = fp(1:null_index)
+  if (c_associated(p)) then
+    call c_f_pointer(p, fp)
+    null_index = scan(fp, char(0))-1
+    string = fp(1:null_index)
+  else
+    nullify(fp)
+    string = ""
+  end if
 end subroutine kim_support_status_string

@@ -157,7 +157,12 @@ subroutine kim_model_destroy_string(model_destroy_handle, string)
 
   call c_f_pointer(model_destroy_handle%p, model_destroy)
   p = model_destroy_string(model_destroy)
-  call c_f_pointer(p, fp)
-  null_index = scan(fp, char(0))-1
-  string = fp(1:null_index)
+  if (c_associated(p)) then
+    call c_f_pointer(p, fp)
+    null_index = scan(fp, char(0))-1
+    string = fp(1:null_index)
+  else
+    nullify(fp)
+    string = ""
+  end if
 end subroutine kim_model_destroy_string

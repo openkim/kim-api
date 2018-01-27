@@ -470,7 +470,11 @@ subroutine kim_model_get_neighbor_list_cutoffs(model_handle, cutoffs, ierr)
 
   call c_f_pointer(model_handle%p, model)
   call get_neighbor_list_cutoffs_pointer(model, number_of_cutoffs, cutoffs_ptr)
-  call c_f_pointer(cutoffs_ptr, cutoffs_fpointer, [number_of_cutoffs])
+  if (c_associated(cutoffs_ptr)) then
+    call c_f_pointer(cutoffs_ptr, cutoffs_fpointer, [number_of_cutoffs])
+  else
+    nullify(cutoffs_fpointer)
+  end if
 
   if (size(cutoffs) < number_of_cutoffs) then
     ierr = 1
@@ -812,9 +816,14 @@ subroutine kim_model_get_parameter_data_type_extent_and_description( &
   call c_f_pointer(model_handle%p, model)
   ierr = get_parameter_data_type_extent_and_description(model, &
     parameter_index-1, data_type, extent, p)
-  call c_f_pointer(p, fp)
-  null_index = scan(fp, char(0))-1
-  description = fp(1:null_index)
+  if (c_associated(p)) then
+    call c_f_pointer(p, fp)
+    null_index = scan(fp, char(0))-1
+    description = fp(1:null_index)
+  else
+    nullify(fp)
+    description = ""
+  end if
 end subroutine kim_model_get_parameter_data_type_extent_and_description
 
 subroutine kim_model_get_parameter_integer(model_handle, parameter_index, &
@@ -930,9 +939,14 @@ subroutine kim_model_string(model_handle, string)
 
   call c_f_pointer(model_handle%p, model)
   p = model_string(model)
-  call c_f_pointer(p, fp)
-  null_index = scan(fp, char(0))-1
-  string = fp(1:null_index)
+  if (c_associated(p)) then
+    call c_f_pointer(p, fp)
+    null_index = scan(fp, char(0))-1
+    string = fp(1:null_index)
+  else
+    nullify(fp)
+    string = ""
+  end if
 end subroutine kim_model_string
 
 subroutine kim_model_set_log_id(model_handle, log_id)

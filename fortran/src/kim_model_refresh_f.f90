@@ -219,7 +219,12 @@ subroutine kim_model_refresh_string(model_refresh_handle, string)
 
   call c_f_pointer(model_refresh_handle%p, model_refresh)
   p = model_refresh_string(model_refresh)
-  call c_f_pointer(p, fp)
-  null_index = scan(fp, char(0))-1
-  string = fp(1:null_index)
+  if (c_associated(p)) then
+    call c_f_pointer(p, fp)
+    null_index = scan(fp, char(0))-1
+    string = fp(1:null_index)
+  else
+    nullify(fp)
+    string = ""
+  end if
 end subroutine kim_model_refresh_string

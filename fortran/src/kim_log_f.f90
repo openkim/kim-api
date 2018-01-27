@@ -181,9 +181,14 @@ subroutine kim_log_get_id(log_handle, id_string)
 
   call c_f_pointer(log_handle%p, log)
   p = get_id(log)
-  call c_f_pointer(p, fp)
-  null_index = scan(fp, char(0))-1
-  id_string = fp(1:null_index)
+  if (c_associated(p)) then
+    call c_f_pointer(p, fp)
+    null_index = scan(fp, char(0))-1
+    id_string = fp(1:null_index)
+  else
+    nullify(fp)
+    id_string = ""
+  end if
 end subroutine kim_log_get_id
 
 subroutine kim_log_set_id(log_handle, id_string)

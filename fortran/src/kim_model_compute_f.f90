@@ -208,7 +208,11 @@ subroutine kim_model_compute_get_argument_pointer_int0(model_compute_handle, &
 
   call c_f_pointer(model_compute_handle%p, model_compute)
   ierr = get_argument_pointer_integer(model_compute, argument_name, p)
-  call c_f_pointer(p, int0)
+  if (c_associated(p)) then
+    call c_f_pointer(p, int0)
+  else
+    nullify(int0)
+  end if
 end subroutine kim_model_compute_get_argument_pointer_int0
 
 subroutine kim_model_compute_get_argument_pointer_int1(model_compute_handle, &
@@ -230,7 +234,12 @@ subroutine kim_model_compute_get_argument_pointer_int1(model_compute_handle, &
 
   call c_f_pointer(model_compute_handle%p, model_compute)
   ierr = get_argument_pointer_integer(model_compute, argument_name, p)
-  call c_f_pointer(p, int1, [extent1])
+  if (c_associated(p)) then
+    call c_f_pointer(p, int1, [extent1])
+  else
+    nullify(int1)
+  end if
+
 end subroutine kim_model_compute_get_argument_pointer_int1
 
 subroutine kim_model_compute_get_argument_pointer_int2(model_compute_handle, &
@@ -253,7 +262,11 @@ subroutine kim_model_compute_get_argument_pointer_int2(model_compute_handle, &
 
   call c_f_pointer(model_compute_handle%p, model_compute)
   ierr = get_argument_pointer_integer(model_compute, argument_name, p)
-  call c_f_pointer(p, int2, [extent1, extent2])
+  if (c_associated(p)) then
+    call c_f_pointer(p, int2, [extent1, extent2])
+  else
+    nullify(int2)
+  end if
 end subroutine kim_model_compute_get_argument_pointer_int2
 
 subroutine kim_model_compute_get_argument_pointer_double0( &
@@ -274,7 +287,11 @@ subroutine kim_model_compute_get_argument_pointer_double0( &
 
   call c_f_pointer(model_compute_handle%p, model_compute)
   ierr = get_argument_pointer_double(model_compute, argument_name, p)
-  call c_f_pointer(p, double0)
+  if (c_associated(p)) then
+    call c_f_pointer(p, double0)
+  else
+    nullify(double0)
+  end if
 end subroutine kim_model_compute_get_argument_pointer_double0
 
 subroutine kim_model_compute_get_argument_pointer_double1( &
@@ -296,7 +313,11 @@ subroutine kim_model_compute_get_argument_pointer_double1( &
 
   call c_f_pointer(model_compute_handle%p, model_compute)
   ierr = get_argument_pointer_double(model_compute, argument_name, p)
-  call c_f_pointer(p, double1, [extent1])
+  if (c_associated(p)) then
+    call c_f_pointer(p, double1, [extent1])
+  else
+    nullify(double1)
+  end if
 end subroutine kim_model_compute_get_argument_pointer_double1
 
 subroutine kim_model_compute_get_argument_pointer_double2( &
@@ -319,7 +340,11 @@ subroutine kim_model_compute_get_argument_pointer_double2( &
 
   call c_f_pointer(model_compute_handle%p, model_compute)
   ierr = get_argument_pointer_double(model_compute, argument_name, p)
-  call c_f_pointer(p, double2, [extent1, extent2])
+  if (c_associated(p)) then
+    call c_f_pointer(p, double2, [extent1, extent2])
+  else
+    nullify(double2)
+  end if
 end subroutine kim_model_compute_get_argument_pointer_double2
 
 subroutine kim_model_compute_is_callback_present(model_compute_handle, &
@@ -361,7 +386,11 @@ subroutine kim_model_compute_get_neighbor_list(model_compute_handle, &
   call c_f_pointer(model_compute_handle%p, model_compute)
   ierr = get_neighbor_list(model_compute, neighbor_list_index-1, &
     particle_number, number_of_neighbors, p)
-  call c_f_pointer(p, neighbors_of_particle, [number_of_neighbors])
+  if (c_associated(p)) then
+    call c_f_pointer(p, neighbors_of_particle, [number_of_neighbors])
+  else
+    nullify(neighbors_of_particle)
+  end if
 end subroutine kim_model_compute_get_neighbor_list
 
 subroutine kim_model_compute_process_dedr_term(model_compute_handle, &
@@ -453,7 +482,12 @@ subroutine kim_model_compute_string(model_compute_handle, string)
 
   call c_f_pointer(model_compute_handle%p, model_compute)
   p = model_compute_string(model_compute)
-  call c_f_pointer(p, fp)
-  null_index = scan(fp, char(0))-1
-  string = fp(1:null_index)
+  if (c_associated(p)) then
+    call c_f_pointer(p, fp)
+    null_index = scan(fp, char(0))-1
+    string = fp(1:null_index)
+  else
+    nullify(fp)
+    string = ""
+  end if
 end subroutine kim_model_compute_string

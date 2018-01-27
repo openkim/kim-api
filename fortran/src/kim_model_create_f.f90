@@ -654,7 +654,12 @@ subroutine kim_model_create_string(model_create_handle, string)
 
   call c_f_pointer(model_create_handle%p, model_create)
   p = model_create_string(model_create)
-  call c_f_pointer(p, fp)
-  null_index = scan(fp, char(0))-1
-  string = fp(1:null_index)
+  if (c_associated(p)) then
+    call c_f_pointer(p, fp)
+    null_index = scan(fp, char(0))-1
+    string = fp(1:null_index)
+  else
+    nullify(fp)
+    string = ""
+  end if
 end subroutine kim_model_create_string
