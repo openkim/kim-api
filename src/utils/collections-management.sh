@@ -42,14 +42,15 @@ make_command="make --no-print-directory"
 
 # define usage function
 usage () {
-  printf "usage: $0 <command> [<args>]\n"
-  printf "\n"
-  printf "command is one of the following:\n"
-  printf "  list\n"
-  printf "  set-user-models-dir <dir>\n"
-  printf "  set-user-drivers-dir <dir>\n"
-  printf "  install <user | system [--sudo]> <item ID | OpenKIM | item path>\n"
-  printf "  remove [--sudo] <item ID>\n"
+  local command=`printf $0 | sed 's|.*/\([^/][^/]*\)/*|\1|'`
+
+  # Follows docopt.org format
+  printf "Usage:\n"
+  printf "  ${command} list\n"
+  printf "  ${command} set-user-models-dir <directory>\n"
+  printf "  ${command} set-user-drivers-dir <directory>\n"
+  printf "  ${command} install (user | system [--sudo]) (<openkim-item-id> | OpenKIM | <local-item-id-path>)\n"
+  printf "  ${command} remove [--sudo] <item-id>\n"
   printf "\n\n"
 
   printf "list:\n"
@@ -62,7 +63,7 @@ usage () {
   printf "  Rewrite configuration file with provided directory\n"
   printf "\n"
   printf "install:\n"
-  printf "  Install model and/or model driver from openkim.org or from local directory\n"
+  printf "  Install model and/or model driver from openkim.org or from a local path\n"
   printf "\n"
   printf "remove:\n"
   printf "  Remove model or model driver\n"
