@@ -52,7 +52,9 @@ MODEL_LIB_BUILD = $(LIB_ROOT)-model-v$(VERSION_FULL)
 # Add this file and item makefile to makefiles list
 KIM_MAKE_FILES += $(KIM_DIR)/$(builddir)/Makefile.ParameterizedModel Makefile
 
-.PHONY: clean install-system install-user installdirs uninstall-system uninstall-user kim-item-type model-name model-driver-name
+.PHONY: clean installdirs check-for-empty-environment-collection kim-item-type model-name model-driver-name
+.PHONY: install-system install-user install-environment
+.PHONY: uninstall-system uninstall-user uninstall-environment
 
 # descriptor file make rule
 .INTERMEDIATE: kim_str.c
@@ -199,6 +201,12 @@ clean:
                       $(addprefix kim_str.,o c) \
                       $(EXPORT_LIST_NAME) descriptor.kim
 
+check-for-empty-environment-collection:
+	$(QUELL)if test x"$(install_modeldir)" = x"--empty--/$(MODEL_NAME)"; then \
+                  printf "Environment variable '$(shell $(COLLECTIONS_INFO) env env | sed -e 's/\([^[:space:]]*\) .*/\1/')' is empty.\n"; \
+                  false; else true; \
+                fi
+
 installdirs:
 	$(QUELL)fl="$(install_parammodeldir)" && \
                 if test -d "$$fl"; then rm -rf "$$fl"; fi && \
@@ -206,12 +214,15 @@ installdirs:
 
 SYSTEM_MODELS_DIR = $(DESTDIR)$(shell $(COLLECTIONS_INFO) system models)
 USER_MODELS_DIR = $(DESTDIR)$(shell $(COLLECTIONS_INFO) config_file models)
+ENVIRONMENT_MODELS_DIR = $(word 1,$(shell $(COLLECTIONS_INFO) env models))
+ENVIRONMENT_MODELS_DIR := $(strip $(if $(ENVIRONMENT_MODELS_DIR), $(DESTDIR)$(ENVIRONMENT_MODELS_DIR), --empty--))
 ifeq ($(USER_MODELS_DIR),)
   $(error Invalid config file)
 endif
 install-system: install_parammodeldir = $(SYSTEM_MODELS_DIR)/$(MODEL_NAME)
 install-user:   install_parammodeldir = $(USER_MODELS_DIR)/$(MODEL_NAME)
-install-system install-user: install-%: all installdirs
+install-environment: install_modeldir = $(ENVIRONMENT_MODELS_DIR)/$(MODEL_NAME)
+install-system install-user install-environment: install-%: check-for-empty-environment-collection all installdirs
 	@printf "Installing...($*)................. Model.......... $(MODEL_NAME).\n"
 	$(QUELL)if test \( x"$*" = x"system" -a x"$(driver_collection)" = x"user" \); then                    \
                   printf "*******************************************************************************\n"; \
@@ -224,8 +235,9 @@ install-system install-user: install-%: all installdirs
 	$(QUELL)$(INSTALL_PROGRAM) -m 0755 "lib$(MODEL_LIB_BUILD).so" "$(install_parammodeldir)/lib$(MODEL_LIB_BUILD).so"
 	$(QUELL)ln -fs "lib$(MODEL_LIB_BUILD).so" "$(install_parammodeldir)/lib$(MODEL_LIB).so"
 
-uninstall-system: uninstall_parammodeldir = $(SYSTEM_MODELS_DIR)/$(MODEL_NAME)
-uninstall-user:   uninstall_parammodeldir = $(USER_MODELS_DIR)/$(MODEL_NAME)
-uninstall-system uninstall-user: uninstall-%:
+uninstall-system:      install_modeldir = $(SYSTEM_MODELS_DIR)/$(MODEL_NAME)
+uninstall-user:        install_modeldir = $(USER_MODELS_DIR)/$(MODEL_NAME)
+uninstall-environment: install_modeldir = $(ENVIRONMENT_MODELS_DIR)/$(MODEL_NAME)
+uninstall-system uninstall-user uninstall-environment: uninstall-%: check-for-empty-environment-collection
 	@printf "Uninstalling...($*)................. Model.......... $(MODEL_NAME).\n"
 	$(QUELL)fl="$(uninstall_parammodeldir)" && if test -d "$$fl"; then rm -rf "$$fl"; fi

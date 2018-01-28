@@ -53,7 +53,9 @@ MODEL_LIB_BUILD = $(LIB_ROOT)-model-v$(VERSION_FULL)
 # Add this file and item makefile to makefiles list
 KIM_MAKE_FILES += $(KIM_DIR)/$(builddir)/Makefile.Model Makefile
 
-.PHONY: clean install-system install-user installdirs uninstall-system uninstall-user kim-item-type model-name model-kim-file
+.PHONY: clean installdirs check-for-empty--environment-collection kim-item-type model-name model-kim-file
+.PHONY: install-system install-user install-environment
+.PHONY: uninstall-system uninstall-user uninstall-environment
 
 # descriptor file make rule
 .INTERMEDIATE: kim_str.c
@@ -138,6 +140,12 @@ clean:
                       $(addprefix init_wrapper.,o cpp) $(LOCALCLEAN) \
                       $(EXPORT_LIST_NAME)
 
+check-for-empty-environment-collection:
+	$(QUELL)if test x"$(install_modeldir)" = x"--empty--/$(MODEL_NAME)"; then \
+                  printf "Environment variable '$(shell $(COLLECTIONS_INFO) env env | sed -e 's/\([^[:space:]]*\) .*/\1/')' is empty.\n"; \
+                  false; else true; \
+                fi
+
 installdirs:
 	$(QUELL)fl="$(install_modeldir)" && \
                 if test -d "$$fl"; then rm -rf "$$fl"; fi && \
@@ -146,18 +154,22 @@ installdirs:
 COLLECTIONS_INFO = $(libexecdir)/$(full_package_name)/$(full_package_name)-collections-info
 SYSTEM_MODELS_DIR = $(DESTDIR)$(shell $(COLLECTIONS_INFO) system models)
 USER_MODELS_DIR = $(DESTDIR)$(shell $(COLLECTIONS_INFO) config_file models)
+ENVIRONMENT_MODELS_DIR = $(word 1,$(shell $(COLLECTIONS_INFO) env models))
+ENVIRONMENT_MODELS_DIR := $(strip $(if $(ENVIRONMENT_MODELS_DIR), $(DESTDIR)$(ENVIRONMENT_MODELS_DIR), --empty--))
 ifeq ($(USER_MODELS_DIR),)
   $(error Invalid config file)
 endif
-install-system: install_modeldir = $(SYSTEM_MODELS_DIR)/$(MODEL_NAME)
-install-user:   install_modeldir = $(USER_MODELS_DIR)/$(MODEL_NAME)
-install-system install-user: install-%: all installdirs
+install-system:      install_modeldir = $(SYSTEM_MODELS_DIR)/$(MODEL_NAME)
+install-user:        install_modeldir = $(USER_MODELS_DIR)/$(MODEL_NAME)
+install-environment: install_modeldir = $(ENVIRONMENT_MODELS_DIR)/$(MODEL_NAME)
+install-system install-user install-environment: install-%: check-for-empty-environment-collection all installdirs
 	@printf "Installing...($*)................. Model.......... $(MODEL_NAME).\n"
 	$(QUELL)$(INSTALL_PROGRAM) -m 0755 "lib$(MODEL_LIB_BUILD).so" "$(install_modeldir)/lib$(MODEL_LIB_BUILD).so"
 	$(QUELL)ln -fs "lib$(MODEL_LIB_BUILD).so" "$(install_modeldir)/lib$(MODEL_LIB).so"
 
-uninstall-system: uninstall_modeldir = $(SYSTEM_MODELS_DIR)/$(MODEL_NAME)
-uninstall-user:   uninstall_modeldir = $(USER_MODELS_DIR)/$(MODEL_NAME)
-uninstall-system uninstall-user: uninstall-%:
+uninstall-system:      install_modeldir = $(SYSTEM_MODELS_DIR)/$(MODEL_NAME)
+uninstall-user:        install_modeldir = $(USER_MODELS_DIR)/$(MODEL_NAME)
+uninstall-environment: install_modeldir = $(ENVIRONMENT_MODELS_DIR)/$(MODEL_NAME)
+uninstall-system uninstall-user uninstall-environment: uninstall-%: check-for-empty-environment-collection
 	@printf "Uninstalling...($*)................. Model.......... $(MODEL_NAME).\n"
-	$(QUELL)fl="$(uninstall_modeldir)" && if test -d "$$fl"; then rm -rf "$$fl"; fi
+	$(QUELL)fl="$(install_modeldir)" && if test -d "$$fl"; then rm -rf "$$fl"; fi

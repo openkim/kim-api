@@ -49,7 +49,7 @@ usage () {
   printf "  ${command} list\n"
   printf "  ${command} set-user-models-dir <directory>\n"
   printf "  ${command} set-user-drivers-dir <directory>\n"
-  printf "  ${command} install (user | system [--sudo]) (<openkim-item-id> | OpenKIM | <local-item-id-path>)\n"
+  printf "  ${command} install (environment | user | system [--sudo]) (<openkim-item-id> | OpenKIM | <local-item-id-path>)\n"
   printf "  ${command} remove [--sudo] <item-id>\n"
   printf "\n\n"
 
@@ -64,6 +64,8 @@ usage () {
   printf "\n"
   printf "install:\n"
   printf "  Install model and/or model driver from openkim.org or from a local path\n"
+  printf "  (Installing to the environment collection places items in the first\n"
+  printf "   directory of the list.)\n"
   printf "\n"
   printf "remove:\n"
   printf "  Remove model or model driver\n"
@@ -593,6 +595,15 @@ case $command in
     else
       subcommand=$2
       case $subcommand in
+        environment)
+          item_name=$3
+          if ! get_build_install_item "environment" "${item_name}" "sudo-no" ""; then
+            printf "\nAborting!\n"
+            exit 1
+          else
+            printf "\nSuccess!\n"
+          fi
+          ;;
         user)
           item_name=$3
           if ! get_build_install_item "user" "${item_name}" "sudo-no" ""; then
