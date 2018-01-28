@@ -89,13 +89,13 @@ check_item_compatibility () {
                  sed -e 's/\[//g' -e 's/\]//g' \
                  -e 's/{"kim-api-version": "\([0-9.]*\)"/\1/g'`
   if test x"" = x"${version}"; then
-    printf "*** ERROR *** ${item_name} not found.\n"
+    printf "*** ERROR *** ${item_name} not found at openkim.org.\n"
     return 1
   else
     if check_version_compatibility "${version}"; then
       return 0
     else
-      printf "*** ERROR *** ${item_name} is not compatible with this version of the KIM API.\n"
+      printf "*** ERROR *** ${item_name} found at openkim.org is not compatible with this version of the KIM API.\n"
       return 1
     fi
   fi
@@ -162,37 +162,28 @@ get_build_install_item () {
       local_build="${PWD}/${local_build}"
     fi
     item_name="${base_name}"
+
+    if test \! -d "${local_build}"; then
+      printf "Item path '${local_build}' does not exist.\n"
+      return 1
+    fi
   fi
 
   # check for existing item
-  if test x"__MD_" = x`printf -- "${item_name}" | sed 's/.*\(__MD_\).*/\1/'`; then
-    found_item="`${collections_info} model_drivers find "${item_name}"`"
-    item_type="MD"
-  elif test x"__MO_" = x`printf -- "${item_name}" | sed 's/.*\(__MO_\).*/\1/'`; then
-    found_item="`${collections_info} models find "${item_name}"`"
-    item_type="MO"
-  elif test x"__SM_" = x`printf -- "${item_name}" | sed 's/.*\(__SM_\).*/\1/'`; then
-    found_item="`${collections_info} models find "${item_name}"`"
-    item_type="SM"
-  elif test x"OpenKIM" = x"${item_name}"; then
+  if test x"OpenKIM" = x"${item_name}"; then
     found_item=""
     item_type="OpenKIM"
   else
-    found_item="UnknownItemType"
-    item_type="Unknown"
+    found_item="`${collections_info} model_drivers find "${item_name}"`"
+    found_item="${found_item}""`${collections_info} models find "${item_name}"`"
   fi
   if test x"" != x"${found_item}"; then
-    if test x"Unknown" = x"${item_type}"; then
-      printf "Item '${item_name}' of unknown type.\n"
-      return 1
+    local item_collection=`printf -- "${found_item}" | sed -e 's/ .*//'`
+    printf "Item '${item_name}' already installed in collection '${item_collection}'.\n"
+    if test x"${item_collection}" = x"${install_collection}"; then
+      return 0
     else
-      local item_collection=`printf -- "${found_item}" | sed -e 's/ .*//'`
-      printf "Item '${item_name}' already installed in collection '${item_collection}'.\n"
-      if test x"${item_collection}" = x"${install_collection}"; then
-        return 0
-      else
-        return 1
-      fi
+      return 1
     fi
   fi
 
@@ -224,7 +215,7 @@ get_build_install_item () {
           get_build_install_item "$install_collection" "${modname}" "${use_sudo}" "${PASSWORD}" || return 1
         fi
       done
-    elif test x"MD" = x"${item_type}"; then
+    else
       if test x"" = x"${local_build}"; then
         if check_item_compatibility "${item_name}"; then
           printf "*@downloading.......@%-50s\n" "${item_name}" | sed -e 's/ /./g' -e 's/@/ /g'
@@ -242,51 +233,45 @@ get_build_install_item () {
         cp -r "${local_build}" "${item_name}"
       fi
       cd "${item_name}"
+      item_type="`${make_command} kim-item-type`"
       if test 0 -lt `grep -c MAKE_SYSTEM Makefile`; then
         printf "*** ERROR *** ${item_name} appears to be written for an older, incompatible, version of the KIM API.\n"
         return 1
-      fi
-      ${make_command} clean && ${make_command} && if test x"sudo-yes" = x"${use_sudo}"; then
-        printf -- "${PASSWORD}\n" | sudo -k -S ${make_command} "install-${install_collection}" 2> /dev/null
-      else
-        ${make_command} "install-${install_collection}"
-      fi || return 1
-    elif test x"MO" = x"${item_type}"; then
-      if test x"" = x"${local_build}"; then
-        if check_item_compatibility "${item_name}"; then
-          printf "*@downloading.......@%-50s\n" "${item_name}" | sed -e 's/ /./g' -e 's/@/ /g'
-          if wget -q --content-disposition "https://openkim.org/download/${item_name}.txz"; then
-            tar Jxvf "${item_name}.txz" 2>&1 | sed -e 's/^/                /' &&
-              rm -f "${item_name}.txz"
-          else
-            printf "                Unable to download ${item_name} from https://openkim.org.  Check the KIM Item ID for errors.\n"
-            return 1
-          fi
-        else
-          return 1
-        fi
-      else
-        cp -r "${local_build}" "${item_name}"
-      fi
-      cd "${item_name}"
-      if test 0 -lt `grep -c MAKE_SYSTEM Makefile`; then
-        printf "*** ERROR *** ${item_name} appears to be written for an older, incompatible, version of the KIM API.\n";
-        return 1
-      elif test x"ParameterizedModel" = x"`${make_command} -C \"${item_name}\" kim-item-type`"; then
-        dvr="`${make_command} -C \"${item_name}\" model-driver-name`"
+      elif test x"ParameterizedModel" = x"${item_type}"; then
+        dvr="`${make_command} model-driver-name`"
         if test x"" != x"`${collections_info} model_drivers find "${dvr}"`"; then
           printf "*@using installed driver.......@%-50s\n" "${dvr}" | sed -e 's/ /./g' -e 's/@/ /g' || return 1
         else
-          get_build_install_item "${install_collection}" "${dvr}" "${use_sudo}" "${PASSWORD}" || return 1
+          printf "This model needs its driver '${dvr}', trying to find it at openkim.org.\n"
+          # try openkim.org first
+          if ! get_build_install_item "${install_collection}" "${dvr}" "${use_sudo}" "${PASSWORD}"; then
+            if test x"" != x"${local_build}"; then
+              # now try local
+              printf "Now trying to find '${dvr}' locally.\n"
+              dvr=`printf "${local_build}" | sed "s|^\(.*/\)${item_name}\$|\1${dvr}|"`
+              get_build_install_item "${install_collection}" "${dvr}" "${use_sudo}" "${PASSWORD}" || return 1
+            fi
+          fi
         fi
-      fi
-      ${make_command} clean && ${make_command} && if test x"sudo-yes" = x"${use_sudo}"; then
-        printf -- "${PASSWORD}\n" | sudo -k -S ${make_command} "install-${install_collection}" 2> /dev/null
+        ${make_command} clean && ${make_command} && if test x"sudo-yes" = x"${use_sudo}"; then
+            printf -- "${PASSWORD}\n" | sudo -k -S ${make_command} "install-${install_collection}" 2> /dev/null
+          else
+            ${make_command} "install-${install_collection}"
+          fi || return 1
+      elif test x"Model"          = x"${item_type}" -o \
+                x"ModelDriver"    = x"${item_type}" -o \
+                x"SimulatorModel" = x"${item_type}"; then
+        ${make_command} clean && ${make_command} && if test x"sudo-yes" = x"${use_sudo}"; then
+            printf -- "${PASSWORD}\n" | sudo -k -S ${make_command} "install-${install_collection}" 2> /dev/null
+          else
+            ${make_command} "install-${install_collection}"
+          fi || return 1
       else
-        ${make_command} "install-${install_collection}"
-      fi || return 1
+        printf "Item '${item_name}' of unknown type '${item_type}'.\n"
+        return 1
+      fi
     fi
-  )  || return 1  # exit subshell
+  ) || return 1  # exit subshell
 
   rm -rf "${build_dir}" || return 1
 }
@@ -303,7 +288,7 @@ remove_item () {
   if test x"" = x"${found_item}"; then
     found_item="`${collections_info} models find "${item_name}"`"
     if test x"" = x"${found_item}"; then
-      printf "Item not installed.\n"
+      printf "Item '${item_name}' not installed.\n"
       return 1
     else
       item_type="models"
