@@ -51,8 +51,8 @@ usage () {
   printf "  ${command} set-user-drivers-dir <directory>\n"
   printf "  ${command} install\n"
   printf "          (CWD | environment | user | system [--sudo])\n"
-  printf "          (<openkim-item-id> | OpenKIM | <local-item-id-path>)\n"
-  printf "  ${command} remove [--sudo] <item-id>\n"
+  printf "          (<openkim-item-id>... | <local-item-id-path>... | OpenKIM)\n"
+  printf "  ${command} remove [--sudo] <item-id>...\n"
   printf "  ${command} remove-all [--sudo]\n"
   printf "\n\n"
 
@@ -293,7 +293,6 @@ remove_item () {
   local item_name="$1"
   local use_sudo="$2"
   local PASSWORD="$3"
-  local need_confirmation="$4"
   local found_item=""
   local item_type=""
 
@@ -313,28 +312,11 @@ remove_item () {
 
   local item_dir=`${collections_info} "${item_type}" find "${item_name}" | sed -e 's/^[^ ]* [^ ]* \([^ ]*\).*/\1/'`"/${item_name}"
 
-  local confirm='y'
-  if test x"${need_confirmation}" = x"yes"; then
-    printf "This will remove the following directory and all files inside.\n"
-    printf "\n"
-    printf "\t%s\n" "${item_dir}"
-    printf "\n"
-    printf "Are you sure you want to proceed? "
-    if get_confirmation; then
-      confirm='y'
-    else
-      confirm='n'
-    fi
-  fi
-  if test x"${confirm}" = x"y"; then
-    printf "Removing '%s'.\n" "${item_dir}"
-    if test x"sudo-yes" = x"${use_sudo}"; then
-      printf -- "${PASSWORD}\n" | sudo -k -S rm -rf "${item_dir}" 2> /dev/null || return 1
-    else
-      rm -rf "${item_dir}" || return 1
-    fi
+  printf "Removing '%s'.\n" "${item_dir}"
+  if test x"sudo-yes" = x"${use_sudo}"; then
+    printf -- "${PASSWORD}\n" | sudo -k -S rm -rf "${item_dir}" 2> /dev/null || return 1
   else
-    return 1
+    rm -rf "${item_dir}" || return 1
   fi
 }
 
@@ -682,60 +664,66 @@ case $command in
       exit 1
     else
       subcommand=$2
+      shift
+      shift
       case $subcommand in
         CWD)
-          item_name=$3
-          if test -d "./${item_name}"; then
-            printf "A directory named '${item_name}' already exists in the CWD.\n"
-            printf "\nAborting!\n"
-            exit 1
-          fi
-          export KIM_API_MODEL_DRIVERS_DIR=${PWD}
-          export KIM_API_MODELS_DIR=${PWD}
-          if ! get_build_install_item "environment" "${item_name}" "sudo-no" ""; then
-            printf "\nAborting!\n"
-            exit 1
-          else
-            printf "\nSuccess!\n"
-          fi
+          for item_name in $@; do
+            if test -d "./${item_name}"; then
+              printf "A directory named '${item_name}' already exists in the CWD.\n"
+              printf "\nAborting!\n"
+              exit 1
+            fi
+            export KIM_API_MODEL_DRIVERS_DIR=${PWD}
+            export KIM_API_MODELS_DIR=${PWD}
+            if ! get_build_install_item "environment" "${item_name}" "sudo-no" ""; then
+              printf "\nAborting!\n"
+              exit 1
+            else
+              printf "\nSuccess!\n"
+            fi
+          done
           ;;
         environment)
-          item_name=$3
-          if ! get_build_install_item "environment" "${item_name}" "sudo-no" ""; then
-            printf "\nAborting!\n"
-            exit 1
-          else
-            printf "\nSuccess!\n"
-          fi
+          for item_name in $@; do
+            if ! get_build_install_item "environment" "${item_name}" "sudo-no" ""; then
+              printf "\nAborting!\n"
+              exit 1
+            else
+              printf "\nSuccess!\n"
+            fi
+          done
           ;;
         user)
-          item_name=$3
-          if ! get_build_install_item "user" "${item_name}" "sudo-no" ""; then
-            printf "\nAborting!\n"
-            exit 1
-          else
-            printf "\nSuccess!\n"
-          fi
+          for item_name in $@; do
+            if ! get_build_install_item "user" "${item_name}" "sudo-no" ""; then
+              printf "\nAborting!\n"
+              exit 1
+            else
+              printf "\nSuccess!\n"
+            fi
+          done
           ;;
         system)
           PASSWORD=""
-          if test x"--sudo" = x"$3"; then
+          if test x"--sudo" = x"$1"; then
+            shift
             use_sudo="sudo-yes"
             if ! get_password; then
               printf "\nAborting!\n"
               exit 1
             fi
-            item_name=$4
           else
             use_sudo="sudo-no"
-            item_name=$3
           fi
-          if ! get_build_install_item "system" "${item_name}" "${use_sudo}" "${PASSWORD}"; then
-            printf "\nAborting!\n"
-            exit 1
-          else
-            printf "\nSuccess!\n"
-          fi
+          for item_name in $@; do
+            if ! get_build_install_item "system" "${item_name}" "${use_sudo}" "${PASSWORD}"; then
+              printf "\nAborting!\n"
+              exit 1
+            else
+              printf "\nSuccess!\n"
+            fi
+          done
           ;;
         *)
           printf "unknown subcommand: %s\n\n" $subcommand
@@ -750,23 +738,32 @@ case $command in
       usage
       exit 1
     else
-      if test x"--sudo" = x"$2"; then
+      shift
+      if test x"--sudo" = x"$1"; then
+        shift
         use_sudo="sudo-yes"
         if ! get_password; then
           printf "\nAborting!\n"
           exit 1
         fi
-        item_name=$3
       else
         use_sudo="sudo-no"
-        item_name=$2
       fi
-      if ! remove_item "${item_name}" "${use_sudo}" "${PASSWORD}" "yes"; then
-        printf "\nAborting!\n"
-        exit 1
-      else
-        printf "\nSuccess!\n"
-      fi
+    fi
+    printf "This will remove all files associated with these items.\n"
+    printf "\n"
+    printf "Are you sure you want to proceed? "
+    if get_confirmation; then
+      for item_name in $@; do
+        if ! remove_item "${item_name}" "${use_sudo}" "${PASSWORD}"; then
+          printf "\nAborting!\n"
+          exit 1
+        else
+          printf "\nSuccess!\n"
+        fi
+      done
+    else
+      printf "\nAborting!\n"
     fi
     ;;
   remove-all)
@@ -788,13 +785,13 @@ case $command in
     if get_confirmation; then
       # get full list and loop over it to remove
       for item_name in `${collections_info} model_drivers | sed -e 's/^[^[:space:]]* \([^[:space:]]*\).*/\1/'`; do
-        if ! remove_item "${item_name}" "${use_sudo}" "${PASSWORD}" "no"; then
+        if ! remove_item "${item_name}" "${use_sudo}" "${PASSWORD}"; then
           printf "\n Aborting!\n"
           exit 1
         fi
       done
       for item_name in `${collections_info} models | sed -e 's/^[^[:space:]]* \([^[:space:]]*\).*/\1/'`; do
-        if ! remove_item "${item_name}" "${use_sudo}" "${PASSWORD}" "no"; then
+        if ! remove_item "${item_name}" "${use_sudo}" "${PASSWORD}"; then
           printf "\n Aborting!\n"
           exit 1
         fi
