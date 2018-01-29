@@ -50,7 +50,7 @@ usage () {
   printf "  ${command} set-user-models-dir <directory>\n"
   printf "  ${command} set-user-drivers-dir <directory>\n"
   printf "  ${command} install\n"
-  printf "          (environment | user | system [--sudo])\n"
+  printf "          (CWD | environment | user | system [--sudo])\n"
   printf "          (<openkim-item-id> | OpenKIM | <local-item-id-path>)\n"
   printf "  ${command} remove [--sudo] <item-id>\n"
   printf "  ${command} remove-all [--sudo]\n"
@@ -634,6 +634,22 @@ case $command in
     else
       subcommand=$2
       case $subcommand in
+        CWD)
+          item_name=$3
+          if test -d "./${item_name}"; then
+            printf "A directory named '${item_name}' already exists in the CWD.\n"
+            printf "\nAborting!\n"
+            exit 1
+          fi
+          export KIM_API_MODEL_DRIVERS_DIR=${PWD}
+          export KIM_API_MODELS_DIR=${PWD}
+          if ! get_build_install_item "environment" "${item_name}" "sudo-no" ""; then
+            printf "\nAborting!\n"
+            exit 1
+          else
+            printf "\nSuccess!\n"
+          fi
+          ;;
         environment)
           item_name=$3
           if ! get_build_install_item "environment" "${item_name}" "sudo-no" ""; then
