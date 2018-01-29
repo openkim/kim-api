@@ -270,19 +270,27 @@ get_build_install_item () {
             fi
           fi
         fi
-        ${make_command} clean && ${make_command} && if test x"sudo-yes" = x"${use_sudo}"; then
-            printf -- "${PASSWORD}\n" | sudo -k -S ${make_command} "install-${install_collection}" 2> /dev/null
-          else
-            ${make_command} "install-${install_collection}"
-          fi || return 1
+        if ! ((${make_command} clean && ${make_command}) > ./make-log.txt 2>&1 && \
+                if test x"sudo-yes" = x"${use_sudo}"; then
+                  printf -- "${PASSWORD}\n" | sudo -k -S ${make_command} "install-${install_collection}" 2> /dev/null
+                else
+                  ${make_command} "install-${install_collection}"
+                fi); then
+          cat ./make-log.txt
+          return 1
+        fi
       elif test x"Model"          = x"${item_type}" -o \
                 x"ModelDriver"    = x"${item_type}" -o \
                 x"SimulatorModel" = x"${item_type}"; then
-        ${make_command} clean && ${make_command} && if test x"sudo-yes" = x"${use_sudo}"; then
-            printf -- "${PASSWORD}\n" | sudo -k -S ${make_command} "install-${install_collection}" 2> /dev/null
-          else
-            ${make_command} "install-${install_collection}"
-          fi || return 1
+        if ! ((${make_command} clean && ${make_command}) > ./make-log.txt 2>&1 && \
+                if test x"sudo-yes" = x"${use_sudo}"; then
+                  printf -- "${PASSWORD}\n" | sudo -k -S ${make_command} "install-${install_collection}" 2> /dev/null
+                else
+                  ${make_command} "install-${install_collection}"
+                fi); then
+          cat ./make-log.txt
+          return 1
+        fi
       else
         printf "Item '${item_name}' of unknown type '${item_type}'.\n"
         return 1
