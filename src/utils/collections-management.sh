@@ -52,6 +52,7 @@ usage () {
   printf "  ${command} install\n"
   printf "          (CWD | environment | user | system [--sudo])\n"
   printf "          (<openkim-item-id>... | <local-item-id-path>... | OpenKIM)\n"
+  printf "  ${command} reinstall [--sudo] <item-id>...\n"
   printf "  ${command} remove [--sudo] <item-id>...\n"
   printf "  ${command} remove-all [--sudo]\n"
   printf "\n\n"
@@ -69,6 +70,9 @@ usage () {
   printf "  Install model and/or model driver from openkim.org or from a local path\n"
   printf "  (Installing to the environment collection places items in the first\n"
   printf "   directory of the list.)\n"
+  printf "\n"
+  printf "reinstall:\n"
+  printf "  Remove and reinstall items which are from openkim.org.\n"
   printf "\n"
   printf "remove:\n"
   printf "  Remove model or model driver.\n"
@@ -605,7 +609,7 @@ if test $# -lt 1; then
 else
   command=$1
   case $command in
-    list|set-user-drivers-dir|set-user-models-dir|install|remove|remove-all)
+    list|set-user-drivers-dir|set-user-models-dir|install|reinstall|remove|remove-all)
     ;;
     *)
       printf "unknown command: %s\n\n" $command
@@ -732,6 +736,43 @@ case $command in
           ;;
       esac
     fi
+    ;;
+  reinstall)
+    if test $# -lt 2; then
+      usage
+      exit 1
+    else
+      shift
+      if test x"--sudo" = x"$1"; then
+        shift
+        use_sudo="sudo-yes"
+        if ! get_password; then
+          printf "\nAborting!\n"
+          exit 1
+        fi
+      else
+        use_sudo="sudo-no"
+      fi
+    fi
+    for item_name in $@; do
+      if check_item_compatibility "${item_name}"; then
+        found_item="`${collections_info} model_drivers find "${item_name}"` `${collections_info} models find "${item_name}"`"
+        printf "!!!${found_item}!!!!\n"
+        if test \! x"" = x"${found_item}"; then
+          item_collection=`printf "${found_item}" | sed -e 's/^[[:space:]]*\([^[:space:]]*\) .*/\1/'`
+          if ! (remove_item "${item_name}" "${use_sudo}" "${PASSWORD}" && \
+                  get_build_install_item "${item_collection}" "${item_name}" "${use_sudo}" "${PASSWORD}"); then
+            printf "\nAborting!\n"
+            exit 1
+          else
+            printf "\nSuccess!\n"
+          fi
+        else
+          printf "\nAborting!\n"
+          exit 1
+        fi
+      fi
+    done
     ;;
   remove)
     if test $# -lt 2; then
