@@ -35,6 +35,7 @@
 #include <list>
 #include <vector>
 #include <cstring>
+#include "KIM_Log.hpp"
 #include "old_KIM_API_DIRS.h"
 using namespace OLD_KIM;
 
@@ -47,8 +48,8 @@ void usage(char const* const name)
             << "   env <env | models | model_drivers>\n"
             << "   config_file <env | name | models | model_drivers>\n"
             << "   system <library | models | model_drivers>\n"
-            << "   models [find <name>]\n"
-            << "   model_drivers [find <name>]\n";
+            << "   models [--log] [find <name>]\n"
+            << "   model_drivers [--log] [find <name>]\n";
   // note: this interface is likely to change in future kim-api releases
 }
 
@@ -64,9 +65,11 @@ class collectionsInfo
   enum CONFIG_FILE_OPTIONS {CF_ENV, CF_NAME, CF_MODELS, CF_MODEL_DRIVERS};
   void configFile(CONFIG_FILE_OPTIONS const opt);
 
-  void models(bool const list_all, std::string const& name);
+  void models(bool const list_all, std::string const& name,
+              KIM::Log * log);
 
-  void drivers(bool const list_all, std::string const& name);
+  void drivers(bool const list_all, std::string const& name,
+               KIM::Log * log);
  private:
   void listItems(
       std::list<std::vector<std::string> > const& items,
@@ -135,17 +138,19 @@ void collectionsInfo::configFile(CONFIG_FILE_OPTIONS const opt)
   }
 }
 
-void collectionsInfo::models(bool const list_all, std::string const& name)
+void collectionsInfo::models(bool const list_all, std::string const& name,
+                             KIM::Log * log)
 {
   std::list<std::vector<std::string> > items;
-  getAvailableItems(KIM_MODELS_DIR, items, NULL);
+  getAvailableItems(KIM_MODELS_DIR, items, log);
   listItems(items, list_all, name);
 }
 
-void collectionsInfo::drivers(bool list_all, std::string const& name)
+void collectionsInfo::drivers(bool list_all, std::string const& name,
+                              KIM::Log * log)
 {
   std::list<std::vector<std::string> > items;
-  getAvailableItems(KIM_MODEL_DRIVERS_DIR, items, NULL);
+  getAvailableItems(KIM_MODEL_DRIVERS_DIR, items, log);
   listItems(items, list_all, name);
 }
 
@@ -336,6 +341,18 @@ int processItems(int argc, char* argv[])
   int returnVal = 0;
   bool list_all = true;
   std::string name;
+
+  KIM::Log * log = NULL;
+  if (argc >= 3)
+  {
+    if (0 == strcmp("--log", argv[2]))
+    {
+      argc--;
+      argv = &(argv[1]);
+      KIM::Log::Create(&log);
+    }
+  }
+
   if ((argc == 3) || (argc > 4))
   {
     returnVal = 1;
@@ -361,13 +378,14 @@ int processItems(int argc, char* argv[])
     collectionsInfo col;
     if (0 == strcmp("models", argv[1]))
     {
-      col.models(list_all, name);
+      col.models(list_all, name, log);
     }
     else
     {
-      col.drivers(list_all, name);
+      col.drivers(list_all, name, log);
     }
   }
 
+  if (log) KIM::Log::Destroy(&log);
   return returnVal;
 }
