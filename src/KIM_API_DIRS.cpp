@@ -45,6 +45,11 @@
 
 #define LINELEN 256
 
+char const * const DirectoryPathTypeString(DirectoryPathType const type)
+{
+  return (type == KIM_MODELS_DIR) ? "Model" : "Model Driver";
+}
+
 void sanitizeString(std::string &str)
 {
   std::string::iterator itr;
@@ -330,7 +335,8 @@ bool lessThan(std::vector<std::string> lhs, std::vector<std::string> rhs)
 }
 
 void getAvailableItems(DirectoryPathType type,
-                       std::list<std::vector<std::string> > &list)
+                       std::list<std::vector<std::string> > &list,
+                       std::ostream * verbose)
 {
   std::list<std::pair<std::string,std::string> > paths;
   searchPaths(type, &paths);
@@ -345,6 +351,12 @@ void getAvailableItems(DirectoryPathType type,
     std::list<std::string>::const_iterator itemItr;
     for (itemItr = items.begin(); itemItr != items.end(); ++itemItr)
     {
+      if (verbose)
+      {
+        *verbose << "Looking for " << DirectoryPathTypeString(type)
+                 << " in '" << *itemItr << "'\n";
+      }
+
       std::vector<std::string> entry(4);
       entry[IE_COLLECTION] = collection;
       std::size_t split = itemItr->find_last_of("/");
@@ -368,23 +380,52 @@ void getAvailableItems(DirectoryPathType type,
       tmp_lib_handle = dlopen(lib.c_str(), RTLD_NOW);
       if (tmp_lib_handle != NULL)
       {
+        if (verbose)
+        {
+          *verbose << "  Opened shared library\n";
+        }
+
         std::string verSymbolName = entry[IE_NAME] + "_compiled_with_version";
         char const* const verSymbolPtr = (char const* const)
             dlsym(tmp_lib_handle, verSymbolName.c_str());
         char* dlsym_error = dlerror();
         if (dlsym_error)
         {
-          std::cerr << "* Error (getAvailableItems): Cannot load symbol: "
-                    << dlsym_error <<std::endl;
+          if (verbose)
+          {
+            *verbose << "  Unable to get 'compiled_with_version' : "
+                     << dlerror()
+                     << "\n";
+          }
           entry[IE_VER] = "unknown";
+
         }
         else
         {
+          if (verbose)
+          {
+            *verbose << "  Obtained 'compiled_with_version' : "
+                     << verSymbolPtr
+                     << "\n";
+          }
           entry[IE_VER] = verSymbolPtr;
         }
 
         list.push_back(entry);
         dlclose(tmp_lib_handle);
+        if (verbose)
+        {
+          *verbose << "  Closed shared library\n";
+        }
+      }
+      else
+      {
+        if (verbose)
+        {
+          *verbose << "  Unable to open shared library: "
+                   << dlerror()
+                   << "\n";
+        }
       }
     }
   }
@@ -393,11 +434,12 @@ void getAvailableItems(DirectoryPathType type,
 }
 
 bool findItem(DirectoryPathType type, std::string const& name,
-             std::vector<std::string>* const Item)
+              std::vector<std::string>* const Item,
+              std::ostream * verbose)
 {
   bool success = false;
   std::list<std::vector<std::string> > list;
-  getAvailableItems(type, list);
+  getAvailableItems(type, list, verbose);
 
   for (std::list<std::vector<std::string> >::const_iterator
            itr = list.begin(); itr != list.end(); ++itr)

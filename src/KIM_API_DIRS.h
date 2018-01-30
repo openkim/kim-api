@@ -34,6 +34,7 @@
 #ifndef KIMHDR_KIM_API_DIRS_H
 #define KIMHDR_KIM_API_DIRS_H
 
+#include <ostream>
 #include <string>
 #include <list>
 #include <vector>
@@ -45,7 +46,8 @@ enum DirectoryPathType
 };
 
 bool findItem(DirectoryPathType type, std::string const& name,
-              std::vector<std::string>* const Item);
+              std::vector<std::string>* const Item,
+              std::ostream * verbose = NULL);
 
 // needed by collection-info
 std::vector<std::string> getConfigFileName();
@@ -55,6 +57,7 @@ std::vector<std::string> getSystemDirs();
 std::vector<std::string> getUserDirs();
 enum GET_ITEMS_ENTRIES {IE_COLLECTION, IE_NAME, IE_DIR, IE_VER};
 void getAvailableItems(DirectoryPathType type,
-                       std::list<std::vector<std::string> > &list);
+                       std::list<std::vector<std::string> > &list,
+                       std::ostream * verbose = NULL);
 
 #endif /* KIMHDR_KIM_API_DIRS_H */
