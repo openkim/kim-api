@@ -121,8 +121,8 @@ install_bindir = $(dest_package_dir)/bin
 install_nodest_bindir = $(package_dir)/bin
 install_libexecdir = $(dest_package_dir)/libexec
 install_nodest_libexecdir = $(package_dir)/libexec
-install_bin = $(full_package_name)-build-config $(full_package_name)-collections-management $(full_package_name)-simulator-model
-install_libexec = $(full_package_name)-collections-info
+install_bin = $(full_package_name)-build-config $(full_package_name)-collections-management
+install_libexec = $(full_package_name)-collections-info $(full_package_name)-simulator-model
 
 install: dirs-install programs-install
 
