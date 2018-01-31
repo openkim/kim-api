@@ -45,17 +45,20 @@ using namespace OLD_KIM;
 #endif
 
 
-void usage(char const* const name)
+void usage(std::string name)
 {
+  size_t beg = name.find_last_of("/");
+  if (beg != std::string::npos) name = name.substr(beg+1, std::string::npos);
+
   // Follows docopt.org format
   std::cerr << "Usage:\n"
             << "  " << name << " "
-            << "<simulator model name>\n"
+            << "<simulator-model-name>\n"
             << "  " << name << " "
-            << "<simulator model name> "
+            << "<simulator-model-name> "
             << "number-of-parameter-files\n"
             << "  " << name << " "
-            << "<simulator model name> "
+            << "<simulator-model-name> "
             << "(metadata-file | <parameter-file-index>) "
             << "(data | name)\n";
       // note: this interface is likely to change in future kim-api releases

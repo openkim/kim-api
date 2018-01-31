@@ -30,67 +30,46 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
+#include <iostream>
 #include <cstdio>
 #include <cstring>
 #include <sstream>
 
-
-#ifndef CC_STRING
-#error
-#endif
-#ifndef CXX_STRING
-#error
-#endif
-#ifndef FC_STRING
-#error
-#endif
-#ifndef LD_STRING
-#error
-#endif
-#ifndef INCLUDES_STRING
-#error
-#endif
-#ifndef CFLAGS_STRING
-#error
-#endif
-#ifndef CXXFLAGS_STRING
-#error
-#endif
-#ifndef FFLAGS_STRING
-#error
-#endif
-#ifndef LDFLAGS_STRING
-#error
-#endif
-#ifndef LDLIBS_STRING
-#error
-#endif
-#ifndef XLANGLDLIBS_STRING
-#error
-#endif
-#ifndef FNOMAINFLAG_STRING
-#error
-#endif
-#ifndef OBJONLYFLAG_STRING
-#error
-#endif
-#ifndef OUTPUTINFLAG_STRING
-#error
-#endif
-#ifndef MAKEFILEKIMCONFIG_STRING
-#error
-#endif
-#ifndef LIBEXECPATH_STRING
-#error
-#endif
-#ifndef VERSION_STRING
-#error
-#endif
-
-
 #define SUCCESS                     0
 #define INVALID_NUMBER_OF_ARGUMENTS 1
 #define UNKNOWN_OPTION              3
+
+void usage(std::string name)
+{
+  size_t beg = name.find_last_of("/");
+  if (beg != std::string::npos) name = name.substr(beg+1, std::string::npos);
+
+  // There's really no good way to follow docopt in this case....
+  std::cerr << "Usage:\n"
+            << "  " << name << " <option> [<option>]...\n"
+            << "    Stand-alone Options:\n"
+            << "      --makefile-kim-config\n"
+            << "      --master-config\n"
+            << "      --libexec-path\n"
+            << "      --cc\n"
+            << "      --cxx\n"
+            << "      --fc\n"
+            << "      --ld\n"
+            << "      --objonlyflag\n"
+            << "      --outputinflag\n"
+            << "      --version\n"
+            << "      --help\n"
+            << "\n"
+            << "    Combinable Options:\n"
+            << "      --includes\n"
+            << "      --cflags\n"
+            << "      --cxxflags\n"
+            << "      --fflags\n"
+            << "      --ldflags\n"
+            << "      --ldlibs\n"
+            << "      --xlangldlibs\n"
+            << "      --fnomainflag\n";
+}
 
 int processFlag(char const* const opt, std::stringstream * const outString)
 {
@@ -235,27 +214,6 @@ int main(int argc, char* argv[])
     result = INVALID_NUMBER_OF_ARGUMENTS;
   }
 
-  fprintf(stderr, "Usage: %s option [option [...]]\n", argv[0]);
-  fprintf(stderr, "  Stand-alone Options:\n");
-  fprintf(stderr, "    --master-config\n");
-  fprintf(stderr, "    --libexec-path\n");
-  fprintf(stderr, "    --cc\n");
-  fprintf(stderr, "    --cxx\n");
-  fprintf(stderr, "    --fc\n");
-  fprintf(stderr, "    --ld\n");
-  fprintf(stderr, "    --objonlyflag\n");
-  fprintf(stderr, "    --outputinflag\n");
-  fprintf(stderr, "    --version\n");
-  fprintf(stderr, "    --help\n");
-  fprintf(stderr, "\n");
-  fprintf(stderr, "  Combinable Options:\n");
-  fprintf(stderr, "    --includes\n");
-  fprintf(stderr, "    --cflags\n");
-  fprintf(stderr, "    --cxxflags\n");
-  fprintf(stderr, "    --fflags\n");
-  fprintf(stderr, "    --ldflags\n");
-  fprintf(stderr, "    --ldlibs\n");
-  fprintf(stderr, "    --xlangldlibs\n");
-  fprintf(stderr, "    --fnomainflag\n");
+  usage(argv[0]);
   return result;
 }
