@@ -37,17 +37,19 @@
 #include <cstring>
 #include "KIM_API_DIRS.h"
 
-void usage(char const* const name)
+void usage(std::string name)
 {
-  std::cerr << "usage: "
-            << name
-            << " <command> [<args>]\n"
-            << "Where <command> is one of the below.\n"
-            << "   env <env | models | model_drivers>\n"
-            << "   config_file <env | name | models | model_drivers>\n"
-            << "   system <library | models | model_drivers>\n"
-            << "   models [--verbose] [find <name>]\n"
-            << "   model_drivers [--verbose] [find <name>]\n";
+  size_t beg = name.find_last_of("/");
+  if (beg != std::string::npos) name = name.substr(beg+1, std::string::npos);
+
+  // Follows docopt.org format
+  std::cerr << "Usage:\n"
+            << "  " << name << " env (env | models | model_drivers)\n"
+            << "  " << name
+            << " config_file (env | name | models | model_drivers)\n"
+            << "  " << name << " system (library | models | model_drivers)\n"
+            << "  " << name << " models [--log] [find <model-name>]\n"
+            << "  " << name << " model_drivers [--log] [find <driver-name>]\n";
   // note: this interface is likely to change in future kim-api releases
 }
 
@@ -343,7 +345,7 @@ int processItems(int argc, char* argv[])
   std::ostream * verbose = NULL;
   if (argc >= 3)
   {
-    if (0 == strcmp("--verbose", argv[2]))
+    if (0 == strcmp("--log", argv[2]))
     {
       argc--;
       argv = &(argv[1]);
