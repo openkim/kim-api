@@ -117,14 +117,6 @@ install_nodest_libexecdir = $(package_dir)/libexec
 install_bin = $(full_package_name)-build-config $(full_package_name)-collections-management
 install_libexec = $(full_package_name)-descriptor-file-match $(full_package_name)-collections-info $(full_package_name)-simulator-model
 
-install-check:
-	$(QUELL)if test -d "$(dest_package_dir)"; then \
-                  rm -rf "$(install_bindir)"; \
-                  rm -rf "$(install_libexecdir)"; \
-                  for fl in $(install_bin); do rm -f "$(DESTDIR)$(bindir)/$$fl"; done; \
-                  rm -rf "$(DESTDIR)$(libexecdir)/$(full_package_name)"; \
-                fi
-
 installdirs:
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(DESTDIR)$(bindir)"
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(DESTDIR)$(libexecdir)"
