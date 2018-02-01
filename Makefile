@@ -213,6 +213,7 @@ config-uninstall:
 	$(QUELL)if test -d "$(DESTDIR)$(libexecdir)"; then rmdir "$(DESTDIR)$(bindir)" > /dev/null 2>&1 || true; fi
 	$(QUELL)if test -d "$(DESTDIR)$(libdir)"; then rmdir "$(DESTDIR)$(libdir)" > /dev/null 2>&1 || true; fi
 	$(QUELL)if test -d "$(DESTDIR)$(exec_prefix)"; then rmdir "$(DESTDIR)$(exec_prefix)" > /dev/null 2>&1 || true; fi
+	$(QUELL)if test -d "$(DESTDIR)$(sysconfdir)"; then rmdir "$(DESTDIR)$(sysconfdir)" > /dev/null 2>&1 || true; fi
 	$(QUELL)if test -d "$(DESTDIR)$(prefix)"; then rmdir "$(DESTDIR)$(prefix)" > /dev/null 2>&1 || true; fi
 
 ########### for internal use ###########

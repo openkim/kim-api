@@ -83,6 +83,8 @@ usage () {
   printf "Fine tuning of the installation directories:\n"
   printf "  --bindir=DIR            user executables [EPREFIX/bin]\n"
   printf "  --libexecdir=DIR        program executables [EPREFIX/libexec]\n"
+  printf "  --sysconfdir=DIR        read-only single-machine data %s\n" \
+         "[PREFIX/etc]"
   printf "  --libdir=DIR            object code libraries [EPREFIX/lib]\n"
   printf "  --includedir=DIR        C and Fortran header files %s\n" \
          "[PREFIX/include]"
@@ -134,6 +136,7 @@ prefix=''
 execPrefix=''
 bindir=''
 libexecdir=''
+sysconfdir=''
 libdir=''
 includedir=''
 makeVariables=''
@@ -243,6 +246,9 @@ do
       ;;
     --libexecdir=*)
       libexecdir=`stripOption $1`
+      ;;
+    --sysconfdir=*)
+      sysconfdir=`stripOption $1`
       ;;
     --libdir=*)
       libdir=`stripOption $1`
@@ -438,6 +444,9 @@ if test "x" != "x${bindir}"; then
 fi
 if test "x" != "x${libexecdir}"; then
   printf 'printf "libexecdir = '${libexecdir}'\\n" >> $flnm\n' >> $flnm
+fi
+if test "x" != "x${sysconfdir}"; then
+  printf 'printf "sysconfdir = '${sysconfdir}'\\n" >> $flnm\n' >> $flnm
 fi
 if test "x" != "x${libdir}"; then
   printf 'printf "libdir = '${libdir}'\\n" >> $flnm\n' >> $flnm
