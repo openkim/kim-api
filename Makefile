@@ -64,9 +64,9 @@ help:
 #
 # Main build settings and rules
 #
-.PHONY: all config utils-all kim-api-objects kim-api-libs
+.PHONY: all config kim-api-objects kim-api-libs utils-all completion-all
 
-all: config kim-api-objects kim-api-libs utils-all
+all: config kim-api-objects kim-api-libs utils-all completion-all
 
 # Add local Makefile to KIM_MAKE_FILES
 KIM_MAKE_FILES += Makefile
@@ -74,6 +74,7 @@ KIM_MAKE_FILES += Makefile
 
 #%% added srcdir and examplesdir
 srcdir = $(KIM_DIR)/src
+compdir = $(KIM_DIR)/completion
 examplesdir = examples
 
 # build targets involved in "make all"
@@ -102,13 +103,16 @@ kim-api-libs: $(KIM_MAKE_FILES) kim-api-libs-making-echo
 utils-all: $(KIM_MAKE_FILES) src/utils-making-echo
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(srcdir)/utils all
 
+completion-all: $(KIM_MAKE_FILES) completion-making-echo
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(compdir) all
+
 
 #
 # Main clean rules and targets
 #
-.PHONY: clean kim-api-clean config-clean utils-clean
+.PHONY: clean kim-api-clean utils-clean completion-clean config-clean
 
-clean: config kim-api-clean utils-clean config-clean
+clean: config kim-api-clean utils-clean completion-clean config-clean
 
 # build targets involved in "make clean"
 kim-api-clean:
@@ -118,6 +122,9 @@ kim-api-clean:
 utils-clean:
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(srcdir)/utils clean
 
+completion-clean:
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(compdir) clean
+
 config-clean:
 	@printf "Cleaning... KIM_Config files.\n"
 	$(QUELL)rm -f $(KIM_CONFIG_FILES)
@@ -126,9 +133,9 @@ config-clean:
 #
 # Main install settings and rules
 #
-.PHONY: install install-check installdirs kim-api-objects-install kim-api-libs-install config-install utils-install
+.PHONY: install install-check installdirs kim-api-objects-install kim-api-libs-install config-install utils-install completion-install
 
-install: install-check config kim-api-objects-install kim-api-libs-install utils-install config-install
+install: install-check config kim-api-objects-install kim-api-libs-install utils-install config-install completion-install
 
 # build targets involved in "make install"
 install_builddir = $(dest_package_dir)/$(builddir)
@@ -155,6 +162,9 @@ kim-api-libs-install:
 
 utils-install:
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(srcdir)/utils install
+
+completion-install:
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(compdir) install
 
 config-install: installdirs
 	@printf "Installing...($(dest_package_dir))................................. $(builddir)"
@@ -188,19 +198,22 @@ installdirs:
 #
 # Main uninstall settings and rules
 #
-.PHONY: uninstall kim-api-objects-uninstall kim-api-libs-uninstall utils-uninstall config-uninstall
+.PHONY: uninstall kim-api-objects-uninstall kim-api-libs-uninstall utils-uninstall completion-uninstall config-uninstall
 
-uninstall: config kim-api-objects-uninstall utils-uninstall kim-api-libs-uninstall config-uninstall
+uninstall: config kim-api-objects-uninstall kim-api-libs-uninstall utils-uninstall completion-uninstall config-uninstall
 
 # targets involved in "make uninstall"
 kim-api-objects-uninstall:
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(srcdir) objects-uninstall
 
+kim-api-libs-uninstall:
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(srcdir) libs-uninstall
+
 utils-uninstall:
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(srcdir)/utils uninstall
 
-kim-api-libs-uninstall:
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(srcdir) libs-uninstall
+completion-uninstall:
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(compdir) uninstall
 
 config-uninstall:
 	@printf "Uninstalling...($(dest_package_dir))................................. KIM_Config files.\n"
