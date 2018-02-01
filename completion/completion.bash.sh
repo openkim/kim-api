@@ -110,7 +110,7 @@ _###FULL#PACKAGE#NAME###-collections-management()
           opts="OpenKIM"
         fi
 
-        local query='query={"type":"mo","kim-api-version":{"$regex":"^1\\."}}'
+        local query='query={"type":"mo","kim-api-version":{"$regex":"^2\\."}}'
         query="${query}"'&fields={"kimcode":1}'
         query="${query}"'&database=obj'
         local list=`wget -q -O - --post-data="${query}" \
