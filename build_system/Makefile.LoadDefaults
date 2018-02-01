@@ -58,6 +58,7 @@ exec_prefix = $(prefix)
 libdir = $(exec_prefix)/lib
 bindir = $(exec_prefix)/bin
 libexecdir = $(exec_prefix)/libexec
+sysconfdir = $(prefix)/etc
 
 # INSTALL short cut values for internal use
 INSTALL_PROGRAM = install

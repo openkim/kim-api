@@ -531,6 +531,7 @@ if necessary.
     libdir =       # default is '$(exec_prefix)/lib'
     bindir =       # default is '$(exec_prefix)/bin'
     libexecdir =   # default is '$(exec_prefix)/libexec'
+    sysconfdir =   # default is '$(prefix)/etc'
 
 
     * NOTE: See item F.3 below for more details on the installation process.
@@ -567,13 +568,14 @@ F.3 ADVANCED DETAILS OF THE INSTALLATION PROCESS
 
 Upon `make install', the compiled versions of the KIM API library, associated
 and binary utilities will be copied to `$(libdir)/$(full_package_name)/'.  The
-bindir, libexecdir, and includedir directories are also populated.  The default
-values for libdir, bindir, libexec, and includedir are `$(exec_prefix)/lib',
-`$(exec_prefix)/bin', `$(exec_prefix)/libexec', and `$(prefix)/include',
-respectively.  The default value for exec_prefix is `$(prefix)', and the
-default value for prefix is `/usr/local'.  Thus, the default values of libdir,
-bindir, libexec, and includedir are `/usr/local/lib', `/usr/local/bin',
-`/usr/local/libexec', and `/usr/local/include', respectively.  The value of
+bindir, libexecdir, includedir, and sysconfdir directories are also populated.
+The default values for libdir, bindir, libexec, includedir, and sysconfdir are
+`$(exec_prefix)/lib', `$(exec_prefix)/bin', `$(exec_prefix)/libexec',
+`$(prefix)/include', and `$(prefix)/etc', respectively.  The default value for
+exec_prefix is `$(prefix)', and the default value for prefix is `/usr/local'.
+Thus, the default values of libdir, bindir, libexec, includedir, and sysconfdir
+are `/usr/local/lib', `/usr/local/bin', `/usr/local/libexec',
+`/usr/local/include', `/usr/local/etc', respectively.  The value of
 full_package_name is `$(package_name)-v$(VERSION_MAJOR)'.  Additionally the
 supporting header and `.mod' files will be copied to
 `$(libdir)/$(full_package_name)/include' to support subsequent compilation

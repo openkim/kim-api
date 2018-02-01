@@ -64,9 +64,9 @@ help:
 #
 # Main build settings and rules
 #
-.PHONY: all utils-all kim-api-fortran-all kim-api-c-all kim-api-cpp-all
+.PHONY: all kim-api-fortran-all kim-api-c-all kim-api-cpp-all utils-all completion-all
 
-all: kim-api-fortran-includes-all kim-api-c-includes-all kim-api-cpp-includes-all kim-api-fortran-all kim-api-c-all kim-api-cpp-all utils-all
+all: kim-api-fortran-includes-all kim-api-c-includes-all kim-api-cpp-includes-all kim-api-fortran-all kim-api-c-all kim-api-cpp-all utils-all completion-all
 
 # Add local Makefile to KIM_MAKE_FILES
 KIM_MAKE_FILES += $(KIM_DIR)/Makefile
@@ -95,13 +95,16 @@ kim-api-cpp-all: $(KIM_MAKE_FILES) kim-api-cpp-making-echo
 utils-all: $(KIM_MAKE_FILES) cpp/src/utils-making-echo
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C cpp/src/utils all
 
+completion-all: $(KIM_MAKE_FILES) completion-making-echo
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C completion all
+
 
 #
 # Main clean rules and targets
 #
-.PHONY: clean kim-api-cpp-includes-clean kim-api-fortran-clean kim-api-c-clean kim-api-cpp-clean utils-clean
+.PHONY: clean kim-api-cpp-includes-clean kim-api-fortran-clean kim-api-c-clean kim-api-cpp-clean utils-clean completion-clean
 
-clean: kim-api-fortran-includes-clean kim-api-c-includes-clean kim-api-cpp-includes-clean kim-api-fortran-clean kim-api-c-clean kim-api-cpp-clean utils-clean
+clean: kim-api-fortran-includes-clean kim-api-c-includes-clean kim-api-cpp-includes-clean kim-api-fortran-clean kim-api-c-clean kim-api-cpp-clean utils-clean completion-clean
 
 # build targets involved in "make clean"
 kim-api-fortran-includes-clean:
@@ -120,13 +123,16 @@ kim-api-cpp-clean:
 utils-clean:
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C cpp/src/utils clean
 
+completion-clean:
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C completion clean
+
 
 #
 # Main install settings and rules
 #
-.PHONY: install dirs-install config-install build-system-install kim-api-fortran-install kim-api-c-install kim-api-cpp-install utils-install
+.PHONY: install dirs-install config-install build-system-install kim-api-fortran-install kim-api-c-install kim-api-cpp-install utils-install completion-install
 
-install: dirs-install config-install build-system-install kim-api-fortran-install kim-api-c-install kim-api-cpp-install utils-install
+install: dirs-install config-install build-system-install kim-api-fortran-install kim-api-c-install kim-api-cpp-install utils-install completion-install
 
 dirs-install:
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(DESTDIR)$(includedir)"
@@ -170,15 +176,20 @@ kim-api-cpp-install:
 utils-install:
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C cpp/src/utils install
 
+completion-install:
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C completion install
 
 #
 # Main uninstall settings and rules
 #
-.PHONY: uninstall utils-uninstall kim-api-cpp-uninstall kim-api-c-uninstall kim-api-fortran-uninstall build-system-uninstall config-uninstall dirs-uninstall
+.PHONY: uninstall completion-uninstall utils-uninstall kim-api-cpp-uninstall kim-api-c-uninstall kim-api-fortran-uninstall build-system-uninstall config-uninstall dirs-uninstall
 
-uninstall: utils-uninstall kim-api-cpp-uninstall kim-api-c-uninstall kim-api-fortran-uninstall build-system-uninstall config-uninstall dirs-uninstall
+uninstall: completion-uninstall utils-uninstall kim-api-cpp-uninstall kim-api-c-uninstall kim-api-fortran-uninstall build-system-uninstall config-uninstall dirs-uninstall
 
 # targets involved in "make uninstall"
+completion-uninstall:
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C completion uninstall
+
 utils-uninstall:
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C cpp/src/utils uninstall
 

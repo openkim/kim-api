@@ -58,11 +58,12 @@ include $(KIM_DIR)/build_system/Makefile.LoadDefaults
 
 # override default install options
 #prefix =
-#includedir =
 #exec_prefix =
-#libdir =
 #bindir =
 #libexecdir =
+#sysconfdir =
+#libdir =
+#includedir =
 
 # load rest of generic make settings
 include $(KIM_DIR)/build_system/Makefile.Generic
