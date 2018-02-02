@@ -44,7 +44,9 @@ all: $(full_package_name)-descriptor-file-match \
      $(full_package_name)-build-config \
      $(full_package_name)-collections-info \
      $(full_package_name)-collections-management \
-     $(full_package_name)-simulator-model
+     $(full_package_name)-simulator-model \
+     $(full_package_name)-activate \
+     $(full_package_name)-deactivate
 
 # Add the local Makefile to KIM_MAKE_FILES
 KIM_MAKE_FILES += Makefile
@@ -98,6 +100,20 @@ $(full_package_name)-collections-management: collections-management.sh $(KIM_MAK
                     -e 's|###BUILD#CONFIG###|$(package_dir)/bin/$(full_package_name)-build-config|g' collections-management.sh > $@
 	$(QUELL)chmod 0755 $@
 
+$(full_package_name)-activate: activate.sh $(KIM_MAKE_FILES)
+	@printf "Creating... $@.\n"
+	$(QUELL)sed -e 's|###FULL#PACKAGE#NAME###|$(full_package_name)|g' \
+                    -e 's|###PACKAGE#DIR###|$(package_dir)|g' \
+                    -e 's|###SYSCONFDIR###|$(sysconfdir)|g' activate.sh > $@
+	$(QUELL)chmod 0755 $@
+
+$(full_package_name)-deactivate: deactivate.sh $(KIM_MAKE_FILES)
+	@printf "Creating... $@.\n"
+	$(QUELL)sed -e 's|###FULL#PACKAGE#NAME###|$(full_package_name)|g' \
+                    -e 's|###PACKAGE#DIR###|$(package_dir)|g' \
+                    -e 's|###SYSCONFDIR###|$(sysconfdir)|g' deactivate.sh > $@
+	$(QUELL)chmod 0755 $@
+
 
 .PHONY: all clean install installdirs uninstall
 
@@ -107,14 +123,17 @@ clean:
                    $(full_package_name)-build-config \
                    $(full_package_name)-collections-info \
                    $(full_package_name)-collections-management \
-                   $(full_package_name)-simulator-model
+                   $(full_package_name)-simulator-model \
+                   $(full_package_name)-activate \
+                   $(full_package_name)-deactivate
 
 
 install_bindir = $(dest_package_dir)/bin
 install_nodest_bindir = $(package_dir)/bin
 install_libexecdir = $(dest_package_dir)/libexec
 install_nodest_libexecdir = $(package_dir)/libexec
-install_bin = $(full_package_name)-build-config $(full_package_name)-collections-management
+install_bin = $(full_package_name)-build-config $(full_package_name)-collections-management \
+              $(if $(filter-out $(patsubst %,%/bin,$(standard_system_prefixes)),$(bindir)),$(full_package_name)-activate $(full_package_name)-deactivate,)
 install_libexec = $(full_package_name)-descriptor-file-match $(full_package_name)-collections-info $(full_package_name)-simulator-model
 
 installdirs:

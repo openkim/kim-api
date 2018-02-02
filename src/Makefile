@@ -66,7 +66,7 @@ lib$(KIM_LIB_BUILD).a: $(ALLOBJ) KIM_API_DIRS.o
 	$(QUELL)ar rcs $@ $(ALLOBJ) KIM_API_DIRS.o
 
 # Update LINKSOPATH, if prefix is non-standard
-ifeq ($(filter / /usr /usr/local,$(prefix)),)
+ifeq ($(filter $(standard_system_prefixes),$(prefix)),)
    LINKSOPATH = $(package_dir)/
 endif
 

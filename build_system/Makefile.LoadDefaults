@@ -47,6 +47,7 @@ user_config_file_dir_name  = .$(package_name)
 user_config_file_root_name = $(HOME)#  undocumented feature
 
 # INSTALL stuff
+standard_system_prefixes = / /usr /usr/local
 prefix = /usr/local
 includedir = $(prefix)/include
 exec_prefix = $(prefix)
