@@ -90,7 +90,7 @@ lib-cpp-$(KIM_LIB_BUILD).a: $(OBJCPP)
 	$(QUELL)ar rcs $@ $(OBJCPP)
 
 # Update LINKSOPATH, if prefix is non-standard
-ifeq ($(filter / /usr /usr/local,$(prefix)),)
+ifeq ($(filter $(standard_system_prefixes),$(prefix)),)
    LINKSOPATH = $(package_dir)/
 endif
 
