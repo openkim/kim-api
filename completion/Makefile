@@ -46,6 +46,7 @@ $(full_package_name)-completion.bash: completion.bash.sh $(KIM_MAKE_FILES)
 	@printf "Creating... $@.\n"
 	$(QUELL)sed -e 's|###FULL#PACKAGE#NAME###|$(full_package_name)|g' \
                     -e 's|###COLLECTIONS#INFO#UTILITY###|$(package_dir)/libexec/$(full_package_name)/$(full_package_name)-collections-info|g' \
+                    -e 's|###MAJOR#VERSION###|$(VERSION_MAJOR)|g' \
                 completion.bash.sh > $@
 
 

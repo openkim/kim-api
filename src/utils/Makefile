@@ -97,7 +97,8 @@ $(full_package_name)-simulator-model: simulator-model.o lib$(KIM_LIB_BUILD).so
 $(full_package_name)-collections-management: collections-management.sh $(KIM_MAKE_FILES)
 	@printf "Creating... $@.\n"
 	$(QUELL)sed -e 's|###COLLECTIONS#INFO#UTILITY###|$(package_dir)/libexec/$(full_package_name)/$(full_package_name)-collections-info|g' \
-                    -e 's|###BUILD#CONFIG###|$(package_dir)/bin/$(full_package_name)-build-config|g' collections-management.sh > $@
+                    -e 's|###BUILD#CONFIG###|$(package_dir)/bin/$(full_package_name)-build-config|g' \
+                    -e 's|###MAJOR#VERSION###|$(VERSION_MAJOR)|g' collections-management.sh > $@
 	$(QUELL)chmod 0755 $@
 
 $(full_package_name)-activate: activate.sh $(KIM_MAKE_FILES)

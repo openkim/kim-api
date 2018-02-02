@@ -36,6 +36,7 @@
 
 collections_info=###COLLECTIONS#INFO#UTILITY###
 build_config=###BUILD#CONFIG###
+major_version=###MAJOR#VERSION###
 
 make_command="make --no-print-directory"
 
@@ -89,7 +90,7 @@ check_version_compatibility () {
   local version="$1"
   local major=`printf -- "${version}" | sed -e 's/\([^.}]*\).*/\1/'`
   local minor=`printf -- "${version}" | sed -e 's/[^.]*\.\([^.}]*\).*/\1/'`
-  if test \! \( \( ${major} -eq 1 \) -a \( ${minor} -ge 6 \) \) ; then
+  if test \! \( \( ${major} -eq ${major_version} \) -a \( ${minor} -ge 6 \) \) ; then
     return 1
   else
     return 0
@@ -220,7 +221,7 @@ get_build_install_item () {
 
     # download item (and possibly its driver)
     if test x"OpenKIM" = x"${item_type}"; then
-      local query='query={"type":"mo","kim-api-version":{"$regex":"^1\\."}}'
+      local query='query={"type":"mo","kim-api-version":{"$regex":"^'"${major_version}"'\\."}}'
       query="${query}"'&fields={"kimcode":1, "kim-api-version":1}'
       query="${query}"'&database=obj'
       local list=`wget -q -O - --post-data="${query}" https://query.openkim.org/api \
