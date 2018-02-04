@@ -133,7 +133,10 @@ _###FULL#PACKAGE#NAME###-collections-management()
         drivers=`${collections_info} model_drivers | sed -e 's|[^[:space:]]* \([^[:space:]]*\) .*|\1|'`
         opts="${opts} ${models} ${drivers}"
 
-        COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+        if test x"reinstall" = x"${COMP_WORDS[1]}"; then
+          _cd
+        fi
+        COMPREPLY=( "${COMPREPLY[@]}" $(compgen -W "${opts}" -- "${cur}") )
         return 0;
         ;;
       remove-all)

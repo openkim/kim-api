@@ -52,8 +52,8 @@ usage () {
   printf "  ${command} set-user-drivers-dir <directory>\n"
   printf "  ${command} install\n"
   printf "          (CWD | environment | user | system [--sudo])\n"
-  printf "          (<openkim-item-id>... | <local-item-id-path>... | OpenKIM)\n"
-  printf "  ${command} reinstall [--sudo] <item-id>...\n"
+  printf "          (<openkim-item-id>... | <local-item-path>... | OpenKIM)\n"
+  printf "  ${command} reinstall [--sudo] (<openkim-item-id> | <local-item-path>)...\n"
   printf "  ${command} remove [--sudo] <item-id>...\n"
   printf "  ${command} remove-all [--sudo]\n"
   printf "\n\n"
@@ -73,7 +73,7 @@ usage () {
   printf "   directory of the list.)\n"
   printf "\n"
   printf "reinstall:\n"
-  printf "  Remove and reinstall items which are from openkim.org.\n"
+  printf "  Remove and reinstall items.\n"
   printf "\n"
   printf "remove:\n"
   printf "  Remove model or model driver.\n"
@@ -118,6 +118,53 @@ check_item_compatibility () {
     fi
   fi
 }
+
+check_for_local_build () {
+  local name="$1"
+  local_build_path=""
+  local base_name=`printf -- "${name}" | sed 's|.*/\([^/][^/]*\)/*$|\1|'`
+  if test x"${base_name}" != x"${name}"; then
+    local_build_path=`printf -- "${name}" | sed 's|/*$||'`
+    if test x"/" != x`expr ${local_build_path} : '\(.\)'`; then
+      local_build_path="${PWD}/${local_build_path}"
+    fi
+    return 0
+  else
+    return 1
+  fi
+  # output is: local_build_path
+}
+
+get_local_build_item_name () {
+  local build_path="$1"
+  if test \! -d "${build_path}"; then
+    printf "Item path '${build_path}' does not exist.\n"
+    return 1
+  fi
+
+  local item_type=`make -C "${build_path}" kim-item-type`
+  case "${item_type}" in
+    Model|ParameterizedModel|SimulatorModel)
+      item_name=`make -C "${build_path}" model-name`
+      ;;
+    ModelDriver)
+      item_name=`make -C "${build_path}" model-driver-name`
+      ;;
+    *)
+      item_name=""
+      printf "Item type '${item_type}' unknown.\n"
+      error="true"
+      ;;
+  esac
+
+  if test x"true" = x"${error}"; then
+    return 1
+  else
+    return 0
+  fi
+  # output is: item_name
+}
+
 
 check_config_file () {
   local config_file_name=`${collections_info} config_file name`
@@ -165,24 +212,25 @@ get_build_install_item () {
   local PASSWORD="$4"
   local found_item=""
   local item_type=""
-  local local_build=""
+  local local_build_path=""
 
   # check for non-empty item_name
   if test x"" = x"${item_name}"; then
+    printf "Empty item id.\n"
     return 1
   fi
 
-  # check for local build
-  local base_name=`printf -- "${item_name}" | sed 's|.*/\([^/][^/]*\)/*$|\1|'`
-  if test x"${base_name}" != x"${item_name}"; then
-    local_build=`printf -- "${item_name}" | sed 's|/*$||'`
-    if test x"/" != x`expr ${local_build} : '\(.\)'`; then
-      local_build="${PWD}/${local_build}"
-    fi
-    item_name="${base_name}"
+  # make changes for installing to CWD collection, if necessary
+  if test x"${install_collection}" = x"CWD"; then
+    export KIM_API_MODEL_DRIVERS_DIR=${PWD}
+    export KIM_API_MODELS_DIR=${PWD}
+    install_collection="environment"
+  fi
 
-    if test \! -d "${local_build}"; then
-      printf "Item path '${local_build}' does not exist.\n"
+  # check for local build and get item name
+  if check_for_local_build "${item_name}"; then  # sets local_build_path
+    if ! get_local_build_item_name "${local_build_path}"; then  # sets item_name
+      # error message already printed
       return 1
     fi
   fi
@@ -231,11 +279,11 @@ get_build_install_item () {
         fi
       done
     else
-      if test x"" = x"${local_build}"; then
+      if test x"" = x"${local_build_path}"; then
         if check_item_compatibility "${item_name}"; then
-          printf "*@downloading.......@%-50s\n" "${item_name}" | sed -e 's/ /./g' -e 's/@/ /g'
+          printf "Downloading..............@%s\n" "${item_name}" | sed -e 's/ /./g' -e 's/@/ /g'
           if wget -q --content-disposition "https://openkim.org/download/${item_name}.txz"; then
-            tar Jxvf "${item_name}.txz" 2>&1 | sed -e 's/^/                /' &&
+            tar Jxf "${item_name}.txz" 2>&1 | sed -e 's/^/                /' &&
               rm -f "${item_name}.txz"
           else
             printf "                Unable to download ${item_name} from https://openkim.org.  Check the KIM Item ID for errors.\n"
@@ -245,7 +293,7 @@ get_build_install_item () {
           return 1
         fi
       else
-        cp -r "${local_build}" "${item_name}"
+        cp -r "${local_build_path}" "${item_name}"
       fi
       cd "${item_name}"
       item_type="`${make_command} kim-item-type`"
@@ -255,7 +303,7 @@ get_build_install_item () {
       elif test x"ParameterizedModel" = x"${item_type}"; then
         dvr="`${make_command} model-driver-name`"
         if test x"" != x"`${collections_info} model_drivers find "${dvr}"`"; then
-          printf "*@using installed driver.......@%-50s\n" "${dvr}" | sed -e 's/ /./g' -e 's/@/ /g' || return 1
+          printf "Using@installed@driver...@%s\n" "${dvr}" | sed -e 's/ /./g' -e 's/@/ /g' || return 1
         else
           printf "This model needs its driver '${dvr}', trying to find it at openkim.org.\n"
           # try openkim.org first
@@ -677,36 +725,9 @@ case $command in
       shift
       shift
       case $subcommand in
-        CWD)
-          for item_name in $@; do
-            if test -d "./${item_name}"; then
-              printf "A directory named '${item_name}' already exists in the CWD.\n"
-              printf "\nAborting!\n"
-              exit 1
-            fi
-            export KIM_API_MODEL_DRIVERS_DIR=${PWD}
-            export KIM_API_MODELS_DIR=${PWD}
-            if ! get_build_install_item "environment" "${item_name}" "sudo-no" ""; then
-              printf "\nAborting!\n"
-              exit 1
-            else
-              printf "\nSuccess!\n"
-            fi
-          done
-          ;;
-        environment)
-          for item_name in $@; do
-            if ! get_build_install_item "environment" "${item_name}" "sudo-no" ""; then
-              printf "\nAborting!\n"
-              exit 1
-            else
-              printf "\nSuccess!\n"
-            fi
-          done
-          ;;
-        user)
-          for item_name in $@; do
-            if ! get_build_install_item "user" "${item_name}" "sudo-no" ""; then
+        CWD|environment|user)
+          for item_id in $@; do
+            if ! get_build_install_item "${subcommand}" "${item_id}" "sudo-no" ""; then
               printf "\nAborting!\n"
               exit 1
             else
@@ -726,8 +747,8 @@ case $command in
           else
             use_sudo="sudo-no"
           fi
-          for item_name in $@; do
-            if ! get_build_install_item "system" "${item_name}" "${use_sudo}" "${PASSWORD}"; then
+          for item_id in $@; do
+            if ! get_build_install_item "system" "${item_id}" "${use_sudo}" "${PASSWORD}"; then
               printf "\nAborting!\n"
               exit 1
             else
@@ -760,23 +781,33 @@ case $command in
         use_sudo="sudo-no"
       fi
     fi
-    for item_name in $@; do
-      if check_item_compatibility "${item_name}"; then
-        found_item="`${collections_info} model_drivers find "${item_name}"` `${collections_info} models find "${item_name}"`"
-        printf "!!!${found_item}!!!!\n"
-        if test \! x"" = x"${found_item}"; then
-          item_collection=`printf "${found_item}" | sed -e 's/^[[:space:]]*\([^[:space:]]*\) .*/\1/'`
-          if ! (remove_item "${item_name}" "${use_sudo}" "${PASSWORD}" && \
-                  get_build_install_item "${item_collection}" "${item_name}" "${use_sudo}" "${PASSWORD}"); then
-            printf "\nAborting!\n"
-            exit 1
-          else
-            printf "\nSuccess!\n"
-          fi
-        else
+    for item_id in $@; do
+      if check_for_local_build "${item_id}"; then  # sets local_build_path
+        if ! get_local_build_item_name "${local_build_path}"; then  # sets item_name
           printf "\nAborting!\n"
           exit 1
         fi
+      else
+        if ! check_item_compatibility "${item_id}"; then
+          printf "\nAborting!\n"
+          exit 1
+        else
+          item_name="${item_id}"
+        fi
+      fi
+      found_item="`${collections_info} model_drivers find "${item_name}"` `${collections_info} models find "${item_name}"`"
+      if test \! x"" = x"${found_item}"; then
+        item_collection=`printf "${found_item}" | sed -e 's/^[[:space:]]*\([^[:space:]]*\) .*/\1/'`
+        if ! (remove_item "${item_name}" "${use_sudo}" "${PASSWORD}" && \
+                get_build_install_item "${item_collection}" "${item_id}" "${use_sudo}" "${PASSWORD}"); then
+          printf "\nAborting!\n"
+          exit 1
+        else
+          printf "\nSuccess!\n"
+        fi
+      else
+        printf "\nAborting!\n"
+        exit 1
       fi
     done
     ;;
@@ -801,8 +832,8 @@ case $command in
     printf "\n"
     printf "Are you sure you want to proceed? "
     if get_confirmation; then
-      for item_name in $@; do
-        if ! remove_item "${item_name}" "${use_sudo}" "${PASSWORD}"; then
+      for item_id in $@; do
+        if ! remove_item "${item_id}" "${use_sudo}" "${PASSWORD}"; then
           printf "\nAborting!\n"
           exit 1
         else
@@ -831,14 +862,14 @@ case $command in
     printf "Are you sure you want to proceed? "
     if get_confirmation; then
       # get full list and loop over it to remove
-      for item_name in `${collections_info} model_drivers | sed -e 's/^[^[:space:]]* \([^[:space:]]*\).*/\1/'`; do
-        if ! remove_item "${item_name}" "${use_sudo}" "${PASSWORD}"; then
+      for item_id in `${collections_info} model_drivers | sed -e 's/^[^[:space:]]* \([^[:space:]]*\).*/\1/'`; do
+        if ! remove_item "${item_id}" "${use_sudo}" "${PASSWORD}"; then
           printf "\n Aborting!\n"
           exit 1
         fi
       done
-      for item_name in `${collections_info} models | sed -e 's/^[^[:space:]]* \([^[:space:]]*\).*/\1/'`; do
-        if ! remove_item "${item_name}" "${use_sudo}" "${PASSWORD}"; then
+      for item_id in `${collections_info} models | sed -e 's/^[^[:space:]]* \([^[:space:]]*\).*/\1/'`; do
+        if ! remove_item "${item_id}" "${use_sudo}" "${PASSWORD}"; then
           printf "\n Aborting!\n"
           exit 1
         fi

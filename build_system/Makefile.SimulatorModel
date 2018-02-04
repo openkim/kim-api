@@ -178,15 +178,15 @@ ifeq ($(USER_MODELS_DIR),)
 endif
 install-system: install_simmodeldir = $(SYSTEM_MODELS_DIR)/$(MODEL_NAME)
 install-user:   install_simmodeldir = $(USER_MODELS_DIR)/$(MODEL_NAME)
-install-environment: install_modeldir = $(ENVIRONMENT_MODELS_DIR)/$(MODEL_NAME)
+install-environment: install_simmodeldir = $(ENVIRONMENT_MODELS_DIR)/$(MODEL_NAME)
 install-system install-user install-environment: install-%: check-for-empty-environment-collection all installdirs
-	@printf "Installing...($*)................. Model.......... $(MODEL_NAME).\n"
+	@printf "Installing..... Model.......... $(MODEL_NAME).\n"
 	$(QUELL)$(INSTALL_PROGRAM) -m 0755 "lib$(MODEL_LIB_BUILD).so" "$(install_simmodeldir)/lib$(MODEL_LIB_BUILD).so"
 	$(QUELL)ln -fs "lib$(MODEL_LIB_BUILD).so" "$(install_simmodeldir)/lib$(MODEL_LIB).so"
 
-uninstall-system:      install_modeldir = $(SYSTEM_MODELS_DIR)/$(MODEL_NAME)
-uninstall-user:        install_modeldir = $(USER_MODELS_DIR)/$(MODEL_NAME)
-uninstall-environment: install_modeldir = $(ENVIRONMENT_MODELS_DIR)/$(MODEL_NAME)
+uninstall-system:      install_simmodeldir = $(SYSTEM_MODELS_DIR)/$(MODEL_NAME)
+uninstall-user:        install_simmodeldir = $(USER_MODELS_DIR)/$(MODEL_NAME)
+uninstall-environment: install_simmodeldir = $(ENVIRONMENT_MODELS_DIR)/$(MODEL_NAME)
 uninstall-system uninstall-user uninstall-environment: uninstall-%: check-for-empty-environment-collection
-	@printf "Uninstalling...($*)................. Model.......... $(MODEL_NAME).\n"
+	@printf "Uninstalling... Model.......... $(MODEL_NAME).\n"
 	$(QUELL)fl="$(install_simmodeldir)" && if test -d "$$fl"; then rm -rf "$$fl"; fi
