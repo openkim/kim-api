@@ -48,8 +48,8 @@ if test x"`basename "$0" 2> /dev/null`" \
 fi
 
 
-export PATH=`printf "${PATH}" | sed -e "s|^${_package_dir}/bin:||" \
-                                    -e "s|:${_package_dir}/bin:|:|g" \
+export PATH=`printf "${PATH}" | sed -e "s|:${_package_dir}/bin:|:|g" \
+                                    -e "s|^${_package_dir}/bin:||" \
                                     -e "s|:${_package_dir}/bin\$||"`
 
 for _func in `grep "_${_full_package_name}-.*[[:space:]]*()" \
