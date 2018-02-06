@@ -73,7 +73,6 @@ module mod_neighborlist
   type neighObject_type
      integer(c_int) :: number_of_particles
      integer(c_int), pointer :: neighborList(:,:)
-     real(c_double), pointer :: RijList(:,:,:)
   end type neighObject_type
 contains
 
@@ -178,7 +177,6 @@ subroutine NEIGH_PURE_cluster_neighborlist(half, numberOfParticles, coords, &
   return
 
 end subroutine NEIGH_PURE_cluster_neighborlist
-
 
 !-------------------------------------------------------------------------------
 !
@@ -311,7 +309,7 @@ end subroutine create_FCC_configuration
 ! Main program
 !
 !-------------------------------------------------------------------------------
-program ex_test_ar_fcc_cluster
+program ex_test_ar_fcc_cluster_fortran
   use, intrinsic :: iso_c_binding
   use error
   use kim_language_name_module
@@ -334,6 +332,7 @@ program ex_test_ar_fcc_cluster
   real(c_double), parameter :: max_spacing    = 1.2*FCCspacing
   real(c_double), parameter :: spacing_incr   = 0.025*FCCspacing
   real(c_double) :: current_spacing
+  real(c_double) :: force_norm
 
   character(len=256) :: modelname
 
@@ -351,7 +350,8 @@ program ex_test_ar_fcc_cluster
   integer(c_int), target          :: particle_contributing(N)
   real(c_double), target :: energy
   real(c_double), target :: coords(DIM, N)
-  integer(c_int) i, ierr, ierr2
+  real(c_double), target :: forces(DIM, N)
+  integer(c_int) i, j, ierr, ierr2
 
   integer(c_int) species_is_supported
   integer(c_int) species_code
@@ -372,9 +372,9 @@ program ex_test_ar_fcc_cluster
   ! Print output header
   !
   print *
-  print *,'This is Test : ex_test_Ar_fcc_cluster.'
+  print *,'This is Test : ex_test_Ar_fcc_cluster_fortran'
   print *
-  print '(120(''-''))'
+  print '(80(''-''))'
   print '("Results for KIM Model : ",A)', trim(modelname)
 
   ! Create empty KIM object
@@ -405,7 +405,7 @@ program ex_test_ar_fcc_cluster
     call my_error("Model does not support Ar", __LINE__, __FILE__)
   endif
 
-  ! it would be good to check that the model is compatible
+  ! Best-practice is to check that the model is compatible
   ! but we will skip it here
 
   ! register memory with the KIM system
@@ -425,9 +425,17 @@ program ex_test_ar_fcc_cluster
   call kim_model_set_argument_pointer(model_handle, &
     kim_argument_name_partial_energy, energy, ierr2)
   ierr = ierr + ierr2
+  call kim_model_set_argument_pointer(model_handle, &
+    kim_argument_name_partial_forces, forces, ierr2)
+  ierr = ierr + ierr2
   if (ierr /= 0) then
      call my_error("set_argument_pointer", __LINE__, __FILE__)
   endif
+
+  ! Allocate storage for neighbor lists
+  !
+  allocate(neighObject%neighborList(N+1,N))
+  neighObject%number_of_particles = N
 
   ! Set pointer in KIM object to neighbor list routine and object
   !
@@ -461,12 +469,8 @@ program ex_test_ar_fcc_cluster
     particle_contributing(i) = 1  ! every particle contributes
   enddo
 
-  ! Allocate storage for neighbor lists and
-  ! store pointers to neighbor list object and access function
-  !
-  allocate(neighObject%neighborList(N+1,N))
-  neighObject%number_of_particles = N
-
+  ! print header
+  print '(3A20)', "Energy", "Force Norm", "Lattice Spacing"
   ! do the computations
   current_spacing = min_spacing
   do while (current_spacing < max_spacing)
@@ -474,27 +478,34 @@ program ex_test_ar_fcc_cluster
     call create_FCC_configuration(current_spacing, nCellsPerSide, .false., &
       coords, middleDum)
     ! Compute neighbor lists
-    !
-    call NEIGH_PURE_cluster_neighborlist(.false., N, coords, cutoff+cutpad, &
-      neighObject)
-    if (ierr /= 0) then
-      call my_error("update_neighborlist", __LINE__, __FILE__)
-    endif
+    call NEIGH_PURE_cluster_neighborlist(.false., N, coords, (cutoff+cutpad), &
+                                         neighObject)
 
-    ! Call model compute to get forces (gradient)
-    !
+    ! Call model compute
     call kim_model_compute(model_handle, ierr)
     if (ierr /= 0) then
       call my_error("kim_api_model_compute", __LINE__, __FILE__)
     endif
 
+    ! compue force_norm
+    force_norm = 0.0;
+    do i = 1, N
+      do j = 1, DIM
+        force_norm = force_norm + forces(j,i)*forces(j,i)
+      end do
+    end do
+    force_norm = sqrt(force_norm)
+
     ! Print results to screen
     !
-    print '(2ES20.10)', energy, current_spacing
+    print '(3ES20.10)', energy, force_norm, current_spacing
 
     current_spacing = current_spacing + spacing_incr
   enddo
 
+  ! Deallocate neighbor list object
+  deallocate( neighObject%neighborList )
+
   call kim_model_destroy(model_handle)
 
-end program ex_test_ar_fcc_cluster
+end program ex_test_ar_fcc_cluster_fortran

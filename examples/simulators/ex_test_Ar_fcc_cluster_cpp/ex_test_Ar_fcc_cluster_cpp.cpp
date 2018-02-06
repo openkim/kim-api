@@ -33,6 +33,8 @@
 #include <stdlib.h>
 #include <iostream>
 #include <iomanip>
+#include <string>
+#include <cmath>
 #include "KIM_LogVerbosity.hpp"
 #include "KIM_LanguageName.hpp"
 #include "KIM_DataType.hpp"
@@ -71,7 +73,6 @@
 typedef struct
 {
   int numberOfParticles;
-  int iteratorId;
   int* NNeighbors;
   int* neighborList;
 } NeighList;
@@ -97,6 +98,7 @@ int main()
   double const SpacingIncr = 0.025*FCCSPACING;
   double CurrentSpacing;
   double cutpad = 0.75; /* Angstroms */
+  double force_norm;
   int i;
   int error;
 
@@ -112,27 +114,27 @@ int main()
   int number_of_cutoffs;
   double const * cutoff_cluster_model;
   double energy_cluster_model;
+  double forces_cluster[NCLUSTERPARTS*DIM];
 
   std::string modelname;
 
   /* Get KIM Model names */
-  std::cout << "Please enter valid KIM Model name: \n";
+  printf("Please enter valid KIM Model name: \n");
   std::cin >> modelname;
 
 
   /* initialize the model */
   KIM::Model * kim_cluster_model;
   int requestedUnitsAccepted;
-  error = KIM::Model::Create(
-      KIM::NUMBERING::zeroBased,
-      KIM::LENGTH_UNIT::A,
-      KIM::ENERGY_UNIT::eV,
-      KIM::CHARGE_UNIT::e,
-      KIM::TEMPERATURE_UNIT::K,
-      KIM::TIME_UNIT::ps,
-      modelname,
-      &requestedUnitsAccepted,
-      &kim_cluster_model);
+  error = KIM::Model::Create(KIM::NUMBERING::zeroBased,
+                             KIM::LENGTH_UNIT::A,
+                             KIM::ENERGY_UNIT::eV,
+                             KIM::CHARGE_UNIT::e,
+                             KIM::TEMPERATURE_UNIT::K,
+                             KIM::TIME_UNIT::ps,
+                             modelname,
+                             &requestedUnitsAccepted,
+                             &kim_cluster_model);
   if (error)
   {
     MY_ERROR("KIM_create_model_interface()");
@@ -194,23 +196,27 @@ int main()
               << supportStatus.String() << "\""
               << std::endl;
 
-    // can only handle energy as a required arg
+    // can only handle energy and force as a required arg
     if (supportStatus == KIM::SUPPORT_STATUS::required)
     {
-      if (argumentName != KIM::ARGUMENT_NAME::partialEnergy)
+      if ((argumentName != KIM::ARGUMENT_NAME::partialEnergy)
+          ||
+          (argumentName != KIM::ARGUMENT_NAME::partialForces))
       {
         MY_ERROR("unsupported required argument");
       }
     }
 
-    // must have energy
-    if (argumentName == KIM::ARGUMENT_NAME::partialEnergy)
+    // must have energy and forces
+    if ((argumentName == KIM::ARGUMENT_NAME::partialEnergy)
+        ||
+        (argumentName == KIM::ARGUMENT_NAME::partialForces))
     {
       if (! ((supportStatus == KIM::SUPPORT_STATUS::required)
              ||
              (supportStatus == KIM::SUPPORT_STATUS::optional)))
       {
-        MY_ERROR("energy not available");
+        MY_ERROR("energy or forces not available");
       }
     }
   }
@@ -238,8 +244,6 @@ int main()
     }
   }
 
-  // We're compatible with the model. Let's do it.
-
   int numberOfParameters;
   kim_cluster_model->GetNumberOfParameters(&numberOfParameters);
   for (int i=0; i<numberOfParameters; ++i)
@@ -255,6 +259,8 @@ int main()
               << " and description : " << str << std::endl;
   }
 
+  // We're compatible with the model. Let's do it.
+
   error = kim_cluster_model->SetArgumentPointer(
       KIM::ARGUMENT_NAME::numberOfParticles, (int *) &numberOfParticles_cluster)
       || kim_cluster_model->SetArgumentPointer(
@@ -266,7 +272,9 @@ int main()
       || kim_cluster_model->SetArgumentPointer(
           KIM::ARGUMENT_NAME::coordinates, (double*) coords_cluster)
       || kim_cluster_model->SetArgumentPointer(
-          KIM::ARGUMENT_NAME::partialEnergy, &energy_cluster_model);
+          KIM::ARGUMENT_NAME::partialEnergy, &energy_cluster_model)
+      || kim_cluster_model->SetArgumentPointer(
+          KIM::ARGUMENT_NAME::partialForces, (double*) forces_cluster);
   if (error) MY_ERROR("KIM_API_set_data");
   error = kim_cluster_model->SetCallbackPointer(
       KIM::CALLBACK_NAME::GetNeighborList,
@@ -304,10 +312,14 @@ int main()
 
   /* ready to compute */
   std::cout << std::setiosflags(std::ios::scientific) << std::setprecision(10);
+  std::cout << "This is Test : ex_test_Ar_fcc_cluster_cpp\n";
   std::cout << "--------------------------------------------------------------------------------\n";
-  std::cout << "This is Test  : ex_test_Ar_fcc_cluster\n";
-  std::cout << "MODEL is : " << modelname << std::endl;
+  std::cout << "Results for KIM Model : " << modelname << std::endl;
 
+  std::cout << std::setw(20) << "Energy"
+            << std::setw(20) << "Force Norm"
+            << std::setw(20) << "Lattice Spacing"
+            << std::endl;
   for (CurrentSpacing = MinSpacing; CurrentSpacing < MaxSpacing; CurrentSpacing += SpacingIncr)
   {
     /* update coordinates for cluster */
@@ -320,9 +332,17 @@ int main()
     error = kim_cluster_model->Compute();
     if (error) MY_ERROR("compute");
 
+    /* compute force norm */
+    force_norm = 0.0;
+    for (i=0; i < DIM*numberOfParticles_cluster; ++i)
+    {
+      force_norm += forces_cluster[i]*forces_cluster[i];
+    }
+    force_norm = sqrt(force_norm);
+
     /* print the results */
-    std::cout << "Energy for " << NCLUSTERPARTS << " parts = "
-              << std::setw(20) << energy_cluster_model
+    std::cout << std::setw(20) << energy_cluster_model
+              << std::setw(20) << force_norm
               << std::setw(20) << CurrentSpacing
               << std::endl;
   }

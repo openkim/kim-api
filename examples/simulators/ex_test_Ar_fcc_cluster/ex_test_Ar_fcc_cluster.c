@@ -68,19 +68,17 @@
            __LINE__, __FILE__);                                         \
   }
 
-
 /* Define neighborlist structure */
 typedef struct
 {
   int numberOfParticles;
-  int iteratorId;
   int* NNeighbors;
   int* neighborList;
 } NeighList;
 
 /* Define prototypes */
-void fcc_cluster_neighborlist(int allOrOne, int numberOfParticles,
-                              double* coords, double cutoff, NeighList* nl);
+void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
+                              double cutoff, NeighList* nl);
 
 int get_cluster_neigh(
     void const * const dataObject,
@@ -100,6 +98,7 @@ int main()
   double const SpacingIncr = 0.025*FCCSPACING;
   double CurrentSpacing;
   double cutpad = 0.75; /* Angstroms */
+  double force_norm;
   int i;
   int error;
 
@@ -111,16 +110,14 @@ int main()
   int speciesIsSupported;
   int particleSpecies_cluster_model[NCLUSTERPARTS];
   int particleContributing_cluster_model[NCLUSTERPARTS];
-  int particleContributing_one_atom_model[NCLUSTERPARTS];
   double coords_cluster[NCLUSTERPARTS][DIM];
   NeighList nl_cluster_model;
   /* model outputs */
   int number_of_cutoffs_cluster_model;
   double influence_distance_cluster_model;
   double const * cutoff_cluster_model;
-  double energy_cluster_model = 0.0;
-  double energy_one_atom_model = 0.0;
-  double energy = 0.0;
+  double energy_cluster_model;
+  double forces_cluster[NCLUSTERPARTS*DIM];
 
   char modelname[NAMESTRLEN];
   int requestedUnitsAccepted;
@@ -130,8 +127,6 @@ int main()
   KIM_SupportStatus supportStatus;
   int numberOfAPI_Callbacks;
   KIM_CallbackName callbackName;
-
-
 
   /* Get KIM Model names */
   printf("Please enter valid KIM Model name: \n");
@@ -174,18 +169,22 @@ int main()
                                                &supportStatus);
     if (error) MY_ERROR("can't get argument supportStatus");
 
-    /* can only handle energy as a required arg */
+    /* can only handle energy and force as a required arg */
     if (KIM_SupportStatusEqual(supportStatus, KIM_SUPPORT_STATUS_required))
     {
-      if (KIM_ArgumentNameNotEqual(argumentName,
-                                   KIM_ARGUMENT_NAME_partialEnergy))
+      if ((KIM_ArgumentNameNotEqual(argumentName,
+                                    KIM_ARGUMENT_NAME_partialEnergy)) ||
+          (KIM_ArgumentNameNotEqual(argumentName,
+                                    KIM_ARGUMENT_NAME_partialForces)))
       {
         MY_ERROR("unsupported required argument");
       }
     }
 
-    /* must have energy */
-    if (KIM_ArgumentNameEqual(argumentName, KIM_ARGUMENT_NAME_partialEnergy))
+    /* must have energy and forces */
+    if ((KIM_ArgumentNameEqual(argumentName, KIM_ARGUMENT_NAME_partialEnergy))
+        ||
+        (KIM_ArgumentNameEqual(argumentName, KIM_ARGUMENT_NAME_partialForces)))
     {
       if (! ((KIM_SupportStatusEqual(supportStatus,
                                      KIM_SUPPORT_STATUS_required))
@@ -193,7 +192,7 @@ int main()
              (KIM_SupportStatusEqual(supportStatus,
                                      KIM_SUPPORT_STATUS_optional))))
       {
-        MY_ERROR("energy not available");
+        MY_ERROR("energy or forces not available");
       }
     }
   }
@@ -218,20 +217,29 @@ int main()
   /* We're compatible with the model.  Let's do it. */
 
   error =
-      KIM_Model_SetArgumentPointerInteger(model,
-                                          KIM_ARGUMENT_NAME_numberOfParticles,
-                                          &numberOfParticles_cluster)
+      KIM_Model_SetArgumentPointerInteger(
+          model,
+          KIM_ARGUMENT_NAME_numberOfParticles,
+          &numberOfParticles_cluster)
       ||
       KIM_Model_SetArgumentPointerInteger(
           model,
           KIM_ARGUMENT_NAME_particleSpeciesCodes,
           particleSpecies_cluster_model)
       ||
+      KIM_Model_SetArgumentPointerInteger(
+          model,
+          KIM_ARGUMENT_NAME_particleContributing,
+          particleContributing_cluster_model)
+      ||
       KIM_Model_SetArgumentPointerDouble(model, KIM_ARGUMENT_NAME_coordinates,
                                          (double*) &coords_cluster)
       ||
       KIM_Model_SetArgumentPointerDouble(model, KIM_ARGUMENT_NAME_partialEnergy,
-                                         &energy);
+                                         &energy_cluster_model)
+      ||
+      KIM_Model_SetArgumentPointerDouble(model, KIM_ARGUMENT_NAME_partialForces,
+                                         (double*) &forces_cluster);
   if (error) MY_ERROR("KIM_setm_data");
   KIM_Model_SetCallbackPointer(model,
                                KIM_CALLBACK_NAME_GetNeighborList,
@@ -259,9 +267,7 @@ int main()
   for (i = 0; i < NCLUSTERPARTS; ++i)
   {
     particleContributing_cluster_model[i] = 1;  /* all particles contribute */
-    particleContributing_one_atom_model[i] = 0;  /* none (but 30 contribute */
   }
-  particleContributing_one_atom_model[30] = 1;
 
   /* setup neighbor lists */
   /* allocate memory for list */
@@ -273,38 +279,37 @@ int main()
   if (NULL==nl_cluster_model.neighborList) MY_ERROR("malloc unsuccessful");
 
   /* ready to compute */
-  printf("--------------------------------------------------------------------------------\n");
   printf("This is Test  : ex_test_Ar_fcc_cluster\n");
-  printf("MODEL is : %s\n",   modelname);
+  printf("--------------------------------------------------------------------------------\n");
+  printf("Results for KIM Model : %s\n",   modelname);
 
-  printf("There are %i particles.\n", NCLUSTERPARTS);
-  printf("%20s, %20s, %20s\n", "Cluster Energy", "One Atom Energy", "Current Spacing");
+  printf("%20s, %20s, %20s\n", "Energy", "Force Norm", "Lattice Spacing");
   for (CurrentSpacing = MinSpacing; CurrentSpacing < MaxSpacing; CurrentSpacing += SpacingIncr)
   {
     /* update coordinates for cluster */
     create_FCC_cluster(CurrentSpacing, NCELLSPERSIDE, &(coords_cluster[0][0]));
     /* compute neighbor lists */
-    fcc_cluster_neighborlist(-1, NCLUSTERPARTS, &(coords_cluster[0][0]),
+    fcc_cluster_neighborlist(0, NCLUSTERPARTS, &(coords_cluster[0][0]),
                              (*cutoff_cluster_model + cutpad), &nl_cluster_model);
 
     /* call compute functions */
-    error = KIM_Model_SetArgumentPointerInteger(model, KIM_ARGUMENT_NAME_particleContributing, particleContributing_cluster_model);
-    error = error || KIM_Model_Compute(model);
+    error = KIM_Model_Compute(model);
     if (error) MY_ERROR("KIM_model_compute");
-    energy_cluster_model = energy;
 
-    error = KIM_Model_SetArgumentPointerInteger(model, KIM_ARGUMENT_NAME_particleContributing, particleContributing_one_atom_model);
-    error = error || KIM_Model_Compute(model);
-    if (error) MY_ERROR("KIM_model_compute");
-    energy_one_atom_model = energy;
+    /* compute force norm */
+    force_norm = 0.0;
+    for (i=0; i < DIM*numberOfParticles_cluster; ++i)
+    {
+      force_norm += forces_cluster[i]*forces_cluster[i];
+    }
+    force_norm = sqrt(force_norm);
 
     /* print the results */
     printf("%20.10e, %20.10e, %20.10e\n",
            energy_cluster_model,
-           energy_one_atom_model,
+           force_norm,
            CurrentSpacing);
   }
-
 
   /* free memory of neighbor lists */
   free(nl_cluster_model.NNeighbors);
@@ -435,7 +440,7 @@ void create_FCC_cluster(double FCCspacing, int nCellsPerSide, double *coords)
 }
 
 
-void fcc_cluster_neighborlist(int allOrOne, int numberOfParticles, double* coords,
+void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
                               double cutoff, NeighList* nl)
 {
   /* local variables */
@@ -449,21 +454,22 @@ void fcc_cluster_neighborlist(int allOrOne, int numberOfParticles, double* coord
   double cutoff2;
 
   cutoff2 = cutoff*cutoff;
+
   for (i = 0; i < numberOfParticles; ++i)
   {
     a = 0;
-    if ((allOrOne == i) || (allOrOne < 0))
+    for (j = 0; j < numberOfParticles; ++j)
     {
-      for (j = 0; j < numberOfParticles; ++j)
+      r2 = 0.0;
+      for (k = 0; k < DIM; ++k)
       {
-        r2 = 0.0;
-        for (k = 0; k < DIM; ++k)
-        {
-          dx[k] = coords[j*DIM + k] - coords[i*DIM + k];
-          r2 += dx[k]*dx[k];
-        }
+        dx[k] = coords[j*DIM + k] - coords[i*DIM + k];
+        r2 += dx[k]*dx[k];
+      }
 
-        if ((r2 < cutoff2) && (i != j))
+      if (r2 < cutoff2)
+      {
+        if ((half && i < j) || (!half && i != j))
         {
           /* part j is a neighbor of part i */
           (*nl).neighborList[i*NCLUSTERPARTS + a] = j;
