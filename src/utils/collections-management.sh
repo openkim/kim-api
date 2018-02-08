@@ -185,6 +185,22 @@ get_local_build_item_name () {
   # output is: item_name
 }
 
+check_makefile_for_v2_build_config () {
+  # Assumes we are in the TMP build dir with "${item_id}" as a subdirectory
+  local item_id="$1"
+
+  printf "include ./${item_id}/Makefile\n"  > Makefile
+  printf 'print-%%: ; @printf -- "$($*)"'  >> Makefile
+
+  local item_build_config=`make print-KIM_API_BUILD_CONFIG 2> /dev/null`
+
+  if test x"kim-api-v2-build-config" = x"${item_build_config}"; then
+    printf "Item is designed for kim-api-v2 (Makefile KIM_API_BUILD_CONFIG = kim-api-v2-build-config).\n"
+    return 0
+  else
+    return 1
+  fi
+}
 
 check_config_file () {
   local config_file_name=`${collections_info} config_file name`
@@ -316,11 +332,13 @@ get_build_install_item () {
           return 1
         fi
       else
-        cp -r "${local_build_path}" "${item_name}"
+        cp -r "${local_build_path}" "./${item_name}"
       fi
-      cd "${item_name}"
+      cd "./${item_name}"
       item_type="`${make_command} kim-item-type`"
-      if test 0 -lt `grep -c MAKE_SYSTEM Makefile`; then
+      if (cd .. && check_makefile_for_v2_build_config "${item_name}"); then
+        return 1
+      elif test 0 -lt `grep -c MAKE_SYSTEM Makefile`; then
         printf "*** ERROR *** ${item_name} appears to be written for an older, incompatible, version of the KIM API.\n"
         return 1
       elif test x"ParameterizedModel" = x"${item_type}"; then
