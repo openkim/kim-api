@@ -165,7 +165,6 @@ get_local_build_item_name () {
   # output is: item_name
 }
 
-
 check_config_file () {
   local config_file_name=`${collections_info} config_file name`
   local drivers_dir=`${collections_info} config_file model_drivers`
@@ -293,9 +292,9 @@ get_build_install_item () {
           return 1
         fi
       else
-        cp -r "${local_build_path}" "${item_name}"
+        cp -r "${local_build_path}" "./${item_name}"
       fi
-      cd "${item_name}"
+      cd "./${item_name}"
       item_type="`${make_command} kim-item-type`"
       if test 0 -lt `grep -c MAKE_SYSTEM Makefile`; then
         printf "*** ERROR *** ${item_name} appears to be written for an older, incompatible, version of the KIM API.\n"
