@@ -296,10 +296,7 @@ get_build_install_item () {
       fi
       cd "./${item_name}"
       item_type="`${make_command} kim-item-type`"
-      if test 0 -lt `grep -c MAKE_SYSTEM Makefile`; then
-        printf "*** ERROR *** ${item_name} appears to be written for an older, incompatible, version of the KIM API.\n"
-        return 1
-      elif test x"ParameterizedModel" = x"${item_type}"; then
+      if test x"ParameterizedModel" = x"${item_type}"; then
         dvr="`${make_command} model-driver-name`"
         if test x"" != x"`${collections_info} model_drivers find "${dvr}"`"; then
           printf "Using@installed@driver...@%s\n" "${dvr}" | sed -e 's/ /./g' -e 's/@/ /g' || return 1
