@@ -49,7 +49,7 @@ class LengthUnit
   LengthUnit(std::string const & str);
   bool operator==(LengthUnit const & rhs) const;
   bool operator!=(LengthUnit const & rhs) const;
-  std::string String() const;
+  std::string const & String() const;
 };
 
 namespace LENGTH_UNIT

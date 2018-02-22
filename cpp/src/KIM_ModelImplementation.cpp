@@ -538,7 +538,7 @@ int ModelImplementation::GetNumberOfParameterFiles(
 }
 
 int ModelImplementation::GetParameterFileName(
-    int const index, std::string * const parameterFileName) const
+    int const index, std::string const ** const parameterFileName) const
 {
   LOG_DEBUG("Enter GetParameterFileName().");
 
@@ -556,7 +556,7 @@ int ModelImplementation::GetParameterFileName(
     return true;
   }
 
-  *parameterFileName = parameterFileNames_[index];
+  *parameterFileName = &(parameterFileNames_[index]);
   LOG_DEBUG("Exit GetParameterFileName().");
   return false;
 }
@@ -602,7 +602,7 @@ void ModelImplementation::GetNumberOfParameters(int * const numberOfParameters)
 
 int ModelImplementation::GetParameterDataTypeExtentAndDescription(
     int const parameterIndex, DataType * const dataType, int * const extent,
-    std::string * const description) const
+    std::string const ** const description) const
 {
   LOG_DEBUG("Enter GetParameterDataTypeExtentAndDescription().");
 
@@ -611,7 +611,7 @@ int ModelImplementation::GetParameterDataTypeExtentAndDescription(
   if (extent != NULL)
     *extent = parameterExtent_[parameterIndex];
   if (description != NULL)
-    *description = parameterDescription_[parameterIndex];
+    *description = &(parameterDescription_[parameterIndex]);
 
   LOG_DEBUG("Exit GetParameterDataTypeExtentAndDescription().");
   return false;
@@ -1388,23 +1388,27 @@ int ModelImplementation::ConvertUnit(
 {
   LOG_DEBUG("Enter ConvertUnit().");
 
-  static LengthMap lengthConvertToSI = GetLengthMap();
-  static EnergyMap energyConvertToSI = GetEnergyMap();
-  static ChargeMap chargeConvertToSI = GetChargeMap();
-  static TemperatureMap temperatureConvertToSI = GetTemperatureMap();
-  static TimeMap timeConvertToSI = GetTimeMap();
+  static LengthMap const lengthConvertToSI = GetLengthMap();
+  static EnergyMap const energyConvertToSI = GetEnergyMap();
+  static ChargeMap const chargeConvertToSI = GetChargeMap();
+  static TemperatureMap const temperatureConvertToSI = GetTemperatureMap();
+  static TimeMap const timeConvertToSI = GetTimeMap();
 
   double const lengthConversion
-      = lengthConvertToSI[toLengthUnit]/lengthConvertToSI[fromLengthUnit];
+      = lengthConvertToSI.find(toLengthUnit)->second /
+      lengthConvertToSI.find(fromLengthUnit)->second;
   double const energyConversion
-      = energyConvertToSI[toEnergyUnit]/energyConvertToSI[fromEnergyUnit];
+      = energyConvertToSI.find(toEnergyUnit)->second /
+      energyConvertToSI.find(fromEnergyUnit)->second;
   double const chargeConversion
-      = chargeConvertToSI[toChargeUnit]/chargeConvertToSI[fromChargeUnit];
+      = chargeConvertToSI.find(toChargeUnit)->second /
+      chargeConvertToSI.find(fromChargeUnit)->second;
   double const temperatureConversion
-      = temperatureConvertToSI[toTemperatureUnit]
-      /temperatureConvertToSI[fromTemperatureUnit];
+      = temperatureConvertToSI.find(toTemperatureUnit)->second /
+      temperatureConvertToSI.find(fromTemperatureUnit)->second;
   double const timeConversion
-      = timeConvertToSI[toTimeUnit]/timeConvertToSI[fromTimeUnit];
+      = timeConvertToSI.find(toTimeUnit)->second /
+      timeConvertToSI.find(fromTimeUnit)->second;
 
   *conversionFactor
       = pow(lengthConversion, lengthExponent)
@@ -1453,7 +1457,7 @@ void ModelImplementation::LogEntry(LogVerbosity const logVerbosity,
   log_->LogEntry(logVerbosity, message, lineNumber, fileName);
 }
 
-std::string ModelImplementation::String() const
+std::string const & ModelImplementation::String() const
 {
   LOG_DEBUG("Enter String().");
 
@@ -1651,8 +1655,9 @@ std::string ModelImplementation::String() const
       "====================================================================="
       "===========\n";
 
+  string_ = ss.str();
   LOG_DEBUG("Exit String().");
-  return ss.str();
+  return string_;
 }
 
 

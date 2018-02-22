@@ -57,8 +57,11 @@ StringMap const GetStringMap()
   m[oneBased] = "oneBased";
   return m;
 }
+
+StringMap const numberingToString = GetStringMap();
+std::string numberingUnknown("unknown");
 }  // namespace
-extern StringMap const numberingToString = GetStringMap();
+
 
 void GetNumberOfNumberings(int * const numberOfNumberings)
 {
@@ -102,16 +105,13 @@ bool Numbering::operator==(Numbering const & rhs) const
 bool Numbering::operator!=(Numbering const & rhs) const
 {return numberingID!=rhs.numberingID;}
 
-std::string Numbering::String() const
+std::string const & Numbering::String() const
 {
-  std::string result;
   NUMBERING::StringMap::const_iterator iter
       = NUMBERING::numberingToString.find(*this);
   if (iter == NUMBERING::numberingToString.end())
-    result = "unknown";
+    return NUMBERING::numberingUnknown;
   else
-    result = iter->second;
-
-  return result;
+    return iter->second;
 }
 }  // namespace KIM

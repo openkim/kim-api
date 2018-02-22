@@ -54,7 +54,7 @@ void ModelDriverCreate::GetNumberOfParameterFiles(
 }
 
 int ModelDriverCreate::GetParameterFileName(
-    int const index, std::string * const parameterFileName) const
+    int const index, std::string const ** const parameterFileName) const
 {
   CONVERT_POINTER;
 
@@ -219,7 +219,7 @@ void ModelDriverCreate::LogEntry(LogVerbosity const logVerbosity,
   pImpl->LogEntry(logVerbosity, message, lineNumber, fileName);
 }
 
-std::string ModelDriverCreate::String() const
+std::string const & ModelDriverCreate::String() const
 {
   CONVERT_POINTER;
 

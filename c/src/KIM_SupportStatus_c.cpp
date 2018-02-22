@@ -83,9 +83,7 @@ int KIM_SupportStatusNotEqual(KIM_SupportStatus const left,
 char const * const KIM_SupportStatusString(
     KIM_SupportStatus const supportStatus)
 {
-  static std::string result;
-  result = makeSupportStatusCpp(supportStatus).String();
-  return result.c_str();
+  return makeSupportStatusCpp(supportStatus).String().c_str();
 }
 
 KIM_SupportStatus const KIM_SUPPORT_STATUS_requiredByAPI

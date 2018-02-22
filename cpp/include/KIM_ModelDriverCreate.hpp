@@ -63,7 +63,7 @@ class ModelDriverCreate
  public:
   void GetNumberOfParameterFiles(int * const numberOfParameterFiles) const;
   int GetParameterFileName(int const index,
-                           std::string * const parameterFileName) const;
+                           std::string const ** const parameterFileName) const;
 
   int SetModelNumbering(Numbering const numbering);
 
@@ -117,7 +117,7 @@ class ModelDriverCreate
 
   void LogEntry(LogVerbosity const logVerbosity, std::string const & message,
                 int const lineNumber, std::string const & fileName) const;
-  std::string String() const;
+  std::string const & String() const;
 
  private:
   // do not allow copy constructor or operator=

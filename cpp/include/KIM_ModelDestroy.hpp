@@ -47,7 +47,7 @@ class ModelDestroy{
 
   void LogEntry(LogVerbosity const logVerbosity, std::string const & message,
                 int const lineNumber, std::string const & fileName) const;
-  std::string String() const;
+  std::string const & String() const;
 
  private:
   // do not allow copy constructor or operator=

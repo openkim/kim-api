@@ -100,10 +100,8 @@ void KIM_Log_Destroy(KIM_Log ** const log)
 char const * const KIM_Log_GetID(KIM_Log const * const log)
 {
   CONVERT_POINTER;
-  static std::string logID_String;
-  logID_String = pLog->GetID();
 
-  return logID_String.c_str();
+  return pLog->GetID().c_str();
 }
 
 void KIM_Log_SetID(KIM_Log * const log, char const * const id)

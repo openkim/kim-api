@@ -49,7 +49,7 @@ class TemperatureUnit
   TemperatureUnit(std::string const & str);
   bool operator==(TemperatureUnit const & rhs) const;
   bool operator!=(TemperatureUnit const & rhs) const;
-  std::string String() const;
+  std::string const & String() const;
 };
 
 namespace TEMPERATURE_UNIT

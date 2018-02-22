@@ -51,7 +51,7 @@ class ArgumentName
   ArgumentName(std::string const & str);
   bool operator==(ArgumentName const & rhs) const;
   bool operator!=(ArgumentName const & rhs) const;
-  std::string String() const;
+  std::string const & String() const;
 };
 
 namespace ARGUMENT_NAME

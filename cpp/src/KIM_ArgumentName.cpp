@@ -76,8 +76,11 @@ StringMap const GetStringMap()
   m[partialParticleVirial] = "partialParticleVirial";
   return m;
 }
+
+StringMap const argumentNameToString = GetStringMap();
+std::string const argumentNameUnknown("unknown");
 }  // namespace
-extern StringMap const argumentNameToString = GetStringMap();
+
 
 namespace
 {
@@ -98,8 +101,10 @@ DataTypeMap const GetDataTypeMap()
   m[partialParticleVirial] = DATA_TYPE::Double;
   return m;
 }
+
+DataTypeMap const argumentNameToDataType = GetDataTypeMap();
 }  // namespace
-extern DataTypeMap const argumentNameToDataType = GetDataTypeMap();
+
 
 namespace
 {
@@ -114,6 +119,7 @@ ArgumentVector const GetArgumentVector()
   return v;
 }
 }  // namespace
+// used by KIM::ModelImplementation
 extern ArgumentVector const requiredByAPI_Arguments = GetArgumentVector();
 
 void GetNumberOfArguments(int * const numberOfArguments)
@@ -173,16 +179,13 @@ bool ArgumentName::operator==(ArgumentName const & rhs) const
 bool ArgumentName::operator!=(ArgumentName const & rhs) const
 {return argumentNameID != rhs.argumentNameID;}
 
-std::string ArgumentName::String() const
+std::string const & ArgumentName::String() const
 {
-  std::string result;
   ARGUMENT_NAME::StringMap::const_iterator iter
       = ARGUMENT_NAME::argumentNameToString.find(*this);
   if (iter == ARGUMENT_NAME::argumentNameToString.end())
-    result = "unknown";
+    return ARGUMENT_NAME::argumentNameUnknown;
   else
-    result = iter->second;
-
-  return result;
+    return iter->second;
 }
 }  // namespace KIM

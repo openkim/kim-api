@@ -40,7 +40,7 @@ namespace KIM
 {
 namespace SEM_VER
 {
-void GetSemVer(std::string * const version);
+void GetSemVer(std::string const ** const version);
 int IsLessThan(std::string const & versionA, std::string const & versionB,
                int * const isLessThan);
 int ParseSemVer(std::string const & version, int * const major,

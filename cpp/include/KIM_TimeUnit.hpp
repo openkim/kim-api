@@ -49,7 +49,7 @@ class TimeUnit
   TimeUnit(std::string const & str);
   bool operator==(TimeUnit const & rhs) const;
   bool operator!=(TimeUnit const & rhs) const;
-  std::string String() const;
+  std::string const & String() const;
 };
 
 namespace TIME_UNIT

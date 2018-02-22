@@ -57,8 +57,11 @@ StringMap const GetStringMap()
   m[Double] = "Double";
   return m;
 }
+
+StringMap const dataTypeToString = GetStringMap();
+std::string const dataTypeUnknown("unknown");
 }  // namespace
-extern StringMap const dataTypeToString = GetStringMap();
+
 
 void GetNumberOfDataTypes(int * const numberOfDataTypes)
 {
@@ -102,16 +105,13 @@ bool DataType::operator==(DataType const & rhs) const
 bool DataType::operator!=(DataType const & rhs) const
 {return dataTypeID!=rhs.dataTypeID;}
 
-std::string DataType::String() const
+std::string const & DataType::String() const
 {
-  std::string result;
   DATA_TYPE::StringMap::const_iterator iter
       = DATA_TYPE::dataTypeToString.find(*this);
   if (iter == DATA_TYPE::dataTypeToString.end())
-    result = "unknown";
+    return DATA_TYPE::dataTypeUnknown;
   else
-    result = iter->second;
-
-  return result;
+    return iter->second;
 }
 }  // namespace KIM

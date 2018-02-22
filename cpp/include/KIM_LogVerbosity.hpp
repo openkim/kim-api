@@ -57,7 +57,7 @@ class LogVerbosity
   bool operator>=(LogVerbosity const & rhs) const;
   bool operator==(LogVerbosity const & rhs) const;
   bool operator!=(LogVerbosity const & rhs) const;
-  std::string String() const;
+  std::string const & String() const;
 };
 
 namespace LOG_VERBOSITY

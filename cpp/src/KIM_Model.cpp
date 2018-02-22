@@ -151,7 +151,7 @@ void Model::GetNumberOfParameters(int * const numberOfParameters) const
 
 int Model::GetParameterDataTypeExtentAndDescription(
     int const parameterIndex, DataType * const dataType, int * const extent,
-    std::string * const description) const
+    std::string const ** const description) const
 {
   return pimpl->GetParameterDataTypeExtentAndDescription(
       parameterIndex, dataType, extent, description);
@@ -195,7 +195,7 @@ void Model::GetSimulatorBufferPointer(void ** const ptr) const
   pimpl->GetSimulatorBufferPointer(ptr);
 }
 
-std::string Model::String() const
+std::string const & Model::String() const
 {
   return pimpl->String();
 }

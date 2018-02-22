@@ -79,9 +79,7 @@ int KIM_LengthUnitNotEqual(KIM_LengthUnit left, KIM_LengthUnit right)
 
 char const * const KIM_LengthUnitString(KIM_LengthUnit const lengthUnit)
 {
-  static std::string result;
-  result = makeLengthUnitCpp(lengthUnit).String();
-  return result.c_str();
+  return makeLengthUnitCpp(lengthUnit).String().c_str();
 }
 
 KIM_LengthUnit const KIM_LENGTH_UNIT_unused

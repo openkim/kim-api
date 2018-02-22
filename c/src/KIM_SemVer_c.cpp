@@ -30,6 +30,8 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
+#include "string.h"
+
 #ifndef KIM_SEM_VER_HPP_
 #include "KIM_SemVer.hpp"
 #endif
@@ -44,9 +46,9 @@ extern "C"
 {
 void KIM_SEM_VER_GetSemVer(char const ** const version)
 {
-  static std::string versionLocal;
-  KIM::SEM_VER::GetSemVer(&versionLocal);
-  *version = versionLocal.c_str();
+  std::string const * pStr;
+  KIM::SEM_VER::GetSemVer(&pStr);
+  *version = pStr->c_str();
 }
 
 int KIM_SEM_VER_IsLessThan(char const * const versionA,
@@ -59,11 +61,14 @@ int KIM_SEM_VER_IsLessThan(char const * const versionA,
 
 int KIM_SEM_VER_ParseSemVer(char const * const version,
                             int * const major, int * const minor,
-                            int * const patch, char const ** const prerelease,
-                            char const ** const buildMetadata)
+                            int * const patch,
+                            char * const prerelease,
+                            int const prereleaseLength,
+                            char * const buildMetadata,
+                            int const buildMetadataLength)
 {
-  static std::string prereleaseLocal;
-  static std::string buildMetadataLocal;
+  std::string prereleaseLocal;
+  std::string buildMetadataLocal;
   std::string * prerel;
   std::string * build;
   if (prerelease == NULL)
@@ -82,9 +87,18 @@ int KIM_SEM_VER_ParseSemVer(char const * const version,
   if (!error)
   {
     if (prerelease != NULL)
-      *prerelease = prereleaseLocal.c_str();
+    {
+      char * copyReturn
+          = strncpy(prerelease, prereleaseLocal.c_str(), prereleaseLength);
+      if (copyReturn != prerelease) error = 1;
+    }
     if (buildMetadata != NULL)
-      *buildMetadata = buildMetadataLocal.c_str();
+    {
+      char * copyReturn
+          = strncpy(buildMetadata, buildMetadataLocal.c_str(),
+                    buildMetadataLength);
+      if (copyReturn != buildMetadata) error = 1;
+    }
   }
 
   return error;

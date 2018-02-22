@@ -110,7 +110,7 @@ class Model
   void GetNumberOfParameters(int * const numberOfParameters) const;
   int GetParameterDataTypeExtentAndDescription(
       int const index, DataType * const dataType, int * extent,
-      std::string * const description) const;
+      std::string const ** const description) const;
   int GetParameter(int const parameterIndex, int const arrayIndex,
                    int * const parameterValue) const;
   int GetParameter(int const parameterIndex, int const arrayIndex,
@@ -123,7 +123,7 @@ class Model
   void SetSimulatorBufferPointer(void * const ptr);
   void GetSimulatorBufferPointer(void ** const ptr) const;
 
-  std::string String() const;
+  std::string const & String() const;
 
   void SetLogID(std::string const & logID);
   void PushLogVerbosity(LogVerbosity const logVerbosity);

@@ -80,9 +80,7 @@ int KIM_SpeciesNameNotEqual(KIM_SpeciesName const left,
 
 char const * const KIM_SpeciesNameString(KIM_SpeciesName const speciesName)
 {
-  static std::string result;
-  result = makeSpeciesNameCpp(speciesName).String();
-  return (result.c_str());
+  return makeSpeciesNameCpp(speciesName).String().c_str();
 }
 
 

@@ -63,8 +63,10 @@ StringMap const GetStringMap()
   m[s] = "s";
   return m;
 }
+
+StringMap const timeUnitToString = GetStringMap();
+std::string const timeUnitUnknown("unknown");
 }  // namespace
-extern StringMap const timeUnitToString = GetStringMap();
 
 void GetNumberOfTimeUnits(int * const numberOfTimeUnits)
 {
@@ -108,16 +110,13 @@ bool TimeUnit::operator==(TimeUnit const & rhs) const
 bool TimeUnit::operator!=(TimeUnit const & rhs) const
 {return timeUnitID!=rhs.timeUnitID;}
 
-std::string TimeUnit::String() const
+std::string const & TimeUnit::String() const
 {
-  std::string result;
   TIME_UNIT::StringMap::const_iterator iter
       = TIME_UNIT::timeUnitToString.find(*this);
   if (iter == TIME_UNIT::timeUnitToString.end())
-    result = "unknown";
+    return TIME_UNIT::timeUnitUnknown;
   else
-    result = iter->second;
-
-  return result;
+    return iter->second;
 }
 }  // namespace KIM

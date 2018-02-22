@@ -332,8 +332,11 @@ StringMap const GetStringMap()
   m[user20] = "user20";
   return m;
 }
+
+StringMap const speciesNameToString = GetStringMap();
+std::string const speciesNameUnknown("unknown");
 }  // namespace
-extern StringMap const speciesNameToString = GetStringMap();
+
 
 void GetNumberOfSpeciesNames(int * const numberOfSpeciesNames)
 {
@@ -377,16 +380,13 @@ bool SpeciesName::operator==(SpeciesName const & rhs) const
 bool SpeciesName::operator!=(SpeciesName const & rhs) const
 {return speciesNameID!=rhs.speciesNameID;}
 
-std::string SpeciesName::String() const
+std::string const & SpeciesName::String() const
 {
-  std::string result;
   SPECIES_NAME::StringMap::const_iterator iter
       = SPECIES_NAME::speciesNameToString.find(*this);
   if (iter == SPECIES_NAME::speciesNameToString.end())
-    result = "unknown";
+    return SPECIES_NAME::speciesNameUnknown;
   else
-    result = iter->second;
-
-  return result;
+    return iter->second;
 }
 }  // namespace KIM

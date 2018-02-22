@@ -52,7 +52,7 @@ class LogImplementation
   static int Create(LogImplementation ** const logImplementation);
   static void Destroy(LogImplementation ** const logImplementation);
 
-  std::string GetID() const;
+  std::string const & GetID() const;
   void SetID(std::string const & id);
 
   void PushVerbosity(LogVerbosity const logVerbosity);

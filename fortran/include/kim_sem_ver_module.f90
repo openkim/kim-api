@@ -66,8 +66,8 @@ module kim_sem_ver_module
       integer(c_int), intent(out) :: major
       integer(c_int), intent(out) :: minor
       integer(c_int), intent(out) :: patch
-      character(len=*), intent(out) :: prerelease
-      character(len=*), intent(out) :: build_metadata
+      character(len=*), intent(inout) :: prerelease
+      character(len=*), intent(inout) :: build_metadata
       integer(c_int), intent(out) :: ierr
     end subroutine kim_sem_ver_parse_sem_ver
   end interface

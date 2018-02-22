@@ -49,7 +49,7 @@ class CallbackName
   CallbackName(std::string const & str);
   bool operator==(CallbackName const & rhs) const;
   bool operator!=(CallbackName const & rhs) const;
-  std::string String() const;
+  std::string const & String() const;
 };
 
 namespace CALLBACK_NAME

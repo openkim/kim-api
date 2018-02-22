@@ -65,8 +65,11 @@ StringMap const GetStringMap()
   mm[nm] = "nm";
   return mm;
 }
+
+StringMap const lengthUnitToString = GetStringMap();
+std::string const lengthUnitUnknown("unknown");
 }  // namespace
-extern StringMap const lengthUnitToString = GetStringMap();
+
 
 void GetNumberOfLengthUnits(int * const numberOfLengthUnits)
 {
@@ -110,16 +113,13 @@ bool LengthUnit::operator==(LengthUnit const & rhs) const
 bool LengthUnit::operator!=(LengthUnit const & rhs) const
 {return lengthUnitID!=rhs.lengthUnitID;}
 
-std::string LengthUnit::String() const
+std::string const & LengthUnit::String() const
 {
-  std::string result;
   LENGTH_UNIT::StringMap::const_iterator iter
       = LENGTH_UNIT::lengthUnitToString.find(*this);
   if (iter == LENGTH_UNIT::lengthUnitToString.end())
-    result = "unknown";
+    return LENGTH_UNIT::lengthUnitUnknown;
   else
-    result = iter->second;
-
-  return result;
+    return iter->second;
 }
 }  // namespace KIM

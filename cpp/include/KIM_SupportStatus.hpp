@@ -49,7 +49,7 @@ class SupportStatus
   SupportStatus(std::string const & str);
   bool operator==(SupportStatus const & rhs) const;
   bool operator!=(SupportStatus const & rhs) const;
-  std::string String() const;
+  std::string const & String() const;
 };
 
 namespace SUPPORT_STATUS

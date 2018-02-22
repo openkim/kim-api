@@ -220,7 +220,7 @@ int LennardJones612Implementation::OpenParameterFiles(
 
   for (int i = 0; i < numberParameterFiles; ++i)
   {
-    std::string paramFileName;
+    std::string const * paramFileName;
     ier = modelDriverCreate->GetParameterFileName(
         i,
         &paramFileName);
@@ -229,7 +229,7 @@ int LennardJones612Implementation::OpenParameterFiles(
       LOG_ERROR("Unable to get parameter file name");
       return ier;
     }
-    parameterFilePointers[i] = fopen(paramFileName.c_str(), "r");
+    parameterFilePointers[i] = fopen(paramFileName->c_str(), "r");
     if (parameterFilePointers[i] == 0)
     {
       char message[MAXLINE];

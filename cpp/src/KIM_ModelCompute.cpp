@@ -132,7 +132,7 @@ void ModelCompute::LogEntry(LogVerbosity const logVerbosity,
   pImpl->LogEntry(logVerbosity, message, lineNumber, fileName);
 }
 
-std::string ModelCompute::String() const
+std::string const & ModelCompute::String() const
 {
   CONVERT_POINTER;
 

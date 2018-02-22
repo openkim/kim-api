@@ -125,7 +125,7 @@ void LogImplementation::Destroy(LogImplementation ** const logImplementation)
   }
 }
 
-std::string LogImplementation::GetID() const
+std::string const & LogImplementation::GetID() const
 {
   return idString_;
 }

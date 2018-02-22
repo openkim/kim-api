@@ -65,8 +65,11 @@ StringMap const GetStringMap()
   m[debug] = "debug";
   return m;
 }
+
+StringMap const logVerbosityToString = GetStringMap();
+std::string const logVerbosityUnknown("unknown");
 }  // namespace
-extern StringMap const logVerbosityToString = GetStringMap();
+
 
 void GetNumberOfLogVerbosities(int * const numberOfLogVerbosities)
 {
@@ -118,16 +121,13 @@ bool LogVerbosity::operator==(LogVerbosity const & rhs) const
 bool LogVerbosity::operator!=(LogVerbosity const & rhs) const
 {return logVerbosityID != rhs.logVerbosityID;}
 
-std::string LogVerbosity::String() const
+std::string const & LogVerbosity::String() const
 {
-  std::string result;
   LOG_VERBOSITY::StringMap::const_iterator iter
       = LOG_VERBOSITY::logVerbosityToString.find(*this);
   if (iter == LOG_VERBOSITY::logVerbosityToString.end())
-    result = "unknown";
+    return LOG_VERBOSITY::logVerbosityUnknown;
   else
-    result = iter->second;
-
-  return result;
+    return iter->second;
 }
 }  // namespace KIM

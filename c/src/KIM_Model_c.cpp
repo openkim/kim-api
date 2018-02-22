@@ -405,7 +405,6 @@ int KIM_Model_GetParameterDataTypeExtentAndDescription(
 {
   CONVERT_POINTER;
   KIM::DataType typ;
-  static std::string str;
 
   KIM::DataType * pTyp;
   if (dataType == NULL)
@@ -413,22 +412,23 @@ int KIM_Model_GetParameterDataTypeExtentAndDescription(
   else
     pTyp = &typ;
 
-  std::string * pStr;
+  std::string const * pStr;
+  std::string const ** ppStr;
   if (description == NULL)
-    pStr = NULL;
+    ppStr = NULL;
   else
-    pStr = &str;
+    ppStr = &pStr;
 
   int error
       = pModel->GetParameterDataTypeExtentAndDescription(
-          parameterIndex, pTyp, extent, pStr);
+          parameterIndex, pTyp, extent, ppStr);
 
   if (error)
     return true;
   else
   {
     if (dataType != NULL) *dataType = makeDataTypeC(typ);
-    if (description != NULL) *description = str.c_str();
+    if (description != NULL) *description = pStr->c_str();
     return false;
   }
 }
@@ -492,10 +492,8 @@ void KIM_Model_GetSimulatorBufferPointer(KIM_Model const * const model,
 char const * const KIM_Model_String(KIM_Model const * const model)
 {
   CONVERT_POINTER;
-  static std::string modelString;
-  modelString = pModel->String();
 
-  return modelString.c_str();
+  return pModel->String().c_str();
 }
 
 void KIM_Model_SetLogID(KIM_Model * const model, char const * const logID)

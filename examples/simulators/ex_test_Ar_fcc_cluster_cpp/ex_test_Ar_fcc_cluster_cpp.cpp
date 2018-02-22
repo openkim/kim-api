@@ -249,14 +249,14 @@ int main()
   for (int i=0; i<numberOfParameters; ++i)
   {
     KIM::DataType dataType;
-    std::string str;
+    std::string const * str;
     int extent;
     kim_cluster_model->GetParameterDataTypeExtentAndDescription(
         i, &dataType, &extent, &str);
     std::cout << "Parameter No. " << i
               << " has data type \"" << dataType.String() << "\""
               << " with extent " << extent
-              << " and description : " << str << std::endl;
+              << " and description : " << *str << std::endl;
   }
 
   // We're compatible with the model. Let's do it.

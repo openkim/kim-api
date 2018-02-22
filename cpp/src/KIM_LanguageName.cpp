@@ -59,8 +59,11 @@ StringMap const GetStringMap()
   m[fortran] = "fortran";
   return m;
 }
+
+StringMap const languageNameToString = GetStringMap();
+std::string const languageNameUnknown("unknown");
 }  // namespace
-extern StringMap const languageNameToString = GetStringMap();
+
 
 void GetNumberOfLanguageNames(int * const numberOfLanguageNames)
 {
@@ -104,16 +107,13 @@ bool LanguageName::operator==(LanguageName const & rhs) const
 bool LanguageName::operator!=(LanguageName const & rhs) const
 {return languageNameID != rhs.languageNameID;}
 
-std::string LanguageName::String() const
+std::string const & LanguageName::String() const
 {
-  std::string result;
   LANGUAGE_NAME::StringMap::const_iterator iter
       = LANGUAGE_NAME::languageNameToString.find(*this);
   if (iter == LANGUAGE_NAME::languageNameToString.end())
-    result = "unknown";
+    return LANGUAGE_NAME::languageNameUnknown;
   else
-    result = iter->second;
-
-  return result;
+    return iter->second;
 }
 }  // namespace KIM

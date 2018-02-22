@@ -153,7 +153,7 @@ class ModelImplementation
 
   int GetNumberOfParameterFiles(int * const numberOfParameterFiles) const;
   int GetParameterFileName(int const index,
-                           std::string * const parameterFileName) const;
+                           std::string const ** const parameterFileName) const;
 
   int SetParameterPointer(int const extent, int * const ptr,
                           std::string const & description);
@@ -162,7 +162,7 @@ class ModelImplementation
   void GetNumberOfParameters(int * const numberOfParameters) const;
   int GetParameterDataTypeExtentAndDescription(
       int const parameterIndex, DataType * const dataType, int * const extent,
-      std::string * const description) const;
+      std::string const ** const description) const;
   int GetParameter(int const parameterIndex, int const arrayIndex,
                    int * const parameterValue) const;
   int GetParameter(int const parameterIndex, int const arrayIndex,
@@ -245,7 +245,7 @@ class ModelImplementation
   void PopLogVerbosity();
   void LogEntry(LogVerbosity const logVerbosity, std::string const & message,
                 int const lineNumber, std::string const & fileName) const;
-  std::string String() const;
+  std::string const & String() const;
 
  private:
   // do not allow copy constructor or operator=
@@ -346,6 +346,8 @@ class ModelImplementation
 
   void * modelBuffer_;
   void * simulatorBuffer_;
+
+  mutable std::string string_;
 
 };  // class ModelImplementation
 }  // namespace KIM

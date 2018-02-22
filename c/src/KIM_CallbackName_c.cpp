@@ -81,9 +81,7 @@ int KIM_CallbackNameNotEqual(KIM_CallbackName const left,
 
 char const * const KIM_CallbackNameString(KIM_CallbackName callbackName)
 {
-  static std::string result;
-  result = makeCallbackNameCpp(callbackName).String();
-  return result.c_str();
+  return makeCallbackNameCpp(callbackName).String().c_str();
 }
 
 // Order doesn't matter as long as all values are unique

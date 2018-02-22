@@ -48,6 +48,8 @@ namespace SEM_VER
 {
 namespace
 {
+std::string const version(KIM_VERSION_STRING);
+
 enum SERIES_TYPE {PRERELEASE, BUILD_METADATA};
 enum IDENTIFIER_TYPE {NUMERIC, ALPHANUMERIC, INVALID};
 char const numeric[] = "0123456789";
@@ -236,9 +238,9 @@ enum HAS_ANCILLARY
 }  // namespace
 
 
-void GetSemVer(std::string * const version)
+void GetSemVer(std::string const ** const version)
 {
-  *version = KIM_VERSION_STRING;
+  *version = &(SEM_VER::version);
 }
 
 int IsLessThan(std::string const & versionA, std::string const & versionB,

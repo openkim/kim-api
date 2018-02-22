@@ -79,9 +79,7 @@ int KIM_DataTypeNotEqual(KIM_DataType const left, KIM_DataType const right)
 
 char const * const KIM_DataTypeString(KIM_DataType const dataType)
 {
-  static std::string result;
-  result = makeDataTypeCpp(dataType).String();
-  return result.c_str();
+  return makeDataTypeCpp(dataType).String().c_str();
 }
 
 KIM_DataType const KIM_DATA_TYPE_Integer = {KIM::DATA_TYPE::Integer.dataTypeID};

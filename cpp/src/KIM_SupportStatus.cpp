@@ -61,8 +61,11 @@ StringMap const GetStringMap()
   m[optional] = "optional";
   return m;
 }
+
+StringMap const supportStatusToString = GetStringMap();
+std::string const supportStatusUnknown("unknown");
 }  // namespace
-extern StringMap const supportStatusToString = GetStringMap();
+
 
 void GetNumberOfSupportStatuses(int * const numberOfSupportStatuses)
 {
@@ -106,16 +109,13 @@ bool SupportStatus::operator==(SupportStatus const & rhs) const
 bool SupportStatus::operator!=(SupportStatus const & rhs) const
 {return supportStatusID != rhs.supportStatusID;}
 
-std::string SupportStatus::String() const
+std::string const & SupportStatus::String() const
 {
-  std::string result;
   SUPPORT_STATUS::StringMap::const_iterator iter
       = SUPPORT_STATUS::supportStatusToString.find(*this);
   if (iter == SUPPORT_STATUS::supportStatusToString.end())
-    result = "unknown";
+    return SUPPORT_STATUS::supportStatusUnknown;
   else
-    result = iter->second;
-
-  return result;
+    return iter->second;
 }
 }  // namespace KIM

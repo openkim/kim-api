@@ -67,8 +67,11 @@ StringMap const GetStringMap()
   m[kcal_mol] = "kcal_mol";
   return m;
 }
+
+StringMap const energyUnitToString = GetStringMap();
+std::string const energyUnitUnknown("unknown");
 }  // namespace
-extern StringMap const energyUnitToString = GetStringMap();
+
 
 void GetNumberOfEnergyUnits(int * const numberOfEnergyUnits)
 {
@@ -113,16 +116,13 @@ bool EnergyUnit::operator==(EnergyUnit const & rhs) const
 bool EnergyUnit::operator!=(EnergyUnit const & rhs) const
 {return energyUnitID!=rhs.energyUnitID;}
 
-std::string EnergyUnit::String() const
+std::string const & EnergyUnit::String() const
 {
-  std::string result;
   ENERGY_UNIT::StringMap::const_iterator iter
       = ENERGY_UNIT::energyUnitToString.find(*this);
   if (iter == ENERGY_UNIT::energyUnitToString.end())
-    result = "unknown";
+    return ENERGY_UNIT::energyUnitUnknown;
   else
-    result = iter->second;
-
-  return result;
+    return iter->second;
 }
 }  // namespace KIM

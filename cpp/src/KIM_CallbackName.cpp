@@ -60,8 +60,11 @@ StringMap const GetStringMap()
   m[ProcessD2EDr2Term] = "ProcessD2EDr2Term";
   return m;
 }
+
+StringMap const callbackNameToString = GetStringMap();
+std::string const callbackNameUnknown("unknown");
 }  // namespace
-extern StringMap const callbackNameToString = GetStringMap();
+
 
 namespace
 {
@@ -74,7 +77,9 @@ CallbackVector const GetCallbackVector()
   return v;
 }
 }  // namespace
+// Used by KIM::ModelImplementation
 extern CallbackVector const requiredByAPI_Callbacks = GetCallbackVector();
+
 
 void GetNumberOfCallbacks(int * const numberOfCallbacks)
 {
@@ -118,16 +123,13 @@ bool CallbackName::operator==(CallbackName const & rhs) const
 bool CallbackName::operator!=(CallbackName const & rhs) const
 {return callbackNameID != rhs.callbackNameID;}
 
-std::string CallbackName::String() const
+std::string const & CallbackName::String() const
 {
-  std::string result;
   CALLBACK_NAME::StringMap::const_iterator iter
       = CALLBACK_NAME::callbackNameToString.find(*this);
   if (iter == CALLBACK_NAME::callbackNameToString.end())
-    result = "unknown";
+    return CALLBACK_NAME::callbackNameUnknown;
   else
-    result = iter->second;
-
-  return result;
+    return iter->second;
 }
 }  // namespace KIM

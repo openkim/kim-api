@@ -215,21 +215,21 @@ int KIM_ModelDriverCreate_GetParameterFileName(
 {
   CONVERT_POINTER;
 
-  static std::string str;
-  std::string * pStr;
+  std::string const * pStr;
+  std::string const ** ppStr;
   if (parameterFileName == 0)
-    pStr = 0;
+    ppStr = NULL;
   else
-    pStr = &str;
+    ppStr = &pStr;
 
   int error
-      = pModelDriverCreate->GetParameterFileName(index, pStr);
+      = pModelDriverCreate->GetParameterFileName(index, ppStr);
 
   if (error)
     return true;
   else
   {
-    if (parameterFileName != 0) *parameterFileName = str.c_str();
+    if (parameterFileName != 0) *parameterFileName = pStr->c_str();
     return false;
   }
 }
@@ -425,10 +425,8 @@ char const * const KIM_ModelDriverCreate_String(
     KIM_ModelDriverCreate const * const modelCreate)
 {
   CONVERT_POINTER;
-  static std::string result;
-  result = pModelDriverCreate->String();
 
-  return result.c_str();
+  return pModelDriverCreate->String().c_str();
 }
 
 }  // extern "C"

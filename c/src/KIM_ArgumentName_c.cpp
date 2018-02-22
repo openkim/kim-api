@@ -91,9 +91,7 @@ int KIM_ArgumentNameNotEqual(KIM_ArgumentName const left,
 
 char const * const KIM_ArgumentNameString(KIM_ArgumentName argumentName)
 {
-  static std::string result;
-  result = makeArgumentNameCpp(argumentName).String();
-  return result.c_str();
+  return makeArgumentNameCpp(argumentName).String().c_str();
 }
 
 // Order doesn't matter as long as all values are unique

@@ -58,15 +58,18 @@ module kim_sem_ver_f_module
     end function is_less_than_func
 
     integer(c_int) function parse_sem_ver(version, major, minor, patch, &
-      prerelease, build_metadata) bind(c, name="KIM_SEM_VER_ParseSemVer")
+      prerelease, prerelease_length, build_metadata, build_metadata_length) &
+      bind(c, name="KIM_SEM_VER_ParseSemVer")
       use, intrinsic :: iso_c_binding
       implicit none
       character(c_char), intent(in) :: version(*)
       integer(c_int), intent(out) :: major
       integer(c_int), intent(out) :: minor
       integer(c_int), intent(out) :: patch
-      type(c_ptr), intent(out) :: prerelease
-      type(c_ptr), intent(out) :: build_metadata
+      type(c_ptr), intent(in), value :: prerelease
+      integer(c_int), intent(in), value :: prerelease_length
+      type(c_ptr), intent(in), value :: build_metadata
+      integer(c_int), intent(in), value :: build_metadata_length
     end function parse_sem_ver
   end interface
 end module kim_sem_ver_f_module
@@ -112,27 +115,31 @@ subroutine kim_sem_ver_parse_sem_ver(version, major, minor, patch, &
   integer(c_int), intent(out) :: major
   integer(c_int), intent(out) :: minor
   integer(c_int), intent(out) :: patch
-  character(len=*), intent(out) :: prerelease
-  character(len=*), intent(out) :: build_metadata
+  character(len=*), intent(inout) :: prerelease
+  character(len=*), intent(inout) :: build_metadata
   integer(c_int), intent(out) :: ierr
 
-  type(c_ptr) :: p_prerelease
-  character(len=len(prerelease)+1), pointer :: fp_prerelease
-  type(c_ptr) :: p_build
-  character(len=len(build_metadata)+1), pointer :: fp_build
-  integer(c_int) :: null_index
+  character(c_char), target :: c_prerelease(len(prerelease))
+  character(c_char), target :: c_build_metadata(len(build_metadata))
+  integer(c_int) :: i
 
   ierr = parse_sem_ver(trim(version)//c_null_char, major, minor, patch, &
-    p_prerelease, p_build)
-  call c_f_pointer(p_prerelease, fp_prerelease)
-  null_index = scan(fp_prerelease, char(0))-1
-  prerelease = fp_prerelease(1:null_index)
-  if (c_associated(p_build)) then
-    call c_f_pointer(p_build, fp_build)
-    null_index = scan(fp_build, char(0))-1
-    build_metadata = fp_build(1:null_index)
-  else
-    nullify(fp_build)
-    build_metadata = ""
-  end if
+    c_loc(c_prerelease), len(prerelease), c_loc(c_build_metadata), &
+    len(build_metadata))
+  prerelease=""
+  do i=1,len(prerelease)
+    if (c_prerelease(i) .eq. char(0)) then
+      exit
+    else
+      prerelease = trim(prerelease)//c_prerelease(i)
+    end if
+  end do
+  build_metadata=""
+  do i=1,len(build_metadata)
+    if (c_build_metadata(i) .eq. char(0)) then
+      exit
+    else
+      build_metadata = trim(build_metadata)//c_build_metadata(i)
+    end if
+  end do
 end subroutine kim_sem_ver_parse_sem_ver

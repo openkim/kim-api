@@ -58,7 +58,7 @@ void Log::Destroy(Log ** const log)
   *log = 0;
 }
 
-std::string Log::GetID() const
+std::string const & Log::GetID() const
 {
   return pimpl->GetID();
 }

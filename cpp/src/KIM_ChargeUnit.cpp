@@ -61,8 +61,11 @@ StringMap const GetStringMap()
   m[statC] = "statC";
   return m;
 }
+
+StringMap const chargeUnitToString = GetStringMap();
+std::string const chargeUnitUnknown("unknown");
 }  // namespace
-extern StringMap const chargeUnitToString = GetStringMap();
+
 
 void GetNumberOfChargeUnits(int * const numberOfChargeUnits)
 {
@@ -106,16 +109,13 @@ bool ChargeUnit::operator==(ChargeUnit const & rhs) const
 bool ChargeUnit::operator!=(ChargeUnit const & rhs) const
 {return chargeUnitID!=rhs.chargeUnitID;}
 
-std::string ChargeUnit::String() const
+std::string const & ChargeUnit::String() const
 {
-  std::string result;
   CHARGE_UNIT::StringMap::const_iterator iter
       = CHARGE_UNIT::chargeUnitToString.find(*this);
   if (iter == CHARGE_UNIT::chargeUnitToString.end())
-    result = "unknown";
+    return CHARGE_UNIT::chargeUnitUnknown;
   else
-    result = iter->second;
-
-  return result;
+    return iter->second;
 }
 }  // namespace KIM

@@ -58,8 +58,11 @@ StringMap const GetStringMap()
   m[K] = "K";
   return m;
 }
+
+StringMap const temperatureUnitToString = GetStringMap();
+std::string const temperatureUnitUnknown("unknown");
 }  // namespace
-extern StringMap const temperatureUnitToString = GetStringMap();
+
 
 void GetNumberOfTemperatureUnits(int * const numberOfTemperatureUnits)
 {
@@ -103,16 +106,13 @@ bool TemperatureUnit::operator==(TemperatureUnit const & rhs) const
 bool TemperatureUnit::operator!=(TemperatureUnit const & rhs) const
 {return temperatureUnitID!=rhs.temperatureUnitID;}
 
-std::string TemperatureUnit::String() const
+std::string const & TemperatureUnit::String() const
 {
-  std::string result;
   TEMPERATURE_UNIT::StringMap::const_iterator iter
       = TEMPERATURE_UNIT::temperatureUnitToString.find(*this);
   if (iter == TEMPERATURE_UNIT::temperatureUnitToString.end())
-    result = "unknown";
+    return TEMPERATURE_UNIT::temperatureUnitUnknown;
   else
-    result = iter->second;
-
-  return result;
+    return iter->second;
 }
 }  // namespace KIM

@@ -94,10 +94,8 @@ char const * const KIM_ModelDestroy_String(
     KIM_ModelDestroy const * const modelDestroy)
 {
   CONVERT_POINTER;
-  static std::string result;
-  result = pModelDestroy->String();
 
-  return result.c_str();
+  return pModelDestroy->String().c_str();
 }
 
 }  // extern "C"

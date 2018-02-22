@@ -49,7 +49,7 @@ class Log
   static int Create(Log ** const log);
   static void Destroy(Log ** const log);
 
-  std::string GetID() const;
+  std::string const & GetID() const;
   void SetID(std::string const & id);
 
   void PushVerbosity(LogVerbosity const logVerbosity);

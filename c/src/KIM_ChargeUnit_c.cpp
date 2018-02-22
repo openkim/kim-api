@@ -79,9 +79,7 @@ int KIM_ChargeUnitNotEqual(KIM_ChargeUnit const left, KIM_ChargeUnit right)
 
 char const * const KIM_ChargeUnitString(KIM_ChargeUnit const chargeUnit)
 {
-  static std::string result;
-  result = makeChargeUnitCpp(chargeUnit).String();
-  return result.c_str();
+  return makeChargeUnitCpp(chargeUnit).String().c_str();
 }
 
 KIM_ChargeUnit const KIM_CHARGE_UNIT_unused

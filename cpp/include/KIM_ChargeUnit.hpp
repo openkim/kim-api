@@ -49,7 +49,7 @@ class ChargeUnit
   ChargeUnit(std::string const & str);
   bool operator==(ChargeUnit const & rhs) const;
   bool operator!=(ChargeUnit const & rhs) const;
-  std::string String() const;
+  std::string const & String() const;
 };
 
 namespace CHARGE_UNIT

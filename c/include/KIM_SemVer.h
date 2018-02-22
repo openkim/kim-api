@@ -42,6 +42,8 @@ int KIM_SEM_VER_IsLessThan(char const * const versionA,
                            int * const isLessThan);
 int KIM_SEM_VER_ParseSemVer(char const * const version,
                             int * const major, int * const minor,
-                            int * const patch, char const ** const prerelease,
-                            char const ** const buildMetadata);
+                            int * const patch, char * const prerelease,
+                            int const prereleaseLength,
+                            char * const buildMetadata,
+                            int const buildMetadataLength);
 #endif  /* KIM_SEM_VER_H_ */
