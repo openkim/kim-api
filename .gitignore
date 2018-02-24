@@ -3,6 +3,7 @@
 *.so
 *.a
 *.mod
+kim.log
 .DS_Store
 /Makefile.KIM_Config
 export-list.txt
