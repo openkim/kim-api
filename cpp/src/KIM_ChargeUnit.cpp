@@ -72,7 +72,7 @@ void GetNumberOfChargeUnits(int * const numberOfChargeUnits)
   *numberOfChargeUnits = chargeUnitToString.size();
 }
 
-int GetCharegeUnit(int const index, ChargeUnit * const chargeUnit)
+int GetChargeUnit(int const index, ChargeUnit * const chargeUnit)
 {
   int numberOfChargeUnits;
   GetNumberOfChargeUnits(&numberOfChargeUnits);

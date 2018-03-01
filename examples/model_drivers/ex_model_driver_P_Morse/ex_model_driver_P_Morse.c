@@ -421,9 +421,9 @@ int model_driver_create(
   ier = KIM_ModelDriverCreate_SetUnits(modelDriverCreate,
                                        KIM_LENGTH_UNIT_A,
                                        KIM_ENERGY_UNIT_eV,
-                                       KIM_CHARGE_UNIT_e,
-                                       KIM_TEMPERATURE_UNIT_K,
-                                       KIM_TIME_UNIT_ps);
+                                       KIM_CHARGE_UNIT_unused,
+                                       KIM_TEMPERATURE_UNIT_unused,
+                                       KIM_TIME_UNIT_unused);
   if (ier == TRUE)
   {
     LOG_ERROR("Problem setting units");

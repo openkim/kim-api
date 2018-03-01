@@ -99,7 +99,12 @@ namespace CALLBACK_NAME
 {
 extern std::vector<CallbackName> const requiredByAPI_Callbacks;
 }  // namespace CALLBACK_NAME
+
+namespace
+{
+}  // namespace
 }  // namespace KIM
+
 
 namespace
 {
@@ -157,6 +162,8 @@ int ModelImplementation::Create(
     int * const requestedUnitsAccepted,
     ModelImplementation ** const modelImplementation)
 {
+  // error checking of arguments performed as part of ModelCreate()
+
   Log * pLog;
   int error = Log::Create(&pLog);
   if (error)
@@ -258,6 +265,9 @@ void ModelImplementation::SetInfluenceDistancePointer(
 {
   LOG_DEBUG("Enter SetInfluenceDistancePointer().");
 
+  if (influenceDistance == NULL)
+    LOG_ERROR("Null pointer provided for InfluenceDistancePotiner.");
+
   influenceDistance_ = influenceDistance;
 
   LOG_DEBUG("Exit SetInfluenceDistancePointer().");
@@ -279,6 +289,11 @@ void ModelImplementation::SetNeighborListCutoffsPointer(
 {
   LOG_DEBUG("Enter SetNeighborListCutoffsPointer().");
 
+  if (numberOfCutoffs < 1)
+    LOG_ERROR("Number of neighbor list cutoffs must be >= 1.");
+  if (cutoffs == NULL)
+    LOG_ERROR("Null pointer provided for cutoffs.");
+
   numberOfCutoffs_ = numberOfCutoffs;
   cutoffs_ = cutoffs;
 
@@ -298,17 +313,24 @@ void ModelImplementation::GetNeighborListCutoffsPointer(
   LOG_DEBUG("Exit GetNeighborListCutoffsPointer().");
 }
 
-
 int ModelImplementation::SetRefreshPointer(LanguageName const languageName,
                                            func * const fptr)
 {
   LOG_DEBUG("Enter SetRefreshPointer().");
 
-  refreshLanguage_ = languageName;
-  refreshFunction_ = fptr;
+  int error = Validate(languageName);
+  if (error)
+  {
+    LOG_ERROR("Invalid arguemnts.");
+  }
+  else
+  {
+    refreshLanguage_ = languageName;
+    refreshFunction_ = fptr;
+  }
 
   LOG_DEBUG("Exit SetRefreshPointer().");
-  return false;
+  return error;
 }
 
 int ModelImplementation::SetDestroyPointer(LanguageName const languageName,
@@ -316,11 +338,19 @@ int ModelImplementation::SetDestroyPointer(LanguageName const languageName,
 {
   LOG_DEBUG("Enter SetDestroyPointer().");
 
-  destroyLanguage_ = languageName;
-  destroyFunction_ = fptr;
+  int error = Validate(languageName);
+  if (error)
+  {
+    LOG_ERROR("Invalid arguemnts.");
+  }
+  else
+  {
+    destroyLanguage_ = languageName;
+    destroyFunction_ = fptr;
+  }
 
   LOG_DEBUG("Exit SetDestroyPointer().");
-  return false;
+  return error;
 }
 
 int ModelImplementation::SetComputePointer(LanguageName const languageName,
@@ -328,11 +358,19 @@ int ModelImplementation::SetComputePointer(LanguageName const languageName,
 {
   LOG_DEBUG("Enter SetComputePointer().");
 
-  computeLanguage_ = languageName;
-  computeFunction_ = fptr;
+  int error = Validate(languageName);
+  if (error)
+  {
+    LOG_ERROR("Invalid arguemnts.");
+  }
+  else
+  {
+    computeLanguage_ = languageName;
+    computeFunction_ = fptr;
+  }
 
   LOG_DEBUG("Exit SetComputePointer().");
-  return false;
+  return error;
 }
 
 
@@ -341,10 +379,18 @@ int ModelImplementation::SetSpeciesCode(SpeciesName const speciesName,
 {
   LOG_DEBUG("Enter SetSpeciesCode().");
 
-  supportedSpecies_[speciesName] = code;
+  int error = Validate(speciesName);
+  if (error)
+  {
+    LOG_ERROR("Invalid arguemnts.");
+  }
+  else
+  {
+    supportedSpecies_[speciesName] = code;
+  }
 
   LOG_DEBUG("Exit SetSpeciesCode().");
-  return false;
+  return error;
 }
 
 int ModelImplementation::GetSpeciesSupportAndCode(
@@ -354,36 +400,62 @@ int ModelImplementation::GetSpeciesSupportAndCode(
 {
   LOG_DEBUG("Enter GetSpeciesSupportAndCode().");
 
-  std::map<SpeciesName const, int, CALLBACK_NAME::Comparator>::const_iterator
-      result = supportedSpecies_.find(speciesName);
+  int error = Validate(speciesName);
 
-  if (result == supportedSpecies_.end())
+  if (error)
   {
-    LOG_DEBUG("Species is not supported.");
-    *speciesIsSupported = false;
+    LOG_ERROR("Invalid arguments.");
   }
   else
   {
-    LOG_DEBUG("Species is supported.");
-    *speciesIsSupported = true;
-    if (code != NULL)
-      *code = result->second;
+    std::map<SpeciesName const, int, CALLBACK_NAME::Comparator>::const_iterator
+        result = supportedSpecies_.find(speciesName);
+
+    if (result == supportedSpecies_.end())
+    {
+      LOG_DEBUG("Species is not supported.");
+      *speciesIsSupported = false;
+    }
+    else
+    {
+      LOG_DEBUG("Species is supported.");
+      *speciesIsSupported = true;
+      if (code != NULL)
+        *code = result->second;
+    }
   }
 
   LOG_DEBUG("Exit GetSpeciesSupportAndCode().");
-  return false;
+  return error;
 }
-
 
 int ModelImplementation::SetArgumentSupportStatus(
     ArgumentName const argumentName, SupportStatus const supportStatus)
 {
   LOG_DEBUG("Enter SetArgumentSupportStatus().");
 
+  int error =
+      Validate(argumentName) ||
+      Validate(supportStatus);
+  if (error)
+  {
+    LOG_ERROR("Invalid arguments.");
+    LOG_DEBUG("Exit SetArgumentSupportStatus().");
+    return true;
+  }
+
+  if ((argumentSupportStatus_[argumentName] == SUPPORT_STATUS::requiredByAPI)
+      && (supportStatus != SUPPORT_STATUS::requiredByAPI))
+  {
+    LOG_ERROR("Argument SupportStatus is 'requiredByAPI' and cannot be "
+              "changed.");
+    LOG_DEBUG("Exit SetArgumentSupportStatus().");
+    return true;
+  }
+
   argumentSupportStatus_[argumentName] = supportStatus;
 
-  // @@@ do lots of error checking
-
+  // initialize pointer if not already done
   if (supportStatus != SUPPORT_STATUS::notSupported)
   {
     std::map<ArgumentName const, void *, ARGUMENT_NAME::Comparator>::
@@ -392,7 +464,7 @@ int ModelImplementation::SetArgumentSupportStatus(
     if (result == argumentPointer_.end())
     {
       LOG_DEBUG("Initialize argument pointer.");
-      argumentPointer_[argumentName] = 0;
+      argumentPointer_[argumentName] = NULL;
     }
   }
 
@@ -406,30 +478,62 @@ int ModelImplementation::GetArgumentSupportStatus(
 {
   LOG_DEBUG("Enter GetArgumentSupportStatus().");
 
-  std::map<ArgumentName const, SupportStatus, ARGUMENT_NAME::Comparator>::
-      const_iterator result = argumentSupportStatus_.find(argumentName);
-
-  if (result == argumentSupportStatus_.end())
+  int error = Validate(argumentName);
+  if (error)
   {
-    LOG_ERROR("");
+    LOG_ERROR("Invalid arguments.");
     LOG_DEBUG("Exit GetArgumentSupportStatus().");
     return true;
   }
-  else
-  {
-    *supportStatus = result->second;
-    LOG_DEBUG("Exit GetArgumentSupportStatus().");
-    return false;
-  }
-}
 
+  std::map<ArgumentName const, SupportStatus, ARGUMENT_NAME::Comparator>::
+      const_iterator result = argumentSupportStatus_.find(argumentName);
+  *supportStatus = result->second;
+
+  LOG_DEBUG("Exit GetArgumentSupportStatus().");
+  return false;
+}
 
 int ModelImplementation::SetCallbackSupportStatus(
     CallbackName const callbackName, SupportStatus const supportStatus)
 {
   LOG_DEBUG("Enter SetCallbackSupportStatus().");
 
+  int error =
+      Validate(callbackName) ||
+      Validate(supportStatus);
+  if (error)
+  {
+    LOG_ERROR("Invalid arguments.");
+    LOG_DEBUG("Exit SetCallbackSupportStatus().");
+    return true;
+  }
+
+  if ((callbackSupportStatus_[callbackName] == SUPPORT_STATUS::requiredByAPI)
+      && (supportStatus != SUPPORT_STATUS::requiredByAPI))
+  {
+    LOG_ERROR("Callback SupportStatus is 'requiredByAPI' and cannot be "
+              "changed.");
+    LOG_DEBUG("Exit SetCallbackSupportStatus().");
+    return true;
+  }
+
   callbackSupportStatus_[callbackName] = supportStatus;
+
+  // initialize pointer if not already done
+  if (supportStatus != SUPPORT_STATUS::notSupported)
+  {
+    std::map<CallbackName const, func *, CALLBACK_NAME::Comparator>::
+        const_iterator result = callbackFunctionPointer_.find(callbackName);
+
+    if (result == callbackFunctionPointer_.end())
+    {
+      LOG_DEBUG("Initialize callback pointer.");
+      callbackLanguage_[callbackName] = LANGUAGE_NAME::cpp;  // place holder
+      callbackFunctionPointer_[callbackName] = NULL;
+      callbackDataObjectPointer_[callbackName] = NULL;
+    }
+  }
 
   LOG_DEBUG("Exit SetCallbackSupportStatus().");
   return false;
@@ -440,29 +544,36 @@ int ModelImplementation::GetCallbackSupportStatus(
 {
   LOG_DEBUG("Enter GetCallbackSupportStatus().");
 
-  std::map<CallbackName const, SupportStatus, CALLBACK_NAME::Comparator>::
-      const_iterator result = callbackSupportStatus_.find(callbackName);
-
-  if (result == callbackSupportStatus_.end())
+  int error = Validate(callbackName);
+  if (error)
   {
-    LOG_ERROR("");
+    LOG_ERROR("Invalid arguments.");
     LOG_DEBUG("Exit GetCallbackSupportStatus().");
     return true;
   }
-  else
-  {
-    *supportStatus = result->second;
-    LOG_DEBUG("Exit GetCallbackSupportStatus().");
-    return false;
-  }
-}
 
+  std::map<CallbackName const, SupportStatus, CALLBACK_NAME::Comparator>::
+      const_iterator result = callbackSupportStatus_.find(callbackName);
+  *supportStatus = result->second;
+
+  LOG_DEBUG("Exit GetCallbackSupportStatus().");
+  return false;
+}
 
 int ModelImplementation::SetModelNumbering(Numbering const numbering)
 {
   LOG_DEBUG("Enter SetModelNumbering().");
 
+  int error = Validate(numbering);
+  if (error)
+  {
+    LOG_ERROR("Invalid arguments.");
+    LOG_DEBUG("Exit SetModelNumbering().");
+    return true;
+  }
+
   modelNumbering_ = numbering;
+  numberingHasBeenSet_ = true;
 
   LOG_DEBUG("Exit SetModelNumbering().");
   return false;
@@ -470,14 +581,21 @@ int ModelImplementation::SetModelNumbering(Numbering const numbering)
 
 int ModelImplementation::SetSimulatorNumbering(Numbering const numbering)
 {
-  LOG_DEBUG("Enter SetModelNumbering().");
+  LOG_DEBUG("Enter SetSimulatorNumbering().");
+
+  int error = Validate(numbering);
+  if (error)
+  {
+    LOG_ERROR("Invalid arguments.");
+    LOG_DEBUG("Exit SetSimulatorNumbering().");
+    return true;
+  }
 
   simulatorNumbering_ = numbering;
 
-  LOG_DEBUG("Exit SetModelNumbering().");
+  LOG_DEBUG("Exit SetSimulatorNumbering().");
   return false;
 }
-
 
 int ModelImplementation::SetUnits(LengthUnit const lengthUnit,
                                   EnergyUnit const energyUnit,
@@ -487,11 +605,40 @@ int ModelImplementation::SetUnits(LengthUnit const lengthUnit,
 {
   LOG_DEBUG("Enter SetUnits().");
 
+  int error =
+      Validate(lengthUnit) ||
+      Validate(energyUnit) ||
+      Validate(chargeUnit) ||
+      Validate(temperatureUnit) ||
+      Validate(timeUnit);
+  if (error)
+  {
+    LOG_ERROR("Invalid arguments.");
+    LOG_DEBUG("Exit SetUnits().");
+    return true;
+  }
+
+  if (lengthUnit == LENGTH_UNIT::unused)
+  {
+    LOG_ERROR("Models cannot specify 'unused' for LengthUnit");
+    LOG_DEBUG("Exit SetUnits().");
+    return true;
+  }
+
+  if (energyUnit == ENERGY_UNIT::unused)
+  {
+    LOG_ERROR("Models cannot specify 'unused' for EnergyUnit");
+    LOG_DEBUG("Exit SetUnits().");
+    return true;
+  }
+
   lengthUnit_ = lengthUnit;
   energyUnit_ = energyUnit;
   chargeUnit_ = chargeUnit;
   temperatureUnit_ = temperatureUnit;
   timeUnit_ = timeUnit;
+
+  unitsHaveBeenSet_ = true;
 
   LOG_DEBUG("Exit SetUnits().");
   return false;
@@ -519,7 +666,6 @@ void ModelImplementation::GetUnits(LengthUnit * const lengthUnit,
   LOG_DEBUG("Exit GetUnits().");
 }
 
-
 int ModelImplementation::GetNumberOfParameterFiles(
     int * const numberOfParameterFiles) const
 {
@@ -527,12 +673,13 @@ int ModelImplementation::GetNumberOfParameterFiles(
 
   if (modelType_ != ModelLibrary::PARAMETERIZED_MODEL)
   {
-    LOG_ERROR("");
+    LOG_ERROR("Only parameterized models have parameter files.");
     LOG_DEBUG("Exit GetNumberOfParameterFiles().");
     return true;
   }
 
   *numberOfParameterFiles = numberOfParameterFiles_;
+
   LOG_DEBUG("Exit GetNumberOfParameterFiles().");
   return false;
 }
@@ -544,14 +691,14 @@ int ModelImplementation::GetParameterFileName(
 
   if (modelType_ != ModelLibrary::PARAMETERIZED_MODEL)
   {
-    LOG_ERROR("");
+    LOG_ERROR("Only parameterized models have parameter files.");
     LOG_DEBUG("Exit GetParameterFileName().");
     return true;
   }
 
   if ((index < 0) || (index >= numberOfParameterFiles_))
   {
-    LOG_ERROR("");
+    LOG_ERROR("Invalid parameter file index.");
     LOG_DEBUG("Exit GetParameterFileName().");
     return true;
   }
@@ -565,6 +712,19 @@ int ModelImplementation::SetParameterPointer(int const extent, int * const ptr,
                                              std::string const & description)
 {
   LOG_DEBUG("Enter SetParameterPointer().");
+
+  if (extent == 0)
+  {
+    LOG_ERROR("Extent must be > 0.");
+    LOG_DEBUG("Exit SetParameterPointer().");
+    return true;
+  }
+  if (ptr == NULL)
+  {
+    LOG_ERROR("Null pointer provided for parameter.");
+    LOG_DEBUG("Exit SetParameterPointer().");
+    return true;
+  }
 
   parameterDescription_.push_back(description);
   parameterDataType_.push_back(DATA_TYPE::Integer);
@@ -580,6 +740,19 @@ int ModelImplementation::SetParameterPointer(int const extent,
                                              std::string const & description)
 {
   LOG_DEBUG("Enter SetParameterPointer().");
+
+  if (extent == 0)
+  {
+    LOG_ERROR("Extent must be > 0.");
+    LOG_DEBUG("Exit SetParameterPointer().");
+    return true;
+  }
+  if (ptr == NULL)
+  {
+    LOG_ERROR("Null pointer provided for parameter.");
+    LOG_DEBUG("Exit SetParameterPointer().");
+    return true;
+  }
 
   parameterDescription_.push_back(description);
   parameterDataType_.push_back(DATA_TYPE::Double);
@@ -606,6 +779,14 @@ int ModelImplementation::GetParameterDataTypeExtentAndDescription(
 {
   LOG_DEBUG("Enter GetParameterDataTypeExtentAndDescription().");
 
+  if ((parameterIndex < 0) ||
+      (static_cast<unsigned int>(parameterIndex) >= parameterPointer_.size()))
+  {
+    LOG_ERROR("Invalid parameter index.");
+    LOG_DEBUG("Exit GetParameterDataTypeExtentAndDescription().");
+    return true;
+  }
+
   if (dataType != NULL)
     *dataType = parameterDataType_[parameterIndex];
   if (extent != NULL)
@@ -623,19 +804,26 @@ int ModelImplementation::GetParameter(int const parameterIndex,
 {
   LOG_DEBUG("Enter GetParameter().");
 
-  if ((arrayIndex < 0) || (arrayIndex >= parameterExtent_[parameterIndex]))
+  if ((parameterIndex < 0) ||
+      (static_cast<unsigned int>(parameterIndex) >= parameterPointer_.size()))
   {
-    LOG_ERROR("");
+    LOG_ERROR("Invalid parameter index.");
     LOG_DEBUG("Exit GetParameter().");
     return true;
   }
-  else
+
+  if ((arrayIndex < 0) || (arrayIndex >= parameterExtent_[parameterIndex]))
   {
-    *parameterValue = reinterpret_cast<int const *>
-        (parameterPointer_[parameterIndex])[arrayIndex];
+    LOG_ERROR("Invalid parameter arrayIndex.");
     LOG_DEBUG("Exit GetParameter().");
-    return false;
+    return true;
   }
+
+  *parameterValue = reinterpret_cast<int const *>
+      (parameterPointer_[parameterIndex])[arrayIndex];
+
+  LOG_DEBUG("Exit GetParameter().");
+  return false;
 }
 
 int ModelImplementation::GetParameter(int const parameterIndex,
@@ -644,19 +832,26 @@ int ModelImplementation::GetParameter(int const parameterIndex,
 {
   LOG_DEBUG("Enter GetParameter().");
 
-  if ((arrayIndex < 0) || (arrayIndex >= parameterExtent_[parameterIndex]))
+  if ((parameterIndex < 0) ||
+      (static_cast<unsigned int>(parameterIndex) >= parameterPointer_.size()))
   {
-    LOG_ERROR("");
+    LOG_ERROR("Invalid parameter index.");
     LOG_DEBUG("Exit GetParameter().");
     return true;
   }
-  else
+
+  if ((arrayIndex < 0) || (arrayIndex >= parameterExtent_[parameterIndex]))
   {
-    *parameterValue = reinterpret_cast<double const *>
-        (parameterPointer_[parameterIndex])[arrayIndex];
+    LOG_ERROR("Invalid parameter arrayIndex.");
     LOG_DEBUG("Exit GetParameter().");
-    return false;
+    return true;
   }
+
+  *parameterValue = reinterpret_cast<double const *>
+      (parameterPointer_[parameterIndex])[arrayIndex];
+
+  LOG_DEBUG("Exit GetParameter().");
+  return false;
 }
 
 int ModelImplementation::SetParameter(int const parameterIndex,
@@ -664,19 +859,27 @@ int ModelImplementation::SetParameter(int const parameterIndex,
                                       int const parameterValue)
 {
   LOG_DEBUG("Enter SetParameter().");
-  if ((arrayIndex < 0) || (arrayIndex >= parameterExtent_[parameterIndex]))
+
+  if ((parameterIndex < 0) ||
+      (static_cast<unsigned int>(parameterIndex) >= parameterPointer_.size()))
   {
-    LOG_ERROR("");
+    LOG_ERROR("Invalid parameter index.");
     LOG_DEBUG("Exit SetParameter().");
     return true;
   }
-  else
+
+  if ((arrayIndex < 0) || (arrayIndex >= parameterExtent_[parameterIndex]))
   {
-    reinterpret_cast<int *>(parameterPointer_[parameterIndex])[arrayIndex]
-        = parameterValue;
+    LOG_ERROR("Invalid parameter arrayIndex.");
     LOG_DEBUG("Exit SetParameter().");
-    return false;
+    return true;
   }
+
+  reinterpret_cast<int *>(parameterPointer_[parameterIndex])[arrayIndex]
+      = parameterValue;
+
+  LOG_DEBUG("Exit SetParameter().");
+  return false;
 }
 
 int ModelImplementation::SetParameter(int const parameterIndex,
@@ -684,19 +887,27 @@ int ModelImplementation::SetParameter(int const parameterIndex,
                                       double const parameterValue)
 {
   LOG_DEBUG("Enter SetParameter().");
-  if ((arrayIndex < 0) || (arrayIndex >= parameterExtent_[parameterIndex]))
+
+  if ((parameterIndex < 0) ||
+      (static_cast<unsigned int>(parameterIndex) >= parameterPointer_.size()))
   {
-    LOG_ERROR("");
+    LOG_ERROR("Invalid parameter index.");
     LOG_DEBUG("Exit SetParameter().");
     return true;
   }
-  else
+
+  if ((arrayIndex < 0) || (arrayIndex >= parameterExtent_[parameterIndex]))
   {
-    reinterpret_cast<double *>(parameterPointer_[parameterIndex])[arrayIndex]
-        = parameterValue;
+    LOG_ERROR("Invalid parameter arrayIndex.");
     LOG_DEBUG("Exit SetParameter().");
-    return false;
+    return true;
   }
+
+  reinterpret_cast<double *>(parameterPointer_[parameterIndex])[arrayIndex]
+      = parameterValue;
+
+  LOG_DEBUG("Exit SetParameter().");
+  return false;
 }
 
 int ModelImplementation::SetArgumentPointer(ArgumentName const argumentName,
@@ -704,7 +915,24 @@ int ModelImplementation::SetArgumentPointer(ArgumentName const argumentName,
 {
   LOG_DEBUG("Enter SetArgumentPointer().");
 
-  //@@@ check for existence
+  int error = Validate(argumentName);
+  if (error)
+  {
+    LOG_ERROR("Invalid arguments.");
+    LOG_DEBUG("Exit SetArgumentPointer().");
+    return true;
+  }
+
+  std::map<ArgumentName const, SupportStatus, CALLBACK_NAME::Comparator>::
+      const_iterator result = argumentSupportStatus_.find(argumentName);
+  if (result->second == SUPPORT_STATUS::notSupported)
+  {
+    LOG_ERROR("Pointer value cannot be set for Arguments that are "
+              "'notSupported'.");
+    LOG_DEBUG("Exit SetArgumentPointer().");
+    return true;
+  }
+
   argumentPointer_[argumentName]
       = reinterpret_cast<void *>(const_cast<int *>(ptr));
 
@@ -717,7 +945,24 @@ int ModelImplementation::SetArgumentPointer(ArgumentName const argumentName,
 {
   LOG_DEBUG("Enter SetArgumentPointer().");
 
-  //@@@ check for existence
+  int error = Validate(argumentName);
+  if (error)
+  {
+    LOG_ERROR("Invalid arguments.");
+    LOG_DEBUG("Exit SetArgumentPointer().");
+    return true;
+  }
+
+  std::map<ArgumentName const, SupportStatus, CALLBACK_NAME::Comparator>::
+      const_iterator result = argumentSupportStatus_.find(argumentName);
+  if (result->second == SUPPORT_STATUS::notSupported)
+  {
+    LOG_ERROR("Pointer value cannot be set for Arguments that are "
+              "'notSupported'.");
+    LOG_DEBUG("Exit SetArgumentPointer().");
+    return true;
+  }
+
   argumentPointer_[argumentName]
       = reinterpret_cast<void *>(const_cast<double *>(ptr));
 
@@ -730,22 +975,30 @@ int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
 {
   LOG_DEBUG("Enter GetArgumentPointer().");
 
-  std::map<ArgumentName const, void *, ARGUMENT_NAME::Comparator>::
-      const_iterator result = argumentPointer_.find(argumentName);
-
-  if (result == argumentPointer_.end())
+  int error = Validate(argumentName);
+  if (error)
   {
-    *ptr = 0;
-    LOG_ERROR(argumentName.String());
+    LOG_ERROR("Invalid arguments.");
     LOG_DEBUG("Exit GetArgumentPointer().");
     return true;
   }
-  else
+
+  std::map<ArgumentName const, SupportStatus, CALLBACK_NAME::Comparator>::
+      const_iterator statusResult = argumentSupportStatus_.find(argumentName);
+  if (statusResult->second == SUPPORT_STATUS::notSupported)
   {
-    *ptr = reinterpret_cast<int const *>(result->second);
+    LOG_ERROR("Pointer value does not exist for Arguments that are "
+              "'notSupported'.");
     LOG_DEBUG("Exit GetArgumentPointer().");
-    return false;
+    return true;
   }
+
+  std::map<ArgumentName const, void *, ARGUMENT_NAME::Comparator>::
+      const_iterator result = argumentPointer_.find(argumentName);
+  *ptr = reinterpret_cast<int const *>(result->second);
+
+  LOG_DEBUG("Exit GetArgumentPointer().");
+  return false;
 }
 
 int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
@@ -753,22 +1006,31 @@ int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
 {
   LOG_DEBUG("Enter GetArgumentPointer().");
 
-  std::map<ArgumentName const, void *, ARGUMENT_NAME::Comparator>::
-      const_iterator result = argumentPointer_.find(argumentName);
-
-  if (result == argumentPointer_.end())
+  int error = Validate(argumentName);
+  if (error)
   {
-    *ptr = 0;
-    LOG_ERROR("");
+    LOG_ERROR("Invalid arguments.");
     LOG_DEBUG("Exit GetArgumentPointer().");
     return true;
   }
-  else
+
+  std::map<ArgumentName const, SupportStatus, CALLBACK_NAME::Comparator>::
+      const_iterator statusResult = argumentSupportStatus_.find(argumentName);
+  if (statusResult->second == SUPPORT_STATUS::notSupported)
   {
-    *ptr = reinterpret_cast<int *>(result->second);
+    LOG_ERROR("Pointer value does not exist for Arguments that are "
+              "'notSupported'.");
     LOG_DEBUG("Exit GetArgumentPointer().");
-    return false;
+    return true;
   }
+
+  std::map<ArgumentName const, void *, ARGUMENT_NAME::Comparator>::
+      const_iterator result = argumentPointer_.find(argumentName);
+
+  *ptr = reinterpret_cast<int *>(result->second);
+
+  LOG_DEBUG("Exit GetArgumentPointer().");
+  return false;
 }
 
 int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
@@ -776,22 +1038,31 @@ int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
 {
   LOG_DEBUG("Enter GetArgumentPointer().");
 
-  std::map<ArgumentName const, void *, ARGUMENT_NAME::Comparator>::
-      const_iterator result = argumentPointer_.find(argumentName);
-
-  if (result == argumentPointer_.end())
+  int error = Validate(argumentName);
+  if (error)
   {
-    *ptr = 0;
-    LOG_ERROR("");
+    LOG_ERROR("Invalid arguments.");
     LOG_DEBUG("Exit GetArgumentPointer().");
     return true;
   }
-  else
+
+  std::map<ArgumentName const, SupportStatus, CALLBACK_NAME::Comparator>::
+      const_iterator statusResult = argumentSupportStatus_.find(argumentName);
+  if (statusResult->second == SUPPORT_STATUS::notSupported)
   {
-    *ptr = reinterpret_cast<double const *>(result->second);
+    LOG_ERROR("Pointer value does not exist for Arguments that are "
+              "'notSupported'.");
     LOG_DEBUG("Exit GetArgumentPointer().");
-    return false;
+    return true;
   }
+
+  std::map<ArgumentName const, void *, ARGUMENT_NAME::Comparator>::
+      const_iterator result = argumentPointer_.find(argumentName);
+
+  *ptr = reinterpret_cast<double const *>(result->second);
+
+  LOG_DEBUG("Exit GetArgumentPointer().");
+  return false;
 }
 
 int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
@@ -799,22 +1070,31 @@ int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
 {
   LOG_DEBUG("Enter GetArgumentPointer().");
 
-  std::map<ArgumentName const, void *, ARGUMENT_NAME::Comparator>::
-      const_iterator result = argumentPointer_.find(argumentName);
-
-  if (result == argumentPointer_.end())
+  int error = Validate(argumentName);
+  if (error)
   {
-    *ptr = 0;
-    LOG_ERROR("");
+    LOG_ERROR("Invalid arguments.");
     LOG_DEBUG("Exit GetArgumentPointer().");
     return true;
   }
-  else
+
+  std::map<ArgumentName const, SupportStatus, CALLBACK_NAME::Comparator>::
+      const_iterator statusResult = argumentSupportStatus_.find(argumentName);
+  if (statusResult->second == SUPPORT_STATUS::notSupported)
   {
-    *ptr = reinterpret_cast<double *>(result->second);
+    LOG_ERROR("Pointer value does not exist for Arguments that are "
+              "'notSupported'.");
     LOG_DEBUG("Exit GetArgumentPointer().");
-    return false;
+    return true;
   }
+
+  std::map<ArgumentName const, void *, ARGUMENT_NAME::Comparator>::
+      const_iterator result = argumentPointer_.find(argumentName);
+
+  *ptr = reinterpret_cast<double *>(result->second);
+
+  LOG_DEBUG("Exit GetArgumentPointer().");
+  return false;
 }
 
 int ModelImplementation::SetCallbackPointer(CallbackName const callbackName,
@@ -824,25 +1104,33 @@ int ModelImplementation::SetCallbackPointer(CallbackName const callbackName,
 {
   LOG_DEBUG("Enter SetCallbackPointer().");
 
-  std::map<CallbackName const, SupportStatus, CALLBACK_NAME::Comparator>::
-      const_iterator result = callbackSupportStatus_.find(callbackName);
-
-  if ((result == callbackSupportStatus_.end())
-      ||
-      (result->second == SUPPORT_STATUS::notSupported))
+  int error =
+      Validate(callbackName) ||
+      Validate(languageName);
+  if (error)
   {
-    LOG_ERROR("");
+    LOG_ERROR("Invalid arguments.");
     LOG_DEBUG("Exit SetCallbackPointer().");
     return true;
   }
-  else
+
+  std::map<CallbackName const, SupportStatus, CALLBACK_NAME::Comparator>::
+      const_iterator result = callbackSupportStatus_.find(callbackName);
+
+  if (result->second == SUPPORT_STATUS::notSupported)
   {
-    callbackLanguage_[callbackName] = languageName;
-    callbackFunctionPointer_[callbackName] = fptr;
-    callbackDataObjectPointer_[callbackName] = dataObject;
+    LOG_ERROR("Pointer value cannot be set for Callbacks that are "
+              "'notSupported'.");
     LOG_DEBUG("Exit SetCallbackPointer().");
-    return false;
+    return true;
   }
+
+  callbackLanguage_[callbackName] = languageName;
+  callbackFunctionPointer_[callbackName] = fptr;
+  callbackDataObjectPointer_[callbackName] = dataObject;
+
+  LOG_DEBUG("Exit SetCallbackPointer().");
+  return false;
 }
 
 int ModelImplementation::IsCallbackPresent(
@@ -850,23 +1138,28 @@ int ModelImplementation::IsCallbackPresent(
 {
   LOG_DEBUG("Enter IsCallbackPresent().");
 
+  int error = Validate(callbackName);
+  if (error)
+  {
+    LOG_ERROR("Invalid arguments.");
+    LOG_DEBUG("Exit IsCallbackPresent().");
+    return false;
+  }
+
   std::map<CallbackName const, func *, CALLBACK_NAME::Comparator>::
       const_iterator result = callbackFunctionPointer_.find(callbackName);
 
-  if ((result == callbackFunctionPointer_.end())
-      ||
-      (result->second == 0))
+  if (result->second == NULL)
   {
     *present = false;
-    LOG_DEBUG("Exit IsCallbackPresent().");
-    return false;
   }
   else
   {
     *present = true;
-    LOG_DEBUG("Exit IsCallbackPresent().");
-    return false;
   }
+
+  LOG_DEBUG("Exit IsCallbackPresent().");
+  return false;
 }
 
 struct KIM_ModelCompute
@@ -877,6 +1170,42 @@ struct KIM_ModelCompute
 int ModelImplementation::Compute() const
 {
   LOG_DEBUG("Enter Compute().");
+
+  // Check that all required arguments are present
+  for (std::map<ArgumentName const, SupportStatus,
+           ARGUMENT_NAME::Comparator>::const_iterator
+           itr = argumentSupportStatus_.begin();
+       itr != argumentSupportStatus_.end(); ++itr)
+  {
+    if ((itr->second == SUPPORT_STATUS::requiredByAPI) ||
+        (itr->second == SUPPORT_STATUS::required))
+    {
+      if (argumentPointer_.find(itr->first)->second == NULL)
+      {
+        LOG_ERROR("Required Argument is not present.");
+        LOG_DEBUG("Exit Compute().");
+        return true;
+      }
+    }
+  }
+
+  // Check that all required callbacks are present
+  for (std::map<CallbackName const, SupportStatus,
+           CALLBACK_NAME::Comparator>::const_iterator
+           itr = callbackSupportStatus_.begin();
+       itr != callbackSupportStatus_.end(); ++itr)
+  {
+    if ((itr->second == SUPPORT_STATUS::requiredByAPI) ||
+        (itr->second == SUPPORT_STATUS::required))
+    {
+      if (callbackFunctionPointer_.find(itr->first)->second == NULL)
+      {
+        LOG_ERROR("Required Callback is not present.");
+        LOG_DEBUG("Exit Compute().");
+        return true;
+      }
+    }
+  }
 
   typedef int ModelComputeCpp(KIM::ModelCompute * const);
   ModelComputeCpp * CppCompute
@@ -912,14 +1241,14 @@ int ModelImplementation::Compute() const
   }
   else
   {
-    LOG_ERROR("");
+    LOG_ERROR("Unknown LanguageName.  SHOULD NEVER GET HERE.");
     LOG_DEBUG("Exit Compute().");
     return true;
   }
 
   if (error)
   {
-    LOG_ERROR("");
+    LOG_ERROR("Model supplied Compute() routine returned error.");
     LOG_DEBUG("Exit Compute().");
     return true;
   }
@@ -978,19 +1307,34 @@ int ModelImplementation::ClearInfluenceDistanceAndCutoffsThenRefreshModel()
   }
   else
   {
-    LOG_ERROR("");
+    LOG_ERROR("Unknown LanguageName.  SHOULD NEVER GET HERE.");
     LOG_DEBUG("Exit ClearInfluenceDistanceAndCutoffsThenRefreshModel().");
     return true;
   }
 
   if (error)
   {
-    LOG_ERROR("");
+    LOG_ERROR("Model supplied Refresh() routine returned error.");
     LOG_DEBUG("Exit ClearInfluenceDistanceAndCutoffsThenRefreshModel().");
     return true;
   }
   else
   {
+    // error checking
+    if (influenceDistance_ == NULL)
+    {
+      LOG_ERROR("Model supplied Refresh() routine did not set "
+                "InfluenceDistancePointer");
+      LOG_DEBUG("Exit ClearInfluenceDistanceAndCutoffsThenRefreshModel().");
+      return true;
+    }
+    if (cutoffs_ == NULL)
+    {
+      LOG_ERROR("Model supplied Refresh() routine did not set CutoffsPointer");
+      LOG_DEBUG("Exit ClearInfluenceDistanceAndCutoffsThenRefreshModel().");
+      return true;
+    }
+
     LOG_DEBUG("Exit ClearInfluenceDistanceAndCutoffsThenRefreshModel().");
     return false;
   }
@@ -1004,16 +1348,34 @@ int ModelImplementation::GetNeighborList(int const neighborListIndex,
 {
   LOG_DEBUG("Enter GetNeighborList().");
 
-  std::map<CallbackName const, LanguageName, CALLBACK_NAME::Comparator>::
-      const_iterator languageResult
-      = callbackLanguage_.find(CALLBACK_NAME::GetNeighborList);
-  if (languageResult == callbackLanguage_.end())
+  if ((neighborListIndex < 0) || (neighborListIndex >= numberOfCutoffs_))
   {
-    LOG_ERROR("");
+    LOG_ERROR("Invalid neighborListIndex.");
     LOG_DEBUG("Exit GetNeighborList().");
     return true;
   }
-  LanguageName languageName = languageResult->second;
+
+  int zeroBasedParticleNumber = particleNumber +
+      ((NUMBERING::zeroBased == modelNumbering_)
+       ? 0 : -numberingOffset_);
+  std::map<ArgumentName const, void *, ARGUMENT_NAME::Comparator>::
+      const_iterator pointerResult
+      = argumentPointer_.find(ARGUMENT_NAME::numberOfParticles);
+  int const * numberOfParticles
+      = reinterpret_cast<int const *>(pointerResult->second);
+  if ((zeroBasedParticleNumber < 0) ||
+      (zeroBasedParticleNumber >= *(numberOfParticles)))
+  {
+    LOG_ERROR("Invalid particleNumber.");
+    LOG_DEBUG("Exit GetNeighborList().");
+    return true;
+  }
+
+  std::map<CallbackName const, LanguageName, CALLBACK_NAME::Comparator>::
+      const_iterator languageResult
+      = callbackLanguage_.find(CALLBACK_NAME::GetNeighborList);
+
+  LanguageName const languageName = languageResult->second;
   void const * dataObject
       = (callbackDataObjectPointer_.find(CALLBACK_NAME::GetNeighborList))
       ->second;
@@ -1067,14 +1429,14 @@ int ModelImplementation::GetNeighborList(int const neighborListIndex,
   }
   else
   {
-    LOG_ERROR("");
+    LOG_ERROR("Unknown LanguageName.  SHOULD NEVER GET HERE.");
     LOG_DEBUG("Exit GetNeighborList().");
     return true;
   }
 
   if (error)
   {
-    LOG_ERROR("");
+    LOG_ERROR("Simulator supplied GetNeighborList() routine returned error.");
     LOG_DEBUG("Exit GetNeighborList().");
     return true;
   }
@@ -1111,12 +1473,7 @@ int ModelImplementation::ProcessDEDrTerm(double const de, double const r,
   std::map<CallbackName const, LanguageName, CALLBACK_NAME::Comparator>::
       const_iterator languageResult
       = callbackLanguage_.find(CALLBACK_NAME::ProcessDEDrTerm);
-  if (languageResult == callbackLanguage_.end())
-  {
-    LOG_ERROR("");
-    LOG_DEBUG("Exit ProcessDEDrTerm().");
-    return true;
-  }
+
   LanguageName languageName = languageResult->second;
   void const * dataObject
       = (callbackDataObjectPointer_.find(CALLBACK_NAME::ProcessDEDrTerm))
@@ -1160,14 +1517,14 @@ int ModelImplementation::ProcessDEDrTerm(double const de, double const r,
   }
   else
   {
-    LOG_ERROR("");
+    LOG_ERROR("Unknown LanguageName.  SHOULD NEVER GET HERE.");
     LOG_DEBUG("Exit ProcessDEDrTerm().");
     return true;
   }
 
   if (error)
   {
-    LOG_ERROR("");
+    LOG_ERROR("Simulator supplied ProcessDEDrTerm() routine returned error.");
     LOG_DEBUG("Exit ProcessDEDrTerm().");
     return true;
   }
@@ -1188,12 +1545,7 @@ int ModelImplementation::ProcessD2EDr2Term(double const de,
   std::map<CallbackName const, LanguageName, CALLBACK_NAME::Comparator>::
       const_iterator languageResult
       = callbackLanguage_.find(CALLBACK_NAME::ProcessD2EDr2Term);
-  if (languageResult == callbackLanguage_.end())
-  {
-    LOG_ERROR("");
-    LOG_DEBUG("Exit ProcessD2EDr2Term().");
-    return true;
-  }
+
   LanguageName languageName = languageResult->second;
   void const * dataObject = (callbackDataObjectPointer_
                              .find(CALLBACK_NAME::ProcessD2EDr2Term))->second;
@@ -1246,14 +1598,14 @@ int ModelImplementation::ProcessD2EDr2Term(double const de,
   }
   else
   {
-    LOG_ERROR("");
+    LOG_ERROR("Unknown LanguageName.  SHOULD NEVER GET HERE.");
     LOG_DEBUG("Exit ProcessD2EDr2Term().");
     return true;
   }
 
   if (error)
   {
-    LOG_ERROR("");
+    LOG_ERROR("Simulator supplied ProcessD2EDr2Term() routine returned error.");
     LOG_DEBUG("Exit ProcessD2EDr2Term().");
     return true;
   }
@@ -1393,6 +1745,24 @@ int ModelImplementation::ConvertUnit(
   static ChargeMap const chargeConvertToSI = GetChargeMap();
   static TemperatureMap const temperatureConvertToSI = GetTemperatureMap();
   static TimeMap const timeConvertToSI = GetTimeMap();
+
+  int error =
+      Validate(fromLengthUnit) ||
+      Validate(fromEnergyUnit) ||
+      Validate(fromChargeUnit) ||
+      Validate(fromTemperatureUnit) ||
+      Validate(fromTimeUnit) ||
+      Validate(toLengthUnit) ||
+      Validate(toEnergyUnit) ||
+      Validate(toChargeUnit) ||
+      Validate(toTemperatureUnit) ||
+      Validate(toTimeUnit);
+  if (error)
+  {
+    LOG_ERROR("Invalid arguments.");
+    LOG_DEBUG("Exit ConvertUnit().");
+    return true;
+  }
 
   double const lengthConversion
       = lengthConvertToSI.find(toLengthUnit)->second /
@@ -1665,6 +2035,8 @@ ModelImplementation::ModelImplementation(ModelLibrary * const modelLibrary,
                                          Log * const log) :
     modelLibrary_(modelLibrary),
     log_(log),
+    numberingHasBeenSet_(false),
+    unitsHaveBeenSet_(false),
     influenceDistance_(0),
     numberOfCutoffs_(0),
     cutoffs_(0),
@@ -1693,6 +2065,7 @@ ModelImplementation::ModelImplementation(ModelLibrary * const modelLibrary,
   {
     argumentSupportStatus_[*requiredByAPI_Argument]
         = SUPPORT_STATUS::requiredByAPI;
+    argumentPointer_[*requiredByAPI_Argument] = NULL;
   }
 
   // populate Callbacks
@@ -1712,6 +2085,10 @@ ModelImplementation::ModelImplementation(ModelLibrary * const modelLibrary,
   {
     callbackSupportStatus_[*requiredByAPI_Callback]
         = SUPPORT_STATUS::requiredByAPI;
+    callbackLanguage_[*requiredByAPI_Callback]
+        = LANGUAGE_NAME::cpp;  // place holder
+    callbackFunctionPointer_[*requiredByAPI_Callback] = NULL;
+    callbackDataObjectPointer_[*requiredByAPI_Callback] = NULL;
   }
 
   LOG_DEBUG("Exit ModelImplementation().");
@@ -1738,12 +2115,26 @@ int ModelImplementation::ModelCreate(
 {
   LOG_DEBUG("Enter ModelCreate().");
 
-  modelName_ = modelName;
-
-  int error = SetSimulatorNumbering(numbering);
+  int error =
+      Validate(numbering) ||
+      Validate(requestedLengthUnit) ||
+      Validate(requestedEnergyUnit) ||
+      Validate(requestedChargeUnit) ||
+      Validate(requestedTemperatureUnit) ||
+      Validate(requestedTimeUnit);
   if (error)
   {
-    LOG_ERROR("");
+    LOG_ERROR("Invalid arguments.");
+    LOG_DEBUG("Exit ModelCreate().");
+    return true;
+  }
+
+  modelName_ = modelName;
+
+  error = SetSimulatorNumbering(numbering);
+  if (error)
+  {
+    LOG_ERROR("Could not set simulator numbering.");
     LOG_DEBUG("Exit ModelCreate().");
     return true;
   }
@@ -1751,7 +2142,7 @@ int ModelImplementation::ModelCreate(
   error = modelLibrary_->Open(true, modelName);
   if (error)
   {
-    LOG_ERROR("");
+    LOG_ERROR("Could not open model shared library.");
     LOG_DEBUG("Exit ModelCreate().");
     return true;
   }
@@ -1768,7 +2159,7 @@ int ModelImplementation::ModelCreate(
                                         requestedTimeUnit);
       if (error)
       {
-        LOG_ERROR("");
+        LOG_ERROR("Initialization of Stand Alone model returned error.");
         LOG_DEBUG("Exit ModelCreate().");
         return true;
       }
@@ -1782,7 +2173,7 @@ int ModelImplementation::ModelCreate(
                                            requestedTimeUnit);
       if (error)
       {
-        LOG_ERROR("");
+        LOG_ERROR("Initialization of Parameterized Model returned error.");
         LOG_DEBUG("Exit ModelCreate().");
         return true;
       }
@@ -1802,6 +2193,65 @@ int ModelImplementation::ModelCreate(
       LOG_DEBUG("Exit ModelCreate().");
       return true;
       break;
+  }
+
+  // Error checking
+  //  no need to check arguments, callbacks, or parameters
+  if (!numberingHasBeenSet_)
+  {
+    LOG_ERROR("Model supplied Create() routine did not set numbering.");
+    LOG_DEBUG("Exit ModelCreate().");
+    return true;
+  }
+
+  if (!unitsHaveBeenSet_)
+  {
+    LOG_ERROR("Model supplied Create() routine did not set units.");
+    LOG_DEBUG("Exit ModelCreate().");
+    return true;
+  }
+
+  if (influenceDistance_ == NULL)
+  {
+    LOG_ERROR("Model supplied Create() routine did not set "
+              "InfluenceDistancePointer.");
+    LOG_DEBUG("Exit ModelCreate().");
+    return true;
+  }
+
+  if (cutoffs_ == NULL)
+  {
+    LOG_ERROR("Model supplied Create() routine did not set CutoffsPointer.");
+    LOG_DEBUG("Exit ModelCreate().");
+    return true;
+  }
+
+  if (refreshFunction_ == NULL)
+  {
+    LOG_ERROR("Model supplied Create() routine did not set RefreshPointer.");
+    LOG_DEBUG("Exit ModelCreate().");
+    return true;
+  }
+
+  if (destroyFunction_ == NULL)
+  {
+    LOG_ERROR("Model supplied Create() routine did not set DestroyPointer.");
+    LOG_DEBUG("Exit ModelCreate().");
+    return true;
+  }
+
+  if (computeFunction_ == NULL)
+  {
+    LOG_ERROR("Model supplied Create() routine did not set ComputePointer.");
+    LOG_DEBUG("Exit ModelCreate().");
+    return true;
+  }
+
+  if (supportedSpecies_.empty())
+  {
+    LOG_ERROR("Model supplied Create() routine did not set SpeciesCode.");
+    LOG_DEBUG("Exit ModelCreate().");
+    return true;
   }
 
   // set numberingOffset_
@@ -1863,14 +2313,14 @@ int ModelImplementation::ModelDestroy()
   }
   else
   {
-    LOG_ERROR("");
+    LOG_ERROR("Unknown LanguageName.  SHOULD NEVER GET HERE.");
     LOG_DEBUG("Exit ModelDestroy().");
     return true;
   }
 
   if (error)
   {
-    LOG_ERROR("");
+    LOG_ERROR("Model supplied Destroy() routine returned error.");
     LOG_DEBUG("Exit ModelDestroy().");
     return true;
   }
@@ -1895,13 +2345,26 @@ int ModelImplementation::InitializeStandAloneModel(
 {
   LOG_DEBUG("Enter InitializeStandAloneModel().");
 
+  int error =
+      Validate(requestedLengthUnit) ||
+      Validate(requestedEnergyUnit) ||
+      Validate(requestedChargeUnit) ||
+      Validate(requestedTemperatureUnit) ||
+      Validate(requestedTimeUnit);
+  if (error)
+  {
+    LOG_ERROR("Invalid arguments.");
+    LOG_DEBUG("Exit InitializeStandAloneModel().");
+    return true;
+  }
+
   LanguageName languageName;
   func * functionPointer = 0;
-  int error = modelLibrary_->GetModelCreateFunctionPointer(
+  error = modelLibrary_->GetModelCreateFunctionPointer(
       &languageName, &functionPointer);
   if (error)
   {
-    LOG_ERROR("");
+    LOG_ERROR("Could not get ModelCreateFunctionPointer.");
     LOG_DEBUG("Exit InitializeStandAloneModel().");
     return true;
   }
@@ -1975,13 +2438,13 @@ int ModelImplementation::InitializeStandAloneModel(
   }
   else
   {
-    LOG_ERROR("");
+    LOG_ERROR("Unknown LanguageName.  SHOULD NEVER GET HERE.");
     LOG_DEBUG("Exit InitializeStandAloneModel().");
     return true;
   }
   if (error)
   {
-    LOG_ERROR("");
+    LOG_ERROR("Model supplied Create() routine returned error.");
     LOG_DEBUG("Exit InitializeStandAloneModel().");
     return true;
   }
@@ -2006,11 +2469,23 @@ int ModelImplementation::InitializeParameterizedModel(
 {
   LOG_DEBUG("Enter InitializeParameterizedModel().");
 
-  // get driver name
-  int error = modelLibrary_->GetModelDriverName(&modelDriverName_);
+  int error =
+      Validate(requestedLengthUnit) ||
+      Validate(requestedEnergyUnit) ||
+      Validate(requestedChargeUnit) ||
+      Validate(requestedTemperatureUnit) ||
+      Validate(requestedTimeUnit);
   if (error)
   {
-    LOG_ERROR("");
+    LOG_ERROR("Invalid arguments.");
+    LOG_DEBUG("Exit InitializeParameterizedModel().");
+    return true;
+  }
+  // get driver name
+  error = modelLibrary_->GetModelDriverName(&modelDriverName_);
+  if (error)
+  {
+    LOG_ERROR("Could not get Model Driver name.");
     LOG_DEBUG("Exit InitializeParameterizedModel().");
     return true;
   }
@@ -2019,7 +2494,7 @@ int ModelImplementation::InitializeParameterizedModel(
   error = WriteParameterFiles();
   if (error)
   {
-    LOG_ERROR("");
+    LOG_ERROR("Could not write parameter files to scratch space.");
     LOG_DEBUG("Exit InitializeParameterizedModel().");
     return true;
   }
@@ -2028,14 +2503,14 @@ int ModelImplementation::InitializeParameterizedModel(
   error = modelLibrary_->Close();
   if (error)
   {
-    LOG_ERROR("");
+    LOG_ERROR("Could not close model shared library.");
     LOG_DEBUG("Exit InitializeParameterizedModel().");
     return true;
   }
   error = modelLibrary_->Open(false, modelDriverName_);
   if (error)
   {
-    LOG_ERROR("");
+    LOG_ERROR("Could not open model driver shared library.");
     LOG_DEBUG("Exit InitializeParameterizedModel().");
     return true;
   }
@@ -2044,7 +2519,7 @@ int ModelImplementation::InitializeParameterizedModel(
   error = modelLibrary_->GetModelType(&itemType);
   if ((error) || (itemType != ModelLibrary::MODEL_DRIVER))
   {
-    LOG_ERROR("");
+    LOG_ERROR("Invalid model driver shared library.");
     LOG_DEBUG("Exit InitializeParameterizedModel().");
     return true;
   }
@@ -2055,7 +2530,7 @@ int ModelImplementation::InitializeParameterizedModel(
       &languageName, &functionPointer);
   if (error)
   {
-    LOG_ERROR("");
+    LOG_ERROR("Could not get ModelCreateFunctionPointer.");
     LOG_DEBUG("Exit InitializeParameterizedModel().");
     return true;
   }
@@ -2130,13 +2605,13 @@ int ModelImplementation::InitializeParameterizedModel(
   }
   else
   {
-    LOG_ERROR("");
+    LOG_ERROR("Unknown LanguageName.  SHOULD NEVER GET HERE.");
     LOG_DEBUG("Exit InitializeParameterizedModel().");
     return true;
   }
   if (error)
   {
-    LOG_ERROR("");
+    LOG_ERROR("Model Driver supplied Create() routine returned error.");
     LOG_DEBUG("Exit InitializeParameterizedModel().");
     return true;
   }
@@ -2168,7 +2643,7 @@ int ModelImplementation::WriteParameterFiles()
     int error = modelLibrary_->GetParameterFileString(i, &length , &strPtr);
     if (error)
     {
-      LOG_ERROR("");
+      LOG_ERROR("Could not get parameter file data.");
       LOG_DEBUG("Exit WriteParameterFiles().");
       return true;
     }
@@ -2186,7 +2661,7 @@ int ModelImplementation::WriteParameterFiles()
     if (fileid == -1)
     {
       free(cstr);
-      LOG_ERROR("");
+      LOG_ERROR("Could not create a secure temporary file.");
       LOG_DEBUG("Exit WriteParameterFiles().");
       return true;
     }
@@ -2201,5 +2676,293 @@ int ModelImplementation::WriteParameterFiles()
 
   LOG_DEBUG("Exit WriteParameterFiles().");
   return false;
+}
+
+int ModelImplementation::Validate(ArgumentName const argumentName) const
+{
+  LOG_DEBUG("Enter Validate().");
+
+  int numberOfArguments;
+  ARGUMENT_NAME::GetNumberOfArguments(&numberOfArguments);
+
+  for (int i = 0; i < numberOfArguments; ++i)
+  {
+    ArgumentName argName;
+    ARGUMENT_NAME::GetArgumentName(i, &argName);
+
+    if (argumentName == argName)
+    {
+      LOG_DEBUG("Exit Validate().");
+      return false;
+    }
+  }
+
+  LOG_ERROR("Invalid ArgumentName encountered.");
+  LOG_DEBUG("Exit Validate().");
+  return true;
+}
+
+int ModelImplementation::Validate(CallbackName const callbackName) const
+{
+  LOG_DEBUG("Enter Validate().");
+
+  int numberOfCallbacks;
+  CALLBACK_NAME::GetNumberOfCallbacks(&numberOfCallbacks);
+
+  for (int i = 0; i < numberOfCallbacks; ++i)
+  {
+    CallbackName cbName;
+    CALLBACK_NAME::GetCallbackName(i, &cbName);
+
+    if (callbackName == cbName)
+    {
+      LOG_DEBUG("Exit Validate().");
+      return false;
+    }
+  }
+
+  LOG_ERROR("Invalid CallbackName encountered.");
+  LOG_DEBUG("Exit Validate().");
+  return true;
+}
+
+int ModelImplementation::Validate(ChargeUnit const chargeUnit) const
+{
+  LOG_DEBUG("Enter Validate().");
+
+  int numberOfChargeUnits;
+  CHARGE_UNIT::GetNumberOfChargeUnits(&numberOfChargeUnits);
+
+  for (int i = 0; i < numberOfChargeUnits; ++i)
+  {
+    ChargeUnit cgUnit;
+    CHARGE_UNIT::GetChargeUnit(i, &cgUnit);
+
+    if (chargeUnit == cgUnit)
+    {
+      LOG_DEBUG("Exit Validate().");
+      return false;
+    }
+  }
+
+  LOG_ERROR("Invalid ChargeUnit encountered.");
+  LOG_DEBUG("Exit Validate().");
+  return true;
+}
+
+int ModelImplementation::Validate(DataType const dataType) const
+{
+  LOG_DEBUG("Enter Validate().");
+
+  int numberOfDataTypes;
+  DATA_TYPE::GetNumberOfDataTypes(&numberOfDataTypes);
+
+  for (int i = 0; i < numberOfDataTypes; ++i)
+  {
+    DataType dType;
+    DATA_TYPE::GetDataType(i, &dType);
+
+    if (dataType == dType)
+    {
+      LOG_DEBUG("Exit Validate().");
+      return false;
+    }
+  }
+
+  LOG_ERROR("Invalid DataType encountered.");
+  LOG_DEBUG("Exit Validate().");
+  return true;
+}
+
+int ModelImplementation::Validate(EnergyUnit const energyUnit) const
+{
+  LOG_DEBUG("Enter Validate().");
+
+  int numberOfEnergyUnits;
+  ENERGY_UNIT::GetNumberOfEnergyUnits(&numberOfEnergyUnits);
+
+  for (int i = 0; i < numberOfEnergyUnits; ++i)
+  {
+    EnergyUnit eUnit;
+    ENERGY_UNIT::GetEnergyUnit(i, &eUnit);
+
+    if (energyUnit == eUnit)
+    {
+      LOG_DEBUG("Exit Validate().");
+      return false;
+    }
+  }
+
+  LOG_ERROR("Invalid EnergyUnit encountered.");
+  LOG_DEBUG("Exit Validate().");
+  return true;
+}
+
+int ModelImplementation::Validate(LanguageName const languageName) const
+{
+  LOG_DEBUG("Enter Validate().");
+
+  int numberOfLanguageNames;
+  LANGUAGE_NAME::GetNumberOfLanguageNames(&numberOfLanguageNames);
+
+  for (int i = 0; i < numberOfLanguageNames; ++i)
+  {
+    LanguageName langName;
+    LANGUAGE_NAME::GetLanguageName(i, &langName);
+
+    if (languageName == langName)
+    {
+      LOG_DEBUG("Exit Validate().");
+      return false;
+    }
+  }
+
+  LOG_ERROR("Invalid LanguageName encountered.");
+  LOG_DEBUG("Exit Validate().");
+  return true;
+}
+
+int ModelImplementation::Validate(LengthUnit const lengthUnit) const
+{
+  LOG_DEBUG("Enter Validate().");
+
+  int numberOfLengthUnits;
+  LENGTH_UNIT::GetNumberOfLengthUnits(&numberOfLengthUnits);
+
+  for (int i = 0; i < numberOfLengthUnits; ++i)
+  {
+    LengthUnit lenUnit;
+    LENGTH_UNIT::GetLengthUnit(i, &lenUnit);
+
+    if (lengthUnit == lenUnit)
+    {
+      LOG_DEBUG("Exit Validate().");
+      return false;
+    }
+  }
+
+  LOG_ERROR("Invalid LengthUnit encountered.");
+  LOG_DEBUG("Exit Validate().");
+  return true;
+}
+
+int ModelImplementation::Validate(Numbering const numbering) const
+{
+  LOG_DEBUG("Enter Validate().");
+
+  int numberOfNumberings;
+  NUMBERING::GetNumberOfNumberings(&numberOfNumberings);
+
+  for (int i = 0; i < numberOfNumberings; ++i)
+  {
+    Numbering num;
+    NUMBERING::GetNumbering(i, &num);
+
+    if (numbering == num)
+    {
+      LOG_DEBUG("Exit Validate().");
+      return false;
+    }
+  }
+
+  LOG_ERROR("Invalid Numbering encountered.");
+  LOG_DEBUG("Exit Validate().");
+  return true;
+}
+
+int ModelImplementation::Validate(SpeciesName const speciesName) const
+{
+  LOG_DEBUG("Enter Validate().");
+
+  int numberOfSpeciesNames;
+  SPECIES_NAME::GetNumberOfSpeciesNames(&numberOfSpeciesNames);
+
+  for (int i = 0; i < numberOfSpeciesNames; ++i)
+  {
+    SpeciesName specName;
+    SPECIES_NAME::GetSpeciesName(i, &specName);
+
+    if (speciesName == specName)
+    {
+      LOG_DEBUG("Exit Validate().");
+      return false;
+    }
+  }
+
+  LOG_ERROR("Invalid SpeciesName encountered.");
+  LOG_DEBUG("Exit Validate().");
+  return true;
+}
+
+int ModelImplementation::Validate(SupportStatus const supportStatus) const
+{
+  LOG_DEBUG("Enter Validate().");
+
+  int numberOfSupportStatuses;
+  SUPPORT_STATUS::GetNumberOfSupportStatuses(&numberOfSupportStatuses);
+
+  for (int i = 0; i < numberOfSupportStatuses; ++i)
+  {
+    SupportStatus supStatus;
+    SUPPORT_STATUS::GetSupportStatus(i, &supStatus);
+
+    if (supportStatus == supStatus)
+    {
+      LOG_DEBUG("Exit Validate().");
+      return false;
+    }
+  }
+
+  LOG_ERROR("Invalid SupportStatus encountered.");
+  LOG_DEBUG("Exit Validate().");
+  return true;
+}
+
+int ModelImplementation::Validate(TemperatureUnit const temperatureUnit) const
+{
+  LOG_DEBUG("Enter Validate().");
+
+  int numberOfTemperatureUnits;
+  TEMPERATURE_UNIT::GetNumberOfTemperatureUnits(&numberOfTemperatureUnits);
+
+  for (int i = 0; i < numberOfTemperatureUnits; ++i)
+  {
+    TemperatureUnit tempUnit;
+    TEMPERATURE_UNIT::GetTemperatureUnit(i, &tempUnit);
+
+    if (temperatureUnit == tempUnit)
+    {
+      LOG_DEBUG("Exit Validate().");
+      return false;
+    }
+  }
+
+  LOG_ERROR("Invalid TemperatureUnit encountered.");
+  LOG_DEBUG("Exit Validate().");
+  return true;
+}
+
+int ModelImplementation::Validate(TimeUnit const timeUnit) const
+{
+  LOG_DEBUG("Enter Validate().");
+
+  int numberOfTimeUnits;
+  TIME_UNIT::GetNumberOfTimeUnits(&numberOfTimeUnits);
+
+  for (int i = 0; i < numberOfTimeUnits; ++i)
+  {
+    TimeUnit tmUnit;
+    TIME_UNIT::GetTimeUnit(i, &tmUnit);
+
+    if (timeUnit == tmUnit)
+    {
+      LOG_DEBUG("Exit Validate().");
+      return false;
+    }
+  }
+
+  LOG_ERROR("Invalid TimeUnit encountered.");
+  LOG_DEBUG("Exit Validate().");
+  return true;
 }
 }  // namespace KIM

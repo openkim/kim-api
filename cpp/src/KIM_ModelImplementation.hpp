@@ -239,7 +239,6 @@ class ModelImplementation
       double * const conversionFactor) const;
 
 
-  //@@@ better name for this?
   void SetLogID(std::string const & logID);
   void PushLogVerbosity(LogVerbosity const logVerbosity);
   void PopLogVerbosity();
@@ -264,6 +263,18 @@ class ModelImplementation
                   std::string const & modelName);
   int ModelDestroy();
 
+  int Validate(ArgumentName const argumentName) const;
+  int Validate(CallbackName const callbackName) const;
+  int Validate(ChargeUnit const chargeUnit) const;
+  int Validate(DataType const dataType) const;
+  int Validate(EnergyUnit const energyUnit) const;
+  int Validate(LanguageName const languageName) const;
+  int Validate(LengthUnit const lengthUnit) const;
+  int Validate(Numbering const numbering) const;
+  int Validate(SpeciesName const speciesName) const;
+  int Validate(SupportStatus const supportStatus) const;
+  int Validate(TemperatureUnit const temperatureUnit) const;
+  int Validate(TimeUnit const timeUnit) const;
 
   ModelLibrary::ITEM_TYPE modelType_;
   std::string modelName_;
@@ -291,11 +302,12 @@ class ModelImplementation
 
   int WriteParameterFiles();
 
+  bool numberingHasBeenSet_;
   Numbering modelNumbering_;
   Numbering simulatorNumbering_;
   int numberingOffset_;
 
-
+  bool unitsHaveBeenSet_;
   LengthUnit lengthUnit_;
   EnergyUnit energyUnit_;
   ChargeUnit chargeUnit_;

@@ -589,6 +589,20 @@ real(c_double) energy_at_cutoff
 
 kim_log_file = __FILE__
 
+! register units
+call kim_model_driver_create_set_units( &
+  model_driver_create_handle, &
+  requested_length_unit, &
+  requested_energy_unit, &
+  kim_charge_unit_unused, &
+  kim_temperature_unit_unused, &
+  kim_time_unit_unused, ierr)
+if (ierr /= 0) then
+  kim_log_message = "Unable to set units"
+  LOG_ERROR()
+  goto 42
+end if
+
 ! register numbering
 call kim_model_driver_create_set_model_numbering( &
   model_driver_create_handle, kim_numbering_one_based, ierr)
