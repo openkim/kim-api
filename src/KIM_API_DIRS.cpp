@@ -139,12 +139,14 @@ std::vector<std::string> getUserDirs()
 
     mkdir(path.c_str(), 0755);
     fl.open(configFile[0].c_str(), std::ofstream::out);
-    fl << "model_drivers_dir = " << path << "/" << "model_drivers\n";
-    fl << "models_dir = " << path << "/" << "models\n";
+    fl << "model_drivers_dir = " << path
+       << "/v" << VERSION_MAJOR << "_model_drivers\n";
+    fl << "models_dir = " << path
+       << "/v" << VERSION_MAJOR << "_models\n";
     fl.close();
-    userDirs[0] = path + "/" + "model_drivers";
+    userDirs[0] = path + "/v" + VERSION_MAJOR + "_model_drivers";
     mkdir(userDirs[0].c_str(), 0755);
-    userDirs[1] = path + "/" + "models";
+    userDirs[1] = path + "/v" + VERSION_MAJOR + "_models";
     mkdir(userDirs[1].c_str(), 0755);
   }
   else
