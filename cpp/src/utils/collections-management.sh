@@ -43,7 +43,7 @@ make_command="make --no-print-directory"
 
 # define usage function
 usage () {
-  local command=`printf $0 | sed 's|.*/\([^/][^/]*\)/*|\1|'`
+  local command="`printf $0 | sed 's|.*/\([^/][^/]*\)/*|\1|'`"
 
   # Follows docopt.org format
   printf "Usage:\n"
@@ -88,8 +88,8 @@ usage () {
 
 check_version_compatibility () {
   local version="$1"
-  local major=`printf -- "${version}" | sed -e 's/\([^.}]*\).*/\1/'`
-  local minor=`printf -- "${version}" | sed -e 's/[^.]*\.\([^.}]*\).*/\1/'`
+  local major="`printf -- "${version}" | sed -e 's/\([^.}]*\).*/\1/'`"
+  local minor="`printf -- "${version}" | sed -e 's/[^.]*\.\([^.}]*\).*/\1/'`"
   if test \( ${major} -eq ${major_version} \) ; then
     return 0
   else
@@ -102,10 +102,10 @@ check_item_compatibility () {
   local query="query={\"kimcode\":\"${item_name}\"}"
   query="${query}"'&fields={"kim-api-version":1}'
   query="${query}"'&database=obj&history=on'
-  local version=`wget -q -O - --post-data="${query}" https://query.openkim.org/api \
+  local version="`wget -q -O - --post-data="${query}" https://query.openkim.org/api \
                  | \
                  sed -e 's/\[//g' -e 's/\]//g' \
-                 -e 's/{"kim-api-version": "\([0-9.]*\)"/\1/g'`
+                 -e 's/{"kim-api-version": "\([0-9.]*\)"/\1/g'`"
   if test x"" = x"${version}"; then
     printf "*** ERROR *** ${item_name} not found at openkim.org.\n"
     return 1
@@ -122,10 +122,10 @@ check_item_compatibility () {
 check_for_local_build () {
   local name="$1"
   local_build_path=""
-  local base_name=`printf -- "${name}" | sed 's|.*/\([^/][^/]*\)/*$|\1|'`
+  local base_name="`printf -- "${name}" | sed 's|.*/\([^/][^/]*\)/*$|\1|'`"
   if test x"${base_name}" != x"${name}"; then
-    local_build_path=`printf -- "${name}" | sed 's|/*$||'`
-    if test x"/" != x`expr ${local_build_path} : '\(.\)'`; then
+    local_build_path="`printf -- "${name}" | sed 's|/*$||'`"
+    if test x"/" != x"`expr ${local_build_path} : '\(.\)'`"; then
       local_build_path="${PWD}/${local_build_path}"
     fi
     return 0
@@ -142,13 +142,13 @@ get_local_build_item_name () {
     return 1
   fi
 
-  local item_type=`make -C "${build_path}" kim-item-type`
+  local item_type="`${make_command} -C "${build_path}" kim-item-type`"
   case "${item_type}" in
     Model|ParameterizedModel|SimulatorModel)
-      item_name=`make -C "${build_path}" model-name`
+      item_name="`${make_command} -C "${build_path}" model-name`"
       ;;
     ModelDriver)
-      item_name=`make -C "${build_path}" model-driver-name`
+      item_name="`${make_command} -C "${build_path}" model-driver-name`"
       ;;
     *)
       item_name=""
@@ -166,9 +166,9 @@ get_local_build_item_name () {
 }
 
 check_config_file () {
-  local config_file_name=`${collections_info} config_file name`
-  local drivers_dir=`${collections_info} config_file model_drivers`
-  local models_dir=`${collections_info} config_file models`
+  local config_file_name="`${collections_info} config_file name`"
+  local drivers_dir="`${collections_info} config_file model_drivers`"
+  local models_dir="`${collections_info} config_file models`"
 
   if test \! -f "${config_file_name}" -o x"" = x"${drivers_dir}" -o x"" = x"${models_dir}"; then
     printf "Invalid kim-api configuration file.\n"
@@ -178,9 +178,9 @@ check_config_file () {
 
 rewrite_config_file_models_dir () {
   if test -d "$1"; then
-     local config_file_name=`${collections_info} config_file name`
-     local drivers_dir=`${collections_info} config_file model_drivers`
-     local models_dir=`cd "$1" && pwd`
+     local config_file_name="`${collections_info} config_file name`"
+     local drivers_dir="`${collections_info} config_file model_drivers`"
+     local models_dir="`cd "$1" && pwd`"
 
      printf "model_drivers_dir = %s\n" "${drivers_dir}" >  "${config_file_name}" || return 1
      printf "models_dir = %s\n" "${models_dir}"         >> "${config_file_name}"
@@ -192,9 +192,9 @@ rewrite_config_file_models_dir () {
 
 rewrite_config_file_drivers_dir () {
   if test -d "$1"; then
-    local config_file_name=`${collections_info} config_file name`
-    local drivers_dir=`cd "$1" && pwd`
-    local models_dir=`${collections_info} config_file models`
+    local config_file_name="`${collections_info} config_file name`"
+    local drivers_dir="`cd "$1" && pwd`"
+    local models_dir="`${collections_info} config_file models`"
 
     printf "model_drivers_dir = %s\n" "${drivers_dir}" >  "${config_file_name}" || return 1
     printf "models_dir = %s\n" "${models_dir}"         >> "${config_file_name}"
@@ -243,7 +243,7 @@ get_build_install_item () {
     found_item="${found_item}""`${collections_info} models find "${item_name}"`"
   fi
   if test x"" != x"${found_item}"; then
-    local item_collection=`printf -- "${found_item}" | sed -e 's/ .*//'`
+    local item_collection="`printf -- "${found_item}" | sed -e 's/ .*//'`"
     printf "Item '${item_name}' already installed in collection '${item_collection}'.\n"
     if test x"${item_collection}" = x"${install_collection}"; then
       return 0
@@ -254,7 +254,7 @@ get_build_install_item () {
 
   # create private temporary directory
   if test x"" = x"${TMPDIR}"; then TMPDIR="/tmp"; fi
-  local build_dir=`mktemp -d "${TMPDIR}/###FULL#PACKAGE#NAME###-build-XXXXXXXXXX"`
+  local build_dir="`mktemp -d "${TMPDIR}/###FULL#PACKAGE#NAME###-build-XXXXXXXXXX"`"
   if test $? -ne 0; then
     printf "Unable to create temporary directory.\n"
     return 1;
@@ -268,10 +268,10 @@ get_build_install_item () {
       local query='query={"type":"mo","kim-api-version":{"$regex":"^'"${major_version}"'\\."}}'
       query="${query}"'&fields={"kimcode":1, "kim-api-version":1}'
       query="${query}"'&database=obj'
-      local list=`wget -q -O - --post-data="${query}" https://query.openkim.org/api \
+      local list="`wget -q -O - --post-data="${query}" https://query.openkim.org/api \
                      | \
                      sed -e 's/\[//g' -e 's/\]//g' \
-                     -e 's/{"kim-api-version": "\([0-9.]*\)", "kimcode": "\([^"]*\)"},*/\1:\2/g'`
+                     -e 's/{"kim-api-version": "\([0-9.]*\)", "kimcode": "\([^"]*\)"},*/\1:\2/g'`"
       for version in ${list}; do \
         if check_version_compatibility "${version}"; then
           get_build_install_item "$install_collection" "${modname}" "${use_sudo}" "${PASSWORD}" || return 1
@@ -307,7 +307,7 @@ get_build_install_item () {
             if test x"" != x"${local_build}"; then
               # now try local
               printf "Now trying to find '${dvr}' locally.\n"
-              dvr=`printf "${local_build}" | sed "s|^\(.*/\)${item_name}\$|\1${dvr}|"`
+              dvr="`printf "${local_build}" | sed "s|^\(.*/\)${item_name}\$|\1${dvr}|"`"
               get_build_install_item "${install_collection}" "${dvr}" "${use_sudo}" "${PASSWORD}" || return 1
             fi
           fi
@@ -364,7 +364,7 @@ remove_item () {
     item_type="model_drivers"
   fi
 
-  local item_dir=`${collections_info} "${item_type}" find "${item_name}" | sed -e 's/^[^ ]* [^ ]* \([^ ]*\).*/\1/'`"/${item_name}"
+  local item_dir="`${collections_info} "${item_type}" find "${item_name}" | sed -e 's/^[^ ]* [^ ]* \([^ ]*\).*/\1/'`""/${item_name}"
 
   printf "Removing '%s'.\n" "${item_dir}"
   if test x"sudo-yes" = x"${use_sudo}"; then
@@ -382,16 +382,16 @@ split_drivers_list_into_collections () {
   drivers_usr_collection=""; number_drivers_usr=0
   drivers_sys_collection=""; number_drivers_sys=0
     while read line; do
-      local collection=`printf -- "$line" | sed -e 's/\([^ ]*\) .*/\1/'`
-      local name=`printf -- "$line" | sed -e 's/[^ ]* \([^ ]*\) .*/\1/'`
-      local directory=`printf -- "$line" | sed -e 's/[^ ]* [^ ]* \([^ ]*\) .*/\1/'`
-      local version=`printf -- "$line" | sed -e 's/[^ ]* [^ ]* [^ ]* \([^ ]*\).*/\1/'`
+      local collection="`printf -- "$line" | sed -e 's/\([^ ]*\) .*/\1/'`"
+      local name="`printf -- "$line" | sed -e 's/[^ ]* \([^ ]*\) .*/\1/'`"
+      local directory="`printf -- "$line" | sed -e 's/[^ ]* [^ ]* \([^ ]*\) .*/\1/'`"
+      local version="`printf -- "$line" | sed -e 's/[^ ]* [^ ]* [^ ]* \([^ ]*\).*/\1/'`"
       case $collection in
         "")
         # empty do nothing
         ;;
         CWD)
-          number_drivers_cwd=`expr $number_drivers_cwd \+ 1`
+          number_drivers_cwd="`expr $number_drivers_cwd \+ 1`"
           drivers_cwd_collection="${drivers_cwd_collection}\t${name}"
           if test x"${with_version}" = x"yes"; then
             drivers_cwd_collection="${drivers_cwd_collection}\n\t\t${version}"
@@ -399,7 +399,7 @@ split_drivers_list_into_collections () {
           drivers_cwd_collection="${drivers_cwd_collection}\n"
           ;;
         environment)
-          number_drivers_env=`expr $number_drivers_env \+ 1`
+          number_drivers_env="`expr $number_drivers_env \+ 1`"
           drivers_env_collection="${drivers_env_collection}\t${name}"
           if test x"${with_version}" = x"yes"; then
             drivers_env_collection="${drivers_env_collection}\n\t\t${version}"
@@ -407,7 +407,7 @@ split_drivers_list_into_collections () {
           drivers_env_collection="${drivers_env_collection}\n"
           ;;
         user)
-          number_drivers_usr=`expr $number_drivers_usr \+ 1`
+          number_drivers_usr="`expr $number_drivers_usr \+ 1`"
           drivers_usr_collection="${drivers_usr_collection}\t${name}"
           if test x"${with_version}" = x"yes"; then
             drivers_usr_collection="${drivers_usr_collection}\n\t\t${version}"
@@ -415,7 +415,7 @@ split_drivers_list_into_collections () {
           drivers_usr_collection="${drivers_usr_collection}\n"
           ;;
         system)
-          number_drivers_sys=`expr $number_drivers_sys \+ 1`
+          number_drivers_sys="`expr $number_drivers_sys \+ 1`"
           drivers_sys_collection="${drivers_sys_collection}\t${name}"
           if test x"${with_version}" = x"yes"; then
             drivers_sys_collection="${drivers_sys_collection}\n\t\t${version}"
@@ -440,16 +440,16 @@ split_models_list_into_collections () {
   models_usr_collection=""; number_models_usr=0
   models_sys_collection=""; number_models_sys=0
     while read line; do
-      local collection=`printf -- "$line" | sed -e 's/\([^ ]*\) .*/\1/'`
-      local name=`printf -- "$line" | sed -e 's/[^ ]* \([^ ]*\) .*/\1/'`
-      local directory=`printf -- "$line" | sed -e 's/[^ ]* [^ ]* \([^ ]*\) .*/\1/'`
-      local version=`printf -- "$line" | sed -e 's/[^ ]* [^ ]* [^ ]* \([^ ]*\).*/\1/'`
+      local collection="`printf -- "$line" | sed -e 's/\([^ ]*\) .*/\1/'`"
+      local name="`printf -- "$line" | sed -e 's/[^ ]* \([^ ]*\) .*/\1/'`"
+      local directory="`printf -- "$line" | sed -e 's/[^ ]* [^ ]* \([^ ]*\) .*/\1/'`"
+      local version="`printf -- "$line" | sed -e 's/[^ ]* [^ ]* [^ ]* \([^ ]*\).*/\1/'`"
       case $collection in
         "")
         # empty do nothing
         ;;
         CWD)
-          number_models_cwd=`expr $number_models_cwd \+ 1`
+          number_models_cwd="`expr $number_models_cwd \+ 1`"
           models_cwd_collection="${models_cwd_collection}\t${name}"
           if test x"${with_version}" = x"yes"; then
             models_cwd_collection="${models_cwd_collection}\n\t\t${version}"
@@ -457,7 +457,7 @@ split_models_list_into_collections () {
           models_cwd_collection="${models_cwd_collection}\n"
           ;;
         environment)
-          number_models_env=`expr $number_models_env \+ 1`
+          number_models_env="`expr $number_models_env \+ 1`"
           models_env_collection="${models_env_collection}\t${name}"
           if test x"${with_version}" = x"yes"; then
             models_env_collection="${models_env_collection}\n\t\t${version}"
@@ -465,7 +465,7 @@ split_models_list_into_collections () {
           models_env_collection="${models_env_collection}\n"
           ;;
         user)
-          number_models_usr=`expr $number_models_usr \+ 1`
+          number_models_usr="`expr $number_models_usr \+ 1`"
           models_usr_collection="${models_usr_collection}\t${name}"
           if test x"${with_version}" = x"yes"; then
             models_usr_collection="${models_usr_collection}\n\t\t${version}"
@@ -473,7 +473,7 @@ split_models_list_into_collections () {
           models_usr_collection="${models_usr_collection}\n"
           ;;
         system)
-          number_models_sys=`expr $number_models_sys \+ 1`
+          number_models_sys="`expr $number_models_sys \+ 1`"
           models_sys_collection="${models_sys_collection}\t${name}"
           if test x"${with_version}" = x"yes"; then
             models_sys_collection="${models_sys_collection}\n\t\t${version}"
@@ -497,14 +497,14 @@ print_separator_line () {
 print_list_of_drivers_and_models () {
   local with_version=$1
 
-  config_env_name=`${collections_info} config_file env | sed -e 's/ .*//'`
-  config_env=`${collections_info} config_file env | sed -e 's/^[^ ]* //'`
+  config_env_name="`${collections_info} config_file env | sed -e 's/ .*//'`"
+  config_env="`${collections_info} config_file env | sed -e 's/^[^ ]* //'`"
   if test x"" = x"${config_env}"; then config_env="--empty--"; fi
-  drivers_env_name=`${collections_info} env env | sed -e 's/^[^ ]* //'`
-  drivers_env=`${collections_info} env model_drivers`
+  drivers_env_name="`${collections_info} env env | sed -e 's/^[^ ]* //'`"
+  drivers_env="`${collections_info} env model_drivers`"
   if test x"" = x"${drivers_env}"; then drivers_env="--empty--"; fi
-  models_env_name=`${collections_info} env env | sed -e 's/ .*//'`
-  models_env=`${collections_info} env models`
+  models_env_name="`${collections_info} env env | sed -e 's/ .*//'`"
+  models_env="`${collections_info} env models`"
   if test x"" = x"${models_env}"; then models_env="--empty--"; fi
 
   printf "\n\n"
@@ -512,10 +512,10 @@ print_list_of_drivers_and_models () {
   printf -- "  ---  Model Collections Listing\n"
   print_separator_line "="
   printf "\n"
-  printf "kim-api library: \n\t%s\n" `${collections_info} system library`
+  printf "kim-api library: \n\t%s\n" "`${collections_info} system library`"
   printf "\n"
   printf "kim-api configuration file:\n\t%s\n" \
-         `${collections_info} config_file name`
+         "`${collections_info} config_file name`"
   printf "\n\n"
   printf "Environment Variables:\n"
   print_separator_line "-"
@@ -531,9 +531,9 @@ print_list_of_drivers_and_models () {
   print_separator_line "="
 
 
-  model_drivers_list=`${collections_info} model_drivers`
+  model_drivers_list="`${collections_info} model_drivers`"
   split_drivers_list_into_collections "${model_drivers_list}" "${with_version}"
-  models_list=`${collections_info} models`
+  models_list="`${collections_info} models`"
   split_models_list_into_collections "${models_list}" "${with_version}"
 
   printf "\n\n\n"
@@ -584,9 +584,9 @@ print_list_of_drivers_and_models () {
   fi
   printf "\n\n"
 
-  drivers_usr=`${collections_info} config_file model_drivers`
+  drivers_usr="`${collections_info} config_file model_drivers`"
   if test x"" = x"${drivers_usr}"; then drivers_usr="--empty--"; fi
-  models_usr=`${collections_info} config_file models`
+  models_usr="`${collections_info} config_file models`"
   if test x"" = x"${models_usr}"; then models_usr="--empty--"; fi
   printf "User Collection\n"
   print_separator_line "-"
@@ -607,14 +607,14 @@ print_list_of_drivers_and_models () {
 
   printf "System Collection\n"
   print_separator_line "-"
-  printf "Drivers: %s\n" `${collections_info} system model_drivers`
+  printf "Drivers: %s\n" "`${collections_info} system model_drivers`"
   if test $number_drivers_sys -gt 0; then
     printf -- "${drivers_sys_collection}"
   else
     printf "\t--empty--\n"
   fi
   printf "\n\n"
-  printf "Models: %s\n" `${collections_info} system models`
+  printf "Models: %s\n" "`${collections_info} system models`"
   if test $number_models_sys -gt 0; then
     printf -- "${models_sys_collection}"
   else
@@ -793,7 +793,7 @@ case $command in
       fi
       found_item="`${collections_info} model_drivers find "${item_name}"` `${collections_info} models find "${item_name}"`"
       if test \! x"" = x"${found_item}"; then
-        item_collection=`printf "${found_item}" | sed -e 's/^[[:space:]]*\([^[:space:]]*\) .*/\1/'`
+        item_collection="`printf "${found_item}" | sed -e 's/^[[:space:]]*\([^[:space:]]*\) .*/\1/'`"
         if ! (remove_item "${item_name}" "${use_sudo}" "${PASSWORD}" && \
                 get_build_install_item "${item_collection}" "${item_id}" "${use_sudo}" "${PASSWORD}"); then
           printf "\nAborting!\n"

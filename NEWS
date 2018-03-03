@@ -32,6 +32,43 @@
 #
 
 
+=== kim-api-v1.9.3 ============== 10Feb2018 ====================================
+
+* Major additions to options supported by the kim-api-v1-collections-management
+  utility.  Added options include:
+
+  - list --with-version
+  - install CWD
+  - install environment
+  - reinstall
+  - remove-all
+
+  Additionally, items can now be installed from a source directory on the local
+  file system.  Also, multiple items can be listed on a single command line.
+
+* Added a kim-api-v1-activate/deactivate utilities (available when installed to
+  non-standard locations).  These add/remove to PATH and setup the bash
+  completions.
+
+* Added bash completions for user utilities
+
+* Added support for the sysconfdir variable to the build system
+
+* Updated utilities to more closely follow docopt.org specifications.
+
+* Model/Driver 'make install-*' now respect the DESTDIR environment variable.
+
+* Added support for Model/Driver install to the environment collection.
+
+* Add tracking of Parameterized Model parameter file file-names within the
+  generated model shared library.
+
+* Rename vc_* examples to utility_* to avoid confusion with new openkim.org
+  Verification Checks.
+
+* Various minor typo and bug fixes.
+
+
 === kim-api-v2.0.0-alpha.0 ====== 18Jan2018 ====================================
 
 * Complete rewrite of the kim-api package.  Released as "alpha" to solicit
