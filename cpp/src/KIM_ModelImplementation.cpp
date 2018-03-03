@@ -99,10 +99,6 @@ namespace CALLBACK_NAME
 {
 extern std::vector<CallbackName> const requiredByAPI_Callbacks;
 }  // namespace CALLBACK_NAME
-
-namespace
-{
-}  // namespace
 }  // namespace KIM
 
 
@@ -139,6 +135,14 @@ KIM_TimeUnit makeTimeUnitC(KIM::TimeUnit const timeUnit)
   return timeUnitC;
 }
 }  // namespace
+
+// log helpers
+#define SNUM( x ) static_cast<std::ostringstream &>(    \
+    std::ostringstream() << std::dec << x).str()
+#define SPTR( x ) static_cast<std::ostringstream &>(                    \
+    std::ostringstream() << static_cast<void const * const>(x) ).str()
+#define SFUNC( x ) static_cast<std::ostringstream &>(           \
+    std::ostringstream() << static_cast<func *>(x)).str()
 
 
 #include "KIM_ModelImplementationLogMacros.hpp"
@@ -263,60 +267,71 @@ void ModelImplementation::Destroy(
 void ModelImplementation::SetInfluenceDistancePointer(
     double const * const influenceDistance)
 {
-  LOG_DEBUG("Enter SetInfluenceDistancePointer().");
+  LOG_DEBUG_CODE(std::string const callString = "SetInfluenceDistancePointer("
+                 + SPTR(influenceDistance) + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   if (influenceDistance == NULL)
     LOG_ERROR("Null pointer provided for InfluenceDistancePotiner.");
 
   influenceDistance_ = influenceDistance;
 
-  LOG_DEBUG("Exit SetInfluenceDistancePointer().");
+  LOG_DEBUG("Exit " + callString);
 }
 
 void ModelImplementation::GetInfluenceDistance(
     double * const influenceDistance) const
 {
-  LOG_DEBUG("Enter GetInfluenceDistance().");
+  LOG_DEBUG_CODE(std::string const callString = "GetInfluenceDistance("
+                 + SPTR(influenceDistance) + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   *influenceDistance = *influenceDistance_;
 
-  LOG_DEBUG("Exit GetInfluenceDistance().");
+  LOG_DEBUG("Exit " + callString);
 }
 
 
 void ModelImplementation::SetNeighborListCutoffsPointer(
     int const numberOfCutoffs, double const * const cutoffs)
 {
-  LOG_DEBUG("Enter SetNeighborListCutoffsPointer().");
+  LOG_DEBUG_CODE(std::string const callString = "SetNeighborListCutoffsPointer("
+                 + SNUM(numberOfCutoffs) + ", " + SPTR(cutoffs) + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   if (numberOfCutoffs < 1)
-    LOG_ERROR("Number of neighbor list cutoffs must be >= 1.");
+    LOG_ERROR("Number of neighbor list cutoffs, " + SNUM(numberOfCutoffs)
+              + ", must be >= 1.");
   if (cutoffs == NULL)
     LOG_ERROR("Null pointer provided for cutoffs.");
 
   numberOfCutoffs_ = numberOfCutoffs;
   cutoffs_ = cutoffs;
 
-  LOG_DEBUG("Exit SetNeightborListCutoffsPointer().");
+  LOG_DEBUG("Exit " + callString);
 }
 
 void ModelImplementation::GetNeighborListCutoffsPointer(
     int * const numberOfCutoffs, double const ** const cutoffs) const
 {
-  LOG_DEBUG("Enter GetNeighborListCutoffsPointer().");
+  LOG_DEBUG_CODE(std::string const callString = "GetNeighborListCutoffsPointer("
+                 + SPTR(numberOfCutoffs) + ", " + SPTR(cutoffs) + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   if (numberOfCutoffs != NULL)
     *numberOfCutoffs = numberOfCutoffs_;
   if (cutoffs != NULL)
     *cutoffs = cutoffs_;
 
-  LOG_DEBUG("Exit GetNeighborListCutoffsPointer().");
+  LOG_DEBUG("Exit " + callString);
 }
 
 int ModelImplementation::SetRefreshPointer(LanguageName const languageName,
                                            func * const fptr)
 {
-  LOG_DEBUG("Enter SetRefreshPointer().");
+  LOG_DEBUG_CODE(std::string const callString = "SetRefreshPointer("
+                 + languageName.String() + ", " + SFUNC(fptr) + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   int error = Validate(languageName);
   if (error)
@@ -329,14 +344,16 @@ int ModelImplementation::SetRefreshPointer(LanguageName const languageName,
     refreshFunction_ = fptr;
   }
 
-  LOG_DEBUG("Exit SetRefreshPointer().");
+  LOG_DEBUG("Exit " + callString);
   return error;
 }
 
 int ModelImplementation::SetDestroyPointer(LanguageName const languageName,
                                            func * const fptr)
 {
-  LOG_DEBUG("Enter SetDestroyPointer().");
+  LOG_DEBUG_CODE(std::string const callString = "SetDestroyPointer("
+                 + languageName.String() + ", " + SFUNC(fptr) + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   int error = Validate(languageName);
   if (error)
@@ -349,14 +366,16 @@ int ModelImplementation::SetDestroyPointer(LanguageName const languageName,
     destroyFunction_ = fptr;
   }
 
-  LOG_DEBUG("Exit SetDestroyPointer().");
+  LOG_DEBUG("Exit " + callString);
   return error;
 }
 
 int ModelImplementation::SetComputePointer(LanguageName const languageName,
                                            func * const fptr)
 {
-  LOG_DEBUG("Enter SetComputePointer().");
+  LOG_DEBUG_CODE(std::string const callString = "SetComputePointer("
+                 + languageName.String() + ", " + SFUNC(fptr) + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   int error = Validate(languageName);
   if (error)
@@ -369,15 +388,16 @@ int ModelImplementation::SetComputePointer(LanguageName const languageName,
     computeFunction_ = fptr;
   }
 
-  LOG_DEBUG("Exit SetComputePointer().");
+  LOG_DEBUG("Exit " + callString);
   return error;
 }
-
 
 int ModelImplementation::SetSpeciesCode(SpeciesName const speciesName,
                                         int const code)
 {
-  LOG_DEBUG("Enter SetSpeciesCode().");
+  LOG_DEBUG_CODE(std::string const callString = "SetSpeciesCode("
+                 + speciesName.String() + ", " + SNUM(code) + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   int error = Validate(speciesName);
   if (error)
@@ -389,7 +409,7 @@ int ModelImplementation::SetSpeciesCode(SpeciesName const speciesName,
     supportedSpecies_[speciesName] = code;
   }
 
-  LOG_DEBUG("Exit SetSpeciesCode().");
+  LOG_DEBUG("Exit " + callString);
   return error;
 }
 
@@ -398,7 +418,10 @@ int ModelImplementation::GetSpeciesSupportAndCode(
     int * const speciesIsSupported,
     int * const code) const
 {
-  LOG_DEBUG("Enter GetSpeciesSupportAndCode().");
+  LOG_DEBUG_CODE(std::string const callString = "GetSpeciesSupportAndCode("
+                 + speciesName.String() + ", " + SPTR(speciesIsSupported)
+                 + ", " + SPTR(code) + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   int error = Validate(speciesName);
 
@@ -425,14 +448,17 @@ int ModelImplementation::GetSpeciesSupportAndCode(
     }
   }
 
-  LOG_DEBUG("Exit GetSpeciesSupportAndCode().");
+  LOG_DEBUG("Exit " + callString);
   return error;
 }
 
 int ModelImplementation::SetArgumentSupportStatus(
     ArgumentName const argumentName, SupportStatus const supportStatus)
 {
-  LOG_DEBUG("Enter SetArgumentSupportStatus().");
+  LOG_DEBUG_CODE(std::string const callString = "SetArgumentSupportStatus("
+                 + argumentName.String() + ", " + supportStatus.String()
+                 + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   int error =
       Validate(argumentName) ||
@@ -440,16 +466,16 @@ int ModelImplementation::SetArgumentSupportStatus(
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit SetArgumentSupportStatus().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
   if ((argumentSupportStatus_[argumentName] == SUPPORT_STATUS::requiredByAPI)
       && (supportStatus != SUPPORT_STATUS::requiredByAPI))
   {
-    LOG_ERROR("Argument SupportStatus is 'requiredByAPI' and cannot be "
-              "changed.");
-    LOG_DEBUG("Exit SetArgumentSupportStatus().");
+    LOG_ERROR("Argument '" + argumentName.String()
+              + "' SupportStatus is 'requiredByAPI' and cannot be changed.");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
@@ -468,7 +494,7 @@ int ModelImplementation::SetArgumentSupportStatus(
     }
   }
 
-  LOG_DEBUG("Exit SetArgumentSupportStatus().");
+  LOG_DEBUG("Exit " + callString);
   return false;
 }
 
@@ -476,13 +502,16 @@ int ModelImplementation::GetArgumentSupportStatus(
     ArgumentName const argumentName, SupportStatus * const supportStatus)
     const
 {
-  LOG_DEBUG("Enter GetArgumentSupportStatus().");
+  LOG_DEBUG_CODE(std::string const callString = "GetArgumentSupportStatus("
+                 + argumentName.String() + ", " + SPTR(supportStatus)
+                 + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   int error = Validate(argumentName);
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit GetArgumentSupportStatus().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
@@ -490,14 +519,17 @@ int ModelImplementation::GetArgumentSupportStatus(
       const_iterator result = argumentSupportStatus_.find(argumentName);
   *supportStatus = result->second;
 
-  LOG_DEBUG("Exit GetArgumentSupportStatus().");
+  LOG_DEBUG("Exit " + callString);
   return false;
 }
 
 int ModelImplementation::SetCallbackSupportStatus(
     CallbackName const callbackName, SupportStatus const supportStatus)
 {
-  LOG_DEBUG("Enter SetCallbackSupportStatus().");
+  LOG_DEBUG_CODE(std::string const callString = "SetCallbackSupportStatus("
+                 + callbackName.String() + ", " + supportStatus.String()
+                 + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   int error =
       Validate(callbackName) ||
@@ -505,16 +537,16 @@ int ModelImplementation::SetCallbackSupportStatus(
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit SetCallbackSupportStatus().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
   if ((callbackSupportStatus_[callbackName] == SUPPORT_STATUS::requiredByAPI)
       && (supportStatus != SUPPORT_STATUS::requiredByAPI))
   {
-    LOG_ERROR("Callback SupportStatus is 'requiredByAPI' and cannot be "
-              "changed.");
-    LOG_DEBUG("Exit SetCallbackSupportStatus().");
+    LOG_ERROR("Callback '" + callbackName.String()
+              + "' SupportStatus is 'requiredByAPI' and cannot be changed.");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
@@ -535,20 +567,22 @@ int ModelImplementation::SetCallbackSupportStatus(
     }
   }
 
-  LOG_DEBUG("Exit SetCallbackSupportStatus().");
+  LOG_DEBUG("Exit " + callString);
   return false;
 }
 
 int ModelImplementation::GetCallbackSupportStatus(
     CallbackName const callbackName, SupportStatus * const supportStatus) const
 {
-  LOG_DEBUG("Enter GetCallbackSupportStatus().");
+  LOG_DEBUG_CODE(std::string const callString = "GetCallbackSupportStatus("
+                 + callbackName.String() + ", " + SPTR(supportStatus) + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   int error = Validate(callbackName);
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit GetCallbackSupportStatus().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
@@ -556,44 +590,48 @@ int ModelImplementation::GetCallbackSupportStatus(
       const_iterator result = callbackSupportStatus_.find(callbackName);
   *supportStatus = result->second;
 
-  LOG_DEBUG("Exit GetCallbackSupportStatus().");
+  LOG_DEBUG("Exit " + callString);
   return false;
 }
 
 int ModelImplementation::SetModelNumbering(Numbering const numbering)
 {
-  LOG_DEBUG("Enter SetModelNumbering().");
+  LOG_DEBUG_CODE(std::string const callString = "SetModelNumbering("
+                 + numbering.String() + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   int error = Validate(numbering);
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit SetModelNumbering().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
   modelNumbering_ = numbering;
   numberingHasBeenSet_ = true;
 
-  LOG_DEBUG("Exit SetModelNumbering().");
+  LOG_DEBUG("Exit " + callString);
   return false;
 }
 
 int ModelImplementation::SetSimulatorNumbering(Numbering const numbering)
 {
-  LOG_DEBUG("Enter SetSimulatorNumbering().");
+  LOG_DEBUG_CODE(std::string const callString = "SetSimulatorNumbering("
+                 + numbering.String() + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   int error = Validate(numbering);
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit SetSimulatorNumbering().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
   simulatorNumbering_ = numbering;
 
-  LOG_DEBUG("Exit SetSimulatorNumbering().");
+  LOG_DEBUG("Exit " + callString);
   return false;
 }
 
@@ -603,7 +641,14 @@ int ModelImplementation::SetUnits(LengthUnit const lengthUnit,
                                   TemperatureUnit const temperatureUnit,
                                   TimeUnit const timeUnit)
 {
-  LOG_DEBUG("Enter SetUnits().");
+  LOG_DEBUG_CODE(std::string const callString = "SetUnits("
+                 + lengthUnit.String() + ", "
+                 + energyUnit.String() + ", "
+                 + chargeUnit.String() + ", "
+                 + temperatureUnit.String() + ", "
+                 + timeUnit.String()
+                 + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   int error =
       Validate(lengthUnit) ||
@@ -614,21 +659,21 @@ int ModelImplementation::SetUnits(LengthUnit const lengthUnit,
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit SetUnits().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
   if (lengthUnit == LENGTH_UNIT::unused)
   {
     LOG_ERROR("Models cannot specify 'unused' for LengthUnit");
-    LOG_DEBUG("Exit SetUnits().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
   if (energyUnit == ENERGY_UNIT::unused)
   {
     LOG_ERROR("Models cannot specify 'unused' for EnergyUnit");
-    LOG_DEBUG("Exit SetUnits().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
@@ -640,7 +685,7 @@ int ModelImplementation::SetUnits(LengthUnit const lengthUnit,
 
   unitsHaveBeenSet_ = true;
 
-  LOG_DEBUG("Exit SetUnits().");
+  LOG_DEBUG("Exit " + callString);
   return false;
 }
 
@@ -650,7 +695,13 @@ void ModelImplementation::GetUnits(LengthUnit * const lengthUnit,
                                    TemperatureUnit * const temperatureUnit,
                                    TimeUnit * const timeUnit) const
 {
-  LOG_DEBUG("Enter GetUnits().");
+  LOG_DEBUG_CODE(std::string const callString = "GetUnits("
+                 + SPTR(lengthUnit) + ", "
+                 + SPTR(energyUnit) + ", "
+                 + SPTR(chargeUnit) + ", "
+                 + SPTR(temperatureUnit) + ", "
+                 + SPTR(timeUnit) + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   if (lengthUnit != NULL)
     *lengthUnit = lengthUnit_;
@@ -663,66 +714,73 @@ void ModelImplementation::GetUnits(LengthUnit * const lengthUnit,
   if (timeUnit != NULL)
     *timeUnit = timeUnit_;
 
-  LOG_DEBUG("Exit GetUnits().");
+  LOG_DEBUG("Exit " + callString);
 }
 
 int ModelImplementation::GetNumberOfParameterFiles(
     int * const numberOfParameterFiles) const
 {
-  LOG_DEBUG("Enter GetNumberOfParameterFiles().");
+  LOG_DEBUG_CODE(std::string const callString = "GetNumberOfParameterFiles("
+                 + SPTR(numberOfParameterFiles) + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   if (modelType_ != ModelLibrary::PARAMETERIZED_MODEL)
   {
     LOG_ERROR("Only parameterized models have parameter files.");
-    LOG_DEBUG("Exit GetNumberOfParameterFiles().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
   *numberOfParameterFiles = numberOfParameterFiles_;
 
-  LOG_DEBUG("Exit GetNumberOfParameterFiles().");
+  LOG_DEBUG("Exit " + callString);
   return false;
 }
 
 int ModelImplementation::GetParameterFileName(
     int const index, std::string const ** const parameterFileName) const
 {
-  LOG_DEBUG("Enter GetParameterFileName().");
+  LOG_DEBUG_CODE(std::string const callString = "GetParameterFileName("
+                 + SNUM(index) + ", " + SPTR(parameterFileName) + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   if (modelType_ != ModelLibrary::PARAMETERIZED_MODEL)
   {
     LOG_ERROR("Only parameterized models have parameter files.");
-    LOG_DEBUG("Exit GetParameterFileName().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
   if ((index < 0) || (index >= numberOfParameterFiles_))
   {
-    LOG_ERROR("Invalid parameter file index.");
-    LOG_DEBUG("Exit GetParameterFileName().");
+    LOG_ERROR("Invalid parameter file index, " + SNUM(index) + ".");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
   *parameterFileName = &(parameterFileNames_[index]);
-  LOG_DEBUG("Exit GetParameterFileName().");
+  LOG_DEBUG("Exit " + callString);
   return false;
 }
 
 int ModelImplementation::SetParameterPointer(int const extent, int * const ptr,
                                              std::string const & description)
 {
-  LOG_DEBUG("Enter SetParameterPointer().");
+  LOG_DEBUG_CODE(std::string const callString = "SetParameterPointer("
+                 + SNUM(extent) + ", " + SPTR(ptr) + ", '"
+                 + description + "').";);
+  LOG_DEBUG("Enter " + callString);
 
   if (extent == 0)
   {
-    LOG_ERROR("Extent must be > 0.");
-    LOG_DEBUG("Exit SetParameterPointer().");
+    LOG_ERROR("Extent, " + SNUM(extent) + ", must be > 0.");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
   if (ptr == NULL)
   {
     LOG_ERROR("Null pointer provided for parameter.");
-    LOG_DEBUG("Exit SetParameterPointer().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
@@ -731,7 +789,7 @@ int ModelImplementation::SetParameterPointer(int const extent, int * const ptr,
   parameterExtent_.push_back(extent);
   parameterPointer_.push_back(ptr);
 
-  LOG_DEBUG("Exit SetParameterPointer().");
+  LOG_DEBUG("Exit " + callString);
   return false;
 }
 
@@ -739,18 +797,21 @@ int ModelImplementation::SetParameterPointer(int const extent,
                                              double * const ptr,
                                              std::string const & description)
 {
-  LOG_DEBUG("Enter SetParameterPointer().");
+  LOG_DEBUG_CODE(std::string const callString = "SetParameterPointer("
+                 + SNUM(extent) + ", " + SPTR(ptr) + ", '"
+                 + description + "').";);
+  LOG_DEBUG("Enter " + callString);
 
   if (extent == 0)
   {
-    LOG_ERROR("Extent must be > 0.");
-    LOG_DEBUG("Exit SetParameterPointer().");
+    LOG_ERROR("Extent, " + SNUM(extent) + ", must be > 0.");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
   if (ptr == NULL)
   {
     LOG_ERROR("Null pointer provided for parameter.");
-    LOG_DEBUG("Exit SetParameterPointer().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
@@ -759,31 +820,37 @@ int ModelImplementation::SetParameterPointer(int const extent,
   parameterExtent_.push_back(extent);
   parameterPointer_.push_back(ptr);
 
-  LOG_DEBUG("Exit SetParameterPointer().");
+  LOG_DEBUG("Exit " + callString);
   return false;
 }
 
 void ModelImplementation::GetNumberOfParameters(int * const numberOfParameters)
     const
 {
-  LOG_DEBUG("Enter GetNumberOfParameters().");
+  LOG_DEBUG_CODE(std::string const callString = "GetNumberOfParameters("
+                 + SPTR(numberOfParameters) + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   *numberOfParameters = parameterPointer_.size();
 
-  LOG_DEBUG("Exit GetNumberOfParameters().");
+  LOG_DEBUG("Exit " + callString);
 }
 
 int ModelImplementation::GetParameterDataTypeExtentAndDescription(
     int const parameterIndex, DataType * const dataType, int * const extent,
     std::string const ** const description) const
 {
-  LOG_DEBUG("Enter GetParameterDataTypeExtentAndDescription().");
+  LOG_DEBUG_CODE(std::string const callString
+                 = "GetParameterDataTypeExtentAndDescription("
+                 + SNUM(parameterIndex) + ", " + SPTR(dataType) + ", "
+                 + SPTR(extent) + ", " + SPTR(description) + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   if ((parameterIndex < 0) ||
       (static_cast<unsigned int>(parameterIndex) >= parameterPointer_.size()))
   {
-    LOG_ERROR("Invalid parameter index.");
-    LOG_DEBUG("Exit GetParameterDataTypeExtentAndDescription().");
+    LOG_ERROR("Invalid parameter index, " + SNUM(parameterIndex) + ".");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
@@ -794,7 +861,7 @@ int ModelImplementation::GetParameterDataTypeExtentAndDescription(
   if (description != NULL)
     *description = &(parameterDescription_[parameterIndex]);
 
-  LOG_DEBUG("Exit GetParameterDataTypeExtentAndDescription().");
+  LOG_DEBUG("Exit " + callString);
   return false;
 }
 
@@ -802,27 +869,30 @@ int ModelImplementation::GetParameter(int const parameterIndex,
                                       int const arrayIndex,
                                       int * const parameterValue) const
 {
-  LOG_DEBUG("Enter GetParameter().");
+  LOG_DEBUG_CODE(std::string const callString = "GetParameter("
+                 + SNUM(parameterIndex) + ", " + SNUM(arrayIndex) + ", "
+                 + SPTR(parameterValue) + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   if ((parameterIndex < 0) ||
       (static_cast<unsigned int>(parameterIndex) >= parameterPointer_.size()))
   {
-    LOG_ERROR("Invalid parameter index.");
-    LOG_DEBUG("Exit GetParameter().");
+    LOG_ERROR("Invalid parameter index, " + SNUM(parameterIndex) + ".");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
   if ((arrayIndex < 0) || (arrayIndex >= parameterExtent_[parameterIndex]))
   {
-    LOG_ERROR("Invalid parameter arrayIndex.");
-    LOG_DEBUG("Exit GetParameter().");
+    LOG_ERROR("Invalid parameter arrayIndex, " + SNUM(arrayIndex) + ".");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
   *parameterValue = reinterpret_cast<int const *>
       (parameterPointer_[parameterIndex])[arrayIndex];
 
-  LOG_DEBUG("Exit GetParameter().");
+  LOG_DEBUG("Exit " + callString);
   return false;
 }
 
@@ -830,27 +900,30 @@ int ModelImplementation::GetParameter(int const parameterIndex,
                                       int const arrayIndex,
                                       double * const parameterValue) const
 {
-  LOG_DEBUG("Enter GetParameter().");
+  LOG_DEBUG_CODE(std::string const callString = "GetParameter("
+                 + SNUM(parameterIndex) + ", " + SNUM(arrayIndex) + ", "
+                 + SPTR(parameterValue) + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   if ((parameterIndex < 0) ||
       (static_cast<unsigned int>(parameterIndex) >= parameterPointer_.size()))
   {
-    LOG_ERROR("Invalid parameter index.");
-    LOG_DEBUG("Exit GetParameter().");
+    LOG_ERROR("Invalid parameter index, " + SNUM(parameterIndex) + ".");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
   if ((arrayIndex < 0) || (arrayIndex >= parameterExtent_[parameterIndex]))
   {
-    LOG_ERROR("Invalid parameter arrayIndex.");
-    LOG_DEBUG("Exit GetParameter().");
+    LOG_ERROR("Invalid parameter arrayIndex, " + SNUM(arrayIndex) + ".");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
   *parameterValue = reinterpret_cast<double const *>
       (parameterPointer_[parameterIndex])[arrayIndex];
 
-  LOG_DEBUG("Exit GetParameter().");
+  LOG_DEBUG("Exit " + callString);
   return false;
 }
 
@@ -858,27 +931,30 @@ int ModelImplementation::SetParameter(int const parameterIndex,
                                       int const arrayIndex,
                                       int const parameterValue)
 {
-  LOG_DEBUG("Enter SetParameter().");
+  LOG_DEBUG_CODE(std::string const callString = "SetParameter("
+                 + SNUM(parameterIndex) + ", " + SNUM(arrayIndex) + ", "
+                 + SNUM(parameterValue) + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   if ((parameterIndex < 0) ||
       (static_cast<unsigned int>(parameterIndex) >= parameterPointer_.size()))
   {
-    LOG_ERROR("Invalid parameter index.");
-    LOG_DEBUG("Exit SetParameter().");
+    LOG_ERROR("Invalid parameter index, " + SNUM(parameterIndex) + ".");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
   if ((arrayIndex < 0) || (arrayIndex >= parameterExtent_[parameterIndex]))
   {
-    LOG_ERROR("Invalid parameter arrayIndex.");
-    LOG_DEBUG("Exit SetParameter().");
+    LOG_ERROR("Invalid parameter arrayIndex, " + SNUM(arrayIndex) + ".");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
   reinterpret_cast<int *>(parameterPointer_[parameterIndex])[arrayIndex]
       = parameterValue;
 
-  LOG_DEBUG("Exit SetParameter().");
+  LOG_DEBUG("Exit " + callString);
   return false;
 }
 
@@ -886,110 +962,119 @@ int ModelImplementation::SetParameter(int const parameterIndex,
                                       int const arrayIndex,
                                       double const parameterValue)
 {
-  LOG_DEBUG("Enter SetParameter().");
+  LOG_DEBUG_CODE(std::string const callString = "SetParameter("
+                 + SNUM(parameterIndex) + ", " + SNUM(arrayIndex) + ", "
+                 + SNUM(parameterValue) + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   if ((parameterIndex < 0) ||
       (static_cast<unsigned int>(parameterIndex) >= parameterPointer_.size()))
   {
-    LOG_ERROR("Invalid parameter index.");
-    LOG_DEBUG("Exit SetParameter().");
+    LOG_ERROR("Invalid parameter index, " + SNUM(parameterIndex) + ".");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
   if ((arrayIndex < 0) || (arrayIndex >= parameterExtent_[parameterIndex]))
   {
-    LOG_ERROR("Invalid parameter arrayIndex.");
-    LOG_DEBUG("Exit SetParameter().");
+    LOG_ERROR("Invalid parameter arrayIndex, " + SNUM(arrayIndex) + ".");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
   reinterpret_cast<double *>(parameterPointer_[parameterIndex])[arrayIndex]
       = parameterValue;
 
-  LOG_DEBUG("Exit SetParameter().");
+  LOG_DEBUG("Exit " + callString);
   return false;
 }
 
 int ModelImplementation::SetArgumentPointer(ArgumentName const argumentName,
                                             int const * const ptr)
 {
-  LOG_DEBUG("Enter SetArgumentPointer().");
+  LOG_DEBUG_CODE(std::string const callString = "SetArgumentPointer("
+                 + argumentName.String() + ", " + SPTR(ptr) + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   int error = Validate(argumentName);
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit SetArgumentPointer().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
-  std::map<ArgumentName const, SupportStatus, CALLBACK_NAME::Comparator>::
+  std::map<ArgumentName const, SupportStatus, ARGUMENT_NAME::Comparator>::
       const_iterator result = argumentSupportStatus_.find(argumentName);
   if (result->second == SUPPORT_STATUS::notSupported)
   {
-    LOG_ERROR("Pointer value cannot be set for Arguments that are "
-              "'notSupported'.");
-    LOG_DEBUG("Exit SetArgumentPointer().");
+    LOG_ERROR("Pointer value cannot be set for Argument '"
+              + argumentName.String() + "' which is 'notSupported'.");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
   argumentPointer_[argumentName]
       = reinterpret_cast<void *>(const_cast<int *>(ptr));
 
-  LOG_DEBUG("Exit SetArgumentPointer().");
+  LOG_DEBUG("Exit " + callString);
   return false;
 }
 
 int ModelImplementation::SetArgumentPointer(ArgumentName const argumentName,
                                             double const * const ptr)
 {
-  LOG_DEBUG("Enter SetArgumentPointer().");
+  LOG_DEBUG_CODE(std::string const callString = "SetArgumentPointer("
+                 + argumentName.String() + ", " + SPTR(ptr) + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   int error = Validate(argumentName);
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit SetArgumentPointer().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
-  std::map<ArgumentName const, SupportStatus, CALLBACK_NAME::Comparator>::
+  std::map<ArgumentName const, SupportStatus, ARGUMENT_NAME::Comparator>::
       const_iterator result = argumentSupportStatus_.find(argumentName);
   if (result->second == SUPPORT_STATUS::notSupported)
   {
-    LOG_ERROR("Pointer value cannot be set for Arguments that are "
-              "'notSupported'.");
-    LOG_DEBUG("Exit SetArgumentPointer().");
+    LOG_ERROR("Pointer value cannot be set for Arguments '"
+              + argumentName.String() + "' which is 'notSupported'.");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
   argumentPointer_[argumentName]
       = reinterpret_cast<void *>(const_cast<double *>(ptr));
 
-  LOG_DEBUG("Exit SetArgumentPointer().");
+  LOG_DEBUG("Exit " + callString);
   return false;
 }
 
 int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
                                             int const ** const ptr) const
 {
-  LOG_DEBUG("Enter GetArgumentPointer().");
+  LOG_DEBUG_CODE(std::string const callString = "GetArgumentPointer("
+                 + argumentName.String() + ", " + SPTR(ptr) + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   int error = Validate(argumentName);
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit GetArgumentPointer().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
-  std::map<ArgumentName const, SupportStatus, CALLBACK_NAME::Comparator>::
+  std::map<ArgumentName const, SupportStatus, ARGUMENT_NAME::Comparator>::
       const_iterator statusResult = argumentSupportStatus_.find(argumentName);
   if (statusResult->second == SUPPORT_STATUS::notSupported)
   {
-    LOG_ERROR("Pointer value does not exist for Arguments that are "
-              "'notSupported'.");
-    LOG_DEBUG("Exit GetArgumentPointer().");
+    LOG_ERROR("Pointer value does not exist for Argument '"
+              + (statusResult->first).String() + "' which is 'notSupported'.");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
@@ -997,30 +1082,32 @@ int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
       const_iterator result = argumentPointer_.find(argumentName);
   *ptr = reinterpret_cast<int const *>(result->second);
 
-  LOG_DEBUG("Exit GetArgumentPointer().");
+  LOG_DEBUG("Exit " + callString);
   return false;
 }
 
 int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
                                             int ** const ptr) const
 {
-  LOG_DEBUG("Enter GetArgumentPointer().");
+  LOG_DEBUG_CODE(std::string const callString = "GetArgumentPointer("
+                 + argumentName.String() + ", " + SPTR(ptr) + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   int error = Validate(argumentName);
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit GetArgumentPointer().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
-  std::map<ArgumentName const, SupportStatus, CALLBACK_NAME::Comparator>::
+  std::map<ArgumentName const, SupportStatus, ARGUMENT_NAME::Comparator>::
       const_iterator statusResult = argumentSupportStatus_.find(argumentName);
   if (statusResult->second == SUPPORT_STATUS::notSupported)
   {
-    LOG_ERROR("Pointer value does not exist for Arguments that are "
-              "'notSupported'.");
-    LOG_DEBUG("Exit GetArgumentPointer().");
+    LOG_ERROR("Pointer value does not exist for Argument '"
+              + (statusResult->first).String() + "' which is 'notSupported'.");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
@@ -1029,30 +1116,32 @@ int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
 
   *ptr = reinterpret_cast<int *>(result->second);
 
-  LOG_DEBUG("Exit GetArgumentPointer().");
+  LOG_DEBUG("Exit " + callString);
   return false;
 }
 
 int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
                                             double const ** const ptr) const
 {
-  LOG_DEBUG("Enter GetArgumentPointer().");
+  LOG_DEBUG_CODE(std::string const callString = "GetArgumentPointer("
+                 + argumentName.String() + ", " + SPTR(ptr) + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   int error = Validate(argumentName);
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit GetArgumentPointer().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
-  std::map<ArgumentName const, SupportStatus, CALLBACK_NAME::Comparator>::
+  std::map<ArgumentName const, SupportStatus, ARGUMENT_NAME::Comparator>::
       const_iterator statusResult = argumentSupportStatus_.find(argumentName);
   if (statusResult->second == SUPPORT_STATUS::notSupported)
   {
-    LOG_ERROR("Pointer value does not exist for Arguments that are "
-              "'notSupported'.");
-    LOG_DEBUG("Exit GetArgumentPointer().");
+    LOG_ERROR("Pointer value does not exist for Argument '"
+              + (statusResult->first).String() + "' which is 'notSupported'.");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
@@ -1061,30 +1150,32 @@ int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
 
   *ptr = reinterpret_cast<double const *>(result->second);
 
-  LOG_DEBUG("Exit GetArgumentPointer().");
+  LOG_DEBUG("Exit " + callString);
   return false;
 }
 
 int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
                                             double ** const ptr) const
 {
-  LOG_DEBUG("Enter GetArgumentPointer().");
+  LOG_DEBUG_CODE(std::string const callString = "GetArgumentPointer("
+                 + argumentName.String() + ", " + SPTR(ptr) + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   int error = Validate(argumentName);
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit GetArgumentPointer().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
-  std::map<ArgumentName const, SupportStatus, CALLBACK_NAME::Comparator>::
+  std::map<ArgumentName const, SupportStatus, ARGUMENT_NAME::Comparator>::
       const_iterator statusResult = argumentSupportStatus_.find(argumentName);
   if (statusResult->second == SUPPORT_STATUS::notSupported)
   {
-    LOG_ERROR("Pointer value does not exist for Arguments that are "
-              "'notSupported'.");
-    LOG_DEBUG("Exit GetArgumentPointer().");
+    LOG_ERROR("Pointer value does not exist for Argument '"
+              + (statusResult->first).String() + "' which is 'notSupported'.");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
@@ -1093,7 +1184,7 @@ int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
 
   *ptr = reinterpret_cast<double *>(result->second);
 
-  LOG_DEBUG("Exit GetArgumentPointer().");
+  LOG_DEBUG("Exit " + callString);
   return false;
 }
 
@@ -1102,7 +1193,10 @@ int ModelImplementation::SetCallbackPointer(CallbackName const callbackName,
                                             func * const fptr,
                                             void const * const dataObject)
 {
-  LOG_DEBUG("Enter SetCallbackPointer().");
+  LOG_DEBUG_CODE(std::string const callString = "SetCallbackPointer("
+                 + callbackName.String() + ", " + languageName.String()
+                 + ", " + SFUNC(fptr) + ", " + SPTR(dataObject) + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   int error =
       Validate(callbackName) ||
@@ -1110,7 +1204,7 @@ int ModelImplementation::SetCallbackPointer(CallbackName const callbackName,
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit SetCallbackPointer().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
@@ -1119,9 +1213,9 @@ int ModelImplementation::SetCallbackPointer(CallbackName const callbackName,
 
   if (result->second == SUPPORT_STATUS::notSupported)
   {
-    LOG_ERROR("Pointer value cannot be set for Callbacks that are "
-              "'notSupported'.");
-    LOG_DEBUG("Exit SetCallbackPointer().");
+    LOG_ERROR("Pointer value cannot be set for Callback '"
+              + callbackName.String() + "' that is 'notSupported'.");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
@@ -1129,20 +1223,22 @@ int ModelImplementation::SetCallbackPointer(CallbackName const callbackName,
   callbackFunctionPointer_[callbackName] = fptr;
   callbackDataObjectPointer_[callbackName] = dataObject;
 
-  LOG_DEBUG("Exit SetCallbackPointer().");
+  LOG_DEBUG("Exit " + callString);
   return false;
 }
 
 int ModelImplementation::IsCallbackPresent(
     CallbackName const callbackName, int * const present) const
 {
-  LOG_DEBUG("Enter IsCallbackPresent().");
+  LOG_DEBUG_CODE(std::string const callString = "IsCallbackPresent("
+                 + callbackName.String() + ", " + SPTR(present) + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   int error = Validate(callbackName);
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit IsCallbackPresent().");
+    LOG_DEBUG("Exit " + callString);
     return false;
   }
 
@@ -1158,7 +1254,7 @@ int ModelImplementation::IsCallbackPresent(
     *present = true;
   }
 
-  LOG_DEBUG("Exit IsCallbackPresent().");
+  LOG_DEBUG("Exit " + callString);
   return false;
 }
 
@@ -1169,7 +1265,8 @@ struct KIM_ModelCompute
 
 int ModelImplementation::Compute() const
 {
-  LOG_DEBUG("Enter Compute().");
+  LOG_DEBUG_CODE(std::string const callString = "Compute().";);
+  LOG_DEBUG("Enter " + callString);
 
   // Check that all required arguments are present
   for (std::map<ArgumentName const, SupportStatus,
@@ -1182,8 +1279,9 @@ int ModelImplementation::Compute() const
     {
       if (argumentPointer_.find(itr->first)->second == NULL)
       {
-        LOG_ERROR("Required Argument is not present.");
-        LOG_DEBUG("Exit Compute().");
+        LOG_ERROR("Required Argument '" + (itr->first).String()
+                  + "' is not present.");
+        LOG_DEBUG("Exit " + callString);
         return true;
       }
     }
@@ -1200,8 +1298,9 @@ int ModelImplementation::Compute() const
     {
       if (callbackFunctionPointer_.find(itr->first)->second == NULL)
       {
-        LOG_ERROR("Required Callback is not present.");
-        LOG_DEBUG("Exit Compute().");
+        LOG_ERROR("Required Callback '" + (itr->first).String()
+                  + "' is not present.");
+        LOG_DEBUG("Exit " + callString);
         return true;
       }
     }
@@ -1242,19 +1341,19 @@ int ModelImplementation::Compute() const
   else
   {
     LOG_ERROR("Unknown LanguageName.  SHOULD NEVER GET HERE.");
-    LOG_DEBUG("Exit Compute().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
   if (error)
   {
     LOG_ERROR("Model supplied Compute() routine returned error.");
-    LOG_DEBUG("Exit Compute().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
   else
   {
-    LOG_DEBUG("Exit Compute().");
+    LOG_DEBUG("Exit " + callString);
     return false;
   }
 }
@@ -1266,7 +1365,9 @@ struct KIM_ModelRefresh
 
 int ModelImplementation::ClearInfluenceDistanceAndCutoffsThenRefreshModel()
 {
-  LOG_DEBUG("Enter ClearInfluenceDistanceAndCutoffsThenRefreshModel().");
+  LOG_DEBUG_CODE(std::string const callString =
+                 "ClearInfluenceDistanceAndCutoffsThenRefreshModel().";);
+  LOG_DEBUG("Enter " + callString);
 
   influenceDistance_ = 0;
   numberOfCutoffs_ = 0;
@@ -1308,14 +1409,14 @@ int ModelImplementation::ClearInfluenceDistanceAndCutoffsThenRefreshModel()
   else
   {
     LOG_ERROR("Unknown LanguageName.  SHOULD NEVER GET HERE.");
-    LOG_DEBUG("Exit ClearInfluenceDistanceAndCutoffsThenRefreshModel().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
   if (error)
   {
     LOG_ERROR("Model supplied Refresh() routine returned error.");
-    LOG_DEBUG("Exit ClearInfluenceDistanceAndCutoffsThenRefreshModel().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
   else
@@ -1325,17 +1426,17 @@ int ModelImplementation::ClearInfluenceDistanceAndCutoffsThenRefreshModel()
     {
       LOG_ERROR("Model supplied Refresh() routine did not set "
                 "InfluenceDistancePointer");
-      LOG_DEBUG("Exit ClearInfluenceDistanceAndCutoffsThenRefreshModel().");
+      LOG_DEBUG("Exit " + callString);
       return true;
     }
     if (cutoffs_ == NULL)
     {
       LOG_ERROR("Model supplied Refresh() routine did not set CutoffsPointer");
-      LOG_DEBUG("Exit ClearInfluenceDistanceAndCutoffsThenRefreshModel().");
+      LOG_DEBUG("Exit " + callString);
       return true;
     }
 
-    LOG_DEBUG("Exit ClearInfluenceDistanceAndCutoffsThenRefreshModel().");
+    LOG_DEBUG("Exit " + callString);
     return false;
   }
 }
@@ -1346,12 +1447,16 @@ int ModelImplementation::GetNeighborList(int const neighborListIndex,
                                          int const ** const neighborsOfParticle)
     const
 {
-  LOG_DEBUG("Enter GetNeighborList().");
+  LOG_DEBUG_CODE(std::string const callString = "GetNeighborList("
+                 + SNUM(neighborListIndex) + ", " + SNUM(particleNumber) + ", "
+                 + SPTR(numberOfNeighbors) + ", " + SPTR(neighborsOfParticle)
+                 + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   if ((neighborListIndex < 0) || (neighborListIndex >= numberOfCutoffs_))
   {
-    LOG_ERROR("Invalid neighborListIndex.");
-    LOG_DEBUG("Exit GetNeighborList().");
+    LOG_ERROR("Invalid neighborListIndex, " + SNUM(neighborListIndex) + ".");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
@@ -1366,8 +1471,8 @@ int ModelImplementation::GetNeighborList(int const neighborListIndex,
   if ((zeroBasedParticleNumber < 0) ||
       (zeroBasedParticleNumber >= *(numberOfParticles)))
   {
-    LOG_ERROR("Invalid particleNumber.");
-    LOG_DEBUG("Exit GetNeighborList().");
+    LOG_ERROR("Invalid particleNumber, " + SNUM(zeroBasedParticleNumber) + ".");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
@@ -1430,14 +1535,14 @@ int ModelImplementation::GetNeighborList(int const neighborListIndex,
   else
   {
     LOG_ERROR("Unknown LanguageName.  SHOULD NEVER GET HERE.");
-    LOG_DEBUG("Exit GetNeighborList().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
   if (error)
   {
     LOG_ERROR("Simulator supplied GetNeighborList() routine returned error.");
-    LOG_DEBUG("Exit GetNeighborList().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
@@ -1460,7 +1565,7 @@ int ModelImplementation::GetNeighborList(int const neighborListIndex,
     *neighborsOfParticle = simulatorNeighborsOfParticle;
   }
 
-  LOG_DEBUG("Exit GetNeighborList().");
+  LOG_DEBUG("Exit " + callString);
   return false;
 }
 
@@ -1468,7 +1573,10 @@ int ModelImplementation::ProcessDEDrTerm(double const de, double const r,
                                          double const * const dx,
                                          int const i, int const j) const
 {
-  LOG_DEBUG("Enter ProcessDEDrTerm().");
+  LOG_DEBUG_CODE(std::string const callString = "ProcessDEDrTerm("
+                 + SNUM(de) + ", " + SNUM(r) + ", " + SPTR(dx) + ", "
+                 + SNUM(i) + ", " + SNUM(j) + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   std::map<CallbackName const, LanguageName, CALLBACK_NAME::Comparator>::
       const_iterator languageResult
@@ -1518,19 +1626,19 @@ int ModelImplementation::ProcessDEDrTerm(double const de, double const r,
   else
   {
     LOG_ERROR("Unknown LanguageName.  SHOULD NEVER GET HERE.");
-    LOG_DEBUG("Exit ProcessDEDrTerm().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
   if (error)
   {
     LOG_ERROR("Simulator supplied ProcessDEDrTerm() routine returned error.");
-    LOG_DEBUG("Exit ProcessDEDrTerm().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
   else
   {
-    LOG_DEBUG("Exit ProcessDEDrTerm().");
+    LOG_DEBUG("Exit " + callString);
     return false;
   }
 }
@@ -1541,7 +1649,10 @@ int ModelImplementation::ProcessD2EDr2Term(double const de,
                                            int const * const i,
                                            int const * const j) const
 {
-  LOG_DEBUG("Enter ProcessD2EDr2Term().");
+  LOG_DEBUG_CODE(std::string const callString = "ProcessD2EDr2Term("
+                 + SNUM(de) + ", " + SPTR(r) + ", " + SPTR(dx) + ", "
+                 + SPTR(i) + ", " + SPTR(j) + ").";);
+  LOG_DEBUG("Enter " + callString);
   std::map<CallbackName const, LanguageName, CALLBACK_NAME::Comparator>::
       const_iterator languageResult
       = callbackLanguage_.find(CALLBACK_NAME::ProcessD2EDr2Term);
@@ -1599,58 +1710,66 @@ int ModelImplementation::ProcessD2EDr2Term(double const de,
   else
   {
     LOG_ERROR("Unknown LanguageName.  SHOULD NEVER GET HERE.");
-    LOG_DEBUG("Exit ProcessD2EDr2Term().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
   if (error)
   {
     LOG_ERROR("Simulator supplied ProcessD2EDr2Term() routine returned error.");
-    LOG_DEBUG("Exit ProcessD2EDr2Term().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
   else
   {
-    LOG_DEBUG("Exit ProcessD2EDr2Term().");
+    LOG_DEBUG("Exit " + callString);
     return false;
   }
 }
 
 void ModelImplementation::SetModelBufferPointer(void * const ptr)
 {
-  LOG_DEBUG("Enter SetModelBufferPointer().");
+  LOG_DEBUG_CODE(std::string const callString = "SetModelBufferPointer("
+                 + SPTR(ptr) + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   modelBuffer_ = ptr;
 
-  LOG_DEBUG("Exit SetModelBufferPointer().");
+  LOG_DEBUG("Exit " + callString);
 }
 
 void ModelImplementation::GetModelBufferPointer(void ** const ptr) const
 {
-  LOG_DEBUG("Enter GetModelBufferPointer().");
+  LOG_DEBUG_CODE(std::string const callString = "GetModelBufferPointer("
+                 + SPTR(ptr) + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   *ptr = modelBuffer_;
 
-  LOG_DEBUG("Exit GetModelBufferPointer().");
+  LOG_DEBUG("Exit " + callString);
 }
 
 
 void ModelImplementation::SetSimulatorBufferPointer(void * const ptr)
 {
-  LOG_DEBUG("Enter SetSimulatorBufferPointer().");
+  LOG_DEBUG_CODE(std::string const callString = "SetSimulatorBufferPointer("
+                 + SPTR(ptr) + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   simulatorBuffer_ = ptr;
 
-  LOG_DEBUG("Exit SetSimulatorBufferPointer().");
+  LOG_DEBUG("Exit " + callString);
 }
 
 void ModelImplementation::GetSimulatorBufferPointer(void ** const ptr) const
 {
-  LOG_DEBUG("Enter GetSimulatorBufferPointer().");
+  LOG_DEBUG_CODE(std::string const callString = "GetSimulatorBufferPointer("
+                 + SPTR(ptr) + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   *ptr = simulatorBuffer_;
 
-  LOG_DEBUG("Exit GetSimulatorBufferPointer().");
+  LOG_DEBUG("Exit " + callString);
 }
 
 namespace
@@ -1738,7 +1857,24 @@ int ModelImplementation::ConvertUnit(
     double const timeExponent,
     double * const conversionFactor) const
 {
-  LOG_DEBUG("Enter ConvertUnit().");
+  LOG_DEBUG_CODE(std::string const callString = "ConvertUnit("
+                 + fromLengthUnit.String() + ", "
+                 + fromEnergyUnit.String() + ", "
+                 + fromChargeUnit.String() + ", "
+                 + fromTemperatureUnit.String() + ", "
+                 + fromTimeUnit.String() + ", "
+                 + toLengthUnit.String() + ", "
+                 + toEnergyUnit.String() + ", "
+                 + toChargeUnit.String() + ", "
+                 + toTemperatureUnit.String() + ", "
+                 + toTimeUnit.String() + ", "
+                 + SNUM(lengthExponent) + ", "
+                 + SNUM(energyExponent) + ", "
+                 + SNUM(chargeExponent) + ", "
+                 + SNUM(temperatureExponent) + ", "
+                 + SNUM(timeExponent) + ", "
+                 + SPTR(conversionFactor) + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   static LengthMap const lengthConvertToSI = GetLengthMap();
   static EnergyMap const energyConvertToSI = GetEnergyMap();
@@ -1760,7 +1896,7 @@ int ModelImplementation::ConvertUnit(
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit ConvertUnit().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
@@ -1787,35 +1923,39 @@ int ModelImplementation::ConvertUnit(
       * pow(temperatureConversion, temperatureExponent)
       * pow(timeConversion, timeExponent);
 
-  LOG_DEBUG("Exit ConvertUnit().");
+  LOG_DEBUG("Exit " + callString);
   return false;
 }
 
 void ModelImplementation::SetLogID(std::string const & logID)
 {
-  LOG_DEBUG("Enter SetLogID().");
+  LOG_DEBUG_CODE(std::string const callString = "SetLogID('" + logID + "').";);
+  LOG_DEBUG("Enter " + callString);
 
   log_->SetID(logID);
 
-  LOG_DEBUG("Exit SetLogID().");
+  LOG_DEBUG("Exit " + callString);
 }
 
 void ModelImplementation::PushLogVerbosity(LogVerbosity const logVerbosity)
 {
-  LOG_DEBUG("Enter PushLogVerbosity().");
+  LOG_DEBUG_CODE(std::string const callString = "PushLogVerbosity("
+                 + logVerbosity.String() + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   log_->PushVerbosity(logVerbosity);
 
-  LOG_DEBUG("Exit PushLogVerbosity().");
+  LOG_DEBUG("Exit " + callString);
 }
 
 void ModelImplementation::PopLogVerbosity()
 {
-  LOG_DEBUG("Enter PopLogVerbosity().");
+  LOG_DEBUG_CODE(std::string const callString = "PopLogVerbosity().";);
+  LOG_DEBUG("Enter " + callString);
 
   log_->PopVerbosity();
 
-  LOG_DEBUG("Exit PopLogVerbosity().");
+  LOG_DEBUG("Exit " + callString);
 }
 
 void ModelImplementation::LogEntry(LogVerbosity const logVerbosity,
@@ -1829,7 +1969,8 @@ void ModelImplementation::LogEntry(LogVerbosity const logVerbosity,
 
 std::string const & ModelImplementation::String() const
 {
-  LOG_DEBUG("Enter String().");
+  LOG_DEBUG_CODE(std::string const callString = "String().");
+  LOG_DEBUG("Enter " + callString);
 
   std::stringstream ss;
   ss << std::setprecision(10) << std::scientific << std::left;
@@ -2026,7 +2167,7 @@ std::string const & ModelImplementation::String() const
       "===========\n";
 
   string_ = ss.str();
-  LOG_DEBUG("Exit String().");
+  LOG_DEBUG("Exit " + callString);
   return string_;
 }
 
@@ -2046,7 +2187,9 @@ ModelImplementation::ModelImplementation(ModelLibrary * const modelLibrary,
     modelBuffer_(0),
     simulatorBuffer_(0)
 {
-  LOG_DEBUG("Enter ModelImplementation().");
+  LOG_DEBUG_CODE(std::string const callString = "ModelImplementation("
+                 + SPTR(modelLibrary) + ", " + SPTR(log) + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   // populate Arguments
   int numberOfArguments;
@@ -2091,16 +2234,17 @@ ModelImplementation::ModelImplementation(ModelLibrary * const modelLibrary,
     callbackDataObjectPointer_[*requiredByAPI_Callback] = NULL;
   }
 
-  LOG_DEBUG("Exit ModelImplementation().");
+  LOG_DEBUG("Exit " + callString);
 }
 
 ModelImplementation::~ModelImplementation()
 {
-  LOG_DEBUG("Enter ~ModelImplementation().");
+  LOG_DEBUG_CODE(std::string const callString = "~ModelImplementation().";);
+  LOG_DEBUG("Enter " + callString);
 
   delete modelLibrary_;
 
-  LOG_DEBUG("Destroying Log object and exit ~ModelImplementation().");
+  LOG_DEBUG("Destroying Log object and exit " + callString);
   Log::Destroy(&log_);
 }
 
@@ -2113,7 +2257,15 @@ int ModelImplementation::ModelCreate(
     TimeUnit const requestedTimeUnit,
     std::string const & modelName)
 {
-  LOG_DEBUG("Enter ModelCreate().");
+  LOG_DEBUG_CODE(std::string const callString = "ModelCreate("
+                 + numbering.String() + ", "
+                 + requestedLengthUnit.String() + ", "
+                 + requestedEnergyUnit.String() + ", "
+                 + requestedChargeUnit.String() + ", "
+                 + requestedTemperatureUnit.String() + ", "
+                 + requestedTimeUnit.String() + ", '"
+                 + modelName + "').";);
+  LOG_DEBUG("Enter " + callString);
 
   int error =
       Validate(numbering) ||
@@ -2125,7 +2277,7 @@ int ModelImplementation::ModelCreate(
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit ModelCreate().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
@@ -2135,7 +2287,7 @@ int ModelImplementation::ModelCreate(
   if (error)
   {
     LOG_ERROR("Could not set simulator numbering.");
-    LOG_DEBUG("Exit ModelCreate().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
@@ -2143,7 +2295,7 @@ int ModelImplementation::ModelCreate(
   if (error)
   {
     LOG_ERROR("Could not open model shared library.");
-    LOG_DEBUG("Exit ModelCreate().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
@@ -2160,7 +2312,7 @@ int ModelImplementation::ModelCreate(
       if (error)
       {
         LOG_ERROR("Initialization of Stand Alone model returned error.");
-        LOG_DEBUG("Exit ModelCreate().");
+        LOG_DEBUG("Exit " + callString);
         return true;
       }
       break;
@@ -2174,23 +2326,23 @@ int ModelImplementation::ModelCreate(
       if (error)
       {
         LOG_ERROR("Initialization of Parameterized Model returned error.");
-        LOG_DEBUG("Exit ModelCreate().");
+        LOG_DEBUG("Exit " + callString);
         return true;
       }
       break;
     case ModelLibrary::MODEL_DRIVER:
       LOG_ERROR("Creation of a model driver is not allowed.");
-      LOG_DEBUG("Exit ModelCreate().");
+      LOG_DEBUG("Exit " + callString);
       return true;
       break;
     case ModelLibrary::SIMULATOR_MODEL:
       LOG_ERROR("Creation of a simulator model is not allowed.");
-      LOG_DEBUG("Exit ModelCreate().");
+      LOG_DEBUG("Exit " + callString);
       return true;
       break;
     default:
       LOG_ERROR("Creation of an unknown model type is not allowed.");
-      LOG_DEBUG("Exit ModelCreate().");
+      LOG_DEBUG("Exit " + callString);
       return true;
       break;
   }
@@ -2200,14 +2352,14 @@ int ModelImplementation::ModelCreate(
   if (!numberingHasBeenSet_)
   {
     LOG_ERROR("Model supplied Create() routine did not set numbering.");
-    LOG_DEBUG("Exit ModelCreate().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
   if (!unitsHaveBeenSet_)
   {
     LOG_ERROR("Model supplied Create() routine did not set units.");
-    LOG_DEBUG("Exit ModelCreate().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
@@ -2215,42 +2367,42 @@ int ModelImplementation::ModelCreate(
   {
     LOG_ERROR("Model supplied Create() routine did not set "
               "InfluenceDistancePointer.");
-    LOG_DEBUG("Exit ModelCreate().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
   if (cutoffs_ == NULL)
   {
     LOG_ERROR("Model supplied Create() routine did not set CutoffsPointer.");
-    LOG_DEBUG("Exit ModelCreate().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
   if (refreshFunction_ == NULL)
   {
     LOG_ERROR("Model supplied Create() routine did not set RefreshPointer.");
-    LOG_DEBUG("Exit ModelCreate().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
   if (destroyFunction_ == NULL)
   {
     LOG_ERROR("Model supplied Create() routine did not set DestroyPointer.");
-    LOG_DEBUG("Exit ModelCreate().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
   if (computeFunction_ == NULL)
   {
     LOG_ERROR("Model supplied Create() routine did not set ComputePointer.");
-    LOG_DEBUG("Exit ModelCreate().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
   if (supportedSpecies_.empty())
   {
     LOG_ERROR("Model supplied Create() routine did not set SpeciesCode.");
-    LOG_DEBUG("Exit ModelCreate().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
@@ -2266,7 +2418,7 @@ int ModelImplementation::ModelCreate(
   if (simulatorNumbering_ != modelNumbering_)
     getNeighborListStorage_.resize(numberOfCutoffs_);
 
-  LOG_DEBUG("Exit ModelCreate().");
+  LOG_DEBUG("Exit " + callString);
   return false;
 }
 
@@ -2277,7 +2429,8 @@ struct KIM_ModelDestroy
 
 int ModelImplementation::ModelDestroy()
 {
-  LOG_DEBUG("Enter ModelDestroy().");
+  LOG_DEBUG_CODE(std::string const callString = "ModelDestroy().";);
+  LOG_DEBUG("Enter " + callString);
 
   typedef int ModelDestroyCpp(KIM::ModelDestroy * const);
   ModelDestroyCpp * CppDestroy
@@ -2314,19 +2467,19 @@ int ModelImplementation::ModelDestroy()
   else
   {
     LOG_ERROR("Unknown LanguageName.  SHOULD NEVER GET HERE.");
-    LOG_DEBUG("Exit ModelDestroy().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
   if (error)
   {
     LOG_ERROR("Model supplied Destroy() routine returned error.");
-    LOG_DEBUG("Exit ModelDestroy().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
   else
   {
-    LOG_DEBUG("Exit ModelDestroy().");
+    LOG_DEBUG("Exit " + callString);
     return false;
   }
 }
@@ -2343,7 +2496,13 @@ int ModelImplementation::InitializeStandAloneModel(
     TemperatureUnit const requestedTemperatureUnit,
     TimeUnit const requestedTimeUnit)
 {
-  LOG_DEBUG("Enter InitializeStandAloneModel().");
+  LOG_DEBUG_CODE(std::string const callString = "InitializeStandAloneModel("
+                 + requestedLengthUnit.String() + ", "
+                 + requestedEnergyUnit.String() + ", "
+                 + requestedChargeUnit.String() + ", "
+                 + requestedTemperatureUnit.String() + ", "
+                 + requestedTimeUnit.String() + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   int error =
       Validate(requestedLengthUnit) ||
@@ -2354,7 +2513,7 @@ int ModelImplementation::InitializeStandAloneModel(
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit InitializeStandAloneModel().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
@@ -2365,7 +2524,7 @@ int ModelImplementation::InitializeStandAloneModel(
   if (error)
   {
     LOG_ERROR("Could not get ModelCreateFunctionPointer.");
-    LOG_DEBUG("Exit InitializeStandAloneModel().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
@@ -2439,18 +2598,18 @@ int ModelImplementation::InitializeStandAloneModel(
   else
   {
     LOG_ERROR("Unknown LanguageName.  SHOULD NEVER GET HERE.");
-    LOG_DEBUG("Exit InitializeStandAloneModel().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
   if (error)
   {
     LOG_ERROR("Model supplied Create() routine returned error.");
-    LOG_DEBUG("Exit InitializeStandAloneModel().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
   else
   {
-    LOG_DEBUG("Exit InitializeStandAloneModel().");
+    LOG_DEBUG("Exit " + callString);
     return false;
   }
 }
@@ -2467,7 +2626,13 @@ int ModelImplementation::InitializeParameterizedModel(
     TemperatureUnit const requestedTemperatureUnit,
     TimeUnit const requestedTimeUnit)
 {
-  LOG_DEBUG("Enter InitializeParameterizedModel().");
+  LOG_DEBUG_CODE(std::string const callString = "InitializeParameterizedModel("
+                 + requestedLengthUnit.String() + ", "
+                 + requestedEnergyUnit.String() + ", "
+                 + requestedChargeUnit.String() + ", "
+                 + requestedTemperatureUnit.String() + ", "
+                 + requestedTimeUnit.String() + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   int error =
       Validate(requestedLengthUnit) ||
@@ -2478,7 +2643,7 @@ int ModelImplementation::InitializeParameterizedModel(
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit InitializeParameterizedModel().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
   // get driver name
@@ -2486,7 +2651,7 @@ int ModelImplementation::InitializeParameterizedModel(
   if (error)
   {
     LOG_ERROR("Could not get Model Driver name.");
-    LOG_DEBUG("Exit InitializeParameterizedModel().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
@@ -2495,7 +2660,7 @@ int ModelImplementation::InitializeParameterizedModel(
   if (error)
   {
     LOG_ERROR("Could not write parameter files to scratch space.");
-    LOG_DEBUG("Exit InitializeParameterizedModel().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
@@ -2504,14 +2669,14 @@ int ModelImplementation::InitializeParameterizedModel(
   if (error)
   {
     LOG_ERROR("Could not close model shared library.");
-    LOG_DEBUG("Exit InitializeParameterizedModel().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
   error = modelLibrary_->Open(false, modelDriverName_);
   if (error)
   {
     LOG_ERROR("Could not open model driver shared library.");
-    LOG_DEBUG("Exit InitializeParameterizedModel().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
   // check that it is a driver
@@ -2520,7 +2685,7 @@ int ModelImplementation::InitializeParameterizedModel(
   if ((error) || (itemType != ModelLibrary::MODEL_DRIVER))
   {
     LOG_ERROR("Invalid model driver shared library.");
-    LOG_DEBUG("Exit InitializeParameterizedModel().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
@@ -2531,7 +2696,7 @@ int ModelImplementation::InitializeParameterizedModel(
   if (error)
   {
     LOG_ERROR("Could not get ModelCreateFunctionPointer.");
-    LOG_DEBUG("Exit InitializeParameterizedModel().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
@@ -2606,13 +2771,13 @@ int ModelImplementation::InitializeParameterizedModel(
   else
   {
     LOG_ERROR("Unknown LanguageName.  SHOULD NEVER GET HERE.");
-    LOG_DEBUG("Exit InitializeParameterizedModel().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
   if (error)
   {
     LOG_ERROR("Model Driver supplied Create() routine returned error.");
-    LOG_DEBUG("Exit InitializeParameterizedModel().");
+    LOG_DEBUG("Exit " + callString);
     return true;
   }
 
@@ -2625,13 +2790,14 @@ int ModelImplementation::InitializeParameterizedModel(
   numberOfParameterFiles_ = -1;
   parameterFileNames_.clear();
 
-  LOG_DEBUG("Exit InitializeParameterizedModel().");
+  LOG_DEBUG("Exit " + callString);
   return false;
 }
 
 int ModelImplementation::WriteParameterFiles()
 {
-  LOG_DEBUG("Enter WriteParameterFiles().");
+  LOG_DEBUG_CODE(std::string const callString = "WriteParameterFiles().";);
+  LOG_DEBUG("Enter " + callString);
 
   modelLibrary_->GetNumberOfParameterFiles(&numberOfParameterFiles_);
   std::vector<unsigned char const *> parameterFileStrings;
@@ -2644,7 +2810,7 @@ int ModelImplementation::WriteParameterFiles()
     if (error)
     {
       LOG_ERROR("Could not get parameter file data.");
-      LOG_DEBUG("Exit WriteParameterFiles().");
+      LOG_DEBUG("Exit " + callString);
       return true;
     }
     parameterFileStrings.push_back(strPtr);
@@ -2662,7 +2828,7 @@ int ModelImplementation::WriteParameterFiles()
     {
       free(cstr);
       LOG_ERROR("Could not create a secure temporary file.");
-      LOG_DEBUG("Exit WriteParameterFiles().");
+      LOG_DEBUG("Exit " + callString);
       return true;
     }
     parameterFileNames_.push_back(cstr);
@@ -2674,13 +2840,15 @@ int ModelImplementation::WriteParameterFiles()
     fclose(fl);  // also closed the fileid
   }
 
-  LOG_DEBUG("Exit WriteParameterFiles().");
+  LOG_DEBUG("Exit " + callString);
   return false;
 }
 
 int ModelImplementation::Validate(ArgumentName const argumentName) const
 {
-  LOG_DEBUG("Enter Validate().");
+  LOG_DEBUG_CODE(std::string const callString = "Validate("
+                 + argumentName.String() + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   int numberOfArguments;
   ARGUMENT_NAME::GetNumberOfArguments(&numberOfArguments);
@@ -2692,19 +2860,22 @@ int ModelImplementation::Validate(ArgumentName const argumentName) const
 
     if (argumentName == argName)
     {
-      LOG_DEBUG("Exit Validate().");
+      LOG_DEBUG("Exit " + callString);
       return false;
     }
   }
 
   LOG_ERROR("Invalid ArgumentName encountered.");
-  LOG_DEBUG("Exit Validate().");
+  LOG_DEBUG("Exit " + callString);
   return true;
 }
 
 int ModelImplementation::Validate(CallbackName const callbackName) const
 {
-  LOG_DEBUG("Enter Validate().");
+  LOG_DEBUG_CODE(std::string const callString = "Validate("
+                 + callbackName.String() + ").";);
+  LOG_DEBUG("Enter " + callString);
+
 
   int numberOfCallbacks;
   CALLBACK_NAME::GetNumberOfCallbacks(&numberOfCallbacks);
@@ -2716,19 +2887,21 @@ int ModelImplementation::Validate(CallbackName const callbackName) const
 
     if (callbackName == cbName)
     {
-      LOG_DEBUG("Exit Validate().");
+      LOG_DEBUG("Exit " + callString);
       return false;
     }
   }
 
   LOG_ERROR("Invalid CallbackName encountered.");
-  LOG_DEBUG("Exit Validate().");
+  LOG_DEBUG("Exit " + callString);
   return true;
 }
 
 int ModelImplementation::Validate(ChargeUnit const chargeUnit) const
 {
-  LOG_DEBUG("Enter Validate().");
+  LOG_DEBUG_CODE(std::string const callString = "Validate("
+                 + chargeUnit.String() + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   int numberOfChargeUnits;
   CHARGE_UNIT::GetNumberOfChargeUnits(&numberOfChargeUnits);
@@ -2740,19 +2913,21 @@ int ModelImplementation::Validate(ChargeUnit const chargeUnit) const
 
     if (chargeUnit == cgUnit)
     {
-      LOG_DEBUG("Exit Validate().");
+      LOG_DEBUG("Exit " + callString);
       return false;
     }
   }
 
   LOG_ERROR("Invalid ChargeUnit encountered.");
-  LOG_DEBUG("Exit Validate().");
+  LOG_DEBUG("Exit " + callString);
   return true;
 }
 
 int ModelImplementation::Validate(DataType const dataType) const
 {
-  LOG_DEBUG("Enter Validate().");
+  LOG_DEBUG_CODE(std::string const callString = "Validate("
+                 + dataType.String() + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   int numberOfDataTypes;
   DATA_TYPE::GetNumberOfDataTypes(&numberOfDataTypes);
@@ -2764,19 +2939,21 @@ int ModelImplementation::Validate(DataType const dataType) const
 
     if (dataType == dType)
     {
-      LOG_DEBUG("Exit Validate().");
+      LOG_DEBUG("Exit " + callString);
       return false;
     }
   }
 
   LOG_ERROR("Invalid DataType encountered.");
-  LOG_DEBUG("Exit Validate().");
+  LOG_DEBUG("Exit " + callString);
   return true;
 }
 
 int ModelImplementation::Validate(EnergyUnit const energyUnit) const
 {
-  LOG_DEBUG("Enter Validate().");
+  LOG_DEBUG_CODE(std::string const callString = "Validate("
+                 + energyUnit.String() + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   int numberOfEnergyUnits;
   ENERGY_UNIT::GetNumberOfEnergyUnits(&numberOfEnergyUnits);
@@ -2788,19 +2965,21 @@ int ModelImplementation::Validate(EnergyUnit const energyUnit) const
 
     if (energyUnit == eUnit)
     {
-      LOG_DEBUG("Exit Validate().");
+      LOG_DEBUG("Exit " + callString);
       return false;
     }
   }
 
   LOG_ERROR("Invalid EnergyUnit encountered.");
-  LOG_DEBUG("Exit Validate().");
+  LOG_DEBUG("Exit " + callString);
   return true;
 }
 
 int ModelImplementation::Validate(LanguageName const languageName) const
 {
-  LOG_DEBUG("Enter Validate().");
+  LOG_DEBUG_CODE(std::string const callString = "Validate("
+                 + languageName.String() + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   int numberOfLanguageNames;
   LANGUAGE_NAME::GetNumberOfLanguageNames(&numberOfLanguageNames);
@@ -2812,19 +2991,21 @@ int ModelImplementation::Validate(LanguageName const languageName) const
 
     if (languageName == langName)
     {
-      LOG_DEBUG("Exit Validate().");
+      LOG_DEBUG("Exit " + callString);
       return false;
     }
   }
 
   LOG_ERROR("Invalid LanguageName encountered.");
-  LOG_DEBUG("Exit Validate().");
+  LOG_DEBUG("Exit " + callString);
   return true;
 }
 
 int ModelImplementation::Validate(LengthUnit const lengthUnit) const
 {
-  LOG_DEBUG("Enter Validate().");
+  LOG_DEBUG_CODE(std::string const callString = "Validate("
+                 + lengthUnit.String() + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   int numberOfLengthUnits;
   LENGTH_UNIT::GetNumberOfLengthUnits(&numberOfLengthUnits);
@@ -2836,19 +3017,21 @@ int ModelImplementation::Validate(LengthUnit const lengthUnit) const
 
     if (lengthUnit == lenUnit)
     {
-      LOG_DEBUG("Exit Validate().");
+      LOG_DEBUG("Exit " + callString);
       return false;
     }
   }
 
   LOG_ERROR("Invalid LengthUnit encountered.");
-  LOG_DEBUG("Exit Validate().");
+  LOG_DEBUG("Exit " + callString);
   return true;
 }
 
 int ModelImplementation::Validate(Numbering const numbering) const
 {
-  LOG_DEBUG("Enter Validate().");
+  LOG_DEBUG_CODE(std::string const callString = "Validate("
+                 + numbering.String() + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   int numberOfNumberings;
   NUMBERING::GetNumberOfNumberings(&numberOfNumberings);
@@ -2860,19 +3043,21 @@ int ModelImplementation::Validate(Numbering const numbering) const
 
     if (numbering == num)
     {
-      LOG_DEBUG("Exit Validate().");
+      LOG_DEBUG("Exit " + callString);
       return false;
     }
   }
 
   LOG_ERROR("Invalid Numbering encountered.");
-  LOG_DEBUG("Exit Validate().");
+  LOG_DEBUG("Exit " + callString);
   return true;
 }
 
 int ModelImplementation::Validate(SpeciesName const speciesName) const
 {
-  LOG_DEBUG("Enter Validate().");
+  LOG_DEBUG_CODE(std::string const callString = "Validate("
+                 + speciesName.String() + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   int numberOfSpeciesNames;
   SPECIES_NAME::GetNumberOfSpeciesNames(&numberOfSpeciesNames);
@@ -2884,19 +3069,21 @@ int ModelImplementation::Validate(SpeciesName const speciesName) const
 
     if (speciesName == specName)
     {
-      LOG_DEBUG("Exit Validate().");
+      LOG_DEBUG("Exit " + callString);
       return false;
     }
   }
 
   LOG_ERROR("Invalid SpeciesName encountered.");
-  LOG_DEBUG("Exit Validate().");
+  LOG_DEBUG("Exit " + callString);
   return true;
 }
 
 int ModelImplementation::Validate(SupportStatus const supportStatus) const
 {
-  LOG_DEBUG("Enter Validate().");
+  LOG_DEBUG_CODE(std::string const callString = "Validate("
+                 + supportStatus.String() + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   int numberOfSupportStatuses;
   SUPPORT_STATUS::GetNumberOfSupportStatuses(&numberOfSupportStatuses);
@@ -2908,19 +3095,21 @@ int ModelImplementation::Validate(SupportStatus const supportStatus) const
 
     if (supportStatus == supStatus)
     {
-      LOG_DEBUG("Exit Validate().");
+      LOG_DEBUG("Exit " + callString);
       return false;
     }
   }
 
   LOG_ERROR("Invalid SupportStatus encountered.");
-  LOG_DEBUG("Exit Validate().");
+  LOG_DEBUG("Exit " + callString);
   return true;
 }
 
 int ModelImplementation::Validate(TemperatureUnit const temperatureUnit) const
 {
-  LOG_DEBUG("Enter Validate().");
+  LOG_DEBUG_CODE(std::string const callString = "Validate("
+                 + temperatureUnit.String() + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   int numberOfTemperatureUnits;
   TEMPERATURE_UNIT::GetNumberOfTemperatureUnits(&numberOfTemperatureUnits);
@@ -2932,19 +3121,21 @@ int ModelImplementation::Validate(TemperatureUnit const temperatureUnit) const
 
     if (temperatureUnit == tempUnit)
     {
-      LOG_DEBUG("Exit Validate().");
+      LOG_DEBUG("Exit " + callString);
       return false;
     }
   }
 
   LOG_ERROR("Invalid TemperatureUnit encountered.");
-  LOG_DEBUG("Exit Validate().");
+  LOG_DEBUG("Exit " + callString);
   return true;
 }
 
 int ModelImplementation::Validate(TimeUnit const timeUnit) const
 {
-  LOG_DEBUG("Enter Validate().");
+  LOG_DEBUG_CODE(std::string const callString = "Validate("
+                 + timeUnit.String() + ").";);
+  LOG_DEBUG("Enter " + callString);
 
   int numberOfTimeUnits;
   TIME_UNIT::GetNumberOfTimeUnits(&numberOfTimeUnits);
@@ -2956,13 +3147,13 @@ int ModelImplementation::Validate(TimeUnit const timeUnit) const
 
     if (timeUnit == tmUnit)
     {
-      LOG_DEBUG("Exit Validate().");
+      LOG_DEBUG("Exit " + callString);
       return false;
     }
   }
 
   LOG_ERROR("Invalid TimeUnit encountered.");
-  LOG_DEBUG("Exit Validate().");
+  LOG_DEBUG("Exit " + callString);
   return true;
 }
 }  // namespace KIM
