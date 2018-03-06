@@ -336,7 +336,7 @@ module kim_model_f_module
       import kim_model_type
       implicit none
       type(kim_model_type), intent(inout) :: model
-      type(kim_log_verbosity_type), intent(in) :: log_verbosity
+      type(kim_log_verbosity_type), intent(in), value :: log_verbosity
     end subroutine push_log_verbosity
 
     subroutine pop_log_verbosity(model) &
