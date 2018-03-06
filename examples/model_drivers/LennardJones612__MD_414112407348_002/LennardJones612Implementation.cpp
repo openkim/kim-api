@@ -525,9 +525,9 @@ int LennardJones612Implementation::ConvertUnits(
   ier = modelDriverCreate->SetUnits(
       requestedLengthUnit,
       requestedEnergyUnit,
-      requestedChargeUnit,
-      requestedTemperatureUnit,
-      requestedTimeUnit);
+      KIM::CHARGE_UNIT::unused,
+      KIM::TEMPERATURE_UNIT::unused,
+      KIM::TIME_UNIT::unused);
   if (ier)
   {
     LOG_ERROR("Unable to set units to requested values");

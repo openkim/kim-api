@@ -50,6 +50,7 @@
 #include "KIM_ChargeUnit.h"
 #include "KIM_TemperatureUnit.h"
 #include "KIM_TimeUnit.h"
+#include "KIM_Numbering.h"
 #include "KIM_LanguageName.h"
 #include "KIM_SpeciesName.h"
 #include "KIM_SupportStatus.h"
@@ -427,6 +428,14 @@ int model_driver_create(
   if (ier == TRUE)
   {
     LOG_ERROR("Problem setting units");
+    return ier;
+  }
+
+  ier = KIM_ModelDriverCreate_SetModelNumbering(modelDriverCreate,
+                                                KIM_NUMBERING_zeroBased);
+  if (ier == TRUE)
+  {
+    LOG_ERROR("Unable to set numbering");
     return ier;
   }
 

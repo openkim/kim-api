@@ -1461,8 +1461,7 @@ int ModelImplementation::GetNeighborList(int const neighborListIndex,
   }
 
   int zeroBasedParticleNumber = particleNumber +
-      ((NUMBERING::zeroBased == modelNumbering_)
-       ? 0 : -numberingOffset_);
+      ((NUMBERING::zeroBased == modelNumbering_) ? 0 : -1);
   std::map<ArgumentName const, void *, ARGUMENT_NAME::Comparator>::
       const_iterator pointerResult
       = argumentPointer_.find(ARGUMENT_NAME::numberOfParticles);
