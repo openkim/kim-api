@@ -31,102 +31,62 @@
 //
 
 
-#ifdef LOG_FATAL_CODE
-#undef LOG_FATAL_CODE
-#endif
-#if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_FATAL_)
-#define LOG_FATAL_CODE(CODE) CODE
-#else
-#define LOG_FATAL_CODE(CODE)
-#endif
-//
-#ifdef LOG_FATAL
 #undef LOG_FATAL
-#endif
+#undef LOG_FATAL_SOURCE
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_FATAL_)
+#define LOG_FATAL_SOURCE 1
 #define LOG_FATAL(message)                                    \
   this->LogEntry(KIM::LOG_VERBOSITY::fatal, message,          \
                  __LINE__, __FILE__)
 #else
+#define LOG_FATAL_SOURCE 0
 #define LOG_FATAL(message)
 #endif
 
-#ifdef LOG_ERROR_CODE
-#undef LOG_ERROR_CODE
-#endif
-#if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_ERROR_)
-#define LOG_ERROR_CODE(CODE) CODE
-#else
-#define LOG_ERROR_CODE(CODE)
-#endif
-//
-#ifdef LOG_ERROR
 #undef LOG_ERROR
-#endif
+#undef LOG_ERROR_SOURCE
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_ERROR_)
+#define LOG_ERROR_SOURCE 1
 #define LOG_ERROR(message)                                    \
   this->LogEntry(KIM::LOG_VERBOSITY::error, message,          \
                  __LINE__, __FILE__)
 #else
+#define LOG_ERROR_SOURCE 0
 #define LOG_ERROR(message)
 #endif
 
-#ifdef LOG_WARNING_CODE
-#undef LOG_WARNING_CODE
-#endif
-#if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_WARNING_)
-#define LOG_WARNING_CODE(CODE) CODE
-#else
-#define LOG_WARNING_CODE(CODE)
-#endif
-//
-#ifdef LOG_WARNING
 #undef LOG_WARNING
-#endif
+#undef LOG_WARNING_SOURCE
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_WARNING_)
+#define LOG_WARNING_SOURCE 1
 #define LOG_WARNING(message)                                  \
   this->LogEntry(KIM::LOG_VERBOSITY::warning, message,        \
                  __LINE__, __FILE__)
 #else
+#define LOG_WARNING_SOURCE 0
 #define LOG_WARNING(message)
 #endif
 
-#ifdef LOG_INFORMATION_CODE
-#undef LOG_INFORMATION_CODE
-#endif
-#if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_INFORMATION_)
-#define LOG_INFORMATION_CODE(CODE) CODE
-#else
-#define LOG_INFORMATION_CODE(CODE)
-#endif
-//
-#ifdef LOG_INFORMATION
 #undef LOG_INFORMATION
-#endif
+#undef LOG_INFORMAITON_SOURCE
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_INFORMATION_)
+#define LOG_INFORMATION_SOURCE 1
 #define LOG_INFORMATION(message)                              \
   this->LogEntry(KIM::LOG_VERBOSITY::information, message,    \
                  __LINE__, __FILE__)
 #else
+#define LOG_INFORMATION_SOURCE 0
 #define LOG_INFORMATION(message)
 #endif
 
-#ifdef LOG_DEBUG_CODE
-#undef LOG_DEBUG_CODE
-#endif
-#if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_DEBUG_)
-#define LOG_DEBUG_CODE(CODE) CODE
-#else
-#define LOG_DEBUG_CODE(CODE)
-#endif
-//
-#ifdef LOG_DEBUG
 #undef LOG_DEBUG
-#endif
+#undef LOG_DEBUG_SOURCE
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_DEBUG_)
+#define LOG_DEBUG_SOURCE 1
 #define LOG_DEBUG(message)                                    \
   this->LogEntry(KIM::LOG_VERBOSITY::debug, message,          \
                  __LINE__, __FILE__)
 #else
+#define LOG_DEBUG_SOURCE 0
 #define LOG_DEBUG(message)
 #endif
