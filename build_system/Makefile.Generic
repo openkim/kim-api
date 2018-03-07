@@ -99,82 +99,82 @@ endif
 
 # C Compiler pattern rules
 KIM_CTYPE_STANDARD_COMPILE_LIST = $(ARCHFLAG) $(PICFLAG) $(KIMINCLUDEFLAGS) $(KIMDEFINES) $(OBJONLYFLAG) $(CFLAGS)
-%.o:%.c Makefile    # C with preprocessing
+%.o:%.c $(KIM_MAKE_FILES)    # C with preprocessing
 	@printf "Creating... $@.\n"
 	$(QUELL)$(CC)  $(KIM_CTYPE_STANDARD_COMPILE_LIST) $<
-%.o:%.i Makefile    # C without preprocessing
+%.o:%.i $(KIM_MAKE_FILES)    # C without preprocessing
 	@printf "Creating... $@.\n"
 	$(QUELL)$(CC)  $(KIM_CTYPE_STANDARD_COMPILE_LIST) $<
 # C++ Compiler pattern rules
 KIM_CXXTYPE_STANDARD_COMPILE_LIST = $(ARCHFLAG) $(PICFLAG) $(KIMINCLUDEFLAGS) $(KIMDEFINES) $(OBJONLYFLAG) $(CXXFLAGS)
-%.o:%.cpp Makefile  # C++ with preprocessing
+%.o:%.cpp $(KIM_MAKE_FILES)  # C++ with preprocessing
 	@printf "Creating... $@.\n"
 	$(QUELL)$(CXX) $(KIM_CXXTYPE_STANDARD_COMPILE_LIST) $<
-%.o:%.ii Makefile   # C++ without preprocessing
+%.o:%.ii $(KIM_MAKE_FILES)   # C++ without preprocessing
 	@printf "Creating... $@.\n"
 	$(QUELL)$(CXX) $(KIM_CXXTYPE_STANDARD_COMPILE_LIST) $<
-%.o:%.cc Makefile   # C++ with preprocessing
+%.o:%.cc $(KIM_MAKE_FILES)   # C++ with preprocessing
 	@printf "Creating... $@.\n"
 	$(QUELL)$(CXX) $(KIM_CXXTYPE_STANDARD_COMPILE_LIST) $<
-%.o:%.cxx Makefile  # C++ with preprocessing
+%.o:%.cxx $(KIM_MAKE_FILES)  # C++ with preprocessing
 	@printf "Creating... $@.\n"
 	$(QUELL)$(CXX) $(KIM_CXXTYPE_STANDARD_COMPILE_LIST) $<
-%.o:%.cpp Makefile  # C++ with preprocessing
+%.o:%.cpp $(KIM_MAKE_FILES)  # C++ with preprocessing
 	@printf "Creating... $@.\n"
 	$(QUELL)$(CXX) $(KIM_CXXTYPE_STANDARD_COMPILE_LIST) $<
-%.o:%.C Makefile    # C++ with preprocessing
+%.o:%.C $(KIM_MAKE_FILES)    # C++ with preprocessing
 	@printf "Creating... $@.\n"
 	$(QUELL)$(CXX) $(KIM_CXXTYPE_STANDARD_COMPILE_LIST) $<
 
 # Fortran Compiler pattern rules
 KIM_FTYPE_STANDARD_COMPILE_LIST = $(ARCHFLAG) $(PICFLAG) $(KIMINCLUDEFLAGS) $(KIMDEFINES) $(OBJONLYFLAG) $(FFLAGS) $(FFORTRANFILEFLAG)
 # Fixed form code
-%.o %.mod:%.f Makefile    # FORTRAN 77 without preprocessing
+%.o %.mod:%.f $(KIM_MAKE_FILES)    # FORTRAN 77 without preprocessing
 	@printf "Creating... $@.\n"
 	$(QUELL)$(FC) $(FFIXEDFLAG) $(FNOCPPFLAG) $(KIM_FTYPE_STANDARD_COMPILE_LIST) $<
-%.o %.mod:%.for Makefile  # FORTRAN 77 without preprocessing
+%.o %.mod:%.for $(KIM_MAKE_FILES)  # FORTRAN 77 without preprocessing
 	@printf "Creating... $@.\n"
 	$(QUELL)$(FC) $(FFIXEDFLAG) $(FNOCPPFLAG) $(KIM_FTYPE_STANDARD_COMPILE_LIST) $<
-%.o %.mod:%.ftn Makefile  # FORTRAN 77 without preprocessing
+%.o %.mod:%.ftn $(KIM_MAKE_FILES)  # FORTRAN 77 without preprocessing
 	@printf "Creating... $@.\n"
 	$(QUELL)$(FC) $(FFIXEDFLAG) $(FNOCPPFLAG) $(KIM_FTYPE_STANDARD_COMPILE_LIST) $<
-%.o %.mod:%.fpp Makefile  # FORTRAN 77 with preprocessing
+%.o %.mod:%.fpp $(KIM_MAKE_FILES)  # FORTRAN 77 with preprocessing
 	@printf "Creating... $@.\n"
 	$(QUELL)$(FC) $(FFIXEDFLAG) $(FCPPFLAG)   $(KIM_FTYPE_STANDARD_COMPILE_LIST) $<
-%.o %.mod:%.F Makefile    # FORTRAN 77 with preprocessing
+%.o %.mod:%.F $(KIM_MAKE_FILES)    # FORTRAN 77 with preprocessing
 	@printf "Creating... $@.\n"
 	$(QUELL)$(FC) $(FFIXEDFLAG) $(FCPPFLAG)   $(KIM_FTYPE_STANDARD_COMPILE_LIST) $<
-%.o %.mod:%.FOR Makefile  # FORTRAN 77 with preprocessing
+%.o %.mod:%.FOR $(KIM_MAKE_FILES)  # FORTRAN 77 with preprocessing
 	@printf "Creating... $@.\n"
 	$(QUELL)$(FC) $(FFIXEDFLAG) $(FCPPFLAG)   $(KIM_FTYPE_STANDARD_COMPILE_LIST) $<
-%.o %.mod:%.FTN Makefile  # FORTRAN 77 with preprocessing
+%.o %.mod:%.FTN $(KIM_MAKE_FILES)  # FORTRAN 77 with preprocessing
 	@printf "Creating... $@.\n"
 	$(QUELL)$(FC) $(FFIXEDFLAG) $(FCPPFLAG)   $(KIM_FTYPE_STANDARD_COMPILE_LIST) $<
-%.o %.mod:%.FPP Makefile  # FORTRAN 77 with preprocessing
+%.o %.mod:%.FPP $(KIM_MAKE_FILES)  # FORTRAN 77 with preprocessing
 	@printf "Creating... $@.\n"
 	$(QUELL)$(FC) $(FFIXEDFLAG) $(FCPPFLAG)   $(KIM_FTYPE_STANDARD_COMPILE_LIST) $<
 # Free form code
-%.o %.mod:%.f90 Makefile  # Fortran 90 without preprocessing
+%.o %.mod:%.f90 $(KIM_MAKE_FILES)  # Fortran 90 without preprocessing
 	@printf "Creating... $@.\n"
 	$(QUELL)$(FC) $(FFREEFLAG) $(FNOCPPFLAG)  $(KIM_FTYPE_STANDARD_COMPILE_LIST) $<
-%.o %.mod:%.f95 Makefile  # Fortran 95 without preprocessing
+%.o %.mod:%.f95 $(KIM_MAKE_FILES)  # Fortran 95 without preprocessing
 	@printf "Creating... $@.\n"
 	$(QUELL)$(FC) $(FFREEFLAG) $(FNOCPPFLAG)  $(KIM_FTYPE_STANDARD_COMPILE_LIST) $<
-%.o %.mod:%.f03 Makefile  # Fortran 2003 without preprocessing
+%.o %.mod:%.f03 $(KIM_MAKE_FILES)  # Fortran 2003 without preprocessing
 	@printf "Creating... $@.\n"
 	$(QUELL)$(FC) $(FFREEFLAG) $(FNOCPPFLAG)  $(KIM_FTYPE_STANDARD_COMPILE_LIST) $<
-%.o %.mod:%.f08 Makefile  # Fortran 2008 without preprocessing
+%.o %.mod:%.f08 $(KIM_MAKE_FILES)  # Fortran 2008 without preprocessing
 	@printf "Creating... $@.\n"
 	$(QUELL)$(FC) $(FFREEFLAG) $(FNOCPPFLAG)  $(KIM_FTYPE_STANDARD_COMPILE_LIST) $<
-%.o %.mod:%.F90 Makefile  # Fortran 90 with preprocessing
+%.o %.mod:%.F90 $(KIM_MAKE_FILES)  # Fortran 90 with preprocessing
 	@printf "Creating... $@.\n"
 	$(QUELL)$(FC) $(FFREEFLAG) $(FCPPFLAG)    $(KIM_FTYPE_STANDARD_COMPILE_LIST) $<
-%.o %.mod:%.F95 Makefile  # Fortran 95 with preprocessing
+%.o %.mod:%.F95 $(KIM_MAKE_FILES)  # Fortran 95 with preprocessing
 	@printf "Creating... $@.\n"
 	$(QUELL)$(FC) $(FFREEFLAG) $(FCPPFLAG)    $(KIM_FTYPE_STANDARD_COMPILE_LIST) $<
-%.o %.mod:%.F03 Makefile  # Fortran 2003 with preprocessing
+%.o %.mod:%.F03 $(KIM_MAKE_FILES)  # Fortran 2003 with preprocessing
 	@printf "Creating... $@.\n"
 	$(QUELL)$(FC) $(FFREEFLAG) $(FCPPFLAG)    $(KIM_FTYPE_STANDARD_COMPILE_LIST) $<
-%.o %.mod:%.F08 Makefile  # Fortran 2008 with preprocessing
+%.o %.mod:%.F08 $(KIM_MAKE_FILES)  # Fortran 2008 with preprocessing
 	@printf "Creating... $@.\n"
 	$(QUELL)$(FC) $(FFREEFLAG) $(FCPPFLAG)    $(KIM_FTYPE_STANDARD_COMPILE_LIST) $<

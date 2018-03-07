@@ -86,8 +86,8 @@ To install and run the KIM API package you need the following:
    is known to have subtle bugs, and SHOULD NOT BE USED with the KIM API
    software package.
 
-4. Standard utilities: xxd, ar, printf, sed, grep, find, cat, test, cp, touch,
-   rm, rmdir, ln, chmod, install (needed for use in the build system).
+4. Standard utilities: xxd, ar, printf, sed, grep, find, cat, test, cp, rm,
+   rmdir, ln, chmod, install (needed for use in the build system).
 
 5. wget and tar (needed for by the kim-api-vX-collections-management utility).
 
