@@ -237,6 +237,9 @@ void LogImplementation::LogEntry(LogVerbosity const logVerbosity,
                               message,
                               lineNumber,
                               fileName);
+#if (KIM_LOG_MAXIMUM_LEVEL == KIM_LOG_VERBOSITY_DEBUG_)
+    logStream_ << std::flush;
+#endif
   }
 }
 
