@@ -58,6 +58,25 @@ unsigned LogImplementation::sequence_ = 0;
 namespace
 {
 LogVerbosity const defaultLogVerbosity(KIM_LOG_MAXIMUM_LEVEL);
+
+int Validate(LogVerbosity const logVerbosity)
+{
+  int numberOfLogVerbosities;
+  LOG_VERBOSITY::GetNumberOfLogVerbosities(& numberOfLogVerbosities);
+
+  for (int i = 0; i < numberOfLogVerbosities; ++i)
+  {
+    LogVerbosity logVerb;
+    LOG_VERBOSITY::GetLogVerbosity(i, &logVerb);
+
+    if (logVerbosity == logVerb)
+    {
+      return false;
+    }
+  }
+
+  return true;
+}
 }  // namespace
 
 int LogImplementation::Create(LogImplementation ** const logImplementation)
@@ -171,13 +190,16 @@ void LogImplementation::SetID(std::string const & id)
 
 void LogImplementation::PushVerbosity(LogVerbosity const logVerbosity)
 {
+  LogVerbosity logVerb(logVerbosity);
+  if (! Validate(logVerbosity)) logVerb = verbosity_.top();
+
   std::stringstream ss;
-  ss << "Log verbosity '" << logVerbosity.String() << "' pushed (on top of "
+  ss << "Log verbosity '" << logVerb.String() << "' pushed (on top of "
      << verbosity_.top().String() << ").";
   LogEntry(LOG_VERBOSITY::information, ss.str(),
            __LINE__, __FILE__);
 
-  verbosity_.push(logVerbosity);
+  verbosity_.push(logVerb);
 }
 
 void LogImplementation::PopVerbosity()
@@ -202,11 +224,13 @@ void LogImplementation::LogEntry(LogVerbosity const logVerbosity,
                                  int const lineNumber,
                                  std::string const & fileName) const
 {
-  if ((logVerbosity != LOG_VERBOSITY::silent) &&
-      (logVerbosity <= verbosity_.top()))
+  LogVerbosity logVerb(logVerbosity);
+  if (! Validate(logVerbosity)) logVerb = verbosity_.top();
+
+  if ((logVerb != LOG_VERBOSITY::silent) && (logVerb <= verbosity_.top()))
   {
     std::string tm(GetTimeStamp());
-    logStream_ << EntryString(logVerbosity.String(),
+    logStream_ << EntryString(logVerb.String(),
                               tm,
                               sequence_,
                               idString_,
