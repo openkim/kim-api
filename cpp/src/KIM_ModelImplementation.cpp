@@ -1584,19 +1584,21 @@ int ModelImplementation::GetNeighborList(int const neighborListIndex,
                                          int const ** const neighborsOfParticle)
     const
 {
-#if LOG_DEBUG_SOURCE
-  std::string const callString = "GetNeighborList("
-      + SNUM(neighborListIndex) + ", " + SNUM(particleNumber) + ", "
-      + SPTR(numberOfNeighbors) + ", " + SPTR(neighborsOfParticle) + ").";
-#endif
-  LOG_DEBUG("Enter " + callString);
+  // No debug logging for callbacks: too expensive
+  //
+  // #if LOG_DEBUG_SOURCE
+  //   std::string const callString = "GetNeighborList("
+  //       + SNUM(neighborListIndex) + ", " + SNUM(particleNumber) + ", "
+  //       + SPTR(numberOfNeighbors) + ", " + SPTR(neighborsOfParticle) + ").";
+  // #endif
+  //   LOG_DEBUG("Enter " + callString);
 
 #if LOG_ERROR_SOURCE
   if ((neighborListIndex < 0) || (neighborListIndex >= numberOfCutoffs_))
   {
     LOG_ERROR("Invalid neighborListIndex, " + SNUM(neighborListIndex)
               + ".");
-    LOG_DEBUG("Exit " + callString);
+    // LOG_DEBUG("Exit " + callString);
     return true;
   }
 
@@ -1612,7 +1614,7 @@ int ModelImplementation::GetNeighborList(int const neighborListIndex,
   {
     LOG_ERROR("Invalid particleNumber, " + SNUM(zeroBasedParticleNumber)
               + ".");
-    LOG_DEBUG("Exit " + callString);
+    // LOG_DEBUG("Exit " + callString);
     return true;
   }
 #endif
@@ -1676,21 +1678,21 @@ int ModelImplementation::GetNeighborList(int const neighborListIndex,
   else
   {
     LOG_ERROR("Unknown LanguageName.  SHOULD NEVER GET HERE.");
-    LOG_DEBUG("Exit " + callString);
+    // LOG_DEBUG("Exit " + callString);
     return true;
   }
 
   if (error)
   {
     LOG_ERROR("Simulator supplied GetNeighborList() routine returned error.");
-    LOG_DEBUG("Exit " + callString);
+    // LOG_DEBUG("Exit " + callString);
     return true;
   }
 
   // account for numbering differences if needed
   if (simulatorNumbering_ != modelNumbering_)
   {
-    LOG_DEBUG("Numbering conversion is required.");
+    // LOG_DEBUG("Numbering conversion is required.");
 
     std::vector<int> & list = getNeighborListStorage_[neighborListIndex];
     list.resize(*numberOfNeighbors);
@@ -1701,12 +1703,12 @@ int ModelImplementation::GetNeighborList(int const neighborListIndex,
   }
   else
   {
-    LOG_DEBUG("Numbering conversion is not required.");
+    // LOG_DEBUG("Numbering conversion is not required.");
 
     *neighborsOfParticle = simulatorNeighborsOfParticle;
   }
 
-  LOG_DEBUG("Exit " + callString);
+  // LOG_DEBUG("Exit " + callString);
   return false;
 }
 
@@ -1714,12 +1716,14 @@ int ModelImplementation::ProcessDEDrTerm(double const de, double const r,
                                          double const * const dx,
                                          int const i, int const j) const
 {
-#if LOG_DEBUG_SOURCE
-  std::string const callString = "ProcessDEDrTerm("
-      + SNUM(de) + ", " + SNUM(r) + ", " + SPTR(dx) + ", "
-      + SNUM(i) + ", " + SNUM(j) + ").";
-#endif
-  LOG_DEBUG("Enter " + callString);
+  // No debug logging for callbacks: too expensive
+  //
+  // #if LOG_DEBUG_SOURCE
+  //   std::string const callString = "ProcessDEDrTerm("
+  //       + SNUM(de) + ", " + SNUM(r) + ", " + SPTR(dx) + ", "
+  //       + SNUM(i) + ", " + SNUM(j) + ").";
+  // #endif
+  //   LOG_DEBUG("Enter " + callString);
 
   std::map<CallbackName const, LanguageName, CALLBACK_NAME::Comparator>::
       const_iterator languageResult
@@ -1769,19 +1773,19 @@ int ModelImplementation::ProcessDEDrTerm(double const de, double const r,
   else
   {
     LOG_ERROR("Unknown LanguageName.  SHOULD NEVER GET HERE.");
-    LOG_DEBUG("Exit " + callString);
+    // LOG_DEBUG("Exit " + callString);
     return true;
   }
 
   if (error)
   {
     LOG_ERROR("Simulator supplied ProcessDEDrTerm() routine returned error.");
-    LOG_DEBUG("Exit " + callString);
+    // LOG_DEBUG("Exit " + callString);
     return true;
   }
   else
   {
-    LOG_DEBUG("Exit " + callString);
+    // LOG_DEBUG("Exit " + callString);
     return false;
   }
 }
@@ -1792,12 +1796,14 @@ int ModelImplementation::ProcessD2EDr2Term(double const de,
                                            int const * const i,
                                            int const * const j) const
 {
-#if LOG_DEBUG_SOURCE
-  std::string const callString = "ProcessD2EDr2Term("
-      + SNUM(de) + ", " + SPTR(r) + ", " + SPTR(dx) + ", "
-      + SPTR(i) + ", " + SPTR(j) + ").";
-#endif
-  LOG_DEBUG("Enter " + callString);
+  // No debug logging for callbacks: too expensive
+  //
+  // #if LOG_DEBUG_SOURCE
+  //   std::string const callString = "ProcessD2EDr2Term("
+  //       + SNUM(de) + ", " + SPTR(r) + ", " + SPTR(dx) + ", "
+  //       + SPTR(i) + ", " + SPTR(j) + ").";
+  // #endif
+  //   LOG_DEBUG("Enter " + callString);
   std::map<CallbackName const, LanguageName, CALLBACK_NAME::Comparator>::
       const_iterator languageResult
       = callbackLanguage_.find(CALLBACK_NAME::ProcessD2EDr2Term);
@@ -1855,19 +1861,19 @@ int ModelImplementation::ProcessD2EDr2Term(double const de,
   else
   {
     LOG_ERROR("Unknown LanguageName.  SHOULD NEVER GET HERE.");
-    LOG_DEBUG("Exit " + callString);
+    // LOG_DEBUG("Exit " + callString);
     return true;
   }
 
   if (error)
   {
     LOG_ERROR("Simulator supplied ProcessD2EDr2Term() routine returned error.");
-    LOG_DEBUG("Exit " + callString);
+    // LOG_DEBUG("Exit " + callString);
     return true;
   }
   else
   {
-    LOG_DEBUG("Exit " + callString);
+    // LOG_DEBUG("Exit " + callString);
     return false;
   }
 }
@@ -3036,10 +3042,13 @@ int ModelImplementation::WriteParameterFiles()
 
 int ModelImplementation::Validate(ArgumentName const argumentName) const
 {
-#if LOG_DEBUG_SOURCE
-  std::string const callString = "Validate(" + argumentName.String() + ").";
-#endif
-  LOG_DEBUG("Enter " + callString);
+  // No debug logging for Validate: too expensive
+  //
+  // #if LOG_DEBUG_SOURCE
+  //   std::string const callString = "Validate(" + argumentName.String()
+  //       + ").";
+  // #endif
+  //   LOG_DEBUG("Enter " + callString);
 
   int numberOfArguments;
   ARGUMENT_NAME::GetNumberOfArguments(&numberOfArguments);
@@ -3051,23 +3060,25 @@ int ModelImplementation::Validate(ArgumentName const argumentName) const
 
     if (argumentName == argName)
     {
-      LOG_DEBUG("Exit " + callString);
+      // LOG_DEBUG("Exit " + callString);
       return false;
     }
   }
 
   LOG_ERROR("Invalid ArgumentName encountered.");
-  LOG_DEBUG("Exit " + callString);
+  // LOG_DEBUG("Exit " + callString);
   return true;
 }
 
 int ModelImplementation::Validate(CallbackName const callbackName) const
 {
-#if LOG_DEBUG_SOURCE
-  std::string const callString = "Validate(" + callbackName.String() + ").";
-#endif
-  LOG_DEBUG("Enter " + callString);
-
+  // No debug logging for Validate: too expensive
+  //
+  // #if LOG_DEBUG_SOURCE
+  //   std::string const callString = "Validate(" + callbackName.String()
+  //       + ").";
+  // #endif
+  //   LOG_DEBUG("Enter " + callString);
 
   int numberOfCallbacks;
   CALLBACK_NAME::GetNumberOfCallbacks(&numberOfCallbacks);
@@ -3079,22 +3090,25 @@ int ModelImplementation::Validate(CallbackName const callbackName) const
 
     if (callbackName == cbName)
     {
-      LOG_DEBUG("Exit " + callString);
+      // LOG_DEBUG("Exit " + callString);
       return false;
     }
   }
 
   LOG_ERROR("Invalid CallbackName encountered.");
-  LOG_DEBUG("Exit " + callString);
+  // LOG_DEBUG("Exit " + callString);
   return true;
 }
 
 int ModelImplementation::Validate(ChargeUnit const chargeUnit) const
 {
-#if LOG_DEBUG_SOURCE
-  std::string const callString = "Validate(" + chargeUnit.String() + ").";
-#endif
-  LOG_DEBUG("Enter " + callString);
+  // No debug logging for Validate: too expensive
+  //
+  // #if LOG_DEBUG_SOURCE
+  //   std::string const callString = "Validate(" + chargeUnit.String()
+  //       + ").";
+  // #endif
+  //   LOG_DEBUG("Enter " + callString);
 
   int numberOfChargeUnits;
   CHARGE_UNIT::GetNumberOfChargeUnits(&numberOfChargeUnits);
@@ -3106,22 +3120,25 @@ int ModelImplementation::Validate(ChargeUnit const chargeUnit) const
 
     if (chargeUnit == cgUnit)
     {
-      LOG_DEBUG("Exit " + callString);
+      // LOG_DEBUG("Exit " + callString);
       return false;
     }
   }
 
   LOG_ERROR("Invalid ChargeUnit encountered.");
-  LOG_DEBUG("Exit " + callString);
+  // LOG_DEBUG("Exit " + callString);
   return true;
 }
 
 int ModelImplementation::Validate(DataType const dataType) const
 {
-#if LOG_DEBUG_SOURCE
-  std::string const callString = "Validate(" + dataType.String() + ").";
-#endif
-  LOG_DEBUG("Enter " + callString);
+  // No debug logging for Validate: too expensive
+  //
+  // #if LOG_DEBUG_SOURCE
+  //   std::string const callString = "Validate(" + dataType.String()
+  //       + ").";
+  // #endif
+  //   LOG_DEBUG("Enter " + callString);
 
   int numberOfDataTypes;
   DATA_TYPE::GetNumberOfDataTypes(&numberOfDataTypes);
@@ -3133,22 +3150,24 @@ int ModelImplementation::Validate(DataType const dataType) const
 
     if (dataType == dType)
     {
-      LOG_DEBUG("Exit " + callString);
+      // LOG_DEBUG("Exit " + callString);
       return false;
     }
   }
 
   LOG_ERROR("Invalid DataType encountered.");
-  LOG_DEBUG("Exit " + callString);
+  // LOG_DEBUG("Exit " + callString);
   return true;
 }
 
 int ModelImplementation::Validate(EnergyUnit const energyUnit) const
 {
-#if LOG_DEBUG_SOURCE
-  std::string const callString = "Validate(" + energyUnit.String() + ").";
-#endif
-  LOG_DEBUG("Enter " + callString);
+  // No debug logging for Validate: too expensive
+  //
+  // #if LOG_DEBUG_SOURCE
+  //   std::string const callString = "Validate(" + energyUnit.String() + ").";
+  // #endif
+  //   LOG_DEBUG("Enter " + callString);
 
   int numberOfEnergyUnits;
   ENERGY_UNIT::GetNumberOfEnergyUnits(&numberOfEnergyUnits);
@@ -3160,22 +3179,25 @@ int ModelImplementation::Validate(EnergyUnit const energyUnit) const
 
     if (energyUnit == eUnit)
     {
-      LOG_DEBUG("Exit " + callString);
+      // LOG_DEBUG("Exit " + callString);
       return false;
     }
   }
 
   LOG_ERROR("Invalid EnergyUnit encountered.");
-  LOG_DEBUG("Exit " + callString);
+  // LOG_DEBUG("Exit " + callString);
   return true;
 }
 
 int ModelImplementation::Validate(LanguageName const languageName) const
 {
-#if LOG_DEBUG_SOURCE
-  std::string const callString = "Validate(" + languageName.String() + ").";
-#endif
-  LOG_DEBUG("Enter " + callString);
+  // No debug logging for Validate: too expensive
+  //
+  // #if LOG_DEBUG_SOURCE
+  //   std::string const callString = "Validate(" + languageName.String()
+  //       + ").";
+  // #endif
+  //   LOG_DEBUG("Enter " + callString);
 
   int numberOfLanguageNames;
   LANGUAGE_NAME::GetNumberOfLanguageNames(&numberOfLanguageNames);
@@ -3187,22 +3209,25 @@ int ModelImplementation::Validate(LanguageName const languageName) const
 
     if (languageName == langName)
     {
-      LOG_DEBUG("Exit " + callString);
+      // LOG_DEBUG("Exit " + callString);
       return false;
     }
   }
 
   LOG_ERROR("Invalid LanguageName encountered.");
-  LOG_DEBUG("Exit " + callString);
+  // LOG_DEBUG("Exit " + callString);
   return true;
 }
 
 int ModelImplementation::Validate(LengthUnit const lengthUnit) const
 {
-#if LOG_DEBUG_SOURCE
-  std::string const callString = "Validate(" + lengthUnit.String() + ").";
-#endif
-  LOG_DEBUG("Enter " + callString);
+  // No debug logging for Validate: too expensive
+  //
+  // #if LOG_DEBUG_SOURCE
+  //   std::string const callString = "Validate(" + lengthUnit.String()
+  //       + ").";
+  // #endif
+  //   LOG_DEBUG("Enter " + callString);
 
   int numberOfLengthUnits;
   LENGTH_UNIT::GetNumberOfLengthUnits(&numberOfLengthUnits);
@@ -3214,22 +3239,25 @@ int ModelImplementation::Validate(LengthUnit const lengthUnit) const
 
     if (lengthUnit == lenUnit)
     {
-      LOG_DEBUG("Exit " + callString);
+      // LOG_DEBUG("Exit " + callString);
       return false;
     }
   }
 
   LOG_ERROR("Invalid LengthUnit encountered.");
-  LOG_DEBUG("Exit " + callString);
+  // LOG_DEBUG("Exit " + callString);
   return true;
 }
 
 int ModelImplementation::Validate(Numbering const numbering) const
 {
-#if LOG_DEBUG_SOURCE
-  std::string const callString = "Validate(" + numbering.String() + ").";
-#endif
-  LOG_DEBUG("Enter " + callString);
+  // No debug logging for Validate: too expensive
+  //
+  // #if LOG_DEBUG_SOURCE
+  //   std::string const callString = "Validate(" + numbering.String()
+  //       + ").";
+  // #endif
+  //   LOG_DEBUG("Enter " + callString);
 
   int numberOfNumberings;
   NUMBERING::GetNumberOfNumberings(&numberOfNumberings);
@@ -3241,22 +3269,25 @@ int ModelImplementation::Validate(Numbering const numbering) const
 
     if (numbering == num)
     {
-      LOG_DEBUG("Exit " + callString);
+      // LOG_DEBUG("Exit " + callString);
       return false;
     }
   }
 
   LOG_ERROR("Invalid Numbering encountered.");
-  LOG_DEBUG("Exit " + callString);
+  // LOG_DEBUG("Exit " + callString);
   return true;
 }
 
 int ModelImplementation::Validate(SpeciesName const speciesName) const
 {
-#if LOG_DEBUG_SOURCE
-  std::string const callString = "Validate(" + speciesName.String() + ").";
-#endif
-  LOG_DEBUG("Enter " + callString);
+  // No debug logging for Validate: too expensive
+  //
+  // #if LOG_DEBUG_SOURCE
+  //   std::string const callString = "Validate(" + speciesName.String()
+  //       + ").";
+  // #endif
+  //   LOG_DEBUG("Enter " + callString);
 
   int numberOfSpeciesNames;
   SPECIES_NAME::GetNumberOfSpeciesNames(&numberOfSpeciesNames);
@@ -3268,22 +3299,25 @@ int ModelImplementation::Validate(SpeciesName const speciesName) const
 
     if (speciesName == specName)
     {
-      LOG_DEBUG("Exit " + callString);
+      // LOG_DEBUG("Exit " + callString);
       return false;
     }
   }
 
   LOG_ERROR("Invalid SpeciesName encountered.");
-  LOG_DEBUG("Exit " + callString);
+  // LOG_DEBUG("Exit " + callString);
   return true;
 }
 
 int ModelImplementation::Validate(SupportStatus const supportStatus) const
 {
-#if LOG_DEBUG_SOURCE
-  std::string const callString = "Validate(" + supportStatus.String() + ").";
-#endif
-  LOG_DEBUG("Enter " + callString);
+  // No debug logging for Validate: too expensive
+  //
+  // #if LOG_DEBUG_SOURCE
+  //   std::string const callString = "Validate(" + supportStatus.String()
+  //       + ").";
+  // #endif
+  //   LOG_DEBUG("Enter " + callString);
 
   int numberOfSupportStatuses;
   SUPPORT_STATUS::GetNumberOfSupportStatuses(&numberOfSupportStatuses);
@@ -3295,22 +3329,25 @@ int ModelImplementation::Validate(SupportStatus const supportStatus) const
 
     if (supportStatus == supStatus)
     {
-      LOG_DEBUG("Exit " + callString);
+      // LOG_DEBUG("Exit " + callString);
       return false;
     }
   }
 
   LOG_ERROR("Invalid SupportStatus encountered.");
-  LOG_DEBUG("Exit " + callString);
+  // LOG_DEBUG("Exit " + callString);
   return true;
 }
 
 int ModelImplementation::Validate(TemperatureUnit const temperatureUnit) const
 {
-#if LOG_DEBUG_SOURCE
-  std::string const callString = "Validate(" + temperatureUnit.String() + ").";
-#endif
-  LOG_DEBUG("Enter " + callString);
+  // No debug logging for Validate: too expensive
+  //
+  // #if LOG_DEBUG_SOURCE
+  //   std::string const callString = "Validate(" + temperatureUnit.String()
+  //       + ").";
+  // #endif
+  //   LOG_DEBUG("Enter " + callString);
 
   int numberOfTemperatureUnits;
   TEMPERATURE_UNIT::GetNumberOfTemperatureUnits(&numberOfTemperatureUnits);
@@ -3322,22 +3359,25 @@ int ModelImplementation::Validate(TemperatureUnit const temperatureUnit) const
 
     if (temperatureUnit == tempUnit)
     {
-      LOG_DEBUG("Exit " + callString);
+      // LOG_DEBUG("Exit " + callString);
       return false;
     }
   }
 
   LOG_ERROR("Invalid TemperatureUnit encountered.");
-  LOG_DEBUG("Exit " + callString);
+  // LOG_DEBUG("Exit " + callString);
   return true;
 }
 
 int ModelImplementation::Validate(TimeUnit const timeUnit) const
 {
-#if LOG_DEBUG_SOURCE
-  std::string const callString = "Validate(" + timeUnit.String() + ").";
-#endif
-  LOG_DEBUG("Enter " + callString);
+  // No debug logging for Validate: too expensive
+  //
+  // #if LOG_DEBUG_SOURCE
+  //   std::string const callString = "Validate(" + timeUnit.String()
+  //       + ").";
+  // #endif
+  //   LOG_DEBUG("Enter " + callString);
 
   int numberOfTimeUnits;
   TIME_UNIT::GetNumberOfTimeUnits(&numberOfTimeUnits);
@@ -3349,13 +3389,13 @@ int ModelImplementation::Validate(TimeUnit const timeUnit) const
 
     if (timeUnit == tmUnit)
     {
-      LOG_DEBUG("Exit " + callString);
+      // LOG_DEBUG("Exit " + callString);
       return false;
     }
   }
 
   LOG_ERROR("Invalid TimeUnit encountered.");
-  LOG_DEBUG("Exit " + callString);
+  // LOG_DEBUG("Exit " + callString);
   return true;
 }
 }  // namespace KIM
